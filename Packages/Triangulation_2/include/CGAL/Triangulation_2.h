@@ -100,7 +100,7 @@ public:
   typedef typename Tds::Vertex_iterator        All_vertices_iterator;
 
   typedef Triangulation_finite_faces_iterator_2<Self>
-                                               Finite_faces_iterator;
+                                              Finite_faces_iterator;
   typedef Filter_iterator<All_edges_iterator, Infinite_tester>
                                                Finite_edges_iterator;
   typedef Triangulation_finite_vertices_iterator_2<Self>
@@ -855,13 +855,14 @@ typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert_in_edge(const Point& p, Face_handle f,int i)
 {
-  CGAL_triangulation_precondition( orientation(f->vertex(cw(i))->point(), 
-					    p,
-					    f->vertex(ccw(i))->point()) 
-                                   == COLLINEAR &&
-      collinear_between(f->vertex(cw(i))->point(), p,
-			f->vertex(ccw(i))->point()) );
-  Vertex_handle v = _tds.insert_in_edge(&(*f), i);
+ //  CGAL_triangulation_precondition( orientation(f->vertex(cw(i))->point(), 
+// 					    p,
+// 					    f->vertex(ccw(i))->point()) 
+//                                    == COLLINEAR &&
+//       collinear_between(f->vertex(cw(i))->point(), p,
+// 			f->vertex(ccw(i))->point()) );
+  //  Vertex_handle v = _tds.insert_in_edge(&(*f), i);
+  Vertex_handle v = _tds.insert_in_edge(f,i);
   v->set_point(p);
   return v;
 }

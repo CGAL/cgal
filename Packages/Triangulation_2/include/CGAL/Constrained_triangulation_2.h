@@ -167,7 +167,7 @@ protected:
 				       Locate_type lt,
 				       Face_handle loc, 
 				       int li );
-  Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
+//Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
   void update_constraints_incident(Vertex_handle va, 
 				   Vertex_handle c1,
 				   Vertex_handle c2);
@@ -358,28 +358,28 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   return va;
 }
 
-template < class Gt, class Tds, class Itag >  
-typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle 
-Constrained_triangulation_2<Gt, Tds, Itag>::
-special_insert_in_edge(const Point & a, Face_handle f, int i)
-  // insert  point p in edge(f,i)
-  // bypass the precondition for point a to be in edge(f,i)
-  // update constrained status
-{
-  Vertex_handle va;
-  Vertex_handle c1,c2;
-  c1 = f->vertex(cw(i));  //endpoint of edge
-  c2 = f->vertex(ccw(i)); //endpoint of edge
-  bool insert_in_constrained_edge = f->is_constrained(i);
+// template < class Gt, class Tds, class Itag >  
+// typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle 
+// Constrained_triangulation_2<Gt, Tds, Itag>::
+// special_insert_in_edge(const Point & a, Face_handle f, int i)
+//   // insert  point p in edge(f,i)
+//   // bypass the precondition for point a to be in edge(f,i)
+//   // update constrained status
+// {
+//   Vertex_handle va;
+//   Vertex_handle c1,c2;
+//   c1 = f->vertex(cw(i));  //endpoint of edge
+//   c2 = f->vertex(ccw(i)); //endpoint of edge
+//   bool insert_in_constrained_edge = f->is_constrained(i);
  
-  va = _tds.insert_in_edge(f, i);
-  va->set_point(a);
+//   va = _tds.insert_in_edge(f, i);
+//   va->set_point(a);
 
-  if (insert_in_constrained_edge) update_constraints_incident(va, c1,c2);
-  else clear_constraints_incident(va);
-  if (dimension() == 2) update_constraints_opposite(va);
-  return va;
-}
+//   if (insert_in_constrained_edge) update_constraints_incident(va, c1,c2);
+//   else clear_constraints_incident(va);
+//   if (dimension() == 2) update_constraints_opposite(va);
+//   return va;
+// }
 
 
 template < class Gt, class Tds, class Itag >

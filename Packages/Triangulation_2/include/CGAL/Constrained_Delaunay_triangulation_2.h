@@ -152,7 +152,7 @@ protected:
 				       Locate_type lt,
 				       Face_handle loc, 
 				       int li );
-  Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
+//Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
   void remove_2D(Vertex_handle v );
   virtual void triangulate_hole(List_faces& intersected_faces,
 				List_edges& conflict_boundary_ab,
@@ -548,21 +548,21 @@ remove(Vertex_handle v)
   return;
 }
 
-template < class Gt, class Tds, class Itag >  
-typename
-Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::Vertex_handle
-Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
-special_insert_in_edge(const Point & a, Face_handle f, int i)
-  // insert  point p in edge(f,i)
-  // bypass the precondition for point a to be in edge(f,i)
-  // update constrained status
-  // this member fonction is not robust with exact predicates 
-  // and approximate construction. Should be removed 
-{
-  Vertex_handle vh=Ctr::special_insert_in_edge(a,f,i);
-  flip_around(vh);
-  return vh;
-}
+// template < class Gt, class Tds, class Itag >  
+// typename
+// Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::Vertex_handle
+// Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
+// special_insert_in_edge(const Point & a, Face_handle f, int i)
+//   // insert  point p in edge(f,i)
+//   // bypass the precondition for point a to be in edge(f,i)
+//   // update constrained status
+//   // this member fonction is not robust with exact predicates 
+//   // and approximate construction. Should be removed 
+// {
+//   Vertex_handle vh=Ctr::special_insert_in_edge(a,f,i);
+//   flip_around(vh);
+//   return vh;
+// }
 
 template < class Gt, class Tds, class Itag >  
 void 
