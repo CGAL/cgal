@@ -27,7 +27,7 @@
 #include <CGAL/Interval_arithmetic.h>
 #include <iostream>
 #include <vector>
-#include <utility>
+// #include <utility>
 #include <functional>
 #include <cmath>
 
@@ -64,6 +64,10 @@ CGAL_BEGIN_NAMESPACE
 class MP_Float;
 double to_double(const MP_Float &);
 
+// I use macros because otherwise it's not STD compliant...
+#define CGAL_MP_FLOAT_TRUNC_MAX (double(base)*(base/2-1)/double(base-1))
+#define CGAL_MP_FLOAT_TRUNC_MIN (double(-base)*(base/2)/double(base-1))
+
 class MP_Float
 {
 public:
@@ -74,8 +78,9 @@ public:
   static const unsigned log_limb = 8*sizeof(limb);
   static const limb2    base     = 1<<log_limb;
   static const unsigned limbs_per_double = 2 + 53/log_limb;
-  static const double trunc_max = double(base)*(base/2-1)/double(base-1);
-  static const double trunc_min = double(-base)*(base/2)/double(base-1);
+  // The following is not STD compliant :(
+  // static const double trunc_max = double(base)*(base/2-1)/double(base-1);
+  // static const double trunc_min = double(-base)*(base/2)/double(base-1);
 
   typedef std::vector<limb>  V;
   typedef V::const_iterator  const_iterator;
@@ -114,12 +119,13 @@ public:
 
     // First, find the exponent.
     exp = 1 - limbs_per_double;
-    while (d < trunc_min || d > trunc_max) {
+    while (d < CGAL_MP_FLOAT_TRUNC_MIN || d > CGAL_MP_FLOAT_TRUNC_MAX) {
       exp++;
       d *= 1.0/base;
     }
 
-    while (d >= trunc_min/base && d <= trunc_max/base) {
+    while (d >= CGAL_MP_FLOAT_TRUNC_MIN/base
+  	&& d <= CGAL_MP_FLOAT_TRUNC_MAX/base) {
       exp--;
       d *= base;
     }
@@ -175,6 +181,21 @@ public:
   }
 
   bool operator<(const MP_Float &) const;
+
+  bool operator>(const MP_Float &f) const
+  {
+      return f<*this;
+  }
+
+  bool operator>=(const MP_Float &f) const
+  {
+      return !(*this<f);
+  }
+
+  bool operator<=(const MP_Float &f) const
+  {
+      return !(*this>f);
+  }
 
   bool operator==(const MP_Float &b) const
   {
