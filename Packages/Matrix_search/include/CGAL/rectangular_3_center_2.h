@@ -934,10 +934,13 @@ rectangular_3_center_2_type2(
   typedef pair< RandomAccessIterator, RandomAccessIterator >  IP;
 
   typename Operations::Construct_iso_rectangle_2
-  rect  = op.construct_iso_rectangle_2_object();
+  rect = op.construct_iso_rectangle_2_object();
 
   typename Operations::Construct_vertex_2
   v = op.construct_vertex_2_object();
+
+  typename Operations::Less_x_2 less_x_2 = op.less_x_2_object();
+  typename Operations::Less_y_2 less_y_2 = op.less_y_2_object();
 
   // constant fraction to be excluded on every iteration (1/.)
   const unsigned int fraction = 7;
@@ -1136,16 +1139,25 @@ rectangular_3_center_2_type2(
     CGAL_optimisation_assertion(b1 - (m + 1) >= 5 * cutoff);
 
     // compute the four cutting lines for R
-    nth_element(m + 1, m + 1 + cutoff, b1, op.less_x_2_object());
+    nth_element(m + 1, m + 1 + cutoff, b1, less_x_2);
     Point x_min_cutoff = *(m + 1 + cutoff);
     nth_element(m + 1, m + 1 + cutoff, b1, op.greater_x_2_object());
     Point x_max_cutoff = *(m + 1 + cutoff);
-    nth_element(m + 1, m + 1 + cutoff, b1, op.less_y_2_object());
+    nth_element(m + 1, m + 1 + cutoff, b1, less_y_2);
     Point y_min_cutoff = *(m + 1 + cutoff);
     nth_element(m + 1, m + 1 + cutoff, b1, op.greater_y_2_object());
     Point y_max_cutoff = *(m + 1 + cutoff);
-    Rectangle B = rect(v(rect(x_min_cutoff, y_min_cutoff), 0),
-                       v(rect(x_max_cutoff, y_max_cutoff), 2));
+
+    Point Pmin = v(rect(x_min_cutoff, y_min_cutoff),
+                   less_x_2(x_min_cutoff, y_min_cutoff) ?
+                   less_y_2(x_min_cutoff, y_min_cutoff) ? 3 : 0
+                   : less_y_2(x_min_cutoff, y_min_cutoff) ? 2 : 1);
+    Point Pmax = v(rect(x_max_cutoff, y_max_cutoff),
+                   less_x_2(x_max_cutoff, y_max_cutoff) ?
+                   less_y_2(x_max_cutoff, y_max_cutoff) ? 1 : 2
+                   : less_y_2(x_max_cutoff, y_max_cutoff) ? 0 : 3);
+
+    Rectangle B = rect(Pmin, Pmax);
 
     // Algorithm search_E:
 
