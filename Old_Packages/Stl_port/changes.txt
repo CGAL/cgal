@@ -1,3 +1,10 @@
+(20/12/01)
+Moved vc7/iterator to wininst/include/CGAL/config/msvc7/iterator_specializations.h
+Modev vc7/stl_iterator_base.h to wininst/include/CGAL/config/msvc7/
+Removed vc7/README
+Removed vc7
+
+
 1.33 (19/7/01)
 Made the conversion operator to vector_const_iterator in the vector_iterator
 class const. (GJG)
