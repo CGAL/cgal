@@ -40,6 +40,10 @@ _test_cls_regular_euclidean_traits_3 (const Traits & )
                    Compute_squared_radius_smallest_orthogonal_sphere_3
                    Compute_squared_radius_smallest_orthogonal_sphere_3;
 
+  typedef typename Traits::
+                   Compute_critical_squared_radius_3
+                   Compute_critical_squared_radius_3;        
+
   Traits traits;
   Power_test_3 power_test =  traits.power_test_3_object();
   Compare_power_distance_3 compare_power_distance =
@@ -57,6 +61,8 @@ _test_cls_regular_euclidean_traits_3 (const Traits & )
   Compute_squared_radius_smallest_orthogonal_sphere_3
     squared_radius_smallest_orthogonal_sphere =
     traits.compute_squared_radius_smallest_orthogonal_sphere_3_object();
+  Compute_critical_squared_radius_3  critical_squared_radius =
+    traits.compute_critical_squared_radius_3_object();
   
 
   // test of Does_simplex_intersect_dual_support_3
@@ -207,4 +213,12 @@ _test_cls_regular_euclidean_traits_3 (const Traits & )
 
   // TODO
   // add test for Compute_squared_radius_smallest_orthogonal_sphere_3
+  
+//   Weighted_point wc(
+//                   weighted_circumcenter(wp0,wp1,wp2,wp3),
+// 		  squared_radius_smallest_orthogonal_sphere(wp0,wp1,wp2,wp3));
+//   Weighted_point wt(Bare_point(1.,0.,0.), 0.);
+//   assert( power_product(wc,wt) == critical_squared_radius(wp0,wp1,wp2,wp3,wt));
+  
+  
 }

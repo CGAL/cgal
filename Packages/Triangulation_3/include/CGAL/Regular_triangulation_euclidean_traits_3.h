@@ -347,6 +347,38 @@ public:
 };
 
 
+// Compute the square radius of the circle centered in t
+// and orthogonal to  the circle orthogonal a p,q,r,s
+template< typename K>
+class Compute_critical_squared_radius_3
+{
+ public:
+  typedef typename K::Weighted_point_3                  Weighted_point_3; 
+  typedef typename K::FT                                FT;
+ 
+  typedef Arity_tag< 5 >   Arity;
+  typedef FT               result_type;
+
+  result_type operator() (const Weighted_point_3 & p,
+			  const Weighted_point_3 & q,
+			  const Weighted_point_3 & r,
+			  const Weighted_point_3 & s,
+			  const Weighted_point_3 & t) const
+  {
+    return critical_squared_radiusC3 (p.x(),p.y(),p.z(),FT(p.weight()),
+				      q.x(),q.y(),q.z(),FT(q.weight()),
+				      r.x(),r.y(),r.z(),FT(r.weight()),
+				      s.x(),s.y(),s.z(),FT(s.weight()),
+				      t.x(),t.y(),t.z(),FT(t.weight()));
+  }
+};
+
+
+
+
+
+
+
 
 template < class K, class Weight = typename K::RT >
 class Regular_triangulation_euclidean_traits_base_3
@@ -379,7 +411,9 @@ public:
                                  Construct_weighted_circumcenter_3;
   typedef CGAL::Compute_squared_radius_smallest_orthogonal_sphere_3<Self>
                 Compute_squared_radius_smallest_orthogonal_sphere_3;
-  typedef CGAL::Compute_power_product_3<Self>    Compute_power_product_3; 
+  typedef CGAL::Compute_power_product_3<Self>    Compute_power_product_3;
+  typedef CGAL::Compute_critical_squared_radius_3<Self>
+                                       Compute_critical_squared_radius_3;
   
   Power_test_3   power_test_3_object() const
   { return Power_test_3(); }
@@ -410,6 +444,10 @@ public:
   Compute_squared_radius_smallest_orthogonal_sphere_3
   compute_squared_radius_smallest_orthogonal_sphere_3_object() const
   { return Compute_squared_radius_smallest_orthogonal_sphere_3(); }
+
+  Compute_critical_squared_radius_3
+  compute_critical_squared_radius_3_object() const
+  {return  Compute_critical_squared_radius_3(); }
 };
 
 // We need to introduce a "traits_base_3" class in order to get the

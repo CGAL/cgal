@@ -19,7 +19,8 @@ CXXFLAGS = \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            -Iinclude \
-           $(LONG_NAME_PROBLEM_CXXFLAGS)
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+	   -DCGAL_NO_DEPRECATED_CODE  
 
 #---------------------------------------------------------------------#
 #                    linker flags
