@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../include/ \
+CXXFLAGS = -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -27,31 +27,26 @@ LIBPATH = \
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS)
+          $(CGAL_LDFLAGS) \
+          -lCGALQt
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
 all:            \
-                constrained$(EXE_EXT) \
-                test$(EXE_EXT) 
+                constrained$(EXE_EXT) 
 
 constrained.moc: constrained.C
-	${QT_MOC} -o constrained.moc constrained.C
+	$(QT_MOC) -o constrained.moc $<
 
-constrained$(OBJ_EXT): constrained.C constrained.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) constrained.C
+constrained$(OBJ_EXT): constrained.moc
 
 constrained$(EXE_EXT): constrained$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)constrained constrained$(OBJ_EXT) $(LDFLAGS)
 
-test$(EXE_EXT): test$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test test$(OBJ_EXT) $(LDFLAGS)
-
 clean: \
-                   constrained.clean \
-                   test.clean 
+                   constrained.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
