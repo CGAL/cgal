@@ -1,3 +1,6 @@
+Version 6.97 (8 September 2003) 
+- bug fix in Segment_2.h
+
 Version 6.96 (7 September 2003) 
 - Replaced global function calls by Kernel functors
 
