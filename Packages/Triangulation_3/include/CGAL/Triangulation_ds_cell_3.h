@@ -2,7 +2,9 @@
 //
 // $Id$
 //
-// cell of a triangulation of any dimension <=3
+// cell of a combinatorial triangulation of any dimension <=3
+// use to store vertices if dimension <=0, edges if dimension 1,
+// faces if dimension 2, plain cells if dimension 3
 //
 // ============================================================================
 
@@ -63,6 +65,11 @@ public:
   CGAL_Triangulation_ds_cell(Tds& tds)
     : Cb()
     // builds a new cell of tds and maintains the list of cells
+  { add_list(tds); }
+
+  CGAL_Triangulation_ds_cell(Tds& tds, Cell* c)
+    : Cb(c->vertex(0),c->vertex(1),c->vertex(2),c->vertex(3),
+	 c->neighbor(0),c->neighbor(1),c->neighbor(2),c->neighbor(3))
   { add_list(tds); }
     
   CGAL_Triangulation_ds_cell(Tds& tds,
@@ -331,36 +338,112 @@ public:
 
     case 3:
       {
-//     for(int i = 0; i < 4; i++) {
-//       if ( vertex(i) == NULL ) return false;
-//     }
+	for(int i = 0; i < 4; i++) {
+	  if ( vertex(i) == NULL ) {
+	    if (verbose) { 
+	      cerr << "vertex " << i << " NULL" << endl;
+	    }
+	    CGAL_triangulation_assertion(false); return false;
+	  }
+	}
 
-//     for(int i = 0; i < 4; i++) {
-//       Cell* n = neighbor(i);
-//       if ( n == NULL ) return false;
-            
-//       int in;
-//       if ( ! n->has_neighbor(this,in) ) return false;
+	for(int i = 0; i < 4; i++) {
+	  Cell* n = neighbor(i);
+	  if ( n == NULL ) {
+	    if (verbose) { 
+	      cerr << "neighbor " << i << " NULL" << endl;
+	    }
+	    CGAL_triangulation_assertion(false); return false;
+	  }
 
-//       int j1n,j2n,j3n;
-//       if ( ! n->has_vertex(vertex((i+1)%4),j1n) ) return false;
-//       if ( ! n->has_vertex(vertex((i+2)%4),j2n) ) return false;
-//       if ( ! n->has_vertex(vertex((i+3)%4),j3n) ) return false;
-
-//       // tests whether the orientations of this and n are consistent
-//       switch ( j1n ) {
-//       case (in+1)%4 :
-// 	if ( ( ! j2n == (in+3)%4 ) || ( ! j3n == (in+2)%4 ) ) return false;
-//       case (in+2)%4 :
-// 	if ( ( ! j2n == (in+1)%4 ) || ( ! j3n == (in+3)%4 ) ) return false;
-//       case (in+3)%4 :
-// 	if ( ( ! j2n == (in+2)%4 ) || ( ! j3n == (in+1)%4 ) ) return false;
-//       };
-//     }
-      }
-    }
+	  int in;
+	  if ( ! n->has_neighbor(this,in) ) {
+	    if (verbose) { 
+	      error_neighbor(n,i,in); 
+	    }
+	    CGAL_triangulation_assertion(false); return false;
+	  }
+	  
+	  int j1n,j2n,j3n;
+	  if ( ! n->has_vertex(vertex((i+1)&3),j1n) ) {
+	    if (verbose) { cerr << "vertex " << (i+1)%4
+				<< " not vertex of neighbor " << i << endl; }
+	    CGAL_triangulation_assertion(false); return false;
+	  }
+	  if ( ! n->has_vertex(vertex((i+2)&3),j2n) ) {
+	    if (verbose) { cerr << "vertex " << (i+2)%4
+				<< " not vertex of neighbor " << i << endl; }
+	    CGAL_triangulation_assertion(false); return false;
+	  }
+	  if ( ! n->has_vertex(vertex((i+3)&3),j3n) ) {
+	    if (verbose) { cerr << "vertex " << (i+3)%4
+				<< " not vertex of neighbor " << i << endl; }
+	    CGAL_triangulation_assertion(false); return false;
+	  }
+	  
+	  if ( in+j1n+j2n+j3n != 6) {
+	    if (verbose) { cerr << "sum of the indices != 6 " << endl; }
+	    CGAL_triangulation_assertion(false); return false;
+	  }
+	  
+	  // tests whether the orientations of this and n are consistent
+	  if ( ((i+in)&1) == 0 ) { // i and in have the same parity
+	    if ( j1n == ((in+1)&3) ) {
+	      if ( ( j2n != ((in+3)&3) ) || ( j3n != ((in+2)&3) ) ) {
+		if (verbose) { 
+		  error_orient(n,i);
+		}
+		CGAL_triangulation_assertion(false); return false;
+	      }
+	    }
+	    if ( j1n == ((in+2)&3) ) {
+	      if ( ( j2n != ((in+1)&3) ) || ( j3n != ((in+3)&3) ) ) {
+		if (verbose) { 
+		  error_orient(n,i);
+		}
+		CGAL_triangulation_assertion(false); return false;
+	      }
+	    }
+	    if ( j1n == ((in+3)&3) ) {
+	      if ( ( j2n != ((in+2)&3) ) || ( j3n != ((in+1)&3) ) ) {
+		if (verbose) { 
+		  error_orient(n,i);
+		}
+		CGAL_triangulation_assertion(false); return false;
+	      }
+	    }
+	  }
+	  else { // i and in do not have the same parity
+	    if ( j1n == ((in+1)&3) ) {
+	      if ( ( j2n != ((in+2)&3) ) || ( j3n != ((in+3)&3) ) ) {
+		if (verbose) { 
+		  error_orient(n,i);
+		}
+		CGAL_triangulation_assertion(false); return false;
+	      }
+	    }
+	    if ( j1n == ((in+2)&3) ) {
+	      if ( ( j2n != ((in+3)&3) ) || ( j3n != ((in+1)&3) ) ) {
+		if (verbose) { 
+		  error_orient(n,i);
+		}
+		CGAL_triangulation_assertion(false); return false;
+	      }
+	    }
+	    if ( j1n == ((in+3)&3) ) {
+	      if ( ( j2n != ((in+1)&3) ) || ( j3n != ((in+2)&3) ) ) {
+		if (verbose) { 
+		  error_orient(n,i);
+		}
+		CGAL_triangulation_assertion(false); return false;
+	      }
+	    }
+	  }
+	} // end looking at neighbors
+      }// end case dim 3
+    } // end switch
     return true;
-  }
+  } // end is_valid
 
 private:
 
@@ -389,6 +472,36 @@ private:
     return (i+2) % 3;
   }
  
+  void error_orient( Cell * n, int i) const
+  {
+    cerr << this->vertex(0)->point() << ", "
+	 << this->vertex(1)->point() << ", "
+	 << this->vertex(2)->point() << ", "
+	 << this->vertex(3)->point() << endl
+	 << " pb orientation with neighbor " << i
+	 << " : " << endl 
+	 << n->vertex(0)->point() << ", "
+	 << n->vertex(1)->point() << ", "
+	 << n->vertex(2)->point() << ", "
+	 << n->vertex(3)->point() << endl
+	 << endl;
+  }
+
+  void error_neighbor( Cell* n, int i, int in ) const
+  {
+    cerr << "neighbor " << i << endl
+	 << n->vertex(0)->point() << ", "
+	 << n->vertex(1)->point() << ", "
+	 << n->vertex(2)->point() << ", "
+	 << n->vertex(3)->point() << endl
+	 << " does not have this " << endl
+	 << this->vertex(0)->point() << ", "
+	 << this->vertex(1)->point() << ", "
+	 << this->vertex(2)->point() << ", "
+	 << this->vertex(3)->point() << endl
+	 << " as neighbor " << in << endl;
+  }
+
 };
 
 #endif CGAL_TRIANGULATION_DS_CELL_H
