@@ -25,25 +25,6 @@
 
 namespace CGAL{
 
-#if defined(_MSC_VER)
-Polynomial<int> operator - (const Polynomial<int>& p)
-{
-  CGAL_assertion(p.degree()>=0);
-  Polynomial<int> res(p.coeffs().begin(),p.coeffs().end());
-  Polynomial<int>::iterator it, ite=res.coeffs().end();
-  for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;
-  return res;
-}
-
-Polynomial<double> operator - (const Polynomial<double>& p)
-{
-  CGAL_assertion(p.degree()>=0);
-  Polynomial<double> res(p.coeffs().begin(),p.coeffs().end());
-  Polynomial<double>::iterator it, ite=res.coeffs().end();
-  for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;
-  return res;
-}
-#endif
 
 // SPECIALIZE_IMPLEMENTATION(NT,int double) START
 // SPECIALIZING to :
@@ -56,7 +37,7 @@ void Polynomial<int>::euclidean_div(
   int rd=r.degree(), gd=g.degree(), qd;
   if ( rd < gd ) { q = Polynomial<int>(int(0)); }
   else { qd = rd-gd+1; q = Polynomial<int>(std::size_t(qd)); }
-  while ( rd >= gd ) {
+  while ( rd >= gd && !(r.is_zero())) {
     int S = r[rd] / g[gd];
     qd = rd-gd;
     q.coeff(qd) += S;
@@ -140,7 +121,7 @@ void Polynomial<double>::euclidean_div(
   int rd=r.degree(), gd=g.degree(), qd;
   if ( rd < gd ) { q = Polynomial<double>(double(0)); }
   else { qd = rd-gd+1; q = Polynomial<double>(std::size_t(qd)); }
-  while ( rd >= gd ) {
+  while ( rd >= gd && !(r.is_zero())) {
     double S = r[rd] / g[gd];
     qd = rd-gd;
     q.coeff(qd) += S;
