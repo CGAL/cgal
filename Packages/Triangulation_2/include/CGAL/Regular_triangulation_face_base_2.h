@@ -11,13 +11,13 @@
 // release       :
 // release_date  :
 //
-// file          : $RCSfile$
+// file          : Triangulation/include/CGAL/Regular_triangulation_face_base_2.
 // source        : $Source$
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Mariette Yvinec
+// author(s)     : Frederic Fichel, Mariette Yvinec
 //
-// coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 //
 // ============================================================================
 

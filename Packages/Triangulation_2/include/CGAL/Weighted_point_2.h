@@ -11,13 +11,13 @@
 // release       :
 // release_date  :
 //
-// file          : $RCSfile$
+// file          : Triangulation/include/CGAL/Weighted_point_2.h
 // source        : $Source$
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Mariette Yvinec
 //
-// coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 //
 // ============================================================================
 
