@@ -44,9 +44,9 @@ set ccopt=unknown
 if "%2" == "ml"		set ccopt=-ML
 if "%2" == "mt"		set ccopt=-MT
 if "%2" == "md"		set ccopt=-MD
-if "%2" == "mld"	set ccopt=-MLd -Zi
-if "%2" == "mtd"	set ccopt=-MTd -Zi
-if "%2" == "mdd"	set ccopt=-MDd -Zi
+if "%2" == "mld"	set ccopt=-MLd -Z7
+if "%2" == "mtd"	set ccopt=-MTd -Z7
+if "%2" == "mdd"	set ccopt=-MDd -Z7
 if %cclibo% == ML	set ccopt=-ML
 
 set cxx=cl -nologo -GX 
