@@ -76,7 +76,8 @@ public:
     Halfedge_handle h; return h;
   }
 
-  Halfedge_handle vertical_ray_shoot(const Point_2 &, Locate_type &, bool) const
+  Halfedge_handle vertical_ray_shoot(const Point_2 &, Locate_type &, bool)
+    const
   {
     CGAL_assertion_msg(false, "Dummy point location - locate not allowed");
     Halfedge_handle h; return h;

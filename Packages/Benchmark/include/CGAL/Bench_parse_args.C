@@ -15,7 +15,8 @@ char * Bench_parse_args::s_benchOpts[] =
    "tn", "tm", "sn", "sm", "h", "nl", NULL};
 
 char * Bench_parse_args::s_typeOpts[] =
-  {"increment", "aggregate", "display", "subcurves", "points", "i", "a", "d", "c", "p", NULL};
+  {"increment", "aggregate", "display", "subcurves", "points",
+   "i", "a", "d", "c", "p", NULL};
 
 char * Bench_parse_args::s_strategyOpts[] =
   {"trapezoidal", "naive", "walk", "dummy", "t", "n", "w", "d"};

@@ -120,7 +120,8 @@ public:
   const char * getFilename() const { return m_filename; }
   const char * getFullname() const { return m_fullname.c_str(); }
   const char * getTypeName(TypeId id) const { return s_typeOpts[id]; }
-  const char * getStrategyName(StrategyId id) const { return s_strategyOpts[id]; }
+  const char * getStrategyName(StrategyId id) const
+  { return s_strategyOpts[id]; }
 
   /*!
    */
