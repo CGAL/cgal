@@ -298,9 +298,17 @@ private slots:
     if ( s.isEmpty() )
         return;
     tr1.clear();
+    A.clear();
+    L.clear();
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
     in >> tr1;
+    Vertex_iterator it = tr1.vertices_begin();
+    while(it != tr1.vertices_end()) {
+      L.push_back((*it).point());
+      it++;
+    }
+    A.make_alpha_shape(L.begin(), L.end());
     something_changed();
   }
 
