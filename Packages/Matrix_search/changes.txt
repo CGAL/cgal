@@ -9,7 +9,7 @@
 
 ALL : use namespace std and CGAL
 ALL : use standard header files
-DOCS: Initial revision
+ALL : Initial revision
 
 //---------------------------------------------------------------------
 //	 CGAL-1.2

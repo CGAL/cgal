@@ -27,7 +27,9 @@
 #if ! (ISO_SQUARE_STATIC_2_H)
 #define ISO_SQUARE_STATIC_2_H 1
 
+#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
+#endif // CGAL_OPTIMISATION_ASSERTIONS_H
 
 CGAL_BEGIN_NAMESPACE
 
