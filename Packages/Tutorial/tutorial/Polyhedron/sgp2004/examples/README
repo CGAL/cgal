@@ -1,0 +1,37 @@
+README
+
+This directory contains examples for the tutorial on the CGAL::Polyhedron_3.
+
+Requirements:
+
+    CGAL 3.1 or later.
+
+Files:
+
+    makefile        the makefile
+    intersection.C  self intersection of a polyhedral surface
+    mini_ball.C     smallest enclosing sphere of a set of points
+    convex_hull.C   convex hull and width of a point set
+
+Compilation:
+
+    These files are regular CGAL programs. We provide already default 
+    CGAL makefile that will work if the CGAl_MAKEFILE variable is 
+    properly set. Type make to build the programs.
+
+Copyright and License:
+
+/**************************************************************************
+// Copyright (c) 2004  Max-Planck-Institut Saarbruecken (Germany)
+// All rights reserved.
+//
+// This file is part of the CGAL::Polyhedon_3 tutorial; you can redistribute 
+// it and/or modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; version 2.1 of the
+// License. See the file LICENSE.LGPL distributed with it.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// Author(s) : Lutz Kettner
+**************************************************************************/
