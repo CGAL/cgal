@@ -27,6 +27,8 @@
 template < class GT >
 class CGAL_Triangulation_vertex_base_3
 {
+  friend istream& operator>> CGAL_NULL_TMPL_ARGS
+  (istream&, CGAL_Triangulation_vertex_base_3<GT>&);
 
 public:
   typedef typename GT::Point Point;
@@ -85,5 +87,25 @@ private:
   void * _c;
   
 };
+
+template < class GT >
+istream& operator>>
+(istream& is, CGAL_Triangulation_vertex_base_3<GT> & v)
+  // non combinatorial information. Default = point
+{
+  is >> v._p;
+  return is;
+}
+template < class GT >
+ostream& operator<<
+(ostream& os, const CGAL_Triangulation_vertex_base_3<GT> & v)
+  // non combinatorial information. Default = point
+{
+  os << v.point();
+  //  if(CGAL_is_ascii(os)){
+  //    os << endl;
+  //  }
+  return os;
+}
 
 #endif CGAL_TRIANGULATION_VERTEX_BASE_3_H

@@ -67,6 +67,8 @@ class CGAL_Triangulation_data_structure_3
 
   friend istream& operator>> CGAL_NULL_TMPL_ARGS
   (istream&, CGAL_Triangulation_data_structure_3<Vb,Cb>&);
+//   friend ostream& operator<< CGAL_NULL_TMPL_ARGS
+//   (ostream& os, const CGAL_Triangulation_data_structure_3<Vb,Cb> &tr);
 
   friend void CGAL_Triangulation_ds_cell_3<Vb,Cb>::add_list
   (CGAL_Triangulation_data_structure_3<Vb,Cb>&);
@@ -1527,6 +1529,13 @@ private:
 template < class Vb, class Cb>
 istream& operator>>
 (istream& is, CGAL_Triangulation_data_structure_3<Vb,Cb>& tds)
+  // reads :
+  // the dimension
+  // the number of vertices
+  // the number of cells
+  // the cells by the indices of their vertices 
+  // the neighbors of each cell by their index in the preceding list of cells
+  // when dimension < 3 : the same with faces of maximal dimension
 {
 
   typedef CGAL_Triangulation_data_structure_3<Vb,Cb> Tds;
@@ -1534,7 +1543,7 @@ istream& operator>>
   typedef  Tds::Cell Cell;
   typedef  Tds::Edge Edge;
   typedef  Tds::Facet Facet;
-  typedef typename Vb::Point Point;
+  //  typedef typename Vb::Point Point;
 
   tds.clear();
 
@@ -1548,25 +1557,24 @@ istream& operator>>
     return is;
   }
 
-  Point p;
+  //  Point p;
   vector<Vertex*> V(n);
   
   // creation of the vertices
   for (i=0; i < n; i++) {
-    is >> p;
-    V[i] = new Vertex(p);
+    //    is >> p;
+    //    V[i] = new Vertex(p);
+    V[i] = new Vertex();
   }
-
-  if ( d<0 ) return is;
-  
-  is >> m;
-  vector<Cell*> C(m);
-  Cell* c;
 
   // creation of the cells and neighbors
   switch (d) {
   case 3:
     {
+      is >> m;
+      vector<Cell*> C(m);
+      Cell* c;
+
       int i0, i1, i2, i3;
       for(i = 0; i < m; i++) {
 	is >> i0 >> i1 >> i2 >> i3;
@@ -1589,6 +1597,10 @@ istream& operator>>
     }
   case 2:
     {
+      is >> m;
+      vector<Cell*> C(m);
+      Cell* c;
+
       int i0, i1, i2;
       for(i = 0; i < m; i++) {
 	is >> i0 >> i1 >> i2;
@@ -1609,6 +1621,10 @@ istream& operator>>
     }
   case 1:
     {
+      is >> m;
+      vector<Cell*> C(m);
+      Cell* c;
+
       int i0, i1;
       for(i = 0; i < m; i++) {
 	is >> i0 >> i1;
@@ -1627,7 +1643,10 @@ istream& operator>>
     }
   case 0:
     {
-      CGAL_triangulation_assertion( (n == 2) || (m == 2) );
+      vector<Cell*> C(2);
+      Cell* c;
+
+      CGAL_triangulation_assertion( (n == 2) );
       for (i=0; i < 2; i++) {
 	c = new Cell(tds, V[i], NULL, NULL, NULL);
 	C[i] = c;
@@ -1639,6 +1658,14 @@ istream& operator>>
       }
       break;
     }
+  case -1:
+    {
+      Cell* c;
+      CGAL_triangulation_assertion( (n == 1) );
+      c = new Cell(tds, V[0], NULL, NULL, NULL);
+      V[0]->set_cell(c);
+      break;
+    }
   }
   CGAL_triangulation_assertion( tds.is_valid(true) );
   return is;
@@ -1648,6 +1675,13 @@ istream& operator>>
 template < class Vb, class Cb>
 ostream& operator<<
 (ostream& os, const CGAL_Triangulation_data_structure_3<Vb,Cb>  &tds)
+  // writes :
+  // the dimension
+  // the number of vertices
+  // the number of cells
+  // the cells by the indices of their vertices 
+  // the neighbors of each cell by their index in the preceding list of cells
+  // when dimension < 3 : the same with faces of maximal dimension
 {
   typedef CGAL_Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef  Tds::Vertex  Vertex;
@@ -1705,6 +1739,15 @@ ostream& operator<<
       }
       // n is written twice, this is simpler for input, same as other
       // dimensions  
+      break;
+    }
+  default:
+    {
+      if(CGAL_is_ascii(os)){
+	os << tds.dimension() << endl << n << endl;
+      } else {
+	os << tds.dimension() << n;
+      }
     }
   }
 
@@ -1712,16 +1755,16 @@ ostream& operator<<
     return os;
   }
   
-  // write the vertices
+  // index the vertices
   int i = 0;
   Vertex_iterator it = tds.vertices_begin();
     
   while(it != tds.vertices_end()){
     V[&(*it)] = i++;
-    os << it->point();
-    if(CGAL_is_ascii(os)){
-      os << endl;
-    }
+    //    os << it->point();
+    //    if(CGAL_is_ascii(os)){
+    //      os << endl;
+    //    }
     ++it;
   }
   CGAL_triangulation_assertion( i == n );
@@ -1849,12 +1892,12 @@ ostream& operator<<
       }
       break;
     }
-  default:
-    {
-      os << m;
-      if(CGAL_is_ascii(os)){ os << endl;}
-      break;
-    }
+//   default:
+//     {
+//       os << m;
+//       if(CGAL_is_ascii(os)){ os << endl;}
+//       break;
+//     }
   }
   return os;
 }

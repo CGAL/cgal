@@ -32,6 +32,8 @@
 template < class Gt >
 class CGAL_Triangulation_cell_base_3
 {
+  friend istream& operator>> CGAL_NULL_TMPL_ARGS
+  (istream&, CGAL_Triangulation_cell_base_3<Gt>&);
 
 public:
 
@@ -240,4 +242,20 @@ private:
   void* V[4];
   void* N[4];
 };
+
+template < class GT >
+istream& operator>>
+(istream& is, CGAL_Triangulation_cell_base_3<GT> & c)
+  // non combinatorial information. Default = nothing
+{
+  return is;
+}
+template < class GT >
+ostream& operator<<
+(ostream& os, const CGAL_Triangulation_cell_base_3<GT> & c)
+  // non combinatorial information. Default = nothing
+{
+  return os;
+}
+
 #endif CGAL_TRIANGULATION_CELL_BASE_3_H

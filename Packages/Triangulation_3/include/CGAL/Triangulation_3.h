@@ -76,8 +76,8 @@ template < class GT, class Tds >
 class CGAL_Triangulation_3
   :public CGAL_Triangulation_utils_3
 {
-//   friend istream& operator>> CGAL_NULL_TMPL_ARGS
-//   (istream& is, CGAL_Triangulation_3<GT,Tds> &tr);
+  friend istream& operator>> CGAL_NULL_TMPL_ARGS
+  (istream& is, CGAL_Triangulation_3<GT,Tds> &tr);
 //   friend ostream& operator<< CGAL_NULL_TMPL_ARGS
 //   (ostream& os, const CGAL_Triangulation_3<GT,Tds> &tr);
 
@@ -235,6 +235,84 @@ public:
   int dimension() const 
     { return _tds.dimension();}
 
+  inline 
+  int number_of_finite_cells() const 
+    { 
+      CGAL_triangulation_precondition( dimension() == 3 );
+      int i=0;
+      Cell_iterator it = finite_cells_begin();
+      while(it != cells_end()) {
+	++i;
+	++it;
+      }
+      return i;
+    }
+  
+  inline 
+  int number_of_cells() const 
+    { 
+      CGAL_triangulation_precondition( dimension() == 3 );
+      int i=0;
+      Cell_iterator it = all_cells_begin();
+      while(it != cells_end()) {
+	++i;
+	++it;
+      }
+      return i;
+    }
+  
+  inline 
+  int number_of_finite_facets() const
+    {
+      int i=0;
+      CGAL_triangulation_precondition( dimension() >= 2 );
+      Facet_iterator it = finite_facets_begin();
+      while(it != facets_end()) {
+	++i;
+	++it;
+      }
+      return i;
+    }
+
+  inline 
+  int number_of_facets() const
+    {
+      int i=0;
+      CGAL_triangulation_precondition( dimension() >= 2 );
+      Facet_iterator it = all_facets_begin();
+      while(it != facets_end()) {
+	++i;
+	++it;
+      }
+      return i;
+    }
+
+  inline 
+  int number_of_finite_edges() const
+    {
+      int i=0;
+      CGAL_triangulation_precondition( dimension() >= 1 );
+      Edge_iterator it = finite_edges_begin();
+      while(it != edges_end()) {
+	++i;
+	++it;
+      }
+      return i;
+    }
+  
+  inline 
+  int number_of_edges() const
+    {
+      int i=0;
+      CGAL_triangulation_precondition( dimension() >= 1 );
+      Edge_iterator it = all_edges_begin();
+      while(it != edges_end()) {
+	++i;
+	++it;
+      }
+      return i;
+    }
+  
   inline
   int number_of_vertices() const // number of finite vertices
     {return _tds.number_of_vertices()-1;}
@@ -2696,21 +2774,397 @@ public:
 };
 
 
+template < class GT, class Tds >
+istream& operator>>
+(istream& is, CGAL_Triangulation_3<GT, Tds> &tr)
+  // reads
+  // the dimension
+  // the number of finite vertices
+  // the non combinatorial information on vertices (point, etc)
+  // the number of cells
+  // the cells by the indices of their vertices in the preceding list
+  // of vertices, plus the non combinatorial information on each cells
+  // the neighbors of each cell by their index in the preceding list of cells
+  // when dimension < 3 : the same with faces of maximal dimension
+{
+  //  return operator>>(is, tr._tds);
+  typedef CGAL_Triangulation_3<GT, Tds> Triangulation;
+  typedef  Triangulation::Vertex_handle  Vertex_handle;
+  typedef  Triangulation::Cell_handle Cell_handle;
+  typedef  Triangulation::Vertex  Vertex;
+  typedef  Triangulation::Cell Cell;
+  typedef  Triangulation::Edge Edge;
+  typedef  Triangulation::Facet Facet;
+  typedef typename GT::Point Point;
 
-// template <class GT, class Tds >
-// ostream& operator<<
-// (ostream& os, const CGAL_Triangulation_3<GT, Tds> &tr)
-// {
-//     return os ;
-// }
+  tr._tds.clear(); // infinite vertex created
+  tr.infinite = new Vertex(Point(500,500,500)); // ?? debug
 
-// template < class GT, class Tds >
-// istream& operator>>
-// (istream& is, CGAL_Triangulation_3<GT, Tds> &tr)
-// {
-//   return operator>>(is, tr._tds);
-// }
+  int i;
+  int n, m, d;
+  is >> d >> n;
+  tr._tds.set_dimension(d);
+  tr.set_number_of_vertices(n);
+
+  Point p;
+  vector<Vertex_handle> V(n+1);
+  V[0] = tr.infinite_vertex();
+  // the infinite vertex is numbered 0
+
+  for (i=1; i <= n; i++) {
+    is >> p;
+    V[i] = new Vertex(p);
+  }
+
+  // creation of the cells and neighbors
+  switch (d) {
+  case 3:
+    {
+      is >> m;
+      vector<Cell_handle> C(m);
+      Cell_handle c;
+
+      int i0, i1, i2, i3;
+      for(i = 0; i < m; i++) {
+	is >> i0 >> i1 >> i2 >> i3;
+	c = new Cell(tr._tds, V[i0], V[i1], V[i2], V[i3]);
+	is >> *c;
+	C[i] = c;
+	V[i0]->set_cell(c);
+	V[i1]->set_cell(c);
+	V[i2]->set_cell(c);
+	V[i3]->set_cell(c);
+      }
+      for(i = 0; i < m; i++) {
+        is >> i0 >> i1 >> i2 >> i3;
+        c = C[i];
+        c->set_neighbor(0, C[i0]);
+        c->set_neighbor(1, C[i1]);
+        c->set_neighbor(2, C[i2]);
+        c->set_neighbor(3, C[i3]);
+      }
+      break;
+    }
+  case 2:
+    {
+      is >> m;
+      vector<Cell_handle> C(m);
+      Cell_handle c;
+
+      int i0, i1, i2;
+      for(i = 0; i < m; i++) {
+	is >> i0 >> i1 >> i2;
+	c = new Cell(tr._tds, V[i0], V[i1], V[i2], NULL);
+	is >> *c;
+	C[i] = c;
+	V[i0]->set_cell(c);
+	V[i1]->set_cell(c);
+	V[i2]->set_cell(c);
+      }
+      for(i = 0; i < m; i++) {
+        is >> i0 >> i1 >> i2;
+	c = C[i];
+        c->set_neighbor(0, C[i0]);
+        c->set_neighbor(1, C[i1]);
+        c->set_neighbor(2, C[i2]);
+      }
+      break;
+    }
+  case 1:
+    {
+      is >> m;
+      vector<Cell_handle> C(m);
+      Cell_handle c;
+
+      int i0, i1;
+      for(i = 0; i < m; i++) {
+	is >> i0 >> i1;
+	c = new Cell(tr._tds, V[i0], V[i1], NULL, NULL);
+	is >> *c;
+	C[i] = c;
+	V[i0]->set_cell(c);
+	V[i1]->set_cell(c);
+      }
+      for(i = 0; i < m; i++) {
+        is >> i0 >> i1;
+	c = C[i];
+        c->set_neighbor(0, C[i0]);
+        c->set_neighbor(1, C[i1]);
+      }
+      break;
+    }
+  case 0:
+    {
+      vector<Cell_handle> C(2);
+      Cell_handle c;
+
+      CGAL_triangulation_assertion( (n == 1) );
+      for (i=0; i < 2; i++) {
+	c = new Cell(tr._tds, V[i], NULL, NULL, NULL);
+	is >> *c;
+	C[i] = c;
+	V[i]->set_cell(c);
+      }
+      for (i=0; i < 2; i++) {
+	c = C[i];
+        c->set_neighbor(0, C[1-i]);
+      }
+      break;
+    }
+  case -1:
+    {
+      Cell_handle c;
+      CGAL_triangulation_assertion( (n == 0) );
+      c = new Cell(tr._tds, V[0], NULL, NULL, NULL);
+      V[0]->set_cell(c);
+      break;
+    }
+  }
+  CGAL_triangulation_assertion( tr.is_valid(true) );
+  return is;
+
+}
     
+template < class GT, class Tds >
+ostream& operator<<
+(ostream& os, const CGAL_Triangulation_3<GT, Tds> &tr)
+  // writes :
+  // the dimension
+  // the number of finite vertices
+  // the non combinatorial information on vertices (point, etc)
+  // the number of cells
+  // the cells by the indices of their vertices in the preceding list
+  // of vertices, plus the non combinatorial information on each cells
+  // the neighbors of each cell by their index in the preceding list of cells
+  // when dimension < 3 : the same with faces of maximal dimension
+{
+  typedef CGAL_Triangulation_3<GT, Tds> Triangulation;
+  typedef  Triangulation::Vertex  Vertex;
+  typedef  Triangulation::Cell Cell;
+  typedef  Triangulation::Edge Edge;
+  typedef  Triangulation::Facet Facet;
+  typedef  Triangulation::Vertex_iterator  Vertex_iterator;
+  typedef  Triangulation::Cell_iterator  Cell_iterator;
+  typedef  Triangulation::Edge_iterator  Edge_iterator;
+  typedef  Triangulation::Facet_iterator  Facet_iterator;
+ 
+  map< void*, int, less<void*> > V;
+  map< void*, int, less<void*> > C;
+
+  int n = tr.number_of_vertices();
+  int m;
+  switch ( tr.dimension() ) {
+  case 3:
+    {
+      m = tr.number_of_cells();
+      if(CGAL_is_ascii(os)){
+        os << tr.dimension() << endl << n << endl;
+      } else {
+        os << tr.dimension() << n;
+      }
+      break;
+    }
+  case 2:
+    {
+      m = tr.number_of_facets();
+      if(CGAL_is_ascii(os)){
+        os << tr.dimension() << endl << n << endl;
+      } else {
+        os << tr.dimension() << n;
+      }
+      break;
+    }
+  case 1:
+    {
+      m = tr.number_of_edges();
+      if(CGAL_is_ascii(os)){
+        os << tr.dimension() << endl << n << endl;
+      } else {
+        os << tr.dimension() << n ;
+      }
+      break;
+    }
+  case 0:
+    {
+      m = n;
+      if(CGAL_is_ascii(os)){
+	os << tr.dimension() << endl << n << endl;
+      } else {
+	os << tr.dimension() << n;
+      }
+      // n is written twice, this is simpler for input, same as other
+      // dimensions  
+      break;
+    }
+  default:
+    {
+      if(CGAL_is_ascii(os)){
+	os << tr.dimension() << endl << n << endl;
+      } else {
+	os << tr.dimension() << n;
+      }
+    }
+  }
+
+  if (n == 0){
+    return os;
+  }
+
+  // write the vertices
+  V[&(*tr.infinite_vertex())] = 0;
+  // the infinite vertex is numbered 0
+  int i = 1;
+  Vertex_iterator it = tr.all_vertices_begin();
+    
+  while(it != tr.vertices_end()){
+    if ( (&(*it)) != &(*(tr.infinite_vertex())) ) {
+      V[&(*it)] = i++;
+      os << *it; // uses the << operator of Vertex
+      if(CGAL_is_ascii(os)){
+	os << endl;
+      }
+    }
+    ++it;
+  }
+  CGAL_triangulation_assertion( i == (n+1) );
+
+  // write the cells
+  i = 0;
+  int j;
+  switch ( tr.dimension() ) {
+  case 3:
+    {
+      os << m;
+      if(CGAL_is_ascii(os)){ os << endl;}
+
+      // write the cells
+      Cell_iterator it = tr.all_cells_begin();
+      while( it != tr.cells_end() ) {
+	C[&(*it)] = i++;
+	for(j = 0; j < 4; j++){
+	  os << V[&(*it->vertex(j))];
+	  if(CGAL_is_ascii(os)) {
+	    if ( j==3 ) {
+	      os << *it; // other information
+	      os << endl;
+	    } else {
+	      os << ' ';
+	    }
+	  }
+	}
+	++it;
+      }
+      CGAL_triangulation_assertion( i == m );
+      
+      // write the neighbors
+      it = tr.all_cells_begin();
+      while ( it != tr.cells_end() ) {
+	for (j = 0; j < 4; j++) {
+	  os << C[&(* it->neighbor(j))];
+	  if(CGAL_is_ascii(os)){
+	    if(j==3) {
+	      os << endl;
+	    } else {
+	      os <<  ' ';
+	    }
+	  }
+	}
+	++it;
+      }
+      break;
+    }
+  case 2:
+    {
+      os << m;
+      if(CGAL_is_ascii(os)){ os << endl;}
+
+      // write the facets
+      Facet_iterator it = tr.all_facets_begin();
+      while( it != tr.facets_end() ) {
+	C[&*((*it).first)] = i++;
+	for(j = 0; j < 3; j++){
+	  os << V[&(*(*it).first->vertex(j))];
+	  if(CGAL_is_ascii(os)) {
+	    if ( j==2 ) {
+	      os << *((*it).first); // other information
+	      os << endl;
+	    } else {
+	      os <<  ' ';
+	    }
+	  }
+	}
+	++it;
+      }
+      CGAL_triangulation_assertion( i == m );
+      
+      // write the neighbors
+      it = tr.all_facets_begin();
+      while ( it != tr.facets_end() ) {
+	for (j = 0; j < 3; j++) {
+	  os << C[&*((*it).first->neighbor(j))];
+	  if(CGAL_is_ascii(os)){
+	    if(j==2) {
+	      os << endl;
+	    } else {
+	      os <<  ' ';
+	    }
+	  }
+	}
+	++it;
+      }
+      break;
+    }
+  case 1:
+    {
+      os << m;
+      if(CGAL_is_ascii(os)){ os << endl;}
+
+      // write the edges
+      Edge_iterator it = tr.all_edges_begin();
+      while( it != tr.edges_end() ) {
+	C[&*((*it).first)] = i++;
+	for(j = 0; j < 2; j++){
+	  os << V[&(*(*it).first->vertex(j))];
+	  if(CGAL_is_ascii(os)) {
+	    if ( j==1 ) {
+	      os << *((*it).first); // other information 
+	      os << endl;
+	    } else {
+	      os <<  ' ';
+	    }
+	  }
+	}
+	++it;
+      }
+      CGAL_triangulation_assertion( i == m );
+      
+      // write the neighbors
+      it = tr.all_edges_begin();
+      while ( it != tr.edges_end() ) {
+	for (j = 0; j < 2; j++) {
+	  os << C[&*((*it).first->neighbor(j))];
+	  if(CGAL_is_ascii(os)){
+	    if(j==1) {
+	      os << endl;
+	    } else {
+	      os <<  ' ';
+	    }
+	  }
+	}
+	++it;
+      }
+      break;
+    }
+//   default:
+//     {
+//       os << m;
+//       if(CGAL_is_ascii(os)){ os << endl;}
+//       break;
+//     }
+  }
+  return os ;
+}
+
 
 #endif CGAL_TRIANGULATION_3_H
 
