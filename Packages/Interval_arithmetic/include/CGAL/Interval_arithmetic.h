@@ -336,8 +336,16 @@ inline CGAL_Interval_nt_advanced CGAL_max (const CGAL_Interval_nt_advanced& d,
 	  			    CGAL_max(d.sup, e.sup));
 }
 
-ostream& operator<<(ostream& os, const CGAL_Interval_nt_advanced& d)
+inline ostream& operator<<(ostream& os, const CGAL_Interval_nt_advanced& d)
 { return os << "[" << d.lower_bound() << ";" << d.upper_bound() << "]"; }
+
+inline istream& operator>>(istream& is, CGAL_Interval_nt_advanced& ia)
+{
+    double d;
+    is >> d;
+    ia = d;
+    return is;
+}
 
 
 // The non-advanced class.
@@ -386,7 +394,8 @@ public:
 	              (CGAL_Interval_nt_advanced) e);
     }
   // friend IA     operator* (const double &, const IA &);
-  friend double CGAL_to_double (const IA &);
+  friend double CGAL_to_double (const IA & d)
+    { return CGAL_to_double((CGAL_Interval_nt_advanced) d); }
   friend bool   CGAL_is_valid  (const IA & d)
     { return CGAL_is_valid((CGAL_Interval_nt_advanced) d); }
   friend bool   CGAL_is_finite (const IA & d)
@@ -550,7 +559,7 @@ CGAL_number_type_tag(CGAL_Interval_nt_advanced)
 #include <CGAL/Interval_arithmetic/IA_leda_rational.h>
 #endif
 
-#ifdef CGAL_FIXED_H
+#ifdef CGAL_FIXED_PRECISION_NT_H
 #include <CGAL/Interval_arithmetic/IA_Fixed.h>
 #endif
 
