@@ -571,25 +571,6 @@ The optional argument \ccc{start} is used as a starting place for the search.}
 \ccc{last}$\left.\right)$.  Returns the number of inserted points.
 \ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
 \ccc{Point}.}}
-%\ccGlue
-%\ccMethod{int insert(list<Point>::const_iterator first,
-%	     list<Point>::const_iterator last);}
-%{Same as the previous one.}
-%\ccGlue
-%\ccMethod{int insert(vector<Point>::const_iterator first,
-%	     vector<Point>::const_iterator last);}
-%{Same as the previous one.}
-%\ccGlue
-%\ccMethod{int insert(istream_iterator<Point, ptrdiff_t> first,
-%	     istream_iterator<Point, ptrdiff_t> last);}
-%{Same as the previous one.}
-%\ccGlue
-%\ccMethod{int insert(Point* first,
-%	     Point* last);}
-%{Same as the previous one.}
-
-\ccMethod{Vertex_handle push_back(const Point& p);}
-{Equivalent to \ccc{insert(p)}.}
 
 The previous methods are sufficient to build a whole triangulation. We
 also provide some other methods that can be used instead of
@@ -685,6 +666,26 @@ alt="insert_outside_affine_hull} (2-dimensional case)">
 </CENTER>
 \end{ccHtmlOnly}
 \end{figure} 
+
+\ccMethod{template <class CellIt>
+     Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end,
+	                          Cell_handle begin, int i);}
+{Creates a new vertex by staring a hole.  It takes an iterator range
+[\ccc{cell_begin}; \ccc{cell_end}[ of \ccc{Cell_handles} which specifies a set
+of connected cells (resp. facets in dimension 2) describing a hole.
+(\ccc{begin}, \ccc{i}) is a facet (resp. an edge) on the boundary of the hole,
+that is, \ccc{begin} belongs to the set of cells (resp.  facets) previously
+described, and \ccc{begin->neighbor(i)} does not.  Then this function deletes
+all the cells (resp. facets) describing the hole, creates a new vertex
+\ccc{v}, and for each facet (resp. edge) on the boundary of the hole, creates
+a new cell (resp. facet) with \ccc{v} as vertex.  Then \ccc{v->set_point(p)}
+is called and \ccc{v} is returned.\\
+This operation is equivalent to calling
+\ccStyle{tds().insert_in_hole(cell_begin, cell_end, begin, i);
+v->set_point(p)}.
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, the set of cells (resp. facets)
+is connected, its boundary is connected, and \ccc{p} lies inside the
+hole, which is star-shaped wrt \ccc{p}}.}
 
 \ccHeading{Removal}
 

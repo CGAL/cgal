@@ -349,12 +349,12 @@ public:
 
   // Internal function : assumes the conflict cells are marked.
   template <class CellIt>
-  Vertex_handle _star_hole(CellIt cell_begin, CellIt cell_end,
-	                   Cell_handle begin = Cell_handle(), int i = 0)
+  Vertex_handle _insert_in_hole(CellIt cell_begin, CellIt cell_end,
+	                        Cell_handle begin, int i)
   {
       CGAL_triangulation_precondition(begin != NULL);
-      // if begin == NULL, we could compute one by walking in CellIt.
-      // At the moment, the functionality is not available, you have
+      // if begin == NULL (default arg), we could compute one by walking in
+      // CellIt.  At the moment, the functionality is not available, you have
       // to specify a starting facet.
 
       Vertex_handle newv = create_vertex();
@@ -372,13 +372,13 @@ public:
 
   // Mark the cells in conflict, then calls the internal function.
   template <class CellIt>
-  Vertex_handle star_hole(CellIt cell_begin, CellIt cell_end,
-	                  Cell_handle begin = Cell_handle(), int i = 0)
+  Vertex_handle insert_in_hole(CellIt cell_begin, CellIt cell_end,
+	                       Cell_handle begin, int i)
   {
       for (CellIt cit = cell_begin; cit != cell_end; ++cit)
 	  (*cit)->set_in_conflict_flag(1);
 
-      return _star_hole(cell_begin, cell_end, begin, i);
+      return _insert_in_hole(cell_begin, cell_end, begin, i);
   }
 
   //INSERTION
@@ -404,7 +404,7 @@ private:
   Cell_handle remove_degree_3(Vertex_handle v);
   Cell_handle remove_degree_2(Vertex_handle v);
 public:
-  Cell_handle remove_from_simplex(Vertex_handle v);
+  Cell_handle remove_from_maximal_dimension_simplex(Vertex_handle v);
   void remove_decrease_dimension(Vertex_handle v);
 
   // Change orientation of the whole TDS.
@@ -596,7 +596,7 @@ private:
   }
 
 public:
-  // TODO : The 2 following functions need to be documented...
+
   template <class OutputIterator>
   void
   incident_cells(Vertex_handle v, OutputIterator cells) const
@@ -668,6 +668,7 @@ public:
       std::copy(tmp_vertices.begin(), tmp_vertices.end(), vertices);
   }
 
+  // The following two are obsolete.
   void
   incident_cells(Vertex_handle v, std::set<Cell_handle> & cells,
 	         Cell_handle c = Cell_handle() ) const;
@@ -1753,7 +1754,7 @@ insert_in_edge(Cell_handle c, int i, int j)
 	  ++ccir;
       } while (ccir->handle() != c);
 
-      return _star_hole(cells.begin(), cells.end(), c, i);
+      return _insert_in_hole(cells.begin(), cells.end(), c, i);
     }
   case 2:
     {
@@ -2035,7 +2036,7 @@ remove_decrease_dimension(Vertex_handle v)
 template <class Vb, class Cb >
 typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle
 Triangulation_data_structure_3<Vb,Cb>::
-remove_from_simplex(Vertex_handle v)
+remove_from_maximal_dimension_simplex(Vertex_handle v)
 {
     CGAL_triangulation_precondition(dimension() >= 1);
     CGAL_triangulation_precondition(degree(v) == dimension() + 1);

@@ -472,6 +472,7 @@ public:
 
   Vertex_handle insert(const Point & p, Cell_handle start = NULL);
 
+  // Obsolete.
   Vertex_handle push_back(const Point & p)
   {
       return insert(p);
@@ -515,6 +516,17 @@ public:
   Vertex_handle
   insert_outside_affine_hull(const Point & p);
 
+  template <class CellIt>
+  Vertex_handle
+  insert_in_hole(const Point & p, CellIt cell_begin, CellIt cell_end,
+	         Cell_handle begin, int i)
+  {
+      // Some geometric preconditions should be tested...
+      Vertex_handle v = _tds.insert_in_hole(cell_begin, cell_end, begin, i);
+      v->set_point(p);
+      return v;
+  }
+ 
 protected:
   // - c is the current cell, which must be in conflict.
   // - tester is the function object that tests if a cell is in conflict.
@@ -591,7 +603,7 @@ protected:
   }
 
   // This one takes a function object to recursively determine the cells in
-  // conflict, then calls _tds._star_hole().
+  // conflict, then calls _tds._insert_in_hole().
   template < class Conflict_test >
   Vertex_handle
   insert_conflict(Cell_handle c, const Conflict_test &tester)
@@ -616,8 +628,8 @@ protected:
 				    Emptyset_iterator());
 
     // Create the new cells and delete the old.
-    return _tds._star_hole(cells.begin(), cells.end(),
-	                   facet.first, facet.second);
+    return _tds._insert_in_hole(cells.begin(), cells.end(),
+	                        facet.first, facet.second);
   }
 
 private:

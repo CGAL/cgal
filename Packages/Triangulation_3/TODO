@@ -24,8 +24,6 @@ TEST SUITE
   atteindre 100%.
 
 Doc
-- finir le changement Vertex * -> handles dans la TDS.
-- documenter find_conflicts/star_hole.
 - (optional) sphere et grille en couleur version eps
 - (revoir les anciennes corrections de JF Dufourd)
 
@@ -39,6 +37,8 @@ TDS
 	(pb edge_iterator...? etonnant)
 
 T3
+- virer push_back (qui n'est deja plus documente, mais il manque des trucs
+  dans STL_extensions pour pouvoir le virer completement).
 - .triangle(Facet) devrait retourner un triangle oriente 
   (cf mail sur cgal-discuss-l).
 - nettoyer flips/is_flippable (code duplique)

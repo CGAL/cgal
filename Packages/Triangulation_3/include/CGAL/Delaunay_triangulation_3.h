@@ -201,6 +201,7 @@ public:
 
   Vertex_handle insert(const Point & p, Cell_handle start = NULL);
 
+  // Obsolete.
   Vertex_handle push_back(const Point & p)
   {
       return insert(p);
@@ -620,7 +621,7 @@ remove(Vertex_handle v)
   }
 
   if (dimension() == 1) {
-      _tds.remove_from_simplex(v);
+      _tds.remove_from_maximal_dimension_simplex(v);
       CGAL_triangulation_expensive_postcondition(is_valid());
       return true;
   }

@@ -91,6 +91,12 @@ edge of cell \ccc{c} whose vertices indices are \ccc{i} and
 of \ccc{c} opposite to the vertex of index \ccc{i}. (See
 Section~\ref{TDS3-sec-intro}.)} 
 
+Vertices and cells are usually manipulated via \ccc{handles}, which support
+the two dereference operators \ccc{operator*} and \ccc{operator->}.
+
+\ccNestedType{Vertex_handle}{}
+\ccGlue
+\ccNestedType{Cell_handle}{}
 
 The following iterators allow one to visit all the vertices, edges, facets
 and cells of the triangulation data structure. They are all
@@ -386,6 +392,23 @@ alt="insert_increase_dimension} (1-dimensional case)">
 \end{ccHtmlOnly}
 \end{figure} 
 
+\ccMethod{template <class CellIt>
+          Vertex_handle insert_in_hole(CellIt cell_begin, CellIt cell_end,
+	                               Cell_handle begin, int i);}
+{Creates a new vertex by staring a hole.  It takes an iterator range
+[\ccc{cell_begin}; \ccc{cell_end}[ of \ccc{Cell_handles} which specifies a set
+of connected cells (resp. facets in dimension 2) describing a hole.
+(\ccc{begin}, \ccc{i}) is a facet (resp. an edge) on the boundary of the hole,
+that is, \ccc{begin} belongs to the set of cells (resp.  facets) previously
+described, and \ccc{begin->neighbor(i)} does not.  Then this function deletes
+all the cells (resp. facets) describing the hole, creates a new vertex
+\ccc{v}, and for each facet (resp. edge) on the boundary of the hole, creates
+a new cell (resp. facet) with \ccc{v} as vertex.  \ccc{v} is returned.
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, the set of cells (resp. facets)
+is connected, and its boundary is connected.}}
+
+\ccHeading{Removal}
+
 \ccMethod{void remove_decrease_dimension(Vertex_handle v);}
 {This operation is the reciprocal of \ccc{insert_increase_dimension()}.
 It transforms a triangulation of the sphere $S^d$ of $\R^{d+1}$ into the
@@ -395,16 +418,14 @@ triangulation of the sphere $S^{d-1}$ of $\R^{d}$ by removing the vertex
 \ccVar.\ccc{degree(v)} $=$ \ccVar.\ccc{number_of_vertices()} $-1$.}
 }
 
-\ccMethod{Cell_handle remove_from_simplex(Vertex_handle v);}
-{Removes \ccc{v}. The incident faces of maximal dimension incident to
-\ccc{v} are replaced by a single face of the same dimension. This
-operation is exactly the reciprocal to \ccVar.\ccc{insert_in_cell(v)}.
+\ccMethod{Cell_handle remove_from_maximal_dimension_simplex(Vertex_handle v);}
+{Removes \ccc{v}. The incident simplices of maximal dimension incident to
+\ccc{v} are replaced by a single simplex of the same dimension. This
+operation is exactly the reciprocal to \ccVar.\ccc{insert_in_cell(v)} in
+dimension 3, \ccVar.\ccc{insert_in_facet(v)} in dimension 2, and
+\ccVar.\ccc{insert_in_edge(v)} in dimension 1.
 \ccPrecond{\ccVar.\ccc{degree(v)} $=$ \ccVar.\ccc{dimension()+1}.}
 }
-
-\ccMethod{void reorient();}
-{Changes the orientation of all cells of the triangulation data structure.
-\ccPrecond{\ccVar.\ccc{dimension()} $\geq 1$.}}
 
 \ccMethod{void clear();}
 {Deletes all cells and vertices. \ccVar\ is reset as a triangulation
@@ -415,6 +436,10 @@ data structure constructed by the default constructor.}
 \ccHeading{Other modifiers}
 The following modifiers can affect the validity of the triangulation
 data structure.
+
+\ccMethod{void reorient();}
+{Changes the orientation of all cells of the triangulation data structure.
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 1$.}}
 
 \ccMethod{Vertex_handle create_vertex();}
 {Creates a vertex and adds it to the triangulation data structure.}

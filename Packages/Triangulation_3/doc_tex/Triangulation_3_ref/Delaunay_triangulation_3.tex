@@ -107,9 +107,6 @@ number of inserted points.
 %	     Point* last);}
 %{}
 
-\ccMethod{Vertex_handle push_back(const Point& p);}
-{Equivalent to \ccc{insert(p)}.}
-
 \ccHeading{Removal}
 
 When a vertex \ccc{v} is removed from a triangulation, all the cells
@@ -179,6 +176,33 @@ by \ccc{f} and not containing any other point of the triangulation,
 \ccMethod{Bounded_side
 	  side_of_circle(Cell_handle c, int i, const Point & p);}
 {Same as the previous method for facet \ccc{i} of cell \ccc{c}.}
+
+A point \ccc{p} is said to be in conflict with a cell \ccc{c} in dimension 3
+(resp. a facet \ccc{f} in dimension 2) iff \ccVar.\ccc{side_of_sphere(c, p)}
+(resp. \ccVar.\ccc{side_of_circle(f, p)}) returns \ccc{ON_BOUNDED_SIDE}.
+
+\ccMethod{template <class Out_it_boundary_facets,
+            class Out_it_cells, class Out_it_internal_facets>
+  void
+  find_conflicts(Point p, Cell_handle c,
+	         Out_it_boundary_facets bfit, Out_it_cells cit,
+		 Out_it_internal_facets ifit);}
+{A point \ccc{p} defines a set of connected cells (resp. facets in dimension
+2) which are in conflict with it, which forms a hole.  The starting cell
+(resp.  facet) \ccc{c} must be in conflict.  Then this function returns
+respectively in the output iterators~:\\
+-- \ccc{cit}~: the cells (resp. facets) in conflict.\\
+-- \ccc{bfit}~: the facets (resp. edges) on the boundary, that is, the facets
+(resp. edges) \ccc{(t, i)} where the cell (resp. facet) \ccc{t} is in
+conflict, but \ccc{t->neighbor(i)} is not.\\
+-- \ccc{ifit}~: the facets (resp. edges) inside the hole, that is, delimiting
+two cells (resp facets) in conflict.\\
+This function can be used in conjunction with \ccc{insert_in_hole()} in order
+to decide the insertion of a point after seeing which elements of the
+triangulation are affected.
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, and \ccc{c} is in conflict
+with \ccc{p}.}
+}
 
 \ccHeading{Voronoi diagram}
 \ccIndexMainItem{Voronoi diagram}

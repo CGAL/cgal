@@ -57,6 +57,7 @@
 \usepackage{graphicx}        % for PostScript figures
 \usepackage{ipe}             % for IPE figures
 \usepackage{makeidx}         % for the index
+\usepackage{minitoc}         % for the minitable of contents
 
 % page dimensions, for example as used for the CGAL manuals
 % ---------------------------------------------------------
@@ -111,7 +112,10 @@
 \ccDefGlobalScope{CGAL::}
 
 \begin{document}
-\input{main}
+\input{Triangulation_3/main}
+\input{TriangulationDS_3/main}
+\input{Triangulation_3_ref/main}
+\input{TriangulationDS_3_ref/main}
 \lcTex{\printindex}        %places the index in the document
 
 \bibliographystyle{alpha}
