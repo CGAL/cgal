@@ -1,11 +1,11 @@
-\begin{ccRefConcept}{ConvexHullTraits_d}
+\begin{ccRefConcept}{DelaunayTraits_d}
 
-\ccDefinition Requirements of the traits class to be used with the
-class \ccc{Convex_hull_d}.
+\ccDefinition Requirements of the second traits class to be used with the
+class \ccc{Delaunay_d}.
 
 \ccTypes
 \ccAutoIndexingOff
-\ccNestedType{Point_d}{the dD point type on which the convex hull algorithm 
+\ccNestedType{Point_d}{the dD point type on which the Delaunay algorithm 
 operates}
 \ccGlue
 \ccNestedType{Hyperplane_d}{a dD plane}
@@ -14,7 +14,7 @@ operates}
 \ccGlue
 \ccNestedType{Ray_d}{a dD ray}
 \ccGlue
-\ccNestedType{RT}{an arithmetic ring type}
+\ccNestedType{RT}{a arithmetic ring type}
 
 \ccNestedType{Construct_vector_d}{Function object type that provides
 \ccc{Vector_d operator()(int d, CGAL::Null_vector)}, which constructs
@@ -75,6 +75,25 @@ the affine hull of the points in \ccc{tuple[first,last)}.}
 \ccc{r} and \ccc{h} intersect and returns the corresponding
 polymorphic object.}
 
+The previous requirements are all identical to the concept
+\ccc{ConvexHullTraits_d}. The Delaunay class adds the following
+requirements.
+
+\ccNestedType{Project_along_d_axis_d}{Predicate object type that
+provides \ccc{DelaunayTraits_d::Point_d operator()(Point_d p)}, which
+determines the $d-1$-dimensional point from the $d$-dimensional point
+$p$ while discarding the last coordinate.}
+
+\ccNestedType{Lift_to_paraboloid_d}{Predicate object type that
+provides \ccc{Point_d operator()(DelaunayTraits_d::Point_d p)}, which
+determines the $d$-dimensional point from the $d-1$-dimensional point
+$p$ while lifting it to the paraboloid of revolution.}
+
+\ccNestedType{Component_accessor_d}{Predicate object type that
+provides \ccc{RT homogeneous(Vector_d v,int i)} and \ccc{int
+dimension(Vector_d v)}, where the former determines the $i$th
+coordinate of $v$ and the latter the dimension of $v$.}
+
 \ccCreation
 \ccCreationVariable{traits}
 
@@ -93,8 +112,7 @@ predicate object type.  For example:
 
 \ccHasModels
 \ccRefIdfierPage{CGAL::Cartesian_d<FT,LA>}\\
-\ccRefIdfierPage{CGAL::Homogeneous_d<RT,LA>}\\
-\ccRefIdfierPage{CGAL::Convex_hull_d_traits_3<R>}
+\ccRefIdfierPage{CGAL::Homogeneous_d<RT,LA>}
 
 %\ccSeeAlso
 
