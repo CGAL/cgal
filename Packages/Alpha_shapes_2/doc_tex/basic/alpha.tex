@@ -284,6 +284,8 @@ is an internal format.
 
 \ccInclude{CGAL/IO/Window_stream.h}
 
+\ccInclude{CGAL/IO/alpha_shapes_2_window_stream.h}
+
 \ccFunction{Window_stream& operator<<(Window_stream& W,
                          const Alpha_shape_2<Gt,Tds>& T);}
 {Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the window stream \ccStyle{W}.
@@ -398,12 +400,12 @@ They are listed below as such.
 \begin{ccClass}{Alpha_shape_vertex_base}
 \ccCreationVariable{v}
 \ccCreation
-\ccConstructor{Alpha_shape_vertex_base()}{default constructor.}
+\ccConstructor{Alpha_shape_vertex_base()};{default constructor.}
 \ccGlue
-\ccConstructor{Alpha_shape_vertex_base(Point p)}{constructor setting
+\ccConstructor{Alpha_shape_vertex_base(Point p);}{constructor setting
 th point associated to.}
 \ccGlue
-\ccConstructor{Alpha_shape_vertex_base(Point p, void* f)} 
+\ccConstructor{Alpha_shape_vertex_base(Point p, void* f);} 
 {constructor setting the point  associated to and an incident face.}
 
 \ccHeading{Access Functions}
@@ -444,11 +446,11 @@ They are listed below as such.
 \begin{ccClass}{Alpha_shape_face_base}
 \ccCreationVariable{f}
 \ccCreation
-\ccConstructor{Alpha_shape_face_base()}{default constructor.}
+\ccConstructor{Alpha_shape_face_base();}{default constructor.}
 \ccGlue
-\ccConstructor{Alpha_shape_face_base(void* v0, void* v1, void* v2)}{constructor setting the incident vertices.}
+\ccConstructor{Alpha_shape_face_base(void* v0, void* v1, void* v2);}{constructor setting the incident vertices.}
 \ccGlue
-\ccConstructor{Alpha_shape_face_base(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2)} 
+\ccConstructor{Alpha_shape_face_base(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2);} 
 {constructor setting the incident vertices and the neighboring faces.}
 
 \ccHeading{Access Functions}
@@ -725,6 +727,8 @@ is an internal format.
 
 \ccInclude{CGAL/IO/Window_stream.h}
 
+\ccInclude{CGAL/IO/alpha_shapes_2_window_stream.h}
+
 \ccFunction{Window_stream& operator<<(Window_stream& W,
                          const Weighted_alpha_shape_2<Gt,Tds>& T);}
 {Inserts the weighted alpha shape \ccVar\ for the current $\alpha$-value into the window stream \ccStyle{W}.
@@ -758,7 +762,7 @@ $O(\mbox{\em number of faces } \log{\mbox{\em number of faces}})$.
 The class \ccStyle{Weighted_alpha_shape_2<Gt,Tds>} parameterized with a
 traits class, that has the same requirements as the Regular
 triangulation traits class.  The following requirement catalog lists
-the primitives that must be defined additionnally.
+the primitives that must be defined additionally.
 
 \begin{ccClass} {Gt}
 \subsection*{Traits (\mbox{\it Gt})}
@@ -827,7 +831,7 @@ define the requirements of such Weighted Alpha Shape \ccc{Vertex} and
 
 The information about the alpha values associated  are store in the 
 vertices of the Weighted Alpha Shape. Thus the nested \ccc{Vertex}
-type of a Weighted Alpha Shape offers additonnal functionalities to deal with this information.
+type of a Weighted Alpha Shape offers additonal functionalities to deal with this information.
 This additional functionalities related to the Weighted Alpha Shape
 are requirements which have to be fulfilled
 by the base face  an Weighted Alpha Shape
@@ -859,11 +863,11 @@ They are listed below as such.
 \begin{ccClass}{Weighted_alpha_shape_face_base}
 \ccCreationVariable{f}
 \ccCreation
-\ccConstructor{Weighted_alpha_shape_face_base()}{default constructor.}
+\ccConstructor{Weighted_alpha_shape_face_base();}{default constructor.}
 \ccGlue
-\ccConstructor{Weighted_alpha_shape_face_base(void* v0, void* v1, void* v2)}{constructor setting the incident vertices.}
+\ccConstructor{Weighted_alpha_shape_face_base(void* v0, void* v1, void* v2);}{constructor setting the incident vertices.}
 \ccGlue
-\ccConstructor{Weighted_alpha_shape_face_base(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2)} 
+\ccConstructor{Weighted_alpha_shape_face_base(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2);} 
 {constructor setting the incident vertices and the neighboring faces.}
 
 \ccHeading{Access Functions}
