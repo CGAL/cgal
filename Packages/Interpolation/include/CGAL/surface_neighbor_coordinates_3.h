@@ -263,10 +263,10 @@ surface_neighbor_coordinates_3(const Dt& dt,
   dt.vertices_in_conflict(p,c,
 			 std::back_inserter(conflict_vertices));
 
-  for (std::list< Vertex_handle >::iterator it = conflict_vertices.begin();
+  for (typename std::list< Vertex_handle >::iterator it = conflict_vertices.begin();
        it != conflict_vertices.end();){
     if(dt.is_infinite(*it)){
-      std::list< Vertex_handle >::iterator itp = it;
+      typename std::list< Vertex_handle >::iterator itp = it;
       it++;
       conflict_vertices.erase(itp);
     } else {
