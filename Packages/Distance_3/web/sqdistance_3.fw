@@ -1603,6 +1603,7 @@ Saarbruecken@)
 
 CGAL_BEGIN_NAMESPACE
 
+@<3D squared distance general utilities@>
 @<3D squared distance 0 header declarations@>
 
 CGAL_END_NAMESPACE
@@ -1634,7 +1635,6 @@ Saarbruecken@)
 
 CGAL_BEGIN_NAMESPACE
 
-@<3D squared distance general utilities@>
 @<3D squared distance 0 outline definitions@>
 
 CGAL_END_NAMESPACE
