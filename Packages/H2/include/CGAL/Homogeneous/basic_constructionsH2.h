@@ -42,14 +42,6 @@ gp_linear_intersection(const LineH2<R>& l1, const LineH2<R>& l2)
                      l1.a()*l2.b() - l2.a()*l1.b() );
 }
 
-template <typename K>
-CGAL_KERNEL_MEDIUM_INLINE
-typename K::Line_2
-bisector( const PointH2<K>& p, const PointH2<K>& q )
-{
-  return K().construct_bisector_2_object()(p, q);
-}
-
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 typename R::FT

@@ -26,7 +26,43 @@
 
 // Generic functions calling the kernel functor.
 
+#include <CGAL/user_classes.h>
+
 CGAL_BEGIN_NAMESPACE
+
+template <typename K>
+inline
+typename K::Line_2
+bisector(const typename K::Point_2 &p,
+         const typename K::Point_2 &q, const K &k)
+{
+  return k.construct_bisector_2_object()(p, q);
+}
+
+template <typename K>
+inline
+typename K::Line_2
+bisector(const typename K::Line_2 &l1,
+         const typename K::Line_2 &l2, const K &k)
+{
+  return k.construct_bisector_2_object()(l1, l2);
+}
+
+template <typename K>
+inline
+typename K::Line_2
+bisector(const Point_2<K> &p, const Point_2<K> &q)
+{
+  return bisector(p, q, K());
+}
+
+template <typename K>
+inline
+typename K::Line_2
+bisector(const Line_2<K> &l1, const Line_2<K> &l2)
+{
+  return bisector(l1, l2, K());
+}
 
 template <typename K>
 inline

@@ -21,6 +21,48 @@
 #ifndef CGAL__TEST_FCT_PLANE_3_H
 #define CGAL__TEST_FCT_PLANE_3_H
 
+// Accessory function testing functions that require sqrt().
+// Doesn't instantiate anything if RT doesn't support sqrt().
+template <class R>
+bool
+_test_fct_plane_sqrt_3(const R&, CGAL::Tag_false)
+{
+  bool UNTESTED_STUFF_BECAUSE_SQRT_IS_NOT_SUPPORTED;
+  std::cout << std::endl
+            << "WARNING : FT doesn't support sqrt(),"
+               " hence some functions are not tested." << std::endl;
+  return true;
+}
+
+template <class R>
+bool
+_test_fct_plane_sqrt_3(const R&, CGAL::Tag_true)
+{
+ typedef typename  R::Point_3  Point_3;
+ typedef typename  R::Plane_3  Plane_3;
+
+ // bisector of 2 planes
+ Point_3 q0(0, 0, 0, 1);
+ Point_3 q1(1, 0, 0, 1);
+ Point_3 q2(0, 1, 0, 1);
+ Point_3 q3(1, 1, 0, 1);
+ Point_3 q4(2, 0, 0, 1);
+ Point_3 q5(0, 0, 1, 1);
+
+ Plane_3 ql1 (q0, q1, q5);
+ Plane_3 ql2 (q0, q2, q5);
+ Plane_3 ql3 (q0, q3, q5);
+ Plane_3 ql4 (q0, q4, q5);
+ Plane_3 ql5 (q1, q0, q5);
+ Plane_3 bl3 = CGAL::bisector(ql1, ql2);
+
+ assert( bl3 == ql3 );
+ assert( CGAL::bisector(ql4, ql2) == ql3 );
+ assert( CGAL::bisector(ql1, ql5) == ql1 );
+
+ return true;
+}
+
 template <class R>
 bool
 _test_fct_plane_3(const R& )
@@ -58,6 +100,9 @@ _test_fct_plane_3(const R& )
  Plane_3 h5 (p7, p8, p9);
  assert(   CGAL::parallel(h1, h2) );
  assert( ! CGAL::parallel(h1, h5) );
+
+ // More tests, that require sqrt().
+ _test_fct_plane_sqrt_3(R(), typename CGAL::Number_type_traits<FT>::Has_sqrt());
 
  std::cout << "done" << std::endl;
  return true;

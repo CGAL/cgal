@@ -398,6 +398,31 @@ bisector_of_pointsC3(const FT &px, const FT &py, const FT &pz,
     - CGAL_NTS square(px) - CGAL_NTS square(py) - CGAL_NTS square(pz);
 }
 
+template < class FT >
+void
+bisector_of_planesC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
+		     const FT &qa, const FT &qb, const FT &qc, const FT &qd,
+		     FT &a, FT &b, FT &c, FT &d)
+{
+  // We normalize the equations of the 2 planes, and we then add them.
+  FT n1 = CGAL_NTS sqrt(CGAL_NTS square(pa) + CGAL_NTS square(pb) +
+                        CGAL_NTS square(pc));
+  FT n2 = CGAL_NTS sqrt(CGAL_NTS square(qa) + CGAL_NTS square(qb) +
+                        CGAL_NTS square(qc));
+  a = n2 * pa + n1 * qa;
+  b = n2 * pb + n1 * qb;
+  c = n2 * pc + n1 * qc;
+  d = n2 * pd + n1 * qd;
+
+  // Care must be taken for the case when this produces a degenerate line.
+  if (a == 0 && b == 0 && c == 0) {
+    a = n2 * pa - n1 * qa;
+    b = n2 * pb - n1 * qb;
+    c = n2 * pc - n1 * qc;
+    d = n2 * pd - n1 * qd;
+  }
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CONSTRUCTIONS_KERNEL_FTC3_H

@@ -1,3 +1,6 @@
+Version 102.7 (4 December 2003)
+- More bisector() functions.
+
 Version 102.6 (3 December 2003)
 - Add parallel().
 

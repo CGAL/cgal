@@ -1319,6 +1319,7 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Construct_bisector_2
   {
+    typedef typename K::RT      RT;
     typedef typename K::FT      FT;
     typedef typename K::Point_2 Point_2;
     typedef typename K::Line_2  Line_2;
@@ -1329,8 +1330,6 @@ namespace HomogeneousKernelFunctors {
     Line_2
     operator()(const Point_2& p, const Point_2& q) const
     {
-      typedef typename K::RT RT;
-
       // Bisector equation is based on equation
       // ( X - p.x())^2 + (Y - p.y())^2 == ( X - q.x())^2 + (Y - q.y())
       // and x() = hx()/hw() ...
@@ -1349,11 +1348,22 @@ namespace HomogeneousKernelFunctors {
 
       return Line_2( a, b, c );
     }
+
+    Line_2
+    operator()(const Line_2& p, const Line_2& q) const
+    {
+      RT a, b, c;
+      bisector_of_linesC2(p.a(), p.b(), p.c(),
+                          q.a(), q.b(), q.c(),
+                          a, b, c);
+      return Line_2(a, b, c);
+    }
   };
 
   template <typename K>
   class Construct_bisector_3
   {
+    typedef typename K::RT      RT;
     typedef typename K::FT      FT;
     typedef typename K::Point_3 Point_3;
     typedef typename K::Plane_3 Plane_3;
@@ -1364,8 +1374,6 @@ namespace HomogeneousKernelFunctors {
     Plane_3
     operator()(const Point_3& p, const Point_3& q) const
     {
-      typedef typename K::RT RT;
-
       // Bisector equation is based on equation
       // ( X - p.x())^2 + (Y - p.y())^2 == ( X - q.x())^2 + (Y - q.y())
       // and x() = hx()/hw() ...
@@ -1386,6 +1394,16 @@ namespace HomogeneousKernelFunctors {
 	   - phx*phx*qhw*qhw - phy*phy*qhw*qhw - phz*phz*qhw*qhw;
 
       return Plane_3( a, b, c, d );
+    }
+
+    Plane_3
+    operator()(const Plane_3& p, const Plane_3& q) const
+    {
+      RT a, b, c, d;
+      bisector_of_planesC3(p.a(), p.b(), p.c(), p.d(),
+	                   q.a(), q.b(), q.c(), q.d(),
+			   a, b, c, d);
+      return Plane_3(a, b, c, d);
     }
   };
 

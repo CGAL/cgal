@@ -22,6 +22,46 @@
 #ifndef CGAL__TEST_FCT_LINE_2_H
 #define CGAL__TEST_FCT_LINE_2_H
 
+// Accessory function testing functions that require sqrt().
+// Doesn't instantiate anything if RT doesn't support sqrt().
+template <class R>
+bool
+_test_fct_line_sqrt_2(const R&, CGAL::Tag_false)
+{
+  bool UNTESTED_STUFF_BECAUSE_SQRT_IS_NOT_SUPPORTED;
+  std::cout << std::endl
+            << "WARNING : FT doesn't support sqrt(),"
+               " hence some functions are not tested." << std::endl;
+  return true;
+}
+
+template <class R>
+bool
+_test_fct_line_sqrt_2(const R&, CGAL::Tag_true)
+{
+ typedef typename  R::Point_2  Point_2;
+ typedef typename  R::Line_2   Line_2;
+
+ // bisector of 2 lines (uses sqrt()...)
+ Point_2 q0(0, 0, 1);
+ Point_2 q1(1, 0, 1);
+ Point_2 q2(0, 1, 1);
+ Point_2 q3(1, 1, 1);
+ Point_2 q4(2, 0, 1);
+
+ Line_2 ql1 (q0, q1);
+ Line_2 ql2 (q0, q2);
+ Line_2 ql3 (q0, q3);
+ Line_2 ql4 (q0, q4);
+ Line_2 ql5 (q1, q0);
+ Line_2 bl3 = CGAL::bisector(ql1, ql2);
+
+ assert( bl3 == ql3 );
+ assert( CGAL::bisector(ql4, ql2) == ql3 );
+ assert( CGAL::bisector(ql1, ql5) == ql1 );
+
+ return true;
+}
 
 template <class R>
 bool
@@ -141,6 +181,9 @@ _test_fct_line_2(const R& )
  assert(bl2 == Line_2(p1, p12));
  assert(bl1.oriented_side(p2) == CGAL::ON_POSITIVE_SIDE);
  assert( CGAL::parallel(bl1, bl2) );
+
+ // More tests, that require sqrt().
+ _test_fct_line_sqrt_2(R(), typename CGAL::Number_type_traits<FT>::Has_sqrt());
 
  std::cout << "done" << std::endl;
  return true;

@@ -30,6 +30,40 @@ CGAL_BEGIN_NAMESPACE
 
 template <typename K>
 inline
+typename K::Plane_3
+bisector(const typename K::Point_3 &p,
+         const typename K::Point_3 &q, const K &k)
+{
+  return k.construct_bisector_3_object()(p, q);
+}
+
+template <typename K>
+inline
+typename K::Plane_3
+bisector(const typename K::Plane_3 &h1,
+         const typename K::Plane_3 &h2, const K &k)
+{
+  return k.construct_bisector_3_object()(h1, h2);
+}
+
+template <typename K>
+inline
+typename K::Plane_3
+bisector(const Point_3<K> &p, const Point_3<K> &q)
+{
+  return bisector(p, q, K());
+}
+
+template <typename K>
+inline
+typename K::Plane_3
+bisector(const Plane_3<K> &h1, const Plane_3<K> &h2)
+{
+  return bisector(h1, h2, K());
+}
+
+template <typename K>
+inline
 bool
 parallel(const typename K::Line_3 &l1,
          const typename K::Line_3 &l2, const K &k)

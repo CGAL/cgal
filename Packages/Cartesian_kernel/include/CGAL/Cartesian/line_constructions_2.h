@@ -50,15 +50,6 @@ line_from_point_direction(const PointC2<K> &p,
 template < class K >
 inline
 LineC2<K>
-bisector(const PointC2<K> &p,
-         const PointC2<K> &q)
-{
-  return K().construct_bisector_2_object()(p, q);
-}
-
-template < class K >
-inline
-LineC2<K>
 perpendicular_through_point(const LineC2<K> &l,
                             const PointC2<K> &p)
 {

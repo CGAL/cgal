@@ -893,6 +893,16 @@ namespace CartesianKernelFunctors {
       bisector_of_pointsC2(p.x(), p.y(), q.x(), q.y(), a, b, c);
       return Line_2(a, b, c);
     }
+
+    Line_2
+    operator()(const Line_2& p, const Line_2& q) const
+    {
+      FT a, b, c;
+      bisector_of_linesC2(p.a(), p.b(), p.c(),
+                          q.a(), q.b(), q.c(),
+                          a, b, c);
+      return Line_2(a, b, c);
+    }
   };
 
   template <typename K>
@@ -912,6 +922,16 @@ namespace CartesianKernelFunctors {
       bisector_of_pointsC3(p.x(), p.y(), p.z(),
 	                   q.x(), q.y(), q.z(),
 			   a, b, c, d);
+      return Plane_3(a, b, c, d);
+    }
+
+    Plane_3
+    operator()(const Plane_3& p, const Plane_3& q) const
+    {
+      FT a, b, c, d;
+      bisector_of_planesC3(p.a(), p.b(), p.c(), p.d(),
+                           q.a(), q.b(), q.c(), q.d(),
+                           a, b, c, d);
       return Plane_3(a, b, c, d);
     }
   };

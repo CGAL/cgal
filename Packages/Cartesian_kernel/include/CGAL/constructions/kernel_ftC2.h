@@ -143,6 +143,28 @@ bisector_of_pointsC2(const FT &px, const FT &py,
 }
 
 template < class FT >
+CGAL_KERNEL_INLINE
+void
+bisector_of_linesC2(const FT &pa, const FT &pb, const FT &pc,
+		    const FT &qa, const FT &qb, const FT &qc,
+		    FT &a, FT &b, FT &c)
+{
+  // We normalize the equations of the 2 lines, and we then add them.
+  FT n1 = CGAL_NTS sqrt(CGAL_NTS square(pa) + CGAL_NTS square(pb));
+  FT n2 = CGAL_NTS sqrt(CGAL_NTS square(qa) + CGAL_NTS square(qb));
+  a = n2 * pa + n1 * qa;
+  b = n2 * pb + n1 * qb;
+  c = n2 * pc + n1 * qc;
+
+  // Care must be taken for the case when this produces a degenerate line.
+  if (a == 0 && b == 0) {
+    a = n2 * pa - n1 * qa;
+    b = n2 * pb - n1 * qb;
+    c = n2 * pc - n1 * qc;
+  }
+}
+
+template < class FT >
 inline
 FT
 line_y_at_xC2(const FT &a, const FT &b, const FT &c, const FT &x)

@@ -95,15 +95,6 @@ typename R::FT
 squared_distance( PointH3<R> const& p, PointH3<R> const& q)
 { return (p-q)*(p-q); }
 
-
-template <typename K>
-CGAL_KERNEL_MEDIUM_INLINE
-typename K::Plane_3
-bisector( const PointH3<K>& p, const PointH3<K>& q )
-{
-  return K().construct_bisector_3_object()(p, q);
-}
-
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 PointH3<R>
@@ -222,8 +213,10 @@ circumcenter( PointH3<R> const& p,
               PointH3<R> const& r)
 {
   return gp_linear_intersection( PlaneH3<R>(p,q,r),
-                                 bisector(p,q),
-                                 bisector(p,r));
+		 bisector(static_cast<const Point_3<R>& >(p),
+		          static_cast<const Point_3<R>& >(q)),
+		 bisector(static_cast<const Point_3<R>& >(p),
+		          static_cast<const Point_3<R>& >(r)));
 }
 
 template <class R>
