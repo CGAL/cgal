@@ -35,7 +35,7 @@ submit:
 	--exclude=TODO \
 	version description.txt changes.txt \
 	src include doc_tex doc_ps 
-	cp -f iostream.tar.gz *description.txt $(WWW_dir)
+	cp -f iostream.tar.gz *.txt version $(WWW_dir)
 	cp -rf doc_ps/* $(WWW_dir)/doc_ps/
 	cp -rf doc_html/* $(WWW_dir)/doc_html/
 
@@ -43,7 +43,7 @@ submit:
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
 	echo "/iostream/iostream.tar.gz" >> $(TMP_file)
-#	mail -s autohandle cgal-submit@cs.uu.nl yvinec < $(TMP_file)
+	mail -s autohandle cgal-submit@cs.uu.nl yvinec < $(TMP_file)
 	rm -f $(TMP_file)
 
 doc:
