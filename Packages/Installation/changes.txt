@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Fixed test_gmp to work on M$ as well.
 GLOB: Corrected CGAL_WINDOW_LDFLAGS setting.
 GLOB: Get INSTALL_CONF_VERSION from CGAL_CFG_NO_ITERATOR_TRAITS.C.
 GLOB: joined CGAL_LIB_NAME and CGAL_LIBNAME.
