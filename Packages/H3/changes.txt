@@ -1,3 +1,16 @@
+2.59 (11 May 2003)
+- Add missing functor for Plane_3(Point_3, Vector_3).
+- In order to get rid of Direction_3 at some point, I have added :
+    - Line_3(Point_3, Vector_3)        ConstructLine_3
+    - Ray_3(Point_3, Vector_3)         ConstructRay_3
+    - Ray_3(Point_3, Line_3)           ConstructRay_3
+    - Vector_3(Line_3)                 ConstructVector_3
+    - Vector_3(Ray_3)                  ConstructVector_3
+    - Vector_3(Segment_3)              ConstructVector_3
+    - Vector_3 Line_3.to_vector()
+    - Vector_3 Ray_3.to_vector()
+    - Vector_3 Segment_3.to_vector()
+
 2.58 (11 April 2003) [af]
 - bug fix in Iso_cuboid_3
 

@@ -36,6 +36,7 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Direction_3          Direction_3;
+  typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
@@ -63,10 +64,11 @@ public:
   const Point_3 &  operator[](int i) const;
 
   FT                squared_length() const;
-  Direction_3   direction() const;
-  Line_3        supporting_line() const;
-  SegmentH3<R>  opposite() const;
-  SegmentH3<R>  transform( const Aff_transformation_3& t) const;
+  Direction_3       direction() const;
+  Vector_3          to_vector() const;
+  Line_3            supporting_line() const;
+  SegmentH3<R>      opposite() const;
+  SegmentH3<R>      transform( const Aff_transformation_3& t) const;
   Bbox_3            bbox() const;
   bool              has_on(const Point_3& p) const;
   bool              collinear_has_on(const Point_3& p) const;
@@ -146,6 +148,12 @@ SegmentH3<R>::squared_length() const
   return  (end() - start()) *
           (end() - start())   ;
 }
+
+template < class R >
+CGAL_KERNEL_INLINE
+typename SegmentH3<R>::Vector_3
+SegmentH3<R>::to_vector() const
+{ return end() - start(); }
 
 template < class R >
 CGAL_KERNEL_INLINE

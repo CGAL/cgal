@@ -30,7 +30,7 @@ CGAL_BEGIN_NAMESPACE
 template < class R_ >
 class RayH3
   : public R_::template Handle<std::pair<typename R_::Point_3,
-                                         typename R_::Direction_3> >::type
+                                         typename R_::Vector_3> >::type
 {
 CGAL_VC7_BUG_PROTECTED
    typedef typename R_::RT                   RT;
@@ -38,9 +38,10 @@ CGAL_VC7_BUG_PROTECTED
    typedef typename R_::Point_3              Point_3;
    typedef typename R_::Line_3               Line_3;
    typedef typename R_::Direction_3          Direction_3;
+   typedef typename R_::Vector_3             Vector_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-   typedef std::pair<Point_3, Direction_3>          rep;
+   typedef std::pair<Point_3, Vector_3>             rep;
    typedef typename R_::template Handle<rep>::type  base;
 
 public:
@@ -50,16 +51,23 @@ public:
       : base(rep()) {}
 
     RayH3( const Point_3& sp, const Point_3& secondp)
-      : base(rep(sp, (secondp-sp).direction())) {}
+      : base(rep(sp, secondp-sp)) {}
+
+    RayH3( const Point_3& sp, const Vector_3& v)
+      : base(rep(sp, v)) {}
 
     RayH3( const Point_3& sp, const Direction_3& d)
-      : base(rep(sp, d)) {}
+      : base(rep(sp, d.to_vector())) {}
+
+    RayH3( const Point_3& sp, const Line_3& l)
+      : base(rep(sp, l.to_vector())) {}
 
     const Point_3 & start() const;
     const Point_3 & source() const;
     Point_3 second_point() const;
     Point_3 point(int i) const;
-    const Direction_3 & direction() const;
+    Direction_3 direction() const;
+    const Vector_3 & to_vector() const;
     Line_3  supporting_line() const;
     RayH3<R>   opposite() const;
     RayH3<R>   transform( const Aff_transformation_3 & t) const;
@@ -85,18 +93,26 @@ RayH3<R>::start() const
 
 template < class R >
 inline
-const typename RayH3<R>::Direction_3 &
-RayH3<R>::direction() const
+const typename RayH3<R>::Vector_3 &
+RayH3<R>::to_vector() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   return Ptr()->second;
 }
 
 template < class R >
+inline
+typename RayH3<R>::Direction_3
+RayH3<R>::direction() const
+{
+  return to_vector().direction();
+}
+
+template < class R >
 CGAL_KERNEL_INLINE
 typename RayH3<R>::Point_3
 RayH3<R>::second_point() const
-{ return start() + direction().to_vector(); }
+{ return start() + to_vector(); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -104,7 +120,7 @@ typename RayH3<R>::Point_3
 RayH3<R>::point(int i) const
 {
   CGAL_kernel_precondition( i >= 0 );
-  return start() + RT(i)*(direction().to_vector() ) ;
+  return start() + RT(i)*to_vector();
 }
 
 template < class R >
@@ -176,7 +192,7 @@ template < class R >
 inline
 bool
 RayH3<R>::is_degenerate() const
-{ return (Ptr()->second).is_degenerate() ; }
+{ return to_vector() == NULL_VECTOR; }
 
 template < class R >
 CGAL_KERNEL_INLINE

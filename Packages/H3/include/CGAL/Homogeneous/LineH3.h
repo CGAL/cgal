@@ -30,7 +30,7 @@ CGAL_BEGIN_NAMESPACE
 template < class R_ >
 class LineH3
   : public R_::template Handle<std::pair<typename R_::Point_3,
-                                         typename R_::Direction_3> >::type
+                                         typename R_::Vector_3> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::RT                   RT;
@@ -43,7 +43,7 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef std::pair<Point_3, Direction_3>          rep;
+  typedef std::pair<Point_3, Vector_3>          rep;
   typedef typename R_::template Handle<rep>::type  base;
 
 public:
@@ -53,16 +53,19 @@ public:
     : base(rep()) {}
 
   LineH3(const Point_3& p, const Point_3& q)
-    : base(rep(p, (q - p).direction())) {}
+    : base(rep(p, q - p)) {}
 
   LineH3(const Segment_3& s)
-    : base(rep(s.start(), s.direction())) {}
+    : base(rep(s.start(), s.to_vector())) {}
 
   LineH3(const Ray_3& r)
-    : base(rep(r.start(), r.direction())) {}
+    : base(rep(r.start(), r.to_vector())) {}
 
   LineH3(const Point_3& p, const Direction_3& d)
-    : base(rep(p, d)) {}
+    : base(rep(p, d.to_vector())) {}
+
+  LineH3(const Point_3& p, const Vector_3& v)
+    : base(rep(p, v)) {}
 
   Plane_3  perpendicular_plane(const Point_3& p) const;
   LineH3<R>   opposite() const;
@@ -70,7 +73,8 @@ public:
   Point_3  point(int i) const;
   Point_3  projection(const Point_3& p) const;
 
-  const Direction_3 & direction() const;
+  Direction_3 direction() const;
+  const Vector_3 & to_vector() const;
 
   bool            has_on( const Point_3& p ) const;
   bool            is_degenerate() const;
@@ -97,11 +101,17 @@ template < class R >
 CGAL_KERNEL_INLINE
 typename LineH3<R>::Point_3
 LineH3<R>::point(int i) const
-{ return point() + RT(i)*direction().to_vector() ; }
+{ return point() + RT(i)*to_vector() ; }
 
 template < class R >
 inline
-const typename LineH3<R>::Direction_3 &
+const typename LineH3<R>::Vector_3 &
+LineH3<R>::to_vector() const
+{ return Ptr()->second; }
+
+template < class R >
+inline
+typename LineH3<R>::Direction_3
 LineH3<R>::direction() const
 { return Ptr()->second; }
 
@@ -109,13 +119,13 @@ template < class R >
 CGAL_KERNEL_INLINE
 typename LineH3<R>::Plane_3
 LineH3<R>::perpendicular_plane(const typename LineH3<R>::Point_3& p ) const
-{ return Plane_3( p, direction() ); }
+{ return Plane_3( p, to_vector() ); }
 
 template < class R >
 CGAL_KERNEL_INLINE
 LineH3<R>
 LineH3<R>::opposite() const
-{ return LineH3<R>( point(), -direction() ); }
+{ return LineH3<R>( point(), -to_vector() ); }
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
@@ -131,7 +141,7 @@ LineH3<R>::projection(const typename LineH3<R>::Point_3& p) const
   const RT  vy = v.hy();
   const RT  vz = v.hz();
   const RT  vw = v.hw();
-  Vector_3 dir = direction().to_vector();
+  Vector_3 dir = to_vector();
   const RT  dx = dir.hx();
   const RT  dy = dir.hy();
   const RT  dz = dir.hz();
@@ -147,7 +157,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 LineH3<R>
 LineH3<R>::transform(const typename LineH3<R>::Aff_transformation_3& t) const
-{ return LineH3<R>(t.transform(point() ), t.transform(direction() )); }
+{ return LineH3<R>(t.transform(point() ), t.transform(to_vector() )); }
 
 
 #ifndef CGAL_NO_OSTREAM_INSERT_LINEH3
@@ -157,11 +167,11 @@ std::ostream &operator<<(std::ostream &os, const LineH3<R> &l)
   switch(os.iword(IO::mode))
   {
     case IO::ASCII :
-        return os << l.point() << ' ' << l.direction();
+        return os << l.point() << ' ' << l.to_vector();
     case IO::BINARY :
-        return os << l.point() <<  l.direction();
+        return os << l.point() <<  l.to_vector();
     default:
-        return  os << "LineH3(" << l.point() << ", " << l.direction() << ")";
+        return  os << "LineH3(" << l.point() << ", " << l.to_vector() << ")";
   }
 }
 #endif // CGAL_NO_OSTREAM_INSERT_LINEH3
@@ -171,9 +181,9 @@ template < class R >
 std::istream &operator>>(std::istream &is, LineH3<R> &l)
 {
   typename R::Point_3 p;
-  typename R::Direction_3 d;
-  is >> p >> d;
-  l = LineH3<R>(p, d);
+  typename R::Vector_3 v;
+  is >> p >> v;
+  l = LineH3<R>(p, v);
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_LINEH3
@@ -182,20 +192,20 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 LineH3<R>::has_on( const typename LineH3<R>::Point_3& p ) const
-{ return collinear(point(), point()+direction().to_vector(), p); }
+{ return collinear(point(), point()+to_vector(), p); }
 
 template < class R >
 CGAL_KERNEL_INLINE
 bool
 LineH3<R>::is_degenerate() const
-{ return direction().is_degenerate(); }
+{ return to_vector() == NULL_VECTOR; }
 
 template < class R >
 CGAL_KERNEL_INLINE
 bool
 LineH3<R>::operator==(const LineH3<R>& l) const
 {
-  return l.direction() == direction() && l.has_on( point() );
+  return l.to_vector() == to_vector() && l.has_on( point() );
 }
 
 CGAL_END_NAMESPACE
