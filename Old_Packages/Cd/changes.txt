@@ -1,0 +1,5 @@
+Ver 1.0 (Oct 1 1999)
+New package (code from Bernd and Sven, via Stefan)
+- extracted for (int i=...) declarations into "int i; for (i=...)"
+  due to problems with VC++
+- added "os << d" in ASCII case of "os << Point_d" 
