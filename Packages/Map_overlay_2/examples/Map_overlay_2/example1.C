@@ -1,12 +1,8 @@
 #include <CGAL/basic.h> //CGAL definitions that need to be before anything else
-//#include <CGAL/leda_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Map_overlay_default_dcel.h>
-//#ifndef CGAL_MAP_OVERLAY_DEFAULT_NOTIFIER_H
-//#include <CGAL/Map_overlay_default_notifier.h>
-//#endif
 #include <CGAL/Map_overlay.h>
 #include <CGAL/Arr_segment_exact_traits.h>
 #include <CGAL/Planar_map_2.h>
@@ -28,7 +24,6 @@ typedef Traits::Curve                       Curve;
 
 typedef CGAL::Map_overlay_default_dcel<Traits> Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>        Planar_map;
-//typedef CGAL::Map_overlay_default_notifier<PM>     MapOverlay_change_notification;
 typedef CGAL::Map_overlay<Planar_map>          MapOverlay;
 
 typedef CGAL::Pm_walk_along_line_point_location<Planar_map>  PmWalkPL;
@@ -57,7 +52,7 @@ void calc_Window_size(const Planar_map &pm,
 }
 
 
-int  main(int argc)
+int  main()
 {
   std::vector<Curve> segments;
   PmWalkPL     pl_walk1, pl_walk2;
@@ -65,8 +60,6 @@ int  main(int argc)
   int   num_curves1, num_curves2;
   
   std::cin >> num_curves1;
-  
-  cout<<"number of curves in one map is "<<num_curves1<<"\n";
   
   NT          x1, y1, x2, y2;
   
@@ -82,8 +75,7 @@ int  main(int argc)
   segments.clear();
   
   std::cin >> num_curves2;
-  cout<<" number of curves in the other map is "<<num_curves2<<"\n";
-
+  
   while (num_curves2--) {
     std::cin >> x1 >> y1 >> x2 >> y2;
 
@@ -108,9 +100,7 @@ int  main(int argc)
   W.display();
   
   W<<CGAL::BLUE;
-  W<<pm1;
-  W<<CGAL::RED;
-  W<<pm2;
+  W<<map_overlay.subdivision();
 
   return 0;
 }
