@@ -16,6 +16,7 @@
 \label{I1_ChapterMapOverlay_2}
 
 \section{Introduction}
+\label{OVL_sec:example}
 
 Given two planar subdivisions $S_1$ and $S_2$, the overlay of 
 $S_1$ and $S_2$, denoted by $O(S_1,S_2)$ is the subdivision 
@@ -34,29 +35,44 @@ information regarding the features from $S_1$ and $S_2$ laying above it.
 
 The subdivision, representing the overlay and its two creators, 
 can be either a {\it planar map} 
-(see Chapter~\ref{I1_ChapterPlanarMap}), 
-a {\it planar map with intersections} 
-(see Chapter~\ref{I1_ChapterPmwx}), or an {\it arrangement} 
-(see Chapter~\ref{I1_ChapterArrangement_2}).
+(see Chapter~\ref{I1_ChapterPlanarMap}) 
+or a {\it planar map with intersections} 
+(see Chapter~\ref{I1_ChapterPmwx}).
+%or an {\it arrangement} (see Chapter~\ref{I1_ChapterArrangement_2}).
 
-Figure~\ref{fig:overlay_example} displays an overlay of two given rectangles.
+Figure~\ref{OVL_sec:overlay_example} displays an overlay of two given rectangles.
 
-\begin{figure}
-\begin{center}
-\ \psfig{figure=overlay_example.ps,width=14cm} \
-\end{center}
-\vspace{-2ex}
-\caption{Two rectangles (left) and their overlay (right). We denote the subdivision 
-induced by the first rectangle by $S_1$ and the second by $S_2$. 
-The face $f$ of the overlay is below $f_1$ and the unbounded face of $S_2$. 
-The halfedge $e$ of the overlay contains a halfedge pointer to $e_2$ and two faces pointers 
-to $f_1$ and to $f_2$. The vertex $v$ of the overlay points to $v_2$, contains a halfedge 
-pointer to $e_2$ and is lying below $f_1$ and $f_2$.}
-\label{fig:overlay_example}
-\end{figure}
+% \begin{figure}
+%     \begin{center}
+%         \ \psfig{figure=.overlay_example.ps,width=14cm} \
+%     \end{center}
+%     \vspace{-2ex}
+%     \caption{Two rectangles (left) and their overlay (right). We denote the subdivision 
+%        induced by the first rectangle by $S_1$ and the second by $S_2$. 
+%        The face $f$ of the overlay is below $f_1$ and the unbounded face of $S_2$. 
+%        The halfedge $e$ of the overlay contains a halfedge pointer to $e_2$ and two faces pointers 
+%        to $f_1$ and to $f_2$. The vertex $v$ of the overlay points to $v_2$, contains a halfedge 
+%        pointer to $e_2$ and is lying below $f_1$ and $f_2$.}
+%     \label{OVL_sec:overlay_example}
+% \end{figure}
+
+% \begin{figure}[h]
+% \begin{ccTexOnly}
+%     \centerline{
+%       \includegraphics{overlay_example.ps}
+%     }
+% \end{ccTexOnly}
+
+% \caption{Two rectangles (left) and their overlay (right). We denote the subdivision 
+% induced by the first rectangle by $S_1$ and the second by $S_2$. 
+% The face $f$ of the overlay is below $f_1$ and the unbounded face of $S_2$. 
+% The halfedge $e$ of the overlay contains a halfedge pointer to $e_2$ and two faces pointers 
+% to $f_1$ and to $f_2$. The vertex $v$ of the overlay points to $v_2$, contains a halfedge 
+% pointer to $e_2$ and is lying below $f_1$ and $f_2$.
+% \label{OVL_sec:overlay_example}}
 
 \section{Software Design}
-The {\ccc Map_overlay<Subdivision, Change_notification>} class 
+The \ccc{Map_overlay<Subdivision,Notifier>} class 
 is a data structure for maintaining 2D map overlay.
 The data structure maintains the subdivision obtained by overlaying 
 the two creators,
@@ -64,13 +80,14 @@ and also contains two pointers to these creators.
 The underlying combinatorial structure is determined by the
 (i) {\it Subdivision} which presents the subdivision type of the arrangement 
 representing the overlay and its two creators. 
-In our usage, {\it Subdivision} is a {\ccc Planar Map}, 
-a {\ccc Planar Map With Intersections}, or an a {\ccc Arrangement}.
+In our usage, {\it Subdivision} is a \ccc{Planar Map}, 
+a \ccc{Planar Map With Intersections}.
+% or an a \ccc{Arrangement}.
 Notice that the choice of a subdivision type determines the choice 
 of a DCEL and a traits class.
-(ii) {\it Change_notification} is the notifier class used to update the overlay features. 
-{\it Change_notification} should be a model of the 
-{\ccc PlanarMapWithIntersectionsChangeNotification_2} concept.
+(ii) {\it Notifier>} is the notifier class used to update the overlay features. 
+{\it Notifier} should be a model of the 
+\ccc{PlanarMapWithIntersectionsChangeNotification_2} concept.
 
 \paragraph{Map Overlay Algorithms:}
 The input to our algorithms are two planar subdivisions denoted by $S_1$ and $S_2$ having 
@@ -88,11 +105,15 @@ and maintaining within each input curve its corresponding halfedge.
 The latter information is needed when using the notifier in order to
 update the creator pointers. 
 
+Our experimets show that the sweep-line algorithm is much faster than the incremental algorithm,
+and hence, users are most encouraged to employ the sweep-line algorithm 
+and use \ccc{Planar Map} as their subdivision. 
+
 \paragraph{Map Overlay DCEL:}
-The {\ccc Map_overlay_default_dcel<Traits,Vertex_base,Halfedge_base,Face_base>}
+The \ccc{Map_overlay_default_dcel<Traits,Vertex_base,Halfedge_base,Face_base>}
 class is the data structure representing the DCEL of the overlay. 
 The basic components of the DCEL of the overlay are built 
-on top of the basic components of the {\ccc Planar Map} or the {\ccc Arrangement} 
+on top of the basic components of the \ccc{Planar Map} or the \ccc{Planar Map With Intersections} 
 (depending on the subdivision we choose in order to represent the overlay and its 
 two creators).
 
@@ -115,14 +136,14 @@ we choose one such face arbitrarily.
 \paragraph{Map Overlay Notifier:}
 Updating the DCEL additional attributes is performed by the {\em notifier} class.
 We extend and override the notification functions of the basic {\em notifier}, defined 
-in the {\ccc Planar_Map} package (see Chapter~\ref{I1_ChapterPlanarMap}), 
+in the \ccc{Planar_Map} package (see Chapter~\ref{I1_ChapterPlanarMap}), 
 to update the corresponding features constructed by the overlay. 
 
-The {\ccc Map_overlay_default_notifier<Subdivision>} class 
+The \ccc{Map_overlay_default_notifier<Subdivision>} class 
 keeps on updating the additional information in the DCEL.
 It updates the pointers to the components of the creators.
-The notifier class overrides only the functions {\ccc add\_edge} 
-and {\ccc split\_edge} of the basic notifier defined for {\ccc Planar_Map}.
+The notifier class overrides only the functions \ccStyle{add_edge} 
+and \ccStyle{split_edge} of the basic notifier defined for \ccc{Planar_Map}.
 In our implementation these functions update 
 the pointers of the halfedges and the vertices in the DCEL 
 presenting the overlay, see Chapter~\ref{I1_ChapterPlanarMap} for details.
@@ -130,7 +151,7 @@ In order to update the creator face pointers, we define a new function in our no
 which traverses all features in the overlay in a DFS manner and updates the 
 corresponding pointers. This function is invoked once we have terminated 
 inserting into the overlay all the curves of $S_1$ and $S_2$.
-We did not use the {\ccc split\_face} function in order to update a face pointers, 
+We did not use the \ccStyle{split_face} function in order to update a face pointers, 
 since it is invoked each time a cycle in the DCEL is closed and degrade performance. 
 
 \subsection{Example of an Overlaying Two Subdivisions of Line Segments:}
