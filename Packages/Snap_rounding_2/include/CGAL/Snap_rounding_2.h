@@ -256,7 +256,7 @@ public:
   /*! Determine the output mode: integer grid or closest grid point
       or Snap Rounding (SR).
    */
-  void use_integer_output(bool inp_int_output);
+  void use_integer_mode(bool inp_int_output);
 
   template<class Out>
   void output(Out &o);
@@ -1114,7 +1114,7 @@ void Snap_rounding_2<Rep_>::do_isr(bool inp_do_isr)
   }
 
 template<class Rep_>
-void Snap_rounding_2<Rep_>::use_integer_output(bool inp_int_output)
+void Snap_rounding_2<Rep_>::use_integer_mode(bool inp_int_output)
   { 
     int_output = inp_int_output;
     need_sr = true;

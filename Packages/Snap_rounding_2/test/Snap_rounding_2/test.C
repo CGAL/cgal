@@ -106,10 +106,10 @@ int main(int argc,char *argv[])
   print_out(s1);
 
   // output for integer mode
-  s1.use_integer_output(true);
+  s1.use_integer_mode(true);
   std::cout << "\nthe output for integer grid\n";
   print_out(s1);
-  s1.use_integer_output(false);
+  s1.use_integer_mode(false);
 
 
   std::cout << "\noutput after removing first element\n";
