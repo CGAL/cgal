@@ -134,13 +134,6 @@ private:
   void deactivating()
   {
     widget->setCursor(oldcursor);
-		
-    RasterOp old = widget->rasterOp();	//save the initial raster mode
-    widget->setRasterOp(XorROP);
-    widget->lock();
-    *widget << CGAL::GREEN;
-    widget->unlock();
-    widget->setRasterOp(old);
   };
 };//end class 
 
