@@ -26,6 +26,7 @@
 #include <CGAL/Cartesian/solve_3.h>
 #include <vector>
 #include <functional>
+#include <CGAL/predicate_classes_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -53,9 +54,12 @@ public:
   typedef typename R::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
-  TetrahedronC3();
+  TetrahedronC3()
+    : Tetrahedron_handle_3(Tetrahedron_ref_3()) {}
+
   TetrahedronC3(const Point_3 &p, const Point_3 &q, const Point_3 &r,
-                const Point_3 &s);
+                const Point_3 &s)
+    : Tetrahedron_handle_3(Tetrahedron_ref_3(p, q, r, s)) {}
 
   Point_3    vertex(int i) const;
   Point_3    operator[](int i) const;
@@ -65,7 +69,13 @@ public:
 
   Bbox_3     bbox() const;
 
-  Self       transform(const Aff_transformation_3 &t) const;
+  Self       transform(const Aff_transformation_3 &t) const
+  {
+    return TetrahedronC3(t.transform(vertex(0)),
+                         t.transform(vertex(1)),
+                         t.transform(vertex(2)),
+                         t.transform(vertex(3)));
+  }
 
   Orientation    orientation() const;
   Oriented_side  oriented_side(const Point_3 &p) const;
@@ -81,35 +91,14 @@ public:
 };
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
-TetrahedronC3<R CGAL_CTAG>::TetrahedronC3()
-  : Tetrahedron_handle_3(Tetrahedron_ref_3()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-TetrahedronC3<R CGAL_CTAG>::
-TetrahedronC3(const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &p,
-              const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &q,
-              const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &r,
-              const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &s)
-  : Tetrahedron_handle_3(Tetrahedron_ref_3(p, q, r, s)) {}
-
-template < class Point_3 >
-struct Less_xyzC3 {
-  // cannot reuse it from predicate_classes, because of
-  // problems with file inclusions...
-  bool operator() (Point_3 const &p, Point_3 const &q) {
-      return lexicographically_xyz_smaller_or_equal(p,q);
-    }
-};
-
-template < class R >
 bool
 TetrahedronC3<R CGAL_CTAG>::
 operator==(const TetrahedronC3<R CGAL_CTAG> &t) const
 {
-  if ( identical(t) ) return true;
-  if ( orientation() != t.orientation() ) return false;
+  if (identical(t))
+      return true;
+  if (orientation() != t.orientation())
+      return false;
 
   std::vector< Point_3 > V1;
   std::vector< Point_3 > V2;
@@ -118,8 +107,8 @@ operator==(const TetrahedronC3<R CGAL_CTAG> &t) const
   int k;
   for ( k=0; k < 4; k++) V1.push_back( vertex(k));
   for ( k=0; k < 4; k++) V2.push_back( t.vertex(k));
-  std::sort(V1.begin(), V1.end(), Less_xyzC3<Point_3>());
-  std::sort(V2.begin(), V2.end(), Less_xyzC3<Point_3>());
+  std::sort(V1.begin(), V1.end(), Less_xyz<Point_3>());
+  std::sort(V2.begin(), V2.end(), Less_xyz<Point_3>());
   uniq_end1 = std::unique( V1.begin(), V1.end());
   uniq_end2 = std::unique( V2.begin(), V2.end());
   V1.erase( uniq_end1, V1.end());
@@ -263,18 +252,6 @@ TetrahedronC3<R CGAL_CTAG>::bbox() const
 {
   return vertex(0).bbox() + vertex(1).bbox()
        + vertex(2).bbox() + vertex(3).bbox();
-}
-
-template < class R >
-inline
-TetrahedronC3<R CGAL_CTAG>
-TetrahedronC3<R CGAL_CTAG>::transform
-  (const typename TetrahedronC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
-{
-  return TetrahedronC3<R CGAL_CTAG>(t.transform(vertex(0)),
-                           t.transform(vertex(1)),
-                           t.transform(vertex(2)),
-                           t.transform(vertex(3)));
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TETRAHEDRONC3
