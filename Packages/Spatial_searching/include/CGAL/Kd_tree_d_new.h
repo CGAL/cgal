@@ -36,7 +36,10 @@ namespace CGAL {
   template <class Traits>
   class Kdtree_d {
 
+  public:
   typedef typename Traits::Iso_box_d Box;
+  private:
+
   typedef typename Traits::Item Item;
   typedef std::list<Item> Item_list; 
 
