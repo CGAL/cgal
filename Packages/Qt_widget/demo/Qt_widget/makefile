@@ -48,9 +48,18 @@ DEMO_SUBDIRS= \
 ./Convex_Hull_2 \
 ./Max_k-gon
 
-all:            \
-                constrained$(EXE_EXT) 
-	for dir in ${DEMO_SUBDIRS}; do make -C $$dir; done
+all:             \
+                constrained$(EXE_EXT)
+	badexit=""; \
+	for dir in $(DEMO_SUBDIRS); do \
+	  (cd $$dir && make ) || badexit="yes";\
+	done; \
+        test -z $$badexit
+
+$(DEMO_SUBDIRS):
+	cd $@ && make
+
+#	for dir in ${DEMO_SUBDIRS}; do make -C $$dir; done
 
 constrained.moc: constrained.C
 	$(QT_MOC) -o constrained.moc $<
