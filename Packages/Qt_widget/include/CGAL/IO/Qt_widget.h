@@ -34,6 +34,7 @@
 #include <qmessagebox.h>
 #include <qprinter.h>
 
+
 #ifndef CGAL_QT_WIDGET_HISTORY_H
   #include <CGAL/IO/Qt_widget_history.h>
 #endif

@@ -36,10 +36,10 @@
 #include <qstatusbar.h>
 #include <qbuttongroup.h>
 
-typedef CGAL::Cartesian<CGAL::MP_Float>        K;
-typedef CGAL::Partition_traits_2<K>            Traits;
-typedef Traits::Point_2                        Point_2;
-typedef Traits::Polygon_2                      Cgal_Polygon;
+typedef CGAL::Cartesian<CGAL::MP_Float>                   K;
+typedef CGAL::Partition_traits_2<K>                       Traits;
+typedef Traits::Point_2                                   Point_2;
+typedef Traits::Polygon_2                                 Cgal_Polygon;
 
 namespace CGAL {
 
@@ -60,18 +60,18 @@ public:
 
 private:
   QToolBar      *maintoolbar;
-  QToolButton		*but[10];
+  QToolButton	*but[10];
   Qt_widget     *widget;
-  QMainWindow		*window;
+  QMainWindow   *window;
   QButtonGroup	*button_group;
-  int			nr_of_buttons;
+  int           nr_of_buttons;
 
-  CGAL::Qt_layer_mouse_coordinates                  *showMC;
-  CGAL::Qt_layer_show_polygon <Cgal_Polygon>	    *showP;
-  CGAL::Qt_layer_show_greene_approx <Cgal_Polygon > *showGA;
-  CGAL::Qt_layer_show_ymonotone <Cgal_Polygon>      *showYM;
-  CGAL::Qt_layer_show_optimal_convex <Cgal_Polygon> *showOC;
-  CGAL::Qt_layer_show_polygon_points <Cgal_Polygon> *showPP;
+  CGAL::Qt_layer_mouse_coordinates                   *showMC;
+  CGAL::Qt_layer_show_polygon <Cgal_Polygon>	     *showP;
+  CGAL::Qt_layer_show_greene_approx <Cgal_Polygon >  *showGA;
+  CGAL::Qt_layer_show_ymonotone <Cgal_Polygon>       *showYM;
+  CGAL::Qt_layer_show_optimal_convex <Cgal_Polygon>  *showOC;
+  CGAL::Qt_layer_show_polygon_points <Cgal_Polygon>  *showPP;
 
 };//end class
 

@@ -44,7 +44,7 @@ namespace CGAL {
      nr_of_buttons(0)
   {
     showMC = new Qt_layer_mouse_coordinates(*mw);
-    showP  = new Qt_layer_show_polygon<Cgal_Polygon>(*p);
+    showP = new Qt_layer_show_polygon<Cgal_Polygon>(*p);
     showGA = new Qt_layer_show_greene_approx<Cgal_Polygon>(*p);
     showYM = new Qt_layer_show_ymonotone<Cgal_Polygon>(*p);
     showOC = new Qt_layer_show_optimal_convex<Cgal_Polygon>(*p);

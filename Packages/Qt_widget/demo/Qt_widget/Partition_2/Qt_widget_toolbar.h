@@ -61,14 +61,14 @@ signals:
 private slots:
 	
 private:
-  QToolBar       *maintoolbar;
-  QToolButton    *but[10];
-  Qt_widget      *widget;
-  QButtonGroup   *button_group;
-  int		 nr_of_buttons;
+  QToolBar        *maintoolbar;
+  QToolButton     *but[10];
+  Qt_widget       *widget;
+  QButtonGroup    *button_group;
+  int             nr_of_buttons;
 	
   CGAL::Qt_widget_get_simple_polygon<Cgal_Polygon>
-                 getsimplebut;
+                  getsimplebut;
 };//end class
 
 };//end namespace
