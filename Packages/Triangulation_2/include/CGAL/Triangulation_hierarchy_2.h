@@ -12,7 +12,6 @@
 // release_date  :
 //
 // file          : include/CGAL/Triangulation_hierarchy_2.h
-// source        : $RCSfile$
 // revision      : 
 // revision_date : 
 // package       : Triangulation
@@ -22,8 +21,8 @@
 //
 // ============================================================================
 
-#ifndef TRIANGULATION_HIERARCHY_2_H
-#define TRIANGULATION_HIERARCHY_2_H
+#ifndef CGAL_TRIANGULATION_HIERARCHY_2_H
+#define CGAL_TRIANGULATION_HIERARCHY_2_H
 
 #include <CGAL/Random.h>
 
@@ -448,4 +447,5 @@ random_level()
 }
 
 CGAL_END_NAMESPACE
-#endif //TRIANGULATION_HIERARCHY_2_H
+
+#endif // CGAL_TRIANGULATION_HIERARCHY_2_H
