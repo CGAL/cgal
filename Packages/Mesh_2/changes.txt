@@ -1,3 +1,7 @@
+28 June 2004 Laurent Rineau
+- Move mark_facets functions from Delaunay_mesh_2 to
+  Conforming_Delaunay_triangulation_2.
+
 17 May 2004 Menelaos Karavelas
 - replaced Point by Point_2 in the demo in order to resolve clash with
   the Mac version of Qt
