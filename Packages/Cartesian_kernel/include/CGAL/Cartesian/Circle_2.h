@@ -204,7 +204,7 @@ has_on_bounded_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
 {
     // FIXME: predicate
   // return squared_distance(center(),p) < squared_radius();
-  return bounded_side(p) == ON_XXX_SIDE;
+  return bounded_side(p) == ON_BOUNDED_SIDE;
 }
 
 template < class R >
@@ -215,7 +215,7 @@ has_on_unbounded_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
 {
     // FIXME: predicate
   // return squared_distance(center(),p) > squared_radius();
-  return bounded_side(p) == ON_!!!_SIDE;
+  return bounded_side(p) == ON_UNBOUNDED_SIDE;
 }
 
 template < class R >
