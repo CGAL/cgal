@@ -127,7 +127,7 @@ typename Triangulation_ds_face_2<Tds>::Vertex_handle
 Triangulation_ds_face_2<Tds>::
 mirror_vertex(int i) const
 {
-  CGAL_triangulation_precondition ( neighbor(i) != NULL);
+  CGAL_triangulation_precondition ( neighbor(i) != NULL &&  dimension() >= 1);
   //return neighbor(i)->vertex(neighbor(i)->index(this->handle()));
   return neighbor(i)->vertex(mirror_index(i));
 }
@@ -138,8 +138,8 @@ Triangulation_ds_face_2<Tds>::
 mirror_index(int i) const
 {
   // return the index of opposite vertex in neighbor(i);
-  CGAL_triangulation_precondition (neighbor(i) != NULL);
-  //return neighbor(i)->index(this->handle());
+  CGAL_triangulation_precondition (neighbor(i) != NULL &&  dimension() >= 1);
+  if (dimension() == 1) return neighbor(i)->index(this->handle());
   return ccw( neighbor(i)->index(vertex(ccw(i))));
 }
 
@@ -210,10 +210,12 @@ is_valid(bool verbose, int level) const
   bool result = Fb::is_valid(verbose, level);
   for(int i = 0; i <= dimension(); i++) {
     Face_handle n = neighbor(i);
-    // MK: this needs to be changed so that we get the correct index
-    // when we have two faces with two common edges
-    //    int in = n->index(this->handle());
-    int in = n->index(mirror_vertex(i));
+    // the strange formulation in case dimension()==2 
+    // is used to handle the cases of TDS allowing
+    // two faces with two common edges
+    int in;
+    if (dimension() == 0) in = n->index(this->handle());
+    else in = n->index(mirror_vertex(i));
     result = result && ( this->handle() == n->neighbor(in) );
     switch(dimension()) {
     case 0 : 

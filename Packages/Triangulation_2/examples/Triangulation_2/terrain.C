@@ -20,6 +20,7 @@ int main()
 
   Delaunay dt;
   dt.insert(begin, end);
+  std::cout << dt.number_of_vertices() << std::endl;
   return 0;
 }
 
