@@ -123,8 +123,8 @@ namespace CGAL {
 
     template <class PointPointerIter>
     void update_from_point_pointers(PointPointerIter begin, 
-                                    PointPointerIter end, bool empty) {
-      if (empty) { // no points
+                                    PointPointerIter end) {
+      if (begin ==end) { // no points
 	for (int i=0; i < dim; ++i) {
 	  lower_[i]= FT(1); upper_[i]= FT(-1);
 	}
