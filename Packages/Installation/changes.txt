@@ -3,8 +3,9 @@
 //=====================================================================
 
 20 August 2004 Sylvain Pion
-- Rename "CGAL_CFG_NO_LONGNAME_PROBLEM.C" to "CGAL_CFG_LONGNAME_BUG.C".
-  (seems more correct)
+- install_cgal : Rename "CGAL_CFG_NO_LONGNAME_PROBLEM.C" to
+  "CGAL_CFG_LONGNAME_BUG.C" (seems more correct).
+- install_cgal : replace now obsolete sed command by cat.
 
 18 August 2004 Radu Ursu
 - install GMP in the CGAL tree copies also mpfr.h and mpf2mpfr.h

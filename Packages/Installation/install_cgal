@@ -1157,7 +1157,7 @@ create_replacement_header()
         ${_printf} "%s\n" "#include <$arg>" > ${tmp_code_file}
 	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
 	if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then
-	    ${_sed} "s/@CGAL@/${CGAL_VERSION}/;s@FILE@${_final_file};s/@VERSION@/${CGAL_INSTALL_VERSION}/" <<EOF3 >>${replacement_header}
+	    ${_cat} <<EOF3 >>${replacement_header}
 // Copyright (c) 1996-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
