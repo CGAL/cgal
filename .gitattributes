@@ -456,3 +456,7 @@ Packages/Triangulation_3/doc_tex/basic/Triangulation_3/topo-simplex2.gif svneol=
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/topo-simplex3.gif svneol=native#unset
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/topo-simplex4.gif svneol=native#unset
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/utils.gif svneol=native#unset
+Packages/Viewer_3/doc_tex/Viewer_3/viewer.eps -text
+Packages/Viewer_3/doc_tex/Viewer_3/viewer.gif -text svneol=unset#unset
+Packages/Viewer_3/doc_tex/support/Viewer_3/viewer.eps -text
+Packages/Viewer_3/doc_tex/support/Viewer_3/viewer.gif -text svneol=unset#unset

@@ -1,0 +1,933 @@
+// ============================================================================
+//
+// Copyright (c) 1999 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/draw_CGAL_Objects.h
+// revision      : $Revision$
+//
+// author(s)     : Francois Rebufat <Francois.Rebufat@sophia.inria.fr>
+//
+// coordinator   : INRIA Sophia Antipolis 
+//                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
+//
+// ============================================================================
+#include <CGAL/Cartesian.h>
+#ifndef V_UTILS
+#include <CGAL/v_utils.h>
+#endif 
+#ifndef DRAWABLE 
+#include <CGAL/Drawable_object.h>
+#endif
+// style for drawing objects
+// enum Style {FILL=1, WIRE, RAW, FOS1, FOS2, FOS3, FOS4, FOS5};
+
+CGAL_BEGIN_NAMESPACE
+
+
+//#### DRAWABLE POINT #######
+template<class Point3>
+class Drawable_point_3: public  Drawable_object
+{
+private:
+  double x,y,z;
+public:
+
+  ~Drawable_point_3(){}
+  Drawable_point_3(){type="Point";}
+  Drawable_point_3(const Point3 &p, Color c, Style sty=FILL, Size s =
+		   5 , Precision prec=15)
+    {
+     x=to_double(p.x());
+     y=to_double(p.y());
+     z=to_double(p.z());
+     color = c; size = s;
+     set_center(); precision=prec; lind=0; style=sty;type="Point";
+    }
+
+   Drawable_point_3(const double x1,const double y1,const double z1,
+		    Color c, Style sty=FILL, Size s = 5 , Precision
+		    prec=15)
+
+    {
+     x=x1;
+     y=y1;
+     z=z1;
+     color = c; size = s;
+     set_center(); precision=prec; lind=0; style=sty;type="Point";
+    }
+
+
+  void set_center()
+    {
+      o_center[0]=x; o_center[1]=y; o_center[2]=z;
+    }
+
+
+
+
+  void draw() 
+    {
+ 
+      if (lind)
+	glCallList(lind);
+      else {
+	lind = glGenLists(1);
+	glNewList(lind,GL_COMPILE_AND_EXECUTE);
+	set_color(color);
+	if (style==WIRE) {
+	  GLUquadricObj *q= gluNewQuadric();
+	  glPushMatrix();
+	  glTranslatef(x, y, z);
+	  gluQuadricNormals(q, (GLenum) GL_SMOOTH);
+	  gluQuadricDrawStyle(q,(GLenum) GLU_LINE);
+	  glLineWidth(1);
+	  gluSphere(q,size,precision,precision);
+	  glPopMatrix();
+	  gluDeleteQuadric(q);
+	}
+	else if (style==FILL) {
+	  GLUquadricObj *q= gluNewQuadric();
+	  glPushMatrix();
+	  glTranslatef(x, y, z);
+	  gluQuadricNormals(q, (GLenum) GL_SMOOTH);
+	  gluQuadricDrawStyle(q,(GLenum) GLU_FILL);
+	  gluSphere(q,size,precision,precision);
+	  glPopMatrix();
+	  gluDeleteQuadric(q);
+        }
+	else {
+	  glPointSize(size);
+	  glBegin(GL_POINTS);
+	  glVertex3f(x,y,z);
+	  glEnd();
+	}
+	glEndList();
+      }
+    }
+
+};
+
+
+// #### DRAWABLE SEGMENT #####
+// draw a segment as a tube.
+
+template<class segment3>
+class Drawable_segment_3: public  Drawable_object
+{
+private:
+  double x1 , y1, z1,x2,y2,z2 ;
+
+public:
+
+  Drawable_segment_3(){type="Segment";}
+  Drawable_segment_3(const segment3 &sg,Color c, Style sty= RAW, Size
+		     s=5, Precision prec=15)
+    {
+      x1=to_double(sg.source().x());
+      y1=to_double(sg.source().y());
+      z1=to_double(sg.source().z());
+      x2=to_double(sg.target().x());
+      y2=to_double(sg.target().y());
+      z2=to_double(sg.target().z());
+      color = c; size=s; style = sty;
+      set_center(); precision=prec;lind=0;type="Segment";
+    }
+
+  void set_center()
+    {
+      o_center[0]=(x1+x2)/2; o_center[1]=(y1+y2)/2;
+      o_center[2]=(z1+z2)/2;
+    }
+
+void draw()
+  {
+  if(lind)
+    glCallList(lind);
+  else {
+   lind = glGenLists(1);
+   glNewList(lind,GL_COMPILE_AND_EXECUTE);
+   set_color(color);
+   if (style==FILL) {
+     GLUquadricObj *q= gluNewQuadric();
+     std::pair<double, double> ag=get_angles(x1,y1,z1,x2,y2,z2);
+     double l=sqrt(pow(x1-x2,2) +pow(y1-y2,2) + pow(z1-z2,2));
+     glPushMatrix();
+     glTranslatef(x1, y1, z1);
+     glRotatef(ag.first,1,0,0);
+     glRotatef(ag.second,0,1,0);
+     gluQuadricNormals(q, (GLenum) GL_SMOOTH);
+     gluCylinder(q, size, size, l, precision, 1);
+     glPopMatrix();
+     gluDeleteQuadric(q);
+   }
+   else {
+     glLineWidth(size);
+     glBegin(GL_LINES);
+       glVertex3f(x1,y1,z1);
+       glVertex3f(x2,y2,z2);
+     glEnd();
+   }
+
+   glEndList();
+  }
+  }
+};
+
+
+
+
+ //### DRAWABLE SET OF POINTS ######
+// The type pointed by InputIterator must be Point
+ template < class InputIterator, class Point >
+class Drawable_points_set_3: public  Drawable_object
+ {
+private:
+   std::list<Point> LP;
+
+ public:
+   Drawable_points_set_3(){type="Point Set";}
+   Drawable_points_set_3(InputIterator first, InputIterator
+ 			last,Color c, Style sty=FILL, Size s=5,
+			 Precision prec=15)
+    {
+      while(first!=last) {
+        LP.push_back(*first);
+        ++first;
+      }
+     color = c; size = s;
+     set_center(); precision=prec; lind=0;
+     style=sty;type="Point Set";
+    }
+
+
+
+  void draw() 
+    {
+       if (lind)
+	glCallList(lind);
+      else 
+	{
+  	  std::list<Point>::iterator it;
+	  lind = glGenLists(1);
+	  glNewList(lind,GL_COMPILE_AND_EXECUTE);
+	   set_color(color);
+	   for (it=LP.begin();it!=LP.end();it++) {
+	     GLUquadricObj *q= gluNewQuadric();
+	     glPushMatrix();
+	     glTranslatef(to_double(it->x()), to_double(it->y()), to_double(it->z()));
+	     gluQuadricNormals(q, (GLenum) GL_SMOOTH);
+	     if (style != FILL) {
+	       gluQuadricDrawStyle(q,(GLenum) GLU_LINE);
+               glLineWidth(1);
+	     }
+	     else
+	       gluQuadricDrawStyle(q,(GLenum) GLU_FILL);
+	     gluSphere(q,size,precision,precision);
+	     glPopMatrix();
+	     gluDeleteQuadric(q);
+	   }
+	   glEndList();
+	}
+    }
+   
+
+  void set_center()
+    {
+      std::list<Point>::iterator it;
+      int s=LP.size();
+      double o1=0; double o2=0; double o3=0;
+      for (it=LP.begin();it!=LP.end();it++) {
+	o1+=to_double(it->x());
+	o2+=to_double(it->y());
+	o3+=to_double(it->z());
+      }
+      o_center[0]=o1/s; o_center[1]=o2/s; o_center[2]=o3/s;
+    }
+
+ void add_point(double x, double y, double z) 
+   {
+     glDeleteLists(lind,1);
+     lind=0;
+     LP.push_back(Point(x,y,z));
+     set_center();
+   }
+		  
+};
+
+
+
+
+
+
+template<class triangle>
+class Drawable_triangle_3: public  Drawable_object
+{
+private:
+  triangle tr;
+
+public:
+
+  Drawable_triangle_3(){type="Triangle";}
+  Drawable_triangle_3(const triangle &tri,Color c, Style sty=WIRE,
+		      Size s=2, Precision prec = 0)
+    {
+      tr=tri;
+      color = c; size=s;
+      set_center();lind=0;type="Triangle";style=sty;
+    }
+
+  void set_center()
+    {
+      o_center[0]=(tr[0].x()+tr[1].x()+tr[2].x())/3; 
+      o_center[1]=(tr[0].y()+tr[1].y()+tr[2].y())/3;
+      o_center[2]=(tr[0].z()+tr[1].z()+tr[2].z())/3;
+    }
+
+void draw()
+{
+  if(lind)
+    glCallList(lind);
+  else {
+    lind = glGenLists(1);
+    glNewList(lind,GL_COMPILE_AND_EXECUTE);
+    glLineWidth(size);
+    set_color(color);
+    if (style==WIRE) 
+      glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    else
+      glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+    draw_triangle(tr[0].x(),tr[0].y(),tr[0].z(),tr[1].x(),tr[1].y(),tr[1].z(),
+		  tr[2].x(),tr[2].y(),tr[2].z()); 
+    glEndList();
+  }
+}
+};
+
+template<class tetrahedron>
+class Drawable_tetrahedron_3: public  Drawable_object
+{
+private:
+  tetrahedron tr;
+
+public:
+
+  Drawable_tetrahedron_3(){type="Tetrahedron";}
+  Drawable_tetrahedron_3(const tetrahedron &tet,Color c, Style
+			 sty=WIRE, Size s=5, Precision prec=15)
+
+    {
+      tr=tet;
+      color = c; size=s;
+      set_center();lind=0;type="Tetrahedron";style=sty;precision=prec;
+    }
+
+  void set_center()
+    {
+      o_center[0]=(tr[0].x()+tr[1].x()+tr[2].x()+tr[3].x())/4; 
+      o_center[1]=(tr[0].y()+tr[1].y()+tr[2].y()+tr[3].y())/4;
+      o_center[2]=(tr[0].z()+tr[1].z()+tr[2].z()+tr[3].z())/4;
+    }
+
+void draw()
+  {
+  if(lind)
+    glCallList(lind);
+  else {
+   lind = glGenLists(1);
+
+   glNewList(lind,GL_COMPILE_AND_EXECUTE);
+     glLineWidth(size);
+     set_color(color);
+     if (style==RAW) {
+       glBegin(GL_LINES);
+	 glVertex3f(tr[0].x(),tr[0].y(),tr[0].z());
+	 glVertex3f(tr[1].x(),tr[1].y(),tr[1].z());
+	 glVertex3f(tr[0].x(),tr[0].y(),tr[0].z());
+	 glVertex3f(tr[3].x(),tr[3].y(),tr[3].z());
+	 glVertex3f(tr[0].x(),tr[0].y(),tr[0].z());
+	 glVertex3f(tr[2].x(),tr[2].y(),tr[2].z());
+	 glVertex3f(tr[1].x(),tr[1].y(),tr[1].z());
+	 glVertex3f(tr[2].x(),tr[2].y(),tr[2].z());
+	 glVertex3f(tr[1].x(),tr[1].y(),tr[1].z());
+	 glVertex3f(tr[3].x(),tr[3].y(),tr[3].z());
+	 glVertex3f(tr[2].x(),tr[2].y(),tr[2].z());
+	 glVertex3f(tr[3].x(),tr[3].y(),tr[3].z());
+
+       glEnd();
+     }
+     else if (style==WIRE){
+       draw_tube(tr[0].x(),tr[0].y(),tr[0].z(),tr[1].x(),
+		 tr[1].y(),tr[1].z(),size,precision);
+       draw_tube(tr[0].x(),tr[0].y(),tr[0].z(),tr[2].x(),
+		 tr[2].y(),tr[2].z(),size,precision);
+       draw_tube(tr[0].x(),tr[0].y(),tr[0].z(),tr[3].x(),
+		 tr[3].y(),tr[3].z(),size,precision);
+       draw_tube(tr[1].x(),tr[1].y(),tr[1].z(),tr[3].x(),
+		 tr[3].y(),tr[3].z(),size,precision);
+       draw_tube(tr[2].x(),tr[2].y(),tr[2].z(),tr[3].x(),
+		 tr[3].y(),tr[3].z(),size,precision);
+       draw_tube(tr[1].x(),tr[1].y(),tr[1].z(),tr[2].x(),
+		 tr[2].y(),tr[2].z(),size,precision);
+       draw_sphere(tr[0].x(),tr[0].y(),tr[0].z(),size+1, precision);
+       draw_sphere(tr[1].x(),tr[1].y(),tr[1].z(),size+1, precision);
+       draw_sphere(tr[2].x(),tr[2].y(),tr[2].z(),size+1, precision);
+       draw_sphere(tr[3].x(),tr[3].y(),tr[3].z(),size+1, precision);
+       
+     }
+     else {
+       draw_triangle(tr[0].x(),tr[0].y(),tr[0].z(),tr[1].x(),tr[1].y(),
+		     tr[1].z(),tr[2].x(),tr[2].y(),tr[2].z());
+       draw_triangle(tr[0].x(),tr[0].y(),tr[0].z(),tr[1].x(),tr[1].y(),
+		     tr[1].z(),tr[3].x(),tr[3].y(),tr[3].z());
+       draw_triangle(tr[0].x(),tr[0].y(),tr[0].z(),tr[3].x(),tr[3].y(),
+		     tr[3].z(),tr[2].x(),tr[2].y(),tr[2].z());
+       draw_triangle(tr[1].x(),tr[1].y(),tr[1].z(),tr[2].x(),tr[2].y(),
+		     tr[2].z(),tr[3].x(),tr[3].y(),tr[3].z());
+     }
+
+   glEndList();
+  
+  }
+  }
+};
+
+
+
+
+
+template<class line3>
+class Drawable_line_3: public  Drawable_object
+{
+private:
+  double x1 , y1, z1,x2,y2,z2 ;
+
+public:
+
+  Drawable_line_3(){type="Line";}
+  Drawable_line_3(const line3 &ln, Color c, Style sty=RAW, Size s=2 , Precision
+  		   prec=15)
+    {
+      x1=ln.point(5000).x();
+      y1=ln.point(5000).y();
+      z1=ln.point(5000).z();
+      x2=ln.point(-5000).x();
+      y2=ln.point(-5000).y();
+      z2=ln.point(-5000).z();
+      color = c; size=s;style=sty;
+      set_center(); precision=prec;lind=0;type="Line";
+    }
+
+  void set_center()
+    {
+      o_center[0]=(x1+x2)/2; o_center[1]=(y1+y2)/2;
+      o_center[2]=(z1+z2)/2;
+    }
+
+void draw()
+  {
+  if(lind)
+    glCallList(lind);
+  else {
+   lind = glGenLists(1);
+   glNewList(lind,GL_COMPILE_AND_EXECUTE);
+   set_color(color);
+   if (style==FILL) {
+     GLUquadricObj *q = gluNewQuadric();
+     std::pair<double, double> ag=get_angles(x1,y1,z1,x2,y2,z2);
+     double l=sqrt(pow(x1-x2,2) + pow(y1-y2,2) + pow(z1-z2,2));
+     glPushMatrix();
+     glTranslatef(x1, y1, z1);
+     glRotatef(ag.first,1,0,0);
+     glRotatef(ag.second,0,1,0);
+     gluQuadricDrawStyle(q,(GLenum) GLU_FILL);
+     gluQuadricNormals(q, (GLenum) GL_SMOOTH);
+     gluCylinder(q, size, size, l, precision, precision);
+     glPopMatrix();
+     gluDeleteQuadric(q);
+   }
+   else {
+     glLineWidth(size);
+     glBegin(GL_LINES);
+       glVertex3f(x1,y1,z1);
+       glVertex3f(x2,y2,z2);
+     glEnd();
+   }
+
+   glEndList();
+  }
+  }
+};
+
+
+template<class ray3>
+class Drawable_ray_3: public  Drawable_object
+{
+private:
+  double x1 , y1, z1,x2,y2,z2 ;
+
+public:
+
+  Drawable_ray_3(){type="Ray";}
+  Drawable_ray_3(const ray3 &ry, Color c, Style sty=RAW, Size s=2 , Precision
+  		   prec=15)
+    {
+      x1=ry.source().x();
+      y1=ry.source().y();
+      z1=ry.source().z();
+      x2=ry.point(5000).x();
+      y2=ry.point(5000).y();
+      z2=ry.point(5000).z();
+      color = c; size=s;style=sty;
+      set_center(); precision=prec;lind=0;type="Ray";
+    }
+
+  void set_center()
+    {
+      o_center[0]=x1; o_center[1]=y1;
+      o_center[2]=z1;
+    }
+
+void draw()
+  {
+  if(lind)
+    glCallList(lind);
+  else {
+   lind = glGenLists(1);
+   glNewList(lind,GL_COMPILE_AND_EXECUTE);
+   set_color(color);
+   if (style==FILL) {
+     GLUquadricObj *q= gluNewQuadric();
+     std::pair<double, double> ag=get_angles(x1,y1,z1,x2,y2,z2);
+     double l=sqrt(pow(x1-x2,2) +pow(y1-y2,2) + pow(z1-z2,2));
+     glPushMatrix();
+     glTranslatef(x1, y1, z1);
+     glRotatef(ag.first,1,0,0);
+     glRotatef(ag.second,0,1,0);
+     gluQuadricDrawStyle(q,(GLenum) GLU_FILL);
+     gluQuadricNormals(q, (GLenum) GL_SMOOTH);
+     gluCylinder(q, size, size, l, precision, precision);
+     glPopMatrix();
+     gluDeleteQuadric(q);
+   }
+   else {
+     glLineWidth(size);
+     glBegin(GL_LINES);
+       glVertex3f(x1,y1,z1);
+       glVertex3f(x2,y2,z2);
+     glEnd();
+   }
+
+   glEndList();
+  }
+  }
+};
+
+
+
+
+
+
+// ###################### 2-D drawable Objetct #######################
+
+
+//#### DRAWABLE POINT #######
+template<class Point2>
+class Drawable_point_2: public  Drawable_object
+{
+private:
+  double x,y;
+public:
+
+  Drawable_point_2(){type="Point";}
+  Drawable_point_2(const Point2 &p, Color c, Style
+		   sty=RAW, Size s = 5 , Precision
+		   prec=5)
+    {
+     x=to_double(p.x());
+     y=to_double(p.y());
+     color = c; size = s;
+     set_center(); precision=prec; lind=0; style=sty;type="Point_2";
+    }
+
+   Drawable_point_2(const double x1,const double y1,
+		    Color c, Style sty=RAW, Size s = 5 , Precision
+		    prec=5)
+
+    {
+     x=x1;
+     y=y1;
+     color = c; size = s;
+     set_center(); precision=prec; lind=0; style=sty;type="Point_2";
+    }
+
+
+  void set_center()
+    {
+      o_center[0]=x; o_center[1]=y; o_center[2]=0;
+    }
+
+ void draw() 
+    {
+      if (lind)
+	glCallList(lind);
+      else {
+	lind = glGenLists(1);
+	glNewList(lind,GL_COMPILE_AND_EXECUTE);
+	set_color(color);
+
+	if (style==RAW) {
+	  glPointSize(size);
+	  glBegin(GL_POINTS);
+	  glVertex3f(x,y,0);
+	  glEnd();
+	}
+	else {
+	  GLUquadricObj *q= gluNewQuadric();
+	  glPushMatrix();
+	  glTranslatef(x, y, 0);
+	  gluQuadricNormals(q, (GLenum) GL_NONE);
+	  glLineWidth(1);
+	  if (style==FILL) {
+	    gluQuadricDrawStyle(q,(GLenum) GLU_FILL);
+	    gluDisk(q,0,size,precision,1);
+	  }
+	  else {
+	    gluQuadricDrawStyle(q,(GLenum) GLU_LINE);
+	    gluDisk(q,size, size,precision,1);
+	  }
+	  glPopMatrix();
+	  gluDeleteQuadric(q);
+	}
+	glEndList();
+      }
+    }
+
+};
+
+
+template<class segment2>
+class Drawable_segment_2: public  Drawable_object
+{
+private:
+  double x1 , y1, x2,y2;
+
+public:
+
+  Drawable_segment_2(){type="Segment";}
+  Drawable_segment_2(const segment2 &sg,Color c, Style sty= RAW, Size
+		     s=2, Precision prec=0)
+    {
+      x1=to_double(sg.source().x());
+      y1=to_double(sg.source().y());
+      x2=to_double(sg.target().x());
+      y2=to_double(sg.target().y());
+      color = c; size=s; style = sty;
+      set_center(); precision=prec;lind=0;type="Segment_2";
+    }
+
+  void set_center()
+    {
+      o_center[0]=(x1+x2)/2; o_center[1]=(y1+y2)/2;
+      o_center[2]=0;
+    }
+
+void draw()
+  {
+    if(lind)
+      glCallList(lind);
+    else {
+      lind = glGenLists(1);
+      glNewList(lind,GL_COMPILE_AND_EXECUTE);
+      set_color(color);
+      glLineWidth(size);
+      glBegin(GL_LINES);
+      glVertex2f(x1,y1);
+      glVertex2f(x2,y2);
+      glEnd();
+    }
+    glEndList();
+  }
+  
+};
+
+
+template<class line2>
+class Drawable_line_2: public  Drawable_object
+{
+private:
+  double x1 , y1, x2,y2;
+public:
+
+  Drawable_line_2(){type="Line";}
+  Drawable_line_2(const line2 &ln, Color c, Style sty=RAW, Size s=2 , Precision
+  		   prec=15)
+    {
+      x1=ln.point(5000).x();
+      y1=ln.point(5000).y();
+      x2=ln.point(-5000).x();
+      y2=ln.point(-5000).y();
+      color = c; size=s;style=sty;
+      set_center(); precision=prec;lind=0;type="Line2";
+    }
+
+  void set_center()
+    {
+      o_center[0]=(x1+x2)/2; o_center[1]=(y1+y2)/2;
+      o_center[2]=0;
+    }
+void draw()
+  {
+    if(lind)
+      glCallList(lind);
+    else {
+      lind = glGenLists(1);
+      glNewList(lind,GL_COMPILE_AND_EXECUTE);
+      set_color(color);
+      glLineWidth(size);
+      glBegin(GL_LINES);
+      glVertex2f(x1,y1);
+      glVertex2f(x2,y2);
+      glEnd();
+    }
+    glEndList();
+  }
+
+};
+
+
+
+template<class ray2>
+class Drawable_ray_2: public  Drawable_object
+{
+private:
+  double x1 , y1,x2,y2;
+
+public:
+
+  Drawable_ray_2(){type="Ray2";}
+  Drawable_ray_2(const ray2 &ry, Color c, Style sty=RAW, Size s=2 , Precision
+  		   prec=15)
+    {
+      x1=to_double(ry.source().x());
+      y1==to_double(ry.source().y());
+      x2==to_double(ry.point(5000).x());
+      y2==to_double(ry.point(5000).y());
+      color = c; size=s;style=sty;
+      set_center(); precision=prec;lind=0;type="Ray2";
+    }
+
+  void set_center()
+    {
+      o_center[0]=x1; o_center[1]=y1;
+      o_center[2]=0;
+    }
+void draw()
+  {
+    if(lind)
+      glCallList(lind);
+    else {
+      lind = glGenLists(1);
+      glNewList(lind,GL_COMPILE_AND_EXECUTE);
+      set_color(color);
+      glLineWidth(size);
+      glBegin(GL_LINES);
+      glVertex2f(x1,y1);
+      glVertex2f(x2,y2);
+      glEnd();
+    }
+    glEndList();
+  }
+
+
+};
+
+
+
+template<class triangle2>
+class Drawable_triangle_2: public  Drawable_object
+{
+private:
+  triangle2* tr;
+
+public:
+
+  Drawable_triangle_2(){type="Triangle2";}
+  Drawable_triangle_2(triangle2 tri,Color c, Color c2, Style sty=FILL,
+		      Size s=2, Precision prec = 0)
+    {
+      tr=&tri;
+      color = c; col2=c2; size=s;
+      set_center();lind=0;type="Triangle2";style=sty;
+    }
+
+  void set_center()
+    {
+      o_center[0]=to_double(((*tr)[0].x()+(*tr)[1].x()+(*tr)[2].x()))/3; 
+      o_center[1]=to_double(((*tr)[0].y()+(*tr)[1].y()+(*tr)[2].y()))/3;
+      o_center[2]=0;
+    }
+
+void draw()
+{
+  if(lind)
+    glCallList(lind);
+  else {
+    lind = glGenLists(1);
+    glNewList(lind,GL_COMPILE_AND_EXECUTE);
+    glLineWidth(size);
+    set_color(color);
+    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    draw_triangle_2(to_double((*tr)[0].x()),to_double((*tr)[0].y()),
+		    to_double((*tr)[1].x()),to_double((*tr)[1].y()), 
+		    to_double((*tr)[2].x()),to_double((*tr)[2].y()));
+
+    if (style==FILL) {
+      set_color(col2);
+      glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+      draw_shrink_triangle_2(to_double((*tr)[0].x()),to_double((*tr)[0].y()),
+			     to_double((*tr)[1].x()),to_double((*tr)[1].y()),
+			     to_double((*tr)[2].x()),to_double((*tr)[2].y()));
+    }
+    glEndList();
+}
+}
+};
+
+template<class circle2>
+class Drawable_circle_2: public  Drawable_object
+{
+private:
+  double x,y,r;
+public:
+
+  Drawable_circle_2(){type="Circle2";}
+  Drawable_circle_2(const circle2 &crl, Color c, Style
+		   sty=RAW, Size s = 5 , Precision
+		   prec=5)
+    {
+     x=to_double(crl.center().x());
+     y=to_double(crl.center().y());
+     r=sqrt(to_double(crl.squared_radius()));
+     color = c; size = s;
+     set_center(); precision=prec; lind=0; style=sty;type="Circle2";
+    }
+
+
+
+  void set_center()
+    {
+      o_center[0]=x; o_center[1]=y; o_center[2]=0;
+    }
+
+ void draw() 
+    {
+      if (lind)
+	glCallList(lind);
+      else {
+	lind = glGenLists(1);
+	glNewList(lind,GL_COMPILE_AND_EXECUTE);
+	set_color(color);
+	GLUquadricObj *q= gluNewQuadric();
+	glPushMatrix();
+	glTranslatef(x, y, 0);
+	gluQuadricNormals(q, (GLenum) GL_NONE);
+	glLineWidth(size);
+	if (style==FILL) {
+	  gluQuadricDrawStyle(q,(GLenum) GLU_FILL);
+	  gluDisk(q,0,r,precision,10);
+	}
+	else {
+	  gluQuadricDrawStyle(q,(GLenum) GLU_LINE);
+	  gluDisk(q,r, r,precision,1);
+	  }
+	glPopMatrix();
+	gluDeleteQuadric(q);
+      }
+	glEndList();
+      }
+
+};
+
+template<class triangulation_2>
+class Drawable_triangulation_2: public  Drawable_object
+{
+private:
+  triangulation_2* tr;
+ 
+public:  
+  
+
+Drawable_triangulation_2(){type="Triangulation_2";}
+
+Drawable_triangulation_2(triangulation_2* tet,Color c, Color c2, Style
+			 sty=WIRE, Size s=5, Precision prec=15)
+  {
+    tr=tet;
+    color = c; col2= c2; size=s;
+      set_center();lind=0;type="Triangulation_2";style=sty;precision=prec;
+    }
+
+  void set_center()
+    {
+
+      typename triangulation_2::Vertex_iterator vit;
+      o_center[0]=0;o_center[1]=0;o_center[2]=0;
+      for (vit=tr->finite_vertices_begin() ; vit != tr->vertices_end(); vit++) {
+	o_center[0]= o_center[0] + to_double(vit->point().x());
+	o_center[1]= o_center[1] + to_double(vit->point().y());
+      }
+      o_center[0] = o_center[0]/tr->number_of_vertices();
+      o_center[1] = o_center[1]/tr->number_of_vertices();
+    }
+
+  void draw()
+    {
+      if(lind)
+	glCallList(lind);
+      else {
+	typename triangulation_2::Vertex_handle v1, v2;
+	typename triangulation_2::Face_handle f;
+	int no;
+	lind = glGenLists(1);
+	glNewList(lind,GL_COMPILE_AND_EXECUTE);
+	set_color(color);
+        glLineWidth(size);
+	typename triangulation_2::Edge_iterator it;
+	for (it = tr->edges_begin(); it != tr->edges_end(); it++) 
+	  {
+	    glBegin( GL_LINES );  
+	    f = (*it).first;
+	    no = (*it).second;
+	    v1 = f->vertex(f->ccw(no));
+	    v2 = f->vertex(f->cw(no));
+	    glVertex2d(to_double(v1->point().x()),to_double(v1->point().y()));
+	    glVertex2d(to_double(v2->point().x()),to_double(v2->point().y()));
+	  }
+	glEnd();
+      }
+      glEndList();
+
+    }
+
+
+ void add_point(double x, double y ,double z)
+    {
+      glDeleteLists(lind,1);
+      lind=0;
+      typedef typename triangulation_2::Point Point;
+      tr->insert(Point(x,y));
+      set_center();
+    }
+};
+
+
+CGAL_END_NAMESPACE

@@ -1,0 +1,201 @@
+// ============================================================================
+//
+// Copyright (c) 1999 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Viewer_stream.h
+// revision      : $Revision$
+//
+// author(s)     : Francois Rebufat <Francois.Rebufat@sophia.inria.fr>
+//
+// coordinator   : INRIA Sophia Antipolis 
+//                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
+//
+// ============================================================================
+#include <CGAL/Point_3.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Segment_3.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Triangle_3.h>
+#include <CGAL/Triangle_2.h>
+#include <CGAL/Tetrahedron_3.h>
+#include <CGAL/Line_3.h>
+#include <CGAL/Line_2.h>
+#include <CGAL/Ray_3.h>
+#include <CGAL/Ray_2.h>
+#include <CGAL/Circle_2.h>
+#include "Viewer_3.h"
+
+CGAL_BEGIN_NAMESPACE
+// Transform a point_3 to a drawable_point_3 with Viewer attributs.
+template <class R>
+Drawable_point_3<Point_3<R> >*
+convert_type(Point_3<R> p, Viewer_3 &W)
+{
+  Drawable_point_3<Point_3<R> >* dp = new
+    Drawable_point_3<Point_3<R> >(p,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
+  return(dp);
+}
+
+template <class R>
+Drawable_point_3<std::vector<R> >*
+convert_type(std::vector<R> p, Viewer_3 &W)
+{
+  Drawable_point_3<std::vector<R> >* dp = new
+    Drawable_point_3<std::vector<R> >(p[0],p[1],p[2],W.get_color(),W.get_style(),W.get_size(),W.get_precision());
+  return(dp);
+}
+
+
+
+template<class R>
+Drawable_segment_3<Segment_3<R> >*
+convert_type(Segment_3<R> s, Viewer_3 &W)
+{
+   Drawable_segment_3<Segment_3<R> >* sp = new
+     Drawable_segment_3<Segment_3<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
+  return(sp);
+}
+
+template<class R>
+Drawable_triangle_3<Triangle_3<R> >*
+convert_type(Triangle_3<R> s, Viewer_3 &W)
+{
+   Drawable_triangle_3<Triangle_3<R> >* sp = new
+     Drawable_triangle_3<Triangle_3<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
+  return(sp);
+}
+
+
+template<class R>
+Drawable_tetrahedron_3<Tetrahedron_3<R> >*
+convert_type(Tetrahedron_3<R> s, Viewer_3 &W)
+{
+   Drawable_tetrahedron_3<Tetrahedron_3<R> >* sp = new
+     Drawable_tetrahedron_3<Tetrahedron_3<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
+  return(sp);
+}
+
+template<class R>
+Drawable_line_3<Line_3<R> >*
+convert_type(Line_3<R> s, Viewer_3 &W)
+{
+   Drawable_line_3<Line_3<R> >* sp = new
+     Drawable_line_3<Line_3<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
+  return(sp);
+}
+
+
+template<class R>
+Drawable_ray_3<Ray_3<R> >*
+convert_type(Ray_3<R> s, Viewer_3 &W)
+{
+   Drawable_ray_3<Ray_3<R> >* sp = new
+     Drawable_ray_3<Ray_3<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
+  return(sp);
+}
+
+
+template<class R>
+Drawable_point_2<Point_2<R> >*
+convert_type(Point_2<R> s, Viewer_3 &W)
+{
+   Drawable_point_2<Point_2<R> >* sp = new
+     Drawable_point_2<Point_2<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
+  return(sp);
+}
+
+template<class R>
+Drawable_segment_2<Segment_2<R> >*
+convert_type(Segment_2<R> s, Viewer_3 &W)
+{
+   Drawable_segment_2<Segment_2<R> >* sp = new
+     Drawable_segment_2<Segment_2<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
+  return(sp);
+}
+
+template<class R>
+Drawable_line_2<Line_2<R> >*
+convert_type(Line_2<R> s, Viewer_3 &W)
+{
+   Drawable_line_2<Line_2<R> >* sp = new
+     Drawable_line_2<Line_2<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
+  return(sp);
+}
+
+template<class R>
+Drawable_ray_2<Ray_2<R> >*
+convert_type(Ray_2<R> s, Viewer_3 &W)
+{
+   Drawable_ray_2<Ray_2<R> >* sp = new
+     Drawable_ray_2<Ray_2<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
+  return(sp);
+}
+
+template<class R>
+Drawable_triangle_2<Triangle_2<R> >*
+convert_type(Triangle_2<R> s, Viewer_3 &W)
+{
+   Drawable_triangle_2<Triangle_2<R> >* sp = new
+     Drawable_triangle_2<Triangle_2<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
+  return(sp);
+}
+
+template<class R>
+Drawable_circle_2<Circle_2<R> >*
+convert_type(Circle_2<R> s, Viewer_3 &W)
+{
+   Drawable_circle_2<Circle_2<R> >* sp = new
+     Drawable_circle_2<Circle_2<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
+  return(sp);
+}
+
+
+// Stream for color
+Viewer_3&
+operator<<(Viewer_3& W, Color c)
+{
+W.set_color(c);
+return W;
+}
+
+// Stream for size 
+Viewer_3&
+operator<<(Viewer_3& W, Size s)
+{
+W.set_size(s);
+return W;
+}
+
+// Stream for style and precision.
+Viewer_3&
+operator<<(Viewer_3& W, Style s)
+{
+W.set_style(s);
+return W;
+}
+
+Viewer_3&
+operator<<(Viewer_3& W, Precision s)
+{
+W.set_precision(s);
+return W;
+}
+// Stream for a CGAL object that has a convert_type operation
+template <class object>
+Viewer_3&
+operator<<(Viewer_3& W, object o)
+{
+W.add_drawable(convert_type(o,W));
+return W;
+}
+
+CGAL_END_NAMESPACE
