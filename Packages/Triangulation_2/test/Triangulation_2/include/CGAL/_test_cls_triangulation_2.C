@@ -527,7 +527,7 @@ _test_cls_triangulation_2( const Triangulation & )
   Finite_faces_iterator fit = T2_7.finite_faces_begin();
   assert(!T2_7.is_infinite(fit));
   while(!T2_7.is_infinite(fit->neighbor(0)) ) ++fit;
-  T2_7.flip(fit,0);
+ 
 
   /***************************/
   /******* Circulators *******/
