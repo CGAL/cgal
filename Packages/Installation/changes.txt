@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Fix support for GMP++
 GLOB: Update GMP to version 4.1
 GLOB: Add support for GMP++
 GLOB: Use configure to install GMP

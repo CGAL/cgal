@@ -5386,19 +5386,10 @@ write_linker_flags()
 	 "${GMP_INSTALLATION}" = 'e' ]; then
 	if [ -n "${CYGWIN_COMPILER}" ]; then
 	    LIB_PATH="${LIB_PATH} '${LIBPATH_OPT}\$(GMP_LIB_DIR)'"
-	    if [ -n "${GMPXX_SUPPORT}" ]; then
-	        LIB_PATH="${LIB_PATH} '${LIBPATH_OPT}\$(GMPXX_LIB_DIR)'"
-	    fi
 	else
 	    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(GMP_LIB_DIR)"
-	    if [ -n "${GMPXX_SUPPORT}" ]; then
-	        LIB_PATH="${LIB_PATH} '${LIBPATH_OPT}\$(GMPXX_LIB_DIR)'"
-	    fi
 	fi
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(GMP_LIB_DIR)"
-	if [ -n "${GMPXX_SUPPORT}" ]; then
-	    RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(GMPXX_LIB_DIR)"
-	fi
     fi
     LIBS="${LIBS} `lib_option gmp`"
     GEOWLIBS="${GEOWLIBS} `lib_option gmp`"
