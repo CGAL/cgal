@@ -302,13 +302,6 @@ public:
   typedef CGAL::Construct_radical_axis_2<Bare_point, W> 
                                             Construct_radical_axis_2;
   
-  
-  Regular_triangulation_euclidean_traits_2(){}
-  Regular_triangulation_euclidean_traits_2 ( 
-    const  Regular_triangulation_euclidean_traits_2& ) {}
-  Regular_triangulation_euclidean_traits_2& operator=
-  (const  Regular_triangulation_euclidean_traits_2& ) {return *this ;}
-  
   Power_test_2 
   power_test_2_object() const
     {  return Power_test_2();}

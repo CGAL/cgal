@@ -45,20 +45,21 @@ void usage(char* program)
 bool
 parse(int argc, char* argv[], Options &opt)
 {
-    strcpy(opt.program, argv[0]);
+    CGAL_CLIB_STD::strcpy(opt.program, argv[0]);
     --argc;
     argv++;
 
     while ((argc > 0) && (argv[0][0] == '-')){
-        if ((!strcmp(argv[0], "-f")) || (!strcmp(argv[0], "-file"))) {
-          strcpy(opt.fname, argv[1]);
+        if ((!CGAL_CLIB_STD::strcmp(argv[0], "-f"))
+	|| (!CGAL_CLIB_STD::strcmp(argv[0], "-file"))) {
+          CGAL_CLIB_STD::strcpy(opt.fname, argv[1]);
           opt.file_input = true;
           argv += 2;
           argc -= 2;
       }
-      else if ((!strcmp(argv[0], "-?")) ||
-               (!strcmp(argv[0], "-h")) ||
-               (!strcmp(argv[0], "-help"))) {
+      else if ((!CGAL_CLIB_STD::strcmp(argv[0], "-?")) ||
+               (!CGAL_CLIB_STD::strcmp(argv[0], "-h")) ||
+               (!CGAL_CLIB_STD::strcmp(argv[0], "-help"))) {
           usage(opt.program);
           return false;
       }
@@ -188,8 +189,7 @@ void convex_hull(Triangulation &T)
     }
 }
 
-void fileIO(Triangulation &T,
-            const Options& opt)
+void fileIO(Triangulation &T, const Options&)
 {
     std::cout << "The triangulation will be written to a file and read again\n";
     {

@@ -11,7 +11,7 @@ class ray;
 
 class point{
 public:
-  friend PVector;
+  friend class PVector;
   point()
     : _x(0), _y(0)
   {}

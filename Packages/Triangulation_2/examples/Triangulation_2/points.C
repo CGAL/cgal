@@ -15,7 +15,7 @@ typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
 typedef CGAL::Triangulation_2<Gt,Tds>  Triangulation;
 typedef CGAL::Delaunay_triangulation_2<Gt,Tds>  Delaunay_triangulation;
 
-int main(int argc, char* argv[])
+int main(int, char* argv[])
 {
 
   Triangulation T;

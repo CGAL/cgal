@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.94 (??/?/01)
+- GCC 3.0 fixes.
+
 Ver 4.93 (29/5/01)
 - Triangulation_hierarchy doc fixes.
 - Fixed a bug in Line_face_circulator and extend the testsuit
