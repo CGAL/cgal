@@ -48,7 +48,17 @@ public:
   
   Td_traits(const Traits_base& t) : Traits_base(t){}
   Td_traits() {}
-  
+
+  ~Td_traits(void)
+  {
+    if (POINT_AT_LEFT_TOP_INFINITY)
+      delete POINT_AT_LEFT_TOP_INFINITY;
+    if (POINT_AT_RIGHT_BOTTOM_INFINITY)
+      delete POINT_AT_RIGHT_BOTTOM_INFINITY;
+    if (CURVE_AT_INFINITY)
+      delete CURVE_AT_INFINITY;
+  }
+
 protected:
   typedef X_trapezoid_const_ref const_ref;
   
@@ -152,9 +162,9 @@ public:
   static const Point& get_point_at_right_bottom_infinity();
   static const X_curve& get_curve_at_infinity();
 private:
-  static Point POINT_AT_LEFT_TOP_INFINITY;
-  static Point POINT_AT_RIGHT_BOTTOM_INFINITY;
-  static X_curve CURVE_AT_INFINITY;
+  static Point * POINT_AT_LEFT_TOP_INFINITY;
+  static Point * POINT_AT_RIGHT_BOTTOM_INFINITY;
+  static X_curve * CURVE_AT_INFINITY;
 };
 
 CGAL_END_NAMESPACE

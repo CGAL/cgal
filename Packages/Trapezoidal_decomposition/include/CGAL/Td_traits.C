@@ -41,7 +41,9 @@ Td_traits<Traits,X_curve_plus>::get_point_at_left_top_infinity(){
   return Td_traits<Traits,X_curve_plus>::POINT_AT_LEFT_TOP_INFINITY;
   */
   //  static Point POINT_AT_LEFT_TOP_INFINITY;
-  return POINT_AT_LEFT_TOP_INFINITY;
+  if (!POINT_AT_LEFT_TOP_INFINITY)
+    POINT_AT_LEFT_TOP_INFINITY = new Point();
+  return *POINT_AT_LEFT_TOP_INFINITY;
 }
 
 template <class Traits,class X_curve_plus>
@@ -53,7 +55,9 @@ Td_traits<Traits,X_curve_plus>::get_point_at_right_bottom_infinity(){
   return Td_traits<Traits,X_curve_plus>::POINT_AT_RIGHT_BOTTOM_INFINITY;
   */
   //  static Point POINT_AT_RIGHT_BOTTOM_INFINITY;
-  return POINT_AT_RIGHT_BOTTOM_INFINITY;
+  if (!POINT_AT_RIGHT_BOTTOM_INFINITY)
+    POINT_AT_RIGHT_BOTTOM_INFINITY = new Point();
+  return *POINT_AT_RIGHT_BOTTOM_INFINITY;
 }
 
 template <class Traits,class X_curve_plus>
@@ -65,22 +69,21 @@ Td_traits<Traits,X_curve_plus>::get_curve_at_infinity(){
   return Td_traits<Traits,X_curve_plus>::CURVE_AT_INFINITY;
   */
   //  static X_curve CURVE_AT_INFINITY;
-  return CURVE_AT_INFINITY;
+  if (!CURVE_AT_INFINITY)
+    CURVE_AT_INFINITY = new X_curve();
+  return *CURVE_AT_INFINITY;
 }
 
 template <class Traits,class X_curve_plus>
-typename Td_traits<Traits,X_curve_plus>::Point
-Td_traits<Traits,X_curve_plus>::POINT_AT_LEFT_TOP_INFINITY = 
-Point();
+typename Td_traits<Traits,X_curve_plus>::Point *
+Td_traits<Traits,X_curve_plus>::POINT_AT_LEFT_TOP_INFINITY = 0;
 
 template <class Traits,class X_curve_plus>
-typename Td_traits<Traits,X_curve_plus>::Point
-Td_traits<Traits,X_curve_plus>::POINT_AT_RIGHT_BOTTOM_INFINITY = 
-Point();
-
+typename Td_traits<Traits,X_curve_plus>::Point *
+Td_traits<Traits,X_curve_plus>::POINT_AT_RIGHT_BOTTOM_INFINITY = 0;
 
 template <class Traits,class X_curve_plus>
-typename Td_traits<Traits,X_curve_plus>::X_curve
-Td_traits<Traits,X_curve_plus>::CURVE_AT_INFINITY = X_curve();
+typename Td_traits<Traits,X_curve_plus>::X_curve *
+Td_traits<Traits,X_curve_plus>::CURVE_AT_INFINITY = 0;
 
 CGAL_END_NAMESPACE

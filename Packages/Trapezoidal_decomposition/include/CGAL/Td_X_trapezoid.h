@@ -151,38 +151,55 @@ public:
   void set_lt(X_trapezoid* lt) {ptr()->e6=lt;}
   void set_rb(X_trapezoid* rb) {ptr()->e7=rb;}
   void set_rt(X_trapezoid* rt) {ptr()->e8=rt;}
+
 public:
-  Td_X_trapezoid(){
-    PTR=new Boundary_type(
-                          Traits::get_point_at_left_top_infinity(),
-                          Traits::get_point_at_right_bottom_infinity(),
-                          Traits::get_curve_at_infinity(),
-                          Traits::get_curve_at_infinity(),
-                          CGAL_TRAPEZOIDAL_DECOMPOSITION_2_TOTALLY_UNBOUNDED,
-                          0,0,0,0);node=0;}
-  Td_X_trapezoid(
-    const Point& l ,const Point&r,const X_curve& b,const X_curve &t,
-    unsigned char c=CGAL_TRAPEZOIDAL_DECOMPOSITION_2_BOUNDED,
-    X_trapezoid *lb=0,X_trapezoid *lt=0,X_trapezoid *rb=0,X_trapezoid *rt=0,
-    Data_structure* p=0){PTR=new Boundary_type(l,r,b,t,c,lb,lt,rb,rt);node=p;}
-  Td_X_trapezoid(
-    const Point* l ,const Point* r , const X_curve* b ,const X_curve *t,
-    X_trapezoid *lb=0,X_trapezoid *lt=0,X_trapezoid *rb=0,X_trapezoid *rt=0,
-    Data_structure* p=0)
+  Td_X_trapezoid(void)
   {
-    PTR=new Boundary_type(
-       l ? *l : Traits::get_point_at_left_top_infinity(),
+    PTR = new Boundary_type(Traits::get_point_at_left_top_infinity(),
+                            Traits::get_point_at_right_bottom_infinity(),
+                            Traits::get_curve_at_infinity(),
+                            Traits::get_curve_at_infinity(),
+                            CGAL_TRAPEZOIDAL_DECOMPOSITION_2_TOTALLY_UNBOUNDED,
+                            0, 0, 0, 0);
+    node = 0;
+  }
+  
+  Td_X_trapezoid(const Point &l, const Point &r,
+                 const X_curve &b, const X_curve &t,
+                 unsigned char c = CGAL_TRAPEZOIDAL_DECOMPOSITION_2_BOUNDED,
+                 X_trapezoid *lb = 0, X_trapezoid *lt = 0,
+                 X_trapezoid *rb = 0, X_trapezoid *rt = 0,
+                 Data_structure *p = 0)
+  {
+    PTR = new Boundary_type(l, r, b, t, c, lb, lt, rb, rt);
+    node = p;
+  }
+  
+  Td_X_trapezoid(const Point *l, const Point *r ,
+                 const X_curve *b, const X_curve *t,
+                 X_trapezoid *lb = 0, X_trapezoid *lt = 0,
+                 X_trapezoid *rb = 0, X_trapezoid *rt = 0,
+                 Data_structure *p = 0)
+  {
+    PTR = new Boundary_type
+      (l ? *l : Traits::get_point_at_left_top_infinity(),
        r ? *r : Traits::get_point_at_right_bottom_infinity(),
        b ? *b : Traits::get_curve_at_infinity(),
        t ? *t : Traits::get_curve_at_infinity(),
-       (l ? 0 : CGAL_TRAPEZOIDAL_DECOMPOSITION_2_LEFT_UNBOUNDED) | 
-       (r ? 0 : CGAL_TRAPEZOIDAL_DECOMPOSITION_2_RIGHT_UNBOUNDED) | 
-       (b ? 0 : CGAL_TRAPEZOIDAL_DECOMPOSITION_2_BOTTOM_UNBOUNDED) | 
-       (t ? 0 : CGAL_TRAPEZOIDAL_DECOMPOSITION_2_TOP_UNBOUNDED),
-       lb,lt,rb,rt);node=p;
+       ((l ? 0 : CGAL_TRAPEZOIDAL_DECOMPOSITION_2_LEFT_UNBOUNDED) | 
+        (r ? 0 : CGAL_TRAPEZOIDAL_DECOMPOSITION_2_RIGHT_UNBOUNDED) | 
+        (b ? 0 : CGAL_TRAPEZOIDAL_DECOMPOSITION_2_BOTTOM_UNBOUNDED) | 
+        (t ? 0 : CGAL_TRAPEZOIDAL_DECOMPOSITION_2_TOP_UNBOUNDED)),
+       lb, lt, rb, rt);
+    node = p;
   }
-  Td_X_trapezoid(const X_trapezoid& tr) : Handle(tr){node=tr.node;}
-  ~Td_X_trapezoid() {}
+  
+  Td_X_trapezoid (const X_trapezoid &tr) :
+    Handle(tr)
+  {
+    node = tr.node;
+  }
+  
   /*
     remark:
     operator= should not copy node (or otherwise update 
@@ -205,19 +222,31 @@ public:
   {
     return !(operator==(t2));
   }
-  const Point& left() const {
+  const Point &left(void) const
+  {
     return !is_left_unbounded() ? 
-      ptr()->e0 : Traits::get_point_at_left_top_infinity();}
-  const Point& right() const {
+      ptr()->e0 : Traits::get_point_at_left_top_infinity();
+  }
+  
+  const Point &right(void) const
+  {
     return !is_right_unbounded() ? 
-      ptr()->e1 : Traits::get_point_at_right_bottom_infinity();}
+      ptr()->e1 : Traits::get_point_at_right_bottom_infinity();
+  }
+  
   // filters out the infinite case where at returns predefined dummy values
-  const X_curve& bottom() const {
+  const X_curve &bottom(void) const
+  {
     return !is_bottom_unbounded() ?  
-      ptr()->e2 : Traits::get_curve_at_infinity();}
-  const X_curve& top() const {
+      ptr()->e2 : Traits::get_curve_at_infinity();
+  }
+  
+  const X_curve &top(void) const
+  {
     return !is_top_unbounded() ?	
-      ptr()->e3 : Traits::get_curve_at_infinity();}
+      ptr()->e3 : Traits::get_curve_at_infinity();
+  }
+  
   unsigned char boundedness() const {return ptr()->e4;}
   bool is_left_unbounded() const {
     return (ptr()->e4&CGAL_TRAPEZOIDAL_DECOMPOSITION_2_LEFT_UNBOUNDED)!=0;}
@@ -625,7 +654,6 @@ public:
     right();
   }
 #endif
-
 };
 
 CGAL_END_NAMESPACE
