@@ -50,7 +50,8 @@ public:
   
   typedef PlanarMapTraits_2          Base;
   typedef typename Base::X_curve X_curve;
-  typedef typename Base::Point_2 Point_2;
+  typedef typename Base::Point Point;
+  typedef Point Point_2;
   //typedef  typename PlanarMapTraits_2::Point_2 Point; // for backward compat.
   
   Planar_map_traits_wrap() : Base()

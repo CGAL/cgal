@@ -110,7 +110,7 @@ public:
   typedef Planar_map_traits_wrap<Traits> Traits_wrap;
   typedef typename Traits::X_curve X_curve;
   typedef typename Traits::Point Point;
-  typedef typename Point         Point_2;
+  typedef Point         Point_2;
   typedef std::list<X_curve> X_curve_container;
   
   typedef Topological_map<Dcel> TPM;
