@@ -1,3 +1,6 @@
+1.5.1 ( 31 May 2002)
+- 2 Nef demos added, LER demo changed
+
 1.4.9 (02 May 2002)
 - 3d Delaunay demo changed, Nef demo removed
 

@@ -1,0 +1,12 @@
+This demo lets you input two polygons that can have holes.
+The two input polygons have different scenes. Use Scenes->activate
+to access them. The holes in the polygons are computed by performing
+intersections of the first polygon in the scene with the others.
+
+We show the result of boolean operations on these two
+polygons. 
+The result of the boolean operation is computed using
+the Nef polyhedron class of CGAL.
+
+Note that you have to input the simple polygons counter-clockwise
+if you want to use the INTERIOR for the boolean operation.
