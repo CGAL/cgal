@@ -1,3 +1,7 @@
+1.67 (1 February 2004) [mk]
+- fixed bugs that gcc 3.4 was complaining about; mainly added "this->"
+  in front of inherited methods
+
 1.66 (25 January 2004) [mk]
 - make some undocumented methods protected in Apollonius_graph_2;
   test suite was appropriately altered; these changes have also been
