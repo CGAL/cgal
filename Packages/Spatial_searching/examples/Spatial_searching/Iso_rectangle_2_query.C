@@ -9,12 +9,11 @@
 
 typedef CGAL::Cartesian<double> K;
 typedef K::Point_2 Point;
-typedef K::Iso_rectangle_2 Box;
 typedef CGAL::Random_points_in_square_2<Point> Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
 typedef CGAL::Search_traits_2<K> Traits;
 typedef CGAL::Kd_tree<Traits> Tree;
-typedef CGAL::Fuzzy_iso_box<Traits, Box> Fuzzy_iso_box;	
+typedef CGAL::Fuzzy_iso_box<Traits> Fuzzy_iso_box;	
 
 int 
 main() {
