@@ -45,6 +45,8 @@ int main()
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
   #include <CGAL/leda_rational.h>
   #include <CGAL/Arr_leda_segment_traits_2.h>
+// #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
+  #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
   #include <CGAL/Arr_polyline_traits.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
@@ -93,7 +95,9 @@ int main()
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
   typedef leda_rational                                         NT;
-  typedef CGAL::Arr_leda_segment_traits_2                       Traits;
+// typede leda_rat_kernel_traits                                   Kernel
+  typedef CGAL::Pm_segment_traits_leda_kernel_2                 Kernel;
+  typedef CGAL::Arr_leda_segment_traits_2<Kernel>               Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
   typedef CGAL::Quotient<int>                                   NT;
@@ -121,24 +125,24 @@ typedef std::list<Point_2>                                      Point_list;
 
 class Arr_polyline_traits_test
 {
-  Pmwx subd;  
+  Pmwx m_subd;  
 
 public:
 #if CGAL_ARR_TEST_POINT_LOCATION == 3  
   Arr_polyline_traits_test() : 
-    subd(new CGAL::Pm_walk_along_line_point_location<Planar_map>) {};
+    m_subd(new CGAL::Pm_walk_along_line_point_location<Planar_map>) {};
 
 #elif CGAL_ARR_TEST_POINT_LOCATION == 4  
   Arr_polyline_traits_test() : 
-    subd(new CGAL::Pm_simple_point_location<Planar_map>) {};
+    m_subd(new CGAL::Pm_simple_point_location<Planar_map>) {};
 
 #elif CGAL_ARR_TEST_POINT_LOCATION == 2
   Arr_polyline_traits_test() : 
-    subd(new CGAL::Pm_naive_point_location<Planar_map>) {};
+    m_subd(new CGAL::Pm_naive_point_location<Planar_map>) {};
 #else
   // CGAL_ARR_TEST_POINT_LOCATION == 1
   Arr_polyline_traits_test() : 
-    subd(new CGAL::Pm_default_point_location<Planar_map>) {};
+    m_subd(new CGAL::Pm_default_point_location<Planar_map>) {};
   // None
 #endif
 
@@ -206,11 +210,11 @@ private:
   }
   
   void check_that_vertices_are_in_arrangement(Pmwx & subd,
-                                              Point_list & m_all_point_list)
+                                              Point_list & all_point_list)
   {
     Point_list::iterator pit;
       
-    for (pit = m_all_point_list.begin(); pit != m_all_point_list.end(); pit++)
+    for (pit = all_point_list.begin(); pit != all_point_list.end(); pit++)
     {
 #if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
     CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
@@ -250,17 +254,17 @@ private:
     std::cout << "expected # of vertices: ";
     std::cout << m_exp_num_vertices << std::endl;
     std::cout << "  actual # of vertices: ";
-    std::cout << subd.number_of_vertices() << std::endl;
+    std::cout << m_subd.number_of_vertices() << std::endl;
 
     std::cout << "expected # of edges: ";
     std::cout << m_exp_num_edges << std::endl;
     std::cout << "  actual # of edges: ";
-    std::cout << subd.number_of_halfedges() / 2<< std::endl;      
+    std::cout << m_subd.number_of_halfedges() / 2<< std::endl;      
 
     std::cout << "expected # of faces: ";
     std::cout << m_exp_num_faces << std::endl;
     std::cout << "  actual # of faces: ";
-    std::cout << subd.number_of_faces() << std::endl;
+    std::cout << m_subd.number_of_faces() << std::endl;
   }
 
   NT get_next_num(std::ifstream & file)
@@ -388,7 +392,7 @@ private:
       curr_curve = read_polyline_curve(file, reverse_order);
 #endif
 
-      subd.insert(curr_curve);
+      m_subd.insert(curr_curve);
     }
 
     // 2. read test vertices
@@ -441,8 +445,8 @@ public:
     // DEBUG: Print polyline content
 #if 0
     typedef Pmwx::Halfedge_const_iterator Halfedge_const_iterator;
-    Halfedge_const_iterator it = subd.halfedges_begin();
-    Halfedge_const_iterator it_end = subd.halfedges_end();
+    Halfedge_const_iterator it = m_subd.halfedges_begin();
+    Halfedge_const_iterator it_end = m_subd.halfedges_end();
     int num = 1;
     CGAL_For_all(it, it_end) {
       std::cout << "Curve " << num << std::endl;
@@ -452,31 +456,31 @@ public:
       ++it; ++num;
     }
       
-    print_vertices(subd);
+    print_vertices(m_subd);
 
-    // Pmwx::Face_handle f  = subd->unbounded_face();
+    // Pmwx::Face_handle f  = m_subd->unbounded_face();
     // Pmwx::Holes_iterator it = f->holes_begin(), end=f->holes_end();
     // Pmwx::Ccb c  = *it;
     // const X_curve_2_2 & cv = curr->curve();
 #endif
     
     // Check validity of arrangement after insertion:
-    CGAL_assertion(subd.is_valid());
+    CGAL_assertion(m_subd.is_valid());
             
     // Check that vertices read are indeed in the arrangement:
-    check_that_vertices_are_in_arrangement(subd, m_all_point_list);
+    check_that_vertices_are_in_arrangement(m_subd, m_all_point_list);
 
     // count overlaps
     // Shai: There are no overlaps in pmwx.
-    // m_act_num_overlaps = count_overlaps(subd); 
+    // m_act_num_overlaps = count_overlaps(m_subd); 
 
     show_comparison();   
       
-    CGAL_assertion (subd.number_of_vertices()  == m_exp_num_vertices);
+    CGAL_assertion (m_subd.number_of_vertices()  == m_exp_num_vertices);
     // verify that test points are as located in the arrangemet as expected
-    points_in_expected_place(subd, m_tst_point_list, exp_type_list);
-    CGAL_assertion (subd.number_of_halfedges() == m_exp_num_edges * 2);
-    CGAL_assertion (subd.number_of_faces()     == m_exp_num_faces);
+    points_in_expected_place(m_subd, m_tst_point_list, exp_type_list);
+    CGAL_assertion (m_subd.number_of_halfedges() == m_exp_num_edges * 2);
+    CGAL_assertion (m_subd.number_of_faces()     == m_exp_num_faces);
 
     // Shai: There are no overlaps in pmwx.
     // CGAL_assertion (m_act_num_overlaps       == m_exp_num_overlaps);
