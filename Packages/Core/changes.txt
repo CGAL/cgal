@@ -1,4 +1,4 @@
-
+Version 0.8 (4 July 03) [af]
 - Replaced CORE.lib with $(CGAL_CORE_LIB) to get it platform independent
 
 Version 0.7 (30 June 03) [af]
