@@ -423,7 +423,7 @@ private:
 					std::list<Halfedge_handle> boundary;	// returned list
 					mesh->free_skeleton();
 					Mesh_feature_extractor feature_extractor(mesh);
-					int nb_boundaries = feature_extractor.extract_boundaries(false,true);
+					int nb_boundaries = feature_extractor.extract_boundaries(true);
 					assert(nb_boundaries == 1);
 					Backbone *pBackbone = (*mesh->get_skeleton()->backbones())[0];
 					boundary = *(pBackbone->halfedges());

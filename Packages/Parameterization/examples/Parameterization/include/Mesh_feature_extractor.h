@@ -39,8 +39,7 @@ private:
 public: 
 
 	// main functions	
-	int extract_boundaries(bool open_backbones = false,
-	                       bool sort = true);
+	int extract_boundaries(bool sort = true);
 	
 private:
   bool add_boundary_backbone(int tag_free,int tag_processed);

@@ -113,7 +113,7 @@ static const Backbone* cut_mesh(Polyhedron_ex* mesh)
   int genus = mesh->genus();
   if(genus == 0)
   {
-    int nb_boundaries = feature_extractor.extract_boundaries(false,true);
+    int nb_boundaries = feature_extractor.extract_boundaries(true);
 
     // no boundary, we need to cut the mesh
     if(nb_boundaries == 0)

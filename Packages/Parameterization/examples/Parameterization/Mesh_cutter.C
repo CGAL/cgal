@@ -106,7 +106,7 @@ bool Mesh_cutter::init()
 //***************************************************
 bool Mesh_cutter::extend()
 {
-  list<Polyhedron_ex::Halfedge_handle>::iterator pos;
+  std::list<Polyhedron_ex::Halfedge_handle>::iterator pos;
   Polyhedron_ex::Halfedge_handle pHalfedge = pick_best_halfedge(pos);
   if(pHalfedge == NULL)
     return false;
@@ -115,7 +115,7 @@ bool Mesh_cutter::extend()
   pHalfedge->opposite()->facet()->tag(DONE);
 
   // insert halfedge
-  list<Polyhedron_ex::Halfedge_handle>::iterator tmp =
+  std::list<Polyhedron_ex::Halfedge_handle>::iterator tmp =
   m_pBackbone->halfedges()->insert(pos,pHalfedge->opposite()->next()->next());
   m_pBackbone->halfedges()->insert(tmp,pHalfedge->opposite()->next());
 
@@ -133,7 +133,7 @@ bool Mesh_cutter::extend()
 bool Mesh_cutter::simplify()
 {
   // cleanup
-  list<Polyhedron_ex::Halfedge_handle>::iterator iter;
+  std::list<Polyhedron_ex::Halfedge_handle>::iterator iter;
   for(iter  = m_pBackbone->halfedges()->begin();
       iter != m_pBackbone->halfedges()->end();
       iter++)
@@ -178,13 +178,13 @@ void Mesh_cutter::precompute_distances()
 // pick_best_halfedge
 //***************************************************
 Polyhedron_ex::Halfedge_handle Mesh_cutter::pick_best_halfedge(
-                               list<Polyhedron_ex::Halfedge_handle>::iterator &pos)
+                               std::list<Polyhedron_ex::Halfedge_handle>::iterator &pos)
 {
   Polyhedron_ex::Halfedge_handle pBest = NULL;
   double min_distance = 1e308; //
 
   // cleanup
-  list<Polyhedron_ex::Halfedge_handle>::iterator iter;
+  std::list<Polyhedron_ex::Halfedge_handle>::iterator iter;
   for(iter  = m_pBackbone->halfedges()->begin();
       iter != m_pBackbone->halfedges()->end();
       iter++)
@@ -203,7 +203,7 @@ Polyhedron_ex::Halfedge_handle Mesh_cutter::pick_best_halfedge(
 
     // no boundary vertex
     Polyhedron_ex::Vertex_handle pVertex = opposite->next()->vertex();
-    if(m_pPolyhedron->is_border(*pVertex))
+    if(m_pPolyhedron->is_border(pVertex))
       continue;
 
     // precomputed distance
@@ -218,53 +218,3 @@ Polyhedron_ex::Halfedge_handle Mesh_cutter::pick_best_halfedge(
   return pBest;
 }	
 
-//***************************************************
-// keep only one connected component
-//***************************************************
-void Mesh_cutter::keep_one_connected_component()
-{
-	std::cerr << "keep one component..." << std::endl;
-	return; // ** TODO **
-
-	// check if valid
-	//bool valid = m_pPolyhedron->is_valid(false,1);	
-
-	m_pPolyhedron->tag_facets(0);
-	Polyhedron_ex::Facet_handle pFacet = NULL;
-	int index = 1;
-	while((pFacet = m_pPolyhedron->get_any_facet_tag(0)) != NULL)
-	{
-		CGAL_assertion(pFacet != NULL);
-  		std::cerr << "seed recursive tag " << index << std::endl;
-		recursive_tag(pFacet,index);
-		index++;
-	}
-	std::cerr << index-1 << " connected components" << std::endl;
-}
-
-//***************************************************
-// recursive tag
-//***************************************************
-void Mesh_cutter::recursive_tag(Polyhedron_ex::Facet_handle pFacet,
-                                int index)
-{
-  if(pFacet == NULL)
-    return;
-  if(pFacet->tag() == index)
-    return;
-
-  // tag current facet
-  pFacet->tag(index);
-
-  // move to next/opposit
-  Polyhedron_ex::Halfedge_handle he = pFacet->halfedge();
-  CGAL_assertion(he != NULL);
-  CGAL_assertion(he->opposite() != NULL);
-  CGAL_assertion(he->next()->opposite() != NULL);
-  CGAL_assertion(he->next()->next() != NULL);
-  CGAL_assertion(he->next()->next()->opposite() != NULL);
-
-  recursive_tag(he->opposite()->facet(),index);
-  recursive_tag(he->next()->opposite()->facet(),index);
-  recursive_tag(he->next()->next()->opposite()->facet(),index);
-}

@@ -32,20 +32,10 @@ private:
   std::list<HALFEDGE_HANDLE> m_halfedges;
 
 public:
-
-  // type of backbone
-  enum backbone_type {SEAMING,
-                      SHARP,
-                      BOUNDARY};
-private:
-  backbone_type m_type;
-
-public:
-  Feature_backbone(backbone_type t = SEAMING)
+  Feature_backbone()
   {
     m_begin = NULL;
     m_end = NULL;
-    m_type = t;
   }
   ~Feature_backbone()
   {
@@ -72,10 +62,6 @@ public:
       m_halfedges.push_back(*iter);
   }
 
-  // type
-  backbone_type type() { return m_type; }
-  void type(backbone_type t) { m_type = t; }
-
   // data access
   std::list<HALFEDGE_HANDLE>* halfedges() { return &m_halfedges; }
   const std::list<HALFEDGE_HANDLE>* halfedges() const { return &m_halfedges; }
@@ -95,7 +81,6 @@ class Feature_skeleton
 {
 private:
   typedef Feature_backbone<VERTEX_HANDLE,HALFEDGE_HANDLE> backbone;
-  typedef typename backbone::backbone_type backbone_type;
   std::vector<backbone*> m_backbones;
 
 public:
@@ -138,45 +123,6 @@ public:
       }
     }
     return false;
-  }
-
-  bool erase_one_type(backbone_type type)
-  {
-    typedef typename std::vector<backbone*>::iterator backbone_iterator;
-    backbone_iterator ppBackbone;
-    for(ppBackbone  = m_backbones.begin();
-        ppBackbone != m_backbones.end();
-        ppBackbone++)
-    {
-      backbone *pBackbone = *ppBackbone;
-      if(pBackbone->type() == type)
-      {
-        delete pBackbone;
-        m_backbones.erase(ppBackbone);
-        return true;
-      }
-    }
-    return false;
-  }
-
-  backbone *get_backbone_type(backbone_type type)
-  {
-    typedef typename std::vector<backbone*>::iterator backbone_iterator;
-    backbone_iterator ppBackbone;
-    for(ppBackbone  = m_backbones.begin();
-        ppBackbone != m_backbones.end();
-        ppBackbone++)
-    {
-      backbone *pBackbone = *ppBackbone;
-      if(pBackbone->type() == type)
-        return pBackbone;
-    }
-    return NULL;
-  }
-
-  void erase_type(backbone_type type)
-  {
-    while(erase_one_type(type));
   }
 
 };

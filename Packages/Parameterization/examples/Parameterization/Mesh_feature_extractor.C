@@ -32,8 +32,7 @@ Mesh_feature_extractor::~Mesh_feature_extractor()
 // extract boundaries
 // return the number of boundary backbones
 //*************************************************************
-int Mesh_feature_extractor::extract_boundaries(bool open_backbones,
-                                               bool sort)
+int Mesh_feature_extractor::extract_boundaries(bool sort)
 {
   const int tag_free = 0;
   const int tag_processed = 1;
@@ -61,64 +60,6 @@ int Mesh_feature_extractor::extract_boundaries(bool open_backbones,
 }
 
 
-////*************************************************************
-//// add isolated feature backbone
-////*************************************************************
-//bool Mesh_feature_extractor::add_feature_backbone(int tag_free,
-//                                                  int tag_processed)
-//{
-//  // some (closed) sharp backbones may not be linked
-//  // to any corner, we have to grab them also
-//  Halfedge_handle seed_halfedge =
-//    m_pPolyhedron->get_sharp_or_seaming_halfedge_tag(tag_free);
-//  if(seed_halfedge == NULL)
-//    return false;
-//
-//  // add one backbone
-//  std::cerr << "  add one closed sharp backbone...";
-//  backbone *pNewBackbone = new backbone(backbone::SHARP);
-//  m_pSkeleton->backbones()->push_back(pNewBackbone);
-//
-//  // add the seed halfedge
-//  pNewBackbone->halfedges()->push_back(seed_halfedge);
-//  seed_halfedge->tag(tag_processed); // processed
-//  seed_halfedge = seed_halfedge->opposite();
-//  CGAL_assertion(seed_halfedge != NULL);
-//  seed_halfedge->tag(tag_processed); // processed
-//
-//  // set the begin/end vertex the same)
-//  Vertex_handle seed_vertex = seed_halfedge->prev()->vertex();
-//  CGAL_assertion(seed_vertex != NULL);
-//
-//  int size = 1;
-//  Vertex_handle current_vertex = seed_halfedge->vertex();
-//  //CGAL_assertion(current_vertex->is_crease());
-//  Halfedge_handle next = NULL;
-//  // pick the next halfedge
-//  while((next =
-//    m_pPolyhedron->get_sharp_or_seaming_halfedge_tag(current_vertex,0)) != NULL)
-//  {
-//    next->tag(tag_processed); // tag this one
-//    next = next->opposite(); // reverse it
-//    CGAL_assertion(next != NULL);
-//    next->tag(tag_processed); // tag also the opposite
-//
-//    // add it to the backbone and update the end
-//    pNewBackbone->halfedges()->push_back(next);
-//    current_vertex = next->vertex();
-//    CGAL_assertion(current_vertex != NULL);
-//    size++;
-//  }
-//  std::cerr << size << " halfedges" << std::endl;
-//
-//  // set no begin/end
-//  pNewBackbone->begin(NULL);
-//  pNewBackbone->end(NULL);
-//
-//  return true;
-//}
-
-
 //*************************************************************
 // add closed boundary backbone
 //*************************************************************
@@ -131,7 +72,7 @@ bool Mesh_feature_extractor::add_boundary_backbone(int tag_free,
 
   // add one backbone
   std::cerr << "  add one closed boundary backbone...";
-  backbone *pNewBackbone = new backbone(backbone::BOUNDARY);
+  backbone *pNewBackbone = new backbone;
   m_pSkeleton->backbones()->push_back(pNewBackbone);
 
   // add the seed halfedge
@@ -157,6 +98,7 @@ bool Mesh_feature_extractor::add_boundary_backbone(int tag_free,
     size++;
   }
   while(1);
+
   std::cerr << size << " halfedges" << std::endl;
   return true;
 }
