@@ -37,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
 template < int i > struct Arity_tag { enum { arity = i }; };
 
 // use to deduce arity of functors --> allows binding std functors
-#if !defined(_MSC_VER) || (_MSC_VER < 1300)
+#if !defined(_MSC_VER) || (_MSC_VER > 1300)
 
 template < class T >
 struct Arity_traits {
@@ -109,9 +109,8 @@ struct Arity_traits {
   typedef typename Switcher::template Arity_tmp< F >::Arity Arity;
 };
 
-#endif // !defined(_MSC_VER) || (_MSC_VER < 1300)
+#endif // !defined(_MSC_VER) || (_MSC_VER > 1300)
 
-#ifndef _MSC_VER
 #ifndef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
 
 // --------------------------------------------------------------------
@@ -236,9 +235,7 @@ struct Arity_traits< std::const_mem_fun1_ref_t< T1, T2, T3 > > {
 };
 
 #endif // ! CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
-#endif // ! _MSC_VER
 
 CGAL_END_NAMESPACE
 
 #endif // CGAL_FUNCTIONAL_BASE_H
-// EOF //
