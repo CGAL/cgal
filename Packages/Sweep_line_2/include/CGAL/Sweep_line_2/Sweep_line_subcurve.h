@@ -23,6 +23,7 @@
 #include <set>
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
+#include <CGAL/Sweep_line_2/Sweep_line_traits.h>
 #include <CGAL/assertions.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -65,22 +66,21 @@ public:
   typedef Sweep_line_subcurve<Traits> Self;
   typedef Status_line_curve_less_functor<Traits, Self> StatusLineCurveLess;
 
-  typedef std::set<Self*, StatusLineCurveLess,CGAL_ALLOCATOR(int)> StatusLine;
+  typedef std::set<Self*, StatusLineCurveLess, CGAL_ALLOCATOR(int)> StatusLine;
   typedef typename StatusLine::iterator StatusLineIter;
 
   typedef Sweep_line_event<Traits, Self> Event;
 
   Sweep_line_subcurve(){}
 
-  Sweep_line_subcurve(X_monotone_curve_2 &curve ,SweepLineTraits_2 *traits);
+  Sweep_line_subcurve(X_monotone_curve_2 &curve);
 
-  void init(X_monotone_curve_2 &curve ,SweepLineTraits_2 *traits)
+  void init(X_monotone_curve_2 &curve)
   {
-    m_traits = traits;
     m_curve = curve;
-    m_source = traits->curve_source(curve);
-    m_target = traits->curve_target(curve);
-    Comparison_result res = traits->compare_xy(m_source, m_target);
+    m_source = traits()->curve_source(curve);
+    m_target = traits()->curve_target(curve);
+    Comparison_result res = traits()->compare_xy(m_source, m_target);
     if ( res  == LARGER )
     {
       m_lastPoint = m_target; 
@@ -149,11 +149,11 @@ public:
   }
 
   bool is_source(const Point_2 &p) { 
-    return m_traits->point_equal(p, m_source);
+    return traits()->point_equal(p, m_source);
   }
 
   bool is_target(const Point_2 &p) { 
-    return m_traits->point_equal(p, m_target);
+    return traits()->point_equal(p, m_target);
   }
 
   /*! returns true if the specified point is the source or the target
@@ -219,9 +219,6 @@ public:
 
 private:
 
-  /*! a pointer to the traits object */
-  Traits *m_traits;
-
   /*! thecurve */
   X_monotone_curve_2 m_curve;
 
@@ -249,17 +246,24 @@ private:
   /*! */
   StatusLineIter m_hint;
 
+
+  protected:
+
+  Traits* traits()
+  {
+    return Sweep_line_traits<Traits>::get_traits();
+  }
+
 };
 
 template<class SweepLineTraits_2>
 inline Sweep_line_subcurve<SweepLineTraits_2>::
-Sweep_line_subcurve( X_monotone_curve_2 &curve,
-                    SweepLineTraits_2 *traits)  :  m_traits(traits)
+Sweep_line_subcurve( X_monotone_curve_2 &curve) 
 {
   m_curve = curve;
-  m_source = traits->curve_source(curve);
-  m_target = traits->curve_target(curve);
-  Comparison_result res = traits->compare_xy(m_source, m_target);
+  m_source = traits()->curve_source(curve);
+  m_target = traits()->curve_target(curve);
+  Comparison_result res = traits()->compare_xy(m_source, m_target);
   if ( res  == LARGER )
   {
     m_lastPoint = m_target; 

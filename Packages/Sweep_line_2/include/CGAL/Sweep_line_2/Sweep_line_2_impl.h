@@ -25,6 +25,7 @@
 #include <map>
 #include <set>
 #include <CGAL/memory.h>
+#include <CGAL/Sweep_line_2/Sweep_line_traits.h>
 
 #ifndef VERBOSE
 
@@ -108,8 +109,8 @@ CGAL_BEGIN_NAMESPACE
 
 template <class CurveInputIterator,  class SweepLineTraits_2,
           class SweepEvent, class CurveWrap,
-          typename EventAlloc = CGAL_ALLOCATOR (SweepEvent),
-          typename SubCurveAlloc = CGAL_ALLOCATOR(CurveWrap) >
+          typename EventAlloc    = CGAL_ALLOCATOR (SweepEvent),
+          typename SubCurveAlloc = CGAL_ALLOCATOR (CurveWrap) >
 class Sweep_line_2_impl
 {
 public:
@@ -134,7 +135,7 @@ public:
   typedef Status_line_curve_less_functor<Traits, Subcurve> StatusLineCurveLess;
   typedef typename StatusLineCurveLess::Compare_param CompareParams;
  
-  typedef std::set<Subcurve*, StatusLineCurveLess,CGAL_ALLOCATOR(int)> StatusLine;
+  typedef std::set<Subcurve*, StatusLineCurveLess, CGAL_ALLOCATOR(int)> StatusLine;
   typedef typename StatusLine::iterator StatusLineIter;
  
   class  SweepLineGetSubCurves {};
@@ -143,6 +144,7 @@ public:
   class  SweepLinePlanarmap {};
 
   Sweep_line_2_impl()  : m_traits(new Traits()),
+                         m_sweep_line_traits(m_traits),
                          m_traitsOwner(true),
                          m_includeEndPoints(true),
                          m_found_intersection(false),
@@ -153,6 +155,7 @@ public:
 
 
   Sweep_line_2_impl(Traits *t) : m_traits(t),
+                                 m_sweep_line_traits(m_traits),
                                  m_traitsOwner(false),
                                  m_includeEndPoints(true),
                                  m_found_intersection(false),
@@ -258,6 +261,14 @@ public:
     return m_found_intersection;
   }
 
+
+  static Traits* get_traits()
+  {
+    static Traits* s_traits = 0;
+    if(!s_traits)
+      return new Traits;
+    return s_traits;
+  }
 
 protected:
 
@@ -1019,6 +1030,8 @@ protected:
   /*! a pointer to a traits object */
   Traits *m_traits;
 
+  Sweep_line_traits<Traits> m_sweep_line_traits;
+
   /*! an indication to whether the traits should be deleted in the distructor
    */
   bool m_traitsOwner;
@@ -1081,6 +1094,8 @@ protected:
 
   /*! The num of subcurves  */
   unsigned int m_num_of_subCurves;
+
+  
 
   
 #ifndef NDEBUG
@@ -1157,12 +1172,7 @@ init(CurveInputIterator begin, CurveInputIterator end)
   CurveInputIterator iter;
   for ( iter = begin ; iter != end ; ++iter)
   {
-   
     m_traits->curve_make_x_monotone(*iter, std::back_inserter(m_xcurves));
-    SL_DEBUG(
-             std::cout << "curve " << *iter << " was split into " 
-             << xcurves.size() << " curves." << std::endl;
-             )
   }
   m_num_of_subCurves = m_xcurves.size();
 
@@ -1195,7 +1205,7 @@ init_curve(X_monotone_curve_2 &curve,unsigned int j)
   Event *e ;
  
   m_subCurveAlloc.construct(m_subCurves+j,m_masterSubcurve);
-  (m_subCurves+j)->init(curve, m_traits);
+  (m_subCurves+j)->init(curve);
 
   const Point_2 &left_end = (m_subCurves+j)->get_left_end();
   const Point_2 &right_end = (m_subCurves+j)->get_right_end();
@@ -1209,7 +1219,7 @@ init_curve(X_monotone_curve_2 &curve,unsigned int j)
     {
       e =  m_eventAlloc.allocate(1); 
       m_eventAlloc.construct(e, m_masterEvent);
-      e->init(right_end , m_traits);
+      e->init(right_end );
      
 
     #ifndef NDEBUG
@@ -1236,7 +1246,7 @@ init_curve(X_monotone_curve_2 &curve,unsigned int j)
     {
       e =  m_eventAlloc.allocate(1); // allocation of space for one dlink 
       m_eventAlloc.construct(e, m_masterEvent);
-      e -> init(left_end , m_traits );
+      e -> init(left_end);
     #ifndef NDEBUG
       e->id = m_eventId++;
     #endif
@@ -1440,7 +1450,7 @@ intersect(Subcurve *c1, Subcurve *c2)
                                        //of the end-points of two curves
       e =  m_eventAlloc.allocate(1);
       m_eventAlloc.construct(e, m_masterEvent);
-      e -> init(xp , m_traits );
+      e -> init(xp);
       
 #ifndef NDEBUG
       e->id = m_eventId++;
@@ -1572,11 +1582,9 @@ Sweep_line_2_impl<CurveInputIterator,SweepLineTraits_2,SweepEvent,CurveWrap,
 PrintSubCurves()
 {
   SL_DEBUG(std::cout << std::endl << "Sub curves: " << std::endl;)
-  SubCurveListIter iter = m_subCurves.begin(); 
-  while ( iter != m_subCurves.end() )
+  for(unsigned int i=0 ; i < m_num_of_subCurves ; ++i)
   {
-    (*iter)->Print();
-    ++iter;
+    m_subCurves[i].Print();
   }
 }
 

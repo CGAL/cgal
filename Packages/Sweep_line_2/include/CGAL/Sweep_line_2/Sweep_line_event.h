@@ -22,9 +22,11 @@
 
 
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
+#include <CGAL/Sweep_line_2/Sweep_line_traits.h>
 #include <list>
 #include <set>
 #include <functional>
+
 
 
 
@@ -44,15 +46,12 @@ CGAL_BEGIN_NAMESPACE
  *   the left of the event point.
  * - a list of curves that pass through the event point and defined to 
  *   the right of the event point.
- * - a list of vertical curves that pass through the event
- * - a list of points that are intersection points on the vertical curves
  * and some more data that is used to help with the algorithm.
  *
  * The class mostly exists to store information and does not have any 
  * significant functionality otherwise.
  * 
  * TODO - implement this class with a set to hold the left and right curves
- * TODO - implement the vertical points array as a set
  */
 
 
@@ -74,21 +73,21 @@ public:
   typedef typename StatusLine::iterator StatusLineIter;
 
 
+
   Sweep_line_event(){}
 
   /*! Constructor */
-  Sweep_line_event(const Point_2 &point, Traits *traits) :
-    m_point(point), m_traits(traits),
+  Sweep_line_event(const Point_2 &point) :
+    m_point(point),
     m_isInitialized(false),
     m_isInternalIntersectionPoint(false),
     m_containsOverlap(false)
   {}
 
 
-  void init(const Point_2 &point , Traits *traits)
+  void init(const Point_2 &point)
   {
     m_point = point;
-    m_traits = traits;
     m_isInitialized = false;
     m_isInternalIntersectionPoint = false;
     m_containsOverlap = false;
@@ -125,7 +124,7 @@ public:
     if (m_leftCurves.empty())
     {
       m_leftCurves.push_back(curve);
-      if(!m_traits->curve_is_vertical(curve->get_curve()))
+      if(!traits()->curve_is_vertical(curve->get_curve()))
       {
         m_isInitialized = true;
         m_rightmostPointToLeft = curve->get_left_end();
@@ -134,16 +133,15 @@ public:
     }
 
     //update_rightmost_point(ref) if curve is not vertical
-    if(!m_traits->curve_is_vertical(curve->get_curve()))
+    if(!traits()->curve_is_vertical(curve->get_curve()))
     {
       if(! m_isInitialized)
       {
         m_rightmostPointToLeft = curve->get_last_point();
         m_isInitialized = true;
       }
-
       else
-        if ( m_traits->compare_x(curve->get_last_point() , m_rightmostPointToLeft) == LARGER )
+        if ( traits()->compare_x(curve->get_last_point() , m_rightmostPointToLeft) == LARGER )
           m_rightmostPointToLeft = curve->get_last_point();  
     
 
@@ -167,7 +165,7 @@ public:
       Comparison_result res = SMALLER;
       iter = m_leftCurves.begin();
       while(iter != m_leftCurves.end() &&
-            m_traits->curve_is_vertical((*iter)->get_curve()))
+            traits()->curve_is_vertical((*iter)->get_curve()))
       {
         ++iter;
       }
@@ -175,10 +173,13 @@ public:
 
       while ( iter != m_leftCurves.end() )
       {
-        
-        res = m_traits->curves_compare_y_at_x(cv, 
+        res = traits()->curves_compare_y_at_x(cv, 
                                              (*iter)->get_curve(),
                                               m_rightmostPointToLeft);
+        if (res == EQUAL)
+          res = traits()->curves_compare_y_at_x_right(cv, 
+                                                      (*iter)->get_curve(),
+                                                      m_rightmostPointToLeft);
         if ( res != LARGER )
           break;
         ++iter;
@@ -194,7 +195,7 @@ public:
         if ( iter == m_leftCurves.end())
           break;
 
-        res = m_traits->curves_compare_y_at_x(cv, 
+        res = traits()->curves_compare_y_at_x(cv, 
                                              (*iter)->get_curve(),
                                               m_rightmostPointToLeft);
       }
@@ -218,7 +219,7 @@ public:
         }
         iter = m_leftCurves.begin();
         while ( iter != m_leftCurves.end() &&
-                m_traits->curve_is_vertical((*iter)->get_curve()) &&
+                traits()->curve_is_vertical((*iter)->get_curve()) &&
                 curve > (*iter))
         {
           m_containsOverlap = true;
@@ -255,7 +256,7 @@ public:
 
     iter = m_rightCurves.begin();
     Comparison_result res;
-    while ((res = m_traits->curves_compare_y_at_x_right(curve->get_curve(),
+    while ((res = traits()->curves_compare_y_at_x_right(curve->get_curve(),
                                                       (*iter)->get_curve(), 
                                                       m_point)) == LARGER)
     {
@@ -276,7 +277,7 @@ public:
               m_rightCurves.insert(iter, curve);
               return true;
       }
-      res = m_traits->curves_compare_y_at_x_right(curve->get_curve(),
+      res = traits()->curves_compare_y_at_x_right(curve->get_curve(),
                                                   (*iter)->get_curve(), 
                                                    m_point);
     } 
@@ -355,7 +356,6 @@ public:
 
 #ifndef NDEBUG
   void Print();
-  void PrintVerticalXPoints();
 #endif
  
 
@@ -364,9 +364,6 @@ public:
 
   /*! The point of the event */
   Point_2 m_point;
-
-  /*! A pointer to a traits class */
-  Traits *m_traits;
 
   /*! A list of curves on the left side of the event, sorted by their y value
       to the left of the point */
@@ -394,6 +391,17 @@ public:
   /*! true if any two curves passing through the event overlap. */
   bool m_containsOverlap;
 
+  
+
+  protected:
+
+
+  Traits* traits()
+  {
+    return Sweep_line_traits<Traits>::get_traits();
+  }
+
+  
 #ifndef NDEBUG
 public:
   int id;
