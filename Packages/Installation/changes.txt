@@ -9,6 +9,9 @@
 
 GLOB: src/Interval_arithmetic/workaround_4_ms.obj is no longer necessary.
 GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.
+GLOB: Add flag -MLd for msvc.
+GLOB: Mark MSVC6 as supported.
+GLOB: Fixed log_print for compilers (no more quoting).
 GLOB: Fixed (removed) check_COMPILER.
 GLOB: Fixed check_comp_executable for irix.
 GLOB: Added support for QT window.
