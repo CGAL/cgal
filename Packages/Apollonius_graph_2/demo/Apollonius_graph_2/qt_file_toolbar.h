@@ -69,6 +69,7 @@ signals:
 private:
   void initActions()
     {
+      QString str;
       QPixmap openIcon, saveIcon, newIcon, printIcon;
       newIcon = QPixmap(filenew);
       openIcon = QPixmap(fileopen);
@@ -95,10 +96,11 @@ private:
 
       fileSaveAs = new QAction(tr("Save File As"), saveIcon, tr("Save &as..."),
 			       0, this);
-      fileSaveAs->setStatusTip(tr("Saves the actual document under a new filename"));
-      QString _save_as =
+      str = "Saves the actual document under a new filename";
+      fileSaveAs->setStatusTip(tr(str));
+      str =
 	tr("Save As\n\nSaves the actual document under a new filename");
-      fileSaveAs->setWhatsThis(_save_as);
+      fileSaveAs->setWhatsThis(str);
       connect(fileSaveAs, SIGNAL(activated()), this, SLOT(slotFileSaveAs()));
 #if 0
       fileSaveAs = new QAction(tr("Save File As"), tr("Save &as..."), 0, this);
