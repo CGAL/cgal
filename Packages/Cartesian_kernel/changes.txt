@@ -1,5 +1,6 @@
 Version 6.0 (?? ????? 00)
 - Merged C2, C3 and Cartesian_basic in Cartesian_kernel.
+- Replaced `x == FT(0)' by `CGAL_NTS is_zero(x)'.
 
 --- CGAL 2.2 is out ---
 

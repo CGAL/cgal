@@ -55,7 +55,7 @@ circumcenter_translateC2(const FT &dqx, const FT &dqy,
 
   // The 3 points aren't collinear.
   // Hopefully, this is already checked at the upper level.
-  CGAL_kernel_assertion ( den != FT(0) );
+  CGAL_kernel_assertion ( ! CGAL_NTS is_zero(den) );
 
   // One possible optimization here is to precompute 1/den, to avoid one
   // division.  However, we loose precision, and it's maybe not worth it (?).
@@ -129,7 +129,7 @@ void
 line_get_pointC2(const FT &a, const FT &b, const FT &c, int i,
                  FT &x, FT &y)
 {
-  if (b==FT(0))
+  if (CGAL_NTS is_zero(b))
     {
       x = (-b-c)/a + FT(i)*b;
       y = FT(1) - FT(i)*a;
@@ -162,12 +162,12 @@ line_project_pointC2(const FT &la, const FT &lb, const FT &lc,
 {
 #if 1
   // Original old version
-  if (la==FT(0)) // horizontal line
+  if (CGAL_NTS is_zero(la)) // horizontal line
   {
     x = px;
     y = -lc/lb;
   }
-  else if (lb==FT(0)) // vertical line
+  else if (CGAL_NTS is_zero(lb)) // vertical line
   {
     x = -lc/la;
     y = py;

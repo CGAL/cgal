@@ -73,7 +73,7 @@ circumcenterC3( const FT &px, const FT &py, const FT &pz,
   FT den   = det3x3_by_formula(psx,psy,psz,
                                qsx,qsy,qsz,
                                rsx,rsy,rsz);
-  CGAL_kernel_assertion( den != FT(0) );
+  CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
   FT inv = FT(1)/(FT(2) * den);
 
   x = sx + num_x*inv;
@@ -191,8 +191,8 @@ point_on_planeC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
                  FT &x, FT &y, FT &z)
 {
   x = y = z = FT(0);
-  if (pa != FT(0))      x = -pd/pa;
-  else if (pb != FT(0)) y = -pd/pb;
+  if (! CGAL_NTS is_zero(pa))      x = -pd/pa;
+  else if (! CGAL_NTS is_zero(pb)) y = -pd/pb;
   else                  z = -pd/pc;
 }
 
