@@ -4,94 +4,47 @@
 
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Kernel/Cartesian_coordinate_iterator_2.h>
 
 
+class MyPointC2 {
 
-
-template < class R_ >
-class MyPointC2
-
-{
-CGAL_VC7_BUG_PROTECTED
-  typedef typename R_::FT                   FT;
-  typedef typename R_::Vector_2             Vector_2;
-  typedef typename R_::Point_2              Point_2;
-  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
-
-  FT x_, y_;
-  int c_;
+private:
+  double vec[2];
+  int col;
 
 public:
-  typedef CGAL::Cartesian_coordinate_iterator_2<R_> Cartesian_const_iterator;
-
-  typedef R_   R;
 
   MyPointC2()
-    : x_(FT(0)),y_(FT(0)), c_(0) 
-  {}
+    : col(0)
+  {
+    *vec = 0;
+    *(vec+1) = 0;
+  }
 
   
-  MyPointC2(const FT &x, const FT &y)
-    : x_(x),y_(y), c_(0) {}
-
-  
-  const FT& x() const
+  MyPointC2(const double x, const double y, int c=0)
+    : col(c)
   {
-    return x_;
-  }
-  const FT& y() const
-  {
-    return y_;
+    *vec = x;
+    *(vec+1) = y;
   }
 
-  FT& x()
-  {
-    return x_;
-  }
+  const double& x() const  { return *vec; }
 
-  FT& y()
-  {
-    return y_;
-  }
+  const double& y() const { return *(vec+1); }
 
-  int c() const
-  {
-    return c_;
-  }
+  double & x() { return *vec; }
 
-  int& c()
-  {
-    return c_;
-  }
+  double& y() { return *(vec+1); }
+
+  int color() const { return col; }
+
+  int& color() { return col; }
   
   
-  const FT& cartesian(int i) const;
-  FT homogeneous(int i) const;
-  const FT& operator[](int i) const
-  {
-      return cartesian(i);
-  }
-
-
-  Cartesian_const_iterator cartesian_begin() const 
-  {
-    return Cartesian_const_iterator(static_cast<const Point_2* >(this),0);
-  }
-
-  Cartesian_const_iterator cartesian_end() const 
-  {
-    return Cartesian_const_iterator(static_cast<const Point_2* >(this), 2);
-  }
-
-  int dimension() const
-  {
-      return 2;
-  }
-
   bool operator==(const MyPointC2 &p) const
   {
-    return ( x_ == p.x_ )  && ( y_ == p.y_ );
+    return ( *vec == *(p.vec) )  && ( *(vec+1) == *(p.vec + 1) && ( col == p.col) );
   }
 
   bool operator!=(const MyPointC2 &p) const
@@ -99,71 +52,88 @@ public:
       return !(*this == p);
   }
 
-  CGAL::Bbox_2 bbox() const;
+};
 
-  Point_2 transform(const Aff_transformation_2 &t) const
-  {
-    return t.transform(*this);
+template <class ConstructBbox_2>
+class MyConstruct_bbox_2 : public ConstructBbox_2 {
+public:
+  CGAL::Bbox_2 operator()(const typename MyPointC2& p) const {
+    return CGAL::Bbox_2(p.x(), p.y(), p.x(), p.y());
   }
 };
 
-template < class R >
-CGAL_KERNEL_INLINE
-const typename MyPointC2<R>::FT &
-MyPointC2<R>::cartesian(int i) const
-{
-  CGAL_kernel_precondition( (i == 0) || (i == 1) );
-  return (i == 0) ? x() : y();
-}
 
-template < class R >
-CGAL_KERNEL_INLINE
-typename MyPointC2<R>::FT
-MyPointC2<R>::homogeneous(int i) const
-{
-  CGAL_kernel_precondition( (i>=0) && (i<=2) );
-  if (i<2)
-    return cartesian(i);
-  return FT(1);
-}
+class MyConstruct_coord_iterator {
+public:
+  const double* operator()(const MyPointC2& p)
+  {
+    return &p.x();
+  }
 
-template < class R >
-CGAL_KERNEL_INLINE
-CGAL::Bbox_2
-MyPointC2<R>::bbox() const
-{
-  std::pair<double,double> xp = CGAL::to_interval(x());
-  std::pair<double,double> yp = CGAL::to_interval(y());
-  return CGAL::Bbox_2(xp.first, yp.first,  xp.second, yp.second);
-}
+  const double* operator()(const MyPointC2& p, int)
+  {
+    const double* pyptr = &p.y();
+    pyptr++;
+    return pyptr;
+  }
+};
 
+  template <typename K>
+  class MyConstruct_point_2
+  {
+    typedef typename K::RT         RT;
+    typedef typename K::Point_2    Point_2;
+  public:
+    typedef Point_2          result_type;
+    typedef CGAL::Arity_tag< 1 >   Arity;
 
+    Point_2
+    operator()() const
+    { return Point_2(); }
 
+    Point_2
+    operator()(CGAL::Origin o) const
+    { return Point_2(0,0); }
 
-template < class R >
+    Point_2
+    operator()(const RT& x, const RT& y) const
+    { return Point_2(x, y); }
+
+    
+    // We need this one, as such a functor is in the Filtered_kernel
+    Point_2
+    operator()(const RT& x, const RT& y, const RT& w) const
+    { 
+      if(w != 1){
+	return Point_2(x/w, y/w); 
+      } else {
+	return Point_2(x,y);
+      }
+    }
+  };
+
 std::ostream &
-operator<<(std::ostream &os, const MyPointC2<R> &p)
+operator<<(std::ostream &os, const MyPointC2 &p)
 {
     switch(os.iword(CGAL::IO::mode)) {
     case CGAL::IO::ASCII :
-        return os << p.x() << ' ' << p.y() << ' ' << p.c();
+        return os << p.x() << ' ' << p.y() << ' ' << p.color();
     case CGAL::IO::BINARY :
         CGAL::write(os, p.x());
         CGAL::write(os, p.y());
-        CGAL::write(os, p.c());
+        CGAL::write(os, p.color());
         return os;
     default:
-        return os << "MyPointC2(" << p.x() << ", " << p.y() << ", " << p.c() << ')';
+        return os << "MyPointC2(" << p.x() << ", " << p.y() << ", " << p.color() << ')';
     }
 }
 
 
 
-template < class R >
 std::istream &
-operator>>(std::istream &is, MyPointC2<R> &p)
+operator>>(std::istream &is, MyPointC2 &p)
 {
-    typename R::FT x, y;
+    double x, y;
     int c;
     switch(is.iword(CGAL::IO::mode)) {
     case CGAL::IO::ASCII :
@@ -180,8 +150,8 @@ operator>>(std::istream &is, MyPointC2<R> &p)
         break;
     }
     if (is) {
-      p = MyPointC2<R>(x, y);
-      p.c() = c;
+      p = MyPointC2(x, y);
+      p.color() = c;
     }
     return is;
 }

@@ -88,23 +88,7 @@ MySegmentC2<R>::operator!=(const MySegmentC2<R> &s) const
   return !(*this == s);
 }
 
-/*
-template < class R >
-inline
-const typename MySegmentC2<R>::Point_2 &
-MySegmentC2<R>::start() const
-{
-  return source();
-}
 
-template < class R >
-inline
-const typename MySegmentC2<R>::Point_2 &
-MySegmentC2<R>::end() const
-{
-  return target();
-}
-*/
 
 template < class R >
 CGAL_KERNEL_INLINE

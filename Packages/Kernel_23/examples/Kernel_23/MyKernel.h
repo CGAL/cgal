@@ -11,39 +11,7 @@
 
 
 
-  template <typename K>
-  class MyConstruct_point_2
-  {
-    typedef typename K::RT         RT;
-    typedef typename K::Point_2    Point_2;
-  public:
-    typedef Point_2          result_type;
-    typedef CGAL::Arity_tag< 1 >   Arity;
 
-    Point_2
-    operator()() const
-    { return Point_2(); }
-
-    Point_2
-    operator()(CGAL::Origin o) const
-    { return Point_2(0,0); }
-
-    Point_2
-    operator()(const RT& x, const RT& y) const
-    { return Point_2(x, y); }
-
-    
-    // We need this one, as such a functor is in the Filtered_kernel
-    Point_2
-    operator()(const RT& x, const RT& y, const RT& w) const
-    { 
-      if(w != 1){
-	return Point_2(x/w, y/w); 
-      } else {
-	return Point_2(x,y);
-      }
-    }
-  };
 
 
 // Taken from include/CGAL/Cartesian/Cartesian_base.h
@@ -51,10 +19,14 @@
 template < typename K_ >
 struct MyCartesian_base : public CGAL::Cartesian_base< K_ >
 {
-    typedef K_                           Kernel;
-    typedef MyPointC2<Kernel>            Point_2;
-    typedef MySegmentC2<Kernel>          Segment_2;
-    typedef MyConstruct_point_2<Kernel>  Construct_point_2;
+  typedef K_                                 Kernel;
+  typedef CGAL::Cartesian_base< K_ >         Base;
+  typedef MyPointC2                          Point_2;
+  typedef MySegmentC2<Kernel>                Segment_2;
+  typedef MyConstruct_point_2<Kernel>        Construct_point_2;
+  typedef const double*                      Cartesian_const_iterator_2;
+  typedef MyConstruct_coord_iterator         Construct_cartesian_const_iterator_2;
+  typedef MyConstruct_bbox_2<typename Base::Construct_bbox_2>         Construct_bbox_2;
 };
 
 
