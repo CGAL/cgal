@@ -295,7 +295,7 @@ public:
     tr.is_edge(e.first, e.second, fh, index);
     CGAL_assertion(should_be_true == true);
 
-    return Edge(fh, i);
+    return Edge(fh, index);
   }
 
   const Face_handle next_bad_face() const
