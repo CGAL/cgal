@@ -1,3 +1,6 @@
+2.4 (26 January 2001)
++ Added intersections of Iso_cuboid_3 with line, ray, segment and Iso_cuboid_3
+
 -----
 * 2.3 *
 + Removed guards around include directives
