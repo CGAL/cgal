@@ -154,7 +154,7 @@ points_on_square_grid_3( double a, std::size_t n,
     int m = int(CGAL_CLIB_STD::ceil(
                   std::sqrt(std::sqrt(static_cast<double>(n)))));
 
-    while (m*m*m < n) m++;
+    while (m*m*m < int(n)) m++;
 
     double base = -a;  // Left and bottom boundary.
     double step = 2*a/(m-1);

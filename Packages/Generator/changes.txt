@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.52 (20 Mar 2002)
+   - casting to get rid of warnings
+
 2.51 (15 Mar 2002)
    - added static_cast<double> to remove ambiguity for sqrt function
 
