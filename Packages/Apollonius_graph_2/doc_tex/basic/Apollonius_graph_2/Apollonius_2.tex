@@ -364,8 +364,8 @@ not.
     We want to determine the sign of the distance of the left-most
     circle from the one in the middle. The almost horizontal curve is
     the bisector of the top-most and bottom-most circles. Left: the
-    predicate returns \ccc{NEGATIVE}. Right: the predicate returns
-    \ccc{POSITIVE}.}
+    predicate returns \ccc{CGAL::NEGATIVE}. Right: the predicate
+    returns \ccc{CGAL::POSITIVE}.}
 \begin{ccHtmlOnly}
 </font>
 \end{ccHtmlOnly}
@@ -506,12 +506,13 @@ inexact predicates.
 Since using an exact number type may be too slow, the
 \ccc{Apollonius_graph_traits_2<K,Method_tag>} class is designed to
 support the dynamic filtering of \cgal{} through the
-\ccc{Filtered_exact<CT,ET>} mechanism. In particular if \ccc{CT} is an
-inexact number type that supports the operations denoted by the tag
-\ccc{Method_tag} and \ccc{ET} is an exact number type for these
-operations, then kernel with number type \ccc{Filtered_exact<CT,ET>}
-will yield exact predicates for the Apollonius graph traits. To give a
-concrete example, \ccc{Filtered_exact<double,MP_Float>} with
+\ccc{CGAL::Filtered_exact<CT,ET>} mechanism. In particular if \ccc{CT}
+is an inexact number type that supports the operations denoted by the
+tag \ccc{Method_tag} and \ccc{ET} is an exact number type for these
+operations, then kernel with number type
+\ccc{CGAL::Filtered_exact<CT,ET>} will yield exact predicates for the
+Apollonius graph traits. To give a concrete example,
+\ccc{CGAL::Filtered_exact<double,CGAL::MP_Float>} with 
 \ccc{CGAL::Ring_tag} will produce exact predicates.
 
 Another possibility for fast and exact predicate evalutation is to use
