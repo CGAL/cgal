@@ -1427,7 +1427,7 @@ public:
       return;
     }
 
-    list<Vertex *> Vertices;
+    std::list<Vertex *> Vertices;
     {// creation of a list of all vertices
       Vertex_iterator it = vertices_begin(), done = vertices_end();
       do{
@@ -1450,11 +1450,15 @@ public:
 
 
     {// deletion of the vertices
-      list<Vertex*>::iterator
+      std::list<Vertex*>::iterator
 	it=Vertices.begin(),done=Vertices.end();
-      do{
+      while ( it != done ) {
 	delete *it;
-      } while (++it!=done);
+	++it;
+      }
+//       do{
+// 	delete *it;
+//       } while (++it!=done);
     }
 
     set_number_of_vertices(0);
