@@ -46,6 +46,7 @@ public:
   typedef Gt  Geom_traits;
 
   typedef typename Gt::Point_3 Point;
+  typedef typename Gt::Vector_3 Vector;
   typedef typename Gt::Segment_3 Segment;
   typedef typename Gt::Triangle_3 Triangle;
   typedef typename Gt::Tetrahedron_3 Tetrahedron;
@@ -146,6 +147,21 @@ private:
 		  Vertex_handle v3, 
 		  const Point & p) const;
 
+  Oriented_side 
+  side_of_oriented_sphere(const Point & p,
+			  const Point & q,
+			  const Point & r,
+			  const Point & s,
+			  const Point & test) const;
+
+
+  Oriented_side 
+  side_of_oriented_circle(const Point & p,
+			  const Point & q,
+			  const Point & r,
+			  const Point & test) const;
+
+
 public:
 
   Bounded_side
@@ -222,7 +238,7 @@ insert(const Point & p, Cell_handle start)
 	  _tds.star_region(conflicts,&(*v),&(*aconflict),ineighbor);
 	  return v;
       }
-      break;
+      //      break;// unreachable code
     }// dim 3
   case 2:
     {
@@ -259,7 +275,7 @@ insert(const Point & p, Cell_handle start)
     // dimension <= 1
     return Triangulation_3<Gt,Tds>::insert(p);
   }
-  return Triangulation_3<Gt,Tds>::insert(p);// to avoid warning with egcs
+  // return Triangulation_3<Gt,Tds>::insert(p);// to avoid warning with egcs // to avoid warning with bcc
 }// insert(p)
 
 template < class Gt, class Tds >
@@ -508,7 +524,7 @@ fill_hole_3D( std::set<Facet> & boundhole,
 	      ( ! is_infinite(v[1]) ) &&
 	      ( ! is_infinite(v[2]) ) &&
 	      ( ! is_infinite(*vit) ) &&
-	      geom_traits().orientation( v[0]->point(),v[1]->point(),
+	      orientation( v[0]->point(),v[1]->point(),
 					 v[2]->point(),(*vit)->point() ) 
 	      != POSITIVE ) ) 
       { ++vit; }
@@ -532,7 +548,7 @@ fill_hole_3D( std::set<Facet> & boundhole,
       if ( ! is_infinite(*vit) ) {
 	sos = side_of_sphere(v[0],v[1],v[2],*oppvert.begin(), 
 			     (*vit)->point());
-	ori = geom_traits().orientation( v[0]->point(), v[1]->point(),
+	ori = orientation( v[0]->point(), v[1]->point(),
 					v[2]->point(), (*vit)->point() );
 	if ( ori == POSITIVE ) {
 	  if ( sos == ON_BOUNDED_SIDE ) {
@@ -628,7 +644,7 @@ fill_hole_3D( std::set<Facet> & boundhole,
 		 &&
 		 ( (vf2 == v[0]) || (vf2 == v[1]) || (vf2 == v[2]) )
 		 &&
-		 ( geom_traits().orientation
+		 ( orientation
 		   (vf1->point(),vf2->point(),
 		    vf3->point(),(*bv)->point()) == COPLANAR ))
 		||
@@ -636,7 +652,7 @@ fill_hole_3D( std::set<Facet> & boundhole,
 		 &&
 		 ( (vf3 == v[0]) || (vf3 == v[1]) || (vf3 == v[2]) )
 		 &&
-		 ( geom_traits().orientation
+		 ( orientation
 		   (vf1->point(),vf2->point(),
 		    vf3->point(),(*bv)->point()) == COPLANAR ))
 		||
@@ -644,7 +660,7 @@ fill_hole_3D( std::set<Facet> & boundhole,
 		 &&
 		 ( (vf3 == v[0]) || (vf3 == v[1]) || (vf3 == v[2]) )
 		 &&
-		 ( geom_traits().orientation
+		 ( orientation
 		   (vf1->point(),vf2->point(),
 		    vf3->point(),(*bv)->point()) == COPLANAR )) ) )
 	    {
@@ -734,7 +750,7 @@ fill_hole_3D( std::set<Facet> & boundhole,
 	     // already tested, ti be removed
 	     && 
 	     ( ( ! is_infinite((*oppvert.begin())) &&
-		 ( geom_traits().orientation
+		 ( orientation
 		   (v[0]->point(),v[1]->point(),v[2]->point(),
 		    ((*oppvert.begin()))->point()) 
 		   == POSITIVE ) )
@@ -929,7 +945,7 @@ violates( Vertex_handle u,
     pf[1] = (f.first)->vertex((f.second+2)&3)->point();
     pf[2] = (f.first)->vertex((f.second+3)&3)->point();
  
-    if ( geom_traits().orientation( pu, pf[0], pf[1], pf[2] ) != COPLANAR ) 
+    if ( orientation( pu, pf[0], pf[1], pf[2] ) != COPLANAR ) 
       return false;
 
     Point p[3];
@@ -937,9 +953,9 @@ violates( Vertex_handle u,
     p[1] = v1->point();
     p[2] = v2->point();
     Orientation o[3];
-    o[0] = geom_traits().orientation(p[0],pf[0],pf[1],pf[2]);
-    o[1] = geom_traits().orientation(p[1],pf[0],pf[1],pf[2]);
-    o[2] = geom_traits().orientation(p[2],pf[0],pf[1],pf[2]);
+    o[0] = orientation(p[0],pf[0],pf[1],pf[2]);
+    o[1] = orientation(p[1],pf[0],pf[1],pf[2]);
+    o[2] = orientation(p[2],pf[0],pf[1],pf[2]);
 
     if ( ( o[0] != COPLANAR ) && ( o[1] != COPLANAR ) && ( o[2] != COPLANAR ) )
       return false;
@@ -950,15 +966,15 @@ violates( Vertex_handle u,
 	k = (i+2)%3;
 	if ( 
 	    ( (o[0] == COPLANAR) && (p[0] != pf[j]) && (p[0] != pf[k]) &&
-	      ( geom_traits().orientation_in_plane(pf[j],pf[k],pf[i],p[0])
+	      ( orientation_in_plane(pf[j],pf[k],pf[i],p[0])
 		== NEGATIVE ) ) 
 	    ||
 	    ( (o[1] == COPLANAR) && (p[1] != pf[j]) && (p[1] != pf[k]) &&
-	      ( geom_traits().orientation_in_plane(pf[j],pf[k],pf[i],p[1])
+	      ( orientation_in_plane(pf[j],pf[k],pf[i],p[1])
 		== NEGATIVE ) ) 
 	    ||
 	    ( (o[2] == COPLANAR) && (p[2] != pf[j]) && (p[2] != pf[k]) &&
-	      ( geom_traits().orientation_in_plane(pf[j],pf[k],pf[i],p[2])
+	      ( orientation_in_plane(pf[j],pf[k],pf[i],p[2])
 		== NEGATIVE ) ) 
 	    )
 	  return true;
@@ -976,13 +992,13 @@ violates( Vertex_handle u,
 	    k = (l+2)%3;
 	    if ( p[i] == pf[l] ) {
 	      if ( (pu != pf[j]) && (pu != pf[k]) &&
-		   ( geom_traits().orientation_in_plane(pf[j],pf[k],pf[l],pu)
+		   ( orientation_in_plane(pf[j],pf[k],pf[l],pu)
 		     == NEGATIVE ) )
 		return true;
 	      else
 		continue;
 	    }
-	    if ( ( geom_traits().orientation_in_plane(pf[j],pf[k],pu,p[i])
+	    if ( ( orientation_in_plane(pf[j],pf[k],pu,p[i])
 		   != POSITIVE ) )
 	      return true;
 	  }
@@ -1023,6 +1039,45 @@ find_conflicts_2(std::set<void*, std::less<void*> > & conflicts,
   }
 }// find_conflicts_2
 
+
+
+
+template < class Gt, class Tds >
+Oriented_side 
+Delaunay_triangulation_3<Gt,Tds>::
+side_of_oriented_sphere(const Point & p,
+			  const Point & q,
+			  const Point & r,
+			  const Point & s,
+			  const Point & test) const
+{
+  return geom_traits().side_of_oriented_sphere_3_object()(p, q, r, s, test);
+}
+
+
+
+
+template < class Gt, class Tds >
+Oriented_side 
+Delaunay_triangulation_3<Gt,Tds>::
+side_of_oriented_circle(const Point & p,
+			  const Point & q,
+			  const Point & r,
+			  const Point & test) const
+{
+  Vector v = geom_traits().cross_product_object()(q-p, r-p);
+
+  return geom_traits().coplanar_side_of_oriented_circle_3_object()(p, q, r, test, v);
+
+  //  return geom_traits().side_of_oriented_circle(p, q, r, test);
+}
+
+
+
+
+
+
+
 template < class Gt, class Tds >
 Bounded_side
 Delaunay_triangulation_3<Gt,Tds>::
@@ -1031,13 +1086,13 @@ side_of_sphere(Cell_handle c, const Point & p) const
   CGAL_triangulation_precondition( dimension() == 3 );
   int i3;
   if ( ! c->has_vertex( infinite_vertex(), i3 ) ) 
-    return Bounded_side( geom_traits().side_of_oriented_sphere
+    return Bounded_side( side_of_oriented_sphere
 			 (c->vertex(0)->point(),
 			  c->vertex(1)->point(),
 			  c->vertex(2)->point(),
 			  c->vertex(3)->point(),p) );
 //     Oriented_side
-//       o = geom_traits().side_of_oriented_sphere(c->vertex(0)->point(),
+//       o = side_of_oriented_sphere(c->vertex(0)->point(),
 // 						c->vertex(1)->point(),
 // 						c->vertex(2)->point(),
 // 						c->vertex(3)->point(),p);
@@ -1055,21 +1110,21 @@ side_of_sphere(Cell_handle c, const Point & p) const
     i2 = (i3+3)&3;
   }
   Orientation
-    o = geom_traits().orientation(c->vertex(i0)->point(),
+    o = orientation(c->vertex(i0)->point(),
 				  c->vertex(i1)->point(),
 				  c->vertex(i2)->point(),
 				  p);
   if (o != ZERO)
     return Bounded_side(o);
 
-  return Bounded_side( geom_traits().side_of_oriented_circle
+  return Bounded_side( side_of_oriented_circle
 		       ( c->vertex(i0)->point(), 
 			 c->vertex(i1)->point(),
 			 c->vertex(i2)->point(),
 			 p ) );
 //     {
 //       Oriented_side s = 
-// 	geom_traits().side_of_oriented_circle
+// 	side_of_oriented_circle
 // 	( c->vertex(i0)->point(),
 // 	  c->vertex(i1)->point(),
 // 	  c->vertex(i2)->point(),
@@ -1107,14 +1162,14 @@ side_of_sphere(Vertex_handle v0,
 	i2 = (i+3)&3;
       }
       Orientation
-	o = geom_traits().orientation(v[i0]->point(),
+	o = orientation(v[i0]->point(),
 				      v[i1]->point(),
 				      v[i2]->point(),
 				      p);
       if (o != ZERO)
 	return Bounded_side(o);
 
-      return Bounded_side( geom_traits().side_of_oriented_circle
+      return Bounded_side( side_of_oriented_circle
 			   ( v[i0]->point(), 
 			     v[i1]->point(),
 			     v[i2]->point(),
@@ -1123,7 +1178,7 @@ side_of_sphere(Vertex_handle v0,
   }
   
   // all vertices are finite
-  return Bounded_side( geom_traits().side_of_oriented_sphere
+  return Bounded_side( side_of_oriented_sphere
 		       ( v[0]->point(),
 			 v[1]->point(),
 			 v[2]->point(),
@@ -1156,13 +1211,13 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
     // the triangulation is supposed to be valid, ie the facet
     // with vertices 0 1 2 in this order is positively oriented
     if ( ! c->has_vertex( infinite_vertex(), i3 ) ) 
-      return Bounded_side( geom_traits().side_of_oriented_circle
+      return Bounded_side( side_of_oriented_circle
 			   (c->vertex(0)->point(),
 			    c->vertex(1)->point(),
 			    c->vertex(2)->point(),
 			    p) );
 //       Oriented_side
-// 	o = geom_traits().side_of_oriented_circle(c->vertex(0)->point(),
+// 	o = side_of_oriented_circle(c->vertex(0)->point(),
 // 						  c->vertex(1)->point(),
 // 						  c->vertex(2)->point(),
 // 						  p);
@@ -1180,7 +1235,7 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
     // to v1v2
     Cell_handle n = c->neighbor(i3);
     Orientation o =
-      geom_traits().orientation_in_plane( v1->point(), 
+      orientation_in_plane( v1->point(), 
 					  v2->point(), 
 					  n->vertex(n->index(c))->point(),
 					  p );
@@ -1234,18 +1289,18 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
     int i0 = (i>0) ? 0 : 1;
     int i1 = (i>1) ? 1 : 2;
     int i2 = (i>2) ? 2 : 3;
-    CGAL_triangulation_precondition( geom_traits().orientation
+    CGAL_triangulation_precondition( orientation
 				     (c->vertex(i0)->point(),
 				      c->vertex(i1)->point(),
 				      c->vertex(i2)->point(),
 				      p) == COPLANAR );
-    return Bounded_side ( geom_traits().side_of_oriented_circle
+    return Bounded_side ( side_of_oriented_circle
 			  (c->vertex(i0)->point(),
 			   c->vertex(i1)->point(),
 			   c->vertex(i2)->point(),
 			   p) );
 //     Oriented_side
-//       o = geom_traits().side_of_oriented_circle(c->vertex(i0)->point(),
+//       o = side_of_oriented_circle(c->vertex(i0)->point(),
 // 						c->vertex(i1)->point(),
 // 						c->vertex(i2)->point(),
 // 						p);
@@ -1261,7 +1316,7 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
     v1 = c->vertex( next_around_edge(i3,i) ),
     v2 = c->vertex( next_around_edge(i,i3) );
   Orientation o =
-    geom_traits().orientation_in_plane( v1->point(),
+    orientation_in_plane( v1->point(),
 					v2->point(),
 					c->vertex(i)->point(),
 					p );
