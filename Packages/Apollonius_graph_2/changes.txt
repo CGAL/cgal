@@ -1,3 +1,7 @@
+1.59 (6 November 2003) [mk]
+- Radu updated the project file for the demo so that it
+  reflects the new files involved in the demo
+
 1.58 (30 October 2003) [mk]
 - copied (and added to the package) the cgal.bib file from the
   user manual to the reference manual
