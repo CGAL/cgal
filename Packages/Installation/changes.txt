@@ -1,6 +1,6 @@
-//=====================================================================
-//	Revision History for package Installation
-//=====================================================================
+26 August 2004 Sylvain Pion
+- install_cgal : update supported compiler list recognition.
+- install_cgal : remove obsolete workaround for g++ 2.8 concerning leda.
 
 20 August 2004 Sylvain Pion
 - install_cgal : Rename "CGAL_CFG_NO_LONGNAME_PROBLEM.C" to

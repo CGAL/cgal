@@ -4391,28 +4391,27 @@ _set_support()
 #	    ;;
 	*SUNPRO*)
 	    case `compiler_version` in
-		5.3*|5.4*|5.5*) CGAL_SUPPORT_COMPILER='y';;
+		5.5*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
 	*MIPSPRO*n32*|*MIPSPRO*64*) 
 	    case `compiler_version` in
-		7.3*) CGAL_SUPPORT_COMPILER='y';;
+		7.[34]*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
 	*GNU*)
 	    case `compiler_version` in
 		2.95*) CGAL_SUPPORT_COMPILER='y';;
-		3.[0123]*) CGAL_SUPPORT_COMPILER='y';;
+		3.[234]*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
 	*Intel*)
 	    case `compiler_version` in
-		7*) CGAL_SUPPORT_COMPILER='y';;
+		[78]*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
 	*VC++*)
 	    case `compiler_version` in
-		1300*) CGAL_SUPPORT_COMPILER='y';;
 		1310*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
@@ -5758,13 +5757,7 @@ write_compiler_flags()
   fi
   
   if [ -n "${LEDA_SUPPORT}" ]; then
-    case ${CGAL_OS_COMPILER} in
-	*g++-2.8*)
-	    makefile_print_line "-DCGAL_USE_LEDA -DLEDA_PREFIX -DLEDA_NO_DEFAULT_COMPARE" \
-	    >> ${FILE};;
-		*)
-	    makefile_print_line "-DCGAL_USE_LEDA -DLEDA_PREFIX" >> ${FILE};;
-    esac
+    makefile_print_line "-DCGAL_USE_LEDA -DLEDA_PREFIX" >> ${FILE}
   fi
 
   makefile_print_line "'-I\$(CGAL_INCL_CONF_DIR)'" >> ${FILE}
@@ -7315,6 +7308,3 @@ case ${_WHAT_TO_DO} in
 esac
 exit 0
 
-# ---------------------------------------------------------------------
-# EOF 
-# ---------------------------------------------------------------------
