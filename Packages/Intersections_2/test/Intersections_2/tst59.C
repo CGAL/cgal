@@ -10,13 +10,13 @@
 #include "numrep2.h"
 #include <iostream.h>
 
-typedef CGAL_Point_2< TestR > point_t;
-typedef CGAL_Iso_rectangle_2< TestR > rect_t;
+typedef CGAL::Point_2< TestR > point_t;
+typedef CGAL::Iso_rectangle_2< TestR > rect_t;
 
 void print(const point_t &pt)
 {
-    double xd = CGAL_to_double(pt.x());
-    double yd = CGAL_to_double(pt.y());
+    double xd = CGAL::to_double(pt.x());
+    double yd = CGAL::to_double(pt.y());
     // force 0 to be positive zero.
     if (xd == 0.0)
 	xd = 0.0;
@@ -32,15 +32,15 @@ void print(const point_t &pt)
 void one_pair(rect_t const & irect1, rect_t const & irect2)
 {
     rect_t irect;
-    CGAL_Object result = CGAL_intersection(irect1, irect2);
-    if (CGAL_assign(irect, result)) {
+    CGAL::Object result = CGAL::intersection(irect1, irect2);
+    if (CGAL::assign(irect, result)) {
 	cout << "Intersection.\n";
 	print(irect.min());
 	cout << ' ';
 	print(irect.max());
 	cout << '\n';
     }
-    if (!CGAL_assign(irect, result)) {
+    if (!CGAL::assign(irect, result)) {
 	cout << "No intersection.\n";
     }
 }

@@ -12,13 +12,13 @@
 #include "numrep2.h"
 
 
-typedef CGAL_Point_2< TestR > point_t;
-typedef CGAL_Segment_2< TestR > segment_t;
+typedef CGAL::Point_2< TestR > point_t;
+typedef CGAL::Segment_2< TestR > segment_t;
 
 void print(const point_t &pt)
 {
-    double xd = CGAL_to_double(pt.x());
-    double yd = CGAL_to_double(pt.y());
+    double xd = CGAL::to_double(pt.x());
+    double yd = CGAL::to_double(pt.y());
     // force 0 to be positive zero.
     if (xd == 0.0)
 	xd = 0.0;
@@ -41,15 +41,15 @@ void treat_intersection(const segment_t &seg1, const segment_t &seg2)
 {
     point_t pt1;
     segment_t iseg;
-    CGAL_Object result = CGAL_intersection(seg1, seg2);
-    if (!CGAL_assign(iseg, result) && !CGAL_assign(pt1, result))
+    CGAL::Object result = CGAL::intersection(seg1, seg2);
+    if (!CGAL::assign(iseg, result) && !CGAL::assign(pt1, result))
 	cout << "No intersection.\n";
-    if (CGAL_assign(pt1, result)) {
+    if (CGAL::assign(pt1, result)) {
 	cout << "Point intersection.\n";
 	print(pt1);
 	cout<<'\n';
     }
-    if (CGAL_assign(iseg, result)) {
+    if (CGAL::assign(iseg, result)) {
 	cout << "Segment intersection.\n";
 	print(iseg);
 	cout<<'\n';

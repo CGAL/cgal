@@ -9,15 +9,15 @@
 
 #include "numrep2.h"
 
-typedef CGAL_Point_2< TestR > point_t;
-typedef CGAL_Line_2< TestR > line_t;
-typedef CGAL_Ray_2< TestR > ray_t;
-typedef CGAL_Segment_2< TestR > segment_t;
+typedef CGAL::Point_2< TestR > point_t;
+typedef CGAL::Line_2< TestR > line_t;
+typedef CGAL::Ray_2< TestR > ray_t;
+typedef CGAL::Segment_2< TestR > segment_t;
 
 void print(const point_t &pt)
 {
-    double xd = CGAL_to_double(pt.x());
-    double yd = CGAL_to_double(pt.y());
+    double xd = CGAL::to_double(pt.x());
+    double yd = CGAL::to_double(pt.y());
     // force 0 to be positive zero.
     if (xd == 0.0)
 	xd = 0.0;
@@ -34,20 +34,20 @@ void treat_intersection(const line_t &line, const ray_t &ray)
     point_t ipt;
     ray_t iray;
 /*
-    CGAL_Line_2_Ray_2_pair<TestR> pair(&line, &ray);
+    CGAL::Line_2_Ray_2_pair<TestR> pair(&line, &ray);
     switch (pair.intersection_type()) {
-    case CGAL_Line_2_Ray_2_pair<TestR>::NO:
+    case CGAL::Line_2_Ray_2_pair<TestR>::NO:
 	cout << "No intersection.\n";
 	break;
-    case CGAL_Line_2_Ray_2_pair<TestR>::RAY:
+    case CGAL::Line_2_Ray_2_pair<TestR>::RAY:
 	cout << "Ray intersection.\n";
 	pair.intersection(iray);
 	print(iray.start());
 	cout << ' ';
-	print(CGAL_ORIGIN + iray.direction().vector());
+	print(CGAL::ORIGIN + iray.direction().vector());
 	cout<<'\n';
 	break;
-    case CGAL_Line_2_Ray_2_pair<TestR>::POINT:
+    case CGAL::Line_2_Ray_2_pair<TestR>::POINT:
 	cout << "Point intersection.\n";
 	pair.intersection(ipt);
 	print(ipt);
@@ -58,20 +58,20 @@ void treat_intersection(const line_t &line, const ray_t &ray)
     }
 */
 
-    CGAL_Object result = CGAL_intersection(line, ray);
-    if (CGAL_assign(ipt, result)) {
+    CGAL::Object result = CGAL::intersection(line, ray);
+    if (CGAL::assign(ipt, result)) {
 	cout << "Point intersection.\n";
 	print(ipt);
 	cout<<'\n';
     }
-    if (CGAL_assign(iray, result)) {
+    if (CGAL::assign(iray, result)) {
 	cout << "Ray intersection.\n";
 	print(iray.start());
 	cout << ' ';
-	print(CGAL_ORIGIN + iray.direction().vector());
+	print(CGAL::ORIGIN + iray.direction().vector());
 	cout<<'\n';
     }
-    if (!CGAL_assign(iray, result) && !CGAL_assign(ipt, result)) {
+    if (!CGAL::assign(iray, result) && !CGAL::assign(ipt, result)) {
 	cout << "No intersection.\n";
     }
 }

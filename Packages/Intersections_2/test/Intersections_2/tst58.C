@@ -10,14 +10,14 @@
 
 #include "numrep2.h"
 
-typedef CGAL_Point_2< TestR > point_t;
-typedef CGAL_Segment_2< TestR > segment_t;
-typedef CGAL_Iso_rectangle_2< TestR > rect_t;
+typedef CGAL::Point_2< TestR > point_t;
+typedef CGAL::Segment_2< TestR > segment_t;
+typedef CGAL::Iso_rectangle_2< TestR > rect_t;
 
 void print(const point_t &pt)
 {
-    double xd = CGAL_to_double(pt.x());
-    double yd = CGAL_to_double(pt.y());
+    double xd = CGAL::to_double(pt.x());
+    double yd = CGAL::to_double(pt.y());
     // force 0 to be positive zero.
     if (xd == 0.0)
 	xd = 0.0;
@@ -35,7 +35,7 @@ void one_pair(segment_t const & seg, rect_t const & rect)
     segment_t iseg;
     point_t point;
 /*
-    typedef CGAL_Segment_2_Iso_rectangle_2_pair<TestR> ist;
+    typedef CGAL::Segment_2_Iso_rectangle_2_pair<TestR> ist;
     ist pair(&seg, &rect);
     switch (pair.intersection_type()) {
     case ist::SEGMENT:
@@ -57,14 +57,14 @@ void one_pair(segment_t const & seg, rect_t const & rect)
 	break;
     }
 */
-    CGAL_Object result = CGAL_intersection(seg, rect);
-    if (CGAL_assign(point, result)) {
+    CGAL::Object result = CGAL::intersection(seg, rect);
+    if (CGAL::assign(point, result)) {
 	cout << "Point intersection.\n";
     }
-    if (CGAL_assign(iseg, result)) {
+    if (CGAL::assign(iseg, result)) {
 	cout << "Segment intersection.\n";
     }
-    if (!CGAL_assign(point, result) && !CGAL_assign(iseg, result)) {
+    if (!CGAL::assign(point, result) && !CGAL::assign(iseg, result)) {
 	cout << "No intersection.\n";
     }
 }

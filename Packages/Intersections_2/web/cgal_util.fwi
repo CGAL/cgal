@@ -1,16 +1,16 @@
 @$@<do_intersect macro@>@(@2@)@Z@M==@{@-
 template <class R>
-inline bool CGAL_do_intersect(
-    const CGAL_@1<R> &p1,
-    const CGAL_@2<R> &p2)
+inline bool do_intersect(
+    const @1<R> &p1,
+    const @2<R> &p2)
 {
-    typedef CGAL_@1_@2_pair<R> pair_t;
+    typedef @1_@2_pair<R> pair_t;
     pair_t pair(&p1, &p2);
     return pair.intersection_type() != pair_t::NO;
 }@-
 @}
 
-@$@<CGAL_heading@>@(@4@)@Z@M==@{@-
+@$@<cgal_heading@>@(@4@)@Z@M==@{@-
 @!  parameter description with an example value
 @! file : include/CGAL/Optimisation/Min_circle_2.h
 @! source  : web/Optimisation/Min_circle_2.aw

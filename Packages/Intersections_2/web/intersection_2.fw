@@ -2,7 +2,7 @@
 
 
 @O@<../include/CGAL/intersection_2.h@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/intersection_2.h@,@-
 intersection_2.fw@,@-
 Geert-Jan Giezeman@,@-
@@ -20,7 +20,7 @@ MPI, Saarbruecken@)
 
 
 @O@<../include/CGAL/intersections.h@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/intersections.h@,@-
 intersection_2.fw@,@-
 Geert-Jan Giezeman@,@-

@@ -6,15 +6,15 @@
 
 #include "numrep2.h"
 
-typedef CGAL_Point_2<TestR> point_t;
-typedef CGAL_Line_2<TestR> line_t;
-typedef CGAL_Segment_2<TestR> segment_t;
-typedef CGAL_Iso_rectangle_2<TestR> rect_t;
+typedef CGAL::Point_2<TestR> point_t;
+typedef CGAL::Line_2<TestR> line_t;
+typedef CGAL::Segment_2<TestR> segment_t;
+typedef CGAL::Iso_rectangle_2<TestR> rect_t;
 
 void print(const point_t &pt)
 {
-    double xd = CGAL_to_double(pt.x());
-    double yd = CGAL_to_double(pt.y());
+    double xd = CGAL::to_double(pt.x());
+    double yd = CGAL::to_double(pt.y());
     // force 0 to be positive zero.
     if (xd == 0.0)
 	xd = 0.0;
@@ -32,9 +32,9 @@ void one_pair(line_t const & line, rect_t const & rect)
     segment_t seg;
     point_t point;
 /*
-    CGAL_Line_2_Iso_rectangle_2_pair<TestR> pair(&line, &rect);
+    CGAL::Line_2_Iso_rectangle_2_pair<TestR> pair(&line, &rect);
     switch (pair.intersection_type()) {
-    case CGAL_Line_2_Iso_rectangle_2_pair<TestR>::SEGMENT:
+    case CGAL::Line_2_Iso_rectangle_2_pair<TestR>::SEGMENT:
 	cout<<"Segment intersection.\n";
 	pair.intersection(seg);
 	print(seg.start());
@@ -42,25 +42,25 @@ void one_pair(line_t const & line, rect_t const & rect)
 	print(seg.end());
 	cout<<'\n';
 	break;
-    case CGAL_Line_2_Iso_rectangle_2_pair<TestR>::POINT:
+    case CGAL::Line_2_Iso_rectangle_2_pair<TestR>::POINT:
 	cout<<"Point intersection.\n";
 	pair.intersection(point);
 	print(point);
 	cout<<'\n';
 	break;
-    case CGAL_Line_2_Iso_rectangle_2_pair<TestR>::NO:
+    case CGAL::Line_2_Iso_rectangle_2_pair<TestR>::NO:
 	cout<<"No intersection.\n";
 	break;
     }
 */
-    CGAL_Object result = CGAL_intersection(line, rect);
-    if (CGAL_assign(point, result)) {
+    CGAL::Object result = CGAL::intersection(line, rect);
+    if (CGAL::assign(point, result)) {
 	cout << "Point intersection.\n";
     }
-    if (CGAL_assign(seg, result)) {
+    if (CGAL::assign(seg, result)) {
 	cout << "Segment intersection.\n";
     }
-    if (!CGAL_assign(point, result) && !CGAL_assign(seg, result)) {
+    if (!CGAL::assign(point, result) && !CGAL::assign(seg, result)) {
 	cout << "No intersection.\n";
     }
 }

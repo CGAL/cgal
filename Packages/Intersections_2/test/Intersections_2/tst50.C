@@ -4,20 +4,20 @@
 #include <iostream.h>
 #include <CGAL/Object.h>
 #include <CGAL/Triangle_2.h>
-#include <vector.h>
+#include <vector>
 #include <CGAL/Triangle_2_Triangle_2_intersection.h>
 
 #include "numrep2.h"
 
-typedef CGAL_Point_2< TestR > point_t;
-typedef CGAL_Segment_2< TestR > segment_t;
-typedef CGAL_Triangle_2< TestR > trian_t;
-typedef vector<point_t>  container_t;
+typedef CGAL::Point_2< TestR > point_t;
+typedef CGAL::Segment_2< TestR > segment_t;
+typedef CGAL::Triangle_2< TestR > trian_t;
+typedef std::vector<point_t>  container_t;
 
 void print(const point_t &pt)
 {
-    double xd = CGAL_to_double(pt.x());
-    double yd = CGAL_to_double(pt.y());
+    double xd = CGAL::to_double(pt.x());
+    double yd = CGAL::to_double(pt.y());
     // force 0 to be positive zero.
     if (xd == 0.0)
 	xd = 0.0;
@@ -30,9 +30,9 @@ void print(const point_t &pt)
 
 /*
 template <class R>
-void print(const CGAL_Point_2<R> &pt)
+void print(const CGAL::Point_2<R> &pt)
 {
-    cout << CGAL_to_double(pt.x()) <<' '<<CGAL_to_double(pt.y());
+    cout << CGAL::to_double(pt.x()) <<' '<<CGAL::to_double(pt.y());
 }
 */
 
@@ -43,20 +43,20 @@ void one_pair(trian_t const & trian1, trian_t const & trian2)
     point_t point;
     container_t pgn;
 
-    if (CGAL_do_intersect(trian1, trian2))
+    if (CGAL::do_intersect(trian1, trian2))
 	;
 
-    CGAL_Object result = CGAL_intersection(trian1, trian2);
-    if (CGAL_assign(point, result)) {
+    CGAL::Object result = CGAL::intersection(trian1, trian2);
+    if (CGAL::assign(point, result)) {
 	cout << "Point intersection.\n";
     }
-    if (CGAL_assign(seg, result)) {
+    if (CGAL::assign(seg, result)) {
 	cout << "Segment intersection.\n";
     }
-    if (CGAL_assign(trian3, result)) {
+    if (CGAL::assign(trian3, result)) {
 	cout << "Triangle intersection.\n";
     }
-    if (CGAL_assign(pgn, result)) {
+    if (CGAL::assign(pgn, result)) {
 	cout << "Polygon intersection.\n";
 	cout << pgn.size()<<'\n';
 	for (container_t::size_type i=0; i<pgn.size(); i++) {
@@ -64,8 +64,8 @@ void one_pair(trian_t const & trian1, trian_t const & trian2)
 	    cout << '\n';
 	}
     }
-    if (!CGAL_assign(seg, result) && !CGAL_assign(trian3, result)
-	    && !CGAL_assign(point, result) && !CGAL_assign(pgn, result)) {
+    if (!CGAL::assign(seg, result) && !CGAL::assign(trian3, result)
+	    && !CGAL::assign(point, result) && !CGAL::assign(pgn, result)) {
 	cout << "No intersection.\n";
     }
 }
@@ -99,25 +99,25 @@ int main()
 }
 
 /*
-    CGAL_Triangle_2_Triangle_2_pair<TestR> pair(&trian1, &trian2);
+    CGAL::Triangle_2_Triangle_2_pair<TestR> pair(&trian1, &trian2);
     switch (pair.intersection_type()) {
-    case CGAL_Triangle_2_Triangle_2_pair<TestR>::POLYGON:
+    case CGAL::Triangle_2_Triangle_2_pair<TestR>::POLYGON:
 	cout<<"Polygon intersection.\n";
 	pair.intersection();
 	break;
-    case CGAL_Triangle_2_Triangle_2_pair<TestR>::TRIANGLE:
+    case CGAL::Triangle_2_Triangle_2_pair<TestR>::TRIANGLE:
 	cout<<"Triangle intersection.\n";
 	pair.intersection(trian3);
 	break;
-    case CGAL_Triangle_2_Triangle_2_pair<TestR>::SEGMENT:
+    case CGAL::Triangle_2_Triangle_2_pair<TestR>::SEGMENT:
 	cout<<"Segment intersection.\n";
 	pair.intersection(seg);
 	break;
-    case CGAL_Triangle_2_Triangle_2_pair<TestR>::POINT:
+    case CGAL::Triangle_2_Triangle_2_pair<TestR>::POINT:
 	cout<<"Point intersection.\n";
 	pair.intersection(point);
 	break;
-    case CGAL_Triangle_2_Triangle_2_pair<TestR>::NO:
+    case CGAL::Triangle_2_Triangle_2_pair<TestR>::NO:
 	cout<<"No intersection.\n";
 	break;
     }

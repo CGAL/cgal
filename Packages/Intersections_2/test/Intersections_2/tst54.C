@@ -10,13 +10,13 @@
 
 #include "numrep2.h"
 
-typedef CGAL_Point_2< TestR > point_t;
-typedef CGAL_Triangle_2< TestR > trian_t;
+typedef CGAL::Point_2< TestR > point_t;
+typedef CGAL::Triangle_2< TestR > trian_t;
 
 void print(const point_t &pt)
 {
-    double xd = CGAL_to_double(pt.x());
-    double yd = CGAL_to_double(pt.y());
+    double xd = CGAL::to_double(pt.x());
+    double yd = CGAL::to_double(pt.y());
     // force 0 to be positive zero.
     if (xd == 0.0)
 	xd = 0.0;
@@ -33,7 +33,7 @@ void one_pair(point_t const & pt, trian_t const & trian)
 {
     point_t point;
 /*
-    typedef CGAL_Point_2_Triangle_2_pair<TestR> Is_type;
+    typedef CGAL::Point_2_Triangle_2_pair<TestR> Is_type;
     Is_type pair(&pt, &trian);
     switch (pair.intersection_type()) {
     case Is_type::POINT:
@@ -47,14 +47,14 @@ void one_pair(point_t const & pt, trian_t const & trian)
 	break;
     }
 */
-    if (CGAL_do_intersect(pt, trian))
+    if (CGAL::do_intersect(pt, trian))
 	;
 
-    CGAL_Object result = CGAL_intersection(pt, trian);
-    if (CGAL_assign(point, result)) {
+    CGAL::Object result = CGAL::intersection(pt, trian);
+    if (CGAL::assign(point, result)) {
 	cout << "Point intersection.\n";
     }
-    if (!CGAL_assign(point, result)) {
+    if (!CGAL::assign(point, result)) {
 	cout << "No intersection.\n";
     }
 }
