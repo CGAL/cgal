@@ -24,11 +24,10 @@
 #include "fileprint.xpm"
 
 
-class File_toolbar : public QObject
+class File_toolbar : public QToolBar
 {
   Q_OBJECT
 private:
-  QToolBar     *fileToolbar;
   QMainWindow  *window;
 
   QAction *fileNew;
@@ -39,12 +38,15 @@ private:
   QAction *filePrint;
 public:
   /** construtor */
-  File_toolbar(QMainWindow *mw)
-    {
-      window = mw;
-      initActions();
-      initToolBar();
-    }
+  File_toolbar(const QString& label, QMainWindow* mainWindow,
+	       QWidget* parent, bool newLine = FALSE,
+	       const char* name = 0, WFlags f = 0 )
+    : QToolBar(label, mainWindow, parent, newLine, name, f),
+      window(mainWindow)
+  {
+    initActions();
+    initToolBar();
+  }
 
   ~File_toolbar()
     {
@@ -54,12 +56,10 @@ public:
       delete fileSaveAs;
       delete fileClose;
       delete filePrint;
-
-      delete fileToolbar;
     }
 
 
-  inline QToolBar* toolbar() { return fileToolbar; }
+  inline QToolBar* toolbar() { return this; }
 
 signals:
   void fileToRead(const QString& f);
@@ -118,6 +118,7 @@ private:
 
   void initToolBar()
     {
+#if 0
       fileToolbar = new QToolBar(window, "file operations");
       fileNew->addTo(fileToolbar);
       fileOpen->addTo(fileToolbar);
@@ -125,6 +126,13 @@ private:
       filePrint->addTo(fileToolbar);
       fileToolbar->addSeparator();
       QWhatsThis::whatsThisButton(fileToolbar);
+#endif
+      fileNew->addTo(this);
+      fileOpen->addTo(this);
+      fileSaveAs->addTo(this);
+      filePrint->addTo(this);
+      this->addSeparator();
+      QWhatsThis::whatsThisButton(this);
     }
   
   /** setup the statusbar */

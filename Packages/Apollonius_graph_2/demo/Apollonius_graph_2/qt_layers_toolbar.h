@@ -22,21 +22,25 @@
 //#include "removecircle.xpm"
 
 
-class Layers_toolbar : public QObject
+class Layers_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
-  Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, AG_2& ag)
-    : nr_of_buttons(0) {
-
+  Layers_toolbar(CGAL::Qt_widget *widget, AG_2& ag,
+		 const QString& label, QMainWindow* mainWindow,
+		 QWidget* parent, bool newLine = FALSE,
+		 const char* name = 0, WFlags f = 0 )
+    : QToolBar(label, mainWindow, parent, newLine, name, f),
+      nr_of_buttons(0)
+  {  
     showVD = new Voronoi_diagram_layer<AG_2>(ag);
     showDG = new Delaunay_graph_layer<AG_2>(ag);
     showNT = new Visible_sites_layer<AG_2>(ag);
     showTR = new Hidden_sites_layer<AG_2>(ag);
 
     // set the widget
-    widget = w;
-    window = mw;
+    this->widget = widget;
+    window = mainWindow;
     window->statusBar();
 
     widget->attach(showTR);
@@ -44,14 +48,13 @@ public:
     widget->attach(showVD);
     widget->attach(showNT);
 
-    maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 
     but[0] = new QToolButton(QPixmap( (const char**)points_small_xpm ),
 			     "Show sites", 
 			     0, 
 			     this, 
 			     SLOT(show_sites()), 
-			     maintoolbar, 
+			     this, 
 			     "Show weighted points");
 
     but[1] = new QToolButton(QPixmap( (const char**)voronoi_small_xpm ),
@@ -59,7 +62,7 @@ public:
 			     0, 
 			     this, 
 			     SLOT(show_apollonius_diagram()), 
-			     maintoolbar, 
+			     this, 
 			     "Show Voronoi_diagram");
 
     
@@ -68,7 +71,7 @@ public:
 			     0, 
 			     this, 
 			     SLOT(show_apollonius_graph()), 
-			     maintoolbar, 
+			     this, 
 			     "Show Delaunay graph");
 
     but[3] = new QToolButton(QPixmap( (const char**)point_small_xpm ),
@@ -76,7 +79,7 @@ public:
 			     0, 
 			     this, 
 			     SLOT(insert_point_mode()), 
-			     maintoolbar, 
+			     this, 
 			     "Insert point");
 
     but[4] = new QToolButton(QPixmap( (const char**)circle_small_xpm ),
@@ -84,7 +87,7 @@ public:
 			     0, 
 			     this, 
 			     SLOT(insert_circle_mode()), 
-			     maintoolbar, 
+			     this, 
 			     "Insert circle");
     
 #if 0
@@ -93,7 +96,7 @@ public:
 			     0, 
 			     this, 
 			     SLOT(remove_mode()), 
-			     maintoolbar, 
+			     this, 
 			     "Remove site");
 #else
     but[5] = new QToolButton(QPixmap( (const char**)notool_xpm ),
@@ -101,7 +104,7 @@ public:
 			     0, 
 			     this, 
 			     SLOT(remove_mode()), 
-			     maintoolbar, 
+			     this, 
 			     "Remove site");
 #endif
     showDG->deactivate();
@@ -126,7 +129,7 @@ public:
     delete showNT;
   }
 
-  inline QToolBar* toolbar() { return maintoolbar; };
+  inline QToolBar* toolbar() { return this; };
 
 signals:
   void new_object(CGAL::Object);
@@ -190,7 +193,6 @@ private slots:
   }
 
 private:
-  QToolBar		*maintoolbar;
   QToolButton		*but[10];
   CGAL::Qt_widget	*widget;
   QMainWindow		*window;	

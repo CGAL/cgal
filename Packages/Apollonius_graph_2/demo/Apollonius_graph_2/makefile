@@ -58,7 +58,7 @@ demo$(EXE_EXT): demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   demo.clean 
+                   demo.clean ; rm -f *.moc 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
