@@ -543,9 +543,7 @@ public:
 
   //INSERTION 
 
-  Vertex_handle insert(const Point & p );
-
-  Vertex_handle insert(const Point & p, Cell_handle start);
+  Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle() );
 
   template < class InputIterator >
   int insert(InputIterator first, InputIterator last)
@@ -2536,38 +2534,6 @@ flip_flippable( Cell_handle c, int i, int j )
 		   c->vertex(next_around_edge(i,j))->point() ) == LEFTTURN );
 #endif
   _tds.flip_flippable( &(*c), i, j );
-}
-
-template < class GT, class Tds >
-Triangulation_3<GT,Tds>::Vertex_handle
-Triangulation_3<GT,Tds>::
-insert(const Point & p )
-{
-  Locate_type lt;
-  int li, lj;
-  Cell_handle c, start;
-  if ( dimension() >= 1 ) {
-    // there is at least one finite "cell" (or facet or edge)
-    start = infinite_vertex()->cell()
-      ->neighbor( infinite_vertex()->cell()->index( infinite_vertex()) );
-  }
-  c = locate( p, lt, li, lj, start);
-  switch (lt) {
-  case VERTEX:
-    return c->vertex(li);
-  case EDGE:
-    return insert_in_edge(p, c, li, lj);
-  case FACET:
-    return insert_in_facet(p, c, li);
-  case CELL:
-    return insert_in_cell(p, c);
-  case OUTSIDE_CONVEX_HULL:
-    return insert_outside_convex_hull(p, c);
-  case OUTSIDE_AFFINE_HULL:
-    return insert_outside_affine_hull(p);
-  }
-  // cannot happen, only to avoid warning with eg++
-  return insert_in_edge(p, c, li, lj);
 }
 
 template < class GT, class Tds >
