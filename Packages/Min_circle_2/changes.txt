@@ -1,5 +1,9 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.7 on 23-Feb-2000
+- ported to Borland C++ compiler.
+- field 'maintainer' added to file header.
+
 Version 3.6 on 02-Feb-2000
 - removed `CGAL_..._cast' macros.
 - added `cc_manual_index.sty' to documentation.
