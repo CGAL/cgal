@@ -1,3 +1,6 @@
+version 11.12:
+- Use STL_extension's Triple.
+
 version 11.11:
 - Fixes for SunPro.
 

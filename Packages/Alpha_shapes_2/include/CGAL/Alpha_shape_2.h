@@ -30,13 +30,12 @@
 #include <list>
 #include <set>
 #include <map>
-
-#include <CGAL/triple.h>
 #include <vector>
-
 #include <algorithm>
 #include <utility>
 #include <iostream>
+
+#include <CGAL/utility.h>
 
 #ifdef CGAL_ALPHA_WINDOW_STREAM
 #include <CGAL/IO/Window_stream.h>
