@@ -92,9 +92,8 @@ public:
   Filtered_exact () {}
   Filtered_exact (const Filtered_exact<CT,ET,Cache_t> & fil)
       : _value(fil._value), _cache(fil._cache)  { }
-  template <class NT>
-  Filtered_exact (const NT & nt)
-      : _value(nt)  { update_cache(); }
+  Filtered_exact (const CT & ct)
+      : _value(ct)  { update_cache(); }
   template <class NT>
   Filtered_exact (const NT & num, const NT & den) // For Quotient<>.
       : _value(num, den)   { update_cache(); }
