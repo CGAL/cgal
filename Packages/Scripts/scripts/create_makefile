@@ -23,6 +23,33 @@ header()
 }
 
 
+create_makefile_entry_cpp()
+{
+#  local CFILE MOC_FROM MOCFILE
+  CFILE=$1.cpp
+  MOCFILE=""
+  if [ -n "$QT" ]; then
+    if MOC_FROM=`awk 'BEGIN{ FS=":"; COUNT=0 } \
+            /\/\/ *moc_source_file *:/ {print $2; COUNT++} \
+            END{ exit COUNT==0 }' $CFILE`; then
+      MOCFILE=$1.moc
+      echo "$MOCFILE: $MOC_FROM"
+      echo "	\$(QT_MOC) -o $MOCFILE \$<"
+      echo
+      echo "$1\$(OBJ_EXT): $MOCFILE"
+      echo
+    fi
+  fi
+#  if grep 'main *(' $CFILE  > /dev/null; then
+    echo "$1\$(OBJ_EXT): $1.cpp"
+    echo "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) $1.cpp"
+
+    echo "$1\$(EXE_EXT): $1\$(OBJ_EXT)"
+    echo "	\$(CGAL_CXX) \$(LIBPATH) \$(EXE_OPT)$1 $1\$(OBJ_EXT) \$(LDFLAGS)"
+    echo
+#  fi;
+}
+
 create_makefile_entry()
 {
 #  local CFILE MOC_FROM MOCFILE
@@ -107,15 +134,25 @@ create_makefile()
   for file in `ls *.C` ; do
       printf "\\\\\n                `basename $file .C`\$(EXE_EXT) "
   done
+  for file in `ls *.cpp` ; do
+      printf "\\\\\n                `basename $file .cpp`\$(EXE_EXT) "
+  done
   echo
   echo
   for file in `ls *.C` ; do
     base=`basename $file .C`
     create_makefile_entry $base
   done
+  for file in `ls *.cpp` ; do
+    base=`basename $file .cpp`
+    create_makefile_entry_cpp $base
+  done
   printf "clean: "
   for file in `ls *.C` ; do
       printf "\\\\\n                   `basename $file .C`.clean "
+  done
+  for file in `ls *.cpp` ; do
+      printf "\\\\\n                   `basename $file .cpp`.clean "
   done
   printf    "\n\n"
   header "suffix rules"

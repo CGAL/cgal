@@ -1,3 +1,6 @@
+1.27 (29 October 2002)
++ Add support for *.cpp to create_makefile
+
 1.23 (29 January 2002)
 + libgmp.* instead of libgmp.a.
 
