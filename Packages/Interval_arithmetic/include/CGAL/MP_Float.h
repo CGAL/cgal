@@ -325,7 +325,8 @@ Add_Sub(MP_Float &r, const MP_Float &a, const MP_Float &b)
   r.canonicalize();
 }
 
-static
+// a few of the following should not be inline.
+inline
 MP_Float
 MP_Float::operator+(const MP_Float &b) const
 {
@@ -339,7 +340,7 @@ MP_Float::operator+(const MP_Float &b) const
   return r;
 }
 
-static
+inline
 MP_Float
 MP_Float::operator-(const MP_Float &b) const
 {
@@ -353,7 +354,7 @@ MP_Float::operator-(const MP_Float &b) const
   return r;
 }
 
-static
+inline
 MP_Float
 MP_Float::operator*(const MP_Float &b) const
 {
@@ -380,7 +381,7 @@ MP_Float::operator*(const MP_Float &b) const
   return r;
 }
 
-static
+inline
 MP_Float
 MP_Float::operator/(const MP_Float &d) const
 {
@@ -396,7 +397,7 @@ sqrt(const MP_Float &d)
 
 // to_double() returns, not the closest double, but a one bit error is allowed.
 // We guarantee : to_double(MPI(double d)) == d.
-static
+inline
 double
 to_double(const MP_Float &b)
 {
