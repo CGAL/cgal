@@ -1,3 +1,6 @@
+- the insert_point_on_segment method in the Segment_Voronoi_diagram_2
+  class has a bug: it does not handle the case where ff1 or ff2 are
+  infinite faces.
 - make the storage site take a point container as template parameter,
   rather than a point handle
 - make sure all types in the doc correspond to real types in the code
@@ -7,14 +10,12 @@
 - add swap method in hierarchy; verify that the swap method in the segment
   Voronoi diagram class works correctly (does it swap the point container
   correctly?)
-- make the intersectio tag in the traits to be the first template argument,
+- make the intersection tag in the traits to be the first template argument,
   thus no default value
 - change the return type of the do_intersect predicate (and potentially
   its name) to be a char instead of std::pair<int,int>; the char should
   encode the type of arrangement; actually rename do_intersect to 
   arrangement_type and return an enumeration type
-- in the predicate classes, instead of the kernel's orientation use the
-  orientation class taylored for sites (it does geometric filtering)
 - in class Svd_basic_constructions_C2.h, inside method to_ft, check
   if sqrt is supported by the number type; actually this is ok for predicates
   but constructions also need to use this too.
