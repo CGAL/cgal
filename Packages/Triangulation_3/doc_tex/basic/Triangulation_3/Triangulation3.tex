@@ -1579,38 +1579,38 @@ This method is  mainly a debugging help for the users of advanced features.
 
 \end{ccClassTemplate}
 
-\section{Debugging}
+%\section{Debugging}
 
-	\subsection{Pretty print}	
- \textit{to be written}
+%	\subsection{Pretty print}	
+% \textit{to be written}
 
-	\subsection{Debugging with handles} 
-Most debuggers cannot understand \ccc{handles} well. Under the
-debugger, an instruction such as
+%	\subsection{Debugging with handles} 
+%Most debuggers cannot understand \ccc{handles} well. Under the
+%debugger, an instruction such as
 
-\texttt{(dbx) print -r c->vertex(0)}
+%\texttt{(dbx) print -r c->vertex(0)}
 
-where \ccc{c} is a \ccc{Cell_handle}, is answered by:
+%where \ccc{c} is a \ccc{Cell_handle}, is answered by:
 
-\texttt{can't find field "vertex" in "c"}
+%\texttt{can't find field "vertex" in "c"}
 
-To work around this problem, two functions have been defined to transform 
-\ccc{handles} into usual $C^{++}$ pointers for debugging purposes.
+%To work around this problem, two functions have been defined to transform 
+%\ccc{handles} into usual $C^{++}$ pointers for debugging purposes.
 
-\ccFunction{template <class Traits, class Tds>
-	Triangulation_vertex_3<Traits,Tds> * 
-debug(const Triangulation_vertex_handle_3<Traits,Tds> v);}
-{}
+%\ccFunction{template <class Traits, class Tds>
+%	Triangulation_vertex_3<Traits,Tds> * 
+%debug(const Triangulation_vertex_handle_3<Traits,Tds> v);}
+%{}
 
-\ccFunction{template <class Traits, class Tds>
-	Triangulation_cell_3<Traits,Tds> * 
-	debug(const Triangulation_cell_handle_3<Traits,Tds>
-c);}
-{}
+%\ccFunction{template <class Traits, class Tds>
+%	Triangulation_cell_3<Traits,Tds> * 
+%	debug(const Triangulation_cell_handle_3<Traits,Tds>
+%c);}
+%{}
 
-This allows the following:\\
-\texttt{(dbx) print -r CGAL\_debug(c)->vertex(0)\\
-CGAL\_debug(c)->vertex(0) = \{\\\
-\ldots\\
-\} }
+%This allows the following:\\
+%\texttt{(dbx) print -r CGAL\_debug(c)->vertex(0)\\
+%CGAL\_debug(c)->vertex(0) = \{\\\
+%\ldots\\
+%\} }
 
