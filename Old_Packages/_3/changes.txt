@@ -1,3 +1,7 @@
+3.13 (?? Feb 2001)
+
+- added min_coord(), max_coord() for Iso_cuboid_3 and new constructor
+
 3.12 (13 Feb 2001)
 
 - added squared_area() function for Triangle_3 and volume() function

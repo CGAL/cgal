@@ -2,6 +2,9 @@
 
 - Added some missing function object classes
 - Added doc for area and volume functions and function objects
+- Added doc for new min_coord, max_coord in Iso_rectangle and Iso_cuboid
+- Added doc for new constructor in Iso_rectangle and Iso_cuboid
+- Added missing xmin, ymin, xmax, ymax documentation in Iso_rectangle
 
 2.7     (26 Sep 2000)
 

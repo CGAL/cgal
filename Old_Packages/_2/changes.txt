@@ -1,3 +1,8 @@
+3.10 (?? Feb 2001)
+- added min_coord() and max_coord() funcions in Iso_rectangle_2 and new
+  constructor
+
+
 3.9  (13 Feb 2001)
 
 - added area() functions for Triangle_2 and Iso_rectangle_2
