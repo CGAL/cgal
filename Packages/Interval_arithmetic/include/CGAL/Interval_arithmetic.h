@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Interval_arithmetic.h
+// file          : $Id$
 // revision      : $Revision$
 // revision_date : $Date$
 // package       : Interval Arithmetic
