@@ -212,8 +212,8 @@ Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
 natural_neighbor_coordinates_2(const Dt& dt,
 			       const typename Dt::Geom_traits::Point_2& p,
 			       OutputIterator out,
-			       typename Dt::Face_handle start
-			       = Dt::Face_handle())
+			       typename Dt::Face_handle start = 
+			       CGAL_TYPENAME_DEFAULT_ARG Dt::Face_handle() )
 
 {
   Project_vertex_output_iterator<OutputIterator> op(out);
