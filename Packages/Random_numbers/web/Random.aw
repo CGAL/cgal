@@ -2,7 +2,7 @@
 @! The CGAL Project
 @! Implementation: Random Numbers Generator
 @! ----------------------------------------------------------------------------
-@! file  : Kernel/web/Random.aw
+@! file  : web/Random/Random.aw
 @! author: Sven Schönherr (sven@inf.fu-berlin.de)
 @! ----------------------------------------------------------------------------
 @! $Revision$
@@ -74,7 +74,7 @@ created in Section~4.
 \renewcommand{\ccEndFont}{}
 \ccSetThreeColumns{CGAL_Random}{random.restore_seed( Seed seed)}{}
 \ccPropagateThreeToTwoColumns
-\input{../spec/Random.tex}
+\input{../spec/Random/Random.tex}
 
 @! ============================================================================
 @! Implementation
@@ -361,8 +361,8 @@ numbers.
 \clearpage
 \section{Files}
 
-@file <Random.h> = @begin
-    @<Random header>("include/CGAL/Random.h")
+@file <include/CGAL/Random/Random.h> = @begin
+    @<Random header>("include/CGAL/Random/Random.h")
 
     #ifndef CGAL_RANDOM_H
     #define CGAL_RANDOM_H
@@ -398,7 +398,7 @@ numbers.
     @<end of file line>
 @end
 
-@file <Random.C> = @begin
+@file <src/Random.C> = @begin
     @<Random header>("src/Random.C")
 
     #include <CGAL/Random.h>
@@ -418,8 +418,8 @@ numbers.
     @<end of file line>
 @end
 
-@file <test_Random.C> = @begin
-    @<Random header>("test/test_Random.C")
+@file <test/Random/test_Random.C> = @begin
+    @<Random header>("test/Random/test_Random.C")
 
     #include <CGAL/Random.h>
     #include <assert.h>
@@ -433,7 +433,7 @@ numbers.
     @<end of file line>
 @end
 
-@i file_header.awlib
+@i file_header.awi
 
 @macro <Random header>(1) many = @begin
     @<file header>("Random Numbers Generator",@1,"Random",

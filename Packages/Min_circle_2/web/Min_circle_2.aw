@@ -70,13 +70,13 @@
 
 We provide an implementation of an optimisation algorithm for computing
 the smallest (w.r.t.\ area) enclosing circle of a finite point set $P$
-in the plane. The class template \ccc{CGAL_Min_circle_2<Traits>} is
-implemented as a semi-dynamic data structure, thus allowing to insert
-points while maintaining the smallest enclosing circle. It is
-parameterized with a traits class, that defines the abstract interface
-between the optimisation algorithm and the primitives it uses. For ease
-of use, we provide traits class adapters that interface the
-optimisation algorithm with user supplied point classes.
+in the plane. The class template \ccc{CGAL_Min_circle_2} is implemented
+as a semi-dynamic data structure, thus allowing to insert points while
+maintaining the smallest enclosing circle. It is parameterized with a
+traits class, that defines the abstract interface between the
+optimisation algorithm and the primitives it uses. For ease of use, we
+provide traits class adapters that interface the optimisation algorithm
+with user supplied point classes.
 
 This document is organized as follows. The algorithm is described in
 Section~1. Section~2 contains the specifications as they appear in the
@@ -90,7 +90,6 @@ checks. Finally the product files are created in Section~5.
 @! The Algorithm
 @! ============================================================================
 
-\setlength{\parskip}{0.8ex}
 \clearpage
 \section{The Algorithm} \label{sec:algo}
 
@@ -155,12 +154,13 @@ in the \cgal\ Reference Manual.
 \renewcommand{\ccSection}{\ccSubsection}
 \renewcommand{\ccFont}{\tt}
 \renewcommand{\ccEndFont}{}
-\ccSetThreeColumns{typedef Traits::Circle}{}{%
+\ccSetThreeColumns{typedef CGAL_Point_2<R>}{}{%
   creates a variable \ccc{min_circle} of type \ccc{CGAL_Min_circle_2<Traits>}.}
 \ccPropagateThreeToTwoColumns
-\input{../spec/Min_circle_2.tex}
-\input{../spec/Min_circle_2_adapterC2.tex}
-\input{../spec/Min_circle_2_adapterH2.tex}
+\input{../../spec/Optimisation/Min_circle_2.tex}
+\input{../../spec/Optimisation/Optimisation_circle_2.tex}
+\input{../../spec/Optimisation/Min_circle_2_adapterC2.tex}
+\input{../../spec/Optimisation/Min_circle_2_adapterH2.tex}
 
 @! ============================================================================
 @! Implementations
@@ -1171,6 +1171,336 @@ pseudocode above.
 		    ++point_iter; }
 	    else
 		++point_iter; }
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+@! Class template CGAL_Optimisation_circle_2<R>
+@! ----------------------------------------------------------------------------
+
+\subsection{Class template \ccFont CGAL\_Optimisation\_circle\_2<R>}
+
+First, we declare the class template \ccc{CGAL_Optimisation_circle_2},
+
+@macro<Optimisation_circle_2 declaration> = @begin
+    template < class _R >
+    class CGAL_Optimisation_circle_2;
+@end
+
+\emph{Workaround:} The GNU compiler (g++ 2.7.2[.?]) does not accept types
+with scope operator as argument type or return type in class template
+member functions. Therefore, all member functions are implemented in
+the class interface.
+
+The class interface looks as follows.
+
+@macro <Optimisation_circle_2 interface> = @begin
+    template < class _R >
+    class CGAL_Optimisation_circle_2 {
+      public:
+	@<Optimisation_circle_2 public interface>
+
+      private:
+	// private data members
+	@<Optimisation_circle_2 private data members>
+
+    @<dividing line>
+
+    // Class implementation
+    // ====================
+
+      public:
+	// Set functions
+	// -------------
+	@<Optimisation_circle_2 set functions>
+
+	// Access functions
+	// ----------------
+	@<Optimisation_circle_2 access functions>
+
+	// Equality tests
+	// --------------
+	@<Optimisation_circle_2 equality tests>
+
+	// Predicates
+	// ----------
+	@<Optimisation_circle_2 predicates>
+    };
+@end   
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Public Interface}
+
+The functionality is described and documented in the specification
+section, so we do not comment on it here.
+
+@macro <Optimisation_circle_2 public interface> = @begin
+    // types
+    typedef           _R               R;
+    typedef           CGAL_Point_2<R>  Point;
+    typedef typename  _R::FT           Distance;
+
+    /**************************************************************************
+    WORKAROUND: The GNU compiler (g++ 2.7.2[.*]) does not accept types
+    with scope operator as argument type or return type in class template
+    member functions. Therefore, all member functions are implemented in
+    the class interface.
+
+    // creation
+    void  set( );
+    void  set( Point const& p);
+    void  set( Point const& p, Point const& q);
+    void  set( Point const& p, Point const& q, Point const& r);
+    void  set( Point const& center, Distance const& squared_radius);
+
+    // access functions    
+    Point    const&  center        ( ) const;
+    Distance const&  squared_radius( ) const
+
+    // equality tests
+    bool  operator == ( CGAL_Optimisation_circle_2<R> const& c) const;
+    bool  operator != ( CGAL_Optimisation_circle_2<R> const& c) const;
+
+    // predicates
+    CGAL_Bounded_side  bounded_side( Point const& p) const;
+    bool  has_on_bounded_side      ( Point const& p) const;
+    bool  has_on_boundary          ( Point const& p) const;
+    bool  has_on_unbounded_side    ( Point const& p) const;
+
+    bool  is_empty     ( ) const;
+    bool  is_degenerate( ) const;
+    **************************************************************************/
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Private Data Members}
+
+The circle is represented by its center and squared radius.
+
+@macro <Optimisation_circle_2 private data members> = @begin
+    Point     _center;
+    Distance  _squared_radius;
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Set Functions}
+
+We provide set functions taking zero, one, two, or three (boundary)
+points and another set function taking a center point and a squared
+radius.
+
+@macro <Optimisation_circle_2 set functions> = @begin
+    inline
+    void
+    set( )
+    {
+	_center         =  Point( CGAL_ORIGIN);
+	_squared_radius = -Distance( 1);
+    }
+    
+    inline
+    void
+    set( Point const& p)
+    {
+	_center         = p;
+	_squared_radius = Distance( 0);
+    }
+    
+    inline
+    void
+    set( Point const& p, Point const& q)
+    {
+	_center         = CGAL_midpoint( p, q);
+	_squared_radius = CGAL_squared_distance( p, _center);
+    }
+    
+    inline
+    void
+    set( Point const& p, Point const& q, Point const& r)
+    {
+	_center         = CGAL_circumcenter( p, q, r);
+	_squared_radius = CGAL_squared_distance( p, _center);
+    }
+    
+    inline
+    void
+    set( Point const& center, Distance const& squared_radius)
+    {
+	_center         = center;
+	_squared_radius = squared_radius;
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Access Functions}
+
+These functions are used to get the current center point or
+squared radius, resp.
+
+@macro <Optimisation_circle_2 access functions> = @begin
+    inline
+    Point const&
+    center( ) const
+    {
+	return( _center);
+    }
+
+    inline
+    Distance const&
+    squared_radius( ) const
+    {
+	return( _squared_radius);
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Equality Tests}
+
+@macro <Optimisation_circle_2 equality tests> = @begin
+    bool
+    operator == ( CGAL_Optimisation_circle_2<R> const& c) const
+    {
+	return( ( _center          == c._center        ) &&
+		( _squared_radius  == c._squared_radius) );
+    }
+    
+    bool
+    operator != ( CGAL_Optimisation_circle_2<R> const& c) const
+    {
+	return( ! operator==( c));
+    }
+@end
+    
+@! ----------------------------------------------------------------------------
+\subsubsection{Predicates}
+
+The following predicates perform in-circle tests and check for
+emptyness and degeneracy, resp.
+
+@macro <Optimisation_circle_2 predicates> = @begin
+    inline
+    CGAL_Bounded_side
+    bounded_side( Point const& p) const
+    {
+	return( CGAL_static_cast( CGAL_Bounded_side,
+				  CGAL_sign( CGAL_squared_distance( p, _center)
+					     - _squared_radius)));
+    }
+
+    inline
+    bool
+    has_on_bounded_side( Point const& p) const
+    {
+	return( CGAL_squared_distance( p, _center) < _squared_radius);
+    }
+
+    inline
+    bool
+    has_on_boundary( Point const& p) const
+    {
+	return( CGAL_squared_distance( p, _center) == _squared_radius);
+    }
+
+    inline
+    bool
+    has_on_unbounded_side( Point const& p) const
+    {
+	return( _squared_radius < CGAL_squared_distance( p, _center));
+    }
+
+    inline
+    bool
+    is_empty( ) const
+    {
+	return( CGAL_is_negative( _squared_radius));
+    }
+
+    inline
+    bool
+    is_degenerate( ) const
+    {
+	return( ! CGAL_is_positive( _squared_radius));
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{I/O}
+
+@macro <Optimisation_circle_2 I/O operators declaration> = @begin
+    template < class _R >
+    ostream&
+    operator << ( ostream& os, CGAL_Optimisation_circle_2<_R> const& c);
+
+    template < class _R >
+    istream&
+    operator >> ( istream& is, CGAL_Optimisation_circle_2<_R>      & c);
+@end
+
+@macro <Optimisation_circle_2 I/O operators> = @begin
+    template < class _R >
+    ostream&
+    operator << ( ostream& os, CGAL_Optimisation_circle_2<_R> const& c)
+    {
+	switch ( CGAL_get_mode( os)) {
+
+	  case CGAL_IO::PRETTY:
+	    os << "CGAL_Optimisation_circle_2( "
+	       << c.center() << ", "
+	       << c.squared_radius() << ')';
+	    break;
+
+	  case CGAL_IO::ASCII:
+	    os << c.center() << ' ' << c.squared_radius();
+	    break;
+
+	  case CGAL_IO::BINARY:
+	    os << c.center();
+	    CGAL_write( os, c.squared_radius());
+	    break;
+
+	  default:
+	    CGAL_optimisation_assertion_msg( false,
+					     "CGAL_get_mode( os) invalid!");
+	    break; }
+
+	return( os);
+    }
+
+    template < class _R >
+    istream&
+    operator >> ( istream& is, CGAL_Optimisation_circle_2<_R>& c)
+    {
+	typedef typename  CGAL_Optimisation_circle_2<_R>::Point     Point;
+	typedef typename  CGAL_Optimisation_circle_2<_R>::Distance  Distance;
+
+	switch ( CGAL_get_mode( is)) {
+
+	  case CGAL_IO::PRETTY:
+	    cerr << endl;
+	    cerr << "Stream must be in ascii or binary mode" << endl;
+	    break;
+
+	  case CGAL_IO::ASCII: {
+	    Point     center;
+	    Distance  squared_radius;
+	    is >> center >> squared_radius;
+	    c.set( center, squared_radius); }
+	    break;
+
+	  case CGAL_IO::BINARY: {
+	    Point     center;
+	    Distance  squared_radius;
+	    is >> center;
+	    CGAL_read( is, squared_radius);
+	    c.set( center, squared_radius); }
+	    break;
+
+	  default:
+	    CGAL_optimisation_assertion_msg( false,
+					     "CGAL_get_mode( is) invalid!");
+	    break; }
+
+	return( is);
     }
 @end
 
@@ -2260,6 +2590,7 @@ To test the traits class adapters we use the code coverage test function.
     cover_Min_circle_2( verbose, AdapterC2(), Rt());
     cover_Min_circle_2( verbose, AdapterH2(), Rt());
 @end
+
 @! ----------------------------------------------------------------------------
 @! External Test Sets
 @! ----------------------------------------------------------------------------
@@ -2304,7 +2635,6 @@ end of each file.
 	++argv; }
 @end
 
-
 @! ==========================================================================
 @! Files
 @! ==========================================================================
@@ -2318,8 +2648,8 @@ end of each file.
 
 \subsection{Min\_circle\_2.h}
 
-@file <Min_circle_2.h> = @begin
-    @<Min_circle_2 header>("include/CGAL/Min_circle_2.h")
+@file <../../include/CGAL/Optimisation/Min_circle_2.h> = @begin
+    @<Min_circle_2 header>("include/CGAL/Optimisation/Min_circle_2.h")
 
     #ifndef CGAL_MIN_CIRCLE_2_H
     #define CGAL_MIN_CIRCLE_2_H
@@ -2368,8 +2698,8 @@ end of each file.
 
 \subsection{Min\_circle\_2.C}
 
-@file <Min_circle_2.C> = @begin
-    @<Min_circle_2 header>("include/CGAL/Min_circle_2.C")
+@file <../../include/CGAL/Optimisation/Min_circle_2.C> = @begin
+    @<Min_circle_2 header>("include/CGAL/Optimisation/Min_circle_2.C")
 
     // Class implementation (continued)
     // ================================
@@ -2381,13 +2711,82 @@ end of each file.
 @end
 
 @! ----------------------------------------------------------------------------
+@! Optimisation_circle_2.h
+@! ----------------------------------------------------------------------------
+
+\subsection{Optimisation\_circle\_2.h}
+
+@file <../../include/CGAL/Optimisation/Optimisation_circle_2.h> = @begin
+    @<Optimisation_circle_2 header>("include/CGAL/Optimisation/Optimisation_circle_2.h")
+
+    #ifndef CGAL_OPTIMISATION_CIRCLE_2_H
+    #define CGAL_OPTIMISATION_CIRCLE_2_H
+
+    // Class declaration
+    // =================
+    @<Optimisation_circle_2 declaration>
+
+    // Class interface
+    // ===============
+    // includes
+    #ifndef CGAL_POINT_2_H
+    #  include <CGAL/Point_2.h>
+    #endif
+    #ifndef CGAL_BASIC_CONSTRUCTIONS_2_H
+    #  include <CGAL/basic_constructions_2.h>
+    #endif
+    #ifndef CGAL_SQUARED_DISTANCE_2_H
+    #  include <CGAL/squared_distance_2.h>
+    #endif
+
+    @<Optimisation_circle_2 interface>
+
+    // Function declarations
+    // =====================
+    // I/O
+    // ---
+    @<Optimisation_circle_2 I/O operators declaration>
+
+    #ifdef CGAL_INCLUDE_TEMPLATE_CODE
+    #  include <CGAL/Optimisation_circle_2.C>
+    #endif
+
+    #endif // CGAL_OPTIMISATION_CIRCLE_2_H
+
+    @<end of file line>
+@end
+
+@! ----------------------------------------------------------------------------
+@! Optimisation_circle_2.C
+@! ----------------------------------------------------------------------------
+
+\subsection{Optimisation\_circle\_2.C}
+
+@file <../../include/CGAL/Optimisation/Optimisation_circle_2.C> = @begin
+    @<Optimisation_circle_2 header>("include/CGAL/Optimisation/Optimisation_circle_2.C")
+
+    // Class implementation (continued)
+    // ================================
+    // includes
+    #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
+    #  include <CGAL/optimisation_assertions.h>
+    #endif
+
+    // I/O
+    // ---
+    @<Optimisation_circle_2 I/O operators>
+
+    @<end of file line>
+@end
+
+@! ----------------------------------------------------------------------------
 @! Min_circle_2_adapterC2.h
 @! ----------------------------------------------------------------------------
 
 \subsection{Min\_circle\_2\_adapterC2.h}
 
-@file <Min_circle_2_adapterC2.h> = @begin
-    @<Min_circle_2 header>("include/CGAL/Min_circle_2_adapterC2.h")
+@file <../../include/CGAL/Optimisation/Min_circle_2_adapterC2.h> = @begin
+    @<Min_circle_2 header>("include/CGAL/Optimisation/Min_circle_2_adapterC2.h")
 
     #ifndef CGAL_MIN_CIRCLE_2_ADAPTERC2_H
     #define CGAL_MIN_CIRCLE_2_ADAPTERC2_H
@@ -2422,8 +2821,8 @@ end of each file.
 
 \subsection{Min\_circle\_2\_adapterH2.h}
 
-@file <Min_circle_2_adapterH2.h> = @begin
-    @<Min_circle_2 header>("include/CGAL/Min_circle_2_adapterH2.h")
+@file <../../include/CGAL/Optimisation/Min_circle_2_adapterH2.h> = @begin
+    @<Min_circle_2 header>("include/CGAL/Optimisation/Min_circle_2_adapterH2.h")
 
     #ifndef CGAL_MIN_CIRCLE_2_ADAPTERH2_H
     #define CGAL_MIN_CIRCLE_2_ADAPTERH2_H
@@ -2458,8 +2857,8 @@ end of each file.
 
 \subsection{test\_Min\_circle\_2.C}
 
-@file <test_Min_circle_2.C> = @begin
-    @<Min_circle_2 header>("test/test_Min_circle_2.C")
+@file <../../test/Optimisation/test_Min_circle_2.C> = @begin
+    @<Min_circle_2 header>("test/optimisation/test_Min_circle_2.C")
 
     @<Min_circle_2 test (includes and typedefs)>
 
@@ -2497,11 +2896,18 @@ end of each file.
     @<end of file line>
 @end
 
-@i file_header.awlib
+@i ../file_header.awi
  
 @macro <Min_circle_2 header>(1) many = @begin
-    @<file header>("2D Smallest Enclosing Circle",@1,"Min_circle_2",
-		   "Bernd Gärtner, Sven Schönherr (sven@@inf.fu-berlin.de)",
+    @<file header>("2D Smallest Enclosing Circle",@1,
+		   "Optimisation/Min_circle_2","Bernd Gärtner, Sven Schönherr",
+		   "$Revision$","$Date$")
+@end
+
+@macro <Optimisation_circle_2 header>(1) many = @begin
+    @<file header>("2D Optimisation Circle",@1,
+		   "Optimisation/Optimisation_circle_2",
+		   "Bernd Gärtner, Sven Schönherr",
 		   "$Revision$","$Date$")
 @end
 
