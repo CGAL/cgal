@@ -461,8 +461,8 @@ insert_third(const Site_2& p)
 {
   CGAL_triangulation_precondition( number_of_vertices() == 2 );
 
-  Vertex_handle v1(vertices_begin());
-  Vertex_handle v2(++vertices_begin());
+  Vertex_handle v1(finite_vertices_begin());
+  Vertex_handle v2(++finite_vertices_begin());
 
   if ( is_hidden(v1->site(), p) ) {
     v1->add_hidden_site(p);

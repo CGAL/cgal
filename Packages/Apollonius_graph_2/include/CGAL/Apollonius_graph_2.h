@@ -42,8 +42,6 @@
 #include <CGAL/Concatenate_iterator.h>
 
 
-
-
 CGAL_BEGIN_NAMESPACE
 
 template < class Node >
@@ -320,14 +318,14 @@ public:
 
   Sites_iterator sites_begin() const {
     return Sites_iterator(visible_sites_end(),
-			  hidden_sites_begin(),
-			  visible_sites_begin());
+    			  hidden_sites_begin(),
+    			  visible_sites_begin());
   }
 
   Sites_iterator sites_end() const {
     return Sites_iterator(visible_sites_end(),
-			  hidden_sites_begin(),
-			  hidden_sites_end(),0);
+    			  hidden_sites_begin(),
+    			  hidden_sites_end(),0);
   }
 
   Visible_sites_iterator visible_sites_begin() const {
@@ -339,14 +337,12 @@ public:
   }
 
   Hidden_sites_iterator hidden_sites_begin() const {
-    return Hidden_sites_iterator(finite_vertices_begin(),
-				 finite_vertices_end(),
+    return Hidden_sites_iterator(finite_vertices_end(),
 				 finite_vertices_begin());
   }
 
   Hidden_sites_iterator hidden_sites_end() const {
-    return Hidden_sites_iterator(finite_vertices_begin(),
-				 finite_vertices_end(),
+    return Hidden_sites_iterator(finite_vertices_end(),
 				 finite_vertices_end());
   }
 
