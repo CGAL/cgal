@@ -24,7 +24,10 @@ multithreading functionnalities.\\
 Graphical geometric objects inherit from a virtual class 
 \ccc{Drawable\_object}. All of them have the same interface. They are stored by the
 viewer in a two level scene graph that can be accessed interactively
-with the viewer window or by functions in the main program.
+with the viewer window or by functions in the main program. \\
+In order to use the \ccc{Viewer\_3}, you will need to install the FLTK
+library (http://www.fltk.org/about.html) and the OpenGL (or Mesa)
+library (http://www.opengl.org/, http://mesa3d.sourceforge.net/).
 
 
 \section{Global view}
@@ -105,9 +108,10 @@ perspective projection.
 \subsection{General parameters}
 
 The viewer provides a panel to control the scene lightning (``Set
-light''), a panel to set parameters as the default parameters for
-drawable objects if they are not specified when inserted
-(``Parameters'') and a panel to control cliping planes (``Cliping''). \\
+light''). Another panel is provided to set parameters as the default
+parameters for drawable objects. The viewer stores two colors, a
+precision, a style and a size parameters that can be assign to
+drawable objects as default parameters. They is also a panel to control cliping planes (``Cliping''). \\
 A button (``Exit Thread'') stops the viewer thread and gives back the
 control to the main thread. The ``Reset'' button sets all the
 transformation matrices (translation, rotation) to identity.
@@ -202,8 +206,9 @@ object. \\
 For usability reason, we provide stream-like function to send 
 CGAL object directly to the scene graph. In this case, the drawable is built
 using the viewer default values for color, size, style and
-precision. All objects are added in the first object group. Stream-like functions are provided too for modifying these
-viewer values.
+precision. All objects are added in the first object
+group. Stream-like functions are provided too for modifying these
+viewer values using manipulators.
 
 \subsection{Defining your own drawable object}
 
@@ -320,8 +325,7 @@ drawable object obj into the group g.}
 \ccMethod{Precision get_precision();}{Returns the default drawable
 object \ccc{Precision}.}
 
-\ccMethod{Color get_color();}{Returns the default drawable
-object \ccc{Color}.}
+\ccMethod{Color get_color(int i);}{Returns the default viewer first \ccc{Color} if i=1, the second \ccc{Color} elsewhere.}
 
 \ccMethod{GL_win* get_window();}{Returns a pointer on the \ccc{GL\_win} member.}
 
@@ -343,7 +347,8 @@ to s.}
 \ccMethod{void set_precision(Precision p);}{Sets the default drawable object
 \ccc{Precision} to p.}
 
-\ccMethod{void set_color(Color c);}{Sets the default drawable object \ccc{Color} to c.}
+\ccMethod{void set_color(Color c, int i);}{Sets the default viewer
+first \ccc{Color} to c if i=1, the second elsewhere.}
 \ccMethod{void set_custom_panel(User_ctr_win fct);}{Sets the viewer 
 user panel to be defined by the function \ccc{fct}.}
 
@@ -370,6 +375,8 @@ drawable indiced by \ccc{i}. The drawable is definitely deleted.}
 \ccMethod{void delete_selection();}{Deletes selection made in the
 viewer graph browser.}
 
+\ccMethod{void delete_group(int g);}{Deletes the group of drawables
+indiced by g;}
 
 \ccHeading{Miscellaneous}
 
@@ -399,160 +406,10 @@ callbacks. \ccc{GL\_win} object is the main data member of the class \ccc{Viewer
 usage of the viewer, users do not have to interfer with the \ccc{GL\_win}
 object and use \ccc{GL\_win} member functions. For developping more advanced 
 application (such as defining a custom actions), it could be necessary 
-to access some of the \ccc{GL\_win} function and parameters.
+to access some of the \ccc{GL\_win} functions and parameters.
 
+For more information about this class, see the reference manual.
 \ccInclude{CGAL/GL_win.h}
-
-\ccTypes
-\ccThree{typedef void (*Mouse_grab)(int, int, int, int, int, int, int,
-GL_win *) Mouse_grab;}{}{A function pointer and so on and so on and so on}
-\ccThreeToTwo
-
-\ccTypedef{typedef void (*Mouse_click)(int, int, int, GL_win *)
-Mouse_click;}{Used to defined a function to set a custom mouse click event.}
-\ccGlue
-\ccTypedef{typedef void (*Mouse_grab)(int, int, int, int, int, int,
-int, GL_win *) Mouse_grab;}{Used to defined a function to set a custom mouse grab event.}
-
-\ccCreation
-\ccCreationVariable{win}
-\ccThree{GL_win();}{t = tr bidulebidulebidulebidule}{}
-\ccThreeToTwo
-\ccConstructor{GL_win(int x,int y,int w,int h,int s,const char*
-l=0);}{Defines a windows in the wiever having \ccc{x,y,w,h} coordinates (see
-FLTK coordinates style for widgets : \ccc{x,y} : top-left corner,
-\ccc{w} : width and \ccc{h}: height of the widget). \ccc{s} is used for the scale of the
-viewing volume (see \ccc{Viewer_3} description and constructor). A
-scale of \ccc{s} will displays objects
-with coordinates included in $ [- \frac{s}{2} , + \frac{s}{2} ]
-\times [- \frac{s}{2} , + \frac{s}{2} ] \times [- \frac{s}{2} , +
-\frac{s}{2} ] $ viewing cube.}
-
-
-
-\subsection{Functionalities}
-\ccHeading{Setting}
-
-\ccMethod{void set_angle(float ag);}{Sets camera view angle in
-perspective projection.}
-
-\ccMethod{void set_deep(float dp);}{Sets deepth field of view;}
-
-\ccMethod{void set_projection(bool b);} {Sets the projection mode. If true, 
-mode is in perspective else, in orthogonal.}
-
-\ccMethod{void set_mouse_push_handler(Mouse_click fct);}{Sets mouse events 
-callbacks (see \ccc{Viewer\_3} class);}
-
-\ccMethod{void set_mouse_release_handler(Mouse_click fct);}{Sets mouse events 
-callbacks (see \ccc{Viewer\_3} class);}
-
-\ccMethod{void set_mouse_grab_handler(Mouse_click fct);}{Sets mouse events 
-callbacks (see \ccc{Viewer\_3} class);}
-
-\ccMethod{void set_mode(int i);}{Sets the visualization mode :
-``View'', ``insert point'', ``Slice'', ``User mode''.}
-
-\ccMethod{void set_light_diff(float,float,float);}{Sets light RGB
-parameters.}
-
-\ccMethod{void set_light_variation(float);}{Sets light intensity.}
-
-\ccMethod{void set_light_shy(float);}{Sets material shininess;}
-
-\ccMethod{void set_X_light_pos(float);}{Sets light position in
-x-coordinate;}
-
-
-\ccMethod{void set_Y_light_pos(float);}{Sets light position in
-y-coordinate;}
-
-\ccMethod{void set_Z_light_pos(float);}{Sets light position in
-z-coordinate;}
-
-\ccMethod{void set_clip_planes(int);}{Sets the clip planes for the
-slice mode : 0 means x-y plane, 1, x-z, 2, y-z;}
-
-\ccMethod{void set_clip_width(float w,int s);} {Sets the width to \ccc{w} for
-slice \ccc{s} (0,1,2);}
-
-\ccMethod{void set_clip_move(float t,int s);}{Sets the translation for
-slice \ccc{s} (0,1,2) in respect to the original position of the slice;}
-
-\ccMethod{void set_bgcolor(Color c);}{Assignes background color to \ccc{c};}
-
-\ccMethod{void set_light();}{Reset the lightning. Needs to be called
-when light parameters are modified.}
-
-\ccMethod{void set_light(bool);}{Sets the light to be on/off (true/false);}
-
-\ccHeading{Access functions}
-
-\ccMethod{vector<double> get_real_point(int i,std::vector<double>
-p);}{Apply to point p (represented by a vector) all the oposite
-matrices transformation (the  global matrix of the whole scene and the
-local matrix to groupe \ccc{i}) and return the new vector.}
-
-\ccMethod{vector<double> get_point();}{Returns the coordinates
-(expressed in the viewer coordinates system not in the user one. To
-have the coordinates in the user coordinates system, apply
-\ccc{get_real_point} on it) of the point generated by the ``insert point'' mode.}
-
-\ccMethod{Drawable_object* get_drawable(int gr, int ind);}{Returns a
-pointer to the drawable object indiced by \ccc{ind}, in group \ccc{gr}.}
-
-\ccMethod{double* get_transform();}{Returns the global transformation
-matrix;}
-
-\ccMethod{Scene_graph* get_scene_graph();}{Return the scene graph reference.}
-
-\ccHeading{Adding, removing}
-
-\ccMethod{void delete_group(int gr);}{Deletes group\ccc{ gr}.}
-
-\ccMethod{void add_new_group();}{Adds a new empty group at the end of
-the scene graph.}
-
-\ccMethod{void add_point_to_object(int gr,int obj,std::vector<double>
-pt);}{Adds point \ccc{pt} (represented by a vector) to object \ccc{obj} in group
-\ccc{gr}. The object has to be an drawable object based on point that
-implement its \ccc{add\_point} function (see \ccc{Drawable\_objects}).}
-
-\ccMethod{void add_drawable(Drawable_object* obj, int i);}{Adds drawable
-\ccc{obj} in group \ccc{gr}.}
-
-\ccMethod{void remove_drawable(int gr, int obj);}{Removes drawable  \ccc{obj} 
-in group \ccc{gr}.}
-
-
-\ccHeading{Miscellaneous}
-
-\ccMethod{void reshape();}{Defines the projection matrix and enable
-some Open GL functionalities.}
-
-\ccMethod{void reset();}{Resets the all the transformations matrices
-(global and for each group).}
-
-\ccMethod{void redraw();}{Draws the scene and swaps the buffers.}
-
-\ccMethod{void make_visible(int gr);}{Sets the group \ccc{gr} to be
-displayable in the viewer.}
-
-\ccMethod{void change_visibility(int gr , int obj, bool b);}{Changes the
-visibility status for object \ccc{obj} in group \ccc{gr}.}
-
-\ccMethod{void group_visible(bool b, int gr);}{Changes the
-visibility status in group \ccc{gr}.}
-
-\ccMethod{void change_group(int val);}{Sets \ccc{val} to be the number of
-groups present in the scene graph.}
-
-\ccMethod{void clean_graph();}{Removes empty groups eventually present 
-in scene graph.}
-
-\ccMethod{void switch_light();}{Switches the light : on/off.}
-
-
 \end{ccClass}
 
 \begin{ccClass}{Drawable_object}
@@ -620,6 +477,10 @@ be s.}
 \ccMethod{void set_colors(Color c1, Color c2);}{Sets the color to \ccc{c1} and
 the second color to \ccc{c2}.}
 
+\ccMethod{void set_color1(Color c1);}{Sets the first color to \ccc{c1}.}
+
+\ccMethod{void set_color2(Color c1);}{Sets the second color to \ccc{c1}.}
+
 \ccMethod{virtual void add_point(double x, double y, double
 z);}{Virtual function to add a point to an object.}
 \end{ccClass}
@@ -632,7 +493,8 @@ virtual interface \ccc{Drawable\_object} and are templated by a geometric
 object. All these drawables are using \cgal\ standard acces functions
 for accessing coordinates of objects. All coordinates number types
 (for the template objects) must support the \cgal\ standard
-\ccc{to_double} function.
+\ccc{to_double} function. Note that all drawables make a copy of the
+\cgal\ object they represent. 
 
 \ccInclude{CGAL/draw\_CGAL\_Object.h}
 
@@ -654,8 +516,8 @@ for accessing coordinates of objects. All coordinates number types
 
 \ccConstructor{Drawable_point_2(const double& x1,const double& y1,
 		    Color c, Style sty=RAW, Size s = 5 , Precision
-		    prec=5);}{Object constructor. A template type must 
-be provided of any valid type.}
+		    prec=5);}{Object constructor. A \ccc{Point_2}
+template parameter type on double coordinates must be provided.}
 \end{ccClassTemplate}
 
 \begin{ccClassTemplate}{Drawable_segment_2<Segment2>}
@@ -679,7 +541,7 @@ sty= RAW, Size s=2, Precision prec=15);}{The \ccc{Ray2} type must provide
 
 \begin{ccClassTemplate}{Drawable_triangle_2<Triangle2>}
 \ccConstructor{Drawable_triangle_2(const Triangle2& 
-tri, Color c1, Color c2, Style sty= FILL, Size s=2, Precision prec=0);}{The
+tri, Color c1, Color c2=BLACK, Style sty=FILL, Size s=2, Precision prec=0);}{The
 \ccc{Triangle2} must provide \ccc{tr[i].x/y()} (i=0,1,2) access functions.}
 \end{ccClassTemplate}
 
@@ -712,7 +574,8 @@ sty=FILL, Size s=5, Precision prec=15);}{The type \ccc{Point3} must provide
 \ccConstructor{Drawable_point_3(const double& x, const double& y,const
 double& z, Color c, Style
 sty=FILL, Size s=5, Precision prec=15);}{Constructor with three double 
-for coordinates. Template can be anything.}
+for coordinates. A \ccc{Point_3} template type parameter on double
+cordinates must be provided.}
 \end{ccClassTemplate}
 
 \begin{ccClassTemplate}{Drawable_points_set_3<InputIterator, Point3>}
@@ -724,7 +587,7 @@ are iterators on a container containing \ccc{point3} objects.}
 
 \begin{ccClassTemplate}{Drawable_segment_3<segment3>}
 \ccConstructor{Drawable_segment_3(const segment3& sg, Color c, Style
-sty=FILL, Size s=5, Precision prec=15);}{The type \ccc{segment3} must
+sty=RAW, Size s=5, Precision prec=15);}{The type \ccc{segment3} must
 provide \ccc{source()} and \ccc{target()} access functions.}
 \end{ccClassTemplate}
 
@@ -749,7 +612,7 @@ provide \ccc{tr[i]} for accessing vertices and \ccc{x()},  \ccc{y()},
 
 \begin{ccClassTemplate}{Drawable_tetrahedron_3<tetrahedron3>}
 \ccConstructor{Drawable_tetrahedron_3(const tetrahedron3& tri, Color c, Style
-sty=WIRE, Size s=2, Precision prec=0);}{The type \ccc{tetrahedron3} must
+sty=FILL, Size s=2, Precision prec=0);}{The type \ccc{tetrahedron3} must
 provide  \ccc{tr[i]} for accessing vertices and  \ccc{x()},
 \ccc{y()},  \ccc{z()} access functions for coordinates of each vertex.}
 \end{ccClassTemplate}
@@ -820,7 +683,6 @@ spheres for vertices.
 Sizes=2, Precision prec=10);}{Builds a new Drawable\_facets\_object\_3.}
 \end{ccClassTemplate}
 
-
 \begin{ccClass}{Scene_graph}
 \subsection{The Scene graph Class, \protect \ccClassTemplateName}
 
@@ -831,115 +693,6 @@ transformation matrices (rotation, translation) for the scene and the
 center of the scene as data members.
 
 \ccInclude{CGAL/scene\_graph.h}
-
-\ccTypes
-\ccThree{typedef Gt::Triangle}{}{the triangulatiooooooooooooooooooooooooo00000}
-\ccThreeToTwo
-
-\ccTypedef{typedef Scene_graph::iterator;}{Iterator over all groups of 
-the scene graph.}
-
-
-
-
-\ccCreation
-\ccCreationVariable{sg}
-\ccThree{Scene_graph()graph;}{t = tr bidulebidulebidulebidule}{}
-\ccThreeToTwo
-\ccConstructor{Scene_graph();}{Builds a new scene graph with one empty 
-group. Transformation matrices are set to identity.}
-
-
-\subsection{Functionalities}
-\ccHeading{Setting}
-
-\ccMethod{void set_identity();}{Sets the two transformation matrices
-to identity;}
-
-\ccMethod{void set_scene_center();}{Computes the center of mass of
-the scene.}
-
-\ccMethod{void make_visible(int gr);}{Sets all objects of group gr to
-be visible (selected in the scene browser).}
-
-
-\ccMethod{void change_visibility(int gr, int obj, bool b);}{Sets the
-visibility status of objetct \ccc{obj} in group \ccc{gr} to be \ccc{b};}
-
-\ccMethod{void group_visible(bool b, int gr);}{Sets the visibility status of
-group \ccc{gr} to be \ccc{b};}
-
-\ccMethod{void set_rotation();}{Sets the rotation matrix to the current 
-matrix defined in the top of the OpenGL modelview matrix stack.}
-
-\ccMethod{void set_translation(double x, double y);}{Sets the
-x/y-coordinates for the global translation matrix.}
-
-
-\ccHeading{Adding and remove}
-
-
-
-\ccMethod{void add_new_group(Drawable_object* obj);}{Adds a new group
-to scene graph containing object \ccc{obj}.}
-
-\ccMethod{void add_new_group();}{Adds a new empty group.}
-
-\ccMethod{void delete_group(int gr);}{Deletes group \ccc{gr};}
-
-\ccMethod{void add_drawable(Drawable_object* obj, int gr=1);}{Adds
-drawable object \ccc{obj} in group \ccc{gr}.}
-
-\ccMethod{int remove_drawable(int gr, int obj);}{Removes drawable \ccc{obj}
-from group \ccc{gr}. Do nothing if no object indiced by \ccc{obj} in
-\ccc{gr} or no group \ccc{gr} exist.}
-
-\ccMethod{void add_point_to_object(int gr, int obj, float x, float y,
-float z);}{Adds as point having x/y/z/-coordinates to object \ccc{obj} in
-group \ccc{gr}. Object must have \ccc{add\_point()} method defined.}
-
-\ccHeading{Accessing}
-
-\ccMethod{Drawable_object* get_drawable(int gr, int obj);}{Returns a
-pointer on the drawable \ccc{obj} in group \ccc{gr}.}
-  
-
-\ccMethod{double get_center(int i);}{Returns x/y/z coordinates (0,1,2) 
-of scene center of mass.}
-
-\ccMethod{int get_size();}{Returns the size of the scene graph (ie,
-the number of groups it contains).}
-
-\ccMethod{double* get_rotation();}{Returns the scene rotation matrix;}
-
-\ccMethod{double* get_translation();}{Returns the scene translation
-matrix;}
-
-\ccMethod{double* get_group_translation(int gr);}{Returns the matrix of 
-translation of group gr.}
-
-
-\ccMethod{double* get_group_rotation(int g);}{Returns the matrix of 
-rotation of group \ccc{gr}.}
-
-\ccMethod{bool group_visible(int g);}{Returuns if a group is visible or 
-not (name to be changed!).}
-
-
-\ccHeading{Iterators}
-
-\ccMethod{iterator begin();}{Iterator over all groups.}
-
-\ccMethod{iterator end();}{past-the-end iterator.}
-
-\ccHeading{Miscellaneous}
-
-\ccMethod{void change_group(int orig, int obj, int dest);}{Moves
-object \ccc{obj} from group \ccc{orig} to group\ccc{dest}.}
-
-\ccMethod{void clean_graph();}{Browses the scene graph and remove
-empty groups.}
-
 
 \end{ccClass}
 \begin{ccClass}{Scene_group}
@@ -954,110 +707,7 @@ its own iterator type to browse through the objects of the group.
 
 \ccInclude{CGAL/scene\_group.h}
 
-\ccTypes
-\ccThree{typedef Gt::Triangleblblblnl}{}{the triangulatiooooooooooooooooooooooo}
-\ccThreeToTwo
-
-\ccTypedef{typedef Scene_group::iterator;}{Iterator over all groups of 
-the scene graph.}
-
-
-
-
-\ccCreation
-\ccCreationVariable{gr}
-\ccThree{Scene_graph()group;}{t = tr bidulebidulebidulebidule}{}
-\ccThreeToTwo
-\ccConstructor{Scene_group();}{Builds a new scene
-group. Transformation matrices are set to identity.}
-
-
-\ccConstructor{Scene_group(std::vector<Drawable_object*> l);}{Builds a
-new scene group containing drawable objects included in \ccc{l}.}
-
-\ccConstructor{Scene_group(Drawable_object* obj);}{Builds a
-new scene group containing the object \ccc{obj}.}
-
-\subsection{Functionalities}
-
-\ccHeading{Setting}
-
-\ccMethod{void set_scene_center();}{Sets the center of mass for the
-group.}
-
-\ccMethod{void set_rotation(float y, float x, double* Mw);}{Modifies the
-rotation matrix around x/y axis for the group. The matrix \ccc{Mw} is the
-global transformation matrix (rotation and translation) for the
-scene.}
-
-\ccMethod{void set_translation(float x, float y, double* Mw);}{Idem as 
-previously for translation.}
-
-\ccMethod{void change_visibility(int obj,bool b);}{Sets the visibility 
-of the object \ccc{obj} to be\ccc{b}.}
-
-\ccMethod{void all_visible();}{Sets all objects in the group to be
-visible.}
-
-\ccMethod{void group_visible(bool b);}{Sets the visibility status of
-the group to be\ccc{b}.}
-
-
-\ccHeading{Accessing}
-
-\ccMethod{double get_center(int i);}{Returns the x/y/z-coordinates of
-the center of mass for the group.}
-
- \ccMethod{int get_size();}{Returns the size of the group (i.e., the
-number of drawable object it contains).}
-
-\ccMethod{Drawable_object* get_drawable(int obj);}{Returns the
-reference of the drawable \ccc{obj}.}
-
-\ccMethod{double* get_group_rotation();}{Returns the rotation matrix
-for the group.}
-
-\ccMethod{double* get_group_translation();}{Returns the translation matrix
-for the group.}
-
-\ccMethod{bool group_visible();}{Return the visibility status for the
-group.}
-
-\ccHeading{Adding and remove}
-
-\ccMethod{void add_to_group(Drawable_object* obj);}{Adds the drawable
-\ccc{obj} to the group.}
-
-\ccMethod{int remove_drawable(int i);}{Remove the drawable of indice \ccc{i} 
-from the group.}
-
-\ccMethod{void add_point_to_object(int i, float x, float y, float
-z);}{Adds \ccc{point(x,y,z)} to object \ccc{i}. Object \ccc{i} must
-have an \ccc{add\_point()} method defined. If not, nothing is done.}
-
-
-\ccHeading{Iterators}
-
-\ccMethod{iterator begin();}{Iterator over all groups.}
-
-\ccMethod{iterator end();}{past-the-end iterator.}
-
-\ccHeading{Miscellaneous}
-
-\ccMethod{void draw_group();}{Draws group without regarding of
-visibility status. This function has to be called inside a more
-general display function that define all the viewer parameters}
-
-\ccMethod{void draw_visible();}{Draws group. Only visible objects are
-drawn.}
-
-\ccMethod{void draw_invisible();}{Draws group. Only invisible objects are
-drawn.}
-
-
-
 \end{ccClass}
-
 
 \subsection{Stream support}
 
@@ -1075,21 +725,9 @@ by the stream operator.
 \subsubsection{Input streams}
 
 \ccThree{Viewer_3& operator}{operator<<(Viewer_3& W, Style s);}{}
-
+\ccThreeToTwo
 \ccFunction{Viewer_3& operator<<(Viewer_3& W, Object o);}
 {Sends the object \ccc{o} to the viewer.}
-\ccGlue
-\ccFunction{Viewer_3& operator<<(Viewer_3& W, Style s);}
-{Sets the default \ccc{Style} to be \ccc{s}.}
-\ccGlue
-\ccFunction{Viewer_3& operator<<(Viewer_3& W, Size s);}
-{Sets the default \ccc{Size} to be \ccc{s}.}
-\ccGlue
-\ccFunction{Viewer_3& operator<<(Viewer_3& W, Color c);}
-{Sets the default \ccc{Color} to be \ccc{c}.}
-\ccGlue
-\ccFunction{Viewer_3& operator<<(Viewer_3& W, Precision p);}
-{Sets the default \ccc{Precision} to be \ccc{p}.}
 
 \subsubsection{Convert functions}
 
@@ -1124,6 +762,36 @@ for the kernel objects :
 A function that takes a \ccc{std::vector<R>} with three elements and
 returns a \ccc{Drawable_point_3} is also provided.
 
+\subsubsection{Manipulators for assigning \ccc{Viewer_3} parameters}
+
+The stream support offer stream facilities to set some Viewer
+parameters like default colors, size, precision, etc. It use a manipulator class \ccc{O_manip} that implements
+generic stream function :
+
+\ccFunction{Viewer_3& operator<< (Viewer_3& W, const O_manip<Obj>&
+m);}{}
+
+In order to use it, a manipulator must be build. The
+\ccc{Viewer_stream.h} defines several manipulator constructor for
+standards parameters.
+
+\ccFunction{O_manip<Precision> set_precision(Precision i);}{Defines a
+manipulator to set the viewer default precision parameter.}
+\ccGlue
+ \ccFunction{O_manip<Color> set_color1(Color c);}{Defines a
+manipulator to set the viewer default first color parameter.}
+\ccGlue
+ \ccFunction{O_manip<Color> set_color2(Color c);}{Defines a
+manipulator to set the viewer default second color parameter.}
+\ccGlue
+\ccFunction{O_manip<Size> set_size(Size i);}{Defines a
+manipulator to set the viewer default size parameter.}
+\ccGlue
+\ccFunction{O_manip<Style> set_style(Style i);}{Defines a
+manipulator to set the viewer default style parameter.}
+
+
+
 \subsection{Threads}
 
 In order to run independently from the main program, the viewer, when
@@ -1135,9 +803,9 @@ Solaris but some problems are known in linux if the library X has not
 been compile with multithreading options. The Viewer\_3 can be use with 
 or without multithreading option by simply add a flag when build
 object files : simply add -DUSE\_THREAD in your makefile or in the make 
-command line. Also, if multithreading is use the libpthread.so library
+command line. Also, if multithreading is use, the libpthread.so library
 have to be added when linking and option -D\_REENTRANT (see example
-makefile).
+makefiles).
 The pthread package exports several functions working on threads and
 we recommand that people that want to build their own mutithreading
 structure have a look to the documentation of pthread functions. This
@@ -1392,7 +1060,7 @@ int main(int argc, char *argv[])
   tr.insert(point_t(100,-350,0));
   tr.insert(point_t(500,-300,-250));
 
-  W << CGAL::ORANGE ;
+  W << CGAL::set_color_1(CGAL::ORANGE) ;
   Delaunay_3::Cell_iterator cit;
   tetra t;
   for (cit = tr.finite_cells_begin(); cit != tr.cells_end(); cit++) {
@@ -1559,9 +1227,9 @@ int main(int argc, char *argv[])
 
 \section{Adresses}
 
-About OpenGL consult the official page : http:\/\/www.opengl.org\/ \\
+About OpenGL consult the official page : http://www.opengl.org/ \\
 For Mesa (a free OpenGL clone), consult :
-http:\/\/mesa3d.sourceforge.net\/ \\
-For FLTK (free shareware) : http:\/\/www.fltk.org\/about.html
+http://mesa3d.sourceforge.net/ \\
+For FLTK (free shareware) : http://www.fltk.org/about.html
 
 
