@@ -63,8 +63,8 @@ given by the iterator sequence \ccc{begin}, \ccc{end}.
 
 \ccOperations
 
-\ccMethod{template <class Separator>
-void split_container(Point_container<Point> &C, Separator sep, bool sliding=false);}
+\ccMethod{template <class SpatialSeparator>
+void split_container(Point_container<Point> &C, SpatialSeparator sep, bool sliding=false);}
 {Given an empty container \ccc{C} with the same dimension as \ccc{c}, splits \ccc{c} into
 \ccc{c} and \ccc{C} using the separator \ccc{sep}. If sliding is true after splitting 
 each container contains at least one point. \ccc{c} should contain at least two points.}
@@ -202,7 +202,7 @@ std::ostream& operator<<(std::ostream& s, Point_container<SpatialPoint> c);}
 
 \ccSeeAlso
 
-SpatialPoint, Separator, PointContainer.
+SpatialPoint, SpatialSeparator, PointContainer.
 
 \end{ccRefClass}
 

@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunctionObjectClass}{Midpoint_of_rectangle<SpatialPoint, PointContainer, Separator>}  %% add template arg's if necessary
+\begin{ccRefFunctionObjectClass}{Midpoint_of_rectangle<SpatialPoint, PointContainer, SpatialSeparator>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -41,14 +41,14 @@ Splitter
 
 \ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.} 
 \ccTypedef{PointContainer Container;}{Point container.}
-\ccTypedef{Separator Separator;}{\ccHtmlNoLinksFrom{Separator}.}
+\ccTypedef{SpatialSeparator Separator;}{Separator.}
 
 \ccCreationVariable{s}  %% choose variable name
 
 \ccOperations
 
 \ccMethod{
-void operator()(\ccHtmlNoLinksFrom{Separator}& s, Container& c0, Container& c1, NT Aspect_ratio=NT(3));} 
+void operator()(Separator& s, Container& c0, Container& c1, NT Aspect_ratio=NT(3));} 
 {Modifies the separator $s$ by the {\bf midpoint of rectangle} splitting rule, 
 and splits \ccc{c0} into \ccc{c0} and \ccc{c1},
 using the splitting dimension and the splitting value of the modified separator.
@@ -56,7 +56,7 @@ using the splitting dimension and the splitting value of the modified separator.
 
 \ccSeeAlso
 
-Splitter, PointContainer, Separator.
+Splitter, PointContainer, SpatialSeparator.
 \end{ccRefFunctionObjectClass}
 
 

@@ -240,6 +240,7 @@ implementation of the Euclidean distance.
 \caption{Scheme of concepts and classes implementing neighbor searching algorithms.
 Point is used as shorthand for SpatialPoint, Tree is used as shorthand for SpatialTree,
 Container is used as shorthand for PointContainer,
+Separator is used as shorthand for SpatialSeparator,
 and Distance as shorthand for both GeneralDistance and OrthogonalDistance.
 \label{ASPAS:Fig1}}
 \end{figure}
@@ -252,7 +253,7 @@ and Distance as shorthand for both GeneralDistance and OrthogonalDistance.
 <img border=0 src="./Fig1.gif" alt=" "><br> 
 Scheme of concepts and classes implementing neighbor searching algorithms.
 Point is used as shorthand for SpatialPoint, Tree is used as shorthand for SpatialTree,
-Container is used as shorthand for PointContainer,
+Container is used as shorthand for PointContainer, Separator is used as shorthand for SpatialSeparator,
 and Distance as shorthand for both GeneralDistance and OrthogonalDistance.
 </center>
 
@@ -282,19 +283,19 @@ provides method to support the implementation of splitting rules.
 \ccc{CGAL::Point_container<SpatialPoint>} provides an implementation.
 
 
-\ccc{Separator} denoting a $d-1$-dimensional
+\ccc{SpatialSeparator} denoting a $d-1$-dimensional
 subspace separating a $d$-dimensional spaces in two parts,
 as implemented by \ccc{CGAL::Plane_separator<NT>}.
 
 \item 
 \ccc{Splitter} denoting a splitting rule as implemented by the function object classes 
-\ccc{CGAL::Midpoint_of_rectangle<SpatialPoint, PointContainer, Separator>},
-\ccc{CGAL::Midpoint_of_max_spread<SpatialPoint, PointContainer, Separator>},
-\ccc{CGAL::Sliding_midpoint<SpatialPoint, PointContainer, Separator>},
-\ccc{CGAL::Median_of_rectangle<SpatialPoint, PointContainer, Separator>},
-\ccc{CGAL::Median_of_max_spread<SpatialPoint, PointContainer, Separator>},
-\ccc{CGAL::Fair<SpatialPoint, PointContainer, Separator>}, and
-\ccc{CGAL::Sliding_Fair<SpatialPoint, PointContainer, Separator>}.
+\ccc{CGAL::Midpoint_of_rectangle<SpatialPoint, PointContainer, SpatialSeparator>},
+\ccc{CGAL::Midpoint_of_max_spread<SpatialPoint, PointContainer, SpatialSeparator>},
+\ccc{CGAL::Sliding_midpoint<SpatialPoint, PointContainer, SpatialSeparator>},
+\ccc{CGAL::Median_of_rectangle<SpatialPoint, PointContainer, SpatialSeparator>},
+\ccc{CGAL::Median_of_max_spread<SpatialPoint, PointContainer, SpatialSeparator>},
+\ccc{CGAL::Fair<SpatialPoint, PointContainer, SpatialSeparator>}, and
+\ccc{CGAL::Sliding_Fair<SpatialPoint, PointContainer, SpatialSeparator>}.
 
 \item
 \ccc{TreeTraits} denoting a traits class for the construction of a tree.
@@ -488,7 +489,7 @@ This may violate the aspect ratio bound, but will never generate empty cells.
 \label{Spatial_searching:Backward_compability_Kd-trees}
 
 In release 2.3 of CGAL
-$k$-$d$ trees have been implemented by the class \ccc{CGAL::Kdtree_d<TreeTraits>} (see Section \ref{KDT_section}), 
+$k$-$d$ trees have been implemented by the class \ccc{CGAL::Kdtree_d<TreeTraits>}, 
 that is parameterized with one of the
 traits classes 
 

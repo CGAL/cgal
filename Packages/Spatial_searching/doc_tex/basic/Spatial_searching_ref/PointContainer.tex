@@ -44,8 +44,8 @@ given by the iterator sequence \ccc{begin}, \ccc{end}.
 
 \ccOperations
 
-\ccMethod{template <class Separator>
-void split_container(PointContainer& C, Separator sep, bool sliding=false);}
+\ccMethod{template <class SpatialSeparator>
+void split_container(PointContainer& C, SpatialSeparator sep, bool sliding=false);}
 {Given an empty container \ccc{C} with the same dimension as \ccc{c}, splits \ccc{c} into
 \ccc{c} and \ccc{C} using the separator \ccc{sep}. If sliding is true after splitting 
 each container contains at least one point. \ccc{c} should contain at least two points.}
@@ -56,7 +56,7 @@ each container contains at least one point. \ccc{c} should contain at least two 
 
 \ccSeeAlso
 
-SpatialPoint, Separator.
+SpatialPoint, SpatialSeparator.
 \ccc{CGAL::Point_container<SpatialPoint>}.
 
 \end{ccRefConcept}
