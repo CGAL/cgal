@@ -47,7 +47,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="$(QTDIR)/bin/moc.exe -o partition_2.moc partition_2.C"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -96,7 +97,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="$(QTDIR)/bin/moc.exe -o partition_2.moc partition_2.C"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -112,36 +114,6 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath="Qt_widget_toolbar.C">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="Qt_widget_toolbar_layers.C">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="partition_2.C">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -156,68 +128,66 @@
 						CompileAs="2"/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath="partition_2_toolbar.C">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="partition_2_toolbar_layers.C">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc">
 			<File
-				RelativePath="Qt_widget_toolbar.h">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar.moc Qt_widget_toolbar.h
-"
-						Outputs="Qt_widget_toolbar.moc"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar.moc Qt_widget_toolbar.h
-"
-						Outputs="Qt_widget_toolbar.moc"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="Qt_widget_toolbar_layers.h">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.h
-"
-						Outputs="Qt_widget_toolbar_layers.moc"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.h
-"
-						Outputs="Qt_widget_toolbar_layers.moc"/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="cgal_types.h">
 			</File>
 			<File
-				RelativePath="partition_2.h">
+				RelativePath="partition_2_layers.h">
+			</File>
+			<File
+				RelativePath="partition_2_toolbar.h">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o partition_2.moc partition_2.C
-"
-						Outputs="partition_2.moc"/>
+						CommandLine="$(QTDIR)/bin/moc.exe -o partition_2_toolbar.moc partition_2_toolbar.h"
+						Outputs="partition_2_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o partition_2.moc partition_2.C
-"
-						Outputs="partition_2.moc"/>
+						CommandLine="$(QTDIR)/bin/moc.exe -o partition_2_toolbar.moc partition_2_toolbar.h"
+						Outputs="partition_2_toolbar.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="partition_2_toolbar_layers.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o partition_2_toolbar_layers.moc partition_2_toolbar_layers.h"
+						Outputs="partition_2_toolbar_layers.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o partition_2_toolbar_layers.moc partition_2_toolbar_layers.h"
+						Outputs="partition_2_toolbar_layers.moc"/>
 				</FileConfiguration>
 			</File>
 		</Filter>
