@@ -8,11 +8,11 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.3-I-79 $
-// release_date  : $CGAL_Date: 2001/07/03 $
+// release       : $CGAL_Revision: CGAL-2.4-I-5 $
+// release_date  : $CGAL_Date: 2001/08/31 $
 //
 // file          : include/CGAL/Segment_circle_2.h
-// package       : Arrangement 
+// package       : Arrangement (2.19)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // author(s)     : Ron Wein <wein@post.tau.ac.il>
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
@@ -52,6 +52,7 @@ static int _solve_quadratic_eq (const NT& a, const NT& b, const NT& c,
   static const NT _zero = NT(0);
   static const NT _two  = NT(2);
   static const NT _four = NT(4);
+
 
   if (a == _zero)
   {
@@ -676,6 +677,17 @@ class Segment_circle_2
     if (_conic != arc._conic)
       return (0);
 
+    // If the two arcs are completely equal, return one of them as the
+    // overlapping arc.
+    bool      same_or = (_conic.orientation() == arc._conic.orientation());
+
+    if ((same_or && _source == arc._source && _target == arc._target) ||
+	(!same_or && _source == arc._target && _target == arc._source))
+    {
+      ovlp_arcs[0] = arc;
+      return (1);
+    }
+
     // In case one of the arcs is a full conic, return the whole other conic.
     if (arc.is_full_conic())
     {
@@ -692,8 +704,17 @@ class Segment_circle_2
     // and target.
     const Point *arc_sourceP;
     const Point *arc_targetP;
+    int         orient1 = _conic.orientation();
+    int         orient2 = arc._conic.orientation();
 
-    if (_conic.orientation() == arc._conic.orientation())
+    if (orient1 == 0)
+      orient1 = (compare_lexicographically_xy (_source, _target) 
+		 == LARGER) ? 1 : -1;
+    if (orient2 == 0)
+      orient2 = (compare_lexicographically_xy (arc._source, arc._target) 
+		 == LARGER) ? 1 : -1;
+
+    if (orient1 == orient2)
     {
       arc_sourceP = &(arc._source);
       arc_targetP = &(arc._target);
@@ -736,11 +757,12 @@ class Segment_circle_2
       //            arc:   +=====>
       ovlp_arcs[0] = Segment_circle_2<NT>(_conic, _source, *arc_targetP);
       return (1);
+
     }
-    else if (arc._is_strictly_between_endpoints(_source) &&
-             arc._is_strictly_between_endpoints(_target))
+    else if (arc._is_between_endpoints(_source) &&
+             arc._is_between_endpoints(_target))
     {
-      // Case 3 - *this:     +----------->     
+      // Case 4 - *this:     +----------->     
       //            arc:   +================>
       ovlp_arcs[0] = *this;
       return (1);
@@ -749,7 +771,7 @@ class Segment_circle_2
     // If we reached here, there are no overlaps:
     return (0);
   }
-		
+
   private:
 
   // Check whether the given point is between the source and the target.
