@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.65 on ? February 2001
+- Kernel_checker
+- Filtered_kernel and Filtered_predicate.
+
 Version 4.64 on 1 February 2001
 - MP_Float.
 

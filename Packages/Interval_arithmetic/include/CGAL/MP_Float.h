@@ -127,7 +127,7 @@ public:
     // Then, compute the limbs.
     v.resize(limbs_per_double);
     for (int i = limbs_per_double - 1; i > 0; i--) {
-      v[i] = (limb) std::rint(d);
+      v[i] = (limb) ::rint(d);
       if (d-v[i] >= double(base/2-1)/(base-1))
         v[i]++;
       d -= v[i];
@@ -139,7 +139,7 @@ public:
 
     remove_trailing_zeros();
 
-    CGAL_expensive_assertion(d == (limb) std::rint(d));
+    CGAL_expensive_assertion(d == (limb) ::rint(d));
     CGAL_assertion(v.back() != 0);
     CGAL_expensive_assertion(CGAL::to_double(*this) == bak);
   }
@@ -513,7 +513,7 @@ operator<< (std::ostream & os, const MP_Float &b)
     if (exp != 0)
       os << " * 2^" << exp;
 
-    approx += std::ldexp(*i, exp);
+    approx += std::ldexp(double(*i), exp);
 
     exp += MP_Float::log_limb;
   }

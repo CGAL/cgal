@@ -42,8 +42,8 @@ CGAL_BEGIN_NAMESPACE
 // - Potential caching is done at the Point_2 level.
 // - The operators() should probably NOT be inline.
 
-// Simple function to check if 2 arguments have the same type.
 #if 0
+// Simple function to check if 2 arguments have the same type.
 template < class T >
 inline void
 same_type_checker(const T&, const T&)
