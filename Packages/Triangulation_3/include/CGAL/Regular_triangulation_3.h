@@ -531,9 +531,9 @@ star_region_delete_points(Conflict_set & region,
   Vertex_handle vh;
 // std::set<void*> pts;
 //  Weighted_point *p;
-    
+
   // for each cell to be deleted, keep vertices
-  Conflict_set::const_iterator it;
+  typename Conflict_set::const_iterator it;
   for( it = region.begin(); it != region.end(); ++it) {
     c_tmp = (Cell *) *it;
     // store vertices
@@ -545,17 +545,17 @@ star_region_delete_points(Conflict_set & region,
       }
     }
   }
-    
+
   // Create the new faces and delete old ones
   _tds.star_region( region, v, c, li );
-    
+
   // get the vertices incident to v
   std::set<Vertex_handle> inc_vert;
   incident_vertices(v, inc_vert);
-    
+
   // for each vertex, check if it is a vertex incident to v
   // if not, delete it
-  std::set<void *>::const_iterator it2;
+  typename std::set<void *>::const_iterator it2;
   for( it2 = vert.begin(); it2 != vert.end(); ++it2) {
     v_tmp = (Vertex *) *it2;
     if ( inc_vert.find(v_tmp) == inc_vert.end() ) {
