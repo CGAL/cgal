@@ -1,6 +1,5 @@
-#include <CGAL/basic.h>
-#include <iostream>
-#include <fstream>
+// file example/Triangulation_2/regular.C
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>

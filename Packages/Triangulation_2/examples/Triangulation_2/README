@@ -3,18 +3,6 @@ to compule and run all these examples type :
 To compute and run only some of them type
 ./cgal_test name-of_wanted_example
 
-example: 
-Illustrates features of the triangulation package.
-It has no graphical IO and does not depend on any other library.
-
-voronoi:
-Illustrate the use of a Delaunay triangulation and
-takes  the dual of the triangulation.
-
-points:
-Illustrates how to input user defined points and a user provided traits
-class in a Triangulation 
-
 triangulation_prog1:
 the first example in the documentation
 
@@ -22,6 +10,22 @@ colored_face
 Illustrates how the user can derive its own base face from the default
 one to add e. g. a color.
 
+example: 
+Illustrates features of the triangulation package.
+It has no graphical IO and does not depend on any other library.
+
+voronoi:
+Builds a Delaunay triangulation from input points in a file
+and takes the dual Voronoi diagram
+
 terrain
 Build a terrain using a Delaunay triangulation with the traits class for 
 terrains.
+
+regular
+Build a regular triangulation
+
+points:
+Illustrates how to input user defined points and a user provided traits
+class in a Triangulation 
+
