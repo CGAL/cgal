@@ -45,7 +45,7 @@ with the rounding modes used in this package.
     any propagation at the entry.  The drawback is that it also stops many
     other optimizations.  We now use this macro only just before it is needed.
 
-3/ std::sqrt() on Windows (GCC CygWin and VC++):
+3/ std::sqrt() on Windows (GCC/CygWin and VC++):
 ------------------------------------------------
 
   When you don't optimize, std::sqrt() calls a library routine instead of the
@@ -53,6 +53,8 @@ with the rounding modes used in this package.
   This is plain stupid, and moreover this library routine appears to be buggy !
   The fix would be to provide our own cgal_sqrt_ms_workaround() in extern C
   precompiled module.
+  GCC/CygWin now uses inline assembly to simplify the installation.
+  Hopefully VC++ will follow the same path.
   
 4/ is_valid() bug with VC++:
 ----------------------------
@@ -77,7 +79,7 @@ with the rounding modes used in this package.
 
   Another "problem" is that when you don't parenthesize an expression with
   doubles, MipsPro believes it can optimize more than it should (reordering
-  computations).  so I had to add additionnal parenthesis...
+  computations).  So I had to add additionnal parenthesis...
   For example, MipsPro compiles "a*-b" to "-(a*b)" instead of "a*(-b)".
   
   Solution: adding parenthesis.
@@ -89,7 +91,7 @@ with the rounding modes used in this package.
 
   The new (May'00) C standard specifies compiler and library requirements
   to implement portable interval arithmetic !!!
-  Problem: it's not fully implemented anywhere that I know of.
+  Problem: it's not fully implemented anywhere that I know of, yet...
 
 --
 Sylvain
