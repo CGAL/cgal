@@ -61,14 +61,14 @@ template <class IteratorForward, class R>
 Bounded_side bounded_side_3(IteratorForward first,
 			    IteratorForward last,
                             const Point_3<R>& point,
-                            Plane_3<R> plane = Plane_3<R>()) {
+                            Plane_3<R> plane = Plane_3<R>(0,0,0,0)) {
   typedef typename R::Point_2 Point_2;
   typedef typename R::Point_3 Point_3;
   typedef typename R::Vector_3 Vector_3;
   typedef typename R::Direction_3 Direction_3;
   typedef typename R::Plane_3 Plane_3;
 
-  if(plane == Plane_3()) {
+  if(plane == Plane_3(0,0,0,0)) {
     // TO TEST: code never tested
     IteratorForward p(first);
     Point_3 p0(*(p++));
@@ -158,7 +158,7 @@ template <class IC, class R>
 Bounded_side bounded_side_3(IC first,
 			    IC last,
 			    const Point_3<R>& point,
-			    Plane_3<R> plane = Plane_3<R>()) {
+			    Plane_3<R> plane = Plane_3<R>(0,0,0,0)) {
 
   typedef typename R::Point_2 Point_2;
   typedef typename R::Point_3 Point_3;
@@ -168,7 +168,7 @@ Bounded_side bounded_side_3(IC first,
 
   CGAL_assertion( !CGAL::is_empty_range( first, last));
 
-  if(plane == Plane_3()) {
+  if(plane == Plane_3(0,0,0,0)) {
     Vector_3 hv;
     normal_vector_newell_3( first, last, hv);
     plane = Plane_3( *first, Direction_3(hv));
