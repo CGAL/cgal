@@ -66,21 +66,6 @@ public:
   typedef typename Gt::Direction_3   Direction;
   typedef typename Gt::Object_3      Object;
 
-  // Function objects
-  typedef typename Gt::Side_of_oriented_sphere_3 Side_of_oriented_sphere;
-  typedef typename Gt::Coplanar_side_of_bounded_circle_3
-                                             Coplanar_side_of_bounded_circle;
-  // for dual:
-  typedef typename Gt::Construct_circumcenter_3
-                                             Construct_circumcenter;
-  typedef typename Gt::Construct_perpendicular_line_3
-                                             Construct_perpendicular_line;
-  typedef typename Gt::Construct_plane_3
-                                             Construct_plane;
-  typedef typename Gt::Construct_direction_of_line_3
-                                             Construct_direction_of_line;
-  typedef typename Gt::Construct_ray_3       Construct_ray;
-
   typedef typename Triangulation_3<Gt,Tds>::Cell_handle   Cell_handle;
   typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
 
@@ -98,52 +83,74 @@ public:
   typedef typename Triangulation_3<Gt,Tds>::Locate_type Locate_type;
 
 protected:
-  Side_of_oriented_sphere          side_of_oriented_sphere;
-  Coplanar_side_of_bounded_circle  coplanar_side_of_bounded_circle;
-  Construct_circumcenter           construct_circumcenter;
-  Construct_perpendicular_line     construct_perpendicular_line;
-  Construct_plane                  construct_plane;
-  Construct_direction_of_line      construct_direction_of_line;
-  Construct_ray                    construct_ray;
+
+  Oriented_side
+  side_of_oriented_sphere(const Point &p, const Point &q, const Point &r,
+	                  const Point &s, const Point &t) const
+  {
+      return geom_traits().side_of_oriented_sphere_3_object()(p, q, r, s, t);
+  }
+
+  Bounded_side
+  coplanar_side_of_bounded_circle(const Point &p, const Point &q,
+	                          const Point &r, const Point &s) const
+  {
+      return geom_traits().coplanar_side_of_bounded_circle_3_object()(p,q,r,s);
+  }
+
+  // for dual:
+  Point
+  construct_circumcenter(const Point &p, const Point &q, const Point &r) const
+  {
+      return geom_traits().construct_circumcenter_3_object()(p, q, r);
+  }
+
+  Point
+  construct_circumcenter(const Point &p, const Point &q,
+	                 const Point &r, const Point &s) const
+  {
+      return geom_traits().construct_circumcenter_3_object()(p, q, r, s);
+  }
+
+  Line
+  construct_perpendicular_line(const Plane &pl, const Point &p) const
+  {
+      return geom_traits().construct_perpendicular_line_3_object()(pl, p);
+  }
+
+  Plane
+  construct_plane(const Point &p, const Point &q, const Point &r) const
+  {
+      return geom_traits().construct_plane_3_object()(p, q, r);
+  }
+
+  Direction
+  construct_direction_of_line(const Line &l) const
+  {
+      return geom_traits().construct_direction_of_line_3_object()(l);
+  }
+
+  Ray
+  construct_ray(const Point &p, const Direction &d) const
+  {
+      return geom_traits().construct_ray_3_object()(p, d);
+  }
 
 public:
 
   Delaunay_triangulation_3()
     : Triangulation_3<Gt,Tds>()
-  {
-    init_function_objects();
-  }
+  {}
   
   Delaunay_triangulation_3(const Gt & gt)
     : Triangulation_3<Gt,Tds>(gt)
-  {
-    init_function_objects();
-  }
+  {}
   
   // copy constructor duplicates vertices and cells
   Delaunay_triangulation_3(const Delaunay_triangulation_3<Gt,Tds> & tr)
     : Triangulation_3<Gt,Tds>(tr)
   { 
-    init_function_objects();
     CGAL_triangulation_postcondition( is_valid() );  
-  }
-
-  void init_function_objects() 
-  {
-    side_of_oriented_sphere =
-	geom_traits().side_of_oriented_sphere_3_object();
-    coplanar_side_of_bounded_circle =
-	geom_traits().coplanar_side_of_bounded_circle_3_object();
-    construct_circumcenter = 
-        geom_traits().construct_circumcenter_3_object();
-    construct_perpendicular_line =
-        geom_traits().construct_perpendicular_line_3_object();
-    construct_plane =
-        geom_traits().construct_plane_3_object();
-    construct_direction_of_line =
-        geom_traits().construct_direction_of_line_3_object();
-    construct_ray =
-        geom_traits().construct_ray_3_object();
   }
 
   template < class InputIterator >
@@ -735,18 +742,15 @@ dual(Cell_handle c, int i) const
 
   if ( dimension() == 2 ) {
     CGAL_triangulation_precondition( i == 3 );
-    const Point& p = c->vertex(0)->point();
-    const Point& q = c->vertex(1)->point();
-    const Point& r = c->vertex(2)->point();
-    return make_object( construct_circumcenter(p,q,r) );
+    return make_object( construct_circumcenter(c->vertex(0)->point(),
+		                               c->vertex(1)->point(),
+					       c->vertex(2)->point()) );
   }
 
   // dimension() == 3
   Cell_handle n = c->neighbor(i);
-  if ( ! is_infinite(c) && ! is_infinite(n) ) {
-    Segment s = construct_segment( dual(c), dual(n) );
-    return make_object(s);
-  }
+  if ( ! is_infinite(c) && ! is_infinite(n) )
+    return make_object(construct_segment( dual(c), dual(n) ));
 
   // either n or c is infinite
   int in;
@@ -766,8 +770,7 @@ dual(Cell_handle c, int i) const
   
   Line l = construct_perpendicular_line( construct_plane(p,q,r),
 					 construct_circumcenter(p,q,r) );
-  Ray ray = construct_ray( dual(n), construct_direction_of_line(l) );
-  return make_object(ray);
+  return make_object(construct_ray( dual(n), construct_direction_of_line(l) ));
 }
 
 template < class Gt, class Tds >

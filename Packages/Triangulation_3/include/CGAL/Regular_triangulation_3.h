@@ -37,7 +37,8 @@ template < class Gt,
            class Tds = Triangulation_data_structure_3 <
                                    Triangulation_vertex_base_3<Gt>,
                                    Triangulation_cell_base_3<void> > >
-class Regular_triangulation_3 : public Triangulation_3<Gt,Tds>
+class Regular_triangulation_3
+  : public Triangulation_3<Gt,Tds>
 {
   friend std::istream& operator >> CGAL_NULL_TMPL_ARGS
   (std::istream& is, Triangulation_3<Gt,Tds> &tr);
@@ -60,26 +61,21 @@ public:
   typedef typename Triangulation_3<Gt,Tds>::Edge_iterator       Edge_iterator;
 
   typedef typename Gt::Weighted_point                           Weighted_point;
-  typedef typename Gt::Power_test_3                             Power_test;
 
   Regular_triangulation_3()
-    : Triangulation_3<Gt,Tds>() {
-    init_function_objects();
-  }
+    : Triangulation_3<Gt,Tds>()
+  {}
   
   Regular_triangulation_3(const Gt & gt)
-  : Triangulation_3<Gt,Tds>(gt) {
-    init_function_objects();
-  }
+    : Triangulation_3<Gt,Tds>(gt)
+  {}
   
   // copy constructor duplicates vertices and cells
   Regular_triangulation_3(const Regular_triangulation_3<Gt,Tds> & rt)
       : Triangulation_3<Gt,Tds>(rt)
-    { 
-      init_function_objects();
-  
+  { 
       CGAL_triangulation_postcondition( is_valid() );  
-    }
+  }
   
   template < class InputIterator >
   int
@@ -121,11 +117,26 @@ public:
 
 private:
 
-  Power_test power_test;
-
-  void init_function_objects() 
+  Oriented_side
+  power_test(const Weighted_point &p, const Weighted_point &q,
+	     const Weighted_point &r) const
   {
-      power_test = geom_traits().power_test_3_object();
+      return geom_traits().power_test_3_object()(p, q, r);
+  }
+
+  Oriented_side
+  power_test(const Weighted_point &p, const Weighted_point &q,
+	     const Weighted_point &r, const Weighted_point &s) const
+  {
+      return geom_traits().power_test_3_object()(p, q, r, s);
+  }
+
+  Oriented_side
+  power_test(const Weighted_point &p, const Weighted_point &q,
+	     const Weighted_point &r, const Weighted_point &s,
+	     const Weighted_point &t) const
+  {
+      return geom_traits().power_test_3_object()(p, q, r, s, t);
   }
 
   bool in_conflict_3(const Weighted_point &p, const Cell_handle c) const

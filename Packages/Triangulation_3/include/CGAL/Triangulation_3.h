@@ -87,17 +87,6 @@ public:
   typedef typename GT::Triangle_3              Triangle;
   typedef typename GT::Tetrahedron_3           Tetrahedron;
 
-  typedef typename GT::Compare_x_3             Compare_x_3;
-  typedef typename GT::Compare_y_3             Compare_y_3;
-  typedef typename GT::Compare_z_3             Compare_z_3;
-  typedef typename GT::Equal_3                 Equal_3;
-  typedef typename GT::Collinear_3             Collinear_3;
-  typedef typename GT::Orientation_3           Orientation_3;
-  typedef typename GT::Coplanar_orientation_3  Coplanar_orientation_3;
-  typedef typename GT::Construct_segment_3     Construct_segment_3;
-  typedef typename GT::Construct_triangle_3    Construct_triangle_3;
-  typedef typename GT::Construct_tetrahedron_3 Construct_tetrahedron_3;
-
   typedef Triangulation_cell_handle_3<GT,Tds>          Cell_handle;
   typedef Triangulation_vertex_handle_3<GT,Tds>        Vertex_handle;
 
@@ -129,16 +118,68 @@ protected:
   Tds _tds;
   GT  _gt;
   Vertex_handle infinite; //infinite vertex
-  
-  Compare_x_3 compare_x;
-  Compare_y_3 compare_y;
-  Compare_z_3 compare_z;
-  Equal_3 equal;
-  Orientation_3 orientation;
-  Coplanar_orientation_3 coplanar_orientation;
-  Construct_segment_3 construct_segment;
-  Construct_triangle_3 construct_triangle;
-  Construct_tetrahedron_3 construct_tetrahedron;
+ 
+  Comparison_result
+  compare_x(const Point &p, const Point &q) const
+  {
+      return geom_traits().compare_x_3_object()(p, q);
+  }
+
+  Comparison_result
+  compare_y(const Point &p, const Point &q) const
+  {
+      return geom_traits().compare_y_3_object()(p, q);
+  }
+
+  Comparison_result
+  compare_z(const Point &p, const Point &q) const
+  {
+      return geom_traits().compare_z_3_object()(p, q);
+  }
+
+  bool
+  equal(const Point &p, const Point &q) const
+  {
+      return geom_traits().equal_3_object()(p, q);
+  }
+
+  Orientation
+  orientation(const Point &p, const Point &q,
+	      const Point &r, const Point &s) const
+  {
+      return geom_traits().orientation_3_object()(p, q, r, s);
+  }
+
+  Orientation
+  coplanar_orientation(const Point &p, const Point &q, const Point &r) const
+  {
+      return geom_traits().coplanar_orientation_3_object()(p, q, r);
+  }
+
+  bool
+  collinear(const Point &p, const Point &q, const Point &r) const
+  {
+      return coplanar_orientation(p, q, r) == COLLINEAR;
+  }
+
+  Segment
+  construct_segment(const Point &p, const Point &q) const
+  {
+      return geom_traits().construct_segment_3_object()(p, q);
+  }
+
+  Triangle
+  construct_triangle(const Point &p, const Point &q, const Point &r) const
+  {
+      return geom_traits().construct_triangle_3_object()(p, q, r);
+  }
+
+  Tetrahedron
+  construct_tetrahedron(const Point &p, const Point &q,
+	                const Point &r, const Point &s) const
+  {
+      return geom_traits().construct_tetrahedron_3_object()(p, q, r, s);
+  }
 
   void init_tds()
     {
@@ -149,19 +190,6 @@ protected:
       handle2pointer( Cell_handle() );
     }
   
-  void init_function_objects() 
-    {
-      compare_x = geom_traits().compare_x_3_object();
-      compare_y = geom_traits().compare_y_3_object();
-      compare_z = geom_traits().compare_z_3_object();
-      equal = geom_traits().equal_3_object();
-      orientation = geom_traits().orientation_3_object();
-      coplanar_orientation = geom_traits().coplanar_orientation_3_object();
-      construct_segment = geom_traits().construct_segment_3_object();
-      construct_triangle = geom_traits().construct_triangle_3_object();
-      construct_tetrahedron = geom_traits().construct_tetrahedron_3_object();
-    }
-
   bool test_dim_down(Vertex_handle v);
 
 public:
@@ -171,14 +199,12 @@ public:
     : _tds(), _gt()
     {
       init_tds();
-      init_function_objects();
     }
 
   Triangulation_3(const GT & gt) 
     : _tds(), _gt(gt)
     {
       init_tds();
-      init_function_objects();
     }
 
   // copy constructor duplicates vertices and cells
@@ -186,7 +212,6 @@ public:
     : _gt(tr._gt)
     {
       infinite = (Vertex *) _tds.copy_tds(tr._tds, &(*(tr.infinite)) );
-      init_function_objects();
     }
 
   void clear()
@@ -358,12 +383,6 @@ public:
   }
 
   // PREDICATES ON POINTS ``TEMPLATED'' by the geom traits
-
-  bool
-  collinear(const Point & p, const Point & q, const Point & r) const
-  {
-      return coplanar_orientation(p, q, r) == COLLINEAR;
-  }
 
   Bounded_side
   side_of_tetrahedron(const Point & p,
