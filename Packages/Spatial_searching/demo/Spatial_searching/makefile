@@ -23,7 +23,7 @@ CXXFLAGS = -I../../../include/ \
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          $(CGAL_LIBPATH)\
+          $(CGAL_LIBPATH)
 	  
 
 LDFLAGS = \
