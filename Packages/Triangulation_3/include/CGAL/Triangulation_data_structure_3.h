@@ -223,7 +223,7 @@ public:
   void delete_cells(It begin, It end)
   {
       for(It i = begin; i != end; ++i)
-	  delete_cell(&**i);
+	  delete_cell(*i);
   }
 
   // QUERIES
@@ -798,7 +798,7 @@ is_edge(Vertex_handle u, Vertex_handle v, Cell_handle &c, int &i, int &j) const
 
   for(Cell_iterator cit = cell_container().begin(); cit != cells_end(); ++cit)
     if (cit->has_vertex(u,i) && cit->has_vertex(v,j)) {
-      c = &*cit;
+      c = cit->handle();
       return true; 
     }
   return false;
@@ -817,7 +817,7 @@ is_edge(Cell_handle c, int i, int j) const
   if ((i>3) || (j>3)) return false;
 
   for(Cell_iterator cit = cell_container().begin(); cit != cells_end(); ++cit)
-    if (&*cit == &*c)
+    if (cit->handle() == c)
 	return true;
   return false;
 }
@@ -880,7 +880,7 @@ is_cell(Vertex_handle u, Vertex_handle v, Vertex_handle w, Vertex_handle t,
 	 && ( it->has_vertex(v,j) )
 	 && ( it->has_vertex(w,k) ) 
 	 && ( it->has_vertex(t,l) ) ) {
-      c = &*it;
+      c = it->handle();
       return true;
     }
   }
@@ -1583,12 +1583,12 @@ insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j)
       const Vertex_handle vj=c->vertex(j);
       Cell_circulator ccir = incident_cells(c, i, j);
       do {
-	  Cell_handle cc = &*ccir;
+	  Cell_handle cc = ccir->handle();
 	  cells.push_back(cc);
 	  facets.push_back(Facet(cc, cc->index(vi)));
 	  facets.push_back(Facet(cc, cc->index(vj)));
 	  ++ccir;
-      } while (&*ccir != &*c);
+      } while (ccir->handle() != c);
 
       star_hole_3(v, facets.begin(), facets.end(), cells.begin(), cells.end());
       break;
@@ -1803,8 +1803,8 @@ insert_increase_dimension(Vertex_handle v, // new vertex
 	it->set_vertex(3,v);
 	if ( ! it->has_vertex(star) ) {
 	  Cell_handle cnew = create_cell( it->vertex(0), it->vertex(2),
-			            it->vertex(1), star);
-	  set_adjacency(cnew, &*it, 3, 3);
+			                  it->vertex(1), star);
+	  set_adjacency(cnew, it->handle(), 3, 3);
 	  new_cells.push_back(cnew);
 	}
       }
@@ -1836,7 +1836,7 @@ insert_increase_dimension(Vertex_handle v, // new vertex
       // reorientation of all the cells
       if (reorient)
 	  for(it = cells_begin(); it != cells_end(); ++it)
-	      change_orientation(&*it);
+	      change_orientation(it->handle());
     }
   }// end switch
     
@@ -2066,7 +2066,7 @@ copy_tds(const Tds & tds, Vertex_handle vert )
 
   for (Vertex_iterator vit = tds.vertices_begin();
        vit != tds.vertices_end(); ++vit)
-    TV[i++] = &*vit; 
+    TV[i++] = vit->handle(); 
   
   CGAL_triangulation_assertion( i == n ); 
   std::sort(TV.begin(), TV.end(), 
@@ -2083,8 +2083,8 @@ copy_tds(const Tds & tds, Vertex_handle vert )
   // Create the cells.
   for (Cell_iterator cit = tds.cell_container().begin();
 	  cit != tds.cells_end(); ++cit) {
-      F[&(*cit)] = create_cell(&*cit);
-      F[&(*cit)]->set_vertices(V[cit->vertex(0)],
+      F[cit->handle()] = create_cell(cit->handle());
+      F[cit->handle()]->set_vertices(V[cit->vertex(0)],
 			       V[cit->vertex(1)],
 			       V[cit->vertex(2)],
 			       V[cit->vertex(3)]);

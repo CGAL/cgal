@@ -389,9 +389,9 @@ remove(Vertex_handle v)
     typename Tds::Vertex_iterator vit;
 
     for ( vit = _tds.vertices_begin(); vit != _tds.vertices_end(); ++vit ) 
-      if ( &*vit != &*inf &&
-	   &*vit != &*v ) 
-	insert( vit->point(), NULL, &*vit );
+      if ( vit->handle() != inf &&
+	   vit->handle() != v ) 
+	insert( vit->point(), NULL, vit->handle() );
 
     _tds.delete_vertex(v);
 
@@ -815,10 +815,11 @@ is_valid(bool verbose, int level) const
     {
       Finite_cell_iterator it;
       for ( it = finite_cells_begin(); it != finite_cells_end(); ++it ) {
-	is_valid_finite(&*it);
+	is_valid_finite(it->handle());
 	for (int i=0; i<4; i++ ) {
-	  if ( side_of_sphere (&*it, it->vertex(it->neighbor(i)->index(&*it))
-		 ->point() ) == ON_BOUNDED_SIDE ) {
+	  if ( side_of_sphere (it->handle(),
+		    it->vertex(it->neighbor(i)->index(it->handle()))->point())
+		  == ON_BOUNDED_SIDE ) {
 	    if (verbose)
 	      std::cerr << "non-empty sphere " << std::endl;
 	    CGAL_triangulation_assertion(false);

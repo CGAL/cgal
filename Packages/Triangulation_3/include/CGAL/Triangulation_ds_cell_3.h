@@ -89,7 +89,7 @@ public:
 
   Vertex_handle vertex(int i) const
   {
-    return (Vertex_handle) (Vertex *) (Cb::vertex(i));
+    return (Vertex *) (Cb::vertex(i));
   } 
 
   bool has_vertex(const Vertex_handle v) const
@@ -111,7 +111,7 @@ public:
 
   Cell_handle neighbor(int i) const
   {
-    return (Cell_handle) (Cell *) Cb::neighbor(i);
+    return (Cell *) Cb::neighbor(i);
   }
     
   bool has_neighbor(const Cell_handle n) const
@@ -148,6 +148,11 @@ public:
   unsigned char get_in_conflict_flag() const
   {
       return _in_conflict_flag;
+  }
+
+  Cell_handle handle() const
+  {
+      return this;
   }
 
   // CHECKING
@@ -286,14 +291,14 @@ Triangulation_ds_cell_3<Tds>::is_valid
 	return false;
       }
       
-      if ( &*n0->neighbor(1) != this) {
+      if ( n0->neighbor(1) != handle()) {
 	if (verbose)
 	    std::cerr << "neighbor 0 does not have this as neighbor 1" 
 		      << std::endl;
 	CGAL_triangulation_assertion(false);
 	return false;
       }
-      if ( &*n1->neighbor(0) != this) {
+      if ( n1->neighbor(0) != handle()) {
 	if (verbose)
 	    std::cerr << "neighbor 1 does not have this as neighbor 0" 
 		      << std::endl;
@@ -346,7 +351,7 @@ Triangulation_ds_cell_3<Tds>::is_valid
 	  return false;
 	}
 	in = cw(in); 
-	if ( &*n->neighbor(in) != this) {
+	if ( n->neighbor(in) != handle()) {
 	  if (verbose)
 	      std::cerr << "neighbor " << i
 		        << " does not have this as neighbor " 

@@ -57,7 +57,7 @@ public:
 	                          Iterator_base end)
     : _ib(it), _end(end), _tr(tr)
   { 
-    while ( _tr->is_infinite(&*_ib) )
+    while ( _tr->is_infinite(_ib->handle()) )
       ++_ib;
   }
 
@@ -83,7 +83,7 @@ public:
   {
       do {
 	++_ib; 
-      } while ( _ib != _end && _tr->is_infinite(&*_ib) );
+      } while ( _ib != _end && _tr->is_infinite(_ib->handle()) );
       return *this;
   }
 
@@ -92,7 +92,7 @@ public:
   {
       do {
 	--_ib;
-      } while ( _ib != _end && _tr->is_infinite(&*_ib) );
+      } while ( _ib != _end && _tr->is_infinite(_ib->handle()) );
       return *this;
   }
 

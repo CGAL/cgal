@@ -90,7 +90,7 @@ public:
       do {
 	increment();
       } while ( pos != _tds->cell_container().end()
-	     && &*pos > &*pos->neighbor(index) );
+	     && pos->neighbor(index) < pos->handle());
       // reports a facet when the current cell has a pointer inferior
       // to the pointer of the neighbor cell
       return *this;
@@ -120,7 +120,7 @@ public:
       else
 	  index--;
     } while ( pos != _tds->cell_container().end()
-	   && &*pos > &*pos->neighbor(index) );
+	   && pos->neighbor(index) < pos->handle() );
     // reports a facet when the current cell has a pointer inferior
     // to the pointer of the neighbor cell
     return *this;
@@ -154,7 +154,7 @@ public:
     {
       // case pos == NULL should not be accessed, there is no facet
       // when dimension <2 
-      return Facet(&*pos, index);
+      return Facet(pos->handle(), index);
     }
 
 private:
@@ -263,7 +263,7 @@ public:
 	do {
 	  increment2();
 	} while ( pos != _tds->cell_container().end() && 
-		  &*pos > &*pos->neighbor(3-b-e) );
+		  pos->neighbor(3-b-e) < pos->handle() );
 	break;
       }
     case 3:
@@ -313,7 +313,7 @@ public:
 	    e = b+1; // case b==2, e==0 forbids to write e--
 	  }
 	} while ( pos != _tds->cell_container().end() && 
-		  &*pos > &*pos->neighbor(3-b-e) );
+		  pos->neighbor(3-b-e) < pos->handle() );
 	break;
       }
     case 3:
@@ -341,8 +341,9 @@ public:
 	    Cell_circulator ccir = _tds->incident_cells(&(*pos),b,e);
 	    do {
 	      ++ccir;
-	    } while ( &*ccir > &*pos );
-	    if ( &*ccir == &*pos ) // pos is the cell with minimum pointer
+	    } while ( pos->handle() < ccir->handle() );
+	    if ( pos->handle() == ccir->handle() )
+		// pos is the cell with minimum pointer
 	      notfound = false;
 	  }
 	  else {
@@ -385,7 +386,7 @@ public:
 
   Edge operator*() const
     {
-      return Edge(&*pos, b, e);
+      return Edge(pos->handle(), b, e);
     }
 
 private:

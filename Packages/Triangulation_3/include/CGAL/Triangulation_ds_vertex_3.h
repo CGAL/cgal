@@ -63,6 +63,11 @@ public:
       return _order_of_creation;
   }
 
+  Vertex_handle handle() const
+  {
+      return this;
+  }
+
 private:
   void set_order_of_creation()
   {
