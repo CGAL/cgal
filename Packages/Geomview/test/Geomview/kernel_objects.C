@@ -24,8 +24,8 @@ typedef CGAL::Cartesian<double> K;
 
 void test_parse_point()
 {
-  K::Point_3 p;
   const char *test_point="( 123 456 789 1 )";
+  K::Point_3 p;
   CGAL::parse_point(test_point, p);
   CGAL_assertion(p == K::Point_3(123, 456, 789));
 }
