@@ -12,8 +12,6 @@ correspondant a l'Alpha Shape ponderee.
 #include <cstring>
 #include <iostream>
 #include <fstream>
-#include <strstream>
-// en fait le std dit sstream
 
 #include <vector>
 #include <list>
