@@ -172,10 +172,6 @@ copy of cells and vertices, thus this method runs in constant time.}
 \ccMethod{void clear();}
 {Deletes all finite vertices and all cells of \ccVar.}
 
-\ccMethod{void ~Triangulation_3();}
-{Destructor. All vertices (including the infinite vertex) and cells are
-deleted.}
-
 \ccFunction{template < class GT, class Tds >
             bool operator==(const Triangulation_3<GT, Tds> & t1,
                             const Triangulation_3<GT, Tds> & t2);}

@@ -1,3 +1,6 @@
+9 February 2005 Sylvain Pion
+- Remove documentation of Triangulation_3 and TDS_3's destructors.
+
 31 January 2005 Sylvain Pion
 - Document .point() in TDS::Vertex.
 
