@@ -2,7 +2,7 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Kd_tree_traits_point_2.h>
+#include <CGAL/Search_traits_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Fuzzy_sphere.h>
@@ -11,7 +11,7 @@ typedef CGAL::Cartesian<double> K;
 typedef K::Point_2 Point;
 typedef CGAL::Random_points_in_square_2<Point> Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
-typedef CGAL::Kd_tree_traits_point_2<K> Traits;
+typedef CGAL::Search_traits_2<K> Traits;
 typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_circle;
 typedef CGAL::Kd_tree<Traits> Tree;
   

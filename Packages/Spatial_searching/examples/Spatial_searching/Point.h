@@ -1,6 +1,4 @@
 
-class Construct_coord_iterator;
-
 struct Point {
   double vec[3];
 
@@ -49,16 +47,13 @@ public:
 };
 
 
-
-
-
 class Distance
 {
 public:
 
   typedef Point Query_item;
 
-  double distance(const Point& p1, const Point& p2) const
+  double transformed_distance(const Point& p1, const Point& p2) const
   {
     double distx= p1.x()-p2.x();
     double disty= p1.y()-p2.y();

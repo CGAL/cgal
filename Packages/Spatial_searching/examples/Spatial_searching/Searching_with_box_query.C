@@ -3,26 +3,19 @@
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/point_generators_d.h>
-#include <CGAL/Kd_tree.h>
-#include <CGAL/Kd_tree_traits_point_d.h>
 #include <CGAL/K_neighbor_search.h>
 #include <CGAL/Manhattan_distance_iso_box_point.h>
-#include <iostream>
 
-typedef CGAL::Homogeneous_d<CGAL::MP_Float> R;
-typedef R::Point_d Point_d;
-typedef R::Iso_box_d Iso_box;
-typedef Point_d::R::RT NT;
+typedef CGAL::Homogeneous_d<CGAL::MP_Float> Kernel;
+typedef Kernel::Point_d Point_d;
+typedef Kernel::Iso_box_d Iso_box;
 typedef CGAL::Random_points_in_iso_box_d<Point_d>       Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
-typedef CGAL::Kd_tree_traits_point_d<R> Traits;
-typedef CGAL::Manhattan_distance_iso_box_point<Traits,Iso_box> L1_distance;
-typedef CGAL::K_neighbor_search<Traits, L1_distance> K_neighbor_search;
+typedef CGAL::Manhattan_distance_iso_box_point<Kernel,Iso_box> L1_distance;
+typedef CGAL::K_neighbor_search<Kernel, L1_distance> K_neighbor_search;
 typedef K_neighbor_search::Tree Tree;
-typedef std::list<K_neighbor_search::Point_with_distance> Neighbors;
 
-int 
-main() {
+int main() {
   const int D = 4;
   const int N = 1000;
   const int K = 5;
@@ -41,13 +34,10 @@ main() {
   Point_d q(D,qa,qa+D,1000.0);
   Iso_box query(p,q);
 
-  Neighbors neighbors;
-  
-  K_neighbor_search NN(tree, query, K);
+  K_neighbor_search search(tree, query, K);
   std::cout << "neighbour searching statistics using no extended nodes: " << std::endl;
-  NN.the_k_neighbors(std::back_inserter(neighbors));
 
-  for(Neighbors::iterator it = neighbors.begin(); it!= neighbors.end(); it++) { 
+  for(K_neighbor_search::iterator it = search.begin(); it!= search.end(); it++) { 
     std::cout << " d(q,nn)= " << it->second 
 	      << " nn= " << it->first << std::endl; 
   }
