@@ -48,7 +48,7 @@ triangulation_3$(EXE_EXT): triangulation_3$(OBJ_EXT)
 		$(LDFLAGS)
 
 clean:
-	triangulation_3.clean
+	rm -rf *$(OBJ_EXT) triangulation_3$(EXE_EXT)
 
 #---------------------------------------------------------------------#
 #                    suffix rules
