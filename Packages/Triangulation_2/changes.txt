@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+1 september 2004 Mariette
+- fixed typo in doc : ref page of Triangulation_2
+
 28 August 2004 Menelaos Karavelas
 - added code for join_vertices and split_vertex methods
 - added versions of join_vertices that take an Edge, an Edge_iterator and
@@ -11,6 +14,10 @@ constrained and regular triangulations with  tests and examples.
 
 25 August 2004 Andreas Fabri
 - changes in doc_tex for pdflatex
+
+24 August 2004 Mariette
+- make tag dependant function in Triangulation_hierarchy_2
+  a template  to reallow  explicit  instantiation in testsuite 
 
 24 August 2004 Mariette
  - added a Weighted_tag in Triangulation_2 and Regular_triangulation_2
