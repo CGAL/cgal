@@ -58,9 +58,10 @@ public:
   typedef std::list<Halfedge_const_handle>        Halfedges_const_list;
 	
 public:	
-  Pm_simple_point_location() : 
-    Pm_point_location_base<Planar_map>(),
-    traits(0) {}
+	Pm_simple_point_location() : 
+	  Pm_point_location_base<Planar_map>(),
+		  pm(0),
+		  traits(0) {}
 	
   Pm_simple_point_location(Planar_map* _pm,Traits_wrap* _traits) : 
     Pm_point_location_base<Planar_map>(),traits(_traits),pm(_pm) {}
@@ -103,7 +104,7 @@ public:
         return h;
       }
     }
-		
+
     Halfedges_const_list relevant_halfedges;
     find_relevant_halfedges(p, relevant_halfedges);
 
@@ -491,3 +492,4 @@ protected:
 CGAL_END_NAMESPACE
 
 #endif //CGAL_PM_NAIVE_POINT_LOCATION_H
+
