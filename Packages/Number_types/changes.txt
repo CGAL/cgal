@@ -1,3 +1,6 @@
+4.35	 (26 October 01)
+- std::ceil => CGAL_CLIB_STD::ceil for VC++.
+
 4.34	 (24 October 01)
 - Gmpz now uses Handle_for.
 - Missing std:: to ceil().
