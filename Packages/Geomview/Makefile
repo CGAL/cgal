@@ -1,5 +1,7 @@
 # Makefile for the Geomwiew package.
 
+.PHONY: test demo
+
 WWW_CGAL=/net/servers/www-sop/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Geomview
 TMP_file=/tmp/submit-mail
@@ -51,6 +53,12 @@ Doc_ps :
 	gzip Geomview.ps ;\
 	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc *.idx ;
 	mv doc_tex/support/Geomview/Geomview.ps.gz doc_ps ;
+
+test:
+	$(MAKE) -C test/Geomview all
+
+demo:
+	$(MAKE) -C demo/Geomview all
 
 clean:
 	$(MAKE) -C test/Geomview clean
