@@ -48,8 +48,8 @@
 In this chapter we introduce \ccc{planar maps} which are 
 embeddings of \ccc{topological maps} into the plane.
 The \ccc{Planar_map_2<Dcel,Traits>} class is derived
-from the \ccc{Topological_map<Dcel>} class with additional geometric considerations
-and functionalities (e.g., point location, bounding box). 
+from the \ccc{Topological_map<Dcel>} class with additional geometric
+considerations and functionalities (e.g., point location). 
 In this section we briefly review
 the geometric concepts added in the planar map; the combinatorial concepts were
 reviewed in Chapter ~\ref{I1_ChapterTopologicalMap}, {\em Topological Maps}.
@@ -99,17 +99,27 @@ of a face are traversed in counterclockwise order, and halfedges on the inner
 boundaries (holes) of a face are traversed in clockwise order. Halfedges 
 around a vertex are also traversed in clockwise order. 
 
-\paragraph{Maps with infinite objects (bounding boxes):}
-
-The Planar map deals both with bounded objects, such as segments, circles.
-and with infinite objects, such as lines, rays, parabolas.
-For simplicity we decided that the default would be the former, e.g. bounded objects.
-In order to deal with the latter, some finite representation of such infinite curves is required. The bounding box strategy supplies the required functionality to do this.
-
-A bounding box is defined by two main aspects: its traits representation and its maintenance strategy.
-The traits representation is a given shape that corresponds to a region in the plane in which we are interested at a given moment, e.g. a rectangle, a big disk, the whole plane.
-The maintenance strategy, can be of many types. The strategy may be of \ccc{static} type , i.e. we are interested only in a fixed region of the plane, curves outside this region are ignored, or it may be \ccc{dynamic}, i.e. the bounding box increases or decreases while the user updates the planar map.
-The strategy may be of an \ccc{open} type, i.e. the boundary of the box should not be included as curves of the map, or it may be \ccc{closed}, where this means that the boundary is a part of the planar map.
+% \paragraph{Maps with infinite objects (bounding boxes):}
+% 
+% The Planar map deals both with bounded objects, such as segments,
+% circles. and with infinite objects, such as lines, rays,
+% parabolas. For simplicity we decided that the default would be the
+% former, e.g. bounded objects. In order to deal with the latter, some
+% finite representation of such infinite curves is required. The
+% bounding box strategy supplies the required functionality to do this. 
+%
+% A bounding box is defined by two main aspects: its traits
+% representation and its maintenance strategy. The traits representation
+% is a given shape that corresponds to a region in the plane in which we
+% are interested at a given moment, e.g. a rectangle, a big disk, the
+% whole plane. The maintenance strategy, can be of many types. The
+% strategy may be of \ccc{static} type , i.e. we are interested only in
+% a fixed region of the plane, curves outside this region are ignored,
+% or it may be \ccc{dynamic}, i.e. the bounding box increases or
+% decreases while the user updates the planar map. The strategy may be
+% of an \ccc{open} type, i.e. the boundary of the box should not be
+% included as curves of the map, or it may be \ccc{closed}, where this
+% means that the boundary is a part of the planar map. 
 
 \paragraph{Point Location:}
 

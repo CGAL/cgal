@@ -305,57 +305,61 @@ queries and updates might take longer, especially, if many removal and split
 operation are performed.
 \end{ccAdvanced}
 
-\begin{ccAdvanced}
-\subsection*{Bounding box strategies}
-The planar map can support infinite objects. In such cases a special utility, namely a \ccc{bounding box} is used. 
-Analogous to the point location strategy the users can define which algorithm 
-will be used to update and query the map's bounding box. However, if such a
-behavior is not expected or wanted the user can ignore the bounding box
-or choose the \ccStyle{Pm_unbounding_box}, which is also the default one used by the planar map.
-
-Defining the bounding box algorithm is done with a {\em bounding box} class
-passed to the map in the constructor. The class passed should be a model of the
-concept \ccc{PlanarMapBoundingBox_2}. The \ccc{bounding box} class should be
-derived from the base class \ccStyle{Pm_bounding_box_base<Planar_map>} which is a
-(\ccc{pure virtual}) base class that defines the interface between the algorithm
-implemented and the planar map according to the requirements of the above concept.
-All concrete classes for bounding box strategies, namely the
-{\em unbounding box strategy} and the {\em dynamic open strategy} 
-stand up to these criteria 
-%are models of the concept \ccc{PlanarMapBoundingBox_2}. These classes were
-%implemented as classes that inherit from the base class
-% \ccc{Pm_bounding_box_base<Planar_map>}.
-
-The following sections list and describe the \ccc{PlanarMapBoundingBox_2}
-concept and the supplied bounding box strategies which model this concept:
-\ccc{PlanarMapBoundingBox_2}\lcTex{ (\ccRefPage{PlanarMapBoundingBox_2})}, 
-\ccc{Pm_unbounding_box<Planar_map>}\lcTex{ (\ccRefPage{CGAL::Pm_unbounding_box<Planar_map>})}
-and
-\ccc{Pm_dynamic_open_bounding_box<Planar_map>}\lcTex{
-(\ccRefPage{CGAL::Pm_dynamic_open_bounding_box<Planar_map>})}.
-
-\paragraph{Trade-off Issues}
-The main trade-off issues between the different strategies
-implemented are concerned with functionality and time efficiency. 
-
-The unbounding box is efficient in time though compared to 
-the others it is limited to bounded curves traits, e.g., circle traits or
-line segment traits.
-This means that if the users want to work with, say, straight lines the unbounding
-box will not work.
-To the other extreme, if one chooses the dynamic bounding box and queries a 
-point 
-outside the bounded area then this might cause the whole bounding box to be 
-modified. The requirement may be of a linear time (in the number of curves).
-In addition to that, in order to ensure that the bounding box is
-large enough, the traits has to supply 
-additional functions, namely to model the \ccc{PlanarMapBoundingBoxTraits_2} concept
-(which is a refinement of the \ccc{PlanarMapTraits_2} concept).
-%, namely to model the planar ray shoot traits concept.
-
-%% add \ccInheritFrom{Pm_bounding_box_base<Planar_map>} to each
-%% of these classes
-\end{ccAdvanced}
+% \begin{ccAdvanced}
+% \subsection*{Bounding box strategies}
+% The planar map can support infinite objects. In such cases a special
+% utility, namely a \ccc{bounding box} is used. Analogous to the point
+% location strategy the users can define which algorithm will be used to
+% update and query the map's bounding box. However, if such a behavior
+% is not expected or wanted the user can ignore the bounding box or
+% choose the \ccStyle{Pm_unbounding_box}, which is also the default one
+% used by the planar map. 
+% 
+% Defining the bounding box algorithm is done with a {\em bounding box}
+% class passed to the map in the constructor. The class passed should be
+% a model of the concept \ccc{PlanarMapBoundingBox_2}. The
+% \ccc{bounding box} class should be derived from the base class
+% \ccStyle{Pm_bounding_box_base<Planar_map>} which is a
+% (\ccc{pure virtual}) base class that defines the interface between the
+% algorithm implemented and the planar map according to the requirements
+% of the above concept. All concrete classes for bounding box
+% strategies, namely the {\em unbounding box strategy} and the
+% {\em dynamic open strategy} stand up to these criteria 
+% %are models of the concept \ccc{PlanarMapBoundingBox_2}. These classes were
+% %implemented as classes that inherit from the base class
+% % \ccc{Pm_bounding_box_base<Planar_map>}.
+% 
+% The following sections list and describe the
+% \ccc{PlanarMapBoundingBox_2} concept and the supplied bounding box
+% strategies which model this concept:
+% \ccc{PlanarMapBoundingBox_2}\lcTex{ (\ccRefPage{PlanarMapBoundingBox_2})}, 
+% \ccc{Pm_unbounding_box<Planar_map>}
+% \lcTex{ (\ccRefPage{CGAL::Pm_unbounding_box<Planar_map>})}
+% and
+% \ccc{Pm_dynamic_open_bounding_box<Planar_map>}\lcTex{
+% (\ccRefPage{CGAL::Pm_dynamic_open_bounding_box<Planar_map>})}.
+% 
+% \paragraph{Trade-off Issues}
+% The main trade-off issues between the different strategies
+% implemented are concerned with functionality and time efficiency. 
+% 
+% The unbounding box is efficient in time though compared to 
+% the others it is limited to bounded curves traits, e.g., circle traits or
+% line segment traits. This means that if the users want to work with,
+% say, straight lines the unbounding box will not work.
+% To the other extreme, if one chooses the dynamic bounding box and
+% queries a point outside the bounded area then this might cause the
+% whole bounding box to be modified. The requirement may be of a linear
+% time (in the number of curves). In addition to that, in order to
+% ensure that the bounding box is large enough, the traits has to supply 
+% additional functions, namely to model the
+% \ccc{PlanarMapBoundingBoxTraits_2} concept (which is a refinement of
+% the \ccc{PlanarMapTraits_2} concept). 
+% %, namely to model the planar ray shoot traits concept.
+% 
+% %% add \ccInheritFrom{Pm_bounding_box_base<Planar_map>} to each
+% %% of these classes
+% \end{ccAdvanced}
 
 \subsection*{Accelerating Work with Planar Maps}
 
@@ -412,12 +416,12 @@ significantly reduces running time.
 
 \subsection*{Concepts}
 \ccRefConceptPage{PlanarMapPointLocation_2}\\
-\ccRefConceptPage{PlanarMapBoundingBox_2}\\
+%\ccRefConceptPage{PlanarMapBoundingBox_2}\\
 \ccRefConceptPage{PlanarMapDcel_2}\\
 \ccRefConceptPage{PlanarMapDcelVertex_2}\\
 \ccRefConceptPage{PlanarMapDcelHalfedge_2}\\
 \ccRefConceptPage{PlanarMapTraits_2}\\
-\ccRefConceptPage{PlanarMapBoundingBoxTraits_2}
+%\ccRefConceptPage{PlanarMapBoundingBoxTraits_2}
 
 \subsection*{Classes}
 
@@ -428,12 +432,12 @@ significantly reduces running time.
 %\ccc{Planar_map_2<Dcel, Traits>::Vertex}\\
 %\ccc{Planar_map_2<Dcel, Traits>::Halfedge}\\
 %\ccc{Planar_map_2<Dcel, Traits>::Face}\\
-\ccRefIdfierPage{CGAL::Pm_unbounding_box<Planar_map>}\\
-\ccRefIdfierPage{CGAL::Pm_dynamic_open_bounding_box<Planar_map>}\\
+%\ccRefIdfierPage{CGAL::Pm_unbounding_box<Planar_map>}\\
+%\ccRefIdfierPage{CGAL::Pm_dynamic_open_bounding_box<Planar_map>}\\
 \ccRefIdfierPage{CGAL::Pm_dcel<V,H,F>}\\
 \ccRefIdfierPage{CGAL::Pm_segment_traits_2<R>}\\
 \ccRefIdfierPage{CGAL::Pm_leda_segment_traits_2}\\
-\ccRefIdfierPage{CGAL::Pm_straight_traits_2<R>}\\
+%\ccRefIdfierPage{CGAL::Pm_straight_traits_2<R>}\\
 \ccRefIdfierPage{CGAL::File_header}\\
 \ccRefIdfierPage{CGAL::Pm_file_scanner<Planar_map>}\\
 \ccRefIdfierPage{CGAL::Pm_file_writer<Planar_map>}\\
