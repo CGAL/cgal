@@ -28,10 +28,6 @@
 #define CGAL_PROTECT_ITERATOR
 #endif
 
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-#error Sorry, iterator traits are not supported, cannot continue.
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 //  The iterator identity adaptor will be used for the HDS implementations

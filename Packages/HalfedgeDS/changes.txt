@@ -1,6 +1,9 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.38 (18 Jan 2004)
+- Remove traces of CGAL_CFG_NO_ITERATOR_TRAITS.
+
 3.37 (27 Nov 2003)
 - added HalfedgeDS_iterator.h header file comming from Polyhedron package,
  known as Polyhedron_iterator_3.h
