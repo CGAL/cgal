@@ -45,10 +45,10 @@
 // Some useful constants
 
 // Smallest interval strictly containing zero.
-#define CGAL_IA_SMALLEST (Interval_nt_advanced(-CGAL_IA_MIN_DOUBLE, \
-                                                CGAL_IA_MIN_DOUBLE))
+#define CGAL_IA_SMALLEST (CGAL::Interval_nt_advanced(-CGAL_IA_MIN_DOUBLE, \
+                                                      CGAL_IA_MIN_DOUBLE))
 // [-inf;+inf]
-#define CGAL_IA_LARGEST (Interval_nt_advanced(-HUGE_VAL, HUGE_VAL))
+#define CGAL_IA_LARGEST (CGAL::Interval_nt_advanced(-HUGE_VAL, HUGE_VAL))
 
 CGAL_BEGIN_NAMESPACE
 
@@ -77,7 +77,8 @@ struct Interval_nt_advanced
 
   Interval_nt_advanced(const double i, const double s)
   {
-      CGAL_assertion_msg(i<=s," Variable used before being initialized ?");
+      CGAL_assertion_msg(i<=s,
+	      " CGAL bug or variable used before being initialized");
       _inf = CGAL_IA_STOP_CPROP(i);
       _sup = CGAL_IA_STOP_CPROP(s);
   }
@@ -400,12 +401,18 @@ square (const Interval_nt_advanced & d)
 inline
 double
 to_double (const Interval_nt_advanced & d)
-{ return (d.sup()+d.inf())*.5; }
+{
+    return (d.sup() + d.inf()) * .5;
+}
 
 inline
 bool
 is_valid (const Interval_nt_advanced & d)
-{ return is_valid(d.inf()) && is_valid(d.sup()) && d.inf() <= d.sup(); }
+{
+    // The 2 first is_valid() are implicitely done by the 3rd test ;-)
+    // return is_valid(d.inf()) && is_valid(d.sup()) && d.inf() <= d.sup();
+    return d.inf() <= d.sup();
+}
 
 inline
 bool
