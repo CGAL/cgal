@@ -10,8 +10,7 @@ typedef CGAL::Gmpz Gmpz;
 typedef CGAL::Gmpq Gmpq;
 
 
- 
-int main(int, char **) {
+int main() {
 
   Gmpq q;
   Gmpq q1(12);

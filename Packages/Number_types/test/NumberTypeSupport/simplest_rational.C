@@ -1,5 +1,4 @@
 
-
 #include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/Quotient.h>
@@ -8,11 +7,11 @@
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
 //#include <CGAL/gmpxx.h>
-#endif // CGAL_USE_GMP
+#endif
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_rational.h>
-#endif // CGAL_USE_LEDA
+#endif
 
 
 #include <CGAL/simplest_rational_in_interval.h>
@@ -42,11 +41,11 @@ void test_it()
   q = CGAL::to_rational<Q>(d);
   assert(CGAL::to_double(q) == d);
 }
- 
-int main(int, char **) {
+
+int main() {
 #ifdef CGAL_USE_GMP
   test_it<Gmpq>();
-#endif //CGAL_USE_GMP
+#endif
 
   //#ifdef CGAL_USE_GMPXX
   //test_it<mpq_class>();
@@ -54,12 +53,9 @@ int main(int, char **) {
 
   test_it<Quot>();
 
-
 #ifdef CGAL_USE_LEDA
   test_it<leda_rational>();
 #endif
 
   return 0;
 }
-
-
