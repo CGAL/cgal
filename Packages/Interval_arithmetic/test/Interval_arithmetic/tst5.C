@@ -91,6 +91,7 @@ void bench()
 int test()
 {
   NT px, py, la, lb, lc;
+  Filtered_exact< Quotient<Gmpz>, Quotient<Gmpz> > qq (3,5);
   Filtered_exact< Quotient<int>, leda_rational> ii (3,2);
   Quotient<leda_integer> jj (4,5);
   Interval_nt nt = convert_to<Interval_nt_advanced>(jj);
