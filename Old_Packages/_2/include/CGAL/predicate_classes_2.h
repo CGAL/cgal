@@ -39,8 +39,12 @@ template <class Point>      struct Collinear_are_ordered_along_line_2;
 template <class Point>      struct Are_strictly_ordered_along_line_2;
 template <class Point>      struct Collinear_are_strictly_ordered_along_line_2;
 template <class Point>      struct Collinear_2;
+template <class Point>      struct Left_turn_2;
+template <class Point>      struct Right_turn_2;
+#ifndef CGAL_NO_DEPRECATED_CODE
 template <class Point>      struct Leftturn_2;
 template <class Point>      struct Rightturn_2;
+#endif
 template <class Point>      struct Orientation_2;
 template <class Point>      struct Side_of_oriented_circle_2;
 template <class Point>      struct Side_of_bounded_circle_2;
@@ -177,19 +181,36 @@ struct Collinear_2
        { return collinear( p,q,r); }
 };
 
+
+template <class Point>
+struct Left_turn_2
+{
+  bool operator()( const Point& p, const Point& q, const Point& r) const
+       { return left_turn( p,q,r); }
+};
+
+template <class Point>
+struct Right_turn_2
+{
+  bool operator()( const Point& p, const Point& q, const Point& r) const
+       { return right_turn( p,q,r); }
+};
+
+#ifndef CGAL_NO_DEPRECATED_CODE
 template <class Point>
 struct Leftturn_2
 {
   bool operator()( const Point& p, const Point& q, const Point& r) const
-       { return leftturn( p,q,r); }
+       { return left_turn( p,q,r); }
 };
 
 template <class Point>
 struct Rightturn_2
 {
   bool operator()( const Point& p, const Point& q, const Point& r) const
-       { return rightturn( p,q,r); }
+       { return right_turn( p,q,r); }
 };
+#endif
 
 template <class Point>
 struct Orientation_2
@@ -224,7 +245,7 @@ class Compare_distance_to_point_2
   Compare_distance_to_point_2( const Point& p) : _p(p) {}
   Comparison_result
        operator()( const Point& q, const Point& r)
-       { return cmp_dist_to_point( _p,q,r); }
+       { return compare_distance_to_point( _p,q,r); }
  private:
   Point _p;
 };
@@ -235,7 +256,7 @@ class Less_distance_to_point_2
  public:
   Less_distance_to_point_2( ) {}
   bool operator()( const Point& p, const Point& q, const Point& r)
-       { return has_smaller_dist_to_point(p,q,r); }
+       { return has_smaller_distance_to_point(p,q,r); }
 };
 
 template <class Point, class Line>
@@ -246,7 +267,7 @@ class Compare_signed_distance_to_line_2
   Compare_signed_distance_to_line_2( const Line& l) : _l(l) {}
   Comparison_result
        operator()( const Point& p, const Point& q)
-       { return cmp_signed_dist_to_line( _l, p, q); }
+       { return compare_signed_distance_to_line( _l, p, q); }
  private:
   Line _l;
 };
@@ -258,7 +279,7 @@ class Less_signed_distance_to_line_2
  public:
   Less_signed_distance_to_line_2( const Line& l) : _l(l) {}
   bool operator()( const Line& l, const Point& p, const Point& q)
-       { return has_smaller_signed_dist_to_line( l, p, q); }
+       { return has_smaller_signed_distance_to_line( l, p, q); }
  private:
   Line _l;
 };
@@ -273,7 +294,7 @@ class Compare_signed_distance_to_implicit_line_2
   {}
   Comparison_result
        operator()( const Point& r, const Point& s)
-       { return cmp_signed_dist_to_line( _p, _q, r, s); }
+       { return compare_signed_distance_to_line( _p, _q, r, s); }
  private:
   Point _p;
   Point _q;
@@ -288,7 +309,7 @@ class Less_signed_distance_to_implicit_line_2
    : _p(p), _q(q)
   {}
   bool operator()( const Point& r, const Point& s)
-       { return has_smaller_signed_dist_to_line( _p, _q, r, s); }
+       { return has_smaller_signed_distance_to_line( _p, _q, r, s); }
  private:
   Point _p;
   Point _q;
