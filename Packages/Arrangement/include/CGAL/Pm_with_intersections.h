@@ -949,7 +949,6 @@ public:
             //update the curve of prev_halfedge (and his twin) with overlap_cv
             //because the overlapped sub-curve contains data from both curves
             //when using data traits
-            // BZBZ!!
             prev_halfedge->set_curve(overlap_cv);
             prev_halfedge->twin()->set_curve(overlap_cv);
             
@@ -982,8 +981,8 @@ public:
               // source will be the same as split1's source
               he_split = 
                 Planar_map::split_edge(prev_halfedge->twin(), split1, split2);
-              he_split -> set_curve(overlap_cv);   //BZBZ
-              he_split->twin()->set_curve(overlap_cv); //BZBZ
+              he_split -> set_curve(overlap_cv);   
+              he_split->twin()->set_curve(overlap_cv); 
               
               if (en != NULL) {
                 en->split_edge(he_split, he_split->next_halfedge(), 
@@ -1017,8 +1016,8 @@ public:
               //  edge 
               // source will be the same as split1's source
               he_split = Planar_map::split_edge(prev_halfedge, split1, split2);
-              he_split->next_halfedge() -> set_curve(overlap_cv);   //BZBZ
-              he_split->next_halfedge()->twin()->set_curve(overlap_cv); //BZBZ
+              he_split->next_halfedge() -> set_curve(overlap_cv);  
+              he_split->next_halfedge()->twin()->set_curve(overlap_cv);
               if (en != NULL) {
                 en->split_edge(he_split, he_split->next_halfedge(), 
                                split1, split2);
@@ -1161,10 +1160,13 @@ public:
 			   const X_monotone_curve_2_iterator & end,
 			   Change_notification * en = NULL)
   {
-    typedef Pmwx_aggregate_insert<X_monotone_curve_2_iterator, Traits, 
+    typedef Pmwx_aggregate_insert< Traits, 
       Self ,Change_notification> Pmwx_agg_insert;
-    Pmwx_agg_insert p(traits);
-    p.insert_curves(begin, end, *this, en);
+    //Pmwx_agg_insert p(traits);
+    Pmwx_agg_insert p(traits, this, en);
+
+    //p.insert_curves(begin, end, *this, en);
+    p.insert_curves(begin,end);
 
     return halfedges_begin();
   }
