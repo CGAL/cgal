@@ -21,7 +21,7 @@
 @p maximum_output_line_length = 110
 
 \title{\bf How to Implement Geomview Stream IO Operators}
-\author{Andreas Fabri (revised by Hervé Brönnimann}
+\author{Andreas Fabri (revised by Hervé Brönnimann)}
 \date{\geomviewRevision, \geomviewDate}
 \maketitle
 

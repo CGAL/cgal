@@ -1,4 +1,8 @@
 * text=auto !eol
+Packages/Geomview/doc_html/support/Geomview/cc_advanced_begin.gif svneol=native#unset
+Packages/Geomview/doc_html/support/Geomview/cc_advanced_end.gif svneol=native#unset
+Packages/Geomview/doc_html/support/Geomview/cc_ref_up_arrow.gif svneol=native#unset
+Packages/Geomview/doc_ps/geomview.ps.gz svneol=native#unset
 Packages/Installation/doc_tex/installation/Fig/a-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/c-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/g-simp.ipe -text

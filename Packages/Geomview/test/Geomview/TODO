@@ -1,0 +1,19 @@
+Geomview testsuite:
+
+It's not clear how to make it at this point...
+After talking to Francois, I got the following idea:
+
+* make sure . is in the path
+* create a local script called geomview, so that upon creating the
+  Geomview_stream(), the call execlp("geomview",...)  calls ./geomview instead
+  of the 3D viewer
+* that script will simply process gcl (geomview command language) so that it
+  reports on its output exactly the objects that are given from the input
+* the testsuite will simply consist of outputting the different objects into the
+  geomview stream, and getting them back, and comparing.
+  
+This should allow the testsuite to be fully automatic and yet test all the
+documented features of the package. How to do it remains to be cleared.
+Any volunteers?
+
+--Herve

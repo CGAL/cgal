@@ -1,0 +1,45 @@
+Geomview package: an interface to the Geometry Center's popular 3D viewer
+
+CONTENTS:
+
+include/CGAL/IO/Geomview.h
+src/Geomview.C
+
+CHANGES
+
+Ver 1.3 (29 Sept 1998)
+- Removed variables CGAL_RSH and CGAL_GEOMVIEW. Use default values instead.
+- Removed makefile_geomview, and compile always with libCGAL.
++ for this, one must add Geomview_stream.o to CGAL_Objects in makefile_lib
+- Typo CCAL --> CGAL
+- Added operator<<(Polyhedron<T,HDS> &P) in the documentation
+
+Ver 1.2 (23 Jun 1998)
+Changes suggested by  Aalim Fevens <fevens@qucis.queensu.ca>
+- In Chapter 8 on Geomview in Reference Manual Part 3 on page 81,
+  the Input Operators for CGAL Kernel Classes should be for the
+  CGAL_Point_3(R> point class, not the CGAL_Point_2<R> point
+  class. The latter class is not yet in the include file for
+  Geomview as far as I can see.
+- bug in include/CGAL/IO/Geomview_stream.h at line 243
+
+Ver 1.1 (22 Jun 1998)
+- Changed the defaults of CGAL_RSH to "rsh" and CGAL_GEOMVIEW to
+  "geomview" (assuming the user has them in his path, otherwise
+  he wouldn't be able to install them)
+- Probably the best is to patch the script "install_cgal", its
+  manual, so that it is all done automagically. Unfortunately,
+  I ran into problems when writing this patch. For one thing, sed
+  couln't update makefile_geomview. Ask me
+  (Herve.Bronnimann@#sophia.inria.fr) if you want this patch.
+
+Ver 1.0 (31 Mar 1998)
+- added makefile_geomview in src, with two environment variable CGAL_RSH and
+  CGAL_GEOMVIEW which have to be redefined for other installations than the
+  default. The default is:
+            CGAL_RSH=\"/usr/ucb/rsh\"
+            CGAL_GEOMVIEW=\"/usr/local/bin/geomview\"
+- added #include <CGAL/IO/Polyhedron_geomview_ostream.h>
+
+Ver 0.9 (25 Feb 1998)
+- preliminary version (not tested)

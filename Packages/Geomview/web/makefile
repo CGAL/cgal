@@ -28,3 +28,6 @@ package: code
 
 print: tex
 	dvips -o /tmp/geomview.ps triangulation; psnup -2 /tmp/geomview.ps | lpr ; rm /tmp/geomview.ps
+
+clean:
+	- rm *.lis *.aux *.toc *.log *.bbl *~ *.dvi *.ps

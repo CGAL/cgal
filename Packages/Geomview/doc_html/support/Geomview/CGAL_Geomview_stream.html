@@ -1,0 +1,666 @@
+<!-- Begin of cc_manual_header -->
+<!-- ------------------------- -->
+<!-- $Revision$ -->
+<!-- $Date$ -->
+
+  <!-- CC manual page automatically extracted from a TeX specification -->
+  <!-- in file Chapter_main.html -->
+  <!-- by cc_extract_html, $Revision$. -->
+
+<!--  Title -->
+  <HEAD>
+  <TITLE>Geomview: CGAL_Geomview_stream</TITLE>
+  </HEAD>
+
+<!-- Background layout-->
+  <BODY BGCOLOR="FAF8E8" TEXT="#000000">
+
+<!-- Navigation -->
+  <STRONG>Navigation:</STRONG>
+  <A HREF="Chapter_main.html">Up</A>,
+  <A HREF="contents.html">Table of Contents</A>,
+  <A HREF="biblio.html">Bibliography</A>,
+  <A HREF="manual_index.html">Index</A>,
+  <A HREF="title.html">Title Page</A>
+<HR>
+
+<!-- End of cc_manual_header -->
+
+<A NAME="Index_anchor_0"></A>
+
+<A NAME="Cross_link_anchor_0"></A>
+
+<P>
+
+<H3>Definition</H3>An object of the class <I><A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A></I>
+is a stream in which geometric objects can be insrted and where
+geometric objects can be extracted from. The constructor starts
+geomview either on the local either on a remote machine.
+<P>
+
+<I>#include &lt;<A HREF="GAL/include//CGAL/IO/Geomview_stream.h">
+CGAL/IO/Geomview_stream.h</A>&gt;</I>
+<P>
+
+<H3>Creation</H3>
+<P>
+
+        <!2><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH=550>
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=30% NOWRAP COLSPAN=2>
+        <I>
+    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP><I>
+    <A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A> G ( </I></TD><TD ALIGN=LEFT VALIGN=TOP NOWRAP><I>
+     CGAL_Bbox_3 bbox = CGAL_Bbox_3(0,0,0, 1,1,1), <BR>
+     const char *machine = NULL, <BR>
+     const char *login = NULL);</I></TD></TR></TABLE>
+    
+        </I>
+        </TD></TR><TR><TD WIDTH=30%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=70%>
+    Introduces a geomview stream <I>G</I> with a camera that sees the
+    bounding box. If machine and login are non-null, geomview is
+    started on the remote machine.
+    <P>
+        </TD></TR>
+        </TABLE><!2>
+
+<P>
+
+<H3>Operations</H3><H3> Output Operators for CGAL Kernel Classes</H3>
+<P>
+
+At the moment not all classes of the CGAL kernel have output operators.
+2D objects are embedded in the <I>xy</I>-plane.
+<P>
+
+        <!3><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH=550>
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=3>
+        <I>
+    template &lt;class R&gt;
+        </I>
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A NAME="Function_CGAL_Geomview_stream___operator666CGAL_Geomview_stream__G+__const_CGAL_Point_26R9__p9;"></A>
+<A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=2>
+        <I>
+      &amp; G &lt;&lt;  CGAL_Point_2&lt;R&gt; p
+        </I>
+        </TD></TR><TR><TD WIDTH=25%></TD><TD WIDTH=25%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Inserts the point <I>p</I> into the stream <I>G</I>.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=3>
+        <I>
+    template &lt;class R&gt;
+        </I>
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A NAME="Function_CGAL_Geomview_stream___operator666CGAL_Geomview_stream__G+__const_CGAL_Point_36R9__p9;"></A>
+<A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=2>
+        <I>
+      &amp; G &lt;&lt;  CGAL_Point_3&lt;R&gt; p
+        </I>
+        </TD></TR><TR><TD WIDTH=25%></TD><TD WIDTH=25%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Inserts the point <I>p</I> into the stream <I>G</I>.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=3>
+        <I>
+    template &lt;class R&gt;
+        </I>
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A NAME="Function_CGAL_Geomview_stream___operator666CGAL_Geomview_stream__G+__const_CGAL_Segment_26R9__s9;"></A>
+<A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=2>
+        <I>
+      &amp; G &lt;&lt;  CGAL_Segment_2&lt;R&gt; s
+        </I>
+        </TD></TR><TR><TD WIDTH=25%></TD><TD WIDTH=25%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Inserts the segment <I>s</I> into the stream <I>G</I>.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=3>
+        <I>
+    template &lt;class R&gt;
+        </I>
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A NAME="Function_CGAL_Geomview_stream___operator666CGAL_Geomview_stream__G+__const_CGAL_Segment_36R9__s9;"></A>
+<A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=2>
+        <I>
+      &amp; G &lt;&lt;  CGAL_Segment_3&lt;R&gt; s
+        </I>
+        </TD></TR><TR><TD WIDTH=25%></TD><TD WIDTH=25%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Inserts the segment <I>s</I> into the stream <I>G</I>.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=3>
+        <I>
+    template &lt;class R&gt;
+        </I>
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A NAME="Function_CGAL_Geomview_stream___operator666CGAL_Geomview_stream__G+__const_CGAL_Triangle_26R9__t9;"></A>
+<A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=2>
+        <I>
+      &amp; G &lt;&lt;  CGAL_Triangle_2&lt;R&gt; t
+        </I>
+        </TD></TR><TR><TD WIDTH=25%></TD><TD WIDTH=25%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Inserts the triangle <I>t</I> into the stream <I>G</I>.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=3>
+        <I>
+    template &lt;class R&gt;
+        </I>
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A NAME="Function_CGAL_Geomview_stream___operator666CGAL_Geomview_stream__G+__const_CGAL_Triangle_36R9__t9;"></A>
+<A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=2>
+        <I>
+      &amp; G &lt;&lt;  CGAL_Triangle_3&lt;R&gt; t
+        </I>
+        </TD></TR><TR><TD WIDTH=25%></TD><TD WIDTH=25%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Inserts the triangle <I>t</I> into the stream <I>G</I>.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=3>
+        <I>
+    template &lt;class R&gt;
+        </I>
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A NAME="Function_CGAL_Geomview_stream___operator666CGAL_Geomview_stream__G+__const_CGAL_Tetrahedron_36R9__t9;"></A>
+<A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=2>
+        <I>
+      &amp; G &lt;&lt;  CGAL_Tetrahedron_3&lt;R&gt; t
+        </I>
+        </TD></TR><TR><TD WIDTH=25%></TD><TD WIDTH=25%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Inserts the tetrahedron <I>t</I> into the stream <I>G</I>.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+     G &lt;&lt;  CGAL_Bbox_2 b
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Inserts the bounding box <I>b</I> into the stream <I>G</I>.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+     G &lt;&lt;  CGAL_Bbox_3 b
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Inserts the bounding box <I>b</I> into the stream <I>G</I>.
+        </TD></TR>
+        </TABLE><!3>
+
+<P>
+
+<H3> Input Operators for CGAL Kernel Classes</H3>
+<P>
+
+At the moment input is only provided for points. The user has to select
+a point on the <I>pickplane</I> with the right mouse button. The
+pickplane can be moved anywhere with the left mouse button, before a
+point is entered.
+<P>
+
+        <!3><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH=550>
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=3>
+        <I>
+    template &lt;class R&gt;
+        </I>
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A NAME="Function_CGAL_Geomview_stream___operator996CGAL_Geomview_stream__G+__CGAL_Point_36R9__p9;"></A>
+<A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=2>
+        <I>
+      &amp; G &gt;&gt;  CGAL_Point_3&lt;R&gt;&amp; p
+        </I>
+        </TD></TR><TR><TD WIDTH=25%></TD><TD WIDTH=25%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Extracts the point <I>p</I> from the stream <I>G</I>. The point is
+    echoed.
+        </TD></TR>
+        </TABLE><!3>
+
+<P>
+
+<H3> Output Operators for CGAL Basic Library Classes</H3>
+<P>
+
+        <!3><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH=550>
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=3>
+        <I>
+    template &lt;class Traits, class HDS&gt;
+        </I>
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A NAME="Function_CGAL_Geomview_stream__operator666CGAL_Geomview_stream__G+__const_CGAL_Polyhedron_36Traits+HDS9__P9;"></A>
+<A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=2>
+        <I>
+      &amp;G &lt;&lt;  CGAL_Polyhedron_3&lt;Traits,HDS&gt; P
+        </I>
+        </TD></TR><TR><TD WIDTH=25%></TD><TD WIDTH=25%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Inserts the polyhedron <I>P</I> into the stream <I>G</I>.
+        </TD></TR>
+        </TABLE><!3>
+
+<P>
+
+<H3> Colors</H3>
+<P>
+
+geomview distinguishes between edge and face colors. The edge color is
+at the same time the color of vertices.
+<P>
+
+        <!3><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH=550>
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+     G &lt;&lt;  CGAL_Color c
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Makes <I>c</I> the color of vertices, edges and faces in subsequent
+    IO operations.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    CGAL_Color
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=2>
+        <I>
+    G.set_bg_color (  CGAL_Color c)
+        </I>
+        </TD></TR><TR><TD WIDTH=25%></TD><TD WIDTH=25%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Changes the background color. Returns the old value.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    CGAL_Color
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=2>
+        <I>
+    G.set_vertex_color (  CGAL_Color c)
+        </I>
+        </TD></TR><TR><TD WIDTH=25%></TD><TD WIDTH=25%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Changes the vertex color. Returns the old value.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    CGAL_Color
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=2>
+        <I>
+    G.set_edge_color (  CGAL_Color c)
+        </I>
+        </TD></TR><TR><TD WIDTH=25%></TD><TD WIDTH=25%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Changes the edge color. Returns the old value.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    CGAL_Color
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=2>
+        <I>
+    G.set_face_color (  CGAL_Color c)
+        </I>
+        </TD></TR><TR><TD WIDTH=25%></TD><TD WIDTH=25%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Changes the face color. Returns the old value.
+        </TD></TR>
+        </TABLE><!3>
+
+<P>
+
+<H3> Miscellaneous</H3>
+<P>
+
+        <!3><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH=550>
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    void
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    G.clear ()
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Deletes all objects.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    void
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    G.look_recenter ()
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Positions the camera in a way that all objects can be seen.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    int
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    G.get_line_width ()
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Returns the line width.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    int
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    G.set_line_width ( int w)
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Sets the line width to <I>w</I>. Returns the previous value.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    double
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    G.get_vertex_radius ()
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Returns the radius of vertices.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    double
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP COLSPAN=2>
+        <I>
+    G.set_vertex_radius ( double r)
+        </I>
+        </TD></TR><TR><TD WIDTH=25%></TD><TD WIDTH=25%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Sets the radius of vertices to <I>d</I>. Returns the previous
+    value.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    bool
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    G.set_trace ( bool b)
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Sets tracing on. The data that are sent to <I>geomview</I> are also
+    sent to <I>cerr</I>. Returns the previous value. By default tracing
+    is off.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    bool
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    G.get_trace ()
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Returns <I>true</I> iff tracing is on.
+        </TD></TR>
+        </TABLE><!3>
+
+<P>
+
+<BR><IMG BORDER=0 SRC="cc_advanced_begin.gif" ALT="begin of advanced section"><BR>
+<H3> Advanced and Developers Features</H3>
+<P>
+
+The following functions are helpful if you develop your own insert and
+extract functions. The following functions allow to pass a string from
+geomview and to read data sent back by geomview.
+<P>
+
+        <!3><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH=550>
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+     G &lt;&lt; const char* s
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Inserts string <I>s</I> into the stream.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+     G &gt;&gt; char* s
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Extracts a string <I>s</I> from the stream.
+    <BR><STRONG>Precondition: </STRONG>You have to allocate enough
+    memory.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+     G &lt;&lt; int i
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Inserts integer <I>i</I> into the stream. Puts whitespace around if
+    the stream is in ascii mode.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+     G &lt;&lt; double d
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Inserts double <I>d</I> into the stream. Puts whitespace around if
+    the stream is in ascii mode.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    bool
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    G.in_ascii_mode ()
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Returns <I>true</I> iff <I>G</I> is in ascii mode.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    bool
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    G.in_binary_mode ()
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Returns <I>true</I> iff <I>G</I> is in binary mode.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    void
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    G.set_binary_mode ()
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    void
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    G.set_ascii_mode ()
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    
+        </TD></TR>
+        </TABLE><!3>
+
+<P>
+
+For convenience we offer the manipulators <I>ascii</I> and
+<I>binary</I> that can be inserted in the stream.
+<P>
+
+        <!3><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH=550>
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+     G &lt;&lt; ascii
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Sets the stream in ascii mode.
+        </TD></TR>
+        
+        <TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+    <A HREF="CGAL_Geomview_stream.html#Cross_link_anchor_0">CGAL_Geomview_stream</A>&amp;
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=25% NOWRAP>
+        <I>
+     G &lt;&lt; binary
+        </I>
+        </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
+    Sets the stream in binary mode.
+        </TD></TR>
+        </TABLE><!3>
+
+<P>
+
+<BR><IMG BORDER=0 SRC="cc_advanced_end.gif" ALT="end of advanced section"><BR>
+<P>
+
+<PRE>
+
+</PRE>
+<P>
+
+<H3>Implementation</H3>The constructor forks a process and establishes
+two pipes between the processes. The forked process is then overlayed
+with geomview. The file descriptors <I>stdin</I> and <I>stdout</I> of
+geomview are hooked on the two pipes.
+<P>
+
+All insert operators construct expressions in <I>gcl</I>, the geomview
+comand language, which is a subset of <TT>LISP</TT>. These expressions
+are sent to geomview via the pipe. The extract operators notify
+<I>interest</I> for a certain kind of events. When such an event
+happens geomview sends a description of the event in gcl and the
+extract operator has to parse this expression.
+<P>
+
+In order to implement further insert and extract operators you should
+take a look at the implementation
+[<A HREF="biblio.html#Biblio_GV_Impl">GV_Impl</A>] and at the geomview
+manual [<A HREF="biblio.html#Biblio_GVManual">GVManual</A>].
+<P>
+<!-- Begin of cc_manual_footer -->
+<!-- ------------------------- -->
+<!-- $Revision$ -->
+<!-- $Date$ -->
+
+<!-- Navigation -->
+<HR>
+  <STRONG>Navigation:</STRONG>
+  <A HREF="Chapter_main.html">Up</A>,
+  <A HREF="contents.html">Table of Contents</A>,
+  <A HREF="biblio.html">Bibliography</A>,
+  <A HREF="manual_index.html">Index</A>,
+  <A HREF="title.html">Title Page</A>
+<HR>
+
+<address> 
+  The <A HREF=http://www.cs.ruu.nl/CGAL/><TT>CGAL</TT> Project</A>.  0.9.   Wed, September 30, 1998. 
+</address>
+</BODY>
+</HTML>
+
+<!-- End of cc_manual_footer -->
