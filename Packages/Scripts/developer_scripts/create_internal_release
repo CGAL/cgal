@@ -254,6 +254,14 @@ sub create_version_tex_file()
 EOF
     print TEMPFILE "\\gdef\\cgalversion{$newver}\n";
 
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+
+    my @months = ( "January", "February", "March", "April",
+                   "May", "June", "July", "August", "September",
+                   "October", "November", "December" );
+
+    print TEMPFILE "\\gdef\\cgalversiondate{$mday $months[$mon] ", 1900 + $year, "}\n";
+
     close TEMPFILE || die "Error closing temporary file: $!\n";
     system('mv', "tempfile", 'version.tex');
     chdir '../..' or die;
