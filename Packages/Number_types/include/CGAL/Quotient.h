@@ -45,9 +45,9 @@ class Quotient
 {
  public:
   typedef NumberType NT;
-  typedef Tag_false  Has_gcd_tag;
-  typedef Tag_true   Has_division_tag;
-  typedef Tag_false  Has_sqrt_tag;
+  typedef Tag_false  Has_gcd;
+  typedef Tag_true   Has_division;
+  typedef Tag_false  Has_sqrt;
   
   Quotient() : num( NT(0) ), den( NT(1) ) {}
 
@@ -602,10 +602,12 @@ NumberType
 numerator(const Quotient<NumberType>& q)
 { return q.num ; }
 
+/*
 template <class NumberType>
 NumberType
 gcd(const NumberType&, const NumberType&)
 { return NumberType(1); }
+*/
 
 CGAL_END_NAMESPACE
 

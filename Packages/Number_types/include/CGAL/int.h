@@ -32,16 +32,21 @@ CGAL_BEGIN_NAMESPACE
 // int
 
 template <> struct Number_type_traits<int> {
-  typedef Tag_false  Has_gcd_tag;
-  typedef Tag_false  Has_division_tag;
-  typedef Tag_false  Has_sqrt_tag;
+  typedef Tag_true   Has_gcd;
+  typedef Tag_false  Has_division;
+  typedef Tag_false  Has_sqrt;
 };
 
 template <> struct Number_type_traits<unsigned int> {
-  typedef Tag_false  Has_gcd_tag;
-  typedef Tag_false  Has_division_tag;
-  typedef Tag_false  Has_sqrt_tag;
+  typedef Tag_true  Has_gcd;
+  typedef Tag_false  Has_division;
+  typedef Tag_false  Has_sqrt;
 };
+
+inline
+int
+div(int i1, int i2)
+{ return i1 / i2; }
 
 inline
 double
@@ -66,16 +71,21 @@ io_tag(int)
 // long
 
 template <> struct Number_type_traits<long int> {
-  typedef Tag_false  Has_gcd_tag;
-  typedef Tag_false  Has_division_tag;
-  typedef Tag_false  Has_sqrt_tag;
+  typedef Tag_true   Has_gcd;
+  typedef Tag_false  Has_division;
+  typedef Tag_false  Has_sqrt;
 };
 
 template <> struct Number_type_traits<unsigned long int> {
-  typedef Tag_false  Has_gcd_tag;
-  typedef Tag_false  Has_division_tag;
-  typedef Tag_false  Has_sqrt_tag;
+  typedef Tag_true   Has_gcd;
+  typedef Tag_false  Has_division;
+  typedef Tag_false  Has_sqrt;
 };
+
+inline
+long int
+div(long int i1, long int i2)
+{ return i1 / i2; }
 
 inline
 double
@@ -100,16 +110,21 @@ io_tag(long int)
 // short
 
 template <> struct Number_type_traits<short int> {
-  typedef Tag_false  Has_gcd_tag;
-  typedef Tag_false  Has_division_tag;
-  typedef Tag_false  Has_sqrt_tag;
+  typedef Tag_true   Has_gcd;
+  typedef Tag_false  Has_division;
+  typedef Tag_false  Has_sqrt;
 };
 
 template <> struct Number_type_traits<unsigned short int> {
-  typedef Tag_false  Has_gcd_tag;
-  typedef Tag_false  Has_division_tag;
-  typedef Tag_false  Has_sqrt_tag;
+  typedef Tag_true   Has_gcd;
+  typedef Tag_false  Has_division;
+  typedef Tag_false  Has_sqrt;
 };
+
+inline
+short int
+div(short int i1, short int i2)
+{ return i1 / i2; }
 
 inline
 double
@@ -136,16 +151,21 @@ io_tag(short int)
 #ifdef LONG_LONG
 
 template <> struct Number_type_traits<long long> {
-  typedef Tag_false  Has_gcd_tag;
-  typedef Tag_false  Has_division_tag;
-  typedef Tag_false  Has_sqrt_tag;
+  typedef Tag_true   Has_gcd;
+  typedef Tag_false  Has_division;
+  typedef Tag_false  Has_sqrt;
 };
 
 template <> struct Number_type_traits<unsigned long long> {
-  typedef Tag_false  Has_gcd_tag;
-  typedef Tag_false  Has_division_tag;
-  typedef Tag_false  Has_sqrt_tag;
+  typedef Tag_true   Has_gcd;
+  typedef Tag_false  Has_division;
+  typedef Tag_false  Has_sqrt;
 };
+
+inline
+long long
+div(long long i1, long long i2)
+{ return i1 / i2; }
 
 inline
 double

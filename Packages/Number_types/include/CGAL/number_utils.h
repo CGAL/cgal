@@ -222,6 +222,22 @@ bool
 is_integral( const NT& n)
 { return CGAL::is_integral(n); }
 
+template <class NT>
+inline
+NT
+gcd( const NT& n1, const NT& n2)
+{ 
+  CGAL_precondition(!CGAL_NTS is_zero(n2));
+  NT x = CGAL_NTS abs(n1);
+  NT y = CGAL_NTS abs(n2);
+  do {
+    x %= y;
+    if (CGAL_NTS is_zero(x)) return y;
+    y %= x;
+  } while (CGAL_NTS is_positive(y));
+  return x;
+}
+
 } // namespace NTS
 
 CGAL_END_NAMESPACE

@@ -30,9 +30,9 @@
 CGAL_BEGIN_NAMESPACE
 
 template <> struct Number_type_traits<leda_integer> {
-  typedef Tag_false Has_gcd_tag;
-  typedef Tag_false Has_division_tag;
-  typedef Tag_false Has_sqrt_tag;
+  typedef Tag_true  Has_gcd;
+  typedef Tag_false Has_division;
+  typedef Tag_false Has_sqrt;
 };
 
 #ifndef CGAL_CFG_NO_NAMESPACE
@@ -65,6 +65,13 @@ sign(const leda_integer& n)
 #endif
 
 inline
+leda_integer
+div( const leda_integer& n1, const leda_integer& n2)
+{ 
+  return n1 / n2;
+}
+
+inline
 Interval_base
 to_interval (const leda_integer & n)
 {
@@ -76,6 +83,15 @@ to_interval (const leda_integer & n)
   else {
     FPU_set_cw(CGAL_FE_UPWARD);
     return Interval_nt_advanced(cn)+Interval_nt_advanced::Smallest;
+  }
+}
+
+namespace NTS {
+  inline
+  leda_integer
+  gcd( const leda_integer& n1, const leda_integer& n2)
+  { 
+    return CGAL_LEDA_SCOPE::gcd(n1, n2);
   }
 }
 

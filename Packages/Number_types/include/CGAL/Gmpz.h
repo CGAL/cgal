@@ -87,9 +87,9 @@ class Gmpz
 {
   typedef Handle_for<Gmpz_rep> Base;
 public:
-  typedef Tag_false  Has_gcd_tag;
-  typedef Tag_false  Has_division_tag;
-  typedef Tag_false  Has_sqrt_tag;
+  typedef Tag_true  Has_gcd;
+  typedef Tag_false Has_division;
+  typedef Tag_true  Has_sqrt;
 
   Gmpz()
     : Base(Gmpz_rep()) {}
@@ -157,6 +157,8 @@ public:
 
   Gmpz& operator*=(const Gmpz &z);
   Gmpz operator*=(int i);
+
+  Gmpz& operator%=(const Gmpz &z);
 
   Gmpz& operator/=(const Gmpz &z);
   Gmpz operator/=(int i);
@@ -372,6 +374,14 @@ Gmpz::operator%(const Gmpz &z) const
 }
 
 inline
+Gmpz&
+Gmpz::operator%=(const Gmpz &z)
+{
+    *this = *this % z;
+    return *this;
+}
+
+inline
 Gmpz
 Gmpz::operator/(int i) const
 {
@@ -457,6 +467,13 @@ sqrt(const Gmpz &z)
   Gmpz Res;
   mpz_sqrt(Res.mpz(), z.mpz());
   return Res;
+}
+
+inline
+Gmpz
+div(const Gmpz &z1, const Gmpz &z2)
+{
+  return z1 / z2;
 }
 
 inline
@@ -578,6 +595,15 @@ to_interval (const Gmpz & z)
       return app;
   FPU_set_cw(CGAL_FE_UPWARD);
   return Interval_nt_advanced(app) + Interval_base::Smallest;
+}
+
+namespace NTS {
+  inline
+  Gmpz
+  gcd( const Gmpz& n1, const Gmpz& n2)
+  { 
+    return CGAL::gcd(n1, n2);
+  }
 }
 
 CGAL_END_NAMESPACE

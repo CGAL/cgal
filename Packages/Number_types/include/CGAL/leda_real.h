@@ -43,9 +43,9 @@
 CGAL_BEGIN_NAMESPACE
 
 template <> struct Number_type_traits<leda_real> {
-  typedef Tag_false Has_gcd_tag;
-  typedef Tag_true  Has_division_tag;
-  typedef Tag_true  Has_sqrt_tag;
+  typedef Tag_false Has_gcd;
+  typedef Tag_true  Has_division;
+  typedef Tag_true  Has_sqrt;
 };
 
 #ifndef CGAL_NO_NAMESPACE
@@ -101,6 +101,14 @@ to_interval (const leda_real & z)
   return ( Interval_nt_advanced(-rel_error,rel_error) + 1 ) * approx;
 }
 
+namespace NTS {
+  inline
+  leda_real
+  sqrt( const leda_real& n)
+  { 
+    return CGAL_LEDA_SCOPE::sqrt(n);
+  }
+}
 
 CGAL_END_NAMESPACE
 

@@ -72,9 +72,9 @@ compare (const MP_Float & a, const MP_Float & b)
 class MP_Float
 {
 public:
-  typedef Tag_false  Has_gcd_tag;
-  typedef Tag_true   Has_division_tag;
-  typedef Tag_false  Has_sqrt_tag;
+  typedef Tag_false  Has_gcd;
+  typedef Tag_true   Has_division;
+  typedef Tag_false  Has_sqrt;
 
   typedef short limb;
   typedef int   limb2;

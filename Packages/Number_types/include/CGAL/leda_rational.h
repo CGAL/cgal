@@ -42,9 +42,9 @@
 CGAL_BEGIN_NAMESPACE
 
 template <> struct Number_type_traits<leda_rational> {
-  typedef Tag_false Has_gcd_tag;
-  typedef Tag_true  Has_division_tag;
-  typedef Tag_false Has_sqrt_tag;
+  typedef Tag_false Has_gcd;
+  typedef Tag_true  Has_division;
+  typedef Tag_false Has_sqrt;
 };
 
 #ifndef CGAL_NO_NAMESPACE
@@ -88,7 +88,6 @@ to_interval (const leda_rational & z)
   return ( (approx + Interval_base::Smallest) + Interval_base::Smallest)
          + Interval_base::Smallest;
 }
-
 
 CGAL_END_NAMESPACE
 

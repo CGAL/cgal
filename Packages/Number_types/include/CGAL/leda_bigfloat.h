@@ -36,9 +36,9 @@
 CGAL_BEGIN_NAMESPACE
 
 template <> struct Number_type_traits<leda_bigfloat> {
-  typedef Tag_false Has_gcd_tag;
-  typedef Tag_true  Has_division_tag;
-  typedef Tag_false Has_sqrt_tag;
+  typedef Tag_false Has_gcd;
+  typedef Tag_true  Has_division;
+  typedef Tag_false Has_sqrt;
 };
 
 #ifndef CGAL_CFG_NO_NAMESPACE
@@ -74,9 +74,6 @@ to_interval (const leda_bigfloat & z)
   return approx + Interval_base::Smallest;
 }
 
-
 CGAL_END_NAMESPACE
-
-
 
 #endif // CGAL_BIGFLOAT_H

@@ -32,16 +32,21 @@
 CGAL_BEGIN_NAMESPACE
 
 template <> struct Number_type_traits<long long int> {
-  typedef Tag_false  Has_gcd_tag;
-  typedef Tag_false  Has_division_tag;
-  typedef Tag_false  Has_sqrt_tag;
+  typedef Tag_true   Has_gcd;
+  typedef Tag_false  Has_division;
+  typedef Tag_false  Has_sqrt;
 };
 
 template <> struct Number_type_traits<unsigned long long int> {
-  typedef Tag_false  Has_gcd_tag;
-  typedef Tag_false  Has_division_tag;
-  typedef Tag_false  Has_sqrt_tag;
+  typedef Tag_true   Has_gcd;
+  typedef Tag_false  Has_division;
+  typedef Tag_false  Has_sqrt;
 };
+
+inline
+long long int
+div(long long int i1, long long int i2)
+{ return i1 / i2; }
 
 inline
 double
