@@ -1,3 +1,8 @@
+11 December 2004 Laurent Rineau
+- new dialog in mesh_demo, to set up layer properties
+- fix documentation
+- NEW: pictures in the documentation
+
 17 November 2004 Laurent Rineau
 - fix for g++-3.4
 - fix Delaunay_mesh_area_2 which was broken

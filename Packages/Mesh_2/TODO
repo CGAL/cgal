@@ -7,10 +7,10 @@
 
 Before CGAL-3.1:
 
-- Update the hierachy if CDT is a CT_plus_2. 
+- Update the hierachy if CDT is a CT_plus_2. [DELAYED]
 - [doc] concept CDT.
 - [doc] pictures
 - [doc] document Compute_area_2 in a concept. It is used in 
   Delaunay_mesh_criteria_2.
 - Fix clusters bug: the algorithm should ignore the Shewchuck rule when 
-  inserting point in a *big* triangle.
+  inserting point in a *big* triangle. [DONE]

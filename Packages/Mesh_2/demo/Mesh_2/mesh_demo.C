@@ -66,6 +66,7 @@ int main(int, char*)
 #include "Show_clusters.h"
 #include <CGAL/IO/Qt_widget_show_mouse_coordinates.h>
 
+#include "Qt_widget_style_editor.h"
 
 #include <qapplication.h>
 #include <qmainwindow.h>
@@ -82,6 +83,7 @@ int main(int, char*)
 #include <qtoolbar.h>
 #include <qpushbutton.h>
 #include <qbuttongroup.h>
+#include <qtabwidget.h>
 
 #include <qlabel.h>
 #include <qlineedit.h>
@@ -353,6 +355,75 @@ public:
   };
 };
 
+class Preferences : public QWidget
+{
+  Q_OBJECT
+private:
+  QGridLayout* layout;
+  QTabWidget* tab;
+
+public:
+  Preferences(QWidget* parent = 0, const char* name = 0, bool modal = false)
+    : QWidget(parent, name, modal)
+  {
+    layout = new QGridLayout(this, 1,1, 11, 6, "pref_layout");
+    tab = new QTabWidget(this);
+    layout->addWidget(tab, 0, 0);
+  }
+
+  template <typename LayersIterator>
+  void setLayers(LayersIterator begin, LayersIterator end)
+  {
+    QWidget* w;
+    while( (w = tab->currentPage()) != 0)
+      {
+	tab->removePage(w);
+	delete w;
+      }
+
+    for(LayersIterator it = begin; it!=end; ++it)
+      {
+	QFrame* box = new QFrame(this);
+	QHBoxLayout* hor = new QHBoxLayout(box, 5, 0);
+	QVBoxLayout* layout = new QVBoxLayout(hor, 5);
+
+	QCheckBox* check = new QCheckBox("&Activated", box);
+	layout->addWidget(check);
+
+	check->setChecked((*it)->is_active());
+
+	connect(check, SIGNAL(stateChanged(int)),
+		*it, SLOT(stateChanged(int)));
+	connect(check, SIGNAL(stateChanged(int)),
+		this, SLOT(is_changed()));
+
+	//	QGroupBox* group = new QGroupBox("&Properties", box);
+	CGAL::Qt_widget_style_editor* editor =
+	  new CGAL::Qt_widget_style_editor((*it)->style(), box);
+	editor->show();
+
+	layout->addWidget(editor);
+	layout->addItem(new QSpacerItem(0, 0,
+					QSizePolicy::Minimum,
+					QSizePolicy::Expanding));
+	hor->addItem(new QSpacerItem(0, 0,
+				     QSizePolicy::Expanding,
+				     QSizePolicy::Minimum));
+
+	connect(editor, SIGNAL(styleChanged()),
+		this, SLOT(is_changed()));
+
+	tab->addTab(box, (*it)->name());
+      }
+  }
+
+private slots:
+  void is_changed() { emit changed(); }  
+
+signals:
+  void changed();
+}; // end of class Preferences
+
 class MyWindow : public QMainWindow
 {
   Q_OBJECT
@@ -568,6 +639,20 @@ public:
       connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
               this, SLOT(get_cgal_object(CGAL::Object)));
 
+      const int number_of_styled_layers = 4;
+      CGAL::Qt_widget_styled_layer* styled_layers[number_of_styled_layers] =
+        { show_points,
+          show_seeds,
+          show_constraints,
+          show_triangulation};
+
+      prefs = new Preferences(0, "Preferences", false);
+      prefs->setCaption("Layers properties");
+      prefs->setLayers(styled_layers, styled_layers + number_of_styled_layers);
+      prefs->resize(300, 200);
+
+      connect(prefs, SIGNAL(changed()),
+	      widget, SLOT(redraw()));
 
       // --- TOOLBARS ---
 
@@ -802,6 +887,12 @@ public:
       connect(this, SIGNAL(initializedMesher()),
               this, SLOT(after_initialized_mesher()));
 
+      QPopupMenu *pmOptions = new QPopupMenu(this);
+      menuBar()->insertItem("&Options", pmOptions);
+      pmOptions->insertItem("Set &layer properties...", this, 
+                            SLOT(displayPreferences()));
+      pmOptions->setCheckable(true);
+
       widget->set_window(-1.,1.,-1.,1.);
       widget->setMouseTracking(TRUE);
     };
@@ -868,6 +959,12 @@ private slots:
   {
     Mesher::mark_facets(cdt, seeds.begin(), seeds.end());
   }
+
+  void displayPreferences()
+  {
+    prefs->show();
+  }
+  
 
 public slots:
 
@@ -1188,7 +1285,7 @@ public slots:
         return;
       std::ofstream of(s);
       if(s.right(5) == ".poly")
-        CGAL::write_triangle_poly_file(cdt, of);
+        CGAL::write_triangle_poly_file(cdt, of, seeds.begin(), seeds.end());
       else
         write_constraints(cdt, of);
     }
@@ -1257,6 +1354,7 @@ private:
   Mesher* mesher;
   Seeds seeds;
 
+  Preferences* prefs;
   QPopupMenu *pmCriteria;
   int menu_id;
 

@@ -21,12 +21,13 @@
 #ifndef CGAL_QT_LAYER_SHOW_TRIANGULATION_CONSTRAINTS_H
 #define CGAL_QT_LAYER_SHOW_TRIANGULATION_CONSTRAINTS_H
 
-#include <CGAL/IO/Qt_widget_layer.h>
+#include "Qt_widget_styled_layer.h"
 
 namespace CGAL {
 
 template <class T>
-class Qt_layer_show_triangulation_constraints : public Qt_widget_layer
+class Qt_layer_show_triangulation_constraints
+  : public Qt_widget_styled_layer
 {
 public:
 	
@@ -35,7 +36,20 @@ public:
 					  int linewidth = 1,
                                           QObject* parent = 0,
                                           const char* name = 0)
-    : Qt_widget_layer(parent, name), tr(t), color(lc), width(linewidth){};
+    : Qt_widget_styled_layer(0, parent, name), tr(t)
+  {
+    color="Color";
+    width="Line width";
+
+    setColor(QColor(lc.red(), lc.green(), lc.blue()));
+    setLineWidth(linewidth);
+  };
+
+  void setColor(QColor c)
+  { style()->setColor(color, c); }
+
+  void setLineWidth(int line_width)
+  { style()->setInt(width, line_width); }
 
   void draw()
   {
@@ -44,8 +58,8 @@ public:
     QColor old_color = widget->color();
     int old_width = widget->lineWidth();
 
-    widget->setColor(color);
-    widget->setLineWidth(width);
+    widget->setColor(style()->getColor(color));
+    widget->setLineWidth(style()->getInt(width));
 
     for(typename T::Edge_iterator it=tr->edges_begin();
 	it!=tr->edges_end();
@@ -57,11 +71,11 @@ public:
     widget->setColor(old_color);
     widget->unlock();
   };
-	
+
 private:
   T *tr;
-  CGAL::Color color;
-  int width;
+  QString color;
+  QString width;
 };//end class
 
 } // namespace CGAL

@@ -1,5 +1,17 @@
 
 
+Qt_widget_style_editor.o: \
+
+
+Qt_widget_styled_layer.o: \
+
+
+Show_points.o: \
+
+
+Show_segments_base.o: \
+
+
 conform.o: \
   ../../../Triangulation_2/include/CGAL/Constrained_Delaunay_triangulation_2.h \
   ../../../Triangulation_2/include/CGAL/triangulation_assertions.h \
@@ -109,15 +121,3 @@ mesh_demo.o: \
   ../../include/CGAL/Delaunay_mesh_face_base_2.h \
   ../../include/CGAL/IO/File_poly.h \
   ../../../Triangulation_2/include/CGAL/Delaunay_triangulation_2.h \
-
-
-Qt_widget_styled_layer.o: \
-
-
-Qt_widget_style_editor.o: \
-
-
-Show_points.o: \
-
-
-Show_segments_base.o: \

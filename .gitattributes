@@ -1337,6 +1337,20 @@ Packages/Mesh_2/demo/Mesh_2/data/fish.poly -text
 Packages/Mesh_2/demo/Mesh_2/data/trivial.poly -text
 Packages/Mesh_2/demo/Mesh_2/marked.xpm -text
 Packages/Mesh_2/demo/Mesh_2/seeds.xpm -text
+Packages/Mesh_2/doc_tex/Mesh_2/domain-mesh.eps -text svneol=unset#unset
+Packages/Mesh_2/doc_tex/Mesh_2/domain-mesh.png -text svneol=unset#unset
+Packages/Mesh_2/doc_tex/Mesh_2/domain-seeds-mesh.eps -text svneol=unset#unset
+Packages/Mesh_2/doc_tex/Mesh_2/domain-seeds-mesh.png -text svneol=unset#unset
+Packages/Mesh_2/doc_tex/Mesh_2/domain-seeds.eps -text svneol=unset#unset
+Packages/Mesh_2/doc_tex/Mesh_2/domain-seeds.png -text svneol=unset#unset
+Packages/Mesh_2/doc_tex/Mesh_2/domain.eps -text svneol=unset#unset
+Packages/Mesh_2/doc_tex/Mesh_2/domain.png -text svneol=unset#unset
+Packages/Mesh_2/doc_tex/Mesh_2/example-conform-Delaunay.eps -text svneol=unset#unset
+Packages/Mesh_2/doc_tex/Mesh_2/example-conform-Delaunay.png -text svneol=unset#unset
+Packages/Mesh_2/doc_tex/Mesh_2/example-conform-Gabriel.eps -text svneol=unset#unset
+Packages/Mesh_2/doc_tex/Mesh_2/example-conform-Gabriel.png -text svneol=unset#unset
+Packages/Mesh_2/doc_tex/Mesh_2/example-conform.eps -text svneol=unset#unset
+Packages/Mesh_2/doc_tex/Mesh_2/example-conform.png -text svneol=unset#unset
 Packages/Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.eps -text
 Packages/Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.gif -text svneol=unset#unset
 Packages/Mesh_3/examples/Mesh_3/cube-1-1-1.off -text
