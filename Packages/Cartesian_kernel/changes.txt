@@ -1,3 +1,6 @@
+Version 6.3 (22 January 2001)
+- Stefan's original Simple_cartesian replaced by this one.
+
 Version 6.2 (18 January 2001)
 - Borland fix for SegmentC2.
 - Removed #include<CGAL/predicate_classes_3.h> in Tetrahedron_3.h that broke
