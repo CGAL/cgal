@@ -101,32 +101,6 @@ public :
       return(false);
     }
 
-  void display()
-    {
-      direct_iterator it;
-
-      for (it=direct_func.begin();it!=direct_func.end();++it)
-	{
-	  cerr << (it->first).second << "(" << (it->first).first->vertex(((it->first).second+1)&3)->point();
-	  cerr << "," << (it->first).first->vertex(((it->first).second+2)&3)->point();
-	  cerr << "," << (it->first).first->vertex(((it->first).second+3)&3)->point();
-	  cerr << ")" << endl;
-	}
-
-      cerr << endl;
-
-      reverse_iterator mit;
-
-      for (mit=reverse_func.begin();mit!=reverse_func.end();++mit)
-	{
-	  cerr << (mit->second).second << "(" << (mit->second).first->vertex(((mit->second).second+1)&3)->point();
-	  cerr << "," << (mit->second).first->vertex(((mit->second).second+2)&3)->point();
-	  cerr << "," << (mit->second).first->vertex(((mit->second).second+3)&3)->point();
-	  cerr << ")" << endl;
-	}
-    }
-
-
   // Access
   reverse_iterator front() const
     {
