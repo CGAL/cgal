@@ -1,14 +1,3 @@
 Planar Parameterization of Triangulated Surface Meshes
 
-Pierre Alliez, Bruno Levy, Laurent Saboret
-
-Keywords: parameterization, bijective mapping, triangulated meshes, convex embedding, conformal, harmonic maps, free boundary methods.
-
-1 Introduction
-
-Parameterizing a surface amounts to finding a one-to-one mapping from a suitable domain to the surface. A good mapping is the one which minimizes either angle or area distortions in some sense. In this package, we focus on triangulated surfaces that are homeomorphic to a disk and on piecewise linear mappings into a planar domain. Although the main motivation behind the first parameterization methods was the application to texture mapping, it is now frequently used for mapping more sophisticated modulation signals (such as normal, transparency, reflection or light modulation maps), fitting scattered data, re-parameterizing spline surfaces, repairing CAD models, approximating surfaces and remeshing.
-
-2 Package description
-
-This CGAL Package implements some of the state-of-the-art parameterization methods, such as LSCM (Lévy et al. 02), fixed or free boundary conformal maps, Authalic, Floater mean coordinate values or Tutte uniform weights. It proposes an interface with both the 2D Triangulation Data Structure enriched with 3D points and the Polyhedron.  Since parameterizing meshes require efficient representation of sparse matrices and efficient iterative or direct linear solvers, we plan to evaluate the standard packages or propose a separate package devoted to linear algebra.
-
+This CGAL Package implements some of the state-of-the-art parameterization methods, such as LSCM (Lévy et al. 02), fixed or free boundary conformal maps, Authalic, Floater mean coordinate values or Tutte uniform weights. It proposes an interface with both the 2D Triangulation Data Structure enriched with 3D points and the Polyhedron. 
