@@ -527,9 +527,10 @@ distance_index(
     const Ray_2<R> &ray);
 
 template <class R>
-extern R_FT_return(R)
+R_FT_return(R)
 squared_distance_indexed(const Point_2<R> &pt,
-    const Ray_2<R> &ray, int ind1, int ind2);
+    const Ray_2<R> &ray, int ind);
+
 @}
 
 @C@<Implementation@>
@@ -631,7 +632,7 @@ distance_index(
 template <class R>
 extern R_FT_return(R)
 squared_distance_indexed(const Point_2<R> &pt,
-    const Segment_2<R> &seg, int ind1, int ind2);
+    const Segment_2<R> &seg, int ind1);
 @}
 
 @C@<Implementation@>
