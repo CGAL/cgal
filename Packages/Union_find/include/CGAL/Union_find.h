@@ -29,10 +29,8 @@
 #define CGAL_UNION_FIND_H
 
 #include <CGAL/basic.h>
-#include <memory>
+#include <CGAL/memory.h>
 #include <cassert>
-
-#define ALLOC(t) std::allocator<t>
 
 #ifndef _MSC_VER
 #define CGAL_UNION_FIND_NO_ALLOCATOR
@@ -72,7 +70,7 @@ public:
 
 } // CGALi
 
-template <typename T, typename A = ALLOC(int) > 
+template <typename T, typename A = CGAL_ALLOCATOR(T) > 
 class Union_find;
 
 /*{\Manpage {Union_find}{T,A}{Union-Find with path compression}{P}}*/
