@@ -60,8 +60,6 @@
 
 #include <CGAL/Cartesian/basic_constructions_2.h>
 
-// #include <CGAL/Kernel/Construction_objects_2.h>
-// #include <CGAL/Kernel/Predicate_objects_2.h>
 #include <CGAL/predicate_objects_on_points_2.h>
 #include <CGAL/Kernel/function_objects.h>
 
@@ -84,9 +82,6 @@
 #include <CGAL/Cartesian/distance_predicates_3.h>
 
 #include <CGAL/Cartesian/basic_constructions_3.h>
-
-// #include <CGAL/Kernel/Construction_objects_3.h>
-// #include <CGAL/Kernel/Predicate_objects_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
