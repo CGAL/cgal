@@ -1,3 +1,8 @@
+1.39 (10 Oct 2002)
+  - replace use of CGALi::Construct template with own function object
+    in Triangulation_indirect_traits (since template was removed in
+    the kernel).
+
 1.38 (12 Aug 2002)
   - replace LEFTTURN and relatives by LEFT_TURN and relatives.
 

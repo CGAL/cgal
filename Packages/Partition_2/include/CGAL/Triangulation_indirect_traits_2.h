@@ -113,6 +113,18 @@ private:
    Orientation_2 _orientation_2;
 };
 
+template <class Circulator>
+class Construct_indirect_segment_2
+{
+public:
+   typedef Indirect_segment<Circulator>   Indirect_segment;
+
+   Indirect_segment operator()(Circulator p1, Circulator p2)
+   {
+      return Indirect_segment(p1, p2);
+   }
+};
+
 template <class Circulator, class Traits>
 class Triangulation_indirect_traits_2 
 {
@@ -124,7 +136,7 @@ public:
   typedef Indirect_orientation_2<typename Traits::Orientation_2> Orientation_2;
   typedef Indirect_compare_x_2<typename Traits::Compare_x_2>     Compare_x_2;
   typedef Indirect_compare_y_2<typename Traits::Compare_y_2>     Compare_y_2;
-  typedef CGALi::Construct<Segment_2>      Construct_segment_2;
+  typedef Construct_indirect_segment_2<Circulator>      Construct_segment_2;
 
    Compare_x_2 compare_x_2_object() const
    {
