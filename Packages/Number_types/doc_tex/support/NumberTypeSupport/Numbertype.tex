@@ -151,7 +151,10 @@ This number type provides an equivalent functionality to \ccc{leda_real}.
 \cgal\ provides wrapper classes for number types defined in the
 {\sc Gnu} Multiple Precision arithmetic library~\cite{g-ggmpa-}.
 The file {\tt  CGAL/Gmpz.h} provides the class \ccStyle{Gmpz},
-a wrapper class for the integer type \ccc{mpz_t}, that is compliant to the
+a wrapper class for the integer type \ccc{mpz_t}, that is compliant with the
+\cgal\ number type requirements. The file {\tt  CGAL/Gmpq.h} provides the class \ccStyle{Gmpq},
+a wrapper class for the rational type \ccc{mpq_t}, that is compliant
+with the
 \cgal\ number type requirements.
 
 In addition, it is possible to directly use the C++ number types provided with
