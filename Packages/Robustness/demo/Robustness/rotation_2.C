@@ -26,7 +26,7 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
-#include <CGAL/IO/leda_window.h>
+#include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Ostream_iterator.h>
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>
@@ -42,6 +42,14 @@ typedef CartesianDouble::Direction_2      Direction;
 typedef std::vector<Point>                Vector;
 typedef CGAL::Homogeneous<CGAL::Gmpz>     HomogeneousInteger;
 typedef CGAL::Cartesian<leda_real>        CartesianLedaReal;
+
+
+#if defined(CGAL_USE_CGAL_WINDOW)
+#include <sstream>
+#define leda_window  CGAL::window
+#define leda_string  std::string
+#define leda_green2  CGAL::green2
+#endif
 
 int
 main()
@@ -130,10 +138,19 @@ main()
               if ( CGAL::collinear( *i, *j, *k) ) ++s;
               ++n;
           }
+	  
+#if defined(CGAL_USE_LEDA)	  
   str = leda_string("Before rotation, %2.2f%% ", 100.0* s/n );
   str += trailer;
+#else
+  std::ostringstream OS;
+  OS << "Before rotation, " << 100.0* s/n << "% ";
+  OS << trailer;
+  OS << std::ends;
+  str = OS.str();
+#endif
+
   W.draw_ctext(250,60, str);
-  
   
   n = 0;
   s = 0;
@@ -144,26 +161,45 @@ main()
               if ( CGAL::collinear( *i, *j, *k) ) ++s;
               ++n;
           }
+	  
+#if defined(CGAL_USE_LEDA)	  
   str = leda_string("After rotation, only %2.2f%% ", 100.0* s/n );
   str += trailer;
+#else
+  std::ostringstream OS2;
+  OS2 << "After rotation, only " << 100.0* s/n << "% ";
+  OS2 << trailer;
+  OS2 << std::ends;
+  str = OS2.str();  
+#endif  
   W.draw_ctext(250,40, str);
   
   
   Vector D;
   D.push_back( L.front());
   Point o = Point( CGAL::ORIGIN);
-  CartesianDouble::Less_distance_to_point_2 less =
-      CartesianDouble().less_distance_to_point_2_object(o);
-  for ( i = CR.begin(); i != CR.end(); ++i)
-  {
+  CartesianDouble::Compare_distance_2 cmp =
+      CartesianDouble().compare_distance_2_object();
+  for ( i = CR.begin(); i != CR.end(); ++i) {
     bool new_distance = true;
-    for ( j = D.begin(); j != D.end(); ++j)
-    { if ( !( less( *i, *j))||( less( *j, *i)) ) new_distance = false; }
+    for ( j = D.begin(); j != D.end(); ++j) {
+      if ( ( cmp(o, *i, *j) != CGAL::SMALLER) ||
+           ( cmp(o, *j, *i) == CGAL::SMALLER) )
+        new_distance = false;
+    }
     if ( new_distance ) { D.push_back( *i); }
   }
-  
+ 
+#if defined(CGAL_USE_LEDA)  
   str = leda_string("%d different distances",
                     std::distance( D.begin(), D.end() ));
+#else
+  std::ostringstream OS3;
+  OS3 << std::distance( D.begin(), D.end() ) << " different distances";
+  OS3 << std::ends;
+  str = OS3.str();  
+#endif		    
+		    
   W.draw_ctext(700,50,str);
   
 
