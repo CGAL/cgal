@@ -69,10 +69,11 @@ _test_cls_tds_3( const Tds &)
   assert(tdsfromfile.dimension() == -2);
   assert(tdsfromfile.number_of_vertices() == 0);
 
-  
+  std::cout << "    copy" << std::endl;
   Vertex_iterator vit;
   Vertex * v1 = new Vertex();
   tds2.insert_increase_dimension(v1, NULL);
+  assert( tds2.number_of_vertices() == 1 );
   Tds tds3(tds2);
   Vertex * v2 = new Vertex();
 

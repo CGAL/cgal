@@ -1,8 +1,7 @@
 -------------- POUR LA RELEASE
 
-- bien tester le output_stream de T_3 (ordre de creation des sommets)
-- meme chose sur copy et eventuellement autres operations du meme style, 
-a verifier 
+- bien tester le output_stream de T_3 et le copy_tds (ordre de creation des sommets)
+- eventuellement autres operations du meme style ? a verifier 
 
 a negocier 
 - mise a jour de la doc de Filtered_exact...
