@@ -76,6 +76,8 @@ typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
 typedef Nef_polyhedron::Aff_transformation_3 Aff_transformation_3;
 typedef CGAL::grid_generator<Nef_polyhedron> ggen;
 
+bool cgal_nef3_timer_on = false;
+
 int main(int argc, char* argv[]) {
 
   assert(argc>1 && argc < 5);
@@ -106,6 +108,8 @@ int main(int argc, char* argv[]) {
   Nef_polyhedron N2;
   in2 >> N2;
   CGAL_assertion(N2.is_valid());
+
+  cgal_nef3_timer_on = true;
 
 #if defined CGAL_NEF3_UNION
   N1=N1.union(N2);

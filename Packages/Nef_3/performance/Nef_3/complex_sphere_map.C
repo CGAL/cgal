@@ -8,13 +8,8 @@ typedef leda_integer NT;
 typedef CGAL::Gmpz NT;
 #endif
 
-#ifdef CGAL_NEF3_USE_GMPQ
-#include <CGAL/Gmpq.h>
-typedef CGAL::Gmpq NT;
-#endif
-
 #ifdef CGAL_NEF3_USE_LAZY_EXACT_NT
-#include <CGAL/Lazy_nt.h>
+#include <CGAL/Lazy_nt>
 typedef CGAL::Lazy_nt<NT> RT;
 #else
 typedef NT RT;
@@ -28,6 +23,11 @@ typedef CGAL::Simple_homogeneous<RT> Kernel;
 #ifdef CGAL_NEF3_USE_HOMOGENEOUS
 #include <CGAL/Homogeneous.h>
 typedef CGAL::Homogeneous<RT> Kernel;
+#endif
+
+#ifdef CGAL_NEF3_USE_FILTERED_HOMOGENEOUS_3
+#include <CGAL/Filtered_homogeneous_3.h>
+typedef CGAL::Filtered_homogeneous_3<RT> Kernel;
 #endif
 
 #ifdef CGAL_NEF3_USE_EXTENDED_HOMOGENEOUS
@@ -60,67 +60,33 @@ typedef CGAL::Cartesian<NT> Kernel;
 typdef CGAL::Extended_cartesian<NT> Kernel;
 #endif
 
+#include <CGAL/basic.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
-#include <CGAL/Timer.h>
-#include <sstream>
-#include <fstream>
-#include "tetrahedron_generator.h"
-#include "grid_generator.h"
+#include "worst_case_sphere_map_generator.h"
 
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
 typedef Nef_polyhedron::Vector_3 Vector_3;
 typedef Nef_polyhedron::Aff_transformation_3 Aff_transformation_3;
-typedef tetrahedron_generator<Kernel> tgen;
-typedef CGAL::grid_generator<Nef_polyhedron> ggen;
+typedef Nef_polyhedron::Vertex_const_iterator Vertex_const_iterator;
 
 bool cgal_nef3_timer_on = false;
 
 int main(int argc, char* argv[]) {
 
-  assert(argc>1 && argc < 7);
-  
-  int nx = argc>2 ? std::atoi(argv[2]) : 2;
-  int ny = argc>3 ? std::atoi(argv[3]) : 2;
-  int nz = argc>4 ? std::atoi(argv[4]) : 2;
+  CGAL_assertion(argc==2);
 
-  std::ifstream in(argv[1]);
-  Nef_polyhedron Nin;
-  in >> Nin;
-  Nin.transform(Aff_transformation_3(CGAL::SCALING,2,1));
-  std::ostringstream out1;
-  ggen g(out1, Nin);
-  g.print(nx,ny,nz);
-  std::istringstream in1(out1.str());
-  Nef_polyhedron N1;
-  in1 >> N1;
-  RT s = g.size_x();
-  N1.transform(Aff_transformation_3(CGAL::TRANSLATION,Vector_3(s,s,s,2)));
+  Nef_polyhedron N1,N2;
+  std::ostringstream out;
+  worst_case_sphere_map_generator<Nef_polyhedron> wgen(out);
+  wgen.print(std::atoi(argv[1]));
+  std::istringstream in(out.str());
+  in >> N1;
   CGAL_assertion(N1.is_valid());
 
-  std::ostringstream out2;
-  CGAL::Random r;
-  if(argc>5) {
-    tgen t2(out2,s,std::atoi(argv[5]));
-    t2.create_tetrahedra(nx+1,ny+1,nz+1);
-  } else {
-    tgen t2(out2,s);
-    t2.create_tetrahedra(nx+1,ny+1,nz+1);    
-  }
-  std::istringstream in2(out2.str());
-  Nef_polyhedron N2;
-  in2 >> N2;
-  CGAL_assertion(N2.is_valid());
+  N2=N1;
+  N2.transform(Aff_transformation_3(1,0,0, 0,0,-1, 0,1,0, 1));
 
   cgal_nef3_timer_on = true;
-
-#if defined CGAL_NEF3_UNION
-  N1.join(N2);
-#elif defined CGAL_NEF3_INTERSECTION
-  N1.intersection(N2);
-#elif defined CGAL_NEF3_DIFFERENCE
-  N1.difference(N2);
-#else
-  N1.symmetric_difference(N2);
-#endif
-}
+  N1=N2.join(N1);
+};

@@ -13,13 +13,12 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-#           -O2 -DNDEBUG \
-
 CXXFLAGS = \
 	   $(ADDITIONAL_CXXFLAGS) \
            -DCGAL_NEF3_DUMP_STATISTICS \
            -DCGAL_NEF3_TIMER_INITIALIZE_KDTREE \
-           -DCGAL_NEF3_TIMER_PLANE_SWEEPS \
+           -DCGAL_NEF3_TIMER_PLUECKER \
+	   -DCGAL_NEF3_TIMER_PLANE_SWEEPS \
            -DCGAL_NEF3_TIMER_SPHERE_SWEEPS \
            -DCGAL_NEF3_TIMER_POINT_LOCATION \
            -DCGAL_NEF3_TIMER_SIMPLIFICATION \
@@ -50,16 +49,23 @@ LDFLAGS = \
 
 all:            \
                 union_of_rotated_cylinders$(EXE_EXT) \
+                union_of_rotated_cylinders2$(EXE_EXT) \
 	        two_tetrahedra_fields$(EXE_EXT) \
 	       	tetrahedra_and_grid$(EXE_EXT) \
                 big_and_small$(EXE_EXT) \
                 quadratic$(EXE_EXT) \
+                quadratic2$(EXE_EXT) \
                 convert_to_sat$(EXE_EXT) \
                 tetrahedra_as_sat$(EXE_EXT) \
-                grid_as_sat$(EXE_EXT)
+                grid_as_sat$(EXE_EXT) \
+                abdruck$(EXE_EXT) \
+                complex_sphere_map$(EXE_EXT) \
+                complex_facet$(EXE_EXT)
 
 union_of_rotated_cylinders$(EXE_EXT): union_of_rotated_cylinders$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)union_of_rotated_cylinders union_of_rotated_cylinders$(OBJ_EXT) $(LDFLAGS)
+union_of_rotated_cylinders2$(EXE_EXT): union_of_rotated_cylinders2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)union_of_rotated_cylinders2 union_of_rotated_cylinders2$(OBJ_EXT) $(LDFLAGS)
 two_tetrahedra_fields$(EXE_EXT): two_tetrahedra_fields$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)two_tetrahedra_fields two_tetrahedra_fields$(OBJ_EXT) $(LDFLAGS)
 tetrahedra_and_grid$(EXE_EXT): tetrahedra_and_grid$(OBJ_EXT)
@@ -68,22 +74,35 @@ big_and_small$(EXE_EXT): big_and_small$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)big_and_small big_and_small$(OBJ_EXT) $(LDFLAGS)
 quadratic$(EXE_EXT): quadratic$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)quadratic quadratic$(OBJ_EXT) $(LDFLAGS)
+quadratic2$(EXE_EXT): quadratic2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)quadratic2 quadratic2$(OBJ_EXT) $(LDFLAGS)
 convert_to_sat$(EXE_EXT): convert_to_sat$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)convert_to_sat convert_to_sat$(OBJ_EXT) $(LDFLAGS)
 tetrahedra_as_sat$(EXE_EXT): tetrahedra_as_sat$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tetrahedra_as_sat tetrahedra_as_sat$(OBJ_EXT) $(LDFLAGS)
 grid_as_sat$(EXE_EXT): grid_as_sat$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)grid_as_sat grid_as_sat$(OBJ_EXT) $(LDFLAGS)
+abdruck$(EXE_EXT): abdruck$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)abdruck abdruck$(OBJ_EXT) $(LDFLAGS)
+complex_sphere_map$(EXE_EXT): complex_sphere_map$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)complex_sphere_map complex_sphere_map$(OBJ_EXT) $(LDFLAGS)
+complex_facet$(EXE_EXT): complex_facet$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)complex_facet complex_facet$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    union_of_rotated_cylinders.clean \
+                   union_of_rotated_cylinders2.clean \
 	           two_tetrahedra_fields.clean \
 	           tetrahedra_and_grid.clean \
 	           big_and_small.clean \
 	           quadratic.clean \
+	           quadratic2.clean \
 	           convert_to_sat.clean \
 	           tetrahedra_as_sat.clean \
-	           grid_as_sat.clean
+	           grid_as_sat.clean \
+	           abdruck.clean \
+	           complex_sphere_map.clean \
+	           complex_facet.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

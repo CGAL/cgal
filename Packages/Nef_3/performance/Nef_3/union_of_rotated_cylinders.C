@@ -81,6 +81,7 @@ typedef CGAL::Nef_polyhedron_3<Kernel>      Nef_polyhedron;
 typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
 typedef Kernel::Aff_transformation_3        Aff_transformation_3;
 
+bool cgal_nef3_timer_on = false;
 
 Aff_transformation_3 compute_transformation_matrix(double alpha) {
   
@@ -188,8 +189,8 @@ int main(int argc, char* argv[]) {
 
     Nef_polyhedron N2 = N1;
     N2.transform(aff);
-    CGAL::Timer t;
-    t.start();
+
+    cgal_nef3_timer_on = true;
 #if defined CGAL_NEF3_SYMDIFF
   N1.symmetric_difference(N2);
 #elif defined CGAL_NEF3_INTERSECTION
@@ -199,6 +200,5 @@ int main(int argc, char* argv[]) {
 #else
   N1.join(N2);
 #endif
-    t.stop();
   }
 }

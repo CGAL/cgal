@@ -74,6 +74,7 @@ typdef CGAL::Extended_cartesian<NT> Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
 typedef tetrahedron_generator<Kernel> tgen;
 
+bool cgal_nef3_timer_on = false;
 
 int main(int argc, char* argv[]) {
 
@@ -100,6 +101,8 @@ int main(int argc, char* argv[]) {
   in2 >> N2;
   CGAL_assertion(N2.is_valid());
   
+  cgal_nef3_timer_on = false;
+
 #if defined CGAL_NEF3_UNION
   N1.union(N2);
 #elif defined CGAL_NEF3_INTERSECTION
