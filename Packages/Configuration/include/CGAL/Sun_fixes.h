@@ -88,7 +88,7 @@ namespace std {
     return n;
   }
 
-#if ( __SUNPRO_CC < 0x550)
+
   template < class T >
   inline typename T::value_type*
   __value_type (const T&)
@@ -105,6 +105,27 @@ namespace std {
   {
     typename T::iterator_category tmp;
     return tmp;
+  }
+
+
+#if ( __SUNPRO_CC == 0x550)
+
+  template < class T >
+  inline T* __value_type(T*)
+  { return _RWSTD_STATIC_CAST(T*,0); }
+
+  template <class T>
+  inline ptrdiff_t* 
+  __distance_type (T*)
+  { 
+    return _RWSTD_STATIC_CAST(ptrdiff_t*,0);
+  }
+
+  template <class T>
+  inline random_access_iterator_tag 
+  __iterator_category (T*)
+  {
+    return random_access_iterator_tag();
   }
 #endif
 
