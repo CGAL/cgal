@@ -18,7 +18,7 @@ int main(int, char*)
 #include <list>
 #include <CGAL/Polygon_2.h>
 #include <qapplication.h>
-#include <CGAL/IO/Qt_Widget.h>
+#include <CGAL/IO/Qt_widget.h>
 
 typedef CGAL::Cartesian<int> Rep;
 typedef CGAL::Point_2<Rep> Point;

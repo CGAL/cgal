@@ -21,7 +21,7 @@
 
 #ifdef CGAL_USE_QT
 
-#include "Qt_Widget_toolbar_views.h"
+#include "Qt_widget_toolbar_views.h"
 #include <CGAL/IO/Qt_view_show_mouse_coordinates.h>
 #include <CGAL/IO/Qt_view_show_polygon.h>
 #include <CGAL/IO/Qt_view_show_greene_approximation.h>
@@ -189,6 +189,6 @@ namespace CGAL {
   
 }//end namespace
 
-#include "Qt_Widget_toolbar_views.moc"
+#include "Qt_widget_toolbar_views.moc"
 
 #endif

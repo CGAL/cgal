@@ -20,8 +20,8 @@
 
 #ifdef CGAL_USE_QT
 
-#include <CGAL/IO/Qt_Widget.h>
-#include <CGAL/IO/Qt_Widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_standard_toolbar.h>
 
 // icons
 #include <CGAL/IO/pixmaps/zoom_in_rect.xpm>

@@ -19,7 +19,7 @@ int main(int, char*)
 
 
 #include <qapplication.h>
-#include <CGAL/IO/Qt_Widget.h>
+#include <CGAL/IO/Qt_widget.h>
 
 typedef CGAL::Cartesian<double>		    Rep;
 typedef CGAL::Point_2<Rep>		    Point;

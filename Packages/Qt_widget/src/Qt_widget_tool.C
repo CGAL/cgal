@@ -20,9 +20,9 @@
 
 #ifdef CGAL_USE_QT
 
-#include <CGAL/IO/Qt_Widget.h>
+#include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/IO/Qt_Widget_tool.h>
+#include <CGAL/IO/Qt_widget_tool.h>
 
 namespace CGAL {
 
@@ -43,6 +43,6 @@ void Qt_widget_tool::detach()
 
 } // namespace CGAL
 
-#include "Qt_Widget_tool.moc"
+#include "Qt_widget_tool.moc"
 
 #endif
