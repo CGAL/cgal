@@ -68,6 +68,7 @@ class Refine_edges_base_with_clusters :
   Clusters<Tr>& clusters;
 
   bool va_has_a_cluster, vb_has_a_cluster;
+  bool cluster_splitted;
   Cluster ca, cb;
 
 public:
@@ -90,6 +91,7 @@ public:
     this->vb = edge.first->vertex(tr.ccw(edge.second));
     va_has_a_cluster = false;
     vb_has_a_cluster = false;
+    cluster_splitted = false;
     
     // true bellow to remove ca and cb because they will
     // be restored by update_cluster(...).
@@ -120,10 +122,10 @@ public:
   {
     Super::do_after_insertion(v);
     if( va_has_a_cluster ) 
-      clusters.update_cluster(ca,this->va,this->vb,v,false);
+      clusters.update_cluster(ca,this->va,this->vb,v,cluster_splitted);
     // false == 'edge not reduced'
     if( vb_has_a_cluster )
-      clusters.update_cluster(cb,this->vb,this->va,v,false);
+      clusters.update_cluster(cb,this->vb,this->va,v,cluster_splitted);
   }
 
   /**
@@ -238,6 +240,8 @@ private:
 
     typedef typename Geom_traits::FT FT;
     
+
+    cluster_splitted = true;
 
     const Point& a = va->point();
     const Point& b = vb->point();

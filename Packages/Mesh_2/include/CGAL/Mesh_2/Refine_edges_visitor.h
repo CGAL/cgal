@@ -73,6 +73,11 @@ public:
     mark_at_left = fh->neighbor(edge_index)->is_marked();
   }
 
+  void before_insertion(const Edge&, const Point& p, Zone& z)
+  {
+    mesher_base.do_before_insertion(Face_handle(), p, z);
+  }
+
   /** Restore markers in the star of \c v. */
   void after_insertion(const Vertex_handle& v)
   {
@@ -103,10 +108,9 @@ public:
 
     // then let's update bad faces
     mesher_base.compute_new_bad_faces(v);
-  }
 
-  template <typename E, typename P, typename Z>
-  void before_insertion(E, P, Z) const {}
+    CGAL_expensive_assertion(mesher_base.check_bad_faces());
+  }
 
   template <typename E, typename P, typename Z>
   void after_no_insertion(E, P, Z) const {}
