@@ -1210,21 +1210,21 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
   // Inserts the alpha shape into the stream `os' as an indexed face set. 
   // Precondition: The insert operator must be defined for `Point'
 { 
-  typedef Alpha_shape_3<Dt>::Interval_vertex_map Interval_vertex_map;
+  typedef typename Alpha_shape_3<Dt>::Interval_vertex_map Interval_vertex_map;
   typename Interval_vertex_map::const_iterator vertex_alpha_it;
 
-  const Alpha_shape_3<Dt>::Interval2* pInterval2;
+  const typename Alpha_shape_3<Dt>::Interval2* pInterval2;
 
   typedef long Key;
 
-  std::map< Key, int, std::less< Key > > V;
+  std::map< Key, int > V;
 
   int number_of_vertices = 0;
 
-  typedef Alpha_shape_3<Dt>::Interval_facet_map Interval_facet_map;
+  typedef typename Alpha_shape_3<Dt>::Interval_facet_map Interval_facet_map;
   typename Interval_facet_map::const_iterator face_alpha_it;
 
-  const Alpha_shape_3<Dt>::Interval3* pInterval;
+  const typename Alpha_shape_3<Dt>::Interval3* pInterval;
 
   int i0, i1, i2;
 
