@@ -164,7 +164,7 @@ Triangulation_hierarchy_2(const Geom_traits& traits)
 { 
   hierarchy[0] = this; 
   for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
-    hierarchy[i] = new Tr_Base();
+    hierarchy[i] = new Tr_Base(traits);
 }
 
 
@@ -177,7 +177,7 @@ Triangulation_hierarchy_2(const Triangulation_hierarchy_2<Triangulation> &tr)
   // create an empty triangulation to be able to delete it !
   hierarchy[0] = this; 
   for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
-    hierarchy[i] = new Tr_Base();
+    hierarchy[i] = new Tr_Base(tr.geom_traits());
   copy_triangulation(tr);
 } 
  
