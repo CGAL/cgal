@@ -1413,6 +1413,7 @@ Packages/Polyhedron/examples/Polyhedron/cross.off -text
 Packages/Qt_widget/demo/Qt_widget/Alpha_shapes_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Convex_Hull_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Min_ellipse_2/demo.dsp -text
+Packages/Qt_widget/demo/Qt_widget/Min_quadrilateral_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Partition_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/basic/tutorial1/demo.dsp -text
@@ -1431,6 +1432,8 @@ Packages/Qt_widget/include/CGAL/IO/pixmaps/hand.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/handtool.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/holddown.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/line.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/min_parallelogram.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/min_rectangle.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/mouse_coord.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/movepoint.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/nearest_vertex.xpm -text
