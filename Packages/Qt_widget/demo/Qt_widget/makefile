@@ -33,6 +33,13 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 DEMO_SUBDIRS= \
+./Convex_Hull_2 \
+./Examples \
+./Max_k-gon \
+./Min_ellipse_2 \
+./Min_quadrilateral_2 \
+./Partition_2 \
+./Triangulation_2 \
 ./basic/tutorial1 \
 ./basic/tutorial2 \
 ./basic/tutorial3 \
@@ -40,14 +47,7 @@ DEMO_SUBDIRS= \
 ./basic/tutorial5 \
 ./basic/tutorial6 \
 ./basic/tutorial7 \
-./basic/tutorial8 \
-./Partition_2 \
-./Triangulation_2 \
-./Min_ellipse_2 \
-./Min_quadrilateral_2 \
-./Convex_Hull_2 \
-./Max_k-gon \
-./Examples
+./basic/tutorial8
 
 all:             \
                 constrained$(EXE_EXT)
