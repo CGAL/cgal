@@ -36,7 +36,6 @@ class Triangulation_hierarchy_vertex_base_3
   typedef Vbb V_Base;
   typedef typename V_Base::Point   Point;
 
-
   Triangulation_hierarchy_vertex_base_3()
     : V_Base(), _up(0), _down(0)
     {}
@@ -49,11 +48,10 @@ class Triangulation_hierarchy_vertex_base_3
 
  public:  // for use in Triangulation_hierarchy only
   //  friend class Triangulation_hierarchy_3;
-  void* up() {return _up;}
-  void* down() {return _down;}
+  void* up() const {return _up;}
+  void* down() const {return _down;}
   void set_up(void *u) {_up=u;}
   void set_down(void *d) {if (this) _down=d;}
-
 
  private:
   void* _up;    // same vertex one level above
@@ -63,8 +61,8 @@ class Triangulation_hierarchy_vertex_base_3
 // parameterization of the  hierarchy
 //const float Triangulation_hierarchy_3__ratio    = 30.0;
 const int Triangulation_hierarchy_3__ratio    = 30;
-const int   Triangulation_hierarchy_3__minsize  = 20;
-const int   Triangulation_hierarchy_3__maxlevel = 5;
+const int Triangulation_hierarchy_3__minsize  = 20;
+const int Triangulation_hierarchy_3__maxlevel = 5;
 // maximal number of points is 30^5 = 24 millions !
 
 template < class Tr>
@@ -154,9 +152,7 @@ public:
 		      Cell_handle start) const{
     return Tr_Base::locate(p, lt, li, lj, start);
   }
-
 };
-
 
 
 template <class Tr >
@@ -168,7 +164,6 @@ Triangulation_hierarchy_3(const Geom_traits& traits)
   for(int i=1;i<Triangulation_hierarchy_3__maxlevel;++i)
     hierarchy[i] = new Tr_Base(traits);
 }
-
 
 // copy constructor duplicates vertices and cells
 template <class Tr>
@@ -271,21 +266,30 @@ Triangulation_hierarchy_3<Tr>::
 is_valid() const
 {
   bool result = true;
-  int i;
-  Vertex_iterator it;
+  
   //verify correctness of triangulation at all levels
-  for(i=0;i<Triangulation_hierarchy_3__maxlevel;++i)
+  for(int i=0; i<Triangulation_hierarchy_3__maxlevel; ++i)
 	result = result && hierarchy[i]->is_valid();
+
   //verify that lower level has no down pointers
-  for( it = hierarchy[0]->vertices_begin(); 
+  for( it = hierarchy[0]->finite_vertices_begin(); 
        it != hierarchy[0]->vertices_end(); ++it) 
     result = result && ( it->down() == 0 );
+
   //verify that other levels has down pointer and reciprocal link is fine
-  for(i=1;i<Triangulation_hierarchy_3__maxlevel;++i)
-    for( it = hierarchy[i]->vertices_begin(); 
+  for(int i=1; i<Triangulation_hierarchy_3__maxlevel; ++i)
+    for( Vertex_iterator it = hierarchy[i]->finite_vertices_begin(); 
 	 it != hierarchy[i]->vertices_end(); ++it) 
       result = result && 
 	       ( ((Vertex*)((Vertex*)it->down())->up()) ==  &(*it) );
+
+  //verify that other levels has down pointer and reciprocal link is fine
+  for(int i=0; i<Triangulation_hierarchy_3__maxlevel-1; ++i)
+    for( Vertex_iterator it = hierarchy[i]->finite_vertices_begin(); 
+	 it != hierarchy[i]->vertices_end(); ++it) 
+      result = result && ( ((Vertex*)it->up() == NULL) ||
+	       ( ((Vertex*)((Vertex*)it->up())->down()) ==  &(*it) ));
+
   return result;
 }
 
@@ -295,6 +299,8 @@ Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
 insert(const Point &p)
 {
+  CGAL_triangulation_expensive_assertion(is_valid());
+
   int vertex_level = random_level();
   Locate_type lt;
   int i, j;
@@ -302,16 +308,16 @@ insert(const Point &p)
   Cell_handle positions[Triangulation_hierarchy_3__maxlevel];
   locate(p,lt,i,j,positions);
   //insert at level 0
-  Vertex_handle vertex=hierarchy[0]->insert(p,positions[0]);
-  Vertex_handle previous=vertex;
+  Vertex_handle vertex = hierarchy[0]->insert(p,positions[0]);
+  Vertex_handle previous = vertex;
   Vertex_handle first = vertex;
 
-  int level  = 1;
+  int level = 1;
   while (level <= vertex_level ){
     if (positions[level] != NULL)
-      vertex=hierarchy[level]->insert(p,positions[level]);
+      vertex = hierarchy[level]->insert(p, positions[level]);
     else
-      vertex=hierarchy[level]->insert(p);
+      vertex = hierarchy[level]->insert(p);
     vertex->set_down((void *) &*previous);// link with level above
     previous->set_up((void *) &*vertex);
     previous=vertex;
@@ -334,12 +340,14 @@ void
 Triangulation_hierarchy_3<Tr>::
 remove(Vertex_handle v )
 {
+  CGAL_triangulation_expensive_assertion(is_valid());
+
   void * u=v->up();
-  int l = 0 ;
+  int l = 0;
   while(1){
     hierarchy[l++]->remove(v);
-    if (!u) break; 
-    if(l>Triangulation_hierarchy_3__maxlevel) break;
+    if (!u) break;
+    if (l>Triangulation_hierarchy_3__maxlevel) break;
     v=(Vertex*)u; u=v->up();
   }
 }
