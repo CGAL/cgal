@@ -36,10 +36,12 @@
 
 
 #ifdef _MSC_VER
+#   define CGAL_SCOPE
 #   define CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT 1
 #   include <stl_config.h>
 #   include <stl_iterator_base.h>
 #else  // not _MSC_VER
+#   define CGAL_SCOPE CGAL::
 #   define CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(a)
 #endif // _MSC_VER
 
