@@ -1483,7 +1483,7 @@ public:
   CGAL_Bounded_side
   side_of_facet(const Point & p,
 		Cell_handle c,
-		int i,
+		//		int i,
 		Locate_type & lt, int & li, int & lj) const
     // supposes dimension 2 otherwise does not work for infinite facets
     // returns :
@@ -1499,8 +1499,9 @@ public:
     // giving the facet (c,i)
     {//side_of_facet
       CGAL_triangulation_precondition( dimension() == 2 );
-      CGAL_triangulation_precondition( i == 3 );
-      if ( ! is_infinite(c,i) ) {
+      //      CGAL_triangulation_precondition( i == 3 );
+      //      if ( ! is_infinite(c,i) ) {
+      if ( ! is_infinite(c,3) ) {
 	// The following precondition is useless because it is written
 	// in side_of_facet  
 // 	CGAL_triangulation_precondition( geom_traits().orientation
@@ -1584,12 +1585,12 @@ public:
 // 					 == CGAL_COPLANAR );
 	int i1,i2; // indices in the facet
 	// TBD: replace using nextposaroundij
-	if ( i == ((inf+1)&3) ) {
+	if ( 3 == ((inf+1)&3) ) {
 	  i1 = (inf+2)&3;
 	  i2 = (inf+3)&3;
 	}
 	else {
-	  if ( i == ((inf+2)&3) ) {
+	  if ( 3 == ((inf+2)&3) ) {
 	    i1 = (inf+3)&3;
 	    i2 = (inf+1)&3;
 	  }
@@ -1621,7 +1622,7 @@ public:
 	  // p lies in f
 	  { 
 	    lt = FACET;
-	    li = i;
+	    li = 3;
 	    return CGAL_ON_BOUNDED_SIDE;
 	  }
 	case CGAL_ZERO:
@@ -1670,7 +1671,8 @@ public:
 		const Facet & f,
 		Locate_type & lt, int & li, int & lj) const
     {
-      return side_of_facet(p, f.first, f.second, lt, li, lj);
+      CGAL_triangulation_precondition( f.second == 3 );
+      return side_of_facet(p, f.first, lt, li, lj);
     }
 
   CGAL_Bounded_side
@@ -1733,7 +1735,6 @@ public:
   CGAL_Bounded_side
   side_of_edge(const Point & p,
 		Cell_handle c,
-		int i, int j,
 		Locate_type & lt, int & li) const
     // supposes dimension 1 otherwise does not work for infinite edges
     // returns :
@@ -1747,21 +1748,21 @@ public:
     // li refer to indices in the cell c 
     {//side_of_edge
       CGAL_triangulation_precondition( dimension() == 1 );
-      if ( ! is_infinite(c,i,j) ) {
+      if ( ! is_infinite(c,0,1) ) {
 	return side_of_segment(p,
-			       c->vertex(i)->point(),
-			       c->vertex(j)->point(),
+			       c->vertex(0)->point(),
+			       c->vertex(1)->point(),
 			       lt, li);
       }
       else { // infinite edge
-	if ( geom_traits().equal( p, c->vertex(i)->point() ) ) {
+	if ( geom_traits().equal( p, c->vertex(0)->point() ) ) {
 	  lt = VERTEX;
-	  li = i;
+	  li = 0;
 	  return CGAL_ON_BOUNDARY;
 	}
-	if ( geom_traits().equal( p, c->vertex(j)->point() ) ) {
+	if ( geom_traits().equal( p, c->vertex(1)->point() ) ) {
 	  lt = VERTEX;
-	  li = j;
+	  li = 1;
 	  return CGAL_ON_BOUNDARY;
 	}
 	// does not work in dimension > 2
@@ -1772,8 +1773,8 @@ public:
 	Vertex_handle
 	  v0 = n->vertex(0),
 	  v1 = n->vertex(1);
-	CGAL_Comparison_result c = geom_traits().compare_x(v0->point(),
-						  v1->point());
+	CGAL_Comparison_result c = geom_traits().compare_x
+	  (v0->point(), v1->point());
 	CGAL_Comparison_result cp;
 	if ( c == CGAL_EQUAL ) {
 	  c = geom_traits().compare_y(v0->point(),
@@ -1809,7 +1810,9 @@ public:
 	       const Edge & e,
 	       Locate_type & lt, int & li) const
     {
-      return side_of_edge(p, e.first, e.second, e.third, lt, li);
+      CGAL_triangulation_precondition( e.second == 0 );
+      CGAL_triangulation_precondition( e.third == 1 );
+      return side_of_edge(p, e.first, lt, li);
     }
 
   //INSERTION 
@@ -2044,7 +2047,7 @@ public:
 					 ( j == 0 || j == 1 ) );
 	int li;
 	Locate_type lt;
-	CGAL_triangulation_precondition( side_of_edge(p,c,0,1,lt,li)
+	CGAL_triangulation_precondition( side_of_edge(p,c,lt,li)
 					 == CGAL_ON_BOUNDED_SIDE );
 	break;
       }
@@ -2108,7 +2111,7 @@ public:
 	Cell_handle cur = c;
 	Cell_handle prev = c->neighbor( ccw(c->index(infinite)) );
 
-	while ( side_of_facet( p, cur, 3, loc, i, j ) 
+	while ( side_of_facet( p, cur, loc, i, j ) 
 		// in dimension 2, cur has only one facet numbered 3
 		== CGAL_ON_BOUNDED_SIDE ) {
 	    // loc must be == CELL since p supposed to be
@@ -2136,7 +2139,7 @@ public:
 	prev = c;
 	cur = c->neighbor( ccw(c->index(v)) );
 
-	while ( side_of_facet( p, cur, 3, loc, i, j ) 
+	while ( side_of_facet( p, cur, loc, i, j ) 
 		== CGAL_ON_BOUNDED_SIDE ) {
 	  cur->set_vertex( cur->index(infinite), v );
 	  prev = cur;
