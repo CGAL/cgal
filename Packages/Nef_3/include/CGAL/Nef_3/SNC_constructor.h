@@ -14,7 +14,7 @@
 // $Source$
 // $Revision$ $Date$
 // $Name$
-//
+//file:///usr/share/doc/mozilla-browser/localstart.html
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de> 
 //                 Miguel Granados    <granados@mpi-sb.mpg.de>
 //                 Susan Hert         <hert@mpi-sb.mpg.de>
@@ -351,6 +351,12 @@ public:
      view of $e$. \precond $p$ is part of $e$.}*/
 
   Vertex_handle clone_SM( Vertex_handle vin);
+
+  template<typename Selection>
+  Vertex_handle create_edge_facet_overlay( Halfedge_handle e, 
+					   Halffacet_handle f,
+					   const Point_3& p,
+					   const Selection& BOP);
 
  private:
   void pair_up_halfedges() const;
@@ -997,7 +1003,7 @@ create_from_edge(Halfedge_handle e,
   bool first = true;
 
   // SETDTHREAD(19*43*131);
-  SM_decorator EE(vertex(e));
+  /*
   SHalfedge_handle eee;
   TRACEN("---------------------" << point(vertex(e)));
   CGAL_nef3_forall_shalfedges(eee,EE)
@@ -1005,6 +1011,7 @@ create_from_edge(Halfedge_handle e,
 	   "|" << EE.mark(eee) << 
 	   " " << EE.mark(EE.face(eee)));
   TRACEN(" ");
+  */
 
   if(E.is_isolated(e)) {
     SFace_handle f = D.new_face();
@@ -1022,9 +1029,11 @@ create_from_edge(Halfedge_handle e,
     first = false;
   }
 
+  /*
   CGAL_nef3_forall_shalfedges(eee,D)
     TRACEN("|" << D.circle(eee));
   TRACEN(" ");
+  */
 
   ec1 = E.out_edges(e);
   SHalfedge_around_svertex_circulator ec2(D.out_edges(v1));
@@ -1045,11 +1054,13 @@ create_from_edge(Halfedge_handle e,
   SM_point_locator L(v);
   L.init_marks_of_halfspheres();
 
+  /*
   CGAL_nef3_forall_shalfedges(eee,D)
     TRACEN("|" << D.circle(eee) <<
 	   "|" << D.mark(eee) << 
 	   " " << D.mark(D.face(eee)));
   TRACEN("---------------------");
+  */
 
   return v;
 }
@@ -1130,6 +1141,90 @@ clone_SM( typename SNC_::Vertex_handle vin) {
   D.mark_of_halfsphere(+1) = E.mark_of_halfsphere(+1);
 
   return vout;
+}
+
+template <typename SNC_>
+template <typename Selection>
+typename SNC_::Vertex_handle
+SNC_constructor<SNC_>::
+create_edge_facet_overlay( typename SNC_::Halfedge_handle e, 
+			   typename SNC_::Halffacet_handle f,
+			   const Point_3& p,
+			   const Selection& BOP) {
+
+  TRACEN("edge facet overlay " << p);
+
+  Unique_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
+
+  SM_decorator D(sncp()->new_vertex(p, BOP(mark(e), mark(f))));
+  SM_const_decorator E(source(e));
+  
+  Sphere_point ps = calc_point(e);
+  ps = normalized(ps);
+  SVertex_handle v1 = D.new_vertex(ps);
+  SVertex_handle v2 = D.new_vertex(ps.antipode());
+  TRACEN("new svertex 1 " << ps);
+  TRACEN("new svertex 2 " << ps.antipode());
+  Halffacet_handle faces_p(f);
+  Vector_3 vec(ps);
+  if(plane(faces_p).oriented_side(p+vec) == ON_NEGATIVE_SIDE)
+    faces_p = twin(faces_p);
+  D.mark(v1) = BOP(E.mark(e), mark(volume(faces_p)));
+  D.mark(v2) = BOP(E.mark(e), mark(volume(twin(faces_p))));
+
+  if(E.is_isolated(e)) {
+    CGAL_nef3_assertion_msg(0,"not implemented yet");
+  }
+  else {
+    SVertex_handle sv;
+    SHalfedge_handle se1;
+    SHalfedge_handle se2;
+    SFace_handle sf;
+    Sphere_circle c(plane(f));
+
+    SHalfedge_around_svertex_const_circulator ec(E.out_edges(e)), ee(ec);
+    CGAL_For_all(ec,ee) {
+      Sphere_segment seg(E.point(E.source(ec)), E.point(E.source(ec)).antipode(), E.circle(ec));
+      Sphere_point sp(intersection(c, seg.sphere_circle()));
+      TRACEN(seg <<" has_on " << sp);
+      if(!seg.has_on(sp))
+	sp = sp.antipode();
+      sv = D.new_vertex(sp);
+      TRACEN("new svertex 3 " << normalized(sp));
+      D.mark(sv) = BOP(E.mark(ec), mark(f));
+      se1 = D.new_edge_pair(v1, sv);
+      se2 = D.new_edge_pair(sv, v2);
+      D.mark(se1) = BOP(E.mark(ec), mark(volume(faces_p)));
+      D.mark(se2) = BOP(E.mark(ec), mark(volume(twin(faces_p))));
+      mark_of_right_sface[se1] = E.mark(E.face(ec));
+      D.circle(se1) = D.circle(se2) = E.circle(ec);
+      D.circle(D.twin(se1)) = D.circle(D.twin(se2)) = D.circle(se1).opposite();
+    }
+    
+    SHalfedge_around_svertex_circulator ec2(D.out_edges(v1)), ee2(ec2);
+    CGAL_For_all(ec2,ee2) {
+      SHalfedge_around_svertex_circulator en(ec2);
+      en++;
+      se1 = D.new_edge_pair(twin(ec2), twin(en), -1, 1);
+      TRACEN("new edge pair " << ssource(twin(ec2))->tmp_point() << " -> " << ssource(twin(en))->tmp_point());
+      D.circle(se1) = Sphere_circle(plane(faces_p));
+      D.circle(D.twin(se1)) = D.circle(se1).opposite();
+      D.mark(se1) = BOP(mark_of_right_sface[ec2], mark(faces_p));
+      
+      sf = D.new_face();
+      D.mark(sf) = BOP(mark_of_right_sface[ec2], mark(volume(faces_p)));
+      D.link_as_face_cycle(se1,sf);
+      sf = D.new_face();
+      D.mark(sf) = BOP(mark_of_right_sface[ec2], mark(volume(twin(faces_p))));
+      D.link_as_face_cycle(D.twin(se1),sf);
+    }   
+  }
+  TRACEN("");
+
+  SM_point_locator L(D.center_vertex());
+  L.init_marks_of_halfspheres();
+
+  return D.center_vertex();
 }
 
 template <typename SNC_>

@@ -924,12 +924,14 @@ public:
 
     void operator()( Halfedge_handle e0, Object_handle o1, const Point_3& p)
       const {
+
+      Halfedge_handle e;
+      Halffacet_handle f;
+
       TRACEN("Intersection_call_back: intersection reported on " << p << " (normalized: " << normalized(p) << " )");
 #ifdef _DEBUG
       SNC_decorator D0(snc0);
       TRACEN("edge 0 has source " << point(source(e0)) << " and direction " << D0.tmp_point(e0));
-      Halfedge_handle e;
-      Halffacet_handle f;
       SNC_decorator D1(snc1);
       if( assign( e, o1)) {
 	TRACEN("edge 1 has source " << point(source(e)) << " and direction " << D1.tmp_point(e));
@@ -940,15 +942,28 @@ public:
       else 
       	CGAL_nef3_assertion_msg( 0, "wrong handle");
 #endif      
-      SNC_decorator D(result);
-      Vertex_handle v0, v1;
-      v0 = D.qualify_with_respect( p, Object_handle(e0), snc0);
-      v1 = D.qualify_with_respect( p, o1, snc1);
-      if( inverse_order)
-	std::swap( v0, v1);
-      D.binop_local_views( v0, v1, bop, result);
-      result.delete_vertex(v0);
-      result.delete_vertex(v1);
+
+      if( assign( e, o1)) {
+	SNC_decorator D(result);
+	Vertex_handle v0, v1;
+	v0 = D.qualify_with_respect( p, Object_handle(e0), snc0);
+	v1 = D.qualify_with_respect( p, o1, snc1);
+	if( inverse_order)
+	  std::swap( v0, v1);
+	D.binop_local_views( v0, v1, bop, result);
+	result.delete_vertex(v0);
+	result.delete_vertex(v1);
+      }
+      else if( assign( f, o1)) {
+	SNC_constructor C(result);
+	Vertex_handle v0 = C.create_edge_facet_overlay(e0, f, p, bop);
+	SM_overlayer O(v0);
+	O.simplify();
+      }
+      else 
+	CGAL_nef3_assertion_msg( 0, "wrong handle");
+
+
     }
   private:
     SNC_structure& snc0;

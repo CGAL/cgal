@@ -465,6 +465,7 @@ void link_as_face_cycle(SHalfedge_handle e, SFace_handle f) const
   SHalfedge_around_sface_circulator hfc(e), hend(hfc);
 
   CGAL_For_all(hfc,hend) set_face(hfc,f); 
+
   store_boundary_object(e,f);
 } 
 

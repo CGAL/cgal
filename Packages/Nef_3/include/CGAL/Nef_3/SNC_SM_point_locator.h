@@ -343,7 +343,7 @@ public:
       }
     }
 
-    CGAL_nef3_forall_shalfedges(e,*this) {
+    CGAL_nef3_forall_sedges(e,*this) {
       if ( visited[e] ) continue;
       Sphere_segment se = segment(e);
       Sphere_point p_res;
