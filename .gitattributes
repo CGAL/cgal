@@ -1391,6 +1391,8 @@ Packages/Planar_map/doc_tex/Planar_map/example_p.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Planar_map/example_p.ps -text
 Packages/Planar_map/doc_tex/Planar_map/face.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Planar_map/face.ipe -text
+Packages/Planar_map/doc_tex/Planar_map/insert_at.fig -text
+Packages/Planar_map/doc_tex/Planar_map/insert_at.ps -text
 Packages/Planar_map/doc_tex/Topological_map/dcel.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Topological_map/dcel.ipe -text
 Packages/Planar_map/doc_tex/Topological_map/my_face.gif -text svneol=unset#unset
@@ -1401,6 +1403,8 @@ Packages/Planar_map/doc_tex/basic/Planar_map/example_p.gif -text svneol=unset#un
 Packages/Planar_map/doc_tex/basic/Planar_map/example_p.ps -text
 Packages/Planar_map/doc_tex/basic/Planar_map/face.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/basic/Planar_map/face.ipe -text
+Packages/Planar_map/doc_tex/basic/Planar_map/insert_at.fig -text
+Packages/Planar_map/doc_tex/basic/Planar_map/insert_at.ps -text
 Packages/Planar_map/doc_tex/basic/Topological_map/dcel.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/basic/Topological_map/dcel.ipe -text
 Packages/Planar_map/doc_tex/basic/Topological_map/my_face.gif -text svneol=unset#unset
