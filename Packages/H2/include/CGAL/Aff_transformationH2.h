@@ -25,7 +25,6 @@
 #ifndef CGAL_AFF_TRANSFORMATIONH2_H
 #define CGAL_AFF_TRANSFORMATIONH2_H
 
-#include <CGAL/No_op_allocator.h>
 #include <CGAL/rational_rotation.h>
 
 CGAL_BEGIN_NAMESPACE
