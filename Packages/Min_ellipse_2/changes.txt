@@ -1,8 +1,15 @@
-3.22 rursu: forgot to add the makefile in demo.
-
-3.21 rursu: replaced Leda_window based demo with Qt_widget based demo.
 
 Changes done to the `Min_ellipse_2' package.
+
+
+Version 3.23 on 11-Jun-2003
+- Added workaround for missing member templates in Sun STL [af]
+
+Version 3.22 on 10-Jun2003 [rursu]
+- Forgot to add the makefile in demo.
+
+Version 3.21 on 10-Jun2003 [rursu]
+- Replaced Leda_window based demo with Qt_widget based demo.
 
 Version 3.20 on 7-May-2003
 - Removed old workarounds

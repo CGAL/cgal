@@ -1,6 +1,10 @@
-3.17 rursu: replaced Leda_window based demo with Qt_widget based demo
-
 Changes done to the `Min_circle_2' package
+
+Version 3.18 on 11-Jun-2003
+- Added workaround for missing member templates in Sun STL [af]
+
+Version 3.17  on 10-Jun-2003
+- Replaced Leda_window based demo with Qt_widget based demo  [rursu]
 
 Version 3.16 on 7-May-2003
 - Removed old workarounds

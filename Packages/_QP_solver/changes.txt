@@ -1,11 +1,10 @@
-Version 0.9.10 on 10-Jun-2003
-- Added workaround for missing member templates in Sun STL [af]
+Changes done to the `_QP_solver' package
+
+Version 0.9.10 on 10-Jun-2003 [af]
+- Added workaround for missing member templates in Sun STL
 
 Version 0.9.9  on 05-Jun-2003 rursu
  - replaced CGAL_TYPENAME_MSVC_NULL by typename keyword
-
-
-Changes done to the `_QP_solver' package
 
 Version 0.9.8 on 12-Apr-2003
 - G++ 3.4 fixes by Sylvain.
