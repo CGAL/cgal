@@ -21,6 +21,7 @@
 #define CGAL_CONFORM_2_H
 #include <list>
 #include <map>
+#include <queue>
 #include <iterator>
 #include <functional>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -84,6 +85,14 @@ public:
   //@{
   enum Initialization { NONE, CLUSTER, DELAUNAY, GABRIEL };
   //@}
+
+  /** \name Types needed to mark the domain for Delaunay_mesh_2<Tr> */
+  //@{
+  typedef std::list<Point> Seeds;
+  typedef typename Seeds::const_iterator Seeds_iterator;
+  typedef Seeds_iterator Seeds_const_iterator;
+  //@}
+
 
 protected:
   // typedefs for private members types
@@ -223,8 +232,6 @@ public:
 		    const Face_handle& fh,
 		    const int i) const
       {
-	typedef typename Geom_traits::Angle_2 Angle_2;
-	
 	const Angle_2 angle = ct.geom_traits().angle_2_object();
 	
 	const Point& a = fh->vertex(ct.cw(i))->point();
@@ -240,8 +247,6 @@ public:
 		    const int i,
 		    const Point& p) const	
       {
-	typedef typename Geom_traits::Angle_2 Angle_2;
-	
 	const Angle_2 angle = ct.geom_traits().angle_2_object();
 	
 	const Point& a = fh->vertex(ct.cw(i))->point();
@@ -261,7 +266,7 @@ public:
 	typedef typename Geom_traits::Side_of_oriented_circle_2
 	  Side_of_oriented_circle_2;
 	
-	const Side_of_oriented_circle_2 in_circle =
+	Side_of_oriented_circle_2 in_circle =
 	  ct.geom_traits().side_of_oriented_circle_2_object();
 	
 	const Vertex_handle& vi = fh->vertex(i);
@@ -373,6 +378,16 @@ public:
   void clear();
   //@}
 
+  /** \name MARKING FUNCTIONS */
+
+  /** Procedure that marks facets according to a list of seeds. Used by
+      Delaunay_mesh_2<Tr>. This function will only be availlable if
+      Face_base is model of DelaunayMeshFaceBase_2. */
+  template <typename Seeds_it>
+  void mark_facets(Seeds_it begin,
+		   Seeds_it end,
+		   bool mark = false);
+
   /** \name CONFORMING FUNCTIONS */
   //@{
   void make_conforming_Delaunay();
@@ -425,7 +440,6 @@ protected:
       Construct_translated_point_2;
   typedef typename Geom_traits::Compute_squared_distance_2
       Compute_squared_distance_2;
-  typedef typename Geom_traits::Angle_2 Angle_2;
   typedef typename Geom_traits::Construct_vector_2
       Construct_vector_2;
   typedef typename Geom_traits::Construct_scaled_vector_2
@@ -433,6 +447,7 @@ protected:
   typedef typename Geom_traits::Construct_midpoint_2
       Construct_midpoint_2;
   typedef typename Geom_traits::Orientation_2 Orientation_2;
+  typedef typename Geom_traits::Angle_2 Angle_2;
   //@}
 
 private:
@@ -454,6 +469,17 @@ private:
 
   // --- PRIVATE MEMBER FUNCTIONS ---
 private: 
+
+  /** \name auxiliary functions to set markers
+   These functions will only be availlable if Face_base is model of
+   DelaunayMeshFaceBase_2 */
+
+  // mark all faces of the convex_hull but those connected to the
+  // infinite faces
+  void mark_convex_hull();
+
+  // propagate the mark m recursivly
+  void propagate_marks(Face_handle f, bool m);
 
   /** \name Auxiliary functions to handle clusters
       See more functions about clusters in protected member functions. */
@@ -657,6 +683,35 @@ clear()
   Triangulation::clear();
 }
 
+// --- MARKING FUNCTIONS ---
+
+template <class Tr>
+template <typename Seeds_it>
+void Conforming_Delaunay_triangulation_2<Tr>::
+mark_facets(Seeds_it begin,
+	    Seeds_it end,
+	    bool mark /* = false */)
+{
+  if (this->dimension()<2) return;
+  if( begin != end )
+    {
+      for(All_faces_iterator it=all_faces_begin();
+	  it!=all_faces_end();
+	  ++it)
+	it->set_marked(!mark);
+	  
+      for(Seeds_const_iterator sit=begin; sit!=end; ++sit)
+	{
+	  Face_handle fh=locate(*sit);
+	  if(fh!=NULL)
+	    propagate_marks(fh, mark);
+	}
+    }
+  else
+    mark_convex_hull();
+  propagate_marks(infinite_face(), false);
+};
+
 // --- CONFORMING FUNCTIONS ---
 
 template <class Tr>
@@ -715,6 +770,43 @@ step_by_step(const Is_locally_conform& is_loc_conf)
 // --- PRIVATE MEMBER FUNCTIONS ---
 
 #ifndef CGAL_IT_IS_A_CONSTRAINED_TRIANGULATION_PLUS
+
+template <class Tr>
+void Conforming_Delaunay_triangulation_2<Tr>::
+mark_convex_hull()
+{
+  for(All_faces_iterator fit=all_faces_begin();
+      fit!=all_faces_end();
+      ++fit)
+    fit->set_marked(true);
+  propagate_marks(infinite_face(), false);
+}
+
+template <class Tr>
+void Conforming_Delaunay_triangulation_2<Tr>::
+propagate_marks(const Face_handle fh, bool mark)
+{
+  // std::queue only works with std::list on VC++6, and not with
+  // std::deque, which is the default
+  // But it should be fixed by VC++7 know. [Laurent Rineau 2003/03/24]
+  std::queue<Face_handle/*, std::list<Face_handle>*/> face_queue;
+  fh->set_marked(mark);
+  face_queue.push(fh);
+  while( !face_queue.empty() )
+    {
+      Face_handle fh = face_queue.front();
+      face_queue.pop();
+      for(int i=0;i<3;i++)
+	{
+	  const Face_handle& nb = fh->neighbor(i);
+	  if( !fh->is_constrained(i) && (mark != nb->is_marked()) )
+	    {
+	      nb->set_marked(mark);
+	      face_queue.push(nb);
+	    }
+	}
+    }
+};
 
 template <class Tr>
 void Conforming_Delaunay_triangulation_2<Tr>::

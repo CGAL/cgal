@@ -22,12 +22,10 @@
 #include <CGAL/Conforming_Delaunay_triangulation_2.h>
 #include <CGAL/Double_map.h>
 
-#include <queue>
-
 CGAL_BEGIN_NAMESPACE
 
 /**
-   Tr is a Delaunay con`strained triangulation (with intersections or not)
+   Tr is a Delaunay constrained triangulation (with intersections or not)
 */
 template <class Tr>
 class Delaunay_mesh_2: public Conforming_Delaunay_triangulation_2<Tr>
@@ -54,11 +52,12 @@ public:
   typedef typename Base::Point                  Point;
   //@}
 
-  /** \name Types needed to access member datas */
+  /** \name Types needed to access member datas
+   (Inherited from Conforming_DT.) */
   //@{
-  typedef std::list<Point> Seeds;
-  typedef typename Seeds::const_iterator Seeds_iterator;
-  typedef Seeds_iterator Seeds_const_iterator;
+  typedef typename Base::Seeds Seeds;
+  typedef typename Base::Seeds_const_iterator Seeds_const_iterator;
+  typedef Seeds_const_iterator Seeds_iterator;
   //@}
 
   /** \name Traits types */
@@ -111,7 +110,7 @@ public:
   }
 
   /** Procedure that forces facets to be marked immediatelly. \em Not
-      documented. */
+      documented. Call the base classes'one. */
   void mark_facets();
 
   /** \name MESHING FUNCTIONS */
@@ -184,17 +183,6 @@ private:
 
 private: 
   /** \name PRIVATE MEMBER FUNCTIONS */
-
-  /** \name auxiliary functions to set markers */
-
-  // mark all faces of the convex_hull but those connected to the
-  // infinite faces
-  void mark_convex_hull();
-
-  // propagate the mark m recursivly
-  void propagate_marks(Face_handle f, bool m);
-
-
 
   // -- functions that maintain the map of bad faces
 
@@ -309,24 +297,7 @@ template <class Tr>
 void Delaunay_mesh_2<Tr>::
 mark_facets()
 {
-  if (Base::dimension()<2) return;
-  if( seeds_begin() != seeds_end() )
-    {
-      for(All_faces_iterator it=all_faces_begin();
-	  it!=all_faces_end();
-	  ++it)
-	it->set_marked(!seeds_mark);
-	  
-      for(Seeds_const_iterator sit=seeds_begin(); sit!=seeds_end(); ++sit)
-	{
-	  Face_handle fh=locate(*sit);
-	  if(fh!=NULL)
-	    propagate_marks(fh, seeds_mark);
-	}
-    }
-  else
-    mark_convex_hull();
-  propagate_marks(infinite_face(), false);
+  Conform::mark_facets(seeds.begin(), seeds.end(), seeds_mark);
 }
 
 // --- MESHING FUNCTIONS ---
@@ -389,43 +360,6 @@ step_by_step_refine_mesh()
 }
 
 // --- PRIVATE MEMBER FUNCTIONS ---
-
-template <class Tr>
-void Delaunay_mesh_2<Tr>::
-mark_convex_hull()
-{
-  for(All_faces_iterator fit=all_faces_begin();
-      fit!=all_faces_end();
-      ++fit)
-    fit->set_marked(true);
-  propagate_marks(infinite_face(), false);
-}
-
-template <class Tr>
-void Delaunay_mesh_2<Tr>::
-propagate_marks(const Face_handle fh, bool mark)
-{
-  // std::queue only works with std::list on VC++6, and not with
-  // std::deque, which is the default
-  // But it should be fixed by VC++7 know. [Laurent Rineau 2003/03/24]
-  std::queue<Face_handle/*, std::list<Face_handle>*/> face_queue;
-  fh->set_marked(mark);
-  face_queue.push(fh);
-  while( !face_queue.empty() )
-    {
-      Face_handle fh = face_queue.front();
-      face_queue.pop();
-      for(int i=0;i<3;i++)
-	{
-	  const Face_handle& nb = fh->neighbor(i);
-	  if( !fh->is_constrained(i) && (mark != nb->is_marked()) )
-	    {
-	      nb->set_marked(mark);
-	      face_queue.push(nb);
-	    }
-	}
-    }
-}
 
 template <class Tr>
 inline
