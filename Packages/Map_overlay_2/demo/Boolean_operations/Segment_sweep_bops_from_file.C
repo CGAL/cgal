@@ -23,23 +23,10 @@ int main()
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Planar_map_2.h>
 
-#include <CGAL/sweep_to_construct_planar_map_2.h>
-
-#ifndef CGAL_ARR_2_BOP_DCEL_H
 #include <CGAL/Bop_default_dcel.h>
-#endif
-
-#ifndef CGAL_MAP_OVERLAY_NAIVE_H
 #include <CGAL/Map_overlay.h>
-#endif
-
-#ifndef CGAL_MAP_OVERLAY_NAIVE_H
 #include <CGAL/Map_overlay_naive.h>
-#endif
-
-#ifndef BOOLEAN_OPERATIONS_H
 #include <CGAL/Boolean_operations_2.h>
-#endif
 
 #include <CGAL/leda_rational.h>
 #include <LEDA/rat_window.h>
@@ -61,7 +48,7 @@ typedef CGAL::Bop_default_dcel<Traits>          Dcel;
 typedef CGAL::Planar_map_2<Dcel, Traits>        PM;
 
 typedef CGAL::Map_overlay_default_notifier<PM>             
-                                              Ovl_change_notification;
+                                                Ovl_change_notification;
 typedef CGAL::Map_overlay_2<PM, Ovl_change_notification>   MapOverlay;
 typedef CGAL::Boolean_operations_2<MapOverlay>             Bops;
 

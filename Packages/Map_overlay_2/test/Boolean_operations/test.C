@@ -9,27 +9,14 @@
 
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Pm_default_dcel.h>
-#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-#ifndef CGAL_BOP_DEFAULT_DCEL_H
 #include <CGAL/Bop_default_dcel.h>
-#endif
-
-#ifndef CGAL_MAP_OVERLAY_DEFAULT_NOTIFIER_H
 #include <CGAL/Map_overlay_default_notifier.h>
-#endif
-
-#ifndef CGAL_MAP_OVERLAY_H
 #include <CGAL/Map_overlay.h>
-#endif
-
-#ifndef BOOLEAN_OPERATIONS_2_H
 #include <CGAL/Boolean_operations_2.h>
-#endif
- 
 #include <CGAL/IO/Arr_iostream.h>
-
 #include <CGAL/sweep_to_construct_planar_map_2.h>
 
 // Quotient is included anyway, because it is used to read
@@ -64,7 +51,7 @@ int main(int argc, char* argv[])
 #include <LEDA/polygon.h>
 
 // Choose traits
-#include <CGAL/Arr_leda_segment_exact_traits.h>
+#include <CGAL/Arr_leda_segment_traits_2.h>
 
 // Quotient is included anyway, because it is used to read
 // data files. Quotient can read both integers and fractions.
@@ -79,43 +66,46 @@ class Boolean_operations_test {
   };
   
 public:
-  //typedef CGAL::Quotient<int>                NT;
-  typedef leda_rational                      NT;
-  typedef CGAL::Cartesian<NT>                R;
-  typedef CGAL::Arr_segment_exact_traits<R>  Traits;
-  //typedef CGAL::Arr_segment_exact_traits  Traits;
-  typedef Traits::Point                      Point;
-  typedef Traits::X_curve                    X_curve;
-  typedef Traits::Curve                      Curve;
+  //typedef CGAL::Quotient<int>                         NT;
+  typedef leda_rational                                 NT;
+  typedef CGAL::Cartesian<NT>                           R;
+  typedef CGAL::Arr_segment_traits_2<R>                 Traits;
 
-  typedef CGAL::Polygon_traits_2<R>          Polygon_traits;
-  typedef std::list<Point>                   Polygon_Container;
-  typedef CGAL::Polygon_2<Polygon_traits, Polygon_Container > Polygon;
-  typedef std::list<Polygon>                 Polygon_list;
+  typedef Traits::Point_2                               Point;
+  typedef Traits::X_curve_2                             X_curve;
+  typedef Traits::Curve_2                               Curve;
 
-  typedef CGAL::Bop_default_dcel<Traits>                 Dcel;
-  typedef CGAL::Planar_map_2<Dcel, Traits>               Planar_map;
+  typedef CGAL::Polygon_traits_2<R>                     Polygon_traits;
+  typedef std::list<Point>                              Polygon_Container;
+  typedef CGAL::Polygon_2<Polygon_traits, Polygon_Container>    Polygon;
+  typedef std::list<Polygon>                                    Polygon_list;
+
+  typedef CGAL::Bop_default_dcel<Traits>                        Dcel;
+  typedef CGAL::Planar_map_2<Dcel, Traits>                      Planar_map;
+typedef CGAL::Planar_map_with_intersections_2<Planar_map>       Pmwx;
   typedef CGAL::Map_overlay_default_notifier<Planar_map> 
                                              MapOverlay_change_notification;
-  typedef CGAL::Map_overlay_2<Planar_map,MapOverlay_change_notification>  MapOverlay; 
-  typedef CGAL::Boolean_operations_2<MapOverlay>                        Bops;
+  typedef CGAL::Map_overlay_2<Planar_map,MapOverlay_change_notification>
+                                                        MapOverlay; 
+  typedef CGAL::Boolean_operations_2<MapOverlay>         Bops;
   
   typedef Planar_map::Ccb_halfedge_circulator   Ccb_halfedge_circulator;
-  typedef Planar_map::Ccb_halfedge_const_circulator   Ccb_halfedge_const_circulator;
+  typedef Planar_map::Ccb_halfedge_const_circulator
+                                                Ccb_halfedge_const_circulator;
   typedef Planar_map::Face_handle               Face_handle;
   typedef Planar_map::Vertex_iterator           Vertex_iterator;
   typedef Planar_map::Face_iterator             Face_iterator;
   typedef Planar_map::Holes_iterator            Holes_iterator;
-  typedef Planar_map::Holes_const_iterator            Holes_const_iterator;
+  typedef Planar_map::Holes_const_iterator      Holes_const_iterator;
   typedef Planar_map::Face                      Face;
   typedef Planar_map::Halfedge                  Halfedge;
   typedef Planar_map::Vertex                    Vertex;
   
-  typedef Bops::Faces_container                      Faces_container;
-  typedef Bops::Halfedges_container                  Halfedges_container;
-  typedef Bops::Vertices_container                   Vertices_container;
+  typedef Bops::Faces_container                 Faces_container;
+  typedef Bops::Halfedges_container             Halfedges_container;
+  typedef Bops::Vertices_container              Vertices_container;
   
-  //  typedef CGAL::Planar_map_with_intersections_2<Planar_map>   Pmwx;
+  //typedef CGAL::Planar_map_with_intersections_2<Planar_map>   Pmwx;
   
   typedef CGAL::Arr_base_node<X_curve>          Base_node;
   typedef CGAL::Pm_dcel<CGAL::Arr_2_vertex_base<Point>,
@@ -269,10 +259,12 @@ private:
   {    
     for (InputIterator1 p_iter=points_begin; p_iter!= points_end; ++p_iter){
       int num_vertices_above=0;
-      for (InputIterator2 poly_iter=polygons_begin; poly_iter!=polygons_end; ++poly_iter){
+      for (InputIterator2 poly_iter=polygons_begin; poly_iter!=polygons_end;
+           ++poly_iter){
         bool found=false;
         for (Polygon::Vertex_const_iterator v_iter=poly_iter->vertices_begin();
-             v_iter != poly_iter->vertices_end() && !found; ++v_iter){  // *e_iter is CGAL Segment.
+             v_iter != poly_iter->vertices_end() && !found; ++v_iter){
+            // *e_iter is CGAL Segment.
           if (*v_iter == *p_iter)
             found=true;
         }
@@ -280,7 +272,8 @@ private:
           ++num_vertices_above;
       }
       
-      //cout << *p_iter <<" is below "<< num_vertices_above <<" vertices"<<endl;
+      //cout << *p_iter <<" is below "<< num_vertices_above <<" vertices"
+      //<<endl;
       
       if (num_vertices_above==covering)
         points.insert(*p_iter);
@@ -304,10 +297,12 @@ private:
     
     for (InputIterator1 p_iter=points_begin; p_iter!= points_end; ++p_iter){
       int num_edges_above=0;
-      for (InputIterator2 poly_iter=polygons_begin; poly_iter!=polygons_end; ++poly_iter){
+      for (InputIterator2 poly_iter=polygons_begin; poly_iter!=polygons_end;
+           ++poly_iter){
         bool found=false;
         for (Polygon::Edge_const_iterator e_iter=poly_iter->edges_begin();
-             e_iter != poly_iter->edges_end() && !found; ++e_iter){  // *e_iter is CGAL Segment.
+             e_iter != poly_iter->edges_end() && !found; ++e_iter){
+            // *e_iter is CGAL Segment.
           Curve cv(*e_iter);
           if (traits.curve_get_point_status(cv,*p_iter) == Traits::ON_CURVE)
             found=true;
@@ -342,8 +337,8 @@ private:
   }
   
   // we can use this function, instead of computing exact covering, since 
-  // there are not isolated vertices in our structures. Hence if a vertex is below 
-  // a face - it has to be connected to at least one edge.
+  // there are not isolated vertices in our structures. Hence if a vertex is
+  // below  a face - it has to be connected to at least one edge.
   template <class InputIterator1, class InputIterator2,class Container>
   void get_points_below_faces(InputIterator1 points_begin,
                               InputIterator1 points_end,
@@ -353,7 +348,8 @@ private:
   {
     std::set<Point,less_xy<Point> >  endpoints(points_begin, points_end);
     
-    for (InputIterator2 face_iter=faces_begin; face_iter!=faces_end; ++face_iter){
+    for (InputIterator2 face_iter=faces_begin; face_iter!=faces_end;
+         ++face_iter){
       if ((*face_iter)->does_outer_ccb_exist()){
         Arrangement::Ccb_halfedge_circulator circ=(*face_iter)->outer_ccb();
         do {
@@ -376,8 +372,8 @@ private:
   
   // This function is written for the symmetric difference.
   // the two former functions: get_points_below_vertex_with_covering and 
-  // get_points_below_edge_with_covering could have return a point inside a polygon 
-  // since this check was not perfromed. Here we clean such points.
+  // get_points_below_edge_with_covering could have return a point inside a
+  // polygon since this check was not perfromed. Here we clean such points.
   template <class InputIterator, class Container>
   void  remove_points_below_faces(InputIterator polygons_begin,
                                   InputIterator polygons_end, 
@@ -413,7 +409,8 @@ private:
     
     std::list<Point> intersections;
     
-    // inserting to common points the endpoints which have covering number of vertices above.
+    // inserting to common points the endpoints which have covering number of
+    // vertices above.
     for (InputIterator1 poly_iter=polygons_begin; 
          poly_iter != polygons_end; ++poly_iter){
       for (Polygon::Vertex_iterator v_iter=poly_iter->vertices_begin(); 
@@ -477,11 +474,15 @@ private:
       Traits  traits;
       
       /* // for debugging!
-        cout<<"("<<CGAL::to_double(h_.curve().source().x())<<","<< CGAL::to_double(h_.curve().source().y())<<") ";
-        cout<<"("<<CGAL::to_double(h_.curve().target().x())<<","<< CGAL::to_double(h_.curve().target().y())<<") "<<endl;
+        cout<<"("<<CGAL::to_double(h_.curve().source().x())<<","
+        << CGAL::to_double(h_.curve().source().y())<<") ";
+        cout<<"("<<CGAL::to_double(h_.curve().target().x())<<","
+        << CGAL::to_double(h_.curve().target().y())<<") "<<endl;
  
-        cout<<"("<<CGAL::to_double(halfedge.curve().source().x())<<","<< CGAL::to_double(halfedge.curve().source().y())<<") ";
-        cout<<"("<<CGAL::to_double(halfedge.curve().target().x())<<","<< CGAL::to_double(halfedge.curve().target().y())<<") "<<endl;
+        cout<<"("<<CGAL::to_double(halfedge.curve().source().x())
+        <<","<< CGAL::to_double(halfedge.curve().source().y())<<") ";
+        cout<<"("<<CGAL::to_double(halfedge.curve().target().x())
+        <<","<< CGAL::to_double(halfedge.curve().target().y())<<") "<<endl;
         cout<<endl;
         // end debugging. */
 
@@ -738,7 +739,8 @@ private:
     bop.Union(bops_faces,bops_halfedges,bops_vertices);
 
     std::list<Arrangement::Face_iterator> union_faces[2];
-    // faces[0] will contain the symmetric diff faces, and faces[1] will contain the intersection faces.
+    // faces[0] will contain the symmetric diff faces, and faces[1] will
+    // contain the intersection faces.
     Arrangement arr;
     insert_polygons(arr,polygons);
 
@@ -747,8 +749,10 @@ private:
     for ( ; i <= polygons.size(); ++i) 
       get_faces_with_covering(std::back_inserter(union_faces[i-1]),arr,i);
     
-    std::list<Arrangement::Face_iterator> faces(union_faces[0].begin(), union_faces[0].end());
-    std::copy(union_faces[1].begin(), union_faces[1].end(), std::back_inserter(faces));
+    std::list<Arrangement::Face_iterator> faces(union_faces[0].begin(),
+                                                union_faces[0].end());
+    std::copy(union_faces[1].begin(), union_faces[1].end(),
+              std::back_inserter(faces));
     
     cout<<"Faces sizes:"<<faces.size()<<" "<<bops_faces.size()<<endl;
     
@@ -872,14 +876,13 @@ private:
     return num;
   }
 
-  void read_file_build_creator(std::ifstream& file, Planar_map& pm)
+  void read_file_build_creator(std::ifstream & file, Pmwx & pm)
   { 
     // read number of curves
     unsigned int num_curves = get_next_int(file);
     
     cout<<"num_curves="<<num_curves<<endl;
    
-    
     std::list<Curve> curves;
     //Curve curr_curve;
     // read curves (test specific)
@@ -892,8 +895,7 @@ private:
       curves.push_back(Curve(p1,p2));
     }
     
-    Traits traits;
-    sweep_to_construct_planar_map_2(curves.begin(),curves.end(), traits, pm);
+    pm.insert(curves.begin(), curves.end());
   }
   
 public:
@@ -902,8 +904,8 @@ public:
   {
     std::ifstream file(filename);
     
-    PmWalkPL     pl_walk1, pl_walk2;
-    Planar_map   pm1(&pl_walk1), pm2(&pl_walk2);
+    PmWalkPL pl_walk1, pl_walk2;
+    Pmwx pm1(&pl_walk1), pm2(&pl_walk2);
     
     read_file_build_creator(file, pm1);
     read_file_build_creator(file, pm2);
@@ -955,5 +957,3 @@ int main(int argc, char* argv[])
 }
 
 #endif // CGAL_ARR_TEST_LEDA_CONFLICT
-
-

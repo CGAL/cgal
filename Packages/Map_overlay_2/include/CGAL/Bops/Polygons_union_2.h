@@ -26,25 +26,32 @@
 #ifndef CGAL_POLYGONS_UNION_2_H
 #define CGAL_POLYGONS_UNION_2_H
 
+#include <CGAL/basic.h>
+#include <CGAL/Pm_default_dcel.h>
+#include <CGAL/Planar_map_2.h>
+#include <CGAL/Pm_with_intersections.h>
+#include <CGAL/Pm_walk_along_line_point_location.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class Traits_>
 class Polygons_union_2
 {
-  typedef Traits_       Traits;
-  typedef typename Traits::Point_2           Point_2;
-  typedef typename Traits::X_curve_2         X_curve_2;
-  typedef typename Traits::Curve_2           Curve_2;
-  typedef Holes_split_dcel<Traits>           Dcel;
-  typedef Planar_map_2<Dcel,Traits>          Planar_map;
-  typedef Map_overlay_2<Planar_map>          MapOverlay;
-  typedef Boolean_operations_2<MapOverlay>   Bops;
-  typedef Pm_walk_along_line_point_location<Planar_map>   PmWalkPL;
-  typedef Holes_split_notifier<Planar_map>         Notifier;
+  typedef Traits_                                       Traits;
+  typedef typename Traits::Point_2                      Point_2;
+  typedef typename Traits::X_curve_2                    X_curve_2;
+  typedef typename Traits::Curve_2                      Curve_2;
+  typedef Holes_split_dcel<Traits>                      Dcel;
+  typedef Planar_map_2<Dcel,Traits>                     Planar_map;
+  typedef Planar_map_with_intersections_2<Planar_map>   Pmwx;
+  typedef Map_overlay_2<Planar_map>                     MapOverlay;
+  typedef Boolean_operations_2<MapOverlay>              Bops;
+  typedef Pm_walk_along_line_point_location<Planar_map> PmWalkPL;
+  typedef Holes_split_notifier<Planar_map>              Notifier;
   
-  typedef typename Bops::Faces_container           Faces_container;
-  typedef typename Bops::Halfedges_container       Halfedges_container;
-  typedef typename Bops::Vertices_container        Vertices_container;
+  typedef typename Bops::Faces_container                Faces_container;
+  typedef typename Bops::Halfedges_container            Halfedges_container;
+  typedef typename Bops::Vertices_container             Vertices_container;
 public:
   
   template <class Polygon,
@@ -123,7 +130,8 @@ public:
           (*f_iter)->outer_ccb();
         do {
           edges.push_back(cc->curve());
-          //cout<<"outer ccb: ("<< CGAL::to_double(cc->curve().source().x()) <<","
+          //cout<<"outer ccb: ("<< CGAL::to_double(cc->curve().source().x())
+          // <<","
           //    << CGAL::to_double(cc->curve().source().y()) <<") ("
           //    << CGAL::to_double(cc->curve().target().x()) << ","
           //    << CGAL::to_double(cc->curve().target().y()) << ")" <<endl;
@@ -131,12 +139,11 @@ public:
         
         // Generating Polygons:
         PmWalkPL pm_walk;
-        Planar_map pm(&pm_walk);
-        CGAL::sweep_to_construct_planar_map_2(edges.begin(),edges.end(), 
-                                              traits, pm);
-    
+        Pmwx pm(&pm_walk);
+        pm.insert(edges.begin(),edges.end());
+        
         // First, emanating vertical walls from each hole in the map.
-        Notifier  notf;
+        Notifier notf;
         Holes_split<Planar_map,Notifier> holes_split(&traits);
         holes_split.split_holes(pm, notf);
     
@@ -150,9 +157,3 @@ public:
 CGAL_END_NAMESPACE
 
 #endif
-
-
-
-
-
-

@@ -5,9 +5,8 @@
 #include <CGAL/Map_overlay_default_notifier.h>
 #include <CGAL/Map_overlay.h>
 #include <CGAL/Boolean_operations_2.h>
-#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Planar_map_2.h>
-#include <CGAL/sweep_to_construct_planar_map_2.h>
 #include <iostream>
 #include <vector>
 #include <list>
@@ -16,22 +15,23 @@
 //#include <CGAL/IO/cgal_window.h>  //used for visualization -
 //#include <CGAL/IO/Pm_Window_stream.h>
 
-typedef CGAL::Quotient<int>                 NT;
-typedef CGAL::Cartesian<NT>                 K;
-typedef CGAL::Arr_segment_exact_traits<K>   Traits;
-typedef Traits::Point_2                       Point_2;
-typedef Traits::X_curve_2                     X_curve_2;
-typedef Traits::Curve_2                       Curve_2;
+typedef CGAL::Quotient<int>                                     NT;
+typedef CGAL::Cartesian<NT>                                     K;
+typedef CGAL::Arr_segment_traits_2<K>                           Traits;
+typedef Traits::Point_2                                         Point_2;
+typedef Traits::X_curve_2                                       X_curve_2;
+typedef Traits::Curve_2                                         Curve_2;
 
-typedef CGAL::Bop_default_dcel<Traits>           Dcel;
-typedef CGAL::Planar_map_2<Dcel,Traits>          Planar_map;
-typedef CGAL::Map_overlay_2<Planar_map>          MapOverlay;
-typedef CGAL::Boolean_operations_2<MapOverlay>   Bops;
-typedef CGAL::Pm_walk_along_line_point_location<Planar_map>  PmWalkPL;
+typedef CGAL::Bop_default_dcel<Traits>                          Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits>                         Planar_map;
+typedef CGAL::Planar_map_with_intersections_2<Planar_map>       Pmwx;
+typedef CGAL::Map_overlay_2<Planar_map>                         MapOverlay;
+typedef CGAL::Boolean_operations_2<MapOverlay>                  Bops;
+typedef CGAL::Pm_walk_along_line_point_location<Planar_map>     PmWalkPL;
 
-typedef Bops::Faces_container                  Faces_container;
-typedef Bops::Halfedges_container              Halfedges_container;
-typedef Bops::Vertices_container               Vertices_container;
+typedef Bops::Faces_container                   Faces_container;
+typedef Bops::Halfedges_container               Halfedges_container;
+typedef Bops::Vertices_container                Vertices_container;
 
 
 using std::cin;
@@ -40,7 +40,7 @@ using std::endl;
 
 int  main()
 {
-  Planar_map  pm1, pm2;
+  Pmwx pm1, pm2;
   int   num_curves1, num_curves2;
   
   NT   x1, y1, x2, y2;
@@ -55,9 +55,7 @@ int  main()
     curves.push_back(X_curve_2(p1, p2));
   }
   
-  Traits traits;
-  CGAL::sweep_to_construct_planar_map_2(curves.begin(), 
-                                        curves.end(), traits, pm1);
+  pm1.insert(curves.begin(),curves.end());
   
   curves.clear();
   
@@ -69,8 +67,7 @@ int  main()
     curves.push_back(X_curve_2(p1, p2));
   }
    
-  CGAL::sweep_to_construct_planar_map_2(curves.begin(), 
-                                        curves.end(), traits, pm2);
+  pm2.insert(curves.begin(), curves.end());
   
   // ignoring unbounded face in boolean operations.
   pm1.unbounded_face()->set_ignore_bop(false); 

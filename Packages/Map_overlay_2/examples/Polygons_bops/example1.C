@@ -1,8 +1,7 @@
 #include <CGAL/basic.h> //CGAL definitions that need to be before anything else
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Arr_leda_segment_exact_traits.h>
-#include <CGAL/sweep_to_construct_planar_map_2.h>
+#include <CGAL/Arr_leda_segment_traits_2.h>
 #include <CGAL/Bops/Polygons_bops_traits.h>
 #include <CGAL/Polygons_bops_2.h>
 
@@ -72,9 +71,3 @@ int  main()
   
  return 0;
 }
-
-
-
-
-
-

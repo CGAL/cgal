@@ -25,15 +25,8 @@ int main()
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Planar_map_2.h>
 
-#include <CGAL/sweep_to_construct_planar_map_2.h>
-
-#ifndef CGAL_MAP_OVERLAY_DEFAULT_DCEL_H
 #include <CGAL/Map_overlay_default_dcel.h>
-#endif
-
-#ifndef CGAL_MAP_OVERLAY_H
 #include <CGAL/Map_overlay.h>
-#endif
 
 #include <CGAL/leda_rational.h>
 #include <LEDA/rat_window.h>

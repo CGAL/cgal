@@ -6,7 +6,7 @@
 #include <CGAL/Map_overlay_incremental.h>
 #include <CGAL/Map_overlay_default_notifier.h>
 #include <CGAL/Pm_with_intersections.h>
-#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/IO/Pm_iostream.h>
 
 #include <iostream>
@@ -18,15 +18,16 @@
 //#include <CGAL/IO/cgal_window.h>  //used for visualization -
 //#include <CGAL/IO/Pm_Window_stream.h>
 
-typedef CGAL::Quotient<int>                    NT;
-typedef CGAL::Cartesian<NT>                    K;
-typedef CGAL::Arr_segment_exact_traits<K>      Traits;
-typedef Traits::Point_2                        Point_2;
-typedef Traits::X_curve_2                      X_curve_2;
-typedef Traits::Curve_2                        Curve_2;
+typedef CGAL::Quotient<int>                     NT;
+typedef CGAL::Cartesian<NT>                     K;
+typedef CGAL::Arr_segment_traits_2<K>           Traits;
 
-typedef CGAL::Map_overlay_default_dcel<Traits> Dcel;
-typedef CGAL::Planar_map_2<Dcel,Traits>        Planar_map;
+typedef Traits::Point_2                         Point_2;
+typedef Traits::X_curve_2                       X_curve_2;
+typedef Traits::Curve_2                         Curve_2;
+
+typedef CGAL::Map_overlay_default_dcel<Traits>  Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits>         Planar_map;
 typedef CGAL::Planar_map_with_intersections_2<Planar_map>    Pmwx;
 typedef CGAL::Map_overlay_incremental<Pmwx>     MapOverlay_incremental;
 typedef CGAL::Map_overlay_2<Pmwx>               MapOverlay;

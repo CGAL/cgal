@@ -26,45 +26,37 @@
 #ifndef CGAL_POLYGONS_BOPS_TRAITS_2_H
 #define CGAL_POLYGONS_BOPS_TRAITS_2_H
 
-#ifndef CGAL_POLYGON_2_H
 #include <CGAL/Polygon_2.h>
-#endif
-
-#ifndef CGAL_ARR_SEGMENT_EXACT_TRAITS_H
-#include <CGAL/Arr_segment_exact_traits.h>
-#endif
-
-#ifndef CGAL_RAY_2_SEGMENT_2_INTERSECTION_H
+#include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Ray_2_Segment_2_intersection.h>
-#endif
-
 
 CGAL_BEGIN_NAMESPACE
 
 template <class Kernel_>
-class Polygons_bops_traits_2 : public Arr_segment_exact_traits<Kernel_>
+class Polygons_bops_traits_2 : public Arr_segment_traits_2<Kernel_>
 {
-  typedef Kernel_  Kernel;
-  typedef typename Kernel::FT   FT;
+  typedef Kernel_                       Kernel;
+  typedef typename Kernel::FT           FT;
+
 public:
-  typedef Arr_segment_exact_traits<Kernel>   Base;
+  typedef Arr_segment_traits_2<Kernel>  Base;
   
-  typedef typename Base::Point_2   Point_2;
-  typedef typename Base::X_curve_2 X_curve_2;
-  typedef X_curve_2       Curve_2;
+  typedef typename Base::Point_2        Point_2;
+  typedef typename Base::X_curve_2      X_curve_2;
+  typedef X_curve_2                     Curve_2;
   
-  typedef typename Kernel::Ray_2       Ray_2;   // a new type for this class.
-  typedef typename Kernel::Direction_2 Direction_2;
+  typedef typename Kernel::Ray_2        Ray_2;   // a new type for this class.
+  typedef typename Kernel::Direction_2  Direction_2;
   
   typedef typename Base::Curve_point_status Curve_point_status;
   
   // Obsolete, for backward compatibility
-  typedef Point_2                  Point;
-  typedef X_curve_2                X_curve;
-  typedef Curve_2                  Curve;
+  typedef Point_2                       Point;
+  typedef X_curve_2                     X_curve;
+  typedef Curve_2                       Curve;
 
   //protected:
-  //typedef typename Base::Curve_status    Curve_status;
+  //typedef typename Base::Curve_status   Curve_status;
   
 public:
   

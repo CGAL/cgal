@@ -397,7 +397,8 @@ public:
                 }
             } while (++ccb_cir != begin_face->outer_ccb());
           
-          // checking wether one of the face pointer is 0 - if it is - it must be under an unbounded creator face.
+          // checking wether one of the face pointer is 0 - if it is - it must
+          // be under an unbounded creator face.
           if (begin_face->get_first_face_above() == 0)
             {
 #ifdef CGAL_NOTF_DEBUG
@@ -405,7 +406,8 @@ public:
               cout<<" - putting unbounded"<<std::endl;
 #endif
               
-              set_first_face_above(begin_face, first_creator_->unbounded_face());
+              set_first_face_above(begin_face,
+                                   first_creator_->unbounded_face());
               //begin_face->set_first_face_above
               //(first_creator.unbounded_face().operator->());
             }
@@ -645,7 +647,7 @@ public:
     
   }
 
-  /***************************************** new functions **********************************************************/
+  /**** new functions ****/
   void set_curve_attributes(const X_curve_2& cv, 
                             Halfedge_const_handle orig_halfedge1_, 
                             bool first_halfedge_)
@@ -1172,7 +1174,3 @@ private:
 CGAL_END_NAMESPACE
 
 #endif
-
-
-
-

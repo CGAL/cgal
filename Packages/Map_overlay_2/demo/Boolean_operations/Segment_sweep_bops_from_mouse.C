@@ -25,23 +25,10 @@ int main()
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Planar_map_2.h>
 
-#include <CGAL/sweep_to_construct_planar_map_2.h>
-
-#ifndef CGAL_ARR_2_BOP_DCEL_H
 #include <CGAL/Bop_default_dcel.h>
-#endif
-
-#ifndef CGAL_MAP_OVERLAY_NAIVE_H
 #include <CGAL/Map_overlay.h>
-#endif
-
-#ifndef CGAL_MAP_OVERLAY_NAIVE_H
 #include <CGAL/Map_overlay_naive.h>
-#endif
-
-#ifndef BOOLEAN_OPERATIONS_H
 #include <CGAL/Boolean_operations_2.h>
-#endif
 
 #include <CGAL/leda_rational.h>
 #include <LEDA/rat_window.h>
@@ -52,32 +39,31 @@ int main()
 using namespace leda;
 #endif
 
-typedef leda_rational                                NT;
-typedef CGAL::Arr_leda_segment_exact_traits         Traits;
+typedef leda_rational                                   NT;
+typedef CGAL::Arr_leda_segment_exact_traits             Traits;
 
-typedef Traits::Point_2                             Point;
-typedef Traits::Curve_2                             Curve;
-typedef Traits::X_curve                             X_curve;
+typedef Traits::Point_2                                 Point;
+typedef Traits::Curve_2                                 Curve;
+typedef Traits::X_curve_2                               X_curve;
 
-typedef CGAL::Bop_default_dcel<Traits>              Dcel;
-typedef CGAL::Planar_map_2<Dcel, Traits>            PM;
+typedef CGAL::Bop_default_dcel<Traits>                  Dcel;
+typedef CGAL::Planar_map_2<Dcel, Traits>                PM;
+typedef CGAL::Planar_map_with_intersections_2<PM>       Pmwx;
 
-typedef CGAL::Map_overlay_default_notifier<PM>           
-                                                Ovl_change_notification;
-typedef CGAL::Map_overlay_2<PM, Ovl_change_notification>     MapOverlay;
-typedef CGAL::Boolean_operations_2<MapOverlay>               Bops;
+typedef CGAL::Map_overlay_default_notifier<PM>  Ovl_change_notification;
+typedef CGAL::Map_overlay_2<PM, Ovl_change_notification>        MapOverlay;
+typedef CGAL::Boolean_operations_2<MapOverlay>          Bops;
+typedef CGAL::Pm_walk_along_line_point_location<PM>     PmWalkPL;
 
-typedef Bops::Faces_container                      Faces_container;
-typedef Bops::Halfedges_container                  Halfedges_container;
-typedef Bops::Vertices_container                   Vertices_container;
-
-typedef CGAL::Pm_walk_along_line_point_location<PM>         PmWalkPL;
+typedef Bops::Faces_container                           Faces_container;
+typedef Bops::Halfedges_container                       Halfedges_container;
+typedef Bops::Vertices_container                        Vertices_container;
 
 // global variables are used so that the redraw function for the LEDA window
 // can be defined to draw information found in these variables.
 static PmWalkPL pm_walk1, pm_walk2;
-static PM pm1(&pm_walk1); 
-static PM pm2(&pm_walk2);
+static Pmwx pm1(&pm_walk1); 
+static Pmwx pm2(&pm_walk2);
 static CGAL::Window_stream W(700, 700, "CGAL - Segment Boolean-Operations Demo");
 
 // redraw function for the LEDA window. 
@@ -209,7 +195,7 @@ void redraw(CGAL::Window_stream * wp)
 }*/
 
 
-int  read_planar_map(PM& pm, CGAL::Window_stream& W)
+int read_planar_map(Pmwx & pm, CGAL::Window_stream & W)
 {
   std::vector<Point> cv1;
   std::vector<Curve> curves;
@@ -224,9 +210,7 @@ int  read_planar_map(PM& pm, CGAL::Window_stream& W)
       if (b==2 || b==3){
         //creating planar map.
         Traits traits;
-        CGAL::sweep_to_construct_planar_map_2(curves.begin(), 
-                                              curves.end(),
-                                              traits, pm);
+        pm.insert(curves.begin(), curves.end());
         W << pm;
         return b;
       }

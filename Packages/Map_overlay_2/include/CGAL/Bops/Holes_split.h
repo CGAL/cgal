@@ -45,24 +45,26 @@ class Holes_split {
   typedef typename Traits::X_curve            X_curve;
   typedef typename Traits::Curve              Curve;
   
-  typedef typename Planar_map::Vertex                 Vertex;
-  typedef typename Planar_map::Face                   Face;
-  typedef typename Planar_map::Halfedge               Halfedge;
-  typedef typename Planar_map::Vertex_handle          Vertex_handle;
-  typedef typename Planar_map::Halfedge_handle        Halfedge_handle;
-  typedef typename Planar_map::Face_handle            Face_handle;
-  typedef typename Planar_map::Vertex_const_handle    Vertex_const_handle;
-  typedef typename Planar_map::Halfedge_const_handle  Halfedge_const_handle;
-  typedef typename Planar_map::Face_const_handle      Face_const_handle;
-  typedef typename Planar_map::Vertex_iterator        Vertex_iterator;
-  typedef typename Planar_map::Vertex_const_iterator  Vertex_const_iterator;
-  typedef typename Planar_map::Halfedge_iterator      Halfedge_iterator;
-  typedef typename Planar_map::Halfedge_const_iterator   Halfedge_const_iterator;
-  typedef typename Planar_map::Face_iterator          Face_iterator;
-  typedef typename Planar_map::Face_const_iterator    Face_const_iterator;
-  typedef typename Planar_map::Ccb_halfedge_circulator    Ccb_halfedge_circulator;
-  typedef typename Planar_map::Ccb_halfedge_const_circulator   Ccb_halfedge_const_circulator;
-  typedef typename Planar_map::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
+  typedef typename Planar_map::Vertex                   Vertex;
+  typedef typename Planar_map::Face                     Face;
+  typedef typename Planar_map::Halfedge                 Halfedge;
+  typedef typename Planar_map::Vertex_handle            Vertex_handle;
+  typedef typename Planar_map::Halfedge_handle          Halfedge_handle;
+  typedef typename Planar_map::Face_handle              Face_handle;
+  typedef typename Planar_map::Vertex_const_handle      Vertex_const_handle;
+  typedef typename Planar_map::Halfedge_const_handle    Halfedge_const_handle;
+  typedef typename Planar_map::Face_const_handle        Face_const_handle;
+  typedef typename Planar_map::Vertex_iterator          Vertex_iterator;
+  typedef typename Planar_map::Vertex_const_iterator    Vertex_const_iterator;
+  typedef typename Planar_map::Halfedge_iterator        Halfedge_iterator;
+  typedef typename Planar_map::Halfedge_const_iterator  Halfedge_const_iterator;
+  typedef typename Planar_map::Face_iterator            Face_iterator;
+  typedef typename Planar_map::Face_const_iterator      Face_const_iterator;
+  typedef typename Planar_map::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
+  typedef typename Planar_map::Ccb_halfedge_const_circulator
+                                        Ccb_halfedge_const_circulator;
+  typedef typename Planar_map::Halfedge_around_vertex_circulator
+                                        Halfedge_around_vertex_circulator;
   typedef typename Planar_map::Holes_iterator          Holes_iterator;
   typedef typename Planar_map::Holes_const_iterator    Holes_const_iterator;
   typedef typename Planar_map::Locate_type             Locate_type;
@@ -126,7 +128,8 @@ class Holes_split {
     //int eps = up? EPSILON: -EPSILON;
     //Point pertrubed_p = Point(v->point().x(), 
     //                          v->point().y() + eps);
-    //cout<<"pertrubed_p="<< pertrubed_p.xcoordD()<<","<<pertrubed_p.ycoordD() << endl;
+    //cout<<"pertrubed_p="<< pertrubed_p.xcoordD()<<","<<pertrubed_p.ycoordD()
+    // << endl;
     
     // we have to raise p since the function
     // vertical_ray_shoot will return the vertex of of in
@@ -198,13 +201,15 @@ public:
       if (face->is_unbounded())
         continue; // splitting only bounded faces.
       
-      // keeping all Ccb in a seperate vector, since face is going to be changed.
+      // keeping all Ccb in a seperate vector, since face is going to be
+      // changed.
       std::vector<Ccb_halfedge_circulator> 
         holes(face->holes_begin(),face->holes_end());
       
       //for (Holes_iterator holes_it = face->holes_begin(); 
       //     holes_it != face->holes_end(); ++holes_it) {
-      for (typename std::vector<Ccb_halfedge_circulator>::iterator holes_it = holes.begin(); 
+      for (typename std::vector<Ccb_halfedge_circulator>::iterator holes_it =
+               holes.begin(); 
            holes_it != holes.end(); ++holes_it) 
         {
           Ccb_halfedge_circulator face_cc(*holes_it);
@@ -225,7 +230,8 @@ public:
           
           // updating lefthigh_most to have the highest value of y.
           for (unsigned int i=0; i < vertices_cc.size() - 1 &&
-                 vertices_cc[i]->point().x() == vertices_cc[i+1]->point().x(); ++i)
+                 vertices_cc[i]->point().x() == vertices_cc[i+1]->point().x();
+               ++i)
             lefthigh_most=vertices_cc[i+1];
           
           Vertex_handle righthigh_most = vertices_cc.back();
@@ -233,7 +239,8 @@ public:
           
           // updating rightlow_most to have the lowest value of y.
           for (unsigned int i=vertices_cc.size() - 1;  i > 1 &&
-                 vertices_cc[i]->point().x() == vertices_cc[i-1]->point().x(); --i)
+                 vertices_cc[i]->point().x() == vertices_cc[i-1]->point().x();
+               --i)
             lefthigh_most=vertices_cc[i-1];
           
           /*Vertex_handle leftlow_most=face_cc->source();
@@ -241,12 +248,15 @@ public:
             Vertex_handle rightlow_most=face_cc->source();
             Vertex_handle righthigh_most=face_cc->source();
             do {
-            if (face_cc->source()->point().xcoord() < leftmost->point().xcoord())
+            if (face_cc->source()->point().xcoord() <
+            leftmost->point().xcoord())
             lefthigh_most=leftlow_most=face_cc->source();
-            else if (face_cc->source()->point().xcoord() == leftmost->point().xcoord()){
+            else if (face_cc->source()->point().xcoord() ==
+            leftmost->point().xcoord()){
           
             }
-            if (face_cc->source()->point().xcoord() > rightmost->point().xcoord())
+            if (face_cc->source()->point().xcoord() >
+            rightmost->point().xcoord())
             rightmost=face_cc->source();
           } while (++face_cc != *holes_it);*/
         

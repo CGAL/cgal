@@ -123,7 +123,8 @@ public:
           (*f_iter)->outer_ccb();
         do {
           edges.push_back(cc->curve());
-          //cout<<"outer ccb: ("<< CGAL::to_double(cc->curve().source().x()) <<","
+          //cout<<"outer ccb: ("<< CGAL::to_double(cc->curve().source().x())
+          // <<","
           //    << CGAL::to_double(cc->curve().source().y()) <<") ("
           //    << CGAL::to_double(cc->curve().target().x()) << ","
           //    << CGAL::to_double(cc->curve().target().y()) << ")" <<endl;
@@ -150,9 +151,3 @@ public:
 CGAL_END_NAMESPACE
 
 #endif
-
-
-
-
-
-

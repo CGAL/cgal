@@ -5,22 +5,22 @@
 #include <CGAL/Map_overlay.h>
 #include <CGAL/Arr_polyline_traits.h>
 #include <CGAL/Planar_map_2.h>
-#include <CGAL/sweep_to_construct_planar_map_2.h>
 
 #include <iostream>
 #include <vector>
 #include <list>
 
-typedef CGAL::Quotient<int>                 NT;
-typedef CGAL::Cartesian<NT>                 K;
-typedef CGAL::Arr_polyline_traits<K>        Traits;
-typedef Traits::Point_2                     Point_2;
-typedef Traits::X_curve_2                   X_curve_2;
-typedef Traits::Curve_2                     Curve_2;
+typedef CGAL::Quotient<int>                             NT;
+typedef CGAL::Cartesian<NT>                             K;
+typedef CGAL::Arr_polyline_traits<K>                    Traits;
+typedef Traits::Point_2                                 Point_2;
+typedef Traits::X_curve_2                               X_curve_2;
+typedef Traits::Curve_2                                 Curve_2;
 
-typedef CGAL::Map_overlay_default_dcel<Traits> Dcel;
-typedef CGAL::Planar_map_2<Dcel,Traits>        Planar_map;
-typedef CGAL::Map_overlay_2<Planar_map>        MapOverlay;
+typedef CGAL::Map_overlay_default_dcel<Traits>          Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits>                 Planar_map;
+typedef CGAL::Planar_map_with_intersections_2<PM>       Pmwx;
+typedef CGAL::Map_overlay_2<Planar_map>                 MapOverlay;
 
 typedef CGAL::Pm_walk_along_line_point_location<Planar_map>  PmWalkPL;
 
@@ -53,7 +53,7 @@ public:
 int  main()
 {
   std::vector<Curve_2> polylines;
-  Planar_map   pm1, pm2;
+  Pmwx pm1, pm2;
   int   num_curves1, num_curves2;
   
   std::cin >> num_curves1;
@@ -62,9 +62,7 @@ int  main()
     polylines.push_back(cv);
   } 
   
-  Traits traits;
-  CGAL::sweep_to_construct_planar_map_2(polylines.begin(),polylines.end(), 
-                                        traits, pm1);
+  pm1.insert(polylines.begin(), polylines.end());
 
   polylines.clear();
   
@@ -74,18 +72,20 @@ int  main()
     polylines.push_back(cv); 
   }
   
-  CGAL::sweep_to_construct_planar_map_2(polylines.begin(),polylines.end(), 
-                                        traits, pm2);
+  pm2.insert(polylines.begin(), polylines.end());
   
   MapOverlay map1(pm1), map2(pm2);
   cout<<"Calling map overlay\n";
   MapOverlay map_overlay(map1, map2);
   
   MapOverlay::Change_notification  notifier;
-  for (Planar_map::Vertex_const_iterator v_iter=map_overlay.subdivision().vertices_begin();
+  for (Planar_map::Vertex_const_iterator v_iter =
+           map_overlay.subdivision().vertices_begin();
          v_iter!=map_overlay.subdivision().vertices_end(); ++v_iter){
-    if (notifier.get_first_halfedge_above(v_iter) != v_iter->incident_halfedges() && 
-        notifier.get_second_halfedge_above(v_iter) != v_iter->incident_halfedges())
+    if (notifier.get_first_halfedge_above(v_iter) !=
+        v_iter->incident_halfedges() && 
+        notifier.get_second_halfedge_above(v_iter) !=
+        v_iter->incident_halfedges())
       // means both halfedge above are not null.
       std::cout<<v_iter->point()<<" is an intersection point" << std::endl;
     else
@@ -94,7 +94,3 @@ int  main()
   
   return 0;
 }
-
-
-
-

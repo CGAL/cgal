@@ -96,7 +96,8 @@ public:
   
   Halfedge_bop() : halfedge_overlay() { bop_ = true; }
 
-  Halfedge_bop(const_pointer e) : halfedge_overlay(*e) { set_ignore_bop(e->bop()); }
+  Halfedge_bop(const_pointer e) : halfedge_overlay(*e)
+  { set_ignore_bop(e->bop()); }
 
   Halfedge_bop(const_ref e) : halfedge_overlay(e) { set_ignore_bop(e.bop()); } 
   
@@ -169,10 +170,13 @@ private:
   mutable bool bop_;
 };
 
-template <class Traits, class Vertex_base = Pm_vertex_base<typename Traits::Point>, 
-  class Halfedge_base = Pm_halfedge_base<typename Traits::X_curve> , 
-  class Face_base =  Pm_face_base> 
-class Bop_default_dcel: public Pm_dcel<Vertex_bop<Vertex_base>, Halfedge_bop<Halfedge_base>, Face_bop<Face_base> > 
+template <class Traits, class Vertex_base =
+          Pm_vertex_base<typename Traits::Point>, 
+          class Halfedge_base = Pm_halfedge_base<typename Traits::X_curve> , 
+          class Face_base =  Pm_face_base> 
+class Bop_default_dcel :
+  public Pm_dcel<Vertex_bop<Vertex_base>, Halfedge_bop<Halfedge_base>,
+                 Face_bop<Face_base> > 
 {
 public:  // CREATION
   Bop_default_dcel() {} 

@@ -26,15 +26,8 @@ int main()
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Planar_map_2.h>
 
-#include <CGAL/sweep_to_construct_planar_map_2.h>
-
-#ifndef CGAL_MAP_OVERLAY_DEFAULT_DCEL_H
 #include <CGAL/Map_overlay_default_dcel.h>
-#endif
-
-#ifndef CGAL_MAP_OVERLAY_H
 #include <CGAL/Map_overlay.h>
-#endif
 
 #include <CGAL/leda_real.h>
 #include <LEDA/rat_window.h>
@@ -45,18 +38,18 @@ int main()
 using namespace leda;
 #endif
 
-typedef leda_real                            NT;
-typedef CGAL::Cartesian<NT>                  Rep;
-typedef CGAL::Arr_polyline_traits<Rep>       Traits;
+typedef leda_real                               NT;
+typedef CGAL::Cartesian<NT>                     Rep;
+typedef CGAL::Arr_polyline_traits<Rep>          Traits;
 
-typedef Traits::Point_2                      Point;
-typedef Traits::Curve_2                      Curve;
-typedef Traits::X_curve_2                    X_curve;
+typedef Traits::Point_2                         Point;
+typedef Traits::Curve_2                         Curve;
+typedef Traits::X_curve_2                       X_curve;
 
-typedef CGAL::Map_overlay_default_dcel<Traits>      Dcel;
-typedef CGAL::Planar_map_2<Dcel, Traits>            PM;
+typedef CGAL::Map_overlay_default_dcel<Traits>  Dcel;
+typedef CGAL::Planar_map_2<Dcel, Traits>        PM;
 
-typedef CGAL::Map_overlay_default_notifier<PM>                Ovl_change_notification;
+typedef CGAL::Map_overlay_default_notifier<PM>  Ovl_change_notification;
 typedef CGAL::Map_overlay_2<PM, Ovl_change_notification>      MapOverlay;
 
 typedef CGAL::Pm_walk_along_line_point_location<PM>           PmWalkPL;
@@ -66,7 +59,8 @@ typedef CGAL::Pm_walk_along_line_point_location<PM>           PmWalkPL;
 static PmWalkPL pm_walk1, pm_walk2;
 static PM pm1(&pm_walk1); 
 static PM pm2(&pm_walk2);
-static CGAL::Window_stream W(500, 500, "CGAL - Segment Map-Overlay Demo: Sweep Algorithm");
+static CGAL::Window_stream
+  W(500, 500, "CGAL - Segment Map-Overlay Demo: Sweep Algorithm");
 
 leda_point to_leda_pnt(Point p)
 {
@@ -152,32 +146,44 @@ int main(int argc, char* argv[])
   MapOverlay map2(pm2);
   MapOverlay map_overlay(map1, map2, &ovl_walk);
   
-  //MapOverlay map_overlay(pm1, pm2);  // makes problem with the pointer to the creators: the two contrsucted overlays of pm1 and pm2 are temporary variables, and hence the pointers to them are not valid.
+  //MapOverlay map_overlay(pm1, pm2);  // makes problem with the pointer to the
+  // creators: the two contrsucted overlays of pm1 and pm2 are temporary
+  //variables, and hence the pointers to them are not valid.
   
-  std::cout<<"Locate Overlay Face:"<<endl;
-  std::cout<<"Purple Face - an overlay face laying under two bounded faces"<<std::endl;
-  std::cout<<"Blue Face - an overlay face laying under a bounded face of the first map and the unbounded face of the second"<<std::endl;
-  std::cout<<"Red Face - an overlay face laying under the unbounded face of the first map and a bounded face of the second"<<std::endl;
-  std::cout<<"Orange Face - an overlay face laying under the unbounded faces of both maps"<<endl;
+  std::cout << "Locate Overlay Face:"<<endl;
+  std::cout << "Purple Face - an overlay face laying under two bounded faces"
+            << std::endl;
+  std::cout << "Blue Face - "
+            << "an overlay face laying under a bounded face of the first map "
+            << "and the unbounded face of the second"<<std::endl;
+  std::cout << "Red Face - "
+            << "an overlay face laying under the unbounded face of "
+            << "the first map and a bounded face of the second"
+            << std::endl;
+  std::cout << "Orange Face - "
+            << "an overlay face laying under the unbounded faces of both maps"
+            << endl;
   
   // Point Location Queries
   W.set_status_string("Map Overlay. Enter a point with left button.");
   
   // if first map is empty
   if (pm1.halfedges_begin() == pm1.halfedges_end()) 
-    {
-      std::cout << std::endl;
-      std::cout << "No edges were inserted to the first planar map. First Planar map is empty. Exiting.";
-      std::cout << std::endl;
-    }
+  {
+    std::cout << std::endl;
+    std::cout << "No edges were inserted to the first planar map. "
+              << "First Planar map is empty. Exiting.";
+    std::cout << std::endl;
+  }
   
   // if second map is empty
   if (pm2.halfedges_begin() == pm2.halfedges_end()) 
-    {
-      std::cout << std::endl;
-      std::cout << "No edges were inserted to the first planar map. First Planar map is empty. Exiting.";
-      std::cout << std::endl;
-    }
+  {
+    std::cout << std::endl;
+    std::cout << "No edges were inserted to the first planar map. "
+              << "First Planar map is empty. Exiting.";
+    std::cout << std::endl;
+  }
   
   if (pm1.halfedges_begin() != pm1.halfedges_end() && 
       pm2.halfedges_begin() != pm2.halfedges_end() )
@@ -187,11 +193,3 @@ int main(int argc, char* argv[])
 }
 
 #endif // CGAL_USE_LEDA
-
-
-
-
-
-
-
-

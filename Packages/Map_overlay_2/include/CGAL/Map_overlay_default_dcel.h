@@ -230,7 +230,7 @@ public:
       return halfedges_above[1];
     }
 
-  // -------------------------------  add faces above halfedges (not to their sides).
+  // ----  add faces above halfedges (not to their sides).
   void  set_first_face_above(const void*  face)
   {
     // updating only if the value is not 0 and not already in the array.

@@ -24,23 +24,10 @@ int main()
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Planar_map_2.h>
 
-#include <CGAL/sweep_to_construct_planar_map_2.h>
-
-#ifndef CGAL_ARR_2_BOP_DCEL_H
 #include <CGAL/Bop_default_dcel.h>
-#endif
-
-#ifndef CGAL_MAP_OVERLAY_NAIVE_H
 #include <CGAL/Map_overlay.h>
-#endif
-
-#ifndef CGAL_MAP_OVERLAY_NAIVE_H
 #include <CGAL/Map_overlay_naive.h>
-#endif
-
-#ifndef BOOLEAN_OPERATIONS_H
 #include <CGAL/Boolean_operations_2.h>
-#endif
 
 #include <CGAL/leda_real.h>
 #include <LEDA/rat_window.h>
@@ -51,22 +38,22 @@ int main()
 using namespace leda;
 #endif
 
-typedef leda_real                            NT;
-typedef CGAL::Cartesian<NT>                  Rep;
-typedef CGAL::Arr_polyline_traits<Rep>       Traits;
+typedef leda_real                               NT;
+typedef CGAL::Cartesian<NT>                     Rep;
+typedef CGAL::Arr_polyline_traits<Rep>          Traits;
 
-typedef Traits::Point_2                      Point;
-typedef Traits::Curve_2                      Curve;
-typedef Traits::X_curve_2                    X_curve;
+typedef Traits::Point_2                         Point;
+typedef Traits::Curve_2                         Curve;
+typedef Traits::X_curve_2                       X_curve;
 
-typedef CGAL::Bop_default_dcel<Traits>       Dcel;
-typedef CGAL::Planar_map_2<Dcel, Traits>     PM;
+typedef CGAL::Bop_default_dcel<Traits>          Dcel;
+typedef CGAL::Planar_map_2<Dcel, Traits>        PM;
 
-typedef CGAL::Map_overlay_default_notifier<PM>             Ovl_change_notification;
-typedef CGAL::Map_overlay_2<PM, Ovl_change_notification>   MapOverlay;
-typedef CGAL::Boolean_operations_2<MapOverlay>               Bops;
+typedef CGAL::Map_overlay_default_notifier<PM>  Ovl_change_notification;
+typedef CGAL::Map_overlay_2<PM, Ovl_change_notification> MapOverlay;
+typedef CGAL::Boolean_operations_2<MapOverlay>  Bops;
 
-typedef CGAL::Pm_walk_along_line_point_location<PM>             PmWalkPL;
+typedef CGAL::Pm_walk_along_line_point_location<PM>     PmWalkPL;
 
 // global variables are used so that the redraw function for the LEDA window
 // can be defined to draw information found in these variables.

@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Map_overlay_default_dcel.h>
-#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/Arr_segment_traits_2.h>
 
 // Quotient is included anyway, because it is used to read
 // data files. Quotient can read both integers and fractions.
@@ -28,16 +28,16 @@ int main(int argc, char* argv[])
 #include <iostream>
 #include "Map_overlay_base_test.h"
 
-typedef CGAL::Quotient<int>                            NT;
-typedef CGAL::Cartesian<NT>                            R;
-typedef CGAL::Arr_segment_exact_traits<R>              Traits;
+typedef CGAL::Quotient<int>                     NT;
+typedef CGAL::Cartesian<NT>                     R;
+typedef CGAL::Arr_segment_traits_2<R>           Traits;
 
-typedef Traits::Point                                 Point;
-typedef Traits::X_curve                               X_curve;
-typedef Traits::Curve                                 Curve;
+typedef Traits::Point_2                         Point;
+typedef Traits::X_curve_2                       X_curve;
+typedef Traits::Curve_2                         Curve;
 
-typedef CGAL::Map_overlay_default_dcel<Traits>        Dcel;
-typedef CGAL::Planar_map_2<Dcel, Traits>               PM;
+typedef CGAL::Map_overlay_default_dcel<Traits>  Dcel;
+typedef CGAL::Planar_map_2<Dcel, Traits>        PM;
 
 // This is provided dute to the fact that the extractor (is >> ) 
 // is not defined per each kind of curve. 

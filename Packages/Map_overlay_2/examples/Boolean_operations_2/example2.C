@@ -5,7 +5,7 @@
 #include <CGAL/Map_overlay_default_notifier.h>
 #include <CGAL/Map_overlay.h>
 #include <CGAL/Boolean_operations_2.h>
-#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/sweep_to_construct_planar_map_2.h>
 #include <iostream>
@@ -16,22 +16,22 @@
 //#include <CGAL/IO/cgal_window.h>  //used for visualization -
 //#include <CGAL/IO/Pm_Window_stream.h>
 
-typedef CGAL::Quotient<int>                 NT;
-typedef CGAL::Cartesian<NT>                 K;
-typedef CGAL::Arr_segment_exact_traits<K>   Traits;
-typedef Traits::Point_2                     Point_2;
-typedef Traits::X_curve_2                   X_curve_2;
-typedef Traits::Curve_2                     Curve_2;
+typedef CGAL::Quotient<int>                     NT;
+typedef CGAL::Cartesian<NT>                     K;
+typedef CGAL::Arr_segment_traits_2<K>           Traits;
+typedef Traits::Point_2                         Point_2;
+typedef Traits::X_curve_2                       X_curve_2;
+typedef Traits::Curve_2                         Curve_2;
 
-typedef CGAL::Bop_default_dcel<Traits>           Dcel;
-typedef CGAL::Planar_map_2<Dcel,Traits>          Planar_map;
-typedef CGAL::Map_overlay_2<Planar_map>          MapOverlay;
-typedef CGAL::Boolean_operations_2<MapOverlay>   Bops;
+typedef CGAL::Bop_default_dcel<Traits>          Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits>         Planar_map;
+typedef CGAL::Map_overlay_2<Planar_map>         MapOverlay;
+typedef CGAL::Boolean_operations_2<MapOverlay>  Bops;
 typedef CGAL::Pm_walk_along_line_point_location<Planar_map>  PmWalkPL;
 
-typedef Bops::Faces_container                  Faces_container;
-typedef Bops::Halfedges_container              Halfedges_container;
-typedef Bops::Vertices_container               Vertices_container;
+typedef Bops::Faces_container                   Faces_container;
+typedef Bops::Halfedges_container               Halfedges_container;
+typedef Bops::Vertices_container                Vertices_container;
 
 
 using std::cin;
