@@ -33,14 +33,14 @@ public:
 //   typedef typename T::Vertex          Vertex;
   typedef typename T::Vertex_iterator	Vertex_iterator;
 
-  Qt_layer_show_points(T &t, Color c=CGAL::GREEN, int pointsize=3, 
+  Qt_layer_show_points(T *&t, Color c=CGAL::GREEN, int pointsize=3, 
 		       PointStyle pointstyle = CGAL::DISC)
     : tr(t), color(c), size(pointsize), style(pointstyle) {};
 
   void draw()
   {  
-    Vertex_iterator it = tr.vertices_begin(), 
-		beyond = tr.vertices_end();
+    Vertex_iterator it = tr->vertices_begin(), 
+		beyond = tr->vertices_end();
     *widget << color << CGAL::PointSize (size) 
 		<< CGAL::PointStyle (style);
     while(it != beyond) {
@@ -49,7 +49,7 @@ public:
     }
   };
 private:
-  T	&tr;
+  T	*&tr;
   Color color;
   int size;
   PointStyle style;

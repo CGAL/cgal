@@ -59,25 +59,29 @@ public:
 public:
   // CONSTRUCTORS
 
-  // default constructor
+  // default constructor, to be used with IO functions
   Mesh_2(const Geom_traits& gt = Geom_traits());
 
-  // for compatibility only
-  Mesh_2(List_constraints& lc, const Geom_traits& gt = Geom_traits());
+  // constructor from a Triangulation& t
+  explicit 
+  Mesh_2(Triangulation& t, const Geom_traits& gt = Geom_traits(),
+	 bool dont_refine = false);
 
-  // TODO: this comment
-  template <class InputIterator>
-  Mesh_2(InputIterator first, InputIterator last, 
-	 const Geom_traits& gt = Geom_traits())
-    : Tr(gt), is_really_a_contrained_edge(*this), 
-      c_edge_queue(is_really_a_contrained_edge)
+  // the same with declaration of seeds.
+  // See the explanation of functions refine(...) for the
+  // signification of arguments Seed_it begin,end and bool mark.
+  // The parameter dont_refine should not be documented because it
+  // allow to construct a "mesh" that is not meshed.
+  template <class Seed_it> 
+  explicit 
+  Mesh_2(Triangulation& t, Seed_it begin, Seed_it end, 
+	 const Geom_traits& gt = Geom_traits(), bool mark = false,
+	 bool dont_refine = false)
     {
-      while(first != last){
-	insert((*first).first, (*first).second);
-	++first;
-      }
-      CGAL_triangulation_postcondition(is_valid());
-    }
+      swap(t);
+      if(!dont_refine)
+	refine(begin, end, mark);
+    };
 
   // ASSIGNEMENT
   // TODO!
@@ -99,12 +103,12 @@ public:
   //   segment2
   //   ...
   void write(std::ostream &f) const;
-  void read(std::istream &f);
+  void read(std::istream &f, bool dont_refine = false);
 
   // write and read a mesh in the Triangle .poly format 
   // (see http://www-2.cs.cmu.edu/~quake/triangle.poly.html)
   void write_poly(std::ostream &f) const;
-  void read_poly(std::istream &f);
+  void read_poly(std::istream &f, bool dont_refine = false);
 
   // HELPING FUNCTION
   void clear();
@@ -160,6 +164,23 @@ public:
   }
 
   // STEP BY STEP MESHING
+
+  // two deprecated constructors
+
+  Mesh_2(List_constraints& lc, const Geom_traits& gt = Geom_traits());
+
+  template <class InputIterator>
+  Mesh_2(InputIterator first, InputIterator last, 
+	 const Geom_traits& gt = Geom_traits())
+    : Tr(gt), is_really_a_contrained_edge(*this), 
+      c_edge_queue(is_really_a_contrained_edge)
+    {
+      while(first != last){
+	insert((*first).first, (*first).second);
+	++first;
+      }
+      CGAL_triangulation_postcondition(is_valid());
+    }
 
   // init(...): Initialize the data structures 
   // (The call of one of the following init function is REQUIRED
@@ -499,17 +520,14 @@ Mesh_2(const Geom_traits& gt)
 
 template <class Tr>
 Mesh_2<Tr>::
-Mesh_2(List_constraints& lc, const Geom_traits& gt)
+Mesh_2(Triangulation& t, const Geom_traits& gt, bool dont_refine)
   : Tr(gt), is_really_a_contrained_edge(*this),
     c_edge_queue(is_really_a_contrained_edge)
 {
-  typename List_constraints::iterator lcit = lc.begin();
-  for( ; lcit != lc.end(); ++lcit)
-    {
-      insert( (*lcit).first, (*lcit).second);
-    }
-  CGAL_triangulation_postcondition(is_valid());
-}
+  swap(t);
+  if(!dont_refine)
+    refine();
+};
 
 // ACCESS FUNCTIONS
 
@@ -586,7 +604,7 @@ write(std::ostream &f) const
 //the function that reads a file
 template <class Tr>
 void Mesh_2<Tr>::
-read(std::istream &f)
+read(std::istream &f, bool dont_refine)
 {
   int nedges = 0;
   clear();
@@ -596,6 +614,8 @@ read(std::istream &f)
     f >> p1 >> p2;
     insert(p1, p2);
   }
+  if(!dont_refine)
+    refine();
 }
 
 //the function that write a Shewchuk Triangle .poly file
@@ -651,7 +671,7 @@ write_poly(std::ostream &f) const
 //the function that reads a Shewchuk Triangle .poly file
 template <class Tr>
 void Mesh_2<Tr>::
-read_poly(std::istream &f)
+read_poly(std::istream &f, bool dont_refine)
 {
   clear();
 
@@ -695,8 +715,10 @@ read_poly(std::istream &f)
       skip_until_EOL(f); skip_comment_OFF(f);
       seeds.push_back(p);
     }
-
-  init(seeds.begin(), seeds.end(), false);
+  if(dont_refine)
+    init(seeds.begin(), seeds.end(), false);
+  else
+    refine(seeds.begin(), seeds.end(), false);
 }
 
 // HELPING FUNCTIONS
@@ -726,6 +748,22 @@ refine()
 }
 
 // REMESHING FUNCTIONS
+
+// deprecated constructor
+template <class Tr>
+Mesh_2<Tr>::
+Mesh_2(List_constraints& lc, const Geom_traits& gt)
+  : Tr(gt), is_really_a_contrained_edge(*this),
+    c_edge_queue(is_really_a_contrained_edge)
+{
+  typename List_constraints::iterator lcit = lc.begin();
+  for( ; lcit != lc.end(); ++lcit)
+    {
+      insert( (*lcit).first, (*lcit).second);
+    }
+  CGAL_triangulation_postcondition(is_valid());
+}
+
 template <class Tr>
 void Mesh_2<Tr>::
 set_geom_traits(const Geom_traits& gt)

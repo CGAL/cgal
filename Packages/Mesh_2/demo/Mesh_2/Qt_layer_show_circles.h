@@ -44,8 +44,7 @@ public:
   typedef typename GT::Circle_2 Circle;
   typedef typename GT::FT		FT;
 
-  Qt_layer_show_circles(T &t, QLabel& l) : tr(t), label(l),
-    do_erase(false) {};
+  Qt_layer_show_circles(T*& t) : tr(t), do_erase(false) {};
 
   void draw() const
   {
@@ -54,7 +53,7 @@ public:
   
   void mousePressEvent(QMouseEvent* e)
     {
-      if (tr.dimension()<1) return;
+      if (tr->dimension()<1) return;
       FT
 	x=static_cast<FT>(widget->x_real(e->x())),
 	y=static_cast<FT>(widget->y_real(e->y()));
@@ -63,14 +62,14 @@ public:
 
       int li;
       Locate_type lt;
-      Face_handle fh = tr.locate(p,lt,li);
+      Face_handle fh = tr->locate(p,lt,li);
       if(lt == T::FACE)
 	draw_circle(fh);	  
     };
 
   void mouseMoveEvent(QMouseEvent *e)
     {
-      if (tr.dimension()<1) return;
+      if (tr->dimension()<1) return;
       FT
 	x=static_cast<FT>(widget->x_real(e->x())),
 	y=static_cast<FT>(widget->y_real(e->y()));
@@ -79,7 +78,7 @@ public:
 
       int li;
       Locate_type lt;
-      Face_handle fh = tr.locate(p,lt,li);
+      Face_handle fh = tr->locate(p,lt,li);
       if(lt == T::FACE)
 	{
 	  if(fh!=old_face)
@@ -91,9 +90,6 @@ public:
 	      old_face=fh;
 	      
 	      widget->unlock();
-	      QString s;
-	      s.setNum(to_double(tr.squared_minimum_sine(fh)), 'g', 5);
-	      label.setText(s);
 	      do_erase=true;
 	    }
 	}
@@ -107,7 +103,7 @@ public:
 
   void leaveEvent(QEvent *e)
     {
-      if (tr.dimension()<1) return;      
+      if (tr->dimension()<1) return;      
       if(do_erase)
 	draw_circle(old_face);
     };
@@ -124,7 +120,7 @@ private:
       widget->get_painter().setRasterOp(NotROP);
       
       Point v=((*fh).vertex(0))->point();
-      Point c=tr.circumcenter(fh);
+      Point c=tr->circumcenter(fh);
       
       *widget << Circle(c,squared_distance(v,c));
       widget->setColor(oldcolor);
@@ -133,8 +129,7 @@ private:
       widget->do_paint();
     }
 
-  T      &tr;
-  QLabel &label;
+  T*& tr;
   Face_handle  old_face;
   bool	       do_erase;
 };//end class 

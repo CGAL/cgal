@@ -31,17 +31,17 @@ class Qt_layer_show_triangulation : public Qt_widget_layer
 {
 public:
 	
-  Qt_layer_show_triangulation(T &t) : tr(t){};
+  Qt_layer_show_triangulation(T *&t) : tr(t){};
 
 
   void draw()
   {
     *widget << CGAL::BLUE; 
-    *widget << tr;
+    *widget << *tr;
   };
 	
 private:
-  T &tr;
+  T *&tr;
 };//end class 
 
 } // namespace CGAL

@@ -30,21 +30,21 @@ class Qt_layer_show_triangulation_constraints : public Qt_widget_layer
 {
 public:
 	
-  Qt_layer_show_triangulation_constraints(T &t) : tr(t){};
+  Qt_layer_show_triangulation_constraints(T *&t) : tr(t){};
 
   void draw()
   {
     widget->lock();
-    for(typename T::Edge_iterator it=tr.edges_begin();
-	it!=tr.edges_end();
+    for(typename T::Edge_iterator it=tr->edges_begin();
+	it!=tr->edges_end();
 	it++)
-      if(tr.is_constrained(*it))
-	  *widget << CGAL::RED << tr.segment(*it);
+      if(tr->is_constrained(*it))
+	  *widget << CGAL::RED << tr->segment(*it);
     widget->unlock();  
   };
 	
 private:
-  T &tr;
+  T *&tr;
 };//end class 
 
 } // namespace CGAL

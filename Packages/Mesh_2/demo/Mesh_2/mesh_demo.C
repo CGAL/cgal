@@ -1,4 +1,4 @@
-// if QT is not installed, a message will be issued in runtime.
+ // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
 #include <iostream>
 
@@ -78,10 +78,10 @@ typedef CGAL::Mesh_2<Tr> Mesh;
 template <class M>
 class Show_marked_faces : public CGAL::Qt_widget_layer
 {
-  M &mesh;
+  M *&mesh;
   CGAL::Color color;
 public:
-  Show_marked_faces(Mesh &m, CGAL::Color c=CGAL::GREEN) : mesh(m),
+  Show_marked_faces(M *&m, CGAL::Color c=CGAL::GREEN) : mesh(m),
     color(c) {};
 
   typedef typename M::Finite_faces_iterator Face_iterator;
@@ -91,11 +91,11 @@ public:
     QColor old_fill_color = widget->fillColor();
     int old_line_width = widget->lineWidth();
     *widget << CGAL::FillColor(CGAL::GREEN) << CGAL::LineWidth(0);
-    for(Face_iterator fit=mesh.finite_faces_begin();
-	fit!=mesh.finite_faces_end();
+    for(Face_iterator fit=mesh->finite_faces_begin();
+	fit!=mesh->finite_faces_end();
 	++fit)
       if(fit->is_marked())
-	*widget << mesh.triangle(fit);
+	*widget << mesh->triangle(fit);
     widget->setFillColor(old_fill_color);
     widget->setLineWidth(old_line_width);
   }
@@ -114,7 +114,7 @@ public:
   }
 
   void activating()
-  {	
+  {
     oldcursor = widget->cursor();
     widget->setCursor(crossCursor);
   };
@@ -150,8 +150,12 @@ class MyWindow : public QMainWindow
 {
   Q_OBJECT
 public:
-  MyWindow() : is_mesh_initialized(false), traits(), mesh(traits)
+  MyWindow() : is_mesh_initialized(false), traits()
     {
+      triangulation = new Tr(traits);
+      mesh = 0;
+      seeds = new Seeds();
+
       QFrame* mainframe = new QFrame(this); 
       QHBoxLayout *hbox = new QHBoxLayout(mainframe);
       hbox->setAutoAdd(true);
@@ -173,23 +177,24 @@ public:
       // STATUSBAR
       statusBar();
 
-      aspect_ratio_label = new QLabel(statusBar(), "aspect_ratio");
-      statusBar()->addWidget(aspect_ratio_label, 0, true);
+      //      aspect_ratio_label = new QLabel(statusBar(), "aspect_ratio");
+      //      statusBar()->addWidget(aspect_ratio_label, 0, true);
 
       // LAYERS
-      show_points = new CGAL::Qt_layer_show_points<Mesh>(mesh);
+      show_points = new CGAL::Qt_layer_show_points<Tr>(triangulation);
       show_seeds = new CGAL::Qt_layer_show_points<Seeds>(seeds,
 							 CGAL::BLUE,
 							 5,
 							 CGAL::CROSS);
       show_triangulation = 
-	new CGAL::Qt_layer_show_triangulation<Mesh>(mesh);
+	new CGAL::Qt_layer_show_triangulation<Tr>(triangulation);
       show_marked = 
-	new Show_marked_faces<Mesh>(mesh);
+	new Show_marked_faces<Tr>(triangulation);
       show_constraints = 
-	new CGAL::Qt_layer_show_triangulation_constraints<Mesh>(mesh);
+	new CGAL::Qt_layer_show_triangulation_constraints<Tr>
+	(triangulation);
       show_circles = 
-	new CGAL::Qt_layer_show_circles<Mesh>(mesh, *aspect_ratio_label);
+	new CGAL::Qt_layer_show_circles<Tr>(triangulation);
       show_mouse = new CGAL::Qt_layer_mouse_coordinates(*this);
 
       // layers order, first attached are "under" last attached
@@ -424,11 +429,11 @@ public:
   void bounds(FT &xmin, FT &ymin, 
 	      FT &xmax, FT &ymax)
     {
-      Mesh::Finite_vertices_iterator vi=mesh.finite_vertices_begin();
+      Mesh::Finite_vertices_iterator vi=mesh->finite_vertices_begin();
       xmin=xmax=vi->point().x();
       ymin=ymax=vi->point().y();
       vi++;
-      while(vi != mesh.finite_vertices_end())
+      while(vi != mesh->finite_vertices_end())
 	{
 	  if(vi->point().x() < xmin) xmin=vi->point().x();
 	  if(vi->point().x() > xmax) xmax=vi->point().x();
@@ -438,7 +443,37 @@ public:
 	}
     }
 
+  void switch_to_mesh()
+    {
+      if(mesh == 0)
+	{
+	  std::cerr << "switch_to_mesh()" << std::endl;
+	  // "construct" a mesh from triangulation without refining it
+	  // (because of the third parameter dont_refine=true)
+	  mesh = new Mesh(*triangulation, traits, true);
+	  delete triangulation;
+	  triangulation = mesh;
+	};
+    }
+
+  void switch_to_triangulation()
+    {
+      if(mesh != 0)
+	{
+	  std::cerr << "switch_to_triangulation()" << std::endl
+		    << mesh->number_of_vertices() << std::endl;
+	  triangulation = new Tr(); // empty triangulation
+	  triangulation->swap(*mesh); // swap *triangulation and *mesh
+	  // *mesh is now empty
+	  delete mesh;
+	  std::cerr << triangulation->number_of_vertices() << std::endl;
+	  mesh = 0; // in case delete does not the job
+	};
+    }
+
 public slots:
+
+
   void get_cgal_object(CGAL::Object obj)
     {
       Point p;
@@ -447,16 +482,18 @@ public slots:
       if(CGAL::assign(p,obj))
 	if(get_seed->is_active())
 	  {
-	    seeds.push_back(p);
-	    mesh.mark_facets(seeds.begin(), seeds.end());
+	    seeds->push_back(p);
+	    switch_to_mesh();
+	    mesh->mark_facets(seeds->begin(), seeds->end());
 	  }
 	else
 	  if(follow_mouse->is_active())
 	    {
+	      switch_to_mesh();
 	      typedef Mesh::Face_handle Face_handle;
 	      std::list<Face_handle> l;
 
-	      Face_handle fh = mesh.locate(p);
+	      Face_handle fh = mesh->locate(p);
 	      traits.set_point(p);
 	      if( (fh!=NULL) )
 		{
@@ -468,18 +505,24 @@ public slots:
 		  if(traits.is_bad_object().operator()(a, b, c))
 		    l.push_back(fh);
 		}
-	      mesh.set_geom_traits(traits, l.begin(), l.end());
-	      while( mesh.refine_step() );
+	      mesh->set_geom_traits(traits, l.begin(), l.end());
+	      while( mesh->refine_step() );
 	      widget->redraw();
 	    }
 	  else
-	    mesh.insert(p);
+	    {
+	      switch_to_triangulation();
+	      triangulation->insert(p);
+	    }
       else
 	if (CGAL::assign(poly,obj))
-	  for(Polygon::Edge_const_iterator it=poly.edges_begin();
-	      it!=poly.edges_end();
-	      it++)
-	    mesh.insert((*it).source(),(*it).target());
+	  {
+	    switch_to_triangulation();
+	    for(Polygon::Edge_const_iterator it=poly.edges_begin();
+		it!=poly.edges_end();
+		it++)
+	    triangulation->insert((*it).source(),(*it).target());
+	  }
       widget->redraw();
     }
 
@@ -488,16 +531,16 @@ public slots:
 //       widget->lock();
 //       widget->clear();
 
-//       for(Mesh::Edge_iterator it=mesh.edges_begin();
-// 	  it!=mesh.edges_end();
+//       for(Mesh::Edge_iterator it=mesh->edges_begin();
+// 	  it!=mesh->edges_end();
 // 	  it++)
-// 	if(mesh.is_constrained(*it))
-// 	  *widget << CGAL::RED << mesh.segment(*it);
+// 	if(mesh->is_constrained(*it))
+// 	  *widget << CGAL::RED << mesh->segment(*it);
 // 	else
-// 	  *widget << CGAL::BLUE << mesh.segment(*it);
+// 	  *widget << CGAL::BLUE << mesh->segment(*it);
 //       *widget << CGAL::GREEN;
-//       for(Mesh::Vertex_iterator it=mesh.vertices_begin();
-// 	  it!=mesh.vertices_end();
+//       for(Mesh::Vertex_iterator it=mesh->vertices_begin();
+// 	  it!=mesh->vertices_end();
 // 	  it++)
 // 	*widget << it->point();
 //       widget->unlock();
@@ -506,6 +549,8 @@ public slots:
     //insert a bounding box around the mesh
   void insert_bounding_box()
     {
+      switch_to_triangulation();
+
       FT xmin, xmax, ymin, ymax;
       bounds(xmin, ymin, xmax, ymax);
 
@@ -518,46 +563,49 @@ public slots:
       Point bb2(xcenter + 1.5*xspan, ycenter - 1.5*yspan);
       Point bb3(xcenter + 1.5*xspan, ycenter + 1.5*yspan);
       Point bb4(xcenter - 1.5*xspan, ycenter + 1.5*yspan);
-      mesh.insert(bb1);
-      mesh.insert(bb2);
-      mesh.insert(bb3);
-      mesh.insert(bb4);
-      mesh.insert(bb1, bb2);
-      mesh.insert(bb2, bb3);
-      mesh.insert(bb3, bb4);
-      mesh.insert(bb4, bb1);
+      triangulation->insert(bb1);
+      triangulation->insert(bb2);
+      triangulation->insert(bb3);
+      triangulation->insert(bb4);
+      triangulation->insert(bb1, bb2);
+      triangulation->insert(bb2, bb3);
+      triangulation->insert(bb3, bb4);
+      triangulation->insert(bb4, bb1);
       widget->redraw();
     }
 
   void refineMesh()
     {
+      switch_to_mesh();
       saveTriangulationUrgently("last_input.edg");
-      mesh.refine(seeds.begin(), seeds.end());
+      mesh->refine(seeds->begin(), seeds->end());
       is_mesh_initialized=true;
       widget->redraw();
     }
 
   void conformMesh()
     {
+      switch_to_mesh();
       if(!is_mesh_initialized)
 	{
 	  saveTriangulationUrgently("last_input.edg");
-	  mesh.init(seeds.begin(), seeds.end());
+	  mesh->init(seeds->begin(), seeds->end());
 	  is_mesh_initialized=true;
 	}
-      mesh.conform();
+      mesh->conform();
       widget->redraw();
     }
 
   void refineMeshStep()
     {
+      switch_to_mesh();
       if(!is_mesh_initialized)
 	{
-	  mesh.init(seeds.begin(), seeds.end());
+	  mesh->init(seeds->begin(), seeds->end());
 	  is_mesh_initialized=true;
 	  saveTriangulationUrgently("last_input.edg");
 	}
-      if(!mesh.refine_step())
+      if(!mesh->refine_step())
 	pbMeshTimer->setOn(false);
       widget->redraw();
     }
@@ -584,14 +632,17 @@ public slots:
 
   void clearMesh()
     {
-      mesh.clear();
-      seeds.clear();
+      switch_to_mesh();
+      mesh->clear();
+      seeds->clear();
       is_mesh_initialized=false;
+      switch_to_triangulation();
       widget->redraw();
     }
 
   void openTriangulation()
     {
+      switch_to_mesh();
       QString s( QFileDialog::getOpenFileName( QString::null,
 					       my_filters, this ) );
       if ( s.isEmpty() )
@@ -599,18 +650,18 @@ public slots:
       std::ifstream f(s);
       if(s.right(5) == ".poly")
 	{
-	  mesh.read_poly(f);
-	  seeds.clear();
-	  for(Mesh::Seeds::iterator it = mesh.seeds.begin();
-	      it != mesh.seeds.end();
+	  mesh->read_poly(f);
+	  seeds->clear();
+	  for(Mesh::Seeds::iterator it = mesh->seeds.begin();
+	      it != mesh->seeds.end();
 	      ++it)
-	    seeds.push_back(*it);
+	    seeds->push_back(*it);
 	  is_mesh_initialized=true;
 	}
       else
 	{
-	  mesh.read(f);
-	  seeds.clear();
+	  mesh->read(f);
+	  seeds->clear();
 	  is_mesh_initialized=false;
 	}
 
@@ -629,21 +680,23 @@ public slots:
 
   void saveTriangulation()
     {
+      switch_to_mesh();
       QString s( QFileDialog::getSaveFileName( "filename.edg",
 					       my_filters, this ) );
       if ( s.isEmpty() )
         return;
       std::ofstream of(s);
       if(s.right(5) == ".poly")
-	mesh.write_poly(of);
+	mesh->write_poly(of);
       else
-	mesh.write(of);
+	mesh->write(of);
     }
 
   void saveTriangulationUrgently(QString s=QString("dump.edg"))
     {
+      switch_to_mesh();
       std::ofstream of(s);
-      mesh.write(of);
+      mesh->write(of);
     }
 
   inline
@@ -655,25 +708,29 @@ public slots:
     {
       double bound = QInputDialog::getDouble( "Set bound",
 					      "Please enter a new bound",
-					      mesh.geom_traits().bound());
+					      mesh->geom_traits().bound());
       traits.set_bound(bound);
-      mesh.set_geom_traits(traits);
+      if( mesh != 0 )
+	mesh->set_geom_traits(traits);
     }
 
   void setSizeBound() 
     {
-      double bound = QInputDialog::getDouble( "Set bound",
-					      "Please enter a new bound",
-					      mesh.geom_traits().size_bound());
+      double bound = 
+	QInputDialog::getDouble( "Set bound",
+				 "Please enter a new bound",
+				 mesh->geom_traits().size_bound());
       traits.set_size_bound(bound);
-      mesh.set_geom_traits(traits);
+      if ( mesh != 0 )
+	mesh->set_geom_traits(traits);
     }
 
   void setLocal()
     {
-      traits.set_local_size(!mesh.geom_traits().is_local_size());
+      switch_to_mesh();
+      traits.set_local_size(!mesh->geom_traits().is_local_size());
       pmCriteria->setItemChecked(menu_id, traits.is_local_size());
-      mesh.set_geom_traits(traits);
+      mesh->set_geom_traits(traits);
       if(traits.is_local_size())
 	follow_mouse->activate();
       else
@@ -684,9 +741,10 @@ private:
   static const QString my_filters;
   bool is_mesh_initialized;
   Meshtraits traits;
-  Mesh mesh;
+  Tr* triangulation;
+  Mesh* mesh;
 
-  Seeds seeds;
+  Seeds* seeds;
 
   QPopupMenu *pmCriteria;
   int menu_id;
@@ -697,15 +755,15 @@ private:
   CGAL::Qt_widget_get_polygon<Polygon>* get_polygon;
   Follow_mouse* follow_mouse;
 
-  CGAL::Qt_layer_show_points<Mesh>* show_points;
+  CGAL::Qt_layer_show_points<Tr>* show_points;
   CGAL::Qt_layer_show_points<Seeds>* show_seeds;
-  CGAL::Qt_layer_show_triangulation<Mesh>* show_triangulation;
-  CGAL::Qt_layer_show_triangulation_constraints<Mesh>* show_constraints;
-  CGAL::Qt_layer_show_circles<Mesh>* show_circles;
+  CGAL::Qt_layer_show_triangulation<Tr>* show_triangulation;
+  CGAL::Qt_layer_show_triangulation_constraints<Tr>* show_constraints;
+  CGAL::Qt_layer_show_circles<Tr>* show_circles;
   CGAL::Qt_layer_mouse_coordinates* show_mouse;
-  Show_marked_faces<Mesh>* show_marked;
+  Show_marked_faces<Tr>* show_marked;
 
-  QLabel* aspect_ratio_label;
+  //  QLabel* aspect_ratio_label;
   QTimer* timer;
   QPushButton *pbMeshTimer;
   int timer_interval;
