@@ -8,14 +8,14 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.3-I-75 $
-// release_date  : $CGAL_Date: 2001/06/21 $
+// release       : $CGAL_Revision: CGAL-2.4-I-31 $
+// release_date  : $CGAL_Date: 2001/11/30 $
 //
 // file          : include/CGAL/LEDA/window.h
-// package       : cgal_window (1.0.3)
+// package       : cgal_window (1.0.7)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 1.0.3
-// revision_date : 25 June 2001
+// revision      : 1.0.7
+// revision_date : 03 Dec 2001
 // author(s)     : Matthias Baesken, Algorithmic Solutions
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>) 
@@ -234,7 +234,7 @@ std::list<CGAL::window_point>::const_iterator __dummy_iter__;
 
 // windows cannot be copied, use reference parameters! 
 
-window(const window&) { }
+window(const window&) : BASE_WINDOW() { }
 window& operator=(const window&) { return *this; }
 
 char* access_str(GenPtr p) { return (char*)(((string*)p)->c_str()); }
