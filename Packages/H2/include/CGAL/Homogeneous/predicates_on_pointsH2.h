@@ -24,7 +24,6 @@
 #define CGAL_PREDICATES_ON_POINTSH2_H
 
 #include <CGAL/Homogeneous/PointH2.h>
-#include <CGAL/Homogeneous/predicates_on_pointsH2.h>
 
 CGAL_BEGIN_NAMESPACE
 

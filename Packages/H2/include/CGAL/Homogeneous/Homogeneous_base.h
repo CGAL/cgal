@@ -69,7 +69,7 @@
 #include <CGAL/Homogeneous/predicates_on_pointsH2.h>
 
 #include <CGAL/representation_tags.h>
-#include <CGAL/Kernel/function_objects.h>
+#include <CGAL/Homogeneous/function_objects.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -113,7 +113,7 @@ struct Homogeneous_base
     typedef ConicHPA2<Point_2, Data_accessor_2>     Conic_2;
  
     // Functors types and access functions.
-#define CGAL_Kernel_pred(Y,Z) typedef CGALi::Y<Kernel> Y; \
+#define CGAL_Kernel_pred(Y,Z) typedef HomogeneousKernelFunctors::Y<Kernel> Y; \
                               Y Z() const { return Y(); }
 #define CGAL_Kernel_cons(Y,Z) CGAL_Kernel_pred(Y,Z)
 
