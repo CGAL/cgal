@@ -1,3 +1,6 @@
+8 May 2004 Sylvain Pion
+- Prevent warnings when -DNDEBUG.
+
 23 April 2004 Andreas Fabri
 - bug fix in line_from_pointsC2 (sign error, degenerate line)
 

@@ -64,10 +64,10 @@ public:
     : base(Construct_point_2()(left.x(), bottom.y()),
            Construct_point_2()(right.x(), top.y()))
   {
-    typename R::Less_x_2 less_x;
-    typename R::Less_y_2 less_y;
-    CGAL_kernel_precondition(!less_x(right, left));
-    CGAL_kernel_precondition(!less_y(top, bottom));
+    CGAL_kernel_assertion_code(typename R::Less_x_2 less_x;)
+    CGAL_kernel_assertion_code(typename R::Less_y_2 less_y;)
+    CGAL_kernel_assertion(!less_x(right, left));
+    CGAL_kernel_assertion(!less_y(top, bottom));
   }
 
   Iso_rectangleC2(const FT& min_x, const FT& min_y, 
