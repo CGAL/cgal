@@ -884,7 +884,8 @@ Alpha_shape_3<Dt>::initialize_alpha_edge_maps(bool reinitialize)
 	}
       } while (++fcirc != done);
  
-      alpha_mid_edge_map.insert(Alpha_edge_map::value_type(as->alpha_mid(), *eit));
+      alpha_mid_edge_map.insert(Alpha_edge_map::value_type
+	                        (as->alpha_mid(), *eit));
       
       //cross links
       Vertex_handle_pair vhp = make_vertex_handle_pair(
@@ -932,7 +933,8 @@ Alpha_shape_3<Dt>::initialize_alpha_edge_maps(bool reinitialize)
 	    as->set_alpha_mid(asf->alpha_min());
 	}
       } while (++fcirc != done);
-      alpha_mid_edge_map.insert(Alpha_edge_map::value_type(as->alpha_mid(), *eit));
+      alpha_mid_edge_map.insert(Alpha_edge_map::value_type
+	                        (as->alpha_mid(), *eit));
     }
   }
   return;
@@ -973,7 +975,8 @@ Alpha_shape_3<Dt>::initialize_alpha_vertex_maps(bool reinitialize)
 	}
       }
 
-      alpha_mid_vertex_map.insert(Alpha_vertex_map::value_type(as->alpha_mid(),vit));
+      alpha_mid_vertex_map.insert(Alpha_vertex_map::value_type
+	                          (as->alpha_mid(),vit));
   
       // cross link
       vit->set_alpha_status(as);
