@@ -5,17 +5,19 @@
 # Author: Sylvain Pion <Sylvain.Pion@sophia.inria.fr>.
 #
 #
-#  This script takes as _stdin_ "predicates_on_ftC2.h" or equivalent.
-#  It produces as _stdout_ "Filter/predicates_on_ftC2.h" or equivalent.
+#  This script takes as STDIN "predicates_on_ftC2.h" or equivalent.
+#  It produces as STDOUT "Filter/predicates_on_ftC2.h" or equivalent.
 #
-#  See the CGAL documentation, Support Library, Interval Arithmetic.
+#  It is not supposed to be universal, and it can be considered a quick and
+#  dirty hack.  But it appears to work for CGAL's predicates.
+#
+#  See the CGAL documentation: Support Library, Number Types, CGAL_Filtering.
 #
 
 $in_header=1;
 $in_def=0;
 $in_decl=0;
 $after_template=0;
-$after_inline=0;
 $result_type="";
 @args=();
 
@@ -69,26 +71,27 @@ while (<>)
   if ($after_template)
   {
     s/(CGAL_KERNEL_.*INLINE)/\/\/ $1/; # Comment the INLINE line.
-    if ($result_type eq "") {
-      if ($after_inline) {
+    s/inline/\/\/ inline/;             # Comment the INLINE line.
+    if ( /\(/ ) { $in_decl=1; }
+    if (! $in_decl) {
+      if (! (/INLINE/ || /inline/)) {
         $result_type = $_;
         chop($result_type);
         # print "RESULT_TYPE = $result_type\n";
       }
     }
-    if (/INLINE/) { $after_inline=1; $result_type=""; }
-    if (/[,\)]/) { $in_decl = 1; }
     if ($in_decl)
     {
-      @a = split /[,\)]/;
+      @a = split /[,\)]/; # Stores the arguments names in @args.
       foreach (@a) {
+	s/^.*\(//;
         next if /^$/;
         /(\w+)\s*$/;
         push(@args, $1);
         $last_arg=$1;
       }
       s/,[\s]*/,\n\t/g; # Split to make the lines < 80 characters.
-      s/FT/CGAL_Filtering<CT,ET>/g;
+      s/[RF]T/CGAL_Filtering<CT,ET>/g;
     }
     if (/\(/) {
       /([a-zA-Z_]\w*)\s*\(/;
@@ -97,7 +100,7 @@ while (<>)
     }
   }
   if (/template/) { $after_template = 1; }
-  s/template\s*<\s*class\s*FT\s*>/template < class CT, class ET >/;
+  s/template\s*<\s*class\s*[RF]T\s*>/template < class CT, class ET >/;
 
   if ($in_header)
   {
