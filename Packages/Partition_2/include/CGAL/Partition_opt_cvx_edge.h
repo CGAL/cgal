@@ -88,6 +88,7 @@ private:
    Partition_opt_cvx_diagonal_list _solution;
 };
 
+inline
 std::ostream& operator<<(std::ostream& os, const Partition_opt_cvx_edge& g)
 {
    if (g.is_done()) os << "1";
