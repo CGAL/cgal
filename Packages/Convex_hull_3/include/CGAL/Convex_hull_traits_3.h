@@ -37,6 +37,26 @@
 
 namespace CGAL {
 
+template <class T>
+class Max_coordinate_3 
+{
+public:
+
+    int operator()(const T& v)
+    {
+      if (CGAL_NTS abs(v.x()) >= CGAL_NTS abs(v.y()))
+      {
+         if (CGAL_NTS abs(v.x()) >= CGAL_NTS abs(v.z())) return 0;
+         return 2;
+      }
+      else
+      {
+         if (CGAL_NTS abs(v.y()) >= CGAL_NTS abs(v.z())) return 1;
+         return 2;
+      }
+    }
+};
+
 // without this we get an internal compiler error on bcc
 #if defined(__BORLANDC__)
 template <class R_, class Polyhedron_ = CGAL::Polyhedron_3<R_> >
@@ -80,6 +100,7 @@ class Convex_hull_traits_3
   typedef Convex_hull_projective_xy_traits_2<Point_3>  Traits_xy;
   typedef Convex_hull_projective_xz_traits_2<Point_3>  Traits_xz;
   typedef Convex_hull_projective_yz_traits_2<Point_3>  Traits_yz;
+  typedef Max_coordinate_3<Vector_3>                   Max_coordinate_3;
 
   // for postcondition checking 
   typedef typename R::Ray_3                      Ray_3; 
@@ -147,6 +168,10 @@ class Convex_hull_traits_3
   Less_signed_distance_to_plane_3  
   less_signed_distance_to_plane_3_object() const
   { return Less_signed_distance_to_plane_3(); }
+
+  Max_coordinate_3  
+  max_coordinate_3_object() const
+  { return Max_coordinate_3(); }
 };
 
 } // namespace CGAL

@@ -92,20 +92,6 @@ class Build_coplanar_poly : public Modifier_base<HDS> {
   ForwardIterator end;    
 };
 
-template <class Vector_3>
-int max_coordinate(const Vector_3& v)
-{
-   if (CGAL_NTS abs(v.x()) >= CGAL_NTS abs(v.y()))
-   {
-      if (CGAL_NTS abs(v.x()) >= CGAL_NTS abs(v.z())) return 0;
-      return 2;
-   }
-   else
-   {
-      if (CGAL_NTS abs(v.y()) >= CGAL_NTS abs(v.z())) return 1;
-      return 2;
-   }
-}
 
 template <class InputIterator, class Plane_3, class Polyhedron_3, class Traits>
 void coplanar_3_hull(InputIterator first, InputIterator beyond,
@@ -114,12 +100,15 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
   typedef typename Traits::R                     R;
   typedef typename Traits::Point_3               Point_3;
   typedef typename Traits::Vector_3              Vector_3;
+  typedef typename Traits::Max_coordinate_3      Max_coordinate_3;
   typedef Polyhedron_3                           Polyhedron;
   
   std::list<Point_3> CH_2;
   typedef typename std::list<Point_3>::iterator  CH_2_iterator;
   typedef typename Traits::Construct_orthogonal_vector_3
                                                    Construct_normal_vec;
+  Max_coordinate_3 max_coordinate =  traits.max_coordinate_3_object();
+
   Construct_normal_vec c_normal = 
                           traits.construct_orthogonal_vector_3_object();
   Vector_3 normal = c_normal(plane);
@@ -291,7 +280,7 @@ partition_outside_sets(const std::list<Facet_handle>& new_facets,
 // the MSVC 6.0 and 7.0 compilers cannot deal with function overloading
 // very well, so we have to use specific templating here with the CGAL
 // Polyhedron_3 type in its two different forms (one that is swallowed by
-// MSVC6 and the other by MSVC 7.0. 
+// MSVC6 and the other by MSVC 7.0). 
 //
 #if defined(_MSC_VER)
 
@@ -457,7 +446,7 @@ ch_quickhull_3_scan(
 // the MSVC 6.0 and 7.0 compilers cannot deal with function overloading
 // very well, so we have to use specific templating here with the CGAL
 // Polyhedron_3 type in its two different forms (one that is swallowed by
-// MSVC6 and the other by MSVC 7.0. 
+// MSVC6 and the other by MSVC 7.0). 
 //
 #if defined(_MSC_VER)
 
@@ -546,7 +535,7 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
 // the MSVC 6.0 and 7.0 compilers cannot deal with function overloading
 // very well, so we have to use specific templating here with the CGAL
 // Polyhedron_3 type in its two different forms (one that is swallowed by
-// MSVC6 and the other by MSVC 7.0. 
+// MSVC6 and the other by MSVC 7.0). 
 //
 #if defined(_MSC_VER)
 
@@ -754,7 +743,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 // the MSVC 6.0 and 7.0 compilers cannot deal with function overloading
 // very well, so we have to use specific templating here with the CGAL
 // Polyhedron_3 type in its two different forms (one that is swallowed by
-// MSVC6 and the other by MSVC 7.0. 
+// MSVC6 and the other by MSVC 7.0). 
 //
 #if defined(_MSC_VER)
 
@@ -823,7 +812,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 // the MSVC 6.0 and 7.0 compilers cannot deal with function overloading
 // very well, so we have to use specific templating here with the CGAL
 // Polyhedron_3 type in its two different forms (one that is swallowed by
-// MSVC6 and the other by MSVC 7.0. 
+// MSVC6 and the other by MSVC 7.0). 
 //
 #if defined(_MSC_VER)
 

@@ -1,3 +1,7 @@
+2.39    (3 May 2002)
+- added extra traits class requirement for case when all points may be coplanar
+  for function object required to decide in which direction to project things
+
 2.38    (2 May 2002)
 - eliminate use of back_inserter for Delaunay triangulation since (a) the
   push_back function is deprecated and (b) M$VC7 doesn't like this.

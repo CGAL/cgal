@@ -69,6 +69,14 @@ three types that are default-constructable are necessary:
 \ccNestedType{Traits_yz}{A model of ConvexHullTraits\_2 for points projected
                          into the $yz$-plane}
 
+One also needs the following function object to help choose which of the above
+traits classes to use:
+
+\ccNestedType{Max_coordinate_3}{Function object type that provides
+\ccc{int operator()(Vector_3 v)}, which returns the index (0, 1, or 2 for
+$x$, $y$, or $z$, respectively) of the coordinate of $v$ with maximum absolute 
+value.}
+
 These types need not be provided when it is known that the points are
 not all coplanar.
 
