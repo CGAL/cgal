@@ -23,12 +23,11 @@
 
 $in_def=0;
 $in_decl=0;
-$in_dont_filter=0; # We are in a piece of code that don't need to be filtered.
 $after_template=0;
 $result_type="";
 @args=();
 
-# A sub routine to treat the header: the first parsing step.
+# A sub routine to treat the CGAL header: the first parsing step.
 sub treat_CGAL_header {
   while (<>)
   {
@@ -73,6 +72,13 @@ sub treat_CGAL_header {
 #ifndef $new_protect_name\n";
 }
 
+# A sub routine that just skips a "CGAL_NO_FILTER" section.
+sub skip_no_filter_section {
+  while (<>) {
+    last if /\/\/CGAL_NO_FILTER_END/;
+  }
+}
+
 # List of CGAL's enum types.
 @CGAL_return_types=("Sign", "Comparison_result", "Orientation",
 	            "Oriented_side", "Bounded_side");
@@ -98,16 +104,10 @@ treat_CGAL_header();
 
 while (<>)
 {
-  # First we treat the CGAL_NO_FILTER_BEGIN/CGAL_NO_FILTER_END section:
-  # just remove the code, including the bounding lines.
+  # Treat the CGAL_NO_FILTER_BEGIN/CGAL_NO_FILTER_END section:
   if (/\/\/CGAL_NO_FILTER_BEGIN/) {
-    $in_dont_filter=1;
+    skip_no_filter_section();
   }
-  if (/\/\/CGAL_NO_FILTER_END/) {
-    $in_dont_filter=0;
-    next;
-  }
-  next if ($in_dont_filter);
 
   if (/^}$/) {
     $in_def=0;
