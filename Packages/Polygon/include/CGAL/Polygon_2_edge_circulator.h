@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997 The CGAL Consortium
 //
@@ -6,10 +6,10 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-0.9-I-08 $
-// release_date  : $CGAL_Date: 1998/03/11 $
+// release       : $CGAL_Revision: CGAL-1.2-I-17 $
+// release_date  : $CGAL_Date: 1999/01/08 $
 //
 // file          : include/CGAL/Polygon_2_edge_circulator.h
 // source        : 
@@ -19,7 +19,7 @@
 //
 // coordinator   : Utrecht University
 //
-// ============================================================================
+// ======================================================================
 
 #ifndef CGAL_POLYGON_2_EDGE_CIRCULATOR_H
 #define CGAL_POLYGON_2_EDGE_CIRCULATOR_H
@@ -209,6 +209,7 @@ class CGAL_Polygon_2_const_edge_circulator {
 // should be equal to the iterator category of the corresponding container,
 // but this cannot be implemented (???).
 //--------------------------------------------------------------------//
+#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
 template <class _Traits, class _Container>
 inline
 CGAL_Bidirectional_circulator_tag
@@ -217,6 +218,7 @@ iterator_category(
 {
   return CGAL_Bidirectional_circulator_tag();
 }
+#endif // CGAL_CFG_NO_ITERATOR_TRAITS
 
 //--------------------------------------------------------------------//
 // I don't know how to implement the following function:

@@ -167,6 +167,8 @@ class CGAL_Polygon_2_edge_iterator {
 // be equal to the iterator category of the corresponding container, but this
 // cannot be implemented (???).
 //--------------------------------------------------------------------//
+
+#ifdef CGAL_CFG_NO_ITERATOR_TRAITS 
 template <class _Traits, class _Container>
 inline
 bidirectional_iterator_tag
@@ -174,6 +176,8 @@ iterator_category(const CGAL_Polygon_2_edge_iterator<_Traits, _Container>&)
 {
   return bidirectional_iterator_tag();
 }
+
+#endif // CGAL_CFG_NO_ITERATOR_TRAITS
 
 //--------------------------------------------------------------------//
 // I don't know how to implement the following function:
