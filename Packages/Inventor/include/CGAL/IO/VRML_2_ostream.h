@@ -269,7 +269,8 @@ operator<<(VRML_2_ostream& os,
   os << " " << CGAL::to_double(s.source().y()) 
      << " " << CGAL::to_double(s.source().z()) << ",\n";
   os << Indent;
-  os << CGAL::to_double(s.target().x()) << " " << CGAL::to_double(s.target().y()) 
+  os << CGAL::to_double(s.target().x())
+     << " " << CGAL::to_double(s.target().y()) 
      << " " << CGAL::to_double(s.target().z()) << " ]\n";
   os << Indent << "}\n" << Indent << "coordIndex [ 0 1 -1 ]\n";
   os << Indent << "} # IndexedLineSet\n";
