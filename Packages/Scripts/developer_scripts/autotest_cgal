@@ -290,6 +290,13 @@ test_script()
         printf "result collection::\n${FILENAME}\n" | ${SENDMAIL} -s "autohandle" ${i}
       done
     fi
+
+    
+    #removing test_platformname directories at the end 
+    #of the testsuite to save space
+    cd ${CGAL_DIR}
+    rm -rf test_{2}
+
 }
 
 
