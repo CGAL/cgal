@@ -460,6 +460,14 @@ lexicographically_yx_smaller(const Point_2<K> &p, const Point_2<K> &q)
   return CGALi::lexicographically_yx_smaller(p, q, K());
 }
 
+template < class K >
+inline
+bool
+lexicographically_yx_smaller_or_equal(const Point_2<K> &p, const Point_2<K> &q)
+{
+  return CGALi::lexicographically_yx_smaller_or_equal(p, q, K());
+}
+
 // FIXME : Undocumented
 template < class K >
 inline

@@ -481,6 +481,16 @@ lexicographically_yx_smaller(const typename CGAL_WRAP(K)::Point_2 &p,
   return k.less_yx_2_object()(p, q);
 }
 
+template < class K >
+inline
+bool
+lexicographically_yx_smaller_or_equal(const typename CGAL_WRAP(K)::Point_2 &p,
+                                      const typename CGAL_WRAP(K)::Point_2 &q,
+                                      const K& k)
+{
+  return !k.less_yx_2_object()(q, p);
+}
+
 // FIXME : Undocumented
 template < class K >
 inline

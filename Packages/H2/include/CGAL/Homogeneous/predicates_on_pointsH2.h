@@ -71,31 +71,6 @@ compare_yx(const PointH2<R>& p, const PointH2<R>& q)
       return ( qV < pV ) ? LARGER : EQUAL;
 }
 
-template < class R>
-CGAL_KERNEL_INLINE
-bool
-lexicographically_yx_smaller_or_equal(const PointH2<R>& p, const PointH2<R>& q)
-{
-  typedef typename R::RT RT;
-
-  const RT& phx = p.hx();
-  const RT& phy = p.hy();
-  const RT& phw = p.hw();
-  const RT& qhx = q.hx();
-  const RT& qhy = q.hy();
-  const RT& qhw = q.hw();
-
-  RT pV = phy * qhw;
-  RT qV = qhy * phw;
-  if ( qV < pV )
-      return false;
-  else if ( pV < qV )
-      return true;
-  pV = phx * qhw;
-  qV = qhx * phw;
-  return ( pV <= qV );
-}
-
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Oriented_side

@@ -3,6 +3,7 @@
 - Move compare_slopes(Line_2, Line_2) to the new scheme.
 - Remove side_of_oriented_line(Line_2, Point_2) : it's not documented,
   only in Cartesian, and available as Line_2::oriented_side(Point_2).
+- Move lexicographically_yx_smaller_or_equal() to the new scheme.
 
 21 Feb 2004 Sylvain Pion
 - Move internal predicates(p,q,K) to CGALi.

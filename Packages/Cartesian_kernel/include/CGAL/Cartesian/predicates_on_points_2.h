@@ -65,15 +65,6 @@ compare_lexicographically_yx(const PointC2<K> &p,
   return compare_lexicographically_xyC2(p.y(), p.x(), q.y(), q.x());
 }
 
-template < class K >
-inline
-bool
-lexicographically_yx_smaller_or_equal(const PointC2<K> &p,
-                                      const PointC2<K> &q)
-{
-  return compare_lexicographically_yx(p, q) != LARGER;
-}
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
