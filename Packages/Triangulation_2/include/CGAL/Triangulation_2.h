@@ -195,7 +195,35 @@ public:
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const
   {
-    return _tds.is_valid();
+    bool result = _tds.is_valid();
+
+    Face_iterator it;
+    for(it=faces_begin(); it!=faces_end(); it++){
+      CGAL_Orientation s = geom_traits().orientation(it->vertex(0)->point(),
+						     it->vertex(1)->point(),
+						     it->vertex(2)->point());
+      CGAL_triangulation_assertion( s == CGAL_LEFTTURN );
+      result = result && ( s == CGAL_LEFTTURN );
+    }
+
+    Vertex_circulator start = infinite_vertex()->incident_vertices(),
+      pc(start),
+      qc(start),
+      rc(start);
+    ++qc;
+    ++rc;
+    ++rc;
+    do{
+      CGAL_Orientation s = geom_traits().orientation(pc->point(),
+						     qc->point(),
+						     rc->point());
+      CGAL_triangulation_assertion( s != CGAL_LEFTTURN );
+      result = result && ( s != CGAL_LEFTTURN );
+      pc = qc;
+      qc = rc;
+      ++rc;
+    }while(pc != start);
+    return result;
   }
 
   // TEST IF INFINITE FEATURES
