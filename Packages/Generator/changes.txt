@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.68 (12 Aug 2003)
+- Removed unused variable name from parameter list to get rid of warning [af]
+
 2.67 (25 Jul 2003)
    - modified the Generator doc (rursu)
 
