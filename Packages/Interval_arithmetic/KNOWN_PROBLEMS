@@ -51,10 +51,7 @@ with the rounding modes used in this package.
   When you don't optimize, std::sqrt() calls a library routine instead of the
   assembly instruction "fsqrt".
   This is plain stupid, and moreover this library routine appears to be buggy !
-  The fix would be to provide our own cgal_sqrt_ms_workaround() in extern C
-  precompiled module.
-  GCC/CygWin now uses inline assembly to simplify the installation.
-  Hopefully VC++ will follow the same path.
+  GCC/CygWin and VC++ use inline assembly to fix it.
   
 4/ is_valid() bug with VC++:
 ----------------------------
