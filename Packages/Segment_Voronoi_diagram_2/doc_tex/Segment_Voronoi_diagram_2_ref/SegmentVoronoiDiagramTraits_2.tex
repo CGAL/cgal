@@ -101,24 +101,6 @@ types for the predicates.
   \ccc{s3}.
 }
 %
-%\ccGlue
-%\ccNestedType{Construct_Apollonius_site_2}
-%{A constructor for
-%a dual Apollonius site (a site whose center is a
-%vertex of the Apollonius diagram and its weight is the common
-%distance of its center from the three defining sites).
-%Must provide \ccc{Site_2 operator()(Site_2 s1,
-%Site_2 s2, Site_2 s3)}, which constructs a
-%dual site whose center $c$ is equidistant from \ccc{s1}, \ccc{s2} and
-%\ccc{s3}, and its weight is equal to the (signed) distance of $c$
-%from \ccc{s1} (or \ccc{s2} or \ccc{s3}).\\
-%Must also provide \ccc{Line_2 operator()(Site_2 s1, Site_2 s2)}, which
-%constructs a line bitangent to \ccc{s1} and \ccc{s2}. This line is the
-%dual site of \ccc{s1}, \ccc{s2} and the site at infinity; it can be
-%viewed as a dual Apollonius site whose center is at infinity
-%and its weight is infinite.
-%}
-%
 \ccTwo{SegmentVoronoiDiagramTraits_2}{}
 %
 \ccGlue
@@ -268,16 +250,6 @@ is not in conflict with the Voronoi edge.}
   returns the type of the arrangement of the two sites \ccc{s1} and
   \ccc{s2}.}
 %
-%\ccGlue
-%\ccNestedType{Is_degenerate_edge_2}{A predicate object type.
-%Must provide \ccc{bool operator()(Site_2 s1, Site_2
-%s2, Site_2 s3, Site_2 s4)}. It returns \ccc{true} if
-%the Apollonius edge defined by \ccc{s1}, \ccc{s2}, \ccc{s3} and
-%\ccc{s4} is degenerate, \ccc{false} otherwise. An Apollonius edge is
-%called degenerate if its two endpoints coincide.
-%\ccPrecond{the Apollonius vertices of \ccc{s1}, \ccc{s2},
-%\ccc{s3}, and \ccc{s1}, \ccc{s4}, \ccc{s2} must exist.}}
-%
  
 
 \ccCreationVariable{gt}  %% choose variable name
@@ -342,9 +314,6 @@ construct_object_2_object();}{}
 \ccMethod{Construct_svd_vertex_2
 construct_svd_vertex_2_object();}{} 
 %
-%\ccGlue
-%\ccMethod{Construct_Apollonius_site_2
-%construct_Apollonius_site_2_object();}{}
 
 
 

@@ -2,6 +2,8 @@
 - moved split_vertex from Segment_Voronoi_diagram_data_structure_2 to TDS2
 - replaced Segment_Voronoi_diagram_data_structure_2 (which is now obsolete)
   by Apollonius_graph_data_structure_2 (until a better name is found...)
+- documentation: replaced references to the segment Voronoi diagram concept
+  and model by the ones in the Apollonius graph package
 
 27 August 2004:  Menelaos Karavelas
 - fixed bug in hierarchy about calling the wrong version of insert_third
