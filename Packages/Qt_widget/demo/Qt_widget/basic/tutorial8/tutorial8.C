@@ -43,7 +43,7 @@ public:
     
     QToolBar  *tools_toolbar;
     tools_toolbar = new QToolBar("Tools", this, 
-							QMainWindow::Top, TRUE, "Tools");
+				QMainWindow::Top, TRUE, "Tools");
     addToolBar(tools_toolbar, Top, FALSE);
     get_point_but =  new QToolButton(QPixmap( (const char**)point_xpm ),
 				  "Point Tool", 
