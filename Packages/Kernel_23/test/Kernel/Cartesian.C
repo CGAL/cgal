@@ -81,6 +81,7 @@ main()
   _test_angle( Cls() );
 
   std::cout << "Testing 3d-2d with Cartesian<Quotient<Precise_integer> > :";
+  std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
   
   return 0;
