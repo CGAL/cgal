@@ -218,9 +218,11 @@ private:
     Polyhedron P;
     Nef_polyhedron N = load_off("data/cube.off");
     N.convert_to_Polyhedron(P);
+    N.dump();
     std::ofstream out("data/temp.off");
     out << P;
-    CGAL_nef3_assertion(are_files_equal("data/temp.off","data/cube1.off"));
+    N = load_off("data/temp.off");
+    CGAL_nef3_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
 
     N = load_nef3("topology.nef3.SH");
     CGAL_nef3_assertion(N.is_valid(0,0));
@@ -367,7 +369,7 @@ private:
 	CGAL_nef3_assertion(assign(eout,o));
 	CGAL_nef3_assertion(ein == eout || ein == E.twin(eout));
       }
-
+    
       Halffacet_const_iterator fin;
       Halffacet_handle fout;
       CGAL_nef3_forall_halffacets(fin,E) {
@@ -391,7 +393,7 @@ private:
 	CGAL_nef3_assertion(E.plane(fin) == E.plane(fout) || 
 			    E.plane(fin) == E.plane(E.twin(fout)));
       }
-
+    
       Volume_const_iterator Cin;
       Volume_handle Cout;
       Vector_3 vec(1,1,1);
@@ -413,7 +415,7 @@ private:
       }
     }
   }
-  
+
   void intersection(char* suffix) {
 
     if(suffix[1] == 'E') {
@@ -832,10 +834,10 @@ private:
     
   void mark_evaluation(char* suffix) {
     
-    if(suffix[1] == 'E') {    
+    if(suffix[1] == 'S') {    
       Nef_polyhedron R;
-      Nef_polyhedron P = load_nef3("mark_eval.nef3", suffix);
-      Nef_polyhedron N = load_nef3("mark_eval2.nef3", suffix);
+      Nef_polyhedron P = load_nef3("mark_eval.nef3.SH");
+      Nef_polyhedron N = load_nef3("mark_eval2.nef3.SH");
       Nef_polyhedron P2 = P;
       Nef_polyhedron N2 = N;
       P2.transform(Aff_transformation_3( CGAL::SCALING, 2, 1));
@@ -843,62 +845,63 @@ private:
       
       R = P2.intersection(P);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "mePPinters.nef3", suffix));
+      CGAL_assertion(does_nef3_equals_file(R, "mePPinters.nef3.SH"));
       R = P2.intersection(N);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "mePNinters.nef3", suffix));
+      CGAL_assertion(does_nef3_equals_file(R, "mePNinters.nef3.SH"));
       R = N2.intersection(P);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "meNPinters.nef3", suffix));
+      CGAL_assertion(does_nef3_equals_file(R, "meNPinters.nef3.SH"));
       R = N2.intersection(N);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "meNNinters.nef3", suffix));
-      
+      CGAL_assertion(does_nef3_equals_file(R, "meNNinters.nef3.SH"));
+		    
       R = P2.join(P);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "mePPjoin.nef3", suffix));
+      CGAL_assertion(does_nef3_equals_file(R, "mePPjoin.nef3.SH"));
       R = P2.join(N);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "mePNjoin.nef3", suffix));
+      CGAL_assertion(does_nef3_equals_file(R, "mePNjoin.nef3.SH"));
       R = N2.join(P);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "meNPjoin.nef3", suffix));
+      CGAL_assertion(does_nef3_equals_file(R, "meNPjoin.nef3.SH"));
       R = N2.join(N);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "meNNjoin.nef3", suffix));
+      CGAL_assertion(does_nef3_equals_file(R, "meNNjoin.nef3.SH"));
 
       R = P2.difference(P);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "mePPdiff.nef3", suffix));
+      CGAL_assertion(does_nef3_equals_file(R, "mePPdiff.nef3.SH"));
       R = P2.difference(N);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "mePNdiff.nef3", suffix));
+      CGAL_assertion(does_nef3_equals_file(R, "mePNdiff.nef3.SH"));
       R = N2.difference(P);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "meNPdiff.nef3", suffix));
+      CGAL_assertion(does_nef3_equals_file(R, "meNPdiff.nef3.SH"));
       R = N2.difference(N);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "meNNdiff.nef3", suffix));
-      
+      CGAL_assertion(does_nef3_equals_file(R, "meNNdiff.nef3.SH"));
+		    
       R = P2.symmetric_difference(P);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "mePPsymdiff.nef3", suffix));
+      CGAL_assertion(does_nef3_equals_file(R, "mePPsymdiff.nef3.SH"));
       R = P2.symmetric_difference(N);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "mePNsymdiff.nef3", suffix));
+      CGAL_assertion(does_nef3_equals_file(R, "mePNsymdiff.nef3.SH"));
       R = N2.symmetric_difference(P);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "meNPsymdiff.nef3", suffix));
+      CGAL_assertion(does_nef3_equals_file(R, "meNPsymdiff.nef3.SH"));
       R = N2.symmetric_difference(N);
       CGAL_nef3_assertion(R.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(R, "meNNsymdiff.nef3", suffix));
+      CGAL_assertion(does_nef3_equals_file(R, "meNNsymdiff.nef3.SH"));
     }
-  } 
+  }		     
+     
     
 public:
   void run_test(char* suffix) {
 
-            loadSave(suffix);
+    //        loadSave(suffix);
     //        construction(suffix); 
     //        point_location_SNC(suffix);
     //        intersection(suffix);   
@@ -907,7 +910,7 @@ public:
     //        simplification_SM(suffix);
     //	      synthesis(suffix);
     //        unary_operations(suffix);
-    //        mark_evaluation(suffix);
+            mark_evaluation(suffix);
   }
 
 };
