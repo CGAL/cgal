@@ -21,16 +21,6 @@
 #include <assert.h>
 
 #include <map.h>
-// Repair, what the STL bool definitions made wrong.
-#ifdef bool
-#undef bool
-#endif
-#ifdef true
-#undef true
-#endif
-#ifdef false
-#undef false
-#endif
 
 #include <database.h>
 #include <html_config.h>
@@ -2089,8 +2079,8 @@ void format_function( bool method, const char* signature, const Text& T) {
 	op_symbols = function_name + 8;
 	while ( *op_symbols && *op_symbols <= ' ')
 	    ++op_symbols;
-        normal_operator     = return_value;
-	conversion_operator = ! return_value;
+        normal_operator     = (return_value != 0);
+	conversion_operator = (return_value == 0);
     }
 
     double exp_size_ret = 0.0;
