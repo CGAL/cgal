@@ -17,7 +17,7 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 
@@ -33,6 +33,7 @@
 #include "_test_cls_direction_2.C"
 #include "_test_fct_direction_2.C"
 #include "_test_fct_point_line_2.C"
+#include "_test_fct_point_segment_2.C"
 #include "_test_further_fct_point_line_2.C"
 #include "_test_cls_line_2.C"
 #include "_test_cls_segment_2.C"
@@ -56,6 +57,7 @@ _test_2(const R& r)
  && _test_cls_direction_2(r)
  && _test_fct_direction_2(r)
  && _test_fct_point_line_2( r )
+ && _test_fct_point_segment_2( r )
  && _test_further_fct_point_line_2( r )
  && _test_cls_line_2( r )
  && _test_cls_segment_2( r )

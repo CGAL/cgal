@@ -104,6 +104,8 @@ test_new_2(const R& rep)
         = rep.construct_segment_2_object();
   Segment_2 s1 = construct_segment();
   Segment_2 s2 = construct_segment(p2,p3);
+  Segment_2 s3 = construct_segment(p2,p5);
+  Segment_2 s4 = construct_segment(p3,p2);
 
   typename R::Construct_ray_2 construct_ray =
         rep.construct_ray_2_object();
@@ -418,6 +420,9 @@ test_new_2(const R& rep)
   Comparison_result tmp34b = compare_y_at_x(p2,l2,l3);
   Comparison_result tmp34c = compare_y_at_x(l2,l3,l4);
   Comparison_result tmp34d = compare_y_at_x(l2,l3,l4,l5);
+  Comparison_result tmp34e = compare_y_at_x(p6,s3);
+  Comparison_result tmp34f = compare_y_at_x(p6,s3,s4);
+
 
   typename R::Compare_x_at_y_2 compare_x_at_y
         = rep.compare_x_at_y_2_object();
@@ -574,7 +579,8 @@ test_new_2(const R& rep)
   use(tmp52b); use(tmp52a); use(tmp51b); use(tmp51a); use(tmp50b); use(tmp50a);
   use(tmp49b); use(tmp49a); use(tmp48b); use(tmp48a); use(tmp47); use(tmp46);
   use(tmp45); use(tmp44); use(tmp43); use(tmp42); use(tmp41); use(tmp40);
-  use(tmp39); use(tmp37); use(tmp36); use(tmp35); use(tmp34d);
+  use(tmp39); use(tmp37); use(tmp36); use(tmp35);
+  use(tmp34d); use(tmp34e); use(tmp34f);
   use(tmp34c); use(tmp34b); use(tmp34a); use(tmp32d); use(tmp32c); use(tmp32b);
   use(tmp32a); use(tmp31d); use(tmp31c); use(tmp31b); use(tmp31a); use(tmp30);
   use(tmp26); use(tmp25); use(tmp24);

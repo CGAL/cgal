@@ -1,3 +1,6 @@
+3.38   (21 December 2001)
+- Add tests for compare_y_at_x for segments.
+
 3.37   (13 December 2001)
 - Add tests for IO operators.
 
