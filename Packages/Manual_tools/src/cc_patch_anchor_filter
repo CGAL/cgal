@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl -pi
+#!/usr/bin/perl -pi
 
 # Patch the links in the anchor translator to achieve crosslinks between 
 # the different directories.

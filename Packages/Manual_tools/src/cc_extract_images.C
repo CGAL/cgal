@@ -15,7 +15,7 @@
 **************************************************************************/
 
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 
 #define State0   0    // Startzustand
 #define State1   1    // '"' or '/'       erkannt
@@ -36,17 +36,17 @@ int main( int argc, char**) {
     int state = State0;
 
     if ( argc > 1) {
-        cerr << "Usage: cc_extract_images" << endl;
-	cerr << "Filter to extract inline image names from a HTML stream "
-	        "from stdin" << endl;
+        std::cerr << "Usage: cc_extract_images" << std::endl;
+	std::cerr << "Filter to extract inline image names from a HTML stream "
+	        "from stdin" << std::endl;
         exit(1);
     }
-    c = cin.get();
-    while( cin) {
+    c = std::cin.get();
+    while( std::cin) {
 	if ( state > 0) {
 	    if ( idx >= max_buf) {
-		cerr << "cc_extract_images: error: internal buffer overflow."
-		     << endl;
+		std::cerr << "cc_extract_images: error: internal buffer "
+                             "overflow." << std::endl;
 		exit(1);
 	    }
 	    buffer[idx++] = c;
@@ -110,17 +110,17 @@ int main( int argc, char**) {
 	case State8:
 	    if ( c == '"') {
 		buffer[idx-1] = '\0';  // Cancel last '"'
-		cout << buffer << endl;
+		std::cout << buffer << std::endl;
 		state = State0;
 	    } else 
 		state = State4;
 	    break;
 	default:
-	    cerr << "cc_extract_images: internal error: unknown state."
-		 << endl;
+	    std::cerr << "cc_extract_images: internal error: unknown state."
+		 << std::endl;
 	    exit(1);
         }
-	c = cin.get();
+	c = std::cin.get();
     }
     return(0);
 }

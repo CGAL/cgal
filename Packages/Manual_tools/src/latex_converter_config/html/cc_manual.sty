@@ -300,6 +300,11 @@
 %\renewcommand{\lciTocFooter}{cc_toc_w_parts_footer}
 %}
 
+\newcommand{\ccMultiplePartsToc}{\gdef{\lciIfMultipleParts}{\lcTrue}
+  \renewcommand{\lciTocHeader}{cc_toc_w_parts_header}
+  \renewcommand{\lciTocFooter}{cc_toc_w_parts_footer}
+}
+
 % make chapters start number at 1 again for each new part of the manual
 \newcommand{\ccNumberChaptersByPart}{\gdef{\lciIfNumberChaptersByPart}{\lcTrue}}
 

@@ -15,7 +15,9 @@
 #ifndef HTML_ERROR_H
 #define HTML_ERROR_H 1
 
-#include <iostream.h>
+#include <iostream>
+
+using namespace std;
 
 // Error messages and Numbers
 // ==========================

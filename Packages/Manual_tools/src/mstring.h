@@ -13,14 +13,24 @@
 // comment this for SGI 7.2
 using namespace std;
 
-// provide hash function for string class of egcs 1.1.1
+// provide hash function for string class
 #ifdef __GNUC__
-#include <hashtable.h>
 
-// needed for g++ 3.0.4
+#if ((__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
+
+#include <ext/hash_map>
+
+using __gnu_cxx::hash;
+using __gnu_cxx::hash_map;
+
+namespace __gnu_cxx {
+
+#else // ((__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
+
+#include <hash_map>
 namespace std {
-// needed fro g++ 3.1
-//namespace __gnu_cxx {
+
+#endif // ((__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
 
 struct hash<string>
 {
@@ -36,7 +46,7 @@ struct hash<string>
 
 }
 
-#endif
+#endif // __GNUC__
 
 #endif // MY_STRING_H //
 

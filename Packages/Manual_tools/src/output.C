@@ -13,13 +13,15 @@
 **************************************************************************/
 
 #include <output.h>
-#include <fstream.h>
-#include <list.h>
+#include <fstream>
+#include <list>
 #include <html_config.h>
 #include <html_error.h>
 #include <macro_dictionary.h>
 #include <string_conversion.h>
 #include <cpp_formatting.h>
+
+using namespace std;
 
 /* File and filename handling */
 /* ========================== */
@@ -134,7 +136,7 @@ Output_file current_output;
 
 // Maintain a stack of output files
 // --------------------------------
-typedef list<Output_file> Output_file_stack;
+typedef std::list<Output_file> Output_file_stack;
 Output_file_stack output_file_stack;
 
 void push_current_output() {

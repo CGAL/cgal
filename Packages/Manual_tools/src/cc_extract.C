@@ -17,9 +17,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stream.h>
+#include <iostream>
 #include <buffer.h>
 #include <config.h>
+
+using namespace std;
 
 // Max. width of the formatted output
 #define MaxTextWidth 74

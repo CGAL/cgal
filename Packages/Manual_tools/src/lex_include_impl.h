@@ -17,9 +17,11 @@
 #ifndef LEX_INCLUDE_IMPL_H
 #define LEX_INCLUDE_IMPL_H 1
 
-#include <iomanip.h>
+#include <iomanip>
 #include <macro_dictionary.h>
 #include <string_conversion.h>
+
+using namespace std;
 
 // Global variables used in scanner.
 Include_stack       include_stack;

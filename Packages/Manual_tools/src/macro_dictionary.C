@@ -14,15 +14,18 @@
 
 #include <macro_dictionary.h>
 
-#include <iostream.h>
+#include <iostream>
 #include <html_lex.h>
 #include <lex_include.h>
 #include <string_conversion.h>
 #include <html_error.h>
 #include <html_config.h>
-#include <hash_map.h>
-#include <list.h>
+#include <list>
 #include <string.h>
+
+// #include <hash_map.h>  // get hash_map from mstring.h
+
+using namespace std;
 
 typedef hash_map< string, Macro_item> Macro_dictionary_scope;
 
@@ -34,8 +37,8 @@ public:
     bool  operator[]( char c) const { return on[c]; }
 };
 
-typedef list< Macro_dictionary_scope>  Macro_dictionary;
-typedef list<Active_char_scope>        Active_char;
+typedef std::list< Macro_dictionary_scope>  Macro_dictionary;
+typedef std::list< Active_char_scope>       Active_char;
 
 Macro_dictionary  macro_dictionary(1);
 Active_char       active_char(1);

@@ -20,16 +20,16 @@
 // Other modules needed:
 // ==============================================
 #include <stdlib.h>
-#include <list.h>
-#include <vector.h>
+#include <list>
+#include <vector>
 #include <basic.h>
 
 
 // Class specifications:
 // ==============================================
 class Buffer {
-    typedef vector<char>::const_iterator const_iterator;
-    vector<char> buf;
+    typedef std::vector<char>::const_iterator const_iterator;
+    std::vector<char> buf;
 public:
     Buffer() : buf( 1, '\0') {}
     Buffer( char c) : buf( 2, '\0') { *(buf.begin()) = c; }
@@ -75,7 +75,7 @@ public:
     }
 };
 
-typedef list< Buffer*>              Buffer_list;
+typedef std::list< Buffer*>         Buffer_list;
 typedef Buffer_list::iterator       Buffer_iterator;
 typedef Buffer_list::const_iterator Buffer_const_iterator;
 

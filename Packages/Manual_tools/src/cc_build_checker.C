@@ -21,11 +21,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stream.h>
 #include <ctype.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 #include <buffer.h>
 #include <config.h>
+
+using namespace std;
 
 #define MaxParameters          1002
 #define MaxOptionalParameters  1000
@@ -81,8 +83,8 @@ Buffer* pattern2 = new Buffer;
    special constant IDFIER_TAG
    */
 Buffer* function_decl  = new Buffer;
-const char IDFIER_TAG = 254;
-const char INLINE_TAG = 253;
+const char IDFIER_TAG = char(254);
+const char INLINE_TAG = char(253);
 
 /* Number of pattern's written */
 int n_pattern = 0;

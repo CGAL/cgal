@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl -pi
+#!/usr/bin/perl -pi
 
 # Patch the links to the main pages (like contents) in the local pages.
 s/(<A HREF=[\"])(contents[.]html[\"]>)/$1..\/$2/g;

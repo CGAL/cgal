@@ -17,7 +17,6 @@
 
 #include <mstring.h>
 #include <ctype.h>
-#include <strstream.h>
 #include <string_conversion.h>
 #include <macro_dictionary.h>
 #include <cpp_formatting.h>

@@ -14,9 +14,9 @@
 
 
 #include <stdio.h>
-#include <iostream.h>
-#include <fstream.h>
 #include <strings.h>
+#include <iostream>
+#include <fstream>
 
 
 typedef struct Lines{
@@ -69,20 +69,20 @@ main( int argc, char **argv) {
 // argv[2] is a file with links and their numbers
 // argv[3] is an output file
   if (argc < 4) {
-      cerr << "*** Error: program needs an additional parameter"<<'\n';
+      std::cerr << "*** Error: program needs an additional parameter"<<'\n';
       exit(1);
   }
   char* file_name1 = argv[1];
   char* file_name2 = argv[2];
   char* out_file_name = argv[3]; 
 
-  ofstream out_file(out_file_name);
+  std::ofstream out_file(out_file_name);
   if (!out_file)
-     cerr<<"*** Error: cannot open file "<< out_file_name <<'\n';
+     std::cerr<<"*** Error: cannot open file "<< out_file_name <<'\n';
 
-  ifstream in_file1(file_name1);
+  std::ifstream in_file1(file_name1);
   if (!in_file1)
-     cerr<<"*** Error: cannot open file "<< file_name1 <<'\n';
+     std::cerr<<"*** Error: cannot open file "<< file_name1 <<'\n';
 
   int number;
   char link[400];
@@ -92,9 +92,9 @@ main( int argc, char **argv) {
   }
 
 
-  ifstream in_file2(file_name2);
+  std::ifstream in_file2(file_name2);
   if (!in_file2)
-     cerr<<"*** Error: cannot open file "<< file_name2 <<'\n';
+     std::cerr<<"*** Error: cannot open file "<< file_name2 <<'\n';
  
  
   char ch;

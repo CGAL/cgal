@@ -15,9 +15,11 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H 1
 
-#include <iostream.h>
+#include <iostream>
 #include <mstring.h>
 #include <basic.h>
+
+using namespace std;
 
 #define OUT(x) if ( m_out) *m_out << x; return *this
 

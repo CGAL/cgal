@@ -15,9 +15,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stream.h>
-#include <fstream.h>
-#include <strstream.h>
+#include <iostream>
+#include <fstream>
 #include <ctype.h>
 
 #include <mstring.h>
@@ -31,6 +30,8 @@
 #include <html_error.h>
 #include <string_conversion.h>
 #include <output.h>
+
+using namespace std;
 
 
 /* Program name and release          */

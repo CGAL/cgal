@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <mstring.h>
-#include <list.h>
+#include <list>
 
 enum Include_type { Include_file, Include_string};
 
@@ -66,7 +66,7 @@ public:
 };
 
 class Include_stack {
-    typedef list<Include_stack_item>   Stack;
+    typedef std::list<Include_stack_item>   Stack;
     typedef Stack::size_type  size_type;
     Stack   m_stack;
 

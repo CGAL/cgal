@@ -16,7 +16,9 @@
 #define MODULE_BASIC 1
 
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
+
+using namespace std;
 
 // Own assertion macro
 // ================================================

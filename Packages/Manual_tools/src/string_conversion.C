@@ -16,17 +16,16 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <output.h>
-#include <strstream.h>
+#include <sstream>
 #include <html_config.h>
 
 // New style conversion routines
 // =======================================
 
 string int_to_string( int i) {
-    char buf[64];
-    ostrstream out( buf, 64);
-    out << i << '\0';
-    return string(buf);
+    ostringstream out;
+    out << i;
+    return out.str();
 }
 
 void remove_leading_spaces( string& s) {
