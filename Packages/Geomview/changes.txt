@@ -3,6 +3,7 @@ CHANGES to the Geomview package.
 Ver 3.9 (?? January 2001)
 - Add documentation for the previous change.
 - Draw intersection of the BBox for Ray_2 and Line_2.
+- Update for Geomview 1.8.1 (endianness bug on Linux).
 
 Ver 3.8 (23 January 2001)
 - Added (simple) operator<<() for Ray_[23] and Line_[23].

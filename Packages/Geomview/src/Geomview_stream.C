@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1999,2000 The CGAL Consortium
+// Copyright (c) 1999,2000,2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -24,12 +24,14 @@
 #if !defined(__BORLANDC__) && !defined(_MSC_VER)
 
 #include <CGAL/basic.h>
-#include <CGAL/IO/Geomview_stream.h>
 
 #include <strstream> // deprecated
 #include <csignal>
 #include <cerrno>
 #include <unistd.h>
+
+#include <CGAL/IO/Geomview_stream.h>
+#include <CGAL/IO/binary_file_io.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -223,7 +225,9 @@ Geomview_stream::operator<<(int i)
     // Depending on the mode chosen
     if (get_binary_mode()) {
         // we write raw binary data to the stream.
-        ::write(out, (char*)&i, sizeof(i));
+        int num = i;
+        _swap_to_big_endian(num);
+        ::write(out, (char*)&num, sizeof(num));
         trace(i);
     } else {
         // transform the int in a character sequence and put whitespace around
@@ -240,7 +244,9 @@ Geomview_stream::operator<<(double d)
 {
     float f = d;
     if (get_binary_mode()) {
-        ::write(out, (char*)&f, sizeof(f));
+        float num = d;
+        _swap_to_big_endian(num);
+        ::write(out, (char*)&num, sizeof(num));
         trace(f);
     } else {
         // 'copy' the float in a string and append a blank
