@@ -55,10 +55,10 @@ Qt_widget_move_point.moc: Qt_widget_move_point.h
 	$(QT_MOC) -o Qt_widget_move_point.moc Qt_widget_move_point.h
 
 
-triangulation_2.moc: triangulation_2.C Qt_widget_move_point$(OBJ_EXT) \
+triangulation_2.moc: triangulation_2.h Qt_widget_move_point$(OBJ_EXT) \
 			Qt_widget_toolbar$(OBJ_EXT) \
 			Qt_widget_toolbar_layers$(OBJ_EXT)
-	${QT_MOC} -o triangulation_2.moc triangulation_2.C
+	${QT_MOC} -o triangulation_2.moc triangulation_2.h
 
 triangulation_2$(OBJ_EXT): triangulation_2.C triangulation_2.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) triangulation_2.C
