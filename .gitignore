@@ -187,6 +187,8 @@ Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.ps
 Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.ps.gz
 Packages/Visibility_complex/demo/*.moc
 Packages/Visibility_complex/demo/arrangments
+Packages/Visibility_complex/doc_html
+Packages/Visibility_complex/doc_ps
 Packages/_QP_solver/*.aux
 Packages/_QP_solver/*.bbl
 Packages/_QP_solver/*.blg
