@@ -22,7 +22,7 @@
 #ifndef CORE_EXPR_H
 #define CORE_EXPR_H
 
-#include "ExprRep.h"
+#include <CORE/ExprRep.h>
 
 CORE_BEGIN_NAMESPACE
 

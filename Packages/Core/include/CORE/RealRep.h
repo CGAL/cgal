@@ -19,10 +19,10 @@
  * $Id$
  *****************************************************************/
 
-#include "CoreImpl.h"
-#include "CoreAux.h"
-#include "BigFloat.h"
-#include "MemoryPool.h"
+#include <CORE/CoreImpl.h>
+#include <CORE/CoreAux.h>
+#include <CORE/BigFloat.h>
+#include <CORE/MemoryPool.h>
 
 #ifndef CORE_REALREP_H
 #define CORE_REALREP_H

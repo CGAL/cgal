@@ -17,7 +17,7 @@
  * $Id$
  *****************************************************************/
 
-#include "CoreDefs.h"
+#include <CORE/CoreDefs.h>
 
 CORE_BEGIN_NAMESPACE
 
@@ -119,7 +119,7 @@ long defInitialProgressivePrec = 64;
 bool rationalReduceFlag = false;
 
 #ifndef CORE_ENABLE_INLINES
-#include "CoreDefs.inl"
+#include <CORE/CoreDefs.inl>
 #endif
 
 CORE_END_NAMESPACE

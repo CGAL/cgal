@@ -24,7 +24,7 @@
 #ifndef CORE_REAL_H
 #define CORE_REAL_H
 
-#include "RealRep.h"
+#include <CORE/RealRep.h>
 
 CORE_BEGIN_NAMESPACE
 
@@ -331,7 +331,7 @@ inline Real power(const Real& r, unsigned long p) { return pow(r, p); }
 inline Real sqrt(const Real& x) { return x.sqrt(defAbsPrec); }
 
 #ifdef CORE_ENABLE_INLINES
-  #include "Real.inl"
+  #include <CORE/Real.inl>
 #endif
 
 CORE_END_NAMESPACE

@@ -24,12 +24,12 @@
  * $Id$
  *****************************************************************/
 
-#include "extLong.h"
+#include <CORE/extLong.h>
 
 CORE_BEGIN_NAMESPACE
 
 #ifndef CORE_ENABLE_INLINES
-#include "extLong.inl"
+#include <CORE/extLong.inl>
 #endif
 
 const long nearHalfInfty    = LONG_MAX / 2;

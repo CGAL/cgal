@@ -24,12 +24,12 @@
 #if defined (__BORLANDC__)
   #include <mem.h>
 #endif
-#include "Real.h"
+#include <CORE/Real.h>
 
 CORE_BEGIN_NAMESPACE
 
 #ifndef CORE_ENABLE_INLINES
-#include "Real.inl"
+#include <CORE/Real.inl>
 #endif
 
 const Real& Real::getZero() {

@@ -23,8 +23,8 @@
 #ifndef CORE_DEFS_H
 #define CORE_DEFS_H
 
-#include "CoreImpl.h"
-#include "extLong.h"
+#include <CORE/CoreImpl.h>
+#include <CORE/extLong.h>
 
 CORE_BEGIN_NAMESPACE
 
@@ -183,7 +183,7 @@ CORE_INLINE void setScientificFormat(std::ostream& o = std::cout);
 CORE_INLINE void setPositionalFormat(std::ostream& o = std::cout);
 
 #ifdef CORE_ENABLE_INLINES
-#include "CoreDefs.inl"
+#include <CORE/CoreDefs.inl>
 #endif
 
 CORE_END_NAMESPACE

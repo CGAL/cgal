@@ -19,7 +19,7 @@
 #ifndef CORE_GEOMETRY_H
 #define CORE_GEOMETRY_H
 
-#include "CORE.h"
+#include <CORE/CORE.h>
 
 
 //base class for geom2d and geom3d classes

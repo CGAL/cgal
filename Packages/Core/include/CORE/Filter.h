@@ -24,8 +24,8 @@
 #ifndef CORE_FILTER_H
 #define CORE_FILTER_H
 
-#include "CoreImpl.h"
-#include "Real.h"
+#include <CORE/CoreImpl.h>
+#include <CORE/Real.h>
 
 #if defined (_MSC_VER) || defined (__MINGW32__) // add support for MinGW
   #define finite(x)	_finite(x)

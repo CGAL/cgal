@@ -25,7 +25,7 @@
 #endif
 
 #include <cstdarg>
-#include "CORE.h"
+#include <CORE/CORE.h>
 
 class Vector;
 class Matrix;

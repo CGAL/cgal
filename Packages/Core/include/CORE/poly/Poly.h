@@ -38,7 +38,7 @@
 #ifndef CORE_POLY_H
 #define CORE_POLY_H
 
-#include "../BigFloat.h"
+#include <CORE/BigFloat.h>
 #include <vector>
 
 CORE_BEGIN_NAMESPACE
@@ -321,7 +321,7 @@ template < class NT >
   }
 
 // IMPLEMENTATIONS ARE FOUND IN
-#include "Poly.tcc"
+#include <CORE/poly/Poly.tcc>
 
 CORE_END_NAMESPACE
 #endif

@@ -22,9 +22,9 @@
 #ifndef CORE_H
 #define CORE_H
 
-#include "CoreImpl.h"
-#include "CoreAux.h"
-#include "CoreDefs.h"
+#include <CORE/CoreImpl.h>
+#include <CORE/CoreAux.h>
+#include <CORE/CoreDefs.h>
 
 // User can still access machine types:
 typedef double machine_double;

@@ -20,7 +20,7 @@
 #ifndef CORE_AUX_H
 #define CORE_AUX_H
 
-#include "CoreImpl.h"
+#include <CORE/CoreImpl.h>
 
 CORE_BEGIN_NAMESPACE
 
@@ -96,7 +96,7 @@ CORE_INLINE void core_error(std::string msg,
 CORE_INLINE long gcd(long m, long n);
 
 #ifdef CORE_ENABLE_INLINES
-  #include "CoreAux.inl"
+  #include <CORE/CoreAux.inl>
 #endif
 
 CORE_END_NAMESPACE

@@ -19,13 +19,13 @@
  * $Id$
  *****************************************************************/
 
-#include "Expr.h"
+#include <CORE/Expr.h>
 #include <cmath>
 
 CORE_BEGIN_NAMESPACE
 
 #ifndef CORE_ENABLE_INLINES
-//#include "Expr.inl"
+//#include <CORE/Expr.inl>
 #endif
 
 #ifdef DEBUG_BOUND

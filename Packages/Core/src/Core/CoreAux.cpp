@@ -18,12 +18,12 @@
  * $Id$
  *****************************************************************/
 
-#include "CoreAux.h"
+#include <CORE/CoreAux.h>
 
 CORE_BEGIN_NAMESPACE
 
 #ifndef CORE_ENABLE_INLINES
-#include "CoreAux.inl"
+#include <CORE/CoreAux.inl>
 #endif
 
 CORE_END_NAMESPACE

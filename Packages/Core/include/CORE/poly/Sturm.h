@@ -32,8 +32,8 @@
    $Id$
  ************************************** */
 
-#include "../BigFloat.h"
-#include "Poly.h"
+#include <CORE/BigFloat.h>
+#include <CORE/poly/Poly.h>
 
 CORE_BEGIN_NAMESPACE
 

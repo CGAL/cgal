@@ -16,7 +16,7 @@
  * $Id$
  *****************************************************************/
 
-#include "BigInt.h"
+#include <CORE/BigInt.h>
 
 CORE_BEGIN_NAMESPACE
 

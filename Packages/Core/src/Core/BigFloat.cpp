@@ -21,12 +21,12 @@
 #if defined (__BORLANDC__)
   #include <mem.h>
 #endif
-#include "BigFloat.h"
+#include <CORE/BigFloat.h>
 
 CORE_BEGIN_NAMESPACE
 
 #ifndef CORE_ENABLE_INLINES
-#include "BigFloat.inl"
+#include <CORE/BigFloat.inl>
 #endif
 
 BigInt FiveTo(unsigned long exp)

@@ -21,8 +21,8 @@
 #ifndef CORE_extLong_H
 #define CORE_extLong_H
 
-#include "CoreImpl.h"
-#include "CoreAux.h"
+#include <CORE/CoreImpl.h>
+#include <CORE/CoreAux.h>
 
 CORE_BEGIN_NAMESPACE
 
@@ -134,7 +134,7 @@ public:
 #define CORE_negInfty extLong::getNegInfty()
 
 #ifdef CORE_ENABLE_INLINES
-#include "extLong.inl"
+#include <CORE/extLong.inl>
 #endif
 
 CORE_END_NAMESPACE

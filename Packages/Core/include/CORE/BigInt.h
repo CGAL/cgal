@@ -21,7 +21,7 @@
 
 #include <stdio.h> 
 #include "gmp.h"
-#include "CoreImpl.h"
+#include <CORE/CoreImpl.h>
 
 CORE_BEGIN_NAMESPACE
 

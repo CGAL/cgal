@@ -20,7 +20,7 @@
 #ifndef CORE_BIGRAT_H
 #define CORE_BIGRAT_H
 
-#include "BigInt.h"
+#include <CORE/BigInt.h>
 
 CORE_BEGIN_NAMESPACE
 

@@ -14,8 +14,8 @@
  * $Id$
  *****************************************************************/
 
-#include "BigFloatRep.h"
-#include "BigFloat.h"
+#include <CORE/BigFloatRep.h>
+#include <CORE/BigFloat.h>
 
 CORE_BEGIN_NAMESPACE
 

@@ -20,7 +20,7 @@
 #  define CORE_LEVEL 3
 #endif
 
-#include "linearAlgebra.h"
+#include <CORE/linearAlgebra.h>
 
 class Point3d;
 class Line3d;
@@ -29,12 +29,12 @@ class Plane3d;
 class Triangle3d;
 class Polygon3d;
 
-#include "geom3d/point3d.h"
-#include "geom3d/line3d.h"
-#include "geom3d/segment3d.h"
-#include "geom3d/plane3d.h"
-#include "geom3d/triangle3d.h"
-#include "geom3d/polygon3d.h"
+#include <CORE/geom3d/point3d.h>
+#include <CORE/geom3d/line3d.h>
+#include <CORE/geom3d/segment3d.h>
+#include <CORE/geom3d/plane3d.h>
+#include <CORE/geom3d/triangle3d.h>
+#include <CORE/geom3d/polygon3d.h>
 
 // automaticall link necessary static library under visual c++
 #ifdef _MSC_VER

@@ -23,13 +23,13 @@
 #include <assert.h>
 #endif
 
-#include "CoreImpl.h"
-#include "CoreAux.h"
-#include "CoreDefs.h"
-#include "extLong.h"
-#include "BigInt.h"
-#include "BigRat.h"
-#include "MemoryPool.h"
+#include <CORE/CoreImpl.h>
+#include <CORE/CoreAux.h>
+#include <CORE/CoreDefs.h>
+#include <CORE/extLong.h>
+#include <CORE/BigInt.h>
+#include <CORE/BigRat.h>
+#include <CORE/MemoryPool.h>
 
 CORE_BEGIN_NAMESPACE
 
@@ -170,7 +170,7 @@ const long DBL_MAX_CHUNK = (DBL_MAX_EXP - 1) / CHUNK_BIT + 1;
 const double lgTenM = 3.321928094887362;
 
 #ifdef CORE_ENABLE_INLINES
-#include "BigFloat.inl"
+#include <CORE/BigFloat.inl>
 #endif
 
 CORE_END_NAMESPACE

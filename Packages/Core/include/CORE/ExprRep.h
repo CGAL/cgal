@@ -22,12 +22,12 @@
 #ifndef CORE_EXPRREP_H
 #define CORE_EXPRREP_H
 
-#include "CoreImpl.h"
-#include "CoreAux.h"
-#include "Real.h"
-#include "Filter.h"
-#include "MemoryPool.h"
-#include "poly/Sturm.h"
+#include <CORE/CoreImpl.h>
+#include <CORE/CoreAux.h>
+#include <CORE/Real.h>
+#include <CORE/Filter.h>
+#include <CORE/MemoryPool.h>
+#include <CORE/poly/Sturm.h>
 
 CORE_BEGIN_NAMESPACE
 

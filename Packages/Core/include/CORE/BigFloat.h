@@ -20,7 +20,7 @@
 #ifndef CORE_BIGFLOAT_H
 #define CORE_BIGFLOAT_H
 
-#include "BigFloatRep.h"
+#include <CORE/BigFloatRep.h>
 
 CORE_BEGIN_NAMESPACE
 
