@@ -24,6 +24,7 @@
 #define CGAL_LAZY_EXACT_NT_H
 
 #include <CGAL/basic.h>
+#include <CGAL/tags.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/Interval_arithmetic.h>
