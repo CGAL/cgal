@@ -84,7 +84,7 @@ extern "C" {
 #endif
 
 
-// Pure and safe SSE2 mode (g++ -mfp-math=sse && (-msse2 || -march=pentium4))
+// Pure and safe SSE2 mode (g++ -mfpmath=sse && (-msse2 || -march=pentium4))
 // can be detected by :
 // TODO : see what Intel and VC++ have to say about this.
 #if defined __FLT_EVAL_METHOD__ && defined __SSE2_MATH__ && \
@@ -93,7 +93,7 @@ extern "C" {
 #  include <xmmintrin.h>
 #endif
 
-// We do not handle -mfp-math=387,sse yet.
+// We do not handle -mfpmath=387,sse yet.
 #if defined __SSE2_MATH__ && \
     ! (__FLT_EVAL_METHOD__ == 0 || __FLT_EVAL_METHOD__ == 1)
 #  warning Unsafe SSE2 mode : not supported yet.
