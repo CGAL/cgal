@@ -21,7 +21,7 @@ RADU URSU
 --------------
 1) A move point tool for min_ellipse_2 and convex_hull_2	[done]
 2) The demo for Min_quadrilateral_2				[done]
-
+3) Add << operator for Alpha_shapes_2
 
 
 TODO FOR DOC
