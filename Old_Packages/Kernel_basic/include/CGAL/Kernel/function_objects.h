@@ -179,6 +179,18 @@ class Call_perpendicular_line_to_get
     { return c.perpendicular_line(a1); }
 };
 
+template <class Vector>
+class Call_orthogonal_vector_to_get
+{
+  public:
+    typedef Vector     result_type;
+
+    template <class Cls>
+    Vector
+    operator()( const Cls& c ) const
+    { return c.orthogonal_vector(); }
+};
+
 template <class ReturnType>
 class Call_squared_area_to_get
 {

@@ -284,6 +284,8 @@ typedef CGALi::Call_perpendicular_plane_to_get<Plane_3>
                                                Construct_perpendicular_plane_3;
 typedef CGALi::Call_perpendicular_line_to_get<Line_3> 
                                                Construct_perpendicular_line_3;
+typedef CGALi::Call_orthogonal_vector_to_get<Vector_3>
+                                               Construct_orthogonal_vector_3;
 typedef CGALi::p_Midpoint<Point_3>             Construct_midpoint_3;
 typedef CGALi::p_Center<Point_3>               Construct_center_3;
 typedef CGALi::p_Circumcenter<Point_3>         Construct_circumcenter_3;
@@ -317,6 +319,8 @@ CGAL_Kernel_obj(Construct_perpendicular_plane_3,
 	        construct_perpendicular_plane_3_object)
 CGAL_Kernel_obj(Construct_perpendicular_line_3,
 	        construct_perpendicular_line_3_object)
+CGAL_Kernel_obj(Construct_orthogonal_vector_3,
+	        construct_orthogonal_vector_3_object)
 CGAL_Kernel_obj(Construct_midpoint_3, construct_midpoint_3_object)
 CGAL_Kernel_obj(Construct_center_3, construct_center_3_object)
 CGAL_Kernel_obj(Construct_circumcenter_3, construct_circumcenter_3_object)

@@ -218,6 +218,10 @@ test_new_3(const R& rep)
         = rep.construct_perpendicular_line_3_object();
   Line_3 tmp3a = construct_perpendicular_line(h2,p5);
 
+  typename R::Construct_orthogonal_vector_3 construct_orthogonal_vector
+        = rep.construct_orthogonal_vector_3_object();
+  Vector_3 tmp3b = construct_orthogonal_vector(p5);
+
   typename R::Construct_midpoint_3 construct_midpoint
         = rep.construct_midpoint_3_object();
   Point_3 tmp4 = construct_midpoint(p2,p3);
@@ -523,7 +527,7 @@ test_new_3(const R& rep)
   use(tmp15); use(tmp14); use(tmp13); use(tmp12b); use(tmp12a);
   use(tmp16); use(tmp17); use(tmp18); use(tmp19); use(tmp20); use(tmp21);
   use(tmp26); use(tmp28); use(tmp30a); use(tmp30b); use(tmp34ab); 
-  use(tmp39a); 
+  use(tmp39a); use(tmp3a); use(tmp3b);
 
   return true;
 }
