@@ -110,7 +110,7 @@ compare_noinline (const MP_Float & a, const MP_Float & b)
 template <class BinOp>
 inline
 void
-Add_Sub(MP_Float &r, const MP_Float &a, const MP_Float &b)
+Add_Sub(MP_Float &r, const MP_Float &a, const MP_Float &b, const BinOp &op)
 {
   CGAL_assertion(!b.is_zero());
 
@@ -120,14 +120,14 @@ Add_Sub(MP_Float &r, const MP_Float &a, const MP_Float &b)
     min_exp = b.min_exp();
     max_exp = b.max_exp();
   }
-    
+
   r.exp = min_exp;
   r.v.resize(max_exp - min_exp + 1); // One more for the carry.
   r.v[0] = 0;
   for(int i = 0; i < max_exp - min_exp; i++)
   {
-    MP_Float::limb2 tmp = r.v[i] + BinOp()(a.of_exp(i+min_exp),
-                                             b.of_exp(i+min_exp));
+    MP_Float::limb2 tmp = r.v[i] + op(a.of_exp(i+min_exp),
+                                      b.of_exp(i+min_exp));
     r.v[i] = tmp;
     r.v[i+1] = MP_Float::higher_limb(tmp);
   }
@@ -143,7 +143,7 @@ MP_Float::operator+(const MP_Float &b) const
     return *this;
 
   MP_Float r;
-  Add_Sub<std::plus<limb2> >(r, *this, b);
+  Add_Sub(r, *this, b, std::plus<limb2>());
   return r;
 }
 
@@ -154,7 +154,7 @@ MP_Float::operator-(const MP_Float &b) const
     return *this;
 
   MP_Float r;
-  Add_Sub<std::minus<limb2> >(r, *this, b);
+  Add_Sub(r, *this, b, std::minus<limb2>());
   return r;
 }
 

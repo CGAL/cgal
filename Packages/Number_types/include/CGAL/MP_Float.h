@@ -94,7 +94,7 @@ private:
       return;
 
     iterator i = v.begin();
-    for (i++; *i == 0; i++)
+    for (++i; *i == 0; ++i)
       ;
     exp += i-v.begin();
     v.erase(v.begin(), i);

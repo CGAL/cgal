@@ -1,12 +1,10 @@
 // Test program for the MP_Float class.
 // Sylvain Pion.
-//
-// We should be able to more deeply test it using an NT checker.
 
 #include <CGAL/basic.h>
-#include <CGAL/MP_Float.h>
 #include <iostream>
 #include <cassert>
+#include <CGAL/MP_Float.h>
 #include <CGAL/Random.h>
 #include <CGAL/Quotient.h>
 
@@ -57,17 +55,8 @@ int main(int argc, char **argv)
   CGAL::Quotient<CGAL::MP_Float> q1(1), q2(2);
   assert(q1+q1 == q2);
 
-#if 0
-  std::vector<int> iii;
-  iii.push_back(1);
-  iii.push_back(2);
-  iii.push_back(3);
-  iii.erase(iii.begin(), iii.begin()+1);
-  std::cout << *iii.begin();
-#endif
-
-  int loops = argc > 1 ? atoi(argv[1]) : 0;
-  // bench(loops);
+  int loops = argc > 1 ? atoi(argv[1]) : 100;
+  bench(loops);
 
   std::cout.precision(20);
 
@@ -95,13 +84,14 @@ int main(int argc, char **argv)
     std::cout << a << std::endl;
     std::cout << "exp = " << a.exp << "    v[" << a.v.size()<< "] = ";
     if (!a.is_zero())
-      for (int j=0; j<a.v.size(); j++)
+      for (unsigned int j=0; j<a.v.size(); j++)
         std::cout << " " << a.v[j];
     std::cout << std::endl;
 #endif
     a = a + MPF(i);
     j += i;
     CGAL_assertion(a == MPF(j));
+    // std::cout << "a=" << a << std::endl << "MPF(j)=" << MPF(j) << std::endl;
   }
 
   std::cout << a << std::endl;
