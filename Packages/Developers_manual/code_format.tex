@@ -394,11 +394,12 @@ are allowed in \cgal), and a pointer to the file containing its text in the
 \item then, there are 4 keywords, which are automatically expanded by CVS
 (there are options to CVS to suppress these expansions if you need):
 \begin{itemize}
-\item \$Source$ : the name of the source file in the repository, it also
+% Note : the {} are there to prevent the expansion of the keywords here.
+\item \${}Source: \$ : the name of the source file in the repository, it also
 helps figuring out which package the file comes from,
-\item \$Revision$ : the CVS revision of the file,
-\item \$Date$ : the date of this revision,
-\item \$Name$ : empty in general, otherwise contains the tag which has been
+\item \${}Revision: \$ : the CVS revision of the file,
+\item \${}Date: \$ : the date of this revision,
+\item \${}Name: \$ : empty in general, otherwise contains the tag which has been
 used to checkout this file.  It is used to identify the corresponding release
 of \cgal\ (internal or public).
 \end{itemize}
