@@ -135,20 +135,20 @@ such component.
 %note that the returned pointers are \ccc{const} so
 %the users cannot change the internal state.
 
-\ccMethod{const Subdivision&  subdivision () const;}
+\ccMethod{const Subdivision&  subdivision ();}
 {returns a const pointer to the subdivision induced by the overlay.}
 
                                 %For some applications the users may want to have direct access to
                                 %the creators and the notifier. For this, we have implemented the 
                                 %following functions, note that the returned pointers are \ccc{const} so the users cannot change the internal state.
 
-\ccMethod{const Self&  first_creator () const;}
+\ccMethod{const Self&  first_creator ();}
 {returns a const reference to the first creator of the overlay.}
 
-\ccMethod{const Self&  second_creator () const;}
+\ccMethod{const Self&  second_creator ();}
 {returns a const reference to the second creator of the overlay.}
 
-\ccMethod{const Change_notification*  change_notification() const;}
+\ccMethod{const Change_notification*  change_notification();}
 {returns a const pointer to the notifier of the overlay.}
 
 \begin{ccAdvanced}
@@ -196,7 +196,7 @@ The concepts \ccc{MapOverlayAlgorithm_2}
 \ccc{PlanarMapPointLocation_2} (\ccRefPage{PlanarMapPointLocation_2}) 
 list the set of requirements of each class.
 
-The following is the list of all constructors of the \ccRefClass
+The following is the list of all constructors of the \ccClassTemplateName
 defined by the user parameters, as described above.
   
 \ccConstructor{Map_overlay_2 (const Subdivision &arr, 
@@ -206,7 +206,7 @@ defined by the user parameters, as described above.
    Map_overlay_base<Subdivision,Notifier> *algo);}{}
 
 \ccConstructor{Map_overlay_2 (const Subdivision &arr, 
-   Notifier* notifier \\
+   Notifier* notifier 
    Map_overlay_base<Subdivision,Notifier> *algo);}{}
 
 \ccConstructor{Map_overlay_2 (const Self &ovl1, const Self &ovl2, 
@@ -241,14 +241,14 @@ defined by the user parameters, as described above.
 \end{ccAdvanced}
 
 \ccSeeAlso
-\ccc{MapOverlayNotifier<Subdivision>}\lcTex{ 
-   (\ccRefPage{CGAL::MapOverlayNotifier<Subdivision>})}\\
-\ccc{MapOverlayDcel_2<Traits,Vertex_base,Halfedge_base,Face_base>}\lcTex{ 
-   (\ccRefPage{CGAL::MapOverlayDcel_2<Traits,Vertex_base,Halfedge_base,Face_base>})}
+\ccc{Map_overlay_default_notifier<Subdivision>}\lcTex{ 
+   (\ccRefPage{CGAL::Map_overlay_default_notifier<Subdivision>})}\\
+\ccc{Map_overlay_default_dcel<Traits,Vertex_base,Halfedge_base,Face_base>}\lcTex{ 
+   (\ccRefPage{CGAL::Map_overlay_default_dcel<Traits,V,H,F>})}
 \ccc{Map_overlay_incremental<Subdivision,Notifier>}\lcTex{ 
    (\ccRefPage{CGAL::Map_overlay_incremental<Subdivision,Notifier>})}
-\ccc{Map_overlay_sweep_line<Subdivision,Notifier>}\lcTex{ 
-   (\ccRefPage{CGAL::Map_overlay_sweep_line<Subdivision,Notifier>})}
+\ccc{Map_overlay_sweep<Subdivision,Notifier>}\lcTex{ 
+   (\ccRefPage{CGAL::Map_overlay_sweep<Subdivision,Notifier>})}
 
 \end{ccRefClass}
 
@@ -258,3 +258,7 @@ defined by the user parameters, as described above.
 \ccRefPageEnd
 % EOF
 % +------------------------------------------------------------------------+
+
+
+
+
