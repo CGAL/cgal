@@ -221,8 +221,6 @@ public:
  
   std::ostream& op_ostream(std::ostream& os) const;
 
-  Vect_seg& op_vect_seg(Vect_seg& V) const;
-  
 #ifdef CGAL_ALPHA_WINDOW_STREAM
   Window_stream& op_window(Window_stream& W) const;
 #endif 
@@ -1649,124 +1647,6 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
   return os;
 }
 
-//-------------------------------------------------------------------------
-
-template < class Dt >
-typename Alpha_shape_2<Dt>::Vect_seg& 
-Alpha_shape_2<Dt>::op_vect_seg(Vect_seg& V) const
-{
-
-  typedef typename Alpha_shape_2<Dt>::Interval_vertex_map 
-    Interval_vertex_map;
-  //  typename Interval_vertex_map::const_iterator vertex_alpha_it;
-
-  typedef  typename Alpha_shape_2<Dt>::Interval_edge_map 
-    Interval_edge_map;
-  typename Interval_edge_map::const_iterator edge_alpha_it;
-
-  const typename Alpha_shape_2<Dt>::Interval3* pInterval;
-
-  if (get_mode() == Alpha_shape_2<Dt>::REGULARIZED) 
-    {
-      // it is much faster looking at the sorted intervals 
-      // than looking at all sorted faces
-      // alpha must be larger than the mid boundary
-      // and alpha is smaller than the upper boundary
-      for (edge_alpha_it = _interval_edge_map.begin(); 
-	   edge_alpha_it != _interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < get_alpha();
-	   ++edge_alpha_it) 
-	{
-
-	  pInterval = &(*edge_alpha_it).first;
-
-	  CGAL_triangulation_assertion(pInterval->second != Infinity);
-	  // since this happens only for convex hull of dimension 1
-	  // thus singular
-
-	  if(pInterval->second < get_alpha() &&
-	     (pInterval->third >= get_alpha()
-	      || pInterval->third == Infinity)) 
-	    {
-	      // alpha must be larger than the mid boundary
-	      // and alpha is smaller than the upper boundary
-	      // which might be infinity 
-	      // visualize the boundary
-	    
- CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-					(*edge_alpha_it).second.second)
-			       == Alpha_shape_2<Dt>::REGULAR));
-	      // if we used Edelsbrunner and Muecke's definition
-	      // regular means incident to a higher-dimensional face
-	      // thus we would write to many vertices
-	      V.push_back(segment((*edge_alpha_it).second.first,
-				  (*edge_alpha_it).second.second));
-	    }
-	}
-    }
-  else 
-    { // get_mode() == GENERAL
-    
-      // draw the edges
-      for (edge_alpha_it = _interval_edge_map.begin(); 
-	   edge_alpha_it != _interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < get_alpha();
-	   ++edge_alpha_it) 
-	{
-	
-	  pInterval = &(*edge_alpha_it).first;
-
-	  if (pInterval->first == UNDEFINED) 
-	    {
-	    
- CGAL_triangulation_assertion(pInterval->second != Infinity);
-	      // since this happens only for convex hull of dimension 1
-	      // thus singular
-
-	      if(pInterval->second < get_alpha() &&
-		 (pInterval->third >= get_alpha()
-		  || pInterval->third == Infinity)) 
-		{
-		  // alpha must be larger than the mid boundary
-		  // and alpha is smaller than the upper boundary
-		  // which might be infinity 
-		  // visualize the boundary
-		
- CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-					(*edge_alpha_it).second.second) ==
-			       Alpha_shape_2<Dt>::REGULAR));
-		  V.push_back(segment((*edge_alpha_it).second.first,
-				      (*edge_alpha_it).second.second));
-		}
-	    }
-	  else 
-	    {
-	    
-
-	      if(pInterval->third >= get_alpha()
-		 || pInterval->third == Infinity) 
-		{
-		  // if alpha is smaller than the upper boundary
-		  // which might be infinity 
-		  // visualize the boundary
-	
- CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
-					 (*edge_alpha_it).second.second) ==
-				Alpha_shape_2<Dt>::REGULAR) || 
-			       (classify((*edge_alpha_it).second.first,
-					 (*edge_alpha_it).second.second) ==
-				Alpha_shape_2<Dt>::SINGULAR)));
-
-		  V.push_back(segment((*edge_alpha_it).second.first,
-				      (*edge_alpha_it).second.second));
-		}
-	    }
-
-	}
-    }
-  return V;
-}
-
 //-------------------------------------------------------------------
 
 template < class Dt >
@@ -1776,14 +1656,7 @@ operator<<(std::ostream& os, const Alpha_shape_2<Dt>& A)
   return A.op_ostream(os);
 }
 
-//-------------------------------------------------------------------
 
-template < class Dt >
-typename Alpha_shape_2<Dt>::Vect_seg& 
-operator<<(typename Alpha_shape_2<Dt>::Vect_seg& V, const Alpha_shape_2<Dt>& A)
-{
-  return A.op_vect_seg(V);
-}
 
 //-------------------------------------------------------------------
 
