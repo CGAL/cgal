@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = $(UTIL)/CGAL/CGAL-2.3-I-69/make/makefile_sparc_SunOS-5.6_g++-2.95.3_LEDA
+CGAL_MAKEFILE = $(UTIL)/CGAL/CGAL-2.3-I-77/make/makefile_sparc_SunOS-5.6_g++-2.95.3_LEDA
 
 #$(UTIL)/CGAL-I/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
 #makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
