@@ -51,8 +51,9 @@ namespace CGAL {
   public:
     typedef std::list<Item*> Points_list; 
 
-    typedef typename Kernel_traits<Item>::Kernel K;
-    typedef typename K::FT NT;
+    // typedef typename Kernel_traits<Item>::Kernel K;
+    // typedef typename K::FT NT;
+    typedef typename Item::R::FT NT;
     typedef Points_container<Item> Self;
 
   private:
@@ -269,7 +270,8 @@ namespace CGAL {
 				c.p_list[i].clear();
 		typename Points_list::iterator pt;
                 for (pt = p_list[i].begin();
-				( (sep->side(*(*pt)) == ON_NEGATIVE_SIDE) 
+				// ( (sep->side(*(*pt)) == ON_NEGATIVE_SIDE)
+				( ( (*(*pt))[split_coord] < cutting_value) 
 				&&
 				(pt != p_list[i].end())
 					); ++pt) {}

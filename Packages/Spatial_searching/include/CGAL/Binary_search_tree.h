@@ -24,6 +24,7 @@
 #ifndef CGAL_BINARY_SEARCH_TREE_H
 #define CGAL_BINARY_SEARCH_TREE_H
 #include <CGAL/Binary_node.h>
+// #include <CGAL/Timer.h> included for time analysis
 namespace CGAL {
 
 
@@ -54,12 +55,18 @@ public:
 	    Traits t = Traits(), bool check_validity=false) : tr(t) {
     assert(first != beyond);
     int dim = first->dimension();
+    // CGAL::Timer tim;
+    // tim.reset(); tim.start();
+    // std::cout << "results timer in tree constructor:" << std::endl;
     std::copy(first, beyond, std::back_inserter(pts));
+    // std::cout << "time t1 =" << tim.time() << " seconds" << std::endl;
     Points_container<Item> c(dim, pts.begin(), pts.end());
+    // std::cout << "time t2 =" << tim.time() << " seconds" << std::endl;
     // if (check_validity) { assert(c.is_valid()); }
 		// std::cout << "validity of container used to store points:" 
 		//	    <<  c.is_valid() << std::endl;}
     bbox = new Box<NT>(c.bounding_box());
+    // std::cout << "time t3 =" << tim.time() << " seconds" << std::endl;
     the_item_number=c.size();
     if (c.size() <= t.bucket_size())
       tree_root = new Node(c);
@@ -67,6 +74,7 @@ public:
 		if (t.use_extended_nodes())
 		{tree_root = new Node(c,t,true); 
 		 std::cout << "using extended internal nodes" << std::endl;}
+                 //  std::cout << "time t4 =" << tim.time() << " seconds" << std::endl;}
 		else
 		{tree_root = new Node(c,t,false); 
 		 std::cout << "not using extended internal nodes" 
@@ -76,6 +84,7 @@ public:
 		// std::cout << "validity of constructed binary tree:" 
 		// <<  is_valid() << std::endl;
 	//}
+        // std::cout << "time t5 =" << tim.time() << " seconds" << std::endl;
   }
 
     ~Binary_search_tree() {

@@ -34,8 +34,9 @@ namespace CGAL {
     typedef Separator_ Separator;
     typedef Item_ Item;
     typedef Item** Item_iterator;
-    typedef typename Kernel_traits<Item>::Kernel K;
-    typedef typename K::FT NT;
+    // CGAL dependency typedef typename Kernel_traits<Item>::Kernel K;
+    // CGaL dependency typedef typename K::FT NT;
+    typedef typename Item::R::FT NT;
     typedef std::pair<Item*,NT> Item_with_distance;
 
   private:
