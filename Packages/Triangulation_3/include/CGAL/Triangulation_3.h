@@ -181,6 +181,50 @@ protected:
       return geom_traits().construct_tetrahedron_3_object()(p, q, r, s);
   }
 
+  // Accessory function, which is the only user of compare_[xyz].
+  // Should this come from the traits directly ?
+  enum COLLINEAR_POSITION {BEFORE, SOURCE, MIDDLE, TARGET, AFTER};
+
+  COLLINEAR_POSITION
+  collinear_position(const Point &s, const Point &p, const Point &t) const
+  // (s,t) defines a line, p is on that line.
+  // Depending on the position of p wrt s and t, returns :
+  // --------------- s ---------------- t --------------
+  // BEFORE       SOURCE    MIDDLE    TARGET       AFTER
+  {
+      CGAL_triangulation_precondition(!equal(s, t));
+      CGAL_triangulation_precondition(collinear(s, p, t));
+      Comparison_result c;
+      if ((c = compare_x(s, t)) != EQUAL) {
+	  Comparison_result ps = compare_x(p, s);
+	  if (ps == c)     return BEFORE;
+	  if (ps == EQUAL) return SOURCE;
+	  Comparison_result tp = compare_x(t, p);
+	  if (tp == c)     return AFTER;
+	  if (tp == EQUAL) return TARGET;
+	  return MIDDLE;
+      }
+      else if ((c = compare_y(s,t)) != EQUAL) {
+	  Comparison_result ps = compare_y(p, s);
+	  if (ps == c)     return BEFORE;
+	  if (ps == EQUAL) return SOURCE;
+	  Comparison_result tp = compare_y(t, p);
+	  if (tp == c)     return AFTER;
+	  if (tp == EQUAL) return TARGET;
+	  return MIDDLE;
+      }
+      else {
+	  c = compare_z(s, t);
+	  Comparison_result ps = compare_z(p, s);
+	  if (ps == c)     return BEFORE;
+	  if (ps == EQUAL) return SOURCE;
+	  Comparison_result tp = compare_z(t, p);
+	  if (tp == c)     return AFTER;
+	  if (tp == EQUAL) return TARGET;
+	  return MIDDLE;
+      }
+  }
+
   void init_tds()
     {
       infinite = (Vertex*) _tds.insert_increase_dimension(NULL);
@@ -1409,26 +1453,6 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	return (*finite_eit).first;
       }
       // if p is collinear, location :
-      Comparison_result o, o0, o1;
-      int xyz;
-      Point p0 = c->vertex(0)->point();
-      Point p1 = c->vertex(1)->point();
-      CGAL_triangulation_assertion( ( compare_x(p0,p1) != EQUAL ) ||
-				    ( compare_y(p0,p1) != EQUAL ) ||
-				    ( compare_z(p0,p1) != EQUAL ) );
-      o = compare_x(p0,p1);
-      if ( o == EQUAL ) {
-	o = compare_y(p0,p1);
-	if ( o == EQUAL ) {
-	  o = compare_z(p0,p1);
-	  xyz = 3;
-	}
-	else 
-	  xyz = 2;
-      }
-      else 
-	xyz  = 1;
-      //	bool notfound = true;
       while (1) {
 	if ( c->has_vertex(infinite,inf) ) {
 	  // c must contain p in its interior
@@ -1438,54 +1462,28 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 
 	// else c is finite
 	// we test on which direction to continue the traversal
-	p0 = c->vertex(0)->point();
-	p1 = c->vertex(1)->point();
-	switch ( xyz ) {
-	case 1:
-	  {
-	    o = compare_x(p0,p1);
-	    o0 = compare_x(p0,p);
-	    o1 = compare_x(p,p1);
-	    break;
-	  }
-	case 2:
-	  {
-	    o = compare_y(p0,p1);
-	    o0 = compare_y(p0,p);
-	    o1 = compare_y(p,p1);
-	    break;
-	  }
-	default: // case 3
-	  {
-	    o = compare_z(p0,p1);
-	    o0 = compare_z(p0,p);
-	    o1 = compare_z(p,p1);
-	  }
-	}
-	  
-	if (o0 == EQUAL) {
-	  lt = VERTEX;
-	  li = 0;
-	  return c;
-	}
-	if (o1 == EQUAL) {
-	  lt = VERTEX;
-	  li = 1;
-	  return c;
-	}
-	if ( o0 == o1 ) {
-	  lt = EDGE;
-	  li = 0;
-	  lj = 1;
-	  return c;
-	}
-	if ( o0 == o ) { 
+	switch (collinear_position(c->vertex(0)->point(),
+		                   p,
+				   c->vertex(1)->point()) ) {
+	case AFTER:
 	  c = c->neighbor(0);
 	  continue;
-	}
-	if ( o1 == o ) { 
+	case BEFORE:
 	  c = c->neighbor(1);
 	  continue; 
+	case MIDDLE:
+	    lt = EDGE;
+	    li = 0;
+	    lj = 1;
+	    return c;
+	case SOURCE:
+	    lt = VERTEX;
+	    li = 0;
+	    return c;
+	case TARGET:
+	    lt = VERTEX;
+	    li = 1;
+	    return c;
 	}
       }
     }
@@ -1825,56 +1823,35 @@ side_of_facet(const Point & p,
 
   CGAL_triangulation_assertion(coplanar_orientation(v1->point(), v2->point(),
 	                       c->mirror_vertex(inf)->point()) == POSITIVE);
-  Orientation o = coplanar_orientation(v1->point(), v2->point(), p);
-  switch (o) {
+
+  switch (coplanar_orientation(v1->point(), v2->point(), p)) {
   case POSITIVE:
-    // p lies on the same side of v1v2 as vn, so not in f
-    {
+      // p lies on the same side of v1v2 as vn, so not in f
       return ON_UNBOUNDED_SIDE;
-    }
   case NEGATIVE:
-    // p lies in f
-    { 
+      // p lies in f
       lt = FACET;
       li = 3;
       return ON_BOUNDED_SIDE;
-    }
-  case ZERO:
-    // p collinear with v1v2
-    {
+  default: // case ZERO:
+      // p collinear with v1v2
       int i_e;
       switch (side_of_segment(p, v1->point(), v2->point(), lt, i_e)) {
 	// computation of the indices in the original cell
       case ON_BOUNDED_SIDE:
-	{
 	  // lt == EDGE ok
 	  li = i1;
 	  lj = i2;
 	  return ON_BOUNDARY;
-	}
       case ON_BOUNDARY:
-	{
 	  // lt == VERTEX ok
 	  li = ( i_e == 0 ) ? i1 : i2;
 	  return ON_BOUNDARY;
-	}
-      case ON_UNBOUNDED_SIDE:
-	{
+      default: // case ON_UNBOUNDED_SIDE:
 	  // p lies on the line defined by the finite edge
 	  return ON_UNBOUNDED_SIDE;
-	}
-      default:
-	{
-	  // cannot happen. only to avoid warning with eg++
-	  return ON_UNBOUNDED_SIDE;
-	}
       } 
-    }// case ZERO
-  }// switch o
-  // end infinite facet
-  // cannot happen. only to avoid warning with eg++
-  CGAL_triangulation_assertion(false);
-  return ON_UNBOUNDED_SIDE;
+  }
 }
 
 template < class GT, class Tds >
@@ -1893,44 +1870,23 @@ side_of_segment(const Point & p,
 {
   CGAL_triangulation_precondition( ! equal(p0, p1) );
   CGAL_triangulation_precondition( collinear(p, p0, p1) );
-      
-  Comparison_result c = compare_x(p0,p1);
-  Comparison_result c0;
-  Comparison_result c1;
 
-  if ( c == EQUAL ) {
-    c = compare_y(p0,p1);
-    if ( c == EQUAL ) {
-      c0 = compare_z(p0,p);
-      c1 = compare_z(p,p1);
-    }
-    else {
-      c0 = compare_y(p0,p);
-      c1 = compare_y(p,p1);
-    }
-  }
-  else {
-    c0 = compare_x(p0,p);
-    c1 = compare_x(p,p1);
-  }
-      
-  //      if ( (c0 == SMALLER) && (c1 == SMALLER) ) {
-  if ( c0 == c1 ) {
+  switch (collinear_position(p0, p, p1)) {
+  case MIDDLE:
     lt = EDGE;
     return ON_BOUNDED_SIDE;
-  }
-  if (c0 == EQUAL) {
+  case SOURCE:
     lt = VERTEX;
     i = 0;
     return ON_BOUNDARY;
-  }
-  if (c1 == EQUAL) {
+  case TARGET:
     lt = VERTEX;
     i = 1;
     return ON_BOUNDARY;
+  default: // case BEFORE: case AFTER:
+    lt = OUTSIDE_CONVEX_HULL;
+    return ON_UNBOUNDED_SIDE;
   }
-  lt = OUTSIDE_CONVEX_HULL;
-  return ON_UNBOUNDED_SIDE;
 }
 
 template < class GT, class Tds >
@@ -1949,48 +1905,25 @@ side_of_edge(const Point & p,
   // (for an infinite edge this means that p lies on the other half line)
   // lt has a meaning when ON_BOUNDED_SIDE and ON_BOUNDARY  
   // li refer to indices in the cell c 
-{//side_of_edge
+{
   CGAL_triangulation_precondition( dimension() == 1 );
   if ( ! is_infinite(c,0,1) ) 
     return side_of_segment(p, c->vertex(0)->point(), c->vertex(1)->point(),
 			   lt, li);
   // else infinite edge
   int inf = c->index(infinite);
-  if ( equal( p, c->vertex(1-inf)->point() ) ) {
-    lt = VERTEX;
-    li = 1-inf;
-    return ON_BOUNDARY;
+  switch (collinear_position(c->vertex(1-inf)->point(), p,
+	                     c->mirror_vertex(1-inf)->point())) {
+      case SOURCE:
+	  lt = VERTEX;
+	  li = 1-inf;
+	  return ON_BOUNDARY;
+      case BEFORE:
+          lt = EDGE;
+          return ON_BOUNDED_SIDE;
+      default: // case MIDDLE: case AFTER: case TARGET:
+          return ON_UNBOUNDED_SIDE;
   }
-  // does not work in dimension > 2
-  Cell_handle n = c->neighbor(inf);
-  int i_e = n->index(c);
-  // we know that n is finite
-  Vertex_handle
-    v0 = n->vertex(0),
-    v1 = n->vertex(1);
-  Comparison_result c01 = compare_x(v0->point(), v1->point());
-  Comparison_result cp;
-  if ( c01 == EQUAL ) {
-    c01 = compare_y(v0->point(),v1->point());
-    if ( i_e == 0 ) {
-      cp = compare_y( v1->point(), p );
-    }
-    else {
-      cp = compare_y( p, v0->point() );
-    }
-  }
-  else {
-    if ( i_e == 0 ) 
-      cp = compare_x( v1->point(), p );
-    else 
-      cp = compare_x( p, v0->point() );
-  }
-  if ( c01 == cp ) {
-    // p lies on the same side of n as infinite
-    lt = EDGE;
-    return ON_BOUNDED_SIDE;
-  }
-  return ON_UNBOUNDED_SIDE;
 }
 
 template < class GT, class Tds >
@@ -2685,9 +2618,7 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
       {
 	const Point & n0 =
 	    c->neighbor(0)->vertex(c->neighbor(0)->index(c))->point();  
-	if ( ( compare_x( p0, p1 ) != compare_x( p1, n0 ) )
-	  || ( compare_y( p0, p1 ) != compare_y( p1, n0 ) )
-	  || ( compare_z( p0, p1 ) != compare_z( p1, n0 ) ) ) {
+	if ( collinear_position(p0, p1, n0) != MIDDLE ) {
 	  if (verbose)
 	      std::cerr << "badly oriented edge "
 		        << p0 << ", " << p1 << std::endl
@@ -2701,11 +2632,9 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
       }
       if ( ! is_infinite ( c->neighbor(1)->vertex(c->neighbor(1)->index(c)) ) )
       {
-	const Point & n1 = 
-	  c->neighbor(1)->vertex(c->neighbor(1)->index(c))->point();
-	if ( ( compare_x( p1, p0 ) != compare_x( p0, n1 ) )
-	  || ( compare_y( p1, p0 ) != compare_y( p0, n1 ) )
-	  || ( compare_z( p1, p0 ) != compare_z( p0, n1 ) ) ) {
+	const Point & n1 =
+	    c->neighbor(1)->vertex(c->neighbor(1)->index(c))->point();
+	if ( collinear_position(p1, p0, n1) != MIDDLE ) {
 	  if (verbose)
 	      std::cerr << "badly oriented edge "
 		        << p0 << ", " << p1 << std::endl
