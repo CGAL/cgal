@@ -13,12 +13,17 @@ struct Primitive {
 
 struct Box : public CGAL::Box_intersection_d::Box_d< double, 3 >
 {
+    typedef CGAL::Box_intersection_d::Box_d< double, 3 > Base;
     Primitive *primitive;
     Box( Primitive *p ) : primitive( p ) {
-        for( unsigned int d = 0; d < 3; ++d ) {
-            lo[d] = 10.0 * CGAL::default_random.get_double();
-            hi[d] = lo[d] + 1.0 + CGAL::default_random.get_double();
-        }
+        double d1 = 10.0 * CGAL::default_random.get_double();
+        double d2 = 10.0 * CGAL::default_random.get_double();
+        double d3 = 10.0 * CGAL::default_random.get_double();
+        *((Base*)(this)) = Base( 
+            CGAL::Bbox_3( d1, d2, d3,
+                          d1 + 1.0 + CGAL::default_random.get_double(),
+                          d2 + 1.0 + CGAL::default_random.get_double(),
+                          d3 + 1.0 + CGAL::default_random.get_double()));
     }
 };
 
@@ -30,7 +35,7 @@ void fill_boxes( unsigned int n, std::vector< Box >& boxes ) {
 void callback( const Box &a, const Box &b ) {
     if( a.primitive->intersect( b.primitive ) )
         std::cout << "intersection between box "
-            << a.get_id() << " and " << b.get_id() << std::endl;
+            << a.id() << " and " << b.id() << std::endl;
 };
 
 int main() {

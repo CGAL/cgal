@@ -46,12 +46,12 @@ void all_pairs( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                 RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
                 Callback& callback, Traits traits )
 {
-    const std::size_t last_dim = Traits::get_dim() - 1;
+    const int last_dim = Traits::dimension() - 1;
     for( RandomAccessIter1 p = p_begin; p != p_end; ++p ) {
         for( RandomAccessIter2 i = i_begin; i != i_end; ++i ) {
-            if (Traits::get_id(*p) >= Traits::get_id(*i) )
+            if (Traits::id(*p) >= Traits::id(*i) )
                 continue;
-            for( std::size_t dim = 0; dim <= last_dim; ++dim )
+            for( int dim = 0; dim <= last_dim; ++dim )
                 if( !Traits::does_intersect( *p, *i, dim ) )
                     goto no_intersection1;
             callback( *p, *i );
@@ -67,7 +67,7 @@ template< class RandomAccessIter1, class RandomAccessIter2,
           class Callback, class Traits >
 void one_way_scan( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
-                   Callback& callback, Traits traits, std::size_t last_dim,
+                   Callback& callback, Traits traits, int last_dim,
                    bool in_order = true )
 {
     typedef typename Traits::Compare Compare;
@@ -85,9 +85,9 @@ void one_way_scan( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
              p != p_end && Traits::is_lo_less_hi( *p, *i, 0 );
              ++p )
         {
-            if( Traits::get_id( *p ) == Traits::get_id( *i ) )
+            if( Traits::id( *p ) == Traits::id( *i ) )
                 continue;
-            for( std::size_t dim = 1; dim <= last_dim; ++dim )
+            for( int dim = 1; dim <= last_dim; ++dim )
                 if( !Traits::does_intersect( *p, *i, dim ) )
                     goto no_intersection;
             if( in_order )
@@ -106,7 +106,7 @@ template< class RandomAccessIter1, class RandomAccessIter2,
 void modified_two_way_scan(
     RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
-    Callback& callback, Traits traits, std::size_t last_dim,
+    Callback& callback, Traits traits, int last_dim,
     bool in_order = true )
 {
     typedef typename Traits::Compare Compare;
@@ -121,10 +121,10 @@ void modified_two_way_scan(
                  p != p_end && Traits::is_lo_less_hi( *p, *i_begin, 0 );
                  ++p )
             {
-                if( Traits::get_id( *p ) == Traits::get_id( *i_begin ) )
+                if( Traits::id( *p ) == Traits::id( *i_begin ) )
                     continue;
 
-                for( std::size_t dim = 1; dim <= last_dim; ++dim )
+                for( int dim = 1; dim <= last_dim; ++dim )
                     if( !Traits::does_intersect( *p, *i_begin, dim ) )
                         goto no_intersection1;
                 if( Traits::contains_lo_point( *i_begin, *p, last_dim ) ) {
@@ -142,9 +142,9 @@ void modified_two_way_scan(
                  i != i_end && Traits::is_lo_less_hi( *i, *p_begin, 0 );
                  ++i )
             {
-                if( Traits::get_id( *p_begin ) == Traits::get_id( *i ) )
+                if( Traits::id( *p_begin ) == Traits::id( *i ) )
                     continue;
-                for( std::size_t dim = 1; dim <= last_dim; ++dim )
+                for( int dim = 1; dim <= last_dim; ++dim )
                     if( !Traits::does_intersect( *p_begin, *i, dim ) )
                         goto no_intersection2;
                 if( Traits::contains_lo_point( *i, *p_begin, last_dim ) ) {
@@ -166,7 +166,7 @@ void modified_two_way_scan(
 template< class RandomAccessIter, class Predicate_traits >
 RandomAccessIter
 median_of_three( RandomAccessIter a, RandomAccessIter b, RandomAccessIter c,
-                 Predicate_traits traits, std::size_t dim )
+                 Predicate_traits traits, int dim )
 {
 
     if( Predicate_traits::is_lo_less_lo( *a, *b, dim ) )
@@ -187,7 +187,7 @@ median_of_three( RandomAccessIter a, RandomAccessIter b, RandomAccessIter c,
 template< class RandomAccessIter, class Predicate_traits >
 RandomAccessIter
 iterative_radon( RandomAccessIter begin, RandomAccessIter end,
-                 Predicate_traits traits, std::size_t dim, int num_levels )
+                 Predicate_traits traits, int dim, int num_levels )
 {
     if( num_levels < 0 ) {
         const unsigned int rnd = CGAL::default_random.get_int( 0, INT_MAX );
@@ -213,7 +213,7 @@ split_points( RandomAccessIter begin, RandomAccessIter end,
     int levels = (int)(.91*log(((double)std::distance(begin,end))/137.0)+1);
     levels = (levels <= 0) ? 1 : levels;
     RandomAccessIter it = iterative_radon( begin, end, traits, dim, levels );
-    mi = Predicate_traits::min( *it, dim );
+    mi = Predicate_traits::min_coord( *it, dim );
     return std::partition( begin, end,
                            typename Predicate_traits::Lo_less( mi, dim ) );
 }
@@ -233,9 +233,9 @@ split_points( RandomAccessIter begin, RandomAccessIter end,
 
 template< class ForwardIter, class Traits >
 void dump_points( ForwardIter begin, ForwardIter end, Traits traits,
-                  std::size_t dim ) {
+                  int dim ) {
     while( begin != end ) {
-        std::cout << Traits::min( *begin, dim ) << " ";
+        std::cout << Traits::min_coord( *begin, dim ) << " ";
         ++begin;
     }
     std::cout << std::endl;
@@ -243,10 +243,10 @@ void dump_points( ForwardIter begin, ForwardIter end, Traits traits,
 
 template< class ForwardIter, class Traits >
 void dump_intervals( ForwardIter begin, ForwardIter end, Traits traits,
-                     std::size_t dim ) {
+                     int dim ) {
     while( begin != end ) {
-        std::cout << "[" << Traits::min( *begin, dim ) << ","
-                         << Traits::max( *begin, dim ) << ") ";
+        std::cout << "[" << Traits::min_coord( *begin, dim ) << ","
+                         << Traits::max_coord( *begin, dim ) << ") ";
         ++begin;
     }
     std::cout << std::endl;
@@ -255,7 +255,7 @@ void dump_intervals( ForwardIter begin, ForwardIter end, Traits traits,
 template< class ForwardIter, class  Traits >
 void dump_box_numbers( ForwardIter begin, ForwardIter end, Traits traits ) {
     while( begin != end ) {
-        std::cout << Traits::get_id( *begin ) << " ";
+        std::cout << Traits::id( *begin ) << " ";
         ++begin;
     }
     std::cout << std::endl;
@@ -274,7 +274,7 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
                    T lo, T hi,
                    Callback& callback, Predicate_traits traits,
-                   std::size_t cutoff, std::size_t dim, bool in_order )
+                   std::ptrdiff_t cutoff, int dim, bool in_order )
 {
     typedef typename Predicate_traits::Spanning   Spanning;
     typedef typename Predicate_traits::Lo_less    Lo_less;
@@ -318,8 +318,8 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
         return;
     }
 
-    if( (std::size_t)std::distance( p_begin, p_end ) < cutoff ||
-        (std::size_t)std::distance( i_begin, i_end ) < cutoff  )
+    if( std::distance( p_begin, p_end ) < cutoff ||
+        std::distance( i_begin, i_end ) < cutoff  )
     {
         DUMP( "scanning ... " << std::endl )
         modified_two_way_scan( p_begin, p_end, i_begin, i_end,

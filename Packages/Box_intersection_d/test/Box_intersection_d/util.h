@@ -8,13 +8,13 @@
 
 #include <CGAL/Random.h>
 
-template< class NT, unsigned int DIM, bool CLOSED = true >
+template< class NT, int DIM, bool CLOSED = true >
 struct Util {
     typedef NT Number_type;
     typedef CGAL::Box_intersection_d::Box_d< Number_type, DIM >  Box;
-    typedef CGAL::Box_intersection_d::Box_traits_d< Box > Box_adapter;
-    typedef CGAL::Box_intersection_d::Box_predicate_traits_d<
-                                             Box_adapter, CLOSED > Traits;
+    typedef CGAL::Box_intersection_d::Box_traits_d< Box >        B_traits;
+    typedef CGAL::Box_intersection_d::Predicate_traits_d< B_traits, CLOSED > 
+                                                                 Traits;
     typedef std::vector< Box >      Box_container;
     typedef std::pair< Box, Box >   Box_pair;
     typedef std::vector< Box_pair > Result_container;
@@ -39,7 +39,7 @@ struct Util {
     
         for( unsigned int i = 0; i < n; ++i ) {
             NT lo[DIM], max[DIM];
-            for( unsigned int d = 0; d < DIM; ++d ) {
+            for( int d = 0; d < DIM; ++d ) {
                 lo[d] =
                     (NT)(CGAL::default_random.get_double() * (n - maxEdgeLength));
                 max[d] =
@@ -50,7 +50,7 @@ struct Util {
     }
     
     static void assert_intersection( const Box& a, const Box& b ) {
-        for( unsigned int dim = 0; dim < DIM; ++dim ) {
+        for( int dim = 0; dim < DIM; ++dim ) {
             if( Traits::does_intersect( a, b, dim ) == false ) {
                 std::cout << "does not intersect!" << std::endl;
                 //cout << a << endl << b << endl;
@@ -80,9 +80,9 @@ struct Util {
     
     static bool
     areEqual( const Box& a, const Box& b ) {
-        for( unsigned int dim = 0; dim < DIM; ++dim )
-            if( Traits::min( a, dim ) != Traits::min( b, dim ) ||
-                Traits::max( a, dim ) != Traits::max( b, dim )   )
+        for( int dim = 0; dim < DIM; ++dim )
+            if( Traits::min_coord( a, dim ) != Traits::min_coord( b, dim ) ||
+                Traits::max_coord( a, dim ) != Traits::max_coord( b, dim )   )
                 return false;
         return true;
     }

@@ -19,7 +19,7 @@ void fill_boxes( unsigned int n, std::vector<Box>& boxes ) {
 
 void callback( const Box& a, const Box& b ) {
     std::cout << "intersection between box "
-              << a.get_id() << " and " << b.get_id() << std::endl;
+              << a.id() << " and " << b.id() << std::endl;
 };
 
 int main() {
