@@ -67,10 +67,8 @@ namespace CGAL {
                 
 	public:
 		
-	  // TODO: I have to ask Sylvain how to get rid if this:
-	  void* p;
-	  void *   for_compact_container() const { return p; }
-	  void * & for_compact_container()       { return p; }
+	  void *   for_compact_container() const { return lower_ch.for_compact_container(); }
+	  void * & for_compact_container()       { return lower_ch.for_compact_container(); }
 
 	// default constructor
 	Kd_tree_node(): the_node_type() {};
