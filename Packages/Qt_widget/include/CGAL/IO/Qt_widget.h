@@ -23,6 +23,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Intersections.h>
+#include <CGAL/Triangle_2_Iso_rectangle_2_intersection.h> //temporary, should remove!!
 #include <CGAL/IO/Color.h>
 #ifdef CGAL_USE_GMP
   #include <CGAL/Gmpz.h>
@@ -235,10 +237,12 @@ private:
   void	  set_scales(); // set xscal and yscal
   void	  set_scale_center(const double xc, const double yc);
 
-  bool set_scales_to_be_done;
-  double  xcentre, ycentre; //the center of the axex
+  bool    set_scales_to_be_done; //this flag is set when the widget is
+            //not visible and should postpone the set_scales(),
+            //add_to_history() and configure_history_buttons() calls
+  double  xcentre, ycentre; //the center of the axes
   
-  Qt_widget_history history;
+  Qt_widget_history history;//this instance manage the viewports
   void configure_history_buttons(); //change the enabled state of
                                     //the history buttons
 
@@ -259,10 +263,10 @@ private:
   QBrush      savedBrush; // saved brush, to be able to restore it on
   // setFilled(true)
 
-  double xmin, xmax, ymin, ymax; // real dimensions
-  double xscal, yscal; // scalings int/double
-  bool constranges; // tell if the ranges should be const
-  bool is_the_first_time;
+  double    xmin, xmax, ymin, ymax; // real dimensions
+  double    xscal, yscal; // scales int/double
+  bool      constranges; // tell if the ranges should be const
+  bool      is_the_first_time;
 
   //for layers
   std::list<Qt_widget_layer*>	qt_layers;
@@ -655,21 +659,40 @@ template< class R >
 Qt_widget&
 operator<<(Qt_widget& w, const Triangle_2<R>& t)
 {
-  const int
-    ax = w.x_pixel(to_double(t.vertex(0).x())),
-    ay = w.y_pixel(to_double(t.vertex(0).y())),
-    bx = w.x_pixel(to_double(t.vertex(1).x())),
-    by = w.y_pixel(to_double(t.vertex(1).y())),
-    cx = w.x_pixel(to_double(t.vertex(2).x())),
-    cy = w.y_pixel(to_double(t.vertex(2).y()));
-
-  QPointArray array;
-
-  array.setPoints(3,ax,ay,bx,by,cx,cy);
+  CGAL::Iso_rectangle_2<R> r( Point_2<R>(w.x_real(0), w.y_real(0)), 
+                              Point_2<R>(w.x_real(w.geometry().width()), w.y_real(w.geometry().height())));
+  CGAL::Object obj = CGAL::intersection(t, r);
+  Point_2<R> pi;
+  Segment_2<R> si;
+  Triangle_2<R> ti;
+  typedef typename Point_2<R> Point;
+  std::vector<Point> vi;
+  if(CGAL::assign(pi, obj))
+    w << pi;
+  if(CGAL::assign(si, obj))
+    w << si;
+  if(CGAL::assign(ti, obj))
+  {
+    QPointArray array(3);
+    array[0] = QPoint(w.x_pixel(to_double(t.vertex(0).x())), w.y_pixel(to_double(t.vertex(0).y())));
+    array[1] = QPoint(w.x_pixel(to_double(t.vertex(1).x())), w.y_pixel(to_double(t.vertex(1).y())));
+    array[2] = QPoint(w.x_pixel(to_double(t.vertex(2).x())), w.y_pixel(to_double(t.vertex(2).y())));
+    w.get_painter().drawPolygon(array);
+  }   
+  if(CGAL::assign(vi, obj)){
+    QPointArray array(int(vi.size()));
+    std::vector<Point>::const_iterator it = vi.begin();
+    int pos = 0;
+    while(it != vi.end()){
+      array[pos] = QPoint(w.x_pixel(to_double((*it).x())), w.y_pixel(to_double((*it).y())));
+      pos++;
+      it++;
+    }  
   w.get_painter().drawPolygon(array);
+  }
   w.do_paint();
-  return w;
-}
+
+  return w;}
 #endif
 
 #ifdef CGAL_CIRCLE_2_H
