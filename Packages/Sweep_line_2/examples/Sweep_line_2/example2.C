@@ -12,7 +12,6 @@
 #include <vector>
 
 // #include <CGAL/IO/cgal_window.h>
-
 // #include <CGAL/IO/Pm_Window_stream.h>
 // #include <CGAL/IO/Arr_polyline_traits_Window_stream.h>
 
@@ -30,8 +29,7 @@ typedef CGAL::Pm_file_writer<PM>             Pm_writer;
 
 CGAL_BEGIN_NAMESPACE
 
-std::ostream&  operator<<(std::ostream& os,  
-			  const Curve& cv)
+std::ostream & operator<<(std::ostream & os, const Curve & cv)
 {
   typedef Curve::const_iterator  Points_iterator;
   
@@ -43,19 +41,14 @@ std::ostream&  operator<<(std::ostream& os,
   return os;
 }
 
-
-std::istream&  operator>>(std::istream& in,  
-			  Curve& cv)
+std::istream & operator>>(std::istream & in, Curve & cv)
 {
-  std::size_t  size;
-
+  std::size_t size;
   in >> size;
 
   for (unsigned int i = 0; i < size; i++){
-    Point  p;
-    
+    Point p;
     in >> p;
-    
     cv.push_back(p);  
   }
   
@@ -93,7 +86,7 @@ int main()
   // Construct the planar map  
   Traits traits;
   CGAL::sweep_to_construct_planar_map_2(polylines.begin(),polylines.end(), 
-					traits, pm);
+                                        traits, pm);
 
   // Write output 
   std::cout << " * * * Printing list of all halfedges of the resulting ";
@@ -110,9 +103,6 @@ int main()
   // W.button("Finish",2);
   // W.display();
   // W << pm;
+
+  return 0;
 }
-
-
-
-
-

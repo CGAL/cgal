@@ -1,5 +1,6 @@
 // examples/Sweep_line/example3.C
 // ------------------------------
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
@@ -19,10 +20,8 @@ typedef Traits::Curve                          Curve;
 int main()
 {
   // Read input
-
   int               num_segments;
   std::list<Curve>  segments;
-  
   std::cin >> num_segments;
   
   NT  x1, y1, x2, y2;
@@ -30,8 +29,7 @@ int main()
   while (num_segments--) 
   {
     std::cin >> x1 >> y1 >> x2 >> y2;
-    
-    segments.push_back(Curve(Point(x1,y1), Point(x2,y2)));
+    segments.push_back(Curve(Point(x1, y1), Point(x2, y2)));
   }    
 
   // Use a sweep to create the sub curves  
@@ -44,11 +42,13 @@ int main()
   
   // Write output
 
-  std::cout<<"The number of disjoint interior sub segments is "<< subcurves.size();
-  std::cout<< std::endl;
+  std::cout <<"The number of disjoint interior sub segments is "
+            << subcurves.size();
+  std::cout << std::endl;
   
   for (std::list<Curve>::iterator scv_iter = subcurves.begin(); 
-       scv_iter != subcurves.end(); 
-       scv_iter++)
+       scv_iter != subcurves.end(); scv_iter++)
     std::cout<< *scv_iter<< std::endl;
+
+  return 0;
 }

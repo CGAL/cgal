@@ -1,5 +1,28 @@
 // examples/Sweep_line/example1.C
 // ------------------------------
+
+#if defined(CGAL_CFG_NO_LONGNAME_PROBLEM) || defined(_MSC_VER)
+// Define shorter names to please linker (g++/egcs)
+#define Arrangement_2                           _Ar
+#define Cartesian                               _Cr
+#define Quotient                                _Qt
+#define Planar_map_2                            _PM
+#define Point_2                                 _Pt
+#define allocator                               _All
+#define Pm_default_dcel                         _PDD
+#define Arr_segment_exact_traits                _AST
+#define Segment_2                               _Sg
+#define Pm_change_notification                  _PCN
+#define Sweep_curves_base_2                     _SCB
+#define _Rb_tree                                _RT
+#define Sweep_curves_to_planar_map_utils        _SCPMU
+#define X_curve_plus_id                         _XCPI
+#define sweep_to_construct_planar_map_2         _SCPM
+#define vector_iterator                         _VI
+#define Point_plus_handle                       _PPH
+#define Intersection_point_node                 _IPN
+#endif
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
@@ -35,7 +58,6 @@ int main()
   std::cout << " * * * Demonstrating a trivial use of the sweep line algorithm"
 	    << std::endl << std::endl;
 
-
   // Read input
   std::cin >> num_segments;
   
@@ -44,10 +66,8 @@ int main()
   while (num_segments--) 
   {
     std::cin >> x1 >> y1 >> x2 >> y2;
-    
     segments.push_back(Curve(Point(x1, y1), Point(x2, y2)));
   }    
-
   // Construct the planar map  
   Traits traits;
   CGAL::sweep_to_construct_planar_map_2(segments.begin(), segments.end(),
@@ -59,7 +79,7 @@ int main()
 
   Pm_writer verbose_writer(std::cout, pm, true);
   verbose_writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
-
+  
   // Use a window visualization
   // CGAL::Window_stream W(700, 700, "CGAL Sweep Line Example");
   // W.init(-10, 10, -10);
@@ -67,4 +87,6 @@ int main()
   // W.display();
   // W << pm;
   // W.read_mouse();
+
+  return 0;
 }
