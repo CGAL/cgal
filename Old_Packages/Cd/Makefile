@@ -15,9 +15,9 @@ package: clean $(Package).tar.gz
 	@echo "----------------------------------"
 	@echo "---- changes.txt              ----"
 	@echo "---- make test                ----"
-	@echo "---- make VERSION=X.X version ----"
+	@echo "---- make VERSION=1.4 version ----"
 	@echo "---- make commit              ----"
-	@echo "---- make VERSION=X.X rtag    ----"
+	@echo "---- make VERSION=1.4 rtag    ----"
 	@echo "---- make package             ----"
 	@echo "---- make submit              ----"
 
@@ -31,7 +31,6 @@ version:
 	cvs update
 
 commit:
-	vim changes.txt
 	cvs commit
 
 rtag:
