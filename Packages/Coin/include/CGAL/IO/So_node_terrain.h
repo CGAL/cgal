@@ -34,7 +34,7 @@
 
 #include <qgl.h>
 #include <map>
-#include <qprogressdialog.h>
+#include <qprogressbar.h>
 
 #include <Inventor/SbBox.h>
 #include <Inventor/caches/SoNormalCache.h>
@@ -159,13 +159,14 @@ public:
   void compute_normals_for_faces(){
     lock();
     faces_normals.erase(faces_normals.begin(), faces_normals.end());
-    QProgressDialog progress( "Computing normals for faces...", 
-      "Cancel computing", t.number_of_faces(), NULL, "progress", true );
-    progress.setMinimumDuration(0);
+    QProgressBar * progress = new QProgressBar(NULL, "My Progress");
+    progress->setCaption("Normals for faces");
+    progress->setTotalSteps(t.number_of_faces());
+    progress->show();
     int faces_count = 0;
     Finite_faces_iterator fit;
     for (fit = t.finite_faces_begin(); fit != t.finite_faces_end(); ++fit){
-      progress.setProgress( faces_count );
+      progress->setProgress( faces_count );
       CPoint3 p1(CGAL::to_double((*(*fit).vertex(0)).point().x()),
                   CGAL::to_double((*(*fit).vertex(0)).point().y()),
                   CGAL::to_double((*(*fit).vertex(0)).point().z()));
@@ -184,20 +185,23 @@ public:
       }
       faces_count++;
     }
-    progress.setProgress( faces_count );
+    progress->setProgress( faces_count );
+    progress->hide();
+    //delete progress;
     unlock();
   }
   void compute_normals_for_vertices(){
     lock();
     vertices_normals.erase(vertices_normals.begin(), vertices_normals.end());
-    QProgressDialog progress( "Computing normals for vertices...", 
-      "Cancel computing", t.number_of_vertices(), NULL, "progress", true );
-    progress.setMinimumDuration(0);
+    QProgressBar * progress = new QProgressBar(NULL, "My Progress");
+    progress->setCaption("Normals for vertices");
+    progress->setTotalSteps(t.number_of_vertices());
+    progress->show();
     int vertices_count = 0;
     Finite_vertices_iterator vit;      
     for ( vit = t.finite_vertices_begin(); 
           vit != t.finite_vertices_end(); ++vit){
-      progress.setProgress(vertices_count);
+      progress->setProgress(vertices_count);
       Face_circulator cit = (&(*vit))->incident_faces();
       unsigned int normals_count = 0;
       CVector3 normals_sum(0, 0, 0);
@@ -213,7 +217,9 @@ public:
       }
       vertices_count++;
     }
-    progress.setProgress(vertices_count);
+    progress->setProgress(vertices_count);
+    progress->hide();
+    //delete progress;
     unlock();
   }
   void lock(){LOCK++;}
@@ -275,9 +281,11 @@ protected:
   }
 
   virtual void  GLRender(SoGLRenderAction *action){
-    if (LOCK)      
+    if (LOCK)
+    {
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       return;
-    else
+    } else
       lock();
     SoState * state = action->getState();
 
