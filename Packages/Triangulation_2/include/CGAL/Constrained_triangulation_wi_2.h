@@ -25,14 +25,10 @@
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_WI_2_H
 #define CGAL_CONSTRAINED_TRIANGULATION_WI_2_H
 
-// #include <utility>
-// #include <list>
-// #include <map> 
-// #include <set>
-
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
+#include <CGAL/Constraint_hierarchy_2.h>
 
 CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds>
@@ -65,7 +61,12 @@ public:
   typedef std::list<Face_handle>             List_faces;
   typedef std::list<Vertex_handle>           List_vertices;
 
+  typedef Constraint_hierarchy_2<Vertex_handle, bool> Constraint_hierarchy;
 
+protected:
+  Constraint_hierarchy hierarchy;
+
+public:
   Constrained_triangulation_wi_2(const Gt& gt=Gt()) 
     : Constrained_triangulation() { }
 
@@ -122,6 +123,14 @@ protected:
 			Vertex_handle vh,
 			List_edges& new_edges);
 
+  Vertex_handle intersect(Face_handle f, int i, 
+			  Vertex_handle vaa,
+			  Vertex_handle vbb);
+
+  //to debug
+public:
+  void print_hierarchy() { return hierarchy.print();}
+
 };
 
 template <class Gt, class Tds >
@@ -148,8 +157,33 @@ inline
 Constrained_triangulation_wi_2<Gt,Tds>::Vertex_handle
 Constrained_triangulation_wi_2<Gt,Tds>::
 insert(Point a)
+  // temporartily cut and paste from Constrained_triangulation::insert
+  // to add the update of the constrained_hirearchy
 {
-  return Constrained_triangulation::insert(a);
+  //return Constrained_triangulation::insert(a);
+  Vertex_handle va;
+  Vertex_handle c1,c2;
+  Face_handle loc;
+  int li;
+  Locate_type lt;
+  bool insert_in_constrained_edge = false;
+
+  loc = locate(a, lt, li);
+  if ( lt == EDGE && loc->is_constrained(li) ){
+    insert_in_constrained_edge = true;
+    c1=loc->vertex(ccw(li)); //endpoint of the constraint
+    c2=loc->vertex(cw(li)); // endpoint of the constraint
+  }
+  
+  va = Triangulation::insert(a,lt,loc,li);
+  if (insert_in_constrained_edge) update_constraints_incident(va, c1,c2);
+  else if(lt != VERTEX) clear_constraints_incident(va);
+  if (dimension() == 2) update_constraints_opposite(va);
+
+  if (insert_in_constrained_edge) {
+    hierarchy.split_constraint(c1,c2,va);
+  }
+  return va;
 }
 
 
@@ -169,6 +203,7 @@ insert(Point a, Point b)
 {
   Vertex_handle va= insert(a);
   Vertex_handle vb= insert(b);
+  hierarchy.insert_constraint(va,vb);
   insert(va, vb);
 }
 
@@ -209,7 +244,7 @@ insert(const Vertex_handle & va,
   // triangulation t
   // The constraint will be subdivided in smaller parts
   // if it intersects other constrained edges
-  // Precondition : the algorithm assumes that a and b are vertices of t
+  // Precondition : the algorithm assumes that a and b are vertices of t,
   // walks in t along ab, removes the triangles intersected by ab and
   // creates new ones
   // fr is the face incident to edge ab and to the right  of ab
@@ -223,6 +258,7 @@ insert(const Vertex_handle & va,
   // to be also used in  Delaunay constrained triangulation
   // The algorithm runs in time proportionnal to the number 
   // of removed triangles
+  // algorithm augmented to update the constraints hierarchy
 {
   Vertex_handle vaa=va, vbb=va;
   Face_handle fl;
@@ -232,6 +268,7 @@ insert(const Vertex_handle & va,
 
     // case where ab contains an edge of t incident to a
     if(includes_edge(vaa,vb,vbb,fr,i)) {
+      //hierarchy.split_constraint(va, vb, vbb);
       if (dimension()==1) fr->set_constraint(2, true);
       else{
 	fr->set_constraint(i,true);
@@ -273,6 +310,7 @@ insert(const Vertex_handle & va,
 	}
       }
     }
+    if (vbb != vb) hierarchy.split_constraint(vaa, vb, vbb);
   }
 }
 
@@ -312,21 +350,24 @@ find_intersected_faces(Vertex_handle va,
   int ih;
     
   if(current_face->is_constrained(ind)) {
-    // to deal with the case where the first crossed edge
-    // is constrained
+//     // to deal with the case where the first crossed edge
+//     // is constrained
+//     vh = current_face->mirror_vertex(ind);
+//     Point pi  ;
+//     Object result;
+//     result = intersection(segment(current_face,ind),
+// 			  Segment(a,b));
+//     assert(assign(pi, result));
+//     Vertex_handle vi = special_insert_in_edge(pi,current_face,ind);
     vh = current_face->mirror_vertex(ind);
-    Point pi  ;
-    Object result;
-    result = intersection(segment(current_face,ind),
-			  Segment(a,b));
-    assert(assign(pi, result));
-    Vertex_handle vi = special_insert_in_edge(pi,current_face,ind);
+    Vertex_handle vi=intersect(current_face, ind, vaa, vb);
 
     // to set the edge vaa vi as constrained
     assert(is_edge(vi,vaa,fh,ih));
     fh->set_constraint(ih,true);
     (fh->neighbor(ih))->set_constraint(fh->mirror_index(ih),true);
     new_vertices.push_back(vi);
+    //no need to inset (vi,vaa) in new_edges because it is constrained....
     update_new_edges(a,b,vi,vh,new_edges);
     return vi;
   }
@@ -369,12 +410,13 @@ find_intersected_faces(Vertex_handle va,
       if(current_face->is_constrained(i1)) {
 	vhh = current_face->vertex(i1);
 	vh = current_face->mirror_vertex(i1);
-	Point pi  ;
-	Object result;
-        result = intersection(segment(current_face,i1),
-			      Segment(a,b));
-	assert(assign(pi, result));
-	Vertex_handle vi=special_insert_in_edge(pi,current_face,i1);
+	// Point pi  ;
+// 	Object result;
+//         result = intersection(segment(current_face,i1),
+// 			      Segment(a,b));
+// 	assert(assign(pi, result));
+// 	Vertex_handle vi=special_insert_in_edge(pi,current_face,i1);
+	Vertex_handle vi=intersect(current_face, i1, vaa,vb);
 	new_vertices.push_back(vi);
 	update_new_edges(a,b,vi,vh,new_edges);
 	update_new_edges(a,b,vi,vhh,new_edges);
@@ -434,6 +476,36 @@ update_new_edges(Point a, Point b,
   else {
     new_edges.push_back(Edge(fh->neighbor(ih),fh->mirror_index(ih)));
   }
+}
+
+template < class Gt, class Tds >
+Constrained_triangulation_wi_2<Gt,Tds>:: Vertex_handle 
+Constrained_triangulation_wi_2<Gt,Tds>::
+intersect(Face_handle f, int i, 
+	  Vertex_handle vaa,
+	  Vertex_handle vbb)
+// compute the intersection of the constraint edges (f,i) 
+// with the subconstraint (vaa,vbb) being inserted
+// update the constraint hierarchy
+// and return the Vertex_handle of the new Vertex
+{
+  Vertex_handle  vc, vd, va, vb;
+  Vertex_handle  vcc, vdd;
+  vcc = f->vertex(cw(i));
+  vdd = f->vertex(ccw(i));
+  assert(hierarchy.enclosing_constraint(vcc,vdd,vc,vd));
+  assert(hierarchy.enclosing_constraint(vaa,vbb,va,vb));
+						  
+  Point pi; //creator for point is required here
+  Object result;
+  result = intersection(Segment(vc->point(),vd->point()),
+			Segment(va->point(),vb->point()));
+  assert(assign(pi, result));
+
+  Vertex_handle vi = special_insert_in_edge(pi,f,i);
+  //hierarchy.split_constraint(vaa,vbb,vi);
+  hierarchy.split_constraint(vcc,vdd,vi);
+  return vi;
 }
 
 
