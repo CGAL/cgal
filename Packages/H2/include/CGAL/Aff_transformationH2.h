@@ -555,12 +555,6 @@ class Aff_transformationH2
                                const RT& d, const RT& e,
                                                          const RT& g = RT(1));
 
-          Aff_transformationH2( Aff_transformation_rep_baseH2<R>* _ptr);
-
-
-          ~Aff_transformationH2();
-
-
     PointH2<R>     transform(const PointH2<R>& p) const;
     VectorH2<R>    transform(const VectorH2<R>& v) const;
     DirectionH2<R> transform(const DirectionH2<R>& d) const;
@@ -677,32 +671,20 @@ Aff_transformationH2( const RT& a, const RT& b,
 }
 
 template < class R >
-Aff_transformationH2<R>::
-Aff_transformationH2( Aff_transformation_rep_baseH2<R>* _ptr )
-{
- ptr = _ptr;
- ptr->add_reference();
-}
-
-template < class R >
-Aff_transformationH2<R>::~Aff_transformationH2()
-{}
-
-template < class R >
 PointH2<R>
 Aff_transformationH2<R>::transform(const PointH2<R>& p) const
-{ return ptr->transform(p); }
+{ return Ptr()->transform(p); }
 
 
 template < class R >
 VectorH2<R>
 Aff_transformationH2<R>::transform( const VectorH2<R>& v) const
-{ return ptr->transform(v); }
+{ return Ptr()->transform(v); }
 
 template < class R >
 DirectionH2<R>
 Aff_transformationH2<R>::transform( const DirectionH2<R>& d) const
-{ return ptr->transform(d); }
+{ return Ptr()->transform(d); }
 
 template < class R >
 LineH2<R>
@@ -713,39 +695,39 @@ template < class R >
 Aff_transformationH2<R>
 Aff_transformationH2<R>::
 inverse() const
-{ return ptr->inverse(); }
+{ return Ptr()->inverse(); }
 
 template < class R >
 bool
 Aff_transformationH2<R>::
 is_even() const
-{ return ptr->is_even(); }
+{ return Ptr()->is_even(); }
 
 template < class R >
 bool
 Aff_transformationH2<R>::
 is_odd() const
-{ return !( ptr->is_even() ); }
+{ return ! is_even(); }
 
 template < class R >
 inline
 typename Aff_transformationH2<R>::FT
 Aff_transformationH2<R>::
 cartesian(int i, int j) const
-{ return ptr->cartesian(i,j); }
+{ return Ptr()->cartesian(i,j); }
 
 template < class R >
 inline
 typename Aff_transformationH2<R>::RT
 Aff_transformationH2<R>::
 homogeneous(int i, int j) const
-{ return ptr->homogeneous(i,j); }
+{ return Ptr()->homogeneous(i,j); }
 
 template < class R >
 Aff_transformation_repH2<R>
 Aff_transformationH2<R>::
 general_form() const
-{ return ptr->general_form(); }
+{ return Ptr()->general_form(); }
 
 template <class R>
 Aff_transformationH2<R>
@@ -755,8 +737,8 @@ Aff_transformationH2<R>::
 operator*(const Aff_transformationH2<R>& right_argument) const
 {
   return _general_transformation_composition(
-                  ptr->general_form(),
-                  right_argument.ptr->general_form() );
+                  Ptr()->general_form(),
+                  right_argument.Ptr()->general_form() );
 }
 
 template <class R>

@@ -1,3 +1,6 @@
+2.40   (?? October 2001)
+- Cleanup use of ptr in AffH2.
+
 2.39   (2 October 2001)
 - Access functions of objects (like .x() ) now return const references.
 
