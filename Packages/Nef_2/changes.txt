@@ -1,6 +1,9 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
-1.31 (28 Jul 2003) [rursu]
+1.32 (16 Jul 2003) [af]
+     - Removed specializations of Polynomial<T>::operator-() for T = int and double
+
+1.31 (28 Jun 2003) [rursu]
      - replaced Leda_based demo with Qt_widget demo
      - fixed demo/Nef_2/makefile for FreeBSD
 
