@@ -1,7 +1,9 @@
+18 September 2004 Andreas Fabri
+- Changed the data file for example_big_alpha.C
 
 25 August 2004 Mariette
 - make function set_alpha_min_of_vertices a template 
-  so that explicir instanciation of the whole class works in any case.
+  so that explicit instanciation of the whole class works in any case.
 
 13 August 2004 Mariette
 - fixes in the doc
