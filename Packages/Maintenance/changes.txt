@@ -1,3 +1,8 @@
+5 May 2004 Sylvain Pion
+- create_testresult_page :
+  - Add link to the internal release download page.
+  - Remove useless systematic warning about unknown platform.
+
 28 Apr 2004 Sylvain Pion
 - testresults page now points to the new Manual test page.
 

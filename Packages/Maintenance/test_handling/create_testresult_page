@@ -318,8 +318,7 @@ sub choose_platforms()
 	$pf =~ s/^[^_]*_//;
 	$pf =~ s/_LEDA$//;
 	if (!exists $platform_index{$shortpf}) {
-	    print STDERR
-		"Warning: Platform $_ is unknown!\n";
+	    # print STDERR "Warning: Platform $_ is unknown!\n";
 	    $platform_index{$shortpf} = 1;
 	    push(@known_platforms,$shortpf); # ???
     	    $platform_short_names{$shortpf} = $shortpf;
@@ -448,12 +447,11 @@ The results of the tests are presented in a table
 ('y' = success, 'w' = warning, 'n' = failure),
 and the error + compiler output from each test can be retrieved by clicking
 on it.
-<BR>
 <B>N.B. The detection of warnings is not exact.
 Look at the output to be sure!</B>
 <OL>
-<LI><A HREF="#platforms">Platform Description</A> </LI>
-<LI><A HREF="#testresults">Test Results</A> </LI>
+<LI><A HREF="https://www-sop.inria.fr/geometrica/CGAL/Members/Releases/">
+Downloading internal releases</A></LI>
 <LI><A HREF="http://www.cgal.org/Members/Manual_test/${release_name}/">
 The documentation of this release</A></LI>
 EOF
