@@ -39,15 +39,17 @@
 // towards -infinity, it's enough to take the opposite of some of the operand,
 // and the opposite of the result (see operator+, operator*,...).
 
-#include <iostream>
-#include <CGAL/config.h>
-#include <CGAL/assertions.h>
-#include <CGAL/IO/io_tags.h>		// For io_Operator().
-#include <CGAL/number_type_tags.h>	// For number_type_tag()
-#include <CGAL/double.h>		// For is_valid() and is_finite().
-#include <CGAL/enum.h> 	// Because we overload {sign,compare,abs,min,max}
-#include <CGAL/number_utils.h> 		// For max and square<double>
-#include <CGAL/misc.h>			// For convert_to<>()
+// #include <CGAL/config.h>		// This order is necessary.
+// #include <iostream>
+#include <CGAL/basic.h>
+
+// #include <CGAL/assertions.h>
+// #include <CGAL/IO/io_tags.h>		// For io_Operator().
+// #include <CGAL/number_type_tags.h>	// For number_type_tag()
+// #include <CGAL/double.h>		// For is_valid() and is_finite().
+// #include <CGAL/enum.h>		// For overloading sign, compare, abs
+// #include <CGAL/number_utils.h> 	// For square<double>
+// #include <CGAL/misc.h>		// For convert_to<>()
 #include <CGAL/Interval_arithmetic/_FPU.h>	// FPU rounding mode functions.
 
 // Some useful constants
