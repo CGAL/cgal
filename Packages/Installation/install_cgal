@@ -622,90 +622,6 @@ guess_os()
 # compiler related functions:
 # -------------------------------------------------------------------
 
-
-# give version numbers for GNU GCC
-# NB: truncated to *.*.* (three numbers)
-# since we don't want to make a difference between 2.7.2.*
-# ($* is full path to executable)
-_gpp_version()
-{
-    ${_printf} "%s" \
-	"`${*} --version 2>&1 | ${_awk} '{print $1}' | \
-	${_awk} 'BEGIN {FS=\".\"}
-		{print $1\".\"$2\".\"$3}'`"
-}
-
-# give version numbers for Borland C++
-# ($* is full path to executable)
-_borland_version()
-{
-    ${_printf} "%s" \
-    "`${*} | head -1 | ${_awk} '{print $3}'`"
-}
-
-# give version numbers for Microsoft Visual C++
-# ($* is full path to executable)
-_microsoft_vc_version()
-{
-    ${_printf} "%s" \
-    "`${*} 2>&1 | head -1 | ${_awk} '{print $7,$8}' | \
-		${_sed} 's/, fuer//;s/Version //'`"
-}
-
-# give version numbers for SUNPRO CC
-# ($* is full path to executable)
-_sunpro_version()
-{
-    ${_printf} "%s" \
-      `$* -V 2>&1 | ${_awk} 'BEGIN {RS="+"} $1 ~ /[0-9.]+/ {print $1}'`
-}
-
-# give version numbers for KAI C++ (KCC)
-# ($* is full path to executable)
-_kcc_version()
-{
-    TMP_KCC_FILE=./tmp_kcc.C
-    ${_printf} "%s\n" "int main() {return 0;}" > ${TMP_KCC_FILE}
-    _tmp="`$* --version ${TMP_KCC_FILE} 2>&1 | ${_fgrep} \"KAI C++\" | ${_awk} '{print $3}'`"
-    ${_printf} "%s" "${_tmp}" 
-    ${_rm} -f ${TMP_KCC_FILE}
-}
-
-# give version numbers for IRIX MIPSPRO CC
-# ($* is full path to executable)
-_sgi_version()
-{
-    case ${SYST} in
-	*IRIX*5.*)
-	    ${_printf} "%s" \
-		"`${_versions} -b c++_dev | ${_fgrep} c++_dev | \
-		${_awk} '{print $5}'`"
-	    ;;
-	*IRIX*6.*)
-	    # CC -version should be fine
-	    if ${*} -version >/dev/null 2>&1; then
-		 ${*} -version 2>&1 | ${_awk} '{print $(NF)}'
-	    else
-	    # ... but not for CC -32
-		# use versions - looks either like this:
-		# I  c++_dev              03/11/97  C++, 7.1
-		# (version nr on position 5)
-		# or like that:
-		# I  c++_dev              11/27/97  C++ Headers and Libraries, 7.2 on irix 6.2
-		# (version nr on position 8)
-		_tmp="`${_versions} -b c++_dev | ${_fgrep} c++_dev | \
-		    ${_awk} '{print $5}'`"
-		if [ "${_tmp}" = "Headers" ]; then
-		    ${_versions} -b c++_dev | ${_fgrep} c++_dev | \
-			${_awk} '{print $8}'
-		else
-		    ${_printf} "%s" "${_tmp}" 
-		fi
-	    fi
-	    ;;
-    esac
-}
-
 # return the cmdline-switch to add directory variable $1 
 # to the runtime linker path of current compiler
 rpath_directive()
@@ -1679,80 +1595,69 @@ linker_flags_no_cgal_lib()
 get_compiler_description()
 {
   ${_cat} <<EOF4 >${TMP_CXX_FILE}.C
-// We need the following lines, since MIPSPRO only knows <iostream>,
-// if it is called with -LANG:std (as of Rel 7.3)
-// and I do not want to check for this before compiling ...
-#if defined(__sgi) && defined(_COMPILER_VERSION) && !defined(_STANDARD_C_PLUS_PLUS)
-#include <iostream.h>
-#define CGAL_STDCOUT cout
-#define CGAL_STDENDL endl
-#else
 #include <iostream>
-#define CGAL_STDCOUT std::cout
-#define CGAL_STDENDL std::endl
-#endif
 
 void output_first_ciff_separate(int x, int base)
 {
   int j = 1;
   while (x / (base * j) >= 1) j *= base;
-  CGAL_STDCOUT << x/j << "." << x - j * (x/j);
+  std::cout << x/j << "." << x - j * (x/j);
 }
 
 int main()
 {
 #ifdef __GNUC__
   // GNU cc
-  CGAL_STDCOUT << "GNU@" << __GNUC__ << "." << __GNUC_MINOR__;
+  std::cout << "GNU@" << __GNUC__ << "." << __GNUC_MINOR__;
 #ifdef __GNUC_PATCHLEVEL__
-  CGAL_STDCOUT << "." << __GNUC_PATCHLEVEL__;
+  std::cout << "." << __GNUC_PATCHLEVEL__;
 #endif
-  CGAL_STDCOUT << CGAL_STDENDL;
+  std::cout << std::endl;
 #elif defined(__sgi) && defined(_COMPILER_VERSION)
   // SGI mipspro
-  CGAL_STDCOUT << "MIPSPRO";
+  std::cout << "MIPSPRO";
 #if (_MIPS_SIM == _OABI32)
-  CGAL_STDCOUT << " (o32)";
+  std::cout << " (o32)";
 #elif (_MIPS_SIM == _NABI32)
-  CGAL_STDCOUT << " (n32)";
+  std::cout << " (n32)";
 #elif (_MIPS_SIM == _ABI64)
-  CGAL_STDCOUT << " (64)";
+  std::cout << " (64)";
 #endif // _MIPS_SIM
-  CGAL_STDCOUT << "@";
+  std::cout << "@";
   output_first_ciff_separate(_COMPILER_VERSION, 10);
-  CGAL_STDCOUT << CGAL_STDENDL;
+  std::cout << std::endl;
 #elif defined(__sun) && defined(__SUNPRO_CC)
   // SUN workshop
-  CGAL_STDCOUT << "SUNPRO@" << std::hex;
+  std::cout << "SUNPRO@" << std::hex;
   output_first_ciff_separate(__SUNPRO_CC, 16);
-  CGAL_STDCOUT << CGAL_STDENDL;
+  std::cout << std::endl;
 #elif defined(__BORLANDC__)
   // Borland 
-  CGAL_STDCOUT << "Borland@" << std::hex;
+  std::cout << "Borland@" << std::hex;
   output_first_ciff_separate(__BORLANDC__, 16);
-  CGAL_STDCOUT << CGAL_STDENDL;
+  std::cout << std::endl;
 #elif defined(__MWERKS__)
   // Metrowerks
-  CGAL_STDCOUT << "Metrowerks@" << std::hex;
+  std::cout << "Metrowerks@" << std::hex;
 #if (__MWERKS__ == 1)
-  CGAL_STDCOUT << "precw7" << CGAL_STDENDL;
+  std::cout << "precw7" << std::endl;
 #else
   output_first_ciff_separate(__MWERKS__, 16);
-  CGAL_STDCOUT << CGAL_STDENDL;
+  std::cout << std::endl;
 #endif // (__MWERKS__ == 1)
 #elif defined(__KCC)
   // KAI CC
-  CGAL_STDCOUT << "KAI CC@";
+  std::cout << "KAI CC@";
   output_first_ciff_separate(__KCC_VERSION / 100, 10);
   if (__KCC_VERSION % 100 != 0) 
-    CGAL_STDCOUT << char(__KCC_VERSION % 100 + int('a') - 1);
-  CGAL_STDCOUT << CGAL_STDENDL;
+    std::cout << char(__KCC_VERSION % 100 + int('a') - 1);
+  std::cout << std::endl;
 #elif defined(_MSC_VER)
   // Microsoft Visual C++
-  CGAL_STDCOUT << "VC++@" << _MSC_VER << CGAL_STDENDL;
+  std::cout << "VC++@" << _MSC_VER << std::endl;
 #else
   // we do not know this compiler --> add specs if supported
-  CGAL_STDCOUT << "unknown" << CGAL_STDENDL;
+  std::cout << "unknown" << std::endl;
 #endif // def __GNUC_
 
   return 0;
@@ -1764,7 +1669,7 @@ EOF4
   	*bcc32.exe*|*BCC32*) EXE_OPT="-e";;
 	*CL.*|*cl.*)         EXE_OPT="-Fp";;
     esac
-    _flags="${TMP_CXX_FILE}.C ${EXE_OPT}${TMP_CXX_FILE}"
+    _flags="${ADDITIONAL_CXXFLAGS} ${TMP_CXX_FILE}.C ${EXE_OPT}${TMP_CXX_FILE}"
 
     # compile
     ${_printf} "%s\n%s\n" \
