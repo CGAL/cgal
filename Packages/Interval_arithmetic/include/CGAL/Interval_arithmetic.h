@@ -71,28 +71,19 @@ struct Interval_nt_advanced
 #endif // CGAL_IA_NO_EXCEPTION
 
   // The constructors.
-  Interval_nt_advanced()
-#ifndef CGAL_NO_ASSERTIONS
-      : _inf(1), _sup(-1) // Buggy interval to detect use before definition.
-#endif
-      {}
+  Interval_nt_advanced() {}
 
-  // To stop constant propagation, I need these CGAL_IA_FORCE_TO_DOUBLE(),
-  // and this one is not specific to Intel.
-  // Ideally, the good ones (0.0*x ...) should be enabled...
+  // To stop constant propagation, I need these CGAL_IA_STOP_CPROP().
+  // It's not activated by default though.
 
   Interval_nt_advanced(const double d)
-      : _inf(d), _sup(d) {}
-//   { _inf = _sup = CGAL_IA_FORCE_TO_DOUBLE(d); }
+  { _inf = _sup = CGAL_IA_STOP_CPROP(d); }
 
   Interval_nt_advanced(const double i, const double s)
-      : _inf(i), _sup(s)
   {
       CGAL_assertion_msg(i<=s," Variable used before being initialized ?");
-#if 0
-      _inf = CGAL_IA_FORCE_TO_DOUBLE(i);
-      _sup = CGAL_IA_FORCE_TO_DOUBLE(s);
-#endif
+      _inf = CGAL_IA_STOP_CPROP(i);
+      _sup = CGAL_IA_STOP_CPROP(s);
   }
 
 #if 1
