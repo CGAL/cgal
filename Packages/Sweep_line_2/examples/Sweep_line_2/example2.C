@@ -4,8 +4,6 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h> 
-#include <CGAL/Pm_default_dcel.h>
-#include <CGAL/Planar_map_2.h>
 #include <CGAL/Sweep_line_2.h> 
 #include <CGAL/Arr_polyline_traits.h>
 #include <iostream>
