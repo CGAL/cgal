@@ -31,6 +31,7 @@ The algorithm works in an incremental manner. It is implemented
 as a semi-dynamic data structure, thus allowing to insert points
 while maintaining the smallest enclosing circle.
 
+\subsubsection*{Traits Class}
 The class template is parameterized with a traits class which defines
 the abstract interface between the optimisation algorithm and the
 primitives it uses. We provide a traits class implementation that
@@ -42,6 +43,12 @@ describes the requirements that must be fulfilled by traits classes
 for optimisation algorithms.  This is at the same time a specification
 for using the provided traits class implementation as for users who
 want to supply their own traits class.
+
+\subsubsection*{Assertions}
+The optimisation code uses infix \ccc{OPTIMISATION} in the assertions,
+e.g.\ defining the compiler flag
+\ccc{CGAL_OPTIMISATION_NO_PRECONDITIONS} switches precondition
+checking off, cf.~Section~\ref{assertions}.
 
 \include{Min_circle_2}
 %\include{Min_ellipse_2}
