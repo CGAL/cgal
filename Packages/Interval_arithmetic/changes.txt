@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.97 on 6 June 2001
+- Workaround bugs and misfeatures of GCC 3 in FPU.h.
+  Unfortunately at a performance cost :((
+
 Version 4.96 on 6 June 2001
 - First version of Kernel_checker, which works only for predicates.
 

@@ -70,8 +70,9 @@ CGAL_BEGIN_NAMESPACE
 // Inline function to stop compiler optimization.
 inline double IA_force_to_double(double x)
 {
-#ifdef __GNUG__
-  asm("" : "=m"(x) : "m"(x));  // Portable assembly :)
+#if defined __GNUG__ && __GNUG__ < 3
+  // This appears to be faster, but doesn't work reliably everywhere.
+  asm("" : "=m"(x) : "m"(x));
   // asm("" : "+m"(x) );
   return x;
 #else
@@ -97,8 +98,9 @@ inline double IA_force_to_double(double x)
 // because operations are done with a wrong rounding mode at compile time.
 // G++ also uses __builtin_constant_p().
 #ifndef CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION
-#  ifdef __GNUG__
-	// Note : GCC 2.96 seems to have "issues" with this now (august'00).
+#  if defined __GNUG__ && __GNUG__ < 3
+	// Note : GCC 3 doesn't guarantee __builtin_constant_p to return false
+	// when he will not do cprop :(.
 #    define CGAL_IA_STOP_CPROP(x) \
             (__builtin_constant_p (x) ? CGAL::IA_force_to_double(x) : (x) )
 #    define CGAL_IA_STOP_CPROP2(x,y) \
@@ -128,7 +130,7 @@ inline double IA_bug_sqrt(double d)
 #endif
 
 // Here are the operator macros that make use of the above.
-// With __GNUG__, we can do slightly better : test with __builtin_constant_p()
+// With GCC, we can do slightly better : test with __builtin_constant_p()
 // that both arguments are constant before stopping one of them.
 // Use inline functions instead ?
 #define CGAL_IA_ADD(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)+CGAL_IA_STOP_CPROP2(b,a))
@@ -253,6 +255,9 @@ inline
 FPU_CW_t
 FPU_get_cw (void)
 {
+#if defined __GNUG__ && __GNUG__ >= 3
+    volatile
+#endif
     FPU_CW_t cw;
     CGAL_IA_GETFPCW(cw);
     return cw;
