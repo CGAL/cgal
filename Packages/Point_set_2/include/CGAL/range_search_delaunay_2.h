@@ -260,7 +260,7 @@ OutputIterator range_search(Dt& delau,
   
   Point a=a1,b=b1,c=c1,d=d1;
     
-  if (Orientation_2()(a,b,c) == RIGHTTURN) 
+  if (Orientation_2()(a,b,c) == RIGHT_TURN) 
   { Point tmp = b;
     b = d;
     d = tmp;
@@ -274,8 +274,8 @@ OutputIterator range_search(Dt& delau,
 
   for(;it != L.end();it++)
   { Point p = (*it)->point();
-    if ( Orientation_2()(a,b,p) == RIGHTTURN || Orientation_2()(b,c,p) == RIGHTTURN ||
-         Orientation_2()(c,d,p) == RIGHTTURN || Orientation_2()(d,a,p) == RIGHTTURN )  { }
+    if ( Orientation_2()(a,b,p) == RIGHT_TURN || Orientation_2()(b,c,p) == RIGHT_TURN ||
+         Orientation_2()(c,d,p) == RIGHT_TURN || Orientation_2()(d,a,p) == RIGHT_TURN )  { }
     else { *res = *it; res++; }
   }
   return res;     
@@ -410,7 +410,7 @@ OutputIterator range_search(Dt& delau,
   
   Point a=a1,b=b1,c=c1,d=d1;
     
-  if (Orientation_2()(a,b,c) == RIGHTTURN) 
+  if (Orientation_2()(a,b,c) == RIGHT_TURN) 
   { Point tmp = b;
     b = d;
     d = tmp;
@@ -428,8 +428,8 @@ OutputIterator range_search(Dt& delau,
 
   for(;it != L.end();it++)
   { Point p = (*it)->point();
-    if ( Orientation_2()(a,b,p) == RIGHTTURN || Orientation_2()(b,c,p) == RIGHTTURN ||
-         Orientation_2()(c,d,p) == RIGHTTURN || Orientation_2()(d,a,p) == RIGHTTURN )  { }
+    if ( Orientation_2()(a,b,p) == RIGHT_TURN || Orientation_2()(b,c,p) == RIGHT_TURN ||
+         Orientation_2()(c,d,p) == RIGHT_TURN || Orientation_2()(d,a,p) == RIGHT_TURN )  { }
     else { *res = *it; res++; }
   }
   return res;     

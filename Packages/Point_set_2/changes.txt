@@ -1,3 +1,6 @@
+2.3.15 (25 Nov 2003) [af]
+- Replace RIGHTTURN with RIGHT_TURN
+
 2.3.14 (1 October 2003) [af]
 - Moved \chapter to main.tex
 
