@@ -106,18 +106,24 @@ template <class R_> struct Convex_hull_d_traits_3
       ++s;
       if (s == e){
 	return !coplanar( A[0], A[1], A[2], A[3] );
-      } else {
-	return false;
-      }
+      } 
+      return false;
     }
   };
 
-  Affinely_independent_d affinely_independent_d_object() const
-  { return Affinely_independent_d(); }
+
+  Affinely_independent_d 
+  affinely_independent_d_object() const
+  { 
+    return Affinely_independent_d(); 
+  }
+
 
   struct Contained_in_simplex_d {
+
     template <class I>
-    bool operator()(I s, I e, const Point_d& p)
+    bool 
+    operator()(I s, I e, const Point_d& p)
     { 
       Point_d A[4];
       CGAL_assertion(s != e);
@@ -143,14 +149,16 @@ template <class R_> struct Convex_hull_d_traits_3
       if (s == e){
         typename R_::Tetrahedron_3 t( A[0], A[1], A[2], A[3] );
         return !t.has_on_unbounded_side(p);
-      } else {
-	return false;  // should be unreachable !
-      } 
+      }
+      return false;  // should be unreachable !
     }
   };
 
-  Contained_in_simplex_d contained_in_simplex_d_object() const
-  { return Contained_in_simplex_d(); }
+  Contained_in_simplex_d 
+  contained_in_simplex_d_object() const
+  { 
+    return Contained_in_simplex_d(); 
+  }
  
   struct Contained_in_affine_hull_d {
     template <class I>
@@ -177,8 +185,14 @@ template <class R_> struct Convex_hull_d_traits_3
       return false;
     }
   };
-  Contained_in_affine_hull_d contained_in_affine_hull_d_object() const
-  { return Contained_in_affine_hull_d(); }
+
+
+  Contained_in_affine_hull_d 
+  contained_in_affine_hull_d_object() const
+  { 
+    return Contained_in_affine_hull_d(); 
+  }
+
 
   struct Component_accessor_d {
     template <typename C>
