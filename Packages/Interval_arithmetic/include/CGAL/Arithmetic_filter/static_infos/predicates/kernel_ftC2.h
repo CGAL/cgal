@@ -70,6 +70,11 @@ double Static_Filtered_compare_y_at_xC2_12::_epsilon_2;
 double Static_Filtered_compare_y_at_xC2_12::_epsilon_3;
 double Static_Filtered_compare_y_at_xC2_12::_bound = -1.0;
 
+double Static_Filtered_compare_y_at_x_segment_C2_9::_epsilon_0;
+double Static_Filtered_compare_y_at_x_segment_C2_9::_epsilon_1;
+double Static_Filtered_compare_y_at_x_segment_C2_9::_epsilon_2;
+double Static_Filtered_compare_y_at_x_segment_C2_9::_bound = -1.0;
+
 double Static_Filtered_equal_directionC2_4::_epsilon_0;
 double Static_Filtered_equal_directionC2_4::_epsilon_1;
 double Static_Filtered_equal_directionC2_4::_epsilon_2;

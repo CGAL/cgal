@@ -2370,6 +2370,335 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 #else
 static
 #endif
+/* CGAL_KERNEL_LARGE_INLINE */
+Comparison_result
+compare_y_at_x_segment_C2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s1sx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s1sy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s1tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s1ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s2sx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s2sy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s2tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s2ty)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA compare_y_at_x_segment_C2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    return compare_y_at_x_segment_C2(
+		px.interval(),
+		s1sx.interval(),
+		s1sy.interval(),
+		s1tx.interval(),
+		s1ty.interval(),
+		s2sx.interval(),
+		s2sy.interval(),
+		s2tx.interval(),
+		s2ty.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA compare_y_at_x_segment_C2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    return compare_y_at_x_segment_C2(
+		px.exact(),
+		s1sx.exact(),
+		s1sy.exact(),
+		s1tx.exact(),
+		s1ty.exact(),
+		s2sx.exact(),
+		s2sy.exact(),
+		s2tx.exact(),
+		s2ty.exact());
+  }
+}
+
+#ifdef CGAL_IA_NEW_FILTERS
+
+struct Static_Filtered_compare_y_at_x_segment_C2_9
+{
+  static double _bound;
+  static double _epsilon_0,_epsilon_1,_epsilon_2;
+
+  static Comparison_result update_epsilon(
+	const Static_filter_error &px,
+	const Static_filter_error &s1sx,
+	const Static_filter_error &s1sy,
+	const Static_filter_error &s1tx,
+	const Static_filter_error &s1ty,
+	const Static_filter_error &s2sx,
+	const Static_filter_error &s2sy,
+	const Static_filter_error &s2tx,
+	const Static_filter_error &s2ty,
+	double & epsilon_0,
+	double & epsilon_1,
+	double & epsilon_2)
+  {
+    typedef Static_filter_error FT;
+  
+      
+      
+      CGAL_kernel_precondition(s1sx != s1tx);
+      CGAL_kernel_precondition(s2sx != s2tx);
+      if (s1sx < s1tx)
+          CGAL_kernel_precondition(s1sx <= px && px <= s1tx);
+      else
+          CGAL_kernel_precondition(s1tx <= px && px <= s1sx);
+      if (s2sx < s2tx)
+          CGAL_kernel_precondition(s2sx <= px && px <= s2tx);
+      else
+          CGAL_kernel_precondition(s2tx <= px && px <= s2sx);
+  
+      FT s1stx = s1sx-s1tx;
+      FT s2stx = s2sx-s2tx;
+  
+      return Comparison_result(
+  	CGAL_NTS Static_Filtered_compare_2::update_epsilon(s1sx, s1tx,
+  		epsilon_0) *
+  	CGAL_NTS Static_Filtered_compare_2::update_epsilon(s2sx, s2tx,
+  		epsilon_1) *
+  	CGAL_NTS Static_Filtered_compare_2::update_epsilon(-(s1sx-px)*(s1sy-s1ty)*s2stx,
+  		         (s2sy-s1sy)*s2stx*s1stx
+  		         -(s2sx-px)*(s2sy-s2ty)*s1stx ,
+  		epsilon_2));
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2);
+    // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  static Comparison_result epsilon_variant(
+	const Restricted_double &px,
+	const Restricted_double &s1sx,
+	const Restricted_double &s1sy,
+	const Restricted_double &s1tx,
+	const Restricted_double &s1ty,
+	const Restricted_double &s2sx,
+	const Restricted_double &s2sy,
+	const Restricted_double &s2tx,
+	const Restricted_double &s2ty,
+	const double & epsilon_0,
+	const double & epsilon_1,
+	const double & epsilon_2)
+  {
+    typedef Restricted_double FT;
+  
+      
+      
+      CGAL_kernel_precondition(s1sx != s1tx);
+      CGAL_kernel_precondition(s2sx != s2tx);
+      if (s1sx < s1tx)
+          CGAL_kernel_precondition(s1sx <= px && px <= s1tx);
+      else
+          CGAL_kernel_precondition(s1tx <= px && px <= s1sx);
+      if (s2sx < s2tx)
+          CGAL_kernel_precondition(s2sx <= px && px <= s2tx);
+      else
+          CGAL_kernel_precondition(s2tx <= px && px <= s2sx);
+  
+      FT s1stx = s1sx-s1tx;
+      FT s2stx = s2sx-s2tx;
+  
+      return Comparison_result(
+  	CGAL_NTS Static_Filtered_compare_2::epsilon_variant(s1sx, s1tx,
+  		epsilon_0) *
+  	CGAL_NTS Static_Filtered_compare_2::epsilon_variant(s2sx, s2tx,
+  		epsilon_1) *
+  	CGAL_NTS Static_Filtered_compare_2::epsilon_variant(-(s1sx-px)*(s1sy-s1ty)*s2stx,
+  		         (s2sy-s1sy)*s2stx*s1stx
+  		         -(s2sx-px)*(s2sy-s2ty)*s1stx ,
+  		epsilon_2));
+  }
+};
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
+#endif
+/* CGAL_KERNEL_LARGE_INLINE */
+Comparison_result
+compare_y_at_x_segment_C2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &s1sx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &s1sy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &s1tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &s1ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &s2sx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &s2sy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &s2tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &s2ty)
+{
+//   bool re_adjusted = false;
+  const double SAF_bound = Static_Filtered_compare_y_at_x_segment_C2_9::_bound;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(s1sx.to_double()) > SAF_bound ||
+	fabs(s1sy.to_double()) > SAF_bound ||
+	fabs(s1tx.to_double()) > SAF_bound ||
+	fabs(s1ty.to_double()) > SAF_bound ||
+	fabs(s2sx.to_double()) > SAF_bound ||
+	fabs(s2sy.to_double()) > SAF_bound ||
+	fabs(s2tx.to_double()) > SAF_bound ||
+	fabs(s2ty.to_double()) > SAF_bound)
+  {
+// re_adjust:
+    // Compute the new bound.
+    double NEW_bound = 0.0;
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(s1sx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(s1sy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(s1tx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(s1ty.to_double()));
+    NEW_bound = max(NEW_bound, fabs(s2sx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(s2sy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(s2tx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(s2ty.to_double()));
+    // Re-adjust the context.
+#ifdef CGAL_PROFILE
+    static Profile_counter updates("SA compare_y_at_x_segment_C2 updates");
+    ++updates;
+#endif
+    Static_Filtered_compare_y_at_x_segment_C2_9::new_bound(NEW_bound);
+  }
+
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("SA compare_y_at_x_segment_C2 calls");
+    ++calls;
+#endif
+    return Static_Filtered_compare_y_at_x_segment_C2_9::epsilon_variant(
+		px.dbl(),
+		s1sx.dbl(),
+		s1sy.dbl(),
+		s1tx.dbl(),
+		s1ty.dbl(),
+		s2sx.dbl(),
+		s2sy.dbl(),
+		s2tx.dbl(),
+		s2ty.dbl(),
+		Static_Filtered_compare_y_at_x_segment_C2_9::_epsilon_0,
+		Static_Filtered_compare_y_at_x_segment_C2_9::_epsilon_1,
+		Static_Filtered_compare_y_at_x_segment_C2_9::_epsilon_2);
+  }
+  catch (...)
+  {
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("SA compare_y_at_x_segment_C2 failures");
+    ++failures;
+#endif
+    return compare_y_at_x_segment_C2(
+		px.exact(),
+		s1sx.exact(),
+		s1sy.exact(),
+		s1tx.exact(),
+		s1ty.exact(),
+		s2sx.exact(),
+		s2sy.exact(),
+		s2tx.exact(),
+		s2ty.exact());
+  }
+}
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
+#endif
+/* CGAL_KERNEL_LARGE_INLINE */
+Comparison_result
+compare_y_at_x_segment_C2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &s1sx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &s1sy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &s1tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &s1ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &s2sx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &s2sy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &s2tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &s2ty)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_compare_y_at_x_segment_C2_9::_bound; )
+  CGAL_assertion(!(
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(s1sx.to_double()) > SAF_bound ||
+	fabs(s1sy.to_double()) > SAF_bound ||
+	fabs(s1tx.to_double()) > SAF_bound ||
+	fabs(s1ty.to_double()) > SAF_bound ||
+	fabs(s2sx.to_double()) > SAF_bound ||
+	fabs(s2sy.to_double()) > SAF_bound ||
+	fabs(s2tx.to_double()) > SAF_bound ||
+	fabs(s2ty.to_double()) > SAF_bound));
+
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("ST compare_y_at_x_segment_C2 calls");
+    ++calls;
+#endif
+    return Static_Filtered_compare_y_at_x_segment_C2_9::epsilon_variant(
+		px.dbl(),
+		s1sx.dbl(),
+		s1sy.dbl(),
+		s1tx.dbl(),
+		s1ty.dbl(),
+		s2sx.dbl(),
+		s2sy.dbl(),
+		s2tx.dbl(),
+		s2ty.dbl(),
+		Static_Filtered_compare_y_at_x_segment_C2_9::_epsilon_0,
+		Static_Filtered_compare_y_at_x_segment_C2_9::_epsilon_1,
+		Static_Filtered_compare_y_at_x_segment_C2_9::_epsilon_2);
+  }
+  catch (...)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("ST compare_y_at_x_segment_C2 failures");
+    ++failures;
+#endif
+    return compare_y_at_x_segment_C2(
+		px.exact(),
+		s1sx.exact(),
+		s1sy.exact(),
+		s1tx.exact(),
+		s1ty.exact(),
+		s2sx.exact(),
+		s2sy.exact(),
+		s2tx.exact(),
+		s2ty.exact());
+  }
+}
+
+#endif // CGAL_IA_NEW_FILTERS
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
+           class CGAL_IA_CACHE >
+#else
+static
+#endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
 equal_directionC2(
