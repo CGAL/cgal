@@ -93,9 +93,13 @@ public:
   */
   void do_before_conflicts(const Edge& e, const Point&)
   {
-    tr.remove_constrained_edge(e.first, e.second,
-                               std::inserter(special_zone,
-                                             special_zone.begin()));
+    std::cerr << e.first->vertex(Tr::cw(e.second))->point() << std::endl;
+    this->tr.remove_constrained_edge(e.first, e.second,
+                                     std::inserter(special_zone,
+                                                   special_zone.begin()));
+    std::cerr << this->va->point() << " / "
+              << this->vb->point() << std::endl;
+    std::cerr << e.first->vertex(Tr::cw(e.second))->point() << std::endl;
   }
 
   /** 
@@ -110,6 +114,9 @@ public:
     typedef typename Tr::List_faces List_faces;
     List_faces list_faces;
     Vertex_handle dummy_vh;
+
+    std::cerr << this->va->point() << " / "
+              << this->vb->point() << std::endl;
 
     CGAL_assertion_code( bool should_be_false = )
     this->tr.find_intersected_faces(this->va, this->vb,

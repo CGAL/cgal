@@ -105,7 +105,7 @@ namespace Mesh_2 {
       const Angle_2 angle = ct.geom_traits().angle_2_object();
 
       const Vertex_handle& va = fh->vertex(ct. cw(i));
-      const Vertex_handle& vb = fh->vertex(ct.ccw(i));      
+      const Vertex_handle& vb = fh->vertex(ct.ccw(i));
 
       const Point& a = va->point();
       const Point& b = vb->point();
@@ -388,7 +388,9 @@ public:
   /** This version computes the refinement point without handling
       clusters. The refinement point of an edge is just the middle point of
       the segment.
-      Saves the handles of the edge that will be splitted. */
+      Saves the handles of the edge that will be splitted.
+      This function is overridden in class Refine_edge_with_clusters.
+  */
   Point get_refinement_point(const Edge& edge) 
   {
     typename Geom_traits::Construct_midpoint_2

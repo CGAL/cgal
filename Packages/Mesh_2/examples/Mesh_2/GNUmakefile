@@ -15,7 +15,7 @@ include $(CGAL_MAKEFILE)
 
 OTHER_CXXFLAGS?=
 
-CXXFLAGS = \
+CXXFLAGS = -I../../../Triangulation_2/include \
            -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \

@@ -91,6 +91,10 @@ public:
 
     this->va = edge.first->vertex(Tr::cw (edge.second));
     this->vb = edge.first->vertex(Tr::ccw(edge.second));
+
+    std::cerr << "get_refinement_point\n" << this->va->point() << " / "
+              << this->vb->point() << std::endl;
+
     va_has_a_cluster = false;
     vb_has_a_cluster = false;
     cluster_splitted = false;

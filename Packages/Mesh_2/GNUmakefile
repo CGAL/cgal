@@ -33,6 +33,7 @@ clean:
 dist-clean: clean
 	find . -name '.#*' -exec rm \{\} \;
 	find . -name '*~' -exec rm \{\} \;
+	rm -rf doxygen
 
 dist: dist-clean
 	tar czfv /tmp/Mesh_2.tar.gz . --exclude=CVS --exclude=TODO \

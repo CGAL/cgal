@@ -58,6 +58,4 @@ namespace CGAL {
 // moc_source_file: Show_segments_base.h
 #include "Show_segments_base.moc"
 
-
-#endif
-
+#endif // CGAL_USE_QT
