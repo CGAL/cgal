@@ -73,9 +73,10 @@ int main(int argc, char* argv[])
 // Picking a default  point location strategy
 // See comment above.
 #ifndef CGAL_ARR_TEST_POINT_LOCATION
-  #define CGAL_ARR_TEST_POINT_LOCATION 1
-  //#define CGAL_ARR_TEST_POINT_LOCATION 2
-  //#define CGAL_ARR_TEST_POINT_LOCATION 3
+  #define CGAL_ARR_TEST_POINT_LOCATION 1 // Trapezoidal Decomposition
+  //#define CGAL_ARR_TEST_POINT_LOCATION 2 // Naive
+  //#define CGAL_ARR_TEST_POINT_LOCATION 3 // Walk
+  //#define CGAL_ARR_TEST_POINT_LOCATION 4 // Simple 
 #endif
 
 #if CGAL_ARR_TEST_POINT_LOCATION == 1
