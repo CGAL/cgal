@@ -51,7 +51,7 @@ typedef Coord_kernel::Segment_2                            Coord_segment;
 typedef Coord_kernel::Circle_2                             Coord_circle;
 
 // For the conic traits:
-#define COORD_SCALE  1000
+//#define COORD_SCALE  10
 
 // Planar map typedef - using rational exact number type
 typedef CGAL::Quotient<CGAL::MP_Float>                     NT;

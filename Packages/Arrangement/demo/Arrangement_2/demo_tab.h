@@ -186,6 +186,9 @@ public:
    *         point location if the mode is on. */
   void draw()
   {
+    QCursor old = cursor();
+    setCursor(Qt::WaitCursor);
+
     if (snap_mode == GRID || grid)
       draw_grid();
     
@@ -238,7 +241,9 @@ public:
         // Keep track of IDs we haven't seen before.
         if (ind1 != ind2 && ind1 != index && ind2 != index)
         {
-          const Pm_point_2& p = (*vit).point();
+          //const Pm_point_2& p = (*vit).point();
+		  Coord_point p(CGAL::to_double((*vit).point().x())/ m_tab_traits.COORD_SCALE, 
+			            CGAL::to_double((*vit).point().y())/ m_tab_traits.COORD_SCALE); 
           *this << p;
           break;
         }
@@ -251,7 +256,9 @@ public:
 	        setColor(pm_color);
 	      else
 	        setColor(colors[ind2]);
-		  const Pm_point_2& p = (*vit).point();
+		  //const Pm_point_2& p = (*vit).point();
+		  Coord_point p(CGAL::to_double((*vit).point().x())/ m_tab_traits.COORD_SCALE, 
+			            CGAL::to_double((*vit).point().y())/ m_tab_traits.COORD_SCALE); 
           *this << p;
 		}
       } while (eit != first);
@@ -302,64 +309,73 @@ public:
       setColor(Qt::black);
       (*this) << CGAL::LineWidth(1);
 
+	  Coord_point pl_draw(pl_point.x() / m_tab_traits.COORD_SCALE , 
+		                  pl_point.y() / m_tab_traits.COORD_SCALE);
+
 	  if (ray_shooting_direction)
 	  {
 	    if (lt == Curves_arr::UNBOUNDED_FACE)
 		{
-		  Coord_point up(pl_point.x() , y_max());
-		  (*this) << Coord_segment(pl_point , up );
+		  Coord_point up(pl_draw.x() , y_max());
+		  (*this) << Coord_segment(pl_draw , up );
 		}
 		else // we shoot something
 		{
-		  Pm_point_2 p1c1(pl_point.x() , y_max());
+		  Pm_point_2 p1c1(pl_point.x() , y_max() * m_tab_traits.COORD_SCALE);
 		  Pm_point_2 p2c1(pl_point.x() , pl_point.y());
 		  const Xcurve c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
 		  const Xcurve c2 = e->curve();
 		  Pm_point_2 p1;
 		  Pm_point_2 p2;
-      
-		  m_traits.nearest_intersection_to_right(c1, c2, p2c1, p1, p2);
-	      Coord_type x1 = CGAL::to_double(p1.x());
-		  Coord_type y1 = CGAL::to_double(p1.y());
-		  Coord_point up(x1,y1);
-		  (*this) << Coord_segment(pl_point , up );
+		  Pm_point_2 most_left(x_min() * m_tab_traits.COORD_SCALE, pl_point.y());
+		  m_traits.nearest_intersection_to_right(c1, c2, most_left, p1, p2);
+		  Coord_type y1 = CGAL::to_double(p1.y()) / m_tab_traits.COORD_SCALE;
+		  Coord_point up(pl_draw.x(),y1);
+		  (*this) << Coord_segment(pl_draw , up );
 		}
 	  }
 	  else // down ray shooting
 	  {
 	    if (lt == Curves_arr::UNBOUNDED_FACE)
 		{
-		  Coord_point down(pl_point.x() , y_min());
-		  (*this) << Coord_segment(pl_point , down );
+		  Coord_point down(pl_draw.x() , y_min());
+		  (*this) << Coord_segment(pl_draw , down );
 		}
 		else // we shoot something
 		{
-		  Pm_point_2 p1c1(pl_point.x() , y_min());
+		  Pm_point_2 p1c1(pl_point.x() , y_min() * m_tab_traits.COORD_SCALE);
 		  Pm_point_2 p2c1(pl_point.x() , pl_point.y());
 		  const Xcurve c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
 		  const Xcurve c2 = e->curve();
 		  Pm_point_2 p1;
 		  Pm_point_2 p2;
-      
-		  m_traits.nearest_intersection_to_left(c1, c2, p2c1, p1, p2);
-	      Coord_type x1 = CGAL::to_double(p1.x());
-		  Coord_type y1 = CGAL::to_double(p1.y());
-		  Coord_point up(x1,y1);
-		  (*this) << Coord_segment(pl_point , up );
+   		  Pm_point_2 most_right(x_max() * m_tab_traits.COORD_SCALE, pl_point.y());
+
+		  m_traits.nearest_intersection_to_left(c1, c2, most_right, p1, p2);
+		  Coord_type y1 = CGAL::to_double(p1.y()) / m_tab_traits.COORD_SCALE;
+		  Coord_point up(pl_draw.x(),y1);
+		  (*this) << Coord_segment(pl_draw , up );
 		}
-	  }
-	    
+	  }	    
       
       (*this) << CGAL::LineWidth(3);
       setColor(Qt::red);
       
       switch (lt) {
        case (Curves_arr::VERTEX):
-        *this << e->target()->point();
+		{
+		Coord_point p(CGAL::to_double(e->target()->point().x())/ m_tab_traits.COORD_SCALE, 
+			          CGAL::to_double(e->target()->point().y())/ m_tab_traits.COORD_SCALE); 
+		*this << p;
         break;
+		}
        case (Curves_arr::UNBOUNDED_VERTEX) :
-        *this << e->target()->point();
+        {
+		Coord_point p(CGAL::to_double(e->target()->point().x())/ m_tab_traits.COORD_SCALE, 
+			          CGAL::to_double(e->target()->point().y())/ m_tab_traits.COORD_SCALE); 
+		*this << p;
         break;
+		}
        case (Curves_arr::EDGE):
         m_tab_traits.draw_xcurve(this , e->curve() );
         break;
@@ -371,11 +387,10 @@ public:
        case (Curves_arr::UNBOUNDED_FACE) :
         break;
         
-      }                
-      
+      }                 
       (*this) << CGAL::LineWidth(m_line_width);
     }
-    
+    setCursor(old);
   }
   
   /*! draw_grid - draw the grid */
@@ -525,12 +540,14 @@ public:
       {
         active = true;
         m_tab_traits.first_point( p );
-		split_point = Pm_point_2( p.x() , p.y() );
+		split_point = Pm_point_2( p.x() * m_tab_traits.COORD_SCALE ,
+			                      p.y() * m_tab_traits.COORD_SCALE);
       } 
       else
       {	    
 	    active = false;
-		Pm_point_2 split_point2 = Pm_point_2( p.x() , p.y() );
+		Pm_point_2 split_point2 = Pm_point_2(p.x() * m_tab_traits.COORD_SCALE,
+			                                 p.y() * m_tab_traits.COORD_SCALE);
         const Xcurve split_curve = 
 			m_tab_traits.curve_make_x_monotone(split_point , split_point2);
 	    Pm_point_2 p1;
@@ -570,7 +587,8 @@ public:
       Coord_type x, y;
       x_real(e->x(), x);
       y_real(e->y(), y);
-      new_object(make_object(Coord_point(x, y)));
+      new_object(make_object(Coord_point(x * m_tab_traits.COORD_SCALE, 
+									     y * m_tab_traits.COORD_SCALE)));
     }
   }
   
@@ -626,7 +644,8 @@ public:
     if( m_curves_arr.number_of_vertices() == 0 )
       return;
     
-    Coord_point p(x_real(e->x()) ,y_real(e->y()));
+    Coord_point p(x_real(e->x()) * m_tab_traits.COORD_SCALE ,
+		          y_real(e->y()) * m_tab_traits.COORD_SCALE);
     
     bool is_first = true;
     Coord_type min_dist = 0;
@@ -693,7 +712,7 @@ public:
 	  Coord_type x, y;
       x_real(e->x(), x);
       y_real(e->y(), y);
-      Coord_point p(x,y);
+      Coord_point p(x * m_tab_traits.COORD_SCALE, y * m_tab_traits.COORD_SCALE);
       second_curve = m_curves_arr.halfedges_end();
 	  m_tab_traits.find_close_curve(closest_curve ,second_curve ,p ,this ,true);
 	  setColor(Qt::red);
@@ -720,18 +739,6 @@ public:
       RasterOp old_raster = rasterOp();//save the initial raster mode
       setRasterOp(XorROP);
       lock();
-    
-	  /*colors[1] = Qt::blue;
-    colors[2] = Qt::gray;
-    colors[3] = Qt::green;
-    colors[4] = Qt::cyan;
-    colors[5] = Qt::magenta;
-    colors[6] = Qt::black;
-    colors[7] = Qt::darkGreen;
-    colors[8] = Qt::darkBlue;
-    colors[9] = Qt::darkMagenta;
-    colors[10] = Qt::darkCyan;
-    colors[11] = Qt::yellow;*/
 
       setColor(Qt::green);
       
@@ -777,7 +784,8 @@ public:
     int xmax = static_cast<int> (x_max());
     int ymin = static_cast<int> (y_min());
     int ymax = static_cast<int> (y_max());
-    Coord_type d = std::max(0.5 , (x_max() - x_min())/40);
+    Coord_type d = 
+		std::max(0.5 , (x_max() - x_min())/40);
     switch ( snap_mode ) {
      case POINT:
       {
@@ -888,7 +896,8 @@ public:
       return;
 
       setColor(Qt::red);
-      Coord_point p(x_real(e->x()) ,y_real(e->y()));
+      Coord_point p(x_real(e->x()) * m_tab_traits.COORD_SCALE ,
+		            y_real(e->y()) * m_tab_traits.COORD_SCALE);
 	  bool is_first = true;
       Coord_type min_dist = 0;
 	  
@@ -964,9 +973,13 @@ public:
   Halfedge_around_vertex_circulator;
   typedef Curves_arr::Edge_iterator Edge_iterator;
   typedef Curve_data Data;
-  
+ 
+  /*! coordinate scale - used in conics*/
+  int COORD_SCALE;
+
   /*! constructor */
-  Segment_tab_traits()
+  Segment_tab_traits():
+  COORD_SCALE(1)
   {}
   
   /*! distructor */
@@ -1238,6 +1251,7 @@ public:
   /*! temporary points of the created segment */
   Traits m_traits;
   Coord_point m_p1,m_p2;
+  
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1271,9 +1285,13 @@ public:
   Halfedge_around_vertex_circulator;
   typedef Curves_arr::Edge_iterator Edge_iterator;
   typedef Curve_pol_data Data;
+
+  /*! coordinate scale - used in conics*/
+  int COORD_SCALE;
   
   /*! constructor */
-  Polyline_tab_traits()
+  Polyline_tab_traits():
+  COORD_SCALE(1)
   {}
   
   /*! distructor */
@@ -1694,8 +1712,7 @@ private:
   /*! the old point of the rubber band */
   Coord_point rubber_old;
   /*! container to hold the point during polyline creation */
-  std::vector<Pm_pol_point_2> points;
-  
+  std::vector<Pm_pol_point_2> points;  
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1727,8 +1744,12 @@ public:
   typedef Curves_arr::Edge_iterator Edge_iterator;
   typedef Curve_conic_data Data;
   
+  /*! coordinate scale - used in conics*/
+  int COORD_SCALE;
+
   /*! constructor */
-  Conic_tab_traits()
+  Conic_tab_traits():
+  COORD_SCALE(10)
   {}
   
   /*! distructor */
@@ -1746,8 +1767,8 @@ public:
     
     if (c.is_segment())
     {
-      Coord_point coord_source(sx , sy);
-      Coord_point coord_target(tx , ty);
+      Coord_point coord_source(sx / COORD_SCALE, sy / COORD_SCALE);
+      Coord_point coord_target(tx / COORD_SCALE, ty / COORD_SCALE);
       Coord_segment coord_seg(coord_source, coord_target);
       
       *w << coord_seg;
@@ -1781,16 +1802,16 @@ public:
           if (nps == 1)
           {
             curr_y = CGAL::to_double(ps[0].y());
-            (*w) << Coord_segment( Coord_point(prev_x, prev_y) ,
-                                   Coord_point(curr_x, curr_y) );
+            (*w) << Coord_segment (Coord_point(prev_x / COORD_SCALE, prev_y / COORD_SCALE),
+                                   Coord_point(curr_x / COORD_SCALE, curr_y / COORD_SCALE));
             prev_x = curr_x;
             prev_y = curr_y;
             
           }
         }
         
-        (*w) << Coord_segment( Coord_point(prev_x, prev_y) ,
-                               Coord_point(end_x, end_y) );
+        (*w) << Coord_segment (Coord_point(prev_x / COORD_SCALE, prev_y / COORD_SCALE),
+                               Coord_point(end_x / COORD_SCALE, end_y / COORD_SCALE));
       }
       else
       {
@@ -1819,8 +1840,9 @@ public:
   /*! first_point - a first point of inserted sgment */
   void first_point( Coord_point p )
   {
-    m_p1 = m_p2 = p;
-	first_time_hyperbola = true;
+    m_p_old = m_p1 = m_p2 = m_p3 = m_p4 = p;
+	num_points = 1;
+	first_time = true;
   }
   
   /*! middle_point - the last point of a segment */
@@ -1833,18 +1855,18 @@ public:
       CfNT x, y, x1, y1, x0, y0, temp;
       CfNT sq_rad;
 
-      x = CfNT(static_cast<int>(COORD_SCALE * m_p1.x()));
-      y = CfNT(static_cast<int>(COORD_SCALE * m_p1.y()));
-      x1 = CfNT(static_cast<int>(COORD_SCALE * p.x()));
-      y1 = CfNT(static_cast<int>(COORD_SCALE * p.y()));
+      x1 = CfNT(static_cast<int>(COORD_SCALE * m_p1.x()));
+      y1 = CfNT(static_cast<int>(COORD_SCALE * m_p1.y()));
+      x = CfNT(static_cast<int>(COORD_SCALE * p.x()));
+      y = CfNT(static_cast<int>(COORD_SCALE * p.y()));
 
       Pm_base_conic_2 *cv = NULL;
 
       switch (w->conic_type)
       {
       case CIRCLE:
-	sq_rad = CGAL::square(x - x1) + CGAL::square(y - y1);
-        cv = new Pm_base_conic_2(Int_circle_2 (Int_point_2(x, y), sq_rad)); 
+	    sq_rad = CGAL::square(x - x1) + CGAL::square(y - y1);
+        cv = new Pm_base_conic_2(Int_circle_2 (Int_point_2(x1, y1), sq_rad)); 
         break;
 
       case SEGMENT:
@@ -1879,8 +1901,66 @@ public:
 
 	// RWRW: Do nothing ...
       case PARABOLA:
+        *w << CGAL::LineWidth(3);
+   	    if (num_points == 1)
+		{
+		  m_p2 = p;
+		  num_points++;
+		  *w << m_p2;
+		  return;
+		}
+		if (num_points == 2)
+		{
+          CfNT x2 = CfNT(static_cast<int>(COORD_SCALE * m_p2.x()));
+          CfNT y2 = CfNT(static_cast<int>(COORD_SCALE * m_p2.y()));
+		  
+		  cv = new Pm_base_conic_2 (Int_point_2(x1,y1),Int_point_2(x2,y2),Int_point_2(x,y));
+		}
+        break;
       case HYPERBOLA:
-	return;
+	    *w << CGAL::LineWidth(3);
+	    if (num_points == 1)
+		{
+		  m_p2 = p;
+		  num_points++;
+		  *w << m_p2;
+		  return;
+		}
+		if (num_points == 2)
+		{
+		  m_p3 = p;
+		  num_points++;
+		  *w << m_p3;
+		  return;
+		}
+		if (num_points == 3)
+		{
+		  m_p4 = p;
+		  num_points++;
+		  *w << m_p4;
+		  return;
+		}
+		if (num_points == 4)
+		{
+		  *w << p;
+          CfNT x2 = CfNT(static_cast<int>(COORD_SCALE * m_p2.x()));
+          CfNT y2 = CfNT(static_cast<int>(COORD_SCALE * m_p2.y()));
+		  CfNT x3 = CfNT(static_cast<int>(COORD_SCALE * m_p3.x()));
+          CfNT y3 = CfNT(static_cast<int>(COORD_SCALE * m_p3.y()));
+		  CfNT x4 = CfNT(static_cast<int>(COORD_SCALE * m_p4.x()));
+          CfNT y4 = CfNT(static_cast<int>(COORD_SCALE * m_p4.y()));
+		  
+		  cv = new Pm_base_conic_2 (Int_point_2(x1,y1),Int_point_2(x2,y2),
+			     Int_point_2(x3,y3),Int_point_2(x4,y4),Int_point_2(x,y));
+		  if (! cv->is_valid())
+		  {
+			  QMessageBox::information( w, "Insert Conic", "Invalid Conic");
+	          w->active = false;
+			  *w << m_p1 << m_p2 << m_p3 << m_p4 << p;
+			  return;
+		  }
+		}
+        break;	
 
 	/*
       case PARABOLA:
@@ -2010,50 +2090,42 @@ public:
   void draw_last_segment( Qt_widget_demo_tab<Conic_tab_traits> * w)
   {
     if (w->mode == SPLIT)
-	  *w << Coord_segment( m_p1 , m_p2 );
+	  *w << Coord_segment( m_p1 , m_p_old );
 	else
 	{
       switch (w->conic_type)
 	  {
 	    case CIRCLE:
 	    *w << Coord_circle(m_p1,
-		    pow(m_p1.x() - m_p2.x(), 2) + pow(m_p1.y() - m_p2.y(),2));
+		    pow(m_p1.x() - m_p_old.x(), 2) + pow(m_p1.y() - m_p_old.y(),2));
 	    break;
 	    case SEGMENT:
-    	  *w << Coord_segment( m_p1 , m_p2 );
+    	  *w << Coord_segment( m_p1 , m_p_old );
 	    break;
         case ELLIPSE:
 	    {
- 		  *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
-		  *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
-		  *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
-		  *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
+ 		  *w << Coord_segment( Coord_point(m_p1.x(),m_p_old.y()) , m_p_old );
+		  *w << Coord_segment( Coord_point(m_p1.x(),m_p_old.y()) , m_p1 );
+		  *w << Coord_segment( Coord_point(m_p_old.x(),m_p1.y()) , m_p_old );
+		  *w << Coord_segment( Coord_point(m_p_old.x(),m_p1.y()) , m_p1 );
 		  break;
 	    }		
 	    case PARABOLA:
-	    {
- 	  	  *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
-		  if (m_p1.y() != m_p2.y())
+	      if (first_time)
 		  {
-		    *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
-		    *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
-		    *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
+		    *w << CGAL::LineWidth(3);
+		    *w << m_p1;
+		    first_time = false;
 		  }
 		  break;
-	    }		
 	    case HYPERBOLA:
-	    {
-	      if (first_time_hyperbola)
-	 	  {
- 		    *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
-		    *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
-		    *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
-		    *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
-		    *w << Coord_segment( m_p1 , m_p2 );
-		    *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , Coord_point(m_p1.x(),m_p2.y()) );
+		  if (first_time)
+		  {
+		    *w << CGAL::LineWidth(3);
+		    *w << m_p1;
+		    first_time = false;
 		  }
 		  break;
-	    }		
 	  }
 	}
   }
@@ -2062,7 +2134,7 @@ public:
   void draw_current_segment( Coord_point p ,
                              Qt_widget_demo_tab<Conic_tab_traits> * w)
   {
-    m_p2 = p;
+    m_p_old = p;
 	draw_last_segment(w);
   }
 	
@@ -2074,13 +2146,15 @@ public:
   {
     bool first = true;
     Coord_type x1,y1,dt,min_dist = 0;
+	//Coord_type x_scale = COORD_SCALE * x;
+	//Coord_type y_scale = COORD_SCALE * y;
     Vertex_iterator vit;
     for (vit = w->m_curves_arr.vertices_begin();
          vit != w->m_curves_arr.vertices_end(); vit++)
     {
       const Pm_point_2& p = (*vit).point();
-      x1 = CGAL::to_double(p.x());
-      y1 = CGAL::to_double(p.y());
+      x1 = CGAL::to_double(p.x()) / COORD_SCALE;
+      y1 = CGAL::to_double(p.y()) / COORD_SCALE;
       dt = w->dist(x1 , y1 , x , y);
       if ( dt < min_dist || first)
       {
@@ -2378,9 +2452,12 @@ public:
 
   Traits m_traits;
   /*! temporary points of the created conic */
-  Coord_point m_p1,m_p2,m_p3;
+  Coord_point m_p_old,m_p1,m_p2,m_p3,m_p4;
   /*! bool flag for hyperbola insertion */
-  bool first_time_hyperbola;
+  bool first_time;
+  /*! counter for the number of points */
+  int num_points;
+  
 };
 
 typedef Qt_widget_demo_tab<Segment_tab_traits> Qt_widget_segment_tab;

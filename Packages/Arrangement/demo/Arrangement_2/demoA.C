@@ -30,6 +30,18 @@
 #include "icons/demo_zoomin.xpm"
 #include "icons/demo_pointlocation.xpm"
 
+#include "icons/demo_conic_3points.xpm"
+#include "icons/demo_conic_5points.xpm"
+#include "icons/demo_conic_circle.xpm"
+#include "icons/demo_conic_ellipse.xpm"
+#include "icons/demo_conic_segment.xpm"
+#include "icons/demo_rayshoot_down.xpm"
+#include "icons/demo_rayshoot_up.xpm"
+#include "icons/demo_arrow_down.xpm"
+#include "icons/demo_arrow_up.xpm"
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 /*! MyWindow constructor
@@ -103,7 +115,7 @@ MyWindow::MyWindow(int w, int h)
   pointLocationMode->setToggleAction( TRUE );
   
   rayShootingMode = new QAction("RayShooting",
-                                QPixmap( (const char**)rayshoot_xpm ),
+                                QPixmap( (const char**)demo_rayshoot_up_xpm ),
                                 "&Ray Shooting", 0 , modeGroup,
                                 "Ray Shooting" );
   rayShootingMode->setToggleAction( TRUE );
@@ -132,29 +144,29 @@ MyWindow::MyWindow(int w, int h)
   conicTypeGroup->setExclusive( TRUE );
   
   setCircle = new QAction("Circle",
-                                 QPixmap( (const char**)mycircle_xpm ),
+                                 QPixmap( (const char**)demo_conic_circle_xpm ),
                                  "&Circle", 0 ,conicTypeGroup,
                                  "Circle" );
   setCircle->setToggleAction( TRUE );
   setSegment = new QAction("Segment",
-                                 QPixmap( (const char**)segment_xpm ),
+                                 QPixmap( (const char**)demo_conic_segment_xpm ),
                                  "&Segment", 0 ,conicTypeGroup,
                                  "Segment" );
   setSegment->setToggleAction( TRUE );
   setEllipse = new QAction("Ellipse",
-                                 QPixmap( (const char**)ellipse_xpm ),
+                                 QPixmap( (const char**)demo_conic_ellipse_xpm ),
                                  "&Ellipse", 0 ,conicTypeGroup,
                                  "Ellipse" );
   setEllipse->setToggleAction( TRUE );
-  setParabola = new QAction("Parabola",
-                                 QPixmap( (const char**)parabula_xpm ),
-                                 "&Parabola", 0 ,conicTypeGroup,
-                                 "Parabola" );
+  setParabola = new QAction("3 Points Arc",
+                                 QPixmap( (const char**)demo_conic_3points_xpm ),
+                                 "&3 Points Arc", 0 ,conicTypeGroup,
+                                 "3 Points Arc" );
   setParabola->setToggleAction( TRUE );
-  setHyperbola = new QAction("Hyperbola",
-                                 QPixmap( (const char**)hyperbula_xpm ),
-                                 "&Hyperbola", 0 ,conicTypeGroup,
-                                 "Hyperbola" );
+  setHyperbola = new QAction("5 Points Arc",
+                                 QPixmap( (const char**)demo_conic_5points_xpm ),
+                                 "&5 Points Arc", 0 ,conicTypeGroup,
+                                 "5 Points Arc" );
   setHyperbola->setToggleAction( TRUE );
   
   
@@ -168,17 +180,17 @@ MyWindow::MyWindow(int w, int h)
   // file menu
   QPopupMenu * file = new QPopupMenu( this );
   menuBar()->insertItem( "&File", file );
-  file->insertItem("&Open Segment File", this, SLOT(fileOpenSegment()));
-  file->insertItem("&Open Polyline File", this, SLOT(fileOpenPolyline()));
-  file->insertItem("&Open Conic File", this, SLOT(fileOpenConic()));
-  file->insertItem("&Open Segment Pm File", this, SLOT(fileOpenSegmentPm()));
-  file->insertItem("&Open Polyline Pm File", this, SLOT(fileOpenPolylinePm()));
+  file->insertItem("&Open Segment File...", this, SLOT(fileOpenSegment()));
+  file->insertItem("&Open Polyline File...", this, SLOT(fileOpenPolyline()));
+  file->insertItem("&Open Conic File...", this, SLOT(fileOpenConic()));
+  file->insertItem("&Open Segment Pm File...", this, SLOT(fileOpenSegmentPm()));
+  file->insertItem("&Open Polyline Pm File...", this, SLOT(fileOpenPolylinePm()));
   //file->insertItem("&Open Conic Pm File", this, SLOT(fileOpenConicPm()));
-  file->insertItem("&Save", this, SLOT(fileSave()));
-  file->insertItem("&Save As", this, SLOT(fileSaveAs()));
-  file->insertItem("&Save to ps", this, SLOT(fileSave_ps()));
+  file->insertItem("&Save...", this, SLOT(fileSave()));
+  file->insertItem("&Save As...", this, SLOT(fileSaveAs()));
+  file->insertItem("&Save to ps...", this, SLOT(fileSave_ps()));
   file->insertSeparator();
-  file->insertItem("&Print", this , SLOT(print()));
+  file->insertItem("&Print...", this , SLOT(print()));
   file->insertSeparator();
   file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
   file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
@@ -220,29 +232,29 @@ MyWindow::MyWindow(int w, int h)
   setPolylineTraits->addTo(options); 
   setConicTraits->addTo(options); 
   options->insertSeparator();
-  options->insertItem("Overlay", this, SLOT(overlay_pm()));
+  options->insertItem("Overlay...", this, SLOT(overlay_pm()));
   options->insertSeparator();
-  options->insertItem("Properties", this, SLOT(properties()));
+  options->insertItem("Properties...", this, SLOT(properties()));
   options->insertSeparator();
   options->insertItem("Show Grid", this, SLOT(showGrid()));
-  options->insertItem("Hide Grig", this, SLOT(hideGrid()));
+  options->insertItem("Hide Grid", this, SLOT(hideGrid()));
   options->insertSeparator();
-  options->insertItem("Conic Type", this, SLOT(conicType()));
-  options->insertSeparator();
-  options->insertItem("Background Color", this, SLOT(backGroundColor()));
+  //options->insertItem("Conic Type", this, SLOT(conicType()));
+  //options->insertSeparator();
+  options->insertItem("Background Color...", this, SLOT(backGroundColor()));
   options->insertSeparator(); 
-  options->insertItem("Change Planar Map Color", this, SLOT(changePmColor()));
+  options->insertItem("Planar Map Color...", this, SLOT(changePmColor()));
   options->insertSeparator();
-  options->insertItem("RayShooting Diraction", this, 
+  options->insertItem("Ray-Shooting Direction...", this, 
 	                                       SLOT(rayShootingDirection()));
   
   // help menu
   QPopupMenu * help = new QPopupMenu( this );
   menuBar()->insertItem( "&Help", help );
-  help->insertItem("How To", this, SLOT(howto()), Key_F1);
+  help->insertItem("How To...", this, SLOT(howto()), Key_F1);
   help->insertSeparator();
-  help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
-  help->insertItem("About &Qt", this, SLOT(aboutQt()) );
+  help->insertItem("&About...", this, SLOT(about()), CTRL+Key_A );
+  help->insertItem("About &Qt...", this, SLOT(aboutQt()) );
   
   QToolBar *modeTools = new QToolBar( this, "mode operations" );
   modeTools->setLabel( "Mode Operations" );
@@ -395,7 +407,7 @@ void MyWindow::init(Qt_widget_base_tab *widget)
           this, SLOT(get_new_object(CGAL::Object)));
   widget->attach(testlayer);
   widget->setCursor(QCursor( QPixmap( (const char**)small_draw_xpm)));
-  rayShootingMode->setIconSet(QPixmap((const char**)ray_shooting_xpm ));
+  rayShootingMode->setIconSet(QPixmap((const char**)demo_rayshoot_up_xpm ));
   QColor c = Qt::white;
   c.setRgb(236,236,236);
   widget->setBackgroundColor(c);
@@ -534,7 +546,7 @@ void MyWindow::updateTraitsType( QAction *action )
   widget->index = old_index;
   widget->pm_color = widget->colors[old_index];
   widget->setCursor(QCursor( QPixmap( (const char**)small_draw_xpm)));
-  rayShootingMode->setIconSet(QPixmap((const char**)ray_shooting_xpm ));
+  rayShootingMode->setIconSet(QPixmap((const char**)demo_rayshoot_up_xpm ));
 
   // add the new widget to myBar
   myBar->insertTab( widget, label , index );
@@ -703,10 +715,10 @@ void MyWindow::updateMode( QAction *action )
     w_demo_p->mode = RAY_SHOOTING;
 	if (w_demo_p->ray_shooting_direction)
       w_demo_p->setCursor(
-	  QCursor(QPixmap((const char**)small_ray_shooting_xpm)));
+	  QCursor(QPixmap((const char**)demo_arrow_up_xpm)));
 	else
       w_demo_p->setCursor(
-	  QCursor(QPixmap((const char**)small_ray_shooting_down_xpm)));
+	  QCursor(QPixmap((const char**)demo_arrow_down_xpm)));
   }
   else if ( action == dragMode ) 
   {
@@ -743,19 +755,19 @@ void MyWindow::rayShootingDirection()
     if (strcmp(type,"Up") == 0)
 	{
       w_demo_p->ray_shooting_direction = true;
-      rayShootingMode->setIconSet(QPixmap((const char**)ray_shooting_xpm ));
+      rayShootingMode->setIconSet(QPixmap((const char**)demo_rayshoot_up_xpm ));
 	  if (w_demo_p->mode == RAY_SHOOTING)
 	    w_demo_p->setCursor(
-	    QCursor(QPixmap((const char**)small_ray_shooting_xpm)));
+	    QCursor(QPixmap((const char**)demo_arrow_up_xpm)));
 	}
     else if (strcmp(type,"Down") == 0)
 	{
       w_demo_p->ray_shooting_direction = false;
       rayShootingMode->setIconSet( 
-		  QPixmap((const char**)ray_shooting_down_xpm ));
+		  QPixmap((const char**)demo_rayshoot_down_xpm ));
 	  if (w_demo_p->mode == RAY_SHOOTING)
 	    w_demo_p->setCursor(
-	    QCursor(QPixmap((const char**)small_ray_shooting_down_xpm)));
+	    QCursor(QPixmap((const char**)demo_arrow_down_xpm)));
 	}
   }
 }

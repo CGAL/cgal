@@ -753,6 +753,13 @@ Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.gif -
 Packages/Arrangement/demo/Arrangement_2/icons/conic.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/conic_types.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/delete.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_arrow_down.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_arrow_up.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_conic_3points.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_conic_5points.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_conic_circle.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_conic_ellipse.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_conic_segment.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/demo_delete.bmp -text svneol=unset#unset
 Packages/Arrangement/demo/Arrangement_2/icons/demo_delete.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/demo_insert.bmp -text svneol=unset#unset
@@ -763,6 +770,8 @@ Packages/Arrangement/demo/Arrangement_2/icons/demo_pointlocation.bmp -text svneo
 Packages/Arrangement/demo/Arrangement_2/icons/demo_pointlocation.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/demo_rayshoot.bmp -text svneol=unset#unset
 Packages/Arrangement/demo/Arrangement_2/icons/demo_rayshoot.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_rayshoot_down.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_rayshoot_up.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/demo_snapgrid.bmp -text svneol=unset#unset
 Packages/Arrangement/demo/Arrangement_2/icons/demo_snapgrid.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/demo_snapvertex.bmp -text svneol=unset#unset
