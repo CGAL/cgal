@@ -78,13 +78,14 @@ private:
 
   typedef std::list<typename Gt::Point_2>     PC;
 
+  typedef Simple_container_wrapper<PC>        Point_container;
+  typedef Vb                                  Base;
+
 public:
   // TYPES
   //------
   typedef Gt                                  Geom_traits;
-  typedef Simple_container_wrapper<PC>        Point_container;
   typedef typename Point_container::iterator  Point_handle;
-  typedef Vb                                  Base;
   typedef typename Gt::Site_2                 Site_2;
   typedef USE_FULL_STORAGE_SITE_Tag           Storage_site_tag;
 
