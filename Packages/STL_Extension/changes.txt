@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: rename start to start_ in vector.h (avoid Partition_2/SunPro warnings)
+GLOB: test_Compact_c.h : Sun doesn't have operator!= for std::reverse_iterator
 GLOB: removed stlport/cgal_functional_base.h
 GLOB: Fix typo in iterator.h
 GLOB: SRC : Excluded vector from MSC VC6.

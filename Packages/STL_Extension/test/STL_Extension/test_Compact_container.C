@@ -106,7 +106,9 @@ void test(const Cont &)
   Cont c6(c5.begin(), c5.end());
   Cont c7(c0.begin(), c0.end(), typename Cont::allocator_type());
   Cont c8;
+#ifndef __SUNPRO_CC
   c8.insert(c0.rbegin(), c0.rend());
+#endif
 
   assert(c0 == c1);
   assert(! (c0 < c1));
