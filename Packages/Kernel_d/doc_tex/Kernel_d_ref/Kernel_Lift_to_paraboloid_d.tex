@@ -1,0 +1,11 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Lift_to_paraboloid_d}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{ Kernel::Point_d operator()(const Kernel::Point_d&
+  p);} {returns $p = (x_0,\ldots,x_{d-1})$ lifted to the paraboloid of
+  revolution which is the point $(p_0, \ldots,p_{d-1},\sum_{0 \le i <
+    d}p_i^2)$ in $(d+1)$-space.}
+
+\end{ccRefFunctionObjectConcept}

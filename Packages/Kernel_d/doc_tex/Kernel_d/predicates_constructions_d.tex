@@ -1,0 +1,120 @@
+\chapter{Predicates and Constructions}
+
+\section{Predicates}
+Predicates are at the heart of a geometry kernel. They are basic units
+for the composition of geometric algorithms and encapsulate
+decisisons.  Hence their correctness is crucial for the control flow
+and hence for the correctness of an implementation of a geometric
+algorithm. \cgal\ uses the term predicate in a generalized sense. Not
+only components returning a Boolean value are called predicates but
+also components returning an enumeration type like a
+\ccc{Comparison_result} or an \ccc{Orientation}.  We say components,
+because predicates are implemented both as functions and function
+objects (also called functors and provided by a kernel class).
+
+\cgal\ provides predicates for the \ccHtmlNoLinksFrom{orientation} of
+point sets (\ccc{orientation}), for comparing points according to some
+given order, especially for comparing Cartesian coordinates
+(e.g.~\ccc{lexicographically_xy_smaller}), in-sphere tests, and
+predicates to compare distances.
+
+\section{Constructions}
+Functions and function objects that generate objects that are neither
+of type \ccc{bool} nor enum types are called constructions.
+Constructions involve computation of new numerical values and may be
+imprecise due to rounding errors unless a kernel with an exact number
+type is used.
+
+Affine transformations (\ccc{Aff_transformation_d<R>}) allow to
+generate new object instances under arbitrary affine transformations.
+These transformations include translations, rotations (within planes)
+and scaling. Most of the geometric objects in a kernel have a member
+function \ccc{transform(Aff_transformation t)} which applies the
+transformation to the object instance.
+
+{\cgal} also provides a set of functions that detect or compute the
+\ccHtmlNoLinksFrom{intersection}\index{intersection} between objects
+and functions to calculate their squared
+distance\index{distance}\index{distance!squared}.  Moreover, some
+member functions of kernel objects are constructions.
+
+So there are routines that compute the square of the Euclidean
+distance, but no routines that compute the distance itself. Why?
+First of all, the two values can be derived from each other quite
+easily (by taking the square root or taking the square). So, supplying
+only the one and not the other is only a minor inconvenience for the
+user.  Second, often either value can be used. This is for example the
+case when (squared) distances are compared.  Third, the library wants
+to stimulate the use of the squared distance instead of the distance.
+The squared distance can be computed in more cases and the computation
+is cheaper.  We do this by not providing the perhaps more natural
+routine, The problem of a distance routine is that it needs the
+\ccStyle{sqrt} operation.  This has two drawbacks:
+\begin{itemize}
+\item The \ccStyle{sqrt} operation can be costly. Even if it is not
+  very costly for a specific number type and platform, avoiding it is
+  always cheaper.
+\item There are number types on which no \ccStyle{sqrt} operation is
+  defined, especially integer types and rationals.
+\end{itemize}
+
+\section{Intersection and Polymorphic Return Values}
+
+Intersections on kernel objects currently cover only those objects
+that are part of flats (\ccc{Segment_d<R>}, \ccc{Ray_d<R>},
+\ccc{Line_c<R>}, and \ccc{Hyperplane_d<R>}).  For any pair of objects
+$o1$, $o2$ of these types the operation \ccc{intersection(o1,o2)}
+returns a polymorphic object that wraps the result of the intersection
+operation.
+
+The class \ccc{Object} provides the polymorphic abstraction.  An
+object \ccStyle{obj} of type \ccc{Object} can represent an arbitrary
+class. The only operations it provides is to make copies and
+assignments, so that you can put them in lists or arrays. Note that
+\ccc{Object} is NOT a common base class for the elementary classes.
+Therefore, there is no automatic conversion from these classes to
+\ccc{Object} Rather this is done with the global function
+\ccc{make_object()}. This encapsulation mechanism requires the use of
+\ccc{assign} to unwrap the encapsulated class.
+
+\ccExample 
+In the following example, the object type is used as a return value for
+the \ccHtmlNoLinksFrom{intersection} computation, as there are
+possibly different return values.
+\ccHtmlLinksOff%
+\begin{cprog}
+  Point_d< Cartesian_d<double> > p;
+  Segment_d< Cartesian_d<double> > s, s1, s2;
+  std::cin >> s1 >> s2;
+  Object obj = intersection(s1, s2);
+  if ( assign(p, obj) ) {
+    /* do something with p */
+  } else if ( (assign(s, obj) ) {
+    /* do something with s */
+  }
+  /*  there was no intersection */
+\end{cprog}
+\ccHtmlLinksOn%
+
+\section{Constructive Predicates}
+For testing where a point $p$ lies with respect to a hyperplane
+defined by an array $P$ of points $p_1$, ... , $p_d$, one may be
+tempted to construct the hyperplane \ccc{Hyperplane_d<R>(d,P,P+d)} and
+use the method \ccc{oriented_side(p)}.  This may pay off if many tests
+with respect to the plane are made.  Nevertheless, unless the number
+type is exact, the constructed plane is only approximated, and
+round-off errors may lead \ccc{oriented_side(p)} to return an
+\ccHtmlNoLinksFrom{orientation} which is different from the
+\ccHtmlNoLinksFrom{orientation} of $p_1$, ... , $p_d$, $p$.
+
+In {\cgal}, we provide predicates in which such geometric decisions
+are made directly with a reference to the input points in $P$ without
+an intermediary object like a plane.  For the above test, the
+recommended way to get the result is to use
+\ccc{orientation(P',P'+d)}, where $P'$ is an array containing the
+points $p_1$, ... , $p_d$, $p$.
+
+For exact number types like \ccc{leda_real}, the situation is
+different. If several tests are to be made with the same plane, it
+pays off to construct the plane and to use \ccc{oriented_side(p)}.
+

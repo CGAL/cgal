@@ -1,0 +1,177 @@
+\begin{ccRefFunction}{intersection}
+\ccInclude{CGAL/intersections_d.h}
+
+\ccFunction{Object intersection(Type1<R> f1, Type2<R> f2);} {returns
+  the intersection result of $f1$ and $f2$ by means of the polymorphic
+  wrapper type \ccc{Object}. The returned object can be tested for the
+  intersection result and assigned by means of the operation \ccc{bool
+    assign(T& t, Object o)}.  \ccPrecond The objects are of the same
+  dimension.}
+
+The possible value for types \ccStyle{Type1} and \ccStyle{Type2} and
+the possible return values wrapped in \ccc{Object} are the following:
+
+
+\begin{ccTexOnly}
+\begin{longtable}[c]{|l|l|l|}
+%\caption{All available intersection computations}\\
+\multicolumn{3}{l}{\sl \ \ }
+\endfirsthead
+\multicolumn{3}{l}{\sl continued}
+\endhead
+\hline
+Type1 & Type2 & \parbox{4 cm}{\vspace{1 mm}{Return Type}} \\
+\hline
+\ccStyle{Line_d} & \ccStyle{Line_d} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_d}, \ccStyle{Line_d}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Segment_d} & \ccStyle{Line_d} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_d}, \ccStyle{Segment_d}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Segment_d} & \ccStyle{Segment_d} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_d}, \ccStyle{Segment_d}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Ray_d} & \ccStyle{Line_d} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_d}, \ccStyle{Ray_d}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Ray_d} & \ccStyle{Segment_d} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_d}, \ccStyle{Segment_d}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Ray_d} & \ccStyle{Ray_d} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_d}, \ccStyle{Segment_d}, \ccStyle{Ray_d}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Hyperplane_d} & \ccStyle{Line_d} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Point_3}, \ccStyle{Line_3} 
+\vspace{1 mm}} \\
+\hline
+\ccStyle{Hyperplane_d} & \ccStyle{Ray_d} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Point_d}, \ccStyle{Ray_d}
+\vspace{1 mm}}  \\
+\hline
+\ccStyle{Hyperplane_d} & \ccStyle{Segment_d} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Point_d}, \ccStyle{Segment_d}
+\vspace{1 mm}}  \\
+\hline
+\end{longtable}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR> <TH> Type1 </TH>
+ <TH> Type2 </TH>
+ <TH> Return Type </TH>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Line_d </TD>
+    <TD VALIGN="CENTER" > Line_d </TD>
+    <TD><TABLE>
+        <TR><TD>Point_d</TD></TR>
+        <TR><TD>Line_d</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Segment_d </TD>
+    <TD VALIGN="CENTER" > Line_d </TD>
+    <TD><TABLE>
+        <TR><TD>Point_d</TD></TR>
+        <TR><TD>Segment_d</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Segment_d </TD>
+    <TD VALIGN="CENTER" > Segment_d </TD>
+    <TD><TABLE>
+        <TR><TD>Point_d</TD></TR>
+        <TR><TD>Segment_d</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Ray_d </TD>
+    <TD VALIGN="CENTER" > Line_d </TD>
+    <TD><TABLE>
+        <TR><TD>Point_d</TD></TR>
+        <TR><TD>Ray_d</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Ray_d </TD>
+    <TD VALIGN="CENTER" > Segment_d </TD>
+    <TD><TABLE>
+        <TR><TD>Point_d</TD></TR>
+        <TR><TD>Segment_d</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Ray_d </TD>
+    <TD VALIGN="CENTER" > Ray_d </TD>
+    <TD><TABLE>
+        <TR><TD>Point_d</TD></TR>
+        <TR><TD>Segment_d</TD></TR>
+        <TR><TD>Ray_d</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Hyperplane_d </TD>
+    <TD VALIGN="CENTER" > Line_d </TD>
+    <TD><TABLE>
+        <TR><TD>Point_d</TD></TR>
+        <TR><TD>Line_d</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Hyperplane_d </TD>
+    <TD VALIGN="CENTER" > Ray_d </TD>
+    <TD><TABLE>
+        <TR><TD>Point_d</TD></TR>
+        <TR><TD>Ray_d</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Hyperplane_d </TD>
+    <TD VALIGN="CENTER" > Segment_d </TD>
+    <TD><TABLE>
+        <TR><TD>Point_d</TD></TR>
+        <TR><TD>Segment_d</TD></TR>
+        </TABLE></TD>
+</TR>
+</TABLE>
+</DIV>
+\end{ccHtmlOnly}
+
+\ccExample
+
+The following example demonstrates the most common use of 
+\ccc{intersection} routines.
+\ccHtmlLinksOff%
+\begin{verbatim}
+#include <CGAL/intersections_d.h>
+
+template <class R>
+void foo(Segment_d<R> seg, Line_d<R> lin)
+{
+  Point_d<R> ipnt; Segment_d<R> iseg;
+  Object result = intersection(seg, lin);
+  if ( assign(ipnt, result) ) {
+    // handle the point intersection case.
+  } else if ( assign(iseg, result) ) {
+    // handle the segment intersection case.
+  } else {
+    // handle the no intersection case.
+  }
+}
+\end{verbatim}%
+\ccHtmlLinksOn%
+
+\ccSeeAlso
+\ccc{do_intersect}, \ccc{Kernel::Intersect_d} 
+\end{ccRefFunction}
+
+  
+

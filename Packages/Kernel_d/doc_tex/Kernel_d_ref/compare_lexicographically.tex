@@ -1,0 +1,11 @@
+\begin{ccRefFunction}{compare_lexicographically}
+\ccInclude{CGAL/predicates_d.h}
+
+\ccFunction{Comparison_result compare_lexicographically(const
+  Point_d<R>& p, const Point_d<R>& q);}{Compares the Cartesian
+  coordinates of points \ccStyle{p} and \ccStyle{q} lexicographically
+  in ascending order of its Cartesian components \ccc{p[i]} and
+  \ccc{q[i]} for $i = 0,\ldots,d-1$.  \ccPrecond \ccc{p.dimension() ==
+    q.dimension()}}
+\end{ccRefFunction}
+

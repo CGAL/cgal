@@ -1,0 +1,12 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Oriented_side_d}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{template <class Kernel_object> Oriented_side
+  operator()(const Kernel_object& o, const Kernel::Point_d& p);
+  }{returns the side of $p$ with respect to $o$.  \ccc{Kernel_object}
+  may be any of \ccc{Kernel::Sphere_d} or \ccc{Kernel::Hyperplane_d}.
+  \ccPrecond \ccc{p} and \ccc{o} have the same dimension.}
+
+\end{ccRefFunctionObjectConcept}

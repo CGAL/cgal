@@ -1,0 +1,13 @@
+\begin{ccRefFunction}{affinely_independent}
+\ccInclude{CGAL/predicates_d.h}
+\ccHtmlNoLinks
+
+\ccFunction{template <class ForwardIterator> bool
+  affinely_independent(ForwardIterator first, ForwardIterator last);}
+{returns true iff the points in \ccc{A = tuple [first,last)} are
+  affinely independent.  \ccPrecond The objects are of the same
+  dimension.  \ccRequire The value type of \ccc{ForwardIterator} is
+  \ccc{Point_d<R>} }
+
+\end{ccRefFunction}
+

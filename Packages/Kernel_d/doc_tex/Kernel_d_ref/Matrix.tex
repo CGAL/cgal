@@ -1,0 +1,165 @@
+\begin{ccRefConcept}{Matrix}\ccCreationVariable{M}
+
+\ccDefinition
+
+An instance of data type \ccc{Matrix} is a matrix of
+variables of number type \ccc{NT}. The types \ccc{Matrix} and \ccc{Vector}
+together realize many functions of basic linear algebra. 
+
+\ccSetOneOfTwoColumns{4cm}
+
+\ccTypes
+
+\ccNestedType{NT}{the ring type of the components.  }
+
+\ccNestedType{iterator}{bidirectional iterator for accessing
+all components row-wise.}
+
+\ccNestedType{row_iterator}{random access iterator for accessing row
+  entries.}
+
+\ccNestedType{column_iterator}{random access iterator for accessing
+column entries.}
+
+There also constant versions of the above iterators:
+\ccc{const_iterator}, \ccc{row_const_iterator}, and
+\ccc{column_const_iterator}.
+
+
+
+\ccNestedType{Identity}{a tag class for identity initialization }
+
+\ccNestedType{Vector}{the vector type used.  }
+
+\ccSetOneOfTwoColumns{5cm}
+
+\ccCreation
+
+\ccConstructor{Matrix()}{creates an instance \ccc{M} of type
+\ccc{Matrix}.  }
+
+\ccConstructor{Matrix(int n)}{creates an instance \ccc{M} of type
+\ccc{Matrix} of dimension $n \times n$ initialized to the zero matrix.
+}
+
+\ccConstructor{Matrix(int m, int n)}{creates an instance \ccc{M} of
+type \ccc{Matrix} of dimension $m \times n$ initialized to the zero
+matrix.  }
+
+\ccConstructor{Matrix(std::pair<int,int> p)}{creates an instance
+\ccc{M} of type \ccc{Matrix} of dimension
+\ccc{p.first}$\times$\ccc{p.second} initialized to the zero matrix.  }
+
+\ccConstructor{Matrix(int n, Identity, NT x = NT(1))}{creates an
+instance \ccc{M} of type \ccc{Matrix} of dimension $n \times n$
+initialized to the identity matrix (times \ccc{x}).  }
+
+\ccConstructor{Matrix(int m, int n, NT x)}{creates an instance \ccc{M}
+of type \ccc{Matrix} of dimension $m \times n$ initialized to the
+matrix with \ccc{x} entries.  }
+
+\ccConstructor{template <class Forward_iterator>
+Matrix(Forward_iterator first, Forward_iterator last)}{creates an
+instance \ccc{M} of type \ccc{Matrix}. Let $S$ be the ordered set of
+$n$ column-vectors of common dimension $m$ as given by the iterator
+range \ccc{[first,last)}.  \ccc{M} is initialized to an $m \times n$
+matrix with the columns as specified by $S$.  \ccPrecond
+\ccc{Forward_iterator} has a value type \ccc{V} from which we require
+to provide a iterator type \ccc{V::const_iterator}, to have
+\ccc{V::value_type == NT}.\\ Note that \ccc{Vector} or
+\ccc{std::vector<NT>} fulfill these requirements.  }
+
+\ccConstructor{Matrix(std::vector< Vector > A)}{creates an instance
+\ccc{M} of type \ccc{Matrix}. Let $A$ be an array of $n$
+column-vectors of common dimension $m$.  \ccc{M} is initialized to an
+$m \times n$ matrix with the columns as specified by $A$.  }
+
+\ccSetTwoOfThreeColumns{2.5cm}{4cm}
+
+\ccOperations
+
+\ccMethod{int row_dimension() ;}{returns $n$, the number of rows of
+\ccc{M}.  }
+
+\ccMethod{int column_dimension() ;}{returns $m$, the number of columns
+of \ccc{M}.  }
+
+\ccMethod{std::pair<int,int> dimension() ;}{returns $(m,n)$, the
+dimension pair of \ccc{M}.  }
+
+\ccMethod{Vector row(int i) ;}{returns the $i$-th row of \ccc{M} (an
+$m$ - vector). \ccPrecond $0 \le i \le m - 1$.  }
+
+\ccMethod{Vector column(int i) ;}{returns the $i$-th column of \ccc{M}
+(an $n$ - vector). \ccPrecond $0 \le i \le n - 1$.  }
+
+\ccMethod{NT& operator()(int i, int j) ;}{returns $M_{i,j}$.
+\ccPrecond $0\le i\le m-1$ and $0\le j\le n-1$.}
+
+\ccMethod{void swap_rows(int i, int j) ;}{swaps rows $i$ and $j$.
+\ccPrecond $0\le i\le m-1$ and $0\le j\le m-1$. 
+}
+
+\ccMethod{void swap_columns(int i, int j) ;}{swaps columns $i$ and
+$j$. \ccPrecond $0\le i\le n-1$ and $0\le j\le n-1$.  }
+
+\ccMethod{row_iterator row_begin(int i) ;}{an iterator pointing to the
+first entry of the $i$th row.  \ccPrecond $0\le i\le m-1$.  }
+
+\ccMethod{row_iterator row_end(int i) ;}{an iterator pointing beyond
+the last entry of the $i$th row.  \ccPrecond $0\le i\le m-1$.  }
+
+\ccMethod{column_iterator column_begin(int i) ;}{an iterator pointing
+to the first entry of the $i$th column.  \ccPrecond $0\le i\le n-1$.
+}
+
+\ccMethod{column_iterator column_end(int i) ;}{an iterator pointing
+beyond the last entry of the $i$th column.  \ccPrecond $0\le i\le
+n-1$.}
+
+\ccMethod{iterator begin();}{an iterator pointing to the first entry
+of $M$.}
+
+\ccMethod{terator end();}{an iterator pointing beyond the last entry
+of $M$.}
+
+The same operations exist for \ccc{row_const_iterator},
+\ccc{column_const_iterator} and \ccc{const_iterator}. 
+
+
+\ccMethod{bool operator==(const Matrix& M1) ;}{Test for equality.  }
+
+\ccMethod{bool operator!=(const Matrix& M1) ;}{Test for inequality.  }
+
+\ccHeading{Arithmetic Operators} 
+
+\ccSetTwoOfThreeColumns{1.2cm}{2.5cm}
+
+\newcommand{\dimeq}{\\ \ccc{M.row_dimension() == M1.row_dimension()} and\\
+\ccc{M.column_dimension() == M1.column_dimension()}}
+ 
+
+\ccMethod{Matrix operator+ (const Matrix& M1);}{ Addition. \ccPrecond
+  \dimeq.}
+
+\ccMethod{Matrix operator- (const Matrix& M1);}{
+  Subtraction. \ccPrecond \dimeq.}
+
+\ccMethod{Matrix operator-();}{Negation.}
+
+\ccMethod{Matrix operator*(const Matrix& M1)
+;}{Multiplication. \ccPrecond \\ \ccc{M.column_dimension() =
+M1.row_dimension()}.  }
+
+\ccMethod{Vector operator*(const Vector& vec) ;}{Multiplication with
+vector. \ccPrecond \\ \ccc{M.column_dimension() = vec.dimension()}.  }
+
+\ccFunction{Matrix operator*(const NT& x, const Matrix& M)
+;}{Multiplication of every entry with \ccc{x}.  }
+
+\ccFunction{Matrix operator*(const Matrix& M, const NT& x)
+;}{Multiplication of every entry with \ccc{x}.  }
+
+\end{ccRefConcept}
+
+

@@ -1,0 +1,14 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Contained_in_affine_hull_d}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{template <class ForwardIterator> Bounded_side
+  operator()( ForwardIterator first, ForwardIterator last, const
+  Kernel::Point_d& p); }{determines whether $p$ is contained in the
+  affine hull of the points in \ccc{A = tuple [first,last)}.
+  \ccPrecond The objects are of the same dimension.
+  \ccRequire The value type of \ccc{ForwardIterator} is
+  \ccc{Kernel::Point_d}.}
+
+\end{ccRefFunctionObjectConcept}
