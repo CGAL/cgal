@@ -1,6 +1,6 @@
 # Makefile for the Geomwiew package.
 
-.PHONY: test demo version
+.PHONY: test demo version doc
 
 WWW_CGAL=/net/servers/www-sop/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Geomview
@@ -14,7 +14,7 @@ package:
 	@echo "---- editer changes.txt  ---------"
 	@echo "---- cvs update; cvs commit ------"
 	@echo "---- more version ----------------"
-	@echo "---- make Doc --------------------"
+	@echo "---- make doc --------------------"
 	@echo "---- make VERSION=X.Y version ----"
 	@echo "---- cvs commit ------------------"
 	@echo "---- make VERSION=X.Y tag --------"
@@ -41,17 +41,9 @@ submit:
 	mail -s autohandle cgal-submit@cs.uu.nl $(USER) < $(TMP_file)
 	rm -f $(TMP_file)
 
-Doc : Doc_ps
-
-Doc_ps : 	
-	rm -f doc_ps/Geomview.ps.gz;
-	cd doc_tex/support/Geomview; \
-	latex wrapper ; bibtex wrapper; \
-	latex wrapper ; bibtex wrapper; \
-	dvips -o Geomview.ps wrapper.dvi; \
-	gzip Geomview.ps ;\
-	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc *.idx ;
-	mv doc_tex/support/Geomview/Geomview.ps.gz doc_ps ;
+doc:
+	$(MAKE) -C doc_tex/support/Geomview all
+	cp -f doc_tex/support/Geomview/Geomview.ps.gz doc_ps
 
 test:
 	$(MAKE) -C test/Geomview all
@@ -62,3 +54,4 @@ demo:
 clean:
 	$(MAKE) -C test/Geomview clean
 	$(MAKE) -C demo/Geomview clean
+	$(MAKE) -C doc_tex/support/Geomview clean
