@@ -31,7 +31,7 @@
 #include <qiconset.h>
 
 Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, 
-			     QMainWindow *mw, std::list<Point> *l1) :
+			     QMainWindow *mw, std::list<Point_2> *l1) :
   QToolBar(mw, "NT")
   {
     w->attach(&move_deletebut);
