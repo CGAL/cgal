@@ -71,8 +71,11 @@ $(Package).tar.gz:
 	--exclude=CVS \
 	--exclude=wrapper.tex --exclude=weight.tex \
 	--exclude=Weighted_alpha_shape_2.h \
-	--exclude=Makefile* --exclude=*5000* --exclude=*.o \
+	--exclude=Makefile* --exclude=*.o \
         --exclude=*.obj --exclude=*.exe --exclude=*~ \
+	--exclude=*5000* --exclude=Attali_7 \
+	--exclude=Melkemi_1 --exclude=allerton \
+	--exclude=baguette* --exclude=test* \
 	version description.txt changes.txt \
 	include doc_tex doc_ps test examples demo
 
