@@ -1248,7 +1248,7 @@ Section~\ref{sectionHdsExamples}.
 The first example instantiates a polyhedron using the default traits
 class, the default halfedge data structure, and creates a tetrahedron.
 
-\ccIncludeExampleCode{Polyhedron/polyhedron_prog_simple.C}
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_simple_old.C}
 
 % +-------------------------------------------------------------+
 \subsection{Example with Geometry in Vertices}
@@ -1258,7 +1258,7 @@ addition it demonstrates the use of the vertex iterator and the access
 to the point in the vertices. The output of
 the program will be {\tt (1 0 0) (0 1 0) (0 0 1) (0 0 0)}.
 
-\ccIncludeExampleCode{Polyhedron/polyhedron_prog_tetra.C}
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_tetra_old.C}
 
 % +-------------------------------------------------------------+
 \subsection{Example Computing Plane Equations}
@@ -1270,7 +1270,7 @@ here strictly convex facets and exact arithmetic. In our example a
 homogeneous representation with {\tt int} coordinates is sufficient.
 The output of the program are the four plane equations.
 
-\ccIncludeExampleCode{Polyhedron/polyhedron_prog_normals.C}
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_normals_old.C}
 
 % +-------------------------------------------------------------+
 \subsection{Example Declaring a Point Iterator}
@@ -1287,11 +1287,8 @@ computation. The following declaration gives us such a point iterator.
 typedef Polyhedron::Vertex                                   Vertex;
 typedef Polyhedron::Vertex_iterator                          Vertex_iterator;
 typedef Polyhedron::Point                                    Point;
-typedef Polyhedron::Difference                               Difference;
-typedef Polyhedron::iterator_category                        iterator_category;
 typedef Project_point<Vertex>                                Project_point;
-typedef Iterator_project<Vertex_iterator, Project_point,
-        Point&, Point*, Difference, iterator_category>       Point_iterator;
+typedef Iterator_project<Vertex_iterator, Project_point>     Point_iterator;
 \end{verbatim}
 
 The {\tt for}-loop of the previous example could now be replaced with
@@ -1313,7 +1310,7 @@ The following example creates a tetrahedron and writes it to
 The example makes advanced use of \stl\ algorithms (\ccc{copy},
 \ccc{distance}), \stl\ \ccc{ostream_iterator} and \cgal\ circulators.
 
-\ccIncludeExampleCode{Polyhedron/polyhedron_prog_off.C}
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_off_old.C}
 
 
 % +------------------------------------------------------------------------+
@@ -1323,7 +1320,7 @@ The \ccc{Polyhedron_incremental_builder_3} class is used to create
 a triangle using the modifier mechanism as described in the Support
 Library Manual.
 
-\ccIncludeExampleCode{Polyhedron/polyhedron_prog_incr_builder.C}
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_incr_builder_old.C}
 
 % +--------------------------------------------------------+
 
