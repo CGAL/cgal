@@ -46,7 +46,6 @@ all:            \
                 _test_to_interval$(EXE_EXT) \
                 _test_valid_finite_double$(EXE_EXT) \
                 _test_valid_finite_float$(EXE_EXT) \
-                cln_io$(EXE_EXT) \
                 doubletst$(EXE_EXT) \
                 floattst$(EXE_EXT) \
                 quotient_io$(EXE_EXT) \
@@ -67,9 +66,6 @@ _test_valid_finite_double$(EXE_EXT): _test_valid_finite_double$(OBJ_EXT)
 
 _test_valid_finite_float$(EXE_EXT): _test_valid_finite_float$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_valid_finite_float _test_valid_finite_float$(OBJ_EXT) $(LDFLAGS)
-
-cln_io$(EXE_EXT): cln_io$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)cln_io cln_io$(OBJ_EXT) $(LDFLAGS)
 
 doubletst$(EXE_EXT): doubletst$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)doubletst doubletst$(OBJ_EXT) $(LDFLAGS)
@@ -92,7 +88,6 @@ clean: \
                    _test_to_interval.clean \
                    _test_valid_finite_double.clean \
                    _test_valid_finite_float.clean \
-                   cln_io.clean \
                    doubletst.clean \
                    floattst.clean \
                    quotient_io.clean \

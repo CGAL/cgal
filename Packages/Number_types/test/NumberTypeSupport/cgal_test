@@ -75,7 +75,6 @@ else
   compile_and_run _test_to_interval
   compile_and_run _test_valid_finite_double
   compile_and_run _test_valid_finite_float
-  compile_and_run cln_io
   compile_and_run doubletst
   compile_and_run floattst
   compile_and_run quotient_io

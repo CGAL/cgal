@@ -36,11 +36,6 @@
 #include <CGAL/Gmpq.h>
 #endif
 
-#ifdef CGAL_USE_CLN
-#include <CGAL/CLN/cl_integer.h>
-#include <CGAL/CLN/cl_rational.h>
-#endif
-
 #include <CGAL/_test_to_interval.h>
 
 int
@@ -71,12 +66,6 @@ main()
   && test_to_interval( CGAL::Gmpq() )
   && test_to_interval( CGAL::Quotient< CGAL::Gmpz>() )
 #endif // CGAL_USE_GMP
-
-#ifdef CGAL_USE_CLN
-  && test_to_interval( cl_I() )
-  && test_to_interval( cl_RA() )
-  && test_to_interval( CGAL::Quotient< cl_I>() )
-#endif // CGAL_USE_CLN
   ;
 
   return ok ? 0 : 1;
