@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+
+ver 7.76
+- fixed nearest_vertex_1D in Delaunay_triangulation_2.h
+
+
 ver 7.75 (20/05/03) [mk]
 - added operator= for Triangulation_ds_circulator_2 and
   Triangulation_iterator_adaptor; this was done in order to avoid

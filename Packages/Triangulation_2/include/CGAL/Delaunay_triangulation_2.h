@@ -301,13 +301,13 @@ nearest_vertex_2D(const Point& p, Face_handle f) const
     CGAL_triangulation_precondition(oriented_side(f,p)!=ON_NEGATIVE_SIDE);
 
   typename Geom_traits::Compare_distance_2 
-    closer =  geom_traits().compare_distance_2_object();
+    compare_distance =  geom_traits().compare_distance_2_object();
   Vertex_handle nn =  !is_infinite(f->vertex(0)) ? f->vertex(0):f->vertex(1);
-  if ( !is_infinite(f->vertex(1)) && closer(p,
+  if ( !is_infinite(f->vertex(1)) && compare_distance(p,
 					    f->vertex(1)->point(),
 					    nn->point()) == SMALLER) 
     nn=f->vertex(1);
-  if ( !is_infinite(f->vertex(2)) && closer(p,
+  if ( !is_infinite(f->vertex(2)) && compare_distance(p,
 					    f->vertex(2)->point(), 
 					    nn->point()) == SMALLER) 
     nn=f->vertex(2);
@@ -324,13 +324,14 @@ Delaunay_triangulation_2<Gt,Tds>::
 nearest_vertex_1D(const Point& p) const
 {
   typename Geom_traits::Compare_distance_2 
-    closer =  geom_traits().compare_distance_2_object();
+    compare_distance =  geom_traits().compare_distance_2_object();
   Vertex_handle nn;
   
   Finite_vertices_iterator vit=finite_vertices_begin();
   nn = vit->handle();
   for ( ; vit != finite_vertices_end(); ++vit){
-    if (closer(p, vit->point(), nn->point()) == SMALLER) nn=vit->handle();
+    if (compare_distance(p, vit->point(), nn->point()) == SMALLER) 
+      nn=vit->handle();
   } 
   return nn;
 }
@@ -347,10 +348,10 @@ look_nearest_neighbor(const Point& p,
   if ( ON_POSITIVE_SIDE != side_of_oriented_circle(ni,p) ) return;
 
   typename Geom_traits::Compare_distance_2 
-    closer =  geom_traits().compare_distance_2_object();
+    compare_distance =  geom_traits().compare_distance_2_object();
   i = ni->index(f);
   if ( !is_infinite(ni->vertex(i)) &&
-       closer(p, 
+       compare_distance(p, 
 	      ni->vertex(i)->point(),
 	      nn->point())  == SMALLER)  nn=ni->vertex(i);
     

@@ -107,7 +107,7 @@ Doc_ps:
 Doc_html :
 	cd doc_tex/basic/Triangulation_2; \
 	cc_manual_to_html -title Triangulation_2 \
-	-o ../../../doc_html/basic/Triangulation_2 main.tex
+	-o ../../../doc_html/basic/Triangulation_2 wrapper.tex
 	cd doc_tex/basic/TDS_2; \
 	cc_manual_to_html -title Triangulation_data_structure_2 \
 	-o ../../../doc_html/basic/TDS_2 main.tex
