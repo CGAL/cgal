@@ -114,84 +114,87 @@
 
 \end{ccRefFunction}
 
-%% +---------------------------------------------+
-\begin{ccRefFunction}{min_element_if}
-  \label{sectionMinElementIf}
+%% Michael: I commented these, as I think they should be replaced by combining 
+%% Filter_iterator with std::min/max_element().
+%%
+%% %% +---------------------------------------------+
+%% \begin{ccRefFunction}{min_element_if}
+%%   \label{sectionMinElementIf}
   
-  \ccDefinition The function \ccRefName\ computes the minimum among
-  the elements of a range which satisfy a certain predicate. It is
-  modeled after the STL function \ccc{min_element}.
+%%   \ccDefinition The function \ccRefName\ computes the minimum among
+%%   the elements of a range which satisfy a certain predicate. It is
+%%   modeled after the STL function \ccc{min_element}.
 
-  \ccInclude{CGAL/algorithm.h}
+%%   \ccInclude{CGAL/algorithm.h}
   
-  \ccFunction{template < class ForwardIterator, class Predicate >
-    ForwardIterator min_element_if(ForwardIterator first,
-    ForwardIterator last, Predicate pred);}{returns an iterator
-    referring to the minimal element among those satifying the
-    predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The
-    ordering is defined by the \ccc{operator<} on \ccc{VT} where
-    \ccc{VT} is the value type of \ccc{ForwardIterator}.
-    \ccRequire \ccc{pred} is an unary function
-    object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
+%%   \ccFunction{template < class ForwardIterator, class Predicate >
+%%     ForwardIterator min_element_if(ForwardIterator first,
+%%     ForwardIterator last, Predicate pred);}{returns an iterator
+%%     referring to the minimal element among those satifying the
+%%     predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The
+%%     ordering is defined by the \ccc{operator<} on \ccc{VT} where
+%%     \ccc{VT} is the value type of \ccc{ForwardIterator}.
+%%     \ccRequire \ccc{pred} is an unary function
+%%     object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
   
-  \ccFunction{template < class ForwardIterator, class Compare, class
-    Predicate > ForwardIterator min_element_if(ForwardIterator first,
-    ForwardIterator last, Compare comp, Predicate pred);} {return an
-    iterator referring to the minimal element among those satifying
-    the predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}).
-    The ordering is defined by \ccc{comp}.
-    \ccRequire \ccc{comp} is a binary function
-    object: \ccc{VT}~$\times$~\ccc{VT}~$\rightarrow$~\ccc{bool} where
-    \ccc{VT} is the value type of \ccc{ForwardIterator}. \ccc{pred} is
-    an unary function object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
+%%   \ccFunction{template < class ForwardIterator, class Compare, class
+%%     Predicate > ForwardIterator min_element_if(ForwardIterator first,
+%%     ForwardIterator last, Compare comp, Predicate pred);} {return an
+%%     iterator referring to the minimal element among those satifying
+%%     the predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}).
+%%     The ordering is defined by \ccc{comp}.
+%%     \ccRequire \ccc{comp} is a binary function
+%%     object: \ccc{VT}~$\times$~\ccc{VT}~$\rightarrow$~\ccc{bool} where
+%%     \ccc{VT} is the value type of \ccc{ForwardIterator}. \ccc{pred} is
+%%     an unary function object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
   
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::max_element_if}\\
-  \ccRefIdfierPage{CGAL::min_max_element}
+%%   \ccSeeAlso
+%%   \ccRefIdfierPage{CGAL::max_element_if}\\
+%%   \ccRefIdfierPage{CGAL::min_max_element}
 
-  \ccExample The following example program computes the minimal odd
-  element of the sequence $(3,\,5,\,2)$. Hence the output is
-  \ccc{min_odd = 3}.
+%%   \ccExample The following example program computes the minimal odd
+%%   element of the sequence $(3,\,5,\,2)$. Hence the output is
+%%   \ccc{min_odd = 3}.
   
-  \ccIncludeVerbatim{STL_Extension_ref/min_element_if_example_noheader.C}
+%%   \ccIncludeVerbatim{STL_Extension_ref/min_element_if_example_noheader.C}
 
-\end{ccRefFunction}
+%% \end{ccRefFunction}
 
-%% +---------------------------------------------+
-\begin{ccRefFunction}{max_element_if}
+%% %% +---------------------------------------------+
+%% \begin{ccRefFunction}{max_element_if}
   
-  \ccDefinition The function \ccRefName\ computes the maximum among
-  the elements of a range which satisfy a certain predicate. It is
-  modeled after the STL function \ccc{max_element}.
+%%   \ccDefinition The function \ccRefName\ computes the maximum among
+%%   the elements of a range which satisfy a certain predicate. It is
+%%   modeled after the STL function \ccc{max_element}.
 
-  \ccInclude{CGAL/algorithm.h}
+%%   \ccInclude{CGAL/algorithm.h}
   
-  \ccFunction{template < class ForwardIterator, class Predicate >
-    ForwardIterator max_element_if(ForwardIterator first,
-    ForwardIterator last, Predicate pred);}{returns an iterator
-    referring to the maximal element among those satifying the
-    predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The
-    ordering is defined by the \ccc{operator<} on \ccc{VT} where
-    \ccc{VT} is the value type of \ccc{ForwardIterator}.
-    \ccRequire \ccc{pred} is an unary function
-    object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
+%%   \ccFunction{template < class ForwardIterator, class Predicate >
+%%     ForwardIterator max_element_if(ForwardIterator first,
+%%     ForwardIterator last, Predicate pred);}{returns an iterator
+%%     referring to the maximal element among those satifying the
+%%     predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The
+%%     ordering is defined by the \ccc{operator<} on \ccc{VT} where
+%%     \ccc{VT} is the value type of \ccc{ForwardIterator}.
+%%     \ccRequire \ccc{pred} is an unary function
+%%     object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
   
-  \ccFunction{template < class ForwardIterator, class Compare, class
-    Predicate > ForwardIterator max_element_if(ForwardIterator first,
-    ForwardIterator last, Compare comp, Predicate pred);} {return an
-    iterator referring to the maximal element among those satifying
-    the predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}).
-    The ordering is defined by \ccc{comp}.
-    \ccRequire \ccc{comp} is a binary function
-    object: \ccc{VT}~$\times$~\ccc{VT}~$\rightarrow$~\ccc{bool} where
-    \ccc{VT} is the value type of \ccc{ForwardIterator}. \ccc{pred} is
-    an unary function object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
+%%   \ccFunction{template < class ForwardIterator, class Compare, class
+%%     Predicate > ForwardIterator max_element_if(ForwardIterator first,
+%%     ForwardIterator last, Compare comp, Predicate pred);} {return an
+%%     iterator referring to the maximal element among those satifying
+%%     the predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}).
+%%     The ordering is defined by \ccc{comp}.
+%%     \ccRequire \ccc{comp} is a binary function
+%%     object: \ccc{VT}~$\times$~\ccc{VT}~$\rightarrow$~\ccc{bool} where
+%%     \ccc{VT} is the value type of \ccc{ForwardIterator}. \ccc{pred} is
+%%     an unary function object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
 
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::min_element_if}\\
-  \ccRefIdfierPage{CGAL::min_max_element}
+%%   \ccSeeAlso
+%%   \ccRefIdfierPage{CGAL::min_element_if}\\
+%%   \ccRefIdfierPage{CGAL::min_max_element}
 
-\end{ccRefFunction}
+%% \end{ccRefFunction}
 
 %% +=========================================================================+
 
@@ -772,15 +775,16 @@
 \end{ccRefFunction}
 
 \begin{ccRefFunction}{compose}
-  \ccDefinition The function \ccRefName\ is used to compose functors
-  $f_0,\,\ldots,\,f_n$ into each other, thereby creating a new functor
-  $f$. The first argument $f_0$ always denotes the base functor, for
-  which the remaining functors $f_1,\,\ldots,\,f_n$ provide the
-  arguments. If we denote the arity of a functor $f$ by $ar(f)$, then
-  $ar(f) = \sum_{i=1}^n ar(f_i)$, i.e., the arguments of $f$ are
-  distributed among $f_1,\,\ldots,\,f_n$ according to their respective
-  arity. Between one and three functors can be composed into the base
-  functor, giving raise to a functor of arity at most five.
+  \ccDefinition The function \ccRefName\ is used to
+  \ccHtmlNoLinksFrom{compose} functors $f_0,\,\ldots,\,f_n$ into each
+  other, thereby creating a new functor $f$. The first argument $f_0$
+  always denotes the base functor, for which the remaining functors
+  $f_1,\,\ldots,\,f_n$ provide the arguments. If we denote the arity
+  of a functor $f$ by $ar(f)$, then $ar(f) = \sum_{i=1}^n ar(f_i)$,
+  i.e., the arguments of $f$ are distributed among
+  $f_1,\,\ldots,\,f_n$ according to their respective arity. Between
+  one and three functors can be \ccHtmlNoLinksFrom{composed} into the
+  base functor, giving raise to a functor of arity at most five.
   
   As an example, consider a binary functor $f_0$ and two functors
   $f_1$ and $f_2$, with arity three and two, respectively. Composing
@@ -825,16 +829,17 @@
 \end{ccRefFunction}
 
 \begin{ccRefFunction}{compose_shared}
-  \ccDefinition The function \ccRefName\ is used to compose functors
-  $f_0,\,\ldots,\,f_n$ into each other, thereby creating a new functor
-  $f$. The first argument $f_0$ always denotes the base functor, for
-  which the remaining functors $f_1,\,\ldots,\,f_n$ provide the
-  arguments. Contrary to the function \ccc{compose}, the arguments of
-  $f$ are not split among $f_1,\,\ldots,\,f_n$, but instead shared by
-  all the functors. Therefore, all the functors $f_1,\,\ldots,\,f_n$
-  must have the same arity, which is also the arity of the composed
-  functor $f$. Two or three functors can be composed into the base
-  functor, giving raise to a functor of arity at most five.
+  \ccDefinition The function \ccRefName\ is used to
+  \ccHtmlNoLinksFrom{compose} functors $f_0,\,\ldots,\,f_n$ into each
+  other, thereby creating a new functor $f$. The first argument $f_0$
+  always denotes the base functor, for which the remaining functors
+  $f_1,\,\ldots,\,f_n$ provide the arguments. Contrary to the function
+  \ccc{compose}, the arguments of $f$ are not split among
+  $f_1,\,\ldots,\,f_n$, but instead shared by all the
+  functors. Therefore, all the functors $f_1,\,\ldots,\,f_n$ must have
+  the same arity, which is also the arity of the composed functor
+  $f$. Two or three functors can be composed into the base functor,
+  giving raise to a functor of arity at most five.
   
   As an example, consider a binary functor $f_0$ and two binary
   functors $f_1$ and $f_2$. Composing $f_1$ and $f_2$ into $f_0$
