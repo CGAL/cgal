@@ -62,11 +62,6 @@ template <typename K, typename I> class Nef_polyhedron_3;
 template <typename K, typename I> class Nef_polyhedron_3_rep;
 
 template <typename K, typename I>
-std::ostream& operator<<(std::ostream&, const Nef_polyhedron_3<K,I>&); 
-template <typename K, typename I>
-std::istream& operator>>(std::istream&, Nef_polyhedron_3<K,I>&); 
-
-template <typename K, typename I>
 class Nef_polyhedron_3_rep 
 { 
   typedef Nef_polyhedron_3_rep<K,I>                     Self;
