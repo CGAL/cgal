@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 5.03
+- added a demo for constrained triangulation
+- added messages in the demo for the case where LEDA is not there
+
 Ver 5.02 
 - fixed a few details to avoid bcc warning like unused initial values...
 - fixed makefiles due to change in package names
