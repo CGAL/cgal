@@ -47,7 +47,7 @@ LDFLAGS = \
 all: example_cl_I
 
 clean:
-	rm -f *.o *.bb *.bbg *.da *.gcov core *.rpo .pure
+	rm -f example_cl_I *.o *.bb *.bbg *.da *.gcov core *.rpo .pure
 
 #---------------------------------------------------------------------#
 #                    suffix rules

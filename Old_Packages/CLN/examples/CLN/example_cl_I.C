@@ -1,4 +1,3 @@
-
 #ifndef CGAL_USE_CLN
 #  error You need to have CLN installed in order to run this example
 #endif
@@ -14,10 +13,14 @@
 int
 main ()
 {
+    using std::cout;
+    using std::endl;
+
     cl_I b = "31";
     cl_I p = b * 75;
     bool ok = (p==2325) && (CGAL::compare(p,cl_I(31*75))==CGAL::EQUAL);
-    std::cout << (ok ? "ok" : "ERROR") << std::endl;
-    std::cout << p << " == " << 31*75 << endl;
+
+    cout << (ok ? "ok" : "ERROR") << endl;
+    cout << p << " == " << 31*75 << endl;
     return (ok) ? 0 : -1;
 }
