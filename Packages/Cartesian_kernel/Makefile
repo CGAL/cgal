@@ -9,10 +9,6 @@ WWW_base=/net/servers/www-sop/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
-WWW_base=/net/servers/www-sop/prisme/CGAL/DR:/Members
-WWW_dir=$(WWW_base)/$(Package)
-TMP_file=/tmp/submit-mail
-
 all:
         @echo "-----------------------------------"
         @echo "---- edit changes.txt          ----"
