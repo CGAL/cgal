@@ -139,7 +139,6 @@ Straight_2_(typename K::Ray_2 const &ray)
 {
     support_ = ray.supporting_line();
     typename K::Vector_2 const &dir = ray.direction().to_vector();
-//    main_dir_ = (CGAL_NTS abs(dir.hx()) > CGAL_NTS abs(dir.hy()) ) ? 0 : 1;
     main_dir_ = (CGAL_NTS abs(dir.x()) > CGAL_NTS abs(dir.y()) ) ? 0 : 1;
     dir_sign_ =
         CGAL_NTS sign(support_.direction().to_vector().cartesian(main_dir_));
@@ -156,7 +155,6 @@ Straight_2_(typename K::Ray_2 const &ray_,bool cooriented)
         /* the supporting line is cooriented with the input ray iff
         cooriented is true */
     typename K::Vector_2 const &dir = ray.direction().to_vector();
-//    main_dir_ = (CGAL_NTS abs(dir.hx()) > CGAL_NTS abs(dir.hy()) ) ? 0 : 1;
     main_dir_ = (CGAL_NTS abs(dir.x()) > CGAL_NTS abs(dir.y()) ) ? 0 : 1;
     dir_sign_ =
         CGAL_NTS sign(support_.direction().to_vector().cartesian(main_dir_));
@@ -257,39 +255,16 @@ bool Straight_2_<K>::operator==(const Straight_2_<K>& s) const
   return false;
 }
 
-/*
-template <class K>
-R::FT
-cross(Vector_2<R> const &vec1, Vector_2<R> const &vec2)
-{
-    (vec1.hx() * vec2.hy() - vec1.hy() * vec2.hx()) / (vec1.hw()*vec2.hw());
-}
-*/
 
-#if 0 // #ifdef CGAL_CARTESIAN_H
-template <class FT>
-FT
-cross(Vector_2< Cartesian<FT> > const &vec1,
-      Vector_2< Cartesian<FT> > const &vec2)
-{
-    return vec1.x() * vec2.y() - vec1.y() * vec2.x();
-}
 
-template <class K>
-int
-sign_of_cross(Direction_2<R> const &dir1,
-            Direction_2<R> const &dir2)
-{
-    return CGAL_NTS sign(cross(dir1.to_vector(), dir2.to_vector()));
-}
-#endif
+
 
 
 template <class K>
 int
 sign_of_cross(typename K::Direction_2 const &dir1,
-            typename K::Direction_2 const &dir2,
-	     const K&)
+	      typename K::Direction_2 const &dir2,
+	      const K&)
 {
     int result;
     switch(CGALi::orientation(dir1.to_vector(), dir2.to_vector(), K()))  {
