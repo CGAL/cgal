@@ -1,3 +1,8 @@
+06 January 2005 Sylvain Pion
+- Add Map_overlay_2 back in the internal releases.
+
+------------------------- CGAL 3.1 -----------------------------
+
 18 December 2004 Sylvain Pion
 - install_cgal now automatically recognizes internal releases from the
   existence of "test/", no need to modify it by hand.
