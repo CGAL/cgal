@@ -1,0 +1,58 @@
+#!/bin/sh
+#
+# Shell script to ease CGAL package submission.
+# $Revision$
+# $Date$
+#
+# Sylvain Pion, 2001.
+
+
+# A few sanity tests first...
+
+if [ ! -d CVS ]; then
+  echo "There's no CVS directory here."
+  echo "You must be in the package's working directory in order to submit."
+  exit 1;
+fi
+
+Rep=`cat CVS/Repository`
+
+if [ `dirname $Rep` != "CGAL/Packages" -a \
+     `dirname $Rep` != "/CVSROOT/CGAL/Packages" ]; then
+  echo "You're not where you should be"
+  exit 1;
+fi
+
+if [ ! -f version ]; then
+  echo "The version file doesn't exist"
+  exit 1;
+fi
+
+if [ $# -ne 1 ]; then
+  echo "The current version file contains: " `cat version`
+  echo
+  echo "Run the script with the new version number, e.g. : cgal_submit 1.23"
+  exit 1;
+fi
+
+# Then process the version number...
+
+Package=`basename $Rep`
+
+VERSION=$1
+TAG_VERSION=v`echo $VERSION | sed -e "s/\./_/g"`
+CGAL_VERSION="$VERSION (`date '+%e %b %Y'`)"
+
+echo $CGAL_VERSION > version || exit 1
+cvs -q commit -m "Bump for $CGAL_VERSION" version || exit 1
+cvs -q tag -c $TAG_VERSION || exit 1
+# Delete the tag on all files, because of dead files still having it.
+cvs -q rtag -a -d current_submission $Package || exit 1
+# The tag the current working dir.
+cvs -q tag -F current_submission || exit 1
+
+
+# Thanks for submitting !
+
+echo "You've just resubmitted the package $Package, version $VERSION".
+
