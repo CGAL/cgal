@@ -1,0 +1,23 @@
+Changes done to the `Min_sphere_d_new' package
+
+Version 0.6 on 28-Aug-2000
+- ``workarounds'' for M$-VC++
+
+Version 0.5 on 17-Aug-2000
+- fixed some bugs on Borland and M$-VC++
+- added '#include <cassert>' to 'test_Min_sphere_d.h'
+
+Version 0.4 on 13-Aug-2000
+- three test programs: 2D, 3D, dD (5,10)
+- each traits class model is tested twice, i.e. `default' and `advanced' use
+
+Version 0.3 on 10-Aug-2000
+- `is_valid' completed
+- test program does code coverage
+
+Version 0.2 on 09-Aug-2000
+- fixed some bugs on IRIX
+- preliminary QP solver moved to package `_QP_solver'
+
+Version 0.1 on 06-Aug-2000
+- initial version

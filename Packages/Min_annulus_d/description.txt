@@ -1,0 +1,2 @@
+Algorithm for computing the smallest enclosing annulus of points
+in arbitrary dimension

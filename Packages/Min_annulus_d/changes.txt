@@ -1,0 +1,10 @@
+Changes done to the `Min_annulus_d' package
+
+Version 0.3 on 28-Aug-2000
+- ``workarounds'' for M$-VC++
+
+Version 0.2 on 24-Aug-2000
+- bugs fixed on Borland
+
+Version 0.1 on 21-Aug-2000
+- initial version
