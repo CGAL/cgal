@@ -2788,6 +2788,216 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 #else
 static
 #endif
+/* inline */
+Angle
+angleC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ry)
+{
+  try
+  {
+    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    return angleC2(
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    return angleC2(
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact());
+  }
+}
+
+#ifdef CGAL_IA_NEW_FILTERS
+
+struct Static_Filtered_angleC2_6
+{
+  static double _bound;
+  static double _epsilon_0;
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
+
+  static Angle update_epsilon(
+	const Static_filter_error &px,
+	const Static_filter_error &py,
+	const Static_filter_error &qx,
+	const Static_filter_error &qy,
+	const Static_filter_error &rx,
+	const Static_filter_error &ry,
+	double & epsilon_0)
+  {
+    typedef Static_filter_error FT;
+  
+    return (Angle) CGAL_NTS Static_Filtered_sign_1::update_epsilon((px-qx)*(rx-qx)+(py-qy)*(ry-qy),
+  		epsilon_0);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    number_of_updates++;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  static Angle epsilon_variant(
+	const Restricted_double &px,
+	const Restricted_double &py,
+	const Restricted_double &qx,
+	const Restricted_double &qy,
+	const Restricted_double &rx,
+	const Restricted_double &ry,
+	const double & epsilon_0)
+  {
+    typedef Restricted_double FT;
+  
+    return (Angle) CGAL_NTS Static_Filtered_sign_1::epsilon_variant((px-qx)*(rx-qx)+(py-qy)*(ry-qy),
+  		epsilon_0);
+  }
+};
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
+#endif
+/* inline */
+Angle
+angleC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &ry)
+{
+//   bool re_adjusted = false;
+  const double SAF_bound = Static_Filtered_angleC2_6::_bound;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound)
+  {
+// re_adjust:
+    // Compute the new bound.
+    double NEW_bound = 0.0;
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ry.to_double()));
+    // Re-adjust the context.
+    Static_Filtered_angleC2_6::new_bound(NEW_bound);
+  }
+
+  try
+  {
+    return Static_Filtered_angleC2_6::epsilon_variant(
+		px.dbl(),
+		py.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		rx.dbl(),
+		ry.dbl(),
+		Static_Filtered_angleC2_6::_epsilon_0);
+  }
+  catch (...)
+  {
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_angleC2_6::number_of_failures++;
+    return angleC2(
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact());
+  }
+}
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
+#endif
+/* inline */
+Angle
+angleC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &ry)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_angleC2_6::_bound; )
+  CGAL_assertion(!(
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_angleC2_6::epsilon_variant(
+		px.dbl(),
+		py.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		rx.dbl(),
+		ry.dbl(),
+		Static_Filtered_angleC2_6::_epsilon_0);
+  }
+  catch (...)
+  {
+    Static_Filtered_angleC2_6::number_of_failures++;
+    return angleC2(
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact());
+  }
+}
+
+#endif // CGAL_IA_NEW_FILTERS
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
+           class CGAL_IA_CACHE >
+#else
+static
+#endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Oriented_side
 side_of_oriented_circleC2(

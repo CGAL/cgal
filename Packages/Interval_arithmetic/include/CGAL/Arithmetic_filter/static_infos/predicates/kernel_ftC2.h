@@ -125,6 +125,13 @@ unsigned Static_Filtered_orientationC2_6::number_of_updates = 0;
 
 unsigned Static_Filtered_orientationC2_6::number_of_failures = 0;
 
+double Static_Filtered_angleC2_6::_epsilon_0;
+double Static_Filtered_angleC2_6::_bound = -1.0;
+
+unsigned Static_Filtered_angleC2_6::number_of_updates = 0;
+
+unsigned Static_Filtered_angleC2_6::number_of_failures = 0;
+
 double Static_Filtered_side_of_oriented_circleC2_8::_epsilon_0;
 double Static_Filtered_side_of_oriented_circleC2_8::_bound = -1.0;
 

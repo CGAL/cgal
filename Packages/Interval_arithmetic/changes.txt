@@ -2,6 +2,7 @@ Changes done to the Interval Arithmetic package.
 
 Version 4.88 on 16 May 2001
 - Added operator> and operator!= to Interval_base.
+- Handle Angles.
 
 Version 4.87 on 27 April 2001
 - Rename coplanar_side_of_oriented_circle to bounded.

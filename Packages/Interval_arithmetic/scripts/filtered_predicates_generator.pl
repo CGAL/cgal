@@ -434,7 +434,8 @@ sub parse_dependancy_files {
 
 # Main program
 sub main {
-  for ("Sign","Comparison_result","Orientation","Oriented_side","Bounded_side")
+  for ("Sign","Comparison_result","Orientation","Oriented_side","Bounded_side",
+       "Angle")
   {
     $known_ret_types{$_}=1;
     $known_ret_types{"CGAL::$_"}=1;
