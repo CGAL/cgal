@@ -553,6 +553,11 @@ public:
 
   Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle() );
 
+  Vertex_handle push_back(const Point & p)
+  {
+      return insert(p);
+  }
+
   template < class InputIterator >
   int insert(InputIterator first, InputIterator last)
     {

@@ -583,6 +583,9 @@ The optional argument \ccc{start} is used as a starting place for the search.}
 %	     Point* last);}
 %{Same as the previous one.}
 
+\ccMethod{Vertex_handle push_back(const Point& p);}
+{Equivalent to \ccc{insert(p)}.}
+
 The previous methods are sufficient to build a whole triangulation. We
 also provide some other methods that can be used instead of
 \ccc{insert(p)} when the place where the new point \ccc{p} must be inserted

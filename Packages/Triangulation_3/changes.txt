@@ -7,6 +7,7 @@ Version 1.50 (?? Apr 01)
   starting cell.
 - Finally update the traits to the last kernel, and documentation.
 - Regular triangulation speed up.
+- Added push_back() member functions.
 
 Version 1.49 (13 Apr 01)
 - locate() interface changes to match the 2D case wrt the default start.

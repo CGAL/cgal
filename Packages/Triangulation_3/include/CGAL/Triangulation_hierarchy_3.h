@@ -30,30 +30,29 @@ CGAL_BEGIN_NAMESPACE
 
 template < class Vbb>
 class Triangulation_hierarchy_vertex_base_3
- : public Vbb
+  : public Vbb
 {
- public:
-  typedef Vbb V_Base;
+public:
+  typedef Vbb                      V_Base;
   typedef typename V_Base::Point   Point;
 
   Triangulation_hierarchy_vertex_base_3()
-    : V_Base(), _up(0), _down(0)
-    {}
-  Triangulation_hierarchy_vertex_base_3(const Point & p, void* f)
-    : V_Base(p,f), _up(0), _down(0)
-    {}
-  Triangulation_hierarchy_vertex_base_3(const Point & p)
-    : V_Base(p), _up(0), _down(0)
-    {}
+    : V_Base(), _up(0), _down(0) {}
 
- public:  // for use in Triangulation_hierarchy only
+  Triangulation_hierarchy_vertex_base_3(const Point & p, void* f)
+    : V_Base(p,f), _up(0), _down(0) {}
+
+  Triangulation_hierarchy_vertex_base_3(const Point & p)
+    : V_Base(p), _up(0), _down(0) {}
+
+public:  // for use in Triangulation_hierarchy only
   //  friend class Triangulation_hierarchy_3;
   void* up() const {return _up;}
   void* down() const {return _down;}
   void set_up(void *u) {_up=u;}
   void set_down(void *d) {if (this) _down=d;}
 
- private:
+private:
   void* _up;    // same vertex one level above
   void* _down;  // same vertex one level below
 };
@@ -67,22 +66,22 @@ const int Triangulation_hierarchy_3__maxlevel = 5;
 
 template < class Tr>
 class Triangulation_hierarchy_3
-: public Tr
+  : public Tr
 {
- public:
-  typedef Tr                        Tr_Base;
+public:
+  typedef Tr                                   Tr_Base;
   typedef typename Tr_Base::Geom_traits        Geom_traits;
   typedef typename Geom_traits::Point_3        Point;
-  typedef typename Tr_Base::Vertex_handle     Vertex_handle;
-  typedef typename Tr_Base::Cell_handle       Cell_handle;
-  typedef typename Tr_Base::Vertex_iterator   Vertex_iterator;
-  typedef typename Tr_Base::Vertex           Vertex;
-  typedef typename Tr_Base::Locate_type       Locate_type;
+  typedef typename Tr_Base::Vertex_handle      Vertex_handle;
+  typedef typename Tr_Base::Cell_handle        Cell_handle;
+  typedef typename Tr_Base::Vertex_iterator    Vertex_iterator;
+  typedef typename Tr_Base::Vertex             Vertex;
+  typedef typename Tr_Base::Locate_type        Locate_type;
 
- private:
+private:
   // here is the stack of triangulations which form the hierarchy
   Tr_Base*   hierarchy[Triangulation_hierarchy_3__maxlevel];
-  Random random; // random generator
+  Random     random; // random generator
 
 public:
   Triangulation_hierarchy_3(const Geom_traits& traits = Geom_traits());
@@ -101,7 +100,11 @@ public:
 
   // INSERT REMOVE
   Vertex_handle insert(const Point &p);
-  Vertex_handle push_back(const Point &p);
+
+  Vertex_handle push_back(const Point &p)
+  {
+      return insert(p);
+  }
  
   template < class InputIterator >
   int insert(InputIterator first, InputIterator last)
@@ -314,15 +317,6 @@ insert(const Point &p)
     level++;
   }
   return first;
-}
-
-template <class Tr>
-inline
-Triangulation_hierarchy_3<Tr>::Vertex_handle
-Triangulation_hierarchy_3<Tr>::
-push_back(const Point &p)
-{
-  return insert(p);
 }
 
 template <class Tr>

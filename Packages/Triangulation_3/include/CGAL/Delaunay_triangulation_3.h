@@ -133,7 +133,12 @@ public:
   }
 
   Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle());
-  
+
+  Vertex_handle push_back(const Point & p)
+  {
+      return insert(p);
+  }
+
   bool remove(Vertex_handle v );
 
   // to be made private after tests

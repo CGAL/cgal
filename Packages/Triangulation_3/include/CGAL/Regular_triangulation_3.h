@@ -93,15 +93,20 @@ public:
 
   Vertex_handle insert( const Weighted_point & p,
 	                Cell_handle start = Cell_handle());
-    
+
+  Vertex_handle push_back(const Weighted_point &p)
+  {
+      return insert(p);
+  }
+
   Bounded_side
   side_of_power_sphere( Cell_handle c, const Weighted_point &p) const;
-  
+
   Bounded_side
   side_of_power_circle( const Facet & f, const Weighted_point & p) const
-    {
+  {
       return side_of_power_circle(f.first, f.second, p);
-    }
+  }
 
   Bounded_side
   side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const;
@@ -116,24 +121,24 @@ private:
   Power_test power_test;
 
   void init_function_objects() 
-    {
+  {
       power_test = geom_traits().power_test_3_object();
-    }
+  }
 
   bool in_conflict_3(const Weighted_point &p, const Cell_handle c) const
-    {
+  {
       return side_of_power_sphere(c, p) == ON_BOUNDED_SIDE;
-    }
+  }
 
   bool in_conflict_2(const Weighted_point &p, const Cell_handle c, int i) const
-    {
+  {
       return side_of_power_circle(c, i, p) == ON_BOUNDED_SIDE;
-    }
+  }
 
   bool in_conflict_1(const Weighted_point &p, const Cell_handle c) const
-    {
+  {
       return side_of_power_segment(c, p) == ON_BOUNDED_SIDE;
-    }
+  }
 
   class Conflict_tester_3
   {
