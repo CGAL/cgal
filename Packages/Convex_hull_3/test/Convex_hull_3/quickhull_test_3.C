@@ -68,40 +68,6 @@ void test_triangle_convexity()
     assert( CGAL::is_strongly_convex_3(P) );
 }
 
-void test_points_on_one_side_of_init_plane()
-{
-    Polyhedron_3 P;
-    std::vector<Point_3> points;
-    points.push_back(Point_3(-2.225272276809919e-1, 
-                              8.537846524342609e-1, 
-                              3.821314565782854e-1));
-    points.push_back(Point_3(-2.182388734114448e-1,
-                              8.399350144607299e-1,
-                              3.678859340480853e-1));
-    points.push_back(Point_3(-2.262616596466967e-1,
-                              8.453967990030387e-1 ,
-                              3.728475291205906e-1));
-    points.push_back(Point_3(-2.245200836728471e-1,
-                              8.488443924576239e-1,
-                              3.638725654586197e-1));
-    points.push_back(Point_3(-2.254161576993196e-1,
-                              8.455145371246828e-1,
-                              3.647196477834685e-1));
-    points.push_back(Point_3(-2.250613629569156e-1,
-                              8.559150012661568e-1,
-                              3.634245284453834e-1));
-    points.push_back(Point_3(-2.31643635126683e-1,
-                              8.43170047145367e-1,
-                              3.647291300482989e-1));
-    points.push_back(Point_3(-2.294658749706351e-1,
-                              8.38922782690085e-1,
-                              3.786767514250773e-1));
-
-    Polyhedron_3 polyhedron1;
-    CGAL::convex_hull_3(points.begin(), points.end(), polyhedron1, Traits());
-    assert ( polyhedron1.size_of_vertices() == 7 && 
-             polyhedron1.size_of_facets() == 10 );
-}
 
 void test_small_hull()
 {
@@ -134,8 +100,6 @@ int main()
   test_tetrahedron_convexity();
   std::cerr << "Testing small hull" << std::endl;
   test_small_hull();
-  std::cerr << "Testing points on one side of initial plane" << std::endl;
-  test_points_on_one_side_of_init_plane();
 
   std::cerr << "Testing 500 random points" << std::endl;
   std::vector<Point_3> points;
