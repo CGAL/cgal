@@ -246,7 +246,7 @@ public slots:
   void show_crust(){
     Delaunay T(tr1);
     Face_iterator f;
-    typedef std::set<Point, Point_compare> point_set;
+    typedef std::set<Point_2, Point_compare> point_set;
     point_set s;
     for (f=T.faces_begin(); f!=T.faces_end(); ++f)
       s.insert( T.dual(f) );
@@ -274,10 +274,10 @@ public slots:
 private slots:
   void get_new_object(CGAL::Object obj)
   {
-    Point   p;
+    Point_2 p;
     Wpoint  wp;
     if(CGAL::assign(p,obj)) {
-      wp = p;
+      wp = Wpoint(p);
       tr1.insert(p);
       LW.push_back(wp);
       L.push_back(p);
@@ -360,31 +360,31 @@ private slots:
     A.clear();
     AW.clear();
     Wpoint pw;
-    CGAL::Random_points_in_disc_2<Point> g(0.2);
+    CGAL::Random_points_in_disc_2<Point_2> g(0.2);
     for(int count=0; count<200; count++) {
       tr1.insert(*g);
-      pw = *g;
+      pw = Wpoint(*g);
       L.push_back(*g++);
       LW.push_back(pw);
     }
 
     {
-      CGAL::Random_points_on_circle_2<Point> g(0.3);
+      CGAL::Random_points_on_circle_2<Point_2> g(0.3);
 
       for(int count=0; count<100; count++) {
 	tr1.insert(*g);
-	pw = *g;
+	pw = Wpoint(*g);
 	L.push_back(*g++);
 	LW.push_back(pw);
       }
     }
 
     {
-      CGAL::Random_points_on_circle_2<Point> g(0.45);
+      CGAL::Random_points_on_circle_2<Point_2> g(0.45);
 
       for(int count=0; count<60; count++) {
 	tr1.insert(*g);
-	pw = *g;
+	pw = Wpoint(*g);
 	L.push_back(*g++);
 	LW.push_back(pw);
       }
@@ -490,8 +490,10 @@ main(int argc, char **argv)
   app.setMainWidget(&win);
   win.setCaption(my_title_string);
   win.setMouseTracking(TRUE);
+#if !defined(__POWERPC__)
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
   win.setIcon(cgal_icon);
+#endif
   win.show();
   win.init_coordinates();
   current_state = -1;

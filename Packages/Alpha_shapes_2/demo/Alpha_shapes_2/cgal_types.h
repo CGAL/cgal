@@ -20,14 +20,14 @@
 
 typedef double                      Coord_type;
 typedef CGAL::Cartesian<Coord_type> Rep;
-typedef Rep::Point_2                Point;
+typedef Rep::Point_2                Point_2;
 typedef Rep::Segment_2              Segment;
 typedef Rep::Line_2                 Line;
 typedef Rep::Triangle_2             Triangle; 
 
 typedef Rep::Less_xy_2              Point_compare;
 typedef CGAL::Triangulation_2<Rep>  Triangulation;
-typedef std::list<Point>            CGALPointlist;
+typedef std::list<Point_2>          CGALPointlist;
 
 //Weighted alpha_shape
 typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<Rep> Gt_w;
@@ -39,7 +39,7 @@ typedef CGAL::Triangulation_default_data_structure_2<Gt_w,Av_w,Af_w>
                                                            Tds_w;
 typedef CGAL::Regular_triangulation_2<Gt_w,Tds_w>          Rt_w;
 typedef CGAL::Alpha_shape_2<Rt_w>                          Alpha_shape_w;
-typedef CGAL::Weighted_point<Point, double>                Wpoint;
+typedef CGAL::Weighted_point<Point_2, double>              Wpoint;
 
 //Delaunay triangulation
 typedef Rep                                                Gt;
