@@ -29,7 +29,7 @@
 
 // CT = construction type (filtered)
 // ET = exact type, used for exact predicate evaluation
-// (Interval_nt_advanced) is used for filtering.
+// (Interval_nt_advanced) = used for filtering.
 //
 // 2 functions must be provided for the whole thing to work for a particular
 // instantiation:
@@ -52,6 +52,7 @@ public:
 
   Fil operator-()               const { return Fil(-value); }
 
+#ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
   Fil operator+(const Fil& fil) const { return Fil(value + fil.value); }
   Fil operator-(const Fil& fil) const { return Fil(value - fil.value); }
   Fil operator*(const Fil& fil) const { return Fil(value * fil.value); }
@@ -61,6 +62,7 @@ public:
   Fil& operator-=(const Fil& fil) { value -= fil.value; return *this; }
   Fil& operator*=(const Fil& fil) { value *= fil.value; return *this; }
   Fil& operator/=(const Fil& fil) { value /= fil.value; return *this; }
+#endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 
   bool operator< (const Fil& fil) const { return value <  fil.value; }
   bool operator> (const Fil& fil) const { return value >  fil.value; }
@@ -82,6 +84,12 @@ template <class CT, class ET>
 inline double CGAL_to_double (const CGAL_Filtering<CT,ET>& fil)
 { return CGAL_to_double(fil.value); }
 
+#ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
+template <class CT, class ET>
+inline CGAL_Filtering<CT,ET> sqrt (const CGAL_Filtering<CT,ET>& fil)
+{ return sqrt(fil.value); }
+#endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
+
 // template <class ET>
   // template <class CT>
     // ET CGAL_to_exact_type(const CT &);
@@ -89,12 +97,12 @@ inline double CGAL_to_double (const CGAL_Filtering<CT,ET>& fil)
 // All exact types should reasonnably have a built-in exact conversion
 // from doubles ?  If not, it will fail, and you have to provide it.
 //
-// It's bad to provide such a default, because it can be a inexact cast:
+// It's bad to provide such a default, because it can be an inexact cast:
 // ex: CGAL_Gmpz accepts it, but it's false !!!
 
 template <class ET>
 inline ET CGAL_to_exact_type (const double & d)
-{ return ET(d); }
+{ return d; }
 
 
 #ifdef CGAL_PREDICATES_ON_FTC2_H
