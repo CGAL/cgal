@@ -552,8 +552,7 @@ Interval_nt
 Interval_nt::operator+ (const Interval_nt & d) const
 CGAL_NAMED_RETURN_VALUE_OPT_1
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   CGAL_NAMED_RETURN_VALUE_OPT_2
   tmp._inf = -CGAL_IA_FORCE_TO_DOUBLE(-_inf - d._inf);
   tmp._sup =  CGAL_IA_FORCE_TO_DOUBLE(_sup + d._sup);
@@ -566,8 +565,7 @@ Interval_nt
 Interval_nt::operator- (const Interval_nt & d) const
 CGAL_NAMED_RETURN_VALUE_OPT_1
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   CGAL_NAMED_RETURN_VALUE_OPT_2
   tmp._inf = -CGAL_IA_FORCE_TO_DOUBLE(d._sup - _inf);
   tmp._sup =  CGAL_IA_FORCE_TO_DOUBLE(_sup - d._inf);
@@ -579,8 +577,7 @@ inline
 Interval_nt
 Interval_nt::operator* (const Interval_nt & d) const
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   Interval_nt tmp ( Interval_nt_advanced::operator*(d) );
   FPU_set_cw(backup);
   return tmp;
@@ -591,8 +588,7 @@ Interval_nt
 Interval_nt::operator* (const double d) const
 CGAL_NAMED_RETURN_VALUE_OPT_1
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   CGAL_NAMED_RETURN_VALUE_OPT_2
   if (d>=0) {
       tmp._inf = -CGAL_IA_FORCE_TO_DOUBLE(_inf*-d);
@@ -624,8 +620,7 @@ inline
 Interval_nt
 Interval_nt::operator/ (const Interval_nt & d) const
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   Interval_nt tmp ( Interval_nt_advanced::operator/(d) );
   FPU_set_cw(backup);
   return tmp;
@@ -640,8 +635,7 @@ inline
 Interval_nt
 Interval_nt::operator/ (const double d) const
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   Interval_nt tmp ( Interval_nt_advanced::operator/(d) );
   FPU_set_cw(backup);
   return tmp;
@@ -681,8 +675,7 @@ inline
 Interval_nt
 square (const Interval_nt & d)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   Interval_nt tmp = square( (Interval_nt_advanced) d);
   FPU_set_cw(backup);
   return tmp;
@@ -747,8 +740,7 @@ inline
 Interval_nt
 convert_from_to (const Interval_nt&, const FT & z)
 {
-    FPU_CW_t backup = FPU_get_cw();
-    FPU_set_cw(FPU_cw_up);
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
     Interval_nt tmp(convert_from_to(Interval_nt_advanced(), z));
     FPU_set_cw(backup);
     return tmp;
@@ -760,8 +752,7 @@ inline
 Interval_nt
 convert_to (const FT & z)
 {
-    FPU_CW_t backup = FPU_get_cw();
-    FPU_set_cw(FPU_cw_up);
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
     Interval_nt tmp(convert_to<Interval_nt_advanced>(z));
     FPU_set_cw(backup);
     return tmp;

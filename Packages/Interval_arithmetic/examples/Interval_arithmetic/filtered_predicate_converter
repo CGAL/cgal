@@ -49,8 +49,7 @@ while (<>)
       {print STDERR "Warning: $result_type is unknown\n"; }
     print
 "{
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     $result_type result = $function_name(
