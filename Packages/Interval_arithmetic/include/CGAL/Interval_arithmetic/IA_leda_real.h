@@ -24,8 +24,7 @@
 #ifndef CGAL_IA_LEDA_REAL_H
 #define CGAL_IA_LEDA_REAL_H
 
-inline CGAL_Interval_nt_advanced CGAL_convert_to<CGAL_Interval_nt_advanced>
-	(const leda_real &z)
+inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_real &z)
 {
     const double rel_error = z.get_double_error();
     return ( CGAL_Interval_nt_advanced(-rel_error,rel_error) + 1 )

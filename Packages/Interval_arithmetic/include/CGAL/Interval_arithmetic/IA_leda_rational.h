@@ -27,8 +27,7 @@
 // For this one, I prefer not relying on the to_double() member function, as
 // it doesn't give any warranty on the precision.
 
-inline CGAL_Interval_nt_advanced CGAL_convert_to<CGAL_Interval_nt_advanced>
-	(const leda_rational &z)
+inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_rational &z)
 {
     return CGAL_convert_to<CGAL_Interval_nt_advanced>(z.numerator())
 	/  CGAL_convert_to<CGAL_Interval_nt_advanced>(z.denominator());

@@ -26,7 +26,7 @@
 
 // The Fixed is in fact a float => exact conversion.
 
-inline CGAL_Interval_nt_advanced CGAL_convert_to<CGAL_Interval_nt_advanced>
+inline CGAL_Interval_nt_advanced CGAL_convert_to
 	(const CGAL_Fixed_precision_nt &z)
 {
     return CGAL_Interval_nt_advanced (z.to_double());

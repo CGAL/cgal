@@ -28,8 +28,7 @@
 // approximation, which is guaranted 1 bit error max, and return an interval
 // around this value.  A check for underflow is added.
 
-inline CGAL_Interval_nt_advanced CGAL_convert_to<CGAL_Interval_nt_advanced>
-	(const leda_bigfloat &z)
+inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_bigfloat &z)
 {
     return CGAL_Interval_nt_advanced (CGAL_to_double(z)) +
 	   CGAL_Interval_nt_advanced::smallest;
