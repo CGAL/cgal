@@ -26,9 +26,10 @@
 
 #include <algorithm>
 #include <iterator>
+#include <functional>
 #include <cstdlib>
 #include <cmath>
-#include <functional>
+#include <climits>
 #include <cassert>
 
 CGAL_BEGIN_NAMESPACE
@@ -186,8 +187,10 @@ RandomAccessIter
 iterative_radon( RandomAccessIter begin, RandomAccessIter end,
                  Predicate_traits traits, unsigned int dim, int num_levels )
 {
-    if( num_levels < 0 )
-        return begin + lrand48() % std::distance( begin, end );
+    if( num_levels < 0 ) {
+        const unsigned int rnd = CGAL::default_random.get_int( 0, INT_MAX );
+        return begin + rnd % std::distance( begin, end );
+    }
 
     return median_of_three(
          iterative_radon( begin, end, traits, dim, num_levels - 1 ),
