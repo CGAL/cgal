@@ -1,3 +1,6 @@
+1.17 (22 Sep 2003)
+- new headers
+
 1.16 (07 May 2003)
 - Removed DESIGN_ONE of Polyhedron_3.
 
