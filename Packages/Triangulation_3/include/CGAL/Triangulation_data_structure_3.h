@@ -334,7 +334,7 @@ public:
   Vertex_handle insert_in_edge(Vertex_handle v, const Edge & e)   
     { return insert_in_edge(w, e.first, e.second, e.third); }
   
-  Vertex_handle insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j);   
+  Vertex_handle insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j);
 
   Vertex_handle insert_increase_dimension(Vertex_handle v, // new vertex
 				     Vertex_handle star = NULL,
