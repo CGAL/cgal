@@ -3,7 +3,7 @@
 \chapter{2D Triangulations} \label{Chapter_2D_Triangulations}
 
 This chapter describes the two dimensional triangulations
-of \cgal\. After a few definitions in 
+of \cgal. After a few definitions in 
 section~\ref{Section_2D_Triangulations_Definitions}, 
 the overall software
 design of the 2D triangulation package is described 
@@ -168,7 +168,7 @@ class parametrized by the base classes for faces and vertices.
 The class \ccc{Triangulation_2<Traits,Tds>}
 serves as a base class for all
 planar embedded two-dimensional triangulations
-in \cgal\ .
+in \cgal.
 This class expects a model of  {geometric traits} class
 as first template argument and a model of {triangulation data structure}
 as second argument. The requirements  for the geometric traits
@@ -176,7 +176,7 @@ are described later in this section.
 The concept of 
 {triangulation data structure} and some models for this concept are
 described in chapter~\ref{Chapter_2D_Triangulation_data_structure}.
-\cgal provides a default for the triangulation data structure
+\cgal\ provides a default for the triangulation data structure
 template argeument.
  
 The class \ccc{Triangulation_2<Traits,Tds>}
@@ -335,6 +335,22 @@ insertion of a point, removal of a vertex,
 flipping  of an edge. The flipping of an edge
 is possible when the union of the two incident faces
 forms  a convex body (see Figure~\ref{I1_fig_flip_bis}). 
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center} %\IpeScale{70} \Ipe{Flip.ipe} \end{center}
+\input{flip.ltex}
+\end{center}
+\end{ccTexOnly} 
+\caption{Flip. \label{I1_fig_flip_bis}}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=Flip.gif align=center alt="Flip">
+</CENTER>
+\end{ccHtmlOnly} 
+\end{figure}
+
 
 \subsubsection{Implementation}
 
