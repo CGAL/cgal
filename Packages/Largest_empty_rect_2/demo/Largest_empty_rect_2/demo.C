@@ -73,13 +73,8 @@ void show_biggest_rec(Largest_empty_rect &empty_rectangle,
   W << CGAL::RED << b;
 
   std::cout
-    << "\nThe largest empty iso rectangle is :\n   buttom-left point - ("
-    << b.min().x() << ":" << b.min().y()
-    << ")\n   top-right point   - (" << b.max().x() << ":"
-    << b.max().y() << ")\n";
-  std::cout << "Its size is "
-    << CGAL_NTS abs((b.max().x() - b.min().x()) * (b.max().y() - b.min().y()))
-    << std::endl;
+    << "\nThe largest empty iso rectangle is " << b << std::endl;
+  std::cout << "Its size is " << b.area() << std::endl << std::endl;
 }
 
 int main(int argc,char *argv[])
@@ -238,7 +233,6 @@ int main(int argc,char *argv[])
     } else if(mouse_input == 3) {
       // change to automatic mode
       automatic_show = true;
-      show_biggest_rec(empty_rectangle,W);
       W.enable_button(4);
       W.disable_button(3);
       W.disable_button(1);
