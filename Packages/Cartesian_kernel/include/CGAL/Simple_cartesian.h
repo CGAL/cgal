@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Simple_Cartesian_v2.h
+// file          : include/CGAL/Simple_cartesian.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Sylvain Pion
@@ -19,8 +19,8 @@
 //
 // ======================================================================
 
-#ifndef CGAL_SIMPLE_CARTESIAN_V2_H
-#define CGAL_SIMPLE_CARTESIAN_V2_H
+#ifndef CGAL_SIMPLE_CARTESIAN_H
+#define CGAL_SIMPLE_CARTESIAN_H
 
 #include <CGAL/basic.h>
 #include <CGAL/cartesian_classes.h>
@@ -86,7 +86,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template< class R, class FT_ >
-struct Simple_Cartesian_v2_base :
+struct Simple_cartesian_base :
      public Cartesian_base_dynamic_d<R,FT_>
 {
     typedef FT_                                         RT;
@@ -206,8 +206,8 @@ struct Simple_Cartesian_v2_base :
 
 
 template< class FT_ >
-struct Simple_Cartesian_v2
-  : public Simple_Cartesian_v2_base< Simple_Cartesian_v2<FT_>, FT_ >
+struct Simple_cartesian
+  : public Simple_cartesian_base< Simple_cartesian<FT_>, FT_ >
 {
     // Number types and representation tag (to avoid ambiguity)
     typedef FT_                                           RT;
@@ -215,8 +215,8 @@ struct Simple_Cartesian_v2
     typedef Cartesian_tag                                 Rep_tag;
     typedef Cartesian_tag                                 Kernel_tag;
 
-    typedef Simple_Cartesian_v2<FT>                       Self;
-    typedef Simple_Cartesian_v2_base<Self,FT>             Kernel_base;
+    typedef Simple_cartesian<FT>                       Self;
+    typedef Simple_cartesian_base<Self,FT>             Kernel_base;
 
     typedef typename Kernel_base::Object_2                Object_2;
     typedef typename Kernel_base::Object_3                Object_3;          
@@ -372,4 +372,4 @@ CGAL_END_NAMESPACE
 
 #include <CGAL/iterator_traits_pointer_specs_for_cartesian_kernel.h>
 
-#endif // CGAL_SIMPLE_CARTESIAN_V2_H
+#endif // CGAL_SIMPLE_CARTESIAN_H
