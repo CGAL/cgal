@@ -1,3 +1,6 @@
+4.26 (22 September)
+- resubmission, just to be sure
+
 4.25 (20 September)
 - Added typenames
 
