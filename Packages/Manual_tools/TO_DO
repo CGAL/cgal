@@ -1,6 +1,8 @@
 Manual_tools/TO_DO
 ==================
 
+-- Bug in linking Assert_circulator in Circulator package in the intro.tex page
+
 -- detect and layout long template parameter lists
 
 -- Documentation
