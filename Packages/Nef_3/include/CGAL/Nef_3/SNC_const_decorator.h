@@ -200,7 +200,7 @@ public:
   // attributes::
   const Point_3& point(Vertex_const_handle v) const
   { return v->point(); }
-  Sphere_point tmp_point(Halfedge_const_handle e) const
+  const Sphere_point& tmp_point(Halfedge_const_handle e) const
   { return e->tmp_point(); }
   Sphere_point calc_point(Halfedge_const_handle e) const
   { CGAL_nef3_assertion(twin(e)!=Halfedge_const_handle());
