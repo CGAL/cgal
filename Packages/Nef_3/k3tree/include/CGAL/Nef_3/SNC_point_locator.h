@@ -12,8 +12,8 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Timer.h>
 
-#include <CGAL/Polygon_triangulation_traits_2.h>
-#include <CGAL/Nef_3/triangulate_nef3_facet.h>
+// #include <CGAL/Polygon_triangulation_traits_2.h>
+// #include <CGAL/Nef_3/triangulate_nef3_facet.h>
 
 #undef _DEBUG
 #define _DEBUG 509
@@ -25,7 +25,11 @@
 // TODO: find out the proper CGAL replacement for this macro and remove it
 #define CGAL_for_each( i, C) for( i = C.begin(); i != C.end(); ++i)
 
-#define TIMER(instruction) instruction
+// #define TIMER(instruction) instruction
+#define TIMER(instruction)
+
+#define CLOG(t) std::clog <<" "<<t<<std::endl; std::clog.flush()
+// #define CLOG(t)
 
 CGAL_BEGIN_NAMESPACE
 
@@ -88,17 +92,17 @@ public:
   //                   Unique_hash_map<Halffacet_handle, bool>& F) = 0;
 
   virtual ~SNC_point_locator() {
-    std::clog<<std::endl;
-    std::clog<<"construction_time:  "<<ct_t.time()<<std::endl;
-    std::clog<<"pointlocation_time: "<<pl_t.time()<<std::endl;
-    std::clog<<"rayshooting_time:   "<<rs_t.time()<<std::endl;
-    std::clog<<"intersection_time:  "<<it_t.time()<<std::endl;
+    CLOG("");
+    CLOG("construction_time:  "<<ct_t.time());
+    CLOG("pointlocation_time: "<<pl_t.time());
+    CLOG("rayshooting_time:   "<<rs_t.time());
+    CLOG("intersection_time:  "<<it_t.time());
     // warning: the total time showed here could be actually larger
     // that the real time used by this class, since point location
     // and intersection test use the ray shooter and so the same time 
     // could be account to more than one timer
-    std::clog<<"pltotal_time:       "<<
-      ct_t.time()+pl_t.time()+rs_t.time()+it_t.time()<<std::endl;
+    CLOG("pltotal_time:       "<<
+      ct_t.time()+pl_t.time()+rs_t.time()+it_t.time());
   };
 };
 
@@ -151,9 +155,9 @@ public:
     TIMER(ct_t.start());
     strcpy( version_, "Point Locator by Spatial Subdivision (tm)");
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
-    std::clog<<version()<<" (with triangulated facets)"<<std::endl;
+    CLOG(version()<<" (with triangulated facets)");
 #else
-    std::clog<<version()<<std::endl;
+    CLOG(version());
 #endif
     CGAL_assertion( W != NULL);
     Base::initialize(W);
@@ -535,7 +539,7 @@ public:
   virtual void initialize(SNC_structure* W) { 
     TIMER(ct_t.start());
     strcpy( version_, "Naive Point Locator (tm)");
-    std::clog<<version()<<std::endl;
+    CLOG(version());
     CGAL_assertion( W != NULL);
     Base::initialize(W); 
     initialized = true;
