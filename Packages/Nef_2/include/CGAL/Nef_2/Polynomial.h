@@ -119,8 +119,10 @@ template <class NT> inline Polynomial<NT>
 template <class NT> inline Polynomial<NT>
   operator % (const Polynomial<NT>&, const Polynomial<NT>&);
 
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template<class NT> CGAL::Sign 
   sign(const Polynomial<NT>& p);
+#endif
 
 template <class NT> double 
   to_double(const Polynomial<NT>& p) ;
@@ -1374,10 +1376,11 @@ template <class NT> bool operator >=
   (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
   { return ( (p1-p2).sign() != CGAL::NEGATIVE ); }    
 
-
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template <class NT> CGAL::Sign 
   sign(const Polynomial<NT>& p)
   { return p.sign(); }
+#endif
 
 //------------------------------------------------------------------
 // SPECIALIZE_FUNCTION(NT,int double) START
