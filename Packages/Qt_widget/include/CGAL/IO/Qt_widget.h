@@ -155,13 +155,10 @@ public:
 
   // tool system
   // ~~~~~~~~~~~
-  void	      attach_standard(Qt_widget_standard_tool* tool);
   void	      attach(Qt_widget_tool* tool);
   inline bool has_tool() const { return _has_tool; };
-  inline bool has_standard_tool() const { return _has_standard_tool; };
   void	      detach_current_tool();
-  void	      detach_current_standard_tool(); 
-
+  
   void new_object(CGAL::Object obj) { emit(new_cgal_object(obj)); };
   
   //layers
@@ -202,6 +199,12 @@ protected:
 
 
 private:
+  //Standard toolbar
+  void	      attach_standard(Qt_widget_standard_tool* tool);
+  inline bool has_standard_tool() const { return _has_standard_tool; };
+  void	      detach_current_standard_tool(); 
+
+
   void	  set_scales(); // set xscal and yscal
   void	  set_scale_center(double xc, double yc);
   double  xcentre, ycentre; //the center of the axex
@@ -234,6 +237,7 @@ private:
   //for layers
   std::list<Qt_widget_layer*>	qt_layers;
   std::list<togglelayer>	qt_toggle_layers;
+  friend class Standard_toolbar;
 };//end Qt_widget class
 
 // manipulators
