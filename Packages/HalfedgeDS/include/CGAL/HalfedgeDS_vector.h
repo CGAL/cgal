@@ -246,13 +246,13 @@ public:
     size_type capacity_of_halfedges() const   { return halfedges.capacity();}
     size_type capacity_of_faces() const       { return faces.capacity();}
 
-    size_t bytes() const {
+    std::size_t bytes() const {
         return sizeof(Self)
                + vertices.size()  * sizeof( Vertex)
                + halfedges.size() * sizeof( Halfedge)
                + faces.size()     * sizeof( Face);
     }
-    size_t bytes_reserved() const {
+    std::size_t bytes_reserved() const {
         return sizeof(Self)
                + vertices.capacity()  * sizeof( Vertex)
                + halfedges.capacity() * sizeof( Halfedge)

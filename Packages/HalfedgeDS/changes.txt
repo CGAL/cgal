@@ -1,6 +1,11 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.16 (11 Jul 2001)
+
+     - Fixed references to Polyhedron_3<Traits> in doc.
+     - Removed call to hash maps statistics in HalfedgeDS_list.
+
 3.15 (10 Jul 2001)
 
      - Documented the allocator template parameter.

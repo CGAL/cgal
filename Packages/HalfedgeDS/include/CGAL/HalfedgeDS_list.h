@@ -615,9 +615,9 @@ pointer_update( const CGAL__HDS_IP_List<Traits_,HalfedgeDSItems,Alloc>& hds) {
             D.set_face_halfedge(f, h_map[ D.get_face_halfedge(f)]);
         }
     }
-    h_map.statistics();
-    v_map.statistics();
-    f_map.statistics();
+    //h_map.statistics();
+    //v_map.statistics();
+    //f_map.statistics();
 }
 
 template < class Traits_, class HalfedgeDSItems, class Alloc>
