@@ -1,4 +1,4 @@
-Version 1.187 (?? January 04)
+Version 1.187 (07 January 04)
 - cleaning in demos and doc (#include for geomview)
 
 Version 1.186 (01 January 04 :-)
