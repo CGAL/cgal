@@ -1,3 +1,6 @@
+Version 1.184 (4 December 03)
+- Get rid of CGAL_NULL_TMPL_ARGS.
+
 Version 1.183 (1 December 03)
 - Update to the new filter_iterator() interface.
 

@@ -37,7 +37,7 @@ template < class Gt,
 class Regular_triangulation_3
   : public Triangulation_3<Gt,Tds>
 {
-  friend std::istream& operator >> CGAL_NULL_TMPL_ARGS
+  friend std::istream& operator >> <>
   (std::istream& is, Triangulation_3<Gt,Tds> &tr);
 
   typedef Regular_triangulation_3<Gt, Tds>      Self;
