@@ -5814,7 +5814,11 @@ _do_compile()
     if [ -n "${INTERNAL_RELEASE}" -a "$1" != "sharedlib" ]; then
 	MAKE_OPTION="-i"
     fi
-    if make ${MAKE_OPTION} -f makefile_$1 >${COMPILE_LOGFILE} 2>&1; then
+    # Check if there is a special makefile file
+    if [ -f makefile_$1 ]; then
+        MAKE_OPTION="${MAKE_OPTION} -f makefile_$1"
+    fi
+    if make ${MAKE_OPTION} >${COMPILE_LOGFILE} 2>&1; then
 	log_print "Compilation of $1 ${_libname} succeeded."
 	${_printf} "%s\n" " done."
 	ANY_LIB_COMPILED='y'

@@ -1,3 +1,6 @@
+08 January 2005 Sylvain Pion
+- Fix bug introduced on 18/12/04 about makefile_{Core,Qt}.
+
 21 December 2004 Sylvain Pion
 - Make the doc compile with the new scheme.
 
