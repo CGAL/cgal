@@ -123,7 +123,7 @@ template <class NT>   /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<NT>
 template <class NT> inline Polynomial<NT>
   operator / (const Polynomial<NT>&, const Polynomial<NT>&);
 
-#if ! defined(_MSC_VER) || _MSC_VER >= 1300
+#if ! defined(_MSC_VER)
 template<class NT> /*CGAL_KERNEL_INLINE*/ CGAL::Sign 
   sign(const Polynomial<NT>& p);
 #endif // collides with global CGAL sign
@@ -1372,7 +1372,7 @@ template <class NT> /*CGAL_KERNEL_INLINE*/ bool operator >=
   (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
   { return ( (p1-p2).sign() != CGAL::NEGATIVE ); }    
 
-#if ! defined(_MSC_VER) || _MSC_VER >= 1300
+#if ! defined(_MSC_VER)
 template <class NT> /*CGAL_KERNEL_INLINE*/ CGAL::Sign 
   sign(const Polynomial<NT>& p)
   { return p.sign(); }
