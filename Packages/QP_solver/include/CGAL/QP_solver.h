@@ -44,7 +44,9 @@
 #include <CGAL/QPE_pricing_strategy.h>
 #endif
 
+
 #include <CGAL/functional.h>
+#include <CGAL/algorithm.h>
 
 #ifndef CGAL_IO_VERBOSE_OSTREAM_H
 #include <CGAL/IO/Verbose_ostream.h>
@@ -299,6 +301,7 @@ private:
 
     // additional variables
     int                      l;         // minimum of 'qp_n' and 'qp_m'
+    int 		     e;         // number of equality constraints
     
     Indices                  in_B;      // variable   in basis, -1 if non-basic
     Indices                  in_C;      // constraint in basis, -1 if non-basic
@@ -597,10 +600,10 @@ private:
 				 Tag_false is_symmetric) const;
 
     template < class NT, class It >
-    void  mu_j__slack_or_artificial_( NT& mu_j, int j, It lambda_it,
+    void  mu_j__slack_or_artificial_( NT& mu_j, int j, It lambda_it, const NT& dd,
 				      Tag_true  has_no_inequalities) const;
     template < class NT, class It >
-    void  mu_j__slack_or_artificial_( NT& mu_j, int j, It lambda_it,
+    void  mu_j__slack_or_artificial_( NT& mu_j, int j, It lambda_it, const NT& dd,
 				      Tag_false has_no_inequalities) const;
 
     // ratio test
@@ -678,6 +681,20 @@ private:
     void  print_solution( );
 
     const char*  variable_type( int k) const;
+    
+    // ensure container size
+    template <class Container>
+    void ensure_size(Container& c, typename Container::size_type desired_size) {
+    	typedef typename Container::value_type Value_type;
+    	for (typename Container::size_type i=c.size(); i < desired_size; ++i) {
+	    c.push_back(Value_type());
+	}
+    }
+    
+    // 
+    public:
+    bool is_solution_feasible();
+    bool is_solution_optimal();
 
 // ----------------------------------------------------------------------------
 
@@ -706,7 +723,7 @@ private:
 
 	} else {                                        // slack or artificial
 
-	    mu_j__slack_or_artificial( mu_j, j, lambda_it,
+	    mu_j__slack_or_artificial( mu_j, j, lambda_it, dd,
 				       Has_no_inequalities());
 
 	}
@@ -773,7 +790,7 @@ private:
 
     template < class NT, class It >  inline                     // no ineq.
     void
-    mu_j__slack_or_artificial( NT& mu_j, int j, It lambda_it, Tag_true) const
+    mu_j__slack_or_artificial( NT& mu_j, int j, It lambda_it, const NT& dd, Tag_true) const
     {
 	j -= qp_n;
                                                         // artificial variable
@@ -782,12 +799,12 @@ private:
 	if ( art_A[ j].second) mu_j = -mu_j;
 
 	// c_j + ...
-	mu_j += NT( 1);
+	mu_j += dd*NT( 1);
     }
 
     template < class NT, class It >  inline                     // has ineq.
     void
-    mu_j__slack_or_artificial( NT& mu_j, int j, It lambda_it, Tag_false) const
+    mu_j__slack_or_artificial( NT& mu_j, int j, It lambda_it, const NT& dd, Tag_false) const
     {
 	j -= qp_n;
 
@@ -805,7 +822,7 @@ private:
 	    if ( art_A[ j].second) mu_j = -mu_j;
 
 	    // c_j + ...
-	    mu_j += NT( 1);
+	    mu_j += dd*NT( 1);
 	}
     }
 
@@ -1178,6 +1195,7 @@ replace_variable( Tag_false)
     bool  enter_original = ( (j < qp_n) || (j >= (int)( qp_n+slack_A.size())));
     bool  leave_original = ( (i < qp_n) || (i >= (int)( qp_n+slack_A.size())));
 
+
     // update basis & basis inverse
     if ( leave_original) {
 	if ( enter_original) {                              // orig  <--> orig
@@ -1188,8 +1206,15 @@ replace_variable( Tag_false)
 
 	// special artificial variable removed?
 	if ( is_phaseI && ( i == art_s_i)) {
+	    // remove the fake column - it corresponds
+	    // to the special artificial variable which is
+	    // (like all artificial variables) not needed
+	    // anymore once it leaves the basis. Note:
+	    // regular artificial variables are only removed
+	    // from the problem after phase I 
 	    art_s_i = -art_A.back().first;
 	    art_A.pop_back();
+	    in_B.pop_back();
 	} else {
 	    strategyP->leaving_basis( i);
 	}
@@ -1215,8 +1240,7 @@ basis_matrix_stays_regular()
 	A_row_by_index_accessor  a_accessor( A_accessor( qp_A, 0, qp_n), new_row);
 	std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
 		   A_row_by_index_iterator( B_O.end  (), a_accessor),
-		   tmp_x.begin());
-		   
+		   tmp_x.begin());	   
 	inv_M_B.multiply( tmp_x.begin(),                        // dummy (not used)
 		  tmp_x.begin(), tmp_l_2.begin(), tmp_x_2.begin(),
 		  Tag_false(),                                 // QP
@@ -1271,6 +1295,7 @@ compute__x_B_S( Tag_false)
 }
 
 CGAL_END_NAMESPACE
+
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #  include <CGAL/QPE_solver.C>
