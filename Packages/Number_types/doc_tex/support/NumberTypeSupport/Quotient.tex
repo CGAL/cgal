@@ -1,7 +1,7 @@
 
-\begin{ccClassTemplate} {Quotient<NT>}
+\begin{ccRefClass} {Quotient<NT>}
 \label{Quotient}
-\subsection{Quotient}
+%\subsection{Quotient}
 
 \ccDefinition
 An object of the class \ccStyle{Quotient<NT>} is an element of the 
@@ -14,6 +14,9 @@ A \ccStyle{Quotient<NT>} \ccStyle{q} is represented as a pair of
 \ccStyle{NT}s, representing numerator and denominator.
 
 \ccInclude{CGAL/Quotient.h}
+
+\ccIsModel
+FieldNumberType
 
 \ccCreation
 \ccCreationVariable{q}
@@ -32,9 +35,6 @@ A \ccStyle{Quotient<NT>} \ccStyle{q} is represented as a pair of
 
 
 \ccOperations
-The arithmetic operations $+,\ -,\ *,\ /,\ +=,\
--=,\ *=,\ /=,\ -$(unary), and
-the comparison operations $<, <=,\ >,\ >=,\ !=$ and $==$ are all available.
 
 %\ccSetTwoOfThreeColumns{5cm}{4cm}
 \ccSetThreeColumns{std::ostream& }{}{\hspace*{8cm}}
@@ -49,7 +49,6 @@ if  \ccStyle{q.numerator()} and \ccStyle{q.denominator()} are called
 consecutively wrt \ccStyle{q}, i.e.~\ccStyle{q} is not involved in 
 any other operation between these calls.
 
-\clearpage
 \ccMethod{NT numerator() const;}
        {returns a numerator of \ccStyle{q}.}
 \ccGlue
@@ -87,4 +86,4 @@ on number types.
 %\ccFunction{io_Operator  io_tag(const Gmpz& g);}
 %       {}
 
-\end{ccClassTemplate} 
+\end{ccRefClass} 

@@ -20,7 +20,7 @@ based on the {\sc Gnu} Multiple Precision Arithmetic Library.
 \ccInclude{CGAL/Gmpz.h}
 
 \ccIsModel
-\ccRefConceptPage{EuclideanRingNumberType}
+EuclideanRingNumberType
 
 \ccCreation
 \ccCreationVariable{q}
@@ -39,16 +39,6 @@ based on the {\sc Gnu} Multiple Precision Arithmetic Library.
             {creates an multiple precision integer initialized with
              the integral part of \ccStyle{d}.}
 
-\ccOperations
-
-The arithmetic operations 
-$+,\ -,\ *,\ /,\ %,\ +=,\ -=,\ *=,\ %=\ /=,\ -$(unary), \ccc{div}, 
-\ccc{gcd}, the comparison operations $<,\ <=,\ >,\ >=,\ ==,\ !=$ and
-the stream operations are all available.
-
-Of course, also all the other operations required by the number type
-concept, like \ccc{to_double}, \ccc{is_finite}, etc., are defined for
-\ccClassName.
 
 \ccImplementation
 \ccc{Gmpz}s are reference counted.

@@ -2,9 +2,9 @@
 % $Date$
 % author : Sylvain Pion
 
-\begin{ccClass} {MP_Float}
-\subsection{Multi Precision Floats}
-\label{mpfloat}
+\begin{ccRefClass} {MP_Float}
+%\subsection{Multi Precision Floats}
+%\label{mpfloat}
 
 \ccDefinition
 An object of the class \ccc{MP_Float} is able to represent a floating point
@@ -15,6 +15,9 @@ approximately, so we suggest that you use rationals using Quotient<MP\_Float>
 when you need exact divisions.
 
 \ccInclude{CGAL/MP_Float.h}
+
+\ccIsModel
+FieldNumberType
 
 \ccCreation
 \ccCreationVariable{m}
@@ -32,8 +35,6 @@ when you need exact divisions.
 {introduces the floating point value d.}
 
 \ccOperations
-All functions are provided so that it can be used as a number type in
-\cgal.
 
 \ccFunction{std::ostream& operator<<(std::ostream& out, const MP_Float& m);}
 {writes a double approximation of \ccc{m} to the ostream \ccc{out}.}
@@ -48,4 +49,4 @@ For faster implementations of the same functionality with large integral
 values, you may want to consider using \ccc{GMP}, \ccc{CLN} or \ccc{LEDA}
 instead.
 
-\end{ccClass} 
+\end{ccRefClass} 
