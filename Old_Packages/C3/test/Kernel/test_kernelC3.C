@@ -26,7 +26,7 @@
 #endif // CGAL_BASIC_H
 #include <cassert>
 #ifndef CGAL_CARTESIAN_H
-#include <CGAL/Cartesian.h>
+#include <CGAL/Cartesian_3.h>
 #endif // CGAL_CARTESIAN_H
 #include <CGAL/leda_real.h>
 #include <CGAL/_test_3.C>
@@ -34,7 +34,7 @@
 int
 main()
 {
-  typedef   CGAL::Cartesian<leda_real>     Cls;
+  typedef   CGAL::Cartesian_3<leda_real>     Cls;
   cout << "Testing 3d with Cartesian<leda_real> :" << endl;
   _test_3( Cls() );
   return 0;
