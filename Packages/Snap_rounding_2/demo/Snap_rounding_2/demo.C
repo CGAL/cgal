@@ -16,6 +16,8 @@ int main(int argc, char* argv[])
 #include <CGAL/Cartesian.h>
 #include <CGAL/Snap_rounding_2.h>
 
+#include <fstream>
+
 typedef leda_rational Number_Type;
 typedef CGAL::Cartesian<Number_Type> Rep;
 typedef CGAL::Segment_2<Rep> Segment_2;
@@ -45,15 +47,14 @@ void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg
     exit(1);
   }
 
-  ifstream is(argv[1]);
-
+  std::ifstream is(argv[1]);
   
-  if(argc > 3)
+  if(argc > 2)
     do_isr = !strcmp(argv[2],"t");
   else
     do_isr = true;
 
-  if(argc > 4)
+  if(argc > 3)
     wait_for_click = !strcmp(argv[3],"t");
   else
     wait_for_click = false;
@@ -61,7 +62,7 @@ void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg
   number_of_kd_trees = 5;
 
   if(is.bad()) {
-    std::cerr << "Bad input file : " << argv[1] << endl;
+    std::cerr << "Bad input file : " << argv[1] << std::endl;
     exit(1);
   }
 
@@ -70,7 +71,7 @@ void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg
   is >> prec;
 
   if(number_of_segments < 1) {
-    std::cerr << "Bad input file(number of segments)" << argv[2] << endl;
+    std::cerr << "Bad input file(number of segments)" << argv[2] << std::endl;
     exit(1);
   }
 
@@ -85,9 +86,9 @@ void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg
 }
 
 #ifdef ISR_DEBUG
-inline Number_Type max(Number_Type a,Number_Type b) {return((a > b) ? a : b);}
+//inline Number_Type max(Number_Type a,Number_Type b) {return((a > b) ? a : b);}
 inline Number_Type max(Number_Type a,Number_Type b,Number_Type c) {Number_Type tmp = max(a,b);return(max(tmp,c));}
-inline Number_Type min(Number_Type a,Number_Type b) {return((a > b) ? b : a);}
+//inline Number_Type min(Number_Type a,Number_Type b) {return((a > b) ? b : a);}
 inline Number_Type min(Number_Type a,Number_Type b,Number_Type c) {Number_Type tmp = min(a,b);return(min(tmp,c));}
 
 
@@ -134,13 +135,12 @@ int main(int argc,char *argv[])
   w.display();
   draw_orig(w,seg_list);
 #endif
-
   CGAL::Snap_rounding_2<Rep> i(seg_list.begin(),seg_list.end(),prec,do_isr,number_of_trees);
 
 #ifdef TIMER
   t.stop();
 
-  std::cerr << endl << "The whole program took " << t.time() << " seconds\n\n";
+  std::cerr << std::endl << "The whole program took " << t.time() << " seconds\n\n";
 #endif
 
 #ifdef ISR_DEBUG
