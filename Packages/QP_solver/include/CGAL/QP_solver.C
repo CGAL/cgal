@@ -236,7 +236,7 @@ init_basis( )
     if ( ! art_s.empty()) {
 	    s_i = -art_s_i;
 	art_s_i = qp_n+s+art_A.size();
-	art_A.push_back( std::make_pair( s_i, slack_A[ s_i].first));
+	art_A.push_back( std::make_pair( s_i, ! slack_A[ s_i].second));
     }
 
     // initialize indices of basic variables
@@ -370,8 +370,12 @@ init_additional_data_members( )
     
     if ( ! tmp_l.empty()) tmp_l.clear();
     tmp_l.insert( tmp_l.end(), l, et0);
+    if ( ! tmp_l_2.empty()) tmp_l_2.clear();
+    tmp_l_2.insert( tmp_l_2.end(), l, et0);
     if ( ! tmp_x.empty()) tmp_x.clear();
     tmp_x.insert( tmp_x.end(), l, et0);
+    if ( ! tmp_x_2.empty()) tmp_x_2.clear();
+    tmp_x_2.insert( tmp_x_2.end(), l, et0);
 }
 
 // transition (to phase II)
@@ -1107,6 +1111,7 @@ replace_variable_original_slack( )
     // enter original variable [ in: j ]
     minus_c_B[ B_O.size()]
 	= ( is_phaseI ? ( j < qp_n ? et0 : -et1) : -ET( qp_c[ j]));
+    
 
     in_B  [ j] = B_O.size();
        B_O.push_back( j);
@@ -1141,6 +1146,7 @@ replace_variable_original_slack( )
 	tmp_x[ in_B[ art_s_i]] = ET( art_s[ new_row]);
     }
     inv_M_B.enter_original_leave_slack( q_x_O.begin(), tmp_x.begin());
+    
 }
 
 // enter variable into basis
@@ -1185,18 +1191,23 @@ enter_variable( )
 
 	// leave inequality constraint [ out: j ]
 	int old_row = slack_A[ j-qp_n].first;
-	   C[ in_C[ old_row]] = C.back();
-	in_C[ C.back()      ] = old_row;
+	int k = in_C[old_row];
+	
+	// reflect change of active constraints heading C in b_C
+	b_C[ k] = b_C[C.size()-1];
+		
+	   C[ k] = C.back();
+	in_C[ C.back()      ] = k;
 	in_C[ old_row       ] = -1;
 	   C.pop_back();
-
+	
 	// diagnostic output
 	CGAL_qpe_debug {
 	    if ( vout2.verbose()) print_basis();
 	}
 
 	// update basis inverse
-	inv_M_B.swap_constraint( old_row);
+	inv_M_B.swap_constraint( k);
 	inv_M_B.enter_slack();
     }
 
@@ -1333,8 +1344,12 @@ check_basis_inverse()
     CGAL_qpe_debug {
 	vout4 << "check: " << std::flush;
     }
-
-    bool ok = check_basis_inverse( Is_linear());
+    bool ok;
+    if (is_phaseI) {
+    	ok = check_basis_inverse(Tag_true());
+    } else {
+        ok = check_basis_inverse( Is_linear());
+    }
 
     // diagnostic output
     CGAL_qpe_debug {
@@ -1411,14 +1426,14 @@ check_basis_inverse( Tag_false)
 		      art_A[ *i_it - qp_n].first != (int)row ? et0 :// artific.
 		      ( art_A[ *i_it - qp_n].second ? -et1 : et1));
 	}
-
+	
 	if ( art_s_i >= 0) {              // special artificial variable basic?
 	    int  k = qp_n+slack_A.size()+art_s_i;
 	    if ( in_B[ k] >= 0) {
 		tmp_x[ in_B[ k]] = art_s[ row];
 	    }
 	}
-
+	
 	inv_M_B.multiply( tmp_l.begin(), tmp_x.begin(),
 			  q_lambda.begin(), q_x_O.begin());
 
