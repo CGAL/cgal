@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Ovl_incremental_algorithm.tex (Map_overlay)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: ovl (Map_overlay_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%**************************************************************************
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
+\begin{ccRefClass}{Map_overlay_incremental<Subdivision,Notifier>}
+\label{OVL_sec:incremental}
+
+The \ccRefName\ class implements the incremental algorithm which inserts 
+all curves of the two creators one by one in a random order. 
+Theoretically, when maintaining the trapezoidal decomposition of 
+the overlay constructed so far, the construction of the overlay 
+takes randomized expected time $O(N\log{N} + k)$ employing Mulmuley game~\cite{m-cgitr-93},
+where $N$ is the number of curves the two creators have in total, 
+and $k$ is the number of intersections betweem curves 
+from the first creator and curves from the second one. 
+However, the usage of the \ccc{Planar Map With Intersections}
+package employing trapezoidal decomposition is too slow in practice. 
+Hence, we construct the arrangement presenting the overlay 
+using the ``walk along a line'' strategy, implying that the construction 
+running time is $O(n^2)$.
+
+\ccInclude{CGAL/Map_overlay_incremental.h}
+
+\ccIsModel
+  \ccc{MapOverlayAlgorithm_2}
+
+\ccInheritsFrom
+  \ccc{Map_overlay_base<Subdivision,Notifier>}
+
+\ccSeeAlso
+   Discussion of the different overlay construction strategies in the introduction
+of \ccc{Map_overlay} reference pages\lcTex{ (\ccRefPage{Ovl_Ref_intro})}.
+
+\end{ccRefClass}
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
