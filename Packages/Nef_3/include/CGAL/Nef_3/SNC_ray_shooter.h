@@ -189,12 +189,12 @@ public:
     CGAL_precondition( !ray.is_degenerate());
     bool hit = false;
     Point_3 end_of_seg;
-    SNC_intersection is(*sncp());
+    SNC_intersection is(*this->sncp());
 
     TRACEN( "Shooting ray " << ray);
     Object_handle o;
     Vertex_handle v;
-    CGAL_forall_vertices( v, *sncp()) {
+    CGAL_forall_vertices( v, *this->sncp()) {
       if ( ray.source() != point(v) && ray.has_on(point(v))) {
         if(hit && !Segment_3(ray.source(), end_of_seg).has_on(point(v)))
           continue;
@@ -206,7 +206,7 @@ public:
     }
 
     Halfedge_handle e;
-    CGAL_forall_edges( e, *sncp()) {
+    CGAL_forall_edges( e, *this->sncp()) {
       Point_3 q;
       if( is.does_intersect_internally( ray, segment(e), q)) {
         if (!hit || 
@@ -220,7 +220,7 @@ public:
     }
 
     Halffacet_handle f;
-    CGAL_forall_halffacets( f, *sncp()) {
+    CGAL_forall_halffacets( f, *this->sncp()) {
       Point_3 q;
       if( is.does_intersect_internally( ray, f, q) ) {
         if(!hit || 
@@ -239,11 +239,11 @@ public:
     /*{\Mop returns the lowest dimension object on an SNC structure
       which contais |p| in its interior. }*/ {
 
-    SNC_intersection is(*sncp());
+    SNC_intersection is(*this->sncp());
 
     TRACEN( "Point locator for " << p);
     Vertex_handle v;
-    CGAL_forall_vertices( v, *sncp()) {
+    CGAL_forall_vertices( v, *this->sncp()) {
       TRACEN("test vertex " << point(v));
       if ( p == point(v)) {
 	TRACEN("on vertex.");
@@ -252,14 +252,14 @@ public:
     }
 
     Halfedge_handle e;
-    CGAL_forall_edges( e, *sncp()) {
+    CGAL_forall_edges( e, *this->sncp()) {
       if ( is.does_contain_internally( segment(e), p) ) {
 	TRACEN("on edge.");
 	return Object_handle(e);
       }
     }
     Halffacet_handle f;
-    CGAL_forall_halffacets( f, *sncp()) {
+    CGAL_forall_halffacets( f, *this->sncp()) {
       if ( is.does_contain_internally( f, p) ) {
 	TRACEN("on facet.");
 	return Object_handle(f);

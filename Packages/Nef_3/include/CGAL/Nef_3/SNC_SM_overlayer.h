@@ -88,8 +88,8 @@ void SNC_SM_overlayer<Map>::simplify()
      clear_face_cycle_entries(f);
   }
 
-  if ( has_shalfloop() ) {
-    SHalfloop_handle l = shalfloop();
+  if ( this->has_shalfloop() ) {
+    SHalfloop_handle l = this->shalfloop();
     SFace_handle f = *(UF.find(Pitem[face(l)]));
     link_as_loop(l,f);
     f = *(UF.find(Pitem[face(twin(l))]));
@@ -97,7 +97,7 @@ void SNC_SM_overlayer<Map>::simplify()
   }
 
   SHalfedge_iterator e, en;
-  for(e = shalfedges_begin(); e != shalfedges_end(); e = en) { 
+  for(e = this->shalfedges_begin(); e != this->shalfedges_end(); e = en) { 
     en = e; ++en; if ( en==twin(e) ) ++en;
     TRACEN("can simplify ? " << PH(e));
     if(!Infi_box::is_sedge_on_infibox(e)) {
@@ -127,7 +127,7 @@ void SNC_SM_overlayer<Map>::simplify()
   }
 
   CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
-  for (e = shalfedges_begin(); e != shalfedges_end(); ++e) {
+  for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
     if ( linked[e] ) continue;
     SHalfedge_around_sface_circulator hfc(e),hend(hfc);
     SFace_handle f = *(UF.find( Pitem[face(e)]));
@@ -136,7 +136,7 @@ void SNC_SM_overlayer<Map>::simplify()
   }
 
   SVertex_iterator v,vn;
-  for(v = svertices_begin(); v != svertices_end(); v=vn) {
+  for(v = this->svertices_begin(); v != this->svertices_end(); v=vn) {
     vn=v; ++vn;
     if ( is_isolated(v) ) {
     
@@ -169,7 +169,7 @@ void SNC_SM_overlayer<Map>::simplify()
   }
 
   SFace_iterator fn;
-  for (f = fn = sfaces_begin(); f != sfaces_end(); f=fn) { 
+  for (f = fn = this->sfaces_begin(); f != this->sfaces_end(); f=fn) { 
     ++fn;
     Union_find_handle pit = Pitem[f];
     if ( UF.find(pit) != pit ) {

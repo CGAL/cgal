@@ -189,11 +189,11 @@ protected:
  protected:
  // typedef bool   Mark;
 
-  SNC_structure& snc() { return ptr()->snc_; } 
-  const SNC_structure& snc() const { return ptr()->snc_; } 
+  SNC_structure& snc() { return this->ptr()->snc_; } 
+  const SNC_structure& snc() const { return this->ptr()->snc_; } 
 
-  SNC_point_locator*& pl() { return ptr()->pl_; }
-  const SNC_point_locator* pl() const { return ptr()->pl_; }
+  SNC_point_locator*& pl() { return this->ptr()->pl_; }
+  const SNC_point_locator* pl() const { return this->ptr()->pl_; }
 
   friend std::ostream& operator<< <>
       (std::ostream& os, Nef_polyhedron_3<Kernel,Items, Mark>& NP);
@@ -429,7 +429,7 @@ protected:
     typedef typename SM_decorator::SHalfedge_around_sface_circulator
       SHalfedge_around_sface_circulator;
 
-    if ( number_of_vertices() == 0)
+    if ( this->number_of_vertices() == 0)
       return 0;
     
     // Find top-most vertex v_max (top-most also works fine for terrains)
@@ -573,35 +573,35 @@ protected:
  bool is_empty() const {
    /*{\Mop returns true if |\Mvar| is empty, false otherwise.}*/
    if(Infi_box::extended_kernel()) 
-     return number_of_vertices() == 8 &&
-            number_of_edges() == 12 &&
-            number_of_facets() == 6 &&
-            number_of_volumes() == 2 &&
-            mark(++volumes_begin()) == false;
+     return this->number_of_vertices() == 8 &&
+            this->number_of_edges() == 12 &&
+            this->number_of_facets() == 6 &&
+            this->number_of_volumes() == 2 &&
+            mark(++this->volumes_begin()) == false;
 
    else 
-     return number_of_vertices() == 0 &&
-            number_of_edges() == 0 &&
-            number_of_facets() == 0 &&
-            number_of_volumes() == 1 &&
-            mark(volumes_begin()) == false;
+     return this->number_of_vertices() == 0 &&
+            this->number_of_edges() == 0 &&
+            this->number_of_facets() == 0 &&
+            this->number_of_volumes() == 1 &&
+            mark(this->volumes_begin()) == false;
   }
 
  bool is_space() const {
   /*{\Mop returns true if |\Mvar| is the whole space, false otherwise.}*/
    if(Infi_box::extended_kernel()) 
-     return number_of_vertices() == 8 &&
-            number_of_edges() == 12 &&
-            number_of_facets() == 6 &&
-            number_of_volumes() == 2 &&
-            mark(++volumes_begin()) == true;
+     return this->number_of_vertices() == 8 &&
+            this->number_of_edges() == 12 &&
+            this->number_of_facets() == 6 &&
+            this->number_of_volumes() == 2 &&
+            mark(++this->volumes_begin()) == true;
 
    else 
-     return number_of_vertices() == 0 &&
-            number_of_edges() == 0 &&
-            number_of_facets() == 0 &&
-            number_of_volumes() == 1 &&
-            mark(volumes_begin()) == true;
+     return this->number_of_vertices() == 0 &&
+            this->number_of_edges() == 0 &&
+            this->number_of_facets() == 0 &&
+            this->number_of_volumes() == 1 &&
+            mark(this->volumes_begin()) == true;
   }
 
   /*{\Xtext \headerline{Destructive Operations}}*/
@@ -669,7 +669,7 @@ protected:
   void extract_closure()
   /*{\Xop converts |\Mvar| to its closure. }*/
   { TRACEN("extract closure");
-    if( is_shared()) clone_rep();
+    if( this->is_shared()) clone_rep();
     extract_complement();
     extract_interior();
     extract_complement();
@@ -678,7 +678,7 @@ protected:
   void extract_regularization()
   /*{\Xop converts |\Mvar| to its regularization. }*/
   { TRACEN("extract regularization");
-    if( is_shared()) clone_rep();
+    if( this->is_shared()) clone_rep();
     extract_interior();
     extract_closure();
   }
@@ -953,7 +953,7 @@ protected:
     // precondition: the polyhedron as a bounded boundary
     // (needs to be explicitly tested at some time)
 
-    if( is_shared())
+    if( this->is_shared())
       clone_rep();
     // only linear transform for the origin-centered sphere maps
     Aff_transformation_3 linear( aff.hm(0,0), aff.hm(0,1), aff.hm(0,2),
@@ -993,7 +993,7 @@ protected:
       }
     }
 
-    if(!is_bounded() && !ninety && !scale) {
+    if(!this->is_bounded() && !ninety && !scale) {
       Halffacet_iterator fi;
       CGAL_forall_facets(fi, snc()) {
 	if(!is_standard(fi) || is_bounded(fi)) continue;
@@ -1113,7 +1113,7 @@ protected:
 	 aff.homogeneous(2,1) != 0 ||
 	 aff.homogeneous(0,0) != aff.homogeneous(1,1) ||
 	 aff.homogeneous(0,0) != aff.homogeneous(2,2) ||
-	 !is_bounded()) {
+	 !this->is_bounded()) {
 	   SNC_point_locator* old_pl = pl();
 	   pl() = pl()->clone();
 	   pl()->initialize(&snc());
@@ -1238,7 +1238,7 @@ protected:
 
   std::size_t bytes_reduced() {
     // bytes used for the Nef_polyhedron_3.
-    cout << sizeof(Self) + (snc().bytes_reduced2() - sizeof(SNC_structure)) << std::endl;
+    std::cout << sizeof(Self) + (snc().bytes_reduced2() - sizeof(SNC_structure)) << std::endl;
     return sizeof(Self) + (snc().bytes_reduced() - sizeof(SNC_structure));
   }
 
@@ -1282,7 +1282,7 @@ Nef_polyhedron_3( const SNC_structure& W, SNC_point_locator* _pl,
   CGAL_assertion( clone_snc == true || clone_pl == false);
   // TODO: granados: define behavior when clone=false
   //  TRACEN("construction from an existing SNC structure (clone="<<clone<<")"); 
-  copy_on_write();
+  this->copy_on_write();
   if(clone_snc) {
     snc() = W;
     set_snc(snc());
@@ -1300,7 +1300,7 @@ void
 Nef_polyhedron_3<Kernel,Items, Mark>::
 extract_complement() {
   TRACEN("extract complement");
-  if( is_shared()) clone_rep();
+  if( this->is_shared()) clone_rep();
   SNC_decorator D(snc());
   Vertex_iterator v;
   CGAL_forall_vertices(v,D){
@@ -1322,7 +1322,7 @@ void
 Nef_polyhedron_3<Kernel,Items, Mark>::
 extract_interior() {
   TRACEN("extract interior");
-  if (is_shared()) clone_rep();
+  if (this->is_shared()) clone_rep();
   SNC_decorator D(snc());
   Vertex_iterator v;
   CGAL_forall_vertices(v,D){
@@ -1341,7 +1341,7 @@ void
 Nef_polyhedron_3<Kernel,Items, Mark>::
 extract_boundary() {
   TRACEN("extract boundary");
-  if (is_shared()) clone_rep();
+  if (this->is_shared()) clone_rep();
   SNC_decorator D(snc());
   Vertex_iterator v;
   CGAL_forall_vertices(v,D) {

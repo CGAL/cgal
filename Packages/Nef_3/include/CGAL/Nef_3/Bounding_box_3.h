@@ -52,9 +52,9 @@ public:
 	*/
 
 	//	Point_3& get_min() { return Ptr()->min; }
-	const Point_3& get_min() const { return Ptr()->min; }
+	const Point_3& get_min() const { return this->Ptr()->min; }
 	//	Point_3& get_max() { return Ptr()->max; }
-	const Point_3& get_max() const { return Ptr()->max; }
+	const Point_3& get_max() const { return this->Ptr()->max; }
 
   Bounding_box_3  operator+(const Bounding_box_3& b) const;
 };

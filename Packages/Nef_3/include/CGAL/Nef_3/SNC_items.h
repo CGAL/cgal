@@ -568,8 +568,8 @@ class SNC_items {
     Object_list& boundary_entry_objects() { return boundary_entry_objects_; }
     const Object_list& boundary_entry_objects() const { return boundary_entry_objects_; }
 
-    GenPtr& info() { return info_; }
-    const GenPtr& info() const { return info_; }
+    GenPtr& info() { return this->info_; }
+    const GenPtr& info() const { return this->info_; }
 
     Halffacet_cycle_iterator facet_cycles_begin()
     { return boundary_entry_objects_.begin(); }
@@ -648,8 +648,8 @@ class SNC_items {
     Mark& mark() { return mark_; }
     const Mark& mark() const { return mark_; }
 
-    GenPtr& info() { return info_; }
-    const GenPtr& info() const { return info_; }
+    GenPtr& info() { return this->info_; }
+    const GenPtr& info() const { return this->info_; }
 
     Object_list& shell_entry_objects() { return shell_entry_objects_; }
     const Object_list& shell_entry_objects() const { 

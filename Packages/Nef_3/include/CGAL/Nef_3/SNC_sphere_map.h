@@ -52,7 +52,7 @@ struct move_shalfedge_around_sface {
 };
 
 template <typename Kernel_, typename Items_, typename Mark_>
-class SNC_sphere_map : public Items_::Vertex<SNC_structure<Kernel_, Items_, Mark_> >
+class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Items_, Mark_> >
 {
 
  public:
@@ -62,8 +62,8 @@ class SNC_sphere_map : public Items_::Vertex<SNC_structure<Kernel_, Items_, Mark
   typedef Kernel_                                   Kernel;
   typedef Mark_                                     Mark;
   typedef SNC_structure<Kernel,Items,Mark>          SNC_structure;
-  typedef typename Items::Vertex<SNC_structure>     Base;
-  //  typedef bool                                      Mark;
+  typedef typename Items::template Vertex<SNC_structure>  Base;
+  //  typedef bool                                        Mark;
   typedef CGAL::Sphere_geometry<Kernel>             Sphere_kernel;
  
   typedef typename Sphere_kernel::Sphere_point     Sphere_point;
@@ -138,14 +138,14 @@ class SNC_sphere_map : public Items_::Vertex<SNC_structure<Kernel_, Items_, Mark
  public:
   SNC_sphere_map(bool construct=false) : Base(), destruct(construct) {
     if(!construct) return;
-    sncp() = new SNC_structure;
-    init_range(sncp()->svertices_end());
-    init_range(sncp()->shalfedges_end());
-    init_range(sncp()->sfaces_end());
-    shalfloop() = sncp()->shalfloops_end();
+    this->sncp() = new SNC_structure;
+    init_range(this->sncp()->svertices_end());
+    init_range(this->sncp()->shalfedges_end());
+    init_range(this->sncp()->sfaces_end());
+    this->shalfloop() = this->sncp()->shalfloops_end();
   }
 
-  ~SNC_sphere_map() { if(destruct) delete sncp(); }
+  ~SNC_sphere_map() { if(destruct) delete this->sncp(); }
 
   SNC_sphere_map(const Base& v) : Base(v), destruct(false) {}
   SNC_sphere_map(const Self& M) : Base((Base) M), destruct(M.destruct) {}
@@ -163,19 +163,19 @@ class SNC_sphere_map : public Items_::Vertex<SNC_structure<Kernel_, Items_, Mark
 
   template <typename H>
   bool is_sm_boundary_object(H h) const
-  { return sncp()->is_sm_boundary_object(h); }
+  { return this->sncp()->is_sm_boundary_object(h); }
 
   template <typename H>
   Object_iterator& sm_boundary_item(H h)
-  { return sncp()->sm_boundary_item(h); }
+  { return this->sncp()->sm_boundary_item(h); }
 
   template <typename H>
   void store_sm_boundary_item(H h, Object_iterator o)
-  { sncp()->store_sm_boundary_item(h,o); }
+  { this->sncp()->store_sm_boundary_item(h,o); }
 
   template <typename H>
   void undef_sm_boundary_item(H h)
-  { sncp()->undef_sm_boundary_item(h); }
+  { this->sncp()->undef_sm_boundary_item(h); }
 
   void reset_sm_iterator_hash(Object_iterator it)
   { SVertex_handle sv;
@@ -228,7 +228,7 @@ class SNC_sphere_map : public Items_::Vertex<SNC_structure<Kernel_, Items_, Mark
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
+    { this->CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
   };
 
   class SFace_cycle_const_iterator : public Object_const_iterator 
@@ -259,7 +259,7 @@ class SNC_sphere_map : public Items_::Vertex<SNC_structure<Kernel_, Items_, Mark
     operator Object_handle() const { return Ibase::operator*(); }
     const Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
+    { this->CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
   };
 
   SFace_cycle_const_iterator sface_cycles_begin(SFace_const_handle f) const
@@ -292,10 +292,10 @@ class SNC_sphere_map : public Items_::Vertex<SNC_structure<Kernel_, Items_, Mark
         SHalfedge_around_sface_circulator;
 
   bool empty() const {
-    return number_of_svertices() == 0 &&
-      number_of_shalfedges() == 0 &&
-      number_of_shalfloops() == 0 &&
-      number_of_sfaces() == 0;
+    return this->number_of_svertices() == 0 &&
+      this->number_of_shalfedges() == 0 &&
+      this->number_of_shalfloops() == 0 &&
+      this->number_of_sfaces() == 0;
   }
 
   /*
@@ -317,14 +317,14 @@ class SNC_sphere_map : public Items_::Vertex<SNC_structure<Kernel_, Items_, Mark
   SVertex_handle new_svertex(const Sphere_point& p, 
 			   Mark m = Mark()) {   
     SVertex_iterator sv;
-    if (svertices_begin() == sncp()->svertices_end()) {
-      sv = sncp()->new_halfedge_only();
+    if (this->svertices_begin() == this->sncp()->svertices_end()) {
+      sv = this->sncp()->new_halfedge_only();
       init_range(sv);
     }
     else {
-      SVertex_iterator svn = svertices_end();
-      sv =  sncp()->new_halfedge_only(svn);
-      svertices_last() = sv;
+      SVertex_iterator svn = this->svertices_end();
+      sv =  this->sncp()->new_halfedge_only(svn);
+      this->svertices_last() = sv;
     }
     sv->point() = p; 
     sv->mark() = m;
@@ -334,49 +334,49 @@ class SNC_sphere_map : public Items_::Vertex<SNC_structure<Kernel_, Items_, Mark
   }
 
   SFace_handle new_sface() {
-    SFace_iterator sf =  sncp()->new_sface_only();
-    if ( sfaces_begin() == sncp()->sfaces_end()) init_range(sf);
-    else sfaces_last() = sf;
+    SFace_iterator sf =  this->sncp()->new_sface_only();
+    if ( this->sfaces_begin() == this->sncp()->sfaces_end()) init_range(sf);
+    else this->sfaces_last() = sf;
     sf->center_vertex() = Vertex_handle((SNC_in_place_list_sm<Self>*) this);
     return sf; 
   }
 
   SHalfedge_handle new_shalfedge_pair() {
-    SHalfedge_iterator se = sncp()->new_shalfedge_only();
-    SHalfedge_iterator set = sncp()->new_shalfedge_only();
-    if(shalfedges_begin() == sncp()->shalfedges_end()) init_range(se);
-    shalfedges_last() = set;
+    SHalfedge_iterator se = this->sncp()->new_shalfedge_only();
+    SHalfedge_iterator set = this->sncp()->new_shalfedge_only();
+    if(this->shalfedges_begin() == this->sncp()->shalfedges_end()) init_range(se);
+    this->shalfedges_last() = set;
     make_twins(se,set);
     return se; 
   }
 
   SHalfloop_handle new_shalfloop_pair() {
     //    CGAL_assertion( !cv->has_shalfloop() );
-    CGAL_assertion( !has_shalfloop() );
-    SHalfloop_iterator sl =  sncp()->new_shalfloop_only();
-    SHalfloop_iterator slt = sncp()->new_shalfloop_only();
+    CGAL_assertion( !this->has_shalfloop() );
+    SHalfloop_iterator sl =  this->sncp()->new_shalfloop_only();
+    SHalfloop_iterator slt = this->sncp()->new_shalfloop_only();
     make_twins(sl,slt);
     //    cv->shalfloop() = sl;
-    shalfloop() = sl;
+    this->shalfloop() = sl;
     return sl; 
   }
 
   void delete_svertex(SVertex_handle v) {
-    if (svertices_begin() == svertices_last() ) 
-      { CGAL_assertion(v == svertices_begin()); 
-      init_range(sncp()->svertices_end()); }
-    else if (svertices_begin() == v ) ++(svertices_begin());
-    else if (svertices_last() == v ) --(svertices_last());
-    sncp()->delete_halfedge_only(v);
+    if (this->svertices_begin() == this->svertices_last() ) 
+      { CGAL_assertion(v == this->svertices_begin()); 
+      init_range(this->sncp()->svertices_end()); }
+    else if (this->svertices_begin() == v ) ++(this->svertices_begin());
+    else if (this->svertices_last() == v ) --(this->svertices_last());
+    this->sncp()->delete_halfedge_only(v);
   }
 
   void delete_shalfedge(SHalfedge_handle e) {
-    if ( shalfedges_begin() == shalfedges_last() ) 
-      { CGAL_assertion( e == shalfedges_begin() ); 
-      init_range(sncp()->shalfedges_end()); }
-    else if (shalfedges_begin() == e ) ++(shalfedges_begin());
-    else if (shalfedges_last() == e ) --(shalfedges_last());
-    sncp()->delete_shalfedge_only(e);
+    if ( this->shalfedges_begin() == this->shalfedges_last() ) 
+      { CGAL_assertion( e == this->shalfedges_begin() ); 
+      init_range(this->sncp()->shalfedges_end()); }
+    else if (this->shalfedges_begin() == e ) ++(this->shalfedges_begin());
+    else if (this->shalfedges_last() == e ) --(this->shalfedges_last());
+    this->sncp()->delete_shalfedge_only(e);
   }
 
   void delete_shalfedge_pair(SHalfedge_handle e) { 
@@ -385,19 +385,19 @@ class SNC_sphere_map : public Items_::Vertex<SNC_structure<Kernel_, Items_, Mark
   }
 
   void delete_sface(SFace_handle f) {
-    if (sfaces_begin() == sfaces_last() ) 
-      { CGAL_assertion( f == sfaces_begin() ); 
-      init_range(sncp()->sfaces_end()); }
-    else if (sfaces_begin() == f ) ++(sfaces_begin());
-    else if (sfaces_last() == f )  --(sfaces_last());
-    sncp()->delete_sface_only(f); 
+    if (this->sfaces_begin() == this->sfaces_last() ) 
+      { CGAL_assertion( f == this->sfaces_begin() ); 
+      init_range(this->sncp()->sfaces_end()); }
+    else if (this->sfaces_begin() == f ) ++(this->sfaces_begin());
+    else if (this->sfaces_last() == f )  --(this->sfaces_last());
+    this->sncp()->delete_sface_only(f); 
   }
 
   void delete_shalfloop_pair() {
-    CGAL_assertion(has_shalfloop() );
-    sncp()->delete_shalfloop_only(shalfloop()->twin());  
-    sncp()->delete_shalfloop_only(shalfloop());  
-    shalfloop() = sncp()->shalfloops_end();
+    CGAL_assertion(this->has_shalfloop() );
+    this->sncp()->delete_shalfloop_only(this->shalfloop()->twin());  
+    this->sncp()->delete_shalfloop_only(this->shalfloop());  
+    this->shalfloop() = this->sncp()->shalfloops_end();
   }
 
  protected:

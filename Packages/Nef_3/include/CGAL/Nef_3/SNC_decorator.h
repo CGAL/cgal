@@ -703,6 +703,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     return f_visible;
   }
 
+  /*
   Halffacet_handle get_visible_facet( const Halfedge_handle e,
                                       const Segment_3& ray) const {
     //{\Mop when one shoot a ray |ray| in order to find the facet below to
@@ -748,6 +749,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
     return Halffacet_handle(); // never reached
   }
+  */
 
   Halffacet_handle get_visible_facet( const Halffacet_handle f,
 				      const Segment_3& ray) const 

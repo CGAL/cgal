@@ -71,7 +71,7 @@ public:
   }
 
   Standard_line_3 standard_line(const Point_3& p) const
-  { CGAL_assertion(type(p)!=STANDARD);
+  { CGAL_assertion(type(p)!=this->STANDARD);
     RT hx = p.hx(), hy = p.hy(), hz = p.hz(), hw = p.hw();
     Standard_RT dx,dy,dz;
     if (hx.degree()>0) dx=hx[1]; else dx=0;
@@ -83,7 +83,7 @@ public:
   }
 
   Standard_ray_3 standard_ray(const Point_3& p) const
-  { CGAL_assertion(type(p)!=STANDARD);
+  { CGAL_assertion(type(p)!=this->STANDARD);
     Standard_line_3 l = standard_line(p);
     Standard_point_3 q = l.point(0);
     return Standard_ray_3(q,l);
@@ -91,7 +91,7 @@ public:
 
   Segment_3 construct_segment(const Point_3& p, const Point_3& q) const
   { typename Base::Construct_segment_3 _segment =
-      construct_segment_3_object();
+      this->construct_segment_3_object();
     return _segment(p,q); 
   }
 };

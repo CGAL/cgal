@@ -230,21 +230,21 @@ public:
   void visit_shell_objects(SFace_const_handle f, Visitor& V) const;
 
   Vertex_const_iterator   vertices_begin() const { 
-    return sncp()->vertices_begin(); }
+    return this->sncp()->vertices_begin(); }
   Vertex_const_iterator   vertices_end()   const { 
-    return sncp()->vertices_end(); }
+    return this->sncp()->vertices_end(); }
   Halfedge_const_iterator halfedges_begin()const {
-    return sncp()->halfedges_begin(); }
+    return this->sncp()->halfedges_begin(); }
   Halfedge_const_iterator halfedges_end()  const { 
-    return sncp()->halfedges_end(); }
+    return this->sncp()->halfedges_end(); }
   Halffacet_const_iterator halffacets_begin() const { 
-    return sncp()->halffacets_begin(); }
+    return this->sncp()->halffacets_begin(); }
   Halffacet_const_iterator halffacets_end() const { 
-    return sncp()->halffacets_end(); }
+    return this->sncp()->halffacets_end(); }
   Volume_const_iterator   volumes_begin() const   { 
-    return sncp()->volumes_begin(); }
+    return this->sncp()->volumes_begin(); }
   Volume_const_iterator   volumes_end()   const   { 
-    return sncp()->volumes_end(); }
+    return this->sncp()->volumes_end(); }
 
   Shell_entry_const_iterator shells_begin(Volume_const_handle c) const {
     return c->shells_begin();
@@ -254,17 +254,17 @@ public:
   }
 
   Size_type number_of_vertices() const  
-  { return sncp()->number_of_vertices(); }
+  { return this->sncp()->number_of_vertices(); }
   Size_type number_of_halfedges() const 
-  { return sncp()->number_of_halfedges(); }
+  { return this->sncp()->number_of_halfedges(); }
   Size_type number_of_edges() const     
-  { return sncp()->number_of_edges(); }
+  { return this->sncp()->number_of_edges(); }
   Size_type number_of_halffacets() const    
-  { return sncp()->number_of_halffacets();}
+  { return this->sncp()->number_of_halffacets();}
   Size_type number_of_facets() const    
-  { return sncp()->number_of_facets();}
+  { return this->sncp()->number_of_facets();}
   Size_type number_of_volumes() const   
-  { return sncp()->number_of_volumes();}
+  { return this->sncp()->number_of_volumes();}
 
   bool is_bounded() const {
     if(is_standard_kernel())
@@ -337,8 +337,8 @@ public:
       return Halffacet_const_handle();
     }
     /*    SM_decorator SD;
-    if(sncp()->halfedges_begin() == sncp()->halfedges_end() || 
-       SD.is_isolated(sncp()->halfedges_begin())) 
+    if(this->sncp()->halfedges_begin() == this->sncp()->halfedges_end() || 
+       SD.is_isolated(this->sncp()->halfedges_begin())) 
       return Halffacet_const_handle();  
     */
 
@@ -534,6 +534,7 @@ public:
     return f_visible;
   }
 
+  /*
   Halffacet_const_handle get_visible_facet( const Halfedge_const_handle e,
                                       const Segment_3& ray) const {
     //{\Mop when one shoot a ray |ray| in order to find the facet below to
@@ -579,6 +580,7 @@ public:
 
     return Halffacet_const_handle(); // never reached
   }
+  */
 
   Halffacet_const_handle get_visible_facet( const Halffacet_const_handle f,
 				      const Segment_3& ray) const 

@@ -117,8 +117,8 @@ public:
   /*{\Mtypemember size type.}*/
 
  private:
-  friend class SM_decorator;
-  friend class SNC_decorator;
+  friend class CGAL::SM_decorator<Sphere_map>;
+  friend class CGAL::SNC_decorator<Self>;
 
   /*{\Mtext For all objects |Vertex|, |Halfedge|, |Halffacet|, |Volume|
   there are handle and iterator types |xxx_handle|, |xxx_iterator|.
@@ -309,7 +309,7 @@ public:
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
+    { this->CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
   };
 
   class SFace_cycle_const_iterator : public Object_const_iterator 
@@ -340,7 +340,7 @@ public:
     operator Object_handle() const { return Ibase::operator*(); }
     const Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
+    { this->CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
   };
 
 
@@ -361,7 +361,7 @@ public:
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
+    { this->CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
   };
 
   class Shell_entry_const_iterator : public Object_const_iterator 
@@ -381,7 +381,7 @@ public:
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
+    { this->CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
   };
 
   typedef CircFromIt<SHalfedge_const_iterator, 
