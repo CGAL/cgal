@@ -81,7 +81,7 @@ int main(int argc,char *argv[])
     W.init(-2,13,-2);
     W.set_mode(leda_src_mode);
     W.set_node_width(3);
-    W.button("Show Biggest Empty Rectangle",1);
+    W.button("Show Largest Empty Rectangle",1);
     W.button("Clear",2);
     W.button("Automatic",3);
     W.button("Manual",4);
