@@ -36,7 +36,7 @@ template < class Gt, class Tds>
 class Regular_triangulation_3 : public Triangulation_3<Gt,Tds>
 {
 public:
-  
+  typedef typename Gt::Bare_point Bare_point;
   typedef typename Gt::Weighted_point Weighted_point;
 
   Regular_triangulation_3()
@@ -126,7 +126,10 @@ public:
   
   Bounded_side
   side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const;
-  
+
+  Bounded_side
+  side_of_power_edge( Cell_handle c, const Weighted_point &p) const;
+
   bool is_valid(bool verbose = false, int level = 0) const;
 
 private:
@@ -140,6 +143,11 @@ private:
       return side_of_power_circle(c, i, p) == ON_BOUNDED_SIDE;
     }
 
+  bool in_conflict_1(const Weighted_point & p, const Cell_handle & c)
+    {
+      return side_of_power_edge(c, p) == ON_BOUNDED_SIDE;
+    }
+
   void find_conflicts_3(std::set<void*, std::less<void*> > &conflicts, 
 			const Weighted_point & p,
 			Cell_handle c, Cell_handle & ac, int & i);
@@ -147,7 +155,7 @@ private:
   void find_conflicts_2(std::set<void*, less<void*> > & conflicts, 
 			const Point & p,
 			Cell_handle c, Cell_handle & ac, int & i);
-  
+
   std::set<void*, std::less<void*> > 
   star_region_delete_points( std::set<void*, std::less<void*> > & region, 
 			     Vertex* v, 
@@ -330,6 +338,21 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
 }
 
 template < class Gt, class Tds >
+Bounded_side
+Regular_triangulation_3<Gt,Tds>::
+side_of_power_edge( Cell_handle c, const Weighted_point &p) const
+{
+  CGAL_triangulation_precondition( dimension() == 1 );
+  if ( ! is_infinite(c,0,1) ) 
+    return Bounded_side( geom_traits().power_test
+			 ( c->vertex(0)->point(), 
+			   c->vertex(1)->point(), 
+			   p ) );
+  Locate_type lt; int i;
+  return side_of_edge( p, c, lt, i );
+}
+
+template < class Gt, class Tds >
 Regular_triangulation_3<Gt,Tds>::Vertex_handle
 Regular_triangulation_3<Gt,Tds>::
 insert(const Weighted_point & p )
@@ -390,17 +413,22 @@ insert(const Weighted_point & p, Cell_handle start )
       case FACET:
       case EDGE:
 	{
-	  Vertex_handle v = new Vertex(p);
-	  std::set<void*, std::less<void*> > conflicts;
+	  Vertex_handle v=NULL;
 	  std::set<void*, std::less<void*> > deleted_points;
-	  Cell_handle aconflict;
-	  int ineighbor;
 	  if (in_conflict_2(p, c, 3)) {
+	    v = new Vertex(p);
+	    std::set<void*, std::less<void*> > conflicts;
+	    Cell_handle aconflict;
+	    int ineighbor;
 	    find_conflicts_2(conflicts,p,c,aconflict,ineighbor);
 	    deleted_points = 
 	      star_region_delete_points(conflicts,&(*v),&(*aconflict),
 					ineighbor);
 	    set_number_of_vertices(number_of_vertices()+1);
+	  }
+	  else {
+	    Point* P = new Point( p );
+	    deleted_points.insert( P );
 	  }
 	  return v;
 	}
@@ -415,6 +443,83 @@ insert(const Weighted_point & p, Cell_handle start )
 	}
       }
     }//dim 2
+  case 1:
+    {
+      Locate_type lt;
+      int li, lj;
+      Cell_handle c = locate( p, start, lt, li, lj);
+      switch (lt) {
+      case OUTSIDE_CONVEX_HULL:
+      case EDGE:
+	{
+	  Vertex_handle v=NULL;
+	  std::set<void*, std::less<void*> > deleted_points;
+	  Point * P;
+	  if ( in_conflict_1(p, c) ) {
+	    v = new Vertex(p);
+	    set_number_of_vertices(number_of_vertices()+1);
+	    Cell_handle bound[2];
+	    Cell_handle n;
+	    std::set<void*, std::less<void*> > conflicts;
+
+	    for (int j =0; j<2; j++ ) {
+	      n = c;
+	      while ( ( ! is_infinite(n->vertex(1-j)) ) && 
+		      in_conflict_1( p, n->neighbor(j) ) ) {
+		if (n!=c) (void) conflicts.insert( (void *) &(*n) );
+		P = new Point( n->vertex(1-j)->point() );
+		(void) deleted_points.insert((void*) P);
+		set_number_of_vertices(number_of_vertices()-1);
+		n = n->neighbor(j);
+	      }
+	      bound[j] = n;
+	    }
+	    if ( bound[0] != bound[1] ) {
+	      if ( (c != bound[0]) && (c != bound[1]) ) {
+		(void) conflicts.insert( (void *) &(*c) );
+	      }
+	      bound[0]->set_vertex(0,v);
+	      v->set_cell(bound[0]);
+	      bound[1]->set_vertex(1,v);
+	      bound[1]->set_neighbor(0,bound[0]);
+	      bound[0]->set_neighbor(1,bound[1]);
+	    }
+	    else {
+	      bound[1] = new Cell(bound[0]->vertex(0), v, NULL, NULL,
+				  bound[0], bound[0]->neighbor(1), NULL, NULL);
+	      _tds.add_cell(&(*bound[1]));
+	      bound[0]->neighbor(1)->set_neighbor(0,bound[1]);
+	      bound[0]->vertex(0)->set_cell(bound[1]);
+
+	      bound[0]->set_neighbor(1,bound[1]);
+	      bound[0]->set_vertex(0,v);
+	      v->set_cell(bound[0]);
+	    }
+
+	    std::set<void*, std::less<void*> >::const_iterator it;
+	    for ( it = conflicts.begin(); it != conflicts.end(); ++it) {
+	      delete(*it);
+	    }
+	  }
+	  else {
+	    Point* P = new Point( p );
+	    deleted_points.insert( P );
+	  }
+	  return v;
+	}
+      case VERTEX:
+	return c->vertex(li);
+      case OUTSIDE_AFFINE_HULL:
+	{
+	  return
+	    Triangulation_3<Gt,Tds>::insert_outside_affine_hull(p); 
+	}
+      case FACET:
+      case CELL:
+	// impossible in dimension 1
+	return NULL;
+      }
+    }
   default :
     {
       // temporary : will only work for non degenerated dimensions
@@ -523,12 +628,11 @@ is_valid(bool verbose = false, int level = 0) const
       Facet_iterator it;
       for ( it = finite_facets_begin(); it != facets_end(); ++it ) {
 	is_valid_finite((*it).first);
-	for ( i=0; i<2; i++ ) {
+	for ( i=0; i<3; i++ ) {
 	  if ( side_of_power_circle
 	       ( (*it).first, 3,
-		 (*it).first
-		 ->vertex( (((*it).first)->neighbor(i))
-			   ->index((*it).first) )->point() )
+		 (*it).first->vertex( (((*it).first)->neighbor(i))
+				      ->index((*it).first) )->point() )
 	       == ON_BOUNDED_SIDE ) {
 	    if (verbose) { 
 	      std::cerr << "non-empty circle " << std::endl;
@@ -539,12 +643,26 @@ is_valid(bool verbose = false, int level = 0) const
       }
       break;
     }
-  default:
+  case 1:
     {
-      std::cerr << "degenerate dimensions not yet implemented" 
-		<< std::endl;
-      CGAL_triangulation_assertion(false);
-    } 
+      Edge_iterator it;
+      for ( it = finite_edges_begin(); it != edges_end(); ++it ) {
+	is_valid_finite((*it).first);
+	for ( i=0; i<2; i++ ) {
+	  if ( side_of_power_edge
+	       ( (*it).first,
+		 (*it).first->vertex( (((*it).first)->neighbor(i))
+				      ->index((*it).first) )->point() )
+	       == ON_BOUNDED_SIDE ) {
+	    if (verbose) { 
+	      std::cerr << "non-empty edge " << std::endl;
+	    }
+	    CGAL_triangulation_assertion(false); return false;
+	  }
+	}
+      }
+      break;
+    }
   }
   if (verbose) { std::cerr << "Regular valid triangulation" << std::endl;}
   return true;
