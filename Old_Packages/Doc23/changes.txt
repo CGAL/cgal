@@ -1,3 +1,6 @@
+2.12    (23 Mar 2001)
+- Fix return type of Construct_circumcenter_[23].
+
 2.11    (20 Mar 2001)
 - Added squared_radius() and Compute_squared_radius_[23].
 
