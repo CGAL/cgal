@@ -22,9 +22,6 @@
 
 #include <CGAL/basic.h>
 
-#include <cassert>
-#include <list>
-#include <vector>
 #include <CGAL/Delaunay_triangulation_3.h>
 
 #include <CGAL/_test_types.h>

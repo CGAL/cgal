@@ -21,11 +21,6 @@
 // ============================================================================
 
 #include <CGAL/basic.h>
-
-#include <cassert>
-#include <list>
-#include <vector>
-
 #include <CGAL/Triangulation_3.h>
 
 #include <CGAL/_test_types.h>

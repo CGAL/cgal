@@ -25,7 +25,6 @@
 #include <iostream>
 #include <cassert>
 #include <list>
-#include <vector>
 
 #include <CGAL/_test_types.h>
 

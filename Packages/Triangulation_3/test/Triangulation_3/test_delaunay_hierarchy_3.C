@@ -20,7 +20,6 @@
 // ============================================================================
 
 #include <CGAL/basic.h>
-#include <iostream>
 
 #include <CGAL/_test_types.h>
 
