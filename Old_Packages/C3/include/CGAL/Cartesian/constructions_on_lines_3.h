@@ -41,12 +41,12 @@ CGAL_BEGIN_NAMESPACE
 template <class R>
 CGAL_KERNEL_LARGE_INLINE
 PointC3<R CGAL_CTAG>
-point_on_line(const LineC3<R CGAL_CTAG>& l, int i)
+point_on_line(int i, const LineC3<R CGAL_CTAG>& l)
 {
   typename R::FT x, y, z;
   point_on_lineC3(l.point().x(),l.point().y(),l.point().z(),
-      l.second_point().x(),l.second_point().y(),l.second_point().z(),
-      i,x,y,z);
+                  l.direction().dx(),l.direction().dy(),l.direction().dz(),
+                  i,x,y,z);
   return PointC3<R CGAL_CTAG>(x,y,z);
 }
 
@@ -57,10 +57,10 @@ projection_line(const PointC3<R CGAL_CTAG>& p,
                 const LineC3<R CGAL_CTAG>& l)
 {
   typename R::FT x,y,z;
-  projection_lineC3(l.point().x(), l.point().y(), l.point().z(),
-      l.second_point().x(), l.second_point().y(), l.second_point().z(),
-      p.x(),p.y(),p.z(),
-      x,y,z);
+  projection_lineC3(p.x(),p.y(),p.z(),
+		    l.point().x(), l.point().y(), l.point().z(),
+                    l.direction().dx(),l.direction().dy(),l.direction().dz(),
+                    x,y,z);
   return PointC3<R CGAL_CTAG>(x,y,z);
 }
 

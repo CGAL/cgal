@@ -86,28 +86,32 @@ circumcenterC3( const FT &px, const FT &py, const FT &pz,
 template <class FT>
 CGAL_KERNEL_MEDIUM_INLINE
 void
-point_on_lineC3(const FT &px, const FT &py, const FT &pz,
-                const FT &qx, const FT &qy, const FT &qz,
+point_on_lineC3(const FT &lpx, const FT &lpy, const FT &lpz,
+                const FT &ldx, const FT &ldy, const FT &ldz,
 		int i,
                 FT &x, FT &y, FT &z)
 {
-  x = px + (qx-px)*i;
-  y = py + (qy-py)*i;
-  z = pz + (qz-pz)*i;
+  x = lpx + ldx*i;
+  y = lpy + ldy*i;
+  z = lpz + ldz*i;
 }
 
 template <class FT>
 CGAL_KERNEL_MEDIUM_INLINE
 void
 projection_lineC3(const FT &px, const FT &py, const FT &pz,
-                  const FT &qx, const FT &qy, const FT &qz,
-                  const FT &rx, const FT &ry, const FT &rz,
+                  const FT &lpx, const FT &lpy, const FT &lpz,
+                  const FT &ldx, const FT &ldy, const FT &ldz,
                   FT &x, FT &y, FT &z)
 {
-  // projects r on the line pq
-  x = px + (qx-px) * (rx-px);
-  y = py + (qy-py) * (ry-py);
-  z = pz + (qz-pz) * (rz-pz);
+  // projects p on the line l
+  FT dpx = px-lpx;
+  FT dpy = py-lpy;
+  FT dpz = pz-lpz;
+  FT lambda = (ldx*dpx+ldy*dpy+ldy*dpz) / (ldx*ldx+ldy*ldy+ldz*ldz);
+  x = lpx + lambda * dpx;
+  y = lpy + lambda * dpy;
+  z = lpz + lambda * dpz;
 }
 
 

@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 
 CGAL_CXX = g++
 
-CXXFLAGS = \
+CXXFLAGS = -g \
            $(TESTSUITE_CXXFLAGS) \
            -I./include \
 	   -DCGAL_CFG_NO_ADVANCED_KERNEL -I../NewKernel/include \

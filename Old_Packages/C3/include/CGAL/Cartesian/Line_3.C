@@ -96,7 +96,7 @@ template < class R >
 LineC3<R CGAL_CTAG>::
 LineC3(const typename LineC3<R CGAL_CTAG>::Ray_3 &r)
 {
-  new_rep(r.start(), r.second_point() - r.start());
+  new_rep(r.start(), r.point(1) - r.start());
 }
 
 template < class R >
@@ -150,13 +150,6 @@ LineC3<R CGAL_CTAG>::point() const
 }
 
 template < class R >
-typename LineC3<R CGAL_CTAG>::Point_3
-LineC3<R CGAL_CTAG>::second_point() const
-{
-  return ptr()->e1;
-}
-
-template < class R >
 typename LineC3<R CGAL_CTAG>::Direction_3
 LineC3<R CGAL_CTAG>::direction() const
 {
@@ -168,8 +161,7 @@ template < class R >
 typename LineC3<R CGAL_CTAG>::Point_3
 LineC3<R CGAL_CTAG>::point(int i) const
 {
-  // use a construction for that?
-  return CGAL::point_on_line(*this,i);
+  return point_on_line(i,*this);
 }
 
 template < class R >
@@ -191,7 +183,7 @@ template < class R >
 typename LineC3<R CGAL_CTAG>::Point_3
 LineC3<R CGAL_CTAG>::projection(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  return CGAL::projection_line(p,*this);
+  return projection_line(p,*this);
 }
 
 template < class R >

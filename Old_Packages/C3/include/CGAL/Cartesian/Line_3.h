@@ -85,7 +85,6 @@ public:
   Self        opposite() const;
 
   Point_3     point() const;
-  Point_3     second_point() const;
   Point_3     point(int i) const;
 
   Point_3     projection(const Point_3 &p) const;

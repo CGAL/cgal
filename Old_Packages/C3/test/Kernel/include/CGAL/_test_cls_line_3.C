@@ -96,6 +96,9 @@ _test_cls_line_3(const R& )
 
  assert( l4.point(2) - l4.point(1) == l4.point(1) - l4.point(0) );
  CGAL::Point_3<R> p1l4proj = l4.projection(p1);
+ std::cout << p1 << std::endl;
+ std::cout << l4 << std::endl;
+ std::cout << p1l4proj << std::endl;
  assert( l4.has_on( p1l4proj ) );
  assert( l4.perpendicular_plane( p1l4proj ).has_on( p1l4proj ) );
  assert( l4.perpendicular_plane( p1l4proj ).has_on( p1 ) );
