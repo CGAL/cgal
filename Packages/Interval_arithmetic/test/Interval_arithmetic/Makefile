@@ -19,7 +19,7 @@ CXXFLAGS = \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            -Iinclude \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) -O2
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
