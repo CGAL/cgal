@@ -83,7 +83,7 @@ public:
       last = false;
     } else {
       advance_on_boundary();
-      if(pos == first_vertex){
+      if(&*pos == &*first_vertex){
 	last = true;
       }
     }
@@ -1685,7 +1685,7 @@ public:
   {
     std::list<Cell_handle> ch_set;
     T.incident_cells(vh, std::back_inserter(ch_set));
-    for (std::list<Cell_handle>::iterator c_it = ch_set.begin();
+    for (typename std::list<Cell_handle>::iterator c_it = ch_set.begin();
 	 c_it != ch_set.end(); 
 	 c_it++)
       (*c_it)->clear();
@@ -1698,7 +1698,7 @@ public:
   {
     std::list<Cell_handle> ch_set;
     T.incident_cells(vh, std::back_inserter(ch_set));
-    for (std::list<Cell_handle>::iterator c_it = ch_set.begin();
+    for (typename std::list<Cell_handle>::iterator c_it = ch_set.begin();
 	 c_it != ch_set.end(); c_it++)
       {
 	Cell_handle c = *c_it;
@@ -1898,7 +1898,7 @@ public:
     std::list<Vertex_handle> vh_list;
     T.incident_vertices(vh, std::back_inserter(vh_list));
 
-    for (std::list<Vertex_handle>::iterator v_it = vh_list.begin();
+    for (typename std::list<Vertex_handle>::iterator v_it = vh_list.begin();
 	 v_it != vh_list.end(); v_it++)
       if ((*v_it)->is_on_border() && is_interior_edge(Edge_like(vh, *v_it)))
 	return true;
@@ -2037,7 +2037,7 @@ public:
 	  do
 	    {
 	      itmp = L_v.size();
-	      std::list<Vertex_handle>::iterator new_end =
+	      typename std::list<Vertex_handle>::iterator new_end =
 		std::remove_if(L_v.begin(), L_v.end(), Remove(*this,T));
 	      L_v.erase(new_end, L_v.end());
 	    }

@@ -79,12 +79,12 @@ private:
   // and two iterators per vertex in this list
   // Note that ie_last is not past the end
   // ie_first == ie_last == interior_edge.end()  iff  the set is empty
-  std::list<Vertex_handle>::iterator ie_first, ie_last;
+  typename std::list<Vertex_handle>::iterator ie_first, ie_last;
 
 
   // We do the same for the incidence requests
   static std::list< Incidence_request_elt > incidence_requests;
-  std::list< Incidence_request_elt >::iterator ir_first, ir_last;
+  typename std::list< Incidence_request_elt >::iterator ir_first, ir_last;
   //-------------------- CONSTRUCTORS ---------------------------------
 
 public:
@@ -160,14 +160,14 @@ public:
 	}
       if(ir_first != incidence_requests.end()){
 	assert(ir_last != incidence_requests.end());
-	std::list< Incidence_request_elt >::iterator b(ir_first), e(ir_last);
+	typename std::list< Incidence_request_elt >::iterator b(ir_first), e(ir_last);
 	e++;
 	incidence_requests.erase(b, e);
       }
 
       if(ie_first != interior_edges.end()){
 	assert(ie_last != interior_edges.end());
-	std::list<Vertex_handle>::iterator b(ie_first), e(ie_last);
+	typename std::list<Vertex_handle>::iterator b(ie_first), e(ie_last);
 	e++;
 	interior_edges.erase(b, e);
       }
@@ -186,7 +186,7 @@ public:
 
       if(ir_first != incidence_requests.end()){
 	assert(ir_last != incidence_requests.end());
-	std::list< Incidence_request_elt >::iterator b(ir_first), e(ir_last);
+	typename std::list< Incidence_request_elt >::iterator b(ir_first), e(ir_last);
 	e++;
 	incidence_requests.erase(b, e);
 	ir_first = incidence_requests.end();
@@ -312,9 +312,9 @@ public:
       if(ie_first == interior_edges.end()){
 	r1 = false;
       }else {
-	std::list<Vertex_handle>::iterator b(ie_first), e(ie_last);
+	typename std::list<Vertex_handle>::iterator b(ie_first), e(ie_last);
 	e++;
-	std::list<Vertex_handle>::iterator r = std::find(b, e, v);
+	typename std::list<Vertex_handle>::iterator r = std::find(b, e, v);
 	r1 = ( r != e);
       }
 
@@ -328,10 +328,10 @@ public:
 	ie_last = interior_edges.insert(ie_last, v);
 	ie_first = ie_last;
       } else {
-	std::list<Vertex_handle>::iterator e(ie_last);
+	typename std::list<Vertex_handle>::iterator e(ie_last);
 	e++;
 #ifdef DEBUG
-	std::list<Vertex_handle>::iterator r = std::find(ie_first, e, v);
+	typename std::list<Vertex_handle>::iterator r = std::find(ie_first, e, v);
 #endif
 	assert(r == e);
 	ie_last = interior_edges.insert(e, v);
@@ -349,9 +349,9 @@ public:
 	  ie_first = ie_last;
 	}
       } else {
-	std::list<Vertex_handle>::iterator b(ie_first), e(ie_last);
+	typename std::list<Vertex_handle>::iterator b(ie_first), e(ie_last);
 	e++;
-	std::list<Vertex_handle>::iterator r = std::find(b, e, v);
+	typename std::list<Vertex_handle>::iterator r = std::find(b, e, v);
 	if(r != e){
 	  if(r == ie_first){
 	    ie_first++;
@@ -373,7 +373,7 @@ public:
 	ir_last = incidence_requests.insert(ir_last, ir);
 	ir_first = ir_last;
       } else {
-	std::list<Incidence_request_elt>::iterator e(ir_last);
+	typename std::list<Incidence_request_elt>::iterator e(ir_last);
 	e++;
 	ir_last = incidence_requests.insert(e, ir);
       }
@@ -474,11 +474,11 @@ public:
 };
 
 template <class Gt>
-std::list<Local_selection_vertex_base_3<Gt>::Vertex_handle> Local_selection_vertex_base_3<Gt>::interior_edges;
+std::list<typename Local_selection_vertex_base_3<Gt>::Vertex_handle> Local_selection_vertex_base_3<Gt>::interior_edges;
 
 template <class Gt>
-std::list<Local_selection_vertex_base_3<Gt>::Incidence_request_elt> Local_selection_vertex_base_3<Gt>::incidence_requests;
+std::list<typename Local_selection_vertex_base_3<Gt>::Incidence_request_elt> Local_selection_vertex_base_3<Gt>::incidence_requests;
 
 //-------------------------------------------------------------------
-#endif LOCAL_SELECTION_VERTEX_BASE_3_H
+#endif //LOCAL_SELECTION_VERTEX_BASE_3_H
 //-------------------------------------------------------------------

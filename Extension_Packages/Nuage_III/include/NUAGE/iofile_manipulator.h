@@ -67,7 +67,7 @@ write_in_file_medit_selected_facets(char* foutput, const Surface& S)
   for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
        v_it != T.finite_vertices_end();
        v_it++){
-    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
+    typename CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
@@ -168,7 +168,7 @@ write_in_file_gv_selected_facets(char* foutput, const Surface& S)
   for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
        v_it != T.finite_vertices_end();
        v_it++){
-    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
+    typename CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
@@ -276,7 +276,7 @@ write_in_file_ply_selected_facets(char* foutput, const Surface& S)
   for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
        v_it != T.finite_vertices_end();
        v_it++){
-    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
+    typename CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
@@ -369,7 +369,7 @@ write_in_file_iv_border_edges(const Surface& S, std::ofstream& os)
 
   typedef const Point*  Const_point_star;
   std::vector<Const_point_star>  points_tab(_vh_bord_count);
-  for (std::map<Vertex_handle, int>::iterator vh_it = _vh_vect.begin();
+  for (typename std::map<Vertex_handle, int>::iterator vh_it = _vh_vect.begin();
        vh_it != _vh_vect.end(); vh_it++)
     points_tab[vh_it->second] = &vh_it->first->point();
   
@@ -447,7 +447,7 @@ write_in_file_iv_remaining_points(const Surface& S, std::ofstream& os)
 
   typedef const Point*  Const_point_star;
   std::vector<Const_point_star>  points_tab(_vh_bord_count);
-  for (std::map<Vertex_handle, int>::iterator vh_it = _vh_vect.begin();
+  for (typename std::map<Vertex_handle, int>::iterator vh_it = _vh_vect.begin();
        vh_it != _vh_vect.end(); vh_it++)
     points_tab[vh_it->second] = &vh_it->first->point();
   
@@ -513,7 +513,7 @@ write_in_file_iv_border_facets(const Surface& S, std::ofstream& os)
 
   typedef const Point*  Const_point_star;
   std::vector<Const_point_star>  points_tab(_vh_bord_count);
-  for (std::map<Vertex_handle, int>::iterator vh_it = _vh_vect.begin();
+  for (typename std::map<Vertex_handle, int>::iterator vh_it = _vh_vect.begin();
        vh_it != _vh_vect.end(); vh_it++)
     points_tab[vh_it->second] = &vh_it->first->point();
   
@@ -672,7 +672,7 @@ write_in_file_iv_selected_facets(char* foutput, const Surface& S,
   for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
        v_it != T.finite_vertices_end();
        v_it++){
-    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
+    typename CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
@@ -854,7 +854,7 @@ write_in_file_vrml2_selected_facets(char* foutput, const Surface& S,
   for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
        v_it != T.finite_vertices_end();
        v_it++){
-    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
+    typename CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
@@ -919,7 +919,7 @@ write_in_file_vrml2_selected_facets(char* foutput, const Surface& S,
     write_boundaries(os, S);
   }
 
-  Surface::Outlier_iterator pit = S.outliers_begin();
+  typename Surface::Outlier_iterator pit = S.outliers_begin();
 
   if(pit != S.outliers_end()) {
     os << "Shape {\n"

@@ -26,6 +26,9 @@ public:
     typedef Local_selection_cell_base_3<Cb2>                    Other;
   };
 
+  typedef typename CellBase::Vertex_handle Vertex_handle;
+  typedef typename CellBase::Cell_handle Cell_handle;
+
 private:
      
 #ifdef FACET_NUMBER
@@ -219,4 +222,4 @@ facet_number(int i)
 
 };
 
-#endif LOCAL_SELECTION_CELL_BASE_3_H
+#endif // LOCAL_SELECTION_CELL_BASE_3_H
