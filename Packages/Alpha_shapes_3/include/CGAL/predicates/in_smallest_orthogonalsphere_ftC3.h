@@ -79,7 +79,7 @@ in_smallest_orthogonalsphereC3(
   FT drx = rx - (px + qx)/FT2;
   FT dry = ry - (py + qy)/FT2;
   FT drz = rz - (pz + qz)/FT2;
-  FT drw = rw - (pw + qw)/FT2
+  FT drw = rw - (pw + qw)/FT2;
   FT dr2 = CGAL_NTS square(drx) + CGAL_NTS square(dry) + CGAL_NTS square(drz); 
   FT dpr = dpx*drx + dpy*dry +dpz*drz;
   return Bounded_side(CGAL_NTS sign (dr2 - dp2/FT4 + dpr*dpw/dp2 + drw ));
