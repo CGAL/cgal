@@ -178,8 +178,6 @@ struct Interval_nt_advanced
 
   double inf() const { return _inf; }
   double sup() const { return _sup; }
-  double lower_bound() const { return _inf; } // Kept for backward
-  double upper_bound() const { return _sup; } // compatibility
 
   // The (join, union, ||) operator.
   IA operator|| (const IA & d) const
