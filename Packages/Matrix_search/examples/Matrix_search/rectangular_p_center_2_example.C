@@ -1,29 +1,21 @@
-// ============================================================================
+// Copyright (c) 1998-2003  ETH Zurich (Switzerland).
+// All rights reserved.
 //
-// Copyright (c) 1998, 1999, 2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision $
-// release_date  : $CGAL_Date $
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : rectangular_p_center_2_example.C
-// chapter       : $CGAL_Chapter: Geometric Optimisation $
-// package       : $CGAL_Package: Matrix_search $
-// source        : pcenter.aw
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
-//
-// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
-// coordinator   : ETH
-//
-// 2-4-Centering Axis-Parallel 2D-Rectangles - example program
-// ============================================================================
+// Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
@@ -34,44 +26,32 @@
 #include <algorithm>
 #include <vector>
 
-using namespace std;
-using CGAL::set_pretty_mode;
-using CGAL::rectangular_p_center_2;
+typedef double                                      FT;
 
-typedef double                                             FT;
-typedef CGAL::Cartesian< FT >                              K;
-typedef K::Point_2                                         Point;
-typedef std::vector< Point >                               Cont;
-typedef CGAL::Creator_uniform_2< FT, Point >               Creator;
-typedef CGAL::Random_points_in_square_2< Point, Creator >  Point_generator;
-typedef CGAL::Ostream_iterator< Point, ostream >    Ostream_iterator_point;
+struct Kernel : public CGAL::Cartesian<FT> {};
 
-int main() {
+typedef Kernel::Point_2                             Point;
+typedef std::vector<Point>                          Cont;
+typedef CGAL::Random_points_in_square_2<Point>      Generator;
+typedef CGAL::Ostream_iterator<Point,std::ostream>  OIterator;
 
-  int number_of_points(10);
-  int p(2);
-  Ostream_iterator_point cout_ip(cout);
-  set_pretty_mode(cout);
+int main()
+{
+  int n = 10;
+  int p = 2;
+  OIterator cout_ip(std::cout);
+  CGAL::set_pretty_mode(std::cout);
 
   Cont points;
-  CGAL::copy_n(Point_generator(1),
-               number_of_points,
-               back_inserter(points));
-  cout << "Generated Point Set:" << endl;
-  copy(points.begin(), points.end(), cout_ip);
+  CGAL::copy_n(Generator(1), n, std::back_inserter(points));
+  std::cout << "Generated Point Set:\n";
+  std::copy(points.begin(), points.end(), cout_ip);
 
-  Cont centers;
   FT p_radius;
-  rectangular_p_center_2(
-    points.begin(),
-    points.end(),
-    back_inserter(centers),
-    p_radius,
-    3);
-
-  cout << "\n\n" << p << "-centers:" << endl;
-  copy(centers.begin(), centers.end(), cout_ip);
-  cout << "\n\n" << p << "-radius = " << p_radius << endl;
+  std::cout << "\n\n" << p << "-centers:\n";
+  CGAL::rectangular_p_center_2(
+    points.begin(), points.end(), cout_ip, p_radius, 3);
+  std::cout << "\n\n" << p << "-radius = " << p_radius << std::endl;
 
   return 0;
 } 

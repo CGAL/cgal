@@ -6,38 +6,31 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
-using CGAL::random_convex_set_2;
-using CGAL::maximum_area_inscribed_k_gon_2;
+typedef double                                    FT;
 
-typedef double                                FT;
-typedef CGAL::Cartesian< FT >                 K;
-typedef K::Point_2                            Point;
-typedef CGAL::Polygon_traits_2< K >           P_traits;
-typedef vector< Point >                       Cont;
-typedef CGAL::Polygon_2< P_traits, Cont >     Polygon;
-typedef CGAL::Creator_uniform_2< FT, Point >  Creator;
-typedef CGAL::Random_points_in_square_2< Point, Creator >
-  Point_generator;
+struct Kernel : public CGAL::Cartesian<FT> {};
+
+typedef Kernel::Point_2                           Point;
+typedef std::vector<int>                          Index_cont;
+typedef CGAL::Polygon_2<Kernel>                   Polygon;
+typedef CGAL::Random_points_in_square_2<Point>    Generator;
 
 int main() {
 
+  int n = 10;
+  int k = 5;
+
+  // generate random convex polygon:
   Polygon p;
-  int number_of_points( 10);
-  int k( 5);
+  CGAL::random_convex_set_2(n, back_inserter(p), Generator(1));
+  std::cout << "Generated Polygon:\n" << p << std::endl;
 
-  random_convex_set_2( number_of_points,
-                       back_inserter( p),
-                       Point_generator( 1));
-  cout << "Generated Polygon:\n" << p << endl;
-
+  // compute maximum area incribed k-gon of p:
   Polygon k_gon;
-  maximum_area_inscribed_k_gon_2(
-    p.vertices_begin(),
-    p.vertices_end(),
-    k,
-    back_inserter( k_gon));
-  cout << "Maximum area " << k << "-gon:\n" << k_gon << endl;
+  CGAL::maximum_area_inscribed_k_gon_2(
+    p.vertices_begin(), p.vertices_end(), k, std::back_inserter(k_gon));
+  std::cout << "Maximum area " << k << "-gon:\n"
+            << k_gon << std::endl;
 
   return 0;
 } 

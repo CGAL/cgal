@@ -1,61 +1,39 @@
-// ============================================================================
+// Copyright (c) 1998-2003  ETH Zurich (Switzerland).
+// All rights reserved.
 //
-// Copyright (c) 1998, 1999, 2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision $
-// release_date  : $CGAL_Date $
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : extremal_polygon_2_test.C
-// chapter       : $CGAL_Chapter: Geometric Optimisation $
-// package       : $CGAL_Package: Matrix_search $
-// source        : mon_search.aw
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
-//
-// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
-// coordinator   : ETH
-//
-// Test program: Compute extremal polygons of a convex polygon
-// ============================================================================
+// Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
 #include <CGAL/Cartesian.h>
+#include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>
 #include <CGAL/extremal_polygon_2.h>
 #include <functional>
 #include <vector>
 
+typedef double                                    FT;
 
-using std::vector;
-using std::back_inserter;
-using CGAL::Cartesian;
-using CGAL::Creator_uniform_2;
-using CGAL::Random_points_in_square_2;
-using CGAL::random_convex_set_2;
-using CGAL::maximum_area_inscribed_k_gon_2;
-using CGAL::maximum_perimeter_inscribed_k_gon_2;
+struct Kernel : public CGAL::Cartesian<FT> {};
 
-// typedefs:
-typedef double                      FT;
-typedef Cartesian< FT >             K;
-typedef K::Point_2                  Point;
-typedef vector< Point >             Cont;
-typedef CGAL::Polygon_2< K, Cont >  Polygon;
+typedef Kernel::Point_2                           Point;
+typedef std::vector<Point>                        Cont;
+typedef CGAL::Polygon_2<Kernel>                   Polygon;
+typedef CGAL::Random_points_in_square_2<Point>    Generator;
 
-// do random convex set generation always with double
-// (coordinates get too long with exact computation)
-typedef CGAL::Point_2< Cartesian< double > >        Point_double;
-typedef vector< Point_double >                    Cont_double;
-typedef Creator_uniform_2< double, Point_double > Creator;
-typedef Random_points_in_square_2< Point_double, Creator >
-  Point_generator;
 template < class RandomAccessIC,
            class OutputIterator >
 OutputIterator
@@ -140,86 +118,26 @@ brute_force_area_4( RandomAccessIC b,
 
 
 int main() {
-  // set_pretty_mode( cout);
 
-  int number_of_points [] = { 20, 51, 102, 500 };
-  int k [] = { 3, 7, 12, 27 };
+  int number_of_points[] = { 20, 51, 102, 500 };
+  int k[] = { 3, 7, 12, 27 };
   int j;
 
-  for ( int n( 0); n < 4; ++n) {
-    /*
-    cout << " : " << number_of_points[n] << endl;
-
-    Cont_double p_d;
-    random_convex_set_2( number_of_points[n],
-                         back_inserter( p_d),
-                         Point_generator( 1));
-
-    // build polygon:
+  for (int n = 0; n < 4; ++n) {
     Polygon p;
-    transform( p_d.begin(),
-               p_d.end(),
-               back_inserter( p),
-               D2R());
-    */
-
-    Polygon p;
-    random_convex_set_2( number_of_points[n],
-                         back_inserter( p),
-                         Point_generator( 1));
-    CGAL_assertion( p.is_convex());
+    CGAL::random_convex_set_2(number_of_points[n],
+                              std::back_inserter(p),
+                              Generator(1));
+    CGAL_assertion(p.is_convex());
 
     for ( j = 0; j < 4; ++j) {
       // maximum area:
       Cont k_gon;
       k_gon.reserve( k[j]);
 
-      maximum_area_inscribed_k_gon_2(
-        p.vertices_begin(),
-        p.vertices_end(),
-        k[j],
-        back_inserter( k_gon));
-
-      /* TAKES TOO LONG:
-      // check it:
-      Cont k_gon2;
-      brute_force_area_3(
-        p.vertices_begin(),
-        p.vertices_end(),
-        back_inserter( k_gon2));
-
-      cout << "k_gon:\n";
-      Polygon pp( k_gon.begin(), k_gon.end());
-      cout << pp << endl;
-
-      FT area_ms(
-        CGAL_NTS abs(
-          (*(k_gon.begin())).x() *
-          ( (*(k_gon.begin()+1)).y() - (*(k_gon.begin()+2)).y()) +
-          (*(k_gon.begin()+1)).x() *
-          ( (*(k_gon.begin()+2)).y() - (*(k_gon.begin())).y()) +
-          (*(k_gon.begin()+2)).x() *
-          ( (*(k_gon.begin())).y() - (*(k_gon.begin()+1)).y()))
-        );
-      cout << "area1 = " << area_ms << endl;
-
-      cout << "k_gon2:\n";
-      Polygon ppp( k_gon2.begin(), k_gon2.end());
-      cout << ppp << endl;
-
-      FT area_bf(
-        CGAL_NTS abs(
-          (*(k_gon2.begin())).x() *
-          ( (*(k_gon2.begin()+1)).y() - (*(k_gon2.begin()+2)).y()) +
-          (*(k_gon2.begin()+1)).x() *
-          ( (*(k_gon2.begin()+2)).y() - (*(k_gon2.begin())).y()) +
-          (*(k_gon2.begin()+2)).x() *
-          ( (*(k_gon2.begin())).y() - (*(k_gon2.begin()+1)).y())));
-
-      cout << "area2 = " << area_bf << endl;
-
-      CGAL_assertion( area_bf == area_ms);
-      */
+      CGAL::maximum_area_inscribed_k_gon_2(
+        p.vertices_begin(),  p.vertices_end(),
+        k[j],                std::back_inserter(k_gon));
 
     } // for ( j = 0; j < 4; ++j)
 
@@ -227,11 +145,9 @@ int main() {
       // maximum perimeter:
       Cont k_gon;
       k_gon.reserve( k[j]);
-      maximum_perimeter_inscribed_k_gon_2(
-        p.vertices_begin(),
-        p.vertices_end(),
-        k[j],
-        back_inserter( k_gon));
+      CGAL::maximum_perimeter_inscribed_k_gon_2(
+        p.vertices_begin(),  p.vertices_end(),
+        k[j],                std::back_inserter( k_gon));
     } // for ( j = 0; j < 4; ++j)
 
   } // for ( int n( 0); n < 4; ++n)

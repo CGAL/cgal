@@ -1,49 +1,46 @@
 #include <CGAL/Random.h>
 #include <CGAL/Cartesian_matrix.h>
 #include <CGAL/sorted_matrix_search.h>
+#include <CGAL/functional.h>
 #include <vector>
+#include <algorithm>
+#include <iterator>
 
-using namespace std;
-using namespace CGAL;
+typedef int                  Value;
+typedef std::vector<Value>   Vector;
+typedef Vector::iterator     Value_iterator;
+typedef std::vector<Vector>  Vector_cont;
+using CGAL::Cartesian_matrix;
+typedef Cartesian_matrix<std::plus<int>, Value_iterator, Value_iterator>
+  Matrix;
 
-typedef int                              Value;
-typedef vector< Value >                  Vector;
-typedef Vector::iterator                 Value_iterator;
-typedef vector< Vector >                 Vector_cont;
-typedef Cartesian_matrix<
-  plus< int >,
-  Value_iterator,
-  Value_iterator >                       Matrix;
-
-int main() {
+int main()
+{
   // set of vectors the matrices are build from:
   Vector_cont vectors;
 
   // generate a random vector and sort it:
   Vector a;
-  int i;
-  cout << "a = ( ";
-  for ( i = 0; i < 5; ++i) {
-    a.push_back( default_random( 100));
-    cout << a.back() << " ";
-  }
-  cout << ")" << endl;
-  sort( a.begin(), a.end(), less< Value >());
+  const int n = 5;
+  for (int i = 0; i < n; ++i)
+    a.push_back(CGAL::default_random(100));
+  std::sort(a.begin(), a.end());
+  std::cout << "a = ( ";
+  std::copy(a.begin(), a.end(), std::ostream_iterator<int>(std::cout," "));
+  std::cout << ")\n";
 
-  // build a cartesian from a:
-  Matrix M( a.begin(), a.end(), a.begin(), a.end());
+  // build a Cartesian matrix from a:
+  Matrix M(a.begin(), a.end(), a.begin(), a.end());
 
-  // search an upper bound for max(a):
-  Value bound( a[4]);
-  Value upper_bound(
-    sorted_matrix_search(
-      &M,
-      &M + 1,
-      sorted_matrix_search_traits_adaptor(
-        bind_2( greater_equal< Value >(), bound),
-        M)));
-  cout << "upper bound for " << bound << " is "
-       << upper_bound << endl;
+  // search for an upper bound for max(a):
+  Value bound = a[n-1];
+  Value upper_bound =
+  sorted_matrix_search(
+    &M, &M + 1,
+    CGAL::sorted_matrix_search_traits_adaptor(
+      CGAL::bind_2(std::greater_equal<Value>(), bound), M));
+  std::cout << "Upper bound for " << bound << " is "
+            << upper_bound << "." << std::endl;
 
   return 0;
 } 

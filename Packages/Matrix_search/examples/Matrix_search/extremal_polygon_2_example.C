@@ -1,29 +1,21 @@
-// ============================================================================
+// Copyright (c) 1998-2003  ETH Zurich (Switzerland).
+// All rights reserved.
 //
-// Copyright (c) 1998, 1999, 2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision $
-// release_date  : $CGAL_Date $
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : extremal_polygon_2_example.C
-// chapter       : $CGAL_Chapter: Geometric Optimisation $
-// package       : $CGAL_Package: Matrix_search $
-// source        : mon_search.aw
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
-//
-// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
-// coordinator   : ETH
-//
-// Example program: Compute extremal polygons of a convex polygon
-// ============================================================================
+// Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
@@ -33,37 +25,31 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
-using CGAL::random_convex_set_2;
-using CGAL::maximum_area_inscribed_k_gon_2;
+typedef double                                    FT;
 
-typedef double                                FT;
-typedef CGAL::Cartesian< FT >                 K;
-typedef K::Point_2                            Point;
-typedef vector< Point >                       Cont;
-typedef CGAL::Polygon_2< K, Cont >            Polygon;
-typedef CGAL::Creator_uniform_2< FT, Point >  Creator;
-typedef CGAL::Random_points_in_square_2< Point, Creator >
-  Point_generator;
+struct Kernel : public CGAL::Cartesian<FT> {};
+
+typedef Kernel::Point_2                           Point;
+typedef std::vector<int>                          Index_cont;
+typedef CGAL::Polygon_2<Kernel>                   Polygon;
+typedef CGAL::Random_points_in_square_2<Point>    Generator;
 
 int main() {
 
+  int n = 10;
+  int k = 5;
+
+  // generate random convex polygon:
   Polygon p;
-  int number_of_points( 10);
-  int k( 5);
+  CGAL::random_convex_set_2(n, back_inserter(p), Generator(1));
+  std::cout << "Generated Polygon:\n" << p << std::endl;
 
-  random_convex_set_2( number_of_points,
-                       back_inserter( p),
-                       Point_generator( 1));
-  cout << "Generated Polygon:\n" << p << endl;
-
+  // compute maximum area incribed k-gon of p:
   Polygon k_gon;
-  maximum_area_inscribed_k_gon_2(
-    p.vertices_begin(),
-    p.vertices_end(),
-    k,
-    back_inserter( k_gon));
-  cout << "Maximum area " << k << "-gon:\n" << k_gon << endl;
+  CGAL::maximum_area_inscribed_k_gon_2(
+    p.vertices_begin(), p.vertices_end(), k, std::back_inserter(k_gon));
+  std::cout << "Maximum area " << k << "-gon:\n"
+            << k_gon << std::endl;
 
   return 0;
 } 

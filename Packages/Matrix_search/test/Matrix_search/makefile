@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+CGAL_MAKEFILE = /usr/pack/cgal-2.4-mh/make/makefile_sparc_SunOS-5.9_g++-2.95
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#

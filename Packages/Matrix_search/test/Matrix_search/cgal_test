@@ -42,7 +42,7 @@ compile_and_run()
     fi
     echo "Executing $1 ... "
     echo
-    if eval 2>&1 $COMMAND > $OUTPUTFILE ; then
+    if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
       echo "   succesful execution   of $1" >> $ERRORFILE
     else
       echo "   ERROR:    execution   of $1" >> $ERRORFILE
@@ -51,7 +51,7 @@ compile_and_run()
     echo   "   ERROR:    not executed   $1" >> $ERRORFILE
   fi
 
-  eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
+  eval "make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null 2>&1 "
 }
 
 #---------------------------------------------------------------------#
