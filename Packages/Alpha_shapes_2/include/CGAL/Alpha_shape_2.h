@@ -62,8 +62,8 @@ class Alpha_shape_2 : public Delaunay_triangulation_2<Gt, Tds>
 {
 
   template < class Gt, class Tds >
-  friend std::ostream& operator<< (std::ostream& os, const
-				   Alpha_shape_2<Gt,Tds>& A);
+  friend std::ostream& operator<<
+  (std::ostream& os, const Alpha_shape_2<Gt,Tds>& A);
 
   template < class Gt, class Tds >
   friend std::vector<typename Gt::Segment>& operator<<
@@ -71,7 +71,8 @@ class Alpha_shape_2 : public Delaunay_triangulation_2<Gt, Tds>
   
 #ifdef CGAL_ALPHA_WINDOW_STREAM
   template < class Gt, class Tds > 
-  friend Window_stream& operator<< (Window_stream& os, const Alpha_shape_2<Gt,Tds>& A);
+  friend Window_stream& operator<<
+  (Window_stream& os, const Alpha_shape_2<Gt,Tds>& A);
 #endif  
   // DEFINITION The class Alpha_shape_2<Gt,Tds> represents the family
   // of alpha-shapes of points in a plane for all positive alpha. It
@@ -1625,7 +1626,7 @@ Alpha_shape_2<Gt,Tds>::find_alpha_solid() const
 
 //-------------------------------------------------------------------------
 
-template<class Gt, class Tds>
+template < class Gt, class Tds >
 std::ostream& 
 operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A) 
 {
@@ -1864,7 +1865,7 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
 
 //-------------------------------------------------------------------------
 
-template<class Gt, class Tds>
+template < class Gt, class Tds >
 std::vector<typename Gt::Segment>& 
 operator<<(std::vector<typename Gt::Segment>& V, const
 	   Alpha_shape_2<Gt,Tds>& A) 

@@ -3,3 +3,6 @@ Import source from the Reconstruction package.
 
 Version 1.1 :
 -> basic library.
+
+Version 1.2 :
+C++ "standardisation".

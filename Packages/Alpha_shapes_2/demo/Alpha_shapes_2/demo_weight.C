@@ -29,7 +29,7 @@
 #include <cstring>
 #include <iostream>
 #include <fstream>
-#include <strstream.h>
+#include <strstream>
 
 // #include <cassert>
 #include <CGAL/triangulation_assertions.h>

@@ -12,7 +12,8 @@ correspondant a l'Alpha Shape ponderee.
 #include <cstring>
 #include <iostream>
 #include <fstream>
-#include <strstream.h>
+#include <strstream>
+// en fait le std dit sstream
 
 #include <list>
 
@@ -77,7 +78,7 @@ Construst_Alpha_shape(const std::list<Point> &V_p,
   Alpha_shape_2 A;
   
   int  n = A.make_Alpha_shape(V_p.begin(), V_p.end());
-  std::cerr << "Inserted " << n  << " points" << std::endl;
+  std::cout << "Inserted " << n  << " points" << std::endl;
   
   if (mode) 
     { A.set_mode(Alpha_shape_2::GENERAL); } 
@@ -106,14 +107,14 @@ file_input(std::list<Point>& L)
 
   int n;
   is >> n;
-  std::cerr << "Reading " << n << " points" << std::endl;
+  std::cout << "Reading " << n << " points" << std::endl;
   Point p;
   for( ; n>0 ; n--)
     {
       is >> p;
       L.push_back(p);
     }
-  std::cerr << "Points inserted" << std::endl;
+  std::cout << "Points inserted" << std::endl;
   return true;
 }
     
@@ -125,5 +126,5 @@ int main(int argc,  char* argv[])
  file_input(L);
  std::vector<Gt::Segment> V =
    Construst_Alpha_shape(L,10000.0,Alpha_shape_2::GENERAL);
- std::cerr << "Weighted Alpha Shape computed" << std::endl;
+ std::cout << "Weighted Alpha Shape computed" << std::endl;
 }

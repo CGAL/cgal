@@ -29,7 +29,7 @@
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
-template<class Gt, class Tds>
+template < class Gt, class Tds >
 Window_stream& 
 operator<<(Window_stream& W, const Alpha_shape_2<Gt,Tds>& A) 
 {
@@ -167,7 +167,7 @@ CGAL_END_NAMESPACE
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
-template<class Gt, class Tds>
+template < class Gt, class Tds >
 Window_stream& 
 operator<<(Window_stream& W, const Weighted_alpha_shape_2<Gt,Tds>& A) 
 {

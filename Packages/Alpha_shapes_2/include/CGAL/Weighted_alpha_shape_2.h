@@ -1681,7 +1681,7 @@ Weighted_alpha_shape_2<Gt,Tds>::find_alpha_solid() const
 
 //-----------------------------------------------------------------------
 
-template<class Gt, class Tds>
+template < class Gt, class Tds >
 std::ostream& 
 operator<<(std::ostream& os, const Weighted_alpha_shape_2<Gt,Tds>& A) 
 {
