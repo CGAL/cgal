@@ -46,8 +46,8 @@ public:
       Polygon::Edge_const_iterator  it;
       widget->lock();
 	RasterOp old_rasterop=widget->rasterOp();
-	widget->painter().setRasterOp(CopyROP);
-	*widget << CGAL::YELLOW;
+	widget->painter().setRasterOp(XorROP);
+	*widget << CGAL::GREEN;
 	for(it = poly.edges_begin(); it != --poly.edges_end(); it++)
 	  *widget << *it;
 	widget->setRasterOp(old_rasterop);
@@ -77,8 +77,10 @@ public:
 	  //show the last rubber as edge of the polygon
 	  widget->lock();
 	    RasterOp old_rasterop=widget->rasterOp();
-	    widget->painter().setRasterOp(CopyROP);
-	    *widget << CGAL::YELLOW;
+	    widget->painter().setRasterOp(XorROP);
+	    *widget << CGAL::WHITE;
+	    *widget << Segment_2(rubber, last_of_poly);
+	    *widget << CGAL::GREEN;
 	    *widget << Segment_2(rubber, last_of_poly);
 	    widget->setRasterOp(old_rasterop);
 	  widget->unlock();
@@ -106,6 +108,28 @@ public:
     };
   };
 
+  void keyPressEvent(QKeyEvent *e)
+  {
+    switch ( e->key() ) {
+	case 0x1000:				// key_escape
+	  if(poly.size() > 1){
+	    widget->lock();
+	      RasterOp old_rasterop=widget->rasterOp();
+	      widget->painter().setRasterOp(XorROP);
+	      *widget << CGAL::GREEN;
+	      *widget << Segment_2(*(----poly.vertices_end()), last_of_poly);
+	      *widget << CGAL::WHITE;
+	      *widget << Segment_2(rubber, last_of_poly);
+	      *widget << Segment_2(rubber, *(----poly.vertices_end()));
+	      widget->setRasterOp(old_rasterop);
+	    widget->unlock();
+	    poly.erase(--poly.vertices_end());
+	    last_of_poly = *(--poly.vertices_end());
+	  }
+	  break;
+    }//endswitch
+  }
+
   void mouseMoveEvent(QMouseEvent *e)
   {
     if (active)
@@ -132,6 +156,8 @@ public:
   {	
     oldcursor = widget->cursor();
     widget->setCursor(crossCursor);
+    oldpolicy = widget->focusPolicy();
+    widget->setFocusPolicy(QWidget::StrongFocus);
   };
   
   void detaching()
@@ -140,6 +166,7 @@ public:
     active = false;
     first_time = true;
     widget->setCursor(oldcursor);
+    widget->setFocusPolicy(oldpolicy);
     widget->redraw();
   };
   void leaveEvent(QEvent *e)
@@ -189,6 +216,7 @@ protected:
 	  last_of_poly,	//the last point of the polygon
 	  rubber_old; //the old point of the rubber band
   Polygon poly;	      //the polygon
+  QWidget::FocusPolicy	oldpolicy;
 };
 
 } // namespace CGAL
