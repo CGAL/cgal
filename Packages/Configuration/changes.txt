@@ -1,3 +1,8 @@
+2.50 (rursu)
+- Removed test/Configuration/*.C and *.h
+- The release creation process will copy the config/testfiles directory in test/Configuration.
+- We will no longer need to edit two times the configuration files.
+
 2.49 (rursu)
 - LONGNAME_BUC.C: protected pragma by ifdefs _MSC_VER
 
