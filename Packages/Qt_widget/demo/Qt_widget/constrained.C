@@ -35,13 +35,13 @@ int main(int, char*)
 #include <qmenubar.h>
 
 typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>  Rep;
+typedef CGAL::Cartesian<Coord_type>  K;
 
-typedef CGAL::Point_2<Rep>  Point;
-typedef CGAL::Segment_2<Rep>  Segment;
-typedef CGAL::Triangle_2<Rep>  Triangle;
+typedef K::Point_2  Point;
+typedef K::Segment_2  Segment;
+typedef K::Triangle_2  Triangle;
 
-typedef CGAL::Constrained_triangulation_2<Rep>  Constrained_triangulation;
+typedef CGAL::Constrained_triangulation_2<K>  Constrained_triangulation;
 
 typedef Constrained_triangulation::Constraint     Constraint;
 
@@ -51,89 +51,23 @@ typedef Constrained_triangulation::Vertex_handle  Vertex_handle;
 const QString my_title_string("Contrained Triangulation Demo with"
 			      " CGAL Qt_widget");
 
-void
-draw_constraints(CGAL::Qt_widget &win, std::list<Constraint> & lc)
-{
-  win << CGAL::RED;
-  win.lock();
-  std::list<Constraint>::iterator cit=lc.begin();
-  for( ; cit != lc.end(); ++cit) {
-    win << Segment((*cit).first,(*cit).second);
-  }
-  win.unlock();
-  win << CGAL::BLUE;
-} 
 
-void
-input_constraints_from_file(std::list<Constraint> & list_contraintes,
-			    std::ifstream& is)
-{
-  int n;
-  is >> n;
-  qDebug("Reading %d constraints", n);
-  Point p,q;
-  for(; n > 0; n--) {
-    is >> p >> q;
-    list_contraintes.push_back(std::make_pair(p,q));
-  }
-}
-
-void
-draw_connected_component(const Point&  p, 
-			 const Constrained_triangulation& ct,
-			 CGAL::Qt_widget& win)
-{
-	
-  Face_handle fh = ct.locate(p);
-  std::set<Face_handle> component; 
-  std::list<Face_handle> st; 
-  //std::list<Vertex_handle> stv; 
-  // component includes the faces of the connected_component
-  // stack includes the faces in component whose neighbors
-  // have not yet been looked at
-
-  
-  st.push_back(fh);
-  component.insert(fh);
-  while (! st.empty()){
-    fh = st.back();
-    st.pop_back();
-    for(int i = 0 ; i < 3 ; ++i){
-      if ( (! fh->is_constrained(i)) && 
-	   component.find(fh->neighbor(i)) == component.end() ) {
-	component.insert(fh->neighbor(i));
-	st.push_back(fh->neighbor(i));
-      }
-    }
-  }
-
-  // draw
-  int width=win.lineWidth();
-  win << CGAL::FillColor(CGAL::GREEN) << CGAL::LineWidth(0);
-  std::set<Face_handle>::iterator it;
-  for ( it = component.begin(); it != component.end(); it++) {
-    if (! ct.is_infinite( *it)) win << ct.triangle( *it);
-    else win << ct.segment(*it, (*it)->index(ct.infinite_vertex()));
-  }
-  win << CGAL::LineWidth(width);
-  
-  return;
-}
 class MyWindow : public QMainWindow
 {
   Q_OBJECT
 public:
-  MyWindow(int x, int y): win(this) {
-    setCentralWidget(&win);
-    win.set_window(-1.1, 1.1, -1.1, 1.1, true);
-    point_factory = new CGAL::Qt_widget_get_point<Rep>();
-    connect(&win, SIGNAL(new_cgal_object(CGAL::Object)), this,
-	    SLOT(new_point(CGAL::Object)));
-    win.attach(*point_factory);
-    connect(&win, SIGNAL(mousePressed(QMouseEvent*)), this,
-	    SLOT(mousePressedOnWin(QMouseEvent*)));
+  MyWindow(int x, int y) {
+    win = new CGAL::Qt_widget(this);
+    setCentralWidget(win);
+    win->set_window(-1.1, 1.1, -1.1, 1.1, true);
 
-    connect(&win, SIGNAL(custom_redraw()), this, SLOT(redrawWin()));
+    point_factory = new CGAL::Qt_widget_get_point<K>();
+    connect(win, SIGNAL(new_cgal_object(CGAL::Object)),
+	    this, SLOT(new_point(CGAL::Object)) );
+    win->attach(*point_factory);
+
+    connect(win, SIGNAL(custom_redraw()), this, SLOT(redrawWin()) );
+
     statusBar();
     
     // file menu
@@ -147,16 +81,85 @@ public:
     menuBar()->insertItem( "&Help", help );
     help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
 
-    win.show();
+    win->show();
     resize(x,y);
   };
 
+  void draw_constraints()
+  {
+    *win << CGAL::RED;
+    win->lock();
+    std::list<Constraint>::iterator cit=lc.begin();
+    for( ; cit != lc.end(); ++cit) {
+      *win << Segment((*cit).first,(*cit).second);
+    }
+    win -> unlock();
+    *win << CGAL::BLUE;
+  }
+
+  void draw_connected_component(const Point&  p)
+  {
+    
+    Face_handle fh = ct.locate(p);
+    std::set<Face_handle> component; 
+    std::list<Face_handle> st; 
+    //std::list<Vertex_handle> stv; 
+    // component includes the faces of the connected_component
+    // stack includes the faces in component whose neighbors
+    // have not yet been looked at
+    
+  
+    st.push_back(fh);
+    component.insert(fh);
+    while (! st.empty()){
+      fh = st.back();
+      st.pop_back();
+      for(int i = 0 ; i < 3 ; ++i){
+	if ( (! fh->is_constrained(i)) && 
+	     component.find(fh->neighbor(i)) == component.end() ) {
+	  component.insert(fh->neighbor(i));
+	  st.push_back(fh->neighbor(i));
+	}
+      }
+    }
+
+    // draw
+    int width=win->lineWidth();
+    *win << CGAL::FillColor(CGAL::GREEN) << CGAL::LineWidth(0);
+    std::set<Face_handle>::iterator it;
+    for ( it = component.begin(); it != component.end(); it++) {
+      if (! ct.is_infinite( *it)) *win << ct.triangle( *it);
+      else *win << ct.segment(*it, (*it)->index(ct.infinite_vertex()));
+    }
+    *win << CGAL::LineWidth(width);
+
+  };
+  
   void init_paint()
   {
-    win.lock();
+    win->lock();
     load_file("data/fish");
-    win.unlock();
+    win->unlock();
     statusBar()->message("Enter points with the left button");
+  };
+
+  void load_file(QString name)
+  {
+    std::ifstream is(name);
+    lc.clear();
+
+    int n;
+    is >> n;
+    qDebug("Reading %d constraints", n);
+    Point p,q;
+    for(; n > 0; n--) {
+      is >> p >> q;
+      lc.push_back(std::make_pair(p,q));
+    }
+
+    ct=lc;
+    assert(ct.is_valid());
+    redrawWin();
   };
 
   ~MyWindow()
@@ -167,38 +170,28 @@ public slots:
 
   void redrawWin()
   {
-    win.lock();
-    win.clear();
-    win << CGAL::BLUE << ct;
-    draw_constraints(win,lc);
-    win.unlock();
+    win->lock();
+    win->clear();
+    *win << CGAL::BLUE << ct;
+    draw_constraints();
+    win->unlock();
   }
-
-  void mousePressedOnWin(QMouseEvent* e)
-  {
-    statusBar()->message("Terminate with right button");
-    if(e->button() == Qt::RightButton)
-      {
-	qApp->quit();
-      }
-  };
 
   void new_point(CGAL::Object obj)
   {
     Point p;
     if (CGAL::assign(p,obj))
       {
-	win.clear();
-	win.lock();
-	win << CGAL::BLUE <<ct;
-	draw_connected_component(p, ct, win);
-	draw_constraints(win,lc);
-	win << p ;
-	win.unlock();
+	win->clear();
+	win->lock();
+	*win << CGAL::BLUE <<ct;
+	draw_connected_component(p);
+	draw_constraints();
+	*win << p ;
+	win->unlock();
       }
   };
 
-private slots:
   void about()
   {
     QMessageBox::about( this, my_title_string,
@@ -218,17 +211,7 @@ private slots:
   };
 
 private:
-  void load_file(QString name)
-  {
-    std::ifstream is(name);
-    lc.clear();
-    input_constraints_from_file(lc,is);
-    ct=lc;
-    assert(ct.is_valid());
-    redrawWin();
-  };
-
-  CGAL::Qt_widget win;
+  CGAL::Qt_widget* win;
   CGAL::Qt_widget_tool* point_factory;
   std::list<Constraint> lc;
   Constrained_triangulation ct;
@@ -245,8 +228,12 @@ main(int argc, char **argv)
   app.setMainWidget(&win);
   win.setCaption(my_title_string);
   win.show();
-  win.init_paint(); // initial paiting must be done after show()
+
+  // initial paiting must be done after show()
   // because Qt send resizeEvent only on show.
+  win.load_file("data/fish");
+  win.statusBar()->message("Enter points with the left button");
+
   return app.exec();
 }
 
