@@ -1,0 +1,7 @@
+demo/Nef_3/README
+=================
+
+nef_3:  This program maintains a stack of Nef_3 polyhedra and accepts
+------  a little language to manipulate this stack, load files, apply
+        boolean operations, save files, etc.
+
