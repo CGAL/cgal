@@ -1,5 +1,8 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.3 on 16-Jul-2001
+- fixed warning of unused parameter in 'Basis_inverse::init(...)'
+
 Version 0.9.2 on 21-Mar-2001
 - removed 'maintainer' line from file header
 

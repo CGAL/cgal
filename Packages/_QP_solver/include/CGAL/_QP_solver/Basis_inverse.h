@@ -257,7 +257,7 @@ template < class InputIterator1, class InputIterator2 > inline
 void
 init( unsigned int l,
       InputIterator1 u_it, InputIterator2 w_it,
-      unsigned int max_size, Tag_true)
+      unsigned int, Tag_true)
 {
     k = m;
     M = Matrix( m, Row( m, et_0));
