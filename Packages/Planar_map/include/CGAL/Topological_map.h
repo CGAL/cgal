@@ -65,7 +65,6 @@ public:
   typedef typename Dcel::Face::Holes_iterator TR_HOI;
   typedef typename Dcel::Face::Holes_const_iterator TR_C_HOI;
 
-
 public:
   class Vertex;
   class Halfedge;
@@ -366,22 +365,22 @@ public:
     // the CC compiler thinks we mean Base::Holes_iterator.
     Holes_iterator holes_begin() 
     {
-      return TR_HOI(typename Base::holes_begin());
+      return TR_HOI(Base::holes_begin());
     }
 
     Holes_const_iterator holes_begin() const
     {
-      return TR_C_HOI(typename Base::holes_begin()); 
+      return TR_C_HOI(Base::holes_begin()); 
     }
     
     Holes_iterator holes_end() 
     {
-      return TR_HOI(typename Base::holes_end()); 
+      return TR_HOI(Base::holes_end()); 
     }
 
     Holes_const_iterator holes_end() const 
     {
-      return TR_C_HOI(typename Base::holes_end()); 
+      return TR_C_HOI(Base::holes_end()); 
     }
 
     bool is_halfedge_on_inner_ccb(Halfedge_const_handle e) 
