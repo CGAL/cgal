@@ -1,33 +1,82 @@
 % begin cgal manual page
 
-\begin{ccRefClass}{Nef_polyhedron_S2<K>}\ccCreationVariable{N}
+\begin{ccRefClass}{Nef_polyhedron_S2<Traits>}\ccCreationVariable{N}
   
 \ccDefinition
 
 An instance of data type \ccc{Nef_polyhedron_S2<K>} is a subset of
-$S_2$ that is the result of forming complements and intersections
-starting from a finite set \ccc{H} of half-spaces bounded by a plane
-containing the origin. Halfspaces correspond to hemispheres of $S_2$
-and are therefore modeled by oriented great circles of type
-\ccc{Sphere_circle}. \ccc{Nef_polyhedron_S2} is closed under all
-binary set operations \ccc{intersection}, \ccc{union},
+the sphere $S_2$ that is the result of forming complements and 
+intersections starting from a finite set \ccc{H} of halfspaces 
+bounded by a plane containing the origin. Halfspaces correspond to 
+hemispheres of $S_2$ and are therefore modeled by oriented great 
+circles of type \ccc{Sphere_circle}. \ccc{Nef_polyhedron_S2} is 
+closed under all binary set operations \ccc{intersection}, \ccc{union},
 \ccc{difference}, \ccc{complement} and under the topological
 operations \ccc{boundary}, \ccc{closure}, and \ccc{interior}.
 
-The template parameter \ccc{Kernel} is specified via a kernel concept.
-\ccc{Kernel} must be a model of the concept
+\ccInclude{CGAL/Nef_polyhedron_S2.h}
+
+\ccParameters
+
+\begin{tabbing}
+\ccc{template <} \=\ccc{class NefSphereKernelTraits_2,}\\
+                 \>\ccc{class NefSphereItems_2 = CGAL::SM_items,}\\
+                 \>\ccc{class Nef_polyhedronMarks = bool}\\
+    \ccc{class Nef_polyhedron_S2;}
+\end{tabbing}
+
+The first template parameter must be a model of the concept
 \ccc{NefSphereKernelTraits_2}.
+
+The second parameter expects a model of the concept
+\ccc{Nef_polyhedronItems_3}.  The default is the \ccc{CGAL::SNC_items}
+class.
+
+The third parameter expects a model of the concept \ccc{Nef_polyhedronMarks}.
+The default is the basic type \ccc{bool}.
 
 \ccSetOneOfTwoColumns{7cm}
 
 \ccTypes
 
 \ccNestedType{Sphere_point}{points in the sphere surface.}
-
+\ccGlue
 \ccNestedType{Sphere_segment}{segments in the sphere surface.}
-
+\ccGlue
 \ccNestedType{Sphere_circle}{oriented great circles modeling spatial
   half-spaces.}
+
+\ccNestedType{SVertex_const_handle}{non-mutable handle to svertex.}
+\ccGlue
+\ccNestedType{SHalfedge_const_handle}{non-mutable handle to shalfedge.}
+\ccGlue
+\ccNestedType{SHalfloop_const_handle}{non-mutable handle to shalfloop.}
+\ccGlue
+\ccNestedType{SFace_const_handle}{non-mutable handle to sface.}
+
+\ccNestedType{SVertex_const_iterator}{non-mutable iterator over all svertices.}
+\ccGlue
+\ccNestedType{SHalfedge_const_iterator}{non-mutable iterator over all shalfedges.}
+\ccGlue
+\ccNestedType{SHalfloop_const_iterator}{non-mutable iterator over all shalfloops.}
+\ccGlue
+\ccNestedType{SFace_const_iterator}{non-mutable iterator over all sfaces.}
+
+\ccNestedType{SHalfedge_around_svertex_const_circulator}{circulating the
+  adjacency list of an svertex \ccc{v}.  }
+\ccGlue
+\ccNestedType{SHalfedge_around_sface_const_circulator}{circulating the
+  sface cycle of an sface \ccc{f}.  }
+\ccGlue
+\ccNestedType{SFace_cycle_const_iterator}{iterating all sface cycles of
+  an sface \ccc{f}.  The iterator has method \ccc{bool is_svertex()},
+  \ccc{bool is_shalfedge()}, \ccc{bool is_shalfloop()}, and can be
+  converted to the corresponding handles \ccc{SVertex_const_handle},
+  \ccc{SHalfedge_const_handle}, or \ccc{SHalfloop_const_handle}.  }
+
+\ccNestedType{Mark}{attributes of objects (vertices, edges, faces).}
+
+\ccNestedType{Size_type}{size type.}
 
 \ccEnum{enum Boundary { EXCLUDED, INCLUDED }}{construction selection.}
 
@@ -71,8 +120,8 @@ The template parameter \ccc{Kernel} is specified via a kernel concept.
 \ccMethod{ bool is_empty() ;}{returns true if \ccc{N} is empty, false
   otherwise.  }
 
-\ccMethod{ bool is_plane() ;}{returns true if \ccc{N} is the whole
-  plane, false otherwise.  }
+\ccMethod{ bool is_sphere() ;}{returns true if \ccc{N} is the whole
+  sphere, false otherwise.  }
 
 \ccHeading{Constructive Operations} 
 
@@ -114,6 +163,42 @@ There are also comparison operations like \ccc{<,<=,>,>=,==,!=} which
 implement the relations subset, subset or equal, superset, superset or
 equal, equality, inequality, respectively.
 
+\ccHeading{Statistics and Integrity} 
+
+\ccThree{Size_type}{N.number_of_sface_cycles();}{}
+
+\ccMethod{Size_type number_of_svertices() ;}{returns the number of
+  svertices.  }
+\ccGlue
+\ccMethod{Size_type number_of_shalfedges() ;}{returns the number of
+  shalfedges.  }
+
+\ccMethod{Size_type number_of_sedges() ;}{returns the number of sedges.
+  }
+\ccGlue
+\ccMethod{Size_type number_of_shalfloops() ;}{returns the number of
+  shalfloops.  }
+\ccGlue
+\ccMethod{Size_type number_of_sloops() ;}{returns the number of sloops.
+  }
+\ccGlue
+\ccMethod{Size_type number_of_sfaces() ;}{returns the number of sfaces.
+  }
+\ccGlue
+\ccMethod{Size_type number_of_sface_cycles() ;}{returns the number of
+  sface cycles.  }
+\ccGlue
+\ccMethod{Size_type number_of_connected_components() ;}{calculates the
+  number of connected components of \ccc{P}.  }
+\ccGlue
+\ccMethod{void print_statistics(std::ostream& os = std::cout) ;}{print
+  the statistics of \ccc{P}: the number of vertices, edges, and faces.
+  }
+\ccGlue
+\ccMethod{void check_integrity_and_topological_planarity(bool
+  faces=true) ;}{checks the link structure and the genus of \ccc{P}.
+  }
+
 \ccHeading{Exploration - Point location - Ray shooting} As Nef
 polyhedra are the result of forming complements and intersections
 starting from a set \ccc{H} of half-spaces that are defined by
@@ -125,9 +210,6 @@ structure.
 \ccSetOneOfTwoColumns{3cm}
 
 \ccTypes
-
-\ccNestedType{Explorer}{a decorator to examine the underlying plane
-  map.  See the manual page of \ccc{Explorer}.  }
 
 \ccNestedType{Object_handle}{a generic handle to an object of the
   underlying plane map. The kind of object \ccc{(vertex, halfedge,
@@ -180,9 +262,28 @@ structure.
   \ccc{m} allows one to choose between different point location
   strategies.  }
 
-\ccMethod{ Explorer explorer() ;}{returns a decorator object which
-  allows read-only access of the underlying plane map. See the manual
-  page \ccc{Explorer} for its usage.  }
+\ccHeading{Iteration} 
+
+\ccThree{SHalfloop_const_handle;}{N.has_shalfloop();;}{}
+
+\ccMethod{bool has_shalfloop() const;}{returns true iff there is 
+  a shalfloop.  }
+
+\ccMethod{SHalfloop_const_handle shalfloop() const;}{returns access to the
+  sloop.  }
+
+The list of all objects can be accessed via iterator ranges.
+For comfortable iteration we also provide iterations macros. 
+The iterator range access operations are of the following kind:\\
+\ccc{SVertex_iterator   svertices_begin()/svertices_end()}\\
+\ccc{SHalfedge_iterator shalfedges_begin()/shalfedges_end()}\\
+\ccc{SHalfloop_iterator shalfloops_begin()/shalfloops_end()}\\
+\ccc{SFace_iterator     sfaces_begin()/sfaces_end()}
+
+The macros are then \ccc{CGAL_forall_svertices(v,M)},
+\ccc{CGAL_forall_shalfedges(e,M)}, \ccc{CGAL_forall_sfaces(f,M)},
+\ccc{CGAL_forall_sface_cycles_of(fc,F)} where \ccc{M} is a sphere map
+and \ccc{F} is a sface.
 
 \ccHeading{Input and Output} A Nef polyhedron \ccc{N} can be
 visualized in an open GL window. The output operator is defined in the
@@ -205,11 +306,10 @@ preprocessing.
 
 \ccExample
 
-Nef polyhedra are parameterized by a standard CGAL kernel.
+Nef polyhedra are parameterized by a standard CGAL kernel. The example
+computes the intersection of two Nef polyhedra \ccc{N1} and \ccc{N2}.
 
 \ccIncludeExampleCode{Nef_S2/simple.C}
-
-After line (*) \ccc{N3} is the intersection of \ccc{N1} and \ccc{N2}. 
 
 \end{ccRefClass}
 
