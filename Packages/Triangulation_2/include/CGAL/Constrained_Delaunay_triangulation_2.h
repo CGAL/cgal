@@ -75,7 +75,7 @@ public:
   }
 
   template<class InputIterator>
-  Constrained_triangulation_2(InputIterator first,
+  Constrained_Delaunay_triangulation_2(InputIterator first,
 			      InputIterator last,
 			      const Gt& gt=Gt() )
      : Constrained_Delaunay_triangulation_2(gt)
