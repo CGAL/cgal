@@ -25,7 +25,7 @@ lexicographically_xyz_smaller_or_equal(const PointC3<R CGAL_CTAG> &p,
                                        const PointC3<R CGAL_CTAG> &q)
 {
   return compare_lexicographically_xyz(p,q) != LARGER;
-}
+ }
 
 template < class R >
 bool

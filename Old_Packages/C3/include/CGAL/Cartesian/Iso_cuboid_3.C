@@ -6,7 +6,7 @@
 #define CGAL_CARTESIAN_ISO_CUBOID_3_C
 
 #include <CGAL/Bbox_3.h>
-#include <CGAL/predicates_on_points_3.h>
+#include <CGAL/Cartesian/predicates_on_points_3.h>
 
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #define CGAL_CTAG
