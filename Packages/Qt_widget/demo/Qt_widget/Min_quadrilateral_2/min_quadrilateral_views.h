@@ -14,9 +14,9 @@ template <class R>
 class Qt_view_show_parallelogram : public CGAL::Qt_widget_view
 {
 public:
-  typedef R::Point_2	Point;
-  typedef R::Segment_2	Segment;
-  typedef R::Line_2	Line;
+  typedef typename R::Point_2	Point;
+  typedef typename R::Segment_2	Segment;
+  typedef typename R::Line_2	Line;
 
 
   typedef CGAL::Polygon_traits_2< R>			    Traits;
@@ -60,9 +60,9 @@ template <class R>
 class Qt_view_show_strip : public CGAL::Qt_widget_view
 {
 public:
-  typedef R::Point_2	Point;
-  typedef R::Segment_2	Segment;
-  typedef R::Line_2	Line;
+  typedef typename R::Point_2	Point;
+  typedef typename R::Segment_2	Segment;
+  typedef typename R::Line_2	Line;
 
 
   typedef CGAL::Polygon_traits_2< R>			    Traits;
@@ -103,9 +103,9 @@ template <class R>
 class Qt_view_show_rectangle : public CGAL::Qt_widget_view
 {
 public:
-  typedef R::Point_2	Point;
-  typedef R::Segment_2	Segment;
-  typedef R::Line_2	Line;
+  typedef typename R::Point_2	Point;
+  typedef typename R::Segment_2	Segment;
+  typedef typename R::Line_2	Line;
 
 
   typedef CGAL::Polygon_traits_2< R>			    Traits;
@@ -150,7 +150,7 @@ template <class R>
 class Qt_view_show_points : public CGAL::Qt_widget_view
 {
 public:
-  typedef R::Point_2	Point;
+  typedef typename R::Point_2	Point;
   
   Qt_view_show_points(std::list<Point> *pl){list_of_points = pl;};
 
