@@ -204,6 +204,7 @@ sqrt (const Interval_nt<Protected> & d)
   return Interval_nt<Protected>(i, CGAL_IA_SQRT(d.sup_));
 }
 
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template <bool Protected>
 inline
 Interval_nt<Protected>
@@ -221,6 +222,38 @@ max (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
   return Interval_nt<Protected>(std::max(d.inf_, e.inf_),
 		                std::max(d.sup_, e.sup_));
 }
+
+#else
+
+inline
+Interval_nt<false>
+min (const Interval_nt<false> & d, const Interval_nt<false> & e)
+{
+  return Interval_nt<false>(std::min(d.inf_, e.inf_),std::min(d.sup_, e.sup_));
+}
+
+inline
+Interval_nt<false>
+max (const Interval_nt<false> & d, const Interval_nt<false> & e)
+{
+  return Interval_nt<false>(std::max(d.inf_, e.inf_),std::max(d.sup_, e.sup_));
+}
+
+inline
+Interval_nt<true>
+min (const Interval_nt<true> & d, const Interval_nt<true> & e)
+{
+  return Interval_nt<true>(std::min(d.inf_, e.inf_),std::min(d.sup_, e.sup_));
+}
+
+inline
+Interval_nt<true>
+max (const Interval_nt<true> & d, const Interval_nt<true> & e)
+{
+  return Interval_nt<true>(std::max(d.inf_, e.inf_),std::max(d.sup_, e.sup_));
+}
+
+#endif // CGAL_CFG_MATCHING_BUG_2
 
 namespace NTS {
 

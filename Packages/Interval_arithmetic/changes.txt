@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.57 on 10 September 2000
+- Workaround for M$VC++, min/max.
+
 Version 4.56 on 6 September 2000
 - Renamed data member _inf and _sup to inf_ and sup_ for standard compliance.
 
