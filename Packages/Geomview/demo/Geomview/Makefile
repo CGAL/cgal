@@ -14,11 +14,9 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
 	-I../../include \
-	-I../../../Triangulation/include \
-	-I../../../Triangulation3/include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-O2 -W -Wall -pedantic
+	-W -Wall # -O2 # -pedantic
 	# -g -W -Wall -Winline
 	# -O2 -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
 	# -O2 -W -Winline -Wunused -malign-double
@@ -33,6 +31,8 @@ CXXFLAGS = \
 	# -frepo
 	# -pedantic
 	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
+	# -I../../../Triangulation/include \
+	# -I../../../Triangulation3/include \
 	# -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
 	# /Fatst1.s
 	# /Op /Oi /Od /Za /O2 /Ox
