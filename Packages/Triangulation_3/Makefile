@@ -3,13 +3,13 @@
 CVS_MODULE_NAME=tet
 Package=Triangulation3
 
-.PHONY: doc package filters test example submit version rtag
+.PHONY: doc package test example submit version rtag
 
 WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
-package: doc filters example clean $(Package).tar.gz
+package: doc example clean $(Package).tar.gz
 	@echo "-----------------------------------"
 	@echo "------------ Penser à: ------------"
 	@echo "-----------------------------------"
@@ -44,8 +44,8 @@ test:
 	$(MAKE) -C test/$(Package)
 
 clean:
-	$(MAKE) -C doc_tex/basic/Triangulation3 clean
-	$(MAKE) -C examples/Triangulation3 clean
+	$(MAKE) -C doc_tex/basic/$(Package) clean
+	$(MAKE) -C examples/$(Package) clean
 	$(MAKE) -C test/$(Package) clean
 	rm -f $(Package).tar.gz
 
@@ -58,8 +58,8 @@ $(Package).tar.gz:
 	--exclude=Weighted_point_3.h \
 	--exclude=TODO \
 	version description.txt changes.txt \
-	src demo include doc_tex doc_ps test examples
+	demo include doc_tex doc_ps test examples
 
-doc:
-	$(MAKE) -C doc_tex/basic/Triangulation3
-	cp doc_tex/basic/Triangulation3/$(Package).ps doc_ps/
+doc: doc_ps/$(Package).ps
+	$(MAKE) -C doc_tex/basic/$(Package)
+	cp doc_tex/basic/$(Package)/$(Package).ps doc_ps/
