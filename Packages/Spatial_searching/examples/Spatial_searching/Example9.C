@@ -184,9 +184,9 @@ return sqrt(d);
 
 }; // end of class
 
-// typedef CGAL::Kernel_traits<Point>::Kernel K;
-// typedef K::FT NT;
-typedef double NT;
+typedef CGAL::Kernel_traits<Point>::Kernel K;
+typedef K::FT NT;
+// typedef double NT;  causes IRIS compiler problem ??
 
 typedef CGAL::Plane_separator<NT> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
@@ -194,7 +194,7 @@ typedef CGAL::Creator_uniform_3<double,Point> Creator;
 typedef CGAL::Nearest_neighbour_L2_standard_search_Minkowski_norm <Traits,CGAL::Search_nearest_neighbour,Point3D_distance> 
 Nearest_neighbours_type;
 
-// typedef std::vector<Point> Vector;  causes IRIS compiler problem
+// typedef std::vector<Point> Vector;  causes IRIS compiler problem ??
 typedef std::vector<Traits::Item> Vector;
 
 NT The_squared_distance(const Point& P, const Point& Q) {
@@ -213,10 +213,9 @@ NT The_squared_distance(const Point& P, const Point& Q) {
   int bucket_size=1;
   NT eps=0.0;
 
-  std::vector<double> my_weights(dim);
-  my_weights[0]=1.0; my_weights[1]=1.0; my_weights[2]=1.0;
+  
 
-  const int data_point_number=  10000;
+  const int data_point_number=  1000000;
   const int query_point_number= 10000;
 
   std::cout << " bucket_size="
@@ -241,7 +240,7 @@ NT The_squared_distance(const Point& P, const Point& Q) {
     
   
   Vector query_points;
-  query_points.reserve(10000);
+  query_points.reserve(query_point_number);
 
   // Create 10000 query points within the same cube.
   CGAL::copy_n( g, query_point_number, std::back_inserter(query_points));
@@ -283,7 +282,7 @@ NT The_squared_distance(const Point& P, const Point& Q) {
   << query_point_number << " queries in time " <<  t.time() <<
   " seconds using ASPAS" << std::endl; 
 
- 
+  /*
   // brute force approach
 
   // copy data points from list to vector
@@ -330,12 +329,14 @@ NT The_squared_distance(const Point& P, const Point& Q) {
 	};
   };
   std::cout << "all results are fine" << std::endl;  
+  */
   return 0;
 };
 
 int main() {
   test_benchmark_nearest_neighbour_L2();
 
+  
   /*
   double dummy;
   std::cout << "Enter input to stop: \n" ;

@@ -120,9 +120,9 @@ operator==(const Point& p, const Point& q)
 
 
 
-// typedef CGAL::Kernel_traits<Point>::Kernel K;
-// typedef K::FT NT;
-typedef double NT;
+typedef CGAL::Kernel_traits<Point>::Kernel K;
+typedef K::FT NT;
+// typedef double NT; causes IRIS compiler problem ??
 
 typedef CGAL::Plane_separator<NT> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
@@ -131,7 +131,7 @@ typedef CGAL::Weighted_Minkowski_distance<Traits> Distance_traits;
 typedef CGAL::Nearest_neighbour_L2_standard_search_Minkowski_norm <Traits,CGAL::Search_nearest_neighbour,Distance_traits> 
 Nearest_neighbours_type;
 
-// typedef std::vector<Point> Vector;  causes IRIS compiler problem
+// typedef std::vector<Point> Vector;  causes IRIS compiler problem ??
 typedef std::vector<Traits::Item> Vector;
 
 NT The_squared_distance(const Point& P, const Point& Q) {
