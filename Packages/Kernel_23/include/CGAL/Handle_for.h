@@ -120,20 +120,20 @@ public:
     id() const
     { return reinterpret_cast<long int>(&*ptr_); }
 
-    // Ptr() is the "public" access to the pointer.  Both const and non-const.
-    // non-const does copy-on-write.
+    // Ptr() is the "public" access to the pointer to the object.
+    // The non-const version asserts that the instance is not shared.
     const T *
     Ptr() const
-    { return &(ptr_->t); }
+    {
+       return &(ptr_->t);
+    }
 
-    /*
     T *
     Ptr()
     {
-	copy_on_write();
-	return ptr_;
+      CGAL_assertion(!is_shared());
+      return &(ptr_->t);
     }
-    */
 
     bool
     is_shared() const
@@ -163,13 +163,14 @@ protected:
     }
 
     // ptr() is the protected access to the pointer.  Both const and non-const.
+    // Redundant with Ptr().
     T *
     ptr()
-    { return &(ptr_->t); }
+    { return Ptr(); }
 
     const T *
     ptr() const
-    { return &(ptr_->t); }
+    { return Ptr(); }
 };
 
 
