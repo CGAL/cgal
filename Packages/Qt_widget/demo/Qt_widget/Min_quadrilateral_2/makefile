@@ -28,8 +28,6 @@ LIBPATH = \
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_QT_LDFLAGS) \
-          -lCGALQt
-
 
 #---------------------------------------------------------------------#
 #                    target entries
