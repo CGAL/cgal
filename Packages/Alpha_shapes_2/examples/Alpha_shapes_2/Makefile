@@ -34,14 +34,14 @@ LDFLAGS = $(CGAL_WINDOW_LIBPATH) \
 #                    target entries
 #---------------------------------------------------------------------#
 
-test_alpha: test_alpha.o
-	$(CGAL_CXX) -o test_alpha  test_alpha.o $(LDFLAGS)
+example_alpha: example_alpha.o
+	$(CGAL_CXX) -o example_alpha  example_alpha.o $(LDFLAGS)
 
-test_weight: test_weight.o
-	$(CGAL_CXX) -o test_weight  test_weight.o $(LDFLAGS)
+example_weight: example_weight.o
+	$(CGAL_CXX) -o example_weight  example_weight.o $(LDFLAGS)
 clean:
 	/bin/rm -f *.o \
-                   test_alpha  test_weight \
+                   example_alpha  example_weight \
                    core
 
 #---------------------------------------------------------------------#

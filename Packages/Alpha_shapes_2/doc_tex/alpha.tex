@@ -42,7 +42,7 @@ $\alpha$-values.
 
 %----------------------------------------------------------------------
 
-\section{Alpha Shape of Points in a Plane \label{I1_SectAlpha Shape_2}}
+\section{Alpha Shape of Points in a Plane \label{I1_SectAlpha_Shape_2}}
 
 \begin{ccClassTemplate} {Alpha_shape_2<Gt,Tds>}
 
@@ -375,13 +375,523 @@ p1}.}
 The class \ccStyle{Alpha_shape_2<Gt,Tds>} parameterized with a
 triangulation data structure class, that has exactly the same
 requirements as the Delaunay triangulation triangulation data
-structure class. But, she requires to be templated by the the two
-paramaters \ccc{Alpha_shape_vertex_base_2} and
-\ccc{Alpha_shape_face_base_2}.
+structure class. 
+
+But, she requires to be templated by special \ccc{Vertex} and
+\ccc{Face}, to store the alpha values associated. Thus, we need to
+define the requirements of such Alpha Shape \ccc{Vertex} and
+\ccc{Face} classes.
+
+\subsection{The Vertex Type of an Alpha Shape\label{I1_SectVertex}}
+
+The information about the alpha values associated  are store in the 
+vertices of the Alpha Shape. Thus the nested \ccc{Vertex}
+type of a Alpha Shape offers additonnal functionalities to deal with this information.
+This additional functionalities related to the Alpha Shape
+are requirements which have to be fulfilled
+by the base face  an Alpha Shape
+in addition to the functionalities required by a simple Triangulation Vertex
+They are listed below as such.
+
+
+
+\begin{ccClass}{Alpha_shape_vertex_base}
+\ccCreationVariable{v}
+\ccCreation
+\ccConstructor{Alpha_shape_vertex_base()}{default constructor.}
+\ccGlue
+\ccConstructor{Alpha_shape_vertex_base(Point p)}{constructor setting
+th point associated to.}
+\ccGlue
+\ccConstructor{Alpha_shape_vertex_base(Point p, void* f)} 
+{constructor setting the point  associated to and an incident face.}
+
+\ccHeading{Access Functions}
+\ccMethod{std::pair< Coord_type, Coord_type > get_Range();}
+{returns two alpha values $\alpha_1 \leq \alpha_2$, such as for
+$\alpha$ under $\alpha_2$, the vertex is attached but singular, and
+for $\alpha$ under $\alpha_1$, the vertex is regular.}
+
+
+\ccModifiers
+\ccMethod{void Range(std::pair< Coord_type, Coord_type > I);}
+{sets the alpha values $\alpha_1 \leq \alpha_2$, such as for
+$\alpha$ under $\alpha_2$, the vertex is attached but singular, and
+for $\alpha$ under $\alpha_1$, the vertex is regular.}
+\end{ccClass}
+
+
+Of course  \cgal\ provides a default \ccc{Vertex_base} class
+for the Alpha Shape. The class
+\ccc{Alpha_shape_face_base_2<Gt>} simply derived from 
+\ccc{Triangulation_face_base_2<Gt>}.
 
 \ccInclude{CGAL/Alpha_shape_vertex_base_2.h}
 
+\subsection{The Face Type of an Alpha Shape} 
+
+The information about the alpha values associated  are store in the 
+vertices of the Alpha Shape. Thus the nested \ccc{Face}
+type of a Alpha Shape offers additonnal functionalities to deal with this information.
+This additional functionalities related to the Alpha Shape
+are requirements which have to be fulfilled
+by the base face  an Alpha Shape
+in addition to the functionalities required by a simple Triangulation Face
+They are listed below as such.
+
+
+
+\begin{ccClass}{Alpha_shape_face_base}
+\ccCreationVariable{f}
+\ccCreation
+\ccConstructor{Alpha_shape_face_base()}{default constructor.}
+\ccGlue
+\ccConstructor{Alpha_shape_face_base(void* v0, void* v1, void* v2)}{constructor setting the incident vertices.}
+\ccGlue
+\ccConstructor{Alpha_shape_face_base(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2)} 
+{constructor setting the incident vertices and the neighboring faces.}
+
+\ccHeading{Access Functions}
+\ccMethod{std::vector<Interval3> get_Range();}
+{returns a vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains three alpha values $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
+$\alpha$ under $\alpha_3$, the edge is attached but singular,
+for $\alpha$ under $\alpha_2$, the face is regular, and for $\alpha$
+under $\alpha_1$, the edge is interior.}
+\ccMethod{Coord_type get_Alpha();}
+{return the Alpha value, under which the Alpha Shape contains the
+face.}
+
+\ccModifiers
+\ccMethod{void Range(std::vector<Interval3> V);}
+{sets the vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains three alpha values $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
+$\alpha$ under $\alpha_3$, the edge is attached but singular,
+for $\alpha$ under $\alpha_2$, the face is regular, and for $\alpha$
+under $\alpha_1$, the edge is interior.}
+\ccMethod{void Alpha(Coord_type A);}
+{sets the Alpha value, under which the Alpha Shape contains the
+face.}
+
+\end{ccClass}
+
+
+Of course  \cgal\ provides a default \ccc{Face_base} class
+for the Alpha Shape. The class
+\ccc{Alpha_shape_face_base_2<Gt>} simply derived from 
+\ccc{Triangulation_face_base_2<Gt>}.
+
 \ccInclude{CGAL/Alpha_shape_face_base_2.h}
 
-These two classes have the same requirements as the classes
-\ccc{Triangulation_vertex_base_2} and \ccc{Triangulation_face_base_2}.
+%----------------------------------------------------------------------
+
+\section{Weighted Alpha Shape of Points in a Plane \label{I2_SectWeighted_Alpha_Shape_2}}
+
+\begin{ccClassTemplate} {Weighted_alpha_shape_2<Gt,Tds>}
+
+\ccDefinition
+The class \ccClassTemplateName\ represents the family of
+$\alpha$-shapes of weighted points in a plane for {\em all} positive
+$\alpha$. It maintains the underlying Regular triangulation which
+represents connectivity and order among its faces. Each
+$k$-dimensional face of the Regular triangulation is associated with
+an interval that specifies for which values of $\alpha$ the face
+belongs to the $\alpha$-shape. There are links between the intervals
+and the $k$-dimensional faces of the Regular triangulation.
+
+
+\ccInclude{CGAL/Weighted_alpha_shape_2.h}
+
+\ccInheritsFrom
+
+\ccStyle{Regular_triangulation_2<Gt,Tds>}
+
+The modifying functions \ccStyle{insert} and \ccStyle{remove} will overwrite
+the inherited functions. At the moment, only the static version is implemented.
+
+\ccTypes
+\ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
+\ccThreeToTwo
+
+\ccNestedType{Gt}{the weighted alpha shape traits type.}
+ 
+It contains the Regular triangulation traits class.  For example
+\ccStyle{Gt::Point} is a mapping on a weighted point class. Additionally,
+it defines a mapping on a coordinate type class.
+
+\ccTypedef{typedef Gt::Coord_type Coord_type;}{}
+
+\ccNestedType{Alpha_iterator}{An iterator that allow to traverse 
+the sorted sequence of different $\alpha$-values. The iterator is
+bidirectional and non-mutable. Its \ccStyle{value_type}
+is \ccStyle{Coord_type}}
+
+\ccEnum{enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR};}
+{Distinguishes the different cases for classifying a $k$-dimensional face
+ of the underlying Regular triangulation of the $\alpha$-shape. \\
+\ccStyle{EXTERIOR} if the face does not belong to the $\alpha$-complex.\\
+\ccStyle{SINGULAR} if the face belongs to the boundary of the $\alpha$-shape,
+ but is not incident to any 2-dimensional face of the $\alpha$-complex\\
+\ccStyle{REGULAR} if the face belongs to the boundary of the $\alpha$-shape
+ and is incident to a 2-dimensional face of the $\alpha$-complex\\
+\ccStyle{INTERIOR} if the face belongs to the $\alpha$-complex, but does
+not belong to the boundary of the $\alpha$-shape\\}
+
+\ccEnum{enum Mode {GENERAL, REGULARIZED};}
+{ In general, an weighted alpha shape is a non-connected, mixed-dimension
+polygon. Its regularized version is formed by the set of regular edges
+and their vertices}
+
+\ccCreation
+\ccCreationVariable{A}
+
+\ccConstructor{Weighted_alpha_shape_2(Coord_type alpha = 0,
+				  Mode m = GENERAL);}
+{Introduces an empty $\alpha$-shape \ccVar\ for a positive $\alpha$-value
+ \ccStyle{alpha}.
+\ccPrecond \ccStyle{alpha}~$\geq~0$.}
+
+
+\ccConstructor{template < class InputIterator >
+		Weighted_alpha_shape_2(
+			InputIterator first,
+			InputIterator last,
+                const Coord_type& alpha = 0,
+	        Mode m = GENERAL);}
+{Initializes the family of alpha-shapes with the weighted points in the range
+$\left[\right.$\ccStyle{first}, \ccStyle{last}$\left.\right)$ and 
+introduces an $\alpha$-shape \ccVar\ for a positive $\alpha$-value
+\ccStyle{alpha}.  
+\ccPrecond The \ccStyle{value_type} of \ccStyle{first} and
+\ccStyle{last} is \ccStyle{Weighted_point}.\\
+\ccStyle{alpha} $\geq 0$.}
+
+\ccOperations
+
+\ccMethod{template < class InputIterator >
+		int make_Alpha_shape(
+			InputIterator first,
+			InputIterator last,
+                        const Coord_type& alpha = 0,
+	                Mode m = GENERAL);}
+{Initialize the family of alpha-shapes with the weighted points in the range
+$\left[\right.$\ccStyle{first}, \ccStyle{last}$\left.\right)$ and 
+introduces an $\alpha$-shape \ccVar\ for a positive $\alpha$-value
+\ccStyle{alpha}. Returns the number of inserted weighted points. \\
+If the function is applied to an non-empty family of alpha-shape, it is cleared
+before initialization.
+\ccPrecond The \ccStyle{value_type} of \ccStyle{first} and
+\ccStyle{last} is \ccStyle{Weighted_point}.\\
+\ccStyle{alpha} $\geq 0$.}
+
+\ccMethod{void
+	clear();}
+{Clears the structure.}
+
+\ccMethod{Coord_type
+	set_alpha(const Coord_type& alpha);}
+{Sets the $\alpha$-value to \ccStyle{alpha}.
+ Returns the previous $\alpha$-value.
+\ccPrecond \ccStyle{alpha} $\geq 0$.}
+
+\ccMethod{const Coord_type&
+	get_alpha(void) const;}
+{Returns the current $\alpha$-value.}
+
+\ccMethod{const Coord_type&  get_nth_alpha(int n) const;}
+{Returns the $n$-th alpha-value.
+ \ccPrecond \ccStyle{n} < number of alphas.}
+
+\ccMethod{int number_of_alphas() const;}
+{Returns the number of different alpha-values.}
+
+% dynamic version	
+% 
+% \ccMethod{Vertex* insert(const Point& p);}
+% {Inserts point \ccStyle{p} in the alpha shape and returns the
+% corresponding vertex of the underlying Regular triangulation.\\ If
+% point \ccStyle{p} coincides with an already existing vertex, this
+% vertex is returned and the alpha shape remains unchanged.\\ Otherwise,
+% the vertex is inserted in the underlying Regular triangulation and
+% the associated intervals are updated. }
+% 
+% \ccMethod{void remove(Vertex *v);}
+% {Removes the vertex from the underlying Regular triangulation. The
+% created hole is retriangulated and the associated intervals are
+% updated.}
+% 
+
+\ccMethod{Mode
+	set_mode(Mode m = GENERAL );}
+{Sets \ccVar\ to its general or regularized version. 
+Returns the previous mode.}
+
+\ccMethod{Mode
+	get_mode(void) const;}
+{Returns whether \ccVar\ is general or regularized.}
+
+\ccMethod{template  < class OutputIterator >
+	  OutputIterator get_Alpha_shape_vertices(
+					 OutputIterator result);}
+{Writes the vertices of the weighted alpha shape \ccVar\ for the current $\alpha$-value
+to the container where \ccStyle{result} refers to. 
+The \ccStyle{value_type} of \ccStyle{result} is \ccStyle{Vertex*}.
+Returns an output iterator which is the end of the constructed range.}
+
+\ccMethod{template  < class OutputIterator >
+	  OutputIterator get_Alpha_shape_edges(
+					 OutputIterator result);}
+{Writes the edges 
+of the weighted alpha shape \ccVar\ for the current $\alpha$-value
+to the container where \ccStyle{result} refers to. 
+The \ccStyle{value_type} of \ccStyle{result} is \ccStyle{pair<Face*, int>}.
+Returns an output iterator which is the end of the constructed range.}
+
+\ccHeading{Predicates}
+
+
+\ccMethod{Classification_type
+           classify(const Point& p, 
+	const Coord_type& alpha = get_alpha()) const;}
+{Classifies a weighted point \ccStyle{p} with respect to \ccVar.}
+
+\ccMethod{Classification_type
+           classify(Face* f, const Coord_type& alpha = get_alpha()) const;}
+{Classifies the face \ccStyle{f} of the underlying Regular triangulation with respect to \ccVar.}
+
+\ccMethod{Classification_type
+           classify(pair<Face*, int> e, const Coord_type& alpha = get_alpha()) const;}
+{Classifies the edge \ccStyle{e} of the underlying Regular triangulation with respect to \ccVar.}
+
+\ccMethod{Classification_type
+           classify(Face* f, int i, const Coord_type& alpha = get_alpha()) const;}
+{Classifies the edge of the face \ccStyle{f} opposite to the vertex with index \ccStyle{i} of the underlying Regular triangulation with respect to \ccVar.}	
+
+\ccMethod{Classification_type
+           classify(Vertex* v, const Coord_type& alpha = get_alpha()) const;}
+{Classifies the vertex \ccStyle{v} of the underlying Regular triangulation with respect to \ccVar.}
+
+
+\ccHeading{Traversal of the $\alpha$-Values}
+
+\smallskip
+The weighted alpha shape class defines an iterator that allows to visit the
+sorted sequence of $\alpha$-values. This iterator is
+non-mutable and bidirectional. Its value type is
+\ccStyle{Coord_type}.
+
+\ccMethod{Alpha_iterator alpha_begin() const;}
+{Returns an iterator that allows to traverse the
+sorted sequence of $\alpha$-values of the family of weighted alpha shapes.}
+
+\ccMethod{Alpha_iterator alpha_end() const;}
+{Returns the corresponding past-the-end iterator.}
+
+\ccMethod{Alpha_iterator alpha_find(const Coord_type& alpha) const;}
+{Returns an iterator pointing to an element with $\alpha$-value
+\ccStyle{alpha}, or the corresponding past-the-end iterator if such 
+an element is not found.}
+
+\ccMethod{Alpha_iterator alpha_lower_bound(const Coord_type& alpha) const;}
+{Returns an iterator pointing to the first element with
+$\alpha$-value not less than \ccStyle{alpha}.}
+
+\ccMethod{Alpha_iterator alpha_upper_bound(const Coord_type& alpha) const;}
+{Returns an iterator pointing to the first element with $\alpha$-value
+greater than \ccStyle{alpha}.}
+
+\ccHeading{Operations}
+
+\ccMethod{int number_solid_components(const Coord_type& alpha = get_alpha()) const;}
+{Returns the number of solid components of \ccVar, that is, the number of components of its regularized version.}
+
+\ccMethod{Alpha_iterator find_optimal_alpha(int nb_components) const;}
+{Returns an iterator pointing to the first element with $\alpha$-value
+such that \ccVar\ satisfies the following two properties:\\
+\ccStyle{nb_components} equals the number of solid components and \\
+all data weighted points are either on the boundary or in the interior of the regularized version of \ccVar.\\
+If no such value is found, the iterator points to the first element with 
+$\alpha$-value such that \ccVar\ satisfies the second property.}
+\ccHeading{I/O}
+
+The I/O operators are defined for \ccStyle{iostream}, and for
+the window stream provided by \cgal. The format for the iostream
+is an internal format. 
+
+\ccInclude{CGAL/IO/ostream_2.h}
+
+\ccFunction{ostream& operator<<(ostream& os,
+                  const Weighted_alpha_shape_2<Gt,Tds>& A);}
+{Inserts the weighted alpha shape \ccVar\ for the current $\alpha$-value into the stream \ccStyle{os}.
+\ccPrecond The insert operator must be defined for \ccStyle{Weighted_point}.}
+
+\ccInclude{CGAL/IO/Window_stream.h}
+
+\ccFunction{Window_stream& operator<<(Window_stream& W,
+                         const Weighted_alpha_shape_2<Gt,Tds>& T);}
+{Inserts the weighted alpha shape \ccVar\ for the current $\alpha$-value into the window stream \ccStyle{W}.
+\ccPrecond The insert operator must be defined for \ccStyle{Weighted_point} and \ccStyle{Segment}.}
+\end{ccClassTemplate}
+
+\ccImplementation
+In the first static version, the set of intervals associated with the
+$k$-dimensional faces of the underlying Regular triangulation are
+stored only as sorted \ccStyle{vectors}. By using an interval tree the
+alpha-shape could be constructed more efficiently. For the dynamic
+version, we need \ccStyle{multimaps} or dynamic interval trees. The
+cross links between the intervals and the $k$-dimensional faces of the
+Regular triangulation are actually realized using
+\ccStyle{multimaps} resp.\ \ccStyle{hash multimaps}.
+
+\ccStyle{A.alpha find} uses linear search, while 
+\ccStyle{A.alpha lower bound} and \ccStyle{A.alpha upper bound} 
+use binary search.
+\ccStyle{A.number solid components} performs a graph traversal and takes time linear in the number of faces of the underlying Regular triangulation.
+\ccStyle{A.find optimal alpha} uses binary search and takes time
+$O(\mbox{\em number of faces } \log{\mbox{\em number of faces}})$.
+
+%----------------------------------------------------------------------
+
+\section{Requirements\label{I2_SectRequirements}}
+
+
+\subsection{Requirements for the Alpha-Shape Traits Class} 
+
+The class \ccStyle{Weighted_alpha_shape_2<Gt,Tds>} parameterized with a
+traits class, that has the same requirements as the Regular
+triangulation traits class.  The following requirement catalog lists
+the primitives that must be defined additionnally.
+
+\begin{ccClass} {Gt}
+\subsection*{Traits (\mbox{\it Gt})}
+
+\ccCreationVariable{t}
+
+\ccDefinition
+A class \ccClassName\ that satisfies the requirements of a weighted alpha shape
+traits class must provide the following predicate and operations in
+addition to the requirements for the Regular triangulation traits
+class.
+
+\ccTypes
+
+\ccNestedType{Coord_type}{A type to hold a coordinate type class. 
+The type must provide a copy constructor, assignment, comparison
+operators, negation, multiplication, division and allow the
+declaration and initialization with a small integer constant
+(cf. requirements for number types). An obvious choice would be
+coordinate type of the weighted point class.}
+
+\ccCreation
+
+Only a default constructor is required. Note that further constructors
+can be provided. 
+
+\ccConstructor{Gt();}
+{A default constructor.}
+
+
+\ccOperations
+
+\ccMethod{Coord_type squared_radius_smallest_orthogonalcircle(const Point& p0,
+                                       		const Point& p1, 
+						const Point& p2 );} 
+{Returns the squared radius of smallest orthogonal circle of the
+weighted points \ccStyle{p0, p1, p2}. }
+
+\ccMethod{Coord_type squared_radius_smallest_orthogonalcircle(const Point& p0,
+                                       const Point& p1);} 
+{Returns the squared radius of smallest orthogonal circle of the
+weighted points \ccStyle{p0, p1}. }
+
+\ccMethod{Oriented_side in_smallest_orthogonalcircle(const Point& p0,
+                                    const Point& p1,
+                                    const Point& test);}
+{Returns the relative position of point \ccStyle{test} to the circle
+defined as the smallest orthogonal circle of the weighted points \ccStyle{p0,
+p1}.}
+
+\end{ccClass}
+
+\subsection{Requirements for the Triangulation Data Structure Class}
+
+The class \ccStyle{Weighted_alpha_shape_2<Gt,Tds>} parameterized with a
+triangulation data structure class, that has exactly the same
+requirements as the Regular triangulation triangulation data
+structure class. 
+
+But, she requires to be templated by special \ccc{Vertex} and
+\ccc{Face}, to store the weighted alpha values associated. Thus, we need to
+define the requirements of such Weighted Alpha Shape \ccc{Vertex} and
+\ccc{Face} classes.
+
+\subsection{The Vertex Type of a Weighted Alpha Shape} 
+
+The information about the alpha values associated  are store in the 
+vertices of the Weighted Alpha Shape. Thus the nested \ccc{Vertex}
+type of a Weighted Alpha Shape offers additonnal functionalities to deal with this information.
+This additional functionalities related to the Weighted Alpha Shape
+are requirements which have to be fulfilled
+by the base face  an Weighted Alpha Shape
+in addition to the functionalities required by a simple Triangulation Vertex
+
+They are in fact the same as the \ccStyle{Alpha_shape_vertex_base}
+(cf. \ref{I1_SectVertex}).
+
+Of course  \cgal\ provides a default \ccc{Vertex_base} class
+for the Weighted Alpha Shape. The class
+\ccc{Alpha_shape_face_base_2<Gt>} simply derived from 
+\ccc{Triangulation_face_base_2<Gt>}.
+
+\ccInclude{CGAL/Alpha_shape_vertex_base_2.h}
+
+\subsection{The Face Type of an Weighted Alpha Shape} 
+
+The information about the alpha values associated  are store in the 
+vertices of the Weighted Alpha Shape. Thus the nested \ccc{Face}
+type of a Weighted Alpha Shape offers additonnal functionalities to deal with this information.
+This additional functionalities related to the Weighted Alpha Shape
+are requirements which have to be fulfilled
+by the base face  an Weighted Alpha Shape
+in addition to the functionalities required by a Regular Triangulation Face
+They are listed below as such.
+
+
+
+\begin{ccClass}{Weighted_alpha_shape_face_base}
+\ccCreationVariable{f}
+\ccCreation
+\ccConstructor{Weighted_alpha_shape_face_base()}{default constructor.}
+\ccGlue
+\ccConstructor{Weighted_alpha_shape_face_base(void* v0, void* v1, void* v2)}{constructor setting the incident vertices.}
+\ccGlue
+\ccConstructor{Weighted_alpha_shape_face_base(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2)} 
+{constructor setting the incident vertices and the neighboring faces.}
+
+\ccHeading{Access Functions}
+\ccMethod{std::vector<Interval3> get_Range();}
+{returns a vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains three alpha values $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
+$\alpha$ under $\alpha_3$, the edge is attached but singular,
+for $\alpha$ under $\alpha_2$, the face is regular, and for $\alpha$
+under $\alpha_1$, the edge is interior.}
+\ccMethod{Coord_type get_Alpha();}
+{return the Alpha value, under which the Weighted Alpha Shape contains the
+face.}
+
+\ccModifiers
+\ccMethod{void Range(std::vector<Interval3> V);}
+{sets the vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains three alpha values $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
+$\alpha$ under $\alpha_3$, the edge is attached but singular,
+for $\alpha$ under $\alpha_2$, the face is regular, and for $\alpha$
+under $\alpha_1$, the edge is interior.}
+\ccMethod{void Alpha(Coord_type A);}
+{sets the Alpha value, under which the Weighted Alpha Shape contains the
+face.}
+
+\end{ccClass}
+
+
+Of course  \cgal\ provides a default \ccc{Face_base} class
+for the Weighted Alpha Shape. The class
+\ccc{Weighted_alpha_shape_face_base_2<Gt>} simply derived from 
+\ccc{Regular_triangulation_face_base_2<Gt>}.
+
+\ccInclude{CGAL/Weighted_alpha_shape_face_base_2.h}

@@ -9,7 +9,7 @@ WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
-package: clean $(Package).tar.gz
+package: doc clean $(Package).tar.gz
 	@echo "-----------------------------------"
 	@echo "------------ Penser à: ------------"
 	@echo "-----------------------------------"
@@ -33,6 +33,7 @@ submit: package
 	   $(WWW_dir)
 	rm -f $(WWW_dir)/$(Package).ps.gz
 	gzip -9 $(WWW_dir)/$(Package).ps
+	chmod a+r $(WWW_dir)/$(Package).ps.gz
 	echo > $(TMP_file)
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
@@ -41,12 +42,16 @@ submit: package
 	rm -f $(TMP_file)
 
 test:
-	$(MAKE) -C test/$(Package)
+	$(MAKE) -C test/$(Package) test_alpha test_weight
+
+example:
+	$(MAKE) -C examples/$(Package) example_alpha example_weight
 
 clean:
+	$(MAKE) -C doc_tex/basic/ clean
 	$(MAKE) -C test/$(Package) clean
+	$(MAKE) -C examples/$(Package) clean	
 	rm -f $(Package).tar.gz
-	rm -f src/.pure src/*.o
 
 # --exclude=tstlink is here because I don't want to provide a makefile for
 # the test-suite.
@@ -55,10 +60,13 @@ clean:
 
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
-	--exclude=CVS --exclude=*.tex --exclude=Makefile \
-	--exclude=TODO --exclude=*5000* --exclude=tstlink2.C \
-	--exclude=tst6.C \
+	--exclude=CVS --exclude=wrapper.tex --exclude=main.tex \
+	--exclude=Makefile --exclude=*5000* --exclude=*.o \
 	version description.txt changes.txt \
 	include doc_tex doc_ps test examples demo
 
+doc: doc_ps/$(Package).ps
 
+doc_ps/$(Package).ps: doc_tex/basic/alpha.tex
+	$(MAKE) -C doc_tex/basic all
+	cp doc_tex/basic/$(Package).ps doc_ps/
