@@ -37,24 +37,24 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 Oriented_side
 power_testH2( 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &pw, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &phx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &phy, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &phw, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &pwt,
               
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qw, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qhx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qhy, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qhw, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qwt,
               
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rw, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rhx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rhy, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rhw, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rwt,
               
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tw, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &thx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &thy, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &thw, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &twt)
 {
   CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
@@ -62,21 +62,21 @@ power_testH2(
   try
   {
     Oriented_side result = power_testH2(
-		px.interval(),
-		py.interval(),
-		pw.interval(),
+		phx.interval(),
+		phy.interval(),
+		phw.interval(),
 		pwt.interval(),
-		qx.interval(),
-		qy.interval(),
-		qw.interval(),
+		qhx.interval(),
+		qhy.interval(),
+		qhw.interval(),
 		qwt.interval(),
-		rx.interval(),
-		ry.interval(),
-		rw.interval(),
+		rhx.interval(),
+		rhy.interval(),
+		rhw.interval(),
 		rwt.interval(),
-		tx.interval(),
-		ty.interval(),
-		tw.interval(),
+		thx.interval(),
+		thy.interval(),
+		thw.interval(),
 		twt.interval());
     CGAL::FPU_set_cw(backup);
     return result;
@@ -85,21 +85,21 @@ power_testH2(
   {
     CGAL::FPU_set_cw(backup);
     return power_testH2(
-		px.exact(),
-		py.exact(),
-		pw.exact(),
+		phx.exact(),
+		phy.exact(),
+		phw.exact(),
 		pwt.exact(),
-		qx.exact(),
-		qy.exact(),
-		qw.exact(),
+		qhx.exact(),
+		qhy.exact(),
+		qhw.exact(),
 		qwt.exact(),
-		rx.exact(),
-		ry.exact(),
-		rw.exact(),
+		rhx.exact(),
+		rhy.exact(),
+		rhw.exact(),
 		rwt.exact(),
-		tx.exact(),
-		ty.exact(),
-		tw.exact(),
+		thx.exact(),
+		thy.exact(),
+		thw.exact(),
 		twt.exact());
   }
 }
@@ -110,19 +110,19 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 Oriented_side
 power_testH2( 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &pw, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &phx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &phy, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &phw, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &pwt,
               
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qw, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qhx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qhy, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qhw, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qwt,
               
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tw, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &thx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &thy, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &thw, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &twt)
 {
   CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
@@ -130,17 +130,17 @@ power_testH2(
   try
   {
     Oriented_side result = power_testH2(
-		px.interval(),
-		py.interval(),
-		pw.interval(),
+		phx.interval(),
+		phy.interval(),
+		phw.interval(),
 		pwt.interval(),
-		qx.interval(),
-		qy.interval(),
-		qw.interval(),
+		qhx.interval(),
+		qhy.interval(),
+		qhw.interval(),
 		qwt.interval(),
-		tx.interval(),
-		ty.interval(),
-		tw.interval(),
+		thx.interval(),
+		thy.interval(),
+		thw.interval(),
 		twt.interval());
     CGAL::FPU_set_cw(backup);
     return result;
@@ -149,17 +149,17 @@ power_testH2(
   {
     CGAL::FPU_set_cw(backup);
     return power_testH2(
-		px.exact(),
-		py.exact(),
-		pw.exact(),
+		phx.exact(),
+		phy.exact(),
+		phw.exact(),
 		pwt.exact(),
-		qx.exact(),
-		qy.exact(),
-		qw.exact(),
+		qhx.exact(),
+		qhy.exact(),
+		qhw.exact(),
 		qwt.exact(),
-		tx.exact(),
-		ty.exact(),
-		tw.exact(),
+		thx.exact(),
+		thy.exact(),
+		thw.exact(),
 		twt.exact());
   }
 }
