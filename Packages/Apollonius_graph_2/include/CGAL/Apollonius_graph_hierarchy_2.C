@@ -77,8 +77,7 @@ Apollonius_graph_hierarchy_2<Gt,Agds>::
 copy
 (const Apollonius_graph_hierarchy_2<Gt,Agds> &agh)
 {
-  std::map< const Vertex_handle, Vertex_handle,
-    std::less<const Vertex_handle> > V;
+  std::map< Vertex_handle, Vertex_handle > V;
   for(int i = 0; i < ag_hierarchy_2__maxlevel; ++i) {
     //      hierarchy[i]->copy_triangulation(*awvd.hierarchy[i]);
     *(hierarchy[i]) = *agh.hierarchy[i];
