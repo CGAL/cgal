@@ -632,31 +632,14 @@ remove_dim_down(Vertex* v)
   Face * f;
   for( ; lfit !=  to_downgrade.end() ; ++lfit) {
     f = *lfit; j = f->index(v);
-    if (dimension() == 1){
-      if (j == 0) {
-	f->set_vertex(0, f->vertex(1));
-	f->set_neighbor(0, f->neighbor(1));
-      }
+    if (dimension() == 1) {
+      if (j == 0) 	f->reorient();
       f->set_vertex(1,NULL);
       f->set_neighbor(1,NULL);
     }
-    else{ //dimension() == 2
-      switch(j) {
-      case 0 : 
-	f->set_vertex(0, f->vertex(1));
-	f->set_vertex(1, f->vertex(2));
-	f->set_neighbor(0, f->neighbor(1));
-	f->set_neighbor(1, f->neighbor(2));
-	break;
-      case 1 :
-	f->set_vertex(1, f->vertex(0));
-	f->set_vertex(0, f->vertex(2));
-	f->set_neighbor(1, f->neighbor(0));
-	f->set_neighbor(0, f->neighbor(2));
-	break;
-      case 2 :
-	break;
-      }
+    else { //dimension() == 2
+      if (j == 0) f->cw_permute();
+      else if(j == 1) f->ccw_permute();
       f->set_vertex(2,NULL);
       f->set_neighbor(2,NULL);
     }

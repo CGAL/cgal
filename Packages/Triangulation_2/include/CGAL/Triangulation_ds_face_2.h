@@ -63,7 +63,7 @@ public:
   void set_neighbors() { Fb::set_neighbors();}
   void set_vertices(Vertex* v0, Vertex* v1, Vertex* v2);
   void set_neighbors(Face* n0, Face* n1, Face* n2);
-  void reorient();
+  //void reorient();  inherited from Face_base
  
   //Vertex Access Member Functions
   Vertex* vertex(int i) const;
@@ -107,17 +107,6 @@ Triangulation_ds_face_2<Vb,Fb>::
 set_neighbors(Face* n0, Face* n1, Face* n2)
 {
   Fb::set_neighbors(n0,n1,n2);
-}
-
-template < class Vb, class Fb >
-void 
-Triangulation_ds_face_2<Vb,Fb>::
-reorient()
-{
-  Vertex* vtemp = vertex(0);
-  Face* ftemp   = neighbor(0);
-  set_vertex(0, vertex(1)) ; set_vertex(1,vtemp);
-  set_neighbor(0, neighbor(1));set_neighbor(1,ftemp);
 }
 
 template < class Vb, class Fb >
