@@ -25,18 +25,14 @@
 // ============================================================================
 
 
-#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
 #include <cstddef>
 #include <iostream>
 #include <fstream>
 #include <strstream>
 #include <cstring>
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Plane_3.h>
 
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -67,12 +63,10 @@ char* tetra =    "OFF\n"
 
 
 void test_file_IO_OFF() {
-    typedef Cartesian<double>                 Rep;
-    typedef Cartesian<int>                    RepI;
-    typedef Point_3<Rep>                      Point;
-    typedef Plane_3<Rep>                      Plane;
-    typedef Polyhedron_default_traits_3<Rep>  Traits;
-    typedef Polyhedron_3<Traits>              Polyhedron;
+    typedef Cartesian<double>     Kernel;
+    typedef Kernel::Point_3       Point;
+    typedef Kernel::Plane_3       Plane;
+    typedef Polyhedron_3<Kernel>  Polyhedron;
     {
         Polyhedron P;
         std::istrstream in( triangle, CGAL_CLIB_STD::strlen( triangle));

@@ -23,7 +23,9 @@
 // ============================================================================
 
 #include <CGAL/basic.h>
-
+#include <CGAL/Bbox_3.h>
+#include <CGAL/IO/Verbose_ostream.h>
+#include <CGAL/IO/File_scanner_OFF.h>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
@@ -31,9 +33,6 @@
 #include <fstream>
 #include <cfloat>
 
-#include <CGAL/Bbox_3.h>
-#include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/IO/File_scanner_OFF.h>
 
 using namespace std;
 

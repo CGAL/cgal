@@ -47,6 +47,9 @@
 #define CGAL_PROTECT_IOSTREAM
 #endif
 
+#include <CGAL/Point_3.h>
+#include <CGAL/Vector_3.h>
+
 CGAL_BEGIN_NAMESPACE
 
 class File_scanner_OFF : public File_header_OFF {
@@ -434,9 +437,6 @@ public:
 
     void skip_to_next_facet( int current_facet);
 };
-
-template < class R> class Point_3;
-template < class R> class Vector_3;
 
 template < class R> inline
 Point_3<R>&

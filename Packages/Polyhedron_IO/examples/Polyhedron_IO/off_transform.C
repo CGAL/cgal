@@ -22,25 +22,21 @@
 // Applies translation and scaling to an OFF object.
 // ============================================================================
 
-#include <CGAL/basic.h>
-
+#include <CGAL/Cartesian.h>
+#include <CGAL/IO/Verbose_ostream.h>
+#include <CGAL/IO/File_scanner_OFF.h>
+#include <CGAL/IO/File_writer_OFF.h>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Vector_3.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/IO/File_scanner_OFF.h>
-#include <CGAL/IO/File_writer_OFF.h>
-
 using namespace std;
 
-typedef  CGAL::Vector_3< CGAL::Cartesian<float> >       Vector;
-typedef  CGAL::Point_3< CGAL::Cartesian<float> >        Point;
+typedef  CGAL::Cartesian<float>  Kernel;
+typedef  Kernel::Point_3         Point;
+typedef  Kernel::Vector_3        Vector;
 
 bool    verbose      = false;
 bool    binary       = false;

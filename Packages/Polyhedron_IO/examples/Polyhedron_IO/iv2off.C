@@ -24,8 +24,9 @@
 // keywords. It does not recognize transformations nor groups.
 // ============================================================================
 
-#include <CGAL/basic.h>
-
+#include <CGAL/Cartesian.h>
+#include <CGAL/IO/Verbose_ostream.h>
+#include <CGAL/IO/File_writer_OFF.h>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
@@ -33,17 +34,13 @@
 #include <fstream>
 #include <list>
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/IO/File_writer_OFF.h>
-
 using namespace std;
 
-typedef  CGAL::Point_3< CGAL::Cartesian<float> > Point;
-typedef  list<Point>                             Point_list;
-typedef  list<int>                               Facet;
-typedef  list<Facet>                             Facet_list;
+typedef  CGAL::Cartesian<float>  Kernel;
+typedef  Kernel::Point_3         Point;
+typedef  list<Point>             Point_list;
+typedef  list<int>               Facet;
+typedef  list<Facet>             Facet_list;
 
 // Command line arguments
 // ======================

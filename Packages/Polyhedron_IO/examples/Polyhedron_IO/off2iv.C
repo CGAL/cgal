@@ -23,17 +23,15 @@
 // ============================================================================
 
 #include <CGAL/basic.h>
-
+#include <CGAL/IO/Verbose_ostream.h>
+#include <CGAL/IO/Inventor_ostream.h>
+#include <CGAL/IO/File_writer_inventor.h>
+#include <CGAL/IO/generic_copy_OFF.h>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <fstream>
-
-#include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/IO/Inventor_ostream.h>
-#include <CGAL/IO/File_writer_inventor.h>
-#include <CGAL/IO/generic_copy_OFF.h>
 
 using namespace std;
 

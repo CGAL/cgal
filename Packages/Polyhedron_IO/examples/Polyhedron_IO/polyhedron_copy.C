@@ -22,27 +22,20 @@
 // Copies a CGAL::Polyhedron_3 from OFF format to OFF format.
 // ============================================================================
 
-#include <CGAL/basic.h>
-
+#include <CGAL/Cartesian.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/IO/Verbose_ostream.h>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Plane_3.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-
 using namespace std;
 
-typedef  CGAL::Cartesian<double>               R;
-typedef  CGAL::Polyhedron_default_traits_3<R>  Traits;
-typedef  CGAL::Polyhedron_3<Traits>            Polyhedron;
+typedef CGAL::Cartesian<double>     Kernel;
+typedef CGAL::Polyhedron_3<Kernel>  Polyhedron;
 
 bool  verbose   = false;
 bool  binary    = false;

@@ -23,19 +23,17 @@
 // ============================================================================
 
 #include <CGAL/basic.h>
-
-#include <cstddef>
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <fstream>
-
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/IO/VRML_1_ostream.h>
 #include <CGAL/IO/VRML_2_ostream.h>
 #include <CGAL/IO/File_writer_inventor.h>
 #include <CGAL/IO/File_writer_VRML_2.h>
 #include <CGAL/IO/generic_copy_OFF.h>
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <fstream>
 
 using namespace std;
 

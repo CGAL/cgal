@@ -23,8 +23,13 @@
 // (Terrain triangulation)
 // ============================================================================
 
-#include <CGAL/basic.h>
-
+#include <CGAL/Cartesian.h>
+#include <CGAL/IO/Verbose_ostream.h>
+#include <CGAL/IO/File_scanner_OFF.h>
+#include <CGAL/IO/File_writer_OFF.h>
+#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
+#include <CGAL/Triangulation_2.h>
+#include <CGAL/Delaunay_triangulation_2.h>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
@@ -34,36 +39,27 @@
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_rational.h>
 #endif
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/IO/File_scanner_OFF.h>
-#include <CGAL/IO/File_writer_OFF.h>
-#include <CGAL/Triangulation_short_names_2.h>
-#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
-#include <CGAL/Triangulation_2.h>
-#include <CGAL/Delaunay_triangulation_2.h>
 #include "triangulation_print_OFF.h"
 
 using namespace std;
 using CGAL::Point_3;
 
-template <class R>
-struct  Indexed_point: public Point_3<R> {
+template <class K>
+struct  Indexed_point: public Point_3<K> {
     int*  index;
     Indexed_point()                                 {}
-    Indexed_point( Point_3<R> p) : Point_3<R>(p)    {}
+    Indexed_point( Point_3<K> p) : Point_3<K>(p)    {}
     Indexed_point( double x, double y, double z, int* i) 
-        : Point_3<R>(x,y,z), index(i)               {}
+        : Point_3<K>(x,y,z), index(i)               {}
 };
 
 #ifdef CGAL_USE_LEDA
-typedef  CGAL::Cartesian<leda_rational>                R;
+typedef  CGAL::Cartesian<leda_rational>                     Kernel;
 #else
-typedef  CGAL::Cartesian<double>                       R;
+typedef  CGAL::Cartesian<double>                            Kernel;
 #endif
-typedef  Indexed_point<R>                              IPoint;
-typedef  CGAL::Triangulation_euclidean_traits_xy_3<R>  Gtraits;
+typedef  Indexed_point<Kernel>                              IPoint;
+typedef  CGAL::Triangulation_euclidean_traits_xy_3<Kernel>  Gtraits;
 
 struct Gt : public Gtraits {
     typedef IPoint Point;

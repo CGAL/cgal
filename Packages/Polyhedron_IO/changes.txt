@@ -1,5 +1,11 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
+
+3.5 (25 Jun 2001)
+
+     - Adapted to new kernel traits from Polyhedron.
+     - Revised example files.
+
 3.4 (19 Jun 2001)
 
      - Cleanup in binary_file_io.h.
