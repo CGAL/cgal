@@ -1,0 +1,330 @@
+\newcommand{\Section}[1]{Section~{\protect\ref{#1}}}
+\newcommand{\Chapter}[1]{Chapter~{\protect\ref{#1}}}
+\newcommand{\new}[1]{\marginpar{\sf #1}}
+
+\newcommand{\what}{\mbox{?\hspace*{2cm}?}}
+
+
+\parindent0em
+\setlength{\parskip}{1ex minus 0.9ex}
+\sloppy
+
+\newcommand{\note}[1]{{\bf NOTE: #1}}
+
+\chapter{Geomview} \label{ChapterGeomview}
+
+
+\section{Introduction}
+
+This chapter presents the \cgal\ interface to geomview, which is a
+viewer for three-dimensional objects, developed at the Geometry Center
+in Minneapolis\footnote{\tt http://www.geom.umn.edu/}.
+
+\noindent {\bf Important:} The last line in the startup file \ccc{.geomview}
+must be \ccc{(echo "started")}.
+
+\begin{ccClass}{CGAL_Geomview_stream}
+\ccDefinition
+An object of the class \ccClassName\ is a stream in which geometric
+objects can be insrted and where geometric objects can be extracted
+from. The constructor starts geomview either on the local either on
+a remote machine.
+
+\ccInclude{CGAL/IO/Geomview_stream.h}
+
+\ccSetThreeColumns{CGAL_Oriented_side}{}{\hspace*{10cm}}
+\ccThreeToTwo
+\ccCreation
+\ccCreationVariable{G}
+
+\ccConstructor{CGAL_Geomview_stream(const CGAL_Bbox_3 &bbox 
+	                                 = CGAL_Bbox_3(0,0,0, 1,1,1),
+				    const char *machine = NULL,
+                                    const char *login = NULL);}
+{Introduces a geomview stream \ccVar\ with a camera that sees the
+bounding box. If machine and login are non-null, geomview is started
+on the remote machine.}
+
+
+
+\ccOperations
+
+
+\ccHeading{Output Operators for CGAL Kernel Classes}
+
+At the moment not all classes of the \cgal\ kernel have output
+operators. 2D objects are embedded in the \ccc{xy}-plane.
+
+\ccFunction{template <class R>
+            CGAL_Geomview_stream&
+            operator<<(CGAL_Geomview_stream& G,
+                       const CGAL_Point_2<R>& p);}
+{Inserts the point \ccc{p} into the stream \ccVar.}
+
+
+\ccFunction{template <class R>
+            CGAL_Geomview_stream&
+            operator<<(CGAL_Geomview_stream& G,
+                       const CGAL_Point_3<R>& p);}
+{Inserts the point \ccc{p} into the stream \ccVar.}
+
+
+\ccFunction{template <class R>
+            CGAL_Geomview_stream&
+            operator<<(CGAL_Geomview_stream& G,
+                       const CGAL_Segment_2<R>& s);}
+{Inserts the segment \ccc{s} into the stream \ccVar.}
+
+\ccFunction{template <class R>
+            CGAL_Geomview_stream&
+            operator<<(CGAL_Geomview_stream& G,
+                       const CGAL_Segment_3<R>& s);}
+{Inserts the segment \ccc{s} into the stream \ccVar.}
+
+
+\ccFunction{template <class R>
+            CGAL_Geomview_stream&
+            operator<<(CGAL_Geomview_stream& G,
+                       const CGAL_Triangle_2<R>& t);}
+{Inserts the triangle \ccc{t} into the stream \ccVar.}
+
+
+\ccFunction{template <class R>
+            CGAL_Geomview_stream&
+            operator<<(CGAL_Geomview_stream& G,
+                       const CGAL_Triangle_3<R>& t);}
+{Inserts the triangle \ccc{t} into the stream \ccVar.}
+
+
+\ccFunction{template <class R>
+            CGAL_Geomview_stream&
+            operator<<(CGAL_Geomview_stream& G,
+                       const CGAL_Tetrahedron_3<R>& t);}
+{Inserts the tetrahedron \ccc{t} into the stream \ccVar.}
+
+
+\ccMethod{CGAL_Geomview_stream&
+          operator<<(const CGAL_Bbox_2& b);}
+{Inserts the bounding box \ccc{b} into the stream \ccVar.}
+
+\ccMethod{CGAL_Geomview_stream&
+          operator<<(const CGAL_Bbox_3& b);}
+{Inserts the bounding box \ccc{b} into the stream \ccVar.}
+
+
+\ccHeading{Input Operators for CGAL Kernel Classes}
+
+At the moment input is only provided for points. The user has to select
+a point on the {\it pickplane} with the right mouse button. The pickplane
+can be moved anywhere with the left mouse button, before a point is entered.
+
+\ccFunction{template <class R>
+            CGAL_Geomview_stream&
+            operator>>(CGAL_Geomview_stream& G,
+                       CGAL_Point_2<R>& p);}
+{Extracts the point \ccc{p} from the stream \ccVar. The point is
+ echoed.}
+
+
+\ccHeading{IO Operators for CGAL Basic Library Classes}
+
+
+\ccFunction{template <class Traits>
+            CGAL_Geomview_stream&
+            operator<<(CGAL_Geomview_stream& G,
+                       const CGAL_Tetrahedralization_3<Traits>& T);}
+{Inserts the tetrahedralization \ccc{T} into the stream \ccVar.}
+
+For geometric structures as a tetrahedalization only one geomview
+object is created. If you want to select a single simplex you have
+to insert the simplices individually with the following operator.
+
+\ccFunction{template <class V>
+            CGAL_Geomview_stream&
+            operator<<(CGAL_Geomview_stream& G,
+                       const CGAL_Tetrahedralization_simplex<V>* s);}
+{Inserts the tetrahedralization simplex \ccc{s} into the stream \ccVar.}
+
+
+\ccFunction{template < class V >
+            CGAL_Geomview_stream&
+            operator>>(CGAL_Geomview_stream &G,
+                       CGAL_Tetrahedralization_simplex<V>*& s);}
+{Assigns the pointer to the tetrahedralization simplex the user selected
+ with the right mouse button to variable \ccc{s}. 
+\ccPrecond It is in the responsibility of the user to guarantee that the
+pointer still points to memory allocated for a simplex.}
+
+
+\ccFunction{template <class P>
+            CGAL_Geomview_stream&
+            operator<<(CGAL_Geomview_stream& G,
+                       const CGAL_Tetrahedralization_vertex<P>* v);}
+{Inserts the tetrahedralization vertex \ccc{v} into the stream \ccVar.
+ Vertices are drawn as a cube with twice \ccc{G.get_vertex_radius}
+ as side length. This value is 1/100'th of the \ccc{x}-length of the
+initial bounding box.}
+
+
+\ccFunction{template < class P>
+            CGAL_Geomview_stream&
+            operator>>(CGAL_Geomview_stream &G,
+                       CGAL_Tetrahedralization_vertex<V>*& v);}
+{Assigns the pointer to the tetrahedralization vertex the user selected
+ with the right mouse button to variable \ccc{v}. 
+\ccPrecond It is in the responsibility of the user to guarantee that the
+pointer still points to memory allocated for a vertex.}
+
+\ccHeading{Colors}
+
+geomview distinguishes between edge and face colors. The edge color
+is at the same time the color of vertices. 
+
+\ccMethod{CGAL_Geomview_stream&
+            operator<<(const CGAL_Color& c);}
+{Makes \ccc{c} the color of vertices, edges and faces in subsequent IO 
+ operations.}
+
+\ccMethod{CGAL_Color
+          set_bg_color(const CGAL_Color& c);}
+{Changes the background color. Returns the old value.}
+
+\ccMethod{CGAL_Color
+          set_vertex_color(const CGAL_Color& c);}
+{Changes the vertex color. Returns the old value.}
+
+\ccMethod{CGAL_Color
+          set_edge_color(const CGAL_Color& c);}
+{Changes the edge color. Returns the old value.}
+
+
+\ccMethod{CGAL_Color
+          set_face_color(const CGAL_Color& c);}
+{Changes the face color. Returns the old value.}
+
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{void
+	  clear();}
+{Deletes all objects.}
+
+\ccMethod{void
+	  look_recenter();}
+{Positions the camera in a way that all objects can be seen.}
+
+\ccMethod{int
+          get_line_width() const;}
+{Returns the line width.}
+
+\ccMethod{int
+          set_line_width(int w);}
+{Sets the line width to \ccc{w}. Returns the previous value.}
+
+\ccMethod{double
+          get_vertex_radius() const;}
+{Returns the radius of vertices.}
+
+\ccMethod{double
+          set_vertex_radius(double r) const;}
+{Sets the radius of vertices to \ccc{d}. Returns the previous value.}
+
+\ccMethod{bool
+          set_trace(bool b);} 
+{Sets tracing on. The data that are sent to \ccc{geomview} are also
+ sent to \ccc{cerr}.  Returns the previous value. By default tracing is
+ off.}
+
+\ccMethod{bool
+          get_trace();}
+{Returns \ccc{true} iff tracing is on.}
+
+
+\ccHeading{Advanced and Developers Features}
+
+The following functions are helpful if you develop your own insert
+and extraxt functions. The following functions allow to pass a string
+from geomview and to read data sent back by geomview.
+
+\ccMethod{CGAL_Geomview_stream&
+            operator<<(const char* s);}
+{Inserts string \ccc{s} into the stream.}
+
+
+\ccMethod{CGAL_Geomview_stream&
+            operator>>(char* s);}
+{Extracts a string \ccc{s} from the stream.
+\ccPrecond You have to allocate enough memory.}
+
+\ccMethod{CGAL_Geomview_stream&
+            operator<<(int i);}
+{Inserts integer \ccc{i} into the stream. Puts whitespace around if the
+stream is in ascii mode.}
+
+
+\ccMethod{CGAL_Geomview_stream&
+            operator<<(double d);}
+{Inserts double \ccc{d} into the stream. Puts whitespace around if the
+stream is in ascii mode.}
+
+\ccMethod{bool in_binary_mode();}
+{Returns \ccc{true} iff \ccVar\ is in binary mode.}
+
+\ccMethod{bool in_ascii_mode();}
+{Returns \ccc{true} iff \ccVar\ is in binary mode.}
+
+\ccMethod{void set_binary_mode();}{}
+\ccMethod{void set_ascii_mode();}{}
+
+For convenience we offer the manipulators \ccc{ascii} and \ccc{binary}
+that can be inserted in the stream.
+
+\ccMethod{CGAL_Geomview_stream&
+            operator<<(ascii);}
+{Sets the stream in ascii mode.}
+
+\ccMethod{CGAL_Geomview_stream&
+            operator<<(binary);}
+{Sets the stream in binary mode.}
+
+%\ccExample
+
+
+\begin{cprog}
+
+\end{cprog} 
+
+\ccImplementation
+
+The constructor forks a process and establishes two pipes between the
+processes. The forked process is then overlayed with geomview. The
+file descriptors \ccc{stdin} and \ccc{stdout} of geomview are hooked
+on the two pipes.
+
+All insert operators construct expressions in \ccc{gcl}, the geomview
+comand language, which is a subset of {\sc Lisp}. These expressions
+are sent to geomview via the pipe. The extract operators notify \ccc{interest}
+for a certain kind of events. When such an event happens geomview
+sends a description of the event in gcl and the extract operator has
+to parse this expression.
+
+In order to implement further insert and extract operators you should
+take a look at the implementation \cite{GV_Impl} and at the geomview
+manual \cite{GVManual}.
+\end{ccClass}
+
+\begin{thebibliography}{10}
+
+\bibitem{GVManual}
+Mark Phillips et al.
+\newblock {\em Geomview Manual}.
+\newblock Version 1.6.1 for Unix Workstations.
+\newblock December 10, 1996.
+
+
+\bibitem{GV_Impl}
+Andreas Fabri.
+\newblock {How to Implement Geomview Stream IO Operators.}
+\newblock July 2997.
+\end{thebibliography}
+
