@@ -50,6 +50,8 @@ _test_circulator( const Triangulation &T )
   eit=T.edges_begin();
   {
     cc0=cc=T.incident_cells(*eit);
+	Cell_handle ch = cc0; // Test the conversion.
+	(void) ch;
     do {
       assert(cc->has_vertex((*eit).first->vertex((*eit).second)));
       assert(cc->has_vertex((*eit).first->vertex((*eit).third)));
@@ -108,7 +110,7 @@ _test_circulator( const Triangulation &T )
   std::vector<Cell_handle> cells;
   std::vector<Vertex_handle > vertices;
 
-  Vertex_handle vh = T.vertices_begin()->handle();
+  Vertex_handle vh = T.vertices_begin();
 
   T.incident_cells(vh,std::back_inserter(cells));
   T.incident_vertices(vh, std::back_inserter(vertices));

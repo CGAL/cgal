@@ -27,17 +27,27 @@ template < class Triangulation >
 int
 _test_vertex_iterator( const Triangulation &T )
 {
+    typedef typename Triangulation::Vertex_handle Vertex_handle;
     typedef typename Triangulation::Vertex_iterator Vertex_iterator;
     typedef typename Triangulation::Finite_vertices_iterator Finite_vertices_iterator;
     int n = 0;
+	
     Vertex_iterator vit;
     for (vit = T.vertices_begin(); vit != T.vertices_end(); ++vit)
+	{
+	  Vertex_handle vh = vit; // Test the conversion.
+	  (void) vh;
       n++;
+	}
     assert( n-1 == T.number_of_vertices() );
     n=0;
     Finite_vertices_iterator fvit;
-   for (fvit = T.finite_vertices_begin(); fvit != T.finite_vertices_end(); ++fvit)
+    for (fvit = T.finite_vertices_begin(); fvit != T.finite_vertices_end(); ++fvit)
+    {
+	  Vertex_handle vh = fvit; // Test the conversion.
+	  (void) vh;
       n++;
+    }
     assert( n == T.number_of_vertices() );
     return n;
 }
@@ -57,8 +67,8 @@ _test_triangulation_iterator( const Triangulation &T )
   typedef typename Triangulation::Vertex_iterator Vertex_iterator;
 
   typedef typename Triangulation::Facet           Facet;
-  typedef typename Triangulation::Cell_handle            Cell_handle;
-  
+  typedef typename Triangulation::Cell_handle     Cell_handle;
+
   int n=0 , m=0 , f=0 , t=0;
   Cell_iterator Cit;
   Facet_iterator Fit;
@@ -70,7 +80,11 @@ _test_triangulation_iterator( const Triangulation &T )
   Finite_vertices_iterator FVit;
   if (T.dimension()==3) {
   for (FCit = T.finite_cells_begin(); FCit != T.finite_cells_end(); ++FCit)
+  {
+     Cell_handle ch = FCit; // Test the conversion.
+	 (void) ch;
      t++;
+  }
   for (FFit = T.finite_facets_begin(); FFit != T.finite_facets_end(); ++FFit)
      f++;
   for (FEit = T.finite_edges_begin(); FEit != T.finite_edges_end(); ++FEit)
@@ -80,7 +94,11 @@ _test_triangulation_iterator( const Triangulation &T )
   assert((n-m+f-t)==1);
   n=0 ; m=0 ; f=0 ; t=0;
   for (Cit = T.cells_begin(); Cit != T.cells_end(); ++Cit)
+  {
+     Cell_handle ch = Cit; // Test the conversion.
+	 (void) ch;
      t++;
+  }
   for (Fit = T.facets_begin(); Fit != T.facets_end(); ++Fit)
      f++;
   for (Eit = T.edges_begin(); Eit != T.edges_end(); ++Eit)

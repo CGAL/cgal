@@ -94,9 +94,13 @@ public:
   typedef Vertex_iterator                      All_vertices_iterator;
 
   typedef Filter_iterator<Cell_iterator, Infinite_tester>
-                                               Finite_cells_iterator;
+                                               Finite_cells_iterator_base;
   typedef Filter_iterator<Vertex_iterator, Infinite_tester>
-                                               Finite_vertices_iterator;
+                                               Finite_vertices_iterator_base;
+  typedef Triangulation_iterator_handle_adaptor_3<Finite_cells_iterator_base,
+                               Cell_handle>    Finite_cells_iterator;
+  typedef Triangulation_iterator_handle_adaptor_3<Finite_vertices_iterator_base,
+                               Vertex_handle>  Finite_vertices_iterator;
   typedef Filter_iterator<Edge_iterator, Infinite_tester>
                                                Finite_edges_iterator;
   typedef Filter_iterator<Facet_iterator, Infinite_tester>

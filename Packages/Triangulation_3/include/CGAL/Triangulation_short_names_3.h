@@ -34,6 +34,8 @@
 #define Triangulation_ds_edge_iterator_3            TDS_eit3
 #define Triangulation_ds_facet_iterator_3           TDS_fit3
 
+#define Triangulation_iterator_handle_adaptor_3     T_iha3
+
 #define Triangulation_ds_cell_circulator_3          TDS_ccir3
 #define Triangulation_ds_facet_circulator_3         TDS_fcir3
 
@@ -47,7 +49,7 @@
 #define Regular_triangulation_euclidean_traits_3    R_gt3
 #define Regular_triangulation_3                     RT3
 
-#define Triangulation_hierarchy_3                   TH_3
+#define Triangulation_hierarchy_3                   TH3
 #define Triangulation_hierarchy_vertex_base_3       TH_vb3
 
 #endif // CGAL_TRIANGULATION_SHORT_NAMES_3_H

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1999,2000,2001 The CGAL Consortium
+// Copyright (c) 1999,2000,2001,2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -81,8 +81,12 @@ public:
 
   typedef DS_Container<Cell>                       Cell_container;
   typedef DS_Container<Vertex>                     Vertex_container;
-  typedef typename Cell_container::iterator        Cell_iterator;
-  typedef typename Vertex_container::iterator      Vertex_iterator;
+  typedef typename Cell_container::iterator        Cell_Iterator_base;
+  typedef typename Vertex_container::iterator      Vertex_Iterator_base;
+  typedef Triangulation_iterator_handle_adaptor_3<Cell_Iterator_base,
+                                   Cell_handle>    Cell_iterator;
+  typedef Triangulation_iterator_handle_adaptor_3<Vertex_Iterator_base,
+                                   Vertex_handle>  Vertex_iterator;
   typedef Triangulation_ds_facet_iterator_3<Tds>   Facet_iterator;
   typedef Triangulation_ds_edge_iterator_3<Tds>    Edge_iterator;
 

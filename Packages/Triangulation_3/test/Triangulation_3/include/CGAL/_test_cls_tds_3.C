@@ -77,26 +77,26 @@ _test_cls_tds_3( const Tds &)
 
   Vertex_iterator vit;
   vit=tds3.vertices_begin();
-  tds3.insert_increase_dimension(vit->handle());
+  tds3.insert_increase_dimension(vit);
   std::cout << "ok" << std::endl;
   assert(tds3.is_valid());
   Tds tds4 = tds3;
   vit=tds4.vertices_begin();
-  tds4.insert_increase_dimension(vit->handle());
+  tds4.insert_increase_dimension(vit);
   std::cout << "ok" << std::endl;
   assert(tds4.is_valid());
   Tds tds5;
   tds5.swap(tds4);
   tds4=tds5;
   vit=tds5.vertices_begin();
-  tds5.insert_increase_dimension(vit->handle());
+  tds5.insert_increase_dimension(vit);
   std::cout << "ok" << std::endl;
   assert(tds5.is_valid());
   Tds tds6;
   tds6.swap(tds5);
   tds5=tds6;
   vit=tds6.vertices_begin();
-  tds6.insert_increase_dimension(vit->handle());
+  tds6.insert_increase_dimension(vit);
   std::cout << "ok" << std::endl;
   assert(tds6.is_valid());
 
@@ -126,11 +126,11 @@ _test_cls_tds_3( const Tds &)
   int nbflips=0;
   int i;
   cit = tds6.cells_begin();
-  tds6.insert_in_cell(cit->handle());
+  tds6.insert_in_cell(cit);
   cit = tds6.cells_begin();
-  tds6.insert_in_cell(cit->handle());
+  tds6.insert_in_cell(cit);
   cit = tds6.cells_begin();
-  tds6.insert_in_cell(cit->handle());
+  tds6.insert_in_cell(cit);
   assert(tds6.number_of_vertices()==8);
 //   std::cout << tds6.number_of_cells()<< " cells" << std::endl;
 
@@ -144,12 +144,12 @@ _test_cls_tds_3( const Tds &)
       tds6.incident_vertices( cit->vertex(i), std::inserter(set_of_vertices,
 			                      set_of_vertices.begin() ) );
       if ( set_of_vertices.find ( cit->neighbor(i)->vertex
-	     ( cit->neighbor(i)->index( cit->handle() ) ) ) 
+	     ( cit->neighbor(i)->index( cit ) ) ) 
 	   == set_of_vertices.end() ) {
 	nbflips++;
-	tds6.flip_flippable( cit->handle(), i );
+	tds6.flip_flippable( cit, i );
 	assert(tds6.is_valid());
-// 	if ( tds6.flip( cit->handle(), i ) ) {
+// 	if ( tds6.flip( cit, i ) ) {
 // 	  tds6.is_valid(true);
 // 	  nbflips++;
 // 	}
@@ -173,7 +173,7 @@ _test_cls_tds_3( const Tds &)
     next_cell = ++cit; --cit;
     while ( (! flipped) && (i<4) ) {
       if ( (i!=j) ) {
-	flipped = tds6.flip( cit->handle(), i, j ) ;
+	flipped = tds6.flip( cit, i, j ) ;
 	if (flipped) {
 	  nbflips++;
 	  assert(tds6.is_valid());

@@ -1,18 +1,15 @@
 -------------- POUR LA RELEASE
 
-- Priorite (sinon on n'est pas 100% backward-compatible) :
-  mettre des conversion operators circulator/iterator -> handles.
-  et virer les appels a handle() dans la test-suite pour verifier si ca
-  marche.  Pour les iterators, il faudra surement deriver simplement de
-  celui du DS_container.
-- Finir de decider pour find_conflicts, si on veut les facettes du bord du
-  trou vues de l'interieur ou de l'exterieur.  Implanter ca avant la release !
-  (et prevenir David/Raphaelle, les deux seuls users pour le moment).
 - bien tester le output_stream de T_3 et le copy_tds (ordre de creation des
   sommets). 
 - Verifier qu'il n'y a pas d'autres operations du meme style a modifier. 
 
 -------------- POUR DES QU'ON PEUT
+
+- Finir de decider pour find_conflicts, si on veut les facettes du bord du
+  trou vues de l'interieur ou de l'exterieur. 
+  Fournir un output iterator adaptator pour transformer l'iterateur de 
+  facettes vues de l'interieur en iterateur de facettes vues de l'exterieur.
 
 General
 - constructeurs pour avoir Triangulation T(points.begin(), points.end()); 

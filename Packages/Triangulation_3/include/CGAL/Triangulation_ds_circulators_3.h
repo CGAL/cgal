@@ -138,6 +138,8 @@ public:
     return ! (*this == ccir);
   }
 
+  operator Cell_handle() const { return (*this)->handle(); }
+
 private:
   Vertex_handle _s;    // source vertex of the edge
   Vertex_handle _t;    // target vertex of the edge

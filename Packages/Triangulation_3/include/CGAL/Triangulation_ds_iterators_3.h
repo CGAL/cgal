@@ -30,6 +30,18 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class Base, class Handle>
+struct Triangulation_iterator_handle_adaptor_3
+  : public Base
+{
+  Triangulation_iterator_handle_adaptor_3() : Base() {}
+   
+  Triangulation_iterator_handle_adaptor_3(const Base & b) 
+    : Base(b) {}
+
+  operator Handle() const {return (*this)->handle();}
+};
+
 template < class Tds >
 class Triangulation_ds_facet_iterator_3
 {

@@ -72,6 +72,9 @@ bidirectional and non-mutable.
 The edges and facets of the triangulation can also be visited through
 iterators and circulators which are bidirectional and non-mutable.
 
+Iterators and circulators are convertible to the corresponding handles, thus
+the user can pass them directly as arguments to the functions.
+
 \ccTypedef{typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle;}
 {handle to a vertex}
 \ccGlue
@@ -233,9 +236,6 @@ dimension~2.}}
 \ccPrecond{As above and $i\neq j$. Moreover $i,j \in \{0,1,2,3\}$ in
 dimension~3, $i,j \in \{0,1,2\}$ in dimension~2, $i,j \in \{0,1\}$ in 
 dimension~1.}}
-
- \textit{not yet implemented : geometric access functions with iterators or
-circulators as arguments.}
 
 \ccHeading{Tests for Finite and Infinite Vertices and Faces}
 
