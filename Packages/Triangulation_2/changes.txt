@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 7.70 (25/04/03)
+- various bug fixes
+- readd Triangulation_face_base_2.h
+- suppress vertex creators with default aurguments (pb with SGI)
+
 ver 7.69 (22/04/03)
 - small bug fixes
 
