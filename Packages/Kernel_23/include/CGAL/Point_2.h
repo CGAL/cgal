@@ -75,6 +75,26 @@ private:
   {}
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_POINT_2
+template < class R >
+std::ostream&
+operator<<(std::ostream& os, const Point_2<R>& p)
+{
+  typedef typename  R::Point_2_base  RPoint_2;
+  return os << static_cast<const RPoint_2&>(p);
+}
+#endif // CGAL_NO_OSTREAM_INSERT_POINT_2
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_POINT_2
+template < class R >
+std::istream&
+operator>>(std::istream& is, Point_2<R>& p)
+{
+  typedef typename  R::Point_2_base  RPoint_2;
+  return is >> static_cast<RPoint_2&>(p);
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_POINT_2
+
 CGAL_END_NAMESPACE
 
 #include <CGAL/Vector_2.h>

@@ -61,6 +61,26 @@ public:
   {}
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_ISO_CUBOID_3
+template < class R >
+std::ostream&
+operator<<(std::ostream& os, const Iso_cuboid_3<R>& r)
+{
+  typedef typename  R::Iso_cuboid_3_base  RIso_cuboid_3;
+  return  os << (const RIso_cuboid_3& )r; }
+#endif // CGAL_NO_OSTREAM_INSERT_ISO_CUBOID_3
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOID_3
+template < class R >
+std::istream&
+operator>>(std::istream& is, Iso_cuboid_3<R>& r)
+{
+  typedef typename  R::Iso_cuboid_3_base  RIso_cuboid_3;
+  is >> (RIso_cuboid_3& )r;
+  return is;
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOID_3
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_ISO_CUBOID_3_H

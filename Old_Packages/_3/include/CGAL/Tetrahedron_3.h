@@ -62,6 +62,26 @@ public:
                      }
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_TETRAHEDRON_3
+template < class R >
+std::ostream&
+operator<<(std::ostream& os, const Tetrahedron_3<R>& t)
+{
+  typedef typename  R::Tetrahedron_3_base  RTetrahedron_3;
+  return os << static_cast<const RTetrahedron_3&>(t);
+}
+#endif // CGAL_NO_OSTREAM_INSERT_TETRAHEDRON_3
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRON_3
+template < class R >
+std::istream&
+operator>>(std::istream& is, Tetrahedron_3<R>& t)
+{
+  typedef typename  R::Tetrahedron_3_base  RTetrahedron_3;
+  return is >> static_cast<RTetrahedron_3&>(t);
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRON_3
+
 CGAL_END_NAMESPACE
 
 #endif  // CGAL_TETRAHEDRON_3_H

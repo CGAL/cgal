@@ -92,6 +92,26 @@ public:
   { return RDirection_2::operator-(); }
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_DIRECTION_2
+template < class R >
+std::ostream &
+operator<<(std::ostream &os, const Direction_2<R> &d)
+{
+  typedef typename  R::Direction_2_base  RDirection_2;
+  return os << static_cast<const RDirection_2&>(d);
+}
+#endif // CGAL_NO_OSTREAM_INSERT_DIRECTION_2
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_DIRECTION_2
+template < class R >
+std::istream &
+operator>>(std::istream &is, Direction_2<R> &p)
+{
+  typedef typename  R::Direction_2_base  RDirection_2;
+  return is >> static_cast<RDirection_2&>(p);
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTION_2
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_DIRECTION_2_H

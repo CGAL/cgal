@@ -64,6 +64,26 @@ public:
   { return  CGAL::Triangle_2<R>(vertex(0), vertex(2), vertex(1)); }
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLE_2
+template < class R >
+std::ostream &
+operator<<(std::ostream &os, const Triangle_2<R> &t)
+{
+  typedef typename  R::Triangle_2_base  RTriangle_2;
+  return os << (const RTriangle_2&)t;
+}
+#endif // CGAL_NO_OSTREAM_INSERT_TRIANGLE_2
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLE_2
+template < class R >
+std::istream &
+operator>>(std::istream &is, Triangle_2<R> &t)
+{
+  typedef typename  R::Triangle_2_base  RTriangle_2;
+  return is >> (RTriangle_2&)t;
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLE_2
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_TRIANGLE_2_H

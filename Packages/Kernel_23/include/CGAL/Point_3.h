@@ -93,6 +93,25 @@ bool
 operator!=(const Origin& o, const Point_3<R>& p)
 { return p != o; }
 
+#ifndef CGAL_NO_OSTREAM_INSERT_POINT_3
+template < class R >
+std::ostream&
+operator<<(std::ostream& os, const Point_3<R>& p)
+{
+  typedef typename  R::Point_3_base  RPoint_3;
+  return os << static_cast<const RPoint_3&>(p);
+}
+#endif // CGAL_NO_OSTREAM_INSERT_POINT_3
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_POINT_3
+template < class R >
+std::istream& operator>>(std::istream& is, Point_3<R>& p)
+{
+  typedef typename  R::Point_3_base  RPoint_3;
+  return is >> static_cast<RPoint_3&>(p);
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_POINT_3
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_POINT_3_H

@@ -70,6 +70,26 @@ public:
   { return vertex(i); }
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLE_3
+template < class R >
+std::ostream&
+operator<<(std::ostream& os, const Triangle_3<R>& t)
+{
+  typedef typename  R::Triangle_3_base  RTriangle_3;
+  return os << static_cast<const RTriangle_3&>(t);
+}
+#endif // CGAL_NO_OSTREAM_INSERT_TRIANGLE_3
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLE_3
+template < class R >
+std::istream&
+operator>>(std::istream& is, Triangle_3<R>& t)
+{
+  typedef typename  R::Triangle_3_base  RTriangle_3;
+  return is >> static_cast<RTriangle_3&>(t);
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLE_3
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_TRIANGLE_3_H

@@ -105,6 +105,26 @@ public:
   }
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_LINE_2
+template < class R >
+std::ostream &
+operator<<(std::ostream &os, const Line_2<R> &l)
+{
+  typedef typename  R::Line_2_base  RLine_2;
+  return os << static_cast<const RLine_2&>(l);
+}
+#endif // CGAL_NO_OSTREAM_INSERT_LINE_2
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_LINE_2
+template < class R >
+std::istream &
+operator>>(std::istream &is, Line_2<R> &p)
+{
+  typedef typename  R::Line_2_base  RLine_2;
+  return is >> static_cast<RLine_2&>(p);
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_LINE_2
+
 CGAL_END_NAMESPACE
 
 #endif  // CGAL_LINE_2_H

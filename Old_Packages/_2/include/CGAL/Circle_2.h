@@ -102,6 +102,27 @@ public:
   }
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_CIRCLE_2
+template < class R >
+std::ostream &
+operator<<(std::ostream &os, const Circle_2<R> &c)
+{
+  typedef typename R::Circle_2_base  RCircle_2;
+  return os << (const RCircle_2&)c;
+}
+
+#endif // CGAL_NO_OSTREAM_INSERT_CIRCLE_2
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_CIRCLE_2
+template < class R >
+std::istream &
+operator>>(std::istream &is, Circle_2<R> &c)
+{
+  typedef typename R::Circle_2_base  RCircle_2;
+  return is >> (RCircle_2&)c;
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLE_2
+
 CGAL_END_NAMESPACE
 
 #endif  // CGAL_CIRCLE_2_H

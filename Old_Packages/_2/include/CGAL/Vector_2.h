@@ -131,6 +131,26 @@ private:
   Vector_2(const CGAL::Direction_2<R> &d) : RVector_2(d) {}
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_VECTOR_2
+template < class R >
+std::ostream &
+operator<<(std::ostream &os, const Vector_2<R> &v)
+{
+  typedef typename  R::Vector_2_base  RVector_2;
+  return os << static_cast<const RVector_2&>(v);
+}
+#endif // CGAL_NO_OSTREAM_INSERT_VECTOR_2
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_VECTOR_2
+template < class R >
+std::istream &
+operator>>(std::istream &is, Vector_2<R> &p)
+{
+  typedef typename  R::Vector_2_base  RVector_2;
+  return is >> static_cast<RVector_2&>(p);
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_VECTOR_2
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_VECTOR_2_H

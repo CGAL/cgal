@@ -130,6 +130,26 @@ cross_product(const Vector_3<R>& v, const Vector_3<R>& w)
 	               static_cast<const RVector_3&>(w));
 }
 
+#ifndef CGAL_NO_OSTREAM_INSERT_VECTOR_3
+template < class R >
+std::ostream&
+operator<<(std::ostream& os, const Vector_3<R>& v)
+{
+  typedef typename  R::Vector_3_base  RVector_3;
+  return os << static_cast<const RVector_3&>(v);
+}
+#endif // CGAL_NO_OSTREAM_INSERT_VECTOR_3
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_VECTOR_3
+template < class R >
+std::istream&
+operator>>(std::istream& is, Vector_3<R>& p)
+{
+  typedef typename  R::Vector_3_base  RVector_3;
+  return is >> static_cast<RVector_3&>(p);
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_VECTOR_3
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_VECTOR_3_H

@@ -88,6 +88,22 @@ public:
   { return RDirection_3::operator-(); }
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_DIRECTION_3
+template < class R >
+std::ostream& operator<<(std::ostream& os, const Direction_3<R>& d)
+{
+  typedef typename  R::Direction_3_base  RDirection_3;
+  return os << static_cast<const RDirection_3&>(d); }
+#endif // CGAL_NO_OSTREAM_INSERT_DIRECTION_3
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_DIRECTION_3
+template < class R >
+std::istream& operator>>(std::istream& is, Direction_3<R>& p)
+{
+  typedef typename  R::Direction_3_base  RDirection_3;
+  return is >> static_cast<RDirection_3&>(p); }
+#endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTION_3
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_DIRECTION_3_H

@@ -87,6 +87,27 @@ public:
   { return RLine_3::transform(t); }
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_LINE_3
+template < class R >
+std::ostream&
+operator<<(std::ostream& os, const Line_3<R>& l)
+{
+  typedef typename  R::Line_3_base  RLine_3;
+  return os << static_cast<const RLine_3&>(l);
+}
+#endif // CGAL_NO_OSTREAM_INSERT_LINE_3
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_LINE_3
+template < class R >
+std::istream&
+operator>>(std::istream & is, Line_3<R> & p)
+{
+  typedef typename  R::Line_3_base  RLine_3;
+  is >> static_cast<RLine_3&>(p);
+  return is;
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_LINE_3
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_LINE_3_H

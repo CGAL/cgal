@@ -73,6 +73,26 @@ public:
   { return RSegment_3::supporting_line(); }
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_SEGMENT_3
+template < class R>
+std::ostream&
+operator<<(std::ostream& os, const Segment_3<R>& s)
+{
+  typedef typename  R::Segment_3_base  RSegment_3;
+  return os << static_cast<const RSegment_3&>(s);
+}
+#endif // CGAL_NO_OSTREAM_INSERT_SEGMENT_3
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENT_3
+template < class R>
+std::istream&
+operator>>(std::istream& is, Segment_3<R>& s)
+{
+  typedef typename  R::Segment_3_base  RSegment_3;
+  return is >> static_cast<RSegment_3&>(s);
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENT_3
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_SEGMENT_3_H

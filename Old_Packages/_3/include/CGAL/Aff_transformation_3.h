@@ -121,6 +121,26 @@ public:
                         }
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_3
+template < class R >
+std::ostream&
+operator<<(std::ostream& os, const CGAL::Aff_transformation_3<R>& t)
+{
+  typedef typename   R::Aff_transformation_3_base  RAff_transformation_3;
+  return os << static_cast<const RAff_transformation_3&>(t);
+}
+#endif // CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_3
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_3
+template < class R >
+std::istream&
+operator>>(std::istream& is, CGAL::Aff_transformation_3<R>& t)
+{
+  typedef typename   R::Aff_transformation_3_base  RAff_transformation_3;
+  return is >> static_cast<const RAff_transformation_3&>(t);
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_3
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_AFF_TRANSFORMATION_3_H

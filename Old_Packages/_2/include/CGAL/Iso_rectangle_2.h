@@ -83,6 +83,27 @@ public:
   { return  RIso_rectangle_2::transform(t); }
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLE_2
+template < class R >
+std::ostream &
+operator<<(std::ostream &os, const Iso_rectangle_2<R> &r)
+{
+  typedef typename R::Iso_rectangle_2_base  RIso_rectangle_2;
+  return  os << (const RIso_rectangle_2&)r;
+}
+#endif // CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLE_2
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLE_2
+template < class R >
+std::istream &
+operator>>(std::istream &is, Iso_rectangle_2<R> &r)
+{
+  typedef typename R::Iso_rectangle_2_base  RIso_rectangle_2;
+  is >> (RIso_rectangle_2&)r;
+  return is;
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLE_2
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_ISO_RECTANGLE_2_H

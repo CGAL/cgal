@@ -111,6 +111,26 @@ public:
   { return CGAL::Plane_3<R>( RPlane_3::transform(t) ); }
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_PLANE_3
+template < class R >
+std::ostream&
+operator<<(std::ostream& os, const Plane_3<R>& p)
+{
+  typedef typename  R::Plane_3_base  RPlane_3;
+  return os << static_cast<const RPlane_3&>(p);
+}
+#endif // CGAL_NO_OSTREAM_INSERT_PLANE_3
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_PLANE_3
+template < class R >
+std::istream&
+operator>>(std::istream& is, Plane_3<R>& t)
+{
+  typedef typename  R::Plane_3_base  RPlane_3;
+  return is >> static_cast<RPlane_3&>(t);
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_PLANE_3
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_PLANE_3_H

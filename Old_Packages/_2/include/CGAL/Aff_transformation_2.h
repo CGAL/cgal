@@ -144,6 +144,26 @@ public:
                       { return RAff_transformation_2::operator*(t); }
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_2
+template < class R >
+std::ostream &
+operator<<(std::ostream &os, const CGAL::Aff_transformation_2<R> &t)
+{
+  typedef typename  R::Aff_transformation_2_base  RAff_transformation_2;
+  return os << static_cast<const RAff_transformation_2&>(t);
+}
+#endif // CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_2
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_2
+template < class R >
+std::istream &
+operator>>(std::istream &is, CGAL::Aff_transformation_2<R> &t)
+{
+  typedef typename  R::Aff_transformation_2_base  RAff_transformation_2;
+  return is >> static_cast<RAff_transformation_2&>(t);
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_2
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_AFF_TRANSFORMATION_2_H

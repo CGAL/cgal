@@ -74,6 +74,26 @@ public:
   { return RRay_3::transform(t); }
 };
 
+#ifndef CGAL_NO_OSTREAM_INSERT_RAY_3
+template < class R >
+std::ostream&
+operator<<(std::ostream& os, const Ray_3<R>& r)
+{
+  typedef typename  R::Ray_3_base  RRay_3;
+  return os << static_cast<const RRay_3&>(r);
+}
+#endif // CGAL_NO_OSTREAM_INSERT_RAY_3
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_RAY_3
+template < class R >
+std::istream&
+operator>>(std::istream& is, Ray_3<R>& r)
+{
+  typedef typename  R::Ray_3_base  RRay_3;
+  return is >> static_cast<RRay_3&>(r);
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_RAY_3
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_RAY_3_H
