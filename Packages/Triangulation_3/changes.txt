@@ -1,3 +1,9 @@
+Version 1.34 (3 apr 00)
+fix in the doc :
+cheating with concept Tds_3 and its template parameters
+to remove problem with indexing...
+To be arranged latex
+
 Version 1.33 (29 march 00)
 very bad version of the new doc
 

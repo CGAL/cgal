@@ -54,6 +54,7 @@ clean:
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.* --exclude=Makefile \
+	--exclude=cc_make_ref_pages --exclude=cc_ref_wizard \
 	--exclude=TODO \
 	--exclude=.pure --exclude=*.pv \
 	--exclude=.nfs*\
