@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: convex_hull_constructive_traits_2.tex
+% | Reference manual page: Convex_hull_constructive_traits_2.tex
 % +------------------------------------------------------------------------+
 % | 14.05.2001   Susan Hert and Stefan Schirra
 % | Package: Convex_hull_2
@@ -7,21 +7,21 @@
 % +------------------------------------------------------------------------+
 
 \ccAutoIndexingOff
-\begin{ccRefClass}{convex_hull_constructive_traits_2<R>}
+\begin{ccRefClass}{Convex_hull_constructive_traits_2<R>}
 \ccAutoIndexingOn
-\ccIndexTraitsClassBegin{convex_hull_constructive_traits_2}{}{convex hull, 2D}
+\ccIndexTraitsClassBegin{Convex_hull_constructive_traits_2}{}{convex hull, 2D}
 
 \ccDefinition
   
 The class \ccRefName\ serves as a traits class for all the two-dimensional
 convex hull and extreme point calculation function. Unlike the class
-\ccc{CGAL::convex_hull_traits_2<R>}, this class makes use of previously
+\ccc{CGAL::Convex_hull_traits_2<R>}, this class makes use of previously
 computed results to avoid redundancy.  For example,
 in the sidedness tests, lines (of type \ccc{R::Line_2}) are constructed,
 which is equivalent to the precomputation of subdeterminants of
 the orientation-determinant for three points.
 
-\ccInclude{CGAL/convex_hull_constructive_traits_2.h}
+\ccInclude{CGAL/Convex_hull_constructive_traits_2.h}
 
 \ccIsModel
 
@@ -52,7 +52,7 @@ the orientation-determinant for three points.
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
-\ccConstructor{convex_hull_constructive_traits_2();}{default constructor.}
+\ccConstructor{Convex_hull_constructive_traits_2();}{default constructor.}
 
 \ccOperations
 \ccAutoIndexingOff
@@ -77,12 +77,12 @@ the orientation-determinant for three points.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::convex_hull_leda_traits_2}  \\
-\ccRefIdfierPage{CGAL::convex_hull_rat_leda_traits_2}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_leda_traits_2}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_rat_leda_traits_2}  \\
 \ccRefIdfierPage{CGAL::Convex_hull_projective_xy_traits_2<Point_3>} \\
 \ccRefIdfierPage{CGAL::Convex_hull_projective_xz_traits_2<Point_3>} \\
 \ccRefIdfierPage{CGAL::Convex_hull_projective_yz_traits_2<Point_3>}  \\
-\ccRefIdfierPage{CGAL::convex_hull_traits_2<R>}  
+\ccRefIdfierPage{CGAL::Convex_hull_traits_2<R>}  
 
 \ccIndexTraitsClassEnd
 \ccAutoIndexingOff

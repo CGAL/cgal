@@ -26,6 +26,22 @@ there are also a number of functions available for computing particular
 extreme points and subsequences of the hull points, such as the lower
 hull or upper hull of a set of points.
 
+
+\ccHeading{Assertions}
+\ccIndexSubitem{convex hull, 2D}{assertion flags}
+\ccIndexSubitem{assertion flags}{convex hull, 2D}
+\ccIndexSubitem{convex hull, 3D}{assertion flags}
+\ccIndexSubitem{assertion flags}{convex hull, 3D}
+The assertion flags for the convex hull and extreme point algorithms
+use \ccc{CH} in their names (\textit{e.g.}, \ccc{CGAL_CH_NO_POSTCONDITIONS}).
+For the convex hull algorithms, the postcondition
+check tests only convexity (if not disabled), but not containment of the
+input points in the polygon or polyhedron defined by the output points.
+The latter is considered an expensive checking and can be enabled by
+defining \ccc{CGAL_CH_CHECK_EXPENSIVE}%
+\ccIndexAssertionFlagName{CGAL_CH_CHECK_EXPENSIVE}.
+
+
 \ccHeading{Concepts}
 
 %\ccRefConceptPage{ConvexHull3fromD_Rep}\\
@@ -36,13 +52,13 @@ hull or upper hull of a set of points.
 
 \ccHeading{Traits Classes}
 
-\ccRefIdfierPage{CGAL::convex_hull_constructive_traits_2<R>}  \\
-\ccRefIdfierPage{CGAL::convex_hull_leda_traits_2}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_constructive_traits_2<R>}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_leda_traits_2}  \\
 \ccRefIdfierPage{CGAL::Convex_hull_projective_xy_traits_2<Point_3>}  \\
 \ccRefIdfierPage{CGAL::Convex_hull_projective_xz_traits_2<Point_3>}  \\
 \ccRefIdfierPage{CGAL::Convex_hull_projective_yz_traits_2<Point_3>}  \\
-\ccRefIdfierPage{CGAL::convex_hull_rat_leda_traits_2}  \\
-\ccRefIdfierPage{CGAL::convex_hull_traits_2<R>} \\
+\ccRefIdfierPage{CGAL::Convex_hull_rat_leda_traits_2}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_traits_2<R>} \\
 \ccRefIdfierPage{CGAL::Convex_hull_traits_3<R>} \\
 
 \ccHeading{Convex Hull Functions}

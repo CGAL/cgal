@@ -38,9 +38,8 @@ iterators, the $O(n \log n)$ algorithm of of Akl and Toussaint
             The source range [\ccc{first},\ccc{beyond}) does not contain
             \ccc{result}.}
 
-The default traits class \ccc{Default_traits} is the \cgal\ 
-\ccc{Kernel_traits_2} class,%\ccIndexTraitsClassDefault{convex_hull_2}
-with the representation type determined by \ccc{InputIterator::value_type}.
+The default traits class \ccc{Default_traits} is the kernel in which
+the type \ccc{InputIterator::value_type} is defined. 
 
 \ccHeading{Requirements}
 \begin{enumerate}
@@ -75,8 +74,8 @@ In the following example we use the \stl-compliant interface of
 sequence of extreme points. Point data are read from standard input, the
 convex hull polygon is shown in a \cgal\ window.
 Remember, that when no traits class is specified for the function
-\ccc{convex_hull_2}, the representation class \ccc{R} is used 
-with the two-dimensional \cgal\ kernel to create the default traits class.
+\ccc{convex_hull_2}, the kernel from which the input points come is
+used as the default traits class.
 
 \ccIncludeExampleCode{Convex_hull_2/convex_hull_2_demo.C}
 

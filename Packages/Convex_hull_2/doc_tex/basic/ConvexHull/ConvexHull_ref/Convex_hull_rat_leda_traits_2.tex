@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: convex_hull_leda_traits_2.tex
+% | Reference manual page: Convex_hull_rat_leda_traits_2.tex
 % +------------------------------------------------------------------------+
 % | 14.05.2001   Susan Hert and Stefan Schirra
 % | Package: Convex_hull_2
@@ -7,19 +7,20 @@
 % +------------------------------------------------------------------------+
 
 \ccAutoIndexingOff
-\begin{ccRefClass}{convex_hull_leda_traits_2}
+\begin{ccRefClass}{Convex_hull_rat_leda_traits_2}
 \ccAutoIndexingOn
-\ccIndexTraitsClassBegin{convex_hull_leda_traits_2}{}{convex hull, 2D}
+\ccIndexTraitsClassBegin{Convex_hull_rat_leda_traits_2}{}{convex hull, 2D}
 
 \ccDefinition
   
 The class \ccRefName\ serves as a traits class for all the two-dimensional
 convex hull and extreme point calculation function.  It uses the 
-two-dimensional floating point geometry kernel of \leda.
-Please note that, due to the use of floating-point arithmetic, the results
-may not be robust when using this traits class.
+two-dimensional exact rational geometry kernel of \leda.  The usage of this 
+traits class is not recommended with \ccc{ch_eddy()} for \leda\ versions prior 
+to 3.6.  Older versions of \leda\ do
+not provide appropriate efficient predicates for this function.
 
-\ccInclude{CGAL/convex_hull_leda_traits_2.h}
+\ccInclude{CGAL/Convex_hull_rat_leda_traits_2.h}
 
 \ccIsModel
 
@@ -28,10 +29,10 @@ may not be robust when using this traits class.
 
 \ccTypes
 \ccAutoIndexingOff
-\ccSetThreeColumns{typedef CGAL::Less_signed_distance_to_line_2 }{Less_signed_distance_to_line_2}{}
+\ccSetThreeColumns{typedef CGAL::p_Less_signed_distance_to_line_2 }{Less_signed_distance_to_line_2}{}
 \ccThreeToTwo
 
-\ccTypedef{typedef leda_point             Point_2;}{}
+\ccTypedef{typedef leda_rat_point             Point_2;}{}
 \ccGlue
 \ccTypedef{typedef CGAL::p_Less_xy<Point_2>               Less_xy_2;}{}
 \ccGlue
@@ -50,7 +51,7 @@ may not be robust when using this traits class.
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
-\ccConstructor{convex_hull_leda_traits_2();}{default constructor.}
+\ccConstructor{Convex_hull_rat_leda_traits_2();}{default constructor.}
 
 \ccOperations
 
@@ -76,12 +77,12 @@ may not be robust when using this traits class.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::convex_hull_constructive_traits_2<R>}  \\
-\ccRefIdfierPage{CGAL::convex_hull_rat_leda_traits_2}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_constructive_traits_2<R>}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_leda_traits_2}  \\
 \ccRefIdfierPage{CGAL::Convex_hull_projective_xy_traits_2<Point_3>} \\
 \ccRefIdfierPage{CGAL::Convex_hull_projective_xz_traits_2<Point_3>} \\
 \ccRefIdfierPage{CGAL::Convex_hull_projective_yz_traits_2<Point_3>}  \\
-\ccRefIdfierPage{CGAL::convex_hull_traits_2<R>}  
+\ccRefIdfierPage{CGAL::Convex_hull_traits_2<R>}  
 
 \ccIndexTraitsClassEnd
 \ccAutoIndexingOff

@@ -15,8 +15,11 @@
 \ccDefinition
   
 The function \ccRefName\ determines if a given sequence of points defines
-a clockwise-oriented, stongly convex polygon.  The algorithm requires
-$O(n)$ time for a set of $n$ input points.
+a clockwise-oriented, stongly convex polygon.  
+A set of points is said to be strongly convex %
+\ccIndexMainItemDef{strongly convex} if it consists of only extreme points
+(\textit{i.e.}, vertices of the convex hull).
+
 
 \ccInclude{CGAL/convexity_check_2.h}
 
@@ -51,6 +54,9 @@ functions that return instances of these types:
 
 \ccRefIdfierPage{CGAL::is_ccw_strongly_convex_2} \\
 \ccRefIdfierPage{CGAL::is_strongly_convex_3} 
+
+\ccImplementation
+The algorithm requires $O(n)$ time for a set of $n$ input points.
 
 \ccIndexMainItemEnd{convexity checking, 2D}
 \ccIndexSubitemEnd{polygon}{strongly convex}
