@@ -41,10 +41,10 @@ LDFLAGS =  $(CGAL_LDFLAGS) -L$(FLTK_DIR)/lib -L/usr/lib/X11 \
 #---------------------------------------------------------------------#
 
 
-demo: main.o 
-	$(CGAL_CXX) -o $@ $(OFILES) main.o -lpthread $(LDFLAGS)
+demo: demo.o 
+	$(CGAL_CXX) -o $@ $(OFILES) demo.o -lpthread $(LDFLAGS)
 
-facet: facet_obj.o
+facet_obj: facet_obj.o
 	$(CGAL_CXX) -o $@ $(OFILES) facet_obj.o -lpthread $(LDFLAGS)
 
 
@@ -69,7 +69,7 @@ testter: testter.o
 stream_ex: stream_ex.o
 	$(CGAL_CXX) -o $@ $(OFILES) stream_ex.o -lpthread $(LDFLAGS)
 
-all: facet demo tetra1 tetra2 tetra3 terrain stream_ex
+all: facet_obj demo tetra1 tetra2 tetra3 terrain stream_ex
 
 #---------------------------------------------------------------------#
 #                    suffix rules

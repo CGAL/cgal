@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
   W.set_custom_panel(my_panel);
   W.set_mouse_push_handler(myhandler);
   stop();
+  std::cerr << "after 1st stop" << std::endl;
   point_t p1(100,100,100);
   point_t p2(200,100,100);
   point_t p3(300,100,100);
