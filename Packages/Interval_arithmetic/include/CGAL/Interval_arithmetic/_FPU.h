@@ -51,7 +51,7 @@
 #endif
 
 
-// The test-suite fails for Mips.  Maybe an egcs-1.0.3 bug (1.1 is ok !):
+// The test-suite fails for Irix 5.3, because its assembler is BAD.
 // /usr/tmp/cca004Mh.s: Assembler messages:
 // /usr/tmp/cca004Mh.s:6396: Error: ERROR: Illegal operands `ctc1'
 // /usr/tmp/cca004Mh.s:6439: Error: ERROR: Illegal operands `ctc1'
@@ -60,7 +60,6 @@
 
 #if ( defined(__GNUC__) && \
     ( defined(__i386) || \
-      defined(__mips) || \
       defined(__sparc) || \
       defined(__alpha) ) )
 #define CGAL_IA_USE_ASSEMBLY
