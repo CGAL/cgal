@@ -241,14 +241,8 @@ public:
 
   void swap(Triangulation_3 &tr)
     {
-      GT t(geom_traits());
-      _gt = tr.geom_traits();
-      tr._gt = t; 
-
-      Vertex_handle inf = infinite_vertex();
-      infinite = tr.infinite_vertex();
-      tr.infinite = inf;
-
+      std::swap(tr._gt, _gt);
+      std::swap(tr.infinite, infinite);
       _tds.swap(tr._tds);
     }
 

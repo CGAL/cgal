@@ -204,16 +204,9 @@ void
 Triangulation_hierarchy_3<Tr>:: 
 swap(Triangulation_hierarchy_3<Tr> &tr)
 {
-//   Tr_Base** h= hierarchy;
-//   hierarchy = tr.hierarchy;
-//   tr.hierarchy = h;
-  Tr_Base* temp;
   Tr_Base::swap(tr);
-  for(int i= 1; i<Triangulation_hierarchy_3__maxlevel; ++i){
-    temp = hierarchy[i];
-    hierarchy[i] = tr.hierarchy[i];
-    tr.hierarchy[i]= temp;
-  }
+  for(int i=1; i<Triangulation_hierarchy_3__maxlevel; ++i)
+      std::swap(hierarchy[i], tr.hierarchy[i]);
 }
 
 template <class Tr>
