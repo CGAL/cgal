@@ -133,7 +133,7 @@ public:
    */
   void init_right_curves()
   {
-    m_isCurveInPm.reserve(get_num_right_curves());
+    m_isCurveInPm.resize(get_num_right_curves());
     for ( int i = 0 ; i < get_num_right_curves() ; i++ )
       m_isCurveInPm[i] = false;
   }
@@ -150,23 +150,35 @@ public:
   {
     int i = 0;
     int counter = 0;
+    int skip = 0;
+
+    for (unsigned int j = 0 ; j < m_isCurveInPm.size() ; j++ ) {
+      if ( m_isCurveInPm[j] == true ) {
+        skip++;
+      }
+    }
+    skip--;
+
     SubCurveIter iter = m_rightCurves->end();
     --iter;
     for ( ; iter != m_rightCurves->begin() ; --iter ) {
-      
       if ( curve->getId() == (*iter)->getId() ) {
-	m_isCurveInPm[counter] = true;
-	if ( get_num_left_curves() == 0 )
-	  return i-1;
-	return i;
+        m_isCurveInPm[counter] = true;
+        if (( i == 0 ) && ( get_num_left_curves() == 0 ))
+          return skip;
+        if ( get_num_left_curves() == 0 ) {    
+          return i-1;
+        }
+        return i;
       }
       if ( m_isCurveInPm[counter] == true )
-	i++;
+        i++;
       counter++;
     }
-    
-    CGAL_assertion(curve->getId() == (*iter)->getId());
 
+    CGAL_assertion(curve->getId() == (*iter)->getId());
+    m_isCurveInPm[counter] = true;
+    
     if ( get_num_left_curves() == 0 )
       i--;
     return i;
@@ -183,7 +195,7 @@ public:
     while ( curve->getId() != (*iter)->getId() )
     {
       if ( m_isCurveInPm[counter] == true )
-	return false;
+        return false;
       counter++;
       --iter;
     }
