@@ -4,10 +4,14 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1221
+//---------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------
 //	revision 1220
 //---------------------------------------------------------------------
 
-GLOB: chaged headers
 
 //---------------------------------------------------------------------
 //	revision 1219
@@ -539,7 +543,7 @@ DOCS: removed support for "external" STL
 DOCS: removed obsolete paragraph about LEDA/STL problems
 DOCS: updated upgrade section.
 DOCS: updated list of supported compilers.
-ALL : Update for CGAL-2.0.
+DOCS: Update for CGAL-2.0.
 DOCS: adopted to new html-converter.
 DOCS: Made conformant to the new html coverter.
 DOCS: changed LEDA from 3.6.1 to 3.7.
@@ -549,10 +553,8 @@ DOCS: moved here from former package Installation_doc.
 DOCS: Added Dima to the list of authors.
 DOCS: Fixed Y2K-problem in mydate.
 DOCS: Replaced path by nonlinkedpath.
-TEST: Added return 0;
-TEST: Converted to namespace CGAL.
-ALL : Initial revision
-ALL : Installation
+GLOB: Initial revision
+GLOB: Installation
 
 //---------------------------------------------------------------------
 //	revision 1157
@@ -1032,7 +1034,6 @@ DOCS: Some minor changes due to Dima.
 //---------------------------------------------------------------------
 
 DOCS: Fixed Y2K-problem in mydate.
-TEST: Updated makefile and removed superfluous include in example.C.
 
 //---------------------------------------------------------------------
 //	revision 187
@@ -1247,7 +1248,6 @@ GLOB: Standard header tests give now feedback (ok/no).
 GLOB: Stripped quotes from unix file/pathnames.
 GLOB: Added cygpath use for non-iteractive modes also.
 GLOB: No object file specification in compiler call.
-TEST: Added return 0;
 
 //---------------------------------------------------------------------
 //	revision 157
@@ -1260,7 +1260,6 @@ GLOB: fixed EXE_OPT setting.
 //---------------------------------------------------------------------
 
 GLOB: Added GMP support for MSVC.
-TEST: Converted to namespace CGAL.
 
 //---------------------------------------------------------------------
 //	revision 155
