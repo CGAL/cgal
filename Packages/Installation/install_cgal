@@ -3341,9 +3341,7 @@ test_for_leda_incl_in_sys_incl()
 {
     ${_printf} "%s\n" "
     #include <LEDA/basic.h>
-    int main() {
-	return 0;
-    }" > ${TMP_CXX_FILE}.C
+    int main() { return 0; }" > ${TMP_CXX_FILE}.C
     if _compile_test "LEDA sysincl" "${CUSTOM_CXXFLAGS} " "$1"; then
 	cleanup_after_compile
 	${_printf} "%s\n" " ok."
@@ -3360,10 +3358,7 @@ test_for_leda_incl_in_sys_incl()
 # ($1 nonzero indicates verbosity)
 test_for_leda_lib_in_sys_lib()
 {
-    ${_printf} "%s\n" "
-    int main() {
-	return 0;
-    }" > ${TMP_CXX_FILE}.C
+    ${_printf} "%s\n" "int main() { return 0; }" > ${TMP_CXX_FILE}.C
     if _compile_test "LEDA syslibs" "${CUSTOM_CXXFLAGS} " "$1"; then
 	if _link_run_test "LEDA syslibs" "" \
 	    "${CUSTOM_LDFLAGS} `leda_lib_option P``leda_lib_option G``leda_lib_option L``math_ldflags`" "$1"; then
@@ -3685,9 +3680,7 @@ test_for_qt_incl_in_sys_incl()
 {
     ${_printf} "%s\n" "
     #include <qaction.h>
-    int main() {
-	return 0;
-    }" > ${TMP_CXX_FILE}.C
+    int main() { return 0; }" > ${TMP_CXX_FILE}.C
     if _compile_test "Qt sysincl" "${CUSTOM_CXXFLAGS} " "$1"; then
 	cleanup_after_compile
 	${_printf} "%s\n" " ok."
@@ -3704,10 +3697,7 @@ test_for_qt_incl_in_sys_incl()
 # ($1 nonzero indicates verbosity)
 test_for_qt_lib_in_sys_lib()
 {
-    ${_printf} "%s\n" "
-    int main() {
-	return 0;
-    }" > ${TMP_CXX_FILE}.C
+    ${_printf} "%s\n" "int main() { return 0; }" > ${TMP_CXX_FILE}.C
     if _compile_test "Qt syslibs" "${CUSTOM_CXXFLAGS} " "$1";
     then
 	if _link_run_test "Qt syslibs" "" \
