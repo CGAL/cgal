@@ -155,7 +155,7 @@ void visu_vertex(CGAL::Geomview_stream & os, const TRIANGULATION & T,
     os << c->vertex(i)->point();
 }
 
-int main(int argc, char* argv[])
+int main()
 {
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
 

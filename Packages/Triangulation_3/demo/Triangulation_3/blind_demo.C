@@ -62,7 +62,7 @@ typedef Triangulation::Locate_type Locate_type;
 typedef Gt::Point_3 Point;
 //typedef CGAL::Point_3<Rep>  Point;
 
-int main(int argc, char* argv[])
+int main()
 {
 
   Delaunay T;
