@@ -16,6 +16,12 @@
 - Faire des benchs/profiles de points non-randoms...
 - Alignement des cellules en memoire : effets de cache + pointeurs a
   l'interieur des cellules pour le voisinage (Fred a deja fait => ask).
+- La gestion memoire (interne a l'allocateur new/delete) prend pas mal de
+  place (30%...).  Ca serait bien de ranger les cellules dans des tableaux,
+  et ca permettrait de surcroi[tsx] aussi de se passer des listes doublements
+  chainees.
+  Le flag temporaire pourrait aller dans un des bits -> sizeof(cell) == 32 :)
+  NB: Ca serait bien de factoriser ce probleme avec T2D !!!
 - Facet_circulator a l'air bugue (et lent) d'apres F&D quand on specifie une
   facet de depart.  Est-ce qu'il y a besoin de stocker un TDS * ?  Stocker
   deux Vertex * plutot que deux ints, ca permet de gagner une Cell *, et
