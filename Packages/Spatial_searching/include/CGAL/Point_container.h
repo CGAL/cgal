@@ -133,8 +133,8 @@ public:
   {
     int cut_dim(-1);
     FT max_spread_points(FT(-1));
-    FT max_length=max_spread();  // length of longest side of box
-    int dim=dimension();
+    FT max_length = max_spread();  // length of longest side of box
+    int dim = dimension();
     for (int d=0; d<dim; d++) {
       FT length=bbox.max_coord(d)-bbox.min_coord(d);
       
@@ -217,11 +217,8 @@ public:
 
   // building the container from a sequence of Point_d*
   Point_container(const int d, iterator begin, iterator end) :
-    b(begin), e(end), bbox(d), tbox(d)  
+    b(begin), e(end), bbox(d, begin, end), tbox()  
   {
-    bbox = Kd_tree_rectangle<SearchTraits>(d, begin, end);
-    tbox = bbox;
-    
     built_coord = max_span_coord();
   }
 
@@ -263,7 +260,7 @@ public:
   
   void recompute_tight_bounding_box() 
   {
-    tbox.update_from_point_pointers(begin(), end(), begin() == end());
+    tbox.update_from_point_pointers(begin(), end());
   }
   
   
@@ -332,13 +329,11 @@ public:
     // adjusting boxes
     bbox.set_lower_bound(split_coord, cutting_value);
     tbox.update_from_point_pointers(begin(),
-				    end(),
-				    empty());
+				    end());
 	
     c.bbox.set_upper_bound(split_coord, cutting_value);
     c.tbox.update_from_point_pointers(c.begin(),
-				      c.end(),
-				      c.empty());
+				      c.end());
         
        
   }
@@ -377,10 +372,10 @@ public:
     
     typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
     typename SearchTraits::Cartesian_const_iterator_d mpit = construct_it((*(*mid)));
-    FT val1= *(mpit+split_coord);
+    FT val1 = *(mpit+split_coord);
     mid++;
     mpit = construct_it((*(*mid)));
-    FT val2= *(mpit+split_coord);
+    FT val2 = *(mpit+split_coord);
     return (val1+val2)/FT(2); 
   }
 
