@@ -3,6 +3,8 @@
 #include <fstream>
 #include <cassert>
 
+
+#include <CGAL/basic.h>
 #include <CGAL/Filtered_exact.h>
 
 
@@ -15,11 +17,21 @@ typedef CGAL::Filtered_exact<double,leda_real> NT;
 
 #else
 
+#ifdef CGAL_USE_CORE
+// Othwrwise if CORE is present use CORE's Expr as the exact number
+// type for Filtered_exact
+
+#include <CGAL_Expr.h>
+typedef CGAL::Filtered_exact<double,CORE::Expr> NT;
+
+#else
+
 // Otherwise just use double. This may cause numerical errors but it
 // is still worth doing it to show how to define correctly the traits
 // class
 typedef double NT;
 
+#endif
 #endif
 
 

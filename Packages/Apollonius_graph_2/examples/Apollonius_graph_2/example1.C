@@ -3,6 +3,8 @@
 #include <fstream>
 #include <cassert>
 
+#include <CGAL/basic.h>
+
 // example that uses the Filtered_exact number type
 
 #include <CGAL/MP_Float.h>
