@@ -138,7 +138,7 @@ public:
   // halfedge <he>. The returned intersections is based on the intersection
   // of the supporting curves (if they exist).
   bool 
-  directed_nearest_intersection_with_halfedge(const X_curve_2 & cv,
+  directed_nearest_intersection_with_halfedge(const X_curve_2 & /* cv */,
                                               const X_curve_2 & orig_cv,
                                               Halfedge_handle he,
                                               const Point_2 & ref_point,
@@ -859,7 +859,6 @@ public:
     //have this endpoint as it's source
     // at the end source_vertex and target_vertex will contain the
     // end-vertices of cv
-    int count = 0;
     Vertex_handle curr_vertex = source_vertex;
     X_curve_2 cv = cv_; 
     X_curve_2 orig_cv = cv;
@@ -944,11 +943,11 @@ public:
           else
             source_vertex = inserted_he->source();
           //inserted_edges.push_back(inserted_he);
-          count++;
         }
                         
       // by now: curr_vertex and source_vertex are set
-      source_vertex_valid = true;
+      // TBD: the following statement is meaningless, Efi.
+      // source_vertex_valid = true;
     }
                 
     while (!remaining_curve_trivial)
@@ -1002,7 +1001,6 @@ public:
               cv = split2;
             }
             curr_vertex = prev_halfedge->source();
-            count++;
           }
           else
           { 
@@ -1086,7 +1084,6 @@ public:
                 he_split->next_halfedge()->twin()->target();
 
             }
-            count++;
           }
                                         
           target_vertex = curr_vertex; // temporary -can be changed later
@@ -1120,8 +1117,6 @@ public:
         cv = remaining_curve;
       last_edge = inserted_he;
 
-      count++;
-                        
       target_vertex = curr_vertex; // temporary - can be changed later
     }
 
