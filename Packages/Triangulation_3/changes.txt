@@ -1,4 +1,8 @@
-Version 1.51 (?? May 01)
+Version 1.51 (18 May 01)
+- remove
+- bug fix in is_edge of tds
+- all interfaces of tds.insertxxx() changed
+- tds.clear modified
 - even more for() scope VC++ bug workarounds.
 - fix BCC/KCC warning.
 

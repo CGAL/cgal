@@ -102,11 +102,11 @@ public:
     : _dimension(-2), _number_of_vertices(0)
   {}
 
-  Triangulation_data_structure_3(const Vertex & v)
-    : _dimension(-2), _number_of_vertices(0)
-  {
-    insert_increase_dimension(v);
-  }
+//   Triangulation_data_structure_3(const Vertex & v)
+//     : _dimension(-2), _number_of_vertices(0)
+//   {
+//     insert_increase_dimension(v);
+//   }
 
   Triangulation_data_structure_3(const Tds & tds)
     : _number_of_vertices(0)
@@ -346,21 +346,21 @@ public:
 
   //INSERTION
 
-  Vertex * insert_in_cell(const Vertex & w, Cell* c);
+  Vertex * insert_in_cell(Vertex * v, Cell* c);
 
-  Vertex * insert_in_facet(const Vertex & w, const Facet & f)
+  Vertex * insert_in_facet(Vertex * v, const Facet & f)
     { return insert_in_facet(w,f.first,f.second); }
   
-  Vertex * insert_in_facet(const Vertex & w, Cell* c, int i);
+  Vertex * insert_in_facet(Vertex * v, Cell* c, int i);
   // inserts v in the facet opposite to vertex i of cell c
   
-  Vertex * insert_in_edge(const Vertex & w, const Edge & e)   
+  Vertex * insert_in_edge(Vertex * v, const Edge & e)   
     { return insert_in_edge(w, e.first, e.second, e.third); }
   
-  Vertex * insert_in_edge(const Vertex & w, Cell* c, int i, int j);   
+  Vertex * insert_in_edge(Vertex * v, Cell* c, int i, int j);   
   // inserts v in the edge of cell c with vertices i and j
 
-  Vertex * insert_increase_dimension(const Vertex & w, // new vertex
+  Vertex * insert_increase_dimension(Vertex * v, // new vertex
 				     Vertex* star = NULL,
 				     bool reorient = false);
     // star = vertex from which we triangulate the facet of the
@@ -374,9 +374,12 @@ public:
   // conflict, then inserts by starring.
   // Maybe we need _2 and _3 versions ?
   template < class Conflict_test >
-  void insert_conflict(Vertex & w, Cell *c, const Conflict_test &tester)
+  Vertex * insert_conflict( Vertex * w, Cell *c, const Conflict_test &tester)
   {
     CGAL_triangulation_precondition( tester(c) );
+
+    if ( w == NULL ) 
+      w = new Vertex();
 
     if (dimension() == 3)
     {
@@ -386,8 +389,8 @@ public:
       find_conflicts_3(c, ccc, i, tester);
 
       // Create the new cells, and returns one of them.
-      Cell * nouv = create_star2_3( &w, ccc, i );
-      w.set_cell( nouv );
+      Cell * nouv = create_star2_3( w, ccc, i );
+      w->set_cell( nouv );
 
       move_temporary_free_cells_to_free_list();
     }
@@ -399,11 +402,13 @@ public:
       find_conflicts_2(c, ccc, i, tester);
 
       // Create the new cells, and returns one of them.
-      Cell * nouv = create_star2_2( &w, ccc, i );
-      w.set_cell( nouv );
+      Cell * nouv = create_star2_2( w, ccc, i );
+      w->set_cell( nouv );
 
       move_temporary_free_cells_to_free_list();
     }
+
+    return w;
   }
 
 private:
@@ -596,6 +601,8 @@ public:
   void swap(Tds & tds);
 
   void clear();
+
+  std::vector<Vertex *> clear_cells_only();
 
 private:
   // in dimension i, number of vertices >= i+2 
@@ -1570,13 +1577,14 @@ print_cells(std::ostream& os,
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Vertex*
 Triangulation_data_structure_3<Vb,Cb>::
-insert_in_cell(const Vertex & w, Cell* c)
+insert_in_cell( Vertex * v, Cell* c )
 { //insert in cell
   CGAL_triangulation_precondition( dimension() == 3 );
   CGAL_triangulation_precondition( (c != NULL) );
   CGAL_triangulation_expensive_precondition( is_cell(c) );
 
-  Vertex * v = new Vertex(w);
+  if ( v == NULL )
+    v = new Vertex();
 
   //     c->insert_in_cell(v);
 
@@ -1618,13 +1626,14 @@ insert_in_cell(const Vertex & w, Cell* c)
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Vertex*
 Triangulation_data_structure_3<Vb,Cb>::
-insert_in_facet(const Vertex & w, Cell* c, int i)
+insert_in_facet(Vertex * v, Cell* c, int i)
 { // inserts v in the facet opposite to vertex i of cell c
 
   CGAL_triangulation_precondition( (c != NULL)); 
   CGAL_triangulation_precondition( dimension() >= 2 );
 
-  Vertex * v = new Vertex(w);
+  if ( v == NULL )
+    v = new Vertex();
 
   switch ( dimension() ) {
 
@@ -1734,13 +1743,14 @@ insert_in_facet(const Vertex & w, Cell* c, int i)
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Vertex*
 Triangulation_data_structure_3<Vb,Cb>::
-insert_in_edge(const Vertex & w, Cell* c, int i, int j)   
+insert_in_edge(Vertex * v, Cell* c, int i, int j)   
 { // inserts v in the edge of cell c with vertices i and j
   CGAL_triangulation_precondition( c != NULL ); 
   CGAL_triangulation_precondition( i != j );
   CGAL_triangulation_precondition( dimension() >= 1 );
 
-  Vertex * v = new Vertex(w);
+  if ( v == NULL )
+    v = new Vertex();
 
   Cell* cnew;
   Cell* dnew;
@@ -1875,7 +1885,7 @@ insert_in_edge(const Vertex & w, Cell* c, int i, int j)
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Vertex*
 Triangulation_data_structure_3<Vb,Cb>::
-insert_increase_dimension(const Vertex & w, // new vertex
+insert_increase_dimension(Vertex * v, // new vertex
 			  Vertex* star,
 			  bool reorient) 
   // star = vertex from which we triangulate the facet of the
@@ -1885,7 +1895,8 @@ insert_increase_dimension(const Vertex & w, // new vertex
   // changes the dimension
   // if (reorient) the orientation of the cells is modified
 {  // insert()
-  Vertex * v = new Vertex(w);
+  if ( v == NULL ) 
+    v = new Vertex();
 
   Cell* c;
   Cell* d;
@@ -2593,9 +2604,9 @@ swap(Tds & tds)
 }
 
 template <class Vb, class Cb >
-void
+std::vector< Triangulation_data_structure_3<Vb,Cb>::Vertex * > 
 Triangulation_data_structure_3<Vb,Cb>::
-clear()
+clear_cells_only()
 {
   CGAL_triangulation_assertion(_list_of_temporary_free_cells._next_cell
 	  == &_list_of_temporary_free_cells);
@@ -2617,7 +2628,7 @@ clear()
 
     // then _list_of_cells points on itself, nothing more to do
     set_dimension(-2);
-    return;
+    return std::vector<Vertex *>();
   }
 
   // We must save all vertices because we're going to delete the cells.
@@ -2631,7 +2642,7 @@ clear()
   {
     // We save the vertices to delete them after.
     // We use the same trick as the Vertex_iterator.
-    for (int i=0; i<=dimension(); i++)
+    for (int i=0; i<=std::max(0,dimension()); i++)
       if (it->vertex(i)->cell() == it)
         Vertices.push_back(&(*it->vertex(i)));
     delete it; // The ds_cell destructor removes it from the list.
@@ -2641,6 +2652,16 @@ clear()
   CGAL_triangulation_assertion(_list_of_cells._next_cell == &_list_of_cells);
   CGAL_triangulation_assertion(_list_of_cells._previous_cell==&_list_of_cells);
 
+  return Vertices;
+}
+
+template <class Vb, class Cb >
+void
+Triangulation_data_structure_3<Vb,Cb>::
+clear()
+{
+  std::vector<Vertex*> Vertices = clear_cells_only();
+
   // deletion of the vertices
   for (typename std::vector<Vertex*>::iterator vit = Vertices.begin();
        vit != Vertices.end(); ++vit)
@@ -2648,6 +2669,7 @@ clear()
 
   set_number_of_vertices(0);
   set_dimension(-2);
+
 }
 
 template <class Vb, class Cb >

@@ -146,7 +146,7 @@ protected:
 
   void init_tds()
     {
-      infinite = (Vertex*) _tds.insert_increase_dimension(Vertex());
+      infinite = (Vertex*) _tds.insert_increase_dimension(NULL);
       // this causes a problem of accessing non initialized data 
       // (seen by purify) in _tds.insert_increase_dimension
       // when doing Vertex* w = new Vertex(v)
@@ -176,21 +176,6 @@ protected:
       construct_triangle_3 = geom_traits().construct_triangle_3_object();
       construct_tetrahedron_3 = geom_traits().construct_tetrahedron_3_object();
     }
-
-  // debug
-  Triangulation_3(const Point & p0,
-		  const Point & p1, 
-		  const Point & p2,
-		  const Point & p3)
-    : _tds(), _gt()
-    {
-      init_tds();
-      init_function_objects();
-      insert_increase_dimension(p0);
-      insert_increase_dimension(p1);
-      insert_increase_dimension(p2);
-      insert_increase_dimension(p3);
-    } 
 
   bool test_dim_down(Vertex_handle v);
 
@@ -551,7 +536,9 @@ public:
 
   //INSERTION 
 
-  Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle() );
+  Vertex_handle insert(const Point & p, 
+		       Cell_handle start = Cell_handle(),
+		       Vertex_handle v = NULL);
 
   Vertex_handle push_back(const Point & p)
   {
@@ -570,28 +557,33 @@ public:
     }
 
   Vertex_handle
-  insert_in_cell(const Point & p, Cell_handle c);
+  insert_in_cell(const Point & p, Cell_handle c, Vertex_handle v = NULL);
 
   Vertex_handle
-  insert_in_facet(const Point & p, Cell_handle c, int i);
+  insert_in_facet(const Point & p, Cell_handle c, int i,
+		  Vertex_handle v = NULL);
 
   Vertex_handle
-  insert_in_facet(const Point & p, const Facet & f)
+  insert_in_facet(const Point & p, const Facet & f,
+		  Vertex_handle v = NULL)
     {
-      return insert_in_facet(p, f.first,f.second);
+      return insert_in_facet(p, f.first,f.second, v);
     }
 
   Vertex_handle
-  insert_in_edge(const Point & p, Cell_handle c, int i, int j);
+  insert_in_edge(const Point & p, Cell_handle c, int i, int j,
+		 Vertex_handle v = NULL);
 
   Vertex_handle
-  insert_in_edge(const Point & p, const Edge & e)
+  insert_in_edge(const Point & p, const Edge & e,
+		 Vertex_handle v = NULL)
     {
-      return insert_in_edge(p, e.first,e.second,e.third);
+      return insert_in_edge(p, e.first,e.second,e.third, v);
     }
   
   Vertex_handle
-  insert_outside_convex_hull(const Point & p, Cell_handle c);
+  insert_outside_convex_hull(const Point & p, Cell_handle c,
+			     Vertex_handle v = NULL);
   //			     int li, int lj=0)
   // c is an infinite cell containing p
   // whose facet li lies on the convex hull boundary
@@ -600,6 +592,9 @@ public:
   // in dimension 2, edge li,lj separates p from the triangulation
   // in dimension 1, vertex li separates p from the triangulation
   // dimension 0 not allowed, use outside-affine-hull
+
+  Vertex_handle
+  insert_outside_affine_hull(const Point & p, Vertex_handle v = NULL );
 
 private:
   // Here are the conflit tester function object passed to
@@ -643,9 +638,6 @@ private:
   };
 
 public:
-
-  Vertex_handle
-  insert_outside_affine_hull(const Point & p);
 
   //TRAVERSING : ITERATORS AND CIRCULATORS
   Cell_iterator finite_cells_begin() const
@@ -2576,7 +2568,7 @@ flip_flippable( Cell_handle c, int i, int j )
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
-insert(const Point & p, Cell_handle start)
+insert(const Point & p, Cell_handle start, Vertex_handle v)
 {
   Locate_type lt;
   int li, lj;
@@ -2585,24 +2577,23 @@ insert(const Point & p, Cell_handle start)
   case VERTEX:
     return c->vertex(li);
   case EDGE:
-    return insert_in_edge(p, c, li, lj);
+    return insert_in_edge(p, c, li, lj, v);
   case FACET:
-    return insert_in_facet(p, c, li);
+    return insert_in_facet(p, c, li, v);
   case CELL:
-    return insert_in_cell(p, c);
+    return insert_in_cell(p, c, v);
   case OUTSIDE_CONVEX_HULL:
-    return insert_outside_convex_hull(p, c);
+    return insert_outside_convex_hull(p, c, v);
   case OUTSIDE_AFFINE_HULL:
-    return insert_outside_affine_hull(p);
+  default:
+    return insert_outside_affine_hull(p, v);
   }
-  // cannot happen, only to avoid warning with eg++
-  return insert_in_edge(p, c, li, lj);
 }
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
-insert_in_cell(const Point & p, Cell_handle c)
+insert_in_cell(const Point & p, Cell_handle c, Vertex_handle v)
 {
   CGAL_triangulation_precondition( dimension() == 3 );
   CGAL_triangulation_precondition_code
@@ -2616,14 +2607,16 @@ insert_in_cell(const Point & p, Cell_handle c)
 			   c->vertex(3)->point(),
 			   lt,i,j ) == ON_BOUNDED_SIDE );
 
-    return (Vertex*)_tds.insert_in_cell( Vertex(p), &(*c) );
+    v = (Vertex*)_tds.insert_in_cell( &(*v), &(*c) );
+    v->set_point(p);
+    return v;
 }
 
 template < class GT, class Tds >
 inline
 Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
-insert_in_facet(const Point & p, Cell_handle c, int i)
+insert_in_facet(const Point & p, Cell_handle c, int i, Vertex_handle v)
 {
   CGAL_triangulation_precondition( dimension() == 2 || dimension() == 3);
   CGAL_triangulation_precondition( (dimension() == 2 && i == 3)
@@ -2643,13 +2636,15 @@ insert_in_facet(const Point & p, Cell_handle c, int i)
 			c->vertex((i+3)&3)->point(),
 			lt, li, lj) == ON_BOUNDED_SIDE );
 
-    return (Vertex*) _tds.insert_in_facet( Vertex(p), &(*c), i);
+    v = (Vertex*) _tds.insert_in_facet( &(*v), &(*c), i);
+    v->set_point(p);
+    return v;
 }
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
-insert_in_edge(const Point & p, Cell_handle c, int i, int j)
+insert_in_edge(const Point & p, Cell_handle c, int i, int j, Vertex_handle v)
 {
   CGAL_triangulation_precondition( i != j );
   CGAL_triangulation_precondition( dimension() >= 1 && dimension() <= 3 );
@@ -2682,13 +2677,15 @@ insert_in_edge(const Point & p, Cell_handle c, int i, int j)
     }
   }
 
-  return (Vertex*) _tds.insert_in_edge( Vertex(p), &(*c), i, j);
+  v = (Vertex*) _tds.insert_in_edge( &(*v), &(*c), i, j);
+  v->set_point(p);
+  return v;
 }
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
-insert_outside_convex_hull(const Point & p, Cell_handle c)
+insert_outside_convex_hull(const Point & p, Cell_handle c, Vertex_handle v)
   //			     int li, int lj=0)
   // c is an infinite cell containing p
   // whose facet li lies on the convex hull boundary
@@ -2708,39 +2705,35 @@ insert_outside_convex_hull(const Point & p, Cell_handle c)
       // 	// p lies in the infinite edge neighboring c 
       // 	// on the other side of li
       // 	return insert_in_edge(p,c->neighbor(1-li),0,1);
-      return insert_in_edge(p,c,0,1);
+      return insert_in_edge(p,c,0,1,v);
     }
   case 2:
     {
-      Vertex_handle v = new Vertex(p);
-      v->set_cell( c );
       set_number_of_vertices(number_of_vertices()+1);
 
       Conflict_tester_outside_convex_hull_2 tester(p, this);
-      _tds.insert_conflict(*v, &(*c), tester);
-
+      Vertex_handle v = (Vertex *) _tds.insert_conflict(NULL, &(*c), tester);
+      v->set_point(p);
+      
       return v;
     }
   case 3:
+  default:
     {
-      Vertex_handle v = new Vertex(p);
-      v->set_cell( c );
       set_number_of_vertices(number_of_vertices()+1);
 
       Conflict_tester_outside_convex_hull_3 tester(p, this);
-      _tds.insert_conflict(*v, &(*c), tester);
-
+      Vertex_handle v = (Vertex *) _tds.insert_conflict(NULL, &(*c), tester);
+      v->set_point(p);
       return v;
     }
   }
-  // to avoid warning with eg++
-  return NULL;
 }
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
-insert_outside_affine_hull(const Point & p)
+insert_outside_affine_hull(const Point & p, Vertex_handle v)
 {
   CGAL_triangulation_precondition( dimension() < 3 );
   bool reorient;
@@ -2774,9 +2767,11 @@ insert_outside_affine_hull(const Point & p)
     reorient = false;
   }
 
-  return (Vertex*) _tds.insert_increase_dimension( Vertex(p), 
-						   &(*infinite_vertex()), 
-						   reorient);
+  v = (Vertex*) _tds.insert_increase_dimension( &(*v), 
+						&(*infinite_vertex()), 
+						reorient);
+  v->set_point(p);
+  return v;
 }
 
 template < class GT, class Tds >

@@ -74,30 +74,30 @@ std::ifstream iFileT("Test_tds_IO_3",std::ios::in);
 
   
   Vertex_iterator vit;
-  Vertex v1;
+  Vertex * v1 = new Vertex();
   tds2.insert_increase_dimension(v1, NULL);
   Tds tds3(tds2);
-  Vertex v2;
+  Vertex * v2 = new Vertex();
 
   vit=tds3.vertices_begin();
   tds3.insert_increase_dimension(v2,&*vit);
   std::cout << "ok" << std::endl;
   Tds tds4 = tds3;
-  Vertex v3;
+  Vertex * v3 = new Vertex();
   vit=tds4.vertices_begin();
   tds4.insert_increase_dimension(v3,&*vit);
   std::cout << "ok" << std::endl;
   Tds tds5;
   tds5.swap(tds4);
   tds4=tds5;
-  Vertex v4;
+  Vertex * v4 = new Vertex();
   vit=tds5.vertices_begin();
   tds5.insert_increase_dimension(v4,&*vit);
   std::cout << "ok" << std::endl;
   Tds tds6;
   tds6.swap(tds5);
   tds5=tds6;
-  Vertex v5;
+  Vertex * v5 = new Vertex();
   vit=tds6.vertices_begin();
   tds6.insert_increase_dimension(v5,&*vit);
   std::cout << "ok" << std::endl;
@@ -105,8 +105,6 @@ std::ifstream iFileT("Test_tds_IO_3",std::ios::in);
   // Setting functions
   std::cout << "    setting functions" << std::endl;
   tds1.set_number_of_vertices(1);
-  tds2.set_number_of_vertices(5);
-
   
   std::cout << "  Insert are tested in test_triangulation_3  " << std::endl;
 
@@ -122,7 +120,6 @@ std::ifstream iFileT("Test_tds_IO_3",std::ios::in);
   assert(tds6.dimension()==3);
 
   assert(tds3.number_of_vertices()==2);
-  assert(tds2.number_of_vertices()==5);
   assert(tds1.number_of_vertices()==1);
 
   std::cout << "  Test flip " << std::endl;
@@ -130,13 +127,13 @@ std::ifstream iFileT("Test_tds_IO_3",std::ios::in);
   Cell_iterator cit, cdone;
   int nbflips=0;
   int i;
-  Vertex v6;
+  Vertex * v6 = new Vertex();
   cit = tds6.cells_begin();
   tds6.insert_in_cell(v6, &(*cit));
-  Vertex v7;
+  Vertex * v7 = new Vertex();
   cit = tds6.cells_begin();
   tds6.insert_in_cell(v7, &(*cit));
-  Vertex v8;
+  Vertex * v8 = new Vertex();
   cit = tds6.cells_begin();
   tds6.insert_in_cell(v8, &(*cit));
   assert(tds6.number_of_vertices()==8);
@@ -200,7 +197,17 @@ std::ifstream iFileT("Test_tds_IO_3",std::ios::in);
 
   // test destructor and return
   std::cout << "    test destructors and return" << std::endl;
-  tds1.clear();
-  tds2.clear();
-  tds3.clear();
+
+  assert(tds1.is_valid());
+  assert(tds2.is_valid());
+  assert(tdsfromfile.is_valid());
+  assert(tds3.is_valid());
+  assert(tds4.is_valid());
+  assert(tds5.is_valid());
+  assert(tds6.is_valid());
+
+//   tds1.clear();
+//   tds2.clear();
+//   tds3.clear();
+
 }

@@ -132,7 +132,9 @@ public:
     return number_of_vertices() - n;
   }
 
-  Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle());
+  Vertex_handle insert(const Point & p, 
+		       Cell_handle start = Cell_handle(), 
+		       Vertex_handle v = NULL);
 
   Vertex_handle push_back(const Point & p)
   {
@@ -177,8 +179,6 @@ private:
 
   int max2(int i0, int i1, int i2, int i3, int i4, int m) const;
   int maxless(int i0, int i1, int i2, int i3, int i4, int m) const;
-
-  bool remove_3D_ear(Vertex_handle v );
 
   void delete_cells(std::list<Cell_handle> & cells, int dummy_for_windows=0);
   void delete_cells(std::list<Facet> & cells);
@@ -235,7 +235,7 @@ private:
 template < class Gt, class Tds >
 Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds>::
-insert(const Point & p, Cell_handle start)
+insert(const Point & p, Cell_handle start, Vertex_handle v)
 {
   switch (dimension()) {
   case 3:
@@ -249,10 +249,10 @@ insert(const Point & p, Cell_handle start)
 //    case CELL:
 //    case FACET:
 //    case EDGE:
-      Vertex_handle v = new Vertex(p);
       set_number_of_vertices(number_of_vertices()+1);
       Conflict_tester_3 tester(p, this);
-      _tds.insert_conflict((*v), &(*c), tester);
+      v = (Vertex *) _tds.insert_conflict(&(*v), &(*c), tester); 
+      v->set_point(p);
       return v;
     }// dim 3
   case 2:
@@ -266,10 +266,10 @@ insert(const Point & p, Cell_handle start)
       case FACET:
       case EDGE:
 	{
-	  Vertex_handle v = new Vertex(p);
 	  set_number_of_vertices(number_of_vertices()+1);
           Conflict_tester_2 tester(p, this);
-          _tds.insert_conflict((*v), &(*c), tester);
+	  v = (Vertex *) _tds.insert_conflict(&(*v), &(*c), tester); 
+	  v->set_point(p);
 	  return v;
 	}
       case VERTEX:
@@ -277,12 +277,12 @@ insert(const Point & p, Cell_handle start)
       case OUTSIDE_AFFINE_HULL:
 	  // if the 2d triangulation is Delaunay, the 3d
 	  // triangulation will be Delaunay
-	return Triangulation_3<Gt,Tds>::insert_outside_affine_hull(p); 
+	return Triangulation_3<Gt,Tds>::insert_outside_affine_hull(p,v); 
       }
     }//dim 2
   default :
     // dimension <= 1
-    return Triangulation_3<Gt,Tds>::insert(p,start);
+    return Triangulation_3<Gt,Tds>::insert(p,start,v);
   }
 }// insert(p)
 
@@ -295,26 +295,47 @@ remove(Vertex_handle v)
   CGAL_triangulation_precondition( !is_infinite(v));
   CGAL_triangulation_expensive_precondition( _tds.is_vertex(&(*v)) );
 
-  if ( dimension() <3 ) {
-    // to be implemented : removal in degenerate dimensions
-    // the triangulation is now rebuilt...
+  if ( dimension() <3 || test_dim_down(v) ) {
+    // the triangulation is rebuilt...
 
-    Vertex_iterator vit, vdone = vertices_end();
-    std::list<Point> points;
-    for ( vit = finite_vertices_begin(); vit != vdone ; ++vit)
-      if ( v != (*vit).handle() ) 
-	points.push_front( vit->point() );
+    Vertex_handle inf = infinite_vertex();
 
-    typename std::list<Point>::iterator pit, pdone = points.end();
-    
-    clear();
-    for ( pit = points.begin(); pit != pdone; ++pit)
-      insert( *pit );
+    std::vector< typename Tds::Vertex * > Vertices =
+      _tds.clear_cells_only(); 
+
+    _tds.set_number_of_vertices(0);
+    _tds.set_dimension(-2);
+    _tds.insert_increase_dimension( &(*inf) );
+    CGAL_triangulation_assertion( inf == infinite_vertex() );
+
+    typename std::vector< typename Tds::Vertex * >::iterator vit;
+
+    for ( vit = Vertices.begin(); vit != Vertices.end(); ++vit ) 
+      if ( *vit != &(*inf) && *vit != &(*v) ) 
+	insert( (*vit)->point(), NULL, (Vertex *) *vit );
+
+    delete(&(*v));
 
     return true;
   }
 
-  return remove_3D_ear(v);
+  CGAL_triangulation_assertion( dimension() == 3 );
+
+  std::list<Facet> boundary; // facets on the boundary of the hole
+
+  std::list<Cell_handle> hole;
+  make_hole_3D_ear(v, boundary,hole);
+
+  bool filled = fill_hole_3D_ear(boundary);
+  if(filled){
+    delete( &(*v) );
+    delete_cells(hole);
+    set_number_of_vertices(number_of_vertices()-1);
+  } else {
+    undo_make_hole_3D_ear(boundary, hole);
+  }
+
+  return filled;
 }
 
 template < class Gt, class Tds >
@@ -809,59 +830,6 @@ is_valid(Cell_handle c, bool verbose, int level) const
       std::cerr << "Delaunay valid cell" << std::endl;
   return true;
 }
-
-
-template < class Gt, class Tds >
-bool
-Delaunay_triangulation_3<Gt,Tds>::
-remove_3D_ear(Vertex_handle v)
-{
-  CGAL_triangulation_precondition( dimension() == 3 );
-
-  std::list<Facet> boundary; // facets on the boundary of the hole
-
-  if ( test_dim_down(v) ) {
-
-    // _tds.remove_dim_down(&(*v)); return; 
-    // !!!!!!!!!!!! TO BE DONE !!!!!!!!!!!!!
-    // the triangulation is rebuilt...
-
-    Vertex_iterator vit;
-    Vertex_iterator vdone = vertices_end();
-    std::list<Point> points;
-    for ( vit = finite_vertices_begin(); vit != vdone ; ++vit) {
-	if ( v != (*vit).handle() ) { points.push_front( vit->point() ); }
-    }
-    typename std::list<Point>::iterator pit;
-    typename std::list<Point>::iterator pdone = points.end();
-    
-    clear();
-    for ( pit = points.begin(); pit != pdone; ++pit) {
-      insert( *pit );
-    }
-    return true;
-  }
-
-  std::list<Cell_handle> hole;
-  make_hole_3D_ear(v, boundary,
-		   hole);
-
-
-  //  std::cout << "fill" << std::endl;
-  bool filled = fill_hole_3D_ear(boundary);
-  if(filled){
-    delete( &(*v) );
-    delete_cells(hole);
-    set_number_of_vertices(number_of_vertices()-1);
-  } else {
-    undo_make_hole_3D_ear(boundary, hole);
-  }
-
-  return filled;
-
-}// remove_3D_ear(v)
-
-
 
 template < class Gt, class Tds >
 void

@@ -433,12 +433,9 @@ _test_cls_delaunay_3(const Triangulation &)
     }
     int n = Tdel.number_of_vertices();
     for(int i = 0; i < n; i++) {
-      if ( Tdel.dimension() == 3) {
-	assert(Tdel.remove(Vertex_handle(vertices[i])));
-      }
+      assert(Tdel.remove(Vertex_handle(vertices[i])));
     }
     assert(Tdel.is_valid(false));
-    assert(Tdel.dimension()<3);
     std::cout << "    successfull" << std::endl; 
   }
 
@@ -524,7 +521,7 @@ _test_cls_delaunay_3(const Triangulation &)
 
   // %%%%%%%%%% deletion in Delaunay
   if (del) {
-    std::cout << "    deletion in a 10points Delaunay triangulation";
+    std::cout << "    deletion in a 10 points Delaunay triangulation";
     Vertex_handle v;
     while ( T3_5.number_of_vertices() >= 1 ) {
       if ( T3_5.dimension() > 1 )

@@ -14,7 +14,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 # pour purify :
-#CGAL_CXX=purify /usr/local/egcs/bin/g++
+#CGAL_CXX=purify -best-effort /usr/local/gcc/bin/g++
 
 CXXFLAGS = \
 	-I../../include \
@@ -39,7 +39,7 @@ CXXFLAGS = \
 
 # pour purify :
 #CGAL_LDFLAGS= $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)/libCGAL.a \
-#              -L$(GMP_LIB_DIR) -lgmp -lm 
+              # -L$(GMP_LIB_DIR) -lgmp -lm 
 
 LDFLAGS = $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS)
