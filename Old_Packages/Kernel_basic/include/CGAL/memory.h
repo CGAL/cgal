@@ -17,26 +17,22 @@
 // revision_date : $Date$
 // author(s)     : Michael Seel
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 #ifndef CGAL_MEMORY_H
 #define CGAL_MEMORY_H
 
-#include <memory>
+// This file defines the macro CGAL_ALLOCATOR(t) which is the default
+// allocator used by CGAL.
 
 #ifdef CGAL_USE_LEDA
 #  include <LEDA/allocator.h>
 #  define CGAL_ALLOCATOR(t) leda_allocator< t >
-#  define CGAL_ALLOC leda_allocator
-
-#elif defined __SUNPRO_CC
-#  define CGAL_ALLOCATOR(t) std::allocator_interface< std::allocator< t >, t >
-#  define CGAL_ALLOC not_possible
 
 #else
+#  include <memory>
 #  define CGAL_ALLOCATOR(t) std::allocator< t >
-#  define CGAL_ALLOC std::allocator
 #endif
 
 #endif // CGAL_MEMORY_H
