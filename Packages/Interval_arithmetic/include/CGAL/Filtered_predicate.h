@@ -28,19 +28,22 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// This template class is a wrapper that implements the filtering for all
-// predicates (dynamic filters with IA).
+// This template class is a wrapper that implements the filtering for any
+// predicate (dynamic filters with IA).
 
 // TODO :
+// - We should specialize it for the static filters versions when possible...
 // - each predicate in the default kernel should define a tag that says if it
 //   wants to be filtered or not (=> all homogeneous predicate define this
 //   tag).  We could even test-suite that automatically.  It makes a strong
 //   new requirement on the kernel though...
+//   Could be done with a traits mecanism ?
+//   A default template could use the current IA, but other tags or whatever
+//   could specify no filtering at all, or static filtering...
 // - same thing for constructions => virtual operator() ?
 // - similarly, constructions should have a tag saying if they can throw or
 //   not, or we let all this up to the compiler optimizer to figure out ?
-// - The operators() should probably not be inline (?).
-// - Potential caching is done at the Point_2 level.
+// - Some caching should be done at the Point_2 level.
 
 
 template <class EP, class AP, class C2E, class C2F, bool Protection = true>
@@ -54,6 +57,7 @@ class Filtered_predicate
 public:
 
   typedef typename AP::result_type  result_type;
+  typedef typename AP::Arity        Arity;
   // Should be the same type as EP::result_type.
 
   Filtered_predicate()

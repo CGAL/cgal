@@ -50,6 +50,7 @@ public:
 	: o1(oo1), o2(oo2) {}
 
     typedef typename O1::result_type result_type;
+    typedef typename O1::Arity       Arity;
 
     template <class A1>
     result_type
