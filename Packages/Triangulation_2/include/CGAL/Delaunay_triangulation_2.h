@@ -416,7 +416,6 @@ void   fill_hole ( Vertex_handle v, list< Edge > & first_hole );
   }
   
   Object dual(const Edge_iterator& ei) const
->>>>>>> 1.4.1.13
   {
       return dual(*ei);
   }
