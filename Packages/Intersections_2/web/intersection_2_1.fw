@@ -272,6 +272,7 @@ Once inline (which the g++ compiler wants because of a bug) and once outline.
 
 CGAL_BEGIN_NAMESPACE
 
+template <>
 Bbox_2_Line_2_pair< Cartesian<double> >::Bbox_2_Line_2_pair(
     Bbox_2 const *bbox, Line_2< Cartesian<double> > const *line)
 {
@@ -554,6 +555,7 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
+template <>
 Ray_2_Bbox_2_pair< Cartesian<double> >::
 Ray_2_Bbox_2_pair(
             Ray_2< Cartesian<double> > const *ray,
