@@ -85,7 +85,8 @@ public:
     RasterOp old = widget->rasterOp();	//save the initial raster mode
     widget->setRasterOp(XorROP);
     *widget << CGAL::GREEN;
-    *widget << oldCircle;	
+    if(!first_time)
+      *widget << oldCircle;	
     widget->unlock();
     widget->setRasterOp(old);
     first_time = TRUE;
