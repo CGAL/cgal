@@ -51,6 +51,7 @@ using ::ptrdiff_t;
 
 #include <cstdlib>
 namespace std{
+using ::abort;
 using ::atoi;
 }
 
@@ -67,6 +68,13 @@ struct output_iterator : public iterator<output_iterator_tag,void,void> {};
 namespace std{
 using ::strcat;
 using ::strcpy;
+}
+
+#include <ctime>
+
+namespace std{
+using ::clock;
+using ::clock_t;
 }
 
 #endif // CGAL_MSVC_STANDARD_HEADER_FIXES_H
