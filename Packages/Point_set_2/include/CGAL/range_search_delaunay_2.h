@@ -68,7 +68,7 @@ void dfs(const Dt& delau,
      
     // go through the vertices ...
     do {
-       act = v;
+       act = vc;
  
        if (! delau.is_infinite(act)) {
 	 // test, if act is marked ...
