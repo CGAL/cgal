@@ -129,7 +129,7 @@ typedef Triangulation::Line_face_circulator  Line_face_circulator;
 int  main()
 {
   Triangulation T;
-  vector<Point> points;
+  std::vector<Point> points;
 
   points.push_back(Point(0,0));
   points.push_back(Point(1,1));
@@ -163,8 +163,8 @@ int  main()
   
 
   Vertex_iterator v_it = T.finite_vertices_begin();
-  cout<< v_it->get_v()->point()<<"\n";
-  cout<< v_it->get_vh()->point()<<"\n";
+  std::cout<< v_it->get_v()->point()<<"\n";
+  std::cout<< v_it->get_vh()->point()<<"\n";
 
   return 0;
 }
