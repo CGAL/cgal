@@ -358,7 +358,7 @@ public:
    */
   template<class OutputIterator>
   OutputIterator curve_make_x_monotone (const Curve_2& curve,
-					OutputIterator o)
+					OutputIterator o) const
   {
     // Go over all curve segments.
     int                n = curve._size();
