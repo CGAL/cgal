@@ -1,3 +1,6 @@
+1.7     (?? June 2001)
+- Get rid of #include <LEDA/rat_point.h>, and use Cartesian_converter<>.
+
 1.6     (20 June 2001)
 - Update to new header style, and simplify code.
 - Try to use Quotient<MP_Float> in place of leda_real.

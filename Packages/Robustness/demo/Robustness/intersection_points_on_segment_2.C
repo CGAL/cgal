@@ -16,7 +16,6 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================
  
@@ -39,6 +38,7 @@
 #  include <CGAL/Quotient.h>
 typedef CGAL::Quotient<CGAL::MP_Float> leda_real;
 #endif
+#include <CGAL/Cartesian_converter.h>
 #include <CGAL/kernel_to_kernel.h>
 #include <CGAL/intersection_test_statistics.h>
 
@@ -111,7 +111,7 @@ main(int argc, char** argv)
 
   std::vector< CartesianFloat::Segment_2>  CF1;
   std::vector< CartesianFloat::Segment_2>  CF2;
-  Cartesian_double_to_Cartesian< CartesianFloat::RT > converter1;
+  CGAL::Cartesian_converter<CartesianDouble, CartesianFloat> converter1;
   std::transform( CD1.begin(), CD1.end(), std::back_inserter( CF1), converter1);
   std::transform( CD2.begin(), CD2.end(), std::back_inserter( CF2), converter1);
   std::vector< HomogeneousFloat::Segment_2>  HF1;

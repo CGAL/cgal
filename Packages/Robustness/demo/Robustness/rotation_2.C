@@ -35,7 +35,6 @@
 #  include <CGAL/Quotient.h>
 typedef CGAL::Quotient<CGAL::MP_Float> leda_real;
 #endif
-#include <CGAL/kernel_to_kernel.h>
 
 typedef CGAL::Cartesian<double>           CartesianDouble;
 typedef CartesianDouble::Point_2          Point;

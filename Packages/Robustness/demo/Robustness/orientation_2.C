@@ -35,7 +35,7 @@
 typedef CGAL::MP_Float   leda_real;
 #endif
 #include <CGAL/Interval_arithmetic.h>
-#include <CGAL/kernel_to_kernel.h>
+#include <CGAL/Cartesian_converter.h>
 #include <CGAL/orientation_test_statistics.h>
 
 typedef CGAL::Cartesian<double>                CartesianDouble;
@@ -86,7 +86,7 @@ main(int argc, char** argv)
 
     CGAL::Orientation* C = new CGAL::Orientation[N*N*N];
     std::vector< CartesianLedaReal::Point_2>  S;
-    CGAL::Cartesian_double_to_Cartesian< CartesianLedaReal::RT > converter;
+    CGAL::Cartesian_converter<CartesianDouble, CartesianLedaReal> converter;
     leda_string s1;
     leda_string s2;
 

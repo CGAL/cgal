@@ -32,7 +32,6 @@
 #include <CGAL/IO/Ostream_iterator.h>
 #include <CGAL/leda_real.h>
 #include <CGAL/Interval_arithmetic.h>
-#include <CGAL/kernel_to_kernel.h>
 #include <CGAL/orientation_test_statistics.h>
 
 #include <CGAL/Min_circle_2_traits_2.h>

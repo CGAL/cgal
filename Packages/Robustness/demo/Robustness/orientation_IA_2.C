@@ -36,7 +36,7 @@
 typedef CGAL::Quotient<CGAL::MP_Float> leda_real;
 #endif
 #include <CGAL/Interval_arithmetic.h>
-#include <CGAL/kernel_to_kernel.h>
+#include <CGAL/Cartesian_converter.h>
 #include <CGAL/orientation_test_statistics.h>
 
 typedef CGAL::Cartesian<double>                   CartesianDouble;
@@ -86,7 +86,7 @@ main(int argc, char** argv)
                CGAL::Ostream_iterator< Point, CGAL_Stream>( W2));
 
     std::vector< CartesianInterval::Point_2>  SIA;
-    CGAL::Cartesian_double_to_Cartesian< CartesianInterval::RT > converterIA;
+    CGAL::Cartesian_converter<CartesianDouble, CartesianInterval> converterIA;
     leda_string s1;
     leda_string s2;
 

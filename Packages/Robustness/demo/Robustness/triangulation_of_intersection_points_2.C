@@ -39,7 +39,7 @@ typedef CGAL::Quotient<CGAL::MP_Float.h>  leda_real;
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/IO/Window_stream.h>
-#include <CGAL/kernel_to_kernel.h>
+#include <CGAL/Cartesian_converter.h>
 
 // Workaround for VC++
 #ifdef CGAL_CFG_MATCHING_BUG_2
@@ -125,7 +125,7 @@ main( int argc, char** argv)
   std::vector< double_Segment>   double_segments;
   CGAL::copy_n( g, N, std::back_inserter( double_segments) );
   std::vector<real_Segment>  real_segments;
-  CGAL::Cartesian_double_to_Cartesian<leda_real> converter;
+  CGAL::Cartesian_converter<C_double, C_real> converter;
   std::transform( double_segments.begin(),
                   double_segments.end(),
                   std::back_inserter( real_segments),
@@ -148,7 +148,7 @@ main( int argc, char** argv)
 
   std::vector<C_filtered_Segment >  filtered_segments;
   typedef CGAL::Filtered_exact< double, leda_real>  Filtered;
-  CGAL::Cartesian_double_to_Cartesian<Filtered>  Fconverter;
+  CGAL::Cartesian_converter<C_double, C_filtered>  Fconverter;
   std::transform( double_segments.begin(),
                   double_segments.end(),
                   std::back_inserter( filtered_segments),

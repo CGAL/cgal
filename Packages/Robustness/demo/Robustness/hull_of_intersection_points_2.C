@@ -40,7 +40,7 @@ typedef CGAL::Quotient<CGAL::MP_Float> leda_real;
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/IO/polygonal_2.h>
-#include <CGAL/kernel_to_kernel.h>
+#include <CGAL/Cartesian_converter.h>
 
 int
 main( int argc, char** argv)
@@ -72,7 +72,7 @@ main( int argc, char** argv)
   std::vector< double_Segment>   double_segments;
   CGAL::copy_n( g, N, std::back_inserter( double_segments) );
   std::vector<real_Segment>  real_segments;
-  CGAL::Cartesian_double_to_Cartesian<leda_real> converter;
+  CGAL::Cartesian_converter<C_double, C_real> converter;
   std::transform( double_segments.begin(),
                   double_segments.end(),
                   std::back_inserter( real_segments),
