@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.3-I-44 $
 // release_date  : $CGAL_Date: 2001/03/09 $
 //
-// file          : include/CGAL/SL.h
+// file          : include/CGAL/Sweep_line_functors.h
 // package       : arr (1.87)
 // maintainer    : Tali Zvi <talizvi@post.tau.ac.il>
 // source        : 
@@ -117,19 +117,41 @@ public:
 	      << "\t\t  " << c1->getCurve() << "\n"
 	      << "\t\t  " << c2->getCurve() << "\n";
 #endif
+    
+    const X_curve_2 &cv1 = c1->getCurve();
+    const X_curve_2 &cv2 = c2->getCurve();
+    if ( m_traits->curve_is_vertical(cv1) )
+    {
+      if ( m_traits->curve_get_point_status(cv2, c1->getSource()) == 
+	   Traits::UNDER_CURVE &&
+	   m_traits->curve_get_point_status(cv2, c1->getTarget()) == 
+	   Traits::UNDER_CURVE) {
+	return true;
+      }
+      return false;
+    }
+    if ( m_traits->curve_is_vertical(cv2))
+    {
+      if ( m_traits->curve_get_point_status(cv1, c2->getSource()) == 
+	   Traits::ABOVE_CURVE &&
+	   m_traits->curve_get_point_status(cv1, c2->getTarget()) == 
+	   Traits::ABOVE_CURVE) {
+	return true;
+      }
+      return false;
+    }
+
+    // non of the curves is vertical... 
     Comparison_result r = 
       m_traits->curve_compare_at_x_right(c1->getCurve(), 
 					 c2->getCurve(), 
 					 *p);
     if ( r == SMALLER) {
-      //std::cout << "at_x_right SMALLER\n";
       return true;
     } 
     if ( r == LARGER ) {
-      //std::cout << "at_x_right LARGER\n";
       return false;
     }
-    //std::cout << "at_x_right EQUAL\n";
     return false;
   }
 

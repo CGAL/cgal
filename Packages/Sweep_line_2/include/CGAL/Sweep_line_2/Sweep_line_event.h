@@ -42,19 +42,6 @@ public:
   typedef typename Traits::X_curve_2 X_curve_2;
   typedef typename Traits::Point_2 Point_2;
 
-#ifdef OLD_IMPL
-  typedef Sweep_line_subcurve<Traits> SubCurve;
-  typedef Curve_less_functor<Traits> CurveLess;
-  typedef typename std::set<SubCurve *, CurveLess> SubcurveContainer;
-  typedef typename SubcurveContainer::iterator SubCurveIter;
-
-  Sweep_line_event(const Point_2 &point, Traits *traits) {
-    CurveLess lessFunc(traits);
-    m_leftCurves = new SubcurveContainer(lessFunc);
-    m_rightCurves = new SubcurveContainer(lessFunc);
-    m_point = point;
-  }
-#else
   typedef Sweep_line_subcurve<Traits> SubCurve;
   typedef typename std::list<SubCurve *> SubcurveContainer;
   typedef typename SubcurveContainer::iterator SubCurveIter;
@@ -63,24 +50,76 @@ public:
   typedef std::set<SubCurve*, StatusLineCurveLess> StatusLine;
   typedef typename StatusLine::iterator StatusLineIter;
 
-  Sweep_line_event(const Point_2 &point, Traits *traits) {
+  /*! Constructor */
+  Sweep_line_event(const Point_2 &point, Traits *traits, 
+		   bool isInternalIntersectionPoint = false) {
     m_leftCurves = new SubcurveContainer();
     m_rightCurves = new SubcurveContainer();
     m_point = point;
     m_traits = traits;
+    m_isInitialized = false;
+    m_verticalCurve = 0;  
+    m_isInternalIntersectionPoint = isInternalIntersectionPoint;
   }
-#endif
 
+  /*! Destructor. Deletes the lists of curves, without deleting the 
+      curves themselves. 
+  */
   ~Sweep_line_event() {
     delete m_leftCurves;
     delete m_rightCurves;
   }
 
-  /** if the curve is already in, we will take it out and reinsert it, 
-      since its relative position to the other curves may have changed.
+
+  /*! Adds a new curve to the event. The curve is added only to the list/s
+      in which it is defined (left or/and right).
+      The event point has to be either the source or the target of the curve.
+      @param curve  a pointer to the curve.
   */
-  void addCurveToLeft(SubCurve *curve) 
+  void addCurve(SubCurve *scurve)
   {
+    const X_curve_2 &curve = scurve->getCurve();
+    const Point_2 &source = m_traits->curve_source(curve);
+    const Point_2 &target = m_traits->curve_target(curve);
+    
+    if ( m_traits->curve_is_vertical(curve) ) 
+    {
+      m_verticalCurve = scurve;
+
+    } else 
+    {
+      const Point_2 *rel = &(source);
+      if ( m_traits->point_is_same(m_point, source) )
+	rel = &(target);
+      
+      if ( m_traits->compare_x(m_point, *rel) == LARGER ) {
+	addCurveToLeft1(scurve);
+      } else {
+	addCurveToRight(scurve);
+      }
+    }
+  }
+
+  /*! Adds a new curve that is defined to the right of the event point.
+      The insertion is performed so that the curves remain srted by their Y 
+      values to theright of the event.
+      If the curve is already in the list of curves, it is removed and 
+      re-inserted. This way the curves remain sorted.
+      @param curve  a pointer to the curve.
+  */
+  void addCurveToLeft(SubCurve *curve, const Point_2 &ref) 
+  {
+    if ( ! m_isInitialized ) 
+    {
+      if ( curve->isSourceLeftToTarget())
+	m_rightmostPointToLeft = curve->getSource();
+      else
+	m_rightmostPointToLeft = curve->getTarget();
+
+      m_isInitialized = true;
+    }
+
+    UpdateRightmostPoint(curve);
     if (m_leftCurves->empty())
       m_leftCurves->push_back(curve);
     else 
@@ -96,8 +135,57 @@ public:
       iter = m_leftCurves->begin();
       while ( iter != m_leftCurves->end() &&
 	      m_traits->curve_compare_at_x_right(curve->getCurve(),
-					  (*iter)->getCurve(), 
-					   *(curve->getReferencePoint())) 
+						 (*iter)->getCurve(), 
+						 ref)
+	      == LARGER)
+      {
+	++iter;
+      }
+
+      if ( iter == m_leftCurves->end() ||
+	   !m_traits->curve_is_same((*iter)->getCurve(), curve->getCurve()))
+      {
+	m_leftCurves->insert(iter, curve);
+      } 
+    }
+  }
+
+  /*! Adds a new curve that is defined to the right of the event point.
+      The insertion is performed so that the curves remain srted by their Y 
+      values to theright of the event.
+      If the curve is already in the list of curves, it is removed and 
+      re-inserted. This way the curves remain sorted.
+      @param curve  a pointer to the curve.
+  */
+  void addCurveToLeft1(SubCurve *curve) 
+  {
+    if ( !m_isInitialized ) 
+    {
+      if ( curve->isSourceLeftToTarget())
+	m_rightmostPointToLeft = curve->getSource();
+      else
+	m_rightmostPointToLeft = curve->getTarget();
+      m_isInitialized = true;
+    }
+
+    UpdateRightmostPoint(curve);
+    if (m_leftCurves->empty())
+      m_leftCurves->push_back(curve);
+    else 
+    {
+      SubCurveIter iter = m_leftCurves->begin();
+      while ( iter != m_leftCurves->end() ) {
+	if ( m_traits->curve_is_same((*iter)->getCurve(), curve->getCurve())) {
+	  m_leftCurves->erase(iter);
+	  break;
+	}
+	++iter;
+      }
+      iter = m_leftCurves->begin();
+      while ( iter != m_leftCurves->end() &&
+	      m_traits->curve_compare_at_x_right(curve->getCurve(),
+						 (*iter)->getCurve(), 
+						 m_rightmostPointToLeft)
 	      == LARGER)
       {
 	++iter;
@@ -111,6 +199,11 @@ public:
     }
   }
 
+  /*! Adds a new curve that is defined to the right of the event point.
+      The insertion is performed so that the curves remain srted by their Y 
+      values to theright of the event.
+      @param curve  a pointer to the curve.
+  */
   void addCurveToRight(SubCurve *curve) 
   {
     if (m_rightCurves->empty())
@@ -121,7 +214,7 @@ public:
       while ( iter != m_rightCurves->end() &&
 	      m_traits->curve_compare_at_x_right(curve->getCurve(),
 						 (*iter)->getCurve(), 
-						 *(curve->getReferencePoint())) 
+						 m_point)
 	      == LARGER)
       {
 	++iter;
@@ -134,32 +227,72 @@ public:
     }
   }
 
+  /*! Returns an iterator to the first curve to the left of the event */
   SubCurveIter leftCurvesBegin() {
     return m_leftCurves->begin();
   }
 
+  /*! Returns an iterator to the one past the last curve to the left 
+      of the event */
   SubCurveIter leftCurvesEnd() {
     return m_leftCurves->end();
   }
 
+  /*! Returns an iterator to the first curve to the right of the event */
   SubCurveIter rightCurvesBegin() {
     return m_rightCurves->begin();
   }
 
-  SubCurveIter rightCurvesEnd() {
+  /*! Returns an iterator to the one past the last curve to the right 
+      of the event */
+   SubCurveIter rightCurvesEnd() {
     return m_rightCurves->end();
   }
 
+  /*! Returns the number of intersecting curves that are defined
+      to the right of the event point. */
   int getNumRightCurves() {
     return m_rightCurves->size();
   }
 
+  /*! Returns true if at least one intersecting curve is defined to 
+      the left of the point. */
   bool hasLeftCurves() {
     return !m_leftCurves->empty();
   }
 
+  /*! Returns the actual point of the event */
   const Point_2 &getPoint() {
     return m_point;
+  }
+
+  bool doesContainVerticalCurve() {
+    return m_verticalCurve != 0;
+  }
+  SubCurve *getVerticalCurve() {
+    return m_verticalCurve;
+  }
+
+  void addVerticalCurveXPoint(const Point_2 &p) {
+    if ( m_verticalCurveXPoints.empty() ) 
+    {
+      m_verticalCurveXPoints.push_back(p); 
+      return;
+    }
+    if (!m_traits->point_is_same(p, m_verticalCurveXPoints.back())) {
+      m_verticalCurveXPoints.push_back(p);
+    }
+  }
+
+  std::list<Point_2> &getVerticalCurveXPointList() {
+    return m_verticalCurveXPoints;
+  }
+
+  bool isInternalIntersectionPoint() {
+    return m_isInternalIntersectionPoint;
+  }
+  void markInternalIntersectionPoint() {
+    m_isInternalIntersectionPoint = true;
   }
 
 #ifndef NDEBUG
@@ -168,15 +301,57 @@ public:
  
 private:
 
+  void UpdateRightmostPoint(SubCurve *curve)
+  {
+    if ( curve->isSourceLeftToTarget())
+    {
+      if ( curve->isTarget(m_point) )
+	if ( m_traits->compare_x(m_point, m_rightmostPointToLeft) == LARGER )
+	  m_rightmostPointToLeft = m_point;
+    } else
+    {
+      if ( curve->isSource(m_point) )
+	if ( m_traits->compare_x(m_point, m_rightmostPointToLeft) == LARGER )
+	  m_rightmostPointToLeft = m_point;
+    }
+  }
+
+  /*! A pointer to a traits class */
   Traits *m_traits;
 
+  /*! A list of curves on the left side of the event, sorted by their y value
+      to the left of the point */
   SubcurveContainer *m_leftCurves;
+
+  /*! A list of curves on the right side of the event, sorted by their y value
+      to the right of the point */
   SubcurveContainer *m_rightCurves;
 
-  /*! this is true only if this is a right end of one of the original curves */
-  bool m_isEndPoint;
-
+  /*! The point of the event */
   Point_2 m_point;
+
+  /*! The rightmost curve-end point that is to the left of the event
+      point. This point is used as a reference point when curves are compared
+      only when new curves are added at the initialization stage.
+  */
+  Point_2 m_rightmostPointToLeft;
+
+  /*! An indication whether this event has been initialized. The event is
+      initialized after the first curve has been added to the left of the 
+      event. 
+  */
+  bool m_isInitialized;
+
+  /*! a pointer to a vertical curve going through this event */
+  SubCurve *m_verticalCurve;
+
+  /*! a list of intersection points on the vertical curve */
+  std::list<Point_2> m_verticalCurveXPoints;
+
+  /*! a flag that inidcates whether the event is an "interior" intersection 
+      point.
+  */
+  bool m_isInternalIntersectionPoint;
 
 #ifndef NDEBUG
 public:
@@ -196,8 +371,6 @@ Print()
   for ( SubCurveIter iter = m_leftCurves->begin() ;
 	iter != m_leftCurves->end() ; ++iter )
   {
-    //const X_curve_2 &c = (*iter)->getCurve();
-    //std::cout << "\t(" << c << ") \n";
     std::cout << "\t";
     (*iter)->Print();
     std::cout << "\n";
@@ -207,40 +380,14 @@ Print()
   for ( SubCurveIter iter = m_rightCurves->begin() ;
 	iter != m_rightCurves->end() ; ++iter )
   {
-    //const X_curve_2 &c = (*iter)->getCurve();
-    //std::cout << "\t(" << c << ") \n";
     std::cout << "\t";
     (*iter)->Print();
     std::cout << "\n";
   }
   std::cout << std::endl;
 }
-#endif
+#endif // NDEBUG
 
-
-
-
-/*
-  void addCurveToLeft(SubCurve *curve) {
-#ifndef VERBOSE
-    m_leftCurves->insert(curve); 
-#else
-    std::pair<SubCurveIter, bool> res = m_leftCurves->insert(curve);
-    if (res.second!=true)
-      std::cout << "Warning: addCurveToLeft\n";
-#endif
-
-  }
-  void addCurveToRight(SubCurve *curve) {
-#ifndef VERBOSE
-    m_rightCurves->insert(curve);
-#else
-    std::pair<SubCurveIter, bool> res = m_rightCurves->insert(curve);
-    if (res.second!=true)
-      std::cout << "Warning: addCurveToRight\n";
-#endif
-  }
-*/
 CGAL_END_NAMESPACE
 
 #endif // CGAL_SWEEP_LINE_EVENT_H
