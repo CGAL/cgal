@@ -16,15 +16,36 @@ require 'getopt.pl';
 
 # Global variables
 $new_protect_name="";	# equivalent to CGAL_ARITHMETIC_FILTER_BASIC_H.
-$line=0;		# current line number.
 @CGAL_enum_types=("Sign", "Comparison_result", "Orientation", "Oriented_side",
                   "Bounded_side"); # List of CGAL's enum types.
-@predicates=(		# list of predicates.
-# fct_name, template_type, ret_type, inline, CGAL::, body, args
-    [ "compare", "NT", "Comparison_result", "inline", "",
+@predicates=(		# list of predicates, with the 2 built-ins.
+# CGAL::, template_type, inline, ret_type, fct_name, body, args
+    [ "", "NT", "inline", "Comparison_result", "compare",
       "return (a < b) ? SMALLER : (b < a) ? LARGER : EQUAL;", "a", "b" ],
-    [ "sign", "NT", "Sign", "inline", "",
+    [ "", "NT", "inline", "sign", "Sign",
       "return (x < NT(0)) ? NEGATIVE : (NT(0) < x) ? POSITIVE : ZERO;", "x"] );
+
+# A few useful regular expressions.
+
+# A C symbol.  We don't match x::f(), nor x.f(), nor x->f().
+$C_symbol_re='[a-zA-Z_]\w*';
+
+# A well parenthesized expression is a recursive regexp, right ?
+# How do I do that ?
+# The Perl FAQ says it's hard...
+# Maybe I can limit myself to 2 or 3 levels easily ?
+# $Well_paren_re='';
+
+# An argument of a function is something containing a well parenthized
+# expression, and no comma outside.
+# $Arg_re='[^,]*\($Well_paren_re\)[^,]';
+
+# An argument list is one or more Args, separated by commas.
+# [ note: ?: doesn't set $1, $2... ]
+# $Args_list_re='?:($Arg_re,)*$Arg_re';
+
+# A function call.
+# $Function_call_re='($C_symbol_re)\s*\(($Args_list_re)\)';
 
 # Parse the command line options.
 sub parse_command_line {
@@ -45,7 +66,7 @@ sub parse_command_line {
 # Auxiliary routine to emit a warning and die if pedantic.
 sub warning {
   local ($_) = @_;
-  print STDERR "// Warning [line $line]: $_\n";
+  print STDERR "// Warning [line $.]: $_\n";
   die if $pedantic;
 }
 
@@ -54,9 +75,8 @@ sub treat_CGAL_header {
   # skip the old header.
   while (<FI>)
   {
-    $line++;
     # get $file_name from the "file:" field in the headers.
-    $file_name = $1 if /\/\/ file[\s]*: include\/CGAL\/(.*)/;
+    $file_name = $1 if m#// file[\s]*: include/CGAL/(.*)#;
 
     # set $new_protect_name and exit.
     if (/^#ifndef[\s]*([\S]*_H)\s*/) {
@@ -96,28 +116,37 @@ sub treat_CGAL_header {
 
 # Skips a "CGAL_NO_FILTER" section.
 sub skip_no_filter_section {
-  while (<FI>) { $line++; last if /\/\/CGAL_NO_FILTER_END/; }
-}
-
-# Returns the old body of the function.
-sub get_old_body {
-  local $b="";
-  while (<FI>) { $line++; last if /^}\s*$/; $b = "$b$_"; }
-  return $b;
+  while (<FI>) { last if m#//CGAL_NO_FILTER_END#; }
 }
 
 # Warns if the return type is not known
 # (to detect functions returning void or FT)
 sub check_known_type {
-  my ($type) = @_;
+  local ($type) = @_;
   if (not $known_ret_types{$type}) {
     warning ("\"$type\" is an unknown enumerative type");
   }
 }
 
-# Puts the new body 
-sub put_new_body {
-  local ($ret_type, $fct_name, $CGAL, @args) = @_;
+# Print the Filtered_exact<> version of a predicate.
+sub print_filtered_exact {
+  # This version doesn't need the template type, nor the body.
+  local ($CGAL, $t, $inline, $ret_type, $fct_name, $b, @args) = @_;
+  # Print the function declaration
+  # The template line would be more pretty without the MipsPro hack...
+  print FO
+"#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif\n";
+  print FO "/* $inline */\n" if $inline;	# No inline by default.
+  print FO "$ret_type\n";
+  print FO "$fct_name(\n";
+  foreach (@args) {
+    print FO "    const ${CGAL}Filtered_exact ";
+    print FO "<CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &$_";
+    print FO ($_ eq $args[$#args] ? ")\n" : ",\n");
+  }
+  # Print the body
   print FO "{
   ${CGAL}FPU_CW_t backup = ${CGAL}FPU_get_and_set_cw(${CGAL}FPU_cw_up);
   try
@@ -138,73 +167,44 @@ sub put_new_body {
   }
 }
 
-# Treat the declaration of a function.
-sub parse_function_declaration {
-  local ($inline, $ret_type, $fct_name, @args, $in_decl);
+# Parse from "template" to end of body "}"
+sub parse_whole_definition {
+  local ($def) = @_;
+  local $template_type, $inline, $ret_type, $fct_name, $arg_list;
+  local @args;
   while (<FI>) {
-    $line++;
-    # get the eventual inline declaration.
-    $inline=$1 if /(CGAL_.*INLINE|inline)/;
-
-    # get the function name.
-    if ( /\(/ ) {
-      $in_decl=1;
-      /([a-zA-Z_]\w*)\s*\(/;
-      $fct_name=$1;
-    }
-
-    if (! $in_decl) {
-      # get the return type.
-      if (! (/inline/i)) {
-        $ret_type = $_;
-        chop($ret_type);
-        check_known_type($ret_type);
-      }
-    }
-    else
-    {
-      # get the args.
-      s/^.*\(//;
-      foreach (split /[,\)]/) {
-        next if /^\s*$/;
-	if (not /const/) {
-	  warning("Using non const argument \"$_\" in \"$fct_name\".");
-	}
-        /(\w+)\s*$/;
-        push @args, $1;
-      }
-    }
-    last if /\)/;
+    $def .= $_;
+    last if /^}\s*$/;
   }
-  return ($inline, $ret_type, $fct_name, @args);
-}
-
-# Print the new function declaration.
-sub put_new_function_declaration {
-  local ($inline, $ret_type, $fct_name, $CGAL, @args) = @_;
-  # The template line would be more pretty without the MipsPro hack...
-  print FO
-"#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#endif\n";
-  # By default, we do not inline the filtered version.
-  print FO "/* $inline */\n" if $inline;
-  print FO "$ret_type\n";
-  print FO "$fct_name(\n";
-  foreach (@args) {
-    print FO "    const ${CGAL}Filtered_exact ";
-    print FO "<CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &$_";
-    print FO ($_ eq $args[$#args] ? ")\n" : ",\n");
+  $_ = $def;
+  /^\W*template\s*\<\s*(?:\S*)\s*(\S*)\s*\>	# template type name
+    \W*(CGAL_\w*INLINE|inline|)			# eventual inline directive
+    \W*((?:CGAL::|)$C_symbol_re)		# return type
+    \W*($C_symbol_re)				# function name
+    .*?\((.*?)\)/smx;				# argument list
+  $template_type = $1;
+  $inline   = $2;
+  $ret_type = $3;
+  $fct_name = $4;
+  $arg_list = $5;
+  $body     = $';
+  foreach (split (',', $arg_list)) {
+    if (not /const/) {
+      warning("Non const argument \"$_\" in function \"$fct_name\".");
+    }
+    /($C_symbol_re)\s*$/;
+    push @args, $1;
   }
+  check_known_type($ret_type);
+  return ($template_type, $inline, $ret_type, $fct_name, $body, @args);
 }
 
 sub parse_input_code {
   local $CGAL = "CGAL::";
   while (<FI>)
   {
-    $line++;
     # Treat the CGAL_NO_FILTER_BEGIN/CGAL_NO_FILTER_END section.
-    if (/\/\/CGAL_NO_FILTER_BEGIN/) {
+    if (m#//CGAL_NO_FILTER_BEGIN#) {
       skip_no_filter_section();
       next;
     }
@@ -214,36 +214,64 @@ sub parse_input_code {
     $CGAL="CGAL::" if /CGAL_END_NAMESPACE/;
   
     # Treat next template function declaration.
-    if (/^\s*template\s*\<\s*(\S*)\s*(\S*)\s*\>/) {
-      $template_type = $2;
-      ($inline, $ret_type, $fct_name, @args) = parse_function_declaration();
-      next;
-    }
-  
-    # Treat the body of a function.
-    if (/^{\s*/) {
-      push @predicates, [$fct_name, $template_type, $ret_type,
-                         $inline, $CGAL, get_old_body(), @args];
+    if (/template\W*\<.*\>/) {
+      push @predicates, [ $CGAL, parse_whole_definition($_) ];
     }
   }
 }
 
-# Prints the code of the overloaded predicates.
+# Prints the code of the overloaded predicates
 sub print_predicates {
   local $was_in_CGAL = 0;
   # We skip the 2 built-in predicates sign() and compare().
   for $i ( 2 .. $#predicates ) {
-    local ($fct_name, $template_type, $ret_type, 
-           $inline, $CGAL, $body, @args) = @{$predicates[$i]};
+    local ($CGAL) = @{$predicates[$i]};
     print "CGAL_BEGIN_NAMESPACE\n\n" if $CGAL eq "" && not $was_in_CGAL;
     print "CGAL_END_NAMESPACE\n\n"   if $CGAL ne "" && $was_in_CGAL;
-    put_new_function_declaration($inline, $ret_type, $fct_name, $CGAL, @args);
-    put_new_body($ret_type, $fct_name, $CGAL, @args);
+    print_filtered_exact(@{$predicates[$i]});
     print FO "\n";
     $was_in_CGAL = $CGAL eq "";
   }
   print "CGAL_END_NAMESPACE\n\n" if $was_in_CGAL;
 }
+
+# Find predicate calls in the function body
+sub match_calls {
+  local ($_) = @_;
+  # Note that the following are buggy if they appear in strings...
+  # (http://www.perl.com/cgi-bin/pace/pub/doc/manual/html/pod/perlfaq6.html)
+  s#//.*##mg;      # Remove C++ "//" comments.
+  s#/\*.*?\*/##sg; # Remove C "/* .. */" comments.
+
+  # Note that we must also deal with called functions, because of explicit
+  # casts Sign(predicate(...)).
+  # But I don't think we'll have predicates calling predicates...
+  # It's either a predicate calling constructions, or a cast calling a
+  # predicate.
+  print STDERR "$_\n";
+}
+
+# Test routine.
+sub pipo {
+  match_calls("
+  Sign sign1 = sign_of_determinant2x2(l1a, l1b, l2a, l2b);
+  Sign sign2 = sign_of_determinant2x2(h1a, h1b, h2a, h2b);
+  // This could probably be optimized.
+  // If someone uses it intensively, please feel free to do so.
+  FT FT0(0);
+  Sign sign3 = sign_of_determinant4x4(l1a, l1b, FT0, l1c,
+                                      l2a, l2b, FT0, l2c,
+                                      h1a, FT0, h1b, h1c,
+                                      h2a, FT0, h2b, h2c);
+  /* a
+   * multi-line comment */
+  CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
+  return Comparison_result (- sign1 * sign2 * sign3);
+  ");
+  exit;
+}
+
+# pipo();
 
 # Main program
 sub main {
