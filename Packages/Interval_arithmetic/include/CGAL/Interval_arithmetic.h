@@ -463,6 +463,22 @@ compare (const Interval_nt<false> & d, const Interval_nt<false> & e)
 
 } // namespace NTS
 
+inline
+Interval_base
+to_interval (const long & l)
+{
+  if (sizeof(double) > sizeof(long)) {
+    // On 64bit platforms, a long doesn't fit exactly in a double.
+    // Well, a perfect fix would be to use std::numeric_limits<>, but...
+    Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
+    Interval_nt_advanced approx ((double) l);
+    FPU_set_cw(CGAL_FE_UPWARD);
+    return approx + Interval_nt_advanced(Interval_base::Smallest);
+  }
+  else
+    return Interval_base(double(l));
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_INTERVAL_ARITHMETIC_H

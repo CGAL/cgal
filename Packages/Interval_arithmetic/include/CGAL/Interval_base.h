@@ -117,18 +117,8 @@ to_interval (const short & s)
   return Interval_base(double(s));
 }
 
-inline
-Interval_base
-to_interval (const long & l)
-{
-  // actually we would like to compare number of mantissa bits,
-  // this seems to be a sufficient approximation
-  CGAL_assertion( sizeof(double) > sizeof(long) );
-  // need something else for 64 bits longs.
-  return Interval_base(double(l));
-}
-
-// to_interval(long long) is in Interval_arithmetic.h
+// to_interval(long) is in Interval_arithmetic.h
+// to_interval(long long) is in long_long.h
 
 inline
 double

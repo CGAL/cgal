@@ -1,3 +1,7 @@
+Version 4.156 on 25 November 2002
+- Move to_interval(long) from Interval_base.h to Interval_arithmetic.h,
+  and fix it for 64bits platforms.
+
 Version 4.155 on 22 November 2002
 - Remove src/Interval_arithmetic/*.
 
