@@ -769,7 +769,7 @@ set_compiler_flags()
     CGAL_LIBNAME="libCGAL.a"
     CGAL_WIN_LIBNAME="libCGALWin.a"
     CGAL_QT_LIBNAME="libCGALQt.a"
-    CGAL_CORE_LIBNAME="libCORE.a"
+    CGAL_CORE_LIBNAME="libCore.a"
     CGAL_WIN_EXTRA_DIR=x11
     GMP_LIBNAME="libgmp.a"
     GMPXX_LIBNAME="libgmpxx.a"
@@ -803,7 +803,7 @@ set_compiler_flags()
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_WIN_LIBNAME="CGALWin.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
-	    CGAL_CORE_LIBNAME="libCORE.lib"
+	    CGAL_CORE_LIBNAME="libCore.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
@@ -838,7 +838,7 @@ set_compiler_flags()
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_WIN_LIBNAME="CGALWin.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
-	    CGAL_CORE_LIBNAME="CORE.lib"
+	    CGAL_CORE_LIBNAME="Core.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
@@ -872,7 +872,7 @@ set_compiler_flags()
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_WIN_LIBNAME="CGALWin.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
-	    CGAL_CORE_LIBNAME="CORE.lib"
+	    CGAL_CORE_LIBNAME="Core.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
