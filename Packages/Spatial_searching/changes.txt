@@ -1,5 +1,5 @@
 04 May 2004 Andreas Fabri
-- Removed destructor as it does nothing and leads to error messages for SunProCC
+- Removed ~Point_container() as it does nothing and leads to error messages for SunProCC
 
 17 Feb 2004 Sylvain Pion
 - Remove CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
