@@ -6,36 +6,36 @@
 #include <CGAL/Timer.h>
 
 #include <CGAL/predicates_on_ftC2.h>
-// #include <CGAL/Arithmetic_filter/predicates_on_ftC2.h>
+// #include <CGAL/predicates_on_ftC3.h>
+// #include <CGAL/predicates_on_rtH2.h>
 
 #define CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 #include <CGAL/Arithmetic_filter.h>
 
+#include <CGAL/double.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/leda_real.h>
-#include <CGAL/double.h>
 // #include <CGAL/leda_bigfloat.h>
+// #include <CGAL/leda_rational.h>
+// #include <CGAL/leda_integer.h>
 
 // #define CGAL_IA_NO_WARNINGS
 // #include <CGAL/Interval_arithmetic.h>
-// #include <CGAL/Fixed.h>
+// #include <CGAL/Fixed_precision_nt.h>
 #include <CGAL/Double_eps.h>
-#include <CGAL/predicates_on_ftC3.h>
-#include <CGAL/Arithmetic_filter/predicates_on_ftC3.h>
-#include <CGAL/predicates_on_rtH2.h>
-#include <CGAL/Arithmetic_filter/predicates_on_rtH2.h>
 
 // Don't be stupid, CGAL_Gmpz can only store integers !!!
 // typedef CGAL_Filtered_exact<double, CGAL_Gmpz> NT;
 // typedef CGAL_Filtered_exact<leda_real, leda_real> NT;
 // typedef CGAL_Filtered_exact<double, leda_bigfloat> NT;
-typedef CGAL_Filtered_exact<double, leda_real> NT;
+// typedef CGAL_Filtered_exact<double, leda_real> NT;
+typedef CGAL_Filtered_exact<double, leda_rational> NT;
 // typedef CGAL_Filtered_exact<float, leda_real> NT;
 // typedef CGAL_Filtered_exact<unsigned short int, leda_real> NT;
 // typedef CGAL_Filtered_exact<int, leda_real> NT;
-// typedef Fixed NT;
-// typedef CGAL_Gmpz NT;
+// typedef CGAL_Fixed_precision_nt NT;
 // typedef double NT;
+// typedef CGAL_Gmpz NT;
 // typedef leda_real NT;
 // typedef leda_rational NT;
 // typedef CGAL_Double_eps NT;
@@ -45,6 +45,8 @@ typedef CGAL_Filtered_exact<double, leda_real> NT;
 int test(void);
 void bench(void);
 
+// Now try the higher level predicates (C2/C3/H2/H3).
+// Well, that is make a test-suite.
 int main()
 {
   // CGAL_Interval_nt ia (2);
@@ -68,7 +70,7 @@ void bench()
   px=1; py=2; la=3; lb=4; lc=5;
   px = py;
   px = NT(py);
-  NT ppx(py);
+  // NT ppx(py);
   dt = t.time(); t.start();
   for (i=0; i<loops; i++)
     result = CGAL_compare_y_at_xC2(px, py, la, lb, lc);
