@@ -1,3 +1,9 @@
+7 March 2005:  Menelaos Karavelas
+- replaced calls to the vertex handle methods degree() and
+  incident_{edges,faces}() by calls to the corresponding TDS methods that
+  take the vertex as argument. This was done in compliance with the latest
+  changes in the design of the Triangulation_2 software.
+
 18 November 2004 Sylvain Pion
 - g++ 3.4.[23] workaround.
 

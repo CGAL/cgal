@@ -1,3 +1,13 @@
+7 March 2005:  Menelaos Karavelas
+- replaced calls to the vertex handle methods degree() and
+  incident_{edges,faces}() by calls to the corresponding TDS methods that
+  take the vertex as argument. This was done in compliance with the latest
+  changes in the design of the Triangulation_2 software.
+- modified test suite to comply with the above change
+- added access method in Apollonius_graph_2 that returns a const reference
+  to the TDS.
+- added fix for a nasty warning on the PowerPC version of G++ 3.4
+
 4 October 2004:  Menelaos Karavelas
 - removed "\ccInclude{iostream}" from Apollonius_site_2.tex in the reference
   manual; it was causing the manual tools to post a warning
