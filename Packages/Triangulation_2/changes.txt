@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+22 June 2004 Sylvain Pion
+- Fix signed/unsigned warnings introduced by last change.
+
 17 June 2004 Andreas Fabri
 - Bug fix in Triangulation_data_structure_2<..>::file_input(..)
 
