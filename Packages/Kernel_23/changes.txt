@@ -1,3 +1,6 @@
+26 Feb 2004 Sylvain Pion
+- Re-allow conversion from RPoint_2 to Point_2 (still needed by conics).
+
 24 Feb 2004 Sylvain Pion
 - Add missing CGAL_WRAP() for SunPRO.
 

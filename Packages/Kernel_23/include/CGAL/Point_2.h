@@ -43,7 +43,7 @@ public:
     : RPoint_2(o)
   {}
 
-#if 0
+#if 1 // still needed by Min_ellipse_2...
   Point_2(const RPoint_2& p)
     : RPoint_2(p)
   {}
