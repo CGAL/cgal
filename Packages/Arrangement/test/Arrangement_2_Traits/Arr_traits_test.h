@@ -66,7 +66,7 @@ private:
 	tr.make_x_monotone(cit->cv, x_monotone_parts);
       
 	if (x_monotone_parts.size() != cit->x_monotone_num) {
-	  std::cout << "  cut into wrong number of parts." << std::std::endl;
+	  std::cout << "  cut into wrong number of parts." << std::endl;
 	  test_success = false;
 	}
       }
