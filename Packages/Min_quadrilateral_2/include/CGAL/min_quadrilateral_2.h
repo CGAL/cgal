@@ -326,11 +326,6 @@ min_rectangle_2(
   return t.copy_rectangle_vertices_2(rect_so_far, o);
 
 } // min_rectangle_2( f, l, o , t)
-CGAL_END_NAMESPACE
-#include <CGAL/IO/Ostream_iterator.h>
-#include <CGAL/IO/leda_window.h>
-#include <CGAL/leda_real.h>
-CGAL_BEGIN_NAMESPACE
 
 template < class ForwardIterator, class OutputIterator, class Traits >
 OutputIterator
