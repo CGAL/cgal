@@ -214,7 +214,7 @@ public:
     Halfedge_around_vertex_circulator vcir = vitr->vertex_begin();
     int n = CGAL::circulator_size(vcir);    
 
-    float Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
+    float R[] = {0.0, 0.0, 0.0};
     Point& S = vitr->point();
     
     for (int i = 0; i < n; i++, ++vcir) {
