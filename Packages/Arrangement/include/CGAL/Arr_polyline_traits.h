@@ -331,7 +331,10 @@ public:
     }
   }
   
-
+  bool point_is_same(const Point_2 & p, const Point_2 & q) const
+  {
+    return is_same(p, q);
+  }
 
   bool curve_is_same(const X_curve_2& cv1, const X_curve_2& cv2) const {
     CGAL_assertion(is_x_monotone(cv1));

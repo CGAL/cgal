@@ -905,6 +905,12 @@ class Arr_segment_circle_traits
   }
 
   // Check whether the two curves are identical.
+  bool curve_is_same (const Point_2 & p, const Point_2 & q) const
+  {
+    return p == q;
+  }
+
+  // Check whether the two curves are identical.
   bool curve_is_same (const X_curve_2& curve1, const X_curve_2& curve2) const
   {
     CGAL_precondition(is_x_monotone(curve1));
