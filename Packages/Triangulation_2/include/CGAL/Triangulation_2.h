@@ -175,67 +175,6 @@ public:
 		       Face_handle f = Face_handle() );
   Vertex_handle push_back(const Point &p);
  
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-    template < class InputIterator >
-    int insert(InputIterator first, InputIterator last)
-    {
-        int n = number_of_vertices();
-        while(first != last){
-            insert(*first);
-            ++first;
-        }
-        return number_of_vertices() - n;
-    }
-#else
-#if defined(LIST_H) || defined(__SGI_STL_LIST_H)
-    int insert(std::list<Point>::const_iterator first,
-               std::list<Point>::const_iterator last)
-    {
-        int n = number_of_vertices();
-        while(first != last){
-            insert(*first);
-            ++first;
-        }
-        return number_of_vertices() - n;
-    }
-#endif // LIST_H
-#if defined(VECTOR_H) || defined(__SGI_STL_VECTOR_H)
-    int insert(std::vector<Point>::const_iterator first,
-               std::vector<Point>::const_iterator last)
-    {
-        int n = number_of_vertices();
-        while(first != last){
-            insert(*first);
-            ++first;
-        }
-        return number_of_vertices() - n;
-    }
-#endif // VECTOR_H
-  //#ifdef ITERATOR_H
-    int insert(std::istream_iterator<Point, std::ptrdiff_t> first,
-               std::istream_iterator<Point, std::ptrdiff_t> last)
-    {
-        int n = number_of_vertices();
-        while(first != last){
-            insert(*first);
-            ++first;
-        }
-        return number_of_vertices() - n;
-    }
-  //#endif // ITERATOR_H
-    int insert(Point* first,
-               Point* last)
-    {
-        int n = number_of_vertices();
-        while(first != last){
-            insert(*first);
-            ++first;
-        }
-        return number_of_vertices() - n;
-    }
-#endif // TEMPLATE_MEMBER_FUNCTIONS
-    
-
   void remove_degree_3(Vertex_handle  v, Face_handle f = Face_handle());
   void remove_first(Vertex_handle  v);
   void remove_second(Vertex_handle v);
@@ -309,6 +248,7 @@ public:
 protected:
   void remove_1D(Vertex_handle v);
   void remove_2D(Vertex_handle v);
+  bool test_dim_down(Vertex_handle v);
   void make_hole ( Vertex_handle v, std::list<Edge> & hole);
   Vertex_handle file_input(std::istream& is);
   void   file_output(std::ostream& os) const;
@@ -317,6 +257,81 @@ private:
   Vertex_handle insert_outside_convex_hull_1(const Point& p, Face_handle f);
   Vertex_handle insert_outside_convex_hull_2(const Point& p, Face_handle f);
   void   fill_hole ( Vertex_handle v, std::list<Edge> & hole);
+
+public:
+#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
+template < class Stream >
+Stream&  draw_triangulation(Stream& os) const 
+{
+  Finite_edges_iterator it = finite_edges_begin();
+  for( ;it != finite_edges_end() ; ++it) {
+    os << segment(it);
+  }
+  return os;
+}
+#endif
+
+#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
+    template < class InputIterator >
+    int insert(InputIterator first, InputIterator last)
+    {
+        int n = number_of_vertices();
+        while(first != last){
+            insert(*first);
+            ++first;
+        }
+        return number_of_vertices() - n;
+    }
+#else
+#if defined(LIST_H) || defined(__SGI_STL_LIST_H)
+    int insert(std::list<Point>::const_iterator first,
+               std::list<Point>::const_iterator last)
+    {
+        int n = number_of_vertices();
+        while(first != last){
+            insert(*first);
+            ++first;
+        }
+        return number_of_vertices() - n;
+    }
+#endif // LIST_H
+#if defined(VECTOR_H) || defined(__SGI_STL_VECTOR_H)
+    int insert(std::vector<Point>::const_iterator first,
+               std::vector<Point>::const_iterator last)
+    {
+        int n = number_of_vertices();
+        while(first != last){
+            insert(*first);
+            ++first;
+        }
+        return number_of_vertices() - n;
+    }
+#endif // VECTOR_H
+  //#ifdef ITERATOR_H
+    int insert(std::istream_iterator<Point, std::ptrdiff_t> first,
+               std::istream_iterator<Point, std::ptrdiff_t> last)
+    {
+        int n = number_of_vertices();
+        while(first != last){
+            insert(*first);
+            ++first;
+        }
+        return number_of_vertices() - n;
+    }
+  //#endif // ITERATOR_H
+    int insert(Point* first,
+               Point* last)
+    {
+        int n = number_of_vertices();
+        while(first != last){
+            insert(*first);
+            ++first;
+        }
+        return number_of_vertices() - n;
+    }
+#endif // TEMPLATE_MEMBER_FUNCTIONS
+    
+
 
 };
 
@@ -896,16 +911,17 @@ remove_1D(Vertex_handle v)
   _tds.remove_1D(&(*v));
 }
 
-
 template <class Gt, class Tds >
-void
+bool
 Triangulation_2<Gt,Tds>::
-remove_2D(Vertex_handle v)
+test_dim_down(Vertex_handle v)
 {
   //test the dimensionality of the resulting triangulation
+  //upon removing of vertex v
   //it goes down to 1 iff
   // 1) any finite face is incident to v
   // 2) all vertices are colinear
+  CGAL_triangulation_precondition(dimension() == 2);
   bool  dim1 = true; 
   Finite_faces_iterator fit = finite_faces_begin();
   while (dim1==true && fit != finite_faces_end()) {
@@ -926,10 +942,15 @@ remove_2D(Vertex_handle v)
 	== COLLINEAR; 
     }
   }
-	       
-  if (dim1) { 
-    _tds.remove_dim_down(&(*v));
-  }
+  return dim1;
+}
+
+template <class Gt, class Tds >
+void
+Triangulation_2<Gt,Tds>::
+remove_2D(Vertex_handle v)
+{
+  if (test_dim_down(v)) {  _tds.remove_dim_down(&(*v));  }
   else {
     std::list<Edge> hole;
     make_hole(v, hole);

@@ -62,7 +62,6 @@ public:
   {   CGAL_triangulation_postcondition( is_valid() );  }
   
 // CHECK -QUERY
-
   bool is_valid(bool verbose = false, int level = 0) const;
 
   Oriented_side
@@ -84,6 +83,43 @@ public:
 			Face_handle f = Face_handle() );
   void  remove(Vertex_handle v );
   
+
+  
+private:
+  void restore_Delaunay(Vertex_handle v);
+  void propagating_flip(Face_handle& f,int i);
+  void remove_2D(Vertex_handle v );
+  void fill_hole( Vertex_handle v, std::list<Edge> & hole);
+
+  Vertex_handle nearest_vertex_2D(const Point& p, Face_handle f) const;
+  Vertex_handle nearest_vertex_1D(const Point& p) const;
+
+  void  look_nearest_neighbor(const Point& p,
+			      Face_handle f,
+			      int i,
+			      int& min,
+			      Vertex_handle& nn,
+			      Distance& closer) const;
+
+public:
+#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
+template < class Stream>
+Stream& draw_dual(Stream & ps)
+{
+  Finite_edges_iterator eit= finite_edges_begin();
+  for (; eit != finite_edges_end(), eend; ++eit) {
+    Object o = t.dual(eit);
+    Ray r;
+    Segment s;
+    Line l;
+    if (CGAL::assign(s,o)) ps << s;
+    if (CGAL::assign(r,o)) ps << r;
+    if (CGAL::assign(l,o)) ps << l;
+  }
+  return ps;
+}
+#endif //CGAL_CFG_NO_MEMBER_TEMPLATES 
+
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class InputIterator >
   int
@@ -148,24 +184,8 @@ public:
       }
       return number_of_vertices() - n;
    }
-  #endif // TEMPLATE_MEMBER_FUNCTIONS
+  #endif //CGAL_CFG_NO_MEMBER_TEMPLATES
 
-  
-private:
-  void restore_Delaunay(Vertex_handle v);
-  void propagating_flip(Face_handle& f,int i);
-  void remove_2D(Vertex_handle v );
-  void fill_hole( Vertex_handle v, std::list<Edge> & hole);
-
-  Vertex_handle nearest_vertex_2D(const Point& p, Face_handle f) const;
-  Vertex_handle nearest_vertex_1D(const Point& p) const;
-
-  void  look_nearest_neighbor(const Point& p,
-			      Face_handle f,
-			      int i,
-			      int& min,
-			      Vertex_handle& nn,
-			      Distance& closer) const;
 };
 
 
@@ -471,34 +491,7 @@ void
 Delaunay_triangulation_2<Gt,Tds>::
 remove_2D(Vertex_handle v)
 {
-  //test the dimensionality of the resulting triangulation
-  //it goes down to 1 iff
-  // 1) any finite face is incident to v
-  // 2) all vertices are colinear
-  bool  dim1 = true; 
-  Finite_faces_iterator fit = finite_faces_begin();
-  while (dim1==true && fit != finite_faces_end()) {
-    dim1 = dim1 && fit->has_vertex(v);
-    fit++;
-  }
-  Face_circulator fic = v->incident_faces();
-  while (is_infinite(fic)) {++fic;}
-  Face_circulator done(fic);
-  Face_handle start(fic); int iv = start->index(v);
-  Point p = start->vertex(cw(iv))->point(); 
-  Point q = start->vertex(ccw(iv))->point();
-  while ( dim1 && ++fic != done) {
-    iv = fic->index(v);
-    if (fic->vertex(ccw(iv)) != infinite_vertex()) {
-      dim1 = dim1 &&
-	geom_traits().orientation(p, q, fic->vertex(ccw(iv))->point()) 
-	== COLLINEAR; 
-    }
-  }
-	       
-  if (dim1) { 
-    _tds.remove_dim_down(&(*v));
-  }
+  if (test_dim_down(v)) {  _tds.remove_dim_down(&(*v));  }
   else {
     std::list<Edge> hole;
     make_hole(v, hole);
