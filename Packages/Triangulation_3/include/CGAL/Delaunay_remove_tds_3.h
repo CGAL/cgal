@@ -31,26 +31,32 @@ public :
     : _f(f) 
     {}
   
-  void* face() const {     return _f;
+  void* 
+  face() const {     return _f;
   }
 
-  void set_face(void* f) {
+  void 
+  set_face(void* f) {
     _f = f ;
   }
 
-  bool is_valid(bool /* verbose */ = false, int /* level */ = 0) const {
+  bool
+  is_valid(bool /* verbose */ = false, int /* level */ = 0) const {
       return true;
     }
 
-  void set_info(I i) { 
+  void 
+  set_info(I i) { 
     _info = i;
   }
 
-  I info(){ 
+  I 
+  info(){ 
     return _info; 
   }
   
-  Point point() {
+  Point 
+  point() {
     return _info->point();
   }
 
@@ -60,7 +66,15 @@ private:
 };
 
 
-// We derive the face class.
+/* We derive the face class, 
+   - because we want an additional pointer,
+   - because we want to manage the order of the list of the faces
+     in the triangulation datastructure,
+   - because we want to look at each 'edge' only once. If two 
+     triangles are neighbors, then the triangle with the smaller 
+     address has the edge.
+*/
+
 
 template < class Gt,class I >
 class Delaunay_remove_tds_face_3_2 :public Triangulation_face_base_2<Gt> {
@@ -75,7 +89,8 @@ public:
 			       void* n0, void* n1, void* n2) :
     Triangulation_face_base_2<void*>(v0, v1, v2, n0, n1, n2) {}
 
-  void set_info(I i) { 
+  void 
+  set_info(I i) { 
     inf = i;    
   }
 
@@ -84,13 +99,21 @@ public:
   }
 
   //Handling the doubly connected list of faces
-  void* p() const {return _p;}
-  void* n() const {return _n;}
-  void  set_p(void* f) {_p = f;};
-  void  set_n(void* f) {_n = f;};
+  void* 
+  p() const {return _p;}
+
+  void* 
+  n() const {return _n;}
+
+  void  
+  set_p(void* f) {_p = f;};
+
+  void
+  set_n(void* f) {_n = f;};
 
   // Remove this face from the list
-  void unlink() {
+  void 
+  unlink() {
     if(_p) {
       ((Delaunay_remove_tds_face_3_2*)_p)->set_n(_n);
     }
@@ -100,7 +123,8 @@ public:
   }
 
   // Remove neighbor i from the list
-  void unlink(int i) {
+  void 
+  unlink(int i) {
     Delaunay_remove_tds_face_3_2 * n = 
       (Delaunay_remove_tds_face_3_2*)neighbor(cw(i));
     n->unlink();
@@ -109,7 +133,9 @@ public:
   }
 
   // Move a given face after this
-  void move_after_this(Delaunay_remove_tds_face_3_2* f) {
+private:
+  void 
+  move_after_this(Delaunay_remove_tds_face_3_2* f) {
     if(_n == f) {
       return;
     }
@@ -125,7 +151,11 @@ public:
     f->set_p(this);
   }
 
-  void set_edge(int i, Delaunay_remove_tds_face_3_2* f) {
+public:
+  // Note that when we set an edge, the face gets moved
+  // so that it gets considered later.
+  void
+  set_edge(int i, Delaunay_remove_tds_face_3_2* f) {
     Delaunay_remove_tds_face_3_2 *n = 
       (Delaunay_remove_tds_face_3_2*)neighbor(i);
     if(n < this) {
@@ -138,22 +168,26 @@ public:
     }      
   }
 
-  void set_edge(int i) {
+  void 
+  set_edge(int i) {
     set_edge(i, this);
   }
 
-  void set_edge() {
+  void 
+  set_edge() {
     for(int i = 0; i < 3; i++) {
       set_edge(i, this);
     }
   }
 
-  void set_edge(int i, bool b) {
+  void 
+  set_edge(int i, bool b) {
     _edge[i] = b;
   }
 
 
-  bool edge(int i) const {
+  bool 
+  edge(int i) const {
     return _edge[i];
   }
     
@@ -181,6 +215,7 @@ public:
 
 
 // This class is used to represent the boundary of a hole in a polyhedron.
+// It only implements a constructor, the rest is inherited
 
 template <class T>
 class Delaunay_remove_tds_3_2 
@@ -246,40 +281,29 @@ public:
       Vertex_3_2 *v0, *v1, *v2;
 
       Vertex *w0 = handle2pointer(h->vertex(i0));
-      map_it = vertex_map.lower_bound(w0);
-      if((map_it == vertex_map.end()) || (w0 != map_it->first)) {
+
+      if((map_it = vertex_map.find(w0)) == vertex_map.end()) {
 	v0 = create_vertex();
 	v0->set_info(w0);
-	if((map_it != vertex_map.begin()) && (map_it != vertex_map.end())) { 
-	  map_it--;
-	}
-	vertex_map.insert(map_it, std::make_pair(w0, v0));
+	vertex_map.insert(std::make_pair(w0, v0));
       } else {
 	v0 = map_it->second;
       }
-
+      
       Vertex *w1 = handle2pointer(h->vertex(i1));
-      map_it = vertex_map.lower_bound(w1);
-      if((map_it == vertex_map.end()) || (w1 != map_it->first)) {
+      if((map_it = vertex_map.find(w1)) == vertex_map.end()) {
 	v1 = create_vertex();
 	v1->set_info(w1);
-	if((map_it != vertex_map.begin()) && (map_it != vertex_map.end())) { 
-	  map_it--;
-	}
-	vertex_map.insert(map_it, std::make_pair(w1, v1));
+	vertex_map.insert(std::make_pair(w1, v1));
       } else {
 	v1 = map_it->second;
       }
       
       Vertex *w2 = handle2pointer(h->vertex(i2));
-      map_it = vertex_map.lower_bound(w2);
-      if((map_it == vertex_map.end()) || (w2 != map_it->first)) {
+      if((map_it = vertex_map.find(w2)) == vertex_map.end()) {
 	v2 = create_vertex();
 	v2->set_info(w2);
-	if((map_it != vertex_map.begin()) && (map_it != vertex_map.end())) { 
-	  map_it--;
-	}
-	vertex_map.insert(map_it, std::make_pair(w2, v2));
+	vertex_map.insert(std::make_pair(w2, v2));
       } else {
 	v2 = map_it->second;
       }

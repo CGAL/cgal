@@ -1637,7 +1637,6 @@ remove_3D_ear(Vertex_handle v)
   CGAL_triangulation_precondition( dimension() == 3 );
 
   std::list<Facet> boundary; // facets on the boundary of the hole
-  //  std::set<Vertex_handle> bdvert; // vertices on the boundary of the hole
 
   if ( test_dim_down(v) ) {
 
@@ -1663,7 +1662,6 @@ remove_3D_ear(Vertex_handle v)
 
   std::list<Cell_handle> hole;
   make_hole_3D_ear(v, boundary,
-		   //bdvert, 
 		   hole);
 
 
@@ -1687,7 +1685,6 @@ void
 Delaunay_triangulation_3<Gt,Tds>::
 make_hole_3D_ear( Vertex_handle v, 
 	      std::list<Facet> & boundhole,
-		  //std::set<Vertex_handle> & boundvert,
 	      std::list<Cell_handle> & hole)
 {
   CGAL_triangulation_precondition( ! test_dim_down(v) );
@@ -1712,11 +1709,7 @@ make_hole_3D_ear( Vertex_handle v,
     for ( i=0; i<4; i++) {
       if ( i != indv ) {
 	vi = (*cit)->vertex(i);
-	//if ( boundvert.find( vi ) == boundvert.end() )
-	//  {
-	//    boundvert.insert( vi );
 	    vi->set_cell( opp_cit );
-	    //  }
       }
     }
 
@@ -1731,7 +1724,7 @@ template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
 undo_make_hole_3D_ear(std::list<Facet> & boundhole,
-		  std::list<Cell_handle> & hole){
+		      std::list<Cell_handle> & hole){
   std::list<Cell_handle>::iterator cit = hole.begin();
   for(std::list<Facet>::iterator fit = boundhole.begin();	
       fit != boundhole.end();
@@ -1767,7 +1760,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
   int opcount = 0;
 
   Face_3_2 *f = &(* surface.faces_begin());
-  Face_3_2 *last_op;
+  Face_3_2 *last_op = NULL; // This is where the last ear was inserted
   int k = -1;
 
   // This is a loop over the halfedges of the surface of the hole
@@ -1783,8 +1776,8 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
       }
       k = 0;
     }
+
     if(f->edge(k)) {
-      bool violation = false;
       Vertex_3_2 *w0, *w1, *w2, *w3;
       Vertex *v0, *v1, *v2, *v3;
       int i = ccw(k);
@@ -1807,7 +1800,6 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
       const Point & p2 = v2->point();
       const Point & p3 = v3->point();
 
-
       bool inf_0 = is_infinite(Vertex_handle(v0));
       bool inf_1 = is_infinite(Vertex_handle(v1));
       bool inf_2 = is_infinite(Vertex_handle(v2));
@@ -1816,8 +1808,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
       if( inf_1 || inf_2 ){
 	// there will be another ear, so let's ignore this one,
 	// because it is complicated to treat
-      } else if( inf_0 || inf_3 ||
-		 (orientation(p0, p1, p2, p3) == POSITIVE) ) {
+      } else if( inf_0 || inf_3 || (orientation(p0, p1, p2, p3) == POSITIVE) ) {
 	// the two faces form a concavity, in which we might plug a tetrahedron
 
 	int cospheric = 0;
@@ -1825,14 +1816,14 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	bool on_unbounded_side = false;
 	// we now look at all vertices that are on the boundary of the hole
 	for(Surface::Vertex_iterator vit = surface.vertices_begin();
-	    (! violation ) && (vit != surface.vertices_end());
+	    (vit != surface.vertices_end());
 	    vit++) {
 	  Vertex *v = (*vit).info();
 	  if( (! is_infinite(Vertex_handle(v)))
 	      && (v != v0) && (v != v1) && (v != v2) && (v != v3)) {
 	    const Point & p = v->point();
 
-	    Bounded_side bs; // = side_of_sphere(v0, v1, v2, v3, p);
+	    Bounded_side bs;
 
 	    if(inf_0) {
 	      bs = side_of_sphere_inf(p2, p1, p3, p);
@@ -1841,195 +1832,163 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	    } else {
 	      bs = Bounded_side( side_of_oriented_sphere(p0, p1, p2, p3, p) );
 	    }
-	    //CGAL_triangulation_assertion(bs == side_of_sphere(v0, v1, v2, v3, p));
+
+	    if(bs == ON_BOUNDED_SIDE) { goto next_ear; }
 
 	    if((bs == ON_BOUNDARY)) {
 	      cospheric++;
 	      cospheric_vertices.insert(&(*vit));
 	    }
-	    violation = (bs == ON_BOUNDED_SIDE);
-	    on_unbounded_side |= (bs == on_unbounded_side);
+
+	    on_unbounded_side |= (bs == ON_UNBOUNDED_SIDE);
 	  }
 	}
-
+	// we looked at all vertices
 	// if there are cospheric points we have to test a little bit more
-	if( (! violation) && (cospheric > 0) ) {
+	if( cospheric > 0 ) {
+	  std::set<Vertex_3_2*>::iterator co_it,
+	                                  not_found = cospheric_vertices.end();
 	  if(inf_0 || inf_3) {
-	    // the cospheric points are on the boundary of the convex hull we don't care
+	    // the cospheric points are on the boundary of the convex hull 
 	    if(! on_unbounded_side) {
 	      //std::cout << "all points are coplanar" << std::endl;
 	    }
 	  }  else  {
-	    // for all edges that are incident to w2, check if the other vertex is cospheric
-	    // and if the edge  is coplanar to plane(v0, v2, v3) 
+	    // for all edges that are incident to w2, check if the other vertex
+	    // is cospheric, and if the edge  is coplanar to plane(v0, v2, v3) 
 	    Vertex_circulator_3_2 vc = w2->incident_vertices();
 	    Vertex_circulator_3_2 done = vc;
-	    std::set<Vertex_3_2*>::iterator co_it, not_found = cospheric_vertices.end();
+	    
 	    do {
 	      if( ! ((co_it = cospheric_vertices.find(&(*vc))) == not_found) ) {
 		const Point & pc = (*co_it)->info()->point();
-		violation = orientation(p0,p2,p3,pc) == COPLANAR;
-	      }
-	    } while( (! violation) && (++vc != done));
 
-	    if( ! violation ) {
-	      // for all edges that are incident to w1, check if the other vertex is cospheric
-	      // and if the edge  is coplanar to plane(v0, v1, v3) 
-	      Vertex_circulator_3_2 vc = w1->incident_vertices();
-	      Vertex_circulator_3_2 done = vc;
-	      std::set<Vertex_3_2*>::iterator co_it, not_found = cospheric_vertices.end();
-	      do {
-		if( ! ((co_it = cospheric_vertices.find(&(*vc))) == not_found) ) {
-		  const Point & pc = (*co_it)->info()->point();
-		  violation = (orientation(p0,p1,p3,pc) == COPLANAR);
-		}
-	      } while( (! violation) && (++vc != done));
-	    }
+		if(orientation(p0,p2,p3,pc) == COPLANAR) { goto next_ear; }
+	      }
+	    } while( ++vc != done );
+
+	    // for all edges that are incident to w1, check if the other vertex
+	    // is cospheric, and if the edge  is coplanar to plane(v0, v1, v3) 
+	    vc = w1->incident_vertices();
+	    done = vc;
+	    do {
+	      if( ! ((co_it = cospheric_vertices.find(&(*vc))) == not_found) ) {
+		const Point & pc = (*co_it)->info()->point();
+		if(orientation(p0,p1,p3,pc) == COPLANAR) { goto next_ear; }
+	      }
+	    } while( ++vc != done );
+	    
 	  }
-	  if( (! violation) && (! inf_0) && (! inf_1) && (! inf_2) && (! inf_3) ) {
+	  if( (! inf_0) && (! inf_1) && (! inf_2) && (! inf_3) ) {
+	    // all vertices are finite
 	    for(std::set<Vertex_3_2*>::iterator it = cospheric_vertices.begin();
 		it != cospheric_vertices.end();
 		it++) {
 	      const Point & pit = (*it)->info()->point();
 	      Vertex_circulator_3_2 vc = (*it)->incident_vertices();
 	      Vertex_circulator_3_2 done = vc;
-	      std::set<Vertex_3_2*>::iterator co_it, not_found = cospheric_vertices.end();
 	      do {
-		if( ! ((co_it = cospheric_vertices.find(&(*vc))) == not_found) ) {
+		if(! ((co_it = cospheric_vertices.find(&(*vc))) == not_found) ){
 		  const Point & pc = (*co_it)->info()->point();
-		  violation = (orientation(p0,p3,pc, pit) == COPLANAR) 
-		    && (coplanar_orientation(p0,p3,pc, pit) == NEGATIVE);
+		  if((orientation(p0,p3,pc, pit) == COPLANAR) 
+		     && (coplanar_orientation(p0,p3,pc, pit) == NEGATIVE)) {
+		    goto next_ear;
+		  }
 		}
-	      } while( (! violation) && (++vc != done));
+	      } while( ++vc != done);
 	    }
 	  }
 	} // test a little bit more
 
+	// 
 	Face_3_2 *m_i = f->neighbor(i);
 	Face_3_2 *m_j = f->neighbor(j); 
 	bool neighbor_i = m_i == n->neighbor(cw(fi));
 	bool neighbor_j = m_j == n->neighbor(ccw(fi));
 
-	if((! violation) && (! (((! neighbor_i) && (! neighbor_j)) 
-				&& surface.is_edge(f->vertex(k), n->vertex(fi))))) {
-	  // none of the vertices violates the Delaunay property
-	  // and if we are in the flip case, the edge that would get introduced is not on the surface
-	  // We are ready to plug the tetrahedron
-	  // It may touch 2 triangles, 
+	if( (((! neighbor_i) && (! neighbor_j)) 
+	       && surface.is_edge(f->vertex(k), n->vertex(fi)))) {
+	  // We are in the flip case:
+	  // The edge that would get introduced is on the surface
+	  goto next_ear;
+	}
+	
+	// none of the vertices violates the Delaunay property
+	// We are ready to plug the tetrahedron
 
-	  Cell_handle ch = create_cell(Vertex_handle(v0), Vertex_handle(v1), Vertex_handle(v2), Vertex_handle(v3),
-				       NULL, NULL, NULL, NULL);
-	  cells.push_back(ch);
-	  Cell* c = handle2pointer(ch);
-	  v0->set_cell(c);
-	  v1->set_cell(c);
-	  v2->set_cell(c);
-	  v3->set_cell(c);
-	 
-	  //print(ch);
-	  /*
-Removal of point 265 : -7 -18 -15
+	Cell_handle ch = create_cell(Vertex_handle(v0), 
+				     Vertex_handle(v1), 
+				     Vertex_handle(v2), 
+				     Vertex_handle(v3),
+				     NULL, NULL, NULL, NULL);
+	cells.push_back(ch);
+	Cell* c = handle2pointer(ch);
+	v0->set_cell(c);
+	v1->set_cell(c);
+	v2->set_cell(c);
+	v3->set_cell(c);
 
--9 -18 -14; -7 -21 -10; -8 -22 -16; -3 -21 -11;
-flip
--1 -20 -15; -8 -22 -16; -3 -21 -11; -9 -18 -14;
-flip
--9 -18 -14; -1 -20 -15; -8 -22 -16; -7 -19 -24;
-remove
--3 -11 -20; -7 -19 -24; -1 -20 -15; -9 -18 -14;
-flip
--9 -18 -14; -3 -11 -20; -7 -19 -24; -11 -14 -13;
-remove
--9 -18 -14; -3 -11 -20; -11 -14 -13; -7 -9 -11;
-flip
--11 -14 -13; -7 -9 -11; -5 -12 -9; -3 -11 -20;
-flip
--5 -12 -9; -9 -18 -14; -11 -14 -13; -7 -9 -11;
-flip
--5 -12 -9; -7 -21 -10; -9 -18 -14; -3 -21 -11;
-remove
--5 -12 -9; -3 -21 -11; -9 -18 -14; -1 -20 -15;
-remove
--3 -11 -20; -1 -20 -15; -5 -12 -9; -9 -18 -14;
-remove
--3 -11 -20; -9 -18 -14; -5 -12 -9; -7 -9 -11;
-remove
+	// The new tetrahedron touches the faces that form the ear
+	Facet fac = n->info();
+	c->set_neighbor(0, fac.first);
+	fac.first->set_neighbor(fac.second, c);
+	fac = f->info();
+	c->set_neighbor(3, fac.first);
+	fac.first->set_neighbor(fac.second, c);
 
-Unable to find an ear
-4 4 2
--3 -11 -20; -5 -12 -9; -11 -14 -13; -7 -9 -11
-	   */
-
-	  Facet fac = n->info();
-	  c->set_neighbor(0, fac.first);
+	// It may touch another face, 
+	// or even two other faces if it is the last tetrahedron
+	if(neighbor_i) {
+	  fac = m_i->info();
+	  c->set_neighbor(1, fac.first);
 	  fac.first->set_neighbor(fac.second, c);
-	  fac = f->info();
-	  c->set_neighbor(3, fac.first);
+	}
+	if(neighbor_j) {
+	  fac = m_j->info();
+	  c->set_neighbor(2, fac.first);
 	  fac.first->set_neighbor(fac.second, c);
-	  CGAL_triangulation_assertion(c->neighbor(0) != c->neighbor(3));
-	  // 3, or even 4 if it is the last tetrahedron
+	}
+	
+	if((! neighbor_i) && (! neighbor_j)) {
+	  surface.flip(f,k);
+	  int ni = f->index(n);
+	  f->set_edge(ni, false);
+	  f->set_edge(cw(ni));
+	  f->set_edge(ccw(ni));
+	  last_op = f; k = -1;
+	  
+	  int fi = n->index(f);
+	  n->set_edge(fi, false);
+	  n->set_edge(cw(fi), f);
+	  n->set_edge(ccw(fi), f);
 
-	  if(neighbor_i) {
-	    fac = m_i->info();
-	    c->set_neighbor(1, fac.first);
-	    CGAL_triangulation_assertion(c->neighbor(1) != c->neighbor(3));
-	    CGAL_triangulation_assertion(c->neighbor(1) != c->neighbor(0));
-	    fac.first->set_neighbor(fac.second, c);
-	  }
-	  if(neighbor_j) {
-	    fac = m_j->info();
-	    c->set_neighbor(2, fac.first);
-	    CGAL_triangulation_assertion(c->neighbor(2) != c->neighbor(3));
-	    CGAL_triangulation_assertion(c->neighbor(2) != c->neighbor(0));
-	    if(neighbor_i) {
-	    CGAL_triangulation_assertion(c->neighbor(2) != c->neighbor(1));
-	    }
-	    fac.first->set_neighbor(fac.second, c);
-	  }
-
-	  if((! neighbor_i) && (! neighbor_j)) {
-	    surface.flip(f,k);
-	    //std::cout << "flip" << std::endl;
-	    int ni = f->index(n);
-	    f->set_edge(ni, false);
-	    f->set_edge(cw(ni));
-	    f->set_edge(ccw(ni));
-	    last_op = f; k = -1;
-
-	    int fi = n->index(f);
-	    n->set_edge(fi, false);
-	    n->set_edge(cw(fi), f);
-	    n->set_edge(ccw(fi), f);
-
-	    f->set_info(std::make_pair(Cell_handle(c),2));
-	    n->set_info(std::make_pair(Cell_handle(c),1));
-	  } else if (neighbor_i && (! neighbor_j)) {
-	    f->unlink(j);
-	    surface.remove_degree_3(f->vertex(j), f);
-	    //std::cout << "remove" << std::endl;
-	    f->set_edge();
-	    last_op = f; k = -1;
-	    f->set_info(std::make_pair(Cell_handle(c),2));
-	  } else if ((! neighbor_i) && neighbor_j)  {
-	    f->unlink(i);
-	    surface.remove_degree_3(f->vertex(i), f);
-	    //std::cout << "remove" << std::endl;
-	    f->set_edge();
-	    last_op = f; k = -1;
-	    f->set_info(std::make_pair(Cell_handle(c),1));
+	  f->set_info(std::make_pair(Cell_handle(c),2));
+	  n->set_info(std::make_pair(Cell_handle(c),1));
+	} else if (neighbor_i && (! neighbor_j)) {
+	  f->unlink(j);
+	  surface.remove_degree_3(f->vertex(j), f);
+	  f->set_edge();
+	  last_op = f; k = -1;
+	  f->set_info(std::make_pair(Cell_handle(c),2));
+	} else if ((! neighbor_i) && neighbor_j)  {
+	  f->unlink(i);
+	  surface.remove_degree_3(f->vertex(i), f);
+	  f->set_edge();
+	  last_op = f; k = -1;
+	  f->set_info(std::make_pair(Cell_handle(c),1));
+	} else {
+	  if(surface.number_of_vertices() != 4) {
+	    delete_cells(cells);
+	    return false;
 	  } else {
-	    if(surface.number_of_vertices() != 4) {
-	      delete_cells(cells);
-	      return false;
-	    } else {
-	      // when we leave the function the vertices and faces of the surface
-	      // are deleted by the destructor
-	      return true;
-	    }
+	    // when we leave the function the vertices and faces of the surface
+	    // are deleted by the destructor
+	    return true;
 	  }
-	}// if(! violation)
-      }// if(geom_traits()..
+	}
+      } // else if (inf_0 ...
     }// if(f->edge(k))
+  next_ear: ;
   } // for(;;)
 }
 
