@@ -1226,6 +1226,8 @@ Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon2.gif -
 Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon3.gif -text svneol=unset#unset
 Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon4.gif -text svneol=unset#unset
 Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon5.gif -text svneol=unset#unset
+Packages/Mesh_2/bench/data/square-deforme.poly -text
+Packages/Mesh_2/bench/data/square.poly -text
 Packages/Mesh_2/demo/Mesh_2/contraints.xpm -text
 Packages/Mesh_2/demo/Mesh_2/marked.xpm -text
 Packages/Mesh_2/demo/Mesh_2/seeds.xpm -text

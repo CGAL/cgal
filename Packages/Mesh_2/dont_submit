@@ -3,3 +3,4 @@ Makefile
 TODO
 my_tags.j2h
 README
+bench
