@@ -22,7 +22,9 @@
 #define Td_X_trapezoid                  TXT
 #define Interval_nt                     IN
 #define PL_X_curve_plus                 PXCP
+#if ! defined(_MSC_VER)
 #define bidirectional_iterator_tag      BIT
+#endif
 #define Forward_circulator_tag          FCT
 
 #define remove_in_face_interior         RIFI
