@@ -121,7 +121,7 @@ public:
         Vector h(n) ;
         Vector Ad(n) ;
         Vector t(n) ;
-        CoeffType rTh, rTAd, rTr, alpha, beta=0, omega, ht, tt;
+        CoeffType rTh, rTAd, rTr, alpha, beta=0, omega=0, ht, tt;
         unsigned int its=0;										// Loop counter
         CoeffType err=epsilon_*epsilon_*BLAS<Vector>::dot(b,b);	// Error to reach
 
@@ -189,7 +189,7 @@ private:
 	{
 		// LS 03/2005: replace Lsolver test by Laspack test to parameterize venus-loop.off w/ authalic/square method
 		//#define IsZero(a) (fabs(a) < 1e-40)
-		return (fabs(a) < 10.0 * numeric_limits<CoeffType>::min());
+		return (fabs(a) < 10.0 * std::numeric_limits<CoeffType>::min());
 	}
 
 private:
