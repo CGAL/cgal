@@ -60,20 +60,12 @@ public:
   typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
   typedef Triangulation_ds_cell_3<Vb,Cb> Cell;
 
-  // CONSTRUCTORS
-
-  // used only for initializing _list_of_cells by the constructors of
+  // used only for initializing _list_of_*cells by the constructors of
   // Triangulation_data_structure_3
   // private ?
   Triangulation_ds_cell_3()
     : Cb(), _previous_cell(this), _next_cell(this), in_conflict_flag(0)
   {}
-
-//   Triangulation_ds_cell_3(Tds & tds)
-//     : Cb()
-//     // builds a new cell of Triangulation_data_structure_3 and
-//     // maintains the list of cells  
-//   { add_list(tds); }
 
   Triangulation_ds_cell_3(Cell* c)
     : Cb(*c), in_conflict_flag(0)
@@ -100,8 +92,6 @@ public:
     set_vertices(v0,v1,v2,v3);
   }
 
-  // DESTRUCTOR
-
   ~Triangulation_ds_cell_3()
     {
       _previous_cell->_next_cell = _next_cell;
@@ -114,7 +104,7 @@ public:
   {
     Cb::set_vertex(i,v);
   }
-    
+
   void set_neighbor(int i, Cell* n)
   {
     Cb::set_neighbor(i,n);
@@ -124,7 +114,7 @@ public:
   {
     Cb::set_vertices(v0,v1,v2,v3);
   }
-    
+
   void set_neighbors(Cell* n0, Cell* n1, Cell* n2, Cell* n3)
   {
     Cb::set_neighbors(n0,n1,n2,n3);

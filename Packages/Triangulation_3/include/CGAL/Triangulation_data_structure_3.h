@@ -104,42 +104,33 @@ public:
   typedef Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
   typedef Triangulation_ds_facet_circulator_3<Tds> Facet_circulator;
 
-  // CONSTRUCTORS
-
   Triangulation_data_structure_3() 
-    : _dimension(-2), _number_of_vertices(0), _list_of_cells() 
+    : _dimension(-2), _number_of_vertices(0)
   {}
 
   Triangulation_data_structure_3(const Vertex & v)
-    : _dimension(-2), _number_of_vertices(0), _list_of_cells()
+    : _dimension(-2), _number_of_vertices(0)
   {
     insert_increase_dimension(v);
-    //    CGAL_triangulation_postcondition( is_valid() );
   }
 
   Triangulation_data_structure_3(const Tds & tds)
-    : _number_of_vertices(0), _list_of_cells()
+    : _number_of_vertices(0)
     // _number_of_vertices is set to 0 so that clear() in copy_tds() works
   {
     copy_tds(tds);
   }
 
-  // DESTRUCTOR
-
   ~Triangulation_data_structure_3()
   {
     clear();
   }
-  
-  // ASSIGNEMENT
 
   Tds & operator= (const Tds & tds)
   {
     copy_tds(tds);
     return *this;
   }  
-    
-  // ACCESS FUNCTIONS
 
   int number_of_vertices() const {return _number_of_vertices;}
   
@@ -172,55 +163,104 @@ public:
 
   void set_dimension(int n) { _dimension = n; }
 
-  Cell * create_cell() 
+  Cell* create_cell() 
     { 
-      Cell* c = new Cell();
-      add_cell( c );
+      Cell* c = get_new_cell();
+      add_cell(c);
       return c; 
     }
 
-  Cell* create_cell( Cell* c )
+  Cell* create_cell(Cell* c)
     {
       Cell* cnew = new Cell(c);
-      add_cell( cnew );
-      return cnew; 
-    }
-  
-  Cell* create_cell( Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3)
-    {
-      Cell* cnew = new Cell(v0,v1,v2,v3);
-      add_cell( cnew );
+      add_cell(cnew);
       return cnew; 
     }
 
-  Cell* create_cell( Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
-		     Cell* n0, Cell* n1, Cell* n2, Cell* n3)
+  Cell* create_cell(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3)
     {
-      Cell* cnew = new Cell(v0,v1,v2,v3,n0,n1,n2,n3);
-      add_cell( cnew );
-      return cnew; 
+      Cell* c = get_new_cell();
+      c->set_vertices(v0,v1,v2,v3);
+      add_cell(c);
+      return c; 
+    }
+
+  Cell* create_cell(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
+		    Cell* n0, Cell* n1, Cell* n2, Cell* n3)
+    {
+      Cell* c = get_new_cell();
+      c->set_vertices(v0,v1,v2,v3);
+      c->set_neighbors(n0,n1,n2,n3);
+      add_cell(c);
+      return c; 
     }
 
   // not documented
   // only used by copy_tds in the TDS class
-  Cell* create_cell( Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
-		     const Cell & old_cell )
+  Cell* create_cell(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
+		    const Cell & old_cell)
     {
       Cell* cnew = new Cell( v0,v1,v2,v3,old_cell );
-      add_cell( cnew );
+      add_cell(cnew);
       return cnew; 
     }
 
-  void add_cell( Cell* c ) 
+  void link_cells(Cell* a, Cell *b)
+  {
+      a->_next_cell = b;
+      b->_previous_cell = a;
+  }
+
+  void remove_cell_from_list(Cell* c)
+  {
+      link_cells(c->_previous_cell, c->_next_cell);
+  }
+
+  // TODO : ajouter (et donc l'eliminer) add_cell() dedans...
+  Cell* get_new_cell()
+  {
+      if (_list_of_free_cells._next_cell == &_list_of_free_cells)
+	  return new Cell();
+
+      Cell *r = _list_of_free_cells._next_cell;
+      r->set_in_conflict_flag(0);
+      remove_cell_from_list(r);
+      return r;
+  }
+
+  void add_cell( Cell* c )
     {
       CGAL_triangulation_precondition( c != NULL );
-      c->_next_cell = list_of_cells()._next_cell;
-      list_of_cells()._next_cell = c;
-      c->_next_cell->_previous_cell = c;
-      c->_previous_cell = past_end_cell();
+
+      link_cells(c, _list_of_cells._next_cell);
+      link_cells(&_list_of_cells, c);
     }
 
-  void delete_cell( Cell* c ) 
+  void move_cell_to_temporary_free_list(Cell *c)
+  {
+      CGAL_triangulation_precondition( c != NULL );
+
+      remove_cell_from_list(c);
+      link_cells(c, _list_of_temporary_free_cells._next_cell);
+      link_cells(&_list_of_temporary_free_cells, c);
+  }
+
+  void move_temporary_free_cells_to_free_list()
+  {
+      CGAL_triangulation_precondition( &_list_of_temporary_free_cells !=
+	     _list_of_temporary_free_cells._next_cell );
+
+      link_cells(&_list_of_free_cells,
+	          _list_of_temporary_free_cells._next_cell);
+      link_cells(_list_of_temporary_free_cells._previous_cell,
+	         &_list_of_free_cells);
+      link_cells(&_list_of_temporary_free_cells,
+	         &_list_of_temporary_free_cells);
+  }
+
+  // ACCESS FUNCTIONS
+
+  void delete_cell( Cell* c )
     { 
       CGAL_triangulation_expensive_precondition( dimension() != 3 ||
                                                  is_cell(c) );
@@ -228,9 +268,14 @@ public:
                                                  is_facet(c,3) );
       CGAL_triangulation_expensive_precondition( dimension() != 1 ||
                                                  is_edge(c,0,1) );
-      CGAL_triangulation_expensive_precondition( dimension()!=0 ||
+      CGAL_triangulation_expensive_precondition( dimension() != 0 ||
                                                  is_vertex(c->vertex(0)) );
-      delete c; 
+
+      remove_cell_from_list(c);
+      link_cells(c, _list_of_free_cells._next_cell);
+      link_cells(&_list_of_free_cells, c);
+      // Maybe we should have an heuristic to know when to really
+      // delete the cells, or provide some flush() method to the user.
     }
 
   // QUERIES
@@ -340,18 +385,14 @@ public:
   // conflict, then inserts by starring.
 
 private:
-  typedef std::vector<void *> Conflict_vector;
   // The two find_conflicts_[23] below could probably be merged ?
-  // Anyway, Conflict_vector is probably temporary, so...
   template < class Conflict_test >
   void
-  find_conflicts_3(Conflict_vector & conflicts, Cell *c, Cell * &ac, int &i,
-                 const Conflict_test &tester);
+  find_conflicts_3(Cell *c, Cell * &ac, int &i, const Conflict_test &tester);
 
   template < class Conflict_test >
   void
-  find_conflicts_2(Conflict_vector & conflicts, Cell *c, Cell * &ac, int &i,
-                 const Conflict_test &tester);
+  find_conflicts_2(Cell *c, Cell * &ac, int &i, const Conflict_test &tester);
 
   Cell * create_star2_3(Vertex* v, Cell* c, int li,
 	                Cell * prev_c = NULL, Vertex * prev_v = NULL);
@@ -494,10 +535,8 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const;
 
 
-  //Helping functions
-  void init(Vertex*  v)
-    {
-    }
+  // Helping functions
+  void init(Vertex* v) {} // What's the purpose ???
 
   Vertex* copy_tds(const Tds & tds, Vertex* vert = NULL);
     // returns the new vertex corresponding to vert in the new tds 
@@ -517,7 +556,18 @@ private:
   // the list is circular, the foo element being used to recognize the end
   // of the list
   Cell _list_of_cells;
-  
+
+  // The 2 following free cells lists do not need to be doubly connected.
+  // We could then use the second pointer to store the flag, then ?
+  //         _previous_cell == NULL for when in conflict
+  //         _previous_cell |= 1 for when not in conflict ?
+  // This is a list of free cells that serves as an allocator cache.
+  Cell _list_of_free_cells;
+
+  // This is a list of cells that is filled by find_conflicts, and which is
+  // merged to _list_of_free_cells after create_star.
+  Cell _list_of_temporary_free_cells;
+
   // ACCESS FUNCTIONS
 
   Cell & list_of_cells() 
@@ -537,7 +587,6 @@ private:
   // counts but does not check
   bool count_cells(int & i, bool verbose = false, int level = 0) const;
   // counts AND checks the validity
-  
 };
 
 template < class Vb, class Cb>
@@ -1324,7 +1373,6 @@ template < class Vb, class Cb>
 std::ostream& 
 print_cells(std::ostream& os, 
 	    const Triangulation_data_structure_3<Vb,Cb>  &tds,
-	    //	    int n,
 	    std::map< void*, int > &V )
 {
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
@@ -1348,7 +1396,8 @@ print_cells(std::ostream& os,
     {
       m = tds.number_of_cells();
       os << m;
-      if(is_ascii(os)){ os << std::endl;}
+      if(is_ascii(os))
+	  os << std::endl;
 
       // write the cells
       Cell_iterator it = tds.cells_begin();
@@ -1357,11 +1406,10 @@ print_cells(std::ostream& os,
 	for(j = 0; j < 4; j++){
 	  os << V[it->vertex(j)];
 	  if(is_ascii(os)) {
-	    if ( j==3 ) {
+	    if ( j==3 )
 	      os << std::endl;
-	    } else {
+	    else
 	      os << ' ';
-	    }
 	  }
 	}
 	++it;
@@ -1374,11 +1422,10 @@ print_cells(std::ostream& os,
 	for (j = 0; j < 4; j++) {
 	  os << C[&(* it->neighbor(j))];
 	  if(is_ascii(os)){
-	    if(j==3) {
+	    if(j==3)
 	      os << std::endl;
-	    } else {
+	    else
 	      os <<  ' ';
-	    }
 	  }
 	}
 	++it;
@@ -1389,7 +1436,8 @@ print_cells(std::ostream& os,
     {
       m = tds.number_of_facets();
       os << m;
-      if(is_ascii(os)){ os << std::endl;}
+      if(is_ascii(os))
+	  os << std::endl;
 
       // write the facets
       Facet_iterator it = tds.facets_begin();
@@ -1398,11 +1446,10 @@ print_cells(std::ostream& os,
 	for(j = 0; j < 3; j++){
 	  os << V[(*it).first->vertex(j)];
 	  if(is_ascii(os)) {
-	    if ( j==2 ) {
+	    if ( j==2 )
 	      os << std::endl;
-	    } else {
+	    else
 	      os <<  ' ';
-	    }
 	  }
 	}
 	++it;
@@ -1415,11 +1462,10 @@ print_cells(std::ostream& os,
 	for (j = 0; j < 3; j++) {
 	  os << C[&*((*it).first->neighbor(j))];
 	  if(is_ascii(os)){
-	    if(j==2) {
+	    if(j==2)
 	      os << std::endl;
-	    } else {
+	    else
 	      os <<  ' ';
-	    }
 	  }
 	}
 	++it;
@@ -1430,7 +1476,8 @@ print_cells(std::ostream& os,
     {
       m = tds.number_of_edges();
       os << m;
-      if(is_ascii(os)){ os << std::endl;}
+      if(is_ascii(os))
+	  os << std::endl;
 
       // write the edges
       Edge_iterator it = tds.edges_begin();
@@ -1439,11 +1486,10 @@ print_cells(std::ostream& os,
 	for(j = 0; j < 2; j++){
 	  os << V[(*it).first->vertex(j)];
 	  if(is_ascii(os)) {
-	    if ( j==1 ) {
+	    if ( j==1 )
 	      os << std::endl;
-	    } else {
+	    else
 	      os <<  ' ';
-	    }
 	  }
 	}
 	++it;
@@ -1456,23 +1502,16 @@ print_cells(std::ostream& os,
 	for (j = 0; j < 2; j++) {
 	  os << C[&*((*it).first->neighbor(j))];
 	  if(is_ascii(os)){
-	    if(j==1) {
+	    if(j==1)
 	      os << std::endl;
-	    } else {
+	    else
 	      os <<  ' ';
-	    }
 	  }
 	}
 	++it;
       }
       break;
     }
-//   default:
-//     {
-//       os << m;
-//       if(is_ascii(os)){ os << std::endl;}
-//       break;
-//     }
   }
   return os;
 }
@@ -2053,44 +2092,45 @@ void
 Triangulation_data_structure_3<Vb,Cb>::
 insert_conflict(Vertex & w, Cell *c, const Conflict_test &tester)
 {
-  CGAL_triangulation_precondition( dimension() >= 2 ); // FIXME
   CGAL_triangulation_precondition( tester(c) );
 
-  // We anticipate 32 cells to be deleted (the average is about 20 ?).
-  // (maybe we get do without this completely... later)
-  Conflict_vector conflict_vector;
-  conflict_vector.reserve(32);
-
+  if (dimension() == 3)
+  {
   // Call the recursive find_conflict().
   // Probably this will go to the trash if both steps are merged... later.
   Cell *ccc;
   int i;
-  if (dimension() == 3)
-    find_conflicts_3(conflict_vector, c, ccc, i, tester);
-  else
-    find_conflicts_2(conflict_vector, c, ccc, i, tester);
+  find_conflicts_3(c, ccc, i, tester);
 
   // Create the new cells, and returns one of them.
   Cell * nouv;
-  if (dimension() == 3)
-    nouv = create_star2_3( &w, ccc, i );
-  else
-    nouv = create_star2_2( &w, ccc, i );
+  nouv = create_star2_3( &w, ccc, i );
   w.set_cell( nouv );
 
-  // We delete the old cells (these should probably go in a free_list).
-  // But memory management needs to be revised too anyway...
-  typename Conflict_vector::const_iterator it;
-  for( it = conflict_vector.begin(); it != conflict_vector.end(); ++it)
-    delete (Cell *) *it;
+  move_temporary_free_cells_to_free_list();
+  }
+  else // dim == 2
+  {
+  // Call the recursive find_conflict().
+  // Probably this will go to the trash if both steps are merged... later.
+  Cell *ccc;
+  int i;
+  find_conflicts_2(c, ccc, i, tester);
+
+  // Create the new cells, and returns one of them.
+  Cell * nouv;
+  nouv = create_star2_2( &w, ccc, i );
+  w.set_cell( nouv );
+
+  move_temporary_free_cells_to_free_list();
+  }
 }
 
 template <class Vb, class Cb >
 template < class Conflict_test >
 void
 Triangulation_data_structure_3<Vb,Cb>::
-find_conflicts_3(Conflict_vector & conflicts, Cell *c, Cell * &ac, int &i,
-                 const Conflict_test &tester)
+find_conflicts_3(Cell *c, Cell * &ac, int &i, const Conflict_test &tester)
 {
   // The semantic of the flag is the following :
   // 0  -> never went on the cell
@@ -2099,7 +2139,7 @@ find_conflicts_3(Conflict_vector & conflicts, Cell *c, Cell * &ac, int &i,
 
   CGAL_triangulation_precondition( tester(c) );
 
-  conflicts.push_back( (Conflict_vector::value_type) &(*c) );
+  move_cell_to_temporary_free_list(c);
   c->set_in_conflict_flag(1);
 
   for ( int j=0; j<4; j++ ) {
@@ -2107,7 +2147,7 @@ find_conflicts_3(Conflict_vector & conflicts, Cell *c, Cell * &ac, int &i,
     if (test->get_in_conflict_flag() != 0)
       continue; // test was already tested.
     if ( tester(test) )
-      find_conflicts_3(conflicts, test, ac, i, tester);
+      find_conflicts_3(test, ac, i, tester);
     else {
       test->set_in_conflict_flag(-1);
       ac = c;
@@ -2121,8 +2161,7 @@ template <class Vb, class Cb >
 template < class Conflict_test >
 void
 Triangulation_data_structure_3<Vb,Cb>::
-find_conflicts_2(Conflict_vector & conflicts, Cell *c, Cell * &ac, int &i,
-                 const Conflict_test &tester)
+find_conflicts_2(Cell *c, Cell * &ac, int &i, const Conflict_test &tester)
 {
   // The semantic of the flag is the following :
   // 0  -> never went on the cell
@@ -2131,7 +2170,7 @@ find_conflicts_2(Conflict_vector & conflicts, Cell *c, Cell * &ac, int &i,
 
   CGAL_triangulation_precondition( tester(c) );
 
-  conflicts.push_back( (Conflict_vector::value_type) &(*c) );
+  move_cell_to_temporary_free_list(c);
   c->set_in_conflict_flag(1);
 
   for ( int j=0; j<3; j++ ) {
@@ -2139,7 +2178,7 @@ find_conflicts_2(Conflict_vector & conflicts, Cell *c, Cell * &ac, int &i,
     if (test->get_in_conflict_flag() != 0)
       continue; // test was already tested.
     if ( tester(test) )
-      find_conflicts_2(conflicts, test, ac, i, tester);
+      find_conflicts_2(test, ac, i, tester);
     else {
       test->set_in_conflict_flag(-1);
       ac = c;
@@ -2735,6 +2774,16 @@ void
 Triangulation_data_structure_3<Vb,Cb>::
 clear()
 {
+  CGAL_triangulation_assertion(_list_of_temporary_free_cells._next_cell
+	  == &_list_of_temporary_free_cells);
+  CGAL_triangulation_assertion(_list_of_temporary_free_cells._previous_cell
+	  == &_list_of_temporary_free_cells);
+
+  // Delete the cells in the free_list.
+  for (Cell* it = _list_of_free_cells._next_cell; it != &_list_of_free_cells;
+       it = _list_of_free_cells._next_cell)
+      delete it;
+
   if (number_of_vertices() == 0) {
     // the list of cells must be cleared even in this case
     for (Cell* it = _list_of_cells._next_cell; it != past_end_cell();

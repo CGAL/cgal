@@ -11,6 +11,7 @@ Version 1.46 (?? ??? 01)
 - Use std::distance(). [syl]
 - Triangulation_hierarchy<>.
 - Remove some old style casts.
+- Add a free cell list to speed up allocation.
 - Various cleanups.
 
 Version 1.45 (22 dec 00)
