@@ -1,6 +1,11 @@
 Nef_S2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.2 (16 Apr 2002)
+
+     - Fixed handling of antipodal points in construction of Sphere_circle
+       from two points.
+
 1.1 (19 Mar 2002)
 
      - include/CGAL/Nef_S2/SM_overlayer.h and SM_triangulator.h: 

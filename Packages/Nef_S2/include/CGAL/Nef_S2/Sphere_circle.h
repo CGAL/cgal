@@ -48,7 +48,14 @@ create any great circle that contains $p$ and $q$.}*/
     if ( CGAL::orientation(p1,p,q,p4) != CGAL::POSITIVE )
       *this = Self(opposite());
   } else {
-    *this = Self(Plane_3(p1,q-p));
+    /* previous method was: *this = Self(Plane_3(p1,q-p)); 
+       but p, q don't belong to he plane ((0,0,0), q-p) */
+
+    if(!Line_3(p,q).has_on(Point_3(1,0,0)))
+      *this = Self(Plane_3(p,q,Point_3(1,0,0)));
+    else
+      *this = Self(Plane_3(p,q,Point_3(0,1,0)));
+    /* take one point that doesn't belong to the line (p, q-p) */
   }
 }
 
