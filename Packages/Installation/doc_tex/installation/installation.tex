@@ -1,7 +1,11 @@
 %%
 %%  *** CGAL Installation Guide ***
 %%
-%% file: installation.tex
+%% file:     installation.tex
+%%
+%% authors:  Michael Hoffmann and Wieger Wesselink
+%%
+%% $Revision$ $Date$
 %%
 
 %% macro for GNU
@@ -26,7 +30,7 @@
 \newcommand{\msvc}[1]{\textsc{Microsoft}~Visual~\texttt{C++}~{\rm #1}}
 
 %% macro for CGAL release number
-\newcommand{\cgalrelease}{1.0}
+\newcommand{\cgalrelease}{1.1}
 
 %% macro for CGAL directory
 \newcommand{\cgaldir}{\texttt{CGAL-\cgalrelease}}
@@ -38,16 +42,16 @@
 \newcommand{\cgalinstconfdir}{\cgaldir\texttt{/config/install}}
 
 %% macros for WWW pages
-\newcommand{\cgalhomepage}{\path'http://www.cs.ruu.nl/CGAL'}
-\newcommand{\compilerpage}{\path'http://www.cs.ruu.nl/CGAL/Compilers/'}
-\newcommand{\faqpage}{\path'http://www.cs.ruu.nl/CGAL/FAQ/'}
-\newcommand{\hpstlpage}{\path'http://www.cs.rpi.edu/~musser/stl.html'}
+\newcommand{\cgalhomepage}{\path'http://www.cs.uu.nl/CGAL'}
+\newcommand{\compilerpage}{\path'http://www.cs.uu.nl/CGAL/Compilers/'}
+\newcommand{\faqpage}{\path'http://www.cs.uu.nl/CGAL/FAQ/'}
+%%\newcommand{\hpstlpage}{\path'http://www.cs.rpi.edu/~musser/stl.html'}
 \newcommand{\sgistlpage}{\path'http://www.sgi.com/Technology/STL/'}
 \newcommand{\stlportpage}{\path'http://www.metabyte.com/~fbp/stl/'}
 
 \section{Introduction}
 
-\cgal\ is a {\em Computational Geometry Algorithms Library\/} written
+\cgal\ is a \textit{Computational Geometry Algorithms Library\/} written
 in \CC, which is developed in an {\sc Esprit Ltr} project. The goal is
 to make the large body of geometric algorithms developed in the field
 of computational geometry available for industrial application.
@@ -73,46 +77,41 @@ More precisely, \cgaldir\ supports the following Unix
 compilers/operating systems:
 
 \begin{center}
-\begin{tabular}{||c||c||}
-\hline
-\hline
-\textbf{compiler} & \textbf{operating system} \\
-\hline
-\hline
-\multicolumn{1}{|l|}{\mipsprocc\ 7.2} & \multicolumn{1}{|l|}{IRIX 6.2} \\
-\hline
-\multicolumn{1}{|l|}{\sunprocc{4.2}} & \multicolumn{1}{|l|}{Solaris 2.5} \\
-\hline
-\multicolumn{1}{|l|}{\Gcc{2.8.0 / 2.8.1}} & \multicolumn{1}{|l|}{IRIX 6.2 / SUN Solaris 2.5 /
-Linux 2.0} \\
-\hline
-\multicolumn{1}{|l|}{\egcs{1.0.1 / 1.0.2} } & \multicolumn{1}{|l|}{IRIX 5.3 / IRIX 6.2 / Solaris 2.5 / Linux 2.0} \\
-\hline
-\end{tabular}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{|l|l|} \hline
+    \textbf{compiler}     & \textbf{operating system}\\\hline\hline
+    \mipsprocc\ 7.2 (n32) & IRIX 6.2\\\hline
+    \sunprocc{4.2}        & Solaris 2.5\\\hline
+    \Gcc{2.8.*}           & IRIX 6.2 / SUN Solaris 2.5 / Linux 2.0\\\hline
+    \egcs{1.0.*}          & IRIX 5.3 / IRIX 6.2 / Solaris 2.5 / Linux 2.0\\\hline
+  \end{tabular}
 \end{center}
 
-If your compiler/operating system is not on this list, this not
-necessarily implies that \cgal\ does not work on your
-system\footnote{e.g. we would expect \egcs{1.0.*} to work on IRIX 6.4
-  as well}, it just means we did not test it so far. For some
-compilers we did the tests, but not all parts of \cgal\ work with
-them. This includes \mipsprocc\ 4.0, \sunprocc{4.1} and \Gcc{2.7.2}.
-An overview of known problems is given at the following URL:
-\begin{quote}
-      \compilerpage
-\end{quote}
+There are plans to support PC compilers (\msvc{}) in the future, but
+there is no such support at the moment.
 
-N.B. It is highly recommended to read this information, since some of
-these older compilers may cause a lot of problems! Especially the
-support for templates is sometimes very poor.
+%%If your compiler/operating system is not on this list, this not
+%%necessarily implies that \cgal\ does not work on your
+%%system\footnote{e.g. we would expect \egcs{1.0.*} to work on IRIX 6.4
+%%  as well}, it just means we did not test it so far. For some
+%%compilers we did the tests, but not all parts of \cgal\ work with
+%%them. This includes \mipsprocc\ 4.0, \sunprocc{4.1} and \Gcc{2.7.2}.
+%%An overview of known problems is given at the following URL:
+%%\begin{quote}
+%%      \compilerpage
+%%\end{quote}
 
-At the same location you can find some hints about \cgal\ support for
-PC compilers (\bcc{5.02}\ and \msvc{5.0}), but this in a very
-premature state at the moment.
+%%N.B. It is highly recommended to read this information, since some of
+%%these older compilers may cause a lot of problems! Especially the
+%%support for templates is sometimes very poor. 
 
-In case you want to use \leda\ together with \cgal\ (needed e.g. for
-the graphical demo programs), you should have a look at section
-\ref{sec:leda} now.
+%%At the same location you can find some hints about \cgal\ support for
+%%PC compilers (\bcc{5.02}\ and \msvc{5.0}), but this in a very
+%%premature state at the moment.
+
+%%In case you want to use \leda\ together with \cgal\ (needed e.g. for
+%%the graphical demo programs), you should have a look at section
+%%\ref{sec:leda} now.
 
 \section{Getting \cgal}
 
@@ -129,7 +128,7 @@ library. The \cgal\ library can also be downloaded using FTP. The
 library can be found at the following location:
 
 \begin{verbatim}
-      ftp.cs.ruu.nl
+      ftp.cs.uu.nl
 \end{verbatim}
 
 in the directory \texttt{/pub/CGAL}. This directory contains release
@@ -138,8 +137,8 @@ file that contains descriptions of the files in this directory. An
 example of an FTP-session is given below.
 
 \begin{alltt}
-      $ ftp ftp.cs.ruu.nl 
-      Name (ftp.cs.ruu.nl:<your username>): anonymous
+       ftp ftp.cs.uu.nl 
+      Name (ftp.cs.uu.nl:<your username>): anonymous
       Password: <type your email address here>
       ftp> cd pub/CGAL
       ftp> get README
@@ -162,26 +161,28 @@ and for the gzipped file use the commands
       tar xvf <filename>.tar
 \end{verbatim}
 
-N.B. On a PC you should use an unzip utility that can deal with long
-filenames (like WinZip or InfoZip)!
+%% N.B. On a PC you should use an unzip utility that can deal with long
+%% filenames (like WinZip or InfoZip)!
 
 In both cases the directory \cgaldir\ will be created. This directory
 contains the following subdirectories:
 
 \begin{center}
-\begin{tabular}{||c||c||}
-\hline\hline
-\textbf{directory} & \textbf{contents} \\ \hline\hline
-\multicolumn{1}{|l}{\texttt{auxiliary}} & \multicolumn{1}{|l|}{packages that can optionally be used with \cgal} \\ \hline
-\multicolumn{1}{|l}{\texttt{config}} & \multicolumn{1}{|l|}{configuration files for install script} \\ \hline
-\multicolumn{1}{|l}{\texttt{doc\_html}} & \multicolumn{1}{|l|}{documentation (HTML)} \\ \hline
-\multicolumn{1}{|l}{\texttt{doc\_ps}} & \multicolumn{1}{|l|}{documentation (Postscript)} \\ \hline
-\multicolumn{1}{|l}{\texttt{examples}} & \multicolumn{1}{|l|}{example programs } \\ \hline
-\multicolumn{1}{|l}{\texttt{include}} & \multicolumn{1}{|l|}{header files} \\ \hline
-\multicolumn{1}{|l}{\texttt{lib}} & \multicolumn{1}{|l|}{(shared) object libraries} \\ \hline
-\multicolumn{1}{|l}{\texttt{make}} & \multicolumn{1}{|l|}{files with platform dependent makefile settings} \\ \hline
-\multicolumn{1}{|l}{\texttt{src}} & \multicolumn{1}{|l|}{source files} \\ \hline
-\end{tabular}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{|l|l|} \hline
+    \textbf{directory} & \textbf{contents}\\\hline\hline
+    \texttt{auxiliary} & packages that can optionally be used with \cgal\\\hline
+    \texttt{config}    & configuration files for install script\\\hline
+    \texttt{demo}      & demo programs (some of them  need \leda)\\\hline
+    \texttt{doc\_html} & documentation (HTML)\\\hline
+    \texttt{doc\_pdf}  & documentation (PDF)\\\hline
+    \texttt{doc\_ps}   & documentation (Postscript)\\\hline
+    \texttt{examples}  & example programs\\\hline
+    \texttt{include}   & header files\\\hline
+    \texttt{lib}       & (shared) object libraries\\\hline
+    \texttt{make}      & files with platform dependent makefile settings\\\hline
+    \texttt{src}       & source files\\\hline
+  \end{tabular}
 \end{center}
 
 \section{Installing \cgal}
@@ -190,7 +191,7 @@ The directory \cgaldir\ contains a Bourne shell script called
 \texttt{install\_cgal}. The script can be run in two modes: a
 menu-driven interactive mode and a non-interactive mode.  Normally you
 should use the interactive mode, but in case you run into problems
-with it or don't like it for some reason, you can still use the
+with it or do not like it for some reason, you can still use the
 non-interactive mode.
 
 We first describe a sample installation in section
@@ -200,9 +201,8 @@ about specific menus and their options, take a look at section
 \ref{sec:interactive-mode}. Finally, for the non-interactive mode
 refer to section \ref{sec:non-interactive}.
 
-\textbf{Warning.} If you have an old compiler like \Gcc{2.7.2}, or if
-you want to use \leda\ in combination with \cgal, there are some
-compatibility issues that need to be addressed first. See
+If you want to use \leda\ in combination with \cgal, there might be
+some compatibility issues that need to be addressed first. See
 section~\ref{sec:leda} and \compilerpage\ for more information about
 this.
 
@@ -250,8 +250,8 @@ has a ``builtin'' \stl, i.e. if \stl\ works without adding any
 specific compiler flags.  Here the chosen compiler is \sunprocc{4.2}
 that has no builtin \stl.  \footnote{If your compiler has a builtin
   \stl, you will have to wait for a moment while the script tests for
-  a number of language features, which can't be done without \stl.} If
-there is more than one compiler installed on your system (and
+  a number of language features, which cannot be done without \stl.}
+If there is more than one compiler installed on your system (and
 supported by \cgal), you may later choose to use a different compiler
 from the compiler menu.
 
@@ -260,7 +260,7 @@ A menu similar to the following will appear on your screen.
 \begin{scriptsize}\label{pic:main-menu}
 \begin{alltt}
   ****************************************************************
-  **              CGAL 1.0 Installation Main Menu               **
+  **              CGAL 1.1 Installation Main Menu               **
   **              -------------------------------               **
   **                                                            **
   **   OS:                  sparc_SunOS-5.5                     **
@@ -327,7 +327,7 @@ bug is \textit{not} present. On the other hand \texttt{no} resp.
 \begin{scriptsize}
 \begin{verbatim}
   ****************************************************************
-  **            CGAL 1.0 Installation Compiler Menu             **
+  **            CGAL 1.1 Installation Compiler Menu             **
   **            -----------------------------------             **
   **                                                            **
   **   OS:                  sparc_SunOS-5.5                     **
@@ -369,8 +369,8 @@ bug is \textit{not} present. On the other hand \texttt{no} resp.
 If the \stl\ test succeeds, the current setup is marked as tested and
 the settings are saved to a file in the directory \cgalinstconfdir.
 Thus, if you run the install script a second time for this
-OS/compiler, you won't have to enter the \stl\ directory again, but it
-is retrieved from the corresponding config file instead.
+OS/compiler, you will not have to enter the \stl\ directory again, but
+it is retrieved from the corresponding config file instead.
 
 \subsection{Building the \cgal\ libraries \label{sec:build-the-libs}}
 
@@ -392,7 +392,7 @@ from compiler or linker).
 \begin{verbatim}
   ****************************************************************
   **                                                            **
-  **                     Compiling CGAL 1.0                     **
+  **                     Compiling CGAL 1.1                     **
   **                     ------------------                     **
   **                                                            **
   ****************************************************************
@@ -421,8 +421,8 @@ to the \leda\ resp.  GMP menu) or simply quit the install script by
 typing ``\texttt{q}''. When leaving the script, you get a list of
 successful builds during the session.
 
-Now it would be a good idea to print and read the `Getting Started
-with \cgal' document that can be found in the \texttt{doc\_ps}
+Now it would be a good idea to print and read the document
+\texttt{getting\_started.ps} that can be found in the \texttt{doc\_ps}
 directory.
 
 \section{The interactive mode}\label{sec:interactive-mode}
@@ -433,22 +433,23 @@ directory and enter the command
       ./install_cgal -i
 \end{verbatim}
 
-After initialisation during which certain utility programs are located
+After initialization during which certain utility programs are located
 and your system is searched for compilers supported by \cgal, you get
-into the \cgal\ installation {\em main menu} (see page
+into the \cgal\ installation \textit{main menu} (see page
 \pageref{pic:main-menu} for a picture).
 
->From the main menu you can reach a number of different sub-menus, of
-which the most important maybe is the {\em compiler menu}. This is
-where you can choose the compiler you want to work with and setup \stl.
-The compiler menu is described in section \ref{sec:compiler-menu}.
+From the main menu you can reach a number of different sub-menus, of
+which the most important maybe is the \textit{compiler menu}. This is
+where you can choose the compiler you want to work with and setup
+\stl.  The compiler menu is described in section
+\ref{sec:compiler-menu}.
 
 If you want to use \leda\ or \gnu\ GMP with \cgal, you will have to go
-to the {\em leda menu} described in section \ref{sec:leda-menu} resp.
-to the {\em gmp menu} described in section \ref{sec:gmp-menu}.
+to the \textit{leda menu} described in section \ref{sec:leda-menu} resp.
+to the \textit{gmp menu} described in section \ref{sec:gmp-menu}.
 
 Finally you can build the \cgal\ libraries by typing \texttt{b}.
-However, it is recommended to run the {\em setup test} which is
+However, it is recommended to run the \textit{setup test} which is
 available in all menus as option \texttt{t} before. The setup test
 includes an \stl\ test, a \leda\ test and a GMP test, but not all
 tests are performed always; e.g. the \leda\ test is only done, if you
@@ -619,7 +620,7 @@ You can either specify a full path, e.g. \texttt{/usr/local/bin/g++},
 or just the basename, e.g. \texttt{g++}, which means the script
 searches your \texttt{PATH} for the compiler location. If your
 compiler call contains whitespaces it has to be quoted, e.g.
-\texttt{./install\_cgal -ni "CC -64"}.  The options given this way
+\texttt{./install\_cgal -ni "CC -n32"}.  The options given this way
 become part of your \cgal-OS description (see section
 \ref{sec:os-compiler-id}) which is useful e.g. to distinguish between
 different compilers using the same frontend (\mipsprocc\ on
@@ -643,8 +644,8 @@ the \cgal\ version you are going to install and that you are running
 the non-interactive mode. Then it proceeds by locating some utility
 programs, determining your OS and compiler version, displaying the
 settings you gave via command line and classifying (see also section
-\ref{sec:stl}) the \stl\ version used (which -- of course -- won't
-work, if you didn't set up \stl\ correctly, see section
+\ref{sec:stl}) the \stl\ version used (which -- of course -- will not
+work, if you did not set up \stl\ correctly, see section
 \ref{sec:stl-setup} below). Your compiler is also checked for a number
 of bugs resp. support of certain language features; a message
 \texttt{ok} always indicates that your compiler works as it should
@@ -667,8 +668,8 @@ first, see section \ref{sec:makefiles} for an explanation of the
 makefile structure of \cgal.
 
 When this is finished it would be a good idea to print and read the
-`Getting Started with \cgal' document that can be found in the
-\texttt{doc\_ps} directory.
+`Getting Started with \cgal' document \texttt{getting\_started.ps}
+that can be found in the \texttt{doc\_ps} directory.
 
 \subsection{Setting up \stl}\label{sec:stl-setup}
 
@@ -686,13 +687,13 @@ things running.
 
 See also section \ref{sec:leda}. By default there is no support for
 \leda, but you can change this easily by use of the command line
-option ``\texttt{-leda}''. If \leda\ is installed in system directories
-on your system, you should indicate this by setting the flags ``{\tt
-  --leda-sys-incl}'' resp.  ``\texttt{--leda-sys-lib}''. If this is not
-the case, you have to supply the directories containing the \leda\ 
-header files (``\texttt{--LEDA\_INCL\_DIR} \textit{$<$dir$>$}'') resp. the
-\leda\ libraries for your compiler (``\texttt{--LEDA\_LIB\_DIR} {\it
-  $<$dir$>$}'').
+option ``\texttt{-leda}''. If \leda\ is installed in system
+directories on your system, you should indicate this by setting the
+flags ``{\tt --leda-sys-incl}'' resp.  ``\texttt{--leda-sys-lib}''. If
+this is not the case, you have to supply the directories containing
+the \leda\ header files (``\texttt{--LEDA\_INCL\_DIR}
+\textit{$<$dir$>$}'') resp. the \leda\ libraries for your compiler
+(``\texttt{--LEDA\_LIB\_DIR} {\it $<$dir$>$}'').
 
 \subsection{Setting up support for GMP}\label{sec:gmp-setup}
 
@@ -727,14 +728,15 @@ or just by denoting its basename, as long as it is on your path:
 The option is intended for testing purposes and automatic detection of
 the correct include makefile (see also section \ref{sec:makefiles}).
 
-Finally there exists an option ``\texttt{--verbose}'' that can be set in
-interactive mode as well as in non-interactive mode. When set you get
-a detailed summary of error messages occuring during \textit{any}
+Finally there exists an option ``\texttt{--verbose}'' that can be set
+in interactive mode as well as in non-interactive mode. When set you
+get a detailed summary of error messages occurring during \textit{any}
 compiler test (determining \stl\ version etc.). Normally you only get
 these messages, if a required test (such as the general \stl\ test)
-fails, otherwise you are just informed, \textit{if} it succeeded or not.
-This option is not recommended for general use, but it can be useful
-to check why a certain test fails that was expected to be passed.
+fails, otherwise you are just informed, \textit{if} it succeeded or
+not.  This option is not recommended for general use, but it can be
+useful to check why a certain test fails that was expected to be
+passed.
 
 \section{Troubleshooting\label{sec:troubleshooting}}
 
@@ -743,8 +745,8 @@ at the \cgal\ homepage:
 \begin{alltt}
 \cgalhomepage
 \end{alltt}
-If you can't find a solution to your problem there, please send email
-to \texttt{cgal@cs.ruu.nl}.
+If you cannot find a solution to your problem there, please send email
+to \texttt{cgal@cs.uu.nl}.
 
 \section{Identifying OS and Compiler}\label{sec:os-compiler-id}
 
@@ -774,7 +776,7 @@ scheme.
 \end{description}
 
 The suffix \texttt{\_}LEDA is appended to indicate \leda\ support. This
-destinction is necessary, because the object libraries look (at least
+distinction is necessary, because the object libraries look (at least
 possibly) different.
 
 We call the resulting string \cgal-OS description. 
@@ -804,27 +806,27 @@ The \cgal\ distribution contains the following makefiles:
   example programs.
 \end{itemize}
 
-All these makefiles are generic: they can be used for more than one compiler.
-To achieve this, the first section of each makefile contains an include
-statement that looks as follows:
+All these makefiles are generic: they can be used for more than one
+compiler.  To achieve this, the first section of each makefile
+contains an include statement that looks as follows:
 
 \begin{verbatim}
-      CGAL_MAKEFILE = /users/jannes/CGAL-1.0/make/makefile_<CGAL-OS description>
+      CGAL_MAKEFILE = /users/jannes/CGAL-1.1/make/makefile_<CGAL-OS description>
       include $(CGAL_MAKEFILE)
 \end{verbatim}
 
 The file \texttt{CGAL\_MAKEFILE} is an include file with platform
-dependent makefile settings. The abbreviation \texttt{<CGAL-OS description>}
-(see section \ref{sec:os-compiler-id} for details) is
+dependent makefile settings. The abbreviation \texttt{<CGAL-OS
+  description>} (see section \ref{sec:os-compiler-id} for details) is
 used to identify the operating system and compiler for which the
 settings hold. For example, the file
-\texttt{makefile\_mips\_IRIX-5.3\_CC-4.0} contains makefile settings
-for the IRIX 5.3 operating system and the \mipsprocc\ 4.0
-compiler. These include files are automatically generated by the
+\texttt{makefile\_mips\_IRIX64-6.2\_CC-n32-7.20} contains makefile
+settings for the IRIX 6.2 operating system and the \mipsprocc\ 7.2
+compiler.  These include files are automatically generated by the
 \texttt{install\_cgal} script and they are all located in the
-\texttt{\cgaldir/make} directory.
-For convenience, the \texttt{install\_cgal} script will substitute the 
-include makefile that was generated most recently.
+\texttt{\cgaldir/make} directory.  For convenience, the
+\texttt{install\_cgal} script will substitute the include makefile
+that was generated most recently.
 
 If you want to compile an application or an object library with a
 different compiler, the only thing you need to do is to substitute
@@ -857,21 +859,25 @@ last section of the makefiles contains a suffix rule that tells the
 compiler how to create a \texttt{.o}-file from a \texttt{.C}-file.  If
 you want to use the default rule that is defined by the make utility,
 you may want to remove this suffix rule.  However, note that this may
-have consequences for the makefile variables
-\texttt{CGAL\_CXX} and \texttt{CXXFLAGS}.
+have consequences for the makefile variables \texttt{CGAL\_CXX} and
+\texttt{CXXFLAGS}.
 
 \section{Compiling a \cgal\ application}
-The directory \texttt{CGAL-1.0/examples} contains a small program (example.C)
-and a sample makefile with some comments. The \texttt{CGAL\_MAKEFILE}
-variable in this makefile (see section \ref{sec:makefiles}) is automatically substituted
-by the \texttt{install\_cgal} script and equals the most recently generated include
-makefile in the \texttt{\cgaldir/make} directory. After the installation of \cgal\ this
-sample makefile is ready for use. Just type 'make example' to compile the program example.C.
-You may use this makefile as a blueprint for your own makefiles.
+The directory \texttt{CGAL-1.1/examples} contains a small program
+(example.C) and a sample makefile with some comments. The
+\texttt{CGAL\_MAKEFILE} variable in this makefile (see section
+\ref{sec:makefiles}) is automatically substituted by the
+\texttt{install\_cgal} script and equals the most recently generated
+include makefile in the \texttt{\cgaldir/make} directory. After the
+installation of \cgal\ this sample makefile is ready for use. Just
+type '\texttt{make example}' to compile the program
+\texttt{example.C}.  You may use this makefile as a blueprint for your
+own makefiles.
 
-Furthermore the directories \texttt{\cgaldir/examples} and \texttt{\cgaldir/demo}
-contain many subdirectories with non-graphical and graphical example programs.
-In all these directories you will find a makefile that is ready for use.
+Furthermore the directories \texttt{\cgaldir/examples} and
+\texttt{\cgaldir/demo} contain many subdirectories with non-graphical
+and graphical example programs.  In all these directories you will
+find a makefile that is ready for use.
 
 \section{Using \cgal\ and \leda \label{sec:leda}}
 This section describes how to use \cgal\ and \leda\ simultaneously.
@@ -880,16 +886,15 @@ This section describes how to use \cgal\ and \leda\ simultaneously.
 \cgal\ supports \leda\ in the following ways:
 
 \begin{enumerate}
-\item
-There are support functions defined for the \leda\ number types
-\texttt{big\_float}, \texttt{integer}, \texttt{rational} and \texttt{real}
-(see the files \texttt{<CGAL/leda\_*>}).
+\item There are support functions defined for the \leda\ number types
+  \texttt{big\_float}, \texttt{integer}, \texttt{rational} and
+  \texttt{real} (see the files \texttt{<CGAL/leda\_*>}).
 
 \item
 \cgal\ defines the following \leda-related compiler flags:
 \begin{itemize}
 \item When \leda\ is used, the flags \texttt{CGAL\_USE\_LEDA} and
-\texttt{LEDA\_PREFIX} will be set.
+  \texttt{LEDA\_PREFIX} will be set.
 \item When \leda\ is used, the \leda\ memory management (\leda\ handles) will be
 used for geometric primitives in \cgal. This can be turned of by setting the flag
 \texttt{CGAL\_NO\_LEDA\_HANDLE}. In that case \cgal\ memory management will
@@ -903,12 +908,15 @@ corresponding to \leda\ can be recognized by the suffix
 
 \subsection{\leda\ and \stl\ conflicts}
 
-When you are using an old compiler or an old version of \stl, the combination of
-\leda\ and \stl\ (which is required for \cgal) may give some problems.
+If you are using an old compiler or an old version of \stl, the
+combination of \leda\ and \stl\ may give some problems. In order to
+avoid them, it is highly recommended to use the latest \leda\ 
+release\footnote{At the moment this is \leda\ 3.6.1.}, since this is
+what we test \cgal\ with.
 
 \subsubsection{Definition of type bool}
 
-If a compiler doesn't support the keyword bool, libraries like \leda\ 
+If a compiler does not support the keyword bool, libraries like \leda\ 
 and \stl\ provide their own definition of bool. Unfortunately the
 \leda\ definition of bool is incompatible with the definition in most
 \stl\ implementations. One of them needs to be changed. The easiest
@@ -937,19 +945,13 @@ in a file called bool.h or stl\_config.h
 The flag \texttt{CGAL\_USE\_LEDA} ensures that you can continue to use \stl\ wwithout
 depending on \leda.
 
-REMARK 1)
-If you don't like to modify centrally managed \stl\ files, it is possible to fake
-it. This can be done by making changes to a copy of the \stl\ file bool.h or
-stl\_config.h. After this you have to make sure that this copy is found earlier
-on the include path than the original file.
-It is also possible to modify \leda\ instead of \stl. However, then
-you have to modify and recompile (if you have the source code) \leda.
-
-REMARK 2) If you are using \leda\ 3.5 (and not 3.4 or 3.6), the \leda\ 
-definition of bool can be disabled by defining the flag
-\texttt{LEDA\_BOOL\_H}. So if you add \texttt{-DLEDA\_BOOL\_H} to the
-custom compiler flags during the installation of \cgal, you can use
-\leda\ and \stl\ simultaneously without changing either of them.
+REMARK: If you do not like to modify centrally managed \stl\ files, it
+is possible to fake it. This can be done by making changes to a copy
+of the \stl\ file bool.h or stl\_config.h. After this you have to make
+sure that this copy is found earlier on the include path than the
+original file.  It is also possible to modify \leda\ instead of \stl.
+However, then you have to modify and recompile (if you have the source
+code) \leda.
 
 \subsubsection{'red' and 'black' conflict}
 
@@ -967,85 +969,79 @@ like \texttt{leda\_}.
 For using the \cgal\ library, the Standard Template Library is
 required. Recent compilers provide their own implementation of \stl.
 There are also free implementations. Most notable are the
-original Hewlett Packard implementation (\hpstlpage), the implementation
-from Silicon Graphics (\sgistlpage, also contains documentation and
-links to other \stl\ resources) and a port of this SGI version to
-a lot of other compilers (\stlportpage).
+implementation from Silicon Graphics (\sgistlpage, also contains
+documentation and links to other \stl\ resources) and a port of this
+SGI version to a lot of other compilers (\stlportpage).
 
-The \texttt{install\_cgal} script tries to figure out which \stl\ is used.
-This is necessary for the circulator package, and also to work around some
-bugs. In case the right version is not recognized, you could try to use
-the non-interactive mode of the \texttt{install\_cgal} script
-(see section \ref{sec:non-interactive}). The compiler flag
-\verb~CGAL_STL_VERSION~ can take the following values:
+The \texttt{install\_cgal} script tries to figure out which \stl\ is
+used.  This is necessary for the circulator package, and also to work
+around some bugs. In case the right version is not recognized, you
+could try to use the non-interactive mode of the
+\texttt{install\_cgal} script (see section \ref{sec:non-interactive}).
+The compiler flag \verb~CGAL_STL_VERSION~ can take the following
+values:
 
 \begin{center}
-\begin{tabular}{|l|l|}
-\hline \hline
-CGAL\_STL\_GCC                    & \stl\ version that comes with gcc-2.7.2 \\ \hline
-CGAL\_STL\_HP                     & Free HP version \\ \hline
-CGAL\_STL\_SGI\_3\_0              & SGI STL 3.0 \\ \hline
-CGAL\_STL\_SGI\_WWW               & Free new SGI implementation \\ \hline
-CGAL\_STL\_SGI\_WWW\_OLD          & Free SGI implementation for older compilers \\ \hline
-CGAL\_STL\_SGI\_CC                & SGI implementation that comes with their\\ 
-                                  & 7.0/7.1 compilers \\ \hline
-CGAL\_STL\_UNKNOWN                & unknown \stl\ version (this will probably not work) \\ \hline
-%CGAL\_STL\_WITH\_ITERATOR\_TRAITS & \stl\ implementation that relies on\\
-%                                  & iterator traits\\ \hline
-\hline
-\end{tabular}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{|l|l|} \hline
+    CGAL\_STL\_GCC                & \stl\ version that comes with gcc-2.7.2 \\ \hline
+    CGAL\_STL\_HP                 & Free HP version \\ \hline
+    CGAL\_STL\_SGI\_3\_0          & SGI STL 3.0 or newer \\ \hline
+    CGAL\_STL\_SGI\_WWW           & SGI STL prior to 3.0 \\ \hline
+    CGAL\_STL\_SGI\_WWW\_OLD      & SGI STL for older compilers \\ \hline
+    CGAL\_STL\_SGI\_CC            & SGI implementation that comes with their\\ 
+    & 7.0/ 7.1 compilers \\ \hline
+    CGAL\_STL\_UNKNOWN            & unknown \stl\ version (this will probably not work) \\ \hline
+  \end{tabular}
 \end{center}
 
 Most \stl\ libraries consist of only header files. An exception is
 HP's \stl, which also has source files \verb~random.cpp~ and
-\verb~tempbuf.cpp~.  The \cgal\ makefiles do {\em not} take care of
+\verb~tempbuf.cpp~.  The \cgal\ makefiles do \textit{not} take care of
 this. You have to compile these files yourself and add them to the
 custom linker flags during the installation of CGAL, or enter them
 manually in the makefiles.
 
-%%?? I've removed that, since the config/install files
-%%?? have changed since then and I would expect
-%%?? problems from here. We should add a section like this again
-%%?? for CGAL-1.0.1
-%%\section{Upgrading a \cgal\ 0.9 installation}
-%%In case you have \cgal\ 0.9 installed on your system, you might like
-%%to reuse your configuration files. Simply use the following commands
-%%to put them into the right place:
-%%\begin{verbatim}
-%%mkdir <NEW_CGAL_DIR>/config/install
-%%cp <OLD_CGAL_DIR>/config/* <NEW_CGAL_DIR>/config/install
-%%\end{verbatim}
-%%where \texttt{<OLD\_CGAL\_DIR>} is your \cgal\ 0.9 root directory
-%%(e.g.  \texttt{/pub/local/CGAL-0.9}) and \texttt{<NEW\_CGAL\_DIR>} is
-%%the root directory of your new \cgal\ installation (e.g. {\tt
-%%  /pub/local/CGAL-1.0}).
+\section{Upgrading a \cgal\ 1.0 installation}
+In case you have \cgal\ 1.0 installed on your system, you might like
+to reuse your configuration files. Simply use the following commands
+to put them into the right place:
+\begin{verbatim}
+cp -r <OLD_CGAL_DIR>/config/install <NEW_CGAL_DIR>/config
+\end{verbatim}
+where \texttt{<OLD\_CGAL\_DIR>} is your \cgal\ 1.0 root directory
+(e.g.  \texttt{/pub/local/CGAL-1.0}) and\\
+\texttt{<NEW\_CGAL\_DIR>} is the root directory of your new \cgal\ 
+installation (e.g. {\tt /pub/local/CGAL-1.1}).
 
-%%It is {\bf strongly} recommended to rerun all tests using the option
-%%\texttt{A} from the main menu.
+It is \textbf{strongly} recommended to rerun all tests using the
+option \texttt{A} from the main menu.
 
 \section{Compiler workarounds}
 In \cgal\ a number of compiler flags is defined, all of them start
 with the prefix \texttt{CGAL\_CFG}. These flags are used to work
 around compiler bugs and limitations.  For example, the flag
-\texttt{CGAL\_CFG\_NO\_BUILTIN\_BOOL} denotes that the compiler
-doesn't know the keyword bool. If this flag is defined, the type bool
-will be borrowed from the \stl\ library (currently by including the
-file \texttt{<pair.h>}).
+\texttt{CGAL\_CFG\_NO\_BUILTIN\_BOOL} denotes that the compiler does
+not know the keyword bool. If this flag is defined, the type bool will
+be borrowed from the \stl\ library (currently by including the file
+\texttt{<pair.h>}).
 
-For each compiler a file \texttt{<CGAL/compiler\_config.h>} is defined, with the
-correct settings of all flags. This file is generated automatically by the
-\texttt{install\_cgal} script. For this the test programs in the directory
-\texttt{\cgaldir/config/testfiles} are used. The file \texttt{<CGAL/compiler\_config.h>}
-and the test programs contain a description of the problem, so in case of trouble
+For each compiler a file \texttt{<CGAL/compiler\_config.h>} is
+defined, with the correct settings of all flags. This file is
+generated automatically by the \texttt{install\_cgal} script. For this
+the test programs in the directory \texttt{\cgaldir/config/testfiles}
+are used. The file \texttt{<CGAL/compiler\_config.h>} and the test
+programs contain a description of the problem, so in case of trouble
 with a \texttt{CGAL\_CFG} flag it is a good idea to take a look at it.
 
-The file \texttt{<CGAL/config.h>} manages all configuration problems of the compiler.
-This file includes the file \texttt{CGAL/compiler\_config.h}.
-It is therefore important that the file \texttt{<CGAL/config.h>} is always included
-before any other \cgal\ source file that depends on workaround flags. In most cases
-you don't have to do anything special for this, because many CGAL files
-already take care of including \texttt{<CGAL/config.h>}. Nevertheless it would be a
-good idea to always start your \cgal\ programs with including
-\texttt{<CGAL/config.h>} (or \texttt{<CGAL/basic.h>}, which contains some more basic
-\cgal\ definitions).
+The file \texttt{<CGAL/config.h>} manages all configuration problems
+of the compiler.  This file includes the file
+\texttt{CGAL/compiler\_config.h}.  It is therefore important that the
+file \texttt{<CGAL/config.h>} is always included before any other
+\cgal\ source file that depends on workaround flags. In most cases you
+do not have to do anything special for this, because many CGAL files
+already take care of including \texttt{<CGAL/config.h>}. Nevertheless
+it would be a good idea to always start your \cgal\ programs with
+including \texttt{<CGAL/config.h>} (or \texttt{<CGAL/basic.h>}, which
+contains some more basic \cgal\ definitions).
 
