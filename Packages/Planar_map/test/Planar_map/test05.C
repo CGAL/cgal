@@ -1,3 +1,9 @@
+#if TESTR == 1 
+// In this case we user Filetered_kernel which is no good for 
+// Pm_straight_traits_2 until Straight_2 is a type within the kernels.
+#define VOID_TEST
+#endif
+
 #ifndef VOID_TEST
 #include "numrep1.h"
 #include <cassert>
@@ -110,14 +116,8 @@ int main(int argc, char *argv[])
                      lt==Planar_map::UNBOUNDED_EDGE);
   }
 #else //VOID_TEST
-  usage();
+  std::cout << "Test is void." << std::endl;
 #endif //VOID_TEST
 
   return 0;
 }
-
-
-
-
-
-
