@@ -39,7 +39,6 @@ int main(int, char*)
 #include "icons/demo_zoomin.xpm"
 #include "icons/demo_pointlocation.xpm"
 
-
 const QString my_title_string("Arrangement Demo with CGAL Qt_widget");
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1116,7 +1115,6 @@ void MyWindow::fileOpenPm()
   statusBar()->message( QString( "Opened \'%1\'" ).arg( m_filename ), 2000 );
 
 }
-
 /*! open a polyline or conic file 
  * \param filename - name of the file
  */
@@ -1186,6 +1184,8 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     int i, j;
     
     inputFile >> num_polylines; 
+    std::list<Pm_pol_2> pol_list;
+
     for (i = 0; i < num_polylines; i++) 
     {
       inputFile >> num_segments;
@@ -1210,8 +1210,12 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       cd.m_index = w_demo_p->index;
       cd.m_ptr.m_curve = base_polyline;
       
-      w_demo_p->m_curves_arr.insert(Pm_pol_2( *base_polyline , cd));
+	  Pm_pol_2 curve(*base_polyline, cd);
+      pol_list.push_back(curve);
+      //w_demo_p->m_curves_arr.insert(Pm_pol_2( *base_polyline , cd));
     }
+	 w_demo_p->m_curves_arr.insert(pol_list.begin(),pol_list.end());
+
     if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
       w_demo_p->empty = true;
     else 
@@ -1230,6 +1234,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     inputFile >> count;
     
     int i;
+    std::list<Pm_seg_2> seg_list;
     for (i = 0; i < count; i++) {
       NT x0, y0, x1, y1;
       inputFile >> x0 >> y0 >> x1 >> y1;
@@ -1251,9 +1256,12 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       cd.m_index = w_demo_p->index;
       cd.m_ptr.m_curve = base_seg;
       
-      w_demo_p->m_curves_arr.insert(Pm_seg_2( *base_seg , cd));
-
+	  Pm_seg_2 curve(*base_seg, cd);
+      seg_list.push_back(curve);
+      //w_demo_p->m_curves_arr.insert(Pm_seg_2( *base_seg , cd));
     }
+	w_demo_p->m_curves_arr.insert(seg_list.begin(),seg_list.end());
+
 	if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
 	  w_demo_p->empty = true;
     else 
