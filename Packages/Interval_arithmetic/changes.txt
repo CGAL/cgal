@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.109 on 17 July 2001
+- Test Lazy_exact_nt more throughly using Delaunay_3.
+
 Version 4.108 on 17 July 2001
 - Remove debug messages from Lazy_exact_nt.
 

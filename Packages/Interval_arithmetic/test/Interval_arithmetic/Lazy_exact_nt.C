@@ -2,9 +2,11 @@
 
 #include <CGAL/Cartesian.h>
 #include <iostream>
+#include <CGAL/Random.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
+#include <CGAL/Delaunay_triangulation_3.h>
 
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>
@@ -57,6 +59,23 @@ my_min(const NT& n, const NT& m)
 
 } // namespace CGAL
 
+typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> >  my_NT;
+typedef CGAL::Delaunay_triangulation_3<CGAL::Cartesian<my_NT> > Delaunay;
+
+int my_rand()
+{
+  return int(CGAL::default_random.get_double()*(1<<31));
+}
+
+void delaunay()
+{
+  Delaunay D;
+  for (int i=0; i<100; i++)
+    D.insert(Delaunay::Point(my_NT(my_rand()),
+                             my_NT(my_rand()),
+			     my_NT(my_rand())));
+}
+
 int main ()
 {
   std::cout.precision(20);
@@ -93,6 +112,7 @@ int main ()
   std::cout << "sizeof(Lazy_exact_nt) = " << sizeof(CGAL::Lazy_exact_nt<int>)
             << std::endl;
   predicates();
+  delaunay();
   return 0;
 }
 
