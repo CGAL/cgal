@@ -4,6 +4,17 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.107
+//---------------------------------------------------------------------
+
+GLOB: Show KCC and Borland 5.5 as supported.
+GLOB: Search for kcc automatically.
+GLOB: Added KCC description.
+DOCS: Updated list of supported compilers: add borland and kcc.
+DOCS: Added http references to compiler vendors.
+DOCS: Added section about long-name problem on Irix.
+
+//---------------------------------------------------------------------
 //	revision 1.106
 //---------------------------------------------------------------------
 

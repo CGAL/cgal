@@ -7,6 +7,9 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Show KCC and Borland 5.5 as supported.
+GLOB: Search for kcc automatically.
+GLOB: Added KCC description.
 GLOB: Added kcc version detection as by Stefan.
 GLOB: Corrected SAVE_THE_BLANK fix for KCC.
 GLOB: Fixed guess_os as suggested by Dima,
@@ -19,6 +22,9 @@ GLOB: Added flags for Solaris / KCC.
 GLOB: Fixed problem in _real_options.
 ALL : Updated CGAL_VERSION to 2.2.
 DOCS: updated.
+DOCS: Updated list of supported compilers: add borland and kcc.
+DOCS: Added http references to compiler vendors.
+DOCS: Added section about long-name problem on Irix.
 DOCS: Added indexing commands. (finally ... :-)
 DOCS: Changed LEDA version to 4.1.
 DOCS: Removed description of the replace_header script.
