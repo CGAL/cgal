@@ -741,15 +741,10 @@ public:
   void delete_sface_only(SFace_handle h)
   { sfaces_.erase(h); delete &* h; }
   
-  bool is_bbox_facet(const Halffacet_handle h) {
-    SNC_decorator D(*this);
-    return (D.volume(h) == D.volumes_begin() ||
-	    D.volume(D.twin(h)) == D.volumes_begin());
-  }
-
   typedef typename Union_find< Volume_handle>::handle UFH_volume;
   typedef typename Union_find< Halffacet_handle>::handle UFH_facet;
   typedef typename Union_find< SFace_handle>::handle UFH_sface;
+
 
   void remove_f_including_all_edge_uses_in_its_boundary_cycles 
     ( Halffacet_handle f,
@@ -764,26 +759,23 @@ public:
 	SHalfedge_around_facet_circulator u(e), eend(e);
 	CGAL_For_all(u, eend) {
 	  SFace_handle fu = D.sface(u), ftu = D.sface(D.twin(u));
-	  TRACEN("UNION of sfacets "<<IO->index(fu)<<" & "<<IO->index(ftu));
+	  TRACEN("UNION of "<<IO->index(fu)<<" & "<<IO->index(ftu));
 	  merge_sets( fu, ftu, hash, uf);
 	  SM_decorator SD(D.vertex(u));
-	  TRACEN("deleting sedge pair "<<IO->index(u)<<
-		 " & "<<IO->index(SD.twin(u)));
+	  TRACEN("removing "<<IO->index(u)<<" & "<<IO->index(SD.twin(u)));
 	  SD.delete_edge_pair(u);
 	}
       }
       else if( assign(l, fc)) {
 	SFace_handle fu = D.sface(l), ftu = D.sface(D.twin(l));
-	TRACEN("UNION of sfacets "<<IO->index(fu)<<" & "<<IO->index(ftu));
+	TRACEN("UNION of "<<IO->index(fu)<<" & "<<IO->index(ftu));
 	merge_sets( fu, ftu, hash, uf);
 	SM_decorator SD(D.vertex(l));
-	TRACEN("deleting sloop pair "<<IO->index(l)<<
-	       " & "<<IO->index(SD.twin(l)));
+	TRACEN("removing "<<IO->index(l)<<" & "<<IO->index(SD.twin(l)));
 	SD.delete_loop_only();
       }
     }
-    TRACEN("deleting halffacet pair "<<IO->index(f)<<
-	   " & "<<IO->index(D.twin(f)));
+    TRACEN("removing "<<IO->index(f)<<" & "<<IO->index(D.twin(f)));
     delete_halffacet_pair(f);
   }
 
@@ -840,6 +832,7 @@ public:
     return '.';
   }
 
+#ifdef FORGET_IT
   void merge_halfedges( SVertex_handle p, SVertex_handle q,
 	  Unique_hash_map< Halffacet_handle, UFH_facet>& hash,
           Union_find< Halffacet_handle>& uf ) {
@@ -1118,6 +1111,7 @@ public:
       TRACEN("AFTER2 "<<PFC(new_cycle));
     }
   }
+#endif // FORGET_IT
 
   bool is_isolated(Vertex_handle v) {
     SM_decorator SD(v);
@@ -1125,31 +1119,31 @@ public:
 	    !SD.has_loop());
   }
 
-  bool has_halfloop_only(Vertex_handle v) {
+  bool is_in_facet_interior(Vertex_handle v) {
     SM_decorator SD(v);
     return( is_empty_range( SD.svertices_begin(), SD.svertices_end()) &&
 	    SD.has_loop());
   }
 
-  bool is_vertex_in_edge(Vertex_handle v) {
+  bool is_in_edge_interior(Vertex_handle v) {
     SM_decorator SD(v);
     if( !is_empty_range( SD.svertices_begin(), SD.svertices_end()) &&
 	!SD.has_loop()) {
-      TRACE(point(v)<<" is vertex in edge? ");
+      TRACE(point(v)<<" is in edge interior? ");
       SVertex_iterator sv(SD.svertices_begin());
-      SVertex_handle p0(sv++);
+      SVertex_handle p1(sv++);
       if( sv != SD.svertices_end()) {
-	TRACE("has one svertex, ");
-	SVertex_handle pf(sv++);
-	if( sv == SD.svertices_end()) {
-	  TRACE("has two svertices, ");
-	  Sphere_point sp0(SD.point(p0)), spf(SD.point(pf));
-	  TRACEN("and are antipode,  yes");
-	  return( sp0 == spf.antipode());
-	}
+       TRACE("has one svertex, ");
+       SVertex_handle p2(sv++);
+       if( sv == SD.svertices_end()) {
+         TRACE("has two svertices, ");
+         Sphere_point sp1(SD.point(p1)), sp2(SD.point(p2));
+         TRACEN("and are antipode? " << (sp1 == sp2.antipode()));
+         return( sp1 == sp2.antipode());
+       }
       }
     }
-    TRACEN("no");
+    TRACEN("failed");
     return false;
   }
 
@@ -1166,108 +1160,123 @@ public:
     Union_find< Halffacet_handle> uf_facet;
     Union_find< SFace_handle> uf_sface;
 
+    /* We discard  the information about boundary entry points, first
+       on volumes, facets on sfacets.  Since during the volumes simplification
+       is required the remotion of facet cycles, the information about those
+       cycles is keep until the this simplification step is performed. */
+
+    boundary_item_.clear();
+    sm_boundary_item_.clear();
+
     Volume_iterator c;
-    CGAL_nef3_forall_volumes( c, *this)
+    CGAL_nef3_forall_volumes( c, *this) {
       hash_volume[c] = uf_volume.make_set(c);
-    Halffacet_iterator hf;
-    CGAL_nef3_forall_halffacets( hf, *this)
-      hash_facet[hf] = uf_facet.make_set(hf);
+      reset_object_list(c->shell_entry_objects_);
+    }
     SFace_iterator sf;
-    CGAL_nef3_forall_sfaces( sf, *this)
+    CGAL_nef3_forall_sfaces( sf, *this) {
       hash_sface[sf] = uf_sface.make_set(sf);
+      reset_object_list(sf->boundary_entry_objects_);
+    }
     
-    Halffacet_handle f((*this).halffacets_begin());
+    /* 
+     * Volumes simplification 
+     */
+    Halffacet_handle f(D.halffacets_begin());
     CGAL_assertion( !f->is_twin());
-    while( f != (*this).halffacets_end()) {
+    while( f != D.halffacets_end()) {
       Halffacet_iterator f_next(f);
       do
 	f_next++;
-      while( f_next != (*this).halffacets_end() && f_next->is_twin());
+      while( f_next != D.halffacets_end() && f_next->is_twin());
+
       Volume_handle c1 = D.volume(f), c2 = D.volume(D.twin(f));
-      if(!is_bbox_facet(f))
-	TRACEN(" mark("<<IO->index(c1)<<")="<<D.mark(c1)<<
-	       " mark("<<IO->index(f)<<")="<<D.mark(f)<<
-	       " mark("<<IO->index(c2)<<")="<<D.mark(c2)<<
-	       " is_twin(f)="<<f->is_twin());
-      if( (D.mark(c1) == D.mark(f) && D.mark(f) == D.mark(c2))
-	  && !is_bbox_facet(f)) {
+      TRACEN(" mark("<<IO->index(c1)<<")="<<D.mark(c1)<<
+	     " mark("<<IO->index(f) <<")="<<D.mark(f) <<
+	     " mark("<<IO->index(c2)<<")="<<D.mark(c2)<<
+	     " is_twin(f)="<<f->is_twin());
+      if( D.mark(c1) == D.mark(f) && D.mark(f) == D.mark(c2)
+	  && !D.is_infbox_facet(f)) {
 	merge_sets( c1, c2, hash_volume, uf_volume);
 	remove_f_including_all_edge_uses_in_its_boundary_cycles
 	  (f, hash_sface, uf_sface);
-	TRACEN("unioning volumes "<<IO->index(c1)<<" and "<<IO->index(c2));
+	TRACEN("UNION of "<<IO->index(c1)<<" & "<<IO->index(c2));
       }
       f = f_next;
     }
 
-    Halfedge_iterator e = (*this).halfedges_begin();
+    Halffacet_iterator hf;
+    CGAL_nef3_forall_halffacets( hf, *this) {
+      hash_facet[hf] = uf_facet.make_set(hf);
+      reset_object_list(hf->boundary_entry_objects_);
+    }
+
+    /* 
+     * Edges simplification
+     */
+    Halfedge_iterator e(D.halfedges_begin());
     CGAL_assertion( !e->is_twin());
     while( e != (*this).halfedges_end()) {
       Halfedge_iterator e_next(e);
       do 
 	e_next++;
-      while( e_next != (*this).halfedges_end() && e_next->is_twin());
-      Halfedge_handle et(D.twin(e));
-      SM_decorator SD(D.source(e)), SDt(D.source(et));
-      if( SD.is_isolated(e) &&
-	  D.mark(e) == D.mark(D.volume(e->incident_sface_))) {
-	CGAL_assertion( SDt.is_isolated(et));
-	SD.delete_vertex_only(e);
-	SDt.delete_vertex_only(et);
+      while( e_next != D.halfedges_end() && e_next->is_twin());
+
+      SM_decorator SD(D.source(e));
+      if( SD.is_isolated(e) && D.mark(e) == D.mark(D.volume(D.sface(e)))) {
+	TRACEN("removing pair "<<IO->index(e)<<' '<<IO->index(D.twin(e)));
+	delete_halfedge_pair(e);
       } 
       else { 
-	SHalfedge_handle e1(SD.first_out_edge(e)), e2(SD.cyclic_adj_succ(e1));
-	TRACEN(" mark(e1) "<<D.mark(e1)<<
-	       " mark(e) "<<D.mark(e)<<
-	       " mark(e2) "<<D.mark(e2));
-	if( (e1 != e2 && e1 == SD.cyclic_adj_succ(e2)) &&
-	    (SD.circle(e1) == SD.circle(SD.twin(e2))) &&
-	    (D.mark(e1) == D.mark(e) && D.mark(e) == D.mark(e2)))
-	  //if( !uf_facet.same_set( hash_facet[D.facet(e1)],
-	  //		  hash_facet[D.facet(SD.twin(e2))]))
-	  merge_facet_cycles(e, hash_sface, uf_sface, hash_facet, uf_facet);
+	if( D.has_outdeg_two(e)) {
+	  SHalfedge_handle e1(SD.first_out_edge(e)); 
+	  SHalfedge_handle e2(SD.cyclic_adj_succ(e1));
+	  if( SD.circle(e1)==SD.circle(SD.twin(e2)) &&
+	      D.mark(e1)==D.mark(e) && D.mark(e)==D.mark(e2)) {
+	    Halffacet_handle f1(D.facet(e1)); 
+	    Halffacet_handle f2(D.facet(e2));
+	    TRACEN("UNION of "<<IO->index(f1)<<" & "<<IO->index(D.twin(f2)));
+	    merge_sets( f1, D.twin(f2), hash_facet, uf_facet);
+	    TRACEN("UNION of "<<IO->index(D.twin(f1))<<" & "<<IO->index(f2));
+	    merge_sets( D.twin(f1), f2, hash_facet, uf_facet);
+	    TRACEN("removing "<<IO->index(e));
+	    remove_edge_and_merge_facet_cycles(e);
+	  }
+	}
       }
       e = e_next;
     }
 
+    /* 
+     * Vertices simplification
+     */
     Vertex_iterator v = (*this).vertices_begin();
     while( v != (*this).vertices_end()) {
+      SM_decorator SD(v);
       Vertex_iterator v_next(v);
       v_next++;
-      SM_decorator SD(v);
+
       CGAL_assertion( SD.sfaces_begin() != SFace_handle());
       if( is_isolated(v) && D.mark(v) == D.mark(D.volume(SD.sfaces_begin()))) {
 	TRACEN("removing isolated vertex "<<IO->index(v));
-	CGAL_assertion( is_boundary_object( D.volume( SD.sfaces_begin())));
-	D.undo_boundary_object(v, D.volume(SD.sfaces_begin()));
 	delete_vertex(v);
       }
-      if( has_halfloop_only(v)) {
-	TRACEN(" mark(v) "<<D.mark(v)<<
-	       " mark(sloop) "<<SD.mark(SD.shalfloop())<<
-	       " mark(facet(sloop)) "<<D.mark(D.facet(SD.shalfloop())));
+      else if( is_in_facet_interior(v)) {
 	CGAL_assertion( D.facet(SD.shalfloop()) != Halffacet_handle());
 	if( D.mark(v) == D.mark(D.facet(SD.shalfloop()))) {
-	  TRACEN("removing vertex "<<IO->index(v)<<
-		 " from facet "<<IO->index(D.facet(SD.shalfloop())));
-	  CGAL_assertion( is_boundary_object( SD.shalfloop()));
-	  D.undo_boundary_object(SD.shalfloop(), D.facet(SD.shalfloop()));
-	  CGAL_assertion( is_boundary_object( D.twin( SD.shalfloop())));
-	  D.undo_boundary_object(D.twin(SD.shalfloop()), 
-				 D.twin(D.facet(SD.shalfloop())));
+	  TRACEN("removing "<<IO->index(v)<<
+		 " on facet "<<IO->index(D.facet(SD.shalfloop())));
 	  delete_vertex(v);
 	}
       }
-      if( is_vertex_in_edge(v)) {
+      else if( is_in_edge_interior(v)) {
 	SVertex_iterator sv(SD.svertices_begin());
 	Halfedge_handle e1(sv++), e2(sv++);
-	TRACEN(" mark(e1) "<<D.mark(e1)<<
-	       " mark(sv) "<<D.mark(v)<<
-	       " mark(ef) "<<D.mark(e2));
 	CGAL_assertion( sv == SD.svertices_end());
 	if( D.mark(e1) == D.mark(v) && D.mark(v) == D.mark(e2)) {
-	  TRACEN("removing vertex "<<IO->index(v)<<
-		 " from edges "<<IO->index(e1)<<" & "<<IO->index(e2));
-	  merge_halfedges(e1, e2, hash_facet, uf_facet);
+	  TRACEN("merging "<<IO->index(e1)<<" & "<<IO->index(e2)<<
+		 " in "<<IO->index(v));
+	  merge_halfedge_pairs( e1, e2);
 	}
       }
       v = v_next;
@@ -1283,6 +1292,48 @@ public:
     TRACEN(">>> simplifying done");
    }
    
+   void remove_edge_and_merge_facet_cycles( Halfedge_handle e) {
+     SNC_decorator D(*this);
+     CGAL_assertion( D.has_outdeg_two(e));
+     delete_svertex_and_update_incidences(e);
+     delete_svertex_and_update_incidences(D.twin(e));
+   }
+
+   void delete_svertex_and_update_incidences( SVertex_handle v) {
+     SNC_decorator D(*this);
+     SM_decorator SD(D.vertex(v));
+     SHalfedge_handle e1(SD.first_out_edge(v)); 
+     SHalfedge_handle e2(SD.cyclic_adj_succ(e1));
+     if( e1 == SD.twin(e2)) {
+       SD.convert_edge_to_loop(e1);
+       CGAL_assertion(SD.shalfloop() != SHalfloop_handle());
+       D.add_sloop_to_facet( SD.shalfloop(), D.facet(e1));
+     }
+     else {
+       CGAL_assertion( D.has_outdeg_two(v));
+       D.link_as_prev_next_pair( SD.twin(e2), e1);
+       D.link_as_prev_next_pair( SD.twin(e1), e2);
+       SD.merge_edge_pairs_at_target( SD.twin(e1));
+     }
+   }
+
+   void merge_halfedge_pairs( SVertex_handle p, SVertex_handle q) {
+     SNC_decorator D(*this);
+     CGAL_assertion( D.vertex(p) == D.vertex(q));
+     Vertex_handle v(D.vertex(p)); 
+     CGAL_assertion( is_in_edge_interior(v));
+     SM_decorator SD(v);
+     SHalfedge_around_svertex_circulator s(SD.first_out_edge(p)), se(s);
+     CGAL_For_all( s, se) {
+       D.link_as_prev_next_pair( D.previous(s), D.next(s));
+       D.link_as_prev_next_pair( D.previous(SD.twin(s)), D.next(SD.twin(s)));
+     }
+     D.make_twins( D.twin(p), D.twin(q));
+     SD.delete_vertex(p);
+     SD.delete_vertex(q);
+     delete_vertex(v);
+   }
+
    void purge_no_find_objects( 
       Unique_hash_map< Volume_handle, UFH_volume>& hash_volume,
       Unique_hash_map< Halffacet_handle, UFH_facet>& hash_facet,
@@ -1318,59 +1369,77 @@ public:
   void create_boundary_links_forall_sfaces(
       Unique_hash_map< SFace_handle, UFH_sface>& hash,
       Union_find< SFace_handle>& uf ) {
+    Unique_hash_map< SHalfedge_handle, bool> linked(false);
     SNC_decorator D(*this);
-    SM_decorator SD;
     SHalfedge_iterator e;
-    CGAL_nef3_forall_shalfedges(e, *this) { // all shalfedges
-      // if( e was not yet assigned to an sface cycle )
-      UFH_sface sf(uf.find(hash[D.sface(e)]));
-      if( hash[D.sface(e)] != sf) {
-	// assign all sedges in sface cycle of e to find(sface(e))
-	SHalfedge_around_sface_circulator c(e), cend(c);
-	CGAL_For_all( c, cend)
-	  SD.set_face(e, *sf);
+    CGAL_nef3_forall_shalfedges(e, *this) {
+      if( linked[e])
+	continue;
+      SM_decorator SD(D.vertex(e));
+      // SHalfedge_handle e_min = e;
+      SFace_handle sf = *(uf.find(hash[D.sface(e)]));
+      CGAL_assertion( sf != SFace_handle());
+      SHalfedge_around_sface_circulator c(e), cend(c);
+      CGAL_For_all( c, cend) {
+	SD.set_face(e, sf);
+	linked[e] = true;
       }
+      /* TODO: set as first boundary entry the outermost cycle */
+      SD.store_boundary_object( e, sf);
     }
     SVertex_handle sv;
-    CGAL_nef3_forall_svertices(sv, *this)
-      if( SD.is_isolated(sv))
-	SD.set_face( sv, *(uf.find(hash[D.sface(sv)])));
+    CGAL_nef3_forall_svertices(sv, *this) {
+      SM_decorator SD(D.vertex(sv));
+      if( SD.is_isolated(sv)) {
+	SFace_handle sf = *(uf.find(hash[D.sface(sv)])); 
+	CGAL_assertion( sf != SFace_handle());
+	SD.set_face( sv, sf);
+	SD.store_boundary_object( sv, sf);
+      }
+    }
   }
 
   void create_boundary_links_forall_facets(
       Unique_hash_map< Halffacet_handle, UFH_facet>& hash,
       Union_find< Halffacet_handle>& uf) {
+    Unique_hash_map< SHalfedge_handle, bool> linked(false);
     SNC_decorator D(*this);
     SHalfedge_iterator u;
-    CGAL_nef3_forall_shalfedges(u, *this) { // all edge uses
-      // if( u was not yet assigned to a facet cycle )
-      UFH_facet sf(uf.find(hash[D.facet(u)]));
-      if( hash[D.facet(u)] != sf) {
-	// assign all edge uses in facet cycle of u to find(facet(u))
-	SHalfedge_around_facet_circulator c(u), cend(c);
-	CGAL_For_all( c, cend) 
-	  u->incident_facet_ = *sf;
+    CGAL_nef3_forall_shalfedges(u, *this) {
+      if( linked[u])
+	continue;
+      // SHalfedge_handle u_min = u;
+      Halffacet_handle f = *(uf.find(hash[D.facet(u)]));
+      SHalfedge_around_facet_circulator c(u), cend(c);
+      CGAL_For_all( c, cend) {
+	u->incident_facet_ = f; /* TODO: implement method in decorator */
+	linked[u] = true;
       }
+      /* TODO: set as first boundary entry the outermost cycle */
+      D.store_boundary_object( u, f);
     }
     SHalfloop_iterator l;
-    CGAL_nef3_forall_shalfloops( l, *this) // all sloops
-      l->incident_facet_ = *(uf.find(hash[D.facet(l)]));
+    CGAL_nef3_forall_shalfloops( l, *this) {
+      Halffacet_handle f = *(uf.find(hash[D.facet(l)]));
+      l->incident_facet_ = f; /* TODO: implement method in decorator */
+      D.store_boundary_object( l, f);
+    }
   }
 
   typedef typename SNC_decorator::Shell_volume_setter Volume_setter;
+
   void create_boundary_links_forall_volumes( 
       Unique_hash_map< Volume_handle, UFH_volume>& hash,
       Union_find< Volume_handle>& uf) {
+    Unique_hash_map< Volume_handle, bool> linked(false);
     SNC_decorator D(*this);
     SFace_iterator sf;
-    CGAL_nef3_forall_sfaces(sf, *this) { // all sfaces
-      // if( f was not yet assigned to a shell )
-      UFH_volume c(uf.find(hash[D.volume(sf)]));
-      if( hash[D.volume(sf)] != c) {
-	// assign all sfaces a facets in the shell of f to find(volume(f))
-	Volume_setter setter(D, *c);
-	D.visit_shell_objects( sf, setter );
-      }
+    CGAL_nef3_forall_sfaces(sf, *this) {
+      Volume_handle c = *(uf.find(hash[D.volume(sf)]));
+      if( linked[c])
+	continue;
+      Volume_setter setter(D, c);
+      D.visit_shell_objects( sf, setter );
     }
   }
   

@@ -1,8 +1,8 @@
 Nef_3 Package: TODO
 ---------------------------------------------------------------------
 
-- Simplification of adjacent halfedges belonging to the same facet.
-- Simplification adjacent facets which union generates holes.
+- Recovering of the outer cycle of each facet and sface at the end
+  of the simplification process.
 - Unary operations
 - Intersections of Line_3 with Line_3
 - Find all intersections between two SNC's.

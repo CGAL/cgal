@@ -328,15 +328,27 @@ public:
     if( facet_plane == SD.circle(l)) {
       l->incident_facet_ = f;
       SD.twin(l)->incident_facet_ = twin(f);
-      store_boundary_object(l, f);
-      store_boundary_object(SD.twin(l), twin(f));
     } else {
       CGAL_assertion( facet_plane.opposite() == SD.circle(l));
       l->incident_facet_ = twin(f);
       SD.twin(l)->incident_facet_ = f;
-      store_boundary_object(l, twin(f));
-      store_boundary_object(SD.twin(l), f);
     }
+  }
+
+  /* returns true if |f| is part of the infinimaximal box.*/
+  bool is_infbox_facet(Halffacet_handle f) const {
+    return (volume(f) == sncp()->volumes_begin() ||
+	    volume(twin(f)) == sncp()->volumes_begin());
+  }
+
+  /* returns true when |v| has outdegree two.*/
+  bool has_outdeg_two(SVertex_handle v) const {
+    SM_decorator SD;
+    if( SD.is_isolated(v))
+      return false;
+    SHalfedge_handle e1 = SD.first_out_edge(v);
+    SHalfedge_handle e2 = SD.cyclic_adj_succ(e1);
+    return( e1!=e2 && SD.cyclic_adj_succ(e2)==e1);
   }
 
   template <typename Visitor>
@@ -346,8 +358,8 @@ public:
   Vertex_iterator   vertices_end()     { return sncp()->vertices_end(); }
   Halfedge_iterator halfedges_begin()  { return sncp()->halfedges_begin(); }
   Halfedge_iterator halfedges_end()    { return sncp()->halfedges_end(); }
-  Halffacet_iterator    halffacets_begin()     { return sncp()->halffacets_begin(); }
-  Halffacet_iterator    halffacets_end()       { return sncp()->halffacets_end(); }
+  Halffacet_iterator halffacets_begin(){ return sncp()->halffacets_begin(); }
+  Halffacet_iterator halffacets_end()  { return sncp()->halffacets_end(); }
   Volume_iterator   volumes_begin()    { return sncp()->volumes_begin(); }
   Volume_iterator   volumes_end()      { return sncp()->volumes_end(); }
 
