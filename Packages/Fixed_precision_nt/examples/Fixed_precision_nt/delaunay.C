@@ -9,10 +9,7 @@
 
 #include <CGAL/Fixed_precision_nt.h>
 #include <CGAL/Timer.h>
-
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <CGAL/point_generators_2.h>
@@ -23,7 +20,7 @@ static bool Fixed_precision_nt_init_result =
             CGAL::Fixed_precision_nt::init(2000.0);
 
 typedef CGAL::Cartesian<coord_type>               Repclass;
-typedef CGAL::Point_2<Repclass>                   Point_;
+typedef Repclass::Point_2                         Point_;
 typedef CGAL::Delaunay_triangulation_2<Repclass>  Delaunay_;
 
 int main(int argc, char* argv[])

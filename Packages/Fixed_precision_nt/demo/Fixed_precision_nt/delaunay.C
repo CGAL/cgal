@@ -1,12 +1,3 @@
-#ifndef CGAL_USE_LEDA
-#include <iostream>
-int main()
-{
-  std::cout << "This demo requires the LEDA window." << std::endl;
-  return 0;
-}
-#else
-
 #include <CGAL/basic.h>
 #include <cstdio>
 #include <cstring>
@@ -15,13 +6,13 @@ int main()
 #include <strstream>
 
 #include <CGAL/Fixed_precision_nt.h>
-
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-
 #include <CGAL/Delaunay_triangulation_2.h>
-
 #include <CGAL/IO/Window_stream.h>
+
+#ifdef CGAL_USE_CGAL_WINDOW
+#define leda_src_mode CGAL::src_mode
+#endif
 
 typedef CGAL::Fixed_precision_nt coord_type;
 static bool Fixed_precision_nt_init_result 
@@ -60,4 +51,3 @@ int main()
     }
     return 0;
 }
-#endif

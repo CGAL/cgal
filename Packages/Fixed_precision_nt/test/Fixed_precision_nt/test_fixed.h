@@ -5,29 +5,22 @@
 #include <fstream>
 #include <strstream>
 
-
 #include <CGAL/Fixed_precision_nt.h>
 #include <CGAL/Gmpz.h>
-
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/predicates_on_points_2.h>
-#include <CGAL/predicates_on_points_3.h>
-
 #include <CGAL/point_generators_2.h>
 #include <CGAL/point_generators_3.h>
 
-
-typedef CGAL::Point_2<CGAL::Cartesian<CGAL::Fixed_precision_nt> > Point2;
-typedef CGAL::Point_2<CGAL::Cartesian<CGAL::Gmpz> >  Point2gmp;
-typedef CGAL::Point_3<CGAL::Cartesian<CGAL::Fixed_precision_nt> > Point3;
-typedef CGAL::Point_3<CGAL::Cartesian<CGAL::Gmpz> >  Point3gmp;
+typedef CGAL::Cartesian<CGAL::Fixed_precision_nt>::Point_2 Point2;
+typedef CGAL::Cartesian<CGAL::Gmpz>::Point_2               Point2gmp;
+typedef CGAL::Cartesian<CGAL::Fixed_precision_nt>::Point_3 Point3;
+typedef CGAL::Cartesian<CGAL::Gmpz>::Point_3               Point3gmp;
 
 Point2gmp convert(Point2 p)
 {return Point2gmp(
     (int)(CGAL::to_double(p.x())/CGAL::Fixed_precision_nt::unit_value()),
     (int)(CGAL::to_double(p.y())/CGAL::Fixed_precision_nt::unit_value()));}
+
 Point3gmp convert(Point3 p)
 {return Point3gmp(
     (int)(CGAL::to_double(p.x())/CGAL::Fixed_precision_nt::unit_value()),
