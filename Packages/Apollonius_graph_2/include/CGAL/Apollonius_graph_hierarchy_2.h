@@ -66,6 +66,9 @@ public:
   //  typedef Finite_faces_iterator      Face_iterator;
   //  typedef Finite_edges_iterator      Edge_iterator;
 
+protected:
+  // some local types
+  typedef typename Ag_base::Vertex_base       Vertex_base;
 
 public:
   // CREATION

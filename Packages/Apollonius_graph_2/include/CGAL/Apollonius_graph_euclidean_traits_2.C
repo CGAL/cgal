@@ -21,7 +21,7 @@ ad_circumcenter_2(const Weighted_point< Point,We >& p,
 		  const Weighted_point< Point,We >& r,
 		  Cartesian_tag )
 {
-  typedef typename Point::R Rep;
+  typedef typename Kernel_traits<Point>::Kernel Rep;
   typename Rep::FT x,y;
   ad_circumcenterC2(p.x(),p.y(),p.weight(),
 		    q.x(),q.y(),q.weight(),
@@ -37,7 +37,7 @@ ad_circumcenter_2(const Weighted_point< Point, We >& p,
 		  const Weighted_point< Point, We >& r,
 		  Homogeneous_tag )
 {
-  typedef typename Point::R Rep;
+  typedef typename Kernel_traits<Point>::Kernel Rep;
   typename Rep::RT x,y,w;
   ad_circumcenterH2(p.hx(),p.hy(),p.hw(),p.weight(),
 		    q.hx(),q.hy(),q.hw(),q.weight(),
@@ -53,7 +53,7 @@ ad_circumcenter_2(const Weighted_point< Point, We >& p,
 		  const Weighted_point< Point, We >& q,
 		  const Weighted_point< Point, We >& r)
 {
-  typedef typename Point::R::Rep_tag Tag;
+  typedef typename Kernel_traits<Point>::Kernel::Rep_tag Tag;
   return ad_circumcenter_2< Point, We >(p, q, r, Tag()); 
 }
 
@@ -88,7 +88,7 @@ ad_circumcircle_2(const Weighted_point< Point,We >& p,
 		  const Weighted_point< Point,We >& r,
 		  Cartesian_tag )
 {
-  typename Point::FT x,y;
+  typename Kernel_traits<Point>::Kernel::FT x,y;
   We wt;
   ad_circumcircleC2(p.x(),p.y(),p.weight(),
 		    q.x(),q.y(),q.weight(),
@@ -104,7 +104,7 @@ ad_circumcircle_2(const Weighted_point< Point, We >& p,
 		  const Weighted_point< Point, We >& r,
 		  Homogeneous_tag )
 {
-  typename Point::RT x,y,w;
+  typename Kernel_traits<Point>::Kernel::RT x,y,w;
   We wt;
   ad_circumcircleH2(p.hx(),p.hy(),p.hw(),p.weight(),
 		    q.hx(),q.hy(),q.hw(),q.weight(),
@@ -120,7 +120,7 @@ ad_circumcircle_2(const Weighted_point< Point, We >& p,
 		  const Weighted_point< Point, We >& q,
 		  const Weighted_point< Point, We >& r)
 {
-  typedef typename Point::R::Rep_tag Tag;
+  typedef typename Kernel_traits<Point>::Kernel::Rep_tag Tag;
   return ad_circumcircle_2< Point, We >(p, q, r, Tag()); 
 }
 
@@ -131,7 +131,7 @@ ad_left_bitangent_line_2(const Weighted_point< Point,We >& p,
 			 const Weighted_point< Point,We >& q,
 			 Cartesian_tag )
 {
-  typename Point::FT a, b, c;
+  typename Kernel_traits<Point>::Kernel::FT a, b, c;
   ad_left_bitangent_lineC2(p.x(),p.y(),p.weight(),
 			   q.x(),q.y(),q.weight(),
 			   a,b,c);
@@ -145,7 +145,7 @@ ad_left_bitangent_line_2(const Weighted_point< Point, We >& p,
 			 const Weighted_point< Point, We >& q,
 			 Homogeneous_tag )
 {
-  typename Point::RT a, b, c;
+  typename Kernel_traits<Point>::Kernel::RT a, b, c;
   ad_left_bitangent_lineH2(p.hx(),p.hy(),p.hw(),p.weight(),
 			   q.hx(),q.hy(),q.hw(),q.weight(),
 			   a, b, c);
@@ -158,7 +158,7 @@ Line
 ad_left_bitangent_line_2(const Weighted_point< Point, We >& p,
 			 const Weighted_point< Point, We >& q)
 {
-  typedef typename Point::R::Rep_tag Tag;
+  typedef typename Kernel_traits<Point>::Kernel::Rep_tag Tag;
   return ad_left_bitangent_line_2< Point, We, Line >(p, q, Tag()); 
 }
 
@@ -473,7 +473,7 @@ ad_is_hidden_test_2(const Weighted_point< Point, We >& p,
 		    const Weighted_point< Point, We >& q,
 		    Cartesian_tag, Sqrt_field_tag )
 {
-  typedef typename Point::FT  FT;
+  typedef typename Kernel_traits<Point>::Kernel::FT  FT;
   return ad_is_hidden_test_sqrtf_C2(p.x(), p.y(), FT(p.weight()),
 				    q.x(), q.y(), FT(q.weight()));
 }
@@ -486,7 +486,7 @@ ad_is_hidden_test_2(const Weighted_point< Point, We >& p,
 		    const Weighted_point< Point, We >& q,
 		    Cartesian_tag, Ring_tag )
 {
-  typedef typename Point::FT  FT;
+  typedef typename Kernel_traits<Point>::Kernel::FT  FT;
   return ad_is_hidden_test_ring_C2(p.x(), p.y(), FT(p.weight()),
 				    q.x(), q.y(), FT(q.weight()));
 }
@@ -500,7 +500,7 @@ ad_is_hidden_test_2(const Weighted_point< Point, We >& p,
 		    const Weighted_point< Point, We >& q,
 		    Homogeneous_tag)
 {
-  typedef typename Point::RT  RT;
+  typedef typename Kernel_traits<Point>::Kernel::RT  RT;
   Sign s = sign_of_ad_distance2_testH2(p.hx(), p.hy(), p.hw(), 
 				       RT(p.weight()),
 				       q.hx(), q.hy(), q.hw(),
@@ -533,7 +533,7 @@ public:
   inline bool operator()(const Weighted_point &p,
 			 const Weighted_point &q) const
   {
-    typedef typename Point::R::Rep_tag Tag;
+    typedef typename Kernel_traits<Point>::Kernel::Rep_tag Tag;
     return
       ad_is_hidden_test_2<Point,Weight,Method_tag>(p, q, Tag());
   }
@@ -552,7 +552,7 @@ ad_distances_test_2(const Weighted_point< Point, We >& p1,
 		    const Weighted_point< Point, We >& p2,
 		    const Point& p, Cartesian_tag, Sqrt_field_tag )
 {
-  typedef typename Point::FT  FT;
+  typedef typename Kernel_traits<Point>::Kernel::FT  FT;
   return
     compare_ad_distances_test_sqrtf_C2(p1.x(), p1.y(), FT(p1.weight()),
 				       p2.x(), p2.y(), FT(p2.weight()),
@@ -567,7 +567,7 @@ ad_distances_test_2(const Weighted_point< Point, We >& p1,
 		    const Weighted_point< Point, We >& p2,
 		    const Point& p, Cartesian_tag, Ring_tag )
 {
-  typedef typename Point::FT  FT;
+  typedef typename Kernel_traits<Point>::Kernel::FT  FT;
   return
     compare_ad_distances_test_ring_C2(p1.x(), p1.y(), FT(p1.weight()),
 				      p2.x(), p2.y(), FT(p2.weight()),
@@ -596,7 +596,7 @@ ad_distances_test_2(const Weighted_point< Point, We >& p1,
 		    const Weighted_point< Point, We >& p2,
 		    const Point& p, Homogeneous_tag )
 {
-  typedef typename Point::RT  RT;
+  typedef typename Kernel_traits<Point>::Kernel::RT  RT;
   return compare_ad_distances_testH2(p1.hx(), p1.hy(), p1.hw(),
 				     RT(p1.weight()),
 				     p2.hx(), p2.hy(), p2.hw(),
@@ -615,7 +615,7 @@ ad_distances_test_2(const Weighted_point< Point, We >& p1,
 		    const Weighted_point< Point, We >& p2,
 		    const Point& p)
 {
-  typedef typename Point::R::Rep_tag Tag;
+  typedef typename Kernel_traits<Point>::Kernel::Rep_tag Tag;
   return ad_distances_test_2<Point,We,Method_tag>(p1, p2, p, Tag());
 }
 
@@ -656,7 +656,7 @@ ad_incircle_test_2(const Weighted_point< Point, We >& p1,
 		   const Weighted_point< Point, We >&  q,
 		   Cartesian_tag, Sqrt_field_tag )
 {
-  typedef typename Point::FT  FT;
+  typedef typename Kernel_traits<Point>::Kernel::FT  FT;
   return ad_incircle_test_sqrtf_C2(p1.x(), p1.y(), FT(p1.weight()),
 				   p2.x(), p2.y(), FT(p2.weight()),
 				    q.x(),  q.y(), FT( q.weight()));
@@ -671,7 +671,7 @@ ad_incircle_test_2(const Weighted_point< Point, We >& p1,
 		   const Weighted_point< Point, We >&  q,
 		   Cartesian_tag, Ring_tag )
 {
-  typedef typename Point::FT  FT;
+  typedef typename Kernel_traits<Point>::Kernel::FT  FT;
   return ad_incircle_test_ring_C2(p1.x(), p1.y(), FT(p1.weight()),
 				  p2.x(), p2.y(), FT(p2.weight()),
 				   q.x(),  q.y(), FT( q.weight()));
@@ -698,7 +698,7 @@ ad_incircle_test_2(const Weighted_point< Point, We >& p1,
 		   const Weighted_point< Point, We >& q,
 		   Homogeneous_tag )
 {
-  typedef typename Point::RT  RT;
+  typedef typename Kernel_traits<Point>::Kernel::RT  RT;
   return 
     ad_incircle_testH2(p1.hx(), p1.hy(), p1.hw(), RT(p1.weight()),
 		       p2.hx(), p2.hy(), p2.hw(), RT(p2.weight()),
@@ -718,7 +718,7 @@ ad_incircle_test_2(const Weighted_point< Point, We >& p1,
 		   const Weighted_point< Point, We >&  q,
 		   Cartesian_tag, Sqrt_field_tag )
 {
-  typedef typename Point::FT  FT;
+  typedef typename Kernel_traits<Point>::Kernel::FT  FT;
   return ad_incircle_test_sqrtf_C2(p1.x(), p1.y(), FT(p1.weight()),
 				   p2.x(), p2.y(), FT(p2.weight()),
 				   p3.x(), p3.y(), FT(p3.weight()),
@@ -735,7 +735,7 @@ ad_incircle_test_2(const Weighted_point< Point, We >& p1,
 		   const Weighted_point< Point, We >&  q,
 		   Cartesian_tag, Ring_tag )
 {
-  typedef typename Point::FT  FT;
+  typedef typename Kernel_traits<Point>::Kernel::FT  FT;
   return ad_incircle_test_ring_C2(p1.x(), p1.y(), FT(p1.weight()),
 				  p2.x(), p2.y(), FT(p2.weight()),
 				  p3.x(), p3.y(), FT(p3.weight()),
@@ -766,7 +766,7 @@ ad_incircle_test_2(const Weighted_point< Point, We >& p1,
 		   const Weighted_point< Point, We >& q,
 		   Homogeneous_tag )
 {
-  typedef typename Point::RT  RT;
+  typedef typename Kernel_traits<Point>::Kernel::RT  RT;
   return 
     ad_incircle_testH2(p1.hx(), p1.hy(), p1.hw(), RT(p1.weight()),
 		       p2.hx(), p2.hy(), p2.hw(), RT(p2.weight()),
@@ -790,7 +790,7 @@ public:
 		  const Weighted_point& p3,
 		  const Weighted_point& q) const
   {
-    typedef typename Point::R::Rep_tag Tag;
+    typedef typename Kernel_traits<Point>::Kernel::Rep_tag Tag;
     return
       ad_incircle_test_2<Point,Weight,Method_tag>(p1, p2, p3, q, Tag());
   }
@@ -801,7 +801,7 @@ public:
 		  const Weighted_point& p2,
 		  const Weighted_point& q) const
   {
-    typedef typename Point::R::Rep_tag Tag;
+    typedef typename Kernel_traits<Point>::Kernel::Rep_tag Tag;
     return
       ad_incircle_test_2<Point,Weight,Method_tag>(p1, p2, q, Tag());
   }
@@ -822,7 +822,7 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& q,
 		      bool b, Cartesian_tag, Sqrt_field_tag)
 {
-  typedef typename Pt::FT  FT;
+  typedef typename Kernel_traits<Pt>::Kernel::FT  FT;
   return
     ad_finite_edge_test_degenerated_sqrtf_C2(p1.x(), p1.y(),
 					     FT(p1.weight()),
@@ -840,7 +840,7 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& q,
 		      bool b, Cartesian_tag, Ring_tag)
 {
-  typedef typename Pt::FT  FT;
+  typedef typename Kernel_traits<Pt>::Kernel::FT  FT;
   return
     ad_finite_edge_test_degenerated_ring_C2(p1.x(), p1.y(),
 					    FT(p1.weight()),
@@ -871,7 +871,7 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& q,
 		      bool b, Homogeneous_tag)
 {
-  typedef typename Pt::RT  RT;
+  typedef typename Kernel_traits<Pt>::Kernel::RT  RT;
   return
     ad_finite_edge_test_degeneratedH2(p1.hx(), p1.hy(),
 				      p1.hw(),
@@ -891,7 +891,7 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& p2,
 		      const Weighted_point< Pt, We >& q, bool b)
 {
-  typedef typename Pt::R::Rep_tag Tag;
+  typedef typename Kernel_traits<Pt>::Kernel::Rep_tag Tag;
   return ad_finite_edge_test_2<Pt,We,Method_tag>
     (p1, p2, q, b, Tag());
 }
@@ -907,7 +907,7 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& q,
 		      bool b, Cartesian_tag, Sqrt_field_tag)
 {
-  typedef typename Pt::FT  FT;
+  typedef typename Kernel_traits<Pt>::Kernel::FT  FT;
   return ad_finite_edge_test_degenerated_sqrtf_C2(p1.x(), p1.y(),
 						  FT(p1.weight()),
 						  p2.x(), p2.y(),
@@ -927,7 +927,7 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& q,
 		      bool b, Cartesian_tag, Ring_tag)
 {
-  typedef typename Pt::FT  FT;
+  typedef typename Kernel_traits<Pt>::Kernel::FT  FT;
   return ad_finite_edge_test_degenerated_ring_C2(p1.x(), p1.y(),
 						 FT(p1.weight()),
 						 p2.x(), p2.y(),
@@ -961,7 +961,7 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& q,
 		      bool b, Homogeneous_tag)
 {
-  typedef typename Pt::RT  RT;
+  typedef typename Kernel_traits<Pt>::Kernel::RT  RT;
   return
     ad_finite_edge_test_degeneratedH2(p1.hx(), p1.hy(),
 				      p1.hw(),
@@ -985,7 +985,7 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& p3,
 		      const Weighted_point< Pt, We >& q, bool b)
 {
-  typedef typename Pt::R::Rep_tag Tag;
+  typedef typename Kernel_traits<Pt>::Kernel::Rep_tag Tag;
   return
     ad_finite_edge_test_2<Pt,We,Method_tag>(p1, p2, p3, q, b, Tag());
 }
@@ -1003,7 +1003,7 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& q,
 		      bool b, Cartesian_tag, Sqrt_field_tag)
 {
-  typedef typename Pt::FT  FT;
+  typedef typename Kernel_traits<Pt>::Kernel::FT  FT;
   return
     ad_finite_edge_test_sqrtf_C2(p1.x(), p1.y(), FT(p1.weight()),
 				 p2.x(), p2.y(), FT(p2.weight()),
@@ -1022,7 +1022,7 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& q,
 		      bool b, Cartesian_tag, Ring_tag)
 {
-  typedef typename Pt::FT  FT;
+  typedef typename Kernel_traits<Pt>::Kernel::FT  FT;
   return
     ad_finite_edge_test_ring_C2(p1.x(), p1.y(), FT(p1.weight()),
 				p2.x(), p2.y(), FT(p2.weight()),
@@ -1056,7 +1056,7 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& q,
 		      bool b, Homogeneous_tag)
 {
-  typedef typename Pt::RT  RT;
+  typedef typename Kernel_traits<Pt>::Kernel::RT  RT;
   return
     aw_Voronoi_diagram_finite_edge_testH2(p1.hx(), p1.hy(), p1.hw(),
 					 RT(p1.weight()),
@@ -1080,7 +1080,7 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 		      const Weighted_point< Pt, We >& q,
 		      bool b)
 {
-  typedef typename Pt::R::Rep_tag Tag;
+  typedef typename Kernel_traits<Pt>::Kernel::Rep_tag Tag;
   return ad_finite_edge_test_2<Pt,We,Method_tag>
     (p1, p2, p3, p4, q, b, Tag());
 }
@@ -1144,7 +1144,7 @@ ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
 			const Weighted_point< Pt, We >& q,
 			bool b, Cartesian_tag, Sqrt_field_tag)
 {
-  typedef typename Pt::FT  FT;
+  typedef typename Kernel_traits<Pt>::Kernel::FT  FT;
   return
     ad_infinite_edge_test_sqrtf_C2(p2.x(), p2.y(), FT(p2.weight()),
 				   p3.x(), p3.y(), FT(p3.weight()),
@@ -1162,7 +1162,7 @@ ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
 			const Weighted_point< Pt, We >& q,
 			bool b, Cartesian_tag, Ring_tag)
 {
-  typedef typename Pt::FT  FT;
+  typedef typename Kernel_traits<Pt>::Kernel::FT  FT;
   return
     ad_infinite_edge_test_ring_C2(p2.x(), p2.y(), FT(p2.weight()),
 				  p3.x(), p3.y(), FT(p3.weight()),
@@ -1195,7 +1195,7 @@ ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
 			const Weighted_point< Pt, We >& q,
 			bool b, Homogeneous_tag)
 {
-  typedef typename Pt::RT  RT;
+  typedef typename Kernel_traits<Pt>::Kernel::RT  RT;
   return
     ad_infinite_edge_testH2(p2.hx(), p2.hy(), p2.hw(),
 			    RT(p1.weight()),
@@ -1215,7 +1215,7 @@ ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
 			const Weighted_point< Pt, We >& p4,
 			const Weighted_point< Pt, We >& q, bool b)
 {
-  typedef typename Pt::R::Rep_tag Tag;
+  typedef typename Kernel_traits<Pt>::Kernel::Rep_tag Tag;
   return ad_infinite_edge_test_2<Pt,We,Method_tag>
     (p2, p3, p4, q, b, Tag());
 }
@@ -1257,7 +1257,7 @@ ad_is_degenerate_edge_test_2(const Weighted_point< Pt, We >& p1,
 			     const Weighted_point< Pt, We >& p4,
 			     Cartesian_tag, Sqrt_field_tag)
 {
-  typedef typename Pt::FT  FT;
+  typedef typename Kernel_traits<Pt>::Kernel::FT  FT;
   return
     ad_is_degenerate_edge_test_sqrtf_C2(p1.x(), p1.y(), FT(p1.weight()),
 					p2.x(), p2.y(), FT(p2.weight()),
@@ -1274,7 +1274,7 @@ ad_is_degenerate_edge_test_2(const Weighted_point< Pt, We >& p1,
 			     const Weighted_point< Pt, We >& p4,
 			     Cartesian_tag, Ring_tag)
 {
-  typedef typename Pt::FT  FT;
+  typedef typename Kernel_traits<Pt>::Kernel::FT  FT;
   return
     ad_is_degenerate_edge_test_ring_C2(p1.x(), p1.y(), FT(p1.weight()),
 				       p2.x(), p2.y(), FT(p2.weight()),
@@ -1306,7 +1306,7 @@ ad_is_degenerate_edge_test_2(const Weighted_point< Pt, We >& p1,
 			     const Weighted_point< Pt, We >& p4,
 			     Homogeneous_tag)
 {
-  typedef typename Pt::RT  RT;
+  typedef typename Kernel_traits<Pt>::Kernel::RT  RT;
   return
     ad_is_degenerate_edge_testH2(p1.hx(), p1.hy(), p1.hw(),
 				 RT(p1.weight()),
@@ -1326,7 +1326,7 @@ ad_is_degenerate_edge_test_2(const Weighted_point< Pt, We >& p1,
 			     const Weighted_point< Pt, We >& p3,
 			     const Weighted_point< Pt, We >& p4)
 {
-  typedef typename Pt::R::Rep_tag Tag;
+  typedef typename Kernel_traits<Pt>::Kernel::Rep_tag Tag;
   return ad_is_degenerate_edge_test_2<Pt,We,Method_tag>
     (p1, p2, p3, p4, Tag());
 }

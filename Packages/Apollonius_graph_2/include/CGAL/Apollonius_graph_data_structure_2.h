@@ -10,7 +10,8 @@ template <class Vb, class Fb>
 class Apollonius_graph_data_structure_2
   : public Triangulation_data_structure_2<Vb, Fb>
 {
-private:
+  //private:
+public:
   typedef Triangulation_data_structure_2<Vb, Fb>       Tds_base;
   typedef typename Tds_base::Face                      Face;
   typedef typename Tds_base::Vertex                    Vertex;
