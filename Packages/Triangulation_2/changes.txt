@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+25 August 2004 Andreas Fabri
+- changes in doc_tex for pdflatex
+
 24 August 2004 Mariette
  - added a Weighted_tag in Triangulation_2 and Regular_triangulation_2
  - fixed the pb of copy_triangulation for hierarchies of regular triangulation
