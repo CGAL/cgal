@@ -91,13 +91,13 @@ void Geomview_stream::setup_geomview(const char *machine,
         std::cerr << "fork failed" << std::endl ;
         exit(-1);
     case 0:               // The child process
-        std::close(pipe_out[1]); // does not write to the out pipe,
-        std::close(pipe_in[0]);  // does not read from the in pipe.
+        close(pipe_out[1]); // does not write to the out pipe,
+        close(pipe_in[0]);  // does not read from the in pipe.
 
 
-        std::close (0);          // this is the file descriptor of cin
+        close (0);          // this is the file descriptor of cin
         dup(pipe_out[0]);   // we connect it to the pipe
-        std::close (1);          // this is the file descriptor of cout
+        close (1);          // this is the file descriptor of cout
         dup(pipe_in[1]);    // we connect it to the pipe
         if (machine && (strlen(machine)>0)) {
             std::ostrstream os;
@@ -134,7 +134,7 @@ void Geomview_stream::setup_geomview(const char *machine,
         out = pipe_out[1];
 
         char inbuf[10];
-        read(in, inbuf, 7);
+        ::read(in, inbuf, 7);
 
         cout << "done." << std::endl;
 
@@ -280,7 +280,7 @@ Geomview_stream&
 Geomview_stream::operator<<(const char *cptr)
 {
     int length = strlen(cptr);
-    if (length != write(out, cptr, length)) {
+    if (length != ::write(out, cptr, length)) {
         std::cerr << "write problem in the pipe while sending data to geomview"
              << std::endl;
         exit(-1);
@@ -295,13 +295,13 @@ Geomview_stream::operator<<(int i)
     // Depending on the mode chosen
     if (in_binary_mode()) {
         // we write raw binary data to the stream.
-        write(out, (char*)&i, sizeof(i));
+        ::write(out, (char*)&i, sizeof(i));
     } else {
         // transform the int in a character sequence and put whitespace around
         std::ostrstream str;
         str << i << ' ' << ends;
         char *bptr = str.str();
-        write(out, bptr, int(strlen(bptr)));
+        ::write(out, bptr, int(strlen(bptr)));
     }
     trace(i);
 
@@ -313,14 +313,14 @@ Geomview_stream::operator<<(double d)
     float f = d;
 
     if (in_binary_mode()) {
-        write(out, (char*)&f, sizeof(f));
+        ::write(out, (char*)&f, sizeof(f));
     } else {
         // 'copy' the float in a string and append a blank
         ostrstream str;
         str << f << " " << ends ;
         char *bptr = str.str();
 
-        write(out, bptr, int(strlen(bptr)));
+        ::write(out, bptr, int(strlen(bptr)));
     }
     trace(f);
     return *this;
@@ -521,14 +521,14 @@ Geomview_stream&
 Geomview_stream::operator>>(char *expr)
 {
     // skip whitespace
-    read(in, expr, 1);
+    ::read(in, expr, 1);
     while(expr[0] != '('){
-        read(in, expr, 1);
+        ::read(in, expr, 1);
     }
     int pcount = 1;
     int i = 1;
     while (1) {
-        read(in, &expr[i], 1);
+        ::read(in, &expr[i], 1);
         if (expr[i] == ')'){
             pcount--;
         } else if (expr[i] == '('){
