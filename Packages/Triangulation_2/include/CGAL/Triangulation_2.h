@@ -891,19 +891,14 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int li)
   switch(lt) {
   case FACE:
     return insert_in_face(p,loc);
-    break;
   case EDGE:
     return insert_in_edge(p,loc,li);
-    break;
   case OUTSIDE_CONVEX_HULL:
     return  insert_outside_convex_hull(p,loc);
-    break;
   case OUTSIDE_AFFINE_HULL:
    return  insert_outside_affine_hull(p);
-   break; 
   case VERTEX:
     return loc->vertex(li);
-    break;
   }
   CGAL_triangulation_assertion(false);  // locate step failed
   return Vertex_handle();
