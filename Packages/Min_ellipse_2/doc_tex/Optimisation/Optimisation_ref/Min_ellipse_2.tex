@@ -118,7 +118,7 @@ useful for reconstructing $me(P)$ from a given support set $S$ of $P$.
 \ccConstructor{ template < class InputIterator >
                 Min_Ellipse_2( InputIterator  first,
                                InputIterator  last,
-                               bool           randomize = false,
+                               bool           randomize,
                                Random&        random    = default_random,
                                const Traits&  traits    = Traits()   );}{
         creates a variable \ccVar\ of type \ccClassTemplateName.
@@ -132,38 +132,6 @@ useful for reconstructing $me(P)$ from a given support set $S$ of $P$.
         performance (see example below).
         \ccPrecond The value type of \ccc{first} and \ccc{last}
         is \ccc{Point}.}
-
-\emph{Note:} In case a compiler does not support member templates yet,
-we provide specialized constructors instead. In the current release
-there are constructors for C arrays (using pointers as iterators), for
-the \stl\ sequence containers \ccc{vector<Point>} and \ccc{list<Point>}
-and for the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
-
-\ccHidden
-\ccConstructor{ Min_ellipse_2( const Point*   first,
-                               const Point*   last,
-                               bool           randomize = false,
-                               Random&        random    = default_random,
-                               const Traits&  traits    = Traits());}{
-        STL-like constructor for random access iterators.}
-
-\ccHidden
-\ccConstructor{ Min_ellipse_2( list<Point>::const_iterator  first,
-                               list<Point>::const_iterator  last,
-                               bool           randomize = false,
-                               Random&        random    = default_random,
-                               const Traits&  traits    = Traits());}{
-        STL-like constructor for sequence container list<Point>.}
-
-\ccHidden
-\ccConstructor{ Min_ellipse_2( istream_iterator<Point,ptrdiff_t>  first,
-                               istream_iterator<Point,ptrdiff_t>  last,
-                               bool           randomize = false,
-                               Random&        random    = default_random,
-                               const Traits&  traits    = Traits()     );}{
-        STL-like constructor for input stream iterator
-        istream_iterator<Point,ptrdiff_t>.}
-
 
 \ccConstructor{ Min_ellipse_2( const Traits& traits = Traits());}{
         creates a variable \ccVar\ of type \ccClassTemplateName.
