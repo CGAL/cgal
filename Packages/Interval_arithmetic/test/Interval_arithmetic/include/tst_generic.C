@@ -313,6 +313,8 @@ cout << CGAL_is_finite(d.upper_bound()) << CGAL_is_valid(d.upper_bound())<<endl;
   cout << (int) tmpflag << endl;
   flag = tmpflag && flag;
 
+  cout << (int) (0.0 < IA(1)) << endl;
+
 #ifdef ADVANCED
   CGAL_FPU_set_rounding_to_nearest();
 #endif
