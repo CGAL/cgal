@@ -21,6 +21,8 @@
 #ifndef CGAL_CURVE_ORIGIN_TRAITS_2_H
 #define CGAL_CURVE_ORIGIN_TRAITS_2_H
 
+#include <list>
+
 CGAL_BEGIN_NAMESPACE
 
 /*! A generic traits class for maintaining an arrangement of X-monotone curves,
@@ -36,27 +38,72 @@ CGAL_BEGIN_NAMESPACE
 template <class Traits_>
 class Arr_curve_origin_traits_2 : public Traits_ {
 public:
-  typedef Traits_                               Traits;
-  typedef typename Traits::Curve_2              Curve_2;
-  typedef typename Traits::X_monotone_curve_2   Org_x_monotone_curve_2;
-  typedef typename Traits::Point_2              Point_2;
+  typedef Traits_                                       Traits;
+  typedef typename Traits::Curve_2                      Curve_2;
+  typedef typename Traits::Point_2                      Point_2;
+  typedef typename Traits::X_monotone_curve_2           Org_x_monotone_curve_2;
 
   class X_monotone_curve_2 : public Org_x_monotone_curve_2 {
   private:
-	const Curve_2 * m_origin;
-
+    enum {CURVE_2, X_MONOTONE_CURVE_2} m_type;
+    union {
+      Curve_2 * m_curve;
+      X_monotone_curve_2 * m_x_monotone_curve;
+    } m_origin;
+    
   public:
+    /*! Parameterless constructor */
     X_monotone_curve_2() {}
     
-    X_monotone_curve_2(const Org_x_monotone_curve_2 & cv, const Curve_2 * origin) :
-      Org_x_monotone_curve_2(cv),
-      m_origin(origin)
-    {}
+    /*! Constructor */
+    X_monotone_curve_2(const Org_x_monotone_curve_2 & cv,
+                       Curve_2 * origin) :
+      Org_x_monotone_curve_2(cv)
+    {
+      m_type = CURVE_2;
+      m_origin.m_curve = origin;
+    }
 
-    const Curve_2 * get_origin() const { return m_origin; }
+    /*! Constructor */
+    X_monotone_curve_2(const Org_x_monotone_curve_2 & cv,
+                       X_monotone_curve_2 * origin) :
+      Org_x_monotone_curve_2(cv)
+    {
+      m_type = X_MONOTONE_CURVE_2;
+      m_origin.m_x_monotone_curve = origin;
+    }
 
-    // void set_origin(Curve_2 * origin) { m_origin = origin; }
+    /*! Constructor */
+    X_monotone_curve_2(const X_monotone_curve_2 * cv)
+    {
+      m_type = cv->m_type;
+      if (m_type == CURVE_2)
+        m_origin.m_curve = cv->m_origin.m_curve;
+      else
+        m_origin.m_x_monotone_curve = cv->m_origin.m_x_monotone_curve;
+    }
+
+    /*! obtains the curve type */
+    bool is_origin_x_monotone() const
+    {
+      return (m_type == X_MONOTONE_CURVE_2);
+    }
+
+    /*! obtains the curve origin */
+    Curve_2 * get_origin_curve() const
+    {
+      return m_origin.m_curve;
+    }
+
+    /*! obtains the curve x-monotone origin */
+    X_monotone_curve_2 * get_origin_x_monotone_curve() const
+    {
+      return m_origin.m_x_monotone_curve;
+    }
   };
+
+  typedef typename std::list<Curve_2*>                  List_curve_2;
+  typedef typename std::list<X_monotone_curve_2*>       List_x_monotone_curve_2;
 
   // For backward compatibility:
   typedef Point_2                               Point;
@@ -66,8 +113,25 @@ public:
 private:
   Traits m_traits;
 
+  mutable List_curve_2 m_curves;
+
+  mutable List_x_monotone_curve_2 m_x_monotone_curves;
+
 public:
-  Arr_curve_origin_traits_2 () : m_traits() {}
+  Arr_curve_origin_traits_2() : m_traits() {}
+
+  ~Arr_curve_origin_traits_2()
+  {
+    typename List_curve_2::const_iterator cit;
+    for (cit = m_curves.begin(); cit != m_curves.end(); ++cit)
+      delete *cit;
+    m_curves.clear();
+    typename List_x_monotone_curve_2::const_iterator xcit;
+    for (xcit = m_x_monotone_curves.begin(); xcit != m_x_monotone_curves.end();
+         ++xcit)
+      delete *xcit;
+    m_x_monotone_curves.clear();
+  }
   
   /*! Cut the given curve into x-monotone subcurves and insert them to the
    * given output iterator. While segments are x_monotone, still need to pass
@@ -83,9 +147,10 @@ public:
     std::list<Org_x_monotone_curve_2>  org_x_curves;
     m_traits.curve_make_x_monotone(cv, std::back_inserter(org_x_curves));
     typename std::list<Org_x_monotone_curve_2>::const_iterator it;
+    Curve_2 * stored_cv = new Curve_2(cv);
+    m_curves.push_back(stored_cv);
     for (it = org_x_curves.begin(); it != org_x_curves.end(); it++)
-      *o++ = X_monotone_curve_2(*it, &cv);
-    
+      *o++ = X_monotone_curve_2(*it, stored_cv);
     return o;
   } 
 
@@ -104,8 +169,15 @@ public:
   {
     Org_x_monotone_curve_2 org_c1, org_c2;
     m_traits.curve_split(cv, org_c1, org_c2, p);
-    c1 = X_monotone_curve_2(org_c1, cv.get_origin());
-    c2 = X_monotone_curve_2(org_c2, cv.get_origin());
+    X_monotone_curve_2 * stored_cv;
+    if (cv.is_origin_x_monotone())
+      stored_cv = cv.get_origin_x_monotone_curve();
+    else {
+      stored_cv = new X_monotone_curve_2(cv);
+      m_x_monotone_curves.push_back(stored_cv);
+    }
+    c1 = X_monotone_curve_2(org_c1, stored_cv);
+    c2 = X_monotone_curve_2(org_c2, stored_cv);
   }
 };
 
