@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.54
+- Functions cw(int) and ccw(int) no longer use an if-statement
+  but a lookup table. It leads to more performance [af]
+
 Ver 7.53
 - fixed a long line in Trivial_iterator.h
 - fixed is_valid() and mirror_vertex in  Triangulation_ds_face_2.h
