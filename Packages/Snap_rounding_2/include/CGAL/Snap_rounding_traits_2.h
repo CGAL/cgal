@@ -26,7 +26,6 @@
 #include <map>
 #include <list>
 
-#include <CGAL/leda_integer.h>
 #include <CGAL/Arr_segment_cached_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -87,31 +86,48 @@ class Minkowski_sum_with_pixel_2 {
  public:
   void operator()(std::list<Point_2>& points_list,
                              Segment_2 s,
-                             NT unit_squere)
+                             NT unit_square)
   {
      Comparison_result cx =  _gt->compare_x_2_object()(s.source(),s.target());
+     Comparison_result cy =  _gt->compare_y_2_object()(s.source(),s.target());
      NT x1 = s.source().x(),y1 = s.source().y(),x2 =
        s.target().x(),y2 = s.target().y();
      Point_2 ms1,ms2,ms3,ms4,ms5,ms6;// minkowski sum points
 
      if(cx == SMALLER) {
-       // we use unit_squere instead of unit_squere / 2 in order to
-       // find tangency points which are not supported by kd-tree
-       ms1 = Point_2(x1 - 0.6 * unit_squere,y1 - 0.6 * unit_squere);
-       ms2 = Point_2(x1 - 0.6 * unit_squere,y1 + 0.6 * unit_squere);
-       ms3 = Point_2(x1 + 0.6 * unit_squere,y1 - 0.6 * unit_squere);
-       ms4 = Point_2(x2 + 0.6 * unit_squere,y2 - 0.6 * unit_squere);
-       ms5 = Point_2(x2 + 0.6 * unit_squere,y2 + 0.6 * unit_squere);
-       ms6 = Point_2(x2 - 0.6 * unit_squere,y2 + 0.6 * unit_squere);
+       if(cy == SMALLER) {
+         // we use unit_square instead of unit_square / 2 in order to
+         // find tangency points which are not supported by kd-tree
+         ms1 = Point_2(x1 - unit_square,y1 - unit_square);
+         ms2 = Point_2(x1 - unit_square,y1 + unit_square);
+         ms3 = Point_2(x1 + unit_square,y1 - unit_square);
+         ms4 = Point_2(x2 + unit_square,y2 - unit_square);
+         ms5 = Point_2(x2 + unit_square,y2 + unit_square);
+         ms6 = Point_2(x2 - unit_square,y2 + unit_square);
+       } else {
+         ms1 = Point_2(x1 - unit_square,y1 - unit_square);
+         ms2 = Point_2(x1 - unit_square,y1 + unit_square);
+         ms3 = Point_2(x1 + unit_square,y1 + unit_square);
+         ms4 = Point_2(x2 + unit_square,y2 - unit_square);
+         ms5 = Point_2(x2 + unit_square,y2 + unit_square);
+         ms6 = Point_2(x2 - unit_square,y2 - unit_square);
+       }
      } else {
-       // we use unit_squere instead of unit_squere / 2 in order to
-       // find tangency points which are not supported by kd-tree
-       ms1 = Point_2(x1 + 0.6 * unit_squere,y1 - 0.6 * unit_squere);
-       ms2 = Point_2(x1 - 0.6 * unit_squere,y1 - 0.6 * unit_squere);
-       ms3 = Point_2(x1 + 0.6 * unit_squere,y1 + 0.6 * unit_squere);
-       ms4 = Point_2(x2 + 0.6 * unit_squere,y2 + 0.6 * unit_squere);
-       ms5 = Point_2(x2 - 0.6 * unit_squere,y2 + 0.6 * unit_squere);
-       ms6 = Point_2(x2 - 0.6 * unit_squere,y2 - 0.6 * unit_squere);
+       if(cy == SMALLER) {
+         ms1 = Point_2(x1 + unit_square,y1 - unit_square);
+         ms2 = Point_2(x1 + unit_square,y1 + unit_square);
+         ms3 = Point_2(x1 - unit_square,y1 - unit_square);
+         ms4 = Point_2(x2 + unit_square,y2 + unit_square);
+         ms5 = Point_2(x2 - unit_square,y2 + unit_square);
+         ms6 = Point_2(x2 - unit_square,y2 - unit_square);
+       } else {
+         ms1 = Point_2(x1 + unit_square,y1 - unit_square);
+         ms2 = Point_2(x1 + unit_square,y1 + unit_square);
+         ms3 = Point_2(x1 - unit_square,y1 + unit_square);
+         ms4 = Point_2(x2 + unit_square,y2 - unit_square);
+         ms5 = Point_2(x2 - unit_square,y2 - unit_square);
+         ms6 = Point_2(x2 - unit_square,y2 + unit_square);
+       }
      }
 
      points_list.push_back(ms1);

@@ -135,6 +135,10 @@ struct hot_pixel_dir_cmp
   bool operator ()(const Hot_Pixel<Rep_> *h1,const Hot_Pixel<Rep_> *h2);
 };
 
+#ifdef KD_DEBUG
+int number_of_false_hp;
+#endif
+
 template<class Rep_,class OutputContainer>
 class Snap_rounding_2 {
 
@@ -191,8 +195,6 @@ private:
                    NT pixel_size,
                    bool int_output,
                    Multiple_kd_tree<Rep,Hot_Pixel<Rep> *> *mul_kd_tree);
-
-  //  void list_copy(std::list<Point_2>& target,std::list<Point_2>& source);
 };
 
 // ctor
@@ -557,6 +559,12 @@ void Snap_rounding_2<Rep_,OutputContainer>::
         (*iter)->set_direction(seg_dir);
         hot_pixels_intersected_set.insert(*iter);
       }
+
+#ifdef KD_DEBUG
+      else
+        ++number_of_false_hp;
+#endif
+
     }
 
     number_of_intersections = hot_pixels_intersected_set.size();
@@ -685,6 +693,10 @@ void snap_rounding_2(
   bool int_output = true,
   unsigned int number_of_kd_trees = 1)
   {
+#ifdef KD_DEBUG
+    number_of_false_hp = 0;
+#endif
+
     std::list<Segment_data<Rep_> > seg_list;
     Multiple_kd_tree<Rep_,Hot_Pixel<Rep_> *> *mul_kd_tree;
 
@@ -702,6 +714,12 @@ void snap_rounding_2(
          seg_list,&mul_kd_tree);
     s.iterate(output_container,pixel_size,int_output,do_isr,seg_list,
          mul_kd_tree);
+
+#ifdef KD_DEBUG
+    std::cout << "Overall number of false hot pixels in all the queries : "
+              << number_of_false_hp << std::endl;
+#endif
+
   }
 
 CGAL_END_NAMESPACE

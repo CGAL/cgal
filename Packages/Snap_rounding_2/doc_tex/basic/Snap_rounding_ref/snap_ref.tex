@@ -77,9 +77,7 @@ grid just as defined by the Snap Rounding algorithm. Note that the number type o
 the representation remains {\ccc Traits::FT}. Otherwise, the plane is tiled
 with unit pixels with size {\ccc pixel\_size} and each vertice of the output is
 represented by the coordinates of the cenetr of the hot pixel that contains it.
-The seventh parameter is desribed below.
-
-\ccPrecond{\ccc{pixel_size} must have a positive value and \ccc{number_of_kd_trees} must be a positive integer.}
+The seventh parameter is desribed next.
 
 \begin{ccAdvanced}
 
@@ -122,6 +120,9 @@ The seventh parameter is desribed below.
  always, one kd-tree (the default) is sufficient.
 
 \end{ccAdvanced}
+
+\ccPrecond{\ccc{pixel_size} must have a positive value and \ccc{number_of_kd_trees} must be a positive integer.}
+
 
 \end{ccRefFunction}
 %\end{ccRefClass}
