@@ -137,7 +137,8 @@ main( int argc, char **argv) {
                       if (ch=='|') {
                         in_file2 >> number;
                         out_file << "<A "<< search(list,number)<<">" 
-                                 << "<img SRC=\""<< argv[4] << "/index_arrow.gif\" ALT=\"reference\" WIDTH=\"14\" HEIGHT=\"12\" VALIGN=BOTTOM BORDER=0></A> ";  
+                                 // << "<img SRC=\""<< argv[4] << "/index_arrow.gif\" ALT=\"reference\" WIDTH=\"14\" HEIGHT=\"12\" VALIGN=BOTTOM BORDER=0></A> ";  
+                                 << "<img SRC=\"./index_arrow.gif\" ALT=\"reference\" WIDTH=\"14\" HEIGHT=\"12\" VALIGN=BOTTOM BORDER=0></A> ";  
                       }
                     }  
                     out_file << ch;
