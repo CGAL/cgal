@@ -2233,15 +2233,19 @@ create_star2_3(Vertex* v, Cell* c, int li, Cell * prev_c, Vertex * prev_v)
       while ( n->get_in_conflict_flag() > 0) {
 // La boucle principale est degagee des problemes d'orientation.
 // Reste encore avant et apres...
-// Pour apres, c'est faisable (mais bof), et ca doit permettre de nettoyer le debut.
+// Pour apres, c'est faisable (mais bof), et ca doit permettre 
+// de nettoyer le debut.
 	CGAL_triangulation_assertion( n != c );
-        if (n->neighbor(0) != cur && n->vertex(0) != vj1 && n->vertex(0) != vj2)
+        if (n->neighbor(0) != cur &&
+            n->vertex(0) != vj1 && n->vertex(0) != vj2)
           cur = n, n = n->neighbor(0);
         else
-        if (n->neighbor(1) != cur && n->vertex(1) != vj1 && n->vertex(1) != vj2)
+        if (n->neighbor(1) != cur &&
+            n->vertex(1) != vj1 && n->vertex(1) != vj2)
           cur = n, n = n->neighbor(1);
         else
-        if (n->neighbor(2) != cur && n->vertex(2) != vj1 && n->vertex(2) != vj2)
+        if (n->neighbor(2) != cur && 
+            n->vertex(2) != vj1 && n->vertex(2) != vj2)
           cur = n, n = n->neighbor(2);
         else
 	  cur = n, n = n->neighbor(3);
