@@ -104,7 +104,8 @@ void test(const Cont &)
   Vect v0;
   const Cont c5(v0.begin(), v0.end());
   Cont c6(c5.begin(), c5.end());
-  Cont c7(c0.begin(), c0.end(), typename Cont::allocator_type());
+  typename Cont::allocator_type Al;
+  Cont c7(c0.begin(), c0.end(), Al);
   Cont c8;
 #ifndef __SUNPRO_CC
   c8.insert(c0.rbegin(), c0.rend());
