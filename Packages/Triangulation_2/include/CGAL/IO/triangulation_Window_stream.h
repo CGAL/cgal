@@ -78,10 +78,10 @@ operator<<(Window_stream& os, const Weighted_point< Point, We > &p)
 {
   double cx = to_double(p.point().x()),
          cy = to_double(p.point().y()),
-         r = to_double(p.weight());
+         rr = to_double(p.weight());
 
   os<<p.point();
-  os.draw_circle(cx, cy , /*sqrt*/(r));
+  os.draw_circle(cx, cy , sqrt(rr));
   return os;
 }
 
@@ -91,12 +91,13 @@ Window_stream& operator>>(Window_stream &os, Weighted_point< Point, We > &wp)
   double cx, cy, x1, y1;
   os.read_mouse(cx,cy);
   os.read_mouse_circle(cx,cy, x1, y1);
-  Point center(cx, cy);
+  //os.read_mouse(x1,y1);
+  Point center(cx,cy);
 
-  We sr = We (sqrt( square(cx-x1)+square(cy-y1) ) );
+  We sr = We (sqrt( CGAL_NTS square(cx-x1)+ CGAL_NTS square(cy-y1) ) );
 
-  os.draw_circle(cx, cy , sr );
-  wp = Weighted_point< Point, We >(center, sr);
+  os.draw_circle(cx, cy , sr);
+  wp = Weighted_point< Point, We >(center, CGAL_NTS square(sr));
   return os;
 }
 
