@@ -138,7 +138,7 @@ void intersection( const Polyhedron& P) {
         box_ptr.push_back( &*j);
     }
     CGAL::box_self_intersection_d( box_ptr.begin(), box_ptr.end(),
-                                   Intersect_facets(), 2000);
+                                   Intersect_facets(), std::ptrdiff_t(2000));
 }
 
 int main() {
