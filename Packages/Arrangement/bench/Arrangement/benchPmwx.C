@@ -24,8 +24,11 @@
 #include <CGAL/IO/Conic_arc_2_Window_stream.h>
 #elif defined(USE_LEDA_SEGMENT_TRAITS)
 #include <CGAL/Arr_leda_segment_traits_2.h>
-#elif defined(USE_CACHED_TRAITS)
+#elif defined(USE_SEGMENT_CACHED_TRAITS)
 #include <CGAL/Arr_segment_cached_traits_2.h>
+#elif defined(USE_POLYLINE_TRAITS)
+#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #else
 #include <CGAL/Arr_segment_traits_2.h>
 #endif
@@ -55,6 +58,8 @@
 
 #if defined(USE_CONIC_TRAITS)
 #include "Conic_reader.h"
+#elif defined(USE_POLYLINE_TRAITS)
+#include "Polyline_reader.h"
 #else
 #include "Segment_reader.h"
 #endif
@@ -65,7 +70,7 @@ typedef CGAL::leda_rat_kernel_traits                    Kernel;
 #elif defined(USE_MY_KERNEL)
 typedef CGAL::Pm_segment_traits_leda_kernel_2           Kernel;
 #define KERNEL_TYPE "Partial Leda"
-#elif defined(USE_SIMPLE_CARTESIAN)
+#elif defined(USE_SIMPLE_CARTESIAN_KERNEL)
 typedef CGAL::Simple_cartesian<WNT>                     Kernel;
 #define KERNEL_TYPE "Simple Cartesian"
 #else
@@ -85,11 +90,17 @@ typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
 #elif defined(USE_LEDA_SEGMENT_TRAITS)
 typedef CGAL::Arr_leda_segment_traits_2<Kernel>         Traits;
 #define TRAITS_TYPE "Leda Segments"
-#elif defined(USE_CACHED_TRAITS)
+#elif defined(USE_SEGMENT_CACHED_TRAITS)
 typedef CGAL::Arr_segment_cached_traits_2<Kernel>       Traits;
 #define TRAITS_TYPE "Cached Segments"
-#elif defined(USE_CACHED_TRAITS)
-typedef CGAL::Arr_segment_cached_traits_2<Kernel>       Traits;
+#elif defined(USE_POLYLINE_TRAITS)
+typedef CGAL::Arr_segment_traits_2<Kernel>              SegmentTraits;
+typedef SegmentTraits::Curve_2                          Segment_2;
+typedef CGAL::Arr_polyline_traits_2<SegmentTraits>      Traits;
+#define TRAITS_TYPE "Polylines"
+#elif defined(USE_LEDA_POLYLINE_TRAITS)
+typedef CGAL::Arr_leda_polyline_traits_2<Kernel>        Traits;
+#define TRAITS_TYPE "Leda Polylines"
 #else
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 #define TRAITS_TYPE "Segments"
@@ -99,7 +110,7 @@ typedef CGAL::Pm_default_dcel<Traits>                   Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>                 Pm;
 typedef CGAL::Planar_map_with_intersections_2<Pm>       Pmwx;
 typedef Traits::Point_2                                 Point;
-typedef Traits::X_monotone_curve_2                               Curve;
+typedef Traits::X_monotone_curve_2                      Curve;
 typedef std::list<Curve>                                CurveList;
 
 typedef CGAL::Pm_default_point_location<Pm>             Trap_point_location;
@@ -119,7 +130,7 @@ inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
   return os;
 }
 
-#if defined(USE_CACHED_TRAITS)
+#if defined(USE_SEGMENT_CACHED_TRAITS)
 inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
                                         const Curve & curve)
 {
@@ -140,7 +151,7 @@ inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
 
 #else
 
-#if defined(USE_CACHED_TRAITS)
+#if defined(USE_SEGMENT_CACHED_TRAITS)
 inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
                                         const Curve & curve)
 {
@@ -148,6 +159,22 @@ inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
   return os;
 }
 #endif
+#endif
+
+#if defined(USE_POLYLINE_TRAITS)
+inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os, 
+                                        const Curve & cv)
+{
+  Curve::const_iterator ps = cv.begin();
+  Curve::const_iterator pt = ps; pt++;
+
+  while (pt != cv.end())
+  {
+    os << Segment_2(*ps, *pt);
+    ps++; pt++;
+  }
+  return (os);
+}
 #endif
 
 inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os, Pmwx & pm)
@@ -183,6 +210,8 @@ public:
   {
 #if defined(USE_CONIC_TRAITS)
     Conic_reader<Traits> reader;
+#elif defined(USE_POLYLINE_TRAITS)
+    Polyline_reader<Traits> reader;
 #else
     Segment_reader<Traits> reader;
 #endif

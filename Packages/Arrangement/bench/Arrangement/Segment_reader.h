@@ -50,7 +50,7 @@ public:
         return -1;
       }
 
-#if defined(USE_LAZY_RAT) || defined(USE_LAZY_QUOTIENT)
+#if defined(USE_LAZY_RATIONAL_NT) || defined(USE_LAZY_QUOTIENT_MP_FLOAT_NT)
       WNT lazy_exact_x0(x0);
       WNT lazy_exact_x1(x1);
       WNT lazy_exact_y0(y0);
