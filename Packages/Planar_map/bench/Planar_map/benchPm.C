@@ -16,8 +16,8 @@
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/Pm_segment_traits_2.h>
-#include <CGAL/IO/Pm_iostream.h>
 #include <CGAL/IO/Window_stream.h>
+#include <CGAL/IO/Planar_map_iostream.h>
 #include "CGAL/bench.h"
 #include <iostream>
 #include <fstream>
@@ -148,6 +148,13 @@ public:
 
 typedef CGAL::Bench<Construct_Pm> ConstructPmBench;
 
+#if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
+CGAL::Window_stream & operator<<(CGAL::Window_stream & os, const Point & p)
+{ return os << leda_point(p.xcoordD(), p.ycoordD()); } 
+CGAL::Window_stream & operator<<(CGAL::Window_stream & os, const Curve & c)
+{ return os << leda_segment(c.xcoord1D(),c.ycoord1D(),c.xcoord2D(),c.ycoord2D()); }
+#endif
+
 /*!
  */
 class Display_Pm : public Basic_Pm {
@@ -179,7 +186,7 @@ public:
     m_window->set_flush(1);
     m_window->flush();
   }
-
+  
   /*!
    */
   int init()
