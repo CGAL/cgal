@@ -22,7 +22,7 @@ RADU URSU
 2) The demo for Min_quadrilateral_2				[done]
 3) Add << operator for Alpha_shapes_2
 4) Make attach uniform for tools and layers. (pointer vs ref)	[done]
-5) Split the demos .C files in 2 .h and .C
+5) Split the demos .C files in 2 .h and .C			[not possible]
 6) Detect the files with lines too long and remove the problem
 
 
