@@ -24,11 +24,11 @@
 
 #ifdef NDEBUG
 #undef CGAL_NEF_DEBUG
-#define CGAL_NEF_DEBUG 0
+#define CGAL_NEF_DEBUG 1
 #endif
 
 #ifndef CGAL_NEF_DEBUG
-#define CGAL_NEF_DEBUG 0
+#define CGAL_NEF_DEBUG 1
 #endif
 
 #ifndef NDEBUG
