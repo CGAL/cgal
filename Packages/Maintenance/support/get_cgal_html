@@ -1,0 +1,4 @@
+#!/bin/sh
+
+/sw/bin/w3mir -cfgfile /projects/CGAL/submissions/autohandle/data/cgal_w3mir_cfg $1
+
