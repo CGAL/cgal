@@ -930,7 +930,8 @@ construct_cluster(Vertex_handle v,
       c.smallest_angle.second = second;
     }
 
-  bool all_edges_in_cluster=false;
+  bool all_edges_in_cluster=false; // tell if all incident edges are
+  // in the cluster
   if(begin==end)
     all_edges_in_cluster=true;
 
