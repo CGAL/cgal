@@ -7,6 +7,11 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: changed to support M$ compilers acc. to GJ's suggestions.
+ALL : updated CGAL-version to 2.1.
+GLOB: removed CGAL_directories (contained only two variables).
+GLOB: no support for gcc prior to 2.8 anymore.
+GLOB: fixed little problem with install-script name - now $CGAL_INSTALL_CGAL.
 GLOB: fixed EXTRA_OBJECTS bug (workaround_4_irix was addded ALWAYS).
 GLOB: changed EXTRA_OBJECTS for Intervall_arithmetic workaround on irix6.
 GLOB: define CGAL_CC in include makefiles.
