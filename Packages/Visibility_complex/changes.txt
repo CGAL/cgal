@@ -1,3 +1,10 @@
+18 May 2004 Radu Ursu
+- modified doc in doc_tex/Visibility_complex to made it work with the new 
+  Manual tools
+- commented out a couple of macros like \todo which are not defined
+- added gif files needed by latex_to_html conversion in 
+  doc_tex/Visibility_complex/fig
+
 30 April 2004 Andreas Fabri
 - replaced global function calls with kernel functors
 

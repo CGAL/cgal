@@ -1777,9 +1777,19 @@ Packages/Visibility_complex/demo/Visibility_complex/pixmaps/cw_flip_parallele.xp
 Packages/Visibility_complex/demo/Visibility_complex/pixmaps/flip.xpm -text
 Packages/Visibility_complex/demo/Visibility_complex/pixmaps/flip_parallele.xpm -text
 Packages/Visibility_complex/demo/Visibility_complex/pixmaps/gmin.xpm -text
+Packages/Visibility_complex/doc_tex/Visibility_complex/fig/bitangent.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/Visibility_complex/fig/configuration.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/Visibility_complex/fig/constraint-edge.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/Visibility_complex/fig/design.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/Visibility_complex/fig/edge-face.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/Visibility_complex/fig/edge-vertex.gif -text svneol=unset#unset
 Packages/Visibility_complex/doc_tex/Visibility_complex/fig/halfedge.ips -text
 Packages/Visibility_complex/doc_tex/Visibility_complex/fig/hds_design.ips -text
 Packages/Visibility_complex/doc_tex/Visibility_complex/fig/loop.ips -text
+Packages/Visibility_complex/doc_tex/Visibility_complex/fig/order.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/Visibility_complex/fig/perturbation.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/Visibility_complex/fig/points.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/Visibility_complex/fig/vis-complex.gif -text svneol=unset#unset
 Packages/Visibility_complex/doc_tex/Visibility_complex/halfedge.gif -text svneol=unset#unset
 Packages/Visibility_complex/doc_tex/Visibility_complex/halfedge_small.gif -text svneol=unset#unset
 Packages/Visibility_complex/doc_tex/Visibility_complex/hds_design_col.gif -text svneol=unset#unset
