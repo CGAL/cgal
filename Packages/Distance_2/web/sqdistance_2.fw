@@ -86,7 +86,7 @@ Saarbruecken@)
 CGAL_BEGIN_NAMESPACE
 
 
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
+#if defined CGAL_HOMOGENEOUS_H
 template <class RT>
 inline RT wmult(Homogeneous<RT>*, const RT &a, const RT & w)
 {
@@ -115,7 +115,36 @@ inline RT wmult(Homogeneous<RT>*, const RT &a,
 }
 #endif // CGAL_HOMOGENEOUS_H
 
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
+#if defined CGAL_SIMPLE_HOMOGENEOUS_H
+template <class RT>
+inline RT wmult(Simple_homogeneous<RT>*, const RT &a, const RT & w)
+{
+    return a*w;
+}
+
+template <class RT>
+inline RT wmult(Simple_homogeneous<RT>*,
+         const RT &a, const RT & w1, const RT & w2)
+{
+    return a*w1*w2;
+}
+
+template <class RT>
+inline RT wmult(Simple_homogeneous<RT>*, const RT &a,
+                    const RT & w1, const RT & w2, const RT & w3)
+{
+    return a*w1*w2*w3;
+}
+
+template <class RT>
+inline RT wmult(Simple_homogeneous<RT>*, const RT &a,
+                const RT & w1, const RT & w2, const RT & w3, const RT & w4)
+{
+    return a*w1*w2*w3*w4;
+}
+#endif // CGAL_SIMPLE_HOMOGENEOUS_H
+
+#if defined CGAL_CARTESIAN_H
 template <class RT>
 inline RT wmult(Cartesian<RT> *, const RT &a, const RT & )
 {
@@ -143,6 +172,35 @@ inline RT wmult(Cartesian<RT> *, const RT &a,
     return a;
 }
 #endif // CGAL_CARTESIAN_H
+
+#if defined CGAL_SIMPLE_CARTESIAN_H
+template <class RT>
+inline RT wmult(Simple_cartesian<RT> *, const RT &a, const RT & )
+{
+    return a;
+}
+
+template <class RT>
+inline RT wmult(Simple_cartesian<RT> *,
+      const RT &a, const RT & , const RT & )
+{
+    return a;
+}
+
+template <class RT>
+inline RT wmult(Simple_cartesian<RT> *, const RT &a,
+            const RT & , const RT & , const RT & )
+{
+    return a;
+}
+
+template <class RT>
+inline RT wmult(Simple_cartesian<RT> *, const RT &a,
+            const RT & , const RT & , const RT & , const RT & )
+{
+    return a;
+}
+#endif // CGAL_SIMPLE_CARTESIAN_H
 
 CGAL_END_NAMESPACE
 
@@ -230,7 +288,7 @@ wcross(const Vector_2<R> &u,
     return (typename R::RT)(u.hx()*v.hy() - u.hy()*v.hx());
 }
 
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
+#if defined CGAL_HOMOGENEOUS_H
 template <class RT>
 inline
 RT wcross_impl(const Homogeneous<RT>*,const Point_2< Homogeneous<RT> > &p,
@@ -243,7 +301,22 @@ RT wcross_impl(const Homogeneous<RT>*,const Point_2< Homogeneous<RT> > &p,
 }
 #endif // CGAL_HOMOGENEOUS_H
 
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
+#if defined CGAL_SIMPLE_HOMOGENEOUS_H
+template <class RT>
+inline
+RT wcross_impl(const Simple_homogeneous<RT>*,
+    const Point_2< Simple_homogeneous<RT> > &p,
+    const Point_2< Simple_homogeneous<RT> > &q,
+    const Point_2< Simple_homogeneous<RT> > &r)
+{
+    return det3x3_by_formula(
+        p.hx(), q.hx(), r.hx(),
+        p.hy(), q.hy(), r.hy(),
+        p.hw(), q.hw(), r.hw());
+}
+#endif // CGAL_SIMPLE_HOMOGENEOUS_H
+
+#if defined CGAL_CARTESIAN_H
 template <class FT>
 inline
 FT wcross_impl(const Cartesian<FT> *, const Point_2< Cartesian<FT> > &p,
@@ -253,6 +326,18 @@ FT wcross_impl(const Cartesian<FT> *, const Point_2< Cartesian<FT> > &p,
     return (q.x()-p.x())*(r.y()-q.y()) - (q.y()-p.y())*(r.x()-q.x());
 }
 #endif // CGAL_CARTESIAN_H
+
+#if defined CGAL_SIMPLE_CARTESIAN_H
+template <class FT>
+inline
+FT wcross_impl(const Simple_cartesian<FT> *,
+    const Point_2< Simple_cartesian<FT> > &p,
+    const Point_2< Simple_cartesian<FT> > &q,
+    const Point_2< Simple_cartesian<FT> > &r)
+{
+    return (q.x()-p.x())*(r.y()-q.y()) - (q.y()-p.y())*(r.x()-q.x());
+}
+#endif // CGAL_SIMPLE_CARTESIAN_H
 
 template <class R>
 typename R::RT wcross(const Point_2< R > &p,
