@@ -16,13 +16,15 @@ package:
 	@echo "---- make test                ----"
 	@echo "---- changes.txt              ----"
 	@echo "---- cvs update; cvs commit ------"
-	@echo "---- OLD VERSION="; more version 
-	@echo "---- make VERSION=2.x version-----"
-	@echo "---- make VERSION=2.x tag --------"
+	@echo "---- more version ----------------"
+	@echo "---- VERSION=   ; export VERSION -"
+	@echo "---- make Doc --------------------"
+	@echo "---- make Version-----------------"
+	@echo "---- make tag --------------------"
 	@echo "---- make submit -----------------"
 	@echo "----------------------------------"
 
-version:
+Version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
 
 tag:
@@ -46,17 +48,16 @@ submit:
 	mail -s autohandle cgal-submit@cs.uu.nl yvinec < $(TMP_file)
 	rm -f $(TMP_file)
 
-doc:
+Doc:
 	cd /u/alcor/0/prisme_util/CGAL/Local/IO/iostream
 	cvs commit doc
 	rm -f doc_tex/general/*.*
 	rm -f doc_ps/iostream.ps.gz
-	cp doc/*.tex doc/*.ltex doc/*.ipe doc_tex/general
+	cp -f doc/*.tex   doc_tex/general
 	cd doc;\
 	latex wrapper.tex ; bibtex wrapper.tex; latex wrapper.tex; \
-	dvips wrapper; gzip wrapper.ps; rm wrapper.dvi
+	dvips wrapper -o; gzip wrapper.ps; rm wrapper.dvi
 	mv doc/wrapper.ps.gz doc_ps/iostream.ps.gz
 	cd doc; cc_manual_to_html -title iostreams -release $(VERSION) \
-		-o ../doc_html/general/iostream/ \
-		main.tex
+		-o ../doc_html/general/iostream/ main.tex
 	echo "done"
