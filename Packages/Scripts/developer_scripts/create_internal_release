@@ -833,14 +833,13 @@ lock;
 create_packages_dir();
 install_packages();
 CreateConfigurationTestdir();
-CreateSrcTestDir();
 CreateDemoTestDirs();
 CreateExampleTestDirs();
 set_version_in_config();
 make_testscripts();
 set_file_headers();
 make_src_makefiles();
-
+CreateSrcTestDir();
 
 unlock;
 
