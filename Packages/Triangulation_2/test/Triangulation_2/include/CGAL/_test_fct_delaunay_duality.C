@@ -23,7 +23,7 @@
 
 template <class Triangulation>
 void
-CGAL::_test_delaunay_duality( const Triangulation &T )
+_test_delaunay_duality( const Triangulation &T )
 {
   typedef Triangulation                      Cls;
 
