@@ -111,6 +111,7 @@ _test_fct_vector_3(const R& )
  assert( CGAL::ORIGIN - v2 == CGAL::Point_3<R>( -n5, -n6, -n7, n8) );
  assert( p1 - p1 == v0 );
  assert( p1 - p0 == p1 - CGAL::ORIGIN);
+ assert( p0 - p1 == CGAL::ORIGIN - p1);
  assert( p1 - p2 == v4 );
  assert( p2 + v4 == p1 );
  assert( p3 - v1 == p2 );

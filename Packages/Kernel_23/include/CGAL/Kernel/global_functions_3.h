@@ -388,12 +388,61 @@ operator*(const Vector_3<K> &v, const Vector_3<K> &w)
   return K().compute_scalar_product_3_object()(v, w);
 }
 
+
+template < class K >
+inline
+typename K::Point_3
+operator+(const Point_3<K> &p, const Vector_3<K> &v)
+{
+  return K().construct_translated_point_3_object()(p, v);
+}
+
+template < class K >
+inline
+typename K::Point_3
+operator+(const Origin &o, const Vector_3<K> &v)
+{
+  return K().construct_translated_point_3_object()(o, v);
+}
+
+template < class K >
+inline
+typename K::Point_3
+operator-(const Point_3<K> &p, const Vector_3<K> &v)
+{
+  return K().construct_translated_point_3_object()(p, K().construct_opposite_vector_3_object()(v));
+}
+
+template < class K >
+inline
+typename K::Point_3
+operator-(const Origin &o, const Vector_3<K> &v)
+{
+  return K().construct_translated_point_3_object()(o, K().construct_opposite_vector_3_object()(v));
+}
+
 template < class K >
 inline
 typename K::Vector_3
 operator-(const Point_3<K> &p, const Point_3<K> &q)
 {
   return K().construct_vector_3_object()(q, p);
+}
+
+template < class K >
+inline
+typename K::Vector_3
+operator-(const Point_3<K> &p, const Origin &o)
+{
+  return K().construct_vector_3_object()(o, p);
+}
+
+template < class K >
+inline
+typename K::Vector_3
+operator-(const Origin &o, const Point_3<K> &q)
+{
+  return K().construct_vector_3_object()(q, o);
 }
 
 template <class K >

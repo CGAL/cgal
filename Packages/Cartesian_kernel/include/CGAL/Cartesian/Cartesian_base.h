@@ -42,7 +42,6 @@
 #include <CGAL/Cartesian/Data_accessor_2.h>
 #include <CGAL/ConicCPA2.h>
 
-#include <CGAL/Cartesian/global_operators_2.h>
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 #include <CGAL/Cartesian/predicates_on_directions_2.h>
 #include <CGAL/Cartesian/basic_constructions_2.h>
@@ -60,7 +59,6 @@
 #include <CGAL/Cartesian/Sphere_3.h>
 #include <CGAL/Cartesian/Aff_transformation_3.h>
 
-#include <CGAL/Cartesian/global_operators_3.h>
 #include <CGAL/Cartesian/predicates_on_points_3.h>
 #include <CGAL/Cartesian/predicates_on_planes_3.h>
 #include <CGAL/Cartesian/basic_constructions_3.h>

@@ -1482,6 +1482,14 @@ namespace CartesianKernelFunctors {
       typename K::Construct_point_2 construct_point_2;
       return construct_point_2(p.x() + v.x(), p.y() + v.y());
     }
+    
+    Point_2
+    operator()( const Origin& , const Vector_2& v) const
+    {  
+      typename K::Construct_point_2 construct_point_2;
+      return construct_point_2(v.x(), v.y());
+    }
+    
   };
 
   template <typename K>
@@ -1498,6 +1506,13 @@ namespace CartesianKernelFunctors {
     { 
       typename K::Construct_point_3 construct_point_3;
       return construct_point_3(p.x() + v.x(), p.y() + v.y(), p.z() + v.z());
+    }
+
+    Point_3
+    operator()( const Origin& , const Vector_3& v) const
+    {  
+      typename K::Construct_point_3 construct_point_3;
+      return construct_point_3(v.x(), v.y(), v.z());
     }
   };
 
@@ -1522,6 +1537,14 @@ namespace CartesianKernelFunctors {
     Vector_2
     operator()( const Point_2& p, const Point_2& q) const
     { return Vector_2(q.x() - p.x(), q.y() - p.y()); }
+
+    Vector_2
+    operator()( const Origin&, const Point_2& q) const
+    { return Vector_2(q.x(), q.y()); }
+
+    Vector_2
+    operator()( const Point_2& p, const Origin& ) const
+    { return Vector_2(-p.x(), -p.y()); }
 
     Vector_2
     operator()( const Segment_2& s) const
@@ -1572,6 +1595,18 @@ namespace CartesianKernelFunctors {
     operator()( const Point_3& p, const Point_3& q) const
     { 
       return Vector_3(q.x() - p.x(), q.y() - p.y(), q.z() - p.z());
+    }
+
+    Vector_3
+    operator()( const Origin&, const Point_3& q) const
+    { 
+      return Vector_3(q.x(), q.y(), q.z());
+    }
+
+    Vector_3
+    operator()( const Point_3& p, const Origin&) const
+    { 
+      return Vector_3(- p.x(), - p.y(), - p.z());
     }
 
     Vector_3
