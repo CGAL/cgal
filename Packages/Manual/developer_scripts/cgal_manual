@@ -481,6 +481,7 @@ find_in_search_path() {
 #---------------------------------------------------------------------#
 
 create_wrapper() {
+    QName="`echo $1 | sed 's/_/\\\\_/g'`"
     cat <<EOF
 % +------------------------------------------------------------------------+
 % | $1.tex
@@ -490,7 +491,7 @@ create_wrapper() {
 
 \documentclass{book}
 \usepackage{Manual/cgal_manual}
-\gdef\lciManualTitle{$1 Package}%
+\gdef\lciManualTitle{$QName}%
 
 \makeindex
 EOF
@@ -503,9 +504,7 @@ EOF
 
 \begin{document}
 
-EOF
-    echo "\\cgaltitlepage{$1 Package}" | sed 's/_/\\_/g'
-    cat <<EOF
+\cgaltitlepage{$QName}
 
 \cleardoublepage
 \pagenumbering{roman}
