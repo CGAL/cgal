@@ -50,21 +50,26 @@ public:
 #endif
 
   SphereC3();
+
+  // Sphere with center p, squared radius s, orientation o
   SphereC3(const Point_3 &p, const FT &s,
            const Orientation &o = COUNTERCLOCKWISE);
-  // Sphere with center p, squared radius s, orientation o
+
+  // Sphere passing through p,q,r,s, oriented by p, q, r, s
   SphereC3(const Point_3 &p, const Point_3 &q,
            const Point_3 &r, const Point_3 &s);
-  // Sphere passing through p,q,r,s, oriented by p, q, r, s
+
+  // Sphere with great circle passing through p,q,r, oriented by o
   SphereC3(const Point_3 &p, const Point_3 &q, const Point_3 &r,
 	   const Orientation &o = COUNTERCLOCKWISE);
-  // Sphere with great circle passing through p,q,r, oriented by o
+
+  // Sphere with diameter pq and orientation o
   SphereC3(const Point_3 & p, const Point_3 & q,
            const Orientation &o = COUNTERCLOCKWISE);
-  // Sphere with diameter pq and orientation o
+
+  // Sphere centered at p, radius 0, orientation o
   SphereC3(const Point_3 & p,
            const Orientation& o = COUNTERCLOCKWISE);
-  // Sphere centered at p, radius 0, orientation o
 
   bool operator==(const Self &) const;
   bool operator!=(const Self &) const;
@@ -89,10 +94,11 @@ public:
   // Returns the image of c by t. Since t is orthogonal, the image is
   // always a circle
 
-  bool is_degenerate() const;
   // A circle is degenerate if its (squared) radius is null or negative
-  Self opposite() const;
+  bool is_degenerate() const;
+
   // Returns a circle with opposite orientation
+  Self opposite() const;
 
   Oriented_side  oriented_side(const Point_3 &p) const;
   //! precond: ! x.is_degenerate() (when available)
@@ -148,8 +154,8 @@ SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
 {
   CGAL_kernel_precondition( o != COLLINEAR);
 
-  SphereC3<R CGAL_CTAG>::Point_3 center = midpoint(p,q);
-  SphereC3<R CGAL_CTAG>::FT      squared_radius = squared_distance(p,center);
+  Point_3 center = midpoint(p,q);
+  FT      squared_radius = squared_distance(p,center);
 
   initialize_with(Sphere_ref_3( center, squared_radius, o) );
 }
@@ -221,6 +227,7 @@ Bounded_side
 SphereC3<R CGAL_CTAG>::
 bounded_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 {
+    // FIXME: it's a predicate...
   return Bounded_side(CGAL_NTS compare(squared_radius(),
                                        squared_distance(center(),p)));
 }
@@ -231,6 +238,7 @@ bool
 SphereC3<R CGAL_CTAG>::
 has_on_boundary(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 {
+    // FIXME: it's a predicate...
   return squared_distance(center(),p) == squared_radius();
   // NB: J'ai aussi trouve ailleurs :
   // return oriented_side(p)==ON_ORIENTED_BOUNDARY;
@@ -269,6 +277,7 @@ bool
 SphereC3<R CGAL_CTAG>::
 has_on_bounded_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 {
+    // FIXME: it's a predicate...
   return squared_distance(center(),p) < squared_radius();
   // NB: J'ai aussi trouve ailleurs :
   // return bounded_side(p)==ON_BOUNDED_SIDE;
@@ -280,6 +289,7 @@ bool
 SphereC3<R CGAL_CTAG>::
 has_on_unbounded_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 {
+    // FIXME: it's a predicate...
   return squared_distance(center(),p) > squared_radius();
   // NB: J'ai aussi trouve ailleurs :
   // return bounded_side(p)==ON_UNBOUNDED_SIDE;
@@ -291,6 +301,7 @@ bool
 SphereC3<R CGAL_CTAG>::
 is_degenerate() const
 {
+    // FIXME: it's a predicate (?)
   return CGAL_NTS is_zero(squared_radius());
 }
 
