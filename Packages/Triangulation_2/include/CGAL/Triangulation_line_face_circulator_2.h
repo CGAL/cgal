@@ -388,23 +388,23 @@ Triangulation_line_face_circulator_2(const Point& pp,
   }
             
   // p lies in the interior of the face
-  Orientation or[3];
+  Orientation orient[3];
   for(j=0; j<3; j++) {
-    or[j] =
+    orient[j] =
       _tr->orientation(p,q,(*this)->vertex(j)->point());
   }
   for(j=0; j<3; j++) {
-    if(or[j] == COLLINEAR){
+    if(orient[j] == COLLINEAR){
       i = j;
-      s = (or[ccw(j)] == LEFTTURN) ? edge_vertex : 
+      s = (orient[ccw(j)] == LEFTTURN) ? edge_vertex : 
 	vertex_edge;
       return;
     }
   }
   s = edge_edge;
   for(j=0; j<3; j++){
-    if(or[j] == RIGHTTURN){
-      i = (or[ccw(j)] == RIGHTTURN) ? j : cw(j);
+    if(orient[j] == RIGHTTURN){
+      i = (orient[ccw(j)] == RIGHTTURN) ? j : cw(j);
       return;
     }
   }

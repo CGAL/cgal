@@ -40,7 +40,7 @@ class Triangulation_all_faces_iterator_2
 public:
   typedef typename Tds::Face_iterator  Base;
   typedef Triangulation_2<Gt,Tds> Triangulation;
-  typedef CGAL_TYPENAME_MSVC_NULL Triangulation::Face Face;
+  typedef typename Triangulation::Face Face;
   typedef Triangulation_all_faces_iterator_2<Gt,Tds>  All_faces;
 
   typedef Face      value_type;
@@ -105,7 +105,7 @@ class Triangulation_all_vertices_iterator_2
 public:
   typedef typename Tds::Vertex_iterator  Base;
   typedef Triangulation_2<Gt,Tds> Triangulation;
-  typedef CGAL_TYPENAME_MSVC_NULL Triangulation::Vertex Vertex;
+  typedef typename Triangulation::Vertex Vertex;
   typedef Triangulation_all_vertices_iterator_2<Gt,Tds> All_vertices;
 
   typedef Vertex       value_type;
@@ -170,9 +170,9 @@ class Triangulation_all_edges_iterator_2
 {
 public:
   typedef Triangulation_2<Gt,Tds>     Triangulation;
-  typedef CGAL_TYPENAME_MSVC_NULL Triangulation::Edge  Edge;
-  typedef CGAL_TYPENAME_MSVC_NULL Triangulation::Face        Face;
-  typedef CGAL_TYPENAME_MSVC_NULL Triangulation::Face_handle  Face_handle;
+  typedef typename Triangulation::Edge  Edge;
+  typedef typename Triangulation::Face        Face;
+  typedef typename Triangulation::Face_handle  Face_handle;
   typedef typename Tds::Edge_iterator Base;
   typedef Triangulation_all_edges_iterator_2<Gt,Tds> All_edges;
 
