@@ -79,7 +79,8 @@ int main(int argc, char **argv)
   }
 
   QApplication a(argc, argv);
-  Qt_widget_Nef_S2* w = new Qt_widget_Nef_S2(N);
+  Qt_widget_Nef_S2<Nef_polyhedron_S2>* w = 
+    new Qt_widget_Nef_S2<Nef_polyhedron_S2>(N);
   a.setMainWidget(w);
   w->show();
   return a.exec();
