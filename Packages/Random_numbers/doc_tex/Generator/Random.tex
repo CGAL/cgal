@@ -25,13 +25,18 @@ streams are \emph{independent} of each other, i.e.\ the sequence of
 numbers from one stream does \emph{not} depend upon how many numbers
 were extracted from the other streams.
 
+It can be very usefull, e.g.\ for debugging, to reproduce a sequence
+of random numbers.  This can be done using the seed functions
+described below.
+
+
 \ccInclude{CGAL/Random.h}
 \ccCreationVariable{random}
 
 % -----------------------------------------------------------------------------
 \ccTypes
 
-\ccSetThreeColumns{double}{\ccVar.get_seed( Seed& seed)}{}
+\ccSetThreeColumns{double}{\ccVar.restore_seed( Seed seed)}{}
 \ccPropagateThreeToTwoColumns
 
 \ccUnchecked
@@ -66,11 +71,14 @@ were extracted from the other streams.
 \ccMemberFunction{ int operator() ( int upper);}{
         returns \ccVar\ccc{.get_int( 0, upper)}.}
 
-\ccMemberFunction{ void get_seed( Seed& seed) const;}{
-        stores the current internal seed in \ccc{seed}.}
+% -----------------------------------------------------------------------------
+\ccHeading{Seed Functions}
 
-\ccMemberFunction{ void set_seed( Seed const& seed);}{
-        sets the internal seed to \ccc{seed}.}
+\ccMemberFunction{ void save_seed( Seed& seed) const;}{
+        saves the current internal seed in \ccc{seed}.}
+
+\ccMemberFunction{ void restore_seed( Seed const& seed);}{
+        restores the internal seed from \ccc{seed}.}
 
 \end{ccClass}
 

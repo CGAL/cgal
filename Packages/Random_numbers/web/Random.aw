@@ -18,6 +18,7 @@
 @usepackage{cc_manual}
 @article
 
+\addtolength{\textheight}{1ex}
 \setlength{\parskip}{1ex}
 
 @! ============================================================================
@@ -53,7 +54,7 @@
 We provide an implementation of a random numbers generator. It allows
 to generate uniformly distributed random @prg{bool}s, @prg{int}s, and
 @prg{double}s. The interface fulfills the requirements of an STL
-random number generating function object, e.g. for the STL algorithm
+random number generating function object, e.g.\ for the STL algorithm
 @prg{random_shuffle}.
 
 This document is organized as follows. Section~1 contains the
@@ -114,7 +115,7 @@ section, so we do not comment on it here.
 
 @macro <Random public interface> = @begin
     // types
-    typedef typename  unsigned short  Seed[3];		// 48 Bits
+    typedef  unsigned short  Seed[3];			// 48 Bits
 
     // creation
     CGAL_Random( );
@@ -127,24 +128,26 @@ section, so we do not comment on it here.
 
     int     operator () ( int upper);
 
-    void    get_seed( Seed& seed) const;
-    void    set_seed( Seed const& seed);
+    void       save_seed( Seed      & seed) const;
+    void    restore_seed( Seed const& seed);
 @end
 
   
+\pagebreak
+
 \subsection{Private Data Members}
 
 The seed is stored in an array of three @prg{unsigned short}s.
 
 @macro <Random private data members> = @begin
     // data members
-    Seed  _seed;			
+    unsigned short  _seed[3];				// 48 Bits
 @end
 
 
 \subsection{Constructors}
 
-In the default constructor te seed is initialized using the system
+In the default constructor the seed is initialized using the system
 time.
 
 @macro <Random constructors> = @begin
@@ -216,13 +219,16 @@ The result is converted to a number in the given range.
     }
 @end
 
+
+\subsection{Seed Operations}
+
 The seed operations just copy the internal seed to or from the given
 seed variable, respectively.
 
 @macro <Random seed operations> = @begin
     void
     CGAL_Random::
-    get_seed( Seed& seed) const
+    save_seed( Seed& seed) const
     {
 	seed[ 0] = _seed[ 0];
 	seed[ 1] = _seed[ 1];
@@ -231,7 +237,7 @@ seed variable, respectively.
 
     void
     CGAL_Random::
-    set_seed( Seed const& seed)
+    restore_seed( Seed const& seed)
     {
 	_seed[ 0] = seed[ 0];
 	_seed[ 1] = seed[ 1];
@@ -246,7 +252,7 @@ seed variable, respectively.
 \section{Test}
 
 We call each function of class @prg{CGAL_Random} at least once to
-ensure code coverage. In addition we check if the generated random
+ensure code coverage. In addition, we check if the generated random
 numbers lie in the given ranges, and if two random numbers generators
 initialized with the same seed generate the same sequence of random
 numbers.
@@ -254,7 +260,7 @@ numbers.
 @macro <Random tests> = @begin
     CGAL_Random        rnd;
     CGAL_Random::Seed  seed;
-    rnd.get_seed( seed);
+    rnd.save_seed( seed);
 
     // test get_bool
     {
@@ -284,9 +290,9 @@ numbers.
 	CGAL_assertion( ( 0 <= i) && ( i < 5555));
     }
 
-    // test seed funtions
+    // test seed functions
     {
-	rnd.set_seed( seed);			// now `rnd' and `rnd2'
+	rnd.restore_seed( seed);		// now `rnd' and `rnd2'
 	CGAL_Random rnd2( seed);		// have the same seed
 
 	CGAL_assertion( rnd.get_bool()          == rnd2.get_bool());
@@ -299,6 +305,8 @@ numbers.
 @! Files
 @! ==========================================================================
 
+\pagebreak
+
 \section{Files}
 
 @file <Random.h> = @begin
@@ -306,8 +314,6 @@ numbers.
 
     #ifndef CGAL_RANDOM_H
     #define CGAL_RANDOM_H
-
-    #define typename
 
     // Class declaration
     // =================
@@ -349,6 +355,8 @@ numbers.
 
     @<end of file line>
 @end
+
+\pagebreak
 
 @file <test_Random.C> = @begin
     @<Random header>("test/test_Random.C")
