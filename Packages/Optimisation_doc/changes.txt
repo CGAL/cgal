@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_doc' package
 
+Version 1.0.17 on 29-Oct-2003
+- Changed example in user manual (no CGALWin anymore).
+
 Version 1.0.16 on 16-Oct-2003
 - Added Largest_empty_iso_rectangle_2 to user manual (text, gif and eps)
 
