@@ -30,7 +30,7 @@
 #include <CGAL/Kernel_archetype.h>
 
 // needed in kernel testsuite ...
-CGAL::Test_vector_3 operator-(const CGAL::Test_vector_3& v)
+CGAL::Vector_3_archetype operator-(const CGAL::Vector_3_archetype& v)
 { return v; } 
 
 #include "CGAL/_test_new_3.h"

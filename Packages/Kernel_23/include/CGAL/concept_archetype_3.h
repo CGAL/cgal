@@ -37,220 +37,220 @@ T(const T1&,const T2&,const T3&,const T4&,const T5&) { }
 
 CGAL_BEGIN_NAMESPACE
 
-struct Test_point_3 {
-  Test_point_3() {  }
-  Test_point_3(const Test_point_3& t) { }
+struct Point_3_archetype {
+  Point_3_archetype() {  }
+  Point_3_archetype(const Point_3_archetype& t) { }
   
-  Test_point_3& operator=(const Test_point_3& t) { return *this; }
+  Point_3_archetype& operator=(const Point_3_archetype& t) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
-  CGAL_concept_archetype_constructors(Test_point_3)
+  CGAL_concept_archetype_constructors(Point_3_archetype)
 #endif  
 };
 
 #if defined(CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS)
-inline bool operator==(const Test_point_3& obj1, const Test_point_3& obj2)
+inline bool operator==(const Point_3_archetype& obj1, const Point_3_archetype& obj2)
 { return true; }
 
-inline bool operator!=(const Test_point_3& obj1, const Test_point_3& obj2)
+inline bool operator!=(const Point_3_archetype& obj1, const Point_3_archetype& obj2)
 { return true; }
 #endif
 
-struct Test_segment_3 {
-  Test_segment_3() {  }
-  Test_segment_3(const Test_segment_3& t) { }
+struct Segment_3_archetype {
+  Segment_3_archetype() {  }
+  Segment_3_archetype(const Segment_3_archetype& t) { }
   
-  Test_segment_3& operator=(const Test_segment_3& t) { return *this; }
+  Segment_3_archetype& operator=(const Segment_3_archetype& t) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
-  CGAL_concept_archetype_constructors(Test_segment_3)
+  CGAL_concept_archetype_constructors(Segment_3_archetype)
 #endif    
 };
 
 #if defined(CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS)
-inline bool operator==(const Test_segment_3& obj1, const Test_segment_3& obj2)
+inline bool operator==(const Segment_3_archetype& obj1, const Segment_3_archetype& obj2)
 { return true; }
 
-inline bool operator!=(const Test_segment_3& obj1, const Test_segment_3& obj2)
+inline bool operator!=(const Segment_3_archetype& obj1, const Segment_3_archetype& obj2)
 { return true; }
 #endif
 
-struct Test_line_3 {
-  Test_line_3() {  }
-  Test_line_3(const Test_line_3& t) { }
+struct Line_3_archetype {
+  Line_3_archetype() {  }
+  Line_3_archetype(const Line_3_archetype& t) { }
   
-  Test_line_3& operator=(const Test_line_3& t) { return *this; }
+  Line_3_archetype& operator=(const Line_3_archetype& t) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
-  CGAL_concept_archetype_constructors(Test_line_3)
+  CGAL_concept_archetype_constructors(Line_3_archetype)
 #endif    
 };
 
 #if defined(CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS)
-inline bool operator==(const Test_line_3& obj1, const Test_line_3& obj2)
+inline bool operator==(const Line_3_archetype& obj1, const Line_3_archetype& obj2)
 { return true; }
 
-inline bool operator!=(const Test_line_3& obj1, const Test_line_3& obj2)
+inline bool operator!=(const Line_3_archetype& obj1, const Line_3_archetype& obj2)
 { return true; }
 #endif
 
-struct Test_ray_3 {
-  Test_ray_3() {  }
-  Test_ray_3(const Test_ray_3& t) { }
+struct Ray_3_archetype {
+  Ray_3_archetype() {  }
+  Ray_3_archetype(const Ray_3_archetype& t) { }
   
-  Test_ray_3& operator=(const Test_ray_3& t) { return *this; }
+  Ray_3_archetype& operator=(const Ray_3_archetype& t) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
-  CGAL_concept_archetype_constructors(Test_ray_3)
+  CGAL_concept_archetype_constructors(Ray_3_archetype)
 #endif    
 };
 
 #if defined(CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS)
-inline bool operator==(const Test_ray_3& obj1, const Test_ray_3& obj2)
+inline bool operator==(const Ray_3_archetype& obj1, const Ray_3_archetype& obj2)
 { return true; }
 
-inline bool operator!=(const Test_ray_3& obj1, const Test_ray_3& obj2)
+inline bool operator!=(const Ray_3_archetype& obj1, const Ray_3_archetype& obj2)
 { return true; }
 #endif
 
-struct Test_vector_3 {
-  Test_vector_3() {  }
-  Test_vector_3(const Test_vector_3& t) { }
+struct Vector_3_archetype {
+  Vector_3_archetype() {  }
+  Vector_3_archetype(const Vector_3_archetype& t) { }
   
-  Test_vector_3& operator=(const Test_vector_3& t) { return *this; }
+  Vector_3_archetype& operator=(const Vector_3_archetype& t) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
-  CGAL_concept_archetype_constructors(Test_vector_3)
+  CGAL_concept_archetype_constructors(Vector_3_archetype)
 #endif    
 };
 
 #if defined(CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS)
-inline bool operator==(const Test_vector_3& obj1, const Test_vector_3& obj2)
+inline bool operator==(const Vector_3_archetype& obj1, const Vector_3_archetype& obj2)
 { return true; }
 
-inline bool operator!=(const Test_vector_3& obj1, const Test_vector_3& obj2)
+inline bool operator!=(const Vector_3_archetype& obj1, const Vector_3_archetype& obj2)
 { return true; }
 #endif
 
-struct Test_direction_3 {
-  Test_direction_3() {  }
-  Test_direction_3(const Test_direction_3& t) { }
+struct Direction_3_archetype {
+  Direction_3_archetype() {  }
+  Direction_3_archetype(const Direction_3_archetype& t) { }
   
-  Test_direction_3& operator=(const Test_direction_3& t) { return *this; }
+  Direction_3_archetype& operator=(const Direction_3_archetype& t) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
-  CGAL_concept_archetype_constructors(Test_direction_3)
+  CGAL_concept_archetype_constructors(Direction_3_archetype)
 #endif    
 };
 
 #if defined(CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS)
-inline bool operator==(const Test_direction_3& obj1, 
-                       const Test_direction_3& obj2)
+inline bool operator==(const Direction_3_archetype& obj1, 
+                       const Direction_3_archetype& obj2)
 { return true; }
 
-inline bool operator!=(const Test_direction_3& obj1, 
-                       const Test_direction_3& obj2)
+inline bool operator!=(const Direction_3_archetype& obj1, 
+                       const Direction_3_archetype& obj2)
 { return true; }
 #endif
 
-struct Test_plane_3 {
-  Test_plane_3() {  }
-  Test_plane_3(const Test_plane_3& t) { }
+struct Plane_3_archetype {
+  Plane_3_archetype() {  }
+  Plane_3_archetype(const Plane_3_archetype& t) { }
   
-  Test_plane_3& operator=(const Test_plane_3& t) { return *this; }
+  Plane_3_archetype& operator=(const Plane_3_archetype& t) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
-  CGAL_concept_archetype_constructors(Test_plane_3)
+  CGAL_concept_archetype_constructors(Plane_3_archetype)
 #endif    
 };
 
 #if defined(CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS)
-inline bool operator==(const Test_plane_3& obj1, const Test_plane_3& obj2)
+inline bool operator==(const Plane_3_archetype& obj1, const Plane_3_archetype& obj2)
 { return true; }
 
-inline bool operator!=(const Test_plane_3& obj1, const Test_plane_3& obj2)
+inline bool operator!=(const Plane_3_archetype& obj1, const Plane_3_archetype& obj2)
 { return true; }
 #endif
 
-struct Test_iso_cuboid_3 {
-  Test_iso_cuboid_3() {  }
-  Test_iso_cuboid_3(const Test_iso_cuboid_3& t) { }
+struct Iso_cuboid_3_archetype {
+  Iso_cuboid_3_archetype() {  }
+  Iso_cuboid_3_archetype(const Iso_cuboid_3_archetype& t) { }
   
-  Test_iso_cuboid_3& operator=(const Test_iso_cuboid_3& t) { return *this; }
+  Iso_cuboid_3_archetype& operator=(const Iso_cuboid_3_archetype& t) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
-  CGAL_concept_archetype_constructors(Test_iso_cuboid_3)
+  CGAL_concept_archetype_constructors(Iso_cuboid_3_archetype)
 #endif    
 };
 
 #if defined(CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS)
-inline bool operator==(const Test_iso_cuboid_3& obj1, 
-                       const Test_iso_cuboid_3& obj2)
+inline bool operator==(const Iso_cuboid_3_archetype& obj1, 
+                       const Iso_cuboid_3_archetype& obj2)
 { return true; }
 
-inline bool operator!=(const Test_iso_cuboid_3& obj1, 
-                       const Test_iso_cuboid_3& obj2)
+inline bool operator!=(const Iso_cuboid_3_archetype& obj1, 
+                       const Iso_cuboid_3_archetype& obj2)
 { return true; }
 #endif
 
-struct Test_sphere_3 {
-  Test_sphere_3() {  }
-  Test_sphere_3(const Test_sphere_3& t) { }
+struct Sphere_3_archetype {
+  Sphere_3_archetype() {  }
+  Sphere_3_archetype(const Sphere_3_archetype& t) { }
   
-  Test_sphere_3& operator=(const Test_sphere_3& t) { return *this; }
+  Sphere_3_archetype& operator=(const Sphere_3_archetype& t) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
-  CGAL_concept_archetype_constructors(Test_sphere_3)
+  CGAL_concept_archetype_constructors(Sphere_3_archetype)
 #endif    
 };
 
 #if defined(CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS)
-inline bool operator==(const Test_sphere_3& obj1, const Test_sphere_3& obj2)
+inline bool operator==(const Sphere_3_archetype& obj1, const Sphere_3_archetype& obj2)
 { return true; }
 
-inline bool operator!=(const Test_sphere_3& obj1, const Test_sphere_3& obj2)
+inline bool operator!=(const Sphere_3_archetype& obj1, const Sphere_3_archetype& obj2)
 { return true; }
 #endif
 
-struct Test_triangle_3 {
-  Test_triangle_3() {  }
-  Test_triangle_3(const Test_triangle_3& t) { }
+struct Triangle_3_archetype {
+  Triangle_3_archetype() {  }
+  Triangle_3_archetype(const Triangle_3_archetype& t) { }
   
-  Test_triangle_3& operator=(const Test_triangle_3& t) { return *this; }
+  Triangle_3_archetype& operator=(const Triangle_3_archetype& t) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
-  CGAL_concept_archetype_constructors(Test_triangle_3)
+  CGAL_concept_archetype_constructors(Triangle_3_archetype)
 #endif    
 };
 
 #if defined(CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS)
-inline bool operator==(const Test_triangle_3& obj1, 
-                       const Test_triangle_3& obj2)
+inline bool operator==(const Triangle_3_archetype& obj1, 
+                       const Triangle_3_archetype& obj2)
 { return true; }
 
-inline bool operator!=(const Test_triangle_3& obj1, 
-                       const Test_triangle_3& obj2)
+inline bool operator!=(const Triangle_3_archetype& obj1, 
+                       const Triangle_3_archetype& obj2)
 { return true; }
 #endif
 
-struct Test_tetrahedron_3 {
-  Test_tetrahedron_3() {  }
-  Test_tetrahedron_3(const Test_tetrahedron_3& t) { }
+struct Tetrahedron_3_archetype {
+  Tetrahedron_3_archetype() {  }
+  Tetrahedron_3_archetype(const Tetrahedron_3_archetype& t) { }
   
-  Test_tetrahedron_3& operator=(const Test_tetrahedron_3& t) { return *this; }
+  Tetrahedron_3_archetype& operator=(const Tetrahedron_3_archetype& t) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
-  CGAL_concept_archetype_constructors(Test_tetrahedron_3)
+  CGAL_concept_archetype_constructors(Tetrahedron_3_archetype)
 #endif    
 };
 
 #if defined(CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS)
-inline bool operator==(const Test_tetrahedron_3& obj1, 
-                       const Test_tetrahedron_3& obj2)
+inline bool operator==(const Tetrahedron_3_archetype& obj1, 
+                       const Tetrahedron_3_archetype& obj2)
 { return true; }
 
-inline bool operator!=(const Test_tetrahedron_3& obj1, 
-                       const Test_tetrahedron_3& obj2)
+inline bool operator!=(const Tetrahedron_3_archetype& obj1, 
+                       const Tetrahedron_3_archetype& obj2)
 { return true; }
 #endif
 

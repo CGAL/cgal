@@ -14,7 +14,8 @@
 struct My_archetype {
   typedef CGAL::Point_3_archetype                                   Point_3;
   typedef CGAL::Plane_3_archetype                                   Plane_3;
-  typedef CGAL::CGALca::Construct_opposite_plane_3<My_archetype>    Construct_opposite_plane_3;
+  typedef CGAL::CGALca::Construct_opposite_plane_3<My_archetype>  \
+  Construct_opposite_plane_3;
   
   Construct_opposite_plane_3
   construct_opposite_plane_3_object()
