@@ -1,3 +1,8 @@
+4.61      (7 August 02)
+- Added files Rational_traits.h, to_rational.h, Gmpq.h,
+  and simplest_rational_in_interval.h
+- Added Rational_traits for leda_rational, mpq_class, Quotient
+
 4.60     (6 August 02)
 - Get rid of is_integral(double) : it's unused (and clashes with boost).
 
