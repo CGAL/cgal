@@ -168,7 +168,7 @@ Interval_nt_advanced
 operator* (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
 {
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
-  if (e._inf>=0.0)					// this>=0
+  if (e._inf>=0.0)					// e>=0
   {
       // d>=0     [_inf*d._inf; _sup*d._sup]
       // d<=0     [_sup*d._inf; _inf*d._sup]
@@ -184,7 +184,7 @@ operator* (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
     return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(a*(-d._inf)),
 	                         CGAL_IA_FORCE_TO_DOUBLE(b*d._sup));
   }
-  else if (e._sup<=0.0)				// this<=0
+  else if (e._sup<=0.0)				// e<=0
   {
       // d>=0     [_inf*d._sup; _sup*d._inf]
       // d<=0     [_sup*d._sup; _inf*d._inf]
@@ -223,9 +223,9 @@ operator/ (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   if (d._inf>0.0)				// d>0
   {
-      // this>=0	[_inf/d._sup; _sup/d._inf]
-      // this<=0	[_inf/d._inf; _sup/d._sup]
-      // this~=0	[_inf/d._inf; _sup/d._inf]
+      // e>=0	[_inf/d._sup; _sup/d._inf]
+      // e<=0	[_inf/d._inf; _sup/d._sup]
+      // e~=0	[_inf/d._inf; _sup/d._inf]
       double a = d._sup, b = d._inf;
     if (e._inf<0.0)
     {
@@ -238,9 +238,9 @@ operator/ (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
   }
   else if (d._sup<0.0)			// d<0
   {
-      // this>=0	[_sup/d._sup; _inf/d._inf]
-      // this<=0	[_sup/d._inf; _inf/d._sup]
-      // this~=0	[_sup/d._sup; _inf/d._sup]
+      // e>=0	[_sup/d._sup; _inf/d._inf]
+      // e<=0	[_sup/d._inf; _inf/d._sup]
+      // e~=0	[_sup/d._sup; _inf/d._sup]
       double a = d._sup, b = d._inf;
     if (e._inf<0.0)
     {
@@ -255,6 +255,34 @@ operator/ (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
     return CGAL_IA_LARGEST; // IA (-HUGE_VAL, HUGE_VAL);
 	   // We could do slightly better -> [0;HUGE_VAL] when d._sup==0,
 	   // but is this worth ?
+}
+
+inline
+Interval_nt_advanced
+sqrt (const Interval_nt_advanced & d)
+{
+  // sqrt([+a,+b]) => [sqrt(+a);sqrt(+b)]
+  // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
+  // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
+  FPU_set_cw(FPU_cw_down);
+  double i = (d._inf>0.0) ? CGAL_IA_FORCE_TO_DOUBLE(std::sqrt(d._inf)) : 0.0;
+  FPU_set_cw(FPU_cw_up);
+  return Interval_nt_advanced(i, CGAL_IA_FORCE_TO_DOUBLE(std::sqrt(d._sup)));
+}
+
+inline
+Interval_nt_advanced
+square (const Interval_nt_advanced & d)
+{
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  if (d._inf>=0.0)
+      return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d._inf*(-d._inf)),
+	     			   CGAL_IA_FORCE_TO_DOUBLE(d._sup*d._sup));
+  if (d._sup<=0.0)
+      return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d._sup*(-d._sup)),
+	     			   CGAL_IA_FORCE_TO_DOUBLE(d._inf*d._inf));
+  return Interval_nt_advanced(0.0,
+	  CGAL_IA_FORCE_TO_DOUBLE(square(std::max(-d._inf, d._sup))));
 }
 
 inline
@@ -290,23 +318,17 @@ operator== (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
 inline
 bool
 operator> (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
-{
-    return d < e;
-}
+{ return d < e; }
 
 inline
 bool
 operator>= (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
-{
-    return d <= e;
-}
+{ return d <= e; }
 
 inline
 bool
 operator!= (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
-{
-    return !(d == e);
-}
+{ return !(d == e); }
 
 inline
 Interval_nt_advanced &
@@ -327,34 +349,6 @@ inline
 Interval_nt_advanced &
 Interval_nt_advanced::operator/= (const Interval_nt_advanced & d)
 { return *this = *this / d; }
-
-inline
-Interval_nt_advanced
-sqrt (const Interval_nt_advanced & d)
-{
-  // sqrt([+a,+b]) => [sqrt(+a);sqrt(+b)]
-  // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
-  // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
-  FPU_set_cw(FPU_cw_down);
-  double i = (d._inf>0.0) ? CGAL_IA_FORCE_TO_DOUBLE(std::sqrt(d._inf)) : 0.0;
-  FPU_set_cw(FPU_cw_up);
-  return Interval_nt_advanced(i, CGAL_IA_FORCE_TO_DOUBLE(std::sqrt(d._sup)));
-}
-
-inline
-Interval_nt_advanced
-square (const Interval_nt_advanced & d)
-{
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
-  if (d._inf>=0.0)
-      return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d._inf*(-d._inf)),
-	     			   CGAL_IA_FORCE_TO_DOUBLE(d._sup*d._sup));
-  if (d._sup<=0.0)
-      return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d._sup*(-d._sup)),
-	     			   CGAL_IA_FORCE_TO_DOUBLE(d._inf*d._inf));
-  return Interval_nt_advanced(0.0,
-	  CGAL_IA_FORCE_TO_DOUBLE(square(std::max(-d._inf, d._sup))));
-}
 
 inline
 double
@@ -445,9 +439,6 @@ operator&& (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 	                        std::min(e._sup, d._sup));
 }
 
-std::ostream & operator<< (std::ostream &, const Interval_nt_advanced &);
-std::istream & operator>> (std::istream &, Interval_nt_advanced &);
-
 
 // The non-advanced class.
 
@@ -518,26 +509,6 @@ operator/ (const Interval_nt & e, const Interval_nt & d)
 }
 
 inline
-Interval_nt &
-Interval_nt::operator+= (const Interval_nt & d)
-{ return *this = *this + d; }
-
-inline
-Interval_nt &
-Interval_nt::operator-= (const Interval_nt & d)
-{ return *this = *this - d; }
-
-inline
-Interval_nt &
-Interval_nt::operator*= (const Interval_nt & d)
-{ return *this = *this * d; }
-
-inline
-Interval_nt &
-Interval_nt::operator/= (const Interval_nt & d)
-{ return *this = *this / d; }
-
-inline
 Interval_nt
 sqrt (const Interval_nt & d)
 {
@@ -556,6 +527,26 @@ square (const Interval_nt & d)
   FPU_set_cw(backup);
   return tmp;
 }
+
+inline
+Interval_nt &
+Interval_nt::operator+= (const Interval_nt & d)
+{ return *this = *this + d; }
+
+inline
+Interval_nt &
+Interval_nt::operator-= (const Interval_nt & d)
+{ return *this = *this - d; }
+
+inline
+Interval_nt &
+Interval_nt::operator*= (const Interval_nt & d)
+{ return *this = *this * d; }
+
+inline
+Interval_nt &
+Interval_nt::operator/= (const Interval_nt & d)
+{ return *this = *this / d; }
 
 inline
 Interval_nt
@@ -582,6 +573,9 @@ Interval_nt
 operator&&(const Interval_nt & d, const Interval_nt & e)
 { return ((Interval_nt_advanced) d) && (Interval_nt_advanced) e; }
 
+
+std::ostream & operator<< (std::ostream &, const Interval_nt_advanced &);
+std::istream & operator>> (std::istream &, Interval_nt_advanced &);
 
 // The undocumented tags.
 
