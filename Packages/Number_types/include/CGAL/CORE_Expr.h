@@ -83,7 +83,9 @@ to_interval (const CORE::Expr & e)
   double approx = to_double(e);
   double rel_error = e.get_double_error();
   FPU_set_cw(CGAL_FE_UPWARD);
-  Interval_nt_advanced ina =  (Interval_nt_advanced(-rel_error,rel_error) + 1 ) * approx;
+  Interval_nt_advanced ina = Interval_nt_advanced(-rel_error,rel_error);
+  ina += 1;
+  ina *= approx;
   return ina.pair();
 }
 #endif
