@@ -1,3 +1,7 @@
+4.32	 (29 August 01)
+- changed ccSection commands to section commands since pdf converter that 
+  creates bookmarks can't handle the former.
+
 4.31	 (15 August 01)
 - Merge Quotient.C into Quotient.h.  SunPro knows about automatic template
   inclusion, but requires these template functions to be not inline, which
