@@ -300,14 +300,15 @@ public:
   bool
   is_valid() const
   {
+    if(empty()) return true;
     bool b = true;
     for (int i = 0; i < dimension(); i++){
-      assert( b = b && (bbox.min_coord(i) <= tbox.min_coord(i)));
-      assert( b = b && (bbox.max_coord(i) >= tbox.max_coord(i)));
+      assert( b = (b && (bbox.min_coord(i) <= tbox.min_coord(i))));
+      assert( b = (b && (bbox.max_coord(i) >= tbox.max_coord(i))));
 
       Between<Traits> between(i,tbox.min_coord(i), tbox.max_coord(i));
       for(iterator it = begin(); it != end(); it++){
-	between(*it);
+	b = (b && between(*it));
       }
     }
     return b;
