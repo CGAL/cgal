@@ -11,7 +11,7 @@
 #include <CGAL/Arrangement_2.h>
 
 #include <CGAL/IO/Arr_iostream.h>
-#include <iostream.h>
+#include <iostream>
 
 //#ifdef CGAL_USE_LEDA
 //#include <CGAL/IO/Arr_Postscript_file_stream.h>
