@@ -16,10 +16,8 @@ typedef leda_integer RT;
 #include <CGAL/Gmpz.h>
 typedef CGAL::Gmpz RT;
 #else
-// NOTE: the choice of double here for a number type may cause problems
-//       for degenerate point sets
-#include <CGAL/double.h>
-typedef double RT;
+#include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float RT;
 #endif
 #endif
 

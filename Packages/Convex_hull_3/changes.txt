@@ -1,3 +1,6 @@
+2.43    (31 Oct 2002)
+- replace double by MP_Float as no-GMP, no-LEDA number type in examples
+
 2.42    (12 Aug 2002)
 - replaced LEFTTURN and relatives by LEFT_TURN and relatives
 
