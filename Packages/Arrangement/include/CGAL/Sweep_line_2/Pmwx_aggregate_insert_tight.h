@@ -414,9 +414,9 @@ protected:
 
   /*!
    *  Handle a vertical curve when the event being processed is the top end 
-   *  of the curve. In this situation, the event contains a list of intersection
-   *  points on the vertical curve. We go through this list and outpt the 
-   *  subcurves induced by these intersection points.
+   *  of the curve. In this situation, the event contains a list of
+   *  intersection points on the vertical curve. We go through this list and
+   *  outpt the subcurves induced by these intersection points.
    *  If the curve is not vertical, returns without doing anything.
    * 
    *  @param out an iterator to the output
