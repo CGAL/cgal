@@ -19,7 +19,9 @@ if ($#ARGV != 1) {
 
 my $scripts_dir= "/projects/CGAL/admin_scripts/";
 my $data_dir= "${scripts_dir}DATA/";
-
+my $testsuite_dir = '/users/www/CGAL/Members/Develop/testsuite';
+my $new_version;
+my $old_version;
 
 my ($v1,$v2,$v3,$u1,$u2,$u3);
 my $versionv=shift or die;
@@ -61,11 +63,15 @@ unlink "${data_dir}version_info",
 
 open(VERSION_INFO, ">${data_dir}version_info");
 if ($swap_versions) {
+    $new_version = "CGAL-${u1}.${u2}-I-${u3}";
+    $old_version = "CGAL-${v1}.${v2}-I-${v3}";
     print VERSION_INFO "CGAL-${u1}.${u2}-I-${u3} ";
     print VERSION_INFO "CGAL-${v1}.${v2}-I-${v3}\n";
     open(NEW_VERSIONS,"<${versionu}") or die;
     open(OLD_VERSIONS,"<$versionv") or die;
 } else {
+    $old_version = "CGAL-${u1}.${u2}-I-${u3}";
+    $new_version = "CGAL-${v1}.${v2}-I-${v3}";
     print VERSION_INFO "CGAL-${v1}.${v2}-I-${v3} ";
     print VERSION_INFO "CGAL-${u1}.${u2}-I-${u3}\n";
     open(NEW_VERSIONS,"<$versionv") or die;
@@ -137,3 +143,7 @@ close(DELETED) or die;
 close(FORMATTED_VERSIONS) or die;
 
 system("${scripts_dir}print_release_page");
+
+chdir($testsuite_dir);
+system("echo","./create_testresult_page", '-p', $old_version, $new_version);
+system("./create_testresult_page", '-p', $old_version, $new_version);
