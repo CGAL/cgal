@@ -26,7 +26,7 @@ CGAL_BEGIN_NAMESPACE
 
 template <class Pt>
 class Arr_2_vertex_base {
- protected:
+protected:
   void* hdg;
   Pt    pt;
 public:
@@ -36,22 +36,17 @@ public:
 
   virtual ~Arr_2_vertex_base() {}
   
-  void*       halfedge()               {return hdg;}
-  const void* halfedge() const         {return hdg;}
-  void        set_halfedge( void* h)   { hdg = h;}
+  void*       halfedge()               { return hdg; }
+  const void* halfedge() const         { return hdg; }
+  void        set_halfedge(void* h)    { hdg = h; }
   // an incident halfedge pointing at `v'.
 
   //    Point&       point()       { return pt;}
   const Point& point() const { return pt;}
-  void set_point(const Point& p) {
-    pt=p;
-  }
+  void set_point(const Point& p) { pt = p; }
 
   // assign function for non-connectivity data
-  virtual void assign(const Arr_2_vertex_base<Pt> &v)
-  {
-    pt = v.pt;
-  }
+  virtual void assign(const Arr_2_vertex_base<Pt> & v) { pt = v.pt; }
 };
 
 template <class Base_node>
@@ -63,32 +58,32 @@ public:
   
   virtual ~Arr_2_halfedge_base() {}
   
-  void*       opposite()       { return opp;}
-  const void* opposite() const { return opp;}
+  void*       opposite()       { return opp; }
+  const void* opposite() const { return opp; }
 
-  void*       next()           { return nxt;}
-  const void* next() const     { return nxt;}
+  void*       next()           { return nxt; }
+  const void* next() const     { return nxt; }
   // the next halfedge along the face.
   
-  void  set_opposite( void* h)  { opp = h;}
+  void  set_opposite(void* h)  { opp = h; }
 
-  void  set_next( void* h)      { nxt = h;}
+  void  set_next(void* h)      { nxt = h; }
   
 
   //    void*       prev()       { return prv;}
   //  const void* prev() const { return prv;}
 
 
-  void*       vertex()       { return v;}
-  const void* vertex() const { return v;}
+  void*       vertex()       { return v; }
+  const void* vertex() const { return v; }
   
-  void*       face()       { return f;}
-  const void* face() const { return f;}
+  void*       face()       { return f; }
+  const void* face() const { return f; }
   // the face to the left.
 
-  void  set_vertex( void* _v)     { v = _v;}
+  void  set_vertex( void* _v)     { v = _v; }
 
-  void  set_face( void* _f)      { f = _f;}
+  void  set_face( void* _f)      { f = _f; }
 
 
   //for debug only !!
@@ -100,23 +95,19 @@ public:
   //use them , the curves are set in the halfedge via the edge_node!!
 
   
-  const Curve& curve() const { 
-    return bn->curve();
-  }
+  const Curve & curve() const { return bn->curve(); }
 //  void set_curve(const Curve& cv) {bn->set_curve(cv);}
 //the setting of the curve is done only in the arrangement level
-  void set_curve(const Curve& cv) {}
+  void set_curve(const Curve &) {}
     
-
   Base_node* edge_node() {return bn;} //will become private in the arrangement
   const Base_node* edge_node() const {return bn;} 
   void set_edge_node(Base_node* b) {bn=b;}
 
   // assign function for non-connectivity data
-  virtual void assign(const Arr_2_halfedge_base<Base_node> &e)
+  virtual void assign(const Arr_2_halfedge_base<Base_node> &)
   {
     //bn = new Base_node(*e.bn);
-    (void) e; // Avoid unused parameter warning
   }
 
 protected:
@@ -179,19 +170,14 @@ public:
 
   
   //this is not documented but needed for a private project
-  Holes_container::size_type number_of_holes() const { return holes.size();}
+  Holes_container::size_type number_of_holes() const { return holes.size(); }
 
   // assign function for non-connectivity data
-  virtual void assign(const  Arr_2_face_base &f)
-  {
-    (void) f; // Avoid unused parameter warning  
-  }
+  virtual void assign(const  Arr_2_face_base &) { }
 
 protected:
   void* hdg;
-  Holes_container holes ;
-
-
+  Holes_container holes;
 };
 
 
@@ -219,12 +205,3 @@ protected:
 CGAL_END_NAMESPACE
 
 #endif
-
-
-
-
-
-
-
-
-

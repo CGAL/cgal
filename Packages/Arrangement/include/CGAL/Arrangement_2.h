@@ -2018,7 +2018,7 @@ void push_in_edge_list(const typename Traits::X_curve& cv,
                        Pm_halfedge_handle phe,
                        Subcurve_node* ftr,
                        In_place_list<Subcurve_node,true>& edge_list,
-                       bool original_direction,
+                       bool /* original_direction */,
                        bool overlap=false)
 {
   Halfedge_handle e = phe;
