@@ -1,5 +1,6 @@
 2.11 (11 September 2003)
 - Replaced begin()/end() of segment and ray with source()/target()
+- Replaced subtraction of points with functor Construct_vector_3
 
 2.10 (10 September 2003)
 - Added specializations for Cartesian and homogeneous kernels [af]

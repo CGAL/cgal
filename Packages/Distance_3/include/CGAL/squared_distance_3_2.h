@@ -58,8 +58,9 @@ squared_distance(
     const typename CGAL_WRAP(K)::Plane_3 & plane,
     const K& k)
 {
+  typename K::Construct_vector_3 construct_vector;
   typedef typename K::Vector_3 Vector_3;
-  Vector_3 diff(pt-plane.point());
+  Vector_3 diff = construct_vector(plane.point(), pt));
   return squared_distance_to_plane(plane.orthogonal_vector(), diff, k);
 }
 
@@ -106,13 +107,14 @@ squared_distance(
     const typename CGAL_WRAP(K)::Plane_3 &plane,
     const K& k)
 {
-  typedef typename K::Point_3 Point_3;
-  typedef typename K::Vector_3 Vector_3;
+    typename K::Construct_vector_3 construct_vector;
+    typedef typename K::Point_3 Point_3;
+    typedef typename K::Vector_3 Vector_3;
     typedef typename K::RT RT;
     typedef typename K::FT FT;
     const Point_3 &start = ray.start();
     const Point_3 &planepoint = plane.point();
-    Vector_3 start_min_pp = start - planepoint;
+    Vector_3 start_min_pp = const(planepoint, start);
     Vector_3 end_min_pp = ray.direction().vector();
     const Vector_3 &normal = plane.orthogonal_vector();
     RT sdm_rs2pp = wdot(normal, start_min_pp, k);
@@ -150,8 +152,9 @@ squared_distance(
     const typename CGAL_WRAP(K)::Plane_3 &plane,
     const K& k)
 {
-  typedef typename K::Point_3 Point_3;
-  typedef typename K::Vector_3 Vector_3;
+    typename K::Construct_vector_3 construct_vector;
+    typedef typename K::Point_3 Point_3;
+    typedef typename K::Vector_3 Vector_3;
     typedef typename K::RT RT;
     typedef typename K::FT FT;
     const Point_3 &start = seg.start();
@@ -159,8 +162,8 @@ squared_distance(
     if (start == end)
         return squared_distance(start, plane, k);
     const Point_3 &planepoint = plane.point();
-    Vector_3 start_min_pp = start - planepoint;
-    Vector_3 end_min_pp = end - planepoint;
+    Vector_3 start_min_pp = construct_vector(planepoint, start);
+    Vector_3 end_min_pp = construct_vector(planepoint, end);
     const Vector_3 &normal = plane.orthogonal_vector();
     RT sdm_ss2pp = wdot(normal, start_min_pp, k);
     RT sdm_se2pp = wdot(normal, end_min_pp, k);
