@@ -535,6 +535,7 @@ locate(const Point& t, Locate_type &lt,  int &li)
 	return true;
       }
       lt = Triangulation::FACE;
+      li = 4;//li unused in this case
       return true;
     }
   case vertex_vertex:

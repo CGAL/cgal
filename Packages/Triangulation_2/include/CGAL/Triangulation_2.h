@@ -1412,67 +1412,67 @@ march_locate_2D(const Face_handle& start,
 		Locate_type& lt,
 		int& li) const
 {
-     //    CGAL_triangulation_precondition( ! is_infinite(start) );
-        Triangulation_2 *ncthis = (Triangulation_2 *)this;
+  //    CGAL_triangulation_precondition( ! is_infinite(start) );
+  Triangulation_2 *ncthis = (Triangulation_2 *)this;
     
-        Point p(start->vertex(0)->point());
-        if(geom_traits().compare_x(t,p) == EQUAL &&  
-	   geom_traits().compare_y(t,p) == EQUAL){
-            lt = VERTEX;
-            li = 0;
-            return start;
-        }
+  Point p(start->vertex(0)->point());
+  if(geom_traits().compare_x(t,p) == EQUAL &&  
+     geom_traits().compare_y(t,p) == EQUAL) {
+    lt = VERTEX;
+    li = 0;
+    return start;
+  }
 
-        Line_face_circulator lfc(start->vertex(0),
-                                 ncthis,
-                                 t);
+  Line_face_circulator lfc(start->vertex(0),
+			   ncthis,
+			   t);
 	
-        if(lfc.collinear_outside()) {
-            // point t lies outside or on the convex hull
-            // we walk clockwise on the hull to decide
-            int i = lfc->index(infinite_vertex());
-            p = lfc->vertex(ccw(i))->point();
-            if(geom_traits().compare_x(t,p) == EQUAL &&  
-	       geom_traits().compare_y(t,p) == EQUAL){
-                lt = VERTEX;
-                li = ccw(i);
-                return lfc;
-            }
-         Point q(lfc->vertex(cw(i))->point());
-	 Orientation pqt;
-         Face_handle f(lfc);
-         while(1){
-           if(geom_traits().compare_x(t,q) == EQUAL &&  
-	      geom_traits().compare_y(t,q) == EQUAL){
-             lt = VERTEX;
-             li = cw(i);
-             return f;
-           }
-	   pqt = geom_traits().orientation(p,q,t);
-	   if (pqt == COLLINEAR && collinear_between(p, t, q)){
-	     lt = EDGE;
-	     li = i;
-	     return f;
-	   }
-	   if (pqt == LEFTTURN){
-	     lt = OUTSIDE_CONVEX_HULL;
-	     li = i;
-	     return f ;
-	   }
-	   	       
-           // go to the next face
-           f = f->neighbor(ccw(i));
-           i = f->index(infinite_vertex());
-           p = q;
-           q = f->vertex(cw(i))->point();
-     	 }
-        }
-
-        while(! lfc.locate(t, lt, li) ){
-	  ++lfc;
-        }
-        return lfc;
+  if(lfc.collinear_outside()) {
+    // point t lies outside or on the convex hull
+    // we walk clockwise on the hull to decide
+    int i = lfc->index(infinite_vertex());
+    p = lfc->vertex(ccw(i))->point();
+    if(geom_traits().compare_x(t,p) == EQUAL &&  
+       geom_traits().compare_y(t,p) == EQUAL){
+      lt = VERTEX;
+      li = ccw(i);
+      return lfc;
     }
+    Point q(lfc->vertex(cw(i))->point());
+    Orientation pqt;
+    Face_handle f(lfc);
+    while(1) {
+      if(geom_traits().compare_x(t,q) == EQUAL &&  
+	 geom_traits().compare_y(t,q) == EQUAL){
+	lt = VERTEX;
+	li = cw(i);
+	return f;
+      }
+      pqt = geom_traits().orientation(p,q,t);
+      if (pqt == COLLINEAR && collinear_between(p, t, q)){
+	lt = EDGE;
+	li = i;
+	return f;
+      }
+      if (pqt == LEFTTURN){
+	lt = OUTSIDE_CONVEX_HULL;
+	li = i;
+	return f ;
+      }
+	   	       
+      // go to the next face
+      f = f->neighbor(ccw(i));
+      i = f->index(infinite_vertex());
+      p = q;
+      q = f->vertex(cw(i))->point();
+    }
+  }
+
+  while(! lfc.locate(t, lt, li) ){
+    ++lfc;
+  }
+  return lfc;
+}
 
     
 template <class Gt, class Tds >
