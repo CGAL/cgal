@@ -1,22 +1,31 @@
-#!/sw/bin/perl -w
+#!/usr/local/bin/perl -w -W
 
+use Cwd;
 use strict;
 
-$ENV{PATH}=
-'/sw/bin:/sbin:/usr/sbin:/usr/bsd:/bin:/usr/bin';
+#$ENV{PATH}=
+#'/sw/bin:/sbin:/usr/sbin:/usr/bsd:/bin:/usr/bin';
 
-my $scriptsdir = "/projects/CGAL/admin_scripts";
+
+
+my $scriptsdir;
 my $mail_prog="$scriptsdir/send_cgal_mail";
-my $unpack_dir_base= "/tmp";
+my $unpack_dir_base;
 my $unpack_dir;
-my $testresult_dir = "/users/www/CGAL/Members/Develop/testsuite";
-#my $testresult_dir = "/users/geert/tmp/tr";
+my $testresult_dir;
 my $result_url;
-my $lockfile="/private/cgal_testannounce.lock";
+my $lockfile="cgal_testannounce.lock";
 my $announcements_dir="/private/CGAL/testannouncements";
-my $lock_cmd= "/sw/bin/lockfile -r 10 -l 600 $lockfile";
+#my $announcements_dir="/u/termite/0/user/spion/CGAL/testannouncements";
+my $lock_cmd= "/usr/local/bin/lockfile";
+my $currentdir;
  
 my ($cgal_version,$tarname,@results);
+
+$currentdir=cwd();
+$testresult_dir="$currentdir/TESTRESULTS";
+$scriptsdir="$currentdir";
+$unpack_dir_base="$currentdir";
 
 sub usage()
 {
@@ -39,7 +48,7 @@ sub make_unpackdir()
 sub unpack_results()
 {
     chdir $unpack_dir or die;
-    if  (system("$scriptsdir/get_cgal_html", $result_url) != 0) {
+    if  (system("$currentdir/get_cgal_html", "$result_url") != 0) {
         chdir('..');
         system('rm','-rf',$unpack_dir);
         die "Could not get URL $result_url\n";
@@ -60,7 +69,7 @@ sub oldnotify()
     "|$mail_prog \"New test results for $cgal_version\" 'geert\@cs.uu.nl'";
     print NOTICE <<"TOTHIER";
 Results for the following platforms have been installed on
-http://www.cs.uu.nl/CGAL/Members/Develop/testsuite/results.html 
+http://www-sop.inria.fr/geometrica/CGAL/Members/testsuite/results.html 
 
 TOTHIER
 
@@ -87,7 +96,7 @@ sub notify()
 	    open NOTICE, "> $announcement_file";
             print NOTICE <<"TOTHIER";
 Results for the following platforms have been installed on
-http://www.cs.uu.nl/CGAL/Members/Develop/testsuite/results.html 
+http://www-sop.inria.fr/geometrica/CGAL/Members/testsuite/results.html 
 
 TOTHIER
 	}
@@ -104,22 +113,32 @@ TOTHIER
 
 sub install_results()
 {
-    chdir $testresult_dir;
-    chdir $cgal_version;
+  if (-d $testresult_dir) {
+    chdir $testresult_dir or die;    
+  } else {
+    mkdir $testresult_dir or die;
+    chdir $testresult_dir or die;
+  }
+  if (-d $cgal_version) {
+    chdir $cgal_version or die;    
+  } else {
+    mkdir $cgal_version or die;
+    chdir $cgal_version or die;
+  }
     my $resultfile;
     for $resultfile (@results) {
         $resultfile =~ s/\.gz//;
-        system("tar", "xf", "${unpack_dir}/$resultfile");
-        unlink "${unpack_dir}/$resultfile";
+        system('tar','--force-local','-xf',"${unpack_dir}/${resultfile}")==0 or die;
+#        unlink "${unpack_dir}/$resultfile";
     }
-    chdir "..";
-    system("./create_testresult_page", $cgal_version);
+    chdir ".." or die;
+#    system("./create_testresult_page", $cgal_version);
 
 # clean up stuff in UNPACK_DIR
 
-    chdir $unpack_dir;
-    unlink $tarname;
-    notify();
+    chdir $unpack_dir or die;
+#    unlink $tarname;
+#    notify();
 
 }
 
@@ -136,7 +155,19 @@ chomp $tarname;
 if ( $tarname =~ m/^(CGAL-\d+\.\d+-I-\d+)-/ ) {
     $cgal_version=$1;
 } else {
+  if ( $tarname =~ m/^(CGAL-\d+\.\d+\.\d+-I-\d+)-/ ) {
+    $cgal_version=$1;
+  } else {
+    if ( $tarname =~ m/^(CGAL-\d+\.\d+\.\d+)-/ ) {
+        $cgal_version=$1;
+  } else {
+      if ( $tarname =~ m/^(CGAL-\d+\.\d+)-/ ) {
+              $cgal_version=$1;
+    } else {
     die "$tarname is not a valid name for a testresult collection.\n";
+   }
+  }
+ }
 }
 
 make_unpackdir();
