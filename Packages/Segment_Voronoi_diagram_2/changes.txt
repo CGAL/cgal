@@ -1,3 +1,8 @@
+4 August 2004:  Menelaos Karavelas
+- fixed references in reference manual
+- fixed problem with .eps extensions in the .tex files
+- added images in PNG format for the PDF version of the manual
+
 8 July 2004:  Menelaos Karavelas
 - renamed the is_exact methods to is_input (one of the suggestions
   in Sylvain's review)
