@@ -1,4 +1,4 @@
-Version 6.9 (?? March 2001)
+Version 6.9 (16 March 2001)
 - Added constructor Vector(Point, Point).
 - Optimize circumcenterC3(3 points).
 - Added side_of_bounded_sphere() for 2 and 3 points.

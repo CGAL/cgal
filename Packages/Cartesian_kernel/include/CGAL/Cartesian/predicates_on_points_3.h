@@ -391,6 +391,32 @@ inline
 Bounded_side
 side_of_bounded_sphere(const PointC3<R CGAL_CTAG> &p,
                        const PointC3<R CGAL_CTAG> &q,
+                       const PointC3<R CGAL_CTAG> &test)
+{
+  return side_of_bounded_sphereC3(p.x(), p.y(), p.z(),
+                                  q.x(), q.y(), q.z(),
+                                  test.x(), test.y(), test.z());
+}
+
+template <class R >
+inline
+Bounded_side
+side_of_bounded_sphere(const PointC3<R CGAL_CTAG> &p,
+                       const PointC3<R CGAL_CTAG> &q,
+                       const PointC3<R CGAL_CTAG> &r,
+                       const PointC3<R CGAL_CTAG> &test)
+{
+  return side_of_bounded_sphereC3(p.x(), p.y(), p.z(),
+                                  q.x(), q.y(), q.z(),
+                                  r.x(), r.y(), r.z(),
+                                  test.x(), test.y(), test.z());
+}
+
+template <class R >
+inline
+Bounded_side
+side_of_bounded_sphere(const PointC3<R CGAL_CTAG> &p,
+                       const PointC3<R CGAL_CTAG> &q,
                        const PointC3<R CGAL_CTAG> &r,
                        const PointC3<R CGAL_CTAG> &s,
                        const PointC3<R CGAL_CTAG> &test)

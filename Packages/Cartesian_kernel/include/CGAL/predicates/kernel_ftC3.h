@@ -336,9 +336,10 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
 
   FT den2 = FT(2) * den;
 
-  return Bounded_side(compare_dist(tsx*den2, tsy*den2, tsz*den2,
-	                           psx*den2, psy*den2, psz*den2,
-				   num_x,    - num_y,  num_z) );
+  // The following could be simplified a bit.
+  return Bounded_side(cmp_dist_to_pointC3(num_x,    - num_y,  num_z,
+	                                  psx*den2, psy*den2, psz*den2,
+	                                  tsx*den2, tsy*den2, tsz*den2) );
 }
 
 template < class FT >
