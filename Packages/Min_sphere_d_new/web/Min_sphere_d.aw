@@ -40,17 +40,6 @@
   \markright{\thesubsection~~#1: #2}}
 
 @! settings for `cc_manual.sty'
-\begin{ccTexOnly}
-\newlength{\optFirstColumn}
-\newlength{\optSecondColumn}
-\end{ccTexOnly}
-\newcommand{\ccSaveColumns}{
-  \setlength{\optFirstColumn}{\ccwFunctionFirst}
-  \setlength{\optSecondColumn}{\ccwFunctionSecond}}
-\newcommand{\ccRestoreColumns}{
-  \setlength{\ccwFunctionFirst}{\optFirstColumn}
-  \setlength{\ccwFunctionSecond}{\optSecondColumn}}
-
 \ccDefGlobalScope{CGAL::}
 \renewcommand{\ccRefPageEnd}{\clearpage}
 
@@ -79,7 +68,7 @@
 @t vskip 0 mm
 @t title titlefont centre "in Arbitrary Dimension*"
 @t vskip 10 mm
-@t title smalltitlefont centre "Sven Schönherr"
+@t title smalltitlefont centre "Bernd Gärtner and Sven Schönherr"
 \begin{center}
   \textbf{ETH Z{\"u}rich}
 \end{center}
@@ -179,8 +168,6 @@ is the negative value of the objective function at $x^*$.
 \emph{Note:} Below some references are undefined, they refer to sections
 in the \cgal\ Reference Manual.
 
-@p maximum_input_line_length = 81
-
 @! ----------------------------------------------------------------------------
 @! Concept: Min_sphere_d_traits
 @! ----------------------------------------------------------------------------
@@ -218,8 +205,6 @@ in the \cgal\ Reference Manual.
 \subsectionRef{Class}{%
   CGAL::Min\_sphere\_d\_traits\_d\texttt{<}R,ET,NT\texttt{>}}
 \input{../doc_tex/basic/Optimisation/Optimisation_ref/Min_sphere_d_traits_d.tex}
-
-@p maximum_input_line_length = 80
 
 
 @! ============================================================================
@@ -2305,55 +2290,6 @@ can be enabled by giving a number between 0 and 3 at the command line.
         @<Min_sphere_d test: main (dD)>
     }
 
-    /*    
-    #include <CGAL/Cartesian.h>
-    #include <CGAL/Point_d.h>
-    #include <CGAL/Min_sphere_d_new.h>
-    #include <CGAL/Min_sphere_d_traits_d_new.h>
-
-    #include <CGAL/_QP_solver/Double.h>
-
-    #include <CGAL/Random.h>
-    
-    typedef  CGAL::Cartesian<double>                R;
-    typedef  CGAL::Min_sphere_d_traits_d<R,GMP::Double>  Traits;
-    typedef  CGAL::Min_sphere_d<Traits>             Min_sphere_d;
-
-    typedef  Traits::Point_d                        Point;
-    
-    // main
-    // ----
-    int
-    main( int argc, char* argv[])
-    {
-        int n = 10;
-        int d = 5;
-        unsigned int  mask = 0xFFFFFF;    // 24-bit
-        int verbose = 1;
-
-        if ( argc > 1) n = atoi( argv[ 1]);
-        if ( argc > 2) d = atoi( argv[ 2]);
-        if ( argc > 3) mask = atoi( argv[ 3]);
-        if ( argc > 4) verbose = atoi( argv[ 4]);
-        
-        // generate random points
-        std::vector<Point>  pts;
-        std::vector<int>  p( d);
-        int  i, j;
-        for ( i = 0; i < n; ++i) {
-            for ( j = 0; j < d; ++j) p[ j] = ( random() & mask);
-            pts.push_back( Point( d, p.begin(), p.end()));
-        }
-
-        // compute min-sphere
-        Min_sphere_d  ms( pts.begin(), pts.end(), Traits(), verbose);
-        CGAL::set_pretty_mode( std::cout);
-        std::cout << ms;
-        ms.is_valid( true);
-        
-        return( 0);
-    }
-    */
     @<end of file line>
 @end
 
