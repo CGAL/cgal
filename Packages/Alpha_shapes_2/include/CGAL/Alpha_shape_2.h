@@ -1334,8 +1334,8 @@ Alpha_shape_2<Dt>::find_optimal_alpha(const int& nb_components)
   Alpha_iterator last = alpha_end();
   Alpha_iterator middle;
   
-  ptrdiff_t len = last - first - 1;
-  ptrdiff_t half;
+  std::ptrdiff_t len = last - first - 1;
+  std::ptrdiff_t half;
 
   while (len > 0) 
     {
