@@ -6,42 +6,43 @@
 #include <pair.h>
 #include <iterator.h>
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_ds_iterators_2.h>
 
-template < class Tds >
+template < class Gt, class Tds >
 class CGAL_Triangulation_face_2;
 
-template < class Tds >
+template < class Gt, class Tds >
 class CGAL_Triangulation_vertex_2;
 
-template < class Tds>
+template < class Gt, class Tds>
 class CGAL_Triangulation_face_iterator_2;
 
-template < class Tds>
+template < class Gt, class Tds>
 class CGAL_Triangulation_vertex_iterator_2;
 
-template < class Tds>
+template < class Gt, class Tds>
 class CGAL_Triangulation_edge_iterator_2;
 
 
-template < class Tds>
+template < class Gt, class Tds>
 class CGAL_Triangulation_face_iterator_2
-    : public bidirectional_iterator<CGAL_Triangulation_face_2<Tds>,ptrdiff_t>
+    : public bidirectional_iterator<CGAL_Triangulation_face_2<Gt,Tds>,ptrdiff_t>
 {
 public:
   typedef typename Tds::Vertex Ve;
   typedef typename Tds::Face Fa;
   typedef typename Tds::Face_iterator  Iterator_base;
 
-  typedef CGAL_Triangulation_face_2<Tds> Face;
-  typedef CGAL_Triangulation_vertex_2<Tds> Vertex;
+  typedef CGAL_Triangulation_face_2<Gt,Tds> Face;
+  typedef CGAL_Triangulation_vertex_2<Gt,Tds> Vertex;
   typedef typename Vertex::Vertex_handle Vertex_handle;
   typedef typename Face::Face_handle Face_handle;
   typedef pair<Face_handle, int>     Edge;
 
-  typedef CGAL_Triangulation_face_iterator_2<Tds>      Face_iterator;
-  typedef CGAL_Triangulation_edge_iterator_2<Tds>      Edge_iterator;
-  typedef CGAL_Triangulation_vertex_iterator_2<Tds>    Vertex_iterator;
+  typedef CGAL_Triangulation_face_iterator_2<Gt,Tds>      Face_iterator;
+  typedef CGAL_Triangulation_edge_iterator_2<Gt,Tds>      Edge_iterator;
+  typedef CGAL_Triangulation_vertex_iterator_2<Gt,Tds>    Vertex_iterator;
 
   static int ccw(int i)
   {
@@ -57,11 +58,11 @@ public:
     : _ib()
   {}
         
-  CGAL_Triangulation_face_iterator_2(CGAL_Triangulation_2<Tds> *tr)
+  CGAL_Triangulation_face_iterator_2(CGAL_Triangulation_2<Gt,Tds> *tr)
             : _ib( &(tr->_tds))
   { }
         
-  CGAL_Triangulation_face_iterator_2(CGAL_Triangulation_2<Tds> *tr, int i)
+  CGAL_Triangulation_face_iterator_2(CGAL_Triangulation_2<Gt,Tds> *tr, int i)
     : _ib( &(tr->_tds), i)
   { }
        
@@ -135,24 +136,24 @@ private:
 };
 
 
-template < class Tds>
+template < class Gt, class Tds>
 class CGAL_Triangulation_vertex_iterator_2
-    : public bidirectional_iterator<CGAL_Triangulation_vertex_2<Tds>,ptrdiff_t>
+    : public bidirectional_iterator<CGAL_Triangulation_vertex_2<Gt, Tds>,ptrdiff_t>
 {
 public:
   typedef typename Tds::Vertex Ve;
   typedef typename Tds::Face Fa;
   typedef typename Tds::Vertex_iterator  Iterator_base;
 
-  typedef CGAL_Triangulation_face_2<Tds> Face;
-  typedef CGAL_Triangulation_vertex_2<Tds> Vertex;
+  typedef CGAL_Triangulation_face_2<Gt,Tds> Face;
+  typedef CGAL_Triangulation_vertex_2<Gt,Tds> Vertex;
   typedef typename Vertex::Vertex_handle Vertex_handle;
   typedef typename Face::Face_handle Face_handle;
   typedef pair<Face_handle, int>     Edge;
 
-  typedef CGAL_Triangulation_face_iterator_2<Tds>      Face_iterator;
-  typedef CGAL_Triangulation_edge_iterator_2<Tds>      Edge_iterator;
-  typedef CGAL_Triangulation_vertex_iterator_2<Tds>    Vertex_iterator;
+  typedef CGAL_Triangulation_face_iterator_2<Gt,Tds>      Face_iterator;
+  typedef CGAL_Triangulation_edge_iterator_2<Gt,Tds>      Edge_iterator;
+  typedef CGAL_Triangulation_vertex_iterator_2<Gt,Tds>    Vertex_iterator;
 
   static int ccw(int i)
   {
@@ -168,11 +169,11 @@ public:
     : _ib()
   {}
         
-  CGAL_Triangulation_vertex_iterator_2(CGAL_Triangulation_2<Tds> *tr)
+  CGAL_Triangulation_vertex_iterator_2(CGAL_Triangulation_2<Gt,Tds> *tr)
             : _ib( &(tr->_tds))
   { }
         
-  CGAL_Triangulation_vertex_iterator_2(CGAL_Triangulation_2<Tds> *tr, int i)
+  CGAL_Triangulation_vertex_iterator_2(CGAL_Triangulation_2<Gt,Tds> *tr, int i)
     : _ib( &(tr->_tds), i)
   { }
        
@@ -246,24 +247,24 @@ private:
 };
 
 
-template < class Tds>
+template < class Gt, class Tds>
 class CGAL_Triangulation_edge_iterator_2
-    : public bidirectional_iterator<typename CGAL_Triangulation_2<Tds>::Edge ,ptrdiff_t>
+    : public bidirectional_iterator<typename CGAL_Triangulation_2<Gt,Tds>::Edge ,ptrdiff_t>
 {
 public:
   typedef typename Tds::Vertex Ve;
   typedef typename Tds::Face Fa;
   typedef typename Tds::Edge_iterator  Iterator_base;
 
-  typedef CGAL_Triangulation_face_2<Tds> Face;
-  typedef CGAL_Triangulation_vertex_2<Tds> Vertex;
+  typedef CGAL_Triangulation_face_2<Gt,Tds> Face;
+  typedef CGAL_Triangulation_vertex_2<Gt,Tds> Vertex;
   typedef typename Vertex::Vertex_handle Vertex_handle;
   typedef typename Face::Face_handle Face_handle;
   typedef pair<Face_handle, int>     Edge;
 
-  typedef CGAL_Triangulation_face_iterator_2<Tds>      Face_iterator;
-  typedef CGAL_Triangulation_edge_iterator_2<Tds>      Edge_iterator;
-  typedef CGAL_Triangulation_vertex_iterator_2<Tds>    Vertex_iterator;
+  typedef CGAL_Triangulation_face_iterator_2<Gt,Tds>      Face_iterator;
+  typedef CGAL_Triangulation_edge_iterator_2<Gt,Tds>      Edge_iterator;
+  typedef CGAL_Triangulation_vertex_iterator_2<Gt,Tds>    Vertex_iterator;
 
   static int ccw(int i)
   {
@@ -279,11 +280,11 @@ public:
     : _ib()
   {}
         
-  CGAL_Triangulation_edge_iterator_2(CGAL_Triangulation_2<Tds> *tr)
+  CGAL_Triangulation_edge_iterator_2(CGAL_Triangulation_2<Gt,Tds> *tr)
             : _ib( &(tr->_tds))
   { }
         
-  CGAL_Triangulation_edge_iterator_2(CGAL_Triangulation_2<Tds> *tr, int i)
+  CGAL_Triangulation_edge_iterator_2(CGAL_Triangulation_2<Gt,Tds> *tr, int i)
     : _ib( &(tr->_tds), i)
   { }
        

@@ -9,6 +9,7 @@
 #include <CGAL/Pointer.h>
 #include <CGAL/circulator.h>
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_default_data_structure_2.h>
 #include <CGAL/Triangulation_face_2.h>
 #include <CGAL/Triangulation_vertex_2.h>
@@ -17,45 +18,57 @@
 #include <CGAL/Triangulation_circulators_2.h>
 
 
-template < class Tds >
+
+
+template < class Gt, class Tds>
+class CGAL_Triangulation_face_iterator_2;
+
+template < class Gt, class Tds>
+class CGAL_Triangulation_vertex_iterator_2;
+
+template < class Gt, class Tds>
+class CGAL_Triangulation_edge_iterator_2;
+
+
+template < class Gt, class Tds >
 class CGAL_Triangulation_2
 {
   friend istream& operator>> CGAL_NULL_TMPL_ARGS
-                (istream& is, CGAL_Triangulation_2<Tds> &tr);
+                (istream& is, CGAL_Triangulation_2<Gt,Tds> &tr);
   friend ostream& operator<< CGAL_NULL_TMPL_ARGS
-                (ostream& os, CGAL_Triangulation_2<Tds> &tr);
-  friend CGAL_Triangulation_face_iterator_2<Tds>;
-  friend CGAL_Triangulation_edge_iterator_2<Tds>;
-  friend CGAL_Triangulation_vertex_iterator_2<Tds>;
+                (ostream& os, CGAL_Triangulation_2<Gt,Tds> &tr);
+  friend CGAL_Triangulation_face_iterator_2<Gt,Tds>;
+  friend CGAL_Triangulation_edge_iterator_2<Gt,Tds>;
+  friend CGAL_Triangulation_vertex_iterator_2<Gt,Tds>;
 
 public:
   typedef Tds Triangulation_data_structure;
-  typedef CGAL_Triangulation_2<Tds> Triangulation;
+  typedef CGAL_Triangulation_2<Gt,Tds> Triangulation;
 
-  typedef typename Tds::Geom_traits  Geom_traits;
+  typedef Gt  Geom_traits;
   typedef typename Geom_traits::Point Point;
   typedef typename Geom_traits::Segment Segment;
   typedef typename Geom_traits::Triangle Triangle;
 
   //  typedef typename Tds::Vertex Ve;
   //  typedef typename Tds::Face Fa;
-  typedef CGAL_Triangulation_face_2<Tds> Face;
-  typedef CGAL_Triangulation_vertex_2<Tds> Vertex;
+  typedef CGAL_Triangulation_face_2<Gt,Tds> Face;
+  typedef CGAL_Triangulation_vertex_2<Gt,Tds> Vertex;
 
   //typedef typename Vertex::Vertex_handle        Vertex_handle;
   //typedef CGAL_Pointer<Vertex>  Vertex_handle;
   //typedef typename Face::Face_handle            Face_handle;
-  typedef CGAL_Triangulation_face_handle_2<Tds> Face_handle;
-  typedef CGAL_Triangulation_vertex_handle_2<Tds> Vertex_handle;
+  typedef CGAL_Triangulation_face_handle_2<Gt,Tds> Face_handle;
+  typedef CGAL_Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
   typedef pair<Face_handle, int>                Edge;
 
-  typedef CGAL_Triangulation_face_circulator_2<Tds>      Face_circulator;
-  typedef CGAL_Triangulation_edge_circulator_2<Tds>      Edge_circulator;
-  typedef CGAL_Triangulation_vertex_circulator_2<Tds>    Vertex_circulator;
+  typedef CGAL_Triangulation_face_circulator_2<Gt,Tds>      Face_circulator;
+  typedef CGAL_Triangulation_edge_circulator_2<Gt,Tds>      Edge_circulator;
+  typedef CGAL_Triangulation_vertex_circulator_2<Gt,Tds>    Vertex_circulator;
 
-  typedef CGAL_Triangulation_face_iterator_2<Tds>   Face_iterator;
-  typedef CGAL_Triangulation_edge_iterator_2<Tds>   Edge_iterator;
-  typedef CGAL_Triangulation_vertex_iterator_2<Tds> Vertex_iterator;
+  typedef CGAL_Triangulation_face_iterator_2<Gt,Tds>   Face_iterator;
+  typedef CGAL_Triangulation_edge_iterator_2<Gt,Tds>   Edge_iterator;
+  typedef CGAL_Triangulation_vertex_iterator_2<Gt,Tds> Vertex_iterator;
 
   class Line_face_circulator;
 
@@ -63,32 +76,36 @@ public:
 
 private:
   Tds _tds;
+  Gt  _gt;
 
 public:
 
 // CONSTRUCTORS
   CGAL_Triangulation_2()
-    :_tds()
+    :_tds(), _gt()
   {}
 
   CGAL_Triangulation_2(const Geom_traits& geom_traits) 
-    : _tds(geom_traits)
+    : _tds(), _gt(geom_traits)
   {}
 
-  CGAL_Triangulation_2(Vertex_handle&  v)
-    : _tds(&(*v))
+  CGAL_Triangulation_2(const Vertex_handle&  v, 
+		       const Geom_traits& geom_traits=Geom_traits())
+    : _tds(&(*v)), _gt(geom_traits)
   { }
 
-  CGAL_Triangulation_2(Vertex_handle&  v, Geom_traits& geom_traits)
-    : _tds( &(*v), geom_traits)
-  {}
+//   CGAL_Triangulation_2(Vertex_handle&  v, const Geom_traits& geom_traits=Geom_traits())
+//     : _tds( &(*v)), _gt(geom_traits)
+//   {}
 
-  CGAL_Triangulation_2(const CGAL_Triangulation_2<Tds> &tr)
-    : _tds(tr._tds)
+  // copy constructor duplicates vertices and faces
+  CGAL_Triangulation_2(const CGAL_Triangulation_2<Gt,Tds> &tr)
+    : _tds(tr._tds), _gt(tr._gt)
   {}
+  
 
-  CGAL_Triangulation_2(Tds tds)
-    : _tds()
+  CGAL_Triangulation_2(Tds tds, const Geom_traits& geom_traits=Geom_traits())
+    : _tds(),_gt(geom_traits)
   {
     _tds.swap(tds);
   }
@@ -96,21 +113,26 @@ public:
  
 
   //Assignement
-  CGAL_Triangulation_2<Tds> &operator=(const CGAL_Triangulation_2<Tds> &tr)
+  CGAL_Triangulation_2 &operator=(const CGAL_Triangulation_2 &tr)
   {
     _tds = tr._tds;
+    _gt = tr._gt;
      return *this;
   }
 
   // Helping functions
    // should be perhaps protected or even removed
-  void  copy_triangulation(const CGAL_Triangulation_2<Tds> &tr)
+  void  copy_triangulation(const CGAL_Triangulation_2 &tr)
   {
+     _gt = tr._gt;
     _tds.copy_tds(tr._tds);
   }
 
-  void swap(CGAL_Triangulation_2<Tds> &tr)
+  void swap(CGAL_Triangulation_2 &tr)
   {
+    Geom_traits t = geom_traits();
+    _gt = tr.geom_traits();
+    tr._gt = t; 
     _tds.swap(tr._tds);
   }
 
@@ -128,7 +150,7 @@ public:
   int  dimension() const { return _tds.dimension();}
   int number_of_vertices() const {return _tds.number_of_vertices();}
   int number_of_faces() const {return _tds.number_of_faces();}
-  const Geom_traits& geom_traits() const { return _tds.geom_traits();}
+  const Geom_traits& geom_traits() const { return _gt;}
   
   const Vertex_handle finite_vertex() const
   {
@@ -786,7 +808,7 @@ public:
             Line_face_circulator(const Face_handle& face,
                                  int index,
                                  State state,
-                                 CGAL_Triangulation_2<Tds>* t,
+                                 CGAL_Triangulation_2<Gt,Tds> * t,
                                  const Point& pp,
                                  const Point& qq)
                 : Face::Face_handle(face), _tr(t), s(state), i(index),  p(pp), q(qq)
@@ -808,7 +830,7 @@ public:
             }
 
             Line_face_circulator(Vertex_handle v,
-                                 CGAL_Triangulation_2<Tds>* tr,
+                                 CGAL_Triangulation_2<Gt,Tds>* tr,
                                  const Point& dir)
                 : _tr(tr)
             {
@@ -979,7 +1001,7 @@ public:
 
             Line_face_circulator(const Point& pp,
                                  const Point& qq,
-                                 CGAL_Triangulation_2<Tds>* t)
+                                 CGAL_Triangulation_2<Gt,Tds> * t)
                 : _tr(t), s(undefined), p(pp), q(qq)
             {
                 Vertex_handle inf = _tr->infinite_vertex();
@@ -1057,7 +1079,7 @@ public:
             Line_face_circulator(const Point& pp,
                                  const Point& qq,
                                  const Face_handle& ff,
-                                 CGAL_Triangulation_2<Tds>* t)
+                                 CGAL_Triangulation_2<Gt,Tds>* t)
                 : Face::Face_handle(ff), _tr(t), s(undefined), p(pp), q(qq)
             {
                 //CGAL_triangulation_precondition(_tr->is_infinite(f) ||
@@ -1408,7 +1430,7 @@ public:
       //    private:
       // o debug
     public:
-            CGAL_Triangulation_2<Tds>* _tr;
+            CGAL_Triangulation_2<Gt, Tds>* _tr;
             State s;
             int i;
             Point p, q;
@@ -1474,7 +1496,7 @@ public:
                     int& li) const
     {
         CGAL_triangulation_precondition( ! is_infinite(start) );
-        CGAL_Triangulation_2<Tds> *ncthis = (CGAL_Triangulation_2<Tds>*)this;
+        CGAL_Triangulation_2 *ncthis = (CGAL_Triangulation_2 *)this;
     
         Point p(start->vertex(0)->point());
         if(geom_traits().compare_x(t,p) == CGAL_EQUAL &&  
@@ -1575,32 +1597,32 @@ public:
   //TRAVERSING : ITERATORS AND CIRCULATORS
  Face_iterator faces_begin() const
     {
-        CGAL_Triangulation_2<Tds>* ncthis = (CGAL_Triangulation_2<Tds> *)this;
+        CGAL_Triangulation_2<Gt, Tds>* ncthis = (CGAL_Triangulation_2<Gt, Tds> *)this;
         return Face_iterator(ncthis);
     }
     Face_iterator faces_end() const
     {
-        CGAL_Triangulation_2<Tds>* ncthis = (CGAL_Triangulation_2<Tds> *)this;
+        CGAL_Triangulation_2<Gt, Tds>* ncthis = (CGAL_Triangulation_2<Gt, Tds> *)this;
         return Face_iterator(ncthis, 1);
     }
     Vertex_iterator vertices_begin() const
     {
-        CGAL_Triangulation_2<Tds>* ncthis = (CGAL_Triangulation_2<Tds>*)this;
+        CGAL_Triangulation_2<Gt, Tds>* ncthis = (CGAL_Triangulation_2<Gt, Tds>*)this;
         return Vertex_iterator(ncthis);
     }
     Vertex_iterator vertices_end() const
     {
-        CGAL_Triangulation_2<Tds>* ncthis = (CGAL_Triangulation_2<Tds>*)this;
+        CGAL_Triangulation_2<Gt, Tds>* ncthis = (CGAL_Triangulation_2<Gt, Tds>*)this;
         return Vertex_iterator(ncthis,1);
     }
     Edge_iterator edges_begin() const
     {
-        CGAL_Triangulation_2<Tds>* ncthis = (CGAL_Triangulation_2<Tds>*)this;
+        CGAL_Triangulation_2<Gt, Tds>* ncthis = (CGAL_Triangulation_2<Gt, Tds>*)this;
         return Edge_iterator(ncthis);
     }
     Edge_iterator edges_end() const
     {
-        CGAL_Triangulation_2<Tds>* ncthis = (CGAL_Triangulation_2<Tds>*)this;
+        CGAL_Triangulation_2<Gt, Tds>* ncthis = (CGAL_Triangulation_2<Gt, Tds>*)this;
         return Edge_iterator(ncthis,1);
     }
 
@@ -1748,9 +1770,9 @@ public:
 
 
 
-template <class Tds >
+template <class Gt, class Tds >
 ostream&
-operator<<(ostream& os, const CGAL_Triangulation_2<Tds> &tr)
+operator<<(ostream& os, const CGAL_Triangulation_2<Gt, Tds> &tr)
 {
   // to debug
   //operator<<(os, tr._tds);
@@ -1758,7 +1780,7 @@ operator<<(ostream& os, const CGAL_Triangulation_2<Tds> &tr)
 
   map< void*, int, less<void*> > V;
   map< void*, int, less<void*> > F;
-  typename CGAL_Triangulation_2<Tds>::Vertex_handle  v;
+  typename CGAL_Triangulation_2<Gt, Tds>::Vertex_handle  v;
 
     int n = tr.number_of_vertices() + 1;
     int m = tr.number_of_faces();
@@ -1782,7 +1804,7 @@ operator<<(ostream& os, const CGAL_Triangulation_2<Tds> &tr)
 
     // write the finite vertices
     {
-        typename CGAL_Triangulation_2<Tds>::Vertex_iterator
+        typename CGAL_Triangulation_2<Gt, Tds>::Vertex_iterator
           it = tr.vertices_begin();
 
         while(it != tr.vertices_end()){
@@ -1804,7 +1826,7 @@ operator<<(ostream& os, const CGAL_Triangulation_2<Tds> &tr)
     i = 0;
     // vertices of the finite faces
     {
-        typename CGAL_Triangulation_2<Tds>::Face_iterator
+        typename CGAL_Triangulation_2<Gt, Tds>::Face_iterator
           it = tr.faces_begin();
 
         while(it != tr.faces_end()){
@@ -1825,7 +1847,7 @@ operator<<(ostream& os, const CGAL_Triangulation_2<Tds> &tr)
 
     // vertices of the infinite faces
     {
-        typename CGAL_Triangulation_2<Tds>::Face_circulator
+        typename CGAL_Triangulation_2<Gt, Tds>::Face_circulator
             fc = tr.infinite_vertex()->incident_faces(),
             done(fc);
 
@@ -1847,7 +1869,7 @@ operator<<(ostream& os, const CGAL_Triangulation_2<Tds> &tr)
 
     // neighbor pointers of the finite faces
     {
-        typename CGAL_Triangulation_2<Tds>::Face_iterator
+        typename CGAL_Triangulation_2<Gt, Tds>::Face_iterator
             it = tr.faces_begin();
         while(it != tr.faces_end()){
             for(int j = 0; j < 3; j++){
@@ -1866,7 +1888,7 @@ operator<<(ostream& os, const CGAL_Triangulation_2<Tds> &tr)
 
     // neighbor pointers of the infinite faces
     {
-        typename CGAL_Triangulation_2<Tds>::Face_circulator
+        typename CGAL_Triangulation_2<Gt, Tds>::Face_circulator
             fc = tr.infinite_vertex()->incident_faces(),
             done(fc);
 
@@ -1890,9 +1912,9 @@ operator<<(ostream& os, const CGAL_Triangulation_2<Tds> &tr)
 
 
 
-template < class Tds >
+template < class Gt, class Tds >
 istream&
-operator>>(istream& is, CGAL_Triangulation_2<Tds> &tr)
+operator>>(istream& is, CGAL_Triangulation_2<Gt, Tds> &tr)
 {
 
   

@@ -3,6 +3,7 @@
 #ifndef CGAL_TRIANGULATION_VERTEX_BASE_2_H
 #define CGAL_TRIANGULATION_VERTEX_BASE_2_H
 
+#include <CGAL/Triangulation_short_names_2.h>
 
 template < class GT >
 class CGAL_Triangulation_vertex_base_2 {

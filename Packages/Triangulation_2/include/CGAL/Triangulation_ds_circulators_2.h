@@ -7,6 +7,7 @@
 #include <iterator.h>
 #include <CGAL/circulator.h>
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/Triangulation_short_names_2.h>
 
 template < class Vertex, class Face >
 class CGAL_Triangulation_ds_face_circulator_2

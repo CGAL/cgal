@@ -1,6 +1,8 @@
 #ifndef CGAL_TRIANGULATION_DS_FACE_2_H
 #define CGAL_TRIANGULATION_DS_FACE_2_H
 
+#include <CGAL/Triangulation_short_names_2.h>
+
 template <class Vb, class Fb >
 class  CGAL_Triangulation_ds_vertex_2 ;
 

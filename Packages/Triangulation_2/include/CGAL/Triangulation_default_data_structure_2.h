@@ -6,6 +6,7 @@
 #include <map.h>
 
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Triangulation_ds_face_2.h>
@@ -24,9 +25,9 @@ friend istream& operator>> CGAL_NULL_TMPL_ARGS
 
 public:
   typedef Gt Geom_traits;
-  typedef typename Geom_traits::Point Point;
-  typedef typename Geom_traits::Segment Segment;
-  typedef typename Geom_traits::Triangle Triangle;
+  //typedef typename Geom_traits::Point Point;
+  //typedef typename Geom_traits::Segment Segment;
+  //typedef typename Geom_traits::Triangle Triangle;
 
   typedef CGAL_Triangulation_ds_vertex_2<Vb,Fb> Vertex;
   typedef CGAL_Triangulation_ds_face_2<Vb,Fb> Face;
@@ -742,7 +743,7 @@ operator>>(istream& is,  CGAL_Triangulation_default_data_structure_2<Gt,Vb,Fb>& 
   typedef CGAL_Triangulation_ds_vertex_2<Vb,Fb>::Vertex Vertex;
   typedef CGAL_Triangulation_ds_face_2<Vb,Fb>::Face Face;
   typedef Gt Geom_traits;
-  typedef typename Geom_traits::Point Point;
+  typedef typename Vb::Point Point;
 
   if(tds.number_of_vertices() != 0){
         tds.clear();

@@ -3,6 +3,7 @@
 
 
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/Triangulation_short_names_2.h>
 
 template < class Gt >
 class CGAL_Triangulation_face_base_2 {

@@ -1,6 +1,7 @@
 #ifndef CGAL_TRIANGULATION_DS_VERTEX_2_H
 #define CGAL_TRIANGULATION_DS_VERTEX_2_H
 
+#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_ds_circulators_2.h>
 
 // template <class Vb, class Fb >

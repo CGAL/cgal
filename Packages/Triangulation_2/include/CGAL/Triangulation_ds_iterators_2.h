@@ -6,7 +6,7 @@
 #include <pair.h>
 
 #include <CGAL/triangulation_assertions.h>
-
+#include <CGAL/Triangulation_short_names_2.h>
 
 //template< class Gt , class Vb, class Fb> 
 //class CGAL_Triangulation_default_data_structure_2;
