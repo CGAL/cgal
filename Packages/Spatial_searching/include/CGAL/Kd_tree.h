@@ -211,7 +211,7 @@ public:
   void invalidate_built()
   {
     if(is_built()){
-      c.clear();
+      nodes.clear();
       delete bbox;
       built_ = false;
     }
