@@ -27,7 +27,7 @@
 
 #include <CGAL/utils.h>
 #include <CGAL/enum.h>
-#include <CGAL/wmult.h>
+#include <CGAL/Kernel/Wutils.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -77,79 +77,6 @@ Vector_3<R> wcross(const Vector_3<R> &u,
         u.hz()*v.hx() - u.hx()*v.hz(),
         u.hx()*v.hy() - u.hy()*v.hx());
 }
-
-#if defined CGAL_HOMOGENEOUS_H
-template <class RT>
-Vector_3< Homogeneous<RT> >
-wcross(const Point_3< Homogeneous<RT> > &p,
-    const Point_3< Homogeneous<RT> > &q,
-    const Point_3< Homogeneous<RT> > &r)
-{
-    RT x,y,z;
-    x =  p.hy() * (q.hz()*r.hw() - q.hw()*r.hz() )
-       + p.hz() * (q.hw()*r.hy() - q.hy()*r.hw() )
-       + p.hw() * (q.hy()*r.hz() - q.hz()*r.hy() );
-    y =  p.hz() * (q.hx()*r.hw() - q.hw()*r.hx() )
-       + p.hx() * (q.hw()*r.hz() - q.hz()*r.hw() )
-       + p.hw() * (q.hz()*r.hx() - q.hx()*r.hz() );
-    z =  p.hx() * (q.hy()*r.hw() - q.hw()*r.hy() )
-       + p.hy() * (q.hw()*r.hx() - q.hx()*r.hw() )
-       + p.hw() * (q.hx()*r.hy() - q.hy()*r.hx() );
-    return Vector_3< Homogeneous<RT> >(x, y, z);
-}
-#endif // CGAL_HOMOGENEOUS_H
-
-#if defined CGAL_SIMPLE_HOMOGENEOUS_H
-template <class RT>
-Vector_3< Simple_homogeneous<RT> >
-wcross(const Point_3< Simple_homogeneous<RT> > &p,
-    const Point_3< Simple_homogeneous<RT> > &q,
-    const Point_3< Simple_homogeneous<RT> > &r)
-{
-    RT x,y,z;
-    x =  p.hy() * (q.hz()*r.hw() - q.hw()*r.hz() )
-       + p.hz() * (q.hw()*r.hy() - q.hy()*r.hw() )
-       + p.hw() * (q.hy()*r.hz() - q.hz()*r.hy() );
-    y =  p.hz() * (q.hx()*r.hw() - q.hw()*r.hx() )
-       + p.hx() * (q.hw()*r.hz() - q.hz()*r.hw() )
-       + p.hw() * (q.hz()*r.hx() - q.hx()*r.hz() );
-    z =  p.hx() * (q.hy()*r.hw() - q.hw()*r.hy() )
-       + p.hy() * (q.hw()*r.hx() - q.hx()*r.hw() )
-       + p.hw() * (q.hx()*r.hy() - q.hy()*r.hx() );
-    return Vector_3< Simple_homogeneous<RT> >(x, y, z);
-}
-#endif // CGAL_SIMPLE_HOMOGENEOUS_H
-
-#if defined CGAL_CARTESIAN_H
-template <class FT>
-Vector_3< Cartesian<FT> >
-wcross(const Point_3< Cartesian<FT> > &p,
-    const Point_3< Cartesian<FT> > &q,
-    const Point_3< Cartesian<FT> > &r)
-{
-    FT x,y,z;
-    x = (q.y()-p.y())*(r.z()-q.z()) - (q.z()-p.z())*(r.y()-q.y());
-    y = (q.z()-p.z())*(r.x()-q.x()) - (q.x()-p.x())*(r.z()-q.z());
-    z = (q.x()-p.x())*(r.y()-q.y()) - (q.y()-p.y())*(r.x()-q.x());
-    return Vector_3< Cartesian<FT> >(x, y, z);
-}
-#endif // CGAL_CARTESIAN_H
-
-#if defined CGAL_SIMPLE_CARTESIAN_H
-template <class FT>
-Vector_3< Simple_cartesian<FT> >
-wcross(const Point_3< Simple_cartesian<FT> > &p,
-    const Point_3< Simple_cartesian<FT> > &q,
-    const Point_3< Simple_cartesian<FT> > &r)
-{
-    FT x,y,z;
-    x = (q.y()-p.y())*(r.z()-q.z()) - (q.z()-p.z())*(r.y()-q.y());
-    y = (q.z()-p.z())*(r.x()-q.x()) - (q.x()-p.x())*(r.z()-q.z());
-    z = (q.x()-p.x())*(r.y()-q.y()) - (q.y()-p.y())*(r.x()-q.x());
-    return Vector_3< Simple_cartesian<FT> >(x, y, z);
-}
-#endif // CGAL_SIMPLE_CARTESIAN_H
-
 
 
 template <class R>
