@@ -47,7 +47,7 @@ public:
 
   Orientation_with_normal_plane_2_3(const Vector& _normal,
 				    const Traits& _traits)
-    : normal(_normal), traits(_traits){};
+    : normal(_normal), traits(_traits) {}
 
   Orientation operator()(const Point &p, const Point &q, const Point &r) const
     {
@@ -59,16 +59,16 @@ private:
   const Traits&  traits;
 };
 
-template <class Point>
+template < typename K >
 class Side_of_plane_centered_sphere_2_3
 {
 public:
   typedef Oriented_side  result_type;
-  typedef typename Point::R    Rep;
-  typedef typename Rep::Vector_3     Vector;
 
-  typedef typename Rep::Plane_3   Plane;
-  typedef typename Rep::Direction_3  Direction;
+  typedef typename K::Point_3      Point;
+  typedef typename K::Vector_3     Vector;
+  typedef typename K::Plane_3      Plane;
+  typedef typename K::Direction_3  Direction;
 
   Side_of_plane_centered_sphere_2_3(const Point& _p,
 				    const Vector& _normal)
@@ -96,12 +96,12 @@ private:
   Vector  normal;
 };
 
-template <class Point>
+template < typename K >
 class Construct_plane_centered_circumcenter_3
 {
 public:
-  typedef typename Point::R Rep;
-  typedef typename Rep::Vector_3     Vector;
+  typedef typename K::Point_3      Point;
+  typedef typename K::Vector_3     Vector;
 
   Construct_plane_centered_circumcenter_3(const Point& _p,
 					  const Vector& _normal)
@@ -118,13 +118,13 @@ private:
 };
 
 
-template <class Point>
+template < typename K >
 class Construct_plane_intersected_bisector_3
 {
 public:
-  typedef typename Point::R          Rep;
-  typedef typename Rep::Vector_3     Vector;
-  typedef typename Rep::Line_3       Line;
+  typedef typename K::Point_3      Point;
+  typedef typename K::Vector_3     Vector;
+  typedef typename K::Line_3       Line;
 
   Construct_plane_intersected_bisector_3(const Point& _a,
 					 const Vector& _normal)
@@ -132,24 +132,24 @@ public:
 
   Line operator() (const Point &p, const Point &q) const
     {
-      return plane_intersected_bisector_3(a,normal, p,q);
+      return plane_intersected_bisector_3(a, normal, p, q);
     }
 
 private:
-  Point a;
+  Point   a;
   Vector  normal;
 };
 
 
-template <class Point>
+template < typename K >
 class Compare_first_projection_3
 {
   //compares the projection of two points onto a second (non-trivial)
   // vector in the projection plane:
 public:
-  typedef typename Point::R          Rep;
-  typedef typename Rep::Vector_3     Vector;
-  typedef typename Rep::FT           Coord_type;
+  typedef typename K::Point_3      Point;
+  typedef typename K::Vector_3     Vector;
+  typedef typename K::FT           Coord_type;
 
   Compare_first_projection_3(const Vector& _normal)
     : normal(_normal) {}
@@ -172,15 +172,15 @@ private:
   Vector normal;
 };
 
-template <class Point>
+template < typename K >
 class Compare_second_projection_3
 {
   //compares the projection of two points onto a second (non-trivial)
   // vector in the projection plane:
 public:
-  typedef typename Point::R          Rep;
-  typedef typename Rep::FT           Coord_type;
-  typedef typename Rep::Vector_3     Vector;
+  typedef typename K::FT           Coord_type;
+  typedef typename K::Vector_3     Vector;
+  typedef typename K::Point_3      Point;
 
   Compare_second_projection_3(const Vector& _normal)
     : normal(_normal) {}
@@ -203,30 +203,30 @@ private:
   Vector normal;
 };
 
-template <class R>
+template < typename K >
 class Compute_area_3
 {
   //squareroot of compute_squared_area_3:
   //-> if no sqrt is supported, cast to double
 public:
-  typedef typename  R::FT                     FT;
-  typedef typename  R::Point_3                Point;
-  typedef typename  R::Compute_squared_area_3 Compute_squared_area_3;
+  typedef typename K::FT                     FT;
+  typedef typename K::Point_3                Point;
+  typedef typename K::Compute_squared_area_3 Compute_squared_area_3;
 
-  FT operator()(const Point& p, const Point& q, const Point& r)
+  FT operator()(const Point& p, const Point& q, const Point& r) const
   {
-    FT squared_area= Compute_squared_area_3()(p,q,r);
+    FT squared_area = Compute_squared_area_3()(p,q,r);
     return cast_sqrt_to_double(squared_area,
                                typename Number_type_traits<FT>::Has_sqrt());
   }
 
 private:
-  FT cast_sqrt_to_double(const FT& squared_area, Tag_true)
+  FT cast_sqrt_to_double(const FT& squared_area, Tag_true) const
     {
       return CGAL_NTS sqrt(squared_area);
     }
 
-  FT cast_sqrt_to_double(const FT& squared_area, Tag_false)
+  FT cast_sqrt_to_double(const FT& squared_area, Tag_false) const
     {
       double approx = CGAL_NTS to_double(squared_area);
       return CGAL_NTS sqrt(approx);
@@ -265,16 +265,15 @@ public:
 
   //specific tests:
   typedef Orientation_with_normal_plane_2_3<Rep>           Orientation_2;
-  typedef Side_of_plane_centered_sphere_2_3<Point_2>       Power_test_2;
+  typedef Side_of_plane_centered_sphere_2_3<Rep>           Power_test_2;
 
-  typedef Construct_plane_centered_circumcenter_3<Point_2>
-  Construct_weighted_circumcenter_2;
+  typedef Construct_plane_centered_circumcenter_3<Rep>
+          Construct_weighted_circumcenter_2;
 
-  typedef Construct_plane_intersected_bisector_3<Point_2>
-  Construct_radical_axis_2;
+  typedef Construct_plane_intersected_bisector_3<Rep> Construct_radical_axis_2;
 
-  typedef Compare_first_projection_3<Point_2>              Compare_x_2;
-  typedef Compare_second_projection_3<Point_2>             Compare_y_2;
+  typedef Compare_first_projection_3<Rep>                  Compare_x_2;
+  typedef Compare_second_projection_3<Rep>                 Compare_y_2;
 
 
   //for certificated coordinate/neighbor computation:
@@ -285,59 +284,59 @@ public:
   //instantiations and creation of functors:
   //for the triangulation:
   Orientation_2
-  orientation_2_object() const {
-    return Orientation_2(normal, Rep());}
+  orientation_2_object() const
+  { return Orientation_2(normal, Rep()); }
 
   Power_test_2
   power_test_2_object() const
-    { return Power_test_2(a,normal);}
+  { return Power_test_2(a,normal); }
 
   Compare_distance_2 compare_distance_2_object() const
-    { return Compare_distance_2(); }
+  { return Compare_distance_2(); }
 
   Compare_x_2
   compare_x_2_object() const
-    { return Compare_x_2(normal);}
+  { return Compare_x_2(normal); }
 
   Compare_y_2
   compare_y_2_object() const
-    { return Compare_y_2(normal);}
+  { return Compare_y_2(normal); }
 
   //for the coordinate computation:
   Compute_area_2 compute_area_2_object() const
-    { return Compute_area_2();}
+  { return Compute_area_2(); }
 
   //for constructions of dual:
   Construct_weighted_circumcenter_2
   construct_weighted_circumcenter_2_object() const
-    { return Construct_weighted_circumcenter_2(a,normal); }
+  { return Construct_weighted_circumcenter_2(a,normal); }
 
   Construct_radical_axis_2  construct_radical_axis_2_object() const
-    {return Construct_radical_axis_2(a,normal);}
+  { return Construct_radical_axis_2(a,normal); }
 
   Construct_ray_2  construct_ray_2_object() const
-    {return Construct_ray_2();}
+  { return Construct_ray_2(); }
 
   Construct_segment_2  construct_segment_2_object() const
-    {return Construct_segment_2();}
+  { return Construct_segment_2(); }
 
   Construct_triangle_2  construct_triangle_2_object() const
-    {return Construct_triangle_2();}
+  { return Construct_triangle_2(); }
 
 
   //for certification of coordinate/neighbor computation:
   Less_distance_to_point_2 less_distance_to_point_2_object() const
-     { return Less_distance_to_point_2();}
+  { return Less_distance_to_point_2(); }
 
   Compute_squared_distance_2 compute_squared_distance_2_object() const
-    { return Compute_squared_distance_2();}
+  { return Compute_squared_distance_2(); }
 
   Voronoi_intersection_2_traits_3<K>(const Point_2& _p = Point_2(),
 				     const Vector_2& _normal = NULL_VECTOR)
       : a(_p), normal(_normal) {}
 
-  const Vector_2& get_normal() const {return normal;}
-  const Point_2&  get_point() const {return a;}
+  const Vector_2& get_normal() const { return normal; }
+  const Point_2&  get_point()  const { return a; }
 
 private:
   //defining the intersection plane:
