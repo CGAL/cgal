@@ -1,0 +1,23 @@
+preamble "\n<h4 align=\"center\"><a  href=\"#IndexA\">A</a>&nbsp;&nbsp;<a href=\"#IndexB\">B</a>&nbsp;&nbsp;<a href=\"#IndexC\">C</a>&nbsp;&nbsp;<a href=\"#IndexD\">D</a>&nbsp;&nbsp;<a href=\"#IndexE\">E</a>&nbsp;&nbsp;<a href=\"#IndexF\">F</a>&nbsp;&nbsp;<a href=\"#IndexG\">G</a>&nbsp;&nbsp;<a href=\"#IndexH\">H</a>&nbsp;&nbsp;<a href=\"#IndexI\">I</a>&nbsp;&nbsp;<a href=\"#IndexJ\">J</a>&nbsp;&nbsp;<a href=\"#IndexK\">K</a>&nbsp;&nbsp;<a href=\"#IndexL\">L</a>&nbsp;&nbsp;<a href=\"#IndexM\">M</a>&nbsp;&nbsp;<a href=\"#IndexN\">N</a>&nbsp;&nbsp;<a href=\"#IndexO\">O</a>&nbsp;&nbsp;<a href=\"#IndexP\">P</a>&nbsp;&nbsp;<a href=\"#IndexQ\">Q</a>&nbsp;&nbsp;<a href=\"#IndexR\">R</a>&nbsp;&nbsp;<a href=\"#IndexS\">S</a>&nbsp;&nbsp;<a href=\"#IndexT\">T</a>&nbsp;&nbsp;<a href=\"#IndexU\">U</a>&nbsp;&nbsp;<a href=\"#IndexV\">V</a>&nbsp;&nbsp;<a href=\"#IndexW\">W</a>&nbsp;&nbsp;<a href=\"#IndexX\">X</a>&nbsp;&nbsp;<a href=\"#IndexY\">Y</a>&nbsp;&nbsp;<a href=\"#IndexZ\">Z</a>&nbsp;&nbsp;
+</h4>\n
+<TABLE CELLPADDING=0 CELLSPACING=0> <TR><TD>"
+
+item_0  " </TD></TR> </TABLE>\n<TABLE  CELLPADDING=0 CELLSPACING=0> <TR><TD> "
+item_1  " </TD></TR> </TABLE>\n<TABLE  CELLPADDING=0 CELLSPACING=0> <TR><TD WIDTH=15></TD><TD> "
+item_01 " </TD></TR> </TABLE>\n<TABLE  CELLPADDING=0 CELLSPACING=0> <TR><TD WIDTH=15></TD><TD> "
+item_x1 " </TD></TR> </TABLE>\n<TABLE  CELLPADDING=0 CELLSPACING=0> <TR><TD WIDTH=15></TD><TD> "
+item_2  " </TD></TR> </TABLE>\n<TABLE  CELLPADDING=0 CELLSPACING=0> <TR><TD WIDTH=30></TD><TD> "
+item_12 " </TD></TR> </TABLE>\n<TABLE  CELLPADDING=0 CELLSPACING=0> <TR><TD WIDTH=30></TD><TD> "
+item_x2 " </TD></TR> </TABLE>\n<TABLE  CELLPADDING=0 CELLSPACING=0> <TR><TD WIDTH=30></TD><TD> "
+delim_0 " ??? "
+delim_1 " ??? "
+delim_2 " ??? "
+delim_n "|"
+
+group_skip "\n \n "
+
+headings_flag 1
+heading_prefix " </TD></TR> </TABLE> \n <BR> \n <TABLE CELLPADDING=0 CELLSPACING=0> <TR><TD> ??? !!! "
+
+
+postamble "</TD></TR>\n</TABLE> \n"
