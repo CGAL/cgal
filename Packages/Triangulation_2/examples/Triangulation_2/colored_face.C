@@ -1,5 +1,4 @@
 // file : examples/Triangulation_2/colored_face.C
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/Triangulation_2.h>

@@ -1,4 +1,6 @@
 // file : example/Triangulation_2/terrain.C
+#include <CGAL/basic.h>
+#include <fstream>
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>

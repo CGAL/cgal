@@ -1,4 +1,6 @@
 //  file : example/Triangulation_2/triangulation_prog1.C
+#include <CGAL/basic.h>
+#include <fstream>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Triangulation_2.h>

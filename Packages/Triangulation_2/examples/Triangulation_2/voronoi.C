@@ -1,3 +1,6 @@
+#include <CGAL/basic.h>
+#include <fstream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 

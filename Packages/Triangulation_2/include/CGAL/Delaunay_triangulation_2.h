@@ -259,8 +259,8 @@ find_conflicts(const Point  &p,
 	       std::list<Face_handle>& conflicts,
 	       Face_handle start ) const
 {
-  //typedef std::back_insert_iterator<std::list<Face_handle> > It;
-  return get_conflicts(p, std::back_inserter(conflicts), start);
+  typedef std::back_insert_iterator<std::list<Face_handle> > It;
+  return get_conflicts<It>(p, std::back_inserter(conflicts), start);
 }
 
 template < class Gt, class Tds >

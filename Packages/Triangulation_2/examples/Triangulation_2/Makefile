@@ -35,13 +35,10 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: points example voronoi colored_face triangulation_prog1 terrain regular
+all: points voronoi colored_face triangulation_prog1 terrain regular
 
 points: points.o
 	$(CGAL_CXX) -o points points.o $(LDFLAGS)
-
-example: example.o
-	$(CGAL_CXX) -o example example.o $(LDFLAGS)
 
 voronoi: voronoi.o
 	$(CGAL_CXX) -o voronoi voronoi.o $(LDFLAGS)
@@ -65,7 +62,7 @@ clean:
 	rm -rf *~ *.o *.obj core tr
 
 realclean: clean
-	rm -rf points example voronoi colored_face triangulation_prog1 \
+	rm -rf points  voronoi colored_face triangulation_prog1 \
 	terrain  regular constrained *.exe \
 	Program* Compiler* Error* error.txt
 

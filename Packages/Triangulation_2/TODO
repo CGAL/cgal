@@ -6,7 +6,6 @@
 - factorize the code duplicated in
   Triangulation_default_data_structure_2
   Triangulation_data_structure_using_list_2
-- add an example of constrained and delaunay constrained triangulation
 - copy constructor for constrained and Delaunay_constrained triangulation
   has to be modified, so that constrained status are duplicated
 - test removal and meshing functions in constrained and Delaunay constrained triangulation

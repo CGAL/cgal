@@ -1,12 +1,10 @@
 // file : example/Triangulation_2/points.C
 
 #include <CGAL/basic.h>
-#include <iostream>
 #include <fstream>
+
 #include "points.h"
-
 #include <CGAL/Delaunay_triangulation_2.h>
-
 
 typedef Euclidean_2 Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
