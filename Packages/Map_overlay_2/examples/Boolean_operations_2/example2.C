@@ -7,7 +7,6 @@
 #include <CGAL/Boolean_operations_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Planar_map_2.h>
-#include <CGAL/sweep_to_construct_planar_map_2.h>
 #include <iostream>
 #include <vector>
 #include <list>
@@ -55,9 +54,7 @@ int  main()
     curves.push_back(X_curve_2(p1, p2));
   }
   
-  Traits traits;
-  CGAL::sweep_to_construct_planar_map_2(curves.begin(), 
-                                        curves.end(), traits, pm1);
+  pm1.insert(curves.begin(), curves.end());
   
   curves.clear();
   
@@ -69,8 +66,7 @@ int  main()
     curves.push_back(X_curve_2(p1, p2));
   }
    
-  CGAL::sweep_to_construct_planar_map_2(curves.begin(), 
-                                        curves.end(), traits, pm2);
+ pm2.insert(curves.begin(),curves.end());
   
   // ignoring unbounded face in boolean operations.
   pm1.unbounded_face()->set_ignore_bop(false); 

@@ -7,6 +7,7 @@
 #include <CGAL/Boolean_operations_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Planar_map_2.h>
+#include <CGAL/Pm_with_intersections.h>
 #include <iostream>
 #include <vector>
 #include <list>
