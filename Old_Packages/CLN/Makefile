@@ -44,7 +44,7 @@ submit: package
 	#$(MAKE) -C test/$(Package)
 
 clean:
-	$(MAKE) -C doc_tex/support/$(Package) clean
+	$(MAKE) -C doc_tex/support/NumberTypeSupport clean
 	rm -f $(Package).tar.gz
 	# $(MAKE) -C test/$(Package) clean
 
@@ -53,10 +53,7 @@ $(Package).tar.gz:
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO \
 	version description.txt changes.txt \
-	include doc_tex doc_ps # src test examples
+	doc_tex doc_ps include # src test examples
 
-doc: doc_ps/$(Package).ps
-
-doc_ps/$(Package).ps: doc_tex/support/$(Package)/main.tex
-	$(MAKE) -C doc_tex/support/$(Package)
-	cp doc_tex/support/$(Package)/$(Package).ps doc_ps/
+doc:
+	$(MAKE) -C doc_tex/support/NumberTypeSupport

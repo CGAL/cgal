@@ -13,9 +13,15 @@ General remarks to forward to Bruno Haible:
 
 TODO:
 ----
+- Factorize the common code of these files in a separate file ?
+  (is_valid, etc... ?)
 - Things that are supported by Gmpz, and should (?) be ported to cl_I:
   - exact_division  (exquo())
   - approximate_decimal_length
   - convert_to<IA>
 - Make benchmarks.
 - Add the converter functions.
+- Test-suite: un fichier générique, testé successivement pour tous les NTs.
+- Aller voir les snapshots sur le site FTP...  Attendre la prochaine version
+  et s'adapter (il y a min/max/abs, les include *io.h, etc...).
+- Attendre gcc-2.95, et réinstaller.

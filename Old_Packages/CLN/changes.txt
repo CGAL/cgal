@@ -1,4 +1,8 @@
 Changes done to the CLN package.
 
+Version 1.1 on 26 June 1999.
+- Rewrote the doc.
+- Submitted the package to internal releases.
+
 Version 1.0 on 26 March 1999.
 - initial version.
