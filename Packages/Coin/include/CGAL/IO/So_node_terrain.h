@@ -109,7 +109,7 @@ public:
       } while (0);
     } while (0);
   }// Initializes this class
-  Node_terrain() : t(t_temp) {
+  Node_terrain() : t(t_temp), LOCK(0) {
     do {
       Node_terrain::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
@@ -126,7 +126,7 @@ public:
       this->isBuiltIn = FALSE;
     } while (0);
   }// The constructor
-  Node_terrain(Triangulation_2 &T) : t(T) {
+  Node_terrain(Triangulation_2 &T) : t(T), LOCK(0) {
     do {
       compute_normals_for_faces();
       compute_normals_for_vertices();
@@ -147,8 +147,15 @@ public:
   }// The constructor
   
   void compute_normals_for_faces(){
-    Finite_faces_iterator fit;      
+    lock();
+    faces_normals.erase(faces_normals.begin(), faces_normals.end());
+    QProgressDialog progress( "Computing normals for faces...", "Cancel computing", t.number_of_faces(),
+                          NULL, "progress", true );
+    progress.setMinimumDuration(0);
+    int faces_count = 0;
+    Finite_faces_iterator fit;
     for (fit = t.finite_faces_begin(); fit != t.finite_faces_end(); ++fit){
+      progress.setProgress( faces_count );
       CPoint3 p1(CGAL::to_double((*(*fit).vertex(0)).point().x()),
                   CGAL::to_double((*(*fit).vertex(0)).point().y()),
                   CGAL::to_double((*(*fit).vertex(0)).point().z()));
@@ -165,11 +172,21 @@ public:
         CVector3 v_n = normal / std::sqrt(sqnorm);
         faces_normals.insert(FACENORMALPAIR(&(*fit), v_n));
       }
+      faces_count++;
     }
+    progress.setProgress( faces_count );
+    unlock();
   }
   void compute_normals_for_vertices(){
+    lock();
+    vertices_normals.erase(vertices_normals.begin(), vertices_normals.end());
+    QProgressDialog progress( "Computing normals for vertices...", "Cancel computing", t.number_of_vertices(),
+                          NULL, "progress", true );
+    progress.setMinimumDuration(0);
+    int vertices_count = 0;
     Finite_vertices_iterator vit;      
     for (vit = t.finite_vertices_begin(); vit != t.finite_vertices_end(); ++vit){
+      progress.setProgress(vertices_count);
       Face_circulator cit = (&(*vit))->incident_faces();
       unsigned int normals_count = 0;
       CVector3 normals_sum(0, 0, 0);
@@ -183,8 +200,19 @@ public:
         CVector3 v_n = normals_sum / std::sqrt(sqnorm);
         vertices_normals.insert(VERTEXNORMALPAIR(&(*vit), v_n));
       }
-    }        
+      vertices_count++;
+    }
+    progress.setProgress(vertices_count);
+    unlock();
   }
+  void lock(){LOCK++;}
+  void unlock(){
+    if(LOCK>0)
+      LOCK--;
+    else
+      assert( LOCK != 0 && "lock is already 0. Be sure you have the same number of locks as the number of unlocks");
+  }
+
 
   SoMFInt32 numVertices;
 
@@ -235,7 +263,9 @@ protected:
   }
 
   virtual void  GLRender(SoGLRenderAction *action){
-    SoState * state = action->getState();
+    if (LOCK)
+      return;
+     SoState * state = action->getState();
 
     // First see if the object is visible and should be rendered
     // now. This is a method on SoShape that checks for INVISIBLE
@@ -307,7 +337,7 @@ protected:
     glPopMatrix();
   }
   
-  virtual void  computeBBox(SoAction *action,
+  virtual void  computeBBox(SoAction *,
     SbBox3f &box, SbVec3f &center){
     Finite_vertices_iterator vit;
     double xmin = 0, ymin = 0, zmin = 0, xmax = 0, ymax = 0, zmax = 0;    
@@ -330,10 +360,12 @@ protected:
     // Set the box to bound the two extreme points
     min.setValue(xmin, ymin, zmin);
     max.setValue(xmax, ymax, zmax);
-    box.setBounds(min, max);
+    box.setBounds(min, max);    
+    center.setValue(0.0f, 0.0f, 0.0f);
   }
   // Generates triangles representing the triangulation
   virtual void  generatePrimitives(SoAction *action){}
+
 
 private:
   virtual SbBool generateDefaultNormals(SoState *, SoNormalCache * nc){
@@ -348,6 +380,7 @@ private:
   std::map<Face_handle, CVector3> faces_normals;
   Triangulation_2 &t;
   Triangulation_2 t_temp;
+  int LOCK;
 
 };
 
