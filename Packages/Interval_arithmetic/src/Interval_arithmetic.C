@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------
 // 
-// release       : $CGAL_Revision: $
-// release_date  : $CGAL_Date: $
+// release       :
+// release_date  :
 // 
 // file          : src/Interval_arithmetic.C
 // revision      : $Revision$
