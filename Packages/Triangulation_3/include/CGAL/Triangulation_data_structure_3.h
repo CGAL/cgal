@@ -2555,7 +2555,8 @@ swap(Tds & tds)
 }
 
 template <class Vb, class Cb >
-std::vector< Triangulation_data_structure_3<Vb,Cb>::Vertex * > 
+std::vector< CGAL_TYPENAME_MSVC_NULL
+             Triangulation_data_structure_3<Vb,Cb>::Vertex * > 
 Triangulation_data_structure_3<Vb,Cb>::
 clear_cells_only()
 {
