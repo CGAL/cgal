@@ -1,5 +1,6 @@
 6 November 2004 Sylvain Pion
 - Add move_point() to Regular_3 (not documented because not tested yet).
+- Add test-suite program test_regular_as_delaunay_3.
 
 27 September 2004 Sylvain Pion
 - Rename Triangulation_cell_base_with_hidden_points_3 into
