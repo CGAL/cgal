@@ -1,6 +1,9 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
 
+27 Apr 2004 Sylvain Pion
+- Fix PGCC warning.
+
 15 Mar 2004 Andreas Fabri
 - construct_Cartesian_const_iterator_d_object  -> construct_cartesian_const_iterator_d_object
 - Added Construct_vertex_d

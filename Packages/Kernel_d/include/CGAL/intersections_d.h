@@ -28,6 +28,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// Actually, we should better list the compilers which are inferior, i.e.
+// the others, which need the additional useless code.
+#if !defined(__KCC) && !defined(__BORLANDC__) && !defined(__PGI)
+#  define CGAL_REMOVE_FLOW_WARNING
+#endif
+
 template <class R>
 Object intersection(const Line_d<R>& l1, const Line_d<R>& l2)
 { typedef typename R::Line_d_Line_d_pair ll_pair;
@@ -44,7 +50,7 @@ Object intersection(const Line_d<R>& l1, const Line_d<R>& l2)
     case ll_pair::LINE:
       return make_object(l1);
   }
-#if !defined(__KCC) && !defined(__BORLANDC__)
+#ifdef CGAL_REMOVE_FLOW_WARNING
   return Object(); // never reached
 #endif
 }
@@ -73,7 +79,7 @@ Object intersection(const Ray_d<R>& l1, const Ray_d<R>& l2)
       return make_object(s);
     }
   }
-#if !defined(__KCC) && !defined(__BORLANDC__)
+#ifdef CGAL_REMOVE_FLOW_WARNING
   return Object(); // never reached
 #endif
 }
@@ -97,7 +103,7 @@ Object intersection(const Segment_d<R>& l1, const Segment_d<R>& l2)
       return make_object(s);
     }
   }
-#if !defined(__KCC) && !defined(__BORLANDC__)
+#ifdef CGAL_REMOVE_FLOW_WARNING
   return Object(); // never reached
 #endif
 }
@@ -119,7 +125,7 @@ Object intersection(const Line_d<R>& l, const Ray_d<R>& r)
         return make_object(r);
     }
   }
-#if !defined(__KCC) && !defined(__BORLANDC__)
+#ifdef CGAL_REMOVE_FLOW_WARNING
   return Object(); // never reached
 #endif
 }
@@ -147,7 +153,7 @@ Object intersection(const Ray_d<R>& r, const Segment_d<R>& s)
         return make_object(st);
     }
   }
-#if !defined(__KCC) && !defined(__BORLANDC__)
+#ifdef CGAL_REMOVE_FLOW_WARNING
   return Object(); // never reached
 #endif
 }
@@ -175,7 +181,7 @@ Object intersection(const Line_d<R>& l, const Segment_d<R>& s)
         return make_object(st);
     }
   }
-#if !defined(__KCC) && !defined(__BORLANDC__)
+#ifdef CGAL_REMOVE_FLOW_WARNING
   return Object(); // never reached
 #endif
 }
@@ -201,7 +207,7 @@ Object intersection(const Line_d<R>& l, const Hyperplane_d<R>& h)
     case lh_pair::LINE:
         return make_object(l);
   }
-#if !defined(__KCC) && !defined(__BORLANDC__)
+#ifdef CGAL_REMOVE_FLOW_WARNING
   return Object(); // never reached
 #endif
 }
@@ -227,7 +233,7 @@ Object intersection(const Ray_d<R>& r, const Hyperplane_d<R>& h)
     case rh_pair::RAY:
         return make_object(r);
   }
-#if !defined(__KCC) && !defined(__BORLANDC__)
+#ifdef CGAL_REMOVE_FLOW_WARNING
   return Object(); // never reached
 #endif
 }
@@ -252,7 +258,7 @@ Object intersection(const Segment_d<R>& s, const Hyperplane_d<R>& h)
     case sh_pair::SEGMENT:
         return make_object(s);
   }
-#if !defined(__KCC) && !defined(__BORLANDC__)
+#ifdef CGAL_REMOVE_FLOW_WARNING
   return Object(); // never reached
 #endif
 }
