@@ -229,6 +229,7 @@ class Infimaximal_box<Tag_true, Kernel> {
  public:
   typedef typename Kernel::RT                    RT;
   typedef typename Kernel::RT::NT                NT;
+  typedef typename Kernel::RT::FT                FT;
   typedef typename Kernel::Standard_kernel       Standard_kernel;
   typedef typename Standard_kernel::Point_3      Standard_point;
   typedef typename Standard_kernel::Plane_3      Standard_plane;
@@ -542,6 +543,32 @@ class Infimaximal_box<Tag_true, Kernel> {
     C.create_extended_box_corner( 1,-1,-1, space );
     C.create_extended_box_corner(-1,-1,-1, space ); 
   }
+
+  /*
+  template <typename SHalfedge_handle>
+  static bool is_edge_on_infibox(SHalfedge_handle e) {
+
+    Point_3 p  = e->center_vertex()->point();
+    if(is_standard(p)) return false;
+
+    Vector_3 v(e->vector());
+    CGAL_assertion(p.hw().degree() == 0);
+    FT Outer(RT(0,1));
+
+    if(CGAL_NTS abs(p.x()) == Outer && 
+       ((p.x() > 0 && v.x() > 0)||(p.x() < 0 && v.x() < 0))) return false;
+    if(CGAL_NTS abs(p.y()) == Outer && 
+       ((p.y() > 0 && v.y() > 0)||(p.y() < 0 && v.y() < 0))) return false;
+    if(CGAL_NTS abs(p.z()) == Outer && 
+       ((p.z() > 0 && v.z() > 0)||(p.z() < 0 && v.z() < 0))) return false;
+
+    if(CGAL_NTS abs(p.x()) == Outer && v.x() == 0) return true;
+    if(CGAL_NTS abs(p.y()) == Outer && v.y() == 0) return true;
+    if(CGAL_NTS abs(p.z()) == Outer && v.z() == 0) return true;
+
+    return false; 
+  }
+  */
 
   template <typename SHalfedge_handle>
   static bool is_edge_on_infibox(SHalfedge_handle e) {
