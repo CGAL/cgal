@@ -33,7 +33,6 @@ CGAL_BEGIN_NAMESPACE
 template < class Tds >
 class  Triangulation_ds_face_2
   : public Tds::Face_base   
-    //    public Triangulation_cw_ccw_2
 {
 public:
   typedef typename Tds::Vertex_base        Vb;
@@ -43,14 +42,10 @@ public:
   typedef typename Tds::Vertex_handle      Vertex_handle;
   typedef typename Tds::Face_handle        Face_handle;
 
-// private:
-//   Face_handle _previous;
-//   Face_handle _next;
-
 public :
   // creators
   Triangulation_ds_face_2()
-    : Fb()//, _previous(this), _next(this)
+    : Fb()
   {}
     
   Triangulation_ds_face_2(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
@@ -97,11 +92,6 @@ public :
   Face_handle handle() {return const_cast<Face*>(this);}
   bool is_valid(bool verbose = false, int level = 0) const;
 
-//   //Handling the list of faces
-//   Face_handle previous() const {return _previous;}
-//   Face_handle next() const {return _next;}
-//   void  set_previous(Face_handle f) {_previous = f;};
-//   void  set_next(Face_handle f) {_next = f;};
 };
 
 
@@ -137,7 +127,7 @@ typename Triangulation_ds_face_2<Tds>::Vertex_handle
 Triangulation_ds_face_2<Tds>::
 mirror_vertex(int i) const
 {
-  CGAL_triangulation_precondition ( &*neighbor(i) != NULL);
+  CGAL_triangulation_precondition ( neighbor(i) != NULL);
   //return neighbor(i)->vertex(neighbor(i)->index(this->handle()));
   return neighbor(i)->vertex(mirror_index(i));
 }
