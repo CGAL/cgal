@@ -309,7 +309,7 @@ Bounded_side bounded_side_2(ForwardIterator first,
   Comparison_result cur_y_comp_res = compare_y_2(*current, point);
 
   do // check if the segment (current,next) intersects
-     // the ray { (t,y) | t >= point.x() }
+     // the ray { (t,point.y()) | t >= point.x() }
   {
     Comparison_result next_y_comp_res = compare_y_2(*next, point);
 
@@ -355,10 +355,6 @@ Bounded_side bounded_side_2(ForwardIterator first,
 		    return ON_BOUNDARY;
 	        break;
 	    }
-            if ( (std::min((*current).x(), (*next).x()) <= point.x()) &&
-                 (point.x() <= std::max((*current).x(), (*next).x()))    ) {
-              return ON_BOUNDARY;
-            }
             break;
           case LARGER:
             if (compare_x_2(point, *current) == EQUAL) {
