@@ -186,13 +186,11 @@ model is provided by \cgal\
 described in Chapter~\ref{chapter-TDS3}.
 \end{itemize}	
 
-Delaunay triangulations as well as hierarchical Delaunay triangulations
+Delaunay triangulations as well as triangulation hierarchies
 \cite{d-iirdt-98} are also implemented in the package: 
 \ccc{Delaunay_triangulation_3<Triangulation_traits_3,Tds_3>} inherits from 
-\ccc{Triangulation_3<Triangulation_traits_3,Tds_3>} and 
-\ccc{Delaunay_hierarchic_triangulation_3<Triangulation_traits_3,Tds_3>} inherits from 
-\ccc{Delaunay_triangulation_3<Triangulation_traits_3,Tds_3>}. \textit{(Hierarchical
-Delaunay triangulations are not yet implemented.)} 
+\ccc{Triangulation_3<Triangulation_traits_3,Tds_3>}, and 
+\ccc{Triangulation_hierarchy_3<Tr>} inherits from \ccc{Tr}.
 
 \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>} derives from
 \ccc{Triangulation_utils_3<Triangulation_traits_3,Tds_3>}, 
@@ -247,10 +245,26 @@ the reference pages for Triangulation\_traits\_3\lcTex{ (
 The class \ccc{Delaunay_triangulation_3<Triangulation_traits_3,Tds_3>}
 represents a three-dimensional Delaunay triangulation. 
 
-\subsection{Hierarchic Delaunay Triangulation} 
-(See~\cite{d-iirdt-98}.)
-\ccc{Delaunay_hierarchic_triangulation_3<Triangulation_traits_3,Tds_3>}
-\textit{Not yet implemented}
+\subsection{Triangulation hierarchy} 
+
+The class \ccc{Triangulation_hierarchy_3<Tr>} implements a triangulation
+augmented with a data structure which allows fast point location queries.
+The data structure is a hierarchy of triangulations. The triangulation at the
+lowest level is the original triangulation where operations and point location
+are to be performed.  Then at each succedding level, the data structure stores
+a triangulation of a small random sample of the vertices of the triangulation
+at the preceeding level. Point location is done through a top-down nearest
+neighbor query.  The nearest neighbor query is first performed naively in the
+top level triangulation.  Then, at each following level, the nearest neighbor
+at that level is found through a linear walk performed from the nearest
+neighbor found at the preceeding level.  Because the number of vertices in
+each triangulation is only a small fraction of the number of vertices of the
+preceeding triangulation the data structure remains small and achieves fast
+point location queries on real data. As proved in~\cite{d-iirdt-98}, this
+structure has an optimal behaviour when it is built for Delaunay
+triangulations.  However it can be used as well for other triangulations and
+the \ccRefName\ class is templated by a parameter which is to be instantiated
+by one of the \cgal\ triangulation classes.
 
 \subsection{Regular Triangulation} 
 \label{Triangulation3-sec-class-Regulartriangulation}
@@ -400,8 +414,7 @@ the functionalities described for the concept
 Triangulation\_traits\_3\lcTex{ (\ccRefPage{Triangulation_traits_3})}.
 So, it can be used as a default traits
 class for \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>},
-\ccc{Delaunay_triangulation_3<Triangulation_traits_3,Tds_3>} and
-\ccc{Delaunay_hierarchic_triangulation_3<Triangulation_traits_3,Tds_3>}.
+\ccc{Delaunay_triangulation_3<Triangulation_traits_3,Tds_3>}.
 
 \ccc{Regular_triangulation_euclidean_traits_3<R,Weight>} is a traits class 
  designed to be used by the class

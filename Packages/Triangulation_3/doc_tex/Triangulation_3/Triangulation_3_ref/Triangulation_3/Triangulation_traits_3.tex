@@ -122,8 +122,6 @@ the operator
 which determines on which side of the oriented sphere circumscribing 
 \ccc{p, q, r, s} the point \ccc{test} lies.}
 %
-
-%
 \ccGlue
 %
 \ccNestedType{Coplanar_side_of_bounded_circle_3}{Predicate object. Must provide
@@ -134,11 +132,18 @@ by \ccc{p}, \ccc{q}, and \ccc{r} on which \ccc{s} lies.
 \ccPrecond \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are coplanar and
 \ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}
 
+\subsubsection{To be used by \protect \ccc{Triangulation_hierarchy_3<Tr>}}
 
-\subsubsection{To be used by \protect 
-\ccc{Delaunay_hierarchic_triangulation_3<Triangulation_traits_3, Tds_3>}}
+\ccDefinition
 
-\textit{Not yet implemented}
+The triangulation hierarchy uses the traits class provided by
+\ccc{Tr::Geom_traits}, which must satisfy the following additional predicate:
+
+\ccNestedType{Less_distance_to_point_3}{Predicate object.
+Must provide a constructor taking a \ccc{Point p} as argument, as well as an
+\ccc{bool operator()(Point q, Point r)} returning true iff \ccc{q} is closer
+to \ccc{p} than \ccc{r} is.}
+
 
 \subsubsection{To be used by \protect 
 \ccc{Regular_triangulation_3<Triangulation_traits_3, Tds_3>}}

@@ -1,0 +1,51 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_hierarchy_vertex_base_3.tex
+% +------------------------------------------------------------------------+
+% |
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationhierarchyvertexbaseRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationhierarchyvertexbaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_hierarchy_vertex_base_3<Vb>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the concept
+\ccc{Triangulation_hierarchy_vertex_base_3_concept}.  This class is templated
+by a parameter \ccc{Vb} which is to be instantiated by a model of  the concept
+\ccc{Triangulation_vertex_base_3_concept}.  The class
+\ccc{Triangulation_hierarchy_vertex_base_3<Vb>} inherits from the class
+\ccc{Vb}.  This design allows to use either the default vertex base class or a
+user customized vertex base with additionnal functionalities.
+
+\ccInclude{CGAL/Triangulation_hierarchy_3.h}
+
+\ccIsModel
+\ccc{Triangulation_hierarchy_vertex_base_3_concept}
+
+\ccInheritsFrom
+\ccc{Vb}
+
+\ccTypes
+\ccTypedef{Vb::Point Point;}{The point type.}
+
+\ccSeeAlso
+\ccc{Triangulation_vertex_base_3_concept} \\
+\ccc{Triangulation_hierarchy_vertex_base_3_concept} \\
+\ccc{CGAL::Triangulation_vertex_base_3<Traits>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
