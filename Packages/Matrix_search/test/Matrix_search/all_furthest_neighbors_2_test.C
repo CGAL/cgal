@@ -39,6 +39,9 @@
 #ifndef CGAL_RANDOM_CONVEX_SET_2_H
 #include <CGAL/random_convex_set_2.h>
 #endif // CGAL_RANDOM_CONVEX_SET_2_H
+#ifndef CGAL_DISTANCE_PREDICATES_2_H
+#include <CGAL/distance_predicates_2.h>
+#endif // CGAL_DISTANCE_PREDICATES_2_H
 #ifndef CGAL_ALL_FURTHEST_NEIGHBORS_2_H
 #include <CGAL/all_furthest_neighbors_2.h>
 #endif // CGAL_ALL_FURTHEST_NEIGHBORS_2_H
@@ -52,6 +55,7 @@ using CGAL::Polygon_traits_2;
 using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::random_convex_set_2;
+using CGAL::has_smaller_dist_to_point;
 using CGAL::all_furthest_neighbors;
 using CGAL::squared_distance;
 using CGAL::iterator_distance;
