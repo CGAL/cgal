@@ -47,7 +47,7 @@ struct Triangulation_iterator_handle_adaptor
     return *this;
   }
 
-  operator Handle() const {return (*this)->handle();}
+  operator Handle() const {return Base::base();}
   Self&  operator++() { Base::operator++(); return *this;}
   Self&  operator--() { Base::operator--(); return *this;}
   Self   operator++(int) { Self tmp(*this); ++(*this); return tmp; }
