@@ -1,3 +1,6 @@
+11 September 2004 Sylvain Pion
+- Add CGAL_CFG_NO_STL.C (extracted from install_cgal).
+
 1 September 2004 Sylvain Pion
 - Add CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP.C .
 
