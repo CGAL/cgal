@@ -392,8 +392,11 @@ bool
 is_valid (const Interval_nt_advanced & d)
 {
     // The 2 first is_valid() are implicitely done by the 3rd test ;-)
-    // return is_valid(d._inf) && is_valid(d._sup) && d._inf <= d._sup;
+#ifdef _MSC_VER
+    return is_valid(d._inf) && is_valid(d._sup) && d._inf <= d._sup;
+#else
     return d._inf <= d._sup;
+#endif
 }
 
 inline
