@@ -32,8 +32,12 @@
 #ifndef CGAL_ALGORITHM_H
 #define CGAL_ALGORITHM_H 1
 
+#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
+#endif // CGAL_BASIC_H
+#ifndef CGAL_COPY_N_H
 #include <CGAL/copy_n.h>
+#endif // CGAL_COPY_N_H
 
 CGAL_BEGIN_NAMESPACE
 

@@ -1,4 +1,6 @@
+#ifndef CGAL_ALGORITHM_H
 #include <CGAL/algorithm.h>
+#endif // CGAL_ALGORITHM_H
 #include <vector>
 #include <iostream>
 #include <functional>
