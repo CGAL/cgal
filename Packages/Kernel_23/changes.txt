@@ -1,3 +1,7 @@
+17 Feb 2004 Sylvain Pion
+- Remove CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
+  and VC++ < 7.1 workarounds.
+
 15 Feb 2004 Sylvain Pion
 - Add intersection(Plane_3, Plane_3, Plane_3). [bug#185]
 
