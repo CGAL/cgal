@@ -912,6 +912,7 @@ public:
     return Vertex_handle(); // never reached
   }
 
+
   template <typename Selection>
   class Intersection_call_back : 
     public SNC_point_locator::Intersection_call_back 
@@ -1103,7 +1104,6 @@ public:
 
     //    SETDTHREAD(19*509*43);
 
-    Halfedge_iterator e0, e1;
 
     //    Progress_indicator_clog ee_intersections
     //      (sncp()->number_of_edges(),
@@ -1113,7 +1113,9 @@ public:
       ( *sncp(), snc1i, BOP, result);
     Intersection_call_back<Selection> call_back1 
       ( snc1i, *sncp(), BOP, result, true);
-
+    // choose between intersection algorithms
+#if 0
+    Halfedge_iterator e0, e1;
     TRACEN("=> finding edge-edge intersections...");
     CGAL_nef3_forall_edges( e0, *sncp()) {
       //      ee_intersections++;
@@ -1139,7 +1141,12 @@ public:
       pl()->intersect_with_facets( e1, call_back1);
     }
     TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
-
+#else
+    {
+        binop_intersection_test_segment_tree<Self> binop_box_intersection;
+        binop_box_intersection(call_back0, call_back1, *sncp(), snc1i );
+    }
+#endif
     TRACEN("=> resultant vertices (before simplification): ");
     CGAL_nef3_forall_vertices( v0, result) TRACEN(&*v0<<" "<<point(v0));
 

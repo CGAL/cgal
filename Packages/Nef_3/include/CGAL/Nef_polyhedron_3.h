@@ -656,18 +656,7 @@ protected:
     }
   }
 
-  template< class Selection >
-  Nef_polyhedron_3<T> bin_op( Nef_polyhedron_3<T>& N1,
-                              const Selection& BOP,
-                              binop_intersection_tests<SNC_decorator,
-                                                       Selection>& tests_impl )
-  {
-    SNC_structure rsnc;
-    SNC_decorator D(snc());
-    D.binary_operation( N1.snc(), BOP, rsnc, tests_impl );
-    return Nef_polyhedron_3<T> (rsnc);
-  }
-  
+
  public:
   void extract_complement();
   /*{\Xop converts |\Mvar| to its complement. }*/
@@ -731,38 +720,6 @@ protected:
     return res;
   }
 
-  Nef_polyhedron_3<T>
-  intersection(Nef_polyhedron_3<T>& N1,
-               CGAL::binop_intersection_tests<SNC_decorator, AND>& tests_impl )
-  {
-    TRACEN(" intersection between nef3 "<<&*this<<" and "<<&N1);
-    return bin_op( N1, AND(), tests_impl );
-  }
-
-  Nef_polyhedron_3<T>
-  join(Nef_polyhedron_3<T>& N1,
-       CGAL::binop_intersection_tests<SNC_decorator, OR>& tests_impl )
-  {
-    TRACEN(" join between nef3 "<<&*this<<" and "<<&N1);
-    return bin_op( N1, OR(), tests_impl );
-  }
-
-  Nef_polyhedron_3<T>
-  difference(Nef_polyhedron_3<T>& N1,
-             CGAL::binop_intersection_tests<SNC_decorator, DIFF>& tests_impl )
-  {
-    TRACEN(" difference between nef3 "<<&*this<<" and "<<&N1);
-    return bin_op( N1, DIFF(), tests_impl );
-  }
-
-  Nef_polyhedron_3<T>
-  symmetric_difference(Nef_polyhedron_3<T>& N1,
-                       CGAL::binop_intersection_tests<SNC_decorator,
-                                                      XOR>& tests_impl )
-  {
-    TRACEN(" symmetric difference between nef3 "<<&*this<<" and "<<&N1);
-    return bin_op( N1, XOR(), tests_impl );
-  }
 
   Nef_polyhedron_3<T> intersection(Nef_polyhedron_3<T>& N1 )
     /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/ {
