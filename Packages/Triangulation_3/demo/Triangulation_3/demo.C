@@ -39,34 +39,26 @@ int main()
 #include <list>
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
 
 #include <CGAL/Triangulation_iterators_3.h>
 #include <CGAL/Triangulation_circulators_3.h>
-#include <CGAL/Triangulation_cell_base_3.h>
-#include <CGAL/Triangulation_vertex_base_3.h>
-#include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_geom_traits_3.h>
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
 #include <CGAL/IO/Geomview_stream.h>
+#include <CGAL/IO/Triangulation_geomview_ostream_3.h>
 
-typedef CGAL::Cartesian<double>  Rep;
+typedef CGAL::Cartesian<double> Gt;
 
-typedef CGAL::Triangulation_geom_traits_3<Rep> Gt;
-typedef CGAL::Triangulation_vertex_base_3<Gt> Vb;
-typedef CGAL::Triangulation_cell_base_3<Gt>  Cb;
+typedef CGAL::Triangulation_3<Gt> Triangulation;
+typedef CGAL::Delaunay_triangulation_3<Gt> Delaunay;
 
-typedef CGAL::Triangulation_data_structure_3<Vb,Cb> TDS;
-typedef CGAL::Triangulation_3<Gt,TDS> Triangulation;
-typedef CGAL::Delaunay_triangulation_3<Gt,TDS> Delaunay;
-
-typedef CGAL::Triangulation_vertex_iterator_3<Gt,TDS> Vertex_iterator;
-typedef CGAL::Triangulation_edge_iterator_3<Gt,TDS> Edge_iterator;
-typedef CGAL::Triangulation_cell_iterator_3<Gt,TDS> Cell_iterator;
-typedef CGAL::Triangulation_facet_iterator_3<Gt,TDS> Facet_iterator;
-typedef CGAL::Triangulation_cell_circulator_3<Gt,TDS> Cell_circulator;
+typedef Triangulation::Vertex_iterator Vertex_iterator;
+typedef Triangulation::Edge_iterator Edge_iterator;
+typedef Triangulation::Cell_iterator Cell_iterator;
+typedef Triangulation::Facet_iterator Facet_iterator;
+typedef Triangulation::Cell_circulator Cell_circulator;
 
 typedef Triangulation::Cell Cell;
 typedef Triangulation::Vertex Vertex;
@@ -75,25 +67,10 @@ typedef Triangulation::Vertex_handle Vertex_handle;
 typedef Triangulation::Locate_type Locate_type;
 
 typedef Gt::Point_3 Point;
-//typedef CGAL::Point_3<Rep>  Point;
 
 ////////////////////// 
 // VISU GEOMVIEW
 ////////////////////// 
-template<class TRIANGULATION>
-void visu_cells(CGAL::Geomview_stream & os, const TRIANGULATION & T)
-{
-  Cell_iterator cit = T.finite_cells_begin();
-  Cell_iterator cdone = T.cells_end();
-  
-  if ( cit == cdone ) { std::cout << "no cell" << std::endl ;}
-  else {
-    while(cit != cdone) {
-      os << T.tetrahedron(&(*cit));
-    ++cit;
-    }
-  }
-}
 template<class TRIANGULATION>
 void visu_cell(CGAL::Geomview_stream & os, const TRIANGULATION & T,
 	       Cell_handle c)
@@ -243,7 +220,7 @@ int main()
   gv.set_vertex_color(CGAL::RED);
 
   std::cout <<"                visualizing T" << std::endl;
-  visu_cells(gv,T);
+  gv << T;
   visu_vertices(gv,T);
   visu_edges(gv,T);
 

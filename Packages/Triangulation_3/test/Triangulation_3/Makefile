@@ -17,8 +17,6 @@ include $(CGAL_MAKEFILE)
 #CGAL_CXX=purify -best-effort /usr/local/gcc/bin/g++
 
 CXXFLAGS = \
-	-I../../../Kernel_basic/include \
-	-I../../../Cartesian_kernel/include \
 	-I../../include \
 	-I./include \
 	 $(CGAL_CXXFLAGS) \
