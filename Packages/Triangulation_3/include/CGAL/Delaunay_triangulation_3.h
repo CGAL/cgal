@@ -129,9 +129,9 @@ protected:
   }
 
   Direction
-  construct_direction_of_line(const Line &l) const
+  construct_direction(const Line &l) const
   {
-      return geom_traits().construct_direction_of_line_3_object()(l);
+      return geom_traits().construct_direction_3_object()(l);
   }
 
   Ray
@@ -972,7 +972,7 @@ dual(Cell_handle c, int i) const
   Line l = construct_perpendicular_line( construct_plane(p,q,r),
 					 construct_circumcenter(p,q,r) );
   return construct_object(construct_ray( dual(n),
-	                                 construct_direction_of_line(l)));
+	                                 construct_direction(l)));
 }
 
 template < class Gt, class Tds >

@@ -25,6 +25,7 @@ CXXFLAGS = \
 	 $(TESTSUITE_CXXFLAGS) \
 	-W -Wall \
 	-DCGAL_CHECK_EXPENSIVE \
+        -DCGAL_NO_DEPRECATED_CODE \
 	-g
 
 	# -I../../../Triangulation_2/include \
