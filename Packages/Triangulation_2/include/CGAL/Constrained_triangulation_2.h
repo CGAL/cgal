@@ -22,6 +22,7 @@
 //
 // ============================================================================
 
+
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_2_H
 #define CGAL_CONSTRAINED_TRIANGULATION_2_H
 

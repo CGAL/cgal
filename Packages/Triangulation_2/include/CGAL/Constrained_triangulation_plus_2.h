@@ -120,7 +120,8 @@ public:
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li );
-  void insert_constraint(Point a, Point b);
+  void insert_constraint(const Point& a, const Point& b);
+
   void insert_constraint(Vertex_handle va, Vertex_handle vb);
 //   template < class InputIterator >
 //   int insert(InputIterator first, InputIterator last);
@@ -128,6 +129,8 @@ public:
   void          push_back(const Constraint& c);
   
   //for backward compatibility
+  // not const Point&, because otherwise VC6/7 messes it up with 
+  // the insert that takes an iterator range
   void insert(Point a, Point b) { insert_constraint(a, b);}
   void insert(Vertex_handle va, Vertex_handle  vb) {insert_constraint(va,vb);}
 
@@ -276,12 +279,15 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 template <class Tr>
 inline void
 Constrained_triangulation_plus_2<Tr>::
-insert_constraint(Point a, Point b)
+insert_constraint(const Point& a, const Point& b)
   // insert endpoints first
 {
   Vertex_handle va= insert(a);
-  Vertex_handle vb= insert(b);
-  insert_constraint(va, vb);
+  // If the segment is "short" it is a good idea to start the next insertion
+  // close to point a
+  // Otherwise, to start here is as good as elsewhere
+  Vertex_handle vb = insert(b, va->face());
+  insert_constraint(va, vb); 
 }
 
 template <class Tr>
@@ -396,10 +402,10 @@ intersect(Face_handle f, int i,
   CGAL_triangulation_assertion(b1);
   CGAL_triangulation_assertion(b2);
 
-  Point pa = va->point();
-  Point pb = vb->point();
-  Point pc = vc->point();
-  Point pd = vd->point();
+  const Point& pa = va->point();
+  const Point& pb = vb->point();
+  const Point& pc = vc->point();
+  const Point& pd = vd->point();
   Point pi;
   Intersection_tag itag = Intersection_tag();
   bool ok = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
@@ -421,10 +427,10 @@ intersect(Face_handle f, int i,
   vcc = f->vertex(cw(i));
   vdd = f->vertex(ccw(i));
 
-  Point pa = vaa->point();
-  Point pb = vbb->point();
-  Point pc = vcc->point();
-  Point pd = vdd->point();
+  const Point& pa = vaa->point();
+  const Point& pb = vbb->point();
+  const Point& pc = vcc->point();
+  const Point& pd = vdd->point();
 
   Point pi; //creator for point is required here
   Intersection_tag itag = Intersection_tag();

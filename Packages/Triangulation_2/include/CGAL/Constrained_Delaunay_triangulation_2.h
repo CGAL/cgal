@@ -107,7 +107,7 @@ public:
   // CONFLICTS
   bool test_conflict(Face_handle fh, const Point& p) const; //deprecated
   bool test_conflict(const Point& p, Face_handle fh) const;
-  void find_conflicts(Point p, std::list<Edge>& le,          //deprecated
+  void find_conflicts(const Point& p, std::list<Edge>& le,          //deprecated
 		      Face_handle hint= Face_handle()) const;
   //  //template member functions, declared and defined at the end 
   // template <class Out_it1, class Out_it2> 
@@ -449,7 +449,7 @@ test_conflict(Face_handle fh, const Point& p) const
 template < class Gt, class Tds, class Itag >    
 void 
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
-find_conflicts(Point p, std::list<Edge>& le, Face_handle hint) const
+find_conflicts(const Point& p, std::list<Edge>& le, Face_handle hint) const
 {
   // sets in le the counterclocwise list of the edges of the boundary of the 
   // union of the faces in conflict with p
