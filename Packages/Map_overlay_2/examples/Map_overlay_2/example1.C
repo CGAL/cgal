@@ -8,13 +8,14 @@
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/sweep_to_construct_planar_map_2.h>
 #include <CGAL/IO/Pm_iostream.h>
-#include <CGAL/IO/Pm_Window_stream.h>
 
 #include <iostream.h>
 #include <vector>
 #include <list>
 
-#include <CGAL/IO/cgal_window.h>  //used for visualization.
+// uncomment if LEDA is installed.
+//#include <CGAL/IO/cgal_window.h>  //used for visualization.
+//#include <CGAL/IO/Pm_Window_stream.h>
 
 typedef CGAL::Quotient<int>                 NT;
 typedef CGAL::Cartesian<NT>                 R;
@@ -32,26 +33,6 @@ typedef CGAL::Pm_walk_along_line_point_location<Planar_map>  PmWalkPL;
 using std::cin;
 using std::cout;
 using std::endl;
-
-void calc_Window_size(const Planar_map &pm, 
-                      double &max_x, double &min_x, double &min_y)
-{
-  Planar_map::Vertex_const_iterator v_iter = pm.vertices_begin();
-  
-  max_x = min_x = CGAL::to_double(v_iter->point().x());
-  min_y = CGAL::to_double(v_iter->point().y());
-
-  for (v_iter = pm.vertices_begin(); v_iter != pm.vertices_end(); v_iter++){
-    NT x = v_iter->point().x(), y = v_iter->point().y();
-    
-    double  dx, dy;
-    dx = CGAL::to_double(x);
-    dy = CGAL::to_double(y);
-    if (dx > max_x) max_x = dx;
-    if (dx < min_x) min_x = dx;
-    if (dy < min_y) min_y = dy;
-  }
-}
 
 
 int  main()
@@ -99,16 +80,13 @@ int  main()
 
   std::cout<<map_overlay.subdivision();
   
-  double        max_x = -9999, min_x = 9999, min_y = 9999;
-  calc_Window_size(map_overlay.subdivision(), max_x, min_x, min_y);
-
-  CGAL::Window_stream W(700, 700);
-  W.init(min_x-1, max_x+1, min_y-1);
-  W.set_node_width(3);
-  W.display();
-  
-  W<<CGAL::BLUE;
-  W<<map_overlay.subdivision();
+  // uncomment if LEDA is installed.
+  //CGAL::Window_stream W(700, 700);
+  //W.init(-10, 10, -10);
+  //W.set_node_width(3);
+  //W.display();
+  //W<<CGAL::BLUE;
+  //W<<map_overlay.subdivision();
   
   return 0;
 }
