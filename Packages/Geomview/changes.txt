@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.29 (11 April 2002)
+- doc fixes
+
 Ver 3.28 (10 April 2002)
 - Split the maunal into user and reference manual
 
