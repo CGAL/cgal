@@ -10,8 +10,8 @@ int main(int, char*){
 #include <CGAL/IO/Qt_widget.h>
 #include <qapplication.h>
 
-typedef CGAL::Cartesian<double>		    Rep;
-typedef CGAL::Point_2<Rep>		    Point;
+typedef CGAL::Cartesian<double>             Rep;
+typedef CGAL::Point_2<Rep>                  Point;
 typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
@@ -21,7 +21,7 @@ class My_window : public Qt_widget {
 public:
   My_window(int x, int y){
     resize(x,y);
-    connect(this, SIGNAL(custom_redraw()),
+    connect(this, SIGNAL(redraw_on_back()),
 	   this, SLOT(redraw_win()));
   };
 private slots:  
