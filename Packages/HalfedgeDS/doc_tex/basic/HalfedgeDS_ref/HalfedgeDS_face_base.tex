@@ -103,6 +103,16 @@ model of the \ccc{PolyhedronItems_3} concept.
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_face_min_base<Refs>}
 
+\ccImplementation
+
+If the compiler does not support partial specialization, i.e., the
+macro \ccc{CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION} or the
+macro \ccc{CGAL_CFG_SUNPRO_PARTIAL_SPEC_BUG} are set, then the
+implementation here cannot save the space of the halfedge reference
+allthough it has not been selected. See
+\ccc{CGAL::HalfedgeDS_face_min_base} for a smaller base class in this
+case.
+
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+
