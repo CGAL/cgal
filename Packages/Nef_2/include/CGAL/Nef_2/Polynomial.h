@@ -1848,7 +1848,7 @@ std::istream& operator >> (std::istream& is, Polynomial<NT>& p) {
                 return is;
 	    is.putback(ch);
         } else {
-            is.putback(ch);
+	    is.putback(ch);
         }
         is >> d;
         if ( pretty) {
