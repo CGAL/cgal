@@ -120,15 +120,6 @@ public:
     init_function_objects();
   }
   
-  Delaunay_triangulation_3(const Point & p0,
-			   const Point & p1,
-			   const Point & p2,
-			   const Point & p3)
-    : Triangulation_3<Gt,Tds>(p0,p1,p2,p3)
-  {
-    init_function_objects();
-  } // debug
-
   // copy constructor duplicates vertices and cells
   Delaunay_triangulation_3(const Delaunay_triangulation_3<Gt,Tds> & tr)
     : Triangulation_3<Gt,Tds>(tr)
@@ -296,10 +287,7 @@ insert(const Point & p, Cell_handle start, Vertex_handle v)
       Cell_handle c = locate( p, lt, li, lj, start);
       if ( lt == VERTEX )
 	  return c->vertex(li);
-//    case OUTSIDE_CONVEX_HULL:
-//    case CELL:
-//    case FACET:
-//    case EDGE:
+
       set_number_of_vertices(number_of_vertices()+1);
       Conflict_tester_3 tester(p, this);
       v = (Vertex *) _tds.insert_conflict(&(*v), &(*c), tester); 
@@ -422,6 +410,7 @@ print( Cell_handle c ) const
     print(c->vertex(i));
   std::cout << std::endl;
 }
+// end debug
 
 template < class Gt, class Tds >
 Bounded_side
@@ -431,34 +420,26 @@ side_of_sphere(Cell_handle c, const Point & p) const
   CGAL_triangulation_precondition( dimension() == 3 );
   int i3;
   if ( ! c->has_vertex( infinite_vertex(), i3 ) ) 
-    return Bounded_side( side_of_oriented_sphere
-			 (c->vertex(0)->point(),
-			  c->vertex(1)->point(),
-			  c->vertex(2)->point(),
-			  c->vertex(3)->point(),p) );
+    return Bounded_side( side_of_oriented_sphere( c->vertex(0)->point(),
+						  c->vertex(1)->point(),
+						  c->vertex(2)->point(),
+						  c->vertex(3)->point(),
+						  p ) );
   // else infinite cell :
-  int i0,i1,i2;
-  if ( (i3&1) == 1 ) {
-    i0 = (i3+1)&3;
-    i1 = (i3+2)&3;
-    i2 = (i3+3)&3;
-  }
-  else {
-    i0 = (i3+2)&3;
-    i1 = (i3+1)&3;
-    i2 = (i3+3)&3;
-  }
-  Orientation o = orientation(c->vertex(i0)->point(),
-			      c->vertex(i1)->point(),
-			      c->vertex(i2)->point(),
-			      p);
+  unsigned char i[3] = {(i3+1)&3, (i3+2)&3, (i3+3)&3};
+  if ( (i3&1) == 0 )
+      std::swap(i[0], i[1]);
+  Orientation o = orientation( c->vertex(i[0])->point(),
+			       c->vertex(i[1])->point(),
+			       c->vertex(i[2])->point(),
+			       p );
   if (o != ZERO)
     return Bounded_side(o);
 
-  return coplanar_side_of_bounded_circle ( c->vertex(i0)->point(), 
-			          c->vertex(i1)->point(),
-			          c->vertex(i2)->point(),
-			          p );
+  return coplanar_side_of_bounded_circle( c->vertex(i[0])->point(), 
+					  c->vertex(i[1])->point(),
+					  c->vertex(i[2])->point(),
+					  p );
 }
 
 template < class Gt, class Tds >
@@ -665,10 +646,10 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
     // the triangulation is supposed to be valid, ie the facet
     // with vertices 0 1 2 in this order is positively oriented
     if ( ! c->has_vertex( infinite_vertex(), i3 ) ) 
-      return coplanar_side_of_bounded_circle (c->vertex(0)->point(),
+      return coplanar_side_of_bounded_circle( c->vertex(0)->point(),
 					      c->vertex(1)->point(),
 					      c->vertex(2)->point(),
-					      p);
+					      p );
     // else infinite facet
     // v1, v2 finite vertices of the facet such that v1,v2,infinite
     // is positively oriented
@@ -703,14 +684,14 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
     int i0 = (i>0) ? 0 : 1;
     int i1 = (i>1) ? 1 : 2;
     int i2 = (i>2) ? 2 : 3;
-    CGAL_triangulation_precondition( orientation (c->vertex(i0)->point(),
+    CGAL_triangulation_precondition( orientation( c->vertex(i0)->point(),
 				                  c->vertex(i1)->point(),
 				                  c->vertex(i2)->point(),
-				                  p) == COPLANAR );
-    return coplanar_side_of_bounded_circle (c->vertex(i0)->point(),
+				                  p ) == COPLANAR );
+    return coplanar_side_of_bounded_circle( c->vertex(i0)->point(),
 					    c->vertex(i1)->point(),
 					    c->vertex(i2)->point(),
-					    p);
+					    p );
   }
 
   //else infinite facet
@@ -742,10 +723,10 @@ dual(Cell_handle c) const
 {
   CGAL_triangulation_precondition(dimension()==3);
   CGAL_triangulation_precondition( ! is_infinite(c) );
-  return construct_circumcenter(c->vertex(0)->point(),
-				c->vertex(1)->point(),
-				c->vertex(2)->point(),
-				c->vertex(3)->point());
+  return construct_circumcenter( c->vertex(0)->point(),
+				 c->vertex(1)->point(),
+				 c->vertex(2)->point(),
+				 c->vertex(3)->point() );
 }
 
 
@@ -768,15 +749,14 @@ dual(Cell_handle c, int i) const
   // dimension() == 3
   Cell_handle n = c->neighbor(i);
   if ( ! is_infinite(c) && ! is_infinite(n) ) {
-    Segment s = construct_segment(dual(c),dual(n));
+    Segment s = construct_segment( dual(c), dual(n) );
     return make_object(s);
   }
 
   // either n or c is infinite
   int in;
-  if ( is_infinite(c) ) {
+  if ( is_infinite(c) ) 
     in = n->index(c);
-  }
   else {
     n = c;
     in = i;
@@ -789,9 +769,9 @@ dual(Cell_handle c, int i) const
   const Point& q = n->vertex(ind[1])->point();
   const Point& r = n->vertex(ind[2])->point();
   
-  Line l = construct_perpendicular_line(construct_plane(p,q,r),
-					construct_circumcenter(p,q,r));
-  Ray ray = construct_ray(dual(n),construct_direction_of_line(l));
+  Line l = construct_perpendicular_line( construct_plane(p,q,r),
+					 construct_circumcenter(p,q,r) );
+  Ray ray = construct_ray( dual(n), construct_direction_of_line(l) );
   return make_object(ray);
 }
 

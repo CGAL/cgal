@@ -263,9 +263,7 @@ public:
     {return _tds.number_of_vertices()-1;}
 
   Vertex_handle infinite_vertex() const
-    {
-      return infinite;
-    }
+    { return infinite; }
    
   Cell_handle infinite_cell() const
     {
@@ -278,7 +276,8 @@ public:
   void set_number_of_vertices(int n) 
     { _tds.set_number_of_vertices(n+1); }
    
-  void add_cell( Cell_handle c ) { _tds.add_cell( &(*c) ); }
+  void add_cell( Cell_handle c ) 
+    { _tds.add_cell( &(*c) ); }
 
   // GEOMETRIC ACCESS FUNCTIONS
   
@@ -302,16 +301,6 @@ public:
   Segment segment(const Edge & e) const
     { return segment(e.first,e.second,e.third); }
 
-  //   Segment segment(const Edge_circulator& ec) const
-  //   {
-  //     return segment(*ec);
-  //   }
-    
-  //   Segment segment(const Edge_iterator& ei) const
-  //   {
-  //     return segment(*ei);
-  //   }
-
   // TEST IF INFINITE FEATURES
   bool is_infinite(const Vertex_handle v) const 
     { return v == infinite_vertex(); }
@@ -332,15 +321,6 @@ public:
   bool is_infinite(const Edge & e) const
     { return is_infinite(e.first,e.second,e.third); }
 
-  //   bool is_infinite(const Edge_circulator& ec) const 
-  //     {
-  //       return is_infinite(*ec);
-  //     }
-
-  //   bool is_infinite(const Edge_iterator& ei) const 
-  //     {
-  //       return is_infinite(*ei);
-  //     }
 
   //QUERIES
 
@@ -349,16 +329,12 @@ public:
   bool is_vertex(Vertex_handle v) const;
   bool is_edge(Vertex_handle u, Vertex_handle v,
 	       Cell_handle & c, int & i, int & j) const;
-  // returns false when dimension <1
   bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w,
 		Cell_handle & c, int & i, int & j, int & k) const;
-  // returns false when dimension <2
   bool is_cell(Cell_handle c) const;
-  // returns false when dimension <3
   bool is_cell(Vertex_handle u, Vertex_handle v, 
 	       Vertex_handle w, Vertex_handle t,
 	       Cell_handle & c, int & i, int & j, int & k, int & l) const;
-  // returns false when dimension <3
   bool is_cell(Vertex_handle u, Vertex_handle v, 
 	       Vertex_handle w, Vertex_handle t,
 	       Cell_handle & c) const;
@@ -403,63 +379,18 @@ public:
 		      const Point & p2, 
 		      const Point & p3,
 		      Locate_type & lt, int & i, int & j ) const;
-  // p0,p1,p2,p3 supposed to be non coplanar
-  // tetrahedron p0,p1,p2,p3 is supposed to be well oriented
-  // returns :
-  // ON_BOUNDED_SIDE if p lies strictly inside the tetrahedron
-  // ON_BOUNDARY if p lies on one of the facets
-  // ON_UNBOUNDED_SIDE if p lies strictly outside the tetrahedron
-  // ?? locate type...
-
   Bounded_side
   side_of_cell(const Point & p, 
 	       Cell_handle c,
 	       Locate_type & lt, int & i, int & j) const;
-  // returns
-  // ON_BOUNDED_SIDE if p inside the cell
-  // (for an infinite cell this means that p lies strictly in the half space
-  // limited by its finite facet)
-  // ON_BOUNDARY if p on the boundary of the cell
-  // (for an infinite cell this means that p lies on the *finite* facet)
-  // ON_UNBOUNDED_SIDE if p lies outside the cell
-  // (for an infinite cell this means that p is not in the preceding
-  // two cases)  
-  // lt has a meaning only when ON_BOUNDED_SIDE or ON_BOUNDARY
-
   Bounded_side
   side_of_triangle(const Point & p,
-		   const Point & p0, 
-		   const Point & p1,
-		   const Point & p2,
+		   const Point & p0, const Point & p1, const Point & p2,
 		   Locate_type & lt, int & i, int & j ) const;
-  // p0,p1,p2 supposed to define a plane
-  // p supposed to lie on plane p0,p1,p2
-  // triangle p0,p1,p2 defines the orientation of the plane
-  // returns
-  // ON_BOUNDED_SIDE if p lies strictly inside the triangle
-  // ON_BOUNDARY if p lies on one of the edges
-  // ON_UNBOUNDED_SIDE if p lies strictly outside the triangle
-
-
   Bounded_side
   side_of_facet(const Point & p,
 		Cell_handle c,
-		//		int i,
 		Locate_type & lt, int & li, int & lj) const;
-  // supposes dimension 2 otherwise does not work for infinite facets
-  // returns :
-  // ON_BOUNDED_SIDE if p inside the facet
-  // (for an infinite facet this means that p lies strictly in the half plane
-  // limited by its finite edge)
-  // ON_BOUNDARY if p on the boundary of the facet
-  // (for an infinite facet this means that p lies on the *finite* edge)
-  // ON_UNBOUNDED_SIDE if p lies outside the facet
-  // (for an infinite facet this means that p is not in the
-  // preceding two cases) 
-  // lt has a meaning only when ON_BOUNDED_SIDE or ON_BOUNDARY
-  // when they mean anything, li and lj refer to indices in the cell c 
-  // giving the facet (c,i)
-
   Bounded_side
   side_of_facet(const Point & p,
 		const Facet & f,
@@ -468,34 +399,14 @@ public:
       CGAL_triangulation_precondition( f.second == 3 );
       return side_of_facet(p, f.first, lt, li, lj);
     }
-
   Bounded_side
-  side_of_segment(const Point & p,
-		  const Point & p0, 
-		  const Point & p1,
+  side_of_segment(const Point & p, 
+		  const Point & p0, const Point & p1,
 		  Locate_type & lt, int & i ) const;
-  // p0, p1 supposed to be different
-  // p supposed to be collinear to p0, p1
-  // returns :
-  // ON_BOUNDED_SIDE if p lies strictly inside the edge
-  // ON_BOUNDARY if p equals p0 or p1
-  // ON_UNBOUNDED_SIDE if p lies strictly outside the edge
-
   Bounded_side
-  side_of_edge(const Point & p,
+  side_of_edge(const Point & p, 
 	       Cell_handle c,
 	       Locate_type & lt, int & li) const;
-  // supposes dimension 1 otherwise does not work for infinite edges
-  // returns :
-  // ON_BOUNDED_SIDE if p inside the edge 
-  // (for an infinite edge this means that p lies in the half line
-  // defined by the vertex)
-  // ON_BOUNDARY if p equals one of the vertices
-  // ON_UNBOUNDED_SIDE if p lies outside the edge
-  // (for an infinite edge this means that p lies on the other half line)
-  // lt has a meaning when ON_BOUNDED_SIDE and ON_BOUNDARY
-  // li refer to indices in the cell c 
-
   Bounded_side
   side_of_edge(const Point & p,
 	       const Edge & e,
@@ -509,25 +420,12 @@ public:
   // MODIFIERS
   bool flip(Facet f);
   bool flip(Cell_handle c, int i);
-  // returns false if the facet is not flippable
-  // true other wise and
-  // flips facet i of cell c
-  // c will be replaced by one of the new cells
   void flip_flippable(Facet f);
   void flip_flippable(Cell_handle c, int i);
-  // flips facet i of cell c
-  // c will be replaced by one of the new cells
-
   bool flip(Edge e);
   bool flip(Cell_handle c, int i, int j);
-  // returns false if the edge is not flippable
-  // true otherwise and
-  // flips edge i,j of cell c
-  // c will be deleted
   void flip_flippable(Edge e);
   void flip_flippable(Cell_handle c, int i, int j);
-  // flips edge i,j of cell c
-  // c will be deleted
 
   //INSERTION 
 
@@ -579,15 +477,6 @@ public:
   Vertex_handle
   insert_outside_convex_hull(const Point & p, Cell_handle c,
 			     Vertex_handle v = NULL);
-  //			     int li, int lj=0)
-  // c is an infinite cell containing p
-  // whose facet li lies on the convex hull boundary
-  // and separates p from the triangulation (in dimension 3)
-  // p is strictly outside the convex hull
-  // in dimension 2, edge li,lj separates p from the triangulation
-  // in dimension 1, vertex li separates p from the triangulation
-  // dimension 0 not allowed, use outside-affine-hull
-
   Vertex_handle
   insert_outside_affine_hull(const Point & p, Vertex_handle v = NULL );
 
@@ -934,140 +823,6 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   //  print_cells(os, tr.tds(), n+1, V);
   print_cells(os, tr.tds(), V);
   
-  //   // write the cells
-  //   i = 0;
-  //   int j;
-  //   switch ( tr.dimension() ) {
-  //   case 3:
-  //     {
-  //       os << m;
-  //       if(is_ascii(os)){ os << std::endl;}
-
-  //       // write the cells
-  //       Cell_iterator it = tr.all_cells_begin();
-  //       while( it != tr.cells_end() ) {
-  // 	C[&(*it)] = i++;
-  // 	for(j = 0; j < 4; j++){
-  // 	  os << V[&(*it->vertex(j))];
-  // 	  if(is_ascii(os)) {
-  // 	    if ( j==3 ) {
-  // 	      os << *it; // other information
-  // 	      os << std::endl;
-  // 	    } else {
-  // 	      os << ' ';
-  // 	    }
-  // 	  }
-  // 	}
-  // 	++it;
-  //       }
-  //       CGAL_triangulation_assertion( i == m );
-      
-  //       // write the neighbors
-  //       it = tr.all_cells_begin();
-  //       while ( it != tr.cells_end() ) {
-  // 	for (j = 0; j < 4; j++) {
-  // 	  os << C[&(* it->neighbor(j))];
-  // 	  if(is_ascii(os)){
-  // 	    if(j==3) {
-  // 	      os << std::endl;
-  // 	    } else {
-  // 	      os <<  ' ';
-  // 	    }
-  // 	  }
-  // 	}
-  // 	++it;
-  //       }
-  //       break;
-  //     }
-  //   case 2:
-  //     {
-  //       os << m;
-  //       if(is_ascii(os)){ os << std::endl;}
-
-  //       // write the facets
-  //       Facet_iterator it = tr.all_facets_begin();
-  //       while( it != tr.facets_end() ) {
-  // 	C[&*((*it).first)] = i++;
-  // 	for(j = 0; j < 3; j++){
-  // 	  os << V[&(*(*it).first->vertex(j))];
-  // 	  if(is_ascii(os)) {
-  // 	    if ( j==2 ) {
-  // 	      os << *((*it).first); // other information
-  // 	      os << std::endl;
-  // 	    } else {
-  // 	      os <<  ' ';
-  // 	    }
-  // 	  }
-  // 	}
-  // 	++it;
-  //       }
-  //       CGAL_triangulation_assertion( i == m );
-      
-  //       // write the neighbors
-  //       it = tr.all_facets_begin();
-  //       while ( it != tr.facets_end() ) {
-  // 	for (j = 0; j < 3; j++) {
-  // 	  os << C[&*((*it).first->neighbor(j))];
-  // 	  if(is_ascii(os)){
-  // 	    if(j==2) {
-  // 	      os << std::endl;
-  // 	    } else {
-  // 	      os <<  ' ';
-  // 	    }
-  // 	  }
-  // 	}
-  // 	++it;
-  //       }
-  //       break;
-  //     }
-  //   case 1:
-  //     {
-  //       os << m;
-  //       if(is_ascii(os)){ os << std::endl;}
-
-  //       // write the edges
-  //       Edge_iterator it = tr.all_edges_begin();
-  //       while( it != tr.edges_end() ) {
-  // 	C[&*((*it).first)] = i++;
-  // 	for(j = 0; j < 2; j++){
-  // 	  os << V[&(*(*it).first->vertex(j))];
-  // 	  if(is_ascii(os)) {
-  // 	    if ( j==1 ) {
-  // 	      os << *((*it).first); // other information 
-  // 	      os << std::endl;
-  // 	    } else {
-  // 	      os <<  ' ';
-  // 	    }
-  // 	  }
-  // 	}
-  // 	++it;
-  //       }
-  //       CGAL_triangulation_assertion( i == m );
-      
-  //       // write the neighbors
-  //       it = tr.all_edges_begin();
-  //       while ( it != tr.edges_end() ) {
-  // 	for (j = 0; j < 2; j++) {
-  // 	  os << C[&*((*it).first->neighbor(j))];
-  // 	  if(is_ascii(os)){
-  // 	    if(j==1) {
-  // 	      os << std::endl;
-  // 	    } else {
-  // 	      os <<  ' ';
-  // 	    }
-  // 	  }
-  // 	}
-  // 	++it;
-  //       }
-  //       break;
-  //     }
-  // //   default:
-  // //     {
-  // //       os << m;
-  // //       if(is_ascii(os)){ os << std::endl;}
-  // //       break;
-  // //     }
-  //   }
   return os ;
 }
 
@@ -1075,11 +830,11 @@ template < class GT, class Tds >
 bool
 Triangulation_3<GT,Tds>::
 test_dim_down(Vertex_handle v)
-{
   // tests whether removing v decreases the dimension of the triangulation 
   // true iff
   // v is incident to all finite cells
   // and all the other vertices are coplanar
+{
   CGAL_triangulation_precondition(dimension() == 3);
   CGAL_triangulation_precondition(! is_infinite(v) );
 
@@ -1168,7 +923,7 @@ triangle(const Cell_handle c, int i) const
 { 
   CGAL_triangulation_precondition( dimension() == 2 || dimension() == 3 );
   CGAL_triangulation_precondition( (dimension() == 2 && i == 3)
-	                        || (dimension() == 3 && i >= 0 && i <= 3) );
+				   || (dimension() == 3 && i >= 0 && i <= 3) );
   CGAL_triangulation_precondition( ! is_infinite(std::make_pair(c, i)) );
   return construct_triangle(c->vertex(i<=0 ? 1 : 0)->point(),
 			    c->vertex(i<=1 ? 2 : 1)->point(),
@@ -1182,8 +937,8 @@ segment(const Cell_handle c, int i, int j) const
 {
   CGAL_triangulation_precondition( i != j );
   CGAL_triangulation_precondition( dimension() >= 1 && dimension() <= 3 );
-  CGAL_triangulation_precondition(
-	  i >= 0 && i <= dimension() && j >= 0 && j <= dimension() );
+  CGAL_triangulation_precondition( i >= 0 && i <= dimension() 
+				   && j >= 0 && j <= dimension() );
   CGAL_triangulation_precondition( ! is_infinite(make_triple(c, i, j)) );
   return construct_segment( c->vertex(i)->point(), c->vertex(j)->point() );
 }
@@ -1196,7 +951,7 @@ is_infinite(const Cell_handle c, int i) const
 {
   CGAL_triangulation_precondition( dimension() == 2 || dimension() == 3 );
   CGAL_triangulation_precondition( (dimension() == 2 && i == 3)
-	                        || (dimension() == 3 && i >= 0 && i <= 3) );
+				   || (dimension() == 3 && i >= 0 && i <= 3) );
   return is_infinite(c->vertex(i<=0 ? 1 : 0)) ||
 	 is_infinite(c->vertex(i<=1 ? 2 : 1)) ||
 	 is_infinite(c->vertex(i<=2 ? 3 : 2));
@@ -1503,33 +1258,32 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	  { 
 	    lt = FACET;
 	    li = ( o[0] == COPLANAR ) ? i :
-	      ( o[1] == COPLANAR ) ? (i+1)&3 :
-	      ( o[2] == COPLANAR ) ? (i+2)&3 :
-	      (i+3)&3;
+	         ( o[1] == COPLANAR ) ? (i+1)&3 :
+	         ( o[2] == COPLANAR ) ? (i+2)&3 :
+	         (i+3)&3;
 	    break;
 	  }
 	case 2:
 	  { 
 	    lt = EDGE;
 	    li = ( o[0] != COPLANAR ) ? i :
-	      ( o[1] != COPLANAR ) ? ((i+1)&3) :
-	      ((i+2)&3);
+	         ( o[1] != COPLANAR ) ? ((i+1)&3) :
+	         ((i+2)&3);
 	    lj = ( o[ (li+1-i)&3 ] != COPLANAR ) ? ((li+1)&3) :
-	      ( o[ (li+2-i)&3 ] != COPLANAR ) ? ((li+2)&3) :
-	      ((li+3)&3);
-	    CGAL_triangulation_assertion
-	      ( collinear( p,
-			   c->vertex( li )->point(),
-			   c->vertex( lj )->point() ) );
+	         ( o[ (li+2-i)&3 ] != COPLANAR ) ? ((li+2)&3) :
+	         ((li+3)&3);
+	    CGAL_triangulation_assertion(collinear( p,
+						    c->vertex( li )->point(),
+						    c->vertex( lj )->point() ));
 	    break;
 	  }
 	case 3:
 	  {
 	    lt = VERTEX;
 	    li = ( o[0] != COPLANAR ) ? i :
-	      ( o[1] != COPLANAR ) ? (i+1)&3 :
-	      ( o[2] != COPLANAR ) ? (i+2)&3 :
-	      (i+3)&3;
+	         ( o[1] != COPLANAR ) ? (i+1)&3 :
+	         ( o[2] != COPLANAR ) ? (i+2)&3 :
+	         (i+3)&3;
 	    break;
 	  }
 	}
@@ -1547,11 +1301,10 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 
       //first tests whether p is coplanar with the current triangulation
       Facet_iterator finite_fit = finite_facets_begin();
-      if ( orientation
-	   ( p, 
-	     (*finite_fit).first->vertex(0)->point(),
-	     (*finite_fit).first->vertex(1)->point(),
-	     (*finite_fit).first->vertex(2)->point() ) 
+      if ( orientation( p, 
+			(*finite_fit).first->vertex(0)->point(),
+			(*finite_fit).first->vertex(1)->point(),
+			(*finite_fit).first->vertex(2)->point() ) 
 	   != DEGENERATE ) {
 	lt = OUTSIDE_AFFINE_HULL;
 	li = 3; // only one facet in dimension 2
@@ -1595,8 +1348,8 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 
 	// now p is in c or on its boundary
 	int sum = ( o[0] == COLLINEAR )
-	  + ( o[1] == COLLINEAR )
-	  + ( o[2] == COLLINEAR );
+	        + ( o[1] == COLLINEAR )
+	        + ( o[2] == COLLINEAR );
 	switch (sum) {
 	case 0:
 	  {
@@ -1608,8 +1361,8 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	  {
 	    lt = EDGE;
 	    li = ( o[0] == COLLINEAR ) ? i :
-	      ( o[1] == COLLINEAR ) ? ccw(i) :
-	      cw(i);
+	         ( o[1] == COLLINEAR ) ? ccw(i) :
+	         cw(i);
 	    lj = ccw(li);
 	    break;
 	  }
@@ -1617,8 +1370,8 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	  {
 	    lt = VERTEX;
 	    li = ( o[0] != COLLINEAR ) ? cw(i) :
-	      ( o[1] != COLLINEAR ) ? i :
-	      ccw(i);
+	         ( o[1] != COLLINEAR ) ? i :
+	         ccw(i);
 	    break;
 	  }
 	}
@@ -1637,10 +1390,9 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 
       //first tests whether p is collinear with the current triangulation
       Edge_iterator finite_eit = finite_edges_begin();
-      if ( !collinear
-	   (p,
-	    (*finite_eit).first->vertex(0)->point(),
-	    (*finite_eit).first->vertex(1)->point()) ) {
+      if ( ! collinear( p,
+			(*finite_eit).first->vertex(0)->point(),
+			(*finite_eit).first->vertex(1)->point()) ) {
 	lt = OUTSIDE_AFFINE_HULL;
 	return (*finite_eit).first;
       }
@@ -1649,10 +1401,9 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
       int xyz;
       Point p0 = c->vertex(0)->point();
       Point p1 = c->vertex(1)->point();
-      CGAL_triangulation_assertion
-	( ( compare_x(p0,p1) != EQUAL ) ||
-	  ( compare_y(p0,p1) != EQUAL ) ||
-	  ( compare_z(p0,p1) != EQUAL ) );
+      CGAL_triangulation_assertion( ( compare_x(p0,p1) != EQUAL ) ||
+				    ( compare_y(p0,p1) != EQUAL ) ||
+				    ( compare_z(p0,p1) != EQUAL ) );
       o = compare_x(p0,p1);
       if ( o == EQUAL ) {
 	o = compare_y(p0,p1);
@@ -1660,16 +1411,13 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	  o = compare_z(p0,p1);
 	  xyz = 3;
 	}
-	else {
+	else 
 	  xyz = 2;
-	}
       }
-      else {
+      else 
 	xyz  = 1;
-      }
       //	bool notfound = true;
       while (1) {
-	  
 	if ( c->has_vertex(infinite,inf) ) {
 	  // c must contain p in its interior
 	  lt = OUTSIDE_CONVEX_HULL;
@@ -1702,23 +1450,6 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	    o1 = compare_z(p,p1);
 	  }
 	}
-	// 	  o = compare_x(p0,p1);
-	// 	  if ( o == EQUAL ) {
-	// 	    o = compare_y(p0,p1);
-	// 	    if ( o == EQUAL ) {
-	// 	      o = compare_z(p0,p1);
-	// 	      o0 = compare_z(p0,p);
-	// 	      o1 = compare_z(p,p1);
-	// 	    }
-	// 	    else {
-	// 	      o0 = compare_y(p0,p);
-	// 	      o1 = compare_y(p,p1);
-	// 	    }
-	// 	  }
-	// 	  else {
-	// 	    o0 = compare_x(p0,p);
-	// 	    o1 = compare_x(p,p1);
-	// 	  }
 	  
 	if (o0 == EQUAL) {
 	  lt = VERTEX;
@@ -1745,26 +1476,6 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	  continue; 
 	}
       }
-      // 	do {
-      // 	  if ( side_of_edge( p, c, 0, 1, lt, li ) != ON_UNBOUNDED_SIDE ) {
-      // 	    notfound = false;
-      // 	  }
-      // 	  else {
-      // 	    if ( compare_x(p,c->vertex(1)->point()) 
-      // 		 == LARGER ) {
-      // 	      c = c->neighbor(0);
-      // 	    }
-      // 	    else {
-      // 	      c = c->neighbor(1);
-      // 	    }
-      // 	  }
-      // 	} while ( notfound );
-      // 	if ( lt == EDGE ) {
-      // 	  if ( c->has_vertex(infinite) ) {
-      // 	    lt = OUTSIDE_CONVEX_HULL;
-      // 	  }
-      // 	  lj = 1-li;
-      // 	} // else vertex, li is already the right index
     }
   case 0:
     {
@@ -1821,11 +1532,10 @@ side_of_tetrahedron(const Point & p,
 
   // now all the oi's are >=0
   // sum gives the number of facets p lies on
-  int sum = 
-    ( (o0 == ZERO) ? 1 : 0 ) + 
-    ( (o1 == ZERO) ? 1 : 0 ) +
-    ( (o2 == ZERO) ? 1 : 0 ) + 
-    ( (o3 == ZERO) ? 1 : 0 );
+  int sum = ( (o0 == ZERO) ? 1 : 0 ) 
+          + ( (o1 == ZERO) ? 1 : 0 ) 
+          + ( (o2 == ZERO) ? 1 : 0 ) 
+          + ( (o3 == ZERO) ? 1 : 0 );
 
   switch (sum) {
   case 0:
@@ -1838,9 +1548,9 @@ side_of_tetrahedron(const Point & p,
       lt = FACET;
       // i = index such that p lies on facet(i)
       i = ( o0 == ZERO ) ? 0 :
-	( o1 == ZERO ) ? 1 :
-	( o2 == ZERO ) ? 2 :
-	3;
+	  ( o1 == ZERO ) ? 1 :
+	  ( o2 == ZERO ) ? 2 :
+	  3;
       return ON_BOUNDARY;
     }
   case 2:
@@ -1849,13 +1559,13 @@ side_of_tetrahedron(const Point & p,
       // i = smallest index such that p does not lie on facet(i)
       // i must be < 3 since p lies on 2 facets
       i = ( o0 == POSITIVE ) ? 0 :
-	( o1 == POSITIVE ) ? 1 :
-	2;
+	  ( o1 == POSITIVE ) ? 1 :
+	  2;
       // j = larger index such that p not on facet(j)
       // j must be > 0 since p lies on 2 facets
       j = ( o3 == POSITIVE ) ? 3 :
-	( o2 == POSITIVE ) ? 2 :
-	1;
+	  ( o2 == POSITIVE ) ? 2 :
+	  1;
       return ON_BOUNDARY;
     }
   case 3:
@@ -1863,9 +1573,9 @@ side_of_tetrahedron(const Point & p,
       lt = VERTEX;
       // i = index such that p does not lie on facet(i)
       i = ( o0 == POSITIVE ) ? 0 :
-	( o1 == POSITIVE ) ? 1 :
-	( o2 == POSITIVE ) ? 2 :
-	3;
+	  ( o1 == POSITIVE ) ? 1 :
+	  ( o2 == POSITIVE ) ? 2 :
+	  3;
       return ON_BOUNDARY;
     }
   default:
@@ -1910,18 +1620,11 @@ side_of_cell(const Point & p,
       v1=c->vertex((inf+1)&3), 
       v2=c->vertex((inf+2)&3), 
       v3=c->vertex((inf+3)&3);
-    if ( (inf&1) == 0 ) {
-      o = orientation(p,
-				    v1->point(),
-				    v2->point(),
-				    v3->point());
-    }
-    else {
-      o =  orientation(v3->point(),
-				     p,
-				     v1->point(),
-				     v2->point());
-    }
+    if ( (inf&1) == 0 ) 
+      o = orientation(p, v1->point(), v2->point(), v3->point());
+    else 
+      o =  orientation(v3->point(), p, v1->point(), v2->point());
+
     switch (o) {
     case POSITIVE:
       {
@@ -1935,10 +1638,7 @@ side_of_cell(const Point & p,
 	// location in the finite facet
 	int i_f, j_f;
 	Bounded_side side = 
-	  side_of_triangle(p,
-			   v1->point(),
-			   v2->point(),
-			   v3->point(),
+	  side_of_triangle(p, v1->point(), v2->point(), v3->point(),
 			   lt, i_f, j_f);
 	// lt need not be modified in most cases :
 	switch (side) {
@@ -1952,12 +1652,12 @@ side_of_cell(const Point & p,
 	  {
 	    // lt == VERTEX OR EDGE ok
 	    i = ( i_f == 0 ) ? ((inf+1)&3) :
-	      ( i_f == 1 ) ? ((inf+2)&3) :
-	      ((inf+3)&3);
+	        ( i_f == 1 ) ? ((inf+2)&3) :
+	        ((inf+3)&3);
 	    if ( lt == EDGE ) {
 	      j = (j_f == 0 ) ? ((inf+1)&3) :
-		( j_f == 1 ) ? ((inf+2)&3) :
-		((inf+3)&3);
+		  ( j_f == 1 ) ? ((inf+2)&3) :
+		  ((inf+3)&3);
 	    }
 	    return ON_BOUNDARY;
 	  }
@@ -1999,7 +1699,7 @@ side_of_triangle(const Point & p,
   // ON_BOUNDARY if p lies on one of the edges
   // ON_UNBOUNDED_SIDE if p lies strictly outside the triangle
 {
-  CGAL_triangulation_precondition( !collinear(p0,p1,p2) );
+  CGAL_triangulation_precondition( ! collinear(p0,p1,p2) );
   CGAL_triangulation_precondition( orientation(p,p0,p1,p2) == COPLANAR );
 
   // edge p0 p1 :
@@ -2009,7 +1709,7 @@ side_of_triangle(const Point & p,
   // edge p2 p0 :
   Orientation o2 = coplanar_orientation(p2,p0,p1,p);
 
-  if ( (o0 == NEGATIVE) ||
+  if ( (o0 == NEGATIVE) || 
        (o1 == NEGATIVE) ||
        (o2 == NEGATIVE) ) {
     lt = OUTSIDE_CONVEX_HULL;
@@ -2018,10 +1718,9 @@ side_of_triangle(const Point & p,
 
   // now all the oi's are >=0
   // sum gives the number of edges p lies on
-  int sum = 
-    ( (o0 == ZERO) ? 1 : 0 ) + 
-    ( (o1 == ZERO) ? 1 : 0 ) +
-    ( (o2 == ZERO) ? 1 : 0 );
+  int sum = ( (o0 == ZERO) ? 1 : 0 ) 
+          + ( (o1 == ZERO) ? 1 : 0 ) 
+          + ( (o2 == ZERO) ? 1 : 0 );
 
   switch (sum) {
   case 0:
@@ -2033,18 +1732,20 @@ side_of_triangle(const Point & p,
     {
       lt = EDGE;
       i = ( o0 == ZERO ) ? 0 :
-	( o1 == ZERO ) ? 1 :
-	2;
-      if ( i == 2 ) { j=0; }
-      else { j = i+1; }
+	  ( o1 == ZERO ) ? 1 :
+	  2;
+      if ( i == 2 ) 
+	j=0;
+      else 
+	j = i+1;
       return ON_BOUNDARY;
     }
   case 2:
     {
       lt = VERTEX;
       i = ( o0 == POSITIVE ) ? 2 :
-	( o1 == POSITIVE ) ? 0 :
-	1;
+	  ( o1 == POSITIVE ) ? 0 :
+	  1;
       return ON_BOUNDARY;
     }
   default:
@@ -2098,11 +1799,11 @@ side_of_facet(const Point & p,
 			    lt, i_t, j_t);
     // indices in the original cell :
     li = ( i_t == 0 ) ? 0 :
-      ( i_t == 1 ) ? 1 :
-      2;
+         ( i_t == 1 ) ? 1 :
+         2;
     lj = ( j_t == 0 ) ? 0 :
-      ( j_t == 1 ) ? 1 :
-      2;
+         ( j_t == 1 ) ? 1 :
+         2;
     return side;
   }
   // else infinite facet
@@ -2115,22 +1816,7 @@ side_of_facet(const Point & p,
     // 					  c->neighbor(inf)->vertex(1)->point(),
     // 					  c->neighbor(inf)->vertex(2)->point())
     // 					 == COPLANAR );
-  int i1,i2; // indices in the facet
-//     if ( 3 == ((inf+1)&3) ) {
-//       i1 = (inf+2)&3;
-//       i2 = (inf+3)&3;
-//     }
-//     else {
-//       if ( 3 == ((inf+2)&3) ) {
-// 	i1 = (inf+3)&3;
-// 	i2 = (inf+1)&3;
-//       }
-//       else {
-// 	i1 = (inf+1)&3;
-// 	i2 = (inf+2)&3;
-//       }
-//     }
-  // replaced using next_around_edgeij
+  int i1,i2; 
   i2 = next_around_edge(inf,3);
   i1 = 3-inf-i2;
   Vertex_handle 
@@ -2141,11 +1827,8 @@ side_of_facet(const Point & p,
   Cell_handle n = c->neighbor(inf);
   // n must be a finite cell
   Orientation o =
-    coplanar_orientation
-    ( v1->point(), 
-      v2->point(), 
-      n->vertex(n->index(c))->point(),
-      p );
+    coplanar_orientation( v1->point(), v2->point(), 
+			  n->vertex(n->index(c))->point(), p );
   switch (o) {
   case POSITIVE:
     // p lies on the same side of v1v2 as vn, so not in f
@@ -2164,9 +1847,7 @@ side_of_facet(const Point & p,
     {
       int i_e;
       Bounded_side side = 
-	side_of_segment( p,
-			 v1->point(), v2->point(),
-			 lt, i_e );
+	side_of_segment( p, v1->point(), v2->point(), lt, i_e );
       switch (side) {
 	// computation of the indices inthe original cell
       case ON_BOUNDED_SIDE:
@@ -2276,9 +1957,7 @@ side_of_edge(const Point & p,
 {//side_of_edge
   CGAL_triangulation_precondition( dimension() == 1 );
   if ( ! is_infinite(c,0,1) ) 
-    return side_of_segment(p,
-			   c->vertex(0)->point(),
-			   c->vertex(1)->point(),
+    return side_of_segment(p, c->vertex(0)->point(), c->vertex(1)->point(),
 			   lt, li);
   // else infinite edge
   int inf = c->index(infinite);
@@ -2294,8 +1973,7 @@ side_of_edge(const Point & p,
   Vertex_handle
     v0 = n->vertex(0),
     v1 = n->vertex(1);
-  Comparison_result c01 = 
-    compare_x(v0->point(), v1->point());
+  Comparison_result c01 = compare_x(v0->point(), v1->point());
   Comparison_result cp;
   if ( c01 == EQUAL ) {
     c01 = compare_y(v0->point(),v1->point());
@@ -2307,12 +1985,10 @@ side_of_edge(const Point & p,
     }
   }
   else {
-    if ( i_e == 0 ) {
+    if ( i_e == 0 ) 
       cp = compare_x( v1->point(), p );
-    }
-    else {
+    else 
       cp = compare_x( p, v0->point() );
-    }
   }
   if ( c01 == cp ) {
     // p lies on the same side of n as infinite
@@ -2327,6 +2003,10 @@ inline
 bool
 Triangulation_3<GT,Tds>::
 flip( Facet f )
+  // returns false if the facet is not flippable
+  // true other wise and
+  // flips facet i of cell c
+  // c will be replaced by one of the new cells
 {
   return flip( f.first, f.second);
 }
@@ -2345,36 +2025,36 @@ flip( Cell_handle c, int i )
   
   if ( i%2 == 1 ) {
     if ( orientation( c->vertex((i+1)&3)->point(),
-				    c->vertex((i+2)&3)->point(),
-				    n->vertex(in)->point(),
-				    c->vertex(i)->point() )
+		      c->vertex((i+2)&3)->point(),
+		      n->vertex(in)->point(),
+		      c->vertex(i)->point() )
 	 != POSITIVE ) return false;
     if ( orientation( c->vertex((i+2)&3)->point(),
-				    c->vertex((i+3)&3)->point(),
-				    n->vertex(in)->point(),
-				    c->vertex(i)->point() )
+		      c->vertex((i+3)&3)->point(),
+		      n->vertex(in)->point(),
+		      c->vertex(i)->point() )
 	 != POSITIVE ) return false;
     if ( orientation( c->vertex((i+3)&3)->point(),
-				    c->vertex((i+1)&3)->point(),
-				    n->vertex(in)->point(),
-				    c->vertex(i)->point() )
+		      c->vertex((i+1)&3)->point(),
+		      n->vertex(in)->point(),
+		      c->vertex(i)->point() )
 	 != POSITIVE ) return false;
   }
   else {
     if ( orientation( c->vertex((i+2)&3)->point(),
-				    c->vertex((i+1)&3)->point(),
-				    n->vertex(in)->point(),
-				    c->vertex(i)->point() )
+		      c->vertex((i+1)&3)->point(),
+		      n->vertex(in)->point(),
+		      c->vertex(i)->point() )
 	 != POSITIVE ) return false;
     if ( orientation( c->vertex((i+3)&3)->point(),
-				    c->vertex((i+2)&3)->point(),
-				    n->vertex(in)->point(),
-				    c->vertex(i)->point() )
+		      c->vertex((i+2)&3)->point(),
+		      n->vertex(in)->point(),
+		      c->vertex(i)->point() )
 	 != POSITIVE ) return false;
     if ( orientation( c->vertex((i+1)&3)->point(),
-				    c->vertex((i+3)&3)->point(),
-				    n->vertex(in)->point(),
-				    c->vertex(i)->point() )
+		      c->vertex((i+3)&3)->point(),
+		      n->vertex(in)->point(),
+		      c->vertex(i)->point() )
 	 != POSITIVE ) return false;
   }
 
@@ -2404,44 +2084,38 @@ flip_flippable( Cell_handle c, int i )
 				   ( ! is_infinite( n ) ) );
   
   if ( i%2 == 1 ) {
-    CGAL_triangulation_precondition
-      ( orientation( c->vertex((i+1)&3)->point(),
-				   c->vertex((i+2)&3)->point(),
-				   n->vertex(in)->point(),
-				   c->vertex(i)->point() )
-	== POSITIVE );
-    CGAL_triangulation_precondition
-      ( orientation( c->vertex((i+2)&3)->point(),
-				   c->vertex((i+3)&3)->point(),
-				   n->vertex(in)->point(),
-				   c->vertex(i)->point() )
-	== POSITIVE );
-    CGAL_triangulation_precondition
-      ( orientation( c->vertex((i+3)&3)->point(),
-				   c->vertex((i+1)&3)->point(),
-				   n->vertex(in)->point(),
-				   c->vertex(i)->point() )
-	== POSITIVE );
+    CGAL_triangulation_precondition( orientation( c->vertex((i+1)&3)->point(),
+						  c->vertex((i+2)&3)->point(),
+						  n->vertex(in)->point(),
+						  c->vertex(i)->point() )
+				     == POSITIVE );
+    CGAL_triangulation_precondition( orientation( c->vertex((i+2)&3)->point(),
+						  c->vertex((i+3)&3)->point(),
+						  n->vertex(in)->point(),
+						  c->vertex(i)->point() )
+				     == POSITIVE );
+    CGAL_triangulation_precondition( orientation( c->vertex((i+3)&3)->point(),
+						  c->vertex((i+1)&3)->point(),
+						  n->vertex(in)->point(),
+						  c->vertex(i)->point() )
+				     == POSITIVE );
   }
   else {
-    CGAL_triangulation_precondition
-      ( orientation( c->vertex((i+2)&3)->point(),
-				   c->vertex((i+1)&3)->point(),
-				   n->vertex(in)->point(),
-				   c->vertex(i)->point() )
-	== POSITIVE );
-    CGAL_triangulation_precondition
-      ( orientation( c->vertex((i+3)&3)->point(),
-				   c->vertex((i+2)&3)->point(),
-				   n->vertex(in)->point(),
-				   c->vertex(i)->point() )
-	== POSITIVE );
-    CGAL_triangulation_precondition
-      ( orientation( c->vertex((i+1)&3)->point(),
-				   c->vertex((i+3)&3)->point(),
-				   n->vertex(in)->point(),
-				   c->vertex(i)->point() )
-	== POSITIVE );
+    CGAL_triangulation_precondition( orientation( c->vertex((i+2)&3)->point(),
+						  c->vertex((i+1)&3)->point(),
+						  n->vertex(in)->point(),
+						  c->vertex(i)->point() )
+				     == POSITIVE );
+    CGAL_triangulation_precondition( orientation( c->vertex((i+3)&3)->point(),
+						  c->vertex((i+2)&3)->point(),
+						  n->vertex(in)->point(),
+						  c->vertex(i)->point() )
+				     == POSITIVE );
+    CGAL_triangulation_precondition( orientation( c->vertex((i+1)&3)->point(),
+						  c->vertex((i+3)&3)->point(),
+						  n->vertex(in)->point(),
+						  c->vertex(i)->point() )
+				     == POSITIVE );
   }
   
   _tds.flip_flippable( &(*c), i);
@@ -2452,6 +2126,10 @@ inline
 bool
 Triangulation_3<GT,Tds>::
 flip( Edge e )
+  // returns false if the edge is not flippable
+  // true otherwise and
+  // flips edge i,j of cell c
+  // c will be deleted
 {
   return flip( e.first, e.second, e.third );
 }
@@ -2485,14 +2163,14 @@ flip( Cell_handle c, int i, int j )
   int in = n->index( c->vertex(i) );
   int jn = n->index( c->vertex(j) );
   if ( orientation( c->vertex(next_around_edge(i,j))->point(),
-				  c->vertex(next_around_edge(j,i))->point(),
-				  n->vertex(next_around_edge(jn,in))->point(),
-				  c->vertex(j)->point() )
+		    c->vertex(next_around_edge(j,i))->point(),
+		    n->vertex(next_around_edge(jn,in))->point(),
+		    c->vertex(j)->point() )
        != POSITIVE ) return false;
   if ( orientation( c->vertex(i)->point(),
-				  c->vertex(next_around_edge(j,i))->point(),
-				  n->vertex(next_around_edge(jn,in))->point(),
-				  c->vertex(next_around_edge(i,j))->point() )
+		    c->vertex(next_around_edge(j,i))->point(),
+		    n->vertex(next_around_edge(jn,in))->point(),
+		    c->vertex(next_around_edge(i,j))->point() )
        != POSITIVE ) return false;
 
   _tds.flip_flippable( &(*c), i, j );
@@ -2631,25 +2309,23 @@ insert_in_edge(const Point & p, Cell_handle c, int i, int j, Vertex_handle v)
 {
   CGAL_triangulation_precondition( i != j );
   CGAL_triangulation_precondition( dimension() >= 1 && dimension() <= 3 );
-  CGAL_triangulation_precondition(
-	  i >= 0 && i <= dimension() && j >= 0 && j <= dimension() );
-  CGAL_triangulation_precondition_code
-  ( Locate_type lt;
-    int li; );
+  CGAL_triangulation_precondition( i >= 0 && i <= dimension() 
+				   && j >= 0 && j <= dimension() );
+  CGAL_triangulation_precondition_code( Locate_type lt; int li; );
   switch ( dimension() ) {
   case 3:
   case 2:
     {
       CGAL_triangulation_precondition( ! is_infinite(c, i, j) );
-      CGAL_triangulation_precondition
-	( collinear( c->vertex(i)->point(),
-		     p,
-		     c->vertex(j)->point() )
-	  &&
-	  side_of_segment( p,
-			   c->vertex(i)->point(),
-			   c->vertex(j)->point(),
-			   lt, li ) == ON_BOUNDED_SIDE );
+      CGAL_triangulation_precondition( collinear( c->vertex(i)->point(),
+						  p,
+						  c->vertex(j)->point() )
+				       &&
+				       side_of_segment( p,
+							c->vertex(i)->point(),
+							c->vertex(j)->point(),
+							lt, li ) 
+				       == ON_BOUNDED_SIDE );
       break;
     }
   case 1:
@@ -2669,13 +2345,8 @@ template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
 insert_outside_convex_hull(const Point & p, Cell_handle c, Vertex_handle v)
-  //			     int li, int lj=0)
   // c is an infinite cell containing p
-  // whose facet li lies on the convex hull boundary
-  // and separates p from the triangulation (in dimension 3)
   // p is strictly outside the convex hull
-  // in dimension 2, edge li,lj separates p from the triangulation
-  // in dimension 1, vertex li separates p from the triangulation
   // dimension 0 not allowed, use outside-affine-hull
 {
   CGAL_triangulation_precondition( dimension() > 0 );
@@ -2726,14 +2397,13 @@ insert_outside_affine_hull(const Point & p, Vertex_handle v)
       CGAL_triangulation_precondition_code
 	( Cell_handle c = infinite_cell();
 	  Cell_handle n = c->neighbor(c->index(infinite_vertex())); )
-	CGAL_triangulation_precondition
-	  ( !collinear(p,
-		       n->vertex(0)->point(),
-		       n->vertex(1)->point()) );
-	// no reorientation : the first non-collinear point determines
-	// the orientation of the plane
-	reorient = false;
-	break;
+      CGAL_triangulation_precondition( !collinear(p,
+						  n->vertex(0)->point(),
+						  n->vertex(1)->point()) );
+      // no reorientation : the first non-collinear point determines
+      // the orientation of the plane
+      reorient = false;
+      break;
     }
   case 2:
     {
@@ -2802,9 +2472,8 @@ incident_cells(Vertex_handle v,
 
   if ( &(*c) == NULL )
     c = v->cell();
-  else {
+  else
     CGAL_triangulation_precondition( c->has_vertex(v) );
-  }
   if ( cells.find( c ) != cells.end() )
     return; // c was already found
 
@@ -2832,9 +2501,8 @@ incident_vertices(Vertex_handle v,
 
   if ( &(*c) == NULL )
     c = v->cell();
-  else {
+  else 
     CGAL_triangulation_precondition( c->has_vertex(v) );
-  }
 
   std::set<Cell*> cells;
   util_incident_vertices(v, vertices, cells, c, dummy_for_windows);
@@ -2855,9 +2523,8 @@ incident_vertices(Vertex_handle v,
 
   if ( &(*c) == NULL )
     c = v->cell();
-  else {
+  else 
     CGAL_triangulation_precondition( c->has_vertex(v) );
-  }
 
   std::set<Cell_handle> cells;
   util_incident_vertices(v, vertices, cells, c);
@@ -2873,9 +2540,8 @@ util_incident_vertices(Vertex_handle v,
 		       int dummy_for_windows) const
 {
   bool WARNING_THIS_FUNCTION_IS_DEPRECATED;
-  if ( cells.find( &(*c) ) != cells.end() ) {
+  if ( cells.find( &(*c) ) != cells.end() )
     return; // c was already visited
-  }
   cells.insert( &(*c) );
 
   int d = dimension();
