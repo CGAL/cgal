@@ -1,2 +1,6 @@
-Filter->Filtered
-get_cluster est nul!
+- Rewrite get_cluster.
+- Use Compute_area_2 with three points instead of a triangle.
+- Implement a method to split all clusters at the beginnning, and another 
+  one that does not deal with clusters.
+
+- Histograms
