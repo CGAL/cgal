@@ -23,8 +23,8 @@
 //
 // Chapter       : 
 // ======================================================================
-#ifndef CGAL_POLYGON_DO_INTERSECT_2_H
-#define CGAL_POLYGON_DO_INTERSECT_2_H
+#ifndef CGAL_POLYGONS_DO_INTERSECT_2_H
+#define CGAL_POLYGONS_DO_INTERSECT_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -48,7 +48,7 @@ class Polygons_do_intersect_2
 public:
   
   template <class Polygon> 
-  void operator()(const Polygon& polygon1,
+  bool operator()(const Polygon& polygon1,
                   const Polygon& polygon2) const
   { 
     PmWalkPL pm_walk1, pm_walk2;
@@ -90,6 +90,13 @@ public:
             !vertices.empty()) ;
   }
 };
+
+CGAL_END_NAMESPACE
+
+#endif
+
+
+
 
 
 
