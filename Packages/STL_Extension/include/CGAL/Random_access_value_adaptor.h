@@ -1,31 +1,38 @@
-// ======================================================================
+#line 205 "stl_extension.aw"
+
+#line 20 "cgal_header.awi"
+// ============================================================================
 //
-// Copyright (c) 1997 The CGAL Consortium
+// Copyright (c) 1997, 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 1999, July 28
+// release       : $CGAL_Revision: $
+// release_date  : $CGAL_Date: $
 //
 // file          : Random_access_value_adaptor.h
-// package       : STL_Extension (2.7)
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
+// package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
+#line 37 "cgal_header.awi"
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
+// author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
+//                 Lutz Kettner <kettner@inf.ethz.ch>
 //
 // coordinator   : INRIA, Sophia Antipolis
 //
 // Random Access Value Adaptor provides random access for sequences.
-// ======================================================================
+// ============================================================================
 
+#line 209 "stl_extension.aw"
 #ifndef CGAL_RANDOM_ACCESS_VALUE_ADAPTOR_H
 #define CGAL_RANDOM_ACCESS_VALUE_ADAPTOR_H 1
+#line 4010 "stl_extension.aw"
 #ifndef CGAL_RANDOM_ACCESS_ADAPTOR_H
 #include <CGAL/Random_access_adaptor.h>
 #endif // CGAL_RANDOM_ACCESS_ADAPTOR_H
@@ -35,25 +42,28 @@ CGAL_BEGIN_NAMESPACE
 template < class IC, class T >
 class Random_access_value_adaptor : public Random_access_adaptor<IC> {
 public:
-    Random_access_value_adaptor() {}
-        // invalid index.
+  typedef typename Random_access_adaptor<IC>::size_type size_type;
 
-    Random_access_value_adaptor( const IC& i)
-        : Random_access_adaptor<IC>(i) {}
-        // empty random access index initialized to start at i.
+  Random_access_value_adaptor() {}
+  // invalid index.
 
-    Random_access_value_adaptor( const IC& i, const IC& j)
-        : Random_access_adaptor<IC>(i,j) {}
-        // random access index initialized with range [i,j).
+  Random_access_value_adaptor( const IC& i)
+  : Random_access_adaptor<IC>(i) {}
+  // empty random access index initialized to start at i.
 
-// OPERATIONS
+  Random_access_value_adaptor( const IC& i, const IC& j)
+  : Random_access_adaptor<IC>(i,j) {}
+  // random access index initialized with range [i,j).
 
-    T& operator[]( size_type n) const {
-        // returns inverse index of k.
-        return *(Random_access_adaptor<IC>::operator[](n));
-    }
+  // OPERATIONS
+
+  T& operator[]( size_type n) const {
+    // returns inverse index of k.
+    return *(Random_access_adaptor<IC>::operator[](n));
+  }
 };
 
 CGAL_END_NAMESPACE
+#line 212 "stl_extension.aw"
 #endif // CGAL_RANDOM_ACCESS_VALUE_ADAPTOR_H //
 // EOF //
