@@ -1,5 +1,12 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.59 on ?? ??????? 2000
+- Moved CGAL/Interval_arithmetic/_FPU.h to CGAL/FPU.h.
+- Dispatched all to_interval() functions.
+- Made Lazy_exact_nt<> work again.
+
+------  CGAL 2.2 is out ---------
+
 Version 4.58 on 13 September 2000
 - Last fix was not correct.  Try this one...
 
