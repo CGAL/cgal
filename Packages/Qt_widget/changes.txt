@@ -1,3 +1,10 @@
+1.2.38
+----------
+	The alpha shapes demo was modified.
+	The nef_2 output operator for Qt_widget was patched.
+	The nef_2 has been added in the testsuite.
+
+
 1.2.36 == 1.2.37
 
 1.2.36
