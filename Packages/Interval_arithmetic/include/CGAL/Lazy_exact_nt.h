@@ -109,11 +109,22 @@ struct Lazy_exact_rep : public Rep
   virtual ~Lazy_exact_rep () {};
 };
 
+// int constant
+template <typename ET>
+struct Lazy_exact_Int_Cst : public Lazy_exact_rep<ET>
+{
+  Lazy_exact_Int_Cst (int i)
+      : Lazy_exact_rep<ET>(double(i)) {}
+
+  void update_approx() { CGAL_assertion(false); }
+  void update_exact()  { et = new ET((int)in.inf()); }
+};
+
 // double constant
 template <typename ET>
 struct Lazy_exact_Cst : public Lazy_exact_rep<ET>
 {
-  Lazy_exact_Cst (const double d)
+  Lazy_exact_Cst (double d)
       : Lazy_exact_rep<ET>(d) {}
 
   void update_approx() { CGAL_assertion(false); }
@@ -142,6 +153,20 @@ struct Lazy_exact_binary : public Lazy_exact_unary<ET>
   Lazy_exact_binary (const Interval_base &i,
 		     const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
       : Lazy_exact_unary<ET>(i, a), op2(b) {}
+};
+
+// Exact constant
+template <typename ET>
+struct Lazy_exact_Ex_Cst : public Lazy_exact_rep<ET>
+{
+  Lazy_exact_Ex_Cst (const ET & e)
+      : Lazy_exact_rep<ET>(to_interval(e))
+  {
+    et = new ET(e);
+  }
+
+  void update_approx() { CGAL_assertion(false); }
+  void update_exact()  { CGAL_assertion(false); }
 };
 
 // Here we could use a template class for all operations (STL provides
@@ -211,17 +236,20 @@ struct Lazy_exact_nt : public Handle
   typedef Lazy_exact_nt<ET> Self;
   typedef Lazy_exact_rep<ET> Self_rep;
 
-  Lazy_exact_nt () {}
+  // Lazy_exact_nt () {} // Handle is not such a nice stuff...  at the moment.
 
   Lazy_exact_nt (Self_rep *r)
   { PTR = r; }
 
   // Operations
-  Lazy_exact_nt (const double d)
+  Lazy_exact_nt (double d)
   { PTR = new Lazy_exact_Cst<ET>(d); }
 
-  Lazy_exact_nt (const int i)
-  { PTR = new Lazy_exact_Cst<ET>(double(i)); }
+  Lazy_exact_nt (int i = 0)
+  { PTR = new Lazy_exact_Int_Cst<ET>(i); }
+
+  Lazy_exact_nt (const ET & e)
+  { PTR = new Lazy_exact_Ex_Cst<ET>(e); }
 
   Self operator+ (const Self & a) const
   { return new Lazy_exact_Add<ET>(*this, a); }
@@ -257,6 +285,20 @@ struct Lazy_exact_nt : public Handle
       return exact() < a.exact();
     }
   }
+
+  bool operator== (const Self & a) const
+  {
+    try
+    {
+      return approx() == a.approx();
+    }
+    catch (Interval_base::unsafe_comparison)
+    {
+      std::cerr << "Interval filter failure (==)" << std::endl;
+      return exact() == a.exact();
+    }
+  }
+
 private:
   Self_rep * ptr() const { return (Self_rep*) PTR; }
 };
@@ -278,7 +320,7 @@ to_interval(const Lazy_exact_nt<ET> & a)
 }
 
 // Note:  GCC 2.95 completely and silently ignores the catch block
-//        of _template_ function-try-blocks.  GCC 2.96 fixes the bug. 
+//        of _template_ function-try-blocks.  Later versions fix the bug. 
 namespace NTS {
 
 template <typename ET>
@@ -351,28 +393,54 @@ operator<< (std::ostream & os, const Lazy_exact_nt<ET> & a)
 { return os << a.approx(); }
 
 template <typename ET>
+std::istream &
+operator>> (std::istream & is, Lazy_exact_nt<ET> & a)
+{
+  ET e;
+  is >> e;
+  a = e;
+  return is;
+}
+
+template <typename ET>
 inline
-Lazy_exact_nt<ET>
+Lazy_exact_nt<ET> &
 operator+=(Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
 { return a = a + b; }
 
 template <typename ET>
 inline
-Lazy_exact_nt<ET>
+Lazy_exact_nt<ET> &
 operator-=(Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
 { return a = a - b; }
 
 template <typename ET>
 inline
-Lazy_exact_nt<ET>
+Lazy_exact_nt<ET> &
 operator*=(Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
 { return a = a * b; }
 
 template <typename ET>
 inline
-Lazy_exact_nt<ET>
+Lazy_exact_nt<ET> &
 operator/=(Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
 { return a = a / b; }
+
+template <typename ET>
+inline
+bool
+is_finite(const Lazy_exact_nt<ET> & a)
+{
+  return is_finite(a.approx()) || is_finite(a.exact());
+}
+
+template <typename ET>
+inline
+bool
+is_valid(const Lazy_exact_nt<ET> & a)
+{
+  return is_valid(a.approx()) || is_valid(a.exact());
+}
 
 template <typename ET>
 inline
