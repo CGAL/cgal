@@ -44,7 +44,7 @@ public:
   typedef Kernel_                         Kernel;
 
   // Categories:
-#define HAS_LEFT_NOT
+  // #define HAS_LEFT_NOT
 #if !defined(HAS_LEFT_NOT)
   typedef Tag_true                        Has_left_category;
 #else
