@@ -188,7 +188,7 @@ template < class Gt, class Tds >
 inline
 Constrained_triangulation_2<Gt,Tds>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds>::
-insert(Point a)
+insert(const Point& a)
 // inserts point a 
 {
   Face_handle loc;
@@ -201,7 +201,7 @@ insert(Point a)
 template < class Gt, class Tds >
 Constrained_triangulation_2<Gt,Tds>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds>::
-insert(const Point& p, Locate_type lt, Face_handle loc, int li)
+insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 // insert a point p, whose localisation is known (lt, f, i)
 // in addition to what is done for non constrained triangulations
 // constrained edges are updated
@@ -212,12 +212,12 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int li)
 
   if ( lt == EDGE && loc->is_constrained(li) ){
     insert_in_constrained_edge = true;
-    c1=loc->vertex(ccw(li)); //endpoint of the constraint
-    c2=loc->vertex(cw(li)); // endpoint of the constraint
+    v1=loc->vertex(ccw(li)); //endpoint of the constraint
+    v2=loc->vertex(cw(li)); // endpoint of the constraint
   }
 
   va = Triangulation::insert(a,lt,loc,li);
-  if (insert_in_constrained_edge) update_constraints_incident(va, c1,c2);
+  if (insert_in_constrained_edge) update_constraints_incident(va, v1,v2);
   else if(lt != VERTEX) clear_constraints_incident(va);
   if (dimension() == 2) update_constraints_opposite(va);
   return va;
