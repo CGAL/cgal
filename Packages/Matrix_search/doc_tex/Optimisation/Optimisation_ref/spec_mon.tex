@@ -1,0 +1,44 @@
+%% ==============================================================
+%% Specification: Searching in Matrices
+%% --------------------------------------------------------------
+%% file  : spec_mon.awi
+%% author: Michael Hoffmann
+%% $Id$
+%% ==============================================================
+
+\ccParDims
+\cgalColumnLayout
+
+%%
+%% ==> intro:
+%%
+%%This section describes algorithms for searching in matrices with
+%%specific properties and some applications. In particular, there are
+%%general implementations of
+%%\begin{itemize}
+%%\item monotone matrix search in section \ref{secMonotoneMatrixSearch},
+%%  which can be applied to compute
+%%  \begin{itemize}
+%%  \item all furthest neighbors for the vertices of a convex polygon
+%%    (see section \ref{secAllFurthestNeighbors}) \textit{or}
+%%  \item extremal polygons of a convex polygon (see section
+%%    \ref{secComputingExtremalPolygons}).
+%%  \end{itemize}
+%%\item and sorted matrix search in section \ref{secSortedMatrixSearch},
+%%  which can be used to compute the $p$-centers of a planar point set
+%%  (see section \ref{sec_RectangularPCenters}).
+%%\end{itemize}
+
+@awi spec_extremal_polygons.awi
+
+@awi spec_all_furthest_neighbors.awi
+
+@awi spec_rectangular_p_centers.awi
+
+@awi spec_monotone_matrix_search.awi
+
+@awi spec_sorted_matrix_search.awi
+
+%% --------------------------------------------------------------
+%% EOF
+%% --------------------------------------------------------------
