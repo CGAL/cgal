@@ -1,3 +1,6 @@
+25 Feb 2004  Sylvain Pion
+- parallel(x,x,k) is now in CGALi::.
+
 1 Feb 2004  Sylvain Pion
 - Remove "extern"
 

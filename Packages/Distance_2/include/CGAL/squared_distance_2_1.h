@@ -580,7 +580,7 @@ namespace CGALi {
 		   const K& k)
   {
     typedef typename K::FT FT;
-    if (CGAL::parallel(line1,line2,K()))
+    if (CGALi::parallel(line1, line2, k))
       return CGALi::squared_distance(line1.point(), line2, k);
     else
       return (FT)0;
