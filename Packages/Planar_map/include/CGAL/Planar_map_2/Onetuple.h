@@ -16,6 +16,7 @@
 // revision      : 1.0
 // revision_date : 27 Jun 2000 
 // author(s)     : Oren Nechushtan
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
 //
 // ======================================================================
  
