@@ -1,3 +1,6 @@
+4.45	 (12 February 02)
+- Remove spurious warnings from Purify with MP_Float.
+
 4.44	 (24 January 02)
 - Fix Gmpz::operator=().
 - CodeWarrior fixes.

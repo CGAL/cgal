@@ -116,11 +116,15 @@ Add_Sub(MP_Float &r, const MP_Float &a, const MP_Float &b, const BinOp &op)
 {
   CGAL_assertion(!b.is_zero());
 
-  int min_exp = std::min(a.min_exp(), b.min_exp());
-  int max_exp = std::max(a.max_exp(), b.max_exp());
+  int min_exp, max_exp;
+
   if (a.is_zero()) {
     min_exp = b.min_exp();
     max_exp = b.max_exp();
+  }
+  else {
+    min_exp = std::min(a.min_exp(), b.min_exp());
+    max_exp = std::max(a.max_exp(), b.max_exp());
   }
 
   r.exp = min_exp;

@@ -191,7 +191,7 @@ public:
 
   bool operator==(const MP_Float &b) const
   {
-    return (v == b.v) && ((exp == b.exp) || v.empty());
+    return (v == b.v) && (v.empty() || (exp == b.exp));
   }
 
   bool operator!=(const MP_Float &b) const
