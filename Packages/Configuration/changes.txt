@@ -1,3 +1,8 @@
+2.13
++ Added std::distance for sunpro.
++ Added iterator_traits fake to CGAL_CFG_NO_ITERATOR_TRAITS.
++ Added CGAL_CFG_MATCHING_BUG_3.
+
 2.12
 + Added iterator_traits fake for sunpro 5.3.
 
