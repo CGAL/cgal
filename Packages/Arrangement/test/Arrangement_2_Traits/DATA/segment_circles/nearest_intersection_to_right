@@ -2,22 +2,38 @@
 # Data block
 #-----------------------------------------------------------
 # Number of curves
-4
+8
 a 0 0 1 -1 0 1 0
 s -1 0 1 2
 s -1 2 1 0
 a 0 0 1 0 1 1 0
+s 9 10 10 10
+s 10 9 10 10
+s -4 -1  6 -1      # 6
+s 2  -1 -4 -1      # 7
 #-----------------------------------------------------------
 # Number of "stand alone" points
-3
+5
 -0.5 0
 0 0
 0.5 0
+10 9
+-7 0
 #-----------------------------------------------------------
 # Execution block
 #-----------------------------------------------------------
 nearest_intersection_to_right 0 1 0   0 1  0 1  TRUE.
 nearest_intersection_to_right 0 2 0   0 1  0 1  TRUE.
-nearest_intersection_to_right 0 1 1   0 0  0 0  FALSE.
+# The intersection (0, 1) in the following test is lexicographically bigger
+# than (0, 0)
+nearest_intersection_to_right 0 1 1   0 1  0 1  TRUE.
 nearest_intersection_to_right 1 2 2   0 0  0 0  FALSE.
 nearest_intersection_to_right 0 3 0   0 1  1 0  TRUE.
+# The following check was added as a regression test. Shai 09 Sep 2001
+nearest_intersection_to_right 4 5 3   10 10 10 10 TRUE.
+# The following checks were added as a regression test. Shai, Ron 25 Sep 2001
+curves_overlap                6 7 TRUE.
+curves_overlap                7 6 TRUE.
+curves_overlap                0 1 FALSE.
+nearest_intersection_to_right 6 7 4   -4 -1  2 -1 TRUE.
+nearest_intersection_to_right 7 6 4    2 -1 -4 -1 TRUE.

@@ -2,18 +2,21 @@
 # Data block
 #-----------------------------------------------------------
 # Number of curves
-5
+7
 a 0 0 4 -2 0 2 0
 a 0 0 4 2 0 -2 0
 a 3 0 4 1 0 5 0
 s -2 2 6 0
 s 2 1 10 -1 
+s 9 10 10 10
+s 10 9 10 10
 #-----------------------------------------------------------
 # Number of "stand alone" points
-3
+4
 0 0
 3 0
 5 0
+10 9
 #-----------------------------------------------------------
 # Execution block
 #-----------------------------------------------------------
@@ -24,3 +27,5 @@ do_intersect_to_right 0 3 1 FALSE.      # Intersect only to the left.
 do_intersect_to_right 2 4 2 FALSE.      # Intersect only to the left.
 do_intersect_to_right 3 4 1 TRUE.       # Overlapping
 do_intersect_to_right 1 2 0 FALSE.      # No intersection at all.
+# The following check was added as a regression test. Shai 09 Sep 20
+do_intersect_to_right 5 6 3 TRUE.
