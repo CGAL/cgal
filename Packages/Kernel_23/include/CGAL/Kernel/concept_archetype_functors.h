@@ -547,11 +547,11 @@ public:
 
     FT
     operator()( const Iso_rectangle_2& r ) const
-    { FT val; return val; }
+    { FT val = 0; return val; }
 
     FT
     operator()( const Triangle_2& t ) const
-    { FT val; return val; }
+    { FT val = 0; return val; }
 };
 
 template <typename K>
@@ -565,7 +565,7 @@ public:
 
     FT
     operator()( const Triangle_3& t ) const
-    { FT val; return val; }
+    { FT val = 0; return val; }
 };
 
 template <typename K>
@@ -580,7 +580,7 @@ public:
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
-    { FT val; return val; }
+    { FT val = 0; return val; }
 };
 
 template <typename K>
@@ -595,7 +595,7 @@ public:
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
-    { FT val; return val; }
+    { FT val = 0; return val; }
 };
 
 template <typename K>
@@ -609,7 +609,7 @@ class Compute_squared_length_2
 
     FT
     operator()( const Segment_2& s) const
-    { FT val; return val; }
+    { FT val = 0; return val; }
 };
 
 template <typename K>
@@ -623,7 +623,7 @@ class Compute_squared_length_3
 
     FT
     operator()( const Segment_3& s) const
-    { FT val; return val; }
+    { FT val = 0; return val; }
 };
 
 template <typename K>
@@ -638,11 +638,11 @@ public:
 
     FT
     operator()( const Circle_2& c) const
-    { FT val; return val; }
+    { FT val = 0; return val; }
 
     FT
     operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
-    { FT val; return val; }
+    { FT val = 0; return val; }
 };
 
 template <typename K>
@@ -657,16 +657,16 @@ public:
 
     FT
     operator()( const Sphere_3& s) const
-    { FT val; return val; }
+    { FT val = 0; return val; }
 
     FT
     operator()( const Point_3& p, const Point_3& q, const Point_3& r) const
-    { FT val; return val; }
+    { FT val = 0; return val; }
 
     FT
     operator()( const Point_3& p, const Point_3& q,
 	        const Point_3& r, const Point_3& s) const
-    { FT val; return val; }
+    { FT val = 0; return val; }
 };
 
 template <typename K>
@@ -681,11 +681,11 @@ public:
 
     FT
     operator()( const Tetrahedron_3& t ) const
-    { FT val; return val; }
+    { FT val = 0; return val; }
 
     FT
     operator()( const Iso_cuboid_3& c ) const
-    { FT val; return val; }
+    { FT val = 0; return val; }
 };
 
 template <typename K>

@@ -1,0 +1,128 @@
+\chapter{Kernel related tools}
+
+\section{Introduction}
+
+The following manual sections describe various tools that might be useful for variuos kinds of users of the
+CGAL kernel. The kernel concept archetype describes a minimal model for the CGAL kernel that can be used
+for testing CGAL kernel compatibility of geometrical algorithm implementations. It can be useful for
+all people developing CGAL-style code that uses the CGAL kernel.
+
+%say later something about Kernel checker
+%say later something about Filter stuff 
+%what else (converters ?) 
+
+\section{Kernel concept archetype}
+
+\subsection{Introduction}
+
+CGAL defines the concept of a geometry
+kernel. Such a kernel provides types, construction objects and generalized
+predicates. Most implementations of CG algorithms and data structures 
+in the basic library of CGAL were done in a way that classes or functions can be
+parametrized with a geometric traits class. 
+
+In most cases this geometric traits class must be a model of the CGAL geometry kernel concept
+(but there are some exceptions).
+
+The CGAL distribution comes with a number of models (or geometry kernels), for instance
+the cartesian kernel (\ccc{CGAL::Cartesian}) or the homogeneous kernel (\ccc{CGAL::Homogeneous}),
+that can be used with the packages of the basic library.
+
+But does it mean that packages of the basic library are fully compatible with the CGAL kernel concept
+if they can be used with these CGAL kernel models? Not neccesarily, because such a package
+might also use member functions or global functions/operators, that are implemented for CGAL kernel types but
+not for other classes or kernels.
+
+That's why it is important to verify whether the documented requirements of a package are really covered
+by the implementation. Manual verification is error prone, so there should be something better available
+in a generic library for this application.
+
+That's why the CGAL kernel concept archetype \ccc{CGAL::Kernel_archetype} was developed. It provides all functionality
+required by the CGAL kernel concept, but nothing more, so it can be seen as a minimal
+implementation of a model for the CGAL kernel concept.
+It can be used for testing successful compilation of packages of the basic library with a minimal
+model. Deprecated kernel functionality is not supported. All geometrical types (like the 2d/3d point or segment types)
+of \ccc{CGAL::Kernel_archetype} have
+copy constructors, default constructors and an assignment operator, and nothing else.
+Comparison operators are by default not supported, but can be switched on by the flag
+{\em CGAL\_CONCEPT\_ARCHETYPE\_ALLOW\_COMPARISONS}.
+
+The geometrical types of the concept archetype encapsulate no data members, so runtime checks with the archetype
+are not very useful (\ccc{CGAL::Kernel_archetype} is only meant for compilation checks with a minimal model in the testsuites
+of CGAL packages).
+
+The header file for the concept archetype is {\em CGAL/Kernel\_archetype.h}.
+
+The package supports the two- and three-dimensional part of the CGAL kernel concept. The d-dimensional
+part is not supported.
+
+\subsection{Restricting the interface}
+
+Normally packages of the Basic Library or Extension packages use only a small subset of the functionality offered
+by models of the CGAL kernel concept. In these cases testing with a model that offers only this (used and) documented subset
+makes sense. \ccc{CGAL::Kernel_archetype} normally offers the full functionality (all types, functors and constructions
+of a CGAL kernel model), but it is possible to restrict the interface.\\
+If you want to do this, you have to define the macro {\em CGAL\_CA\_LIMITED\_INTERFACE} (before the inclusion
+of {\em CGAL/Kernel\_archetype.h}) for switching on the interface limitation. Now you have to tell the kernel
+archetype what types have to be provided by it. For every type you have to define a macro.
+The name of the macro is {\em CGAL\_CA\_NAME\_OF\_KERNEL\_TYPE}, where {\em NAME\_OF\_KERNEL\_TYPE} is the name
+of the kernel type (written in capitals) that has to be provided by the kernel archetype for a specific package.
+Lets have a look at a small example. The kernel archetype has to provide in some test suite a limited interface.
+The interface has to offer type definitions for {\em Point\_3} and {\em Plane\_3} and the
+3d orientation functor type definition {\em Orientation\_3}:
+
+\ccHtmlLinksOff
+
+\begin{ccExampleCode}
+// limit interface of the Kernel_archetype
+#define CGAL_CA_LIMITED_INTERFACE
+#define CGAL_CA_POINT_3
+#define CGAL_CA_PLANE_3
+#define CGAL_CA_ORIENTATION_3
+
+#include <CGAL/Kernel_archetype.h>
+\end{ccExampleCode}
+
+\ccHtmlLinksOn
+
+Now other kernel functionality is removed from the interface of \ccc{CGAL::Kernel_archetype}, so access to these
+other kernel types will result in a compile-time error.
+
+\subsection{Example program}
+
+The following example shows a program for checking the 2d convex hull algorithm of CGAL with
+the archetype. You can see the usage of the \ccc{CGAL::Kernel_archetype} that replaces a CGAL kernel that
+is normally used.
+
+\ccHtmlLinksOff
+
+{\bf test\_convex\_hull\_2.C :}
+
+\begin{ccExampleCode}
+#include <CGAL/basic.h>
+#include <CGAL/convex_hull_2.h>
+#include <CGAL/Kernel_archetype.h>
+#include <list>
+
+typedef CGAL::Kernel_archetype      K;
+typedef K::Point_2                  Point_2;
+
+int main()
+{
+  std::list<Point_2> input;
+  
+  Point_2 act;
+  input.push_back(act);
+
+  std::list<Point_2> output;
+
+  K  traits;
+
+  CGAL::convex_hull_2(input.begin(), input.end(), std::back_inserter(output), traits);		        
+  return 0;
+}
+\end{ccExampleCode}
+
+\ccHtmlLinksOn
+
+\section{Kernel checker}
