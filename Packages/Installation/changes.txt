@@ -9,6 +9,8 @@
 
 GLOB: src/Interval_arithmetic/workaround_4_ms.obj is no longer necessary.
 GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.
+GLOB: Removed -Wall for g++ on Solaris. (<- GJ)
+GLOB: Copy libgmp always, do not link.
 GLOB: Changed test_leda to take into account namespace leda. (<- Matthias)
 GLOB: Changed handling of libgmp: also treat shared libs.
 GLOB: Add flag -MLd for msvc.
