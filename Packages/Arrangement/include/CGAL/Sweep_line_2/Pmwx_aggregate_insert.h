@@ -76,7 +76,6 @@ public:
   using Base::m_traits;
   using Base::m_sweepLinePos;
   using Base::m_currentEvent;
-  using Base::m_use_hint_for_erase;
   using Base::m_statusLine;
   using Base::m_tmpOut;
   using Base::m_status_line_insert_hint;
@@ -107,7 +106,6 @@ public:
     for (eit = pm.edges_begin(); eit != pm.edges_end(); ++eit) 
     {
       m_xcurves.push_back(eit->curve());
-      ++m_num_of_subCurves;
     }
     pm.clear();
     Base::init(begin, end);
@@ -206,7 +204,6 @@ protected:
     const Point_2 &eventPoint = m_currentEvent->get_point();
 
     Halfedge_handle h(NULL);
-    m_use_hint_for_erase = false;
     bool are_overlap = false;
     SubCurve* leftCurvePrev = 0;
     while ( leftCurveIter != m_currentEvent->left_curves_end() )  
@@ -337,9 +334,7 @@ protected:
 
         // before deleting check new neighbors that will become after deletion
         remove_curve_from_status_line(leftCurve);
-        m_use_hint_for_erase = true;
       
-      //  m_currentPos = m_prevPos;
         leftCurvePrev = *leftCurveIter; 
         ++leftCurveIter;
         are_overlap = false;
@@ -356,7 +351,6 @@ protected:
     const Point_2 &eventPoint = m_currentEvent->get_point();
 
     Halfedge_handle h(NULL);
-    m_use_hint_for_erase = false;
     while ( leftCurveIter != m_currentEvent->left_curves_end() )  
     {
       SubCurve *leftCurve = *leftCurveIter;   
@@ -426,9 +420,7 @@ protected:
 
         // before deleting check new neighbors that will become after deletion
         remove_curve_from_status_line(leftCurve);
-        m_use_hint_for_erase = true;
       
-      //  m_currentPos = m_prevPos;
         ++leftCurveIter;  
     }  
     
