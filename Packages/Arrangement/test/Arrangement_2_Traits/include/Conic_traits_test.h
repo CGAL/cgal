@@ -51,7 +51,8 @@ read_curve (std::ifstream & is, Curve & cv)
   char one_line[128];
 
   skip_comments (is, one_line);
-  std::istrstream str_line( one_line, 128 );
+  std::string stringvalues(one_line);
+  std::istringstream str_line(stringvalues, std::istringstream::in);
 
   // Get the arc type.
   char     type;
