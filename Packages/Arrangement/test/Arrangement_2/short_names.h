@@ -17,7 +17,7 @@
 #define Arr_2_default_dcel              ADD
 #define Arr_segment_traits_2            AST
 #define Arr_circles_real_traits         ACRT
-#define Arr_polyline_traits             APT
+#define Arr_polyline_traits_2           APT
 #define Arr_base_node                   ABN
 #define Arr_2_halfedge_base             AHB
 #define Arr_2_vertex_base               AVB

@@ -49,8 +49,10 @@ public:
   typedef typename Segment_traits_2::Point_2        Point_2;
   typedef typename Segment_traits_2::Curve_2        Segment_2;
 
+private:
+
   /*!
-   * Representation of a polyline curve.
+   * Inner representation of a polyline curve.
    */
   class My_polyline_2 : 
     protected ::std::vector<typename Segment_traits_::Curve_2>
@@ -70,39 +72,51 @@ public:
     {}
 
     /*!
-     * Allocate a polyline with n segments.
-     * \param n The number of segments.
-     */
-    My_polyline_2 (const int& n) :
-      Base(n)
-    {}
-
-    /*!
-     * Constructor from a container of points, defining the endpoints of the
+     * Constructor from a range of points, defining the endpoints of the
      * polyline segments.
-     * \param points A container of points.
-     * \pre The are at least 2 points in the container.
+     * \param pts_begin An iterator pointing to the first point in the range.
+     * \param pts_end An iterator pointing after the last point in the range.
+     * \pre The are at least 2 points in the range.
      *      In other cases, an empty polyline will be created.
      */
-    template <class Container>
-    My_polyline_2 (const Container& points)
+    template <class Iterator>
+    My_polyline_2 (const Iterator& pts_begin,
+		   const Iterator& pts_end)
     {
-      typename Container::const_iterator ps = points.begin();
+      // Check if there are no points in the range:
+      Iterator  ps = pts_begin;
 
-      if (ps == points.end())
+      if (ps == pts_end)
 	return;
 
-      typename Container::const_iterator pt = ps; pt++;
+      // Construct a segment from each to adjacent points.
+      Iterator  pt = ps;
+      pt++;
 
-      while (pt != points.end())
+      while (pt != pts_end)
       {
 	push_back (Segment_2 (*ps, *pt));
 	ps++; pt++;
       }
     }
 
+    /*!
+     * Append a segment to the polyline.
+     * \param seg The new segment to be appended to the polyline.
+     * \pre If the polyline is not empty, the segment source must be the
+     *      same as the target point of the last segment in the polyline.
+     */
+    void append (const Segment_2& seg)
+    {
+      push_back(seg);
+      return;
+    }
+
     friend class Arr_polyline_traits_2;
   };
+  friend class Polyline_2<Segment_traits_2>;
+
+public:
 
   typedef Polyline_2<Segment_traits_2>            Curve_2;
   typedef Polyline_2<Segment_traits_2>            X_monotone_curve_2;
@@ -367,11 +381,11 @@ public:
     // Copy the segments in revered order while flipping each one individually.
     int                n = cv.size();
     int                i;
-    X_monotone_curve_2 flip_cv(n);
+    X_monotone_curve_2 flip_cv;
 
     for (i = 0; i < n; i++)
     {
-      flip_cv[i] = seg_traits.curve_opposite(cv[n - i - 1]);
+      flip_cv.append(seg_traits.curve_opposite(cv[n - i - 1]));
     }
 
     return (flip_cv); 
@@ -1049,14 +1063,17 @@ public:
   {}
 
   /*!
-   * Constructor from a container of points, defining the endpoints of the
+   * Constructor from a range of points, defining the endpoints of the
    * polyline segments.
-   * \param points A container of points.
-   * \pre The are at least 2 points in the container.
+   * \param pts_begin An iterator pointing to the first point in the range.
+   * \param pts_end An iterator pointing after the last point in the range.
+   * \pre The are at least 2 points in the range.
+   *      In other cases, an empty polyline will be created.
    */
-  template <class Container>
-  Polyline_2 (const Container& points) :
-    Base(points)
+  template <class Iterator>
+  Polyline_2 (const Iterator& pts_begin,
+	      const Iterator& pts_end) :
+    Base(pts_begin, pts_end)
   {}
 
   /*!
@@ -1094,7 +1111,7 @@ public:
     int                               i;           // The current point.
 
     /*!
-     * Constructor.
+     * Private constructor.
      * \param cv The scanned curve.
      * \param index The index of the segment.
      */
@@ -1241,26 +1258,6 @@ public:
       return (size() + 1);
   }
 };
-
-/*!
- * Output operator for a cached segment.
- */
-template <class Segment_traits_>
-::std::ostream& operator<< (::std::ostream& os,
-                            const Polyline_2<Segment_traits_>& pl)
-{
-  typename Polyline_2<Segment_traits_>::const_iterator it;
-  bool                                                 first = true;
-
-  for (it = pl.begin(); it != pl.end(); it++) 
-  {
-    if (! first)
-      os << " --- ";
-    os << *it;
-    first = false;
-  }
-  return (os);
-}
 
 CGAL_END_NAMESPACE
 

@@ -25,21 +25,18 @@
 #define CGAL_SEGMENT_TRAITS        1
 #define CGAL_SEGMENT_LEDA_TRAITS   2
 #define CGAL_POLYLINE_TRAITS      11
-#define CGAL_POLYLINE_LEDA_TRAITS 12
 
 // Picking a default Traits class (this, with the 
 // PL flag enables the running of the test independently of cgal_make.)
 #ifndef CGAL_ARR_TEST_TRAITS
-//#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
+#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
-//#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
 #endif
 
 // Making sure test doesn't fail if LEDA is not installed
 #if ! defined(CGAL_USE_LEDA) && \
-      (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
-       CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS)
+      (CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS)
 
 int main(int argc, char* argv[])
 {
@@ -63,13 +60,6 @@ int main(int argc, char* argv[])
 #elif CGAL_ARR_TEST_TRAITS==CGAL_POLYLINE_TRAITS
   #include <CGAL/Arr_polyline_traits_2.h>
   #include <CGAL/Arr_segment_cached_traits_2.h>
-//#include <CGAL/IO/Arr_polyline_traits_iostream.h>
-#elif CGAL_ARR_TEST_TRAITS==CGAL_POLYLINE_LEDA_TRAITS
-//#error Currently not supported (July 2000)
-  #include <CGAL/leda_rational.h>
-  #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
-  #include <CGAL/Arr_leda_polyline_traits.h>
-//#include <CGAL/IO/Arr_leda_polyline_traits_iostream.h>
 #else
   #error No traits defined for test
 #endif
@@ -122,15 +112,8 @@ int main(int argc, char* argv[])
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
   typedef CGAL::Quotient<CGAL::MP_Float>                NT;
   typedef CGAL::Cartesian<NT>                           Kernel;
-  typedef CGAL::Arr_segment_cached_traits_2<Kernel>     SegmentTraits;
-  typedef CGAL::Arr_polyline_traits_2<SegmentTraits>    Traits;
-
-#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
-  typedef leda_rational                                 NT;
-  typedef CGAL::Pm_segment_traits_leda_kernel_2         Kernel;
-  typedef CGAL::Arr_leda_polyline_traits<Kernel,
-					 std::list<Kernel::Point_2> >        
-                                                        Traits;
+  typedef CGAL::Arr_segment_cached_traits_2<Kernel>     Seg_traits;
+  typedef CGAL::Arr_polyline_traits_2<Seg_traits>       Traits;
 
 #endif
 
@@ -144,8 +127,7 @@ typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >     Arr_2;
 typedef Arr_2::Planar_map                               Planar_map;
  
 // Defining IO operators for polyline curves.
-#if (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
-     CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS)
+#if (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS)
 
 CGAL_BEGIN_NAMESPACE
 
@@ -153,11 +135,7 @@ std::ostream & operator<<(std::ostream & os, const Curve & cv)
 {
   typedef Curve::const_iterator       Points_iterator;
   
-#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
-    os << cv.points() << std::endl;
-#else
-    os << cv.size() << std::endl;
-#endif
+  os << cv.points() << std::endl;
 
   for (Points_iterator points_iter = cv.begin(); 
        points_iter != cv.end(); points_iter++)
@@ -313,8 +291,7 @@ private:
       
       for (pit = all_points_list.begin(); pit != all_points_list.end(); pit++)
 	{
-#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
-    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 	  std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
 #else
 	  std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
@@ -334,11 +311,7 @@ private:
 	   pit != point_list.end();
 	   pit++, lt_it++)
 	{
-#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
-    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-	  //#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-	  //CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || 
-          //    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 	  std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
 #else
 	  std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
@@ -404,8 +377,7 @@ private:
   int get_next_int(std::ifstream& file)
     {
 
-#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
-    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
       // The to_long precondition is that number is indeed long
       // is supplied here since input numbers are small.
       return get_next_num(file).numerator().to_long();
@@ -441,12 +413,10 @@ private:
     return segment;
   }
 
-#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
-      CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
+#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS 
 
   Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
   {
-    Curve                 polyline;
     NT                    x,y; 
     int                   num_x_curves ;
     Point_list            point_list;
@@ -461,7 +431,8 @@ private:
       else
 	point_list.push_back(s);
     }
-    return (Curve(point_list));
+
+    return (Curve(point_list.begin(), point_list.end()));
   }
 
 #else

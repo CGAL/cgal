@@ -29,23 +29,23 @@ int main()
   Arr_2                arr;
   std::vector<Point_2> pts;
 
-   // Curve #1, not x monotone.
-   pts.push_back(Point_2(  0,  0));
-   pts.push_back(Point_2( 10, 10));
-   pts.push_back(Point_2(  0, 20));
-   arr.insert (Curve_2(pts));
+  // Curve #1, not x monotone.
+  pts.push_back(Point_2(  0,  0));
+  pts.push_back(Point_2( 10, 10));
+  pts.push_back(Point_2(  0, 20));
+  arr.insert (Curve_2(pts.begin(), pts.end())); 
+  
+  // Curve #2, x monotone.
+  pts.clear();
+  pts.push_back(Point_2(100,  0));
+  pts.push_back(Point_2(150, 50));
+  pts.push_back(Point_2(200,  0));
+  arr.insert (Curve_2(pts.begin(), pts.end()));
 
-   // Curve #2, x monotone.
-   pts.clear();
-   pts.push_back(Point_2(100,  0));
-   pts.push_back(Point_2(150, 50));
-   pts.push_back(Point_2(200,  0));
-   arr.insert (Curve_2(pts));
+  // Curve #1 is broken into two edges. Point_2 (10,10) turns into a vertex.
+  Arr_2::Locate_type lt;
+  arr.locate(Point_2(10, 10), lt);
+  CGAL_assertion(lt == Arr_2::VERTEX);
 
-   // Curve #1 is broken into two edges. Point_2 (10,10) turns into a vertex.
-   Arr_2::Locate_type lt;
-   arr.locate(Point_2(10, 10), lt);
-   CGAL_assertion(lt == Arr_2::VERTEX);
-
-   return 0;
+  return 0;
 }

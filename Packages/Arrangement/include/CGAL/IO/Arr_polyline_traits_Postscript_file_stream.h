@@ -13,9 +13,9 @@
 //
 // file          : include/CGAL/IO/Arr_polyline_traits_Postscript_file_stream.h
 // package       : Arrangement (1.82)
-// maintainer    : Eyal Flato <flato@math.tau.ac.il>
-// author(s)     : Eti Ezra <estere@post.tau.ac.il>
-// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+// maintainer    : Efi Fogel <efif@post.tau.ac.il>
+// author(s)     : Ron Wein <wein@post.tau.ac.il>
+// coordinator   : Tel-Aviv University (Dan Halperin <danha@post.tau.ac.il>)
 //
 // ======================================================================
 
@@ -31,54 +31,43 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Curve>
-Postscript_file_stream& 
-operator<<(Postscript_file_stream& ps, const Curve& cv)        
+template <class Segment_traits_>
+Postscript_file_stream& operator<< (Postscript_file_stream& ps,
+				    const Polyline_2<Segment_traits_>& pl)
 {
-  typedef typename Curve::value_type           Point;
-  typedef typename Curve::iterator             Curve_iter;
-  typedef typename Point::R                    R;
-  typedef CGAL::Segment_2<R>                   Segment;
-  typedef typename Curve::const_iterator       Points_iterator;
-  
-  ps << *(cv.begin());
-  
-  Points_iterator points_iter;
-  for (points_iter = cv.begin(); points_iter != cv.end(); ) {
-    //for (unsigned int i = 0; i < cv.size() - 1; i++){
-    Points_iterator source_point = points_iter;
-    
-    Points_iterator target_point =  (++points_iter);
-    
-    if (target_point == cv.end())
-      break;
-    
-    ps << Segment(*source_point, *target_point);
+  typedef Polyline_2<Segment_traits_>          Curve_2;
+  typedef typename Curve_2::const_iterator     Points_iterator;
+  typedef typename Curve_2::Segment_2          Segment_2;
+
+  Points_iterator   its = pl.begin();
+
+  // Disregard empty polylines:
+  if (its == pl.end())
+    return (ps);
+
+  // Draw the first point.
+  ps << (*its);
+
+  // Draw each segment of the polyline.
+  Points_iterator   itt = pl.begin();
+  itt++;
+
+  while (itt != pl.end())
+  {  
+    ps << Segment_2(*its, *itt);
+    its++; itt++;
   }
 
-  ps << *(--points_iter);
+  // Now (*its) is the last polyline point -- draw it as well.
+  ps << (*its);
 
-  return ps;
- 
-  /*typedef typename Curve::value_type           Point;
-    typedef typename Point::R                    R;
-    typedef CGAL::Segment_2<R>          Segment;
-    
-    ps << cv[0];
-    
-    for (unsigned int i = 0; i < cv.size() - 1; i++){
-    ps << Segment(cv[i], cv[i+1]);
-    }
-    
-    ps << cv[cv.size() - 1];
-    
-    return ps;*/
+  return (ps);
 }
 
 CGAL_END_NAMESPACE
 
 #endif
-#endif 
+#endif
 
 
 

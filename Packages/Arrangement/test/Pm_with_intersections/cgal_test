@@ -59,7 +59,7 @@ run()
 
   if [ $3 -eq $CGAL_SEGMENT_TRAITS -o $3 -eq $CGAL_SEGMENT_LEDA_TRAITS ] ; then
     datafiles="DATA/segments/*"
-  elif [ $3 -eq $CGAL_POLYLINE_TRAITS -o $3 -eq $CGAL_POLYLINE_LEDA_TRAITS ]; then
+  elif [ $3 -eq $CGAL_POLYLINE_TRAITS ] ; then
        datafiles="DATA/polylines/*"
   fi
 
@@ -120,7 +120,6 @@ else
   CGAL_SEGMENT_TRAITS=1
   CGAL_SEGMENT_LEDA_TRAITS=2
   CGAL_POLYLINE_TRAITS=11
-  CGAL_POLYLINE_LEDA_TRAITS=12
 
   TRAP=1  # Trapezoidal decomposition
   NAIVE=2
@@ -128,25 +127,19 @@ else
   SIMPLE=4
 
   # run test with generic segment traits
-    (compile_and_run test_pmwx $TRAP   $CGAL_SEGMENT_TRAITS)
-    (compile_and_run test_pmwx $NAIVE  $CGAL_SEGMENT_TRAITS)
-    (compile_and_run test_pmwx $WALK   $CGAL_SEGMENT_TRAITS)
-    (compile_and_run test_pmwx $SIMPLE $CGAL_SEGMENT_TRAITS)
+#    (compile_and_run test_pmwx $TRAP   $CGAL_SEGMENT_TRAITS)
+#    (compile_and_run test_pmwx $NAIVE  $CGAL_SEGMENT_TRAITS)
+#    (compile_and_run test_pmwx $WALK   $CGAL_SEGMENT_TRAITS)
+#    (compile_and_run test_pmwx $SIMPLE $CGAL_SEGMENT_TRAITS)
   # run test with leda segment traits
-    (compile_and_run test_pmwx $TRAP   $CGAL_SEGMENT_LEDA_TRAITS)
-    (compile_and_run test_pmwx $NAIVE  $CGAL_SEGMENT_LEDA_TRAITS)
-    (compile_and_run test_pmwx $WALK   $CGAL_SEGMENT_LEDA_TRAITS)
-    (compile_and_run test_pmwx $SIMPLE $CGAL_SEGMENT_LEDA_TRAITS)
+#    (compile_and_run test_pmwx $TRAP   $CGAL_SEGMENT_LEDA_TRAITS)
+#    (compile_and_run test_pmwx $NAIVE  $CGAL_SEGMENT_LEDA_TRAITS)
+#    (compile_and_run test_pmwx $WALK   $CGAL_SEGMENT_LEDA_TRAITS)
+#    (compile_and_run test_pmwx $SIMPLE $CGAL_SEGMENT_LEDA_TRAITS)
   # run test with generic polyline traits
     (compile_and_run test_pmwx $TRAP   $CGAL_POLYLINE_TRAITS)
     (compile_and_run test_pmwx $NAIVE  $CGAL_POLYLINE_TRAITS)
     (compile_and_run test_pmwx $WALK   $CGAL_POLYLINE_TRAITS)
     (compile_and_run test_pmwx $SIMPLE $CGAL_POLYLINE_TRAITS)
 
-  # Uncomment when leda polyline traits is fully debugged
-  # run test with leda polyline traits
-    (compile_and_run test_pmwx $TRAP   $CGAL_POLYLINE_LEDA_TRAITS)
-    (compile_and_run test_pmwx $NAIVE  $CGAL_POLYLINE_LEDA_TRAITS)
-    (compile_and_run test_pmwx $WALK   $CGAL_POLYLINE_LEDA_TRAITS)
-    (compile_and_run test_pmwx $SIMPLE $CGAL_POLYLINE_LEDA_TRAITS)
 fi

@@ -99,7 +99,7 @@ void read_curves (const char* filename,
       points.push_back (Point_2(x,y));
     }
 
-    Curve_2   polyline(points);
+    Curve_2   polyline(points.begin(), points.end());
     curves.push_back(polyline);
 
     if (i == 0)
@@ -170,7 +170,7 @@ int main(int argc, char* argv[])
 
   // Draw the arrangement.
   W << pmwx;
-
+  
   // Point Location part.
   Pmwx_2::Halfedge_handle e;
   double  x,y;

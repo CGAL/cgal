@@ -101,7 +101,7 @@ void redraw(CGAL::Window_stream * wp)
   // draw currently inserted polyline
     *wp << CGAL::BLACK;
   if (pts.size() > 1) 
-    *wp << Curve_2(pts);
+    *wp << Curve_2(pts.begin(), pts.end());
   else if (pts.size() == 1) 
     *wp << pts[0];
   // draw arragnement
@@ -194,7 +194,7 @@ int main()
     // on right click, or on "Continue"
     if (b == MOUSE_BUTTON(3) || (should_exit && pts.size() > 1)) {
       if ( pts.size() > 1)  //(at least 2 points, otherwise ignore)
-	Arr.insert(Curve_2(pts));
+	Arr.insert(Curve_2(pts.begin(), pts.end()));
       
       pts.clear();
       W << Arr;

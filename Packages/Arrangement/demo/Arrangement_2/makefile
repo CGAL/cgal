@@ -46,7 +46,8 @@ all:            \
                 Segment_arr_from_file$(EXE_EXT) \
                 Conics_arr_from_file$(EXE_EXT) \
                 Segment_arr_from_mouse$(EXE_EXT) \
-                Polygon_intersection_demo$(EXE_EXT) 
+                Polygon_intersection_demo$(EXE_EXT) \
+                Hyper_segment_arr_from_file$(EXE_EXT) 
 
 Circle_arr_from_file$(EXE_EXT): Circle_arr_from_file$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Circle_arr_from_file Circle_arr_from_file$(OBJ_EXT) $(LDFLAGS)
@@ -72,6 +73,9 @@ Segment_arr_from_mouse$(EXE_EXT): Segment_arr_from_mouse$(OBJ_EXT)
 Polygon_intersection_demo$(EXE_EXT): Polygon_intersection_demo$(OBJ_EXT)  Polygon_intersection$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polygon_intersection_demo Polygon_intersection_demo$(OBJ_EXT)  Polygon_intersection$(OBJ_EXT) $(LDFLAGS)
 
+Hyper_segment_arr_from_file$(EXE_EXT): Hyper_segment_arr_from_file$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Hyper_segment_arr_from_file Hyper_segment_arr_from_file$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    Circle_arr_from_file.clean \
                    Polyline_arr_from_file.clean \
@@ -81,7 +85,8 @@ clean: \
                    Conics_arr_from_file.clean \
                    Polygon_intersection.clean \
                    Segment_arr_from_mouse.clean \
-                   Polygon_intersection_demo.clean
+                   Polygon_intersection_demo.clean \
+                   Hyper_segment_arr_from_file.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

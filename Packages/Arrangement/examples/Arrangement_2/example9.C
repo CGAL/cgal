@@ -35,7 +35,7 @@ int main()
   pts.push_back(Point_2( 50,  0));
   pts.push_back(Point_2(  0,  0));
   pts.push_back(Point_2(  0, 50));
-  arr.insert (Curve_2(pts)); 
+  arr.insert (Curve_2(pts.begin(), pts.end())); 
   
   pts.clear();
   pts.push_back(Point_2( 25, 75));
@@ -43,7 +43,7 @@ int main()
   pts.push_back(Point_2( 75, 25));
   pts.push_back(Point_2( 25, 25));
   pts.push_back(Point_2( 25, 75));
-  arr.insert (Curve_2(pts)); 
+  arr.insert (Curve_2(pts.begin(), pts.end())); 
   
   // Upward vertical ray shooting
   // the edge <25,50>-<50,50> is supposed to be have been created

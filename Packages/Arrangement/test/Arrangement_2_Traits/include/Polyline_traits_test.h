@@ -92,7 +92,8 @@ read_curve( std::ifstream& is, Curve_2& cv )
     strLine >> x >> y;
     pts.push_back( Point_2( x,y ) );
   }
-  cv = Curve_2(pts);
+
+  cv = Curve_2(pts.begin(), pts.end());
   return;
 }
 //---------------------------------------------------------------------------
