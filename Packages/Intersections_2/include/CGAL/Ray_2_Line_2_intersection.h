@@ -199,27 +199,31 @@ Ray_2_Line_2_pair<K>::intersection(typename K::Ray_2 &result) const
 template <class K>
 inline bool do_intersect(const Line_2<K> &p1, const Ray_2<K> &p2)
 {
-  return typename K::Do_intersect_2()(p1, p2);
+  typedef typename K::Do_intersect_2 Do_intersect;
+  return Do_intersect()(p1, p2);
 }
 
 template <class K>
 inline bool do_intersect(const Ray_2<K> &p2, const Line_2<K> &p1)
 {
-  return typename K::Do_intersect_2()(p1, p2);
+  typedef typename K::Do_intersect_2 Do_intersect;
+  return Do_intersect()(p1, p2);
 }
 
 template <class K>
 inline Object
 intersection(const Line_2<K> &line, const Ray_2<K> &ray)
 {
-    return typename K::Intersect_2()(ray, line);
+  typedef typename K::Intersect_2 Intersect;
+    return Intersect()(ray, line);
 }
 
 template <class K>
 inline Object
 intersection(const Ray_2<K> &ray, const Line_2<K> &line)
 {
-    return typename K::Intersect_2()(ray, line);
+  typedef typename K::Intersect_2 Intersect;
+    return Intersect()(ray, line);
 }
 CGAL_END_NAMESPACE
 

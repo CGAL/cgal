@@ -235,15 +235,18 @@ inline bool do_intersect(
     const Line_2<K> &p1,
     const Line_2<K> &p2)
 {
-  return typename K::Do_intersect_2()(p1, p2);
+  typedef typename K::Do_intersect_2 Do_intersect;
+  return Do_intersect()(p1, p2);
 }
 
 template <class K>
 Object
 intersection(const Line_2<K> &line1, const Line_2<K> &line2)
 {
-  return typename K::Intersect_2()(line1, line2);
+  typedef typename K::Intersect_2 Intersect;
+  return Intersect()(line1, line2);
 }
+
 
 CGAL_END_NAMESPACE
 

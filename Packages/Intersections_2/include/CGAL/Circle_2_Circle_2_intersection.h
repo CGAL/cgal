@@ -57,7 +57,8 @@ bool
 do_intersect(const Circle_2<K> & circ1, 
 	     const Circle_2<K> & circ2)
 {
-  return typename K::Do_intersect_2()(circ1, circ2);
+  typedef typename K::Do_intersect_2 Do_intersect;
+  return Do_intersect()(circ1, circ2);
 }
 
 

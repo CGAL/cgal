@@ -498,7 +498,8 @@ bool
 do_intersect(const Segment_2<K> &seg1, 
 	     const Segment_2<K> &seg2)
 {
-  return typename K::Do_intersect_2()(seg1, seg2);
+  typedef typename K::Do_intersect_2 Do_intersect;
+  return Do_intersect()(seg1, seg2);
 }
 
 
@@ -507,7 +508,8 @@ Object
 intersection(const Segment_2<K> &seg1, 
 	     const Segment_2<K> &seg2)
 {
-  return typename K::Intersect_2()(seg1, seg2);
+  typedef typename K::Intersect_2 Intersect;
+  return Intersect()(seg1, seg2);
 }
 
 CGAL_END_NAMESPACE

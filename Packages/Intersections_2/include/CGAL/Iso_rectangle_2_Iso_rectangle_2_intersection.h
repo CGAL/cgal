@@ -88,7 +88,8 @@ intersection(
     const Iso_rectangle_2<K> &irect1,
     const Iso_rectangle_2<K> &irect2)
 {
-  return typename K::Intersect_2()(irect1, irect2);
+  typedef typename K::Intersect_2 Intersect;
+  return Intersect()(irect1, irect2);
 }
 
 

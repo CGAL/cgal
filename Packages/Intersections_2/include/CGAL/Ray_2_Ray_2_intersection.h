@@ -296,7 +296,8 @@ bool
 do_intersect(const Ray_2<K> &ray1, 
 	     const Ray_2<K> &ray2)
 {
-  return typename K::Do_intersect_2()(ray1, ray2);
+  typedef typename K::Do_intersect_2 Do_intersect;
+  return Do_intersect()(ray1, ray2);
 }
 
 template <class K>
@@ -304,7 +305,8 @@ Object
 intersection(const  Ray_2<K> &ray1, 
 	     const Ray_2<K> &ray2)
 {
-  return typename K::Intersect_2()(ray1, ray2);
+  typedef typename K::Intersect_2 Intersect;
+  return Intersect()(ray1, ray2);
 }
 
 CGAL_END_NAMESPACE

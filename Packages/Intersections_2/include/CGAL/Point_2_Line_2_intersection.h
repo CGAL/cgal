@@ -83,7 +83,8 @@ bool
 do_intersect(const Line_2<K> &line, 
 	     const Point_2<K> &pt)
 {
-    return typename K::Do_intersect_2()(pt, line);
+  typedef typename K::Do_intersect_2 Do_intersect;
+    return Do_intersect()(pt, line);
 }
 
 template <class K>
@@ -92,7 +93,8 @@ bool
 do_intersect(const Point_2<K> &pt,
 	     const Line_2<K> &line)
 {
-    return typename K::Do_intersect_2()(pt, line);
+  typedef typename K::Do_intersect_2 Do_intersect;
+    return Do_intersect()(pt, line);
 }
 
 template <class K>
@@ -101,7 +103,8 @@ Object
 intersection(const Line_2<K> &line, 
 	     const Point_2<K> &pt)
 {
-  return typename K::Intersection_2()(pt, line);
+  typedef typename K::Intersect_2 Intersect;
+  return Intersection()(pt, line);
 }
 
 template <class K>
@@ -110,7 +113,8 @@ Object
 intersection(const Point_2<K> &pt,
 	     const Line_2<K> &line)
 {
-  return typename K::Intersection_2()(pt, line);
+  typedef typename K::Intersect_2 Intersect;
+  return Intersection()(pt, line);
 }
 CGAL_END_NAMESPACE
 

@@ -39,7 +39,8 @@ Object
 intersection(const Triangle_2<K> &tr1, 
 	     const Triangle_2<K>& tr2)
 {
-  return typename K::Intersect_2()(tr1, tr2);
+  typedef typename K::Intersect_2 Intersect;
+  return Intersect()(tr1, tr2);
 }
 
 CGAL_END_NAMESPACE

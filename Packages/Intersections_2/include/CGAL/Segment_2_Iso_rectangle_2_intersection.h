@@ -258,14 +258,16 @@ inline bool
 do_intersect(const Iso_rectangle_2<K> & iso,
 	     const Segment_2<K> &seg)
 {
-  return typename K::Do_intersect_2()(seg, iso);
+  typedef typename K::Do_intersect_2 Do_intersect;
+  return Do_intersect()(seg, iso);
 }
 
 template <class K>
 inline bool
 do_intersect(const Segment_2<K> &seg, const Iso_rectangle_2<K> &iso)
 {
-  return typename K::Do_intersect_2()(seg, iso);
+  typedef typename K::Do_intersect_2 Do_intersect;
+  return Do_intersect()(seg, iso);
 }
 
 
@@ -275,7 +277,8 @@ intersection(
     const Iso_rectangle_2<K> &iso,
     const Segment_2<K> &seg)
 {
-    return typename K::Intersect_2()(seg, iso);
+  typedef typename K::Intersect_2 Intersect;
+  return Intersect()(seg, iso);
 }
 
 template <class K>
@@ -283,7 +286,8 @@ inline Object
 intersection(const Segment_2<K> &seg,
 	       const Iso_rectangle_2<K> &iso)
 {
-    return typename K::Intersect_2()(seg, iso);
+  typedef typename K::Intersect_2 Intersect;
+  return Intersect()(seg, iso);
 }
 
 CGAL_END_NAMESPACE
