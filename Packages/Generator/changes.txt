@@ -1,36 +1,40 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
-2.73 (22 Sep 2003)
+2.74 (2 Oct 2003)
+- Changed code that gets included in the user manual
+- Added random segments to the demo
+
+2.73 (1 Oct 2003)
 - Moved \chapter to main.tex
 
 2.72 (22 Sep 2003)
 - new headers
 
 2.71 (17 Sep 2003) [af]
-   - Removed Polygon_traits_2
+- Removed Polygon_traits_2
 
 2.70 (10 Sep 2003) [rursu]
-   - Qt_help_window class is in the namespace CGAL
+- Qt_help_window class is in the namespace CGAL
 
 2.69 (07 Sep 2003)
-   - [rursu] demo use now the new Qt_help_window class instead of HelpWindow
-   - [rursu] demo use new icon demoicon
+- [rursu] demo use now the new Qt_help_window class instead of HelpWindow
+- [rursu] demo use new icon demoicon
 
 2.68 (12 Aug 2003)
-   - Removed unused variable name from parameter list to get rid of warning[af]
+- Removed unused variable name from parameter list to get rid of warning[af]
 
 2.67 (25 Jul 2003)
-   - modified the Generator doc (rursu)
+- modified the Generator doc (rursu)
 
 2.66 (09 Jul 2003)
-   - replaced Leda based demo with Qt based demo (rursu)
+- replaced Leda based demo with Qt based demo (rursu)
 
 2.65 (6  Apr 2003)
-   - G++ 3.4 support : add missing "this->".
+- G++ 3.4 support : add missing "this->".
 
 2.64 (22 Aug 2002)
-   - default Creator now uses number type from given point types 
-     instead of double; default creator is now documented
+- default Creator now uses number type from given point types 
+  instead of double; default creator is now documented
 
 2.63 (12 Aug 2002)
    - replaced LEFTTURN and relatives with LEFT_TURN and relatives
