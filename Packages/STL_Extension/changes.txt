@@ -1,3 +1,6 @@
+27 April 2004 Sylvain Pion
+- Much more symbol names shortening for Compact_container's iterators.
+
 17 April 2004 Sylvain Pion
 - Shorten symbol name CC_iterator -> CCit.
 
