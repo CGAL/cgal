@@ -1,6 +1,10 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.12 (29 Jun 2001)
+
+     - Changed \ccIdfierPage back to \ccRefIdfierPage.
+
 3.11 (29 Jun 2001)
 
      - Smaller corrections in the doc.
