@@ -42,7 +42,7 @@ is to be instantiated with a model of
 which is the class 
 \ccc{CGAL::Triangulation_data_structure_2 <
                        CGAL::Triangulation_vertex_base_2<Traits>,
-		       CGAL::Triangulation_face_base_2<Traits> >}.
+                       CGAL::Triangulation_face_base_2<Traits> >}.
 
 The geometric traits \ccc{Traits} 
 is to be instantiated with a model of
@@ -92,7 +92,7 @@ Inherits all the types defined in  \ccc{Triangulation_2<Traits,Tds>}.
 Traits());}{default constructor.}
 
 \ccConstructor{Delaunay_triangulation_2(
-	       const Delaunay_triangulation_2<Traits,Tds> &tr);}
+               const Delaunay_triangulation_2<Traits,Tds> &tr);}
 {copy constructor. All the vertices and faces are duplicated.}
 
 \ccHeading{Insertion and Removal}
@@ -153,11 +153,11 @@ begins with a location step and
 \ccMethod{template <class OutputItFaces, class OutputItBoundaryEdges> 
   std::pair<OutputItFaces,OutputItBoundaryEdges>
   get_conflicts_and_boundary(const Point  &p, 
-			     OutputItFaces fit, 
-			     OutputItBoundaryEdges eit,
+                             OutputItFaces fit, 
+                             OutputItBoundaryEdges eit,
                              Face_handle start) const;}
-{ \ccc{OutItFaces} is an output iterator with \ccc{Face_handle} as value type.
-\ccc{OutItBoundaryEdges} stands for an output iterator with \ccc{Edge} as value type.
+{ \ccc{OutputItFaces} is an output iterator with \ccc{Face_handle} as value type.
+\ccc{OutputItBoundaryEdges} stands for an output iterator with \ccc{Edge} as value type.
 This members function outputs in the container pointed to by \ccc{fit}
 the faces which are in conflict with point \ccc{p}
 i. e. the faces whose circumcircle contains \ccc{p}.
@@ -170,18 +170,18 @@ which is not in conflict with \ccc{p}.
 The function returns in a std::pair the resulting output iterators.}
 
 \ccMethod{template <class OutputItFaces> 
-	  OutputItFaces
+          OutputItFaces
           get_conflicts (const Point  &p, 
-   		         OutputItFaces fit, 
-  		         Face_handle start) const;}
+                         OutputItFaces fit, 
+                         Face_handle start) const;}
 {same as above except that only the faces in conflict with \ccc{p}
 are output. The function returns the resulting output iterator.}
 
 \ccMethod{template <class OutputItBoundaryEdges>
           OutputItBoundaryEdges
           get_boundary_of_conflicts(const Point  &p, 
-   		   		    OutputItBoundaryEdges eit,
-  		       		    Face_handle start) const;}
+                                    OutputItBoundaryEdges eit,
+                                    Face_handle start) const;}
 { \ccc{OutputItBoundaryEdges} stands for an output iterator with 
 \ccc{Edge} as value
 type.
