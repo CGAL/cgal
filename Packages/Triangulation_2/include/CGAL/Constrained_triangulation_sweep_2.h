@@ -8,23 +8,34 @@
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
-#include <CGAL/Constrained_triangulation_2.h>
+#include <CGAL/Triangulation_2.h>
+
+
+//template<class Gt, class Tds>
+//class CGAL_Constrained_triangulation_2.h>;
 
 template < class Gt, class Tds>
-class CGAL_Constrained_triangulation_sweep
+class CGAL_Constrained_triangulation_sweep_2
 {
 public:
     typedef Gt  Geom_traits;
     typedef typename Gt::Point Point;
     typedef typename Gt::Segment Segment;
     
-  typedef CGAL_Triangulation_2<Gt,Tds>  Triangulation;
-  typedef CGAL_Constrained_Triangulation_2<Gt,Tds>  Constrained_triangulation;
-  typedef Triangulation::Vertex Vertex;
-  typedef Triangulation::Face Face;
-  typedef Triangulation::Vertex_handle Vertex_handle;
-  typedef Triangulation::Face_handle Face_handle;
+//   typedef CGAL_Constrained_triangulation_2<Gt,Tds>  Constrained_triangulation;
+//   typedef Constrained_triangulation::Vertex Vertex;
+//   typedef typename Constrained_triangulation::Face Face;
+//   typedef typename Constrained_triangulation::Vertex_handle Vertex_handle;
+//   typedef typename Constrained_triangulation::Face_handle Face_handle;
+
+  typedef CGAL_Triangulation_face_2<Gt,Tds> Face;
+  typedef CGAL_Triangulation_vertex_2<Gt,Tds> Vertex;
+  typedef CGAL_Triangulation_face_handle_2<Gt,Tds> Face_handle;
+  typedef CGAL_Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
+  typedef pair<Face_handle, int>                Edge;
+
     
+ 
   typedef pair<Point,Point> Constraint;
     
   class Neighbor_list;
@@ -124,19 +135,19 @@ public:
     public:
       bool is_removable(Face_handle fh)
       {
-	return ( fh->vertex(1) == fh->vertex(2) &&
-		 fh->neighbor(1)!= NULL && neighbor(2)!= NULL);
+	return ( (*fh).vertex(1) == (*fh).vertex(2) &&
+		 (*fh).neighbor(1)!= NULL && (*fh).neighbor(2)!= NULL);
       }
 
       void remove_flat(Face_handle fh) 
 	// must be followed by a Delete() in calling code
       {
-	assert(fh->vertex(1) == fh->vertex(2));
-	Face_handle f2= fh->neighbor(2);
-	Face_handle f1= fh->neighbor(1);
-	if ( f2 != NULL) { f2->set_neighbor( f2->index(fh), f1);}
-	if ( f1 != NULL) { f1->set_neighbor( f1->index(fh), f2);}
-	(vertex(0))->set_face( f2 != NULL ? f2 : f1 );
+	assert((*fh).vertex(1) == (*fh).vertex(2));
+	Face_handle f2= (*fh).neighbor(2);
+	Face_handle f1= (*fh).neighbor(1);
+	if ( f2 != NULL) { (*f2).set_neighbor( (*f2).index(fh), f1);}
+	if ( f1 != NULL) { (*f1).set_neighbor( (*f1).index(fh), f2);}
+	( (*fh). vertex(0))->set_face( f2 != NULL ? f2 : f1 );
 	fh.Delete();
 	return;
       }
@@ -236,13 +247,13 @@ public:
       void set_right_most(Vertex_handle v) { rm=v;}
     };
     
-    CGAL_Constrained_triangulation_sweep( Gt& t = Gt())
+    CGAL_Constrained_triangulation_sweep_2( const Gt& t = Gt())
       : _t(t), _lc(NULL)
     {
     }
     
-    CGAL_Constrained_triangulation_sweep( list<Constraint>& lc,
-                                               Gt& t = Gt())
+    CGAL_Constrained_triangulation_sweep_2( list<Constraint>& lc,
+                                            const  Gt& t = Gt())
       : _t(t), _lc(&lc)
     {
       event_less= Event_less(_t);
@@ -289,7 +300,7 @@ public:
 
 template<class Gt, class Tds>
 void
-CGAL_Constrained_triangulation_sweep<Gt,Tds>::
+CGAL_Constrained_triangulation_sweep_2<Gt,Tds>::
 make_event_queue()
 {
   if ( ! queue.empty()) {return;} // queue already done
@@ -335,7 +346,7 @@ make_event_queue()
 
 template<class Gt,class Tds>
 void
-CGAL_Constrained_triangulation_sweep<Gt,Tds>::
+CGAL_Constrained_triangulation_sweep_2<Gt,Tds>::
 build_triangulation()
 {
   Point p;
@@ -370,8 +381,8 @@ build_triangulation()
 }
 
 template<class Gt, class Tds>
-CGAL_Constrained_triangulation_sweep<Gt,Tds>::Vertex_handle
-CGAL_Constrained_triangulation_sweep<Gt,Tds>::
+CGAL_Constrained_triangulation_sweep_2<Gt,Tds>::Vertex_handle
+CGAL_Constrained_triangulation_sweep_2<Gt,Tds>::
 treat_in_edges(const Event_queue::iterator & event,
                Sweep_status::iterator & loc)
 {
@@ -464,7 +475,7 @@ treat_in_edges(const Event_queue::iterator & event,
 
 template<class Gt, class Tds>
 void
-CGAL_Constrained_triangulation_sweep<Gt,Tds>::
+CGAL_Constrained_triangulation_sweep_2<Gt,Tds>::
 treat_out_edges(const Event_queue::iterator & event,
                 Sweep_status::iterator & loc)
 {
@@ -522,8 +533,8 @@ treat_out_edges(const Event_queue::iterator & event,
 }
 
 template<class Gt, class Tds>
-CGAL_Constrained_triangulation_sweep<Gt,Tds>::Vertex_handle
-CGAL_Constrained_triangulation_sweep<Gt,Tds>::
+CGAL_Constrained_triangulation_sweep_2<Gt,Tds>::Vertex_handle
+CGAL_Constrained_triangulation_sweep_2<Gt,Tds>::
 set_infinite_faces()
 {
   Vertex_handle infinite= (new Vertex)->handle();
@@ -561,7 +572,7 @@ set_infinite_faces()
     fn->set_neighbor(in,newf); newf->set_neighbor(0,fn);
     last->set_neighbor(2,newf);newf->set_neighbor(1,last);
     newf->set_constrained(0, fn->is_constrained(in));
-    if (lower_list->is_removable(fn)) { lower_list->remove_flat(fn) }
+    if (lower_list->is_removable(fn)) { lower_list->remove_flat(fn); }
     (newf->vertex(2))->set_face(newf->neighbor(0));
     last=newf;
   }
@@ -574,7 +585,7 @@ set_infinite_faces()
 
 template<class Gt, class Tds>
 bool
-CGAL_Constrained_triangulation_sweep<Gt,Tds>::
+CGAL_Constrained_triangulation_sweep_2<Gt,Tds>::
 do_intersect(const Constraint& c1, const Constraint& c2 )
 {
   // The constraints are known to be  non degenerate

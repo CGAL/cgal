@@ -7,7 +7,7 @@
 
 template <class Gt>
 class CGAL_Constrained_triangulation_face_base_2
-  :  public CGAL_triangulation_face_base_2<Gt>
+  :  public CGAL_Triangulation_face_base_2<Gt>
 {
 protected:
     bool C[3];
@@ -29,7 +29,7 @@ public:
     set_constrained(false,false,false);
   }
 
-  CGAL_Constrained_triangulation_face_base_2(void* v0, void* v1, void* v2
+  CGAL_Constrained_triangulation_face_base_2(void* v0, void* v1, void* v2,
 					     void* n0, void* n1, void* n2)
     : Fb(v0,v1,v2,n0,n1,n2)
   {
@@ -37,8 +37,8 @@ public:
   }
 
 
-  CGAL_Constrained_triangulation_face_base_2(void* v0, void* v1, void* v2
-					     void* n0, void* n1, void* n2
+  CGAL_Constrained_triangulation_face_base_2(void* v0, void* v1, void* v2,
+					     void* n0, void* n1, void* n2,
 					     bool c0, bool c1, bool c2 )
     : Fb(v0,v1,v2,n0,n1,n2)
   {
@@ -68,9 +68,13 @@ public:
     bool result = Fb::is_valid();
     CGAL_triangulation_assertion(result);
     for(int i = 0; i < 3; i++) {
-      Face_handle n = neighbor(i);
+      Constrained_face_base*  n = (Constrained_face_base*)neighbor(i);
       if(n != NULL){
-	int ni = n->index(handle());
+	 // The following seems natural, but it may fail if the faces
+	// this and n are neighbors on two edges (1-dim triangulation,
+	// with infinite faces
+	// int ni = n->index(this);//
+	int ni = cw(n->vertex_index(vertex(cw(i))));
 	result = result && ( is_constrained(i) == n->is_constrained(ni));
       }
     }
