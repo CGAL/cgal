@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+CGAL_MAKEFILE = $(CGAL)/make/makefile_i686_Linux-2.2.18_g++-3.3.0
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#

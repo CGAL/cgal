@@ -4,6 +4,8 @@
 #include <CGAL/Triangulation_hierarchy_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>
+#include <cassert>
+
 
 struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
 
