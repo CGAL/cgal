@@ -34,7 +34,7 @@
 typedef   CGAL::Point_2<CGAL::Cartesian<double> >        Point2;
 
 int
-main(int argc, char *argv[])
+main(int argc, char **)
 {
   if (argc >= 2) { return 0; }
 
