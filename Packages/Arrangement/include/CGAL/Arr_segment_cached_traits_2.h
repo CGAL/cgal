@@ -601,14 +601,13 @@ protected:
       
       return Object();
     }
-    
+
     // In case the intersection is an overlapping segment [p1, p2]
     // (notice that p1 < p2):
     if (compare_xy_2_object()(p1, p) == LARGER)
     {
       // The entire segment p1 -> p2 is to the right of p:
-      return (CGAL::make_object (X_monotone_curve_2 (cv1.line,
-                                                     p1, p2)));
+      return (CGAL::make_object (X_monotone_curve_2 (cv1.line, p1, p2)));
     }
     else if (compare_xy_2_object()(p2, p) == LARGER)
     {
@@ -621,8 +620,7 @@ protected:
       {
         // Perform vertical ray-shooting from p to the overlapping segment
         // and make p1 the resulting point.
-        _vertical_ray_shoot (p, cv1,
-                             p1);
+        _vertical_ray_shoot (p, cv1, p1);
       }
 
       // If after the trimming we have p1 == p2, return just a single point.
@@ -630,8 +628,7 @@ protected:
         return (CGAL::make_object (p1));
 
       // Return the segment p1 -> p2.
-      return (CGAL::make_object (X_monotone_curve_2 (cv1.line,
-                                                     p1, p2)));
+      return (CGAL::make_object (X_monotone_curve_2 (cv1.line, p1, p2)));
     }
 
     // The overlap is entirely to the left of p:
@@ -682,8 +679,7 @@ protected:
     if (compare_xy_2_object()(p2, p) == SMALLER)
     {
       // The entire segment p1 -> p2 is to the left of p:
-      return (CGAL::make_object (X_monotone_curve_2 (cv1.line,
-                                                     p1, p2)));
+      return (CGAL::make_object (X_monotone_curve_2 (cv1.line, p1, p2)));
     }
     else if (compare_xy_2_object()(p1, p) == SMALLER)
     {
@@ -696,8 +692,7 @@ protected:
       {
         // Perform vertical ray-shooting from p to the overlapping segment
         // and make p2 the resulting point.
-        _vertical_ray_shoot (p, cv1,
-                             p2);
+        _vertical_ray_shoot (p, cv1, p2);
       }
 
       // If after the trimming we have p1 == p2, return just a single point.
@@ -705,8 +700,7 @@ protected:
         return (CGAL::make_object (p1));
 
       // Return the segment p1 -> p2.
-      return (CGAL::make_object (X_monotone_curve_2 (cv1.line,
-                                                     p1, p2)));
+      return (CGAL::make_object (X_monotone_curve_2 (cv1.line, p1, p2)));
     }
      
     // The overlap is entirely to the right of p:
