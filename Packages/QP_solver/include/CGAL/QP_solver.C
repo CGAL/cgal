@@ -1034,7 +1034,7 @@ expel_artificial_variables_from_basis( )
 	    // determine first possible entering variable,
 	    //if there is any
 	    for (unsigned int j_ = 0; j_ < qp_n + slack_A.size(); ++j_) {
-	        if (!is_basic(i_)) {  				// is nonbasic 
+	        if (!is_basic(j_)) {  				// is nonbasic 
 		    ratio_test_init__A_Cj( A_Cj.begin(), j_, 
 		        Has_no_inequalities());
 		    r_A_Cj = inv_M_B.inv_M_B_row_dot_col(row_ind, A_Cj.begin());
