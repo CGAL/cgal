@@ -1,16 +1,11 @@
 //example4
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
 
 #include <iostream>
 
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Topological_map.h>
-
-
 
 typedef CGAL::Point_2<CGAL::Cartesian<double> >  Point;
 typedef CGAL::Segment_2<CGAL::Cartesian<double> >Curve;
@@ -74,8 +69,6 @@ int main() {
     ++cc;
     } while (cc != nf->outer_ccb());
   std::cout << cc->source()->point() << std::endl;
-  //  std::cout << std::endl;
-    
 
   return 0;
 }
