@@ -156,7 +156,7 @@ public:
   }
     
   //Miscelleanous
-  int dimension()
+  int dimension() const
   {
     if (vertex(2) != NULL) {return 2;}
     else return( vertex(1) != NULL ? 1 : 0);
@@ -180,7 +180,7 @@ public:
    bool is_valid(bool verbose = false, int level = 0) const
   {
     bool result = Fb::is_valid();
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < dimension()+1; i++) {
       Face* n = neighbor(i);
             
       // The following seems natural, but it may fail if the faces
@@ -193,12 +193,19 @@ public:
       // result = result && (vertex(cw(i)) == n->vertex(ccw(ni)));
       // result = result && (vertex(ccw(i)) == n->vertex(cw(ni)));
 
-      int in;
-      if (! n->has_vertex(vertex(cw(i)),in )) return false;
-      in = cw(in); 
+      int in = n->index(this);
       result = result && ( this == n->neighbor(in) );
-      result = result && (vertex(ccw(i)) == n->vertex(cw(in)));
-
+      switch(dimension()) {
+      case 0 : 
+	break;
+      case 1 :
+	result = result && ( this->vertex(1-i) == n->vertex(1-in));
+	break;
+      case 2 :
+	result = result && ( this->vertex(cw(i)) == n->vertex(ccw(in)))
+	  && ( this->vertex(ccw(i)) == n->vertex(cw(in)));
+	break;
+      }
     }
     return result;
   }
