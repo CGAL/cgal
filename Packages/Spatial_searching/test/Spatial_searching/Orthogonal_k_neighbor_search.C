@@ -85,6 +85,6 @@ int main()
 {
   search(true);
   search(false);
-  std::cout << "done" << std::end;
+  std::cout << "done" << std::endl;
   return 0;
 }
