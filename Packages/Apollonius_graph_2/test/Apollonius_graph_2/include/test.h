@@ -73,6 +73,7 @@ bool test_traits()
   Traits tr;
   Traits tr1(tr);
   tr1 = tr;
+  tr = tr1;
 
 
   // testing access to predicates objects
