@@ -147,6 +147,8 @@ public:
   typedef typename SNC_structure::Aff_transformation_3 
                                   Aff_transformation_3;
 
+  typedef typename SNC_structure::Infi_box Infi_box;
+
   typedef typename Decorator_traits::Vertex_handle Vertex_handle;
   typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
   typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
@@ -338,8 +340,9 @@ public:
     return result;
   }
 
-#ifdef CGAL_NEF3_POINT_LOCATION_BY_RAY_SHOOTING
   virtual Object_handle locate( const Point_3& p) const {
+
+    if(Infi_box::extended_kernel()) {
     TIMER(pl_t.start());
     CGAL_assertion( initialized);
     _TRACEN( "locate "<<p);
@@ -395,9 +398,9 @@ public:
     }    TIMER(pl_t.start());
     TIMER(pl_t.stop());
     return result;
-  }
-#else
-  virtual Object_handle locate( const Point_3& p) const {
+
+  } else {   // standard kernel
+
     CGAL_assertion( initialized);
     _TRACEN( "locate "<<p);
     typename SNC_structure::FT min_distance;
@@ -439,11 +442,13 @@ public:
 
     for(;o!=candidates.end();++o) {
       if( CGAL::assign( e, *o)) {
+	TRACEN("test edge " << e->source()->point() << "->" << e->twin()->source()->point());
         if (is.does_contain_internally(Segment_3(e->source()->point(),e->twin()->source()->point()), p) ) {
           _TRACEN("found on edge "<<Segment_3(e->source()->point(),e->twin()->source()->point()));
           return Object_handle(e);
         }
       } else if( CGAL::assign( f, *o)) {
+	TRACEN("test facet " << f->plane());
         if ( is.does_contain_internally( f, p) ) {
           _TRACEN("found on facet...");
           return Object_handle(f);
@@ -472,7 +477,7 @@ public:
     CGAL_assertion_msg(false, "wrong handle type");
     return Object_handle();
   }
-#endif
+  }
 
   virtual void intersect_with_edges_and_facets( Halfedge_const_handle e0,
 	const typename SNC_point_locator::Intersection_call_back& call_back) const {
