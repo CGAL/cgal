@@ -125,15 +125,11 @@ that we could not work around all of them.
     \textbf{compiler}        & \textbf{operating system}\\\hline\hline
     \mipsprocc\ 7.3 (n32) \footnotemark[7] 
     & IRIX 6.5\\\hline
-    \kcc{4} \footnotemark[8]                 
-    & Solaris 2.6+\\\hline
-    \Gcc{2.95 and 3.0} \footnotemark[9]            
+    \Gcc{2.95, 3.0, 3.1, 3.2} \footnotemark[9]            
     & IRIX 6.5 / Solaris 2.6+ / Linux 2.x / 
       \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
     \sunprocc{5.3} \footnotemark[11]                 
     & Solaris 2.6+\\\hline
-    \msvc{6.0} \footnotemark[12]           
-    & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
     \msvc{7.0} (\textsc{.NET}) \footnotemark[12]           
     & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
     \bcc{5.5} \footnotemark[13]                          
@@ -586,7 +582,8 @@ compiler or linker flags.\bigskip
 \vspace{2pt}
 \begin{description}
 \item[$<$C$>$] Choose the compiler to be used from the list of
-  detected compilers.\index{compilers!choosing}
+  detected compilers.  You can also register other compilers, if they
+  have not been detected automatically.\index{compilers!choosing}
 \item[$<$F$>$] Set custom compiler flags. These are the first flags
   given to the compiler in every call. Under normal circumstances
   there should be no need to set any such
@@ -1038,6 +1035,13 @@ in your previous \cgal\ installation with
 If you want to install \cgal\ for more than one operating system in
 the same directory structure, you have to run the latter command
 (\texttt{rebuild-all}) once on each operating system.
+
+Using \texttt{--build-all} instead of \texttt{--rebuild-all} will save
+you the time of the configuration tests, and will only rebuild the libraries.
+
+If you want to install only one configuration on a given operating system,
+you can specify its name (the base name of a file in \cgalinstconfdir) with
+the option \texttt{--rebuild <config>} or \texttt{--build <config>}.
 
 \textbf{Note} that some compilers that have been supported in previous
 \cgal\ releases might not be supported in \cgal-\cgalrelease\ anymore,

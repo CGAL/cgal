@@ -33,7 +33,7 @@
 CGAL_DIR=/packages/CGAL                   # enter full pathname
 
 # COMPILER
-CGAL_CC=/bin/CC                           # full pathname to compiler
+CGAL_CXX=/bin/CC                           # full pathname to compiler
 
 # COMPANION LIBRARIES
 
@@ -59,7 +59,7 @@ GMP_LIB_DIR=$(GMP_DIR)
 #-----------------------------------------------------------------------#
 #                         CLN                                           #
 #-----------------------------------------------------------------------#
-# Remove the gmp entries from the install command if you don't use CLN.
+# Remove the cln entries from the install command if you don't use CLN.
 CLN_DIR=/packages/cln
 CLN_INCL_DIR=$(CLN_DIR)
 CLN_LIB_DIR=$(CLN_DIR)
@@ -79,7 +79,7 @@ install:
 	     -cln  --CLN_INCL_DIR $(CLN_INCL_DIR) \
 	           --CLN_LIB_DIR $(CLN_LIB_DIR) \
 	           --STL_DIR $(STL_DIR) \
-	     -ni $(CGAL_CC)
+	     -ni $(CGAL_CXX)
 
 cgal_lib:
 	cd src ; make -f makefile_lib

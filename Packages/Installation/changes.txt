@@ -7,6 +7,9 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: New options --build <config> and --rebuild <config>.
+GLOB: Update list of supported compilers.
+GLOB: New interactive option "Register new compiler".
 GLOB: patched to support the FreeBSD printf
 GLOB: VC7 is supported, VC6 is not anymore.
 GLOB: Fix typo.

@@ -125,6 +125,10 @@ SUPPORT_MIPSPRO_64='y'
 UPGRADE_FROM=''
 
 # ---------------------------------------------
+# the config name we want to [re]build one
+BUILD_ONE_CONFIG=''
+
+# ---------------------------------------------
 # LEDA specific:
 
 # suffix for include makefile:
@@ -311,6 +315,7 @@ print_usage_information()
 "usage: ${CGAL_INSTALL_CGAL}
       [--help | --version | -i | --interactive | -u <dir> | 
        --upgrade <dir> | --build-all | --rebuild-all |
+       --build <config> | --rebuild <config> |
        -ni <comp> | --non-interactive <comp> | -os <comp>]
       [-leda] [-gmp] [-gmpxx] [-cln] [-qt] [--verbose]
       [--CGAL_DIR <dir>] [--leda-sys-incl] [--leda-sys-lib]
@@ -321,9 +326,9 @@ print_usage_information()
       [--QT_LIB_DIR <dir>] [--QT_MOC <exe>]
       [--CUSTOM_CXXFLAGS <flags>] [--CUSTOM_LDFLAGS <flags>]
 
-  -leda        enables LEDA support
-  -gmp         enables support for GNU GMP
-  -gmpxx       enables support for GNU GMP built-in C++ interface
+  -leda        enables support for LEDA
+  -gmp         enables support for GMP
+  -gmpxx       enables support for GMP built-in C++ interface
   -cln         enables support for CLN
   -qt          enables support for Qt
   --verbose    give report for each test that fails
@@ -347,6 +352,13 @@ print_usage_information()
 	       (Re)build compiler configuration files and libraries
 	       for all compilers for which a config/install file
 	       exists.
+  --build <config>
+	       Build libraries for the compiler specified by its
+               configuration file config/install/<config>.
+  --rebuild <config>
+	       (Re)build the compiler configuration file and libraries
+	       for the compiler specified by its configuration file
+               config/install/<config>.
   --non-interactive <comp>   
                runs the script in non-interactive mode
                i.e. makefiles are generated for C++ compiler
@@ -4085,39 +4097,36 @@ _choose_compiler()
 # empty (unsupported) or 'y' (supported).
 _set_support()
 {
+    CGAL_SUPPORT_COMPILER=''
     case `compiler_description` in
 	*Borland*)
 	    case `compiler_version` in
 		5.5*) CGAL_SUPPORT_COMPILER='y';;
-		*) CGAL_SUPPORT_COMPILER='';;
 	    esac
 	    ;;
-	*KAI*)
+	*SUNPRO*)
 	    case `compiler_version` in
-		4.*) CGAL_SUPPORT_COMPILER='y';;
+		5.3*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
-	*SUNPRO*) CGAL_SUPPORT_COMPILER='';;
 	*MIPSPRO*n32*) 
 	    case `compiler_version` in
 		7.3*) CGAL_SUPPORT_COMPILER='y';;
-		*) CGAL_SUPPORT_COMPILER='';;
 	    esac
 	    ;;
 	*GNU*)
 	    case `compiler_version` in
-		3.0*) CGAL_SUPPORT_COMPILER='y';;
 		2.95*) CGAL_SUPPORT_COMPILER='y';;
-		*) CGAL_SUPPORT_COMPILER='';;
+		3.0*) CGAL_SUPPORT_COMPILER='y';;
+		3.1*) CGAL_SUPPORT_COMPILER='y';;
+		3.2*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
 	*VC++*)
 	    case `compiler_version` in
 		1300*) CGAL_SUPPORT_COMPILER='y';;
-		*) CGAL_SUPPORT_COMPILER='';;
 	    esac
 	    ;;
-	*) CGAL_SUPPORT_COMPILER='';;
     esac
 }
 
@@ -4273,6 +4282,7 @@ compiler_choose_menu()
 	    eval "${_EXPR} ${i} + 1"
 	    i=${_result}
 	done
+	print_line "${_bold_on}<R>${_bold_off}  Register new compiler"
 	menu_tailer 'Compiler Menu'
 
 	case ${KEY} in
@@ -4286,6 +4296,31 @@ compiler_choose_menu()
 		    fi
 		    return
 		fi
+		;;
+	    r|R)
+		change_value COMPILER_NAME
+		# Reject if it's the name of an already registered compiler
+		i=1
+		while [ $i -lt ${_COMPILER_NUMBER} ]; do
+		    _tmp=`eval "echo '$'_COMPILER_$i"`
+		    _tmp=`eval "echo ${_tmp}"`
+		    if [ "${COMPILER_NAME}" == `compiler_bin ${_tmp}` ]; then
+			return
+		    fi
+	    	    eval "${_EXPR} ${i} + 1"
+	    	    i=${_result}
+		done
+		# Reject if it doesn't pass this test
+		if ! get_compiler_description ${COMPILER_NAME}; then
+		    return
+		fi
+		COMPILER="`basename ${COMPILER_NAME}`@`compiler_basename \"${_tmp3}\"`@${COMPILER_NAME}@${COMPILER_NAME}@`compiler_description \"${_tmp3}\"`@"
+		_check_and_register_compiler "${COMPILER}"
+		reset_all_test_variables
+		_choose_compiler
+		_set_support
+		SETUP_COMPLETE=''
+		return
 		;;
 	    q|Q|b|B)
 		return
@@ -5959,6 +5994,58 @@ lib_menu()
 
 
 # ---------------------------------------------------------------------
+# $1 is the full name of a config file in config/install/*
+# (re)build one function
+#
+_build_one()
+{
+    INSTALL_LOGFILE_REDIRECTION="|print_with_indent | ${_tee} -a ${INSTALL_LOGFILE}"
+    log_print
+    log_print \
+	    "--------------------------------------------------------"
+    log_print "Build on `${_basename} $1`:" 
+    log_print \
+	    "--------------------------------------------------------"
+    INSTALL_LOGFILE_REDIRECTION=">>${INSTALL_LOGFILE}"
+    try_to_get_var_from_file COMPILER $1
+    if [ -n "${COMPILER}" ]; then
+        set_ostype
+        set_compiler_flags
+        retrieve_compiler_settings
+        case ${_WHAT_TO_DO} in
+	    *rebuild*)
+	        test_compiler_specifica "${INSTALL_VERBOSE}";;
+        esac
+        lib_menu
+        store_compiler_settings
+    else
+        log_print "Cannot rebuild the library."
+        print_filled_line
+        print_empty_line
+        print_headline "Cannot build on `${_basename} $1` !" 
+        print_headline "No COMPILER defined in config/install/..."
+        print_filled_line
+        write_buffer "\n"
+        flush_buffer
+    fi
+}
+
+
+# ---------------------------------------------------------------------
+# (re)build one function
+#
+build_one()
+{
+    guess_os log_print
+    case ${SYST} in
+	*CYGWIN*) _check_for_sysutil cygpath y;;
+    esac
+    ${_printf} "\n\n"
+    _build_one config/install/${BUILD_ONE_CONFIG}
+}
+
+
+# ---------------------------------------------------------------------
 # (re)build all function
 #
 build_all()
@@ -5970,35 +6057,7 @@ build_all()
     ${_printf} "\n\n"
     for i in `${_ls} ${CGAL_INSTALL_CONF_DIR}/${SYST}* 2>/dev/null`
     do
-	INSTALL_LOGFILE_REDIRECTION="|print_with_indent | ${_tee} -a ${INSTALL_LOGFILE}"
-	log_print
-	log_print \
-	    "--------------------------------------------------------"
-	log_print "Build on `${_basename} ${i}`:" 
-	log_print \
-	    "--------------------------------------------------------"
-	INSTALL_LOGFILE_REDIRECTION=">>${INSTALL_LOGFILE}"
-	try_to_get_var_from_file COMPILER ${i}
-	if [ -n "${COMPILER}" ]; then
-	    set_ostype
-	    set_compiler_flags
-	    retrieve_compiler_settings
-	    case ${_WHAT_TO_DO} in
-		*rebuild-all*)
-		    test_compiler_specifica "${INSTALL_VERBOSE}";;
-	    esac
-	    lib_menu
-	    store_compiler_settings
-	else
-	    log_print "Cannot rebuild the library."
-	    print_filled_line
-	    print_empty_line
-	    print_headline "Cannot build on `${_basename} ${i}` !" 
-	    print_headline "No COMPILER defined in config/install/..."
-	    print_filled_line
-	    write_buffer "\n"
-	    flush_buffer
-	fi
+        _build_one $i
     done
 }
 
@@ -6527,6 +6586,22 @@ while [ ${#} -gt 0 ]; do
 	    fi
 	    _WHAT_TO_DO='build-all'
 	    ;;
+	--rebuild*|-r*|-R*|-rb*|-RB*)
+	    if [ -n "${_WHAT_TO_DO}" ]; then
+		_CONFLICT='y'
+	    fi
+	    _WHAT_TO_DO='rebuild'
+            BUILD_ONE_CONFIG=$2
+            shift
+	    ;;
+	--build*|-b*|-B*)
+	    if [ -n "${_WHAT_TO_DO}" ]; then
+		_CONFLICT='y'
+	    fi
+	    _WHAT_TO_DO='build'
+            BUILD_ONE_CONFIG=$2
+            shift
+	    ;;
 	*) 
 	    _WHAT_TO_DO='help'
 	    ;;
@@ -6657,6 +6732,13 @@ case ${_WHAT_TO_DO} in
 	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
 	startup_interactive
 	build_all
+	finish_interactive
+	;;
+    *build*)
+	cgal_install_header
+	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
+	startup_interactive
+	build_one
 	finish_interactive
 	;;
     *help*)
