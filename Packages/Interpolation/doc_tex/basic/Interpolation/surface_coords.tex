@@ -39,16 +39,6 @@ well known and for example provided by \cgal\ in the class
 \subsection{Implementation}
 \subsubsection{Voronoi intersection diagrams}
 
-%We say that $\mathcal{H}$ is in {\em general position} if the
-%intersection of an edge (resp.\ a face) of the power diagram with
-%$\mathcal{H}$ is either empty or it is a vertex (resp.\ an edge), and
-%if $\mathcal{H}$ does not contain any vertex of the power diagram.
-%Notice, that a small perturbation of $\mathcal{H}$ always removes a
-%degenerate position.  Without loss of generality, we suppose the
-%general position of $\mathcal{H}$ in order to ensure that the general
-%position assumption for the resulting $k$-dimensional power diagram is
-%satisfied.
-
 In \cgal, the regular triangulation dual to the intersection of a $3D$
 Voronoi diagram with a plane $\mathcal{H}$ can be computed by
 instantiating the \ccc{Regular_triangulation_2<Gt, Tds>} class with
