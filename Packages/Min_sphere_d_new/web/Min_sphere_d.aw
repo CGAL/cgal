@@ -108,7 +108,7 @@
 
 \newlength{\defaultparskip}
 \setlength{\defaultparskip}{\parskip}
-\setlength{\parskip}{.7ex}
+\setlength{\parskip}{.6ex}
 
 \tableofcontents
 
@@ -844,6 +844,7 @@ traits class object.
             os << "  squared radius = "
                << min_sphere.squared_radius_numerator() << " / "
                << min_sphere.squared_radius_denominator() << endl;
+            os << ")" << endl;
             break;
 
           case CGAL::IO::ASCII:
@@ -1221,8 +1222,7 @@ Section~\ref{ccRef_CGAL::Min_sphere_d_traits_2<R,ET,NT>}.3.
         typedef  Access_coordinates_begin_2<R>
                                             Access_coordinates_begin_d;
 
-        typedef  typename R::Construct_point_2
-                                            Construct_point_d;
+        typedef  Construct_point_2<R>       Construct_point_d;
 
         // creation
         Min_sphere_d_traits_2( ) { }
@@ -1289,8 +1289,7 @@ Section~\ref{ccRef_CGAL::Min_sphere_d_traits_3<R,ET,NT>}.4.
         typedef  Access_coordinates_begin_3<R>
                                             Access_coordinates_begin_d;
 
-        typedef  typename R::Construct_point_3
-                                            Construct_point_d;
+        typedef  Construct_point_3<R>       Construct_point_d;
 
         // creation
         Min_sphere_d_traits_3( ) { }
@@ -1386,6 +1385,20 @@ Section~\ref{ccRef_CGAL::Min_sphere_d_traits_d<R,ET,NT>}.5.
 \clearpage
 \section{Test Programs} \label{sec:test_programs}
 
+We provide three programs for testing in two-, three- and
+$d$-dimensional space, namely \ccc{test_Min_sphere_d_2},
+\ccc{test_Min_sphere_d_3}, and \ccc{test_Min_sphere_d_d}.  Verbose
+output can be enabled by giving a number between 0 and 3 at the
+command line.
+  
+@macro <Min_sphere_d test: command line argument> many = @begin
+    int verbose = -1;
+    if ( argc > 1) verbose = atoi( argv[ 1]);
+    CGAL::Verbose_ostream  verr ( verbose >= 0);
+    CGAL::Verbose_ostream  verr0( verbose == 0);
+    CGAL::Verbose_ostream  verrX( verbose >  0);
+@end
+
 @! ----------------------------------------------------------------------------
 @! Code Coverage
 @! ----------------------------------------------------------------------------
@@ -1415,9 +1428,9 @@ error stream.
         typedef  CGAL::Min_sphere_d< Traits >  Min_sphere;
         typedef  typename Traits::Point_d      Point;
 
-        CGAL::Verbose_ostream verr ( verbose >= 0);
-        CGAL::Verbose_ostream verr0( verbose == 0);
-        CGAL::Verbose_ostream verrX( verbose >  0);
+        CGAL::Verbose_ostream  verr ( verbose >= 0);
+        CGAL::Verbose_ostream  verr0( verbose == 0);
+        CGAL::Verbose_ostream  verrX( verbose >  0);
         CGAL::set_pretty_mode( verr.out());
 
         bool  is_valid_verbose = ( verbose > 0);
@@ -1431,6 +1444,7 @@ error stream.
 
         COVER( "point set constructor",
             Min_sphere  ms( first, last, traits, verbose, verr.out());
+            verrX << endl;
             assert( ms.is_valid( is_valid_verbose));
         )
 
@@ -1465,15 +1479,17 @@ error stream.
         )
 
         COVER( "center and squared radius",
-            verrX << "center:";
+            verrX << "center (as range):";
             typename Min_sphere::Coordinate_iterator  coord_it;
             for ( coord_it  = min_sphere.center_coordinates_begin();
                   coord_it != min_sphere.center_coordinates_end();
                   ++coord_it) {
                 verrX << ' ' << *coord_it;
             }
-            verrX << endl << "squared radius: "
-                  << min_sphere.squared_radius_numerator()   << " / "
+            verrX << endl;
+            verrX << "squared radius numerator  : "
+                  << min_sphere.squared_radius_numerator()   << endl;
+            verrX << "squared radius denominator: "
                   << min_sphere.squared_radius_denominator() << endl;
         )
 
@@ -1546,7 +1562,7 @@ Cartesian representation, we use \cgal's Cartesian kernel for testing.
 Some of the following macros are parameterized with the dimension,
 e.g.~with $2$, $3$, or $d$.
 
-@macro <Min_sphere_d test: includes and typedefs>(1) many += @begin
+@macro <Min_sphere_d test: includes>(1) many += @begin
     #include <CGAL/Cartesian.h>
     #include <CGAL/Point_@1.h>
     #include <CGAL/Min_sphere_d_new.h>
@@ -1556,8 +1572,7 @@ e.g.~with $2$, $3$, or $d$.
 We use the number type \ccc{leda_integer} from \leda{} for the first
 variant.
 
-@macro <Min_sphere_d test: includes and typedefs> += @begin
-
+@macro <Min_sphere_d test: typedefs>(2) many += @begin
     // test variant 1 (needs LEDA)
     #ifdef CGAL_USE_LEDA
     # include <CGAL/leda_integer.h>
@@ -1575,7 +1590,7 @@ type used by the underlying quadratic programming solver is
 \textsc{Gmp}'s integers. To speed up the pricing, we use \ccc{double}
 arithmetic.
 
-@macro <Min_sphere_d test: includes and typedefs> += @begin
+@macro <Min_sphere_d test: typedefs> += @begin
 
     // test variant 2 (needs GMP)
     #ifdef CGAL_USE_GMP
@@ -1592,13 +1607,14 @@ coordinates. In $2$- and $3$-space we use \cgal's point generators to build
 the test sets with points lying almost (due to rounding errors) on a circle
 or sphere, respectively.
 
-@macro <Min_sphere_d test: includes and typedefs> += @begin
-
+@macro <Min_sphere_d test: includes> += @begin
+    
     #include <CGAL/Random.h>
     #include <vector>
 @end
 
-@macro <Min_sphere_d test: includes and typedefs (2/3D)>(1) many = @begin
+@macro <Min_sphere_d test: includes (2/3D)>(1) many = @begin
+    
     #include <CGAL/point_generators_@1.h>
     #include <CGAL/copy_n.h>
     #include <iterator>
@@ -1633,13 +1649,12 @@ in a $d$-cube.
 
 Finally we call the test function (described in the last section).
 
-@macro <Min_sphere_d test: includes and typedefs> += @begin
+@macro <Min_sphere_d test: includes> += @begin
 
     #include "test_Min_sphere_d.h"
 @end
 
 @macro <Min_sphere_d test: call test function>(1) many = @begin
-    // call test function
     CGAL::test_Min_sphere_d( points_@1.begin(), points_@1.end(),
                              Traits_@1(), verbose);
 @end
@@ -1649,6 +1664,8 @@ respective number type is available.
 
 @macro <Min_sphere_d test: test variant output>(1) many = @begin
     verr << endl
+         << "==================================="
+         << "===================================" << endl
          << "Testing `Min_sphere_d' with traits class model" << endl
          << "==> " << TEST_VARIANT_@1 << endl
          << "==================================="
@@ -1657,10 +1674,7 @@ respective number type is available.
 @end
 
 @macro <Min_sphere_d test: test variant>(3) many = @begin
-    // test variant @1
-    // --------------
     #ifdef TEST_VARIANT_@1
-
         @<Min_sphere_d test: test variant output>(@1)
 
         // generate point set
@@ -1668,13 +1682,10 @@ respective number type is available.
 
         // call test function
         @<Min_sphere_d test: call test function>(@1)
-
     #endif
 @end
 
 @macro <Min_sphere_d test: test variant (dD)>(1) many = @begin
-    // test variant @1
-    // --------------
     #ifdef TEST_VARIANT_@1
 
         @<Min_sphere_d test: test variant output>(@1)
@@ -1688,39 +1699,213 @@ respective number type is available.
     #endif
 @end
 
-The complete bodies of the test programs look as follows. Verbose output
-can be enabled by giving a number between 0 and 3 at the command line.
+@! ----------------------------------------------------------------------------
+@! Other Implementations
+@! ----------------------------------------------------------------------------
 
-@macro <Min_sphere_d test: command line argument> many = @begin
-    int verbose = -1;
-    if ( argc > 1) verbose = atoi( argv[ 1]);
-    CGAL::Verbose_ostream  verr( verbose >= 0);
+\subsection{Other Implementations}
+
+As an additional correctness check, we compare the results of our
+implementation to those of other implementations available in \cgal. In 2D,
+we use the class template \ccc{Min_circle_2<Traits>} parameterized with the
+traits class model \ccc{Min_circle_2_traits_2<R>}.
+
+@macro <Min_sphere_d test: includes (2D)> = @begin
+    #include <CGAL/Min_circle_2.h>
+    #include <CGAL/Min_circle_2_traits_2.h>
 @end
 
-@macro <Min_sphere_d test: main>(2) many = @begin
-    CGAL_USING_NAMESPACE_STD
-    
-    @<Min_sphere_d test: command line argument>
-    
-    @<Min_sphere_d test: test variant>(1,@1,@2)
+In 3D and dD, we use the ``other'' class template
+\ccc{Min_sphere_d<Traits>} parameterized with its traits class models
+\ccc{Min_sphere_d_traits_3<R>} and \ccc{Min_sphere_d_traits_d<R>},
+respectively. To avoid name conflicts, we ``define'' the prefix
+\ccc{OTHER_}.
 
-    @<Min_sphere_d test: test variant>(2,@1,@2)
-
-    return 0;
+@macro <Min_sphere_d test: includes (3/dD)>(2) many = @begin
+    #define  Min_sphere_d           OTHER_Min_sphere_d
+    #define  Min_sphere_d_traits_@1  OTHER_Min_sphere_d_traits_@1
+    #undef  CGAL_MIN_SPHERE_D_H
+    #undef  CGAL_MIN_SPHERE_D_TRAITS_@2_H
+    #undef  CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+    #define CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+    #include <CGAL/Min_sphere_d.h>
+    #include <CGAL/Min_sphere_d_traits_@1.h>
+    #undef  Min_sphere_d
+    #undef  Min_sphere_d_traits_@1
 @end
 
-@macro <Min_sphere_d test: main (dD)> = @begin
-    CGAL_USING_NAMESPACE_STD
-    
-    @<Min_sphere_d test: command line argument>
-    
-    @<Min_sphere_d test: test variant (dD)>(1)
+The traits class models of the other algorithms use the representation class
+model \ccc{Cartesian<leda_rational>}.
 
-    @<Min_sphere_d test: test variant (dD)>(2)
-
-    return 0;
+@macro <Min_sphere_d test: typedefs> += @begin
+    
+    // comparing (needs LEDA)
+    #ifdef CGAL_USE_LEDA
+    # include <CGAL/leda_rational.h>
+      typedef  CGAL::Cartesian<leda_rational>                R_3;
+      typedef  CGAL::Min_sphere_d<Traits_1>                  Min_sphere_d;
+      typedef  CGAL::@2<
+                   CGAL::@2_traits_@1<R_3> >  O_Min_sphere_d;
+      CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_rational)
+    #endif
 @end
 
+In order to reuse the points from the first test variant (see above), we
+have to convert them to points with coordinate type \ccc{leda_rational}.
+
+@macro <Min_sphere_d test: convert point set (2D)> = @begin
+    std::vector<R_3::Point_2>  points_3;
+    points_3.reserve( points_1.size());
+    {
+        unsigned int i;
+        for ( i = 0; i < points_1.size(); ++i) {
+            points_3.push_back( R_3::Point_2( points_1[ i][ 0],
+                                              points_1[ i][ 1]));
+        }
+    }
+@end
+
+@macro <Min_sphere_d test: convert point set (3D)> = @begin
+    std::vector<R_3::Point_3>  points_3;
+    points_3.reserve( points_1.size());
+    {
+        // use only 10 points!
+        if ( points_1.size() > 10) {
+            points_1.erase( points_1.begin()+10, points_1.end());
+        }
+        unsigned int i;
+        for ( i = 0; i < points_1.size(); ++i) {
+            points_3.push_back( R_3::Point_3( points_1[ i][ 0],
+                                              points_1[ i][ 1],
+                                              points_1[ i][ 2]));
+        }
+    }
+@end
+
+@macro <Min_sphere_d test: convert point set (dD)> = @begin
+    std::vector<R_3::Point_d>  points_3;
+    points_3.reserve( points_1.size());
+    {
+        // use only 10 points!
+        if ( points_1.size() > 10) {
+            points_1.erase( points_1.begin()+10, points_1.end());
+        }
+        int          d = points_1[ 0].dimension();
+        unsigned int i;
+        for ( i = 0; i < points_1.size(); ++i) {
+            points_3.push_back( R_3::Point_d( d, points_1[ i].begin(),
+                                                 points_1[ i].end()));
+        }
+    }
+@end
+
+Both algorithms to compare compute the smallest enclosing sphere and are
+checked for validity.
+
+@macro <Min_sphere_d test: compute smallest enclosing spheres> many = @begin
+    Min_sphere_d  ms( points_1.begin(), points_1.end(),
+                      Traits_1(), verbose);
+    verrX << endl << ms << endl;
+    assert( ms.is_valid( verbose > 0));
+        
+    O_Min_sphere_d  o_ms( points_3.begin(), points_3.end());
+    verrX << endl << o_ms << endl;
+    assert( o_ms.is_valid( verbose > 0));
+    verrX << endl;
+@end
+
+Finally we check whether center and squared radius are the same.
+
+@macro <Min_sphere_d test: check center and squared radius>(1) many = @begin
+    COVER( "center",
+        O_Min_sphere_d::Point  o_ms_center = o_ms@1.center();
+    
+        verrX << "center (as point): " << ms.center()
+              << "  [NOTE: coordinates are truncated!]" << endl;
+        
+        leda_integer  den = *(ms.center_coordinates_end()-1);
+        int           d   = points_1[ 0].dimension();
+        for ( int j = 0; j < d; ++j) {
+            assert( leda_rational( ms.center_coordinates_begin()[ j], den)
+                    == o_ms_center[ j]);
+        }
+        verrX << "centers are equal." << endl;
+    );
+        
+    COVER( "squared radius",
+        verrX << "squared radius: " << ms.squared_radius()
+              << "  [NOTE: value is truncated!]" << endl;
+        
+        assert( leda_rational( ms.squared_radius_numerator(),
+                               ms.squared_radius_denominator())
+                == o_ms@1.squared_radius());
+        verrX << "squared radii are equal." << endl;
+    );
+@end
+
+\ldots
+
+@macro <Min_sphere_d test: additional test output>(1) many = @begin
+    verr << endl
+         << "==================================="
+         << "===================================" << endl
+         << "Comparing `Min_sphere_d' with `@1'" << endl
+         << "==================================="
+         << "===================================" << endl
+         << endl;
+@end
+
+@macro <Min_sphere_d test: additional test (2D)> = @begin
+    #ifdef CGAL_USE_LEDA
+
+        @<Min_sphere_d test: additional test output>(Min_circle_2)
+
+        // convert point set
+        @<Min_sphere_d test: convert point set (2D)>
+
+        // compute smallest enclosing spheres
+        @<Min_sphere_d test: compute smallest enclosing spheres>
+
+        // check center and squared radius
+        @<Min_sphere_d test: check center and squared radius>(".circle()")
+
+    #endif
+@end
+    
+@macro <Min_sphere_d test: additional test (3D)> = @begin
+    #ifdef CGAL_USE_LEDA
+
+        @<Min_sphere_d test: additional test output>(OTHER_Min_sphere_d)
+
+        // convert point set
+        @<Min_sphere_d test: convert point set (3D)>
+
+        // compute smallest enclosing spheres
+        @<Min_sphere_d test: compute smallest enclosing spheres>
+
+        // check center and squared radius
+        @<Min_sphere_d test: check center and squared radius>("")
+
+    #endif
+@end
+    
+@macro <Min_sphere_d test: additional test (dD)> = @begin
+    #ifdef CGAL_USE_LEDA
+
+        @<Min_sphere_d test: additional test output>(OTHER_Min_sphere_d)
+
+        // convert point set
+        @<Min_sphere_d test: convert point set (dD)>
+
+        // compute smallest enclosing spheres
+        @<Min_sphere_d test: compute smallest enclosing spheres>
+
+        // check center and squared radius
+        @<Min_sphere_d test: check center and squared radius>("")
+
+    #endif
+@end
+    
 @! ============================================================================
 @! Files
 @! ============================================================================
@@ -1811,6 +1996,9 @@ can be enabled by giving a number between 0 and 3 at the command line.
     #ifndef CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_2_H
     #  include <CGAL/Optimisation/Access_coordinates_begin_2.h>
     #endif
+    #ifndef CGAL_OPTIMISATION_CONSTRUCT_POINT_2_H
+    #  include <CGAL/Optimisation/Construct_point_2.h>
+    #endif
 
     @<namespace begin>("CGAL")
 
@@ -1849,6 +2037,9 @@ can be enabled by giving a number between 0 and 3 at the command line.
     #endif
     #ifndef CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_3_H
     #  include <CGAL/Optimisation/Access_coordinates_begin_3.h>
+    #endif
+    #ifndef CGAL_OPTIMISATION_CONSTRUCT_POINT_3_H
+    #  include <CGAL/Optimisation/Construct_point_3.h>
     #endif
 
     @<namespace begin>("CGAL")
@@ -1952,17 +2143,37 @@ can be enabled by giving a number between 0 and 3 at the command line.
         "test/Min_sphere_d_new/test_Min_sphere_d_2.C",
         "test program for smallest enclosing sphere (2D traits class)")
 
-    // includes and typedefs
-    // ---------------------
-    @<Min_sphere_d test: includes and typedefs>(2)
-    @<Min_sphere_d test: includes and typedefs (2/3D)>(2)
-
+    // includes
+    // --------
+    @<Min_sphere_d test: includes>(2)
+    @<Min_sphere_d test: includes (2D)>
+    @<Min_sphere_d test: includes (2/3D)>(2)
+    
+    // typedefs
+    // --------
+    @<Min_sphere_d test: typedefs>(2,Min_circle_2)
+    
     // main
     // ----
     int
     main( int argc, char* argv[])
     {
-        @<Min_sphere_d test: main>(2,circle)
+        CGAL_USING_NAMESPACE_STD
+
+        // command line arguments
+        @<Min_sphere_d test: command line argument>
+
+        // code coverage
+        // -------------
+        @<Min_sphere_d test: test variant>(1,2,circle)
+
+        @<Min_sphere_d test: test variant>(2,2,circle)
+
+        // additional tests
+        // ----------------
+        @<Min_sphere_d test: additional test (2D)>
+
+        return 0;
     }
 
     @<end of file line>
@@ -1979,17 +2190,37 @@ can be enabled by giving a number between 0 and 3 at the command line.
         "test/Min_sphere_d_new/test_Min_sphere_d_3.C",
         "test program for smallest enclosing sphere (3D traits class)")
 
-    // includes and typedefs
-    // ---------------------
-    @<Min_sphere_d test: includes and typedefs>(3)
-    @<Min_sphere_d test: includes and typedefs (2/3D)>(3)
+    // includes
+    // --------
+    @<Min_sphere_d test: includes>(3)
+    @<Min_sphere_d test: includes (3/dD)>(3,3)
+    @<Min_sphere_d test: includes (2/3D)>(3)
+
+    // typedefs
+    // --------
+    @<Min_sphere_d test: typedefs>(3,OTHER_Min_sphere_d)
 
     // main
     // ----
     int
     main( int argc, char* argv[])
     {
-        @<Min_sphere_d test: main>(3,sphere)
+        CGAL_USING_NAMESPACE_STD
+    
+        // command line arguments
+        @<Min_sphere_d test: command line argument>
+    
+        // code coverage
+        // -------------
+        @<Min_sphere_d test: test variant>(1,3,sphere)
+
+        @<Min_sphere_d test: test variant>(2,3,sphere)
+
+        // additional tests
+        // ----------------
+        @<Min_sphere_d test: additional test (3D)>
+
+        return 0;
     }
 
     @<end of file line>
@@ -2004,18 +2235,39 @@ can be enabled by giving a number between 0 and 3 at the command line.
 @file <test/Min_sphere_d_new/test_Min_sphere_d_d.C> = @begin
     @<file header>(
         "test/Min_sphere_d_new/test_Min_sphere_d_d.C",
-        "test program for smallest enclosing sphere (dD traits class")
+        "test program for smallest enclosing sphere (dD traits class)")
 
-    // includes and typedefs
-    // ---------------------
-    @<Min_sphere_d test: includes and typedefs>(d)
+    // includes
+    // --------
+    @<Min_sphere_d test: includes>(d)
+    @<Min_sphere_d test: includes (3/dD)>(d,D)
+
+    // typedefs
+    // --------
+    @<Min_sphere_d test: typedefs>(d,OTHER_Min_sphere_d)
 
     // main
     // ----
     int
     main( int argc, char* argv[])
     {
-        @<Min_sphere_d test: main (dD)>
+        CGAL_USING_NAMESPACE_STD
+
+        // command line arguments
+        @<Min_sphere_d test: command line argument>
+
+        // code coverage
+        // -------------
+        @<Min_sphere_d test: test variant (dD)>(1)
+
+        @<Min_sphere_d test: test variant (dD)>(2)
+
+        // additional tests
+        // ----------------
+        @<Min_sphere_d test: additional test (dD)>
+
+
+        return 0;
     }
 
     @<end of file line>
