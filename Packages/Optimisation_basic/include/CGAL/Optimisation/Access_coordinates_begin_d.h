@@ -24,11 +24,11 @@
 #ifndef CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_D_H
 #define CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_D_H
 
-// includes
-#  include <CGAL/Kernel_d/Interface_classes.h>
-#  include <CGAL/Kernel_d/Point_d.h>
 
 CGAL_BEGIN_NAMESPACE
+
+struct Cartesian_tag;
+struct Homogeneous_tag;
 
 // Class declaration
 // =================
@@ -59,11 +59,11 @@ class Access_coordinates_begin_d {
     // operations
 private:
     Coordinate_iterator
-    access( const Point& p, Cartesian_tag) const 
+    access( const Point& p, const Cartesian_tag&) const 
     { return p.cartesian_begin(); }
   
     Coordinate_iterator
-    access( const Point& p, Homogeneous_tag) const 
+    access( const Point& p, const Homogeneous_tag&) const 
     { return p.homogeneous_begin(); }
   
   
