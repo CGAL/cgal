@@ -49,7 +49,7 @@ class Triangulation_vertex_3
 {
 public:
   
-  typedef typename Gt::Point Point;
+  typedef typename Gt::Point_3 Point;
 
   typedef typename Tds::Vertex Vtds;
   typedef typename Tds::Cell Ctds;

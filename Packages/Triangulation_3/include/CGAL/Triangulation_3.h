@@ -96,7 +96,8 @@ class Triangulation_3
 
 public:
 
-  typedef typename GT::Point Point;
+  typedef typename GT::Point_3 Point_3;
+  typedef Point_3 Point;
   typedef typename GT::Segment Segment;
   typedef typename GT::Triangle Triangle;
   typedef typename GT::Tetrahedron Tetrahedron;
@@ -868,7 +869,7 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   typedef typename Triangulation::Cell Cell;
   typedef typename Triangulation::Edge Edge;
   typedef typename Triangulation::Facet Facet;
-  typedef typename GT::Point Point;
+  typedef typename GT::Point_3 Point;
   typedef typename Tds::Vertex TdsVertex;
   typedef typename Tds::Cell TdsCell;
 
@@ -1338,7 +1339,7 @@ triangle(const Cell_handle c, int i) const
     return Triangle(c->vertex(1)->point(),
 		    c->vertex(2)->point(),
 		    c->vertex(3)->point());
-    break;
+
   case 1:
     return Triangle(c->vertex(0)->point(),
 		    c->vertex(2)->point(),

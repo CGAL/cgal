@@ -38,7 +38,7 @@ class Triangulation_vertex_base_3
   (std::istream&, Triangulation_vertex_base_3<GT>&);
 
 public:
-  typedef typename GT::Point Point;
+  typedef typename GT::Point_3 Point;
   
   // CONSTRUCTORS
   
@@ -105,7 +105,7 @@ std::istream& operator >>
 (std::istream& is, Triangulation_vertex_base_3<GT> & v)
   // non combinatorial information. Default = point
 {
-  typedef typename GT::Point Point;
+  typedef typename GT::Point_3 Point;
   //  Point p;
   //  is >> p;
   is >> v._p;
@@ -137,7 +137,8 @@ class Triangulation_vertex_base_pointer_3
   (std::istream&, Triangulation_vertex_base_pointer_3<GT>&);
 
 public:
-  typedef typename GT::Point Point;
+  typedef typename GT::Point_3 Point;
+  //typedef Point Point_3;
   
   // CONSTRUCTORS
   
@@ -217,7 +218,7 @@ std::istream& operator >>
 (std::istream& is, Triangulation_vertex_base_pointer_3<GT> & v)
   // non combinatorial information. Default = point
 { 
-  typedef typename GT::Point Point;
+  typedef typename GT::Point_3 Point;
   Point q;
   is >> q;
   const Point * p = new Point(q);

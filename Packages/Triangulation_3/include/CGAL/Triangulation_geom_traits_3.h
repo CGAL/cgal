@@ -48,7 +48,7 @@ class Triangulation_geom_traits_3
 {
 public:
   typedef Repres Rep;
-  typedef Point_3<Repres>  Point;
+  typedef Point_3<Repres>  Point_3;
   typedef Point_2< Cartesian< typename Repres::FT> >  Point2;
   typedef Segment_3<Repres> Segment;
   typedef Triangle_3<Repres> Triangle;
@@ -66,41 +66,41 @@ public:
 
   // PREDICATES ON POINTS
 
-  bool equal(const Point & p, const Point & q) const
+  bool equal(const Point_3 & p, const Point_3 & q) const
   {
     return ( CGAL::compare_x(p, q)== EQUAL &&  
 	     CGAL::compare_y(p, q)== EQUAL &&
 	     CGAL::compare_z(p, q)== EQUAL );
   }
   
-  Comparison_result compare_x(const Point & p, const Point & q) const
+  Comparison_result compare_x(const Point_3 & p, const Point_3 & q) const
     {
       return CGAL::compare_x(p, q);
     }
 
 
-  Comparison_result compare_y(const Point & p, const Point & q) const
+  Comparison_result compare_y(const Point_3 & p, const Point_3 & q) const
     {
       return CGAL::compare_y(p, q);
     }
 
-  Comparison_result compare_z(const Point & p, const Point & q) const
+  Comparison_result compare_z(const Point_3 & p, const Point_3 & q) const
     {
       return CGAL::compare_z(p, q);
     }
 
-  Orientation orientation(const Point & p,
-			  const Point & q,
-			  const Point & r,
-			  const Point & s) const
+  Orientation orientation(const Point_3 & p,
+			  const Point_3 & q,
+			  const Point_3 & r,
+			  const Point_3 & s) const
   {
     return CGAL::orientation(p, q, r, s);
   }
 
-  Orientation orientation_in_plane(const Point & q,
-					const Point & r,
-					const Point & s,
-					const Point & p) const
+  Orientation orientation_in_plane(const Point_3 & q,
+					const Point_3 & r,
+					const Point_3 & s,
+					const Point_3 & p) const
     // p,q,r,s supposed to be coplanar
     // q,r,s supposed to be non collinear
     // tests whether p is on the same side of q,r as s
@@ -145,9 +145,9 @@ public:
     return Orientation ( CGAL::orientation(Q,R,S) * CGAL::orientation(Q,R,P) );
   }
 
-  bool collinear(const Point & p,
-		 const Point & q,
-		 const Point & r) const
+  bool collinear(const Point_3 & p,
+		 const Point_3 & q,
+		 const Point_3 & r) const
     {
       return CGAL::collinear(p,q,r);
     }
@@ -155,20 +155,20 @@ public:
   // DELAUNAY
 
   Oriented_side 
-  side_of_oriented_sphere(const Point & p,
-			  const Point & q,
-			  const Point & r,
-			  const Point & s,
-			  const Point & test) const
+  side_of_oriented_sphere(const Point_3 & p,
+			  const Point_3 & q,
+			  const Point_3 & r,
+			  const Point_3 & s,
+			  const Point_3 & test) const
     {
       return CGAL::side_of_oriented_sphere(p, q, r, s, test);
     }
 
   Oriented_side 
-  side_of_oriented_circle(const Point & p,
-			  const Point & q,
-			  const Point & r,
-			  const Point & test) const
+  side_of_oriented_circle(const Point_3 & p,
+			  const Point_3 & q,
+			  const Point_3 & r,
+			  const Point_3 & test) const
     {
       CGAL_triangulation_precondition( CGAL::orientation(p,q,r,test) ==
 				       COPLANAR );
@@ -177,9 +177,9 @@ public:
       // test belongs to the circle if and only if it belongs to a
       // sphere passing through pqr
       Orientation ori;
-      Point O(0,0,0), A(1,0,0), B(0,1,0), C(0,0,1);
+      Point_3 O(0,0,0), A(1,0,0), B(0,1,0), C(0,0,1);
 
-      Point P = ((ori = CGAL::orientation(p,q,r,O)) != ZERO) ? O:
+      Point_3 P = ((ori = CGAL::orientation(p,q,r,O)) != ZERO) ? O:
                 ((ori = CGAL::orientation(p,q,r,A)) != ZERO) ? A:
                 ((ori = CGAL::orientation(p,q,r,B)) != ZERO) ? B:
                 ((ori = CGAL::orientation(p,q,r,C)) != ZERO) ? C: C;

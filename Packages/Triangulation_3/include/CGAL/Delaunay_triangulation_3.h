@@ -43,7 +43,7 @@ class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
 
 public:
 
-  typedef typename Gt::Point Point;
+  typedef typename Gt::Point_3 Point;
   typedef typename Gt::Segment Segment;
   typedef typename Gt::Triangle Triangle;
   typedef typename Gt::Tetrahedron Tetrahedron;
@@ -432,7 +432,8 @@ fill_hole_3D( std::set<Facet> & boundhole,
 
   Bounded_side sos;
   Orientation ori;
-  bool opp_inf, sticked, created;
+  bool opp_inf, sticked; 
+  //bool created;
   int nbnew = 1; // to detect a loop in the execution due to an
   // impossible case 
 
@@ -724,7 +725,7 @@ fill_hole_3D( std::set<Facet> & boundhole,
 	
 	// here fit_stick does not violate any facet
 	// test whether it is visible from oppvert.begin()
-	created = false;
+	//created = false;
 	if ( ( ! (is_infinite(v[0]) ||
 		  is_infinite(v[1]) || 
 		  is_infinite(v[2])) )
@@ -751,7 +752,7 @@ fill_hole_3D( std::set<Facet> & boundhole,
 
 	    _tds.add_cell( &(*cnew) );
 	    (fit_stick).first->set_neighbor((fit_stick).second,cnew);
-	    created = true;
+	    //created = true;
 	    ((*oppvert.begin()))->set_cell(cnew);
 
 	    boundhole.erase( fit_stick );
