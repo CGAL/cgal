@@ -95,7 +95,9 @@ public:
   bool is_zero() const { return (_m==0 && _n==0); }
   int sign() const
   { if ( _m != 0 ) return CGAL_NTS sign(_m); 
-    return CGAL_NTS sign(_n); }
+    return CGAL_NTS sign(_n); 
+  }
+
 
   // only for visualization:
   static void set_R(const RT& R) { _R = R; }
@@ -107,9 +109,14 @@ protected:
 
 template <class RT> RT SPolynomial<RT>::_R;
 
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template <typename RT>
 int sign(const SPolynomial<RT>& p)
-{ return p.sign(); }
+{ 
+  return p.sign(); 
+}
+#endif
+
 
 template <typename RT>
 bool operator==(const SPolynomial<RT>& p1, const SPolynomial<RT>& p2)
