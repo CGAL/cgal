@@ -68,7 +68,7 @@ void show_nearest_vertex(Delaunay &T, Window_stream &W)
 	  W.set_mode(dm);
         }
 
-        if( (nv != (CGAL_NULL_TYPE) NULL) && 
+        if( (nv != NULL) && 
 	    ( (b != NO_BUTTON) || ((p != q) && 
 				   (v != nv) ) )){
             // unhighlight
