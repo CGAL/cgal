@@ -704,7 +704,8 @@ public:
   void delete_halfedge_pair(Halfedge_handle e)
   /*{\Mop deletes the halfedge pair of |e,twin(e)|.  Does not care about
   incident objects in the local graph of |source(e)|.}*/ { 
-    TRACEN("~ deleting halfedges pair "<<&*e<<", "<<&*(e->twin_)<<" from "<<&*this);
+    TRACEN("~ deleting halfedges pair "<<&*e<<", "<<&*(e->twin_)<<
+	   " from "<<&*this);
     Halfedge_handle et = e->twin_;
     SM_decorator D1(e->center_vertex_), D2(et->center_vertex_);
     D1.delete_vertex(e);

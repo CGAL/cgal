@@ -355,8 +355,8 @@ The iterator range access operations are of the following kind:\\
 
 The macros are then |CGAL_nef3_forall_svertices(v,M)|,
 |CGAL_nef3_forall_shalfedges(e,M)|, |CGAL_nef3_forall_sedges(e,M)|,
-|CGAL_nef3_forall_sfaces(f,M)|, |CGAL_nef3_forall_sface_cycles_of(fc,F)| where |M|
-is a sphere map and |F| is a face.}*/
+|CGAL_nef3_forall_sfaces(f,M)|, |CGAL_nef3_forall_sface_cycles_of(fc,F)| 
+where |M|is a sphere map and |F| is a face.}*/
 
 }; // SNC_SM_const_decorator
 
