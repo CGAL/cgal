@@ -955,10 +955,11 @@ public:
       Sign sign_r = CGAL_NTS sign(r);
       Sign sign_R = CGAL_NTS sign(R);
 
-      Sign sign_E1 = opposite(sign_R * sign_sigma);
-      Sign sign_E2 = sign_r * sign_sigma;
+      Sign sign_E1 = opposite(static_cast<Sign>(sign_R * sign_sigma));
+      Sign sign_E2 = static_cast<Sign>(sign_r * sign_sigma);
       Sign sign_E3 = sign_delta;
-      Sign sign_E4 = sign_r * sign_R * sign_delta;
+      Sign sign_E4 = 
+	static_cast<Sign>(static_cast<Sign>(sign_r * sign_R) * sign_delta);
 
       Sign sign_E1_plus_E3_P, sign_E4_plus_E2_P;
 
