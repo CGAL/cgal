@@ -1,3 +1,14 @@
+13 May 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
+- removed the internally used macro USE_SC
+- re-added code that was removed in the presence of g++-2.95.3; this
+  was possible after the May 6 changes that removed template-template
+  code
+- moved all methods to be inlined from Segment_Voronoi_diagram_2.C and
+  Segment_Voronoi_diagram_hierarchy_2.C to the corresponding .h files;
+  this was done in order to please the SunPro CC-5.30 compiler
+- moved initialization of UNDEFINED_LEVEL inside the class; again to
+  please the SunPro CC-5.30 compiler
+
 10 May 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - removed unreachable break statements to avoid pgCC warning
 - removed excessive >'s in filtered traits (SunPro specific part)
