@@ -30,9 +30,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-class Bbox_2 : public Simple_Handle_for< Simple_Fourtuple<double> >
+class Bbox_2 : public Simple_Handle_for< Fourtuple<double> >
 {
-  typedef Simple_Handle_for< Simple_Fourtuple<double> > BBox_handle_2;
+  typedef Simple_Handle_for< Fourtuple<double> > BBox_handle_2;
   typedef BBox_handle_2::element_type                   BBox_ref_2;
 
 public:
