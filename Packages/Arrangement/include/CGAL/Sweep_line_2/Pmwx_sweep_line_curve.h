@@ -83,19 +83,19 @@ public:
     return m_hint1;
   }
 
-  void setInsertInfo(PmwxInsertInfo *insertInfo) {
+  void set_insert_info(PmwxInsertInfo *insertInfo) {
     m_insertInfo = insertInfo;
   }
 
-  PmwxInsertInfo *getInsertInfo() const {
+  PmwxInsertInfo *get_insert_info() const {
     return m_insertInfo;
   }
 
-  void setLastEvent(Event *e) {
+  void set_last_event(Event *e) {
     m_lastEvent = e;
   }
 
-  Event *getLastEvent() const {
+  Event *get_last_event() const {
     return m_lastEvent;
   }
 

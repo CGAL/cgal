@@ -82,7 +82,7 @@ public:
     Base(point, traits)
     {}
 
-  PmwxInsertInfo *getInsertInfo() {
+  PmwxInsertInfo *get_insert_info() {
     return &m_insertInfo;
   }
 
@@ -99,7 +99,7 @@ public:
    *
    *  TODO - change the data structure of the vertical events to a set
    */
-  void addVerticalCurveXEvent(Self *e, bool requireSort=false) 
+  void add_vertical_curve_x_event(Self *e, bool requireSort=false) 
   {
     if ( m_verticalCurveXEvents.empty() ) 
     {
@@ -117,7 +117,7 @@ public:
       VerticalXEventListIter iter = m_verticalCurveXEvents.begin();
       while ( iter != m_verticalCurveXEvents.end() )
       {
-	if ( m_traits->compare_xy((*iter)->getPoint(), e->getPoint()) 
+	if ( m_traits->compare_xy((*iter)->get_point(), e->get_point()) 
 	     == SMALLER ) {
 	  ++iter; 
 	}
@@ -132,17 +132,17 @@ public:
     }
   }
 
-  VerticalXEventList &getVerticalXEventList() {
+  VerticalXEventList &get_vertical_x_event_list() {
     return m_verticalCurveXEvents;
   }
 
   /*! Initialize the array that indicates wheter a curve to the right of the
    * event was already inserted into the planar map.
    */
-  void initRightCurves()
+  void init_right_curves()
   {
-    m_isCurveInPm.reserve(getNumRightCurves());
-    for ( int i = 0 ; i < getNumRightCurves() ; i++ )
+    m_isCurveInPm.reserve(get_num_right_curves());
+    for ( int i = 0 ; i < get_num_right_curves() ; i++ )
       m_isCurveInPm[i] = false;
   }
   
@@ -154,7 +154,7 @@ public:
    * @param curve a pointer to a curve that is going to be inserted 
    * @return the number of halfedges to skip before inserting the curve
    */
-  int getHalfedgeJumpCount(CurveWrap *curve)
+  int get_halfedge_jump_count(CurveWrap *curve)
   {
     int i = 0;
     int counter = 0;
@@ -164,7 +164,7 @@ public:
       
       if ( curve->getId() == (*iter)->getId() ) {
 	m_isCurveInPm[counter] = true;
-	if ( getNumLeftCurves() == 0 )
+	if ( get_num_left_curves() == 0 )
 	  return i-1;
 	return i;
       }
@@ -175,7 +175,7 @@ public:
     
     CGAL_assertion(curve->getId() == (*iter)->getId());
 
-    if ( getNumLeftCurves() == 0 )
+    if ( get_num_left_curves() == 0 )
       i--;
     return i;
   }
@@ -183,7 +183,7 @@ public:
   /*! Returns true if the curve is the highest one among the right curves 
    *  that were already inserted into the planar map.
    */
-  bool isCurveLargest(CurveWrap *curve)
+  bool is_curve_largest(CurveWrap *curve)
   {
     int counter = 0;
     SubCurveIter iter = m_rightCurves->end();

@@ -42,11 +42,11 @@ public:
   {
   }
 
-  void setHalfedgeHandle(Halfedge_handle h) {
+  void set_halfedge_handle(Halfedge_handle h) {
     m_halfedge = h;
   }
 
-  Halfedge_handle getHalfedgeHandle() const {
+  Halfedge_handle get_halfedge_handle() const {
     return m_halfedge;
   }
 
