@@ -1,5 +1,8 @@
 Changes done to the `Polytope_distance_d' package
 
+Version 1.1.3 on 18-Mar-2002
+- Added auxiliary typedef to please sunpro.
+
 Version 1.1.2 on 31-Jul-2001
 - Susan moved Optimisation_ref directory up one level
 

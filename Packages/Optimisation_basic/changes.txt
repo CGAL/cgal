@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_basic' package
 
+Version 3.8.11 on 18-Mar-2002
+- Added a couple of CGAL::, K::, resp..
+
 Version 3.8.10 on 31-Jul-2001
 - Susan moved Optimisation_ref directory up one level
 
