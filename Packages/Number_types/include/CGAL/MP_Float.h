@@ -26,7 +26,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Interval_arithmetic.h>
-#include <CGAL/Quotient.h>
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -265,12 +264,14 @@ sqrt(const MP_Float &d);
 double
 to_double(const MP_Float &b);
 
+std::pair<double,double>
+to_interval(const MP_Float &b);
+
+template < typename > class Quotient;
+
 // Overloaded in order to protect against overflow.
 double
 to_double(const Quotient<MP_Float> &b);
-
-std::pair<double,double>
-to_interval(const MP_Float &b);
 
 std::pair<double, double>
 to_interval(const Quotient<MP_Float> &b);

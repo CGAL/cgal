@@ -27,7 +27,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
-#include <CGAL/Quotient.h>
 #include <CGAL/double.h> 
 #include <CGAL/Interval_arithmetic.h>
 
@@ -528,8 +527,8 @@ exact_division(const Gmpz &z1, const Gmpz &z2)
   mpz_t prod;
   mpz_init(prod);
   mpz_mul(prod, Res.mpz(), z2.mpz());
-  CGAL_kernel_postcondition_msg(mpz_cmp(prod, z1.mpz()) == 0,
-                                "exact_division failed\n");
+  CGAL_postcondition_msg(mpz_cmp(prod, z1.mpz()) == 0,
+                         "exact_division failed\n");
   mpz_clear( prod);
 #endif // CGAL_CHECK_POSTCONDITIONS
   return Res;
@@ -623,22 +622,9 @@ to_interval (const Gmpz & z)
     return std::pair<double, double>(i, s);
 }
 
-inline
-double to_double(const Quotient<Gmpz>& quot)
-{
-  mpq_t  mpQ;
-  mpq_init(mpQ);
-  const Gmpz& n = quot.numerator();
-  const Gmpz& d = quot.denominator();
-  mpz_set(mpq_numref(mpQ), n.mpz());
-  mpz_set(mpq_denref(mpQ), d.mpz());
-    
-  mpq_canonicalize(mpQ);
-  
-  double ret = mpq_get_d(mpQ);
-  mpq_clear(mpQ);
-  return ret;
-}
+template < typename > class Quotient;
+
+double to_double(const Quotient<Gmpz>& quot);
 
 CGAL_END_NAMESPACE
 
