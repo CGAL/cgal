@@ -375,11 +375,6 @@ dimension, i.e. the dimension of the points in $P$.
         Optimisation_sphere_d<Rep_tag, FT, RT, Point,Traits>        
                                                 ms_basis; // keeps  miniball
         It                                      support_end;  // delimites S
-
-#ifdef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
-        #define ms_basis(X) ms_basis(typename Traits::Rep_tag(), X)
-#endif
-
 @end
 
 \subsubsection{Creation}
@@ -3234,20 +3229,8 @@ int main ()
     template <class Rep_tag, class FT, class RT, class PT, class Traits>
     class Optimisation_sphere_d;
 
-#ifndef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
-
     @<Optimisation_sphereHd declaration>
     @<Optimisation_sphereCd declaration>
-
-#else
-
-   template <class FT, class RT, class PT, class Traits>
-   class Optimisation_sphereCd;
-
-   template < class FT, class RT, class PT, class Traits>
-   class Optimisation_sphereHd;
-
-#endif
 
     CGAL_END_NAMESPACE
 
@@ -3262,8 +3245,6 @@ int main ()
    
 
     CGAL_BEGIN_NAMESPACE
-
-#ifndef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
 
     // Cartesian version
     // -----------------
@@ -3331,100 +3312,6 @@ int main ()
         @<Optimisation_sphereHd compute_c_and_sqr_r method>
         @<Optimisation_sphereHd prod method>
     };
-
-#else
-
-    // general template 
-    template <class Rep_tag, class FT, class RT, class PT,class Traits>
-    class Optimisation_sphere_d
-    {
-        Optimisation_sphereCd<FT,RT,PT,Traits> ms_cart;
-        Optimisation_sphereHd<FT,RT,PT,Traits> ms_hom;
-
-    public:
-
-        Optimisation_sphere_d (Cartesian_tag t, const Traits& tr = Traits())
-        : ms_cart (tr) {}
-
-        Optimisation_sphere_d (Homogeneous_tag t, const Traits& tr = Traits())
-        : ms_hom (tr) {}
-
-        Optimisation_sphereCd<FT,RT,PT,Traits>& get_sphere (Cartesian_tag t)
-        {return ms_cart;}
-
-        Optimisation_sphereHd<FT,RT,PT,Traits>& get_sphere (Homogeneous_tag t)
-        {return ms_hom;}
-
-        const Optimisation_sphereCd<FT,RT,PT,Traits>& get_sphere
-        (Cartesian_tag t) const
-        {return ms_cart;}
-
-        const Optimisation_sphereHd<FT,RT,PT,Traits>& get_sphere
-        (Homogeneous_tag t) const
-        {return ms_hom;}
-
-    };
-
-    // Cartesian version
-    // -----------------
-    template <class FT, class RT, class PT, class Traits>
-    class Optimisation_sphereCd
-
-    #define Optimisation_sphere_d Optimisation_sphereCd
-    {
-    private:
-        @<Optimisation_sphereCd types and data members>
-
-    public:
-        @<Optimisation_sphereCd constructor>
-        @<Optimisation_sphereCd init method>
-        @<Optimisation_sphereCd destructor>
-        @<Optimisation_sphereCd destroy method>
-        @<Optimisation_sphereCd set_size method>
-        @<Optimisation_sphereCd push method>
-        @<Optimisation_sphereCd pop method>
-        @<Optimisation_sphereCd excess method>
-        @<Optimisation_sphereCd access methods>
-        @<Optimisation_sphereCd is_valid method>
-    private:
-        @<Optimisation_sphereCd multiply method>
-        @<Optimisation_sphereCd compute_c_and_sqr_r method>
-        @<Optimisation_sphereCd prod method>
-    };
-
-    #undef Optimisation_sphere_d
-
-   
-    // Homogeneous version
-    // -----------------
-    template <class FT, class RT, class PT, class Traits>
-    class Optimisation_sphereHd
-    
-    #define Optimisation_sphere_d Optimisation_sphereHd
-    {
-    private:
-        @<Optimisation_sphereHd types and data members>
-
-    public:
-        @<Optimisation_sphereHd constructor>
-        @<Optimisation_sphereHd init method>
-        @<Optimisation_sphereHd destructor>
-        @<Optimisation_sphereHd destroy method>
-        @<Optimisation_sphereHd set_size method>
-        @<Optimisation_sphereHd push method>
-        @<Optimisation_sphereHd pop method>
-        @<Optimisation_sphereHd excess method>
-        @<Optimisation_sphereHd access methods>
-        @<Optimisation_sphereHd is_valid method>
-    private:
-        @<Optimisation_sphereHd multiply method>
-        @<Optimisation_sphereHd compute_c_and_sqr_r method>
-        @<Optimisation_sphereHd prod method>
-    };
-
-    #undef Optimisation_sphere_d
-
-#endif 
 
      CGAL_END_NAMESPACE
 

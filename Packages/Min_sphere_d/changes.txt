@@ -1,3 +1,6 @@
+18 Feb 2004 Sylvain Pion
+- Remove CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION workarounds.
+
 Version 1.3 (10 February 2004) [rursu]
 - Updated headers in examples
 

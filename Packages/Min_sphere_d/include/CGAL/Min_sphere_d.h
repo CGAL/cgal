@@ -85,11 +85,6 @@ class Min_sphere_d
                                                 ms_basis; // keeps  miniball
         It                                      support_end;  // delimites S
     
-    #ifdef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
-            #define ms_basis(X) ms_basis(typename Traits::Rep_tag(), X)
-    #endif
-    
-    
 public:
     Min_sphere_d ()
     : d(-1), tco( Traits()), ms_basis (tco),
