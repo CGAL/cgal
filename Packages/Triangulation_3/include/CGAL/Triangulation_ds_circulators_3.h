@@ -84,6 +84,7 @@ public:
       _e = ccir._e;
       pos = ccir.pos;
       prev = ccir.prev;
+      return *this;
     }
 
   Cell_circulator & 
