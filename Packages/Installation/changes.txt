@@ -7,18 +7,22 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: added licensing information about Qt widget stuff
+GLOB: updated for release 2.4
 GLOB: ABI=32 for GMP also has to be set for GCC, not only SunPRO.
 GLOB: Fix order of libraries (gmp must come after gmpxx and qt).
 GLOB: Fix support for GMP++
-GLOB: Update GMP to version 4.1
-GLOB: Add support for GMP++
-GLOB: Use configure to install GMP
-GLOB: Document CLN version requirements (<1.1)
-GLOB: QT licensing documentation
+ALL : - update GMP to version 4.1
+ALL : - add support for GMP++
+ALL : - use configure to install GMP
+ALL : Document CLN version requirements (<1.1)
+GLOB: Qt license updates
 GLOB: - Document --build-all
 GLOB: Fixes for QT.
 GLOB: src/Interval_arithmetic/workaround_4_ms.obj is no longer necessary.
 GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.
+ALL : 2.4 -> 2.5
+GLOB: Fixed runtime path for Irix/gcc.
 GLOB: Updated windos install for gmp to V4.0.1.
 GLOB: Removed include/compilers/vc7 from include path for VC7.
 GLOB: QT fixed from Radu.
