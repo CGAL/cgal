@@ -1,3 +1,6 @@
+Version 1.65 (20 June 01)
+- Simplify TDS test program to use an empty traits.
+
 Version 1.64 (20 June 01)
 - new demo for vertex removal
 - new example for hierarchy

@@ -19,21 +19,19 @@
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
+
 #include <cassert>
 
 template <class Vertex>
 void
 _test_vertex_tds_3(const Vertex &)
 {
-  
   typedef typename Vertex::Point             Point;
-  //  typedef typename Vertex::Vertex            Vertex;
   typedef typename Vertex::Cell              Cell;
 
   // Build object 
-  Vertex v;
   Cell c1;
-  Point p(1,1,1);
+  Point p;
   Vertex v1(p,&c1);
   assert(v1.cell()==&c1);
   c1.set_vertex(0,&v1);
@@ -43,6 +41,3 @@ _test_vertex_tds_3(const Vertex &)
   c2.set_vertex(0,&v1);
   assert(v1.is_valid());
 }
-
-
-
