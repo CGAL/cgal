@@ -27,8 +27,8 @@ endif
 endif
 LOBJDIR :=$(LOBJDIR)_$(COMPILER)$(COMPILER_VER)
 
-ifeq ($(USE_INSERT_FAST), 1)
-LCPPDEFS+= -DUSE_INSERT_FAST
+ifeq ($(USE_INSERT_TIGHT), 1)
+LCPPDEFS+= -DUSE_INSERT_TIGHT
 LOBJDIR :=$(LOBJDIR)_fast
 TARGET0 :=$(TARGET0)_fast
 endif
@@ -53,4 +53,4 @@ use_conic_traits:
 	$(MAKEF) "USE_CONIC_TRAITS=1"
 
 use_insert_fast:
-	$(MAKEF) "USE_INSERT_FAST=1"
+	$(MAKEF) "USE_INSERT_TIGHT=1"

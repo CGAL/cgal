@@ -56,8 +56,13 @@ typedef leda_rational                                   NT;
 #endif
 
 #if defined(USE_CONIC_TRAITS)
-typedef CGAL::Arr_conic_traits<NT>                      Traits;
+typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
+#if defined(USE_INSERT_TIGHT)
+#define PM_TYPE "Tight Conics"
+#else
 #define PM_TYPE "Conics"
+#endif
 #else
 #if defined(USE_LEDA_KERNEL)
 typedef CGAL::leda_rat_kernel_traits                    Kernel;
@@ -203,8 +208,8 @@ public:
     }
     Strategy strategy;
     Pmwx pm(&strategy);
-#if defined(USE_INSERT_FAST)
-    pm.insert_fast(m_curveList.begin(), m_curveList.end());
+#if defined(USE_INSERT_TIGHT)
+    pm.insert_tight(m_curveList.begin(), m_curveList.end());
 #else
     pm.insert(m_curveList.begin(), m_curveList.end());
 #endif
@@ -240,8 +245,8 @@ public:
   {
     Strategy strategy;
     Pmwx pm(&strategy);
-#if defined(USE_INSERT_FAST)
-    pm.insert_fast(m_curveList.begin(), m_curveList.end());
+#if defined(USE_INSERT_TIGHT)
+    pm.insert_tight(m_curveList.begin(), m_curveList.end());
 #else
     pm.insert(m_curveList.begin(), m_curveList.end());
 #endif
