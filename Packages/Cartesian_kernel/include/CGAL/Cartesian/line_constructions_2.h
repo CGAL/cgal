@@ -71,26 +71,6 @@ perpendicular_through_point( LineC2<R CGAL_CTAG> const& l,
   return LineC2<R CGAL_CTAG>(a,b,c);
 }
 
-// FIXME : Should not be here
-template < class R >
-inline
-typename R::FT
-line_y_at_x( LineC2<R CGAL_CTAG> const& l,
-             typename R::FT const& x)
-{
-  return line_y_at_xC2(l.a(), l.b(), l.c(), x);
-}
-
-// FIXME : Should not be here
-template < class R >
-inline
-typename R::FT
-line_x_at_y( LineC2<R CGAL_CTAG> const& l,
-             typename R::FT const& y)
-{
-  return line_y_at_xC2(l.b(), l.a(), l.c(), y);
-}
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_LINE_CONSTRUCTIONS_2_H
