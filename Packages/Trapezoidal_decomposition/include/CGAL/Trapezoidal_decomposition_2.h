@@ -8,11 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release		 : 
-// release_date  : 1999, October 13
+// release       : $CGAL_Revision: CGAL-2.3-I-73 $
+// release_date  : $CGAL_Date: 2001/06/19 $
 //
-// file 		 : include/CGAL/Trapezoidal_decomposition_2.h
-// package		 : Trapezoidal decomposition 2
+// file          : include/CGAL/Trapezoidal_decomposition_2.h
+// package       : Trapezoidal_decomposition (1.16)
+// maintainer    : Shai Hirsch <shaihi@post.tau.ac.il>
 // source		 : 
 // revision 	 : 
 // revision_date : 
@@ -2195,13 +2196,19 @@ public:
 		
 		reference t_p = locate(p,t);
 		
+		//		std::cout << "t_p" << t_p << "\n";
+
 #ifdef CGAL_TD_DEBUG
+
 		
 		CGAL_warning(t_p.get_node());
 		
 #endif
 		
 		reference tr = **t_p.get_node();
+
+		//		std::cout << "tr" << tr << "\n";
+
 		// tr should be non degenerate trapezoid
 		/* using exact traits, it may happen that p is on the
 		right side of the trapezoid directly under its
@@ -2216,8 +2223,10 @@ public:
 		 x------x
 		*/
 		
-		if (up_direction && traits->point_is_same_x(p,tr.right()) && !traits->point_is_same(tr.left(),tr.right()) ||
-			!up_direction && traits->point_is_same_x(p,tr.left()) && !traits->point_is_same(tr.left(),tr.right()))
+		if (up_direction && !tr.is_right_unbounded() && traits->point_is_same_x(p,tr.right()) && 
+		    (tr.is_left_unbounded() || !traits->point_is_same(tr.left(),tr.right())) ||
+		     !up_direction && !tr.is_left_unbounded() && traits->point_is_same_x(p,tr.left()) && 
+		    (tr.is_right_unbounded() || !traits->point_is_same(tr.left(),tr.right())))
 		{
 			// recalculate vertical ray shoot using locate on point
 			return up_direction ? locate(tr.right(),t).top() : locate(tr.left(),t).bottom();
@@ -3026,8 +3035,8 @@ postcondition:
 		bool needs_update()
 		{
 			//to avoid g++ warning
-			unsigned long sz=number_of_curves();
-			if ((unsigned) rand()> (RAND_MAX/(sz+1)) ) return false;
+			signed long sz=number_of_curves();
+			if (rand()>RAND_MAX/(sz+1)) return false;
 			/*			 INTERNAL COMPILER ERROR overide
 			#ifndef __GNUC__
 			*/
