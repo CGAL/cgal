@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.5-I-99 $
 // release_date  : $CGAL_Date: 2003/05/23 $
 //
-// file          : include/CGAL/General_priority_search.h
+// file          : include/CGAL/Incremental_neighbor_search.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 3.0
@@ -22,8 +22,8 @@
 // ======================================================================
 
 
-#ifndef  GENERAL_PRIORITY_SEARCH_H
-#define  GENERAL_PRIORITY_SEARCH_H
+#ifndef  INCREMENTAL_NEIGHBOR_SEARCH_H
+#define  INCREMENTAL_NEIGHBOR_SEARCH_H
 #include <cstring>
 #include <list>
 #include <queue>
@@ -38,7 +38,7 @@ template <class GeomTraits,
           class Distance_=Euclidean_distance<GeomTraits>,
           class Splitter_ = Sliding_midpoint<GeomTraits>,
 	  class Tree_=Kd_tree<GeomTraits, Splitter_, Tag_false> >
-class General_priority_search { 
+class Incremental_neighbor_search { 
 
 public:
 
@@ -97,7 +97,7 @@ class iterator;
     public:
 
     // constructor
-    General_priority_search(Tree& tree, const Query_item& q,
+    Incremental_neighbor_search(Tree& tree, const Query_item& q,
 			    NT Eps=NT(0.0), bool search_nearest=true, 
 			    const Distance& tr=Distance())
     {
@@ -106,7 +106,7 @@ class iterator;
     };
 
     // destructor
-    ~General_priority_search() {
+    ~Incremental_neighbor_search() {
 	delete start;
         delete past_the_end;
     };
@@ -516,5 +516,5 @@ else {
 } // namespace CGAL
 
 
-#endif  // GENERAL_PRIORITY_SEARCH_H
+#endif  // INCREMENTAL_NEIGHBOR_SEARCH_H
 

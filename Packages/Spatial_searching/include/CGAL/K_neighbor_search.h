@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.5-I-99 $
 // release_date  : $CGAL_Date: 2003/05/23 $
 //
-// file          : include/CGAL/General_k_neighbors_search.h
+// file          : include/CGAL/K_neighbor_search.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 3.0
@@ -21,8 +21,8 @@
 //
 // ======================================================================
 
-#ifndef  CGAL_GENERAL_K_NEIGHBORS_SEARCH_H
-#define  CGAL_GENERAL_K_NEIGHBORS_SEARCH_H
+#ifndef  CGAL_K_NEIGHBOR_SEARCH_H
+#define  CGAL_K_NEIGHBOR_SEARCH_H
 #include <cstring>
 #include <list>
 #include <queue>
@@ -39,7 +39,7 @@ template <class GeomTraits,
           class Splitter_=Sliding_midpoint<GeomTraits> , 
 	  class Tree_=Kd_tree<GeomTraits, Splitter_, Tag_false> >
 
-class General_k_neighbors_search {
+class K_neighbor_search {
 
 public:
   typedef Splitter_ Splitter;
@@ -121,7 +121,7 @@ public:
 
 
     // constructor
-    General_k_neighbors_search(Tree& tree, const Query_item& q, 
+    K_neighbor_search(Tree& tree, const Query_item& q, 
 			    int k=1, NT Eps=NT(0.0), 
 			    bool Search_nearest=true,
 			    const Distance& d=Distance()) {
@@ -162,7 +162,7 @@ public:
 
 
     // destructor
-    ~General_k_neighbors_search() { 
+    ~K_neighbor_search() { 
 		l.clear();  
 		delete distance_instance;
    };
@@ -260,4 +260,4 @@ public:
 } // namespace CGAL
 
 
-#endif  // K_NEIGHBORS_SEARCH
+#endif  // CGAL_K_NEIGHBOR_SEARCH_H

@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.5-I-99 $
 // release_date  : $CGAL_Date: 2003/05/23 $
 //
-// file          : include/CGAL/Manhattan_distance_rectangle_point.h
+// file          : include/CGAL/Manhattan_distance_iso_box_point.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 3.0
@@ -22,15 +22,15 @@
 // ======================================================================
 
 
-#ifndef CGAL_MANHATTAN_DISTANCE_RECTANGLE_POINT_H
-#define CGAL_MANHATTAN_DISTANCE_RECTANGLE_POINT_H
+#ifndef CGAL_MANHATTAN_DISTANCE_ISO_BOX_POINT_H
+#define CGAL_MANHATTAN_DISTANCE_ISO_BOX_POINT_H
 
 #include <CGAL/Kd_tree_rectangle.h>
 
 namespace CGAL {
 
   template <class GeomTraits, class QueryItem>
-  class Manhattan_distance_rectangle_point {
+  class Manhattan_distance_iso_box_point {
 
     public:
 
@@ -39,15 +39,15 @@ namespace CGAL {
     typedef QueryItem                  Query_item;
 
     
-    Manhattan_distance_rectangle_point() {}
+    Manhattan_distance_iso_box_point() {}
       
     
-    // obsolete as we no longer store dimension Manhattan_distance_rectangle_point(const int d) : the_dimension(d) {}
+    // obsolete as we no longer store dimension Manhattan_distance_iso_box_point(const int d) : the_dimension(d) {}
 
     //copy constructor
-    Manhattan_distance_rectangle_point(const Manhattan_distance_rectangle_point& d) {}
+    Manhattan_distance_iso_box_point(const Manhattan_distance_iso_box_point& d) {}
 
-    ~Manhattan_distance_rectangle_point() {}
+    ~Manhattan_distance_iso_box_point() {}
 
     inline NT distance(const QueryItem& q, const Point& p) {
 		NT distance = NT(0);
@@ -111,7 +111,7 @@ namespace CGAL {
     return d;
   }
 
-}; // class Manhattan_distance_rectangle_point
+}; // class Manhattan_distance_iso_box_point
 
 } // namespace CGAL
-#endif // MANHATTAN_DISTANCE_RECTANGLE_POINT_H
+#endif // MANHATTAN_DISTANCE_ISO_BOX_POINT_H
