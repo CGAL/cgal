@@ -259,10 +259,8 @@ find_lowest(typename Pm_naive_point_location<Planar_map>::Vertex_handle v,
 
   do {
     if (traits->point_is_left(curr->source()->point(), v->point())) {
-      if (lowest_left == pm->halfedges_end()) {
-          std::cout << "what gives\n";
+      if (lowest_left == pm->halfedges_end())
         lowest_left = curr;
-      }
       else if (traits->curve_compare_at_x_left(curr->curve(),
                                                lowest_left->curve(), 
                                                v->point()) == SMALLER)
