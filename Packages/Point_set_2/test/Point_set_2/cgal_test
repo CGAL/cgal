@@ -65,3 +65,6 @@ touch $ERRORFILE
 
 compile_and_run range_search
 compile_and_run nearest_nb1
+compile_and_run range_search_fcn
+compile_and_run nearest_nb_fcn
+
