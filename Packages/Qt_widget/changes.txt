@@ -1,3 +1,7 @@
+1.0.3 (21 May 2001)
+=====
+Great modifications in other to follow CGAL packages requirements
+
 1.0.2 (15 May 2001)
 =====
 Fixes several port bugs. Thanks to Dima Pasechnik

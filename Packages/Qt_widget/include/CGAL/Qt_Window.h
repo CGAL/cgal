@@ -9,13 +9,11 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Color.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
+
 enum PointStyle { PIXEL, CROSS, PLUS, CIRCLE, DISC, RECT, BOX };
-CGAL_END_NAMESPACE
 
-//CGAL_BEGIN_NAMESPACE
-
-class QCGALWidget : public QWidget {
+class Qt_widget : public QWidget {
   Q_OBJECT
     Q_PROPERTY( QColor color READ color WRITE setColor )
     Q_PROPERTY( QColor backGroundColor READ backgroundColor WRITE
@@ -25,14 +23,14 @@ class QCGALWidget : public QWidget {
     Q_PROPERTY( bool isFilled READ isFilled WRITE setFilled )
     Q_PROPERTY( uint lineWidth READ lineWidth WRITE setLineWidth )
     Q_PROPERTY( uint pointSize READ pointSize WRITE setPointSize )
-/*     Q_PROPERTY( PointStyle pointStyle READ pointStyle WRITE */
-/* 		setPointStyle ) */
-/*     Q_ENUMS( PointStyle ) */
+    Q_PROPERTY( PointStyle pointStyle READ pointStyle WRITE
+		setPointStyle )
+    Q_ENUMS( PointStyle )
 public:
   // constructor
-  QCGALWidget(QWidget *parent = 0, const char *name = 0);
+  Qt_widget(QWidget *parent = 0, const char *name = 0);
   // destructor
-  ~QCGALWidget() {};
+  ~Qt_widget() {};
 
   // initialization of coordinates system
   void init(double x_min, double x_max, double y_min, double y_max);
@@ -70,7 +68,6 @@ public:
   uint pointSize() const;
   void setPointSize(uint i);
   // pointStyle
-  typedef CGAL::PointStyle PointStyle;
   PointStyle pointStyle() const;
   void setPointStyle(PointStyle s);
 
@@ -85,9 +82,9 @@ public:
 
   // set pen() color to c, cf. manipulators below for setting
   // backgroundColor and fillColor
-  QCGALWidget& operator<<(const CGAL::Color& c);
+  Qt_widget& operator<<(const Color& c);
   // set point style
-  QCGALWidget& operator<<(const CGAL::PointStyle& ps);
+  Qt_widget& operator<<(const PointStyle& ps);
   // clear the Widget, fill it with backgroundColor()
   void clear();
 
@@ -141,10 +138,10 @@ private:
   double xscal, yscal; // scalings int/double
 };
 
-typedef QCGALWidget        Window_stream;
+typedef Qt_widget        Window_stream;
 
 inline
-bool QCGALWidget:: isInitialized() const
+bool Qt_widget:: isInitialized() const
 {
   return initialized;
 }
@@ -153,14 +150,14 @@ bool QCGALWidget:: isInitialized() const
 // ~~~~~~~~~~~~
 // single manipulators
 inline
-QCGALWidget& operator<<(QCGALWidget& w, QCGALWidget& (*m)(QCGALWidget&))
+Qt_widget& operator<<(Qt_widget& w, Qt_widget& (*m)(Qt_widget&))
 {
   return m(w);
 };
 
 // w << noFill << ... stop the filling of geometrical object
 inline
-QCGALWidget& noFill(QCGALWidget& w)
+Qt_widget& noFill(Qt_widget& w)
 {
   w.setFilled(false);
   return w;
@@ -168,50 +165,50 @@ QCGALWidget& noFill(QCGALWidget& w)
 
 // manipulators with one argument
 template <class Param>
-struct QCGALWidgetManip {
-  QCGALWidget& (*f)(QCGALWidget&, Param);
+struct Qt_widgetManip {
+  Qt_widget& (*f)(Qt_widget&, Param);
   Param p;
-  QCGALWidgetManip(QCGALWidget& (*ff)(QCGALWidget&, Param),
+  Qt_widgetManip(Qt_widget& (*ff)(Qt_widget&, Param),
 		 Param pp) : f(ff), p(pp) {}
 };
 
 // usage: w << manip(Param) << ...
 template <class Param>
-QCGALWidget& operator<<(QCGALWidget& w, QCGALWidgetManip<Param> m)
+Qt_widget& operator<<(Qt_widget& w, Qt_widgetManip<Param> m)
 {
   return m.f(w, m.p);
 }
 
-#define __DEFINE_QCGALWIDGET_MANIP(param,function) \
+#define CGAL_QTWIDGET_MANIP(param,function) \
 inline \
-QCGALWidget& __QCGALWidgetManip##function##Aux (QCGALWidget& w, param p) \
+Qt_widget& __Qt_widgetManip##function##Aux (Qt_widget& w, param p) \
 { w.set##function(p); return w; } \
 inline \
-QCGALWidgetManip<param> function(param p) \
-{ return QCGALWidgetManip<param>( __QCGALWidgetManip##function##Aux, p); }
+Qt_widgetManip<param> function(param p) \
+{ return Qt_widgetManip<param>( __Qt_widgetManip##function##Aux, p); }
 
 // w << BackgroundColor(c) << ... sets the background color
-__DEFINE_QCGALWIDGET_MANIP( CGAL::Color, BackgroundColor )
+CGAL_QTWIDGET_MANIP( Color, BackgroundColor )
 
 // w << FillColor(c) << ... sets the fill color
-__DEFINE_QCGALWIDGET_MANIP( CGAL::Color, FillColor )
+CGAL_QTWIDGET_MANIP( Color, FillColor )
 
 // w << LineWidth(i) << ... sets lines width
-__DEFINE_QCGALWIDGET_MANIP( uint, LineWidth )
+CGAL_QTWIDGET_MANIP( uint, LineWidth )
 
 // w << PointSize(i) << ... sets points size
-__DEFINE_QCGALWIDGET_MANIP( uint, PointSize )
+CGAL_QTWIDGET_MANIP( uint, PointSize )
 
 // color types convertors
 // ~~~~~~~~~~~~~~~~~~~~~~
 inline
-QColor QCGALWidget::CGAL2Qt_Color(CGAL::Color c)
+QColor Qt_widget::CGAL2Qt_Color(CGAL::Color c)
 {
   return QColor(c.red(), c.green(), c.blue());
 }
 
 inline
-CGAL::Color QCGALWidget::Qt2CGAL_color(QColor c)
+CGAL::Color Qt_widget::Qt2CGAL_color(QColor c)
 {
   return CGAL::Color(c.red(),c.green(),c.blue());
 }
@@ -219,14 +216,14 @@ CGAL::Color QCGALWidget::Qt2CGAL_color(QColor c)
 // properties
 // ~~~~~~~~~~
 inline
-QColor QCGALWidget::color() const
+QColor Qt_widget::color() const
 {
   return paint.pen().color();
 };
 
 
 inline
-void QCGALWidget::setColor(QColor c)
+void Qt_widget::setColor(QColor c)
 {
   QPen p=painter().pen();
   p.setColor(c);
@@ -234,13 +231,13 @@ void QCGALWidget::setColor(QColor c)
 }
 
 inline
-QColor QCGALWidget::backgroundColor() const
+QColor Qt_widget::backgroundColor() const
 {
   return paint.backgroundColor();
 }
 
 inline
-void QCGALWidget::setBackgroundColor(QColor c)
+void Qt_widget::setBackgroundColor(QColor c)
 {
   QWidget::setBackgroundColor(c);
   painter().setBackgroundColor(c);
@@ -248,26 +245,26 @@ void QCGALWidget::setBackgroundColor(QColor c)
 }
 
 inline
-QColor QCGALWidget::fillColor() const
+QColor Qt_widget::fillColor() const
 {
   return paint.brush().color();
 }
 
 inline
-void QCGALWidget::setFillColor(QColor c)
+void Qt_widget::setFillColor(QColor c)
 {
   setFilled(true);
   painter().setBrush(c);
 }
 
 inline
-bool QCGALWidget::isFilled() const
+bool Qt_widget::isFilled() const
 {
   return( paint.brush().style()==Qt::NoBrush );
 }
 
 inline
-void QCGALWidget::setFilled(bool f)
+void Qt_widget::setFilled(bool f)
 {
   if (f)
     paint.setBrush(savedBrush);
@@ -279,13 +276,13 @@ void QCGALWidget::setFilled(bool f)
 }
 
 inline
-uint QCGALWidget::lineWidth() const
+uint Qt_widget::lineWidth() const
 {
   return( paint.pen().width());
 }
 
 inline
-void QCGALWidget::setLineWidth(uint i)
+void Qt_widget::setLineWidth(uint i)
 {
   QPen p=painter().pen();
   p.setWidth(i);
@@ -293,25 +290,25 @@ void QCGALWidget::setLineWidth(uint i)
 }
 
 inline
-uint QCGALWidget::pointSize() const
+uint Qt_widget::pointSize() const
 {
   return _pointSize;
 }
 
 inline
-void QCGALWidget::setPointSize(uint i)
+void Qt_widget::setPointSize(uint i)
 {
   _pointSize=i;
 }
 
 inline
-QCGALWidget::PointStyle QCGALWidget::pointStyle() const
+PointStyle Qt_widget::pointStyle() const
 {
   return _pointStyle;
 }
 
 inline
-void QCGALWidget::setPointStyle(PointStyle ps)
+void Qt_widget::setPointStyle(PointStyle ps)
 {
   _pointStyle=ps;
 }
@@ -320,35 +317,35 @@ void QCGALWidget::setPointStyle(PointStyle ps)
 // ~~~~~~~~~~~~~~~
 
 template <class R>
-QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Point_2<R>& p)
+Qt_widget& operator<<(Qt_widget& w, const Point_2<R>& p)
 {
   int
-    x=w.x_pixel(CGAL::to_double(p.x())),
-    y=w.y_pixel(CGAL::to_double(p.y()));
+    x=w.x_pixel(to_double(p.x())),
+    y=w.y_pixel(to_double(p.y()));
 
   uint size=w.pointSize();
-  CGAL::PointStyle ps=w.pointStyle();
+  PointStyle ps=w.pointStyle();
 
   switch (ps)
     {
-    case CGAL::PIXEL:
+    case PIXEL:
       {
 	w.painter().drawPoint(x,y);
 	break;
       }
-    case CGAL::CROSS:
+    case CROSS:
       {
 	w.painter().drawLine(x-size/2, y-size/2, x+size/2, y+size/2);
 	w.painter().drawLine(x-size/2, y+size/2, x+size/2, y-size/2);
 	break;
       }
-    case CGAL::PLUS:
+    case PLUS:
       {
 	w.painter().drawLine(x, y-size/2, x, y+size/2);
 	w.painter().drawLine(x-size/2, y, x+size/2, y);
 	break;
       }
-    case CGAL::CIRCLE:
+    case CIRCLE:
       {
 	QBrush old_brush=w.painter().brush();
 	w.painter().setBrush(QBrush());
@@ -356,7 +353,7 @@ QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Point_2<R>& p)
 	w.painter().setBrush(old_brush);
 	break;
       }
-    case CGAL::DISC:
+    case DISC:
       {
 	QBrush old_brush=w.painter().brush();
 	w.painter().setBrush(w.painter().pen().color());
@@ -364,7 +361,7 @@ QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Point_2<R>& p)
 	w.painter().setBrush(old_brush);
 	break;
       }
-    case CGAL::RECT:
+    case RECT:
       {
 	QBrush old_brush=w.painter().brush();
 	w.painter().setBrush(QBrush());
@@ -372,7 +369,7 @@ QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Point_2<R>& p)
 	w.painter().setBrush(old_brush);
 	break;
       }
-    case CGAL::BOX:
+    case BOX:
       {
 	QBrush old_brush=w.painter().brush();
 	w.painter().setBrush(w.painter().pen().color());
@@ -387,13 +384,13 @@ QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Point_2<R>& p)
 
 #ifdef CGAL_SEGMENT_2_H
 template <class R>
-QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Segment_2<R>& s)
+Qt_widget& operator<<(Qt_widget& w, const Segment_2<R>& s)
 {
   const int
-    x1=w.x_pixel(CGAL::to_double(s.source().x())),
-    y1=w.y_pixel(CGAL::to_double(s.source().y())),
-    x2=w.x_pixel(CGAL::to_double(s.target().x())),
-    y2=w.y_pixel(CGAL::to_double(s.target().y()));
+    x1=w.x_pixel(to_double(s.source().x())),
+    y1=w.y_pixel(to_double(s.source().y())),
+    x2=w.x_pixel(to_double(s.target().x())),
+    y2=w.y_pixel(to_double(s.target().y()));
   w.painter().drawLine(x1,y1,x2,y2);
   w.doPaint();
   return w;
@@ -403,18 +400,18 @@ QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Segment_2<R>& s)
 #ifdef CGAL_LINE_2_H
 
 template <class R>
-QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Line_2<R>& l)
+Qt_widget& operator<<(Qt_widget& w, const Line_2<R>& l)
 {
-  typedef CGAL::Cartesian<double> Rep;
-  typedef CGAL::Point_2<Rep> Point;
+  typedef Cartesian<double> Rep;
+  typedef Point_2<Rep> Point;
 
-  const CGAL::Point_2<R>
+  const Point_2<R>
     p1=l.point(),
     p2=p1+l.direction().vector();
 
   const Point
-    p1d=Point(CGAL::to_double(p1.x()),CGAL::to_double(p1.y())),
-    p2d=Point(CGAL::to_double(p2.x()),CGAL::to_double(p2.y()));
+    p1d=Point(to_double(p1.x()),to_double(p1.y())),
+    p2d=Point(to_double(p2.x()),to_double(p2.y()));
 
   double
     x1=w.x_min(),
@@ -448,18 +445,18 @@ QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Line_2<R>& l)
 
 #ifdef CGAL_RAY_2_H
 template <class R>
-QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Ray_2<R>& r)
+Qt_widget& operator<<(Qt_widget& w, const Ray_2<R>& r)
 {
-  typedef CGAL::Cartesian<double> Rep;
-  typedef CGAL::Point_2<Rep> Point;
+  typedef Cartesian<double> Rep;
+  typedef Point_2<Rep> Point;
 
-  const CGAL::Point_2<R>
+  const Point_2<R>
     p1=r.point(0),
     p2=r.point(1);
 
   const Point
-    p1d=Point(CGAL::to_double(p1.x()),CGAL::to_double(p1.y())),
-    p2d=Point(CGAL::to_double(p2.x()),CGAL::to_double(p2.y()));
+    p1d=Point(to_double(p1.x()),to_double(p1.y())),
+    p2d=Point(to_double(p2.x()),to_double(p2.y()));
 
 
   const double
@@ -495,16 +492,16 @@ QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Ray_2<R>& r)
 
 #ifdef CGAL_TRIANGLE_2_H
 template< class R >
-QCGALWidget&
-operator<<(QCGALWidget& w, const CGAL::Triangle_2<R>& t)
+Qt_widget&
+operator<<(Qt_widget& w, const Triangle_2<R>& t)
 {
   const int
-    ax = w.x_pixel(CGAL::to_double(t.vertex(0).x())),
-    ay = w.y_pixel(CGAL::to_double(t.vertex(0).y())),
-    bx = w.x_pixel(CGAL::to_double(t.vertex(1).x())),
-    by = w.y_pixel(CGAL::to_double(t.vertex(1).y())),
-    cx = w.x_pixel(CGAL::to_double(t.vertex(2).x())),
-    cy = w.y_pixel(CGAL::to_double(t.vertex(2).y()));
+    ax = w.x_pixel(to_double(t.vertex(0).x())),
+    ay = w.y_pixel(to_double(t.vertex(0).y())),
+    bx = w.x_pixel(to_double(t.vertex(1).x())),
+    by = w.y_pixel(to_double(t.vertex(1).y())),
+    cx = w.x_pixel(to_double(t.vertex(2).x())),
+    cy = w.y_pixel(to_double(t.vertex(2).y()));
 
   QPointArray array;
 
@@ -517,13 +514,13 @@ operator<<(QCGALWidget& w, const CGAL::Triangle_2<R>& t)
 
 #ifdef CGAL_CIRCLE_2_H
 template < class R>
-QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Circle_2<R>& c)
+Qt_widget& operator<<(Qt_widget& w, const Circle_2<R>& c)
 {
   int 
-    cx=w.x_pixel(CGAL::to_double(c.center().x())),
-    cy=w.y_pixel(CGAL::to_double(c.center().y())),
-    rx=w.x_pixel_dist((std::sqrt(CGAL::to_double(c.squared_radius())))),
-    ry=w.y_pixel_dist((std::sqrt(CGAL::to_double(c.squared_radius()))));
+    cx=w.x_pixel(to_double(c.center().x())),
+    cy=w.y_pixel(to_double(c.center().y())),
+    rx=w.x_pixel_dist((std::sqrt(to_double(c.squared_radius())))),
+    ry=w.y_pixel_dist((std::sqrt(to_double(c.squared_radius()))));
 
   w.painter().drawEllipse(cx-rx,cy-ry,2*rx,2*ry);
   w.doPaint();
@@ -533,14 +530,14 @@ QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Circle_2<R>& c)
 
 #ifdef CGAL_ISO_RECTANGLE_2_H
 template< class R >
-QCGALWidget&
-operator<<(QCGALWidget& w, const CGAL::Iso_rectangle_2<R>& r)
+Qt_widget&
+operator<<(Qt_widget& w, const Iso_rectangle_2<R>& r)
 {
   int
-    xmin = w.x_pixel(CGAL::to_double(r.min().x())),
-    ymin = w.y_pixel(CGAL::to_double(r.min().y())),
-    xmax = w.x_pixel(CGAL::to_double(r.max().x())),
-    ymax = w.y_pixel(CGAL::to_double(r.max().y()));
+    xmin = w.x_pixel(to_double(r.min().x())),
+    ymin = w.y_pixel(to_double(r.min().y())),
+    xmax = w.x_pixel(to_double(r.max().x())),
+    ymax = w.y_pixel(to_double(r.max().y()));
 
   w.painter().drawRect(xmin,ymin,xmax-xmin,ymax-ymin);
   w.doPaint();
@@ -549,15 +546,15 @@ operator<<(QCGALWidget& w, const CGAL::Iso_rectangle_2<R>& r)
 #endif // CGAL_ISO_RECTANGLE_2_H
 
 #ifdef CGAL_BBOX_2_H
-QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Bbox_2& r);
+Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r);
 // see Qt_Window for the implementation of this non-template function
 #endif // CGAL_BBOX_2_H
 
 #ifdef CGAL_POLYGON_2_H
 template <class Tr,class Co>
-QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Polygon_2<Tr,Co>& pol)
+Qt_widget& operator<<(Qt_widget& w, const Polygon_2<Tr,Co>& pol)
 {
-  typedef CGAL::Polygon_2<Tr,Co>::Vertex_const_iterator VI;
+  typedef Polygon_2<Tr,Co>::Vertex_const_iterator VI;
   QPointArray array;
 
   array.resize(pol.size());
@@ -565,8 +562,8 @@ QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Polygon_2<Tr,Co>& pol)
   unsigned int n=0;
   for(VI i=pol.vertices_begin();i!=pol.vertices_end();i++)
     {
-      array.setPoint(n++,w.x_pixel(CGAL::to_double(i->x())),
-		     w.y_pixel(CGAL::to_double(i->y())));
+      array.setPoint(n++,w.x_pixel(to_double(i->x())),
+		     w.y_pixel(to_double(i->y())));
     }
   w.painter().drawPolygon(array);
   w.doPaint();
@@ -576,8 +573,8 @@ QCGALWidget& operator<<(QCGALWidget& w, const CGAL::Polygon_2<Tr,Co>& pol)
 
 #ifdef CGAL_TRIANGULATION_2_H
 template < class Gt, class Tds>
-QCGALWidget&
-operator<<(QCGALWidget& w,  const CGAL::Triangulation_2<Gt, Tds> &t)
+Qt_widget&
+operator<<(Qt_widget& w,  const Triangulation_2<Gt, Tds> &t)
 {
   w.lock();
   t.draw_triangulation(w);
@@ -588,8 +585,8 @@ operator<<(QCGALWidget& w,  const CGAL::Triangulation_2<Gt, Tds> &t)
 
 #ifdef CGAL_DELAUNAY_TRIANGULATION_2_H
 template < class Gt, class Tds >
-QCGALWidget&
-operator<<(QCGALWidget& w,  const CGAL::Delaunay_triangulation_2<Gt,Tds> &dt)
+Qt_widget&
+operator<<(Qt_widget& w,  const Delaunay_triangulation_2<Gt,Tds> &dt)
 {
   w.lock();
   dt.draw_triangulation(w);
@@ -601,8 +598,8 @@ operator<<(QCGALWidget& w,  const CGAL::Delaunay_triangulation_2<Gt,Tds> &dt)
 
 #ifdef CGAL_CONSTRAINED_TRIANGULATION_2_H
 template < class Gt, class Tds>
-QCGALWidget&
-operator<<(QCGALWidget& w,  const CGAL::Constrained_triangulation_2<Gt,Tds> &t)
+Qt_widget&
+operator<<(Qt_widget& w,  const Constrained_triangulation_2<Gt,Tds> &t)
 {
   w.lock();
   t.draw_triangulation(w);
@@ -613,8 +610,8 @@ operator<<(QCGALWidget& w,  const CGAL::Constrained_triangulation_2<Gt,Tds> &t)
 
 #ifdef CGAL_REGULAR_TRIANGULATION_2_H
 template < class Gt, class Tds >
-QCGALWidget&
-operator<<(QCGALWidget& w, CGAL::Regular_triangulation_2<Gt,Tds> &t)
+Qt_widget&
+operator<<(Qt_widget& w, Regular_triangulation_2<Gt,Tds> &t)
 {
   w.lock();
   t.draw_triangulation(w);
@@ -623,7 +620,6 @@ operator<<(QCGALWidget& w, CGAL::Regular_triangulation_2<Gt,Tds> &t)
 }
 #endif // CGAL_REGULAR_TRIANGULATION_2_H
 
-
-//CGAL_END_NAMESPACE
+} // namespace CGAL
 
 #endif // QT_WINDOW_H

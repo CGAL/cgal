@@ -9,7 +9,7 @@
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
 
-#include "Qt_Window.h"
+#include <CGAL/Qt_Window.h>
 #include <qapplication.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
@@ -36,10 +36,10 @@ typedef Constrained_triangulation::Constraint     Constraint;
 typedef Constrained_triangulation::Face_handle    Face_handle;
 typedef Constrained_triangulation::Vertex_handle  Vertex_handle;
 
-
+typedef CGAL::Qt_widget Window_stream;
 
 const QString my_title_string("Contrained Triangulation Demo with"
-			      " QCGALWidget");
+			      " CGAL Qt_widget");
 
 void
 draw_constraints(Window_stream &win, std::list<Constraint> & lc)
@@ -96,13 +96,13 @@ draw_connected_component(const Point&  p,
 
   // draw
   int width=win.lineWidth();
-  win << FillColor(CGAL::GREEN) << LineWidth(0);
+  win << CGAL::FillColor(CGAL::GREEN) << CGAL::LineWidth(0);
   std::set<Face_handle>::iterator it;
   for ( it = component.begin(); it != component.end(); it++) {
     if (! ct.is_infinite( *it)) win << ct.triangle( *it);
     else win << ct.segment(*it, (*it)->index(ct.infinite_vertex()));
   }
-  win << LineWidth(width);
+  win << CGAL::LineWidth(width);
   return;
 }
 
@@ -163,10 +163,9 @@ public slots:
 	win.clear();
 	win.lock();
 	win << CGAL::BLUE <<ct;
-	win << p ;
-	qDebug("New Point! x:%f, y:%f", p.x(), p.y());
 	draw_connected_component(p, ct, win);
 	draw_constraints(win,lc);
+	win << p ;
 	win.unlock();
       }
     else if(e->button() == Qt::RightButton)
@@ -179,7 +178,7 @@ private slots:
   {
     QMessageBox::about( this, my_title_string,
 			"This is a demo from Mariette Yvinnec courses,\n"
-			"adapted to work with QCGALWidget by\n"
+			"adapted to work with CGAL Qt_widget by\n"
 			"Laurent Rineau ( rineau@clipper.ens.fr )");
 
   };
@@ -204,7 +203,7 @@ private:
     redrawWin();
   };
 
-  QCGALWidget win;
+  CGAL::Qt_widget win;
   std::list<Constraint> lc;
   Constrained_triangulation ct;
 };
