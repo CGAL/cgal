@@ -2,6 +2,10 @@
 - TEST RESULTS FROM PLATFORM sparc_SunOS-5.6_eg++-egcs-2.91.57_LEDA
 ---------------------------------------------------------------
 
+DIRECTORY CVS:
+
+ERROR: could not execute the script CVS/cgal_test
+
 DIRECTORY Triangulation:
 
    compilation of test_triangulation_tds (TESTR=) succeeded
