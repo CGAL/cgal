@@ -138,6 +138,7 @@ int main()
 
 
 }
+
 {  
   typedef CGAL::Extended_cartesian<Real> EDec;
   typedef EDec::Point_2     EP;
@@ -244,6 +245,7 @@ int main()
 
   //IO does not work for LEDA reals
 }
+
 {
   typedef CGAL::Filtered_extended_homogeneous<Integer> EDec;
   typedef EDec::Point_2     EP;
