@@ -1,3 +1,6 @@
+2.42
+- Remove CGAL_CFG_NO_EXPLICIT_CLASS_TEMPLATE_SPECIALISATION, it's long dead.
+
 2.41
 - Missing typename in CGAL_NO_ITERATOR_TRAITS.C
   (spotted by gcc, cp-parser-branch)

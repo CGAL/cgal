@@ -104,11 +104,7 @@
 #  define CGAL_NULL_TMPL_ARGS <>
 #endif
 
-#ifdef CGAL_CFG_NO_EXPLICIT_CLASS_TEMPLATE_SPECIALISATION
-#  define CGAL_TEMPLATE_NULL
-#else
-#  define CGAL_TEMPLATE_NULL template <>
-#endif
+#define CGAL_TEMPLATE_NULL template <>
 
 #ifdef CGAL_CFG_NO_STDC_NAMESPACE
 #  define CGAL_CLIB_STD
