@@ -33,15 +33,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Tds >
+template < class Tds_ >
 class Triangulation_ds_cell_circulator_3
-  : public Bidirectional_circulator_base<typename Tds::Cell, 
+  : public Bidirectional_circulator_base<typename Tds_::Cell, 
     ptrdiff_t, size_t>, 
     public Triangulation_utils_3
 {
   // circulates on cells around a given edge
 public:
 
+  typedef Tds_               Tds;
   typedef typename Tds::Cell Cell;
   typedef typename Tds::Edge Edge;
   typedef typename Tds::Vertex Vertex;
@@ -219,15 +220,16 @@ private:
   Cell* pos; // current cell
 };
 
-template < class Tds >
+template < class Tds_ >
 class Triangulation_ds_facet_circulator_3
-  : public Bidirectional_circulator_base<typename Tds::Facet, 
+  : public Bidirectional_circulator_base<typename Tds_::Facet, 
     ptrdiff_t, size_t>, 
     public Triangulation_utils_3
 {
   // circulates on facets around a given edge
 public:
 
+  typedef Tds_               Tds;
   typedef typename Tds::Cell Cell;
   typedef typename Tds::Facet Facet;
   typedef typename Tds::Edge Edge;

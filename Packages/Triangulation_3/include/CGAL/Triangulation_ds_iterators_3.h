@@ -37,10 +37,11 @@ template < class Vb, class Cb > class Triangulation_ds_cell_3;
 template < class Vb, class Cb > class Triangulation_data_structure_3;
 template < class Tds >          class Triangulation_ds_cell_circulator_3;
 
-template < class Tds >
+template < class Tds_ >
 class Triangulation_ds_cell_iterator_3
 {
 public:
+  typedef Tds_                                  Tds;
   typedef typename Tds::Cell                    value_type;
   typedef typename Tds::Cell *                  pointer;
   typedef typename Tds::Cell &                  reference;
@@ -132,13 +133,14 @@ private:
   Cell* pos;
 };
 
-template < class Tds>
+template < class Tds_ >
 class Triangulation_ds_vertex_iterator_3
 {
 // traverses the list of cells and reports for each cell 
 // the vertices whose cell() is the current cell
 
 public:
+  typedef Tds_ Tds;
   typedef typename Tds::Vertex                   value_type;
   typedef typename Tds::Vertex *                 pointer;
   typedef typename Tds::Vertex &                 reference;
@@ -254,13 +256,14 @@ private:
   }
 };
 
-template < class Tds>
+template < class Tds_>
 class Triangulation_ds_facet_iterator_3
 {
 // traverses the list of cells and report for each cell 
 // the vertices whose cell() is the current cell
 
 public:
+  typedef Tds_ Tds;
   typedef typename Tds::Facet                    value_type;
   typedef typename Tds::Facet *                  pointer;
   typedef typename Tds::Facet &                  reference;
@@ -403,13 +406,14 @@ private:
 
 };
 
-template < class Tds>
+template < class Tds_ >
 class Triangulation_ds_edge_iterator_3
 {
 // traverses the list of cells and report for each cell 
 // the vertices whose cell() is the current cell
 
 public:
+  typedef Tds_                                    Tds;
   typedef typename Tds::Edge                      value_type;
   typedef typename Tds::Edge *                    pointer;
   typedef typename Tds::Edge &                    reference;
