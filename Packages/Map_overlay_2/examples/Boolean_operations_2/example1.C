@@ -1,5 +1,4 @@
-#include <CGAL/basic.h> //CGAL definitions that need to be before anything else
-#include <CGAL/Cartesian.h>
+#include <CGAL/Cartesian.h> //CGAL definitions that need to be before anything else
 #include <CGAL/Quotient.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Bop_default_dcel.h>
@@ -8,7 +7,7 @@
 #include <CGAL/Boolean_operations_2.h>
 #include <CGAL/Arr_segment_exact_traits.h>
 #include <CGAL/Planar_map_2.h>
-#include <iostream.h>
+#include <iostream>
 #include <vector>
 #include <list>
 
@@ -17,11 +16,11 @@
 //#include <CGAL/IO/Pm_Window_stream.h>
 
 typedef CGAL::Quotient<int>                 NT;
-typedef CGAL::Cartesian<NT>                 R;
-typedef CGAL::Arr_segment_exact_traits<R>   Traits;
-typedef Traits::Point                       Point;
-typedef Traits::X_curve                     X_curve;
-typedef Traits::Curve                       Curve;
+typedef CGAL::Cartesian<NT>                 K;
+typedef CGAL::Arr_segment_exact_traits<K>   Traits;
+typedef Traits::Point_2                       Point_2;
+typedef Traits::X_curve_2                     X_curve_2;
+typedef Traits::Curve_2                       Curve_2;
 
 typedef CGAL::Bop_default_dcel<Traits>           Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>          Planar_map;
@@ -46,13 +45,13 @@ int  main()
   NT   x1, y1, x2, y2;
   
   cin >> num_curves1;
-  std::vector<Curve>  curves;
+  std::vector<Curve_2>  curves;
   
   while (num_curves1--) {
     cin >> x1 >> y1 >> x2 >> y2;
     
-    Point p1(x1,y2), p2(x2,y2);
-    curves.push_back(X_curve(p1, p2));
+    Point_2 p1(x1,y2), p2(x2,y2);
+    curves.push_back(X_curve_2(p1, p2));
   }
   
   Traits traits;
@@ -65,8 +64,8 @@ int  main()
   while (num_curves2--) {
     cin >> x1 >> y1 >> x2 >> y2;
     
-    Point p1(x1,y2), p2(x2,y2);
-    curves.push_back(X_curve(p1, p2));
+    Point_2 p1(x1,y2), p2(x2,y2);
+    curves.push_back(X_curve_2(p1, p2));
   }
    
   CGAL::sweep_to_construct_planar_map_2(curves.begin(), 
