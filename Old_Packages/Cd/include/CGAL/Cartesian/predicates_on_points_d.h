@@ -38,7 +38,7 @@ compare_lexicographically_d(const PointCd<R CGAL_CTAG> &p,
                             const PointCd<R CGAL_CTAG> &q)
 {
   CGAL_kernel_precondition( p.dimension()==q.dimension() );
-  return Comparison_result( CGAL::sign(
+  return Comparison_result( CGAL_NTS sign(
      std::lexicographical_compare_3way(p.begin(),p.end(),q.begin(),q.end()) ));
 }
 

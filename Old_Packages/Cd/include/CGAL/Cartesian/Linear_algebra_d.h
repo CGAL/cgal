@@ -22,9 +22,9 @@
 #ifndef CGAL_CARTESIAN_LINEAR_ALGEBRA_D_H
 #define CGAL_CARTESIAN_LINEAR_ALGEBRA_D_H
 
+#include <CGAL/Cartesian/redefine_names_d.h>
 #include <memory>
 #include <vector>
-#include <CGAL/Cartesian/redefine_names_d.h>
 #include <CGAL/Cartesian/Linear_algebra_vector.h>
 #include <CGAL/Cartesian/Linear_algebra_matrix.h>
 

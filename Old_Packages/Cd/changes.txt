@@ -1,3 +1,8 @@
+Ver 1.13 (20 June 2001)
+- Fixed a few buggy #includes
+- Use the macro CGAL_ADVANCED_KERNEL_PARTIAL_SPEC.
+- remove warning CGAL::sign -> CGAL_NTS.
+
 Ver 1.12 (18 June 2001)
 - Remove references to VECTOR_WRAPPER.
 

@@ -28,11 +28,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class TriangleCd
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-// This is a partial specialization
-<R_,Cartesian_tag>
-#endif
+class TriangleCd CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public Handle
 {
 public:

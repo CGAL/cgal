@@ -22,22 +22,13 @@
 #ifndef CGAL_CARTESIAN_TETRAHEDRON_D_H
 #define CGAL_CARTESIAN_TETRAHEDRON_D_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_D_H
 #include <CGAL/Cartesian/redefine_names_d.h>
-#endif
-
-#ifndef CGAL_CARTESIAN_FOURTUPLE_H
 #include <CGAL/Fourtuple.h>
-#endif // CGAL_CARTESIAN_FOURTUPLE_H
 
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class TetrahedronCd
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-// This is a partial specialization
-<R_,Cartesian_tag>
-#endif
+class TetrahedronCd CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public Handle
 {
 public:
@@ -101,9 +92,7 @@ private:
 CGAL_END_NAMESPACE
 
 #ifndef CGAL_CARTESIAN_CLASS_DEFINED
-#ifndef CGAL_CARTESIAN_TETRAHEDRON_D_C
 #include <CGAL/Cartesian/Tetrahedron_d.C>
-#endif
 #endif 
 
 #endif

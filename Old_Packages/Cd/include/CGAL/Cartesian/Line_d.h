@@ -22,20 +22,13 @@
 #ifndef CGAL_CARTESIAN_LINE_D_H
 #define CGAL_CARTESIAN_LINE_D_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_D_H
 #include <CGAL/Cartesian/redefine_names_d.h>
-#endif
-
 #include <CGAL/Twotuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class LineCd
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-// This is a partial specialization
-<R_,Cartesian_tag>
-#endif
+class LineCd CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public Handle
 {
 public:
@@ -101,9 +94,7 @@ private:
 CGAL_END_NAMESPACE
 
 #ifndef CGAL_CARTESIAN_CLASS_DEFINED
-#ifndef CGAL_CARTESIAN_LINE_D_C
 #include <CGAL/Cartesian/Line_d.C>
-#endif // CGAL_CARTESIAN_LINE_D_C
 #endif 
 
 #endif // CGAL_CARTESIAN_LINE_D_H

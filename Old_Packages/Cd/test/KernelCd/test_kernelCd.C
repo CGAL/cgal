@@ -21,6 +21,7 @@
 // ============================================================================
 
 
+#include <CGAL/basic.h>
 #include <iostream>
 #include <strstream>
 #include <cassert>

@@ -22,10 +22,7 @@
 #ifndef CGAL_CARTESIAN_CARTESIAN_SOLVE_D_H
 #define CGAL_CARTESIAN_CARTESIAN_SOLVE_D_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_D_H
 #include <CGAL/Cartesian/redefine_names_d.h>
-#endif
-
 #include <CGAL/solve.h>
 #include <CGAL/Cartesian/Vector_d.h>
 
@@ -47,4 +44,4 @@ void solve (const VectorCd<R CGAL_CTAG> &v0,
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CARTESIAN_CARTESIAN_SOLVE_3_H
+#endif // CGAL_CARTESIAN_CARTESIAN_SOLVE_D_H

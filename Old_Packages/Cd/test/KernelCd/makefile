@@ -14,12 +14,12 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
 	   -I./include \
 	   -DCGAL_CFG_NO_ADVANCED_KERNEL \
 	   -DCGAL_NO_LEDA_HANDLE \
-           -I../../include \
 	   -I../../../C2/include \
 	   -I../../../C3/include \
 	   -I../../../Cartesian_basic/include \

@@ -47,11 +47,7 @@ CGAL_END_NAMESPACE
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class Aff_transformationCd
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-// This is a partial specialization
-<R_,Cartesian_tag>
-#endif
+class Aff_transformationCd CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public Handle
 {
   friend class PlaneCd<R_ CGAL_CTAG>;

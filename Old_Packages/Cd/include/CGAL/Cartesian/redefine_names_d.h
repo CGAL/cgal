@@ -55,10 +55,14 @@
 // We unify this with PointCd<R CGAL_CTAG >::function
 #define CGAL_CTAG   , Cartesian_tag
 
+#define CGAL_ADVANCED_KERNEL_PARTIAL_SPEC <R_,Cartesian_tag>
+
 #else
 
-#define CGAL_CTAG   
+#define CGAL_CTAG
 
+#define CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
+ 
 // Note that it was not possible to keep the opposite (changing the
 // Point_d into PointCd for Stefan's design) because it would also
 // change "typename R::Point_d" into "typename R::PointCd" inside the
