@@ -2052,7 +2052,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
-static const char *demoicon_xpm[] = {
+char *demoicon_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 7 1",
 "  c black",
