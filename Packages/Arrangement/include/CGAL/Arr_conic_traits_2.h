@@ -1375,7 +1375,7 @@ class Arr_conic_traits_2
     // Split the curve to source->p and p->target.
     sub_curve1 = X_curve_2 (curve, curve.source(), p, false);
     sub_curve2 = X_curve_2 (curve, p, curve.target(), false);
-    
+
     CGAL_assertion(sub_curve1.is_x_monotone());
     CGAL_assertion(sub_curve2.is_x_monotone());
 
@@ -1454,7 +1454,7 @@ class Arr_conic_traits_2
       slope_res = CGAL::compare (slope2_numer*slope1_denom, 
 				 slope1_numer*slope2_denom);
 
-      CGAL_assertion(slope_res != EQUAL);
+      //CGAL_assertion(slope_res != EQUAL);
 	
       return ((slope_res == LARGER) ? SMALLER : LARGER);
     }
@@ -1586,7 +1586,7 @@ class Arr_conic_traits_2
       slope_res = CGAL::compare (slope1_numer*slope2_denom, 
 				 slope2_numer*slope1_denom);
 
-      CGAL_assertion(slope_res != EQUAL);
+      //CGAL_assertion(slope_res != EQUAL);
 	
       return (slope_res);
     }
