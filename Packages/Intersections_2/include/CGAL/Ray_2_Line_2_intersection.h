@@ -119,6 +119,18 @@ intersection(const typename CGAL_WRAP(K)::Ray_2 &ray,
     }
 }
 
+
+template <class K>
+inline
+Object
+intersection(const typename CGAL_WRAP(K)::Line_2 &line,
+	     const typename CGAL_WRAP(K)::Ray_2 &ray,
+	     const K& k)
+{
+  return CGALi::intersection(ray, line, k);
+}
+
+
 template <class K>
 class Line_2_Ray_2_pair: public Ray_2_Line_2_pair<K> {
 public:

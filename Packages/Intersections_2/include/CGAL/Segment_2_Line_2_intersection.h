@@ -29,9 +29,7 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
-
 #include <CGAL/Object.h>
-
 #include <CGAL/Line_2_Line_2_intersection.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -100,7 +98,8 @@ inline bool do_intersect(
 template <class K>
 Object
 intersection(const typename CGAL_WRAP(K)::Segment_2 &seg, 
-	     const typename CGAL_WRAP(K)::Line_2 &line)
+	     const typename CGAL_WRAP(K)::Line_2 &line,
+	     const K&)
 {
     typedef Segment_2_Line_2_pair<K> is_t;
     is_t ispair(&seg, &line);
@@ -117,6 +116,16 @@ intersection(const typename CGAL_WRAP(K)::Segment_2 &seg,
         return make_object(seg);
     }
 }
+
+template <class K>
+Object
+intersection(const typename CGAL_WRAP(K)::Line_2 &line,
+	     const typename CGAL_WRAP(K)::Segment_2 &seg, 
+	     const K& k)
+{
+  return CGALi::intersection(seg, line, k);
+}
+
 
 template <class K>
 class Line_2_Segment_2_pair: public Segment_2_Line_2_pair<K> {

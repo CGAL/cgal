@@ -28,7 +28,6 @@
 #include <CGAL/Ray_2.h>
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Point_2.h>
-
 #include <CGAL/Line_2.h>
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
@@ -112,17 +111,6 @@ protected:
     mutable typename K::Point_2         _intersection_point;
     mutable typename K::Point_2         _other_point;
 };
-
-template <class K>
-inline bool do_intersect(
-    const typename CGAL_WRAP(K)::Ray_2 &p1,
-    const typename CGAL_WRAP(K)::Triangle_2 &p2,
-    const K&)
-{
-    typedef Ray_2_Triangle_2_pair<K> pair_t;
-    pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO;
-}
 
 
 
@@ -260,6 +248,16 @@ intersection(const typename CGAL_WRAP(K)::Ray_2 &ray,
 }
 
 template <class K>
+Object
+intersection(const typename CGAL_WRAP(K)::Triangle_2&tr,
+	     const typename CGAL_WRAP(K)::Ray_2 &ray, 
+	     const K& k)
+{
+  return CGALi::intersection(ray, tr, k);
+}
+
+
+template <class K>
 class Triangle_2_Ray_2_pair
 : public Ray_2_Triangle_2_pair<K> {
 public:
@@ -268,6 +266,18 @@ public:
             typename K::Ray_2 const *ray) :
                         Ray_2_Triangle_2_pair<K>(ray, trian) {}
 };
+
+template <class K>
+inline bool do_intersect(
+    const typename CGAL_WRAP(K)::Ray_2 &p1,
+    const typename CGAL_WRAP(K)::Triangle_2 &p2,
+    const K&)
+{
+    typedef Ray_2_Triangle_2_pair<K> pair_t;
+    pair_t pair(&p1, &p2);
+    return pair.intersection_type() != pair_t::NO;
+}
+
 
 template <class K>
 inline bool do_intersect(

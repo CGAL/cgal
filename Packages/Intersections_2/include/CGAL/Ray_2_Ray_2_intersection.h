@@ -29,7 +29,6 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
-
 #include <CGAL/Line_2.h>
 #include <CGAL/Line_2_Line_2_intersection.h>
 #include <CGAL/Object.h>

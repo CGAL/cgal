@@ -195,17 +195,22 @@ protected:
 };
 
 template <class K>
-inline bool do_intersect(
-    const typename CGAL_WRAP(K)::Ray_2 &p1,
-    const typename CGAL_WRAP(K)::Segment_2 &p2,
-    const K& k)
+inline bool do_intersect(const typename CGAL_WRAP(K)::Ray_2 &p1,
+			 const typename CGAL_WRAP(K)::Segment_2 &p2,
+			 const K& k)
 {
     typedef Ray_2_Segment_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
     return pair.intersection_type() != pair_t::NO;
 }
 
-
+template <class K>
+inline bool do_intersect(const typename CGAL_WRAP(K)::Segment_2 &p2,
+			 const typename CGAL_WRAP(K)::Ray_2 &p1,
+			 const K& k)
+{
+  return CGALi::do_intersect(p1, p2, k);
+}
 
 template <class K>
 Ray_2_Segment_2_pair<K>::Ray_2_Segment_2_pair()
@@ -390,7 +395,9 @@ Ray_2_Segment_2_pair<K>::intersection(typename K::Segment_2 &result) const
 
 template <class K>
 Object
-intersection(const typename K::Ray_2 &ray, const typename K::Segment_2&seg)
+intersection(const typename CGAL_WRAP(K)::Ray_2 &ray, 
+	     const typename CGAL_WRAP(K)::Segment_2&seg,
+	     const K&)
 {
     typedef Ray_2_Segment_2_pair<K> is_t;
     is_t ispair(&ray, &seg);
@@ -411,6 +418,17 @@ intersection(const typename K::Ray_2 &ray, const typename K::Segment_2&seg)
     }
 }
 
+
+template <class K>
+Object
+intersection(const typename CGAL_WRAP(K)::Segment_2 &seg,
+	     const typename CGAL_WRAP(K)::Ray_2 &ray, 
+	     const K& k)
+{
+  return CGALi::intersection(ray, seg, k);
+}
+
+
 template <class K>
 class Segment_2_Ray_2_pair: public Ray_2_Segment_2_pair<K> {
 public:
@@ -420,16 +438,6 @@ public:
                                 Ray_2_Segment_2_pair<K>(ray, seg) {}
 };
 
-template <class K>
-inline bool do_intersect(
-    const typename K::Segment_2 &p1,
-    const typename K::Ray_2 &p2,
-    const K& k)
-{
-    typedef Segment_2_Ray_2_pair<K> pair_t;
-    pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO;
-}
 
 } // namespace CGALi
 

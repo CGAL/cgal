@@ -26,13 +26,12 @@
 
 #include <CGAL/Point_2.h>
 #include <CGAL/Triangle_2.h>
-#include <CGAL/Point_2.h>
-
 #include <CGAL/Line_2.h>
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Straight_2.h>
 #include <CGAL/Object.h>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
@@ -102,7 +101,13 @@ inline bool do_intersect(const typename CGAL_WRAP(K)::Point_2 &p1,
   pair_t pair(&p1, &p2);
   return pair.intersection_type() != pair_t::NO;
 }
-
+template <class K>
+inline bool do_intersect(const typename CGAL_WRAP(K)::Triangle_2 &p2,
+			 const typename CGAL_WRAP(K)::Point_2 &p1,
+			 const K& k)
+{
+  return CGALi::do_intersect(p1, p2, k);
+}
 
 
 template <class K>
@@ -199,6 +204,16 @@ intersection(const typename CGAL_WRAP(K)::Point_2 &pt,
 }
 
 template <class K>
+Object
+intersection(const typename CGAL_WRAP(K)::Triangle_2 &tr,
+	     const typename CGAL_WRAP(K)::Point_2 &pt, 
+	     const K&)
+{
+  return CGALi::intersection(pt, tr, k);
+}
+
+
+template <class K>
 class Triangle_2_Point_2_pair
 : public Point_2_Triangle_2_pair<K> {
 public:
@@ -212,15 +227,17 @@ public:
 
 
 template <class K>
-inline bool do_intersect(
-    const Triangle_2<K> &tr,
-    const Point_2<K> &pt)
+inline 
+bool
+do_intersect(const Triangle_2<K> &tr, const Point_2<K> &pt)
 {
   return CGALi::do_intersect(pt, tr, K());
 }
 
 template <class K>
-inline bool do_intersect(const Point_2<K> &pt, const Triangle_2<K> &tr)
+inline 
+bool 
+do_intersect(const Point_2<K> &pt, const Triangle_2<K> &tr)
 {
   return CGALi::do_intersect(pt, tr, K());
 }

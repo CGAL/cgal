@@ -26,7 +26,6 @@
 
 #include <CGAL/Line_2.h>
 #include <CGAL/Point_2.h>
-
 #include <CGAL/Object.h>
 CGAL_BEGIN_NAMESPACE
 
@@ -42,9 +41,30 @@ do_intersect(const typename CGAL_WRAP(K)::Point_2 &pt,
 }
 
 template <class K>
+inline bool
+do_intersect(const typename CGAL_WRAP(K)::Line_2 &line,
+	     const typename CGAL_WRAP(K)::Point_2 &pt, 
+	     const K&)
+{
+    return line.has_on(pt);
+}
+
+template <class K>
 Object
 intersection(const typename CGAL_WRAP(K)::Point_2 &pt, 
 	     const typename CGAL_WRAP(K)::Line_2 &line,
+	     const K& k)
+{
+    if (do_intersect(pt,line, k)) {
+        return make_object(pt);
+    }
+    return Object();
+}
+
+template <class K>
+Object
+intersection(const typename CGAL_WRAP(K)::Line_2 &line,
+	     const typename CGAL_WRAP(K)::Point_2 &pt, 
 	     const K& k)
 {
     if (do_intersect(pt,line, k)) {

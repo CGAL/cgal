@@ -44,9 +44,32 @@ do_intersect(const typename CGAL_WRAP(K)::Point_2 &pt,
 
 
 template <class K>
+inline 
+bool
+do_intersect(const typename CGAL_WRAP(K)::Ray_2 &ray,
+	     const typename CGAL_WRAP(K)::Point_2 &pt, 
+	     const K&)
+{
+  return ray.has_on(pt);
+}
+
+
+template <class K>
 Object
 intersection(const typename CGAL_WRAP(K)::Point_2 &pt, 
 	     const typename CGAL_WRAP(K)::Ray_2 &ray,
+	     const K& k)
+{
+  if (do_intersect(pt,ray, k)) {
+    return make_object(pt);
+  }
+  return Object();
+}
+
+template <class K>
+Object
+intersection(const typename CGAL_WRAP(K)::Ray_2 &ray,
+	     const typename CGAL_WRAP(K)::Point_2 &pt, 
 	     const K& k)
 {
   if (do_intersect(pt,ray, k)) {

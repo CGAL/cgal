@@ -119,29 +119,23 @@ protected:
 };
 
 template <class K>
-inline bool do_intersect(
-    const Line_2<K> &p1,
-    const Iso_rectangle_2<K> &p2,
-    const K&)
+inline bool do_intersect(const typename CGAL_WRAP(K)::Line_2 &p1,
+			 const typename CGAL_WRAP(K)::Iso_rectangle_2 &p2,
+			 const K&)
 {
     typedef Line_2_Iso_rectangle_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
     return pair.intersection_type() != pair_t::NO;
 }
 
-} // namespace CGALi
-
 template <class K>
-inline bool do_intersect(
-    const Line_2<K> &p1,
-    const Iso_rectangle_2<K> &p2)
+inline bool do_intersect(const typename CGAL_WRAP(K)::Iso_rectangle_2 &p2,
+			 const typename CGAL_WRAP(K)::Line_2 &p1,
+			 const K& k)
 {
-  return CGALi::do_intersect(p1, p2, K());
+  return CGALi::do_intersect(p1, p2, k);
 }
 
-
-
-namespace CGALi {
 
 template <class K>
 Line_2_Iso_rectangle_2_pair<K>::
@@ -281,6 +275,15 @@ intersection(const typename CGAL_WRAP(K)::Line_2 &line,
     }
 }
 
+template <class K>
+inline
+Object
+intersection(const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
+	     const typename CGAL_WRAP(K)::Line_2 &line, 
+	     const K& k)
+{
+  return CGALi::intersection(line, iso, k);
+}
 
 template <class K>
 class Iso_rectangle_2_Line_2_pair
@@ -295,13 +298,15 @@ public:
 } // namespace CGALi
 
 
-template <class K>
-Object
-intersection(const Line_2<K> &line, const Iso_rectangle_2<K> &iso)
-{
-  return CGALi::intersection(line, iso, K());
-}
 
+
+template <class K>
+inline bool do_intersect(
+    const Line_2<K> &p1,
+    const Iso_rectangle_2<K> &p2)
+{
+  return CGALi::do_intersect(p1, p2, K());
+}
 
 template <class K>
 inline bool do_intersect(
@@ -309,6 +314,13 @@ inline bool do_intersect(
     const Line_2<K> &p2)
 {
   return CGALi::do_intersect(p2, p1, K());
+}
+
+template <class K>
+Object
+intersection(const Line_2<K> &line, const Iso_rectangle_2<K> &iso)
+{
+  return CGALi::intersection(line, iso, K());
 }
 
 template <class K>

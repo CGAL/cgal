@@ -31,18 +31,47 @@
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
+
 template <class K>
-inline bool
+inline 
+bool
 do_intersect(const typename CGAL_WRAP(K)::Point_2 &pt, 
-	     const typename CGAL_WRAP(K)::Segment_2 &seg)
+	     const typename CGAL_WRAP(K)::Segment_2 &seg,
+	     const K&)
 {
     return seg.has_on(pt);
 }
 
 template <class K>
+inline 
+bool
+do_intersect(const typename CGAL_WRAP(K)::Segment_2 &seg,
+	     const typename CGAL_WRAP(K)::Point_2 &pt, 
+	     const K&)
+{
+    return seg.has_on(pt);
+}
+
+
+template <class K>
+inline
 Object
 intersection(const typename CGAL_WRAP(K)::Point_2 &pt, 
-	     const typename CGAL_WRAP(K)::Segment_2 &seg)
+	     const typename CGAL_WRAP(K)::Segment_2 &seg, 
+	     const K&)
+{
+    if (do_intersect(pt,seg)) {
+        return make_object(pt);
+    }
+    return Object();
+}
+
+template <class K>
+inline
+Object
+intersection( const typename CGAL_WRAP(K)::Segment_2 &seg, 
+	      const typename CGAL_WRAP(K)::Point_2 &pt, 
+	      const K&)
 {
     if (do_intersect(pt,seg)) {
         return make_object(pt);

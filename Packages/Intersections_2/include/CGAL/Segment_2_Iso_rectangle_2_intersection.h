@@ -29,7 +29,6 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
-
 #include <CGAL/Object.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -153,7 +152,15 @@ intersection(
     }
 }
 
-
+template <class K>
+inline
+Object
+intersection(const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
+	     const typename CGAL_WRAP(K)::Segment_2 &seg,
+	     const K&)
+{
+  return CGALi::intersection(seg, iso, k);
+}
 
 template <class K>
 Segment_2_Iso_rectangle_2_pair<K>::Segment_2_Iso_rectangle_2_pair()

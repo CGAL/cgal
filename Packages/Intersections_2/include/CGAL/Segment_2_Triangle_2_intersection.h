@@ -27,12 +27,10 @@
 #include <CGAL/Segment_2.h>
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Point_2.h>
-
 #include <CGAL/Line_2.h>
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Straight_2.h>
-
 #include <CGAL/Object.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -249,6 +247,17 @@ intersection(const typename CGAL_WRAP(K)::Segment_2 &seg,
     }
     }
 }
+
+
+template <class K>
+Object
+intersection(const typename CGAL_WRAP(K)::Triangle_2&tr,
+	     const typename CGAL_WRAP(K)::Segment_2 &seg, 
+	     const K& k)
+{
+  return CGALi::intersection(seg, tr, k);
+}
+
 
 template <class K>
 class Triangle_2_Segment_2_pair

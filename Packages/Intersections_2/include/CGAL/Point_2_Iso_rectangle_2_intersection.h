@@ -26,7 +26,6 @@
 
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Point_2.h>
-
 #include <CGAL/Object.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -44,6 +43,16 @@ do_intersect(const typename CGAL_WRAP(K)::Point_2 &pt,
 }
 
 template <class K>
+inline 
+bool
+do_intersect(const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
+	     const typename CGAL_WRAP(K)::Point_2 &pt,
+	     const K&)
+{
+    return !iso.has_on_unbounded_side(pt);
+}
+
+template <class K>
 Object
 intersection(const typename CGAL_WRAP(K)::Point_2 &pt,
 	     const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
@@ -55,6 +64,18 @@ intersection(const typename CGAL_WRAP(K)::Point_2 &pt,
     return Object();
 }
 
+
+template <class K>
+Object
+intersection(const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
+	     const typename CGAL_WRAP(K)::Point_2 &pt,
+	     const K& k)
+{
+  if (CGALi::do_intersect(pt,iso,k)) {
+    return make_object(pt);
+    }
+    return Object();
+}
 
 } // namespace CGALi
 

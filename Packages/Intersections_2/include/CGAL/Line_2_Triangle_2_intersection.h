@@ -28,9 +28,7 @@
 #include <CGAL/Segment_2.h>
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Point_2.h>
-
 #include <CGAL/Object.h>
-
 #include <CGAL/Straight_2.h>
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
@@ -122,7 +120,15 @@ do_intersect(const typename CGAL_WRAP(K)::Line_2 &p1,
     return pair.intersection_type() != pair_t::NO;
 }
 
-
+template <class K>
+inline 
+bool 
+do_intersect(const typename CGAL_WRAP(K)::Triangle_2 &p2,
+	     const typename CGAL_WRAP(K)::Line_2 &p1,
+	     const K& k)
+{
+  return CGALi::do_intersect(p1, p2, k);
+}
 
 template <class K>
 Line_2_Triangle_2_pair<K>::
@@ -251,6 +257,18 @@ intersection(const typename CGAL_WRAP(K)::Line_2 &line,
     }
     }
 }
+
+
+template <class K>
+inline
+Object
+intersection(const typename CGAL_WRAP(K)::Triangle_2 &tr,
+	     const typename CGAL_WRAP(K)::Line_2 &line,
+	     const K& k)
+{
+  return CGAli::intersection(line, tr, k);
+}
+
 
 template <class K>
 class Triangle_2_Line_2_pair
