@@ -1,3 +1,6 @@
+Version 4.130 on 20 February 2002
+- Missing #include <CGAL/MP_Float.h> for VC++.
+
 Version 4.129 on 28 January 2002
 - Fix bug reported by Tamal : Static_filters<>'s functors copy ctors and
   assignment operators were empty, while they should copy the data members.

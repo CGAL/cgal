@@ -31,6 +31,7 @@
 #  define CGAL_IA_ET CGAL::MP_Float
 #  define CGAL_IA_PROTECTED true
 #  define CGAL_IA_CACHE No_Filter_Cache
+#include <CGAL/MP_Float.h>
 #endif
 
 #include <CGAL/Static_filters/Orientation_2.h>
