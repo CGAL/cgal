@@ -17,9 +17,6 @@
 @usepackage{cc_manual,cc_manual_index}
 @article
 
-%\setlength{\parskip}{1ex}
-%\addtolength{\textheight}{5ex}
-
 \setlength{\skip\footins}{3ex}
 
 \pagestyle{headings}
@@ -69,8 +66,8 @@
 {\small
 \begin{center}
   \begin{tabular}{l}
-    \verb+$CGAL_Package: Min_annulus_d WIP+\cgalWIP\verb+$+ \\
-    \verb+$CGAL_Chapter: Geometric Optimisation $+ \\
+    \verb+$CGAL_Package: Random_numbers WIP+\cgalWIP\verb+$+ \\
+    \verb+$CGAL_Chapter: Geometric Object Generators $+ \\
   \end{tabular}
 \end{center}
 }
@@ -113,7 +110,7 @@
 @! ============================================================================
 
 \clearpage
-\sectionmark{Introduction}
+\markright{\uppercase{Introduction}}
 \section{Introduction}
 
 We provide an implementation of a random numbers generator. It allows
@@ -143,9 +140,7 @@ in the \cgal\ Reference Manual.
 @! Class: Random
 @! ----------------------------------------------------------------------------
 
-%\renewcommand{\ccSection}{\ccSubsection}
-%\ccSetThreeColumns{Random}{random.restore_state( State state)}{}
-%\ccPropagateThreeToTwoColumns
+\renewcommand{\ccSection}{\ccSubsection}
 \input{../doc_tex/support/Generator/Random.tex}
 
 
