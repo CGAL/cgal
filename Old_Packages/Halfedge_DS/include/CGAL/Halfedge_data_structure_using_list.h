@@ -49,6 +49,7 @@
 #include <map>
 #define CGAL_PROTECT_MAP
 #endif
+#include <memory>
 
 // Define shorter names to please linker (g++/egcs)
 #define _HDS_list_vertex                    _Hlv
@@ -166,11 +167,26 @@ public:
     // Point needed for Vertex constructor for efficiency reasons.
     typedef typename Vertex::Point          Point;
 
+    // Halfegdes are allocated in pairs. Here is the type for that.
+    struct Halfedge_pair {
+        Halfedge first;
+        Halfedge second;
+        Halfedge_pair() {}
+        Halfedge_pair( const Halfedge& h, const Halfedge& g)
+            : first(h), second(g) {}
+    };
+
+    typedef std::allocator<Vertex>          Vertex_allocator;
+    typedef std::allocator<Halfedge_pair>   Edge_allocator;
+    typedef std::allocator<Facet>           Facet_allocator;
 protected:
+
+
     // Three in-place lists for the elements. They are unmanaged.
-    typedef In_place_list<Vertex,false>     Vertex_list;
-    typedef In_place_list<Halfedge,false>   Halfedge_list;
-    typedef In_place_list<Facet,false>      Facet_list;
+    typedef In_place_list<Vertex,  false, Vertex_allocator> Vertex_list;
+    typedef In_place_list<Halfedge,false, std::allocator<Halfedge> >
+                                                            Halfedge_list;
+    typedef In_place_list<Facet,   false, Facet_allocator>  Facet_list;
 
 public:
     typedef typename Halfedge_list::size_type   Size;
@@ -184,6 +200,55 @@ protected:
     Size           nb_border_halfedges;
     Size           nb_border_edges;
     Halfedge*      border_halfedges;
+
+    Vertex_allocator vertex_allocator;
+    Edge_allocator   edge_allocator;
+    Facet_allocator  facet_allocator;
+
+    Vertex* get_vertex_node( const Vertex& t) {
+        Vertex* p = vertex_allocator.allocate(1);
+        vertex_allocator.construct(p, t);
+        return p;
+    }
+    void put_vertex_node( Vertex* p) {
+        vertex_allocator.destroy( p);
+        vertex_allocator.deallocate( p, 1);
+    }
+
+    Halfedge* get_edge_node( const Halfedge& h, const Halfedge& g) {
+        // creates a new pair of opposite border halfedges.
+        Halfedge_pair* hpair = edge_allocator.allocate(1);
+        edge_allocator.construct(hpair, Halfedge_pair( h, g));
+        Halfedge* h2 = &(hpair->first);
+        Halfedge* g2 = &(hpair->second);
+        CGAL_assertion( h2 == (Halfedge*)hpair);
+        CGAL_assertion( g2 == h2 + 1);
+        h2->H::set_opposite(g2);
+        g2->H::set_opposite(h2);
+        return h2;
+    }
+    void put_edge_node( Halfedge* h) {
+        // deletes the pair of opposite halfedges h and h->opposite().
+        Halfedge* g = &* (h->opposite());
+        Halfedge_pair* hpair = (Halfedge_pair*)h;
+        if ( h > g)
+            hpair = (Halfedge_pair*)g;
+        CGAL_assertion( &(hpair->first) == (Halfedge*)hpair);
+        edge_allocator.destroy( hpair);
+        edge_allocator.deallocate( hpair, 1);
+    }
+
+    Facet* get_facet_node( const Facet& t) {
+        Facet* p = facet_allocator.allocate(1);
+        facet_allocator.construct(p, t);
+        return p;
+    }
+    void put_facet_node( Facet* p) {
+        facet_allocator.destroy( p);
+        facet_allocator.deallocate( p, 1);
+    }
+
+
 public:
     typedef typename Vertex::Supports_vertex_halfedge Supports_vertex_halfedge;
     typedef typename Halfedge::Supports_halfedge_prev Supports_halfedge_prev;
@@ -224,15 +289,6 @@ public:
                                 iterator_category>
                                                 Edge_const_iterator;
 
-
-    // Halfegdes are allocated in pairs. Here is the type for that.
-    struct Halfedge_pair {
-        Halfedge first;
-        Halfedge second;
-        Halfedge_pair() {}
-        Halfedge_pair( const Halfedge& h, const Halfedge& g)
-            : first(h), second(g) {}
-    };
 
 // CREATION
 
@@ -356,58 +412,50 @@ public:
 // opposite pointers are automatically set.
 
     Vertex* new_vertex() {
-                Vertex* v = new Vertex;
+                Vertex* v = get_vertex_node( Vertex());
                 vertices.push_back( *v);
                 return v;
     }
 
     Vertex* new_vertex( const Vertex* w) {
-                Vertex* v = new Vertex(*w);
+                Vertex* v = get_vertex_node( *w);
                 vertices.push_back( *v);
                 return v;
     }
 
     Vertex* new_vertex( const Point& p) {
-                Vertex* v = new Vertex(p);
+                Vertex* v = get_vertex_node( Vertex(p));
                 vertices.push_back( *v);
                 return v;
     }
 
     Halfedge* new_edge() {
                 // creates a new pair of opposite border halfedges.
-                Halfedge_pair* hpair = new Halfedge_pair;
-                Halfedge* h = &(hpair->first);
-                Halfedge* g = &(hpair->second);
-                CGAL_assertion( h == (Halfedge*)hpair);
+                Halfedge* h = get_edge_node( Halfedge(), Halfedge());
+                Halfedge* g = h->opposite();
                 CGAL_assertion( g == h + 1);
-                h->H::set_opposite(g);
-                g->H::set_opposite(h);
                 halfedges.push_back( *h);
                 halfedges.push_back( *g);
                 return h;
     }
 
     Halfedge* new_edge( const Halfedge* he) {
-                Halfedge_pair* hpair =new Halfedge_pair(*he,*(he->opposite()));
-                Halfedge* h = &(hpair->first);
-                Halfedge* g = &(hpair->second);
-                CGAL_assertion( h == (Halfedge*)hpair);
+                Halfedge* h = get_edge_node(*he,*(he->opposite()));
+                Halfedge* g = h->opposite();
                 CGAL_assertion( g == h + 1);
-                h->H::set_opposite(g);
-                g->H::set_opposite(h);
                 halfedges.push_back( *h);
                 halfedges.push_back( *g);
                 return h;
     }
 
     Facet* new_facet(){
-                Facet* f = new Facet;
+                Facet* f = get_facet_node( Facet());
                 facets.push_back( *f);
                 return f;
     }
 
     Facet* new_facet( const Facet* g) {
-                Facet* f = new Facet(*g);
+                Facet* f = get_facet_node( *g);
                 facets.push_back( *f);
                 return f;
     }
@@ -420,7 +468,7 @@ public:
 
     void delete_vertex( Vertex* v) {
                 vertices.erase(v);
-                delete v;
+                put_vertex_node( v);
     }
 
     void delete_edge( Halfedge* h) {
@@ -428,29 +476,21 @@ public:
                 Halfedge* g = h->opposite();
                 halfedges.erase(h);
                 halfedges.erase(g);
-                if ( h > g)
-                    h = g;
-                Halfedge_pair* hpair = (Halfedge_pair*)h;
-                CGAL_assertion( &(hpair->first) == h);
-                delete hpair;
+                put_edge_node(h);
     }
 
     void delete_facet( Facet* f) {
                 facets.erase(f);
-                delete f;
+                put_facet_node( f);
     }
 
     void delete_all() {
                 vertices.destroy();
                 while ( halfedges.begin() != halfedges.end()) {
-                    Halfedge_iterator i = halfedges.begin();
+                    Halfedge* h = &* (halfedges.begin());
                     halfedges.pop_front();
                     halfedges.pop_front();
-                    Halfedge_pair* hpair = (Halfedge_pair*)(&*i);
-                    CGAL_assertion( &(hpair->first) == &*i);
-                    if ( &*i > &*(i->opposite()))
-                        hpair = (Halfedge_pair*)(&*(i->opposite()));
-                    delete hpair;
+                    put_edge_node( h);
                 }
                 facets.destroy();
                 nb_border_halfedges = 0;
@@ -461,26 +501,23 @@ public:
     void vertex_pop_back() {
                 Vertex* v = & (vertices.back());
                 vertices.pop_back();
-                delete v;
+                put_vertex_node(v);
     }
 
     void edge_pop_back() {
                 Halfedge_iterator i = halfedges.end();
                 --i;
                 --i;
+                Halfedge* h = &*i;
                 halfedges.pop_back();
                 halfedges.pop_back();
-                Halfedge_pair* hpair = (Halfedge_pair*)(&*i);
-                CGAL_assertion( &(hpair->first) == &*i);
-                if ( &*i > &*(i->opposite()))
-                    hpair = (Halfedge_pair*)(&*(i->opposite()));
-                delete hpair;
+                put_edge_node(h);
     }
 
     void facet_pop_back() {
                 Facet* f = & (facets.back());
                 facets.pop_back();
-                delete f;
+                put_facet_node(f);
     }
 
 // Operations with Border Halfedges

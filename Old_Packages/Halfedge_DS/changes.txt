@@ -1,6 +1,12 @@
 Halfedge_DS Package: Release changes:
 ---------------------------------------------------------------------
 
+2.17 (10 Jul 2001)
+
+     - Changed Halfedge_data_structure_using_list to use allocators
+       as the underlying In_place_list does now. Seems to fix 
+       segmentation faults on gcc-3.
+
 2.16 (06 Jul 2001)
 
      - Formatted the deprecated manual part.
