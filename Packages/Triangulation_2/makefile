@@ -19,9 +19,9 @@ package:
 	@echo "---- make Test                ----"
 	@echo "---- make Doc --------------------"
 	@echo "---- editer changes.txt       ----"
-	@echo "---- make VERSION=4.11 Version ---"
+	@echo "---- make VERSION=4.41 Version ---"
 	@echo "---- cvs commit ------------------"
-	@echo "---- make VERSION=4.11 Tag -------"
+	@echo "---- make VERSION=4.41 Tag -------"
 	@echo "---- make Submit -----------------"
 	@echo "----------------------------------"
 
