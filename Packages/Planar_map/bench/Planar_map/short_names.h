@@ -11,8 +11,8 @@
 #define Topological_map                 TM
 #define Planar_map_2                    PMp
 #define Arrangement_2                   Ar
-#define I_Polyhedron_iterator           IPI
-#define I_Polyhedron_const_iterator     IPCI
+#define I_HalfedgeDS_iterator           IPI
+#define I_HalfedgeDS_const_iterator     IPCI
 #define In_place_list_iterator          IPLI
 #define In_place_list_const_iterator    IPLCI
 #define allocator                       All

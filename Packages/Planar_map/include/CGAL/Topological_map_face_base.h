@@ -60,17 +60,17 @@ public:
   // and if so, replace names.
 
   // Circulators around a vertex and around a facet.
-  //typedef I_Polyhedron_facet_circ< Halfedge_handle, circulator_category>
+  //typedef I_HalfedgeDS_facet_circ< Halfedge_handle, circulator_category>
   //Halfedge_around_facet_circulator;
   
-  //typedef I_Polyhedron_vertex_circ< Halfedge_handle, circulator_category>
+  //typedef I_HalfedgeDS_vertex_circ< Halfedge_handle, circulator_category>
   //Halfedge_around_vertex_circulator;
   
-  //typedef I_Polyhedron_facet_circ<
+  //typedef I_HalfedgeDS_facet_circ<
   //Halfedge_const_handle,
   //  circulator_category>       Halfedge_around_facet_const_circulator;
   
-  //typedef I_Polyhedron_vertex_circ<
+  //typedef I_HalfedgeDS_vertex_circ<
   //Halfedge_const_handle,
   //  circulator_category>      Halfedge_around_vertex_const_circulator;
   

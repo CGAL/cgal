@@ -69,72 +69,72 @@ public:
   friend Face;
 #endif
 
-  typedef _Polyhedron_iterator<
+  typedef I_HalfedgeDS_iterator<
   TR_VI,
   Vertex,
   Difference, iterator_category> Vertex_iterator;
   
-  typedef _Polyhedron_const_iterator<
+  typedef I_HalfedgeDS_const_iterator<
   TR_C_VI, TR_VI,
   Vertex,
   Difference, iterator_category>       Vertex_const_iterator;
   
-  typedef _Polyhedron_iterator<
+  typedef I_HalfedgeDS_iterator<
   TR_HI,
   Halfedge,
   Difference, iterator_category>       Halfedge_iterator;
   
-  typedef _Polyhedron_const_iterator<
+  typedef I_HalfedgeDS_const_iterator<
   TR_C_HI, TR_HI,
   Halfedge,
   Difference, iterator_category>       Halfedge_const_iterator;
 
-  typedef _Polyhedron_iterator<
+  typedef I_HalfedgeDS_iterator<
   TR_EI,
   Halfedge,
   Difference, iterator_category>       Edge_iterator;
   
-  typedef _Polyhedron_const_iterator<
+  typedef I_HalfedgeDS_const_iterator<
   TR_C_EI, TR_EI,
   Halfedge,
   Difference, iterator_category>       Edge_const_iterator;
   
-  typedef _Polyhedron_iterator<
+  typedef I_HalfedgeDS_iterator<
   TR_FI,
   Face,
   Difference, iterator_category>       Face_iterator;
   
-  typedef _Polyhedron_const_iterator<
+  typedef I_HalfedgeDS_const_iterator<
   TR_C_FI, TR_FI,
   Face,
   Difference, iterator_category>       Face_const_iterator;
 
-  typedef _Polyhedron_facet_circ<
+  typedef I_HalfedgeDS_facet_circ<
   Halfedge,
   Halfedge_iterator,
   Forward_circulator_tag>            Ccb_halfedge_circulator;
 
-  typedef _Polyhedron_vertex_circ<
+  typedef I_HalfedgeDS_vertex_circ<
   Halfedge,
   Halfedge_iterator,
   Forward_circulator_tag>            Halfedge_around_vertex_circulator;
 
-  typedef _Polyhedron_facet_const_circ<
+  typedef I_HalfedgeDS_facet_const_circ<
   Halfedge,
   Halfedge_const_iterator,
   Forward_circulator_tag>       Ccb_halfedge_const_circulator;
   
-  typedef _Polyhedron_vertex_const_circ<
+  typedef I_HalfedgeDS_vertex_const_circ<
   Halfedge,
   Halfedge_const_iterator,
   Forward_circulator_tag>      Halfedge_around_vertex_const_circulator;
 
-  typedef _Polyhedron_iterator<
+  typedef I_HalfedgeDS_iterator<
   TR_HOI,
   Ccb_halfedge_circulator,
   Difference, std::bidirectional_iterator_tag>       Holes_iterator;
   
-  typedef _Polyhedron_const_iterator<
+  typedef I_HalfedgeDS_const_iterator<
   TR_C_HOI, TR_HOI,
   Ccb_halfedge_const_circulator,
   Difference, std::bidirectional_iterator_tag>       Holes_const_iterator;

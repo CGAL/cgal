@@ -25,7 +25,7 @@
 #include <map>
 #include <CGAL/N_step_adaptor.h>
 #include <CGAL/In_place_list.h>
-#include <CGAL/Polyhedron_iterator_3.h>
+#include <CGAL/HalfedgeDS_iterator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -285,12 +285,12 @@ public:
   void            set_halfedge( Halfedge* h) { F::set_halfedge(h);}
 
 
-  typedef _Polyhedron_iterator< typename F::Holes_iterator, 
+  typedef I_HalfedgeDS_iterator< typename F::Holes_iterator, 
     Halfedge*, 
     typename F::Holes_iterator::difference_type,
     typename F::Holes_iterator::iterator_category>       Holes_iterator;
 
-  typedef _Polyhedron_const_iterator<
+  typedef I_HalfedgeDS_const_iterator<
   typename F::Holes_const_iterator, 
   typename F::Holes_iterator,
   const Halfedge*,

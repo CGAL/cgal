@@ -24,7 +24,7 @@
 #define PL_X_curve_plus                 PXCP
 #define Forward_circulator_tag          FCT
 #define remove_in_face_interior         RIFI
-#define I_Polyhedron_const_iterator     PCI
+#define I_HalfedgeDS_const_iterator     PCI
 #define _Rb_tree_iterator               RTI
 #define _Rb_tree                        RT
 
