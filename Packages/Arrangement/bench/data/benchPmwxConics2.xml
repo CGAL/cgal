@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<bench name_length="80" header="false" type_mask="0x2" strategy_mask="0x8" time="5">
+  <class name="cls111" key="aggregate dummy PMWX Conics Cartesian Leda Real"/>
+  <class name="cls112" key="aggregate dummy PMWX Conics Simple Cartesian Leda Real"/>
+  <class name="cls121" key="aggregate dummy PMWX Conics Cartesian Core Expr"/>
+  <class name="cls122" key="aggregate dummy PMWX Conics Simple Cartesian Core Expr"/>
+
+  <class name="cls211" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Lazy Gmpq"/>
+  <class name="cls212" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Lazy Gmpq"/>
+  <class name="cls213" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Gmpq"/>
+  <class name="cls214" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Gmpq"/>
+
+  <class name="cls221" key="aggregate dummy PMWX Curved Kernel Conics Cartesian Gmpz"/>
+  <class name="cls222" key="aggregate dummy PMWX Curved Kernel Conics Simple Cartesian Gmpz"/>
+
+  <class name="cls311" key="aggregate dummy PMWX Exacus Conics Cartesian NiX Leda Real"/>
+  <class name="cls321" key="aggregate dummy PMWX Exacus Conics Cartesian NiX Core"/>
+
+  <!-- <clo name="format" string="-If="/> -->
+  <!-- <clo name="samples" string="-s"/> -->
+  <clo name="time" string="-t"/> 
+  <clo name="header" string="-bh="/> 
+  <clo name="name_length" string="-bnl="/> 
+  <clo name="type_mask" string="-btm="/> 
+  <clo name="strategy_mask" string="-bsm="/> 
+
+  <file name="deg_ellipses30.cnx" format="dat" curves="30"
+    vertices="1300" halfedges="5080" faces="1242"></file>
+  <file name="deg_ellipses60.cnx" format="dat" curves="60"
+    vertices="4934" halfedges="19496" faces="4816"></file>
+  <file name="deg_ellipses90.cnx" format="dat" curves="90"
+    vertices="11214" halfedges="44496" faces="11036"></file>
+
+  <file name="deg_ellipses_gr0.cnx" format="dat" curves="30"
+    vertices="1023" halfedges="4052" faces="1005"></file>
+  <file name="deg_ellipses_gr10.cnx" format="dat" curves="30"
+    vertices="1198" halfedges="4672" faces="1140"></file>
+  <file name="deg_ellipses_gr20.cnx" format="dat" curves="30"
+    vertices="1204" halfedges="4696" faces="1146"></file>
+
+  <file name="ellipses_gr0.cnx" format="dat" curves="30"
+    vertices="1300" halfedges="5080" faces="1242"></file>
+  <file name="ellipses_gr10.cnx" format="dat" curves="30"
+    vertices="1300" halfedges="5080" faces="1242"></file>
+  <file name="ellipses_gr20.cnx" format="dat" curves="30"
+    vertices="1300" halfedges="5080" faces="1242"></file>
+
+  <bench>
+    <bench file="deg_ellipses30.cnx" enable="true">
+      <benchPmwxLedaRealCartesianConic enable="false" header="true"/>
+      <benchPmwxLedaRealSimpleCartesianConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
+      <benchPmwxGmpzCartesianCkConic enable="false"/>
+      <benchPmwxGmpzSimpleCartesianCkConic enable="false"/>
+      <benchPmwxNixLedaCartesianExacusConic header="true"/>
+      <benchPmwxNixCoreCartesianExacusConic/>
+    </bench>
+    <bench file="deg_ellipses60.cnx" enable="true">
+      <benchPmwxLedaRealCartesianConic enable="false" header="true"/>
+      <benchPmwxLedaRealSimpleCartesianConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
+      <benchPmwxGmpzCartesianCkConic enable="false"/>
+      <benchPmwxGmpzSimpleCartesianCkConic enable="false"/>
+      <benchPmwxNixLedaCartesianExacusConic/>
+      <benchPmwxNixCoreCartesianExacusConic/>
+    </bench>
+    <bench file="deg_ellipses90.cnx" enable="true">
+      <benchPmwxLedaRealCartesianConic enable="false" header="true"/>
+      <benchPmwxLedaRealSimpleCartesianConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
+      <benchPmwxGmpzCartesianCkConic enable="false"/>
+      <benchPmwxGmpzSimpleCartesianCkConic enable="false"/>
+      <benchPmwxNixLedaCartesianExacusConic/>
+      <benchPmwxNixCoreCartesianExacusConic/>
+    </bench>
+
+    <bench file="deg_ellipses_gr0.cnx" enable="true">
+      <benchPmwxLedaRealCartesianConic enable="false" header="true"/>
+      <benchPmwxLedaRealSimpleCartesianConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
+      <benchPmwxGmpzCartesianCkConic enable="false"/>
+      <benchPmwxGmpzSimpleCartesianCkConic enable="false"/>
+      <benchPmwxNixLedaCartesianExacusConic/>
+      <benchPmwxNixCoreCartesianExacusConic/>
+    </bench>
+    <bench file="deg_ellipses_gr10.cnx" enable="true">
+      <benchPmwxLedaRealCartesianConic enable="false" header="true"/>
+      <benchPmwxLedaRealSimpleCartesianConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
+      <benchPmwxGmpzCartesianCkConic enable="false"/>
+      <benchPmwxGmpzSimpleCartesianCkConic enable="false"/>
+      <benchPmwxNixLedaCartesianExacusConic/>
+      <benchPmwxNixCoreCartesianExacusConic/>
+    </bench>
+    <bench file="deg_ellipses_gr20.cnx" enable="true">
+      <benchPmwxLedaRealCartesianConic header="true" enable="false"/>
+      <benchPmwxLedaRealSimpleCartesianConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
+      <benchPmwxGmpzCartesianCkConic enable="false"/>
+      <benchPmwxGmpzSimpleCartesianCkConic enable="false"/>
+      <benchPmwxNixLedaCartesianExacusConic/>
+      <benchPmwxNixCoreCartesianExacusConic/>
+    </bench>
+
+    <bench file="ellipses_gr0.cnx" enable="true">
+      <benchPmwxLedaRealCartesianConic enable="false" header="true"/>
+      <benchPmwxLedaRealSimpleCartesianConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
+      <benchPmwxGmpzCartesianCkConic enable="false"/>
+      <benchPmwxGmpzSimpleCartesianCkConic enable="false"/>
+      <benchPmwxNixLedaCartesianExacusConic/>
+      <benchPmwxNixCoreCartesianExacusConic/>
+    </bench>
+    <bench file="ellipses_gr10.cnx" enable="true">
+      <benchPmwxLedaRealCartesianConic enable="false" header="true"/>
+      <benchPmwxLedaRealSimpleCartesianConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
+      <benchPmwxGmpzCartesianCkConic enable="false"/>
+      <benchPmwxGmpzSimpleCartesianCkConic enable="false"/>
+      <benchPmwxNixLedaCartesianExacusConic/>
+      <benchPmwxNixCoreCartesianExacusConic/>
+    </bench>
+    <bench file="ellipses_gr20.cnx" enable="true">
+      <benchPmwxLedaRealCartesianConic enable="false" header="true"/>
+      <benchPmwxLedaRealSimpleCartesianConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
+      <benchPmwxGmpzCartesianCkConic enable="false"/>
+      <benchPmwxGmpzSimpleCartesianCkConic enable="false"/>
+      <benchPmwxNixLedaCartesianExacusConic/>
+      <benchPmwxNixCoreCartesianExacusConic/>
+    </bench>
+
+  </bench>
+
+</bench>
