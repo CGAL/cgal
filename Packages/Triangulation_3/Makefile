@@ -53,13 +53,20 @@ clean:
 
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
-	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
+	--exclude=CVS --exclude=wrapper.* --exclude=Makefile \
 	--exclude=TODO \
 	--exclude=.pure --exclude=*.pv \
 	--exclude=.nfs*\
+	--exclude=HTML_TEST \
 	version description.txt changes.txt \
 	demo include doc_tex doc_ps src test examples
 
-doc: doc_ps/$(Package).ps
-	$(MAKE) -C doc_tex/basic/$(Package)
+doc: 
+	$(MAKE) -C doc_tex/basic/$(Package) clean
+	$(MAKE) -C doc_tex/basic/$(Package) $(Package).ps
 	cp doc_tex/basic/$(Package)/$(Package).ps doc_ps/
+
+$(Package).ps: 
+	$(MAKE) -C doc_tex/basic/$(Package) $(Package).ps
+	cp doc_tex/basic/$(Package)/$(Package).ps doc_ps/$(Package).ps
+
