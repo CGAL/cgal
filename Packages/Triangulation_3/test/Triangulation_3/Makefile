@@ -62,20 +62,20 @@ all: test_triangulation_tds \
 	./test_regular_3 
 #        -B$(UTIL)/Binutils/$(UNAME)/bin/ \
 
-test_triangulation_tds: ../../src/Triangulation_3.o test_triangulation_tds.o 
-	$(CGAL_CXX)  -o test_triangulation_tds Triangulation_3.o test_triangulation_tds.o $(LDFLAGS)
+test_triangulation_tds: test_triangulation_tds.o 
+	$(CGAL_CXX)  -o test_triangulation_tds test_triangulation_tds.o $(LDFLAGS)
 
-test_triangulation_3: ../../src/Triangulation_3.o  test_triangulation_3.o 
-	$(CGAL_CXX) -o test_triangulation_3 Triangulation_3.o test_triangulation_3.o $(LDFLAGS)
+test_triangulation_3: test_triangulation_3.o 
+	$(CGAL_CXX) -o test_triangulation_3 test_triangulation_3.o $(LDFLAGS)
 
-test_delaunay_3: ../../src/Triangulation_3.o  test_delaunay_3.o 
-	$(CGAL_CXX) -o test_delaunay_3 Triangulation_3.o test_delaunay_3.o $(LDFLAGS)
+test_delaunay_3: test_delaunay_3.o 
+	$(CGAL_CXX) -o test_delaunay_3 test_delaunay_3.o $(LDFLAGS)
 
-test_delaunay_hierarchy_3: ../../src/Triangulation_3.o test_delaunay_hierarchy_3.o 
-	$(CGAL_CXX) -o test_delaunay_hierarchy_3 Triangulation_3.o test_delaunay_hierarchy_3.o $(LDFLAGS)
+test_delaunay_hierarchy_3: test_delaunay_hierarchy_3.o 
+	$(CGAL_CXX) -o test_delaunay_hierarchy_3 test_delaunay_hierarchy_3.o $(LDFLAGS)
 
-test_regular_3: ../../src/Triangulation_3.o  test_regular_3.o 
-	$(CGAL_CXX) -o test_regular_3 Triangulation_3.o test_regular_3.o $(LDFLAGS)
+test_regular_3: test_regular_3.o 
+	$(CGAL_CXX) -o test_regular_3 test_regular_3.o $(LDFLAGS)
 
 clean:
 	- rm -f *.o test_triangulation_3 \

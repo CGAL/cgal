@@ -25,25 +25,45 @@
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_3.h>
+#include <CGAL/Triangulation_utils_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
-struct Triangulation_utils_3
+// We use the following template class in order to avoid having a static data
+// member of a non-template class which would require src/Triangulation_3.C .
+template < class T = void >
+struct Triangulation_utils_base_3
 {
   static const char tab_next_around_edge[4][4];
 
-  static int ccw(int i)
-    {
-      CGAL_triangulation_precondition( i >= 0 && i < 3 );
-      return (i==2) ? 0 : i+1;
-    }
-  
-  static int cw(int i)
-    {
-      CGAL_triangulation_precondition( i >= 0 && i < 3 );
-      return (i==0) ? 2 : i-1;
-    }
+  static unsigned int random_value, count, val;
+};
 
+template < class T >
+const char Triangulation_utils_base_3<T>::tab_next_around_edge[4][4] = {
+      {5, 2, 3, 1},
+      {3, 5, 0, 2},
+      {1, 3, 5, 0},
+      {2, 0, 1, 5} };
+
+template < class T >
+unsigned int Triangulation_utils_base_3<T>::random_value = 0;
+
+template < class T >
+unsigned int Triangulation_utils_base_3<T>::count = 0;
+
+template < class T >
+unsigned int Triangulation_utils_base_3<T>::val;
+
+
+// We derive from Triangulation_cw_ccw_2 because we still use cw() and ccw()
+// in the 2D part of the code.  Ideally, this should go away when we re-use
+// T2D entirely.
+
+struct Triangulation_utils_3
+  : public Triangulation_cw_ccw_2,
+    public Triangulation_utils_base_3<>
+{
   static int next_around_edge(const int i, const int j)
   {
     // index of the next cell when turning around the
@@ -53,8 +73,6 @@ struct Triangulation_utils_3
 		                     ( i != j ) );
     return tab_next_around_edge[i][j];
   }
-
-  static unsigned int random_value, count, val;
 
   // rand_4() outputs pseudo random unsigned ints < 4.
   // We compute random 16 bit values, that we slice/shift to make it faster.

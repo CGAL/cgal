@@ -1,6 +1,7 @@
 Version 1.116 (???)
 - replace Pointer by CGAL_COMPARABLE_ITERATOR_CHECKER( *) for 
-Vertex_handle and Cell_handle in TDS
+  Vertex_handle and Cell_handle in TDS
+- Remove src/Triangulation_3.C .
 
 Version 1.115 (29 May 02)
 - Replace max2 by maxless.
