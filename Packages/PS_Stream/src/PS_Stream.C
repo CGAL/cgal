@@ -1,3 +1,5 @@
+#ifndef PS_STREAM_C
+#define PS_STREAM_C
 
 #include <CGAL/IO/PS_Stream.h>
 
@@ -15,8 +17,6 @@ const float PS_Stream::POINT=1.0;
  const DashStyle PS_Stream::DASH5="[5 10] 0 ";
  const DashStyle PS_Stream::DASH1="[2 2] 0 ";
  extern const PS_Stream::Context CTXT_DEFAULT=PS_Stream::Context();
-
-
 
 
 PS_Stream::PS_Stream(ostream& os, OutputMode
@@ -80,7 +80,6 @@ PS_Stream::PS_Stream(const PS_BBox& bb,float H, ostream& os,
   : _bbox(bb), _mode(mode), _height((int)H), _os(cerr)
 {
   _os=os;
-  // _width=(int)((bb.xmax()-bb.xmin())*H/(bb.ymax()-bb.ymin()));
   set_window(bb,H);
   set_scale(bb);
   insert_catalogue();
@@ -92,7 +91,6 @@ PS_Stream::PS_Stream(const PS_BBox& bb,float H, const char* fname,
 {
   static ofstream os(fname,ios::out);
   _os=os; 
-  // _width=(int)((bb.xmax()-bb.xmin())*H/(bb.ymax()-bb.ymin()));
   set_window(bb,H);
   set_scale(bb);
   insert_catalogue();
@@ -215,7 +213,8 @@ PS_Stream& PS_Stream::set_border_color(const Color& color)
 {
   if (ctxt.get_border_color()!=color)
     {
-      os() << color.r() << " " << color.g() << " " << color.b()
+      
+      os() << color 
            << " setrgbcolor" <<endl;
       ctxt.set_border_color(color);
     }
@@ -504,6 +503,51 @@ void PS_Stream::insert_catalogue()
   os() << "/sc {setrgbcolor} bind def" << endl;
   os() << "/tr {mt lt lt lt} bind def" << endl;
   os() << "/re {mt lt lt lt lt} bind def" << endl;
+
+/*************************************************************/
+//Rajout pour dessiner les aretes 
+
+//Le stroke prend la couleur courante donc a definir avant de
+//dessiner l'arete 
+
+os() << "%Syntaxe xa ya xb yb arete" << endl; 
+os() <<	"/arete {
+gsave
+/yb exch def 
+/xb exch def 
+/ya exch def 
+/xa exch def 
+xa ya moveto
+xb yb lineto
+closepath  
+stroke
+grestore
+} def" << endl;
+
+//Rajout pour dessiner les faces 
+//
+os() << "%Syntaxe pt1x pt1y pt2x pt2y .. ptnx ptny nb_points face" << endl; 
+os() <<	"/face {
+
+/nbiter exch def
+newpath
+
+/ptfinaly exch def
+/ptfinalx exch def
+ptfinalx ptfinaly moveto 
+/nbiter nbiter 1 sub def
+
+nbiter {
+/ptay exch def 
+/ptax exch def 
+ptax ptay lineto
+} repeat
+closepath
+
+} def" << endl; 
+
+/*************************************************************/ 
+
   os() << "0 0 0 setrgbcolor"<<endl;
   os() << PS_Stream::SOLID << " setdash"<<endl;
   os() << 0 << " setlinewidth"<<endl;
@@ -620,3 +664,5 @@ PS_Stream& operator << (PS_Stream& ps,const PS_Stream::Axis& g)
 #endif
 
 CGAL_END_NAMESPACE
+
+#endif
