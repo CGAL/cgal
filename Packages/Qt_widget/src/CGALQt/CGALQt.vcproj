@@ -126,7 +126,8 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe $(CGALROOT)/include/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc"/>
+						CommandLine="$(QTDIR)/bin/moc.exe ../../include/CGAL/IO/Qt_widget.h -o Qt_widget.moc"
+						Outputs="Qt_widget.moc"/>
 				</FileConfiguration>
 			</File>
 			<File
@@ -135,7 +136,8 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe $(CGALROOT)/include/CGAL/IO/Qt_widget_layer.h -o Qt_widget_layer.moc"/>
+						CommandLine="$(QTDIR)/bin/moc.exe ../../include/CGAL/IO/Qt_widget_layer.h -o Qt_widget_layer.moc"
+						Outputs="Qt_widget_layer.moc"/>
 				</FileConfiguration>
 			</File>
 			<File
@@ -144,7 +146,8 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe $(CGALROOT)/include/CGAL/IO/Qt_widget.h -o Qt_widget.moc"/>
+						CommandLine="$(QTDIR)/bin/moc.exe ../../include/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc"
+						Outputs="Qt_widget_standard_toolbar.moc"/>
 				</FileConfiguration>
 			</File>
 		</Filter>
