@@ -675,7 +675,7 @@ class Point_handle;
   for the planar map version.
 */
 template <class SweepLineTraits_2>
-class Point_rep : public Ref_counted
+class Point_rep
 {
 public:
   typedef SweepLineTraits_2             Traits;
