@@ -1,3 +1,7 @@
+#include <CGAL/basic.h>
+#ifndef CGAL_USE_LEDA
+int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
+#else
 #include <typedefs.h>
 #include <polygon_io.h>
 #include <CGAL/IO/Window_stream.h>
@@ -152,7 +156,7 @@ void compute_partitions(Polygon_2& polygon)
 
 }
 
-int main( int argc, char** argv )
+int main( )
 {
    menu polygon_menu;
    polygon_menu.button("Enter new polygon", MOUSE_POLYGON);
@@ -244,3 +248,5 @@ int main( int argc, char** argv )
     }
     return 0; // statement is unreachable; warning is OK
 }
+
+#endif // CGAL_USE_LEDA

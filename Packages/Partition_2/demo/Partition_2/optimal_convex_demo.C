@@ -1,4 +1,7 @@
 #include <CGAL/basic.h>
+#ifndef CGAL_USE_LEDA
+int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
+#else
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/partition_2.h>
@@ -51,7 +54,7 @@ void draw_polygons(const Polygon_2& polygon,
 }
 
 
-int main( int argc, char** argv )
+int main( )
 {
    Polygon_2    polygon;
    Polygon_list partition_polys;
@@ -74,3 +77,5 @@ int main( int argc, char** argv )
    W.read_mouse();
    return 0;
 }
+
+#endif // CGAL_USE_LEDA
