@@ -1,7 +1,7 @@
 
 #include <CGAL/basic.h>
 
-#if !defined(CGAL_USE_LEDA) || (__LEDA__ < 430)
+#if !defined(CGAL_USE_LEDA) || (__LEDA__ < 420)
 #include <iostream>
 
 int main(int argc, char *argv[])

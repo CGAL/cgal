@@ -112,6 +112,11 @@ int log(const leda_integer& i)
 
 CGAL_BEGIN_NAMESPACE
 
+// kernel tag for the rational LEDA kernel traits
+
+struct Leda_rational_kernel_tag {  };
+
+
 class leda_rat_R {
 public:
   typedef leda_rational             FT;
@@ -129,6 +134,9 @@ public:
   typedef leda_rat_kernel_traits    Self;
 
   typedef leda_rat_R                R;
+  
+  //tag type ...
+  typedef Leda_rational_kernel_tag  Kernel_tag;
 
   // types ...
   typedef leda_rational             FT;
@@ -234,8 +242,8 @@ public:
   typedef Construct_leda_rat_opposite_vector_2<Self>              Construct_opposite_vector_2;
   
   // 2d intersections and related things
-  typedef Assign_leda_rat_2                                 Assign_2;
-  typedef CGAL_intersect_leda_rat_2<HELP_KERNEL>            Intersect_2;
+  typedef Assign_leda_rat_2                                       Assign_2;
+  typedef CGAL_intersect_leda_rat_2<Self,HELP_KERNEL>             Intersect_2;
     
   // 2d computations
   typedef CGAL_compute_leda_rat_squared_distance_2<HELP_KERNEL>  Compute_squared_distance_2;

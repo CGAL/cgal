@@ -966,10 +966,21 @@ public:
   
       if (ori == CGAL::COUNTERCLOCKWISE)
       {
-        return v.rotate90(1);
+#if (__LEDA__ <= 420)
+        v = v.rotate90();
+#else      
+        v = v.rotate90(1);
+#endif	
       }
       else { // clockwise ...
-        return v.rotate90(-1);
+#if (__LEDA__ <= 420)
+        Vector_2 hlp = v.rotate90();
+	hlp = hlp.rotate90();
+	hlp = hlp.rotate90();
+	v = hlp;
+#else      
+        v = v.rotate90(-1);
+#endif	
       }
       
       // collinear is not allowed
@@ -1003,10 +1014,21 @@ public:
   
       if (ori == CGAL::COUNTERCLOCKWISE)
       {
+#if (__LEDA__ <= 420)
+        return v.rotate90();
+#else      
         return v.rotate90(1);
+#endif	
       }
       else { // clockwise ...
+#if (__LEDA__ <= 420)
+        Vector_2 hlp = v.rotate90();
+	hlp = hlp.rotate90();
+	hlp = hlp.rotate90();
+	return hlp;
+#else      
         return v.rotate90(-1);
+#endif	
       }
       
       // collinear is not allowed
@@ -1041,10 +1063,18 @@ public:
 #endif  
   
     // construct perp. line through p; rotation ccw by 90 degrees
+#if (__LEDA__ <= 420)  
+    int ori = ::orientation(l,p);
+#else    
     int ori = l.side_of(p);
+#endif    
       
     if (ori == 0) { // special case: collinear
+#if (__LEDA__ <= 420)  
+      return l.rotate90(p);
+#else    
       return l.rotate90(p,1);
+#endif      
     }
       
     Segment_2 s = l.perpendicular(p);

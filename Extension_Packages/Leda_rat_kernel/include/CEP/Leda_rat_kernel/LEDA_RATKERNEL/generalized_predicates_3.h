@@ -9,6 +9,22 @@
 
 // 3d generalized predicates  ...
 
+#if (__LEDA__ == 420)
+// fix a linker problem (undefined reference)
+leda_rat_vector::leda_rat_vector(leda_rational a, leda_rational b, leda_rational c)
+{ 
+  leda_integer a_num = a.numerator();
+  leda_integer b_num = b.numerator();
+  leda_integer c_num = c.numerator();
+  leda_integer a_den = a.denominator();
+  leda_integer b_den = b.denominator();
+  leda_integer c_den = c.denominator();
+
+  PTR = new geo_rep(a_num*b_den*c_den, b_num*a_den*c_den, c_num*a_den*b_den,
+                    a_den*b_den*c_den);
+}
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 template<class K>
@@ -109,7 +125,11 @@ public:
   
   bool operator()(const Line_3& l1, const Line_3& l2) const
   {
+#if (__LEDA__ <= 420)
+    if (! ((Line_3&)l1 == (Line_3&)l2)) return false;
+#else  
     if (! (l1 == l2)) return false;
+#endif
     
     // same direction ???
     Vector_3 v1 = l1.to_vector();
@@ -167,7 +187,11 @@ public:
 
   bool operator()(const Triangle_3& t1, const Triangle_3& t2) const
   {
+#if (__LEDA__ <= 420)
+    return ((Triangle_3&)t1 == (Triangle_3&)t2);
+#else  
     return (t1 == t2);
+#endif    
   }  
   
   bool operator()(const Tetrahedron_3& s1,
@@ -724,7 +748,8 @@ class Predicate_leda_d3_rat_is_degenerate {
   typedef typename K::Triangle_3   Triangle_3;
   typedef typename K::Tetrahedron_3  Tetrahedron_3;
   typedef typename K::Segment_3    Segment_3;     
-  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;  
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename K::Vector_3     Vector_3;  
 
 public:
   typedef Arity_tag< 1 > Arity;

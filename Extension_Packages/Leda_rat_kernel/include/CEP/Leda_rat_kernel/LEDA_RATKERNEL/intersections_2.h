@@ -15,6 +15,9 @@
 #include <LEDA/rat_ray.h>
 #include <LEDA/rat_circle.h>
 #include <LEDA/rat_geo_alg.h>
+#include <LEDA/map2.h>
+
+//#include "improved_rat_segment_intersection.h"
 
 // undefine the LEDA vector and list definition
 // (this was only present in older LEDA versions)
@@ -47,35 +50,139 @@ public:
 // computations of 2d intersections ...
 // attention - we need the correct conversion for special segments ...
 
-template<class HELP_KERNEL>
+template<class K, class HELP_KERNEL>
 class CGAL_intersect_leda_rat_2 {
 public:
   typedef Arity_tag< 2 >     Arity;
   typedef CGAL::Object       result_type;
   
+  // kernel types ...
+  typedef typename K::Line_2           Line_2;
+  typedef typename K::Ray_2            Ray_2;
+  typedef typename K::Segment_2        Segment_2;
+  typedef typename K::Triangle_2       Triangle_2;
+  typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
+  
+  // help kernel functor ...
   typedef typename HELP_KERNEL::Intersect_2  Intersect_2;
+  
+#if defined(LEDA_SEGMENT_INTERSECTION_RESULT_CACHE)  
+  // experimental: we use a map2 to cache intersection results ...
+  
+  static leda_map2<leda_rat_segment, leda_rat_segment, CGAL::Object>  intersection_result;
+#endif  
+  
+  CGAL::Object rat_segment_intersection(const leda_rat_segment& s,
+                                        const leda_rat_segment& t) const
+  {  
+   CGAL::Object obj;
+  
+   if ( s.is_trivial() )
+   {   
+    if ( t.contains(  s.source()) )
+       { return CGAL::make_object(s.source()); }
+    else
+       return obj;
+   }
+   if ( t.is_trivial() ) 
+   { 
+    if ( s.contains(t.source()) )
+       { return CGAL::make_object(t.source()); }
+    else 
+       return obj;
+   }
+
+   int o1 = s.orientation(t.start()); 
+   int o2 = s.orientation(t.end());
+  
+   //int o1 = LEDA_NAMESPACE_NAME::orientation(s.start(), s.end(), t.start()); 
+   //int o2 = LEDA_NAMESPACE_NAME::orientation(s.start(), s.end(), t.end());  
+  
+   // two orientation tests were moved ...
+
+   // special case : collinearity ...
+   if ( o1 == 0 && o2 == 0 )
+   { leda_rat_point sa = s.source(); 
+     leda_rat_point sb = s.target();
+     if ( LEDA_NAMESPACE_NAME::compare(sa,sb) > 0 )
+       { leda_rat_point h = sa; sa = sb; sb = h; }
+
+     leda_rat_point ta = t.source(); 
+     leda_rat_point tb = t.target();
+
+     if ( LEDA_NAMESPACE_NAME::compare (ta,tb) > 0 )
+       { leda_rat_point h = ta; ta = tb; tb = h; }
+
+     leda_rat_point a = sa;
+     if (LEDA_NAMESPACE_NAME::compare(sa,ta) < 0) a = ta;
+
+     leda_rat_point b = tb; 
+     if (LEDA_NAMESPACE_NAME::compare(sb,tb) < 0) b = sb;
+
+     if ( LEDA_NAMESPACE_NAME::compare(a,b) <= 0 )
+     { leda_rat_segment I = leda_rat_segment(a,b);
+       if (a == b) return CGAL::make_object(a);
+       else return CGAL::make_object(I);
+     }
+     return obj;
+   }
+  
+   if ( o1 != o2){ // was && ...
+   // moved ...
+   int o3 = t.orientation(s.start());
+   int o4 = t.orientation(s.end());  
+   //int o3 = LEDA_NAMESPACE_NAME::orientation(t.start(),t.end(),s.start());
+   //int o4 = LEDA_NAMESPACE_NAME::orientation(t.start(),t.end(),s.end());     
+  
+   if ( o3 != o4 )
+   { leda_integer w  = s.dy()*t.dx() - t.dy()*s.dx();
+     leda_integer c1 = s.X2()*s.Y1() - s.X1()*s.Y2();
+     leda_integer c2 = t.X2()*t.Y1() - t.X1()*t.Y2();
+
+     leda_rat_point p(c2*s.dx()-c1*t.dx(), c2*s.dy()-c1*t.dy(), w);
+     return CGAL::make_object(p);
+   }
+   }
+   return obj;
+  }
+  
   
   // for segments (uses LEDA directly) ...
   CGAL::Object operator()(const leda_rat_segment& s1, const leda_rat_segment& s2) const
   {
+/*  
     CGAL::Object obj;    
-    leda_rat_segment result;    
-    bool bi = s1.intersection(s2, result);    
+    leda_rat_segment result;      
+    bool bi = s1.intersection(s2, result);  
     if (bi) {
-      //result.normalize();
-    
       if (result.start() == result.end()) {
         obj = CGAL::make_object(result.start()); // only a point ...
       }
       else obj = CGAL::make_object(result); // segment ...
-    }    
+    } 
     return obj;
+*/     
+
+#if defined(LEDA_SEGMENT_INTERSECTION_RESULT_CACHE) 
+    // look up the result in the cache ...
+    if (intersection_result.defined(s1,s2)){ // (s2,s1) ?
+        return intersection_result(s1,s2);
+    }
+    else {
+        CGAL::Object obj = this->rat_segment_intersection(s1,s2);
+	intersection_result(s1,s2) = obj; 
+	intersection_result(s2,s1) = obj; 	
+	return obj;
+    }
+#else   
+    return this->rat_segment_intersection(s1,s2); 
+#endif     
   }     
   
   // this one uses the CGAL kernel ...
   
   template<class T1, class T2>
-  CGAL::Object operator()(const T1& obj1, const T2& obj2) const
+  CGAL::Object compute_intersection_result(const T1& obj1, const T2& obj2) const
   {
      leda_to_cgal_2 conv;
      Intersect_2 inter;
@@ -91,10 +198,87 @@ public:
      cgal_to_leda_2 conv_back;
      
      return conv_back(result);
-  }  
+  } 
+  
+  // these functors call the member template ...
+  // we cannot use a member template directly (because of VC 6)
+  CGAL::Object operator()(const Line_2& obj1, const Line_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Line_2& obj1, const Ray_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Line_2& obj1, const Segment_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Line_2& obj1, const Triangle_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Line_2& obj1, const Iso_rectangle_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }        
+
+  CGAL::Object operator()(const Ray_2& obj1, const Line_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Ray_2& obj1, const Ray_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Ray_2& obj1, const Segment_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Ray_2& obj1, const Triangle_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Ray_2& obj1, const Iso_rectangle_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); } 
+  
+  CGAL::Object operator()(const Segment_2& obj1, const Line_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Segment_2& obj1, const Ray_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Segment_2& obj1, const Triangle_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Segment_2& obj1, const Iso_rectangle_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }  
+  
+  CGAL::Object operator()(const Triangle_2& obj1, const Line_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Triangle_2& obj1, const Ray_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Triangle_2& obj1, const Segment_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Triangle_2& obj1, const Triangle_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Triangle_2& obj1, const Iso_rectangle_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); } 
+  
+  CGAL::Object operator()(const Iso_rectangle_2& obj1, const Line_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Iso_rectangle_2& obj1, const Ray_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Iso_rectangle_2& obj1, const Segment_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Iso_rectangle_2& obj1, const Triangle_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }
+  
+  CGAL::Object operator()(const Iso_rectangle_2& obj1, const Iso_rectangle_2& obj2) const
+  { return compute_intersection_result(obj1,obj2); }          
 };
 
-
+#if defined(LEDA_SEGMENT_INTERSECTION_RESULT_CACHE)
+template<class K, class HELP_KERNEL> 
+leda_map2<leda_rat_segment, leda_rat_segment, CGAL::Object> CGAL_intersect_leda_rat_2<K,HELP_KERNEL>::intersection_result;
+#endif
 
 /*
 class Intersect_leda_rat_2 {

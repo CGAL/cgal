@@ -13,13 +13,13 @@
 
 #include <CGAL/basic.h>
 
-#if !defined(CGAL_USE_LEDA) || (__LEDA__ < 430)
+#if !defined(CGAL_USE_LEDA) || (__LEDA__ < 420)
 #include <iostream>
 
 int main(int argc, char *argv[])
 {
- std::cout << "No LEDA 4.3 or higher installed!\n";
- std::cout << "A LEDA version >= 4.3 is required !\n";
+ std::cout << "No LEDA 4.2 or higher installed!\n";
+ std::cout << "A LEDA version >= 4.2 is required !\n";
  return 0;
 }
 #else 
@@ -49,7 +49,7 @@ typedef K::Point_2                        Point;
 typedef K::Segment_2                      Segment;
 
 
-void new_redraw(window* wp, double x0, double y0, double x1, double y1)
+void new_redraw(leda_window* wp, double x0, double y0, double x1, double y1)
 { }
 
 class geo_hull : public geowin_update<std::list<Point>, std::list<Segment> >
@@ -60,10 +60,10 @@ public:
  int less_rotate_ccw_counter;
  int less_xy_counter;
  GeoWin& gw;
- window& w;
+ leda_window& w;
  
  std::list<Point>         current_hull;
- point_style              pold;
+ leda_point_style              pold;
  const std::list<Point>*  input_set;
 
  geo_hull(GeoWin& g) : gw(g), w(g.get_window()) 
@@ -78,7 +78,7 @@ public:
  void user_interaction() { w.read_mouse(); }
  
  void draw_points()
- { point_style ps = w.set_point_style(cross_point);
+ { leda_point_style ps = w.set_point_style(leda_cross_point);
    std::list<Point>::const_iterator it= input_set->begin();
    for(;it != input_set->end(); it++) w.draw_point(it->to_float());
    w.set_point_style(ps);
@@ -92,8 +92,8 @@ public:
    Point plast;
    bool first = true;
    for(;cit != current_hull.end(); cit++){
-     w.draw_point((*cit).to_float(), green);
-     if (! first) w.draw_segment((*cit).to_float(), plast.to_float(), green);
+     w.draw_point((*cit).to_float(), leda_green);
+     if (! first) w.draw_segment((*cit).to_float(), plast.to_float(), leda_green);
      plast = *cit;
      first= false;
    }
@@ -124,9 +124,9 @@ public:
     
    if (result) {
     gw.msg_clear();
-    gw.msg_open(string("less_rotate_ccw - new point found ..."));
-    w.draw_ray(p1.to_float(), p2.to_float(), blue);
-    w.draw_arrow(p2.to_float(), p3.to_float(), black);
+    gw.msg_open(leda_string("less_rotate_ccw - new point found ..."));
+    w.draw_ray(p1.to_float(), p2.to_float(), leda_blue);
+    w.draw_arrow(p2.to_float(), p3.to_float(), leda_black);
     user_interaction();
    }  
  }
@@ -137,11 +137,11 @@ public:
    bool result = (leda_rat_point::cmp_xy(p1,p2)  <  0);
    
    if (less_xy_counter == 0) // draw start point ...
-     w.draw_point(p1.to_float(), red);
+     w.draw_point(p1.to_float(), leda_red);
    if (result) {
-     w.draw_point(p1.to_float(), red);
+     w.draw_point(p1.to_float(), leda_red);
      gw.msg_clear();
-     gw.msg_open(string("new minimum point (xy-lexicographically) found ..."));
+     gw.msg_open(leda_string("new minimum point (xy-lexicographically) found ..."));
      user_interaction();
    }
    less_xy_counter++;
@@ -159,7 +159,7 @@ public:
    input_set = &L;
    draw_points();
    current_hull.clear(); 
-   pold = w.set_point_style(disc_point);
+   pold = w.set_point_style(leda_disc_point);
  }
  
  void reset_visualization() {

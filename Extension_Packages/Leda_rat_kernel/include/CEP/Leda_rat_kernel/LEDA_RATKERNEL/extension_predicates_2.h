@@ -50,14 +50,24 @@ bool operator()(const __My_Segment_2& s1, const __My_Segment_2& s2,
   // add check ?
   // is p in or left from the x_range of both segments s1, s2 ???
   
-  // do we have an intersection ?  
+  // do we have an intersection ? 
+#if (__LEDA__ <= 420)  
+  int o1 = ::orientation(s1,c); 
+  int o2 = ::orientation(s1,d);
+#else   
   int o1 = s1.orientation(c); 
   int o2 = s1.orientation(d);
+#endif  
   
   if (o1 == o2 && o1 != 0) return false; // we have no intersection point ...
-  
+ 
+#if (__LEDA__ <= 420)
+  int o3 = ::orientation(s2,a);
+  int o4 = ::orientation(s2,b);
+#else  
   int o3 = s2.orientation(a);
   int o4 = s2.orientation(b);
+#endif
   
   if (o3 == o4 && o3 != 0) return false; // we have no intersection point ...  
 
@@ -220,14 +230,24 @@ bool operator()(const __My_Segment_2& s1, const __My_Segment_2& s2,
   // add check ?
   // is p in or left from the x_range of both segments s1, s2 ???  
   // do we have an intersection ?
-   
+
+#if (__LEDA__ <= 420)  
+  int o1 = ::orientation(s1,c); 
+  int o2 = ::orientation(s1,d);
+#else   
   int o1 = s1.orientation(c); 
   int o2 = s1.orientation(d);
+#endif
   
   if (o1 == o2 && o1 != 0) return false; // we have no intersection point ...
-  
+
+#if (__LEDA__ <= 420)  
+  int o3 = ::orientation(s2,a);
+  int o4 = ::orientation(s2,b);
+#else  
   int o3 = s2.orientation(a);
   int o4 = s2.orientation(b);
+#endif
   
   if (o3 == o4 && o3 != 0) return false; // we have no intersection point ...  
 

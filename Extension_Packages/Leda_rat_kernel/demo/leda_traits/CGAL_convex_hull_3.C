@@ -4,13 +4,13 @@
 #define CGAL_PROVIDE_LEDA_RAT_KERNEL_TRAITS_3
 #include <CGAL/basic.h>
 
-#if (!defined(CGAL_USE_LEDA) || (__LEDA__ < 430)) 
+#if (!defined(CGAL_USE_LEDA) || (__LEDA__ < 420)) 
 #include <iostream>
 
 int main(int argc, char *argv[])
 {
- std::cout << "No LEDA 4.3 or higher installed!\n";
- std::cout << "A LEDA version >= 4.3 is required !\n";
+ std::cout << "No LEDA 4.2 or higher installed!\n";
+ std::cout << "A LEDA version >= 4.2 is required !\n";
  return 0;
 }
 #else 
@@ -93,8 +93,8 @@ void show_d3_points(geo_scene sc, leda_d3_window& W, GRAPH<leda_d3_point,int>& H
   for (; hit != Pol.halfedges_end(); hit++) {
     Vertex_handle v1 = hit->vertex();
     Vertex_handle v2 = hit->opposite()->vertex();
-    d3_point ps = (v1->point()).to_float();
-    d3_point pt = (v2->point()).to_float();
+    leda_d3_point ps = (v1->point()).to_float();
+    leda_d3_point pt = (v2->point()).to_float();
 
     leda_node n1= H.new_node(ps);
     leda_node n2= H.new_node(pt);
@@ -104,8 +104,8 @@ void show_d3_points(geo_scene sc, leda_d3_window& W, GRAPH<leda_d3_point,int>& H
  }
  
  else if (CGAL::assign(segment, ch_object) ){
-    d3_point ps = (segment.source()).to_float();
-    d3_point pt = (segment.target()).to_float(); 
+    leda_d3_point ps = (segment.source()).to_float();
+    leda_d3_point pt = (segment.target()).to_float(); 
  
     leda_node n1= H.new_node(ps);
     leda_node n2= H.new_node(pt);
@@ -113,9 +113,9 @@ void show_d3_points(geo_scene sc, leda_d3_window& W, GRAPH<leda_d3_point,int>& H
     H.set_reversal(e1,e2);    
  }
  else if (CGAL::assign(triangle, ch_object) ){
-    d3_point ps = triangle.point1().to_float();
-    d3_point pt = triangle.point2().to_float();
-    d3_point pu = triangle.point3().to_float(); 
+    leda_d3_point ps = triangle.point1().to_float();
+    leda_d3_point pt = triangle.point2().to_float();
+    leda_d3_point pu = triangle.point3().to_float(); 
     
     leda_node n1= H.new_node(ps);
     leda_node n2= H.new_node(pt);
@@ -128,7 +128,7 @@ void show_d3_points(geo_scene sc, leda_d3_window& W, GRAPH<leda_d3_point,int>& H
     H.set_reversal(e5,e6);              
  }
  else if (CGAL::assign(lpoint, ch_object) ){
-    d3_point p = lpoint.to_float(); 
+    leda_d3_point p = lpoint.to_float(); 
     H.new_node(p);
  } 
   

@@ -49,7 +49,7 @@ bool cgal_do_intersect_to_left(const leda_rat_segment& c1, const leda_rat_segmen
     return ( (leda_rat_point::cmp_xy(seg.start(), pt) == -1) || (leda_rat_point::cmp_xy(seg.end(), pt) == -1) );
 }
 
-void my_random_point_in_square(rat_point& p, int maxc)
+void my_random_point_in_square(leda_rat_point& p, int maxc)
 {
   random_point_in_square(p, maxc);
   
@@ -72,7 +72,7 @@ int main()
   Do_intersect_to_left_2    do_intersect_to_left;
   
   for(i=0; i<number_of_tests;i++){
-      rat_point p1,p2,p3,p4, pt;
+      leda_rat_point p1,p2,p3,p4, pt;
   
       my_random_point_in_square(p1, 10000);
       my_random_point_in_square(p2, 10000);
@@ -96,7 +96,7 @@ int main()
   std::cout << "test intersection to left ...\n";  
   
   for(i=0; i<number_of_tests;i++){
-      rat_point p1,p2,p3,p4, pt;
+      leda_rat_point p1,p2,p3,p4, pt;
   
       my_random_point_in_square(p1, 10000);
       my_random_point_in_square(p2, 10000);

@@ -31,7 +31,7 @@ typedef CGAL::Triangulation_2<K>        Triangulation_2;
 typedef Triangulation_2::Edge           Edge;
 typedef Triangulation_2::Edge_iterator  Edge_iterator;
 
-void new_redraw(window* wp, double x0, double y0, double x1, double y1)
+void new_redraw(leda_window* wp, double x0, double y0, double x1, double y1)
 { }
 
 struct geo_triang : public geowin_update<std::list<Point>, std::list<Segment> >
@@ -42,7 +42,7 @@ struct geo_triang : public geowin_update<std::list<Point>, std::list<Segment> >
  CGAL::event_item orientation_it;
  
  GeoWin& gw;
- window& w; 
+ leda_window& w; 
 
  geo_triang(GeoWin& g) : gw(g), w(g.get_window()) 
  { } 
@@ -63,8 +63,8 @@ struct geo_triang : public geowin_update<std::list<Point>, std::list<Segment> >
    draw_points();
    Edge_iterator eit = tr.edges_begin();
    for(;eit != tr.edges_end();eit++) w.draw_segment(tr.segment(*eit).to_float(),leda_blue2);      
-   w.draw_arrow(p1.to_float(),p2.to_float(),green);
-   w.draw_arrow(p2.to_float(),p3.to_float(),green);
+   w.draw_arrow(p1.to_float(),p2.to_float(),leda_green);
+   w.draw_arrow(p2.to_float(),p3.to_float(),leda_green);
    user_interaction();           
  }
  

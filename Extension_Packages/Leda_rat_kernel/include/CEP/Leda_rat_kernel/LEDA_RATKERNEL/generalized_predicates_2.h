@@ -196,7 +196,11 @@ public:
 #if defined(CGAL_GEOMETRY_EVENTS)
     CGAL::occur<const Triangle_2&,const Triangle_2&>(Predicate_leda_rat_equal_2::ev_leda_rat_triangle, t1, t2);
 #endif   
+#if (__LEDA__ <= 420)  
+    return (  ((Triangle_2&) t1) == ((Triangle_2&) t2));
+#else
     return (t1 == t2);
+#endif    
   } 
   
   bool operator()(const Iso_rectangle_2& r1, const Iso_rectangle_2& r2) const
@@ -533,7 +537,11 @@ public:
 #if defined(CGAL_GEOMETRY_EVENTS)
       CGAL::occur<const Point_2&,const Line_2&>(Predicate_leda_rat_compare_x_at_y_2::ev_leda_rat_point_line, p, l);
 #endif   
+#if (__LEDA__ <= 420)
+    int ori = - ::orientation(l,p);
+#else
     int ori = - l.side_of(p);
+#endif    
     
     // has point1 larger y - coord than point2 ????
     if (__My_Point_2::cmp_y(l.point1(),l.point2()) == 1) ori = -ori;
@@ -572,7 +580,11 @@ public:
        l1.intersection(l2,inter);
        
        // compare result ...
+#if (__LEDA__ <= 420)
+       int ori = - ::orientation(h, inter);
+#else       
        int ori = - h.side_of(inter);
+#endif       
     
        // has point1 larger y - coord than point2 ????
        if (__My_Point_2::cmp_y(h.point1(),h.point2()) == 1) ori = -ori;
@@ -861,8 +873,11 @@ public:
          (Predicate_leda_rat_compare_y_at_x_2::ev_leda_rat_point_line, p, l);
 #endif  
     // add - here ??
-  
+#if (__LEDA__ <= 420)
+    int ori = ::orientation(l,p);
+#else  
     int ori = l.side_of(p);
+#endif
     
     // has point1 larger x - coord than point2 ????
     if (__My_Point_2::cmp_x(l.point1(),l.point2()) == 1) ori = -ori;
@@ -893,8 +908,11 @@ public:
     Point_2 p;
     
     l1.intersection(l2, p);
-    
+#if (__LEDA__ <= 420)
+    int ori = ::orientation(l3,p);
+#else    
     int ori = l3.side_of(p);
+#endif    
     
     // has point1 larger x - coord than point2 ????
     if (__My_Point_2::cmp_x(l3.point1(),l3.point2()) == 1) ori = -ori;
@@ -1910,8 +1928,13 @@ public:
 #if defined(CGAL_GEOMETRY_EVENTS)
      CGAL::occur<const Line_2&,const Point_2&> \
        (Predicate_leda_rat_has_on_positive_side_2::ev_leda_rat_line_point, l, p);
-#endif    
-      return (l.side_of(p) == 1);       
+#endif  
+
+#if (__LEDA__ <= 420)
+      return (::orientation(l,p) == 1); 
+#else  
+      return (l.side_of(p) == 1);   
+#endif          
   }
 
   bool operator()(const Triangle_2& t, const Point_2& p) const
@@ -1988,7 +2011,11 @@ public:
      CGAL::occur<const Line_2&,const Point_2&> \
        (Predicate_leda_rat_has_on_negative_side_2::ev_leda_rat_line_point, l, p);
 #endif  
-      return (l.side_of(p) == -1);       
+#if (__LEDA__ <= 420)  
+      return (::orientation(l,p) == -1); 
+#else
+      return (l.side_of(p) == -1); 
+#endif      
   }
 
   bool operator()(const Triangle_2& t, const Point_2& p) const
@@ -2068,8 +2095,12 @@ public:
 #if defined(CGAL_GEOMETRY_EVENTS)
      CGAL::occur<const Line_2&,const Point_2&> \
        (Predicate_leda_rat_oriented_side_2::ev_leda_rat_line_point, l, p);
-#endif    
-      return  (CGAL::Oriented_side) l.side_of(p);       
+#endif
+#if (__LEDA__ <= 420)  
+      return  (CGAL::Oriented_side) ::orientation(l,p);
+#else    
+      return  (CGAL::Oriented_side) l.side_of(p);
+#endif       
   }
 
   CGAL::Oriented_side operator()(const Triangle_2& t, const Point_2& p) const
@@ -2415,8 +2446,13 @@ public:
   
   bool operator()(const Line_2& l, const Ray_2& r) const
   {
+#if (__LEDA__ <= 420)
+    int o1 = ::orientation(l, r.point1());
+    int o2 = ::orientation(l, r.point2());
+#else  
     int o1 = l.side_of(r.point1());
     int o2 = l.side_of(r.point2());
+#endif    
     
     if (o1 != o2 || o1==0 || o2==0) return true;
     

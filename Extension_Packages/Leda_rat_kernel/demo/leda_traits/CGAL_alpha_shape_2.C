@@ -2,13 +2,13 @@
 
 #include <CGAL/basic.h>
 
-#if !defined(CGAL_USE_LEDA) || (__LEDA__ < 430)
+#if !defined(CGAL_USE_LEDA) || (__LEDA__ < 420)
 #include <iostream>
 
 int main(int argc, char *argv[])
 {
- std::cout << "No LEDA 4.3 or higher installed!\n";
- std::cout << "A LEDA version >= 4.3 is required !\n";
+ std::cout << "No LEDA 4.2 or higher installed!\n";
+ std::cout << "A LEDA version >= 4.2 is required !\n";
  return 0;
 }
 #else 
