@@ -1,3 +1,7 @@
+1.2.32
+--------------------
+The demos are different. The demos involved are Trianguation_2 and Alpha_shapes_2.
+
 1.2.30
 --------
 Qt_widget_get_polygon and Qt_widget_get_simple_polygon were upgraded.
