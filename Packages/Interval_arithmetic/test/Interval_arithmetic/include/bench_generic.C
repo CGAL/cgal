@@ -14,6 +14,12 @@
 
 typedef TESTED_TYPE IA_nt;
 
+#ifndef LOOPS
+const int loops = 1000;
+#else
+const int loops = LOOPS;
+#endif
+
 // Not called, only used to watch at the assembly code produced.
 
 IA_nt add (IA_nt a, IA_nt b)
@@ -21,28 +27,18 @@ IA_nt add (IA_nt a, IA_nt b)
   return a+b;
 }
 
-// To avoid constant propagation.
-double ten=10.0;
-double zero_12=0.12;
-
 // Some simple operators benchmarks.
 
 void bench()
 {
-#ifndef LOOPS
-  const int loops = 1000;
-#else
-  const int loops = LOOPS;
-#endif
-
   int i;
   CGAL::Timer t;
   double dt;
   const double dd = 1.0000001;
-  const IA_nt a(zero_12);
+  const IA_nt a(0.12);
   // const IA_nt b(2.1);
-  IA_nt b(IA_nt(21)/ten);
-  IA_nt c(1), d(-5.0/3), e(-6.0/7), f(7.0/9);
+  IA_nt b(IA_nt(21.0)/10.0);
+  IA_nt c(1);
 
   c = a + b;
   std::cout << a << std::endl << b << std::endl;
@@ -89,8 +85,19 @@ void bench()
   BENCH_MACRO_generic(EMPTY, c = dd - c, "d-ia");
   BENCH_MACRO_generic(EMPTY, c = dd / c, "d/ia");
   BENCH_MACRO_generic(EMPTY, c = c / dd, "ia/d");
+}
 
-#if 1
+// OrientationC2() benchmark.
+
+IA_nt a(0.12);
+IA_nt b(IA_nt(21.0)/10.0);
+IA_nt c(1), d(-5.0/3), e(-6.0/7), f(7.0/9);
+
+void bench_orientation()
+{
+  int i;
+  CGAL::Timer t;
+  double dt;
   std::cout << a << std::endl << b << std::endl;
   std::cout << c << std::endl << d << std::endl;
   CGAL::Orientation o;
@@ -99,7 +106,6 @@ void bench()
     o = CGAL::orientationC2(a,b,c,d,e,f);
   t.stop();
   std::cout << (int)o << "\tori2\t" << t.time()-dt << std::endl;
-#endif
 }
 
 
@@ -118,6 +124,7 @@ int main()
 
   std::cout.precision(20);
   bench();
+  bench_orientation();
 
   IA_nt a=1, b=2;
   (int) CGAL::sign(a);
