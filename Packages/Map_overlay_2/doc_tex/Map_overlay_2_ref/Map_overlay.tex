@@ -1,0 +1,274 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Map_overlay.tex (Map_overlay)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: ovl (Map_overlay_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+% +========================================================================+
+%   Map Overlay
+% +========================================================================+
+\begin{ccRefClass}{Map_overlay_2<Subdivision,Notifier=Map_overlay_default_notifier<Subdivision> >}
+\label{OVL_sec:ovl}
+    
+\ccDefinition
+An object $ovl$ of the class \ccClassTemplateName\ is the 
+overlay of two given creators.
+The available subdivisions and notifier classes are described bellow. 
+\ccc{Self} is an abbreviation of the \ccRefName\ type hereafter.
+
+\ccInclude{CGAL/Map_overlay_2.h}
+
+%\ccThree{Planar_map_2<Dcel,Traits> :: Traits}{}{\hspace*{6cm}}
+%\ccThreeToTwo
+
+\ccTypes
+
+%  \ccTypedef{typedef Planar_map_2<Dcel,Traits> Self;}{planar map class}
+
+  \ccNestedType{Subdivision}{subdivision class.}
+  \ccGlue
+  \ccNestedType{Change_notification}{notifier class.}
+
+  \ccHtmlNoLinksFrom{
+  The \ccc{Vertex}, \ccc{Halfedge} and \ccc{Face}
+  types of the overlay are defined as part of the overlay DCEL, 
+  and are built on top of the planar map vertex, halfedge and face 
+  correspondingly. 
+  The Vertex, Halfedge and Face have additional functionality, 
+  each of which updating or returning the corresponing pointers 
+  to the creator components.} % ccHtmlNoLinksFrom
+  See concepts \ccc{MapOverlayDcel_2}\lcTex{ (\ccRefPage{MapOverlayDcel_2})},
+  \ccc{MapOverlayDcelVertex_2} \lcTex{(\ccRefPage{MapOverlayDcelVertex_2})},
+  \ccc{MapOverlayDcelHalfedge_2} \lcTex{(\ccRefPage{MapOverlayDcelHalfedge_2})} 
+  and \ccc{MapOverlayDcelFace_2} 
+  \lcTex{(\ccRefPage{MapOverlayDcelFace_2})}. 
+
+  \ccHtmlNoLinksFrom{
+  \ccNestedType{Vertex}{represents a vertex of the overlay.}}
+  \ccGlue
+  \ccHtmlNoLinksFrom{
+  \ccNestedType{Halfedge}{represents a halfedge of the overlay.}}
+  \ccGlue
+  \ccHtmlNoLinksFrom{
+  \ccNestedType{Face}{represents a face of the overlay.}}
+
+
+  \ccTypedef{typedef typename Subdivision::Traits::X_curve_2 X_curve_2;}
+  {a curve of the overlay.}
+  \ccGlue
+  \ccTypedef{typedef typename Subdivision::Traits::Point_2 Point_2;}
+  {a point of the overlay.}
+
+
+%    \ccNestedType{Vertex}{Represents a vertex of the planar-map.}
+%    \ccNestedType{Halfedge}{Represents an half-edge of the planar-map.}
+%    \ccNestedType{Face}{Represents a face of the planar-map.}
+    
+%    \ccNestedType{Vertex_iterator}{A bidirectional iterator over the
+%       vertices of the planar-map. Its value-type is
+%       \ccStyle{Vertex}.}
+%     
+%    \ccNestedType{Halfedge_iterator}{A bidirectional iterator over the
+%       halfedges of the planar-map.  Its value-type is \ccStyle{Halfedge}.}
+%    
+%    \ccNestedType{Face_iterator}{A bidirectional iterator over the
+%       faces of the planar-map.  Its value-type is \ccStyle{Face}.}
+%    
+%    \ccNestedType{Ccb_halfedge_circulator}{A forward circulator over the
+%       edges of a CCB (connected components of the boundary).  Its
+%       value-type is \ccStyle{Halfedge}.}
+%    
+%    \ccNestedType{Halfedge_around_vertex_circulator}{A forward circulator over
+%       the half-edges which have  the vertex as their source .  
+%       The half-edges are traversed in
+%       their clockwise order around the vertex. Its value-type is
+%       \ccStyle{Halfedge}.}
+%    
+%    \ccNestedType{Holes_iterator}{A bidirectional iterator to
+%       traverse all the holes ( i.e., inner CCBs ) of a face 
+%       (\ccStyle{Holes_iterator++}{} is the next hole in the face).
+%       Its value type is
+%       \ccStyle{Ccb_halfedge_circulator}.}
+    
+%\def\ccLongParamLayout{\ccTrue}
+
+\ccCreation
+  \ccCreationVariable{ovl}
+    
+  \ccConstructor{Map_overlay<Subdivision,Notifier>();} {constructs an
+     ``empty map overlay'' of two ``empty creators'', each of which 
+     contains one unbounded face, which corresponds to the whole plane.}
+  
+  \ccConstructor{Map_overlay<Subdivision,Notifier>(const Subdivision & s);}
+  {a converter between a subdivision and overlay;}
+  
+  \ccConstructor{Map_overlay<Subdivision,Notifier>(const Self & ovl1,const Self& ovl2);}
+  {constructs an overlay out of the two creators given in \ccStyle{ovl1} and \ccStyle{ovl2};}
+  
+  \ccConstructor{Map_overlay<Subdivision,Notifier>(const Self & ovl);}{copy constructor;}
+    
+%  \ccConstructor{Planar_map<I>( list<X_curve_2> & l
+%       );} {construct the planar-map of the curves  of \ccStyle{l}
+%       \ccPrecond{The curves are $x$-monotone} 
+%       \ccPrecond{no pair of curves of $l$ intersect in their interiors} 
+%       }
+        
+%  \ccStyle{template <class InputIterator>} \\
+%  \ccConstructor{ Planar_map<I>( InputIterator begin, 
+%                           InputIterator end );} 
+%                {construct the planar-map of the curves from a 
+%                container iterated by
+%                \ccStyle{InputIterator} from  \ccStyle{begin} to \ccStyle{end}
+%                \ccPrecond{The value type of \ccStyle{InputIterator}
+%                   is \ccStyle{X_curve_2} objects}
+%                \ccPrecond{The curves are $x$-monotone} 
+%                \ccPrecond{no pair of curves intersect in their interiors} 
+%    }
+
+%  \ccConstructor{Planar_map<I>( Planar_map<I>
+%     & map, I::Info_face & i);} {construct the planar-map of all the faces of
+%     \ccStyle{map} with attached information equal to \ccStyle{i}.}
+
+%\newpage
+
+\begin{ccAdvanced}
+
+\ccHeading{Empolying Point-Location, Construction-Algorithm and Notifier}
+
+As described in the introduction, the map overlay users can define 
+the following when constructing an overlay of two creator:
+(i) The algorithm which constructs of the overlay, 
+(ii) the notifier used for updating teh overlay and 
+(iii) the point location strategy defining in their subdivision. 
+This is done by passing instances of some overlay-construction 
+algorithm class instance, a notifier class instance 
+and some point location class instance. 
+The algorithm class should be a model of the \ccc{MapOverlayAlgorithm_2} concept,
+the notifier class has be a model of the \ccc{MapOverlayNotifier_2} concept
+and finally the point location class should be a model of the
+\ccc{PlanarMapPointLocation_2} concept. 
+
+The sweep-line algorithm is our default overlay-construction algorithm,
+and the \ccc{Map_overlay_default_notifier<Subdivision>} class is the default notifier.
+The default point-location strategy is determined according the subdivision instance:
+If the subdivision is a \ccStyle{planar map}, then the default point-location 
+strategy is the randomized trapezoidal decomposition algorithm, otherwise,
+if the chosen subdivision is a \ccStyle{planar map with intersections}, then 
+the default point-location strategy is the ``walk along a line'' algorithm. 
+However, the users can choose to use incremental algorithm as their overlay-construction 
+algorithm, or use the naive point-location (trading time for memory efficiency) as 
+their point-location strategy.
+In addition, users can implement their own overlay-construction algorithm, 
+overlay notifier or point-location algorithm. 
+Implementing a new algorithm can be achived with a class derived from the 
+\ccc{Map_overlay_base<Subdivision,Notifier>}. 
+In the same manner, defining a new notifier is done by deriving a class from the 
+\ccStyle{Subdivision::Change_notification}, which is the 
+notifier class defined in the subdivision class.
+Finally, implementing a user point-location algorithm is performed by a 
+class derived from the \ccc{Point_location_base<Planar_map>}.
+The concepts \ccc{MapOverlayAlgorithm_2} (\ccRefPage{MapOverlayAlgorithm_2})
+, \ccc{MapOverlayNotifier} (\ccRefPage{MapOverlayNotifier_2}) and 
+\ccc{PlanarMapPointLocation_2} (\ccRefPage{PlanarMapPointLocation_2}) 
+list the set of requirements of each class.
+
+\ccConstructor{Map_overlay (const Subdivision &arr, 
+   Notifier* notifier);}{}
+  
+\ccConstructor{Map_overlay (const Subdivision &arr, 
+   Map_overlay_base<Subdivision,Notifier> *algo);}{}
+
+\ccConstructor{Map_overlay (const Subdivision &arr, 
+   Notifier* notifier
+   Map_overlay_base<Subdivision,Notifier> *algo);}{}
+
+\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+   Point_location_base<Subdivision> *pl);}{}
+  
+\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+   Notifier* notifier);}{}
+
+\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+   Notifier* notifier);}{}
+
+\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+   Point_location_base<Subdivision>* pl,
+   Notifier* notifier);}{}
+
+\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+   Map_overlay_base<Subdivision,Notifier> *algo);}{}
+
+\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+   Point_location_base<Subdivision>* pl,
+   Map_overlay_base<Subdivision,Notifier> *algo);}{}
+
+\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+   Notifier* notifier,
+   Map_overlay_base<Subdivision,Notifier> *algo);}{}
+
+\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+   Point_location_base<Subdivision>* pl,
+   Notifier* notifier,
+   Map_overlay_base<Subdivision,Notifier> *algo);}{}
+
+\end{ccAdvanced}
+%\ccThree{Halfedge_handle}{}{\hspace*{11cm}}
+
+The map overlay class defines an assignment operator:
+
+\ccMethod{const Self& operator=(const Self& ovl);}{}
+
+
+The map overlay user may need to access the subdivision induced by the overlay. 
+For example, users may want to make a traversal over all overlay 
+components, and check for each of them what are the creators 
+components laying above it. 
+When performeing boolean operations in this package,
+we make such traversals in order to decide whether a component 
+is reported.
+The function returning the subdivision is given below, 
+note that the returned pointers are \ccc{const} so
+the users cannot change the internal state.
+
+\ccMethod{const Subdivision&  subdivision () const;}
+    {returns a const pointer to the subdivision induced by the overlay.}
+
+\begin{ccAdvanced}
+    For some applications the users may want to have direct access to
+    the creators and the notifier. For this, we have implemented the 
+    following functions, note that the returned pointers are \ccc{const} so
+    the users cannot change the internal state.
+
+    \ccMethod{const Self*  first_creator () const;}
+    {returns a const pointer to the first creator of the overlay.}
+
+    \ccMethod{const Self*  second_creator () const;}
+    {returns a const pointer to the second creator of the overlay.}
+
+    \ccMethod{const Change_notification*  change_notification() const;}
+    {returns a const pointer to the notifier of the overlay.}
+    
+\end{ccAdvanced}
+
+\ccSeeAlso
+\ccc{MapOverlayNotifier<Subdivision>}\lcTex{ 
+   (\ccRefPage{CGAL::MapOverlayNotifier<Subdivision>})}\\
+\ccc{MapOverlayDcel_2<Traits,Vertex_base,Halfedge_base,Face_base>}\lcTex{ 
+   (\ccRefPage{MapOverlayDcel_2<Traits,Vertex_base,Halfedge_base,Face_base>})}
+
+\end{ccRefClass}
+
+% FILL IN THE REST OF THE FILES
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
