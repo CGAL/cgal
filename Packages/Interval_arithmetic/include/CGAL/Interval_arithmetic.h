@@ -27,7 +27,7 @@
 
 // This file contains the description of the two classes:
 // - Interval_nt_advanced  (do the FPU rounding mode changes yourself)
-// - Interval_nt		("plug-in" version, derived from the other one)
+// - Interval_nt           ("plug-in" version, derived from the other one)
 //
 // The differences are:
 // - The second one is slower.
@@ -39,11 +39,11 @@
 #include <CGAL/assertions.h>
 #include <CGAL/IO/io_tags.h>		// For io_Operator().
 #include <CGAL/number_type_tags.h>	// For number_type_tag()
-#include <CGAL/double.h>	// For is_valid() and is_finite().
-#include <CGAL/enum.h>  // Because we overload {sign,compare,abs,min,max}
+#include <CGAL/double.h>		// For is_valid() and is_finite().
+#include <CGAL/enum.h> 	// Because we overload {sign,compare,abs,min,max}
 #include <CGAL/number_utils.h> 		// For max and square<double>
-#include <CGAL/Interval_arithmetic/_FPU.h>	// FPU rounding mode functions.
 #include <CGAL/misc.h>			// For convert_to<>()
+#include <CGAL/Interval_arithmetic/_FPU.h>	// FPU rounding mode functions.
 
 CGAL_BEGIN_NAMESPACE
 
@@ -191,15 +191,14 @@ public:
 // Usefull constants.
 
 // MIN_DOUBLE (subnormal)
-const double Interval_nt_advanced::min_double =5e-324;
+const double Interval_nt_advanced::min_double = 5e-324;
 
 // MAX_DOUBLE
-const double Interval_nt_advanced::max_double =1.7976931348623157081e+308;
+const double Interval_nt_advanced::max_double = 1.7976931348623157081e+308;
 
 // Smallest interval strictly around zero.
 const Interval_nt_advanced Interval_nt_advanced::smallest
-(-Interval_nt_advanced::min_double,
-  Interval_nt_advanced::min_double);
+(-Interval_nt_advanced::min_double, Interval_nt_advanced::min_double);
 
 // [-inf;+inf]
 const Interval_nt_advanced Interval_nt_advanced::largest
