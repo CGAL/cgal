@@ -14,7 +14,7 @@
 // file          : include/CGAL/predicates/kernel_ftC3.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Herve Bronnimann, Sylvain Pion
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
@@ -23,7 +23,7 @@
 #ifndef CGAL_PREDICATES_KERNEL_FTC3_H
 #define CGAL_PREDICATES_KERNEL_FTC3_H
 
-#include <CGAL/determinant.h>
+#include <CGAL/predicates/sign_of_determinant.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 #include <CGAL/constructions/kernel_ftC3.h>
 
@@ -33,16 +33,14 @@ template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
-compare_lexicographically_xyzC3(const FT &x1, const FT &y1, const FT &z1,
-                                const FT &x2, const FT &y2, const FT &z2)
+compare_lexicographically_xyzC3(const FT &px, const FT &py, const FT &pz,
+                                const FT &qx, const FT &qy, const FT &qz)
 {
-  if (x1 < x2) return SMALLER;
-  if (x2 < x1) return LARGER;
-  if (y1 < y2) return SMALLER;
-  if (y2 < y1) return LARGER;
-  if (z1 < z2) return SMALLER;
-  if (z2 < z1) return LARGER;
-  return EQUAL;
+  Comparison_result c = CGAL::compare(px, qx);
+  if (c != EQUAL) return c;
+  c = CGAL::compare(py, qy);
+  if (c != EQUAL) return c;
+  return CGAL::compare(pz, qz);
 }
 
 template < class FT >
@@ -207,7 +205,6 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
                                 sx, sy, sz);
   return Bounded_side(s * o);
 }
-
 
 template < class FT >
 CGAL_KERNEL_INLINE
