@@ -1,3 +1,6 @@
+Version 1.149 (4 June 03)
+- Forgot the VC++ workaround to the last change.
+
 Version 1.148 (4 June 03)
 - Use Filtered_exact instead of Filtered_kernel in the test-suite since regular
   is not ready until the weighted points are in the kernel.

@@ -25,6 +25,15 @@
 #define Simple_cartesian Sc
 
 #include <CGAL/Simple_cartesian.h>
+
+// Workaround for buggy compilers.
+#ifdef CGAL_CFG_MATCHING_BUG_2
+#  define CGAL_IA_CT          double
+#  define CGAL_IA_ET          CGAL::MP_Float
+#  define CGAL_IA_CACHE       No_Filter_Cache
+#  define CGAL_IA_PROTECTED   true
+#endif
+
 #include <CGAL/Filtered_exact.h>
 #include <CGAL/MP_Float.h>
 
