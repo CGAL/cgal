@@ -183,15 +183,17 @@ public:
                   Segment_const_iterator end,
                   NT inp_prec,bool inp_do_isr = true,
                   int inp_number_of_kd_trees = default_number_of_kd_trees);
+  Snap_rounding_2(NT inp_prec,bool inp_do_isr = true,
+                  int inp_number_of_kd_trees = default_number_of_kd_trees);
+
 #ifdef ISR_DEBUG
   template<class Out>
   void output_distances(Out &o);
 #endif
+  // !!!! change names to output ans input
+  const Polyline_const_iterator polylines_begin();
+  const Polyline_const_iterator polylines_end();
 
-  inline Polyline_const_iterator polylines_begin() const {
-             return(segments_output_list.begin());}
-  inline Polyline_const_iterator polylines_end() const {
-             return(segments_output_list.end());}
   inline Segment_const_iterator segments_begin() const {
              return(seg_2_list.begin());}
   inline Segment_const_iterator segments_end() const {
@@ -200,7 +202,7 @@ public:
   inline Segment_iterator segments_end() {return(seg_2_list.end());}
 
   bool insert(Segment_2 seg);
-  bool PUSH_BACK(Segment_2 seg);
+  bool push_back(Segment_2 seg);
   template < class InputIterator >
     int insert(InputIterator first, InputIterator last);
   bool remove(Segment_2 seg);
@@ -209,11 +211,16 @@ public:
   template<class Out>
   void output(Out &o);
 
-#ifdef ISR_DEBUG
+  /*#ifdef ISR_DEBUG
   void window_output(Window_stream &w,bool wait_for_click);
-#endif
+  #endif*/
 
 private:
+  // the next variable is for lazy evaluation:
+  // it determines whether an isr/sr work has
+  // to be done (at the beginning, after insertion, etc) 
+  bool need_sr;
+
   static const int default_number_of_kd_trees = 5;
 
   std::set<Hot_Pixel<Rep> *,hot_pixel_auclidian_cmp<Rep> > hp_set;
@@ -771,12 +778,13 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
   NT inp_prec,bool inp_do_isr,int inp_number_of_kd_trees)
   {
     // initialize approximation angles map
+    
     erase_hp = false;
     do_isr = inp_do_isr;
     prec = inp_prec;
     number_of_segments = 0;
     number_of_kd_trees = inp_number_of_kd_trees;
-
+    need_sr = true;
     // copy segments list
     while(begin != end) {
       seg_list.push_back(Segment_data<Rep_>(begin->source().x(),
@@ -787,37 +795,52 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
       ++begin;
     }
 
-    find_hot_pixels_and_create_kd_trees();
-    iterate();
+    // !!!!! lazy evaluation
+    /* find_hot_pixels_and_create_kd_trees();
+       iterate();*/
   }
 
 template<class Rep_>
-Snap_rounding_2<Rep_>::insert(Segment_2 seg)
+Snap_rounding_2<Rep_>::Snap_rounding_2(
+    NT inp_prec,bool inp_do_isr,int inp_number_of_kd_trees)
   {
-    seg_list.push_back(seg.source().x(),
-                       seg.source().y(),
-                       seg.target().x(),
-                       seg.target().y()));
+    // initialize approximation angles map
+    need_sr = true;
+    erase_hp = false;
+    do_isr = inp_do_isr;
+    prec = inp_prec;
+    number_of_segments = 0;
+    number_of_kd_trees = inp_number_of_kd_trees;
+  }
+
+template<class Rep_>
+bool Snap_rounding_2<Rep_>::insert(Segment_2 seg)
+  {
+    need_sr = true;
+    seg_list.push_back(Segment_data<Rep_>(
+                         seg.source().x(),
+                         seg.source().y(),
+                         seg.target().x(),
+                         seg.target().y()));
 
     seg_2_list.push_back(seg);
     ++number_of_segments;
-
-    find_hot_pixels_and_create_kd_trees();
-    iterate();
 
     return(true);
   }
 
 template<class Rep_>
-Snap_rounding_2<Rep_>::push_back(Segment_2 seg)
+bool Snap_rounding_2<Rep_>::push_back(Segment_2 seg)
   {
     return(insert(seg));
   }
 
+template < class Rep_ >
 template < class InputIterator >
 int
-insert(InputIterator first, InputIterator last)
+Snap_rounding_2<Rep_>::insert(InputIterator first, InputIterator last)
   {
+    need_sr = true;
     int n = 0;
     while(first != last){
       if(insert(*first)){
@@ -830,17 +853,42 @@ insert(InputIterator first, InputIterator last)
 
 
 template<class Rep_>
+const Snap_rounding_2<Rep_>::Polyline_const_iterator Snap_rounding_2<Rep_>::polylines_begin()
+{
+  if(need_sr) {
+    need_sr = false;
+    find_hot_pixels_and_create_kd_trees();
+    iterate();
+  }    
+
+  return(segments_output_list.begin());
+}
+
+template<class Rep_>
+const Snap_rounding_2<Rep_>::Polyline_const_iterator Snap_rounding_2<Rep_>::polylines_end()
+{
+  if(need_sr) {
+    need_sr = false;
+    find_hot_pixels_and_create_kd_trees();
+    iterate();
+  }    
+
+  return(segments_output_list.end());
+}
+
+template<class Rep_>
 bool Snap_rounding_2<Rep_>::remove(Segment_2 seg)
   {
+    need_sr = true;
     bool found = false;
-    Segment_2 s;
+    Segment_data<Rep> s;
 
     for(std::list<Segment_data<Rep> >::iterator i1 = seg_list.begin();
       i1 != seg_list.end();++i1) {
        s = *i1;  
-      if(s.equal(seg) {
+      if(s.equal(seg)) {
         found = true;
-        seg_list.remove(i1);
+        seg_list.erase(i1);
         --number_of_segments;
         break;
       }
@@ -850,9 +898,10 @@ bool Snap_rounding_2<Rep_>::remove(Segment_2 seg)
       for(Segment_iterator i2 = seg_2_list.begin();
         i2 != seg_2_list.end();++i2) {
         if(seg == *i2) {
-          seg_2_list.remove(i2);
+          seg_2_list.erase(i2);
           break;
         }
+      }
     }
 
     return(found);
@@ -861,6 +910,7 @@ bool Snap_rounding_2<Rep_>::remove(Segment_2 seg)
 template<class Rep_>
 void Snap_rounding_2<Rep_>::clear()
   { 
+    need_sr = true;
     seg_list.clear();
     seg_2_list.clear();
   }
@@ -880,7 +930,7 @@ template<class Out> void Snap_rounding_2<Rep_>::output(Out &o)
     }
   }
 
-#ifdef ISR_DEBUG
+/*#ifdef ISR_DEBUG
 template<class Rep_>
 template<class Out> void Snap_rounding_2<Rep_>::output_distances(Out &o)
   {
@@ -940,19 +990,21 @@ void Snap_rounding_2<Rep_>::window_output(Window_stream &w,bool wait_for_click)
         w << Segment_2(Point_2(iter->get_x1(),iter->get_y1()),
                        Point_2(iter->get_x2(),iter->get_y2()));
     }
-
+    std::cerr << "r222222\n";
     // draw isr polylines
     w << CGAL::RED;
     typename std::list<Point_2>::iterator iter2,iter3;
-
+  std::cerr << "r33333\n";
     for(typename std::list<std::list<Point_2> >::iterator iter1 =
         segments_output_list.begin();iter1 != segments_output_list.end();
         ++iter1) {
+    std::cerr << "r44444\n";
       if(wait_for_click)
         w.read_mouse(x,y);
       iter2 = iter3 = iter1->begin();
       seg_painted = false;
       for(++iter2;iter2 != iter1->end();++iter2) {
+    std::cerr << "r5555\n";
         seg_painted = true;
         w << Segment_2(*iter2,*iter3);
         ++iter3;
@@ -972,6 +1024,7 @@ void Snap_rounding_2<Rep_>::window_output(Window_stream &w,bool wait_for_click)
     }
   }
 #endif
+*/
 
 template<class Rep>
 typename Snap_rounding_2<Rep>::Direction Snap_rounding_2<Rep>::seg_dir;

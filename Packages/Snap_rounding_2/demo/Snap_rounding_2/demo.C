@@ -11,9 +11,16 @@ int main(int argc, char* argv[])
   return 0;
 }
 #else
-#define ISR_DEBUG
 
+#include <fstream>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Iso_rectangle_2.h>
+#include <CGAL/squared_distance_2.h>
+#include <CGAL/Polygon_2.h>
+#include <CGAL/IO/Window_stream.h>
+#include <CGAL/IO/cgal_window_redefine.h>
+#include <CGAL/Largest_empty_iso_rectangle_2.h>
 #include "../../include/CGAL/Snap_rounding_2.h"
 
 #include <fstream>
@@ -22,8 +29,112 @@ typedef leda_rational Number_Type;
 typedef CGAL::Cartesian<Number_Type> Rep;
 typedef CGAL::Segment_2<Rep> Segment_2;
 typedef CGAL::Point_2<Rep> Point_2;
+typedef CGAL::Snap_rounding_2<Rep> Snap_rounding_2;
+typedef Snap_rounding_2::Segment_iterator Segment_iterator;
+typedef Snap_rounding_2::Polyline_const_iterator Polyline_const_iterator;
+typedef Snap_rounding_2::Point_const_iterator Point_const_iterator;
+typedef CGAL::Window_stream Window_stream;
 
-#ifdef ISR_DEBUG
+void window_output(
+
+                   Snap_rounding_2 &s,
+
+                   Window_stream &w,
+
+
+                   bool wait_for_click)
+  {
+
+    w << CGAL::BLACK;
+
+    // draw original segments
+    for(Segment_iterator i1 = s.segments_begin();
+        i1 != s.segments_end();
+        ++i1)
+      w << *i1;
+
+
+   /*    for(typename std::set<Hot_Pixel<Rep_> *,hot_pixel_auclidian_cmp<Rep_> >::
+        iterator iter = hp_set.begin();
+        iter != hp_set.end();++iter)
+      (*iter)->draw(w);
+
+    // draw original segments
+    w << CGAL::BLACK;
+    for(typename std::list<Segment_data<Rep_> >::iterator iter =
+        seg_list.begin();iter != seg_list.end();++iter) {
+      if(iter->get_x1() == iter->get_x2() && iter->get_y1() == iter->get_y2())
+        w << Point_2(iter->get_x1(),iter->get_y1());
+      else
+        w << Segment_2(Point_2(iter->get_x1(),iter->get_y1()),
+                       Point_2(iter->get_x2(),iter->get_y2()));
+    }
+   */
+    // draw isr polylines
+    double x,y;
+    w << CGAL::RED;
+    for(Polyline_const_iterator i = s.polylines_begin();
+        i != s.polylines_end();
+        ++i) {
+      if(wait_for_click)
+        w.read_mouse(x,y);
+      Point_const_iterator prev = i->begin();
+      Point_const_iterator i2 = prev;
+      bool seg_painted = false;
+      for(++i2;
+          i2 != i->end();
+          ++i2) {
+        seg_painted = true;
+        w << Segment_2(*prev,*i2);
+        prev = i2;
+      }
+
+      if(!seg_painted) { // segment entirely inside hot pixel
+        w << *(i->begin());
+      }
+    }
+
+    int mouse_input;
+    while(true) {
+      mouse_input = w.read_mouse(x,y);
+      if(mouse_input == 1)
+        return;
+    }
+  }
+
+  /*    typename std::list<Point_2>::iterator iter2,iter3;
+  std::cerr << "r33333\n";
+    for(typename std::list<std::list<Point_2> >::iterator iter1 =
+        segments_output_list.begin();iter1 != segments_output_list.end();
+        ++iter1) {
+    std::cerr << "r44444\n";
+      if(wait_for_click)
+        w.read_mouse(x,y);
+      iter2 = iter3 = iter1->begin();
+      seg_painted = false;
+      for(++iter2;iter2 != iter1->end();++iter2) {
+    std::cerr << "r5555\n";
+        seg_painted = true;
+        w << Segment_2(*iter2,*iter3);
+        ++iter3;
+      }
+
+      if(!seg_painted) { // segment entirely inside hot pixel
+        --iter2;
+        w << *iter2;
+      }
+      }
+
+    int mouse_input;
+    while(true) {
+      mouse_input = w.read_mouse(x,y);
+      if(mouse_input == 1)
+        return;
+    }
+  }
+*/
+
+
 void draw_orig(CGAL::Window_stream &w,std::list<Segment_2> &seg_list)
 {
   w << CGAL::BLACK;
@@ -33,8 +144,7 @@ void draw_orig(CGAL::Window_stream &w,std::list<Segment_2> &seg_list)
   for(std::list<Segment_2>::iterator iter = seg_list.begin();
       iter != seg_list.end();++iter)
     w << *iter;
-}
-#endif		   
+}		   
 
 void read_data(int argc,
                char *argv[],
@@ -94,7 +204,6 @@ void read_data(int argc,
   }
 }
 
-#ifdef ISR_DEBUG
 inline Number_Type max(Number_Type a,Number_Type b,Number_Type c)
        {Number_Type tmp = max(a,b);return(max(tmp,c));}
 inline Number_Type min(Number_Type a,Number_Type b,Number_Type c) 
@@ -121,7 +230,6 @@ void get_extreme_points(std::list<Segment_2> &seg_list,
     max_y = max(iter->source().y(),iter->target().y(),max_y);
   }
 }
-#endif
 
 int main(int argc,char *argv[])
 {
@@ -132,7 +240,6 @@ int main(int argc,char *argv[])
 
   read_data(argc,argv,prec,seg_list,wait_for_click,number_of_trees,do_isr);
 
-#ifdef ISR_DEBUG
   CGAL::Window_stream w(600,600);
   Number_Type x1,y1,x2,y2;
   get_extreme_points(seg_list,x1,y1,x2,y2);
@@ -144,16 +251,14 @@ int main(int argc,char *argv[])
   w.button("Finish",1);
   w.display();
   draw_orig(w,seg_list);
-#endif
+
   CGAL::Snap_rounding_2<Rep> i(seg_list.begin(),
                                seg_list.end(),
                                prec,
                                do_isr,
                                number_of_trees);
 
-#ifdef ISR_DEBUG
-  i.window_output(w,wait_for_click);
-#endif
+  window_output(i,w,wait_for_click);
 
   return(0);
 }
