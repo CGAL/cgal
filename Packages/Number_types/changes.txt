@@ -1,3 +1,6 @@
+4.100  (19 June 2003)
+- Add an assertion for division by zero in MP_Float.
+
 4.99  (3 June 2003)
 - Doc fix.
 

@@ -266,6 +266,7 @@ Integer reciprocal(const Integer A, Integer k) {
 MP_Float
 MP_Float::operator/(const MP_Float &d) const
 {
+  CGAL_assertion_msg(! d.is_zero(), " Division by zero");
   return MP_Float(CGAL::to_double(*this)/CGAL::to_double(d));
 }
 
