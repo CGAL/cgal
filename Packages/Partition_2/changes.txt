@@ -1,4 +1,6 @@
 
+1.55 (10 Sep 2003) [rursu]
+- Qt_help_window is in the CGAL namespace now
 
 1.54 (07 Sep 2003) [rursu]
 - demo use now the new help class Qt_help_window instead of HelpWindow
