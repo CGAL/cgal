@@ -20,7 +20,7 @@
 
 #ifdef CGAL_USE_QT
 
-#include <CGAL/IO/Qt_Widget.h>
+#include <CGAL/IO/Qt_widget.h>
 #include "Qt_widget_toolbar.h"
 
 // icons
