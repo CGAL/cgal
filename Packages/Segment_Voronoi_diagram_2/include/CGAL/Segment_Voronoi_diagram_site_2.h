@@ -52,6 +52,7 @@ public:
 protected:
   typedef typename R::FT        FT;
   typedef typename R::RT        RT;
+  typedef Segment_Voronoi_diagram_site_2<Rep>  Self;
 
 public:
   Segment_Voronoi_diagram_site_2() : defined_(false) {}
@@ -142,12 +143,39 @@ public:
     return compute_target();
   }
 
+  Self source_site() const {
+    CGAL_precondition( is_segment() );
+    if ( input_ || is_exact_[0] ) {
+      return Self(p_);
+    } else {
+      return Self(supporting_segment(), Segment_2(q1_, q2_));
+    }
+  }
+
+  Self target_site() const {
+    CGAL_precondition( is_segment() );
+    if ( input_ || is_exact_[1] ) {
+      return Self(p2_);
+    } else {
+      return Self(supporting_segment(), Segment_2(q3_, q4_));
+    }
+  }
+
   Segment_2 supporting_segment() const {
     CGAL_precondition( is_segment() );
     if ( input_ ) {
       return segment();
     } else {
       return Segment_2(p_, p2_);
+    }
+  }
+
+  Segment_2 supporting_segment(unsigned int i) const {
+    CGAL_precondition( is_point() && !input_ && i < 2 );
+    if ( i == 0 ) {
+      return Segment_2(q1_, q2_);
+    } else {
+      return Segment_2(q3_, q4_);
     }
   }
 

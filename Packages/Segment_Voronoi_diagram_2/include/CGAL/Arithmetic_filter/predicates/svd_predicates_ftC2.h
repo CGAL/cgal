@@ -43,6 +43,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
+static unsigned int num_failures_are_same_points = 0;
 static unsigned int num_failures_side_of_bisector = 0;
 static unsigned int num_failures_vertex_conflict = 0;
 static unsigned int num_failures_finite_edge_conflict = 0;
@@ -50,6 +51,42 @@ static unsigned int num_failures_infinite_edge_conflict = 0;
 static unsigned int num_failures_do_intersect = 0;
 static unsigned int num_failures_are_parallel = 0;
 static unsigned int num_failures_oriented_side = 0;
+
+//----------------------------------------------------------------------------
+
+template < class CT, class ET, bool Protected, class Cache, class Method_tag >
+bool
+svd_are_same_points_ftC2(const std::vector< 
+			 Filtered_exact<CT,ET,Dynamic,Protected,Cache> >& v,
+			 char site_types[], unsigned int num_sites)
+{
+  try {
+    Protect_FPU_rounding<Protected> Protection;
+
+    std::vector<Interval_nt_advanced> v_IT(v.size());
+
+    for (unsigned int i = 0; i < v.size(); i++) {
+      v_IT[i] = v[i].interval();
+    }
+    return svd_are_same_points_ftC2(v_IT, site_types, num_sites);
+  }
+  catch (Interval_nt_advanced::unsafe_comparison) {
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+
+    num_failures_are_same_points++;
+
+    std::vector<ET> v_ET(v.size());
+
+    for (unsigned int i = 0; i < v.size(); i++) {
+      v_ET[i] = v[i].exact();
+    }
+
+    return svd_are_same_points_ftC2(v_ET, site_types, num_sites);
+  }
+}
+
+
+//----------------------------------------------------------------------------
 
 template < class CT, class ET, bool Protected, class Cache, class Method_tag >
 inline

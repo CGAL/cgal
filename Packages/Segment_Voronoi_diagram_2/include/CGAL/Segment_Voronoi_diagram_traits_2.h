@@ -62,7 +62,8 @@ template< class K >
 class Are_same_points_2
 {
 public:
-  typedef typename K::Point_2      Point_2;
+  typedef typename K::Site_2         Site_2;
+  typedef typename K::Point_2        Point_2;
 
   //  typedef typename K::Compare_x_2  compare_x_2;
   //  typedef typename K::Compare_y_2  compare_y_2;
@@ -73,9 +74,11 @@ public:
 
 public:
 
-  bool operator()(const Point_2& p, const Point_2& q) const
+  bool operator()(const Site_2& p, const Site_2& q) const
   {
-    return (p == q);
+    CGAL_precondition( p.is_point() && q.is_point() );
+
+    return svd_are_same_points_C2<K>(p, q);
   }
 };
 

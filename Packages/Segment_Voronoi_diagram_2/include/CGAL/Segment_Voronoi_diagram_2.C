@@ -417,10 +417,13 @@ insert_second(const Point& p)
 {
   CGAL_triangulation_precondition( number_of_vertices() == 1 );
 
-  Point p0 = vertices_begin()->point();
+  // p0 is actually a point
+  Site_2 p0 = vertices_begin()->site();
   // MK: change the equality test between points by the functor in
   // geometric traits
-  if ( are_same_points(p,p0) ) { return Vertex_handle(vertices_begin()); }
+  if ( are_same_points(Site_2(p),p0) ) {
+    return Vertex_handle(vertices_begin());
+  }
 
   return Delaunay_graph::insert(p);
 }
@@ -433,15 +436,16 @@ insert_third(const Site& t)
   CGAL_triangulation_precondition( number_of_vertices() == 2 );
   if ( t.is_point() ) {
     
-    Point p0 = vertices_begin()->point();
-    Point p1 = (++vertices_begin())->point();
+    // p0 and p1 are actually points
+    Site_2 p0 = vertices_begin()->site();
+    Site_2 p1 = (++vertices_begin())->site();
 
     // MK: change the equality test between points by the functor in
     // geometric traits
-    if ( are_same_points(t.point(), p0) ) {
+    if ( are_same_points(t, p0) ) {
       return Vertex_handle(vertices_begin());
     }
-    if ( are_same_points(t.point(), p1) ) {
+    if ( are_same_points(t, p1) ) {
       return Vertex_handle(++vertices_begin());
     }
 
@@ -492,7 +496,7 @@ typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,Svdds>::
 insert(const Site& t, Vertex_handle vnear)
 {
-  if ( t.is_segment() && is_degenerate_segment(t.segment()) ) {
+  if ( t.is_segment() && is_degenerate_segment(t) ) {
     // insert the point
     return insert(t.source(), vnear);
   }
@@ -533,7 +537,7 @@ insert(const Site& t, Vertex_handle vnear)
 
   // check if it is already inserted
   if ( t.is_point() && vnearest->is_point() &&
-       are_same_points(t.point(), vnearest->point()) ) {
+       are_same_points(t, vnearest->site()) ) {
     return vnearest;
   }
 
@@ -753,7 +757,7 @@ find_conflict_region_remove(const Vertex_handle& v,
 
   // check if it is already inserted
   if ( t.is_point() && vnearest->is_point() &&
-       are_same_points(t.point(), vnearest->point()) ) {
+       are_same_points(t, vnearest->site()) ) {
     return;
   }
 
@@ -1183,7 +1187,7 @@ nearest_neighbor(const Point& p,
 template< class Gt, class Svdds >
 bool
 Segment_Voronoi_diagram_2<Gt,Svdds>::
-are_same_points(const Point& p, const Point& q) const
+are_same_points(const Site_2& p, const Site_2& q) const
 {
   return geom_traits().are_same_points_2_object()(p, q);
 }
@@ -1585,12 +1589,12 @@ endpoint_vertices(Vertex_handle v) const
   do {
     Vertex_handle u(vc);
     if ( u->is_point() &&
-	 are_same_points(u->point(), v->segment().source()) ) {
+	 are_same_points(u->site(), v->source_site()) ) {
       vertices.first = u;
     }
 
     if ( u->is_point() &&
-	 are_same_points(u->point(), v->segment().target()) ) {
+	 are_same_points(u->site(), v->target_site()) ) {
       vertices.second = u;
     }
 
@@ -1614,7 +1618,7 @@ is_endpoint_of_segment(Vertex_handle v) const
   do {
     Vertex_handle u(vc);
     if ( u->is_segment() &&
-	 is_endpoint_of_segment(v->point(), u->segment()) ) {
+	 is_endpoint_of_segment(v->site(), u->site()) ) {
       is_endpoint = true;
       break;
     }
@@ -2042,7 +2046,7 @@ number_of_incident_segments(Vertex_handle v) const
   do {
     Vertex_handle vn(vc);
     if ( vn->is_segment() &&
-	 is_endpoint_of_segment(v->point(), vn->segment()) ) {
+	 is_endpoint_of_segment(v->site(), vn->site()) ) {
       counter++;
     }
     ++vc;

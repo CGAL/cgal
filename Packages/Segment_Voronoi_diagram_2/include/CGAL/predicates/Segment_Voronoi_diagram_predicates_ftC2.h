@@ -36,6 +36,90 @@
 
 CGAL_BEGIN_NAMESPACE
 
+//-------------------------------------------------------------------------
+
+template<class K>
+bool svd_are_same_points_C2(const typename K::Site_2 t[],
+			    unsigned int num_sites)
+{
+  typedef typename K::FT   FT;
+  char site_types[4];
+  int k(0);
+
+  std::vector<FT> v;
+
+  for (unsigned int i = 0; i < num_sites; i++) {
+    site_types[k] = 'p';
+    if ( t[i].is_exact() ) {
+      v.push_back( t[i].point().x() );
+      v.push_back( t[i].point().y() );
+      site_types[k+1] = 'e';
+    } else {
+      typename K::Segment_2 s1 = t[i].supporting_segment(0);
+      typename K::Segment_2 s2 = t[i].supporting_segment(1);
+      v.push_back( s1.source().x() );
+      v.push_back( s1.source().y() );
+      v.push_back( s1.target().x() );
+      v.push_back( s1.target().y() );
+      v.push_back( s2.source().x() );
+      v.push_back( s2.source().y() );
+      v.push_back( s2.target().x() );
+      v.push_back( s2.target().y() );
+      site_types[k+1] = 'i';
+    }
+    k += 2;
+  }
+
+  return svd_are_same_points_ftC2(v, site_types, num_sites);
+}
+
+template<class K>
+bool svd_are_same_points_C2(const typename K::Site_2& p,
+			    const typename K::Site_2& q)
+{
+  typename K::Site_2 site_vec[] = {p, q};
+  return svd_are_same_points_C2<K>(site_vec, 2);
+}
+
+template<class FT>
+bool
+svd_are_same_points_ftC2(const std::vector<FT>& v,
+			 char site_types[], unsigned int num_sites)
+{
+   CGAL_precondition( num_sites == 2 );
+
+   must_be_filtered(FT());
+
+   typedef Simple_cartesian<FT>                 Rep;
+   typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
+
+   typedef typename Kernel::Point_2             Point_2;
+   typedef typename Kernel::Segment_2           Segment_2;
+   typedef typename Kernel::Site_2              Site_2;
+   typedef Svd_are_same_points_C2<Kernel>       Are_same_points_2;
+
+   Site_2 t[2];
+
+   for (unsigned int i = 0, k = 0, j = 0; i < num_sites; i++, j += 2) {
+     if ( site_types[j] == 'p' && site_types[j+1] == 'e' ) {
+       Point_2 p(v[k], v[k+1]);
+       t[i].set_point(p);
+     } else {
+       Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
+       Point_2 p3(v[k+4], v[k+5]), p4(v[k+6], v[k+7]);
+       Segment_2 s1(p1, p2), s2(p3, p4);
+       t[i].set_point(s1, s2);
+     }
+     k += ( (site_types[j+1] == 'e') ? 2 : 8 );
+   }
+
+   bool b = Are_same_points_2()(t[0], t[1]);
+   return b;
+}
+
+
+//--------------------------------------------------------------------------
+
 template<class FT, class Method_tag>
 Comparison_result
 svd_compare_distance_ftC2(const FT& qx, const FT& qy,

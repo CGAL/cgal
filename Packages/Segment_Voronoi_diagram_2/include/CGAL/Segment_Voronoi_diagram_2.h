@@ -451,9 +451,9 @@ public:
 
       bool is_endpoint_of_seg =
 	( p.is_segment() && q.is_point() &&
-	  is_endpoint_of_segment(q.point(), p.segment()) ) ||
+	  is_endpoint_of_segment(q, p) ) ||
 	( p.is_point() && q.is_segment() &&
-	  is_endpoint_of_segment(p.point(), q.segment()) );
+	  is_endpoint_of_segment(p, q) );
 
       if ( !is_endpoint_of_seg ) {
 	draw_voronoi_edge(*eit, str);
@@ -507,17 +507,18 @@ public:
 protected:
   // wrappers for the geometric predicates
 
-  bool are_same_points(const Point& p, const Point& q) const;
+  bool are_same_points(const Site_2& p, const Site_2& q) const;
 
-  inline
-  bool is_endpoint_of_segment(const Point& p, const Segment& s) const
+  bool is_endpoint_of_segment(const Site_2& p, const Site_2& s) const
   {
-    return ( are_same_points(p, s.source()) ||
-	     are_same_points(p, s.target()) );
+    CGAL_precondition( p.is_point() && s.is_segment() );
+    return ( are_same_points(p, s.source_site()) ||
+	     are_same_points(p, s.target_site()) );
   }
 
-  inline bool is_degenerate_segment(const Segment& s) const {
-    return are_same_points(s.source(), s.target());
+  bool is_degenerate_segment(const Site_2& s) const {
+    CGAL_precondition( s.is_segment() );
+    return are_same_points(s.source_site(), s.target_site());
   }
 
   // returns:

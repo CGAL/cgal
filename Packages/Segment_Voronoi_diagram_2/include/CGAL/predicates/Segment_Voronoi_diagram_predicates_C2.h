@@ -29,6 +29,7 @@
 #define CGAL_SEGMENT_VORONOI_DIAGRAM_PREDICATES_2_H
 
 #include <CGAL/predicates/Segment_Voronoi_diagram_vertex_C2.h>
+#include <CGAL/predicates/Svd_are_same_points_C2.h>
 #include <CGAL/predicates/Svd_incircle_2.h>
 #include <CGAL/predicates/Svd_finite_edge_interior_2.h>
 #include <CGAL/predicates/Svd_infinite_edge_interior_2.h>
@@ -42,6 +43,7 @@ CGAL_BEGIN_NAMESPACE
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
+#if 1
 template< class K >
 class Svd_are_same_points_2
 {
@@ -59,6 +61,7 @@ public:
     return res == EQUAL;
   }
 };
+#endif
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
