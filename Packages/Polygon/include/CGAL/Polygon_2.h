@@ -162,7 +162,7 @@ operator-(Polygon_vertex_iterator_2<It> it1, Polygon_vertex_iterator_2<It> it2)
 #endif // defined(...CACHED)
 
 template <class Traits_P, class Container_P
-        = std::vector<CGAL_TYPENAME_MSVC_NULL Traits_P::Point_2> >
+        = std::vector<typename Traits_P::Point_2> >
 class Polygon_2 {
 
   public:

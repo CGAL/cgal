@@ -39,8 +39,8 @@ CGAL_BEGIN_NAMESPACE
 
 // Class declaration
 // =================
-template < class K_, class ET_ = CGAL_TYPENAME_MSVC_NULL K_::RT,
-                     class NT_ = CGAL_TYPENAME_MSVC_NULL K_::RT >
+template < class K_, class ET_ = typename K_::RT,
+                     class NT_ = typename K_::RT >
 class Optimisation_d_traits_2;
 
 // Class interface

@@ -1190,7 +1190,7 @@ The matrix $A$ and the vectors $b$ and $c$ are stored in the data members
     typedef  std::vector<NT>            NT_vector;
     typedef  std::vector<NT_vector>     NT_matrix;
 
-    typedef  CGAL_TYPENAME_MSVC_NULL NT_matrix::const_iterator NTMCI;
+    typedef  typename NT_matrix::const_iterator NTMCI;
     typedef  CGAL::Join_random_access_iterator_1<
                  NTMCI, LP_rep_row_of_a<NT> >  A_iterator;
     typedef  typename NT_vector::const_iterator

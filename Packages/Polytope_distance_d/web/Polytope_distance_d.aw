@@ -1045,7 +1045,7 @@ a~$1$. We store matrix $A$ as a vector of vectors in \ccc{a_matrix}.
                                         NT_matrix;
 
     typedef  CGAL::Join_random_access_iterator_1<
-                 CGAL_TYPENAME_MSVC_NULL NT_matrix::const_iterator,
+                 typename NT_matrix::const_iterator,
                  QP_rep_row_of_a<NT> >  A_iterator;
 @end
 

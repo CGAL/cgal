@@ -68,7 +68,7 @@ class Construct_point_3 {
     Point
     operator() ( int, InputIterator first, InputIterator last) const
     {
-	std::vector<CGAL_TYPENAME_MSVC_NULL R::RT>  coords;
+	std::vector<typename R::RT>  coords;
 	std::copy( first, last, std::back_inserter( coords));
 	if ( coords.size() < 4) {
 	    return Point( coords[ 0], coords[ 1], coords[ 2]);

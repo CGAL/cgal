@@ -197,8 +197,8 @@ are expected to be number types fulfilling the requirements of a \cgal\
 number type. They have default type \ccc{K::RT}.
 
 @macro <Optimisation_d_traits_2 declaration> = @begin
-    template < class K_, class ET_ = CGAL_TYPENAME_MSVC_NULL K_::RT,
-                         class NT_ = CGAL_TYPENAME_MSVC_NULL K_::RT >
+    template < class K_, class ET_ = typename K_::RT,
+                         class NT_ = typename K_::RT >
     class Optimisation_d_traits_2;
 @end
 
@@ -264,8 +264,8 @@ are expected to be number types fulfilling the requirements of a \cgal\
 number type. They have default type \ccc{K::RT}.
 
 @macro <Optimisation_d_traits_3 declaration> = @begin
-    template < class K_, class ET_ = CGAL_TYPENAME_MSVC_NULL K_::RT,
-                         class NT_ = CGAL_TYPENAME_MSVC_NULL K_::RT >
+    template < class K_, class ET_ = typename K_::RT,
+                         class NT_ = typename K_::RT >
     class Optimisation_d_traits_3;
 @end
 
@@ -331,8 +331,8 @@ are expected to be number types fulfilling the requirements of a \cgal\
 number type. They have default type \ccc{K::RT}.
 
 @macro <Optimisation_d_traits_d declaration> = @begin
-    template < class K_, class ET_ = CGAL_TYPENAME_MSVC_NULL K_::RT,
-                         class NT_ = CGAL_TYPENAME_MSVC_NULL K_::RT >
+    template < class K_, class ET_ = typename K_::RT,
+                         class NT_ = typename K_::RT >
     class Optimisation_d_traits_d;
 @end
 

@@ -668,7 +668,7 @@ struct QP_rep_poly_dist_d {
                                         NT_matrix;
     
     typedef  CGAL::Join_random_access_iterator_1<
-                 CGAL_TYPENAME_MSVC_NULL NT_matrix::const_iterator,
+                 typename NT_matrix::const_iterator,
                  QP_rep_row_of_a<NT> >  A_iterator;
     typedef  CGAL::Const_value_iterator<NT>
                                         B_iterator;
