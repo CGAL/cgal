@@ -28,25 +28,24 @@
 
 #include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/intersections.h>
-#include <CGAL/Arr_intersection_tags.h>
 
 #include <list>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class Kernel_>
-class Arr_segment_exact_traits : public Pm_segment_traits_2<Kernel_>
+class Arr_segment_traits_2 : public Pm_segment_traits_2<Kernel_>
 {
 public:
-  typedef Efficient_intersection_tag            Intersection_category;
-
   typedef Kernel_                               Kernel;
   typedef int                                   Info_face;
   typedef int                                   Info_edge;
   typedef int                                   Info_vertex;
   
   typedef Pm_segment_traits_2<Kernel>           Base;
-  
+
+  typedef typename Base::Has_left_category      Has_left_category;
+    
   typedef typename Base::Point_2                Point_2;
   typedef typename Base::X_curve_2              X_curve_2;
   typedef X_curve_2                             Curve_2;
@@ -63,7 +62,7 @@ protected:
   typedef typename Kernel::Compare_xy_2         Compare_xy_2;
 
 public:
-  Arr_segment_exact_traits() : Base() { }
+  Arr_segment_traits_2() : Base() { }
 
   /*! is_x_monotone()
    * \return true if the given curve is an x-monotone curve. False, otherwise.
