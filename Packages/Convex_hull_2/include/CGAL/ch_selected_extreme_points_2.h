@@ -139,7 +139,7 @@ all iterators |it| in the range.\\
 
 template <class ForwardIterator, class Traits>
 void
-ch__e_point( ForwardIterator first, ForwardIterator last,
+ch_e_point( ForwardIterator first, ForwardIterator last,
                   ForwardIterator& e,
                   const Traits& ch_traits );
 /*{\Mfuncl traverses the range [|first|,|last|). After execution, 
@@ -263,9 +263,8 @@ all iterators |it| in the range.
 template <class ForwardIterator, class R>
 inline
 void
-ch__e_point( ForwardIterator first, ForwardIterator last,
-                  ForwardIterator& e,
-                  Point_2<R>* )
+ch__e_point( ForwardIterator first, ForwardIterator last, ForwardIterator& e,
+            Point_2<R>* )
 {
   ch_e_point(first, last, e, R() );
 }
