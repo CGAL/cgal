@@ -1,3 +1,6 @@
+Version 1.15 (5 oct 99)
+removing "unsigned int"
+
 Version 1.14 (4 oct 99)
 problem in conversion from ds_cell to Cell_handle solved in
 Triangulation_circulator_3 (in Facet_circulator)
