@@ -43,13 +43,13 @@ public:
   typedef typename Tds::Vertex_circulator  Vertex_circulator;
   typedef typename Tds::Face_circulator    Face_circulator;
   typedef typename Tds::Edge_circulator    Edge_circulator;
-  typedef typename Vb::Point               Point;
+  //typedef typename Vb::Point               Point;
  
   //CREATORS
   Triangulation_ds_vertex_2() : Vb() {}
-  Triangulation_ds_vertex_2(const Point& p) :  Vb(p)  {}
-  Triangulation_ds_vertex_2(const Point& p, Face_handle f) 
-    : Vb(p, &*f )  {}
+  //Triangulation_ds_vertex_2(const Point& p) :  Vb(p)  {}
+  //Triangulation_ds_vertex_2(const Point& p, Face_handle f) 
+  //  : Vb(p, &*f )  {}
 
   //SETTING
   void set_face(Face_handle f)  { Vb::set_face(&*f);}

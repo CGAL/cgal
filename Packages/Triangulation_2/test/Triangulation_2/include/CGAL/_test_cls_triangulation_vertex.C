@@ -50,8 +50,11 @@ _test_cls_triangulation_vertex( const Vertex & )
   
   // Test constructors
   Vertex v1;
-  Vertex v2(p2);
-  Vertex v3(p3,f3.handle());
+  //Vertex v2(p2);
+  //Vertex v3(p3,f3.handle());
+  Vertex v2, v3;
+  v2.set_point(p2);
+  v3.set_point(p3); v3.set_face(f3.handle());
   
   // test is_valid
   assert( v3.face() == f3.handle() );

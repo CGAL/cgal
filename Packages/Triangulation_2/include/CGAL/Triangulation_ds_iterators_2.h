@@ -140,6 +140,7 @@ class Triangulation_ds_vertex_iterator_2
 {
 public:
   typedef typename Tds::Vertex       Vertex;
+  typedef typename Tds::Face         Face;
   
   typedef Vertex       value_type;
   typedef Vertex *     pointer;
@@ -197,7 +198,7 @@ class Triangulation_ds_edge_iterator_2
 {
 public:
   typedef typename Tds::Edge       Edge;
-  
+    
   typedef Edge            value_type;
   typedef Edge *          pointer;
   typedef Edge &          reference;
