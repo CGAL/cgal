@@ -1,3 +1,6 @@
+
+- Various predicates and constructions cleanups and speedups [Sylvain].
+
 Version 3.3.5 (September 22 i1999)
 - Corrected class Identity to class Identity_transformation
 
