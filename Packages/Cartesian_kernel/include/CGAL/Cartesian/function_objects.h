@@ -128,6 +128,7 @@ namespace CartesianKernelFunctors {
   using CommonKernelFunctors::Less_rotate_ccw_2;
   using CommonKernelFunctors::Oriented_side_2;
   using CommonKernelFunctors::Oriented_side_3;
+#ifndef CGAL_NO_DEPRECATED_CODE
   using CommonKernelFunctors::Equal_xy_2;
   using CommonKernelFunctors::Leftturn_2;
   using CommonKernelFunctors::Equal_xyz_3;
@@ -150,6 +151,7 @@ namespace CartesianKernelFunctors {
   using CommonKernelFunctors::Construct_aff_transformation_2;
   using CommonKernelFunctors::Construct_aff_transformation_3;
   using CommonKernelFunctors::Compute_y_at_x_2;
+#endif
 #endif
 
   template <typename K>
