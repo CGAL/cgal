@@ -1,6 +1,7 @@
 Version 3.6.1 (October 7 1999)
 - Various predicates and constructions cleanups and speedups [Sylvain].
 - Added projection_lineC3 and point_on_line as constructions on lines
+- Changed name of Direction::vector to Direction::to_vector
 - Changed targets in the makefile (using .PHONY)
 - Cosmetic changes (notably some typename R::FT)
 
