@@ -1,14 +1,13 @@
-#  Makefile for CGAL's Interval Arithmetic package. [Sylvain Pion]
-
-Package=Interval_arithmetic
+# Makefile for a CGAL package.
 
 .PHONY: doc package filters test example submit version tag
 
+Package:=$(shell basename `cat CVS/Repository`)
+TAG_VERSION:=v$(shell echo $(VERSION) | sed -e "s/\./_/g")
+CGAL_VERSION:="$(VERSION) ($(shell date '+%e %b %Y'))"
 WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
-TAG_VERSION:= v$(shell echo $(VERSION) | sed -e "s/\./_/g")
-CGAL_VERSION:= "$(VERSION) ($(shell date '+%e %b %Y'))"
 
 package: doc filters example clean $(Package).tar.gz
 	@echo "-----------------------------------"
@@ -38,7 +37,7 @@ submit: package
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
 	echo "/$(Package)/$(Package).tar.gz" >> $(TMP_file)
-	mail -s autohandle cgal-submit@cs.uu.nl spion < $(TMP_file)
+	mail -s autohandle cgal-submit@cs.uu.nl $(USER) < $(TMP_file)
 	rm -f $(TMP_file)
 
 test:
