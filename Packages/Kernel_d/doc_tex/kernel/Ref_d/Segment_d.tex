@@ -111,17 +111,14 @@ modulo $2$, which gives easy access to the other vertex.
 
 
 
-\ccFunction{template <class R>
-template <class R> bool weak_equality(const Segment_d<R>& s, const Segment_d<R>& t) ;}{Test for equality as unoriented segments. 
+\ccFunction{bool weak_equality(const Segment_d<R>& s, const Segment_d<R>& t) ;}{Test for equality as unoriented segments. 
 }
 
-\ccFunction{template <class R>
-template <class R> bool parallel(const Segment_d<R>& s1, const Segment_d<R>& s2) ;}{return true if one of the segments is trivial or
+\ccFunction{bool parallel(const Segment_d<R>& s1, const Segment_d<R>& s2) ;}{return true if one of the segments is trivial or
 if the unoriented supporting lines are parallel.  
 }
 
-\ccFunction{template <class R>
-template <class R> bool common_endpoint(const Segment_d<R>& s1, const Segment_d<R>& s2,   Point_d<R>& common)  ;}{if \ccc{s1} and \ccc{s2} touch in a common end point, this point
+\ccFunction{bool common_endpoint(const Segment_d<R>& s1, const Segment_d<R>& s2,   Point_d<R>& common)  ;}{if \ccc{s1} and \ccc{s2} touch in a common end point, this point
 is assigned to \ccc{common} and the result is \ccc{true}, otherwise the 
 result is \ccc{false}.  
 }
