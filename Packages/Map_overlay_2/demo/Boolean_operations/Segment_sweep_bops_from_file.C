@@ -72,7 +72,8 @@ typedef CGAL::Pm_walk_along_line_point_location<PM>        PmWalkPL;
 static PmWalkPL pm_walk1, pm_walk2;
 static PM pm1(&pm_walk1); 
 static PM pm2(&pm_walk2);
-static CGAL::Window_stream W(500, 500, "CGAL - Segment Boolean-Operations Demo");
+static CGAL::Window_stream
+  W(500, 500, "CGAL - Segment Boolean-Operations Demo");
 
 // redraw function for the LEDA window. 
 // used automatically when window reappears.
@@ -131,13 +132,17 @@ void redraw(CGAL::Window_stream * wp)
         bops.Union(faces_result,halfedges_result,vertices_result);
       
       else if (b==6)
-        bops.symmetric_difference(faces_result, halfedges_result, vertices_result);
+        bops.symmetric_difference(faces_result, halfedges_result,
+                                  vertices_result);
 
       std::cout<<"number of faces is "<< faces_result.size()<<std::endl;
-      std::cout<<"The number of resulting halfedges is "<<halfedges_result.size()<<std::endl;
-      std::cout<<"The number of resulting vertices is "<<vertices_result.size()<<std::endl;
+      std::cout<<"The number of resulting halfedges is "
+               <<halfedges_result.size()<<std::endl;
+      std::cout<<"The number of resulting vertices is "
+               <<vertices_result.size()<<std::endl;
 
-      for (list<PM::Face_const_handle>::iterator  f_iter = faces_result.begin(); 
+      for (list<PM::Face_const_handle>::iterator  f_iter =
+           faces_result.begin(); 
            f_iter != faces_result.end(); ++f_iter){
         PM::Face_const_handle fh = *f_iter;
         if (fh->is_unbounded())
@@ -155,7 +160,8 @@ void redraw(CGAL::Window_stream * wp)
         } while (++cc != fh->outer_ccb());
         W.draw_filled_polygon(points_list);
         
-        for (PM::Holes_const_iterator hit = fh->holes_begin(); hit != fh->holes_end(); ++hit) {
+        for (PM::Holes_const_iterator hit = fh->holes_begin(); hit !=
+             fh->holes_end(); ++hit) {
           leda_list<leda_point> holes_points_list;
           PM::Ccb_halfedge_const_circulator cc(*hit);
           W.set_fill_color(leda_black);
@@ -176,7 +182,8 @@ void redraw(CGAL::Window_stream * wp)
         } while (++cc != fh->outer_ccb());
         }
       
-      for (list<PM::Halfedge_const_handle>::iterator h_iter = halfedges_result.begin(); 
+      for (list<PM::Halfedge_const_handle>::iterator h_iter =
+           halfedges_result.begin(); 
            h_iter != halfedges_result.end(); ++h_iter, ++h_iter){
         PM::Halfedge_const_handle h = *h_iter;
 
@@ -185,7 +192,8 @@ void redraw(CGAL::Window_stream * wp)
         W << h->curve();
       }
       
-      for (list<PM::Vertex_const_handle>::iterator  v_iter = vertices_result.begin(); 
+      for (list<PM::Vertex_const_handle>::iterator  v_iter =
+           vertices_result.begin(); 
            v_iter != vertices_result.end(); v_iter++){
         W.set_node_width(4);
         
@@ -229,7 +237,8 @@ void  scan_planar_map(const char* filename, PM& pm)
 }
 
 template <class Arrangement>
-void calc_window_size(const Arrangement &arr, double &min_x, double &max_x, double &min_y)
+void calc_window_size(const Arrangement &arr, double &min_x, double &max_x,
+                      double &min_y)
 {
   Vertex_const_iterator v_iter = arr.vertices_begin();
   
@@ -298,7 +307,8 @@ int main(int argc, char* argv[])
   if (pm1.halfedges_begin() == pm1.halfedges_end()) 
     {
       std::cout << std::endl;
-      std::cout << "No edges were inserted to the first planar map. First Planar map is empty. Exiting.";
+      std::cout << "No edges were inserted to the first planar map. "
+                << "First Planar map is empty. Exiting.";
       std::cout << std::endl;
     }
   
@@ -306,7 +316,8 @@ int main(int argc, char* argv[])
   if (pm2.halfedges_begin() == pm2.halfedges_end()) 
     {
       std::cout << std::endl;
-      std::cout << "No edges were inserted to the first planar map. First Planar map is empty. Exiting.";
+      std::cout << "No edges were inserted to the first planar map. "
+                << "First Planar map is empty. Exiting.";
       std::cout << std::endl;
     }
   

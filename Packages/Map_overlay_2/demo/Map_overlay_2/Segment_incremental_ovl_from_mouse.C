@@ -38,29 +38,31 @@ int main()
 using namespace leda;
 #endif
 
-typedef leda_rational                                  NT;
-typedef CGAL::Arr_leda_segment_exact_traits            Traits;
+typedef leda_rational                                   NT;
+typedef CGAL::Arr_leda_segment_exact_traits             Traits;
 
-typedef Traits::Point                                  Point;
-typedef Traits::X_curve                                X_curve;
+typedef Traits::Point                                   Point;
+typedef Traits::X_curve                                 X_curve;
 
-typedef CGAL::Map_overlay_default_dcel<Traits>                Dcel;
-typedef CGAL::Planar_map_2<Dcel, Traits>              PM;
-typedef CGAL::Planar_map_with_intersections_2<PM>     Pmwx;
+typedef CGAL::Map_overlay_default_dcel<Traits>          Dcel;
+typedef CGAL::Planar_map_2<Dcel, Traits>                PM;
+typedef CGAL::Planar_map_with_intersections_2<PM>       Pmwx;
 
-typedef CGAL::Map_overlay_default_notifier<PM>      MapOverlay_change_notification;
+typedef CGAL::Map_overlay_default_notifier<PM>
+  MapOverlay_change_notification;
 typedef CGAL::Map_overlay_incremental<Pmwx, MapOverlay_change_notification>   
-                                                            MapOverlay_incremental;
+                                                        MapOverlay_incremental;
 typedef CGAL::Map_overlay_2<Pmwx, MapOverlay_change_notification>  MapOverlay;
 
-typedef CGAL::Pm_walk_along_line_point_location<PM>             PmWalkPL;
+typedef CGAL::Pm_walk_along_line_point_location<PM>     PmWalkPL;
 
 // global variables are used so that the redraw function for the LEDA window
 // can be defined to draw information found in these variables.
 //static PmWalkPL pm_walk1, pm_walk2;
 static Pmwx pmwx1; 
 static Pmwx pmwx2;
-static CGAL::Window_stream W(500, 500, "CGAL - Segment Map-Overlay Demo: Incremental Algorithm");
+static CGAL::Window_stream
+  W(500, 500, "CGAL - Segment Map-Overlay Demo: Incremental Algorithm");
 
 // redraw function for the LEDA window. 
 // used automatically when window reappears.
@@ -121,7 +123,8 @@ void redraw(CGAL::Window_stream * wp)
       //  std::cout<<"NULL faces pointers\n";
  
       leda_color fg_col;
-      if (f1 != NULL && !(f1->is_unbounded()) && f2 != NULL && !(f2->is_unbounded()) )     
+      if (f1 != NULL && !(f1->is_unbounded()) && f2 != NULL &&
+          !(f2->is_unbounded()) )     
         fg_col = leda_violet;
       else if (f1 != NULL && !(f1->is_unbounded()))
         fg_col = leda_blue;
@@ -137,8 +140,9 @@ void redraw(CGAL::Window_stream * wp)
       
       leda_list<leda_point> points_list;
       do {
-        leda_point p = leda_point(CGAL::to_double(cc->source()->point().xcoordD()), 
-                                  CGAL::to_double(cc->source()->point().ycoordD()) );
+        leda_point p =
+          leda_point(CGAL::to_double(cc->source()->point().xcoordD()), 
+                     CGAL::to_double(cc->source()->point().ycoordD()) );
 
         points_list.push_back(p);
       } while (++cc != fh->outer_ccb());
@@ -149,7 +153,9 @@ void redraw(CGAL::Window_stream * wp)
         W << cc->source()->point();
       } while (++cc != fh->outer_ccb());
       
-      for (Pmwx::Holes_const_iterator hit = fh->holes_begin(); hit != fh->holes_end(); ++hit) {
+      for (Pmwx::Holes_const_iterator hit = fh->holes_begin();
+           hit != fh->holes_end(); ++hit)
+      {
         Pmwx::Ccb_halfedge_const_circulator cc(*hit);
         do{
         W << cc->curve();
@@ -159,11 +165,14 @@ void redraw(CGAL::Window_stream * wp)
       
       for (Pmwx::Vertex_const_iterator  v_iter = pmwx.vertices_begin(); 
            v_iter != pmwx.vertices_end(); ++v_iter){
-        if (v_iter->get_first_vertex_above() != NULL && v_iter->get_second_vertex_above() != NULL)
+        if (v_iter->get_first_vertex_above() !=
+            NULL && v_iter->get_second_vertex_above() != NULL)
           W.set_color(leda_violet);
-        else if (v_iter->get_first_vertex_above() != NULL && v_iter->get_second_vertex_above() == NULL)
+        else if (v_iter->get_first_vertex_above() !=
+                 NULL && v_iter->get_second_vertex_above() == NULL)
           W<<CGAL::BLUE;
-        else if (v_iter->get_second_vertex_above() != NULL && v_iter->get_first_vertex_above() == NULL)
+        else if (v_iter->get_second_vertex_above() !=
+                 NULL && v_iter->get_first_vertex_above() == NULL)
           W << CGAL::RED;
         else
           W << CGAL::ORANGE;
@@ -203,7 +212,8 @@ int  read_planar_map(Pmwx& pmwx, CGAL::Window_stream& W)
           for(Pmwx::Vertex_iterator vi = pmwx.vertices_begin();
               vi != pmwx.vertices_end(); ++vi) {
             //we are using the leda sqr_dist func
-            if ( pnt.sqr_dist(vi->point()) < ((W.xmax() - W.xmin())/50)*((W.xmax() - W.xmin())/50) )
+            if ( pnt.sqr_dist(vi->point()) <
+                 ((W.xmax() - W.xmin())/50)*((W.xmax() - W.xmin())/50) )
               pnt=vi->point();
           }
           
@@ -278,13 +288,19 @@ int main()
   W << CGAL::BLUE;
   W << pmwx2;
   
-  std::cout<<"Locate Overlay Face:"<<endl;
-  std::cout<<"Purple Face - an overlay face laying under two bounded faces"<<std::endl;
-  std::cout<<"Blue Face - an overlay face laying under a bounded face of the first map and the unbounded face of the second"<<std::endl;
-  std::cout<<"Red Face - an overlay face laying under the unbounded face of the first map and a bounded face of the second"<<std::endl;
-  std::cout<<"Orange Face - an overlay face laying under the unbounded faces of both maps"<<endl;
+  std::cout << "Locate Overlay Face:"<<endl;
+  std::cout << "Purple Face - an overlay face laying under two bounded faces"
+            << std::endl;
+  std::cout << "Blue Face - an overlay face laying under a bounded face "
+            << "of the first map and the unbounded face of the second"
+            << std::endl;
+  std::cout<< "Red Face - an overlay face laying under the unbounded face "
+           << "of the first map and a bounded face of the second"
+           << std::endl;
+  std::cout<<"Orange Face - an overlay face laying under the unbounded faces "
+           << "of both maps" << endl;
   
-  MapOverlay_incremental   ovl_incremental, pmwx_incremental1, pmwx_incremental2;
+  MapOverlay_incremental ovl_incremental, pmwx_incremental1, pmwx_incremental2;
   MapOverlay map1(pmwx1, &pmwx_incremental1);
   MapOverlay map2(pmwx2, &pmwx_incremental2);
   MapOverlay map_overlay(map1, map2, &ovl_incremental);
@@ -296,7 +312,8 @@ int main()
   if (pmwx1.halfedges_begin() == pmwx1.halfedges_end()) 
     {
       std::cout << std::endl;
-      std::cout << "No edges were inserted to the first planar map. First Planar map is empty. Exiting.";
+      std::cout << "No edges were inserted to the first planar map. "
+                << "First Planar map is empty. Exiting.";
       std::cout << std::endl;
     }
   
@@ -304,7 +321,8 @@ int main()
   if (pmwx2.halfedges_begin() == pmwx2.halfedges_end()) 
     {
       std::cout << std::endl;
-      std::cout << "No edges were inserted to the first planar map. First Planar map is empty. Exiting.";
+      std::cout << "No edges were inserted to the first planar map. "
+                << "First Planar map is empty. Exiting.";
       std::cout << std::endl;
     }
   

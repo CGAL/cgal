@@ -38,32 +38,34 @@ int main()
 using namespace leda;
 #endif
 
-typedef leda_real                            NT;
-typedef CGAL::Cartesian<NT>                  Rep;
-typedef CGAL::Arr_polyline_traits<Rep>       Traits;
+typedef leda_real                                       NT;
+typedef CGAL::Cartesian<NT>                             Rep;
+typedef CGAL::Arr_polyline_traits<Rep>                  Traits;
 
-typedef Traits::Point_2                      Point;
-typedef Traits::X_curve_2                    X_curve;
-typedef Traits::Curve_2                      Curve;
+typedef Traits::Point_2                                 Point;
+typedef Traits::X_curve_2                               X_curve;
+typedef Traits::Curve_2                                 Curve;
 
-typedef CGAL::Bop_default_dcel<Traits>                Dcel;
-typedef CGAL::Planar_map_2<Dcel, Traits>              PM;
-typedef CGAL::Planar_map_with_intersections_2<PM>     Pmwx;
+typedef CGAL::Bop_default_dcel<Traits>                  Dcel;
+typedef CGAL::Planar_map_2<Dcel, Traits>                PM;
+typedef CGAL::Planar_map_with_intersections_2<PM>       Pmwx;
 
-typedef CGAL::Map_overlay_default_notifier<PM>      MapOverlay_change_notification;
+typedef CGAL::Map_overlay_default_notifier<PM>
+MapOverlay_change_notification;
 typedef CGAL::Map_overlay_incremental<Pmwx, MapOverlay_change_notification>   
-                                                                 MapOverlay_incremental;
+                                                        MapOverlay_incremental;
 typedef CGAL::Map_overlay_2<Pmwx, MapOverlay_change_notification>  MapOverlay;
-typedef CGAL::Boolean_operations_2<MapOverlay>                   Bops;
+typedef CGAL::Boolean_operations_2<MapOverlay>          Bops;
 
-typedef CGAL::Pm_walk_along_line_point_location<PM>             PmWalkPL;
+typedef CGAL::Pm_walk_along_line_point_location<PM>     PmWalkPL;
 
 // global variables are used so that the redraw function for the LEDA window
 // can be defined to draw information found in these variables.
 //static PmWalkPL pm_walk1, pm_walk2;
 static Pmwx pmwx1; 
 static Pmwx pmwx2;
-static CGAL::Window_stream W(500, 500, "CGAL - Segment Boolean-Operations Demo");
+static CGAL::Window_stream
+  W(500, 500, "CGAL - Segment Boolean-Operations Demo");
 
 leda_point to_leda_pnt(Point p)
 {
@@ -72,7 +74,7 @@ leda_point to_leda_pnt(Point p)
 
 // drawing functions
 CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
-                          const  Point& p)                         
+                                const  Point& p)                         
 {
   // conversion to leda_point in order to show it on screen
   return os << to_leda_pnt(p);
@@ -161,7 +163,8 @@ int main(int argc, char* argv[])
   if (pmwx1.halfedges_begin() == pmwx1.halfedges_end()) 
     {
       std::cout << std::endl;
-      std::cout << "No edges were inserted to the first planar map. First Planar map is empty. Exiting.";
+      std::cout << "No edges were inserted to the first planar map. "
+                << "First Planar map is empty. Exiting.";
       std::cout << std::endl;
     }
   
@@ -169,7 +172,8 @@ int main(int argc, char* argv[])
   if (pmwx2.halfedges_begin() == pmwx2.halfedges_end()) 
     {
       std::cout << std::endl;
-      std::cout << "No edges were inserted to the first planar map. First Planar map is empty. Exiting.";
+      std::cout << "No edges were inserted to the first planar map. "
+                << "First Planar map is empty. Exiting.";
       std::cout << std::endl;
     }
   
