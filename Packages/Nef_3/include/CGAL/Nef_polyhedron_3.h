@@ -830,6 +830,80 @@ protected:
 
   bool operator>=(const Nef_polyhedron_3<Kernel,Items>& N1) const
   { return N1.difference(*this).is_empty(); } 
+ /*
+  void transform( const Aff_transformation_3& aff) {
+    
+    // precondition: the polyhedron as a bounded boundary
+    // (needs to be explicitly tested at some time)
+
+    if( is_shared())
+      clone_rep();
+    // only linear transform for the origin-centered sphere maps
+    Aff_transformation_3 linear( aff.hm(0,0), aff.hm(0,1), aff.hm(0,2),
+				 aff.hm(1,0), aff.hm(1,1), aff.hm(1,2),
+				 aff.hm(2,0), aff.hm(2,1), aff.hm(2,2),
+				 aff.hm(3,3));
+    
+    SNC_decorator deco( snc());
+    
+    list<Vertex_handle> vertex_list;
+    Vertex_iterator vi;
+    CGAL_forall_vertices( vi, snc()) {
+      
+      TRACEN("transform vertex ");
+      if (!is_standard(vi)) {
+	vertex_list.push_bach(vi);
+      } else {
+	vi->point() = vi->point().transform( aff);
+	SM_decorator sdeco(&*vi);
+	sdeco.transform( linear);
+      }
+    }
+
+    CGAL_forall_halffacets(fi, snc()) {
+      if (!deco.is_standard( fi)) {
+	Halffacet_cycle_iterator fc = fi.facet_cycles_begin();
+	CGAL_assertion(fc.is_shalfedge());
+	SHalfedge_around_facet_circulator fcc(SHalfedge(fc)), fend(fcc);
+	CGAL_For_all(fcc,fend) {
+	  deco.add_interim_points(point(source(fcc)),point(target(fcc)));
+	}
+      }
+    }
+
+    typename list<Vertex_handle>::iterator li;
+    for(li = vertex_list.begin(); li != vertex_list.end(); li++){
+      deco.transform_sphere(*li);
+    }
+        
+    if(!is_finite()) {
+      build_external_structure();
+    } else {
+      Halffacet_iterator fi;
+      CGAL_forall_halffacets(fi,snc()) {
+	fi->plane() = fi->plane().transform( aff);
+      }    
+    }
+
+    if(aff.homogeneous(0,1) != 0 ||
+       aff.homogeneous(0,2) != 0 ||
+       aff.homogeneous(1,0) != 0 ||
+       aff.homogeneous(1,2) != 0 ||
+       aff.homogeneous(2,0) != 0 ||
+       aff.homogeneous(2,1) != 0 ||
+       aff.homogeneous(0,0) != aff.homogeneous(1,1) ||
+       aff.homogeneous(0,0) != aff.homogeneous(2,2)) {
+
+      SNC_point_locator* old_pl = pl();
+      pl() = pl()->clone();
+      pl()->initialize(&snc());
+      delete old_pl;   
+    }
+    else
+      pl()->transform(aff);
+
+  }
+*/
 
  bool is_90degree_rotation(const Aff_transformation_3& aff) const {
    if(aff.hm(0,3) != 0) return false;
@@ -924,7 +998,6 @@ protected:
       }
     }
 
-
     if(!is_bounded() && !ninety && !scale) {
       Unique_hash_map<Halffacet_handle, std::list<Point_3> > facet_cycle_map;
       
@@ -1006,12 +1079,14 @@ protected:
 	  O.simplify();
 	  snc().delete_vertex(v1);
 	  snc().delete_vertex(v2);
+	  /*
 	  if(Infi_box::is_infibox_corner(v->point())) {
 	    li2 = corner_list.begin();
 	    while(li2 != corner_list.end() && point(*li2) != v->point()) ++li2;
 	    CGAL_assertion(li2 != corner_list.end());
 	    delete_list.push_back(*li2);
 	  }
+	  */
 	}
 	
 	if(Infi_box::is_infibox_corner(point(*li))) {
@@ -1027,11 +1102,11 @@ protected:
 	  }
 	} else 
 	  snc().delete_vertex(*li);	  
-      }	
+      }
 
       for(li = delete_list.begin(); li != delete_list.end(); ++li)
 	snc().delete_vertex(*li);
- 
+
       while(cstr.erase_redundant_vertices());
       cstr.correct_infibox_sedge_marks();
 
