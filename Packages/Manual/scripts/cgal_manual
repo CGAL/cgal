@@ -1228,7 +1228,7 @@ EOF
             # Use this line on Sun Solaris systems
             # printf "Subject: New manual test results ${Target}\n\n\n${TestSuiteResultUrl}/${Target}\n" | ${Sendmail} ${TestSuiteResultEmail}
             # use this line on Linux systems
-            printf "\n${TestSuiteResultUrl}/${Target}\n" | ${Sendmail} -s "New manual test results ${Target}" ${TestSuiteResultEmail}            
+            printf "\n${TestSuiteResultUrl}/${Target}\n" | ${Sendmail} -s "[automatic] New manual test results ${Target}" ${TestSuiteResultEmail}            
         fi
     fi
 }
