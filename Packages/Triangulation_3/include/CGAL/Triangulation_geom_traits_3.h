@@ -71,7 +71,7 @@ public:
   typedef typename Rep::Construct_tetrahedron_3    Construct_tetrahedron_3;
 
   // For the hierarchy :
-  typedef typename Rep::Less_distance_to_point_3 Less_distance_to_point_3;
+  typedef typename Rep::Compare_distance_3         Compare_distance_3;
 };
 
 CGAL_END_NAMESPACE

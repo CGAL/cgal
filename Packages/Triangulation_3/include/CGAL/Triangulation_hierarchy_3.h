@@ -337,8 +337,8 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
   Cell_handle position;
   Vertex_handle nearest;
   int level  = Triangulation_hierarchy_3__maxlevel;
-  typename Geom_traits::Less_distance_to_point_3 
-    closer = geom_traits().less_distance_to_point_3_object(p);
+  typename Geom_traits::Compare_distance_3
+    cmp_dist = geom_traits().compare_distance_3_object();
 
   // find the highest level with enough vertices
   while (hierarchy[--level]->number_of_vertices() 
@@ -355,20 +355,22 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
       nearest = position->vertex(1);
     else if (hierarchy[level]->is_infinite(position->vertex(1)))
       nearest = position->vertex(0);
-    else if ( closer(position->vertex(0)->point(),
-		     position->vertex(1)->point()))
+    else if ( cmp_dist(p, position->vertex(0)->point(),
+		       position->vertex(1)->point()) == SMALLER)
       nearest = position->vertex(0);
     else
       nearest = position->vertex(1);
     // compare to vertex 2
     if ( dimension() >= 2
       && ( ! hierarchy[level]->is_infinite(position->vertex(2)))
-      && ( closer( position->vertex(2)->point(), nearest->point())))
+      && ( cmp_dist(p, position->vertex(2)->point(), nearest->point())
+	   == SMALLER))
 	nearest = position->vertex(2);
     // compare to vertex 3
     if ( dimension() == 3
       && ( ! hierarchy[level]->is_infinite(position->vertex(3)))
-      && ( closer( position->vertex(3)->point(), nearest->point())))
+      && ( cmp_dist(p, position->vertex(3)->point(), nearest->point())
+	   == SMALLER))
 	nearest = position->vertex(3);
     // go at the same vertex on level below
     nearest = (Vertex*)( nearest->down() );
