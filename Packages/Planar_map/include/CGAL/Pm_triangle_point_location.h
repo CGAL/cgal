@@ -87,13 +87,14 @@ public:
   //typedef Planar_map_with_intersections_2<Planar_map>     Pmwx;
   typedef Pm_point_location_base<Planar_map>       Base;
   typedef Pm_triangle_point_location<Planar_map>   Self;
-  typedef typename Planar_map::Face_iterator              Face_iterator;
-  typedef typename Planar_map::Halfedge_iterator          Halfedge_iterator;
-  typedef typename Planar_map::Vertex_iterator              Vertex_iterator;
-  typedef typename Planar_map::Edge_iterator                Edge_iterator;
-  typedef typename Planar_map::Vertex_handle                Vertex_handle;
-  typedef typename Planar_map::Halfedge_handle              Halfedge_handle;
-  typedef typename Planar_map::Face_handle                  Face_handle;
+  typedef typename Planar_map::Face_iterator            Face_iterator;
+  typedef typename Planar_map::Halfedge_iterator        Halfedge_iterator;
+  typedef typename Planar_map::Vertex_iterator          Vertex_iterator;
+  typedef typename Planar_map::Edge_iterator            Edge_iterator;
+  typedef typename Planar_map::Vertex_handle            Vertex_handle;
+  typedef typename Planar_map::Halfedge_handle          Halfedge_handle;
+  typedef typename Planar_map::Halfedge_const_handle    Halfedge_const_handle;
+  typedef typename Planar_map::Face_handle              Face_handle;
   typedef typename Planar_map::Halfedge_around_vertex_circulator 
                                          Halfedge_around_vertex_circulator;
   typedef typename Planar_map::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
@@ -135,7 +136,7 @@ public:
     updated_cdt(false)
   {}
   
-  void init(Planar_map & pmp, Traits & tr) 
+  void init(Planar_map & pmp, const Traits & tr) 
   {
 #ifdef CGAL_PM_DEBUG
     std::cout << "init PL" << std::endl;
@@ -154,20 +155,29 @@ public:
   inline void insert(Halfedge_handle hh, const X_monotone_curve_2 & cv) 
   {insert_to_cdt(hh, cv); }
 
-  Halfedge_handle locate(const typename Planar_map::Traits::Point_2 & p, Locate_type & lt) const;
+  Halfedge_const_handle locate(const typename Planar_map::Traits::Point_2 & p,
+                               Locate_type & lt) const;
 
-  Halfedge_handle locate(const typename Planar_map::Traits::Point_2 & p, Locate_type & lt);
+  Halfedge_handle locate(const typename Planar_map::Traits::Point_2 & p,
+                         Locate_type & lt);
 
-  Halfedge_handle vertical_ray_shoot(const typename Planar_map::Traits::Point_2& p, Locate_type& lt, bool up)
-    const;
-  Halfedge_handle vertical_ray_shoot(const typename Planar_map::Traits::Point_2& p, Locate_type& lt, bool up);
+  Halfedge_const_handle
+  vertical_ray_shoot(const typename Planar_map::Traits::Point_2& p,
+                     Locate_type& lt, bool up) const;
 
-  inline void split_edge(const X_monotone_curve_2 &, Halfedge_handle, Halfedge_handle,
+  Halfedge_handle
+  vertical_ray_shoot(const typename Planar_map::Traits::Point_2& p,
+                     Locate_type& lt, bool up);
+
+  inline void split_edge(const X_monotone_curve_2 &, Halfedge_handle,
+                         Halfedge_handle,
                          //additions by iddo for arrangement
-                         const X_monotone_curve_2 &, const X_monotone_curve_2 &) 
+                         const X_monotone_curve_2 &,
+                         const X_monotone_curve_2 &) 
   {updated_cdt = false; triangulate_pm(); }
 
-  inline void merge_edge(const X_monotone_curve_2 &, const X_monotone_curve_2 &, Halfedge_handle, 
+  inline void merge_edge(const X_monotone_curve_2 &,
+                         const X_monotone_curve_2 &, Halfedge_handle, 
                          //additions by iddo for arrangement
                          const X_monotone_curve_2 &)   
   {updated_cdt = false;  triangulate_pm();}
@@ -214,7 +224,7 @@ public:
 
 protected:
   Planar_map * pm;
-  Traits_wrap * traits;
+  const Traits_wrap * traits;
   CDT cdt;
   bool updated_cdt;
 };

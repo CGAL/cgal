@@ -39,9 +39,10 @@ CGAL_BEGIN_NAMESPACE
 //if unbounded face - returns NULL or some edge on unbounded face 
 //if its a vertex returns a halfedge pointing _at_ it
 template <class Planar_map>
-typename Pm_triangle_point_location<Planar_map>::Halfedge_handle
-Pm_triangle_point_location<Planar_map>::locate(const typename Planar_map::Traits::Point_2 & p, 
-                                                      Locate_type & lt) const
+typename Pm_triangle_point_location<Planar_map>::Halfedge_const_handle
+Pm_triangle_point_location<Planar_map>::
+locate(const typename Planar_map::Traits::Point_2 & p, 
+       Locate_type & lt) const
 {
 #ifdef CGAL_PM_DEBUG
   point_number++;
@@ -265,15 +266,15 @@ Pm_triangle_point_location<Planar_map>::locate(const typename Planar_map::Traits
  */
 template <class Planar_map>
 typename Pm_triangle_point_location<Planar_map>::Halfedge_handle
-Pm_triangle_point_location<Planar_map>::locate(const typename Planar_map::Traits::Point_2 & p, 
-						      Locate_type & lt) {
+Pm_triangle_point_location<Planar_map>::
+locate(const typename Planar_map::Traits::Point_2 & p, 
+       Locate_type & lt) {
 
   //  if (! updated_cdt)
   //    triangulate_pm();
   //  assert(cdt.is_valid());
 
-  Halfedge_handle h=((cPLp)this)->locate(p,lt);
-
+  Halfedge_handle h = Halfedge_handle_unconst(((cPLp)this)->locate(p,lt));
   return h;
 }
 
@@ -282,7 +283,7 @@ Pm_triangle_point_location<Planar_map>::locate(const typename Planar_map::Traits
 /*!
  */
 template <class Planar_map>
-typename Pm_triangle_point_location<Planar_map>::Halfedge_handle
+typename Pm_triangle_point_location<Planar_map>::Halfedge_const_handle
 Pm_triangle_point_location<Planar_map>::
 vertical_ray_shoot(const typename Planar_map::Traits::Point_2 & p, 
                    Locate_type & lt, 
@@ -294,7 +295,7 @@ vertical_ray_shoot(const typename Planar_map::Traits::Point_2 & p,
 			"Vertical ray shoot NOT suppored in CDT point location");
   assert(false);
   Halfedge_handle e = pm->halfedges_end(); // closest halfedge so far  
-  lt=Planar_map::UNBOUNDED_FACE;
+  lt = Planar_map::UNBOUNDED_FACE;
   return e;
 }
 
@@ -303,10 +304,12 @@ vertical_ray_shoot(const typename Planar_map::Traits::Point_2 & p,
  */
 template <class Planar_map>
 typename Pm_triangle_point_location<Planar_map>::Halfedge_handle
-Pm_triangle_point_location<Planar_map>::vertical_ray_shoot(
-                                                 const typename Planar_map::Traits::Point_2& p, 
-                                                 Locate_type& lt, bool up){
-  Halfedge_handle h=((cPLp)this)->vertical_ray_shoot(p,lt,up);
+Pm_triangle_point_location<Planar_map>::
+vertical_ray_shoot(const typename Planar_map::Traits::Point_2 & p, 
+                   Locate_type & lt, bool up)
+{
+  Halfedge_handle h =
+    Halfedge_handle_unconst(((cPLp)this)->vertical_ray_shoot(p,lt,up));
   return h;
 }
 

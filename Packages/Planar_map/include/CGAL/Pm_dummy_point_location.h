@@ -35,6 +35,7 @@ public:
   typedef typename Planar_map::Traits_wrap              Traits_wrap;
   typedef typename Planar_map::Locate_type              Locate_type;
   typedef typename Planar_map::Halfedge_handle          Halfedge_handle;
+  typedef typename Planar_map::Halfedge_const_handle    Halfedge_const_handle;
   typedef typename Planar_map::Halfedge_iterator        Halfedge_iterator;
   typedef typename Planar_map::Halfedge                 Halfedge;
   typedef typename Planar_map::Vertex_handle            Vertex_handle;
@@ -50,16 +51,16 @@ public:
   Pm_dummy_point_location(Planar_map *, Traits_wrap * traits) : 
     Pm_point_location_base<Planar_map>(), m_traits(traits) {}
 	
-  void init(Planar_map &, Traits & traits)
-  { m_traits = (Traits_wrap*)(&traits); }
+  void init(Planar_map &, const Traits & traits)
+  { m_traits = (const Traits_wrap*)(&traits); }
   void insert(Halfedge_handle, const X_monotone_curve_2 &) {}
 	
   inline const Traits * get_traits() const {return m_traits;}
 
-  Halfedge_handle locate(const Point_2 &, Locate_type &) const
+  Halfedge_const_handle locate(const Point_2 &, Locate_type &) const
   {
     CGAL_assertion_msg(false, "Dummy point location - locate not allowed");
-    Halfedge_handle h; return h;
+    Halfedge_const_handle h; return h;
   }
 	
   Halfedge_handle locate(const Point_2 &, Locate_type &)
@@ -68,11 +69,11 @@ public:
     Halfedge_handle h; return h;
   }
 
-  Halfedge_handle vertical_ray_shoot(const Point_2 &, Locate_type &, bool)
+  Halfedge_const_handle vertical_ray_shoot(const Point_2 &, Locate_type &, bool)
     const
   {
     CGAL_assertion_msg(false, "Dummy point location - locate not allowed");
-    Halfedge_handle h; return h;
+    Halfedge_const_handle h; return h;
   }
 	
   Halfedge_handle vertical_ray_shoot(const Point_2 &, Locate_type &, bool)
@@ -104,7 +105,7 @@ public:
   void debug(){}
 #endif
 protected:
-  Traits_wrap * m_traits;
+  const Traits_wrap * m_traits;
 };
 
 CGAL_END_NAMESPACE
