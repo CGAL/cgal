@@ -16,11 +16,24 @@
 #include <string.h>
 #include <stream.h>
 #include <fstream.h>
+#include <strstream.h>
 #include <ctype.h>
 #include <assert.h>
+
+#include <map.h>
+// Repair what the STL bool definitions made wrong.
+#ifdef bool
+#undef bool
+#endif
+#ifdef true
+#undef true
+#endif
+#ifdef false
+#undef false
+#endif
+
 #include <database.h>
 #include <html_config.h>
-
 
 /* Constants:                        */
 /* ================================= */
@@ -39,6 +52,165 @@ Switch  trace_switch  = NO_SWITCH;
 Switch  line_switch   = NO_SWITCH;
 
 Switch  config_switch = NO_SWITCH;
+Switch  warn_switch   = NO_SWITCH;
+Switch  macro_switch  = NO_SWITCH;
+
+
+/* Two queues to manage footnotes. */
+/* =============================== */
+int  main_footnote_counter = 0;
+int  class_footnote_counter = 0;
+int* footnote_counter = NULL;
+
+PQueue<char*>  main_footnotes;
+PQueue<char*>  class_footnotes;
+PQueue<char*>* footnotes = NULL;
+
+void insertFootnote( char* s) {
+    if (footnotes == NULL)
+        return;
+    footnotes->append(s);
+}
+
+// increments counter and returns current value.
+int nextFootnoteCounter() {
+    if (footnotes == NULL)
+        return 0;
+    (*footnote_counter)++;
+    return *footnote_counter;
+}
+
+// format footnote reference and hyperlink based on actual counter 
+// into a Buffer.
+Buffer* formattedFootnoteNumber() {
+    Buffer* buf = new Buffer;
+    if (footnotes == NULL)
+        buf->add( "[???]");
+    else {
+        char* tmp = new char[10];
+        ostrstream num( tmp, 10);
+        num << *footnote_counter << '\0';
+        buf->add( "[<A HREF=\"#Footnote_");
+        buf->add( tmp);
+        buf->add( "\">^");
+        buf->add( tmp);
+        buf->add( "</A>]");
+        delete[] tmp;
+    }
+    return buf;
+}
+
+// prints footnote reference and hyperlink based on actual counter.
+void printFootnoteCounter( ostream& out) {
+    if (footnotes == NULL)
+        out << "[???]";
+    else
+        out << "[<A HREF=\"#Footnote_" << *footnote_counter << "\">^"
+	    << *footnote_counter << "</A>]";
+}
+
+// prints footnotes and resets counter.
+void printFootnotes( ostream& out) {
+    if (footnotes == NULL)
+        return;
+    if (footnotes->isEmpty())
+        return;
+    int i = 1;
+    out << endl << endl << "<P><HR><H3>Footnotes</H3><P>" << endl << endl;
+    out << "<OL>" << endl;
+    while( ! footnotes->isEmpty()) {
+        out << "<LI><A NAME=\"Footnote_" << i << "\">" 
+	    << footnotes->front() << endl;
+        delete[] footnotes->front();
+        footnotes->remove();
+        i++;
+    }
+    out << "</OL>" << endl;
+    *footnote_counter = 0;
+}
+
+/* A map for user defined macros     */
+/* ================================= */
+struct string_less {
+    bool operator()(const char* x, const char* y) const { 
+        return strcmp(x,y) < 0; 
+    }
+};
+
+map< const char*, const char*, string_less> user_macros;
+
+void insertMacro( const char* key, const char* value) {
+    if ( macro_switch) {
+        cerr << "Macro definition: macro `" << key << "' = `" 
+	     << value << "'." << endl;
+    }
+    user_macros[ key] = value;
+}
+
+const char* fetchMacro( const char* key) {
+    map< const char*, const char*, string_less>::iterator 
+        i = user_macros.find(key);
+    if ( macro_switch) {
+        cerr << "Macro query: macro `" << key << "' = `";
+        if (i == user_macros.end())
+	    cerr << "<undefined>'." << endl;
+        else
+	    cerr << (*i).second << "'." << endl;
+    }
+    if (i == user_macros.end())
+        return 0;
+    return (*i).second;
+}
+
+// The string is already converted to HTML, i.e. $...$ --> <MATH>...</MATH>.
+char* extractRCS( char* s) {
+    char* old = s;
+    while( *s != '>') {
+        ADT_Assert( *s);
+        ++s;
+    }
+    ++s;
+    while( *s == ' ') {
+        ADT_Assert( *s);
+        ++s;
+    }
+    char* p = s;
+    while( *s != '<') {
+        ADT_Assert( *s);
+        ++s;
+    }
+    --s;
+    while( *s == ' ') {
+        ADT_Assert( *s);
+        --s;
+    }
+    ++s;
+    *s = '\0';
+    char* ret = newstr( p);
+    delete[] old;
+    return ret;
+}
+
+char* extractRCSDate( char* s) {
+    char* p = extractRCS( s);
+    char *q = p + strlen( p) - 1;
+    while( *q != ' ') {
+        ADT_Assert( *q);
+        --q;
+    }
+    while( *q == ' ') {
+        ADT_Assert( *q);
+        --q;
+    }
+    ++q;
+    *q = '\0';
+    char* ret = newstr( p);
+    delete[] p;
+    return ret;
+}
+
+/* Configurable command line options */
+/* ================================= */
 
 // This factor is multiplied to the actual width of an C++ declaration
 // right before the test for multiple lines formatting occurs.
@@ -80,6 +252,9 @@ bool tag_rm_eigen_class_name;
 bool tag_operator_layout;
 bool tag_rm_trailing_const;
 
+bool tag_rm_template;
+bool tag_template_inline;    // not supported yet
+
 void tag_defaults() {
     tag_chapter_author         = true;
     tag_replace_prefix         = false;
@@ -90,6 +265,9 @@ void tag_defaults() {
     tag_rm_eigen_class_name    = true;
     tag_operator_layout        = true;
     tag_rm_trailing_const      = true;
+
+    tag_rm_template            = false;
+    tag_template_inline        = false;
 }
 
 void tag_full_declarations() {
@@ -97,48 +275,60 @@ void tag_full_declarations() {
     tag_rm_eigen_class_name    = false;
     tag_operator_layout        = false;
     tag_rm_trailing_const      = false;
+    tag_rm_template            = false;
 }
 
 void handleNewCommand( char* idfier, char* body){
     // check the body for true or false
-    const char* p = body;
+    char* p = body;
     while ( *p && isspace( *p))
         p++;
     bool tag = ( 0 == strncmp( p, "\\ccTrue", 7));
 
-    // check the different idfiers
+
     p = idfier;
     while ( *p && isspace( *p))
         p++;
-    if ( 0 == strncmp( p, "\\ccTagChapterAuthor", 
-                   strlen("\\ccTagChapterAuthor")))
-        tag_chapter_author = tag;
-    if ( 0 == strncmp( p, "\\ccTagReplacePrefix", 
-                   strlen("\\ccTagReplacePrefix")))
-        tag_replace_prefix = tag;
-    if ( 0 == strncmp( p, "\\ccTagReplaceInclude", 
-                   strlen("\\ccTagReplaceInclude")))
-        tag_replace_include = tag;
-    if ( 0 == strncmp( p, "\\ccAlternateThreeColumn",  // compatibility
-                   strlen("\\ccAlternateThreeColumn")))
-        tag_long_param_layout = !tag;
-    if ( 0 == strncmp( p, "\\ccLongParamLayout", 
-                   strlen("\\ccLongParamLayout")))
-        tag_long_param_layout = tag;
-    if ( 0 == strncmp( p, "\\ccTagRmTrailingConst", 
-                   strlen("\\ccTagRmTrailingConst")))
-        tag_rm_trailing_const = tag;
-    if ( 0 == strncmp( p, "\\ccTagRmEigenClassName", 
-                   strlen("\\ccTagRmEigenClassName")))
-        tag_rm_eigen_class_name = tag;
-    if ( 0 == strncmp( p, "\\ccTagRmConstRefPair", 
-                   strlen("\\ccTagRmConstRefPair")))
-        tag_rm_const_ref_pair = tag;
-    if ( 0 == strncmp( p, "\\ccTagOperatorLayout", 
-                   strlen("\\ccTagOperatorLayout")))
-        tag_operator_layout = tag;
+    char *q = p;
+    ++q;
+    while ( *q && isalpha( *q))
+        q++;
+    *q = '\0';
+    p = newstr( p);
     delete[] idfier;
-    delete[] body;
+    insertMacro( p, body);
+
+    // check the different idfiers for tag definitions.
+    if ( 0 == strcmp( p, "\\ccTagChapterAuthor")) 
+        tag_chapter_author = tag;
+    if ( 0 == strcmp( p, "\\ccTagReplacePrefix")) 
+        tag_replace_prefix = tag;
+    if ( 0 == strcmp( p, "\\ccTagReplaceInclude")) 
+        tag_replace_include = tag;
+    if ( 0 == strcmp( p, "\\ccAlternateThreeColumn"))  // compatibility
+        tag_long_param_layout = !tag;
+    if ( 0 == strcmp( p, "\\ccLongParamLayout")) 
+        tag_long_param_layout = tag;
+    if ( 0 == strcmp( p, "\\ccTagRmTrailingConst")) 
+        tag_rm_trailing_const = tag;
+    if ( 0 == strcmp( p, "\\ccTagRmEigenClassName")) 
+        tag_rm_eigen_class_name = tag;
+    if ( 0 == strcmp( p, "\\ccTagRmConstRefPair")) 
+        tag_rm_const_ref_pair = tag;
+    if ( 0 == strcmp( p, "\\ccTagOperatorLayout")) 
+        tag_operator_layout = tag;
+    if ( 0 == strcmp( p, "\\ccTagRmTemplate")) 
+        tag_rm_template = tag;
+    if ( 0 == strcmp( p, "\\ccTagTemplateInline")) 
+        tag_template_inline = tag;
+}
+
+void handleTexDef( const char* idfier, char* body){
+    // idfier starts with \gdef or \def
+    idfier++;  // skip first '\'
+    while (*idfier && *idfier != '\\')
+        idfier ++;
+    handleNewCommand( newstr(idfier), body);
 }
 
 /* Sort keys for the index            */
@@ -351,7 +541,10 @@ ostream* open_file_with_path_for_write( const char* path, const char* name){
 
 /* read a file into a buffer   */
 /* The name has a trailing '}' */
+/* HTML conversion is done simultaneously */
 /* =========================== */
+const char* html_multi_character( char c);  // prototype from below
+
 Buffer* readFileInBuffer(const char* name) {
     int len = strlen( name);
     const char* p = name + len - 1;
@@ -365,7 +558,7 @@ Buffer* readFileInBuffer(const char* name) {
     char c;
     Buffer* b = new Buffer;
     while( in->get(c))
-        b->add(c);
+        b->add( html_multi_character(c));
     return b;
 }
 
@@ -926,18 +1119,20 @@ const char* handle_template_layout( ostream &out,
 		p++;
 	    }
 	    new_pos = p;
-	    // Print the template declaration.
-	    if ( three_col)
-	        three_cols_html_begin( out, true);
-	    else
-	        two_cols_html_begin( out);
+	    if ( ! tag_rm_template) {
+		// Print the template declaration.
+		if ( three_col)
+		    three_cols_html_begin( out, true);
+		else
+		    two_cols_html_begin( out);
 
-	    print_ascii_len_to_html( out, decl, p - decl);
+		print_ascii_len_to_html( out, decl, p - decl);
 
-	    if ( three_col)
-	        three_cols_html_premature_end( out);
-	    else
-	        two_cols_html_premature_end( out);
+		if ( three_col)
+		    three_cols_html_premature_end( out);
+		else
+		    two_cols_html_premature_end( out);
+	    }
 	}
     }
     return new_pos;
@@ -954,7 +1149,7 @@ const char* handle_template_layout( ostream &out,
 // assumed to be the function name. After that, a scope can be a list of 
 // '::' and identifiers. The rest is assumed to be the return value. All parts
 // might be empty. The parantheses for the parameters are not allowed to be
-// omitted. The function name token might be an opearator !!
+// omitted. The function name token might be an operator !!
 // For the special case of enumerators the last parameter enum_decl
 // changes the parsing to look for braces `{}' instead of parantheses `()'.
 void split_function_declaration( const char* signature, 
@@ -2258,6 +2453,7 @@ void handleChapter(  const Text& T) {
 	return;
     }
     if ( class_stream != 0) {
+        printFootnotes( *class_stream);
         if ( chapter_title)
 	    // navigation footer
 	    *class_stream << "<HR> Return to chapter: <A HREF=\"" 
@@ -2272,7 +2468,10 @@ void handleChapter(  const Text& T) {
     }
     delete[] chapter_title;
     chapter_title = text_block_to_string( T);
+    footnotes        = &main_footnotes;
+    footnote_counter = &main_footnote_counter;
     if ( main_stream != &cout) {
+        printFootnotes( *main_stream);
         // navigation footer
         *main_stream << "<HR> Next chapter: <A HREF=\"" 
 		     << new_main_filename 
@@ -2482,6 +2681,7 @@ void handleClasses( const char* classname, const char* template_cls) {
     delete[] t_tmp_name;
 
     if ( class_stream != 0) {
+        printFootnotes( *class_stream);
         // navigation footer
         *class_stream << "<HR> Next class declaration: "
 		      << formatted_template_class_name << endl;
@@ -2492,6 +2692,8 @@ void handleClasses( const char* classname, const char* template_cls) {
 	class_stream = 0;
     }
     class_name           = newstr( classname);
+    footnotes        = &class_footnotes;
+    footnote_counter = &class_footnote_counter;
 
     char *tmp_name = convert_ascii_to_html( classname);
     formatted_class_name = new char[ strlen( tmp_name) + 12];
@@ -2759,6 +2961,10 @@ main( int argc, char **argv) {
 	        nParameters = ErrParameters;
 	    }
         endDetect();
+        detectSwitch( warn_switch, "warn");
+        endDetect();
+        detectSwitch( macro_switch, "macro");
+        endDetect();
 
         detectSwitch( help_switch, "h");
         endDetect();
@@ -2796,6 +3002,8 @@ main( int argc, char **argv) {
                                           "config files." << endl;
         cerr << "       -tmp     <dir/>    set the path where to put the "
                                           "output files." << endl;
+        cerr << "       -warn              warn about unknown macros" << endl;
+        cerr << "       -macro             trace macro definitions" << endl;
         cerr << "       -trace             set `yydebug' for bison to true"
              << endl;
         cerr << "       -line              echo currently parsed line "
@@ -2843,6 +3051,7 @@ main( int argc, char **argv) {
 	fclose( in);
 
 	if ( class_stream != 0) {
+            printFootnotes( *class_stream);
 	    close_html( *class_stream);
 	    assert_file_write( *class_stream, class_filename);
 	    delete   class_stream;
@@ -2852,6 +3061,9 @@ main( int argc, char **argv) {
 	}
 	assert_file_write( *main_stream, main_filename);
 	if ( main_stream != &cout) {
+            footnotes        = &main_footnotes;
+            footnote_counter = &main_footnote_counter;
+            printFootnotes( *main_stream);
 	    close_html( *main_stream);
 	    assert_file_write( *main_stream, main_filename);
 	    delete   main_stream;

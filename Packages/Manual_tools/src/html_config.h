@@ -19,6 +19,31 @@
 // There they can be taylored to the specific application, i.e.
 // extraction or checker.
 
+extern const char* prog_name;
+extern char* current_filename;
+
+
+/* Functions to manage footnotes. */
+/* ============================== */
+void insertFootnote( char* s);
+// increments counter and returns current value.
+int nextFootnoteCounter();
+// format footnote reference and hyperlink based on actual counter 
+// into a Buffer.
+Buffer* formattedFootnoteNumber();
+// prints footnote reference and hyperlink based on actual counter.
+void printFootnoteCounter( ostream& out);
+// prints footnotes and resets counter.
+void printFootnotes( ostream& out);
+
+/* A map for user defined macros     */
+/* ================================= */
+void insertMacro( const char* key, const char* value);
+const char* fetchMacro( const char* key);
+char* extractRCS( char* s);
+char* extractRCSDate( char* s);
+
+
 /* Customization tags for the style */
 /* ================================ */
 extern bool tag_chapter_author;
@@ -30,6 +55,9 @@ extern bool tag_rm_const_ref_pair;
 extern bool tag_rm_eigen_class_name;
 extern bool tag_operator_layout;
 extern bool tag_rm_trailing_const;
+
+extern bool tag_rm_template;
+extern bool tag_template_inline;
 
 void tag_defaults();
 void tag_full_declarations();
@@ -90,6 +118,7 @@ void handleStructDeclaration( const char* decl,
 			      const Text& T = empty_comment);
 
 void handleNewCommand( char* idfier, char* body);
+void handleTexDef( const char* idfier, char* body);
 
 
 // Error messages and Numbers

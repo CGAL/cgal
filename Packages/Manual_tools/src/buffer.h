@@ -52,7 +52,7 @@ T* renew( const T* old, I old_size, I new_size) {
     if ( old && old_size > 0) {
 	size_t min = ( old_size < new_size ? old_size : new_size);
 	memcpy( cpy, old, min * sizeof( T));
-	// delete[] old;
+	delete[] old;
     }
     return cpy;
 }
@@ -80,10 +80,10 @@ public:
 	// Assert( data != NULL);
     }
     ~Buffer() {
-      // ADT_Assert( fibo2 > fibo1);  // SGI complains in the test_suit
-      //  ADT_Assert( fibo2 > len);   // Gnu complains in the test_suit
-        ADT_Assert( strlen( data) == len);
+        ADT_Assert( fibo2 > fibo1);  // SGI complains in the test_suit
+        ADT_Assert( fibo2 > len);   // Gnu complains in the test_suit
         ADT_Assert( data[ len] == '\0');
+        ADT_Assert( strlen( data) == len);
 	delete[] data;
     }
     Buffer( const Buffer& t) {
@@ -219,6 +219,7 @@ public:
 	return data;
     }
     void set( int i, char c) {
+	ADT_Assert( c != 0);
 	ADT_Assert( i >= 0);
         ADT_Assert( size_t(i) < len);
 	data[i] = c;
@@ -275,9 +276,6 @@ public:
 	    isSpace = t.isSpace;
 	    len     = t.len;
 	    string  = newstr( t.string);
-	} else {
-	    string  = NULL;
-            len     = 0;
 	}
         ADT_Assert( (! string && len == 0) || (int)strlen( string) == len);
         ADT_Assert( ! string || string[ len] == '\0');
@@ -343,94 +341,7 @@ int printComment(     ostream& out, const Text& T,
                       bool leadingLine = false, bool HTML = false);
 int printTrueComment( ostream& out, const Text& T, bool leadingLine = false);
 
-//class   InList< Specification>;
-typedef InList< Specification> SpecificationList;
 
-
-enum DeclarationType {
-    EmptyDecl,
-    ClassDecl,
-    StructDecl,
-    ConstructorDecl,
-    MethodDecl,
-    FunctionDecl
-};
-
-struct Declaration {
-    DeclarationType   type;
-    char*             returnType;
-    char*             name;           // name without template parameter
-    char*             templateParams; // template parameter list
-    char*             parameters;     // call parameters
-    Text              comment;        // written besides the declaration
-    SpecificationList spec;           // for classes and structs.
-    Declaration() {
-	type = EmptyDecl;
-	returnType = name = templateParams = parameters = NULL;
-    }
-    Declaration( const Declaration& d) {
-	type            = d.type;
-	returnType      = newstr( d.returnType);
-	name            = newstr( d.name);
-	templateParams  = newstr( d.templateParams);
-	parameters      = newstr( d.parameters);
-	comment         = d.comment;
-	spec            = d.spec;
-    }
-    ~Declaration() {
-	delete[] returnType;
-	delete[] name;
-	delete[] templateParams;
-	delete[] parameters;
-    }
-    Declaration& operator=( const Declaration& d) {
-        if( this != &d) { // beware of this=d; see Stroustrup pp.238
-	    delete[] returnType;
-	    delete[] name;
-	    delete[] templateParams;
-	    delete[] parameters;
-	    type            = d.type;
-	    returnType      = newstr( d.returnType);
-	    name            = newstr( d.name);
-	    templateParams  = newstr( d.templateParams);
-	    parameters      = newstr( d.parameters);
-	    comment         = d.comment;
-	    spec            = d.spec;
-	}
-	return *this;
-    }
-    friend ostream& operator<< (ostream& out, const Declaration& d);
-    friend istream& operator>> (istream& in, Declaration& d);
-};
-
-
-enum SpecificationType {
-    SpecNone,
-    SpecDecl,
-    SpecBoth,
-    SpecComment
-};
-
-struct Specification : public ListLink{
-    SpecificationType type;
-    Declaration       decl;
-    Text              comment;   // written below of the decl.
-    Specification() {
-	type = SpecNone;
-    }
-    // Specification( const Specification& s);              // default
-    // ~Specification();                                    // default
-    // Specification& operator=( const Specification& s);   // default
-    friend ostream& operator<< (ostream& out, const Specification& s);
-    friend istream& operator>> (istream& in, Specification& s);
-};
-
-
-// Auxiliary function declarations
-// ==============================================
-/* ...
-    char* catString( const char* r, const char* s, int l = -1, int m = -1);
-... */
 
 void printString( ostream &out, const char*  s, int len = -1);
 int  scanString(  istream &in,        char*& s);

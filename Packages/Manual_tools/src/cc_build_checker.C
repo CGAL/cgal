@@ -124,7 +124,7 @@ const char* patternText( char c, char) {
 	char_tricky_tmp[7] = c;
         return char_tricky_tmp;
 	  // }
-	break;
+	// break;
     }
     char_tmp[0] = c;
     return char_tmp;

@@ -229,8 +229,8 @@ cat ${config_path}/cc_anchor_header ${new_tmp_path}/cc_anchor_rules ${config_pat
 if ( $?DEBUG) echo "flex -t -8 ${new_tmp_path}/cc_anchor_filter.yy > ${new_tmp_path}/cc_anchor_filter.c"
 flex -t -8 ${new_tmp_path}/cc_anchor_filter.yy > ${new_tmp_path}/cc_anchor_filter.c
 
-if ( $?DEBUG) echo "cc -o ${new_tmp_path}/cc_anchor_filter ${new_tmp_path}/cc_anchor_filter.c"
-cc -o ${new_tmp_path}/cc_anchor_filter ${new_tmp_path}/cc_anchor_filter.c
+if ( $?DEBUG) echo "${CC} -o ${new_tmp_path}/cc_anchor_filter ${new_tmp_path}/cc_anchor_filter.c"
+${CC} -o ${new_tmp_path}/cc_anchor_filter ${new_tmp_path}/cc_anchor_filter.c
 if (-r cc_anchor_filter.o) rm cc_anchor_filter.o
 
 # Filtering all HTML files.
@@ -277,7 +277,7 @@ echo "           -release <text>    set a release number for the manual."
 echo "           -title   <text>    set a title text for the manual."
 echo "           -author  <text>    set an author address (email) for the manual."
 echo "           -config  <dir>     set the path where to find the config files."
-echo "           -tmp     <dir>     set the path where to put the output files."
+echo "           -tmp     <dir>     set the path where to put intermediate files."
 echo "           "
 echo "           -o       <dir>     output directory for the generated HTML manual"
 exit (1)

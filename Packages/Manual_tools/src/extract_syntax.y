@@ -114,16 +114,16 @@ int yyerror( char *s);
 %token             LALRRESTRICTION
 
 %type  <pBuffer>    string
-%type  <pBuffer>    declaration classname template_params
-%type  <pBuffer>    cc_stmts cc_stmt cc_stmts_skip_space
-%type  <pText>      comment_group  comment_sequence  
-%type  <pText>      nested_token_sequence nested_token
-%type  <pText>      compound_comment  full_comment_sequence  
+%type  <pBuffer>    declaration      classname          template_params
+%type  <pBuffer>    cc_stmts         cc_stmt            cc_stmts_skip_space
+%type  <pText>      comment_group    comment_sequence  
+%type  <pText>      nested_token_sequence               nested_token
+%type  <pText>      compound_comment                    full_comment_sequence  
 %type  <pText>      non_empty_comment_sequence
 
-%type  <pText>      whitespaces  optional_whitespaces
+%type  <pText>      whitespaces      optional_whitespaces
 
-%type  <pTextToken> comment_token  non_empty_token  whitespace
+%type  <pTextToken> comment_token    non_empty_token    whitespace
 
 
 
@@ -147,7 +147,6 @@ stmt:             string  { delete $1;}
 					  handleClassEnd();
                                           free( creationvariable);
                                           creationvariable = NULL;
-					  delete $2;
 				      }
 		| BEGINCLASSTEMPLATE
 		  classname           {   handleClassTemplate( $2->string());
@@ -158,15 +157,20 @@ stmt:             string  { delete $1;}
 					  handleClassTemplateEnd();
                                           free( creationvariable);
                                           creationvariable = NULL;
-					  delete $2;
 				      }
 		| CREATIONVARIABLE    {}
-		| CCSTYLE  '{'  nested_token_sequence '}'  { set_INITIAL = 1; }
+		| CCSTYLE  '{'  nested_token_sequence '}'  { set_INITIAL = 1; 
+                                                             delete $3;
+                                                           }
                 | HEADING '{' comment_sequence '}'         { delete $3; }
                 | COMMENTHEADING '{' comment_sequence '}'  { delete $3; }
-		| BEGINTEXONLY  nested_token_sequence ENDTEXONLY   {;}
+		| BEGINTEXONLY  nested_token_sequence ENDTEXONLY  {
+                                                             delete $2;
+                                                           }
 		| BEGINHTMLONLY nested_token_sequence ENDHTMLONLY  { 
-                                                             set_INITIAL = 1; }
+                                                             set_INITIAL = 1;
+                                                             delete $2;
+                                                           }
                 | gobble_parameters
                 | GOBBLEAFTERONEPARAM reduced_group reduced_group
                 | global_tagged_declarator
@@ -198,12 +202,18 @@ reduced_statement:
                 | SPACE   {}
                 | NEWLINE
 		| CREATIONVARIABLE    {}
-		| CCSTYLE  '{' nested_token_sequence '}'  { set_INITIAL = 1; }
+		| CCSTYLE  '{' nested_token_sequence '}'   { set_INITIAL = 1;
+                                                             delete $3;
+                                                           }
                 | HEADING '{' comment_sequence '}'         { delete $3; }
                 | COMMENTHEADING '{' comment_sequence '}'  { delete $3; }
-		| BEGINTEXONLY  nested_token_sequence ENDTEXONLY   {;}
+		| BEGINTEXONLY  nested_token_sequence ENDTEXONLY   {
+                                                             delete $2;
+                                                           }
 		| BEGINHTMLONLY nested_token_sequence ENDHTMLONLY  { 
-                                                             set_INITIAL = 1; }
+                                                             set_INITIAL = 1;
+                                                             delete $2;
+                                                           }
                 | gobble_parameters
                 | GOBBLEAFTERONEPARAM reduced_group reduced_group
 		| reduced_group
@@ -242,6 +252,7 @@ optional_whitespaces:  /* empty */    { $$ = new Text( managed); }
 whitespaces:        whitespace  { $$ = new Text( * $1, managed); }
                   | GOBBLEAFTERONEPARAM comment_group comment_group {
                                   $$ = $2;
+				  delete $3;
 		                }
                   | whitespaces whitespace {
                                   $$ = $1;
@@ -249,6 +260,8 @@ whitespaces:        whitespace  { $$ = new Text( * $1, managed); }
                                 }
                   | whitespaces GOBBLEAFTERONEPARAM comment_group comment_group {
                                   $$ = $3;
+				  delete $1;
+				  delete $4;
 		                }
 ;
 
@@ -264,11 +277,13 @@ whitespace:         SPACE       { $$ = new TextToken( $1.text, $1.len, true); }
 /* =============================== */
 decl_sequence:    comment_sequence  {
 				  handleMainComment( * $1);
+				  delete $1;
 		                }
 		| decl_sequence
 		  tagged_declarator 
 		  comment_sequence {
 				  handleMainComment( * $3);
+				  delete $3;
 		                }
 ;
 
@@ -278,11 +293,13 @@ tagged_declarator:
 		                  handleFunctionDeclaration( $2->string());
 				  delete $2;
 				  handleComment( * $3);
+				  delete $3;
 		                }
 		| METHOD        declaration   comment_group {
 		                  handleMethodDeclaration( $2->string());
 				  delete $2;
 				  handleComment( * $3);
+				  delete $3;
 		                }
 ;
 
@@ -291,6 +308,7 @@ global_tagged_declarator:
 		                  handleFunctionDeclaration( $2->string());
 				  delete $2;
 				  handleComment( * $3);
+				  delete $3;
 		                }
 		| FUNCTIONTEMPLATE 
                       template_params
@@ -304,31 +322,37 @@ global_tagged_declarator:
 				  delete $3;
 				  delete $4;
 				  handleComment( * $5);
+				  delete $5;
 		                }
  		| VARIABLE      declaration   comment_group {
 		                  handleDeclaration( $2->string());
 				  delete $2;
 				  handleComment( * $3);
+				  delete $3;
 		                }
  		| TYPEDEF       declaration   comment_group {
 		                  handleDeclaration( $2->string());
 				  delete $2;
 				  handleComment( * $3);
+				  delete $3;
 		                }
  		| NESTEDTYPE    declaration   comment_group {
 		                  handleNestedType( $2->string());
 				  delete $2;
 				  handleComment( * $3);
+				  delete $3;
 		                }
  		| ENUM          declaration   comment_group {
 		                  handleDeclaration( $2->string());
 				  delete $2;
 				  handleComment( * $3);
+				  delete $3;
 		                }
  		| STRUCT        declaration   comment_group {
 		                  handleDeclaration( $2->string());
 				  delete $2;
 				  handleComment( * $3);
+				  delete $3;
 		                }
 		| GLOBALFUNCTION      declaration   {
 		                  handleFunctionDeclaration( $2->string());
@@ -379,10 +403,15 @@ comment_group:      optional_whitespaces '{' comment_sequence '}'  {
                                 }
 ;
 
-comment_sequence:   optional_whitespaces { $$ = new Text(managed); }
+comment_sequence:   optional_whitespaces { $$ = new Text(managed); 
+                                           delete $1;
+                                         }
                   | optional_whitespaces
                     non_empty_comment_sequence
-                    optional_whitespaces { $$ = $2; }
+                    optional_whitespaces { $$ = $2; 
+	                                   delete $1;
+	                                   delete $3;
+                                         }
 ;
 
 full_comment_sequence:   /* empty */  { $$ = new Text(managed); }
@@ -393,8 +422,6 @@ full_comment_sequence:   /* empty */  { $$ = new Text(managed); }
 		                  $$ = $1;
 				  $$->append( * $2);
 				  $$->append( * $3);
-				  delete $2;
-				  delete $3;
 		                }
 ;
 
@@ -405,7 +432,6 @@ non_empty_comment_sequence:
 		                  $$ = $1;
 				  $$->append( * $2);
 				  $$->append( * $3);
-				  delete $2;
 		                }
                   | non_empty_comment_sequence 
 		    optional_whitespaces
@@ -413,8 +439,6 @@ non_empty_comment_sequence:
 		                  $$ = $1;
 				  $$->append( * $2);
 				  $$->append( * $3);
-				  delete $2;
-				  delete $3;
 		                }
 ;
 
@@ -455,7 +479,9 @@ compound_comment:   '{' full_comment_sequence '}' {
                                   $$ = $2;
                                 }
 		  | BEGINHTMLONLY nested_token_sequence ENDHTMLONLY  { 
-                                                             set_INITIAL = 1; }
+                                  set_INITIAL = 1;
+				  delete $2;
+                                }
                   | CCSECTION '{' comment_sequence '}'  {
 				  $$ = $3;
 		                  $$->cons(   *new TextToken( " ", 1, true));
@@ -513,7 +539,6 @@ nested_token_sequence:
 		  | nested_token_sequence nested_token
 		                {
 				  $1->append( * $2);
-				  free( $2);
 				  $$ = $1;
 				}
 ;

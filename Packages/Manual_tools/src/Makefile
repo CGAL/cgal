@@ -39,9 +39,9 @@ HTML_DEFAULT_PATH = /pub/local/CGAL/Tools/html_config_files/
 CPP = CC
 
 # The C++ compiler options (optimization, debugging, warnings, includes)
-#CPPOPT = -O -Wall $(INCL)   # Gnu
-#CPPOPT = -O +w    $(INCL)   # Sgi
-CPPOPT = -O +w    $(INCL)   # Sun
+#CPPOPT = -g -Wall $(INCL)   # Gnu
+CPPOPT = -g +w -woff 3666   $(INCL)   # Sgi
+#CPPOPT = -g +w    $(INCL)   # Sun
 
 # A C compiler: 
 #   Gnu gcc 2.6.3 (or above)
@@ -50,7 +50,7 @@ CPPOPT = -O +w    $(INCL)   # Sun
 CC = cc
 
 # The C compiler options
-# CCOPT = $(CPPOPT)   # Gnu
+#CCOPT = $(CPPOPT)   # Gnu
 CCOPT = -O $(INCL)  # Sun, SGI
 
 # flex, bison, compile and link commands
@@ -58,12 +58,13 @@ FLEX    = flex -t -8
 BISON   = bison -d -t -v
 COMPILE = $(CPP) $(CPPOPT) -c 
 LINK    = $(CPP) $(CPPOPT)
+#LINK    = purify $(CPP) $(CPPOPT)  # check for memory leaks and much more ...
 
 # The flex and bison output might produce a lot of warnings with 
 # the C++ compiler (Sgi). Special options switch these messages off.
 #XCOMPILE = $(COMPILE)   # Gnu
-#XCOMPILE = $(COMPILE) -woff 3203    # SGI
-XCOMPILE = $(COMPILE)   # Sun
+XCOMPILE = $(COMPILE) -woff 3203    # SGI
+#XCOMPILE = $(COMPILE)   # Sun
 
 # Default targets to make:
 ALL = cc_extract  cc_build_checker  cc_extract_html  cc_index_sort

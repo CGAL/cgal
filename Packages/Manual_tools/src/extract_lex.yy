@@ -58,6 +58,7 @@ char* global_template_params = 0;
 %x VerbMode
 
 letter          [a-zA-Z]
+noletter        [^a-zA-Z]
 digit           [0-9]
 CCletter        [a-zA-Z_]
 idfier          {letter}+
@@ -299,7 +300,7 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    yylval.string.len  = 3;
 		    return STRING;
                  }
-[\\]RCSdef{w}    {
+[\\]RCSdef(Date)?{w}    {
 		    return GOBBLETWOPARAMS;
                  }
 [\\]CC{w}        {
@@ -410,30 +411,30 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 [\\]ccHeading{w}   {
 		    return HEADING;
                  }
-[\\]ccPrecond      {
+[\\]ccPrecond/{noletter}      {
 	            yylval.string.text = "Precondition:";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
-[\\]ccPostcond     {
+[\\]ccPostcond/{noletter}     {
 	            yylval.string.text = "Postcondition:";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
-[\\]ccCommentHeading{w}   {
+[\\]ccCommentHeading{w}/{noletter}   {
 		    return COMMENTHEADING;
                  }
-[\\]leq          {
+[\\]le[q]?/{noletter}       {
 	            yylval.string.text = "<=";
 		    yylval.string.len  = 2;
 		    return STRING;
                  }
-[\\]geq          {
+[\\]ge[q]?/{noletter}       {
 	            yylval.string.text = ">=";
 		    yylval.string.len  = 2;
 		    return STRING;
                  }
-[\\]neq          {
+[\\]neq/{noletter}          {
 	            yylval.string.text = "!=";
 		    yylval.string.len  = 2;
 		    return STRING;
@@ -455,6 +456,11 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    yylval.string.len  = 0;
 	  	    return SPACE;
 }
+[\\]cc((GlueDeclarations)|(ParDims)){w}  {
+		    yylval.string.text = " ";
+		    yylval.string.len  = 0;
+	  	    return SPACE;
+}
 [\\]g?def{w}[\\]{idfier}{w}    {
 		    return GOBBLEONEPARAM;
 }
@@ -466,7 +472,7 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    yylval.string.len  = 0;
 	  	    return SPACE;
 }
-[\\]ccChapterAuthor{w}   {
+[\\]ccChapter((Author)|(SubTitle)){w}   {
 		    return GOBBLEONEPARAM;
 }
 

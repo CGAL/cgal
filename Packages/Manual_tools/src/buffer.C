@@ -188,43 +188,6 @@ operator>> (istream& in, TextToken& t) {
     return in;
 }
 
-ostream&
-operator<< (ostream& out, const Declaration& d) {
-    out << "Declaration[" << indent << indNewline;
-    out << d.type << indNewline;
-    printString( out, d.returnType);
-    out << indNewline;
-    printString( out, d.name);
-    out << indNewline;
-    printString( out, d.templateParams);
-    out << indNewline;
-    printString( out, d.parameters);
-    out << indNewline;
-    out << d.comment << indNewline;
-    out << d.spec << outdent << indNewline;
-    out << ']';
-    return out;
-}
-
-istream&
-operator>> (istream& in, Declaration& ) {
-    return in;
-}
-
-ostream&
-operator<< (ostream& out, const Specification& s) {
-    out << "Specification[" << indent << indNewline;
-    out << s.type    << indNewline;
-    out << s.decl    << indNewline;
-    out << s.comment << outdent << indNewline;
-    out << ']';
-    return out;
-}
-
-istream&
-operator>> (istream& in, Specification& ) {
-    return in;
-}
 
 // Auxiliary function definitions
 // ==============================================

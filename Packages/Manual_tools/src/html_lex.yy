@@ -17,10 +17,18 @@ extern "C" int yylex( void );
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stream.h>
 #include <string.h>
 #include <database.h>
 #include <html_config.h>
 #include <html_syntax.tab.h>
+
+// This flag is true if an \mbox encounters in a math environment.
+bool mbox_within_math = false;
+
+// This flag is true for the first macro in a newcommand. It should not
+// get replaced by previous definitions.
+bool actual_defining = false;
 
 // This flag indicates whether we are in a tabbing or tabular environment.
 bool tab_tag = false;
@@ -63,8 +71,11 @@ bool is_html_multi_character( char c);
 const char* html_multi_character( char c);
 char* addSuffix( const char* name, const char* suffix);
 
-/* enable line number printing to cerr */
+/* Enable line number printing to cerr. */
 extern char  line_switch;
+
+/* Enable warnings for undefined macros. */
+extern char  warn_switch;
 
 /* Hack, to get rid of the yywrap. */
 #define YY_SKIP_YYWRAP 1
@@ -594,6 +605,16 @@ bfblockintro    [\{][\\](bf)
 		    skipspaces();
 		    return CCSUBSECTION; 
                  }
+[\\]RCSdef\{{texmacro}    {
+	            yylval.string.text = newstr(yytext + 8);
+		    yylval.string.len  = -1;
+		    return RCSDEF;
+                 }
+[\\]RCSdefDate\{{texmacro}    {
+	            yylval.string.text = newstr(yytext + 12);
+		    yylval.string.len  = -1;
+		    return RCSDEFDATE;
+                 }
 [\\]CC/{noletter}        {
 		    skipspaces();
 	            yylval.string.text = "C++";
@@ -766,27 +787,38 @@ bfblockintro    [\{][\\](bf)
 [\\]g?def{w}[\\]{idfier}[^\{]*    {
                     ignore_input_tag = true;
                     BEGIN( NestingMode);
-                    return GOBBLEONEPARAM;
+	            yylval.string.text = yytext;
+		    yylval.string.len  = yyleng;
+                    return TEXDEF;
 }
-[\\](re)?newcommand{w}    {
+[\\](re)?newcommand{w}/{noletter}    {
                     ignore_input_tag = true;
+                    actual_defining = true;
                     BEGIN( NestingMode);
                     return NEWCOMMAND;
 }
-[\\]ccTagDefaults{w}  {
+[\\]ccTagDefaults{w}/{noletter}  {
                     tag_defaults();
                     yylval.string.text = " ";
                     yylval.string.len  = 0;
                     return SPACE;
 }
-[\\]ccTagFullDeclarations{w}  {
+[\\]ccTagFullDeclarations{w}/{noletter}  {
                     tag_full_declarations();
                     yylval.string.text = " ";
                     yylval.string.len  = 0;
                     return SPACE;
 }
-[\\]ccChapterAuthor{w}   {
+[\\]ccChapterAuthor{w}/{noletter}   {
                     return CHAPTERAUTHOR;
+}
+[\\]ccChapterSubTitle{w}/{noletter}   {
+                    return CHAPTERSUBTITLE;
+}
+[\\]cc((GlueDeclarations)|(ParDims))/{noletter}  {
+                    yylval.string.text = " ";
+                    yylval.string.len  = 0;
+                    return SPACE;
 }
 
 
@@ -894,13 +926,13 @@ bfblockintro    [\{][\\](bf)
 		    yylval.string.len  = 3;
 		    return STRING;
                  }
-<MMODE>[\\]leq/{noletter}          {
+<MMODE>[\\]le[q]?/{noletter}          {
 		    skipspaces();
 	            yylval.string.text = "&lt;=";  // &le;  not yet supported
 		    yylval.string.len  = 5;
 		    return STRING;
                  }
-<MMODE>[\\]geq/{noletter}          {
+<MMODE>[\\]ge[q]?/{noletter}          {
 		    skipspaces();
 	            yylval.string.text = "&gt;=";  // &ge;  not yet supported
 		    yylval.string.len  = 5;
@@ -938,9 +970,9 @@ bfblockintro    [\{][\\](bf)
 		        yylval.string.len  = -1;
 		        return STRING;
                     }
-	            yylval.string.text = " ";
-		    yylval.string.len  = 1;
-	  	    return SPACE;
+	            yylval.string.text = "<BR>";
+		    yylval.string.len  = 4;
+	  	    return STRING;
 		 }
 
  /* Mathmode                                                       */
@@ -1048,16 +1080,16 @@ bfblockintro    [\{][\\](bf)
 
  /* keywords from TeX/LaTeX that should vanish in HTML             */
  /* -------------------------------------------------------------- */
-[\\]((smallskip)|(protect)|(sloppy))/{noletter}           {}
+<INITIAL,MMODE,NestingMode>[\\]((smallskip)|(protect)|(sloppy))/{noletter}   {}
 [\\]((maketitle)|(tableofcontents))/{noletter}            {}
 [\\]((begin)|(end))[\{]document[\}]                       {}
-[\\]((tiny)|(scriptsize)|(footnotesize)|(small)|(normalsize)|(large)|(Large))/{noletter}
+<INITIAL,MMODE,NestingMode>[\\]((tiny)|(scriptsize)|(footnotesize)|(small)|(normalsize)|(large)|(Large))/{noletter}                      {}
 
 
 [\\]newsavebox{w}[\{]          |
 [\\]usebox{w}[\{]              |
-[\\][*]?hspace{w}[\{]          |
-[\\][*]?vspace{w}[\{]          {
+[\\]hspace[*]?{w}[\{]          |
+[\\]vspace[*]?{w}[\{]          {
 	            /* CCstyle formatting: change to NestingMode */
 		    BEGIN( NestingMode);
 		    return IGNOREBLOCK;
@@ -1083,11 +1115,34 @@ bfblockintro    [\{][\\](bf)
 		    return SPACE;		    
                  }
 
-[\\](([mvhf]box)|(parbox)|([hv]fill)|(nopagebreak)|(nolinebreak)|(linebreak)|(samepage))/{noletter}        {
+[\\](([vf]box)|(parbox)|([hv]fill)|(nopagebreak)|(nolinebreak)|(linebreak)|(samepage))/{noletter}        {
 		    skipoptionalparam();
 	            yylval.string.text = " ";
 		    yylval.string.len  = 1;
 		    return SPACE;		    
+                 }
+<INITIAL,NestingMode>[\\][mh]box/{noletter}        {
+		    return MBOX;		    
+                 }
+<MMODE>[\\][mh]box/{noletter}        {
+                    mbox_within_math = true;
+                    BEGIN( INITIAL);
+		    return MBOX;		    
+                 }
+<INITIAL,MMODE,NestingMode>[\\][,;:!]  {}
+
+
+
+ /* Footnotemanagement           */
+ /* ---------------------------- */
+<INITIAL,MMODE,NestingMode>[\\]footnotemark/{noletter}  {
+                    return FOOTNOTEMARK;
+                 }
+<INITIAL,MMODE,NestingMode>[\\]footnotetext/{noletter}  {
+                    return FOOTNOTETEXT;
+                 }
+<INITIAL,MMODE,NestingMode>[\\]footnote/{noletter}  {
+                    return FOOTNOTE;
                  }
 
 
@@ -1157,6 +1212,35 @@ bfblockintro    [\{][\\](bf)
 <NestingMode>[\)]    {
 	  	    return ')';
 		}
+
+ /* TeX macros                             */
+ /* -------------------------------------- */
+<INITIAL,MMODE,NestingMode>[\\]((ref)|(ccTrue)|(ccFalse)|(kill)|(parskip)|(parindent))/{noletter}    {  // copy without warning
+                    yylval.string.text = yytext;
+                    yylval.string.len  = -1;
+		    return STRING;    
+                }
+<INITIAL,MMODE,NestingMode>{texmacro}    {
+                    if (actual_defining) {
+                        yylval.string.text = yytext;
+                    } else {
+			yylval.string.text = fetchMacro( yytext);
+			if ( yylval.string.text == NULL) {
+			    yylval.string.text = yytext;
+			    if ( warn_switch) {
+				cerr << prog_name 
+				     << ": warning: unknown macro " << yytext 
+				     << " in line " << line_number
+				     << " of file `" << in_filename << "'."
+				     << endl;
+			    }
+			}
+                    }
+                    yylval.string.len  = -1;
+                    actual_defining = false;
+		    return STRING;
+                }
+
 
  /* The rest: spaces and single characters */
  /* -------------------------------------- */

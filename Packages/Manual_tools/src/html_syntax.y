@@ -62,10 +62,16 @@ extern bool first_bibitem;
 // \include should not open a file.
 extern bool ignore_input_tag;
 
+// This flag is true for the first macro in a newcommand. It should not
+// get replaced by previous definitions.
+extern bool actual_defining;
+
 /* Own prototypes */
 /* ============== */
 int yyerror( char *s);
 Text* blockintroProcessing( const char* text, int len, Text* t);
+
+extern bool mbox_within_math;
 
 %}
 
@@ -140,17 +146,26 @@ Text* blockintroProcessing( const char* text, int len, Text* t);
 %token             HEADING
 %token             COMMENTHEADING
 %token             CHAPTERAUTHOR
+%token             CHAPTERSUBTITLE
 %token             GOBBLEONEPARAM
 %token             GOBBLETWOPARAMS
 %token             GOBBLETHREEPARAMS
 %token             IGNOREBLOCK
 %token             IGNORETWOBLOCKS
 %token             NEWCOMMAND
+%token <string>    TEXDEF
+%token <string>    RCSDEF
+%token <string>    RCSDEFDATE
 %token             TTBLOCKINTRO
 %token             EMBLOCKINTRO
 %token             ITBLOCKINTRO
 %token             SCBLOCKINTRO
 %token             BFBLOCKINTRO
+
+%token             MBOX
+%token             FOOTNOTEMARK
+%token             FOOTNOTETEXT
+%token             FOOTNOTE
 
 %token             BEGINMATH
 %token             ENDMATH
@@ -213,7 +228,7 @@ stmt:             string              {   handleBuffer( * $1);
 		  ENDCLASS
                                       {
 					  handleClassEnd();
-                                          free( creationvariable);
+                                          delete[] creationvariable;
                                           creationvariable = NULL;
 				      }
 		| BEGINCLASSTEMPLATE
@@ -224,7 +239,7 @@ stmt:             string              {   handleBuffer( * $1);
 		  ENDCLASSTEMPLATE
                                       {
 					  handleClassTemplateEnd();
-                                          free( creationvariable);
+                                          delete[] creationvariable;
                                           creationvariable = NULL;
 				      }
 		| CREATIONVARIABLE    {}
@@ -249,10 +264,16 @@ stmt:             string              {   handleBuffer( * $1);
 		                      }
                 | CHAPTERAUTHOR  '{' comment_sequence '}' {
                                 if ( tag_chapter_author) {
-				  handleString( "<P><EM>");
+				  handleString( "<EM>");
 				  handleText( * $3);
-				  handleString( "</EM><P>");
+				  handleString( "</EM>");
 			        }
+			        delete $3;
+			      }
+                | CHAPTERSUBTITLE  '{' comment_sequence '}' {
+				handleString( "<EM>");
+				handleText( * $3);
+				handleString( "</EM>");
 			        delete $3;
 			      }
                 | global_tagged_declarator
@@ -347,6 +368,33 @@ string_token:     STRING       {
 				  $$->prepend( "<MATH>", 6);
 				  $$->add( "</MATH>", 7);
 		                }
+                | MBOX comment_group  {
+		                  char* s = text_block_to_string(* $2);
+                                  $$ = new Buffer;
+				  $$->add( s);
+				  delete[] s;
+				  delete $2;
+                                  if (mbox_within_math) {
+                                      mbox_within_math = false;
+				      $$->prepend( "</MATH>", 7);
+				      $$->add( "<MATH>", 6);
+                                      set_MMODE = 1;
+				  }
+		                }
+                | FOOTNOTE comment_group  {
+		                  insertFootnote( text_block_to_string(* $2));
+                                  nextFootnoteCounter();
+                                  $$ = formattedFootnoteNumber();
+				  delete $2;
+		                }
+                | FOOTNOTETEXT comment_group  {
+		                  insertFootnote( text_block_to_string(* $2));
+				  delete $2;
+		                }
+                | FOOTNOTEMARK  {
+                                  nextFootnoteCounter();
+                                  $$ = formattedFootnoteNumber();
+		                }
                 | CHAR          {
                                   $$ = new Buffer;
 				  $$->add( $1);
@@ -391,6 +439,22 @@ whitespace:         SPACE       { $$ = new TextToken( $1.text, $1.len, true); }
 				    set_INITIAL = 1;
 				  }
 				}
+		  | RCSDEF  optional_whitespaces '}' comment_group
+                                { $$ = new TextToken( " ", 1, true);
+                                  insertMacro( $1.text,
+                                               extractRCS(
+                                                   text_block_to_string(*$4)));
+				  delete $2; 
+				  delete $4; 
+				}
+		  | RCSDEFDATE  optional_whitespaces '}' comment_group
+                                { $$ = new TextToken( " ", 1, true);
+                                  insertMacro( $1.text,
+                                               extractRCSDate(
+                                                   text_block_to_string(*$4)));
+				  delete $2; 
+				  delete $4; 
+				}
 		  | NEWCOMMAND  comment_group comment_group
                                 { $$ = new TextToken( " ", 1, true);
 			          handleNewCommand( text_block_to_string(*$2),
@@ -401,6 +465,7 @@ whitespace:         SPACE       { $$ = new TextToken( $1.text, $1.len, true); }
                                     ignore_input_tag = false;
 				    set_INITIAL = 1;
 				  }
+                                  actual_defining = false;
 				}
 		  | NEWCOMMAND  comment_group 
                                 '[' comment_sequence ']' 
@@ -409,6 +474,17 @@ whitespace:         SPACE       { $$ = new TextToken( $1.text, $1.len, true); }
 				  delete $2;
 				  delete $4;
 				  delete $6;
+				  if ( ignore_input_tag) {
+                                    ignore_input_tag = false;
+				    set_INITIAL = 1;
+				  }
+                                  actual_defining = false;
+				}
+		  | TEXDEF  comment_group
+                                { $$ = new TextToken( " ", 1, true);
+			          handleTexDef( $1.text, 
+						text_block_to_string(*$2));
+				  delete $2;
 				  if ( ignore_input_tag) {
                                     ignore_input_tag = false;
 				    set_INITIAL = 1;
@@ -736,6 +812,11 @@ compound_comment:   '{' full_comment_sequence '}' {
                                     $$ = new Text( managed);
 				    delete $2;
 				  }
+				}
+                  | CHAPTERSUBTITLE  comment_group {
+                                  $$ = $2;
+				  $$->cons(   *new TextToken( "<P><EM>"));
+				  $$->append( *new TextToken( "</EM><P> "));
 				}
                   | CREATIONVARIABLE   { $$ = new Text( managed);}
 ;
