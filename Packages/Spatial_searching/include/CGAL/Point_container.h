@@ -228,7 +228,7 @@ namespace CGAL {
 
       // note that splitting is restricted to the built coordinate
       template <class Separator>
-      void split_container(Point_container<GeomTraits>& c, Separator& sep,  
+      void split(Point_container<GeomTraits>& c, Separator& sep,  
 	bool sliding=false) {
 
 	assert(dimension()==c.dimension());

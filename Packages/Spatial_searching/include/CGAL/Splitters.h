@@ -82,7 +82,7 @@ public:
 		   Container& c1) {        
         sep=Separator(c0.max_tight_span_coord(),NT(0));
         sep.set_cutting_value(c0.median(sep.cutting_dimension()));
-        c0.split_container(c1,sep,true);
+        c0.split(c1,sep,true);
   }
 };
 
@@ -113,7 +113,7 @@ public:
 				NT(0));
         sep.set_cutting_value(c0.balanced_fair(sep.cutting_dimension(),
 				aspect_ratio()));
-        c0.split_container(c1,sep);
+        c0.split(c1,sep);
   }
 };
 
@@ -147,7 +147,7 @@ public:
     
     sep.set_cutting_value(c0.balanced_sliding_fair(sep.cutting_dimension(),
 			 aspect_ratio()));
-    c0.split_container(c1,sep,true);
+    c0.split(c1,sep,true);
   }
 };
 
@@ -187,7 +187,7 @@ public:
 	if (max_span_lower >= sep.cutting_value()) {
 		sep.set_cutting_value(max_span_lower); 
 	};
-	c0.split_container(c1,sep,true);
+	c0.split(c1,sep,true);
   }
 };
 
@@ -217,7 +217,7 @@ public:
   {
     sep=Separator(c0.max_span_coord(),NT(0));
     sep.set_cutting_value(c0.median(sep.cutting_dimension()));
-    c0.split_container(c1,sep,true);
+    c0.split(c1,sep,true);
   }
 };
 
@@ -247,7 +247,7 @@ public:
   {
     sep= Separator(c0.max_tight_span_coord(),
     (c0.max_tight_span_upper() + c0.max_tight_span_lower())/NT(2));
-    c0.split_container(c1,sep);
+    c0.split(c1,sep);
   }
 };
 
@@ -276,7 +276,7 @@ public:
   {
     sep = Separator(c0.max_span_coord(),
 		    (c0.max_span_upper() + c0.max_span_lower())/NT(2));
-    c0.split_container(c1,sep);          
+    c0.split(c1,sep);          
   }
  
 };
