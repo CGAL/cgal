@@ -8,35 +8,44 @@
 
 \ccRefPageBegin
 
-%%RefPage: end of header, begin of main body
-% +------------------------------------------------------------------------+
-% +========================================================================+
-%   Arrangement_2_traits
-% +========================================================================+
 \begin{ccRefConcept}{ArrangementTraits_2}
 
 \ccDefinition
-   A model for the\ccRefName\ defines the geometric types and
-   primitive operations used in the arrangement data structure
-   \ccc{Arrangement_2<Dcel,Traits,Base_node>}.
+A model for the\ccRefName\ concept aggregates the geometric types and
+primitive operations used in the arrangement
+\ccc{Arrangement_2<Dcel,Traits,Base_node>} data structure.
 
-  The\ccRefName\ is a synonym of the
-  \ccc{PlanarMapWithIntersectionsTraits_2} concept. It has the same
-  set of requirements. (In previous versions this concept was known as
-  \ccc{Arrangement_2_traits}.)
+Note that the concept \ccRefName\ refines the concept
+\ccc{PlanarMapWithIntersectionsTraits_2} and inherits all its types and
+operations.
+
+In addition to the requirements of the \ccc{PlanarMapWithIntersectionsTraits_2}
+concept, it must provide the types and operations listed below.
+
+\ccRefines
+\ccc{PlanarMapWithIntersectionsTraits_2}
+\lcTex{(\ccRefPage{PlanarMapWithIntersectionsTraits_2})}.
+
+\ccCreationVariable{arr_traits}
+
+\ccCreation
+    
+\ccConstructor{Traits();}
+{A default constructor.}
+
+\ccOperations
+\ccMethod{X_monotone_curve_2 curve_opposite(const X_monotone_curve_2& cv) const;}
+         {flips the direction of the curve \ccc{cv}. The source and target
+          points of \ccc{cv} interchange.}
 
 \ccHasModels
-  \ccc{Arr_segment_exact_traits<R>}\\
-  \ccc{Arr_leda_segment_exact_traits}\\
-  \ccc{Arr_circles_real_traits<NT>}\\
-  \ccc{Arr_polyline_traits<R, Container>} \\
-  \ccc{Arr_leda_polyline_traits<Container>} \\
-  \ccc{Arr_segment_circle_traits<NT>}
+  \ccc{Arr_segment_traits_2<Kernel>}\\
+  \ccc{Arr_segment_cached_traits_2<Kernel>}\\
+  \ccc{Arr_leda_segment_traits_2<Kernel>}\\
+  \ccc{Arr_polyline_traits<Kernel, Container>} \\
+  \ccc{Arr_leda_polyline_traits<Kernel, Container>} \\
+  \ccc{Arr_conic_traits_2<Kernel>}
 
 \end{ccRefConcept}
 
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
 \ccRefPageEnd
-% EOF
-% +------------------------------------------------------------------------+
