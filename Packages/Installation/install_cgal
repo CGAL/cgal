@@ -75,7 +75,6 @@ ENABLE_SHARED='y'
 
 # ---------------------------------------------
 # LEDA specific:
-
 # suffix for include makefile:
 # toggles the use of LEDA: ('' - no LEDA, '_LEDA' - LEDA)
 LEDA_SUPPORT=''
@@ -3058,7 +3057,10 @@ _link_run_test()
     else
 	_flags="${3}"
     fi
-    _flags="${2}`output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${_flags}"
+    case ${COMPILER} in
+     *CL.*|*cl.*|*ICL.*|*icl.*) _flags="${2} `object_file_name ${TMP_CXX_FILE}` ${_flags}";;
+     *) _flags="${2}`output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${_flags}";;
+    esac
 
     # link
     _link="`compiler_bin`"
