@@ -4,7 +4,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_2/Object_handle.h>
-#include <CGAL/Nef_3/SNC_items.h>
 #include <CGAL/Nef_S2/SM_iteration.h>
 #include <CGAL/Nef_S2/Generic_handle_map.h>
 #include <CGAL/Nef_2/iterator_tools.h>
@@ -32,14 +31,17 @@ struct move_shalfedge_around_sface {
 };
 
 template <typename Kernel_, typename Items_>
-class SNC_sphere_map {
+class SNC_sphere_map 
+// : public Base_
+{
 
  public:
-  typedef SNC_sphere_map<Kernel_, Items_>  Self;
-  typedef Items_                           Items;
-  typedef Kernel_                          Kernel;
-  typedef SNC_structure<Items>             SNC_structure;
-  typedef typename Items::Sphere_kernel    Sphere_kernel;
+  typedef SNC_sphere_map<Kernel_, Items_>           Self;
+  typedef Items_                                    Items;
+  typedef Kernel_                                   Kernel;
+  typedef SNC_structure<Items>                      SNC_structure;
+  //  typedef Base_                                     Base;
+  typedef typename Items::Sphere_kernel             Sphere_kernel;
  
   typedef typename Sphere_kernel::Sphere_point     Sphere_point;
   /*{\Mtypemember points on the unit sphere.}*/
@@ -58,24 +60,24 @@ class SNC_sphere_map {
   typedef typename Infi_box::Standard_kernel  Standard_kernel;
   typedef Infimaximal_box<typename Is_extended_kernel<Standard_kernel>::value_type, Standard_kernel> No_box;
 
-  //  typedef typename SNC_structure::Infi_box  Infi_box;
-
+ 
+  typedef typename Items::template Vertex<SNC_structure>    Vertex;
+  typedef CGAL::In_place_list<Vertex,false>                 Vertex_list;
+  typedef CGAL_ALLOCATOR(Vertex)                            Vertex_alloc;
+  typedef typename Vertex_list::iterator                    Vertex_handle;
+  typedef typename Vertex_list::const_iterator              Vertex_const_handle;
+  typedef typename Vertex_list::iterator                    Vertex_iterator;
+  typedef typename Vertex_list::const_iterator              Vertex_const_iterator;
   /*
+  typedef typename SNC_structure::Vertex                  Vertex;
+  typedef typename SNC_structure::Vertex_list             Vertex_list;
+  typedef typename SNC_structure::Vertex_alloc            Vertex_alloc;
   typedef typename SNC_structure::Vertex_handle           Vertex_handle;
   typedef typename SNC_structure::Vertex_const_handle     Vertex_const_handle;
   typedef typename SNC_structure::Vertex_iterator         Vertex_iterator;
   typedef typename SNC_structure::Vertex_const_iterator   Vertex_const_iterator;
-  */
-
-  typedef typename Items::template Vertex<SNC_structure>    Vertex;
-  typedef CGAL::In_place_list<Vertex,false>        Vertex_list;
-  typedef CGAL_ALLOCATOR(Vertex)                   Vertex_alloc;
-  typedef typename Vertex_list::iterator           Vertex_handle;
-  typedef typename Vertex_list::const_iterator     Vertex_const_handle;
-  typedef typename Vertex_list::iterator           Vertex_iterator;
-  typedef typename Vertex_list::const_iterator     Vertex_const_iterator;
-
-  typedef typename Items::template Halfedge<SNC_structure>  SVertex;
+*/
+  typedef typename Items::template SVertex<SNC_structure>  SVertex;
   typedef CGAL::In_place_list<SVertex,false>       SVertex_list;
   typedef CGAL_ALLOCATOR(SVertex)                  SVertex_alloc;
   typedef typename SVertex_list::iterator          SVertex_handle;
@@ -116,18 +118,19 @@ class SNC_sphere_map {
   typedef Vertex_handle       Constructor_parameter;
   typedef Vertex_const_handle Constructor_const_parameter;
 
-  // private:
-  Vertex_handle cv;
+ private:
+  Constructor_parameter cv;
 
+  SNC_structure* sncp() { return cv->sncp(); }
   SNC_structure* sncp() const { return cv->sncp(); }
 
  public:
-  SNC_sphere_map(Vertex_handle v) : cv(v) {}
+  SNC_sphere_map(const Vertex_handle& v) : cv(v) {}
   
-  SNC_sphere_map(const Self& D) : cv(D.cv) {}
+  SNC_sphere_map(const Self& M) : cv(M.cv) {}
 
-  Self& operator=(const Self& D) {
-    cv = D.cv;
+  Self& operator=(const Self& M) {
+    cv = M.cv;
     return *this;
   }
 
@@ -212,7 +215,14 @@ class SNC_sphere_map {
     { return shalfloop_ != 0 ? shalfloop_+2 : shalfloop_; }
   SFace_const_iterator     sfaces_begin()     const { return cv->sfaces_begin();}
   SFace_const_iterator     sfaces_end()       const { return cv->sfaces_end();}
-
+  /*
+  SHalfloop_const_iterator shalfloops_begin() const { return shalfloop(); }
+  SHalfloop_const_iterator shalfloops_end()   const 
+    { return shalfloop_ != 0 ? shalfloop_+2 : shalfloop_; }
+  SHalfloop_iterator shalfloops_begin()  { return shalfloop(); }
+  SHalfloop_iterator shalfloops_end()  
+    { return shalfloop_ != 0 ? shalfloop_+2 : shalfloop_; } 
+  */
   SVertex_iterator   svertices_begin()   { return cv->svertices_begin();}
   SVertex_iterator   svertices_end()     { return cv->svertices_end();}
   SHalfedge_iterator shalfedges_begin()  { return cv->sedges_begin();}
@@ -222,7 +232,6 @@ class SNC_sphere_map {
     { return shalfloop_ != 0 ? shalfloop_+2 : shalfloop_; }
   SFace_iterator     sfaces_begin()      { return cv->sfaces_begin();}
   SFace_iterator     sfaces_end()        { return cv->sfaces_end();}
-
 
   class SFace_cycle_iterator : public Object_iterator 
   /*{\Mtypemember a generic iterator to an object in the boundary
@@ -323,40 +332,13 @@ class SNC_sphere_map {
       number_of_sfaces() == 0;
   }
 
-  /*
-  SVertex_alloc svertex_allocator;
-  SVertex* get_svertex_node( const SVertex& t) {
-    SVertex* p = svertex_allocator.allocate(1);
-    svertex_allocator.construct( p, SVertex());
-    return p;
-  }
-  void put_svertex_node( SVertex* p) {
-    svertex_allocator.destroy(p);
-    svertex_allocator.deallocate( p, 1);
+  bool has_shalfloop() const {
+    return shalfloop_ != 0;
   }
 
-  SHalfedge_alloc shalfedge_allocator;
-  SHalfedge* get_shalfedge_node( const SHalfedge& t) {
-    SHalfedge* p = shalfedge_allocator.allocate(1);
-    shalfedge_allocator.construct( p, SHalfedge());
-    return p;
+  SHalfloop_handle shalfloop() const { 
+    return shalfloop_; 
   }
-  void put_shalfedge_node( SHalfedge* p) {
-    shalfedge_allocator.destroy(p);
-    shalfedge_allocator.deallocate( p, 1);
-  }
-
-  SFace_alloc sface_allocator;
-  SFace* get_sface_node( const SFace& t) {
-    SFace* p = sface_allocator.allocate(1);
-    sface_allocator.construct( p, SFace());
-    return p;
-  }
-  void put_sface_node( SFace* p) {
-    sface_allocator.destroy(p);
-    sface_allocator.deallocate( p, 1);
-  }
-  */
 
   template <typename H>
   void make_twins(H h1, H h2) { 
@@ -367,12 +349,16 @@ class SNC_sphere_map {
   SVertex_handle new_svertex(const Sphere_point& p, 
 			   Mark m = Mark()) {   
     SVertex_iterator svn = cv->svertices_end();
+    //    SVertex_iterator svn = svertices_end();
     SVertex_iterator sv =  sncp()->new_halfedge_only(svn);
     sv->vector() = p; 
     sv->mark() = m;
     if (svertices_begin() == sncp()->svertices_end()) cv->init_range(sv);
+    //    if (svertices_begin() == sncp()->svertices_end()) init_range(sv);
     else cv->svertices_last() = sv;
+    //    else svertices_last() = sv;
     sv->center_vertex() = cv;
+    //    sv->center_vertex() = Vertex_handle(*this);
     TRACEN("new_svertex "<<&*sv);
     return sv;
   }
@@ -386,8 +372,11 @@ class SNC_sphere_map {
   SFace_handle new_sface() const {
     SFace_iterator sf =  sncp()->new_sface_only();
     if ( cv->sfaces_begin() == sncp()->sfaces_end() ) cv->init_range(sf);
+    //    if ( sfaces_begin() == sncp()->sfaces_end() ) init_range(sf);
     else cv->sfaces_last() = sf;
+    //    else sfaces_last() = sf;
     sf->center_vertex() = cv;
+    //    sf->center_vertex() = Vertex_handle(*this);
     return sf; 
   }
 
@@ -402,7 +391,9 @@ class SNC_sphere_map {
     SHalfedge_iterator se = sncp()->new_shalfedge_only();
     SHalfedge_iterator set = sncp()->new_shalfedge_only();
     if ( cv->shalfedges_begin() == sncp()->shalfedges_end() ) cv->init_range(se);
+    //    if ( shalfedges_begin() == sncp()->shalfedges_end() ) init_range(se);
     cv->shalfedges_last() = set;
+    //    shalfedges_last() = set;
     make_twins(se,set);
     return se; 
   }
@@ -420,10 +411,12 @@ class SNC_sphere_map {
 
   SHalfloop_handle new_shalfloop_pair() {
     CGAL_assertion( !cv->has_shalfloop() );
+    //    CGAL_assertion( !has_shalfloop() );
     SHalfloop_iterator sl =  sncp()->new_shalfloop_only();
     SHalfloop_iterator slt = sncp()->new_shalfloop_only();
     make_twins(sl,slt);
     cv->shalfloop() = sl;
+    //    shalfloop() = sl;
     return sl; 
   }
 
@@ -460,19 +453,29 @@ class SNC_sphere_map {
   
 void delete_svertex(SVertex_handle v) const {
   if ( cv->svertices_begin() == cv->svertices_last() ) 
+    //  if (svertices_begin() == svertices_last() ) 
     { CGAL_assertion(v == cv->svertices_begin()); 
+    //    { CGAL_assertion(v == svertices_begin()); 
     cv->init_range(sncp()->svertices_end()); }
+  //    init_range(sncp()->svertices_end()); }
   else if ( cv->svertices_begin() == v ) ++(cv->svertices_begin());
+  //  else if (svertices_begin() == v ) ++(svertices_begin());
   else if ( cv->svertices_last() == v ) --(cv->svertices_last());
+  //  else if (svertices_last() == v ) --(svertices_last());
   sncp()->delete_halfedge_only(v);
 }
 
 void delete_shalfedge(SHalfedge_handle e) const {
   if ( cv->shalfedges_begin() == cv->shalfedges_last() ) 
+    //  if ( shalfedges_begin() == shalfedges_last() ) 
     { CGAL_assertion( e == cv->shalfedges_begin() ); 
+    //    { CGAL_assertion( e == shalfedges_begin() ); 
     cv->init_range(sncp()->shalfedges_end()); }
+  //    init_range(sncp()->shalfedges_end()); }
   else if ( cv->shalfedges_begin() == e ) ++(cv->shalfedges_begin());
+  //  else if (shalfedges_begin() == e ) ++(shalfedges_begin());
   else if ( cv->shalfedges_last() == e ) --(cv->shalfedges_last());
+  //  else if (shalfedges_last() == e ) --(shalfedges_last());
   sncp()->delete_shalfedge_only(e);
 }
 
@@ -483,18 +486,27 @@ void delete_shalfedge_pair(SHalfedge_handle e) const {
 
 void delete_sface(SFace_handle f) const {
   if ( cv->sfaces_begin() == cv->sfaces_last() ) 
+    //  if (sfaces_begin() == sfaces_last() ) 
     { CGAL_assertion( f == cv->sfaces_begin() ); 
+    //    { CGAL_assertion( f == sfaces_begin() ); 
     cv->init_range(sncp()->sfaces_end()); }
+  //    init_range(sncp()->sfaces_end()); }
   else if ( cv->sfaces_begin() == f ) ++(cv->sfaces_begin());
+  //  else if (sfaces_begin() == f ) ++(sfaces_begin());
   else if ( cv->sfaces_last() == f )  --(cv->sfaces_last());
+  //  else if (sfaces_last() == f )  --(sfaces_last());
   sncp()->delete_sface_only(f); 
 }
 
 void delete_shalfloop_pair() const {
   CGAL_assertion( cv->has_shalfloop() );
+  //  CGAL_assertion(has_shalfloop() );
   sncp()->delete_shalfloop_only(cv->shalfloop()->twin());  
+  //  sncp()->delete_shalfloop_only(shalfloop()->twin());  
   sncp()->delete_shalfloop_only(cv->shalfloop());  
+  //  sncp()->delete_shalfloop_only(shalfloop());  
   cv->shalfloop() = sncp()->shalfloops_end();
+  //  shalfloop() = sncp()->shalfloops_end();
 }
   
 };  // SNC_sphere_map

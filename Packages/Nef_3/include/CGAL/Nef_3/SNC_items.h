@@ -25,11 +25,11 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/In_place_list.h>
-#include <CGAL/Nef_2/Object_handle.h>
-#include <CGAL/Nef_3/SNC_sphere_map.h>
 #include <string>
 #include <sstream>
 #include <CGAL/IO/Verbose_ostream.h>
+#include <CGAL/Nef_S2/Sphere_geometry.h>
+#include <CGAL/Nef_3/SNC_iteration.h>
 
 #undef _DEBUG
 #define _DEBUG 83
@@ -38,36 +38,23 @@
 CGAL_BEGIN_NAMESPACE
 
 template <typename K, typename I> class SNC_sphere_map;
-template <typename K, typename M> class SNC_items;
-template <typename I> class SNC_structure;
-template <typename R> class SNC_decorator;
-template <typename R> class SNC_const_decorator;
 template <typename R> class SM_decorator;
-template <typename R> class SM_const_decorator;
-template <typename R> class SNC_FM_decorator;
-template <typename EH>
-  struct move_shalfedge_around_svertex;
-template <typename EH>
-  struct move_shalfedge_around_sface;
-template <typename HE>
-  struct move_shalfedge_around_facet; 
 
 template <typename Kernel_, typename Mark_>
 class SNC_items {
 public:
-  typedef SNC_items<Kernel_,Mark_>       Self;
-  typedef Kernel_                        Kernel;
-  typedef SNC_sphere_map<Kernel_, Self>  Sphere_map;
-  typedef typename Kernel::Point_3  Point_3;
-  typedef typename Kernel::Plane_3  Plane_3;
-  typedef typename Kernel::Vector_3 Vector_3;
-  typedef CGAL::Sphere_geometry<Kernel> Sphere_kernel;
+  typedef Kernel_                                  Kernel;
+  typedef Mark_                                    Mark;
+  typedef SNC_items<Kernel_,Mark_>                 Self;
+  typedef typename Kernel::Point_3                 Point_3;
+  typedef typename Kernel::Plane_3                 Plane_3;
+  typedef typename Kernel::Vector_3                Vector_3;
+  typedef CGAL::Sphere_geometry<Kernel>            Sphere_kernel;
   typedef typename Sphere_kernel::Sphere_point     Sphere_point;
   typedef typename Sphere_kernel::Sphere_segment   Sphere_segment;
   typedef typename Sphere_kernel::Sphere_circle    Sphere_circle;
   typedef typename Sphere_kernel::Sphere_direction Sphere_direction;
   typedef typename Sphere_kernel::Sphere_triangle  Sphere_triangle;
-  typedef Mark_                                    Mark;
   typedef void*                                    GenPtr;
 
 //-----------------------------------------------------------------------------
@@ -148,11 +135,12 @@ public:
       sfaces_begin_ = v.sfaces_begin_;
       sfaces_last_ = v.sfaces_last_;
       shalfloop_ = v.shalfloop_;
-      sm_ = Sphere_map(Vertex_handle(this));
+      sm_ = v.sm_;
       return *this;
     }
 
     Sphere_map* map() { return &sm_; }
+    const Sphere_map* map() const { return &sm_; }
     Refs* sncp() const { return sncp_; }
     Refs*& sncp() { return sncp_; }
 
@@ -397,10 +385,8 @@ public:
 //-----------------------------------------------------------------------------
 
   template <typename Refs>
-  class Halfedge : public CGAL::In_place_list_base< Halfedge<Refs> >
-  { // == SVertex
-    typedef typename Refs::Kernel Kernel;
-    typedef typename Refs::Items Items;
+  class SVertex : public CGAL::In_place_list_base< SVertex<Refs> >
+  { // == Halfedge
     typedef typename Refs::Sphere_map Sphere_map;
     friend class SM_decorator<Refs>;
     typedef typename Refs::Vertex_handle    Vertex_handle;
@@ -419,19 +405,19 @@ public:
 
   public:
 
-    Halfedge() : center_vertex_(), mark_(), twin_(),
+    SVertex() : center_vertex_(), mark_(), twin_(),
       out_sedge_(), incident_sface_(),
       info_(), point_() {}
 
-    Halfedge(Mark m) :  center_vertex_(), mark_(m), twin_(),
+    SVertex(Mark m) :  center_vertex_(), mark_(m), twin_(),
       out_sedge_(), incident_sface_(),
       info_(), point_() {}
 
-    ~Halfedge() {
+    ~SVertex() {
       TRACEN("  destroying Halfedge item "<<&*this);
     }
 
-    Halfedge(const Halfedge<Refs>& e) 
+    SVertex(const SVertex<Refs>& e) 
     { center_vertex_ = e.center_vertex_;
       point_ = e.point_;
       mark_ = e.mark_;
@@ -441,7 +427,7 @@ public:
       info_ = 0;
     }
 
-    Halfedge<Refs>& operator=(const Halfedge<Refs>& e) 
+    SVertex<Refs>& operator=(const SVertex<Refs>& e) 
     { center_vertex_ = e.center_vertex_;
       point_ = e.point_;
       mark_ = e.mark_;
@@ -463,8 +449,8 @@ public:
     Sphere_point& point(){ return point_; }
     const Sphere_point& point() const { return point_; }
 
-    Halfedge_handle& twin() { return twin_; }
-    Halfedge_handle twin()  const { return twin_; }
+    SVertex_handle& twin() { return twin_; }
+    SVertex_handle twin()  const { return twin_; }
 
     SHalfedge_handle& out_sedge() { return out_sedge_; }
     SHalfedge_handle out_sedge() const { return out_sedge_; }
@@ -488,25 +474,25 @@ public:
     bool is_valid( bool verb = false, int level = 0) const {
       
       Verbose_ostream verr(verb);
-      verr << "begin CGAL::SNC_items<...>::Halfedge::is_valid( verb=true, "
+      verr << "begin CGAL::SNC_items<...>::SVertex::is_valid( verb=true, "
 	"level = " << level << "):" << std::endl;
 
       bool valid = (center_vertex_ != NULL && center_vertex_ != Vertex_handle());
       valid = valid && (twin_ != NULL && twin_ != SVertex_handle() &&
-			                 twin_ != Halfedge_handle());
+			                 twin_ != SVertex_handle());
       //      valid = valid && (out_sedge_ != NULL);
       //      valid = valid && (incident_sface_ != SFace_handle());
       
       valid = valid &&((out_sedge_ != NULL && incident_sface_ == NULL) ||
 		       (out_sedge_ == NULL && incident_sface_ != NULL));
       
-      verr << "end of CGAL::SNC_items<...>::Halfedge::is_valid(): structure is "
+      verr << "end of CGAL::SNC_items<...>::SVertex::is_valid(): structure is "
 	   << ( valid ? "valid." : "NOT VALID.") << std::endl;
 
       return valid;
     }
 
-  }; // Halfedge
+  }; // SVertex
 
 
 //-----------------------------------------------------------------------------
@@ -709,12 +695,6 @@ public:
     typedef typename Refs::SFace_handle SFace_handle;
     typedef typename Refs::Halffacet_handle Halffacet_handle;
     friend class SM_decorator<Refs>;
-    friend class move_shalfedge_around_svertex<SHalfedge_handle>;
-    friend class move_shalfedge_around_sface<SHalfedge_handle>;
-    friend class move_shalfedge_around_facet<SHalfedge_handle>;
-    friend class move_shalfedge_around_svertex<SHalfedge_const_handle>;
-    friend class move_shalfedge_around_sface<SHalfedge_const_handle>;
-    friend class move_shalfedge_around_facet<SHalfedge_const_handle>;
 
     // Role within local graph:
     SVertex_handle     source_;            

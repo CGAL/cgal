@@ -34,7 +34,7 @@
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
-#include <CGAL/Nef_3/SNC_SM_io_parser.h>
+#include <CGAL/Nef_S2/SM_io_parser.h>
 #include <CGAL/Nef_3/SNC_constructor.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_3/SNC_point_locator.h>
@@ -768,9 +768,9 @@ public:
     /*{\opOverlays two spheres maps.}*/ {
   
 #ifdef CGAL_NEF3_DUMP_SPHERE_MAPS
-    typedef SNC_SM_io_parser<SNC_structure> SNC_SM_io_parser;
-    SNC_SM_io_parser IO0( std::cerr, v0);
-    SNC_SM_io_parser IO1( std::cerr, v1);
+    typedef SM_io_parser<SM_decorator> SM_io_parser;
+    SM_io_parser IO0( std::cerr, v0);
+    SM_io_parser IO1( std::cerr, v1);
     TRACEN(" sphere maps before local binary operation");
     TRACEN(v0->debug());
     TRACEN(v1->debug());
@@ -788,7 +788,7 @@ public:
 
 #ifdef CGAL_NEF3_DUMP_SPHERE_MAPS
     TRACEN(" result sphere map:");
-    SNC_SM_io_parser IO01( std::cerr, v01);
+    SM_io_parser IO01( std::cerr, v01);
     TRACEN(v01->debug());
     IO01.print();
     TRACEN(" sphere maps after local binary operation");
@@ -927,7 +927,7 @@ public:
       }
       else if( assign( f, o1)) {
 	SNC_constructor C(result);
-	Vertex_handle v0 = C.create_edge_facet_overlay(e0, f, p, bop);
+	Vertex_handle v0 = C.create_edge_facet_overlay(e0, f, p, bop, inverse_order);
 	SM_overlayer O(v0);
 	O.simplify();
       }

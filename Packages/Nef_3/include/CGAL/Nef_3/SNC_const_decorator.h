@@ -27,26 +27,28 @@
 #include <CGAL/Nef_3/Normalizing.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
-#include <CGAL/Nef_S2/SM_const_decorator.h>
-#include <CGAL/Nef_3/SNC_SM_io_parser.h>
+#include <list>
+
 #undef _DEBUG
 #define _DEBUG 191
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE
 
+template<typename S> class SM_const_decorator;
+
 template <typename SNC_structure_>
 class SNC_const_decorator { 
   typedef SNC_structure_                            Base;
   typedef SNC_structure_                            SNC_structure;
   typedef SNC_const_decorator<SNC_structure>        Self;
-  typedef SM_const_decorator<SNC_structure>     SM_const_decorator;
+  typedef CGAL::SM_const_decorator<SNC_structure>   SM_const_decorator;
   const SNC_structure* sncp_;
 
   typedef typename SNC_structure::SHalfedge  SHalfedge;
 
 public:
-  typedef typename SNC_structure::Object_const_handle   Object_const_handle;
+  typedef typename SNC_structure::Object_handle   Object_handle;
   typedef typename SNC_structure::Object_const_iterator Object_const_iterator;
 
   typedef typename SNC_structure::Vertex_const_handle Vertex_const_handle;
@@ -195,7 +197,7 @@ public:
   const Point_3& point(Vertex_const_handle v) const
   { return v->point(); }
 
-  Vector_3& vector(Halfedge_const_handle e) const
+  Vector_3 vector(Halfedge_const_handle e) const
   { return Vector_3(e->point_); }
 
   Segment_3 segment(Halfedge_const_handle e) const
@@ -213,10 +215,6 @@ public:
   { return f->mark(); }
   Mark mark(Volume_const_handle c) const
   { return c->mark(); }
-
-  template <typename H>
-  bool is_boundary_object(H h) const
-  { return sncp()->is_boundary_object(h); }
 
   template <typename Visitor>
   void visit_shell_objects(SFace_const_handle f, Visitor& V) const;
@@ -264,8 +262,8 @@ public:
   static bool is_standard(const Halffacet_const_handle f) {
     return Infi_box::is_standard(f->plane());
   }
-  static bool standard_kernel() { return Infi_box::standard_kernel(); }
-  static bool extended_kernel() { return Infi_box::extended_kernel(); }
+  static bool is_standard_kernel() { return Infi_box::standard_kernel(); }
+  static bool is_extended_kernel() { return Infi_box::extended_kernel(); }
   static void set_size_of_infimaximal_box(const typename Infi_box::NT& size) { 
     Infi_box::set_size_of_infimaximal_box(size); 
   }
@@ -276,8 +274,6 @@ template <typename Visitor>
 void SNC_const_decorator<EW>::
 visit_shell_objects(SFace_const_handle f, Visitor& V) const
 { 
-  typedef typename SM_const_decorator::SHalfedge_around_sface_const_circulator 
-    SHalfedge_around_sface_const_circulator;
   std::list<SFace_const_handle> SFaceCandidates;
   std::list<Halffacet_const_handle> FacetCandidates;
   CGAL::Unique_hash_map<SFace_const_handle,bool> DoneSF(false);

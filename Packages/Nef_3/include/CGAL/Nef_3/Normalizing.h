@@ -19,9 +19,12 @@
 #ifndef CGAL_NORMALIZING_H
 #define CGAL_NORMALIZING_H
 
-#include <CGAL/assertions.h>
-
 #include <CGAL/basic.h>
+#include <CGAL/assertions.h>
+#include <CGAL/Nef_S2/Sphere_point.h>
+#include <CGAL/Nef_S2/Sphere_circle.h>
+#include <CGAL/Nef_S2/Sphere_direction.h>
+
 #undef _DEBUG
 #define _DEBUG 307
 #include <CGAL/Nef_3/debug.h>

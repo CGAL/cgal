@@ -907,7 +907,7 @@ public:
   }  
   
   void set_R(const Bbox_3 bbox) const {
-    if(N.standard_kernel()) return;
+    if(N.is_standard_kernel()) return;
     double size = abs(bbox.xmin());
     if(size < bbox.xmax()) size = bbox.xmax();
     if(size < bbox.ymin()) size = bbox.ymin();

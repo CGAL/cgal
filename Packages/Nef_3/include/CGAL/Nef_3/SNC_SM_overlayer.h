@@ -28,7 +28,6 @@
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_const_decorator.h>
 #include <CGAL/Nef_S2/SM_overlayer.h>
-#include <CGAL/Nef_3/SNC_SM_io_parser.h>
 #include <CGAL/Nef_3/SNC_structure.h>
 #undef _DEBUG
 #define _DEBUG 131

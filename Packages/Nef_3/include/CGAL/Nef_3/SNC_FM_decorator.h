@@ -164,6 +164,7 @@ bool left_turn(const Point_3& p1, const Point_3& p2, const Point_3& p3) const
 //   overwrite some operations from the base class for that semantics.
 //--------------------------------------------------------------------------
 
+template <typename S> class SNC_decorator;
 
 template <typename SNC_structure_>
 class SNC_FM_decorator : public SNC_decorator<SNC_structure_> {
