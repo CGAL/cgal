@@ -162,9 +162,29 @@ int main ()
   // Test % and gcd.
   CGAL::Lazy_exact_nt<int> tmp35(35), tmp7(7), tmp9(9);
   assert((tmp35 % tmp7) == 0);
+  assert((tmp35 % 7) == 0);
   assert(gcd(tmp35, tmp7) == 7);
   tmp9 %= tmp7;
   assert(tmp9 == 2);
+  tmp9 = 9;
+  tmp9 %= 7;
+  assert(tmp9 == 2);
+
+  // Test if all operators are defined.
+  int r = 1;
+  CGAL::Lazy_exact_nt<double> q(1);
+
+  q+q; q+r; r+q; q+1; 1+q;
+  q-q; q-r; r-q; q-1; 1-q;
+  q*q; q*r; r*q; q*1; 1*q;
+  q/q; q/r; r/q; q/1; 1/q;
+  -q;
+  q<q; q<r; r<q; q<1; 1<q;
+  q>q; q>r; r>q; q>1; 1>q;
+  q<=q; q<=r; r<=q; q<=1; 1<=q;
+  q>=q; q>=r; r>=q; q>=1; 1>=q;
+  q==q; q==r; r==q; q==1; 1==q;
+  q!=q; q!=r; r!=q; q!=1; 1!=q;
 
   return 0;
 }

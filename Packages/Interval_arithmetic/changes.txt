@@ -1,6 +1,7 @@
 26 March 2005 Sylvain Pion
 - Lazy_exact_nt<ET> : allow ET == int and ET == double.
 - Lazy_exact_nt<ET> : add % and gcd (kills filtering, though).
+- Lazy_exact_nt<ET> : use boost/operators.hpp
 - Interval_nt : add fit_in_double().
 
 12 January 2005 Sylvain Pion

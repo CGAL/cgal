@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2004  Utrecht University (The Netherlands),
+// Copyright (c) 1999-2005  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -34,6 +34,8 @@
 #include <CGAL/misc.h>
 #include <CGAL/Filtered_exact.h> // to get the overloaded predicates.
 #include <CGAL/Kernel/mpl.h>
+
+#include <boost/operators.hpp>
 
 /*
  * This file contains the definition of the number type Lazy_exact_nt<ET>,
@@ -254,9 +256,15 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 #define CGAL_double(T) typename First_if_different<double, T>::Type
 
+// TODO : Add mixed operations with ET too ?
+
 // The real number type, handle class
 template <typename ET>
-class Lazy_exact_nt : public Handle
+class Lazy_exact_nt
+  : public Handle
+  , boost::ordered_euclidian_ring_operators1< Lazy_exact_nt<ET>
+  , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET>, int
+    > >
 {
 public :
   typedef typename Number_type_traits<ET>::Has_gcd      Has_gcd;
@@ -265,10 +273,10 @@ public :
 
   typedef typename Number_type_traits<ET>::Has_exact_sqrt Has_exact_sqrt;
   typedef typename Number_type_traits<ET>::Has_exact_division
-  Has_exact_division;
+                                                        Has_exact_division;
   typedef typename Number_type_traits<ET>::Has_exact_ring_operations
-  Has_exact_ring_operations;
-  
+                                                     Has_exact_ring_operations;
+
 
   typedef Lazy_exact_nt<ET> Self;
   typedef Lazy_exact_rep<ET> Self_rep;
@@ -276,7 +284,6 @@ public :
   Lazy_exact_nt (Self_rep *r)
   { PTR = r; }
 
-  // Operations
   Lazy_exact_nt ()
   { PTR = new Lazy_exact_Int_Cst<ET>(0); }
 
@@ -293,14 +300,55 @@ public :
   Lazy_exact_nt (const Lazy_exact_nt<ET1> &x)
   { PTR = new Lazy_lazy_exact_Cst<ET, ET1>(x); }
 
+
   Self operator- () const
   { return new Lazy_exact_Opp<ET>(*this); }
+
+  Self & operator+=(const Self& b)
+  { return *this = new Lazy_exact_Add<ET>(*this, b); }
+
+  Self & operator-=(const Self& b)
+  { return *this = new Lazy_exact_Sub<ET>(*this, b); }
+
+  Self & operator*=(const Self& b)
+  { return *this = new Lazy_exact_Mul<ET>(*this, b); }
+
+  Self & operator/=(const Self& b)
+  { return *this = new Lazy_exact_Div<ET>(*this, b); }
+
+  // Mixed operators. (could be optimized ?)
+  Self & operator+=(int b)
+  { return *this = new Lazy_exact_Add<ET>(*this, b); }
+
+  Self & operator-=(int b)
+  { return *this = new Lazy_exact_Sub<ET>(*this, b); }
+
+  Self & operator*=(int b)
+  { return *this = new Lazy_exact_Mul<ET>(*this, b); }
+
+  Self & operator/=(int b)
+  { return *this = new Lazy_exact_Div<ET>(*this, b); }
+
+  // % kills filtering
+  Self & operator%=(const Self& b)
+  {
+    ET res = exact();
+    res %= b.exact();
+    return *this = Lazy_exact_nt<ET>(res);
+  }
+
+  Self & operator%=(int b)
+  {
+    ET res = exact();
+    res %= b;
+    return *this = Lazy_exact_nt<ET>(res);
+  }
 
   const Interval_nt<true>& approx() const
   { return ptr()->approx(); }
 
   Interval_nt<false> interval() const
-  { 
+  {
     const Interval_nt<true>& i = ptr()->approx();
     return Interval_nt<false>(i.inf(), i.sup());
   }
@@ -320,14 +368,6 @@ public :
   {
       CGAL_assertion(d > 0 && d < 1);
       relative_precision_of_to_double = d;
-  }
-
-  bool fit_in_double(double &r) const
-  {
-    // Returns true if the value is representable by a double and to_double()
-    // would return it.  False means "don't know".
-    r = approx().inf();
-    return approx().is_point();
   }
 
 private:
@@ -359,42 +399,8 @@ operator==(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
   return a.exact() == b.exact();
 }
 
-template <typename ET>
-inline
-bool
-operator>(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
-{ return b < a; }
-
-template <typename ET>
-inline
-bool
-operator<=(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
-{ return ! (b < a); }
-
-template <typename ET>
-inline
-bool
-operator>=(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
-{ return ! (a < b); }
-
-template <typename ET>
-inline
-bool
-operator!=(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
-{ return ! (a == b); }
-
 
 // Mixed operators with int.
-template <typename ET>
-bool
-operator<(int a, const Lazy_exact_nt<ET>& b)
-{
-  std::pair<bool, bool> res = Certified::operator<(a, b.approx());
-  if (res.second)
-    return res.first;
-  return a < b.exact();
-}
-
 template <typename ET>
 bool
 operator<(const Lazy_exact_nt<ET>& a, int b)
@@ -407,129 +413,23 @@ operator<(const Lazy_exact_nt<ET>& a, int b)
 
 template <typename ET>
 bool
-operator==(int a, const Lazy_exact_nt<ET>& b)
+operator>(const Lazy_exact_nt<ET>& a, int b)
 {
-  std::pair<bool, bool> res = Certified::operator==(a, b.approx());
+  std::pair<bool, bool> res = Certified::operator<(b, a.approx());
   if (res.second)
     return res.first;
-  return a == b.exact();
+  return b < a.exact();
 }
 
 template <typename ET>
-inline
 bool
 operator==(const Lazy_exact_nt<ET>& a, int b)
-{ return b == a; }
-
-template <typename ET>
-inline
-bool
-operator>(int a, const Lazy_exact_nt<ET>& b)
-{ return b < a; }
-
-template <typename ET>
-inline
-bool
-operator>(const Lazy_exact_nt<ET>& a, int b)
-{ return b < a; }
-
-template <typename ET>
-inline
-bool
-operator<=(int a, const Lazy_exact_nt<ET>& b)
-{ return ! (b < a); }
-
-template <typename ET>
-inline
-bool
-operator<=(const Lazy_exact_nt<ET>& a, int b)
-{ return ! (b < a); }
-
-template <typename ET>
-inline
-bool
-operator>=(int a, const Lazy_exact_nt<ET>& b)
-{ return ! (a < b); }
-
-template <typename ET>
-inline
-bool
-operator>=(const Lazy_exact_nt<ET>& a, int b)
-{ return ! (a < b); }
-
-template <typename ET>
-inline
-bool
-operator!=(int a, const Lazy_exact_nt<ET>& b)
-{ return ! (a == b); }
-
-template <typename ET>
-inline
-bool
-operator!=(const Lazy_exact_nt<ET>& a, int b)
-{ return ! (b == a); }
-
-
-template <typename ET>
-Lazy_exact_nt<ET>
-operator+(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
-{ return new Lazy_exact_Add<ET>(a, b); }
-
-template <typename ET>
-Lazy_exact_nt<ET>
-operator-(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
-{ return new Lazy_exact_Sub<ET>(a, b); }
-
-template <typename ET>
-Lazy_exact_nt<ET>
-operator*(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
-{ return new Lazy_exact_Mul<ET>(a, b); }
-
-template <typename ET>
-Lazy_exact_nt<ET>
-operator/(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
-{ return new Lazy_exact_Div<ET>(a, b); }
-
-// mixed operators
-template <typename ET>
-Lazy_exact_nt<ET>
-operator+(const Lazy_exact_nt<ET>& a, int b)
-{ return new Lazy_exact_Add<ET>(a, b); }
-
-template <typename ET>
-Lazy_exact_nt<ET>
-operator-(const Lazy_exact_nt<ET>& a, int b)
-{ return new Lazy_exact_Sub<ET>(a, b); }
-
-template <typename ET>
-Lazy_exact_nt<ET>
-operator*(const Lazy_exact_nt<ET>& a, int b)
-{ return new Lazy_exact_Mul<ET>(a, b); }
-
-template <typename ET>
-Lazy_exact_nt<ET>
-operator/(const Lazy_exact_nt<ET>& a, int b)
-{ return new Lazy_exact_Div<ET>(a, b); }
-
-template <typename ET>
-Lazy_exact_nt<ET>
-operator+(int a, const Lazy_exact_nt<ET>& b)
-{ return new Lazy_exact_Add<ET>(a, b); }
-
-template <typename ET>
-Lazy_exact_nt<ET>
-operator-(int a, const Lazy_exact_nt<ET>& b)
-{ return new Lazy_exact_Sub<ET>(a, b); }
-
-template <typename ET>
-Lazy_exact_nt<ET>
-operator*(int a, const Lazy_exact_nt<ET>& b)
-{ return new Lazy_exact_Mul<ET>(a, b); }
-
-template <typename ET>
-Lazy_exact_nt<ET>
-operator/(int a, const Lazy_exact_nt<ET>& b)
-{ return new Lazy_exact_Div<ET>(a, b); }
+{
+  std::pair<bool, bool> res = Certified::operator==(b, a.approx());
+  if (res.second)
+    return res.first;
+  return b == a.exact();
+}
 
 
 template <typename ET>
@@ -613,6 +513,14 @@ Lazy_exact_nt<ET>
 max(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
 { return new Lazy_exact_Max<ET>(a, b); }
 
+// gcd kills filtering.
+template <typename ET>
+Lazy_exact_nt<ET>
+gcd(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
+{
+  return Lazy_exact_nt<ET>(CGAL_NTS gcd(a.exact(), b.exact()));
+}
+
 template <typename ET>
 std::ostream &
 operator<< (std::ostream & os, const Lazy_exact_nt<ET> & a)
@@ -628,80 +536,6 @@ operator>> (std::istream & is, Lazy_exact_nt<ET> & a)
   return is;
 }
 
-template <typename ET>
-inline
-Lazy_exact_nt<ET> &
-operator+=(Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
-{ return a = a + b; }
-
-template <typename ET>
-inline
-Lazy_exact_nt<ET> &
-operator-=(Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
-{ return a = a - b; }
-
-template <typename ET>
-inline
-Lazy_exact_nt<ET> &
-operator*=(Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
-{ return a = a * b; }
-
-template <typename ET>
-inline
-Lazy_exact_nt<ET> &
-operator/=(Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
-{ return a = a / b; }
-
-template <typename ET>
-inline
-Lazy_exact_nt<ET> &
-operator+=(Lazy_exact_nt<ET> & a, int b)
-{ return a = a + b; }
-
-template <typename ET>
-inline
-Lazy_exact_nt<ET> &
-operator-=(Lazy_exact_nt<ET> & a, int b)
-{ return a = a - b; }
-
-template <typename ET>
-inline
-Lazy_exact_nt<ET> &
-operator*=(Lazy_exact_nt<ET> & a, int b)
-{ return a = a * b; }
-
-template <typename ET>
-inline
-Lazy_exact_nt<ET> &
-operator/=(Lazy_exact_nt<ET> & a, int b)
-{ return a = a / b; }
-
-
-// % and gcd kill filtering.
-template <typename NT> 
-Lazy_exact_nt<NT> &
-operator%=(Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>& b)
-{
-  NT res = a.exact();
-  res %= b.exact();
-  return a = Lazy_exact_nt<NT>(res);
-}
-
-template <typename NT> 
-inline
-Lazy_exact_nt<NT>
-operator%(const Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>& b)
-{
-  Lazy_exact_nt<NT> res = a;
-  return res %= b;
-}
-
-template <typename NT> 
-Lazy_exact_nt<NT>
-gcd(const Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>& b)
-{
-  return Lazy_exact_nt<NT>(CGAL_NTS gcd(a.exact(), b.exact()));
-}
 
 
 template <typename ET>
@@ -725,7 +559,7 @@ inline
 io_Operator
 io_tag (const Lazy_exact_nt<ET>&)
 { return io_Operator(); }
- 
+
 template <typename ET>
 struct converter<ET, Lazy_exact_nt<ET> >
 {
@@ -735,10 +569,13 @@ struct converter<ET, Lazy_exact_nt<ET> >
     }
 };
 
+
+// Returns true if the value is representable by a double and to_double()
+// would return it.  False means "don't know".
 template < typename ET >
 inline bool
 fit_in_double(const Lazy_exact_nt<ET>& l, double& r)
-{ return l.fit_in_double(r); }
+{ return fit_in_double(l.approx(), r); }
 
 #undef CGAL_double
 #undef CGAL_int
