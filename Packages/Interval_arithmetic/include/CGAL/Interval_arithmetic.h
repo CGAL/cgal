@@ -23,8 +23,9 @@
 
 
 // This file contains the description of the two classes:
-// - CGAL_Interval_nt_advanced  (do the FPU tricks yourself)
+// - CGAL_Interval_nt_advanced  (do the FPU rounding mode changes yourself)
 // - CGAL_Interval_nt		("plug-in" version, derived from the other one)
+// The second one is _much_ slower (till a factor 10).
 
 #ifndef CGAL_INTERVAL_ARITHMETIC_H
 #define CGAL_INTERVAL_ARITHMETIC_H
@@ -41,7 +42,7 @@ class CGAL_Interval_nt_advanced
   friend double CGAL_to_double(const CGAL_Interval_nt_advanced& d);
 
 public:
-  inline CGAL_Interval_nt_advanced(double i, double s)
+  inline CGAL_Interval_nt_advanced(const double i, const double s)
   {
 #ifndef CGAL_NO_PRECONDITIONS
     CGAL_assertion(i<=s);
@@ -49,7 +50,7 @@ public:
     inf = -i; sup = s;
   }
 
-  inline CGAL_Interval_nt_advanced(double d = 0.0)
+  inline CGAL_Interval_nt_advanced(const double d = 0.0)
   {
     inf = -d; sup = d;
   }
@@ -64,10 +65,11 @@ public:
   inline CGAL_Interval_nt_advanced
          operator+(const CGAL_Interval_nt_advanced& d) const
   {
-    CGAL_Interval_nt_advanced tmp;
-    tmp.inf = inf + d.inf;
-    tmp.sup = sup + d.sup;
-    return tmp;
+    return CGAL_Interval_nt_advanced(-(inf + d.inf), sup + d.sup);
+    // CGAL_Interval_nt_advanced tmp;
+    // tmp.inf = inf + d.inf;
+    // tmp.sup = sup + d.sup;
+    // return tmp;
   }
 
   inline CGAL_Interval_nt_advanced&
@@ -81,10 +83,11 @@ public:
   inline CGAL_Interval_nt_advanced
          operator-(const CGAL_Interval_nt_advanced& d) const
   {
-    CGAL_Interval_nt_advanced tmp;
-    tmp.inf = inf + d.sup;
-    tmp.sup = sup + d.inf;
-    return tmp;
+    return CGAL_Interval_nt_advanced(-(inf + d.sup), sup + d.inf);
+    // CGAL_Interval_nt_advanced tmp;
+    // tmp.inf = inf + d.sup;
+    // tmp.sup = sup + d.inf;
+    // return tmp;
   }
 
   inline CGAL_Interval_nt_advanced&
@@ -98,67 +101,77 @@ public:
   inline CGAL_Interval_nt_advanced
          operator*(const CGAL_Interval_nt_advanced& d) const
   {
-    CGAL_Interval_nt_advanced tmp;
+    // CGAL_Interval_nt_advanced tmp;
     if (inf<=0)                                   /* this>=0 */
     {
       if (d.inf<=0)                                 /* d>=0 */
       {
-        tmp.inf = (-inf)*d.inf;
-        tmp.sup = sup*d.sup;
+	return CGAL_Interval_nt_advanced(-((-inf)*d.inf), sup*d.sup);
+        // tmp.inf = (-inf)*d.inf;
+        // tmp.sup = sup*d.sup;
       }
       else if (d.sup<=0)                            /* d<=0 */
       {
-        tmp.inf = sup*d.inf;
-        tmp.sup = (-inf)*d.sup;
+	return CGAL_Interval_nt_advanced(-(sup*d.inf), (-inf)*d.sup);
+        // tmp.inf = sup*d.inf;
+        // tmp.sup = (-inf)*d.sup;
       }
       else                                        /* 0 \in d */
       {
-        tmp.inf = sup*d.inf;
-        tmp.sup = sup*d.sup;
+	return CGAL_Interval_nt_advanced(-(sup*d.inf), sup*d.sup);
+        // tmp.inf = sup*d.inf;
+        // tmp.sup = sup*d.sup;
       };
     }
     else if (sup<=0)                              /* this<=0 */
     {
       if (d.inf<=0)                                 /* d>=0 */
       {
-        tmp.inf = inf*d.sup;
-        tmp.sup = sup*(-d.inf);
+	return CGAL_Interval_nt_advanced(-(inf*d.sup), sup*(-d.inf));
+        // tmp.inf = inf*d.sup;
+        // tmp.sup = sup*(-d.inf);
       }
       else if (d.sup<=0)                            /* d<=0 */
       {
-        tmp.inf = (-sup)*d.sup;
-        tmp.sup = inf*d.inf;
+	return CGAL_Interval_nt_advanced(-((-sup)*d.sup), inf*d.inf);
+        // tmp.inf = (-sup)*d.sup;
+        // tmp.sup = inf*d.inf;
       }
       else                                        /* 0 \in d */
       {
-        tmp.inf = inf*d.sup;
-        tmp.sup = inf*d.inf;
+	return CGAL_Interval_nt_advanced(-(inf*d.sup), inf*d.inf);
+        // tmp.inf = inf*d.sup;
+        // tmp.sup = inf*d.inf;
       };
     }
     else                                          /* 0 \in [inf;sup] */
     {
       if (d.inf<=0)                                 /* d>=0 */
       {
-        tmp.inf = inf*d.sup;
-        tmp.sup = sup*d.sup;
+	return CGAL_Interval_nt_advanced(-(inf*d.sup), sup*d.sup);
+        // tmp.inf = inf*d.sup;
+        // tmp.sup = sup*d.sup;
       }
       else if (d.sup<=0)                            /* d<=0 */
       {
-        tmp.inf = sup*d.inf;
-        tmp.sup = inf*d.inf;
+	return CGAL_Interval_nt_advanced(-(sup*d.inf), inf*d.inf);
+        // tmp.inf = sup*d.inf;
+        // tmp.sup = inf*d.inf;
       }
       else                                        /* 0 \in d */
       {
-        double tmp1, tmp2;
+        double tmp1, tmp2, tmp3, tmp4;
         tmp1 = inf*d.sup;
         tmp2 = sup*d.inf;
-        tmp.inf = (tmp1>tmp2) ? tmp1 : tmp2;
-        tmp1 = inf*d.inf;
-        tmp2 = sup*d.sup;
-        tmp.sup = (tmp1>tmp2) ? tmp1 : tmp2;
+        // tmp.inf = (tmp1>tmp2) ? tmp1 : tmp2;
+        tmp3 = inf*d.inf;
+        tmp4 = sup*d.sup;
+        // tmp.sup = (tmp3>tmp4) ? tmp3 : tmp4;
+	return CGAL_Interval_nt_advanced(-((tmp1>tmp2) ? tmp1 : tmp2),
+					   (tmp3>tmp4) ? tmp3 : tmp4);
       };
     };
-    return tmp;
+    // return tmp;
   }
 
   inline CGAL_Interval_nt_advanced &
@@ -171,46 +184,53 @@ public:
   inline CGAL_Interval_nt_advanced
          operator/(const CGAL_Interval_nt_advanced& d) const
   {
-    CGAL_Interval_nt_advanced tmp;
+    // CGAL_Interval_nt_advanced tmp;
     if (d.inf<0.0)                            /* d>0 */
     {
       if (inf<=0.0)                         /* this>=0 */
       {
-        tmp.inf = inf/d.sup;
-        tmp.sup = sup/(-d.inf);
+	return CGAL_Interval_nt_advanced(-(inf/d.sup), sup/(-d.inf));
+        // tmp.inf = inf/d.sup;
+        // tmp.sup = sup/(-d.inf);
       }
       else if (sup<=0.0)                    /* this<=0 */
       {
-        tmp.inf = inf/(-d.inf);
-        tmp.sup = sup/d.sup;
+	return CGAL_Interval_nt_advanced(-(inf/(-d.inf)), sup/d.sup);
+        // tmp.inf = inf/(-d.inf);
+        // tmp.sup = sup/d.sup;
       }
       else                                /* 0 \in this */
       {
-        tmp.inf = inf/(-d.inf);
-        tmp.sup = sup/(-d.inf);
+	return CGAL_Interval_nt_advanced(-(inf/(-d.inf)), sup/(-d.inf));
+        // tmp.inf = inf/(-d.inf);
+        // tmp.sup = sup/(-d.inf);
       };
     }
     else if (d.sup<0.0)                       /* d<0 */
     {
       if (inf<=0.0)                         /* this>=0 */
       {
-        tmp.inf = sup/(-d.sup);
-        tmp.sup = inf/d.inf;
+	return CGAL_Interval_nt_advanced(-(sup/(-d.sup)), inf/d.inf);
+        // tmp.inf = sup/(-d.sup);
+        // tmp.sup = inf/d.inf;
       }
       else if (sup<=0.0)                    /* b<=0 */
       {
-        tmp.inf = sup/d.inf;
-        tmp.sup = inf/(-d.sup);
+	return CGAL_Interval_nt_advanced(-(sup/d.inf), inf/(-d.sup));
+        // tmp.inf = sup/d.inf;
+        // tmp.sup = inf/(-d.sup);
       }
       else                                /* 0 \in this */
       {
-        tmp.inf = sup/(-d.sup);
-        tmp.sup = inf/(-d.sup);
+	return CGAL_Interval_nt_advanced(-(sup/(-d.sup)), inf/(-d.sup));
+        // tmp.inf = sup/(-d.sup);
+        // tmp.sup = inf/(-d.sup);
       };
     }
     else                                  /* 0 \in [d.inf;d.sup] */
-      tmp.inf = tmp.sup = HUGE_VAL;           /* ]-oo;+oo[. */
-    return tmp;
+      return CGAL_Interval_nt_advanced(-(HUGE_VAL), HUGE_VAL);
+      // tmp.inf = tmp.sup = HUGE_VAL;           /* ]-oo;+oo[. */
+    // return tmp;
   }
 
   inline CGAL_Interval_nt_advanced &
@@ -222,10 +242,11 @@ public:
 
   inline CGAL_Interval_nt_advanced operator-() const
   {
-    CGAL_Interval_nt_advanced tmp;
-    tmp.inf = sup;
-    tmp.sup = inf;
-    return tmp;
+    return CGAL_Interval_nt_advanced(-(sup), inf);
+    // CGAL_Interval_nt_advanced tmp;
+    // tmp.inf = sup;
+    // tmp.sup = inf;
+    // return tmp;
   }
 
   inline bool is_valid() const
@@ -297,7 +318,7 @@ private:
   }
 
 protected:
-        // "inf" stores the OPPOSITE of the inferior bound.
+        // "inf" stores the OPPOSITE of the lower bound.
         // "sup" stores the upper bound of the interval.
   double inf, sup;
 };
@@ -309,8 +330,10 @@ class CGAL_Interval_nt : public CGAL_Interval_nt_advanced
 
 public:
 
-  inline CGAL_Interval_nt(double d = 0.0) : CGAL_Interval_nt_advanced(d) {}
-  inline CGAL_Interval_nt(double a,double b) : CGAL_Interval_nt_advanced(a,b){}
+  inline CGAL_Interval_nt(const double d = 0.0)
+      : CGAL_Interval_nt_advanced(d) {}
+  inline CGAL_Interval_nt(const double a, const double b)
+      : CGAL_Interval_nt_advanced(a,b) {}
 
   inline CGAL_Interval_nt(const CGAL_Interval_nt_advanced &d)
     : CGAL_Interval_nt_advanced(d) {}
