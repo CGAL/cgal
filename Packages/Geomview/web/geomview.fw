@@ -37,14 +37,15 @@ http://www.geom.umn.edu/}.  We provide bidirectional commmunication
 between \cgal\ applications and {\it geomview}.
 
 
-This document explains the implementation in order to enable you 
+This document explains the implementation in order to enable you
 to write further input and output operators. This document should be
 read together with the {\it Geomview Manual} \cite{GVManual} and the manual
 pages for the \ccc{CGAL_Geomview_stream}. This document further
 explains how the interprocess communication between the application
 and geomview works, but you do not have to know about these details
-in order to write output operators. 
+in order to write output operators.
 
+@i notice.fwi
 
 \section{Output Operators for CGAL Kernel Classes}
 
@@ -52,7 +53,7 @@ in order to write output operators.
 command language}. Geomview stream output operators for geometric
 objects build {\it gcl}  expressions that describe features of the geometric
 object. This expression is sent to geomview, interpreted and the
-object appears in the camera view of geomview. 
+object appears in the camera view of geomview.
 
 
 \subsection{2D Point (SKEL)}
@@ -187,7 +188,7 @@ operator<<(CGAL_Geomview_stream &gv,
 
     gv << ascii
        << "(geometry " << id
-       << " {appearance {linewidth " 
+       << " {appearance {linewidth "
        << gv.get_line_width()
        << " }{VECT "
        << 1 << 2 << 1   // 1 polyline, two vertices, 1 color
@@ -233,7 +234,7 @@ operator<<(CGAL_Geomview_stream &gv,
     gv << ascii
        << "(geometry " << id << " {appearance {+edge material {edgecolor "
        << gv.ecr()  << gv.ecg()  << gv.ecb() <<  " } shading constant}{ "
-       << binary 
+       << binary
     // it's a planar polygon
        << "OFF BINARY\n"
 
@@ -277,7 +278,7 @@ operator<<(CGAL_Geomview_stream &gv,
     gv << ascii
        << "(geometry " << id << " {appearance {+edge material {edgecolor "
        << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ "
-       << binary 
+       << binary
     // it's a planar polygon
        << "OFF BINARY\n"
 
@@ -577,7 +578,7 @@ operator<<(CGAL_Geomview_stream &gv,
 \subsection{Tetrahedralization Simplex Input}
 
 Input here means that when you click with the right mouse button on a
-simplex in the Camera of {\it geomview} you get a pointer to the 
+simplex in the Camera of {\it geomview} you get a pointer to the
 simplex in your application. Note that it is in the responsibility of
 the user to guarantee that the pointer still points to memory allocated
 for a simplex.
@@ -635,7 +636,7 @@ We cannot use the code of the point in order to draw a vertex
 as we want it to be pickable, and a line even with elevated
 \ccc{line_width} is not pickable. We could draw a sphere, but
 that slows geomview tremendously down, so we draw a cube. The
-size of the cube is controlled by the geomview stream. 
+size of the cube is controlled by the geomview stream.
 
 
 @$@<output operator templates for geometric objects@>+=@{@-
@@ -1019,7 +1020,7 @@ CGAL_Geomview_stream::trace(int i) const
 \subsection{Vertex Radius}
 
 As it is impossible to pick an edge, even with hight \ccc{linewidth}
-we have to display a vertex as sphere or cube. The 
+we have to display a vertex as sphere or cube. The
 An ugly solution, but look at the alternatives:
 @$@<auxiliary output operators@>+=@{@-
 double
@@ -1551,7 +1552,7 @@ public:
                          const CGAL_Bbox_3 &bbox = CGAL_Bbox_3(0,0,0, 1,1,1));
 
     ~CGAL_Geomview_stream();
-    
+
     void clear();
     void look_recenter() const;
 
