@@ -1,14 +1,7 @@
 // examples/Sweep_line/example6.C
 // ------------------------------
 
-#if defined(CGAL_CFG_NO_LONGNAME_PROBLEM) || defined(_MSC_VER)
-#define Quotient                        Qt
-#define Cartesian                       Cn
-#define Arr_segment_exact_traits        AST
-#define allocator                       All
-#define Sweep_curves_base_2             SCB
-#define Intersection_point_node         IPN
-#endif
+#include "short_names.h"
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
