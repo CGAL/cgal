@@ -53,6 +53,9 @@ class Triangulation_face_circulator_2;
 template <  class Gt, class Tds>
 class Triangulation_vertex_circulator_2;
 
+template <  class Gt, class Tds>
+class Triangulation_line_face_circulator_2;
+
 
 template <  class Gt, class Tds>
 class Triangulation_face_handle_2
@@ -88,6 +91,10 @@ public:
     {}
 
   Triangulation_face_handle_2(const Face_circulator& fc)
+    : Pointer_(&(*fc))
+    {}
+
+  Triangulation_face_handle_2(const Line_face_circulator& fc)
     : Pointer_(&(*fc))
     {}
 
