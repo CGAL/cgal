@@ -6,8 +6,8 @@
 
 #include <CGAL/Simple_cartesian.h>
 
-#include <CEP/Visibility_complex/Visibility_complex_point_traits.h>
-#include <CEP/Visibility_complex/Visibility_complex_2.h>
+#include <CGAL/Visibility_complex_point_traits.h>
+#include <CGAL/Visibility_complex_2.h>
 
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Ostream_iterator.h>

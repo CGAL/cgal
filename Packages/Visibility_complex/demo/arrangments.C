@@ -13,9 +13,9 @@
 #include <CGAL/iterator.h>
 
 // Visibility_complex_2 headers
-#include <CEP/Visibility_complex/Visibility_complex_point_traits.h>
-#include <CEP/Visibility_complex/Visibility_complex_2.h>
-#include <CEP/Visibility_complex/Visibility_complex_antichain.h>
+#include <CGAL/Visibility_complex_point_traits.h>
+#include <CGAL/Visibility_complex_2.h>
+#include <CGAL/Visibility_complex_antichain.h>
 
 // Delaunay triangulations headers
 #include <CGAL/Delaunay_triangulation_2.h>
