@@ -32,9 +32,9 @@
 
 int main()
 {
-  std::cout << "Testing Regular_triangulation_2" <<endl;
-  std::cout << " with CGAL::Regular_triangulation_euclidean_traits_2 : "<<endl;
-  std::cout << "using  Cartesian  points "   <<  endl;
+  std::cout << "Testing Regular_triangulation_2" <<std::endl;
+  std::cout << " with CGAL::Regular_triangulation_euclidean_traits_2 : "<<std::endl;
+  std::cout << "using  Cartesian  points "   <<  std::endl;
 
   typedef CGAL::Regular_triangulation_euclidean_traits_2
     <Test_rep_cartesian, Ftype>           RGt;
@@ -45,9 +45,9 @@ int main()
 
     _test_cls_reg_triangulation_2( RCls() );
 
-  std::cout << "Testing Regular_triangulation_2" <<endl;
-  std::cout << " with CGAL::Regular_triangulation_euclidean_traits_2 : "<<endl;
-  std::cout << "using  Homogeneous points "<< endl;
+  std::cout << "Testing Regular_triangulation_2" <<std::endl;
+  std::cout << " with CGAL::Regular_triangulation_euclidean_traits_2 : "<<std::endl;
+  std::cout << "using  Homogeneous points "<< std::endl;
   typedef CGAL::Regular_triangulation_euclidean_traits_2
     <Test_rep_homogeneous, Rtype>            RGt2;
   typedef CGAL::Triangulation_vertex_base_2<RGt2>                     RVb2;
