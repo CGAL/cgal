@@ -1972,7 +1972,7 @@ remove_decrease_dimension(Vertex_handle v)
 	        to_delete.push_back(ib->handle());
         }
 
-        typename std::vector<Cell_handle>::iterator lfit = to_downgrade.begin();
+        typename std::vector<Cell_handle>::iterator lfit=to_downgrade.begin();
         for( ; lfit != to_downgrade.end(); ++lfit) {
 	    Cell_handle f = *lfit;
 	    int j = f->index(v);
