@@ -38,6 +38,8 @@ int main()
 {
   double d = std::numeric_limits<double>::denorm_min();
   double e = std::numeric_limits<double>::min();
+  // Note : denorm_min == min is actually not necessarily a bug.
+  // So a better test should be found.
   if (d == 0 || d == e)
     return 1;
   return 0;
