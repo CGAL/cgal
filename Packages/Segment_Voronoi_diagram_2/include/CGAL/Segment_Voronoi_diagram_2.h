@@ -504,37 +504,45 @@ public:
   // insert a point
   inline Vertex_handle insert(const Point_2& p) {
     // update input site container
-    register_input_site(p);
-    return insert_point(p, Vertex_handle());
+    Point_handle ph = register_input_site(p);
+    Storage_site_2 ss = Storage_site_2::construct_storage_site_2(ph);
+    return insert_point(ss, p, Vertex_handle());
   }
 
   inline Vertex_handle insert(const Point_2& p, Vertex_handle vnear) {
     // update input site container
-    register_input_site(p);
-    return insert_point(p, vnear);
+    Point_handle ph = register_input_site(p);
+    Storage_site_2 ss = Storage_site_2::construct_storage_site_2(ph);
+    return insert_point(ss, p, vnear);
   }
 
 protected:
   // insert a point without registering it in the input sites
   // container: useful for the hierarchy
-  inline Vertex_handle insert_no_register(const Point_2& p,
+  inline Vertex_handle insert_no_register(const Storage_site_2& ss,
+					  const Point_2& p,
 					  Vertex_handle vnear) {
-    return insert_point(p, vnear);
+    return insert_point(ss, p, vnear);
   }
 
 public:
   // insert a segment
   inline Vertex_handle insert(const Point_2& p0, const Point_2& p1) {
     // update input site container
-    register_input_site(p0, p1);
-    return insert_segment(Site_2::construct_site_2(p0, p1), Vertex_handle());
+    Point_handle_pair php = register_input_site(p0, p1);
+    Storage_site_2 ss =
+      Storage_site_2::construct_storage_site_2(php.first, php.second);
+    return insert_segment(ss, Site_2::construct_site_2(p0, p1),
+			  Vertex_handle());
   }
 
   inline Vertex_handle insert(const Point_2& p0, const Point_2& p1, 
 			      Vertex_handle vnear) {
     // update input site container
-    register_input_site(p0, p1);
-    return insert_segment(Site_2::construct_site_2(p0, p1), vnear);
+    Point_handle_pair php = register_input_site(p0, p1);
+    Storage_site_2 ss =
+      Storage_site_2::construct_storage_site_2(php.first, php.second);
+    return insert_segment(ss, Site_2::construct_site_2(p0, p1), vnear);
   }
 
   inline Vertex_handle  insert(const Site_2& t) {
@@ -550,12 +558,16 @@ public:
     // update input site container
 
     if ( t.is_segment() ) {
-      register_input_site( t.source_of_supporting_site(),
-			   t.target_of_supporting_site() );
-      return insert_segment(t, vnear);
+      Point_handle_pair php =
+	register_input_site( t.source_of_supporting_site(),
+			     t.target_of_supporting_site() );
+      Storage_site_2 ss =
+	Storage_site_2::construct_storage_site_2(php.first, php.second);
+      return insert_segment(ss, t, vnear);
     } else if ( t.is_point() ) {
-      register_input_site( t.point() );
-      return insert_point(t.point(), vnear);
+      Point_handle ph = register_input_site( t.point() );
+      Storage_site_2 ss = Storage_site_2::construct_storage_site_2(ph);
+      return insert_point(ss, t.point(), vnear);
     } else {
       CGAL_precondition ( t.is_defined() );
       return Vertex_handle(); // to avoid compiler error
@@ -564,26 +576,31 @@ public:
 
 
 protected:
-  inline void register_input_site(const Point_2& p)
+  inline Point_handle register_input_site(const Point_2& p)
   {
     std::pair<PH,bool> it = pc_.insert(p);
     isc_.insert( Site_rep_2(it.first, it.first, true) );
+    return it.first;
   }
 
-  inline void register_input_site(const Point_2& p0, const Point_2& p1)
+  inline
+  Point_handle_pair register_input_site(const Point_2& p0, const Point_2& p1)
   {
     std::pair<PH,bool> it1 = pc_.insert(p0);
     std::pair<PH,bool> it2 = pc_.insert(p1);
     isc_.insert( Site_rep_2(it1.first, it2.first, false) );
+    return Point_handle_pair(it1.first, it2.first);
   }
 
-  Vertex_handle  insert_first(const Point_2& p);
-  Vertex_handle  insert_second(const Point_2& p);
-  Vertex_handle  insert_third(const Point_2& p);
+  Vertex_handle  insert_first(const Storage_site_2& ss, const Point_2& p);
+  Vertex_handle  insert_second(const Storage_site_2& ss, const Point_2& p);
+  Vertex_handle  insert_third(const Storage_site_2& ss, const Point_2& p);
   Vertex_handle  insert_third(const Site_2& t, const Storage_site_2& ss);
-  Vertex_handle  insert_third(Vertex_handle v0, Vertex_handle v1);
+  Vertex_handle  insert_third(const Storage_site_2& ss, Vertex_handle v0,
+			      Vertex_handle v1);
 
-  Vertex_handle insert_point(const Point_2& p, Vertex_handle vnear);
+  Vertex_handle insert_point(const Storage_site_2& ss, const Point_2& p,
+			     Vertex_handle vnear);
   Vertex_handle insert_point(const Storage_site_2& ss,
 			     const Site_2& t, Vertex_handle vnear);
   Vertex_handle insert_point2(const Storage_site_2& ss,
@@ -597,7 +614,8 @@ protected:
   insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 				Vertex_handle v);
 
-  Vertex_handle insert_segment(const Site_2& t, Vertex_handle vnear);
+  Vertex_handle insert_segment(const Storage_site_2& ss, const Site_2& t,
+			       Vertex_handle vnear);
 
   Vertex_handle insert_segment_interior(const Site_2& t,
 					const Storage_site_2& ss,
@@ -815,6 +833,7 @@ protected:
 protected:
   // HELPER METHODS FOR CREATING STORAGE SITES
   //------------------------------------------
+#if 0
   inline Storage_site_2 create_storage_site(const Point_2& p) {
     Point_handle ph = pc_.insert(p).first;
     return Storage_site_2::construct_storage_site_2(ph);
@@ -825,6 +844,7 @@ protected:
     return Storage_site_2::construct_storage_site_2
       ( v0->storage_site().point(), v1->storage_site().point() );
   }
+#endif
 
   inline
   Storage_site_2 split_storage_site(const Storage_site_2& ss0,

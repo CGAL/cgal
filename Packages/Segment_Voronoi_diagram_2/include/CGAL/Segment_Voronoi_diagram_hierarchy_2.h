@@ -94,8 +94,10 @@ public:
   typedef typename Base::Input_sites_iterator      Input_sites_iterator;
   typedef typename Base::Output_sites_iterator     Output_sites_iterator;
 
+  typedef typename Base::Point_handle              Point_handle;
+
 protected:
-  typedef typename Base::PC                        PC;
+  typedef typename Base::Point_handle_pair         Point_handle_pair;
 
 public:
   typedef typename Base::Point_container           Point_container;
@@ -190,13 +192,16 @@ public:
   }
 
   Vertex_handle  insert(const Point_2& p) {
-    this->register_input_site(p);
-    return insert_point(p, UNDEFINED_LEVEL);
+    Point_handle ph = this->register_input_site(p);
+    Storage_site_2 ss = Storage_site_2::construct_storage_site_2(ph);
+    return insert_point(p, ss, UNDEFINED_LEVEL);
   }
 
   Vertex_handle  insert(const Point_2& p0, const Point_2& p1) {
-    this->register_input_site(p0,p1);
-    return insert_segment(p0, p1, UNDEFINED_LEVEL);
+    Point_handle_pair php = this->register_input_site(p0,p1);
+    Storage_site_2 ss =
+      Storage_site_2::construct_storage_site_2(php.first, php.second);
+    return insert_segment(p0, p1, ss, UNDEFINED_LEVEL);
   }
 
   Vertex_handle insert(const Point_2& p, Vertex_handle) {
@@ -214,11 +219,15 @@ public:
     CGAL_precondition( t.is_input() );
 
     if ( t.is_segment() ) {
-      this->register_input_site(t.source(), t.target());
-      return insert_segment(t.source(), t.target(), UNDEFINED_LEVEL);
+      Point_handle_pair php =
+	this->register_input_site(t.source(), t.target());
+      Storage_site_2 ss =
+	Storage_site_2::construct_storage_site_2(php.first, php.second);
+      return insert_segment(t.source(), t.target(), ss, UNDEFINED_LEVEL);
     } else if ( t.is_point() ) {
-      this->register_input_site( t.point() );
-      return insert_point(t.point(), UNDEFINED_LEVEL);
+      Point_handle ph = this->register_input_site( t.point() );
+      Storage_site_2 ss = Storage_site_2::construct_storage_site_2(ph);
+      return insert_point(t.point(), ss, UNDEFINED_LEVEL);
     } else {
       CGAL_precondition ( t.is_defined() );
       return Vertex_handle(); // to avoid compiler error
@@ -230,27 +239,28 @@ public:
   }
 
 protected:
-  Vertex_handle insert_point(const Point_2& p, int level) {
+  Vertex_handle insert_point(const Point_2& p, const Storage_site_2& ss,
+			     int level) {
     if ( level == UNDEFINED_LEVEL ) {
       level = random_level();
     }
 
     Vertex_handle vertices[svd_hierarchy_2__maxlevel];
   
-    insert_point(p, level, vertices);
+    insert_point(p, ss, level, vertices);
 
     return vertices[0];
   }
 
-  void          insert_point(const Point_2& p, int level,
-			     Vertex_handle* vertices);
+  void          insert_point(const Point_2& p, const Storage_site_2& ss,
+			     int level,	Vertex_handle* vertices);
 
   void          insert_point(const Site_2& t, const Storage_site_2& ss,
 			     int low, int high, Vertex_handle vbelow,
 			     Vertex_handle* vertices);
 
   Vertex_handle insert_segment(const Point_2& p0, const Point_2& p1,
-			       int level); 
+			       const Storage_site_2& ss, int level); 
 
   Vertex_handle insert_segment_interior(const Site_2& t,
 					const Storage_site_2& ss,

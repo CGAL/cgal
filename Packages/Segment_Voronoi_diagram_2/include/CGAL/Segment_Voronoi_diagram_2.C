@@ -70,13 +70,10 @@ operator=(const Self& other)
 template<class Gt, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-insert_first(const Point_2& p)
+insert_first(const Storage_site_2& ss, const Point_2& p)
 {
   CGAL_precondition( number_of_vertices() == 0 );
 
-  Storage_site_2 ss = create_storage_site(p);
-
-  //  return create_vertex_dim_up(ss);
   Vertex_handle v = this->_tds.insert_second();
   v->set_site(ss);
   return v;
@@ -85,7 +82,7 @@ insert_first(const Point_2& p)
 template<class Gt, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-insert_second(const Point_2& p)
+insert_second(const Storage_site_2& ss, const Point_2& p)
 {
   CGAL_precondition( number_of_vertices() == 1 );
   // p0 is actually a point
@@ -97,17 +94,15 @@ insert_second(const Point_2& p)
     return Vertex_handle(finite_vertices_begin());
   }
 
-  Storage_site_2 ss = create_storage_site(p);
   return create_vertex_dim_up(ss);
 }
 
 template<class Gt, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-insert_third(const Point_2& p)
+insert_third(const Storage_site_2& ss, const Point_2& p)
 {
   Site_2 t = Site_2::construct_site_2(p);
-  Storage_site_2 ss = create_storage_site(p);
   return insert_third(t, ss);
 }
 
@@ -217,14 +212,13 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
 template<class Gt, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-insert_third(Vertex_handle v0, Vertex_handle v1)
+insert_third(const Storage_site_2& ss, Vertex_handle v0, Vertex_handle v1)
 {
   CGAL_precondition( number_of_vertices() == 2 );
 
   //  this can only be the case if the first site is a segment
   CGAL_precondition( dimension() == 1 );
 
-  Storage_site_2 ss = create_storage_site(v0, v1);
   Vertex_handle v = create_vertex_dim_up(ss);
 
   Face_circulator fc = incident_faces(v);
@@ -248,19 +242,18 @@ insert_third(Vertex_handle v0, Vertex_handle v1)
 template<class Gt, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-insert_point(const Point_2& p, Vertex_handle vnear)
+insert_point(const Storage_site_2& ss, const Point_2& p, Vertex_handle vnear)
 {
   int n = number_of_vertices();
   if ( n == 0 ) {
-    return insert_first(p);
+    return insert_first(ss, p);
   } else if ( n == 1 ) {
-    return insert_second(p);
+    return insert_second(ss, p);
   } else if ( n == 2 ) {
-    return insert_third(p);
+    return insert_third(ss, p);
   }
 
   Site_2 t = Site_2::construct_site_2(p);
-  Storage_site_2 ss = create_storage_site(p);
   return insert_point(ss, t, vnear);
 }
 
@@ -659,23 +652,22 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 template<class Gt, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-insert_segment(const Site_2& t, Vertex_handle vnear)
+insert_segment(const Storage_site_2& ss, const Site_2& t, Vertex_handle vnear)
 {
   CGAL_precondition( t.is_segment() );
   CGAL_precondition( t.is_input() );
 
   if ( is_degenerate_segment(t) ) {
-    return insert_point(t.source(), vnear);
+    return insert_point(ss.source_site(), t.source(), vnear);
   }
 
-  Vertex_handle v0 = insert_point( t.source(), vnear );
-  Vertex_handle v1 = insert_point( t.target(), v0 );
+  Vertex_handle v0 = insert_point( ss.source_site(), t.source(), vnear );
+  Vertex_handle v1 = insert_point( ss.target_site(), t.target(), v0 );
 
   if ( number_of_vertices() == 2 ) {
-    return insert_third(v0, v1);
+    return insert_third(ss, v0, v1);
   }
 
-  Storage_site_2 ss = create_storage_site(v0, v1);
   return insert_segment_interior(t, ss, v0);
 }
 

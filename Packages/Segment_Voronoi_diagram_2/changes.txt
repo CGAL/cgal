@@ -7,6 +7,8 @@
   is that sets automatically check whether the inserted item has already been
   inserted; with lists one has to do that explicitly and it is very
   inefficient.
+- made the code a bit more memory efficient: storage sites are created at
+  the top-most level and are passed throughout the various methods
 
 17 august 2004:  Menelaos Karavelas
 - changed the API for the storage site classes; changed the classes that

@@ -40,7 +40,8 @@ public:
   typedef Gt                             Geom_traits;
   typedef typename Geom_traits::Site_2   Site_2;
   typedef typename std::set<typename Site_2::Point_2>::iterator Point_handle;
-  //  typedef typename std::list<typename Site_2::Point_2>::iterator Point_handle;
+  //  typedef typename std::list<typename Site_2::Point_2>::iterator
+  //  Point_handle;
 
 protected:
   typedef Point_handle                   Handle;

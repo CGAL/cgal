@@ -110,7 +110,8 @@ operator=(const Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag> &svd)
 template<class Gt, class STag, class DS, class LTag>
 void
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
-insert_point(const Point_2& p, int level, Vertex_handle* vertices)
+insert_point(const Point_2& p, const Storage_site_2& ss, int level,
+	     Vertex_handle* vertices)
 {
   CGAL_precondition( level != UNDEFINED_LEVEL );
 
@@ -135,15 +136,12 @@ insert_point(const Point_2& p, int level, Vertex_handle* vertices)
       if ( at_res == AT2::IDENTICAL ) {
 	vertex = vnear[0];
       } else {
-	Storage_site_2 ss = create_storage_site(p);
 	vertex = hierarchy[0]->insert_point2(ss, t, vnear[0]);
       }
     } else { // nearest neighbor is a segment
       CGAL_assertion( vnear[0]->is_segment() );
       CGAL_assertion( at_res == AT2::DISJOINT ||
 		      at_res == AT2::INTERIOR );
-
-      Storage_site_2 ss = create_storage_site(p);
 
       if ( at_res == AT2::INTERIOR ) {
 	CGAL_assertion( t.is_input() );
@@ -164,11 +162,11 @@ insert_point(const Point_2& p, int level, Vertex_handle* vertices)
       }
     }
   } else if ( n == 0 ) {
-    vertex = hierarchy[0]->insert_first(p);
+    vertex = hierarchy[0]->insert_first(ss, p);
   } else if ( n == 1 ) {
-    vertex = hierarchy[0]->insert_second(p);
+    vertex = hierarchy[0]->insert_second(ss, p);
   } else if ( n == 2 ) {
-    vertex = hierarchy[0]->insert_third(p);
+    vertex = hierarchy[0]->insert_third(ss, p);
   }
 
   CGAL_assertion( vertex != Vertex_handle() );
@@ -178,7 +176,7 @@ insert_point(const Point_2& p, int level, Vertex_handle* vertices)
   // insert at other levels
   Vertex_handle previous = vertex;
 
-  Storage_site_2 ss = vertex->storage_site();
+  //  Storage_site_2 ss = vertex->storage_site();
 
   int k = 1;
   while ( k <= new_level ) {
@@ -188,7 +186,7 @@ insert_point(const Point_2& p, int level, Vertex_handle* vertices)
     } else if ( nv == 2 ) {
       vertex = hierarchy[k]->insert_third(t, ss);
     } else { // nv == 0 || nv == 1
-      vertex = hierarchy[k]->insert_no_register(p, vnear[k]);
+      vertex = hierarchy[k]->insert_no_register(ss, p, vnear[k]);
     }
 
     CGAL_assertion( vertex != Vertex_handle() );
@@ -237,7 +235,7 @@ insert_point(const Site_2& t, const Storage_site_2& ss,
       vertex = hierarchy[k]->insert_third(t, ss);
     } else {
       if ( ss.is_input() ) {
-	vertex = hierarchy[k]->insert_no_register(t.point(), vnear[k]);
+	vertex = hierarchy[k]->insert_no_register(ss, t.point(), vnear[k]);
       } else {
 	break;
       }
@@ -272,7 +270,7 @@ typename
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
 insert_segment(const Point_2& p0, const Point_2& p1,
-	       int level/*, Tag_true stag*/)
+	       const Storage_site_2& ss, int level/*, Tag_true stag*/)
 {
   // the tag is true so we DO insert segments in hierarchy
   if ( level == UNDEFINED_LEVEL ) {
@@ -282,18 +280,19 @@ insert_segment(const Point_2& p0, const Point_2& p1,
   Site_2 t = Site_2::construct_site_2(p0, p1);
 
   if ( is_degenerate_segment(t) ) {
-    return insert_point(p0, level);
+    return insert_point(p0, ss.source_site(), level);
   }
 
   Vertex_handle vertices0[svd_hierarchy_2__maxlevel];
   Vertex_handle vertices1[svd_hierarchy_2__maxlevel];
 
-  insert_point(p0, level, vertices0);
+  insert_point(p0, ss.source_site(), level, vertices0);
 
 #if 0
   insert_point(p1, level, vertices1);
 #else // this way may be faster...
-  vertices1[0] = hierarchy[0]->insert_no_register(p1, vertices0[0]);
+  vertices1[0] =
+    hierarchy[0]->insert_no_register(ss.target_site(), p1, vertices0[0]);
   if ( level >= 1 ) {
     Storage_site_2 ss1 = vertices1[0]->storage_site();
     insert_point(ss1.site(), ss1, 1, level, vertices1[0], vertices1);
@@ -308,11 +307,10 @@ insert_segment(const Point_2& p0, const Point_2& p1,
   if ( hierarchy[0]->number_of_vertices() == 2 ) {
     static Segments_in_hierarchy_tag stag;
 
-    vertex = hierarchy[0]->insert_third(vertices0[0], vertices1[0]);
+    vertex = hierarchy[0]->insert_third(ss, vertices0[0], vertices1[0]);
     insert_segment_in_upper_levels(t, vertex->storage_site(),
 				   vertex, vertices0, level, stag);
   } else {
-    Storage_site_2 ss = create_storage_site(vertices0[0], vertices1[0]);
     vertex = insert_segment_interior(t, ss, vertices0, level);
   }
 

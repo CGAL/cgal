@@ -40,7 +40,8 @@ public:
   typedef Gt                             Geom_traits;
   typedef typename Geom_traits::Site_2   Site_2;
   typedef typename std::set<typename Site_2::Point_2>::iterator Point_handle;
-  //  typedef typename std::list<typename Site_2::Point_2>::iterator Point_handle;
+  //  typedef typename std::list<typename Site_2::Point_2>::iterator
+  //  Point_handle;
 
 protected:
   typedef Point_handle                   Handle;
@@ -143,29 +144,29 @@ public:
   Self source_site() const
   {
     CGAL_precondition( is_segment() );
-    return Self(h_[0]);
+    return construct_storage_site_2(h_[0]);
   }
 
   Self target_site() const
   {
     CGAL_precondition( is_segment() );
-    return Self(h_[1]);
+    return construct_storage_site_2(h_[1]);
   }
 
   Self supporting_site() const {
     CGAL_precondition( is_segment() );
-    return Self(h_[0], h_[1]);
+    return construct_storage_site_2(h_[0], h_[1]);
   }
 
   Self supporting_site(unsigned int i) const {
     CGAL_precondition( is_point() && !is_input() && i < 2 );
-    return Self(h_[0], h_[0]);
+    return construct_storage_site_2(h_[0], h_[0]);
   }
 
   Self crossing_site(unsigned int i) const {
     CGAL_precondition( is_segment() && !is_input() );
     CGAL_precondition( i < 2 && !is_input(i) );
-    return Self(h_[0], h_[0]);
+    return construct_storage_site_2(h_[0], h_[0]);
   }
 
 protected:
