@@ -1,3 +1,6 @@
+1.20 (27 January 2003)
+- Add CGAL/Kernel/Type_equality_wrapper.h.
+
 1.19 (23 January 2003)
 - Remove empty obsolete class Ref_counted.
 - Cleanup Handle_for.h wrt VC++ 6.
