@@ -136,32 +136,33 @@ public:
 		    OUTSIDE_AFFINE_HULL};
 
 protected:
-  //Helping classes
+//  //Helping classes
 
- //  to be used as adaptators from iterators with Edge value_type
- //   to an iterator with Tds::Edge as value type
-  template<class It>
-  class To_tds_edge_iterator : public It {
-  public:
-    typedef typename Triangulation_data_structure::Edge  Tds_Edge;
-    To_tds_edge_iterator() {}
-    To_tds_edge_iterator(It i) : It(i) {} 
-    Tds_Edge  operator*() {
-      Edge e = It::operator*();
-      return Tds_Edge( &*(e.first), e.second);
-    }
-  };
+// The following nested template classes do not compile on bcc
+//  //  to be used as adaptators from iterators with Edge value_type
+//  //   to an iterator with Tds::Edge as value type
+//   template<class It>
+//   class To_tds_edge_iterator : public It {
+//   public:
+//     typedef typename Triangulation_data_structure::Edge  Tds_Edge;
+//     To_tds_edge_iterator() {}
+//     To_tds_edge_iterator(It i) : It(i) {} 
+//     Tds_Edge  operator*() {
+//       Edge e = It::operator*();
+//       return Tds_Edge( &*(e.first), e.second);
+//     }
+//   };
 
- //  to be used as adaptators from iterators with Face_jhandle value_type
- //   to an iterator with Tds::Face* as value type
-  template<class It>
-  class To_tds_face_iterator : public It {
-  public:
-    typedef typename Triangulation_data_structure::Face  Tds_Face;
-    To_tds_face_iterator() {}
-    To_tds_face_iterator(It i) : It(i) {} 
-    Tds_Face* operator*() { return  &*(It::operator*() ); }
-  };
+//  //  to be used as adaptators from iterators with Face_jhandle value_type
+//  //   to an iterator with Tds::Face* as value type
+//   template<class It>
+//   class To_tds_face_iterator : public It {
+//   public:
+//     typedef typename Triangulation_data_structure::Face  Tds_Face;
+//     To_tds_face_iterator() {}
+//     To_tds_face_iterator(It i) : It(i) {} 
+//     Tds_Face* operator*() { return  &*(It::operator*() ); }
+//   };
 
 protected:
   Gt  _gt;
@@ -427,50 +428,18 @@ public:
 			   EdgeIt edge_end,
 			   FaceIt face_begin,
 			   FaceIt face_end) {
-//     To_tds_edge funct1;
-//     To_tds_face funct2;
-//     typedef typename Triangulation_data_structure::Face  Tds_Face;
-//     typedef typename Triangulation_data_structure::Edge  Tds_Edge;
-//     Tds_Edge  e = funct1(*edge_begin);
-    //Tds_Face* fa = funct2(*face_begin);
-
- //    typedef Iterator_project<EdgeIt, To_tds_edge>  Edge_adaptor; 
-//     typedef Iterator_project<FaceIt, To_tds_face>  Face_adaptor;
-
-//     Edge_adaptor ea = Edge_adaptor(edge_begin);
-//     //Face_adaptor fa = Face_adaptor(face_begin);
-//     ea++;
-    
-    typedef To_tds_edge_iterator<EdgeIt> Tds_ei;
-    typedef To_tds_face_iterator<FaceIt> Tds_fi;
+    typedef typename Triangulation_data_structure::Edge  Tds_Edge;
+    typedef typename Triangulation_data_structure::Face  Tds_Face;
+    typedef To_tds_edge_iterator<EdgeIt, Tds_Edge> Tds_ei;
+    typedef To_tds_face_iterator<FaceIt, Tds_Face> Tds_fi;
     Vertex_handle v = static_cast<Vertex*> 
                        (_tds.star_hole( Tds_ei(edge_begin), 
 					Tds_ei(edge_end),
 					Tds_fi(face_begin),
 					Tds_fi(face_end)) );
-
-
-//     //provisoire tant que les iterator adaptors ne marche pas
-//     typedef typename Triangulation_data_structure::Face  Tds_Face;
-//     typedef typename Triangulation_data_structure::Edge  Tds_Edge;
-//     std::list<Tds_Face*> list_face;
-//     std::list<Tds_Edge> list_edge; 
-//     for( EdgeIt eit=edge_begin; eit != edge_end; eit++)
-//       list_edge.push_back( Tds_Edge(&(*(eit->first)), eit->second));
-//     for (FaceIt fit=face_begin; fit != face_end; fit++) {
-//        list_face.push_back( &**fit );
-//     }
-//      Vertex_handle v = static_cast<Vertex*> (
-//                        _tds.star_hole(list_edge.begin(),
-// 				      list_edge.end(),
-// 				      list_face.begin(),
-// 				      list_face.end() ) );
-
     v->set_point(p);
     return v;
   }
-
-  
 
 };
 

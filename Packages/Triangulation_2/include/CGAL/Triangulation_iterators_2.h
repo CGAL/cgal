@@ -235,6 +235,42 @@ public:
   Finite_edges  operator--(int);
 };
 
+  //Helping classes
+ //  to be used as adaptators from iterators value_type
+ //   Edge of the triangulation
+ //  to an iterator with Tds::Edge as value type
+  template<class It, class TdsEdge>
+  class To_tds_edge_iterator : public It {
+  public:
+    typedef TdsEdge  Tds_Edge;
+    typedef typename iterator_traits<It>::value_type Edge;
+    To_tds_edge_iterator() {}
+    To_tds_edge_iterator(It i) : It(i) {} 
+    Tds_Edge  operator*() {
+      Edge e = It::operator*();
+      return Tds_Edge( &*(e.first), e.second);
+    }
+  };
+
+ //  to be used as adaptators from iterators with Face_handle value_type
+ //   to an iterator with Tds::Face* as value type
+  template<class It, class TdsFace>
+  class To_tds_face_iterator : public It {
+  public:
+    typedef TdsFace  Tds_Face;
+    To_tds_face_iterator() {}
+    To_tds_face_iterator(It i) : It(i) {} 
+    Tds_Face* operator*() { return  &*(It::operator*() ); }
+  };
+
+
+
+
+
+
+
+
+
 template < class Gt, class Tds>
 inline
 Triangulation_all_faces_iterator_2<Gt,Tds>&
