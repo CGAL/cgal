@@ -55,7 +55,7 @@ all:             \
 	for dir in $(DEMO_SUBDIRS); do \
 	  (cd $$dir && make ) || badexit="yes";\
 	done; \
-        test -z $$badexit
+        test -z "$$badexit"
 
 $(DEMO_SUBDIRS):
 	cd $@ && make
