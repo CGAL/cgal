@@ -176,24 +176,24 @@ public:
     return isRightEnd(p);
   }
 
-  const Point_2 &getRightEnd() {
+  const Point_2 &getRightEnd() const {
     if ( isSourceLeftToTarget() )
       return m_target;
     return m_source;
   }
 
-  const Point_2 &getLeftEnd() {
+  const Point_2 &getLeftEnd() const {
     if ( isSourceLeftToTarget() )
       return m_source;
     return m_target;
   }
 
-  const Point_2 &getTopEnd() {
+  const Point_2 &getTopEnd() const {
     assert(m_traits->curve_is_vertical(m_curve)==true);
     return getRightEnd();
   }
 
-  const Point_2 &getBottomEnd() {
+  const Point_2 &getBottomEnd() const {
     assert(m_traits->curve_is_vertical(m_curve)==true);
     return getLeftEnd();
   }
