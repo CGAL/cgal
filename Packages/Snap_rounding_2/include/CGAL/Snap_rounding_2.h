@@ -45,7 +45,7 @@
 #include <list>
 #include <set>
 #include <CGAL/leda_real.h>
-#include <CGAL/Snap_rounding_kd_2.h.
+#include <CGAL/Snap_rounding_kd_2.h>
 
 #include <CGAL/utility.h>
 #include <CGAL/Iterator_project.h>
@@ -100,6 +100,7 @@ private:
   Segment_2 *left_seg;
   Segment_2 *top_seg;
   Segment_2 *bot_seg;
+  Rep_   _gt;
 
 public:
   template<class Out>
@@ -142,6 +143,9 @@ typedef typename Traits::X_curve                     X_curve;
 typedef typename Traits::Curve                       Curve;
 typedef std::list<X_curve>                           CurveContainer;
 typedef typename CurveContainer::iterator            CurveContainerIter;
+
+//typedef typename Traits::compare_x_2_object                  compare_x_2_object;
+//typedef typename Traits::compare_y_2_object                  compare_y_2_object;
 
 public:
   friend class Segment_data<Rep>;
@@ -442,21 +446,26 @@ bool Hot_Pixel<Rep_>::intersect_right(Segment_2 &seg) const
                Snap_rounding_2<Rep_>::DOWN_LEFT && seg.target().y() != tmp);
       else if(p.y() == y - pixel_size / 2.0)
         return(false);// was checked
-      else
+      else {
+        Point_2 p_check(x + pixel_size / 2.0,0);
+        Comparison_result c_target = _gt.compare_x_2_object()(p_check,seg.target());
+        Comparison_result c_source = _gt.compare_x_2_object()(p_check,seg.source());
+
         return((Snap_rounding_2<Rep_>::get_direction() ==
                 Snap_rounding_2<Rep_>::LEFT ||
                 Snap_rounding_2<Rep_>::get_direction() ==
                 Snap_rounding_2<Rep_>::DOWN_LEFT ||
                 Snap_rounding_2<Rep_>::get_direction() ==
-                Snap_rounding_2<Rep_>::UP_LEFT) && seg.target().x() !=
-                x + pixel_size / 2.0 ||
+                Snap_rounding_2<Rep_>::UP_LEFT) &&
+                c_target != EQUAL ||
                 (Snap_rounding_2<Rep_>::get_direction() ==
                 Snap_rounding_2<Rep_>::RIGHT ||
                 Snap_rounding_2<Rep_>::get_direction() ==
                 Snap_rounding_2<Rep_>::DOWN_RIGHT ||
                 Snap_rounding_2<Rep_>::get_direction() ==
-                Snap_rounding_2<Rep_>::UP_RIGHT) && seg.source().x() !=
-                x + pixel_size / 2.0);
+                Snap_rounding_2<Rep_>::UP_RIGHT) &&
+                c_source != EQUAL);
+      }
     } else
       return(false);
   }
