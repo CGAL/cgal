@@ -1,0 +1,157 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Largest_empty_iso_rectangle_2.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Eli Packer
+% | Package: 
+% | 
+%\RCSdef{\RCSTriangulationRev}{$Revision$}
+%\RCSdefDate{\RCSTriangulationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Largest_empty_iso_rectangle_2<T>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+Given a set of points in the plane, the class \ccRefName\ is a data
+structure that maintains the iso-rectangle with the largest area among
+all iso-rectangles that are in the bounding box of the point set, and
+that do not contain any point of the point set.
+
+The class \ccRefName\ expects a model of a \ccc{geometric traits
+class} as its template argument.  Todo: We have to enumerate which
+functions and types have to provided by the traits class: \ccc{Less_x_2, 
+Less_yx_2, Less_yx_2, Compare_x_2, Compare_y_2, Comparison_result}
+
+\ccInclude{CGAL/Largest_empty_iso_rectangle_2.h}
+
+
+\ccTypes
+The class \ccClassTemplateName\ defines the following types:
+
+\ccThreeToTwo
+
+\ccTypedef{typedef Traits Geom_traits;}{}
+
+\ccTypedef{typedef Traits::Point_2 Point_2;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Iso_rectangle_2 Iso_rectangle_2;}{}
+
+
+The following iterator allows to enumerate the points. 
+It is non mutable, bidirectional
+and its value type is \ccc{Point_2}. 
+It is invalidated by any insertion or removal of a point. 
+
+\ccNestedType{const_iterator}{iterator over points}
+
+
+The \ccRefName class also defines the following enum type to specify
+which case occurs when locating a point. 
+
+\ccEnum{enum Point_type {REG, BOT_RIGHT, BOT_LEFT, TOP_LEFT, TOP_RIGHT};}
+{}
+
+
+\ccCreation
+\ccCreationVariable{l}  %% choose variable name
+\ccSetTwoColumns{Qt_widget}{}
+%\ccThree{Largest_empty_iso_rectangle_2<Traits>(const Point_2& bl, const Point_2& tr)}{}{}
+
+\ccConstructor{Largest_empty_iso_rectangle_2<Traits>
+(const Iso_rectangle_2 &b);}
+{.} 
+
+\ccFunction{void ~Largest_empty_iso_rectangle_2<Traits>();}
+{Destructor.}
+
+\ccOperations
+\ccSetThreeColumns{const_iterator}{container.begin() const;}{}
+
+\ccHeading{Assignment}
+
+\ccMethod{Largest_empty_iso_rectangle_2<Traits>
+	operator=(const Largest_empty_iso_rectangle_2<Traits> & tr);}
+{not yet implemented. Data structure is duplicated, and modifying one copy after the 
+duplication does not modify the other copy.}
+
+
+
+\ccAccessFunctions
+
+\ccMethod{const Traits & geom_traits() const;}
+{Returns a const reference to the geometric traits object.}
+
+
+\ccMethod{const_iterator begin() const;}
+{Returns an iterator to the beginning of the point set.}
+\ccMethod{const_iterator end() const;}
+{Returns .}
+
+
+\ccHeading{Queries}
+
+\ccMethod{quadruple<Point_2, Point_2, Point_2, Point_2>
+  get_left_bottom_right_top();}
+{Returns the four points that define the largest empty iso-rectangle.
+Note that these points are almost never on a corner of an iso-rectangle.}
+\ccGlue
+\ccMethod{Iso_rectangle_2  get_largest_empty_iso_rectangle();}
+{Returns the largest empty iso-rectangle. Note that the two
+point defining the iso-rectangle are almost never part of 
+the point set.}
+\ccGlue
+\ccMethod{Iso_rectangle_2 get_bounding_box();}
+{Returns  the bounding box;}
+\ccHeading{Insertion}
+
+A word to degeneracies.
+
+\ccMethod{void 
+  insert(const Point_2& p, Point_type i_type = REG);}
+{Inserts point \ccc{p} in the .\\
+If point \ccc{p} coincides with an already existing vertex, .}
+
+\ccMethod{void 
+  push_back(const Point_2& p);}
+{Inserts point \ccc{p} in the .\\
+If point \ccc{p} coincides with an already existing vertex, .}
+
+
+\ccMethod{template < class InputIterator >
+          int
+          insert(InputIterator first, InputIterator last);}
+{Inserts the points in the range $\left[\right.$\ccc{first},
+\ccc{last}$\left.\right)$.  Returns the number of inserted points.
+\ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
+\ccc{Point}.}}
+
+\ccHeading{Removal}
+
+\ccMethod{bool remove(const Point_2& p);}{Removes point \ccc{p}.
+Returns false, iff \ccc{p} is not in the point set or one of the 
+four auxiliary points. }
+
+\ccMethod{void clear();}
+{Removes all points of \ccVar.}
+
+\ccSeeAlso
+
+
+
+\ccExample
+
+%%\ccIncludeExampleCode{examples/Triangulation3/example1.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
