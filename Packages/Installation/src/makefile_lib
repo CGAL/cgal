@@ -35,6 +35,7 @@ File_writer_VRML_2.o \
 File_writer_inventor.o \
 File_writer_wavefront.o \
 Float.o \
+Geomview_stream.o \
 Origin.o \
 Random.o \
 aff_transformation_tags.o \
