@@ -61,6 +61,8 @@
 
 %% macros for WWW pages
 \newcommand{\cgalhomepage}{\path'http://www.cgal.org'}
+\newcommand{\cgalwinlibmsvc}{\path'http://www.cgal.org/download/CGALWin/MS\_windows/Visual\_C++/CGALWin\_msvc\_native.zip'}
+\newcommand{\cgalwinlibbcc}{\path'http://www.cgal.org/download/CGALWin/MS\_windows/Borland/CGALWin\_bcc\_native.zip'}
 \newcommand{\cgalwinlibpage}{\path'http://www.cgal.org/download/CGALWin/'}
 \newcommand{\sgistlpage}{\path'http://www.sgi.com/tech/stl/'}
 \newcommand{\stlportpage}{\path'http://www.stlport.org/'}
@@ -103,9 +105,9 @@ we could not work around all of them.
 On \mswin, one has two options for installing: one is specifically
 targeted for this OS and is described in
 section~\ref{sec:wininst}\footnote{see also the file
-  \texttt{install.txt} in the root directory of the installation}; the
+  \texttt{INSTALL.win32} in the root directory of the installation}; the
 other is using
-Cygwin\footnote{\path~http://sources.redhat.com/cygwin~} and the
+Cygwin\footnote{\path~http://www.cygwin.com~} and the
 generic installation procedure for Unix-like environments described in
 section~\ref{sec:sample-inst} and subsequent sections.  If you are
 going to install \cgal\ using Cygwin, please read section
@@ -222,6 +224,7 @@ in the present release).
 It is planned that in the future on \mswin\ the installation procedure
 will be automated via InstallShield.
 
+
 \subsection{Visualization}\label{sec:vis}
 
 The programs in the \texttt{demo} directory provide visual output.
@@ -241,14 +244,25 @@ of \leda\ from the \cgal\ download page. It is available in binary
 form only and only for academic research and teaching use.
 
 The installation of the \texttt{CGALWin} binary is described in
-Section~\ref{sec:cgalwin}, but notice that it should be installed only
+Section~\ref{sec:cgalwin}. 
+
+\begin{itemize}
+\item If you are installing \cgal\ on a Unix platform
+or on \mswin\ using Cygwin, \texttt{CGALWin} should be installed only
 after the \cgal\ libraries have been built.
+\item If you are installing \cgal\ on \mswin\ using native tools, that is,
+{\em not} using Cygwin, and are not planning using \leda\ for doing 
+visualization, at this point you could already download\\
+\cgalwinlibmsvc , or/and\\
+ \cgalwinlibbcc , 
+depending on the compiler you are to use, and upack into \cgaldir .
+\end{itemize}
 
-Demo programs for 3D structures require the geomview program for
+Some demo programs for 3D structures require the geomview program for
 visualisation.\index{visualization!geomview} This is available from
-\path'http://www.geomview.org'.
+\path'http://www.geomview.org' (note that it does not run on \mswin).
 
-\section{Installing \cgal}
+\section{Installing \cgal on Unix or Cygwin}
 
 The directory \cgaldir\ contains a Bourne shell script called
 \texttt{install\_cgal}\TTindex{install\_cgal}
@@ -268,7 +282,7 @@ refer to section \ref{sec:non-interactive}.
 If you want to use \leda\ together with \cgal, have a look at
 section~\ref{sec:leda}.
 
-\section{A Sample Installation}\label{sec:sample-inst}
+\section{A Sample Installation on Unix or Cygwin}\label{sec:sample-inst}
 
 In this section we sketch an example installation on a \textsc{Sun}
 running Solaris 2.6 with the \Gcc{2.95} compiler. For a complete
@@ -433,7 +447,8 @@ using \cgal\ on several platforms.
 
 If you want to use the visualization provided by
 \ccc{CGAL::Window_stream} (Section~\ref{sec:vis}) and you do not have
-the \leda\ libraries installed, you should now proceed to
+the \leda\ libraries installed, or do not want to use them with \cgal, 
+you should now proceed to
 Section~\ref{sec:cgalwin} and install the \texttt{CGALWin} library.
 
 %% Now it would be a good idea to print and read the document ``Getting
@@ -446,11 +461,25 @@ Section~\ref{sec:cgalwin} and install the \texttt{CGALWin} library.
 \TTindex{CGALWin}
 
 \textit{Note: This section applies only to those who do \textbf{not}
-  have the \leda\ libraries installed on their system.}
+  have the \leda\ libraries installed on their system, or do not want to
+use \leda\ with \cgal.}
 
 The \texttt{CGALWin} library, as described in Section~\ref{sec:vis},
 can be shipped in binary format only because of licensing
-restrictions. The binaries are available at the \cgal\ download
+restrictions. 
+
+\subsection{Installing \texttt{CGALWin}  on \mswin\ using native tools}
+If you have not already downloaded and unpacked into \cgaldir\
+the archive(s)\\
+\cgalwinlibmsvc, or/and\\
+ \cgalwinlibbcc, 
+depending on the compiler you are to use, please do so now.
+(This should place object library files in the subdirectory 
+\cgaldir\texttt{$\backslash$lib$\backslash$win32$\backslash$<your-compiler>}.)
+This is all that is needed to be done.
+
+\subsection{Installing \texttt{CGALWin} on Unix or Cygwin}
+The binaries are available at the \cgal\ download
 pages\footnote{\cgalwinlibpage}. 
 
 Fetch the file matching your operating system and compiler, uncompress
@@ -484,7 +513,7 @@ Finally, you have to place it into the lib directory
       cp libCGALWin.a \cgaldir/lib/sparc_SunOS-5.6_g++-2.95.3
 \end{alltt}
 
-\section{The interactive mode}\label{sec:interactive-mode}
+\section{The interactive mode (Unix/Cygwin)}\label{sec:interactive-mode}
 \index{interactive installation}\index{installation!interactive}
 \TTsubindex{install\_cgal}{interactive mode}
 
@@ -713,7 +742,7 @@ differently.\bigskip
 \end{minipage}
 \hfill}
 
-\section{The non-interactive mode}\label{sec:non-interactive}
+\section{The non-interactive mode (Unix/Cygwin)}\label{sec:non-interactive}
 \index{non-interactive
   installation}\index{installation!non-interactive}
 \TTsubindex{install\_cgal}{non-interactive mode}
@@ -867,7 +896,7 @@ succeeded or not.  This option is not recommended for general use, but
 it can be useful to check why a certain test fails that was expected
 to be passed.
 
-\section{Upgrading a previous \cgal\ installation}
+\section{Upgrading a previous \cgal\ installation (Unix/Cygwin)}
 \label{sec:upgrade}\index{upgrading \cgal}\index{CGAL@\cgal!upgrade}
 
 In case you already have a previous release of \cgal\ installed on
@@ -903,7 +932,7 @@ that have not been supported in previous releases. For these compilers
 please follow the usual procedure as described in section
 \ref{sec:interactive-mode} or \ref{sec:non-interactive}.
 
-\section{Identifying OS and Compiler}\label{sec:os-compiler-id}
+\section{Identifying OS and Compiler (Unix/Cygwin)}\label{sec:os-compiler-id}
 \index{OS description}\index{identifying OS and compiler}
 
 Since \cgal\ supports several different operating systems and
@@ -938,7 +967,7 @@ We call the resulting string \cgal-OS description.\\ Examples are
   sparc\_SunOS-5.5\_g++-2.95.3\_LEDA}.\\ You can use the install script
 to get your \cgal-OS description, see section \ref{sec:other-options}.
 
-\section{The \cgal\ makefile structure}\label{sec:makefiles}
+\section{The \cgal\ makefile structure (Unix/Cygwin)}\label{sec:makefiles}
 \index{makefile structure}
 
 The \cgal\ distribution contains the following makefiles:
@@ -1017,7 +1046,7 @@ you may want to remove this suffix rule.  However, note that this may
 have consequences for the makefile variables \texttt{CGAL\_CXX} and
 \texttt{CXXFLAGS}.
 
-\section{Compiling a \cgal\ application}
+\section{Compiling a \cgal\ application (Unix/Cygwin)}
 \index{building applications} 
 \index{compiling applications}
 
@@ -1158,7 +1187,7 @@ system. Depending on the version of \msvc{} you might have to replace
 \cgal-\cgalrelease\ provides a basic support for \msvc{6.0} compiler
 and for Inprise Borland C++ Builder 5, known also as \bcc{5.5}.  The
 use of these with \cgal\ is briefly described in file
-\texttt{install.txt} located in the directory \cgal-\cgalrelease.
+\texttt{INSTALL.win32} located in the directory \cgal-\cgalrelease.
 
 Downloading and contents of the distribution are described in 
 section~\ref{sec:gettingcgal} above.
@@ -1177,11 +1206,7 @@ executables, object files and debug-related files in subdirectories
 \texttt{demo/} and \texttt{examples/} can occupy several hunderd
 megabytes all together.
 
-It is highly recommended that you have a recent (at least 4.0) version
-of \leda\ installed. Most of the \cgal\ demos use \leda\ for
-visualization.
-
-\cgal\ has interfaces to a number of rather important 3rd party
+\cgal\ has interfaces to a number of 3rd party
 packages, that provide, in particular, arbitrary precision arithmetic,
 and visualization. On Windows these packages are \leda\ and \gnu\ MP
 (also known as \gmp ).  \gmp\ is supported by default; see
@@ -1222,7 +1247,15 @@ button and choose \textit{Properties}. Go to \textit{Memory}, select
 \texttt{LEDAROOT\bslsh incl}.
 \end{enumerate}
 
-Typically, assuming that \leda\ is installed in \texttt{k:\bslsh
+Without \leda, one would run a command like
+\begin{verbatim}
+K:\cgal\> cgal_config msc mld
+\end{verbatim}
+
+to configure \cgal\ for \msvc{6.0} in single thread debug mode.
+
+
+Or, assuming that \leda\ is installed in \texttt{k:\bslsh
   LEDA-4.1}, one would run at the command prompt:
 \begin{verbatim}
 K:\cgal\> cgal_config msc k:\LEDA-4.1
@@ -1298,10 +1331,10 @@ have customized \texttt{STLPort-3.2.1} to partially support
 For this to work, the compiler should have \texttt{STLPort}
 subdirectory first in its search path.  This issue is taken care of in
 the makefiles generated.  Customization of IDE is described in Sect
-4.2 below.
+\ref{sssect:mscide} below.
 
 
-\paragraph{Using nmake makefiles.}
+\subsubsection{Using nmake makefiles.}
 Simply adapt a makefile \texttt{makefile.mak} 
 from an \texttt{examples/} or \texttt{demos/} subdirectory.
 This means changing the target \texttt{all} and changing the targets that
@@ -1333,12 +1366,11 @@ variable \texttt{CGAL\_MAKEFILE} to specify the full path to
 \texttt{makefile.mak} in
 \CGALR .
 
-Probably such a makefile can also be used for a ``custom build'' via an
-IDE, although we never attempted this ourselves.
+%Probably such a makefile can also be used for a ``custom build'' via an
+%IDE, although we never attempted this ourselves.
 
 
-\paragraph{Using \msvc\ IDE.}
-
+\subsubsection{Using \msvc\ IDE.}\label{sssect:mscide}
 The compiler/linker options used to build the \cgal\ library should
 match those used for the project. This can be done by
 selecting {\em Project/Settings...}, the {\em C/C++} section,
@@ -1368,6 +1400,33 @@ library paths can be entered as shown), or
 \texttt{\$(CGAL\_ROOT)} must be
 replaced by the corresponding full path to the \cgal\ installation.
 
+There are two ways of customizing this, either per project, or per workspace.
+(It is assumed that your CGAL project is within this workspace.)
+The latter is more user-friendly, because the choice of directories is
+can be done with the usual Windows explorer wizard.
+
+{\bf Customizing compilation within a workspace.}
+Select Tools->Options->Directories from the main toolbar.
+In ``Show directories'' for choose ``Include files''.
+Add extra entries and arrange them in the following order.
+\begin{verbatim}
+   $(CGAL_ROOT)\stlport
+   $(CGAL_ROOT)\include\CGAL\config\msvc
+   $(CGAL_ROOT)\include
+   $(CGAL_ROOT)\include
+   $(CGAL_ROOT)\auxiliary\wingmp\gmp-2.0.2
+\end{verbatim}
+It is very important that {\tt stlport} appears first
+in this list; otherwise a bunch
+of ugly compiler error messages is guaranteed.
+
+If \leda\ is used, don't forget to add 
+\begin{verbatim}
+   $(LEDAROOT)\incl
+\end{verbatim}
+
+
+{\bf Customizing compilation within a workspace.}
 Select {\em Project/Settings...}, the {\em C/C++}
 section, {\em Preprocessor} category. Add (in the following order)
 \begin{verbatim}
@@ -1402,12 +1461,14 @@ add \texttt{/TP} to options {\em Project Settings} in the {\em C/C++} section,
 
 
 \paragraph{Customizing linking.}
-Additional library directories have to be specified.
-Select {\em Project/Settings...}, {\em Link} section, {\em Input} 
+Additional libraries and library directories have to be specified.
+
+To specify extra libraries, 
+select {\em Project/Settings...}, {\em Link} section, {\em Input} 
 category. Add 
-\texttt{CGAL.lib} and \texttt{gmp.lib}
+\texttt{CGAL.lib}, \texttt{CGALWin.lib}, and \texttt{gmp.lib}
 in {\em Object/library modules}: list.
-If LEDA is used, also add there
+If \leda\ is used, do not add \texttt{CGALWin.lib}, but also add
 \texttt{libP.lib},
 \texttt{libG.lib}, and 
    \texttt{libL.lib}.
@@ -1421,6 +1482,22 @@ If \leda\ Geowin is used, one should as well add
 \texttt{libGeoW.lib} and \texttt{libD3.lib}
 to {\em Object/library modules}.
 
+To specify the corresponding library directories,
+select Tools->Options->Directories from the main toolbar.
+In ``Show directories for'' choose ``Library files''.
+Add  \verb=$(CGAL_ROOT)\lib\msvc= 
+and
+\begin{verbatim}
+$(CGAL_ROOT)\lib\win32\msvc\XXX,
+\end{verbatim}
+where \verb=XXX= denotes one of the 
+6 compiler options (ML, MLd, MT, MTd, MD, MDd)
+used within the workspace, there.
+If \leda\ is used, add the path to the location of the \leda\ object
+libraries, too.
+
+If \gmp\ is used, add the path to the location of the corresponding
+object library, see Sect.~\ref{sect:wingmp} for the location.
 
 \subsection{\gmp\ support}\label{sect:wingmp}
 \index{msvc@\msvc{}!GMP@\gmp\ support}
@@ -1441,9 +1518,13 @@ that does I/O of the GMP numbers.)  It was checked that all tests that
 come with \gmp\ distribution pass.  For details see 
 \nonlinkedpath'CGALROOT\auxiliary\wingmp\gmp-2.0.2\msvc\src'.
 
-Subject to time constraints, we might provide a smoother \gmp\ support
-for \msvc\ in the future. A new major release of \gmp\ is expected in
-March 2000, probably \cgal\ will be upgraded to use it then.
+Subject to time and labour 
+constraints, we might provide a smoother \gmp\ support
+for \msvc\ in the future. At the time of writing, the
+major release of \gmp\ is 3.1.1. One can compile it using the gcc
+compiler that comes with Mingw (see \path'http://www.mingw.org')
+and so that it will link against \msvc{6.0}-compiled object files.
+(But this still needs minor patches in \gmp\ source.)
 
 \lcTex{\begin{appendix}}
 
