@@ -100,7 +100,8 @@ class Partition_vertex;
 //   Traits::Leftturn_2
 //   Traits::Orientation_2
 template <class Traits_>
-class Partitioned_polygon_2 : public CGALi::vector<Partition_vertex< Traits_ > >
+class Partitioned_polygon_2 : 
+                            public CGALi::vector< Partition_vertex< Traits_ > >
 {
 public:
    typedef Traits_                                      Traits;
