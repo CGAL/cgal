@@ -297,7 +297,6 @@ int main(int argc,  char* argv[])
   double  total_time(0);
 
   Surface S(T,opt.DELTA);
-  std::cout << "A" << std::endl;
   do
     {
       number_of_connected_comp++;
@@ -321,19 +320,19 @@ int main(int argc,  char* argv[])
 	      (opt.NB_BORDER_MAX > 0))
 	    // en principe 2*nb_sommets = nb_facettes: y a encore de la marge!!!
 	    {
-	      bool post_trait;
+	      bool postprocess;
 	      do
 		{
 		  t1.reset();
-		  post_trait = S.postprocessing(opt.NB_BORDER_MAX);
+		  postprocess = S.postprocessing(opt.NB_BORDER_MAX);
 
-		  if (post_trait)
+		  if (postprocess)
 		    {
 		      S.extend(opt.K_init, opt.K_step, opt.K);
 		      sum_time += t1.time();
 		    }
 		}
-	      while(post_trait);
+	      while(postprocess);
 	    }
 
 	    total_time += sum_time;
