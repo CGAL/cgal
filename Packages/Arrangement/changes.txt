@@ -1,3 +1,11 @@
+1.79 (Shai)
+====
+Made typedefs public in Arr_traits_test.
+
+1.78 (Shai)
+====
+- Added std:: and typename where necessary.
+
 1.77 (Shai)
 ====
 - Chaged Arr_circles_real_traits_test to support clean exit when leda 
