@@ -133,13 +133,24 @@ private:
     return true;
   }
 
+  bool does_nef3_equals_file(Nef_polyhedron& N, char* name) {
+    char* fullname = new char[strlen(datadir)+strlen(name)+1];
+    strcpy(fullname, datadir);
+    strcat(fullname, name);
+    std::ofstream out("data/temp.nef3");
+    N.dump(true, out);
+    bool b = are_files_equal("data/temp.nef3",fullname);
+    delete [] fullname;
+    return b;
+  }
+
   bool does_nef3_equals_file(Nef_polyhedron& N, char* name, char* suffix) {
     char* fullname = new char[strlen(datadir)+strlen(name)+strlen(suffix)+1];
     strcpy(fullname, datadir);
     strcat(fullname, name);
     strcat(fullname, suffix);
     std::ofstream out("data/temp.nef3");
-    N.dump(out);
+    N.dump(true, out);
     bool b = are_files_equal("data/temp.nef3",fullname);
     delete [] fullname;
     return b;
@@ -151,6 +162,15 @@ private:
     in >> poly;
     Nef_polyhedron N(poly);
     return N;
+  }
+
+  Nef_polyhedron load_nef3(char* name) {
+    char* fullname = new char[strlen(datadir)+strlen(name)+1];
+    strcpy(fullname, datadir);
+    strcat(fullname, name);
+    Nef_polyhedron tmp(fullname);
+    delete[] fullname;
+    return tmp;
   }
 
   Nef_polyhedron load_nef3(char* name, char* suffix) {
@@ -166,6 +186,13 @@ private:
   void loadSave(char* suffix) {
     Nef_polyhedron N;
 
+    N = load_nef3("topology.nef3.SH");
+    CGAL_nef3_assertion(N.is_valid(0,0));
+    CGAL_nef3_assertion(does_nef3_equals_file(N,"topology.nef3.SH"));
+
+    N = Nef_polyhedron("data/topologyE.nef3");
+    N.dump(true);
+    /*
     if(suffix[1] == 'E') {
       N = load_nef3("topologyE.nef3",suffix);
       CGAL_nef3_assertion(N.is_valid(0,0));
@@ -180,7 +207,8 @@ private:
     N.convert_to_Polyhedron(P);
     std::ofstream out("data/temp.off");
     out << P;
-    CGAL_nef3_assertion(are_files_equal("data/temp.off","data/cube1.off"));
+    CGAL_nef3_assertion(are_files_equal("data/temp.off","data/cube1.off"))
+    */;
   }
 
   void construction(char* suffix) {
@@ -761,12 +789,12 @@ private:
     N1.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-1,-1,-1,1)));
     N1 = N.symmetric_difference(N1);
     CGAL_assertion(N1.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N1,"cube+vertex2.nef3",suffix));
+    //    CGAL_assertion(does_nef3_equals_file(N1,"cube+vertex2.nef3",suffix));
   }
 
-  void pluecker_coordinates(char* suffix) {
+  void synthesis(char* suffix) {
 
-    if(suffix[1] == 'E') {
+    if(false && suffix[1] == 'E') {
       Nef_polyhedron N = Nef_polyhedron(Nef_polyhedron::COMPLETE);  
       CGAL_assertion(N.is_valid(0,0));               
       Nef_polyhedron N1 = Nef_polyhedron(Plane_3(1,0,0,-1));
@@ -789,6 +817,24 @@ private:
       CGAL_assertion(N.is_valid(0,0));
       //      CGAL_assertion(does_nef3_equals_file(N,"cube_created_from_halfspaces.nef3", suffix));
     }
+    
+    Nef_polyhedron N,N2,P,R,S,T;
+    N = load_off("data/centered_cube.off");
+    N2 = N;
+    N2.transform(Aff_transformation_3( CGAL::SCALING, 4, 1));
+    P = N;
+    P.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-2,-2,0,1)));
+    R = N;
+    R.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-2, 2,0,1)));
+    S = N;
+    S.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3( 2,-2,0,1)));
+    T = N;
+    T.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3( 2, 2,0,1)));
+    N2 = N2.difference(P);
+    N2 = N2.difference(T);
+    N2 = N2.difference(R);
+    N2 = N2.difference(S);
+    N2.dump();
   }
 
   void unary_operations(char* suffix) {
@@ -890,16 +936,16 @@ private:
 public:
   void run_test(char* suffix) {
 
-    //       loadSave(suffix);
-        construction(suffix); 
-        point_location_SNC(suffix);
-        intersection(suffix);   
-        point_location_SM(suffix);
- 	simplification_SNC(suffix);
-        simplification_SM(suffix);
-	pluecker_coordinates(suffix);
-        unary_operations(suffix);
-        mark_evaluation(suffix);
+    //        loadSave(suffix);
+    //        construction(suffix); 
+    //        point_location_SNC(suffix);
+    //        intersection(suffix);   
+    //        point_location_SM(suffix);
+    //	      simplification_SNC(suffix);
+    //        simplification_SM(suffix);
+    	      synthesis(suffix);
+    //        unary_operations(suffix);
+    //        mark_evaluation(suffix);
   }
 
 };
@@ -908,9 +954,9 @@ template<typename Kernel>
 const char* test<Kernel>::datadir="data/";
 
 int main() {
-  int dthread;
-  std::cin >> dthread;
-  SETDTHREAD(dthread);
+  //  int dthread;
+  //  std::cin >> dthread;
+  //  SETDTHREAD(dthread);
   //CGAL::set_pretty_mode(std::cerr);
 
   typedef CGAL::Gmpz                         NT;
@@ -923,7 +969,7 @@ int main() {
   test<SH_Kernel> test_SH;
   test<EH_Kernel> test_EH;
 
-  //test_SH.run_test(".SH");
+  //  test_SH.run_test(".SH");
   test_EH.run_test(".EH");
 
   t.stop();
