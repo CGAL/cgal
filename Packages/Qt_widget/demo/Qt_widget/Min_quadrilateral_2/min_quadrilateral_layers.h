@@ -26,11 +26,11 @@ public:
 
   Qt_layer_show_parallelogram(std::list<Point> *pl){list_of_points = pl;};
 
-  void draw(CGAL::Qt_widget &win)
+  void draw()
   {
 
     //Draw the MINIMUM PARALLELOGRAM
-    win.lock();
+    widget->lock();
       Polygon pts;
       typedef std::list<Point>::const_iterator Listconstiter;
       for (Listconstiter i = (*list_of_points).begin(); i != (*list_of_points).end(); ++i)
@@ -44,12 +44,12 @@ public:
 	CGAL::min_parallelogram_2(
 	  p.vertices_begin(), p.vertices_end(), std::back_inserter(kg));
       }
-      RasterOp old = win.rasterOp();	//save the initial raster mode
-      win.setRasterOp(XorROP);
-      win << CGAL::FillColor(CGAL::GRAY);
-      win << kg;
-      win.setRasterOp(old);
-    win.unlock();
+      RasterOp old = widget->rasterOp();	//save the initial raster mode
+      widget->setRasterOp(XorROP);
+      *widget << CGAL::FillColor(CGAL::GRAY);
+      *widget << kg;
+      widget->setRasterOp(old);
+    widget->unlock();
   }
 private:
   std::list<Point>  *list_of_points;  
@@ -72,10 +72,10 @@ public:
 
   Qt_layer_show_strip(std::list<Point> *pl){list_of_points = pl;};
 
-  void draw(CGAL::Qt_widget &win)
+  void draw()
   {
     //DRAW the Line Strips
-    win.lock();
+    widget->lock();
       Polygon pts;
       typedef std::list<Point>::const_iterator Listconstiter;
       for (Listconstiter i = (*list_of_points).begin(); i != (*list_of_points).end(); ++i)
@@ -88,10 +88,10 @@ public:
       if (p.size() >= 2) 
 	CGAL::min_strip_2(
 	  p.vertices_begin(), p.vertices_end(), std::back_inserter(ll));
-      win << CGAL::GREEN;
+      *widget << CGAL::GREEN;
       for (std::vector<Line>::iterator it = ll.begin(); it != ll.end(); ++it)
-	win << (*it);	    
-    win.unlock();
+	*widget << (*it);	    
+    widget->unlock();
 
   }
 private:
@@ -115,10 +115,10 @@ public:
 
   Qt_layer_show_rectangle(std::list<Point> *pl){list_of_points = pl;};
 
-  void draw(CGAL::Qt_widget &win)
+  void draw()
   {
     //Draw the MINIMUM RECTANGLE
-    win.lock();
+    widget->lock();
       Polygon pts;
       typedef std::list<Point>::const_iterator Listconstiter;
       for (Listconstiter i = (*list_of_points).begin(); i != (*list_of_points).end(); ++i)
@@ -132,12 +132,12 @@ public:
 	CGAL::min_rectangle_2(
 	  p.vertices_begin(), p.vertices_end(), std::back_inserter(kg));
       
-      RasterOp old = win.rasterOp();	//save the initial raster mode
-      win.setRasterOp(XorROP);
-      win << CGAL::FillColor(CGAL::BLUE);      
-      win << kg;
-      win.setRasterOp(old);  
-    win.unlock();
+      RasterOp old = widget->rasterOp();	//save the initial raster mode
+      widget->setRasterOp(XorROP);
+      *widget << CGAL::FillColor(CGAL::BLUE);      
+      *widget << kg;
+      widget->setRasterOp(old);  
+    widget->unlock();
 
   }
 private:
@@ -154,20 +154,18 @@ public:
   
   Qt_layer_show_points(std::list<Point> *pl){list_of_points = pl;};
 
-  void draw(CGAL::Qt_widget &win)
+  void draw()
   {
-    
-    
     //Draw the points as CROSS
-    win.lock();
-      win << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
-      win << CGAL::GREEN;
+    widget->lock();
+      *widget << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
+      *widget << CGAL::GREEN;
       std::list<Point>::iterator itp = (*list_of_points).begin();
       while(itp!=(*list_of_points).end())
       {
-	win << (*itp++);
+	*widget << (*itp++);
       }
-    win.unlock();
+    widget->unlock();
   };//end draw();	
 private:
   std::list<Point>  *list_of_points;  

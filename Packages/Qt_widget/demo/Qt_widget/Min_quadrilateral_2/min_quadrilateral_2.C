@@ -83,6 +83,8 @@ public:
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
     file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
     file->insertSeparator();
+    file->insertItem("Printer", widget, SLOT(print_to_ps()), CTRL+Key_P);
+    file->insertSeparator();
     file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
     file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
 
@@ -133,7 +135,6 @@ public slots:
   }
   void new_instance()
   {
-    widget->detach_current_tool();
     widget->lock();
     list_of_points.clear();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval

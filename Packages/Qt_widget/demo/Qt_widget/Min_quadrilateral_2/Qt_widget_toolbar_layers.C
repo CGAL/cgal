@@ -52,46 +52,17 @@ namespace CGAL {
     widget->attach(showLS);
 
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
-		
-    but[0] = new QToolButton(QPixmap( (const char**)mouse_coord_xpm ),
-				"Show Mouse Coordinates", 
-				0, 
-				this, 
-				SLOT(show_coordinates()), 
-				maintoolbar, 
-				"Show Mouse Coordinates");
-		
-    but[1] = new QToolButton(QPixmap( (const char**)points_xpm ),
-				"Show Points", 
-				0, 
-				this, 
-				SLOT(show_points()), 
-				maintoolbar, 
-				"Show Points");
 
-    but[2] = new QToolButton(QPixmap( (const char**)min_parallelogram_xpm ),
-				"Show Parallelogram", 
-				0, 
-				this, 
-				SLOT(show_parallelogram()), 
-				maintoolbar, 
-				"Show Parallelogram");
-
-    but[3] = new QToolButton(QPixmap( (const char**)line_xpm ),
-				"Show The Line Strip", 
-				0, 
-				this, 
-				SLOT(show_strip()), 
-				maintoolbar, 
-				"Show The Line Strip");
-
-    but[4] = new QToolButton(QPixmap( (const char**)min_rectangle_xpm ),
-				"Show The Minimum Rectangle", 
-				0, 
-				this, 
-				SLOT(show_rectangle()), 
-				maintoolbar, 
-				"Show The Minimum Rectangle");
+    but[0] = new QToolButton(maintoolbar, "mouse_coord");
+    but[0]->setPixmap(QPixmap( (const char**)mouse_coord_xpm ));
+    but[1] = new QToolButton(maintoolbar, "points");
+    but[1]->setPixmap(QPixmap( (const char**)points_xpm ));
+    but[2] = new QToolButton(maintoolbar, "Minimum_parallelogram");
+    but[2]->setPixmap(QPixmap( (const char**)min_parallelogram_xpm ));
+    but[3] = new QToolButton(maintoolbar, "Show_lines");
+    but[3]->setPixmap(QPixmap( (const char**)line_xpm ));
+    but[4] = new QToolButton(maintoolbar, "Minimum_rectangle");
+    but[4]->setPixmap(QPixmap( (const char**)min_rectangle_xpm ));
 
     nr_of_buttons = 5;
 	
@@ -102,63 +73,7 @@ namespace CGAL {
     }
   }//end constructor
   	
-  void Layers_toolbar::show_coordinates()
-  {
-    if (but[0]->isOn())
-    {
-      widget->activate(showMC);
-      window->statusBar();
-    } else {
-      widget->deactivate(showMC);
-      window->statusBar()->clear();
-    }
-  }
-  void Layers_toolbar::show_points()
-  {
-    if (but[1]->isOn())
-    {
-      widget->activate(showP);
-      widget->redraw();
-    } else {
-      widget->deactivate(showP);
-      widget->redraw();
-    }
-  }
 
-  void Layers_toolbar::show_parallelogram()
-  {
-    if (but[2]->isOn())
-    {
-      widget->activate(showPL);
-      widget->redraw();
-    } else {
-      widget->deactivate(showPL);
-      widget->redraw();
-    }
-  }
-  void Layers_toolbar::show_strip()
-  {
-    if (but[3]->isOn())
-    {
-      widget->activate(showLS);
-      widget->redraw();
-    } else {
-      widget->deactivate(showLS);
-      widget->redraw();
-    }
-  }
-
-  void Layers_toolbar::show_rectangle()
-  {
-    if (but[4]->isOn())
-    {
-      widget->activate(showR);
-      widget->redraw();
-    } else {
-      widget->deactivate(showR);
-      widget->redraw();
-    }
-  }
 
 
 }//end namespace
