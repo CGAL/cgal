@@ -32,13 +32,8 @@
 #ifndef CGAL_PM_UNBOUNDING_BOX_H
 #define CGAL_PM_UNBOUNDING_BOX_H
 
-#ifndef CGAL_PLANAR_MAP_2_H
 #include <CGAL/Planar_map_2.h>
-#endif
-
-#ifndef CGAL_PM_BOUNDING_BOX_BASE_H
 #include <CGAL/Pm_bounding_box_base.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -51,7 +46,7 @@ public:
   /*
   typedef Planar_map_2<Dcel,Traits> Base;
   typedef Planar_map_Bbox_2<Dcel,Traits> Self;
-  typedef Planar_map_traits_wrap<Traits> Traits_wrap;
+  typedef Pm_traits_wrap_2<Traits> Traits_wrap;
   */
   typedef typename Planar_map::Traits                   Traits;
   typedef typename Traits::X_curve_2                    X_curve_2;

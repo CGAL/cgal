@@ -16,7 +16,7 @@
 // #define _Nonconst_traits                NTs
 #define Td_traits                       TT
 #define Pm_segment_traits_2             PST
-#define Planar_map_traits_wrap          PMTW
+#define Pm_traits_wrap_2                PMTW
 
 #define Planar_map_with_intersections_2 PMWI
 #define Arr_segment_traits_2            AST

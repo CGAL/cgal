@@ -26,36 +26,15 @@
 //for now, since the arrangement default ctr is currently with the walk pl.
 #include <CGAL/Pm_walk_along_line_point_location.h>
 
-
-#ifndef CGAL_PLANAR_MAP_2_H
 #include <CGAL/Planar_map_2.h>
-#endif
-
-//planar map misc also included
-
-#ifndef ARR_2_BASES_H
 #include <CGAL/Arr_2_bases.h>
-#endif
-
-#ifndef CGAL_IN_PLACE_LIST_H
 #include <CGAL/In_place_list.h>
-#endif
-
-#ifndef ARR_ITERATORS_H  
-#include <CGAL/Arr_iterators.h> //for circulators
-#endif
-
-#ifndef CGAL_IO_VERBOSE_OSTREAM_H
+//for circulators
+#include <CGAL/Arr_iterators.h>
 #include <CGAL/IO/Verbose_ostream.h>
-#endif
-
-#ifndef CGAL_PLANAR_MAP_WITH_INTERSECTIONS_H
 #include <CGAL/Pm_with_intersections.h>
-#endif
-
-#ifndef CGAL_IO_ARR_FILE_SCANNER_H
+#include <CGAL/Planar_map_2/Pm_traits_wrap_2.h>
 #include <CGAL/IO/Arr_file_scanner.h>
-#endif // CGAL_IO_ARR_FILE_SCANNER_H
 
 #include <vector>
 
@@ -67,7 +46,7 @@ public:
 
   typedef _Dcel Dcel;
   typedef _Traits Traits;
-  typedef Planar_map_traits_wrap<Traits> Traits_wrap;
+  typedef Pm_traits_wrap_2<Traits> Traits_wrap;
   typedef Planar_map_2<Dcel,Traits> Planar_map;
   typedef Pm_walk_along_line_point_location<Planar_map> WalkPL;
   typedef Planar_map_with_intersections_2<Planar_map> Pmwx;

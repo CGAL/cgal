@@ -24,7 +24,7 @@
 #define In_place_list_iterator          IPLI
 #define In_place_list_const_iterator    IPLCI
 #define allocator                       All
-#define Planar_map_traits_wrap          PmTW
+#define Pm_traits_wrap_2                PmTW
 #define Td_X_trapezoid                  TXT
 #define PL_X_curve_plus                 PXCP
 #if ! defined(_MSC_VER)

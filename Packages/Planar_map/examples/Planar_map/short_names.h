@@ -16,7 +16,7 @@
 #define _Nonconst_traits                NT
 #define Td_traits                       TT
 #define Pm_segment_traits_2             PST
-#define Planar_map_traits_wrap          PMTW
+#define Pm_traits_wrap_2                PMTW
 #define Interval_converter              IC
 #define NT_converter                    NC
 #define Td_X_trapezoid                  TXT
