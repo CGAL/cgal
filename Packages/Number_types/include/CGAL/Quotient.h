@@ -1,4 +1,4 @@
-// Copyright (c) 1999,2003  Utrecht University (The Netherlands),
+// Copyright (c) 1999-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -56,6 +56,12 @@ namespace CGALi {
 
 #define CGAL_int(T) typename CGALi::Int_if_not_int<T>::type
 
+// Simplify the quotient numerator/denominator.
+// Currently the default template doesn't do anything.
+// This function is not documented as a number type requirement for now.
+template < typename NT >
+inline void
+simplify_quotient(NT &, NT &) {}
 
 template <class NT_>
 class Quotient
@@ -153,6 +159,7 @@ Quotient<NT>::operator+= (const Quotient<NT>& r)
 {
     num = num * r.den + r.num * den;
     den *= r.den;
+    simplify_quotient(num, den);
     return *this;
 }
 
@@ -163,6 +170,7 @@ Quotient<NT>::operator-= (const Quotient<NT>& r)
 {
     num = num * r.den - r.num * den;
     den *= r.den;
+    simplify_quotient(num, den);
     return *this;
 }
 
@@ -173,6 +181,7 @@ Quotient<NT>::operator*= (const Quotient<NT>& r)
 {
     num *= r.num;
     den *= r.den;
+    simplify_quotient(num, den);
     return *this;
 }
 
@@ -184,6 +193,7 @@ Quotient<NT>::operator/= (const Quotient<NT>& r)
     CGAL_precondition( r.num != 0 );
     num *= r.den;
     den *= r.num;
+    simplify_quotient(num, den);
     return *this;
 }
 

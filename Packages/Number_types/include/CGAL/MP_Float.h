@@ -272,6 +272,15 @@ std::pair<double, double>
 to_interval(const Quotient<MP_Float> &b);
 
 inline
+void
+simplify_quotient(MP_Float & numerator, MP_Float & denominator)
+{
+  // Currently only simplifies the two exponents.
+  numerator.exp -= denominator.exp;
+  denominator.exp = 0;
+}
+
+inline
 bool
 is_finite(const MP_Float &)
 {

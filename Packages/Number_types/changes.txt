@@ -1,4 +1,8 @@
 31 May 2004 Sylvain Pion
+- Add simplify_quotient() function in Quotient operations, and make it
+  simplify the exponents for MP_Float (other number types do not do anything).
+
+31 May 2004 Sylvain Pion
 - Change the exponent of MP_Float to be a double instead of int.
   (temporary improvement before using a multiprecision value)
 

@@ -103,7 +103,7 @@ void test_overflow_exponent()
   QMPF a = 2;
   a = a/a;
   double loops = 0;
-  while (loops < 55) // An assertion must fail at 56.
+  while (loops < 200) // This should be able to loop forever.
   {
     a = a*a;
     assert((a+1)-1 == a);
