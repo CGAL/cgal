@@ -46,10 +46,13 @@ private:
   void	mousePressEvent(QMouseEvent *e)
   {
     using namespace CGAL;
-
+    if(e->button() == Qt::RightButton)
+      qApp->quit();
+    else
+      {
     this->lock();
     *this << BackgroundColor(ORANGE) << RED <<
-      LineWidth(3) << PointSize(3) << PointStyle(DISC);
+	  LineWidth(3) << PointSize(3) << PointStyle(DISC);
     *this << Segment(Point(10,20),Point(300,400));
     *this << LineWidth(5) << GREEN << FillColor(BLACK) <<
       Circle(Point(400,400),50*50);
@@ -94,6 +97,7 @@ private:
     *this << Ray(Point(200,400), Point(180,430))
 	  << Ray(Point(200,400), Point(180,370));
     this->unlock();
+      }
   };
 };
 
