@@ -1,3 +1,6 @@
+2.6 (8 January 2001)
++ Adapted CGAL_CFG_NO_LONGNAME_PROBLEM.C to remove warning
+
 2.5 (1 December 2000)
 + Adapted CGAL_CFG_STDC_NAMESPACE.C
 
