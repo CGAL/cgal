@@ -1,0 +1,40 @@
+
+\ccDefGlobalScope{}
+\begin{ccRefClass}{cl_I}
+
+\ccDefinition
+
+The class \ccRefName\ is a wrapper class that provides the functions needed to 
+use the number type \ccc{cl_integer}, representing exact multiprecision 
+integers provided by {\sc Cln}, the Class Library 
+for Numbers~\cite{cln} in \cgal.  This wrapper works for versions 1.0.x 
+of \ccc{CLN}.
+
+\ccInclude{CGAL/CLN/cl_integer.h}
+
+\ccIsModel
+RingNumberType
+
+See the {\sc Cln} documentation for additionnal details.
+
+\end{ccRefClass}
+
+\begin{ccRefClass}{cl_RA}
+
+\ccDefinition
+
+The class \ccRefName\ is a wrapper class that provides the functions needed to 
+use the number type \ccc{cl_rational}, representing exact multiprecision 
+rationals provided by {\sc Cln}, the Class Library 
+for Numbers~\cite{cln} in \cgal.  This wrapper works for versions 1.0.x 
+of \ccc{CLN}.
+
+\ccInclude{CGAL/CLN/cl_rational.h}
+
+\ccIsModel
+FieldNumberType
+
+See the {\sc Cln} documentation for additionnal details.
+
+\end{ccRefClass}
+\ccDefGlobalScope{CGAL::}

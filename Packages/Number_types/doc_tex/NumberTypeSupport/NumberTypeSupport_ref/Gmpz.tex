@@ -1,16 +1,6 @@
-\section{Number Types Provided by GNU}
-
-\cgal\ provides wrapper classes for number types defined in the 
-{\sc Gnu} Multiple Precision Arithmetic Library~\cite{g-gmpal-96}.
-The file {\tt  CGAL/Gmpz.h} provides the class \ccStyle{Gmpz}, 
-a wrapper class for the integer type \ccc{mpz_t}, that is compliant to the 
-CGAL number type requirements.
-To use this, the {\sc Gnu} Multiple Precision Arithmetic Library must be 
-installed.
-
-\begin{ccClass} {Gmpz}
+\ccDefGlobalScope{}
+\begin{ccRefClass} {Gmpz}
 \label{Gmpz}
-\subsection{GNU Multiple Precision Integer}
 
 \ccDefinition
 
@@ -43,5 +33,5 @@ EuclideanRingNumberType
 \ccImplementation
 \ccc{Gmpz}s are reference counted.
 
-\end{ccClass} 
-
+\end{ccRefClass} 
+\ccDefGlobalScope{CGAL::}

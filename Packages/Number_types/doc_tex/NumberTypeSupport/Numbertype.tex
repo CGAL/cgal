@@ -55,42 +55,11 @@ or some other subfield of the real numbers.
 The number type concepts mentioned in the previous section list all 
 the required functionality.
 For the user of a number type it is handy to have a larger set of
-operations available.
-
-\subsection{Utility Functions}
-\ccSetThreeColumns{Comparison_result}{}{\hspace*{6cm}}
-
-\ccInclude{CGAL/number_utils.h}
-
-\ccFunction{NT min(const NT& ntval1, const NT& ntval2);}
-{returns the smaller of the two values.}
-\ccGlue
-\ccFunction{NT max(const NT& ntval1, const NT& ntval2);}
-{returns the larger of the two values.}
-\ccGlue
-\ccFunction{NT abs(const NT& ntval);}
-{returns the absolute value.}
-\ccGlue
-\ccFunction{NT square(const NT& ntval);}
-{returns the square of \ccc{ntval}.}
-\ccGlue
-\ccFunction{Sign sign(const NT& ntval);}
-{returns the sign: \ccc{POSITIVE}, \ccc{ZERO}, or \ccc{NEGATIVE}.}
-\ccGlue
-\ccFunction{bool is_negative(const NT& ntval);}
-{}
-\ccGlue
-\ccFunction{bool is_positive(const NT& ntval);}
-{}
-\ccGlue
-\ccFunction{bool is_zero(const NT& ntval);}
-{}
-\ccGlue
-\ccFunction{bool is_one(const NT& ntval);}
-{}
-\ccGlue
-\ccFunction{Comparison_result compare(const NT &n1, const NT &n2);}
-{returns \ccc{GREATER} iff $n1>n2$, \ccc{EQUAL} iff $n1=n2$, and \ccc{SMALLER} iff $n1<n2$.}
+operations available. \cgal\ defines a number of such operations,
+to compute, for example, the minimum or maximum of two numbers, and the
+absolute value, square, sign or square root of a number.  These are
+available both as global functions and as functors.  See the reference
+manual for more details.
 
 Those routines are implemented using the required operations from the
 number type concepts. They are defined by means of templates, so you do not
@@ -100,41 +69,7 @@ corresponding overloading function with the same name for your number types,
 which will get preference over the template functions listed above.
 
 For the number types \ccc{int}, and \ccc{double} there is
-the random numbers generator \ccc{Random}.
-
-%\ccInclude{CGAL/basic.h}
-
-%\ccFunction{template <class NT> bool is_even( NT x);}
-%    {returns $(i \;\&\; 1) == 0$.}
-
-%\ccFunction{template <class NT> bool is_odd( NT x);}
-%    {returns $(i \;\&\; 1) == 1$.}
-
-
-\subsection{Utility Function Classes}
-In addition to the utility routines listed above, 
-there are function object class templates corresponding to these functions.
-Note that the function object class corresponding to \ccc{sign} is
-named \ccc{Sgn} in order to avoid a conflict with the type 
-\ccc{Sign}.
-
-\cgal\ provides the following function object classes:
-
-\ccInclude{CGAL/number_utils_classes.h}
-
-\ccc{class Min<NT,Compare=std::less>;}\\
-\ccc{class Max<NT,Compare=std::less>;}\\
-\ccc{class Abs<NT>;}\\
-\ccc{class Sgn<NT>;}\\
-\ccc{class Is_negative<NT>;}\\
-\ccc{class Is_positive<NT>;}\\
-\ccc{class Is_zero<NT>;}\\
-\ccc{class Is_one<NT>;}\\
-\ccc{class Compare<NT>;} \\
-\ccc{class Div<NT>;} \\
-\ccc{class Gcd<NT>;} \\
-\ccc{class Sqrt<NT>;} \\
-\ccc{class Square<NT>;}
+also a random numbers generator \ccc{CGAL::Random}.
 
 \section{Built-in Number Types}
 
@@ -166,17 +101,35 @@ With the built-in integer types overflow might occur.
 %\newpage
 \section{Number Types Provided by \cgal}
 
-\input{Quotient}
+\cgal\ provides several number types that are that can be used for 
+exact computation.  These include the \ccc{Quotient} class that can
+be used to create, for example, a number type that behaves like a rational
+number.  When used in conjunction with the number type \ccc{MP_Float} that
+is able to represent multi-precision floating point values, you achieve
+an exact rational number representation.  The templated number type
+\ccc{Lazy_exact_nt<NT>} is able to represent any number that \ccc{NT} is able
+to represent, but because it first tries to use an approximate value to
+perform computations it can be faster than the provided number type \ccc{NT}.
+\cgal\ also provides a fixed-precision number type,
+\ccc{Fixed_precision_nt} that provides 24-bit numbers in fixed point
+representation.  This number type provides some specialized predicates
+that are exact and efficient for numbers known to be representable using
+24 bits.
+Two number types for doing interval arithmetic, \ccc{Interval_nt} and
+\ccc{Interval_nt_advanced}, are also provided.  These number types
+help in doing filtering of predicates.
 
-\input{MP_Float}
+\section{Number Types Provided by {\sc Cln}}
+\label{CLN}
 
-\input{Lazy_exact_nt}
+% \ccChapterAuthor{Sylvain Pion}
 
-\input{Fixedprecision}
+\cgal\ defines the functions needed to use the number types \ccc{cl_integer}
+and \ccc{cl_rational} provided by {\sc Cln}, the Class Library for
+Numbers~\cite{cln}.  To use {\sc Cln} with \cgal, just install \cgal\ with
+{\sc Cln} support, and include the corresponding {\sc Cln} file but with the
+prefix \ccc{CGAL/CLN/}.  These wrappers work for versions 1.0.x of \ccc{CLN}.
 
-\input{Interval}
-
-\input{CLN}
 
 \section{Number Types Provided by \leda}
 \label{leda-nt}
@@ -210,17 +163,15 @@ the operations $+,-,*,/$ and $k$-th root computation.
 all comparisons between expressions involving \ccc{leda_real}s produce the
 exact result.
 
-In the include files \ccc{<CGAL/leda_integer.h>}, \ccc{<CGAL/leda_rational.h>}, 
-\ccc{<CGAL/leda_bigfloat.h>}, and \ccc{<CGAL/leda_real.h>}, 
-the \leda\ types \ccc{leda_integer}, \ccc{leda_rational},
-\ccc{leda_bigfloat}, 
-and \ccc{leda_real} are made conform to the requirements presented in
-Section \ref{nt-requirements}. 
-Also, in these files the \leda\ number types are included.
-For more details on the number types of \leda\ we refer to the \leda\ 
-manual~\cite{mnsu-lum}.
+\section{Number Types Provided by GNU}
 
-\input{Gmpz}
+\cgal\ provides wrapper classes for number types defined in the
+{\sc Gnu} Multiple Precision Arithmetic Library~\cite{g-gmpal-96}.
+The file {\tt  CGAL/Gmpz.h} provides the class \ccStyle{Gmpz},
+a wrapper class for the integer type \ccc{mpz_t}, that is compliant to the
+CGAL number type requirements.
+To use this, the {\sc Gnu} Multiple Precision Arithmetic Library must be
+installed.
 
 
 \section{User-supplied Number Types}
@@ -231,4 +182,3 @@ Depending on the arithmetic operations carried out by the algorithms
 that you are going to use, the number types must fulfill the
 corresponding requirements from Section \ref{nt-requirements}. 
 
-\input{Number_type_traits}

@@ -1,0 +1,20 @@
+\begin{ccRefFunction}{gcd}
+
+\ccDefinition
+
+The function \ccRefName\ computes the greatest common divisor of two values.
+
+\ccInclude{CGAL/number_utils.h}
+
+\ccFunction{NT gcd(const NT& ntval1, const NT& ntval2);}
+{
+computes the greatest common divisor of two numbers. If \ccc{ntval1} is
+0, the function returns \ccc{ntval2}.
+\ccPrecond: \ccc{ntval2} is not zero.
+}
+
+\ccImplementation
+
+Uses Euclid's algorithm.
+
+\end{ccRefFunction}

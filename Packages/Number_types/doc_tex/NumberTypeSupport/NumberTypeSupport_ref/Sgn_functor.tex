@@ -1,0 +1,19 @@
+\begin{ccRefFunctionObjectClass}{Sgn<NT>}
+
+\ccDefinition
+
+The function object class \ccRefName\ computes the sign of a number.
+It is named \ccc{Sgn} to avoid a conflict with the type \ccc{Sign}.
+
+
+\ccInclude{CGAL/number_utils_classes.h}
+
+\ccIsModel
+\ccRefConceptPage{AdaptableFunctor}
+
+\ccCreationVariable{f}
+\ccMethod{Sign operator()(const NT& ntval);}
+{returns the sign: \ccc{POSITIVE}, \ccc{ZERO}, or \ccc{NEGATIVE}.}
+
+
+\end{ccRefFunctionObjectClass}

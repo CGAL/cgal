@@ -22,14 +22,35 @@
 \evensidemargin 3mm 
 \oddsidemargin 3mm
 
-\sloppy
+\ccDefGlobalScope{CGAL::}
 
-\begin{document}
+% New manual style including tab markers on the side margins
+% ----------------------------------------------------------
+\marginparsep10mm
+\marginparwidth15mm
+\gdef\ccNewRefManualStyle{\ccTrue}  % undef this for old style manual
+
+% The tab marker are aligned with the top of the main text. To align
+% them with the page header, the following definition of the amount
+% by which the tab is shifted can be used
+\setlength{\ccRefTabLift}{12.5mm}
+
+% Optionally, package authors and a package release can be shown
+% right below the chapter title. Comment out the following lines
+% to get back to the default behavior.
+% -----------------------------------------------------------------
+\def\ccTagChapterAuthor{\ccTrue}
+\def\ccTagChapterRelease{\ccTrue}
 
 % default column layout
 % ---------------------
 \ccSetThreeColumns{CGAL_Oriented_side}{}{\hspace*{10cm}}
 \ccPropagateThreeToTwoColumns
+
+\sloppy
+
+\begin{document}
+
 
 \include{main}
 
