@@ -25,6 +25,7 @@
 #define CGAL_KD_TREE_H
 #include <CGAL/Kd_tree_node.h>
 #include <cassert>
+#include <CGAL/Compact_container.h>
 
 namespace CGAL {
 
@@ -40,14 +41,119 @@ public:
   typedef Kd_tree<Traits> Tree;
 
 private:
-  Node* tree_root;
+
+  Compact_container<Node> nodes;
+  typedef typename Compact_container<Node>::iterator Node_handle;
+
+  Node_handle tree_root;
+
   Kd_tree_rectangle<NT>* bbox;
   std::list<Item> pts;
+
+  // Instead of storing the points in arrays in the Kd_tree_node
+  // we put all the data in a vector in the Kd_tree.
+  // and we only store an iterator range in the Kd_tree_node.
+  // 
+  std::vector<Item*> data;
+  std::vector<Item*>::iterator data_iterator;
   Traits tr;
   int the_item_number;
 
   // protected copy constructor
   Kd_tree(const Tree& tree) {};
+
+
+  // Instead of the recursive construction of the tree in the class Kd_tree_node
+  // we do this in the tree class. The advantage is that we then can optimize
+  // the allocation of the nodes.
+
+  // The leaf node
+  Node_handle 
+  create_leaf_node(Point_container<Item>& c)
+  {
+    Node n;
+    Node_handle nh = nodes.insert(n);
+    nh->n = c.size();
+    nh->the_node_type = Node::LEAF;
+    if (c.size()>0) { 
+      nh->data = data_iterator;
+      data_iterator = std::copy(c.begin(), c.end(), data_iterator);
+    }
+    return nh;
+  }
+
+
+  // The internal node
+
+  // TODO: Similiar to the leaf_init function above, a part of the code should be
+  //       moved to a the class Kd_tree_node.
+  //       It is not proper yet, but the goal was to see if there is
+  //       a potential performance gain through the Compact_container
+  Node_handle 
+  create_internal_node_use_extension(Point_container<Item>& c, Traits& t) 
+  {
+    Node n;
+    Node_handle nh = nodes.insert(n);
+
+    nh->the_node_type = Node::EXTENDED_INTERNAL;
+
+    Point_container<Item> 
+      c_low = Point_container<Item>(c.dimension());
+    Kd_tree_rectangle<NT> bbox(c.bounding_box());
+
+    t.split(nh->sep, c, c_low);
+	        
+    int cd  = nh->sep.cutting_dimension();
+
+    nh->low_val = bbox.min_coord(cd);
+    nh->high_val = bbox.max_coord(cd);
+
+    if (c_low.size() > t.bucket_size())
+      nh->lower_ch = create_internal_node_use_extension(c_low,t);
+    else
+      nh->lower_ch = create_leaf_node(c_low);
+
+    if (c.size() > t.bucket_size())
+      nh->upper_ch = create_internal_node_use_extension(c,t);
+    else
+      nh->upper_ch = create_leaf_node(c);
+
+    return nh;
+  }
+
+  
+  // Note also that I duplicated the code to get rid if the if's for
+  // the boolean use_extension which was constant over the construction
+  Node_handle 
+  create_internal_node(Point_container<Item>& c, Traits& t) 
+  {
+    Node n;
+    Node_handle nh = nodes.insert(n);
+
+    nh->the_node_type = Node::INTERNAL;
+
+    Point_container<Item> 
+      c_low = Point_container<Item>(c.dimension());
+    Kd_tree_rectangle<NT> bbox(c.bounding_box());
+
+    t.split(nh->sep, c, c_low);
+	        
+    if (c_low.size() > t.bucket_size())
+      nh->lower_ch = create_internal_node(c_low,t);
+    else
+      nh->lower_ch = create_leaf_node(c_low);
+
+    if (c.size() > t.bucket_size())
+      nh->upper_ch = create_internal_node(c,t);
+    else
+      nh->upper_ch = create_leaf_node(c);
+
+    return nh;
+  }
+  
+
+
+
 
 public:
 
@@ -59,23 +165,27 @@ public:
     
     std::copy(first, beyond, std::back_inserter(pts));
 
+    data = std::vector<Item*>(pts.size()); // guarantees that iterators we store in Kd_tree_nodes stay valid
+    data_iterator = data.begin();
+
     Point_container<Item> c(dim, pts.begin(), pts.end());
 
     bbox = new Kd_tree_rectangle<NT>(c.bounding_box());
     
     the_item_number=c.size();
     if (c.size() <= t.bucket_size())
-      tree_root = new Node(c);
+      tree_root = create_leaf_node(c);
     else 
 		if (t.use_extended_nodes())
-		tree_root = new Node(c,t,true);  
+		tree_root = create_internal_node_use_extension(c,t);  
 		else
-		tree_root = new Node(c,t,false); 
+		tree_root = create_internal_node(c,t); 
 	
   }
 
   template <class OutputIterator, class Rectangle>
 	OutputIterator search(OutputIterator it, Rectangle& r, NT eps=NT(0)) {
+                //  Why do you create this on the heap?
 		Kd_tree_rectangle<NT>* b = new Kd_tree_rectangle<NT>(*bbox);
 		it=tree_root->tree_items_in_rectangle(it,r,b,eps);
 		delete b;
@@ -98,14 +208,13 @@ public:
 	 return it;}
 
     ~Kd_tree() {
-                  delete tree_root; 
 		  delete bbox;
 	};
 
 
   Traits traits() const {return tr;} // Returns the traits class;
 
-  Node* root() { return tree_root; }
+  Node_handle root() { return tree_root; }
 
   Kd_tree_rectangle<NT>* bounding_box() {return bbox; }
 

@@ -25,17 +25,24 @@
 #define CGAL_KD_TREE_NODE_H
 
 #include <CGAL/Kd_tree_traits_point.h>
-
+#include <CGAL/Compact_container.h>
 namespace CGAL {
+
+  template < class Traits > 
+  class Kd_tree;
 
 	template < class Traits > 
 	class Kd_tree_node {
 
-	public:
+	  friend class Kd_tree<Traits>;
+
+	  typedef Kd_tree_node<Traits> Node;
+
+	  typedef typename Compact_container<Node>::iterator Node_handle;
 
 	enum Node_type {LEAF, INTERNAL, EXTENDED_INTERNAL};
 	typedef typename Traits::Item Item;
-  	typedef typename Traits::Item_iterator Item_iterator;
+	typedef   std::vector<Item*>::iterator Item_iterator;
 	typedef typename Traits::NT NT;
 	typedef typename Traits::Separator Separator;
 
@@ -46,12 +53,12 @@ namespace CGAL {
 
      	// private variables for leaf nodes
 	unsigned int n; // denotes number of items in a leaf node
-  	Item_iterator data; // iterator to data in leaf node
+	Item_iterator data; // iterator to data in leaf node
 
     	// private variables for internal nodes
 
-    	Kd_tree_node* lower_ch;
-  	Kd_tree_node* upper_ch;
+	  Node_handle lower_ch, upper_ch;
+
   	Separator sep;
 
 	// private variables for extended internal nodes
@@ -60,57 +67,13 @@ namespace CGAL {
                 
 	public:
 		
+	  // TODO: I have to ask Sylvain how to get rid if this:
+	  void* p;
+	  void *   for_compact_container() const { return p; }
+	  void * & for_compact_container()       { return p; }
+
 	// default constructor
-	Kd_tree_node() {};
-
-	
-
-        Kd_tree_node(Point_container<Item>& c) :
-    		n(c.size()) {
-                the_node_type=LEAF;
-                if (n>0) { 
-			data=new Item*[n];
-		        std::copy(c.begin(), c.end(), data);
-		}
-  	};
-	// constructor for internal node or extended internal node;
-	Kd_tree_node(Point_container<Item>& c, Traits& t, 
-		     bool use_extension) {
-		
-		
-		if (use_extension) 
-			the_node_type=EXTENDED_INTERNAL;
-		else 
-			the_node_type=INTERNAL;
-
-		
-
-    		Point_container<Item> 
-			c_low = Point_container<Item>(c.dimension());
-			Kd_tree_rectangle<NT> bbox(c.bounding_box());
-                
-    		t.split(sep, c, c_low);
-	        
-    		int cd  = sep.cutting_dimension();
-
-		if (use_extension) {
-    			low_val = bbox.min_coord(cd);
-    			high_val = bbox.max_coord(cd);
-		};
-
-    		if (c_low.size() > t.bucket_size())
-      			lower_ch = 
-			new Kd_tree_node<Traits>(c_low,t,use_extension);
-    		else
-      			lower_ch = new Kd_tree_node<Traits>(c_low);
-
-    		if (c.size() > t.bucket_size())
-      			upper_ch = 
-			new Kd_tree_node<Traits>(c,t,use_extension);
-    		else
-      			upper_ch = new Kd_tree_node<Traits>(c);
-
-  	};
+	Kd_tree_node(): the_node_type() {};
 
         // members for all nodes
 	inline bool is_leaf() const { return (the_node_type==LEAF);}
@@ -122,8 +85,9 @@ namespace CGAL {
   	inline Item_iterator end() const {return data + n;}
 
 	// members for internal node and extended internal node
-	inline Kd_tree_node* lower() const { return lower_ch; }
-  	inline Kd_tree_node* upper() const { return upper_ch; }
+
+	inline Node_handle lower() const { return lower_ch; }
+  	inline Node_handle upper() const { return upper_ch; }
   	
   	// inline Separator& separator() {return sep; }
   	// use instead
@@ -138,23 +102,8 @@ namespace CGAL {
 	inline NT low_value() const { return low_val; }
   	inline NT high_value() const { return high_val; }
        
-        ~Kd_tree_node() {switch (the_node_type) {
-
-			case LEAF: {
-				if (n>0) delete []data;}
-			     	break;
-
-			case INTERNAL: { 
-				delete lower_ch; delete upper_ch;}
-				break;
-			case EXTENDED_INTERNAL:
-				delete lower_ch; delete upper_ch;
-				break;	
-			default:{
-				std::cerr << "Node corrupted\n";
-				}
-		}
-	};
+        
+	
 
 	unsigned int num_items() {
 			if (is_leaf()) return size();
