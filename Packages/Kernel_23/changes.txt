@@ -1,5 +1,6 @@
 1.84 (31 October 2003) [af]
 - Added Filtered_kernel_without_type_equality
+- new header
 
 1.83 (17 October 2003)
 - Add area(p, q, r).
