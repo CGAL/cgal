@@ -1,3 +1,6 @@
+version 1.13 [af]
+- changed option for diff in cgal_test, so that it ignores whitespace
+
 version 1.13 [sp]
 - Idem for demo.C
 
