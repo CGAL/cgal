@@ -69,18 +69,6 @@ public:
   typedef short limb;
   typedef int   limb2;
 
-#if defined _MSC_VER && _MSC_VER <= 1200
-  static const unsigned log_limb;
-  static const limb2    base;
-  static const unsigned limbs_per_double;
-#else
-  static const unsigned log_limb         = 8 * sizeof(limb);
-  static const limb2    base             = 1 << log_limb;
-  static const unsigned limbs_per_double = 2 + 53/log_limb;
-#endif
-
-  static const double trunc_max, trunc_min;
-
   typedef std::vector<limb>  V;
   typedef V::const_iterator  const_iterator;
   typedef V::iterator        iterator;
@@ -118,7 +106,7 @@ public:
   static
   limb higher_limb(limb2 l)
   {
-    return (l - (limb) l) >> log_limb;
+    return (l - (limb) l) >> (8*sizeof(limb));
   }
 
   MP_Float()

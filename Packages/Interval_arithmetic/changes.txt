@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.81 on 21 March 2001
+- Remove static data members of MP_Float, use consts in src/MP_Float.C
+  instead.  
+
 Version 4.80 on 20 March 2001
 - Really fix bug in side_of_sphere.
 - Add ctors for Filter_predicate<> in order to deal (not optimally) with

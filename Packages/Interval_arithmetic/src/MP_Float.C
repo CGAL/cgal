@@ -25,16 +25,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#if defined _MSC_VER && _MSC_VER <= 1200
 const unsigned        log_limb         = 8 * sizeof(MP_Float::limb);
-const MP_Float::limb2 base             = 1 << MP_Float::log_limb;
-const unsigned        limbs_per_double = 2 + 53/MP_Float::log_limb;
-#endif
+const MP_Float::limb2 base             = 1 << log_limb;
+const unsigned        limbs_per_double = 2 + 53/log_limb;
 
-const double MP_Float::trunc_max =
-         double(MP_Float::base)*(MP_Float::base/2-1)/double(MP_Float::base-1);
-const double MP_Float::trunc_min =
-         double(-MP_Float::base)*(MP_Float::base/2)/double(MP_Float::base-1);
+const double trunc_max = double(base)*(base/2-1)/double(base-1);
+const double trunc_min = double(-base)*(base/2)/double(base-1);
 
 inline
 int
@@ -209,9 +205,9 @@ to_double(const MP_Float &b)
     return 0;
 
   int exp = b.max_exp();
-  int steps = std::min(MP_Float::limbs_per_double, b.v.size());
-  double d_exp_1 = ::ldexp(1.0, - (int) MP_Float::log_limb);
-  double d_exp   = ::ldexp(1.0, exp * MP_Float::log_limb);
+  int steps = std::min(limbs_per_double, b.v.size());
+  double d_exp_1 = ::ldexp(1.0, - (int) log_limb);
+  double d_exp   = ::ldexp(1.0, exp * log_limb);
   double d = 0;
 
   for (int i = exp - 1; i > exp - 1 - steps; i--) {
@@ -230,9 +226,9 @@ to_interval(const MP_Float &b)
     return 0;
 
   int exp = b.max_exp();
-  int steps = std::min(MP_Float::limbs_per_double, b.v.size());
-  double d_exp_1 = ::ldexp(1.0, - (int) MP_Float::log_limb);
-  double d_exp   = ::ldexp(1.0, exp * MP_Float::log_limb);
+  int steps = std::min(limbs_per_double, b.v.size());
+  double d_exp_1 = ::ldexp(1.0, - (int) log_limb);
+  double d_exp   = ::ldexp(1.0, exp * log_limb);
 
   // We take care of overflow.  The following should be enough.
   if (!CGAL_NTS is_finite(d_exp))
@@ -276,7 +272,7 @@ operator<< (std::ostream & os, const MP_Float &b)
     return os << 0;
 
   MP_Float::const_iterator i;
-  int exp = b.min_exp() * MP_Float::log_limb;
+  int exp = b.min_exp() * log_limb;
   double approx = 0; // only for giving an idea.
 
   for (i = b.v.begin(); i != b.v.end(); i++)
@@ -288,7 +284,7 @@ operator<< (std::ostream & os, const MP_Float &b)
 
     approx += ::ldexp(double(*i), exp);
 
-    exp += MP_Float::log_limb;
+    exp += log_limb;
   }
 
   os << "  [ double approx == " << approx << " ]";
