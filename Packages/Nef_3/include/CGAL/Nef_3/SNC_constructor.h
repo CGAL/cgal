@@ -425,8 +425,8 @@ public:
 			  Plane_3 h, bool boundary) const;
   void create_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2, 
 				 int max, bool boundary) const;
-  void create_degenerate_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2, 
-					    int min,int max,bool boundary) const;
+  void create_degenerate_corner_frame_point(Point_3 p, Point_3 sp1,Point_3 sp2, 
+					    int min,int max,bool boundary)const;
 
 }; // SNC_constructor<SNC>
 
@@ -473,10 +473,15 @@ create_vertices_of_box_with_plane(const Plane_3& h, bool b) {
       cross[2][(dir+2)%3] = cross[3][(dir+2)%3] = -orth_coords[dir];
 
       for(int i=0; i<4; ++i)
-	if(CGAL_NTS abs(RT(cnst[dir],cross[i][dir])) < CGAL_NTS abs(RT(0,orth_coords[dir])) ||
-	   (CGAL_NTS abs(RT(cnst[dir],cross[i][dir])) == CGAL_NTS abs(RT(0,orth_coords[dir])) && dir == add_corners))
-	  points.push_back(Kernel::epoint(cross[i][0],cnst[0],cross[i][1],cnst[1],cross[i][2],cnst[2],cross[i][3]));
-      
+	if(CGAL_NTS abs(RT(cnst[dir],cross[i][dir])) < 
+	   CGAL_NTS abs(RT(0,orth_coords[dir])) ||
+	   (CGAL_NTS abs(RT(cnst[dir],cross[i][dir])) == 
+	    CGAL_NTS abs(RT(0,orth_coords[dir])) && 
+	    dir == add_corners))
+	  points.push_back(Kernel::epoint(cross[i][0],cnst[0],
+					  cross[i][1],cnst[1],
+					  cross[i][2],cnst[2],
+					  cross[i][3]));
     }
 
     for(int i=0;i<2;i++)
@@ -526,11 +531,15 @@ create_vertices_of_box_with_plane(const Plane_3& h, bool b) {
       CGAL_assertion(Infi_box::degree(sp2.hw()) == 0);
 
       TRACEN("sps " << sp1 << "     " << sp2);
-      TRACEN(orth_coords[min] << "|" << orth_coords[(min+1)%3] << "|" << orth_coords[(min+2)%3]);
+      TRACEN(orth_coords[min] << "|" << 
+	     orth_coords[(min+1)%3] << "|" << 
+	     orth_coords[(min+2)%3]);
 
-      if(orth_coords[min]==0 && orth_coords[(min+1)%3] == orth_coords[(min+2)%3] && h.d() == 0) 
+      if(orth_coords[min]==0 && orth_coords[(min+1)%3] == 
+	 orth_coords[(min+2)%3] && h.d() == 0) 
 	create_degenerate_corner_frame_point(*p,sp1,sp2,min, max, b);
-      else if(CGAL_NTS abs(p->hx()) == CGAL_NTS abs(p->hy()) && CGAL_NTS abs(p->hz()) == CGAL_NTS abs(p->hy()))
+      else if(CGAL_NTS abs(p->hx()) == CGAL_NTS abs(p->hy()) && 
+	      CGAL_NTS abs(p->hz()) == CGAL_NTS abs(p->hy()))
 	create_corner_frame_point(*p,sp1,sp2,max,b);
       else
 	create_frame_point(*p,sp1,sp2,h,b);
@@ -743,7 +752,8 @@ create_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,
   she[5] = SD.new_edge_pair(sv[4],SD.twin(she[1]),-1);
   
   TRACEN("2");
-  SD.circle(SD.twin(she[4]))= Sphere_circle(Plane_3(SP[1],SP[4],Point_3(0,0,0)));
+  SD.circle(SD.twin(she[4]))= 
+    Sphere_circle(Plane_3(SP[1],SP[4],Point_3(0,0,0)));
   SD.circle(she[4]) =  SD.circle(SD.twin(she[4])).opposite();
   SD.mark(she[4]) = boundary;
   
@@ -834,7 +844,8 @@ create_degenerate_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,
   she[3] = SD.new_edge_pair(sv[3],she[1],-1);
   she[4] = SD.new_edge_pair(sv[3],SD.twin(she[1]),1);
   
-  SD.circle(SD.twin(she[3]))= Sphere_circle(Plane_3(SP[1],SP[3],Point_3(0,0,0)));
+  SD.circle(SD.twin(she[3]))= 
+    Sphere_circle(Plane_3(SP[1],SP[3],Point_3(0,0,0)));
   SD.circle(she[3]) =  SD.circle(SD.twin(she[3])).opposite();	  
   SD.mark(she[3]) = boundary;
   
@@ -913,7 +924,7 @@ create_box_corner(int x, int y, int z, bool space, bool boundary) const {
 template <typename SNC_>
 typename SNC_::Vertex_handle 
 SNC_constructor<SNC_>::
-create_extended_box_corner(int x,int y,int z, bool space, bool boundary) const { 
+create_extended_box_corner(int x,int y,int z, bool space,bool boundary) const { 
 
   CGAL_nef3_assertion(CGAL_NTS abs(x) == CGAL_NTS abs(y) &&
 		      CGAL_NTS abs(y) == CGAL_NTS abs(z));
@@ -939,7 +950,8 @@ create_extended_box_corner(int x,int y,int z, bool space, bool boundary) const {
     she[si] = SD.new_edge_pair(sv[si], sv[(si+1)%3]);
   
   for(int i=0; i<3;++i) {
-    SD.circle(she[i]) = Sphere_circle(Plane_3(sp[i],sp[(i+1)%3],Point_3(0,0,0)));
+    SD.circle(she[i]) = 
+      Sphere_circle(Plane_3(sp[i],sp[(i+1)%3],Point_3(0,0,0)));
     SD.circle(SD.twin(she[i])) =  SD.circle(she[i]).opposite();
     SD.mark(she[i]) = boundary;
   }

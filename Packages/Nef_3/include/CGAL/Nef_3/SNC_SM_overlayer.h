@@ -878,8 +878,14 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
   while ( start != beyond ) { 
     int i = start->intersection(xycircle,s1,s2);
     TRACEN("segment " << start->source() << " " << start->target());
-    if (i>1) { L.push_back(s2); M[--L.end()] = M[start];    TRACEN(">1 " << s2.source() << " " << s2.target()); }
-    if (i>0) { L.push_back(s1); M[--L.end()] = M[start];    TRACEN(">0 " << s1.source() << " " << s1.target()); }
+    if (i>1) { 
+      L.push_back(s2); M[--L.end()] = M[start];    
+      TRACEN(">1 " << s2.source() << " " << s2.target()); 
+    }
+    if (i>0) { 
+      L.push_back(s1); M[--L.end()] = M[start];    
+      TRACEN(">0 " << s1.source() << " " << s1.target()); 
+    }
     ++start;
   }
   // now all segments are split into hemispheres
@@ -896,15 +902,27 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
       TRACEN("  splitting xy seg "<<*it);
       bool added=false;
       int n1 =  it->intersection(yzcircle,s1,s2);
-      if (n1 > 1 && !s2.is_degenerate()) 
-      { M[ L.insert(it,s2) ] = M[it]; added=true; TRACEN(">1 " << s2.source() << " " << s2.target()); }
-      if (n1 > 0 && !s1.is_degenerate()) 
-      { M[ L.insert(it,s1) ] = M[it]; added = true; TRACEN(">1 " << s1.source() << " " << s1.target()); }
+      if (n1 > 1 && !s2.is_degenerate()) { 
+	M[ L.insert(it,s2) ] = M[it]; 
+	added=true; 
+	TRACEN(">1 " << s2.source() << " " << s2.target()); 
+      }
+      if (n1 > 0 && !s1.is_degenerate()) { 
+	M[ L.insert(it,s1) ] = M[it]; 
+	added = true; 
+	TRACEN(">1 " << s1.source() << " " << s1.target()); 
+      }
       int n2 =  it->intersection(yzcircle.opposite(),s1,s2);
-      if (n2 > 1 && !s2.is_degenerate()) 
-      { M[ L.insert(it,s2) ] = M[it]; added=true; TRACEN(">1 " << s2.source() << " " << s2.target()); }
-      if (n2 > 0 && !s1.is_degenerate()) 
-      { M[ L.insert(it,s1) ] = M[it]; added=true; TRACEN(">1 " << s1.source() << " " << s1.target()); }
+      if (n2 > 1 && !s2.is_degenerate()) { 
+	M[ L.insert(it,s2) ] = M[it]; 
+	added=true; 
+	TRACEN(">1 " << s2.source() << " " << s2.target()); 
+      }
+      if (n2 > 0 && !s1.is_degenerate()) { 
+	M[ L.insert(it,s1) ] = M[it]; 
+	added=true; 
+	TRACEN(">1 " << s1.source() << " " << s1.target()); 
+      }
       if(added) {
 	itl = it; --it; L.erase(itl); M[itl] = T();
       }
@@ -1043,7 +1061,10 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
 
     for (int i=0; i<2; ++i) {
       SObject_handle o = supp_object(v,i);
-      if ( o == NULL ) { TRACEN("no vertex support"); mark(v,i) = m_buffer[i]; continue; }
+      if ( o == NULL ) { 
+	TRACEN("no vertex support"); 
+	mark(v,i) = m_buffer[i]; continue; 
+      }
       SVertex_handle vs;
       SHalfedge_handle es;
       SHalfloop_handle ls;
@@ -1055,7 +1076,9 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
         { mark(v,i) = PI[i].mark(target(es)); continue; }
         mark(v,i) = PI[i].mark(es); continue;
       }
-      if ( assign(ls,o) ) { mark(v,i) = PI[i].mark(ls); TRACEN("loop " << PI[i].circle(ls)); continue; }
+      if ( assign(ls,o) ) { 
+	mark(v,i) = PI[i].mark(ls); 
+	TRACEN("loop " << PI[i].circle(ls)); continue; }
       CGAL_nef3_assertion_msg(0,"wrong handle");
     } TRACEN(" vertex marks "<<mark(v,0)<<" "<<mark(v,1));
 
@@ -1131,13 +1154,15 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
     TRACEN(PH(e)<< " " << mark(e,0) << " " << incident_mark(e,0));
   TRACEN(" ");
   CGAL_nef3_forall_shalfedges(e,PI[0])
-    TRACEN(PH(e)<<  "|" << circle(e) <<"|" << PI[0].mark(e) << " " << PI[0].mark(PI[0].face(e)));
+    TRACEN(PH(e)<<  "|" << circle(e) <<"|" << PI[0].mark(e) << 
+	   " " << PI[0].mark(PI[0].face(e)));
   TRACEN(" ");
   CGAL_nef3_forall_shalfedges(e,*this)
     TRACEN(PH(e) << " " << mark(e,1) << " " << incident_mark(e,1));
   TRACEN(" ");
   CGAL_nef3_forall_shalfedges(e,PI[1])
-    TRACEN(PH(e) <<  "|" << circle(e) <<"|" << PI[1].mark(e) << " " << PI[1].mark(PI[1].face(e)));
+    TRACEN(PH(e) <<  "|" << circle(e) <<"|" << PI[1].mark(e) << 
+	   " " << PI[1].mark(PI[1].face(e)));
   TRACEN(" ");
 
     SFace_handle ff;
@@ -1288,7 +1313,8 @@ void SNC_SM_overlayer<Refs_>::simplify() const
 	  TRACEN("unioning disjoint faces");
 	}
 	
-	TRACEN("is_closed_at_source " << is_closed_at_source(e) << " " << is_closed_at_source(twin(e)));
+	TRACEN("is_closed_at_source " << is_closed_at_source(e) << 
+	       " " << is_closed_at_source(twin(e)));
 	
 	if ( is_closed_at_source(e) )
 	  Vitem[source(e)] = Pitem[face(e)];
@@ -1336,7 +1362,8 @@ void SNC_SM_overlayer<Refs_>::simplify() const
       }
       else {
 	set_face(v, *(UF.find(Pitem[face(v)])));
-	TRACEN("isolated svertex " << PH(v) << " already has incident face " << &*(face(v)));
+	TRACEN("isolated svertex " << PH(v) << 
+	       " already has incident face " << &*(face(v)));
       }
 
       if ( mark(v) == mark(face(v)) ) {

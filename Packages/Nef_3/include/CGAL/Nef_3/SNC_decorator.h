@@ -381,7 +381,9 @@ public:
   bool is_sedge_on_infibox(SHalfedge_handle sh) {
     Point_3 p = point(vertex(sh));
     TRACEN("Point " << p);
-    if(Infi_box::degree(p.hx())==0 && Infi_box::degree(p.hy())==0 && Infi_box::degree(p.hz())==0)
+    if(Infi_box::degree(p.hx())==0 && 
+       Infi_box::degree(p.hy())==0 && 
+       Infi_box::degree(p.hz())==0)
       return false;
     Sphere_circle c(sh->tmp_circle());
     TRACEN("Circle " << c << " has signum " << sign_of(c));
@@ -403,7 +405,9 @@ public:
 
     Point_3 p  = point(vertex(e));
 
-    if(Infi_box::degree(p.hx())==0 && Infi_box::degree(p.hy())==0 && Infi_box::degree(p.hz())==0)
+    if(Infi_box::degree(p.hx())==0 && 
+       Infi_box::degree(p.hy())==0 && 
+       Infi_box::degree(p.hz())==0)
       return false;
 
     Vector_3 v(tmp_point(e));
@@ -924,7 +928,7 @@ public:
       Unique_hash_map<SHalfedge_handle, bool> SEvisited(false);
       Unique_hash_map<SFace_handle, bool> SFvisited(false);
 
-      valid = valid && SD.is_valid(SVvisited, SEvisited, SFvisited, verb, level);
+      valid = valid && SD.is_valid(SVvisited,SEvisited,SFvisited, verb, level);
     }
  
   
