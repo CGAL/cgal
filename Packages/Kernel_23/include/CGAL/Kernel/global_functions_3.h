@@ -100,6 +100,30 @@ midpoint(const Point_3<K> &p, const Point_3<K> &q)
   return K().construct_midpoint_3_object()(p, q);
 }
 
+template < class K >
+inline
+bool
+operator<(const Point_3<K>& p, const Point_3<K>& q)
+{ return K().less_xyz_3_object()(p, q); }
+
+template < class K >
+inline
+bool
+operator>(const Point_3<K>& p, const Point_3<K>& q)
+{ return K().less_xyz_3_object()(q, p); }
+
+template < class K >
+inline
+bool
+operator<=(const Point_3<K>& p, const Point_3<K>& q)
+{ return ! K().less_xyz_3_object()(q, p); }
+
+template < class K >
+inline
+bool
+operator>=(const Point_3<K>& p, const Point_3<K>& q)
+{ return ! K().less_xyz_3_object()(p, q); }
+
 template <typename K>
 inline
 bool

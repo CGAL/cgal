@@ -55,8 +55,16 @@ _test_cls_point_2(const R& )
  assert( p4 == p6 );
  assert( p1 == p6 );
 
+ assert( p4 <= p5 );
+ assert( p4 >= p5 );
+ assert( ! (p4 < p5) );
+ assert( ! (p4 > p5) );
+
  assert( p3 != p4 );
  assert( p0 != p1 );
+
+ assert( p3 < p4 );
+ assert( p4 > p3 );
 
  assert( p0 == CGAL::ORIGIN);
  assert( p1 != CGAL::ORIGIN );

@@ -113,6 +113,24 @@ with higher dimensional points. Again they come in a
 
 The following operations can be applied on points:
 
+\ccFunction{bool operator<(const Point_2<Kernel> &p,
+                           const Point_2<Kernel> &q);}
+       {returns true iff \ccc{p} is lexicographically smaller than \ccc{q},
+       i.e. either if \ccc{p.x() < q.x()} or if \ccc{p.x() == q.x()} and
+       \ccc{p.y() < q.y()}.}
+
+\ccFunction{bool operator>(const Point_2<Kernel> &p,
+                           const Point_2<Kernel> &q);}
+       {returns true iff \ccc{p} is lexicographically greater than \ccc{q}.}
+
+\ccFunction{bool operator<=(const Point_2<Kernel> &p,
+                           const Point_2<Kernel> &q);}
+       {returns true iff \ccc{p} is lexicographically smaller or equal to \ccc{q}.}
+
+\ccFunction{bool operator>=(const Point_2<Kernel> &p,
+                           const Point_2<Kernel> &q);}
+       {returns true iff \ccc{p} is lexicographically greater or equal to \ccc{q}.}
+
 \ccFunction{Vector_2<Kernel> operator-(const Point_2<Kernel> &p,
                                   const Point_2<Kernel> &q);}
        {returns the difference vector between \ccStyle{q} and \ccStyle{p}. 

@@ -1,3 +1,6 @@
+1.98 (7 January 2004)
+- Add comparison operators for Point_[23].
+
 1.97 (1 January 2004)
 - New faster Handle_for interface
 - More work towards extensible kernel.
