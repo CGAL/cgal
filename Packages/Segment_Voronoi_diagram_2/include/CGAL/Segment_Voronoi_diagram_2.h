@@ -62,7 +62,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 namespace CGALi {
 
   template<typename Edge, typename LTag> struct SVD_which_list;
@@ -108,9 +107,9 @@ namespace CGALi {
     Site& operator()(const Node& x) const {
       static Site s;
       if ( x.third ) { // it is a point
-	s = Site(x.first);
+	s = Site::construct_site_2(x.first);
       } else {
-	s = Site(x.first, x.second);
+	s = Site::construct_site_2(x.first, x.second);
       }
       return s;
     }
@@ -171,6 +170,9 @@ public:
   typedef typename DG::Finite_edges_iterator     Finite_edges_iterator;
 
 private:
+  typedef typename Geom_traits::Arrangement_type_2  AT2;
+  typedef typename AT2::Arrangement_type            Arrangement_type;
+
   typedef std::list<Point_2>                     PC;
 
 #if STORE_INPUT_SITES
@@ -230,6 +232,8 @@ protected:
 
   typedef Triple<Vertex_handle,Vertex_handle,Vertex_handle>
   Vertex_triple;
+
+  typedef std::pair<Face_handle,Face_handle>    Face_pair;
 
   typedef typename Vertex_base::Storage_site_2  Storage_site_2;
 
@@ -479,14 +483,14 @@ public:
   Vertex_handle  insert(const Point_2& p0, const Point_2& p1) {
     // update input site container
     register_input_site(p0, p1);
-    return insert_segment(Site_2(p0, p1), Vertex_handle());
+    return insert_segment(Site_2::construct_site_2(p0, p1), Vertex_handle());
   }
 
   Vertex_handle  insert(const Point_2& p0, const Point_2& p1, 
 			Vertex_handle vnear) {
     // update input site container
     register_input_site(p0, p1);
-    return insert_segment(Site_2(p0, p1), vnear);
+    return insert_segment(Site_2::construct_site_2(p0, p1), vnear);
   }
 
   Vertex_handle  insert(const Site_2& t) {
@@ -555,7 +559,11 @@ protected:
 
   Triple<Vertex_handle,Vertex_handle,Vertex_handle>
   insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
-			  Vertex_handle v, Tag_true);
+			  Vertex_handle v, const Tag_true&);
+
+  Triple<Vertex_handle,Vertex_handle,Vertex_handle>
+  insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
+				Vertex_handle v);
 
   Vertex_handle insert_segment(const Site_2& t, Vertex_handle vnear);
 
@@ -588,12 +596,12 @@ public:
   // NEAREST NEIGHBOR LOCATION
   //--------------------------
   Vertex_handle  nearest_neighbor(const Point_2& p) const {
-    return nearest_neighbor(Site_2(p), Vertex_handle());
+    return nearest_neighbor(Site_2::construct_site_2(p), Vertex_handle());
   }
 
   Vertex_handle  nearest_neighbor(const Point_2& p,
 				  Vertex_handle vnear) const {
-    return nearest_neighbor(Site_2(p), vnear);
+    return nearest_neighbor(Site_2::construct_site_2(p), vnear);
   }
 
 protected:
@@ -757,6 +765,110 @@ protected:
 			   v1->storage_site().point_handle(0) );
   }
 
+  Storage_site_2 split_storage_site(const Storage_site_2& ss0,
+				    const Storage_site_2& ss1,
+				    unsigned int i, const Tag_false&)
+  {
+    // Split the first storage site which is a segment using the
+    // second storage site which is a exact point
+    // i denotes whether the first or second half is to be created
+    CGAL_precondition( ss0.is_segment() && ss1.is_point() );
+    CGAL_precondition( ss1.is_exact() );
+    CGAL_precondition( i < 2 );
+
+    if ( i == 0 ) {
+      return Storage_site_2(ss0.point_handle(0), ss1.point_handle(0));
+    } else {
+      return Storage_site_2(ss1.point_handle(0), ss0.point_handle(1));
+    }
+  }
+
+  Storage_site_2 split_storage_site(const Storage_site_2& ss0,
+				    const Storage_site_2& ss1,
+				    unsigned int i, const Tag_true&)
+  {
+    // Split the first storage site which is a segment using the
+    // second storage site which is a exact point
+    // i denotes whether the first or second half is to be created
+    CGAL_precondition( ss0.is_segment() && ss1.is_point() );
+    //    CGAL_precondition( ss1.is_exact() );
+    CGAL_precondition( i < 2 );
+
+    if ( i == 0 ) {
+      if ( ss0.is_exact(0) ) {
+	if ( ss1.is_exact() ) {
+	  return Storage_site_2(ss0.point_handle(0), ss1.point_handle(0));
+	} else {
+	  Storage_site_2 supp0 = ss0.supporting_segment_site();
+	  Storage_site_2 supp1 = ss1.supporting_segment_site(0);
+
+	  if ( are_parallel(supp0.site(), supp1.site()) ) {
+	    supp1 = ss1.supporting_segment_site(1);
+	  }
+	  return Storage_site_2(supp0.point_handle(0),
+				supp0.point_handle(1),
+				supp1.point_handle(0),
+				supp1.point_handle(1), true);
+	}
+      } else {
+	if ( ss1.is_exact() ) {
+	  return Storage_site_2(ss0.point_handle(0), ss1.point_handle(0),
+				ss0.point_handle(2), ss0.point_handle(3),
+				false);
+	} else {
+	  Storage_site_2 supp0 = ss0.supporting_segment_site();
+	  Storage_site_2 supp1 = ss1.supporting_segment_site(0);
+
+	  if ( are_parallel(supp0.site(), supp1.site()) ) {
+	    supp1 = ss1.supporting_segment_site(1);
+	  }
+	  return Storage_site_2(supp0.point_handle(0),
+				supp0.point_handle(1),
+				ss0.point_handle(2),
+				ss0.point_handle(3),
+				supp1.point_handle(0),
+				supp1.point_handle(1) );
+	}
+      }
+    } else { // i == 1
+      if ( ss0.is_exact(1) ) {
+	if ( ss1.is_exact() ) {
+	  return Storage_site_2(ss1.point_handle(0), ss0.point_handle(1));
+	} else {
+	  Storage_site_2 supp0 = ss0.supporting_segment_site();
+	  Storage_site_2 supp1 = ss1.supporting_segment_site(0);
+
+	  if ( are_parallel(supp0.site(), supp1.site()) ) {
+	    supp1 = ss1.supporting_segment_site(1);
+	  }
+	  return Storage_site_2(supp0.point_handle(0),
+				supp0.point_handle(1),
+				supp1.point_handle(0),
+				supp1.point_handle(1), false);
+	}
+      } else {
+	if ( ss1.is_exact() ) {
+	  return Storage_site_2(ss1.point_handle(0), ss0.point_handle(1),
+				ss0.point_handle(4), ss0.point_handle(5),
+				true);
+	} else {
+	  Storage_site_2 supp0 = ss0.supporting_segment_site();
+	  Storage_site_2 supp1 = ss1.supporting_segment_site(0);
+
+	  if ( are_parallel(supp0.site(), supp1.site()) ) {
+	    supp1 = ss1.supporting_segment_site(1);
+	  }
+	  return Storage_site_2(supp0.point_handle(0),
+				supp0.point_handle(1),
+				supp1.point_handle(0),
+				supp1.point_handle(1),
+				ss0.point_handle(4),
+				ss0.point_handle(5) );
+	}
+      }
+    }
+  }
+
   Storage_site_2 create_storage_site(const Storage_site_2& ss0,
 				     const Storage_site_2& ss1) {
     return Storage_site_2( ss0.point_handle(0), ss0.point_handle(1),
@@ -808,12 +920,20 @@ protected:
   }
 
 protected:
+  void print_error_message() const;
 
-  void print_error_message() const
+  void print_error_message(const Tag_false&) const
   {
-    std::cerr << "SVD::Insert aborted: intersecting segments found"
-	      << std::endl;
+    static int i = 0;
+
+    if ( i == 0 ) {
+      i++;
+      std::cerr << "SVD::Insert aborted: intersecting segments found"
+		<< std::endl;
+    }
   }
+
+  void print_error_message(const Tag_true&) const {}
 
   //protected:
 public:
@@ -836,11 +956,15 @@ protected:
   //-----------------------------
   void initialize_conflict_region(const Face_handle& f, List& l);
 
+  std::pair<Face_handle,Face_handle>
+  find_faces_to_split(const Vertex_handle& v, const Site_2& t) const;
+
   void expand_conflict_region(const Face_handle& f, const Site_2& t,
 			      const Storage_site_2& ss,
 			      List& l, Face_map& fm,
 			      std::map<Face_handle,Sign>& sign_map,
-			      std::pair<bool, Vertex_handle>& vcross);
+			      Triple<bool, Vertex_handle,
+			      Arrangement_type>& vcross);
 
   Vertex_handle add_bogus_vertex(Edge e, List& l);
   Vertex_list   add_bogus_vertices(List& l);
@@ -1041,8 +1165,8 @@ protected:
 		     const Vertex_handle& v,
 		     Sign sgn) const;
 
-  bool arrangement_type(const Site_2& t, Vertex_handle v) const;
-  bool arrangement_type(const Site_2& p, const Site_2& q) const;
+  Arrangement_type arrangement_type(const Site_2& t, Vertex_handle v) const;
+  Arrangement_type arrangement_type(const Site_2& p, const Site_2& q) const;
 
   bool are_parallel(const Site_2& p, const Site_2& q) const {
     return geom_traits().are_parallel_2_object()(p, q);
