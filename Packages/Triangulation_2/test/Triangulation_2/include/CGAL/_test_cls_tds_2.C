@@ -274,6 +274,19 @@ _test_cls_tds_2( const Tds &, const Gt &)
 
 
   //test input, output
+
+  // first set_point to vertices which have not been set
+  //for clean input output of points
+  w1->set_point(p1);
+  w2->set_point(p1);
+  v2->set_point(p1);
+  w3->set_point(p1);
+  v3->set_point(p1);
+  w4->set_point(p1); 
+  Vertex_iterator vit = tds3.vertices_begin();
+  for ( ; vit != tds3.vertices_end(); vit++) {
+    vit->set_point(p1);
+  }
   std::cout << "    output to a file" << std::endl;
   std::ofstream of0("file_tds0");
   CGAL::set_ascii_mode(of0); 

@@ -23,8 +23,8 @@ typedef CGAL::Gmpz Rtype;
 #include <CGAL/leda_integer.h>
 typedef leda_integer Rtype;
 #else
-#include <CGAL/double.h>
-typedef double Rtype;
+#include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float Rtype;
 #endif // CGAL_USE_LEDA
 #endif // CGAL_USE_GMP
 //#endif // CGAL_USE_CLN
