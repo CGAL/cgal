@@ -3064,8 +3064,7 @@ void Min_sphere_of_spheres_d<Traits>::update(LP_algorithm) {
 
     for (i=e; i<n; ++i)
       if (!ss.contains(t.center_cartesian_begin(l[i]),
-                       t.radius(l[i]),Tol,Is_exact())) {
-        pivot(i);
+                       t.radius(l[i]),Tol,Is_exact()) && pivot(i)) {
         k = i+1;
         break;
       }
@@ -3075,8 +3074,9 @@ void Min_sphere_of_spheres_d<Traits>::update(LP_algorithm) {
 %
 This works fine in theory.  However, for approximate computation our
 implementation of \code{pivot()} might fail under certain
-circumstances, so termination is not guaranteed.  That's why this
-algorithm is not the default algorithm.
+circumstances.  In such a case we proceed as if the violating ball
+were contained in the current ball.  In this way, termination is
+guaranteed.
 %
 \subsection{The implementation of the farthest-first heuristic}
 %

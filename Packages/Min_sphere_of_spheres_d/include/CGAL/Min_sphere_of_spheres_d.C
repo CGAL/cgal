@@ -83,8 +83,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
       for (i=e; i<n; ++i)
         if (!ss.contains(t.center_cartesian_begin(l[i]),
-                         t.radius(l[i]),Tol,Is_exact())) {
-          pivot(i);
+                         t.radius(l[i]),Tol,Is_exact()) && pivot(i)) {
           k = i+1;
           break;
         }
