@@ -2,13 +2,13 @@ Subdivision algorithms contain two major
 components: \emph{\tr} and \emph{\gm}.
 The \tr\ reparameterizes the source mesh into the target 
 mesh. The \gm\ transforms a submesh on the source mesh
-to a vertex on the refined mesh. The source submesh with
-the normalized weighting is called 
+to a vertex on the refined mesh. The source submesh (with
+the normalized weighting) is called the
 \emph{stencil}. A proper combination of a \tr\ and a set of 
 rules of \gm\ define a valid subdivision scheme.
 
-Figure \ref{fig:RefSchemes} shows the local configuration 
-of four major refinements
+Figure \ref{fig:RefSchemes} shows the local configurations 
+of the major refinements
 employed in subdivision algorithms, which include Catmull-Clark
 subdivision (PQQ) \cite{cc}, Loop subdivision (PTQ) \cite{loop},
 Doo-Sabin subdivision (DQQ) \cite{ds} and $\sqrt{3}$ subdivision
@@ -22,19 +22,21 @@ of two different refinements.
   \psfrag{DQQ}[]{\scriptsize DQQ} 
   \psfrag{Sqrt3}[]{\scriptsize $\sqrt{3}$} 
   \epsfig{file=figs/RefSchemes.eps, width=7cm}
-  \caption{Topology refinements: 
+  \caption{Refinement schemes in practice: 
     primal quadrilateral quadrisection (PQQ),
     primal triangle quadrisection (PTQ),
     dual quadrilateral quadrisection (DQQ) and
     $\sqrt{3}$ triangulation.}
   \label{fig:RefSchemes}
 \end{figure}
-The \gm\ applies a \emph{mask} on the stencil and
-generate the corresponding vertex on the refined mesh.
-The mask usually specifies an affine combination of the 
-stencil. Figure \ref{fig:RefMap} demonstrates the examples of the
-correspondence between a stencil and its vertex. Subdivisions 
-usually have distinct masks associated with different stencils 
+The \gm\ multiplies the stencils and
+generates the corresponding vertex on the refined mesh.
+%The stencil usually specifies an affine map of the 
+%submesh. 
+Figure \ref{fig:RefMap} demonstrates the examples of the
+correspondence between a stencil and its vertex. According 
+to the employed refinement scheme, subdivisions 
+may have several distinct stencils 
 (Figure \ref{fig:RefMap} (a-c)). 
 \begin{figure}
   \centering
@@ -43,8 +45,8 @@ usually have distinct masks associated with different stencils
   \psfrag{C}[]{(c)}
   \psfrag{D}[]{(d)}
   \epsfig{file=figs/RefMap.eps, width=7cm}
-  \caption{The stencil and its vertex in the 
-           Catmull-Clark subdivision (a-c)
+  \caption{The stencil (vertex weights are not shown) and its 
+           vertex in the Catmull-Clark subdivision (a-c)
            and Doo-Sabin subdivision (d). Catmull-Clark
            subdivision has three stencils: facet-stencil (a), 
            edge-stencil (b) and vertex-stencil (c). 

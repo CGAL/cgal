@@ -25,6 +25,24 @@ past-the-end position in the sequence. Since CGAL is strongly inspired
 from the generality of STL, it is important to become familiar with
 its concepts before starting using it.
 
+%% The generic programming paradigm provides a
+%% soft-coupled framework to support data structures and algorithms. 
+%% It focuses on representing families of the data structures 
+%% or the algorithms by identifying the \emph{abstract representations}.
+%% With the \CC\ template, the standard template library
+%% \cite{ms-stl-96} (STL) is the pioneer library based on
+%% the generic programming paradigm. The STL provides a set of 
+%% data structure families, such as vectors, lists and trees,
+%% and a set of generic algorithms that can be dynamicly
+%% coupled with a data structure. In general, 
+%% the abstract representation of a data structure family
+%% is the \emph{entity type} and of an algorithm family
+%% is the \emph{operation type}.
+%% %For example are the entity sorting and searching where users
+%% %supply the equality predicates to specialize the algorithms.  
+%% The STL frees software engineers from rebuilding the fundamental 
+%% data structures and let them focus on the design of the algorithms.
+
 \noindent \textbf{Halfedge data structure.}
 \input hds
 

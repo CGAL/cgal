@@ -1,4 +1,4 @@
-Policy-based design \cite{Alexandrescu:2001:MCD} assemble a 
+Policy-based design \cite{Alexandrescu:2001:MCD} assembles a 
 class (called \emph{host}) with complex behavior out of many 
 little behaviors (called \emph{policies}). Each policy establishes
 an interface pertaining to a specific behavior.
@@ -6,15 +6,15 @@ Based on this design, we implement a subdivision solution as
 a \emph{refinement function} parameterized with the 
 \emph{stencils}. The host, i.e.\ the refinement function,
 conducts the \tr\ and maintains the stencils. The policy,
-i.e.\ the stencil, attends the \gm . By mixing and matching
+i.e.\ the stencil, attends the \gm s. By mixing and matching
 the host and policy, a combinatory library of the subdivisions
-can be constructed. 
+is then constructed. 
 
 In the following paragraph, we implement the Catmull-Clark 
 subdivision and Doo-Sabin subdivision based on the 
 policy-based design. For the sake of simplicity, all 
 namespaces, template declarations
-and typedefs have be excluded. The sample codes are only
+and typedefs have been excluded. The sample codes are only
 given for illustration purposes.
 
 A Catmull-Clark subdivision function is structured 
@@ -35,20 +35,25 @@ public:
 The \lstinline!quadralize_polyhedron<>()! is the host function
 refining the input mesh
 and the \lstinline!CatmullClark_rule!
-is the policy class applying the Catmull-Clark stencils. 
-The refinement host calls the policy
-functions while maintaining the correspondence of stencils, 
-i.e.\ the submesh centered as the given facet, edge, or
-vertex handle, and the smoothing point.
+is the policy class applying the Catmull-Clark stencils.
+\lstinline!Polyhedron! is the typedef of a user-specialized
+\cgalpoly . The \lstinline!quadralize_polyhedron<>()!
+refines the source mesh while maintaining the 
+correspondence of the stencil, i.e.\ the submesh centered 
+around the given facet, edge, or
+vertex, and the smoothing vertex. The smoothing point
+is calculated by calling the policies, i.e.\
+the \lstinline!facet_rule()!, the \lstinline!edge_rule()!,
+and the \lstinline!vertex_rule()!.
 Different refinement scheme may require a 
-different set of stencils. A PQQ scheme needs
+different set of stencils. A PQQ scheme needs the
 facet-, edge- and vertex-stencils whereas a DQQ scheme 
 only need the corner-stencils (Figure \ref{fig:RefMap}).
 
 \noindent\textbf{Geometry Policies}.
 Inside a policy, applying stencil is simplified as 
-the mesh traversal of only a 1-ring neighborhood. 
-Following example shows the policy of facet-stencil 
+the mesh traversal of only the 1-ring neighborhood. 
+Following example shows the policy of the facet-stencil 
 in the Catmull-Clark subdivision.
 \begin{lstlisting}
 void facet_rule(Facet_handle facet, Point& pt) {
@@ -63,12 +68,12 @@ void facet_rule(Facet_handle facet, Point& pt) {
 \end{lstlisting}
 The \lstinline!Facet_handle facet! points to the 
 center facet of the stencil and the \lstinline!Point& pt! 
-specifies the smoothing vertex. For this specific stencil, 
+specifies the smoothing point. For this specific stencil, 
 we compute the centroid with a loop based on a circulator 
 over the halfedges surrounding a facet. The CGAL kernel 
-geometry, i.e. Points and Vectors computation, is used. 
+geometry, i.e. points and vectors computation, is used. 
 Though for a specialized kernel, special computation may be 
-applied in user-defined policies.
+applied in the user-defined policies.
  
 \noindent\textbf{The refinement host: Euler operations}.
 Implementing a topology refinement is a rather complex job. One
@@ -98,7 +103,7 @@ refines the mesh with a sequence of the Euler operations.
 The points generated in the first pass are stored in a
 point buffer in the order of the stencil 
 traversal. The sequence of the vertex insertions 
-is maintained to match the the stencil traversal, i.e.\ 
+is maintained to match the stencil traversal, i.e.\ 
 the storage order of the point buffer. It assures 
 the stencil correspondence of the refinement.
 
@@ -113,7 +118,7 @@ refinement scheme, called subdivision operator factorization,
 is proposed in \cite{Peter:2003:CPDSS}.
 To support such schemes efficiently, we use the modifier 
 callback mechanism of \cgalpoly\ to rebuild the mesh
-connectivity. In addition to the points buffer, we
+connectivity. In addition to the point buffer, we
 also create a facet list based on the source mesh. Note that in a DQQ
 scheme, every new facet corresponds to a vertex, edge or facet. The
 combination of the points buffer and facet list represents a
@@ -160,25 +165,24 @@ pb.end_surface();
 Our subdivision solution, decoupling the geometry rules from the
 refinement, grants users flexible control of the stencils.
 Variants of the subdivisions can be devised by simply mixing
-and matching the refinement host and geometry policies. As 
-our solution is not restricted by the 
-mesh configurations (in contrast to the quad-tree or patch-based 
-implementation), subdivision pipeline is easily supported
-as a composite function like
-\begin{lstlisting}
-void MySubdivision(Polyhedron& p) {
-  quadralize_polyhedron<Myrule_1<Polyhedron>>(p);
-  dualize_polyhedron<Myrule_2<Polyhedron>>(p);
-} 
-\end{lstlisting}
-
+and matching the refinement hosts and geometry policies. Since
+\cgalpoly\ supports mesh of non-unioform configurations 
+(in contrast to the quad-tree or patch-based 
+implementation), chain of different refinements
+is naturally supported.
+%\begin{lstlisting}
+%void MySubdivision(Polyhedron& p) {
+%  quadralize_polyhedron<Myrule_1<Polyhedron>>(p);
+%  dualize_polyhedron<Myrule_2<Polyhedron>>(p);
+%} 
+%\end{lstlisting}
 More importantly, our solution accepts a user-specialized 
 polyhedron. No special flag or attribute is required 
 to assist the \tr . This generality make our solution 
 naturally fit in a modeling pipeline or a multipass modeling 
-environment. Though in some application, efficiency is more
-important than flexibility, a tight-coupled implementation
-of $\sqrt{3}$ is introduced in next section.
+environment. In some applications, efficiency is more
+important than flexibility. An efficient implementation
+of $\sqrt{3}$ based on \cgalpoly\ is introduced in next section.
 
 %TODO: since the writing memory is not overlapped, multi-threaded
 %supporting is easily done.
