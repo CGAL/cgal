@@ -8,12 +8,12 @@ CFG=cgalQt - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "cgalqt.mak".
+!MESSAGE NMAKE /f "CGALQt.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "cgalqt.mak" CFG="cgalQt - Win32 Debug"
+!MESSAGE NMAKE /f "CGALQt.mak" CFG="cgalQt - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -64,8 +64,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /TP /D /GZ "WIN32" /c
-# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\auxilary\wingmp\gmp-2.0.2" /I "$(CGALROOT)\include\cgal\config\msvc" /I "$(CGALROOT)\include" /D "_DEBUG" /D "CGAL_USE_GMP" /D "WIN32" /D "_MBCS" /D "_LIB" /FR /YX /FD /TP /GZ /c
-# SUBTRACT CPP /X
+# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\auxilary\wingmp\gmp-4.0.1" /I "$(CGALROOT)\include\cgal\config\msvc6" /I "$(CGALROOT)\include" /D "_DEBUG" /D "CGAL_USE_GMP" /D "WIN32" /D "_MBCS" /D "_LIB" /FR /YX /FD /TP /GZ /c
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
 # ADD RSC /l 0x40c /i "$(CGALROOT)\include" /i "$(CGALROOT)\include\cgal" /i "$(CGALROOT)\stlport" /i "$(CGALROOT)\include\cgal\config\msvc" /i "$(CGALROOT)\auxilary\wingmp\gmp-2.0.2" /d "_DEBUG"
 BSC32=bscmake.exe
@@ -87,46 +86,76 @@ LIB32=link.exe -lib
 # Begin Source File
 
 SOURCE=.\Qt_widget.C
-
-!IF  "$(CFG)" == "cgalQt - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "cgalQt - Win32 Debug"
-
-# ADD CPP /I "$(QTDIR)\include"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Qt_widget_layer.C
-
-!IF  "$(CFG)" == "cgalQt - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "cgalQt - Win32 Debug"
-
-# ADD CPP /I "$(QTDIR)\include"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Qt_widget_standard_toolbar.C
-
-!IF  "$(CFG)" == "cgalQt - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "cgalQt - Win32 Debug"
-
-# ADD CPP /I "$(QTDIR)\include"
-
-!ENDIF 
-
 # End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\..\include\CGAL\IO\Qt_widget.h
+
+!IF  "$(CFG)" == "cgalQt - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "cgalQt - Win32 Debug"
+
+# Begin Custom Build
+InputPath=..\..\include\CGAL\IO\Qt_widget.h
+
+"Qt_widget.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc.exe $(CGALROOT)/include/CGAL/IO/Qt_widget.h -o Qt_widget.moc
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\CGAL\IO\Qt_widget_layer.h
+
+!IF  "$(CFG)" == "cgalQt - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "cgalQt - Win32 Debug"
+
+# Begin Custom Build
+InputPath=..\..\include\CGAL\IO\Qt_widget_layer.h
+
+"Qt_widget_layer.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc.exe $(CGALROOT)/include/CGAL/IO/Qt_widget_layer.h -o Qt_widget_layer.moc
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h
+
+!IF  "$(CFG)" == "cgalQt - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "cgalQt - Win32 Debug"
+
+# Begin Custom Build
+InputPath=..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h
+
+"Qt_widget_standard_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc.exe $(CGALROOT)/include/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # End Group
 # End Target
 # End Project
