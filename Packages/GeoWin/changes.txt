@@ -1,3 +1,6 @@
+1.4.4 (25 March 2002)
+- Nef_2 demo changed and help added
+
 1.4.3 (20 March 2002)
 - Polygon triangulation demo added
 

@@ -125,13 +125,13 @@ public:
   { return ( m ? vertex_cl : CGAL::Color(190,190,190) ); }
   
   int width(Vertex_const_handle, const Mark& m) const
-  { return 1; }
+  { return 3; }
   
   Color color(Halfedge_const_handle, const Mark& m) const
   { return ( m ? hedge_cl : CGAL::Color(190,190,190) ); }
   
   int width(Halfedge_const_handle, const Mark& m) const
-  { return 1; }
+  { return 3; }
   
   Color color(Face_const_handle, const Mark& m) const
   { return ( m ? face_cl : CGAL::WHITE ); }
@@ -156,7 +156,7 @@ void draw_nef(CGAL::Window_stream& ws, const Nef_polyhedron_2<T>& P)
   E.determine_frame_radius(D.points_begin(),D.points_end(),frame_radius);
   RT::set_R(frame_radius);
   
-  MyColor colors(CGAL::BLACK, CGAL::BLACK, CGAL::BLUE);
+  MyColor colors(CGAL::RED, CGAL::RED, CGAL::RED);
   T kernel;
   
   Visualizor PMV(ws,D,kernel,colors); 
@@ -165,6 +165,20 @@ void draw_nef(CGAL::Window_stream& ws, const Nef_polyhedron_2<T>& P)
 
 }
 
+Nef create_nef_polyhedron(Polygon& act)
+{
+  std::list<EPoint> pts;
+  Polygon::Vertex_const_iterator it= act.vertices_begin();
+  Polygon::Vertex_const_iterator st= act.vertices_end();  
+  
+  for(;it != st; it++){
+    double xc = (*it).x();
+    double yc = (*it).y();
+    leda_rat_point rp(leda_point(xc,yc));
+    pts.push_back(EPoint(rp.X(),rp.Y(),rp.W()));
+  } 
+  return Nef(pts.begin(), pts.end());
+}
 
 // what kind of boolean operation ???
 int op_kind = 0;
@@ -190,39 +204,12 @@ public:
   if (L.size() < 2) return;
   
   // build two Nef polyhedra ...
-  std::list<EPoint> pts1;
-  std::list<EPoint> pts2; 
-  
-  std::list<Polygon>::const_iterator poly_iter = L.begin();
-  
+  std::list<Polygon>::const_iterator poly_iter = L.begin();  
   Polygon act = *poly_iter; poly1 = act;
-  
-  Polygon::Vertex_const_iterator it= act.vertices_begin();
-  Polygon::Vertex_const_iterator st= act.vertices_end();  
-  
-  for(;it != st; it++){
-    double xc = (*it).x();
-    double yc = (*it).y();
-    leda_rat_point rp(leda_point(xc,yc));
-    pts1.push_back(EPoint(rp.X(),rp.Y(),rp.W()));
-  }
-  
-  poly_iter++;
-  
+  Nef N1 = create_nef_polyhedron(act);
+  poly_iter++;  
   act = *poly_iter; poly2 = act;
-  
-  it= act.vertices_begin();
-  st= act.vertices_end();  
-  
-  for(;it != st; it++){
-    double xc = (*it).x();
-    double yc = (*it).y();
-    leda_rat_point rp(leda_point(xc,yc));
-    pts2.push_back(EPoint(rp.X(),rp.Y(),rp.W()));
-  }  
-  
-  Nef N1(pts1.begin(), pts1.end());
-  Nef N2(pts2.begin(), pts2.end()); 
+  Nef N2 = create_nef_polyhedron(act); 
   
   //perform bop
   switch (op_kind) {
@@ -236,15 +223,11 @@ public:
  
  void draw(leda_window& W,leda_color c1,leda_color c2,double x1,double y1,double x2,double y2)
  {  
-   //W << bop_result;  
-   if (! empty) CGAL::draw_nef(W, bop_result);
-   
+   if (! empty) CGAL::draw_nef(W, bop_result);   
    W.set_color(c1);
-   W << poly1;
-   W << poly2;
+   W << poly1; W << poly2;
  }
 };
-
 
 LEDA_NAMESPACE_NAME::GeoWin* gwin;
 LEDA_NAMESPACE_NAME::geo_scene result;  
@@ -260,6 +243,11 @@ int main()
 
   LEDA_NAMESPACE_NAME::GeoWin GW("Boolean operations on 2d nef polyhedra");
   gwin = &GW;
+#if  __LEDA__ < 430
+  GW.add_help_text(leda_string("Nef_2"));
+#else
+  GW.add_special_help_text(leda_string("Nef_2"),true);
+#endif
 
   geo_nef update_obj;
   
