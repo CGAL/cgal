@@ -201,7 +201,7 @@ public:
 	curve_above_under = SMALLER;
       }
 
-    Halfedges_list::const_iterator rel_it;
+    typename Halfedges_list::const_iterator rel_it;
     for (rel_it = relevant_halfedges.begin(); 
 	 rel_it != relevant_halfedges.end();) 
       {
