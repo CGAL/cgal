@@ -1,3 +1,6 @@
+Version 4.133 on 20 March 2002
+- removed _tag from names of number type traits types
+
 Version 4.132 on 20 March 2002
 - removed number_type_tag
 - added tags for number type operators
