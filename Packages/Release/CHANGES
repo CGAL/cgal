@@ -14,7 +14,7 @@ Additional supported platforms:
 
     * MS Visual C++, version 7.1.
     * SunPro CC versions 5.4 and 5.5 on Solaris
-    * GNU g++ versions 3.2 and 3.3 on Linux, Solaris, Irix, cygwin, and FreeBSD.
+    * GNU g++ version 3.2 and 3.3 on Linux, Solaris, Irix, cygwin, and FreeBSD.
     * MipsPRO CC 7.30 and 7.40 with both the n32 and n64 ABIs.
 
 Platforms not supported anymore:
@@ -78,7 +78,7 @@ Basic Library:
     * Kd-tree : this package is deprecated, its documentation is removed.
       It is replaced by the Spatial Searching package.
 
-    * Largest_empty_rectangle_2 (new package in Geometric Optimization):
+    * Largest_empty_rectangle_2 (new package in Geometric Optimisation):
        Given a set of points P in the plane, the class
        Largest_empty_iso_rectangle_2<T> is a data structure that
        maintains an iso-rectangle with the largest area among all
@@ -89,7 +89,7 @@ Basic Library:
       - The classes Triangulation_data_structure_2 (and 3), which implements
         the data structure for 2D triangulation class, now makes use of
         CGAL::Compact_container (see Support Library section below).
-      - The triangulation classes use a Rebind mecanism to provide
+      - The triangulation classes use a Rebind mechanism to provide
         the full flexibility on Vertex and Face base classes.
         This means that it is possible for the user to derive its own Face
         of Vertex base class, adding a functionality that makes use of
@@ -97,7 +97,7 @@ Basic Library:
         or Vertex_handle.
       - New classes Triangulation_vertex_base_with_info_2 (and 3) and
 	Triangulation_face_base_with_info_2 (and 3) to make easier the
-        customisation of base classes in most cases.
+        customization of base classes in most cases.
 
     * Triangulations 2D:
       - Regular triangulation provides an easy access to hidden points.
@@ -117,7 +117,7 @@ Basic Library:
       - Triangulation_3 now gives non-const access to the data structure.
 
     * Interval_skip_list (new package)
-      An interval skip list is a data strucure for finding all intervals 
+      An interval skip list is a data structure for finding all intervals 
       that contain a point, and for stabbing queries, that is for answering 
       the question whether a given point is contained in an interval or not. 
 
@@ -267,39 +267,55 @@ Basic Library:
 	x-monotone. If an input curve, or a set of input curves, are known to
 	be x-monotone and pairwise disjoint, the new functions below can be
 	used to insert them into the map efficiently.
+
         1. Halfedge_handle
            non_intersecting_insert(const X_monotone_curve_2 & cv,
                                    Change_notification * en = NULL)
-
         2. Halfedge_iterator
            non_intersecting_insert(const X_monotone_curve_2_iterator & begin,
                                    const X_monotone_curve_2_iterator & end,
                                    Change_notification * en = NULL)
-
         3. Halfedge_handle
-           non_intersecting_insert_in_face_interior(const X_monotone_curve_2 & cv,
-                                                    Face_handle f,
-                                                    Change_notification * en = NULL)
-
+           non_intersecting_insert_in_face_interior(
+                                   const X_monotone_curve_2 & cv,
+                                   Face_handle f,
+                                   Change_notification * en = NULL)
         4.  Halfedge_handle
-            non_intersecting_insert_from_vertex(const X_monotone_curve_2 & cv,
-                                                Halfedge_handle h,
-                                                Change_notification * en = NULL)
-
+            non_intersecting_insert_from_vertex(
+                                   const X_monotone_curve_2 & cv,
+                                   Halfedge_handle h,
+                                   Change_notification * en = NULL)
         5.  Halfedge_handle
-            non_intersecting_insert_at_vertices(const X_monotone_curve_2 & cv,
-                                                Halfedge_handle h1,
-                                                Halfedge_handle h2,
-                                                Change_notification * en = NULL)
+            non_intersecting_insert_at_vertices(
+                                   const X_monotone_curve_2 & cv,
+                                   Halfedge_handle h1,
+                                   Halfedge_handle h2,
+                                   Change_notification * en = NULL)
         6.  Halfedge_handle
-            non_intersecting_insert_from_vertex(const X_monotone_curve_2 & cv,
-                                                Vertex_handle v1,
-                                                Change_notification * en = NULL)
+            non_intersecting_insert_from_vertex(
+                                   const X_monotone_curve_2 & cv,
+                                   Vertex_handle v1,
+                                   Change_notification * en = NULL)
         7.  Halfedge_handle
-            non_intersecting_insert_at_vertices(const X_monotone_curve_2 & cv,
-                                                Vertex_handle v1,
-                                                Vertex_handle v2,
-                                                Change_notification * en = NULL)
+            non_intersecting_insert_at_vertices(
+                                   const X_monotone_curve_2 & cv,
+                                   Vertex_handle v1,
+                                   Vertex_handle v2,
+                                   Change_notification * en = NULL)
+
+    * Polyhedral Surface:
+      - The old design that was deprecated since CGAL 2.3 has been removed.
+      - Class Polyhedron_incremental_builder_3:
+        - Renamed local enum ABSOLUTE to ABSOLUTE_INDEXING, and RELATIVE to
+          RELATIVE_INDEXING to avoid conflicts with similarly named
+          macros of another library.
+        - Changed member functions add_vertex(), begin_facet(), and end_facet()
+          to return useful handles.
+        - Added test_facet() to check facets for validity before adding them.
+        - Added vertex( size_t i) to return Vertex_handle for index i.
+
+    * Halfedge Data Structure:
+      - The old design that was deprecated since CGAL 2.3 has been removed.
 
 
 Support Library:
@@ -338,7 +354,7 @@ Support Library:
         - add_to_history(), clear_history(), back(), forth(): use forward(),
           back() and clear_history() of the Qt_widget_standard_toolbar instead.
         - custom_redraw(): use redraw_on_back() and redraw_on_front() instead.
-      - Optimizations:
+      - Optimisations:
         the output operators of the following classes have been optimized:
         - CGAL::Segment_2  (now tests for intersection with the drawing area)
         - CGAL::Triangle_2 (now tests for intersection with the drawing area)
@@ -403,11 +419,11 @@ Basic Library:
       is transparent for the user of triangulation classes.
     - Constrained and Delaunay constrained triangulations are now able
       to handle intersecting input constraints. 
-      The behavior of constrained triangulations with repect to
+      The behavior of constrained triangulations with respect to
       intersection of input constraints can be customized using
       an intersection tag.
     - A new class Constrained_triangulation_plus offers a constrained 
-      hierarchy on top of a constrained triangulations. This additionnal 
+      hierarchy on top of a constrained triangulations. This additional 
       data structure describes the subdivision of the original constraints  
       into edges of the triangulations.
  
@@ -471,7 +487,7 @@ Bugs in the following packages have been fixed:
    3D Convex hull, 2D Polygon partition, simple polygon generator, 
    2D intersections
 
-Also, attempts have been made to assure compatability with upcoming LEDA
+Also, attempts have been made to assure compatibility with upcoming LEDA
 releases that introduce the leda namespace.
   
 Known problems:
@@ -515,7 +531,7 @@ Kernels:
 
    - The 2D and 3D kernels now serve as models of the new kernel concept
      described in the recent paper, "An Adaptable and Extensible Geometry
-     Kernel" by Susan Hert, Micheal Hoffmann, Lutz Kettner, Sylvain Pion, 
+     Kernel" by Susan Hert, Michael Hoffmann, Lutz Kettner, Sylvain Pion, 
      and Michael Seel to be presented at WAE 2001 (and soon available as
      a technical report).  This new kernel is completely compatible with 
      the previous design but is more flexible in that it allows geometric 
@@ -534,7 +550,7 @@ Kernels:
  
    - A new d-dimensional kernel, Kernel_d is available.  It provides diverse 
      kernel objects, predicates and constructions in d dimensions with two 
-     representations based on the kernel families Cartesean_d and Homogeneous_d
+     representations based on the kernel families Cartesian_d and Homogeneous_d
  
 Basic Library:
 
@@ -562,7 +578,7 @@ Basic Library:
     - The traits class requirements have been changed.
     - The simplicity test has a completely new implementation.
     - Properties like convexity, simplicity and area can now be cached by
-      polygons. You need to set a flag to select this behaviour.
+      polygons. You need to set a flag to select this behavior.
 
   Planar Nef Polyhedra
      A new class (Nef_polyhedron_2) representing planar Nef polyhedra = 
@@ -639,7 +655,7 @@ Basic Library:
      to the new CGAL kernels.  CGAL kernel classes can be used as traits
      classes for all 2D triangulations except for regular triangulations.
 
-     Additionnal functionality:
+     Additional functionality:
         - dual method for regular triangulations (to build a power diagram)
         - unified names and signatures for various "find_conflicts()" 
           member functions in Delaunay and constrained Delaunay triangulation.
@@ -704,12 +720,12 @@ Support Library:
   Number types :
     - Lazy_exact_nt<NT> is a new number type wrapper to speed up exact 
       number types.
-    - MP_Float is a new multiprecision floating point number type. It can 
+    - MP_Float is a new multi-precision floating point number type. It can 
       do exact additions, subtractions and multiplications over 
       floating point values.
 
   Window stream
-    In cooperation with Algorithmic Solutions, GmBH (distributors of
+    In cooperation with Algorithmic Solutions, GmbH (distributors of
     the LEDA library), we can now offer a visualization package 
     downloadable in binary form that support visualization on a ported
     version of the LEDA window lib.
@@ -750,7 +766,7 @@ The following functionality has been added:
         --  The triangulation hierarchy which allows fast location query
             is now available.
 
-  -  Inifinite objects can now be included in planar maps.
+  -  Infinite objects can now be included in planar maps.
 
   -  Removal as well as insertions of vertices for 3D Delaunay triangulations 
      is now possible.
