@@ -64,7 +64,7 @@ inline double cgal_ia_force_to_double(const double x)
 #include <fpu_control.h>
 #elif defined __SUNPRO_CC
 #include <ieeefp.h>
-#elif defined __osf || defined __osf__
+#elif defined __osf || defined __osf__ || defined __BORLANDC__
 #include <float.h>
 #elif defined __sgi
     // The 3 C functions do not work on IRIX 6.5 !!!!!
