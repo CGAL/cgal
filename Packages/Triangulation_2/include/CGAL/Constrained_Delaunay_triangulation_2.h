@@ -244,7 +244,7 @@ private:
    Face_handle fn = fh->neighbor(i);
    OutputItFaces fit = pit.first;
    OutputItBoundaryEdges eit = pit.second;
-   if (! test_conflict(p,fn)) {
+   if ( fh->is_constrained(i) || ! test_conflict(p,fn)) {
      *eit++ = Edge(fn, fn->index(fh));
      return std::make_pair(fit,eit);
    }
