@@ -30,8 +30,8 @@
 #include <qrect.h>
 
 
-#ifndef CGAL_QT_WINDOW_GET_POINT_BUTTON
-#define CGAL_QT_WINDOW_GET_POINT_BUTTON Qt::LeftButton
+#ifndef CGAL_QT_WIDGET_GET_POINT_BUTTON
+#define CGAL_QT_WIDGET_GET_POINT_BUTTON Qt::LeftButton
 #endif
 
 
@@ -49,7 +49,7 @@ private:
 
   void mousePressEvent(QMouseEvent *e)
   {
-    if(e->button() == CGAL_QT_WINDOW_GET_POINT_BUTTON)
+    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON)
     {
       widget->setCursor(QCursor( QPixmap( (const char**)holddown_xpm)));
       if (!on_first){
@@ -62,7 +62,7 @@ private:
 
   void mouseReleaseEvent(QMouseEvent *e)
   {
-    if(e->button() == CGAL_QT_WINDOW_GET_POINT_BUTTON)		
+    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON)		
     {
       widget->setCursor(QCursor( QPixmap( (const char**)hand_xpm)));
       double

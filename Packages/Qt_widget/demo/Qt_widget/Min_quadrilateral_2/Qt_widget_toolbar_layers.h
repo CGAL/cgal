@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window_toolbar_layers.h
-// package       : QT_window
+// file          : include/CGAL/IO/Qt_widget_toolbar_layers.h
+// package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
@@ -18,8 +18,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_WINDOW_TOOLBAR_LAYERS_H
-#define CGAL_QT_WINDOW_TOOLBAR_LAYERS_H
+#ifndef CGAL_QT_WIDGET_TOOLBAR_LAYERS_H
+#define CGAL_QT_WIDGET_TOOLBAR_LAYERS_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>

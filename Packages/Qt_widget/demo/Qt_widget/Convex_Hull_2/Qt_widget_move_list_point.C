@@ -9,7 +9,7 @@
 // ----------------------------------------------------------------------------
 //
 // file          : demo/Qt_widget/Max_k-gon/Qt_widget_move_point.C
-// package       : QT_window
+// package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
 // release_date  : 

@@ -19,8 +19,8 @@
 // ============================================================================
 
 
-#ifndef CGAL_QT_WINDOW_TOOLBAR_H
-#define CGAL_QT_WINDOW_TOOLBAR_H
+#ifndef CGAL_QT_WIDGET_TOOLBAR_H
+#define CGAL_QT_WIDGET_TOOLBAR_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>

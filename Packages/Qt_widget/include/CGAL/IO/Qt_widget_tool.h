@@ -20,8 +20,8 @@
 
 
 
-#ifndef CGAL_QT_WINDOW_TOOL_H
-#define CGAL_QT_WINDOW_TOOL_H
+#ifndef CGAL_QT_WIDGET_TOOL_H
+#define CGAL_QT_WIDGET_TOOL_H
 
 
 
@@ -75,5 +75,5 @@ private:
   friend class Qt_widget;
 };
 } // namespace CGAL
-#endif // CGAL_QT_WINDOW_TOOL_H
+#endif // CGAL_QT_WIDGET_TOOL_H
 

@@ -67,4 +67,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_QT_WINDOW_GET_SEGMENT_H
+#endif // CGAL_QT_WIDGET_GET_SEGMENT_H

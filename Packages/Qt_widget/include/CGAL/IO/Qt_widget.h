@@ -628,7 +628,7 @@ operator<<(Qt_widget& w, const Iso_rectangle_2<R>& r)
 
 #ifdef CGAL_BBOX_2_H
 Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r);
-// see Qt_Window for the implementation of this non-template function
+// see Qt_widget for the implementation of this non-template function
 #endif // CGAL_BBOX_2_H
 
 #ifdef CGAL_POLYGON_2_H

@@ -9,7 +9,7 @@
 // ----------------------------------------------------------------------------
 //
 // file          : include/CGAL/IO/Qt_layer_show_ymonotone.h
-// package       : QT_window
+// package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
 // release_date  : 

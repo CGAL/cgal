@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : src/Qt_Window_toolbar.C
-// package       : QT_window
+// file          : src/Qt_widget_toolbar.C
+// package       : Qt_widget
 // author(s)     : Ursu Radu
 // release       : 
 // release_date  : 

@@ -8,7 +8,7 @@
 //	
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window_MovePoint.h
+// file          : include/CGAL/IO/Qt_widget_MovePoint.h
 // package       : QT_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -153,5 +153,5 @@ namespace CGAL {
 
 
 
-#endif // CGAL_QT_WINDOW_GET_SEGMENT_H
+#endif // CGAL_QT_WIDGET_GET_SEGMENT_H
 

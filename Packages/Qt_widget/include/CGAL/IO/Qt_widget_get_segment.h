@@ -24,8 +24,8 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_tool.h>
 
-#ifndef CGAL_QT_WINDOW_GET_POINT_BUTTON
-#define CGAL_QT_WINDOW_GET_POINT_BUTTON Qt::LeftButton
+#ifndef CGAL_QT_WIDGET_GET_POINT_BUTTON
+#define CGAL_QT_WIDGET_GET_POINT_BUTTON Qt::LeftButton
 #endif
 
 
@@ -44,7 +44,7 @@ public:
 private:
   void mousePressEvent(QMouseEvent *e)
   {
-    if(e->button() == CGAL_QT_WINDOW_GET_POINT_BUTTON)
+    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON)
     {
 			FT
 			x=static_cast<FT>(widget->x_real(e->x())),
@@ -83,7 +83,7 @@ private:
   };
 	void mouseReleaseEvent(QMouseEvent *e)
 	{
-		if(e->button() == CGAL_QT_WINDOW_GET_POINT_BUTTON)		
+		if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON)		
 		{
 			FT
 			x=static_cast<FT>(widget->x_real(e->x())),

@@ -27,8 +27,8 @@
 
 
 
-#ifndef CGAL_QT_WINDOW_ZOOMRECT_BUTTON
-#define CGAL_QT_WINDOW_ZOOMRECT_BUTTON Qt::LeftButton
+#ifndef CGAL_QT_WIDGET_ZOOMRECT_BUTTON
+#define CGAL_QT_WIDGET_ZOOMRECT_BUTTON Qt::LeftButton
 #endif
 
 
@@ -49,7 +49,7 @@ private:
   };
   void mousePressEvent(QMouseEvent *e)
   {
-    if(e->button() == CGAL_QT_WINDOW_ZOOMRECT_BUTTON)
+    if(e->button() == CGAL_QT_WIDGET_ZOOMRECT_BUTTON)
     {
       if (!on_first)
       {
@@ -62,7 +62,7 @@ private:
 
   void mouseReleaseEvent(QMouseEvent *e)
   {
-    if(e->button() == CGAL_QT_WINDOW_ZOOMRECT_BUTTON)		
+    if(e->button() == CGAL_QT_WIDGET_ZOOMRECT_BUTTON)		
     {
       double
 	x=widget->x_real(e->x()),

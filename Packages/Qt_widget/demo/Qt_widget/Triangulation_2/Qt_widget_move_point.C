@@ -8,8 +8,8 @@
 //	
 // ----------------------------------------------------------------------------
 //
-// file          : src/Qt_Window_MovePoint.C
-// package       : QT_window
+// file          : src/Qt_widget_MovePoint.C
+// package       : Qt_widget
 // author(s)     : Laurent Rineau
 // release       : 
 // release_date  : 
