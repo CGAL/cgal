@@ -34,8 +34,8 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-SOURCES = ../../../../src/Qt_widget/Qt_widget.o \
-	../../../../src/Qt_widget/Qt_widget_tool.o
+SOURCES = ../../../../src/CGALQt/Qt_widget.o \
+	../../../../src/CGALQt/Qt_widget_tool.o
 
 all: tut2$(EXE_EXT)
 
