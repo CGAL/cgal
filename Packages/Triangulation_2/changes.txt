@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.35 (18 March 00)
+fixed return statement of remove_first and remove_second in
+Triangulation_data_structure_using_list_2
+
 Ver 4.33 (15 March 00)
 added the test file test/Triangulation/test_triangulation_tdsul.C
 which had been forgotten

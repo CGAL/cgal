@@ -26,7 +26,7 @@ package:
 
 Version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version 
-	echo  "$(MAINTAINER)" >> version
+	echo  "maintainer : $(MAINTAINER)" >> version
 
 Tag:
 	cvs tag v`echo $(VERSION) | sed -e "s/\./_/g"` demo doc examples include test
