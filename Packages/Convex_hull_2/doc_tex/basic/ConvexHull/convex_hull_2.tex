@@ -30,7 +30,7 @@ points is returned.  The traits classes for the functions specify the types
 of the input points and the geometric primitives that are required by
 the algorithms. All functions provide an interface in which this
 class need not be specified and defaults to types and operations defined
-in the 2-dimensional \cgal\ kernel.
+in the kernel in which the input point type is defined.
 
 Given a sequence of $n$ input points with $h$ extreme points,
 the function \ccc{convex_hull_2}\ccIndexMainItem[C]{convex_hull_2}
@@ -54,6 +54,20 @@ The linear-time algorithm of Melkman for producing the convex hull of
 simple polygonal chains (or polygons) is available through the function
 \ccc{ch_melkman}\ccIndexMainItem[C]{ch_melkman}.%
 \ccIndexSubitem{convex hull, 2D}{of polyline or polygon}
+
+\section{Example using Bykat's algorithm}
+
+In the following example a convex hull is constructed from point data read
+from standard input using Bykat's algorithm.  The resulting convex polygon
+is stored in a \ccc{CGAL::Polygon_2} and then it is shown in a \cgal\ window.
+The default traits class is used here.  The same results could be
+achieved by substituting the function \ccc{CGAL::ch_bykat} for
+\ccc{CGAL::convex_hull_2}, since the latter calls the former when the
+input points are specified using input interators.
+
+\ccIncludeExampleCode{Convex_hull_2/convex_hull_2_demo.C}
+
+
 
 \section{2D Extreme Points and Hull Subsequences}
 In addition to the functions for producing convex hulls, there are a
