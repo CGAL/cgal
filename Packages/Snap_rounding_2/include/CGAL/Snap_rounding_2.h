@@ -21,13 +21,8 @@
 
 #include <iostream>
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Quotient.h>
 #include <CGAL/enum.h>
 #include <CGAL/predicates_on_points_2.h>
-#include <CGAL/Random.h>
-#include <CGAL/squared_distance_2.h>
-#include <CGAL/point_generators_2.h>
 #include <CGAL/intersection_2.h>
 #include <CGAL/Sweep_line_2.h>
 #include <list>
