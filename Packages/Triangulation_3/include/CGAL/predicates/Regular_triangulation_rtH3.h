@@ -20,15 +20,8 @@
 //
 // ============================================================================
 
-#error Pas fini.
-
 #ifndef CGAL_REGULAR_TRIANGULATION_RTH3_H
 #define CGAL_REGULAR_TRIANGULATION_RTH3_H
-
-#ifdef CGAL_USE_CARTESIAN_QUOTIENT
-#include <CGAL/Quotient.h>
-#include <CGAL/predicates/Regular_triangulation_rtC3.h>
-#endif // CGAL_USE_CARTESIAN_QUOTIENT
 
 // This file contains the low level homogeneous predicates
 // used by the 3D regular triangulation.
@@ -44,15 +37,6 @@ power_testH3(
     const RT &shx, const RT &shy, const RT &shz, const RT &shw, const RT &swt,
     const RT &thx, const RT &thy, const RT &thz, const RT &thw, const RT &twt)
 {
-#ifdef CGAL_USE_CARTESIAN_QUOTIENT
-    // This is an option...
-    return power_testC3(
-	  Quotient(phx,phw),Quotient(phy,phw),Quotient(phz,phw),Quotient(pwt),
-	  Quotient(qhx,qhw),Quotient(qhy,qhw),Quotient(qhz,qhw),Quotient(qwt),
-	  Quotient(rhx,rhw),Quotient(rhy,rhw),Quotient(rhz,rhw),Quotient(rwt),
-	  Quotient(shx,shw),Quotient(shy,shw),Quotient(shz,shw),Quotient(swt),
-	  Quotient(thx,thw),Quotient(thy,thw),Quotient(thz,thw),Quotient(twt));
-#else
     RT dphx = phx*phw;
     RT dphy = phy*phw;
     RT dphz = phz*phw;
@@ -88,12 +72,9 @@ power_testH3(
 	                                        drhx, drhy, drhz, drz, drhw,
 	                                        dshx, dshy, dshz, dsz, dshw,
 	                                        dthx, dthy, dthz, dtz, dthw));
-#endif
 }
 
 #error This one is not yet ported to 3D.
-// Should we use the Cartesian one over Quotient <RT> ?
-
 template <class RT>
 Oriented_side
 power_testH3( const RT &phx, const RT &phy, const RT &phw, const RT &pwt,
@@ -132,7 +113,7 @@ power_testH3( const RT &phx, const RT &phy, const RT &phw, const RT &pwt,
 				                ta, dtz, dthw));
 }
 
-#error one more predicate needed in 3D.
+#error one more predicate needed in 3D...
 
 CGAL_END_NAMESPACE
 
