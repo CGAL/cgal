@@ -76,9 +76,9 @@ namespace CGAL {
 		/*
 		if (use_extension) 
 			the_node_type=EXTENDED_INTERNAL;
-		else 
+		else */
 			the_node_type=INTERNAL;
-		*/
+		
 
     		Points_container<Item> c_low = Points_container<Item>(c.dimension());
 			Box<NT> bbox(c.bounding_box());
@@ -137,7 +137,7 @@ namespace CGAL {
 			*/	
 			default:{
 				std::cerr << "Node corrupted\n";
-				break;}
+				}
 		}
 	};
 

@@ -115,7 +115,6 @@ namespace CGAL {
 
 			default:
 				std::cerr << "Split rule corrupted\n";
-				break;
 		}
 
 		return sep;
