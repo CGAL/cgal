@@ -173,7 +173,7 @@ int main(int argc,char *argv[])
                  Largest_empty_rect::Point,
                  Largest_empty_rect::Point>  q = 
    empty_rectangle1.get_left_bottom_right_top();
- std::cerr << q.first << q.second << q.third << q.fourth << std::endl;
+ std::cerr << q.first << ",  " << q.second << ",  " << q.third << ",  " << q.fourth << std::endl;
   // complete
 
   return(0);

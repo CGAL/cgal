@@ -1,3 +1,9 @@
+Version 1.2 (April 02) [af]
+- changed geom_traits() to traits()
+- removed polygon stuff
+- added Quadruple code in test.C
+
+
 
 Version 1.5 (11 June 01) [af]
 - added CGAL_NTS macro
