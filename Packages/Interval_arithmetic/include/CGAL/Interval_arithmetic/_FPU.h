@@ -34,7 +34,7 @@
 
 // Macro to stop compiler optimization.
 #if defined(__GNUG__)
-#define CGAL_IA_STOP_COMPILER_OPT(x) ({ volatile double y=(x); double z=y; z; })
+#define CGAL_IA_STOP_COMPILER_OPT(x) ({ volatile double y=(x);double z=y;z; })
 #elif defined(_MSC_VER)
 inline double cgal_ia_force_to_double(const double x)
 { volatile double e = x; return e; }
