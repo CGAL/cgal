@@ -24,8 +24,8 @@
 //
 // Chapter       : 
 // ======================================================================
-#ifndef CGAL_SWEEP_LINE_BASE_H
-#define CGAL_SWEEP_LINE_BASE_H
+#ifndef CGAL_SWEEP_LINE_TIGHT_H
+#define CGAL_SWEEP_LINE_TIGHT_H
 
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
 
@@ -164,12 +164,12 @@ public:
   class  SweepLineGetInterCurveList {};
   class  SweepLinePlanarmap {};
 
-  Sweep_line_tight_2() : m_traits(new Traits()), m_traitsOwner(true),
+  Sweep_line_tight_2()  : m_traits(new Traits()), m_traitsOwner(true),
     m_includeEndPoints(true) {}
   Sweep_line_tight_2(Traits *t) : m_traits(t), m_traitsOwner(false),
     m_includeEndPoints(true) {}
 
-  ~Sweep_line_tight_2();
+  virtual ~Sweep_line_tight_2();
 
   /*!
    *  Given a container of curves, this function returns a list of curves
@@ -231,16 +231,16 @@ public:
   *  for each intersection point between any two curves in the 
   *  specified range.
   *  The intersections are calculated using the sweep algorithm.
-  *  \param curves_begin the input iterator that points to the first curve 
+  *  \param begin the input iterator that points to the first curve 
   *                      in the range.
-  *  \param curves_end the input past-the-end iterator of the range.
+  *  \param end the input past-the-end iterator of the range.
   *  \param intersecting_curves an iterator to the output
   *  \param endpoints if true, the end points of the curves are reported
   *                   as intersection points. Defaults to true.
   */
   template <class OutputIterator>
-  void  get_intersecting_curves(CurveInputIterator curves_begin, 
-				CurveInputIterator curves_end, 
+  void  get_intersecting_curves(CurveInputIterator begin, 
+				CurveInputIterator end, 
 				OutputIterator intersecting_curves,
 				bool endpoints = true)
   { 
@@ -1403,9 +1403,9 @@ inline void
 Sweep_line_tight_2<CurveInputIterator,SweepLineTraits_2,SweepEvent,CurveWrap>::
 RemoveCurveFromStatusLine(Subcurve *leftCurve)
 {
+  SL_DEBUG(std::cout << "RemoveCurveFromStatusLine\n";)
   SL_DEBUG(PrintStatusLine();)
   SL_DEBUG(leftCurve->Print();)
-    
   StatusLineIter sliter = m_statusLine->find(leftCurve);
   if ( !leftCurve->isEndPoint(m_currentEvent->getPoint())) {
     m_statusLine->erase(sliter);
@@ -1633,7 +1633,10 @@ inline bool
 Sweep_line_tight_2<CurveInputIterator,SweepLineTraits_2,SweepEvent,CurveWrap>::
 DoCurvesOverlap(Subcurve *c1, Subcurve *c2)
 {
-#if 1
+  SL_DEBUG(std::cout << "DoCurvesOverlap " << m_sweepLinePos << "\n" 
+	    << "\t" << c1->getCurve() << "\n"
+	   << "\t" << c2->getCurve() << "\n";)
+#if 0
 // improve here...
   if ((m_traits->curve_compare_at_x(c1->getCurve(),
 				    c2->getCurve(),
@@ -1933,6 +1936,7 @@ PrintVerticals()
 
 #endif // NDEBUG
 
+
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SWEEP_LINE_BASE_H
+#endif // CGAL_SWEEP_LINE_TIGHT_H
