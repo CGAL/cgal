@@ -102,37 +102,30 @@ typedef CGAL::Bench_parse_args::FormatId                FormatId;
 #if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
 inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
                                         const Point & p)
-{ return os << leda_point(p.xcoordD(), p.ycoordD()); } 
+{
+  os << leda_point(p.xcoordD(), p.ycoordD());
+  return os;
+}
 
 #if defined(USE_CACHED_TRAITS)
 inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
                                         const Curve & curve)
 {
   Kernel::Segment_2 seg = static_cast<Kernel::Segment_2>(curve);
-  os <<  leda_segment(seg.xcoord1D(), seg.ycoord1D(),
-                      seg.xcoord2D(), seg.ycoord2D());
+  os << leda_segment(seg.xcoord1D(), seg.ycoord1D(),
+                     seg.xcoord2D(), seg.ycoord2D());
   return os;
 }
 #else
 inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
                                         const Kernel::Segment_2 & seg)
 {
-  return os << leda_segment(seg.xcoord1D(), seg.ycoord1D(),
-                            seg.xcoord2D(), seg.ycoord2D());
+  os << leda_segment(seg.xcoord1D(), seg.ycoord1D(),
+                     seg.xcoord2D(), seg.ycoord2D());
   return os;
 }
 #endif
 
-inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os, Pmwx & pm)
-{
-  Pmwx::Edge_iterator ei;
-  for (ei = pm.edges_begin(); ei != pm.edges_end(); ++ei)
-    os << (*ei).curve();
-  Pmwx::Vertex_iterator vi;
-  for (vi = pm.vertices_begin(); vi != pm.vertices_end(); ++vi)
-    os << (*vi).point();
-  return os;
-}
 #else
 
 #if defined(USE_CACHED_TRAITS)
@@ -144,6 +137,19 @@ inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
 }
 #endif
 #endif
+
+inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os, Pmwx & pm)
+{
+  Pmwx::Edge_iterator ei;
+  os << CGAL::BLUE;
+  for (ei = pm.edges_begin(); ei != pm.edges_end(); ++ei)
+    os << (*ei).curve();
+  Pmwx::Vertex_iterator vi;
+  os << CGAL::RED;
+  for (vi = pm.vertices_begin(); vi != pm.vertices_end(); ++vi)
+    os << (*vi).point();
+  return os;
+}
 
 /*
  */
