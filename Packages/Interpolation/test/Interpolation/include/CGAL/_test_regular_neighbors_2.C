@@ -45,7 +45,8 @@ bool test_barycenter(ForwardIterator first, ForwardIterator beyond,
 		     typename std::iterator_traits<ForwardIterator>
 		     ::value_type::second_type norm, const Point& p)
 {
-  Point b = CGAL::ORIGIN;
+  typedef typename CGAL::Kernel_traits<Point>::Kernel::Point_2  Bare_point;
+  Bare_point b = CGAL::ORIGIN;
   for(; first != beyond; ++first)
     b = b + (first->second/norm) * (first->first.point() - CGAL::ORIGIN);
 
@@ -64,7 +65,7 @@ _test_regular_neighbors_2( const Triangul & )
   double max_weight =1;
 
   typedef typename Triangul::Geom_traits          Gt;
-  typedef typename Gt::Weighted_point             Weighted_point;
+  typedef typename Gt::Weighted_point_2           Weighted_point;
   typedef typename Gt::Bare_point                 Bare_point;
   typedef typename Gt::Rep::FT                    Coord_type;
 

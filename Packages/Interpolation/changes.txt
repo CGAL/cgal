@@ -1,3 +1,6 @@
+10 September Sylvain Pion
+- Repair breakage due to Weighted_point changes.
+
 9 September Sylvain Pion
 - Code reformatting.
 

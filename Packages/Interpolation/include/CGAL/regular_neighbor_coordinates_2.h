@@ -44,8 +44,7 @@ CGAL_BEGIN_NAMESPACE
 template <class Rt, class OutputIterator>
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_vertex_2(const Rt& rt,
-			       const typename Rt::Geom_traits::
-			       Weighted_point& p,
+			       const typename Rt::Weighted_point& p,
 			       OutputIterator out)
 {
   return regular_neighbor_coordinates_vertex_2(rt, p, out,
@@ -58,8 +57,7 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
 template <class Rt, class OutputIterator>
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_vertex_2(const Rt& rt,
-			       const typename Rt::Geom_traits::
-			       Weighted_point& p,
+			       const typename Rt::Weighted_point& p,
 			       OutputIterator out,
 			       typename Rt::Face_handle start)
 {
@@ -73,8 +71,7 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
 template <class Rt, class OutputIterator, class OutputIteratorVorVertices>
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_vertex_2(const Rt& rt,
-			       const typename Rt::Geom_traits::
-			       Weighted_point& p,
+			       const typename Rt::Weighted_point& p,
 			       OutputIterator out,
 			       OutputIteratorVorVertices vor_vertices,
 			       typename Rt::Face_handle start)
@@ -84,7 +81,7 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
   // recomputation)
   typedef typename Rt::Geom_traits        Traits;
   typedef typename Traits::FT             Coord_type;
-  typedef typename Traits::Weighted_point Weighted_point;
+  typedef typename Rt::Weighted_point     Weighted_point;
 
   typedef typename Rt::Vertex_handle      Vertex_handle;
   typedef typename Rt::Face_handle        Face_handle;
@@ -135,8 +132,7 @@ template <class Rt, class OutputIterator, class EdgeIterator,
   class VertexIterator >
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_vertex_2(const Rt& rt,
-			       const typename Rt::Geom_traits::
-			       Weighted_point& p,
+			       const typename Rt::Weighted_point& p,
 			       OutputIterator out, EdgeIterator
 			       hole_begin, EdgeIterator hole_end,
 			       VertexIterator hidden_vertices_begin,
@@ -156,8 +152,7 @@ template <class Rt, class OutputIterator, class EdgeIterator,
   class VertexIterator , class OutputIteratorVorVertices >
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_vertex_2(const Rt& rt,
-			       const typename Rt::Geom_traits::
-			       Weighted_point& p,
+			       const typename Rt::Weighted_point& p,
 			       OutputIterator out,
 			       OutputIteratorVorVertices vor_vertices,
 			       EdgeIterator
@@ -174,7 +169,7 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
   typedef typename Rt::Geom_traits         Traits;
   typedef typename Traits::FT              Coord_type;
   typedef typename Traits::Bare_point      Bare_point;
-  typedef typename Traits::Weighted_point  Weighted_point;
+  typedef typename Rt::Weighted_point      Weighted_point;
 
   typedef typename Rt::Vertex_handle     Vertex_handle;
   typedef typename Rt::Face_circulator   Face_circulator;
@@ -279,8 +274,7 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
 template <class Rt, class OutputIterator>
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
-			       const typename Rt::Geom_traits::
-			       Weighted_point& p,
+			       const typename Rt::Weighted_point& p,
 			       OutputIterator out)
 {
   return regular_neighbor_coordinates_2(rt, p, out,
@@ -293,8 +287,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
 template <class Rt, class OutputIterator>
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
-			       const typename Rt::Geom_traits::
-			       Weighted_point& p,
+			       const typename Rt::Weighted_point& p,
 			       OutputIterator out,
 			       typename Rt::Face_handle start)
 {
@@ -308,8 +301,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
 template <class Rt, class OutputIterator, class OutputIteratorVorVertices>
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
-			       const typename Rt::Geom_traits::
-			       Weighted_point& p,
+			       const typename Rt::Weighted_point& p,
 			       OutputIterator out,
 			       OutputIteratorVorVertices vor_vertices,
 			       typename Rt::Face_handle start)
@@ -333,8 +325,7 @@ template <class Rt, class OutputIterator, class EdgeIterator,
           class VertexIterator >
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
-			       const typename Rt::Geom_traits::
-			       Weighted_point& p,
+			       const typename Rt::Weighted_point& p,
 			       OutputIterator out, EdgeIterator
 			       hole_begin, EdgeIterator hole_end,
 			       VertexIterator hidden_vertices_begin,
@@ -354,12 +345,10 @@ template <class Rt, class OutputIterator, class EdgeIterator,
   class VertexIterator , class OutputIteratorVorVertices >
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
-			       const typename Rt::Geom_traits::
-			       Weighted_point& p,
+			       const typename Rt::Weighted_point& p,
 			       OutputIterator out,
 			       OutputIteratorVorVertices vor_vertices,
-			       EdgeIterator
-			       hole_begin, EdgeIterator hole_end,
+			       EdgeIterator hole_begin, EdgeIterator hole_end,
 			       VertexIterator hidden_vertices_begin,
 			       VertexIterator hidden_vertices_end)
 {

@@ -274,8 +274,8 @@ public:
 
   //the regular triangulation traits model:
   //Traits::Point_2 is a 3D point!!
-  typedef  Point_2                        Weighted_point;
-  typedef  Point_2                        Bare_point;
+  typedef Point_2                        Weighted_point_2;
+  typedef Point_2                        Bare_point;
 
   // for compatibility with previous versions
   typedef Point_2      Point;

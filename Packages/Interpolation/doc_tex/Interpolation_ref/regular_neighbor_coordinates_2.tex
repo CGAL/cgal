@@ -27,7 +27,7 @@ coordinates regular neighbor coordinates.
 \ccFunction{template < class Rt, class OutputIterator > CGAL::Triple<
   OutputIterator, typename Rt::Geom_traits::FT, bool >
   regular_neighbor_coordinates_2(const Rt& rt, const typename
-  Rt::Geom_traits::Weighted_point& p, OutputIterator out, typename
+  Rt::Weighted_point& p, OutputIterator out, typename
   Rt::Face_handle start = typename Rt::Face_handle());} {
   computes the regular neighbor coordinates for \ccc{p} with respect
   to the weighted points in the two-dimensional regular triangulation
