@@ -21,27 +21,12 @@
 #define CGAL_MIN_CIRCLE_2_H
 
 // includes
-#ifndef CGAL_OPTIMISATION_BASIC_H
 #  include <CGAL/Optimisation/basic.h>
-#endif
-#ifndef CGAL_RANDOM_H
 #  include <CGAL/Random.h>
-#endif
-#ifndef CGAL_PROTECT_LIST
 #  include <list>
-#  define CGAL_PROTECT_LIST
-#endif
-#ifndef CGAL_PROTECT_VECTOR
 #  include <vector>
-#  define CGAL_PROTECT_VECTOR
-#endif
-#ifndef CGAL_PROTECT_ALGORITHM
 #  include <algorithm>
-#  define CGAL_PROTECT_ALGORITHM
-#endif
-#ifndef CGAL_PROTECT_IOSTREAM
 #  include <iostream>
-#  define CGAL_PROTECT_IOSTREAM
 #endif
 
 CGAL_BEGIN_NAMESPACE
@@ -79,7 +64,7 @@ class Min_circle_2 {
     Min_circle_2( const Traits& traits = Traits());
     Min_circle_2( const Point&  p,
                   const Traits& traits = Traits());
-    Min_circle_2( const Point&  p, const Point&  q,
+    Min_circle_2( Point  p, Point  q,
                   const Traits& traits = Traits());
     Min_circle_2( const Point&  p1, const Point&  p2, const Point&  p3,
                   const Traits& traits = Traits());
@@ -379,8 +364,10 @@ class Min_circle_2 {
     }
     
     // constructor for two points
+    // This was const Point& but then Intel 7.0/.net2003 messes it up 
+    // with the constructor taking an iterator range
     inline
-    Min_circle_2( const Point& p1, const Point& p2,
+    Min_circle_2( Point p1, Point p2,
                   const Traits& traits = Traits())
         : tco( traits)
     {
