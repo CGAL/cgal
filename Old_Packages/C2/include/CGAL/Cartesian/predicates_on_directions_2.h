@@ -11,11 +11,11 @@
 // release       : 
 // release_date  :
 // 
-// source        : include/CGAL/Cartesian/predicates_on_directionsH2.h
-// file          : include/CGAL/Cartesian/predicates_on_directionsH2.h
+// source        : include/CGAL/Cartesian/predicates_on_directions_2.h
+// file          : include/CGAL/Cartesian/predicates_on_directions_2.h
 // package       : 
-// revision      : 
-// revision_date : 
+// revision      : $ $
+// revision_date : $ $
 // author(s)     : Herve Bronnimann <Herve.Bronnimann@sophia.inria.fr>
 //
 // coordinator   : INRIA Sophia-Antipolis
