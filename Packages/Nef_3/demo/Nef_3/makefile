@@ -13,19 +13,6 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-MY_DIR = /home/hachenb/CGAL
-HOME = /KM/guests/granados
-POLY = $(MY_DIR)/Polynomial/include
-LOCAL = $(MY_DIR)/local/include
-NEF2 = $(MY_DIR)/Nef_2/include
-NEF3 = $(MY_DIR)/Nef_3/include 
-NEFS2 = $(MY_DIR)/Nef_S2/include
-WALKER = $(HOME)/projects/SNC_walker
-K3TREE = $(MY_DIR)/Nef_3/k3tree/include
-BBOX = $(MY_DIR)/Box_intersection_d/include
-
-CUSTOM_CXXFLAGS = -I$(POLY) -I$(NEF3) -I$(NEF2) -I$(NEFS2) -I$(BBOX) 
-
 CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
            -Iinclude \
@@ -51,19 +38,11 @@ LDFLAGS = \
 
 all:            \
                 nef_3$(EXE_EXT) 
-
-moc_Qt_widget_OpenGL.C: Qt_widget_OpenGL.h
-	$(QT_MOC) -o moc_Qt_widget_OpenGL.C Qt_widget_OpenGL.h
-
-moc_Qt_widget_OpenGL$(OBJ_EXT): moc_Qt_widget_OpenGL.C
-
-# Qt_widget_OpenGL$(OJB_EXT): Qt_widget_OpenGL.C
-
 nef_3.clean:
-	rm -f nef_3 nef_3.o moc_Qt_widget_OpenGL.C moc_Qt_widget_OpenGL.o
+	rm -f nef_3 nef_3.o
 
-nef_3$(EXE_EXT): nef_3$(OBJ_EXT) moc_Qt_widget_OpenGL$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nef_3 nef_3$(OBJ_EXT) moc_Qt_widget_OpenGL$(OBJ_EXT) $(LDFLAGS)
+nef_3$(EXE_EXT): nef_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nef_3 nef_3$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    nef_3.clean  
