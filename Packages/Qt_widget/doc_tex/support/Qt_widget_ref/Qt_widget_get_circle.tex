@@ -19,6 +19,22 @@ mouse button is pressed for the second time, the distance
 between those 2 representing the radius of the new circle.
 
 \ccInclude{CGAL/IO/Qt_widget_get_circle.h}
+\ccParameters
+
+The full template declaration of \ccClassTemplateName\ states one parameter:
+
+\begin{tabbing}
+\ccc{template <} \=\ccc{class T>}\\
+	\ccc{class \ccClassTemplateName;}
+\end{tabbing}
+
+If T is one of the \cgal\ kernels you don't need additional types. If
+not, the parameter T has to provide this types:
+
+\ccTypes
+\ccTypedef{typedef T::Point_2 Point_2;}{This should be a Point type}
+\ccTypedef{typedef T::Circle_2 Circle_2;}{This should be a Circle type}
+\ccTypedef{typedef T::FT FT;}{This should be a Field type}
 
 \ccInheritsFrom
 \ccc{Qt_widget_layer}
