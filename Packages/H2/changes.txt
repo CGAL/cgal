@@ -1,3 +1,6 @@
+2.80 (19 February 2003)
+- removed a const to make an Sgi CC warning disappear
+
 2.79   (19 Feb 2003)
 - Fix Type_equality_wrapper<> for SunPro/MipsPro.
 
