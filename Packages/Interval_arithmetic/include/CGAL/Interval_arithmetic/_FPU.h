@@ -60,10 +60,10 @@
 
 #if ( defined(__GNUC__) && \
     ( defined(__i386) || defined(__sparc) || defined(__alpha) ) )
-#define __USE_ASSEMBLY
+#define CGAL_IA_USE_ASSEMBLY
 #endif
 
-#ifndef __USE_ASSEMBLY
+#ifndef CGAL_IA_USE_ASSEMBLY
 #ifdef __linux
 #include <fpu_control.h>
 #endif
@@ -83,7 +83,7 @@
 #ifdef __sun
 #include <ieeefp.h>
 #endif
-#else	// __USE_ASSEMBLY
+#else	// CGAL_IA_USE_ASSEMBLY
 #ifdef __i386
 #define SETFPCW(CW) asm volatile ("fldcw %0" : : "g" (CW))
 // #define GETFPCW(CW) asm volatile ("fstcw %0" : "=m" (CW) : )
@@ -130,7 +130,7 @@ static inline void CGAL_FPU_set_rounding_to_minus_infinity (void);
 
 static inline void CGAL_FPU_set_rounding_to_zero (void)
 {
-#ifdef __USE_ASSEMBLY
+#ifdef CGAL_IA_USE_ASSEMBLY
 	SETFPCW(CGAL_FPU_cw_zero);
 #else
 #ifdef __linux
@@ -165,7 +165,7 @@ static inline void CGAL_FPU_set_rounding_to_zero (void)
 
 static inline void CGAL_FPU_set_rounding_to_nearest (void)
 {
-#ifdef __USE_ASSEMBLY
+#ifdef CGAL_IA_USE_ASSEMBLY
 	SETFPCW(CGAL_FPU_cw_near);
 #else
 #ifdef __osf
@@ -200,7 +200,7 @@ static inline void CGAL_FPU_set_rounding_to_nearest (void)
 
 static inline void CGAL_FPU_set_rounding_to_infinity (void)
 {
-#ifdef __USE_ASSEMBLY
+#ifdef CGAL_IA_USE_ASSEMBLY
 	SETFPCW(CGAL_FPU_cw_up);
 #else
 #ifdef __osf
@@ -235,7 +235,7 @@ static inline void CGAL_FPU_set_rounding_to_infinity (void)
 
 static inline void CGAL_FPU_set_rounding_to_minus_infinity (void)
 {
-#ifdef __USE_ASSEMBLY
+#ifdef CGAL_IA_USE_ASSEMBLY
 	SETFPCW(CGAL_FPU_cw_down);
 #else
 #ifdef __osf
