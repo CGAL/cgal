@@ -40,8 +40,8 @@ public:
     typename T::const_iterator vert_it;
 
     
-    for (vert_it = polygon.vertices_begin(); vert_it != polygon.vertices_end(); 
-        vert_it++)
+    for (vert_it = polygon.vertices_begin(); 
+		vert_it != polygon.vertices_end(); vert_it++)
     {
       
       widget << CGAL::GREEN << CGAL::PointSize (5) 
