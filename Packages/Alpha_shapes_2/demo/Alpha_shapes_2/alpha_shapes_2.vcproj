@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
-	Name="alpha_shape"
+	Name="alpha_shapes_2"
 	ProjectGUID="{05B33C46-BB9A-4065-80D7-E5A149861C47}"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -36,11 +36,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="$(CGALROOT)\lib\msvc7\CGALQt.lib $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib $(CGALROOT)\lib\msvc7\CGAL.lib $(CGALROOT)\lib\msvc7\gmp.lib wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
-				OutputFile="$(OutDir)/alpha_shape.exe"
+				OutputFile="$(OutDir)/alpha_shapes_2.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="LIBC"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/alpha_shape.pdb"
+				ProgramDatabaseFile="$(OutDir)/alpha_shapes_2.pdb"
 				SubSystem="2"
 				TargetMachine="0"/>
 			<Tool
@@ -85,7 +85,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="$(CGALROOT)\lib\msvc7\CGALQt.lib $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib $(CGALROOT)\lib\msvc7\CGAL.lib $(CGALROOT)\lib\msvc7\gmp.lib wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
-				OutputFile="$(OutDir)/alpha_shape.exe"
+				OutputFile="$(OutDir)/alpha_shapes_2.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="LIBCD"
 				GenerateDebugInformation="TRUE"

@@ -1,3 +1,7 @@
+
+Version 11.40
+- changed demo project name alpha_shape.vcproj -> alpha_shapes_2.vcproj [rursu]
+
 Version 11.39
 - Demo use icon defined in Qt_widget package [rursu]
 
