@@ -30,19 +30,19 @@ counterclockwise-oriented polygon.
 
 \ccHeading{Requirements}
 \begin{enumerate}
-    \item \ccc{Traits} is a model of the concepts PartitionTraits\_2%
-          \ccIndexMainItem[c]{PartitionTraits_2} and 
-          YMonotonePartitionTraits\_2% 
-          \ccIndexMainItem[c]{YMonotonePartitionTraits_2}. 
+    \item \ccc{Traits} is a model of the concepts \ccc{PartitionTraits_2}
+          %\ccIndexMainItem[c]{PartitionTraits_2}
+          and \ccc{YMonotonePartitionTraits_2}.
+          %\ccIndexMainItem[c]{YMonotonePartitionTraits_2}. 
           For the purpose of 
           checking the validity of the $y$-monotone partition produced as
           a preprocessing step for the convex partitioning, it must also 
-          be a model of YMonotonePartitionIsValidTraits\_2
-          \ccIndexMainItem[c]{YMonotonePartitionIsValidTraits_2}. 
+          be a model of \ccc{YMonotonePartitionIsValidTraits_2}.
+          %\ccIndexMainItem[c]{YMonotonePartitionIsValidTraits_2}. 
           For the purpose of checking
           the postcondition that the convex partition is valid, \ccc{Traits}
-          must also be a model of ConvexPartitionIsValidTraits\_2%
-          \ccIndexMainItem[c]{ConvexPartitionIsValidTraits_2}. 
+          must also be a model of \ccc{ConvexPartitionIsValidTraits_2}.
+          %\ccIndexMainItem[c]{ConvexPartitionIsValidTraits_2}. 
     \item \ccc{OutputIterator::value_type} is equivalent to 
           \ccc{Traits::Polygon_2}.
     \item \ccc{InputIterator::value_type} is equivalent to 

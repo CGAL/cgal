@@ -28,11 +28,13 @@ simple, counterclockwise-oriented polygon.
 
 \ccHeading{Requirements}
 \begin{enumerate}
-    \item \ccc{Traits} is a model of the concept YMonotonePartitionTraits\_2%
-          \ccIndexMainItem[c]{YMonotonePartitionTraits_2} and, for the purposes
+    \item \ccc{Traits} is a model of the concept
+          \ccc{YMonotonePartitionTraits_2}
+          % \ccIndexMainItem[c]{YMonotonePartitionTraits_2}
+          and, for the purposes
           of checking the postcondition that the partition is valid, it should 
-          also be a model of YMonotonePartitionIsValidTraits\_2%
-          \ccIndexMainItem[c]{YMonotonePartitionIsValidTraits_2}.
+          also be a model of \ccc{YMonotonePartitionIsValidTraits_2}.
+          % \ccIndexMainItem[c]{YMonotonePartitionIsValidTraits_2}.
     \item \ccc{OutputIterator::value_type} should be 
           \ccc{Traits::Polygon_2}.
     \item \ccc{InputIterator::value_type} should be \ccc{Traits::Point_2},
