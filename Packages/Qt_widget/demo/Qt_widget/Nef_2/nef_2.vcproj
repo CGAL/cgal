@@ -68,20 +68,24 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="&quot;$(CGALROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALROOT)/include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\mkspecs\win32-msvc&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CGAL_USE_QT;CGAL_USE_GMP"
 				StringPooling="TRUE"
 				RuntimeLibrary="4"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="3"
+				CompileAs="2"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="$(CGALROOT)\lib\msvc7\CGAL.lib $(CGALROOT)\lib\msvc7\CGALQt.lib $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib  $(CGALROOT)\lib\msvc7\gmp.lib wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
 				OutputFile="$(OutDir)/nef_2.exe"
 				LinkIncremental="1"
+				IgnoreDefaultLibraryNames="LIBC"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -136,11 +140,25 @@
 "
 						Outputs="Qt_widget_toolbar.moc"/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar.moc Qt_widget_toolbar.h"
+						Outputs="Qt_widget_toolbar.moc"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="Qt_widget_toolbar_layers.h">
 				<FileConfiguration
 					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.h"
+						Outputs="Qt_widget_toolbar_layers.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
 						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.h"
@@ -156,8 +174,14 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o nef_2.moc nef_2.C
-"
+						CommandLine="$(QTDIR)/bin/moc.exe -o nef_2.moc nef_2.C"
+						Outputs="nef_2.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o nef_2.moc nef_2.C"
 						Outputs="nef_2.moc"/>
 				</FileConfiguration>
 			</File>

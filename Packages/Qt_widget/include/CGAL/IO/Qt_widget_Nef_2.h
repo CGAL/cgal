@@ -121,6 +121,19 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
     typedef typename TExplorer::Face_const_iterator
       Face_const_iterator;
 
+    //get the background color, fill color, and the object color
+    QColor bgcolor = ws.backgroundColor();
+	  QColor fillcolor = ws.fillColor();
+	  QColor color = ws.color();
+
+    //QPixmap
+    //QPainter painter
+    QPixmap &widget_pixmap = ws.get_pixmap();
+    QPixmap copy_of_pixmap = (QPixmap)widget_pixmap;
+    widget_pixmap.fill(bgcolor);
+
+
+    //Get the screen rectangle to intersect with the current Nef
     CGAL::Quotient<Standard_RT> wsxq = d_to_q<Standard_RT>(ws.x_min()-1);
     CGAL::Quotient<Standard_RT> wsyq = d_to_q<Standard_RT>(ws.y_min()-1);
     Standard_RT wsx = wsxq.numerator() * wsyq.denominator(); 
@@ -154,11 +167,7 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
     Nef_polyhedron_2<T> N2 = P.intersection(N1);
     TExplorer D = N2.explorer();
 
-	//TExplorer D = P.explorer();
-    //get the background color, fill color, and the object color
-    QColor bgcolor = ws.backgroundColor();
-	  QColor fillcolor = ws.fillColor();
-	  QColor color = ws.color();
+	  //TExplorer D = P.explorer();
     
     //The faces
     Face_const_iterator 
@@ -170,8 +179,8 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
       if(D.mark(fit))
       	ws.setFillColor(fillcolor);
       else{  
+        ws.setFillColor(bgcolor);
         ws.setRasterOp(Qt::CopyROP);
-      	ws.setFillColor(bgcolor);
       }
 
       std::list<Point> l;
@@ -234,6 +243,7 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
     }
     
     ws.setRasterOp(old_raster);
+    bitBlt(&widget_pixmap, 0, 0, &copy_of_pixmap, 0, 0, ws.width(), ws.height(), Qt::XorROP, true);
     return ws;
 }
 

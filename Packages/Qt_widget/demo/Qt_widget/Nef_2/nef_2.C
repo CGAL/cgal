@@ -32,7 +32,7 @@
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : CGAL-2.4
-// release_date  : 2002, July, 05
+// release_date  : 2002, May 16
 //
 // coordinator   : Laurent Rineau
 //
@@ -94,6 +94,8 @@ int current_state;
 Nef_polyhedron Nef_visible(Nef_polyhedron::EMPTY);
 Nef_polyhedron Nef_visible2(Nef_polyhedron::EMPTY);
 
+
+//This class contains a Nef_2 object and a text description
 class Nef_description{
 public:
   Nef_description(Nef_polyhedron n, char *name_p):
@@ -106,8 +108,29 @@ public:
 
 
 
+//This class is a generalisation of QListBox
+class Nef_2_list_box : public QListBox{
+  Q_OBJECT
+public:
+  Nef_2_list_box(QWidget *parent, const char *name):
+    QListBox(parent, name)
+  {
+    setFocusPolicy(QWidget::StrongFocus);
+  }
+  ~Nef_2_list_box(){}
+
+protected:
+  void keyPressEvent(QKeyEvent* e){
+    if ( e->key() == Qt::Key_Delete )
+      if(isSelected(currentItem()))
+        emit(delete_key(item(currentItem())));
+  }
+signals:
+  void delete_key(QListBoxItem *);
+};
 
 
+//This widget contains some widgets in a layout
 class Layout_Widget : public QWidget {
 public:
   Layout_Widget(QWidget *parent = 0, const char *name = 0)
@@ -115,21 +138,22 @@ public:
   {    
 		QBoxLayout *topLayout = new QVBoxLayout( this, 5 );    
     QBoxLayout *bottomLayout = new QHBoxLayout( topLayout );
-		nef_list1 = new QListBox(this, "Nef_list_1");
-    nef_list2 = new QListBox(this, "Nef_list_2");
+		nef_list1 = new Nef_2_list_box(this, "Nef_list_1");
+    nef_list2 = new Nef_2_list_box(this, "Nef_list_2");
 		bottomLayout->addWidget(nef_list1);
     bottomLayout->addWidget(nef_list2);    
     widget = new CGAL::Qt_widget(this);
     topLayout->addWidget(widget);
 	};
 	CGAL::Qt_widget* get_qt_widget(){return widget;}
-  QListBox* get_nef_list1(){return nef_list1;}
-  QListBox* get_nef_list2(){return nef_list2;}
+  Nef_2_list_box* get_nef_list1(){return nef_list1;}
+  Nef_2_list_box* get_nef_list2(){return nef_list2;}
 
 private:
 	CGAL::Qt_widget *widget;
-  QListBox        *nef_list1, *nef_list2;
+  Nef_2_list_box  *nef_list1, *nef_list2;
 };
+
 
 class MyWindow : public QMainWindow
 {
@@ -145,28 +169,28 @@ public:
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()),
-           this, SLOT(timer_done()) );
+           this, SLOT(sl_timer_done()) );
     timer->start( 200, FALSE );
 
     // file menu
     QPopupMenu * file = new QPopupMenu( this );
     menuBar()->insertItem( "&File", file );
-    file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
-    file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
+    file->insertItem("&New", this, SLOT(sl_new_instance()), CTRL+Key_N);
+    file->insertItem("New &Window", this, SLOT(sl_new_window()), CTRL+Key_W);
     file->insertSeparator();
-    file->insertItem("Load Nef_2", this, SLOT(load_nef()), CTRL+Key_L);
-    file->insertItem("Save Nef_2", this, SLOT(save_nef()), CTRL+Key_S);
+    file->insertItem("Load Nef_2", this, SLOT(sl_load_nef()), CTRL+Key_L);
+    file->insertItem("Save Nef_2", this, SLOT(sl_save_nef()), CTRL+Key_S);
     file->insertSeparator();
-    file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
+    file->insertItem("Print", widget, SLOT(sl_print_to_ps()), CTRL+Key_P);
     file->insertSeparator();
-    file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
-    file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
+    file->insertItem( "&Close", this, SLOT(sl_close()), CTRL+Key_X );
+    file->insertItem( "&Quit", qApp, SLOT( sl_closeAllWindows() ), CTRL+Key_Q );
 
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
     menuBar()->insertItem( "&Help", help );
-    help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
-    help->insertItem("About &Qt", this, SLOT(aboutQt()) );
+    help->insertItem("&About", this, SLOT(sl_about()), CTRL+Key_A );
+    help->insertItem("About &Qt", this, SLOT(sl_aboutQt()) );
 
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
@@ -178,13 +202,24 @@ public:
     //boolean operations toolbar
     QToolBar *optoolbar = new QToolBar("operations", this, QMainWindow::Right, true, "Operations");
     QToolButton *but_intersection = new QToolButton(QPixmap( (const char**)intersection_xpm ), 
-      "INTERSECTION", "BOOLEAN OPERATIONS", this, SLOT(intersect()), optoolbar, "intersection");
+      "INTERSECTION", "BOOLEAN OPERATIONS", this, SLOT(sl_intersect()), optoolbar, "intersection");
     QToolButton *but_union = new QToolButton(QPixmap( (const char**)union_xpm ), 
-      "UNION", "BOOLEAN OPERATIONS", this, SLOT(join()), optoolbar, "union");
+      "UNION", "BOOLEAN OPERATIONS", this, SLOT(sl_join()), optoolbar, "union");
     QToolButton *but_difference = new QToolButton(QPixmap( (const char**)difference_xpm ), 
-      "DIFFERENCE", "BOOLEAN OPERATIONS", this, SLOT(difference()), optoolbar, "difference");
+      "DIFFERENCE", "BOOLEAN OPERATIONS", this, SLOT(sl_difference()), optoolbar, "difference");
     QToolButton *but_symm_difference = new QToolButton(QPixmap( (const char**)symmetric_difference_xpm ), 
-      "SYMMETRIC DIFFERENCE", "BOOLEAN OPERATIONS", this, SLOT(symm_difference()), optoolbar, "symm_difference");
+      "SYMMETRIC DIFFERENCE", "BOOLEAN OPERATIONS", this, SLOT(sl_symm_difference()), optoolbar, "symm_difference");
+    
+    QToolButton *but_complement = new QToolButton(QPixmap( (const char**)complement_xpm ), 
+      "COMPLEMENT", "BOOLEAN OPERATIONS", this, SLOT(sl_complement()), optoolbar, "complement");
+    QToolButton *but_interior = new QToolButton(QPixmap( (const char**)interior_xpm ), 
+      "INTERIOR", "BOOLEAN OPERATIONS", this, SLOT(sl_interior()), optoolbar, "interior");
+    QToolButton *but_closure = new QToolButton(QPixmap( (const char**)closure_xpm ), 
+      "CLOSURE", "BOOLEAN OPERATIONS", this, SLOT(sl_closure()), optoolbar, "closure");
+    QToolButton *but_boundary = new QToolButton(QPixmap( (const char**)boundary_xpm ), 
+      "BOUNDARY", "BOOLEAN OPERATIONS", this, SLOT(sl_boundary()), optoolbar, "boundary");
+    QToolButton *but_regularisation = new QToolButton(QPixmap( (const char**)regularization_xpm ), 
+      "REGULARIZATION", "BOOLEAN OPERATIONS", this, SLOT(sl_regularization()), optoolbar, "regularization");
     
 
     this->addToolBar(stoolbar->toolbar(), Top, false);
@@ -192,6 +227,9 @@ public:
     this->addToolBar(ltoolbar->toolbar(), Top, false);
     this->addToolBar(optoolbar, Top, false);
   
+    connect(list1, SIGNAL(delete_key(QListBoxItem*)), this, SLOT(sl_list1_delete_key_pressed(QListBoxItem*)));
+    connect(list2, SIGNAL(delete_key(QListBoxItem*)), this, SLOT(sl_list2_delete_key_pressed(QListBoxItem*)));
+
     Line l1(Point(0, 0), Point(0, 2));
     Nef_polyhedron N1(l1, Nef_polyhedron::INCLUDED);
     Nef_visible = N1;
@@ -207,8 +245,6 @@ public:
     widget->resize(w,h-100);
     list1->resize(w, 200);
     list2->resize(w, 200);
-    //In Qt2.3 doesn't exist this method. In Qt3.0 it is recommended
-    //to use it
     //list1->setPaletteBackgroundColor(QColor(100, 100, 100 ));
     //list2->setPaletteBackgroundColor(QColor(255, 0, 0 ));
     widget->show();
@@ -218,13 +254,13 @@ public:
 	
     //connect the widget to the main function that receives the objects
     connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
-    this, SLOT(get_new_object(CGAL::Object)));
+    this, SLOT(sl_get_new_object(CGAL::Object)));
     
     //connect the signals doubleClicked from the lists to the specific slots
     connect(list1, SIGNAL(clicked(QListBoxItem*)),
-      this, SLOT(list1_selected_item(QListBoxItem*)));
+      this, SLOT(sl_list1_selected_item(QListBoxItem*)));
     connect(list2, SIGNAL(clicked(QListBoxItem*)),
-      this, SLOT(list2_selected_item(QListBoxItem*)));
+      this, SLOT(sl_list2_selected_item(QListBoxItem*)));
 
     list1->setSelected(0, true);
     list2->setSelected(1, true);
@@ -232,15 +268,13 @@ public:
     old_state = 0;
   };
 
-private:
-  void  something_changed(){current_state++;};
-  
+
 public slots:
-  void  set_window(double xmin, double xmax, double ymin, double ymax)
+  void  sl_set_window(double xmin, double xmax, double ymin, double ymax)
   {
     widget->set_window(xmin, xmax, ymin, ymax);
   }
-  void  new_instance()
+  void  sl_new_instance()
   {
     widget->lock();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
@@ -252,7 +286,7 @@ public slots:
   }
 
 
-  void  load_nef()
+  void  sl_load_nef()
 	{
 		QString s( QFileDialog::getOpenFileName( QString::null,
 		    "CGAL files (*.cgal)", this ) );
@@ -264,10 +298,12 @@ public slots:
 		Nef_polyhedron N_temp(Nef_polyhedron::EMPTY);
 		Nef_visible = N_temp;
 		in >> Nef_visible;
+    insert_in_list(Nef_visible, "loaded");
+    list1->setSelected(list1->count()-1, true);
 		something_changed();
 	}
 
-  void  save_nef()
+  void  sl_save_nef()
 	{
 		QString fileName = 
 		QFileDialog::getSaveFileName( "nef_2.cgal", 
@@ -281,10 +317,11 @@ public slots:
 	}//end save_nef()
 
 private slots:
-  void  get_new_object(CGAL::Object obj)
+  void  sl_get_new_object(CGAL::Object obj)
   {
     Cartesian_point_2   p;
     Cartesian_polygon_2 poly;
+    Cartesian_line_2    line;
     if(CGAL::assign(p, obj)) {
       CGAL::Quotient<RT> wsxq = double_to_quotient<RT>(p.x());
       CGAL::Quotient<RT> wsyq = double_to_quotient<RT>(p.y());
@@ -294,7 +331,9 @@ private slots:
       Point p1(wsx, wsy, wsh);
       Point pt[1] = {p1};
       Nef_polyhedron Nt(pt, pt+1);
-      Nef_visible = Nef_visible + Nt;
+      insert_in_list(Nt, "Point");
+      Nef_visible = Nt;
+      list1->setSelected(list1->count()-1, true);
       something_changed();
     } else if(CGAL::assign(poly, obj)){
       Vertex_iterator it = poly.vertices_begin();
@@ -313,36 +352,54 @@ private slots:
       }
       Nef_polyhedron Nt(l_of_p.begin(), l_of_p.end(), Nef_polyhedron::INCLUDED);
       Nef_visible = Nt;
-      
       char tnr[10];
       sprintf(tnr, "%d", poly.size());
       strcat(tnr, "gon");
       insert_in_list(Nt, tnr);
       list1->setSelected(list1->count()-1, true);
+    } else if(CGAL::assign(line, obj)){
+      CGAL::Quotient<RT> wsxq = double_to_quotient<RT>(line.point(0).x());
+      CGAL::Quotient<RT> wsyq = double_to_quotient<RT>(line.point(0).y());
+      RT wsx = wsxq.numerator() * wsyq.denominator(); 
+      RT wsy = wsyq.numerator() * wsxq.denominator(); 
+      RT wsh  = wsxq.denominator() * wsyq.denominator(); 
+      Point p1(wsx, wsy, wsh);
+      wsxq = double_to_quotient<RT>(line.point(1).x());
+      wsyq = double_to_quotient<RT>(line.point(1).y());
+      wsx = wsxq.numerator() * wsyq.denominator(); 
+      wsy = wsyq.numerator() * wsxq.denominator(); 
+      wsh  = wsxq.denominator() * wsyq.denominator(); 
+      Point p2(wsx, wsy, wsh);
+
+      Nef_polyhedron Nt(Line(p1, p2), Nef_polyhedron::INCLUDED);
+      Nef_visible = Nt;
+      insert_in_list(Nt, "HalfSpace");
+      list1->setSelected(list1->count()-1, true);
+      something_changed();
     }
   };
 
-  void  about()
+  void  sl_about()
   {
     QMessageBox::about( this, my_title_string,
 		"This is a demo for Nef_2,\n"
   		"Copyright CGAL @2002");
   };
 
-  void  aboutQt()
+  void  sl_aboutQt()
   {
     QMessageBox::aboutQt( this, my_title_string );
   }
 
-  void  new_window(){
+  void  sl_new_window(){
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("Layer");
     ed->show();
-    ed->set_window(-1.1, 1.1, -1.1, 1.1);
+    ed->sl_set_window(-1.1, 1.1, -1.1, 1.1);
     something_changed();
   }
 
-  void  timer_done()
+  void  sl_timer_done()
   {
     if(old_state!=current_state){
       widget->redraw();
@@ -350,63 +407,162 @@ private slots:
     }
   }	
 
-  void  list1_selected_item(QListBoxItem* item){
-    if(Nef_visible != return_selected_nef(item->text()))
-      Nef_visible = return_selected_nef(item->text());
-    else {
+  void  sl_list1_selected_item(QListBoxItem* item){
+    if(item){
+      if(Nef_visible != return_selected_nef(item->text()))
+        Nef_visible = return_selected_nef(item->text());
+      else {
+        Nef_visible = Nef_polyhedron(Nef_polyhedron::EMPTY);
+        list1->setSelected(item, false);
+      }
+      widget->redraw();
+    }
+  }
+  void  sl_list2_selected_item(QListBoxItem* item){    
+    if(item){  
+      if(Nef_visible2 != return_selected_nef(item->text()))
+        Nef_visible2 = return_selected_nef(item->text());
+      else {
+        Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
+        list2->setSelected(item, false);
+      }
+      widget->redraw();
+    }
+  }
+  void  sl_list1_delete_key_pressed(QListBoxItem* item){
+    if(item){
+      int ci = list1->currentItem();
+      list1->removeItem(ci);      
+      if(list2->currentItem() == ci){
+        Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
+        list2->clearSelection();
+      }
+      list2->removeItem(ci);
       Nef_visible = Nef_polyhedron(Nef_polyhedron::EMPTY);
-      list1->setSelected(item, false);
+      list1->clearSelection();
+      widget->redraw();
     }
-    widget->redraw();
   }
-  void  list2_selected_item(QListBoxItem* item){
-    if(Nef_visible2 != return_selected_nef(item->text()))
-      Nef_visible2 = return_selected_nef(item->text());
-    else {
+  void  sl_list2_delete_key_pressed(QListBoxItem* item){
+    if(item){
+      int ci = list2->currentItem();
+      list2->removeItem(ci);
+      if(list1->currentItem() == ci){
+        Nef_visible = Nef_polyhedron(Nef_polyhedron::EMPTY);
+        list1->clearSelection();
+      }
+      list1->removeItem(ci);
       Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
-      list2->setSelected(item, false);
+      list2->clearSelection();
+      widget->redraw();
     }
-    widget->redraw();
   }
-  void  intersect(){
-    Nef_polyhedron NT = Nef_visible.intersection(Nef_visible2);
-    QString s = list1->currentText() + " AND " + list2->currentText();
-    insert_in_list(NT, s.data());
-    Nef_visible = NT;
-    Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
-    list1->setSelected(list1->count()-1, true);
-    list2->setSelected(list2->currentItem(), false);   
-    widget->redraw();
+  void  sl_intersect(){
+    if( list1->isSelected(list1->currentItem()) && list2->isSelected(list2->currentItem()) ){
+      //if there is something selected
+      Nef_polyhedron NT = Nef_visible.intersection(Nef_visible2);
+      QString s = "AND(" + list1->currentText() + ", " + list2->currentText() + ")";
+      insert_in_list(NT, s.data());
+      Nef_visible = NT;
+      Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
+      list1->setSelected(list1->count()-1, true);
+      list2->setSelected(list2->currentItem(), false);   
+      widget->redraw();
+    }
   }
-  void  join(){
-    Nef_polyhedron NT = Nef_visible.join(Nef_visible2);
-    QString s = list1->currentText() + " OR " + list2->currentText();
-    insert_in_list(NT, s.data());
-    Nef_visible = NT;
-    Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
-    list1->setSelected(list1->count()-1, true);
-    list2->setSelected(list2->currentItem(), false);   
-    widget->redraw();
+  void  sl_join(){
+    if( list1->isSelected(list1->currentItem()) && list2->isSelected(list2->currentItem()) ){
+      //if there is something selected
+      Nef_polyhedron NT = Nef_visible.join(Nef_visible2);
+      QString s = "OR(" + list1->currentText() + ", " + list2->currentText() + ")";
+      insert_in_list(NT, s.data());
+      Nef_visible = NT;
+      Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
+      list1->setSelected(list1->count()-1, true);
+      list2->setSelected(list2->currentItem(), false);   
+      widget->redraw();
+    }
   }
-  void  difference(){
-    Nef_polyhedron NT = Nef_visible.difference(Nef_visible2);
-    QString s = list1->currentText() + " - " + list2->currentText();
-    insert_in_list(NT, s.data());
-    Nef_visible = NT;
-    Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
-    list1->setSelected(list1->count()-1, true);
-    list2->setSelected(list2->currentItem(), false);   
-    widget->redraw();
+  void  sl_difference(){
+    if( list1->isSelected(list1->currentItem()) && list2->isSelected(list2->currentItem()) ){
+      //if there is something selected
+      Nef_polyhedron NT = Nef_visible.difference(Nef_visible2);
+      QString s = "Dif(" + list1->currentText() + ", " + list2->currentText() + ")";
+      insert_in_list(NT, s.data());
+      Nef_visible = NT;
+      Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
+      list1->setSelected(list1->count()-1, true);
+      list2->setSelected(list2->currentItem(), false);   
+      widget->redraw();
+    }
   }
-  void  symm_difference(){
-    Nef_polyhedron NT = Nef_visible.symmetric_difference(Nef_visible2);
-    QString s = list1->currentText() + " - OR - " + list2->currentText();
-    insert_in_list(NT, s.data());
-    Nef_visible = NT;
-    Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
-    list1->setSelected(list1->count()-1, true);
-    list2->setSelected(list2->currentItem(), false);   
-    widget->redraw();
+  void  sl_symm_difference(){
+    if( list1->isSelected(list1->currentItem()) && list2->isSelected(list2->currentItem()) ){
+      //if there is something selected
+      Nef_polyhedron NT = Nef_visible.symmetric_difference(Nef_visible2);
+      QString s = "SYM_DIF(" + list1->currentText() + ", " + list2->currentText() + ")";
+      insert_in_list(NT, s.data());
+      Nef_visible = NT;
+      Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
+      list1->setSelected(list1->count()-1, true);
+      list2->setSelected(list2->currentItem(), false);   
+      widget->redraw();
+    }
+  }
+  void  sl_complement(){
+    if( list1->isSelected(list1->currentItem()) ){
+      //if there is something from the 1st list selected
+      Nef_polyhedron NT = Nef_visible.complement();
+      QString s = "COMPLEMENT( " + list1->currentText() + " )";
+      insert_in_list(NT, s.data());
+      Nef_visible = NT;
+      list1->setSelected(list1->count()-1, true);
+      widget->redraw();
+    }
+  }
+  void  sl_interior(){
+    if( list1->isSelected(list1->currentItem()) ){
+      //if there is something from the 1st list selected
+      Nef_polyhedron NT = Nef_visible.interior();
+      QString s = "INTERIOR( " + list1->currentText() + " )";
+      insert_in_list(NT, s.data());
+      Nef_visible = NT;
+      list1->setSelected(list1->count()-1, true);
+      widget->redraw();
+    }
+  }
+  void  sl_closure(){
+    if( list1->isSelected(list1->currentItem()) ){
+      //if there is something from the 1st list selected
+      Nef_polyhedron NT = Nef_visible.closure();
+      QString s = "CLOSURE( " + list1->currentText() + " )";
+      insert_in_list(NT, s.data());
+      Nef_visible = NT;
+      list1->setSelected(list1->count()-1, true);
+      widget->redraw();
+    }
+  }
+  void  sl_boundary(){
+    if( list1->isSelected(list1->currentItem()) ){
+      //if there is something from the 1st list selected
+      Nef_polyhedron NT = Nef_visible.boundary();
+      QString s = "BOUNDARY( " + list1->currentText() + " )";
+      insert_in_list(NT, s.data());
+      Nef_visible = NT;
+      list1->setSelected(list1->count()-1, true);
+      widget->redraw();
+    }
+  }
+  void  sl_regularization(){
+    if( list1->isSelected(list1->currentItem()) ){
+      //if there is something from the 1st list selected
+      Nef_polyhedron NT = Nef_visible.regularization();
+      QString s = "REGULARIZATION( " + list1->currentText() + " )";
+      insert_in_list(NT, s.data());
+      Nef_visible = NT;
+      list1->setSelected(list1->count()-1, true);
+      widget->redraw();
+    }
   }
 private:
   void  insert_in_list(Nef_polyhedron n,const char *name)
@@ -414,7 +570,7 @@ private:
     char tname[300], tnr[5];
     sprintf(tnr, "%d", nef_index++);
     strcpy(tname, "N");
-    strcat(tname, tnr);strcat(tname, "-");
+    strcat(tname, tnr);strcat(tname, "= ");
     strcat(tname, name);
     Nef_description tempND(n, tname);
     nef_2_list.push_back(tempND);
@@ -431,7 +587,9 @@ private:
       it++;
     }
   }
-private:
+        
+  void  something_changed(){current_state++;};
+
   CGAL::Qt_widget             *widget;		
   CGAL::Tools_toolbar         *newtoolbar;
   CGAL::Layers_toolbar        *ltoolbar;
@@ -441,7 +599,7 @@ private:
                               //used to refresh the current window
                               nef_index;
                               //used to give names to polyhedrons
-  QListBox                    *list1, *list2;
+  Nef_2_list_box              *list1, *list2;
   std::list<Nef_description>  nef_2_list;
 };
 
@@ -461,7 +619,7 @@ main(int argc, char **argv)
   widget.setMouseTracking(TRUE);
   widget.show();
   // because Qt send resizeEvent only on show.
-  widget.set_window(-1, 1, -1, 1);
+  widget.sl_set_window(-1, 1, -1, 1);
   current_state = -1;
   return app.exec();
 }
