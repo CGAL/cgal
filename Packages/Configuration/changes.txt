@@ -1,3 +1,6 @@
+2.52  [af]
+- Added CGAL_CFG_NO_LIMITS
+
 2.51 (rursu)
 - Removed line too long warning from LONGNAME.C
 
