@@ -870,48 +870,6 @@ Packages/Developers_manual/doc_tex/Developers_manual/fig/reference_counting.pdf 
 Packages/Developers_manual/doc_tex/Developers_manual/fig/use_real.eps -text
 Packages/Developers_manual/doc_tex/Developers_manual/fig/use_real.gif -text svneol=unset#unset
 Packages/Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#unset
-Packages/Developers_manual/html/images/Cartesian_ipoint.gif -text svneol=unset#unset
-Packages/Developers_manual/html/images/Cartesian_orientation.gif -text svneol=unset#unset
-Packages/Developers_manual/html/images/Object.gif -text svneol=unset#unset
-Packages/Developers_manual/html/images/cgal_bigger.gif -text svneol=unset#unset
-Packages/Developers_manual/html/images/cgal_small.gif -text svneol=unset#unset
-Packages/Developers_manual/html/images/generic_cgal.gif -text svneol=unset#unset
-Packages/Developers_manual/html/images/handle_allocate.gif -text svneol=unset#unset
-Packages/Developers_manual/html/images/handle_rep.gif -text svneol=unset#unset
-Packages/Developers_manual/html/images/homogeneous_ipoint.gif -text svneol=unset#unset
-Packages/Developers_manual/html/images/homogeneous_orientation.gif -text svneol=unset#unset
-Packages/Developers_manual/html/images/reference_counting.gif -text svneol=unset#unset
-Packages/Developers_manual/html/images/title.gif -text svneol=unset#unset
-Packages/Developers_manual/html/images/use_real.gif -text svneol=unset#unset
-Packages/Developers_manual/pictures/Object.eps -text
-Packages/Developers_manual/pictures/Object.gif -text svneol=unset#unset
-Packages/Developers_manual/pictures/a-full.ipe -text
-Packages/Developers_manual/pictures/a-simp.ipe -text
-Packages/Developers_manual/pictures/c-full.ipe -text
-Packages/Developers_manual/pictures/c-simp.ipe -text
-Packages/Developers_manual/pictures/cgal.ipe -text
-Packages/Developers_manual/pictures/g-full.ipe -text
-Packages/Developers_manual/pictures/g-simp.ipe -text
-Packages/Developers_manual/pictures/generic_cgal.eps -text
-Packages/Developers_manual/pictures/generic_cgal.gif -text svneol=unset#unset
-Packages/Developers_manual/pictures/handle_allocate.eps -text
-Packages/Developers_manual/pictures/handle_allocate.gif -text svneol=unset#unset
-Packages/Developers_manual/pictures/handle_rep.eps -text
-Packages/Developers_manual/pictures/handle_rep.gif -text svneol=unset#unset
-Packages/Developers_manual/pictures/jnis.eps -text
-Packages/Developers_manual/pictures/jnis.gif -text svneol=unset#unset
-Packages/Developers_manual/pictures/l-full.ipe -text
-Packages/Developers_manual/pictures/l-simp.ipe -text
-Packages/Developers_manual/pictures/reference_counting.eps -text
-Packages/Developers_manual/pictures/reference_counting.fig -text
-Packages/Developers_manual/pictures/rmi.eps -text
-Packages/Developers_manual/pictures/rmi.gif -text svneol=unset#unset
-Packages/Developers_manual/pictures/rmifile.eps -text
-Packages/Developers_manual/pictures/rmifile.gif -text svneol=unset#unset
-Packages/Developers_manual/pictures/title.eps -text
-Packages/Developers_manual/pictures/title.gif -text svneol=unset#unset
-Packages/Developers_manual/pictures/use_real.eps -text
-Packages/Developers_manual/pictures/use_real.gif -text svneol=unset#unset
 Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.eps -text
 Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.fig -text
 Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.gif -text svneol=unset#unset
