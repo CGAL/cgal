@@ -1,11 +1,15 @@
 #!/usr/local/bin/perl5
 #
-#  This script takes as stdin "predicates_on_ofC2.h" or equivalent.
-#  It produces as stdout "Filter/predicates_on_ofC2.h" or equivalent.
+# Copyright (c) 1998-1999 The CGAL Consortium
+#
+# Author: Sylvain Pion <Sylvain.Pion@sophia.inria.fr>.
+#
+#
+#  This script takes as _stdin_ "predicates_on_ftC2.h" or equivalent.
+#  It produces as _stdout_ "Filter/predicates_on_ftC2.h" or equivalent.
 #
 #  See the CGAL documentation, Support Library, Interval Arithmetic.
 #
-# Sylvain Pion, 1998.
 
 $in_header=1;
 $in_def=0;
