@@ -1,3 +1,9 @@
+4.2 (9 July 2001)
++ Added random access iterator functionality to Vertex_iterator.
++ Removed ShoulFailToCompile test program.
++ Slight modification to AlgorithmTest.C.
++ Some changes in the documentation.
+
 4.1 (4 July 2001)
 + Renamed second form of area_2 to polygon_area_2 (to fix compiler bug)
 + Rewrote some documentation.

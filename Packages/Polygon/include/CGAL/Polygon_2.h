@@ -235,53 +235,10 @@ class Polygon_2 {
     ~Polygon_2()
       { }
 
-#if 0  // #ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
-    // the following typedefs are required for Sun C++ 4.2
-    typedef typename std::vector<Point_2>::const_iterator         v_ci;
-    typedef typename std::vector<Point_2>::const_reverse_iterator v_cri;
-    typedef typename std::vector<Point_2>::iterator               v_i;
-    typedef typename std::vector<Point_2>::reverse_iterator       v_ri;
-    typedef typename std::list<Point_2>::const_iterator           l_ci;
-    typedef typename std::list<Point_2>::const_reverse_iterator   l_cri;
-    typedef typename std::list<Point_2>::iterator                 l_i;
-    typedef typename std::list<Point_2>::reverse_iterator         l_ri;
-
-    Polygon_2(v_ci first, v_ci last)
-      { copy(first, last, back_inserter(d_container)); }
-    Polygon_2(v_cri first, v_cri last)
-      { copy(first, last, back_inserter(d_container)); }
-    Polygon_2(v_i first, v_i last)
-      { copy(first, last, back_inserter(d_container)); }
-    Polygon_2(v_ri first, v_ri last)
-      { copy(first, last, back_inserter(d_container)); }
-    Polygon_2(l_ci first, l_ci last)
-      { copy(first, last, back_inserter(d_container)); }
-    Polygon_2(l_cri first, l_cri last)
-      { copy(first, last, back_inserter(d_container)); }
-    Polygon_2(l_i first, l_i last)
-      { copy(first, last, back_inserter(d_container)); }
-    Polygon_2(l_ri first, l_ri last)
-      { copy(first, last, back_inserter(d_container)); }
-#else
    template <class InputIterator>
     Polygon_2(InputIterator first, InputIterator last,
             Traits p_traits = Traits())
         : d_container(first,last), traits(p_traits), m_flags(CF_EMPTY) {}
-//      { std::copy(first, last, std::back_inserter(d_container)); }
-
-/*
-    template <class Circulator>
-    Polygon_2(Circulator start)
-	{
-	    if (start != NULL) {
-		Circulator cur = start;
-		do {
-		    d_container.push_back(*cur); ++cur;
-		} while (cur != start);
-	    }
-	}
-*/
-#endif
 
     //--------------------------------------------------------
     //             Operations
