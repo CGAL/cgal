@@ -1114,7 +1114,7 @@ radius of the smallest enclosing sphere.
 @macro <Min_sphere_d compute_min_sphere: compute center and ...> = @begin
     center_coords.resize( ambient_dimension()+1);
     std::fill( center_coords.begin(), center_coords.end(), ET( 0));
-    for ( int i = 0; i < solver.number_of_basic_variables(); ++i) {
+    for ( i = 0; i < solver.number_of_basic_variables(); ++i) {
         ET  value = solver.basic_variables_numerator_begin()[ i];
         int index = solver.basic_variables_index_begin()[ i];
         for ( int j = 0; j < d; ++j)
@@ -2209,6 +2209,7 @@ can be enabled by giving a number between 0 and 3 at the command line.
     #ifndef CGAL_IO_VERBOSE_OSTREAM_H
     #  include <CGAL/IO/Verbose_ostream.h>
     #endif
+    #include <cassert>
     
     @<namespace begin>("CGAL")
 
