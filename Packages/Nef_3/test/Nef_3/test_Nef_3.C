@@ -1083,6 +1083,12 @@ private:
 
   void unary_operations() {
     
+    Nef_polyhedron X = load_nef3("pl_update_test.nef3.SH");
+    Nef_polyhedron Y = load_off("data/centered_cube.off");
+    X=X.closure();
+    X.difference(Y);
+    CGAL_assertion(X.is_valid());
+
     if(Infi_box::extended_kernel()) {
       Nef_polyhedron T = load_nef3("topology.nef3.EH");
       Nef_polyhedron N = T;
@@ -1196,6 +1202,7 @@ private:
     
 public:
   void run_test() {
+    
     loadSave();
     newell();
     transformation();
