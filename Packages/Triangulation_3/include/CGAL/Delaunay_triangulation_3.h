@@ -203,7 +203,7 @@ public:
       return insert(p);
   }
 
-  template <class Conflict_test, class Out_it_boundary_facets,
+  template <class Out_it_boundary_facets,
             class Out_it_cells, class Out_it_internal_facets>
   void
   find_conflicts(const Point &p, Cell_handle c,
@@ -240,7 +240,7 @@ public:
       // Reset the conflict flag in the conflict cells.
       for(typename std::vector<Cell_handle>::iterator ccit=cells.begin();
         ccit != cells.end(); ++ccit) {
-        ccit->set_in_conflict_flag(0);
+        (*ccit)->set_in_conflict_flag(0);
 	*cit++ = *ccit;
       }
   }

@@ -502,7 +502,7 @@ public:
   Vertex_handle
   insert_outside_affine_hull(const Point & p, Vertex_handle v = NULL );
 
-private:
+protected:
   // - c is the current cell, which must be in conflict.
   // - tester is the function object that tests if a cell is in conflict.
   //
@@ -577,7 +577,6 @@ private:
     }
   }
 
-protected:
   // This one takes a function object to recursively determine the cells in
   // conflict, then calls _tds._star_hole().
   template < class Conflict_test >
