@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999, 2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision $
 // release_date  : $CGAL_Date $
 //
-// file          : minimum_enclosing_quadrilateral_traits_2.h
+// file          : Minimum_enclosing_quadrilateral_traits_2.h
 // chapter       : $CGAL_Chapter: Geometric Optimisation $
 // package       : $CGAL_Package: Min_quadrilaterals $
 // source        : oops.aw

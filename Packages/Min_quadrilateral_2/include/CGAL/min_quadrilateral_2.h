@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999, 2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -492,6 +492,7 @@ min_parallelogram_2(ForwardIterator f,
   } // for (;;)
 
 
+   return t.copy_parallelogram_vertices_2(para_so_far, o);
  } // min_parallelogram_2(f, l, o , t)
 template < class ForwardIterator, class OutputIterator, class Traits >
 OutputIterator
