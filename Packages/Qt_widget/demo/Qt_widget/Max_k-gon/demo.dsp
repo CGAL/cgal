@@ -216,9 +216,16 @@ SOURCE=.\Qt_widget_toolbar.h
 # Begin Custom Build
 InputPath=.\Qt_widget_toolbar.h
 
-"Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h"
+BuildCmds= \
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h" \
+	$(QTDIR)\bin\moc.exe -o max_k-gon.moc max_k-gon.C \
+	
 
+"Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+   $(BuildCmds)
+
+"max_k-gon.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+   $(BuildCmds)
 # End Custom Build
 
 !ENDIF 

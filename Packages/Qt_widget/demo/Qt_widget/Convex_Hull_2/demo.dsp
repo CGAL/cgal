@@ -142,14 +142,6 @@ InputPath=..\..\..\include\CGAL\IO\Qt_Widget.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Get_point.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Handtool.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Qt_widget_move_list_point.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
@@ -216,9 +208,16 @@ SOURCE=.\Qt_widget_toolbar.h
 # Begin Custom Build
 InputPath=.\Qt_widget_toolbar.h
 
-"Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h"
+BuildCmds= \
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h" \
+	$(QTDIR)\bin\moc.exe -o convex_hull_2.moc convex_hull_2.C \
+	
 
+"Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+   $(BuildCmds)
+
+"convex_hull_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+   $(BuildCmds)
 # End Custom Build
 
 !ENDIF 
