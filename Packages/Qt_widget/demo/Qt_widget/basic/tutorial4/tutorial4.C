@@ -1,3 +1,5 @@
+//demo/Qt_widget/basic/tutorial4.C
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -15,15 +17,15 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
 
-class My_Layer : public CGAL::Qt_widget_layer{
-  void draw(CGAL::Qt_widget& widget){
-    widget << dt;
+class My_layer : public CGAL::Qt_widget_layer{
+  void draw(){
+    *widget << dt;
   }
 };
 
-class My_Widget : public CGAL::Qt_widget {
+class My_widget : public CGAL::Qt_widget {
 public:
-  My_Widget(QMainWindow* c) : CGAL::Qt_widget(c) {};
+  My_widget(QMainWindow* c) : CGAL::Qt_widget(c) {};
 private:
   //this event is called only when the user presses the mouse
   void mousePressEvent(QMouseEvent *e)
@@ -34,25 +36,25 @@ private:
   }
 };
 
-class My_Window : public QMainWindow{
+class My_window : public QMainWindow{
 public:
-  My_Window(int x, int y)
+  My_window(int x, int y)
   {
-    widget = new My_Widget(this);
+    widget = new My_widget(this);
     setCentralWidget(widget);
     resize(x,y);
     widget->set_window(0, x, 0, y);
     widget->attach(&v);
   }
 private:
-  My_Widget *widget;
-  My_Layer v;
+  My_widget *widget;
+  My_layer v;
 };
 
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    My_Window W(600,600);
+    My_window W(600,600);
     app.setMainWidget( &W );
     W.show();
     W.setCaption("Using QMainWindow QT class");

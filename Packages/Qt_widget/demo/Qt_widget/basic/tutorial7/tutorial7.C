@@ -1,3 +1,5 @@
+//demo/Qt_widget/basic/tutorial7/tutorial7.C
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -17,17 +19,17 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
 
-class My_Layer : public CGAL::Qt_widget_layer{
-  void draw(CGAL::Qt_widget& widget){
-    widget << CGAL::BLACK;
-    widget << dt;
+class My_layer : public CGAL::Qt_widget_layer{
+  void draw(){
+    *widget << CGAL::BLACK;
+    *widget << dt;
   }
 };
 
-class My_Window : public QMainWindow{
+class My_window : public QMainWindow{
   Q_OBJECT
 public:
-  My_Window(int x, int y)
+  My_window(int x, int y)
   {
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
@@ -36,8 +38,8 @@ public:
     widget->set_window(0, x, 0, y);
     
     //How to attach the standard toolbar
-    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
-    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
+    std_toolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
+    this->addToolBar(std_toolbar->toolbar(), Top, FALSE);
     
     widget->attach(&v);
 
@@ -45,7 +47,7 @@ public:
 	  this, SLOT(get_object(CGAL::Object)));
     widget->attach(&get_point);
   }
-  ~My_Window(){}
+  ~My_window(){}
 private slots:
   void get_object(CGAL::Object obj)
   {
@@ -59,8 +61,8 @@ private slots:
   }
 private:
   CGAL::Qt_widget *widget;
-  My_Layer v;
-  CGAL::Qt_widget_standard_toolbar *stoolbar;
+  My_layer v;
+  CGAL::Qt_widget_standard_toolbar *std_toolbar;
   CGAL::Qt_widget_get_point<Rep> get_point;
 };
 
@@ -69,7 +71,7 @@ private:
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    My_Window W(600,600);
+    My_window W(600,600);
     app.setMainWidget( &W );
     W.show();
     W.setCaption("Using the Standard Toolbar");

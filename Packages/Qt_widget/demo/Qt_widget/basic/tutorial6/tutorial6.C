@@ -1,3 +1,5 @@
+//demo/Qt_widget/basic/tutorial6/tutorial6.C
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -7,7 +9,6 @@
 #include <qmainwindow.h>
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_tool.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 
@@ -17,33 +18,32 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
 
-class My_Layer : public CGAL::Qt_widget_layer{
-  void draw(CGAL::Qt_widget& widget){
-    widget << CGAL::BLACK;
-    widget << dt;
+class My_layer : public CGAL::Qt_widget_layer{
+  void draw(){
+    *widget << CGAL::BLACK;
+    *widget << dt;
   }
 };
 
-class My_Tool : public CGAL::Qt_widget_tool{
+class My_input_layer : public CGAL::Qt_widget_layer{
 public:
-  My_Tool(){};
+  My_input_layer(){};
 private:
   void mousePressEvent(QMouseEvent *e)
   {
     if(e->button() == Qt::LeftButton)
     {
-      double
-	x=static_cast<double>(widget->x_real(e->x())),
-	y=static_cast<double>(widget->y_real(e->y()));
+      double x=static_cast<double>(widget->x_real(e->x()));
+      double y=static_cast<double>(widget->y_real(e->y()));
       widget->new_object(CGAL::make_object(Point(x, y)));
     }
   }
 };
 
-class My_Window : public QMainWindow{
+class My_window : public QMainWindow{
   Q_OBJECT
 public:
-  My_Window(int x, int y)
+  My_window(int x, int y)
   {
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
@@ -51,16 +51,16 @@ public:
     widget->set_window(0, x, 0, y);
     
     //How to attach the standard toolbar
-    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
-    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
+    std_toolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
+    this->addToolBar(std_toolbar->toolbar(), Top, FALSE);
     
     widget->attach(&v);
 
     connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
-						this, SLOT(get_object(CGAL::Object)));
+	    this, SLOT(get_object(CGAL::Object)));
     widget->attach(&t);
   }
-  ~My_Window(){}
+  ~My_window(){}
 private slots:
   void get_object(CGAL::Object obj)
   {
@@ -73,9 +73,9 @@ private slots:
   }
 private:
   CGAL::Qt_widget *widget;
-  My_Layer v;
-  My_Tool t;
-  CGAL::Qt_widget_standard_toolbar *stoolbar;
+  My_layer v;
+  My_input_layer t;
+  CGAL::Qt_widget_standard_toolbar *std_toolbar;
 };
 
 #include "tutorial6.moc"
@@ -83,7 +83,7 @@ private:
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    My_Window W(600,600);
+    My_window W(600,600);
     app.setMainWidget( &W );
     W.show();
     W.setCaption("Using the Standard Toolbar");

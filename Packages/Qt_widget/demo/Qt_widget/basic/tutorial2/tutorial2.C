@@ -1,3 +1,5 @@
+//demo/Qt_widget/basic/tutorial2.C
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
@@ -10,10 +12,10 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
 
-class My_Window : public CGAL::Qt_widget {
+class My_window : public CGAL::Qt_widget {
   Q_OBJECT
 public:
-  My_Window(int x, int y){
+  My_window(int x, int y){
     resize(x,y);
     connect(this, SIGNAL(custom_redraw()),
 	   this, SLOT(redraw_win()));
@@ -39,7 +41,7 @@ private:
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    My_Window *W = new My_Window(600,600);
+    My_window *W = new My_window(600,600);
     app.setMainWidget( W );
     W->show();
     W->set_window(0, 600, 0, 600);
