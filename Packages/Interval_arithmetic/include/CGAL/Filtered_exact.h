@@ -404,8 +404,10 @@ div (const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
      const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET, Dynamic,
                           CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil2)
 { return CGAL::CGALi::checked_div(fil1.value(), fil2.value(),
-				  Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-				  CGAL_IA_PROTECTED,CGAL_IA_CACHE>::Has_gcd()); }
+			   typename Filtered_exact<CGAL_IA_CT,
+				                   CGAL_IA_ET,Dynamic,
+				                   CGAL_IA_PROTECTED,
+                                                   CGAL_IA_CACHE>::Has_gcd()); }
 
 
 template < class CT, class ET, class Type, bool Protected, class Cache >
@@ -431,9 +433,10 @@ gcd (const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
      const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
                           CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil2)
 { return CGAL::CGALi::checked_gcd(fil1.value(), fil2.value(), 
-			    Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-				           CGAL_IA_PROTECTED,
-				           CGAL_IA_CACHE>::Has_gcd()); }
+			   typename Filtered_exact<CGAL_IA_CT,
+			                           CGAL_IA_ET,Dynamic,
+			                           CGAL_IA_PROTECTED,
+			                           CGAL_IA_CACHE>::Has_gcd()); }
 
 
 
