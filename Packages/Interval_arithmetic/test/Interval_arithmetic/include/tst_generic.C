@@ -28,23 +28,19 @@ int spiral_test()
   int i=0;
   IA_nt x_i (1), y_i (0), x_ip1, y_ip1, length;
 
-  // try {
   while (++i < 500)
   {
     x_ip1 = x_i - y_i/sqrt((IA_nt)i);
     y_ip1 = y_i + x_i/sqrt((IA_nt)i);
     x_i = x_ip1;
     y_i = y_ip1;
-    length = x_i*x_i + y_i*y_i;
+    length = square(x_i) + square(y_i);
     DEBUG(cout<<i<<": (" << x_i << " , " << y_i << ") : " << length << "\n";)
-    // if ((x_i == 0) || (y_i == 0))
     if ( x_i.overlap(0) || y_i.overlap(0) )
       break;
   };
-  // }
-  // catch (IA_nt::unsafe_comparison) { }
 
-  return (i == 396);
+  return i == 396;
 }
 
 // Here we iteratively compute sqrt(interval), where interval is [0.5;1.5]
@@ -261,40 +257,19 @@ int main()
   cout << "Printing test:" << endl;
   cout << (IA_nt)-.7 << endl << (IA_nt)7/10 << endl << (IA_nt)1/0 << endl;
 
-  cout << "Do square_root_test()   \t";
-  tmpflag = square_root_test();
-  print_res(tmpflag);
+#define TEST_MACRO(fn) \
+  cout << #fn << "\t\t"; \
+  tmpflag = fn(); \
+  print_res(tmpflag); \
   flag = tmpflag && flag;
 
-  cout << "Do spiral_test()        \t";
-  tmpflag = spiral_test();
-  print_res(tmpflag);
-  flag = tmpflag && flag;
-
-  cout << "Do overflow_test()      \t";
-  tmpflag = overflow_test();
-  print_res(tmpflag);
-  flag = tmpflag && flag;
-
-  cout << "Do underflow_test()     \t";
-  tmpflag = underflow_test();
-  print_res(tmpflag);
-  flag = tmpflag && flag;
-
-  cout << "Do division_test()      \t";
-  tmpflag = division_test();
-  print_res(tmpflag);
-  flag = tmpflag && flag;
-
-  cout << "Do multiplication_test()\t";
-  tmpflag = multiplication_test();
-  print_res(tmpflag);
-  flag = tmpflag && flag;
-
-  cout << "Do utility_test()       \t";
-  tmpflag = utility_test();
-  print_res(tmpflag);
-  flag = tmpflag && flag;
+  TEST_MACRO(square_root_test);
+  TEST_MACRO(spiral_test);
+  TEST_MACRO(overflow_test);
+  TEST_MACRO(underflow_test);
+  TEST_MACRO(division_test);
+  TEST_MACRO(multiplication_test);
+  TEST_MACRO(utility_test);
 
   print_res(0.0 < IA_nt(1));
 
