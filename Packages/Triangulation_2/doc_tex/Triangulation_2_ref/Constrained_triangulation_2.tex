@@ -223,7 +223,7 @@ are removed and new ones are created.
 intersect the relative interior of another constrained edge.  
 \ccPrecond  va and vb are distinct vertices of t.  }
 
-\ccMethod{ void insert(const Vertex_handle & va, const Vertex_handle & vb,
+\ccMethod{ void insert(Vertex_handle va, Vertex_handle vb,
 	    Face_handle & fr, int & i);}
 {Same as above. In addition,  sets the face \ccc{fr} incident to the
 egde \ccc{e} 
@@ -231,19 +231,19 @@ and on the right of \ccc{e} oriented from  \ccc{va} to \ccc{vb}
 and the index \ccc{i}  of the vertex of \ccc{fr} opposite to
 \ccc{e}, i.e.  \ccc{e}=\ccc{(fr,i)}.}	    
 
-\ccMethod{void insert(const Vertex_handle & va, const Vertex_handle & vb,
+\ccMethod{void insert(Vertex_handle va, Vertex_handle vb,
 	    Face_handle & fr, int & i, List_edges & new_edges );}
 {Same as above. In addition,  the edges that are created are put in
 the list \ccc{new\_edges}.} 
 
-\ccMethod{void remove(const Vertex_handle & v);}
+\ccMethod{void remove(Vertex_handle v);}
 { Removes a vertex v. 
 \ccPrecond Vertex \ccc{v}  is not incident to a constrained edge.}
 
 \ccMethod{ void remove_incident_constraints(Vertex_handle  v);}
 {Make the edges incident to vertex \ccc{v} unconstrained edges.}
 
-\ccMethod{void remove_constraint(const Face_handle & f, int i);}
+\ccMethod{void remove_constrained_edge(Face_handle f, int i);}
 { Edge \ccc{e}=\ccc{(f,i)}=\ccc{(g,j)} is no longer constrained.}
 
 \ccHeading{I/O}

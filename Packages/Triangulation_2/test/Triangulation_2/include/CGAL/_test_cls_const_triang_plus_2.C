@@ -15,6 +15,7 @@ _test_cls_const_triang_plus_2( const TrP & )
   typedef typename TrP::Context_iterator       Context_iterator;
   typedef typename TrP::Vertices_in_constraint Vertices_in_constraint;
 
+  std::cout << " call test of constrained triangulations" <<std::endl;
   _test_cls_const_Del_triangulation( TrP() );
 
   Point pt[12] = {
@@ -92,6 +93,13 @@ _test_cls_const_triang_plus_2( const TrP & )
   assert(trp3.number_of_constraints() == 0);
   //trp2.print_hierarchy();
   //trp3.print_hierarchy();
+
+  //test remove_constraint
+  std::cout << " test removal of constraint" << std::endl;
+  trp.remove_constraint(vh[10],vh[11]);
+  trp.remove_constraint(vh[6],vh[7]);
+
+  std::cout << std::endl;
   return;
 }
 

@@ -130,10 +130,11 @@ public:
   void push_back(const Constraint& c);
 
   void remove(Vertex_handle  v);
-  void remove_constraint(Face_handle f, int i);
+  void remove_constrained_edge(Face_handle f, int i);
   void remove_incident_constraints(Vertex_handle  v);
   
   //for backward compatibility
+  void remove_constraint(Face_handle f, int i) {remove_constrained_edge(f,i);}
   void insert(Point a, Point b) { insert_constraint(a, b);}
   void insert(Vertex_handle va, Vertex_handle  vb) {insert_constraint(va,vb);}
 
@@ -630,7 +631,7 @@ intersect(Face_handle f, int i,
     }
   }
   else{ //intersection computed
-    remove_constraint(f, i);
+    remove_constrained_edge(f, i);
     vi = virtual_insert(pi, f);
   }
 
@@ -886,7 +887,7 @@ remove_2D(Vertex_handle v)
 template < class Gt, class Tds, class Itag >
 void
 Constrained_triangulation_2<Gt,Tds,Itag>::
-remove_constraint(Face_handle f, int i)
+remove_constrained_edge(Face_handle f, int i)
 {
   f->set_constraint(i, false);
   if (dimension() == 2)
@@ -902,7 +903,7 @@ remove_incident_constraints(Vertex_handle v)
    Edge_circulator ec=incident_edges(v), done(ec);
    if (ec == 0) return;
    do {
-	if(is_constrained(*ec)) { remove_constraint((*ec).first,
+	if(is_constrained(*ec)) { remove_constrained_edge((*ec).first,
 						   (*ec).second);}
 	ec++;
    } while (ec != done);

@@ -152,11 +152,10 @@ public:
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  Exact_predicates_tag);
+ 
+  // REMOVAL
+  void remove_constraint(Vertex_handle va, Vertex_handle vb);
   
-
-  //SUPPRESSION
-  // to be done next
-
   // Query of the constraint hierarchy
   Constraint_iterator constraints_begin() const;
   Constraint_iterator constraints_end()   const;
@@ -456,7 +455,7 @@ intersect(Face_handle f, int i,
     }
   }
   else{ //computed
-    remove_constraint(f, i);
+    Triangulation::remove_constrained_edge(f, i);
     vi = insert(pi, f);
   }
 
@@ -472,6 +471,28 @@ intersect(Face_handle f, int i,
   }
   return vi; 
 }
+
+
+// This remove_constraint leaves all vertices in the triangulation
+template <class Tr>
+void
+Constrained_triangulation_plus_2<Tr>::
+remove_constraint(Vertex_handle va, Vertex_handle vb)
+{
+  CGAL_triangulation_precondition(hierarchy.is_constrained_edge(va,vb));
+  for(Vertices_in_constraint_iterator it = 
+	hierarchy.vertices_in_constraint_begin(va,vb),  succ = it; 
+      ++succ != hierarchy.vertices_in_constraint_end(va,vb); 
+      ++it){
+    Face_handle fh;
+    int i;
+    bool b = Triangulation::is_edge(*it, *succ, fh, i);
+    CGAL_triangulation_assertion(b);
+    // this does also flipping if necessary.
+    Triangulation::remove_constrained_edge(fh,i); 
+  }
+  hierarchy.remove_constraint(va,vb);
+ }
 
 template <class Tr>
 std::ostream &

@@ -390,9 +390,46 @@ insert_constraint(T va, T vb){
     sc_to_c_map.insert(std::make_pair(he,fathers));
     return true;
   }
+  delete children;
+  delete fathers;
   return false; //duplicate constraint - no insertion
 }
 
+template <class T, class Data>
+void
+Constraint_hierarchy_2<T,Data>::
+remove_constraint(T va, T vb){
+  H_edge   he = make_edge(va, vb);
+  H_c_to_sc_map::iterator c_to_sc_it = c_to_sc_map.find(he);
+  CGAL_triangulation_assertion(c_to_sc_it != c_to_sc_map.end());
+
+  H_vertex_list *hvl = c_to_sc_it->second; 
+  
+  // We have to look at all subconstraints
+  for(H_vertex_it it = hvl->begin(), succ = it; 
+      ++succ != hvl->end(); 
+      ++it){
+    H_sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));
+    CGAL_triangulation_assertion(scit != sc_to_c_map.end());
+    H_context_list* hcl = scit->second;
+
+    // and remove the context of the constraint
+    for(H_context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
+      if(ctit->enclosing == hvl){
+	    hcl->erase(ctit);
+		break;
+      }
+    }
+    // If this was the only context in the list, delete the context list
+    if(hcl->empty()){
+      sc_to_c_map.erase(scit);
+      delete hcl;
+    }
+  }
+  c_to_sc_map.erase(c_to_sc_it);
+  delete hvl;
+}
+ 
 
 template <class T, class Data>
 void Constraint_hierarchy_2<T,Data>::
@@ -580,12 +617,7 @@ typename Constraint_hierarchy_2<T,Data>::H_edge
 Constraint_hierarchy_2<T,Data>::
 make_edge(T va, T vb) const
 {
-  H_edge he;
-  if(va<vb)
-    { he.first = va; he.second = vb; }
-  else
-    { he.first = vb; he.second = va; }
-  return(he);
+   return (va<vb) ? H_edge(va,vb) : H_edge(vb,va);
 }
 
 template <class T, class Data>

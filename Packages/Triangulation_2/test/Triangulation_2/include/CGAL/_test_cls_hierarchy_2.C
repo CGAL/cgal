@@ -109,6 +109,14 @@ _test_cls_hierarchy_2()
   assert( ch.number_of_constraints() == h.number_of_constraints());
   assert( ch.number_of_subconstraints() == h.number_of_subconstraints());
   ch.clear();
+
+  //test remove constraint
+  //h.print();
+  h.remove_constraint(v[1],v[2]);
+  // h.print();
+  h.remove_constraint(v[3],v[4]);
+  // h.print();
+
   return;
 }
 

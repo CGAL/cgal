@@ -1,6 +1,15 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+
+Ver 7.97
+- added Constrained_triangulation_plus_2::remove_constraint(..)
+- renamed Constrained_triangulation_2:: and 
+   Constrained_Delaunay_triangulation_2::
+  remove_constraint(Face_handle fh, int i)
+  into
+  remove_constrained_edge(fh,ih)
+
 Ver 7.96
 - added  tds() functions: const and non const access to the tds + test + doc
 - added demos using Qt_widget

@@ -136,12 +136,12 @@ public:
 
   void remove(Vertex_handle v);
   void remove_incident_constraints(Vertex_handle v);
-  void remove_constraint(Face_handle f, int i);
+  void remove_constrained_edge(Face_handle f, int i);
  
   //for backward compatibility
   void insert(Point a, Point b) { insert_constraint(a, b);}
   void insert(Vertex_handle va, Vertex_handle  vb) {insert_constraint(va,vb);}
-
+  void remove_constraint(Face_handle f, int i){remove_constrained_edge(f,i);}
   // CHECK
   bool is_valid(bool verbose = false, int level = 0) const;
  
@@ -600,9 +600,9 @@ remove_incident_constraints(Vertex_handle v)
 template < class Gt, class Tds, class Itag >
 void
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
-remove_constraint(Face_handle f, int i)
+remove_constrained_edge(Face_handle f, int i)
 {
-  Ctr::remove_constraint(f,i);
+  Ctr::remove_constrained_edge(f,i);
   if(dimension() == 2) {
     List_edges le;
     le.push_back(Edge(f,i));

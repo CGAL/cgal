@@ -201,7 +201,7 @@ _test_cls_constrained_triangulation(const Triang &)
   
   
   // remove_constraint and remove _1 dim
-  std::cout << "remove_constraint and remove 1-dim" << std::endl;
+  std::cout << "remove_constrained_edge and remove 1-dim" << std::endl;
   Face_handle fh;
   int ih;
   Vertex_handle vha, vhb;
@@ -213,7 +213,7 @@ _test_cls_constrained_triangulation(const Triang &)
   vhb =  fh->vertex(li);
   assert(T1_2.is_edge(vha,vhb, fh, ih));
   assert(fh->is_constrained(ih));
-  T1_2.remove_constraint(fh,ih);
+  T1_2.remove_constrained_edge(fh,ih);
   assert(T1_2.is_valid());
   T1_2.insert(Point(0,0),Point(3,2));
   fh  =  T1_2.locate(Point(3,2),lt,li); assert( lt == Triang::VERTEX );
@@ -230,7 +230,7 @@ _test_cls_constrained_triangulation(const Triang &)
   assert(T1_2.is_valid());
 
    // remove_constraint and remove 2 dim
-  std::cout << "remove_constraint and remove 2-dim " << std::endl;
+  std::cout << "remove_constrained_edge and remove 2-dim " << std::endl;
   m=2;
   fh = T2_2.locate(lpt[m], lt,li); assert( lt == Triang::VERTEX );
   vha = fh->vertex(li);
@@ -238,7 +238,7 @@ _test_cls_constrained_triangulation(const Triang &)
   vhb =  fh->vertex(li);
   assert(T2_2.is_edge(vha,vhb, fh, ih));
   assert(fh->is_constrained(ih));
-  T2_2.remove_constraint(fh,ih);
+  T2_2.remove_constrained_edge(fh,ih);
   T2_2.insert(lpt[m], lpt[m+1]);
   assert(T2_2.is_valid());
   fh  =  T2_2.locate(lpt[m+1],lt,li); assert( lt == Triang::VERTEX );
