@@ -1,7 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 4.75 (??/12/00)
+Ver 4.75 (11/12/00)
+- fixed a few bugs in Constrained_Delaunay_triangulations :
+  missing typedef + clashing typedef  for VC++
 - added make_hole(), star_hole(), create_vertex(), delete_vertex()
   in Triangulation_default_data_structure_2
   and Triangulation_data_structure_using_list_2
