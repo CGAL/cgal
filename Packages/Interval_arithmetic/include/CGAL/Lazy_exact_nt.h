@@ -61,6 +61,9 @@
  * - Add a CT template parameter like Filtered_exact_nt<> ?
  * - Add a string constant to provide an expression string (a la MetaCGAL) ?
  *   // virtual ostream operator<<() const = 0; // or string, like Core ?
+ * - Have a template-expression (?) thing that evaluates a temporary element,
+ *   and allocates stuff in memory only when really needs to convert to the
+ *   NT.  (cf gmp++, and maybe other things, Blitz++, Synaps...)
  */
 
 /*
