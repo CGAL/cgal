@@ -8,6 +8,8 @@
 #CGAL_MAKEFILE = $(UTIL)/CGAL/CGAL-last/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.60_LEDA
 #CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-last/make/makefile_sparc_SunOS-5.6_CC-4.2_LEDA
 
+CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-last/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66
+
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -15,7 +17,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 # pour purify :
-#CGAL_CXX=purify g++ 
+CGAL_CXX=purify /usr/local/egcs/bin/g++
 
 CXXFLAGS = \
 	-I../../include \
@@ -30,8 +32,8 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 # pour purify :
-#CGAL_LDFLAGS= $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)/libCGAL.a \
-#              -L$(GMP_LIB_DIR) -lgmp -lm 
+CGAL_LDFLAGS= $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)/libCGAL.a \
+              -L$(GMP_LIB_DIR) -lgmp -lm 
 
 LDFLAGS = $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS)

@@ -132,5 +132,8 @@ _test_cell_tds_3( const Cell &)
    assert(c2.index(n2)==2);
    assert(c2.index(n3)==3);
 
+   std::cout << "   Tds Destructors " << std::endl;
+   delete v0; delete v1; delete v2; delete v3; 
+   delete n0; delete n1; delete n2; delete n3; 
 }
 

@@ -20,6 +20,8 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
+#include <CGAL/basic.h>
+
 #include <CGAL/_test_types.h>
 
 #include <CGAL/Triangulation_geom_traits_3.h>

@@ -20,9 +20,10 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
+#include <CGAL/basic.h>
 
-#include <list.h>
-#include <vector.h>
+#include <list>
+#include <vector>
 
 #include <CGAL/_test_types.h>
 #include <CGAL/triple.h>
