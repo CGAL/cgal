@@ -156,7 +156,8 @@ private:
 
   void
   find_conflicts_3(Conflict_set & conflicts, const Point & p,
-		   Cell_handle c, Cell_handle & ac, int & i);
+		   Cell_handle c, Cell_handle & ac, int & i,
+                   Cell_handle prev = NULL);
     // 3d case
     // p is in conflict with c
     // finds the set conflicts of cells in conflict with p
@@ -990,21 +991,25 @@ template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
 find_conflicts_3(Conflict_set & conflicts, const Point & p,
-		 Cell_handle c, Cell_handle & ac, int & i)
+		 Cell_handle c, Cell_handle & ac, int & i, Cell_handle prev)
   // 3d case
   // p is in conflict with c
   // finds the set conflicts of cells in conflict with p
   // gives a cell ac having a facet on the boundary of conflicts
   // and the index i of its facet on the boundary
+  // prev is only an optimization, pointing to where we come from, and
+  // it defaults to NULL.
 {
   (void) conflicts.insert( (Conflict_set::key_type) &(*c) );
 
   for ( int j=0; j<4; j++ ) {
     Cell_handle test = c->neighbor(j);
+    if (test == prev)
+      continue; // We come from this one ! So no need to test anything.
     if (conflicts.find( (Conflict_set::key_type) &(*test) ) != conflicts.end())
-      continue;   // test was already tested and found to be in conflict.
+      continue; // test was already tested and found to be in conflict.
     if ( side_of_sphere( test, p ) == ON_BOUNDED_SIDE )
-      find_conflicts_3(conflicts, p, test, ac, i);
+      find_conflicts_3(conflicts, p, test, ac, i, c);
     else {
       ac = c;
       i = j;
