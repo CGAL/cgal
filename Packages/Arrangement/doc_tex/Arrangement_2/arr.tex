@@ -67,27 +67,42 @@
 
 \section{Introduction}
 
-\paragraph{2D Arrangement:} Given a collection $C$ of (possibly
+Given a collection $C$ of (possibly
 intersecting and not necessarily $x$-monotone) curves in the plane,
 we construct a collection 
 $C''$ in two steps: First we decompose each curve in $C$ into maximal
 $x$-monotone curves, thus obtaining the collection $C'$. We then
 decompose each curve in $C'$ into maximal connected pieces not
 intersecting any other curve in $C'$. This way we obtain the
-collection $C''$ of $x$-monotone, pairwise interior disjoint curves.
+collection $C''$ of $x$-monotone, pairwise interior-disjoint curves.
 The {\em arrangement} of the curves in $C$ is the
-{\it planar map}(see Chapter~\ref{I1_ChapterPlanarMap})
+{\it planar map} (see Chapter~\ref{I1_ChapterPlanarMap})
 induced by the curves in $C''$.
+
+\section{Software Design}
  
+The class \ccc{CGAL::Arrangement_2<Dcel,Traits,Base_node>} is a data
+structure for maintaining 2D arrangements. The data structure
+maintains a planar map and curve hierarchy trees. There is a curve
+tree for each curve inserted into the arrangement (see below). The
+underlying combinatorial structure is determined by the
+\ccc{Dcel} template parameter, which should be a model of the
+\ccc{ArrangementDcel_2} concept. The family of curves of the
+arrangement is determined by the \ccc{Traits} template parameter which
+should be a model of the \ccc{ArrangementTraits_2} concept. The
+\ccc{Base_node} template parameter defines the attributes associated
+with each tree node of the hierarchy tree.
+
 \paragraph{Curve Hierarchy Tree:} When constructing an arrangement
-we decompose each curve $c$ in two steps obtaining the collections $c'$
-and $c''$. We regard these collections as levels in a hierarchy of 
-curves where the union of the subcurves in each level is the original curve
-$c$. We store these collections in a special structure --- a {\em hierarchy
-tree}. This structure usually consists of three levels, although
-in some cases they can consist of less (e.g., when inserting an $x$-monotone 
-curve) or more (when the users define their own {\em split functions} see
-Section~\ref{ssec:example4}). The levels are:
+we decompose each curve $c$ in two steps obtaining the collections
+$c'$ and $c''$. We regard these collections as levels in a hierarchy
+of curves where the union of the subcurves in each level is the
+original curve $c$. We store these collections in a special structure
+--- a {\em hierarchy tree}. This structure usually consists of three
+levels, although in some cases they can consist of less (e.g., when
+inserting an $x$-monotone curve) or more (when the users define their
+own {\em split functions} see Section~\ref{ssec:example4}). The levels
+are:
 \begin{itemize}
 \item Curve node level: the root of the tree --- holds the original curve.
 \item Subcurve node level: inner nodes of the tree --- hold decomposed
@@ -125,7 +140,6 @@ in the tree).
 \end{ccHtmlOnly}
 \end{figure}
 
-
 The hierarchy tree enables us to intersect the curves without loss of
 information. The original curve and the intermediate subcurves are stored
 in the tree and the user can traverse them. Furthermore, the users can
@@ -134,10 +148,32 @@ This can be of use in some applications. For example, in an arrangement
 of spline curves the users might want to intersect a curve in the
 junction points before making the curve $x$-monotone. 
 
-\paragraph{Update Mode:} For some algorithms, it is not needed to build
+\paragraph{Degeneracies} Like the planar map package (see
+Chapter~\ref{I1_ChapterPlanarMap}), the arrangement package can deal
+with $x$-degenerate input (including vertical segments). However,
+while in the planar map the input curves were assumed to be
+$x$-monotone and non-intersecting in their interiors, there are no
+such assumptions in the arrangement. A non $x$-monotone curve is
+partitioned into $x$-monotone subcurves, and curves are intersected in
+their points of intersection with other points before they are
+inserted into the map. Furthermore, overlapping curves are
+supported. If two curves overlap the traits intersection function
+returns the two endpoints of the common part. Circulators of the
+\ccc{Overlap_circulator} type (of
+\ccc{Arrangement_2<Dcel,Traits,Base_node>}) enables to traverse all
+overlapping \ccc{edge_nodes} that correspond to the same pair of
+halfedges in the map.
+
+\paragraph{I/O functions:}
+I/O functions for reading a saved arrangement from the standard input, 
+writing it to the standard output or drawing it to a graphic stream are also provided.
+Users of I/O functions for the arrangement package are required to define I/O 
+operators for the curves defined in their \ccc{Traits} classes.
+
+\paragraph{Update Mode:} For some algorithms, it is not necessary to build
 the whole planar map induced by the arrangement. For example, the lower
-envelope of an arrangement of $x$-monotone curves which intersect
-each other at most a fixed constant $s$ times,
+envelope of an arrangement of $x$-monotone curves that intersect
+each other at most a fixed constant number of $s$ times,
 can be found in near linear time \cite{sa-dsstg-95, h-a-97}
 even if
 the complexity of the planar map induced by it is quadratic.
@@ -150,38 +186,28 @@ default situation.
 When update mode is set to \ccc{false}, the hierarchy tree is built without
 its \ccc{Edge_level}, and the curves are not inserted into the planar map.
 
-\paragraph{Degeneracies} Like the planar map package (see
-Chapter~\ref{I1_ChapterPlanarMap}), the arrangement package can deal with
-$x$-degenerate input (including vertical segments). However, while in the
-planar map the input curves were assumed to be $x$-monotone and non
-intersecting in their interiors, there are no such assumptions in the
-arrangement. A non $x$-monotone curve is partitioned into $x$-monotone
-subcurves, and curves are intersected in their points of intersection
-with other points
-before they are inserted into the map. Furthermore, overlapping curves are
-supported. If two curves overlap the traits intersection function returns
-the two endpoints of the common part. The \ccc{Overlap_circulator}
-enables to traverse all overlapping \ccc{edge_nodes} that correspond to
-the same pair of halfedges in the map.
-
-\paragraph{I/O functions:}
-I/O functions for reading a saved arrangement from the standard input, 
-writing it to the standard output or drawing it to a graphic stream are also provided.
-Users of I/O functions for the arrangement package are required to define I/O 
-operators for the curves defined in their \ccc{Traits} classes.
-
 %******************************************************************************
 
 
 
-\section{Example Programs}
+%\section{Example Programs}
 %---------------------------------------------------
-\subsection{Simple Example of a Segment Arrangement}
+\section{Segment Arrangements}
+
+\ccInclude{CGAL/Arr_segment_exact_traits.h}\\
+\ccInclude{CGAL/Arr_leda_segment_exact_traits.h}
+
+\subsection{Example of an Arrangement of Segments}
 The following example demonstrates the construction of an
 $X$-shaped arrangement out of two segments.
 After the construction we
 traverse the edges of the arrangement in the order defined
 by the original segments.
+
+The four numbers on each output lines is a representation of a segment.
+The first two numbers are the $x$ and $y$ coordinates of the first endpoint.
+The other two numbers are of the second endpoint. The way a curve is
+printed depends on the the output operator imlemented for it.
 
 \ccIncludeExampleCode{Arrangement_2/example1.C}
 
@@ -221,8 +247,12 @@ Edge 1 1 2 2 is covered by 2 edges.
 Edge 2 2 3 3 is covered by a single edge.
 \end{verbatim}
 
+\section{Arrangements of Circular Arcs and/or Line Segments}
 
-\subsection{Example of a Circle Arrangement}
+\ccInclude{CGAL/Arr_circle_real_traits.h}\\
+\ccInclude{CGAL/Arr_segment_circle_traits.h}
+
+\subsection{Example of an Arrangement of Circular Arcs}
 \label{ssec:example3}
 The following example demonstrates the use of the circle traits.
 The arrangement created by this example is depicted in
@@ -249,6 +279,11 @@ in order to run).
 
 \ccIncludeExampleCode{Arrangement_2/example3.C}
 
+\section{Polyline Arrangements}
+
+\ccInclude{CGAL/Arr_polyline_traits.h}\\
+\ccInclude{CGAL/Arr_leda_polyline_traits.h}
+
 \subsection{Example of a Polyline Arrangement}
 \label{ssec:example10}
 The following example demonstrates the use of the polyline traits.
@@ -270,6 +305,11 @@ in order to run).
 \ccIncludeExampleCode{Arrangement_2/example10.C}
 
 \begin{ccAdvanced}
+\section{User-defined Hierarchy}
+
+The default hierarchy strucutre can be extended to include more levels
+according to user defined split functions.
+
 \subsection{Example of a User-defined Hierarchy}
 \label{ssec:example4}
 
