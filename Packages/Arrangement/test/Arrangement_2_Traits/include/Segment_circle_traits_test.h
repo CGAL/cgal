@@ -16,6 +16,14 @@ public Base_traits_test<Traits_class, Number_type>
   typedef typename Traits_class::Segment   Segment;
   typedef typename Traits_class::Circle    Circle;
 
+  typedef Base_traits_test< Traits_class, Number_type > Base;
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Base::tr;
+  using Base::all_curves_vec;
+  using Base::all_points_vec;
+#endif
+
  public:
   
   // Constructor.

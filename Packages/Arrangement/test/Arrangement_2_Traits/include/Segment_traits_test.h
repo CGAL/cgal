@@ -9,6 +9,14 @@ public:
   typedef typename Traits_class::Point_2        Point;
   typedef typename Traits_class::X_monotone_curve_2      X_curve;
   typedef typename Traits_class::Curve_2        Curve;
+  typedef Base_traits_test< Traits_class, Number_type > Base;
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Base::tr;
+  using Base::all_curves_vec;
+  using Base::all_points_vec;
+#endif
+
 public:
   Segment_traits_test( int argc, char ** argv );
   virtual void read_curve( std::ifstream & is, Curve & cv );
