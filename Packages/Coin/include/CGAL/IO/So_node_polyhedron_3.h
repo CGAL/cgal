@@ -223,7 +223,7 @@ protected:
         glVertex3f(5, 0, 0);
         glVertex3f(5, 5, 0);
       glEnd();
-    } else if(complexity==1){ 
+    } else if(complexity==1){
       //render in smooth (specify the normals for the vertices)
       Facet_iterator fit = p.facets_begin();
       while(fit != p.facets_end()){

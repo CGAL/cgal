@@ -67,16 +67,24 @@ class Node_terrain : public SoNonIndexedShape{
 
 public:
   
-  typedef typename Triangulation_2::Geom_traits     Traits;
+  typedef typename Triangulation_2::Geom_traits
+                                            Traits;
+  typedef typename Triangulation_2::Vertex_handle
+                                            Vertex_handle;
+  typedef typename Triangulation_2::Face_handle
+                                            Face_handle;
   typedef typename Triangulation_2::Finite_vertices_iterator
                                             Finite_vertices_iterator;
   typedef typename Triangulation_2::Finite_faces_iterator
-                                            Finite_faces_iterator;  
+                                            Finite_faces_iterator;
+  typedef typename Triangulation_2::Face_circulator
+                                            Face_circulator;
 
-
-  typedef CGAL::Cartesian<double> FT;
-  typedef CGAL::Point_3<FT>       CPoint3;
-  typedef CGAL::Vector_3<FT>      CVector3;
+  typedef CGAL::Cartesian<double>           FT;
+  typedef CGAL::Point_3<FT>                 CPoint3;
+  typedef CGAL::Vector_3<FT>                CVector3;
+  typedef std::pair<Face_handle, CVector3>  FACENORMALPAIR;
+  typedef std::pair<Vertex_handle, CVector3>  VERTEXNORMALPAIR;
 
   static void initClass(){
     do {
@@ -120,6 +128,8 @@ public:
   }// The constructor
   Node_terrain(Triangulation_2 &T) : t(T) {
     do {
+      compute_normals_for_faces();
+      compute_normals_for_vertices();
       Node_terrain::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
       assert(Node_terrain::classTypeId != SoType::badType() && "you forgot init()!");
@@ -136,6 +146,46 @@ public:
     } while (0);
   }// The constructor
   
+  void compute_normals_for_faces(){
+    Finite_faces_iterator fit;      
+    for (fit = t.finite_faces_begin(); fit != t.finite_faces_end(); ++fit){
+      CPoint3 p1(CGAL::to_double((*(*fit).vertex(0)).point().x()),
+                  CGAL::to_double((*(*fit).vertex(0)).point().y()),
+                  CGAL::to_double((*(*fit).vertex(0)).point().z()));
+      CPoint3 p2(CGAL::to_double((*(*fit).vertex(1)).point().x()),
+                  CGAL::to_double((*(*fit).vertex(1)).point().y()),
+                  CGAL::to_double((*(*fit).vertex(1)).point().z()));
+      CPoint3 p3(CGAL::to_double((*(*fit).vertex(2)).point().x()),
+                  CGAL::to_double((*(*fit).vertex(2)).point().y()),
+                  CGAL::to_double((*(*fit).vertex(2)).point().z()));
+
+      CVector3 normal = CGAL::cross_product(p2 - p1, p3 - p1);          
+      double sqnorm = normal * normal;
+      if(sqnorm != 0){
+        CVector3 v_n = normal / std::sqrt(sqnorm);
+        faces_normals.insert(FACENORMALPAIR(&(*fit), v_n));
+      }
+    }
+  }
+  void compute_normals_for_vertices(){
+    Finite_vertices_iterator vit;      
+    for (vit = t.finite_vertices_begin(); vit != t.finite_vertices_end(); ++vit){
+      Face_circulator cit = (&(*vit))->incident_faces();
+      unsigned int normals_count = 0;
+      CVector3 normals_sum(0, 0, 0);
+      do{
+        normals_sum = normals_sum + faces_normals[&(*cit)];
+        normals_count++;
+      }while(++cit!=(&(*vit))->incident_faces());
+      normals_sum = normals_sum/normals_count;
+      double sqnorm = normals_sum * normals_sum;
+      if(sqnorm != 0){
+        CVector3 v_n = normals_sum / std::sqrt(sqnorm);
+        vertices_normals.insert(VERTEXNORMALPAIR(&(*vit), v_n));
+      }
+    }        
+  }
+
   SoMFInt32 numVertices;
 
 public:
@@ -186,22 +236,22 @@ protected:
 
   virtual void  GLRender(SoGLRenderAction *action){
     SoState * state = action->getState();
-    SbBool didpush = FALSE;
-    if (this->vertexProperty.getValue()) {
-      state->push();
-      didpush = TRUE;
-      this->vertexProperty.getValue()->GLRender(action);
-    }
 
     // First see if the object is visible and should be rendered
     // now. This is a method on SoShape that checks for INVISIBLE
     // draw style, BOUNDING_BOX complexity, and delayed
     // transparency.
     if (!this->shouldGLRender(action)) {
-      if (didpush)
-        state->pop();
       return;
     }
+
+    // Determine if we need to send normals. Normals are
+    // necessary if we are not doing BASE_COLOR lighting.
+         
+    // we use the Lazy element to get the light model.   
+    SbBool sendNormals = (SoLazyElement::getLightModel(state) 
+	    != SoLazyElement::BASE_COLOR); 
+
 
     // Determine if there's a material bound per part
     SoMaterialBindingElement::Binding material_binding = 
@@ -214,42 +264,46 @@ protected:
     // This send will ensure that all material state in GL is current. 
     SoGLLazyElement::sendAllMaterial(state);
   
+    float complexity = SbClamp(this->getComplexityValue(action), 0.0f, 1.0f);
+    //Complexity value, valid settings range 
+    //from 0.0 (worst appearance, best perfomance)
+    //to 1.0 (optimal appearance, lowest rendering speed)
 
-
-    glPushMatrix();  
+    glPushMatrix();
+    if(complexity == 0){//render the bounding box
       Finite_vertices_iterator vit;
       glBegin(GL_POINTS);
       for (vit = t.finite_vertices_begin(); vit != t.finite_vertices_end(); ++vit)
         glVertex3f(CGAL::to_double((*vit).point().x()), CGAL::to_double((*vit).point().y()), CGAL::to_double((*vit).point().z()));
       glEnd();
-
+    } else if(complexity==1){ //render smooth      
       Finite_faces_iterator fit;
       glBegin(GL_TRIANGLES);      
       for (fit = t.finite_faces_begin(); fit != t.finite_faces_end(); ++fit){
-        CPoint3 p1(CGAL::to_double((*(*fit).vertex(0)).point().x()),
-                   CGAL::to_double((*(*fit).vertex(0)).point().y()),
-                   CGAL::to_double((*(*fit).vertex(0)).point().z()));
-        CPoint3 p2(CGAL::to_double((*(*fit).vertex(1)).point().x()),
-                   CGAL::to_double((*(*fit).vertex(1)).point().y()),
-                   CGAL::to_double((*(*fit).vertex(1)).point().z()));
-        CPoint3 p3(CGAL::to_double((*(*fit).vertex(2)).point().x()),
-                   CGAL::to_double((*(*fit).vertex(2)).point().y()),
-                   CGAL::to_double((*(*fit).vertex(2)).point().z()));
-
-        CVector3 normal = CGAL::cross_product(p2 - p1, p3 - p1);          
-        double sqnorm = normal * normal;
-        if(sqnorm != 0){
-          CVector3 v_n = normal / std::sqrt(sqnorm);
-          CPoint3 pn = CPoint3(0, 0, 0) + v_n;
-          glNormal3f(pn.x(), pn.y(), pn.z());
-        }
+        CPoint3 pn = CPoint3(0, 0, 0) + vertices_normals[(*fit).vertex(0)];
+        glNormal3f(pn.x(), pn.y(), pn.z());
+        glVertex3f(CGAL::to_double((*(*fit).vertex(0)).point().x()), CGAL::to_double((*(*fit).vertex(0)).point().y()), CGAL::to_double((*(*fit).vertex(0)).point().z()));
+        pn = CPoint3(0, 0, 0) + vertices_normals[(*fit).vertex(1)];
+        glNormal3f(pn.x(), pn.y(), pn.z());
+        glVertex3f(CGAL::to_double((*(*fit).vertex(1)).point().x()), CGAL::to_double((*(*fit).vertex(1)).point().y()), CGAL::to_double((*(*fit).vertex(1)).point().z()));
+        pn = CPoint3(0, 0, 0) + vertices_normals[(*fit).vertex(2)];
+        glNormal3f(pn.x(), pn.y(), pn.z());
+        glVertex3f(CGAL::to_double((*(*fit).vertex(2)).point().x()), CGAL::to_double((*(*fit).vertex(2)).point().y()), CGAL::to_double((*(*fit).vertex(2)).point().z()));
+      }
+      glEnd();
+    } else {
+      Finite_faces_iterator fit;
+      glBegin(GL_TRIANGLES);      
+      for (fit = t.finite_faces_begin(); fit != t.finite_faces_end(); ++fit){
+        CPoint3 pn = CPoint3(0, 0, 0) + faces_normals[&(*fit)];
+        glNormal3f(pn.x(), pn.y(), pn.z());
 
         glVertex3f(CGAL::to_double((*(*fit).vertex(0)).point().x()), CGAL::to_double((*(*fit).vertex(0)).point().y()), CGAL::to_double((*(*fit).vertex(0)).point().z()));
         glVertex3f(CGAL::to_double((*(*fit).vertex(1)).point().x()), CGAL::to_double((*(*fit).vertex(1)).point().y()), CGAL::to_double((*(*fit).vertex(1)).point().z()));
         glVertex3f(CGAL::to_double((*(*fit).vertex(2)).point().x()), CGAL::to_double((*(*fit).vertex(2)).point().y()), CGAL::to_double((*(*fit).vertex(2)).point().z()));      
       }
       glEnd();
-
+    }
     glPopMatrix();
   }
   
@@ -290,6 +344,8 @@ private:
   virtual SbBool generateDefaultNormals(SoState * state,
     SoNormalBundle * bundle){return FALSE;}
 
+  std::map<Vertex_handle, CVector3> vertices_normals;
+  std::map<Face_handle, CVector3> faces_normals;
   Triangulation_2 &t;
   Triangulation_2 t_temp;
 
