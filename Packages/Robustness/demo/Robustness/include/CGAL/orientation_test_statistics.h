@@ -23,10 +23,8 @@
 
 #include <CGAL/Interval_arithmetic.h>
 
-#if defined(CGAL_USE_CGAL_WINDOW)
-#include <sstream>
-#endif
-
+// #include <sstream> // doesn't work with GCC 2.95.2
+#include <strstream>
 
 template <class ForwardIterator, class Traits>
 void
@@ -86,7 +84,8 @@ orientation_statistics_IA( ForwardIterator first, ForwardIterator last,
                 }
 
 #if defined(CGAL_USE_CGAL_WINDOW)
-    std::ostringstream OS;
+    // std::ostringstream OS;
+    std::ostrstream OS;
     OS << "Out of " << c << " orientation tests, " << c;
     OS << std::ends;
     s1 = OS.str();
@@ -97,5 +96,3 @@ orientation_statistics_IA( ForwardIterator first, ForwardIterator last,
                         (double)success/c * 100);
 #endif
 }
-
-

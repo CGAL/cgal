@@ -26,9 +26,8 @@
 
 #include <CGAL/Timer.h>
 
-#if defined(CGAL_USE_CGAL_WINDOW)
-#include <sstream>
-#endif
+// #include <sstream> // Doesn't work with GCC < 2.95.3
+#include <strstream>
 
 template <class ForwardIterator1, class ForwardIterator2, class Traits>
 void
@@ -58,7 +57,8 @@ intersection_statistics( ForwardIterator1 first1, ForwardIterator1 last1,
     watch.stop();
 
 #if defined(CGAL_USE_CGAL_WINDOW)
-   std::ostringstream OS;
+   // std::ostringstream OS;
+   std::ostrstream OS;
    OS << is_count << " intersection points found,\n";
    OS << bl_count << " of them lie on both segments.\n";
    OS << "Out of the " << 2*is_count << "\npoint-on-segment tests, \n" <<  ol_count;
