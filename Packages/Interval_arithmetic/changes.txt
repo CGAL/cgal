@@ -1,4 +1,4 @@
-Version 4.125 on ?? December 2001
+Version 4.125 on 19 December 2001
 - Remove workaround_4_ms.
 - New predicate : compare_slopesC2.
 - Uncomment Conic_2 in Filtered_kernel.
