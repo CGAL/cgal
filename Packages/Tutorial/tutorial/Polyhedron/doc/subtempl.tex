@@ -451,26 +451,24 @@ Doo-Sabin stencil is shown below.
 template <class _Poly>
 class DooSabin_rule : public dualize_rule<_Poly> {
 public:
-  void point_rule(Halfedge_handle edge, Point& pt) {
-    // Facet circulator starts on pointing to the corner. 
-    Halfedge_around_facet_circulator cir = edge->facet()->facet_begin();
+  void point_rule(Halfedge_handle he, Point& pt) {
     // The Doo-Sabin rule is a function of the facet degree.
-    int n =  CGAL::circulator_size(cir);
+    int n =  CGAL::circulator_size(he->facet()->facet_begin());
 
     // CGAL Vector computation is used for simple coding.
     Vector cv(0,0,0), t;
     if (n == 4) { // Regular facet.
-      cv = cv + (cir->vertex()->point()-CGAL::ORIGIN)*9;
-      cv = cv + ((++cir)->vertex()->point()-CGAL::ORIGIN)*3;
-      cv = cv + ((++cir)->vertex()->point()-CGAL::ORIGIN);
-      cv = cv + ((++cir)->vertex()->point()-CGAL::ORIGIN)*3;
+      cv = cv + (he->vertex()->point()-CGAL::ORIGIN)*9;
+      cv = cv + (he->next()->vertex()->point()-CGAL::ORIGIN)*3;
+      cv = cv + (he->next()->next()->vertex()->point()-CGAL::ORIGIN);
+      cv = cv + (he->prev()->vertex()->point()-CGAL::ORIGIN)*3;
       cv = cv/16;
     } else { // Extraordinary facet.
       double a;
-      for (int k = 0; k < n; ++k, ++cir) {
+      for (int k = 0; k < n; ++k, he = he->next()) {
 	if (k == 0) a = ((double)5/n) + 1;
 	else a = (3+2*std::cos(2*k*3.141593/n))/n;
-	cv = cv + (cir->vertex()->point()-CGAL::ORIGIN)*a;
+	cv = cv + (he->vertex()->point()-CGAL::ORIGIN)*a;
       }
       cv = cv/4;
     }
@@ -479,8 +477,9 @@ public:
   }
 };
 \end{lstlisting}
-The circulator around the facet is the only connectivity
-functionality needed to support Doo-Sabin stencil.
+The \CodeFmt{next()} of the halfedges around the 
+facet is the only connectivity functionality needed 
+to support Doo-Sabin stencil. 
 Instead of using the conventional interface \CodeFmt{[i]} 
 of the point type, we demonstrate the CGAL 
 \CodeFmt{Point\_3}/\CodeFmt{Vector\_3} computation that gives

@@ -290,7 +290,7 @@ public:
   void point_rule(Halfedge_handle edge, Point& pt) {
     int n =  CGAL::circulator_size(he->facet()->facet_begin()); 
 
-    Vector cv(0,0,0), t;
+    Vector cv(0,0,0);
     if (n == 4) {
       cv = cv + (he->vertex()->point()-CGAL::ORIGIN)*9;
       cv = cv + (he->next()->vertex()->point()-CGAL::ORIGIN)*3;
