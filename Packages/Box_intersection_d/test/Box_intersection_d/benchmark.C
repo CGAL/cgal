@@ -8,6 +8,7 @@
 #include <CGAL/Timer.h>
 
 #include <iostream>
+#include <iomanip>
 #include <cstdlib>
 #include <iterator>
 #include <vector>
@@ -23,9 +24,9 @@ typedef NT Number_type;
 typedef CGAL::Box_intersection_d::Box_d< Number_type, DIM >  Box;
 typedef CGAL::Box_intersection_d::Box_traits_d< Box > Box_adapter;
 typedef CGAL::Box_intersection_d::Box_predicate_traits_d<
-                                                 Box_adapter, CLOSED > Traits;
-typedef std::vector< Box >     Box_container;
-typedef std::pair< Box, Box >  Box_pair;
+                                      Box_adapter, CLOSED > Traits;
+typedef std::vector< Box >      Box_container;
+typedef std::pair< Box, Box >   Box_pair;
 typedef std::vector< Box_pair > Result_container;
 
 
@@ -78,7 +79,8 @@ test_n( unsigned int n, std::ostream& outfile )
 {
     Box_container boxes1, boxes2;
     //Result_container result_allpairs, result_scanner, result_tree;
-    std::cout << "generating random box sets with size " << n << " ... " << std::flush;
+    std::cout << "generating random box sets with size "
+              << n << " ... " << std::flush;
     fill_boxes( n, boxes1 );
     fill_boxes( n, boxes2 );
     std::cout << std::endl;
@@ -92,23 +94,23 @@ test_n( unsigned int n, std::ostream& outfile )
 
     std::cout << "one way scan ... " << std::flush;
     timer_scan.start();
-    unsigned int repititions = 1;
+    unsigned int repetitions = 1;
     if( problemsize < 20 )
-        repititions = 10000;
+        repetitions = 10000;
     else if( problemsize < 50 )
-        repititions = 5000;
+        repetitions = 5000;
     else if( problemsize < 90 )
-        repititions = 2000;
+        repetitions = 2000;
     else if( problemsize < 300 )
-        repititions = 1000;
+        repetitions = 1000;
     else if( problemsize < 1000 )
-        repititions = 300;
+        repetitions = 300;
     else if( problemsize < 10000 )
-        repititions = 30;
+        repetitions = 30;
     else
-        repititions = 1;
+        repetitions = 1;
 
-    for( unsigned int i = repititions; i; --i ) {
+    for( unsigned int i = repetitions; i; --i ) {
         CGAL::Box_intersection_d::one_way_scan( boxes1.begin(), boxes1.end(),
                                                 boxes2.begin(), boxes2.end(),
                                                 callback1, Traits(), DIM - 1 );
@@ -117,9 +119,9 @@ test_n( unsigned int n, std::ostream& outfile )
                                                 callback1, Traits(), DIM - 1 );
     }
     timer_scan.stop();
-    time_scan = timer_scan.time() / repititions;
+    time_scan = timer_scan.time() / repetitions;
 
-    std::cout << "got " << callback1.counter/repititions << " intersections in "
+    std::cout << "got " << callback1.counter/repetitions << " intersections in "
               << time_scan << " seconds."
               << std::endl;
 
@@ -130,27 +132,35 @@ test_n( unsigned int n, std::ostream& outfile )
     {
         timer.reset();
         timer.start();
-        for( unsigned int i = repititions; i; --i ) {
+        for( unsigned int i = repetitions; i; --i ) {
             CGAL::box_intersection_d( boxes1.begin(), boxes1.end(),
                                       boxes2.begin(), boxes2.end(),
                                       callback2, cutoff );
         }
         timer.stop();
-        time = timer.time() / repititions;
+        time = timer.time() / repetitions;
         std::cout << "cutoff = " << cutoff << " -> t = " << time << std::endl;
         if( last_time < time || time < 1e-4) {
-            if( cutoff > 2*stepsize )
-                cutoff -= 2*stepsize;
+            if( cutoff > stepsize )
+                cutoff -= stepsize;
             else
                 cutoff = 0;
-            if( problemsize < 2000 && problemsize / stepsize > 10 || problemsize / stepsize > 1000 )
+            if( problemsize < 2000 && problemsize/stepsize > 10 ||
+                                      problemsize/stepsize > 50 )
                 break;
+            if( cutoff > stepsize )
+                cutoff -= stepsize;
+            else
+                cutoff = 0;
             stepsize /= 2;
+            last_time = 1e30;
+        } else {
+            last_time = time;
+            //stepsize *= 2;
         }
         cutoff += stepsize;
-        last_time = time;
-
     }
+
     std::cout << "optimal cutoff = " << cutoff << std::endl;
     outfile << problemsize << " " << last_time << " " << time_scan << std::endl;
 }
@@ -162,8 +172,11 @@ void operator()() {
     std::ofstream outfile( "benchmark.data" );
     outfile << "# problemsize streamingtime scanningtime" << std::endl;
     outfile.precision(9);
-    outfile << std::fixed;
-    for( unsigned int n = 1024; n < 200000; n = (int)(n * 8)) {
+    // correct for >= g++3.0 , but g++2.95 does not conform to the standard
+    //outfile << std::fixed; 
+    // workaround for g++2.95: (does not work for >= 3.0)
+    //outfile << setiosflags( ios::fixed );
+    for( unsigned int n = 1024; n < 200000; n = (int)(n * 4)) {
         test_n( n, outfile );
     }
 }
