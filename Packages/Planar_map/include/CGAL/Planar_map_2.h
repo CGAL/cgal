@@ -138,7 +138,7 @@ protected:
   typedef typename PointContainer::value_type  PointContainer_value_type; 
   typedef typename PointContainer::iterator    PointContainer_iterator;
   typedef Pm_point_node<Traits, Point_plus>    Point_node;
-  typedef typename std::map<Point_2,Point_node, PointLessFunctor >
+  typedef std::map<Point_2,Point_node, PointLessFunctor >
                                                Event_queue;
   typedef typename Event_queue::value_type     Event_queue_value_type;
   typedef typename Event_queue::iterator       Event_queue_iterator;  
