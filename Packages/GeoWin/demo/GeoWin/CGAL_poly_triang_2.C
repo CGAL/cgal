@@ -58,7 +58,6 @@ int main(int argc, char *argv[])
 #include <CGAL/leda_rational.h>
 #include <map>
 
-
 #if defined(LEDA_NAMESPACE)
 using namespace leda;
 #endif
@@ -80,7 +79,6 @@ typedef CT::Vertex_handle                                       Vertex_handle;
 typedef CT::Edge_iterator                                       Edge_iterator;
 typedef CT::Edge_circulator                                     Edge_circulator;
 typedef CT::Vertex_circulator                                   Vertex_circulator;
-
 
 //polygon typedefs
 typedef CGAL::Polygon_traits_2<K>                               PTraits;
@@ -108,7 +106,6 @@ void handle_inc_edges(CT& ct,
     Vertex_handle vsucc= *vhelp;
     
     Edge_circulator ec = ct.incident_edges(vact);
-    Edge_circulator es = ec;
     
     bool pred_found = false;
     bool succ_found = false;

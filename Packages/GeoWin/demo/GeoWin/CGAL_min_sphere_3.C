@@ -149,7 +149,7 @@ void generate_sphere_graph(const leda_d3_sphere& Sph, GRAPH<leda_d3_point,int>& 
   double ymin = Sph.center().ycoord() - 0.99*r;
   double ymax = Sph.center().ycoord() + 0.99*r;
   double yakt = ymin, ystep = 0.15*r;
-  double xmin,xmax;
+  double xmin;
   leda_point ct2(ct.xcoord(), ct.ycoord());
   leda_circle C(ct2,r);
   leda_circle C2;
@@ -167,8 +167,8 @@ void generate_sphere_graph(const leda_d3_sphere& Sph, GRAPH<leda_d3_point,int>& 
     leda_segment S(leda_point(ct.xcoord()-r-100.0,yakt), leda_point(ct.xcoord()+r+100.0,yakt));
     leda_list<leda_point> res = C.intersection(S);
     leda_point p1 = res.pop(), p2 = res.pop();
-    if (p1.xcoord() < p2.xcoord()) { xmin = p1.xcoord(); xmax =p2.xcoord(); }
-    else { xmin = p2.xcoord(); xmax =p1.xcoord(); }
+    if (p1.xcoord() < p2.xcoord()) { xmin = p1.xcoord(); }
+    else { xmin = p2.xcoord(); }
     C2 = leda_circle(ct2,ct.xcoord()-xmin); 
     
     leda_list<leda_segment> LS = zoom_segments(Lseg,ct2,ct.xcoord()-xmin);

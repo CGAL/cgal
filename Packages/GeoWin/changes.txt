@@ -1,3 +1,7 @@
+1.4.6 (23 April 2002)
+- a few demo were changed to remove warnings
+- Largest empty rectangle demo (CGAL_ler_2) added
+
 1.4.5 (02 April 2002)
 - Nef_2 and Min_sphere_3 demos changed
   (because there were changes in these packages breaking code)
