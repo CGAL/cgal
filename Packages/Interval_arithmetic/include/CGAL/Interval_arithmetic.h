@@ -55,6 +55,7 @@ CGAL_BEGIN_NAMESPACE
 struct Interval_nt_advanced
 {
   typedef Interval_nt_advanced IA;
+  typedef double  bound_t;
   struct unsafe_comparison {};		// Exception class.
   static unsigned number_of_failures;	// Counts the number of failures.
 
@@ -183,7 +184,7 @@ struct Interval_nt_advanced
   { return IA(std::max(_inf,d._inf), std::min(_sup,d._sup)); }
 
 protected:
-  double _inf, _sup;	// "_inf" stores the lower bound, "_sup" the upper.
+  bound_t _inf, _sup;	// "_inf" stores the lower bound, "_sup" the upper.
 };
 
 inline
@@ -196,7 +197,7 @@ Interval_nt_advanced::operator* (const Interval_nt_advanced & d) const
       // d>=0     [_inf*d._inf; _sup*d._sup]
       // d<=0     [_sup*d._inf; _inf*d._sup]
       // d~=0     [_sup*d._inf; _sup*d._sup]
-    double a = _inf, b = _sup;
+    bound_t a = _inf, b = _sup;
     if (d._inf < 0.0)
     {
 	a=b;
@@ -212,7 +213,7 @@ Interval_nt_advanced::operator* (const Interval_nt_advanced & d) const
       // d>=0     [_inf*d._sup; _sup*d._inf]
       // d<=0     [_sup*d._sup; _inf*d._inf]
       // d~=0     [_inf*d._sup; _inf*d._inf]
-    double a = _sup, b = _inf;
+    bound_t a = _sup, b = _inf;
     if (d._inf < 0.0)
     {
 	a=b;
@@ -231,10 +232,10 @@ Interval_nt_advanced::operator* (const Interval_nt_advanced & d) const
       return IA (-CGAL_IA_FORCE_TO_DOUBLE(_sup*-d._inf),
 	          CGAL_IA_FORCE_TO_DOUBLE(_inf*d._inf));
         					// 0 \in d
-    double tmp1 = CGAL_IA_FORCE_TO_DOUBLE((-_inf)*d._sup);
-    double tmp2 = CGAL_IA_FORCE_TO_DOUBLE(_sup*-d._inf);
-    double tmp3 = CGAL_IA_FORCE_TO_DOUBLE(_inf*d._inf);
-    double tmp4 = CGAL_IA_FORCE_TO_DOUBLE(_sup*d._sup);
+    bound_t tmp1 = CGAL_IA_FORCE_TO_DOUBLE((-_inf)*d._sup);
+    bound_t tmp2 = CGAL_IA_FORCE_TO_DOUBLE(_sup*-d._inf);
+    bound_t tmp3 = CGAL_IA_FORCE_TO_DOUBLE(_inf*d._inf);
+    bound_t tmp4 = CGAL_IA_FORCE_TO_DOUBLE(_sup*d._sup);
     return IA (-std::max(tmp1,tmp2), std::max(tmp3,tmp4));
   };
 }
@@ -331,7 +332,7 @@ Interval_nt_advanced::operator/ (const Interval_nt_advanced & d) const
       // this>=0	[_inf/d._sup; _sup/d._inf]
       // this<=0	[_inf/d._inf; _sup/d._sup]
       // this~=0	[_inf/d._inf; _sup/d._inf]
-    double a = d._sup, b = d._inf;
+    bound_t a = d._sup, b = d._inf;
     if (_inf<0.0)
     {
 	a=b;
@@ -346,7 +347,7 @@ Interval_nt_advanced::operator/ (const Interval_nt_advanced & d) const
       // this>=0	[_sup/d._sup; _inf/d._inf]
       // this<=0	[_sup/d._inf; _inf/d._sup]
       // this~=0	[_sup/d._sup; _inf/d._sup]
-    double a = d._sup, b = d._inf;
+    bound_t a = d._sup, b = d._inf;
     if (_inf<0.0)
     {
 	b=a;
@@ -390,7 +391,8 @@ sqrt (const Interval_nt_advanced & d)
   // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
   // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
   FPU_set_cw(FPU_cw_down);
-  double i = (d._inf>0.0) ? CGAL_IA_FORCE_TO_DOUBLE(std::sqrt(d._inf)) : 0.0;
+  Interval_nt_advanced::bound_t i =
+      (d._inf>0.0) ? CGAL_IA_FORCE_TO_DOUBLE(std::sqrt(d._inf)) : 0.0;
   FPU_set_cw(FPU_cw_up);
   return Interval_nt_advanced(i, CGAL_IA_FORCE_TO_DOUBLE(std::sqrt(d._sup)));
 }
