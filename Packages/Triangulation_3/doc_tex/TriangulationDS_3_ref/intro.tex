@@ -13,7 +13,7 @@
 %\section{Reference pages for 3D-Triangulation data structure}
 \chapter{3D Triangulation Data Structure}
 
-The triangulation data structure must be able to represent a
+The triangulation data structure is able to represent a
 triangulation of a topological sphere $S^d$ of $\R^{d+1}$, for 
 $d \in \{-1,0,1,2,3\}$. (See~\ref{TDS3-sec-intro}.)
 
@@ -21,11 +21,11 @@ The vertex class of a 3D-triangulation data structure must define
 a number of types and operations.  The triangulation data structure
 does not have any geometric requirements on those itself, but they
 are required when the triangulation data structure is used by the
-geometric triangulatoins. (See Section~\ref{TDS3-sec-design}.)
+geometric triangulations. (See Section~\ref{TDS3-sec-design}.)
 
 The cell class of a triangulation data structure stores
 four handles to its four vertices and four handles to its four
-neighbors. The vertices are indexed 0, 1, 2, and 3 in positive order.
+neighbors. The vertices are indexed 0, 1, 2, and 3 in a consistent order.
 The neighbor indexed $i$ lies opposite to vertex \ccc{i}.
 
 In degenerate dimensions, cells are used to store faces of maximal

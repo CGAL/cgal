@@ -24,13 +24,22 @@ functionalities but is much more efficient for large data sets.
 
 \ccInclude{CGAL/Delaunay_triangulation_3.h}
 
+\ccParameters
+
+The first template argument has to be a model of the
+\ccc{DelaunayTriangulationTraits_3} concept.
+
+The second template argument has to be a model of the
+\ccc{TriangulationDataStructure_3} concept.
+It has the default value \ccc{Triangulation_data_structure_3<Triangulation_vertex_base_3<DelaunayTriangulationTraits_3>, Triangulation_cell_base_3<DelaunayTriangulationTraits_3> >}.
+
 \ccInheritsFrom{\ccc{Triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}}
 
 \ccTypes
 
 \ccThree{typedef DelaunayTriangulationTraits_3::Object_3 Object;}{}
 \ccThreeToTwo
-In addition to those inherited, the following types are used for the
+In addition to those inherited, the following types are defined, for use by the
 construction of the Voronoi diagram:
 
 \ccTypedef{typedef DelaunayTriangulationTraits_3::Line_3 Line;}{}

@@ -20,7 +20,7 @@
   
 The concept \ccRefName\ stores
 four \ccc{Vertex_handle}s to its four vertices and four \ccc{Cell_handle}s
-to its four neighbors. The vertices are indexed 0, 1, 2, and 3 in positive
+to its four neighbors. The vertices are indexed 0, 1, 2, and 3 in consistent
 order.  The neighbor indexed $i$ lies opposite to vertex \ccc{i}.
 
 In degenerate dimensions, cells are used to store faces of maximal
@@ -35,10 +35,6 @@ Section~\ref{TDS3-sec-intro}.)
 The class \ccRefName\ defines the following types.
 
 \ccTypedef{typedef TriangulationDataStructure_3 Triangulation_data_structure;}{}
-\ccGlue
-\ccTypedef{typedef TriangulationDataStructure_3::Vertex Vertex;}{}
-\ccGlue
-\ccTypedef{typedef TriangulationDataStructure_3::Cell Cell;}{}
 \ccGlue
 \ccTypedef{typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle;}{}
 \ccGlue

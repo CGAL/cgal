@@ -50,17 +50,15 @@ topological sphere $S^d$ of $\R^{d+1}$, for any $d \in \{-1,0,1,2,3\}$.
 
 \bigskip
 
-The second template parameter of the basic triangulation class 
-(see Chapter~\ref{chapter-Triangulation3})
-\ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>} is a triangulation 
-data structure class. (See Chapter~\ref{chapter-TDS3}.)  
+The second template parameter of the basic triangulation class
+(see Chapter~\ref{chapter-Triangulation3},
+\lcTex{\ccRefPage{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}})
+\ccc{Triangulation_3} is a triangulation data structure class. (See
+Chapter~\ref{chapter-TDS3}.)  
 
-To ensure all the \textbf{flexibility} of the class \ccc{Triangulation_3}
-described in 
-\lcTex{ \ccRefPage{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}
-and in } Chapter~\ref{chapter-Triangulation3}, a model of a
-triangulation data structure must be templated by the base vertex and
-the base cell classes (see~\ref{TDS3-sec-intro}):
+To ensure all the \textbf{flexibility} of the class \ccc{Triangulation_3}, a
+model of a triangulation data structure must be templated by the base vertex
+and the base cell classes (see~\ref{TDS3-sec-intro}):
 \ccc{TriangulationDataStructure_3<TriangulationVertexBase_3,TriangulationCellBase_3>}.
 The optional functionalities related to geometry are compulsory for
 this use as a template parameter of \ccc{Triangulation_3}.
