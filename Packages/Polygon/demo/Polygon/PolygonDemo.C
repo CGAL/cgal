@@ -11,11 +11,11 @@
 #include <CGAL/IO/Window_stream.h>
 #include <vector.h>
 
-typedef CGAL_Cartesian<double> R;
-typedef CGAL_Point_2<R> Point;
-typedef CGAL_Polygon_traits_2<R> Traits;
+typedef CGAL::Cartesian<double> R;
+typedef CGAL::Point_2<R> Point;
+typedef CGAL::Polygon_traits_2<R> Traits;
 typedef vector<Point> Container;
-typedef CGAL_Polygon_2<Traits, Container> Polygon;
+typedef CGAL::Polygon_2<Traits, Container> Polygon;
 
 //--------------------------------------------------------------------------//
 //                   DrawPolyline
@@ -23,10 +23,10 @@ typedef CGAL_Polygon_2<Traits, Container> Polygon;
 // draws the polygon 'polygon' on window W, except for the last segment
 
 template <class Traits, class Container>
-void DrawPolyline(CGAL_Window_stream& W, const CGAL_Polygon_2<Traits,Container>& polygon)
+void DrawPolyline(CGAL::Window_stream& W, const CGAL::Polygon_2<Traits,Container>& polygon)
 {
-  typedef typename CGAL_Polygon_2<Traits,Container>::Vertex_const_iterator VI;
-  typedef typename CGAL_Polygon_2<Traits,Container>::Edge_const_iterator EI;
+  typedef typename CGAL::Polygon_2<Traits,Container>::Vertex_const_iterator VI;
+  typedef typename CGAL::Polygon_2<Traits,Container>::Edge_const_iterator EI;
 
   VI v_begin = polygon.vertices_begin();
   VI v_end   = polygon.vertices_end();
@@ -46,7 +46,7 @@ void DrawPolyline(CGAL_Window_stream& W, const CGAL_Polygon_2<Traits,Container>&
 // draws the polygon 'polygon' on window W
 
 template <class Traits, class Container>
-void DrawPolygon(CGAL_Window_stream& W, const CGAL_Polygon_2<Traits,Container>& polygon)
+void DrawPolygon(CGAL::Window_stream& W, const CGAL::Polygon_2<Traits,Container>& polygon)
 {
   W << polygon;
 }
@@ -57,7 +57,7 @@ void DrawPolygon(CGAL_Window_stream& W, const CGAL_Polygon_2<Traits,Container>& 
 // prints some information about the polygon P to cerr
 
 template <class Traits, class Container>
-void PrintPolygonInfo(const CGAL_Polygon_2<Traits,Container>& P)
+void PrintPolygonInfo(const CGAL::Polygon_2<Traits,Container>& P)
 {
   cerr << "Polygon information:" << endl;
   cerr << endl;
@@ -67,12 +67,12 @@ void PrintPolygonInfo(const CGAL_Polygon_2<Traits,Container>& P)
   cerr << "  P.is_simple()          = " << int(P.is_simple()) << endl;
   cerr << "  P.is_convex()          = " << int(P.is_convex()) << endl;
 
-  CGAL_Orientation o = P.orientation();
+  CGAL::Orientation o = P.orientation();
   cerr << "  P.orientation()        = ";
   switch (o) {
-    case CGAL_CLOCKWISE       : cerr << "clockwise" << endl; break;
-    case CGAL_COUNTERCLOCKWISE: cerr << "counter clockwise" << endl; break;
-    case CGAL_COLLINEAR       : cerr << "collinear" << endl; break;
+    case CGAL::CLOCKWISE       : cerr << "clockwise" << endl; break;
+    case CGAL::COUNTERCLOCKWISE: cerr << "counter clockwise" << endl; break;
+    case CGAL::COLLINEAR       : cerr << "collinear" << endl; break;
   }
 
   cerr << "  P.bbox()               = " << P.bbox() << endl;
@@ -87,7 +87,7 @@ void PrintPolygonInfo(const CGAL_Polygon_2<Traits,Container>& P)
 //                   PolygonDemo
 //--------------------------------------------------------------------------//
 
-void PolygonDemo(CGAL_Window_stream &W)
+void PolygonDemo(CGAL::Window_stream &W)
 {
   cerr << "Enter points with the left button" << endl;
   cerr << "Right button terminates input of points" << endl;
@@ -105,13 +105,13 @@ void PolygonDemo(CGAL_Window_stream &W)
     if (left_button_pressed) {
       polygon.push_back(p);
       W.clear();
-      W << CGAL_RED;
+      W << CGAL::RED;
       DrawPolyline(W, polygon);
     }
 
     if (right_button_pressed) {
       W.clear();
-      W << CGAL_RED;
+      W << CGAL::RED;
       DrawPolygon(W, polygon);
       break;
     }
@@ -131,26 +131,26 @@ void PolygonDemo(CGAL_Window_stream &W)
 
     if (left_button_pressed) {
       W.clear();
-      W << CGAL_GREEN;
+      W << CGAL::GREEN;
       DrawPolygon(W, polygon);
-      W << CGAL_RED << p;
+      W << CGAL::RED << p;
 
-      CGAL_Bounded_side bside   = polygon.bounded_side(p);
+      CGAL::Bounded_side bside   = polygon.bounded_side(p);
       switch (bside) {
-        case CGAL_ON_BOUNDED_SIDE:
+        case CGAL::ON_BOUNDED_SIDE:
           cout << "  the point is inside the polygon" << endl; break;
 
-        case CGAL_ON_BOUNDARY:
+        case CGAL::ON_BOUNDARY:
           cout << "  the point is on the boundary of the polygon" << endl; break;
 
-        case CGAL_ON_UNBOUNDED_SIDE:
+        case CGAL::ON_UNBOUNDED_SIDE:
           cout << "  the point is outside the polygon" << endl; break;
       }
     }
 
     if (right_button_pressed) {
       W.clear();
-      W << CGAL_GREEN;
+      W << CGAL::GREEN;
       DrawPolygon(W, polygon);
       break;
     }
@@ -164,7 +164,7 @@ int main()
 {
   int winx = 500;
   int winy = 500;
-  CGAL_Window_stream W(winx, winy); // physical window size
+  CGAL::Window_stream W(winx, winy); // physical window size
 
   double xmin = 0;
   double xmax = 500;
