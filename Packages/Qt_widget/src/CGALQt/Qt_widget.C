@@ -75,9 +75,9 @@ void Qt_widget::set_scales()
   if(!constranges)
     {
       double tempmin = min(width(), height());
-	    double tempmax = max(xmax-xmin, ymax-ymin);
+	    double div = min(xmax-xmin, ymax-ymin);
       
-      xscal=yscal=(tempmin - 1)/(tempmax);
+      xscal=yscal=(tempmin - 1)/(div);
       set_ranges_const_center();
     }
   else
@@ -401,15 +401,15 @@ void Qt_widget::zoom(double ratio)
 void Qt_widget::x_real(int x, Gmpq& return_t) const
 {
   return_t = simplest_rational_in_interval<Gmpq>( 
-                  xmin+x/xscal-(x/xscal-(x-1)/xscal)/2,
-                  xmin+x/xscal+((x+1)/xscal-x/xscal)/2);
+                  xmin+x/xscal-(1/xscal)/2,
+                  xmin+x/xscal+(1/xscal)/2);
 }
 
 void Qt_widget::y_real(int y, Gmpq& return_t) const
 {
   return_t = simplest_rational_in_interval<Gmpq>( 
-                  ymax - y/yscal-(y/yscal-(y-1)/yscal)/2,
-                  ymax - y/xscal+((y+1)/yscal-y/yscal)/2);
+                  ymax - y/yscal-(1/yscal)/2,
+                  ymax - y/xscal+(1/yscal)/2);
 }
 #endif
 
