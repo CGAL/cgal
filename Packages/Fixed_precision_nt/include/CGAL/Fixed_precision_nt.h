@@ -96,6 +96,10 @@ private:
   void round() {_value = ( _value+ Fixed_SNAP ) - Fixed_SNAP ;}
   
 public:
+  typedef Tag_false       Has_gcd_tag;
+  typedef Tag_true        Has_division_tag;
+  typedef Tag_false       Has_sqrt_tag;
+
   // constructors
   Fixed_precision_nt() {_value=0;}
   Fixed_precision_nt(const Fixed_precision_nt&f) {_value=f._value;}

@@ -1,3 +1,7 @@
+2.30 (20 March 2002)
+- Remove number_type_tag
+- Add tags for number type operations.
+
 2.29 (20 September 2001)
 - Remove useless #includes<>, including non-standard <strstream>.
 
