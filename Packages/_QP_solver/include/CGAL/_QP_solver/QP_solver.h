@@ -1664,7 +1664,8 @@ QP_solver<Rep_>::
 template < class Rep_ >
 void
 QP_solver<Rep_>::
-    set_pricing_strategy( typename QP_solver<Rep_>::Pricing_strategy& pricing_strategy)
+    set_pricing_strategy( 
+      typename QP_solver<Rep_>::Pricing_strategy& pricing_strategy)
         {
             
             CGAL_optimisation_debug {
