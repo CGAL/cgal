@@ -108,7 +108,7 @@ public:
   check_for(Value v, int dim) const {
     for (int i = 0; i < dim; ++i)
       for (int j = 0; j < dim; ++j) {
-        if (CGAL::abs(base_matrix(x + i, y + j) - v) < Value(1E-10))
+        if (CGAL_NTS abs(base_matrix(x + i, y + j) - v) < Value(1E-10))
           cerr << "***" <<        base_matrix(x + i, y + j) << endl;
         if (base_matrix(x + i, y + j) == v)
           return true;
@@ -183,9 +183,9 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
     CGAL_optimisation_expensive_precondition(
       PaddedMatrix( *i).is_sorted());
     active_cells.push_back( Cell( PaddedMatrix( *i)));
-    maxdim = std::max( std::max( (*i).number_of_columns(),
-                                 (*i).number_of_rows()),
-                       maxdim);
+    maxdim = max( max( (*i).number_of_columns(),
+                       (*i).number_of_rows()),
+                  maxdim);
     ++i;
   }
   CGAL_optimisation_precondition( maxdim > 0);
@@ -398,7 +398,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
             compose1_1(
               bind2nd(
                 t.compare_non_strictly(),
-                CGAL::max( lower_median, upper_median)),
+                max( lower_median, upper_median)),
               Cell_max< Cell >( ccd)));
     
       } // both upper_median and lower_median are infeasible

@@ -133,7 +133,7 @@ struct Pcenter_gcc291_operation
 : public CGAL_STD::binary_function< NT, NT, NT >
 {
   NT operator()(const NT& n1, const NT& n2) const
-  { return CGAL::max(NT(0), n1 - n2); }
+  { return max(NT(0), n1 - n2); }
 };
 #endif // defined(__GNUC__) && (__GNUC__ == 2) && (__GNUC_MINOR__ <= 91)
 /*
@@ -217,8 +217,8 @@ rectangular_p_center_2_binary_search(
                    (pierce_it.number_of_points() - 1));
   for ( ForwardIterator i( f); i != l; ++i)
     for ( ForwardIterator j( i + 1); j != l; ++j) {
-      c_diffs.push_back( abs( i->x() - j->x()));
-      c_diffs.push_back( abs( i->y() - j->y()));
+      c_diffs.push_back( CGAL_NTS abs( i->x() - j->x()));
+      c_diffs.push_back( CGAL_NTS abs( i->y() - j->y()));
     }
   CGAL_optimisation_assertion(
     c_diffs.size() == pierce_it.number_of_points() *

@@ -132,8 +132,8 @@ struct Infinity_distance_2
 {
   typename R::FT
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const {
-    return std::max(CGAL::abs(q1.x() - q2.x()),
-                    CGAL::abs(q1.y() - q2.y()));
+    return max(CGAL_NTS abs(q1.x() - q2.x()),
+               CGAL_NTS abs(q1.y() - q2.y()));
   }
 };
 template < class R >
@@ -143,7 +143,7 @@ struct Signed_infinity_distance_2
 {
   typename R::FT
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const
-  { return std::max(q1.x() - q2.x(), q1.y() - q2.y()); }
+  { return max(q1.x() - q2.x(), q1.y() - q2.y()); }
 };
 template < class R >
 struct Construct_corner_2

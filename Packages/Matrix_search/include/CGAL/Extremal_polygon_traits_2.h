@@ -42,9 +42,9 @@ Kgon_triangle_area( const Point_2< R >& p,
                          const Point_2< R >& q,
                          const Point_2< R >& r)
 {
-  return abs( p.x() * ( q.y() - r.y()) +
-                   q.x() * ( r.y() - p.y()) +
-                   r.x() * ( p.y() - q.y()));
+  return CGAL_NTS abs( p.x() * ( q.y() - r.y()) +
+                         q.x() * ( r.y() - p.y()) +
+                         r.x() * ( p.y() - q.y()));
 }
 
 template < class R_ >
@@ -194,7 +194,7 @@ template < class FT_ >
 struct Sqrt : public CGAL_STD::binary_function< FT_, FT_, FT_ >
 {
   typedef FT_  FT;
-  FT operator()(const FT& x) const { return CGAL::sqrt(x); }
+  FT operator()(const FT& x) const { return CGAL_NTS sqrt(x); }
 };
 template < class R_ >
 class Kgon_perimeter_operator
@@ -219,7 +219,7 @@ private:
   static
   FT
   dist( const Point_2& p, const Point_2& q)
-  { return CGAL::sqrt( squared_distance( p, q)); }
+  { return CGAL_NTS sqrt( squared_distance( p, q)); }
 
   const Point_2& root;
 };

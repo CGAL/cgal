@@ -78,7 +78,7 @@ brute_force_area_3( RandomAccessIC b,
       RandomAccessIC i3( i2);
       do {
         FT a(
-          abs(
+          CGAL_NTS abs(
             (*i1).x() * ( (*i2).y() - (*i3).y()) +
             (*i2).x() * ( (*i3).y() - (*i1).y()) +
             (*i3).x() * ( (*i1).y() - (*i2).y())));
@@ -116,11 +116,11 @@ brute_force_area_4( RandomAccessIC b,
         RandomAccessIC i4( i3);
         do {
           FT a(
-            abs(
+            CGAL_NTS abs(
               (*i1).x() * ( (*i4).y() - (*i3).y()) +
               (*i4).x() * ( (*i3).y() - (*i1).y()) +
               (*i3).x() * ( (*i1).y() - (*i4).y())) +
-            abs(
+            CGAL_NTS abs(
               (*i1).x() * ( (*i2).y() - (*i3).y()) +
               (*i2).x() * ( (*i3).y() - (*i1).y()) +
               (*i3).x() * ( (*i1).y() - (*i2).y())));
@@ -208,7 +208,7 @@ int main() {
       cout << pp << endl;
 
       FT area_ms(
-        abs(
+        CGAL_NTS abs(
           (*(k_gon.begin())).x() *
           ( (*(k_gon.begin()+1)).y() - (*(k_gon.begin()+2)).y()) +
           (*(k_gon.begin()+1)).x() *
@@ -223,7 +223,7 @@ int main() {
       cout << ppp << endl;
 
       FT area_bf(
-        abs(
+        CGAL_NTS abs(
           (*(k_gon2.begin())).x() *
           ( (*(k_gon2.begin()+1)).y() - (*(k_gon2.begin()+2)).y()) +
           (*(k_gon2.begin()+1)).x() *
