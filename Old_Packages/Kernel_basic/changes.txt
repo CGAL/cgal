@@ -1,3 +1,6 @@
+3.64   (19 November 2001)
+- Move assign() to a template member function of Object.
+
 3.63   (31 October 2001)
 - Missing include of cstddef in New_delete_allocator.h
 

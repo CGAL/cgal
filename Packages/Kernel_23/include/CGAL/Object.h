@@ -64,9 +64,6 @@ class Object
 
   public:
 
-    template <class T>
-    friend bool assign(T& t, const Object& o);
-
     Object()
     {
 	initialize_with(Wrapper<empty>());
@@ -81,42 +78,49 @@ class Object
 	initialize_with(Wrapper<T>(t));
     }
 
+    template <class T>
+    bool assign(T &t) const
+    {
+#ifdef _MSC_VER
+      try {
+#endif
+        const Wrapper<T> *wp = dynamic_cast<const Wrapper<T> *>(Ptr());
+        if ( wp == static_cast<Wrapper<T> *>(0) )
+            return false;
+        t = *(wp);
+#ifdef _MSC_VER
+      }
+      catch (...) {
+          std::cerr << "ERROR : YOUR COMPILER MUST SUPPORT RTTI" << std::endl;
+          abort();
+      }
+#endif
+      return true;
+    }
+
     bool
     is_empty() const
     {
 	empty E;
-	return assign(E, *this);
+	return assign(E);
     }
 };
 
 
 template <class T>
+inline
 Object
 make_object(const T& t)
 {
     return Object(t);
 }
 
-
 template <class T>
+inline
 bool
 assign(T& t, const Object& o)
 {
-#ifdef _MSC_VER
-  try {
-#endif
-    const Wrapper<T> *wp = dynamic_cast<const Wrapper<T> *>(o.Ptr());
-    if ( wp == static_cast<Wrapper<T> *>(0) )
-        return false;
-    t = *(wp);
-#ifdef _MSC_VER
-  }
-  catch (...) {
-      std::cerr << "ERROR : YOUR COMPILER MUST SUPPORT RTTI" << std::endl;
-      abort();
-  }
-#endif
-  return true;
+    return o.assign(t);
 }
 
 CGAL_END_NAMESPACE
