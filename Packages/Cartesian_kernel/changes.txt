@@ -1,3 +1,6 @@
+Version 6.89 (2 June 2003) 
+- -DCGAL_NO_DEPRECATED_CODE fixes.
+
 Version 6.88 (2 June 2003) 
 - bbox() of Point, Circle, Sphere now use to_interval
  
