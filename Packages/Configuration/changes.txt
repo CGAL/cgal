@@ -1,3 +1,9 @@
+2.39
+- 2 files were added CGAL_CFG_LONGNAME_PROBLEM.C in test/Configuration and testfiles
+- CGAL_CFG_NO_LONGNAME_PROBLEM.C will be removed next release.
+- this flag will be set for VC6, VC7 even if they report only warning
+
+
 2.38
 - The same as 2.37 but also in test/Configuration
 
