@@ -12,6 +12,7 @@
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
 #include <vector>
+#include <cassert>
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
 typedef leda_integer RT;
@@ -48,7 +49,7 @@ int main ()
   for (int i = 0; i < 250 ; i++, ++gen)
      CH.insert(*gen);
 
-  CGAL::assert(CH.is_valid());
+  assert(CH.is_valid());
 
   // define polyhedron to hold convex hull and create it
   Polyhedron_3 P; 
