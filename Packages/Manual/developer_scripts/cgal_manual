@@ -1059,14 +1059,15 @@ run_html() {
     # first run
     if [ $MakeTestSuiteResult -eq 1 ]; then 
         ${LatexToHtml} -quiet -date "${CgalVersionDate}" -release "${CgalVersionHtml}" -author "$HtmlManualAuthor" -o testsuite/$1 -header "$TestSuiteCppHeader" $1
+        if [ $? -ne 0 ]; then RetCode=1; fi
         cd testsuite
         ${GnuTar} czf $1.tgz $1
         cd ..
     else
         ${LatexToHtml} -quiet -date "${CgalVersionDate}" -release "${CgalVersionHtml}" -author "$HtmlManualAuthor" -o ../doc_html/$1 $1
+        if [ $? -ne 0 ]; then RetCode=1; fi
     fi
-    if [ $? -ne 0 ]; then
-        RetCode=1
+    if [ $RetCode -ne 0 ]; then
         report_html $1
         cleanup_html $1
         return $RetCode
