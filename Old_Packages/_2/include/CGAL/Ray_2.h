@@ -30,7 +30,7 @@
 
 #include <CGAL/Point_2.h>
 
-#ifdef CGAL_HOMOGENEOUS_H
+#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
 #include <CGAL/RayH2.h>
 #endif
 

@@ -36,7 +36,7 @@
 
 #include <CGAL/Line_2.h>
 
-#ifdef CGAL_HOMOGENEOUS_H
+#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
 #include <CGAL/Aff_transformationH2.h>
 #endif
 

@@ -1,7 +1,8 @@
-3.9  (?? ??? 2001)
+3.9  (13 Feb 2001)
 
 - added area() functions for Triangle_2 and Iso_rectangle_2
 - Remove old style casts.
+- Simple_homogeneous<>.
 
 3.8  (24 Jan 2001)
 

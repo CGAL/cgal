@@ -28,7 +28,7 @@
 #error  no representation class defined
 #endif
 
-#ifdef CGAL_HOMOGENEOUS_H
+#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
 #include <CGAL/LineH2.h>
 #endif
 

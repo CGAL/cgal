@@ -24,7 +24,7 @@
 #ifndef CGAL_BASIC_CONSTRUCTIONS_2_H
 #define CGAL_BASIC_CONSTRUCTIONS_2_H
 
-#ifdef CGAL_HOMOGENEOUS_H
+#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
 #include <CGAL/basic_constructionsH2.h>
 #endif
 
