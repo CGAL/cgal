@@ -38,8 +38,8 @@ SbVec3f normal3f;
 SoPrimitiveVertex v1p, v2p, v3p;
 bool should_pick = false; //true only once when the key was pressed
 bool right_button_found_polygon = false;
-
-
+Node_polyhedron_3<Polyhedron> *poly;
+SoComplexity * complexity_node;
 
 void render_custom(void *, SoAction *){
   if(!should_pick)
@@ -121,16 +121,16 @@ mouse_button_pressed(void * ud, SoEventCallback * n)
     if(pickDetail != NULL && pickDetail->getTypeId() == SoPolyhedronDetail<Polyhedron>::getClassTypeId()){
       SoPolyhedronDetail<Polyhedron> *poly_detail = (SoPolyhedronDetail<Polyhedron> *) pickDetail;
       v1p.setPoint(poly_detail->get_vertex(0)->getPoint());
-      v1p.setNormal(poly_detail->get_vertex(0)->getNormal());
+      //v1p.setNormal(poly_detail->get_vertex(0)->getNormal());
       v2p.setPoint(poly_detail->get_vertex(1)->getPoint());
-      v2p.setNormal(poly_detail->get_vertex(1)->getNormal());
+      //v2p.setNormal(poly_detail->get_vertex(1)->getNormal());
       v3p.setPoint(poly_detail->get_vertex(2)->getPoint());
-      v3p.setNormal(poly_detail->get_vertex(2)->getNormal());
+      //v3p.setNormal(poly_detail->get_vertex(2)->getNormal());
 
       Facet_handle fh = poly_detail->find_face();
       Halfedge_handle hh = (*fh).halfedge();
       P.erase_facet(hh);
-      should_pick = true;
+      should_pick = true;      
     }    
     viewer->render();
   }
@@ -170,18 +170,18 @@ SoSeparator* get_main_scene(){
   P.make_tetrahedron(p1, p2, p3, p4);
 */
   SoSeparator * sep1 = new SoSeparator;  
-  SoComplexity * complexity = new SoComplexity;
+  complexity_node = new SoComplexity;
   SoMaterial * material = new SoMaterial;
 
-  Node_polyhedron_3<Polyhedron> *poly = new Node_polyhedron_3<Polyhedron>(P);
+  poly = new Node_polyhedron_3<Polyhedron>(P);
 
   material->shininess.setValue(1.0f);
   material->ambientColor.setValue(0.0f, 0.0f, 0.0f);
   material->diffuseColor.setValue(0.8f, 0.2f, 0.0);
-  complexity->value.setValue(0.8f);
+  complexity_node->value.setValue(0.8f);
   
   sep1->ref();
-  sep1->addChild(complexity);
+  sep1->addChild(complexity_node);
   sep1->addChild(material);
   sep1->addChild(poly);
 
@@ -207,9 +207,19 @@ public:
     file->insertSeparator();
     file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
     file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
-    QPopupMenu * edit = new QPopupMenu(this);
+
+    // edit widget menu
+    QPopupMenu * edit = new QPopupMenu( this );
     menuBar()->insertItem( "&Edit", edit );
-    edit->insertItem("&Generate Polyhedron", this, SLOT(generate_polyhedron()), CTRL+Key_G);
+    QPopupMenu * complexity = new QPopupMenu( edit );    
+    edit->insertItem("&Change complexity", complexity);
+    complexity->insertItem("Bounding box", this, SLOT(change_bbox()));
+    complexity->insertItem("Faces", this, SLOT(change_face()));
+    complexity->insertItem("Smooth", this, SLOT(change_smooth()));
+    
+    QPopupMenu * draw = new QPopupMenu(this);
+    menuBar()->insertItem( "&Draw", draw );
+    draw->insertItem("&Generate Polyhedron", this, SLOT(generate_polyhedron()), CTRL+Key_G);
 
     SoEventCallback *myEventCB = new SoEventCallback;  
   
@@ -247,12 +257,26 @@ public slots:
   }
   void load_polyhedron(){
     QString s( QFileDialog::getOpenFileName( QString::null,
-			    "GeomView files (*.off)", this ) );
+			    "GeomView files (*.off) (*.cgal)", this ) );
     if ( s.isEmpty() )
         return;
-
+    //read the polyhedron
+    P.clear();
+    const char* iname = "cin";
+    std::istream*    p_in  = &std::cin;
+    std::ifstream    in;
+    in.open(s);
+    p_in = &in;
+    if ( !*p_in)
+      std::cout << "error: cannot open file for reading." <<endl;
+    //CGAL::set_ascii_mode(* p_in);
+    (*p_in) >> P;
+    in.close();
+    poly->compute_normals_for_faces();
+    poly->compute_normals_for_vertices();
+    viewer->viewAll();
   }
-  void save_polyhedron(){/*
+  void save_polyhedron(){
     QFileDialog qfd(this, "Save Polyhedron", true);
     qfd.setViewMode(QFileDialog::Detail);    
     qfd.addFilter("CGAL files (*.cgal)");
@@ -274,9 +298,9 @@ public slots:
         out << P;
       }
       else if(fileName.endsWith(".off")){
-        CGAL::File_writer_OFF writter;
-        //CGAL::set_ascii_mode(out);
-        //out << P;
+        std::ofstream out(fileName);
+        CGAL::set_ascii_mode(out);
+        out << P;
       } else if(fileName.endsWith(".iv")){
         CGAL::File_writer_inventor writter;
       } else if(fileName.endsWith(".wrl")){
@@ -284,12 +308,27 @@ public slots:
       }
       
     }
-*/
+
   }
   void print_to_ps(){
   }
   void generate_polyhedron(){
   }
+  void change_bbox(){
+    complexity_node->value.setValue(0);
+    poly->touch();
+  }
+
+  void change_face(){
+    complexity_node->value.setValue(0.7f);
+    poly->touch();
+  }
+
+  void change_smooth(){
+    complexity_node->value.setValue(1.0f);
+    poly->touch();
+  }
+
 private:
 };
 

@@ -162,7 +162,10 @@ public:
   };   // The constructor
   
   void compute_normals_for_faces(){
-    lock();    
+    if (LOCK)
+      return;
+    else
+      lock();
     faces_normals.erase(faces_normals.begin(), faces_normals.end());
     QProgressDialog progress( "Computing normals for faces...", 
       "Cancel computing", p.size_of_facets(), NULL, "progress", true );
@@ -188,7 +191,10 @@ public:
     unlock();
   }
   void compute_normals_for_vertices(){
-    lock();    
+    if (LOCK)
+      return;
+    else
+      lock();    
     //vertices_normals.erase(vertices_normals.begin(), vertices_normals.end());
     QProgressDialog progress( "Computing normals for vertices...", 
       "Cancel computing", p.size_of_vertices(), NULL, "progress", true );
@@ -255,6 +261,11 @@ private:
 
 protected:
   virtual void  GLRender(SoGLRenderAction *action){
+    if (LOCK)
+      return;
+    else
+      lock();
+    //std::cout << "called GLRENDER";
     SoState * state = action->getState();
 
     // First see if the object is visible and should be rendered
@@ -367,6 +378,7 @@ protected:
       }//end while
     }
     glPopMatrix();
+    unlock();
   };
   
   virtual void  computeBBox(SoAction *action, SbBox3f &box, SbVec3f &center){
@@ -450,6 +462,8 @@ protected:
       shapeVertex(&pv)
     
 
+
+    //Generate POLYGON primitives
     Facet_iterator fit = p.facets_begin();
     while(fit != p.facets_end()){
       Halfedge_around_facet_circulator h = (*fit).facet_begin();
@@ -475,7 +489,45 @@ protected:
       endShape();
       fit++;
     }//end while
+/*
+    //Generate POINTS primitives
+    Vertex_iterator vit = p.vertices_begin();
+    while(vit != p.vertices_end()){
+      //Halfedge_around_facet_circulator h = (*fit).facet_begin();
+    
+      //Vector_3 normal = CGAL::cross_product(
+        //h->next()->vertex()->point() - h->vertex()->point(),
+        //h->next()->next()->vertex()->point() - h->next()->vertex()->point());
+
+      beginShape(action, POINTS);
+        //double sqnorm = normal * normal;
+        SbVec3f sbnormal;        
+        //if(sqnorm != 0){
+        //  Vector_3 v_n = normal / std::sqrt(sqnorm);
+        //  Point pn = Point(0, 0, 0) + v_n;
+        //  //glNormal3f(pn.x(), pn.y(), pn.z());
+        //  sbnormal.setValue(pn.x(), pn.y(), pn.z());
+        //}
+          Point point = (*vit).point();
+          //glVertex3f(point[0],point[1],point[2]);          
+          GEN_VERTEX(pv, point[0], point[1],  point[2], .25,  0.0, sbnormal);
+      endShape();
+      vit++;
+    }//end while
+  */
+
+
   };
+
+
+  //    The following method is used to create triangle detail
+  //    Ex. :
+  //    SoRayPickAction rp(viewer->getViewportRegion());
+  //    rp.setPoint(mbe->getPosition());
+  //    rp.apply(viewer->getSceneManager()->getSceneGraph());
+  //    Now the detail instance was constructed and stored in the *rp* object
+  //    You don't have to delete it, it will be automatically deleted
+  //    SoPickedPoint * point = rp.getPickedPoint();
 
   virtual SoDetail* 
   createTriangleDetail( SoRayPickAction * action,
@@ -487,6 +539,17 @@ protected:
     SoPolyhedronDetail<Polyhedron_3> 
       *copy = new SoPolyhedronDetail<Polyhedron_3>(action, v1, v2, v3, pp, p);
     return copy;
+  }
+
+  //    The following method is used to create point detail
+  virtual SoDetail *
+  createPointDetail(SoRayPickAction * action ,
+                           const SoPrimitiveVertex * v,
+                           SoPickedPoint * pp)
+  {
+    SoPolyhedronDetail<Polyhedron_3> 
+      *copy = new SoPolyhedronDetail<Polyhedron_3>(action, v, v, v, pp, p);
+    return copy;  
   }
 
 private:

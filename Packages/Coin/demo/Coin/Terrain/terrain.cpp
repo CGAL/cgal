@@ -206,32 +206,33 @@ public slots:
         dt.push_back(TPoint_3(x, y, landscape[x][y]));
 	    }
     }
-    progress.setProgress( gridSize );    
+    progress.setProgress( gridSize );
     terrain->compute_normals_for_faces();
     terrain->compute_normals_for_vertices();    
     terrain->touch();
     viewer->viewAll();
     widget->redraw();
+    
   }
   void change_bbox(){
     complexity_node->value.setValue(0);
-    terrain->touch;
+    terrain->touch();
   }
 
   void change_face(){
     complexity_node->value.setValue(0.7f);
-    terrain->touch;
+    terrain->touch();
   }
 
   void change_smooth(){
     complexity_node->value.setValue(1.0f);
-    terrain->touch;
+    terrain->touch();
   }
 
   void load_terrain(){
     QFileDialog qfd(this, "Load Terrain", true);
     qfd.setViewMode(QFileDialog::Detail);    
-    qfd.addFilter("CGAL files (*.cgal)");
+    qfd.addFilter("CGAL files (*.cgal) (*.off)");
     qfd.setMode(QFileDialog::AnyFile);
 
     QString fileName;
@@ -302,7 +303,7 @@ private:
 int
 main (int argc, char ** argv)
 {
-   QApplication app(argc, argv);   
+   QApplication app(argc, argv);
    MyWindow *mainwin = new MyWindow();
    app.setMainWidget(mainwin);   
    mainwin->resize(600, 300);

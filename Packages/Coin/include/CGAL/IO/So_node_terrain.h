@@ -275,9 +275,11 @@ protected:
   }
 
   virtual void  GLRender(SoGLRenderAction *action){
-    if (LOCK)
+    if (LOCK)      
       return;
-     SoState * state = action->getState();
+    else
+      lock();
+    SoState * state = action->getState();
 
     // First see if the object is visible and should be rendered
     // now. This is a method on SoShape that checks for INVISIBLE
@@ -362,6 +364,7 @@ protected:
       glEnd();
     }
     glPopMatrix();
+    unlock();
   }
   
   virtual void  computeBBox(SoAction *,
