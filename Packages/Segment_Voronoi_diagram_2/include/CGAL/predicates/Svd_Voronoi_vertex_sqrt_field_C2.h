@@ -995,7 +995,6 @@ public:
 	FT dy2 = CGAL::square(y() - pref.y());
 	return dx2 + dy2;
       }
-      break;
     case SSS:
       {
 	Line_2 l = compute_supporting_line(p_.supporting_segment());
@@ -1005,7 +1004,6 @@ public:
 	FT dy2 = CGAL::square(y() - q.y());
 	return dx2 + dy2;
       }
-      break;
     default:
       return FT(0);
     }
