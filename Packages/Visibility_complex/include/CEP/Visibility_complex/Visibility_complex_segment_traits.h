@@ -1,17 +1,10 @@
 #ifndef VISIBILITY_COMPLEX_SEGMENT_TRAITS_H
 #define VISIBILITY_COMPLEX_SEGMENT_TRAITS_H
 
-#ifndef CGAL_BASIC_H
+
 #include <CGAL/basic.h>
-#endif
-
-#ifndef CGAL_BITANGENT_2_H
 #include <CEP/Visibility_complex/Bitangent_2.h>
-#endif
-
-#ifndef CGAL_CONVEX_ARC_2
 #include <CEP/Visibility_complex/Arc_2.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -40,42 +33,47 @@ public:
     // -------------------------------------------------------------------------
     // The two follwing give the chi2 predicate with a point at infinity
     struct Compare_extreme_yx {
-	Point_2 extreme_point(bool b, const Disk& c) const { 
-	    Comparison_result cmp =
-		compare_lexicographically_xyC2(c.source().y(),c.source().x(),
-					       c.target().y(),c.target().x());
-	    return ((b == true  && cmp == SMALLER) || 
-		    (b == false && cmp == LARGER)) ?  c.source() : c.target() ;
+	const Point_2& extreme_point(bool b, const Disk& c) const { 
+	    
+	    Comparison_result comp = compare_y(c.source(), c.target());
+	    comp = (comp != EQUAL) ? comp : compare_x(c.source(), c.target());
+
+	    return ((b == true  && comp == SMALLER) || 
+		    (b == false && comp == LARGER)) ?  c.source() : c.target() ;
 	}
-	Point_2 extreme_point(bool b, const Bitangent_2& c) const 
+	const Point_2& extreme_point(bool b, const Bitangent_2& c) const 
 	{ return (b) ? c.source() : c.target(); }
 	template < class C_ , class D_ >
 	Comparison_result operator() (bool sa , const C_& a,
 				      bool sb , const D_& b) const { 
-	    Point_2 ap = extreme_point(sa,a);
-	    Point_2 bp = extreme_point(sb,b);
-	    return compare_lexicographically_xyC2(ap.y(),ap.x(),bp.y(),bp.x());
+	    const Point_2& ap = extreme_point(sa,a);
+	    const Point_2& bp = extreme_point(sb,b);
+
+	    Comparison_result cr = compare_y(ap,bp);
+	    cr = (cr != EQUAL) ? cr : compare_x(ap,bp);
+	    return cr;
+	    
 	}
     };
     // -------------------------------------------------------------------------
     struct Is_upward_directed {
 	bool operator()(const Bitangent_2& b) const {
-	    Comparison_result comp = 
-		compare_lexicographically_xyC2(b.source().y(),b.source().x(),
-					       b.target().y(),b.target().x());
+	    Comparison_result comp = compare_y(b.source(), b.target());
+	  comp = (comp != EQUAL) ? comp : compare_x(b.source(), b.target());
 	    return (comp != LARGER);
 	}
     };
     // -------------------------------------------------------------------------
     // The chi3 predicate
     struct Orientation_infinite {
-	Point_2 top(const Disk& c) const {
-	    Comparison_result cmp =
-		compare_lexicographically_xyC2(c.source().y(),c.source().x(),
-					       c.target().y(),c.target().x());
-	    return (cmp == SMALLER) ? c.target() : c.source();
+	const Point_2& top(const Disk& c) const {
+
+	  Comparison_result comp = compare_y(c.source(), c.target());
+	  comp = (comp != EQUAL) ? comp : compare_x(c.source(), c.target());
+
+	    return (comp == SMALLER) ? c.target() : c.source();
 	}
-	Point_2 bot(const Disk& o) const 
+	const Point_2& bot(const Disk& o) const 
 	{ return (top(o) == o.source()) ? o.target() : o.source(); }
 	Orientation operator() (const Bitangent_2& a, 
 				const Disk& o) const
