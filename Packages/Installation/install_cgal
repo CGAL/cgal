@@ -265,11 +265,26 @@ ANY_LIB_COMPILED=''
 CUSTOM_CXXFLAGS=''
 CUSTOM_LDFLAGS=''
 
-# We need these to prevent expansion by CVS as well as by the shell...
-SOURCE='$''Source: ''$'
-REVISION='$''Revision: ''$'
-DATE='$''Date: ''$'
-NAME='$''Name: ''$'
+# LGPL License header to be used in some generated files.
+# Note that the quotes at the end are needed to prevent expansion by CVS.
+LGPL_LICENSE_HEADER=\
+"// Copyright (c) 1996-2004  Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $""Source: $
+// $""Revision: $ $""Date: $
+// $""Name: $"
 
 
 # ---------------------------------------------------------------------
@@ -280,7 +295,7 @@ print_general_information()
     ${_printf} "%s\n\n" \
 "You can get a list of all options with \"${CGAL_INSTALL_CGAL} --help\"
 
-First-time-installers: 
+First-time installers: 
 ----------------------
 Just type \"${CGAL_INSTALL_CGAL} -i\" and follow the menus.
 If you get stuck, please read the documentation."
@@ -289,7 +304,7 @@ If you get stuck, please read the documentation."
 print_usage_information()
 {
 	${_printf} "%s\n\n" \
-"usage: ${CGAL_INSTALL_CGAL}
+"Usage: ${CGAL_INSTALL_CGAL}
       [--help | --version | -i | --interactive | -u <dir> | 
        --upgrade <dir> | --build-all | --rebuild-all |
        --build <config> | --rebuild <config> | --disable-shared |
@@ -347,7 +362,7 @@ print_usage_information()
                specified by <comp>.
                For the rest you are on your own.
                (Have a look at the README file.)
-  -os <comp>   prints architecture/os/compiler spec
+  -os <comp>   prints architecture/os/compiler specifications
   --CUSTOM_CXXFLAGS <flags>
                pass the specified <flags> to the compiler
   --CUSTOM_LDFLAGS  <flags>
@@ -1158,23 +1173,7 @@ create_replacement_header()
 	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
 	if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then
 	    ${_cat} <<EOF3 >>${replacement_header}
-// Copyright (c) 1996-2004  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $SOURCE
-// $REVISION $DATE
-// $NAME
+$LGPL_LICENSE_HEADER
 //
 // Author(s): install_cgal script
 
@@ -1333,91 +1332,20 @@ test_compiler_specifica()
     create_standard_header_replacements
     _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL
     _file=${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL/compiler_config.h
-    ${_printf} "%s\n" \
-	"// Copyright (c) 1996-2004  Utrecht University (The Netherlands)," \
-	> ${_file}
-    ${_printf} "%s\n" \
-        "// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany)," \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg" \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria)," \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "// and Tel-Aviv University (Israel).  All rights reserved." \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "//" \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "// This file is part of CGAL (www.cgal.org); you can redistribute it and/or" \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "// modify it under the terms of the GNU Lesser General Public License as" \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "// published by the Free Software Foundation; version 2.1 of the License." \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "// See the file LICENSE.LGPL distributed with CGAL." \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "//" \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE" \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE." \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "//" \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "// $SOURCE" \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "// $REVISION $DATE" \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "// $NAME" \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "//" \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "// Author(s): the install_cgal script" \
-	>> ${_file}
-    ${_printf} "%s\n" \
-        "" \
-        >> ${_file}
-    ${_printf} "%s\n" \
-	"// Compiler specific configuration file for CGAL ${CGAL_VERSION}" \
-	>> ${_file}
-    ${_printf} "%s\n" \
-	"// System: ${CGAL_OS_COMPILER}" \
-	>> ${_file}
-    ${_printf} "%s\n" \
-	"// generated by ${CGAL_INSTALL_CGAL} ${CGAL_INSTALL_VERSION}" \
-	>> ${_file}
-    ${_printf} "%s\n\n" \
-	"//" \
-	>> ${_file}
+    ${_cat} <<EOF5 >${_file}
+$LGPL_LICENSE_HEADER
+//
+// Author(s): the install_cgal script
 
+// Compiler specific configuration file for CGAL ${CGAL_VERSION}
+// System: ${CGAL_OS_COMPILER}
+// generated by ${CGAL_INSTALL_CGAL} ${CGAL_INSTALL_VERSION}
+
+//+--------------------------------------------------------------------------
+// The compiler has to provide a Standard Template Library
+//+--------------------------------------------------------------------------
+EOF5
     # test for STL
-    ${_printf} "%s%s\n" \
-	"//+----------------------------------------------------------" \
-	"----------------" \
-	    >> ${_file}
-    ${_printf} "%s\n" \
-	"// The compiler has to provide a Standard Template Library" \
-	    >> ${_file}
-    ${_printf} "%s%s\n" \
-	"//+----------------------------------------------------------" \
-	"----------------" \
-	    >> ${_file}
     if test_stl_general "${INSTALL_VERBOSE}" 'STL'; then
 	log_print "`extended_compiler_description` seems to have STL."
 	${_printf} "%s\n\n" "// STL test ok" >> ${_file}
