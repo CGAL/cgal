@@ -223,7 +223,7 @@ public:
 
     SVertex_handle v_res;
     SHalfedge_handle e_res;
-    SHalfloop_handle l_res;
+    SHalfloop_handle l_res(shalfloop());
     SOLUTION solution;
 
     TRACEN("  on face...");
