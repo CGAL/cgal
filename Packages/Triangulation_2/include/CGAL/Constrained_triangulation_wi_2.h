@@ -105,6 +105,8 @@ public:
 	      Face_handle & fr, int & i, 
 	      List_edges & new_edges,
 	      List_vertices & new_vertices);
+  Vertex_handle push_back(const Point& a);
+  void          push_back(const Constraint& c);
   
   Vertex_handle find_intersected_faces(Vertex_handle va, 
 				       Vertex_handle vb,
@@ -121,6 +123,25 @@ protected:
 			List_edges& new_edges);
 
 };
+
+template <class Gt, class Tds >
+inline
+Constrained_triangulation_wi_2<Gt,Tds>::Vertex_handle
+Constrained_triangulation_wi_2<Gt,Tds>::
+push_back(const Point &p)
+{
+  return insert(p);
+}
+
+
+template <class Gt, class Tds >
+inline
+void
+Constrained_triangulation_wi_2<Gt,Tds>::
+push_back(const Constraint &c)
+{
+  insert(c.first, c.second);
+}
     
 template < class Gt, class Tds >
 inline 

@@ -116,7 +116,9 @@ public:
   void insert(const Vertex_handle & va, const Vertex_handle & vb,
 	      Face_handle & fr, int & i, 
 	      List_edges & new_edges);
-  
+  Vertex_handle push_back(const Point& a);
+  void          push_back(const Constraint& c);
+
   void remove(Vertex_handle  v);
   void remove_constraint(Face_handle f, int i);
 
@@ -159,7 +161,25 @@ protected:
 };
     
 
+template <class Gt, class Tds >
+inline
+Constrained_triangulation_2<Gt,Tds>::Vertex_handle
+Constrained_triangulation_2<Gt,Tds>::
+push_back(const Point &p)
+{
+  return insert(p);
+}
 
+
+template <class Gt, class Tds >
+inline
+void
+Constrained_triangulation_2<Gt,Tds>::
+push_back(const Constraint &c)
+{
+  insert(c.first, c.second);
+}
+    
 
 template < class Gt, class Tds >
 Constrained_triangulation_2<Gt,Tds>::Vertex_handle
