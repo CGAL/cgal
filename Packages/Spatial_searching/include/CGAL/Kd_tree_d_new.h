@@ -38,7 +38,7 @@ namespace CGAL {
 
   typedef typename Traits::Iso_box_d Box;
   typedef typename Traits::Item Item;
-  typedef list<Item> Item_list; 
+  typedef std::list<Item> Item_list; 
 
   Kd_tree<Traits>* t;
 
@@ -76,10 +76,9 @@ namespace CGAL {
   };
 
   template <class Item,
-	    class Splitter=Sliding_midpoint<Item>, 
-	    class Separator=Plane_separator<typename Item::R::FT> > 
+	    class Splitter=Sliding_midpoint<Item> > 
   class Kdtree_interface_2d : 
-	public Kd_tree_traits_point<Item,Splitter,Separator> {
+	public Kd_tree_traits_point<Item,Splitter> {
 
   public:
 
@@ -131,10 +130,9 @@ namespace CGAL {
 };
 
 template <class Item,
-	    class Splitter=Sliding_midpoint<Item>, 
-	    class Separator=Plane_separator<typename Item::R::FT> > 
+	    class Splitter=Sliding_midpoint<Item> > 
   class Kdtree_interface_3d : 
-	public Kd_tree_traits_point<Item,Splitter,Separator> {
+	public Kd_tree_traits_point<Item,Splitter> {
 
   public:
 
@@ -186,10 +184,9 @@ template <class Item,
 };
 
 template <class Item,
-	  class Splitter=Sliding_midpoint<Item>, 
-	  class Separator=Plane_separator<typename Item::R::FT> > 
+	  class Splitter=Sliding_midpoint<Item> > 
   class Kdtree_interface : 
-	public Kd_tree_traits_point<Item,Splitter,Separator> {
+	public Kd_tree_traits_point<Item,Splitter> {
 
   public:
 

@@ -59,7 +59,8 @@ int main() {
   d.search(std::back_inserter(points_in_spherical_range_query),s);
 
   std::cout << "points approximately in fuzzy range query" << std::endl; 
-  std::cout << "with center (300.0, 300.0, 300.0, 300.0) and fuzzy radius <200.0,400.0> are:" << std::endl;
+  std::cout << "with center (300.0, 300.0, 300.0, 300.0)" << std::endl;
+  std::cout << "and fuzzy radius <200.0,400.0> are:" << std::endl;
   
   unsigned int points_in_spherical_range_query_size=points_in_spherical_range_query.size();
   for (unsigned int j2=0; j2 < points_in_spherical_range_query_size; ++j2) { 
@@ -81,7 +82,8 @@ int main() {
 
   d.search(std::back_inserter(points_in_rectangular_range_query),query);
 
-  std::cout << "points approximately in fuzzy range query [<-200,0>,<800,1000>]]^4 are:" << std::endl;
+  std::cout << "points approximately in fuzzy range query" << std::endl;
+  std::cout << " [<-200,0>,<800,1000>]]^4 are:" << std::endl;
 
   unsigned int points_in_rectangular_range_query_size=points_in_rectangular_range_query.size();
   for (unsigned int j3=0; j3 < points_in_rectangular_range_query_size; ++j3) { 

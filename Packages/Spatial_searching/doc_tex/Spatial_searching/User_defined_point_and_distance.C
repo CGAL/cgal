@@ -1,8 +1,9 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Orthogonal_standard_search.h>
+#include <CGAL/Fuzzy_iso_box_d.h>
 
-#include <vector>
+#include <vector> 
 #include <iostream>
 
 // create own Point type
@@ -185,7 +186,7 @@ int main() {
   const int data_point_number=1000;
   
   typedef std::list<My_point> Point_list;
-  Point_list data_points;
+  Point_list data_points, res;
 
   // generate random data points  
   CGAL::Random_points_in_cube_3<My_point,Creator> g( 1.0);

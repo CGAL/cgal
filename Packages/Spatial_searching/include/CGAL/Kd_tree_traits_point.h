@@ -29,18 +29,15 @@
 namespace CGAL {
 
   template <class Item_, 
-            class Splitter=Sliding_midpoint<Item_>, class Separator_=Plane_separator<typename Item_::R::FT> >
+            class Splitter=Sliding_midpoint<Item_> >
   class Kd_tree_traits_point {
 
   public:
     typedef Item_ Item;
-    typedef Separator_ Separator;
     typedef Item** Item_iterator;
-    // CGAL dependency typedef typename Kernel_traits<Item>::Kernel K;
-    // CGAL dependency typedef typename K::FT NT;
     typedef typename Item::R::FT NT;
     typedef typename Splitter::Container Item_container;
-    
+    typedef typename Splitter::Separator Separator;
     
   private:
 

@@ -204,27 +204,7 @@ public:
 	
   }
 
-  /*
-  template <class OutputIterator, class Rectangle>
-	OutputIterator search(OutputIterator it, Rectangle& r, NT eps=NT(0)) {
-                //  Why do you create this on the heap?
-		Kd_tree_rectangle<NT>* b = new Kd_tree_rectangle<NT>(*bbox);
-		it=tree_root->tree_items_in_rectangle(it,r,b,eps);
-		delete b;
-		return it;
-	}
-
-  template <class OutputIterator>
-	OutputIterator search_within_a_radius(OutputIterator it, Item& center, NT radius, NT eps=NT(0)) {
-		Kd_tree_rectangle<NT>* b = new Kd_tree_rectangle<NT>(*bbox);
-		it=tree_root->tree_items_in_sphere(it, center,
-		(radius-eps)*(radius-eps), radius*radius,
-                (radius+eps)*(radius+eps), b);
-		delete b;
-		return it;
-	}
-  */
-
+ 
   template <class OutputIterator, class FuzzyQueryItem>
 	OutputIterator search(OutputIterator it, const FuzzyQueryItem& q) {
 		Kd_tree_rectangle<NT>* b = new Kd_tree_rectangle<NT>(*bbox);

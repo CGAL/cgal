@@ -24,7 +24,7 @@ typedef CGAL::Kdtree_interface_2d<point>  kd_interface;
 typedef CGAL::Kdtree_d<kd_interface>      kd_tree;
 typedef kd_tree::Box                      box;
 typedef std::list<point>                  points_list;
-
+   
 int main()
 {
     CGAL::Kdtree_d<kd_interface> tree(2);

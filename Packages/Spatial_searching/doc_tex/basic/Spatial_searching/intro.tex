@@ -43,15 +43,16 @@ Spatial searching supports browsing through a collection of $d$-dimensional spat
 stored in a spatial data structure on the basis of their distances to a
 query object. The query object may be a point or an arbitrary spatial object, e.g a 
 $d$-dimensional sphere. The objects in the spatial data structure are $d$-dimensional points.
- 
-Spatial searching is supported in several ways. 
-The first approach is $k$-{\bf nearest neighbor searching} that makes use of a $k$-nearest neighbor
+
+Often the number of the neighbours to be computed is not know beforehand, e.g. because the number
+may depend on some properties of the neighbours or the distance to the query point.
+The convential approach is $k$-{\bf nearest neighbor searching} that makes use of a $k$-nearest neighbor
 algorithm, where $k$ is known prior to the invocation of the algorithm.
 Hence, the number of nearest neighbors has to be
 guessed. If the guess is too large redundant computations are performed.
 If the number is too small the computation has to be  
 reinvoked for a larger number of neighbors, thereby performing redundant computations.
-The second approach is {\bf incremental nearest neighbor searching} in the sense that having obtained
+Therefore, Hjaltason and Samet \cite{hs-rsd-95} implemented {\bf incremental nearest neighbor searching} in the sense that having obtained
 the $k$ nearest neighbors, the $k$ + 1$^{st}$ neighbor can be obtained without
 having to calculate the $k$ + 1 nearest neighbor from scratch.
 The incremental approach is useful when processing queries where
@@ -81,20 +82,22 @@ $r$ denotes the distance to the real $k^{th}$ nearest neighbor.
 Similar the distance of an approximate $k$-furthest neighbor must not be smaller than $r/(1+\epsilon)$. 
 Obviously, for $\epsilon=0$ we get the exact result, and the larger $\epsilon$ is, the less exact the result.
 
-{\bf Range searching}
-is supported for range queries defined by $d$-dimensional objects enclosing a region. 
-Approximate range searching is supported using fuzzy $d$-dimensional objects. The fuzziness of the query object 
+{\bf Exact range searching}
+and 
+{\bf approximate range searching} is supported using exact or fuzzy $d$-dimensional objects enclosing a region.
+The fuzziness of the query object 
 is specified by a parameter $\epsilon$ denoting
-a maximal allowed distance to the boundary of a query object. 
+a maximal allowed distance to the boundary of a query object.  
 If the distance to the the boundary is at
 least $\epsilon$
 points inside the object
 are always reported and 
 points outside the object are never reported. Points within distance $\epsilon$ to the 
-boundary may be or may be not reported.  
+boundary may be or may be not reported.  For exact $d$-dimensional objects 
+the fuzziness parameter $\epsilon=0$.
 
 \subsection{The $k$-$d$ tree}
-\label{KDT_section}
+\label{Kd_tree_section}
 
 Bentley \cite{b-mbstu-75} introduced the $k$-$d$ tree as a generalization of the binary
 search tree in higher dimensions. $k$-$d$ trees hierarchically decompose space into a
@@ -104,6 +107,8 @@ intervals on the coordinate axes.
 $k$-$d$ trees are obtained by partitioning point sets in $\R^d$ using
 ($d$-1)-dimensional hyperplanes.
 Each node in the tree is split into two children by one such separating hyperplane.
+Several splitting rules (see Section \ref{Spatial_Searching:Splitting_rule_section}
+can be used to compute a seperating ($d$-1)-dimensional hyperplane.
 
 Each internal node of the $k$-$d$ tree is associated with a rectangle
 and a hyperplane orthogonal to
@@ -133,23 +138,29 @@ In order to speed-up the internal distance computations in nearest neighbor sear
 in high dimensional space, the approximate searching package supports orthogonal searching. Orthogonal
 searching implements the efficient incremental distance computation
 technique introduced by Arya and Mount \cite{am-afvq-93}.
-Orthogonal searching works only for nearest neighbor queries using query items representing
-points. Also the use of a Minkowski distance is required.
+Orthogonal searching works only for neighbor queries with query items represented as
+points and with a distance defined as a weighted Minkowski metric
+defined by $l_p(w)(r,q)=\root p\of {\sum_{i=1}^{i=d} w_i(r_i-q_i)^p}$ for $0 < p <\infty$ and
+defined by $l_{\infty}(w)(r,q)=max \{w_i |r_i-q_i| \mid 1 \leq i \leq d\}$. 
+The Manhattan distance ($p=1$, $w_i=1$) and the
+Euclidean distance ($p=2$, $w_i=1$) are examples of a weighted Minkowski metric.
 
 To speed up distance computations also transformed
 distances are used instead of the distance itself. 
 For instance for the Euclidean distance, to avoid the expensive computation
 of square roots, squared distances are used instead of the Euclidean distance itself. 
 
+
 \section{Example Programs}
 
-We give five examples. 
+We give six examples. 
 The first example illustrates nearest neighbor searching.
-The second is an example of approximate furthest neighbor searching using a $d$-dimensional
+The second example illustrates selecting a splitting rule.
+The third is an example of approximate furthest neighbor searching using a $d$-dimensional
 iso-rectangle as an query object.
 Approximate range
-searching is illustrated by the third example.
-The fourth example illustrates distance browsing and the last example illustrates 
+searching is illustrated by the fourth example.
+The fifth example illustrates distance browsing and the last example illustrates 
 nearest and furthest neighbour searching using
 a user defined point and distance class.
 
@@ -165,9 +176,17 @@ Finally, if the Euclidean distance is reported the square root is taken.
 
 \ccIncludeExampleCode{Nearest_neighbor_searching.C}
 
+\subsection{Example of selecting a splitting rule}
+
+This example program illustrates selecting a splitting rule.
+The only difference with the previous example is the
+definition of the traits class, where Fair is selected as a splitting rule.
+
+\ccIncludeExampleCode{Using_fair_splitting_rule.C}
+
 \subsection{Example of General Neighbor Searching}
 
-The second example program illustrates approximate nearest and furthest neighbor searching
+This example program illustrates approximate nearest and furthest neighbor searching
 using 4-dimensional Cartesian coordinates.
 Five approximate nearest and furthest neighbors of
 the query rectangle $[0.1,0.2]^4$ are computed.
@@ -176,7 +195,7 @@ the query rectangle $[0.1,0.2]^4$ are computed.
 
 \subsection{Example of a Range Query}
 
-The third example program illustrates approximate range querying for
+This example program illustrates approximate range querying for
 4-dimensional fuzzy iso-rectangles and spheres
 using homogeneous coordinates.
 
@@ -185,7 +204,7 @@ using homogeneous coordinates.
 
 \subsection{Example of distance browsing}
 
-The fourth example program illustrates distance browsing for $4$-dimensional points with
+This example program illustrates distance browsing for $4$-dimensional points with
 a positive first coordinate using orthogonal priority search.
 
  
@@ -199,66 +218,16 @@ implementation of the Euclidean distance.
 
 \ccIncludeExampleCode{User_defined_point_and_distance.C}
 
-\section{Classes}
-
-A user of the approximate spatial searching package should consult the reference
-pages of the following classes
-
-\begin{itemize}
-
-\item
-The class \ccc{Kd_tree} implementing the $k$-$d$ tree.
-
-\item
-The class \ccc{Kd_tree_traits_point} providing parameters for the construction of the $k$-$d$ tree.
-
-\item
-The class \ccc{Weighted_Minkowski_distance} implementing a weighted $L_p$-distance for $d$-dimensional points.
-
-\item
-The class \ccc{L1_distance_rectangle_point} implementing a $L1$ distance for $d$-dimensional
-iso-rectangles and points. 
-
-\item
-The class \ccc{L2_distance_sphere_point} implementing a $L2$ distance for $d$-dimensional
-spheres and points. 
-
-\item
-The class \ccc{General_standard_search} implementing the standard search strategy for general distances
-like the $L1$ distance for iso-rectangles.
-
-\item
-The class \ccc{General_priority_search} implementing the priority search strategy for general distances
-like the $L1$ distance for iso-rectangles.
-
-\item
-The class \ccc{Orthogonal_standard_search} implementing the standard search strategy for orthogonal distances
-like a weighted $L_p$ distance. Requires the use of extended nodes in the $k$-$d$ tree and supports
-only approximate nearest neighbor searching for point queries.
-
-\item
-The class \ccc{Orthogonal_priority_search} implementing the priority search strategy for general distances
-like the $L1$ distance for iso-rectangles. Requires the use of extended nodes in the $k$-$d$ tree
-and supports
-only approximate nearest neighbor searching for point queries.
-
-\item
-If a user wants to define a distance class the part of the reference page of the class
-\ccc{Kd_tree_rectangle} that is not marked as advanced section.
- 
-\end{itemize}
-
-\section{Use of traits classes}
+\section{Software design}
 
 \begin{figure}[t]
 \begin{ccTexOnly}
 \begin{center}
 \leavevmode
-\vspace*{6cm}
-\hspace*{-2cm}
-\scalebox{.7}{\includegraphics{Fig1.eps}}
+\vspace*{-6.5cm}
+\scalebox{.3}{\includegraphics{Fig1.ps}}
 \end{center}
-\vspace*{-8cm}
+\vspace*{6cm}
 \end{ccTexOnly}
 \caption{Overview of use of traits classes.
 \label{ASPAS:Fig1}}
@@ -273,36 +242,133 @@ Overview of use of traits classes.</center>
 \end{ccHtmlOnly}
 
 \begin{ccTexOnly}
-Figure \ref{ASPAS:Fig1} shows an overview of the use of the traits classes.
+Figure \ref{ASPAS:Fig1} illustrates the use of traits classes.
 \end{ccTexOnly}
 
-The parameter \ccc{NT} should provide a number type.
+The spatial searching package consists of a number of concepts, each implemented by
+one or more classes, and four classes implementing neighbor 
+searching algorithms. The concepts are
 
-The parameter \ccc{Item} should provide an implementation of a $d$-dimensional point, 
-for example \ccc{CGAL::Point_d}.
+\begin{itemize}
 
-The parameter \ccc{Query_item} should provide an implementation a spatial object
-as specified by the concept \ccc{CGAL::QueryItem}
-for example \ccc{CGAL::Kd_tree_rectangle}, that implements $d$-dimensional iso rectangles.
+\item 
+\ccc{Point} 
+denoting a $d$-dimensional point, as implemented by 
+\ccc{CGAL::Point_2<R>}, \ccc{CGAL::Point_3<R>}, and \ccc{CGAL::Point_d<R>}.
 
-The parameter \ccc{Separator} should provide an implementation of a $d-1$-dimensional
-subspace as specified by the concept \ccc{CGAL::Separator}.
+\item
+\ccc{Container} denoting a container, that stores points and
+provides method to support the implementation of splitting rules. 
+\ccc{CGAL::Point_container<Point>} provides an implementation.
 
-The parameter \ccc{Traits} should provide an implementation of the concept \ccc{CGAL::TreeTraits}
-specifying the parameters and the splitting rule used in the construction of a $k$-$d$ tree.
 
-The parameter \ccc{Distance} should provide an implementation of a distance.
-For the implementation of nearest neighbor searching with efficient incremental
-distance computation this distance class should meet the requirements of the concept
-\ccc{CGAL::OrthogonalDistance}. Otherwise the distance class has only to meet the
-requirements of the concept \ccc{CGAL::GeneralDistance}.
+\ccc{Separator} denoting a $d-1$-dimensional
+subspace separating a $d$-dimensional spaces in two parts,
+as implemented by \ccc{CGAL::Plane_separator<NT>}.
 
+\item 
+\ccc{Splitter} denoting a splitting rule as implemented by the classes 
+\ccc{CGAL::Midpoint_of_rectangle< Point, Container, Separator>},
+\ccc{CGAL::Midpoint_of_max_spread< Point, Container, Separator>},
+\ccc{CGAL::Sliding_midpoint< Point, Container, Separator>},
+\ccc{CGAL::Median_of_rectangle< Point, Container, Separator>},
+\ccc{CGAL::Median_of_max_spread< Point, Container, Separator>},
+\ccc{CGAL::Fair< Point, Container, Separator>}, and
+\ccc{CGAL::Sliding_Fair< Point, Container, Separator>}.
+
+\item
+\ccc{Traits} denoting a traits class for the construction of a tree.
+\ccc{CGAL::Kd_tree_traits_point< Point, Splitter >} provides an implementation. 
+
+\item
+\ccc{QueryItem} denoting a $d$-dimensional spatial query object. Implementations
+for point queries are provided by
+\ccc{CGAL::Point_2<R>}, \ccc{CGAL::Point_3<R>}, and \ccc{CGAL::Point_d<R>}.
+Implementations
+for spherical queries are provided by
+\ccc{CGAL::Circle_2<R>}, \ccc{CGAL::Sphere_3<R>}, and \ccc{CGAL::Sphere_d<R>}.
+Implementations
+for rectangular queries are provided by
+\ccc{CGAL::Iso_rectangle_2<R>}, \ccc{CGAL::Iso_cuboid_3<R>}, and \ccc{CGAL::Iso_rectangle_d<R>}.
+
+\item
+\ccc{Distance} denoting a distance object. A distance object should define distances between a query object
+and the points stored in a tree and between the query object and the rectangles associated with the nodes from the tree.
+Implementations for queries defined by points are provided
+by \ccc{CGAL::Euclidean_distance<Point>}, and
+\ccc{CGAL::Weighted_Minkowski_distance<Point>} implementing a 
+a weighted Minkowski metric.
+
+An implementation for queries defined by rectangles is provided by
+\ccc{CGAL::Manhattan_distance_rectangle_point<Query_item,Point>}.
+An implementation for queries defined by spheres is provided by
+\ccc{CGAL::Euclidean_distance_sphere_point<Query_item,Point>}.
+
+\end{itemize}
+\ccc{Tree} denoting a search tree.  
+\ccc{CGAL::Kd_tree<Traits>} provides an implementation of $k$-$d$ trees.
+
+The four classes implementing neighbor searching algorithms are
+
+\begin{itemize}
+
+\item
+The class \ccc{CGAL::General_standard_search<Traits, Distance, Query_Item, Tree>} 
+implementing the standard search strategy for general distances
+like the Manhattan distance for iso-rectangles.
+Requires no use of extended nodes in the $k$-$d$ tree and supports only $k$
+neighbor searching for queries defined by points or spatial objects.
+
+
+\item
+The class \ccc{CGAL::General_priority_search<Traits, Distance, Query_Item, Tree>} implementing the priority search 
+strategy for general distances
+like the Manhattan distance for iso-rectangles.
+Requires no use of extended nodes in the $k$-$d$ tree and supports incremental
+neighbor searching and distance browsing for queries defined by points or spatial objects.
+
+\item
+The class \ccc{CGAL::Orthogonal_standard_search<Traits, Distance, Tree>} implementing the standard search strategy for 
+orthogonal distances
+like a weighted Minkowski distance. Requires the use of extended nodes in the $k$-$d$ tree and supports 
+only $k$ neighbor searching for point queries.
+
+\item
+The class \ccc{Orthogonal_priority_search<Traits, Distance, Query_Item, Tree>} implementing the priority search strategy for general 
+distances
+like a weighted Minkowski distance. Requires the use of extended nodes in the $k$-$d$ tree and supports incremental
+neighbor searching and distance browsing for point queries.
+
+\end{itemize}
+
+If one wants to implement a splitter or a tree data structure
+methods from the following classes can be used
+
+\begin{itemize}
+
+\item
+The class \ccc{Kd_tree_rectangle} implementing $d$-dimensional iso-rectangles, 
+methods to compute bounding boxes
+of point sets and methods to split iso-rectangles.
+
+\item
+The class \ccc{Kd_tree_node} implementing $k$-$d$ tree nodes.
+
+\end{itemize}
+
+Besides neighbor searching descirbed above, the spatial searching package
+supports also range searching using the method 
+\ccc{template <class OutputIterator, class FuzzyQueryItem>
+	OutputIterator search(OutputIterator it, const FuzzyQueryItem& q)}.
+Implementations for the concept \ccc{FuzzyQueryItem} are provided by
+the class \ccc{CGAL::Fuzzy_iso_box_d<Point, Iso_Box_d>}  
+and the class \ccc{CGAL::Fuzzy_sphere_d<Point>}. 
 
 \section{Splitting Rules}
+\label{Spatial_Searching:Splitting_rule_section}
 
 Instead of using the default splitting rule \ccc{Sliding_midpoint} described below,
-an advanced user may, depending upon the data, select 
-using an instance from the enumeration \ccc{Split_rules}
+a user may, depending upon the data, select 
 one from the following splitting rules,
 which determine how a separating hyperplane is selected:
 
@@ -376,35 +442,30 @@ This may violate the aspect ratio bound, but will never generate empty cells.
 
 \end{itemize}
 
-Also, a user may provide an implementation of his own
-splitting rule.
+\section{Backward compability with the Kd-trees package}
+\label{Spatial_searching:Backward_compability_Kd-trees}
 
-\section{Implementation}
-
-The following classes are only of interest for modifying the implementation of the
-approximate spatial searching package. Their reference pages are described as advanced sections.
+In release 2.3 of CGAL
+$k$-$d$ trees have been implemented by the class \ccc{CGAL::Kdtree_d} (see Section \ref{KDT_section}, that is parameterized with one of the
+traits classes 
 
 \begin{itemize}
 
 \item
-The class \ccc{Kd_tree_rectangle} implements $d$-dimensional iso-rectangles, 
-methods to compute bounding boxes
-of point sets and methods to split iso-rectangles.
-
-\item
-The class \ccc{Kd_tree_node} implements $k$-$d$ tree nodes.
-
-\item
-The class \ccc{Plane_separator} implements a separator.
+\ccc{Kd_Interface} supporting user defined $d$-dimensional points.
 
 \item 
-The class \ccc{Point_container} is a point container providing a method, that given a separator
-splits a point set. Also \ccc{Point_container} provides methods that support the implementation
-of splitting rules.
+\ccc{Kd_Interface_2d} supporting \ccc{CGAL::Point_2<R>}. 
 
 \item
-The function object classes \ccc{Midpoint_of_rectangle}, \ccc{Midpoint_of_max_spread},
-\ccc{Sliding_midpoint}, \ccc{Median_of_rectangle}, \ccc{Median_of_max_spread}, \ccc{Median_of_max_spread},
-\ccc{Fair} and \ccc{Sliding_fair} implement the splitting rules.
+\ccc{Kd_Interface_3d} supporting \ccc{CGAL::Point_3<R>}. 
 
 \end{itemize}
+
+This $k$-$d$ tree implementation is backward compatible with the 
+$k$-$d$ tree implementation provided by the spatial searching package,
+except for the requirements on the definition of user defined $d$-dimensional points.
+The spatial searching package requires that the user provides a representation
+class \ccc{R} as illustrated by the following code fragment:
+
+\ccIncludeExampleCode{Representation_class.C}
