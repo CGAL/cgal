@@ -45,9 +45,9 @@ class Arr_conic_traits_2
   typedef Curve_2                  X_curve_2;
  
   // Using typename to please compiler (e.g., CC with IRIX64 on mips)
-  typedef typename Curve_2::R      R;
-  typedef typename Curve_2::Point  Point_2;
-  typedef typename Curve_2::Conic  Conic_2;
+  typedef typename Curve_2::R        R;
+  typedef typename Curve_2::Point_2  Point_2;
+  typedef typename Curve_2::Conic_2  Conic_2;
 
   enum Curve_point_status
   {
@@ -956,13 +956,13 @@ class Arr_conic_traits_2
   Point_2 point_to_left (const Point_2& p) const
   {
     NT   x = CGAL::to_double(p.x()) - 1;
-    return (Point_2(x , p.y(), Curve_2::Point::User_defined));
+    return (Point_2(x , p.y(), Point_2::User_defined));
   }
 
   Point_2 point_to_right (const Point_2& p) const
   {
     NT   x = CGAL::to_double(p.x()) + 1;
-    return (Point_2(x , p.y(), Curve_2::Point::User_defined));
+    return (Point_2(x , p.y(), Point_2::User_defined));
   }
 
   // Reflect a point in y.
