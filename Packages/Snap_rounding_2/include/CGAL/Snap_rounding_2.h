@@ -115,8 +115,6 @@ public:
   Hot_Pixel(Point_2 inp_point,NT inp_pixel_size);
   ~Hot_Pixel();
   inline Point_2 get_center() const;
-  inline NT get_x() const;
-  inline NT get_y() const;
   bool intersect_left(Segment_2 &seg) const;
   bool intersect_right(Segment_2 &seg) const;
   bool intersect_bot(Segment_2 &seg) const;
@@ -416,12 +414,6 @@ inline Hot_Pixel<Rep_>::Point_2 Hot_Pixel<Rep_>::get_center() const
     {return(p);}
 
 template<class Rep_>
-inline typename Rep_::FT Hot_Pixel<Rep_>::get_x() const {return(p.x());}
-
-template<class Rep_>
-inline typename Rep_::FT Hot_Pixel<Rep_>::get_y() const {return(p.y());}
-
-template<class Rep_>
 bool Hot_Pixel<Rep_>::intersect_left(Segment_2 &seg) const
   {
     CGAL::Object result;    
@@ -621,7 +613,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
     typename std::list<Segment_data<Rep_> >::iterator iter1;
     CGAL::Object result;
     Point_2 p;
-    std::list<std::pair<std::pair<NT,NT>,Hot_Pixel<Rep_> *> > hot_pixels_list;
+    std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> > hot_pixels_list;
 
     list<X_curve> segments;
     for(iter1 = seg_list.begin();iter1 != seg_list.end();++iter1)
@@ -654,8 +646,8 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
             v_iter = mypointlist.begin();
 	v_iter != mypointlist.end();++v_iter) {
       hp = new Hot_Pixel<Rep_>(*v_iter,pixel_size);
-      hot_pixels_list.push_back(std::pair<std::pair<NT,NT>,Hot_Pixel<Rep_> *>(
-            std::pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
+      hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
+				hp->get_center(),hp));
     }
 
 
@@ -1005,22 +997,6 @@ void Snap_rounding_2<Rep_>::do_isr(bool inp_do_isr)
     wheteher_to_do_isr = inp_do_isr;
     need_sr = true;
   }
-
-/*template<class Rep_>
-template<class Out> void Snap_rounding_2<Rep_>::output(Out &o)
-  {
-    o << number_of_segments << std::endl;
-    for(typename std::list<std::list<Point_2> >::iterator iter1 =
-        segments_output_list.begin();iter1 != segments_output_list.end();
-        ++iter1) {
-      for(typename std::list<Point_2>::iterator iter2 = iter1->begin();
-          iter2 != iter1->end();++iter2)
-        o << iter2->x().to_double() << " " << iter2->y().to_double() << " ";
-
-      o << std::endl;
-    }
-  }
-*/
 
 template<class Rep>
 typename Snap_rounding_2<Rep>::Direction Snap_rounding_2<Rep>::seg_dir;

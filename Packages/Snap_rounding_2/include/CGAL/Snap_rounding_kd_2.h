@@ -59,24 +59,23 @@ private:
   const double pi,half_pi,epsilon,rad_to_deg;
   int number_of_trees;
   std::list<std::pair<kd_tree *,NT> > kd_trees_list;
-  std::list<std::pair<std::pair<NT,NT>,SAVED_OBJECT > > input_points_list;
+  std::list<std::pair<Point,SAVED_OBJECT > > input_points_list;
 
   std::pair<kd_tree *,NT> create_kd_tree(NT angle)
   {
     Points_List l;
     kd_tree *tree = new kd_tree(2);
 
-    for(typename std::list<std::pair<std::pair<NT,NT>,SAVED_OBJECT> >::iterator
+    for(typename std::list<std::pair<Point,SAVED_OBJECT> >::iterator
         iter = input_points_list.begin();
         iter != input_points_list.end();
         ++iter) {
 
-      Point p(iter->first.first,iter->first.second);
+      Point p(iter->first);
 
       rotate(p,angle);
 
-      my_point<NT,SAVED_OBJECT> rotated_point(p,Point(iter->first.first,
-                                iter->first.second),iter->second);
+      my_point<NT,SAVED_OBJECT> rotated_point(p,iter->first,iter->second);
 
       l.push_back(rotated_point);
     }
@@ -138,7 +137,7 @@ private:
   }
 
 public:
-  Multiple_kd_tree(std::list<std::pair<std::pair<NT,NT>,SAVED_OBJECT> > 
+  Multiple_kd_tree(std::list<std::pair<Point,SAVED_OBJECT> > 
                    &inp_points_list,int inp_number_of_trees,
                    std::list<Segment> &seg_list) : 
     pi(3.1415),half_pi(1.57075),epsilon(0.001),rad_to_deg(57.297),
