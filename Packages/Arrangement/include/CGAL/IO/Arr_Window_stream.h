@@ -27,7 +27,7 @@
 #define CGAL_IO_ARR_WINDOW_STREAM_H
 
 #ifndef CGAL_ARRANGEMENT_2_H
-#include <CGAL/Arrangement2.h>
+#include <CGAL/Arrangement_2.h>
 #endif
 
 #ifndef CGAL_LEDA_WINDOW_H
@@ -58,6 +58,8 @@ Window_stream& operator << (Window_stream& os, const Arrangement_2<Dcel,Traits, 
 CGAL_END_NAMESPACE
 
 #endif
+
+
 
 
 
