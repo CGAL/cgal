@@ -559,6 +559,7 @@ operator>>(std::istream& is, Gmpz &z)
   const int null = '0';
   char c;
   Gmpz tmp;
+  std::ios::fmtflags old_flags = is.flags(std::ios::noskipws);
 
 #ifndef CGAL_CFG_NO_LOCALE
   while (is.get(c) && std::isspace(c, std::locale::classic() ))
@@ -600,11 +601,11 @@ operator>>(std::istream& is, Gmpz &z)
       tmp = -tmp;
   if (good){
       z = tmp;
-      if(is.eof() && is.fail() && (! is.bad())){
-	is.clear(std::ios::eofbit);
       }
   } else
-      is.setstate(std::ios::failbit);
+    is.clear(is.rdstate() | std::ios::failbit);
+
+  is.flags(old_flags);
   return is;
 }
 

@@ -1,3 +1,6 @@
+10 September 2004 Andreas Fabri
+- yet another change in operator>>(iostrem&, Gmpz) as it still failed with VC7.1
+
 6 September 2004 Menelaos Karavelas
 - number_type_basic.h: added "#include<CGAL/_QP_solver/Double.h>"
 
