@@ -68,15 +68,15 @@ public:
     delete showC;
   };
 private:
-  QToolButton	   *but[10];
+  QToolButton      *but[10];
   CGAL::Qt_widget  *widget;
-  QMainWindow	   *window;
+  QMainWindow      *window;
   QButtonGroup     *button_group;
-  int	           nr_of_buttons;
+  int              nr_of_buttons;
 	
   Qt_layer_show_triangulation < CDT>  *showT;  
   Qt_layer_show_points < CDT >        *showP;  
-  Qt_layer_show_constraineds < CDT >  *showC;  
+  Qt_layer_show_constraints < CDT >   *showC;
 };//end class
 
 #endif

@@ -58,7 +58,7 @@
   {
     showT   = new Qt_layer_show_triangulation< CDT >(*t);
     showP   = new Qt_layer_show_points< CDT >(*t);
-    showC   = new Qt_layer_show_constraineds<CDT>(*t);
+    showC   = new Qt_layer_show_constraints<CDT>(*t);
 
     //set the widget
     widget = w;
@@ -78,9 +78,9 @@
     but[0] = new QToolButton(this, "triangulation");
     but[0]->setIconSet(set0);
     but[0]->setTextLabel("Show Triangulation");
-    but[1] = new QToolButton(this, "constraineds");
+    but[1] = new QToolButton(this, "constraints");
     but[1]->setIconSet(set1);
-    but[1]->setTextLabel("Show Constraineds");
+    but[1]->setTextLabel("Show Constraints");
     but[2] = new QToolButton(this, "vertices");
     but[2]->setIconSet(set2);
     but[2]->setTextLabel("Show Vertices");
