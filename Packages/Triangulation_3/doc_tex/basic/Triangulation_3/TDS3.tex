@@ -41,7 +41,8 @@ As described in Chapter~\ref{chapter-Triangulation3}, a geometric
 triangulation of a set of points in $\R^d$ is a partition of the
 whole space $\R^d$ into cells having $d+1$ vertices. Some of them
 are infinite, they are obtained by linking an additional vertex at
-infinity to each facet of the convex hull of the points.
+infinity to each facet of the convex hull of the points (see
+Section~\ref{Triangulation3-sec-def}).  
 The underlying combinatorial graph of such a triangulation
 without boundary of $\R^d$ can be seen as a triangulation of the
 topological sphere $S^d$ in $\R^{d+1}$. 
@@ -472,8 +473,9 @@ deleted.}
 
 \ccMethod{int number_of_vertices() const;}
 {The number of vertices. Note that the triangulation data structure has one
-more vertex than an associated geometric triangulation, since the
-infinite vertex is a standard vertex and is thus also counted.}
+more vertex than an associated geometric triangulation, if there is
+one, since the infinite vertex is a standard vertex and is thus also
+counted.} 
 
 \ccHeading{Non constant-time access functions}
 \ccMethod{int number_of_cells() const;}
@@ -636,7 +638,9 @@ split into 2 new edges.
 triangulation of the sphere $S^{d+1}$ of $\R^{d+2}$ by adding vertex \ccc{v}:  
 \ccc{v} is linked to all the vertices to triangulate one of the two
 halfspheres of dimension $(d+1)$. Vertex \ccc{star} is used to
-triangulate the second halfsphere. See
+triangulate the second halfsphere (when there is an associated
+geometric triangulation, star is in fact the vertex associated with
+its infinite vertex). See
 Figure~\ref{TDS3-fig-topo-insert_outside_affine_hull}.\\  
 The numbering of the cells is such that, if \ccc{f} was a face of
 maximal dimension in the initial triangulation, then \ccc{(f,v)} (in
@@ -698,7 +702,7 @@ The following modifiers can affect the validity of the triangulation
 data structure.
 
 \ccMethod{void add_cell( Cell* c );}
-{Adds an already existing cell to the triangulation data structure.
+{Adds an already constructed cell to the triangulation data structure.
 \ccPrecond{\ccc{c != NULL}.}}
 
 \ccMethod{Cell * create_cell();}

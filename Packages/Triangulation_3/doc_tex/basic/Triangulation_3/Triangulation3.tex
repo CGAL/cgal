@@ -66,7 +66,7 @@ cells. Each vertex gives access to one of its incident cells.
 
 The four vertices of a cell are indexed with 0, 1, 2 and 3 in positive
 orientation, the positive orientation being defined by the orientation
-of the underlying space $\R^3$. The neighbors of a cell are also
+of the underlying Euclidean space $\R^3$. The neighbors of a cell are also
 indexed with 0, 1, 2, 3 in such a way that the neighbor indexed by $i$
 is opposite to the vertex with the same index. See
 Figure~\ref{Triangulation3-fig-orient}.
@@ -99,7 +99,7 @@ endpoints are the vertices of \ccc{c} with indices \ccc{i} and
 \subsection{Degenerate Dimensions}
 \label{Triangulation3-sec-degen_dim}
 
-The class \ccc{Triangulation_3<Traits,Tds>} can deal with
+The class \ccc{Triangulation_3<Traits,Tds>} can also deal with
 triangulations whose dimension is less than~3. A triangulation of a
 set of points in $\R^d$ covers the whole space $\R^d$ and consists of
 cells having $d+1$ vertices: some of them are infinite, they are
@@ -118,21 +118,22 @@ finite point.
 when the only vertex of the triangulation is the infinite one.
 \end{itemize} 
 
-We use the same cell class in all cases: triangular faces in
+The same cell class is used in all cases: triangular faces in
 2D can be considered as degenerate cells, having only three vertices
 (resp. neighbors)
 numbered $(0,1,2)$, and one $NULL$ vertex (resp. neighbor);
 edges in 1D have only two vertices (resp. neighbors) numbered $0$ and $1$. 
 
 The implicit representation of facets (resp. edges) still holds
-for degenerate ($< 3$) dimensions : in dimension~2, each cell has only one
-facet of index 3, and 3 edges $(0,1)$, $(1,2)$ and $(2,0)$; in
-dimension~1, each cell has one edge $(0,1)$. 
+for degenerate dimensions (\textit{i.e.}dimensions $<3$) : in
+dimension~2, each cell has only one facet of index 3, and 3 edges
+$(0,1)$, $(1,2)$ and $(2,0)$; in dimension~1, each cell has one edge
+$(0,1)$.  
 
 \subsection{Validity}
 \label{Triangulation3-sec-Valid}
 
-A geometric 3D-triangulation is said to be \ccc{locally valid} iff
+A triangulation of $\R^3$ is said to be \ccc{locally valid} iff
 
 {\bf (a)-(b)} Its underlying combinatorial graph, the triangulation
 data structure, is \ccc{locally valid} 
@@ -140,8 +141,8 @@ data structure, is \ccc{locally valid}
 {\bf (c)} Any cell has its vertices ordered according to positive
 orientation. See Figure~\ref{Triangulation3-fig-orient}.
 
-When the triangulation is degenerated into a planar triangulation, the 
-geometric validity reduces to:
+When the triangulation is degenerated into a triangulation of
+dimension~2, the  geometric validity reduces to:
 
 {\bf (c-2D)} For any two adjacent triangles $(u,v,w_1)$ and $(u,v,w_2)$ with
 common edge $(u,v)$, $w_1$ and $w_2$ lie on opposite sides of $(u,v)$
@@ -150,7 +151,7 @@ in the plane.
 When all the points are collinear, this condition becomes:
 
 {\bf (c-1D)} For any two adjacent edges $(u,v)$ and $(v,w)$, $u$ and
-$w$ lie on opposite sides of the common vertex $v$.
+$w$ lie on opposite sides of the common vertex $v$ on the line.
 
 The \ccc{is_valid()} method provided by \cgal\ checks the local
 validity of a given triangulation. This does not always
@@ -298,11 +299,11 @@ within a cell. These operations are used in \ccc{Triangulation_3.h},
 
 \ccFunction{unsigned int next_around_edge(unsigned int i, 
 				    unsigned int j) const;}
-{In dimension~3, index of the neighbor that is next to a given cell,
+{In dimension~3, index of the neighbor \ccc{n} that is next to the current cell,
 when turning positively around an oriented edge whose endpoints are
 indexed \ccc{i} and \ccc{j}. According to the usual numbering of
 vertices and neighbors in a given cell, it is also the index of the vertex 
-opposite to the desired neighbor. (see Figure~\ref{Triangulation3-fig-utils}).
+opposite to this neighbor \ccc{n}. (see Figure~\ref{Triangulation3-fig-utils}).
 \ccPrecond{\ccc{( i < 4 ) && ( j < 4 ) && ( i != j )}.}}
 
 \ccFunction{unsigned int ccw(unsigned int i) const;}
@@ -374,10 +375,10 @@ and~\ref{Triangulation3-sec-class-Cell}.
 \ccNestedType{Cell}{Cell type}
 
 \ccTypedef{typedef pair<Cell_handle, int> Facet;}{Facet type.
-The pair \ccc{(c,i)} denotes facet number \ccc{i} of cell \ccc{c}.}
+The pair \ccc{(c,i)} denotes facet on index \ccc{i} in cell \ccc{c}.}
 \ccGlue
 \ccTypedef{typedef triple<Cell_handle, int, int> Edge;}{Edge type.
-The triple \ccc{Edge(c,i,j)} denotes the edge with vertices numbered
+The triple \ccc{Edge(c,i,j)} denotes the edge with vertices of index
 \ccc{i} and \ccc{j} in cell \ccc{c}.}
 
 The vertices and faces of the triangulations are accessed through
@@ -586,7 +587,7 @@ is given.}
 			Cell_handle & c, int & i, int & j) const;}
 {Tests whether \ccc{(u,v)} is an edge of \ccVar\ by locating the points 
 in the triangulation. If the edge is found,
-it computes a cell \ccc{c} having this edge and the indices \ccc{i}
+it gives a cell \ccc{c} having this edge and the indices \ccc{i}
 and \ccc{j} of the vertices \ccc{u} and \ccc{v}, in this order.  
 \ccPrecond{\ccc{u} and \ccc{v} are vertices of \ccVar.}\\
 \textit{not yet implemented}}
@@ -602,18 +603,18 @@ this order.
 \textit{not yet implemented}}
 \ccGlue
 \ccMethod{bool is_cell(Vertex_handle u, Vertex_handle v, 
-			Vertex_handle w, Vertex_handle t,
+			Vertex_handle w, Vertex_handle x,
 			Cell_handle & c, 
 			int & i, int & j, int & k, int & l) const;}
-{Tests whether \ccc{(u,v,w,t)} is a cell of \ccVar\ by locating the points 
+{Tests whether \ccc{(u,v,w,x)} is a cell of \ccVar\ by locating the points 
 in the triangulation. If the cell \ccc{c} is found, the method
 computes the indices \ccc{i}, \ccc{j}, \ccc{k} and \ccc{l} of the
-vertices \ccc{u}, \ccc{v}, \ccc{w} and \ccc{t} in \ccc{c}, in this
+vertices \ccc{u}, \ccc{v}, \ccc{w} and \ccc{x} in \ccc{c}, in this
 order. 
-\ccPrecond{\ccc{u}, \ccc{v}, \ccc{w} and \ccc{t} are vertices of \ccVar.}\\
+\ccPrecond{\ccc{u}, \ccc{v}, \ccc{w} and \ccc{x} are vertices of \ccVar.}\\
 \textit{not yet implemented}}
 
-\ccHeading{Location}
+\ccHeading{Point location}
 \ccThree{Vertex_handle}{t.locate()toto}{}
 
 The class \ccClassTemplateName\  provides two functions to locate
@@ -743,7 +744,7 @@ an infinite edge this means that \ccc{p} lies on the other half line,
 which contains the other points of the triangulation.
 \ccPrecond{\ccVar.\ccc{dimension()} $=1$ and \ccc{p} is collinear
 with the points of the triangulation. \ccc{e.second} $=0$ and
-\ccc{e.third} $=1$ (in dimension~2 there is only one edge per cell).}}
+\ccc{e.third} $=1$ (in dimension~1 there is only one edge per cell).}}
 \ccGlue
 \ccMethod{Bounded_side
           side_of_edge(const Point & p,
@@ -870,7 +871,7 @@ place for the search done within the insertion.}
 
 The previous methods are sufficient to build a whole triangulation. We
 also provide some other methods that can be used instead of
-\ccc{insert(p)} when the place the new point \ccc{p} must be inserted
+\ccc{insert(p)} when the place where the new point \ccc{p} must be inserted
 is already known. They are also guaranteed to lead to a valid
 triangulation when they are applied on a valid triangulation.
 
@@ -1099,7 +1100,7 @@ and the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
 \ccMethod{void incident_vertices(Vertex_handle v, 
 		set<Vertex*, less<Vertex*> > & vertices,
 		Cell_handle c = NULL ) const;}
-{Computes the set \ccc{vertices} of all vertices incident to \ccc{v}. If
+{Computes the set \ccc{vertices} of all vertices adjacent to \ccc{v}. If
 \ccVar.\ccc{number_of_vertices()} $<1$ then the set is empty. The optional
 argument \ccc{c} will be used for finding a first vertex of the set.\\
 \textit{An analogous remark as for the previous method holds on the
@@ -1187,7 +1188,9 @@ defined in the class \ccc{Triangulation_3<Traits,Tds>}:
 \begin{ccAdvanced}
 \ccCreation
 The user needs to construct vertices explicitly only when implementing his
-own triangulation algorithms. 
+own triangulation algorithms. If he uses the standard ways proposed by 
+\cgal\ to construct a triangulation, he does not need the following
+constructors. 
 
 \ccConstructor{{Triangulation_vertex_3<Traits,Tds>}();}
 {Introduces a new vertex. The geometric information is initialized by
@@ -1223,7 +1226,7 @@ the handle to the incident cell.}
 {Returns the geometric information of \ccVar.}
 
 \ccMethod{Cell_handle cell() const;}
-{Returns a cell of the triangulation having \ccVar\ as
+{Finds a cell of the triangulation having \ccVar\ as
 vertex. Remember that in degenerate dimensions, a cell stores a face
 of maximal dimension (Section~\ref{Triangulation3-sec-degen_dim}).}
 
@@ -1274,7 +1277,7 @@ the \ccc{add_cell()} method of the triangulation must be used. Note
 that a given cell can be inserted into only textit{one} triangulation.
 
 \ccConstructor{Triangulation_cell_3<Traits,Tds>();}
-{Introduces a variable \ccVar\ and initializes all its vertices and
+{Introduces a cell \ccVar\ and initializes all its vertices and
 neighbors in such a way that tests on the handles for equality with
 \ccc{NULL} will answer \ccc{true}.} 
 
@@ -1287,7 +1290,7 @@ neighbors in such a way that tests on the handles for equality with
     	                    Vertex_handle v1,
                             Vertex_handle v2,
                             Vertex_handle v3);}
-{Introduces a variable \ccVar, and initializes its vertices. The 
+{Introduces a cell \ccVar, and initializes its vertices. The 
 neighbors are initialized so that tests on the handles for equality with
 \ccc{NULL} will answer \ccc{true}.} 
 
@@ -1406,13 +1409,13 @@ Inherits the types of \ccc{Triangulation_3<Traits,Tds>}.
 
 \ccHeading{Insertion}
 
-The following methods, which already exist in triangulations, are
-overloaded to ensure the empty sphere property of Delaunay
+The following methods overload the corresponding methods of
+triangulations to ensure the empty sphere property of Delaunay 
 triangulations.
 
 \ccMethod{Vertex_handle insert(const Point & p );}
 {Inserts point \ccc{p} in the triangulation and returns the corresponding
- vertex. Similar to the insertion in a triangulation, but insures in
+ vertex. Similar to the insertion in a triangulation, but ensures in
 addition the empty sphere property of all the created faces.}
 
 \ccMethod{Vertex_handle insert(const Point & p, Cell_handle start);}
@@ -1490,7 +1493,8 @@ point lies on the finite edge of \ccc{f} (endpoints included),
 \ccc{ON_BOUNDED_SIDE} for a point in the open half plane defined
 by \ccc{f} and not containing any other point of the triangulation,
 \ccc{ON_UNBOUNDED_SIDE} elsewhere. 
-\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$.}}
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$ and in dimension 3,
+\ccc{p} is coplanar with \ccc{f}.}}
 
 \ccMethod{Bounded_side
 	  side_of_circle(Cell_handle c, int i, const Point & p);}
