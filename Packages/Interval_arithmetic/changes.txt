@@ -1,6 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.13 on ?? May 1999
+Version 4.14 on 25 May 1999
+- src/workaround_4_irix.s.IRIX renamed to workaround_4_irix6.s.
+
+Version 4.13 on 11 May 1999
 - New test file, that should emit a warning with a smart compiler.
 - Moved some documentation files.
 - Removed calls to convert_to from the test-suite (MipsPro...).

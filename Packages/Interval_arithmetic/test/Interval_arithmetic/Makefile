@@ -51,13 +51,13 @@ LDFLAGS = \
 
 all: test bench
 
-test:  tst0 tst1 tst2 tst5 tst6 tstlink
+test:  tst0 tst1 tst2 tst5 tstlink # tst6
 	./tst0
 	./tst1
 	./tst2
 	./tst5
-	./tst6
 	./tstlink
+	# ./tst6
 
 bench_isolate: ./a.out
 	./a.out
