@@ -1,7 +1,12 @@
-22 June Sylvain Pion
+8 March 2005 Sylvain Pion
+- Add do_intersect(Triangle_3, Tetrahedron_3) by Nico Kruithof.
+
+============================ CGAL 3.1 ========================
+
+22 June 2004 Sylvain Pion
 - Move code in order to please g++ 3.4.
 
-17 April Andreas Fabri
+17 April 2004 Andreas Fabri
 - Global functions call functor call internal global function
 
 15 Feb 2004 Sylvain Pion

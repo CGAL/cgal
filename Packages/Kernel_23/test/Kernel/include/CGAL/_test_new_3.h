@@ -378,6 +378,8 @@ test_new_3(const R& rep)
   typename R::Do_intersect_3 do_intersect
         = rep.do_intersect_3_object();
      tmp12a = do_intersect(l2,h2);
+     tmp12b = do_intersect(t2,th2);
+     tmp12b = do_intersect(th2,t2);
      tmp12b = do_intersect(r2,h2);
 
   typename R::Assign_3  assign

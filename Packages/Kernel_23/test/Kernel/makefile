@@ -22,6 +22,7 @@ CXXFLAGS = \
            -I../../../Number_types/include \
            -I../../../Distance_2/include \
            -I../../../Intersections_2/include \
+           -I../../../Intersections_3/include \
            -I../../../Interval_arithmetic/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \

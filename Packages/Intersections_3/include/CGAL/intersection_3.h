@@ -31,6 +31,7 @@
 #include <CGAL/Triangle_3_Point_3_do_intersect.h> 
 #include <CGAL/Triangle_3_Ray_3_do_intersect.h>
 #include <CGAL/Triangle_3_Segment_3_do_intersect.h> 
+#include <CGAL/Triangle_3_Tetrahedron_3_do_intersect.h> 
 #include <CGAL/Triangle_3_Triangle_3_do_intersect.h>
 
 

@@ -1,3 +1,6 @@
+8 March 2005 Sylvain Pion
+- Add do_intersect(Triangle_3, Tetrahedron_3) by Nico Kruithof.
+
 6 February 2005 Sylvain Pion
 - Rewrite known_bit_size_integers.h using MPL to help portability.
 
