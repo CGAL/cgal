@@ -4,10 +4,10 @@
 #include <CGAL/intersection_3_1.h>
 #include "numrep2.h"
 
-typedef CGAL_Plane_3<TestR> Plane;
-typedef CGAL_Segment_3<TestR> Segment;
-typedef CGAL_Point_3<TestR> Point;
-typedef CGAL_Direction_3<TestR> Direction;
+typedef CGAL::Plane_3<TestR> Plane;
+typedef CGAL::Segment_3<TestR> Segment;
+typedef CGAL::Point_3<TestR> Point;
+typedef CGAL::Direction_3<TestR> Direction;
 
 
 bool read_data(Plane &pl, Segment &seg)
@@ -36,9 +36,9 @@ bool read_data(Plane &pl, Segment &seg)
 
 void write_point(const Point & pt)
 {
-    double xd = CGAL_to_double(pt.x());
-    double yd = CGAL_to_double(pt.y());
-    double zd = CGAL_to_double(pt.z());
+    double xd = CGAL::to_double(pt.x());
+    double yd = CGAL::to_double(pt.y());
+    double zd = CGAL::to_double(pt.z());
     // force 0 to be positive zero.
     if (xd == 0.0)
 	xd = 0.0;
@@ -52,9 +52,9 @@ void write_point(const Point & pt)
 /*
 void write_point(const Point & pt)
 {
-    cout << CGAL_to_double(pt.x()) <<' '
-	<< CGAL_to_double(pt.y()) <<' '
-	<< CGAL_to_double(pt.z()) << '\n';
+    cout << CGAL::to_double(pt.x()) <<' '
+	<< CGAL::to_double(pt.y()) <<' '
+	<< CGAL::to_double(pt.z()) << '\n';
 }
 */
 
@@ -63,20 +63,33 @@ int main()
     Plane pl;
     Point pt;
     Segment seg;
-    CGAL_Object result;
+    CGAL::Object result;
     
     if (!read_data(pl, seg))
 	return 1;
-    result = CGAL_intersection(pl, seg);
-    if (CGAL_assign(pt, result)) {
+    result = CGAL::intersection(pl, seg);
+    if (result.is_empty()) {
+	if (CGAL::do_intersect(pl, seg)) {
+	    cout << "do_intersect is inconsistent with intersection result.\n";
+	    return 1;
+	}
+	cout << "No intersection.\n";
+	return 0;
+    }
+    if (!CGAL::do_intersect(pl, seg)) {
+	cout << "do_intersect is inconsistent with intersection result.\n";
+	return 1;
+    }
+    if (CGAL::assign(pt, result)) {
 	cout << "Point intersection.\n";
 	write_point(pt);
+	return 0;
     } else {
-	if (CGAL_assign(seg, result)) {
+	if (CGAL::assign(seg, result)) {
 	    cout << "Segment intersection.\n";
-	} else {
-	    cout << "No intersection.\n";
+	    return 0;
 	}
     }
-    return 0;
+    cout << "Unknown result.\n";
+    return 1;
 }

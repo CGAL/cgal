@@ -1,30 +1,30 @@
 #if TESTR == 1
 
 typedef double testnt;
-typedef CGAL_Cartesian<testnt> TestR;
+typedef CGAL::Cartesian<testnt> TestR;
 
 #endif
 
 #if TESTR == 2
 
 typedef long testnt;
-typedef CGAL_Homogeneous<testnt> TestR;
+typedef CGAL::Homogeneous<testnt> TestR;
 
 #endif
 
 
 #if TESTR == 3
 
-typedef CGAL_TestfieldC testnt;
-typedef CGAL_Cartesian<testnt> TestR;
+typedef CGAL::TestfieldC testnt;
+typedef CGAL::Cartesian<testnt> TestR;
 
 #endif
 
 
 #if TESTR == 4
 
-typedef CGAL_TestrepH testnt;
-typedef CGAL_Homogeneous<testnt> TestR;
+typedef CGAL::TestrepH testnt;
+typedef CGAL::Homogeneous<testnt> TestR;
 
 
 #endif
@@ -32,13 +32,13 @@ typedef CGAL_Homogeneous<testnt> TestR;
 #if TESTR == 5
 
 typedef double testnt;
-typedef CGAL_Homogeneous<testnt> TestR;
+typedef CGAL::Homogeneous<testnt> TestR;
 
 #endif
 
 #if TESTR == 6
 
-typedef CGAL_Checked_long testnt;
-typedef CGAL_Homogeneous<testnt> TestR;
+typedef CGAL::Checked_long testnt;
+typedef CGAL::Homogeneous<testnt> TestR;
 
 #endif

@@ -4,10 +4,10 @@
 #include <CGAL/intersection_3_1.h>
 #include "numrep2.h"
 
-typedef CGAL_Plane_3<TestR> Plane;
-typedef CGAL_Line_3<TestR> Line;
-typedef CGAL_Point_3<TestR> Point;
-typedef CGAL_Direction_3<TestR> Direction;
+typedef CGAL::Plane_3<TestR> Plane;
+typedef CGAL::Line_3<TestR> Line;
+typedef CGAL::Point_3<TestR> Point;
+typedef CGAL::Direction_3<TestR> Direction;
 
 
 bool read_data(Plane &pl1, Plane &pl2)
@@ -29,9 +29,9 @@ bool read_data(Plane &pl1, Plane &pl2)
 
 void write_point(const Point & pt)
 {
-    double xd = CGAL_to_double(pt.x());
-    double yd = CGAL_to_double(pt.y());
-    double zd = CGAL_to_double(pt.z());
+    double xd = CGAL::to_double(pt.x());
+    double yd = CGAL::to_double(pt.y());
+    double zd = CGAL::to_double(pt.z());
     // force 0 to be positive zero.
     if (xd == 0.0)
 	xd = 0.0;
@@ -47,21 +47,34 @@ int main()
 {
     Plane pl1, pl2;
     Line l;
-    CGAL_Object result;
+    CGAL::Object result;
     
     if (!read_data(pl1, pl2))
 	return 1;
-    result = CGAL_intersection(pl1, pl2);
-    if (CGAL_assign(l, result)) {
+    result = CGAL::intersection(pl1, pl2);
+    if (result.is_empty()) {
+	if (CGAL::do_intersect(pl1, pl2)) {
+	    cout << "do_intersect is inconsistent with intersection result.\n";
+	    return 1;
+	}
+	cout << "No intersection.\n";
+	return 0;
+    }
+    if (!CGAL::do_intersect(pl1, pl2)) {
+	cout << "do_intersect is inconsistent with intersection result.\n";
+	return 1;
+    }
+    if (CGAL::assign(l, result)) {
 	cout << "Line intersection.\n";
 	write_point(l.point(0));
 	write_point(l.point(1));
+	return 0;
     } else {
-	if (CGAL_assign(pl1, result)) {
+	if (CGAL::assign(pl1, result)) {
 	    cout << "Plane intersection.\n";
-	} else {
-	    cout << "No intersection.\n";
+	    return 0;
 	}
     }
-    return 0;
+    cout << "Unknown result.\n";
+    return 1;
 }

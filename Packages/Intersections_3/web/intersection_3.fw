@@ -19,40 +19,40 @@ object types), those routines are split in several classes.
 @$@<3D Line Plane intersection declarations@>==@{
 
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Plane_3<R> &plane, const CGAL_Line_3<R>&line);
+Object
+intersection(const Plane_3<R> &plane, const Line_3<R>&line);
 
 template <class R>
 inline
-CGAL_Object
-CGAL_intersection(const CGAL_Line_3<R>&line, const CGAL_Plane_3<R> &plane)
+Object
+intersection(const Line_3<R>&line, const Plane_3<R> &plane)
 {
-    return CGAL_intersection(plane,line);
+    return intersection(plane,line);
 }
 
 template <class R>
 bool
-CGAL_do_intersect(const CGAL_Plane_3<R> &p2, const CGAL_Line_3<R> &p1);
+do_intersect(const Plane_3<R> &p2, const Line_3<R> &p1);
 
 
 template <class R>
 inline bool
-CGAL_do_intersect(
-    const CGAL_Line_3<R> &p1,
-    const CGAL_Plane_3<R> &p2)
+do_intersect(
+    const Line_3<R> &p1,
+    const Plane_3<R> &p2)
 {
-    return CGAL_do_intersect(p2,p1);
+    return do_intersect(p2,p1);
 }
 @}
 
 @$@<3D Line Plane intersection implementation@>==@{
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Plane_3<R> &plane, const CGAL_Line_3<R>&line)
+Object
+intersection(const Plane_3<R> &plane, const Line_3<R>&line)
 {
     typedef typename R::RT RT;
-    const CGAL_Point_3<R> &line_pt = line.point();
-    const CGAL_Direction_3<R> &line_dir = line.direction();
+    const Point_3<R> &line_pt = line.point();
+    const Direction_3<R> &line_dir = line.direction();
     RT num,  den;
     num = plane.a()*line_pt.hx() + plane.b()*line_pt.hy()
         + plane.c()*line_pt.hz() + plane.d()*line_pt.hw();
@@ -61,13 +61,13 @@ CGAL_intersection(const CGAL_Plane_3<R> &plane, const CGAL_Line_3<R>&line)
     if (den == RT(0)) {
         if (num == RT(0)) {
             // all line
-            return CGAL_make_object(line);
+            return make_object(line);
         } else {
             // no intersection
-            return CGAL_Object();
+            return Object();
         }
     }
-    return CGAL_make_object(CGAL_Point_3<R>(
+    return make_object(Point_3<R>(
         den*line_pt.hx()-num*line_dir.dx(),
         den*line_pt.hy()-num*line_dir.dy(),
         den*line_pt.hz()-num*line_dir.dz(),
@@ -76,11 +76,11 @@ CGAL_intersection(const CGAL_Plane_3<R> &plane, const CGAL_Line_3<R>&line)
 
 template <class R>
 bool
-CGAL_do_intersect(const CGAL_Plane_3<R> &plane, const CGAL_Line_3<R>&line)
+do_intersect(const Plane_3<R> &plane, const Line_3<R>&line)
 {
     typedef typename R::RT RT;
-    const CGAL_Point_3<R> &line_pt = line.point();
-    const CGAL_Direction_3<R> &line_dir = line.direction();
+    const Point_3<R> &line_pt = line.point();
+    const Direction_3<R> &line_dir = line.direction();
     RT num,  den;
     den = plane.a()*line_dir.dx() + plane.b()*line_dir.dy()
         + plane.c()*line_dir.dz();
@@ -103,82 +103,82 @@ CGAL_do_intersect(const CGAL_Plane_3<R> &plane, const CGAL_Line_3<R>&line)
 @$@<3D Segment Plane intersection declarations@>==@{
 
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Plane_3<R> &plane, const CGAL_Segment_3<R>&seg);
+Object
+intersection(const Plane_3<R> &plane, const Segment_3<R>&seg);
 
 template <class R>
 inline
-CGAL_Object
-CGAL_intersection(const CGAL_Segment_3<R>&seg, const CGAL_Plane_3<R> &plane)
+Object
+intersection(const Segment_3<R>&seg, const Plane_3<R> &plane)
 {
-    return CGAL_intersection(plane,seg);
+    return intersection(plane,seg);
 }
 
 template <class R>
 bool
-CGAL_do_intersect(const CGAL_Plane_3<R> &p1, const CGAL_Segment_3<R> &p2);
+do_intersect(const Plane_3<R> &p1, const Segment_3<R> &p2);
 
 
 template <class R>
 inline bool
-CGAL_do_intersect(
-    const CGAL_Segment_3<R> &p1,
-    const CGAL_Plane_3<R> &p2)
+do_intersect(
+    const Segment_3<R> &p1,
+    const Plane_3<R> &p2)
 {
-    return CGAL_do_intersect(p2,p1);
+    return do_intersect(p2,p1);
 }
 @}
 
 @$@<3D Segment Plane intersection implementation@>==@{
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Plane_3<R> &plane, const CGAL_Segment_3<R>&seg)
+Object
+intersection(const Plane_3<R> &plane, const Segment_3<R>&seg)
 {
-    const CGAL_Point_3<R> &source = seg.source();
-    const CGAL_Point_3<R> &target = seg.target();
-    CGAL_Oriented_side source_side,target_side;
+    const Point_3<R> &source = seg.source();
+    const Point_3<R> &target = seg.target();
+    Oriented_side source_side,target_side;
     source_side = plane.oriented_side(source);
     target_side = plane.oriented_side(target);
     switch (source_side) {
-    case CGAL_ON_ORIENTED_BOUNDARY:
-        if (target_side == CGAL_ON_ORIENTED_BOUNDARY)
-            return CGAL_make_object(seg);
+    case ON_ORIENTED_BOUNDARY:
+        if (target_side == ON_ORIENTED_BOUNDARY)
+            return make_object(seg);
         else
-            return CGAL_make_object(source);
-    case CGAL_ON_POSITIVE_SIDE:
+            return make_object(source);
+    case ON_POSITIVE_SIDE:
         switch (target_side) {
-        case CGAL_ON_ORIENTED_BOUNDARY:
-            return CGAL_make_object(target);
-        case CGAL_ON_POSITIVE_SIDE:
-            return CGAL_Object();
-        case CGAL_ON_NEGATIVE_SIDE:
-            return CGAL_intersection(plane, seg.supporting_line());
+        case ON_ORIENTED_BOUNDARY:
+            return make_object(target);
+        case ON_POSITIVE_SIDE:
+            return Object();
+        case ON_NEGATIVE_SIDE:
+            return intersection(plane, seg.supporting_line());
         }
-    case CGAL_ON_NEGATIVE_SIDE:
+    case ON_NEGATIVE_SIDE:
         switch (target_side) {
-        case CGAL_ON_ORIENTED_BOUNDARY:
-            return CGAL_make_object(target);
-        case CGAL_ON_POSITIVE_SIDE:
-            return CGAL_intersection(plane, seg.supporting_line());
-        case CGAL_ON_NEGATIVE_SIDE:
-            return CGAL_Object();
+        case ON_ORIENTED_BOUNDARY:
+            return make_object(target);
+        case ON_POSITIVE_SIDE:
+            return intersection(plane, seg.supporting_line());
+        case ON_NEGATIVE_SIDE:
+            return Object();
         }
     }
     CGAL_kernel_assertion_msg(false, "Supposedly unreachable code.");
-    return CGAL_Object();
+    return Object();
 }
 
 template <class R>
 bool
-CGAL_do_intersect(const CGAL_Plane_3<R> &plane, const CGAL_Segment_3<R>&seg)
+do_intersect(const Plane_3<R> &plane, const Segment_3<R>&seg)
 {
-    const CGAL_Point_3<R> &source = seg.source();
-    const CGAL_Point_3<R> &target = seg.target();
-    CGAL_Oriented_side source_side,target_side;
+    const Point_3<R> &source = seg.source();
+    const Point_3<R> &target = seg.target();
+    Oriented_side source_side,target_side;
     source_side = plane.oriented_side(source);
     target_side = plane.oriented_side(target);
     if ( source_side == target_side
-       && target_side != CGAL_ON_ORIENTED_BOUNDARY) {
+       && target_side != ON_ORIENTED_BOUNDARY) {
         return false;
     }
     return true;
@@ -190,29 +190,29 @@ CGAL_do_intersect(const CGAL_Plane_3<R> &plane, const CGAL_Segment_3<R>&seg)
 @$@<3D Ray Plane intersection declarations@>==@{
 
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Plane_3<R> &plane, const CGAL_Ray_3<R>&ray);
+Object
+intersection(const Plane_3<R> &plane, const Ray_3<R>&ray);
 
 template <class R>
 inline
-CGAL_Object
-CGAL_intersection(const CGAL_Ray_3<R>&ray, const CGAL_Plane_3<R> &plane)
+Object
+intersection(const Ray_3<R>&ray, const Plane_3<R> &plane)
 {
-    return CGAL_intersection(plane,ray);
+    return intersection(plane,ray);
 }
 
 template <class R>
 bool
-CGAL_do_intersect(const CGAL_Plane_3<R> &p1, const CGAL_Ray_3<R> &p2);
+do_intersect(const Plane_3<R> &p1, const Ray_3<R> &p2);
 
 
 template <class R>
 inline bool
-CGAL_do_intersect(
-    const CGAL_Ray_3<R> &p1,
-    const CGAL_Plane_3<R> &p2)
+do_intersect(
+    const Ray_3<R> &p1,
+    const Plane_3<R> &p2)
 {
-    return CGAL_do_intersect(p2,p1);
+    return do_intersect(p2,p1);
 }
 @}
 
@@ -221,33 +221,33 @@ the plane.
 
 @$@<3D Ray Plane intersection implementation@>==@{
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Plane_3<R> &plane, const CGAL_Ray_3<R>&ray)
+Object
+intersection(const Plane_3<R> &plane, const Ray_3<R>&ray)
 {
-    const CGAL_Object line_intersection =
-            CGAL_intersection(plane, ray.supporting_line());
-    CGAL_Point_3<R> isp;
-    if (CGAL_assign(isp, line_intersection)) {
+    const Object line_intersection =
+            intersection(plane, ray.supporting_line());
+    Point_3<R> isp;
+    if (assign(isp, line_intersection)) {
         if (ray.collinear_has_on(isp))
             return line_intersection;
         else
-            return CGAL_Object();
+            return Object();
     }
     if (line_intersection.is_empty())
         return line_intersection;
-    return CGAL_make_object(ray);
+    return make_object(ray);
 }
 
 template <class R>
 bool
-CGAL_do_intersect(const CGAL_Plane_3<R> &plane, const CGAL_Ray_3<R>&ray)
+do_intersect(const Plane_3<R> &plane, const Ray_3<R>&ray)
 {
-    const CGAL_Object line_intersection =
-            CGAL_intersection(plane, ray.supporting_line());
+    const Object line_intersection =
+            intersection(plane, ray.supporting_line());
     if (line_intersection.is_empty())
         return false;
-    CGAL_Point_3<R> isp;
-    if (CGAL_assign(isp, line_intersection)) {
+    Point_3<R> isp;
+    if (assign(isp, line_intersection)) {
         if (ray.collinear_has_on(isp))
             return true;
         else
@@ -262,14 +262,14 @@ CGAL_do_intersect(const CGAL_Plane_3<R> &plane, const CGAL_Ray_3<R>&ray)
 @$@<3D Plane Plane intersection declarations@>==@{
 
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Plane_3<R> &plane1, const CGAL_Plane_3<R>&plane2);
+Object
+intersection(const Plane_3<R> &plane1, const Plane_3<R>&plane2);
 
 template <class R>
 inline bool
-CGAL_do_intersect(const CGAL_Plane_3<R> &plane1, const CGAL_Plane_3<R>&plane2)
+do_intersect(const Plane_3<R> &plane1, const Plane_3<R>&plane2)
 {
-    return ! CGAL_intersection(plane1, plane2).is_empty();
+    return ! intersection(plane1, plane2).is_empty();
 }
 
 @}
@@ -277,8 +277,8 @@ CGAL_do_intersect(const CGAL_Plane_3<R> &plane1, const CGAL_Plane_3<R>&plane2)
 
 @$@<3D Plane Plane intersection implementation@>==@{
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Plane_3<R> &plane1, const CGAL_Plane_3<R>&plane2)
+Object
+intersection(const Plane_3<R> &plane1, const Plane_3<R>&plane2)
 {
     typedef typename R::RT RT;
     const RT &a = plane1.a();
@@ -291,47 +291,47 @@ CGAL_intersection(const CGAL_Plane_3<R> &plane1, const CGAL_Plane_3<R>&plane2)
     const RT &s = plane2.d();
     const RT zero = RT(0);
     RT det;
-    CGAL_Point_3<R> is_pt;
-    CGAL_Direction_3<R> is_dir;
+    Point_3<R> is_pt;
+    Direction_3<R> is_dir;
 
     det = a*q-p*b;
     if (det != zero) {
-        is_pt = CGAL_Point_3<R>(b*s-d*q, p*d-a*s, zero, det);
-        is_dir = CGAL_Direction_3<R>(b*r-c*q, p*c-a*r, det);
-        return CGAL_make_object(CGAL_Line_3<R>(is_pt, is_dir));
+        is_pt = Point_3<R>(b*s-d*q, p*d-a*s, zero, det);
+        is_dir = Direction_3<R>(b*r-c*q, p*c-a*r, det);
+        return make_object(Line_3<R>(is_pt, is_dir));
     }
     det = a*r-p*c;
     if (det != zero) {
-        is_pt = CGAL_Point_3<R>(c*s-d*r, zero, p*d-a*s, det);
-        is_dir = CGAL_Direction_3<R>(c*q-b*r, det, p*b-a*q);
-        return CGAL_make_object(CGAL_Line_3<R>(is_pt, is_dir));
+        is_pt = Point_3<R>(c*s-d*r, zero, p*d-a*s, det);
+        is_dir = Direction_3<R>(c*q-b*r, det, p*b-a*q);
+        return make_object(Line_3<R>(is_pt, is_dir));
     }
     det = b*r-c*q;
     if (det != zero) {
-        is_pt = CGAL_Point_3<R>(zero, c*s-d*r, d*q-b*s, det);
-        is_dir = CGAL_Direction_3<R>(det, c*p-a*r, a*q-b*p);
-        return CGAL_make_object(CGAL_Line_3<R>(is_pt, is_dir));
+        is_pt = Point_3<R>(zero, c*s-d*r, d*q-b*s, det);
+        is_dir = Direction_3<R>(det, c*p-a*r, a*q-b*p);
+        return make_object(Line_3<R>(is_pt, is_dir));
     }
 // degenerate case
     if (a!=zero || p!=zero) {
         if (a*s == p*d)
-            return CGAL_make_object(plane1);
+            return make_object(plane1);
         else
-            return CGAL_Object();
+            return Object();
     }
     if (b!=zero || q!=zero) {
         if (b*s == q*d)
-            return CGAL_make_object(plane1);
+            return make_object(plane1);
         else
-            return CGAL_Object();
+            return Object();
     }
     if (c!=zero || r!=zero) {
         if (c*s == r*d)
-            return CGAL_make_object(plane1);
+            return make_object(plane1);
         else
-            return CGAL_Object();
+            return Object();
     }
-    return CGAL_make_object(plane1);
+    return make_object(plane1);
 }
 @}
 
@@ -340,23 +340,23 @@ CGAL_intersection(const CGAL_Plane_3<R> &plane1, const CGAL_Plane_3<R>&plane2)
 @$@<3D Line Box intersection declarations@>==@{
 
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Line_3<R> &line,
-        const CGAL_Bbox_3 &box) ;
+Object
+intersection(const Line_3<R> &line,
+        const Bbox_3 &box) ;
 
 template <class R>
-inline CGAL_Object
-CGAL_intersection(const CGAL_Bbox_3 &box,
-        const CGAL_Line_3<R> &line)
+inline Object
+intersection(const Bbox_3 &box,
+        const Line_3<R> &line)
 {
-    return CGAL_intersection(line, box);
+    return intersection(line, box);
 }
 @}
 
 @$@<3D CD Line Box intersection declarations@>==@{
 
-extern CGAL_Object
-CGAL_intersection_bl(const CGAL_Bbox_3 &box,
+extern Object
+intersection_bl(const Bbox_3 &box,
         double lx1, double ly1, double lz1,
         double lx2, double ly2, double lz2,
         bool min_infinite, bool max_infinite);
@@ -370,19 +370,19 @@ of the line and of the direction.
 
 @$@<3D Line Box intersection implementation@>==@{
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Line_3<R> &line,
-        const CGAL_Bbox_3 &box)
+Object
+intersection(const Line_3<R> &line,
+        const Bbox_3 &box)
 {
-    const CGAL_Point_3<R> &linepoint = line.point();
-    const CGAL_Direction_3<R> &linedir = line.direction();
-    return CGAL_intersection_bl(box,
-        CGAL_to_double(linepoint.x()),
-        CGAL_to_double(linepoint.y()),
-        CGAL_to_double(linepoint.z()),
-        CGAL_to_double(linedir.dx()),
-        CGAL_to_double(linedir.dy()),
-        CGAL_to_double(linedir.dz()),
+    const Point_3<R> &linepoint = line.point();
+    const Direction_3<R> &linedir = line.direction();
+    return intersection_bl(box,
+        to_double(linepoint.x()),
+        to_double(linepoint.y()),
+        to_double(linepoint.z()),
+        to_double(linedir.dx()),
+        to_double(linedir.dy()),
+        to_double(linedir.dz()),
         true, true
         );
 }
@@ -391,22 +391,22 @@ CGAL_intersection(const CGAL_Line_3<R> &line,
 
 
 @$@<3D CD Line Box intersection implementation@>==@{
-CGAL_Object
-CGAL_intersection_bl(const CGAL_Bbox_3 &box,
+Object
+intersection_bl(const Bbox_3 &box,
         double lpx, double lpy, double lpz,
         double ldx, double ldy, double ldz,
         bool min_infinite, bool max_infinite)
 {
-    typedef CGAL_Cartesian<double> R_cd;
-    CGAL_Point_3<R_cd> ref_point(lpx,lpy, lpz);
-    CGAL_Vector_3<R_cd> dir(ldx, ldy, ldz);
+    typedef Cartesian<double> R_cd;
+    Point_3<R_cd> ref_point(lpx,lpy, lpz);
+    Vector_3<R_cd> dir(ldx, ldy, ldz);
     double seg_min = 0.0, seg_max = 1.0;
 // first on x value
     if (dir.x() == 0.0) {
         if (ref_point.x() < box.xmin())
-            return CGAL_Object();
+            return Object();
         if (ref_point.x() > box.xmax())
-            return CGAL_Object();
+            return Object();
     } else {
         double newmin, newmax;
         if (dir.x() > 0.0) {
@@ -431,14 +431,14 @@ CGAL_intersection_bl(const CGAL_Bbox_3 &box,
                 seg_max = newmax;
         }
         if (seg_max < seg_min)
-            return CGAL_Object();
+            return Object();
     }
 // now on y value
     if (dir.y() == 0.0) {
         if (ref_point.y() < box.ymin())
-            return CGAL_Object();
+            return Object();
         if (ref_point.y() > box.ymax())
-            return CGAL_Object();
+            return Object();
     } else {
         double newmin, newmax;
         if (dir.y() > 0.0) {
@@ -463,14 +463,14 @@ CGAL_intersection_bl(const CGAL_Bbox_3 &box,
                 seg_max = newmax;
         }
         if (seg_max < seg_min)
-            return CGAL_Object();
+            return Object();
     }
 // now on z value
     if (dir.z() == 0.0) {
         if (ref_point.z() < box.zmin())
-            return CGAL_Object();
+            return Object();
         if (ref_point.z() > box.zmax())
-            return CGAL_Object();
+            return Object();
     } else {
         double newmin, newmax;
         if (dir.z() > 0.0) {
@@ -495,7 +495,7 @@ CGAL_intersection_bl(const CGAL_Bbox_3 &box,
                 seg_max = newmax;
         }
         if (seg_max < seg_min)
-            return CGAL_Object();
+            return Object();
     }
     if (min_infinite || max_infinite) {
         seg_max = 0.0;
@@ -503,8 +503,8 @@ CGAL_intersection_bl(const CGAL_Bbox_3 &box,
             "Zero direction vector of line detected.");
     }
     if (seg_max == seg_min)
-        return CGAL_make_object(ref_point + dir*seg_max);
-    return CGAL_make_object(CGAL_Segment_3<R_cd>(
+        return make_object(ref_point + dir*seg_max);
+    return make_object(Segment_3<R_cd>(
             ref_point + dir*seg_min, ref_point + dir*seg_max));
 }
 @}
@@ -514,16 +514,16 @@ CGAL_intersection_bl(const CGAL_Bbox_3 &box,
 @$@<3D Ray Box intersection declarations@>==@{
 
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Ray_3<R> &ray,
-        const CGAL_Bbox_3 &box) ;
+Object
+intersection(const Ray_3<R> &ray,
+        const Bbox_3 &box) ;
 
 template <class R>
-inline CGAL_Object
-CGAL_intersection(const CGAL_Bbox_3 &box,
-        const CGAL_Ray_3<R> &ray)
+inline Object
+intersection(const Bbox_3 &box,
+        const Ray_3<R> &ray)
 {
-    return CGAL_intersection(ray, box);
+    return intersection(ray, box);
 }
 @}
 
@@ -535,19 +535,19 @@ of the ray and of the direction.
 
 @$@<3D Ray Box intersection implementation@>==@{
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Ray_3<R> &ray,
-        const CGAL_Bbox_3 &box)
+Object
+intersection(const Ray_3<R> &ray,
+        const Bbox_3 &box)
 {
-    const CGAL_Point_3<R> &linepoint = ray.source();
-    const CGAL_Direction_3<R> &linedir = ray.direction();
-    return CGAL_intersection_bl(box,
-        CGAL_to_double(linepoint.x()),
-        CGAL_to_double(linepoint.y()),
-        CGAL_to_double(linepoint.z()),
-        CGAL_to_double(linedir.dx()),
-        CGAL_to_double(linedir.dy()),
-        CGAL_to_double(linedir.dz()),
+    const Point_3<R> &linepoint = ray.source();
+    const Direction_3<R> &linedir = ray.direction();
+    return intersection_bl(box,
+        to_double(linepoint.x()),
+        to_double(linepoint.y()),
+        to_double(linepoint.z()),
+        to_double(linedir.dx()),
+        to_double(linedir.dy()),
+        to_double(linedir.dz()),
         false, true
         );
 }
@@ -558,16 +558,16 @@ CGAL_intersection(const CGAL_Ray_3<R> &ray,
 @$@<3D Segment Box intersection declarations@>==@{
 
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Segment_3<R> &seg,
-        const CGAL_Bbox_3 &box) ;
+Object
+intersection(const Segment_3<R> &seg,
+        const Bbox_3 &box) ;
 
 template <class R>
-inline CGAL_Object
-CGAL_intersection(const CGAL_Bbox_3 &box,
-        const CGAL_Segment_3<R> &seg)
+inline Object
+intersection(const Bbox_3 &box,
+        const Segment_3<R> &seg)
 {
-    return CGAL_intersection(seg, box);
+    return intersection(seg, box);
 }
 @}
 
@@ -579,19 +579,19 @@ of the segment and of the direction.
 
 @$@<3D Segment Box intersection implementation@>==@{
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Segment_3<R> &seg,
-        const CGAL_Bbox_3 &box)
+Object
+intersection(const Segment_3<R> &seg,
+        const Bbox_3 &box)
 {
-    const CGAL_Point_3<R> &linepoint = seg.source();
-    const CGAL_Vector_3<R> &diffvec = seg.target()-linepoint;
-    return CGAL_intersection_bl(box,
-        CGAL_to_double(linepoint.x()),
-        CGAL_to_double(linepoint.y()),
-        CGAL_to_double(linepoint.z()),
-        CGAL_to_double(diffvec.x()),
-        CGAL_to_double(diffvec.y()),
-        CGAL_to_double(diffvec.z()),
+    const Point_3<R> &linepoint = seg.source();
+    const Vector_3<R> &diffvec = seg.target()-linepoint;
+    return intersection_bl(box,
+        to_double(linepoint.x()),
+        to_double(linepoint.y()),
+        to_double(linepoint.z()),
+        to_double(diffvec.x()),
+        to_double(diffvec.y()),
+        to_double(diffvec.z()),
         false, false
         );
 }
@@ -602,16 +602,16 @@ CGAL_intersection(const CGAL_Segment_3<R> &seg,
 @$@<3D Isobox Line intersection declarations@>@Z==@{
 
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Line_3<R> &line,
-        const CGAL_Iso_box_3 &box) ;
+Object
+intersection(const Line_3<R> &line,
+        const Iso_box_3 &box) ;
 
 template <class R>
-inline CGAL_Object
-CGAL_intersection(const CGAL_Iso_box_3 &box,
-        const CGAL_Line_3<R> &line)
+inline Object
+intersection(const Iso_box_3 &box,
+        const Line_3<R> &line)
 {
-    return CGAL_intersection(line, box);
+    return intersection(line, box);
 }
 @}
 
@@ -620,18 +620,18 @@ CGAL_intersection(const CGAL_Iso_box_3 &box,
 
 @$@<3D Isobox Line intersection implementation@>@Z==@{
 template <class R>
-CGAL_Object
-CGAL_intersection(const CGAL_Line_3<R> &line,
-        const CGAL_Iso_box_3 &box)
+Object
+intersection(const Line_3<R> &line,
+        const Iso_box_3 &box)
 {
-    typedef CGAL_Line_2<R> line_t;
+    typedef Line_2<R> line_t;
     typedef typename R::RT RT;
     typedef typename R::FT FT;
     bool all_values = true;
-    CGAL_Point_3<R> const & _ref_point(line.point());
-    CGAL_Vector_3<R> const & _dir(line.direction().vector());
-    CGAL_Point_3<R> const & _iso_min(box.min());
-    CGAL_Point_3<R> const & _iso_max(box.max());
+    Point_3<R> const & _ref_point(line.point());
+    Vector_3<R> const & _dir(line.direction().vector());
+    Point_3<R> const & _iso_min(box.min());
+    Point_3<R> const & _iso_max(box.max());
     int i;
     for (i=0; i< _ref_point.dimension(); i++) {
         if (_dir.homogeneous(i) == RT(0)) {
@@ -712,7 +712,7 @@ CGAL_intersection(const CGAL_Line_3<R> &line,
 
 
 @O@<../include/CGAL/bbox_intersection_3.h@>==@{
-@<CGAL_heading@>@(include/CGAL/bbox_intersection_3.h@,@-
+@<cgal_heading@>@(include/CGAL/bbox_intersection_3.h@,@-
 web/intersection_3.fw@,@-
 Geert-Jan Giezeman <geert@@cs.ruu.nl>@,@-
 Saarbruecken@)
@@ -731,7 +731,7 @@ Saarbruecken@)
 @}
 
 @O@<../include/CGAL/intersection_3_1.h@>==@{@-
-@<CGAL_heading@>@(include/CGAL/intersection_3_1.h@,@-
+@<cgal_heading@>@(include/CGAL/intersection_3_1.h@,@-
 web/intersection_3.fw@,@-
 Geert-Jan Giezeman <geert@@cs.ruu.nl>@,@-
 Saarbruecken@)
@@ -751,7 +751,7 @@ Saarbruecken@)
 @}
 
 @O@<../include/CGAL/intersection_3_1.C@>==@{@-
-@<CGAL_heading@>@(include/CGAL/intersection_3_1.C@,@-
+@<cgal_heading@>@(include/CGAL/intersection_3_1.C@,@-
 web/intersection_3.fw@,@-
 Geert-Jan Giezeman <geert@@cs.ruu.nl>@,@-
 Saarbruecken@)
@@ -771,7 +771,7 @@ compilation time.
 
 @O@<../include/CGAL/intersection_3.h@>==@{@-
 
-@<CGAL_heading@>@(include/CGAL/intersection_3.h@,@-
+@<cgal_heading@>@(include/CGAL/intersection_3.h@,@-
 web/intersection_3.fw@,@-
 Geert-Jan Giezeman <geert@@cs.ruu.nl>@,@-
 Saarbruecken@)
@@ -788,7 +788,7 @@ Saarbruecken@)
 @}
 
 @O@<../src/Bbox_3_intersections.C@>==@{@-
-@<CGAL_heading@>@(src/Bbox_3_intersections.C@,@-
+@<cgal_heading@>@(src/Bbox_3_intersections.C@,@-
 web/intersection_3.fw@,@-
 Geert-Jan Giezeman <geert@@cs.ruu.nl>@,@-
 Saarbruecken@)

@@ -26,11 +26,11 @@ inline long to_nt(int d)
 #include <CGAL/test_types.h>
 
 
-inline CGAL_TestfieldC to_nt(int d)
+inline CGAL::TestfieldC to_nt(int d)
 {
     unsigned char dummy1 = 'a';
     signed char dummy2 = 'a';
-    return CGAL_TestfieldC(dummy1, dummy2, (double)d);
+    return CGAL::TestfieldC(dummy1, dummy2, (double)d);
 }
 
 #endif
@@ -41,11 +41,11 @@ inline CGAL_TestfieldC to_nt(int d)
 #include <CGAL/test_types.h>
 
 
-inline CGAL_TestrepH to_nt(int d)
+inline CGAL::TestrepH to_nt(int d)
 {
     unsigned char dummy1 = 'a';
     signed char dummy2 = 'a';
-    return CGAL_TestrepH(dummy1, dummy2, d);
+    return CGAL::TestrepH(dummy1, dummy2, d);
 }
 
 #endif
@@ -66,9 +66,9 @@ inline double to_nt(int d)
 #  include <CGAL/Homogeneous.h>
 #  include <CGAL/Checked_long.h>
 
-inline CGAL_Checked_long to_nt(int d)
+inline CGAL::Checked_long to_nt(int d)
 {
-    return CGAL_Checked_long(long(d));
+    return CGAL::Checked_long(long(d));
 }
 
 #endif
