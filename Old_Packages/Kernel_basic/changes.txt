@@ -1,3 +1,7 @@
+3.90   (22 April 2002)
+- Add default ctor to Cartesian_double_to_Homogeneous to shut up warning of
+  SunPro in RobustnessDemo.
+
 3.89   (15 April 2002)
 - some changes for LEDA namespace and VC7
 

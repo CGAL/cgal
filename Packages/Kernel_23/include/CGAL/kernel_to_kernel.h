@@ -38,6 +38,8 @@ struct Cartesian_double_to_Homogeneous
   typedef Point_2< Homogeneous< NumberType> >    Point2;
   typedef Segment_2< Homogeneous< NumberType> >  Segment;
 
+  Cartesian_double_to_Homogeneous() {}
+
   Point2
   operator()(  const Point_2<Cartesian<double> >& p) const
   { return Point2( NumberType(p.x()), NumberType(p.y()) ); }
