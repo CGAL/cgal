@@ -1,3 +1,4 @@
+# Created by the script create_makefile
 # This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
@@ -14,13 +15,18 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
-           -g
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
+LIBPATH = \
+          $(CGAL_WINDOW_LIBPATH)
+
 LDFLAGS = \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_WINDOW_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -28,28 +34,28 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                ch_of_polyline \
-                convex_hull_2_demo \
-                convex_hull_of_ipoints 
+                ch_of_polyline$(EXE_EXT) \
+                convex_hull_2_demo$(EXE_EXT) \
+                convex_hull_of_ipoints$(EXE_EXT) 
 
-ch_of_polyline: ch_of_polyline.o
-	$(CGAL_CXX) -o ch_of_polyline ch_of_polyline.o $(LDFLAGS)
+ch_of_polyline$(EXE_EXT): ch_of_polyline$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)ch_of_polyline ch_of_polyline$(OBJ_EXT) $(LDFLAGS)
 
-convex_hull_2_demo: convex_hull_2_demo.o
-	$(CGAL_CXX) -o convex_hull_2_demo convex_hull_2_demo.o $(LDFLAGS)
+convex_hull_2_demo$(EXE_EXT): convex_hull_2_demo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)convex_hull_2_demo convex_hull_2_demo$(OBJ_EXT) $(LDFLAGS)
 
-convex_hull_of_ipoints: convex_hull_of_ipoints.o
-	$(CGAL_CXX) -o convex_hull_of_ipoints convex_hull_of_ipoints.o $(LDFLAGS)
+convex_hull_of_ipoints$(EXE_EXT): convex_hull_of_ipoints$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)convex_hull_of_ipoints convex_hull_of_ipoints$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-       ch_of_polyline.clean \
-       convex_hull_2_demo.clean \
-       convex_hull_of_ipoints.clean 
+                   ch_of_polyline.clean \
+                   convex_hull_2_demo.clean \
+                   convex_hull_of_ipoints.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
