@@ -1,3 +1,8 @@
+Version 4.184 on 17 November 2003
+- FPU.h : by default, use the ISO C99 version (which should make Darwin work).
+
+============================= CGAL 3.0 ===========================
+
 Version 4.183 on 22 October 2003
 - New headers (script filtered_predicate_generator.pl).
 

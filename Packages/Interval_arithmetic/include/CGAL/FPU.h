@@ -31,9 +31,7 @@
 // a helper class which is a nice way to protect blocks of code needing a
 // particular rounding mode.
 
-#ifdef __MWERKS__
-#  include <fenv.h>
-#elif defined __alpha__  && defined __linux__ 
+#if defined __alpha__  && defined __linux__ 
 extern "C" {
 #  include <fenv.h>
 }
@@ -52,6 +50,9 @@ extern "C" {
 #  include <float.h>
 #elif defined __sgi
 #  include <sys/fpu.h>
+#else
+   // By default we use the ISO C99 version.
+#  include <fenv.h>
 #endif
 
 
@@ -156,29 +157,12 @@ inline double IA_bug_sqrt(double d)
 #define CGAL_IA_SQRT(a) \
         CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)))
 
-#ifdef __STD_IEC_559__
-// This is a version for the ISO C99 standard, which aims at portability.
-// It should work with GNU libc 2.1.  Not tested yet.
-#define CGAL_IA_SETFPCW(CW) fesetround(CW)
-#define CGAL_IA_GETFPCW(CW) CW = fegetround()
-typedef fpu_control_t FPU_CW_t;
-#define CGAL_FE_TONEAREST    FE_TONEAREST
-#define CGAL_FE_TOWARDZERO   FE_TOWARDZERO
-#define CGAL_FE_UPWARD       FE_UPWARD
-#define CGAL_FE_DOWNWARD     FE_DOWNWARD
 
-#elif defined __MWERKS__
-#define CGAL_IA_SETFPCW(CW) fesetround(CW)
-#define CGAL_IA_GETFPCW(CW) CW = fegetround()
-typedef int FPU_CW_t;
-#define CGAL_FE_TONEAREST    FE_TONEAREST
-#define CGAL_FE_TOWARDZERO   FE_TOWARDZERO
-#define CGAL_FE_UPWARD       FE_UPWARD
-#define CGAL_FE_DOWNWARD     FE_DOWNWARD
-
-#elif defined __i386__
+#if defined __i386__
 // The GNU libc version (cf powerpc) is nicer, but doesn't work on libc 5 :(
 // This one also works with CygWin.
+// Note that the ISO C99 version is not enough because of the extended
+// mantissa issue on x86.
 #define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : :"m" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("fnstcw %0" : "=m" (CW))
 typedef unsigned short FPU_CW_t;
@@ -258,7 +242,7 @@ typedef unsigned int FPU_CW_t;
 #define CGAL_FE_UPWARD       FP_RND_RP
 #define CGAL_FE_DOWNWARD     FP_RND_RM
 
-#elif defined __alpha__  // preliminary suppor.
+#elif defined __alpha__  // preliminary support.
 #define CGAL_IA_SETFPCW(CW) (__ieee_set_fp_control(CW))
 #define CGAL_IA_GETFPCW(CW) (CW = __ieee_get_fp_control())
 typedef unsigned long FPU_CW_t;
@@ -287,7 +271,14 @@ typedef unsigned short FPU_CW_t;
 #define CGAL_FE_DOWNWARD     (0x400 | 0x127f)
 
 #else
-#error Architecture not supported
+// This is a version following the ISO C99 standard, which aims at portability.
+#define CGAL_IA_SETFPCW(CW)  fesetround(CW)
+#define CGAL_IA_GETFPCW(CW)  CW = fegetround()
+typedef int FPU_CW_t;
+#define CGAL_FE_TONEAREST    FE_TONEAREST
+#define CGAL_FE_TOWARDZERO   FE_TOWARDZERO
+#define CGAL_FE_UPWARD       FE_UPWARD
+#define CGAL_FE_DOWNWARD     FE_DOWNWARD
 #endif
 
 // User interface:
