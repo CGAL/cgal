@@ -1,0 +1,2 @@
+- Remove the requirement to have a ./.geomview file with (echo "started")
+  inside.  Synchronization can probably be done with select() ?
