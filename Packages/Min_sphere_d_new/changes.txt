@@ -1,5 +1,8 @@
 Changes done to the `Min_sphere_d_new' package
 
+Version 0.12.1 on 16-Jul-2001
+- renamed concept 'Optimisation_d_traits' to 'OptimisationDTraits'
+
 Version 0.12 on 09-Jul-2001
 - replaced template parameter 'R' by 'K'
 - fixed warning message of test program when no number type is available
