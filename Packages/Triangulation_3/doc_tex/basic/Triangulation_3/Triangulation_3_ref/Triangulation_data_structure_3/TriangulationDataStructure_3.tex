@@ -309,41 +309,51 @@ known to be flippable.
 The following modifier member functions guarantee
 the combinatorial validity of the resulting triangulation.
 
-\ccMethod{Vertex * insert_in_cell(const Vertex & v, Cell* c);} 
+\ccMethod{Vertex * insert_in_cell(Vertex * v, Cell* c);} 
 {Inserts vertex \ccc{v} in cell \ccc{c}. Cell \ccc{c} is split into four
 new cells, each of these cells being formed with \ccc{v} and a facet
 of \ccc{c}.
+The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
+vertex if \ccc{v} was \ccc{NULL}.
 \ccPrecond{\ccVar.dimension() $=3$ and \ccc{c} is a cell of \ccVar.}}
 
-\ccMethod{Vertex * insert_in_facet(const Vertex & v, const Facet & f);} 
+\ccMethod{Vertex * insert_in_facet(Vertex * v, const Facet & f);} 
 {Inserts vertex \ccc{v} in facet \ccc{f}. In dimension 3, the two
 incident cells are split into 3 new cells; in dimension 2, the facet is
 split into 3 facets.
+The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
+vertex if \ccc{v} was \ccc{NULL}.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$ and \ccc{f} is a
 facet of \ccVar.}} 
 
-\ccMethod{Vertex * insert_in_facet(const Vertex & v, Cell* c, int i);} 
+\ccMethod{Vertex * insert_in_facet(Vertex * v, Cell* c, int i);} 
 {Inserts \ccc{v} in facet \ccc{i} of \ccc{c}.
+The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
+vertex if \ccc{v} was \ccc{NULL}.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, $i \in \{0,1,2,3\}$ 
 in dimension~3, $i=3$ in dimension~2 and \ccc{(c,i)} is a facet of
 \ccVar.}} 
 
-\ccMethod{Vertex * insert_in_edge(const Vertex & v, Edge e);} 
+\ccMethod{Vertex * insert_in_edge(Vertex * v, Edge e);} 
 {Inserts vertex \ccc{v} in edge \ccc{e}. In dimension 3, all the
 incident cells are split into 2 new cells; in dimension 2, the 2
 incident facets are split into 2 new facets; in dimension 1, the edge is 
 split into 2 new edges.
+The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
+vertex if \ccc{v} was \ccc{NULL}.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 1$ and \ccc{e} is an edge of
 \ccVar.}} 
 
-\ccMethod{Vertex * insert_in_edge(const Vertex & v, Cell* c, int i, int j);} 
+\ccMethod{Vertex * insert_in_edge(Vertex * v, Cell* c, int i, int j);} 
 {Inserts \ccc{v} in edge $(i,j)$ of \ccc{c}.
+The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
+vertex if \ccc{v} was \ccc{NULL}.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 1$. $i\neq j$, $i,j \in
 \{0,1,2,3\}$ in dimension~3, $i,j \in \{0,1,2\}$ in dimension~2, $i,j
 \in \{0,1\}$ in dimension~1 and \ccc{(c,i,j)} is an edge of \ccVar.}}
 
 \ccMethod{Vertex * insert_increase_dimension(
-			const Vertex & v, 
+			Vertex * v, 
 			Vertex* star = NULL, 
 			bool reorient = false);}
 {Transforms a triangulation of the sphere $S^d$ of $\R^{d+1}$ into the
@@ -360,7 +370,9 @@ this order) is the corresponding face in the new triangulation. If the
 boolean \ccc{reorient} is set to true, all the faces of maximal
 dimension are given the opposite orientation.\\
 This method can be used to insert the first two vertices in an empty
-triangulation.
+triangulation.\\
+The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
+vertex if \ccc{v} was \ccc{NULL}.
 \ccPrecond{\ccVar.\ccc{dimension()} $= d < 3$. When
 \ccVar.\ccc{number_of_vertices()} $>0$, $star \neq NULL$ and \ccc{star}
 is a vertex of \ccVar.}} 
@@ -381,6 +393,24 @@ alt="insert_increase_dimension} (1-dimensional case)">
 \end{ccHtmlOnly}
 \end{figure} 
 
+\ccMethod{template < class Conflict_test > Vertex *
+insert_conflict(Vertex * v, Cell *c, const Conflict_test &tester);} 
+{Inserts vertex \ccc{v} by replacing all the cells in conflict with 
+\ccc{v} by the cells formed by \ccc{v} and the facets on the boundary
+of the region formed by these conflicting cells.\\
+\ccc{c} is the cell from which the search for conflicting cells
+starts. \ccc{Conflict_test} is a class whose operator \ccc{()} takes a
+\ccc{Cell*} as argument and returns a boolean which determines whether 
+the cell is in conflict with \ccc{v}.\\
+The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
+vertex if \ccc{v} was \ccc{NULL}.
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$. \ccc{c != NULL} and
+\ccc{c} conflicts with \ccc{v}. 
+Additionnally, the set of cells in conflict with \ccc{v} is supposed
+to be a set of connected cells of \ccc{t} (this precondition is not
+checked but must be satisfied).}
+}
+
 \ccMethod{void remove_degree_dplus1(Vertex* v, Cell *f = NULL);}
 {Removes \ccc{v}. The incident faces of maximal dimension incident to
 \ccc{v} are replaced by a single face of the same dimension. This
@@ -392,20 +422,6 @@ operation is exactly reciprocal to \ccVar.\ccc{insert_in_cell(v)}.
 {Deletes all cells and vertices. \ccVar\ is reset as a triangulation
 data structure constructed by the default constructor.}
 
-In addition to these requirements, in order to be used as a triangulation 
-data structure by the class
-\ccc{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}, the triangulation
-must offer the following method:
-
-\ccMethod{void star_region( set<void*> & region, Vertex* v, Cell* c, int li );}
-{Replaces all the cells in \ccc{region} by the cells formed by \ccc{v}
-and the facets on the boundary of \ccc{region}.
-\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$. \ccc{region} is a non-empty 
-set of connected cells of \ccc{t} (this precondition is not checked
-but must be satisfied). \ccc{c} is an 
-element of \ccc{region} whose facet of index \ccc{i} lies on the
-boundary of \ccc{region} (this precondition is not checked
-but must be satisfied).}}
 
 \begin{ccAdvanced}
 \ccHeading{Other modifiers}
