@@ -1,3 +1,8 @@
+1.10    (1 August 2001)
+- Use MP_Float when GMP is not there.
+- Use Filtered_kernel instead of Filtered_exact for VC++.
+- Remove warnings.
+
 1.9     (31 July 2001)
 - Last port to CGALWin.
 
