@@ -722,13 +722,15 @@ public:
 
 
 public:
-  void copy_tds(const Tds &tds)
+  Vertex* copy_tds(const Tds &tds, Vertex* vert = NULL)
+    // returns the new vertex corresponding to vert in the new tds
   {
     map< void*, void*, less<void*> > V;
     map< void*, void*, less<void*> > F;
     Vertex*  v2;
     Face* f2;
 
+    clear();
     int n = tds.number_of_vertices();
     
     _number_of_vertices = tds.number_of_vertices();
@@ -737,7 +739,7 @@ public:
     _dimension = tds.dimension();
     
             
-    if(n == 0){  return ;    }
+    if(n == 0){  return NULL;    }
 
     {
       Vertex_iterator it=tds.vertices_begin();
@@ -788,7 +790,10 @@ public:
     }
 
     CGAL_triangulation_postcondition( is_valid() );
-    return;
+    if ( vert != NULL ) {
+      return (Vertex*) V[vert];
+    }
+    else return NULL;
 
   }
  
