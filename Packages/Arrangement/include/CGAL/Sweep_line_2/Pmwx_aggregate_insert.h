@@ -465,11 +465,11 @@ protected:
 					     topPoint) &&
 	       m_traits->curve_compare_y_at_x(topPoint,
                                               (*slIter)->getCurve()) ==
-               SMALLER &&
+               LARGER &&
 	       m_traits->point_in_x_range((*slIter)->getCurve(), 
 					     vcurve->getBottomEnd()) &&
 	       m_traits->curve_compare_y_at_x(vcurve->getBottomEnd(),
-                                              (*slIter)->getCurve()) == LARGER)
+                                              (*slIter)->getCurve()) == SMALLER)
 	{
 	  SL_DEBUG(std::cout<<"checking \n";)
 	  SL_DEBUG((*slIter)->Print();) 
@@ -703,7 +703,6 @@ private:
  *   to the status line and attempt to intersect them with their neighbours. 
  * - We also check to see if the two intersect again to the right of the point.
  */
-// yyy
 void HandleRightCurves(PM &pm, SweepLinePlanarmap &tag)
 {
   SL_DEBUG(std::cout << "Handling right curves (" ;)
