@@ -1,5 +1,6 @@
 09 August 2004 Andreas Fabri
 - qualified types with CGAL:: namespace as SunPro does not like typedef "This<That> This;"
+- Removed some include statements in Snap_rounding_2.h
 
 21 April 2004 Radu Ursu
 - added end of line at the end of file snap_rounding_2_toolbar.h
