@@ -1,3 +1,9 @@
+01 June 2004 Radu Ursu
+- fixed minor bug in create_internal_module script
+- added create_modules script that is used to build modules automaticly. This 
+  script is using create_internal_module to build the modules. It will be 
+  documented in the Developers_manual ASAP(today) 
+
 31 May 2004 Radu Ursu
 - create_internal_module removes files from the root of the module including install_cgal if it is the case.
 

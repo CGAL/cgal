@@ -1,0 +1,28 @@
+#!/bin/sh
+
+CVSDIR="/cygdrive/d/CGALCVS"
+MODULES_DIRECTORY="Modules"
+
+cd ${CVSDIR} || return
+
+for i in `ls ${MODULES_DIRECTORY}/*`
+do
+  MAIN_NAME="`basename ${i}`"
+  printf "\n\nCreating module ${MAIN_NAME}\n"
+  if [ -r "${MAIN_NAME}" ]; then
+    printf "  Directory ${MAIN_NAME} exists, removing ...\n"
+    rm -rf ${MAIN_NAME}
+  fi
+  for j in `cat ${i}`
+  do
+    if [ -r "${j}" ]; then
+      printf "  Updating package ${j} ...\n" 
+#      cvs update ${j}
+    else
+      printf "  Check out package ${j} ...\n" 
+      cvs co -P ${j}
+    fi
+  done
+  ./create_internal_module -m ${MAIN_NAME} -r CGAL-3.1-I-76 -n 1003004200 -a ${CVSDIR} -p ${i} -s "${CVSDIR}/Scripts/scripts"
+
+done

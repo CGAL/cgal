@@ -44,9 +44,9 @@ Exactly one of the options -h or -r must be present.
 
 Example of how to use the script:
 >cvs -q co -P -r current_submission All
->./create_internal_release -r CGAL-I-1
+>./create_internal_module -m CGAL-I-01 -r CGAL-I-1
 or
->./create_internal_release -r CGAL-I-7 -d \$HOME -a \$HOME/CGALCVS/All -s \$HOME/scripts -l release_creation.lock -p include_in_release
+>./create_internal_module -r CGAL-I-7 -d \$HOME -a \$HOME/CGALCVS/All -s \$HOME/scripts -l release_creation.lock -p include_in_release
 
 
 EOF
@@ -794,7 +794,7 @@ sub make_testscripts()
     chdir 'examples';
     # Windows specific stuff
     print "Creating VC++ projects in examples ...\n";
-    system("$SCRIPTSDIR/../../wininst/developer_scripts/examples/C2vcproj", "*");
+    system("${SCRIPTSDIR}/../../wininst/developer_scripts/examples/C2vcproj", "*");
     print "Creating makefiles in examples ...\n";
     foreach $DIR (glob("*")) {
 	if ( -d $DIR ) {
@@ -990,6 +990,7 @@ make_src_makefiles();
 
 chdir "$RELEASEDIR/$MODULE_NAME" or die;
 system("rm", "-rf", "test");
+system("rm", "-rf", "developer_scripts"); 
 system("rm -f * 2> /dev/null");
 
 unlock;
