@@ -1,5 +1,7 @@
 Changes done to the `Optimisation_doc' package
 
+- Added Min_sphere_of_spheres_d to the manuals
+
 Version 1.0.17 on 29-Oct-2003
 - Changed example in user manual (no CGALWin anymore).
 
