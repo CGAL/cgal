@@ -31,8 +31,8 @@ my @trusted_hosts = (
 	'uni-trier.de',
 	'cs.unc.edu',
         'twi.tudelft.nl',
-	'math.tau.ac.il');
-#'risc.uni-linz.ac.at'
+	'tau.ac.il');
+
 sub get_url()
 {
     my $html_address="";
