@@ -1,3 +1,7 @@
+Version 3.7 (21 April 2000)
+- fixed a bug related to previous
+  removing of  leading underscores in variables names
+
 Version 3.6 (20 April 2000)
 - fixed a bug in compare_xC2
 - removed leading underscores in variables names
