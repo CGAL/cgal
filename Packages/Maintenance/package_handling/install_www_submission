@@ -9,7 +9,7 @@ use Cwd;
 my $testing=0;
 my $MAIL_PROG='/local/bin/smtp-relay';
 
-my ($packagedir, $oldpackagedir, $download_dir,
+my ($sender, $submission, $packagedir, $oldpackagedir, $download_dir,
     $maintainer, $console_output, $tempdir, $check_source_file_prog);
 my $WGET;
 
@@ -57,7 +57,7 @@ sub log_header($)
     }
     print LOGFILE "-------------------------------------------------------\n";
     print LOGFILE "  $_[0]\n";
-    printf LOGFILE "-------------------------------------------------------\n";
+    print LOGFILE "-------------------------------------------------------\n";
 }
 
 sub log_msg($)
@@ -65,7 +65,7 @@ sub log_msg($)
     if ( $console_output ) {
         print  "$_[0]\n";
     }
-    printf LOGFILE "  $_[0]\n";
+    print LOGFILE "  $_[0]\n";
 }
 
 sub log_done()
@@ -299,6 +299,7 @@ sub remove_files()
 	    next if $file eq 'description.txt';
 	    next if $file eq 'long_description.txt';
 	    next if $file eq 'changes.txt';
+	    next if $file eq 'submission_info';
 	    unlink $file;
 	}
     }
@@ -335,7 +336,6 @@ sub install_submission($$)
     $package_name = shift;
     $file_pathname = "$download_dir/$file_name";
 
-    chdir($tempdir);
     if (! unpack_package( $file_pathname) ) {
 	log_msg("Failed to unpack $file_pathname");
 	return 0;
@@ -383,6 +383,12 @@ sub do_submission($)
 	log_msg "ERROR: download failed!";
 	return 0;
     } 
+
+    chdir($tempdir);
+    open SUBMISSION_INFO, ">submission_info";
+    print SUBMISSION_INFO "Submitted by: $sender.\n";
+    print SUBMISSION_INFO "URL: $url.\n";
+    close SUBMISSION_INFO;
     
     if (install_submission("$file_name",$package_name) ) {
 	log_header "Package was successfully installed!";
@@ -405,8 +411,7 @@ if ($#ARGV < 1) {
     exit 1;
 }
 
-my $submission;
-my $sender=shift;
+$sender=shift;
 my $starting_directory = cwd();
 
 if ($starting_directory =~ m'CGAL/Geert/maintenance') {
