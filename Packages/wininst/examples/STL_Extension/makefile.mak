@@ -4,6 +4,8 @@
 #---------------------------------------------------------------------#
 #                    include platform specific settings
 #---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 !include $(CGAL_MAKEFILE)
 
@@ -12,17 +14,23 @@
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
-           $(CGAL_CXXFLAGS)
+           $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
 LIBPATH = \
+          $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
+          $(TESTSUITE_LDFLAGS) \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -30,9 +38,9 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                in_place_list_prog \
-                min_element_if_example_noheader \
-                min_max_element_example_noheader 
+                in_place_list_prog$(EXE_EXT) \
+                min_element_if_example_noheader$(EXE_EXT) \
+                min_max_element_example_noheader$(EXE_EXT) 
 
 in_place_list_prog$(EXE_EXT): in_place_list_prog$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)in_place_list_prog in_place_list_prog$(OBJ_EXT) $(LDFLAGS)

@@ -4,6 +4,8 @@
 #---------------------------------------------------------------------#
 #                    include platform specific settings
 #---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 !include $(CGAL_MAKEFILE)
 
@@ -12,8 +14,9 @@
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           $(EXTRA_FLAGS) \
-           $(CGAL_CXXFLAGS)
+           $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -23,6 +26,7 @@ LIBPATH = \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -30,17 +34,27 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                example1$(EXE_EXT) \
+                example_color$(EXE_EXT) \
+                example_hierarchy$(EXE_EXT) \
+                example_simple$(EXE_EXT) \
                 example_tds$(EXE_EXT) 
 
-example1$(EXE_EXT): example1$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example1 example1$(OBJ_EXT) $(LDFLAGS)
+example_color$(EXE_EXT): example_color$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_color example_color$(OBJ_EXT) $(LDFLAGS)
+
+example_hierarchy$(EXE_EXT): example_hierarchy$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_hierarchy example_hierarchy$(OBJ_EXT) $(LDFLAGS)
+
+example_simple$(EXE_EXT): example_simple$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_simple example_simple$(OBJ_EXT) $(LDFLAGS)
 
 example_tds$(EXE_EXT): example_tds$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_tds example_tds$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   example1.clean \
+                   example_color.clean \
+                   example_hierarchy.clean \
+                   example_simple.clean \
                    example_tds.clean 
 
 #---------------------------------------------------------------------#

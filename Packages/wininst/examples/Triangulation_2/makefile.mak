@@ -4,6 +4,8 @@
 #---------------------------------------------------------------------#
 #                    include platform specific settings
 #---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 !include $(CGAL_MAKEFILE)
 
@@ -12,8 +14,9 @@
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           $(EXTRA_FLAGS) \
-           $(CGAL_CXXFLAGS)
+           $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -23,6 +26,7 @@ LIBPATH = \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -31,7 +35,7 @@ LDFLAGS = \
 
 all:            \
                 colored_face$(EXE_EXT) \
-                example$(EXE_EXT) \
+                constrained$(EXE_EXT) \
                 points$(EXE_EXT) \
                 regular$(EXE_EXT) \
                 terrain$(EXE_EXT) \
@@ -41,8 +45,8 @@ all:            \
 colored_face$(EXE_EXT): colored_face$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)colored_face colored_face$(OBJ_EXT) $(LDFLAGS)
 
-example$(EXE_EXT): example$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example example$(OBJ_EXT) $(LDFLAGS)
+constrained$(EXE_EXT): constrained$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)constrained constrained$(OBJ_EXT) $(LDFLAGS)
 
 points$(EXE_EXT): points$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)points points$(OBJ_EXT) $(LDFLAGS)
@@ -61,7 +65,7 @@ voronoi$(EXE_EXT): voronoi$(OBJ_EXT)
 
 clean: \
                    colored_face.clean \
-                   example.clean \
+                   constrained.clean \
                    points.clean \
                    regular.clean \
                    terrain.clean \
