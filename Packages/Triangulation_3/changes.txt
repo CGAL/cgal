@@ -1,4 +1,4 @@
-Version 1.59 (?? June 01)
+Version 1.59 (14 June 01)
 - Test-suite cleanups.
 - Change prototype of tds::clear_cells_only() to avoid unnecessary vector
   copy.
