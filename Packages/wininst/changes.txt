@@ -1,3 +1,8 @@
+03 June 2004 Radu Ursu
+- updated cgallib.vcproj: removed oprimisation_basic.C 
+- this project is also a VC++ 7.1 project, which means that it can't be 
+  opened with VC++7.0 which is no longer supported 
+
 21 May 2004 Sylvain Pion
 - C2vcproj : pick master.vcproj where it is instead of forcing the release
              scripts to copy it.
