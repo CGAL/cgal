@@ -1313,22 +1313,27 @@ any problems.
 \section{Common problems and solutions}
 \label{sec:common_problems}
 
-\subsection*{Problem --- Linking of word ``Traits'' in HTML}
-\ccIndexSubsubitemBegin{manuals}{HTML}{preventing Traits linking}
+\subsection*{Problem --- Undesired Links in HTML Manual}
+\ccIndexSubsubitemBegin{manuals}{HTML}{preventing links}
 \ccIndexSubitem{traits class}{naming}
 
 \begin{description}
-  \item[{\bf Cause:}] This is caused by the use of the non-mnemonic name 
-``Traits'' for a traits class that is described in a {\tt ccClass} 
-environment that is not preceded by a \verb|\ccHtmlNoClassLinks| command.  
+  \item[{\bf Cause:}] Any occurrence of the name of a class, function,
+  etc. that is documented in the reference manual is automatically
+  crosslinked to the definition of that entity.
 
-  \item[{\bf Solution:}] The preferred solution is to use a better name for the 
-traits class ({\em e.g.}, one that uses the package name as well such as
-\ccc{Planar_map_traits}), 
-although one can also add the command \verb|\ccHtmlNoClassLinks| before the 
-\nonlinkedpath|\begin{ccClass}{Traits}| command to turn off this linking.
+  \item[{\bf Solution:}] Sometimes, the preferred solution is to
+  chosse a better name for the entity under consideration. For
+  example, a traits class for a planar map should be called
+  \ccc{Planar_map_traits} rather than \ccc{Traits}. Another
+  possibility is to add the command \verb|\ccHtmlNoClassLinks| before
+  the \nonlinkedpath|\begin{ccClass}{Traits}| command to globally turn
+  off linking of the word \textit{Traits}. To disable links from one
+  word only, use the command \verb|\ccHtmlNoLinksFrom|. For example,
+  \nonlinkedpath|\ccHtmlNoLinksFrom{Traits}| will not create links for
+  this particular occurrence of the word \textit{Traits}.
 \end{description}
-\ccIndexSubsubitemEnd{manuals}{HTML}{preventing Traits linking}
+\ccIndexSubsubitemEnd{manuals}{HTML}{preventing links}
         
 \subsection*{Problem --- Nontransparent backgrounds for HTML figures} 
 \ccIndexSubsubitemBegin{manuals}{HTML}{figures}
