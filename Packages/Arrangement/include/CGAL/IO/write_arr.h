@@ -252,7 +252,7 @@ void write_arr(const Arrangement& arr,
         //writer.write_index(en_index[edge_iter->children_begin()]);
         //writer.write_index(en_index[edge_iter->children_end()]);
         
-        writer.write_comment("Halfedge indices associtaed with edge nodes");
+        writer.write_comment("Halfedge indices associated with edge nodes");
         writer.write_value(h_index[Halfedge_const_iterator(edge_iter->halfedge())]);
       }
       else{
@@ -265,8 +265,9 @@ void write_arr(const Arrangement& arr,
       writer.write_edge(edge_iter);
      
     }
-    
-    writer.write_edge_nodes_end();
+
+    writer.write_comment("finished current level");
+    //writer.write_edge_nodes_end();
   }
 
   writer.write_title("End of Arrangement");
@@ -275,4 +276,20 @@ void write_arr(const Arrangement& arr,
 CGAL_END_NAMESPACE
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
