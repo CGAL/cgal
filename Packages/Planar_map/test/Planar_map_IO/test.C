@@ -83,7 +83,7 @@ typedef CGAL::Pm_segment_traits_leda_kernel_2           Kernel;
 
 typedef CGAL::Pm_segment_traits_2<Kernel>               Traits;
 typedef Traits::Point_2                                 Point_2;
-typedef Traits::X_curve_2                               X_curve_2;
+typedef Traits::X_monotone_curve_2                               X_monotone_curve_2;
 typedef CGAL::Pm_default_dcel<Traits>                   Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>                 Planar_map;
  
@@ -310,9 +310,9 @@ private:
 #if CGAL_PM_TEST_TRAITS == CGAL_SEGMENT_TRAITS || \
     CGAL_PM_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 
-  X_curve_2 read_segment_curve(std::ifstream & file, bool reverse_order)
+  X_monotone_curve_2 read_segment_curve(std::ifstream & file, bool reverse_order)
   {
-    X_curve_2 segment;
+    X_monotone_curve_2 segment;
     NT    x,y; 
 
     // read two segment points
@@ -325,9 +325,9 @@ private:
     m_all_points_list.push_back(p2);
     
     if (reverse_order)
-      segment = X_curve_2(p1,p2);
+      segment = X_monotone_curve_2(p1,p2);
     else
-      segment = X_curve_2(p2,p1);
+      segment = X_monotone_curve_2(p2,p1);
 
     return segment;
   }
@@ -335,9 +335,9 @@ private:
 #elif CGAL_PM_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
       CGAL_PM_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
 
-  X_curve_2 read_polyline_curve(std::ifstream & file, bool reverse_order)
+  X_monotone_curve_2 read_polyline_curve(std::ifstream & file, bool reverse_order)
   {
-    X_curve_2 polyline;
+    X_monotone_curve_2 polyline;
     NT x,y; 
     int num_x_curves ;
     Point_list point_list;
@@ -397,7 +397,7 @@ private:
                                    bool /* reverse_order */)
   {
     NT x,y; 
-    X_curve_2 curr_curve;
+    X_monotone_curve_2 curr_curve;
     std::ofstream  pm_file("pm.txt", /*std::ios::in |*/ std::ios::out);
     
     pm_file.clear();
@@ -476,7 +476,7 @@ public:
 //       Arr_2::Face_handle    f  = arr->unbounded_face();
 //       Arr_2::Holes_iterator it = f->holes_begin(),end=f->holes_end();
 //       Arr_2::Ccb            c  = *it;
-    //const X_curve_2 & cv = curr->curve();
+    //const X_monotone_curve_2 & cv = curr->curve();
 
     // Check validity of arrangement after insertion
     CGAL_assertion(pm.is_valid());

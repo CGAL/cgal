@@ -28,7 +28,7 @@
 typedef CGAL::Pm_default_dcel<Traits>   Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits> Planar_map;
 typedef Traits::Point_2                 Point_2;
-typedef Traits::X_curve                 X_curve_2;
+typedef Traits::X_curve                 X_monotone_curve_2;
 
 typedef Planar_map::Halfedge_handle Halfedge_handle;
 typedef Planar_map::Face_iterator Face_iterator;
@@ -53,13 +53,13 @@ int main()
   while (n--) {
     inputt x1, y1, x2, y2;
     std::cin >> x1 >> y1 >> x2 >> y2;
-    Halfedge_handle h = Pm.insert(X_curve_2(Point_2(x1,y1),Point_2(x2,y2)));
+    Halfedge_handle h = Pm.insert(X_monotone_curve_2(Point_2(x1,y1),Point_2(x2,y2)));
     std::cout << "Inserted (" << h->curve() << ")" << std::endl;
   }
 
   assert(Pm.is_valid());
 
-  X_curve_2 seg = (Pm.halfedges_begin())->curve();
+  X_monotone_curve_2 seg = (Pm.halfedges_begin())->curve();
 
   std::cout << "\nseg = " << seg << std::endl;
 
@@ -73,8 +73,8 @@ int main()
   std::cout << " ... " ; 
 
   Halfedge_handle h = Pm.split_edge(Pm.halfedges_begin(),
-                                    X_curve_2(s, mid_point),
-                                    X_curve_2(mid_point, t));
+                                    X_monotone_curve_2(s, mid_point),
+                                    X_monotone_curve_2(mid_point, t));
   assert(Pm.is_valid());
   std::cout << "map valid" << std::endl;
 

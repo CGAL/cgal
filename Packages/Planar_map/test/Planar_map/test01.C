@@ -39,7 +39,7 @@
 typedef CGAL::Pm_default_dcel<Traits>   Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits> Planar_map;
 typedef Traits::Point_2                 Point_2;
-typedef Traits::X_curve_2               X_curve_2;
+typedef Traits::X_monotone_curve_2               X_monotone_curve_2;
 typedef Planar_map::Halfedge_handle     Halfedge_handle;
 typedef Planar_map::Locate_type         Locate_type;
 #endif // VOID_TEST
@@ -63,7 +63,7 @@ int main()
   while (n--) {
     inputt x1, y1, x2, y2;
     std::cin >> x1 >> y1 >> x2 >> y2;
-    Halfedge_handle hh = Pm.insert(X_curve_2(Point_2(x1,y1),Point_2(x2,y2)));
+    Halfedge_handle hh = Pm.insert(X_monotone_curve_2(Point_2(x1,y1),Point_2(x2,y2)));
     std::cout << "Inserted (" << hh->curve() << ")"<< std::endl;
   }
   assert(Pm.is_valid());

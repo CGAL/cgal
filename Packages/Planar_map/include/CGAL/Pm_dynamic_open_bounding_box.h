@@ -273,7 +273,7 @@ public:
         while(it!=pm->halfedges_end()) 
           {
             const X_curve& cv=it->curve();
-            if (!traits->curve_is_in_x_range(cv,p) && !insert(cv,r))
+            if (!traits->point_in_x_range(cv,p) && !insert(cv,r))
               return false;
             else {++it;++it;}
           }
@@ -372,13 +372,13 @@ protected:
   bool cooriented(const Ccb_halfedge_circulator& h,const X_curve& cv) const
   {
 #ifdef CGAL_PMBB_DEBUG
-    if (!traits->curve_is_same(h->curve(),cv))
+    if (!traits->curve_equal(h->curve(),cv))
       std::cerr << "\nbool cooriented(h," << cv << "); h->curve()=" 
                 << h->curve() << std::endl;
 #endif
-    CGAL_precondition(traits->curve_is_same(h->curve(),cv));
+    CGAL_precondition(traits->curve_equal(h->curve(),cv));
     const Point& s=h->source()->point(),&t=h->target()->point();
-    if (traits->point_is_same_x(s,t))
+    if (traits->point_equal_x(s,t))
       {
         CGAL_precondition(
           traits->curve_get_status(cv)==Traits::CURVE_VERTICAL_UP || 
@@ -466,19 +466,19 @@ protected:
           t->set_point(traits->curve_source(cv));
           s->set_point(traits->curve_target(cv));
         }
-      CGAL_postcondition(!traits->point_is_same(
+      CGAL_postcondition(!traits->point_equal(
            h->source()->point(),h->target()->point()));
 #ifdef CGAL_PM_DEBUG
-        if (!(traits->point_is_same(
+        if (!(traits->point_equal(
             traits->curve_source(h->curve()),
             h->source()->point()) &&
-          traits->point_is_same(
+          traits->point_equal(
             traits->curve_target(h->curve()),
             h->target()->point()) ||
-          traits->point_is_same(
+          traits->point_equal(
             traits->curve_source(h->curve()),
             h->target()->point()) &&
-          traits->point_is_same(
+          traits->point_equal(
                                 traits->curve_target(h->curve()),
 				h->source()->point())))
           {
@@ -490,16 +490,16 @@ protected:
             std::cout << " h->target()->point()=" << h->target()->point();
           }
         CGAL_postcondition(
-          traits->point_is_same(
+          traits->point_equal(
             traits->curve_source(h->curve()),
             h->source()->point()) &&
-          traits->point_is_same(
+          traits->point_equal(
             traits->curve_target(h->curve()),
             h->target()->point()) ||
-          traits->point_is_same(
+          traits->point_equal(
             traits->curve_source(h->curve()),
             h->target()->point()) &&
-          traits->point_is_same(
+          traits->point_equal(
             traits->curve_target(h->curve()),h->source()->point()) );
 #endif
         ++it;

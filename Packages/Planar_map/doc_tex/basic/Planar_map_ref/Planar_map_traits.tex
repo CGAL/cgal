@@ -36,14 +36,14 @@
     \ccNestedType{Point_2}{A type that holds the position of a vertex in
     the plane.}
     
-    \ccNestedType{X_curve_2}{A type that holds an $x$-monotone curve in the
+    \ccNestedType{X_monotone_curve_2}{A type that holds an $x$-monotone curve in the
     plane.}
 
 \ccHeading{Categories}
     
     \ccNestedType{Has_left_category}{A boolean category that indicates
      whether the method
-     \ccc{curve_compare_at_x_left()} is required or
+     \ccc{curves_compare_y_at_x_left()} is required or
      alternatively the methods
      \ccc{point_reflect_in_x_and_y()} and
      \ccc{curve_reflect_in_x_and_y()} are required. It must be either
@@ -83,51 +83,51 @@
                       $y(p1) < y(p2)$;
     \ccStyle{EQUAL} otherwise.}
 
-    \ccMethod{bool curve_is_vertical(const X_curve_2& cv);} 
+    \ccMethod{bool curve_is_vertical(const X_monotone_curve_2& cv);} 
    {returns \ccStyle{true} if \ccStyle{cv} is a vertical segment, 
     \ccStyle{false} otherwise.}
         
-    \ccMethod{bool curve_is_in_x_range( const X_curve_2& cv,
+    \ccMethod{bool point_in_x_range( const X_monotone_curve_2& cv,
        const Point_2& pnt );}
     {returns \ccStyle{true} if \ccStyle{pnt} is in the $x$ range of
     \ccStyle{cv}, \ccStyle{false} otherwise.}
     
-    \ccMethod{Comparison_result curve_compare_at_x(const X_curve_2& cv1,
-      const X_curve_2& cv2, const Point_2& pnt );}
+    \ccMethod{Comparison_result curves_compare_y_at_x(const X_monotone_curve_2& cv1,
+      const X_monotone_curve_2& cv2, const Point_2& pnt );}
     {compares the $y$-coordinate of $cv1$ and $cv2$ at the $x$-coordinate 
     of $pnt$. Returns \ccStyle{LARGER} if $cv1(x(q)) > cv2(x(q))$;
     \ccStyle{SMALLER} if $cv1(x(q)) < cv2(x(q))$; \ccStyle{EQUAL} otherwise.
     \ccPrecond{$cv1$ and $cv2$ are defined at $pnt$'s $x$-coordinate.}}
 
-    \ccMethod{Comparison_result curve_compare_at_x_left(const X_curve_2& cv1,
-      const X_curve_2& cv2, const Point_2& pnt);}
+    \ccMethod{Comparison_result curves_compare_y_at_x_left(const X_monotone_curve_2& cv1,
+      const X_monotone_curve_2& cv2, const Point_2& pnt);}
     {compares the $y$-coordinate of $cv1$ and $cv2$ immediately to the
      left of the $x$-coordinate of $pnt$.
      \ccPrecond{$cv1$ and $cv2$ meet at $pnt$ $x$-coordinate.}
      \ccPrecond{$cv1$ and $cv2$ are defined to the left of $pnt$'s
      $x$-coordinate.}}
     
-    \ccMethod{Comparison_result curve_compare_at_x_right(const X_curve_2& cv1,
-      const X_curve_2& cv2, const Point_2& pnt);}
+    \ccMethod{Comparison_result curves_compare_y_at_x_right(const X_monotone_curve_2& cv1,
+      const X_monotone_curve_2& cv2, const Point_2& pnt);}
     {compares the $y$-coordinate of $cv1$ and $cv2$ immediately to the right of
      the $x$-coordinate of $pnt$.
      \ccPrecond{$cv1$ and $cv2$ meet at $pnt$ $x$-coordinate.}
      \ccPrecond{$cv1$ and $cv2$ are defined to the left of $pnt$'s
      $x$-coordinate.}}
     
-    \ccMethod{Curve_point_status curve_get_point_status(const X_curve_2& cv,
+    \ccMethod{Curve_point_status curve_compare_y_at_x(const X_monotone_curve_2& cv,
        const Point_2& pnt);}
     {compares the y-coordinates of $pnt$ and the vertical projection of $pnt$
       on $cv$. Returns \ccStyle{SMALLER} if $cv(x(p)) < y(p)$; \ccStyle{LARGER}
       if $cv(x(p)) > y(p)$; \ccStyle{EQUAL} otherwise (p is on the curve).
     \ccPrecond{$cv$ is defined at $pnt$'s $x$-coordinate.}}
 
-    \ccMethod{bool curve_is_same(const X_curve_2 & cv1,
-                                 const X_curve_2 & cv2);}
+    \ccMethod{bool curve_equal(const X_monotone_curve_2 & cv1,
+                                 const X_monotone_curve_2 & cv2);}
     {returns \ccc{true} if \ccc{cv1} and \ccc{cv2} have the same graph, 
       \ccc{false} otherwise.}
 
-    \ccMethod{bool point_is_same(const Point_2 & p1,
+    \ccMethod{bool point_equal(const Point_2 & p1,
                                  const Point_2 & p2);}
     {returns \ccc{true} if \ccc{p1} is the same as \ccc{p2}, \ccc{false}
       otherwise.}
@@ -135,9 +135,9 @@
 %construction function
 %---------------------   
 
-    \ccMethod{Point_2 curve_source(const X_curve_2& cv);}
+    \ccMethod{Point_2 curve_source(const X_monotone_curve_2& cv);}
              {returns the source of \ccc{cv}.}
-    \ccMethod{Point_2 curve_target(const X_curve_2& cv);}
+    \ccMethod{Point_2 curve_target(const X_monotone_curve_2& cv);}
              {returns the target of \ccc{cv}.}
 
 %additions needed for the default point location strategy

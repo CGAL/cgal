@@ -53,11 +53,11 @@ public:
     
   // Traits objects
   typedef typename Kernel::Point_2        Point_2;
-  typedef typename Kernel::Segment_2      X_curve_2;
+  typedef typename Kernel::Segment_2      X_monotone_curve_2;
 
   // Backward compatability    
   typedef Point_2                         Point;
-  typedef X_curve_2                       X_curve;
+  typedef X_monotone_curve_2              X_curve;
 
 protected:
   // Functors:
@@ -77,8 +77,6 @@ public:
    * \param p1 the first point
    * \param p2 the second point
    * \return LARGER if x(p1) > x(p2); SMALLER if x(p1) < x(p2); or else EQUAL
-   *
-   * \todo replace indirect use compare_x() with compare_x_2()
    */
   Comparison_result compare_x(const Point_2 & p1, const Point_2 & p2) const
   { return compare_x_2_object()(p1, p2); }
@@ -96,13 +94,11 @@ public:
   /*! curve_is_vertical()
    * \param cv the curve
    * \return true iff the curve is vertical
-   *
-   * \todo replace indirect use curve_is_vertical() with is_vertical_2()
    */
-  bool curve_is_vertical(const X_curve_2 & cv) const 
+  bool curve_is_vertical(const X_monotone_curve_2 & cv) const 
   { return is_vertical_2_object()(cv); }
 
-  /*! curve_is_in_x_range()
+  /*! point_in_x_range()
    * \param cv the curve
    * \param q the point
    * \return true if q is in the x range of cv
@@ -112,7 +108,7 @@ public:
    * functions (curve_source(), curve_target()) that return the source and
    * target points by value, which is not as efficient as possible.
    */
-  bool curve_is_in_x_range(const X_curve_2 & cv, const Point_2 & q) const
+  bool point_in_x_range(const X_monotone_curve_2 & cv, const Point_2 & q) const
   {
     Construct_vertex_2 construct_vertex = construct_vertex_2_object();
     const Point_2 & source = construct_vertex(cv, 0);
@@ -122,7 +118,7 @@ public:
              (less_x(q, source) && less_x(q, target)));
   }
 
-  /*! curve_compare_at_x() compares the y-coordinate of two given curves at
+  /*! curves_compare_y_at_x() compares the y-coordinate of two given curves at
    * the x-coordinate of a given point.
    * \param cv1 the first curve
    * \param cv2 the second curve
@@ -130,29 +126,27 @@ public:
    * \return LARGER if cv1(x(q)) > cv2(x(q)); SMALLER if cv1(x(q)) < cv2(x(q));
    * or else EQUAL.
    * \pre The point q is in the x range of the two curves.
-   *
-   * \todo replace indirect use curve_compare_at_x() with compare_y_at_x_2()
    */
-  Comparison_result curve_compare_at_x(const X_curve_2 & cv1, 
-				       const X_curve_2 & cv2, 
-				       const Point_2 & q) const
+  Comparison_result curves_compare_y_at_x(const X_monotone_curve_2 & cv1, 
+                                          const X_monotone_curve_2 & cv2, 
+                                          const Point_2 & q) const
   {
-    CGAL_precondition(curve_is_in_x_range(cv1, q));
-    CGAL_precondition(curve_is_in_x_range(cv2, q));
+    CGAL_precondition(point_in_x_range(cv1, q));
+    CGAL_precondition(point_in_x_range(cv2, q));
 
     return compare_y_at_x_2_object()(q, cv1, cv2);
   }
 
 #if !defined(HAS_LEFT_NOT)
-  /*! curve_compare_at_x_left() compares the y value of two curves in an
+  /*! curves_compare_y_at_x_left() compares the y value of two curves in an
    * epsilon environment to the left of the x value of the input point
    * Preconditions: The point q is in the x range of the two curves, and both
    * of them must be also be defined to its left. The two curves must also
    * intersect at x(q).
    */
-  Comparison_result curve_compare_at_x_left(const X_curve_2 & cv1,
-                                            const X_curve_2 & cv2, 
-                                            const Point_2 & q) const 
+  Comparison_result curves_compare_y_at_x_left(const X_monotone_curve_2 & cv1,
+                                               const X_monotone_curve_2 & cv2, 
+                                               const Point_2 & q) const 
   {
     // The two curves must not be vertical.
     CGAL_precondition(! curve_is_vertical(cv1));
@@ -195,23 +189,24 @@ public:
 
   /*! curve_reflect_in_x_and_y reflects the given curve about the origin
    */
-  X_curve_2 curve_reflect_in_x_and_y(const X_curve_2 & cv) const
+  X_monotone_curve_2
+  curve_reflect_in_x_and_y(const X_monotone_curve_2 & cv) const
   {
-    X_curve_2 reflected_cv(point_reflect_in_x_and_y ( cv.source()),
-                           point_reflect_in_x_and_y ( cv.target()));
+    X_monotone_curve_2 reflected_cv(point_reflect_in_x_and_y(cv.source()),
+                                    point_reflect_in_x_and_y(cv.target()));
     return reflected_cv;
   }
 #endif
     
-  /*! curve_compare_at_x_right() compares the y value of two curves in an
+  /*! curves_compare_y_at_x_right() compares the y value of two curves in an
    * epsilon environment to the right of the x value of the input point
    * Preconditions: The point q is in the x range of the two curves, and both
    * of them must be also be defined to its right. The two curves must also
    * intersect at x(q).
    */
-  Comparison_result curve_compare_at_x_right(const X_curve_2 & cv1,
-                                             const X_curve_2 & cv2, 
-                                             const Point_2 & q) const 
+  Comparison_result curves_compare_y_at_x_right(const X_monotone_curve_2 & cv1,
+                                                const X_monotone_curve_2 & cv2, 
+                                                const Point_2 & q) const 
   {
     // The two curves must not be vertical.
     CGAL_precondition(! curve_is_vertical(cv1));
@@ -235,20 +230,25 @@ public:
     
     // Since the curves are continuous, if they are not equal at q, the same
     // result also applies to q's left.
-    CGAL_precondition (curve_compare_at_x(cv1, cv2, q) == EQUAL);     
+    CGAL_precondition (curves_compare_y_at_x(cv1, cv2, q) == EQUAL);     
     
     // <cv1> and <cv2> meet at a point with the same x-coordinate as q
     // compare their derivatives
     return compare_slope_2_object()(cv1, cv2);
   }
     
-  /*! Return the curve-point status of the input objects.
-   * \pre p must be in the x-range of cv.
+  /*! Return the location of the given point with respect to the input curve.
+   * \param cv The curve.
+   * \param p The point.
+   * \pre p is in the x-range of cv.
+   * \return SMALLER if cv(x(p)) < y(p);
+   *         LARGER if cv(x(p)) > y(p);
+   *         or else (if p is on the curve) EQUAL.
    */
-  Comparison_result curve_get_point_status (const X_curve_2 & cv, 
-					    const Point_2 & p) const
+  Comparison_result curve_compare_y_at_x (const X_monotone_curve_2 & cv, 
+                                          const Point_2 & p) const
   {
-    CGAL_precondition(curve_is_in_x_range(cv, p));
+    CGAL_precondition(point_in_x_range(cv, p));
 
     Comparison_result res = compare_y_at_x_2_object()(p, cv);
     if (res == SMALLER)
@@ -258,28 +258,40 @@ public:
     return (EQUAL);
   }
 
-  /*! \todo replace indirect use curve_is_same() with equal_2()
+  /*! Check if the two curves are the same (have the same graph).
+   * \param cv1 The first curve.
+   * \param cv2 The second curve.
+   * \return (true) if the two curves are the same.
    */
-  bool curve_is_same(const X_curve_2 & cv1,const X_curve_2 & cv2) const
+  bool curve_equal(const X_monotone_curve_2 & cv1,
+                   const X_monotone_curve_2 & cv2) const
   {
     Equal_2 equal = equal_2_object();
-    const X_curve_2 & ocv1 = construct_opposite_segment_2_object()(cv1);
+    const X_monotone_curve_2 & ocv1 =
+      construct_opposite_segment_2_object()(cv1);
     return equal(cv1, cv2) || equal(ocv1, cv2);
   }
 
-  /*! \todo replace indirect use point_is_same() with equal_2()
+  /*! Check if the two points are the same.
+   * \param p1 The first point.
+   * \param p2 The second point.
+   * \return (true) if p1 == p2.
    */
-  bool point_is_same(const Point_2 & p1, const Point_2 & p2) const
+  bool point_equal(const Point_2 & p1, const Point_2 & p2) const
   { return equal_2_object()(p1, p2); }
   
-  /*! \todo replace indirect use curve_source() with construct_vertex_2()
+  /*! Get the curve source.
+   * \param cv The curve.
+   * \return The source point.
    */
-  Point_2 curve_source(const X_curve_2 & cv) const 
+  Point_2 curve_source(const X_monotone_curve_2 & cv) const 
   { return construct_vertex_2_object()(cv, 0); }
 
-  /*! \todo replace indirect use curve_target() with construct_vertex_2()
+  /*! Get the curve target.
+   * \param cv The curve.
+   * \return The target point.
    */
-  Point_2 curve_target(const X_curve_2 & cv) const 
+  Point_2 curve_target(const X_monotone_curve_2 & cv) const 
   { return construct_vertex_2_object()(cv, 1); }
 };
 

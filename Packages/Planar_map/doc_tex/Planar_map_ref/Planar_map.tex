@@ -72,7 +72,7 @@
   \ccNestedType{Face}{represents a face of the topological map.}}
 
 
-  \ccTypedef{typedef typename Traits::X_curve_2 X_curve_2;}
+  \ccTypedef{typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;}
   {a curve of the planar map.}
   \ccGlue
   \ccTypedef{typedef typename Traits::Point_2 Point_2;}
@@ -125,7 +125,7 @@
     
   \ccConstructor{Planar_map<Dcel,Traits>(const Self & pm);}{copy constructor;}
     
-%  \ccConstructor{Planar_map<I>( list<X_curve_2> & l
+%  \ccConstructor{Planar_map<I>( list<X_monotone_curve_2> & l
 %       );} {construct the planar-map of the curves  of \ccStyle{l}
 %       \ccPrecond{The curves are $x$-monotone} 
 %       \ccPrecond{no pair of curves of $l$ intersect in their interiors} 
@@ -138,7 +138,7 @@
 %                container iterated by
 %                \ccStyle{InputIterator} from  \ccStyle{begin} to \ccStyle{end}
 %                \ccPrecond{The value type of \ccStyle{InputIterator}
-%                   is \ccStyle{X_curve_2} objects}
+%                   is \ccStyle{X_monotone_curve_2} objects}
 %                \ccPrecond{The curves are $x$-monotone} 
 %                \ccPrecond{no pair of curves intersect in their interiors} 
 %    }
@@ -203,7 +203,7 @@ constructors.
 \ccMethod{bool read (istream & in);}
 {reads \ccRefName\ from the given input stream \ccc{in}. The input
  stream should support the extractor operator (\ccc{>>}) for
- the \ccStyle{Point_2} and \ccStyle{X_curve_2} types of
+ the \ccStyle{Point_2} and \ccStyle{X_monotone_curve_2} types of
  \ccc{Planar_map}. Note that the verbose format is not meant to be
  read. }
 
@@ -212,7 +212,7 @@ constructors.
 {reads \ccRefName\ from the given input stream \ccc{in} using 
 \ccc{scanner}. The input stream should support the
 extractor operator (\ccc{>>}) for the \ccStyle{Point_2} and
-\ccStyle{X_curve_2} types of \ccc{Planar_map} }
+\ccStyle{X_monotone_curve_2} types of \ccc{Planar_map} }
 
 \end{ccAdvanced}
 
@@ -286,7 +286,7 @@ depends on the point location strategy used.
 
 \ccModifiers
 
-  \ccMethod{Halfedge_handle insert( const X_curve_2 & cv );} 
+  \ccMethod{Halfedge_handle insert( const X_monotone_curve_2 & cv );} 
   {inserts the curve \ccc{cv} into the map. \ccc{insert()} returns 
    a handle to a new halfedge directed in the same way as the curve \ccc{cv}. 
    That is, the curve source and target points coincide with the points of the 
@@ -321,7 +321,7 @@ these functions with the naive point location strategy.
 %the time is spent in any case on the updating of the internal point location
 %structure). 
     
-  \ccMethod{Halfedge_handle insert_in_face_interior( const X_curve_2 & cv, 
+  \ccMethod{Halfedge_handle insert_in_face_interior( const X_monotone_curve_2 & cv, 
                                                      Face_handle f);}
   {inserts the curve \ccc{cv} as a new inner component of the face \ccc{f}. 
    \ccc{insert_in_face_interior()} returns a handle to a new halfedge directed
@@ -331,7 +331,7 @@ these functions with the naive point location strategy.
    \ccPrecond{\ccc{cv} is not equivalent to a point. }
   }
 
-  \ccMethod{Halfedge_handle insert_from_vertex(const X_curve_2 & cv,
+  \ccMethod{Halfedge_handle insert_from_vertex(const X_monotone_curve_2 & cv,
                                                Vertex_handle v);}
   {inserts the curve \ccc{cv} into the map. One endpoint of \ccc{cv}
   is the point of the given vertex \ccc{v}, that is already in the map.
@@ -346,7 +346,7 @@ these functions with the naive point location strategy.
    \ccPrecond{\ccc{cv} is not equivalent to a point. }
   }
     
-  \ccMethod{Halfedge_handle insert_at_vertices(const X_curve_2 & cv,
+  \ccMethod{Halfedge_handle insert_at_vertices(const X_monotone_curve_2 & cv,
                                                Vertex_handle v1, 
                                                Vertex_handle v2 );}
   {inserts the curve \ccc{cv} into the map. The two endpoints of \ccc{cv} are
@@ -362,7 +362,7 @@ these functions with the naive point location strategy.
    \ccPrecond{\ccc{cv} is not equivalent to a point. }
   }
 
-  \ccMethod{Halfedge_handle insert_from_vertex(const X_curve_2 & cv,
+  \ccMethod{Halfedge_handle insert_from_vertex(const X_monotone_curve_2 & cv,
                                                Halfedge_handle h);}
   {inserts the curve \ccc{cv} into the map. One endpoint of \ccc{cv} is the 
    point of the target vertex, \ccc{v}, of the given halfedge \ccc{h}.
@@ -384,7 +384,7 @@ these functions with the naive point location strategy.
    \ccPrecond{\ccc{cv} is not equivalent to a point. }
   }
     
-  \ccMethod{Halfedge_handle insert_at_vertices(const X_curve_2 & cv,
+  \ccMethod{Halfedge_handle insert_at_vertices(const X_monotone_curve_2 & cv,
                                                Halfedge_handle h1, 
                                                Halfedge_handle h2 );}
   {inserts the curve \ccc{cv} into the map. The two endpoints of \ccc{cv} are
@@ -413,8 +413,8 @@ these functions with the naive point location strategy.
 
 \end{ccAdvanced}              
 
-\ccMethod{Halfedge_handle split_edge (Halfedge_handle e, const X_curve_2 & c1, 
-                                      const X_curve_2 & c2);}
+\ccMethod{Halfedge_handle split_edge (Halfedge_handle e, const X_monotone_curve_2 & c1, 
+                                      const X_monotone_curve_2 & c2);}
 {splits the edge \ccStyle{e} into \ccStyle{e1} and  \ccStyle{e2} , and
    add a vertex in the splitting point. If the source point of \ccStyle{e}
    is identical to the source of the curve \ccStyle{c1} then \ccStyle{c1}
@@ -434,7 +434,7 @@ these functions with the naive point location strategy.
    }
 
 \ccMethod{Halfedge_handle merge_edge(Halfedge_handle e1, Halfedge_handle e2, 
-                                     const X_curve_2 & cv);}
+                                     const X_monotone_curve_2 & cv);}
 {merges the edges \ccStyle{e1} and \ccStyle{e2} into one edge which will hold 
    the curve \ccStyle{cv}. The return value is the halfedge with the same 
    source vertex that \ccc{e1} had and the same target \ccc{e2} had.

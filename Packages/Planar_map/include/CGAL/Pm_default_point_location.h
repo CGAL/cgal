@@ -280,8 +280,8 @@ private:
     const Point 
       &source=h->source()->point(),
       &target=h->target()->point();
-    return !(!traits->point_is_same_x(target,p)||
-             traits->point_is_same_x(source,p)&&
+    return !(!traits->point_equal_x(target,p)||
+             traits->point_equal_x(source,p)&&
              (traits->point_is_right_top(p,target)&&
               traits->point_is_left_low(target,source)||
               traits->point_is_left_low(p,target)&&
@@ -301,8 +301,8 @@ private:
   bool halfedge_represents_point_inside_face(const Halfedge_handle& h,
                                              const Point& p) const 
   {
-    return (traits->curve_is_in_x_range(h->curve(),p) &&
-	    traits->curve_get_point_status(h->curve(),p) == SMALLER) ==
+    return (traits->point_in_x_range(h->curve(),p) &&
+	    traits->curve_compare_y_at_x(h->curve(),p) == SMALLER) ==
       traits->point_is_left(h->source()->point(),h->target()->point());
   }
   Halfedge_handle halfedge_representing_unbounded_face() const

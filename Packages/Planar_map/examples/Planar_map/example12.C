@@ -19,7 +19,7 @@ typedef CGAL::Simple_cartesian<float>           Cartesian_kernel;
 typedef CGAL::Filtered_kernel<Cartesian_kernel> Kernel;
 typedef CGAL::Pm_segment_traits_2<Kernel>       Traits;
 typedef Traits::Point_2                         Point_2;
-typedef Traits::X_curve_2                       X_curve_2;
+typedef Traits::X_monotone_curve_2                       X_monotone_curve_2;
 typedef CGAL::Pm_default_dcel<Traits>           Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>         Planar_map;
 
@@ -38,13 +38,13 @@ int main()
   Point_2 a0(0, 0), a1(2, 0), a2(1, 2);
 
   // Create the curves:
-  X_curve_2 cv[3];
-  cv[0] = X_curve_2(a0, a1);
-  cv[1] = X_curve_2(a1, a2);
-  cv[2] = X_curve_2(a2, a0);
+  X_monotone_curve_2 cv[3];
+  cv[0] = X_monotone_curve_2(a0, a1);
+  cv[1] = X_monotone_curve_2(a1, a2);
+  cv[2] = X_monotone_curve_2(a2, a0);
 
   std::cout << "The curves of the map :" << std::endl;
-  std::copy(&cv[0], &cv[3], std::ostream_iterator<X_curve_2>(std::cout, "\n"));
+  std::copy(&cv[0], &cv[3], std::ostream_iterator<X_monotone_curve_2>(std::cout, "\n"));
   std::cout << std::endl;
 
   // Insert the curves into the Planar_map:

@@ -51,7 +51,7 @@ public:
 //  typedef  typename I::Info_face       Info_face;
   
   typedef PlanarMapTraits_2                     Base;
-  typedef typename Base::X_curve_2              X_curve_2;
+  typedef typename Base::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Base::Point_2                Point_2;
 
   typedef typename Base::Has_left_category      Has_left_category;
@@ -69,7 +69,7 @@ public:
   bool point_is_right(const Point_2 & p1, const Point_2 & p2) const
   { return (compare_x(p1, p2) == LARGER); }
     
-  bool point_is_same_x(const Point_2 & p1, const Point_2 & p2) const
+  bool point_equal_x(const Point_2 & p1, const Point_2 & p2) const
   { return (compare_x(p1, p2) == EQUAL); }
   
   bool point_is_left_low(const Point_2 & p1, const Point_2 & p2) const
@@ -92,13 +92,13 @@ public:
 				       const Point_2 & p2) const
   { return (point_is_right_top(p1, p2) ? p1 : p2); }
     
-  Point_2 curve_leftmost(const X_curve_2 & cv) const 
+  Point_2 curve_leftmost(const X_monotone_curve_2 & cv) const 
   { return point_leftmost(curve_source(cv),curve_target(cv)); }
     
-  Point_2 curve_rightmost(const X_curve_2 & cv) const
+  Point_2 curve_rightmost(const X_monotone_curve_2 & cv) const
   { return point_rightmost(curve_source(cv),curve_target(cv)); }
       
-  Point_2 curve_leftlow_most(const X_curve_2 & cv) const 
+  Point_2 curve_leftlow_most(const X_monotone_curve_2 & cv) const 
   {
     if (!curve_is_vertical(cv)) 
       return curve_leftmost(cv);
@@ -106,7 +106,7 @@ public:
       return point_leftlow_most(curve_source(cv), curve_target(cv));
   }
     
-  Point_2 curve_righttop_most(const X_curve_2 & cv) const
+  Point_2 curve_righttop_most(const X_monotone_curve_2 & cv) const
   {
     if (!curve_is_vertical(cv)) 
       return curve_rightmost(cv);
@@ -122,44 +122,44 @@ public:
    * \param part2 The second sub-curve.
    * \return (true) if whole == part1 + part2.
    */
-  bool curve_merge_condition(const X_curve_2 & whole,
-			     const X_curve_2 & part1,
-			     const X_curve_2 & part2) const
+  bool curve_merge_condition(const X_monotone_curve_2 & whole,
+			     const X_monotone_curve_2 & part1,
+			     const X_monotone_curve_2 & part2) const
   {
     // The function simply checks whether it is possible to merge
     // the curves part1 and part2 such that whole is the result.
-    if (point_is_same(curve_source(whole), curve_source(part1)))
-      if (point_is_same(curve_target(part1), curve_source(part2)))
-	if (point_is_same(curve_target(part2), curve_target(whole)))
+    if (point_equal(curve_source(whole), curve_source(part1)))
+      if (point_equal(curve_target(part1), curve_source(part2)))
+	if (point_equal(curve_target(part2), curve_target(whole)))
 	  return (true);
 	else
 	  return (false);
       else
-	if (point_is_same(curve_target(part1), curve_target(part2)))
-	  if (point_is_same(curve_source(part2), curve_target(whole)))
+	if (point_equal(curve_target(part1), curve_target(part2)))
+	  if (point_equal(curve_source(part2), curve_target(whole)))
 	    return(true);
 	  else
 	    return (false);
 	else
 	  return (false);
     else
-      if (point_is_same(curve_source(whole), curve_target(part1)))
-	if (point_is_same(curve_source(part1), curve_source(part2)))
-	  if (point_is_same(curve_target(part2), curve_target(whole)))
+      if (point_equal(curve_source(whole), curve_target(part1)))
+	if (point_equal(curve_source(part1), curve_source(part2)))
+	  if (point_equal(curve_target(part2), curve_target(whole)))
 	    return (true);
 	  else
 	    return (false);
 	else
-	  if (point_is_same(curve_source(part1), curve_target(part2)))
-	    if (point_is_same(curve_source(part2), curve_target(whole)))
+	  if (point_equal(curve_source(part1), curve_target(part2)))
+	    if (point_equal(curve_source(part2), curve_target(whole)))
 	      return (true);
 	    else
 	      return (false);
 	  else
 	    return (false);
       else
-	if (point_is_same(curve_source(whole), curve_source(part2)) ||
-	    point_is_same(curve_source(whole), curve_target(part2)))
+	if (point_equal(curve_source(whole), curve_source(part2)) ||
+	    point_equal(curve_source(whole), curve_target(part2)))
 	  return (curve_merge_condition (whole, part2, part1));
 	else
 	  return (false);
@@ -170,9 +170,9 @@ public:
    * \param cv The input curve.
    * \return (true) iff the curve source and target are the same.
    */
-  inline bool curve_is_degenerate(const X_curve_2 & cv) const
+  inline bool curve_is_degenerate(const X_monotone_curve_2 & cv) const
   { 
-    return point_is_same(curve_source(cv),curve_target(cv));
+    return point_equal(curve_source(cv),curve_target(cv));
   }
     
   /*! 
@@ -188,9 +188,9 @@ public:
    * the result is always (false). If cv1 and cv2 overlap, the result is
    * (true), unless cv1 also overlaps them.
    */
-  bool curve_is_between_cw(const X_curve_2& cv, 
-                           const X_curve_2& cv1, 
-                           const X_curve_2& cv2, 
+  bool curve_is_between_cw(const X_monotone_curve_2& cv, 
+                           const X_monotone_curve_2& cv1, 
+                           const X_monotone_curve_2& cv2, 
                            const Point_2& p) const
   {
     // Find the direction of each segment.
@@ -219,21 +219,21 @@ public:
 	  return (dir == DIR_RIGHT ||
 		  dir == DIR_DOWN ||
                   (dir == DIR_LEFT &&
-                   curve_compare_at_x_left (cv2, cv, p) == LARGER));
+                   curves_compare_y_at_x_left (cv2, cv, p) == LARGER));
 	else
 	  return (dir == DIR_RIGHT &&
-		  curve_compare_at_x_right (cv2, cv, p) == SMALLER);
+		  curves_compare_y_at_x_right (cv2, cv, p) == SMALLER);
       }
       else
       {
 	if (dir2 == DIR_LEFT)
 	  return (dir == DIR_LEFT &&
-		  curve_compare_at_x_left (cv2, cv, p) == LARGER);
+		  curves_compare_y_at_x_left (cv2, cv, p) == LARGER);
 	else
 	  return (dir == DIR_LEFT ||
 		  dir == DIR_UP ||
                   (dir == DIR_RIGHT &&
-                   curve_compare_at_x_right (cv2, cv, p) == SMALLER));
+                   curves_compare_y_at_x_right (cv2, cv, p) == SMALLER));
       }
     }
 
@@ -244,12 +244,12 @@ public:
       {
 	if (dir1 == DIR_LEFT)
 	  return (dir == DIR_LEFT &&
-		  curve_compare_at_x_left (cv1, cv, p) == SMALLER);
+		  curves_compare_y_at_x_left (cv1, cv, p) == SMALLER);
 	else
 	  return (dir == DIR_LEFT || 
 		  dir == DIR_DOWN ||
                   (dir == DIR_RIGHT &&
-                   curve_compare_at_x_right (cv1, cv, p) == LARGER));
+                   curves_compare_y_at_x_right (cv1, cv, p) == LARGER));
       }
       else
       {
@@ -257,10 +257,10 @@ public:
 	  return (dir == DIR_RIGHT ||
 		  dir == DIR_UP ||
                   (dir == DIR_LEFT &&
-                   curve_compare_at_x_left (cv1, cv, p) == SMALLER));
+                   curves_compare_y_at_x_left (cv1, cv, p) == SMALLER));
 	else
 	  return (dir == DIR_RIGHT &&
-		  curve_compare_at_x_right (cv1, cv, p) == LARGER);
+		  curves_compare_y_at_x_right (cv1, cv, p) == LARGER);
       }
     }
 
@@ -268,95 +268,95 @@ public:
     if (dir1 == DIR_LEFT && dir2 == DIR_LEFT)
     {
       // Case 1: Both cv1 and cv2 are defined to the left of p.
-      Comparison_result l_res = curve_compare_at_x_left (cv1, cv2, p);
+      Comparison_result l_res = curves_compare_y_at_x_left (cv1, cv2, p);
       
       if (l_res == LARGER)
       {
 	// Case 1(a) : cv1 is above cv2.
 	return (dir != DIR_LEFT ||
-		curve_compare_at_x_left (cv1, cv, p) == SMALLER ||
-                curve_compare_at_x_left (cv2, cv, p) == LARGER);
+		curves_compare_y_at_x_left (cv1, cv, p) == SMALLER ||
+                curves_compare_y_at_x_left (cv2, cv, p) == LARGER);
       }
       else if (l_res == SMALLER)
       {
 	// Case 1(b): cv1 is below cv2.
 	return (dir == DIR_LEFT &&
-		curve_compare_at_x_left (cv1, cv, p) == SMALLER &&
-		curve_compare_at_x_left (cv2, cv, p) == LARGER);
+		curves_compare_y_at_x_left (cv1, cv, p) == SMALLER &&
+		curves_compare_y_at_x_left (cv2, cv, p) == LARGER);
       }
       else
       {
         // Overlapping segments.
         return (dir != DIR_LEFT ||
-                curve_compare_at_x_left (cv1, cv, p) != EQUAL);
+                curves_compare_y_at_x_left (cv1, cv, p) != EQUAL);
       }
     }
     else if (dir1 == DIR_RIGHT && dir2 == DIR_RIGHT)
     {
       // Case 2: Both cv1 and cv2 are defined to the right of p.
-      Comparison_result r_res = curve_compare_at_x_right (cv1, cv2, p);
+      Comparison_result r_res = curves_compare_y_at_x_right (cv1, cv2, p);
 
       if (r_res == LARGER)
       {
 	// Case 2(a) : cv1 is above cv2.
 	return (dir == DIR_RIGHT &&
-		curve_compare_at_x_right (cv1, cv, p) == LARGER &&
-		curve_compare_at_x_right (cv2, cv, p) == SMALLER);
+		curves_compare_y_at_x_right (cv1, cv, p) == LARGER &&
+		curves_compare_y_at_x_right (cv2, cv, p) == SMALLER);
       }
       else if (r_res == SMALLER)
       {
 	// Case 2(b): cv1 is below cv2.
 	return (dir != DIR_RIGHT ||
-		curve_compare_at_x_right (cv1, cv, p) == LARGER ||
-                curve_compare_at_x_right (cv2, cv, p) == SMALLER);
+		curves_compare_y_at_x_right (cv1, cv, p) == LARGER ||
+                curves_compare_y_at_x_right (cv2, cv, p) == SMALLER);
       }
       else
       {
         // Overlapping segments.
         return (dir != DIR_RIGHT ||
-                curve_compare_at_x_right (cv1, cv, p) != EQUAL);
+                curves_compare_y_at_x_right (cv1, cv, p) != EQUAL);
       }
     }
     else if (dir1 == DIR_LEFT && dir2 == DIR_RIGHT)
     {
       // Case 3: cv1 is defined to the left of p, and cv2 to its right.
       return ((dir == DIR_LEFT &&
-	       curve_compare_at_x_left (cv1, cv, p) == SMALLER) ||
+	       curves_compare_y_at_x_left (cv1, cv, p) == SMALLER) ||
 	      (dir == DIR_RIGHT &&
-	       curve_compare_at_x_right (cv2, cv, p) == SMALLER) ||
+	       curves_compare_y_at_x_right (cv2, cv, p) == SMALLER) ||
 	      dir == DIR_UP);
     }
     else
     {
       // Case 4: cv1 is defined to the right of p, and cv2 to its left.
       return ((dir == DIR_RIGHT &&
-	       curve_compare_at_x_right (cv1, cv, p) == LARGER) ||
+	       curves_compare_y_at_x_right (cv1, cv, p) == LARGER) ||
 	      (dir == DIR_LEFT &&
-	       curve_compare_at_x_left (cv2, cv, p) == LARGER) ||
+	       curves_compare_y_at_x_left (cv2, cv, p) == LARGER) ||
 	      dir == DIR_DOWN);
     }
   }
 
-  /*! curve_compare_at_x_from_bottom()
+  /*! curves_compare_y_at_x_from_bottom()
    *
    * \precondition  cv1,cv2 are adjacent to q
    * \postcondition returns which of cv1,cv2 is first in clockwise sweep
    * around q starting from bottom direction.
    */
   Comparison_result 
-  curve_compare_at_x_from_bottom(const X_curve_2 & cv1, 
-				 const X_curve_2 & cv2, 
+  curves_compare_y_at_x_from_bottom(const X_monotone_curve_2 & cv1, 
+				 const X_monotone_curve_2 & cv2, 
 				 const Point_2 & q) const
   {
     if (!curve_is_vertical(cv1)) {
       if (!curve_is_vertical(cv2)) {
-        if (point_is_same(curve_rightmost(cv1),q))  
+        if (point_equal(curve_rightmost(cv1),q))  
         {
           // cv1 extends leftwards from q
-          if (point_is_same(curve_rightmost(cv2),q))
+          if (point_equal(curve_rightmost(cv2),q))
           {
             // cv2 extends leftwards from q
-            return curve_compare_at_x_left(cv1,cv2,q);
+            return curves_compare_y_at_x_left(cv1,cv2,q);
           }
           else // cv2 extends rightwards from q
           {
@@ -365,10 +365,10 @@ public:
         }
         else  // cv1 extends rightwards from q
         {
-          if (point_is_same(curve_leftmost(cv2),q))
+          if (point_equal(curve_leftmost(cv2),q))
           {
             // cv2 extends rightwards from q
-            return curve_compare_at_x_right(cv2,cv1,q);
+            return curves_compare_y_at_x_right(cv2,cv1,q);
           }
           else // cv2 extends leftwards from q
           {
@@ -377,22 +377,22 @@ public:
         }
       } else {
         // cv2 is vertical, cv1 is not vertical 
-        if (point_is_same(curve_rightmost(cv1),q) && 
-          point_is_same(curve_leftlow_most(cv2),   q))
+        if (point_equal(curve_rightmost(cv1),q) && 
+          point_equal(curve_leftlow_most(cv2),   q))
           return SMALLER;
         else
           return LARGER;
       }
     } else {
       // cv1 is vertical
-      if (point_is_same(curve_righttop_most(cv1),q))
+      if (point_equal(curve_righttop_most(cv1),q))
         if (!curve_is_vertical(cv2) || 
-	    point_is_same(curve_leftlow_most(cv2),q))
+	    point_equal(curve_leftlow_most(cv2),q))
           return SMALLER;
         else
           return EQUAL; // both curves extend downwards
       else // cv1 extends from q upwards
-        if (point_is_same(curve_righttop_most(cv2),q))
+        if (point_equal(curve_righttop_most(cv2),q))
           return LARGER;
         else if (!curve_is_vertical(cv2)) // extends rightwards
           return SMALLER;
@@ -401,23 +401,23 @@ public:
     }
   }
 
-  /*! curve_compare_at_x_from_top()
+  /*! curves_compare_y_at_x_from_top()
    */
   Comparison_result 
-  curve_compare_at_x_from_top(const X_curve_2 & cv1, 
-			      const X_curve_2 & cv2, 
+  curves_compare_y_at_x_from_top(const X_monotone_curve_2 & cv1, 
+			      const X_monotone_curve_2 & cv2, 
 			      const Point_2 & q)
     const 
   {
     if (!curve_is_vertical(cv1))
       if (!curve_is_vertical(cv2))
-        if (point_is_same(curve_rightmost(cv1),q)) 
+        if (point_equal(curve_rightmost(cv1),q)) 
         {
           // cv1 extends leftwards from q
-          if (point_is_same(curve_rightmost(cv2),q))
+          if (point_equal(curve_rightmost(cv2),q))
           {
             // cv2 extends leftwards from q
-            return curve_compare_at_x_left(cv1,cv2,q);
+            return curves_compare_y_at_x_left(cv1,cv2,q);
           }
           else // cv2 extends rightwards from q
           {
@@ -426,10 +426,10 @@ public:
         }
         else  // cv1 extends rightwards from q
         {
-          if (point_is_same(curve_leftmost(cv2),q))
+          if (point_equal(curve_leftmost(cv2),q))
           {
             // cv2 extends rightwards from q
-            return curve_compare_at_x_right(cv2,cv1,q);
+            return curves_compare_y_at_x_right(cv2,cv1,q);
           }
           else // cv2 extends leftwards from q
           {
@@ -438,22 +438,22 @@ public:
         }
       else // cv2 is vertical, cv1 is not vertical 
       {
-        if (point_is_same(curve_leftmost(cv1),q) &&
-          point_is_same(curve_righttop_most(cv2), q))
+        if (point_equal(curve_leftmost(cv1),q) &&
+          point_equal(curve_righttop_most(cv2), q))
           return SMALLER;
         else
           return LARGER;
       }
     else // cv1 is vertical
     {
-      if (point_is_same(curve_leftlow_most(cv1),q))
+      if (point_equal(curve_leftlow_most(cv1),q))
         if (!curve_is_vertical(cv2) || 
-	    point_is_same(curve_righttop_most(cv2),q))
+	    point_equal(curve_righttop_most(cv2),q))
           return SMALLER;
         else
           return EQUAL; // both curves extend upwards
       else // cv1 extends from q downwards
-        if (point_is_same(curve_leftlow_most(cv2),q))
+        if (point_equal(curve_leftlow_most(cv2),q))
           return LARGER;
         else if (!curve_is_vertical(cv2)) // extends leftwards
           return SMALLER;
@@ -464,43 +464,43 @@ public:
 
   /*! curve_is_unbounded()
    */
-  bool curve_is_unbounded(const X_curve_2 & cv) const 
+  bool curve_is_unbounded(const X_monotone_curve_2 & cv) const 
   {
     return (curve_is_source_unbounded(cv)||
 	    curve_is_target_unbounded(cv));
   }
     
-  /*! curve_compare_at_x_left() is implemented based on the Has_left category
+  /*! curves_compare_y_at_x_left() is implemented based on the Has_left category
    * If the category indicates that the "left" version is available, it calls
    * the function with same name defined in the base class. Otherwise, it
    * reflects the given point and curves about the origin, and calls the
    * "right" version.
    */
-  Comparison_result curve_compare_at_x_left(const X_curve_2 & cv1,
-                                            const X_curve_2 & cv2, 
+  Comparison_result curves_compare_y_at_x_left(const X_monotone_curve_2 & cv1,
+                                            const X_monotone_curve_2 & cv2, 
                                             const Point_2 & q) const 
   {
-    return curve_compare_at_x_left_imp(cv1, cv2, q, Has_left_category());
+    return curves_compare_y_at_x_left_imp(cv1, cv2, q, Has_left_category());
   }
 
     
-  Comparison_result curve_compare_at_x_left_imp(const X_curve_2 & cv1,
-                                                const X_curve_2 & cv2, 
+  Comparison_result curves_compare_y_at_x_left_imp(const X_monotone_curve_2 & cv1,
+                                                const X_monotone_curve_2 & cv2, 
                                                 const Point_2 & q,
                                                 Tag_true) const
   {
-    return Base::curve_compare_at_x_left(cv1, cv2, q);
+    return Base::curves_compare_y_at_x_left(cv1, cv2, q);
   }
     
-  Comparison_result curve_compare_at_x_left_imp(const X_curve_2 & cv1,
-                                                const X_curve_2 & cv2, 
+  Comparison_result curves_compare_y_at_x_left_imp(const X_monotone_curve_2 & cv1,
+                                                const X_monotone_curve_2 & cv2, 
                                                 const Point_2 & q,
                                                 Tag_false) const 
   {
     Point_2 rq = point_reflect_in_x_and_y(q);
-    X_curve_2 rcv1 = curve_reflect_in_x_and_y(cv1);
-    X_curve_2 rcv2 = curve_reflect_in_x_and_y(cv2);
-    Comparison_result cr = curve_compare_at_x_right(rcv1, rcv2, rq);
+    X_monotone_curve_2 rcv1 = curve_reflect_in_x_and_y(cv1);
+    X_monotone_curve_2 rcv2 = curve_reflect_in_x_and_y(cv2);
+    Comparison_result cr = curves_compare_y_at_x_right(rcv1, rcv2, rq);
     if (cr == SMALLER) return LARGER;
     if (cr == LARGER) return SMALLER;
     return EQUAL;
@@ -529,7 +529,7 @@ protected:
    *         DIR_DOWN if cv is a vertical segment pointing at 6 o'clock;
    *         DIR_LEFT if cv is a non-vertical curve going to the left of p;
    */
-  Curve_dir_at_point _curve_direction_at_point (const X_curve_2& cv,
+  Curve_dir_at_point _curve_direction_at_point (const X_monotone_curve_2& cv,
 						const Point_2& p) const
   {
     // p is one of the end-point. Compare it with the other end-point.

@@ -83,7 +83,7 @@ public:
     typename Planar_map::Halfedge_iterator hit;
     for (hit = pm->halfedges_begin(); hit != pm->halfedges_end(); ++hit) 
       {
-	if (traits->curve_is_in_x_range(hit->curve(),p)) 
+	if (traits->point_in_x_range(hit->curve(),p)) 
 	  {
 	    relevant.push_back(hit);
 	  }
@@ -97,7 +97,7 @@ public:
     typename Planar_map::Vertex_iterator vit;
     for (vit=pm->vertices_begin(); vit!=pm->vertices_end(); ++vit) 
       {
-	if (traits->point_is_same(p,vit->point()) ) 
+	if (traits->point_equal(p,vit->point()) ) 
 	  {
 	    lt = Planar_map::VERTEX; 
 	    Halfedge_handle h(vit->incident_halfedges());	
@@ -112,8 +112,8 @@ public:
     typename Halfedges_list::const_iterator hit;
     for (hit=relevant_halfedges.begin(); hit!=relevant_halfedges.end(); ++hit) 
       {
-	if (traits->curve_is_in_x_range((*hit)->curve(),p) &&
-	    traits->curve_get_point_status((*hit)->curve(),p) == EQUAL) 
+	if (traits->point_in_x_range((*hit)->curve(),p) &&
+	    traits->curve_compare_y_at_x((*hit)->curve(),p) == EQUAL) 
 	  {
 	    lt = Planar_map::EDGE; 
 	    return *hit;
@@ -205,9 +205,9 @@ public:
       {
 	it = *rel_it;
 
-	in_x_range = traits->curve_is_in_x_range(it->curve(), p);
+	in_x_range = traits->point_in_x_range(it->curve(), p);
 	if (in_x_range)
-	  res = traits->curve_get_point_status(it->curve(), p);
+	  res = traits->curve_compare_y_at_x(it->curve(), p);
 
 	if (in_x_range && (res == point_above_under)) 
 	  {
@@ -218,7 +218,7 @@ public:
 	      } 
 	    else 
 	      {
-		if (traits->curve_compare_at_x(closest_edge->curve(),
+		if (traits->curves_compare_y_at_x(closest_edge->curve(),
 						it->curve(), p) == 
 		    curve_above_under) 
 		  {
@@ -270,13 +270,13 @@ public:
     // edge from the vertical segment
     typename Planar_map::Vertex_handle v = pm->vertices_end();
     bool maybe_vertical=false; // BUG fix (Oren)
-    if ( traits->point_is_same_x(closest_edge->target()->point(), p) ) 
+    if ( traits->point_equal_x(closest_edge->target()->point(), p) ) 
       {
 	v = closest_edge->target();
 	maybe_vertical=true; // BUG fix (Oren)
       }
 		
-    if ( traits->point_is_same_x( closest_edge->source()->point(), p) ) 
+    if ( traits->point_equal_x( closest_edge->source()->point(), p) ) 
       {
 	if (!maybe_vertical || 
 	    traits->point_is_right_top(closest_edge->target()->point(),
@@ -406,7 +406,7 @@ protected:
 	  if (lowest_left == pm->halfedges_end())
 	    lowest_left = curr;
 				
-	  if (traits->curve_compare_at_x_left(curr->curve(),
+	  if (traits->curves_compare_y_at_x_left(curr->curve(),
 					      lowest_left->curve(), 
 					      v->point())==SMALLER)
 	    lowest_left = curr;
@@ -418,7 +418,7 @@ protected:
 	  if (lowest_right == pm->halfedges_end())
 	    lowest_right = curr;
 				
-	  if (traits->curve_compare_at_x_right(curr->curve(),
+	  if (traits->curves_compare_y_at_x_right(curr->curve(),
 					       lowest_right->curve(), 
 					       v->point())==LARGER
 	      )

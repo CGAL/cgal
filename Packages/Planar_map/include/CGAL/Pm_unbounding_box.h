@@ -49,11 +49,11 @@ public:
   typedef Pm_traits_wrap_2<Traits> Traits_wrap;
   */
   typedef typename Planar_map::Traits                   Traits;
-  typedef typename Traits::X_curve_2                    X_curve_2;
+  typedef typename Traits::X_monotone_curve_2                    X_monotone_curve_2;
   typedef typename Traits::Point_2                      Point_2;
 
   typedef typename std::vector<Point_2>::iterator       Point_iterator;
-  typedef typename std::vector<X_curve_2>::iterator     X_curve_iterator;
+  typedef typename std::vector<X_monotone_curve_2>::iterator     X_curve_iterator;
 
   /*  typedef typename Traits::Bounding_box Bounding_box;
   typedef typename Traits::Boundary_type Boundary_type;
@@ -122,13 +122,13 @@ public:
               Point_2 * dummy = 0)
 #endif
   {return true;}
-  bool insert(const X_curve_2 &) {return true;}
+  bool insert(const X_monotone_curve_2 &) {return true;}
 #ifndef _MSC_VER
   bool insert(const X_curve_iterator &, const X_curve_iterator &)
 #else
   // workaround for MSVC6.0
   bool insert(const X_curve_iterator &, const X_curve_iterator &,
-              X_curve_2 * dummy = 0)
+              X_monotone_curve_2 * dummy = 0)
 #endif          
   {return true;}
 
@@ -139,16 +139,16 @@ public:
   bool vertical_ray_shoot(const Point_2 &, Locate_type &, bool,
                           Halfedge_handle &) {return true;}
 
-  void split_edge(const X_curve_2 &, Halfedge_handle, Halfedge_handle,
-                  const X_curve_2 &, const X_curve_2 &) {}
+  void split_edge(const X_monotone_curve_2 &, Halfedge_handle, Halfedge_handle,
+                  const X_monotone_curve_2 &, const X_monotone_curve_2 &) {}
 
   void split_boundary_edge(const Halfedge_handle &,
                            Halfedge_handle, Halfedge_handle,
                            const Point_2 &) {}
 
-  void merge_edge(const X_curve_2 &, const X_curve_2 &, Halfedge_handle,
+  void merge_edge(const X_monotone_curve_2 &, const X_monotone_curve_2 &, Halfedge_handle,
                   //additions by iddo for arrangement
-                  const X_curve_2 &) {}
+                  const X_monotone_curve_2 &) {}
 
   void remove_edge(Halfedge_handle) {}
   inline bool is_empty() const {return false;}

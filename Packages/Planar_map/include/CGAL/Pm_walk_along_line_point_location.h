@@ -128,7 +128,7 @@ private:
 
 #ifdef CGAL_PM_DEBUG
 
-  CGAL_precondition(traits->point_is_same(e->target()->point(),p));
+  CGAL_precondition(traits->point_equal(e->target()->point(),p));
 
 #endif
 
@@ -137,7 +137,7 @@ private:
   if (up)
     while(curr!=first)
     {
-      if (traits->curve_compare_at_x_from_bottom(curr->curve(),e->curve(),p)
+      if (traits->curves_compare_y_at_x_from_bottom(curr->curve(),e->curve(),p)
           ==SMALLER) 
       {
 	e=curr;
@@ -148,7 +148,7 @@ private:
   else
     while(curr!=first)
       {
-        if (traits->curve_compare_at_x_from_top(curr->curve(),e->curve(),p)
+        if (traits->curves_compare_y_at_x_from_top(curr->curve(),e->curve(),p)
 	    ==SMALLER) 
         {
 	  e=curr;
@@ -160,7 +160,7 @@ private:
 #ifdef CGAL_PM_DEBUG
 
   CGAL_postcondition(e!=pm->halfedges_end());
-  CGAL_postcondition(traits->point_is_same(e->target()->point(),p));
+  CGAL_postcondition(traits->point_equal(e->target()->point(),p));
 
 #endif
 

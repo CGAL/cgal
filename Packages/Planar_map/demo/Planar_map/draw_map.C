@@ -452,9 +452,9 @@ void window_input(Planar_map & M,
 #endif
 #ifdef CGAL_PM_DEBUG
             Traits_wrap traits=M.get_traits();
-            CGAL_postcondition(traits.point_is_same(e->source()->point(),
+            CGAL_postcondition(traits.point_equal(e->source()->point(),
                                                     first_point));
-            CGAL_postcondition(traits.point_is_same(e->target()->point(),p));
+            CGAL_postcondition(traits.point_equal(e->target()->point(),p));
 #endif
           }
         
@@ -491,9 +491,9 @@ void window_input(Planar_map & M,
 #endif
 #ifdef CGAL_PM_DEBUG
               Traits_wrap traits=M.get_traits();
-              CGAL_postcondition(traits.point_is_same(e->source()->point(),
+              CGAL_postcondition(traits.point_equal(e->source()->point(),
                                                       first_point));
-              CGAL_postcondition(traits.point_is_same(e->target()->point(),
+              CGAL_postcondition(traits.point_equal(e->target()->point(),
                                                       v->point()));
 #endif
               start_flag=true;

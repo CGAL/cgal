@@ -67,7 +67,7 @@ Pm_walk_along_line_point_location<Planar_map>::locate(
 #ifdef CGAL_PM_DEBUG
                     
                     CGAL_assertion(
-                      traits->point_is_same(e->target()->point(),p)
+                      traits->point_equal(e->target()->point(),p)
                       );
                     
 #endif
@@ -88,7 +88,7 @@ Pm_walk_along_line_point_location<Planar_map>::locate(
                 
 #ifdef CGAL_PM_DEBUG
                 
-                CGAL_assertion(traits->point_is_same(e->target()->point(),p));
+                CGAL_assertion(traits->point_equal(e->target()->point(),p));
                 
 #endif
                 
@@ -151,7 +151,7 @@ Pm_walk_along_line_point_location<Planar_map>::vertical_ray_shoot(
         case Planar_map::VERTEX:
                   
 #ifdef CGAL_PM_DEBUG
-          CGAL_assertion(traits->point_is_same_x(e->target()->point(), p));
+          CGAL_assertion(traits->point_equal_x(e->target()->point(), p));
 #endif
         case Planar_map::EDGE:
                   
@@ -335,11 +335,11 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
       const X_curve& cv = curr->curve(), &ecv = e->curve();   
       const Point& p1 = traits->curve_source(cv),
                  & p2 = traits->curve_target(cv);
-      bool              in_x_range = traits->curve_is_in_x_range(cv, p);
+      bool              in_x_range = traits->point_in_x_range(cv, p);
       Comparison_result res = EQUAL;
 
       if (in_x_range)
-	res = traits->curve_get_point_status(cv, p);
+	res = traits->curve_compare_y_at_x(cv, p);
 
       if (res == (up ? LARGER : SMALLER)) 
         /* cv is a non vertical curve intersecting the vertical ray shoot 
@@ -369,7 +369,7 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
 	    }
 	  // if we had an intersection in the previoes iteration.
 	  if (!intersection ||   
-	      traits->curve_compare_at_x(ecv, cv , p) == 
+	      traits->curves_compare_y_at_x(ecv, cv , p) == 
 	                                               (up ? LARGER : SMALLER)
 	      )   // we know that curr is above (or below, if up false) p.
 	    {
@@ -390,10 +390,10 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
               if (!type)
                 if (!traits->curve_is_vertical(cv))
                   {
-                    if (traits->point_is_same_x(e->source()->point(),p)) 
+                    if (traits->point_equal_x(e->source()->point(),p)) 
 		      // p is below (above if not up) e->source().  
 		      { e=e->twin(); lt=Planar_map::VERTEX;}  
-                    else if (traits->point_is_same_x(e->target()->point(),p)) 
+                    else if (traits->point_equal_x(e->target()->point(),p)) 
 		      { lt=Planar_map::VERTEX;}
                     else lt=Planar_map::EDGE;
                   }
@@ -403,7 +403,7 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
               intersection = true;   
 	    }
 	  else if (e != curr && e != curr->twin() && 
-		   traits->curve_compare_at_x(ecv, cv , p) == EQUAL)
+		   traits->curves_compare_y_at_x(ecv, cv , p) == EQUAL)
             // here the common edge point of cv and ecv is on the
             // vertical ray enamating from p, and q will hold that
             // point.
@@ -421,10 +421,10 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
 	      if (q!=traits->curve_source(ecv) &&
 		  q!=traits->curve_target(ecv))
 	      q=traits->curve_target(cv);
-	      if ((up ? traits->curve_compare_at_x_from_bottom(ecv,cv,q) :
-                   traits->curve_compare_at_x_from_top(ecv,cv,q)) == LARGER)
+	      if ((up ? traits->curves_compare_y_at_x_from_bottom(ecv,cv,q) :
+                   traits->curves_compare_y_at_x_from_top(ecv,cv,q)) == LARGER)
 	      {  // ecv is closer to p than cv.
-                if (type != (traits->point_is_same(curr->target()->point(),q)))
+                if (type != (traits->point_equal(curr->target()->point(),q)))
 		  // means we 're under cv (so we take the outer edge part).
 		  e = curr;      
 		
@@ -443,7 +443,7 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
                     // the opposite direction
                     {
                       if (type != 
-                          (traits->point_is_same(curr->target()->point(),q))) 
+                          (traits->point_equal(curr->target()->point(),q))) 
                         e = curr->twin();
                       else
                         e = curr;
@@ -458,7 +458,7 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
 	  else
 	    {
 	      CGAL_assertion(
-			 traits->curve_compare_at_x(ecv, cv , p) == 
+			 traits->curves_compare_y_at_x(ecv, cv , p) == 
 			 (!up ? LARGER : SMALLER) ||
 			 e==curr || e==curr->twin()
 	      );
@@ -513,8 +513,8 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
 	    {
 
 	      // p is in interior of curr->curve();
-	      if ( !traits->point_is_same(p,traits->curve_source(cv)) && 
-		   !traits->point_is_same(p,traits->curve_target(cv)))
+	      if ( !traits->point_equal(p,traits->curve_source(cv)) && 
+		   !traits->point_equal(p,traits->curve_target(cv)))
 		{
 		  lt = Planar_map::EDGE;
 		  if (up==traits->point_is_left_low(curr->target()->point(),
@@ -532,13 +532,13 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
 		  CGAL_assertion(curr!=pm->halfedges_end());
 
 #endif
-                  if (traits->point_is_same(curr->target()->point(),p))
+                  if (traits->point_equal(curr->target()->point(),p))
                     e = find_vertex_representation(curr,p,up);	
                   else
                     e = find_vertex_representation(curr->twin(),p,up);
 
 #ifdef CGAL_PM_DEBUG
-		 CGAL_assertion(traits->point_is_same(e->target()->point(),p));
+		 CGAL_assertion(traits->point_equal(e->target()->point(),p));
 
 #endif
 

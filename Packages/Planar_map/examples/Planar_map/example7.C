@@ -34,7 +34,7 @@ typedef CGAL::Pm_walk_along_line_point_location<Planar_map>
                                                         Walk_point_location;
 typedef Planar_map::Locate_type                         Locate_type;
 typedef Traits::Point_2                                 Point_2;
-typedef Traits::X_curve_2                               X_curve_2;
+typedef Traits::X_monotone_curve_2                               X_monotone_curve_2;
 typedef Planar_map::Halfedge_const_handle               Halfedge_const_handle;
 typedef Planar_map::Ccb_halfedge_const_circulator
                                                 Ccb_halfedge_const_circulator;
@@ -103,17 +103,17 @@ int main(int argc, char * argv[])
   */
 
   // Create the curves:
-  X_curve_2 cv[6];
-  cv[0] = X_curve_2(a1, a2);
-  cv[1] = X_curve_2(a2, a3);
-  cv[2] = X_curve_2(a3, a4);
-  cv[3] = X_curve_2(a4, a5);
-  cv[4] = X_curve_2(a5, a1);
-  cv[5] = X_curve_2(a1, a4);
+  X_monotone_curve_2 cv[6];
+  cv[0] = X_monotone_curve_2(a1, a2);
+  cv[1] = X_monotone_curve_2(a2, a3);
+  cv[2] = X_monotone_curve_2(a3, a4);
+  cv[3] = X_monotone_curve_2(a4, a5);
+  cv[4] = X_monotone_curve_2(a5, a1);
+  cv[5] = X_monotone_curve_2(a1, a4);
 
   CGAL::set_ascii_mode(std::cout);
   std::cout << "The curves of the map :" << std::endl; 
-  std::copy(&cv[0], &cv[6], std::ostream_iterator<X_curve_2>(std::cout, "\n"));
+  std::copy(&cv[0], &cv[6], std::ostream_iterator<X_monotone_curve_2>(std::cout, "\n"));
   std::cout << std::endl;
 
 #define PL_TRAP         0

@@ -26,7 +26,7 @@ typedef CGAL::Quotient<float>                   Number_type;
 typedef CGAL::Cartesian<Number_type>            Kernel;
 typedef CGAL::Pm_segment_traits_2<Kernel>       Traits;
 typedef Traits::Point_2                         Point_2;
-typedef Traits::X_curve_2                       X_curve_2;
+typedef Traits::X_monotone_curve_2                       X_monotone_curve_2;
 typedef CGAL::Pm_default_dcel<Traits>           Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>         Planar_map;
 typedef CGAL::Pm_file_writer<Planar_map>        Pm_writer;
@@ -37,7 +37,7 @@ int main()
   CGAL::Pm_naive_point_location<Planar_map> naive_pl;
   Planar_map pm(&naive_pl);
   Pm_writer verbose_writer(std::cout, pm, true);
-  X_curve_2 cv[6];
+  X_monotone_curve_2 cv[6];
   int i;
 
   CGAL::set_ascii_mode(std::cout);
@@ -57,15 +57,15 @@ int main()
   */
 
   // Create the curves:
-  cv[0] = X_curve_2(a1, a2);
-  cv[1] = X_curve_2(a2, a3);
-  cv[2] = X_curve_2(a3, a4);
-  cv[3] = X_curve_2(a4, a5);
-  cv[4] = X_curve_2(a5, a1);
-  cv[5] = X_curve_2(a1, a4);
+  cv[0] = X_monotone_curve_2(a1, a2);
+  cv[1] = X_monotone_curve_2(a2, a3);
+  cv[2] = X_monotone_curve_2(a3, a4);
+  cv[3] = X_monotone_curve_2(a4, a5);
+  cv[4] = X_monotone_curve_2(a5, a1);
+  cv[5] = X_monotone_curve_2(a1, a4);
 
   std::cout << "The curves of the map :" << std::endl; 
-  std::copy(&cv[0], &cv[6], std::ostream_iterator<X_curve_2>(std::cout, "\n"));
+  std::copy(&cv[0], &cv[6], std::ostream_iterator<X_monotone_curve_2>(std::cout, "\n"));
   std::cout << std::endl;
 
   // Insert the curves into the Planar_map:

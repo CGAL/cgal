@@ -41,7 +41,7 @@ Pm_naive_point_location<Planar_map>::locate(const Point & p,
 {
   typename Planar_map::Vertex_iterator vit=pm->vertices_begin();
   for (; vit != pm->vertices_end(); ++vit) {
-    if (traits->point_is_same(p,vit->point()) ) {
+    if (traits->point_equal(p,vit->point()) ) {
       lt = Planar_map::VERTEX; 
       Halfedge_handle h(vit->incident_halfedges());
       return h;
@@ -50,8 +50,8 @@ Pm_naive_point_location<Planar_map>::locate(const Point & p,
 
   typename Planar_map::Halfedge_iterator hit=pm->halfedges_begin();
   for (; hit != pm->halfedges_end(); ++hit) {
-    if (traits->curve_is_in_x_range(hit->curve(),p) &&
-	traits->curve_get_point_status(hit->curve(),p) == EQUAL) {
+    if (traits->point_in_x_range(hit->curve(),p) &&
+	traits->curve_compare_y_at_x(hit->curve(),p) == EQUAL) {
       lt = Planar_map::EDGE; 
       return hit;
     }
@@ -123,9 +123,9 @@ vertical_ray_shoot(const Point & p, Locate_type & lt, bool up) const
   while (it != eit) {
     // Find if p is in the x-range of the curve and above or below it
     // according to the direction of the shoot.
-    in_x_range = traits->curve_is_in_x_range(it->curve(), p);
+    in_x_range = traits->point_in_x_range(it->curve(), p);
     if (in_x_range)
-      res = traits->curve_get_point_status(it->curve(), p);
+      res = traits->curve_compare_y_at_x(it->curve(), p);
 
     if (in_x_range && res == point_above_under) {
       // If the first curve in the x-range was not found yet
@@ -135,7 +135,7 @@ vertical_ray_shoot(const Point & p, Locate_type & lt, bool up) const
       } else {
         // We found another curve in the x-range and we want to remember
         // the closest
-        if ( traits->curve_compare_at_x(closest_edge->curve(),
+        if ( traits->curves_compare_y_at_x(closest_edge->curve(),
                                         it->curve(), p) == curve_above_under) 
         {
           closest_edge = it;
@@ -187,12 +187,12 @@ vertical_ray_shoot(const Point & p, Locate_type & lt, bool up) const
   // edge from the vertical segment
   typename Planar_map::Vertex_handle v = pm->vertices_end();
   bool maybe_vertical = false; // BUG fix (Oren)
-  if (traits->point_is_same_x(closest_edge->target()->point(), p)) {
+  if (traits->point_equal_x(closest_edge->target()->point(), p)) {
     v = closest_edge->target();
     maybe_vertical=true; // BUG fix (Oren)
   }
 
-  if ( traits->point_is_same_x( closest_edge->source()->point(), p) ) 
+  if ( traits->point_equal_x( closest_edge->source()->point(), p) ) 
     {
       if (!maybe_vertical || 
 	  traits->point_is_right_top(closest_edge->target()->point(),
@@ -269,7 +269,7 @@ find_lowest(typename Pm_naive_point_location<Planar_map>::Vertex_handle v,
     if (traits->point_is_left(curr->source()->point(), v->point())) {
       if (lowest_left == pm->halfedges_end())
         lowest_left = curr;
-      else if (traits->curve_compare_at_x_left(curr->curve(),
+      else if (traits->curves_compare_y_at_x_left(curr->curve(),
                                                lowest_left->curve(), 
                                                v->point()) == SMALLER)
         lowest_left = curr;
@@ -278,7 +278,7 @@ find_lowest(typename Pm_naive_point_location<Planar_map>::Vertex_handle v,
     if (traits->point_is_right(curr->source()->point(), v->point())) {
       if (lowest_right == pm->halfedges_end())
         lowest_right = curr;
-      else if (traits->curve_compare_at_x_right(curr->curve(),
+      else if (traits->curves_compare_y_at_x_right(curr->curve(),
                                                 lowest_right->curve(), 
                                                 v->point()) == LARGER)
         lowest_right = curr;

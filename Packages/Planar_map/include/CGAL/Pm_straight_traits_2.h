@@ -115,8 +115,8 @@ public:
   typedef Ray_2_Ray_2_pair<R> Ray_X_source_unbounded_curve;
   typedef Ray_2_Ray_2_pair<R> Ray_X_target_unbounded_curve; 
   typedef Ray_2_Line_2_pair<R> Ray_X_unbounded_curve;
-  typedef Straight_2_<R> X_curve_2;
-  typedef X_curve_2 X_curve;
+  typedef Straight_2_<R> X_monotone_curve_2;
+  typedef X_monotone_curve_2 X_curve;
   
   typedef std::vector<Point> Point_container;
   typedef std::vector<X_curve> X_curve_container;
@@ -414,7 +414,7 @@ public:
     return false;
   }
   
-  bool curve_is_in_x_range(const X_curve & cv, const Point & q) const
+  bool point_in_x_range(const X_curve & cv, const Point & q) const
     { 
       const Point s=curve_source(cv),t=curve_target(cv);
       // precondition: q is inside bbox;cv intersects bbox
@@ -433,7 +433,7 @@ public:
       return !is_right(q, rightmost(s, t)) && !is_left(q, leftmost(s, t));
     }
   /*
-    bool unbounded_curve_is_in_x_range(const X_curve & cv,
+    bool unbounded_point_in_x_range(const X_curve & cv,
                                        const Point & q) const
     { 
     switch(cv.get_type())
@@ -461,10 +461,10 @@ public:
     }
   
   
-  Comparison_result curve_get_point_status (const X_curve &cv, 
+  Comparison_result curve_compare_y_at_x (const X_curve &cv, 
 					    const Point & p) const
     {
-      CGAL_precondition (curve_is_in_x_range(cv, p));
+      CGAL_precondition (point_in_x_range(cv, p));
 
       if (!curve_is_vertical(cv))
         {
@@ -482,11 +482,11 @@ public:
     }
 
   Comparison_result 
-    curve_compare_at_x(const X_curve &cv1, const X_curve &cv2, const Point &q) 
+    curves_compare_y_at_x(const X_curve &cv1, const X_curve &cv2, const Point &q) 
     const 
     {
-      CGAL_precondition(curve_is_in_x_range(cv1, q));
-      CGAL_precondition(curve_is_in_x_range(cv2, q));
+      CGAL_precondition(point_in_x_range(cv1, q));
+      CGAL_precondition(point_in_x_range(cv2, q));
       
       Point p1 = curve_calc_point(cv1, q);
       Point p2 = curve_calc_point(cv2, q);
@@ -498,7 +498,7 @@ public:
   
   
   Comparison_result 
-  curve_compare_at_x_left(const X_curve &cv1, const X_curve &cv2, 
+  curves_compare_y_at_x_left(const X_curve &cv1, const X_curve &cv2, 
                           const Point &q) const 
   {
     // cases  in which the function isn't defined
@@ -509,7 +509,7 @@ public:
     CGAL_precondition(is_left(leftmost(curve_source(cv2),curve_target(cv2)), 
 			      q));
                                     
-    CGAL_precondition(curve_compare_at_x(cv1, cv2, q) == EQUAL);
+    CGAL_precondition(curves_compare_y_at_x(cv1, cv2, q) == EQUAL);
                   
     // <cv2> and <cv1> meet at a point with the same x-coordinate as q
     // compare their derivatives
@@ -517,7 +517,7 @@ public:
   }
           
   Comparison_result 
-  curve_compare_at_x_right(const X_curve & cv1, const X_curve & cv2,
+  curves_compare_y_at_x_right(const X_curve & cv1, const X_curve & cv2,
                            const Point & q) const 
   {
     // cases  in which the function isn't defined
@@ -528,14 +528,14 @@ public:
     CGAL_precondition(is_right(rightmost(curve_source(cv2), curve_target(cv2)),
 			       q));
             
-    CGAL_precondition(curve_compare_at_x(cv1, cv2, q) == EQUAL);
+    CGAL_precondition(curves_compare_y_at_x(cv1, cv2, q) == EQUAL);
       
     // <cv1> and <cv2> meet at a point with the same x-coordinate as q
     // compare their derivatives
     return compare_derivative(cv1,cv2);
   }
   
-  const X_curve curve_flip(const X_curve &cv) const
+  const X_curve curve_opposite(const X_curve &cv) const
     {
       switch(cv.bound_state())
         {
@@ -601,7 +601,7 @@ public:
   Comparison_result compare_y(const Point &p1, const Point &p2) const
     { return compare_value(p1.y(), p2.y()); }
  public:
-  bool curve_is_same(const X_curve &cv1, const X_curve &cv2) const
+  bool curve_equal(const X_curve &cv1, const X_curve &cv2) const
     {
       return cv1==cv2;
     }
@@ -615,7 +615,7 @@ public:
   }
   bool is_point_on_curve(const X_curve &cv, const Point& p) const //check
     {
-      if (!curve_is_in_x_range(cv, p))
+      if (!point_in_x_range(cv, p))
         return false;
       if (curve_is_vertical(cv))
         {
@@ -707,7 +707,7 @@ public:
   //         Used to draw an arrow representation of the vertical ray shoot.
   {
     // CGAL_assertion (!curve_is_in_s_range(cv, q));
-    if ( !curve_is_in_x_range(cv, q) )
+    if ( !point_in_x_range(cv, q) )
       return curve_source(cv);
                 
     if (curve_is_vertical(cv))

@@ -20,7 +20,7 @@ typedef CGAL::Simple_cartesian<double>          Cartesian_kernel;
 typedef CGAL::Filtered_kernel<Cartesian_kernel> Kernel;
 typedef CGAL::Pm_segment_traits_2<Kernel>       Traits;
 typedef Traits::Point_2                         Point_2;
-typedef Traits::X_curve_2                       X_curve_2;
+typedef Traits::X_monotone_curve_2                       X_monotone_curve_2;
 typedef CGAL::Pm_default_dcel<Traits>           Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>         Planar_map;
 typedef Planar_map::Halfedge_handle             Halfedge_handle;
@@ -36,7 +36,7 @@ int main()
 {
   // Create an instance of a Planar_map:
   Planar_map pm;
-  X_curve_2 cv[18];
+  X_monotone_curve_2 cv[18];
 
   CGAL::set_ascii_mode(std::cout);
 
@@ -45,28 +45,28 @@ int main()
   Point_2 a11(11, 7), a12(6, 9);
 
   // Create the curves:
-  cv[0]  = X_curve_2(a1, a3);
-  cv[1]  = X_curve_2(a1, a4);
-  cv[2]  = X_curve_2(a2, a3);
-  cv[3]  = X_curve_2(a2, a6);
-  cv[4]  = X_curve_2(a3, a6);
-  cv[5]  = X_curve_2(a3, a4);
-  cv[6]  = X_curve_2(a4, a5);
-  cv[7]  = X_curve_2(a4, a7);
-  cv[8]  = X_curve_2(a5, a7);
-  cv[9]  = X_curve_2(a6, a8);
-  cv[10] = X_curve_2(a6, a9);
-  cv[11] = X_curve_2(a7, a10);
-  cv[12] = X_curve_2(a7, a11);
-  cv[13] = X_curve_2(a8, a9);
-  cv[14] = X_curve_2(a9, a10);
-  cv[15] = X_curve_2(a9, a12);
-  cv[16] = X_curve_2(a10, a11);
-  cv[17] = X_curve_2(a10, a12);
+  cv[0]  = X_monotone_curve_2(a1, a3);
+  cv[1]  = X_monotone_curve_2(a1, a4);
+  cv[2]  = X_monotone_curve_2(a2, a3);
+  cv[3]  = X_monotone_curve_2(a2, a6);
+  cv[4]  = X_monotone_curve_2(a3, a6);
+  cv[5]  = X_monotone_curve_2(a3, a4);
+  cv[6]  = X_monotone_curve_2(a4, a5);
+  cv[7]  = X_monotone_curve_2(a4, a7);
+  cv[8]  = X_monotone_curve_2(a5, a7);
+  cv[9]  = X_monotone_curve_2(a6, a8);
+  cv[10] = X_monotone_curve_2(a6, a9);
+  cv[11] = X_monotone_curve_2(a7, a10);
+  cv[12] = X_monotone_curve_2(a7, a11);
+  cv[13] = X_monotone_curve_2(a8, a9);
+  cv[14] = X_monotone_curve_2(a9, a10);
+  cv[15] = X_monotone_curve_2(a9, a12);
+  cv[16] = X_monotone_curve_2(a10, a11);
+  cv[17] = X_monotone_curve_2(a10, a12);
 
   std::cout << "The curves of the map :" << std::endl; 
   std::copy(&cv[0], &cv[18],
-            std::ostream_iterator<X_curve_2>(std::cout, "\n"));
+            std::ostream_iterator<X_monotone_curve_2>(std::cout, "\n"));
   std::cout << std::endl;
 
   // Insert the curves into the Planar_map:

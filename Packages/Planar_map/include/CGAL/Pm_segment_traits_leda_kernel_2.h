@@ -203,7 +203,7 @@ public:
     int cmp_y(const Point_2 & p1, const Point_2 & p2) const
     { return Self::Point_2::cmp_y(p1, p2); }
       
-    bool curve_is_in_x_range(const Segment_2 & cv, const Point_2 & p) const
+    bool point_in_x_range(const Segment_2 & cv, const Point_2 & p) const
     {
       return
         !(((cmp_x(p, cv.source()) < 0) && (cmp_x(p, cv.target()) < 0)) ||
@@ -226,7 +226,7 @@ public:
                                  const Segment_2 & cv1, const Segment_2 & cv2)
       const
     {
-      if ((!curve_is_in_x_range(cv1, q)) || (!curve_is_in_x_range(cv2, q)))
+      if ((!point_in_x_range(cv1, q)) || (!point_in_x_range(cv2, q)))
         return EQUAL;
 		
       // bug ??? in LEDA - 
@@ -277,7 +277,7 @@ public:
 
     Comparison_result operator()(const Point_2 & p, const Segment_2 & cv)
     {
-      if (!curve_is_in_x_range(cv, p)) return EQUAL;
+      if (!point_in_x_range(cv, p)) return EQUAL;
 
       if (cv.is_vertical()) {
         if ((cmp_y(p, cv.source()) < 0) && (cmp_y(p, cv.target()) < 0))

@@ -19,7 +19,7 @@
 typedef CGAL::Homogeneous<long>           Kernel;
 typedef CGAL::Pm_segment_traits_2<Kernel> Traits;
 typedef Traits::Point_2                   Point_2;
-typedef Traits::X_curve_2                 X_curve_2;
+typedef Traits::X_monotone_curve_2                 X_monotone_curve_2;
 typedef CGAL::Pm_default_dcel<Traits>     Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>   Planar_map;
 
@@ -28,7 +28,7 @@ int main()
   // Create an instance of a Planar_map with a naive point location strategy:
   CGAL::Pm_naive_point_location<Planar_map> naive_pl;
   Planar_map pm(&naive_pl);
-  X_curve_2 cv[4];
+  X_monotone_curve_2 cv[4];
   int i;
 
   CGAL::set_ascii_mode(std::cout);
@@ -36,10 +36,10 @@ int main()
   Point_2 a1(0, 0), a2(1, 0), a3(1, 1), a4(0, 1);
 
   // Create the curves:
-  cv[0] = X_curve_2(a1, a2);
-  cv[1] = X_curve_2(a2, a3);
-  cv[2] = X_curve_2(a3, a4);
-  cv[3] = X_curve_2(a4, a1);
+  cv[0] = X_monotone_curve_2(a1, a2);
+  cv[1] = X_monotone_curve_2(a2, a3);
+  cv[2] = X_monotone_curve_2(a3, a4);
+  cv[3] = X_monotone_curve_2(a4, a1);
 
   // Insert the curves into the Planar_map:
   Planar_map::Halfedge_handle e[4];  

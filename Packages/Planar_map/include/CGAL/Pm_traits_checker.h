@@ -76,48 +76,48 @@ public:
     CGAL_assertion(t.curve_is_vertical(cv)==b.curve_is_vertical(P(cv)));
     return t.curve_is_vertical(cv);
   }	
-  bool curve_is_in_x_range(const X_curve & cv, const Point & q) const
+  bool point_in_x_range(const X_curve & cv, const Point & q) const
     {
-    CGAL_assertion(t.curve_is_in_x_range(cv,q) == 
-                   b.curve_is_in_x_range(P(cv),P(q)));
-    return t.curve_is_in_x_range(cv,q);
+    CGAL_assertion(t.point_in_x_range(cv,q) == 
+                   b.point_in_x_range(P(cv),P(q)));
+    return t.point_in_x_range(cv,q);
     }
 
 
-  Comparison_result curve_get_point_status (const X_curve &cv, 
+  Comparison_result curve_compare_y_at_x (const X_curve &cv, 
 					    const Point & p) const
   {
-    CGAL_assertion(t.curve_get_point_status(cv,p) == 
-                   b.curve_get_point_status(P(cv),P(p)));
-    return t.curve_get_point_status(cv,p);
+    CGAL_assertion(t.curve_compare_y_at_x(cv,p) == 
+                   b.curve_compare_y_at_x(P(cv),P(p)));
+    return t.curve_compare_y_at_x(cv,p);
   }
   
   Comparison_result 
-  curve_compare_at_x(const X_curve &cv1, const X_curve &cv2, const Point &q) 
+  curves_compare_y_at_x(const X_curve &cv1, const X_curve &cv2, const Point &q) 
     const 
   {
-    CGAL_assertion(t.curve_compare_at_x(cv1,cv2,q) ==
-                   b.curve_compare_at_x(P(cv1),P(cv2),P(q)));
-    return t.curve_compare_at_x(cv1,cv2,q);
+    CGAL_assertion(t.curves_compare_y_at_x(cv1,cv2,q) ==
+                   b.curves_compare_y_at_x(P(cv1),P(cv2),P(q)));
+    return t.curves_compare_y_at_x(cv1,cv2,q);
   }
   
   Comparison_result 
-  curve_compare_at_x_left(const X_curve &cv1, const X_curve &cv2, 
+  curves_compare_y_at_x_left(const X_curve &cv1, const X_curve &cv2, 
                           const Point &q) const 
   {
-    CGAL_assertion(t.curve_compare_at_x_left(cv1,cv2,q) ==
-                   b.curve_compare_at_x_left(P(cv1),P(cv2),P(q)));
-    return t.curve_compare_at_x_left(cv1,cv2,q);
+    CGAL_assertion(t.curves_compare_y_at_x_left(cv1,cv2,q) ==
+                   b.curves_compare_y_at_x_left(P(cv1),P(cv2),P(q)));
+    return t.curves_compare_y_at_x_left(cv1,cv2,q);
   }
   
   Comparison_result 
-  curve_compare_at_x_right(const X_curve & cv1,
+  curves_compare_y_at_x_right(const X_curve & cv1,
 			   const X_curve & cv2, 
 			   const Point   & q) const 
   {
-    CGAL_assertion(t.curve_compare_at_x_right(cv1,cv2,q) ==
-		   b.curve_compare_at_x_right(P(cv1),P(cv2),P(q)));
-    return t.curve_compare_at_x_right(cv1,cv2,q);
+    CGAL_assertion(t.curves_compare_y_at_x_right(cv1,cv2,q) ==
+		   b.curves_compare_y_at_x_right(P(cv1),P(cv2),P(q)));
+    return t.curves_compare_y_at_x_right(cv1,cv2,q);
   }
 
   Comparison_result compare_x(const Point &p1, const Point &p2) const
@@ -130,10 +130,10 @@ public:
     CGAL_assertion(t.compare_xy(p1,p2)==b.compare_xy(P(p1),P(p2)));
     return t.compare_xy(p1,p2);
   }
-  bool curve_is_same(const X_curve &cv1, const X_curve &cv2) const
+  bool curve_equal(const X_curve &cv1, const X_curve &cv2) const
     {
-    CGAL_assertion(t.curve_is_same(cv1,cv2)==b.curve_is_same(P(cv1),P(cv2)));
-    return t.curve_is_same(cv1,cv2);
+    CGAL_assertion(t.curve_equal(cv1,cv2)==b.curve_equal(P(cv1),P(cv2)));
+    return t.curve_equal(cv1,cv2);
     }
 
 };

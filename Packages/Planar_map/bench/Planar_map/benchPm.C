@@ -54,7 +54,7 @@ typedef CGAL::Pm_segment_traits_2<Kernel>               Traits;
 typedef CGAL::Pm_default_dcel<Traits>                   Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>                 Planar_map;
 typedef Traits::Point_2                                 Point;
-typedef Traits::X_curve_2                               Curve;
+typedef Traits::X_monotone_curve_2                               Curve;
 typedef std::list<Curve>                                CurveList;
 
 typedef CGAL::Pm_default_point_location<Planar_map>     Trap_point_location;
