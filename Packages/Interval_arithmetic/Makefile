@@ -10,17 +10,17 @@ WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
 package: doc filters example clean $(Package).tar.gz
-	@echo "----------------------------------"
-	@echo "------------ Penser à: -----------"
-	@echo "----------------------------------"
-	@echo "---- changes.txt              ----"
-	@echo "---- make test                ----"
-	@echo "---- make VERSION=3.4 version ----"
-	@echo "---- cvs commit               ----"
-	@echo "---- make VERSION=3.4 rtag    ----"
-	@echo "---- make package             ----"
-	@echo "---- make submit              ----"
-	@echo "----------------------------------"
+	@echo "-----------------------------------"
+	@echo "------------ Penser à: ------------"
+	@echo "-----------------------------------"
+	@echo "---- changes.txt               ----"
+	@echo "---- make test                 ----"
+	@echo "---- make VERSION=4.11 version ----"
+	@echo "---- cvs commit                ----"
+	@echo "---- make VERSION=4.11 rtag    ----"
+	@echo "---- make package              ----"
+	@echo "---- make submit               ----"
+	@echo "-----------------------------------"
 
 version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version

@@ -7,13 +7,23 @@
   - (-a)*b    => -(a*b) ssi -ffast-math
   - bug à fixer: cf get_empiric_rounding_mode(), où "volatile" est nécessaire.
 - Comment intégrer ces foutus pré-calculs ?  Faire un draft de propal.
-- Faire aussi une propal pour include/CGAL/Predicates/*.
+- Faire aussi une propal précise pour include/CGAL/Predicates/*.
+- Faire une propal pour modular (après avoir vu/benché leda_modular).
+- Voir si on pourrait faire un filtre static avec le NT d'Olivier, et mes
+  scripts (voir si y'a pas trop de branches, etc...).
 
 Concerning the code itself:
 
+- Stop constant propagation (could be considered a compiler bug, or
+  misfeature).  It's not specific to Intel, it would be nice if egcs had
+  better control over that (work on that ?).  It can easily be fixed by
+  "CGAL_IA_FORCE_TO_DOUBLE" in the constructors.
+- On Intel, due to lack of IEEE support, after each critical operation, I need
+  to "CGAL_IA_FORCE_TO_DOUBLE".  Would be nice if egcs had a good option for
+  that.
+- Drop the class Interval_nt ?  Or have a boolean template parameter, instead
+  or the derivation ?
 - FPU_get_and_set_cw (), c'est plus joli, et ça peut être plus efficace.
-- Les opérateurs (double, Interval_nt (pas advanced)) ne sont pas protégés par
-  le rounding mode +inf...
 - Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
   Hum, rajouter un booléen pour calculer le cache seulement sur demande ?
   (ça évite de le faire inutilement pour les variables intermédiaires,
@@ -29,17 +39,14 @@ Concerning the code itself:
 				NB: si on linke 2 .o comme ça => multiple def...
   - The convert_to workaround could be enabled even for all compilers ?
     It would simplify the code, but:  slow down ?  still work for Quotient ?
-- Mariette dit que g++ 2.8.1 supporte pas
-  Filtered_exact<Quotient<Gmpz>,Quotient<Gmpz>>.  A vérifier et corriger.
+- g++ 2.8.1 n'a pas l'air de supporter: Filter<Quotient<Gmpz>,Quotient<Gmpz>>.
 - Vérifier que EGCS optimise les expressions x*IA(1), IA(1)*x, x*IA(0), etc...
   C'est apparemment loin d'être le cas.  Il inline, mais laisse les tests...
   Il n'a pas l'air de propager les constantes à travers IA(1), même s'il
   inline !!!
-- Refaire un petit coup de GCOV, pour voir où ça en est.
 - Avoir un flag dynamic (static member) qui dit si exception ou pas, voire un
   function pointer pour overlap_action() ?
   Et modifier le comportement dans les fonctions save/restore ?
-- essayer de mettre a et b "register", et voir le changement de l'assembly.
 - converter (long longs), (long doubles)...  au moins documenter que c'est pas
   supporté pour le moment.  Hint: (double) +/- 1ulp.
 ? try if __attribute__((const)) for GNU on my operators is ok, and speed up ?
@@ -71,15 +78,18 @@ Concerning the doc:
 
 - change the status of homogeneous predicates when available...
 - faire un fichier long_description comme ça doit se faire.
-- Tell the status for Mips (the rounding mode).
 - Tell the status for MipsPro (the workaround about partial specializations).
   (#define CGAL_IA_ET, CGAL_IA_CT... cf tst5.C).
 - add a pointer to my MISC'99 paper.
 - Document "IA::number_of_failures".
 - Documenter le mécanisme de cache.
+- Passer au nouveau format de doc.
 
 Concerning the test-suite:
 
+- CGAL_IA_DEBUG ne marche pas sur sparc (FPU_get_cw ne rend pas ce qu'il
+  faut...).
+- Refaire un petit coup de GCOV, pour voir où ça en est.
 - test-suite: rajouter un test simple qui vérifie que les exceptions marchent.
 - Faire une test-suite un peu plus extensive des filtres.  En particulier les
   types templatés, etc...

@@ -14,26 +14,12 @@ include $(CGAL_MAKEFILE)
 
 # CGAL_CXX=$(HOME)/egcs/$(UNAME)/bin/g++
 
-# Extrait de la doc de GNU Make:
-# 
-# Here is an example, which compiles each of `foo.o' and `bar.o' from the
-# corresponding `.c' file: 
-# 
-# objects = foo.o bar.o
-# 
-# all: $(objects)
-# 
-# $(objects): %.o: %.c
-#	$(CC) -c $(CFLAGS) $< -o $@
-# 
-
 CXXFLAGS = -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
 	-O2
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
-	# -DNO_ASSERTIONS -DNO_PRECONDITIONS -DNO_POSTCONDITIONS \
-	# -W -O2 
+	# -O2 -W -Winline
 	# -mcpu=pentiumpro -march=pentiumpro -mieee-fp
 	# -mcpu=ultrasparc -mtune=ultrasparc
 	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
@@ -79,6 +65,19 @@ bench4: tst4
 bench: tst3 tst4
 	./tst3
 	./tst4
+
+# Extrait de la doc de GNU Make:
+# 
+# Here is an example, which compiles each of `foo.o' and `bar.o' from the
+# corresponding `.c' file: 
+# 
+# objects = foo.o bar.o
+# 
+# all: $(objects)
+# 
+# $(objects): %.o: %.c
+#	$(CC) -c $(CFLAGS) $< -o $@
+# 
 
 tst0.o: tst0.C
 

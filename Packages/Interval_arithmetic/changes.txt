@@ -1,6 +1,14 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.1 on 22 April 1999
+Version 4.11 on 4 May 1999
+- Introduced macro CGAL_IA_FORCE_TO_DOUBLE to workaround an Intel processors
+  "feature", breaking the intervals that underflow or overflow.
+- The test-suite should not say "n" when LEDA is not there.
+- Fixed a bug in the division !
+- Some operator?(Interval_nt) didn't change the rounding mode: fixed.
+- Fixed MipsPro.
+
+Version 4.1 on 30 April 1999
 - Fixed typo breaking MipsPro.
 
 Version 4.0 on 22 April 1999
