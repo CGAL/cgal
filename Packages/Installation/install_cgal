@@ -852,6 +852,16 @@ print_using()
 	"#endif // CGAL_CFG_NO_STD${_tmp}_NAMESPACE && !CGAL_NO_STD${_tmp}_NAMESPACE"
 }
 
+# this function is used to undefine macros (used for cctype)
+print_undef()
+{
+    for i in ${*}; do
+	${_printf} "%s\n" "#ifdef ${i}"
+	${_printf} "%s\n" "#undef ${i}"
+	${_printf} "%s\n" "#endif // ${i}"
+    done
+}
+
 create_replacement_header()
 #
 # Create one header as a replacement for a standard header, if necessary.
@@ -929,8 +939,15 @@ EOF3
 	    ctime) print_using C size_t time_t clock_t tm asctime ctime clock difftime gmtime localtime mktime time strftime >> ${replacement_header};;
 	    csignal) print_using C sig_atomic_t raise signal >> ${replacement_header};;
 	    cstdlib) print_using C abort atexit exit getenv system calloc malloc free realloc atof atoi atol mblen mbstowcs mbtowc strtod strtol strtoul wcstombs wctomb bsearch qsort div_t ldiv_t abs div labs ldiv rand srand >> ${replacement_header};;
-# seem to be macros :(
-#	    cctype) print_using C isalnum isalpha iscntrl isdigit isgraph islower isprint ispunct isspace isupper isxdigit >> ${replacement_header};;
+	    # the functions from cctype are implemented as macros
+	    # on some platforms (IRIX6, Solaris2.6)
+	    # but they have to be functions according to the std!
+	    cctype) ${_printf} "\n%s\n" \
+		"#ifdef CGAL_CFG_CCTYPE_MACRO_BUG" >> ${replacement_header}
+		    print_undef isalnum isalpha iscntrl isdigit isgraph islower isprint ispunct isspace isupper isxdigit >> ${replacement_header}
+		    ${_printf} "\n%s\n" \
+		"#endif // CGAL_CFG_CCTYPE_MACRO_BUG" >> ${replacement_header}
+		    print_using C isalnum isalpha iscntrl isdigit isgraph islower isprint ispunct isspace isupper isxdigit >> ${replacement_header};;
 	    cwctype) print_using C wctrans_t wctype_t wint_t iswalnum iswalpha iswcntrl iswctype iswdigit iswgraph iswlower iswprint iswpunct iswspace iswupper iswxdigit towctrans towlower towupper wctrans wctype >> ${replacement_header};;
 	    cstring) print_using C size_t memchr memcmp memcpy memmove memset strcat strchr strcmp strcoll strcpy strcspn strerror strlen strncat strncmp strncpy strpbrk strrchr strspn strstr strtok strxfrm >> ${replacement_header};;
 	    cwchar) print_using C wint_t size_t fgetwc fgetws fputwc fputws getwc getwchar putwc putwchar ungetwc wcscat wcschr wcscmp wcscoll wcscpy wcscspn wcsftime wcslen wcsncat wcsncmp wcsncpy wcspbrk wcsrchr wcsspn wcstod wcstok wcstol wcstoul wcsxfrm >> ${replacement_header};;
@@ -1025,7 +1042,7 @@ EOF2
 }
 
 #
-# end of code segemnt from make_redirection_headers
+# end of code segment from make_redirection_headers
 # --------------------------------------------------------------------------
 
 # COMPILER SPECS TEST:
@@ -3359,7 +3376,8 @@ write_compiler_flags()
   fi
   makefile_print_line "-I\$(CGAL_INCL_CONF_DIR)" >> ${FILE}
   if [ -n "${LEDA_SUPPORT}" ]; then
-    makefile_print_line "-DCGAL_USE_LEDA -DLEDA_PREFIX" >> ${FILE}
+    makefile_print_line "-DCGAL_USE_LEDA -DLEDA_PREFIX -DLEDA_STD_HEADERS" \
+	>> ${FILE}
     if [ -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
 	makefile_print_line "-I\$(CGAL_INCL_DIR)" >> ${FILE}
 	${_printf} "\t%s\n\n" "-I\$(LEDA_INCL_DIR)" >> ${FILE}
