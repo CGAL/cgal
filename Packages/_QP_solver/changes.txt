@@ -1,5 +1,8 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.11 on 19-Jun-2003 [bg]
+- Removed bug in 10-Jun-2003 workaround
+
 Version 0.9.10 on 10-Jun-2003 [af]
 - Added workaround for missing member templates in Sun STL
 

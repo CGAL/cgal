@@ -173,7 +173,7 @@ set_up_initial_solution( )
     b = Values( qp_b, qp_b+qp_m);
 #else
     b = Values ( qp_m );
-    std::copy(qp_b, qp_b+qp_m, std::back_inserter( b ));
+    std::copy(qp_b, qp_b+qp_m, b.begin());
 #endif
 
     // initialize exact version of `-aux_c' (implicit conversion to ET)
