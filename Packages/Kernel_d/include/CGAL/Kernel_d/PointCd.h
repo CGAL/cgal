@@ -73,9 +73,9 @@ PointCd(int d, InputIterator first, InputIterator last)
   : Base( Tuple(d,first,last) ) 
 { if ( first == last ) return; 
   // else first specifies common denominator:
-  CGAL_assertion_msg(*first!=FT(0),
+  CGAL_assertion_msg(FT(*first)!=FT(0),
     "PointCd::constructor: denominator must be nonzero.");
-  for (register int i=0; i<d; ++i) entry(i)/=*first;
+  for (register int i=0; i<d; ++i) entry(i)/=FT(*first);
 }
 
 template <class InputIterator>

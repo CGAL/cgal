@@ -77,6 +77,7 @@ clean: \
 	intersection-test.clean \
 	chull_d-test.clean \
 	delaunay_d-test.clean
+	rm -rf ti_files ii_files
 
 #---------------------------------------------------------------------#
 #                    suffix rules

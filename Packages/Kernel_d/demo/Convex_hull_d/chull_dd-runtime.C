@@ -3,6 +3,7 @@
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Convex_hull_d.h>
 #include <CGAL/random_selection.h>
+#include <CGAL/Timer.h>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -31,6 +32,7 @@ typedef int* p_int;
 typedef p_int* pp_int;
 
 static std::ofstream* p_table_file;
+CGAL::Timer timer;
 
 void random_d_tuple_in_range(p_int V, int d, int l, int h)
 {
@@ -95,12 +97,13 @@ void time_insertion_and_check(pp_int V, int n, int d,
   for(int i=0; i<n; ++i) 
     P[i] = CGAL::Point_d<R>(d,V[i],V[i]+d,1);
   
-  float ti = used_time();
+  timer.reset(); timer.start(); // float ti = used_time();
   for(int i=0; i<n; ++i) {
     C.insert(P[i]);
     if (i%10==0) std::cout << i << " points inserted" << std::endl;
   }
-  float t = used_time(ti);
+  timer.stop(); 
+  double t = timer.time(); timer.reset(); // float t = used_time(ti);
   (*p_table_file) << s << "\t" << d << " " << n << " "
                   << C.number_of_vertices() << " " << C.number_of_facets()
                   << "\t" << t;
@@ -108,13 +111,15 @@ void time_insertion_and_check(pp_int V, int n, int d,
   std::cout << "used time for inserts  " << t << std::endl;
 
   C.clear(d);
-  ti = used_time();
+  timer.start(); // ti = used_time();
   C.initialize(P.begin(),P.end());
-  t = used_time(ti);
+  timer.stop(); t = timer.time(); timer.reset(); 
+  // t = used_time(ti);
   C.print_statistics();
   std::cout << "used time for inserts  " << t << std::endl;
 
   if (check) {
+    timer.start();
     std::cout << "entering check" << std::endl;
     try { C.is_valid(true); }
     catch ( chull_has_local_non_convexity ) 
@@ -124,7 +129,8 @@ void time_insertion_and_check(pp_int V, int n, int d,
     catch ( chull_has_center_on_wrong_side_of_hull_facet ) 
     { std::cerr << "facet center problem determined\n"; }
 
-    t = used_time(ti);
+    // t = used_time(ti);
+    timer.stop(); t = timer.time();
     (*p_table_file) << "\t" << t <<std::endl;
     std::cout<<"used time for sanity check  "<< t <<std::endl<<std::endl;
   } else {
