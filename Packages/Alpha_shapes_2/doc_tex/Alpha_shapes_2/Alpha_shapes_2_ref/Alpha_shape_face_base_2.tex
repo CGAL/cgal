@@ -92,9 +92,10 @@ her face base \ccc{Df}.}
 {returns a vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains
 three alpha values
  $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
-$\alpha$ under $\alpha_3$, the edge is attached but singular,
-for $\alpha$ under $\alpha_2$, the face is regular, and for $\alpha$
-under $\alpha_1$, the edge is interior.}
+$\alpha$  between $\alpha_1$ and $\alpha_2$, the edge indexed with $i$ is
+attached but singular, 
+for $\alpha$ between $\alpha_2$ and $\alpha_3$, the edge is regular, and for $\alpha$
+upper $\alpha_3$, the edge is interior.}
 \ccMethod{Coord_type get_alpha();}
 {return the alpha value, under which the alpha shape contains the
 face.}
@@ -107,9 +108,10 @@ face.}
 {sets the vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains three
 alpha values
  $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
-$\alpha$ under $\alpha_3$, the edge is attached but singular,
-for $\alpha$ under $\alpha_2$, the face is regular, and for $\alpha$
-under $\alpha_1$, the edge is interior.}
+$\alpha$  between $\alpha_1$ and $\alpha_2$, the edge indexed with $i$ is
+attached but singular, 
+for $\alpha$ between $\alpha_2$ and $\alpha_3$, the edge is regular, and for $\alpha$
+upper $\alpha_3$, the edge is interior.}
 \ccMethod{void set_alpha(Coord_type A);}
 {sets the alpha value, under which the alpha shape contains the
 face.}
