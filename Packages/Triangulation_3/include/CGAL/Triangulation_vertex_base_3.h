@@ -28,7 +28,7 @@ CGAL_BEGIN_NAMESPACE
 template < class GT >
 class Triangulation_vertex_base_3
 {
-  friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
+  friend std::istream& operator >> CGAL_NULL_TMPL_ARGS
   (std::istream&, Triangulation_vertex_base_3<GT>&);
 
 public:
@@ -95,7 +95,7 @@ private:
 };
 
 template < class GT >
-std::istream& operator>>
+std::istream& operator >>
 (std::istream& is, Triangulation_vertex_base_3<GT> & v)
   // non combinatorial information. Default = point
 {

@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt >
 class Triangulation_cell_base_3
 {
-  friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
+  friend std::istream& operator >> CGAL_NULL_TMPL_ARGS
   (std::istream&, Triangulation_cell_base_3<Gt>&);
 
 public:
@@ -196,7 +196,7 @@ private:
 };
 
 template < class GT >
-std::istream& operator>>
+std::istream& operator >>
 (std::istream& is, Triangulation_cell_base_3<GT> & c)
   // non combinatorial information. Default = nothing
 {
