@@ -38,7 +38,7 @@ int main()
   typedef CGAL::Regular_triangulation_euclidean_traits_3<Test_rep_cartesian> Cls1;
 
   typedef Cls1::Bare_point Bare1;
-  typedef Cls1::Point  Pt1;
+  typedef Cls1::Point_3  Pt1;
   Pt1 p1[55] = {
 	Pt1(Bare1(1,3,0),0), Pt1(Bare1(3,5,2),0), Pt1(Bare1(3,8,0),0), 
 	Pt1(Bare1(1,3,1),0), Pt1(Bare1(3,5,0),0), Pt1(Bare1(7,5,0),0), 
