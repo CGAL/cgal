@@ -37,7 +37,8 @@ template <class R> class Ray_d;
 template <class R> class Line_d;
 
 template <class R> 
-class Pair_d : public Ref_counted { 
+class Pair_d 
+{
   typedef Pair_d<R> Self;
   typedef typename R::Point_d Point_d;
   typedef typename R::Vector_d Vector_d;

@@ -231,6 +231,9 @@ Vector_(const Vector_<NT_,AL_>& p)
 
 Vector_<NT_,AL_>& operator=(const Vector_<NT_,AL_>& vec)
 { 
+  if (&vec == this)
+    return *this;
+
   register int n = vec.d_;
   if (n != d_) { 
     if (d_ > 0) deallocate_vec_space(v_,d_);

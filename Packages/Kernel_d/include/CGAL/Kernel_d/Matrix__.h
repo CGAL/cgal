@@ -600,6 +600,9 @@ template <class NT_, class AL_>
 Matrix_<NT_,AL_>& Matrix_<NT_,AL_>::
 operator=(const Matrix_<NT_,AL_>& mat)
 { 
+  if (&mat == this)
+    return *this;
+
   register int i,j; 
   if (dm_ != mat.dm_ || dn_ != mat.dn_) { 
     for(i=0; i<dm_; i++) delete v_[i]; 

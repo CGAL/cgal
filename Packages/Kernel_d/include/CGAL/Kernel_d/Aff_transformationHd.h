@@ -36,7 +36,8 @@ template <class RT, class LA > class Aff_transformationHd;
 template <class RT, class LA > class Aff_transformationHd_rep;
 
 template <class RT, class LA>
-class Aff_transformationHd_rep : public Ref_counted {
+class Aff_transformationHd_rep 
+{
   friend class Aff_transformationHd<RT,LA>;
   typedef typename LA::Matrix Matrix;
   Matrix M_;

@@ -98,7 +98,7 @@ template <typename HP, typename H> class Facet_iterator_rep_;
 template <typename HP, typename H> class Facet_iterator_;
 
 template <typename Hull_pointer, typename Handle>
-class Facet_iterator_rep_ : public Ref_counted
+class Facet_iterator_rep_ 
 {
   CGAL::Unique_hash_map<Handle,bool>* pvisited_;
   std::list<Handle>* pcandidates_;
@@ -180,7 +180,7 @@ template <typename HP, typename VH, typename FH>
 class Hull_vertex_iterator_;
 
 template <typename Hull_pointer, typename VHandle, typename FHandle>
-class Hull_vertex_iterator_rep_ : public Ref_counted
+class Hull_vertex_iterator_rep_ 
 {
   CGAL::Unique_hash_map<VHandle,bool>* pvisited_;
   Hull_pointer hull_;

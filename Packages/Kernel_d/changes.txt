@@ -1,5 +1,10 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.72 (22 Aug 2002)
+  - removed obsolete Ref_counted class derivations
+  - proteced assignment operator for Matrx_ and Vector_ when copying
+    an object to itself.
+
 0.9.71 (23 Jul 2002)
    added missing std:: for ptrdiff_t
 
