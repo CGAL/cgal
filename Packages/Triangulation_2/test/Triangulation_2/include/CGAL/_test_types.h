@@ -12,7 +12,7 @@
 #include <CGAL/Gmpz.h>
 #endif // CGAL::GMPZ
 #include <CGAL/Quotient.h>
-#include<CGAL/Arithmetic_filter.h>
+//#include<CGAL/Arithmetic_filter.h>
 
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>

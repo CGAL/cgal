@@ -30,7 +30,7 @@
 
 template <class Tds, class Gt>
 void
-_test_cls_tds_2( const Tds &, const Gt & )
+_test_cls_tds_2( const Tds &, const Gt &)
 {
   // Since tds is extensively used by Triangulation_2,
   // there is no real need to test the functionality
@@ -51,8 +51,8 @@ _test_cls_tds_2( const Tds &, const Gt & )
   typedef typename Tds::Edge_circulator   Edge_circulator;
 
   // Test subclasses
-  _test_cls_tds_vertex( Vertex(), Gt() );
-  _test_cls_tds_face( Face(), Gt() );
+  CGAL::_test_cls_tds_vertex( Vertex(), Gt() );
+  CGAL::_test_cls_tds_face( Face(), Gt() );
 
   // Test constructors
   cout << "    constructors" << endl;
