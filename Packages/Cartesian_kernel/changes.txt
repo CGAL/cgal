@@ -17,8 +17,9 @@ Version 6.0 (?? ????? 00)
 - Changed ptr-> access to Ptr()-> .
 - Removed Cartesian_2 and Cartesian_3.
 - Removed scripts create_symlinks_[23] and remove_symlinks_[23].
-- Handle and Representation specification come now from Cartesian<>,
-  so that we can customize them easily.
+- Handle (and representation via element_type) specification come now from
+  Cartesian<>, so that we can customize them easily.
+- Alternative cartesian kernel without ref-counting : Simple_Cartesian_v2.
 - A few fixes for the advanced kernel.
 - Removed the copy ctors, as they are provided by the handles.
 - Various cleanups.
