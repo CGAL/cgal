@@ -37,7 +37,7 @@ int main()
   std::cout << "* * * Presenting the use of verbose format" << std::endl;
   std::cout << std::endl;
   Pm_writer verbose_writer(std::cout, pm, true);
-  write_pm(pm, verbose_writer, std::cout);
+  CGAL::write_pm(pm, verbose_writer, std::cout);
   
   std::cout << std::endl;
   std::cout << "* * * Demonstrating the use of the writer class interface." << std::endl;
