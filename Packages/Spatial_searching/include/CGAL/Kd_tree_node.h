@@ -179,16 +179,6 @@ namespace CGAL {
 	return lower()->num_nodes() + upper()->num_nodes();
     }
 
-    unsigned int 
-   bucket_size() 
-    {
-      if (is_leaf()) std::cout << size() << std::endl;
-      else{ 
-	lower()->bucket_size();
-	upper()->bucket_size();
-      }
-    }
-    
     int 
     depth(const int current_max_depth) const
     {
