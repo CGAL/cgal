@@ -1,3 +1,6 @@
+2.67   (13 April 2002)
+- simple_homogeneous_rep.h still contained Point_d stuff.
+
 2.66   (22 March 2002)
 - removed remaining include of Point_d.
 

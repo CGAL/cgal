@@ -33,7 +33,6 @@
 
 #include <CGAL/representation_tags.h>
 #include <CGAL/Kernel/function_objects.h>
-#include <CGAL/PointHd.h>
 
 #include <CGAL/ConicHPA2.h>
  
@@ -74,8 +73,6 @@ class Simple_homogeneous_base
     typedef Iso_cuboidH3< R_ >                       Iso_cuboid_3;
     typedef SphereH3< R_ >                           Sphere_3;
     typedef Aff_transformationH3< R_ >               Aff_transformation_3;
-
-    typedef PointHd< FT, RT>                         Point_d;
 };
 
 template <class RT_, class FT_ = Quotient<RT_> >
@@ -89,8 +86,6 @@ class Simple_homogeneous
 
     typedef Homogeneous_tag                         Rep_tag;
     typedef Simple_homogeneous_base< R, RT_, FT_ >  Kernel_base;
-
-    typedef typename Kernel_base::Point_d               Point_d_base;
 
     typedef typename Kernel_base::Object_2              Object_2;
     typedef typename Kernel_base::Object_3              Object_3;
@@ -119,9 +114,6 @@ class Simple_homogeneous
     typedef CGAL::Iso_cuboid_3< R >                Iso_cuboid_3;
     typedef CGAL::Sphere_3< R >                    Sphere_3;
     typedef CGAL::Aff_transformation_3< R >        Aff_transformation_3;
-
-    // we have: template <class R> CGAL::Point_d : public R::Point_d_base
-    typedef CGAL::Point_d< R >                     Point_d;
 
     typedef Data_accessorH2<R>                       Data_accessor_2;
 
