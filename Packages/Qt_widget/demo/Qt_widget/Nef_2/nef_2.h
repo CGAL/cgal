@@ -1,3 +1,6 @@
+
+
+
 #include <CGAL/Quotient.h>
 
 template <class NT>

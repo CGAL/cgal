@@ -60,8 +60,8 @@ private:
        && !firstpoint
        && is_pure(e->state()))
     {
-      FT x=static_cast<FT>(widget->x_real(e->x()));
-      FT y=static_cast<FT>(widget->y_real(e->y()));
+      FT x(widget->x_real(e->x()));
+      FT y(widget->y_real(e->y()));
       x1 = x;
       y1 = y;
       x2 = x;

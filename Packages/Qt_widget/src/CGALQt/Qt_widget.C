@@ -82,10 +82,17 @@ void Qt_widget::set_scales()
 
 void Qt_widget::set_scale_center(const double xc, const double yc)
 {
-  xmin = xc - (geometry().width()/xscal)/2;
-  xmax = xc + (geometry().width()/xscal)/2;
-  ymin = yc - (geometry().height()/yscal)/2;
-  ymax = yc + (geometry().height()/yscal)/2;
+  if(xscal<1) {
+    xmin = xc - (int)(geometry().width()/xscal)/2;
+    xmax = xc + (int)(geometry().width()/xscal)/2;
+    ymin = yc - (int)(geometry().height()/yscal)/2;
+    ymax = yc + (int)(geometry().height()/yscal)/2;
+  } else {
+    xmin = xc - (geometry().width()/xscal)/2;
+    xmax = xc + (geometry().width()/xscal)/2;
+    ymin = yc - (geometry().height()/yscal)/2;
+    ymax = yc + (geometry().height()/yscal)/2;
+  }
   redraw();
 }
 
@@ -365,14 +372,48 @@ void Qt_widget::zoom(double ratio)
   zoom(ratio,xcentre,ycentre);
 }
 
+#ifdef CGAL_USE_GMP
+Gmpq Qt_widget::x_real_rational(int x) const
+{
+  Gmpq r = simplest_rational_in_interval<Gmpq>( xmin+x/xscal-(x/xscal-(x-1)/xscal)/2, xmin+x/xscal+((x+1)/xscal-x/xscal)/2);
+  return r;
+}
+#endif
+
+#ifdef CGAL_USE_GMP
+Gmpq Qt_widget::y_real_rational(int y) const
+{
+  Gmpq r = simplest_rational_in_interval<Gmpq>( ymax - y/yscal-(y/yscal-(y-1)/yscal)/2, ymax - y/xscal+((y+1)/yscal-y/yscal)/2);
+  return r;
+}
+#endif
+
 double Qt_widget::x_real(int x) const
 {
-  return(xmin+x/xscal);
+  if(xscal<1)
+    return(xmin+(int)(x/xscal));
+  else{
+#ifdef CGAL_USE_GMP
+    CGAL_Rational r = simplest_rational_in_interval<CGAL_Rational>( xmin+x/xscal-(x/xscal-(x-1)/xscal)/2, xmin+x/xscal+((x+1)/xscal-x/xscal)/2);
+    return CGAL::to_double(r);
+#else
+    return (xmin+x/xscal);
+#endif
+  }
 }
 
 double Qt_widget::y_real(int y) const
 {
-  return(ymax-y/yscal);
+    if(yscal<1)
+      return(ymax-(int)(y/yscal));
+    else{
+#ifdef CGAL_USE_GMP
+    CGAL_Rational r = simplest_rational_in_interval<CGAL_Rational>( ymax - y/yscal-(y/yscal-(y-1)/yscal)/2, ymax - y/xscal+((y+1)/yscal-y/yscal)/2);
+    return CGAL::to_double(r);
+#else
+    return (ymax-y/xscal);
+#endif
+  }  
 }
 
 double Qt_widget::x_real_dist(double d) const

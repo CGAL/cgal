@@ -31,11 +31,13 @@ template <class Polygon>
 class Qt_widget_get_polygon : public Qt_widget_layer
 {
 public:
-  typedef typename Polygon::Point_2   Point_2;
-  typedef typename Polygon::Segment_2 Segment_2;
-  typedef typename Polygon::Edge_const_iterator  ECI;
-  typedef typename Polygon::Vertex_iterator VI;
-  typedef typename Polygon::FT	      FT;
+  typedef typename Polygon::Point_2     Point_2;
+  typedef typename Polygon::Segment_2   Segment_2;
+  typedef typename Polygon::Edge_const_iterator
+                                        ECI;
+  typedef typename Polygon::Vertex_iterator
+                                        VI;
+  typedef typename Polygon::FT          FT;
   
   Qt_widget_get_polygon()
     : active(false), first_time(true) {}
@@ -73,8 +75,13 @@ protected:
   {
     if(e->button() == Qt::LeftButton && is_pure(e->state()))
     {
-      FT x=static_cast<FT>(widget->x_real(e->x()));
-      FT y=static_cast<FT>(widget->y_real(e->y()));
+#ifdef CGAL_USE_GMP
+      FT x(widget->x_real_rational(e->x()));
+      FT y(widget->y_real_rational(e->y()));
+#else
+      FT x(widget->x_real(e->x()));
+      FT y(widget->y_real(e->y()));
+#endif
       if(!active)
       {
         active=true;
@@ -147,8 +154,8 @@ protected:
   {
     if (active)
     {
-      FT x=static_cast<FT>(widget->x_real(e->x()));
-      FT y=static_cast<FT>(widget->y_real(e->y()));
+      FT x(widget->x_real(e->x()));
+      FT y(widget->y_real(e->y()));
 
       rubber = Point_2(x, y);
       widget->lock();

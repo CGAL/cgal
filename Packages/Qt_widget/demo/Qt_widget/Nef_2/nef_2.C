@@ -179,6 +179,7 @@ public:
     file->insertSeparator();
     file->insertItem("Load Nef_2", this, SLOT(sl_load_nef()), CTRL+Key_L);
     file->insertItem("Save Nef_2", this, SLOT(sl_save_nef()), CTRL+Key_S);
+    file->insertItem("Load Polygon_2", this, SLOT(sl_load_polygon()), CTRL+Key_O);
     file->insertSeparator();
     file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
     file->insertSeparator();
@@ -317,6 +318,38 @@ public slots:
 		}
 	}//end save_nef()
 
+  void  sl_load_polygon(){
+    QString s( QFileDialog::getOpenFileName( QString::null,
+		    "CGAL files (*.cgal)", this ) );
+		if ( s.isEmpty() )
+			return;
+		std::ifstream in(s);
+		CGAL::set_ascii_mode(in);
+
+    Polygon_2_double poly;
+    in >> poly;
+      Vertex_iterator_double it = poly.vertices_begin();
+      std::list<Point> l_of_p;        
+      while(it != poly.vertices_end()){
+        CGAL::Gmpq p_q_x((*it).x());
+        CGAL::Gmpq p_q_y((*it).y());
+        RT wsx = p_q_x.numerator() * p_q_y.denominator(); 
+        RT wsy = p_q_y.numerator() * p_q_x.denominator(); 
+        RT wsh  = p_q_x.denominator() * p_q_y.denominator(); 
+        Point p1(wsx, wsy, wsh);
+        l_of_p.push_back(p1);
+        it++;
+      }
+      Nef_polyhedron Nt(l_of_p.begin(), l_of_p.end(), Nef_polyhedron::INCLUDED);
+      Nef_visible = Nt;
+      char tnr[10];
+      sprintf(tnr, "%d", poly.size());
+      strcat(tnr, "gon");
+      insert_in_list(Nt, tnr);
+      list1->setSelected(list1->count()-1, true);
+      sl_set_window(poly.bbox().xmin(), poly.bbox().xmax(), poly.bbox().ymin(), poly.bbox().ymax());
+      something_changed();
+  }
 private slots:
   void  sl_get_new_object(CGAL::Object obj)
   {
@@ -324,11 +357,16 @@ private slots:
     Cartesian_polygon_2 poly;
     Cartesian_line_2    line;
     if(CGAL::assign(p, obj)) {
+      /*
       CGAL::Quotient<RT> wsxq = double_to_quotient<RT>(p.x());
       CGAL::Quotient<RT> wsyq = double_to_quotient<RT>(p.y());
       RT wsx = wsxq.numerator() * wsyq.denominator(); 
       RT wsy = wsyq.numerator() * wsxq.denominator(); 
       RT wsh  = wsxq.denominator() * wsyq.denominator(); 
+      */
+      RT wsx = p.x().numerator() * p.y().denominator(); 
+      RT wsy = p.y().numerator() * p.x().denominator(); 
+      RT wsh  = p.x().denominator() * p.y().denominator(); 
       Point p1(wsx, wsy, wsh);
       Point pt[1] = {p1};
       Nef_polyhedron Nt(pt, pt+1);
@@ -340,13 +378,13 @@ private slots:
       Vertex_iterator it = poly.vertices_begin();
       std::list<Point> l_of_p;
       while(it != poly.vertices_end()){
-        double xp = (*it).x();
-        double yp = (*it).y();
-        CGAL::Quotient<RT> wsxq = double_to_quotient<RT>(xp);
-        CGAL::Quotient<RT> wsyq = double_to_quotient<RT>(yp);
-        RT wsx = wsxq.numerator() * wsyq.denominator(); 
-        RT wsy = wsyq.numerator() * wsxq.denominator(); 
-        RT wsh  = wsxq.denominator() * wsyq.denominator(); 
+        //double xp = (*it).x();
+        //double yp = (*it).y();
+        //CGAL::Quotient<RT> wsxq = double_to_quotient<RT>(xp);
+        //CGAL::Quotient<RT> wsyq = double_to_quotient<RT>(yp);
+        RT wsx = (*it).x().numerator() * (*it).y().denominator(); 
+        RT wsy = (*it).y().numerator() * (*it).x().denominator(); 
+        RT wsh  = (*it).x().denominator() * (*it).y().denominator(); 
         Point p1(wsx, wsy, wsh);
         l_of_p.push_back(p1);
         it++;
@@ -359,17 +397,27 @@ private slots:
       insert_in_list(Nt, tnr);
       list1->setSelected(list1->count()-1, true);
     } else if(CGAL::assign(line, obj)){
+      /*
       CGAL::Quotient<RT> wsxq = double_to_quotient<RT>(line.point(0).x());
       CGAL::Quotient<RT> wsyq = double_to_quotient<RT>(line.point(0).y());
       RT wsx = wsxq.numerator() * wsyq.denominator(); 
       RT wsy = wsyq.numerator() * wsxq.denominator(); 
       RT wsh  = wsxq.denominator() * wsyq.denominator(); 
+      */
+      RT wsx = line.point(0).x().numerator() * line.point(0).y().denominator(); 
+      RT wsy = line.point(0).y().numerator() * line.point(0).x().denominator(); 
+      RT wsh  = line.point(0).x().denominator() * line.point(0).y().denominator(); 
       Point p1(wsx, wsy, wsh);
+      /*
       wsxq = double_to_quotient<RT>(line.point(1).x());
       wsyq = double_to_quotient<RT>(line.point(1).y());
       wsx = wsxq.numerator() * wsyq.denominator(); 
       wsy = wsyq.numerator() * wsxq.denominator(); 
       wsh  = wsxq.denominator() * wsyq.denominator(); 
+      */
+      wsx = line.point(1).x().numerator() * line.point(1).y().denominator(); 
+      wsy = line.point(1).y().numerator() * line.point(1).x().denominator(); 
+      wsh  = line.point(1).x().denominator() * line.point(1).y().denominator(); 
       Point p2(wsx, wsy, wsh);
 
       Nef_polyhedron Nt(Line(p1, p2), Nef_polyhedron::INCLUDED);

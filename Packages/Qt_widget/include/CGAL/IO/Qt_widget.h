@@ -21,8 +21,75 @@
 #ifndef CGAL_QT_WIDGET_H
 #define CGAL_QT_WIDGET_H
 
+#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Color.h>
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpz.h>
+#include <CGAL/Gmpq.h>
+#include <CGAL/Quotient.h>
+typedef CGAL::Quotient<CGAL::Gmpz> CGAL_Rational;
+
+/* simplest_rational_in_interval(x,y) returns the rational number with
+     the smallest denominator in the interval [x,y].  See Knuth,
+     "Seminumerical algorithms", page 654, answer to exercise
+     4.53-39. */
+
+template <class Quot>
+Quot 
+simplest_rational_in_interval(double x, double y) {
+  if(x > y){
+    std::swap(x,y);
+  }
+  Quot r;  // Return value. 
+  typename Quot::NT r_numerator, r_denominator;
+  // The algorithm will not terminate if x and y are equal. 
+  std::cout << x << "   " << y << std::endl;
+  CGAL_precondition(x != y);
+
+  // Deal with negative arguments.  We only have to deal with the case
+  // where both x and y are negative -- when exactly one is negative
+  // the best rational in the interval [x,y] is 0.
+  if (x < 0 && y < 0) {
+    // Both arguments are negative: solve positive case and negate
+    return  - simplest_rational_in_interval<Quot>(fabs(x),fabs(y));
+  } else if (x <= 0 || y <= 0) {
+    // One argument is 0, or arguments are on opposite sides of 0:
+    // simplest rational in interval is 0 exactly. 
+    r_numerator = 0;
+    r_denominator = 1;
+  } else { // x > 0 && y > 0
+    double xc = CGAL_CLIB_STD::floor(1/x); // First coefficient of cf for x.
+    double xr = CGAL_CLIB_STD::fmod(1/x,1); // Remaining fractional part of x.
+    double yc = CGAL_CLIB_STD::floor(1/y); // First coefficient of cf for y.
+    double yr = CGAL_CLIB_STD::fmod(1/y,1); // Remaining fractional part of y.
+
+    if (xc < yc) {
+      // Return 1/(xc+1).
+      r_numerator = 1;
+      r_denominator = xc + 1;
+    } else if (yc < xc) {
+      // Return 1/(yc+1).
+      r_numerator = 1;
+      r_denominator = yc + 1;
+    } else  {  // xc == yc
+      // Recurse to find s, the rational with the lowest denominator
+      //  between xr and yr.
+      Quot  s(simplest_rational_in_interval<Quot>(xr,yr));
+
+      // Return 1/(xc + s).
+      r_numerator = s.denominator();
+      r_denominator = s.numerator() + xc * s.denominator();
+    }
+  }
+
+  return Quot(r_numerator, r_denominator);
+}
+
+
+
+#endif
+
 #include <vector>
 #include <list>
 #include <map>
@@ -144,6 +211,11 @@ public:
   double y_real(int y) const;
   double x_real_dist(double d) const;
   double y_real_dist(double d) const;
+
+#ifdef CGAL_USE_GMP
+  Gmpq x_real_rational(int x) const;
+  Gmpq y_real_rational(int y) const;
+#endif
   // pixel coordinates
   int x_pixel(double x) const;
   int y_pixel(double y) const;

@@ -55,8 +55,13 @@ private:
     if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON
        && is_pure(e->state()))
     {
-      FT x=static_cast<FT>(widget->x_real(e->x()));
-      FT y=static_cast<FT>(widget->y_real(e->y()));
+#ifdef CGAL_USE_GMP
+      FT x(widget->x_real_rational(e->x()));
+      FT y(widget->y_real_rational(e->y()));
+#else
+      FT x(widget->x_real(e->x()));
+      FT y(widget->y_real(e->y()));
+#endif
       widget->new_object(make_object(Point(x, y)));
     }
   };

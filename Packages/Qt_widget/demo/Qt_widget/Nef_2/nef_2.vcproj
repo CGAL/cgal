@@ -21,7 +21,7 @@
 				AdditionalOptions="/GR /Zm900"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(CGALROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALROOT)/include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\mkspecs\win32-msvc&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CGAL_USE_QT; CGAL_USE_GMP"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CGAL_USE_QT;CGAL_USE_GMP"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
@@ -198,6 +198,9 @@
 		<Filter
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+			<File
+				RelativePath="nef_2.ico">
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
