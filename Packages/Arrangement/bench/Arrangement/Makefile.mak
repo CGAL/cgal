@@ -110,7 +110,7 @@ lazy_gmpq:
 	$(MAKEF) "USE_LAZY_GMPQ=1"
 
 # 
-insert_fast:
+insert_tight:
 	$(MAKEF) "USE_INSERT_TIGHT=1"
 
 my_kernel:
@@ -182,7 +182,7 @@ lazy_gmpq_inst:
 	$(MAKEF) "USE_LAZY_GMPQ=1" install
 
 # 
-insert_fast_inst:
+insert_tight_inst:
 	$(MAKEF) "USE_INSERT_TIGHT=1" install
 
 my_kernel_inst:
