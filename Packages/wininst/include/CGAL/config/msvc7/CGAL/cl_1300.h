@@ -67,6 +67,12 @@
 #define CGAL_CFG_MATCHING_BUG_3 1
 
 //+--------------------------------------------------------------------------
+//| This flag is set, if the compiler does not match member 
+//| definition to an existing declaration (eg. cl1310 Beta)
+//+--------------------------------------------------------------------------
+#define CGAL_CFG_NET2003_MATCHING_BUG 1
+
+//+--------------------------------------------------------------------------
 //| When template implementation files are not included in the source files,
 //| a compiler may attempt to find the unincluded template bodies
 //| automatically. For example, suppose that the following conditions are
@@ -125,12 +131,6 @@
 #define CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION 1
 
 //+--------------------------------------------------------------------------
-//| The flag CGAL_CFG_NO_STANDARD_HEADERS is set, if a compiler does not 
-//| support the new standard headers (i.e. without the .h suffix).
-//+--------------------------------------------------------------------------
-//#define CGAL_CFG_NO_STANDARD_HEADERS 1
-
-//+--------------------------------------------------------------------------
 //| The flag CGAL_CFG_NO_STDC_NAMESPACE is set, if a compiler does not
 //| put the parts of the standard library inherited from the standard
 //| C library in namespace std. (only tests for the symbols used in CGAL)
@@ -152,6 +152,14 @@
 //| The following definition is set if they are not supported.
 //+--------------------------------------------------------------------------
 #define CGAL_CFG_NO_TMPL_IN_TMPL_PARAM 1
+
+//+--------------------------------------------------------------------------
+//| The flag CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG is set, if 
+//| a compiler does not support the definition of the members templates 
+//| out of line. The solution is to put the definition inside the class.
+//| This is a feature of cl1200 and cl1300.
+//+--------------------------------------------------------------------------
+#define CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG 1
 
 //+--------------------------------------------------------------------------
 //| If a compiler does not accept the overloading of a template function, when
