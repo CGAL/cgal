@@ -148,6 +148,8 @@ template <class NT>  Polynomial<NT>
   operator * (const Polynomial<NT>&, const Polynomial<NT>&);
 template <class NT> inline Polynomial<NT>
   operator / (const Polynomial<NT>&, const Polynomial<NT>&);
+template <class NT> inline Polynomial<NT>
+  operator % (const Polynomial<NT>&, const Polynomial<NT>&);
 
 #if ! defined(_MSC_VER)
 template<class NT> CGAL::Sign 
@@ -176,6 +178,8 @@ template<class NT> inline Polynomial<NT> operator *
   (const NT& num, const Polynomial<NT>& p2);
 template<class NT> inline Polynomial<NT> operator / 
   (const NT& num, const Polynomial<NT>& p2);
+template<class NT> inline Polynomial<NT> operator % 
+  (const NT& num, const Polynomial<NT>& p2);
 
   // righthand side
 template<class NT> inline Polynomial<NT> operator + 
@@ -186,6 +190,9 @@ template<class NT> inline Polynomial<NT> operator *
   (const Polynomial<NT>& p1, const NT& num);
 template<class NT> inline Polynomial<NT> operator / 
   (const Polynomial<NT>& p1, const NT& num);
+template<class NT> inline Polynomial<NT> operator % 
+  (const Polynomial<NT>& p1, const NT& num);
+
 
   // lefthand side
 template<class NT> inline bool operator ==  
@@ -229,7 +236,7 @@ template <class pNT> class Polynomial_rep {
   typedef typename Vector::const_iterator const_iterator;
   Vector coeff;
 
-  Polynomial_rep() : coeff() {}
+  Polynomial_rep() : coeff(1) {coeff[0]=0; }
   Polynomial_rep(const NT& n) : coeff(1) { coeff[0]=n; }
   Polynomial_rep(const NT& n, const NT& m) : coeff(2)
     { coeff[0]=n; coeff[1]=m; }
@@ -287,8 +294,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   /*{\Mtypes 5}*/
   public:
   typedef pNT NT;
-  /*{\Mtypemember the component type representing the coefficients.}*/
-
+ 
   typedef Handle_for< Polynomial_rep<NT> > Base;
   typedef Polynomial_rep<NT> Rep;
   typedef typename Rep::Vector    Vector;
@@ -531,6 +537,9 @@ determines the sign for the limit process $x \rightarrow \infty$.
   Polynomial<NT>& operator /= (const Polynomial<NT>& p1)
   { (*this)=(*this)/p1; return (*this); }
 
+  Polynomial<NT>& operator %= (const Polynomial<NT>& p1)
+  { (*this)=(*this)%p1; return (*this); }
+
 
   //------------------------------------------------------------------
   // SPECIALIZE_MEMBERS(int double) START
@@ -552,6 +561,12 @@ determines the sign for the limit process $x \rightarrow \infty$.
   { copy_on_write(); CGAL_assertion(num!=0);
     for(int i=0; i<=degree(); ++i) coeff(i) /= (NT)num; 
     reduce(); return *this; }
+
+  Polynomial<NT>& operator %= (const NT& num)
+  { copy_on_write(); CGAL_assertion(num!=0);
+    for(int i=0; i<=degree(); ++i) coeff(i) %= (NT)num; 
+    reduce(); return *this; }
+
 // SPECIALIZING_MEMBERS FOR const int& 
     
   Polynomial<NT>& operator += (const int& num)
@@ -571,6 +586,12 @@ determines the sign for the limit process $x \rightarrow \infty$.
   { copy_on_write(); CGAL_assertion(num!=0);
     for(int i=0; i<=degree(); ++i) coeff(i) /= (NT)num; 
     reduce(); return *this; }
+
+  Polynomial<NT>& operator %= (const int& num)
+  { copy_on_write(); CGAL_assertion(num!=0);
+    for(int i=0; i<=degree(); ++i) coeff(i) %= (NT)num; 
+    reduce(); return *this; }
+
 // SPECIALIZING_MEMBERS FOR const double& 
     
   Polynomial<NT>& operator += (const double& num)
@@ -589,6 +610,11 @@ determines the sign for the limit process $x \rightarrow \infty$.
   Polynomial<NT>& operator /= (const double& num)
   { copy_on_write(); CGAL_assertion(num!=0);
     for(int i=0; i<=degree(); ++i) coeff(i) /= (NT)num; 
+    reduce(); return *this; }
+
+  Polynomial<NT>& operator %= (const double& num)
+  { copy_on_write(); CGAL_assertion(num!=0);
+    for(int i=0; i<=degree(); ++i) coeff(i) %= (NT)num; 
     reduce(); return *this; }
 
   // SPECIALIZE_MEMBERS(int double) END
@@ -871,6 +897,9 @@ determines the sign for the limit process $x \rightarrow \infty$.
   Polynomial<int>& operator /= (const Polynomial<int>& p1)
   { (*this)=(*this)/p1; return (*this); }
 
+  Polynomial<int>& operator %= (const Polynomial<int>& p1)
+  { (*this)=(*this)%p1; return (*this); }
+
 
   //------------------------------------------------------------------
   // SPECIALIZE_MEMBERS(int double) START
@@ -892,6 +921,12 @@ determines the sign for the limit process $x \rightarrow \infty$.
   { copy_on_write(); CGAL_assertion(num!=0);
     for(int i=0; i<=degree(); ++i) coeff(i) /= (int)num; 
     reduce(); return *this; }
+
+  Polynomial<int>& operator %= (const int& num)
+  { copy_on_write(); CGAL_assertion(num!=0);
+    for(int i=0; i<=degree(); ++i) coeff(i) %= (int)num; 
+    reduce(); return *this; }
+
 // SPECIALIZING_MEMBERS FOR const double& 
     
   Polynomial<int>& operator += (const double& num)
@@ -910,6 +945,11 @@ determines the sign for the limit process $x \rightarrow \infty$.
   Polynomial<int>& operator /= (const double& num)
   { copy_on_write(); CGAL_assertion(num!=0);
     for(int i=0; i<=degree(); ++i) coeff(i) /= (int)num; 
+    reduce(); return *this; }
+
+  Polynomial<int>& operator %= (const double& num)
+  { copy_on_write(); CGAL_assertion(num!=0);
+    for(int i=0; i<=degree(); ++i) coeff(i) %= (int)num; 
     reduce(); return *this; }
 
   // SPECIALIZE_MEMBERS(int double) END
@@ -1192,6 +1232,9 @@ determines the sign for the limit process $x \rightarrow \infty$.
   Polynomial<double>& operator /= (const Polynomial<double>& p1)
   { (*this)=(*this)/p1; return (*this); }
 
+  Polynomial<double>& operator %= (const Polynomial<double>& p1)
+  { (*this)=(*this)%p1; return (*this); }
+
 
   //------------------------------------------------------------------
   // SPECIALIZE_MEMBERS(int double) START
@@ -1213,6 +1256,14 @@ determines the sign for the limit process $x \rightarrow \infty$.
   { copy_on_write(); CGAL_assertion(num!=0);
     for(int i=0; i<=degree(); ++i) coeff(i) /= (double)num; 
     reduce(); return *this; }
+
+/*
+  Polynomial<double>& operator %= (const double& num)
+  { copy_on_write(); CGAL_assertion(num!=0);
+    for(int i=0; i<=degree(); ++i) coeff(i) %= (double)num; 
+    reduce(); return *this; }
+*/
+
 // SPECIALIZING_MEMBERS FOR const int& 
     
   Polynomial<double>& operator += (const int& num)
@@ -1232,6 +1283,13 @@ determines the sign for the limit process $x \rightarrow \infty$.
   { copy_on_write(); CGAL_assertion(num!=0);
     for(int i=0; i<=degree(); ++i) coeff(i) /= (double)num; 
     reduce(); return *this; }
+
+/*
+  Polynomial<double>& operator %= (const int& num)
+  { copy_on_write(); CGAL_assertion(num!=0);
+    for(int i=0; i<=degree(); ++i) coeff(i) %= (double)num; 
+    reduce(); return *this; }
+*/
 
   // SPECIALIZE_MEMBERS(int double) END
   //------------------------------------------------------------------
@@ -1349,6 +1407,12 @@ Polynomial<NT> operator / (const Polynomial<NT>& p1,
 { return divop(p1,p2,Number_type_traits<NT>::Has_gcd()); }
 
 
+template <class NT> inline
+Polynomial<NT> operator % (const Polynomial<NT>& p1,
+			   const Polynomial<NT>& p2)
+{ return modop(p1,p2,Number_type_traits<NT>::Has_gcd()); }
+
+
 template <class NT> 
 Polynomial<NT> divop (const Polynomial<NT>& p1, 
                        const Polynomial<NT>& p2,
@@ -1364,6 +1428,32 @@ Polynomial<NT> divop (const Polynomial<NT>& p1,
 
 template <class NT> 
 Polynomial<NT> divop (const Polynomial<NT>& p1, const Polynomial<NT>& p2,
+                       Tag_true)
+{ CGAL_assertion(!p2.is_zero());
+  if (p1.is_zero()) return 0;
+  Polynomial<NT> q,r; NT D; 
+  Polynomial<NT>::pseudo_div(p1,p2,q,r,D); 
+  CGAL_postcondition( (p2*q+r==p1*Polynomial<NT>(D)) );
+  return q/=D;
+}
+
+
+template <class NT> 
+Polynomial<NT> modop (const Polynomial<NT>& p1, 
+                       const Polynomial<NT>& p2,
+                       Tag_false)
+{ CGAL_assertion(!p2.is_zero());
+  if (p1.is_zero()) return 0;
+  Polynomial<NT> q,r;
+  Polynomial<NT>::euclidean_div(p1,p2,q,r);
+  CGAL_postcondition( (p2*q+r==p1) );
+  return r;
+}
+
+
+template <class NT> 
+Polynomial<NT> modop (const Polynomial<NT>& p1, 
+                       const Polynomial<NT>& p2,
                        Tag_true)
 { CGAL_assertion(!p2.is_zero());
   if (p1.is_zero()) return 0;
@@ -1427,6 +1517,9 @@ template <class NT> CGAL::Sign
   inline    Polynomial<int> operator / 
   (const int& num, const Polynomial<int>& p2)
   { return (Polynomial<int>(num)/p2); }
+  inline    Polynomial<int> operator % 
+  (const int& num, const Polynomial<int>& p2)
+  { return (Polynomial<int>(num)%p2); }
 
   // righthand side
   inline    Polynomial<int> operator + 
@@ -1441,7 +1534,9 @@ template <class NT> CGAL::Sign
   inline    Polynomial<int> operator / 
   (const Polynomial<int>& p1, const int& num)
   { return (p1 / Polynomial<int>(num)); }
-
+  inline    Polynomial<int> operator % 
+  (const Polynomial<int>& p1, const int& num)
+  { return (p1 % Polynomial<int>(num)); }
 
   // lefthand side
   inline    bool operator ==  
@@ -1498,6 +1593,9 @@ template <class NT> CGAL::Sign
   template <class NT>    Polynomial<NT> operator / 
   (const int& num, const Polynomial<NT>& p2)
   { return (Polynomial<NT>(num)/p2); }
+  template <class NT>    Polynomial<NT> operator % 
+  (const int& num, const Polynomial<NT>& p2)
+  { return (Polynomial<NT>(num)%p2); }
 
   // righthand side
   template <class NT>    Polynomial<NT> operator + 
@@ -1512,7 +1610,9 @@ template <class NT> CGAL::Sign
   template <class NT>    Polynomial<NT> operator / 
   (const Polynomial<NT>& p1, const int& num)
   { return (p1 / Polynomial<NT>(num)); }
-
+  template <class NT>    Polynomial<NT> operator % 
+  (const Polynomial<NT>& p1, const int& num)
+  { return (p1 % Polynomial<NT>(num)); }
 
   // lefthand side
   template <class NT>    bool operator ==  
@@ -1569,6 +1669,9 @@ template <class NT> CGAL::Sign
   inline    Polynomial<double> operator / 
   (const double& num, const Polynomial<double>& p2)
   { return (Polynomial<double>(num)/p2); }
+  inline    Polynomial<double> operator %
+  (const double& num, const Polynomial<double>& p2)
+  { return (Polynomial<double>(num)%p2); }
 
   // righthand side
   inline    Polynomial<double> operator + 
@@ -1583,7 +1686,9 @@ template <class NT> CGAL::Sign
   inline    Polynomial<double> operator / 
   (const Polynomial<double>& p1, const double& num)
   { return (p1 / Polynomial<double>(num)); }
-
+  inline    Polynomial<double> operator % 
+  (const Polynomial<double>& p1, const double& num)
+  { return (p1 % Polynomial<double>(num)); }
 
   // lefthand side
   inline    bool operator ==  
@@ -1640,6 +1745,9 @@ template <class NT> CGAL::Sign
   template <class NT>    Polynomial<NT> operator / 
   (const double& num, const Polynomial<NT>& p2)
   { return (Polynomial<NT>(num)/p2); }
+  template <class NT>    Polynomial<NT> operator % 
+  (const double& num, const Polynomial<NT>& p2)
+  { return (Polynomial<NT>(num)%p2); }
 
   // righthand side
   template <class NT>    Polynomial<NT> operator + 
@@ -1654,6 +1762,9 @@ template <class NT> CGAL::Sign
   template <class NT>    Polynomial<NT> operator / 
   (const Polynomial<NT>& p1, const double& num)
   { return (p1 / Polynomial<NT>(num)); }
+  template <class NT>    Polynomial<NT> operator % 
+  (const Polynomial<NT>& p1, const double& num)
+  { return (p1 % Polynomial<NT>(num)); }
 
 
   // lefthand side
@@ -1711,6 +1822,9 @@ template <class NT> CGAL::Sign
   template <class NT>    Polynomial<NT> operator / 
   (const NT& num, const Polynomial<NT>& p2)
   { return (Polynomial<NT>(num)/p2); }
+  template <class NT>    Polynomial<NT> operator % 
+  (const NT& num, const Polynomial<NT>& p2)
+  { return (Polynomial<NT>(num)%p2); }
 
   // righthand side
   template <class NT>    Polynomial<NT> operator + 
@@ -1725,6 +1839,9 @@ template <class NT> CGAL::Sign
   template <class NT>    Polynomial<NT> operator / 
   (const Polynomial<NT>& p1, const NT& num)
   { return (p1 / Polynomial<NT>(num)); }
+  template <class NT>    Polynomial<NT> operator %
+  (const Polynomial<NT>& p1, const NT& num)
+  { return (p1 % Polynomial<NT>(num)); }
 
 
   // lefthand side
@@ -1786,6 +1903,7 @@ void print_monomial(std::ostream& os, const NT& n, int i)
 template <class NT>
 std::ostream& operator << (std::ostream& os, const Polynomial<NT>& p)
 {
+  os << "P";
   int i;
   switch( os.iword(CGAL::IO::mode) )
   {
