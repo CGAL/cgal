@@ -22,6 +22,7 @@
 // Author(s)     : Sylvain Pion
 
 #include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
 #include <functional>
 #include <cmath>
 
