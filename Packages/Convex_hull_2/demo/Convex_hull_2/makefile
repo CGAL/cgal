@@ -41,12 +41,10 @@ convex_hull_2_demo: convex_hull_2_demo.o
 convex_hull_of_ipoints: convex_hull_of_ipoints.o
 	$(CGAL_CXX) -o convex_hull_of_ipoints convex_hull_of_ipoints.o $(LDFLAGS)
 
-clean:
-	/bin/rm -f *.o \
-                   ch_of_polyline \
-                   convex_hull_2_demo \
-                   convex_hull_of_ipoints \
-                   core
+clean: \
+       ch_of_polyline.clean \
+       convex_hull_2_demo.clean \
+       convex_hull_of_ipoints.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
