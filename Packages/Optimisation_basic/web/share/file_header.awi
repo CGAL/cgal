@@ -1,0 +1,36 @@
+@! ============================================================================
+@! The CGAL Project
+@! Implementation: file header and other anyweb macros
+@! ----------------------------------------------------------------------------
+@! file  : web/file_header.awlib
+@! author: Sven Schönherr (sven@inf.fu-berlin.de)
+@! $Id$
+@! ============================================================================
+
+@p maximum_input_line_length = 120
+
+A formatted file header allows easy identification of the files. It is
+parameterized with the title of the implementation, the product file
+name, the source file name and the author name.
+
+@macro <file header>(4) zero many = @begin
+// ============================================================================
+// The CGAL Project
+// Implementation: @1
+// ----------------------------------------------------------------------------
+// file  : @2
+// source: web/@3.aw
+// author: @4
+// $Id$
+// ============================================================================
+@end
+
+@macro <dividing line> zero many = @begin
+// ============================================================================
+@end
+ 
+@macro <end of file line> zero many = @begin
+// ===== EOF ==================================================================
+@end
+
+@! ===== EOF ==================================================================
