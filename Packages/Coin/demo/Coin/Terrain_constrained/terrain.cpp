@@ -8,6 +8,8 @@
 #include <Inventor/nodes/SoTexture2.h>
 #include <Inventor/nodes/SoRotation.h>
 #include <Inventor/nodes/SoComplexity.h>
+#include <Inventor/nodes/SoEventCallback.h>
+#include <Inventor/events/SoKeyboardEvent.h> 
 #include <Inventor/nodes/SoDirectionalLight.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/SoOffScreenRenderer.h>
@@ -41,11 +43,40 @@
 #include <stack>
 
 Delaunay dt;
+Delaunay backup_dt;
 SoQtExaminerViewer * viewer;
 SoSeparator *root;
-Node_terrain<Delaunay> *terrain;
+Node_terrain_constrained<Delaunay> *terrain;
 SoComplexity * complexity_node;
 SoPerspectiveCamera *cam1;
+
+
+void render_custom(void *userdata, SoEventCallback *eventCB){
+  const SoEvent *kp = eventCB->getEvent();
+  if(SO_KEY_PRESS_EVENT(kp, K)){
+    backup_dt = dt;
+    Finite_vertices_iterator it = dt.finite_vertices_begin();    
+    while(it != dt.finite_vertices_end()){
+    }
+    Finite_faces_iterator fit;
+    glColor3f(0.5f, 0.6f, 0.0f);
+    glBegin(GL_TRIANGLES);      
+    for (fit = dt.finite_faces_begin(); fit != dt.finite_faces_end(); ++fit){
+      
+      glColor3f(1.0f, 0.0f, 0.0f);
+      glVertex3f(CGAL::to_double((*(*fit).vertex(0)).point().x()), 
+          CGAL::to_double((*(*fit).vertex(0)).point().y()), 
+          CGAL::to_double((*(*fit).vertex(0)).point().z()));
+      glVertex3f(CGAL::to_double((*(*fit).vertex(1)).point().x()), 
+          CGAL::to_double((*(*fit).vertex(1)).point().y()), 
+          CGAL::to_double((*(*fit).vertex(1)).point().z()));
+      glVertex3f(CGAL::to_double((*(*fit).vertex(2)).point().x()), 
+          CGAL::to_double((*(*fit).vertex(2)).point().y()), 
+          CGAL::to_double((*(*fit).vertex(2)).point().z()));
+    }
+    glEnd();
+  }
+}
 
 
 SoSeparator* get_main_scene(){
@@ -55,7 +86,7 @@ SoSeparator* get_main_scene(){
   SoMaterial * material = new SoMaterial;
   //SoRotation * rot = new SoRotation;
   complexity_node = new SoComplexity;
-  terrain = new Node_terrain<Delaunay>(dt);
+  terrain = new Node_terrain_constrained<Delaunay>(&dt);
 
   //rot->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 30.0f);
   material->diffuseColor.setValue(0.5f, 0.6f, 0.0f);
@@ -104,7 +135,7 @@ public:
   Layout_widget(QWidget *parent, const char *name=0):
       QWidget(parent, name) {
     SoQt::init(this);
-    Node_terrain<Delaunay>::initClass();
+    Node_terrain_constrained<Delaunay>::initClass();
     
     QSizePolicy p(QSizePolicy::Expanding, QSizePolicy::Expanding, true);
     widget = new CGAL::Qt_widget(this);
@@ -115,10 +146,18 @@ public:
     QBoxLayout *topLayout1 = new QHBoxLayout( this);
     
     viewer = new SoQtExaminerViewer(this);
+    SoEventCallback *myEventCB = new SoEventCallback;
     SoSeparator *root = get_main_scene();
+    root->addChild(myEventCB);
     viewer->setSceneGraph(root);
     viewer->setDrawStyle(SoQtViewer::STILL, SoQtViewer::VIEW_WIREFRAME_OVERLAY);    
     viewer->getBaseWidget()->resize(300, 300);
+    viewer->setHeadlight(false);
+
+    myEventCB->addEventCallback(
+      SoKeyboardEvent::getClassTypeId(),
+        render_custom,
+        viewer);
 
     topLayout1->addWidget(viewer->getBaseWidget());
     //topLayout1->addWidget(viewer->getRenderAreaWidget());
@@ -128,7 +167,7 @@ public:
   CGAL::Qt_widget* get_qt_widget(){return widget;}
   SoQtExaminerViewer* get_viewer(){return viewer;}
 private:
-  CGAL::Qt_widget     *widget;  
+  CGAL::Qt_widget     *widget;
   SoQtExaminerViewer  *viewer;
 };
 
@@ -225,7 +264,7 @@ void load_masspts()
       b = b + p.bbox();
     }
   }  
-
+    terrain->set_max_height(b.zmax());
     terrain->compute_normals_for_faces();
     terrain->compute_normals_for_vertices();
     cam1->position.setValue(SbVec3f(b.xmin(), b.ymin(), 2*b.zmax()));    
@@ -291,13 +330,14 @@ void load_breaklines()
 
 
   void generate_terrain(){
+    backup_dt.clear();
     dt.clear();
     terrain->lock();
     Vector p;
     double value;
-    double roughness = 0.5;
+    double roughness = 0.7;
     int frequency    = 70;
-    int gridSize = 200;
+    int gridSize = 100;
     double landscape[300][300];
     bool initFractals = true;
 
@@ -322,7 +362,7 @@ void load_breaklines()
       for ( int y = 0; y < gridSize; y++ ) {
         if ( progress.wasCancelled() )
           exit(1);
-        for(int count = 0; count < 10; count++){
+        for(int count = 0; count < 20; count++){
           p.x = (double) x / (101 - frequency);
           p.y = (double) y / (101 - frequency);
 	        p.z = (double) landscape[x][y] / (101 - frequency);
@@ -353,7 +393,9 @@ void load_breaklines()
       if((*it).point().z() > zmax)
         zmax = (*it).point().z();
       it++;
-    }    
+    }
+    terrain->set_max_height(zmax);
+    backup_dt = dt;
     cam1->position.setValue(SbVec3f(xmin, ymin, 2*zmax));
     cam1->pointAt(SbVec3f(xmin + (xmax-xmin)/5, ymin + (ymax-ymin)/5, zmax), SbVec3f(0, 0, 1));
     widget->clear_history();
@@ -428,6 +470,7 @@ void load_breaklines()
         p = q;
       }
     }
+    terrain->set_max_height(b.zmax());
     terrain->compute_normals_for_faces();
     terrain->compute_normals_for_vertices();
     cam1->position.setValue(SbVec3f(b.xmin() - (b.xmax()-b.xmin())/2, b.ymin() - (b.ymax()-b.ymin())/2, 4*b.zmax()));

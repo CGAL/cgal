@@ -63,7 +63,7 @@
 #include <Inventor/fields/SoMFInt32.h>
 
 template <class Triangulation_2>
-class Node_terrain : public SoNonIndexedShape{
+class Node_terrain_constrained : public SoNonIndexedShape{
   
   //SO_NODE_HEADER(Node_terrain<Triangulation_2>);  
   //defined in Inventor/nodes/SoSubNode.h
@@ -107,29 +107,29 @@ public:
           && "you forgot init() on parentclass!");
 
         // Set up entry in the type system.
-        Node_terrain::classTypeId =
+        Node_terrain_constrained::classTypeId =
         SoType::createType(SoShape::getClassTypeId(),
                          classname,
-                         &Node_terrain::createInstance,
+                         &Node_terrain_constrained::createInstance,
                          SoNode::getNextActionMethodIndex());
         SoNode::incNextActionMethodIndex();
 
         // Store parent's fielddata pointer for later use in the constructor.
-        Node_terrain::parentFieldData = SoShape::getFieldDataPtr();
+        Node_terrain_constrained::parentFieldData = SoShape::getFieldDataPtr();
       } while (0);
     } while (0);
   }// Initializes this class
-  Node_terrain() : LOCK(0), max_height(0) {
+  Node_terrain_constrained() : LOCK(0), max_height(0) {
     do {
-      Node_terrain::classinstances++;
+      Node_terrain_constrained::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
-      assert(Node_terrain::classTypeId != SoType::badType() 
+      assert(Node_terrain_constrained::classTypeId != SoType::badType() 
         && "you forgot init()!");
       // Initialize a fielddata container for the class only once. 
-      if (!Node_terrain::fieldData) {
-        Node_terrain::fieldData =
-          new SoFieldData(Node_terrain::parentFieldData ? \
-                        *Node_terrain::parentFieldData : NULL);
+      if (!Node_terrain_constrained::fieldData) {
+        Node_terrain_constrained::fieldData =
+          new SoFieldData(Node_terrain_constrained::parentFieldData ? \
+                        *Node_terrain_constrained::parentFieldData : NULL);
       }
       // Extension classes from the application programmers should not be
       // considered native. This is important to get the export code to do
@@ -137,19 +137,19 @@ public:
       this->isBuiltIn = FALSE;
     } while (0);
   }// The constructor
-  Node_terrain(Triangulation_2 *T) : t(T), LOCK(0), max_height(0) {
+  Node_terrain_constrained(Triangulation_2 *T) : t(T), LOCK(0), max_height(0) {
     do {
       compute_normals_for_faces();
       compute_normals_for_vertices();
-      Node_terrain::classinstances++;
+      Node_terrain_constrained::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
-      assert(Node_terrain::classTypeId != SoType::badType() 
+      assert(Node_terrain_constrained::classTypeId != SoType::badType() 
         && "you forgot init()!");
       // Initialize a fielddata container for the class only once. 
-      if (!Node_terrain::fieldData) {
-        Node_terrain::fieldData =
-          new SoFieldData(Node_terrain::parentFieldData ? \
-                        *Node_terrain::parentFieldData : NULL);
+      if (!Node_terrain_constrained::fieldData) {
+        Node_terrain_constrained::fieldData =
+          new SoFieldData(Node_terrain_constrained::parentFieldData ? \
+                        *Node_terrain_constrained::parentFieldData : NULL);
       }
       // Extension classes from the application programmers should not be
       // considered native. This is important to get the export code to do
@@ -200,8 +200,8 @@ public:
     progress->setTotalSteps(t->number_of_vertices());
     progress->show();
     int vertices_count = 0;
-    Finite_vertices_iterator vit;      
-    for ( vit = t->finite_vertices_begin(); 
+    Finite_vertices_iterator vit;
+    for ( vit = t->finite_vertices_begin();
           vit != t->finite_vertices_end(); vit++){
       progress->setProgress(vertices_count);
       Face_circulator cit = (&(*vit))->incident_faces();
@@ -239,22 +239,22 @@ public:
 public:
   void set_max_height(double h){max_height = h;}
   static SoType getClassTypeId(void){
-    return Node_terrain::classTypeId;
+    return Node_terrain_constrained::classTypeId;
   }
   virtual SoType getTypeId(void) const{
-    return Node_terrain::classTypeId;
+    return Node_terrain_constrained::classTypeId;
   }
 private:
   static SoType classTypeId;
   static void * createInstance(void){
-    return new Node_terrain;
+    return new Node_terrain_constrained;
   }
 protected:
   static const SoFieldData ** getFieldDataPtr(void){
-    return (const SoFieldData **)(&Node_terrain::fieldData);
+    return (const SoFieldData **)(&Node_terrain_constrained::fieldData);
   }
   virtual const SoFieldData * getFieldData(void) const{
-    return Node_terrain::fieldData;
+    return Node_terrain_constrained::fieldData;
   }
 private:
   static const SoFieldData ** parentFieldData;
@@ -262,7 +262,7 @@ private:
   static unsigned int classinstances;
 
 protected:
-  virtual ~Node_terrain(){}          //The destructor
+  virtual ~Node_terrain_constrained(){}          //The destructor
   
   virtual void  getPrimitiveCount(SoGetPrimitiveCountAction * action){
     if (!this->shouldPrimitiveCount(action)) return;
@@ -572,16 +572,16 @@ private:
 };
 
 template<class Triangulation_2>
-const SoFieldData ** Node_terrain<Triangulation_2>::parentFieldData = NULL;
+const SoFieldData ** Node_terrain_constrained<Triangulation_2>::parentFieldData = NULL;
 
 template<class Triangulation_2>
-unsigned int Node_terrain<Triangulation_2>::classinstances = 0;
+unsigned int Node_terrain_constrained<Triangulation_2>::classinstances = 0;
 
 template<class Triangulation_2>
-const SoFieldData * Node_terrain<Triangulation_2>::fieldData = NULL;
+const SoFieldData * Node_terrain_constrained<Triangulation_2>::fieldData = NULL;
 
 template <class Triangulation_2>
-SoType Node_terrain<Triangulation_2>::classTypeId = SoType::badType();
+SoType Node_terrain_constrained<Triangulation_2>::classTypeId = SoType::badType();
 
 
 #endif
