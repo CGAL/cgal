@@ -22,7 +22,7 @@
 // Substitute old style malloc, realloc, strdup ...
 // ================================================
 char* renew( char* old, size_t old_size, size_t new_size) {
-    ADT_Assert( old);
+    ADT_Assert( old_size == 0 || old != 0);
     ADT_Assert( new_size > old_size);
     char* cpy = new char[ new_size];
     if ( old && old_size > 0) {

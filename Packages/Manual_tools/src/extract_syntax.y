@@ -90,10 +90,6 @@ int yyerror( char *s);
 %token             GLOBALENUM
 %token             GLOBALSTRUCT
 %token             DECLARATION
-%token             BEGINTEXONLY
-%token             ENDTEXONLY
-%token             BEGINHTMLONLY
-%token             ENDHTMLONLY
 
 /* Special action keywords */
 /* ----------------------- */
@@ -166,13 +162,6 @@ stmt:             string  { delete $1;}
                 | HEADING '{' comment_sequence '}'         { delete $3; }
                 | INCLUDE '{' comment_sequence '}'         { delete $3; }
                 | COMMENTHEADING '{' comment_sequence '}'  { delete $3; }
-		| BEGINTEXONLY  nested_token_sequence ENDTEXONLY  {
-                                                             delete $2;
-                                                           }
-		| BEGINHTMLONLY nested_token_sequence ENDHTMLONLY  { 
-                                                             set_INITIAL = 1;
-                                                             delete $2;
-                                                           }
                 | gobble_parameters
                 | GOBBLEAFTERONEPARAM reduced_group reduced_group
                 | global_tagged_declarator
@@ -210,13 +199,6 @@ reduced_statement:
                 | HEADING '{' comment_sequence '}'         { delete $3; }
                 | INCLUDE '{' comment_sequence '}'         { delete $3; }
                 | COMMENTHEADING '{' comment_sequence '}'  { delete $3; }
-		| BEGINTEXONLY  nested_token_sequence ENDTEXONLY   {
-                                                             delete $2;
-                                                           }
-		| BEGINHTMLONLY nested_token_sequence ENDHTMLONLY  { 
-                                                             set_INITIAL = 1;
-                                                             delete $2;
-                                                           }
                 | gobble_parameters
                 | GOBBLEAFTERONEPARAM reduced_group reduced_group
 		| reduced_group
@@ -478,15 +460,6 @@ compound_comment:   '{' full_comment_sequence '}' {
 					      ix->add( "'");
 				  }
                                 }
-		  | BEGINTEXONLY  nested_token_sequence ENDTEXONLY   {
-                                  $$ = $2;
-                                }
-		  | BEGINHTMLONLY nested_token_sequence ENDHTMLONLY  { 
-                                  set_INITIAL = 1;
-				  delete $2;
-                                  $$ = new Text( *new TextToken( " ", 1, true),
-						 managed);
-                                }
                   | CCSECTION '{' comment_sequence '}'  {
 				  $$ = $3;
 		                  $$->cons(   *new TextToken( " ", 1, true));
@@ -702,6 +675,7 @@ gobble_parameters:
                   GOBBLETHREEPARAMS reduced_group reduced_group reduced_group
                 | GOBBLETWOPARAMS   reduced_group reduced_group
                 | GOBBLEONEPARAM    reduced_group
+                | GOBBLEONEPARAM    CHAR
                 | NEWCOMMAND        reduced_group reduced_group
 
 

@@ -29,15 +29,7 @@
 
 // Class declarations:
 // ==============================================
-// Top Level Structure:
-// typedef InList<Specification> SpecificationList;  // typedef is postponed.
-struct Specification;
-
-// Parts of a specification:
-struct Declaration;
 class  TextToken;
-// typedef InList< TextToken> Text;  // typedef is postponed.
-
 
 // Substitute old style malloc, realloc, strdup ...
 // ================================================
@@ -235,7 +227,7 @@ public:
     TextToken() {
 	isSpace = false;
 	len     = 0;
-	string  = 0;
+	string  = newstr( "");
     }
     TextToken( const char* s, int l = -1, bool space = false) {
         isSpace = space;
@@ -278,6 +270,22 @@ public:
 	    len += t.len;
 	    string[len] = '\0';
 	    isSpace = isSpace && t.isSpace;
+	}
+        ADT_Assert( (! string && len == 0) || (int)strlen( string) == len);
+        ADT_Assert( ! string || string[ len] == '\0');
+	return *this;
+    }
+    TextToken& add( const char* s, int l = -1) {
+	if ( s == 0)
+	    l = 0;
+	if ( l == -1)
+	    l = strlen(s);
+	if ( l > 0) {
+	    string = renew( string, len + 1, len + l + 1);
+	    memcpy( string + len, s, l);
+	    len += l;
+	    string[len] = '\0';
+	    isSpace = false;
 	}
         ADT_Assert( (! string && len == 0) || (int)strlen( string) == len);
         ADT_Assert( ! string || string[ len] == '\0');

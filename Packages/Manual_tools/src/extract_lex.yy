@@ -58,6 +58,8 @@ void skipspaces( void);
 %x CCMode
 %x NestingMode
 %x VerbMode
+%x VerbatimMode
+%x HtmlBlockMode
 
 letter          [a-zA-Z]
 noletter        [^a-zA-Z]
@@ -114,6 +116,7 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		}
 "%".*           {   /* Match one line TeX comments at the last line in file */
 		}
+[\\]path[^a-zA-Z]   |   /* path */
 [\\]verb[^a-zA-Z]   {   /* match LaTeX \verb"..." constructs */
 		    BEGIN( VerbMode);
 		    stop_character = yytext[ yyleng-1];
@@ -258,11 +261,7 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 
  /* Specialized keywords, partly TeX, partly from the manual style */
  /* -------------------------------------------------------------- */
-[\\]ccStyle{w}  {   /* CCstyle formatting: change to NestingMode */
-		    BEGIN( NestingMode);
-		    return CCSTYLE;
-		}
-[\\]ccc/{noletter}   {   /* CCstyle formatting: change to NestingMode */
+[\\]((ccc)|(ccStyle)){w}  { /* CCstyle formatting: change to NestingMode */
 		    BEGIN( NestingMode);
 		    return CCSTYLE;
 		}
@@ -527,18 +526,37 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 [\\]ccTexHtml{w}  {
 		    return GOBBLEAFTERONEPARAM;
 }
-[\\]begin{w}[\{]ccTexOnly[\}]{w}   {
-		    return BEGINTEXONLY;
-		}
-[\\]end{w}[\{]ccTexOnly[\}]   {
-		    return ENDTEXONLY;
-		}
+[\\]begin{w}[\{]ccTexOnly[\}]{w}   {}
+[\\]end{w}[\{]ccTexOnly[\}]        {}
+
+[\\]begin{w}[\{]verbatim[\}]{w}     |
+[\\]begin{w}[\{]cprog[\}]{w}        |
+[\\]begin{w}[\{]alltt[\}]{w}        |
 [\\]begin{w}[\{]ccHtmlOnly[\}]{w}   {
-		    BEGIN( NestingMode);
-		    return BEGINHTMLONLY;
+		    BEGIN( VerbatimMode);
 		}
-<NestingMode>[\\]end{w}[\{]ccHtmlOnly[\}]   {
-		    return ENDHTMLONLY;
+<VerbatimMode>[\n]	{
+		    line_number++;
+}
+<VerbatimMode>.  	{ /* ignore */ }
+
+<VerbatimMode>[\\]end{w}[\{]verbatim[\}]{w}     |
+<VerbatimMode>[\\]end{w}[\{]cprog[\}]{w}        |
+<VerbatimMode>[\\]end{w}[\{]alltt[\}]{w}        |
+<VerbatimMode>[\\]end{w}[\{]ccHtmlOnly[\}]      {
+	            BEGIN(INITIAL);
+		}
+
+[\\]begin{w}[\{]ccHtmlBlock[\}]{w}   {
+		    BEGIN( HtmlBlockMode);
+		}
+<HtmlBlockMode>[\n]	{
+		    line_number++;
+}
+<HtmlBlockMode>.  	{ /* ignore */ }
+
+<HtmlBlockMode>[\\]end{w}[\{]ccHtmlBlock[\}]      {
+	            BEGIN(INITIAL);
 		}
 
  /* Flexibility for HTML class files. */
