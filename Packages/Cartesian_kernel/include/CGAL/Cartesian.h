@@ -23,17 +23,13 @@
 #define CGAL_CARTESIAN_H
 
 #include <CGAL/basic.h>
+#include <CGAL/basic_classes.h>
 #include <CGAL/cartesian_classes.h>
+#include <CGAL/user_classes.h>
 #include <CGAL/Cartesian_dynamic_d.h>
 
 #include <CGAL/Twotuple.h>
 #include <CGAL/Threetuple.h>
-
-#ifdef CGAL_CFG_NO_ADVANCED_KERNEL
-  // Because we cannot use Michael's scheme, we need the wrapper classes
-  // We include them (they are common to Cartesian and Homogeneous)
-#include <CGAL/user_classes.h>
-#endif // CGAL_CFG_NO_ADVANCED_KERNEL
 
 #define CGAL_REP_CLASS_DEFINED
 #define CGAL_CARTESIAN_CLASS_DEFINED
@@ -93,8 +89,8 @@
 CGAL_BEGIN_NAMESPACE
 
 template< class R, class FT_ >
-struct Cartesian_base :
-     public Cartesian_base_dynamic_d<R,FT_>
+struct Cartesian_base
+  : public Cartesian_base_dynamic_d<R,FT_>
 {
     typedef FT_                                         RT;
     typedef FT_                                         FT;
