@@ -174,82 +174,78 @@ _test_fctobj_point_line_2(const Point&, const Line& )
  
   std::cout << '.';
  
-  CGAL::Less_distance_to_point_2< Point>     has_smaller_dist_to_point_p4(p4);
-  assert( has_smaller_dist_to_point_p4(p9,p1) );
-  assert( has_smaller_dist_to_point_p4(p6,p5) );
- 
-  CGAL::Less_distance_to_point_2< Point>     has_smaller_dist_to_point_p9(p9);
-  assert( has_smaller_dist_to_point_p9(p9,p6) );
- 
-  CGAL::Less_distance_to_point_2< Point>     has_smaller_dist_to_point_p8(p8);
-  assert(!has_smaller_dist_to_point_p8(p3,p3) );
+  CGAL::Less_distance_to_point_2< Point>     has_smaller_distance_to_point;
+  assert( has_smaller_distance_to_point(p4, p9,p1) );
+  assert( has_smaller_distance_to_point(p4, p6,p5) );
+  assert( has_smaller_distance_to_point(p9, p9,p6) );
+  assert(!has_smaller_distance_to_point(p8, p3,p3) );
  
   std::cout << '.';
  
  
   CGAL::Compare_signed_distance_to_implicit_line_2< Point>
-       cmp_signed_dist_to_line_p1_p2(p1,p2);
-  assert( cmp_signed_dist_to_line_p1_p2( p3,p9) == CGAL::EQUAL );
-  assert( cmp_signed_dist_to_line_p1_p2( p3,p8) == CGAL::LARGER );
+       compare_signed_distance_to_line_p1_p2(p1,p2);
+  assert( compare_signed_distance_to_line_p1_p2( p3,p9) == CGAL::EQUAL );
+  assert( compare_signed_distance_to_line_p1_p2( p3,p8) == CGAL::LARGER );
  
   CGAL::Compare_signed_distance_to_implicit_line_2< Point>
-       cmp_signed_dist_to_line_p2_p1(p2,p1);
-  assert( cmp_signed_dist_to_line_p2_p1( p3,p8) == CGAL::SMALLER );
+       compare_signed_distance_to_line_p2_p1(p2,p1);
+  assert( compare_signed_distance_to_line_p2_p1( p3,p8) == CGAL::SMALLER );
  
   CGAL::Compare_signed_distance_to_implicit_line_2< Point>
-       cmp_signed_dist_to_line_p1_p8(p1,p8);
-  assert( cmp_signed_dist_to_line_p1_p8( p9,p8) == CGAL::LARGER );
-  assert( cmp_signed_dist_to_line_p1_p8( p9,p9) == CGAL::EQUAL );
-  assert( cmp_signed_dist_to_line_p1_p8( p5,p4) == CGAL::SMALLER );
-  assert( cmp_signed_dist_to_line_p1_p8( p4,p5) == CGAL::LARGER );
+       compare_signed_distance_to_line_p1_p8(p1,p8);
+  assert( compare_signed_distance_to_line_p1_p8( p9,p8) == CGAL::LARGER );
+  assert( compare_signed_distance_to_line_p1_p8( p9,p9) == CGAL::EQUAL );
+  assert( compare_signed_distance_to_line_p1_p8( p5,p4) == CGAL::SMALLER );
+  assert( compare_signed_distance_to_line_p1_p8( p4,p5) == CGAL::LARGER );
  
   CGAL::Compare_signed_distance_to_implicit_line_2< Point>
-       cmp_signed_dist_to_line_p8_p1(p8,p1);
-  assert( cmp_signed_dist_to_line_p8_p1( p4,p5) == CGAL::SMALLER );
+       compare_signed_distance_to_line_p8_p1(p8,p1);
+  assert( compare_signed_distance_to_line_p8_p1( p4,p5) == CGAL::SMALLER );
  
   CGAL::Compare_signed_distance_to_implicit_line_2< Point>
-       cmp_signed_dist_to_line_p6_p4(p6,p4);
-  assert( cmp_signed_dist_to_line_p6_p4( p1,p2) == CGAL::EQUAL );
-  assert( cmp_signed_dist_to_line_p6_p4( p1,p9) == CGAL::EQUAL );
-  assert( cmp_signed_dist_to_line_p6_p4( p8,p6) == CGAL::SMALLER );
+       compare_signed_distance_to_line_p6_p4(p6,p4);
+  assert( compare_signed_distance_to_line_p6_p4( p1,p2) == CGAL::EQUAL );
+  assert( compare_signed_distance_to_line_p6_p4( p1,p9) == CGAL::EQUAL );
+  assert( compare_signed_distance_to_line_p6_p4( p8,p6) == CGAL::SMALLER );
  
   CGAL::Compare_signed_distance_to_implicit_line_2< Point>
-       cmp_signed_dist_to_line_p6_p8(p6,p8);
-  assert( cmp_signed_dist_to_line_p6_p8( p7,p9) == CGAL::SMALLER );
-  assert( cmp_signed_dist_to_line_p6_p8( p2,p9) == CGAL::SMALLER );
-  assert( cmp_signed_dist_to_line_p6_p8( p2,p3) == CGAL::LARGER );
+       compare_signed_distance_to_line_p6_p8(p6,p8);
+  assert( compare_signed_distance_to_line_p6_p8( p7,p9) == CGAL::SMALLER );
+  assert( compare_signed_distance_to_line_p6_p8( p2,p9) == CGAL::SMALLER );
+  assert( compare_signed_distance_to_line_p6_p8( p2,p3) == CGAL::LARGER );
  
   CGAL::Compare_signed_distance_to_implicit_line_2< Point>
-       cmp_signed_dist_to_line_p6_p1(p6,p1);
-  assert( cmp_signed_dist_to_line_p6_p1( p1,p6) == CGAL::EQUAL );
-  assert( cmp_signed_dist_to_line_p6_p1( p6,p1) == CGAL::EQUAL );
-  assert( cmp_signed_dist_to_line_p6_p1( p4,p1) == CGAL::SMALLER );
-  assert( cmp_signed_dist_to_line_p6_p1( p5,p6) == CGAL::LARGER );
+       compare_signed_distance_to_line_p6_p1(p6,p1);
+  assert( compare_signed_distance_to_line_p6_p1( p1,p6) == CGAL::EQUAL );
+  assert( compare_signed_distance_to_line_p6_p1( p6,p1) == CGAL::EQUAL );
+  assert( compare_signed_distance_to_line_p6_p1( p4,p1) == CGAL::SMALLER );
+  assert( compare_signed_distance_to_line_p6_p1( p5,p6) == CGAL::LARGER );
  
   CGAL::Compare_signed_distance_to_implicit_line_2< Point>
-       cmp_signed_dist_to_line_p4_p6(p4,p6);
-  assert( cmp_signed_dist_to_line_p4_p6( p8,p6) == CGAL::LARGER );
+       compare_signed_distance_to_line_p4_p6(p4,p6);
+  assert( compare_signed_distance_to_line_p4_p6( p8,p6) == CGAL::LARGER );
  
  
   CGAL::Less_signed_distance_to_implicit_line_2< Point>
-       has_smaller_signed_dist_to_line_p1_p8(p1,p8);
-  assert( has_smaller_signed_dist_to_line_p1_p8( p5,p4) );
+       has_smaller_signed_distance_to_line_p1_p8(p1,p8);
+  assert( has_smaller_signed_distance_to_line_p1_p8( p5,p4) );
  
   CGAL::Less_signed_distance_to_implicit_line_2< Point>
-       has_smaller_signed_dist_to_line_p2_p1(p2,p1);
-  assert( has_smaller_signed_dist_to_line_p2_p1( p3,p8) );
+       has_smaller_signed_distance_to_line_p2_p1(p2,p1);
+  assert( has_smaller_signed_distance_to_line_p2_p1( p3,p8) );
  
   CGAL::Less_signed_distance_to_implicit_line_2< Point>
-       has_smaller_signed_dist_to_line_p6_p1(p6,p1);
-  assert( has_smaller_signed_dist_to_line_p6_p1( p6,p5) );
+       has_smaller_signed_distance_to_line_p6_p1(p6,p1);
+  assert( has_smaller_signed_distance_to_line_p6_p1( p6,p5) );
  
   CGAL::Less_signed_distance_to_implicit_line_2< Point>
-       has_smaller_signed_dist_to_line_p6_p8(p6,p8);
-  assert( has_smaller_signed_dist_to_line_p6_p8( p2,p9) );
+       has_smaller_signed_distance_to_line_p6_p8(p6,p8);
+  assert( has_smaller_signed_distance_to_line_p6_p8( p2,p9) );
  
   CGAL::Less_signed_distance_to_implicit_line_2< Point>
-       has_smaller_signed_dist_to_line_p6_p4(p6,p4);
-  assert( has_smaller_signed_dist_to_line_p6_p4( p8,p6) );
+       has_smaller_signed_distance_to_line_p6_p4(p6,p4);
+  assert( has_smaller_signed_distance_to_line_p6_p4( p8,p6) );
  
   std::cout << '.';
  
