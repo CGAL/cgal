@@ -213,6 +213,6 @@ int main()
 	    << CGAL::to_double(ssquare_total)/n << "  max " 
 	    << CGAL::to_double(ssquare_max)  << std::endl;  
   
-  return 1; 
+  return 0; 
 }
 //end of file
