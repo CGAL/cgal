@@ -22,12 +22,10 @@ public:
   typedef typename Gt::Point_2               Point;
   typedef Triangulation_vertex_base_2<Gt>    Vertex_base;
 
-  typedef typename Ref::Face                     Tds_Face;
-  typedef typename Ref::Vertex                   Tds_Vertex;
-  typedef Triangulation_face_2<Gt,Ref>           Face;
-  typedef Triangulation_vertex_2<Gt,Ref>         Vertex;
-  typedef Triangulation_face_handle_2<Gt,Ref>    Face_handle;
-  typedef Triangulation_vertex_handle_2<Gt,Ref>  Vertex_handle;
+  typedef typename Ref::Face                     Face;
+  typedef typename Ref::Vertex                   Vertex;
+  typedef typename Ref::Face_handle              Face_handle;
+  typedef typename Ref::Vertex_handle            Vertex_handle;
     
   My_vertex() : Vertex_base (){}
 
@@ -55,13 +53,11 @@ class  My_face : public Triangulation_face_base_2<Gt>
 public:
   typedef Triangulation_face_base_2<Gt>            Face_base;
  
-  typedef typename Ref::Face                     Tds_Face;
-  typedef typename Ref::Vertex                   Tds_Vertex;
-  typedef Triangulation_face_2<Gt,Ref>           Face;
-  typedef Triangulation_vertex_2<Gt,Ref>         Vertex;
-  typedef Triangulation_face_handle_2<Gt,Ref>    Face_handle;
-  typedef Triangulation_vertex_handle_2<Gt,Ref>  Vertex_handle;
-  
+  typedef typename Ref::Face                     Face;
+  typedef typename Ref::Vertex                   Vertex;
+  typedef typename Ref::Face_handle              Face_handle;
+  typedef typename Ref::Vertex_handle            Vertex_handle;
+    
   My_face() : Face_base (){}
 
   My_face (void* v0, void* v1, void* v2) : Face_base (v0, v1, v2){}
@@ -90,12 +86,8 @@ private:
 // has to rewrite this class
 template <class Gt>
 class My_TDS:
- public  Triangulation_default_data_structure_2 <
-                          Gt , 
-                          My_vertex <Gt, My_TDS<Gt> > ,
-                          My_face <Gt, My_TDS<Gt> > 
-                          >
-
+ public  Triangulation_data_structure_2 < My_vertex <Gt, My_TDS<Gt> > ,
+                                          My_face <Gt, My_TDS<Gt> >  >
 {
 public:  // CREATION
   My_TDS() {} 

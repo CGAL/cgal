@@ -135,7 +135,8 @@ Triangulation_ds_face_2<Tds>::
 mirror_vertex(int i) const
 {
   CGAL_triangulation_precondition ( &*neighbor(i) != NULL);
-  return neighbor(i)->vertex(neighbor(i)->index(this->handle()));
+  //return neighbor(i)->vertex(neighbor(i)->index(this->handle()));
+  return neighbor(i)->vertex(mirror_index(i));
 }
 
 template < class Tds >
@@ -144,7 +145,8 @@ Triangulation_ds_face_2<Tds>::
 mirror_index(int i) const
 {
   CGAL_triangulation_precondition (neighbor(i) != NULL);
-  return neighbor(i)->index(this->handle());
+  //return neighbor(i)->index(this->handle());
+  return ccw( neighbor(i)->index(vertex(ccw(i))));
 }
 
 template < class Tds >

@@ -1,6 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 6.02 ()
+- changed mirror_index() amd mirror_vertex() in Triangulation_ds_face_2
+  and all the calls to f->index(Face_handle) in  Triangulation_data_structure_2
+  to fit the needs of the extended triangulatin data structure of
+  additively weighted Voronoi diagram
+
 Ver 6.01 (21/1/02)
 - major change in Triangulation package :
   -suppression of Triangulation_face_2 and Triangulation_vertex_2 classes

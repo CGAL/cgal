@@ -87,8 +87,7 @@ private:
 
 template <class Gt>
 class My_TDS:
- public  Triangulation_default_data_structure_2 <
-                          Gt , 
+ public  Triangulation_data_structure_2 <
                           My_vertex <Gt, Triangulation_2<Gt, My_TDS<Gt> > > ,
                           My_face <Gt, Triangulation_2<Gt, My_TDS<Gt> > > 
                           >

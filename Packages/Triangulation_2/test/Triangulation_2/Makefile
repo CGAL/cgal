@@ -57,7 +57,7 @@ clean:
 	test_triangulation_geom_traits \
 	test_triangulation_2 \
 	test_triangulation_tds \
-	test_triangulation_2_bis 
+	test_triangulation_2_bis \
 	 core \
 	T??.triangulation  file_tds? 
 
