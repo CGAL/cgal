@@ -1,4 +1,8 @@
 //-----------------------------------------------------------------------//
+// 1.51
++ MSVC_standard_header_fixes.h: added strcmp, sscanf and sprintf to std::
+
+//-----------------------------------------------------------------------//
 // 1.50
 + Added using std::time_t and std::size_t for Borland.
 

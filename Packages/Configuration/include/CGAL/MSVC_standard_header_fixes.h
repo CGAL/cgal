@@ -43,11 +43,19 @@ namespace std{
   using ::abort;
   using ::atoi;
 }
+
+#include <cstdio>
+namespace std{
+  using ::sscanf;
+  using ::sprintf;
+}
+
 #include <cstring>
 namespace std{
   using ::strcat;
   using ::strcpy;
   using ::strlen;
+  using ::strcmp;
 }
 
 #include <ctime>
