@@ -958,7 +958,7 @@ private:
 
   void  update_subdivision(Intersection_point_node& point_node, 
                            Map_overlay_change_notification *pm_change_notf, 
-                           PM &arr)
+                           PM &pm)
   {
     
 #ifdef  CGAL_SWEEP_LINE_DEBUG
@@ -984,6 +984,8 @@ private:
 #ifdef  CGAL_SWEEP_LINE_DEBUG
       cout<<"now handling "<<cv_iter->get_curve()<<endl;
 #endif
+      
+      bool  overlap=false;
       
       if (is_left(cv_iter->get_rightmost_point().point(), 
                   point_node.get_point().point())) { 
@@ -1025,7 +1027,7 @@ private:
         if (cv_iter != point_node.curves_begin()){
           if (traits.curves_overlap(sub_cv, prev_sub_cv)){
             //cout<<sub_cv<<" and "<< prev_sub_cv<<" are overlapping"<<endl;
-            continue;
+            overlap=true;
           }
         }
 
@@ -1042,77 +1044,80 @@ private:
                                              cv_iter->get_curve().get_parent(),
                                              cv_iter->get_curve().first_map());
         
-        // trying to define a local notifier instead.
-        //Map_overlay_change_notification  notf;
-        //notf.set_curve_attributes(sub_cv,  
-        //                        cv_iter->get_curve().get_parent(), 
-        //                        cv_iter->get_curve().first_map()
-        //                        cv_iter->get_curve().flipped());
-        
-        prev_sub_cv = sub_cv;
-        
-        if (cv_iter->get_rightmost_point().vertex() != Vertex_handle(NULL)){
-          //assert(cv_iter->get_rightmost_point().point() == 
-          // cv_iter->get_rightmost_point().vertex()->point());
+        if (overlap){
+          // special case of overlapping:
+          // We do not insert the overlapped curve. 
+          // However, we have to call add_edge of the notifier in order to update attributes 
+          // of the current halfedge.
+          h = find_halfedge(sub_cv, pm);
+          pm_change_notf->add_edge(sub_cv, h, true, true);
+        }
+        else {
+          prev_sub_cv = sub_cv;
           
-          if (point_node.get_point().vertex() != Vertex_handle(NULL)) {
-            //assert(point_node.get_point().point() == 
-            // point_node.get_point().vertex()->point());
+          if (cv_iter->get_rightmost_point().vertex() != Vertex_handle(NULL)){
+            //assert(cv_iter->get_rightmost_point().point() == 
+            // cv_iter->get_rightmost_point().vertex()->point());
             
-            if (cv_iter->get_curve().flipped()) // opposite orientation.
-              h = arr.insert_at_vertices(sub_cv, 
-                                         point_node.get_point().vertex(), 
-                                         cv_iter->get_rightmost_point().vertex(), 
-                                         pm_change_notf);
-            else
-              h = arr.insert_at_vertices(sub_cv, 
-                                         cv_iter->get_rightmost_point().vertex(), 
-                                         point_node.get_point().vertex(), 
-                                         pm_change_notf);
+            if (point_node.get_point().vertex() != Vertex_handle(NULL)) {
+              //assert(point_node.get_point().point() == 
+              // point_node.get_point().vertex()->point());
+              
+              if (cv_iter->get_curve().flipped()) // opposite orientation.
+                h = pm.insert_at_vertices(sub_cv, 
+                                           point_node.get_point().vertex(), 
+                                           cv_iter->get_rightmost_point().vertex(), 
+                                           pm_change_notf);
+              else
+                h = pm.insert_at_vertices(sub_cv, 
+                                           cv_iter->get_rightmost_point().vertex(), 
+                                           point_node.get_point().vertex(), 
+                                           pm_change_notf);
+            }
+            else {
+              if (cv_iter->get_curve().flipped())
+                h = pm.insert_from_vertex (sub_cv, 
+                                            cv_iter->get_rightmost_point().vertex(), 
+                                            false, 
+                                            pm_change_notf);
+              else
+                h = pm.insert_from_vertex (sub_cv, 
+                                            cv_iter->get_rightmost_point().vertex(), 
+                                            true, 
+                                            pm_change_notf);
+            }
           }
-          else {
+          else if (point_node.get_point().vertex() != Vertex_handle(NULL)) {
+            //assert(point_node.get_point().point() 
+            // == point_node.get_point().vertex()->point());
             if (cv_iter->get_curve().flipped())
-              h = arr.insert_from_vertex (sub_cv, 
-                                          cv_iter->get_rightmost_point().vertex(), 
-                                          false, 
-                                          pm_change_notf);
-            else
-              h = arr.insert_from_vertex (sub_cv, 
-                                          cv_iter->get_rightmost_point().vertex(), 
+              h = pm.insert_from_vertex (sub_cv, 
+                                          point_node.get_point().vertex(), 
                                           true, 
                                           pm_change_notf);
+            else
+              h = pm.insert_from_vertex (sub_cv, 
+                                          point_node.get_point().vertex(), 
+                                          false, 
+                                          pm_change_notf);
+          }
+          else{
+            h = pm.insert_in_face_interior (sub_cv, 
+                                            pm.unbounded_face(), 
+                                            pm_change_notf);
+            
+            // the point is that if the curve has no source to start the insertion from, it has to be inserted to the unbounded face, because all the curves to the right of it have not inserted yet, and in that stage of the sweep line, the curve is on the unbounded face - later on it will be updated automatically by the Planar map (Arrangement) insert functions.
           }
         }
-        else if (point_node.get_point().vertex() != Vertex_handle(NULL)) {
-          //assert(point_node.get_point().point() 
-          // == point_node.get_point().vertex()->point());
-          if (cv_iter->get_curve().flipped())
-            h = arr.insert_from_vertex (sub_cv, 
-                                        point_node.get_point().vertex(), 
-                                        true, 
-                                        pm_change_notf);
-          else
-            h = arr.insert_from_vertex (sub_cv, 
-                                        point_node.get_point().vertex(), 
-                                        false, 
-                                        pm_change_notf);
-        }
-        else{
-          h = arr.insert_in_face_interior (sub_cv, 
-                                           arr.unbounded_face(), 
-                                           pm_change_notf);
-          
-        // the point is that if the curve has no source to start the insertion from, it has to be inserted to the unbounded face, because all the curves to the right of it have not inserted yet, and in that stage of the sweep line, the curve is on the unbounded face - later on it will be updated automatically by the Planar map (Arrangement) insert functions.
-        }
-        
-        //assert(h->source()->point() == cv_iter->get_rightmost_point().point() || (h->target()->point() == cv_iter->get_rightmost_point().point()));
+        //assert(h->source()->point() == cv_iter->get_rightmost_point().point() || 
+        // (h->target()->point() == cv_iter->get_rightmost_point().point()));
         
         // now update the vertex handle of each point.
         //if (cv_iter->get_rightmost_point().vertex() == Vertex_handle(NULL))
         {
           if (h->source()->point() == cv_iter->get_rightmost_point().point())
             //cv_iter->set_vertex_of_rightmost_point(h->source());
-            cv_iter->get_rightmost_point().set_vertex(h->source());
+              cv_iter->get_rightmost_point().set_vertex(h->source());
           else if (h->target()->point() == 
                    cv_iter->get_rightmost_point().point())
             //cv_iter->set_vertex_of_rightmost_point(h->target());
@@ -1132,7 +1137,38 @@ private:
       // else - no new sub curve is inserted to the subdivision.
     }
   }
+  
+  Halfedge_handle find_halfedge(const X_curve& cv, PM& pm)
+  {
+    cout<<"In find_halfedge"<<endl;
+    
+    Locate_type lt;
+    Halfedge_handle h = pm.locate(traits.curve_source(cv),lt);
 
+    cout<<"cv="<<cv<<endl;
+    cout<<"h->curve()="<<h->curve()<<endl;
+    
+    if (h->curve() == cv || h->curve() == traits.curve_flip(cv))
+      return h;
+
+    Vertex_handle v;
+    if (h->source()->point() == traits.curve_source(cv))
+      v = h->source();
+    else
+      v = h->target();
+    
+    typename PM::Halfedge_around_vertex_circulator circ = v->incident_halfedges();
+
+    do {
+      cout<<"circ->curve()="<<circ->curve()<<endl;
+      if (circ->curve() == cv || circ->curve() == traits.curve_flip(cv))
+        return Halfedge_handle(circ);
+    } while (++circ != v->incident_halfedges());
+
+    CGAL_assertion(0);
+    return Halfedge_handle(0);
+  }
+  
   /*  void  update_subdivision(Intersection_point_node& point_node, 
                            Map_overlay_change_notification *pm_change_notf, 
                            PM &pm)
