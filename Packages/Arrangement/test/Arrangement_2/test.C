@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
   #include <CGAL/Arr_polyline_traits.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
-  #error Currently not supported (July 2000)
+  //#error Currently not supported (July 2000)
   #include <CGAL/leda_rational.h>
   #include <CGAL/Arr_leda_polyline_traits.h>
 #else
@@ -85,13 +85,12 @@ int main(int argc, char* argv[])
   #include <CGAL/Pm_naive_point_location.h>  
 #elif CGAL_ARR_TEST_POINT_LOCATION == 3
   #include <CGAL/Pm_walk_along_line_point_location.h>
+#elif CGAL_ARR_TEST_POINT_LOCATION == 4
+  #include <CGAL/Pm_simple_point_location.h>
 #else
   #error No point location strategy defined for test
 #endif
  
-// Using my own temporary version which include arr.is_valid()
-//#include "Arrangement_2_Debug.h"
-//#include "Arrangement_2_Shai.h"
 #include <CGAL/Arrangement_2.h>
 
 // Quotient is included anyway, because it is used to read
@@ -139,7 +138,10 @@ class Arr_polyline_traits_test
   Arr_2 arr;  
 
 public:
-#if CGAL_ARR_TEST_POINT_LOCATION == 3  
+#if CGAL_ARR_TEST_POINT_LOCATION == 4
+  Arr_polyline_traits_test() : arr(new CGAL::Pm_simple_point_location<Planar_map>) {};
+
+#elif CGAL_ARR_TEST_POINT_LOCATION == 3  
   Arr_polyline_traits_test() : arr(new CGAL::Pm_walk_along_line_point_location<Planar_map>) {};
 
 #elif CGAL_ARR_TEST_POINT_LOCATION == 2

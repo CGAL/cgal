@@ -103,6 +103,8 @@ int main(int argc, char* argv[])
   #include <CGAL/Pm_naive_point_location.h>  
 #elif CGAL_ARR_TEST_POINT_LOCATION == 3
   #include <CGAL/Pm_walk_along_line_point_location.h>
+#elif CGAL_ARR_TEST_POINT_LOCATION == 4
+  #include <CGAL/Pm_simple_point_location.h>
 #else
   #error No point location strategy defined for test
 #endif
@@ -157,7 +159,10 @@ class Arr_polyline_traits_test
   Arr_2 arr;  
 
 public:
-#if CGAL_ARR_TEST_POINT_LOCATION == 3  
+#if CGAL_ARR_TEST_POINT_LOCATION == 4
+  Arr_polyline_traits_test() : arr(new CGAL::Pm_simple_point_location<Planar_map>) {};
+
+#elif CGAL_ARR_TEST_POINT_LOCATION == 3  
   Arr_polyline_traits_test() : arr(new CGAL::Pm_walk_along_line_point_location<Planar_map>) {};
 
 #elif CGAL_ARR_TEST_POINT_LOCATION == 2
