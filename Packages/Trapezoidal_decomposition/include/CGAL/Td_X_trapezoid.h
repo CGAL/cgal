@@ -205,7 +205,7 @@ public:
   }
   bool operator==(const X_trapezoid& t2) const
   {
-    return identical(*this,t2);
+    return CGAL::identical(*this,t2);
   }
   bool operator!=(const X_trapezoid& t2) const
   {
