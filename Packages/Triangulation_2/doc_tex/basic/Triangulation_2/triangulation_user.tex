@@ -492,14 +492,14 @@ as optional parameter (or from a finite vertex of
 \ccStyle{infinite_face()} if no optional parameter is given). It takes
 time \ccTexHtml{$O(n)$}{O(n)} in the worst case, but only \ccTexHtml{$O(\sqrt{n})$}{O(sqrt(n))}
 on average if the vertices are distributed uniformly at random.
-The class \ccc{Triangulation_hierarchy_2<Trits,Tds>} 
+The class \ccc{Triangulation_hierarchy_2<Traits,Tds>} 
 implements a data structure  designed to
-offer an alternative, more efficient point location algorithm
+offer an alternative, more efficient point location algorithm.
 
 Insertion of a point is done by locating a face that contains the
 point, and then splitting this face.
 If the point falls outside the convex hull, the triangulation
- is restored by flips.  Apart from the location, insertion takes a time 
+ is restored by flips.  Apart from the location, insertion takes a
 time \ccTexHtml{$O(1)$}{O(1)}. This bound is only an amortized bound
 for points located outside the convex hull.
 
