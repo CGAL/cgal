@@ -41,13 +41,13 @@
 #include <iterator>
 #include <algorithm>
 
-#if defined(CGAL_USE_LEDA)
+#if defined(CGAL_USE_LEDA) && defined(USE_LEDA)
 #ifdef CARTESIAN
 typedef CGAL::Cartesian<leda_rational>          Kernel;
 #else
 typedef CGAL::Homogeneous<leda_rational>        Kernel;
 #endif
-#else //defined(CGAL_USE_LEDA)
+#else //defined(CGAL_USE_LEDA) && defined(USE_LEDA)
 #ifdef CARTESIAN
 typedef CGAL::Quotient<float>                   Number_type;
 typedef CGAL::Cartesian<Number_type>            Kernel;
