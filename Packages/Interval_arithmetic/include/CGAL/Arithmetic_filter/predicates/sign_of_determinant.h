@@ -102,7 +102,8 @@ struct Static_Filtered_sign_of_determinant2x2_4
 {
   static double _bound;
   static double _epsilon_0;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static Sign update_epsilon(
 	const Static_filter_error &a00,
@@ -119,6 +120,7 @@ struct Static_Filtered_sign_of_determinant2x2_4
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,_epsilon_0);
@@ -150,7 +152,7 @@ sign_of_determinant2x2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &a10,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &a11)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_sign_of_determinant2x2_4::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -160,7 +162,7 @@ sign_of_determinant2x2(
 	fabs(a10.to_double()) > SAF_bound ||
 	fabs(a11.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(a00.to_double()));
@@ -180,12 +182,13 @@ re_adjust:
 		a11.dbl(),
 		Static_Filtered_sign_of_determinant2x2_4::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_sign_of_determinant2x2_4::number_of_failures++;
     return sign_of_determinant2x2(
 		a00.exact(),
 		a01.exact(),
@@ -224,8 +227,9 @@ sign_of_determinant2x2(
 		a11.dbl(),
 		Static_Filtered_sign_of_determinant2x2_4::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_sign_of_determinant2x2_4::number_of_failures++;
     return sign_of_determinant2x2(
 		a00.exact(),
 		a01.exact(),
@@ -342,7 +346,8 @@ struct Static_Filtered_sign_of_determinant3x3_9
 {
   static double _bound;
   static double _epsilon_0;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static Sign update_epsilon(
 	const Static_filter_error &a00,
@@ -368,6 +373,7 @@ struct Static_Filtered_sign_of_determinant3x3_9
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -413,7 +419,7 @@ sign_of_determinant3x3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &a21,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &a22)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_sign_of_determinant3x3_9::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -428,7 +434,7 @@ sign_of_determinant3x3(
 	fabs(a21.to_double()) > SAF_bound ||
 	fabs(a22.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(a00.to_double()));
@@ -458,12 +464,13 @@ re_adjust:
 		a22.dbl(),
 		Static_Filtered_sign_of_determinant3x3_9::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_sign_of_determinant3x3_9::number_of_failures++;
     return sign_of_determinant3x3(
 		a00.exact(),
 		a01.exact(),
@@ -522,8 +529,9 @@ sign_of_determinant3x3(
 		a22.dbl(),
 		Static_Filtered_sign_of_determinant3x3_9::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_sign_of_determinant3x3_9::number_of_failures++;
     return sign_of_determinant3x3(
 		a00.exact(),
 		a01.exact(),
@@ -687,7 +695,8 @@ struct Static_Filtered_sign_of_determinant4x4_16
 {
   static double _bound;
   static double _epsilon_0;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static Sign update_epsilon(
 	const Static_filter_error &a00,
@@ -721,6 +730,7 @@ struct Static_Filtered_sign_of_determinant4x4_16
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -781,7 +791,7 @@ sign_of_determinant4x4(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &a32,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &a33)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_sign_of_determinant4x4_16::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -803,7 +813,7 @@ sign_of_determinant4x4(
 	fabs(a32.to_double()) > SAF_bound ||
 	fabs(a33.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(a00.to_double()));
@@ -847,12 +857,13 @@ re_adjust:
 		a33.dbl(),
 		Static_Filtered_sign_of_determinant4x4_16::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_sign_of_determinant4x4_16::number_of_failures++;
     return sign_of_determinant4x4(
 		a00.exact(),
 		a01.exact(),
@@ -939,8 +950,9 @@ sign_of_determinant4x4(
 		a33.dbl(),
 		Static_Filtered_sign_of_determinant4x4_16::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_sign_of_determinant4x4_16::number_of_failures++;
     return sign_of_determinant4x4(
 		a00.exact(),
 		a01.exact(),
@@ -1165,7 +1177,8 @@ struct Static_Filtered_sign_of_determinant5x5_25
 {
   static double _bound;
   static double _epsilon_0;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static Sign update_epsilon(
 	const Static_filter_error &a00,
@@ -1209,6 +1222,7 @@ struct Static_Filtered_sign_of_determinant5x5_25
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -1288,7 +1302,7 @@ sign_of_determinant5x5(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &a43,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &a44)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_sign_of_determinant5x5_25::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -1319,7 +1333,7 @@ sign_of_determinant5x5(
 	fabs(a43.to_double()) > SAF_bound ||
 	fabs(a44.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(a00.to_double()));
@@ -1381,12 +1395,13 @@ re_adjust:
 		a44.dbl(),
 		Static_Filtered_sign_of_determinant5x5_25::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_sign_of_determinant5x5_25::number_of_failures++;
     return sign_of_determinant5x5(
 		a00.exact(),
 		a01.exact(),
@@ -1509,8 +1524,9 @@ sign_of_determinant5x5(
 		a44.dbl(),
 		Static_Filtered_sign_of_determinant5x5_25::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_sign_of_determinant5x5_25::number_of_failures++;
     return sign_of_determinant5x5(
 		a00.exact(),
 		a01.exact(),
@@ -1810,7 +1826,8 @@ struct Static_Filtered_sign_of_determinant6x6_36
 {
   static double _bound;
   static double _epsilon_0;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static Sign update_epsilon(
 	const Static_filter_error &a00,
@@ -1866,6 +1883,7 @@ struct Static_Filtered_sign_of_determinant6x6_36
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -1968,7 +1986,7 @@ sign_of_determinant6x6(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &a54,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &a55)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_sign_of_determinant6x6_36::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -2010,7 +2028,7 @@ sign_of_determinant6x6(
 	fabs(a54.to_double()) > SAF_bound ||
 	fabs(a55.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(a00.to_double()));
@@ -2094,12 +2112,13 @@ re_adjust:
 		a55.dbl(),
 		Static_Filtered_sign_of_determinant6x6_36::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_sign_of_determinant6x6_36::number_of_failures++;
     return sign_of_determinant6x6(
 		a00.exact(),
 		a01.exact(),
@@ -2266,8 +2285,9 @@ sign_of_determinant6x6(
 		a55.dbl(),
 		Static_Filtered_sign_of_determinant6x6_36::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_sign_of_determinant6x6_36::number_of_failures++;
     return sign_of_determinant6x6(
 		a00.exact(),
 		a01.exact(),

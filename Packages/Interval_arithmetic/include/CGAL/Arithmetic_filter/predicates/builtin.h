@@ -42,10 +42,11 @@ struct Static_Filtered_sign_1
   static Sign epsilon_variant( const Restricted_double &a,
                                 const double & epsilon_0)
   {    // return compare_SAF(a,0,epsilon);
-    if (a.dbl()> epsilon_0) return POSITIVE;
-    if (a.dbl()<-epsilon_0) return NEGATIVE;
-    if (a.dbl()==0 && epsilon_0==0) return ZERO;
-    throw Restricted_double::unsafe_comparison();
+    if (to_double(a)> epsilon_0) return POSITIVE;
+    if (to_double(a)<-epsilon_0) return NEGATIVE;
+    if (to_double(a)==0 && epsilon_0==0) return ZERO;
+    Interval_nt_advanced::number_of_failures++;
+    throw Interval_nt_advanced::unsafe_comparison();
   }
 };
 
@@ -74,10 +75,11 @@ struct Static_Filtered_compare_2
           const Restricted_double &b,
           const double & epsilon_0)
   {
-    if (a.dbl() > b.dbl()+epsilon_0) return LARGER;
-    if (a.dbl() < b.dbl()-epsilon_0) return SMALLER;
-    if (a.dbl()==b.dbl() && epsilon_0==0) return EQUAL;
-    throw Restricted_double::unsafe_comparison();
+    if (to_double(a) > to_double(b)+epsilon_0) return LARGER;
+    if (to_double(a) < to_double(b)-epsilon_0) return SMALLER;
+    if (to_double(a)==to_double(b) && epsilon_0==0) return EQUAL;
+    Interval_nt_advanced::number_of_failures++;
+    throw Interval_nt_advanced::unsafe_comparison();
   }
 };
 
@@ -106,7 +108,8 @@ struct Static_Filtered_lexicographical_sign_2
           const double &)
   {
     // Not finished.
-    throw Restricted_double::unsafe_comparison();
+    Interval_nt_advanced::number_of_failures++;
+    throw Interval_nt_advanced::unsafe_comparison();
   }
 };
 

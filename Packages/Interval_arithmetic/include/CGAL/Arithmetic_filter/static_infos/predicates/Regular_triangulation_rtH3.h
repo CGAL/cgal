@@ -27,8 +27,20 @@
 double Static_Filtered_power_testH3_25::_epsilon_0;
 double Static_Filtered_power_testH3_25::_bound = -1.0;
 
+unsigned Static_Filtered_power_testH3_25::number_of_updates = 0;
+
+unsigned Static_Filtered_power_testH3_25::number_of_failures = 0;
+
 double Static_Filtered_power_testH3_20::_bound = -1.0;
 
+unsigned Static_Filtered_power_testH3_20::number_of_updates = 0;
+
+unsigned Static_Filtered_power_testH3_20::number_of_failures = 0;
+
 double Static_Filtered_power_testH3_15::_bound = -1.0;
+
+unsigned Static_Filtered_power_testH3_15::number_of_updates = 0;
+
+unsigned Static_Filtered_power_testH3_15::number_of_failures = 0;
 
 #endif // CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_RTH3_H_STATIC_INFO_H

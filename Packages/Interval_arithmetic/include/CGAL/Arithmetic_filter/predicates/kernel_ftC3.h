@@ -132,7 +132,8 @@ struct Static_Filtered_collinearC3_9
 {
   static double _bound;
   static double _epsilon_0,_epsilon_1,_epsilon_2;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static bool update_epsilon(
 	const Static_filter_error &px,
@@ -169,6 +170,7 @@ struct Static_Filtered_collinearC3_9
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2);
@@ -225,7 +227,7 @@ collinearC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ry,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &rz)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_collinearC3_9::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -240,7 +242,7 @@ collinearC3(
 	fabs(ry.to_double()) > SAF_bound ||
 	fabs(rz.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
@@ -272,12 +274,13 @@ re_adjust:
 		Static_Filtered_collinearC3_9::_epsilon_1,
 		Static_Filtered_collinearC3_9::_epsilon_2);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_collinearC3_9::number_of_failures++;
     return collinearC3(
 		px.exact(),
 		py.exact(),
@@ -338,8 +341,9 @@ collinearC3(
 		Static_Filtered_collinearC3_9::_epsilon_1,
 		Static_Filtered_collinearC3_9::_epsilon_2);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_collinearC3_9::number_of_failures++;
     return collinearC3(
 		px.exact(),
 		py.exact(),
@@ -479,7 +483,8 @@ struct Static_Filtered_orientationC3_12
 {
   static double _bound;
   static double _epsilon_0;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static Orientation update_epsilon(
 	const Static_filter_error &px,
@@ -508,6 +513,7 @@ struct Static_Filtered_orientationC3_12
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -559,7 +565,7 @@ orientationC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &sy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &sz)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_orientationC3_12::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -577,7 +583,7 @@ orientationC3(
 	fabs(sy.to_double()) > SAF_bound ||
 	fabs(sz.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
@@ -613,12 +619,13 @@ re_adjust:
 		sz.dbl(),
 		Static_Filtered_orientationC3_12::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_orientationC3_12::number_of_failures++;
     return orientationC3(
 		px.exact(),
 		py.exact(),
@@ -689,8 +696,9 @@ orientationC3(
 		sz.dbl(),
 		Static_Filtered_orientationC3_12::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_orientationC3_12::number_of_failures++;
     return orientationC3(
 		px.exact(),
 		py.exact(),
@@ -797,7 +805,8 @@ struct Static_Filtered_equal_directionC3_6
 {
   static double _bound;
   static double _epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5,_epsilon_6,_epsilon_7,_epsilon_8;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static bool update_epsilon(
 	const Static_filter_error &dx1,
@@ -839,6 +848,7 @@ struct Static_Filtered_equal_directionC3_6
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5,_epsilon_6,_epsilon_7,_epsilon_8);
@@ -897,7 +907,7 @@ equal_directionC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &dy2,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &dz2)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_equal_directionC3_6::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -909,7 +919,7 @@ equal_directionC3(
 	fabs(dy2.to_double()) > SAF_bound ||
 	fabs(dz2.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(dx1.to_double()));
@@ -941,12 +951,13 @@ re_adjust:
 		Static_Filtered_equal_directionC3_6::_epsilon_7,
 		Static_Filtered_equal_directionC3_6::_epsilon_8);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_equal_directionC3_6::number_of_failures++;
     return equal_directionC3(
 		dx1.exact(),
 		dy1.exact(),
@@ -1001,8 +1012,9 @@ equal_directionC3(
 		Static_Filtered_equal_directionC3_6::_epsilon_7,
 		Static_Filtered_equal_directionC3_6::_epsilon_8);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_equal_directionC3_6::number_of_failures++;
     return equal_directionC3(
 		dx1.exact(),
 		dy1.exact(),
@@ -1109,7 +1121,8 @@ struct Static_Filtered_side_of_oriented_planeC3_7
 {
   static double _bound;
   static double _epsilon_0;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static Oriented_side update_epsilon(
 	const Static_filter_error &a,
@@ -1131,6 +1144,7 @@ struct Static_Filtered_side_of_oriented_planeC3_7
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,_epsilon_0);
@@ -1170,7 +1184,7 @@ side_of_oriented_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pz)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_side_of_oriented_planeC3_7::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -1183,7 +1197,7 @@ side_of_oriented_planeC3(
 	fabs(py.to_double()) > SAF_bound ||
 	fabs(pz.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(a.to_double()));
@@ -1209,12 +1223,13 @@ re_adjust:
 		pz.dbl(),
 		Static_Filtered_side_of_oriented_planeC3_7::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_side_of_oriented_planeC3_7::number_of_failures++;
     return side_of_oriented_planeC3(
 		a.exact(),
 		b.exact(),
@@ -1265,8 +1280,9 @@ side_of_oriented_planeC3(
 		pz.dbl(),
 		Static_Filtered_side_of_oriented_planeC3_7::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_side_of_oriented_planeC3_7::number_of_failures++;
     return side_of_oriented_planeC3(
 		a.exact(),
 		b.exact(),
@@ -1422,7 +1438,8 @@ struct Static_Filtered_side_of_oriented_sphereC3_15
 {
   static double _bound;
   static double _epsilon_0;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static Oriented_side update_epsilon(
 	const Static_filter_error &px,
@@ -1471,6 +1488,7 @@ struct Static_Filtered_side_of_oriented_sphereC3_15
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -1545,7 +1563,7 @@ side_of_oriented_sphereC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ty,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &tz)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_side_of_oriented_sphereC3_15::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -1566,7 +1584,7 @@ side_of_oriented_sphereC3(
 	fabs(ty.to_double()) > SAF_bound ||
 	fabs(tz.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
@@ -1608,12 +1626,13 @@ re_adjust:
 		tz.dbl(),
 		Static_Filtered_side_of_oriented_sphereC3_15::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_side_of_oriented_sphereC3_15::number_of_failures++;
     return side_of_oriented_sphereC3(
 		px.exact(),
 		py.exact(),
@@ -1696,8 +1715,9 @@ side_of_oriented_sphereC3(
 		tz.dbl(),
 		Static_Filtered_side_of_oriented_sphereC3_15::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_side_of_oriented_sphereC3_15::number_of_failures++;
     return side_of_oriented_sphereC3(
 		px.exact(),
 		py.exact(),
@@ -1861,7 +1881,8 @@ struct Static_Filtered_side_of_bounded_sphereC3_15
 {
   static double _bound;
   static double _epsilon_0,_epsilon_1;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static Bounded_side update_epsilon(
 	const Static_filter_error &px,
@@ -1902,6 +1923,7 @@ struct Static_Filtered_side_of_bounded_sphereC3_15
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1);
@@ -1968,7 +1990,7 @@ side_of_bounded_sphereC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ty,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &tz)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_side_of_bounded_sphereC3_15::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -1989,7 +2011,7 @@ side_of_bounded_sphereC3(
 	fabs(ty.to_double()) > SAF_bound ||
 	fabs(tz.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
@@ -2032,12 +2054,13 @@ re_adjust:
 		Static_Filtered_side_of_bounded_sphereC3_15::_epsilon_0,
 		Static_Filtered_side_of_bounded_sphereC3_15::_epsilon_1);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_side_of_bounded_sphereC3_15::number_of_failures++;
     return side_of_bounded_sphereC3(
 		px.exact(),
 		py.exact(),
@@ -2121,8 +2144,9 @@ side_of_bounded_sphereC3(
 		Static_Filtered_side_of_bounded_sphereC3_15::_epsilon_0,
 		Static_Filtered_side_of_bounded_sphereC3_15::_epsilon_1);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_side_of_bounded_sphereC3_15::number_of_failures++;
     return side_of_bounded_sphereC3(
 		px.exact(),
 		py.exact(),
@@ -2250,7 +2274,8 @@ struct Static_Filtered_cmp_dist_to_pointC3_9
 {
   static double _bound;
   static double _epsilon_0;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static Comparison_result update_epsilon(
 	const Static_filter_error &px,
@@ -2275,6 +2300,7 @@ struct Static_Filtered_cmp_dist_to_pointC3_9
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -2319,7 +2345,7 @@ cmp_dist_to_pointC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ry,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &rz)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_cmp_dist_to_pointC3_9::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -2334,7 +2360,7 @@ cmp_dist_to_pointC3(
 	fabs(ry.to_double()) > SAF_bound ||
 	fabs(rz.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
@@ -2364,12 +2390,13 @@ re_adjust:
 		rz.dbl(),
 		Static_Filtered_cmp_dist_to_pointC3_9::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_cmp_dist_to_pointC3_9::number_of_failures++;
     return cmp_dist_to_pointC3(
 		px.exact(),
 		py.exact(),
@@ -2428,8 +2455,9 @@ cmp_dist_to_pointC3(
 		rz.dbl(),
 		Static_Filtered_cmp_dist_to_pointC3_9::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_cmp_dist_to_pointC3_9::number_of_failures++;
     return cmp_dist_to_pointC3(
 		px.exact(),
 		py.exact(),
@@ -2557,7 +2585,8 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_10
 {
   static double _bound;
   static double _epsilon_0;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static Comparison_result update_epsilon(
 	const Static_filter_error &pa,
@@ -2583,6 +2612,7 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_10
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -2629,7 +2659,7 @@ cmp_signed_dist_to_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qz)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_cmp_signed_dist_to_planeC3_10::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -2645,7 +2675,7 @@ cmp_signed_dist_to_planeC3(
 	fabs(qy.to_double()) > SAF_bound ||
 	fabs(qz.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(pa.to_double()));
@@ -2677,12 +2707,13 @@ re_adjust:
 		qz.dbl(),
 		Static_Filtered_cmp_signed_dist_to_planeC3_10::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_cmp_signed_dist_to_planeC3_10::number_of_failures++;
     return cmp_signed_dist_to_planeC3(
 		pa.exact(),
 		pb.exact(),
@@ -2745,8 +2776,9 @@ cmp_signed_dist_to_planeC3(
 		qz.dbl(),
 		Static_Filtered_cmp_signed_dist_to_planeC3_10::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_cmp_signed_dist_to_planeC3_10::number_of_failures++;
     return cmp_signed_dist_to_planeC3(
 		pa.exact(),
 		pb.exact(),
@@ -2905,7 +2937,8 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_15
 {
   static double _bound;
   static double _epsilon_0;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static Comparison_result update_epsilon(
 	const Static_filter_error &ppx,
@@ -2939,6 +2972,7 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_15
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -2998,7 +3032,7 @@ cmp_signed_dist_to_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qz)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_cmp_signed_dist_to_planeC3_15::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -3019,7 +3053,7 @@ cmp_signed_dist_to_planeC3(
 	fabs(qy.to_double()) > SAF_bound ||
 	fabs(qz.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(ppx.to_double()));
@@ -3061,12 +3095,13 @@ re_adjust:
 		qz.dbl(),
 		Static_Filtered_cmp_signed_dist_to_planeC3_15::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_cmp_signed_dist_to_planeC3_15::number_of_failures++;
     return cmp_signed_dist_to_planeC3(
 		ppx.exact(),
 		ppy.exact(),
@@ -3149,8 +3184,9 @@ cmp_signed_dist_to_planeC3(
 		qz.dbl(),
 		Static_Filtered_cmp_signed_dist_to_planeC3_15::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_cmp_signed_dist_to_planeC3_15::number_of_failures++;
     return cmp_signed_dist_to_planeC3(
 		ppx.exact(),
 		ppy.exact(),
@@ -3314,7 +3350,8 @@ struct Static_Filtered_has_larger_signed_dist_to_planeC3_15
 {
   static double _bound;
   static double _epsilon_0;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static bool update_epsilon(
 	const Static_filter_error &ppx,
@@ -3345,6 +3382,7 @@ struct Static_Filtered_has_larger_signed_dist_to_planeC3_15
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -3401,7 +3439,7 @@ has_larger_signed_dist_to_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qz)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_has_larger_signed_dist_to_planeC3_15::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -3422,7 +3460,7 @@ has_larger_signed_dist_to_planeC3(
 	fabs(qy.to_double()) > SAF_bound ||
 	fabs(qz.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(ppx.to_double()));
@@ -3464,12 +3502,13 @@ re_adjust:
 		qz.dbl(),
 		Static_Filtered_has_larger_signed_dist_to_planeC3_15::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_has_larger_signed_dist_to_planeC3_15::number_of_failures++;
     return has_larger_signed_dist_to_planeC3(
 		ppx.exact(),
 		ppy.exact(),
@@ -3552,8 +3591,9 @@ has_larger_signed_dist_to_planeC3(
 		qz.dbl(),
 		Static_Filtered_has_larger_signed_dist_to_planeC3_15::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_has_larger_signed_dist_to_planeC3_15::number_of_failures++;
     return has_larger_signed_dist_to_planeC3(
 		ppx.exact(),
 		ppy.exact(),
@@ -3717,7 +3757,8 @@ struct Static_Filtered_has_smaller_signed_dist_to_planeC3_15
 {
   static double _bound;
   static double _epsilon_0;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static bool update_epsilon(
 	const Static_filter_error &ppx,
@@ -3748,6 +3789,7 @@ struct Static_Filtered_has_smaller_signed_dist_to_planeC3_15
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -3804,7 +3846,7 @@ has_smaller_signed_dist_to_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qz)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_has_smaller_signed_dist_to_planeC3_15::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -3825,7 +3867,7 @@ has_smaller_signed_dist_to_planeC3(
 	fabs(qy.to_double()) > SAF_bound ||
 	fabs(qz.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(ppx.to_double()));
@@ -3867,12 +3909,13 @@ re_adjust:
 		qz.dbl(),
 		Static_Filtered_has_smaller_signed_dist_to_planeC3_15::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_has_smaller_signed_dist_to_planeC3_15::number_of_failures++;
     return has_smaller_signed_dist_to_planeC3(
 		ppx.exact(),
 		ppy.exact(),
@@ -3955,8 +3998,9 @@ has_smaller_signed_dist_to_planeC3(
 		qz.dbl(),
 		Static_Filtered_has_smaller_signed_dist_to_planeC3_15::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_has_smaller_signed_dist_to_planeC3_15::number_of_failures++;
     return has_smaller_signed_dist_to_planeC3(
 		ppx.exact(),
 		ppy.exact(),

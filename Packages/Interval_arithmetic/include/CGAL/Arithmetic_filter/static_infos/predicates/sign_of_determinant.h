@@ -27,16 +27,36 @@
 double Static_Filtered_sign_of_determinant2x2_4::_epsilon_0;
 double Static_Filtered_sign_of_determinant2x2_4::_bound = -1.0;
 
+unsigned Static_Filtered_sign_of_determinant2x2_4::number_of_updates = 0;
+
+unsigned Static_Filtered_sign_of_determinant2x2_4::number_of_failures = 0;
+
 double Static_Filtered_sign_of_determinant3x3_9::_epsilon_0;
 double Static_Filtered_sign_of_determinant3x3_9::_bound = -1.0;
+
+unsigned Static_Filtered_sign_of_determinant3x3_9::number_of_updates = 0;
+
+unsigned Static_Filtered_sign_of_determinant3x3_9::number_of_failures = 0;
 
 double Static_Filtered_sign_of_determinant4x4_16::_epsilon_0;
 double Static_Filtered_sign_of_determinant4x4_16::_bound = -1.0;
 
+unsigned Static_Filtered_sign_of_determinant4x4_16::number_of_updates = 0;
+
+unsigned Static_Filtered_sign_of_determinant4x4_16::number_of_failures = 0;
+
 double Static_Filtered_sign_of_determinant5x5_25::_epsilon_0;
 double Static_Filtered_sign_of_determinant5x5_25::_bound = -1.0;
 
+unsigned Static_Filtered_sign_of_determinant5x5_25::number_of_updates = 0;
+
+unsigned Static_Filtered_sign_of_determinant5x5_25::number_of_failures = 0;
+
 double Static_Filtered_sign_of_determinant6x6_36::_epsilon_0;
 double Static_Filtered_sign_of_determinant6x6_36::_bound = -1.0;
+
+unsigned Static_Filtered_sign_of_determinant6x6_36::number_of_updates = 0;
+
+unsigned Static_Filtered_sign_of_determinant6x6_36::number_of_failures = 0;
 
 #endif // CGAL_ARITHMETIC_FILTER_PREDICATES_SIGN_OF_DETERMINANT_H_STATIC_INFO_H

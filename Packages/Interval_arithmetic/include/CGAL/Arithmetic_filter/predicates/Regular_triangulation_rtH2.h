@@ -174,7 +174,8 @@ struct Static_Filtered_power_testH2_16
 {
   static double _bound;
   static double _epsilon_0;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static Oriented_side update_epsilon(
 	const Static_filter_error &phx,
@@ -228,6 +229,7 @@ struct Static_Filtered_power_testH2_16
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
@@ -308,7 +310,7 @@ power_testH2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &thw,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &twt)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_power_testH2_16::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -330,7 +332,7 @@ power_testH2(
 	fabs(thw.to_double()) > SAF_bound ||
 	fabs(twt.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(phx.to_double()));
@@ -374,12 +376,13 @@ re_adjust:
 		twt.dbl(),
 		Static_Filtered_power_testH2_16::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_power_testH2_16::number_of_failures++;
     return power_testH2(
 		phx.exact(),
 		phy.exact(),
@@ -466,8 +469,9 @@ power_testH2(
 		twt.dbl(),
 		Static_Filtered_power_testH2_16::_epsilon_0);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_power_testH2_16::number_of_failures++;
     return power_testH2(
 		phx.exact(),
 		phy.exact(),
@@ -614,7 +618,8 @@ struct Static_Filtered_power_testH2_12
 {
   static double _bound;
   static double _epsilon_0,_epsilon_1;
-  // static unsigned number_of_failures; // ?
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
 
   static Oriented_side update_epsilon(
 	const Static_filter_error &phx,
@@ -672,6 +677,7 @@ struct Static_Filtered_power_testH2_12
   static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
+    number_of_updates++;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
     (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1);
@@ -752,7 +758,7 @@ power_testH2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &thw,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &twt)
 {
-  bool re_adjusted = false;
+//   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_power_testH2_12::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
@@ -770,7 +776,7 @@ power_testH2(
 	fabs(thw.to_double()) > SAF_bound ||
 	fabs(twt.to_double()) > SAF_bound)
   {
-re_adjust:
+// re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(phx.to_double()));
@@ -807,12 +813,13 @@ re_adjust:
 		Static_Filtered_power_testH2_12::_epsilon_0,
 		Static_Filtered_power_testH2_12::_epsilon_1);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
-    if (!re_adjusted) {  // It failed, we re-adjust once.
-      re_adjusted = true;
-      goto re_adjust;
-    }
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_power_testH2_12::number_of_failures++;
     return power_testH2(
 		phx.exact(),
 		phy.exact(),
@@ -884,8 +891,9 @@ power_testH2(
 		Static_Filtered_power_testH2_12::_epsilon_0,
 		Static_Filtered_power_testH2_12::_epsilon_1);
   }
-  catch (Restricted_double::unsafe_comparison)
+  catch (...)
   {
+    Static_Filtered_power_testH2_12::number_of_failures++;
     return power_testH2(
 		phx.exact(),
 		phy.exact(),
