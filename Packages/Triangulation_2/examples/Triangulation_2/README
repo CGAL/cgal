@@ -17,10 +17,6 @@ colored_face
 Illustrates how the user can derive its own base face from the default
 one to add e. g. a color.
 
-example: 
-Illustrates features of the triangulation package.
-It has no graphical IO and does not depend on any other library.
-
 voronoi:
 Builds a Delaunay triangulation from input points in a file
 and takes the dual Voronoi diagram
