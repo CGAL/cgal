@@ -1,4 +1,9 @@
 02 June 2004 Radu Ursu
+- create_modules script takes modules from the Installation package
+- fixed minor bug when there are directories in the Modules directory, the 
+  directories are not taken into account 
+
+02 June 2004 Radu Ursu
 - create_internal_release must remove the Modules directory from the internal
   release. This is introduced in release from the Installation package. 
 
