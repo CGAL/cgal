@@ -42,7 +42,7 @@ public:
   bool compare(const Point &p, const Point &q) const
   {
     return (CGAL_compare_x(p, q)== CGAL_EQUAL &&  
-	    (CGAL_compare_x(p, q)== CGAL_EQUAL);
+	    CGAL_compare_y(p, q)== CGAL_EQUAL);
   }
 
     CGAL_Orientation orientation(const Point &p,
