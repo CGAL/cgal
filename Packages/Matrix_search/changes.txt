@@ -7,16 +7,64 @@
 //	actual revision
 //---------------------------------------------------------------------
 
-DOCS: (Susan) moved _ref directories up one level and removed cross 
-      references to other manuals (not yet possible)
+ALL : Some fixes for sunpro 5.3.
+
+//---------------------------------------------------------------------
+//	 CGAL 2.3
+//---------------------------------------------------------------------
+
+ALL : moved Optimisation_ref directory up one level
 ALL : Changed concept names.
 ALL : Added help button to pcenter demo.
 ALL : Restricted options in pcenter demo to reasonable values.
 ALL : Use new functor adaptors.
 ALL : Worked over traits classes -> Kernel Traits.
 ALL : Fixed warning on gcc3.
+ALL : Initial revision
 DOCS: -> nohead, due to long filename problems on the stupid platform.
+DOCS: Uniform traits classes documented.
+ALL : added some return 0;
+ALL : MSVBC workaround for TYPENAME_BUGs.
+DOCS: fixed "cal" problem with html converter
+DOCS: fixed preconditions in replace_column (reported by Mariette).
+ALL : use namespace std and CGAL
+ALL : use standard header files
+ALL : Matrix_search
+DOCS: Fixed \ccPureGlobalScope.
+ALL : Minimum_enclosing_* -> Min_*
+ALL : maximum_*_inscribed_k_gon -> maximum_*_inscribed_k_gon_2
+ALL : extremal_polygon -> extremal_polygon_2
+ALL : all_furthest_neighbors -> all_furthest_neighbors_2
+DOCS: Changed everything acc. to the new manual structure.
+DOCS: Added distance_object() to afn-spec.
+ALL : some minor changes to prevent warnings for gcc -Wall.
+DOCS: R1.7
 DOCS: noheader -> nohead.
+SRC : Removed side-effect from expensive assertion in 3center.
+SRC : Use CGAL_NTS for number type utilities.
+SRC : Use Construct_iso_rectangle_2 from Kernel Traits.
+SRC : Fixed more ledaing underscores.
+SRC : Fixed leading underscore names.
+SRC : Fixed bug in maximum_perimeter k-gon::min_k_gon.
+SRC : Use CGAL compose functions.
+SRC : Do not use non-std iterators (std::output_iterator etc.).
+SRC : Several fixes for Borland.
+SRC : Fixed bug in four-center computation.
+SRC : Fixed range bug in expensive_assertion in extremal_polygon.
+SRC : Workaround for peculiar egcs-1.* bug with pcenter_random tests.
+SRC : Fixed two little bugs in 3cover (greater_equal ==> greater).
+SRC : Fixed expensive checks.
+SRC : Fixed internal compiler error on egcs-1.
+SRC : Completely new four-center implementation.
+SRC : Completely new four-cover implementation.
+SRC : Unified traits classes.
+SRC : Worked around some MSVC using-bugs.
+SRC : Added std:: to vector in several places in extremal_polygon_2.h.
+SRC : Removed CGAL::sqrt (now in double.h/leda_real.h).
+SRC : New linear 2- and 3-center algorithm.
+SRC : added std:: in a number of places where it was missing
+SRC : fix signed <-> unsigned comparison warning on gcc.
+SRC : fixed a bug in Rectangle_partition::first_left_of.
 SRC : Added typedefs for Construct_iso_rectangle and Construct_vertex.
 
 //---------------------------------------------------------------------
@@ -72,6 +120,7 @@ ALL : added some return 0;
 ALL : MSVBC workaround for TYPENAME_BUGs.
 DOCS: fixed "cal" problem with html converter
 DOCS: fixed preconditions in replace_column (reported by Mariette).
+DOCS: moved Optimisation_ref directory up one level
 DOCS: Use new functor adaptors.
 DOCS: Worked over traits classes -> Kernel Traits.
 SRC : Fixed bug in four-center computation.
