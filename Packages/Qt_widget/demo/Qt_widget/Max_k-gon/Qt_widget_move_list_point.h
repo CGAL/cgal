@@ -88,38 +88,36 @@ private:
 	      QMessageBox::warning( widget, "There are no points in the list!",
         "Generate some points first or add it with the input tool before using this tool!");
       else{
-	FT
-	  x=static_cast<FT>(widget->x_real(e->x())),
-	  y=static_cast<FT>(widget->y_real(e->y()));
-	Point p(x, y);
-	Point closest_p;  //this point is the closest one to the mouse coordinates
-	FT min_dist;
-	std::list<Point>::const_iterator it = l_of_p->begin();
-	min_dist = squared_distance(p, (*it));
-	while(it!=l_of_p->end())
-	{
-	  if (min_dist > squared_distance(p, (*it))) 
-	  {
-	    min_dist = squared_distance(p, (*it));
-	    closest_p = (*it);
-	  }
-	  it++;
-	}
+        FT x=static_cast<FT>(widget->x_real(e->x()));
+	      FT y=static_cast<FT>(widget->y_real(e->y()));
+        Point p(x, y);
+        Point closest_p;  //this point is the closest one to the mouse coordinates
+        FT min_dist;
+        std::list<Point>::const_iterator it = l_of_p->begin();
+        min_dist = squared_distance(p, (*it));
+        while(it!=l_of_p->end())
+        {
+  	      if (min_dist > squared_distance(p, (*it)))
+	        {
+	          min_dist = squared_distance(p, (*it));
+	          closest_p = (*it);
+	        }
+	        it++;
+	      }
 	
-	RasterOp old = widget->rasterOp();	//save the initial raster mode
-	widget->setRasterOp(XorROP);
-	widget->lock();
-	*widget << CGAL::GREEN << CGAL::PointSize (7) << CGAL::PointStyle (CGAL::DISC);
-	if(!wasrepainted)
-	  *widget << old_point;
-	*widget << closest_p;
-	widget->unlock();
-	widget->setRasterOp(old);
-	popup1->popup(widget->mapToGlobal(e->pos()));
-	old_point = closest_p;
-	current_v = closest_p;
-	wasrepainted = FALSE;
-	on_first = FALSE;
+        RasterOp old = widget->rasterOp();	//save the initial raster mode
+        widget->setRasterOp(XorROP);
+        widget->lock();
+          *widget << CGAL::GREEN << CGAL::PointSize (7) 
+                  << CGAL::PointStyle (CGAL::DISC);
+          *widget << closest_p;
+        widget->unlock();
+        widget->setRasterOp(old);
+        popup1->popup(widget->mapToGlobal(e->pos()));
+        old_point = closest_p;
+        current_v = closest_p;
+        wasrepainted = FALSE;
+        on_first = FALSE;
       }
     }
   };
