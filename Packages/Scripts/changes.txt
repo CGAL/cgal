@@ -1,3 +1,6 @@
+15 June 2004 Radu Ursu
+- fixed minor bug in autotest_cgal
+
 12 June 2004 Radu Ursu
 - create_new_release script is also used to build the modules. It calls create_modules script
 - create_modules script changed:

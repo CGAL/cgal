@@ -494,7 +494,35 @@ if [ ! "${MAIL_ADDRESS}" = "must_be_set_in_.autocgalrc" ]; then
   done
 fi
 
+
+
 # do the job
+
+main_procedure()
+{
+  if [ "${BUILD_HOSTS}" = "must_be_set_in_.autocgalrc" ]; then
+    error "BUILD_HOSTS must be set in .autocgalrc"
+  else
+    for i in ${BUILD_HOSTS}; do
+      TEXT="`value_of COMPILERS_${i}`"
+      if [ -z "${TEXT}" ]; then
+        error "COMPILERS_${i} must be defined in .autocgalrc"
+      else
+        TEXT="`value_of PROCESSORS_${i}`"
+        TEMPVAR="PROCESSORS_${i}"
+        if [ -z "${TEXT}" ]; then
+          log ${ACTUAL_LOGFILE} "\ngiving default 1 values TO PROCESSORS_${i} ...";
+          eval $TEMPVAR="1";
+        fi
+      fi
+    done
+  fi
+  get_cgal
+  unzip_cgal
+  copy_old_stuff
+  build_cgal
+  run_test
+}
 
 
 if [ "${BUILD_HOSTS}" = "localhost" ]; then
@@ -506,29 +534,10 @@ if [ "${BUILD_HOSTS}" = "localhost" ]; then
     copy_old_stuff
     build_cgal;
   else
-    if [ "${BUILD_HOSTS}" = "must_be_set_in_.autocgalrc" ]; then
-      error "BUILD_HOSTS must be set in .autocgalrc"
-    else
-      for i in ${BUILD_HOSTS}; do
-        TEXT="`value_of COMPILERS_${i}`"
-        if [ -z "${TEXT}" ]; then
-          error "COMPILERS_${i} must be defined in .autocgalrc"
-        else
-          TEXT="`value_of PROCESSORS_${i}`"
-          TEMPVAR="PROCESSORS_${i}"
-          if [ -z "${TEXT}" ]; then
-            log ${ACTUAL_LOGFILE} "\ngiving default 1 values TO PROCESSORS_${i} ...";
-            eval $TEMPVAR="1";
-          fi
-        fi
-      done
-    fi
-    get_cgal
-    unzip_cgal
-    copy_old_stuff
-    build_cgal
-    run_test
+    main_procedure;
   fi
+else
+  main_procedure;
 fi
 
 
