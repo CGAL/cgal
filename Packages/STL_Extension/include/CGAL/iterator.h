@@ -14,7 +14,6 @@
 // file          : iterator.h
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 // package       : $CGAL_Package: STL_Extension $
-// source        : stl_extension.fw
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -204,6 +203,7 @@ public:
     return tmp;
   }
 };
+
 template < class I, int N,
            class Ref  = typename std::iterator_traits<I>::reference,
            class Ptr  = typename std::iterator_traits<I>::pointer,
@@ -308,11 +308,15 @@ public:
   bool operator>=( const Self& i) const { return !(*this < i); }
 };
 
-template < class I, int N > inline
-N_step_adaptor<I,N>
-operator+( typename N_step_adaptor<I,N>::difference_type n,
-          N_step_adaptor<I,N> i)
+// Microsoft 1300 cannot handle the default template parameters. Hence, ...
+template < class I, int N, class Ref, class Ptr, 
+	   class Val, class Dist, class Ctg >
+inline
+N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg>
+operator+(typename N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg>::difference_type n,
+	  N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg> i)
 { return i += n; }
+
 template < class I, int N>
 class N_step_adaptor_derived : public I {
 public:
@@ -397,12 +401,13 @@ public:
     }
 };
 
-template < class I, int N>
+template < class I, int N >
 inline
 N_step_adaptor_derived<I,N>
 operator+( typename N_step_adaptor_derived<I,N>::difference_type n,
            N_step_adaptor_derived<I,N> i)
 { return i += n; }
+
 template < class I, class P > struct Filter_iterator;
 
 template < class I, class P >
@@ -941,6 +946,7 @@ Inverse_index< IC>::ini_idx( IC i, const IC& j, std::input_iterator_tag) {
   }
 }
 #endif // (__GNUC__ >= 3)
+
 template < class IC>
 class Random_access_adaptor {
 
@@ -1055,6 +1061,7 @@ Random_access_adaptor< IC>::init_index( IC i, const IC& j,
     } while ((++i) != (j));
   }
 }
+
 template < class IC, class T >
 class Random_access_value_adaptor : public Random_access_adaptor<IC> {
 public:
