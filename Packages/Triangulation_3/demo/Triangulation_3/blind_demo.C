@@ -20,6 +20,9 @@
 // ============================================================================
 #include <CGAL/basic.h>
 
+#include <iostream>
+#include <fstream>
+
 #include <list>
 
 #include <CGAL/Cartesian.h>
