@@ -75,6 +75,7 @@ class Handle_for
     Handle_for()
     {
         ptr_ = allocator.allocate(1);
+	initialize_with(T());
     }
 
     Handle_for(const T& t)

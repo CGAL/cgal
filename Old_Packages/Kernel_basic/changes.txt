@@ -1,3 +1,6 @@
+3.73   (4 January 2002)
+- Fix Handle_for<> default ctor : it forgot to construct the object.
+
 3.72   (14 December 2001)
 - VC++ 7 support by Radu.
 
