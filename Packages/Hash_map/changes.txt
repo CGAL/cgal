@@ -1,5 +1,7 @@
 Hash_map Package: Release changes
 ----------------------------------------------------------------------
+14 September 2004 Andreas Fabri
+- Added boost::associative_property_map, put and get  for class Unique_hash_map
 
 1.5 (21 Oct 2003)
 - new headers
