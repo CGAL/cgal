@@ -35,7 +35,7 @@ public:
     Buffer( char c) : buf( 2, '\0') { *(buf.begin()) = c; }
     Buffer( const char* s, int l = -1) {
 	if (s)
-	    buf.insert( 0, s, s + 1 + ((l<0) ? strlen(s) : l));
+	    buf.insert( buf.begin(), s, s + 1 + ((l<0) ? strlen(s) : l));
 	else
 	    buf.push_back( '\0');
     }
