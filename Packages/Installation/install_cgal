@@ -321,7 +321,6 @@ print_usage_information()
       [--CGAL_DIR <dir>] [--leda-sys-incl] [--leda-sys-lib]
       [--LEDA_INCL_DIR <dir>] [--LEDA_LIB_DIR <dir>]
       [--GMP_INCL_DIR <dir>] [--GMP_LIB_DIR <dir>]
-      [--CLN_INCL_DIR <dir>] [--CLN_LIB_DIR <dir>]
       [--QT_DIR <dir] [--QT_INCL_DIR <dir>] 
       [--QT_LIB_DIR <dir>] [--QT_MOC <exe>]
       [--CUSTOM_CXXFLAGS <flags>] [--CUSTOM_LDFLAGS <flags>]
@@ -329,7 +328,6 @@ print_usage_information()
   -leda        enables support for LEDA
   -gmp         enables support for GMP
   -gmpxx       enables support for GMP built-in C++ interface
-  -cln         enables support for CLN
   -qt          enables support for Qt
   --verbose    give report for each test that fails
                (not generally recommended)
@@ -3577,8 +3575,6 @@ print_os_setting()
     ${1} "GMP:\t\t${_tmp}supported" 
     _set_tmp_to_not_or_not "${GMPXX_SUPPORT}"
     ${1} "GMPXX:\t${_tmp}supported" 
-    _set_tmp_to_not_or_not "${CLN_SUPPORT}"
-    ${1} "CLN:\t\t${_tmp}supported" 
     _set_tmp_to_not_or_not "${QT_SUPPORT}"
     ${1} "Qt:\t\t${_tmp}supported" 
 }
@@ -4063,7 +4059,7 @@ _set_support()
     case `compiler_description` in
 	*Borland*)
 	    case `compiler_version` in
-		5.5*) CGAL_SUPPORT_COMPILER='y';;
+		5.5.1*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
 	*SUNPRO*)
@@ -4071,7 +4067,7 @@ _set_support()
 		5.3*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
-	*MIPSPRO*n32*) 
+	*MIPSPRO*n32*|*MIPSPRO*64*) 
 	    case `compiler_version` in
 		7.3*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
@@ -4125,8 +4121,6 @@ menu_header()
     print_line     "GMP:                 ${_tmp}supported." 
     _set_tmp_to_not_or_not "${GMPXX_SUPPORT}"
     print_line     "GMPXX:               ${_tmp}supported." 
-    _set_tmp_to_not_or_not "${CLN_SUPPORT}"
-    print_line     "CLN:                 ${_tmp}supported." 
     _set_tmp_to_not_or_not "${QT_SUPPORT}"
     print_line     "Qt:                  ${_tmp}supported." 
     print_empty_line
@@ -4554,97 +4548,6 @@ gmp_menu()
     done
 }
 
-
-# ---------------------------------------------------------------------
-# cln_menu to setup CLN
-#
-
-cln_menu()
-{
-    while [ 0 ]; do
-	menu_header 'CLN'
-	print_line "${_bold_on}<C>${_bold_off}  Toggle CLN support" 
-	if [ -n "${CLN_SUPPORT}" ]; then
-	    print_line "${_bold_on}<I>${_bold_off}  CLN  include directory" 
-	    case ${CLN_INSTALLATION} in
-		c) _tmp='<CGAL include directory>';;
-		s) _tmp='<system include directory>';;
-		*) _tmp="${CLN_INCL_DIR}";;
-	    esac
-	    print_line "     ${_tmp:-<undefined>}" 
-	    print_line "${_bold_on}<L>${_bold_off}  CLN  lib directory" 
-	    case ${CLN_INSTALLATION} in
-		c) _tmp='<CGAL lib directory>';;
-		s) _tmp='<system lib directory>';;
-		*) _tmp="${CLN_LIB_DIR}";;
-	    esac
-	    print_line "     ${_tmp:-<undefined>}" 
-	    if [ "${CLN_INSTALLATION}" = 'x' ]; then
-		print_line \
-		    "${_bold_on}<S>${_bold_off}  Use CLN installation in system dirs" 
-	    fi
-	fi
-	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup" 
-	menu_tailer 'Main Menu'
-
-	case $KEY in
-	    c|C)
-		if [ -z "${CLN_SUPPORT}" ]; then 
-		    SETUP_COMPLETE=''
-		    CLN_SUPPORT='_CLN'
-		    if [ -z "${CLN_INSTALLATION}" ]; then
-			go_down_lines 3
-			flush_buffer
-			search_cln "${INSTALL_VERBOSE}"
-		    fi
-		else
-		    CLN_SUPPORT=''
-		fi
-		;;
-	    i|I)
-		if [ -n "${CLN_SUPPORT}" ]; then
-		    if change_dir CLN_INCL_DIR dir; then
-			CLN_TEST_PASSED=''
-			SETUP_COMPLETE=''
-			case ${CLN_INSTALLATION} in 
-			    c|z) CLN_INSTALLATION='z';;
-			    s|x) CLN_INSTALLATION='x';;
-			    *) CLN_INSTALLATION='e';;
-			esac
-		    fi
-		fi
-		;;
-	    l|L)
-		if [ -n "${CLN_SUPPORT}" ]; then 
-		    if change_dir CLN_LIB_DIR dir; then
-			CLN_TEST_PASSED=''
-			SETUP_COMPLETE=''
-			case ${CLN_INSTALLATION} in 
-			    c|z) CLN_INSTALLATION='z';;
-			    s|x) CLN_INSTALLATION='x';;
-			    *) CLN_INSTALLATION='e';;
-			esac
-		    fi
-		fi
-		;;
-	    t|T)
-		go_down_lines 3
-		flush_buffer
-		test_setup
-		;;
-	    s|S)
-		if [ "${CLN_SUPPORT}" -a \
-		     "${CLN_INSTALLATION}" = 'x' ]; then
-		    CLN_TEST_PASSED='y'
-		    CLN_INSTALLATION='s'
-		fi
-		;;
-	    q|Q|b|B)
-		return;;
-	    *);;
-	esac
-    done
-}
 
 # ---------------------------------------------------------------------
 # qt_menu to setup Qt
@@ -6156,7 +6059,6 @@ main_menu()
 	print_line     "${_bold_on}<C>${_bold_off}  Compiler Menu" 
 	print_line     "${_bold_on}<L>${_bold_off}  LEDA Menu" 
 	print_line     "${_bold_on}<G>${_bold_off}  GMP Menu" 
-	print_line     "${_bold_on}<M>${_bold_off}  CLN Menu" 
 	print_line     "${_bold_on}<K>${_bold_off}  Qt Menu" 
 	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup" 
 	print_line     "${_bold_on}<A>${_bold_off}  Run all setup tests (no cache)" 
