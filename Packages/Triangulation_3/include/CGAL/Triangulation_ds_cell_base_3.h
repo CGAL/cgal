@@ -155,10 +155,7 @@ public:
     
   void set_neighbors()
   {
-    N[0] = NULL;
-    N[1] = NULL;
-    N[2] = NULL;
-    N[3] = NULL;
+    N[0] = N[1] = N[2] = N[3] = NULL;
   }
     
   void set_neighbors(Cell_handle n0, Cell_handle n1,
@@ -181,6 +178,12 @@ public:
   // Obsolete : it's redundant with the default constructor.
   void init() const
   {}
+
+  // For use by Compact_container.
+  void * for_compact_container() const
+  { return N[0].for_compact_container(); }
+  void * & for_compact_container()
+  { return N[0].for_compact_container(); }
 
 private:
   Cell_handle   N[4];

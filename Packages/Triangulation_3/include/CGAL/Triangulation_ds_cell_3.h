@@ -63,7 +63,12 @@ public:
   int mirror_index(int i) const
   {
       CGAL_triangulation_precondition ( i>=0 && i<4 );
-      return neighbor(i)->index(handle());
+      Cell_handle ni = neighbor(i);
+      if (&*ni->neighbor(0) == this) return 0;
+      if (&*ni->neighbor(1) == this) return 1;
+      if (&*ni->neighbor(2) == this) return 2;
+      CGAL_triangulation_assertion(&*ni->neighbor(3) == this);
+      return 3;
   }
 
   Vertex_handle mirror_vertex(int i) const
@@ -80,13 +85,6 @@ public:
   {
       return _in_conflict_flag;
   }
-
-  Cell_handle handle() const
-  {
-      return const_cast<Cell*>(this);
-  }
-
-  // CHECKING
 
   bool is_valid(int dim = 3, bool verbose = false, int level = 0) const;
 
@@ -207,14 +205,14 @@ Triangulation_ds_cell_3<Cb>::is_valid(int dim, bool verbose, int level) const
 	return false;
       }
       
-      if ( n0->neighbor(1) != handle()) {
+      if ( &*n0->neighbor(1) != this ) {
 	if (verbose)
 	    std::cerr << "neighbor 0 does not have this as neighbor 1" 
 		      << std::endl;
 	CGAL_triangulation_assertion(false);
 	return false;
       }
-      if ( n1->neighbor(0) != handle()) {
+      if ( &*n1->neighbor(0) != this ) {
 	if (verbose)
 	    std::cerr << "neighbor 1 does not have this as neighbor 0" 
 		      << std::endl;
@@ -254,7 +252,7 @@ Triangulation_ds_cell_3<Cb>::is_valid(int dim, bool verbose, int level) const
 	  return false;
 	}
 	in = cw(in); 
-	if ( n->neighbor(in) != handle()) {
+	if ( &*n->neighbor(in) != this ) {
 	  if (verbose)
 	      std::cerr << "neighbor " << i
 		        << " does not have this as neighbor " 
@@ -296,8 +294,13 @@ Triangulation_ds_cell_3<Cb>::is_valid(int dim, bool verbose, int level) const
 	    return false;
 	  }
 
-	  int in;
-	  if ( ! n->has_neighbor(handle(), in) ) {
+	  int in = 5;
+	  // if ( ! n->has_neighbor(handle(), in) ) {
+          if ( &*n->neighbor(0) == this) in = 0;
+          if ( &*n->neighbor(1) == this) in = 1;
+          if ( &*n->neighbor(2) == this) in = 2;
+          if ( &*n->neighbor(3) == this) in = 3;
+          if (in == 5) {
 	    if (verbose)
               std::cerr << "neighbor of c has not c as neighbor" << std::endl;
 	    CGAL_triangulation_assertion(false);

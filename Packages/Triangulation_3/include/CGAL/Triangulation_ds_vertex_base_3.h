@@ -60,10 +60,14 @@ public:
     return cell() != NULL;
   }
 
+  // For use by the Compact_container.
+  void *   for_compact_container() const
+  { return _c.for_compact_container(); }
+  void * & for_compact_container()
+  { return _c.for_compact_container(); }
+
 private:
   Cell_handle _c;
-  // FIXME : temporary cruft needed for DS_Container (sizeof() too small) :
-  int i;
 };
 
 template < class TDS >

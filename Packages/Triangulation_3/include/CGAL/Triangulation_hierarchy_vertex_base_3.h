@@ -48,13 +48,13 @@ public:
   };
 
   Triangulation_hierarchy_vertex_base_3()
-    : Base(), _up(0), _down(0) {}
+    : Base(), _up(), _down() {}
 
   Triangulation_hierarchy_vertex_base_3(const Point & p, Cell_handle f)
-    : Base(p,f), _up(0), _down(0) {}
+    : Base(p,f), _up(), _down() {}
 
   Triangulation_hierarchy_vertex_base_3(const Point & p)
-    : Base(p), _up(0), _down(0) {}
+    : Base(p), _up(), _down() {}
 
   Vertex_handle up()   const { return _up; }
   Vertex_handle down() const { return _down; }

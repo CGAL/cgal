@@ -30,18 +30,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Base, class Handle>
-struct Triangulation_iterator_handle_adaptor_3
-  : public Base
-{
-  Triangulation_iterator_handle_adaptor_3() : Base() {}
-   
-  Triangulation_iterator_handle_adaptor_3(const Base & b) 
-    : Base(b) {}
-
-  operator Handle() const {return (*this)->handle();}
-};
-
 template < class Tds >
 class Triangulation_ds_facet_iterator_3
 {
@@ -250,9 +238,9 @@ public:
 	    Cell_circulator ccir = _tds->incident_cells(edge);
 	    do {
 	      ++ccir;
-	    } while ( pos->handle() < ccir->handle() ); 
+	    } while ( Cell_handle(pos) < Cell_handle(ccir) ); 
 	    // loop terminates since it stops at least when ccir = pos
-	    if ( ccir->handle() == pos->handle() )
+	    if ( Cell_handle(ccir) == Cell_handle(pos) )
 		// pos is the cell with minimal pointer
 	      notfound = false;
 	    else
@@ -303,8 +291,8 @@ public:
 	    Cell_circulator ccir = _tds->incident_cells(edge);
 	    do {
 	      ++ccir;
-	    } while ( pos->handle() < ccir->handle() );
-	    if ( ccir->handle() == pos->handle() )
+	    } while ( Cell_handle(pos) < Cell_handle(ccir) );
+	    if ( Cell_handle(ccir) == Cell_handle(pos) )
 		// pos is the cell with minimal pointer
 	      notfound = false;
 	  }
@@ -372,8 +360,8 @@ public:
 	    Cell_circulator ccir = _tds->incident_cells(edge);
 	    do {
 	      ++ccir;
-	    } while ( pos->handle() < ccir->handle() );
-	    if ( pos->handle() == ccir->handle() )
+	    } while ( Cell_handle(pos) < Cell_handle(ccir) );
+	    if ( Cell_handle(pos) == Cell_handle(ccir) )
 		// pos is the cell with minimum pointer
 	      notfound = false;
 	  }

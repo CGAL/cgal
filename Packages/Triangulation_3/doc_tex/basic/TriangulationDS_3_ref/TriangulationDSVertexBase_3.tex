@@ -90,6 +90,15 @@ class of \ccc{Triangulation_data_structure_3::Vertex}.}
 {Performs any desired test on a vertex. Checks that the
 pointer to an incident cell is not \ccc{NULL}.}
 
+\ccHeading{Various}
+
+\ccMethod{void * for_compact_container() const;}{}
+\ccGlue
+\ccMethod{void * & for_compact_container();}{}
+{ These member functions are required by \ccc{Triangulation_data_structure_3}
+  because it uses \ccc{Compact_container} to store its cells.  See the
+  documentation of \ccc{Compact_container} for the exact requirements.}
+
 \ccHeading{I/O}
 
 \ccFunction{istream& operator>>

@@ -370,9 +370,9 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
   }
 
   for (int i=level+1; i<Triangulation_hierarchy_3__maxlevel; ++i)
-      pos[i].pos=0;
+      pos[i].pos = NULL;
 
-  Cell_handle position(NULL);
+  Cell_handle position = NULL;
   while(level > 0) {
     // locate at that level from "position"
     // result is stored in "position" for the next level

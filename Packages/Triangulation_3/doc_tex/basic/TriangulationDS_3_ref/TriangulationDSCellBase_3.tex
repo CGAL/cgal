@@ -140,6 +140,15 @@ computes its index \ccc{i} in \ccVar.}
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
 a precise indication of the kind of invalidity encountered.}
 
+\ccHeading{Various}
+
+\ccMethod{void * for_compact_container() const;}{}
+\ccGlue
+\ccMethod{void * & for_compact_container();}{}
+{ These member functions are required by \ccc{Triangulation_data_structure_3}
+  because it uses \ccc{Compact_container} to store its cells.  See the
+  documentation of \ccc{Compact_container} for the exact requirements.}
+
 \ccHeading{I/O}
 
 \ccFunction{istream& operator>> (istream& is, Cell_base & c);}

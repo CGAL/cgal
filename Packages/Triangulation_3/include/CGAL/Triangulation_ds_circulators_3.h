@@ -138,7 +138,8 @@ public:
     return ! (*this == ccir);
   }
 
-  operator Cell_handle() const { return (*this)->handle(); }
+  // For TDS's private use only.
+  Cell_handle base() const { return pos; }
 
 private:
   Vertex_handle _s;    // source vertex of the edge
@@ -408,7 +409,8 @@ public:
     return ! (*this == ccir);
   }
 
-  operator Cell_handle() const { return (*this)->handle(); }
+  // For TDS's private use only.
+  Cell_handle base() const { return pos; }
 
 private:
   Vertex_handle _s;    // source vertex

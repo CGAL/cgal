@@ -423,7 +423,7 @@ _test_cls_delaunay_3(const Triangulation &)
     int i = 0;
     for(Finite_vertices_iterator vi=Tdel.finite_vertices_begin();
 	vi!=Tdel.finite_vertices_end();vi++) {
-      vertices[i++] = &*vi;
+      vertices[i++] = vi;
     }
     int n = Tdel.number_of_vertices();
     for(int j = 0; j < n; j++)
@@ -724,7 +724,7 @@ _test_cls_delaunay_3(const Triangulation &)
       next_cell = ++cit; --cit;
       while ( (! flipped) && (i<4) ) {
 	if ( (i!=j) ) {
-	  flipped = T3_1.flip( &(*cit), i, j ) ;
+	  flipped = T3_1.flip( cit, i, j ) ;
 	  if (flipped) {
 	    nbflips++;
 	    assert(T3_1.is_valid());
@@ -742,7 +742,7 @@ _test_cls_delaunay_3(const Triangulation &)
       // NOTE : the triangulation is modified during loop
       // --> the cell_iterator does not mean a lot
       for ( i=0; i<4; i++ ) {
-	flipped = T3_1.flip( &(*cit), i );
+	flipped = T3_1.flip( cit, i );
 	if (flipped) {
 	  nbflips++;
 	  assert(T3_1.is_valid());

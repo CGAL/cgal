@@ -37,8 +37,6 @@
 #define Triangulation_ds_edge_iterator_3            TDS_eit3
 #define Triangulation_ds_facet_iterator_3           TDS_fit3
 
-#define Triangulation_iterator_handle_adaptor_3     T_iha3
-
 #define Triangulation_ds_cell_circulator_3          TDS_ccir3
 #define Triangulation_ds_facet_circulator_3         TDS_fcir3
 

@@ -93,15 +93,42 @@ public:
   typedef Edge_iterator                        All_edges_iterator;
   typedef Vertex_iterator                      All_vertices_iterator;
 
-  typedef Filter_iterator<Cell_iterator, Infinite_tester>
-                                               Finite_cells_iterator_base;
-  typedef Filter_iterator<Vertex_iterator, Infinite_tester>
-                                               Finite_vertices_iterator_base;
-  typedef Triangulation_iterator_handle_adaptor_3<Finite_cells_iterator_base,
-                               Cell_handle>    Finite_cells_iterator;
-  typedef Triangulation_iterator_handle_adaptor_3
-                               <Finite_vertices_iterator_base,
-				 Vertex_handle> Finite_vertices_iterator;
+  // We derive in order to add a conversion to handle.
+  class Finite_cells_iterator
+    : public Filter_iterator<Cell_iterator, Infinite_tester> {
+    typedef Filter_iterator<Cell_iterator, Infinite_tester> Base;
+    typedef Finite_cells_iterator                           Self;
+  public:
+
+    Finite_cells_iterator() : Base() {}
+    Finite_cells_iterator(const Base &b) : Base(b) {}
+
+    Self & operator++() { Base::operator++(); return *this; }
+    Self & operator--() { Base::operator--(); return *this; }
+    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+
+    operator Cell_handle() const { return Base::base(); }
+  };
+
+  // We derive in order to add a conversion to handle.
+  class Finite_vertices_iterator
+    : public Filter_iterator<Vertex_iterator, Infinite_tester> {
+    typedef Filter_iterator<Vertex_iterator, Infinite_tester> Base;
+    typedef Finite_vertices_iterator                          Self;
+  public:
+
+    Finite_vertices_iterator() : Base() {}
+    Finite_vertices_iterator(const Base &b) : Base(b) {}
+
+    Self & operator++() { Base::operator++(); return *this; }
+    Self & operator--() { Base::operator--(); return *this; }
+    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+
+    operator Vertex_handle() const { return Base::base(); }
+  };
+
   typedef Filter_iterator<Edge_iterator, Infinite_tester>
                                                Finite_edges_iterator;
   typedef Filter_iterator<Facet_iterator, Infinite_tester>

@@ -30,28 +30,24 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class Vb >
-class Triangulation_ds_vertex_3 
+struct Triangulation_ds_vertex_3 
   : public Vb
 {
-  typedef typename Vb::Triangulation_data_structure::Vertex  Vertex;
-public:
-  typedef typename Vb::Vertex_handle  Vertex_handle;
-
   bool is_valid(bool verbose = false, int level = 0) const;
-
-  // The handle() cruft should be killed.
-  Vertex_handle handle() const
-  {
-      return const_cast<Vertex*>(this);
-  }
 };
 
 
+// Should this be moved to TDS::is_valid(Vertex_handle, verbose, level) ?
 template < class Vb >
 bool
 Triangulation_ds_vertex_3<Vb>::is_valid(bool verbose, int level) const
 {
-  bool result = Vb::is_valid(verbose,level) && cell()->has_vertex(handle());
+  bool result = Vb::is_valid(verbose,level);
+  // result = result && cell()->has_vertex(handle());
+  result = result && ( &*cell()->vertex(0) == this ||
+                       &*cell()->vertex(1) == this ||
+                       &*cell()->vertex(2) == this ||
+                       &*cell()->vertex(3) == this );
   if ( ! result ) {
     if ( verbose )
       std::cerr << "invalid vertex" << std::endl;
