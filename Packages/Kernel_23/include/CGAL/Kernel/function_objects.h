@@ -1847,6 +1847,7 @@ namespace CommonKernelFunctors {
   class Intersect_3
   {
     typedef typename K::Object_3    Object_3;
+    typedef typename K::Plane_3     Plane_3;
   public:
     typedef Object_3         result_type;
     typedef Arity_tag< 2 >   Arity;
@@ -1856,6 +1857,10 @@ namespace CommonKernelFunctors {
     Object_3
     operator()(const T1& t1, const T2& t2) const
     { return CGALi::intersection(t1, t2, K() ); }
+
+    Object_3
+    operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3)const
+    { return CGALi::intersection(pl1, pl2, pl3, K() ); }
   };
 
   template <typename K>

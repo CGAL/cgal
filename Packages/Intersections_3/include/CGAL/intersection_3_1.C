@@ -1,4 +1,4 @@
-// Copyright (c) 1997  Utrecht University (The Netherlands),
+// Copyright (c) 1997-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -23,8 +23,6 @@
 
 
 #include <CGAL/wmult.h>
-
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -94,6 +92,30 @@ intersection(const typename CGAL_WRAP(K)::Plane_3 &plane1,
     return make_object(plane1);
 }
 
+template <class K>
+Object
+intersection(const typename CGAL_WRAP(K)::Plane_3 &plane1,
+	     const typename CGAL_WRAP(K)::Plane_3 &plane2,
+	     const typename CGAL_WRAP(K)::Plane_3 &plane3,
+	     const K& k)
+{
+    typedef typename K::Line_3       Line_3;
+    typedef typename K::Plane_3      Plane_3;
+
+    // Intersection between plane1 and plane2 can either be
+    // a line, a plane, or empty.
+    Object o12 = CGALi::intersection(plane1, plane2, k);
+
+    Line_3 l;
+    if (assign(l, o12))
+        return CGALi::intersection(plane3, l, k);
+
+    Plane_3 pl;
+    if (assign(pl, o12))
+        return CGALi::intersection(plane3, pl, k);
+
+    return Object();
+}
 
 
 template <class K>
@@ -727,14 +749,25 @@ intersection(
 
 
 template <class K>
+inline
 Object 
 intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2)
 {
   return CGALi::intersection(plane1, plane2, K());
 }
 
+template <class K>
+inline
+Object 
+intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2,
+             const Plane_3<K> &plane3)
+{
+  return CGALi::intersection(plane1, plane2, plane3, K());
+}
+
 
 template <class K>
+inline
 Object
 intersection(const Plane_3<K>  &plane, const Line_3<K> &line)
 {
@@ -742,6 +775,7 @@ intersection(const Plane_3<K>  &plane, const Line_3<K> &line)
 }
 
 template <class K>
+inline
 bool
 do_intersect(const Plane_3<K> &plane, const Line_3<K> &line)
 {
@@ -749,6 +783,7 @@ do_intersect(const Plane_3<K> &plane, const Line_3<K> &line)
 }
 
 template <class K>
+inline
 Object
 intersection(const Plane_3<K> &plane, const Ray_3<K> &ray)
 {
@@ -756,6 +791,7 @@ intersection(const Plane_3<K> &plane, const Ray_3<K> &ray)
 }
 
 template <class K>
+inline
 bool
 do_intersect(const Plane_3<K> &plane, const Ray_3<K> &ray)
 {
@@ -763,6 +799,7 @@ do_intersect(const Plane_3<K> &plane, const Ray_3<K> &ray)
 }
 
 template <class K>
+inline
 Object
 intersection(const Plane_3<K> &plane, const Segment_3<K> &seg)
 {
@@ -771,6 +808,7 @@ intersection(const Plane_3<K> &plane, const Segment_3<K> &seg)
 
 
 template <class K>
+inline
 bool
 do_intersect(const Plane_3<K>  &plane, const Segment_3<K> &seg)
 {
@@ -778,6 +816,7 @@ do_intersect(const Plane_3<K>  &plane, const Segment_3<K> &seg)
 }
 
 template <class K>
+inline
 Object
 intersection(const Line_3<K> &line,
 	     const Bbox_3 &box)
@@ -786,6 +825,7 @@ intersection(const Line_3<K> &line,
 }
 
 template <class K>
+inline
 Object
 intersection(const Ray_3<K> &ray,
 	     const Bbox_3 &box)
@@ -794,6 +834,7 @@ intersection(const Ray_3<K> &ray,
 }
 
 template <class K>
+inline
 Object
 intersection(const Segment_3<K> &seg,
 	     const Bbox_3 &box)
@@ -802,6 +843,7 @@ intersection(const Segment_3<K> &seg,
 }
 
 template <class K>
+inline
 Object
 intersection(const Line_3<K> &line,
 	     const Iso_cuboid_3<K> &box)
@@ -810,6 +852,7 @@ intersection(const Line_3<K> &line,
 }
 
 template <class K>
+inline
 Object
 intersection(const Ray_3<K> &ray,
 	     const Iso_cuboid_3<K> &box)
@@ -818,6 +861,7 @@ intersection(const Ray_3<K> &ray,
 }
 
 template <class K>
+inline
 Object
 intersection(const Segment_3<K> &seg,
 	     const Iso_cuboid_3<K> &box)
@@ -827,6 +871,7 @@ intersection(const Segment_3<K> &seg,
 
 
 template <class K>
+inline
 Object
 intersection(const Iso_cuboid_3<K> &icub1,
 	     const Iso_cuboid_3<K> &icub2)

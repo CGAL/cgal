@@ -11,6 +11,7 @@ typedef CGAL::Plane_3<TestR> Plane;
 typedef CGAL::Line_3<TestR> Line;
 typedef CGAL::Point_3<TestR> Point;
 typedef CGAL::Direction_3<TestR> Direction;
+typedef CGAL::Object  Object;
 
 
 bool read_data(Plane &pl1, Plane &pl2)
@@ -45,9 +46,77 @@ void write_point(const Point & pt)
     cout << xd <<' '<< yd <<' '<< zd << '\n';
 }
 
+// Testing intersections of 3 planes.
+bool plane_plane_plane()
+{
+  Plane pl1(1,0,0,0);
+  Plane pl2(0,1,0,0);
+  Plane pl3(0,0,1,0);
+
+  // Generic intersection.
+  Object o = CGAL::intersection(pl1, pl2, pl3);
+  Point p;
+  if (!assign(p, o)) {
+    std::cerr << "Unexpected intersection result" << std::endl;
+    return false;
+  }
+
+  if (p != Point(0,0,0)) {
+    std::cerr << "Unexpected intersection result" << std::endl;
+    return false;
+  }
+
+  // Empty intersection.
+  Plane pl4(1,0,0,1); // pl4 is // to pl1.
+
+  Object o2 = CGAL::intersection(pl1, pl2, pl4);
+  if (!o2.is_empty()) {
+    std::cerr << "Unexpected intersection result" << std::endl;
+    return false;
+  }
+
+  Object o3 = CGAL::intersection(pl1, pl4, pl2);
+  if (!o3.is_empty()) {
+    std::cerr << "Unexpected intersection result" << std::endl;
+    return false;
+  }
+
+  // Intersection in a line.
+  Plane pl5(1,1,0,0); // pl1, pl2, pl5 intersect in the line l.
+  Line l;
+
+  Object o4 = CGAL::intersection(pl1, pl2, pl5);
+  if (!assign(l, o4)) {
+    std::cerr << "Unexpected intersection result" << std::endl;
+    return false;
+  }
+
+  if (l != Line(Point(0,0,0), Point(0,0,1))) {
+    std::cerr << "Unexpected intersection result" << std::endl;
+    return false;
+  }
+
+  // Intersection in a plane.
+  Object o5 = CGAL::intersection(pl1, pl1, pl1);
+  Plane pl;
+  if (!assign(pl, o5)) {
+    std::cerr << "Unexpected intersection result" << std::endl;
+    return false;
+  }
+
+  if (pl != pl1) {
+    std::cerr << "Unexpected intersection result" << std::endl;
+    return false;
+  }
+
+  return true;
+}
 
 int main()
 {
+    if (!plane_plane_plane())
+      return 1;
+
     Plane pl1, pl2;
     Line l;
     CGAL::Object result;

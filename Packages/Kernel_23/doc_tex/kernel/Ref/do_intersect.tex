@@ -1,17 +1,5 @@
 \begin{ccRefFunction}{do_intersect}
-\ccInclude{CGAL/intersections.h}\footnote{%
-The drawback of \ccc{<CGAL/intersections.h>} is that a lot is included, 
-which results in long compilation times.
-It is also possible to include only the intersections that are of interest.
-The naming scheme of the header files is as follows.
-Intersections of types \ccStyle{Type1<Kernel>} and \ccStyle{Type2<Kernel>}
-are declared in header file \ccc{CGAL/Type1_Type2_intersection.h}.
-So, \ccHtmlNoLinksFrom{intersection} routines of segments and lines in 2D are declared in
-\ccc{<CGAL/Segment_2_Line_2_intersection.h>}. The order of the type names does not 
-matter. It is also possible to include \ccc{<CGAL/Line_2_Segment_2_intersection.h>}.
-For intersections of two objects of the same type, the type name should be
-mentioned twice: \ccc{<CGAL/Segment_2_Segment_2_intersection.h>} 
-}
+\ccInclude{CGAL/intersections.h}
 
 \ccUnchecked{
 \ccFunction{bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);}

@@ -1,4 +1,4 @@
-// Copyright (c) 1997  Utrecht University (The Netherlands),
+// Copyright (c) 1997-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -21,18 +21,13 @@
 //
 // Author(s)     : Geert-Jan Giezeman <geert@cs.uu.nl>
 
-
 #ifndef CGAL_INTERSECTION_3_1_H
 #define CGAL_INTERSECTION_3_1_H
-
-
 
 #include <CGAL/Object.h>
 #include <CGAL/bbox_intersection_3.h>
 
-
 CGAL_BEGIN_NAMESPACE
-
 
 template <class R>
 Object
@@ -43,6 +38,20 @@ inline bool
 do_intersect(const Plane_3<R> &plane1, const Plane_3<R>&plane2)
 {
     return ! intersection(plane1, plane2).is_empty();
+}
+
+
+template <class R>
+Object
+intersection(const Plane_3<R> &plane1, const Plane_3<R>&plane2,
+             const Plane_3<R>&plane3);
+
+template <class R>
+inline bool
+do_intersect(const Plane_3<R> &plane1, const Plane_3<R>&plane2,
+             const Plane_3<R>&plane3)
+{
+    return ! intersection(plane1, plane2, plane3).is_empty();
 }
 
 
@@ -65,9 +74,7 @@ do_intersect(const Plane_3<R> &p2, const Line_3<R> &p1);
 
 template <class R>
 inline bool
-do_intersect(
-    const Line_3<R> &p1,
-    const Plane_3<R> &p2)
+do_intersect(const Line_3<R> &p1, const Plane_3<R> &p2)
 {
     return do_intersect(p2,p1);
 }

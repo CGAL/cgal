@@ -17,11 +17,17 @@ the type \ccStyle{Type1} is \ccStyle{Kernel::Plane_3} and
 \item \ccStyle{Kernel::Segment_3}
 \end{itemize}
 
+\ccMemberFunction{Kernel::Object_3 operator()(Kernel::Plane_3 pl1,
+                                              Kernel::Plane_3 pl2,
+                                              Kernel::Plane_3 pl3);}
+{computes the \ccHtmlNoLinksFrom{intersection} of three planes.  The result
+can be either a \ccc{Kernel::Point_3}, a \ccc{Kernel::Line_3}, a
+\ccc{Kernel::Plane_3}, or empty.}
+
 \ccRefines
 AdaptableFunctor (with two arguments)
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::intersection}\\
-
 
 \end{ccRefFunctionObjectConcept}

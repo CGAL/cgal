@@ -1,4 +1,7 @@
 15 Feb 2004 Sylvain Pion
+- Add intersection(Plane_3, Plane_3, Plane_3). [bug#185]
+
+15 Feb 2004 Sylvain Pion
 - Add circumcenter(Triangle_[23]) and circumcenter(Tetrahedron_3).
 
 Version 1.106 (09 February 2004) [rursu]

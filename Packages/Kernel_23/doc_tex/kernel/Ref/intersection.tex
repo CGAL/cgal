@@ -1,17 +1,5 @@
 \begin{ccRefFunction}{intersection}
-\ccInclude{CGAL/intersections.h}\footnote{%
-The drawback of \ccc{<CGAL/intersections.h>} is that a lot is included, 
-which results in long compilation times.
-It is also possible to include only the intersections that are of interest.
-The naming scheme of the header files is as follows.
-Intersections of types \ccStyle{Type1<Kernel>} and \ccStyle{Type2<Kernel>}
-are declared in header file \ccc{CGAL/Type1_Type2_intersection.h}.
-So, intersection routines of segments and lines in 2D are declared in
-\ccc{<CGAL/Segment_2_Line_2_intersection.h>}. The order of the type names does not 
-matter. It is also possible to include \ccc{<CGAL/Line_2_Segment_2_intersection.h>}.
-For intersections of two objects of the same type, the type name should be
-mentioned twice: \ccc{<CGAL/Segment_2_Segment_2_intersection.h>} 
-}
+\ccInclude{CGAL/intersections.h}
 
 \ccUnchecked{
 \ccFunction{Object intersection(Type1<Kernel> obj1, Type2<Kernel> obj2);}
@@ -292,14 +280,20 @@ type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
 </DIV>
 \end{ccHtmlOnly}
 
+There is also an intersection function between 3 planes.
+
+\ccFunction{Object intersection(const Plane_3<Kernel>& pl1,
+                                const Plane_3<Kernel>& pl2,
+                                const Plane_3<Kernel>& pl3);}
+{returns the intersection of 3 planes, which can be either a point, a line,
+a plane, or empty.}
+
 \ccExample
 
 The following example demonstrates the most common use of 
 \ccc{intersection} routines.
 \begin{verbatim}
-#include <CGAL/Segment_2_Line_2_intersection.h>
-/* or #include <CGAL/intersections.h> */
-
+#include <CGAL/intersections.h>
 
 void foo(CGAL::Segment_2<Kernel> seg, CGAL::Line_2<Kernel> line)
 {
@@ -341,6 +335,3 @@ void foo(CGAL::Segment_2<Kernel> seg, CGAL::Line_2<Kernel> line)
 \ccRefIdfierPage{CGAL::Object} \\
 
 \end{ccRefFunction}
-
-  
-
