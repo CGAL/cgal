@@ -1,9 +1,9 @@
 /*! \file
- * A construction os a house-like-shaped Planar_map.
+ * A construction of a house-like-shaped Planar_map.
  * In this example a house-like-shaped Planar_map that uses the naive point
  * location strategy is constructed utilising various edge-insertion
  * operations, that is, insert(), insert_from_vertex(), and
- * insert_at_vertices(). The naive point location strategy is suits better
+ * insert_at_vertices(). The naive point location strategy suits better
  * these functions. The planar map is printed out to the standard output using
  * the provided streaming feature.
  */
