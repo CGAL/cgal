@@ -54,6 +54,7 @@ public:
 
   typedef std::list<Edge> List_edges;  
   typedef std::list<Face_handle> List_faces;
+  typedef std::list<Vertex_handle> List_vertices;
 
   Constrained_Delaunay_triangulation_2(const Gt& gt=Gt() ) : 
     Constrained_triangulation(gt) { }
@@ -63,14 +64,14 @@ public:
 
   Constrained_Delaunay_triangulation_2(std::list<Constraint>& lc, 
 					    const Gt& gt=Gt())
-      : Constrained_Delaunay_triangulation_2(gt)
+      : Constrained_triangulation(gt)
   {
     std::list<Constraint>::iterator itc;
     itc=lc.begin();      
       do{
 	insert((*itc).first, (*itc).second);
 	++itc;
-      } while (itc != list_contraintes.end());
+      } while (itc != lc.end());
       CGAL_triangulation_postcondition( is_valid() );
   }
 
@@ -93,6 +94,7 @@ public:
   bool is_flipable(Face_handle f, int i) const;
   void flip(Face_handle& f, int i);
   void flip_around(Vertex_handle va);
+  void flip_around(List_vertices & new_vertices);
   void propagating_flip(Face_handle& f,int i);
   void propagating_flip(List_edges & edges);
 
@@ -210,6 +212,19 @@ flip_around(Vertex_handle va)
     f=next;
   } while(next != start);
 }
+
+template < class Gt, class Tds >
+void 
+Constrained_Delaunay_triangulation_2<Gt, Tds>::
+flip_around(List_vertices& new_vertices)
+{
+  List_vertices::iterator itv=new_vertices.begin();
+  for( ; itv != new_vertices.end(); itv++) {
+    flip_around(*itv);
+  }
+  return;
+}
+
 
 template < class Gt, class Tds >
 void 
@@ -413,10 +428,12 @@ insert(Vertex_handle va, Vertex_handle & vb)
 // inserts line segment ab as an edge in the triangulation 
 {
   List_edges new_edges;
+  List_vertices new_vertices;
   Face_handle fr;
   int i;
-  Constrained_triangulation::insert(va,vb,fr,i,new_edges);
+  Constrained_triangulation::insert(va,vb,fr,i,new_edges,new_vertices);
   propagating_flip(new_edges);
+  flip_around(new_vertices);
 }
 
 template < class Gt, class Tds >  

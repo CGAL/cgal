@@ -56,6 +56,7 @@ public:
   typedef std::pair<Point,Point> Constraint;
   typedef std::list<Edge> List_edges;
   typedef std::list<Face_handle> List_faces;
+  typedef std::list<Vertex_handle> List_vertices;
 
   //nouveau 
   class Less_edge;
@@ -95,7 +96,9 @@ public:
   void insert(const Vertex_handle & va, const Vertex_handle & vb,
 		     Face_handle & fr, int & i);
   void insert(const Vertex_handle & va, const Vertex_handle & vb,
-	      Face_handle & fr, int & i, List_edges & new_edges);
+	      Face_handle & fr, int & i, 
+	      List_edges & new_edges,
+	      List_vertices & new_vertices);
   
   void remove(Vertex_handle  v);
   void remove_constraint(Face_handle f, int i);
@@ -105,7 +108,8 @@ public:
 			       Vertex_handle vaa,
 			       List_edges & list_ab, 
 			       List_edges & list_ba,
-			       List_edges & new_edges);
+			       List_edges & new_edges,
+			       List_vertices & new_vertices);
   void triangulate(List_edges & list_edges, List_faces & faces_to_be_removed); 
   void triangulate(List_edges & list_edges, 
 		   List_faces & faces_to_be_removed, 
@@ -347,9 +351,10 @@ insert(const Vertex_handle & va, const Vertex_handle & vb)
 // Precondition va != vb
 {
   List_edges new_edges;
+  List_vertices new_vertices;
   Face_handle fr;
   int i;
-  insert(va, vb, fr, i, new_edges);
+  insert(va, vb, fr, i, new_edges, new_vertices);
 }
 
 template < class Gt, class Tds >
@@ -369,7 +374,8 @@ Constrained_triangulation_2<Gt,Tds>::
 insert(const Vertex_handle & va, 
        const Vertex_handle & vb,
        Face_handle & fr, int & i, 
-       List_edges & new_edges)
+       List_edges & new_edges,
+       List_vertices & new_vertices)
   // Inserts line segment ab as a constraint (i.e. an edge) in
   // triangulation t
   // The constraint will be subdivided in smaller parts
@@ -380,9 +386,12 @@ insert(const Vertex_handle & va,
   // fr is the face incident to edge ab and to the right  of ab
   // edge ab=(fr,i).
   // new_edges will contain in the end 
-  // all the new unconstrained edges and some of the new constrained
+  // all the new unconstrained edges and some of the new constrained edges
   // to be used e.g. by propagating flip 
   // for Delaunay constrained triangulation
+  // new_vertices will contain the new vertices resulting from
+  // intersections  of constraints
+  // to be also used in  Delaunay constrained triangulation
   // The algorithm runs in time proportionnal to the number 
   // of removed triangles
 {
@@ -411,7 +420,7 @@ insert(const Vertex_handle & va,
       List_edges conflict_boundary_ab, conflict_boundary_ba;
       vbb = find_conflicts(va, vb, vaa,
 			   conflict_boundary_ab,conflict_boundary_ba,
-			   new_edges);
+			   new_edges, new_vertices);
 
       // skip if the lists are empty : the first crossed edge is a constraint
       if ( !conflict_boundary_ab.empty() ) {
@@ -508,7 +517,8 @@ Constrained_triangulation_2<Gt,Tds>::
 find_conflicts(Vertex_handle va, Vertex_handle  vb,
 	       Vertex_handle vaa,
 	       List_edges & list_ab, List_edges & list_ba,
-	       List_edges & new_edges)
+	       List_edges & new_edges,
+	       List_vertices & new_vertices)
   // finds all triangles intersected the current part of constraint ab
   // vaa is the vertex at the begin of the current part
   // the procedure returns the vertex vbb at the end of the current part
@@ -519,6 +529,7 @@ find_conflicts(Vertex_handle va, Vertex_handle  vb,
   // this constraint is splitted and the new vertex becomes vbb.
   // The new edges created by the split which are not constrained 
   // and some of the constrained ones are inserted in new_edges.
+  // The new vertex is inserted in new_vertices.
   // Returns the boundary B of the union of those triangles oriented cw
   // B is represented by two lists of edges list_ab and list_ba 
   // list_ab consists of the edges from a to b (i.e. on the left of a->b)
@@ -548,7 +559,7 @@ find_conflicts(Vertex_handle va, Vertex_handle  vb,
     assert(is_edge(vi,vaa,fh,ih));
     fh->set_constraint(ih,true);
     (fh->neighbor(ih))->set_constraint(fh->mirror_index(ih),true);
-    
+    new_vertices.push_back(vi);
     update_new_edges(a,b,vi,vh,new_edges);
     return vi;
   }
@@ -595,7 +606,7 @@ find_conflicts(Vertex_handle va, Vertex_handle  vb,
 			      Segment(a,b));
 	assert(assign(pi, result));
 	Vertex_handle vi=special_insert_in_edge(pi,current_face,i1);
-
+	new_vertices.push_back(vi);
 	update_new_edges(a,b,vi,vh,new_edges);
 	update_new_edges(a,b,vi,current_vertex,new_edges);
 
