@@ -37,3 +37,14 @@ Demo :
 Doc:
 ---
 - why are the biblio references missing ?  Fscking LaTeX...
+- Monique's comment :
+> >  Also note that terrains are supported directly.
+>
+> Je comprends mal cette remarque:
+> Soit c'est trop court et il faut expliquer que tout ca c'est template et que
+> la sortie en tient compte et que donc ca marche bien, et pas que pour les
+> terrains, les terrains ne sont qu'un exemple (important il est vrai, mais
+> bon) de ce qu'on peut faire comme Triangulation_2 un peu speciale, quand il
+> y aura des triangulations de surfaces ca marchera pareil.
+> Soit c'est trop long, si tout ca est bien evident autant ne pas le dire.
+> qu'en penses-tu ?
