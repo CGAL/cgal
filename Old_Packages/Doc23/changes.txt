@@ -1,4 +1,8 @@
 
+2.55    (??? ??? 2002)
+- documented that all kernel objects should be default constructable
+- added weighted point for 2D and 3D
+
 2.54    (8 Aug 2002)
 - replaced LEFTTURN, RIGHTTURN, etc. by LEFT_TURN, RIGHT_TURN, etc.
 
