@@ -29,54 +29,34 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 template < class GT >
 class Triangulation_vertex_base_2 {
 
 public:
-    typedef typename GT::Point Point;
+  typedef typename GT::Point Point;
 
-
-
-    Triangulation_vertex_base_2 ()
-        : _f(NULL)
+  Triangulation_vertex_base_2 ()
+    : _f(NULL)
     {}
     
-    Triangulation_vertex_base_2(const Point & p)
-        :  _p(p), _f(NULL)
-    {}
-    
-    Triangulation_vertex_base_2(const Point & p, void* f)
-        :  _p(p), _f(f)
+  Triangulation_vertex_base_2(const Point & p, void * f = NULL)
+    :  _p(p), _f(f)
     {}
 
-    inline void set_point(const Point & p)
-    {
-        _p = p;
-    }
-    
-    inline void set_face(void* f)
-    {
-        _f = f;
-    }
-
-    inline 
-    const Point&  point() const
-    {
-        return _p;
-    }
-    
-    
-    inline void* face() const
-    {
-        return _f;
-    }
+  inline void set_point(const Point & p) { _p = p; }
+  inline void set_face(void* f) { _f = f ;}
+ 
+  inline 
+  const Point&  point() const { return _p; }
+     
+  inline void* face() const { return _f;}
+ 
     
   //the following trivial is_valid to allow
   // the user of derived face base classes 
   // to add their own purpose checking
   bool is_valid(bool /* verbose */ = false, int /* level */ = 0) const
-  {return true;}
+    {return true;}
 
 private:
         Point _p;
