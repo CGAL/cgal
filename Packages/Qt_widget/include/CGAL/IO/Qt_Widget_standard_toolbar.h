@@ -54,12 +54,8 @@ public:
   };
   QToolBar*	toolbar(){return maintoolbar;}
 
-signals:
-  void new_object(CGAL::Object);
-  void was_repainted();
 
 private slots:
-  void get_new_object(CGAL::Object obj) { emit(new_object(obj)); }
 
   void toggle_button();
 

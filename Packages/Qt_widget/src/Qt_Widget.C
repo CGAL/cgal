@@ -107,7 +107,6 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
   else
     set_scale_center(xcentre, ycentre);
   emit(resized());
-  emit(redrawed());
   redraw();
 }
 
@@ -308,19 +307,7 @@ int Qt_widget::y_pixel_dist(double d) const
   else
     return( static_cast<int>(d*yscal-0.5) );
 }
-/*
-Qt_widget& Qt_widget::operator<<(Qt_widget_tool* tool)
-{
-  if (has_tool()) {
-    current_tool->detach();
-    emit(detached_tool());
-  }
-  current_tool=tool;
-  _has_tool=true;
-  tool->attach(this);
-  return *this;
-}
-*/
+
 Qt_widget& Qt_widget::operator<<(const Color& c)
 {
   setColor(CGAL2Qt_Color(c));
@@ -400,8 +387,8 @@ void Qt_widget::redraw()
       unlock();
       if (has_tool())
 	current_tool->widget_repainted();
-      emit(redrawed());
     }
+    emit(redrawed());
   };
   
   // add a scene in the list of displayable scenes

@@ -36,7 +36,7 @@ class Qt_widget_get_segment : public Qt_widget_tool
 {
   //  Q_OBJECT
 public:
-  typedef Point_2<R>			Point;
+  typedef Point_2<R>		Point;
   typedef Segment_2<R>		Segment;
   typedef typename R::FT	FT;
 

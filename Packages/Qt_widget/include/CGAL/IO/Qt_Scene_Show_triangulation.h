@@ -32,17 +32,17 @@ class Qt_scene_show_triangulation : public Qt_scene
     //Q_OBJECT
 public:
 	
-	Qt_scene_show_triangulation(T &t) : tr(t){};
+  Qt_scene_show_triangulation(T &t) : tr(t){};
 
 
-	void draw_scene(Qt_widget &widget)
-	{
-		widget << CGAL::BLUE; 
-		widget << tr;
-	};
+  void draw_scene(Qt_widget &widget)
+  {
+    widget << CGAL::BLUE; 
+    widget << tr;
+  };
 	
 private:
-	T	&tr;
+  T &tr;
 };//end class 
 
 } // namespace CGAL
