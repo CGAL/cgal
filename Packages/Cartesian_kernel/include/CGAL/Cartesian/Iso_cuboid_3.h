@@ -64,6 +64,27 @@ public:
 				     Point_3(maxx, maxy, maxz)));
   }
 
+  Iso_cuboidC3(const RT& min_x, const RT& min_y, const RT& min_z,
+               const RT& max_x, const RT& max_y, const RT& max_z)
+  {
+    initialize_with(Iso_cuboid_ref_3(Point_3(min_x, min_y, min_z),
+				     Point_3(max_x, max_y, max_z)));
+  }
+
+  Iso_cuboidC3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
+               const RT& max_hx, const RT& max_hy, const RT& max_hz, 
+               const RT& hw)
+  {
+    if (hw == RT(1))
+       initialize_with(Iso_cuboid_ref_3(Point_3(min_hx, min_hy, min_hz),
+				        Point_3(max_hx, max_hy, max_hz)));
+    else
+       initialize_with(
+         Iso_cuboid_ref_3(Point_3(min_hx/hw, min_hy/hw, min_hz/hw),
+                          Point_3(max_hx/hw, max_hy/hw, max_hz/hw)));
+  }
+
+
   bool operator==(const Self& s) const;
   bool operator!=(const Self& s) const;
 
@@ -96,6 +117,8 @@ public:
   FT           xmax() const;
   FT           ymax() const;
   FT           zmax() const;
+  FT           min_coord(int i) const;
+  FT           max_coord(int i) const;
 
   FT           volume() const;
 };
@@ -168,6 +191,34 @@ Iso_cuboidC3<R CGAL_CTAG>::FT
 Iso_cuboidC3<R CGAL_CTAG>::zmax() const
 {
   return max().z();
+}
+
+template < class R >
+inline
+Iso_cuboidC3<R CGAL_CTAG>::FT
+Iso_cuboidC3<R CGAL_CTAG>::min_coord(int i) const
+{
+  CGAL_kernel_precondition( i == 0 || i == 1 || i == 2 );
+  if (i == 0)
+     return xmin();
+  else if (i == 1)
+     return ymin();
+  else 
+     return zmin();
+}
+
+template < class R >
+inline
+Iso_cuboidC3<R CGAL_CTAG>::FT
+Iso_cuboidC3<R CGAL_CTAG>::max_coord(int i) const
+{
+  CGAL_kernel_precondition( i == 0 || i == 1 || i == 2 );
+  if (i == 0)
+     return xmax();
+  else if (i == 1)
+     return ymax();
+  else 
+     return zmax();
 }
 
 template < class R >

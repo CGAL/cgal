@@ -76,6 +76,24 @@ public:
 	                                Point_2(maxx, maxy)));
   }
 
+  Iso_rectangleC2(const RT& min_x, const RT& min_y, 
+                  const RT& max_x, const RT& max_y)
+  {
+    initialize_with(Iso_rectangle_ref_2(Point_2(min_x, min_y),
+	                                Point_2(max_x, max_y)));
+  }
+
+  Iso_rectangleC2(const RT& min_hx, const RT& min_hy, 
+                  const RT& max_hx, const RT& max_hy, const RT& hw)
+  {
+    if (hw == RT(1))
+       initialize_with(Iso_rectangle_ref_2(Point_2(min_hx, min_hy),
+	                                   Point_2(max_hx, max_hy)));
+    else
+       initialize_with(Iso_rectangle_ref_2(Point_2(min_hx/hw, min_hy/hw),
+	                                   Point_2(max_hx/hw, max_hy/hw)));
+  }
+
   bool            operator==(const Self &s) const;
   bool            operator!=(const Self &s) const;
 
@@ -110,6 +128,8 @@ public:
   FT              ymin() const;
   FT              xmax() const;
   FT              ymax() const;
+  FT              min_coord(int i) const;
+  FT              max_coord(int i) const;
 
   FT              area() const;
 };
@@ -168,6 +188,30 @@ typename Iso_rectangleC2<R CGAL_CTAG>::FT
 Iso_rectangleC2<R CGAL_CTAG>::ymax() const
 {
   return max().y();
+}
+
+template < class R >
+inline
+typename Iso_rectangleC2<R CGAL_CTAG>::FT
+Iso_rectangleC2<R CGAL_CTAG>::min_coord(int i) const
+{
+  CGAL_kernel_precondition( i == 0 || i == 1 );
+  if (i == 0)
+     return xmin();
+  else
+     return ymin();
+}
+
+template < class R >
+inline
+typename Iso_rectangleC2<R CGAL_CTAG>::FT
+Iso_rectangleC2<R CGAL_CTAG>::max_coord(int i) const
+{
+  CGAL_kernel_precondition( i == 0 || i == 1 );
+  if (i == 0)
+     return xmax();
+  else
+     return ymax();
 }
 
 template < class R >
