@@ -1,3 +1,6 @@
+25 March 2004 Radu Ursu
+- made doc work with the new implementation of the Manual tools
+
 25 Feb 2004 Sylvain Pion
 - Small syntactic portability fixes.
 
