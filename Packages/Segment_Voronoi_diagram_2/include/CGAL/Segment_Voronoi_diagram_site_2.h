@@ -49,16 +49,22 @@ public:
   typedef typename R::Point_2   Point_2;
   typedef typename R::Segment_2 Segment_2;
 
+protected:
+  typedef typename R::FT        FT;
+  typedef typename R::RT        RT;
+
+public:
   Segment_Voronoi_diagram_site_2() : defined_(false) {}
 
   // constructs point site using input point
-  Segment_Voronoi_diagram_site_2(const Point_2 &p)
-    : p_(p), defined_(true), point_(true), input_(true)  {}
+  Segment_Voronoi_diagram_site_2(const Point_2 &p) {
+    initialize_site(p);
+  }
 
   // constructs segment site using input segment
-  Segment_Voronoi_diagram_site_2(const Segment_2 &s)
-    : p_(s.source()), p2_(s.target()), defined_(true), point_(false),
-      input_(true), is_exact1_(true), is_exact2_(true) {}
+  Segment_Voronoi_diagram_site_2(const Segment_2 &s) {
+    initialize_site(s);
+  }
 
   // constructs point site using point of intersection
   Segment_Voronoi_diagram_site_2(const Segment_2& s1,
@@ -104,17 +110,19 @@ public:
     defined_ = false;
   }
 
-  //***********************************************************************
-
   bool is_defined () const { return defined_; }
   bool is_point () const { return defined_ && point_; }
   bool is_segment () const { return defined_ && !point_; }
   bool is_exact() const { return input_; }
+  bool is_exact(unsigned int i) const {
+    CGAL_precondition( is_segment() && i < 2 );
+    return is_exact_[i];
+  }
 
   Point_2 point() const { 
     CGAL_precondition ( is_point() );
     if ( !input_ ) {
-      return compute_intersection_point();
+      return compute_intersection_point(q1_, q2_, q3_, q4_);
     } else {
       return p_;
     }
@@ -132,6 +140,25 @@ public:
   Point_2 target() const {
     CGAL_precondition ( is_segment() ); 
     return compute_target();
+  }
+
+  Segment_2 supporting_segment() const {
+    CGAL_precondition( is_segment() );
+    if ( input_ ) {
+      return segment();
+    } else {
+      return Segment_2(p_, p2_);
+    }
+  }
+
+  Segment_2 crossing_segment(unsigned int i) const {
+    CGAL_precondition( is_segment() && !input_ );
+    CGAL_precondition( i < 2 && !is_exact_[i] );
+    if ( i == 0 ) {
+      return Segment_2(q1_, q2_);
+    } else {
+      return Segment_2(q3_, q4_);
+    }
   }
 
   void set_point(const Point_2& p) {
@@ -169,11 +196,33 @@ public:
   }
 
 protected:
-  void initialize_site(const Segment_2& s1, const Segment_2& s2)
+  void initialize_site(const Point_2& p)
   {
     defined_ = true;
     point_ = true;
+    input_ = true;
+    is_exact_[0] = is_exact_[1] = false;
+    p_ = p;
+  }
+
+  void initialize_site(const Segment_2& s)
+  {
+    defined_ = true;
+    point_ = false;
+    input_ = true;
+    is_exact_[0] = is_exact_[1] = true;
+    p_ = s.source();
+    p2_ = s.target();
+  }
+  void initialize_site(const Segment_2& s1, const Segment_2& s2)
+  {
+    // MK: Sort the segments s1 and s2 in lexicographical order so
+    //     that the computation of the intersection point is always
+    //     done in the same manner (?)
+    defined_ = true;
+    point_ = true;
     input_ = false;
+    is_exact_[0] = is_exact_[1] = false;
     q1_ = s1.source();
     q2_ = s1.target();
     q3_ = s2.source();
@@ -187,8 +236,7 @@ protected:
     defined_ = true;
     point_ = false;
     input_ = false;
-    is_exact1_ = false;
-    is_exact2_ = false;
+    is_exact_[0] = is_exact_[1] = false;
     p_ = support.source();
     p2_ = support.target();
     q1_ = s1.source();
@@ -203,8 +251,8 @@ protected:
     defined_ = true;
     point_ = false;
     input_ = false;
-    is_exact1_ = is_first_exact;
-    is_exact2_ = !is_first_exact;
+    is_exact_[0] = is_first_exact;
+    is_exact_[1] = !is_first_exact;
     p_ = support.source();
     p2_ = support.target();
     if ( is_first_exact ) {
@@ -217,34 +265,39 @@ protected:
   }
 
   Point_2 compute_source() const {
-    if ( input_ || is_exact1_ ) {
+    CGAL_precondition( is_segment() );
+    if ( input_ || is_exact_[0] ) {
       return p_;
     } else {
-      return compute_intersection_point(0);
+      return compute_intersection_point(p_, p2_, q1_, q2_);
     }
   }
 
   Point_2 compute_target() const {
-    if ( input_ || is_exact2_ ) {
+    CGAL_precondition( is_segment() );
+    if ( input_ || is_exact_[1] ) {
       return p2_;
     } else {
-      return compute_intersection_point(1);
+      return compute_intersection_point(p_, p2_, q3_, q4_);
     }
   }
 
-  // MK: the following two methods have to be filled in
-  Point_2 compute_intersection_point() const
+  // computes the point of intersection of the segments p1p2 and p3p4
+  static Point_2
+  compute_intersection_point(const Point_2& p1, const Point_2& p2,
+			     const Point_2& p3, const Point_2& p4)
   {
-    CGAL_precondition( point_ && !input_ );
-    return Point_2();
-  }
+    RT x1 = p1.x(), y1 = p1.y();
+    RT x2 = p2.x(), y2 = p2.y();
+    RT x3 = p3.x(), y3 = p3.y();
+    RT x4 = p4.x(), y4 = p4.y();
 
-  Point_2 compute_intersection_point(int i) const
-  {
-    CGAL_precondition( !point_ && !input_ );
-    CGAL_precondition( (i == 0 && !is_exact1_) ||
-		       (i == 1 && !is_exact2_) );
-    return Point_2();
+    RT D = det2x2_by_formula(x2 - x1, x4 - x3, y2 - y1, y4 - y3);
+    RT Dt = det2x2_by_formula(x3 - x1, x4 - x3, y3 - y1, y4 - y3);
+
+    RT t = Dt / D;
+
+    return Point_2(x1 + (x2 - x1) * t, y1 + (y2 - y1) * t);
   }
 
 protected:
@@ -254,7 +307,7 @@ protected:
   bool defined_;
   bool point_;
   bool input_;
-  bool is_exact1_, is_exact2_;
+  bool is_exact_[2];
 };
 
 //-------------------------------------------------------------------------
