@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.27 on 10-Sep-2003 [rursu]
+- Qt_help_window is in the CGAL namespace now.
+
 Version 3.26 on 07-Sep-2003
 - demo use now the new help class Qt_help_window instead of HelpWindow [rursu]
 - demo use now the new demo icon demoicon
