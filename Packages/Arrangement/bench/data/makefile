@@ -1,8 +1,9 @@
 include $(ROOT)/include/make/comdef.mak
 FILES = benchPmwxDb.xml benchPmwxConics.xml
-FILES+= benchPmwxSegments.xml benchCompareSweep.xml
+FILES+= benchPmwxSegments.xml
+FILES+= benchCompareSweep.xml
 FILES+= benchCompareSweepConics.xml
-FILES+= benchPmwx.xml
-FILES+= benchPmwxND.xml
+FILES+= benchPmwx.xml   # all conf. {onebig_100, random_100}
+FILES+= benchPmwxND.xml # non degenerate
 INSTALLDIR =$(ROOT)/bench/data
 include $(MAKEINCDIR)/files.mak
