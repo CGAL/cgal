@@ -35,7 +35,7 @@ public:
   // Event handlers
   virtual void mousePressEvent(QMouseEvent *) {} ;
   virtual void mouseReleaseEvent(QMouseEvent *) {};
-  virtual void wheelEvent(QMouseEvent *) {};
+  virtual void wheelEvent(QWheelEvent *) {};
   virtual void mouseDoubleClickEvent(QMouseEvent *) {};
   virtual void mouseMoveEvent(QMouseEvent *) {};
   virtual void keyPressEvent(QKeyEvent *) {};
