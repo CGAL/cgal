@@ -74,7 +74,7 @@ created in Section~4.
 \renewcommand{\ccEndFont}{}
 \ccSetThreeColumns{CGAL_Random}{random.restore_seed( Seed seed)}{}
 \ccPropagateThreeToTwoColumns
-\input{../../spec/Random/Random.tex}
+\input{../../doc_tex/support/Random/Random.tex}
 
 @! ============================================================================
 @! Implementation
@@ -169,7 +169,9 @@ In the default constructor the seed is initialized using the system
 time.
 
 @macro <Random constructors> = @begin
-    #include <sys/time.h>
+    #ifndef CGAL_PROTECT_SYS_TIME_H
+    #  include <sys/time.h>
+    #endif
 
     CGAL_Random::
     CGAL_Random( )
@@ -211,7 +213,9 @@ uniformly chosen from the interval $[\ccc{0.0},\ccc{1.0})$.
 The result is converted to a number in the given range.
 
 @macro <Random operations> = @begin
-    #include <stdlib.h>
+    #ifndef CGAL_PROTECT_STDLIB_H
+    #  include <stdlib.h>
+    #endif
 
     inline
     bool

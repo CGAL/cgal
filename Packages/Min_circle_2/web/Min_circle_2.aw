@@ -160,10 +160,10 @@ in the \cgal\ Reference Manual.
 \ccSetThreeColumns{typedef CGAL_Point_2<R>}{}{%
   creates a variable \ccc{min_circle} of type \ccc{CGAL_Min_circle_2<Traits>}.}
 \ccPropagateThreeToTwoColumns
-\input{../../spec/Optimisation/Min_circle_2.tex}
-\input{../../spec/Optimisation/Optimisation_circle_2.tex}
-\input{../../spec/Optimisation/Min_circle_2_adapterC2.tex}
-\input{../../spec/Optimisation/Min_circle_2_adapterH2.tex}
+\input{../../doc_tex/basic/Optimisation/Min_circle_2.tex}
+\input{../../doc_tex/basic/Optimisation/Optimisation_circle_2.tex}
+\input{../../doc_tex/basic/Optimisation/Min_circle_2_adapterC2.tex}
+\input{../../doc_tex/basic/Optimisation/Min_circle_2_adapterH2.tex}
 
 @! ============================================================================
 @! Implementations
@@ -2207,16 +2207,13 @@ representation with number type \ccc{CGAL_Quotient<CGAL_Gmpz>} and
 homogeneous representation with number type \ccc{CGAL_Gmpz}.
 
 @macro <Min_circle_2 test (includes and typedefs)> = @begin
-    #include <CGAL/Gmpz.h>
     #include <CGAL/Cartesian.h>
     #include <CGAL/Homogeneous.h>
     #include <CGAL/Optimisation_traits_2.h>
     #include <CGAL/Min_circle_2.h>
     #include <CGAL/Min_circle_2_adapterC2.h>
     #include <CGAL/Min_circle_2_adapterH2.h>
-    #include <CGAL/Random.h>
     #include <CGAL/IO/Verbose_ostream.h>
-    #include <algo.h>
     #include <assert.h>
     #include <fstream.h>
 
@@ -2682,10 +2679,18 @@ end of each file.
     #ifndef CGAL_OPTIMISATION_MISC_H
     #  include <CGAL/optimisation_misc.h>
     #endif
-    #include <list.h>
+    #ifndef CGAL_PROTECT_LIST_H
+    #  include <list.h>
+    #endif
+    #ifndef CGAL_PROTECT_VECTOR_H
     #include <vector.h>
+    #endif
+    #ifndef CGAL_PROTECT_ALGO_H
     #include <algo.h>
+    #endif
+    #ifndef CGAL_PROTECT_IOSTREAM_H
     #include <iostream.h>
+    #endif
 
     @<Min_circle_2 interface>
 
