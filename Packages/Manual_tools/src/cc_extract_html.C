@@ -32,6 +32,7 @@ const char* prog_release = "$Revision$";
 
 /* Flexibility for HTML class files. */
 /* ================================= */
+bool html_no_class_toc   = false;
 bool html_no_class_file  = false;
 bool html_no_class_links = false;
 bool html_no_class_index = false;
@@ -3167,8 +3168,9 @@ void handleClassFile( char* filename, const char* formatted_reference) {
     }
 
     // table of contents
-    *contents_stream << "        <UL><LI> " << formatted_reference
-		     << "</UL>" << endl;
+    if ( ! html_no_class_toc)
+	*contents_stream << "        <UL><LI> " << formatted_reference
+			 << "</UL>" << endl;
 
     current_stream   = class_stream;
     current_filename = class_filename;
@@ -3358,6 +3360,7 @@ void handleClassEnd( void) {
     html_no_class_links = false;
     html_no_class_file  = false;
     html_no_class_index = false;
+    html_no_class_toc   = false;
 }
 
 char* templateClassBaseName( const char* classname) {

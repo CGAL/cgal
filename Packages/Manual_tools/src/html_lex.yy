@@ -631,6 +631,10 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 
  /* Flexibility for HTML class files. */
  /* -------------------------------------------------------------- */
+<INITIAL,MMODE,NestingMode>[\\]ccHtmlNoClassToc/{noletter}    {
+		    skipspaces();
+		    html_no_class_toc = true;
+}
 <INITIAL,MMODE,NestingMode>[\\]ccHtmlNoClassFile/{noletter}    {
 		    skipspaces();
 		    html_no_class_file = true;

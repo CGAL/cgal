@@ -65,6 +65,7 @@ const char* find_sort_key( const char* txt);
 
 /* Flexibility for HTML class files. */
 /* ================================= */
+extern bool html_no_class_toc;
 extern bool html_no_class_file;
 extern bool html_no_class_links;
 extern bool html_no_class_index;
