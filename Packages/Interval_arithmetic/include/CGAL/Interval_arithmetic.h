@@ -406,7 +406,7 @@ sqrt (const Interval_nt_advanced & d)
   // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
   // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
   FPU_set_cw(FPU_cw_down);
-  double i = CGAL_IA_FORCE_TO_DOUBLE((d.inf()>0) ? std::sqrt(d.inf()) : 0);
+  double i = (d.inf()>0) ? CGAL_IA_FORCE_TO_DOUBLE(std::sqrt(d.inf())) : 0;
   FPU_set_cw(FPU_cw_up);
   return Interval_nt_advanced(i, CGAL_IA_FORCE_TO_DOUBLE(std::sqrt(d.sup())));
 }
