@@ -41,6 +41,8 @@ public:
       CGAL::Bbox_2 curve_bbox = cv.bbox();
       if (i == 0) bbox = curve_bbox;
       else bbox = bbox + curve_bbox;
+#else
+      bbox = CGAL::Bbox_2(-10, -10, 10, 10);
 #endif
     }
     inp.close();
