@@ -30,7 +30,6 @@
 
 #define WANT_OBFUSCATING_OPERATORS
 #include <cl_lfloat.h>
-#include <cl_io.h>
 
 CGAL_BEGIN_NAMESPACE
 
