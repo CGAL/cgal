@@ -1,6 +1,10 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.31 (10 Apr 2003)
+
+     - Add missing "this->" spotted by g++ 3.4.
+
 3.30 (22 Apr 2002)
 
      - Added template constructors to _Polyhedron_vertex_const_circ

@@ -273,14 +273,14 @@ public:
 
     // the previous halfedge around the vertex (counterclockwise). Is
     // equal to `h.opposite()->prev()'.
-    Halfedge_handle       prev_on_vertex() { return opposite()->prev(); }
+    Halfedge_handle       prev_on_vertex() { return this->opposite()->prev(); }
     Halfedge_const_handle prev_on_vertex() const {
-        return opposite()->prev();
+        return this->opposite()->prev();
     }
 
     bool is_border_edge() const {
         // is true if `h' or `h.opposite()' is a border halfedge.
-        return (opposite()->is_border() || is_border());
+        return (this->opposite()->is_border() || is_border());
     }
 
     // a circulator of halfedges around the vertex (clockwise).

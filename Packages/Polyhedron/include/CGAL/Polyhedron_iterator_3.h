@@ -414,7 +414,7 @@ public:
     bool operator!=( const Self& i) const { return !(*this == i); }
 
     Self& operator++() {
-        nt = (*nt).next();
+        this->nt = (*this->nt).next();
         return *this;
     }
     Self  operator++(int) {
@@ -427,7 +427,7 @@ public:
 // ---------------------------------
 
     Self& operator--() {
-        nt = (*nt).prev();
+        this->nt = (*this->nt).prev();
         return *this;
     }
     Self  operator--(int) {
@@ -477,7 +477,7 @@ public:
     bool operator!=( const Self& i) const { return !(*this == i); }
 
     Self& operator++() {
-        nt = (*nt).next();
+        this->nt = (*this->nt).next();
         return *this;
     }
     Self  operator++(int) {
@@ -490,7 +490,7 @@ public:
 // ---------------------------------
 
     Self& operator--() {
-        nt = (*nt).prev();
+        this->nt = (*this->nt).prev();
         return *this;
     }
     Self  operator--(int) {
@@ -535,7 +535,7 @@ public:
     bool operator!=( const Self& i) const { return !(*this == i); }
 
     Self& operator++() {
-        nt = (*nt).next()->opposite();
+        this->nt = (*this->nt).next()->opposite();
         return *this;
     }
     Self  operator++(int) {
@@ -548,7 +548,7 @@ public:
 // ---------------------------------
 
     Self& operator--() {
-        nt = (*nt).opposite()->prev();
+        this->nt = (*this->nt).opposite()->prev();
         return *this;
     }
     Self  operator--(int) {
@@ -598,7 +598,7 @@ public:
     bool operator!=( const Self& i) const { return !(*this == i); }
 
     Self& operator++() {
-        nt = (*nt).next()->opposite();
+        this->nt = (*this->nt).next()->opposite();
         return *this;
     }
     Self  operator++(int) {
@@ -611,7 +611,7 @@ public:
 // ---------------------------------
 
     Self& operator--() {
-        nt = (*nt).opposite()->prev();
+        this->nt = (*this->nt).opposite()->prev();
         return *this;
     }
     Self  operator--(int) {
