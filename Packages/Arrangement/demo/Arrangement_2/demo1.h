@@ -39,9 +39,7 @@
 #include <qprinter.h>
 
 #include "cgal_types1.h"
-
 #include <CGAL/IO/Qt_widget_handtool.h>
-
 
 //////////////////////////////////////////////////////////////////////////////
 class Qt_layer;

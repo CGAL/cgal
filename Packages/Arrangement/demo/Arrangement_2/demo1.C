@@ -687,6 +687,11 @@ void MyWindow::properties()
       colors_flag = true;
     else
       colors_flag = false;
+	QString remove_mode = optionsForm->box7->currentText();
+	if (strcmp(remove_mode,"Remove All Original Curve") == 0)
+      w_demo_p->remove_org_curve = true;
+    else
+      w_demo_p->remove_org_curve = false;
     m_scailing_factor = (new_factor/10);
     resize(m_width,m_height);
     w_demo_p->redraw();
@@ -804,7 +809,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       
       w_demo_p->m_curves_arr.insert(Pm_conic_2( *cv , cd));
       
-      CGAL::Bbox_2 curve_bbox = cv->bounding_box();
+      CGAL::Bbox_2 curve_bbox = cv->bbox();
       if (i == 0)
         w_demo->bbox = curve_bbox;
       else
@@ -1484,6 +1489,8 @@ void MyWindow::conicType()
       w_demo_p->conic_type = CIRCLE;
     else if (strcmp(type,"Segment") == 0)
       w_demo_p->conic_type = SEGMENT;
+	else if (strcmp(type,"Ellipse") == 0)
+      w_demo_p->conic_type = ELLIPSE;
   }
 }
 

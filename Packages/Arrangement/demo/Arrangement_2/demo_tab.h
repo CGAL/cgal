@@ -36,7 +36,8 @@ public:
     grid(false),
     conic_type(CIRCLE),
     cube_size(1),
-	ray_shooting_direction(true)
+	ray_shooting_direction(true),
+	remove_org_curve(true)
   {
     *this << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
     set_window(-10, 10, -10, 10);
@@ -96,6 +97,8 @@ public:
   int cube_size;
   /*! ray shooting direction */
   bool ray_shooting_direction; // true for up
+  /*! remove all original curve or only a part */
+  bool remove_org_curve;
 };
 
 /*! template class Qt_widget_demo_tab gets a Tab_traits class as 
@@ -249,25 +252,25 @@ public:
       setColor(Qt::blue);
       (*this) << CGAL::LineWidth(1);
       
-      //Pm_point_2 p1c1(pl_point.x() , y_max());
-      //Pm_point_2 p2c1(pl_point.x() , pl_point.y());
-      //Data d;
+      Pm_point_2 p1c1(pl_point.x() , y_max());
+      Pm_point_2 p2c1(pl_point.x() , pl_point.y());
+      Data d;
       //const Curve cv(Base_curve(p1c1 , p2c1) , d);
-      //Pm_curve_iter o;
-      //m_tab_traits.curve_make_x_monotone(cv, o);
-      //const Xcurve c1 = **o;
+	  //std::list<Xcurve> xcurve_list;
+      //m_tab_traits.curve_make_x_monotone(cv, std::back_inserter(xcurve_list));
+      //const Xcurve c1 = xcurve_list.begin();
       //const Xcurve c2 = e->curve();
       //const Pm_point_2 p(pl_point);
       //Pm_point_2 p1;
       //Pm_point_2 p2;
       //bool ans = 
-	  m_tab_traits.nearest_intersection_to_right(c1, c2, p, p1, p2);
+	   //  m_tab_traits.nearest_intersection_to_right(c1, c2, p, p1, p2);
       ////Coord_point up(pl_point.x() , y_max());
       //Coord_type x1 = CGAL::to_double(p1.x());
       //Coord_type y1 = CGAL::to_double(p1.y());
       //Coord_point up(x1,y1);
       //(*this) << Coord_segment(pl_point , up );
-      //std::cout << p1 << " " << p << std::endl;
+      ////std::cout << p1 << " " << p << std::endl;
       
       (*this) << CGAL::LineWidth(3);
       setColor(Qt::red);
@@ -485,8 +488,28 @@ public:
         is_first = false;
       }    
     }
+
+	if (remove_org_curve)
+	{
+      const Base_curve * org_curve = m_tab_traits.get_origin_curve(closest_curve->curve());
+	  Hafledge_list li;
+	  Hafledge_list_iterator result;
+      for (hei = m_curves_arr.halfedges_begin();
+           hei != m_curves_arr.halfedges_end(); ++hei) 
+	  {
+        const Base_curve * curve = m_tab_traits.get_origin_curve(hei->curve());
+		result = std::find(li.begin(), li.end(), hei);
+	    if (curve == org_curve && result == li.end())
+		{
+		  li.push_back(hei->twin());
+		  m_curves_arr.remove_edge(hei);
+		}
+	  }
+	}
+
+	else
+	  m_curves_arr.remove_edge(closest_curve);
     
-    m_curves_arr.remove_edge(closest_curve);
     redraw();
     
   } // remove_curve
@@ -1247,31 +1270,53 @@ public:
   {
     if(m_p1.x() != p.x() || m_p1.y() != p.y()) 
     {
-      CONIC_NT x,y,x1,y1;
+      CONIC_NT r, s, t, u, v, ww;  // The conic coefficients.
+      CONIC_NT a, b, a_sq, b_sq, x, y, x1, y1, x0, y0;
       x = m_p1.x();
       y = m_p1.y();
       x1 = p.x();
       y1 = p.y();
       Pm_base_conic_2 *cv;
-      if (w->conic_type == CIRCLE )
-      {                
-        Coord_type dist = pow(m_p1.x() - p.x(), 2) + pow(m_p1.y() - p.y(), 2);
-        cv = new Pm_base_conic_2(Pm_conic_circle_2 
+	  Coord_type dist;
+	  switch (w->conic_type)
+	  {
+	  case CIRCLE:
+	    dist = pow(m_p1.x() - p.x(), 2) + pow(m_p1.y() - p.y(), 2);
+	    cv = new Pm_base_conic_2(Pm_conic_circle_2 
                              (Pm_conic_point_2(x,y ), dist, CGAL::CLOCKWISE));
-      }
-      else if (w->conic_type == SEGMENT )
-        cv = new Pm_base_conic_2(Pm_conic_segment_2(Pm_conic_point_2(x,y),
+		break;
+	  case SEGMENT:
+	    cv = new Pm_base_conic_2(Pm_conic_segment_2(Pm_conic_point_2(x,y),
                                                     Pm_conic_point_2(x1,y1)));
-      
+		break;
+	  case ELLIPSE:
+		a = abs(x1 - x)/2;
+		b = abs(y1 - y)/2;
+        a_sq = a*a;
+		b_sq = b*b;
+		x0 = (x + x1)/2;
+		y0 = (y + y1)/2;
+
+		r = b_sq;
+        s = a_sq;
+        t = 0;
+        u = -2*x0*b_sq;
+        v = -2*y0*a_sq;
+        ww = x0*x0*b_sq + y0*y0*a_sq - a_sq*b_sq;
+
+		cv = new Pm_base_conic_2(r, s, t, u, v, ww);
+	    break;
+	  }
+
       Curve_conic_data cd;
       cd.m_type = Curve_conic_data::LEAF;
       cd.m_index = w->index;
       cd.m_ptr.m_curve = cv;
       w->m_curves_arr.insert(Pm_conic_2( *cv , cd));
         
-        w->active = false;
-        //w->redraw();  // not working so I use new_object insted
-        w->new_object(make_object(Coord_segment(m_p1 , p)));
+      w->active = false;
+      //w->redraw();  // not working so I use new_object insted
+      w->new_object(make_object(Coord_segment(m_p1 , p)));
     } 
   }
   
@@ -1283,30 +1328,51 @@ public:
   /*! draw_last_segment - call from mouse move event */
   void draw_last_segment( Qt_widget_demo_tab<Conic_tab_traits> * w)
   {
-    if (w->conic_type == SEGMENT )
-      *w << Coord_segment( m_p1 , m_p2 );
-    else if (w->conic_type == CIRCLE )
-    {
-      Coord_type r = pow(m_p1.x() - m_p2.x(), 2) + pow(m_p1.y() - m_p2.y(),2);
-      *w << Coord_circle(m_p1,r);
-     } 
-        // Draws an ellipse with center at (x + w/2, y + h/2) and size (w, h). 
-        
-        }
+    switch (w->conic_type)
+	{
+	  case CIRCLE:
+	  *w << Coord_circle(m_p1,
+		  pow(m_p1.x() - m_p2.x(), 2) + pow(m_p1.y() - m_p2.y(),2));
+	  break;
+	  case SEGMENT:
+	  *w << Coord_segment( m_p1 , m_p2 );
+	  break;
+	  case ELLIPSE:
+	  {
+ 		*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
+		*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
+		*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
+		*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
+		break;
+	  }		
+	  
+	}
+  }
   
   /*! draw_current_segment - call from mouse move event */
   void draw_current_segment( Coord_point p ,
                              Qt_widget_demo_tab<Conic_tab_traits> * w)
   {
     m_p2 = p;
-    if (w->conic_type == SEGMENT )
-      *w << Coord_segment( m_p1 , p);
-    else if (w->conic_type == CIRCLE )
-    {
-      Coord_type r = pow(m_p1.x() - p.x(), 2) + pow(m_p1.y() - p.y(), 2);
-      *w << Coord_circle(m_p1,r);
-    }
-    
+	switch (w->conic_type)
+	{
+	  case CIRCLE:
+	  *w << Coord_circle(m_p1,
+		  pow(m_p1.x() - p.x(), 2) + pow(m_p1.y() - p.y(), 2));
+	  break;
+	  case SEGMENT:
+	  *w << Coord_segment( m_p1 , p) ;
+	  break;
+	  case ELLIPSE:
+	  {
+ 		*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
+		*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
+		*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
+		*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
+		break;
+	  }
+	  
+	}       
   }
   
   /*! closest_point - find the closest point in the planar map
@@ -1334,9 +1400,6 @@ public:
     }
     return min_dist;
   }
-  ////////////////////////////////////////////////////////////////////////////
-  // those functions will be implemented when support insertion and deletion 
-  // of conic curves
   
   /*! curve_point_distance - return the distance between 
       a point and a conic */

@@ -61,6 +61,15 @@ PropertiesForm::PropertiesForm(  QTabWidget * bar, QWidget* parent ,
   box6->setValue(1);
   arrLayout6->addWidget( box6 );
   optionsFormLayout->addLayout( arrLayout6 );
+
+  arrLayout7 = new QHBoxLayout( 0, 0, 6 );
+  textLabel7 = new QLabel( "Remove Curve Mode", this );
+  arrLayout7->addWidget( textLabel7 );
+  box7 = new QComboBox( FALSE, this );
+  box7->insertItem( "Remove All Original Curve" );
+  box7->insertItem( "Remove Current Xcurve" );
+  arrLayout7->addWidget( box7 );
+  optionsFormLayout->addLayout( arrLayout7 );
   
   buttonsLayout = new QHBoxLayout( 0, 0, 6 );
   okPushButton = new QPushButton( "OK", this );
@@ -306,6 +315,7 @@ OptionsForm::OptionsForm( QWidget* parent ,int number_of_tabs ,
   
   arrComboBox1->insertItem( "Circle" );
   arrComboBox1->insertItem( "Segment" );
+  arrComboBox1->insertItem( "Ellipse" );
   
   arrLayout1->addWidget( arrComboBox1 );
   optionsFormLayout->addLayout( arrLayout1 );
