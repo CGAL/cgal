@@ -582,8 +582,7 @@ template<class Traits_,class OutputContainer>
 void Snap_rounding_2<Traits_,OutputContainer>::
 find_intersected_hot_pixels(Segment_data & seg,
                             std::set<Hot_pixel *,
-                            Hot_pixel_dir_cmp<Traits_> >
-                            &hot_pixels_intersected_set,
+                            Hot_pixel_dir_cmp> & hot_pixels_intersected_set,
                             int &number_of_intersections,
                             NT pixel_size,
                             Multiple_kd_tree * mul_kd_tree)
