@@ -12,8 +12,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Homogeneous.h>
-//#include <CGAL/Cartesian.h>
+#include <CGAL/Cartesian.h>
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Timer.h>
@@ -33,31 +32,23 @@ int main()
 
 #else
 
-#include <CGAL/leda_integer.h>
-//#include <CGAL/leda_real.h>
-//#include <CGAL/leda_rational.h>
-//#include <CGAL/Double_eps.h>
-
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
-#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_segment_cached_traits_2.h>
+#include <CGAL/Timer.h>
 
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Draw_preferences.h>
 
-typedef leda_integer            NT;
-//typedef double                NT;
-//typedef leda_real             NT;
-//typedef leda_rational         NT;
-//typedef CGAL::Double_eps      NT;
-
-typedef CGAL::Homogeneous<NT>                           Rep;
-//typedef CGAL::Cartesian<NT>                           Rep;
-
-typedef CGAL::Arr_segment_traits_2<Rep>                 Traits;
+typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
+typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Arr_segment_cached_traits_2<Kernel>       Traits;
 
 typedef Traits::Point_2                                 Point;
+typedef Traits::Curve_2                                 Curve_2;
 typedef Traits::X_curve_2                               X_curve_2;
-
 
 typedef CGAL::Arr_base_node<X_curve_2>                  Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
@@ -67,6 +58,14 @@ typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>      Arr_2;
 // can be defined to draw information found in these variables.
 static Arr_2               arr; 
 static CGAL::Window_stream W(400, 400, "CGAL - Segment Arrangement Demo");
+
+CGAL_BEGIN_NAMESPACE
+Window_stream& operator<<(Window_stream& os, const Curve_2& cv)
+{
+  os << static_cast<Kernel::Segment_2>(cv);
+  return os;
+}
+CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 Window_stream& operator<<(Window_stream& os, Arr_2 &A)
@@ -118,9 +117,6 @@ void redraw(CGAL::Window_stream * wp)
 
 int main(int argc, char* argv[])
 {
-  //for Double_eps
-  //CGAL::set_eps(0.0001); 
-
   if (argc != 2) {
     std::cout << "usage: Segment_arr_from_file filename\n";
     exit(1);
@@ -137,6 +133,8 @@ int main(int argc, char* argv[])
   W.button("finish",10);
   W.open_status_window();
   W.display();
+
+  std::cout << "Constructing the arrangement ... " << std::endl;
 
   std::ifstream file(argv[1]);
   int num_curves;
@@ -156,6 +154,8 @@ int main(int argc, char* argv[])
     insrt_t.stop();
   }
   
+  std::cout << "Total construction time: " 
+	    << insrt_t.time() << " seconds." << std::endl;
   W << arr;
   
   //POINT LOCATION

@@ -1381,7 +1381,6 @@ Curve_iterator insert_from_vertex(const Curve_2       & cv,
 Curve_iterator insert(const Curve_2       & cv,
                       Change_notification * en = NULL) 
 {
-  
   CGAL_precondition(!traits->point_is_same(traits->curve_source(cv),
                                            traits->curve_target(cv)) ||
                     !traits->is_x_monotone(cv));

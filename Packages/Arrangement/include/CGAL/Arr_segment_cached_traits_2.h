@@ -132,14 +132,12 @@ public:
 protected:
 
   // Functors:
-  typedef typename Kernel::Is_vertical_2        Is_vertical_2;
-  typedef typename Kernel::Construct_vertex_2   Construct_vertex_2;
   typedef typename Kernel::Less_x_2             Less_x_2;
   typedef typename Kernel::Equal_2              Equal_2;
   typedef typename Kernel::Compare_x_2          Compare_x_2;
+  typedef typename Kernel::Compare_y_2          Compare_y_2;
   typedef typename Kernel::Compare_xy_2         Compare_xy_2;
   typedef typename Kernel::Compare_slope_2      Compare_slope_2;
-  typedef typename Kernel::Orientation_2        Orientation_2;
     
 public:
 
@@ -159,7 +157,7 @@ public:
    */
   Comparison_result compare_x(const Point_2 & p1, const Point_2 & p2) const
   {
-    return compare_x_2_object()(p1, p2);
+    return (compare_x_2_object()(p1, p2));
   }
 
   /*! 
@@ -172,7 +170,7 @@ public:
    */
   Comparison_result compare_xy(const Point_2 & p1, const Point_2 & p2) const
   {
-    return compare_xy_2_object()(p1, p2);
+    return (compare_xy_2_object()(p1, p2));
   }
 
   /*!
@@ -197,6 +195,10 @@ public:
   {
     Compare_x_2       compare_x = compare_x_2_object();
     Comparison_result res1 = compare_x (q, cv.ps);
+
+    if (cv.is_vert) // Special check for vertical segments.
+      return (res1 == EQUAL);
+
     Comparison_result res2 = compare_x (q, cv.pt);
 
     // We check if x(p) equals the x value of one of the end-points.
@@ -223,7 +225,61 @@ public:
     CGAL_precondition(curve_is_in_x_range(cv1, q));
     CGAL_precondition(curve_is_in_x_range(cv2, q));
 
-    // Compare using the original segments.
+    // Special treatment for vertical segments:
+    // In case one curve is a vertical segment, return EQUAL if it intersects
+    // with the other segment, otherwise return LARGER or SMALLER.
+    if (cv1.is_vert)
+    {
+      if (cv2.is_vert)
+      {
+	// Compare two vertical segments.
+	Compare_y_2       compare_y = compare_y_2_object();
+	Comparison_result res1 = compare_y (cv1.ps, cv1.pt);
+	const Point_2&    lower1 = (res1 == SMALLER) ? cv1.ps : cv1.pt;
+	const Point_2&    upper1 = (res1 == SMALLER) ? cv1.pt : cv1.ps;
+	Comparison_result res2 = compare_y (cv2.ps, cv2.pt);
+	const Point_2&    lower2 = (res2 == SMALLER) ? cv2.ps : cv2.pt;
+	const Point_2&    upper2 = (res2 == SMALLER) ? cv2.pt : cv2.ps;
+
+	if (compare_y(upper1, lower2) == SMALLER)
+	  // cv1 is entirely below cv2:
+	  return (SMALLER); 
+	else if (compare_y(lower1, upper2) == LARGER)
+	  // cv1 is entirely above cv2:
+	  return (LARGER);
+	else
+	  // cv1 intersects cv2:
+	  return (EQUAL);
+      }
+
+      // Only cv1 is vertical:
+      Comparison_result res1 = compare_y_at_x_2_object()(cv1.ps,cv2.line);
+      Comparison_result res2 = compare_y_at_x_2_object()(cv1.pt,cv2.line);
+
+      if (res1 == res2)
+      {
+	CGAL_assertion(res1 != EQUAL);
+	return (res1);
+      }
+      else
+	return (EQUAL);
+    }
+    else if (cv2.is_vert)
+    {
+      // Only cv2 is vertical:
+      Comparison_result res1 = compare_y_at_x_2_object()(cv2.ps,cv1.line);
+      Comparison_result res2 = compare_y_at_x_2_object()(cv2.pt,cv1.line);
+
+      if (res1 == res2)
+      {
+	CGAL_assertion(res1 != EQUAL);
+	return ((res1 == LARGER) ? SMALLER : LARGER);
+      }
+      else
+	return (EQUAL);
+    }
+
+    // Compare using the supporting lines.
     return (compare_y_at_x_2_object()(q, cv1.line, cv2.line));
   }
 
@@ -267,7 +323,7 @@ public:
     
     // <cv2> and <cv1> meet at a point with the same x-coordinate as q
     // compare their derivatives.
-    // Notice we use the original segments in order to compare the slopes.
+    // Notice we use the supporting lines in order to compare the slopes.
     return (compare_slope_2_object()(cv2.line, cv1.line));
   }
 
@@ -309,7 +365,7 @@ public:
     
     // <cv1> and <cv2> meet at a point with the same x-coordinate as q
     // compare their derivatives
-    // Notice we use the original segments in order to compare the slopes.
+    // Notice we use the supporting lines in order to compare the slopes.
     return (compare_slope_2_object()(cv1.line, cv2.line));
   }
     
@@ -322,15 +378,15 @@ public:
    *         UNDER_CURVE if cv(x(p)) > y(p);
    *         or else ON_CURVE (if p is on the curve).
    */
-  Curve_point_status curve_get_point_status (const X_curve_2& cv, 
-					     const Point_2& p) const
+  Curve_point_status curve_get_point_status (const X_curve_2 & cv, 
+					     const Point_2 & p) const
   {
     if (! curve_is_in_x_range(cv, p))
       return (CURVE_NOT_IN_RANGE);
 
     if (! cv.is_vert)
     {
-      // Compare with the original segment.
+      // Compare with the supporting line.
       Comparison_result res = compare_y_at_x_2_object()(p, cv.line);
       return ((res == LARGER) ? ABOVE_CURVE :
 	      ((res == SMALLER) ? UNDER_CURVE : ON_CURVE));
@@ -338,9 +394,9 @@ public:
     else
     {
       // Compare with the vertical segment's end-points.
-      Compare_xy_2      compare_xy = compare_xy_2_object();
-      Comparison_result res1 = compare_xy (p, cv.ps);
-      Comparison_result res2 = compare_xy (p, cv.pt);
+      Compare_y_2       compare_y = compare_y_2_object();
+      Comparison_result res1 = compare_y (p, cv.ps);
+      Comparison_result res2 = compare_y (p, cv.pt);
       
       if (res1 == LARGER && res2 == LARGER)
 	return (ABOVE_CURVE);
@@ -436,7 +492,7 @@ public:
                    _curve_compare_slope_left (cv1, cv) == SMALLER));
 	else
 	  return (dir == DIR_RIGHT &&
-		  _curve_compare_slope_left (cv1, cv) == LARGER);
+		  _curve_compare_slope_right (cv1, cv) == LARGER);
       }
     }
 
@@ -534,7 +590,7 @@ public:
    */
   bool point_is_same(const Point_2 & p1, const Point_2 & p2) const
   {
-    return equal_2_object()(p1, p2);
+    return (equal_2_object()(p1, p2));
   }
   
   /*!
@@ -857,7 +913,7 @@ private:
 	CGAL_precondition(comp_xy(p, cv.pt) == EQUAL);
       }
 
-      return ((res == SMALLER) ? DIR_UP : DIR_DOWN);
+      return ((res == SMALLER) ? DIR_DOWN : DIR_UP);
     }
 
     // In case cv is not vertical:
@@ -905,7 +961,7 @@ private:
                            bool& is_overlap,
 			   Point_2& p1, Point_2& p2) const
   {
-    // Intersect the two original segments.
+    // Intersect the two supporting lines.
     Object    res = intersect_2_object()(cv1.line, cv2.line);
 
     if (res.is_empty())
@@ -920,8 +976,7 @@ private:
       is_overlap = false;
 
       // Simple case of intersection at a single point.
-      if (curve_get_point_status(cv1, ip) == ON_CURVE &&
-	  curve_get_point_status(cv2, ip) == ON_CURVE)
+      if (_is_on_segment(cv1, ip) && _is_on_segment(cv2, ip))
       {
 	p1 = ip;
 	return (true);
@@ -966,6 +1021,40 @@ private:
     }
   }
 
+  /*!
+   * Check whether the given point lies on the given segment.
+   * \param cv The curve.
+   * \param q The point.
+   * \pre The function assumes q lies on the supporting line of the segment.
+   * \return (true) if q lies of cv.
+   */
+  bool _is_on_segment (const X_curve_2 & cv, const Point_2 & q) const
+  {
+    if (! cv.is_vert)
+    {
+      Compare_x_2       comp_x = compare_x_2_object();
+      Comparison_result res1 = comp_x (q, cv.ps);
+      Comparison_result res2 = comp_x (q, cv.pt);
+
+      // We check if x(q) equals the x value of one of the end-points.
+      // If not, we check whether one end-point is to q's left and the other is
+      // to its right.
+      return ((res1 == EQUAL) || (res2 == EQUAL) ||
+	      (res1 != res2));
+    }
+    else
+    {
+      Compare_y_2       comp_y = compare_y_2_object();
+      Comparison_result res1 = compare_y (q, cv.ps);
+      Comparison_result res2 = compare_y (q, cv.pt);
+
+      // We check if x(q) equals the y value of one of the end-points.
+      // If not, we check whether one end-point is above q and the other is
+      // below it.
+      return ((res1 == EQUAL) || (res2 == EQUAL) ||
+	      (res1 != res2));
+    }
+  }
 };
 
 /*!
@@ -1041,6 +1130,9 @@ class Segment_cached_2 :
   }
 };
 
+/*!
+ * Output operator for a cached segment.
+ */
 template <class Kernel_>
 ::std::ostream& operator<< (::std::ostream& os,
                             const Segment_cached_2<Kernel_>& seg)
