@@ -1,3 +1,6 @@
+2.8.3       (20 Jun 2001)
+- changed window_input demo for usage with CGAL::window
+
 2.8.2       (18 June 2001)
 - Update version string in leda_window to 2.3.
 - Minor fixes.
