@@ -222,26 +222,26 @@ VectorH2<R>::operator*(const VectorH2<R>& v) const
 template <class R>
 CGAL_KERNEL_INLINE
 typename VectorH2<R>::Vector_2
-VectorH2<R>::operator/(const typename R::RT& f) const
+VectorH2<R>::operator/(const typename VectorH2<R>::RT& f) const
 { return VectorH2<R>( hx(), hy(), hw()*f ); }
 
 template <class R>
 CGAL_KERNEL_INLINE
 typename VectorH2<R>::Vector_2
-VectorH2<R>::operator/(const typename R::FT& f) const
+VectorH2<R>::operator/(const typename VectorH2<R>::FT& f) const
 { return VectorH2<R>( hx()*f.denominator(), hy()*f.denominator(),
 	              hw()*f.numerator() ); }
 
 template <class R>
 CGAL_KERNEL_INLINE
 typename VectorH2<R>::Vector_2
-VectorH2<R>::operator*(const typename R::RT& f) const
+VectorH2<R>::operator*(const typename VectorH2<R>::RT& f) const
 { return VectorH2<R>( hx()*f, hy()*f, hw() ); }
 
 template <class R>
 CGAL_KERNEL_INLINE
 typename VectorH2<R>::Vector_2
-VectorH2<R>::operator*(const typename R::FT& f) const
+VectorH2<R>::operator*(const typename VectorH2<R>::FT& f) const
 { return VectorH2<R>( hx()*f.numerator(), hy()*f.numerator(),
 	              hw()*f.denominator() ); }
 
