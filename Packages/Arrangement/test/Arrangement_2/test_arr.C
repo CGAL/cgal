@@ -23,9 +23,9 @@
 
 // Making sure test doesn't fail if LEDA is not installed
 #if ! defined(CGAL_USE_LEDA) && \
-      (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
-       CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS || \
-       CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS)
+  (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
+   CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS || \
+   CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS)
 
 int main()
 {
@@ -49,7 +49,6 @@ int main()
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
   #include <CGAL/Arr_polyline_traits.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
-//#error Currently not supported (July 2000)
   #include <CGAL/leda_rational.h>
   #include <CGAL/Arr_leda_polyline_traits.h>
   #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
@@ -135,20 +134,20 @@ typedef std::list<Point>                                Point_list;
 
 class Arr_test
 {
-  Arr_2 arr;  
+  Arr_2 m_arr;  
 
 public:
 #if CGAL_ARR_TEST_POINT_LOCATION == 4
-  Arr_test() : arr(new CGAL::Pm_simple_point_location<Planar_map>) {};
+  Arr_test() : m_arr(new CGAL::Pm_simple_point_location<Planar_map>) {};
 
 #elif CGAL_ARR_TEST_POINT_LOCATION == 3  
-  Arr_test() : arr(new CGAL::Pm_walk_along_line_point_location<Planar_map>) {};
+  Arr_test() : m_arr(new CGAL::Pm_walk_along_line_point_location<Planar_map>) {};
 
 #elif CGAL_ARR_TEST_POINT_LOCATION == 2
-  Arr_test() : arr(new CGAL::Pm_naive_point_location<Planar_map>) {};
+  Arr_test() : m_arr(new CGAL::Pm_naive_point_location<Planar_map>) {};
 #else
   // CGAL_ARR_TEST_POINT_LOCATION == 1
-  Arr_test() : arr(new CGAL::Pm_default_point_location<Planar_map>) {};
+  Arr_test() : m_arr(new CGAL::Pm_default_point_location<Planar_map>) {};
   // None
 #endif
 
@@ -157,17 +156,17 @@ public:
    ****************************/
 private:
   
-  int                      num_polylines;
+  int num_polylines;
 
-  Point_list               all_points_list;
-  Point_list               test_point_list;
+  Point_list m_all_points_list;
+  Point_list test_point_list;
   std::list<Arr_2::Locate_type> exp_type_list;
   
-  unsigned                 expected_num_vertices,
-                           expected_num_edges,
-                           expected_num_faces,
-                           expected_num_overlaps,
-                           actual_num_overlaps;
+  unsigned expected_num_vertices,
+    expected_num_edges,
+    expected_num_faces,
+    expected_num_overlaps,
+    actual_num_overlaps;
  
   // count overlap references in arrangement,
   // that is every reference from a halfedge of an overlapped edge
@@ -178,8 +177,8 @@ private:
     Arr_2::Overlap_circulator oe;
     unsigned count, counted_overlaps = 0;
       
-    //std::cout << "halfedge: overlapping edges" << std::endl;
-    for (hit=arr.halfedges_begin(); hit!=arr.halfedges_end(); ++hit, ++hit) 
+    for (hit =m_arr.halfedges_begin(); hit != m_arr.halfedges_end();
+         ++hit, ++hit) 
     {
       //std::cout << (*hit).vertex()->point();
       //std::cout << (*hit).opposite()->vertex()->point() << ": " << std::endl;
@@ -215,36 +214,24 @@ private:
     std::cout << std::endl;
   } 
  
-  void print_kind_of_location(Arr_2::Locate_type &lt)
+  void print_kind_of_location(Arr_2::Locate_type & lt)
   {
     switch (lt) {
-      case Arr_2::VERTEX:
-        std::cout << "Vertex ";
-        break;
-      case Arr_2::EDGE:
-        std::cout<< "Edge ";
-        break;
-      case Arr_2::FACE:
-        std::cout<< "Face ";
-        break;
-      case Arr_2::UNBOUNDED_VERTEX:
-        std::cout<< "UnBounded Vertex ";
-        break;
-      case Arr_2::UNBOUNDED_EDGE:
-        std::cout<< "UnBounded Edge ";
-        break;
-      case Arr_2::UNBOUNDED_FACE:
-        std::cout<< "UnBounded Face ";
-        break;
-      }
-      std::cout << std::endl;
+      case Arr_2::VERTEX: std::cout << "Vertex "; break;
+      case Arr_2::EDGE:   std::cout<< "Edge ";    break;
+      case Arr_2::FACE:   std::cout<< "Face ";    break;
+      case Arr_2::UNBOUNDED_VERTEX: std::cout<< "UnBounded Vertex "; break;
+      case Arr_2::UNBOUNDED_EDGE:   std::cout<< "UnBounded Edge ";   break;
+      case Arr_2::UNBOUNDED_FACE:   std::cout<< "UnBounded Face ";   break;
+    }
+    std::cout << std::endl;
   }
   
   bool point_is_in_expected_place(Point &pnt, Arr_2::Locate_type exp_lt)
   {
     Arr_2::Locate_type    location_of_vertex;
       
-    arr.locate(pnt ,location_of_vertex);
+    m_arr.locate(pnt ,location_of_vertex);
     print_kind_of_location(location_of_vertex);
     return (location_of_vertex == exp_lt);
   }
@@ -266,10 +253,10 @@ private:
     }
   }
   
-  void points_in_expected_place(Point_list                    & point_list,
+  void points_in_expected_place(Point_list & point_list,
                                 std::list<Arr_2::Locate_type> & lt_list)
   {
-    Point_list::iterator              pit;
+    Point_list::iterator pit;
     std::list<Arr_2::Locate_type>::iterator lt_it;
       
     for (pit = point_list.begin(), lt_it = lt_list.begin();
@@ -294,17 +281,17 @@ private:
     std::cout << "expected # of vertices: ";
     std::cout << expected_num_vertices << std::endl;
     std::cout << "  actual # of vertices: ";
-    std::cout << arr.number_of_vertices() << std::endl;
+    std::cout << m_arr.number_of_vertices() << std::endl;
 
     std::cout << "expected # of edges: ";
     std::cout << expected_num_edges << std::endl;
     std::cout << "  actual # of edges: ";
-    std::cout << arr.number_of_halfedges() / 2<< std::endl;      
+    std::cout << m_arr.number_of_halfedges() / 2<< std::endl;      
 
     std::cout << "expected # of faces: ";
     std::cout << expected_num_faces << std::endl;
     std::cout << "  actual # of faces: ";
-    std::cout << arr.number_of_faces() << std::endl;
+    std::cout << m_arr.number_of_faces() << std::endl;
 
     std::cout << "expected # of overlaping edges: ";
     std::cout << expected_num_overlaps << std::endl;
@@ -315,9 +302,9 @@ private:
   NT get_next_num(std::ifstream& file)
   {
     CGAL::Quotient<int> num = 0;
-    NT            result(INT_MAX);
-    std::string   s;
-    char          c = 0;
+    NT result(INT_MAX);
+    std::string s;
+    char c = 0;
 
     //file.set_ascii_mode();
     while ( file && (result == NT(INT_MAX) ))
@@ -367,10 +354,10 @@ private:
 #if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS || \
     CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 
-  Curve read_segment_curve(std::ifstream& file, bool reverse_order)
+  Curve read_segment_curve(std::ifstream & file, bool reverse_order)
   {
     Curve segment;
-    NT    x,y; 
+    NT x,y; 
 
     // read two segment points
     x = get_next_num(file); y = get_next_num(file);
@@ -378,8 +365,8 @@ private:
     x = get_next_num(file); y = get_next_num(file);
     Point p2(x,y);
     
-    all_points_list.push_back(p1);
-    all_points_list.push_back(p2);
+    m_all_points_list.push_back(p1);
+    m_all_points_list.push_back(p2);
     
     if (reverse_order)
       segment = Curve(p1,p2);
@@ -418,7 +405,7 @@ private:
         polyline.push_back(*plit);
       }
     
-    all_points_list.splice(all_points_list.end(), point_list); 
+    m_all_points_list.splice(m_all_points_list.end(), point_list); 
     return polyline;
   }
 
@@ -539,7 +526,7 @@ private:
 
 #endif
 
-      arr.insert(curr_curve);
+      m_arr.insert(curr_curve);
     }
 
     // 2. read test vertices
@@ -574,7 +561,6 @@ private:
     //      std::getline(file, s); // skip
     //      std::getline(file, s, ':'); // skip
     expected_num_overlaps = get_next_int(file);
-      
   }
 
   /****************************
@@ -589,31 +575,31 @@ public:
     read_file_build_arrangement(file, reverse_order);
       
     // DEBUG
-    //print_vertices(arr);
+    //print_vertices(m_arr);
 
     // debug
-    //   Arr_2::Face_handle    f  = arr->unbounded_face();
+    //   Arr_2::Face_handle    f  = m_arr->unbounded_face();
     //   Arr_2::Holes_iterator it = f->holes_begin(),end=f->holes_end();
     //   Arr_2::Ccb            c  = *it;
     //const X_curve& cv = curr->curve();
 
     // Check validity of arrangement after insertion
-    CGAL_assertion(arr.is_valid());
+    CGAL_assertion(m_arr.is_valid());
             
     // Check that vertices read are indeed in the arrangement
-    check_that_vertices_are_in_arrangement(all_points_list);
+    check_that_vertices_are_in_arrangement(m_all_points_list);
 
     // count overlaps
     actual_num_overlaps = count_overlaps(); 
 
     show_comparison();   
       
-    CGAL_assertion (arr.number_of_vertices()  == expected_num_vertices);
+    CGAL_assertion (m_arr.number_of_vertices() == expected_num_vertices);
     // verify that test points are as located in the arrangemet as expected
     points_in_expected_place(test_point_list, exp_type_list);
-    CGAL_assertion (arr.number_of_halfedges() == expected_num_edges * 2);
-    CGAL_assertion (arr.number_of_faces()     == expected_num_faces);
-    CGAL_assertion (actual_num_overlaps       == expected_num_overlaps);
+    CGAL_assertion (m_arr.number_of_halfedges() == expected_num_edges * 2);
+    CGAL_assertion (m_arr.number_of_faces() == expected_num_faces);
+    CGAL_assertion (actual_num_overlaps == expected_num_overlaps);
   }
 };
 
