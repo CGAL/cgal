@@ -23,11 +23,19 @@ CXXFLAGS = -I../../../include/ \
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          $(CGAL_LIBPATH)
+          $(CGAL_LIBPATH)\
+	  
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_QT_LDFLAGS) \
+	  $(CGAL_LD_FLAGS)\
+	  -L`pwd`\
+	  -L/0/prisme_util/CGAL/CGAL-2.5-I-85/lib/i686_Linux-2.2.18_g++-2.95_LEDA -L/net/home/prisme/LEDA/LEDA-4.2/lib/Linux_g++ \
+	  -L/net/home/prisme/CLN/CLN-1.0.2/Linux_g++/lib \
+	  -L/usr/local/qt/lib -L/usr/local/gmp/lib -L/usr/X11R6/lib \
+	  -Wl,-R/0/prisme_util/CGAL/CGAL-2.5-I-85/lib/i686_Linux-2.2.18_g++-2.95_LEDA:/net/home/prisme/LEDA/LEDA-4.2/lib/Linux_g++:/net/home/prisme/CLN/CLN-1.0.2/Linux_g++/lib:/usr/local/qt/lib:/usr/local/gmp/lib:/usr/X11R6/lib \
+	  -lCGAL  -lP -lG -lL  -lcln  -lm  -lqt  -lCGALQt2  -lgmpxx  -lgmp
+#          $(CGAL_QT_LDFLAGS) \
 
 
 #---------------------------------------------------------------------#

@@ -81,6 +81,28 @@ private:
     }
   }
 
+  void keyPressEvent(QKeyEvent *e)
+  {
+    switch ( e->key() ) {
+      case Key_Escape:			// key_escape
+         if(firstpoint)
+         {
+	   firstpoint = false;
+           RasterOp old_raster = widget->rasterOp();
+           QColor old_color = widget->color();
+           widget->lock();
+           widget->setRasterOp(XorROP);
+           *widget << CGAL::GREEN;
+           *widget << Segment(Point(x1,y1), Point(x2,y2));
+           widget->setRasterOp(old_raster);
+           widget->setColor(old_color);
+           widget->unlock();
+	   firsttime = true;
+         }
+         break;
+    }//endswitch
+  }
+
   void leaveEvent(QEvent *e)
   {
     if(firstpoint)
@@ -88,11 +110,11 @@ private:
       RasterOp old_raster = widget->rasterOp();//save the initial raster mode
       QColor old_color = widget->color();
       widget->lock();
-	    widget->setRasterOp(XorROP);
-	    *widget << CGAL::GREEN;
-	    *widget << Segment(Point(x1,y1),Point(x2,y2));
-	    widget->setRasterOp(old_raster);
-	    widget->setColor(old_color);
+        widget->setRasterOp(XorROP);
+        *widget << CGAL::GREEN;
+        *widget << Segment(Point(x1,y1), Point(x2,y2));
+        widget->setRasterOp(old_raster);
+        widget->setColor(old_color);
       widget->unlock();
       firsttime = true;
     }
@@ -124,12 +146,15 @@ private:
   };
   void activating()
   {
+    oldpolicy = widget->focusPolicy();
+    widget->setFocusPolicy(QWidget::StrongFocus);
     oldcursor = widget->cursor();
     widget->setCursor(crossCursor);
   };
 
   void deactivating()
   {
+    widget->setFocusPolicy(oldpolicy);
     widget->setCursor(oldcursor);
     firstpoint = false;
   };
@@ -140,6 +165,7 @@ private:
       y2; //the old second point's Y
   bool	firstpoint, //true if the user left clicked once
         firsttime;  //true if the line is not drawn
+  QWidget::FocusPolicy	oldpolicy;
 };//end class 
 
 } // namespace CGAL
