@@ -185,7 +185,7 @@ private:
                                const Point_2& p4) const
     {
       Parallelogram_2 n;
-      n.pp1 = p1, n.pp2 = p2, n.pp3 = p3, n.pp4 = p4, n.dd1 = d1, n.dd2 = d1;
+      n.pp1 = p1, n.pp2 = p2, n.pp3 = p3, n.pp4 = p4, n.dd1 = d1, n.dd2 = d2;
       return n;
     }
   };
