@@ -73,8 +73,8 @@ struct Node {
     int   key;
     Node* next;
     Node* prev;
-    Node() : key(0), next(this), prev( this) {}
-    Node( int n) : key(n), next(this), prev( this) {}
+    Node() : key(0) { next = this; prev = this; }
+    Node( int n) : key(n) { next = this; prev = this; }
     Node( Node* _nx, Node* _pv, int n)
         : key(n), next(_nx), prev( _pv) {}
 };
@@ -124,8 +124,8 @@ class CNode {
     const CNode* next() const { return _next;}
     CNode*       prev()       { return _prev;}
     const CNode* prev() const { return _prev;}
-    CNode() : _next(this), _prev( this), key(0) {}
-    CNode( int n) : _next(this), _prev( this), key(n) {}
+    CNode() : key(0) { _next = this; _prev = this; }
+    CNode( int n) : key(n) { _next = this; _prev = this; }
     CNode( CNode* _nx, CNode* _pv, int n)
         : _next(_nx), _prev( _pv), key(n) {}
     friend CNode* new_cnode( CNode* _nx, CNode* _pv, int n);

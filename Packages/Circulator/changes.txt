@@ -1,6 +1,11 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
 
+3.24 (12 Apr 2002)
+
+     - Changed constructors of test classes with 'this; initializers
+       in test programs to work around warnings on PC compilers.
+
 3.23 (21 Mar 2002)
 
      - Maintenance moved to Lutz Kettner, MPI Saarbruecken.

@@ -492,9 +492,8 @@ C I_get_min_circulator( C c, Random_access_circulator_tag) {
 }
 template <class C> inline
 C get_min_circulator( C c) {
-    return I_get_min_circulator( c, 
-				 //std::iterator_category(c));
-				 std::iterator_traits<C>::iterator_category());
+    typedef std::iterator_traits<C> traits;
+    return I_get_min_circulator( c, typename traits::iterator_category());
 }
 template<class I, class U> inline
 I non_negative_mod(I n, U m) {
