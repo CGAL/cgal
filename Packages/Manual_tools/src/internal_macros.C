@@ -103,8 +103,8 @@ void write_headers_to_index( ostream& out){
     out << sort_key_variable    << "0 !><P><LI><B>Global Variables and "
                                    "Consts</B><P>" << endl;
     out << sort_key_function    << "0 !><P><LI><B>Functions</B><P>" << endl;
-    //    out << sort_key_member_function  << "0 !><P><LI><B>Member Functions</B><P>"
-    //	                             << endl;
+  //out << sort_key_member_function  << "0 !><P><LI><B>Member Functions</B><P>"
+  //	                             << endl;
 }
 
 static int index_anchor_counter = 0;
@@ -225,7 +225,7 @@ void handleChapter(  const Buffer_list& T) {
 
 
     if (macroIsTrue("\\lciIfRefCrossLink"))
-      *main_stream << "<TABLE WIDTH=100%> <TR> <TD ALIGN=LEFT VALIGN=TOP> <H1>" 
+      *main_stream << "<TABLE WIDTH=100%> <TR> <TD ALIGN=LEFT VALIGN=TOP> <H1>"
              << chapter_title << "</H1> </TD>" << endl;
     else
       *main_stream << "<H1>" << chapter_title  << "</H1>" << endl;
@@ -343,7 +343,6 @@ void handleClassFileEnd( void) {
 
 void handleClassEnvironment() {
     string ref_scope_name = macroX("\\ccPureRefScope");
-//    template_class_name = ref_scope_name + macroX("\\ccPureClassTemplateName");
     template_class_name = macroX("\\ccPureClassTemplateName");
     string formatted_template_class_name = 
 	convert_C_to_html( template_class_name);
