@@ -172,7 +172,7 @@ void draw_faces_along_line(Triangulation &T,
     W << CGAL::RED;
     leda_drawing_mode dm = W.set_mode(leda_xor_mode);
     W >> p >> q;
-    while (p==q) W << q;
+    while (p==q) W >> q;
     W << p << q << Line(p,q);
     W.set_mode(dm);
 
