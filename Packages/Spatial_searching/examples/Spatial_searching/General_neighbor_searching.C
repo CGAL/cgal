@@ -3,7 +3,7 @@
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Kd_tree_traits_point_d.h>
-#include <CGAL/Manhattan_distance_rectangle_point.h>
+#include <CGAL/Manhattan_distance_iso_box_point.h>
 #include <CGAL/K_neighbor_search.h>
 
 
@@ -13,7 +13,7 @@ typedef K::Iso_box_d Iso_box_d;
 typedef CGAL::Random_points_in_iso_box_d<Point_d>       Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
 typedef CGAL::Kd_tree_traits_point_d<K> TreeTraits;
-typedef CGAL::Manhattan_distance_rectangle_point<TreeTraits, Iso_box_d> Distance;
+typedef CGAL::Manhattan_distance_iso_box_point<TreeTraits, Iso_box_d> Distance;
 typedef CGAL::K_neighbor_search<TreeTraits, Distance> Neighbor_search;
 typedef Neighbor_search::Tree Tree;
 typedef std::list<Neighbor_search::Point_with_distance> Neighbors;
@@ -31,7 +31,7 @@ main() {
   Tree tree(N_Random_points_iterator(rpit,0),
 	    N_Random_points_iterator(N));
 
-  // define query
+  std::cout << "define query" << std::endl;
   double p[D] = {0.1, 0.1, 0.1, 0.1};
   double q[D] = {0.2, 0.2, 0.2, 0.2};
   Point_d pp(D,p,p+D);
@@ -42,7 +42,10 @@ main() {
   Neighbors::iterator it;
   Distance tr_dist;
 
+  std::cout << "search" << std::endl;
   Neighbor_search N1(tree, query, K, 10.0, false);
+  
+  std::cout << "report" << std::endl;
   N1.the_k_neighbors(std::back_inserter(neighbors)); 
  
   std::cout << "query = [0.1,0.2]^4 " << std::endl 

@@ -39,6 +39,8 @@ main() {
   // using default value 0.0 for epsilon fuzziness paramater
   // Fuzzy_box exact_range(r); replaced by
   Fuzzy_iso_box exact_range(p,q);
+  std::cout << "tree.search(..)" << std::endl;
+  tree.report_all_points(std::ostream_iterator<Point>(std::cout,"\n"));
   tree.search( std::back_inserter( result ), exact_range);
 
   std::cout << "The points in the box [0.2,0.7]x[0.2,0.7] are: " << std::endl;

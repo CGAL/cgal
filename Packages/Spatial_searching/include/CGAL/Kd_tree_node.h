@@ -148,7 +148,6 @@ namespace CGAL {
 			else
 		           if (q.inner_range_intersects(b)) 
 			   it=lower_ch->search(it,q,b);
-
                         if  (q.outer_range_is_contained_by(*b_upper))     
 			    it=upper_ch->tree_items(it);
 			else

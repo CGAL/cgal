@@ -202,7 +202,8 @@ template <class InputIterator>
     std::copy(first, beyond, std::back_inserter(pts));
     Point p = *pts.begin();
     typename GeomTraits::Construct_cartesian_const_iterator ccci;
-    int dim = std::distance(ccci(p), ccci(p,0));  
+    int dim = std::distance(ccci(p), ccci(p,0)); 
+
     data = std::vector<Point*>(pts.size()); // guarantees that iterators we store in Kd_tree_nodes stay valid
     data_iterator = data.begin();
 
@@ -213,8 +214,9 @@ template <class InputIterator>
     the_item_number=c.size();
     if (c.size() <= split.bucket_size())
       tree_root = create_leaf_node(c);
-    else 
-      create_internal_node(c, UseExtendedNode()); 
+    else {
+      tree_root = create_internal_node(c, UseExtendedNode()); 
+    }
 	
   }
 
