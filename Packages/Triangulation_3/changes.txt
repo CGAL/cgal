@@ -1,5 +1,6 @@
 Version 1.56 (?? May 01)
 - Document the hierarchy.
+- Use MP_Float.
 
 Version 1.55 (29 May 01)
 - warning bcc fixed (unused variable)

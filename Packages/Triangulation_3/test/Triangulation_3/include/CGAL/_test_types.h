@@ -8,14 +8,12 @@
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
 typedef leda_integer my_NT;
-#else
-#ifdef CGAL_USE_GMP
+#elif defined CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 typedef CGAL::Gmpz my_NT;
 #else
-#include <CGAL/double.h>
-typedef double my_NT;
-#endif
+#include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float my_NT;
 #endif
 
 #include <CGAL/Cartesian.h>
