@@ -121,6 +121,7 @@ test_n( unsigned int n,
                              setting = CGAL::Box_intersection_d::BIPARTITE )
 {
     Box_container boxes1, boxes2;
+    const unsigned int allpairs_max = 5000;
     //Result_container result_allpairs, result_scanner, result_tree;
     std::cout << "generating random box sets with size " << n
               << " ... " << std::flush;
@@ -135,7 +136,7 @@ test_n( unsigned int n,
     Counter_callback callback0, callback1, callback2;
     CGAL::Timer timer;
 
-    if( n < 5000 ) {
+    if( n < allpairs_max ) {
         std::cout << "all pairs ... " << std::flush;
         timer.start();
         CGAL::Box_intersection_d::all_pairs( boxes1.begin(), boxes1.end(),
@@ -173,7 +174,7 @@ test_n( unsigned int n,
               << timer.time() << " seconds." << std::endl;
 
     if( callback1.counter != callback2.counter ||
-        n < 20000 && callback0.counter != callback1.counter )
+        n < allpairs_max && callback0.counter != callback1.counter )
     {
         ++failed;
         /*unsigned int missing    = countMissingItems( result_scanner,
