@@ -27,7 +27,7 @@
 
 template <class Del>
 void
-_test_cls_delaunay_triangulation_2( const Del & )
+_test_cls_delaunay_triangulation_2( const Del & del)
 {
   typedef Del  Delaunay;
   typedef typename Delaunay::Point                Point;

@@ -49,7 +49,7 @@ public:
 
 template <class Triangulation>
 void
-_test_cls_triangulation_short_2( const Triangulation & )
+_test_cls_triangulation_short_2( const Triangulation &)
 {
   typedef Triangulation                      Cls;
 
