@@ -1,3 +1,23 @@
+// ============================================================================
+//
+// Copyright (c) 1997-2002 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// file          : triangulation_2.C
+// package       : Qt_widget
+// author(s)     : Radu Ursu 
+// release       : 
+// release_date  : 
+//
+// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
+//
+// ============================================================================
+
 // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
 #include <iostream>
@@ -15,26 +35,26 @@ int main(int, char*)
 #else
 
 
-
+//Application headers
 #include "cgal_types.h"
 #include "Qt_widget_toolbar.h"
 #include "Qt_widget_toolbar_layers.h"
 
-//Qt_widget
+//Qt_widget headers
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_helpwindow.h>
 
 
-//STL 
+//STL headers
 #include <fstream>
 #include <stack>
 #include <set>
 #include <string>
 
 
-//Qt
+//Qt headers
 #include <qapplication.h>
 #include <qfiledialog.h>
 #include <qimage.h>
@@ -127,6 +147,8 @@ public:
   file->insertSeparator();
   file->insertItem("&Load Image", 
 		   this, SLOT(load_image()), CTRL+Key_I);
+  file->insertSeparator();
+  file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
   file->insertSeparator();
   file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
   file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
