@@ -204,7 +204,7 @@ public:
 
   typedef Triangulation_dsul_iterator_base_2<Tds> Iterator_base;
   typedef Triangulation_dsul_edge_iterator_2<Tds> Edge_iterator;
-  typedef Triangulation_dsul_iterator_base_2<Tds>::Face Face;
+  typedef typename Triangulation_dsul_iterator_base_2<Tds>::Face Face;
 
 private:
 int index;
