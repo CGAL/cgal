@@ -16,11 +16,11 @@
 // source        : 
 // revision      : 
 // revision_date : 
-// author(s)     : Iddo Hanniel <hanniel@math.tau.ac.il>
-//                 Oren Nechushtan <theoren@math.tau.ac.il>
+// author(s)     : Iddo Hanniel <hanniel@post.tau.ac.il>
+//                 Oren Nechushtan <theoren@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 //
-//
-// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+// coordinator   : Tel-Aviv University (Dan Halperin <danha@post.tau.ac.il>)
 //
 // Chapter       : 
 // ======================================================================
@@ -31,10 +31,6 @@
 #include <CGAL/Planar_map_2/Planar_map_misc.h>
 
 CGAL_BEGIN_NAMESPACE
-
-////////////////////////////////////////////////////////
-//NAIVE STRATEGY
-////////////////////////////////////////////////////////
 
 template <class Planar_map_>
 class Pm_naive_point_location : public Pm_point_location_base<Planar_map_> {
@@ -108,11 +104,10 @@ public:
 public:
   inline const Bounding_box * get_bounding_box() const 
   {return pm->get_bounding_box();}
-  inline const Traits* get_traits() const {return traits;}
+  inline const Traits * get_traits() const {return traits;}
   
 protected:
-  Halfedge_handle find_lowest(Vertex_handle v,
-                              bool highest) const;
+  Halfedge_handle find_lowest(Vertex_handle v, bool highest) const;
   
 #ifdef CGAL_PM_DEBUG
   void debug(){}
@@ -132,4 +127,4 @@ CGAL_END_NAMESPACE
 #include <CGAL/Pm_naive_point_location.C>
 #endif
 
-#endif //CGAL_PM_NAIVE_POINT_LOCATION_H
+#endif
