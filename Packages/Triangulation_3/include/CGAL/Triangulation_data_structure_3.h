@@ -36,7 +36,7 @@
 #include <set>
 #include <vector>
 
-#include <CGAL/triple.h>
+#include <CGAL/utility.h>
 
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/triangulation_assertions.h>
@@ -73,7 +73,7 @@ public:
   // typedef Vertex *      Vertex_handle;
 
   typedef std::pair<Cell_handle, int>              Facet;
-  typedef triple<Cell_handle, int, int>            Edge;
+  typedef Triple<Cell_handle, int, int>            Edge;
 
   friend class Triangulation_ds_facet_iterator_3<Tds>;
   friend class Triangulation_ds_edge_iterator_3<Tds>;

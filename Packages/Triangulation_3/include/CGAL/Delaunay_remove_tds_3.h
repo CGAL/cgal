@@ -27,7 +27,7 @@
 #include <CGAL/basic.h>
 
 #include <map>
-#include <CGAL/quadruple.h>
+#include <CGAL/utility.h>
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Triangulation_data_structure_using_list_2.h>
 
@@ -251,7 +251,7 @@ public:
   // FIXME : similar to operator>>(), isn't it ?  Should we try to factorize ?
   Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole ) {
 
-    typedef quadruple<Vertex_handle_3_2, Vertex_handle_3_2,
+    typedef Quadruple<Vertex_handle_3_2, Vertex_handle_3_2,
                       Face_handle_3_2, int> Halfedge;
 
     std::vector<Halfedge> halfedges;
