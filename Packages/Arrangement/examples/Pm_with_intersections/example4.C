@@ -17,11 +17,11 @@ typedef CGAL::Quotient<int>                             NT;
 typedef CGAL::Cartesian<NT>                             Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 typedef Traits::Point_2                                 Point;
-typedef Traits::X_monotone_curve_2                               Curve;
+typedef Traits::X_monotone_curve_2                      Curve;
 typedef CGAL::Pm_default_dcel<Traits>                   Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>                 PM;
 typedef CGAL::Planar_map_with_intersections_2<PM>       Pmwx;
-typedef std::vector<Curve> CurveContainer;
+typedef std::vector<Curve>                              CurveContainer;
 
 int main()
 {
@@ -32,7 +32,7 @@ int main()
   cv.push_back(Curve(Point(0, 1), Point(1, 0)));
   cv.push_back(Curve(Point(0, 0), Point(1, 1)));
   cv.push_back(Curve(Point(0, 1), Point(1, 1)));
-
+  
   std::cout << "The curves of the map :" << std::endl;
   std::copy(cv.begin(), cv.end(), 
 	    std::ostream_iterator<Curve>(std::cout, "\n"));
