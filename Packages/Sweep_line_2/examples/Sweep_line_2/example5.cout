@@ -1,0 +1,8 @@
+ * * * Demonstrating a trivial usage of the sweep line algorithm
+
+ * * * Printing list of all points in the arrangemen induced by the input segments
+0 0
+0 1
+0.5 0.5
+1 0
+1 1
