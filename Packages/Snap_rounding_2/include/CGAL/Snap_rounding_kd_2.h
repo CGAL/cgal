@@ -55,8 +55,9 @@ class Multiple_kd_tree {
 
 typedef Rep_                                Rep;
 typedef typename Rep::FT                    NT;
-typedef typename Rep::Segment_2             Segment;
+typedef typename Rep::Segment_2             Segment_2;
 typedef typename Rep::Point_2               Point_2;
+typedef typename Rep::Vector_2              Vector_2;
 typedef typename Rep::Iso_rectangle_2       Iso_rectangle_2;
 typedef typename Rep::Direction_2           Direction_2;
 typedef typename Rep::Line_2                Line_2;
@@ -113,9 +114,22 @@ private:
        {return(max(max(max(x1,x2),
                 max(x3,x4)),max(x5,x6)));}
 
-  int get_kd_num(Segment seg,int n)
+  int get_kd_num(Segment_2 seg,int n)
   {
-    Direction_2 d(seg);
+    // force the segment slope to [0-180)
+    Point_2 s = seg.source(),t = seg.target();
+    Comparison_result cx = _gt.compare_x_2_object()(s,t);
+    Comparison_result cy = _gt.compare_y_2_object()(s,t);
+    if(cy == LARGER || cy == EQUAL && cx == LARGER)
+      seg = Segment_2(t,s);
+
+    // force the vector to [0-90)
+    Vector_2 v(seg.source(),seg.target());
+    if(cx == EQUAL || cx == LARGER && cy == SMALLER ||
+       cx == SMALLER && cy == LARGER)
+      v = v.perpendicular(RIGHTTURN);
+
+    Direction_2 d(v.direction());
     int i = 0;
     bool found = false;
     typename std::list<Direction_2>::const_iterator
@@ -133,13 +147,13 @@ private:
   }
 
   void check_kd(int *kd_counter,int number_of_trees,
-       std::list<Segment> &seg_list)
+       std::list<Segment_2> &seg_list)
   {
     for(int i = 0;i < number_of_trees;++i)
       kd_counter[i] = 0;
 
     int kd_num;
-    for(typename std::list<Segment>::iterator iter =
+    for(typename std::list<Segment_2>::iterator iter =
         seg_list.begin();iter != seg_list.end();++iter) {
       kd_num = get_kd_num(*iter,number_of_trees);
       kd_counter[kd_num]++;
@@ -150,7 +164,7 @@ public:
 
   Multiple_kd_tree(std::list<std::pair<Point_2,SAVED_OBJECT> > 
                    &inp_points_list,int inp_number_of_trees,
-                   std::list<Segment> &seg_list) : 
+                   std::list<Segment_2> &seg_list) : 
     pi(3.1415),half_pi(1.57075),epsilon(0.001),
     number_of_trees(inp_number_of_trees),input_points_list(inp_points_list)
   {
@@ -184,17 +198,18 @@ public:
   }
 
   void get_intersecting_points(list<SAVED_OBJECT> &result_list,
-                               Segment inp_s,
+                               Segment_2 inp_s,
                                NT unit_squere)
   {
     Comparison_result cy = _gt.compare_y_2_object()(
            inp_s.source(),inp_s.target());
-    Segment s(cy == SMALLER ?
+    Segment_2 s(cy == SMALLER ?
               inp_s.source() : inp_s.target(),
               cy == SMALLER ?
               inp_s.target() : inp_s.source());
 
     // determine right kd-tree to work on, depending on the segment's slope
+    // ^^^^^^ the next code should be replaced
     double alpha_double = _gt.segment_direction_2_object()(s);
 
     if(alpha_double < 0)
@@ -212,10 +227,9 @@ public:
         ++iter) {
       if(iter->second > alpha) {
         right_iter = iter;
-        if(iter != kd_trees_list.begin()) {
-	  if(iter->second - alpha > last_dif)
+        if(iter != kd_trees_list.begin() &&
+           iter->second - alpha > last_dif)
             --right_iter;
-	}
  
         found = true;
       } else
@@ -225,6 +239,7 @@ public:
       right_iter = kd_trees_list.end();
       --right_iter;
     }
+    // ^^^^ until here
 
     Iso_rectangle_2 rec = _gt.bounding_box_of_minkowski_sum_2_object()
         (s,unit_squere,right_iter->second);
