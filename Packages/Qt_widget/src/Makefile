@@ -15,7 +15,7 @@ MOC=$(QTDIR)/bin/moc
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CGAL_QT_CXXFLAGS = -I$(QTDIR)/include
+CGAL_QT_CXXFLAGS = -I$(QTDIR)/include -DCGAL_USE_QT
 
 CXXFLAGS = \
            -I../include \
@@ -46,7 +46,7 @@ Qt_Window.moc: ../include/CGAL/Qt_Window.h
 	$(MOC) -o Qt_Window.moc $<
 
 clean:
-	rm -f Qt_Window.moc Qt_Window.o
+	rm -f Qt_Window.o
 
 #---------------------------------------------------------------------#
 #                    suffix rules

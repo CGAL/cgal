@@ -16,6 +16,8 @@
 //
 // ============================================================================
 
+#ifdef CGAL_USE_QT
+
 #include <CGAL/Qt_Window.h>
 #include <CGAL/Bbox_2.h>
 
@@ -214,3 +216,5 @@ Qt_widget& operator<<(Qt_widget& w, const CGAL::Bbox_2& r)
 } // namespace CGAL
 
 #include "Qt_Window.moc"
+
+#endif

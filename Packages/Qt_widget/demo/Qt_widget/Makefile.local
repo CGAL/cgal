@@ -15,7 +15,7 @@ MOC=$(QTDIR)/bin/moc
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CGAL_QT_CXXFLAGS = -I$(QTDIR)/include
+CGAL_QT_CXXFLAGS = -I$(QTDIR)/include -DCGAL_USE_QT
 
 CXXFLAGS = -I../../include/ \
            $(CGAL_CXXFLAGS) \
