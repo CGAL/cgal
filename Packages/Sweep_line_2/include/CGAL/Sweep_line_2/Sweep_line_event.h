@@ -16,9 +16,10 @@
 // $Name$
 //
 // Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>
+
 #ifndef CGAL_SWEEP_LINE_EVENT_H
 #define CGAL_SWEEP_LINE_EVENT_H
-//extern unsigned int s_counter;
+
 
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
 #include <list>
@@ -64,7 +65,6 @@ public:
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   typedef typename Traits::Point_2 Point_2;
 
-  //typedef Sweep_line_subcurve<Traits> SubCurve;
   typedef CurveWrap SubCurve;
   typedef std::list<SubCurve *> SubcurveContainer; //TODO - change it to SET (faster?)
   typedef typename SubcurveContainer::iterator SubCurveIter;
@@ -73,12 +73,6 @@ public:
   typedef std::set<SubCurve*, StatusLineCurveLess> StatusLine;
   typedef typename StatusLine::iterator StatusLineIter;
 
-        typedef  Point_less_functor<Point_2 ,SweepLineTraits_2 > PointLess;
-        typedef std::set<Point_2 , PointLess> VerticalXPointSet;  
-  typedef typename VerticalXPointSet::iterator VerticalXPointSetIter; 
-
-  typedef std::list<SubCurve *> VerticalCurveList;
-  typedef typename VerticalCurveList::iterator VerticalCurveListIter;
 
   Sweep_line_event(){}
 
@@ -88,11 +82,7 @@ public:
     m_isInitialized(false),
     m_isInternalIntersectionPoint(false),
     m_containsOverlap(false)
-        
-
-  { 
-    //++s_counter;
-  }
+  {}
 
 
   void init(const Point_2 &point , Traits *traits)
@@ -108,57 +98,11 @@ public:
   /*! Destructor. Deletes the lists of curves, without deleting the 
       curves themselves. 
   */
-  virtual ~Sweep_line_event() {
-   // --s_counter;
-   // delete m_leftCurves;
-   // delete m_rightCurves;
-  }
+  virtual ~Sweep_line_event() 
+  {}
 
-
-  /*! Adds a new curve to the event. The curve is added only to the list/s
-   *  in which it is defined (left or/and right).
-   *  If the curve is vertical, it is added to the list of vertical curves.
-   *
-   *  Precondition: The event point has to be either the source or the 
-   *  target of the curve.
-   *  @param curve  a pointer to the curve.
-   */
-  /*void add_curve(SubCurve *scurve)
-  {
-    const X_monotone_curve_2 &curve = scurve->get_curve();
-    
-    
-    if ( m_traits->curve_is_vertical(curve) ) 
-    {
-      m_verticalCurves.push_back(scurve);
-    }
-    else 
-    {
-      const Point_2 &source = m_traits->curve_source(curve);
-     // const Point_2 &target = m_traits->curve_target(curve);
-      const Point_2 *rel = &(source);
-      if ( m_traits->point_equal(m_point, source) )
-              rel = &(m_traits->curve_target(curve));
-      
-      if ( m_traits->compare_x(m_point, *rel) == LARGER )
-      {
-              add_curve_to_left(scurve, m_rightmostPointToLeft, true);
-      } 
-      else 
-      {
-              add_curve_to_right(scurve);
-      }
-    }
-  }*/
 
   
-  
-  /*void add_curve_to_verticals(SubCurve *vcurve)
-  {
-    m_verticalCurves.push_back(vcurve);
-  }*/
-
-
   /*! Adds a new curve that is defined to the left of the event point.
    *  The insertion is performed so that the curves remain sorted by their
    *  Y values to the left of the event.                             <br>
@@ -173,37 +117,11 @@ public:
    * TODO - check to see in which cases the curve is re-inserted with 
    *        a different ordering. Probably in case of conics.
    */
-  void add_curve_to_left(SubCurve *curve)//, const Point_2& ref //m_rightmostPointToLeft//, 
-                        /* bool isInitStage=false*/
+  void add_curve_to_left(SubCurve *curve)
   {
-    /*if ( isInitStage )
-    {
-      if ( !m_isInitialized ) 
-      {
-              if ( curve->is_source_left_to_target()) 
-        {
-                m_rightmostPointToLeft = curve->get_source();
-              }
-              else
-        {
-                m_rightmostPointToLeft = curve->get_target();
-              }
-              m_isInitialized = true;
-      }
-      else
-      {
-              update_rightmost_point(curve);
-      }
+   
 
-    } 
-    else  //!isInitStage*/
-
-    /*if ( !curve->is_end_point(m_point) ) 
-    {
-      m_isInternalIntersectionPoint = true;
-    }*/
-
-    // now insert the curve at the right place...
+    //insert the curve at the right place...
     if (m_leftCurves.empty())
     {
       m_leftCurves.push_back(curve);
@@ -214,9 +132,6 @@ public:
       }
       return;
     }
-
-
-
 
     //update_rightmost_point(ref) if curve is not vertical
     if(!m_traits->curve_is_vertical(curve->get_curve()))
@@ -237,8 +152,8 @@ public:
       const X_monotone_curve_2 &cv = curve->get_curve();
     
       // look for the curve, and if exists, erase it.
-      while ( iter != m_leftCurves.end() ) {
-        //if ( (*iter)->getId() ==  curve->getId())
+      while ( iter != m_leftCurves.end() ) 
+      {
         if ( (*iter) ==  curve)
         {
                 m_leftCurves.erase(iter);
@@ -259,30 +174,7 @@ public:
 
       while ( iter != m_leftCurves.end() )
       {
-        /*if ( m_traits->point_in_x_range((*iter)->get_curve(), ref))
-        {
-                const Point_2 &ref_point = largest_point(curve->get_last_point(), 
-                                                                                       (*iter)->get_last_point());
-          res = m_traits->curves_compare_y_at_x (cv, (*iter)->get_curve(), 
-                                                 ref_point);
-                if (res == EQUAL) 
-          {
-                  res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->get_curve(), 
-                                                        ref_point);
-                }
-        }
-        else
-        {*/
-          /*const Point_2 &ref_point = largest_point(curve->get_last_point(),
-                                                 (*iter)->get_last_point());
-          res = m_traits->curves_compare_y_at_x (cv, (*iter)->get_curve(), 
-                                               ref_point);
-          if (res == EQUAL)
-            res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->get_curve(), 
-                                                      ref_point);
-        }*/
-
-         // res = m_traits->curves_compare_y_at_x_left(cv , (*iter)->get_curve() ,m_point);
+        
         res = m_traits->curves_compare_y_at_x(cv, 
                                              (*iter)->get_curve(),
                                               m_rightmostPointToLeft);
@@ -291,9 +183,6 @@ public:
         ++iter;
       }
     
-      /*while ( iter != m_leftCurves.end() &&
-              res == EQUAL &&
-              curve->getId() > (*iter)->getId() )*/
       while ( iter != m_leftCurves.end() &&
               res == EQUAL &&
               curve > (*iter) )
@@ -304,14 +193,6 @@ public:
         if ( iter == m_leftCurves.end())
           break;
 
-        /*const Point_2 &ref_point = largest_point(curve->get_last_point(), 
-                                                 (*iter)->get_last_point());
-        res = m_traits->curves_compare_y_at_x (cv, (*iter)->get_curve(), 
-                                               ref_point);
-        if (res == EQUAL)
-          res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->get_curve(), 
-                                                    ref_point);*/
-        //res = m_traits->curves_compare_y_at_x_left(cv , (*iter)->get_curve() ,m_point);
         res = m_traits->curves_compare_y_at_x(cv, 
                                              (*iter)->get_curve(),
                                               m_rightmostPointToLeft);
@@ -320,13 +201,13 @@ public:
     // insert the curve. If the curve is already in the list, it is not added
       m_leftCurves.insert(iter, curve);
       }
-      else // the curve is vertical  !!!!!!
+      else // the curve is vertical  
       {
         SubCurveIter iter = m_leftCurves.begin();
+
          // look for the curve, and if exists, erase it.
         while ( iter != m_leftCurves.end() ) 
         {
-          //if ( (*iter)->getId() ==  curve->getId())
           if ( (*iter) ==  curve)
           {
                   m_leftCurves.erase(iter);
@@ -356,9 +237,7 @@ public:
    */
   bool add_curve_to_right(SubCurve *curve) 
   {
-    /*if ( !curve->is_end_point(m_point) )
-      m_isInternalIntersectionPoint = true;*/
-
+    
     if (m_rightCurves.empty()) {
       m_rightCurves.push_back(curve);
       return true;
@@ -367,11 +246,7 @@ public:
 
     SubCurveIter iter = m_rightCurves.begin();
     Comparison_result res;
-    while (/*((res = m_traits->curves_compare_y_at_x (curve->get_curve(),
-                                                (*iter)->get_curve(), 
-                                                 m_point)) == LARGER) ||
-           (res == EQUAL &&
-            */(res = m_traits->curves_compare_y_at_x_right(curve->get_curve(),
+    while ((res = m_traits->curves_compare_y_at_x_right(curve->get_curve(),
                                                       (*iter)->get_curve(), 
                                                       m_point)) == LARGER)
     {
@@ -383,7 +258,6 @@ public:
       }
     }
     
-    //while ( res == EQUAL && curve->getId() > (*iter)->getId() )
     while ( res == EQUAL && curve > (*iter) )
     {
       m_containsOverlap = true;
@@ -394,17 +268,13 @@ public:
               return true;
       }
 
-      /*res = m_traits->curves_compare_y_at_x (curve->get_curve(),
-                                          (*iter)->get_curve(), 
-                                          m_point);
-      if (res == EQUAL)*/
-           res = m_traits->curves_compare_y_at_x_right(curve->get_curve(),
-                                                 (*iter)->get_curve(), 
-                                                 m_point);
+     
+      res = m_traits->curves_compare_y_at_x_right(curve->get_curve(),
+                                                  (*iter)->get_curve(), 
+                                                   m_point);
     }
     
     // insert the curve only if it is not already in...
-    //if ( (*iter)->getId() !=  curve->getId())
     if ( (*iter) !=  curve)
     {
       m_rightCurves.insert(iter, curve);
@@ -459,60 +329,7 @@ public:
     return m_point;
   }
 
-  /*! 
-    @return returns true if at least one of the curves passign 
-    through the event is vertical.
-  */
- /* bool does_contain_vertical_curve() const {
-    return !m_verticalCurves.empty();
-  }*/
-
-
-  /*!returns the list of vertical curves passing through the event point.
-    @return a reference to the list of curves.
-  */
-  /*VerticalCurveList &get_vertical_curves() {
-    return m_verticalCurves;
-  }*/
-
-  /*!returns the rightmost curve end point that is to the left of the event
-      point.
-    @returns a reference to m_rightmostPointToLeft
-   */
- /* const Point_2 &get_right_most_point_to_left() const{
-    return m_rightmostPointToLeft;
-  }*/
-
-
-  /*! Insert a new intersection point on any of the vertical curves.
-   *  The list of points is sorted by their y values.              <br>
-   *  If the requireSort flag is true, the appripriate place in the list 
-   *  is searched for. If not, the point is assumed to have the largest y 
-   *  value, and is inserted at the end of the list.               <br>
-   *  If the pioint already exists, the point is not inserted again.
-   *  @param p a reference to the point
-   *  @param requireSort false if the point is to be added at the end
-   *  of the list.
-   *  
-   */
- /* void add_vertical_curve_x_point(const Point_2 &p, bool requireSort=false) 
-  {
-    m_verticalCurveXPoints->insert(p);
-  }*/
-        
-
-
-  /*! 
-   *  Returns a referece to the list of intersection points on the 
-   * vertical curves passign through the event. If no vertical curves 
-   * pass through the event or no intersection curves exist, the list 
-   * will be empty.
-   * @return a reference to the list of points.
-   */
- /* VerticalXPointSet &get_vertical_x_point_list() {
-    return *m_verticalCurveXPoints;
-  }*/
-
+ 
   /*! Mark the event as an intersection point at an interior of a curve.
    */
   void mark_internal_intersection_point() {
@@ -541,38 +358,6 @@ public:
 #endif
  
 
-
-  
- /* void update_rightmost_point(SubCurve *curve)
-  {
-    if ( curve->is_source_left_to_target())
-    {
-      if ( curve->is_target(m_point) )
-        if ( m_traits->compare_x(curve->get_source(), 
-                                 m_rightmostPointToLeft) == LARGER )
-          m_rightmostPointToLeft = curve->get_source();
-    } else
-    {
-      if ( curve->is_source(m_point) )
-        if ( m_traits->compare_x(curve->get_target(), 
-                                 m_rightmostPointToLeft) == LARGER )
-          m_rightmostPointToLeft = curve->get_target();
-    }
-  }*/
-
-
-  ///*! Whenever a  curve is added to the event,  
-  // * the right most end point to the left of the event point is updated. 
-  // * Precondition: the event is either the source or destination of the curve.
-  // * @param ref a const reference to a reference point which need to be checked.
-  // */
-  //void update_rightmost_point(const Point_2& ref)
-  //{
-  //    if ( m_traits->compare_x(ref , m_rightmostPointToLeft) == LARGER )
-  //            m_rightmostPointToLeft = ref;
-  //}
-      
-  
   protected:
 
 
@@ -599,18 +384,7 @@ public:
   /*! A boolean indicating that m_rightmostPointToLeft is initialized */
   bool m_isInitialized;
 
-  /*! An indication whether this event has been initialized. The event is
-      initialized after the first curve has been added to the left of the 
-      event. 
-  */
-  //bool m_isInitialized;
-
-  ///*! a list of vertical curves going through this event */
-  //VerticalCurveList m_verticalCurves;  //TODO - remove
-
-  ///*! a list of intersection points on the vertical curves */
-  //VerticalXPointSet* m_verticalCurveXPoints; //TODO - remove
-
+  
   /*! a flag that inidcates whether the event is an "interior" intersection 
       point, or just an end point of all curves passing through it.
   */
@@ -618,13 +392,6 @@ public:
 
   /*! true if any two curves passing through the event overlap. */
   bool m_containsOverlap;
-
-  /*const Point_2 &largest_point(const Point_2 &p1, const Point_2 &p2)
-  {
-    if ( m_traits->compare_x(p1, p2) == LARGER )
-      return p1;
-    return p2;
-  }*/
 
 #ifndef NDEBUG
 public:

@@ -43,6 +43,7 @@ public:
   }
 
 private:
+
   /*! a pointer to a traits class */
   Traits * m_traits;
 };
@@ -69,7 +70,6 @@ public:
 
   Status_line_curve_less_functor(Compare_param *p ,Point_2 *pt) : m_compare_param(p),
                                                                   m_sweep_pos(pt)
-                                                                  //,counter(0)
   {
     m_compare[0] = &Status_line_curve_less_functor::compare_at;
     m_compare[1] = &Status_line_curve_less_functor::compare_right;
@@ -81,12 +81,6 @@ public:
 
   bool compare_at(const Subcurve * c1, const Subcurve * c2)  const 
   {
-   /* const Point_2 * p = &(c2->get_last_point());
-    if ( m_compare_param->m_traits->compare_x(c1->get_last_point(),  
-                                              c2->get_last_point()) == LARGER )
-      p = &(c1->get_last_point());*/ //Baruch
-    //now 'p' holds the right most point
-
     Comparison_result r = 
       m_compare_param->m_traits->curves_compare_y_at_x(c1->get_curve(), 
                                        c2->get_curve(), 
@@ -99,45 +93,9 @@ public:
 
   bool compare_right(const Subcurve * c1, const Subcurve * c2)  const 
   {
-
-    //counter++;
     const X_monotone_curve_2 &cv1 = c1->get_curve();
     const X_monotone_curve_2 &cv2 = c2->get_curve();
     Traits *t = m_compare_param->m_traits;
-
-    
-
-      
-    /*
-    if ( t->curve_is_vertical(cv1) )
-    {
-      if (t->point_in_x_range(cv2, c1->get_source()) &&
-          t->curve_compare_y_at_x(c1->get_right_end(), cv2) == SMALLER )
-      {
-        return true;
-      }
-      return false;
-    }
-    if ( t->curve_is_vertical(cv2))
-    {
-      if (t->point_in_x_range(cv1, c2->get_source()) &&
-          t->curve_compare_y_at_x(c2->get_left_end(), cv1) == LARGER)
-      {
-        return true;
-      }
-      return false;
-    }*/
-
-    // non of the curves are vertical...
-   /* const Point_2 *p = &(c2->get_last_point());
-    if ( m_compare_param->m_traits->compare_x(c1->get_last_point(),  
-                                              c2->get_last_point()) == LARGER )
-      p = &c1->get_last_point();*/
-
-     
-    /*Comparison_result r =  t->curves_compare_y_at_x (c1->get_curve(), 
-                                                     c2->get_curve(), 
-                                                     *p);*/
 
     Comparison_result r =  t->curves_compare_y_at_x (c1->get_curve(), 
                                                      c2->get_curve(), 
@@ -186,7 +144,6 @@ public:
 
     // r = EQUAL (e.g overlap curves)
     return (c1 < c2);
-    //return ( c1->getId() < c2->getId() );
   }
 
   Compare_param * m_compare_param;
@@ -196,8 +153,6 @@ private:
 
   const Point_2 *m_sweep_pos;
 
-  public:
- // mutable unsigned int counter;
 };
 
 CGAL_END_NAMESPACE
