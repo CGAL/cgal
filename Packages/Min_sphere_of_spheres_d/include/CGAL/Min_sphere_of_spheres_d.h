@@ -242,8 +242,6 @@ namespace CGAL {
   template<class Traits>
   Min_sphere_of_spheres_d<Traits>::
     Min_sphere_of_spheres_d(const Traits& traits) : t(traits), e(0), ss(t) {
-    // ??? following will crash because ss.radius() is called for ss.dim==-1:
-    // CGAL_assertion(Min_sphere_of_spheres_impl::isNeg(ss.radius(),ss.disc()));
   }
 
   template<class Traits>

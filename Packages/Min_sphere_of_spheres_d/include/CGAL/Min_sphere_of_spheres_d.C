@@ -68,10 +68,10 @@ namespace CGAL {
       CGAL_assertion(k>=e && e>=0);
   
       // permute:
-      for (int j=k-1; j>=e; --j) // todo. theory: is this necessary?
+      for (int j=k-1; j>=e; --j) // TODO. theory: is this necessary?
         std::swap(l[j],l[random.get_int(e,j+1)]);
   
-      for (i=e; i<n; ++i) // todo. not optimal for updates
+      for (i=e; i<n; ++i)
         if (!ss.contains(t.center_coordinates_begin(*l[i]),t.radius(*l[i]),
 			 Min_sphere_of_spheres_impl::Tol,Is_exact())) {
           pivot(i);
@@ -232,7 +232,7 @@ namespace CGAL {
   template<class Traits>
   bool Min_sphere_of_spheres_d<Traits>::
     is_valid(bool verbose,const Tag_false is_exact) const {
-    // ???
+    // TODO.
     // CGAL_warning_msg(false,
     // "is_valid() not supported for inexact number types");
     return true;

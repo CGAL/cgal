@@ -163,7 +163,7 @@ namespace CGAL {
     // instead of the FarthestFirst heuristic (because the former
     // doesn't handle degeneracies as well as the latter does):
     CGAL_warning_msg(Min_sphere_of_spheres_impl::is_heuristic(Algorithm()),
-      "LP_algorithm can't cope with degeneracies, use Farthest_first_heuristic");
+    "LP_algorithm can't cope with degeneracies, use Farthest_first_heuristic");
     
     // revert basis:
     ss.clear();
