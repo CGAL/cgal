@@ -1,9 +1,9 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
-0.9.78 (7 May 2003)
+0.9.79 (7 May 2003)
   - no simple interface for vc1310 in vector__
 
-0.9.77 (5 May 2003)
+0.9.77/78 (5 May 2003)
   - fixed bug in preprocessor directive
 
 0.9.76
