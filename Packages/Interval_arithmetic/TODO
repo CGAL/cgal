@@ -11,6 +11,16 @@
 
 Concerning the code itself:
 
+- test-suite: rajouter un test simple qui vérifie que les exceptions marchent.
+- FPU_get_and_set_cw (), c'est plus joli, et ça peut être plus efficace.
+- Les opérateurs (double, Interval_nt (pas advanced)) ne sont pas protégés par
+  le rounding mode +inf...
+- Filter_Cache:
+  C'est pas un cache, mais un stockage forcé, et il faut l'updater
+  si la value est modifiée...  Vérifier si c'est bien fait partout.
+  Faire des benchs.
+- template < template<CT,ET> class Filter<CT,ET> >, ça n'aurait pas marché ?
+  voir le Stroustrup, et si MipsPro/M$VC le gobent.
 - sign_det_2x2() optimisé pour l'IA (+ bench de triangulation).
   (et régler le sort de include/CGAL/Interval_arithmetic/determinant.h.)
 	include/CGAL/Interval_arithmetic/determinant.h has no header.
@@ -34,9 +44,6 @@ Concerning the code itself:
 - essayer de mettre a et b "register", et voir le changement de l'assembly.
 - converter (long longs), (long doubles)...  au moins documenter que c'est pas
   supporté pour le moment.  Hint: (double) +/- 1ulp.
-- Permettre de cacher (NT tag ?) les conversions en intervalles.
-  C'est pas un cache, mais un stockage forcé, et il faut l'updater
-  si la value est modifiée...
 ? try if __attribute__((const)) for GNU on my operators is ok, and speed up ?
   what about putting it on predicates too ?
 ? Currently, some types (leda_*, GMP) need the rounding to nearest for doing
@@ -77,6 +84,8 @@ Concerning the doc:
 
 Concerning the test-suite:
 
+- Faire une test-suite un peu plus extensive des filtres.  En particulier les
+  types templatés, etc...
 - test new converter functions ?  [use flag -DCGAL_IA_DEBUG]
 - test NaNs (and Infs?).  Comparisons with these should throw the exception...
   Et vérifier s'ils sont bien propagés correctement (par min/max, ou même *).

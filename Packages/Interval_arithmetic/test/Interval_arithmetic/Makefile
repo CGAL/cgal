@@ -28,24 +28,24 @@ include $(CGAL_MAKEFILE)
 # 
 
 CXXFLAGS = -I../../include \
-           $(TESTSUITE_CXXFLAGS) \
-           $(CGAL_CXXFLAGS) \
-	   -g -O2
-	   # -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS \
-	   # -DNO_ASSERTIONS -DNO_PRECONDITIONS -DNO_POSTCONDITIONS \
-	   # -W -O2 
-	   # -mcpu=pentiumpro -march=pentiumpro
-	   # -mcpu=ultrasparc -mtune=ultrasparc
-	   # -B$(UTIL)/Binutils/$(UNAME)/bin/ \
-	   # -fomit-frame-pointer
-	   # -fprofile-arcs -ftest-coverage
-	   # -DCGAL_IA_DEBUG
-	   # -DNO_QUOTIENT_INT \
-	   # -DCGAL_NO_QUOTIENT_INT_FRIENDS \
-           # -O2 -xtarget=ultra2 # (SunPro)
-	   # -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
-	   # -ffast-math         # seems slower !?!
-	   # -fhonor-std
+	$(TESTSUITE_CXXFLAGS) \
+	$(CGAL_CXXFLAGS) \
+	-O2 -W
+	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
+	# -DNO_ASSERTIONS -DNO_PRECONDITIONS -DNO_POSTCONDITIONS \
+	# -W -O2 
+	# -mcpu=pentiumpro -march=pentiumpro
+	# -mcpu=ultrasparc -mtune=ultrasparc
+	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
+	# -fomit-frame-pointer
+	# -fprofile-arcs -ftest-coverage
+	# -DCGAL_IA_DEBUG
+	# -DNO_QUOTIENT_INT \
+	# -DCGAL_NO_QUOTIENT_INT_FRIENDS \
+        # -O2 -xtarget=ultra2 # (SunPro)
+	# -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
+	# -ffast-math         # seems slower !?!
+	# -fhonor-std
 
 #---------------------------------------------------------------------#
 #                    linker flags

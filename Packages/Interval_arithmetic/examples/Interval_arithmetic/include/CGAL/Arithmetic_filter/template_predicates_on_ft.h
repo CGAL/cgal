@@ -10,25 +10,27 @@
 CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-template < class CGAL_IA_CT, class CGAL_IA_ET >
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 // CGAL_KERNEL_LARGE_INLINE
 Comparison_result
-compare_xC2(const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
-	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
-	            const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &l1a,
-	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &l1b,
-	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &l1c,
-	            const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &l2a,
-	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &l2b,
-	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &l2c)
+compare_xC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,  
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+            
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a, 
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b, 
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
+            
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a, 
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c)
 {
-  Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = compare_xC2(
+    Comparison_result result = compare_xC2(
 		px.interval(),
 		py.interval(),
 		l1a.interval(),
@@ -38,11 +40,12 @@ compare_xC2(const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
 		l2b.interval(),
 		l2c.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = compare_xC2(
+    return compare_xC2(
 		px.exact(),
 		py.exact(),
 		l1a.exact(),
@@ -52,7 +55,7 @@ compare_xC2(const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
 		l2b.exact(),
 		l2c.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 CGAL_END_NAMESPACE

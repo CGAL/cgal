@@ -1,7 +1,13 @@
 Changes done to the Interval Arithmetic package.
 
+Version 3.8 on 20 April 1999
+- Fixed small bugs.
+- Updated documentation.
+
 Version 3.7 on 15 April 1999
 - Partial workaround for lack of partial specialization of the predicates.
+- New template parameter "Filter_Cache" to Filtered_exact<CT,ET> to allow
+  caching of the conversion to intervals (default is off).
 
 Version 3.6 on 15 April 1999
 - Final (hopefully) workaround for the rounding modes on IRIX.
