@@ -127,6 +127,8 @@ run_io()
   elif [ $3 -eq $CGAL_POLYLINE_LEDA_TRAITS ]; then
     iofiles="DATA/IO/polylines/leda_io/" 
     SUFFIO="leda_io"
+    # Avoid running test_io with leda_polyline_traits 
+    return
   fi
 
   for DATAFILE in ${datafiles}
