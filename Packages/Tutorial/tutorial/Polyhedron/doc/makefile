@@ -3,10 +3,10 @@ tex: *.tex
 	bibtex tutorial
 	latex tutorial
 	latex tutorial
-ps: tex
+ps: 
 	dvips -Ppdf -G0 -t letter -z -o tutorial.ps tutorial.dvi
 
-pdf: ps
+pdf:
 	ps2pdf -dMaxSubsetPct=100 -dCompatibilityLevel=1.2 -dSubsetFonts=true -dEmbedAllFonts=true -dAntiAliasColorImages=true  -dColorImageResolution=1200 -dEncodeColorImages#true -dAutoFilterColorImages#false -dColorImageFilter#/FlateEncode tutorial.ps tutorial.pdf
 
 all:

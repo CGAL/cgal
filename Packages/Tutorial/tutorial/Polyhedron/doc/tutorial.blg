@@ -11,45 +11,45 @@ Warning--I didn't find a database entry for "ds"
 Warning--I didn't find a database entry for "sqrt3"
 Warning--I didn't find a database entry for "sqt"
 Warning--I didn't find a database entry for "siggraph1998notes"
-You've used 0 entries,
+You've used 2 entries,
             2543 wiz_defined-function locations,
-            566 strings with 4483 characters,
-and the built_in function-call counts, 24 in all, are:
-= -- 0
-> -- 0
-< -- 0
-+ -- 0
-- -- 0
-* -- 2
-:= -- 10
-add.period$ -- 0
-call.type$ -- 0
-change.case$ -- 0
-chr.to.int$ -- 0
-cite$ -- 0
-duplicate$ -- 0
-empty$ -- 1
-format.name$ -- 0
-if$ -- 2
+            578 strings with 4694 characters,
+and the built_in function-call counts, 684 in all, are:
+= -- 67
+> -- 27
+< -- 1
++ -- 8
+- -- 8
+* -- 41
+:= -- 121
+add.period$ -- 6
+call.type$ -- 2
+change.case$ -- 11
+chr.to.int$ -- 2
+cite$ -- 2
+duplicate$ -- 25
+empty$ -- 53
+format.name$ -- 11
+if$ -- 136
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 0
-newline$ -- 3
-num.names$ -- 0
-pop$ -- 0
+missing$ -- 1
+newline$ -- 13
+num.names$ -- 6
+pop$ -- 13
 preamble$ -- 1
-purify$ -- 0
+purify$ -- 13
 quote$ -- 0
-skip$ -- 2
+skip$ -- 24
 stack$ -- 0
-substring$ -- 0
-swap$ -- 0
-text.length$ -- 0
-text.prefix$ -- 0
+substring$ -- 33
+swap$ -- 2
+text.length$ -- 1
+text.prefix$ -- 1
 top$ -- 0
-type$ -- 0
+type$ -- 16
 warning$ -- 0
-while$ -- 0
-width$ -- 0
-write$ -- 2
+while$ -- 7
+width$ -- 4
+write$ -- 27
 (There were 9 warnings)
