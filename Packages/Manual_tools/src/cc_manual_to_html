@@ -393,12 +393,10 @@ end
 # ---------------------
 if ( $?DEBUG) echo "# Converting the index."
 
-cc_index_sort -ger ${new_tmp_path}/cc_index_body | sed 's/[<][\!]sort[^\!]*[\!][>]//' >  ${new_tmp_path}/cc_index_sorted
-
-\cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/cc_index_sorted ${new_tmp_path}/cc_index_footer > ${new_tmp_path}/cc_index
-
-${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/cc_index | cc_remove_unwanted_links > ${out_path}/manual_index.html
-
+makeindex -s ${config_html}/html_index.mst ${new_tmp_path}/manual.hidx
+cc_index_link ${new_tmp_path}/HREF ${new_tmp_path}/manual.ind ${new_tmp_path}/cc_index ${config_gif}
+cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/cc_index ${new_tmp_path}/cc_index_footer > ${out_path}/manual_index.html
+    
 
 # Copy the necessary images to the manual.
 # -------------------------------------------------------
@@ -424,6 +422,7 @@ else
     \rm -r ${new_tmp_path}
 endif
 if ( ! $quiet_switch) echo "]"
+
 
 end_of_script:
 exit
@@ -459,9 +458,19 @@ foreach f ($in_files $ref_files)
     set options = "${header} -config ${config_path} -tmp ${new_tmp_path}/$f:h -noheader"
     set dir = $f:h
     setenv LATEX_CONV_INPUTS "${dir}:$orig_INPUTS"
+    if (-r ${new_tmp_path}/HREF_counter) then
+       \cat ${new_tmp_path}/HREF_counter > ${new_tmp_path}/$f:h/HREF_counter
+    endif
     cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} $f:t >/dev/null
+    \cat ${new_tmp_path}/$dir/HREF_counter > ${new_tmp_path}/HREF_counter
     if ( ! $quiet_switch) echo "]"
 end
+
+
+foreach f ($in_files $ref_files) 
+  \rm ${new_tmp_path}/$f:h/HREF_counter
+end
+\rm ${new_tmp_path}/HREF_counter
 
 #foreach f ($ref_files)
 #    if ( ! $quiet_switch) echo "[converting package $f"
@@ -490,16 +499,15 @@ foreach f ($in_files $ref_files)
     # ---------------------------------
     if ( ! $quiet_switch) echo "applying local anchor filter to package $f,"
     if ( $?DEBUG) echo "# Filtering all HTML files locally."
-    \mv ${new_tmp_path}/$f:h/cc_index_body ${new_tmp_path}/$f:h/cc_index_body.bak
-    ${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/$f:h/cc_index_body.bak > ${new_tmp_path}/$f:h/cc_index_body
-    \rm ${new_tmp_path}/$f:h/cc_index_body.bak    
+       
     foreach ff (${new_tmp_path}/$f:h/*.html)
         \mv $ff $ff.bak
         ${new_tmp_path}/cc_anchor_filter < $ff.bak | cc_remove_unwanted_links > $ff
 	\rm $ff.bak
     end
     setenv CC__LOC_F "$f:h/"
-    cc_patch_anchor_toc_index ${new_tmp_path}/$f:h/cc_index_body ${new_tmp_path}/$f:h/contents.html
+    cc_patch_anchor_toc_index ${new_tmp_path}/$f:h/contents.html
+    cc_patch_anchor_index ${new_tmp_path}/$f:h/HREF
     setenv CC__LOC_F ../$f:h/
     cc_patch_anchor_filter ${new_tmp_path}/$f:h/cc_anchor_rules
 end
@@ -510,7 +518,6 @@ end
     if ( ! $quiet_switch) echo -n ", converting bibliography"
 if ( $?DEBUG) echo "# Step 3: convert bibliography (if any) and .aux file."
 set options = "${header} -config ${config_path} -tmp ${new_tmp_path} -noheader ${aux_file} ${bbl_file}"
-\touch ${new_tmp_path}/cc_index_body
 if ( "${aux_file}" == ""  && "${bbl_file}" == "") then
     \touch ${new_tmp_path}/cc_anchor_rules
 else
@@ -548,6 +555,7 @@ foreach f ($in_files $ref_files)
     \rm ${out_path}/$f:h/contents.html
 end
 
+
 # Converting the index, table of contents, and the bibliography.
 # --------------------------------------------------------------
 
@@ -556,23 +564,19 @@ if ( ! $quiet_switch) echo -n ", index, toc, bibliography"
 ${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/biblio.html > ${out_path}/biblio.html
 
 if ( $?DEBUG) echo "# Converting the index."
-\mv ${new_tmp_path}/cc_index_body ${new_tmp_path}/cc_index_body.bak
-
+ 
 if ( $ref_part_switch ) then
    set options = "${header} -config ${config_path} -tmp ${new_tmp_path} -onlyheader cc_toc_w_parts_footer cc_toc_w_parts_header cc_index_footer cc_index_header"
    cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} >/dev/null
    \cat ${new_tmp_path}/cc_toc_w_parts_header > ${new_tmp_path}/contents.html
-   \cat ${new_tmp_path}/cc_index_body.bak >> ${new_tmp_path}/cc_index_body
 
 else
    set options = "${header} -config ${config_path} -tmp ${new_tmp_path} -onlyheader cc_toc_footer cc_toc_header cc_index_footer cc_index_header"
    cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} >/dev/null
    \cat ${new_tmp_path}/cc_toc_header > ${new_tmp_path}/contents.html
-   \cat ${new_tmp_path}/cc_index_body.bak >> ${new_tmp_path}/cc_index_body
 endif
 
 foreach f ($in_files $ref_files)
-    \cat ${new_tmp_path}/$f:h/cc_index_body >> ${new_tmp_path}/cc_index_body
     \cat ${new_tmp_path}/$f:h/contents.html >> ${new_tmp_path}/contents.html
 end
 
@@ -591,12 +595,15 @@ else
    \cat ${new_tmp_path}/cc_toc_footer >> ${new_tmp_path}/contents.html
 endif
 
-cc_index_sort -ger ${new_tmp_path}/cc_index_body | sed 's/[<][\!]sort[^\!]*[\!][>]//' >  ${new_tmp_path}/cc_index_sorted
-
-\cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/cc_index_sorted ${new_tmp_path}/cc_index_footer > ${new_tmp_path}/cc_index
-
-${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/cc_index | cc_remove_unwanted_links > ${out_path}/manual_index.html
 ${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/contents.html | cc_remove_unwanted_links > ${out_path}/contents.html
+
+foreach f ($in_files $ref_files)
+    \cat ${new_tmp_path}/$f:h/manual.hidx >> ${new_tmp_path}/manual.hidx
+    \cat ${new_tmp_path}/$f:h/HREF >> ${new_tmp_path}/HREF
+end
+makeindex -s ${config_html}/html_index.mst ${new_tmp_path}/manual.hidx
+cc_index_link ${new_tmp_path}/HREF ${new_tmp_path}/manual.ind ${new_tmp_path}/manual_index ${config_gif}
+cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/manual_index ${new_tmp_path}/cc_index_footer > ${out_path}/manual_index.html
 
 
 # Copy the necessary images to the manual.
@@ -612,6 +619,7 @@ foreach f ($image_files)
         echo "Error: HTML converter: image file '${config_gif}/$f' not found."
     endif
 end
+
 
 goto conversion_done
 

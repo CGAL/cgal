@@ -44,17 +44,21 @@
 // A sort_key is followed by a 0 to indicate the section title.
 // A sort_key is followed by a 1 to indicate a normal entry.
 
+
+
 const string  sort_key_concept          = "<!sort B";
-const string  sort_key_class            = "<!sort C";
-const string  sort_key_struct           = "<!sort C";  // structs like classes
-const string  sort_key_nested_type      = "<!sort D";
-const string  sort_key_enum             = "<!sort E";
-const string  sort_key_enum_tags        = "<!sort F";
-const string  sort_key_typedef          = "<!sort G";
-const string  sort_key_macro            = "<!sort H";
-const string  sort_key_variable         = "<!sort I";
-const string  sort_key_function         = "<!sort J";
-const string  sort_key_member_function  = "<!sort K";
+const string  sort_key_class            = "<!sort B";
+const string  sort_key_struct           = "<!sort B";  // structs like classes
+const string  sort_key_nested_type      = "<!sort B";
+const string  sort_key_enum             = "<!sort B";
+const string  sort_key_enum_tags        = "<!sort B";
+const string  sort_key_typedef          = "<!sort B";
+const string  sort_key_macro            = "<!sort B";
+const string  sort_key_variable         = "<!sort B";
+const string  sort_key_function         = "<!sort B";
+const string  sort_key_member_function  = "<!sort B";
+
+
 
 const string& find_sort_key( string txt) {
     if ( txt.size() > 0)
@@ -91,46 +95,7 @@ const string& find_sort_key( string txt) {
     return sort_key_class;
 }
 
-void write_headers_to_index( ostream& out){
-    out << sort_key_concept     << "0 !><P><LI><B>Concepts</B><P>" << endl;
-    out << sort_key_class       << "0 !><P><LI><B>Classes</B><P>" << endl;
-    //out << sort_key_struct      << "0 !><P><LI><B>Structs</B><P>" << endl;
-    out << sort_key_nested_type << "0 !><P><LI><B>Nested Types</B><P>" << endl;
-    out << sort_key_enum        << "0 !><P><LI><B>Enums</B><P>" << endl;
-    out << sort_key_enum_tags   << "0 !><P><LI><B>Enum Tags</B><P>" << endl;
-    out << sort_key_typedef     << "0 !><P><LI><B>Typedefs</B><P>" << endl;
-    out << sort_key_macro       << "0 !><P><LI><B>Macros</B><P>" << endl;
-    out << sort_key_variable    << "0 !><P><LI><B>Global Variables and "
-                                   "Consts</B><P>" << endl;
-    out << sort_key_function    << "0 !><P><LI><B>Functions</B><P>" << endl;
-  //out << sort_key_member_function  << "0 !><P><LI><B>Member Functions</B><P>"
-  //	                             << endl;
-}
-
 static int index_anchor_counter = 0;
-
-string handleHtmlIndex( const string& category, 
-			const string& sort_key, 
-			const string& formatted_reference) {
-    *index_stream << category << '1';
-    filter_for_index_comment( *index_stream, sort_key);
-    *index_stream << "!><UL><LI><A HREF=\"" << current_filename
-		  << "#Index_anchor_" << index_anchor_counter << "\">"
-		  << formatted_reference << "</A></UL>" << endl;
-    return string("\n<A NAME=\"Index_anchor_") 
-	 + int_to_string( index_anchor_counter++)
-	 + "\"></A>\n";
-}
-
-string handleHtmlIndexC( const string& category, const string& item) {
-    return handleHtmlIndex( category, item, convert_C_to_html( item));
-}
-
-string handleHtmlIndex( const string& category, const string& item) {
-    return handleHtmlIndex( category, item, 
-			    convert_fontified_ascii_to_html( item));
-}
-
 
 static int cross_link_anchor_counter = 0;
 
@@ -188,6 +153,7 @@ static int chapter_num = 0;
 string chapter_title;
 string part_title = "";
 
+
 void handleChapter(  const Buffer_list& T) {
     next_class_link_last = 0;
     chapter_num++;
@@ -208,6 +174,7 @@ void handleChapter(  const Buffer_list& T) {
         *main_stream << "<HR> Next chapter: <A HREF=\"" 
 		     << new_main_filename 
 		     << "\">" << chapter_title << "</A>" << endl;
+ //new_main_filename+"\">" +chapter_title +"</A>" ;    
         close_html( *main_stream);
 	assert_file_write( *main_stream, main_filename);
 	delete   main_stream;
@@ -222,10 +189,8 @@ void handleChapter(  const Buffer_list& T) {
     open_html( *main_stream);
         
 
-
-
-    if (macroIsTrue("\\lciIfRefCrossLink"))
-      *main_stream << "<TABLE WIDTH=100%> <TR> <TD ALIGN=LEFT VALIGN=TOP> <H1>"
+    if (macroIsTrue("\\lciIfRef"))
+      *main_stream << "<TABLE WIDTH=100%> <TR> <TD ALIGN=LEFT VALIGN=TOP> <H1>" 
              << chapter_title << "</H1> </TD>" << endl;
     else
       *main_stream << "<H1>" << chapter_title  << "</H1>" << endl;
@@ -234,12 +199,12 @@ void handleChapter(  const Buffer_list& T) {
     // table of contents
    
     if (macroIsTrue("\\lciIfMultipleParts"))
-       *contents_stream << " <TR> <TD>"<< chapter_num <<"    <A HREF=\"" 
+      *contents_stream << " <TR> <TD>"<< chapter_num <<"    <A HREF=\"" 
                      << main_filename 
 		     << "\">" << chapter_title << "</A> </TD> </TR>" << endl;
-     else
-       *contents_stream << "    <LI> <A HREF=\"" << main_filename
-		     << "\">" << chapter_title << "</A>" << endl;     
+    else
+      *contents_stream << "    <LI> <A HREF=\"" << main_filename
+		     << "\">" << chapter_title << "</A>" << endl;      
 }
 
 
@@ -251,6 +216,7 @@ void handlePart(  const Buffer_list& T) {
     {
        *contents_stream << " </TABLE></TD><TD VALIGN=TOP> <TABLE>"  << endl;
        *contents_stream << "<!-- End of manual part -->"  << endl;
+     //  chapter_num=0; 
     }
     else
     {
@@ -261,12 +227,416 @@ void handlePart(  const Buffer_list& T) {
 
     // add new part title to table of contents
     *contents_stream << "<!-- Start of new manual part -->"  << endl;
-    *contents_stream << "<TR> <TH ALIGN=LEFT VALIGN=TOP><H3>" << part_title 
-                     << "</H3></TH> </TR>" << endl; 
+    *contents_stream << "<TR> <TH ALIGN=LEFT VALIGN=TOP><H3>" << part_title << "</H3></TH> </TR>" << endl; 
     if ( macroIsTrue( "\\lciIfNumberChaptersByPart") )
         chapter_num=0;
 }
 
+
+string correct_name (string s) {
+
+  string tab[20];
+  string search_item;
+  string correct_s=s;
+  int tab_item=0;
+  int k=1;
+  bool found; 
+  size_t i = 0;
+
+  while (i< s.size()) {
+     if (s[i]=='<') { 
+        if (s[i+1]=='/' && (i+1<s.size())) {
+             tab_item++;
+             while (i< s.size() && s[i] != '>') {
+               tab[tab_item]+=s[i];
+               i++;
+             }
+             tab[tab_item].replace(0,2,"");
+             search_item = tab[tab_item]; 
+             tab[tab_item--]=""; 
+             found = false;
+             while ( k<=tab_item && !(found) ) {
+                if (tab[k] == search_item) {
+                   tab[k]="";
+                   found = true;
+                }
+                k++;
+             }  
+             if (!found)  correct_s = "<" + search_item + ">" + correct_s; 
+        } 
+        else { 
+          tab_item++;
+          while (i< s.size() && s[i] != '>') {
+             tab[tab_item]+=s[i];
+             i++;
+          }
+          tab[tab_item].replace(0,1,""); 
+        }
+     } 
+     i++;
+   }
+   for (int j=1;j<=tab_item;j++) {
+      if (!(tab[j]=="")) 
+          correct_s += "</" + tab[j] + ">"; 
+   } 
+/*   if (tab_item > 1) {
+       cerr << endl;
+       cerr << " ***Index Warning*** " << endl; 
+       cerr << "Your indexing text contains formatting commands in the " 
+            << " interior. I'll do what I canwith this, but"
+            << " you may be in trouble" << endl;
+   } */
+   return correct_s;
+
+}
+
+
+void mainTextParse(string s,
+                   string& index_name,
+                   string& modifier) {
+
+   remove_leading_spaces(s);
+   size_t i = 0;
+   while (i< s.size() && s[i] != ',')  index_name+=s[i++]; 
+   if (s[i] ==',') {
+      s.replace(0,++i,""); 
+      remove_leading_spaces(s);
+      i=0;
+      while (i < s.size()){  
+        modifier+=s[i];
+        i++;
+      }    
+   } 
+   index_name = correct_name(index_name);
+   modifier = correct_name(modifier);
+}
+
+
+ostream* temp_main_stream  = 0;
+ostream* temp_current_stream = 0;
+
+
+static string temp_main_filename;
+static string temp_current_filename;
+
+void OpenFileforIndex() {
+  string new_main_filename; 
+  temp_main_stream = main_stream;
+  temp_current_stream = current_ostream;
+  temp_main_filename = main_filename;
+  temp_current_filename = current_filename; 
+
+  string WhichItem = macroX("\\lciWhichItem");
+  if (WhichItem=="MainItem") {
+     new_main_filename = macroX("\\lciMainItemFile");
+  }
+  else {
+     if (WhichItem=="SubItem") 
+        new_main_filename = macroX("\\lciSubItemFile");
+     else {
+        if (WhichItem=="SubSubItem") {
+          new_main_filename = macroX("\\lciSubSubItemFile");
+        }
+        else {
+           cerr << " internal_macros.C : warning: unknown variable WhichItem"
+                << endl; 
+           exit(1);
+        } 
+     }
+  }
+  main_filename = new_main_filename;
+  main_stream = open_file_for_write( tmp_path + main_filename);
+  current_ostream  = main_stream;
+  current_filename = main_filename;
+  insertInternalGlobalMacro( "\\lciOutputFilename", current_filename);
+  insertInternalGlobalMacro( "\\lciMainFilename",   main_filename);
+}
+
+void CloseFileforIndex() {
+  assert_file_write( *main_stream, main_filename);
+  delete   main_stream;
+  main_stream = temp_main_stream;
+  current_ostream = temp_current_stream;
+  main_filename = temp_main_filename;
+  current_filename = temp_current_filename; 
+}
+
+
+
+string name_for_ordering(string s) {
+
+   string ord_s=""; 
+   size_t i = 0;
+   while (i< s.size()) {
+     if (s[i]=='<') { 
+        while (i< s.size() && s[i] != '>')     
+             i++;
+     }
+     else {
+        ord_s+=s[i];
+     }    
+     i++;
+   } 
+   return ord_s;
+}
+
+typedef struct Lines{
+  string text;
+  int number; 
+  struct Lines *next;
+} sList, *pList;
+
+pList modifier_list=NULL;
+
+
+pList AddToList(pList list , string l, int n) {
+  if (list==NULL) {
+     list = new Lines;
+     list->text= l;
+     list->number= n;
+     list->next = NULL;
+  } else {
+     pList p = new Lines;
+     p->text= l;
+     p->number= n;
+     p->next = list;
+     list = p;
+ }
+ return list;
+}
+
+bool search(pList list, string l, int& number) {
+     if (list==NULL) return false;
+        while ((list!=NULL) ) {
+           if (list->text==l) {
+               number = list->number;
+               return true;
+           } else  list=list->next;
+        }
+     return false;
+} 
+
+
+
+void handleIndex() {
+    string category;
+    string index_name, sub_index_name, sub_sub_index_name;
+    string modifier="", sub_modifier="", sub_sub_modifier="";
+    string ord_modifier="", ord_sub_modifier="", ord_sub_sub_modifier="";
+    string ord_index_name="", ord_sub_index_name="", ord_sub_sub_index_name="";
+    string s;
+
+    string main_item = ""; 
+    string WhichItem = macroX("\\lciWhichItem");
+    if (WhichItem=="MainItem" || WhichItem=="SubItem" ||
+          WhichItem=="SubSubItem") {
+       open_file_to_string(tmp_path + macroX("\\lciMainItemFile"),s);
+       mainTextParse(s, index_name, modifier);
+       s="";
+       ord_index_name = name_for_ordering(index_name); 
+       ord_modifier = name_for_ordering(modifier);
+    }
+    if (WhichItem=="SubItem" || WhichItem=="SubSubItem") {   
+       open_file_to_string(tmp_path + macroX("\\lciSubItemFile"),s);
+       mainTextParse(s, sub_index_name, sub_modifier); 
+       s=""; 
+       ord_sub_index_name = name_for_ordering(sub_index_name); 
+       ord_sub_modifier = name_for_ordering(sub_modifier);
+    } 
+   if (WhichItem=="SubSubItem") {   
+       open_file_to_string(tmp_path + macroX("\\lciSubSubItemFile"),s);
+       mainTextParse(s, sub_sub_index_name, sub_sub_modifier);
+       s="";
+       ord_sub_sub_index_name = name_for_ordering(sub_sub_index_name); 
+       ord_sub_sub_modifier = name_for_ordering(sub_sub_modifier);
+   } 
+
+ 
+   string sub_item="";
+   string sub_sub_item="";
+
+   if (sub_index_name!="") sub_index_name="??? "+sub_index_name;
+   if (sub_sub_index_name!="") sub_sub_index_name="??? "+sub_sub_index_name;
+
+   if (!(sub_index_name=="")) {
+       if (sub_modifier=="") 
+          sub_item = ord_sub_index_name+"@ "+sub_index_name;
+       else    
+         sub_item = ord_sub_index_name+" "+ord_sub_modifier +"@ "
+                    + sub_index_name+", "+sub_modifier;      
+   } 
+   if (!(sub_sub_index_name=="")) {
+       if (sub_sub_modifier=="") 
+          sub_sub_item = ord_sub_sub_index_name+"@ "+sub_sub_index_name;
+       else    
+         sub_sub_item = ord_sub_sub_index_name +" " +ord_sub_sub_modifier 
+                        + "@ "+sub_sub_index_name+", " +sub_sub_modifier;      
+   } 
+
+  
+   if (modifier=="") {
+         handleIndex2(ord_index_name+"@ ??? "+index_name,sub_item ,sub_sub_item,
+                      0);
+   }
+   else { 
+       int number;
+       if (search(modifier_list, modifier+index_name, number)) { 
+            handleIndex2(ord_index_name+" "+ord_modifier+"@ ??? "+index_name+ 
+                         ",  "+ modifier+"<A NAME=\""+ int_to_string(number) 
+                        +"\"></A>",sub_item,sub_sub_item,0);          
+       } else {
+            if (ord_modifier=="2D" || ord_modifier=="3D" || 
+                 ord_modifier=="dD") {
+                handleIndex2(ord_index_name+" "+ord_modifier+"@ ??? " 
+                        +index_name+ ",  "+ modifier,sub_item,sub_sub_item,0);
+            } else {
+                handleIndex2(ord_index_name+" "+ord_modifier+"@ ??? " + 
+                   index_name+ ",  " + modifier,sub_item,sub_sub_item,1);
+                handleIndex2(ord_modifier+ " "+ord_index_name+" see "
+                    +ord_index_name+", "+ord_modifier+"@"+modifier
+                    + "  "+index_name+", <I> see </I> ??? "+index_name
+                    + ", "+modifier ,"","",2);
+                modifier_list = AddToList(modifier_list, 
+                                          modifier+index_name,HREF_counter-4);
+            }
+        }
+   }
+} 
+
+
+void handleIndex2(string main_item, string sub_item, string sub_sub_item, int modifier) {
+   if (modifier==1) 
+     *index_stream << "\\indexentry{" 
+		        << main_item<< "<A NAME=\""<<HREF_counter 
+                        <<"\"></A>";
+   else {
+     *index_stream << "\\indexentry{" 
+		        << main_item;
+   }
+
+   if (sub_item!=""){
+        *index_stream <<"! " << sub_item;
+        if (sub_sub_item!="") *index_stream <<"! " << sub_sub_item;
+   }
+    
+   switch (modifier) {
+      case 0 :
+//"<A HREF=\"") + filename + "\">"
+           *HREF_stream << HREF_counter << " HREF=\"" << current_filename
+                        << "#Index_anchor_" << index_anchor_counter << "\"" 
+                        << endl;
+           break;
+      case 1 :
+           *HREF_stream << HREF_counter <<" HREF=\"" << current_filename
+                        << "#Index_anchor_" << index_anchor_counter << "\"" 
+                        << endl;
+           break;
+      case 2 :
+           *HREF_stream << HREF_counter << " HREF=\"" << "#" << HREF_counter-2 
+                        << "\"" << endl;
+           break; 
+   } 
+  
+     
+   *index_stream << "}{"<< HREF_counter << "}" << endl;
+
+   HREF_counter+=2;
+   *current_ostream << "\n<A NAME=\"Index_anchor_" 
+	 << int_to_string( index_anchor_counter++)
+	 << "\"></A> \n";
+}
+
+
+void TraitsClassTextParse(string s, string p) {
+
+   string index_name, index_class_name;
+   remove_leading_spaces(p);
+   remove_trailing_spaces(p);
+   index_class_name="see also"+p+"@<I> see also </I> ??? " + p;
+   remove_leading_spaces(s);
+   size_t i = 0;
+   while (i< s.size()) {
+      if (s[i] ==';') {
+         s.replace(0,++i,"");
+         remove_leading_spaces(s);
+         i=0;
+         remove_trailing_spaces(index_name);
+         if ( ! macroIsTrue("\\lciIfPackage"))  
+              index_name=name_for_ordering(index_name)+"@ ??? <I>"+
+                         name_for_ordering(index_name)+"</I>"; 
+         else   index_name = name_for_ordering(index_name)+"@ ??? "+
+                             name_for_ordering(index_name);
+         handleIndex2(index_name,"traits class@ ??? traits class",
+                      index_class_name,0);
+         index_name=""; 
+      }
+      else {
+         index_name+=s[i++]; 
+      }
+   }
+   remove_leading_spaces(index_name);
+   remove_trailing_spaces(index_name); 
+   if ( ! macroIsTrue("\\lciIfPackage"))  
+       index_name=name_for_ordering(index_name)+"@ ??? <I>"+ 
+                  name_for_ordering(index_name)+"</I>"; 
+   else index_name = name_for_ordering(index_name)+"@ ??? "+
+                             name_for_ordering(index_name);
+   handleIndex2(index_name,"traits class@ ??? traits class",index_class_name,0);
+}
+
+
+
+void handleIndexTraitsClass() {
+   string s1, s2;
+   open_file_to_string(tmp_path + macroX("\\lciMainItemFile"),s1);
+   open_file_to_string(tmp_path + macroX("\\lciSubItemFile"),s2);
+   TraitsClassTextParse(s1, s2);   
+}
+
+
+void handleIndexRefName() {
+   string s1, s2, s3;
+   string index_name; 
+   open_file_to_string(tmp_path + macroX("\\lciMainItemFile"),s1);
+   open_file_to_string(tmp_path + macroX("\\lciSubItemFile"),s2);
+   open_file_to_string(tmp_path + macroX("\\lciSubSubItemFile"),s3);
+   // s1 = local scope (may be empty)
+   // s2 = classname (functioname etc.)
+   // s3 = Ref category
+   if ((s3=="Class") || (s3=="FunctionObjectClass")) {
+      index_name = name_for_ordering(s2)+"@ ??? "+s2;
+      handleIndex2(index_name,"","",0);
+   } 
+   else { 
+     if ((s3=="Concept") || (s3=="FunctionObjectConcept")) {
+        index_name = name_for_ordering(s2)+"@ ??? "+name_for_ordering(s2);
+        handleIndex2(index_name,"","",0);
+     } 
+     else {
+       if (s1=="") {
+          index_name = name_for_ordering(s2)+"@ ??? "+s2;
+          handleIndex2(index_name,"","",0);
+
+       }
+       else {
+         for ( size_t i = 0; i < s1.size(); ++i) {
+	    if ( s1[i]==':' ) {
+              if ( (i+1)<s1.size() && s1[i+1]==':') { 
+	        s1.replace(i,s1.size()-i,"");
+                break;
+              }
+            }
+	  }
+          index_name = name_for_ordering(s1)+"@ ??? "+s1;
+          string index_name2 =  name_for_ordering(s2)+"@ ??? "+s2;  
+          if ((s3=="Function"))           
+             handleIndex2(index_name2,index_name,"",0);
+          else 
+             handleIndex2(index_name,index_name2,"",0);
+       }   
+     } 
+   }
+}
 
 
 void handleBiblio(  const Buffer_list& T) {
@@ -302,10 +672,10 @@ void handleClassFile( const string& filename,
     open_html( *class_stream);
     // Make a hyperlink in the chapter to the class file.
     if ( main_stream != &cout) {
-         if (macroIsTrue("\\lciIfMultipleParts"))
+        if (macroIsTrue("\\lciIfMultipleParts"))
            *main_stream  << "<TR> <TD> <UL><LI>" << formatted_reference
 		      << ".</UL> </TD> </TR>\n" << endl;
-         else
+        else
            *main_stream  << "<UL><LI>\n" << formatted_reference
 		      << ".</UL>\n" << endl;
     }
@@ -316,8 +686,10 @@ void handleClassFile( const string& filename,
             *contents_stream << "<TR> <TD> <UL><LI> " << formatted_reference
 			 << "</UL> </TD> </TR>" << endl;
         else
-            *contents_stream << "          <UL><LI> " << formatted_reference
+            *contents_stream << "<UL><LI> " <<  formatted_reference
 			 << "</UL> " << endl;
+
+
     current_ostream  = class_stream;
     current_filename = class_filename;
     insertInternalGlobalMacro( "\\lciOutputFilename", current_filename);
@@ -343,6 +715,7 @@ void handleClassFileEnd( void) {
 
 void handleClassEnvironment() {
     string ref_scope_name = macroX("\\ccPureRefScope");
+//    template_class_name = ref_scope_name + macroX("\\ccPureClassTemplateName");
     template_class_name = macroX("\\ccPureClassTemplateName");
     string formatted_template_class_name = 
 	convert_C_to_html( template_class_name);
@@ -363,9 +736,14 @@ void handleClassEnvironment() {
 
     if ( macroIsTrue( "\\lciIfHtmlClassIndex") && 
 	 macroIsTrue( "\\lciIfHtmlIndex"))    // Index.
-	*current_ostream << handleHtmlIndex( sort_key_class, 
-					     template_class_name,
-					     formatted_template_class_name);
+	//*current_ostream << handleHtmlIndex( sort_key_class, 
+	//		    	             template_class_name,
+	//				     formatted_template_class_name);
+
+
+ handleIndex2(class_name +"@ ??? "+
+                        convert_C_to_html(class_name),"","",0);
+
 
     if ( macroIsTrue( "\\lciIfHtmlClassLinks") && 
 	 macroIsTrue( "\\lciIfHtmlLinks")) {   // Cross links.
@@ -656,18 +1034,20 @@ three_column_layout( const string&, string param[], size_t n, size_t opt) {
 // ======================================================================
 string
 html_index( const string&, string param[], size_t n, size_t opt) {
-    NParamCheck( 2, 0);  // param[0] is index category, param[1] is text
+/*    NParamCheck( 2, 0);  // param[0] is index category, param[1] is text
     crop_string( param[0]);
     string key = find_sort_key( param[0]);
     string s = string( "\n\\lcRawHtml{<A NAME=\"Index_anchor_") 
 	 + int_to_string( index_anchor_counter) + "\"></A>}\n"
 	   "\\lciPushOutput{index}\\lcRawHtml{" + key + "1"
-         + filter_for_index_comment( param[1]) + "!><UL><LI><A HREF=\""
+         + filter_for_index_comment( param[1]) + "!><A HREF=\""
          + current_filename + "#Index_anchor_" 
 	 + int_to_string( index_anchor_counter) + "\">}" + param[1] 
-	 + "\\lcRawHtml{</A></UL>\n}\\lciPopOutput";
+	 + "\\lcRawHtml{</A><BR>\n}\\lciPopOutput";
     ++index_anchor_counter;
-    return s;
+
+    return s;*/
+    return "";
 }
 
 string
@@ -675,9 +1055,8 @@ html_index_C( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);  // uses cc_string as index item, param[0] is
                          // index category
     crop_string( param[0]);
-    return string( "\\lcRawHtml{")
-	+ handleHtmlIndexC( find_sort_key( param[0]), cc_string)
-	+ '}';
+    handleIndex2(cc_string+"@ ??? "+convert_C_to_html(cc_string),"","",0); 
+    return "";
 }
 
 string

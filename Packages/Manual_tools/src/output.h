@@ -88,6 +88,8 @@ extern ostream* class_stream;
 extern ostream* anchor_stream;
 extern ostream* contents_stream;
 extern ostream* index_stream;
+extern ostream* HREF_stream;
+extern ostream* HREF_counter_stream;
 
 extern string  pre_main_filename;
 extern string  main_filename;
@@ -105,6 +107,8 @@ void     assert_file_write( ostream& out, const string& name);
 istream* open_file_for_read( const string& name);
 istream* open_file_for_read_w_input_dirs( const string& name);
 ostream* open_file_for_write( const string& name);
+int open_counter_file_for_read( const string& name);
+
 
 
 /* Filter a config file                    */

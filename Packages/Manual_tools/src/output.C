@@ -26,12 +26,14 @@
 ostream* current_ostream  = 0;
 string   current_filename = "<cout>";
 
-ostream* pre_stream      = 0;
-ostream* main_stream     = 0;
-ostream* class_stream    = 0;
-ostream* anchor_stream   = 0;
-ostream* contents_stream = 0;
-ostream* index_stream    = 0;
+ostream* pre_stream        = 0;
+ostream* main_stream       = 0;
+ostream* class_stream      = 0;
+ostream* anchor_stream     = 0;
+ostream* contents_stream   = 0;
+ostream* index_stream = 0;
+ostream* HREF_stream = 0;
+ostream* HREF_counter_stream = 0; 
 
 string   pre_main_filename;
 string   main_filename = "<cout>";
@@ -109,6 +111,21 @@ ostream* open_file_for_write( const string& name){
     }
     return out;
 }
+
+int open_counter_file_for_read( const string& name){
+    if (!exist_file(name.c_str())) {
+       return 0;
+    }
+    istream* in = new ifstream( name.c_str());
+    if ( ! *in) {
+       return 0;
+    }
+    int i;
+    *in >> i;
+    delete in;
+    return i;
+}
+
 
 
 // Output_file with stream operators

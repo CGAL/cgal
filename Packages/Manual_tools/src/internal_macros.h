@@ -25,6 +25,14 @@ void handleChapter(  const Buffer_list& T);
 void handlePart(  const Buffer_list& T);
 void handleBiblio(  const Buffer_list& T);
 
+void handleIndex();
+void handleIndex2(string main_item, string sub_item, string sub_sub_item, int modifier);
+void OpenFileforIndex();
+void CloseFileforIndex();
+void handleIndexTraitsClass();
+void handleIndexRefName();
+
+
 void handleClassEnvironment();
 void handleClassEnd();
 
@@ -33,8 +41,6 @@ void handleClassFileEnd( void);
 
 void handleHtmlClassFile( const string& filename, const Buffer_list& T);
 
-string handleHtmlIndexC( const string& category, const string& item);
-string handleHtmlIndex( const string& category, const string& item);
 string handleHtmlCrossLink( string key, bool tmpl_class = false);
 
 // Index sorting.
@@ -53,9 +59,8 @@ extern const string sort_key_variable;
 extern const string sort_key_function;
 extern const string sort_key_member_function;
 
-const string& find_sort_key( string txt);
 
-void write_headers_to_index( ostream& out);
+const string& find_sort_key( string txt);
 
 #endif // INTERNAL_MACROS_H //
 // EOF //

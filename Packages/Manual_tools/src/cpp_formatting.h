@@ -20,8 +20,13 @@
 extern string class_name;
 extern string template_class_name;
 
+extern int HREF_counter;
+
 void handle_two_column_layout( char key, const char* decl);
 void handle_three_column_layout( char key, const char* decl, bool empty);
+void  make_index(string main_item, string sub_item, string sub_sub_item,
+                 const char* signature);
+
 
 
 /* Flexibility for HTML class files. */

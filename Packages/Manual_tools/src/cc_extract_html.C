@@ -168,6 +168,12 @@ void print_html_text_block( ostream &out, const Buffer_list& T) {
 }
 
 
+/* Index */
+/* ======*/
+
+extern int HREF_counter;
+
+
 
 /* Taylored semantic functions used in syntax.y */
 /* ============================================ */
@@ -477,18 +483,19 @@ main( int argc, char **argv) {
 	cerr << endl;
 	exit(0);
     }
+   
 
     main_stream   = &cout;
 
     if ( onlyheader_switch) {
 	for ( i = 0; i < nParameters; i++)
 	    copy_config_file( parameters[i]);
-	index_stream = open_file_for_write(tmp_path + 
-					   macroX( "\\lciIndexFilename"));
-	write_headers_to_index( *index_stream);
-	assert_file_write( *index_stream, 
-			   macroX( "\\lciIndexFilename"));
-	delete index_stream;
+//	index_stream = open_file_for_write(tmp_path + 
+//					   macroX( "\\lciIndexFilename"));
+//	write_headers_to_index( *index_stream);
+//	assert_file_write( *index_stream, 
+//			   macroX( "\\lciIndexFilename"));
+//	delete index_stream;
 	if ( ! quiet_switch)
 	    cerr << ']' << endl;
 	return 0;
@@ -504,18 +511,23 @@ main( int argc, char **argv) {
     // anchor_stream = new ofstream( anchor_filename, ios::out | ios::app);
     anchor_stream   = open_file_for_write( tmp_path +
 					   macroX( "\\lciAnchorFilename"));
+    
     contents_stream = open_file_for_write( tmp_path +
-					   macroX( "\\lciContentsFilename"));
+					   macroX( "\\lciContentsFilename"));  
+
+    index_stream = open_file_for_write( tmp_path +
+					   macroX( "\\lciIndexFilename"));
+    HREF_stream =  open_file_for_write( tmp_path + 
+                                           macroX( "\\lciHREFFilename"));
+
+    HREF_counter =  open_counter_file_for_read( tmp_path + "HREF_counter");
+    
 /*
     if ( ! noheader_switch)
 	copy_and_filter_config_file( macroX( "\\lciTocHeader"), 
 				     *contents_stream);
 */
 
-    index_stream    = open_file_for_write( tmp_path +
-					   macroX( "\\lciIndexFilename"));
-    if ( ! noheader_switch)
-	write_headers_to_index( *index_stream);
 
     if ( ! pre_main_filename.empty()) {
 	pre_stream = open_file_for_write( tmp_path + pre_main_filename);
@@ -523,10 +535,12 @@ main( int argc, char **argv) {
 	open_html( *pre_stream);
     }
     
+
     macro_def_switch = macro_def2_switch;
     macro_exp_switch = macro_exp2_switch;
     if ( trace_switch)
 	yydebug = 1;
+
 
     for ( i = 0; i < nParameters; i++) {
 	if ( ! pre_main_filename.empty()) {
@@ -553,6 +567,7 @@ main( int argc, char **argv) {
 				   0);
 	yyparse();
 
+
 	assert_file_write( *main_stream, main_filename);
 	if ( main_stream != &cout && main_stream != pre_stream) {
 	    close_html( *main_stream);
@@ -572,17 +587,27 @@ main( int argc, char **argv) {
     } else
 	cout << endl;
 
+ 
     assert_file_write( *index_stream, macroX( "\\lciIndexFilename"));
     delete index_stream;
 
     if (macroIsTrue("\\lciIfMultipleParts")) {
-      *contents_stream << "<!-- End last part's contents table -->" << endl;
-      *contents_stream << "</TABLE></TD></TABLE>" << endl; 
+       *contents_stream << "<!-- End last part's contents table -->" << endl;
+       *contents_stream << "</TABLE></TD></TABLE>" << endl; 
     }
 
+   
     if ( ! noheader_switch)
 	copy_and_filter_config_file( macroX( "\\lciTocFooter"),
 				     *contents_stream);
+
+    HREF_counter_stream = open_file_for_write( tmp_path +
+                                 macroX( "\\lciHREFCounterFilename"));
+    *HREF_counter_stream << HREF_counter;
+    assert_file_write( *HREF_counter_stream, 
+                        macroX( "\\lciHREFCounterFilename"));
+    delete HREF_counter_stream;
+
 
     assert_file_write( *contents_stream, 
 		       macroX( "\\lciContentsFilename"));
@@ -590,6 +615,11 @@ main( int argc, char **argv) {
 
     assert_file_write( *anchor_stream, macroX( "\\lciAnchorFilename"));
     delete anchor_stream;
+ 
+    assert_file_write( *HREF_stream, macroX( "\\lciHREFFilename"));
+    delete HREF_stream;
+
+
 
     return 0;
 }

@@ -257,6 +257,15 @@ void append_file_to_string( const string& name, string& s) {
         s += c;
 }
 
+void open_file_to_string( const string& name, string& s) {
+    istream* in = open_file_for_read( name.c_str());
+
+    char c;
+    while( in->get(c))
+        s += c;
+    delete in;
+}
+
 
 
 // Old style conversion routines
@@ -405,6 +414,42 @@ char* convert_fontified_ascii_to_html( const char* txt) {
     return s;
 }
 
+int strlen_for_makeindex( const char* txt) {
+    if (txt == NULL)
+	return 0;
+    int len = 0;
+    while( *txt) {
+	if ( *txt == '|' || *txt=='!' || *txt=='@' ) {
+	    len+=2;   //add "
+	    ++txt;
+	} else {
+            ++len;
+	    ++txt;
+        }  
+    }
+    return len;
+}
+
+char* convert_indexentry_for_makeindex(const char* txt) {
+  if ( txt == NULL) {
+        char *q = new char[1];
+	q[0] = '\0';
+	return q;
+    }
+    char* s = new char[ strlen_for_makeindex( txt) + 1];
+    char* p = s;
+    while( *txt) {
+	if ( *txt == '|'  || *txt=='!' || *txt=='@') {
+            *p++ = '"';
+            *p++ = *txt++;
+	} else
+	    *p++ = *txt++;
+    }
+    *p = '\0';
+    return s;
+}
+
+   
 char* convert_C_to_html( const char* txt) {
     current_font = it_font;
     char* tmp = convert_fontified_ascii_to_html( txt);

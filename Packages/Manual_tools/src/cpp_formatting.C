@@ -32,6 +32,12 @@ string template_class_name;
 // =======================================
 
 
+// index
+// =======================================
+
+int  HREF_counter;
+
+
 /* table size and font size constants */
 /* ================================== */
 const int table_width             = 650; // absolute
@@ -805,6 +811,56 @@ void print_rest( ostream& out, const char* txt){
 }
 
 
+
+//Index
+// =====================================================
+void  make_index(string main_item, string sub_item, string sub_sub_item,
+                 const char* signature, char praefix){
+
+       
+    *current_ostream << "<A NAME=\"Function_";
+    filter_for_index_anchor( *current_ostream, signature);
+    *current_ostream << "\"></A>" << endl;
+
+    *index_stream << "\\indexentry{" 
+		      << main_item <<"@ ??? " <<"<I>" << main_item << "</I>";
+    if (sub_item!=""){
+        *index_stream <<"! " << sub_item << "@ ??? "<<"<I>" 
+                           << sub_item << "</I>";
+        if (sub_sub_item!="") *index_stream <<"! " << sub_sub_item
+                           <<  "@ ??? "<<"<I>" << sub_sub_item 
+                           << "</I>";
+    }
+
+    *HREF_stream << HREF_counter << " HREF=\""<< current_filename;
+    switch (praefix) {
+      case 'f':
+        *HREF_stream << "#Function_";
+        break;
+      case 'e':
+        *HREF_stream << "#Enum_";
+        break;
+      case 't':
+        *HREF_stream << "#Typedef_";
+        break;
+      case 'v':
+        *HREF_stream << "#Var_";
+        break;
+      case 's':
+        *HREF_stream << "#Struct_";
+        break;
+      case 'n':
+        *HREF_stream << "#Nested_type_";
+        break;
+    }
+    filter_for_index_anchor( *HREF_stream, signature);
+    *HREF_stream<< "\""<< endl;
+    *index_stream << "}{"<< HREF_counter << "}" << endl;
+    HREF_counter+=2;
+
+}
+
+
 // Three column layout functions
 // =====================================================
 
@@ -831,7 +887,6 @@ void format_function( bool method, const char* signature,
 				function_name,
 				parameter_list,
 				rest);
-
     // check function_name for operator
     if (     strncmp( function_name, "operator", 8) == 0
 	  && ! isalnum(function_name[8]) 
@@ -842,7 +897,7 @@ void format_function( bool method, const char* signature,
         normal_operator     = (return_value != 0);
 	conversion_operator = (return_value == 0);
     }
-
+      
     double exp_size_ret = 0.0;
     double exp_size = 0.0;
     if ( return_value) {
@@ -857,45 +912,54 @@ void format_function( bool method, const char* signature,
                            table_width*table_first_col/100.0);
     // ---------
     // index
-    if ( !method && macroIsTrue( "\\lciIfHtmlIndex") 
-	 && macroIsTrue( "\\lciIfHtmlRefIndex")) {
-	char* formatted_return   = convert_fontified_ascii_to_html( 
-	    return_value);
-	char* formatted_scope    = convert_fontified_ascii_to_html( scope);
+
+    if (!class_name.empty() &&  macroIsTrue( "\\ccIndex") &&  
+          !(macroIsTrue( "\\ccIsRefFunction")  && 
+          macroIsTrue( "\\ccIsFunctionTemplate"))) {
+       	char* formatted_function = convert_fontified_ascii_to_html( 
+	    function_name);
+        string class_name = macroX("\\ccPureClassName");
+        // Make a hyperlink. Types could be substituted
+	// according the rules.
+
+	if (method) {
+           if (!normal_operator)
+                  make_index(formatted_function,class_name,"",signature,'f');  
+        }
+        else  {
+           if (!normal_operator)
+                  make_index(formatted_function,"","",signature,'f'); 
+        }               
+	delete[] formatted_function;
+	
+    } 
+    if ( !normal_operator && !method && macroIsTrue( "\\lciIfHtmlIndex") 
+	 && macroIsTrue( "\\lciIfHtmlRefIndex")  &&  macroIsTrue( "\\ccIndex") 
+         && class_name.empty()  && !(macroIsTrue( "\\ccIsRefFunction")  && 
+          macroIsTrue( "\\ccIsFunctionTemplate"))) {
+
 	char* formatted_function = convert_fontified_ascii_to_html( 
 	    function_name);
-	char* formatted_params   = convert_fontified_ascii_to_html(
-	    parameter_list);
-	char* formatted_rest     = convert_fontified_ascii_to_html( rest);
+
 	// Make only the function name a hyperlink. Types could be substituted
 	// according the rules.
-	*index_stream << sort_key_function << '1';
-	filter_for_index_comment( *index_stream, function_name);
-	*index_stream << ' ';
-	filter_for_index_comment( *index_stream, signature);
-	*index_stream << "!><UL><LI><I>" 
-		      << formatted_return << ' ' << formatted_scope
-		      << "<A HREF=\"" << current_filename << "#Function_";
-	filter_for_index_anchor( *index_stream, signature);
-	*index_stream << "\">" << formatted_function << "</A>"
-		      << "( " << formatted_params << ")" << formatted_rest
-		      << "</I></UL>" << endl;
-	*current_ostream << "<A NAME=\"Function_";
-	filter_for_index_anchor( *current_ostream, signature);
-	*current_ostream << "\"></A>" << endl;
-	delete[] formatted_return;
-	delete[] formatted_scope;
+
+        make_index(formatted_function,"","",signature,'f'); 
+      
 	delete[] formatted_function;
-	delete[] formatted_params;
-	delete[] formatted_rest;
     }
+   
+
     // end index
     // ----------
-   
+
+
     if ( return_value)
         print_ascii_to_html_spc( *current_ostream, return_value);
-    if ( conversion_operator)
+    if ( conversion_operator) 
         print_ascii_to_html_spc( *current_ostream, op_symbols);
+     
+    char* tmp; 
 
     // handle function body or operation signature
     // first, estimate size
@@ -906,6 +970,7 @@ void format_function( bool method, const char* signature,
     if ( conversion_operator) {
         exp_size += estimate_html_size( op_symbols);
     } else  if ( parameter_list) {
+        tmp = strdup(parameter_list);
         n = separate_parameter_list( parameter_list);
 	char* p = parameter_list;
 	int m = n;
@@ -925,11 +990,20 @@ void format_function( bool method, const char* signature,
 	bool ignore_params = false;  // exception for new and delete operators
 	const char* praefix = "";
 	const char* infix   = "";
-	const char* postfix = "";
+	const char* postfix = "";  
+        char* op_symbols_for_index =  
+                convert_indexentry_for_makeindex( 
+                                  convert_fontified_ascii_to_html(op_symbols));
+
+
+                
 	failed = ! format_operators( ( method ? n + 1 : n), n,
 				     op_symbols,
 				     praefix, infix, postfix,
 				     exp_size, ignore_params);
+        char* p = parameter_list; 
+        int m=n;
+
 	if ( ! failed) {
 	    // print the operator
 	    three_cols_html_second(
@@ -942,13 +1016,14 @@ void format_function( bool method, const char* signature,
 	    print_ascii_to_html_spc( *current_ostream, praefix);
 	    *current_ostream << " ";
 	    char* p = parameter_list;
+                  
 	    if ( ! ignore_params) {
 	        if ( method)
 		    print_ascii_to_html_spc(*current_ostream, 
 					    macroX( "\\ccPureVar"));
 		else if (n) {
 		    --n;
-		    print_ascii_to_html_spc(*current_ostream, p);
+		    print_ascii_to_html_spc(*current_ostream, p); 
 		    p += strlen( p) + 1;  // skip to next parameter
 		}
 	    }
@@ -957,15 +1032,76 @@ void format_function( bool method, const char* signature,
 	    *current_ostream << " ";
 	    if ( ! ignore_params && n) {
 	        while ( n--) {
-		    print_ascii_to_html_spc(*current_ostream, p);
+		    print_ascii_to_html_spc(*current_ostream, p); 
 		    p += strlen( p) + 1;  // skip to next parameter
 		    if ( n)
 		        *current_ostream << ", ";
 		}
 	    }
 	    print_ascii_to_html_spc( *current_ostream, postfix);
-	}
-    }
+       } 
+   
+       if (((! failed) || (! (macroIsTrue("\\ccTagOperatorLayout")))) &&
+              macroIsTrue( "\\ccIndex")  && !(macroIsTrue( "\\ccIsRefFunction") &&
+              macroIsTrue( "\\ccIsFunctionTemplate"))) {
+            p = parameter_list;
+
+            if (!method) {
+               char* q = p;
+               char* s = q;
+               bool found = false;
+               while ((m--) && !(found)) { 
+                  while (*s != '<' && *s) {
+                    *s++;  
+                  }
+                  if (*s) {
+                     char* k = new char[s-q+1];
+                     strncpy(k, q, s-q);
+                     k[s-q]='\0';
+                     char* token = strtok(k," \t");
+                     char* token1 = token;
+                     while (token != NULL) {
+                       token1 = token; 
+                       token = strtok(NULL, " \t");
+                     }
+                     found = true;
+                     make_index(op_symbols_for_index,token1,"",signature,'f');
+                  }
+                  q+=strlen(q)+1;    //skip to next parameter                 
+                  s=q;  
+               } 
+               if (!found) {
+                 q = p; 
+                 if (strcmp(op_symbols,"<<")==0 || strcmp(op_symbols,">>")==0) {
+                    q+=strlen(q)+1; 
+                    char* token = strtok(q, " \t&");
+                    if (token==NULL) { // no second parameter so first 
+                                    // parameter is used. This shouldn't happen.
+                       q = p;
+                       char* k = strdup(q); 
+                       token = strtok(k," \t");
+                       char* token1 = token;
+                       while (token != NULL) {
+                          token1 = token; 
+                          token = strtok(NULL, " \t");
+                       } 
+                       make_index(op_symbols_for_index,token1,"",signature,'f');   
+                    }     
+                    make_index(op_symbols_for_index,token,"",signature,'f');
+                 }
+                 else { 
+                    char* token = strtok(tmp, " \t");
+                    make_index(op_symbols_for_index,token,"",signature,'f');
+                 }
+               }        
+            }  else 
+                  make_index(op_symbols_for_index,
+            	           convert_fontified_ascii_to_html(class_name),"",
+                           signature,'f');
+        }
+  }
+
+
     if ( ! normal_operator || failed) {
 	if ( scope)
 	    exp_size += estimate_html_size( scope);
@@ -1104,28 +1240,19 @@ void format_variable( const char* signature,
 	    *anchor_stream << "\", yytext); }" << endl;
 	}
 	if ( macroIsTrue( "\\lciIfHtmlIndex") && 
-	     macroIsTrue( "\\lciIfHtmlRefIndex")) {
+	     macroIsTrue( "\\lciIfHtmlRefIndex") && 
+             macroIsTrue( "\\ccIndex")) {
 	    // index
-	    *index_stream << (is_typedef ? sort_key_typedef :
-			      sort_key_variable) << '1'; 
-	    filter_for_index_comment( *index_stream, variable_name);
-	    *index_stream << "!><UL><LI><I>" << formatted_var
-			  << "</I></UL>" << endl;
+            char p = (is_typedef ? 't' : 'v');
+            make_index(formatted_var,"","",variable_name,p);
 	}
     } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") && 
-		 macroIsTrue( "\\lciIfHtmlIndex")) {
+		 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")) {
 	// index
-	*index_stream << (is_typedef ? sort_key_typedef :
-			  sort_key_variable) << '1'; 
-	filter_for_index_comment( *index_stream, template_class_name);
-	*index_stream << "::";
-	filter_for_index_comment( *index_stream, variable_name);
-	*index_stream << "!><UL><LI><A HREF=\""
-		      << current_filename 
-		      << (is_typedef ? "#Typedef_" :  "#Var_" );
-	filter_for_index_anchor( *index_stream, variable_name);
-	*index_stream << "\"><I>" << formatted_class << "::"
-		      << variable_name << "</I></A></UL>" << endl;
+        char p = (is_typedef ? 't' : 'v');
+        make_index(string(variable_name),string(class_name),"",
+                   variable_name,p);
+
     }
     if ( macroIsTrue( "\\lciIfHtmlLinks") || 
 	 macroIsTrue( "\\lciIfHtmlIndex")) {
@@ -1208,25 +1335,16 @@ void format_class_declaration( const char* signature) {
 	    filter_for_index_anchor( *anchor_stream, struct_name);
 	    *anchor_stream << "\", yytext); }" << endl;
 	}
-	if ( macroIsTrue( "\\lciIfHtmlIndex")) {
+	if ( macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")) {
 	    // index
-	    *index_stream << sort_key_struct << '1';
-	    filter_for_index_comment( *index_stream, struct_name);
-	    *index_stream << "!><UL><LI><I>" << formatted_struct
-			  << "</I></UL>" << endl;
+            make_index(formatted_struct,"","",struct_name,'s');
 	}
     } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") && 
-		 macroIsTrue( "\\lciIfHtmlIndex")) {
+		 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")) {
 	// index
-	*index_stream << sort_key_struct << '1';
-	filter_for_index_comment( *index_stream, template_class_name);
-	*index_stream << "::";
-	filter_for_index_comment( *index_stream, struct_name);
-	*index_stream << "!><UL><LI><A HREF=\""
-		      << current_filename << "#Struct_";
-	filter_for_index_anchor( *index_stream, struct_name);
-	*index_stream << "\"><I>" << template_class_name << "::"
-		      << struct_name << "</I></A></UL>" << endl;
+        make_index(string(struct_name),string(class_name),"",
+                   struct_name,'s');
+
     }
     if ( macroIsTrue( "\\lciIfHtmlLinks") || 
 	 macroIsTrue( "\\lciIfHtmlIndex")) {
@@ -1278,25 +1396,15 @@ void format_struct( const char* signature) {
 	    filter_for_index_anchor( *anchor_stream, struct_name);
 	    *anchor_stream << "\", yytext); }" << endl;
 	}
-	if ( macroIsTrue( "\\lciIfHtmlIndex")) {
+	if ( macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")) {
 	    // index
-	    *index_stream << sort_key_struct << '1';
-	    filter_for_index_comment( *index_stream, struct_name);
-	    *index_stream << "!><UL><LI><I>" << formatted_struct
-			  << "</I></UL>" << endl;
+            make_index(formatted_struct,"","",struct_name,'s');
 	}
     } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") &&
-		 macroIsTrue( "\\lciIfHtmlIndex")) {
+		 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")) {
 	// index
-	*index_stream << sort_key_struct << '1';
-	filter_for_index_comment( *index_stream, template_class_name);
-	*index_stream << "::";
-	filter_for_index_comment( *index_stream, struct_name);
-	*index_stream << "!><UL><LI><A HREF=\""
-		      << current_filename << "#Struct_";
-	filter_for_index_anchor( *index_stream, struct_name);
-	*index_stream << "\"><I>" << template_class_name << "::"
-		      << struct_name << "</I></A></UL>" << endl;
+        make_index(string(struct_name),string(class_name),"",
+                   struct_name,'s');
     }
     if ( macroIsTrue( "\\lciIfHtmlLinks") || 
 	 macroIsTrue( "\\lciIfHtmlIndex")) {
@@ -1387,21 +1495,11 @@ void format_nested_type( const char* nested_type_name) {
     two_cols_html_begin( *current_ostream);
 
     if ( macroIsTrue( "\\lciIfHtmlClassIndex") && 
-	 macroIsTrue( "\\lciIfHtmlIndex")) {
+	 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")) {
 	// index
-	*index_stream << sort_key_nested_type << '1';
-	filter_for_index_comment( *index_stream, template_class_name);
-	*index_stream << "::";
-	filter_for_index_comment( *index_stream, nested_type_name);
-	*index_stream << "!><UL><LI><A HREF=\""
-		      << current_filename << "#Nested_type_" 
-                      << nested_type_name
-		      << "\"><I>";
 	if ( ! template_class_name.empty())
-	    *index_stream << formatted_class << "::";
-	*index_stream << nested_type_name << "</I></A></UL>" << endl;
-	*current_ostream << "<A NAME=\"Nested_type_" << nested_type_name 
-			<< "\"></A>" << endl;
+           make_index(string(nested_type_name),string(class_name),"",
+                   nested_type_name,'n');
 	// end index
     }
 
@@ -1458,25 +1556,28 @@ void format_enum( const char* signature) {
 	    filter_for_index_anchor( *anchor_stream, enum_name);
 	    *anchor_stream << "\", yytext); }" << endl;
 	}
-	if ( macroIsTrue( "\\lciIfHtmlIndex")) {
+	if ( macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")) {
 	    // index
-	    *index_stream << sort_key_enum << '1';
-	    filter_for_index_comment( *index_stream, enum_name);
-	    *index_stream << "!><UL><LI><I>" << formatted_enum
-			  << "</I></UL>" << endl;
+            char* k = strdup(formatted_enum); 
+            k = strtok(k,"=");
+            if (k==NULL) 
+               make_index(formatted_enum,"","",enum_name,'e'); 
+            else    
+               make_index(k,"","",enum_name,'e');
+            delete[] k; 
 	}
     } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") &&
-		 macroIsTrue( "\\lciIfHtmlIndex")) {
+		 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")) {
 	// index
-	*index_stream << sort_key_enum << '1';
-	filter_for_index_comment( *index_stream, template_class_name);
-	*index_stream << "::";
-	filter_for_index_comment( *index_stream, enum_name);
-	*index_stream << "!><UL><LI><A HREF=\""
-		      << current_filename << "#Enum_";
-	filter_for_index_anchor( *index_stream, enum_name);
-	*index_stream << "\"><I>" << template_class_name << "::"
-		      << enum_name << "</I></A></UL>" << endl;
+        char* k = strdup(formatted_enum); 
+        k = strtok(k,"=");
+        if (k==NULL) 
+           make_index(string(formatted_enum),string(class_name),
+                   "",enum_name,'e'); 
+        else    
+           make_index(string(k),string(class_name),
+                   "",enum_name,'e');
+        delete[] k;
     }
     if ( macroIsTrue( "\\lciIfHtmlLinks") || 
 	 macroIsTrue( "\\lciIfHtmlIndex")) {
@@ -1485,6 +1586,7 @@ void format_enum( const char* signature) {
 	*current_ostream << "\"></A>" << endl;
     }
     // end index
+
 
     // first, estimate size
     double exp_size = 0.0;
@@ -1507,6 +1609,7 @@ void format_enum( const char* signature) {
 	    p += strlen( p) + 1;  // skip to next parameter
 	}
     }
+
     exp_size *= stretch_factor;
     if ( exp_size > table_width && parameter_list) {
       *current_ostream << store_remember_font();
@@ -1539,11 +1642,14 @@ void format_enum( const char* signature) {
 	    if ( class_name.empty()) {
 		if ( macroIsTrue( "\\lciIfHtmlIndex")) {
 		    // index: print enum tags with (possible) initializers
-		    *index_stream << sort_key_enum_tags  << '1' << p 
-				  << "!><UL><LI><I>";
-		    print_ascii_to_html_spc( *index_stream, p);
-		    *index_stream << "</I></UL>" << endl;
-		}
+                    char* k = strdup(p); 
+                    k = strtok(k,"=");
+                    if (k==NULL) 
+                       make_index(p,"","",enum_name,'e'); 
+                    else    
+                       make_index(k,"","",enum_name,'e');
+                    delete[] k; 
+                }  		
 		if ( macroIsTrue( "\\lciIfHtmlLinks")) {
 		    // generate a substitution rule for hyperlinking
 		    // Here, the initializer has to be suppressed
@@ -1568,24 +1674,19 @@ void format_enum( const char* signature) {
 		    *q = c_tmp; // restore initializer
 		}
             } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") && 
-			 macroIsTrue( "\\lciIfHtmlIndex")) {
+			 macroIsTrue( "\\lciIfHtmlIndex")  &&  
+                         macroIsTrue( "\\ccIndex")) {
 		// index: print enum tags with their (possible) initializers
-		*index_stream << sort_key_enum_tags  << '1' << p 
-			      << "!><UL><LI><I>";
-		print_ascii_to_html_spc( *index_stream, p);
-		*index_stream << "</I></UL>" << endl;
-
-		*index_stream << sort_key_enum_tags << '1';
-		filter_for_index_comment( *index_stream, template_class_name);
-		*index_stream << "::";
-		filter_for_index_comment( *index_stream, p);
-		*index_stream << "!><UL><LI><A HREF=\""
-			      << current_filename << "#Enum_";
-		filter_for_index_anchor( *index_stream, enum_name);
-		*index_stream << "\"><I>" << template_class_name << "::"
-			      << p << "</I></A></UL>" << endl;
+                char* k = strdup(p);
+                k = strtok(p,"=");
+                if (k==NULL) 
+                       make_index(string(p), string(class_name) ,"", enum_name, 
+                                  'e'); 
+                else
+                       make_index(string(k),string(class_name),"",enum_name, 
+                                  'e'); 
+                delete[] k;
 	    }
-
 	    p += strlen( p) + 1;  // skip to next parameter
 	    if ( n) {
 	        *current_ostream << ", ";
@@ -1609,6 +1710,7 @@ void format_enum( const char* signature) {
 
     two_cols_html_new_closing( *current_ostream);
 }
+
 
 void format_constructor( const char* signature) {
     current_font = it_font;
@@ -1753,6 +1855,7 @@ void handle_three_column_layout( char key, const char* decl, bool empty) {
 	}
     }
 }
+
 
 
 // EOF //

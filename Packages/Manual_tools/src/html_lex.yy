@@ -592,7 +592,7 @@ number          {digit}+
 <INITIAL,AllttMode>[\\]lciParseCC{seps}[\{][^\}]*[\}]   {
                     count_newlines(yytext);
 		    yytext[ yyleng - 1] = '\0';
-		    char* s = yytext + 1;
+		    char* s = yytext + 1; 
 		    s = next_char(s, '{');
 		    current_macro  = s + 1;
                     skiplimitedsepspaces();
@@ -816,6 +816,36 @@ number          {digit}+
 <INITIAL,AllttMode>[\\]lciPart[*]?{seps}  {
 		    return PART;
 }
+
+
+ /* Index      */
+ /* ---------------------- */
+<INITIAL>[\\]lciOpenFileforIndex  {
+    OpenFileforIndex();      
+    break;
+}
+
+<INITIAL>[\\]lciCloseFileforIndex  {
+    CloseFileforIndex();      
+    break;
+}
+
+<INITIAL>[\\]lciIndex  {
+    handleIndex();      
+    break;
+}
+
+<INITIAL>[\\]lciIndexTraitsClass  {
+    handleIndexTraitsClass();      
+    break;
+}
+
+<INITIAL>[\\]lciIndexRefName  {
+    handleIndexRefName();      
+    break;
+}
+
+
 
  /* start of document      */
  /* ---------------------- */

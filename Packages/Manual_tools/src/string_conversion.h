@@ -33,6 +33,7 @@ void remove_separator( string& s);
 string convert_to_small_caps( string s);
 
 void append_file_to_string( const string& name, string& s);
+void open_file_to_string( const string& name, string& s);
 
 // Replaces the < > around template parameters (as in Kdtree_d<Traits>::Box) 
 // with -'s since < and > are  not valid characters for file names under 
@@ -94,6 +95,9 @@ char* convert_C_to_html( const char* txt);
 inline char* convert_C_to_html( const string& txt) {
     return convert_C_to_html( txt.c_str());
 }
+
+char* convert_indexentry_for_makeindex(const char* txt);
+
 
 
 /* ================================================ */
