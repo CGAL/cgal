@@ -4,17 +4,22 @@
 //-----------------------------------------------------------------------//
 
 #include <CGAL/basic.h>
-#include <fstream.h>
+#include <iostream>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Window_stream.h>
-#include <vector.h>
+#include <vector>
+
+using std::cerr;
+using std::cin;
+using std::cout;
+using std::endl;
 
 typedef CGAL::Cartesian<double> R;
 typedef CGAL::Point_2<R> Point;
 typedef CGAL::Polygon_traits_2<R> Traits;
-typedef vector<Point> Container;
+typedef std::vector<Point> Container;
 typedef CGAL::Polygon_2<Traits, Container> Polygon;
 
 //--------------------------------------------------------------------------//
