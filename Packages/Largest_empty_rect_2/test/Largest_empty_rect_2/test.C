@@ -14,7 +14,7 @@
 typedef double                                Number_Type;
 
 typedef CGAL::Cartesian<Number_Type>             K;
-typedef K::Point_2                      Point; 
+typedef K::Point_2                      Point;
 typedef K::Vector_2                     Vector; 
 typedef K::Segment_2                   Segment;
 typedef K::Iso_rectangle_2              Iso_rectangle_2;
