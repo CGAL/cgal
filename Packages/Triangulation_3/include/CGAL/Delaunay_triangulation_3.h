@@ -398,7 +398,7 @@ insert(const Point & p, Locate_type lt, Cell_handle c, int li, int)
   switch (dimension()) {
   case 3:
     {
-      if ( lt == VERTEX )
+      if ( lt == this->VERTEX )
 	  return c->vertex(li);
 
       Conflict_tester_3 tester(p, this);
@@ -409,19 +409,19 @@ insert(const Point & p, Locate_type lt, Cell_handle c, int li, int)
   case 2:
     {
       switch (lt) {
-      case OUTSIDE_CONVEX_HULL:
-      case CELL:
-      case FACET:
-      case EDGE:
+      case this->OUTSIDE_CONVEX_HULL:
+      case this->CELL:
+      case this->FACET:
+      case this->EDGE:
 	{
           Conflict_tester_2 tester(p, this);
 	  Vertex_handle v = insert_conflict_2(c, tester);
 	  v->set_point(p);
 	  return v;
 	}
-      case VERTEX:
+      case this->VERTEX:
 	return c->vertex(li);
-      case OUTSIDE_AFFINE_HULL:
+      case this->OUTSIDE_AFFINE_HULL:
 	  // if the 2d triangulation is Delaunay, the 3d
 	  // triangulation will be Delaunay
 	return Tr_Base::insert_outside_affine_hull(p); 
@@ -442,7 +442,7 @@ remove_2D(Vertex_handle v)
     std::list<Edge_2D> hole;
     make_hole_2D(v, hole);
     fill_hole_delaunay_2D(hole);
-    _tds.delete_vertex(v);
+    tds().delete_vertex(v);
 }
 
 template <class Gt, class Tds >
@@ -470,7 +470,7 @@ fill_hole_delaunay_2D(std::list<Edge_2D> & first_hole)
 	f = (*hit).first;        i = (*hit).second;
 	ff = (* ++hit).first;    ii = (*hit).second;
 	fn = (* ++hit).first;    in = (*hit).second;
-	_tds.create_face(f, i, ff, ii, fn, in);
+	tds().create_face(f, i, ff, ii, fn, in);
 	continue;
       }
 
@@ -547,7 +547,7 @@ fill_hole_delaunay_2D(std::list<Edge_2D> & first_hole)
       fn = (hole.front()).first;
       in = (hole.front()).second;
       if (fn->has_vertex(v2, i) && i == ccw(in)) {
-	newf = _tds.create_face(ff, ii, fn, in);
+	newf = tds().create_face(ff, ii, fn, in);
 	hole.pop_front();
 	hole.push_front(Edge_2D(newf, 1));
 	hole_list.push_back(hole);
@@ -556,14 +556,14 @@ fill_hole_delaunay_2D(std::list<Edge_2D> & first_hole)
 	fn = (hole.back()).first;
 	in = (hole.back()).second;
 	if (fn->has_vertex(v2, i) && i == cw(in)) {
-	  newf = _tds.create_face(fn, in, ff, ii);
+	  newf = tds().create_face(fn, in, ff, ii);
 	  hole.pop_back();
 	  hole.push_back(Edge_2D(newf, 1));
 	  hole_list.push_back(hole);
 	}
 	else{
 	  // split the hole in two holes
-	  newf = _tds.create_face(ff, ii, v2);
+	  newf = tds().create_face(ff, ii, v2);
 	  Hole new_hole;
 	  ++cut_after;
 	  while( hole.begin() != cut_after )
@@ -588,7 +588,7 @@ make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole)
 {
   std::vector<Cell_handle> to_delete;
 
-  typename Tds::Face_circulator fc = _tds.incident_faces(v);
+  typename Tds::Face_circulator fc = tds().incident_faces(v);
   typename Tds::Face_circulator done(fc);
 
   // We prepare for deleting all interior cells.
@@ -609,7 +609,7 @@ make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole)
     ++fc;
   } while (fc != done);
 
-  _tds.delete_cells(to_delete.begin(), to_delete.end());
+  tds().delete_cells(to_delete.begin(), to_delete.end());
 }
 
 template < class Gt, class Tds >
@@ -619,24 +619,24 @@ remove(Vertex_handle v)
 {
   CGAL_triangulation_precondition( v != NULL);
   CGAL_triangulation_precondition( !is_infinite(v));
-  CGAL_triangulation_expensive_precondition( _tds.is_vertex(v) );
+  CGAL_triangulation_expensive_precondition( tds().is_vertex(v) );
 
   if (dimension() >= 0 && test_dim_down(v)) {
-      _tds.remove_decrease_dimension(v);
+      tds().remove_decrease_dimension(v);
       // Now try to see if we need to re-orient.
       if (dimension() == 2) {
 	  Facet f = *finite_facets_begin();
           if (coplanar_orientation(f.first->vertex(0)->point(),
 		                   f.first->vertex(1)->point(),
 				   f.first->vertex(2)->point()) == NEGATIVE)
-	      _tds.reorient();
+	      tds().reorient();
       }
       CGAL_triangulation_expensive_postcondition(is_valid());
       return true;
   }
 
   if (dimension() == 1) {
-      _tds.remove_from_maximal_dimension_simplex(v);
+      tds().remove_from_maximal_dimension_simplex(v);
       CGAL_triangulation_expensive_postcondition(is_valid());
       return true;
   }
@@ -658,8 +658,8 @@ remove(Vertex_handle v)
 
   bool filled = fill_hole_3D_ear(boundhole);
   if(filled){
-    _tds.delete_vertex(v);
-    _tds.delete_cells(hole.begin(), hole.end());
+    tds().delete_vertex(v);
+    tds().delete_cells(hole.begin(), hole.end());
   } else {
     undo_make_hole_3D_ear(boundhole, hole);
   }
@@ -1176,7 +1176,7 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
 	// in an infinite loop. ==> Panic mode, delete created cells.
 	std::cerr << "\nUnable to find an ear\n" << std::endl;
 	//	std::cerr <<  surface  << std::endl;
-        _tds.delete_cells(cells.begin(), cells.end());
+        tds().delete_cells(cells.begin(), cells.end());
 	return false;
       }
       k = 0;
@@ -1245,24 +1245,24 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
     // none of the vertices violates the Delaunay property
     // We are ready to plug a new cell
 
-    Cell_handle ch = _tds.create_cell(v0, v1, v2, v3);
+    Cell_handle ch = tds().create_cell(v0, v1, v2, v3);
     cells.push_back(ch);
 
     // The new cell touches the faces that form the ear
     Facet fac = n->info();
-    _tds.set_adjacency(ch, 0, fac.first, fac.second);
+    tds().set_adjacency(ch, 0, fac.first, fac.second);
     fac = f->info();
-    _tds.set_adjacency(ch, 3, fac.first, fac.second);
+    tds().set_adjacency(ch, 3, fac.first, fac.second);
 
     // It may touch another face, 
     // or even two other faces if it is the last cell
     if(neighbor_i) {
       fac = m_i->info();
-      _tds.set_adjacency(ch, 1, fac.first, fac.second);
+      tds().set_adjacency(ch, 1, fac.first, fac.second);
     }
     if(neighbor_j) {
       fac = m_j->info();
-      _tds.set_adjacency(ch, 2, fac.first, fac.second);
+      tds().set_adjacency(ch, 2, fac.first, fac.second);
     }
     
     if( !neighbor_i && !neighbor_j) {
@@ -1295,7 +1295,7 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
       // this should not happen at all  => panic mode, 
       //clean up, and say that it didn't work
       CGAL_triangulation_warning_msg(true, "panic");
-      _tds.delete_cells(cells.begin(), cells.end());
+      tds().delete_cells(cells.begin(), cells.end());
       return false;
     } else {
       // when we leave the function the vertices and faces of the surface

@@ -22,10 +22,10 @@
 
 #include <CGAL/Delaunay_triangulation_3.h>
 
+bool del=true;
+
 #include <CGAL/_test_types.h>
 #include <CGAL/_test_cls_delaunay_3.C>
-
-bool del=true;
 
 int main()
 {

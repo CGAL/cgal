@@ -1,6 +1,7 @@
 Version 1.127 (?? Jan 03)
 - Change Construct_direction_of_line_3 to the non-deprecated
   Construct_direction_3.
+- Better support newer GCC.
 
 Version 1.126 (14 Jan 03)
 - Fix documentation.

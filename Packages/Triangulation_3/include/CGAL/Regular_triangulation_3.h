@@ -400,7 +400,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
       // In case the point is completely equal (including weight), then we need
       // to discard it (don't update the triangulation, nor hide it), right ?
       if (! in_conflict_3(p, c)) {  // new point is hidden
-          if (lt == VERTEX)
+          if (lt == this->VERTEX)
               return c->vertex(li); // by coinciding point
           else
               return NULL;          // by cell
@@ -417,7 +417,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
         if ((*it)->cell() == NULL)
 	{
           // vertex has to be deleted
-          _tds.delete_vertex(*it);
+          tds().delete_vertex(*it);
 	}
       }
       // TODO : manage the hidden points.
@@ -426,14 +426,14 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
   case 2:
     {
       switch (lt) {
-      case OUTSIDE_CONVEX_HULL:
-      case CELL:
-      case FACET:
-      case EDGE:
-      case VERTEX:
+      case this->OUTSIDE_CONVEX_HULL:
+      case this->CELL:
+      case this->FACET:
+      case this->EDGE:
+      case this->VERTEX:
 	{
           if (! in_conflict_2(p, c, 3)) {  // new point is hidden
-              if (lt == VERTEX)
+              if (lt == this->VERTEX)
                   return c->vertex(li); // by coinciding point
               else
                   return NULL;          // by face
@@ -449,12 +449,12 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
             if ((*it)->cell() == NULL)
 	    {
               // vertex has to be deleted
-              _tds.delete_vertex(*it);
+              tds().delete_vertex(*it);
 	    }
 	  }
 	  return v;
 	}
-      case OUTSIDE_AFFINE_HULL:
+      case this->OUTSIDE_AFFINE_HULL:
 	{
 	  // if the 2d triangulation is Regular, the 3d
 	  // triangulation will be Regular
@@ -465,12 +465,12 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
   case 1:
     {
       switch (lt) {
-      case OUTSIDE_CONVEX_HULL:
-      case EDGE:
-      case VERTEX:
+      case this->OUTSIDE_CONVEX_HULL:
+      case this->EDGE:
+      case this->VERTEX:
 	{
           if (! in_conflict_1(p, c)) {  // new point is hidden
-              if (lt == VERTEX)
+              if (lt == this->VERTEX)
                   return c->vertex(li); // by coinciding point
               else
                   return NULL;          // by edge
@@ -497,25 +497,25 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
 
           // We preserve the order (like the orientation in 2D-3D).
 
-	  Vertex_handle v = _tds.create_vertex();
+	  Vertex_handle v = tds().create_vertex();
 	  v->set_point(p);
-          Cell_handle c0 = _tds.create_face(v, bound[0]->vertex(0), NULL);
-          Cell_handle c1 = _tds.create_face(bound[1]->vertex(1), v, NULL);
-          _tds.set_adjacency(c0, 1, c1, 0);
-          _tds.set_adjacency(bound[0], 1, c0, 0);
-          _tds.set_adjacency(c1, 1, bound[1], 0);
+          Cell_handle c0 = tds().create_face(v, bound[0]->vertex(0), NULL);
+          Cell_handle c1 = tds().create_face(bound[1]->vertex(1), v, NULL);
+          tds().set_adjacency(c0, 1, c1, 0);
+          tds().set_adjacency(bound[0], 1, c0, 0);
+          tds().set_adjacency(c1, 1, bound[1], 0);
           bound[0]->vertex(0)->set_cell(bound[0]);
           bound[1]->vertex(1)->set_cell(bound[1]);
           v->set_cell(c0);
 
-	  _tds.delete_cells(conflicts.begin(), conflicts.end());
-	  _tds.delete_vertices(hidden_vertices.begin(), hidden_vertices.end());
+	  tds().delete_cells(conflicts.begin(), conflicts.end());
+	  tds().delete_vertices(hidden_vertices.begin(), hidden_vertices.end());
 	  return v;
 	}
-      case OUTSIDE_AFFINE_HULL:
+      case this->OUTSIDE_AFFINE_HULL:
 	return Tr_Base::insert_outside_affine_hull(p);
-      case FACET:
-      case CELL:
+      case this->FACET:
+      case this->CELL:
 	// impossible in dimension 1
         CGAL_assertion(false);
 	return NULL;
@@ -524,7 +524,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
   case 0:
     {
         // We need to compare the weights when the points are equal.
-        if (lt == VERTEX && in_conflict_0(p, c)) {
+        if (lt == this->VERTEX && in_conflict_0(p, c)) {
             CGAL_assertion(li == 0);
             c->vertex(li)->set_point(p); // replace by heavier point
         }

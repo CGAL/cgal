@@ -22,10 +22,10 @@
 
 #include <CGAL/Triangulation_3.h>
 
+bool del = false;
+
 #include <CGAL/_test_types.h>
 #include <CGAL/_test_cls_triangulation_3.C>
-
-bool del = false;
 
 // Explicit instantiation of the whole class :
 template class CGAL::Triangulation_3<K>;
