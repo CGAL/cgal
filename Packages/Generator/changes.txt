@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.46 (10 Dec 2001)
+   - fixed random_points_in_sphere_3 generator
+
 2.45 (05 Dec 2001)
    - Changed lines of more than 79 characters in the demo dir.
 
