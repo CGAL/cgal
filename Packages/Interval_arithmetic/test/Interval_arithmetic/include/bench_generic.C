@@ -15,10 +15,10 @@
 typedef TESTED_TYPE IA_nt;
 
 #ifndef LOOPS
-const int loops = 1000;
-#else
-const int loops = LOOPS;
+#  define LOOPS 1000
 #endif
+
+const int loops = LOOPS;
 
 // Some simple operators benchmarks.
 
