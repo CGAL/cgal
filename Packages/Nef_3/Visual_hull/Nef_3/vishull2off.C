@@ -12,7 +12,8 @@ typedef CGAL::Quotient<NT> CNT;
 typedef CGAL::Cartesian<CNT> CKernel;
 typedef CGAL::Homogeneous<NT> Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
-typedef visual_hull_creator<Nef_polyhedron> VHC;
+typedef Nef_polyhedron::SNC_structure SNC_structure;
+typedef CGAL::visual_hull_creator<SNC_structure> VHC;
 typedef CKernel::FT FT;
 typedef CKernel::Point_3 CPoint;
 typedef Kernel::Point_3 Point_3;
@@ -32,18 +33,18 @@ int main(int argc, char* argv[]) {
   CGAL_assertion(argc==2);
 
   std::ifstream in(argv[1]);
-
-  VHC vhc(read_point(in), read_point(in));
-  Nef_polyhedron N(Nef_polyhedron::COMPLETE);
-
+  std::list<Nef_polyhedron> N_list;
+  
   CGAL::Timer t;
+
+  Point_3 room_min = read_point(in);
+  Point_3 room_max = read_point(in);
 
   int ncameras;
   in >> ncameras;
   for(int cam=0; cam<ncameras; ++cam) {
 
     Point_3 camera(read_point(in));
-    vhc.add_camera(camera);
     
     int npolygons;
     in >> npolygons;
@@ -79,27 +80,35 @@ int main(int argc, char* argv[]) {
 
     t.start();
 
-    for(li=polygon_list.begin(); li!=polygon_list.end(); ++li)
-      if(li==polygon_list.begin()) {
-	vhc.add_outer_cycle_to_camera(li->begin(), li->end());
-      } else {
-	vhc.add_inner_cycle_to_camera(li->begin(), li->end());
-      }
-
-    for(li=polygon_list.begin(); li!=polygon_list.end(); ++li)
-      if(li==polygon_list.begin()) {
-	vhc.create_outer_cycles_opposites(li->begin(), li->end());
-      } else {
-	vhc.create_inner_cycles_opposites(li->begin(), li->end());
-      }   
-	
-    vhc.recompute_scene();
-    
+    Nef_polyhedron N;
+    VHC vhc(room_min, room_max, camera, polygon_list);
+    N.delegate(vhc);
+    N_list.push_back(N);
+    std::cerr << N_list.size() << std::endl;
     t.stop();
   }
 
+  std::cerr << N_list.size() << std::endl;
+
+  t.start();
+  Nef_polyhedron N1,N2;
+  while(N_list.size() > 1) {
+    N1 = N_list.front();
+    N_list.pop_front();
+    N2 = N_list.front();
+    N_list.pop_front();
+    N_list.push_back(N1*N2);
+  }
+  t.stop();
 
   std::cerr << "Runtime Visual Hull :" << t.time() << std::endl;
 
-  vhc.print_off();
+  Nef_polyhedron result(N_list.front());
+
+  QApplication a(argc,argv);
+  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
+    new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(result);
+  a.setMainWidget(w);
+  w->show();
+  a.exec();
 }

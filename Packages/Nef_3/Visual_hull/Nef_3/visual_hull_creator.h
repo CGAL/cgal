@@ -1,15 +1,21 @@
+#ifndef CGAL_NEF_VISUAL_HULL_CREATOR_H
+#define CGAL_NEF_VISUAL_HULL_CREATOR_H
+
 #include <CGAL/Object.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/IO/Qt_widget_Nef_3.h>
+#include <CGAL/Modifier_base.h>
 #include <qapplication.h>
-template <typename Nef_>
-class visual_hull_creator : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
+
+CGAL_BEGIN_NAMESPACE
+
+template <typename SNC_>
+class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
   
-  typedef Nef_ Nef_polyhedron;
-  typedef typename Nef_polyhedron::SNC_structure SNC_structure;
+  typedef SNC_  SNC_structure;
   typedef typename SNC_structure::Kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
   typedef CGAL::SNC_decorator<SNC_structure> SNC_decorator;
@@ -25,11 +31,13 @@ class visual_hull_creator : public CGAL::SNC_decorator<typename Nef_::SNC_struct
   typedef typename SNC_structure::Ray_3 Ray_3;
   typedef typename SNC_structure::Sphere_point Sphere_point;
 
-  Nef_polyhedron result;
-  SNC_structure* snc_;
   Point_3 room_min, room_max;
+  Point_3 c_pos;
   Vertex_handle camera;
-
+  Plane_3 cut;
+  SNC_structure* sncp;
+  std::list<std::list<Point_3> > polygon_list;   
+    
  private:
   Plane_3 find_cutoff_plane() {
     
@@ -79,31 +87,50 @@ class visual_hull_creator : public CGAL::SNC_decorator<typename Nef_::SNC_struct
 
 
  public:
-  visual_hull_creator(Point_3 min, Point_3 max) : 
-    result(Nef_polyhedron::COMPLETE), 
-    room_min(min), room_max(max) {
-  }
-
-  void add_camera(const Point_3& position) {
-    snc_ = new SNC_structure;
-    set_snc(*snc_);
-    camera = sncp()->new_vertex(position);
-    camera->mark() = true;
-  }
-
+  visual_hull_creator(Point_3 min, Point_3 max, Point_3 position, 
+		      std::list<std::list<Point_3> > p) : 
+    room_min(min), room_max(max), c_pos(position), polygon_list(p) { }
+    
+    /*
   void recompute_scene() {
-    SNC_constructor C(*sncp());
+    std::cerr << "recompute scene" << std::endl;
+    SNC_structure s_tmp(*sncp());
+    SNC_constructor C(s_tmp);
     C.clear_external_structure();
-    Nef_polyhedron tmp(*snc_);
+    Nef_polyhedron tmp(s_tmp,new typename Nef_polyhedron::SNC_point_locator_default, false);
     tmp.build_external_structure();
-    CGAL_assertion(tmp.is_valid());
-    result *= tmp;
+    N_list.push_back(tmp);
+  }
+    */
+    
+  void operator()(SNC_structure& snc) {
+
+    sncp = &snc;
+    snc.clear();
+
+    camera = sncp->new_vertex(c_pos);
+    camera->mark() = true;
+
+    typename std::list< std::list<Point_3> >::iterator li;
+    for(li=polygon_list.begin(); li!=polygon_list.end(); ++li)
+      if(li==polygon_list.begin()) {
+	add_outer_cycle_to_camera(li->begin(), li->end());
+      } else {
+	add_inner_cycle_to_camera(li->begin(), li->end());
+      }
+    
+    for(li=polygon_list.begin(); li!=polygon_list.end(); ++li)
+      if(li==polygon_list.begin()) {
+	create_outer_cycles_opposites(li->begin(), li->end());
+      } else {
+	create_inner_cycles_opposites(li->begin(), li->end());
+      }
   }
 
   template<typename Forward_iterator>
   void add_outer_cycle_to_camera(Forward_iterator begin, Forward_iterator end) {
     
-    SNC_constructor C(*sncp());
+    SNC_constructor C(*sncp);
     std::list<Sphere_point> spoints;
     
     Forward_iterator si, si_prev, si_next;
@@ -117,10 +144,10 @@ class visual_hull_creator : public CGAL::SNC_decorator<typename Nef_::SNC_struct
   template<typename Forward_iterator>
   void create_outer_cycles_opposites(Forward_iterator begin, Forward_iterator end) {
     
-    SNC_constructor C(*sncp());
+    SNC_constructor C(*sncp);
     std::list<Sphere_point> spoints;
     
-    Plane_3 cut = find_cutoff_plane();
+    cut = find_cutoff_plane();
     std::list<Point_3> points_on_plane;
 
     Forward_iterator pi;
@@ -146,7 +173,7 @@ class visual_hull_creator : public CGAL::SNC_decorator<typename Nef_::SNC_struct
       bool orient(CGAL::orientation(*si_prev, 
 				    *si, 
 				    *si_next,camera->point()) == CGAL::POSITIVE);
-      C.add_outer_sedge_cycle(sncp()->new_vertex(*si),spoints.begin(), spoints.end(),orient); 
+      C.add_outer_sedge_cycle(sncp->new_vertex(*si),spoints.begin(), spoints.end(),orient); 
       ++si_prev;
       if(si_prev==points_on_plane.end()) si_prev=points_on_plane.begin();
     }
@@ -155,7 +182,7 @@ class visual_hull_creator : public CGAL::SNC_decorator<typename Nef_::SNC_struct
   template<typename Forward_iterator>
     void add_inner_cycle_to_camera(Forward_iterator begin, Forward_iterator end) {
 
-    SNC_constructor C(*sncp());
+    SNC_constructor C(*sncp);
     std::list<Sphere_point> spoints;
     
     Forward_iterator si, si_prev, si_next;
@@ -169,10 +196,10 @@ class visual_hull_creator : public CGAL::SNC_decorator<typename Nef_::SNC_struct
   template<typename Forward_iterator>
     void create_inner_cycles_opposites(Forward_iterator begin, Forward_iterator end) {
 
-    SNC_constructor C(*sncp());
+    SNC_constructor C(*sncp);
     std::list<Sphere_point> spoints;
     
-    Plane_3 cut = find_cutoff_plane();
+    //    Plane_3 cut = find_cutoff_plane();
     std::list<Point_3> points_on_plane;
 
     Forward_iterator pi;
@@ -198,12 +225,13 @@ class visual_hull_creator : public CGAL::SNC_decorator<typename Nef_::SNC_struct
       bool orient(CGAL::orientation(*si_prev, 
 				    *si, 
 				    *si_next,camera->point()) == CGAL::POSITIVE);
-      C.add_inner_sedge_cycle(sncp()->new_vertex(*si),spoints.begin(), spoints.end(),orient,false);
+      C.add_inner_sedge_cycle(sncp->new_vertex(*si),spoints.begin(), spoints.end(),orient,false);
       ++si_prev;
       if(si_prev==points_on_plane.end()) si_prev=points_on_plane.begin();
     }
   }
 
+  /*
   void print_off() {
    
     if(result.is_simple()) {
@@ -222,4 +250,8 @@ class visual_hull_creator : public CGAL::SNC_decorator<typename Nef_::SNC_struct
     w->show();
     a.exec();
   }
+  */
 };
+
+CGAL_END_NAMESPACE
+#endif // CGAL_NEF_VISUAL_HULL_CREATOR_H
