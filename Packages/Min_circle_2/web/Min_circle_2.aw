@@ -15,6 +15,7 @@
 @usepackage[latin1]{inputenc}
 @usepackage{a4wide2}
 @usepackage{amssymb}
+@usepackage{path}
 @usepackage{cc_manual}
 @article
 
@@ -1170,6 +1171,32 @@ traits class object.
 @end
 
 @! ----------------------------------------------------------------------------
+\subsubsection{Graphical Output}
+
+@macro<Min_circle_2 graphical output operator> = @begin
+    #ifdef CGAL_MIN_CIRCLE_2_H
+    #ifndef CGAL_IO_WINDOW_STREAM_MIN_CIRCLE_2
+    #define CGAL_IO_WINDOW_STREAM_MIN_CIRCLE_2
+
+    template< class R >
+    CGAL_Window_stream&
+    operator << ( CGAL_Window_stream &ws,
+                  const CGAL_Min_circle_2<R>& min_circle)
+    {
+        typedef  typename CGAL_Min_circle_2<R>::Point_iterator  Point_iterator;
+
+        Point_iterator  first( min_circle.points_begin());
+        Point_iterator  last ( min_circle.points_end());
+        for ( ; first != last; ++first)
+            ws << *first;
+        return( ws << min_circle.circle());
+    }
+
+    #endif // CGAL_IO_WINDOW_STREAM_MIN_CIRCLE_2
+    #endif // CGAL_MIN_CIRCLE_2_H
+@end
+
+@! ----------------------------------------------------------------------------
 \subsubsection{Private Member Function {\ccFont compute\_circle}}
 
 This is the method for computing the basic case $\mc(\emptyset,B)$,
@@ -1571,6 +1598,33 @@ emptiness and degeneracy, resp.
         return( is);
     }
 @end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Graphical Output}
+
+@macro<Optimisation_circle_2 graphical output operator> = @begin
+    #ifdef CGAL_OPTIMISATION_CIRCLE_2_H
+    #ifndef CGAL_IO_WINDOW_STREAM_OPTIMISATION_CIRCLE_2
+    #define CGAL_IO_WINDOW_STREAM_OPTIMISATION_CIRCLE_2
+
+    template< class R >
+    CGAL_Window_stream&
+    operator << ( CGAL_Window_stream &ws,
+                  const CGAL_Optimisation_circle_2<R>& oc)
+    {
+        double  cx( CGAL_to_double( oc.center().x()));
+        double  cy( CGAL_to_double( oc.center().y()));
+        double  sr( CGAL_to_double( oc.squared_radius()));
+
+        if ( ! CGAL_is_negative( sr))
+            ws.draw_circle( cx, cy, sqrt( sr));
+        return( ws);
+    }
+
+    #endif // CGAL_IO_WINDOW_STREAM_OPTIMISATION_CIRCLE_2
+    #endif // CGAL_OPTIMISATION_CIRCLE_2_H
+@end
+
 
 @! ----------------------------------------------------------------------------
 @! Class template CGAL_Min_circle_2_traits_2<R>
@@ -3043,6 +3097,34 @@ end of each file.
 @end
 
 @! ----------------------------------------------------------------------------
+@! Min_circle_2_Window_stream.h
+@! ----------------------------------------------------------------------------
+
+\subsection{Min\_circle\_2\_Window\_stream.h}
+
+@file <include/CGAL/IO/Min_circle_2_Window_stream.h> = @begin
+    @<file header>(
+        "include/CGAL/IO/Min_circle_2_Window_stream.h",
+        "graphical output to `leda_window' for Min_circle_2 algorith.")
+
+    // Each of the following operators is individually 
+    // protected against multiple inclusion.
+
+    // Window_stream I/O operators
+    // ===========================
+
+    // Optimisation_circle_2
+    // ---------------------
+    @<Optimisation_circle_2 graphical output operator>
+
+    // Min_circle_2
+    // ------------
+    @<Min_circle_2 graphical output operator>
+
+    @<end of file line>
+@end
+
+@! ----------------------------------------------------------------------------
 @! test_Min_circle_2.C
 @! ----------------------------------------------------------------------------
 
@@ -3121,6 +3203,6 @@ web file.
 
 \clearpage
 \bibliographystyle{plain}
-\bibliography{geom,cgal}
+\bibliography{geom,../../doc_tex/basic/Optimisation/cgal}
 
 @! ===== EOF ==================================================================
