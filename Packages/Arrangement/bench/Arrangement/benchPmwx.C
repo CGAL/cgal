@@ -67,13 +67,15 @@ typedef CGAL::Cartesian<WNT>                            Kernel;
 #define KERNEL_TYPE "Cartesian"
 #endif
 
+#if defined (USE_INSERT_TIGHT)
+#define INSERT_TYPE "Tight"
+#else
+#define INSERT_TYPE ""
+#endif
+
 #if defined(USE_CONIC_TRAITS)
 typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
-#if defined(USE_TIGHT_TRAITS)
-#define TRAITS_TYPE "Tight Conics"
-#else
 #define TRAITS_TYPE "Conics"
-#endif
 #elif defined(USE_LEDA_SEGMENT_TRAITS)
 typedef CGAL::Arr_leda_segment_traits_2<Kernel>         Traits;
 #define TRAITS_TYPE "Leda Segments"
@@ -414,7 +416,7 @@ int main(int argc, char * argv[])
           std::string(parseArgs.getTypeName(typeId)) + " " +
           std::string(parseArgs.getStrategyName(strategyId)) + " " +
           "PMWX " + TRAITS_TYPE + " " + KERNEL_TYPE + " " + NUMBER_TYPE +
-          " (" + std::string(filename) + ")";
+          " " + INSERT_TYPE + " (" + std::string(filename) + ")";
       Trap_inc_pmwx_bench benchInst(name, seconds, false);
       Trap_inc_pmwx & benchUser = benchInst.getBenchUser();
       runBench<Trap_inc_pmwx_bench,Trap_inc_pmwx>(benchInst, benchUser,
@@ -430,7 +432,7 @@ int main(int argc, char * argv[])
           std::string(parseArgs.getTypeName(typeId)) + " " +
           std::string(parseArgs.getStrategyName(strategyId)) + " " +
           "PMWX " + TRAITS_TYPE + " " + KERNEL_TYPE + " " + NUMBER_TYPE +
-          " (" + std::string(filename) + ")";
+          " " + INSERT_TYPE + " (" + std::string(filename) + ")";
       Naive_inc_pmwx_bench benchInst(name, seconds, false);
       Naive_inc_pmwx & benchUser = benchInst.getBenchUser();
       runBench<Naive_inc_pmwx_bench,Naive_inc_pmwx>(benchInst, benchUser,
@@ -446,7 +448,7 @@ int main(int argc, char * argv[])
           std::string(parseArgs.getTypeName(typeId)) + " " +
           std::string(parseArgs.getStrategyName(strategyId)) + " " +
           "PMWX " + TRAITS_TYPE + " " + KERNEL_TYPE + " " + NUMBER_TYPE +
-          " (" + std::string(filename) + ")";
+          " " + INSERT_TYPE + " (" + std::string(filename) + ")";
       Walk_inc_pmwx_bench benchInst(name, seconds, false);
       Walk_inc_pmwx & benchUser = benchInst.getBenchUser();
       runBench<Walk_inc_pmwx_bench,Walk_inc_pmwx>(benchInst, benchUser,
@@ -466,7 +468,7 @@ int main(int argc, char * argv[])
           std::string(parseArgs.getTypeName(typeId)) + " " +
           std::string(parseArgs.getStrategyName(strategyId)) + " " +
           "PMWX " + TRAITS_TYPE + " " + KERNEL_TYPE + " " + NUMBER_TYPE +
-          " (" + std::string(filename) + ")";
+          " " + INSERT_TYPE + " (" + std::string(filename) + ")";
       Trap_agg_pmwx_bench benchInst(name, seconds, false);
       Trap_agg_pmwx & benchUser = benchInst.getBenchUser();
       runBench<Trap_agg_pmwx_bench,Trap_agg_pmwx>(benchInst, benchUser,
@@ -482,7 +484,7 @@ int main(int argc, char * argv[])
           std::string(parseArgs.getTypeName(typeId)) + " " +
           std::string(parseArgs.getStrategyName(strategyId)) + " " +
           "PMWX " + TRAITS_TYPE + " " + KERNEL_TYPE + " " + NUMBER_TYPE +
-          " (" + std::string(filename) + ")";
+          " " + INSERT_TYPE + " (" + std::string(filename) + ")";
       Naive_agg_pmwx_bench benchInst(name, seconds, false);
       Naive_agg_pmwx & benchUser = benchInst.getBenchUser();
       runBench<Naive_agg_pmwx_bench,Naive_agg_pmwx>(benchInst, benchUser,
@@ -498,7 +500,7 @@ int main(int argc, char * argv[])
           std::string(parseArgs.getTypeName(typeId)) + " " +
           std::string(parseArgs.getStrategyName(strategyId)) + " " +
           "PMWX " + TRAITS_TYPE + " " + KERNEL_TYPE + " " + NUMBER_TYPE +
-          " (" + std::string(filename) + ")";
+          " " + INSERT_TYPE + " (" + std::string(filename) + ")";
       Walk_agg_pmwx_bench benchInst(name, seconds, false);
       Walk_agg_pmwx & benchUser = benchInst.getBenchUser();
       runBench<Walk_agg_pmwx_bench,Walk_agg_pmwx>(benchInst, benchUser,
@@ -518,7 +520,7 @@ int main(int argc, char * argv[])
           std::string(parseArgs.getTypeName(typeId)) + " " +
           std::string(parseArgs.getStrategyName(strategyId)) + " " +
           "PMWX " + TRAITS_TYPE + " " + KERNEL_TYPE + " " + NUMBER_TYPE +
-          " (" + std::string(filename) + ")";
+          " " + INSERT_TYPE + " (" + std::string(filename) + ")";
       Trap_dis_pmwx_bench benchInst(name, seconds, false);
       Trap_dis_pmwx & benchUser = benchInst.getBenchUser();
       runBench<Trap_dis_pmwx_bench,Trap_dis_pmwx>(benchInst, benchUser,
@@ -534,7 +536,7 @@ int main(int argc, char * argv[])
           std::string(parseArgs.getTypeName(typeId)) + " " +
           std::string(parseArgs.getStrategyName(strategyId)) + " " +
           "PMWX " + TRAITS_TYPE + " " + KERNEL_TYPE + " " + NUMBER_TYPE +
-          " (" + std::string(filename) + ")";
+          " " + INSERT_TYPE + " (" + std::string(filename) + ")";
       Naive_dis_pmwx_bench benchInst(name, seconds, false);
       Naive_dis_pmwx & benchUser = benchInst.getBenchUser();
       runBench<Naive_dis_pmwx_bench,Naive_dis_pmwx>(benchInst, benchUser,
@@ -550,7 +552,7 @@ int main(int argc, char * argv[])
           std::string(parseArgs.getTypeName(typeId)) + " " +
           std::string(parseArgs.getStrategyName(strategyId)) + " " +
           "PMWX " + TRAITS_TYPE + " " + KERNEL_TYPE + " " + NUMBER_TYPE +
-          " (" + std::string(filename) + ")";
+          " " + INSERT_TYPE + " (" + std::string(filename) + ")";
       Walk_dis_pmwx_bench benchInst(name, seconds, false);
       Walk_dis_pmwx & benchUser = benchInst.getBenchUser();
       runBench<Walk_dis_pmwx_bench,Walk_dis_pmwx>(benchInst, benchUser,
