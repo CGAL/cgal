@@ -41,7 +41,6 @@ public:
   typedef Info_                               Info;
 
   typedef typename Base::Geom_traits          Geom_traits;
-  typedef typename Base::Point_container      Point_container;
   typedef typename Base::Point_handle         Point_handle;
   typedef typename Base::Site_2               Site_2;
   typedef typename Base::Storage_site_2       Storage_site_2;
