@@ -15,9 +15,9 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // package       : Interval Arithmetic
-// author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
-//
+// author(s)     : Sylvain Pion
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+//
 // ============================================================================
 
 #ifndef CGAL_IA_LAZY_EXACT_NT_H
