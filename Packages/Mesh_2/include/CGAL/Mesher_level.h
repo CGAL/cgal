@@ -27,14 +27,14 @@ namespace CGAL {
 struct Null_mesh_visitor {
   Null_mesh_visitor previous_level() const { return *this; }
 
+  template <typename E, typename P>
+  void before_conflicts(E, P) const {}
+
   template <typename E, typename P, typename Z>
   void before_insertion(E, P, Z) const {}
 
   template <typename V>
   void after_insertion(V) const {}
-
-  template <typename E, typename P>
-  void before_conflicts(E, P) const {}
 
   template <typename E, typename P, typename Z>
   void after_no_insertion(E, P, Z) const {}
@@ -337,6 +337,7 @@ public:
   /** 
    * This function takes one element from the queue, and try to refine
    * it. It returns \c true if one point has been inserted.
+   * @todo Merge with try_to_refine_element().
    */
   template <class Mesh_visitor>
   bool process_one_element(Mesh_visitor& visitor)

@@ -85,7 +85,7 @@ public:
       const Point_2& pc = fh->vertex(2)->point();
 
       Triangle_2 t = geom_traits.construct_triangle_2_object()(pa,pb,pc);
-      double area = 2*CGAL::to_double(area_2(t));
+      double area = CGAL::to_double(area_2(t));
       area=area*area; // squared area
 
       double

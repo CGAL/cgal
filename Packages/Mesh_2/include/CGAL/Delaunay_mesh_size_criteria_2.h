@@ -55,24 +55,28 @@ public:
     Quality() : Base() {};
     Quality(double _sine, double _size) : Base(_sine, _size) {};
 
-    double size() const { return second; }
-    double sine() const { return first; }
+    const double& size() const { return second; }
+    const double& sine() const { return first; }
 
+    // q1<q2 means q1 is prioritised over q2
     bool operator<(const Quality& q) const
-      {
-	if( size() > q.size() )
-	  return true;
-	else if( size() == q.size() )
-	  return( sine() < q.sine() );
+    {
+      if( size() > 1 )
+	if( q.size() > 1 )
+	  return ( size() > q.size() );
 	else
-	  return false;
-      }
+	  return true; // *this is big but not q
+      else
+	if( q.size() >  1 )
+	  return false; // q is big but not *this
+      return( sine() < q.sine() );
+    }
 
     friend std::ostream& operator<<(std::ostream& out, const Quality& q)
-      {
-	return out << "(size=" << q.size() << ", sine=" << q.sine() <<
-	  ")";
-      }
+    {
+      return out << "(size=" << q.size()
+		 << ", sine=" << q.sine() << ")";
+    }
   };
 
   class Is_bad: public Base::Is_bad
@@ -90,7 +94,6 @@ public:
 		    Quality& q) const
     {
       typedef typename CDT::Geom_traits Geom_traits;
-      typedef typename Geom_traits::Triangle_2 Triangle_2;
       typedef typename Geom_traits::Compute_area_2 Compute_area_2;
       typedef typename Geom_traits::Compute_squared_distance_2
 	Compute_squared_distance_2;
@@ -100,54 +103,65 @@ public:
 
       Geom_traits traits; /** @warning traits with data!! */
 
-      Compute_area_2 area_2 = 
-        traits.compute_area_2_object();
       Compute_squared_distance_2 squared_distance = 
 	traits.compute_squared_distance_2_object();
-      Construct_triangle_2 triangle =
-        traits.construct_triangle_2_object();
 
       const Point_2& pa = fh->vertex(0)->point();
       const Point_2& pb = fh->vertex(1)->point();
       const Point_2& pc = fh->vertex(2)->point();
-
-      Triangle_2 t = triangle(pa,pb,pc);
-      double area = 2*CGAL::to_double(area_2(t));
-      area=area*area;
 
       double
 	a = CGAL::to_double(squared_distance(pb, pc)),
 	b = CGAL::to_double(squared_distance(pc, pa)),
 	c = CGAL::to_double(squared_distance(pa, pb));
       
-      double min_sine; // squared minimum sine
       double max_length; // squared max edge length
+      double other_length_1, other_length_2;
       
       if(a<b)
 	{
-	  if(a<c) min_sine = area/(b*c);
-	  else min_sine = area/(a*b);
-	  
-	  if(b<c) max_length = c;
-	  else max_length = b;
+	  other_length_1 = a;
+	  if(b<c) {
+	    max_length = c;
+	    other_length_2 = b;
+	  }
+	  else { // c<=b
+	    max_length = b;
+	    other_length_2 = c;
+	  }
 	}
-      else
+      else // b<=a
 	{
-	  if(b<c) min_sine = area/(a*c);
-	  else min_sine = area/(a*b);
-	  
-	  if(a<c) max_length = c;
-	  else max_length = a;
+	  other_length_1 = b;
+	  if(a<c) {
+	    max_length = c;
+	    other_length_2 = a;
+	  }
+	  else { // c<=a
+	    max_length = a;
+	    other_length_2 = c;
+	  }
 	}
+
+      q.second = 0;
+      if( SB != 0 )
+	{
+	  q.second = max_length / SB; // normalized by size bound to deal
+				      // with size field
+	  if( q.size() > 1 )
+	    {
+	      q.first = 1; // (do not compute sine)
+	      return true;
+	    }
+	}
+
+      Compute_area_2 area_2 = traits.compute_area_2_object();
+
+      double area = 2*CGAL::to_double(area_2(pa, pb, pc));
+
+      q.first = (area * area) / (other_length_1 * other_length_2); // (sine)
       
-      q.first = min_sine;
-      q.second = 1; // normalized by size bound to deal with
-                    // size field
-      
-      if( min_sine < this->B ) return true;
-      if( SB == 0 ) return false;
-      q.second = max_length / SB;
-      return ( max_length > SB ); /** @todo If max_length > SB
+      return ( q.sine() < this->B );
     }
   };
 

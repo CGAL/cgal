@@ -1,6 +1,9 @@
 - Rewrite get_cluster.
 - Use Compute_area_2 with three points instead of a triangle.
-- Implement a method to split all clusters at the beginnning, and another 
-  one that does not deal with clusters.
+- Implement a method to split all clusters at the beginnning.
 
 - Histograms
+
+- Update the hierachy if CDT is a CT_plus_2.
+- The concept CDT.
+- Document Compute_area_2 in a concept. It is used in criteria.

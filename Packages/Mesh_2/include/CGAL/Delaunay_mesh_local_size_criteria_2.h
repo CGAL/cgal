@@ -94,7 +94,7 @@ public:
 	  
 	  bool is_non_locally_bad = Baseclass::operator()(fh,q);
 
-	  if( q.first < this->B )
+	  if( q.sine() < this->B )
 	    return true;
 
           const Point_2& a = fh->vertex(0)->point();

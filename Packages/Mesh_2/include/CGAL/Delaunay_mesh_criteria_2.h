@@ -52,7 +52,6 @@ public:
                     Quality& q) const
     {
       typedef typename Tr::Geom_traits Geom_traits;
-      typedef typename Geom_traits::Triangle_2 Triangle_2;
       typedef typename Geom_traits::Compute_area_2 Compute_area_2;
       typedef typename Geom_traits::Compute_squared_distance_2
 	Compute_squared_distance_2;
@@ -73,14 +72,12 @@ public:
       const Point_2& pb = fh->vertex(1)->point();
       const Point_2& pc = fh->vertex(2)->point();
 
-      Triangle_2 t = triangle(pa,pb,pc);
-      double area = 2*CGAL::to_double(area_2(t));
-      area=area*area;
+      double area = 2*CGAL::to_double(area_2(pa, pb, pc));
+      area=area*area; // area = 4 * area(triangle)
 
-      double
-	a = CGAL::to_double(squared_distance(pb, pc)),
-	b = CGAL::to_double(squared_distance(pc, pa)),
-	c = CGAL::to_double(squared_distance(pa, pb));
+      double a = CGAL::to_double(squared_distance(pb, pc));
+      double b = CGAL::to_double(squared_distance(pc, pa));
+      double c = CGAL::to_double(squared_distance(pa, pb));
 
       if(a<b)
 	if(a<c)

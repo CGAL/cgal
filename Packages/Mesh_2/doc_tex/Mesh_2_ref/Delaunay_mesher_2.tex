@@ -1,6 +1,6 @@
 \begin{ccRefClass}{Delaunay_mesher_2<CDT, Criteria>}
 
-This class implements a 2D mesh generator. It inher
+This class implements a 2D mesh generator.
 
 \ccParameters The template parameter \ccc{CDT} should be a model of the
 concept \ccc{ConstrainedDelaunayTriangulation_2}, and type \ccc{CDT::Face}
@@ -29,9 +29,10 @@ modified.
 
 The domain to be mesh is defined by the constrained edges and a set of seed
 points. The constrained edges divides the plane into several connected
-components.  the mesh domain is either the union of the bounded connected
+components.  The mesh domain is either the union of the bounded connected
 components including at least one seed, or the union of the bounded
-connected components that do no contain any seed.
+connected components that do no contain any seed. Note that the unbounded
+component of the plane is never meshed.
 
 \ccInclude{CGAL/Delaunay_mesher_2.h}
 
@@ -90,7 +91,7 @@ The following functions are used to define seeds.
 { Returns a const reference to the criteria traits object. }
 
 \begin{ccAdvanced}
-  The function \ccc{set_} scans all faces to recalculate the list of
+  The function \ccc{set_criteria} scans all faces to recalculate the list of
   \emph{bad faces}, that are faces not conforming to the meshing criteria.
   This function actually has an optional argument that permits to prevent
   this recalculation. The filling of the list of bad faces can then be done
