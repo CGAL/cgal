@@ -1,4 +1,4 @@
-// Copyright (c) 1999,2000,2003  Utrecht University (The Netherlands),
+// Copyright (c) 1999-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -32,6 +32,7 @@
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Handle.h>
 #include <CGAL/misc.h>
+#include <CGAL/Filtered_exact.h> // to get the overloaded predicates.
 
 /*
  * This file contains the definition of the number type Lazy_exact_nt<ET>,

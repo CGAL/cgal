@@ -19,11 +19,7 @@ computations done by any exact but slow number type \ccc{NT}.
 In addition to the filtering at each arithmetic operation, the predicates
 are overloaded in the same way as for \ccc{Filtered_exact}, so you get the
 additional speed up without requiring to encapsulate \ccc{Lazy_exact_nt<NT>}
-into \ccc{Filtered_exact}.  You still need to include
-\ccc{CGAL/Filtered_exact.h} in order to include the overloaded functions.
-These overloaded functions do not work if the compiler does not support
-partial overloading of function templates, e.g. Visual C++ (so you miss an
-additional speed up in this case).
+into \ccc{Filtered_exact}.
 
 \ccInclude{CGAL/Lazy_exact_nt.h}
 

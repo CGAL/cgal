@@ -1,3 +1,7 @@
+Version 4.191 on 26 January 2004
+- #include <CGAL/Filtered_exact.h> from Lazy_exact_nt.h to get the overloaded
+  predicates.
+
 Version 4.190 on 25 January 2004
 - Kernel_checker : print the typeid() in case of failure.
 
