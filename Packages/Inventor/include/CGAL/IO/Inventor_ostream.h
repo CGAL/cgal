@@ -44,12 +44,12 @@ CGAL_BEGIN_NAMESPACE
 
 class Inventor_ostream_base {
 private:
-    ostream*  m_os;
+    std::ostream*  m_os;
 public:
     Inventor_ostream_base()           : m_os(0)  {}
     Inventor_ostream_base(ostream& o) : m_os(&o) {}
     ~Inventor_ostream_base()  { close(); }
-    void open(ostream& o)        { m_os = &o; }
+    void open(std::ostream& o)        { m_os = &o; }
     void close() {
         if ( m_os)
             os() << std::endl;
@@ -61,7 +61,7 @@ public:
             return *m_os;
         return 0;
     }
-    ostream& os() {
+    std::ostream& os() {
         // The behaviour if m_os == 0 could be changed to return
         // cerr or a file handle to /dev/null. The latter one would
         // mimick the behaviour that one can still use a stream with
@@ -76,10 +76,10 @@ class Inventor_ostream : public  Inventor_ostream_base
 {
 public:
     Inventor_ostream() {}
-    Inventor_ostream(ostream& o) : Inventor_ostream_base(o) {
+    Inventor_ostream(std::ostream& o) : Inventor_ostream_base(o) {
         header();
     }
-    void open(ostream& o) {
+    void open(std::ostream& o) {
         Inventor_ostream_base::open(o);
         header();
     }

@@ -52,10 +52,10 @@ CGAL_BEGIN_NAMESPACE
 class VRML_1_ostream : public Inventor_ostream_base {
 public:
     VRML_1_ostream() {}
-    VRML_1_ostream(ostream& o) : Inventor_ostream_base(o) {
+    VRML_1_ostream(std::ostream& o) : Inventor_ostream_base(o) {
         header();
     }
-    void open(ostream& o) {
+    void open(std::ostream& o) {
         Inventor_ostream_base::open(o);
         header();
     }

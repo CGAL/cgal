@@ -42,9 +42,9 @@ CGAL_BEGIN_NAMESPACE
 class VRML_2_ostream {
 public:
     VRML_2_ostream()           : m_os(0)  {}
-    VRML_2_ostream(ostream& o) : m_os(&o) { header();}
+    VRML_2_ostream(std::ostream& o) : m_os(&o) { header();}
     ~VRML_2_ostream()  { close(); }
-    void open(ostream& o)   { m_os = &o; header(); }
+    void open(std::ostream& o)   { m_os = &o; header(); }
     void close() {
         if ( m_os)
             footer();
@@ -56,7 +56,7 @@ public:
             return *m_os;
         return 0;
     }
-    ostream& os() {
+    std::ostream& os() {
         // The behaviour if m_os == 0 could be changed to return
         // cerr or a file handle to /dev/null. The latter one would
         // mimick the behaviour that one can still use a stream with
@@ -86,7 +86,7 @@ private:
                 "}\n"
                 "#-- End of file footer" << std::endl;
     }
-    ostream*  m_os;
+    std::ostream*  m_os;
 };
 
 CGAL_END_NAMESPACE
