@@ -140,8 +140,6 @@ public:
 	Cell_handle c = locate( p, start, lt, li, lj);
 	switch (lt) {
 	case OUTSIDE_CONVEX_HULL:
-	  c = c->neighbor(li);
-	  // infinite cell containing p
 	case CELL:
 	case FACET:
 	case EDGE:
@@ -169,8 +167,6 @@ public:
 	Cell_handle c = locate( p, start, lt, li, lj);
 	switch (lt) {
 	case OUTSIDE_CONVEX_HULL:
-	  c = c->neighbor(3-li-lj);
-	  // infinite cell containing p
 	case CELL:
 	case FACET:
 	case EDGE:
