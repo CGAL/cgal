@@ -44,7 +44,7 @@ class Layers_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Layers_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point>	*l_of_p);
+  Layers_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point> *l_of_p);
 	~Layers_toolbar()
 	{
 		delete showMC;
@@ -73,10 +73,10 @@ private:
 	QMainWindow		*window;
 	int			nr_of_buttons;
 	
-	CGAL::Qt_layer_mouse_coordinates	  *showMC;
-	Qt_layer_show_points<Rp>		  *showP;
+	CGAL::Qt_layer_mouse_coordinates  *showMC;
+	Qt_layer_show_points<Rp>	  *showP;
 	Qt_layer_show_parallelogram<Rp>	  *showPL;
-	Qt_layer_show_strip<Rp>	  *showLS;
+	Qt_layer_show_strip<Rp>		  *showLS;
 	Qt_layer_show_rectangle<Rp>	  *showR;
 };//end class
 

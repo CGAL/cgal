@@ -20,11 +20,11 @@ class My_window : public QMainWindow{
 public:
   My_window(int x, int y)
   {
-    win = new CGAL::Qt_widget(this);
-    setCentralWidget(win);
+    widget = new CGAL::Qt_widget(this);
+    setCentralWidget(widget);
     resize(x,y);
-    win->show();
-    win->set_window(0, x, 0, y);
+    widget->show();
+    widget->set_window(0, x, 0, y);
 
     CGAL::Random_points_in_disc_2<Point> g(500);
     for(int count=0; count<100; count++) {
@@ -32,22 +32,22 @@ public:
     }
     
     //How to attach the standard toolbar
-    stoolbar = new CGAL::Standard_toolbar(win, this);
+    stoolbar = new CGAL::Standard_toolbar(widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
 
-    connect(win, SIGNAL(custom_redraw()),
+    connect(widget, SIGNAL(custom_redraw()),
 	    this, SLOT(redraw_win()) );
   }
-  ~My_window(){delete win;}
+  ~My_window(){}
 private slots:	//functions
   void redraw_win()
   {
     //CGAL::Qt_widget::redraw();
-    *win << dt;
+    *widget << dt;
   }
 
 private:	//members
-  CGAL::Qt_widget *win;
+  CGAL::Qt_widget *widget;
   CGAL::Standard_toolbar *stoolbar;
 };
 

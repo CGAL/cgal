@@ -33,7 +33,7 @@
 
 namespace CGAL {
   Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point>	*l_of_p) : 
-    nr_of_buttons(0)
+    nr_of_buttons(0), widget(w), window(mw)
   {
       
     showMC  = new Qt_layer_mouse_coordinates(*mw);
@@ -41,9 +41,8 @@ namespace CGAL {
     showP   = new Qt_layer_show_points<Rp>(l_of_p);
     showLS  = new Qt_layer_show_strip<Rp>(l_of_p);
     showR   = new Qt_layer_show_rectangle<Rp>(l_of_p);
+    
     //set the widget
-    widget = w;
-    window = mw;
     window->statusBar();
 
     widget->attach(showMC);
