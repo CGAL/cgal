@@ -1,4 +1,4 @@
-// Copyright (c) 1997   INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -245,14 +245,6 @@ public:
   typedef typename  R::Point_3                Point;
   typedef typename  R::Compute_squared_area_3 Compute_squared_area_3;
   
-  //operators:
-  //la version avec triangle becomes obsolete from Release 3.0-I-11:
-  FT operator() (const Triangle &t){
-    FT squared_area= Compute_squared_area_3()(t);
-    return 
-      cast_sqrt_to_double(squared_area, 
-			  typename Number_type_traits<FT>::Has_sqrt());
-  }
   FT operator() 
     (const Point& p,const Point& q,const Point& r){
     FT squared_area= Compute_squared_area_3()(p,q,r);
@@ -289,10 +281,8 @@ public:
   typedef typename Rep::Triangle_3                  Triangle_2;
   typedef typename Rep::Line_3                      Line_2;
   typedef typename Rep::Ray_3                       Ray_2;
-  typedef typename Rep::Direction_3                 Direction_2;
   typedef typename Rep::Vector_3                    Vector_2;
   typedef typename Rep::Construct_ray_3             Construct_ray_2;
-  typedef typename Rep::Construct_direction_3       Construct_direction_2;
   typedef typename Rep::Construct_segment_3         Construct_segment_2;
   typedef typename Rep::Construct_triangle_3        Construct_triangle_2;
 
@@ -377,9 +367,6 @@ public:
   Construct_ray_2  construct_ray_2_object() const
     {return Construct_ray_2();}
 
-Construct_direction_2  construct_direction_2_object() const
-{return Construct_direction_2();}
-
 Construct_segment_2  construct_segment_2_object() const
 {return Construct_segment_2();}
 
@@ -400,8 +387,8 @@ public:
 					= NULL_VECTOR) 
       : a(_p), normal(_normal){};
   
-  Vector_2 get_normal() const {return normal;}
-  Point_2  get_point() const {return a;}
+  const Vector_2& get_normal() const {return normal;}
+  const Point_2&  get_point() const {return a;}
   
 private:
   //defining the intersection plane:
