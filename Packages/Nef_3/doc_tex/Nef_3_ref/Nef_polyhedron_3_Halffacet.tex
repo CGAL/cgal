@@ -56,6 +56,8 @@ provides an entry element for each halffacet cycle of a halffacet.
 \ccThree{Halffacet_const_handle}{facet_cycles_begin();;}{}
 \ccThreeToTwo
 
+The following types are the same as in \ccc{Nef_polyhedron_3<Traits>}.
+
 \ccNestedType{Mark}{type of mark.}
 
 \ccNestedType{Plane_3}{plane type stored in Halffacet.}
@@ -72,10 +74,13 @@ provides an entry element for each halffacet cycle of a halffacet.
 \ccCreation
 \ccCreationVariable{f}
 
-\ccConstructor{Halffacet();}{default constructor.}
+There is no need for a user to create a \ccc{Halffacet} explicitly. The
+class \ccc{Nef_polyhedron_3<Traits>} manages the needed halffacets internally.
 
-\ccConstructor{Halffacet(const Plane_3& h, Mark m);}
-{creates Halffacet with initial values for its mark and supporting plane.}
+%\ccConstructor{Halffacet();}{default constructor.}
+
+%\ccConstructor{Halffacet(const Plane_3& h, Mark m);}
+%{creates Halffacet with initial values for its mark and supporting plane.}
 
 \ccThree{Halffacet_cycle_const_iterator}{facet_cycles_begin();;}{}
 

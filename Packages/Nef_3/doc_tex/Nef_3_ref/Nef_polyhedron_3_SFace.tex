@@ -36,12 +36,13 @@ Additionally, \ccc{Nef_polyhedron_S2} provides the macro
 or a svertex.
 
 
-
 \ccInclude{CGAL/Nef_polyhedron_3.h}
 
 \ccTypes
 \ccThree{SFace_cycle_const_iterator}{sf.sface_cycle_begin();;}{}
 \ccThreeToTwo
+
+The following types are the same as in \ccc{Nef_polyhedron_3<Traits>}.
 
 \ccNestedType{Mark}{type of mark.}
 
@@ -59,7 +60,10 @@ or a svertex.
 \ccCreation
 \ccCreationVariable{sf}
 
-\ccConstructor{SFace();}{default constructor.}
+There is no need for a user to create a \ccc{SFace} explicitly. The
+class \ccc{Nef_polyhedron_3<Traits>} manages the needed sfaces internally.
+
+%\ccConstructor{SFace();}{default constructor.}
 
 \ccOperations
 

@@ -30,6 +30,8 @@ iterator range (\ccc{shells_begin()}/\ccc{shells_end()}). A
 \ccThree{Shell_entry_const_iterator}{shells_begin() const;}{}
 \ccThreeToTwo
 
+The following types are the same as in \ccc{Nef_polyhedron_3<Traits>}.
+
 \ccNestedType{Mark}{type of mark.}
 
 \ccNestedType{Object_list}{list of Object handles.}
@@ -42,7 +44,10 @@ iterator range (\ccc{shells_begin()}/\ccc{shells_end()}). A
 \ccCreation
 \ccCreationVariable{c}
 
-\ccConstructor{Volume();}{ default constructor.}
+There is no need for a user to create a \ccc{Volume} explicitly. The
+class \ccc{Nef_polyhedron_3<Traits>} manages the needed volumes internally.
+
+%\ccConstructor{Volume();}{ default constructor.}
 
 \ccOperations
 

@@ -84,6 +84,8 @@ The circulators are bidirectional and assignable to \ccc{Halfedge_const_handle}.
 \ccThree{SHalfedge_const_handle}{se.cyclic_adj_pred();;}{}
 \ccThreeToTwo
 
+The following types are the same as in \ccc{Nef_polyhedron_3<Traits>}.
+
 \ccNestedType{Mark}{type of mark.}
 
 \ccNestedType{Sphere_circle}{sphere circle type stored in SHalfedge.}
@@ -99,7 +101,10 @@ The circulators are bidirectional and assignable to \ccc{Halfedge_const_handle}.
 \ccCreation
 \ccCreationVariable{se}
 
-\ccConstructor{SHalfedge();}{default constructor.}
+There is no need for a user to create a \ccc{SHalfedge} explicitly. The
+class \ccc{Nef_polyhedron_3<Traits>} manages the needed shalfedges internally.
+
+%\ccConstructor{SHalfedge();}{default constructor.}
 
 \ccOperations
 

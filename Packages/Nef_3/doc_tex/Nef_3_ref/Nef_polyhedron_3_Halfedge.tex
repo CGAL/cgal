@@ -52,6 +52,8 @@ returns the the incident sface.
 \ccThree{Halfedge_const_handle}{h.halfedge() const;;}{}
 \ccThreeToTwo
 
+The following types are the same as in \ccc{Nef_polyhedron_3<Traits>}.
+
 \ccNestedType{Mark}{type of mark.}
 
 \ccNestedType{Sphere_point}{sphere point type stored in Halfedge.}
@@ -67,10 +69,13 @@ returns the the incident sface.
 \ccCreation
 \ccCreationVariable{e}
 
-\ccConstructor{Halfedge();}{default constructor.}
+There is no need for a user to create a \ccc{SHalfedge} explicitly. The
+class \ccc{Nef_polyhedron_3<Traits>} manages the needed shalfedges internally.
 
-\ccConstructor{Halfedge(Mark m);}
-{creates Halfedge with an initial value for its mark.}
+%\ccConstructor{Halfedge();}{default constructor.}
+
+%\ccConstructor{Halfedge(Mark m);}
+%{creates Halfedge with an initial value for its mark.}
 
 \ccOperations
 

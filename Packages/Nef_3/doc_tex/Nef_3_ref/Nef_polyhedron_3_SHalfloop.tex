@@ -62,6 +62,8 @@ isolated on a facet. That facet is returned by the member function
 \ccThree{SHalfloop_const_handle}{incident_facet() const;;}{}
 \ccThreeToTwo
 
+The following types are the same as in \ccc{Nef_polyhedron_3<Traits>}.
+
 \ccNestedType{Mark}{type of mark.}
 
 \ccNestedType{Sphere_circle}{sphere circle type stored in SHalfloop.}
@@ -75,7 +77,10 @@ isolated on a facet. That facet is returned by the member function
 \ccCreation
 \ccCreationVariable{se}
 
-\ccConstructor{SHalfloop();}{default constructor.}
+There is no need for a user to create a \ccc{SHalfloop} explicitly. The
+class \ccc{Nef_polyhedron_3<Traits>} manages the needed shalfloops internally.
+
+%\ccConstructor{SHalfloop();}{default constructor.}
 
 \ccOperations
 

@@ -29,18 +29,21 @@ the class \ccc{Nef_polyhedron_3}.
 \ccThree{Vertex_const_handle}{h.halfedge() const;;}{}
 \ccThreeToTwo
 
+The following types are the same as in \ccc{Nef_polyhedron_3<Traits>}.
+
 \ccNestedType{Mark}{type of mark.}
-
 \ccNestedType{Point_3}{point type stored in Vertex.}
-
 
 \ccCreation
 \ccCreationVariable{v}
 
-\ccConstructor{Vertex();}{default constructor.}
+There is no need for a user to create a \ccc{Vertex} explicitly. The
+class \ccc{Nef_polyhedron_3<Traits>} manages the needed vertices internally.
 
-\ccConstructor{Vertex(Mark m);}
-{creates Vertex with an initial value for its mark.}
+%\ccConstructor{Vertex();}{default constructor.}
+
+%\ccConstructor{Vertex(Mark m);}
+%{creates Vertex with an initial value for its mark.}
 
 \ccOperations
 
