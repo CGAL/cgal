@@ -40,8 +40,8 @@ public:
   typedef Apollonius_graph_data_structure_2<Vb, Fb>    Tds;
   typedef Triangulation_data_structure_2<Vb, Fb>       Tds_base;
 
-  typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex_base;
-  typedef typename Fb::template Rebind_TDS<Tds>::Other  Face_base;
+  //  typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex_base;
+  //  typedef typename Fb::template Rebind_TDS<Tds>::Other  Face_base;
 
 
 public:
