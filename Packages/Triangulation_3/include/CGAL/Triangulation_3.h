@@ -79,6 +79,8 @@ class CGAL_Triangulation_3
   friend class CGAL_Triangulation_cell_3<GT,Tds>;
   friend class CGAL_Triangulation_vertex_3<GT,Tds>;
 
+  friend class CGAL_Delaunay_triangulation_3<GT,Tds>;
+
   friend CGAL_Triangulation_cell_iterator_3<GT,Tds>;
   friend CGAL_Triangulation_facet_iterator_3<GT,Tds>;
   friend CGAL_Triangulation_edge_iterator_3<GT,Tds>;
@@ -221,7 +223,7 @@ public:
     { return _gt;}
   
   inline
-  Tds & tds() 
+  const Tds & tds() const 
     { return _tds;}
   
   inline
@@ -2592,7 +2594,6 @@ public:
     return true;
   }
 
-private:
   bool is_valid_finite(Cell_handle c, bool verbose = false, int level = 0) const
     {
       switch ( dimension() ) {
