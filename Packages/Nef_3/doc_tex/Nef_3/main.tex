@@ -330,7 +330,7 @@ halfspaces cannot be used. Instead, we offer a construction from oriented
 2-manifolds represented in a  \ccc{CGAL::Polyhedron}, see
 Section~\ref{subsectionNef_3Polyhedron} below.
 
-In order to handle unbounded Nef polyhedra concpetually in the same
+In order to handle unbounded Nef polyhedra conceptually in the same
 way as we handle bounded Nef polyhedra, we intersect them with a
 bounding volume of size $[-R,R]^3$, where $R$ is a symbolical
 unspecified value, which is finite but larger than all coordinate
@@ -390,7 +390,7 @@ if the number type parameter follows the usual requirements of being a
 model of the \ccc{CGAL::FieldNumberType} concept for the Cartesian
 kernels, or the \ccc{CGAL::RingNumberType} concept for the homogeneous
 kernels, respectively. Note however, that in the current state, the
-Nef polyhedron works only with \cgal\ kernels. The implementationt
+Nef polyhedron works only with \cgal\ kernels. The implementation
 makes use of \cgal\ specific functions in kernel objects, and does not
 yet offer a designed interface to a clean kernel concept that could be
 offered by an external kernel as well.
@@ -417,7 +417,7 @@ point set (\ccc{Nef_polyhedron::INCLUDED}) or not
 \ccc{Nef_polyhedron_3} from a \ccc{Polyhedron_3}, see the Section
 \ref{subsectionNef_3Polyhedron} below.
 
-We can compate the point sets of two Nef polyhedra for equality and
+We can compute the point sets of two Nef polyhedra for equality and
 proper subset relationships. We offer the usual comparison operators
 \ccc{==}, \ccc{!=}, \ccc{<=}, \ccc{>=}, \ccc{<} and \ccc{>}. 
 
@@ -599,13 +599,13 @@ see, there are three items on the sphere map - a shalfloop for each
 halffacet which intersects the sphere, and an svertex where the
 antenna intersects the sphere. The upper shalfloop lies on the 
 halffacet which is oriented outwards and is therefore also 
-oriented outwards. This shalfloop and the svetex belong to the
+oriented outwards. This shalfloop and the svertex belong to the
 second shell.
 The other shalfloop lies on the inwards oriented halffacet and is 
-oriented inwards, too. This shalfloop belong to the third shell. 
+oriented inwards, too. This shalfloop belongs to the third shell. 
 
 \ccc{Nef_polyhedron_3} offers a visitor interface to explore a shell
-following the well-known visitor pattern~cite{cgal:ghjv-dpero-95}.
+following the well-known visitor pattern~\cite{cgal:ghjv-dpero-95}.
 The interface is illustrated by the following example.
 
 \ccIncludeExampleCode{Nef_3/shell_exploration.C}
@@ -652,7 +652,7 @@ Nef polyhedron and returns the item the point belongs to. The
 which is a polymorphic handle type representing any handle type, no
 matter if it is mutable or const.  For further usage of the result,
 the \ccc{Object_handle} has to be casted to the concrete handle type.
-The \ccc{CGAl::assign} function performs such a cast. It returns a
+The \ccc{CGAL::assign} function performs such a cast. It returns a
 boolean that reports the success or the failure of of the cast.
 Looking at the possible return values of the \ccc{locate} function,
 the \ccc{Object_handle} can represent a \ccc{Vertex_const_handle}, a
