@@ -18,16 +18,15 @@
 
 \ccDefinition
   
-The concept \ccClassTemplateName\ defines the requirements for a 
-$d$-dimensional point type.
-For a user defined $d$-dimensional point type a nested representation class
-\ccc{SpatialPoint::R} has to be provided or \ccc{CGAL::Kernel_traits} has to be
-specialized for the point type. 
+The concept \ccClassTemplateName\ defines the requirements for the template 
+parameter of the search classes.
 
 \ccTypes
-\ccNestedType{Point_d}{Point type.}
-\ccNestedType{Iso_box_d}{Iso box type.}
-\ccNestedType{Sphere_d}{Sphere type.}
+
+\ccNestedType{Point_d}{Point type. \ccc{CGAL::Kernel_traits} has to be
+specialized for this type.}
+\ccNestedType{Iso_box_d}{Iso box type. It is only needed for range search queries.}
+\ccNestedType{Sphere_d}{Sphere type. It is only needed for range search queries.}
 
 \ccNestedType{FT}{The number type of the \ccHtmlNoLinksFrom{Cartesian} coordinates of type \ccc{Point_d}.}
 

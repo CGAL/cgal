@@ -28,13 +28,8 @@ $d$-dimensional iso-rectangle defined as a $k$-$d$ tree rectangle.
 \ccInclude{CGAL/Euclidean_distance_sphere_point.h}
 
 \ccParameters
-Expects for the first template argument an implementation for
-$d$-dimensional points of the concept \ccc{Traits}, for example
-\ccc{CGAL::Cartesian_d<double> }.
-
-Expects for the second template argument an implementation 
-for $d$-dimensional spheres of the concept \ccc{Sphere},
-for example \ccc{CGAL::Cartesian_d<double>::Sphere_d}.
+Expects for the template argument a model of the concept \ccc{SearchTraits}, 
+for example \ccc{CGAL::Cartesian_d<double>}.
 
 
 \ccIsModel
