@@ -45,21 +45,24 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefClass} {Weighted_Alpha_shape_euclidean_traits_2}
+\begin{ccRefClass} {Weighted_Alpha_shape_euclidean_traits_2<K>}
 
 \ccCreationVariable{t}
 
 \ccDefinition
 
 The class \ccRefName\ is the default  model for the concept
-\ccc{WeightedAlphaShapeEuclideanTraits_2}.
-
+\ccc{WeightedAlphaShapeEuclideanTraits_2}. \ccc{K} must be a
+kernel.
 
 \ccInclude{Weighted_Alpha_shape_euclidean_traits_2.h}
 
+\ccRefines
+\ccc{Regular_triangulation_euclidean_traits_2<K, typename K::FT> }
+
 
 \ccIsModel
-\ccc{AlphaShapeTraits_2}
+\ccc{AlphaShapeEuclideanTraits_2}
 
 
 \end{ccRefClass}

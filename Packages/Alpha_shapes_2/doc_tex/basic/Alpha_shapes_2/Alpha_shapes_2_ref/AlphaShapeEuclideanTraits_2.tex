@@ -45,15 +45,17 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefConcept} {AlphaShapeTraits_2}
+\begin{ccRefConcept} {AlphaShapeEuclideanTraits_2}
 
 \ccCreationVariable{t}
 
 \ccDefinition
-The concept \ccRefName\ that satisfies the requirements of a
-\ccc{AlphaShapeTraits_2} class must provide the following predicate and
+A model of the concept \ccRefName\  must provide the following predicate and
 operations in addition to the requirements for the underlying triangulation
 traits class.
+
+\ccRefines
+\ccc{TriangulationTraits_2}
 
 \ccTypes
 

@@ -45,16 +45,15 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefConcept}{AlphaShapeVertexBase_2}
+\begin{ccRefConcept}{AlphaShapeVertex_2}
 
 \ccDefinition
+This concept...
 
-This concpet extends the concpet of a triangulation vertex.
+\ccRefines
+\ccc{TriangulationVertexBase_3}.
 
 
-\ccInheritsFrom
-
-\ccc{TriangulationVertexBase_2}
 
 \ccCreationVariable{v}
 
@@ -66,19 +65,19 @@ operators, negation, multiplication, division and allow the
 declaration and initialization with a small integer constant
 (cf. requirements for number types). An obvious choice would be
 coordinate type of the point class.
-\ccPrecond Let's us precise that \ccc{Coord_type} has to be the same as the one used by
+\ccPrecond \ccc{Coord_type} has to be the same as the one used by
 the \ccc{Gt}, already used by underlying triangulation \ccc{Dt}.}
 
 \ccCreation
 
 \begin{ccAdvanced}
 
-\ccConstructor{AlphaShapeVertexBase_2();}{default constructor.}
+\ccConstructor{AlphaShapeVertex_2();}{default constructor.}
 \ccGlue
-\ccConstructor{AlphaShapeVertexBase_2(Point p);}{constructor setting
-the point associated to.}
+\ccConstructor{AlphaShapeVertex_2(Point p);}{constructor setting
+the point.}
 \ccGlue
-\ccConstructor{AlphaShapeVertexBase_2(Point p, void* f);} 
+\ccConstructor{AlphaShapeVertex_2(Point p, void* f);} 
 {constructor setting the point  associated to and an incident face.}
 
 \end{ccAdvanced}

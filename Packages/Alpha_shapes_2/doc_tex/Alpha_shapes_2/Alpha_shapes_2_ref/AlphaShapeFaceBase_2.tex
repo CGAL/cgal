@@ -45,17 +45,14 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefConcept}{AlphaShapeFaceBase_2<Df>}
+\begin{ccRefConcept}{AlphaShapeFaceBase_2}
 
 \ccDefinition
 
-This concept extends the concept of triangulation faces.
-\ccc{Df} has to be chosen as the face base for the underlying triangulation. 
 
+\ccRefines
+\ccc{TriangulationFaceBase_3}.
 
-\ccInheritsFrom
-
-\ccc{Df}
 
 \ccCreationVariable{f}
 \ccTypes
@@ -77,11 +74,11 @@ her face base \ccc{Df}.}
 
 \begin{ccAdvanced}
 
-\ccConstructor{AlphaShapeFaceBase_2();}{default constructor.}
+\ccConstructor{AlphaShapeFace_2();}{default constructor.}
 \ccGlue
-\ccConstructor{AlphaShapeFaceBase_2(void* v0, void* v1, void* v2);}{constructor setting the incident vertices.}
+\ccConstructor{AlphaShapeFace_2(void* v0, void* v1, void* v2);}{constructor setting the incident vertices.}
 \ccGlue
-\ccConstructor{AlphaShapeFaceBase_2(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2);} 
+\ccConstructor{AlphaShapeFace_2(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2);} 
 {constructor setting the incident vertices and the neighboring faces.}
 
 \end{ccAdvanced}

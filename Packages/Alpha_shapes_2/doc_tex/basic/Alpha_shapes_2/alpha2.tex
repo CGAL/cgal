@@ -91,7 +91,7 @@ The wording of this introductory paragraphs is borrowed from  Kaspar Fischer's
 `` Introduction to Alpha Shapes'' which can be found at 
 http://n.ethz.ch/student/fischerk/alphashapes/as/index.html.
 The picture has been taken from Walter Luh's homepage at
-http://www.stanford.edu/~wluh/cs448b/alphashapes.html.}
+http://www.stanford.edu/\~wluh/cs448b/alphashapes.html.}
 
 
 \section{Definitions}
@@ -187,31 +187,26 @@ points cannot be inserted or removed.
 
 
 We currently do not specify concepts for the underlying triangulation
-type. It must be a \ccc{CGAL::Delaunay_triangulation_2} or a
-\ccc{Regular_triangulation_2}, or a
+type. Models that work for a basic alpha-shape are the classes
+\ccc{CGAL::Delaunay_triangulation_2} and 
 \ccc{CGAL::Triangulation_hierarchy_2} templatized with a Delaunay
-triangulation.
+triangulation. A model that works for a weighted alpha-shape is 
+the class \ccc{Regular_triangulation_2}.
 
+The triangulation needs a geometric traits class as argument.
+The requirements of this class are described in the 
+concepts \ccc{CGAL::AlphaShapeEuclideanTraits_2} and
+\ccc{CGAL::WeightedAlphaShapeEuclideanTraits_2} for which
+the classes \ccc{CGAL::Alpha_shape_euclidean_traits_2}
+and \ccc{CGAL::Weighted_alpha_shape_euclidean_traits_2} are models.
 
-The triangulation takes a geometric traits class as argument,
-the alpha shape traits class. The class
-\ccc{CGAL::Alpha_shape_euclidean_traits_2} is model of the
-concept \ccc{CGAL::AlphaShapeEuclideanTraits_2}.
+There are no requirements on the triangulation data structure.
+However it must be parameterized with 
+vertex and face classes, which are model of the concepts
+\ccc{AlphaShapeVertexBase_2} and \ccc{AlphaShapeFaceBase_2},
+by default the classes \ccc{Alpha_shape_vertex_base_2<Gt, Tv} 
+and \ccc{Alpha_shape_face_base_2<Tf>}.
 
-and \ccc{CGAL::Weighted_alpha_shape_euclidean_traits_2}.
-
-The class \ccc{Dt} must be parameterized with a special alpha shape
-traits class and a simple triangulation data structure, with no more requirements as
-for a simple triangulation class, but parameterized with special
-vertex and face classes.  The class \ccc{Alpha_shape_vertex_base_2<Gt, Tv} is a model for
-the concept \ccc{AlphaShapeVertexBase_2}.
-
-The class \ccc{Alpha_shape_face_base_2<Tf>} is a model for the concept
-\ccc{AlphaShapeFaceBase_2}.
-
-\ccc{Regular_triangulation_face_base_2<Gt>}
-
-They have functions that allow to get and set alpha values. 
 
 
 
@@ -239,8 +234,8 @@ The following code sniplet shows how to obtain a basic
 alpha shape type.
 
 \begin{cprog}
-typedef CGAL::Cartesian<double> Rp;
-typedef CGAL::Alpha_shape_euclidean_traits_2<Rp> Gt;
+typedef CGAL::Cartesian<double> K;
+typedef CGAL::Alpha_shape_euclidean_traits_2<K> Gt;
 
 typedef CGAL::Alpha_shape_vertex_base_2<Gt> Av;
 
@@ -264,8 +259,8 @@ and faces.
 Therefore, the only part that changes are the typedefs in the beginning.
 
 \begin{cprog}
-typedef CGAL::Cartesian<double> Rp;
-typedef CGAL::Alpha_shape_euclidean_traits_2<Rp> Gt;
+typedef CGAL::Cartesian<double> K;
+typedef CGAL::Alpha_shape_euclidean_traits_2<K> Gt;
 
 typedef Triangulation_vertex_base_2<Gt> Tv;
 typedef Triangulation_hierarchy_vertex_base_2<Hv> 
@@ -291,8 +286,8 @@ face class, namely \ccc{CGAL::Regular_triangulation_face_base_2<Gt>}.
 Note that there is no special weighted alpha shape class.
 
 \begin{cprog}
-typedef CGAL::Cartesian<double> Rp;
-typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<Rp> Gt;
+typedef CGAL::Cartesian<double> K;
+typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<K> Gt;
 
 typedef CGAL::Alpha_shape_vertex_base_2<Gt> Av;
 
