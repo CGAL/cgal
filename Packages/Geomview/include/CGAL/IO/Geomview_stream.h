@@ -538,9 +538,7 @@ template < class R >
 Geomview_stream&
 operator>>(Geomview_stream &gv, Point_3<R> &point)
 {
-    char gclpick[100];
-    std::strcpy(gclpick, 
-	      "(pick world pickplane * nil nil nil nil nil nil nil)");
+    const char *gclpick = "(pick world pickplane * nil nil nil nil nil nil nil)";
 
     gv << ascii
        << "(pickable pickplane yes) (ui-target pickplane yes)"
@@ -548,7 +546,7 @@ operator>>(Geomview_stream &gv, Point_3<R> &point)
 
     gv >> gv.sexpr;  // this reads a gcl expression
 
-    char* pickpoint = nth(gv.sexpr, 3);
+    const char* pickpoint = nth(gv.sexpr, 3);
     // this gives something as: (0.0607123 0.0607125 4.76837e-07 0.529628)
     parse_point(pickpoint, point);
 
@@ -570,9 +568,7 @@ Geomview_stream&
 operator>>(Geomview_stream &gv, Tetrahedralization_simplex<V>*& s)
 {
     char* id;
-    char gclpick[100];
-    std::strcpy(gclpick, 
-	      "(pick world * nil nil nil nil nil nil nil nil)");
+    const char *gclpick = "(pick world * nil nil nil nil nil nil nil nil)";
 
     gv << ascii ;
     gv << "(interest " << gclpick << ")" ;
@@ -606,9 +602,7 @@ Geomview_stream&
 operator>>(Geomview_stream &gv, Tetrahedralization_vertex<P>*& v)
 {
     char* id;
-    char gclpick[100];
-    std::strcpy(gclpick, 
-	      "(pick world * nil nil nil nil nil nil nil nil)");
+    const char *gclpick = "(pick world * nil nil nil nil nil nil nil nil)";
 
     gv << ascii
        << "(interest " << gclpick << ")" ;
