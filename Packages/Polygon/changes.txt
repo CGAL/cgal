@@ -1,4 +1,11 @@
 //-----------------------------------------------------------------------//
+// 2.8
++Updated demo directory
+ - new makefile
+ - std:: prefixes
+ - display() called for window.
+
+//-----------------------------------------------------------------------//
 // 2.7
 +Made some adaptations for compilation under Borland.
  In CGAL/Polygon_2_algorithms.C:
