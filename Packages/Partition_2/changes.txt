@@ -1,3 +1,6 @@
+1.31 (18 Apr 2002)
+  - removed some .x() and .y() accesses
+
 1.30 (8 Apr 2002)
   - removed remaining <R> parameterization of point type.
 
