@@ -96,7 +96,7 @@ public:
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
     
-    connect(widget, SIGNAL(mouseReleased(QMouseEvent*)), this,
+    connect(widget, SIGNAL(s_mouseReleaseEvent(QMouseEvent*)), this,
           SLOT(insert_after_show_conflicts(QMouseEvent*)));
 	
     //create a timer for checking if somthing changed
