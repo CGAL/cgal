@@ -26,7 +26,7 @@
 // implementation: 3D convex hull via quickhull algorithm
 // ============================================================================
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Homogeneous.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/Convex_hull_traits_3.h>
@@ -34,17 +34,31 @@
 #include <CGAL/predicates_on_points_3.h>
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
+typedef leda_integer RT;
+#else
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpz.h>
+typedef CGAL::Gmpz RT;
+#else
+// NOTE: the choice of double here for a number type may cause problems
+//       for degenerate point sets
+#include <CGAL/double.h>
+typedef double RT;
+#endif
+#endif
 
 #include <vector>
 
 // NOTE: the choice of double here for a number type may cause problems 
 //       for degenerate point sets
-typedef CGAL::Cartesian<double>                   R;
-typedef CGAL::Convex_hull_traits_3<R>             Traits;
+typedef CGAL::Homogeneous<RT>                     K;
+typedef CGAL::Convex_hull_traits_3<K>             Traits;
 typedef Traits::Polyhedron_3                      Polyhedron_3;
 
 // define point creator 
-typedef CGAL::Point_3<R>                          Point_3;
+typedef K::Point_3                                Point_3;
 typedef CGAL::Creator_uniform_3<double, Point_3>  PointCreator;
 typedef CGAL::Random_points_in_sphere_3<Point_3, PointCreator> Generator;
 
@@ -60,10 +74,10 @@ void draw_points_and_hull(const std::vector<Point_3>& points,
       geomview << *p_it;
    }
 
-   CGAL::Segment_3<R>     segment;
-   CGAL::Triangle_3<R>    triangle;
-   Point_3                point;
-   Polyhedron_3           polyhedron;
+   K::Segment_3     segment;
+   K::Triangle_3    triangle;
+   Point_3          point;
+   Polyhedron_3     polyhedron;
 
    geomview << CGAL::BLUE;
    if ( CGAL::assign(point, object) )
