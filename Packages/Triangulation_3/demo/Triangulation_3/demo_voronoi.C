@@ -31,7 +31,10 @@ int main()
 #else
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
+#include <CGAL/MP_Float.h> 
+#include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/Filtered_exact.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 
@@ -43,7 +46,12 @@ int main()
 #include <unistd.h>
 #include <list>
 
-typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > K;
+// an exact number type is needed because we are using constructions
+// (circumcenter computations) in this demo, not only predicates 
+typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > NT1; 
+typedef CGAL::Filtered_exact<NT1, NT1> NT;
+
+typedef CGAL::Simple_cartesian<NT> K;
 
 typedef CGAL::Triangulation_3<K> Triangulation;
 typedef CGAL::Delaunay_triangulation_3<K> Delaunay;
@@ -75,7 +83,7 @@ int main()
   for (z=0 ; z<3 ; z++)
     for (y=0 ; y<3 ; y++)
       for (x=0 ; x<3 ; x++) 
-	  T.insert(Point(x,y,z));
+	  T.insert(Point(NT(x),NT(y),NT(z)));
 
   T.is_valid(true);
 
