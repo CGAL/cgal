@@ -1,3 +1,5 @@
+- Have an interface to the fast OFF format so that people can easily and
+  quickly display a set of facets.
 - recuperer le dernier objet insere dans geomview
 - pouvoir detruire des objets
 - avoir une option pour que les segments soient des petits cylindres,
@@ -24,7 +26,6 @@
   The fact we're multiprocess probably means we'll even have less problems
   than multi-threads...
 - Should wired_flag be checked for Triangle_[23] and other kernel stuff ?
-- Why not use the OOGL library coming with Geomview to parse stuff ?
 
 Color:
 ------
