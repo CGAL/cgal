@@ -1,5 +1,6 @@
 Version 1.108 (22 March 02)
 - Iterators and circulators are convertible to handles.
+- Cell.init() obsolete (redundant with default constructor)
 
 Version 1.107 (8 March 02)
 - patch in DS_Container for MSVC

@@ -167,6 +167,7 @@ public:
   bool is_valid(bool, int ) const
     {return true;}
 
+  // Obsolete : it's redundant with the default constructor.
   void init() const
   {}
 
