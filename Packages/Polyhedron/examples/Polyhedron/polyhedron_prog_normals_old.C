@@ -1,7 +1,7 @@
-// polyhedron_prog_normals.C
+// polyhedron_prog_normals_old.C
 // -----------------------------------------------------------
-#include <CGAL/Homogeneous.h>
 #define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
+#include <CGAL/Homogeneous.h>
 #include <iostream>
 #include <algorithm>
 #include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>

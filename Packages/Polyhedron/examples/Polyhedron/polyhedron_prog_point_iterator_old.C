@@ -1,7 +1,7 @@
-// polyhedron_prog_point_iterator.C
+// polyhedron_prog_point_iterator_old.C
 // -----------------------------------------------------------
-#include <CGAL/Cartesian.h>
 #define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
+#include <CGAL/Cartesian.h>
 #include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
 #include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
