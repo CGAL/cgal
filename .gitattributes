@@ -1964,9 +1964,13 @@ Packages/wininst/demo/Alpha_shapes_3/VC6/demo_alpha.dsp -text
 Packages/wininst/demo/Alpha_shapes_3/VC6/demo_weight.dsp -text
 Packages/wininst/demo/Alpha_shapes_3/VC7/demo_alpha.vcproj -text
 Packages/wininst/demo/Alpha_shapes_3/VC7/demo_weight.vcproj -text
-Packages/wininst/demo/Convex_hull_2/VC6/ch_of_polyline.dsp -text
-Packages/wininst/demo/Convex_hull_2/VC6/convex_hull_2_demo.dsp -text
-Packages/wininst/demo/Convex_hull_2/VC6/convex_hull_of_ipoints.dsp -text
+Packages/wininst/demo/Arrangement_2/VC6/Circle_arr_from_file.dsp -text
+Packages/wininst/demo/Arrangement_2/VC6/Polygon_intersection_demo.dsp -text
+Packages/wininst/demo/Arrangement_2/VC6/Polyline_arr_from_file.dsp -text
+Packages/wininst/demo/Arrangement_2/VC6/Polyline_arr_from_mouse.dsp -text
+Packages/wininst/demo/Arrangement_2/VC6/Seg_circ_arr_from_file.dsp -text
+Packages/wininst/demo/Arrangement_2/VC6/Segment_arr_from_file.dsp -text
+Packages/wininst/demo/Arrangement_2/VC6/Segment_arr_from_mouse.dsp -text
 Packages/wininst/demo/Convex_hull_3/VC6/incremental_hull_3_demo.dsp -text
 Packages/wininst/demo/Convex_hull_3/VC6/quickhull_3_demo.dsp -text
 Packages/wininst/demo/Convex_hull_d/VC6/chull_2d-windows-demo.dsp -text
