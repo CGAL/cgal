@@ -292,6 +292,16 @@ Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/halfedge_methods.ips -text
 Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/poly_optional.ips -text
 Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/polyhedron.ips -text
 Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/shark.ps -text
+Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/add_facet1.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/add_facet2.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/euler_facet.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/euler_loop.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/euler_vertex.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/halfedge.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/halfedge_small.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/poly_optional.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/poly_optional_small.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/shark.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2/Embedding.ipe -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/Flip.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2/Flip.ipe -text

@@ -1,5 +1,9 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
+3.7 (18 Jun 2001)
+
+     - Added old manual part to deprecated_basic.
+
 3.6 (18 Jun 2001)
 
      - Fixed example code inclusion in the doc.
