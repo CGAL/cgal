@@ -109,7 +109,8 @@ public:
   typedef Planar_map_2<Dcel,Traits> Self;
   typedef Planar_map_traits_wrap<Traits> Traits_wrap;
   typedef typename Traits::X_curve X_curve;
-  typedef typename Traits::Point Point;
+  typedef typename Traits::Point_2 Point_2;
+  typedef typename Traits::Point_2 Point; // For backward compatability
   typedef std::list<X_curve> X_curve_container;
   
   typedef Topological_map<Dcel> TPM;
@@ -630,8 +631,8 @@ private:
 			 const X_curve& cv) 
   {
     /*
-      Defining geometrically whether there is a new face an if 
-      there is find if previous1 is on the outside of the new 
+      Defining geometrically whether there is a new face. If 
+      there is, finds if previous1 is on the outside of the new 
       face (send previous1,previous2) or on the inside of the new 
       face (send previous2,previous1)
 		
@@ -717,7 +718,7 @@ private:
 				       previous1->target()->point()));
       }
       else
-	if (traits->curve_compare_at_x_right(cv,left_edge->curve(),
+	if (traits->curve_compare_at_x_right(cv,left_edge->curve(), 
 					     left)==SMALLER ) {  
 	  return (traits->point_is_left(previous1->target()->point(),
 					previous2->target()->point()));
