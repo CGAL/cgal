@@ -55,17 +55,884 @@
 #include <CGAL/Number_type_traits.h>
 
 #include <CGAL/Apollonius_graph_kernel_wrapper_2.h>
-
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/Apollonius_graph_euclidean_traits_2.C>
-#endif
-
 #include <CGAL/Apollonius_graph_constructions_C2.h>
+
 
 #define KEEP_MOST_TYPES_IN_TRAITS 0
 
 
 CGAL_BEGIN_NAMESPACE
+
+
+//***********************************************************************
+//***********************************************************************
+//                              PREDICATES
+//***********************************************************************
+//***********************************************************************
+
+//-----------------------------------------------------------------------
+//                        Compare weight
+//-----------------------------------------------------------------------
+
+template < class K >
+class Compare_weight_2
+{
+public:
+  typedef typename K::Site_2  Site_2;
+  typedef Comparison_result             result_type;
+
+  inline
+  Comparison_result operator()(const Site_2& p,
+			       const Site_2& q) const
+  {
+    return CGAL_NTS compare(p.weight(), q.weight());
+  }
+};
+
+//-----------------------------------------------------------------------
+//                        Is hidden
+//-----------------------------------------------------------------------
+
+template < class K >
+inline
+bool
+ad_is_hidden_test_2(const typename K::Site_2& p,
+		    const typename K::Site_2& q,
+		    Cartesian_tag, Sqrt_field_tag )
+{
+  return ad_is_hidden_test_sqrtf_C2(p.x(), p.y(), p.weight(),
+				    q.x(), q.y(), q.weight());
+}
+
+
+template < class K >
+inline
+bool
+ad_is_hidden_test_2(const typename K::Site_2& p,
+		    const typename K::Site_2& q,
+		    Cartesian_tag, Ring_tag )
+{
+  return ad_is_hidden_test_ring_C2(p.x(), p.y(), p.weight(),
+				   q.x(), q.y(), q.weight());
+}
+
+
+
+template < class K, class Method_tag >
+inline
+bool
+ad_is_hidden_test_2(const typename K::Site_2& p,
+		    const typename K::Site_2& q,
+		    Homogeneous_tag)
+{
+  Sign s = sign_of_ad_distance2_testH2(p.hx(), p.hy(), p.hw(), 
+				       p.weight(),
+				       q.hx(), q.hy(), q.hw(),
+				       q.weight());
+  if ( s == POSITIVE ) { return false; }
+  return (CGAL_NTS compare(p.weight(), q.weight()) != SMALLER);
+}
+
+template < class K, class Method_tag >
+inline
+bool
+ad_is_hidden_test_2(const typename K::Site_2& p,
+		    const typename K::Site_2& q,
+		    Cartesian_tag tag)
+{
+  return ad_is_hidden_test_2< K >(p, q, tag, Method_tag());
+}
+
+
+template< class K, class Method_tag >
+class Is_hidden_2
+{
+public:
+  typedef typename K::Site_2   Site_2;
+  typedef bool                           result_type;
+
+  inline bool operator()(const Site_2 &p,
+			 const Site_2 &q) const
+  {
+    typedef typename K::Rep_tag Tag;
+    return ad_is_hidden_test_2<K,Method_tag>(p, q, Tag());
+  }
+};
+
+
+//-----------------------------------------------------------------------
+//                    Oriented side of bisector
+//-----------------------------------------------------------------------
+
+
+template < class K >
+inline
+Comparison_result
+ad_distances_test_2(const typename K::Site_2& p1,
+		    const typename K::Site_2& p2,
+		    const typename K::Point_2& p,
+		    Cartesian_tag, Sqrt_field_tag )
+{
+  return
+    compare_ad_distances_test_sqrtf_C2(p1.x(), p1.y(), p1.weight(),
+				       p2.x(), p2.y(), p2.weight(),
+				       p.x(),  p.y());
+}
+
+
+template < class K >
+inline
+Comparison_result
+ad_distances_test_2(const typename K::Site_2& p1,
+		    const typename K::Site_2& p2,
+		    const typename K::Point_2& p,
+		    Cartesian_tag, Ring_tag)
+{
+  return compare_ad_distances_test_ring_C2(p1.x(), p1.y(), p1.weight(),
+					   p2.x(), p2.y(), p2.weight(),
+					   p.x(),  p.y());
+}
+
+
+
+template < class K, class Method_tag >
+inline
+Comparison_result
+ad_distances_test_2(const typename K::Site_2& p1,
+		    const typename K::Site_2& p2,
+		    const typename K::Point_2& p, Cartesian_tag tag)
+{
+  return ad_distances_test_2< K >(p1, p2, p, tag, Method_tag());
+}
+
+
+
+template < class K, class Method_tag >
+inline
+Comparison_result
+ad_distances_test_2(const typename K::Site_2& p1,
+		    const typename K::Site_2& p2,
+		    const typename K::Point_2& p, Homogeneous_tag )
+{
+  return compare_ad_distances_testH2(p1.hx(), p1.hy(), p1.hw(),
+				     p1.weight(),
+				     p2.hx(), p2.hy(), p2.hw(),
+				     p2.weight(),
+				     p.hx(), p.hy(), p.hw());
+}
+
+
+
+
+
+template < class K, class Method_tag >
+inline
+Comparison_result
+ad_distances_test_2(const typename K::Site_2& p1,
+		    const typename K::Site_2& p2,
+		    const typename K::Point_2& p)
+{
+  typedef typename K::Rep_tag Tag;
+  return ad_distances_test_2<K,Method_tag>(p1, p2, p, Tag());
+}
+
+
+
+template< class K, class Method_tag >
+class Oriented_side_of_bisector_2
+{
+public:
+  typedef typename K::Point_2             Point_2;
+  typedef typename K::Site_2    Site_2;
+  typedef Oriented_side                   result_type;
+
+  inline Oriented_side operator()(const Site_2& p1,
+				  const Site_2& p2,
+				  const Point_2 &p) const
+  {
+    Comparison_result r = ad_distances_test_2<K,Method_tag>(p1, p2, p);
+
+    if ( r == EQUAL ) { return ON_ORIENTED_BOUNDARY; }
+    return ( r == LARGER ) ? ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE;
+  }
+};
+
+
+
+//-----------------------------------------------------------------------
+//                        Vertex conflict
+//-----------------------------------------------------------------------
+
+
+template < class K >
+inline
+Sign
+ad_incircle_test_2(const typename K::Site_2& p1,
+		   const typename K::Site_2& p2,
+		   const typename K::Site_2&  q,
+		   Cartesian_tag, Sqrt_field_tag )
+{
+  return ad_incircle_test_sqrtf_C2(p1.x(), p1.y(), p1.weight(),
+				   p2.x(), p2.y(), p2.weight(),
+				    q.x(),  q.y(),  q.weight());
+}
+
+
+template < class K >
+inline
+Sign
+ad_incircle_test_2(const typename K::Site_2& p1,
+		   const typename K::Site_2& p2,
+		   const typename K::Site_2&  q,
+		   Cartesian_tag, Ring_tag )
+{
+  return ad_incircle_test_ring_C2(p1.x(), p1.y(), p1.weight(),
+				  p2.x(), p2.y(), p2.weight(),
+				   q.x(),  q.y(),  q.weight());
+}
+
+
+template < class K, class Method_tag >
+inline
+Sign
+ad_incircle_test_2(const typename K::Site_2& p1,
+		   const typename K::Site_2& p2,
+		   const typename K::Site_2&  q,
+		   Cartesian_tag tag)
+{
+  return ad_incircle_test_2< K >(p1, p2, q, tag, Method_tag());
+}
+
+
+template < class K, class Method_tag >
+inline
+Sign
+ad_incircle_test_2(const typename K::Site_2& p1,
+		   const typename K::Site_2& p2,
+		   const typename K::Site_2& q,
+		   Homogeneous_tag )
+{
+  return 
+    ad_incircle_testH2(p1.hx(), p1.hy(), p1.hw(), p1.weight(),
+		       p2.hx(), p2.hy(), p2.hw(), p2.weight(),
+		        q.hx(),  q.hy(),  q.hw(),  q.weight());
+}
+
+
+//-----------------------------------------------------------------------
+
+
+template < class K >
+inline
+Sign
+ad_incircle_test_2(const typename K::Site_2& p1,
+		   const typename K::Site_2& p2,
+		   const typename K::Site_2& p3,
+		   const typename K::Site_2&  q,
+		   Cartesian_tag, Sqrt_field_tag )
+{
+  return ad_incircle_test_sqrtf_C2(p1.x(), p1.y(), p1.weight(),
+				   p2.x(), p2.y(), p2.weight(),
+				   p3.x(), p3.y(), p3.weight(),
+				    q.x(),  q.y(),  q.weight());
+}
+
+
+template < class K >
+inline
+Sign
+ad_incircle_test_2(const typename K::Site_2& p1,
+		   const typename K::Site_2& p2,
+		   const typename K::Site_2& p3,
+		   const typename K::Site_2&  q,
+		   Cartesian_tag, Ring_tag )
+{
+  return ad_incircle_test_ring_C2(p1.x(), p1.y(), p1.weight(),
+				  p2.x(), p2.y(), p2.weight(),
+				  p3.x(), p3.y(), p3.weight(),
+				  q.x(),  q.y(),   q.weight());
+}
+
+
+
+template < class K, class Method_tag >
+inline
+Sign
+ad_incircle_test_2(const typename K::Site_2& p1,
+		   const typename K::Site_2& p2,
+		   const typename K::Site_2& p3,
+		   const typename K::Site_2&  q,
+		   Cartesian_tag tag)
+{
+  return ad_incircle_test_2< K >(p1, p2, p3, q, tag, Method_tag());
+}
+
+
+template < class K, class Method_tag >
+inline
+Sign
+ad_incircle_test_2(const typename K::Site_2& p1,
+		   const typename K::Site_2& p2,
+		   const typename K::Site_2& p3,
+		   const typename K::Site_2& q,
+		   Homogeneous_tag )
+{
+  return 
+    ad_incircle_testH2(p1.hx(), p1.hy(), p1.hw(), p1.weight(),
+		       p2.hx(), p2.hy(), p2.hw(), p2.weight(),
+		       p3.hx(), p3.hy(), p3.hw(), p3.weight(),
+		        q.hx(),  q.hy(),  q.hw(),  q.weight());
+}
+
+
+template < class K, class Method_tag >
+class Vertex_conflict_2
+{
+public:
+  typedef typename K::Site_2      Site_2;
+  typedef Sign                               result_type;
+
+  inline
+  Sign operator()(const Site_2& p1,
+		  const Site_2& p2,
+		  const Site_2& p3,
+		  const Site_2& q) const
+  {
+    typedef typename K::Rep_tag Tag;
+    return ad_incircle_test_2<K,Method_tag>(p1, p2, p3, q, Tag());
+  }
+
+
+  inline
+  Sign operator()(const Site_2& p1,
+		  const Site_2& p2,
+		  const Site_2& q) const
+  {
+    typedef typename K::Rep_tag Tag;
+    return ad_incircle_test_2<K,Method_tag>(p1, p2, q, Tag());
+  }
+ 
+
+
+};
+
+//-----------------------------------------------------------------------
+//                    Finite edge interior conflict
+//-----------------------------------------------------------------------
+
+template < class K >
+inline
+bool
+ad_finite_edge_test_2(const typename K::Site_2& p1,
+		      const typename K::Site_2& p2,
+		      const typename K::Site_2& q,
+		      bool b, Cartesian_tag, Sqrt_field_tag)
+{
+  return
+    ad_finite_edge_test_degenerated_sqrtf_C2(p1.x(), p1.y(),
+					     p1.weight(),
+					     p2.x(), p2.y(),
+					     p2.weight(),
+					     q.x(),  q.y(),
+					     q.weight(), b);
+}
+
+template < class K >
+inline
+bool
+ad_finite_edge_test_2(const typename K::Site_2& p1,
+		      const typename K::Site_2& p2,
+		      const typename K::Site_2& q,
+		      bool b, Cartesian_tag, Ring_tag)
+{
+  return
+    ad_finite_edge_test_degenerated_ring_C2(p1.x(), p1.y(),
+					    p1.weight(),
+					    p2.x(), p2.y(),
+					    p2.weight(),
+					    q.x(),  q.y(),
+					    q.weight(), b);
+}
+
+
+template < class K, class Method_tag >
+inline
+bool
+ad_finite_edge_test_2(const typename K::Site_2& p1,
+		      const typename K::Site_2& p2,
+		      const typename K::Site_2& q,
+		      bool b, Cartesian_tag tag)
+{
+  return
+    ad_finite_edge_test_2< K >(p1, p2, q, b, tag, Method_tag());
+}
+
+template < class K, class Method_tag >
+inline
+bool
+ad_finite_edge_test_2(const typename K::Site_2& p1,
+		      const typename K::Site_2& p2,
+		      const typename K::Site_2& q,
+		      bool b, Homogeneous_tag)
+{
+  return
+    ad_finite_edge_test_degeneratedH2(p1.hx(), p1.hy(),
+				      p1.hw(),
+				      p1.weight(),
+				      p2.hx(), p2.hy(),
+				      p2.hw(),
+				      p2.weight(),
+				      q.hx(),  q.hy(),
+				      q.hw(),
+				      q.weight(), b);
+}
+
+template < class K, class Method_tag >
+inline
+bool
+ad_finite_edge_test_2(const typename K::Site_2& p1,
+		      const typename K::Site_2& p2,
+		      const typename K::Site_2& q, bool b)
+{
+  typedef typename K::Rep_tag Tag;
+  return ad_finite_edge_test_2<K,Method_tag>(p1, p2, q, b, Tag());
+}
+
+//-----------------------------------------------------------------------
+
+template < class K >
+inline
+bool
+ad_finite_edge_test_2(const typename K::Site_2& p1,
+		      const typename K::Site_2& p2,
+		      const typename K::Site_2& p3,
+		      const typename K::Site_2& q,
+		      bool b, Cartesian_tag, Sqrt_field_tag)
+{
+  return ad_finite_edge_test_degenerated_sqrtf_C2(p1.x(), p1.y(),
+						  p1.weight(),
+						  p2.x(), p2.y(),
+						  p2.weight(),
+						  p3.x(), p3.y(),
+						  p3.weight(),
+						  q.x(),  q.y(),
+						  q.weight(), b);
+}
+
+template < class K >
+inline
+bool
+ad_finite_edge_test_2(const typename K::Site_2& p1,
+		      const typename K::Site_2& p2,
+		      const typename K::Site_2& p3,
+		      const typename K::Site_2& q,
+		      bool b, Cartesian_tag, Ring_tag)
+{
+  return ad_finite_edge_test_degenerated_ring_C2(p1.x(), p1.y(),
+						 p1.weight(),
+						 p2.x(), p2.y(),
+						 p2.weight(),
+						 p3.x(), p3.y(),
+						 p3.weight(),
+						 q.x(),  q.y(),
+						 q.weight(), b);
+}
+
+
+template < class K, class Method_tag >
+inline
+bool
+ad_finite_edge_test_2(const typename K::Site_2& p1,
+		      const typename K::Site_2& p2,
+		      const typename K::Site_2& p3,
+		      const typename K::Site_2& q,
+		      bool b, Cartesian_tag tag)
+{
+  return
+    ad_finite_edge_test_2< K >(p1, p2, p3, q, b, tag, Method_tag());
+}
+
+template < class K, class Method_tag >
+inline
+bool
+ad_finite_edge_test_2(const typename K::Site_2& p1,
+		      const typename K::Site_2& p2,
+		      const typename K::Site_2& p3,
+		      const typename K::Site_2& q,
+		      bool b, Homogeneous_tag)
+{
+  return
+    ad_finite_edge_test_degeneratedH2(p1.hx(), p1.hy(),
+				      p1.hw(),
+				      p1.weight(),
+				      p2.hx(), p2.hy(),
+				      p2.hw(),
+				      p2.weight(),
+				      p3.hx(), p3.hy(),
+				      p3.hw(),
+				      p3.weight(),
+				      q.hx(),  q.hy(),
+				      q.hw(),
+				      q.weight(), b);
+}
+
+template < class K, class Method_tag >
+inline
+bool
+ad_finite_edge_test_2(const typename K::Site_2& p1,
+		      const typename K::Site_2& p2,
+		      const typename K::Site_2& p3,
+		      const typename K::Site_2& q, bool b)
+{
+  typedef typename K::Rep_tag Tag;
+  return ad_finite_edge_test_2<K,Method_tag>(p1, p2, p3, q, b, Tag());
+}
+
+//-----------------------------------------------------------------------
+
+
+template < class K >
+inline
+bool
+ad_finite_edge_test_2(const typename K::Site_2& p1,
+		      const typename K::Site_2& p2,
+		      const typename K::Site_2& p3,
+		      const typename K::Site_2& p4,
+		      const typename K::Site_2& q,
+		      bool b, Cartesian_tag, Sqrt_field_tag)
+{
+  return
+    ad_finite_edge_test_sqrtf_C2(p1.x(), p1.y(), p1.weight(),
+				 p2.x(), p2.y(), p2.weight(),
+				 p3.x(), p3.y(), p3.weight(),
+				 p4.x(), p4.y(), p4.weight(),
+				 q.x(),  q.y(), q.weight(), b);
+}
+
+template < class K >
+inline
+bool
+ad_finite_edge_test_2(const typename K::Site_2& p1,
+		      const typename K::Site_2& p2,
+		      const typename K::Site_2& p3,
+		      const typename K::Site_2& p4,
+		      const typename K::Site_2& q,
+		      bool b, Cartesian_tag, Ring_tag)
+{
+  return
+    ad_finite_edge_test_ring_C2(p1.x(), p1.y(), p1.weight(),
+				p2.x(), p2.y(), p2.weight(),
+				p3.x(), p3.y(), p3.weight(),
+				p4.x(), p4.y(), p4.weight(),
+				 q.x(),  q.y(),  q.weight(), b);
+}
+
+
+template < class K, class Method_tag >
+inline
+bool
+ad_finite_edge_test_2(const typename K::Site_2& p1,
+		      const typename K::Site_2& p2,
+		      const typename K::Site_2& p3,
+		      const typename K::Site_2& p4,
+		      const typename K::Site_2& q,
+		      bool b, Cartesian_tag tag)
+{
+  return ad_finite_edge_test_2< K >(p1, p2, p3, p4, q, b,
+				    tag, Method_tag());
+}
+
+template < class K, class Method_tag >
+inline
+bool
+ad_finite_edge_test_2(const typename K::Site_2& p1,
+		      const typename K::Site_2& p2,
+		      const typename K::Site_2& p3,
+		      const typename K::Site_2& p4,
+		      const typename K::Site_2& q,
+		      bool b, Homogeneous_tag)
+{
+  return
+    ad_Voronoi_diagram_finite_edge_testH2(p1.hx(), p1.hy(), p1.hw(),
+					  p1.weight(),
+					  p2.hx(), p2.hy(), p2.hw(),
+					  p2.weight(),
+					  p3.hx(), p3.hy(), p3.hw(),
+					  p3.weight(),
+					  p4.hx(), p4.hy(), p4.hw(),
+					  p4.weight(),
+					  q.hx(),  q.hy(), q.hw(),
+					  q.weight(), b);
+}
+
+template < class K, class Method_tag >
+inline
+bool
+ad_finite_edge_test_2(const typename K::Site_2& p1,
+		      const typename K::Site_2& p2,
+		      const typename K::Site_2& p3,
+		      const typename K::Site_2& p4,
+		      const typename K::Site_2& q,
+		      bool b)
+{
+  typedef typename K::Rep_tag Tag;
+  return ad_finite_edge_test_2<K,Method_tag>
+    (p1, p2, p3, p4, q, b, Tag());
+}
+
+
+
+
+template < class K, class Method_tag >
+class Finite_edge_interior_conflict_2
+{
+public:
+  typedef typename K::Site_2  Site_2;
+  typedef bool                           result_type;
+
+  inline
+  bool operator()(const Site_2& p1,
+		  const Site_2& p2,
+		  const Site_2& p3,
+		  const Site_2& q, bool b) const
+  {
+    return ad_finite_edge_test_2<K,Method_tag>(p1, p2, p3, q, b);
+  }
+
+  bool operator()(const Site_2& p1,
+		  const Site_2& p2,
+		  const Site_2& q, bool b) const
+  {
+    return ad_finite_edge_test_2<K,Method_tag>(p1, p2, q, b);
+  }
+
+
+
+  inline
+  bool operator()(const Site_2& p1,
+		  const Site_2& p2,
+		  const Site_2& p3,
+		  const Site_2& p4,
+		  const Site_2& q,
+		  bool b) const
+  {
+    return ad_finite_edge_test_2<K,Method_tag>(p1, p2, p3, p4, q, b);
+  }
+};
+
+
+//-----------------------------------------------------------------------
+//                   Infinite edge interior conflict
+//-----------------------------------------------------------------------
+
+template < class K >
+inline
+bool
+ad_infinite_edge_test_2(const typename K::Site_2& p2,
+			const typename K::Site_2& p3,
+			const typename K::Site_2& p4,
+			const typename K::Site_2& q,
+			bool b, Cartesian_tag, Sqrt_field_tag)
+{
+  return
+    ad_infinite_edge_test_sqrtf_C2(p2.x(), p2.y(), p2.weight(),
+				   p3.x(), p3.y(), p3.weight(),
+				   p4.x(), p4.y(), p4.weight(),
+				    q.x(),  q.y(),  q.weight(), b);
+}
+
+
+template < class K >
+inline
+bool
+ad_infinite_edge_test_2(const typename K::Site_2& p2,
+			const typename K::Site_2& p3,
+			const typename K::Site_2& p4,
+			const typename K::Site_2& q,
+			bool b, Cartesian_tag, Ring_tag)
+{
+  return
+    ad_infinite_edge_test_ring_C2(p2.x(), p2.y(), p2.weight(),
+				  p3.x(), p3.y(), p3.weight(),
+				  p4.x(), p4.y(), p4.weight(),
+				   q.x(),  q.y(),  q.weight(), b);
+}
+
+
+template < class K, class Method_tag >
+inline
+bool
+ad_infinite_edge_test_2(const typename K::Site_2& p2,
+			const typename K::Site_2& p3,
+			const typename K::Site_2& p4,
+			const typename K::Site_2& q,
+			bool b, Cartesian_tag tag)
+{
+  return
+    ad_infinite_edge_test_2<K>(p2, p3, p4, q, b, tag, Method_tag());
+}
+
+
+
+template < class K, class Method_tag >
+inline
+bool
+ad_infinite_edge_test_2(const typename K::Site_2& p2,
+			const typename K::Site_2& p3,
+			const typename K::Site_2& p4,
+			const typename K::Site_2& q,
+			bool b, Homogeneous_tag)
+{
+  return
+    ad_infinite_edge_testH2(p2.hx(), p2.hy(), p2.hw(),
+			    p2.weight(),
+			    p3.hx(), p3.hy(), p3.hw(),
+			    p3.weight(),
+			    p4.hx(), p4.hy(), p4.hw(),
+			    p4.weight(),
+			    q.hx(),  q.hy(), q.hw(),
+			    q.weight(), b);
+}
+
+template < class K, class Method_tag >
+inline
+bool
+ad_infinite_edge_test_2(const typename K::Site_2& p2,
+			const typename K::Site_2& p3,
+			const typename K::Site_2& p4,
+			const typename K::Site_2& q, bool b)
+{
+  typedef typename K::Rep_tag Tag;
+  return ad_infinite_edge_test_2<K,Method_tag>(p2, p3, p4, q, b, Tag());
+}
+
+
+template < class K, class Method_tag >
+class Infinite_edge_interior_conflict_2
+{
+public:
+  typedef typename K::Site_2 Site_2;
+  typedef bool                          result_type;
+
+  inline
+  bool operator()(const Site_2& p2,
+		  const Site_2& p3,
+		  const Site_2& p4,
+		  const Site_2& q, bool b) const
+  {
+    return ad_infinite_edge_test_2<K,Method_tag>(p2, p3, p4, q, b);
+  }
+};
+
+
+//-----------------------------------------------------------------------
+//                          Is degenerate
+//-----------------------------------------------------------------------
+
+
+
+template < class K >
+inline
+bool
+ad_is_degenerate_edge_test_2(const typename K::Site_2& p1,
+			     const typename K::Site_2& p2,
+			     const typename K::Site_2& p3,
+			     const typename K::Site_2& p4,
+			     Cartesian_tag, Sqrt_field_tag)
+{
+  return
+    ad_is_degenerate_edge_test_sqrtf_C2(p1.x(), p1.y(), p1.weight(),
+					p2.x(), p2.y(), p2.weight(),
+					p3.x(), p3.y(), p3.weight(),
+					p4.x(), p4.y(), p4.weight());
+}
+
+template < class K >
+inline
+bool
+ad_is_degenerate_edge_test_2(const typename K::Site_2& p1,
+			     const typename K::Site_2& p2,
+			     const typename K::Site_2& p3,
+			     const typename K::Site_2& p4,
+			     Cartesian_tag, Ring_tag)
+{
+  return
+    ad_is_degenerate_edge_test_ring_C2(p1.x(), p1.y(), p1.weight(),
+				       p2.x(), p2.y(), p2.weight(),
+				       p3.x(), p3.y(), p3.weight(),
+				       p4.x(), p4.y(), p4.weight());
+}
+
+
+template < class K, class Method_tag >
+inline
+bool
+ad_is_degenerate_edge_test_2(const typename K::Site_2& p1,
+			     const typename K::Site_2& p2,
+			     const typename K::Site_2& p3,
+			     const typename K::Site_2& p4,
+			     Cartesian_tag tag)
+{
+  return
+    ad_is_degenerate_edge_test_2< K >(p1, p2, p3, p4, tag, Method_tag());
+}
+
+
+template < class K, class Method_tag >
+inline
+bool
+ad_is_degenerate_edge_test_2(const typename K::Site_2& p1,
+			     const typename K::Site_2& p2,
+			     const typename K::Site_2& p3,
+			     const typename K::Site_2& p4,
+			     Homogeneous_tag)
+{
+  return
+    ad_is_degenerate_edge_testH2(p1.hx(), p1.hy(), p1.hw(),
+				 p1.weight(),
+				 p2.hx(), p2.hy(), p2.hw(),
+				 p2.weight(),
+				 p3.hx(), p3.hy(), p3.hw(),
+				 p3.weight(),
+				 p4.hx(), p4.hy(), p4.hw(),
+				 p4.weight());
+}
+
+template < class K, class Method_tag >
+inline
+bool
+ad_is_degenerate_edge_test_2(const typename K::Site_2& p1,
+			     const typename K::Site_2& p2,
+			     const typename K::Site_2& p3,
+			     const typename K::Site_2& p4)
+{
+  typedef typename K::Rep_tag Tag;
+  return
+    ad_is_degenerate_edge_test_2<K,Method_tag>(p1, p2, p3, p4, Tag());
+}
+
+
+
+template < class K, class Method_tag >
+class Is_degenerate_edge_2
+{
+public:
+  typedef typename K::Site_2    Site_2;
+  typedef bool                             result_type;
+
+  inline
+  bool operator()(const Site_2& p1,
+		  const Site_2& p2,
+		  const Site_2& p3,
+		  const Site_2& p4) const
+  {
+    return
+      ad_is_degenerate_edge_test_2<K,Method_tag>(p1, p2, p3, p4);
+  }
+};
+
+
+
 
 //-----------------------------------------------------------------------
 // the Traits class
