@@ -5,6 +5,11 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 
+Ver 7.45
+- fixed demo/Triangulation_2/Delaunay.C
+- added a macro to workaround MSC in Trivial_iterator.h
+  changed accordingli the def of Face_handle and Vertex_handle in TDS2
+
 Ver 7.44 (19/08/02)
 - Replaced CGAL::Pointer by CGAL::Comparable_iterator
   in the implemantatins of Face_handle and Vertex_handle

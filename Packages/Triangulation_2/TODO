@@ -1,3 +1,7 @@
+- add examples for Triangulation hierarchy
+  and for the use of both Constrained_plus and triangulation hierarchy
+- corriger le figure "three_layers" dans la doc 
+
 - Check if copy constructor and assignement operator of
   constrained riangulation transfers the contrained marks.
 - Something still tobe done for remove in Constrained
@@ -10,10 +14,6 @@
   les mettre dans un fichier separe
   pour ne pas etre oblige d'inclure iostream obligatoirement
 
-- arranger ca :
-  Concernant la Constrained_triangulation_plus_2:
-  Ca devrait etre Vertices_in_constraint_iterator a la place de 
-  Vertices_in_constraint
 - constrained_triangulation_plus_2 plante sur Sun CC
 - Constraint_hierarchy_3 
   to be done or redone : copy swap and delete

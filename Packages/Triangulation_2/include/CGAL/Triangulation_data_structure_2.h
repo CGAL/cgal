@@ -36,7 +36,6 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_utils_2.h>
-//#include <CGAL/Pointer.h>
 #include <CGAL/Trivial_iterator.h>
 #include <CGAL/DS_Container.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
@@ -113,10 +112,8 @@ public:
   typedef Fb                                         Face_base;
   typedef Triangulation_ds_vertex_2<Tds>             Vertex;
   typedef Triangulation_ds_face_2<Tds>               Face;
-  //  typedef Pointer<Face>                              Face_handle;
-  //  typedef Pointer<Vertex>                            Vertex_handle;
-  typedef CGAL_COMPARABLE_ITERATOR_CHECKER(Face*)        Face_handle;
-  typedef CGAL_COMPARABLE_ITERATOR_CHECKER(Vertex*)      Vertex_handle;
+  typedef CGAL_COMPARABLE_ITERATOR_CHECKER_POINTER(Face)    Face_handle;
+  typedef CGAL_COMPARABLE_ITERATOR_CHECKER_POINTER(Vertex)  Vertex_handle;
   typedef std::pair<Face_handle, int>                Edge;
   
   typedef DS_Container<Face>                         Face_container;
