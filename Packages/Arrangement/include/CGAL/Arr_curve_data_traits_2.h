@@ -42,6 +42,7 @@ public:
   typedef typename Traits::X_monotone_curve_2   Org_x_monotone_curve_2;
   typedef typename Traits::Point_2              Point_2;
 
+  
   class Curve_2 : public Org_curve_2 {
   private:
     Data m_data;
@@ -77,6 +78,11 @@ public:
     void set_data(const Data & data) { m_data = data; }
   };
 
+  // For backward compatibility:
+  typedef Point_2                               Point;
+  typedef X_monotone_curve_2                    X_curve;
+  typedef Curve_2                               Curve;
+  
 private:
   Traits m_traits;
 
@@ -118,7 +124,7 @@ public:
 		   X_monotone_curve_2 & c1, X_monotone_curve_2 & c2, 
                    const Point_2 & p) const
   {
-    Org_x_monotone_curve_2  org_c1, org_c2;
+    Org_x_monotone_curve_2 org_c1, org_c2;
     m_traits.curve_split (cv, org_c1, org_c2, p);
     c1 = X_monotone_curve_2 (org_c1, cv.get_data());
     c2 = X_monotone_curve_2 (org_c2, cv.get_data());
