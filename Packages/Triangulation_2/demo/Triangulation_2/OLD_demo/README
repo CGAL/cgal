@@ -1,5 +1,5 @@
 DEMOS   :
----------
+These are old version of Triangulation_2 demos
 These demos makes use of graphical IO and needs LEDA or CGAL::WINDOW
 to be installed
 
