@@ -187,7 +187,7 @@ public:
  } 
 };
 
-#if !defined(_MSC_VER)
+//#if !defined(_MSC_VER)
 class geo_ellipse : public geowin_redraw, public geowin_update<std::list<Point>, std::list<Point> >
 {
 public:
@@ -201,7 +201,7 @@ public:
   void update(const std::list<Point>& L, std::list<Point>& LP)
   {  min_ell.clear(); min_ell.insert(L.begin(),L.end()); }
 };
-#endif
+//#endif
 
 class geo_circ : public geowin_update<std::list<Point>,std::list<Circle> >
 {
@@ -412,12 +412,12 @@ int main()
   GW.set_fill_color(res6,leda_invisible);
   GW.set_line_width(res6, 3);
 
-#if !defined(_MSC_VER)
+//#if !defined(_MSC_VER)
   // for the minimum enclosing ellipse
   geo_ellipse EL;
   geo_scene res7  = GW.new_scene(EL, EL , my_scene, leda_string("Minimal enclosing ellipse"));
   GW.set_color(res7, leda_white);
-#endif
+//#endif
   
   // for the crust
   geo_crust crust_update;  

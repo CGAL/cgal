@@ -70,10 +70,6 @@ using namespace leda;
 
 using namespace std;
 
-//#if !defined(_MSC_VER)
-//#define USE_RAT
-//#endif
-
 #if defined(USE_RAT)
 typedef leda_rational                         NT;
 typedef leda_integer                          NT2;

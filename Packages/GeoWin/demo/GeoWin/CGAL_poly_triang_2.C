@@ -62,11 +62,8 @@ int main(int argc, char *argv[])
 using namespace leda;
 #endif
 
-#if !defined(_MSC_VER)
 typedef leda_rational coord_type;
-#else
-typedef double coord_type;
-#endif
+//typedef double coord_type;
 
 typedef CGAL::Cartesian<coord_type>                             K;
 typedef K::Point_2                                              Point;

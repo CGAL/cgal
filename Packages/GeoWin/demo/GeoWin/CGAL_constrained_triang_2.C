@@ -50,14 +50,9 @@ int main(int argc, char *argv[])
 }
 #else 
 
-
 #include <CGAL/Cartesian.h>
-#include <CGAL/Triangulation_euclidean_traits_2.h>
-#include <CGAL/Triangulation_2.h>
-#include <CGAL/Triangulation_vertex_base_2.h>
-#include <CGAL/Constrained_triangulation_face_base_2.h>
-#include <CGAL/Triangulation_default_data_structure_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>  
 #include <CGAL/geowin_support.h>
 #include <CGAL/leda_rational.h>
 
@@ -65,22 +60,20 @@ int main(int argc, char *argv[])
 using namespace leda;
 #endif
 
-//#if !defined(_MSC_VER)
-//typedef leda_rational coord_type;
-//#else
-typedef double coord_type;
-//#endif
+typedef leda_rational coord_type;
+//typedef double coord_type;
 
 typedef CGAL::Cartesian<coord_type>                             K;
 typedef K::Point_2                                              Point;
 typedef K::Segment_2                                            Segment;
 
-typedef CGAL::Triangulation_euclidean_traits_2<K>               Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt>                   Vb;
-typedef CGAL::Triangulation_face_base_2<Gt>                     Fb;
-typedef CGAL::Constrained_triangulation_face_base_2<Gt>         CFb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,CFb> Tds;
-typedef CGAL::Constrained_triangulation_2<Gt,Tds>               Constr_triangulation_2;
+typedef CGAL::Triangulation_vertex_base_2<K>                    Vb;
+typedef CGAL::Constrained_triangulation_face_base_2<K>          Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb>             TDS;
+typedef CGAL::Exact_intersections_tag                           Itag;
+typedef CGAL::Constrained_triangulation_2<K,TDS,Itag>           CT;
+typedef CGAL::Constrained_triangulation_plus_2<CT>              Constr_triangulation_2;
+
 typedef Constr_triangulation_2::Constraint                      Constraint;
 typedef Constr_triangulation_2::Edge                            Edge;
 typedef Constr_triangulation_2::Edge_iterator                   Edge_iterator;
@@ -126,7 +119,6 @@ int main()
   std::list<Segment> SL;
 
   GeoWin GW("CGAL - Constrained Triangulation demo");
-  GW.message("The segments of your input should not intersect.");
  
   geo_scene my_scene= GW.new_scene(SL); 
   GW.set_color(my_scene, leda_blue); 
