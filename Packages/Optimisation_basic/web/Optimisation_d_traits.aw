@@ -228,8 +228,7 @@ Section~\ref{ccRef_CGAL::Optimisation_d_traits_2<R,ET,NT>}.3.
         typedef  Access_coordinates_begin_2<R>
                                             Access_coordinates_begin_d;
 
-        typedef  typename R::Construct_point_2
-                                            Construct_point_d;
+        typedef  Construct_point_2<R>       Construct_point_d;
 
         // creation
         Optimisation_d_traits_2( ) { }
@@ -296,8 +295,7 @@ Section~\ref{ccRef_CGAL::Optimisation_d_traits_3<R,ET,NT>}.4.
         typedef  Access_coordinates_begin_3<R>
                                             Access_coordinates_begin_d;
 
-        typedef  typename R::Construct_point_3
-                                            Construct_point_d;
+        typedef  Construct_point_3<R>       Construct_point_d;
 
         // creation
         Optimisation_d_traits_3( ) { }
@@ -416,6 +414,9 @@ Section~\ref{ccRef_CGAL::Optimisation_d_traits_d<R,ET,NT>}.5.
     #ifndef CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_2_H
     #  include <CGAL/Optimisation/Access_coordinates_begin_2.h>
     #endif
+    #ifndef CGAL_OPTIMISATION_CONSTRUCT_POINT_2_H
+    #  include <CGAL/Optimisation/Construct_point_2.h>
+    #endif
 
     @<namespace begin>("CGAL")
 
@@ -454,6 +455,9 @@ Section~\ref{ccRef_CGAL::Optimisation_d_traits_d<R,ET,NT>}.5.
     #endif
     #ifndef CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_3_H
     #  include <CGAL/Optimisation/Access_coordinates_begin_3.h>
+    #endif
+    #ifndef CGAL_OPTIMISATION_CONSTRUCT_POINT_3_H
+    #  include <CGAL/Optimisation/Construct_point_3.h>
     #endif
 
     @<namespace begin>("CGAL")
