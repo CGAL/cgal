@@ -20,6 +20,7 @@ int main()
 
   x_i = 1;
   y_i = 0;
+  y_i += y_i;
   i = 0;
 
   while (++i < 500)
