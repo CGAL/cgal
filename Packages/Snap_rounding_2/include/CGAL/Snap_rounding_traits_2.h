@@ -50,8 +50,10 @@ class Snap_2 {
     NT x_tmp = p.x() / pixel_size;
     NT y_tmp = p.y() / pixel_size;
 
-    x = floor(x_tmp.to_double()) * pixel_size + pixel_size / 2.0;
-    y = floor(y_tmp.to_double()) * pixel_size + pixel_size / 2.0;
+    x = NT(floor(to_double(x_tmp))) * pixel_size + pixel_size / NT(2.0);
+    y = NT(floor(to_double(y_tmp))) * pixel_size + pixel_size / NT(2.0);
+    //    x = floor(x_tmp.to_double()) * pixel_size + pixel_size / 2.0;
+    //    y = floor(y_tmp.to_double()) * pixel_size + pixel_size / 2.0;
   }
 };
 
@@ -63,8 +65,8 @@ class Integer_grid_point_2 {
  public:
   Point_2 operator()(Point_2 p,NT pixel_size)
   {
-    NT x = (p.x() - pixel_size / 2.0) / pixel_size;
-    NT y = (p.y() - pixel_size / 2.0) / pixel_size;
+    NT x = (p.x() - pixel_size / NT(2.0)) / pixel_size;
+    NT y = (p.y() - pixel_size / NT(2.0)) / pixel_size;
     Point_2 out_p(x,y);
 
     return(out_p);

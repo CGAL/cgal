@@ -1,23 +1,10 @@
-// Making sure test doesn't fail if LEDA is not installed
-#if ! defined(CGAL_USE_LEDA)
-#include <iostream>
-#include <fstream>
-int main(int argc, char* argv[])
-{
-  std::cout << "A try to run demo with LEDA but LEDA is not installed.";
-  std::cout << std::endl;
-  std::cout << "Test is not performed.";
-  std::cout << std::endl;
-
-  return 0;
-}
-#else
 #include <CGAL/Cartesian.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/MP_Float.h>
 #include "../../include/CGAL/Snap_rounding_traits_2.h"
 #include "../../include/CGAL/Snap_rounding_2.h"
 
-typedef leda_rational Number_Type;
-
+typedef CGAL::Quotient<CGAL::MP_Float>           Number_Type;
 typedef CGAL::Cartesian<Number_Type>             Rep;
 typedef CGAL::Snap_rounding_traits_2<Rep>        Sr_traits;
 typedef Rep::Segment_2                           Segment_2;
@@ -70,8 +57,8 @@ void print_out(std::list<std::list<Point_2> >::iterator begin_iter,
     for(std::list<Point_2>::iterator i2 = i->begin();
         i2 != i->end();
         ++i2)
-      std::cout << "    (" << i2->x().to_double() << ":"
-                << i2->y().to_double() << ")\n";
+      std::cout << "    (" << to_double(i2->x()) << ":"
+                << to_double(i2->y()) << ")\n";
 
     std::cout << std::endl;
   }
@@ -110,5 +97,3 @@ int main(int argc,char *argv[])
 
   return(0);
 }
-
-#endif // LEDA

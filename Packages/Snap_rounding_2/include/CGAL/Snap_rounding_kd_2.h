@@ -82,7 +82,7 @@ private:
   void rotate(Point_2& p,NT angle)
   {
     static const double rad_to_deg = 57.297;
-    int tranc_angle = int(angle.to_double() * rad_to_deg);
+    int tranc_angle = int(to_double(angle) * rad_to_deg);
 
     NT cosine_val = angle_to_sines_appr[90 - tranc_angle],
        sine_val = angle_to_sines_appr[tranc_angle];
@@ -114,10 +114,10 @@ private:
       tree->dump();
     assert(tree->is_valid());
 
-    NT buffer_angle(angle - half_pi / (2 * number_of_trees));
+    double buffer_angle(to_double(angle) - half_pi / (2 * number_of_trees));
     if(buffer_angle < 0)
       buffer_angle = 0;
-    Line_2 li(tan(buffer_angle.to_double()),-1,0);
+    Line_2 li(tan(buffer_angle),-1,0);
     Direction_2 d(li);
     // rotate_by 180 degrees
     Transformation_2 t(ROTATION,0,-1);
@@ -315,18 +315,18 @@ public:
 
     // auxilary directions
     std::list<Direction_2> directions;
-    NT buffer_angle;
+    double buffer_angle;
     Line_2 li;
     Direction_2 d;
 
     int i = 0;
-    for(NT angle = 0;
+    for(double angle = 0;
         i < number_of_trees;
         angle += half_pi / number_of_trees,++i) {
       buffer_angle = angle - half_pi / (2 * number_of_trees);
       if(buffer_angle < 0)
         buffer_angle = 0;
-      li = Line_2(tan(buffer_angle.to_double()),-1,0);
+      li = Line_2(tan(buffer_angle),-1,0);
       d = Direction_2(li);
       // rotate_by 180 degrees
       Transformation_2 t(ROTATION,0,-1);
@@ -341,10 +341,10 @@ public:
 #ifdef KD_DEBUG
     int number_of_actual_kd_trees = 0;
 #endif
-
-    for(NT angle = 0,i = 0;
+    i = 0;
+    for(NT angle = 0;
         i < number_of_trees;
-        angle += half_pi / number_of_trees,++i) {
+        angle += NT(half_pi / number_of_trees),++i) {
       if(kd_counter[ind] >= (double)number_of_segments /
 	                    (double)number_of_trees / 2.0) {
         kd = create_kd_tree(angle);

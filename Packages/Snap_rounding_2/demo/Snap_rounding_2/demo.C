@@ -2,6 +2,8 @@
 
 #include <fstream>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/squared_distance_2.h>
@@ -10,7 +12,7 @@
 #include "../../include/CGAL/Snap_rounding_traits_2.h"
 #include "../../include/CGAL/Snap_rounding_2.h"
 
-typedef leda_rational                          Number_type;
+typedef CGAL::Quotient<CGAL::MP_Float>         Number_type;
 typedef CGAL::Cartesian<Number_type>           Rep;
 typedef CGAL::Snap_rounding_traits_2<Rep>      Sr_traits;
 typedef Rep::Segment_2                         Segment_2;
@@ -80,10 +82,10 @@ void show_results(Polyline_2_list& polyline_list,
     bool seg_painted = false;
 
     if(show_hp)
-      w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / 2.0,
-					          i2->y() - prec / 2.0),
-                                          Point_2(i2->x() + prec / 2.0,
-					          i2->y() + prec / 2.0));
+      w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / Number_type(2.0),
+					          i2->y() - prec / Number_type(2.0)),
+                                          Point_2(i2->x() + prec / Number_type(2.0),
+					          i2->y() + prec / Number_type(2.0)));
     for(++i2;
         i2 != i->end();
         ++i2) {
@@ -91,10 +93,10 @@ void show_results(Polyline_2_list& polyline_list,
       if(show_output)
         w << CGAL::RED << Segment_2(*prev,*i2);
       if(show_hp)
-        w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / 2.0,
-					            i2->y() - prec / 2.0),
-                                            Point_2(i2->x() + prec / 2.0,
-					            i2->y() + prec / 2.0));
+        w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / Number_type(2.0),
+					            i2->y() - prec / Number_type(2.0)),
+                                            Point_2(i2->x() + prec / Number_type(2.0),
+					            i2->y() + prec / Number_type(2.0)));
       prev = i2;
     }
 
@@ -244,10 +246,10 @@ int main(int argc,char *argv[])
   } else {
     read_data(argc,argv,prec,seg_list);
     get_extreme_points(seg_list,x1,y1,x2,y2);
-    W.init((x1 - 3 - prec * 3).to_double(),x2 - x1 > y2 - y1 ? 
-           (x2 + 3 + prec * 3).to_double() : 
-           (y2 - y1 + x1 + 3 + prec * 3).to_double(),
-           (y1 - 3 - prec * 3).to_double());
+    W.init(to_double(x1) - 3 - to_double(prec) * 3,x2 - x1 > y2 - y1 ? 
+           to_double(x2) + 3 + to_double(prec) * 3 : 
+           to_double(y2 - y1 + x1) + 3 + to_double(prec) * 3,
+           to_double(y1) - 3 - to_double(prec) * 3);
     W.set_mode(leda_src_mode);
     W.set_node_width(3);
   }
@@ -278,8 +280,8 @@ int main(int argc,char *argv[])
   for (;;) {
     mouse_input = W.read_mouse(x3,y3);
     if(mouse_input == -1 && 
-       x3 >= x1 && x3 <= x2 &&
-       y3 >= y1 && y3 <= y2) {
+       Number_type(x3) >= x1 && Number_type(x3) <= x2 &&
+       Number_type(y3) >= y1 && Number_type(y3) <= y2) {
       if(remove_segments) {
 	Number_type min_dist = -1,dist;
         Segment_2_list_iterator closest_iter =
@@ -291,7 +293,7 @@ int main(int argc,char *argv[])
               Point_2(i1->target().x(),i1->target().y()));
           dist = CGAL::squared_distance(Point_2(x3,y3),l_s);
 
-          if(min_dist == -1 || dist < min_dist) {
+          if(min_dist == Number_type(-1) || dist < min_dist) {
             min_dist = dist;
             closest_iter = i1;
 	  }
@@ -304,8 +306,8 @@ int main(int argc,char *argv[])
       } else {
         // add a segment
         mouse_input = W.read_mouse_seg(x3,y3,x4,y4);
-        if(x4 >= x1 && x4 <= x2 &&
-           y4 >= y1 && y4 <= y2) {
+        if(Number_type(x4) >= x1 && Number_type(x4) <= x2 &&
+           Number_type(y4) >= y1 && Number_type(y4) <= y2) {
           if(sr_shown) {
             sr_shown = false;
             redraw(seg_list,W,b,show_input,argc == 1);
@@ -395,13 +397,13 @@ int main(int argc,char *argv[])
       W.disable_button(14);
       show_output = false;
     } else if(mouse_input == 15) {
-      prec = prec * 2;
-      if(prec == 2)
+      prec = prec * Number_type(2);
+      if(prec == Number_type(2))
         W.disable_button(15);
       W.enable_button(16);
     } else if(mouse_input == 16) {
-      prec = prec / 2;
-      if(prec < 1.0 / 5)
+      prec = prec / Number_type(2);
+      if(prec < Number_type(1.0 / 5))
         W.disable_button(16);
       W.enable_button(15);
     } else if(mouse_input == 17) {

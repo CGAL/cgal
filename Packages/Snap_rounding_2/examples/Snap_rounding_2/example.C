@@ -1,9 +1,11 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/MP_Float.h>
 #include "../../include/CGAL/Snap_rounding_traits_2.h"
 #include "../../include/CGAL/Snap_rounding_2.h"
 
-typedef leda_rational                            Number_type;
+typedef CGAL::Quotient<CGAL::MP_Float>           Number_type;
 typedef CGAL::Cartesian<Number_type>             Rep;
 typedef CGAL::Snap_rounding_traits_2<Rep>        Sr_traits;
 typedef Rep::Segment_2                           Segment_2;
@@ -35,8 +37,8 @@ int main()
     for(Polyline_2::const_iterator iter2 = iter1->begin();
         iter2 != iter1->end();
         ++iter2)
-      std::cout << "    (" << iter2->x().to_double() << ":"
-                << iter2->y().to_double() << ")\n";
+      std::cout << "    (" << iter2->x() << ":"
+                << iter2->y() << ")\n";
   }
 
   return(0);

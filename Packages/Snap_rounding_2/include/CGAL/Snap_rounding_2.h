@@ -274,27 +274,27 @@ Hot_Pixel<Rep_>::Hot_Pixel(const Point_2& inp_point,NT inp_pixel_size) :
     _gt.snap_2_object()(inp_point,pixel_size,x,y);
 
     p = Point_2(x,y);
-    p_left = Point_2(x - pixel_size / 2.0,y);
-    p_right = Point_2(x + pixel_size / 2.0,y);
-    p_down = Point_2(x,y - pixel_size / 2.0);
-    p_up = Point_2(x,y + pixel_size / 2.0);
+    p_left = Point_2(x - pixel_size / NT(2.0),y);
+    p_right = Point_2(x + pixel_size / NT(2.0),y);
+    p_down = Point_2(x,y - pixel_size / NT(2.0));
+    p_up = Point_2(x,y + pixel_size / NT(2.0));
 
-    right_seg = new Segment_2(Point_2(x + pixel_size / 2.0,y -
-                              pixel_size / 2.0),
-                              Point_2(x + pixel_size / 2.0,y +
-                              pixel_size / 2.0));
-    left_seg = new Segment_2(Point_2(x - pixel_size / 2.0,y -
-                             pixel_size / 2.0),
-                             Point_2(x - pixel_size / 2.0,y +
-                             pixel_size / 2.0));
-    top_seg = new Segment_2(Point_2(x - pixel_size / 2.0,y +
-                            pixel_size / 2.0),
-                            Point_2(x + pixel_size / 2.0,y +
-                            pixel_size / 2.0));
-    bot_seg = new Segment_2(Point_2(x - pixel_size / 2.0,y -
-                            pixel_size / 2.0),
-                            Point_2(x + pixel_size / 2.0,y -
-                            pixel_size / 2.0));
+    right_seg = new Segment_2(Point_2(x + pixel_size / NT(2.0),y -
+                              pixel_size / NT(2.0)),
+                              Point_2(x + pixel_size / NT(2.0),y +
+                              pixel_size / NT(2.0)));
+    left_seg = new Segment_2(Point_2(x - pixel_size / NT(2.0),y -
+                             pixel_size / NT(2.0)),
+                             Point_2(x - pixel_size / NT(2.0),y +
+                             pixel_size / NT(2.0)));
+    top_seg = new Segment_2(Point_2(x - pixel_size / NT(2.0),y +
+                            pixel_size / NT(2.0)),
+                            Point_2(x + pixel_size / NT(2.0),y +
+                            pixel_size / NT(2.0)));
+    bot_seg = new Segment_2(Point_2(x - pixel_size / NT(2.0),y -
+                            pixel_size / NT(2.0)),
+                            Point_2(x + pixel_size / NT(2.0),y -
+                            pixel_size / NT(2.0)));
   }
 
 template<class Rep_>
