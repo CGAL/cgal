@@ -1,3 +1,6 @@
+1.14 (18 Mar 2002)
+- Const correctness in Data_access of Width_polyhedron.
+
 1.13 (31 Jul 2001)
 - Susan moved doc_tex/*_ref directory up one level
 

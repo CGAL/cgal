@@ -8,11 +8,11 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.2-I-49 $
-// release_date  : $CGAL_Date: 2000/09/26 $
+// release       : $CGAL_Revision: CGAL-2.4-I-64 $
+// release_date  : $CGAL_Date: 2002/03/18 $
 //
 // file          : include/CGAL/Width_3.h
-// package       : Width_3 (1.6)
+// package       : Width_3 (1.13)
 // maintainer    : Thomas Herrmann <herrmann@ifor.math.ethz.ch>
 // chapter       : Geometric Optimisation
 //
@@ -378,15 +378,15 @@ class Width_3 {
   //Checks if two sets are cutting each other or not (the common elements are 
   //not determined
   template <class Vertex_handle_>
-    bool setcut(std::vector<Vertex_handle_>& A, 
-		std::vector<Vertex_handle_>& B) {
+    bool setcut(std::vector<Vertex_handle_>& AA, 
+		std::vector<Vertex_handle_>& BB) {
     DEBUGMSG(SETCUT,"\nBegin SETCUT");
     typename std::vector<Vertex_handle_>::iterator 
-      Ait=A.begin();
+      Ait=AA.begin();
     typename std::vector<Vertex_handle_>::iterator Bfindit;
-    while(Ait!=A.end()) {
-      Bfindit=std::find(B.begin(),B.end(),*Ait);
-      if (Bfindit!=B.end()) {
+    while(Ait!=AA.end()) {
+      Bfindit=std::find(BB.begin(),BB.end(),*Ait);
+      if (Bfindit!=BB.end()) {
 	DEBUGMSG(SETCUT,"The sets are cutting each other. Return true.");
 	DEBUGMSG(SETCUT,"End SETCUT");
 	return true;
