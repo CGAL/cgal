@@ -24,7 +24,14 @@
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 //struct K : public CGAL::Simple_cartesian<FT> {};
 
-typedef CGAL::Conforming_Delaunay_triangulation_2_traits_3<K> Traits_2;
+typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Traits_3;
+typedef CGAL::Constrained_triangulation_cell_base_3<Traits_3> Cb_3;
+typedef CGAL::Constrained_triangulation_vertex_base_3<Traits_3> Vb_3;
+typedef CGAL::Triangulation_data_structure_3<Vb_3, Cb_3> Tds_3;
+typedef CGAL::Regular_triangulation_3<Traits_3, Tds_3>          Rt_3;
+
+typedef CGAL::Conforming_Delaunay_triangulation_2_traits_3<K> Traits_2_3;
+typedef CGAL::Special_mesh_traits_2<Rt_3, Traits_2_3> Traits_2;
 typedef CGAL::Triangulation_vertex_base_2<Traits_2> Vb_2;
 typedef CGAL::Delaunay_mesh_face_base_2<Traits_2> Fb_2;
 typedef CGAL::Triangulation_data_structure_2<Vb_2, Fb_2> Tds_2;
@@ -32,16 +39,10 @@ typedef CGAL::Constrained_Delaunay_triangulation_2<Traits_2, Tds_2> CDT_2;
 typedef CGAL::Constrained_triangulation_plus_2<CDT_2> CDTP_2;
 //typedef CGAL::Conforming_Delaunay_triangulation_2<CDTP_2> Conf_DT_2;
 
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Traits_3;
-typedef CGAL::Constrained_triangulation_cell_base_3<Traits_3> Cb_3;
-typedef CGAL::Constrained_triangulation_vertex_base_3<Traits_3> Vb_3;
-typedef CGAL::Triangulation_data_structure_3<Vb_3, Cb_3> Tds_3;
-
 typedef Traits_3::RT                                          Weight;
 typedef Traits_3::Bare_point                                  Point_3;
 typedef Traits_3::Weighted_point                              Weighted_point_3;
 
-typedef CGAL::Regular_triangulation_3<Traits_3, Tds_3>          Rt_3;
 typedef CGAL::Constrained_regular_triangulation_3<Rt_3, CDT_2>  Crt;
 
 typedef Crt::Vertex_iterator                                 Vertex_iterator;

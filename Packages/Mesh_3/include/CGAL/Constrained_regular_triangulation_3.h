@@ -12,7 +12,7 @@
 #include <queue>
 #include <algorithm>
 #include <CGAL/Constraint_hierarchy_2.h>
-#include <CGAL/Conforming_Delaunay_triangulation_2.h>
+#include <CGAL/Delaunay_mesh_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -27,23 +27,64 @@ struct Off_loader
   }
 };
 
-/** PLC_loader<CT_3. Tr2, CF_it>.
+template <class CT_3, class Traits_2_3>
+struct Special_mesh_traits_2 : public Traits_2_3
+{
+  typedef typename CT_3::Vertex_handle Vertex_handle_3;
+  typedef typename CT_3::Cell_handle Cell_handle_3;
+  typedef typename CT_3::Weighted_point Weighted_point;
+  typedef typename Traits_2_3::Point_2 Point_2;
+
+  CT_3& t;
+  
+  Special_mesh_traits_2<CT_3, Traits_2_3>(CT_3& tr) : t(tr) {};
+  
+  typedef int Quality;
+  
+  struct Is_bad
+  {
+    CT_3& t;
+    
+    Is_bad(CT_3& tr) : t(tr) {};
+    
+    bool operator()(const Point_2& pa,
+		    const Point_2& pb,
+		    const Point_2& pc,
+		    Quality& q) const 
+    {
+      q = 0; // constante, do not sort faces
+      
+      const Vertex_handle_3& va = t.insert(Weighted_point(pa));
+      const Vertex_handle_3& vb = t.insert(Weighted_point(pb));
+      const Vertex_handle_3& vc = t.insert(Weighted_point(pc));
+      
+      Cell_handle_3 c;
+      int i, j, k;
+      return ! t.is_facet(va, vb, vc, c, i, j, k);
+    }
+  };
+
+  Is_bad is_bad_object() const
+  { return Is_bad(t); }
+};
+
+/** PLC_loader<CT_3. CT_2>.
     CT_3: Contrained_triangulation_3,
-    Tr2: Contrained_Delaunay_triangulation_2,
-    Cont: container that contains Constrained_face 
+    CT_2: Contrained_Delaunay_triangulation_2,
+ 
     \todo{TODO:
     Il faudrait propifier ca.
     Avec un namespace PLC, peut-etre, contenant les definitions de types.}
 */
-template <typename CT_3, typename Tr2>
+template <typename CT_3, typename CT_2>
 struct PLC_loader
 {
-  typedef PLC_loader<CT_3, Tr2 > Self;
+  typedef PLC_loader<CT_3, CT_2 > Self;
 
-  typedef typename Tr2::Point Point_3;
-  typedef typename Tr2::Vertex_handle Vertex_handle_2;
-  typedef typename Tr2::Face_handle Face_handle_2;
-  typedef typename Tr2::Geom_traits Geom_traits_2;
+  typedef typename CT_2::Point Point_3;
+  typedef typename CT_2::Vertex_handle Vertex_handle_2;
+  typedef typename CT_2::Face_handle Face_handle_2;
+  typedef typename CT_2::Geom_traits Geom_traits_2;
   typedef typename CT_3::Weighted_point Weighted_point;
   typedef typename CT_3::Vertex_handle Vertex_handle_3;
   typedef typename CT_3::Cell_handle Cell_handle_3;
@@ -60,7 +101,7 @@ struct PLC_loader
 
     explicit Conform_extras(CT_3& tr) : t(tr) {};
     
-    bool is_bad(const Tr2& tr2,
+    bool is_bad(const CT_2& tr2,
 		const Face_handle_2& fh, const int index) const {
       const Point_3& a = fh->vertex(tr2.cw(index) )->point();
       const Point_3& b = fh->vertex(tr2.ccw(index))->point();
@@ -73,10 +114,10 @@ struct PLC_loader
       return not t.is_edge(va, vb, c, i, j);
     }
 
-    void signal_inserted_vertex(const Tr2& tr2,
-				const Face_handle_2& fh, 
-				const int edge_index,
-				const Vertex_handle_2& v) const
+    void signal_inserted_vertex_in_edge(const CT_2& tr2,
+					const Face_handle_2& fh, 
+					const int edge_index,
+					const Vertex_handle_2& v) const
     {
       const Point_3& p = v->point();
 
@@ -504,15 +545,16 @@ struct PLC_loader
     for(CF_it cf_it = constrained_faces_begin;
 	cf_it != constrained_faces_end; ++cf_it)
       {
-	typedef Conforming_Delaunay_triangulation_2<Tr2,
-	  Conform_extras> Conform_2;
+	typedef Delaunay_mesh_2<CT_2, Conform_extras> Mesh_2;
 
 	// MY_DEBUG
 	std::cerr << "Coucou2\n";
 
 	Conform_extras extra = Conform_extras(t);
 
-	Conform_2* tr2 = new Conform_2(Geom_traits_2(), extra);
+	Geom_traits_2 gt = Geom_traits_2(t);
+
+	Mesh_2* tr2 = new Mesh_2(gt, extra);
 
 	typedef std::queue<CGAL::Triple<Vertex_handle_3,
                                         Vertex_handle_3,
@@ -533,13 +575,13 @@ struct PLC_loader
 	std::cerr << "Coucou4\n";
 
 
-	tr2->mark_facets(cf_it->seeds.begin(),
-			cf_it->seeds.end(),
-			cf_it->seeds_in_face);
+	tr2->set_seeds(cf_it->seeds.begin(),
+			 cf_it->seeds.end(),
+			 cf_it->seeds_in_face);
 
-	tr2->make_conforming_Delaunay();
+	tr2->refine_mesh();
 
-	for(typename Tr2::Finite_edges_iterator e_it_2 = 
+	for(typename CT_2::Finite_edges_iterator e_it_2 = 
 	      tr2->finite_edges_begin();
 	    e_it_2 != tr2->finite_edges_end();
 	    ++e_it_2)
@@ -559,7 +601,7 @@ struct PLC_loader
 	std::cerr << "t.number_of_vertices()=" << t.number_of_vertices()
 		  << std::endl;
 
-	for(typename Tr2::Finite_faces_iterator f_it_2 =
+	for(typename CT_2::Finite_faces_iterator f_it_2 =
 	      tr2->finite_faces_begin();
 	    f_it_2 != tr2->finite_faces_end();
 	    ++f_it_2)
@@ -568,11 +610,13 @@ struct PLC_loader
 	    
 	    Cell_handle_3 c;
 	    int i, j, k;
+	    
+	    Vertex_handle_3 v0 = t.insert(f_it_2->vertex(0)->point());
+	    Vertex_handle_3 v1 = t.insert(f_it_2->vertex(1)->point());
+	    Vertex_handle_3 v2 = t.insert(f_it_2->vertex(2)->point());
 
-// 	    if( !is_facet( t.insert(f_it_2->vertex(0)->point()),
-// 			   t.insert(f_it_2->vertex(1)->point()),
-// 			   t.insert(f_it_2->vertex(2)->point()),
-// 			   c, i, j, k) );
+	    std::cerr << "f: " << t.insert_constrained_facet(v0, v1, v2)
+		      << std::endl;
 	  }
 	delete tr2;
       }
@@ -644,8 +688,9 @@ struct Conformer_2D
 	    
   
 
-
-template <class Tr, class Tr2>
+/** TODO
+    \todo{Ne pas deriver d'une Regular_triangulation...} */
+template <class Tr, class CT_2>
 class Constrained_regular_triangulation_3 : public Tr
 {
 public:
@@ -1060,18 +1105,18 @@ private:
 
 };
 
-template <class Tr, class Tr2>
+template <class Tr, class CT_2>
 inline 
-typename Constrained_regular_triangulation_3<Tr, Tr2>::Vertex_handle
-Constrained_regular_triangulation_3<Tr, Tr2>::
+typename Constrained_regular_triangulation_3<Tr, CT_2>::Vertex_handle
+Constrained_regular_triangulation_3<Tr, CT_2>::
 insert(const Bare_point & p, Cell_handle start) 
 {
   return this->insert(Weighted_point(p), start);
 }
 
-template <class Tr, class Tr2>
-typename Constrained_regular_triangulation_3<Tr, Tr2>::Vertex_handle
-Constrained_regular_triangulation_3<Tr, Tr2>::
+template <class Tr, class CT_2>
+typename Constrained_regular_triangulation_3<Tr, CT_2>::Vertex_handle
+Constrained_regular_triangulation_3<Tr, CT_2>::
 insert(const Weighted_point & p, Cell_handle start) 
 {
     Locate_type lt;
@@ -1080,9 +1125,9 @@ insert(const Weighted_point & p, Cell_handle start)
     return insert(p, lt, c, li, lj);
 }
 
-template <class Tr, class Tr2>
-typename Constrained_regular_triangulation_3<Tr, Tr2>::Vertex_handle
-Constrained_regular_triangulation_3<Tr, Tr2>::
+template <class Tr, class CT_2>
+typename Constrained_regular_triangulation_3<Tr, CT_2>::Vertex_handle
+Constrained_regular_triangulation_3<Tr, CT_2>::
 insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
 {
   Vertex_handle v1, v2;
@@ -1249,9 +1294,9 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
   }
 }
 
-template <class Tr, class Tr2>
+template <class Tr, class CT_2>
 typename Tr::Vertex_handle
-Constrained_regular_triangulation_3<Tr, Tr2>::
+Constrained_regular_triangulation_3<Tr, CT_2>::
 off_file_input(std::istream& is, bool verbose)
 {
   Vertex_handle vinf(0);
@@ -1323,9 +1368,9 @@ off_file_input(std::istream& is, bool verbose)
   return vinf;
 }
 
-template <class Tr, class Tr2>
+template <class Tr, class CT_2>
 void
-Constrained_regular_triangulation_3<Tr, Tr2>::
+Constrained_regular_triangulation_3<Tr, CT_2>::
 off_file_output(std::ostream& os)
 {
   std::set<Facet> constrained_facets;

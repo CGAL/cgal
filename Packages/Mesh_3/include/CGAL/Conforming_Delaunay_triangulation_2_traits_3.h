@@ -30,6 +30,9 @@ struct Conforming_Delaunay_triangulation_2_traits_3 : public CGAL::Triangulation
   typedef typename Rep::Compute_squared_distance_3 Compute_squared_distance_2;
   typedef typename Rep::Angle_3 Angle_2;
 
+  // for DelaunayMeshTraits_2<Tr>
+  typedef typename Rep::Construct_circumcenter_3 Construct_circumcenter_2;
+
   Construct_vector_2
   construct_vector_2_object() const
   { return Construct_vector_2(); }
@@ -54,6 +57,9 @@ struct Conforming_Delaunay_triangulation_2_traits_3 : public CGAL::Triangulation
   angle_2_object() const
   { return Angle_2(); }
 
+  Construct_circumcenter_2
+  construct_circumcenter_2_object() const
+  { return Construct_circumcenter_2(); }
 };
 
 } // end namespace CGAL
