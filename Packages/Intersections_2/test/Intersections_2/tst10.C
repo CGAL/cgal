@@ -9,10 +9,6 @@
 
 #include "numrep2.h"
 
-using std::cout;
-using std::cin;
-using std::ios;
-
 typedef CGAL::Point_2< TestR > point_t;
 typedef CGAL::Line_2< TestR > line_t;
 typedef CGAL::Ray_2< TestR > ray_t;
@@ -27,9 +23,9 @@ void print(const point_t &pt)
 	xd = 0.0;
     if (yd == 0.0)
 	yd = 0.0;
-    cout.setf(ios::showpos, ios::showpos);
-    cout << xd <<' '<< yd;
-    cout.setf(0, ios::showpos);
+    std::cout.setf(std::ios::showpos, std::ios::showpos);
+    std::cout << xd <<' '<< yd;
+    std::cout.setf(0, std::ios::showpos);
 }
 
 
@@ -37,46 +33,22 @@ void treat_intersection(const line_t &line, const ray_t &ray)
 {
     point_t ipt;
     ray_t iray;
-/*
-    CGAL::Line_2_Ray_2_pair<TestR> pair(&line, &ray);
-    switch (pair.intersection_type()) {
-    case CGAL::Line_2_Ray_2_pair<TestR>::NO:
-	cout << "No intersection.\n";
-	break;
-    case CGAL::Line_2_Ray_2_pair<TestR>::RAY:
-	cout << "Ray intersection.\n";
-	pair.intersection(iray);
-	print(iray.start());
-	cout << ' ';
-	print(CGAL::ORIGIN + iray.direction().vector());
-	cout<<'\n';
-	break;
-    case CGAL::Line_2_Ray_2_pair<TestR>::POINT:
-	cout << "Point intersection.\n";
-	pair.intersection(ipt);
-	print(ipt);
-	cout<<'\n';
-	break;
-    default:
-	cout << "Unexpected result.\n";
-    }
-*/
 
     CGAL::Object result = CGAL::intersection(line, ray);
     if (CGAL::assign(ipt, result)) {
-	cout << "Point intersection.\n";
+	std::cout << "Point intersection.\n";
 	print(ipt);
-	cout<<'\n';
+	std::cout<<'\n';
     }
     if (CGAL::assign(iray, result)) {
-	cout << "Ray intersection.\n";
+	std::cout << "Ray intersection.\n";
 	print(iray.start());
-	cout << ' ';
+	std::cout << ' ';
 	print(CGAL::ORIGIN + iray.direction().vector());
-	cout<<'\n';
+	std::cout<<'\n';
     }
     if (!CGAL::assign(iray, result) && !CGAL::assign(ipt, result)) {
-	cout << "No intersection.\n";
+	std::cout << "No intersection.\n";
     }
 }
 
@@ -84,16 +56,16 @@ int main()
 {
     randomint ri;
     int x1, x2, y1, y2, w1, w2;
-    cin >> x1 >> y1 >> x2 >> y2;
-    if (!cin)
+    std::cin >> x1 >> y1 >> x2 >> y2;
+    if (!std::cin)
 	return 1;
     w1 = ri.next();
     w2 = ri.next();
     point_t tp1(to_nt(w1*x1), to_nt(w1*y1), to_nt(w1));
     point_t tp2(to_nt(w2*x2), to_nt(w2*y2), to_nt(w2));
     line_t line(tp1, tp2);
-    cin >> x1 >> y1 >> x2 >> y2;
-    if (!cin)
+    std::cin >> x1 >> y1 >> x2 >> y2;
+    if (!std::cin)
 	return 1;
     w1 = ri.next();
     w2 = ri.next();

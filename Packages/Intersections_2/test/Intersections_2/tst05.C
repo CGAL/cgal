@@ -12,9 +12,6 @@
 #include "numrep2.h"
 
 
-using std::cout;
-using std::cin;
-using std::ios;
 
 typedef CGAL::Point_2< TestR > point_t;
 typedef CGAL::Segment_2< TestR > segment_t;
@@ -28,15 +25,15 @@ void print(const point_t &pt)
 	xd = 0.0;
     if (yd == 0.0)
 	yd = 0.0;
-    cout.setf(ios::showpos, ios::showpos);
-    cout << xd <<' '<< yd;
-    cout.setf(0, ios::showpos);
+    std::cout.setf(std::ios::showpos, std::ios::showpos);
+    std::cout << xd <<' '<< yd;
+    std::cout.setf(0, std::ios::showpos);
 }
 
 void print(const segment_t &iseg)
 {
 	print(iseg.start());
-	cout<<' ';
+	std::cout<<' ';
 	print(iseg.end());
 }
 
@@ -47,16 +44,16 @@ void treat_intersection(const segment_t &seg1, const segment_t &seg2)
     segment_t iseg;
     CGAL::Object result = CGAL::intersection(seg1, seg2);
     if (!CGAL::assign(iseg, result) && !CGAL::assign(pt1, result))
-	cout << "No intersection.\n";
+	std::cout << "No intersection.\n";
     if (CGAL::assign(pt1, result)) {
-	cout << "Point intersection.\n";
+	std::cout << "Point intersection.\n";
 	print(pt1);
-	cout<<'\n';
+	std::cout<<'\n';
     }
     if (CGAL::assign(iseg, result)) {
-	cout << "Segment intersection.\n";
+	std::cout << "Segment intersection.\n";
 	print(iseg);
-	cout<<'\n';
+	std::cout<<'\n';
     }
 }
 
@@ -64,16 +61,16 @@ int main()
 {
     randomint ri;
     int x1, x2, y1, y2, w1, w2;
-    cin >> x1 >> y1 >> x2 >> y2;
-    if (!cin)
+    std::cin >> x1 >> y1 >> x2 >> y2;
+    if (!std::cin)
 	return 1;
     w1 = ri.next();
     w2 = ri.next();
     point_t p1(to_nt(w1*x1), to_nt(w1*y1), to_nt(w1)),
 	    p2(to_nt(w2*x2), to_nt(w2*y2), to_nt(w2));
     segment_t seg1(p1, p2);
-    cin >> x1 >> y1 >> x2 >> y2;
-    if (!cin)
+    std::cin >> x1 >> y1 >> x2 >> y2;
+    if (!std::cin)
 	return 1;
     w1 = ri.next();
     w2 = ri.next();
