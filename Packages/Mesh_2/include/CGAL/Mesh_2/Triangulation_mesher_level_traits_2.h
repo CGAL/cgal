@@ -33,7 +33,7 @@ struct Triangulation_mesher_level_traits_2
   typedef typename Tr::Face_handle Face_handle;
   typedef typename Tr::Edge Edge;
 
-  class Zone {
+  struct Zone {
     typedef std::list<Face_handle> Faces;
     typedef std::list<Edge> Edges;
   public:
@@ -44,7 +44,7 @@ struct Triangulation_mesher_level_traits_2
     Edges boundary_edges;
   };
 
-  Zone get_conflicts_zone(Tr& t, const Point& p) const
+  static Zone get_conflicts_zone(Tr& t, const Point& p)
   {
     Zone zone;
 
@@ -60,7 +60,7 @@ struct Triangulation_mesher_level_traits_2
     return zone;
   }
 
-  Vertex_handle insert(Tr&t, const Point& p, Zone& zone)
+  static Vertex_handle insert(Tr&t, const Point& p, Zone& zone)
   {
 #ifdef DEBUG
     std::cerr << "insert(" << p << "): " 

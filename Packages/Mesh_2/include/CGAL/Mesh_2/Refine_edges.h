@@ -25,6 +25,7 @@
 #include <CGAL/Mesh_2/Filtered_queue_container.h>
 
 #include <utility>
+#include <iterator>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
@@ -39,6 +40,56 @@ namespace CGAL {
  */
 
 namespace Mesh_2 {
+
+  template <typename Tr>
+  class Refine_edges_triangulation_mesher_level_traits_2
+  {
+  public:
+    typedef Tr Triangulation;
+    typedef typename Tr::Point Point;
+    typedef typename Tr::Vertex_handle Vertex_handle;
+    typedef typename Tr::Face_handle Face_handle;
+    typedef typename Tr::Edge Edge;
+    typedef typename Tr::Vertex_handle Vertex_handle;
+    typedef typename Tr::Locate_type Locate_type;
+
+    typedef Triangulation_mesher_level_traits_2<Tr> Std_traits;
+
+    typedef typename Std_traits::Zone Zone;
+
+  public:
+    static Zone get_conflicts_zone(Tr& t, const Point& p)
+    {
+      Zone zone;
+
+      typedef std::back_insert_iterator<typename Zone::Faces> OutputItFaces;
+      typedef std::back_insert_iterator<typename Zone::Edges> OutputItEdges;
+
+      OutputItFaces faces_out(zone.faces);
+      OutputItEdges edges_out(zone.boundary_edges);
+
+      int i;
+      Locate_type lt;
+      Face_handle f = t.locate(p,lt,i);
+      *faces_out++ = f;
+      Face_handle n = f->neighbor(i);
+      *faces_out++ = n;
+      int ni = f->mirror_index(i);
+      std::pair<OutputItFaces,OutputItEdges>
+	pit = std::make_pair(faces_out,edges_out);
+      pit = t.propagate_conflicts(p,f,t.ccw(i),pit);
+      pit = t.propagate_conflicts(p,f,t. cw(i),pit);
+      pit = t.propagate_conflicts(p,n,t.ccw(ni),pit);
+      pit = t.propagate_conflicts(p,n,t. cw(ni),pit);
+      return zone; 
+    }
+
+    static Vertex_handle insert(Tr&t, const Point& p, Zone& zone)
+    {
+      return Std_traits::insert(t, p, zone);
+    }
+    
+  }; // end Refine_edges_triangulation_mesher_level_traits_2
 
   namespace details {
 
@@ -402,17 +453,15 @@ public:
     return midpoint(va->point(), vb->point());
   }
 
-  /** Unmark as constrained. */
-  void do_before_conflicts(const Edge& e, const Point&)
+  /** Do nothing. */
+  void do_before_conflicts(const Edge&, const Point&)
   {
-    tr.remove_constrained_edge(e.first, e.second);
   }
 
-  /** Re-mark as constrained. */
+  /** Do nothing. */
   void do_after_no_insertion(const Edge&, const Point&,
                              const Zone& )
   {
-    tr.insert_constraint(va, vb);
   }
 
   /**
@@ -448,16 +497,22 @@ public:
     return std::make_pair(true, true);
   }
 
-  /** Do nothing. */
-  void do_before_insertion(const Edge&, const Point&,
+  /** Unmark as constrained. */
+  void do_before_insertion(const Edge& e, const Point&,
                            const Zone&)
   {
+    const Face_handle& f = e.first;
+    const int& i = e.second;
+
+    f->set_constraint(i, false);
+    (f->neighbor(i))->set_constraint(f->mirror_index(i), false);
   }
 
   /**
    * Scans the edges of the star boundary, to test if they are both
    * locally conforming. If not, push them in the list of edges to be
    * conformed.
+   * 
    */
   void do_after_insertion(const Vertex_handle& v)
   {
@@ -476,8 +531,22 @@ public:
       ++fc;
     } while( fc != fcbegin );
 
-    tr.insert_constraint(va, v);
-    tr.insert_constraint(vb, v);
+    Face_handle fh;
+    int index;
+
+    CGAL_assertion_code(bool should_be_true = )
+    tr.is_edge(va, v, fh, index);
+    CGAL_assertion(should_be_true == true);
+
+    fh->set_constraint(index,true);
+    fh->neighbor(index)->set_constraint(fh->mirror_index(index),true);
+
+    CGAL_assertion_code( should_be_true = )
+    tr.is_edge(vb, v, fh, index);
+    CGAL_assertion(should_be_true == true);
+
+    fh->set_constraint(index,true);
+    fh->neighbor(index)->set_constraint(fh->mirror_index(index),true);
 
     if(!is_locally_conform(tr, va, v))
       add_constrained_edge_to_be_conformed(va, v);
@@ -559,7 +628,7 @@ public:  /** \name DEBUGGING FUNCTIONS */
     struct Refine_edges_types
     {
       typedef Mesher_level <
-        Triangulation_mesher_level_traits_2<Tr>,
+        Refine_edges_triangulation_mesher_level_traits_2<Tr>,
         Self,
         typename Tr::Edge,
         Null_mesher_level > Edges_mesher_level;

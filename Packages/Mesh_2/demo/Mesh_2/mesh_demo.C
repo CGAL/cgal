@@ -1356,8 +1356,8 @@ int main(int argc, char** argv)
   if( argc == 2 )
     W->openTriangulation(QString(argv[1]));
 
-  my_previous_failure_function =
-    CGAL::set_error_handler(cgal_with_exceptions_failure_handler);
+  //  my_previous_failure_function =
+  //CGAL::set_error_handler(cgal_with_exceptions_failure_handler);
 
   try {
     return app.exec();

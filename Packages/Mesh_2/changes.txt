@@ -1,3 +1,8 @@
+19 October 2004 Laurent Rineau
+- Revert changes from 2004/10/17. Refine_edges_for_refine_faces no longer
+y exists.
+
+
 18 October 2004 Laurent Rineau
 - Conforming_Delaunay_triangulation_maker_2 renamed to 
   Triangulation_conformer_2.

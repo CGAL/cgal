@@ -343,7 +343,9 @@ public:
 
     before_conflicts(e, p, visitor);
 
-    Zone zone = Triangulation_traits().get_conflicts_zone(triangulation(), p);
+    Triangulation_traits t_traits;
+
+    Zone zone = t_traits.get_conflicts_zone(triangulation(), p);
 
     const std::pair<bool, bool> result = test_point_conflict(p, zone);
 
@@ -351,8 +353,8 @@ public:
     {
       before_insertion(e, p, zone, visitor);
 
-      Vertex_handle v = Triangulation_traits().insert(triangulation(),
-                                                      p, zone);
+      Vertex_handle v = t_traits.insert(triangulation(),
+					p, zone);
 
       after_insertion(v, visitor);
 
