@@ -45,8 +45,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
   typedef R_                                     R;
 
-  SphereC3()
-    : base() {}
+  SphereC3() {}
 
   SphereC3(const Point_3 &center, const FT &squared_radius,
            const Orientation &o = COUNTERCLOCKWISE)

@@ -42,15 +42,14 @@ CGAL_VC7_BUG_PROTECTED
    typedef typename R_::Direction_3          Direction_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-    typedef Fourtuple<RT>                            rep;
-    typedef typename R_::template Handle<rep>::type  base;
+   typedef Fourtuple<RT>                            rep;
+   typedef typename R_::template Handle<rep>::type  base;
 
 public:
-  typedef Cartesian_coordinate_iterator_3<R_> Cartesian_const_iterator;
+   typedef Cartesian_coordinate_iterator_3<R_> Cartesian_const_iterator;
    typedef R_                 R;
 
-  PointH3()
-    : base(rep()) {}
+  PointH3() {}
 
   PointH3(const Origin &)
     : base (rep( RT(0), RT(0), RT(0), RT(1) )) { }

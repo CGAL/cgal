@@ -48,8 +48,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
   typedef R_                                     R;
 
-  LineC3()
-    : base(rep()) {}
+  LineC3() {}
 
   LineC3(const Point_3 &p, const Point_3 &q)
     : base(rep(p, q-p)) {}

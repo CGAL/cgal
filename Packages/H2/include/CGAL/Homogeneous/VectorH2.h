@@ -50,8 +50,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
   typedef R_                                    R;
 
-   VectorH2()
-      : base ( rep()) {}
+   VectorH2() {}
 
    VectorH2(const Point_2& a, const Point_2& b)
       : base (b-a) {}

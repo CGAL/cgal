@@ -48,7 +48,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
     typedef R_                                    R;
 
-    LineH2();
+    LineH2() {}
     LineH2(const Point_2& p, const Point_2& q);
     LineH2(const RT& a, const RT& b, const RT& c);
     LineH2(const Segment_2& s);
@@ -84,12 +84,6 @@ public:
 
     LineH2<R>  transform(const Aff_transformation_2&) const;
 };
-
-template < class R >
-CGAL_KERNEL_INLINE
-LineH2<R>::LineH2()
- : base ( rep() )
-{}
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE

@@ -46,8 +46,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
    typedef R_                R;
 
-      SphereH3()
-        : base() {}
+      SphereH3() {}
 
       SphereH3(const Point_3& p, const FT& sq_rad,
                const Orientation& o = COUNTERCLOCKWISE);

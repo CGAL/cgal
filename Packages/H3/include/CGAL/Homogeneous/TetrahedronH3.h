@@ -47,8 +47,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
   typedef R_                R;
 
-  TetrahedronH3()
-    : base(rep()) {}
+  TetrahedronH3() {}
 
   TetrahedronH3(const Point_3 &p,
                 const Point_3 &q,

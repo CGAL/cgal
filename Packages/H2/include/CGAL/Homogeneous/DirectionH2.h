@@ -47,8 +47,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
   typedef R_                                    R;
 
-   DirectionH2()
-      : base ( rep()) {}
+   DirectionH2() {}
 
    DirectionH2(const DirectionH2<R>& d )
       : base ( d ) {}

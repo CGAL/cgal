@@ -46,8 +46,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
   typedef R_                                     R;
 
-  SegmentC2()
-    : base(rep()) {}
+  SegmentC2() {}
 
   SegmentC2(const Point_2 &sp, const Point_2 &ep)
     : base(rep(sp, ep)) {}

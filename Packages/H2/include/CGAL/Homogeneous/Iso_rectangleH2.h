@@ -43,8 +43,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
   typedef R_                                    R;
 
-  Iso_rectangleH2()
-    : base(rep()) {}
+  Iso_rectangleH2() {}
 
   Iso_rectangleH2(const Point_2& p, const Point_2& q);
 

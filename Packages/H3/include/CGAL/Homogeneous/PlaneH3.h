@@ -50,8 +50,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
    typedef R_                 R;
 
-    PlaneH3()
-      : base(rep()) {}
+    PlaneH3() {}
 
     PlaneH3(const Point_3&, const Point_3&, const Point_3& );
     PlaneH3(const RT& a, const RT& b,

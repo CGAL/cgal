@@ -1,3 +1,6 @@
+2.65 (8 August 2003)
+- Simplify default constructors to have better optimization.
+
 2.64 (8 August 2003)
 - Add squared_length() to Vector_3.
 

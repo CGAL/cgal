@@ -46,8 +46,7 @@ public:
   typedef Cartesian_coordinate_iterator_3<R_> Cartesian_const_iterator;
   typedef R_                                R;
 
-  PointC3()
-    : base(rep()) {}
+  PointC3() {}
 
   PointC3(const Origin &)
     : base(rep(FT(0), FT(0), FT(0))) {}

@@ -47,8 +47,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
     typedef R_                                    R;
 
-    CircleH2()
-      : base() {}
+    CircleH2() {}
 
     CircleH2(const Point_2& p, const Point_2& q, const Point_2& r)
     {

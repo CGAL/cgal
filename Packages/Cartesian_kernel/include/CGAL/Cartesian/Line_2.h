@@ -46,8 +46,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
   typedef R_                                     R;
 
-  LineC2()
-    : base(rep()) {}
+  LineC2() {}
 
   LineC2(const Point_2 &p, const Point_2 &q)
     : base(R().construct_line_2_object()(p, q)) {}

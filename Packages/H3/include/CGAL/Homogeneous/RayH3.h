@@ -47,8 +47,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
    typedef R_                R;
 
-    RayH3()
-      : base(rep()) {}
+    RayH3() {}
 
     RayH3( const Point_3& sp, const Point_3& secondp)
       : base(rep(sp, secondp-sp)) {}

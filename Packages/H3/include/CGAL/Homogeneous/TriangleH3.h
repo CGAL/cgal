@@ -45,8 +45,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
   typedef R_                R;
 
-  TriangleH3()
-    : base(rep()) {}
+  TriangleH3() {}
 
   TriangleH3(const Point_3 &p,
              const Point_3 &q,

@@ -1,3 +1,6 @@
+2.98 (8 August 2003)
+- Simplify default constructors to have better optimization.
+
 2.97 (7 August 2003)
 - Undo the explicit <RT> previously needed by GMP++.
 - Cleanups in predicates_on_pointsH2.h.

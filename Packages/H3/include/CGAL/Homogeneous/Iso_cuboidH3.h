@@ -43,8 +43,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
   typedef R_                 R;
 
-  Iso_cuboidH3()
-    : base(rep()) {}
+  Iso_cuboidH3() {}
 
   Iso_cuboidH3(const Point_3& p, const Point_3& q);
 

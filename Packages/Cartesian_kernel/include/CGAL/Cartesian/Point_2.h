@@ -47,8 +47,7 @@ public:
 
   typedef R_                                     R;
 
-  PointC2()
-    : base(rep()) {}
+  PointC2() {}
 
   PointC2(const Origin &)
     : base(rep(FT(0), FT(0))) {}

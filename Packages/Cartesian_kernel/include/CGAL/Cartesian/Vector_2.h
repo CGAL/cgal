@@ -44,8 +44,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
   typedef R_                                     R;
 
-  VectorC2()
-    : base(rep()) {}
+  VectorC2() {}
 
   VectorC2(const Null_vector &n)
     : base(R().construct_vector_2_object()(n)) {}

@@ -46,8 +46,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
   typedef R_                 R;
 
-  VectorH3()
-    : base(rep()) {}
+  VectorH3() {}
 
   VectorH3(const Point_3& a, const Point_3& b)
     : base(b-a) {}

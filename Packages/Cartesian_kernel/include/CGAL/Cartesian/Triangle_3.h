@@ -44,8 +44,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
   typedef R_                                     R;
 
-  TriangleC3()
-    : base(rep()) {}
+  TriangleC3() {}
 
   TriangleC3(const Point_3 &p, const Point_3 &q, const Point_3 &r)
     : base(rep(p, q, r)) {}

@@ -43,8 +43,7 @@ public:
   typedef typename Aff_t_base::Direction_2       Direction_2;
   typedef typename Aff_t_base::Aff_transformation_2 Aff_transformation_2;
 
-  Translation_repC2()
-  {}
+  Translation_repC2() {}
 
   Translation_repC2(const Vector_2 &tv)
     : translationvector_(tv)

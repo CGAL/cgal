@@ -48,8 +48,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
   typedef R_                                     R;
 
-  PlaneC3()
-    : base(rep()) {}
+  PlaneC3() {}
 
   PlaneC3(const Point_3 &p, const Point_3 &q, const Point_3 &r)
     : base(plane_from_points(p, q, r)) {}

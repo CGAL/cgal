@@ -46,8 +46,7 @@ CGAL_VC7_BUG_PROTECTED
 public:
   typedef R_                                     R;
 
-  DirectionC2()
-    : base(rep()) {}
+  DirectionC2() {}
 
   DirectionC2(const Vector_2 &v)
     : base(v) {}
