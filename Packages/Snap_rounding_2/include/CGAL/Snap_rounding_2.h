@@ -932,7 +932,8 @@ void Snap_rounding_2<Rep_>::clear()
   }
 
 template<class Rep_>
-bool Snap_rounding_2<Rep_>::change_number_of_kd_trees(int inp_number_of_kd_trees)
+bool Snap_rounding_2<Rep_>::change_number_of_kd_trees(
+          int inp_number_of_kd_trees)
   {
     if(inp_number_of_kd_trees > 0) {
       number_of_kd_trees = inp_number_of_kd_trees;
