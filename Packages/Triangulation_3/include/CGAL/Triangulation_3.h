@@ -1690,7 +1690,6 @@ locate(const Point & p,
   const int rand_b = 2073;
   const int rand_c = 32749;
   int i, inf;
-  Point p0,p1,p2,p3;
   switch (dimension()) {
   case 3:
     {
@@ -1721,10 +1720,10 @@ locate(const Point & p,
 	//	i = rand.get_int(0,4);
 	rand = ( rand_a * rand + rand_b ) % rand_c;
 	i = rand &3;
-	p0 = c->vertex( i )->point();
-	p1 = c->vertex( (i+1)&3 )->point();
-	p2 = c->vertex( (i+2)&3 )->point();
-	p3 = c->vertex( (i+3)&3 )->point();
+	Point p0 = c->vertex( i )->point();
+	Point p1 = c->vertex( (i+1)&3 )->point();
+	Point p2 = c->vertex( (i+2)&3 )->point();
+	Point p3 = c->vertex( (i+3)&3 )->point();
 	if ( (i&1) == 0 ) {
 	  o[0] = geom_traits().orientation( p, p1, p2, p3 );
 	  if ( o[0] == NEGATIVE ) {
@@ -1871,9 +1870,9 @@ locate(const Point & p,
 	//	i = rand.get_int(0,3);
 	rand = ( rand_a * rand + rand_b ) % rand_c;
 	i = rand %3;
-	p0 = c->vertex( i )->point();
-	p1 = c->vertex( ccw(i) )->point();
-	p2 = c->vertex( cw(i) )->point();
+	Point p0 = c->vertex( i )->point();
+	Point p1 = c->vertex( ccw(i) )->point();
+	Point p2 = c->vertex( cw(i) )->point();
 	o[0] = geom_traits().orientation_in_plane(p0,p1,p2,p);
 	if ( o[0] == NEGATIVE ) {
 	  c = c->neighbor( cw(i) );
@@ -1950,8 +1949,8 @@ locate(const Point & p,
       // if p is collinear, location :
       Comparison_result o, o0, o1;
       int xyz;
-      p0 = c->vertex(0)->point();
-      p1 = c->vertex(1)->point();
+      Point p0 = c->vertex(0)->point();
+      Point p1 = c->vertex(1)->point();
       CGAL_triangulation_assertion
 	( ( geom_traits().compare_x(p0,p1) != EQUAL ) ||
 	  ( geom_traits().compare_y(p0,p1) != EQUAL ) ||

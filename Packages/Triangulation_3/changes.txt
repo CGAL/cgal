@@ -1,3 +1,6 @@
+Version 1.44 (? dec 00)
+- locate() optimisation. [syl]
+
 Version 1.43 (6 dec 00)
 - Regular 3D compile for simple cartesian kernels too. [syl]
 - Geomview output. [syl]
