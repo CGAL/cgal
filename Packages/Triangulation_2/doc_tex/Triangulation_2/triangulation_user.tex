@@ -1338,24 +1338,32 @@ presents some predefined geometric traits classes available in \cgal .
 The requirements for the geometric traits class of the basic triangulation class
 \ccc{Triangulation_2<Traits, Tds>} are  kept rather light.
 Essentially, a geometric traits class \ccClassName\ has to provide some  type
-for points, segments and triangles,  
-fonction objects  for 
-coordinate comparison and  orientation tests, and functions
-to access to those predicate objects.
+for points, segments and triangles,
+a few construction objects for those types  
+and fonction objects  for 
+coordinate comparison and  orientation tests.
 
 
 \ccTypes
 \ccThree{Comparison_result}{gt.compare_x()}{}
 \ccThreeToTwo
 
-\ccNestedType{Point_2}{The  point type must provide
-a copy constructor and assignment operator.}
+\ccNestedType{Point_2}{The  point type.}
 \ccGlue
-\ccNestedType{Segment_2}{The segment  type must provide a constructor that takes
-two points as argument.}
+\ccNestedType{Segment_2}{The segment  type. Must provide a constructor that takes
+two points as arguments.}
 \ccGlue
-\ccNestedType{Triangle_2}{The triangle type must provide a constructor
-that takes three points as argument.}
+\ccNestedType{Triangle_2}{The triangle type. Must provide a constructor
+that takes three points as arguments.}
+
+\ccNestedType{Construct_segment_2} {A constructor object for
+\ccc{Segment_2}.Must provide Segment_2 operator()(Point_2 p,Point_2
+                       q), which constructs a  segment from two points.}
+\ccGlue
+\ccNestedType{Construct_triangle_2} {A constructor object for
+\ccc{Triangle_2}.Must provide Triangle_2 operator()(Point_2 p,Point_2
+                       q,Point_2 r ), which constructs a triangle from three points.}
+
 
 \ccNestedType{Compare_x_2}{A function object whose operator() takes
 two points as arguments and returns the 
@@ -1384,8 +1392,12 @@ can be provided.
 \ccMethod{Geom_traits operator=(Geom_traits gtr);}{Assignment operator.}
 
 \ccHeading{Predicates functions}
-The following functions give access to the  predicate objects.
-\ccThree{Comparison_result}{gt.compare_x(Point p0, Point p1)x}{}
+The following functions give access to the  constructor and predicate objects.
+\ccThree{Construct_segment_2}{gt.compare_x(Point p0, Point p1)x}{}
+\ccMethod{Construct_segment_2 construct_segment_2_object();}{}
+\ccGlue
+\ccMethod{Construct_triangle_2 construct_triangle_2_object();}{}
+\ccGlue
 \ccMethod{Comparison_x_2 compare_x_2_object();}{}                               \ccGlue
 \ccMethod{Comparison_y_2 compare_y_2_object();}{}
 \ccGlue
@@ -2537,13 +2549,14 @@ for the basic \ccc{in_circle} test used to maintain the
 empty circle property.
 The \ccc{in_circle} test is the test 
 that actually defines the triangulation.
-The additional types \ccc{Line_2} and
+The additional types \ccc{Line_2}, \ccc{Direction_2} and
 and \ccc{Ray_2} and the constructor objects
+\ccc{Construct_direction_of_line2}, \ccc{Construct_ray_2}
 \ccc{Construct_circumcenter_2}, \ccc{Construct_bisector_2},
 \ccc{Construct_midpoint}
 are used to build the dual Voronoi diagram
 and are required only if the dual functions are called.
-The additional \ccc{Less_distance_to_pont_2} is only required
+The additional \ccc{Less_distance_to_point_2} is only required
 if \ccc{nearest_vertex(..)} query are issued.
 
 \begin{ccClass}{Delaunay_geom_traits}
@@ -2552,9 +2565,13 @@ if \ccc{nearest_vertex(..)} query are issued.
 \ccTypes
 \ccThree{Oriented_side}{xxxxxx}{}
 \ccThreeToTwo
-\ccNestedType{Line_2}{}
+\ccNestedType{Line_2}{The line type.}
 \ccGlue
-\ccNestedType{Ray_2}{}
+\ccNestedType{Direction_2}{The direction of a line.}
+\ccGlue
+\ccNestedType{Ray_2}{The type for ray.}
+
+
 
 \ccNestedType{Side_of_oriented_circle_2}{Function object for the
 \ccc{in_circle} test.}
@@ -2563,14 +2580,18 @@ compare the distance of two points to a third one.
 Needed only if the \ccc{nearest_neighbor()} 
 function is called.}
 
+
 \ccNestedType{Construct_circumcenter_2}{Constructor object  to build
 the circumcenter of three points}
 \ccGlue
 \ccNestedType{Construct_bisector_2}{Constructor object  to build
 the bisector line of two points.}
 \ccGlue
-\ccNestedType{Construct_midpoint}{constructor object to construct the
-midpoint of two points.}
+\ccNestedType{Construct_direction_of_line_2}{Constructor object  to build
+the direction of a line.}
+\ccGlue
+\ccNestedType{Construct_ray_2}{A constructor object  to build
+a ray from a point and a direction.}
 
 
 \ccOperations
@@ -2579,12 +2600,13 @@ type objects.
 \ccMethod{Side_of_oriented_circle_2 side_of_oriented_circle_2_object();}{}
 \ccGlue
 \ccMethod{Less_distance_to_point_2 less_distance_to_point_2_object(const Point_2& p);}{}
-\ccMethod{ Construct_circumcenter_2 construct_circumcenter_2_object();}{}
+\ccMethod{Construct_circumcenter_2 construct_circumcenter_2_object();}{}
 \ccGlue                                        
 \ccMethod{Construct_bisector_2 construct_bisector_2_object();} {}
 \ccGlue
-\ccMethod{Construct midpoint construct_midpoint_object();}{}
-
+\ccMethod{Construct_direction_of_line_2 construct_direction_of_line_2_object();} {}
+\ccGlue
+\ccMethod{Construct_ray_2 construct_ray_2_object();} {}
 \end{ccClass}
 
 
@@ -3091,7 +3113,7 @@ constrained edges with null length are allowed.
 \begin{ccTexOnly}
 \begin{center} \IpeScale{50} \Ipe{constraints.ipe} \end{center}
 \end{ccTexOnly}
-
+ 
 \begin{ccHtmlOnly}
 <CENTER>
 <img border=0 src=constraints.gif align=center alt="A set of
