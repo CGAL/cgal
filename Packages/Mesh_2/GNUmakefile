@@ -48,4 +48,4 @@ update:
 
 # make diff: diff between the cvs repository and the working copy
 diff:
-	@cvs -q -u diff | less
+	@cvs -q diff -u | less
