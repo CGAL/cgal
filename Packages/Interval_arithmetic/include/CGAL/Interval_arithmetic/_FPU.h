@@ -32,21 +32,30 @@
 #define CGAL_IA_MIN_DOUBLE (5e-324) // subnormal
 #define CGAL_IA_MAX_DOUBLE (1.7976931348623157081e+308)
 
+// Macro to stop compiler optimization.
+#if defined(__GNUG__)
+#define CGAL_IA_STOP_COMPILER_OPT(x) ({ volatile double y=(x); double z=y; z; })
+#elif defined(_MSC_VER)
+inline double cgal_ia_force_to_double(const double x)
+{ volatile double e = x; return e; }
+#define CGAL_IA_STOP_COMPILER_OPT(x) cgal_ia_force_to_double(x)
+#endif
+
 // The x87 keeps too wide exponents (15bits) in registers, even in double
 // precision mode.  This causes problems when the intervals overflow or
 // underflow.  To work around that, at every critical moment, we flush the
 // register to memory, using the macro below.
 // The other possible workaround is to use intervals of "long doubles"
 // directly, but I think it would be much slower.
-#ifdef __i386__
-#define CGAL_IA_FORCE_TO_DOUBLE(x) ({ volatile double y=(x); double z=y; z; })
+#if defined(__i386__) || defined(_MSC_VER)
+#define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL_IA_STOP_COMPILER_OPT(x)
 #else
 #define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
 #endif // __i386__
 
 // We sometimes need to do the same thing to stop constant propagation.
 #ifdef CGAL_IA_STOP_CONSTANT_PROPAGATION
-#define CGAL_IA_STOP_CPROP(x) ({ volatile double y=(x); double z=y; z; })
+#define CGAL_IA_STOP_CPROP(x) CGAL_IA_STOP_COMPILER_OPT(x)
 #else
 #define CGAL_IA_STOP_CPROP(x) (x)
 #endif
