@@ -31,6 +31,7 @@ rtag:
 submit: package
 	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
 	   changes.txt $(WWW_dir)
+	cvs update $(LOCAL)/Tetrahedralization
 	rm -f $(WWW_dir)/$(Package).ps.gz
 	gzip -9 $(WWW_dir)/$(Package).ps
 	echo > $(TMP_file)
