@@ -53,7 +53,7 @@ $(Package).tar.gz:
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO \
 	version description.txt changes.txt \
-	doc_tex doc_ps include examples # src test
+	doc_tex doc_ps include examples src test
 
 doc:
 	$(MAKE) -C doc_tex/support/NumberTypeSupport
