@@ -28,9 +28,12 @@
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Planar_map_2.h> 
 #include <CGAL/Bbox_2.h>
-#include <CGAL/IO/Postscript_file_stream.h> 
 #include <CGAL/IO/Pm_drawer.h> 
 #include <CGAL/IO/draw_pm.h> 
+
+#ifdef CGAL_USE_LEDA
+#include <CGAL/IO/Postscript_file_stream.h> 
+#endif
 
 #include <iostream>
 

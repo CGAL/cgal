@@ -1,3 +1,7 @@
+#include <CGAL/basic.h>
+
+#ifdef CGAL_USE_QT
+
 #include "demo1.h"
 #include "forms.h"
 #include "qt_layer.h"
@@ -683,3 +687,5 @@ void MyWindow::ReadCurve(std::ifstream & is, Pm_base_conic_2 & cv)
 
   return;
 }
+
+#endif

@@ -1,3 +1,18 @@
+#include <CGAL/basic.h>
+
+#ifndef CGAL_USE_QT
+
+#include <iostream>
+int main(int, char*)
+{
+  std::cout << "Sorry, this demo needs QT...";
+  std::cout << std::endl;
+  
+  return 0;
+}
+
+#else
+
 #include "demo1.h"
 #include "forms.h"
 #include "qt_layer.h"
@@ -98,7 +113,7 @@ void MyWindow::fileSave()
 /*! save planar map to post script */
 void MyWindow::fileSave_ps()
 {
-    #if 0
+#if 0
   
   Qt_widget_base_tab    *w_demo_p1 = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
@@ -133,7 +148,7 @@ void MyWindow::fileSave_ps()
      break;
     }
   }  
- #endif 
+#endif 
 }
 
 /*! print planar map */
@@ -559,4 +574,4 @@ int main(int argc, char **argv)
   return app.exec();  
 }
 
-//#endif // CGAL_USE_QT
+#endif

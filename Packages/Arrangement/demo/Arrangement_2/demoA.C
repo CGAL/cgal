@@ -1,21 +1,11 @@
+#include <CGAL/basic.h>
+
+#ifdef CGAL_USE_QT
+
 #include "demo1.h"
 #include "forms.h"
 #include "qt_layer.h"
 #include "demo_tab.h"
-
-
-////////////////////////////////////////////////////////////////////////
-//#ifndef CGAL_USE_QT
-//#include <iostream>
-//int main(int, char*)
-//{
-//  std::cout << "Sorry, this demo needs QT...";
-//  std::cout << std::endl;
-//  
-//  return 0;
-//}
-//
-//#else
 
 #include <CGAL/IO/pixmaps/hand.xpm>
 #include <CGAL/IO/pixmaps/movepoint.xpm>
@@ -769,3 +759,5 @@ void MyWindow::rayShootingDirection()
 	}
   }
 }
+
+#endif
