@@ -1,0 +1,73 @@
+//example3
+
+#include <CGAL/basic.h> //CGAL definitions that need to be before anything else
+#include <iostream.h>
+#include <fstream.h>
+#include <vector>
+
+#include <CGAL/leda_rational.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/Cartesian.h>
+
+//#include <CGAL/Pm_default_dcel.h>
+//#include <CGAL/Planar_map_2.h>
+
+#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/sweep_to_produce_planar_map_subcurves.h>
+
+//#include <CGAL/IO/Pm_iostream.h>
+
+
+typedef CGAL::Quotient<int>              NT;
+typedef CGAL::Cartesian<NT>              R;
+
+typedef CGAL::Arr_segment_exact_traits<R>          Traits;
+
+typedef Traits::Point                                 Point;
+typedef Traits::X_curve                               X_curve;
+typedef Traits::Curve                                 Curve;
+
+//typedef CGAL::Pm_default_dcel<Traits>                Dcel;   
+//typedef CGAL::Planar_map_2<Dcel, Traits>             PM;
+
+using namespace std;
+
+
+int main(int argc, char* argv[])
+{
+  int                num_segments;
+  list<Curve>        segments;
+  
+  if (argc < 2) {
+    std::cerr << "usage:  <filename>" << std::endl;
+    exit(1);
+  }
+  
+  std::ifstream f_curves(argv[1]);
+  f_curves >> num_segments;
+  
+  double        x1, y1, x2, y2;
+  
+  while (num_segments--) {
+    f_curves >> x1 >> y1 >> x2 >> y2;
+    
+    segments.push_back(Curve(Point(x1,y1), Point(x2,y2)));
+  }    
+  
+  Traits traits;
+  list<Curve>  subcurves;
+  CGAL::sweep_to_produce_planar_map_subcurves(segments.begin(),segments.end(), traits, subcurves);
+  
+
+  for (list<Curve>::iterator scv_iter = subcurves.begin(); scv_iter != subcurves.end(); scv_iter++)
+    cout<<*scv_iter<<endl;
+}
+
+
+
+
+
+
+
+
+
