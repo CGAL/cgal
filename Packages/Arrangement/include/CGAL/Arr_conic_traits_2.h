@@ -136,6 +136,9 @@ class Arr_conic_traits_2
     CGAL_precondition(curve_is_in_x_range(curve1, p));
     CGAL_precondition(curve_is_in_x_range(curve2, p));
 
+    if (curve1.contains_point(p) && curve2.contains_point(p))
+      return (EQUAL);
+        
     // Get the points on curve1 with the same x co-ordinate as p.
     int      n1;
     Point_2  ps1[2];
@@ -156,6 +159,16 @@ class Arr_conic_traits_2
 	ps1[0] = curve1.target();
 	ps1[1] = curve1.source();
       }
+    }
+    else if (compare_x(p, curve1.source()) == EQUAL)
+    {
+      ps1[0] = curve1.source();
+      n1 = 1;
+    }
+    else if (compare_x(p, curve1.target()) == EQUAL)
+    {
+      ps1[0] = curve1.target();
+      n1 = 1;
     }
     else
     {
@@ -185,6 +198,16 @@ class Arr_conic_traits_2
 	ps2[0] = curve2.target();
 	ps2[1] = curve2.source();
       }
+    }
+    else if (compare_x(p, curve2.source()) == EQUAL)
+    {
+      ps2[0] = curve2.source();
+      n2 = 1;
+    }
+    else if (compare_x(p, curve2.target()) == EQUAL)
+    {
+      ps2[0] = curve2.target();
+      n2 = 1;
     }
     else
     {
@@ -227,6 +250,25 @@ class Arr_conic_traits_2
     // one point with the given x co-ordinate:
     // Compare the y co-ordinates of these two points.
     return (_compare_y (ps1[0], ps2[0]));
+
+    /* DEBUG:
+    Comparison_result res = _compare_y (ps1[0], ps2[0]);
+    
+    if (curve1.conic() != curve2.conic())
+      std::cout << "curve_compare_at_x() : " << std::endl
+                << "C1 : " << curve1 << std::endl
+                << "C2 : " << curve2 << std::endl
+                << "p = (" << CGAL::to_double(p.x()) << ","
+                <<  CGAL::to_double(p.y()) << ")" << std::endl
+                << "ps1[0] = (" << CGAL::to_double(ps1[0].x()) << ","
+                <<  CGAL::to_double(ps1[0].y()) << ")" << std::endl
+                << "ps2[0] = (" << CGAL::to_double(ps2[0].x()) << ","
+                <<  CGAL::to_double(ps2[0].y()) << ")" << std::endl
+                << "res = " << (res == EQUAL ?
+                                "EQUAL" : res == SMALLER ?
+                                "SMALLER" : "LARGER") << std::endl << std::endl;
+    return (res);
+    */
   }
 
   // Decide wether curve1 is above, below or equal to curve2 immediately to
@@ -357,6 +399,25 @@ class Arr_conic_traits_2
 
     // The two curves intersect at ps1[0] = ps2[0] - proceed from here:
     return (_curve_compare_at_intersection_right (curve1, curve2, ps1[0]));
+
+    /* DEBUG:
+    Comparison_result res = _curve_compare_at_intersection_right (curve1,
+                                                                  curve2,
+                                                                  ps1[0]);
+
+    if (curve1.conic() != curve2.conic())
+      std::cout << "curve_compare_at_x_right() : " << std::endl
+                << "C1 : " << curve1 << std::endl
+                << "C2 : " << curve2 << std::endl
+                << "p = (" << CGAL::to_double(p.x()) << ","
+                <<  CGAL::to_double(p.y()) << std::endl
+                << "ps1[0] = (" << CGAL::to_double(ps1[0].x()) << ","
+                <<  CGAL::to_double(ps1[0].y()) << std::endl
+                << "res = " << (res == EQUAL ?
+                                "EQUAL" : res == SMALLER ?
+                                "SMALLER" : "LARGER") << std::endl << std::endl;
+    return (res);
+    */
   }  
 
   // Check whether the given point is above, under or on the given curve.
@@ -710,6 +771,15 @@ class Arr_conic_traits_2
     n = curve1.intersections_with (curve2, ps);    
 #endif
 
+    /* DEBUG:
+    std::cout << "nearest_intersection_to_right() : " << std::endl
+              << "C1 : " << curve1 << std::endl
+              << "C2 : " << curve2 << std::endl
+              << "p = (" << CGAL::to_double(p.x()) << ","
+              <<  CGAL::to_double(p.y()) <<")   [n = " << n << "]"
+              << std::endl;
+    */
+    
     for (int i = 0; i < n; i++)
     {
       // Check if the current point is to the right of p.
@@ -728,10 +798,18 @@ class Arr_conic_traits_2
     {
       // Return the nearest intersection point.
       p1 = p2 = *nearest_inter_P;
+
+      /* DEBUG:
+      std::cout << "p1 = p2 = (" << CGAL::to_double(p1.x()) << ","
+                <<  CGAL::to_double(p1.y()) << std::endl << std::endl;
+      */
       return (true);
     }
     
     // No intersection found.
+    /* DEBUG:
+    std::cout << "No intersection found!" << std::endl << std::endl;
+    */
     return (false);
   }
 
