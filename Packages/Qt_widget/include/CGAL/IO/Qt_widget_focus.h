@@ -77,7 +77,7 @@ public:
 	cursor3 = new QCursor(*mouse_ico3);
   };
 
-  void timerEvent( QTimerEvent *e )
+  void timerEvent( QTimerEvent *)
   {
 	switch(cycle){
 	case 1:

@@ -49,7 +49,7 @@ private:
     wasrepainted = TRUE;
   };
 
-  void timerEvent( QTimerEvent *e )
+  void timerEvent( QTimerEvent *)
   {
     if(on_first)
       widget->setCursor(QCursor( 
