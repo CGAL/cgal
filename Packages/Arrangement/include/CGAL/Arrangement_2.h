@@ -78,9 +78,9 @@ public:
 
   typedef Arrangement_2<_Dcel,_Traits,Base_node> Self;
 
-  typedef typename Traits::Point Point;
-  typedef typename Traits::X_curve X_curve;
-  typedef typename Traits::Curve Curve;
+  typedef typename Traits::Point   Point_2;
+  typedef typename Traits::X_curve X_curve_2;
+  typedef typename Traits::Curve   Curve_2;
    
   typedef typename Planar_map::Halfedge_handle Pm_halfedge_handle;
   typedef typename Planar_map::Face_handle Pm_face_handle;
@@ -93,13 +93,14 @@ public:
   
   typedef typename Dcel::iterator_category      iterator_category;
 
-  // For backward compatibility
+  // Obsolete, for backward compatability
   typedef Change_notification Pmwx_change_notification; 
-  // (backward compatibility end)
+  typedef Point_2             Point;
+  typedef X_curve_2           X_curve;
+  typedef Curve_2             Curve;
 
   //for Action
   //typedef typename Traits::SPLIT_FUNC SPLIT_FUNC;
-  
 
   enum Locate_type { VERTEX=Planar_map::VERTEX,
                      EDGE=Planar_map::EDGE,
@@ -1308,9 +1309,9 @@ bool is_valid(bool verbose = false) const
 
 ///////////////////////////////////////////////////////////////////
 //               INSERTION FUNCTIONS
-Curve_iterator insert_from_vertex(const typename Traits::Curve& cv, 
-				  Vertex_handle src,
-				  Change_notification *en = NULL)
+Curve_iterator insert_from_vertex(const Curve_2       & cv, 
+				  Vertex_handle         src,
+				  Change_notification * en = NULL)
 {
   CGAL_precondition( traits->point_is_same( src->point(), 
 					    traits->curve_source( cv)));
@@ -1394,8 +1395,8 @@ Curve_iterator insert_from_vertex(const typename Traits::Curve& cv,
 }
 
 
-Curve_iterator insert(const typename Traits::Curve& cv,
-		      Change_notification *en = NULL) 
+Curve_iterator insert(const Curve_2       & cv,
+		      Change_notification * en = NULL) 
 {
   
   CGAL_precondition( ! traits->point_is_same( traits->curve_source( cv),
@@ -1489,10 +1490,10 @@ Curve_iterator insert(const typename Traits::Curve& cv,
 //   insertion with user defined intersection functions
 
 template <class F_iterator>
-Curve_iterator insert(const typename Traits::Curve& cv,
-                      F_iterator F_begin,
-                      F_iterator F_end,
-		      Change_notification *en = NULL) 
+Curve_iterator insert(const Curve_2         & cv,
+                      F_iterator            F_begin,
+                      F_iterator            F_end,
+		      Change_notification * en = NULL) 
 {
   if (F_begin==F_end)
     return insert(cv); //if list is empty return the regular insert function
@@ -1516,13 +1517,12 @@ Curve_iterator insert(const typename Traits::Curve& cv,
   cn->levels.push_back(In_place_list<Subcurve_node,true>());
 
   //cut cv into curves and insert them into l
-  std::list<Curve> c_list;
-  //std::list<CGAL_TYPENAME_MSVC_NULL Traits::Curve> c_list;
+  std::list<Curve_2> c_list;
 
   (*(*F_begin))(cv,c_list); 
   ++F_begin;
   
-  typename std::list<Curve>::iterator lit=c_list.begin();
+  typename std::list<Curve_2>::iterator lit=c_list.begin();
   for (; lit!=c_list.end(); ++lit) {
     Subcurve_node* scn=new Subcurve_node;
     scn->ftr=cn;
@@ -1541,7 +1541,7 @@ Curve_iterator insert(const typename Traits::Curve& cv,
     Subcurve_iterator scit=cn->levels[i-1].begin();
     for (; scit!=cn->levels[i-1].end(); ++scit) {
       //cut cv into curves and insert them into l
-      std::list<Curve> c_list;
+      std::list<Curve_2> c_list;
       (*(*F_begin))(scit->curve(),c_list);  //split the curve
 
       Subcurve_iterator aux=cn->levels[i].end();
@@ -1549,7 +1549,7 @@ Curve_iterator insert(const typename Traits::Curve& cv,
 	--aux; 
       }
 
-      typename std::list<Curve>::iterator lit=c_list.begin();
+      typename std::list<Curve_2>::iterator lit=c_list.begin();
       for (; lit!=c_list.end(); ++lit) {
         Subcurve_node* scno=new Subcurve_node;
         scno->ftr=&(*scit); 
@@ -1717,7 +1717,7 @@ Halfedge_handle split_edge(Halfedge_handle e,
 ////////////////////////////
 //LOCATE
 ////////////////////////////
-Halfedge_handle locate(const typename Traits::Point& p,Locate_type& lt)
+Halfedge_handle locate(const typename Traits::Point_2& p,Locate_type& lt)
 {
   typename Planar_map::Locate_type pmlt;
   typename Planar_map::Halfedge_handle pmh=pm.locate(p,pmlt);
@@ -1748,7 +1748,7 @@ Halfedge_handle locate(const typename Traits::Point& p,Locate_type& lt)
   return Halfedge_handle(pmh);
 }
 
-Halfedge_const_handle locate(const typename Traits::Point& p,
+Halfedge_const_handle locate(const typename Traits::Point_2& p,
 			     Locate_type& lt) const
 {
   typename Planar_map::Locate_type pmlt;
@@ -1782,7 +1782,7 @@ Halfedge_const_handle locate(const typename Traits::Point& p,
 //////////////////////////////////////////////////////
 //     VERTICAL RAY SHOOT
 //////////////////////////////////////////////////////
-Halfedge_handle vertical_ray_shoot(const typename Traits::Point& p,
+Halfedge_handle vertical_ray_shoot(const typename Traits::Point_2& p,
 				   Locate_type& lt, bool up)
 {
   typename Planar_map::Locate_type pmlt;
@@ -1812,7 +1812,7 @@ Halfedge_handle vertical_ray_shoot(const typename Traits::Point& p,
   return Halfedge_handle(pmh);
 }
 
-Halfedge_const_handle vertical_ray_shoot(const typename Traits::Point& p,
+Halfedge_const_handle vertical_ray_shoot(const typename Traits::Point_2& p,
 					 Locate_type& lt) const
 {
   typename Planar_map::Locate_type pmlt;
@@ -2114,11 +2114,10 @@ protected:
 //assumes sc is not a Curve_node and not an edge_node
 
 template <class F_iterator>
-Subcurve_iterator replace(Subcurve_iterator sc,
-                          const std::list<CGAL_TYPENAME_MSVC_NULL 
-			  Traits::Curve>& cv_list, 
-                          F_iterator F_begin,
-                          F_iterator F_end)
+Subcurve_iterator replace(Subcurve_iterator          sc,
+                          const std::list<Curve_2> & cv_list, 
+                          F_iterator                 F_begin,
+                          F_iterator                 F_end)
 {
   Subcurve_node* cn= sc->ftr;
 
@@ -2176,7 +2175,7 @@ Subcurve_iterator replace(Subcurve_iterator sc,
   levels.reserve(sz+1); 
   levels.push_back(In_place_list<Subcurve_node,true>() );
   
-  typename std::list<CGAL_TYPENAME_MSVC_NULL Traits::Curve>::const_iterator 
+  typename std::list<Curve_2>::const_iterator 
     lit=cv_list.begin();
   for (; lit!=cv_list.end(); ++lit) {
     Subcurve_node* scn=new Subcurve_node;
@@ -2194,12 +2193,12 @@ Subcurve_iterator replace(Subcurve_iterator sc,
     Subcurve_iterator scit=levels[i-1].begin();
     for (; scit!=levels[i-1].end(); ++scit) {
       //cut cv into curves and insert them into l
-      std::list<CGAL_TYPENAME_MSVC_NULL Traits::Curve> c_list;
+      std::list<Curve_2> c_list;
       (*(*F_begin))(scit->curve(),c_list);  //split the curve
       Subcurve_iterator aux=levels[i].end();
       --aux; //aux keeps the last place we inserted before the coming insertion
 
-      typename std::list<CGAL_TYPENAME_MSVC_NULL Traits::Curve>::iterator
+      typename std::list<Curve_2>::iterator
 	lit=c_list.begin();
       for (; lit!=c_list.end(); ++lit) {
         Subcurve_node* scn=new Subcurve_node;
