@@ -20,6 +20,13 @@ LCPPDEFS+= -DUSE_LEDA_KERNEL
 TARGET0 := $(TARGET0)LedaKernel
 LOBJDIR :=$(LOBJDIR)_leda_kernel
 else
+
+ifeq ($(USE_SIMPLE_CARTESIAN), 1)
+LCPPDEFS+= -DUSE_SIMPLE_CARTESIAN
+TARGET0 := $(TARGET0)SimpleCartesian
+LOBJDIR :=$(LOBJDIR)_simple_cartesian
+
+else
 ifeq ($(USE_MY_KERNEL), 1)
 LCPPDEFS+= -DUSE_MY_KERNEL
 TARGET0 := $(TARGET0)MyKernel
@@ -63,6 +70,7 @@ endif
 endif
 endif
 endif
+endif
 
 ifeq ($(USE_CACHED_TRAITS), 1)
 LCPPDEFS+= -DUSE_CACHED_TRAITS
@@ -92,12 +100,16 @@ LCPPINCS+= -I$(BASEDIR)/../../../Planar_map/include
 LCPPINCS+= -I$(BASEDIR)/../../../Trapezoidal_decomposition/include
 LCPPINCS+= -I$(BASEDIR)/../../../Sweep_line_2/include
 LCPPINCS+= -I$(BASEDIR)/../../../Leda_rat_kernel/include
+LCPPINCS+= -I$(BASEDIR)/../../../Cartesian_kernel/include
 LCPPINCS+= $(CGALINCS)
 
 include $(ROOT)/include/make/cgalrul.mak
 
 cartesian:
 	$(MAKEF)
+
+simple_cartesian:
+	$(MAKEF) "USE_SIMPLE_CARTESIAN=1"
 
 leda_kernel:
 	$(MAKEF) "USE_LEDA_KERNEL=1"
@@ -135,6 +147,9 @@ conic_traits:
 cached_traits:
 	$(MAKEF) "USE_CACHED_TRAITS=1"
 
+simple_cartesian_cached_traits:
+	$(MAKEF) "USE_CACHED_TRAITS=1" "USE_SIMPLE_CARTESIAN=1"
+
 leda_kernel_cached_traits:
 	$(MAKEF) "USE_LEDA_KERNEL=1" "USE_CACHED_TRAITS=1"
 
@@ -157,6 +172,7 @@ double_cached_traits:
 	$(MAKEF) "USE_DOUBLE=1" "USE_CACHED_TRAITS=1"
 
 all_non_cached: cartesian \
+        simple_cartesian \
 	leda_kernel \
 	lazy_rat \
 	quotient_mp_float \
@@ -178,6 +194,9 @@ all_cached: cached_traits \
 
 cartesian_inst:
 	$(MAKEF) install
+
+simple_cartesian_inst:
+	$(MAKEF) "USE_SIMPLE_CARTESIAN=1" install
 
 leda_kernel_inst:
 	$(MAKEF) "USE_LEDA_KERNEL=1" install
@@ -215,6 +234,9 @@ conic_traits_inst:
 cached_traits_inst:
 	$(MAKEF) "USE_CACHED_TRAITS=1" install
 
+simple_cartesian_cached_traits_inst:
+	$(MAKEF) "USE_CACHED_TRAITS=1" "USE_SIMPLE_CARTESIAN=1" install
+
 leda_kernel_cached_traits_inst:
 	$(MAKEF) "USE_LEDA_KERNEL=1" "USE_CACHED_TRAITS=1" install
 
@@ -238,6 +260,7 @@ double_cached_traits_inst:
 
 #
 all_non_cached_inst: cartesian_inst \
+        simple_cartesian_inst \
 	leda_kernel_inst \
 	quotient_mp_float_inst \
 	lazy_rat_inst \
@@ -247,6 +270,7 @@ all_non_cached_inst: cartesian_inst \
 	double_inst
 
 all_cached_inst: cached_traits_inst \
+        simple_cartesian_cached_traits_inst \
 	leda_kernel_cached_traits_inst \
 	quotient_mp_float_cached_traits_inst \
 	lazy_rat_cached_traits_inst \

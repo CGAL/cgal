@@ -12,6 +12,8 @@
 #if !defined(USE_LEDA_SEGMENT_TRAITS)
 #error Must define USE_LEDA_SEGMENT_TRAITS!
 #endif
+#elif defined(USE_SIMPLE_CARTESIAN)
+#include <CGAL/Simple_cartesian.h>
 #else
 #include <CGAL/Cartesian.h>
 #endif
@@ -63,6 +65,9 @@ typedef CGAL::leda_rat_kernel_traits                    Kernel;
 #elif defined(USE_MY_KERNEL)
 typedef CGAL::Pm_segment_traits_leda_kernel_2           Kernel;
 #define KERNEL_TYPE "Partial Leda"
+#elif defined(USE_SIMPLE_CARTESIAN)
+typedef CGAL::Simple_cartesian<WNT>                     Kernel;
+#define KERNEL_TYPE "Simple Cartesian"
 #else
 typedef CGAL::Cartesian<WNT>                            Kernel;
 #define KERNEL_TYPE "Cartesian"
