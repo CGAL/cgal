@@ -1,3 +1,7 @@
+3.34   (25 July 2001)
+- fixed use of constructive predicate and deprecated cmp_ and _dist_ functions
+- fixed LEDA kernel test by adding predicates with new names
+
 3.33   (23 July 2001)
 - renamed cmp_* to compare_* and *_dist_* to *_distance_* and
   leftturn, Leftturn, LEFTTURN to left_turn, Left_turn, LEFT_TURN and
