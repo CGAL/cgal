@@ -544,7 +544,7 @@ Aff_transformation_repH3<R>::is_even() const
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
-typename R::RT
+typename Aff_transformation_repH3<R>::RT
 Aff_transformation_repH3<R>::
 homogeneous(int i, int j) const
 {
@@ -587,7 +587,7 @@ homogeneous(int i, int j) const
 
 template < class R >
 inline
-typename R::FT
+typename Aff_transformation_repH3<R>::FT
 Aff_transformation_repH3<R>::
 cartesian(int i, int j) const
 {
@@ -697,7 +697,7 @@ Translation_repH3<R>::is_even() const
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
-typename R::RT
+typename Translation_repH3<R>::RT
 Translation_repH3<R>::homogeneous(int i, int j) const
 {
   CGAL_kernel_precondition( (i >= 0) && (i <= 3) && (j >= 0) && (j <= 3) );
@@ -738,7 +738,7 @@ Translation_repH3<R>::homogeneous(int i, int j) const
 
 template < class R >
 inline
-typename R::FT
+typename Translation_repH3<R>::FT
 Translation_repH3<R>::
 cartesian(int i, int j) const
 {

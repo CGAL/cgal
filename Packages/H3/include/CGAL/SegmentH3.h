@@ -170,7 +170,7 @@ SegmentH3<R>::operator[](int i) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename SegmentH3<R>::FT
 SegmentH3<R>::squared_length() const
 {
   return  (Ptr()->end() - Ptr()->start()) *

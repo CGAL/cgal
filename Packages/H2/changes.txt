@@ -1,3 +1,6 @@
+2.19   (21 Feb 2001)
+- VC++ fixes.
+
 2.18   (19 Feb 2001)
 - Modified return types "typename R::RT" for VC++.
 

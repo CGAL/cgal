@@ -237,7 +237,7 @@ SphereH3<R>::center() const
 
 template <class R>
 inline
-typename R::FT
+typename SphereH3<R>::FT
 SphereH3<R>::squared_radius() const
 { return Ptr()->squared_radius; }
 

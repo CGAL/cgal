@@ -330,7 +330,7 @@ TetrahedronH3<R>::bbox() const
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-typename R::FT
+typename TetrahedronH3<R>::FT
 TetrahedronH3<R>::volume() const
 {
   VectorH3<R> vec1 = vertex(1) - vertex(0);

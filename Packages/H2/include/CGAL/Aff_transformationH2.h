@@ -535,7 +535,18 @@ class Aff_transformationH2
                                const RT& cosine,
                                const RT& denominator,
                                const RT& scaling_numerator = RT(1),
-                               const RT& scaling_denominator = RT(1));
+                               const RT& scaling_denominator = RT(1))
+  {
+    Aff_transformationH2<R>
+        scaling(SCALING,scaling_numerator,scaling_denominator);
+    Aff_transformationH2<R> combination =
+          Aff_transformationH2<R>(TRANSLATION, scaling.inverse().transform(-v) )
+        * scaling
+        * Aff_transformationH2<R>(ROTATION, sine, cosine, denominator)
+        * Aff_transformationH2<R>(TRANSLATION, v ) ;
+
+    *this = combination;
+  }
 
           // General affine transformation
           //    | a b c |   |x|
@@ -563,8 +574,7 @@ class Aff_transformationH2
     LineH2<R>      transform(const LineH2<R>& l) const;
 #endif // CGAL_NO_LINE_TRANSFORM_IN_AT
 
-    Aff_transformationH2<R>
-                            inverse() const;
+    Aff_transformationH2<R> inverse() const;
     bool                    is_even() const;
     bool                    is_odd()  const;
 
@@ -650,25 +660,6 @@ Aff_transformationH2<R>::Aff_transformationH2(const Rotation,
 
  rational_rotation_approximation(dir.x(), dir.y(), sin, cos, den, n, d);
  ptr = new Rotation_repH2<R>( sin, cos, den );
-}
-
-template < class R >
-Aff_transformationH2<R>::Aff_transformationH2(const VectorH2<R>& v,
-                                              const typename R::RT& sine,
-                                              const typename R::RT& cosine,
-                                    const typename R::RT& denominator,
-                                    const typename R::RT& scaling_numerator,
-                                    const typename R::RT& scaling_denominator )
-{
-  Aff_transformationH2<R>
-      scaling(SCALING,scaling_numerator,scaling_denominator);
-  Aff_transformationH2<R> combination =
-        Aff_transformationH2<R>(TRANSLATION, scaling.inverse().transform(-v) )
-      * scaling
-      * Aff_transformationH2<R>(ROTATION, sine, cosine, denominator)
-      * Aff_transformationH2<R>(TRANSLATION, v ) ;
-
-  *this = combination;
 }
 
 template < class R >

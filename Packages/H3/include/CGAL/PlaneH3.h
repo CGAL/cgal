@@ -264,25 +264,25 @@ PlaneH3<R>::PlaneH3(const PointH3<R>& p,
 
 template < class R >
 inline
-typename R::RT
+typename PlaneH3<R>::RT
 PlaneH3<R>::a() const
 { return Ptr()->e0; }
 
 template < class R >
 inline
-typename R::RT
+typename PlaneH3<R>::RT
 PlaneH3<R>::b() const
 { return Ptr()->e1; }
 
 template < class R >
 inline
-typename R::RT
+typename PlaneH3<R>::RT
 PlaneH3<R>::c() const
 { return Ptr()->e2; }
 
 template < class R >
 inline
-typename R::RT
+typename PlaneH3<R>::RT
 PlaneH3<R>::d() const
 { return Ptr()->e3; }
 
