@@ -1,4 +1,4 @@
-2.18   (?? Feb 2001)
+2.18   (19 Feb 2001)
 - Modified return types "typename R::RT" for VC++.
 
 2.17   (15 Feb 2001)

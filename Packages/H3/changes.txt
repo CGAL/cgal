@@ -1,4 +1,4 @@
-2.19   (?? Feb 2001)
+2.19   (19 Feb 2001)
 - Use the function object Less_xyz_3 instead of CGAL::Less_xyz<>.
 - Modified return types "typename R::RT" for VC++.
 

@@ -1,4 +1,4 @@
-Version 6.7 (?? February 2001)
+Version 6.7 (19 February 2001)
 - Use the function object Less_xyz_3 instead of Less_xyzC3<>.
 
 Version 6.6 (14 February 2001)

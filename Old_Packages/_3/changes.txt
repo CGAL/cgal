@@ -1,4 +1,4 @@
-3.14 (?? Feb 2001)
+3.14 (19 Feb 2001)
 - Comment out CGAL::Less_xyz<>.
 
 3.13 (14 Feb 2001)

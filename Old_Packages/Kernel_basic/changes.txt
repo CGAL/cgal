@@ -1,6 +1,7 @@
-3.23   (?? Feb 2001)
+3.23   (19 Feb 2001)
 - Removed useless operator() in Coplanar_orientation, which caused a problem
   with VC++.
+- Make SunPro happier.
 
 3.22   (14 Feb 2001)
 
