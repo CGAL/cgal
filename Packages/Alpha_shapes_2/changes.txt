@@ -1,3 +1,6 @@
+Version 11.38
+- Simplified traits classes [af]
+
 Version 11.37 (= 11.36) [af]
 - Made predicates independent from CGAL::Cartesian
 - Switched from Cartesian to Filtered_kernel<Simple_cartesian<double> >
