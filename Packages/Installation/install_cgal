@@ -153,7 +153,7 @@ LEDA_TEST_PASSED=''
 #
 
 # version of gmp shipped with CGAL:
-GMP_VERSION='gmp-2.0.2'
+GMP_VERSION='gmp-4.0'
 
 # toggles use of GMP ('' - no, '_GMP' - use it)
 GMP_SUPPORT=''
@@ -3987,21 +3987,14 @@ install_gmp_sub()
     fi
     
     cd ${GMP_VERSION}
-    case ${CGAL_OS_COMPILER} in
-	mips_IRIX*-6*_CC-*32-*)
-	    # gmp-2.0.2 build fails on irix6, since it assummes
-	    # 64 bit wordsize
-	    _host=mips-sgi-irix5;;
-	*)
-	    _host='';;
-    esac
+    _host=''
     if _do_command_may_fail "./configure ${_host}" Configuring; then
 	if _do_command_may_fail "make CC=\"`c_compiler_bin`\"" Building
 	then
 	    ${_printf} "%s" "${_LEFTSPACE}Installing ..."
 	    _check_write ${CGAL_INCL_DIR}
 	    ${_cp} gmp.h ${CGAL_INCL_DIR}
-	    ${_mv} libgmp.a ${CGAL_LIB_DIR}/`full_ostype`
+	    ${_mv} "`${_find} . -name libgmp.a`" "${CGAL_LIB_DIR}/`full_ostype`"
 	    ${_printf} "%s\n" " done."
 	    _do_command "make clean" "Cleaning"
 	    GMP_INSTALLATION='c'
