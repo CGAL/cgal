@@ -109,4 +109,13 @@ FPU_empiric_test()
     return CGAL_FE_TOWARDZERO;
 }
 
+// needed in order that the test suite passes for Intel7
+namespace CGALi {
+
+double 
+zero() { 
+  return 0; 
+}
+
+}
 CGAL_END_NAMESPACE
