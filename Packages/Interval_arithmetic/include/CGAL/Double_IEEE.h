@@ -37,44 +37,40 @@ class Double_IEEE
 
   typedef Double_IEEE Self;
 
+  friend bool   is_valid  (const Self);
+  friend bool   is_finite (const Self);
+  friend double to_double (const Self);
+  friend double sqrt (const Self);
+  friend std::ostream & operator<<(std::ostream&, const Self);
+
 public:
   Double_IEEE() {}
 
   Double_IEEE(const double d) : _d(d) {}
 
-  double d() const
-  {
-    return _d;
-  }
-
-  operator double() const
-  {
-    return _d;
-  }
-
   Self operator-() const
   {
-    return -_d;
+    return (-_d);
   }
 
   Self operator+(const Self d) const
   {
-    return _d + d._d;
+    return (_d + d._d);
   }
 
   Self operator-(const Self d) const
   {
-    return _d - d._d;
+    return (_d - d._d);
   }
 
   Self operator*(const Self d) const
   {
-    return _d * d._d;
+    return (_d * d._d);
   }
 
   Self operator/(const Self d) const
   {
-    return _d / d._d;
+    return (_d / d._d);
   }
 
   Self& operator+=(const Self d)
@@ -108,7 +104,7 @@ public:
 
   bool operator!=(const Self d) const
   {
-    return !(*this == d);
+    return _d != d._d;
   }
 
   bool operator<(const Self d) const
@@ -136,21 +132,28 @@ inline
 bool
 is_valid(const Double_IEEE d)
 {
-    return is_valid(d.d());
+    return is_valid(d._d);
 }
 
 inline
 bool
 is_finite(const Double_IEEE d)
 {
-    return is_finite(d.d());
+    return is_finite(d._d);
 }
 
 inline
 double
 to_double(const Double_IEEE d)
 {
-    return d.d();
+    return d._d;
+}
+
+inline
+double
+sqrt(const Double_IEEE d)
+{
+    return std::sqrt(d._d);
 }
 
 inline
@@ -171,7 +174,7 @@ inline
 std::ostream &
 operator<<(std::ostream& os, const Double_IEEE d)
 {
-    return os << d.d();
+    return os << d._d;
 }
 
 inline
