@@ -873,7 +873,7 @@ set_compiler_flags()
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
 	    MATH_LIB=
-	    START_LD_OPT="-link "
+	    START_LD_OPT=""
 	    ;;
 	*IRIX*5.*CC*)
 	    #### settings for sgi mipspro compiler on irix5
