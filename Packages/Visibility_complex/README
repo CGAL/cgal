@@ -8,9 +8,9 @@ Maintainer:       Angelier Pierre  <Pierre.Angelier@ens.fr>
 Address:          Département d'Informatique de l'Ecole Normale Supérieure
 		  45 rue d'Ulm 75230 Paris Cedex 05 France
 
-URL:              http://www.di.ens.fr/users/angelier/visibility_complex.tar.gz
+URL:              http://www.di.ens.fr/~gecoal/Visibility_complex/Visibility_complex.tar.gz
 
-Version:          1.0 (10 July 2002)
+Version:          1.0.2 (22 July 2002)
 
 CGAL Versions:    2.2 and greater
 
@@ -53,7 +53,8 @@ Description:
 Changes:
       1.0    initial release
       1.0.1  fix for gcc-3.x compilers
-
+      1.0.2  fix in the documentation
+             added a small word about shortest path in the user manual
 Installation:
       
 Documentation:
