@@ -1,3 +1,7 @@
+2.60
+- Removed CGAL_CFG_NO_STANDARD_HEADERS.C as it is not used anymore.
+- Various config.h cleanups.
+
 2.59
 - Added two new tests for cl1300:
 	- CGAL_CFG_USING_NAMESPACE_BUG
