@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 
+// release_date  :
 //
 // file          : config/testfiles/CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION.C
 // source        :
@@ -31,31 +31,17 @@
 //| a non-templated function with the same signature, 
 //| CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION is set.
 
-double y( int i) { return (double)i; }
+int y(int i) { return i + 1; }
 
 template < class T >
-int y( const T& t) {
-  return t.a;
-}
-
-template < class T >
-T
-operator+(const T& a, const T&) {
-  return a;
-}
-
-class X {
-  int a;
-  friend int y<>( const X&);
-  friend X operator+<>(const X&, const X&);
-};
+int y(T t) { return t - 1; }
 
 int main()
 {
-  X x;
-  y( x);
-  X z = x + x;
-  return 0;
+  int i = 3;
+  if (y(i) == 4 && y<>(i) == 2)
+    return 0;
+  return 1;
 }
 
 // EOF //

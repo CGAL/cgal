@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 
+// release_date  :
 //
 // file          : config/testfiles/CGAL_CFG_NO_ITERATOR_TRAITS.C
 // source        :
@@ -39,14 +39,14 @@
 
 using std::iterator_traits;
 
-template < class I, class category = iterator_traits<I>::iterator_category>
+template < class I, class category = typename iterator_traits<I>::iterator_category >
 class Adaptor {
     I _i;
 public:
-    typedef iterator_traits<I>::value_type       value_type;
-    typedef iterator_traits<I>::difference_type  difference_type;
-    typedef iterator_traits<I>::reference        reference;
-    typedef iterator_traits<I>::pointer          pointer;
+    typedef typename iterator_traits<I>::value_type       value_type;
+    typedef typename iterator_traits<I>::difference_type  difference_type;
+    typedef typename iterator_traits<I>::reference        reference;
+    typedef typename iterator_traits<I>::pointer          pointer;
     typedef category                             iterator_category;
     Adaptor( I i) : _i(i) {}
     Adaptor<I, category>&
@@ -63,7 +63,7 @@ public:
 // A global function to extract the iterator category.
 
 template < class I> inline
-iterator_traits<I>::iterator_category
+typename iterator_traits<I>::iterator_category
 query( I i) {
     return iterator_traits<I>::iterator_category();
 }
