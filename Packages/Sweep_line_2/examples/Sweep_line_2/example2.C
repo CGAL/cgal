@@ -98,11 +98,11 @@ int main()
 
   // Use a window visualization
   // CGAL::Window_stream W(700, 700);
-  // W.init(-10, 10, -10);
+  // W.init(-10, 150, -5);
   // W.set_node_width(3);
-  // W.button("Finish",2);
   // W.display();
   // W << pm;
+  // W.read_mouse();
 
   return 0;
 }
