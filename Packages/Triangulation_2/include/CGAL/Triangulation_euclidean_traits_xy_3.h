@@ -15,6 +15,7 @@
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
+// author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
 //
