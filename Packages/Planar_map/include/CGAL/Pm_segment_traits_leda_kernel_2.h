@@ -1,205 +1,214 @@
-#ifdef CGAL_PM_SEGMENT_TRAITS_LEDA_TRAITS
-#define CGAL_PM_SEGMENT_TRAITS_LEDA_TRAITS
+#ifndef CGAL_PM_SEGMENT_TRAITS_LEDA_KERNEL
+#define CGAL_PM_SEGMENT_TRAITS_LEDA_KERNEL
 
 #include <CGAL/rat_leda_in_CGAL_2.h>
 #include <CGAL/Planar_map_2/Pm_segment_utilities_2.h>
-#include <CGAL/Planar_map_2/Pm_point_utilities_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
-class Pm_segment_traits_leda_kernel_2
-{
+class Pm_segment_traits_leda_kernel_2 {
 private:
-  typedef Pm_segment_traits_leda_kernel_2 Self
+  typedef Pm_segment_traits_leda_kernel_2 Self;
 
 public:
-  typedef leda_rat_point      Point_2
-  typedef leda_rat_segment    Segment_2
+  typedef leda_rat_point      Point_2;
+  typedef leda_rat_segment    Segment_2;
 
-  /*!
+  /*! Functor
    */
-  struct Is_vertical_2_ {
+  class Is_vertical_2 {
+  public:
     /*! \todo Can cv be a point, or should it be prohobited by a precondition.
      */
-    bool operator()(const X_curve_2 & cv) const
+    bool operator()(const Segment_2 & cv) const
     {
-      if (cv.is_trivial())
-        return true;
+      if (cv.is_trivial()) return true;
       return cv.is_vertical();
     }
   };
 
-  /*!
+  /*! Functor
    */
-  struct Equal_2_ {
+  class Equal_2 {
+  public:
     bool operator()(const Point_2 & p1, const Point_2 & p2) const
-    { return is_same(p1, p2); }
+    { return (p1 == p2); }
 
-    bool operator()(const X_curve_2 & c1, const X_curve_2 & c2) const
-    { return is_same(c1, c2); }
+    bool operator()(const Segment_2 & c1, const Segment_2 & c2) const
+    { return (c1 == c2); }
   };
 
-  /*!
+  /*! Functor
    */
-  Comparison_result Comparison_result_from_int(int res) const 
-  {
-    if (res < 0) return SMALLER;
-    if (res > 0) return LARGER;
-    return EQUAL;
-  }
+  class Compare_x_2 {
+  public:
+    Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
+    {
+      int res = Self::Point_2::cmp_x(p1, p2);
+      return ((res < 0) ? SMALLER : ((res > 0) ? LARGER : EQUAL));
+    }
+  };
+
+  /*! Functor
+   */
+  class Compare_y_2 {
+  public:
+    Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
+    {
+      int res = Self::Point_2::cmp_y(p1, p2);
+      return ((res < 0) ? SMALLER : ((res > 0) ? LARGER : EQUAL));
+    }
+  };
+
+  /*! Functor
+   */
+  class Less_x_2 {
+  public:
+    bool operator()(const Point_2 & p1, const Point_2 & p2) const
+    { return (Self::Point_2::cmp_x(p1, p2) < 0); }
+  };
     
-  /*!
+  /*! Functor
    */
-  struct Compare_x_2_ {
-    Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
-    {
-      return Comparison_result_from_int(
-#if (__LEDA__ >= 380)
-        Self::Point_2::cmp_x(p1,p2)
-#else // backward compatability to LEDA
-        compare(p1.xcoord(),p2.xcoord())
-#endif
-      );
-    }
+  class Less_y_2 {
+  public:
+    bool operator()(const Point_2 & p1, const Point_2 & p2) const
+    { return (Self::Point_2::cmp_y(p1, p2) < 0); }
+  };
+    
+  /*! Functor
+   */
+  class Construct_vertex_2 {
+  public:
+    Point_2 operator()(const Segment_2 & cv, int id) const
+    { return ((id == 0) ? cv.source() : cv.target()); }
   };
 
-  /*!
+  /*! Functor
    */
-  struct Compare_y_2_ {
-    Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
-    {
-      return Comparison_result_from_int(
-
-#if (__LEDA__ >= 380)
-        Self::Point_2::cmp_y(p1,p2)
-#else // backward compatability to LEDA   
-        compare(p1.ycoord(),p2.ycoord()) 
-#endif
-      );
-    }
-  };
-
-  /*!
-   */
-  struct Construct_vertex_2_ {
-    Point_2 operator()() const
-    {
-    }
-  };
-
-  /*!
-   */
-  struct Compare_y_at_x_2_ {
+  class Compare_y_at_x_2 {
   private:
-    bool curve_is_in_x_range(const X_curve_2 & cv, const Point_2 & q) const
-    { 
-      return !( is_right(q, rightmost(cv.source(), cv.target())) ||
-                is_left(q, leftmost(cv.source(), cv.target()))	 );
+    int cmp_x(const Point_2 & p1, const Point_2 & p2) const
+    { return Self::Point_2::cmp_x(p1, p2); }
+
+    int cmp_y(const Point_2 & p1, const Point_2 & p2) const
+    { return Self::Point_2::cmp_y(p1, p2); }
+      
+    bool curve_is_in_x_range(const Segment_2 & cv, const Point_2 & p) const
+    {
+      return
+        !(((cmp_x(p, cv.source()) < 0) && (cmp_x(p, cv.target()) < 0)) ||
+         ((cmp_x(p, cv.source()) > 0) && (cmp_x(p, cv.target()) > 0)));
     }
 	
-    bool curve_is_in_y_range(const X_curve_2 &cv, const Point_2 & q) const
+    bool curve_is_in_y_range(const Segment_2 & cv, const Point_2 & p) const
     { 
-      bool r = !( is_lower(q, lowest(cv.source(), cv.target())) ||
-                  is_higher(q, highest(cv.source(), cv.target())) );
-      return r;
+      return
+        !(((cmp_y(p, cv.source()) < 0) && (cmp_y(p, cv.target()) < 0)) ||
+         ((cmp_y(p, cv.source()) > 0) && (cmp_y(p, cv.target()) > 0)));
     }
 
     Orientation orientation(const Point_2 & p, const Point_2 & q,
                             const Point_2 & r) const
-    {
-      return CGAL::orientation(p, q, r);
-    }
+    { return CGAL::orientation(p, q, r); }
 	
   public:
-    Comparison_result operator()(const X_curve_2 & cv1, const X_curve_2 & cv2, 
-                                 const Point_2 & q) const
+    Comparison_result operator()(const Point_2 & q,
+                                 const Segment_2 & cv1, const Segment_2 & cv2)
+      const
     {
-      if ((!curve_is_in_x_range(cv1, q)) || 
-          (!curve_is_in_x_range(cv2, q)))
+      if ((!curve_is_in_x_range(cv1, q)) || (!curve_is_in_x_range(cv2, q)))
         return EQUAL;
 		
-      int res;
       // bug ??? in LEDA - 
       // cmp_segments_at_xcoord returns wrong answer if
       // cv1 (or cv2) are from right to left
       // cv1_ and cv2_ are the same as cv1 and cv2 - 
       //   oriented from left to right
-      X_curve_2 cv1_ = cv1;
-      X_curve_2 cv2_ = cv2;
+      Segment_2 cv1_ = cv1;
+      Segment_2 cv2_ = cv2;
       if (lexicographically_xy_larger(cv1.source(), cv1.target()))
         cv1_ = cv1.reversal();
       if (lexicographically_xy_larger(cv2.source(), cv2.target()))
         cv2_ = cv2.reversal();
   		
-                  
       // checking verical curves.
-      struct Is_vertical_2_ is_vertical;
-  
-      if (is_vertical(cv1_)) {
-                    
-        if (is_vertical(cv2_)) {
+      if (cv1_.is_vertical()) {
+        if (cv2_.is_vertical()) {
           // both cv1 and cv2 are vertical
-          if ( is_lower(cv1_.target(), cv2_.source()) )
-            return SMALLER;
-          if ( is_higher(cv1_.source(), cv2_.target()) )
-            return LARGER;
-          return EQUAL; // overlapping. 
-        } // end  both cv1 and cv2 are vertical.
-        else { // only cv1 is vertical.
-          if (orientation(cv2_.source(), 
-                          cv2_.target(), 
-                          cv1_.source()) > 0 )
-            return LARGER;
-                      
-          if (orientation(cv2_.source(), 
-                          cv2_.target(), 
-                          cv1_.target()) < 0)
-            return SMALLER;
-  
-          return EQUAL;
+          int res = cmp_y(cv1_.target(), cv2_.source());
+          return ((res < 0) ? SMALLER : ((res > 0) ? LARGER : EQUAL));
         }
+
+        // only cv1 is vertical.
+        if (orientation(cv2_.source(), cv2_.target(), cv1_.source()) > 0)
+          return LARGER;
+                      
+        if (orientation(cv2_.source(), cv2_.target(), cv1_.target()) < 0)
+          return SMALLER;
+  
+        return EQUAL;
       }
                   
-      if (is_vertical(cv2_)) { // only cv2 is vertical.
-        if (orientation(cv1_.source(), 
-                        cv1_.target(), 
-                        cv2_.source()) > 0 )
+      if (cv2_.is_vertical()) {
+        // only cv2 is vertical:
+        if (orientation(cv1_.source(), cv1_.target(), cv2_.source()) > 0 )
           return SMALLER;
                       
-        if (orientation(cv1_.source(), 
-                        cv1_.target(), 
-                        cv2_.target()) < 0)
+        if (orientation(cv1_.source(), cv1_.target(), cv2_.target()) < 0)
           return LARGER;
   
         return EQUAL;  
       }
                     
-      // end checking verical curves.
-  
-      res = cmp_segments_at_xcoord(cv1_, cv2_, q);
-  		
-      if (res < 0) 
-        return SMALLER;
-      if (res > 0) 
-        return LARGER;
-      return EQUAL;
+      // Non of the curves are vertical:
+      int res = cmp_segments_at_xcoord(cv1_, cv2_, q);
+      return ((res < 0) ? SMALLER : ((res > 0) ? LARGER : EQUAL));
+    }
+
+    Comparison_result operator()(const Point_2 & p, const Segment_2 & cv)
+    {
+      if (!curve_is_in_x_range(cv, p)) return EQUAL;
+
+      if (cv.is_vertical()) {
+        if ((cmp_y(p, cv.source()) < 0) && (cmp_y(p, cv.target()) < 0))
+          return SMALLER;
+        if ((cmp_y(p, cv.source()) > 0) && (cmp_y(p, cv.target()) > 0))
+          return LARGER;
+        return EQUAL;
+      }
+
+      Orientation o = (cmp_x(cv.source(), cv.source()) < 0) ?
+        orientation(cv.source(), cv.target(), p) :
+        orientation(cv.target(), cv.source(), p);
+			
+      return ((o < 0) ? SMALLER : ((o > 0) ? LARGER : EQUAL));
     }
   };
 
-  typedef Is_vertical_2_        Is_vertical_2;
-  typedef Equal_2_              Equal_2;
-  typedef Compare_x_2_          Compare_x_2;
-  typedef Compare_y_2_          Compare_y_2;
-  typedef Construct_vertex_2_   Construct_vertex_2;
-  typedef Compare_y_at_x_2_     Compare_y_at_x_2;
-
-  Is_vertical_2 is_vertical_2_object() { return Is_vertical_2(); }
-  Equal_2_object() { return Equal_2(); }
-  Compare_x_2_object() { return Compare_x_2(); }
-  Compare_y_2_object() { return Compare_y_2(); }
-  Construct_vertex_2_object() { return Construct_vertex_2(); }
-  Compare_y_at_x_2_object() { return Compare_y_at_x_2(); }
+  /*!
+   */
+  class Compare_slope_2 {
+  public:
+    Comparison_result operator()(const Segment_2 & cv1, const Segment_2 & cv2)
+      const
+    {
+      int res = cmp_slopes(cv1, cv2);
+      return ((res < 0) ? SMALLER : ((res > 0) ? LARGER : EQUAL));
+    }
+  };
     
+  // creators:
+  Is_vertical_2 is_vertical_2_object() const { return Is_vertical_2(); }
+  Equal_2 equal_2_object() const { return Equal_2(); }
+  Compare_x_2 compare_x_2_object() const { return Compare_x_2(); }
+  Compare_y_2 compare_y_2_object() const { return Compare_y_2(); }
+  Construct_vertex_2 construct_vertex_2_object() const { return Construct_vertex_2(); }
+  Compare_y_at_x_2 compare_y_at_x_2_object() const { return Compare_y_at_x_2(); }
+  Less_x_2 less_x_2_object() const { return Less_x_2(); }
+  Compare_slope_2 compare_slope_2_object() const { return Compare_slope_2(); }
+};
+
 CGAL_END_NAMESPACE
 
 #endif
