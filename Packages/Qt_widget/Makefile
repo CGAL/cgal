@@ -34,8 +34,10 @@ clean:
 	make -C demo/Qt_widget clean
 
 # clean moc files too
+# Warning: this is deprecated since $CGAL_MAKEFILE clean rule now clean
+# *.moc files too!
 clean-moc: clean
-	find -name '*.moc' -exec rm \{\} \;
+#	find -name '*.moc' -exec rm \{\} \;
 
 # make update: update the working directory
 update:
