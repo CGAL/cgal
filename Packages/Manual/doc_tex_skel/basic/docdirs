@@ -21,6 +21,7 @@ Triangulation_3
 TriangulationDS_3
 Alpha_shapes_2
 Alpha_shapes_3
+Apollonius_graph_2
 Optimisation
 Point_set_2
 SearchStructures
