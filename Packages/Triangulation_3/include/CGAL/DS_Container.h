@@ -70,15 +70,6 @@
 //   able to tell if it's free.  And squating another (or the same) to store
 //   the list pointer.
 
-// We can begin with having only one additionnal pointer in the structure,
-// which can be easily shared with the conflict_flag, as we can even say for
-// sure that the conflict_flag is reset to 0 between iterator calls.
-
-// Next, probably, the conflict_flag should be documented, put in cell_base,
-// and we should have a compact_cell_base, the default (squatting bits in the
-// normal pointers), saying the trick it's doing, so that it doesn't interfere
-// with the users' tricks.
-
 // So either Elt has an additional pointer field, or it has some way to store
 // the necessary information.  Both things should be provided by an
 // object passed to DS_Container giving access to the list pointer, and if
