@@ -30,7 +30,7 @@ CGAL_BEGIN_NAMESPACE
 
 struct Triangulation_utils_3
 {
-  static const char tab_next_around_edge_ij[4][4];
+  static const char tab_next_around_edge[4][4];
 
   int ccw(const int i) const
     {
@@ -51,15 +51,9 @@ struct Triangulation_utils_3
     CGAL_triangulation_precondition( ( 4 > (unsigned) i) &&
 		                     ( 4 > (unsigned) j) &&
 		                     ( i != j ) );
-    return tab_next_around_edge_ij[i][j];
+    return tab_next_around_edge[i][j];
   }
 };
-
-const char Triangulation_utils_3::tab_next_around_edge_ij[4][4] = {
-      {5, 2, 3, 1},
-      {3, 5, 0, 2},
-      {1, 3, 5, 0},
-      {2, 0, 1, 5} };
 
 CGAL_END_NAMESPACE
 

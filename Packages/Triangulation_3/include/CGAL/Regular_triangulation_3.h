@@ -15,11 +15,10 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//                 Sophie Balaven
 //                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 
-//
-// coordinator   : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
+// coordinator   : INRIA Sophia Antipolis 
+//                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
 
