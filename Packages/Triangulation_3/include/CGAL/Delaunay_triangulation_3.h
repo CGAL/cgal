@@ -1536,6 +1536,8 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
   typedef typename Surface::Vertex_3_2 Vertex_3_2;
   typedef typename Surface::Vertex_circulator Vertex_circulator_3_2;
 
+  // The list of cells that get created, so that we know what
+  // we have to delete, in case that we cannot fill the hole
   std::list<Cell_handle> cells;
 
   Surface surface(boundhole);
@@ -1545,12 +1547,17 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
   int k = -1;
 
   // This is a loop over the halfedges of the surface of the hole
-  // we have a current face f, and look at its incident edges (k = 0,1,2)
+  // As edges are not explicitely there, we loop over the faces instead,
+  // and an index. 
+  // The current face is f, The current index is k = 0,1,2
   for(;;){
     k++;
     if(k == 3) {
+      // The faces form a circular list. With f->n() we go to the next face.
       f = (Face_3_2*)f->n();
       if(f == last_op) {
+	// We looked at all edges without doing anything, that is we are
+	// in an infinite loop. ==> Panic mode, delete created cells.
 	std::cerr << "\nUnable to find an ear\n" <<  surface << std::endl;
 	delete_cells(cells);
 	return false;
@@ -1558,6 +1565,9 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
       k = 0;
     }
 
+    // The edges are marked, if they are a candidate for an ear.
+    // This saves time, for example an edge gets not considered
+    // from both sides.
     if(f->edge(k)) {
       Vertex_3_2 *w0, *w1, *w2, *w3;
       Vertex *v0, *v1, *v2, *v3;
@@ -1728,17 +1738,31 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	if((! neighbor_i) && (! neighbor_j)) {
 	  surface.flip(f,k);
 	  int ni = f->index(n);
+	  // The flipped edge is not a concavity
 	  f->set_edge(ni, false);
+	  // The adjacent edges may be a concavity
+	  // that is they are candidates for an ear
+	  // In the list of faces they get moved behind f
 	  f->set_edge(cw(ni));
 	  f->set_edge(ccw(ni));
 	  
 	  int fi = n->index(f);
+	  // The flipped edge is not a concavity
 	  n->set_edge(fi, false);
+	  // The adjacent edges may be a concavity
+	  // that is they are candidates for an ear
+	  // In the list of faces they get moved behind f
 	  n->set_edge(cw(fi), f);
 	  n->set_edge(ccw(fi), f);
 	  f->set_info(std::make_pair(ch,2));
 	  n->set_info(std::make_pair(ch,1));
 	} else if (neighbor_i && (! neighbor_j)) {
+	  // Before removing a face we remove it from the
+	  // list of candidates. This would better be
+	  // part of the remove_degree_3() function,
+	  // but the Triangulation datastructure does not
+	  // know about this. Alternatively we could derive from
+	  // the TDS and overwrite this function.
 	  f->unlink(j);
 	  surface.remove_degree_3(f->vertex(j), f);
 	  f->set_edge();
