@@ -28,6 +28,7 @@
 #include <strstream> // deprecated
 #include <csignal>
 #include <cerrno>
+#include <cstring>
 #include <unistd.h>
 
 #include <CGAL/IO/Geomview_stream.h>
@@ -85,7 +86,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
 	if (dup2(pipe_in[1], 1) != 1)
 	    std::cerr << "Connect pipe to stdout failed." << std::endl;
 
-        if (machine && (std::strlen(machine)>0)) {
+        if (machine && (CGAL_CLIB_STD::strlen(machine)>0)) {
 	    std::string s (" rgeomview ");
 	    s += machine;
 	    s += ":0.0";
@@ -142,7 +143,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         char inbuf[10];
         ::read(in, inbuf, 7);
 
-        if (std::strncmp(inbuf, "started", 7) == 0)
+        if (CGAL_CLIB_STD::strncmp(inbuf, "started", 7) == 0)
         {
             // std::cerr << "You still have a .geomview file with the\n"
                    // << "(echo \"started\") command. Note that this is not\n"
@@ -150,10 +151,10 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
 
             // Then the next one is supposed to be CGAL-3D.
             ::read(in, inbuf, 7);
-            if (std::strncmp(inbuf, "CGAL-3D", 7) != 0)
+            if (CGAL_CLIB_STD::strncmp(inbuf, "CGAL-3D", 7) != 0)
                 std::cerr << "Unexpected string from Geomview !" << std::endl;
         }
-        else if (std::strncmp(inbuf, "CGAL-3D", 7) == 0)
+        else if (CGAL_CLIB_STD::strncmp(inbuf, "CGAL-3D", 7) == 0)
         {
             // std::cerr << "Good, you don't have a .geomview file with the\n"
                       // << "(echo \"started\") command" << std::endl;
