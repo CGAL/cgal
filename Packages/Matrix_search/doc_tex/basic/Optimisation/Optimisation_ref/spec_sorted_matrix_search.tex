@@ -80,12 +80,12 @@
     \ccRequire
     \begin{enumerate}
     \item \ccc{Traits} is a model for
-      \ccc{Sorted_matrix_search_traits}.
+      \ccc{SortedMatrixSearchTraits}.
     \item Value type of \ccc{RandomAccessIC} is \ccc{Traits::Matrix}.
     \end{enumerate}
     
     \ccSeeAlso
-    \ccRefConceptPage{Sorted_matrix_search_traits}
+    \ccRefConceptPage{SortedMatrixSearchTraits}
     
     \ccImplementation The implementation uses an algorithm by
     Frederickson and Johnson\cite{fj-fkppc-83,fj-gsrsm-84} and runs in
@@ -118,12 +118,12 @@
     \ccc{M}.
 
     \ccIsModel
-    \ccRefConceptPage{Sorted_matrix_search_traits}
+    \ccRefConceptPage{SortedMatrixSearchTraits}
     
     \ccRequirements
 
     \begin{enumerate}
-    \item \ccc{M} is a model for \ccc{Basic_matrix} \textit{and}
+    \item \ccc{M} is a model for \ccc{BasicMatrix} \textit{and}
     \item \ccc{F} defines a copy constructor and a monotone \ccc{bool
         operator()( const Value&)}.
     \end{enumerate}
@@ -163,7 +163,7 @@
   \end{ccAdvanced}
 \end{ccRefClass}
 
-\begin{ccRefConcept}{Sorted_matrix_search_traits}
+\begin{ccRefConcept}{SortedMatrixSearchTraits}
   \begin{ccAdvanced}
     \ccCreationVariable{t}\ccTagFullDeclarations
     
@@ -175,7 +175,7 @@
     \ccTypes 
     
     \ccNestedType{Matrix}{The class used for representing matrices.
-      It has to be a model for \ccc{Basic_matrix}.}
+      It has to be a model for \ccc{BasicMatrix}.}
 
     \ccTypedef{typedef Matrix::Value Value;}{The class used for
       representing the matrix elements.}
@@ -210,7 +210,7 @@
     
     \ccSeeAlso
     \ccRefIdfierPage{CGAL::sorted_matrix_search}\\
-    \ccRefConceptPage{Basic_matrix}
+    \ccRefConceptPage{BasicMatrix}
     
     \ccTagDefaults
   \end{ccAdvanced}

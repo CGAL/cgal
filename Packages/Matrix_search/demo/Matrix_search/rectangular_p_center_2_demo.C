@@ -29,8 +29,6 @@
 #ifdef CGAL_USE_LEDA
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Iso_rectangle_2.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/IO/leda_window.h>
 #include <CGAL/IO/Ostream_iterator.h>
 #include <CGAL/IO/Istream_iterator.h>
@@ -225,9 +223,10 @@ main(int argc, char* argv[])
   int ps_button      = W.button("PS", "Generate postscript output.");
   int ascii_button   = W.button("ASCII",
                                 "Generate ascii output of input points.");
+  int help_button    = W.button("Help", "Explain the program.");
   int end_button     = W.button("Quit", "Leave the program.");
   W.int_item("n", number_of_points, "Number of points.");
-  W.int_item("p", number_of_clusters, "Number of clusters.");
+  W.int_item("p", number_of_clusters, 2, 4, "Number of clusters.");
   W.double_item("Cluster Size", c_size,
                 "Size of the clusters (relevant for the cluster generator).");
   W.display();
@@ -317,7 +316,7 @@ main(int argc, char* argv[])
 
     FT result;
     Point_cont centers;
-    if (!input_points.empty()) {
+    if (input_points.size() >= unsigned(number_of_clusters)) {
 #ifndef CGAL_PCENTER_NO_SHOW
       W << GREEN
         << CGAL::bounding_box_2(input_points.begin(), input_points.end());
@@ -421,7 +420,10 @@ main(int argc, char* argv[])
         cerr << "Error: No square has two points on boundary." << endl;
 
 #endif // CGAL_PCENTER_CHECK
-    } // if (!input_points.empty())
+    } // if (input_points.size() >= unsigned(number_of_clusters))
+    else
+      cerr << "Too few points, need at least "
+           << number_of_clusters << "." << endl;
 
 #ifndef CGAL_PCENTER_NO_SHOW
     double x, y;
@@ -448,6 +450,7 @@ main(int argc, char* argv[])
         W.clear();
       } else if (input == gencl_button) {
         // random points in three clusters
+        c_size = std::min(1.0, std::max(0.0, c_size));
         Point_generator_cluster gen(number_of_clusters,
                                     c_size,
                                     1.0,
@@ -495,7 +498,9 @@ main(int argc, char* argv[])
         iterator ymax = std::max_element(input_points.begin(),
                                          input_points.end(),
                                          CGAL::Less_y_2< R >());
-        FT scale = std::max(xmax->x() - xmin->x(), ymax->y() - ymin->y());
+        FT scale;
+        if (input_points.size() > 0)
+          scale = std::max(xmax->x() - xmin->x(), ymax->y() - ymin->y());
         const int size = 500;
         const int border = 20;
         cout << "%!PS-Adobe-2.0 EPSF-1.2\n"
@@ -571,14 +576,41 @@ main(int argc, char* argv[])
 #ifdef _MSC_VER
         }
 #endif
-      } else if (input == end_button || input == MOUSE_BUTTON(3))
-        done = true;
-    } while (!done);
-  } while (!done);
-#endif // CGAL_PCENTER_NO_SHOW
+      } else if ( input == help_button) {
+        // display help text
+        W.del_messages();
+        W.message("CGAL RECTANGULAR p-CENTER DEMO");
+        W.message("");
+        W.message("compute the rectangular p-centers of a set S \
+of n points in the plane,");
+            W.message("i.e. cover S with p congruent axis-parallel squares \
+of minimal size.");
+            W.message("");
+            W.message("Mouse Input:");
+            W.message("");
+            W.message(" <left mouse button>       -  add point.");
+            W.message(" <middle mouse button> -  compute result.");
+            W.message(" <Clear>                          -  clear all points");
+            W.message(" <Square>                       -  generate \
+n random points drawn uniformly from the unit square.");
+            W.message(" <Disc>                           -  generate n \
+random points drawn uniformly from the unit disc.");
+            W.message(" <Cluster>                       -  generate p \
+clusters of altogether n points");
+            W.message("                                            \
+drawn uniformly from squares of size Cluster Size.");
+            W.message(" <PS>                              -  \
+postscript output to stdout.");
+            W.message(" <ASCII>                        -  \
+ASCII output to stdout.");
+          } else if (input == end_button || input == MOUSE_BUTTON(3))
+            done = true;
+        } while (!done);
+      } while (!done);
+    #endif // CGAL_PCENTER_NO_SHOW
 
-  return 0;
-}
+      return 0;
+    }
 
 #else
 

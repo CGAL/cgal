@@ -15,22 +15,26 @@ clicked near a vertex, the corresponding furthest neighbor is marked
 with a little circle. Quit by clicking the middle or right mouse
 button.
 
-
 extremal_polygon_2_demo:
 
-compute the largest are or perimeter k-gon that can be inscribed into
-a convex polygon. vertices can be added with the left, moved with the
+compute the largest area or perimeter k-gon that can be inscribed into
+a convex polygon. Vertices can be added with the left, moved with the
 middle and deleted with the right mouse button. There is a button to
 generate random convex polygons and a slider to change k and n (the
 number of vertices to generate).
 
 rectangular_p_center_2_demo:
 
-compute the rectangular four-centers of a planar point set P, i.e.
-cover P with four congruent axis-parallel squares of minimal sidelength.
-define points by clicking with the left mouse button and end the input
-by clicking the middle mouse button. Then the result is computed and
-displayed. Click any button to end.
+compute the rectangular p-centers of a set S of n points in the plane,
+i.e. cover S with p congruent axis-parallel squares of minimal
+size. Add points by clicking the left mouse button; clicking the
+middle mouse button or "Compute" calculates and displays the result.
+The buttons "Square" and "Disc" generate random points drawn uniformly
+from the unit square and disc, resp. The parameters n and p can be
+adjusted through the corresponding widgets. "Cluster" generates p
+random clusters of size "Cluster Size"; "Clear" removes all points
+from the input set S. Finally, with "PS" and "ASCII" one can get a
+postscript and ASCII, resp., output of the scene onto stdout.
 
 Michael Hoffmann
 

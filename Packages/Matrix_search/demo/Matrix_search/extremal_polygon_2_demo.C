@@ -29,8 +29,6 @@
 #ifdef CGAL_USE_LEDA
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/distance_predicates_2.h>
 #include <CGAL/convex_hull_2.h>
@@ -118,8 +116,8 @@ main()
     W.button( "Help",
               "Explain the program and its mouse interaction."));
   int quit_button(
-    W.button( "End",
-              "Quit Program"));
+    W.button( "Quit",
+              "Leave the Program"));
   cgalize( W);
   W.display();
   W.init( -1.5, 1.5, -1.5);
