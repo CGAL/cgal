@@ -8,14 +8,14 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 
+// release       : $CGAL_Revision: CGAL-2.4-I-18 $
+// release_date  : $CGAL_Date: 2001/10/16 $
 //
 // file          : include/CGAL/Real_timer.h
-// package       : Timer (2.1)
+// package       : Timer (2.1.1)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.1
-// revision_date : 28 September 2001 
+// revision      : 2.1.1
+// revision_date : 10 December 2001 
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //                 Matthias Baesken <baesken@informatik.uni-halle.de>
 // coordinator   : INRIA, Sophia Antipolis
@@ -41,6 +41,10 @@
 #include <sys/timeb>
 #include <ctype> 
 #endif
+#if defined (__MWERKS__)
+#define CGAL_PROTECT_SYS_TIME_H
+#include <ctime>
+#endif
 
 // used for gettimeofday()
 #ifndef CGAL_PROTECT_SYS_TIME_H
@@ -64,15 +68,20 @@ CGAL_BEGIN_NAMESPACE
 class Real_timer {
 private:
 
-#if !defined (_MSC_VER) && !defined(__BORLANDC__)
+#if !defined (_MSC_VER) && !defined(__BORLANDC__) && !defined(__MWERKS__)
     typedef struct timeval  Timetype;
-#else
+#endif
 #if defined (_MSC_VER)
     typedef struct _timeb   Timetype; //MSC
-#else
-    typedef struct timeb    Timetype; //Borland
-#endif 
 #endif
+#if defined (__BORLANDC__)
+    typedef struct timeb    Timetype; //Borland
+#endif
+
+#if defined(__MWERKS__)
+  typedef struct std::tm         Timetype; // Metrowekrs CodeWarrior
+#endif
+
 
     inline  int get_time(Timetype* t) const;
     inline  void report_err() const;
@@ -109,16 +118,23 @@ public:
 // all the platform-specific functions are encapsulated here.
 
 inline int Real_timer::get_time(Timetype* t) const {
-#if !defined(_MSC_VER) && !defined(__BORLANDC__)
+#if !defined(_MSC_VER) && !defined(__BORLANDC__) && !defined(__MWERKS__)
   return gettimeofday( t, NULL);
-#else
+#endif
 #if defined (_MSC_VER)
     _ftime(t);  
-#else
+#endif
+#if defined (__BORLANDC__)
     ftime(t);  
 #endif
+#if defined (__MWERKS__)
+    CGAL_CLIB_STD::time_t tt;
+    CGAL_CLIB_STD::time(&tt);
+    Timetype* lt = CGAL_CLIB_STD::localtime(&tt);
+    *t = *lt;
+#endif
   return 0;
-#endif 
+ 
 }
 
 inline void Real_timer::report_err() const {
@@ -132,12 +148,22 @@ inline void Real_timer::report_err() const {
 }
 
 inline double Real_timer::recalc_time(const Timetype& t) const {
-#if !defined(_MSC_VER) && !defined(__BORLANDC__)
+#if !defined(_MSC_VER) && !defined(__BORLANDC__) && !defined(__MWERKS__)
   return double(t.tv_sec  - started.tv_sec) 
     + double(t.tv_usec - started.tv_usec) / 1000000;
 #else
+#if defined (__MWERKS__)
+  /// we copy them because mktime can modify
+  Timetype tt1 = t;
+  Timetype tt2 = started;
+  CGAL_CLIB_STD::time_t t1 = CGAL_CLIB_STD::mktime(&tt1);
+  CGAL_CLIB_STD::time_t t2 = CGAL_CLIB_STD::mktime(&tt2);
+
+  return CGAL_CLIB_STD::difftime(t1, t2);
+#else // _MSC_VER || __BORLANDC__
   return ((double)(t.time - started.time)) 
     + ((double)(t.millitm - started.millitm))/1000.0;
+#endif
 #endif
 }
 

@@ -1,5 +1,8 @@
 Timer Package: Release changes:
 ---------------------------------------------------------------------
+2.1.1 (10 Dec 2001)
+    Real_timer changes from Andreas Fabri for MWCC included
+
 2.1 (28 Sept 2001)
     some consts in Real_timer.h removed (caused KCC warnings)
 
