@@ -88,8 +88,22 @@ class Optimisation_ellipse_2 {
     int    n_boundary_points;                   // number of boundary points
     Point  boundary_point1, boundary_point2;    // two boundary points
     Conic  conic1, conic2;                      // two conics
-    RT     dr, ds, dt, du, dv, dw;              // the gradient vector
+
+    // this gradient vector has dr=0 and is used in testing the
+    // position of a point relative to an ellipse through 4 points
+    mutable RT     dr, ds, dt, du, dv, dw;  
+    mutable bool   d_values_set; 
     
+    // this gradient vector is just conic2 - conic1 and is used in
+    // obtaining an explicit conic representing an ellipse through 4 poinnts
+    mutable RT     er, es, et, eu, ev, ew;
+    mutable bool e_values_set;
+
+    // needed in bounded-side predicate over ellipse with 4 support points
+    mutable Conic helper_ellipse; // needed in bounded-side predicate over 
+    mutable bool helper_ellipse_set;
+
+    mutable Conic helper_conic; // also needed in bounded-side test
 
 // ============================================================================
 
@@ -143,22 +157,70 @@ class Optimisation_ellipse_2 {
     {
         n_boundary_points = 4;
         Conic::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
+
+	d_values_set = false;
+	e_values_set = false;
+	helper_ellipse_set = false;	
+    }
+
+    void
+    set_d_values() const
+    {
+      if (!d_values_set) {
         dr = RT( 0);
         ds = conic1.r() * conic2.s() - conic2.r() * conic1.s(),
         dt = conic1.r() * conic2.t() - conic2.r() * conic1.t(),
         du = conic1.r() * conic2.u() - conic2.r() * conic1.u(),
         dv = conic1.r() * conic2.v() - conic2.r() * conic1.v(),
         dw = conic1.r() * conic2.w() - conic2.r() * conic1.w();
+	d_values_set = true;
+      }
     }
-    
-    inline
+
+    void
+    set_e_values() const
+    {
+      if (!e_values_set) {
+       	er = conic2.r() - conic1.r();
+	es = conic2.s() - conic1.s();
+	et = conic2.t() - conic1.t();
+	eu = conic2.u() - conic1.u();
+	ev = conic2.v() - conic1.v();
+	ew = conic2.w() - conic1.w();
+	e_values_set = true;
+      }
+    }
+
+    void
+    set_helper_ellipse () const
+    {
+      if (!helper_ellipse_set) {
+        helper_ellipse.set_ellipse( conic1, conic2);
+        helper_ellipse.analyse();
+	CGAL_optimisation_assertion (helper_ellipse.is_ellipse());
+	helper_ellipse_set= true;
+      }
+    }
+
+//    inline
+//     void
+//     set( const Point&, const Point&,
+//          const Point&, const Point&, const Point& p5)
+//     {
+//         n_boundary_points = 5;
+//         conic1.set( conic1, conic2, p5);
+//         conic1.analyse();
+//     }
+
     void
     set( const Point&, const Point&,
          const Point&, const Point&, const Point& p5)
     {
-        n_boundary_points = 5;
-        conic1.set( conic1, conic2, p5);
-        conic1.analyse();
+        // uses the fact that the conic to be constructed has already
+        // been computed in preceding bounded-side test over a 4-point
+        // ellipse
+        conic1 = helper_conic;
+	n_boundary_points = 5;
     }
 
     // Access functions
@@ -178,18 +240,20 @@ class Optimisation_ellipse_2 {
     
         double t = 0.0;
     
-        if ( n_boundary_points == 4)
-            t = conic1.vol_minimum( dr, ds, dt, du, dv, dw);
+        if ( n_boundary_points == 4) {
+	  set_e_values();
+          t = conic1.vol_minimum( er, es, et, eu, ev, ew);
+	}
     
-        Conic c( conic1);
-
-        e.set( CGAL::to_double( c.r()) + t*CGAL::to_double( dr),
-               CGAL::to_double( c.s()) + t*CGAL::to_double( ds),
-               CGAL::to_double( c.t()) + t*CGAL::to_double( dt),
-               CGAL::to_double( c.u()) + t*CGAL::to_double( du),
-               CGAL::to_double( c.v()) + t*CGAL::to_double( dv),
-               CGAL::to_double( c.w()) + t*CGAL::to_double( dw));
-    
+        e.set( CGAL::to_double( conic1.r()) + t*CGAL::to_double( er),
+               CGAL::to_double( conic1.s()) + t*CGAL::to_double( es),
+               CGAL::to_double( conic1.t()) + t*CGAL::to_double( et),
+               CGAL::to_double( conic1.u()) + t*CGAL::to_double( eu),
+               CGAL::to_double( conic1.v()) + t*CGAL::to_double( ev),
+               CGAL::to_double( conic1.w()) + t*CGAL::to_double( ew));
+	// actually, we would have to call e.analyse() now to get
+	// a clean conic, but since this is only internal stuff
+	// right now, the call is omitted to save time    
     }
 
     // Equality tests
@@ -254,15 +318,15 @@ class Optimisation_ellipse_2 {
           case 5:
             return( conic1.convex_side( p));
           case 4: {
-            Conic c;
-            c.set( conic1, conic2, p);
-            c.analyse();
-            if ( ! c.is_ellipse()) {
-                c.set_ellipse( conic1, conic2);
-                c.analyse();
-                return( c.convex_side( p)); }
+            helper_conic.set( conic1, conic2, p);
+            helper_conic.analyse();
+            if ( !helper_conic.is_ellipse()) {
+	        set_helper_ellipse();
+                return( helper_ellipse.convex_side( p)); }
             else {
-                int tau_star = c.vol_derivative( dr, ds, dt, du, dv, dw);
+	        set_d_values();
+                int tau_star = 
+                  helper_conic.vol_derivative( dr, ds, dt, du, dv, dw);
                 return( CGAL::Bounded_side( CGAL_NTS sign( tau_star))); } }
           default:
             CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&

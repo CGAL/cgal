@@ -51,6 +51,78 @@ typedef  CGAL::Homogeneous< Rt >               KerH;
 typedef  CGAL::Min_ellipse_2_traits_2< KerC >  TraitsC;
 typedef  CGAL::Min_ellipse_2_traits_2< KerH >  TraitsH;
 
+typedef  CGAL::Cartesian<double>                     KerCdouble;
+typedef  CGAL::Homogeneous<double>                   KerHdouble;
+typedef  CGAL::Min_ellipse_2_traits_2< KerCdouble >  TraitsCdouble;
+typedef  CGAL::Min_ellipse_2_traits_2< KerHdouble >  TraitsHdouble;
+
+typedef  CGAL::Cartesian<double>::Conic_2            ConicCdouble;
+typedef  CGAL::Homogeneous<double>::Conic_2          ConicHdouble;
+
+//epsilon equality
+template < class Point>
+bool
+eps_equal (const Point& p, const Point& q) 
+{
+  double eps = 0.001;
+  return ( (CGAL::abs(p.x()-q.x()) < eps) && 
+           (CGAL::abs(p.y()-q.y()) < eps) );
+} 
+
+// double test function
+template < class Traits, class Conic >
+void
+double_test_Min_ellipse_2( bool verbose, const Traits&, const Conic&)
+{
+    CGAL_USING_NAMESPACE_STD    
+
+    typedef  CGAL::Min_ellipse_2< Traits >  Min_ellipse;
+    typedef  typename Min_ellipse::Point    Point;
+    typedef  typename Min_ellipse::Ellipse  Ellipse;
+
+    CGAL::Verbose_ostream verr( verbose);
+    
+    verr << endl << "   4-point case, unit square...";
+    {
+	std::vector<Point> P;
+	P.push_back(Point(1,0));
+	P.push_back(Point(0,1));
+	P.push_back(Point(1,1));
+        P.push_back(Point(0,0));
+	Min_ellipse me(P.begin(), P.end(), true);
+	assert(me.number_of_support_points()==4);
+	Conic dc;
+	me.ellipse().double_conic(dc);
+	assert(eps_equal(dc.center(), Point(0.5, 0.5)));
+    }
+    verr << endl << "   4-point case, parallelogram...";
+    {
+	std::vector<Point> P;
+	P.push_back(Point(-1,-1));
+	P.push_back(Point(3,3));
+	P.push_back(Point(0,2));
+        P.push_back(Point(2,0));
+	Min_ellipse me(P.begin(), P.end(), true);
+	assert(me.number_of_support_points()==4);
+	Conic dc;
+	me.ellipse().double_conic(dc);
+	assert(eps_equal(dc.center(), Point(1.0, 1.0)));
+    }
+    verr << endl << "   4-point case, paper example...";
+    {
+	std::vector<Point> P;
+	P.push_back(Point(0,0));
+	P.push_back(Point(1,0));
+	P.push_back(Point(0.5,1));
+        P.push_back(Point(0,1));
+	Min_ellipse me(P.begin(), P.end(), true);
+	assert(me.number_of_support_points()==4);
+	Conic dc;
+	me.ellipse().double_conic(dc);
+	assert(eps_equal(dc.center(), Point(0.406, 0.377)));
+    }
+}
+
 // code coverage test function
 // ---------------------------
 template < class Traits, class RT >
@@ -278,6 +350,7 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
         assert( me_in.ellipse() == me.ellipse());
     }
     verr << endl;
+    
 }
 
 // point classes for adapters test
@@ -449,6 +522,11 @@ main( int argc, char* argv[])
         verbose = true;
         --argc;
         ++argv; }
+
+    // double test
+    // -----------
+    double_test_Min_ellipse_2( verbose, TraitsCdouble(), ConicCdouble());
+    double_test_Min_ellipse_2( verbose, TraitsHdouble(), ConicHdouble());
 
     // code coverage
     // -------------
