@@ -29,6 +29,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 #include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
 
 // This file contains the definition of a generic kernel filter.
 //
@@ -48,20 +49,22 @@ CGAL_BEGIN_NAMESPACE
 // CK = construction kernel.
 // EK = exact kernel called when needed by the filter.
 // FK = filtering kernel
-template <class CK,
-          class EK = Simple_cartesian<MP_Float>,
-          class FK = Simple_cartesian<Interval_nt_advanced>,
-	  class C2E = Cartesian_converter<CK, EK>,
-	  class C2F = Cartesian_converter<CK, FK,
-	              Interval_converter<
-#ifndef __SUNPRO_CC
-		      CGAL_TYPENAME_MSVC_NULL
-#endif
-		      CK::RT> > >
-class Filtered_kernel
-  : public Type_equality_wrapper< CK, Filtered_kernel<CK, EK, FK, C2E, C2F> >
+template < typename CK, typename Kernel >
+class Filtered_kernel_base
+  : public CK::template base<Kernel>::other
 {
+    typedef typename CK::template base<Kernel>::other   Base;
+    // Hardcoded for now.
+    typedef Simple_cartesian<Quotient<MP_Float> >               EK;
+    typedef Simple_cartesian<Interval_nt_advanced>   FK;
+    typedef Cartesian_converter<Base, EK>            C2E;
+    typedef Cartesian_converter<Base, FK,
+                                Interval_converter<typename Base::RT> > C2F;
 public:
+
+    template < typename Kernel2 >
+    struct base { typedef Filtered_kernel_base<CK, Kernel2>  other; };
+
     // What to do with the tag ?
     // Probably this should not exist, should it ?
     // struct filter_tag{};
@@ -69,22 +72,27 @@ public:
     // typedef typename CK::Kernel_tag                       Kernel_tag;
     // typedef typename CK::Rep_tag                          Rep_tag;
 
-    // Macros to define the predicates and constructions.
-
-#define CGAL_Filter_pred(P, Pf) \
+    // We change the predicates.
+#define CGAL_Kernel_pred(P, Pf) \
     typedef Filtered_predicate<typename EK::P, typename FK::P, \
 	                     C2E, C2F> P; \
     P Pf() const { return P(); }
 
-#define CGAL_Filter_cons(C, Cf) \
-    typedef typename CK::C C; \
-    C Cf() const { return C(); }
-
-#define CGAL_Kernel_pred(Y,Z) CGAL_Filter_pred(Y,Z)
-#define CGAL_Kernel_cons(Y,Z) CGAL_Filter_cons(Y,Z)
+    // We don't touch the constructions.
+#define CGAL_Kernel_cons(Y,Z)
 
 #include <CGAL/Kernel/interface_macros.h>
 
+};
+
+template <class CK>
+struct Filtered_kernel
+  : public Type_equality_wrapper<
+                Filtered_kernel_base< CK, Filtered_kernel<CK> >,
+                Filtered_kernel<CK> >
+{
+  template < typename Kernel >
+  struct base { typedef Filtered_kernel_base<CK, Kernel>   other; };
 };
 
 CGAL_END_NAMESPACE
