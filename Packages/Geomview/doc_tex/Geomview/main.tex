@@ -191,6 +191,12 @@ is at the same time the color of vertices.
 \ccMethod{double set_vertex_radius(double r) const;}
 {Sets the radius of vertices to \ccc{d}. Returns the previous value.}
 
+\ccMethod{string get_new_id(string s);}
+{Used to obtain unique identifier names passed to Geomview.  On successive
+calls with the same \ccc{s} value, it will return a string which is \ccc{s}
+appended with the numbers 0, then 1, then 2...  Note that all counters are
+reset when \ccc{clear}() is called.}
+
 
 
 \newpage
@@ -202,7 +208,7 @@ The following functions are helpful if you develop your own insert
 and extract functions. The following functions allow to pass a string
 from Geomview and to read data sent back by Geomview.
 
-\ccMethod{Geomview_stream& operator<<(std::string s);}
+\ccMethod{Geomview_stream& operator<<(string s);}
 {Inserts string \ccc{s} into the stream.}
 
 

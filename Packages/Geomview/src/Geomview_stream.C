@@ -36,9 +36,7 @@ CGAL_BEGIN_NAMESPACE
 Geomview_stream::Geomview_stream(const Bbox_3 &bbox,
 				 const char *machine,
 				 const char *login)
-    : bbox_count(0), triangle_count(0), sphere_count(0),
-      segment_count(0), point_count(0), tetrahedron_count(0),
-      vertex_color(BLACK), edge_color(BLACK), face_color(BLACK),
+    : vertex_color(BLACK), edge_color(BLACK), face_color(BLACK),
       wired_flag(false), echo_flag(true), raw_flag(false),
       trace_flag(false), binary_flag(false),
       line_width(1)
@@ -197,6 +195,7 @@ void
 Geomview_stream::clear()
 {
     (*this) << "(delete World)";
+    id.clear();
 }
 
 void
@@ -256,7 +255,7 @@ Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_2 &bbox)
 {
     bool ascii_bak = gv.set_ascii_mode();
-    gv << "(geometry Bbox" << gv.bbox_count++
+    gv << "(geometry " << gv.get_new_id("Bbox")
        << " {VECT 1 5 0 5 0 ";
     // here are the four corners
 
@@ -277,7 +276,7 @@ Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_3 &bbox)
 {
     bool ascii_bak = gv.set_ascii_mode();
-    gv << "(geometry Bbox" << gv.bbox_count++
+    gv << "(geometry " << gv.get_new_id("Bbox")
        << " {appearance {material {edgecolor "
        << gv.ecr() << gv.ecg() << gv.ecb() <<  "}}{SKEL 8 4 "
     // here are the corners

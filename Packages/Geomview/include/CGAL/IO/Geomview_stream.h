@@ -28,6 +28,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/IO/Color.h>
 
+#include <map>
 #include <string>
 #include <strstream> // deprecated
 // #include <sstream>
@@ -168,14 +169,12 @@ public:
 	return !binary_flag;
     }
 
-    // Various counters for having different IDs corresponding to the
-    // kernel objects sent to Geomview.
-    int bbox_count;
-    int triangle_count;
-    int sphere_count;
-    int segment_count;
-    int point_count;
-    int tetrahedron_count;
+    std::string get_new_id(const std::string & s)
+    {
+	std::ostrstream str;
+	str << s << id[s]++ << std::ends;
+	return str.str();
+    }
 
 private:
     void setup_geomview(const char *machine, const char *login);
@@ -192,6 +191,7 @@ private:
     double radius;    // radius of vertices
     int in, out;      // file descriptors for input and output pipes
     int pid;          // the geomview process identification
+    std::map<const std::string, int> id; // used to get a unique ID per type.
 };
 
 // Factorize code for Point_2 and Point_3.
@@ -202,7 +202,7 @@ output_point(Geomview_stream &gv, const FT &x, const FT &y, const FT &z)
     bool ascii_bak = true; // the initialization value shuts up the compiler.
     if (!gv.get_raw()) {
     	ascii_bak = gv.set_ascii_mode();
-    	gv << "(geometry P" << gv.point_count++
+    	gv << "(geometry " << gv.get_new_id("P")
        	   << " {appearance {linewidth 5 material {edgecolor "
            << gv.vcr() << gv.vcg() << gv.vcb() << "}}{SKEL 1 1 ";
     }
@@ -245,7 +245,7 @@ void
 output_segment(Geomview_stream &gv, const Segment &segment)
 {
     bool ascii_bak = gv.set_ascii_mode();
-    gv << "(geometry Seg" << gv.segment_count++
+    gv << "(geometry " << gv.get_new_id("Seg")
        << " {appearance {linewidth "
        << gv.get_line_width() << "}{VECT "
        << 1 <<  2 << 1    // 1 polyline, two vertices, 1 color
@@ -292,7 +292,7 @@ void
 output_triangle(Geomview_stream &gv, const Triangle &triangle)
 {
     bool ascii_bak = gv.set_ascii_mode();
-    gv << "(geometry Tr" << gv.triangle_count++
+    gv << "(geometry " << gv.get_new_id("Tr")
        << " {appearance {+edge material {edgecolor "
        << gv.ecr()  << gv.ecg()  << gv.ecb() <<  " } shading constant}{ ";
     gv.set_binary_mode();
@@ -345,7 +345,7 @@ Geomview_stream&
 operator<<(Geomview_stream &gv, const Tetrahedron_3<R> &t)
 {
     bool ascii_bak = gv.set_ascii_mode();
-    gv << "(geometry Tetra" << gv.tetrahedron_count++
+    gv << "(geometry " << gv.get_new_id("Tetra")
        << " {appearance {}{ ";
     gv.set_binary_mode();
     gv << "OFF BINARY\n"
@@ -381,7 +381,7 @@ Geomview_stream&
 operator<<(Geomview_stream &gv, const Sphere_3<R> &S)
 {
     bool ascii_bak = gv.set_ascii_mode();
-    gv << "(geometry Sph" << gv.sphere_count++
+    gv << "(geometry " << gv.get_new_id("Sph")
        << " {appearance {+edge material {edgecolor "
        << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ "
        << "SPHERE\n"
