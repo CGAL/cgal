@@ -1,8 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 6.05 ()
+Ver 6.05 (28/1/02)
 - fixed makefile in test/Triangulation_2_constrained
+- fixed star_hole in Constrained_triangulation_2.h
+- added constraint and subcondtrained iterators in 
+  Constrained_triangulation_plus_2.h
 
 Ver 6.04 (28/1/02)
 - fixed include in constructions_on_weighted_points_cartesian_2.h
