@@ -32,10 +32,10 @@ public:
 #endif
 
 public:
-  Iso_cuboidH3();
-  Iso_cuboidH3(const Self& );
-  Iso_cuboidH3(const Point_3& p, const Point_3& q);
-  ~Iso_cuboidH3();
+  Iso_cuboidC3();
+  Iso_cuboidC3(const Self& );
+  Iso_cuboidC3(const Point_3& p, const Point_3& q);
+  ~Iso_cuboidC3();
 
   Self&        operator=(const Self& r);
 
