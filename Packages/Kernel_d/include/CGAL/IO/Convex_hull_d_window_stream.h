@@ -112,8 +112,10 @@ void d3_surface_map(const Convex_hull_d<R>& C,
                 std::swap(j,k); 
               }
 
-              leda_edge efirst = G.new_edge(vi,vk);  // first edge incident to vi
-              Simplex_handle scur = s; int jcur = j; int kcur = k; int icur = i;
+              leda_edge efirst = G.new_edge(vi,vk); 
+              // first edge incident to vi
+              Simplex_handle scur = s; 
+              int jcur = j, kcur = k, icur = i;
 
               while ( C.is_bounded_simplex(C.opposite_simplex(scur,jcur)) && 
                       C.opposite_simplex(scur,jcur) != s ) {
