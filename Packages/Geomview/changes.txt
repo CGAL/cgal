@@ -6,6 +6,7 @@ Ver 3.3 (?? ???????? 2000)
 - Got rid of useless and deprecated strstreams.
 - Fixed a bug in frame().
 - Removed obsolete code concerning the ooold triangulation package.
+- Do not submit test/Geomview/Makefile.
 
 Ver 3.2 (24 November 2000)
 - Forgot to submit the test/ directory.

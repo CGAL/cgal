@@ -15,42 +15,23 @@
   - draw vertices or not
   - draw edges or not
   - draw surfaces or not (fill or wired).
+  Note that Geomview already has the possibility to do these things from the
+  menus, so...
 - le gv << Triangulation_2 utilise gv << Point_[23] et z=0 le cas echeant.
   Maybe by putting the stream is a state "raw".
 - What to do for Circle_2 ?  Maybe there's some code somewhere, or ask the
   geomview list.  Or do the discretisation ourselves, maybe it's the kernel's
   job ?  Discretisation for Sphere and Circle should be configurable for the
   stream.
-- Add test programs for operator<< (Polyhedron, T2D, T3D).
-- Is there a way to have some kind of transparency with Geomview ?
-  Enhance CGAL::Color for that ?
+- Check how to do transparency with Geomview ?  (passing the one from
+  CGAL::Color)
 - Is there a way to see edges like cylinders somewhat (possibly generate them
   ourselves), so that we know which one is in front of which other one ?
 - For T3D : I want to be able to tell Geomview or the CGAL program to stop
   displaying a tetrahedron that I select, so that I can see the inside.
 
-- Make a testsuite (words from Herve):
-<<<<<<<<<<<<<<<<
-Geomview testsuite:
-
-It's not clear how to make it at this point...
-After talking to Francois, I got the following idea:
-
-* make sure . is in the path
-* create a local script called geomview, so that upon creating the
-  Geomview_stream(), the call execlp("geomview",...)  calls ./geomview instead
-  of the 3D viewer
-* that script will simply process gcl (geomview command language) so that it
-  reports on its output exactly the objects that are given from the input
-* the testsuite will simply consist of outputting the different objects into
-* the geomview stream, and getting them back, and comparing.
-
-This should allow the testsuite to be fully automatic and yet test all the
-documented features of the package. How to do it remains to be cleared.
-Any volunteers?
-
---Herve 
->>>>>>>>>>>>>>>
-
-- Maybe we can start geomview with no single window via command line options
-  of environement variables ?  Let's see how it runs...
+Demo :
+------
+- move test/ to demo/, it's more appropriate.  Problem (?) is that it requires
+  a makefile, and a README (see developers manual).
+- Add test files for polyhedrons, t2D, t3d.
