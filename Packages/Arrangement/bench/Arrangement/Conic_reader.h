@@ -9,7 +9,7 @@
 #include <list>
 #include <string>
 
-typedef leda_real NT;
+#include "numberType.h"
 
 template <class Traits>
 class Conic_reader

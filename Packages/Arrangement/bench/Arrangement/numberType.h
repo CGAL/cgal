@@ -39,6 +39,7 @@
 
 #if defined(USE_CONIC_TRAITS)
 typedef leda_real                                       NT;
+typedef NT                                              WNT;
 #define NUMBER_TYPE "Leda Real"
 #else
 
