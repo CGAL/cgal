@@ -35,6 +35,7 @@
 // and the opposite of the result (see operator+, operator*,...).
 
 #include <CGAL/basic.h>
+#include <iostream>
 #include <CGAL/FPU.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -62,11 +63,11 @@ public:
 
   Interval_nt() {}
 
-  Interval_nt(const double d)
-	 : inf_sup(d,d)  {}
+  Interval_nt(double d)
+    : inf_sup(d, d) {}
 
-  Interval_nt(const double i, const double s)
-	  : inf_sup(i,s)
+  Interval_nt(double i, double s)
+    : inf_sup(i, s)
   {
       // VC++ should use instead : (i<=s) || !is_valid(i) || !is_valid(s)
       // Or should I use is_valid() ? or is_valid_or_nan() ?
@@ -78,10 +79,10 @@ public:
   // appears to fix a code generation problem with GCC 3.0.4...
   // (see test/IA/gcc_3.0.bug.C).
   Interval_nt(const Interval_nt & i)
-	  : inf_sup(i.pair()) {}
+    : inf_sup(i.pair()) {}
 
-   Interval_nt(const Pair & p)
-	  : inf_sup(p) {}
+  Interval_nt(const Pair & p)
+    : inf_sup(p) {}
 
   // The advantage of non-member operators is that (double * IA) just works...
   // But is it really useful and wishable in CGAL ?
