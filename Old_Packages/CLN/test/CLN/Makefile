@@ -1,24 +1,18 @@
 # This is the makefile for compiling a CGAL application.
 
-#---------------------------------------------------------------------#
-#                    include platform specific settings
-#---------------------------------------------------------------------#
-# Choose the right include file from the <cgalroot>/make directory.
-
-# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../include \
+CXXFLAGS = \
+        -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
-	$(CGAL_CXXFLAGS) \
-	-g -Wall
+	$(CGAL_CXXFLAGS)
+	# -g -Wall -W
+	# /Op 
 	# -O2 -Wall -W
-	# -fpermissive
-	# -DCGAL_IA_STOP_CONSTANT_PROPAGATION \
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
 	# -DCGAL_CHECK_EXPENSIVE \
 	# -O2 -W -Winline -Wunused -malign-double
@@ -26,9 +20,6 @@ CXXFLAGS = -I../../include \
 	# -mcpu=ultrasparc -mtune=ultrasparc
 	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
 	# -fomit-frame-pointer
-	# -fprofile-arcs -ftest-coverage
-	# -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
-	# -fhonor-std
 	# -frepo
 	# -pedantic
 
@@ -36,7 +27,7 @@ CXXFLAGS = -I../../include \
 #                    linker flags
 #---------------------------------------------------------------------#
 
-LDFLAGS = \
+LDFLAGS =  \
           $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
@@ -44,18 +35,34 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: test_io
-	./test_io
+.PRECIOUS: %$(OBJ_EXT)
+.SUFFIXES: .test
+.PHONY: %.test test
 
-clean:
-	rm -f test_io test_io.tmp *.o *.bb *.bbg *.da *.gcov core *.rpo .pure
+%$(EXE_EXT) : %.C
 
-#---------------------------------------------------------------------#
-#                    suffix rules
-#---------------------------------------------------------------------#
-
-.C.o:
+%$(OBJ_EXT) : %.C
 	$(CGAL_CXX) $(CXXFLAGS) -c $<
 
-.C.s:
+%.s : %.C
 	$(CGAL_CXX) $(CXXFLAGS) -S $<
+
+%$(EXE_EXT) : %$(OBJ_EXT)
+	$(CGAL_CXX) $(EXE_OPT)$@ $+ $(LDFLAGS)
+	./$@
+
+%.test : %$(EXE_EXT)
+	./$<
+
+SOURCES  := $(wildcard  *.C)
+OBJECTS  := $(SOURCES:.C=$(OBJ_EXT))
+PROGRAMS := $(SOURCES:.C=$(EXE_EXT))
+TEST_RUN := $(SOURCES:.C=.test)
+
+all: $(PROGRAMS)
+
+test: $(TEST_RUN)
+
+clean:
+	rm -f *.o $(PROGRAMS) *.bb *.bbg *.da *.gcov core *.rpo .pure
+	rm -f *.obj *.exe
