@@ -8,19 +8,20 @@
 #include <CGAL/Search_traits_2.h>
 
 typedef CGAL::Simple_cartesian<double> K;
+typedef K::Point_2 Point_d;
+typedef CGAL::Random_points_in_square_2<Point_d> Random_points_iterator;
 typedef CGAL::Search_traits_2<K> Traits;
-typedef Traits::Point_d Point_d;
 typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_circle;
 typedef CGAL::Kd_tree<Traits> Tree;
   
 int main() {
 
-  const int N=1;
-
-  std::list<Point_d> points;
-  points.push_back(Point_d(0,0));
-
-  Tree tree(points.begin(), points.end());
+  const int N=1000;
+  Tree tree;
+  Random_points_iterator rpg;
+  for(int i = 0; i < N; i++){
+    tree.insert(*rpg++);
+  }
 
   // define exact circular range query  (fuzziness=0)
   Point_d center(0.2, 0.2);
@@ -38,7 +39,7 @@ int main() {
   // approximate range searching using value 0.1 for fuzziness parameter
   // We do not write into a list but directly in the outpout stream
   Fuzzy_circle approximate_range(center, 0.2, 0.1);
-  tree.search(std::back_inserter( result ), approximate_range);
+  tree.search(std::ostream_iterator<Point_d>(std::cout,"\n"), approximate_range);
   
   return 0;
 };
