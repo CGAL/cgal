@@ -192,7 +192,6 @@ protected:
       didpush = TRUE;
       this->vertexProperty.getValue()->GLRender(action);
     }
-    const SoCoordinateElement * tmp;
 
     // First see if the object is visible and should be rendered
     // now. This is a method on SoShape that checks for INVISIBLE
@@ -216,12 +215,6 @@ protected:
     SoGLLazyElement::sendAllMaterial(state);
   
 
-    SbBool doTextures;
-    const SoGLCoordinateElement * coords = (SoGLCoordinateElement *)tmp;
-
-    SoTextureCoordinateBundle tb(action, TRUE, FALSE);
-    doTextures = tb.needCoordinates();
-
 
     glPushMatrix();  
       Finite_vertices_iterator vit;
@@ -231,7 +224,7 @@ protected:
       glEnd();
 
       Finite_faces_iterator fit;
-      //glBegin(GL_TRIANGLES);
+      glBegin(GL_TRIANGLES);      
       for (fit = t.finite_faces_begin(); fit != t.finite_faces_end(); ++fit){
         CPoint3 p1(CGAL::to_double((*(*fit).vertex(0)).point().x()),
                    CGAL::to_double((*(*fit).vertex(0)).point().y()),
@@ -243,7 +236,6 @@ protected:
                    CGAL::to_double((*(*fit).vertex(2)).point().y()),
                    CGAL::to_double((*(*fit).vertex(2)).point().z()));
 
-        glBegin(GL_TRIANGLES);
         CVector3 normal = CGAL::cross_product(p2 - p1, p3 - p1);          
         double sqnorm = normal * normal;
         if(sqnorm != 0){
@@ -254,10 +246,9 @@ protected:
 
         glVertex3f(CGAL::to_double((*(*fit).vertex(0)).point().x()), CGAL::to_double((*(*fit).vertex(0)).point().y()), CGAL::to_double((*(*fit).vertex(0)).point().z()));
         glVertex3f(CGAL::to_double((*(*fit).vertex(1)).point().x()), CGAL::to_double((*(*fit).vertex(1)).point().y()), CGAL::to_double((*(*fit).vertex(1)).point().z()));
-        glVertex3f(CGAL::to_double((*(*fit).vertex(2)).point().x()), CGAL::to_double((*(*fit).vertex(2)).point().y()), CGAL::to_double((*(*fit).vertex(2)).point().z()));
-        glEnd();
+        glVertex3f(CGAL::to_double((*(*fit).vertex(2)).point().x()), CGAL::to_double((*(*fit).vertex(2)).point().y()), CGAL::to_double((*(*fit).vertex(2)).point().z()));      
       }
-      //glEnd();
+      glEnd();
 
     glPopMatrix();
   }
