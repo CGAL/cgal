@@ -25,7 +25,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-class Sphere_repC3 : public Rep
+class Sphere_repC3 : public Ref_counted
 {
 public:
   typedef typename R::FT                        FT;
