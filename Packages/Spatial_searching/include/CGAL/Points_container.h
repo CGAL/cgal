@@ -84,7 +84,7 @@ namespace CGAL {
 
     inline const Box<NT>& tight_bounding_box() const { return tbox; }
 
-    inline const int dimension() const { return bbox.dimension(); } 
+    inline int dimension() const { return bbox.dimension(); } 
 
     inline int built_coordinate() const { return built_coord; } 
 

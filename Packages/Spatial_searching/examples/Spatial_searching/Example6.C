@@ -97,8 +97,10 @@ int test_nearest_neighbour_Linf() {
   // illustrate use of container with copy
 
 
+  /* Does not work with mips and g++ because 
+  // Item with distance is implemented as a pair, 
 
-  
+
   std::cout << "started test copy" << std::endl;
 
   std::vector<MyTraits::Item_with_distance> result3(point_number);
@@ -130,10 +132,10 @@ int test_nearest_neighbour_Linf() {
 
   std::cout << "testing copy ready" << std::endl;
   
-
+  */
 
   // example of browsing
-  std::cout << "started testing browsing with same input" << std::endl;
+  std::cout << "started testing browsing" << std::endl;
 
   CGAL::Nearest_neighbour_Linf<MyTraits,CGAL::Search_nearest_neighbour> NNN2(d2,Q,eps);
 
@@ -180,7 +182,7 @@ return 0;
 int main() {
   test_nearest_neighbour_Linf();
   
-  /*
+  /* 
   double dummy;
   std::cout << "Enter input to stop: \n" ;
   std::cin >> dummy;

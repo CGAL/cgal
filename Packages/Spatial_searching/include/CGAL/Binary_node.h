@@ -104,22 +104,22 @@ namespace CGAL {
   	};
 
         // members for all nodes
-	inline const bool is_leaf() const { return (the_node_type==LEAF);}
+	inline bool is_leaf() const { return (the_node_type==LEAF);}
 
 	// members for leaf nodes only
-  	inline const unsigned int size() const { return n;}
+  	inline unsigned int size() const { return n;}
   
-  	inline const Item_iterator begin() const  {return data;}
-  	inline const Item_iterator end() const {return data + n;}
+  	inline Item_iterator begin() const  {return data;}
+  	inline Item_iterator end() const {return data + n;}
 
 	// members for internal node and extended internal node
 	inline Binary_node* lower() const { return lower_ch; }
   	inline Binary_node* upper() const { return upper_ch; }
-  	inline const Separator* separator() const {return sep; }
+  	inline Separator* separator() const {return sep; }
 
 	// members for extended internal node only
-	inline const NT low_value() const { return low_val; }
-  	inline const NT high_value() const { return high_val; }
+	inline NT low_value() const { return low_val; }
+  	inline NT high_value() const { return high_val; }
        
         ~Binary_node() {switch (the_node_type) {
 

@@ -176,18 +176,18 @@ namespace CGAL {
         set_max_span();
     }
 
-    inline const int max_span_coord() const { return max_span_coord_; }
+    inline int max_span_coord() const { return max_span_coord_; }
 
-    inline const NT max_span() const {
+    inline NT max_span() const {
       return upper_[max_span_coord_] - lower_[max_span_coord_];
     }
 
-    inline const NT lower(int i) const {
+    inline NT lower(int i) const {
       // assert (i >= 0 && i < dim);
       return lower_[i];
     }
 
-    inline const NT upper(int i) const {
+    inline NT upper(int i) const {
       // assert (i >= 0 && i < dim);
       return upper_[i];
     }
@@ -223,7 +223,7 @@ namespace CGAL {
       }
     }
 
-    const int dimension() const {return dim;}
+    int dimension() const {return dim;}
 
     friend class Points_container<T>;
 

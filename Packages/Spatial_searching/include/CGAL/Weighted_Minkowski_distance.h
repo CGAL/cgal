@@ -46,7 +46,7 @@ namespace CGAL {
 
     private:
 
-    float p; // p denotes the power
+    NT p; // p denotes the power
 
     unsigned int The_dimension;
 
