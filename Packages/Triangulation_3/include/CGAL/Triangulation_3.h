@@ -2412,7 +2412,7 @@ insert_in_facet(const Point & p, Cell_handle c, int i)
   CGAL_triangulation_precondition_code
     ( Locate_type lt;
       int li; int lj; );
-  CGAL_triangulation_precondition
+  CGAL_triangulation_exactness_precondition
     ( coplanar( p, c->vertex((i+1)&3)->point(),
 		   c->vertex((i+2)&3)->point(),
 		   c->vertex((i+3)&3)->point() )
@@ -2443,21 +2443,20 @@ insert_in_edge(const Point & p, Cell_handle c, int i, int j)
   case 2:
     {
       CGAL_triangulation_precondition( ! is_infinite(c, i, j) );
-      CGAL_triangulation_precondition( collinear( c->vertex(i)->point(),
-						  p,
-						  c->vertex(j)->point() )
-				       &&
-				       side_of_segment( p,
-							c->vertex(i)->point(),
-							c->vertex(j)->point(),
-							lt, li ) 
-				       == ON_BOUNDED_SIDE );
+      CGAL_triangulation_exactness_precondition(
+                         collinear( c->vertex(i)->point(),
+				    p,
+				    c->vertex(j)->point() )
+	              && side_of_segment( p,
+					  c->vertex(i)->point(),
+					  c->vertex(j)->point(),
+					  lt, li ) == ON_BOUNDED_SIDE );
       break;
     }
   case 1:
     {
-      CGAL_triangulation_precondition( side_of_edge(p, c, lt, li)
-				       == ON_BOUNDED_SIDE );
+      CGAL_triangulation_exactness_precondition( side_of_edge(p, c, lt, li)
+				                 == ON_BOUNDED_SIDE );
       break;
     }
   }
