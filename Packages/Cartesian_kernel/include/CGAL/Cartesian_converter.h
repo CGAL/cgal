@@ -46,7 +46,7 @@ public:
     typename K2::Point_2
     operator()(const typename K1::Point_2 &a) const
     {
-	return k.construct_point_2_object()(c(a.x()), c(a.y()));
+	return typename K2::Point_2(c(a.x()), c(a.y()));
     }
 
     typename K2::Vector_2

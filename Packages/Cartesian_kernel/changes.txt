@@ -1,3 +1,6 @@
+Version 6.68 (20 January 2003)
+- Cartesian_converter should not use construct_point_2(NT).
+
 Version 6.67 (20 January 2003)
 - Missing #include <> spotted by GCC CVS.
 
