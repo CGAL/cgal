@@ -179,15 +179,15 @@ _test_cls_sphere_3(const R& )
 
  CGAL::Point_3<R> ori = CGAL::Point_3<R>( RT(0), RT(0), RT(0));
  CGAL::Point_3<R> p6  = p2.transform( rotate1 );
- assert( CGAL::cmp_dist_to_point( ori, p2, p6) == CGAL::EQUAL );
+ assert( CGAL::compare_distance_to_point( ori, p2, p6) == CGAL::EQUAL );
  CGAL::Point_3<R> p7  = p2.transform( rotate2 );
- assert( CGAL::cmp_dist_to_point( ori, p2, p7) == CGAL::EQUAL );
+ assert( CGAL::compare_distance_to_point( ori, p2, p7) == CGAL::EQUAL );
  CGAL::Point_3<R> p8  = p2.transform( rotate3 );
- assert( CGAL::cmp_dist_to_point( ori, p2, p8) == CGAL::EQUAL );
+ assert( CGAL::compare_distance_to_point( ori, p2, p8) == CGAL::EQUAL );
  CGAL::Point_3<R> p9  = p2.transform( rotate4 );
- assert( CGAL::cmp_dist_to_point( ori, p2, p9) == CGAL::EQUAL );
+ assert( CGAL::compare_distance_to_point( ori, p2, p9) == CGAL::EQUAL );
  CGAL::Point_3<R> p10 = p2.transform( rotate5 );
- assert( CGAL::cmp_dist_to_point( ori, p2, p10) == CGAL::EQUAL );
+ assert( CGAL::compare_distance_to_point( ori, p2, p10) == CGAL::EQUAL );
  p6 = p6 + v1;
  p7 = p7 + v1;
  p8 = p8 + v1;

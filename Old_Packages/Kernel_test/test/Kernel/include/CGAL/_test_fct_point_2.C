@@ -44,14 +44,14 @@ _test_fct_point_2(const R& )
  CGAL::Point_2<R> p9( RT( 6), RT(10), RT(1) );  // ( 6,10)
 
 
- assert( CGAL::compare_lexicographically_xy(p1,p2) == CGAL::SMALLER );
- assert( CGAL::compare_lexicographically_xy(p3,p2) == CGAL::SMALLER );
- assert( CGAL::compare_lexicographically_xy(p3,p1) == CGAL::SMALLER );
- assert( CGAL::compare_lexicographically_xy(p3,p2) == CGAL::SMALLER );
- assert( CGAL::compare_lexicographically_xy(p2,p1) == CGAL::LARGER );
- assert( CGAL::compare_lexicographically_xy(p2,p3) == CGAL::LARGER );
- assert( CGAL::compare_lexicographically_xy(p4,p3) == CGAL::LARGER );
- assert( CGAL::compare_lexicographically_xy(p4,p4) == CGAL::EQUAL );
+ assert( CGAL::compare_xy(p1,p2) == CGAL::SMALLER );
+ assert( CGAL::compare_xy(p3,p2) == CGAL::SMALLER );
+ assert( CGAL::compare_xy(p3,p1) == CGAL::SMALLER );
+ assert( CGAL::compare_xy(p3,p2) == CGAL::SMALLER );
+ assert( CGAL::compare_xy(p2,p1) == CGAL::LARGER );
+ assert( CGAL::compare_xy(p2,p3) == CGAL::LARGER );
+ assert( CGAL::compare_xy(p4,p3) == CGAL::LARGER );
+ assert( CGAL::compare_xy(p4,p4) == CGAL::EQUAL );
 
  assert( CGAL::lexicographically_xy_smaller_or_equal(p1,p1) );
  assert( CGAL::lexicographically_xy_smaller_or_equal(p3,p1) );
@@ -67,11 +67,9 @@ _test_fct_point_2(const R& )
  assert( CGAL::lexicographically_xy_larger(p2,p3) );
  assert( CGAL::lexicographically_xy_larger(p4,p3) );
 
-/*
  assert( CGAL::lexicographically_xy_larger_or_equal(p3,p3) );
  assert( CGAL::lexicographically_xy_larger_or_equal(p2,p3) );
  assert( CGAL::lexicographically_xy_larger_or_equal(p4,p3) );
-*/
 
  std::cout <<'.';
 
@@ -82,12 +80,12 @@ _test_fct_point_2(const R& )
                            == CGAL::POSITIVE);
 
  assert( CGAL::orientation( p1, p2, p3) == CGAL::COLLINEAR );
- assert( CGAL::orientation( p1, p2, p4) == CGAL::RIGHTTURN );
- assert( CGAL::orientation( p2, p1, p4) == CGAL::LEFTTURN );
- assert( CGAL::orientation( p5, p4, p3) == CGAL::RIGHTTURN );
- assert( CGAL::orientation( p2, p4, p6) == CGAL::RIGHTTURN );
- assert( CGAL::orientation( p6, p4, p2) == CGAL::LEFTTURN );
- assert( CGAL::orientation( p4, p6, p2) == CGAL::RIGHTTURN );
+ assert( CGAL::orientation( p1, p2, p4) == CGAL::RIGHT_TURN );
+ assert( CGAL::orientation( p2, p1, p4) == CGAL::LEFT_TURN );
+ assert( CGAL::orientation( p5, p4, p3) == CGAL::RIGHT_TURN );
+ assert( CGAL::orientation( p2, p4, p6) == CGAL::RIGHT_TURN );
+ assert( CGAL::orientation( p6, p4, p2) == CGAL::LEFT_TURN );
+ assert( CGAL::orientation( p4, p6, p2) == CGAL::RIGHT_TURN );
  assert( CGAL::orientation( p5, p6, p7) == CGAL::COLLINEAR );
  assert( CGAL::orientation( p6, p5, p7) == CGAL::COLLINEAR );
 
@@ -98,11 +96,11 @@ _test_fct_point_2(const R& )
  assert( !CGAL::collinear( p1, p2, p4 ) );
  assert( CGAL::collinear( p6, p6, p3 ) );
 
- assert( CGAL::leftturn( p1, p4, p2 ) );
- assert( CGAL::leftturn( p6, p4, p2 ) );
+ assert( CGAL::left_turn( p1, p4, p2 ) );
+ assert( CGAL::left_turn( p6, p4, p2 ) );
 
- assert( CGAL::rightturn( p4, p6, p2 ) );
- assert( CGAL::rightturn( p1, p2, p4 ) );
+ assert( CGAL::right_turn( p4, p6, p2 ) );
+ assert( CGAL::right_turn( p1, p2, p4 ) );
 
  std::cout << '.';
 
@@ -146,13 +144,13 @@ _test_fct_point_2(const R& )
 
  std::cout << '.';
 
- assert( CGAL::compare_lexicographically_yx(p1,p2) == CGAL::SMALLER );
- assert( CGAL::compare_lexicographically_yx(p2,p1) == CGAL::LARGER );
- assert( CGAL::compare_lexicographically_yx(p2,p2) == CGAL::EQUAL );
- assert( CGAL::compare_lexicographically_yx(p2,p4) == CGAL::SMALLER );
- assert( CGAL::compare_lexicographically_yx(p3,p6) == CGAL::SMALLER );
- assert( CGAL::compare_lexicographically_yx(p6,p3) == CGAL::LARGER );
- assert( CGAL::compare_lexicographically_yx(p4,p9) == CGAL::LARGER );
+ assert( CGAL::compare_yx(p1,p2) == CGAL::SMALLER );
+ assert( CGAL::compare_yx(p2,p1) == CGAL::LARGER );
+ assert( CGAL::compare_yx(p2,p2) == CGAL::EQUAL );
+ assert( CGAL::compare_yx(p2,p4) == CGAL::SMALLER );
+ assert( CGAL::compare_yx(p3,p6) == CGAL::SMALLER );
+ assert( CGAL::compare_yx(p6,p3) == CGAL::LARGER );
+ assert( CGAL::compare_yx(p4,p9) == CGAL::LARGER );
 
  assert( CGAL::lexicographically_yx_smaller(p1,p2) );
  assert( CGAL::lexicographically_yx_smaller(p2,p4) );
@@ -172,66 +170,64 @@ _test_fct_point_2(const R& )
  assert( CGAL::lexicographically_yx_smaller_or_equal(p4,p4) );
  assert( CGAL::lexicographically_yx_smaller_or_equal(p5,p3) );
 
-/*
  assert(!CGAL::lexicographically_yx_larger_or_equal(p5,p3) );
  assert( CGAL::lexicographically_yx_larger_or_equal(p3,p5) );
  assert( CGAL::lexicographically_yx_larger_or_equal(p2,p7) );
  assert( CGAL::lexicographically_yx_larger_or_equal(p7,p7) );
  assert( CGAL::lexicographically_yx_larger_or_equal(p8,p3) );
-*/
 
  std::cout << '.';
 
- assert( CGAL::cmp_dist_to_point(p3,p2,p1) == CGAL::LARGER );
- assert( CGAL::cmp_dist_to_point(p1,p5,p1) == CGAL::LARGER );
- assert( CGAL::cmp_dist_to_point(p4,p6,p5) == CGAL::SMALLER );
- assert( CGAL::cmp_dist_to_point(p4,p9,p1) == CGAL::SMALLER );
- assert( CGAL::cmp_dist_to_point(p8,p3,p3) == CGAL::EQUAL );
- assert( CGAL::cmp_dist_to_point(p2,p3,p3) == CGAL::EQUAL );
- assert( CGAL::cmp_dist_to_point(p2,p4,p9) == CGAL::LARGER );
+ assert( CGAL::compare_distance_to_point(p3,p2,p1) == CGAL::LARGER );
+ assert( CGAL::compare_distance_to_point(p1,p5,p1) == CGAL::LARGER );
+ assert( CGAL::compare_distance_to_point(p4,p6,p5) == CGAL::SMALLER );
+ assert( CGAL::compare_distance_to_point(p4,p9,p1) == CGAL::SMALLER );
+ assert( CGAL::compare_distance_to_point(p8,p3,p3) == CGAL::EQUAL );
+ assert( CGAL::compare_distance_to_point(p2,p3,p3) == CGAL::EQUAL );
+ assert( CGAL::compare_distance_to_point(p2,p4,p9) == CGAL::LARGER );
 
- assert( CGAL::has_larger_dist_to_point(p3,p2,p1) );
- assert( CGAL::has_larger_dist_to_point(p1,p5,p2) );
- assert( CGAL::has_larger_dist_to_point(p1,p5,p1) );
- assert(!CGAL::has_larger_dist_to_point(p1,p5,p5) );
+ assert( CGAL::has_larger_distance_to_point(p3,p2,p1) );
+ assert( CGAL::has_larger_distance_to_point(p1,p5,p2) );
+ assert( CGAL::has_larger_distance_to_point(p1,p5,p1) );
+ assert(!CGAL::has_larger_distance_to_point(p1,p5,p5) );
 
- assert( CGAL::has_smaller_dist_to_point(p4,p9,p1) );
- assert( CGAL::has_smaller_dist_to_point(p4,p6,p5) );
- assert( CGAL::has_smaller_dist_to_point(p9,p9,p6) );
- assert(!CGAL::has_smaller_dist_to_point(p8,p3,p3) );
+ assert( CGAL::has_smaller_distance_to_point(p4,p9,p1) );
+ assert( CGAL::has_smaller_distance_to_point(p4,p6,p5) );
+ assert( CGAL::has_smaller_distance_to_point(p9,p9,p6) );
+ assert(!CGAL::has_smaller_distance_to_point(p8,p3,p3) );
 
  std::cout << '.';
 
- assert( CGAL::cmp_signed_dist_to_line(p1,p2, p3,p9) == CGAL::EQUAL );
- assert( CGAL::cmp_signed_dist_to_line(p1,p2, p3,p8) == CGAL::LARGER );
- assert( CGAL::cmp_signed_dist_to_line(p2,p1, p3,p8) == CGAL::SMALLER );
- assert( CGAL::cmp_signed_dist_to_line(p1,p8, p9,p8) == CGAL::LARGER );
- assert( CGAL::cmp_signed_dist_to_line(p1,p8, p9,p9) == CGAL::EQUAL );
- assert( CGAL::cmp_signed_dist_to_line(p1,p8, p5,p4) == CGAL::SMALLER );
- assert( CGAL::cmp_signed_dist_to_line(p1,p8, p4,p5) == CGAL::LARGER );
- assert( CGAL::cmp_signed_dist_to_line(p8,p1, p4,p5) == CGAL::SMALLER );
- assert( CGAL::cmp_signed_dist_to_line(p6,p4, p1,p2) == CGAL::EQUAL );
- assert( CGAL::cmp_signed_dist_to_line(p6,p4, p1,p9) == CGAL::EQUAL );
- assert( CGAL::cmp_signed_dist_to_line(p6,p8, p7,p9) == CGAL::SMALLER );
- assert( CGAL::cmp_signed_dist_to_line(p6,p8, p2,p9) == CGAL::SMALLER );
- assert( CGAL::cmp_signed_dist_to_line(p6,p8, p2,p3) == CGAL::LARGER );
- assert( CGAL::cmp_signed_dist_to_line(p6,p1, p1,p6) == CGAL::EQUAL );
- assert( CGAL::cmp_signed_dist_to_line(p6,p1, p6,p1) == CGAL::EQUAL );
- assert( CGAL::cmp_signed_dist_to_line(p6,p1, p4,p1) == CGAL::SMALLER );
- assert( CGAL::cmp_signed_dist_to_line(p6,p1, p5,p6) == CGAL::LARGER );
- assert( CGAL::cmp_signed_dist_to_line(p4,p6, p8,p6) == CGAL::LARGER );
- assert( CGAL::cmp_signed_dist_to_line(p6,p4, p8,p6) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_line(p1,p2, p3,p9) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_line(p1,p2, p3,p8) == CGAL::LARGER );
+ assert( CGAL::compare_signed_distance_to_line(p2,p1, p3,p8) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_line(p1,p8, p9,p8) == CGAL::LARGER );
+ assert( CGAL::compare_signed_distance_to_line(p1,p8, p9,p9) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_line(p1,p8, p5,p4) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_line(p1,p8, p4,p5) == CGAL::LARGER );
+ assert( CGAL::compare_signed_distance_to_line(p8,p1, p4,p5) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_line(p6,p4, p1,p2) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_line(p6,p4, p1,p9) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_line(p6,p8, p7,p9) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_line(p6,p8, p2,p9) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_line(p6,p8, p2,p3) == CGAL::LARGER );
+ assert( CGAL::compare_signed_distance_to_line(p6,p1, p1,p6) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_line(p6,p1, p6,p1) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_line(p6,p1, p4,p1) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_line(p6,p1, p5,p6) == CGAL::LARGER );
+ assert( CGAL::compare_signed_distance_to_line(p4,p6, p8,p6) == CGAL::LARGER );
+ assert( CGAL::compare_signed_distance_to_line(p6,p4, p8,p6) == CGAL::SMALLER );
 
- assert( CGAL::has_larger_signed_dist_to_line(p1,p2, p3,p8) );
- assert( CGAL::has_larger_signed_dist_to_line(p1,p8, p9,p8) );
- assert( CGAL::has_larger_signed_dist_to_line(p6,p1, p1,p4) );
- assert( CGAL::has_larger_signed_dist_to_line(p6,p4, p6,p8) );
+ assert( CGAL::has_larger_signed_distance_to_line(p1,p2, p3,p8) );
+ assert( CGAL::has_larger_signed_distance_to_line(p1,p8, p9,p8) );
+ assert( CGAL::has_larger_signed_distance_to_line(p6,p1, p1,p4) );
+ assert( CGAL::has_larger_signed_distance_to_line(p6,p4, p6,p8) );
 
- assert( CGAL::has_smaller_signed_dist_to_line(p1,p8, p5,p4) );
- assert( CGAL::has_smaller_signed_dist_to_line(p2,p1, p3,p8) );
- assert( CGAL::has_smaller_signed_dist_to_line(p6,p1, p6,p5) );
- assert( CGAL::has_smaller_signed_dist_to_line(p6,p8, p2,p9) );
- assert( CGAL::has_smaller_signed_dist_to_line(p6,p4, p8,p6) );
+ assert( CGAL::has_smaller_signed_distance_to_line(p1,p8, p5,p4) );
+ assert( CGAL::has_smaller_signed_distance_to_line(p2,p1, p3,p8) );
+ assert( CGAL::has_smaller_signed_distance_to_line(p6,p1, p6,p5) );
+ assert( CGAL::has_smaller_signed_distance_to_line(p6,p8, p2,p9) );
+ assert( CGAL::has_smaller_signed_distance_to_line(p6,p4, p8,p6) );
 
  std::cout << '.';
 

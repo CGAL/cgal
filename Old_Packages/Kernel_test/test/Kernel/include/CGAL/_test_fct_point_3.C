@@ -41,14 +41,14 @@ _test_fct_point_3(const R& )
  CGAL::Point_3<R> p4(RT(28), RT(40), RT( 20), RT(4) ); // 7,10,5
  CGAL::Point_3<R> p5(RT(12), RT(-4), RT(-20), RT(4) ); // 3,-1,-5
 
- assert( CGAL::compare_lexicographically_xyz(p1,p2) == CGAL::SMALLER );
- assert( CGAL::compare_lexicographically_xyz(p3,p2) == CGAL::SMALLER );
- assert( CGAL::compare_lexicographically_xyz(p3,p1) == CGAL::SMALLER );
- assert( CGAL::compare_lexicographically_xyz(p3,p2) == CGAL::SMALLER );
- assert( CGAL::compare_lexicographically_xyz(p2,p1) == CGAL::LARGER );
- assert( CGAL::compare_lexicographically_xyz(p2,p3) == CGAL::LARGER );
- assert( CGAL::compare_lexicographically_xyz(p4,p3) == CGAL::LARGER );
- assert( CGAL::compare_lexicographically_xyz(p4,p4) == CGAL::EQUAL );
+ assert( CGAL::compare_xyz(p1,p2) == CGAL::SMALLER );
+ assert( CGAL::compare_xyz(p3,p2) == CGAL::SMALLER );
+ assert( CGAL::compare_xyz(p3,p1) == CGAL::SMALLER );
+ assert( CGAL::compare_xyz(p3,p2) == CGAL::SMALLER );
+ assert( CGAL::compare_xyz(p2,p1) == CGAL::LARGER );
+ assert( CGAL::compare_xyz(p2,p3) == CGAL::LARGER );
+ assert( CGAL::compare_xyz(p4,p3) == CGAL::LARGER );
+ assert( CGAL::compare_xyz(p4,p4) == CGAL::EQUAL );
 
  assert( CGAL::lexicographically_xyz_smaller_or_equal(p1,p1) );
  assert( CGAL::lexicographically_xyz_smaller_or_equal(p3,p1) );
@@ -160,14 +160,15 @@ _test_fct_point_3(const R& )
 
  std::cout <<'&';
 
- assert( CGAL::cmp_dist_to_point(p3, p3 + v001, p3+v010) == CGAL::EQUAL );
- assert( CGAL::cmp_dist_to_point(p0, p1, p2) == CGAL::LARGER );
- assert( CGAL::cmp_dist_to_point(p0, p3, p1) == CGAL::SMALLER );
- assert( CGAL::cmp_dist_to_point(p1, p3, p5) == CGAL::SMALLER );
- assert( CGAL::has_larger_dist_to_point(p0, p1, p2) );
- assert( CGAL::has_larger_dist_to_point(p3, p5, p1) );
- assert( CGAL::has_smaller_dist_to_point(p0, p2, p1) );
- assert( CGAL::has_smaller_dist_to_point(p3, p1, p5) );
+ assert( CGAL::compare_distance_to_point(p3, p3 + v001, p3+v010) == 
+                                                        CGAL::EQUAL );
+ assert( CGAL::compare_distance_to_point(p0, p1, p2) == CGAL::LARGER );
+ assert( CGAL::compare_distance_to_point(p0, p3, p1) == CGAL::SMALLER );
+ assert( CGAL::compare_distance_to_point(p1, p3, p5) == CGAL::SMALLER );
+ assert( CGAL::has_larger_distance_to_point(p0, p1, p2) );
+ assert( CGAL::has_larger_distance_to_point(p3, p5, p1) );
+ assert( CGAL::has_smaller_distance_to_point(p0, p2, p1) );
+ assert( CGAL::has_smaller_distance_to_point(p3, p1, p5) );
 
  std::cout << "done" << std::endl;
  return true;

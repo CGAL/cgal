@@ -50,33 +50,33 @@ _test_fctobj_point_line_2(const Point&, const Line& )
   Point p8( RT(24), RT( 9), RT(3) );  // ( 8, 3)
   Point p9( RT( 6), RT(10), RT(1) );  // ( 6,10)
  
-  CGAL::Compare_xy_2< Point> compare_lexicographically_xy;
+  CGAL::Compare_xy_2< Point> compare_xy;
   CGAL::Less_xy_2< Point>    lexicographically_xy_smaller;
  
-  assert( compare_lexicographically_xy(p1,p2) == CGAL::SMALLER );
-  assert( compare_lexicographically_xy(p3,p2) == CGAL::SMALLER );
-  assert( compare_lexicographically_xy(p3,p1) == CGAL::SMALLER );
-  assert( compare_lexicographically_xy(p3,p2) == CGAL::SMALLER );
-  assert( compare_lexicographically_xy(p2,p1) == CGAL::LARGER );
-  assert( compare_lexicographically_xy(p2,p3) == CGAL::LARGER );
-  assert( compare_lexicographically_xy(p4,p3) == CGAL::LARGER );
-  assert( compare_lexicographically_xy(p4,p4) == CGAL::EQUAL );
+  assert( compare_xy(p1,p2) == CGAL::SMALLER );
+  assert( compare_xy(p3,p2) == CGAL::SMALLER );
+  assert( compare_xy(p3,p1) == CGAL::SMALLER );
+  assert( compare_xy(p3,p2) == CGAL::SMALLER );
+  assert( compare_xy(p2,p1) == CGAL::LARGER );
+  assert( compare_xy(p2,p3) == CGAL::LARGER );
+  assert( compare_xy(p4,p3) == CGAL::LARGER );
+  assert( compare_xy(p4,p4) == CGAL::EQUAL );
  
   assert( !lexicographically_xy_smaller(p3,p3) );
   assert(  lexicographically_xy_smaller(p3,p2) );
   assert( !lexicographically_xy_smaller(p4,p3) );
  
   std::cout <<'.';
-  CGAL::Compare_yx_2< Point> compare_lexicographically_yx;
+  CGAL::Compare_yx_2< Point> compare_yx;
   CGAL::Less_yx_2< Point>    lexicographically_yx_smaller;
  
-  assert( compare_lexicographically_yx(p1,p2) == CGAL::SMALLER );
-  assert( compare_lexicographically_yx(p2,p1) == CGAL::LARGER );
-  assert( compare_lexicographically_yx(p2,p2) == CGAL::EQUAL );
-  assert( compare_lexicographically_yx(p2,p4) == CGAL::SMALLER );
-  assert( compare_lexicographically_yx(p3,p6) == CGAL::SMALLER );
-  assert( compare_lexicographically_yx(p6,p3) == CGAL::LARGER );
-  assert( compare_lexicographically_yx(p4,p9) == CGAL::LARGER );
+  assert( compare_yx(p1,p2) == CGAL::SMALLER );
+  assert( compare_yx(p2,p1) == CGAL::LARGER );
+  assert( compare_yx(p2,p2) == CGAL::EQUAL );
+  assert( compare_yx(p2,p4) == CGAL::SMALLER );
+  assert( compare_yx(p3,p6) == CGAL::SMALLER );
+  assert( compare_yx(p6,p3) == CGAL::LARGER );
+  assert( compare_yx(p4,p9) == CGAL::LARGER );
  
   assert( lexicographically_yx_smaller(p1,p2) );
   assert( lexicographically_yx_smaller(p2,p4) );
@@ -89,8 +89,8 @@ _test_fctobj_point_line_2(const Point&, const Line& )
  
   CGAL::Orientation_2< Point>   orientation;
   CGAL::Collinear_2< Point>     collinear;
-  CGAL::Leftturn_2< Point>      leftturn;
-  CGAL::Rightturn_2< Point>     rightturn;
+  CGAL::Left_turn_2< Point>     left_turn;
+  CGAL::Right_turn_2< Point>    right_turn;
  
   Point pe0( RT(1), RT(0) );
   Point pe1( RT(0), RT(1) );
@@ -98,12 +98,12 @@ _test_fctobj_point_line_2(const Point&, const Line& )
   assert( orientation( Point(CGAL::ORIGIN), pe0, pe1)== CGAL::POSITIVE);
  
   assert( orientation( p1, p2, p3) == CGAL::COLLINEAR );
-  assert( orientation( p1, p2, p4) == CGAL::RIGHTTURN );
-  assert( orientation( p2, p1, p4) == CGAL::LEFTTURN );
-  assert( orientation( p5, p4, p3) == CGAL::RIGHTTURN );
-  assert( orientation( p2, p4, p6) == CGAL::RIGHTTURN );
-  assert( orientation( p6, p4, p2) == CGAL::LEFTTURN );
-  assert( orientation( p4, p6, p2) == CGAL::RIGHTTURN );
+  assert( orientation( p1, p2, p4) == CGAL::RIGHT_TURN );
+  assert( orientation( p2, p1, p4) == CGAL::LEFT_TURN );
+  assert( orientation( p5, p4, p3) == CGAL::RIGHT_TURN );
+  assert( orientation( p2, p4, p6) == CGAL::RIGHT_TURN );
+  assert( orientation( p6, p4, p2) == CGAL::LEFT_TURN );
+  assert( orientation( p4, p6, p2) == CGAL::RIGHT_TURN );
   assert( orientation( p5, p6, p7) == CGAL::COLLINEAR );
   assert( orientation( p6, p5, p7) == CGAL::COLLINEAR );
  
@@ -114,11 +114,11 @@ _test_fctobj_point_line_2(const Point&, const Line& )
   assert( !collinear( p1, p2, p4 ) );
   assert( collinear( p6, p6, p3 ) );
  
-  assert( leftturn( p1, p4, p2 ) );
-  assert( leftturn( p6, p4, p2 ) );
+  assert( left_turn( p1, p4, p2 ) );
+  assert( left_turn( p6, p4, p2 ) );
  
-  assert( rightturn( p4, p6, p2 ) );
-  assert( rightturn( p1, p2, p4 ) );
+  assert( right_turn( p4, p6, p2 ) );
+  assert( right_turn( p1, p2, p4 ) );
  
   std::cout << '.';
  
@@ -174,11 +174,15 @@ _test_fctobj_point_line_2(const Point&, const Line& )
  
   std::cout << '.';
  
-  CGAL::Less_distance_to_point_2< Point>     has_smaller_dist_to_point;
-  assert( has_smaller_dist_to_point(p4,p9,p1) );
-  assert( has_smaller_dist_to_point(p4,p6,p5) );
-  assert( has_smaller_dist_to_point(p9,p9,p6) );
-  assert(!has_smaller_dist_to_point(p8,p3,p3) );
+  CGAL::Less_distance_to_point_2< Point>     has_smaller_dist_to_point_p4(p4);
+  assert( has_smaller_dist_to_point_p4(p9,p1) );
+  assert( has_smaller_dist_to_point_p4(p6,p5) );
+ 
+  CGAL::Less_distance_to_point_2< Point>     has_smaller_dist_to_point_p9(p9);
+  assert( has_smaller_dist_to_point_p9(p9,p6) );
+ 
+  CGAL::Less_distance_to_point_2< Point>     has_smaller_dist_to_point_p8(p8);
+  assert(!has_smaller_dist_to_point_p8(p3,p3) );
  
   std::cout << '.';
  

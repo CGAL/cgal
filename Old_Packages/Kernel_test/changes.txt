@@ -1,3 +1,9 @@
+3.33   (23 July 2001)
+- renamed cmp_* to compare_* and *_dist_* to *_distance_* and
+  leftturn, Leftturn, LEFTTURN to left_turn, Left_turn, LEFT_TURN and
+  rightturn, Rightturn, RIGHTTURN to right_turn, Right_turn, RIGHT_TURN
+  and compare_lexicographically* to compare_*
+
 3.32   (23 July 2001)
 - Remove -pedantic from makefiles.  Don't submit cgal_test.
 

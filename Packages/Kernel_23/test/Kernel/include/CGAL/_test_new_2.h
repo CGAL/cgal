@@ -452,9 +452,9 @@ test_new_2(const R& rep)
         = rep.counterclockwise_in_between_2_object();
        tmp39 = ccwib(d1,d2,d3);
 
-  typename R::Leftturn_2 leftturn
-        = rep.leftturn_2_object();
-  bool tmp37 = leftturn(p2,p3,p4);
+  typename R::Left_turn_2 left_turn
+        = rep.left_turn_2_object();
+  bool tmp37 = left_turn(p2,p3,p4);
 
   typename R::Collinear_2 collinear
         = rep.collinear_2_object();
