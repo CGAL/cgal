@@ -1,6 +1,8 @@
 [See also the file TODO_static_filters]
 
 - DOCUMENT enough for the new to_interval() requirement.
+- Filtered_kernel<> should be a proper kernel.  It should be possible to use
+  the Kernel_base stuff (see Kernel_traits paper)...
 - mv test/include/*.C *.def ; Or use template functions ?
 - Use Self instead of IA as the internal typedef ?
 

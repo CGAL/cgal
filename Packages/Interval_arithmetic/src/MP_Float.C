@@ -27,7 +27,7 @@ CGAL_BEGIN_NAMESPACE
 
 const unsigned        log_limb         = 8 * sizeof(MP_Float::limb);
 const MP_Float::limb2 base             = 1 << log_limb;
-const unsigned        limbs_per_double = 2 + 53/log_limb;
+const MP_Float::V::size_type limbs_per_double = 2 + 53/log_limb;
 
 const double trunc_max = double(base)*(base/2-1)/double(base-1);
 const double trunc_min = double(-base)*(base/2)/double(base-1);

@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.82 on  6 April 2001
+- limbs_per_double is now vector<limb>::size_type instead of unsigned to
+  please Alpha.
+
 Version 4.81 on 21 March 2001
 - Remove static data members of MP_Float, use consts in src/MP_Float.C
   instead.  
