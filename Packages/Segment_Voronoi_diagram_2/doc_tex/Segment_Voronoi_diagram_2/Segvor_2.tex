@@ -129,11 +129,11 @@ predicates are evaluated. Having made the distinction between weakly
 and strongly intersecting sites, and having said that segment sites
 are treated as three objects, we are now ready to precisely define the
 Voronoi diagram we compute. Given a set $\mathcal{S}$ of input sites,
-let $\mathcal{S}_{\mathcal{A}(\mathcal{S})}$ be the set of points and
+let $\mathcal{S}_{\mathcal{A}}$ be the set of points and
 (open) segments in the arrangement $\mathcal{A}(\mathcal{S})$ of
 $\mathcal{S}$. The 2D segment Voronoi diagram package of \cgal\
 computes the dual of the Voronoi diagram of the sites in the set 
-$\mathcal{S}_{\mathcal{A}(\mathcal{S})}$.
+$\mathcal{S}_{\mathcal{A}}$.
 
 The dual of the segment Voronoi diagram is uniquely defined once we
 have the segment Voronoi diagram. If the all sites are in
@@ -205,6 +205,9 @@ exceptions to this rule are as follows:
 \label{sec:segvor2-hierarchy}
 
 \hide{
+
+\section{Software Design}
+\label{sec:segvor2-design}
 
 The 2D Apollonius graph class
 \ccc{Apollonius_graph_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>}
@@ -511,7 +514,7 @@ manual.
 The \ccc{Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>} class is nothing but the equivalent of the \ccc{Triangulation_hierarchy_2}
 class, applied to the Apollonius graph. It consists of a series of
 Apollonius graphs constructed in a manner analogous to the Delaunay
-hierarchy by Devillers \cite{d-iirdt-98}. The class
+hierarchy by Devillers \cite{cgal:d-dh-02}. The class
 \ccc{Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>}
 has exactly the same interface and functionality as the
 \ccc{Apollonius_graph_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>}
