@@ -576,7 +576,8 @@ cleanup_latex() {
         rm -f $1.aux $1.bbl
     fi
     # in case the log was not asked for, delete it
-    if [[ $NoLog -eq 1 || ( $KeepLog -eq 0 && $RetCode -eq 0 ) ]] ; then
+    if [[ $NoLog -eq 1 || ( $KeepLog -eq 0 && 
+                   ( $RetCode -eq 0 ||  $RetCode -eq 5 )) ]] ; then
       rm -f $1.log $1.blg $1.ilg
     fi
     return
@@ -1262,6 +1263,7 @@ make_manual() {
     # in case there was no error and the option to keep the log is not set,
     # delete the log
     if [[ $KeepLog -eq 0 && $ReturnStatus -eq 0 ]] ; then rm -f $LogFile ; fi
+    if [[ $KeepLog -eq 0 && $ReturnStatus -eq 5 ]] ; then rm -f $LogFile ; fi
 
     if [[ $ReturnStatus -ne 0 && ${GlobalReturnStatus} -ne 1 ]]; then
         GlobalReturnStatus=$ReturnStatus; 
