@@ -6,7 +6,7 @@
 
 
 #CGAL_MAKEFILE =/0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.14_g++-2.95.2_LEDA
-CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.3-I-15/make/makefile_i686_Linux-2.2.14_g++-2.97.
+CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.14_g++-2.97.
 include $(CGAL_MAKEFILE)
 
 
