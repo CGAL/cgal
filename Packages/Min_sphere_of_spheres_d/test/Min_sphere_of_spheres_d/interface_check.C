@@ -17,7 +17,7 @@ CGAL::Tag_false is_exact(const double) {
 
 void checkCondition(bool c,const char *msg) {
   if (!c) {
-    std::cout << msg << endl;
+    std::cout << msg << std::endl;
     std::cout.flush();
     exit(-1);
   }

@@ -277,7 +277,7 @@ namespace CGAL {
     for (int i=0; i<e; ++i) {
       // check radii:
       const P rd = ss.radius()-t.radius(*l[i]);
-      if (isNeg(rd,ss.disc()))
+      if (Min_sphere_of_spheres_impl::isNeg(rd,ss.disc()))
         isSupporting = false;
     
       // compute the (squared) distance from ss.begin() to l[i]'s center:
