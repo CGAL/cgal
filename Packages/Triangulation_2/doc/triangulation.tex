@@ -1206,8 +1206,9 @@ the pointer to the incident face.}
 \ccMethod{Face_handle face() const;}
 {Returns a face of the triangulation having  \ccVar\ as vertex.}
 
-\ccHeading{Setting}
+
 \begin{ccAdvanced}
+\ccHeading{Setting}
 \ccMethod{void set_face(Face_handle f); }{Sets the incident face to \ccc{f}.}
 \end{ccAdvanced}
 
@@ -1306,9 +1307,9 @@ The class  {Face} defines the same types
 as the class \ccc{Triangulation_2<Gt,Tds>} except the iterators and circulators
 which are not needed.
 
-\ccHeading{Creation}
 
 \begin{ccAdvanced}
+\ccHeading{Creation}
 
 For user defined triangulation algorithms, faces need to
 be explicitly constructed and linked to their neighbors.
@@ -1331,11 +1332,10 @@ neighbors are initialized with \ccc{NULL}.}
                      {Face_handle} n2);}
 {Introduces a variable \ccVar, and initializes the vertices and the neighbors.}
 
-\end{ccAdvanced} 
+
 
 \ccHeading{Setting}
 
-\begin{ccAdvanced}
 
 \ccThree{Vertex_handle}{f.has_vertex( Vertex_handle v, int& i)x}{}
 \ccMethod{void set_vertex(int i, Vertex_handle v);}
@@ -1854,11 +1854,9 @@ The pointer to the incident face is initialized with \ccc{NULL}.}
                       Face* f);}
 {introduces a vertex \ccVar, and initializes the geometric information and 
 the pointer to the incident face.}
-\end{ccAdvanced}
 
 
 \ccHeading{Setting}
-\begin{ccAdvanced}
 
 \ccMethod{void set_point(const Point& p);}
 {sets the geometric information to \ccc{p}.}
@@ -1944,10 +1942,9 @@ The class \ccClassName\ defines the same types as
 the triangulation data structure 
 except the iterators and circulators
 
-\ccHeading{Creation}
 
 \begin{ccAdvanced}
-
+\ccHeading{Creation}
 For user defined triangulation algorithms, faces need to
 be explicitly constructed and linked to their neighbors.
 
@@ -1969,11 +1966,9 @@ neighbors are initialized with \ccc{NULL}.}
                     Face* n2);}
 {introduces a face \ccVar, and initializes the vertices and the neighbors.}
 
-\end{ccAdvanced} 
 
 \ccHeading{Setting}
 
-\begin{ccAdvanced}
 \ccThree{Vertex*}{f.has_vertex( Vertex* v, int& i)x}{}
 \ccMethod{void set_vertex(int i, Vertex* v);}
 {sets vertex \ccc{i} to be \ccc{v}.
@@ -2545,10 +2540,11 @@ are infinite and the bisector line is returned.}
 {Returns the side of \ccc{p} with respect to the circle circumscribing
  the triangle associated with \ccc{f}}
 
+
+\begin{ccAdvanced}
 \ccHeading{Miscellaneous}
 \ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
 
-\begin{ccAdvanced}
 The checking function \ccc{is_valid()} is also overwritten
 to additionally test the empty circle property.
 
@@ -2986,10 +2982,12 @@ hidden points.}
 {Returns the power test of  \ccc{p} with respect to the 
 power circle  associated with \ccc{f}}
 
+
+
+\begin{ccAdvanced}
 \ccHeading{Miscellaneous}
 \ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
 
-\begin{ccAdvanced}
 \ccMethod{bool is_valid(bool verbose = false, int level = 0) const;}
 { Tests the validity of the triangulation as a \ccc{Triangulation_2}
 and additionally test the regularity of the triangulation. This method is
@@ -3460,8 +3458,9 @@ and the corresponding constrained status.}
 {preforms a clockwise permutation of the
  vertices and neighbors and constrained status of \ccVar.}
 
-\ccHeading{Miscelleanous}
+
 \begin{ccAdvanced}
+\ccHeading{Miscelleanous}
 \ccMethod{bool is_valid();}
 {tests the validity of face  \ccVar\ 
 as a face of a plain triangulation
