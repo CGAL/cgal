@@ -1,13 +1,30 @@
+// ======================================================================
+//
+// Copyright (c) 2000 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Cartesian/Scaling_rep_3.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann
+// coordinator   : INRIA Sophia-Antipolis (Mariette.Yvinec@sophia.inria.fr)
+//
+// ======================================================================
 
-#ifndef CGAL_CARTESIAN_SCALINGR_EP_3_H
-#define CGAL_CARTESIAN_SCALINGR_EP_3_H
+#ifndef CGAL_CARTESIAN_SCALING_REP_3_H
+#define CGAL_CARTESIAN_SCALING_REP_3_H
 
 #include <CGAL/Cartesian/redefine_names_3.h>
 
-#ifndef CGAL_CARTESIANR_EDEFINE_NAMES_3_H
+#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #define CGAL_CTAG
 #endif
 
@@ -144,4 +161,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif // CGAL_CARTESIAN_SCALINGR_EP_3_H
+#endif // CGAL_CARTESIAN_SCALING_REP_3_H

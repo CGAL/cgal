@@ -1,9 +1,26 @@
+// ======================================================================
+//
+// Copyright (c) 2000 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Cartesian/Ray_3.C
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
+// coordinator   : INRIA Sophia-Antipolis (Mariette.Yvinec@sophia.inria.fr)
+//
+// ======================================================================
 
-#ifndef CGAL_CARTESIANR_AY_3_C
-#define CGAL_CARTESIANR_AY_3_C
+#ifndef CGAL_CARTESIAN_RAY_3_C
+#define CGAL_CARTESIAN_RAY_3_C
 
 #include <CGAL/Cartesian/distance_computations_3.h>
 
@@ -214,4 +231,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif // CGAL_CARTESIANR_AY_3_C
+#endif // CGAL_CARTESIAN_RAY_3_C
