@@ -45,7 +45,7 @@ int  main()
   
   NT   x1, y1, x2, y2;
   
-  std::cin >> num_curves1;
+  cin >> num_curves1;
   std::vector<Curve>  curves;
   
   while (num_curves1--) {
@@ -61,9 +61,9 @@ int  main()
   
   curves.clear();
   
-  std::cin >> num_curves2;
+  cin >> num_curves2;
   while (num_curves2--) {
-    std::cin >> x1 >> y1 >> x2 >> y2;
+    cin >> x1 >> y1 >> x2 >> y2;
     
     Point p1(x1,y2), p2(x2,y2);
     curves.push_back(X_curve(p1, p2));
@@ -76,7 +76,7 @@ int  main()
   pm1.unbounded_face()->set_ignore_bop(false); 
   pm2.unbounded_face()->set_ignore_bop(false);
   
-  std::cout<<"Creating a boolean-operation object"<<std::endl;
+  cout<<"Creating a boolean-operation object"<<endl;
   Bops bop(pm1, pm2);
   
   Halfedges_container halfedges_result;
@@ -106,8 +106,3 @@ int  main()
       
   return 0;
 }
-
-
-
-
-
