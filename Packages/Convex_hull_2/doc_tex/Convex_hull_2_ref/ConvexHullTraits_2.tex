@@ -22,7 +22,7 @@ is specified with each function.
 
 \ccTypes
 \ccAutoIndexingOff
-\ccSetTwoColumns{ConvexHullTraits_2::Left_of_line_2}{}
+\ccSetTwoColumns{ConvexHullTraits_2::Less_rotate_ccw_2}{}
 
 \ccNestedType{Point_2}%
        {The point type on which the convex hull functions operate.}
@@ -45,12 +45,6 @@ is specified with each function.
         \ccc{bool operator()(Point_2 p,Point_2 q,Point_2 r)}, which
         returns \ccc{true} iff \ccc{r} lies to the left of the
         oriented line through \ccc{p} and \ccc{q}.}
-
-%\ccNestedType{Left_of_line_2}%
-%       {Unary predicate object type that
-%        must provide a constructor taking two \ccc{Point_2}s, $p$ and
-%        $q$, and \ccc{bool operator()(Point_2 r)}, which returns \ccc{true} iff
-%        $r$ lies to the left of the directed line through $p$ and $q$.}
 
 \ccNestedType{Less_signed_distance_to_line_2}%
        {Predicate object type that must provide 
@@ -91,8 +85,6 @@ object types must exist.
 \ccMemberFunction{Less_xy_2 less_xy_2_object(); }{}
 \ccGlue
 \ccMemberFunction{Less_yx_2 less_yx_2_object(); }{}
-\ccGlue
-\ccMemberFunction{Left_of_line_2 left_of_line_2_object();}{}
 \ccGlue
 \ccMemberFunction{Less_signed_distance_to_line_2 less_signed_distance_to_line_2_object(); }{}
 \ccGlue
