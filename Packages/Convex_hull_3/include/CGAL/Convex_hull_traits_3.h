@@ -56,7 +56,7 @@ class Convex_hull_traits_3
 #if defined(__BORLANDC__)
   typedef Polyhedron_                            Polyhedron_3;
 #else
-  typedef Polyhedron_3<R>                        Polyhedron_3;
+  typedef CGAL::Polyhedron_3<R>                  Polyhedron_3;
 #endif
 
   typedef typename R::Construct_segment_3        Construct_segment_3;
