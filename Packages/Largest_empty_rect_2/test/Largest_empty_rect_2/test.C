@@ -78,7 +78,7 @@ int main(int argc,char *argv[])
   // output
   ler = empty_rectangle1.get_largest_empty_iso_rectangle();
 
-  std::cout << "first set      (" << ler.min().x()
+  std::cout << "test first set   (" << ler.min().x()
 	    << "," << ler.min().y() 
             << "),(" << ler.max().x() 
             << "," << ler.max().y() << ")\n";
@@ -154,7 +154,7 @@ int main(int argc,char *argv[])
   // output
   ler = empty_rectangle1.get_largest_empty_iso_rectangle();
 
-  std::cout << "after clear (" << ler.min().x()
+  std::cout << "test after clear (" << ler.min().x()
 	    << "," << ler.min().y() 
             << "),(" << ler.max().x() 
             << "," << ler.max().y() << ")\n";
@@ -162,7 +162,7 @@ int main(int argc,char *argv[])
   // test bbox
   Iso_rectangle_2 bb = empty_rectangle1.get_bounding_box();
 
-  std::cout << "bounding box is (" << bb.min().x()
+  std::cout << "test bounding box (" << bb.min().x()
 	    << "," << bb.min().y() 
             << "),(" << bb.max().x() 
             << "," << bb.max().y() << ")\n";
@@ -173,7 +173,7 @@ int main(int argc,char *argv[])
                  Largest_empty_rect::Point,
                  Largest_empty_rect::Point>  q = 
    empty_rectangle1.get_left_bottom_right_top();
- std::cerr << q.first << ",  " << q.second << ",  " << q.third << ",  " << q.fourth << std::endl;
+ std::cout << "test left_bottom_right_top is " << q.first << ",  " << q.second << ",  " << q.third << ",  " << q.fourth << std::endl;
   // complete
 
   return(0);

@@ -1,1 +1,9 @@
-(5,0),(10,8)
+test first set   (5,0),(10,8)
+test operator = (5,0),(10,8)
+test cctor      (5,0),(10,8)
+test list insertion (5,0),(10,8)
+test default ctor    (0,0),(0.5,1)
+test after removal   (5,0),(10,10)
+test after clear (0,0),(8,10)
+test bounding box (0,0),(10,10)
+test left_bottom_right_top is 0 10,  0 0,  8 8,  10 10
