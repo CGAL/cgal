@@ -1,4 +1,4 @@
-Version 6.0 (?? ????? 00)
+Version 6.0 (12 January 2001)
 - Merged C2, C3 and Cartesian_basic in Cartesian_kernel.
 - Merged all .C files into their corresponding .h.
 - Changed constructions_on_*.h to *_constructions_[23].h, gathering
