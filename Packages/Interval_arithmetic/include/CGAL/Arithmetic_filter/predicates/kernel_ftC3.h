@@ -1065,8 +1065,8 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
-Oriented_side
-coplanar_side_of_oriented_circleC3(
+Bounded_side
+coplanar_side_of_bounded_circleC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &pz,
@@ -1083,7 +1083,7 @@ coplanar_side_of_oriented_circleC3(
   try
   {
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
-    return coplanar_side_of_oriented_circleC3(
+    return coplanar_side_of_bounded_circleC3(
 		px.interval(),
 		py.interval(),
 		pz.interval(),
@@ -1100,7 +1100,7 @@ coplanar_side_of_oriented_circleC3(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
-    return coplanar_side_of_oriented_circleC3(
+    return coplanar_side_of_bounded_circleC3(
 		px.exact(),
 		py.exact(),
 		pz.exact(),
@@ -1118,14 +1118,14 @@ coplanar_side_of_oriented_circleC3(
 
 #ifdef CGAL_IA_NEW_FILTERS
 
-struct Static_Filtered_coplanar_side_of_oriented_circleC3_12
+struct Static_Filtered_coplanar_side_of_bounded_circleC3_12
 {
   static double _bound;
   static double _epsilon_0;
   static unsigned number_of_failures; // ?
   static unsigned number_of_updates;
 
-  static Oriented_side update_epsilon(
+  static Bounded_side update_epsilon(
 	const Static_filter_error &px,
 	const Static_filter_error &py,
 	const Static_filter_error &pz,
@@ -1168,10 +1168,10 @@ struct Static_Filtered_coplanar_side_of_oriented_circleC3_12
     FT vy = pqz*prx - pqx*prz;
     FT vz = pqx*pry - pqy*prx;
     FT v2 = CGAL_NTS square(vx) + CGAL_NTS square(vy) + CGAL_NTS square(vz);
-    return Oriented_side(Static_Filtered_sign_of_determinant4x4_16::update_epsilon(ptx,pty,ptz,pt2,
-                                                rtx,rty,rtz,rt2,
-                                                qtx,qty,qtz,qt2,
-                                                vx,vy,vz,v2,
+    return Bounded_side(Static_Filtered_sign_of_determinant4x4_16::update_epsilon(ptx,pty,ptz,pt2,
+                                               rtx,rty,rtz,rt2,
+                                               qtx,qty,qtz,qt2,
+                                               vx,vy,vz,v2,
   		epsilon_0));
   }
 
@@ -1186,7 +1186,7 @@ struct Static_Filtered_coplanar_side_of_oriented_circleC3_12
     // TODO: We should verify that all epsilons have really been updated.
   }
 
-  static Oriented_side epsilon_variant(
+  static Bounded_side epsilon_variant(
 	const Restricted_double &px,
 	const Restricted_double &py,
 	const Restricted_double &pz,
@@ -1229,10 +1229,10 @@ struct Static_Filtered_coplanar_side_of_oriented_circleC3_12
     FT vy = pqz*prx - pqx*prz;
     FT vz = pqx*pry - pqy*prx;
     FT v2 = CGAL_NTS square(vx) + CGAL_NTS square(vy) + CGAL_NTS square(vz);
-    return Oriented_side(Static_Filtered_sign_of_determinant4x4_16::epsilon_variant(ptx,pty,ptz,pt2,
-                                                rtx,rty,rtz,rt2,
-                                                qtx,qty,qtz,qt2,
-                                                vx,vy,vz,v2,
+    return Bounded_side(Static_Filtered_sign_of_determinant4x4_16::epsilon_variant(ptx,pty,ptz,pt2,
+                                               rtx,rty,rtz,rt2,
+                                               qtx,qty,qtz,qt2,
+                                               vx,vy,vz,v2,
   		epsilon_0));
   }
 };
@@ -1243,8 +1243,8 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
-Oriented_side
-coplanar_side_of_oriented_circleC3(
+Bounded_side
+coplanar_side_of_bounded_circleC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &pz,
@@ -1259,7 +1259,7 @@ coplanar_side_of_oriented_circleC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &tz)
 {
 //   bool re_adjusted = false;
-  const double SAF_bound = Static_Filtered_coplanar_side_of_oriented_circleC3_12::_bound;
+  const double SAF_bound = Static_Filtered_coplanar_side_of_bounded_circleC3_12::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
@@ -1292,12 +1292,12 @@ coplanar_side_of_oriented_circleC3(
     NEW_bound = max(NEW_bound, fabs(ty.to_double()));
     NEW_bound = max(NEW_bound, fabs(tz.to_double()));
     // Re-adjust the context.
-    Static_Filtered_coplanar_side_of_oriented_circleC3_12::new_bound(NEW_bound);
+    Static_Filtered_coplanar_side_of_bounded_circleC3_12::new_bound(NEW_bound);
   }
 
   try
   {
-    return Static_Filtered_coplanar_side_of_oriented_circleC3_12::epsilon_variant(
+    return Static_Filtered_coplanar_side_of_bounded_circleC3_12::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
 		pz.dbl(),
@@ -1310,7 +1310,7 @@ coplanar_side_of_oriented_circleC3(
 		tx.dbl(),
 		ty.dbl(),
 		tz.dbl(),
-		Static_Filtered_coplanar_side_of_oriented_circleC3_12::_epsilon_0);
+		Static_Filtered_coplanar_side_of_bounded_circleC3_12::_epsilon_0);
   }
   catch (...)
   {
@@ -1318,8 +1318,8 @@ coplanar_side_of_oriented_circleC3(
       // re_adjusted = true;
       // goto re_adjust;
     // }
-    Static_Filtered_coplanar_side_of_oriented_circleC3_12::number_of_failures++;
-    return coplanar_side_of_oriented_circleC3(
+    Static_Filtered_coplanar_side_of_bounded_circleC3_12::number_of_failures++;
+    return coplanar_side_of_bounded_circleC3(
 		px.exact(),
 		py.exact(),
 		pz.exact(),
@@ -1341,8 +1341,8 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
-Oriented_side
-coplanar_side_of_oriented_circleC3(
+Bounded_side
+coplanar_side_of_bounded_circleC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &pz,
@@ -1357,7 +1357,7 @@ coplanar_side_of_oriented_circleC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &tz)
 {
   CGAL_assertion_code(
-    const double SAF_bound = Static_Filtered_coplanar_side_of_oriented_circleC3_12::_bound; )
+    const double SAF_bound = Static_Filtered_coplanar_side_of_bounded_circleC3_12::_bound; )
   CGAL_assertion(!(
 	fabs(px.to_double()) > SAF_bound ||
 	fabs(py.to_double()) > SAF_bound ||
@@ -1374,7 +1374,7 @@ coplanar_side_of_oriented_circleC3(
 
   try
   {
-    return Static_Filtered_coplanar_side_of_oriented_circleC3_12::epsilon_variant(
+    return Static_Filtered_coplanar_side_of_bounded_circleC3_12::epsilon_variant(
 		px.dbl(),
 		py.dbl(),
 		pz.dbl(),
@@ -1387,12 +1387,12 @@ coplanar_side_of_oriented_circleC3(
 		tx.dbl(),
 		ty.dbl(),
 		tz.dbl(),
-		Static_Filtered_coplanar_side_of_oriented_circleC3_12::_epsilon_0);
+		Static_Filtered_coplanar_side_of_bounded_circleC3_12::_epsilon_0);
   }
   catch (...)
   {
-    Static_Filtered_coplanar_side_of_oriented_circleC3_12::number_of_failures++;
-    return coplanar_side_of_oriented_circleC3(
+    Static_Filtered_coplanar_side_of_bounded_circleC3_12::number_of_failures++;
+    return coplanar_side_of_bounded_circleC3(
 		px.exact(),
 		py.exact(),
 		pz.exact(),

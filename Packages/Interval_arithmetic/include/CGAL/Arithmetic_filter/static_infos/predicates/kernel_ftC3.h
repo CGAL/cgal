@@ -58,12 +58,12 @@ unsigned Static_Filtered_orientationC3_12::number_of_updates = 0;
 
 unsigned Static_Filtered_orientationC3_12::number_of_failures = 0;
 
-double Static_Filtered_coplanar_side_of_oriented_circleC3_12::_epsilon_0;
-double Static_Filtered_coplanar_side_of_oriented_circleC3_12::_bound = -1.0;
+double Static_Filtered_coplanar_side_of_bounded_circleC3_12::_epsilon_0;
+double Static_Filtered_coplanar_side_of_bounded_circleC3_12::_bound = -1.0;
 
-unsigned Static_Filtered_coplanar_side_of_oriented_circleC3_12::number_of_updates = 0;
+unsigned Static_Filtered_coplanar_side_of_bounded_circleC3_12::number_of_updates = 0;
 
-unsigned Static_Filtered_coplanar_side_of_oriented_circleC3_12::number_of_failures = 0;
+unsigned Static_Filtered_coplanar_side_of_bounded_circleC3_12::number_of_failures = 0;
 
 double Static_Filtered_equal_directionC3_6::_epsilon_0;
 double Static_Filtered_equal_directionC3_6::_epsilon_1;

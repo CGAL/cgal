@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.87 on 27 April 2001
+- Rename coplanar_side_of_oriented_circle to bounded.
+
 Version 4.86 on 27 April 2001
 - Rename construct_tetrahedron_object to construct_tetrahedron_3_object.
 

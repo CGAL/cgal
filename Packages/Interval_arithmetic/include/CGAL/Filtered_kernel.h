@@ -288,8 +288,8 @@ public:
     CGAL_Filter_pred(Collinear_3, collinear_3_object)
     CGAL_Filter_pred(Coplanar_3, coplanar_3_object)
     CGAL_Filter_pred(Coplanar_orientation_3, coplanar_orientation_3_object)
-    CGAL_Filter_pred(Coplanar_side_of_oriented_circle_3,
-	    coplanar_side_of_oriented_circle_3_object)
+    CGAL_Filter_pred(Coplanar_side_of_bounded_circle_3,
+	    coplanar_side_of_bounded_circle_3_object)
     CGAL_Filter_pred(Orientation_3, orientation_3_object)
     CGAL_Filter_pred(Is_degenerate_3, is_degenerate_3_object)
     CGAL_Filter_pred(Has_on_3, has_on_3_object)
