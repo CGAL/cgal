@@ -23,9 +23,9 @@
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| This flag is set if the compiler doesn't support the operator Koenig lookup.
-//| That is, it does not search in the namespace of the arguments for the
-//| function.
+//| This flag is set if the compiler doesn't support the operator Koenig
+//| lookup. That is, it does not search in the namespace of the arguments for
+//| the function.
 
 namespace A {
   struct S {};
