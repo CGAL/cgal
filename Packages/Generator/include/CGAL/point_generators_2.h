@@ -31,11 +31,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_CFG_NO_DEFAULT_PREVIOUS_TEMPLATE_ARGUMENTS
 template < class P, class Creator = Creator_uniform_2<double,P> >
-#else
-template < class P, class Creator >
-#endif
 class Random_points_in_disc_2 : public Random_generator_base<P>{
     void generate_point();
 public:
@@ -69,11 +65,7 @@ generate_point() {
 }
 
 
-#ifndef CGAL_CFG_NO_DEFAULT_PREVIOUS_TEMPLATE_ARGUMENTS
 template < class P, class Creator = Creator_uniform_2<double,P> >
-#else
-template < class P, class Creator >
-#endif
 class Random_points_on_circle_2 : public Random_generator_base<P> {
     void generate_point();
 public:
@@ -106,11 +98,7 @@ generate_point() {
 }
 
 
-#ifndef CGAL_CFG_NO_DEFAULT_PREVIOUS_TEMPLATE_ARGUMENTS
 template < class P, class Creator = Creator_uniform_2<double,P> >
-#else
-template < class P, class Creator >
-#endif
 class Random_points_in_square_2 : public Random_generator_base<P> {
     void generate_point();
 public:
@@ -144,11 +132,7 @@ generate_point() {
 }
 
 
-#ifndef CGAL_CFG_NO_DEFAULT_PREVIOUS_TEMPLATE_ARGUMENTS
 template < class P, class Creator = Creator_uniform_2<double,P> >
-#else
-template < class P, class Creator >
-#endif
 class Random_points_on_square_2 : public Random_generator_base<P> {
     void generate_point();
 public:
@@ -199,11 +183,7 @@ generate_point() {
 }
 
 
-#ifndef CGAL_CFG_NO_DEFAULT_PREVIOUS_TEMPLATE_ARGUMENTS
 template < class P, class Creator = Creator_uniform_2<double,P> >
-#else
-template < class P, class Creator >
-#endif
 class Random_points_on_segment_2 : public Random_generator_base<P> {
     P _p;
     P _q;
@@ -292,6 +272,7 @@ OutputIterator
 points_on_square_grid_2( double a, std::size_t n, OutputIterator o,
                          Creator creator)
 {
+    typedef typename Creator::argument_type T;
     if  (n == 0)
         return o;
     int m = int(CGAL_CLIB_STD::ceil(std::sqrt(static_cast<double>(n))));
@@ -300,7 +281,7 @@ points_on_square_grid_2( double a, std::size_t n, OutputIterator o,
     int j = 0;
     double px = base;
     double py = base;
-    *o++ = creator( px, py);
+    *o++ = creator( T(px), T(py));
     for (std::size_t i = 1; i < n; i++) {
         j++;
         if ( j == m) {
@@ -310,7 +291,7 @@ points_on_square_grid_2( double a, std::size_t n, OutputIterator o,
         } else {
             px = px + step;
         }
-        *o++ = creator( px, py);
+        *o++ = creator( T(px), T(py));
     }
     return o;
 }
@@ -337,6 +318,7 @@ points_on_segment_2( const P& p, const P& q, std::size_t n,
     }
     return o;
 }
+
 template <class ForwardIterator, class Creator>
 void perturb_points_2( ForwardIterator first,
                        ForwardIterator last,
@@ -351,6 +333,7 @@ void perturb_points_2( ForwardIterator first,
     // The expression `to_double((*first).x())' and `to_double((
     // *begin).y())' must be legal.
 {
+    typedef typename Creator::argument_type T;
     xeps *= 2.0;
     yeps *= 2.0;
     for ( ; first != last; ++first) {
@@ -358,7 +341,7 @@ void perturb_points_2( ForwardIterator first,
         double y = to_double( (*first).y());
         x += xeps * (rnd.get_double() - 0.5);
         y += yeps * (rnd.get_double() - 0.5);
-        *first = creator( x, y);
+        *first = creator( T(x), T(y));
     }
 }
 
@@ -410,17 +393,19 @@ OutputIterator random_collinear_points_2(
                        Random& rnd,
                        Creator creator)
 {
-    typedef typename Creator::result_type Point;
+    typedef typename Creator::result_type   Point;
+    typedef typename Creator::argument_type T;
+
     int m = last - first;
     for ( std::size_t i = 0; i < n; i++) {
         const Point& p = first[ rnd.get_int( 0, m-1)];
         const Point& q = first[ rnd.get_int( 0, m-1)];
         double la = rnd.get_double();
         double mu = 1.0 - la;
-        *first2++ = creator(mu * to_double(p.x()) +
-                            la * to_double(q.x()),
-                            mu * to_double(p.y()) +
-                            la * to_double(q.y()));
+        *first2++ = creator(T(mu * to_double(p.x()) +
+                              la * to_double(q.x())),
+                            T(mu * to_double(p.y()) +
+                              la * to_double(q.y())));
     }
     return first2;
 }

@@ -1,5 +1,10 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.60 (25 Apr 2002)
+   - removed obsolete configuration macro
+   - added more casting for creators in point_generators_2
+   - changed argument type of creator in example to get rid of warning
+
 2.59 (24 Apr 2002)
    - in deletion_event in Random_polygon_2_sweep, removed use of
      prev_seg iterator after it was erased (replaced with thing it

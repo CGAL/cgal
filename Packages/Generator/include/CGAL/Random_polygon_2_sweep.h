@@ -523,8 +523,8 @@ void make_simple_polygon(Iterator points_begin, Iterator points_end,
 {
     std::pair<int,int> swap_interval;
 
-    Iterator it;
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
+    Iterator it;
     std::cout << "In make_simple_polygon the points are: " << std::endl;
     int size = 0;
     for (it = points_begin; it != points_end; it++, size++)

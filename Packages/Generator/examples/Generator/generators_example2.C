@@ -14,9 +14,9 @@
 
 using namespace CGAL;
 
-typedef Cartesian<int>                   R;
-typedef Point_2<R>                       Point;
-typedef Creator_uniform_2<double,Point>  Creator;
+typedef Cartesian<int>                R;
+typedef Point_2<R>                    Point;
+typedef Creator_uniform_2<int,Point>  Creator;
 
 int main() {
     // Create test point set. Prepare a vector for 400 points.

@@ -31,11 +31,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_CFG_NO_DEFAULT_PREVIOUS_TEMPLATE_ARGUMENTS
 template < class P, class Creator = Creator_uniform_3<double,P> >
-#else
-template < class P, class Creator >
-#endif
 class Random_points_in_sphere_3 : public Random_generator_base<P> {
     void generate_point();
 public:
@@ -72,11 +68,7 @@ generate_point() {
 }
 
 
-#ifndef CGAL_CFG_NO_DEFAULT_PREVIOUS_TEMPLATE_ARGUMENTS
 template < class P, class Creator = Creator_uniform_3<double,P> >
-#else
-template < class P, class Creator >
-#endif
 class Random_points_on_sphere_3 : public Random_generator_base<P> {
     void generate_point();
 public:
@@ -112,11 +104,7 @@ generate_point() {
 }
 
 
-#ifndef CGAL_CFG_NO_DEFAULT_PREVIOUS_TEMPLATE_ARGUMENTS
 template < class P, class Creator = Creator_uniform_3<double,P> >
-#else
-template < class P, class Creator >
-#endif
 class Random_points_in_cube_3 : public Random_generator_base<P>{
     void generate_point();
 public:
