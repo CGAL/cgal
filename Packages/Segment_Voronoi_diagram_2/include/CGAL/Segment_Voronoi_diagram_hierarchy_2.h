@@ -115,6 +115,7 @@ protected:
   typedef typename Base::Vertex_triple             Vertex_triple;
 
   typedef typename Base::Arrangement_type          Arrangement_type;
+  typedef typename Base::AT2                       AT2;
 
 protected:
   // LOCAL VARIABLES
@@ -180,11 +181,11 @@ public:
     // do it the obvious way: insert them as they come;
     // one might think though that it might be better to first insert
     // all end points and then all segments, or a variation of that.
-    size_type n_before = number_of_vertices();
+    size_type n_before = this->number_of_vertices();
     for (Input_iterator it = first; it != beyond; ++it) {
       insert(*it);
     }
-    size_type n_after = number_of_vertices();
+    size_type n_after = this->number_of_vertices();
     return n_after - n_before;
   }
 

@@ -329,7 +329,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   // insert the interior of a segment, and DO insert segments in
   // upper levels of the hierarchy
   CGAL_precondition( t.is_segment() );
-  CGAL_precondition( number_of_vertices() >= 2 );
+  CGAL_precondition( this->number_of_vertices() >= 2 );
 
   CGAL_assertion( vertices[0] != Vertex_handle() );
   // MK: add here code that checks if the inserted segment has already
