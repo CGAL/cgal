@@ -39,7 +39,7 @@ template<class R>
 class Compare_yz_3
 {
 public:
-  typedef Point_3<R>     Point;
+  typedef typename  R::Point_3     Point;
 
   Comparison_result operator() (Point p, Point q){
     Comparison_result r;
@@ -51,80 +51,43 @@ public:
     
 
 template <class R>
-class Orientation_2_3 
+class Side_of_oriented_circle_2_3
 {
+  // p,q,r and the plane are assumed to be oriented such that
+  // bounded side of circle = positive side
 public:
-  typedef Point_3<R>     Point; 
-  Orientation operator()(const Point& p,
-			 const Point& q,
-			 const Point& r)
-    {
-//       Orientation ori;
-//       Point O(0.1111,0.1111,0.1111); 
-//       Point A(1.1111,0,0);
-//       Point B(0,1.1111,0);
-//       Point C(0,0,1.1111);
-
-//       Point P = ((ori = CGAL::orientation(p,q,r,O)) != ZERO) ? O:
-//                 ((ori = CGAL::orientation(p,q,r,A)) != ZERO) ? A:
-//                 ((ori = CGAL::orientation(p,q,r,B)) != ZERO) ? B:
-//                 ((ori = CGAL::orientation(p,q,r,C)) != ZERO) ? C: C;
-//       return CGAL::orientation(p,q,r,P);
-    }
-  
-};
-
-template <class R>
-class Side_of_oriented_circle_2_3 
-{
-public:
-  typedef Point_3<R>     Point; 
-  CGAL::Oriented_side operator() (const Point &p, 
-				  const Point &q,
-				  const Point &r, 
-				  const Point &s)
-    {
-//       //CGAL_triangulation_precondition( 
-//       //              CGAL::orientation(p,q,r,s) == COPLANAR );
-//       CGAL_triangulation_precondition( !CGAL::collinear(p,q,r) );
-
-//       // test belongs to the circle if and only if it belongs to a
-//       // sphere passing through pqr
-//       Orientation ori;
-//       Point O(0.1111,0.1111,0.1111); 
-//       Point A(1.1111,0,0);
-//       Point B(0,1.1111,0);
-//       Point C(0,0,1.1111);
-
-//       Point P = ((ori = CGAL::orientation(p,q,r,O)) != ZERO) ? O:
-//                 ((ori = CGAL::orientation(p,q,r,A)) != ZERO) ? A:
-//                 ((ori = CGAL::orientation(p,q,r,B)) != ZERO) ? B:
-//                 ((ori = CGAL::orientation(p,q,r,C)) != ZERO) ? C: C;
-
-//       return Oriented_side( ori *
-// 	      CGAL::side_of_oriented_sphere(p, q, r, P, s));
-      return CGAL::coplanar_side_of_bounded_circle(p,q,r,s);
-    }
+  typedef typename  R::Point_3        Point;
+  typedef typename  R::Coplanar_side_of_bounded_circle_3
+                                     Side_of_bounded_circle_2_3;
+  Oriented_side operator() (const Point& p, 
+			    const Point& q, 
+			    const Point& r,
+			    const Point& s) {
+    Side_of_bounded_circle_2_3  side;
+    Bounded_side bs = side(p,q,r,s);
+    return ( bs == ON_UNBOUNDED_SIDE) ? ON_NEGATIVE_SIDE :
+                (bs == ON_BOUNDED_SIDE ) ? ON_POSITIVE_SIDE :
+                               ON_ORIENTED_BOUNDARY;
+  }   
 };
 
 
 
 template < class R >
-class Triangulation_2_traits_3 {
+class Triangulation_2_traits_3 
+{
 public:
   typedef R Rep;
-  typedef Point_3<R>  Point_2;
-  typedef Segment_3<R> Segment_2;
-  typedef Triangle_3<R> Triangle_2;
+  typedef typename Rep::Point_3    Point_2;
+  typedef typename Rep::Segment_3  Segment_2;
+  typedef typename Rep::Triangle_3 Triangle_2;
  
-  typedef typename R::Compare_x_3         Compare_x_2;
-  typedef Compare_yz_3<R>                 Compare_y_2;
-  typedef Orientation_2_3<R>              Orientation_2;
-  typedef R::Coplanar_side_of_bounded_circle_3 
-                                          Side_of_oriented_circle_2;
-  
-  typedef typename R::Construct_segment_3        Construct_segment_2;
-  typedef typename R::Construct_triangle_3       Construct_triangle_2;
+  typedef typename Rep::Compare_x_3               Compare_x_2;
+  typedef Compare_yz_3<Rep>                       Compare_y_2;
+  typedef typename Rep::Coplanar_orientation_3    Orientation_2;
+  typedef Side_of_oriented_circle_2_3<Rep>        Side_of_oriented_circle_2;  
+  typedef typename Rep::Construct_segment_3       Construct_segment_2;
+  typedef typename Rep::Construct_triangle_3      Construct_triangle_2;
 
   // for compatibility with previous versions
   typedef Point_2      Point;
