@@ -142,10 +142,11 @@ and ISR (c) (hot pixels are shaded).}
 \section{Four Line Segment Example}
 
 The following example generates an ISR representation
-of an arrangement of four line segments
-and a list of points that are the vertices of the resulting polylines.
+of an arrangement of four line segments. In particular it produces
+a list of points that are the vertices of the resulting polylines in a plane
+tiled with one-unit square pixels.
 
-\ccIncludeExampleCode{Snap_rounding_2/example.C}
+\ccIncludeExampleCode{Snap_rounding_2/example1.C}
 % +--------------------------------------------------------+
 
 This program generates four polylines, one for each input segment. The exact
@@ -153,27 +154,27 @@ output follows:
 
 \begin{verbatim}
 Polyline number 1:
-    (1/2:1/2)
-    (7/2:7/2)
-    (11/2:11/2)
-    (15/2:15/2)
-    (21/2:21/2)
+    (0/4:0/4)
+    (12/4:12/4)
+    (20/4:20/4)
+    (28/4:28/4)
+    (40/4:40/4)
 Polyline number 2:
-    (1/2:21/2)
-    (7/2:15/2)
-    (11/2:11/2)
-    (15/2:7/2)
-    (21/2:1/2)
+    (0/4:40/4)
+    (12/4:28/4)
+    (20/4:20/4)
+    (28/4:12/4)
+    (40/4:0/4)
 Polyline number 3:
-    (7/2:1/2)
-    (7/2:7/2)
-    (7/2:15/2)
-    (7/2:21/2)
+    (12/4:0/4)
+    (12/4:12/4)
+    (12/4:28/4)
+    (12/4:40/4)
 Polyline number 4:
-    (15/2:1/2)
-    (15/2:7/2)
-    (15/2:15/2)
-    (15/2:21/2)
+    (28/4:0/4)
+    (28/4:12/4)
+    (28/4:28/4)
+    (28/4:40/4)
 \end{verbatim}
 
 The package is supplied with a graphical demo program that opens a window,
