@@ -76,7 +76,7 @@ typedef CGAL::Triangulation_2<Rep>	    Triangulation;
 typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 
-
+typedef Triangulation::Vertex_iterator      Vertex_iterator;
 typedef Delaunay::Face_handle               Face_handle;
 typedef Delaunay::Vertex_handle             Vertex_handle;
 typedef Delaunay::Edge                      Edge;
@@ -86,6 +86,7 @@ const QString my_title_string("Triangulation Demo with"
 			      " CGAL Qt_widget");
 Delaunay	tr1;
 int		current_state;
+Coord_type        xmin, ymin, xmax, ymax;
 
 class Window : public QMainWindow
 {
@@ -235,7 +236,7 @@ private slots:
     Window *ed = new Window(500, 500);
     ed->setCaption("Layer");
     ed->show();
-    ed->set_window(-1.1, 1.1, -1.1, 1.1);
+    ed->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }
 
@@ -288,6 +289,19 @@ private slots:
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
     in >> tr1;
+    Vertex_iterator it = tr1.vertices_begin();
+    while(it != tr1.vertices_end()) {
+      if(xmin > (*it).point().x())
+	xmin = (*it).point().x();
+      if(xmax < (*it).point().x())
+	xmax = (*it).point().x();
+      if(ymin > (*it).point().y())
+	ymin = (*it).point().y();
+      if(ymax < (*it).point().y())
+	ymax = (*it).point().y();
+      it++;
+    }
+    widget->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }
 

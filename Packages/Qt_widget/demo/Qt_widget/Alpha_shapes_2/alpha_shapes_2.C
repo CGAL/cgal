@@ -378,9 +378,9 @@ private slots:
 	ymin = (*it).point().y();
       if(ymax < (*it).point().y())
 	ymax = (*it).point().y();
-      widget->set_window(xmin, xmax, ymin, ymax);
       it++;
     }
+    widget->set_window(xmin, xmax, ymin, ymax);
     A.make_alpha_shape(L.begin(), L.end());
     something_changed();
   }
