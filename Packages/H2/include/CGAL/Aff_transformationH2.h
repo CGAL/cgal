@@ -540,7 +540,7 @@ class Aff_transformationH2
     Aff_transformationH2<R>
         scaling(SCALING,scaling_numerator,scaling_denominator);
     Aff_transformationH2<R> combination =
-          Aff_transformationH2<R>(TRANSLATION, scaling.inverse().transform(-v) )
+          Aff_transformationH2<R>(TRANSLATION, scaling.inverse().transform(-v))
         * scaling
         * Aff_transformationH2<R>(ROTATION, sine, cosine, denominator)
         * Aff_transformationH2<R>(TRANSLATION, v ) ;
