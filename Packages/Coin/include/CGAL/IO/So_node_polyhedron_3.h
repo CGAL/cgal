@@ -60,7 +60,7 @@
 
 
 template<class Handle>
-class less{
+class my_less{
 public:
   bool operator()(const Handle& f1, const Handle& f2) const { return (&(*f1))<(&(*f2));}
 };
@@ -72,7 +72,7 @@ class Node_polyhedron_3 : public SoNonIndexedShape{
   //defined in Inventor/nodes/SoSubNode.h
 
 public:
-  typedef typename Polyhedron_3                         Polyhedron;
+  typedef Polyhedron_3                                  Polyhedron;
   typedef typename Polyhedron::Traits                   Traits;  
   typedef typename Traits::Vector_3                     Vector_3;
   typedef typename Polyhedron::Halfedge_handle          Halfedge_handle;
@@ -90,8 +90,8 @@ public:
   typedef typename Polyhedron::Halfedge_around_vertex_circulator
                                 Halfedge_around_vertex_circulator;
   typedef typename Traits::Point_3                      Point;
-  typedef less<Vertex_handle>                     Vertex_handle_less;
-  typedef less<Facet_handle>                      Facet_handle_less;
+  typedef my_less<Vertex_handle>                     Vertex_handle_less;
+  typedef my_less<Facet_handle>                      Facet_handle_less;
 
   //typedef typename Polyhedron::Size                    Size;
   

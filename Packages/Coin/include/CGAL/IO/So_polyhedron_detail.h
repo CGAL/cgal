@@ -33,7 +33,7 @@ class SoPolyhedronDetail : public SoDetail{
   typedef SoDetail inherited;  
 public:
 
-  typedef typename Polyhedron_3                     Polyhedron;
+  typedef Polyhedron_3                              Polyhedron;
   typedef typename Polyhedron_3::Vertex_handle      Vertex_handle;
   typedef typename Polyhedron_3::Vertex_iterator    Vertex_iterator;
   typedef typename Polyhedron_3::Facet_handle       Facet_handle;
@@ -71,7 +71,7 @@ public:
       SoPolyhedronDetail::classTypeId =
            SoType::createType(SoDetail::getClassTypeId(),
                               SO__QUOTE(SoPolyhedronDetail));
-    } while (0)
+    } while (0);
   }
   virtual SoDetail * copy(void) const {
     SoPolyhedronDetail<Polyhedron_3> * copy = new SoPolyhedronDetail<Polyhedron_3>;
