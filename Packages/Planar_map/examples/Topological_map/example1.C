@@ -36,7 +36,7 @@ int main() {
   std::cout <<  "map is valid." << std::endl;
 
   std::cout << "inserting edge e3 between target vertices of e2 and e1->twin() ...";
-  //  Halfedge_handle e3=
+
   t.insert_at_vertices(e2,e1->twin());
 
   CGAL_assertion(t.is_valid());
