@@ -46,8 +46,8 @@ public:
   typedef typename Tds::Face       value_type;
   typedef typename Tds::Face *     pointer;
   typedef typename Tds::Face &     reference;
-  typedef std::size_t     size_type;
-  typedef std::ptrdiff_t  difference_type;
+  typedef CGAL_CLIB_STD::size_t     size_type;
+  typedef CGAL_CLIB_STD::ptrdiff_t  difference_type;
   typedef std::bidirectional_iterator_tag   iterator_category;
 
   typedef Triangulation_dsul_iterator_base_2<Tds> Iterator_base;

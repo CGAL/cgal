@@ -40,7 +40,8 @@ class Triangulation_2;
 template < class Gt, class Tds >
 class Triangulation_line_face_circulator_2
   :   public Bidirectional_circulator_base<Triangulation_face_2<Gt,Tds>,
-	                                      std::ptrdiff_t,std::size_t>,
+	                                      CGAL_CLIB_STD::ptrdiff_t,
+                                              CGAL_CLIB_STD::size_t>,
       public Triangulation_cw_ccw_2,
       public  Triangulation_face_handle_2<Gt,Tds>
 {

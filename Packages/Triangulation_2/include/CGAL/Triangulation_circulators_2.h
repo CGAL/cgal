@@ -56,7 +56,8 @@ template < class Gt, class Tds>
 class Triangulation_face_circulator_2
     : public 
     Bidirectional_circulator_base<Triangulation_face_2<Gt,Tds>,
-				   CGAL_STD::ptrdiff_t,CGAL_STD::size_t>,
+				   CGAL_CLIB_STD::ptrdiff_t,
+                                   CGAL_CLIB_STD::size_t>,
       public Triangulation_cw_ccw_2
 {
 public:
@@ -105,7 +106,8 @@ public:
 template < class Gt, class Tds>
 class Triangulation_vertex_circulator_2
   : public Bidirectional_circulator_base<Triangulation_vertex_2<Gt,Tds>,
-                                    CGAL_STD::ptrdiff_t,CGAL_STD::size_t>,
+                                         CGAL_CLIB_STD::ptrdiff_t,
+                                         CGAL_CLIB_STD::size_t>,
     public Triangulation_cw_ccw_2
 {
 public:
@@ -153,7 +155,7 @@ class Triangulation_edge_circulator_2
   : public 
    Bidirectional_circulator_base< 
           typename Triangulation_2<Gt, Tds>::Edge, 
-           CGAL_STD::ptrdiff_t, CGAL_STD::size_t>,
+           CGAL_CLIB_STD::ptrdiff_t, CGAL_CLIB_STD::size_t>,
     public Triangulation_cw_ccw_2
 {
 public:

@@ -36,8 +36,8 @@ CGAL_BEGIN_NAMESPACE
 template < class Vertex, class Face >
 class Triangulation_ds_face_circulator_2
   : public Bidirectional_circulator_base<Face,
-                                 CGAL_STD::ptrdiff_t,
-				 CGAL_STD::size_t>,
+                                 CGAL_CLIB_STD::ptrdiff_t,
+				 CGAL_CLIB_STD::size_t>,
     public Triangulation_cw_ccw_2
       
 {
@@ -75,8 +75,8 @@ public:
 template < class Vertex, class Face >
 class Triangulation_ds_vertex_circulator_2 :
   public Bidirectional_circulator_base<Vertex, 
-                                       CGAL_STD::ptrdiff_t,
-                                       CGAL_STD::size_t>,
+                                       CGAL_CLIB_STD::ptrdiff_t,
+                                       CGAL_CLIB_STD::size_t>,
   public  Triangulation_cw_ccw_2
 {
 public:
@@ -113,8 +113,8 @@ public:
 template < class Vertex, class Face >
 class Triangulation_ds_edge_circulator_2 :
   public Bidirectional_circulator_base  <CGAL_STD::pair<Face*,int>, 
-                                         CGAL_STD::ptrdiff_t,
-                                         CGAL_STD::size_t>,
+                                         CGAL_CLIB_STD::ptrdiff_t,
+                                         CGAL_CLIB_STD::size_t>,
   public Triangulation_cw_ccw_2
 {
 public:

@@ -124,7 +124,7 @@ public:
                            Proj_point,
 	                   const Point&, 
                            const Point*,
-                           std::ptrdiff_t,
+                           CGAL_CLIB_STD::ptrdiff_t,
                            std::bidirectional_iterator_tag>  Point_iterator;
 
   typedef Point value_type; // to have a back_inserter

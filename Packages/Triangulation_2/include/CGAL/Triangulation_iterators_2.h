@@ -51,8 +51,8 @@ public:
   typedef Face      value_type;
   typedef Face*     pointer;
   typedef Face&     reference;
-  typedef std::size_t     size_type;
-  typedef std::ptrdiff_t  difference_type;
+  typedef CGAL_CLIB_STD::size_t     size_type;
+  typedef CGAL_CLIB_STD::ptrdiff_t  difference_type;
   typedef std::bidirectional_iterator_tag   iterator_category;
 
 public:
@@ -116,8 +116,8 @@ public:
   typedef Vertex       value_type;
   typedef const Vertex *     pointer;
   typedef const Vertex &     reference;
-  typedef std::size_t     size_type;
-  typedef std::ptrdiff_t  difference_type;
+  typedef CGAL_CLIB_STD::size_t     size_type;
+  typedef CGAL_CLIB_STD::ptrdiff_t  difference_type;
   typedef std::bidirectional_iterator_tag   iterator_category;
 
 
@@ -186,8 +186,8 @@ public:
   typedef Edge       value_type;
   typedef Edge *     pointer;
   typedef Edge &     reference;
-  typedef std::size_t     size_type;
-  typedef std::ptrdiff_t  difference_type;
+  typedef CGAL_CLIB_STD::size_t     size_type;
+  typedef CGAL_CLIB_STD::ptrdiff_t  difference_type;
   typedef std::bidirectional_iterator_tag   iterator_category;
   
 
