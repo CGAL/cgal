@@ -124,6 +124,14 @@ int main(int argc,char *argv[])
   Snap_rounding_2 s3(seg_list.begin(),seg_list.end(),prec,false);
   print_out(s3);
 
+  std::cout << "\nchanging to isr\n";
+  s3.do_isr(true);
+  print_out(s3);
+
+  std::cout << "\nchanging number of kd-trees\n";
+  s3.update_number_of_kd_trees(2);
+  print_out(s3);
+
   return(0);
 }
 

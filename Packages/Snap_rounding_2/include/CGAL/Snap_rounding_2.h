@@ -207,6 +207,8 @@ public:
     int insert(InputIterator first, InputIterator last);
   bool remove(Segment_2 seg);
   void clear();
+  void update_number_of_kd_trees(int inp_number_of_kd_trees);
+  void do_isr(bool inp_do_isr);
 
   template<class Out>
   void output(Out &o);
@@ -230,7 +232,7 @@ private:
   std::list<std::list<Point_2> > segments_output_list;
   int number_of_segments,number_of_kd_trees;
   Multiple_kd_tree<NT,Hot_Pixel<Rep> *> *mul_kd_tree;
-  bool do_isr;
+  bool wheteher_to_do_isr;
 
   void find_hot_pixels_and_create_kd_trees();
   void find_intersected_hot_pixels(Segment_data<Rep> &seg,
@@ -756,7 +758,7 @@ void Snap_rounding_2<Rep_>::iterate()
         if(number_of_intersections > 1) {
           // segments that have at most one intersecting hot pixel are
           // done(it was inserted)
-          if(do_isr)
+          if(wheteher_to_do_isr)
             reroute_isr(hot_pixels_intersected_set,seg_output,
                         number_of_intersections,true);
           else
@@ -777,10 +779,9 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
   begin,Segment_const_iterator end,
   NT inp_prec,bool inp_do_isr,int inp_number_of_kd_trees)
   {
-    // initialize approximation angles map
-    
+    // initialize approximation angles map    
     erase_hp = false;
-    do_isr = inp_do_isr;
+    wheteher_to_do_isr = inp_do_isr;
     prec = inp_prec;
     number_of_segments = 0;
     number_of_kd_trees = inp_number_of_kd_trees;
@@ -794,10 +795,6 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
       ++number_of_segments;
       ++begin;
     }
-
-    // !!!!! lazy evaluation
-    /* find_hot_pixels_and_create_kd_trees();
-       iterate();*/
   }
 
 template<class Rep_>
@@ -807,7 +804,7 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
     // initialize approximation angles map
     need_sr = true;
     erase_hp = false;
-    do_isr = inp_do_isr;
+    wheteher_to_do_isr = inp_do_isr;
     prec = inp_prec;
     number_of_segments = 0;
     number_of_kd_trees = inp_number_of_kd_trees;
@@ -915,6 +912,18 @@ void Snap_rounding_2<Rep_>::clear()
     need_sr = true;
     seg_list.clear();
     seg_2_list.clear();
+  }
+
+template<class Rep_>
+void Snap_rounding_2<Rep_>::update_number_of_kd_trees(int inp_number_of_kd_trees)
+  { 
+    number_of_kd_trees = inp_number_of_kd_trees;
+  }
+
+template<class Rep_>
+void Snap_rounding_2<Rep_>::do_isr(bool inp_do_isr)
+  { 
+    wheteher_to_do_isr = inp_do_isr;
   }
 
 template<class Rep_>
