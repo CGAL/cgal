@@ -9,6 +9,7 @@ o changes from Andreas Fabri, so that it works with VC++, and BCC:
   - Added some typename
   - std::queue only works with std::list not with std::deque on VC++6
 o added this file
+o move Double_map.h in this package to remove dependency to Mesh_3
 
 version 0.9 (2002/07/?)
 -----------------------
