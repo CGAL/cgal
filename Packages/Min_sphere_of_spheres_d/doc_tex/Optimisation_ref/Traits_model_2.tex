@@ -2,13 +2,6 @@
 % The CGAL Reference Manual
 % Chapter: Geometric Optimisation
 % Section: Smallest Enclosing Sphere of Spheres
-% -----------------------------------------------------------------------------
-% file  : doc_tex/basic/Optimisation/Optimisation_ref/Traits_model_2.tex
-% author: Kaspar Fischer (fischerk@inf.ethz.ch)
-% -----------------------------------------------------------------------------
-% $Revision$
-% $Date$
-% $CGAL_Package$
 % =============================================================================
 
 \begin{ccRefClass}{Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>}
@@ -38,7 +31,7 @@ fulfill the following requirements:
 
 \ccNestedType{FT}{is a number type, which fulfills the requirements of
 type \ccc{FT} of concept \ccc{MinSphereOfSpheresTraits}: It must be
-either \ccc{double} or an exact number type.}
+either \ccc{double} or \ccc{float}, or an exact number type.}
 
 \ccNestedType{UseSqrt}{fulfills the
 requirements of type \ccc{Use_square_roots} of concept
@@ -46,6 +39,9 @@ requirements of type \ccc{Use_square_roots} of concept
 
 \ccNestedType{Algorithm}{fulfills the requirements of type
 \ccc{Algorithm} of concept \ccc{MinSphereOfSpheresTraits}: It must be either \ccc{Default_algorithm}, \ccc{LP_algorithm} or \ccc{Farthest_first_heuristic}.}
+
+\ccConstants
+\ccNestedType{D}{is the constant 2, i.e.\ the dimension of $\R^2$.}
 
 \ccTypes
 In addition to the types required by the concept
@@ -58,14 +54,14 @@ In addition to the types required by the concept
 
 \ccNestedType{Algorithm}{}
 
-\ccNestedType{Weight}{is a typedef to to the template parameter \ccc{FT}}
+\ccNestedType{Weight}{is a typedef to the template parameter \ccc{FT}}
 
-\ccNestedType{Point}{is a typedef to to \ccc{CGAL::Point_2<K>}.}
+\ccNestedType{Point}{is a typedef to \ccc{CGAL::Point_2<K>}.}
 
-\ccNestedType{Sphere}{is a typedef to to
+\ccNestedType{Sphere}{is a typedef to
   \ccc{CGAL::Weighted_point<Point,Weight>}.}
 
-\ccNestedType{Coordinate_iterator}{is a typedef to to
+\ccNestedType{Coordinate_iterator}{is a typedef to
 \ccc{Point::Cartesian_const_iterator}.}
 
 
@@ -80,12 +76,7 @@ routines of class \ccc{Weighted_point<Point,Weight>}:
 \ccMemberFunction{ FT radius(const
 Sphere& s);}{ maps to \ccc{s.weight()}.}
 
-\ccMemberFunction{ Coordinate_iterator center_coordinates_begin(const
-Sphere& s);}{ maps to \ccc{s.point().cartesian_begin()}.}
-
-\ccMemberFunction{ Coordinate_iterator center_coordinates_end(const
-Sphere& s);}{ maps to \ccc{s.point().cartesian_end()}.}
-
-\ccMemberFunction{ int dimension(const Sphere& s);}{ maps to \ccc{s.dimension()}.}
+\ccMemberFunction{ Coordinate_iterator begin(const
+Sphere& s);}{ maps to \ccc{s.cartesian_begin()}.}
 
 \end{ccRefClass}

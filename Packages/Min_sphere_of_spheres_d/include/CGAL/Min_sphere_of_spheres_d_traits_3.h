@@ -78,7 +78,7 @@ namespace CGAL {
     }
 
     static inline Coordinate_iterator begin(const Sphere& s) {
-      return s.point().cartesian_begin();
+      return s.cartesian_begin();
     }
   };
 
