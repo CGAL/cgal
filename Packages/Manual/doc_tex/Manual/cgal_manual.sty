@@ -150,6 +150,30 @@
 % relax formatting strictness to avoid many overfull \hbox's etc.
 \sloppy
 
+% Provide a default title page macro. Args: <package/module name>
+% ---------------------------------------------------------------
+\newcommand{\cgalTitlePage}[1]{%
+  \pagestyle{empty}
+  \begin{titlepage}\mbox{}\vspace{3cm}
+  \lcTex{\centerline{\IpeScale{25}%
+      \Ipe{Manual/fig/c-simp.ipe}
+      \Ipe{Manual/fig/g-simp.ipe}
+      \Ipe{Manual/fig/a-simp.ipe}
+      \Ipe{Manual/fig/l-simp.ipe}}}
+  \lcRawHtml{
+  <p align=center>
+    <img border="0" src="Manual/fig/cgal_small_FAF8E8.gif" align="center"
+      alt="[Computational Geometry Algorithms Library]">
+  </p>}
+  \vspace{2cm}
+
+  \centerline{{\huge #1}}\vspace{2cm}
+
+  \centerline{{\Large \cgalversion}}\vspace{1cm}
+
+  \centerline{{\Large \cgalversiondate}}
+  \end{titlepage}  
+}
 
 % Implement the two columns layout for the HTML converted part
 % ------------------------------------------------------------
