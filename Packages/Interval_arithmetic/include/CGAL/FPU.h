@@ -29,14 +29,16 @@
 // It also contains the definition of the Protect_FPU_rounding<> classes,
 // a helper class which is a nice way to protect blocks of code needing a
 // particular rounding mode.
-#if defined __alpha__  && defined __linux__ 
+#ifdef __MWERKS__
+#  include <fenv.h>
+#elif defined __alpha__  && defined __linux__ 
 extern "C" {
 #include <fenv.h>
 }
 #elif defined __linux__ 
-#include <fpu_control.h>
+#  include <fpu_control.h>
 #elif defined __SUNPRO_CC || (defined __KCC && defined __sun)
-#include <ieeefp.h>
+#  include <ieeefp.h>
 #elif defined __osf || defined __osf__ 
 #  ifdef __GNUG__
      // GCC seems to remove (fixincludes) read_rnd/write_rnd...
@@ -45,7 +47,7 @@ extern "C" {
 #    include <float.h>
 #  endif
 #elif defined __BORLANDC__
-#include <float.h>
+#  include <float.h>
 #elif defined __sgi
     // The 3 C functions provided on IRIX 6.5 do not work !
     // So we use precompiled (by gcc) object files linked into libCGAL.
@@ -154,6 +156,15 @@ inline double IA_bug_sqrt(double d)
 #define CGAL_IA_SETFPCW(CW) fesetround(CW)
 #define CGAL_IA_GETFPCW(CW) CW = fegetround()
 typedef fpu_control_t FPU_CW_t;
+#define CGAL_FE_TONEAREST    FE_TONEAREST
+#define CGAL_FE_TOWARDZERO   FE_TOWARDZERO
+#define CGAL_FE_UPWARD       FE_UPWARD
+#define CGAL_FE_DOWNWARD     FE_DOWNWARD
+
+#elif defined __MWERKS__
+#define CGAL_IA_SETFPCW(CW) fesetround(CW)
+#define CGAL_IA_GETFPCW(CW) CW = fegetround()
+typedef int FPU_CW_t;
 #define CGAL_FE_TONEAREST    FE_TONEAREST
 #define CGAL_FE_TOWARDZERO   FE_TOWARDZERO
 #define CGAL_FE_UPWARD       FE_UPWARD
