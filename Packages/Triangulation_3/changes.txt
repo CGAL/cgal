@@ -1,3 +1,6 @@
+30/01/2004 Sylvain Pion
+- Remove obsolete _MSC_VER workaround.
+
 Version 1.190 (?? January 04)
 - Move random generator to CGAL::Random.
 
