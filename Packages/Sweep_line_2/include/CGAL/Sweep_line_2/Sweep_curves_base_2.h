@@ -1159,7 +1159,7 @@ protected:
     // inserting the new event point to curve node, and 
     // then to the status line.
 #ifdef  CGAL_SWEEP_LINE_DEBUG  
-    cout<<"inserting the new event point to curve node, \ 
+    cout<<"inserting the new event point to curve node, 
 and then to the status line"<<std::endl;
 #endif
  
@@ -1354,7 +1354,7 @@ and then to the status line"<<std::endl;
                 first = false;
               }
 #ifdef  CGAL_SWEEP_LINE_DEBUG  
-              cout<<"the event point is the right point of the curve - \ 
+              cout<<"the event point is the right point of the curve - 
 the curve leaves the status"<<std::endl;
 #endif
               status.erase(curr_cv_node);
@@ -1446,7 +1446,7 @@ the curve leaves the status"<<std::endl;
               first = false;
             }
 #ifdef  CGAL_SWEEP_LINE_DEBUG  
-            cout<<"the event point is the right point of the curve - \ 
+            cout<<"the event point is the right point of the curve - 
 the curve leaves the status"<<std::endl;
 #endif
             status.erase(curr_cv_node);

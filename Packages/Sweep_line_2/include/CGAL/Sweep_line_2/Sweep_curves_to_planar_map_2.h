@@ -249,7 +249,7 @@ public:
     // now adding to the x-monotone container all the curves 
     // in the original subdivision.
     for (X_curve_list_iterator  cv_iter = subdivision_curves.begin(); 
-         cv_iter !=  subdivision_curves.end(); ++cv_iter)
+         cv_iter != subdivision_curves.end(); ++cv_iter)
       x_monotone_curves.push_back(*cv_iter);
     
     for (X_curve_list_iterator cv_iter = x_monotone_curves.begin(); 
