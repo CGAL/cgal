@@ -69,14 +69,12 @@ public:
     parent=cv.get_parent();
     return *this;
   }
-  bool operator==(const PL_X_curve_plus &cv) const
-  {
-    return curve::operator==(cv);
-  }
+
   Halfedge_handle get_parent() const
   {
     return parent;
   }
+
 protected:
   Halfedge_handle parent;
 };
