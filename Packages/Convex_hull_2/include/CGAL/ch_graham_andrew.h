@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 // {\it Precondition:} The points in [|first|,|last|) are sorted with respect
 // to $pq$ and the range [|first|,|last|) contains at least two different 
 // points.
-// {\sc traits}: uses |Traits::Leftturn_2| operating on the 
+// {\sc traits}: uses |Traits::Left_turn_2| operating on the 
 // point type |Traits::Point_2|.
 template <class BidirectionalIterator, class OutputIterator, class Traits>
 OutputIterator
@@ -68,7 +68,7 @@ ch__ref_graham_andrew_scan( BidirectionalIterator first,
 
 
 // same as |convex_hull_2(first,last,result)|.
-// {\sc traits}: uses |Traits::Point_2|, |Traits::Leftturn_2|
+// {\sc traits}: uses |Traits::Point_2|, |Traits::Left_turn_2|
 // and |Traits::Less_xy_2|.
 template <class InputIterator, class OutputIterator, class Traits>
 OutputIterator

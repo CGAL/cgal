@@ -46,7 +46,7 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
                  const Traits&   ch_traits)
 {
   typedef  typename Traits::Point_2                    Point_2;    
-  typedef  typename Traits::Leftturn_2                 Left_of_line;
+  typedef  typename Traits::Left_turn_2                 Left_of_line;
 
   if (first == last) return result;
   ForwardIterator n, s, e, w;
@@ -71,7 +71,7 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
   region3.push_back( *e);
   region4.push_back( *n);
 
-  Left_of_line  left_turn = ch_traits.leftturn_2_object();
+  Left_of_line  left_turn = ch_traits.left_turn_2_object();
 
   CGAL_ch_postcondition_code( ForwardIterator save_first = first; )
 

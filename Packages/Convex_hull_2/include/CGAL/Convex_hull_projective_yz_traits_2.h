@@ -67,7 +67,8 @@ public:
    bool 
    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
    { 
-    return orientationC2(p.y(), p.z(), q.y(), q.z(), r.y(), r.z()) == LEFTTURN;
+    return orientationC2(p.y(), p.z(), q.y(), q.z(), r.y(), r.z()) 
+                                                           == LEFT_TURN;
    }
 };
 
@@ -83,7 +84,7 @@ public:
    operator()(const Point_3& c) const
    {
       return orientationC2(p_a.y(), p_a.z(), p_b.y(), p_b.z(), c.y(), c.z()) ==
-             LEFTTURN; 
+             LEFT_TURN; 
    }
 private:
    Point_3 p_a;
@@ -126,9 +127,9 @@ public:
    {
       Orientation orient =
                orientationC2(r.y(), r.z(), p.y(), p.z(), q.y(), q.z());
-      if ( orient ==  LEFTTURN )
+      if ( orient ==  LEFT_TURN )
          return true;
-      else if ( orient == RIGHTTURN )
+      else if ( orient == RIGHT_TURN )
          return false;
       else
       {
@@ -151,7 +152,7 @@ public:
     typedef Point_3                            Point_2;
     typedef Less_xy_plane_yz_2<Point_3>        Less_xy_2;
     typedef Less_yx_plane_yz_2<Point_3>        Less_yx_2;
-    typedef Left_turn_plane_yz_2<Point_3>      Leftturn_2;
+    typedef Left_turn_plane_yz_2<Point_3>      Left_turn_2;
     typedef Less_dist_to_line_plane_yz_2<Point_3>
                                                 Less_signed_distance_to_line_2;
     typedef Less_rotate_ccw_plane_yz_2<Point_3> Less_rotate_ccw_plane_2;
@@ -164,9 +165,9 @@ public:
     less_yx_2_object() const
     {  return Less_yx_2(); }
 
-    Leftturn_2
-    leftturn_2_object() const
-    {  return Leftturn_2(); }
+    Left_turn_2
+    left_turn_2_object() const
+    {  return Left_turn_2(); }
 
     Less_signed_distance_to_line_2
     less_signed_distance_to_line_2_object() const

@@ -49,7 +49,7 @@ ch_bykat(InputIterator first, InputIterator last,
               const Traits& ch_traits)
 {
   typedef typename Traits::Point_2                         Point_2;
-  typedef typename Traits::Leftturn_2                      Leftturn_2;
+  typedef typename Traits::Left_turn_2                      Left_turn_2;
   typedef typename Traits::Less_signed_distance_to_line_2  Less_dist;
 
   if (first == last) return result;
@@ -85,7 +85,7 @@ ch_bykat(InputIterator first, InputIterator last,
   #endif // no postconditions ...
   H.push_back( a );
   L.push_back( P.begin() );
-  Leftturn_2 left_turn = ch_traits.leftturn_2_object();
+  Left_turn_2 left_turn = ch_traits.left_turn_2_object();
   R.push_back( l = std::partition( P.begin(), P.end(), 
                                    bind_1(bind_1(left_turn,a),b) ) );
   r = std::partition( l, P.end(), bind_1(bind_1(left_turn,b),a) );
@@ -138,7 +138,7 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
                              const Traits&   ch_traits)
 {
   typedef typename Traits::Point_2               Point_2;
-  typedef typename Traits::Leftturn_2            Leftturn_2;
+  typedef typename Traits::Left_turn_2            Left_turn_2;
   typedef typename Traits::Less_signed_distance_to_line_2     
                                                  Less_dist;
   typedef typename std::vector< Point_2 >::iterator   
@@ -180,7 +180,7 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
   #endif // no postconditions ...
   H.push_back( a );
   L.push_back( Pbegin );
-  Leftturn_2 left_turn = ch_traits.leftturn_2_object();
+  Left_turn_2 left_turn = ch_traits.left_turn_2_object();
   R.push_back( l = std::partition( Pbegin, Pend, 
                                    bind_1(bind_1(left_turn, a), b) ) );
   r = std::partition( l, Pend, bind_1(bind_1(left_turn,b),a) );

@@ -39,7 +39,7 @@ public:
   typedef typename K::Less_yx_2               Less_yx_2;
   typedef CGALi::r_Less_dist_to_line<K>       Less_signed_distance_to_line_2;
   typedef typename K::Less_rotate_ccw_2       Less_rotate_ccw_2;
-  typedef typename K::Leftturn_2              Leftturn_2;
+  typedef typename K::Left_turn_2              Left_turn_2;
   typedef typename K::Segment_2               Segment_2;    
   
   Less_xy_2
@@ -58,9 +58,9 @@ public:
   less_rotate_ccw_2_object() const
   { return Less_rotate_ccw_2(); }
 
-  Leftturn_2
-  leftturn_2_object() const
-  { return Leftturn_2(); }
+  Left_turn_2
+  left_turn_2_object() const
+  { return Left_turn_2(); }
 
 };
 

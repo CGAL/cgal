@@ -31,7 +31,7 @@ CGAL_BEGIN_NAMESPACE
 // returns true, if the point elements in [|first|,|last|) form a 
 // counterclockwise oriented strongly convex polygon. Strongly means, 
 // there are no three collinear points. 
-// {\sc traits}: uses |Traits::Leftturn_2| and |Traits::Less_xy_2|.
+// {\sc traits}: uses |Traits::Left_turn_2| and |Traits::Less_xy_2|.
 template <class ForwardIterator, class Traits>
 bool
 is_ccw_strongly_convex_2( ForwardIterator first, ForwardIterator last, 
@@ -55,7 +55,7 @@ is_ccw_strongly_convex_2( ForwardIterator first, ForwardIterator last )
 // returns true, if the point elements in [|first|,|last|) form a 
 // clockwise oriented strongly convex polygon. Strongly means, there are
 // no three collinear points.
-// {\sc traits}: uses |Traits::Leftturn_2| and |Traits::Less_xy_2|.
+// {\sc traits}: uses |Traits::Left_turn_2| and |Traits::Less_xy_2|.
 template <class ForwardIterator, class Traits>
 bool
 is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last, 
@@ -77,7 +77,7 @@ is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last )
 // returns true, if all points in [|first1|,|last1|) are 
 // not right of the lines defined by consecutive points in the range 
 // [|first2|,|last2|), where the range is considered as a cycle.
-// {\sc traits}: uses |Traits::Leftturn_2|.
+// {\sc traits}: uses |Traits::Left_turn_2|.
 template <class ForwardIterator1, class ForwardIterator2, class Traits>
 bool
 ch_brute_force_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
@@ -101,7 +101,7 @@ ch_brute_force_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
 // returns true, if all points in [|first1|,|last1|) are 
 // not right of the lines defined by consecutive points in the range 
 // [|first2|,|last2|). 
-// {\sc traits}: uses |Traits::Leftturn_2|.
+// {\sc traits}: uses |Traits::Left_turn_2|.
 template <class ForwardIterator1, class ForwardIterator2, class Traits>
 bool
 ch_brute_force_chain_check_2(ForwardIterator1 first1, 

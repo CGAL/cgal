@@ -48,10 +48,10 @@ ch__recursive_eddy(List& L,
                         const Traits& ch_traits)
 {
   typedef  typename Traits::Point_2                         Point_2;    
-  typedef  typename Traits::Leftturn_2                      Leftturn_2;
+  typedef  typename Traits::Left_turn_2                      Left_turn_2;
   typedef  typename Traits::Less_signed_distance_to_line_2  Less_dist;
 
-  Leftturn_2 left_turn = ch_traits.leftturn_2_object();
+  Left_turn_2 left_turn = ch_traits.left_turn_2_object();
   CGAL_ch_precondition( \
     std::find_if(a_it, b_it, \
             bind_1(bind_1(left_turn, *b_it), *a_it)) \
@@ -89,7 +89,7 @@ ch_eddy(InputIterator first, InputIterator last,
              const Traits& ch_traits)
 {
   typedef  typename Traits::Point_2                         Point_2;    
-  typedef  typename Traits::Leftturn_2                      Leftturn_2;
+  typedef  typename Traits::Left_turn_2                      Left_turn_2;
 
   if (first == last) return result;
   std::list< Point_2 >   L;
@@ -108,7 +108,7 @@ ch_eddy(InputIterator first, InputIterator last,
 
   L.erase(w);
   L.erase(e);
-  Leftturn_2 left_turn = ch_traits.leftturn_2_object();
+  Left_turn_2 left_turn = ch_traits.left_turn_2_object();
   e = std::partition(L.begin(), L.end(), 
                      bind_1(bind_1(left_turn, ep), wp) );
   L.push_front(wp);

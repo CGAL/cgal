@@ -30,7 +30,7 @@ CGAL_BEGIN_NAMESPACE
 
 // same as |convex_hull_2(first,last,result)|.
 // {\sc traits}: operates on |Traits::Point_2| using |Traits::Less_xy_2|, 
-// |Traits::Less_yx_2|, and |Traits::Leftturn_2|.
+// |Traits::Less_yx_2|, and |Traits::Left_turn_2|.
 template <class ForwardIterator, class OutputIterator, class Traits>
 OutputIterator
 ch_akl_toussaint(ForwardIterator first, ForwardIterator last, 

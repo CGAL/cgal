@@ -49,7 +49,7 @@ ch_graham_andrew_scan( BidirectionalIterator first,
 {
   typedef  typename Traits::Less_xy_2   Less_xy;
   typedef  typename Traits::Point_2     Point_2;
-  typedef  typename Traits::Leftturn_2  Leftturn;
+  typedef  typename Traits::Left_turn_2  Left_turn;
 
   std::vector< BidirectionalIterator >    S;
   BidirectionalIterator              alpha;
@@ -62,7 +62,7 @@ ch_graham_andrew_scan( BidirectionalIterator first,
   CGAL_ch_precondition( *first != *last );
   S.push_back( last  );
   S.push_back( first );
-  Leftturn    leftturn = ch_traits.leftturn_2_object();
+  Left_turn    left_turn = ch_traits.left_turn_2_object();
 
 
   iter = first;
@@ -70,7 +70,7 @@ ch_graham_andrew_scan( BidirectionalIterator first,
   {
       ++iter;
   }
-  while (( iter != last ) && !leftturn(*last, *first, *iter) );
+  while (( iter != last ) && !left_turn(*last, *first, *iter) );
 
   if ( iter != last )
   {
@@ -83,9 +83,9 @@ ch_graham_andrew_scan( BidirectionalIterator first,
 
       for ( ++iter ; iter != last; ++iter )
       {
-          if ( leftturn(*alpha, *iter, *last) )
+          if ( left_turn(*alpha, *iter, *last) )
           {
-              while ( !leftturn(*beta, *alpha, *iter) )
+              while ( !left_turn(*beta, *alpha, *iter) )
               {
                   S.pop_back();
                   alpha = beta;
@@ -137,7 +137,7 @@ ch__ref_graham_andrew_scan( BidirectionalIterator first,
 {
   typedef  typename Traits::Less_xy_2   Less_xy;
   typedef  typename Traits::Point_2     Point_2;
-  typedef  typename Traits::Leftturn_2  Leftturn;
+  typedef  typename Traits::Left_turn_2  Left_turn;
 
   std::vector< BidirectionalIterator >    S;
   BidirectionalIterator              alpha;
@@ -150,7 +150,7 @@ ch__ref_graham_andrew_scan( BidirectionalIterator first,
   CGAL_ch_precondition( *first != *last );
   S.push_back( last  );
   S.push_back( first );
-  Leftturn    leftturn = ch_traits.leftturn_2_object();
+  Left_turn    left_turn = ch_traits.left_turn_2_object();
 
 
   iter = first;
@@ -158,7 +158,7 @@ ch__ref_graham_andrew_scan( BidirectionalIterator first,
   {
       ++iter;
   }
-  while (( iter != last ) && !leftturn(*last, *first, *iter) );
+  while (( iter != last ) && !left_turn(*last, *first, *iter) );
 
   if ( iter != last )
   {
@@ -171,9 +171,9 @@ ch__ref_graham_andrew_scan( BidirectionalIterator first,
 
       for ( ++iter ; iter != last; ++iter )
       {
-          if ( leftturn(*alpha, *iter, *last) )
+          if ( left_turn(*alpha, *iter, *last) )
           {
-              while ( !leftturn(*beta, *alpha, *iter) )
+              while ( !left_turn(*beta, *alpha, *iter) )
               {
                   S.pop_back();
                   alpha = beta;
@@ -205,7 +205,7 @@ ch_graham_andrew( InputIterator  first,
 {
   typedef  typename Traits::Less_xy_2   Less_xy;
   typedef  typename Traits::Point_2     Point_2;
-  typedef  typename Traits::Leftturn_2  Leftturn;
+  typedef  typename Traits::Left_turn_2  Left_turn;
 
   if (first == last) return result;
   std::vector< Point_2 >  V;
@@ -253,7 +253,7 @@ ch_lower_hull_scan( InputIterator  first,
 {
   typedef  typename Traits::Less_xy_2   Less_xy;
   typedef  typename Traits::Point_2     Point_2;
-  typedef  typename Traits::Leftturn_2  Leftturn;
+  typedef  typename Traits::Left_turn_2  Left_turn;
 
   if (first == last) return result;
   std::vector< Point_2 >  V;
@@ -288,7 +288,7 @@ ch_upper_hull_scan( InputIterator  first,
 {
   typedef  typename Traits::Less_xy_2   Less_xy;
   typedef  typename Traits::Point_2     Point_2;
-  typedef  typename Traits::Leftturn_2  Leftturn;
+  typedef  typename Traits::Left_turn_2  Left_turn;
 
   if (first == last) return result;
   std::vector< Point_2 >  V;

@@ -37,10 +37,10 @@ is_ccw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
                           const Traits& ch_traits)
 {
   typedef  typename Traits::Less_xy_2      Less_xy;
-  typedef  typename Traits::Leftturn_2     Leftturn;
+  typedef  typename Traits::Left_turn_2     Left_turn;
 
   Less_xy  smaller_xy = ch_traits.less_xy_2_object();
-  Leftturn leftturn = ch_traits.leftturn_2_object();
+  Left_turn left_turn = ch_traits.left_turn_2_object();
 
   ForwardIterator iter1;
   ForwardIterator iter2;
@@ -62,7 +62,7 @@ is_ccw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
 
   while (iter3 != last) 
   {
-      if ( !leftturn( *iter1, *iter2, *iter3 ) ) return false; 
+      if ( !left_turn( *iter1, *iter2, *iter3 ) ) return false; 
       if ( smaller_xy( *iter2, *iter1 ) && smaller_xy( *iter2, *iter3 )) ++f;
 
       ++iter1;
@@ -71,14 +71,14 @@ is_ccw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
   }
 
   iter3 = first;
-  if ( !leftturn( *iter1, *iter2, *iter3 ) ) return false; 
+  if ( !left_turn( *iter1, *iter2, *iter3 ) ) return false; 
   if ( smaller_xy( *iter2, *iter1 ) && smaller_xy( *iter2, *iter3 )) ++f;
 
 
   iter1 = iter2;
   iter2 = first;
   ++iter3;
-  if ( !leftturn( *iter1, *iter2, *iter3 ) ) return false; 
+  if ( !left_turn( *iter1, *iter2, *iter3 ) ) return false; 
   if ( smaller_xy( *iter2, *iter1 ) && smaller_xy( *iter2, *iter3 )) ++f;
 
 
@@ -91,7 +91,7 @@ is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
                          const Traits& ch_traits)
 {
   typedef  typename Traits::Less_xy_2       Less_xy;
-  typedef  typename Traits::Leftturn_2      Leftturn;
+  typedef  typename Traits::Left_turn_2      Left_turn;
 
   Less_xy  smaller_xy = ch_traits.less_xy_2_object();
 
@@ -115,7 +115,7 @@ is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
 
   while (iter3 != last) 
   {
-      if ( !leftturn( *iter2, *iter1, *iter3 ) ) return false;
+      if ( !left_turn( *iter2, *iter1, *iter3 ) ) return false;
       if ( smaller_xy( *iter2, *iter1 ) && smaller_xy( *iter2, *iter3 )) ++f;
 
       ++iter1;
@@ -124,14 +124,14 @@ is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
   }
 
   iter3 = first;
-  if ( !leftturn( *iter2, *iter1, *iter3 ) ) return false;
+  if ( !left_turn( *iter2, *iter1, *iter3 ) ) return false;
   if ( smaller_xy( *iter2, *iter1 ) && smaller_xy( *iter2, *iter3 )) ++f;
 
 
   iter1 = iter2;
   iter2 = first;
   ++iter3;
-  if ( !leftturn( *iter2, *iter1, *iter3 ) ) return false;
+  if ( !left_turn( *iter2, *iter1, *iter3 ) ) return false;
   if ( smaller_xy( *iter2, *iter1 ) && smaller_xy( *iter2, *iter3 )) ++f;
 
 
@@ -144,7 +144,7 @@ ch_brute_force_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
                             ForwardIterator2 first2, ForwardIterator2 last2,
                             const Traits&  ch_traits)
 {
-  typedef    typename Traits::Leftturn_2    Left_of_line;
+  typedef    typename Traits::Left_turn_2    Left_of_line;
   ForwardIterator1 iter11;
   ForwardIterator2 iter21;
   ForwardIterator2 iter22;
@@ -162,7 +162,7 @@ ch_brute_force_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
       return true;
   }
 
-  Left_of_line  left_turn = ch_traits.leftturn_2_object();
+  Left_of_line  left_turn = ch_traits.left_turn_2_object();
   iter22 = first2;
   iter21 = iter22++;
   while (iter22 != last2)
@@ -197,7 +197,7 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1,
 
   if ( successor(first2) == last2 ) return true;
 
-  Left_of_line  left_turn = ch_traits.leftturn_2_object();
+  Left_of_line  left_turn = ch_traits.left_turn_2_object();
   iter22 = first2;
   iter21 = iter22++;
   while (iter22 != last2)

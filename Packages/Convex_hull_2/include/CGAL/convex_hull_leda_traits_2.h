@@ -41,7 +41,7 @@ public:
   typedef   CGALi::p_Less_dist_to_line_2<Point_2>           
                                                Less_signed_distance_to_line_2;
   typedef   CGALi::p_Less_rotate_ccw<Point_2>               Less_rotate_ccw_2;
-  typedef   CGALi::p_Left_turn<Point_2>                     Leftturn_2;
+  typedef   CGALi::p_Left_turn<Point_2>                     Left_turn_2;
   typedef   leda_segment                                    Segment_2; 
   
   Less_xy_2
@@ -60,9 +60,9 @@ public:
   less_rotate_ccw_2_object( ) const
   { return Less_rotate_ccw_2(); }
 
-  Leftturn_2
-  leftturn_2_object() const
-  { return Leftturn_2(); }
+  Left_turn_2
+  left_turn_2_object() const
+  { return Left_turn_2(); }
 
 };
 

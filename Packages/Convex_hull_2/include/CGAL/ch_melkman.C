@@ -49,7 +49,7 @@ ch_melkman( InputIterator first, InputIterator last,
 {
   typedef typename Traits::Point_2      Point;
   typedef typename Traits::Segment_2    Segment;
-  typename Traits::Leftturn_2 leftturn  = ch_traits.leftturn_2_object();
+  typename Traits::Left_turn_2 left_turn  = ch_traits.left_turn_2_object();
   CGAL_ch_assertion_code( \
   typename Traits::Less_xy_2 less       = ch_traits.less_xy_2_object(); )
   
@@ -78,8 +78,8 @@ ch_melkman( InputIterator first, InputIterator last,
     r = *first;
     CGAL_ch_expensive_postcondition_code( IN.push_back(r); )
     // visited input sequence =  p,..., q, r
-    if ( leftturn(p,q,r)) { Q.push_back( q);  break; }
-    if ( leftturn(q,p,r)) { Q.push_front( q); break; }
+    if ( left_turn(p,q,r)) { Q.push_back( q);  break; }
+    if ( left_turn(q,p,r)) { Q.push_front( q); break; }
     CGAL_ch_assertion( less( p, q) ? less (p, r) : less( r, p));
     q = r;
     ++first;
@@ -98,18 +98,20 @@ ch_melkman( InputIterator first, InputIterator last,
     {
       r = *first;
       CGAL_ch_expensive_postcondition_code( IN.push_back(r); )
-      if (leftturn( current, r, Q.front()) || leftturn( Q.back(), r, current))
+      if (left_turn( current, r, Q.front()) || 
+          left_turn( Q.back(), r, current))
       // r outside cone Q.front(), current, Q.back() <=>
-      // rightturn( current, Q.front(), r) || rightturn( Q.back(), current, r)
+      // right_turn( current, Q.front(), r) || 
+      // right_turn( Q.back(), current, r)
       {
         s = current;
-        while ( !leftturn( r, s, Q.front()))
-        //      !leftturn( r, s, Q.front())
+        while ( !left_turn( r, s, Q.front()))
+        //      !left_turn( r, s, Q.front())
         { s = Q.front(); Q.pop_front(); }
         Q.push_front(s);
         s = current;
-        while ( !leftturn( s, r, Q.back()))
-        //     !rightturn( r, s, Q.back())
+        while ( !left_turn( s, r, Q.back()))
+        //     !right_turn( r, s, Q.back())
         { s = Q.back(); Q.pop_back(); }
         Q.push_back(s);
         current = r;

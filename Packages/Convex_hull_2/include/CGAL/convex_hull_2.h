@@ -111,7 +111,7 @@ convex_hull_points_2(ForwardIterator first, ForwardIterator last,
 // {\it Preconditions:}
 // [|first|,|last|) does not contain |result|.
 // {\sc traits}: operates on |Traits::Point_2| using |Traits::Less_xy_2|, 
-// |Traits::Less_yx_2|, and |Traits::Leftturn_2|.
+// |Traits::Less_yx_2|, and |Traits::Left_turn_2|.
 template <class InputIterator, class OutputIterator, class Traits>
 inline
 OutputIterator
@@ -140,7 +140,7 @@ convex_hull_2(ForwardIterator first, ForwardIterator last,
 // {\it Preconditions:}
 // [|first|,|last|) does not contain |result|.
 // {\sc traits}: operates on |Traits::Point_2| using |Traits::Less_xy_2|
-// and |Traits::Leftturn_2|.
+// and |Traits::Left_turn_2|.
 template <class InputIterator, class OutputIterator, class Traits>
 inline
 OutputIterator
@@ -172,7 +172,7 @@ lower_hull_points_2(ForwardIterator first, ForwardIterator last,
 // {\it Preconditions:}
 // [|first|,|last|) does not contain |result|.
 // {\sc traits}: operates on |Traits::Point_2| using |Traits::Less_xy_2|
-// and |Traits::Leftturn_2|.
+// and |Traits::Left_turn_2|.
 template <class InputIterator, class OutputIterator, class Traits>
 inline
 OutputIterator
