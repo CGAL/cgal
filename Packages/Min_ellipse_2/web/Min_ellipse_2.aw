@@ -956,7 +956,9 @@ interfaces of other classes.
     bool
     is_valid( bool verbose = false, int level = 0) const
     {
+    #ifndef CGAL_CFG_NO_NAMESPACE
         using std::endl;
+    #endif
         
         CGAL::Verbose_ostream verr( verbose);
         verr << endl;
@@ -1044,7 +1046,9 @@ traits class object.
     operator << ( std::ostream& os,
                   const Min_ellipse_2<_Traits>& min_ellipse)
     {
+    #ifndef CGAL_CFG_NO_NAMESPACE
         using namespace std;
+    #endif
 
         typedef  Min_ellipse_2<_Traits>::Point  Point;
         typedef  ostream_iterator<Point>        Os_it;
@@ -1092,7 +1096,9 @@ traits class object.
     std::istream&
     operator >> ( std::istream& is, CGAL::Min_ellipse_2<Traits>& min_ellipse)
     {
+    #ifndef CGAL_CFG_NO_NAMESPACE
         using namespace std;
+    #endif
         
         switch ( CGAL::get_mode( is)) {
 
@@ -1609,9 +1615,10 @@ one.
 \subsubsection{I/O}
 
 @macro <Optimisation_ellipse_2 I/O operators declaration> = @begin
+    /*
     class std::ostream;
     class std::istream;
-    /*
+
     template < class _R >
     std::ostream&
     operator << ( std::ostream&, const CGAL::Optimisation_ellipse_2<_R>&);

@@ -895,7 +895,9 @@ with interfaces of other classes.
     bool
     is_valid( bool verbose = false, int level = 0) const
     {
+    #ifndef CGAL_CFG_NO_NAMESPACE
         using std::endl;
+    #endif
         
         CGAL::Verbose_ostream verr( verbose);
         verr << endl;
@@ -1102,7 +1104,9 @@ traits class object.
     operator << ( std::ostream& os,
                   const Min_circle_2<_Traits>& min_circle)
     {
+    #ifndef CGAL_CFG_NO_NAMESPACE
         using namespace std;
+    #endif
 
         typedef  Min_circle_2<_Traits>::Point  Point;
         typedef  ostream_iterator<Point>       Os_it;
@@ -1150,7 +1154,9 @@ traits class object.
     std::istream&
     operator >> ( std::istream& is, CGAL::Min_circle_2<Traits>& min_circle)
     {
+    #ifndef CGAL_CFG_NO_NAMESPACE
         using namespace std;
+    #endif
         
         switch ( CGAL::get_mode( is)) {
 
