@@ -1,3 +1,6 @@
+2.12 (4 April 2003)
+- Brought files in web in sync with changes in include/CGAL
+
 2.11.7 (22 January 2003)
 - Fix for new GCC.
 

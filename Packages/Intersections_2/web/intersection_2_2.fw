@@ -322,10 +322,10 @@ Triangle_2_Triangle_2_pair<R>::intersection(
     for (i=0, cur = _pointlist.first;
          i<_pointlist.size;
          i++, cur = cur->next) {
-      cout << to_double(cur->point.x()) << ' ';
-      cout << to_double(cur->point.y()) << ' ';
+      std::cout << to_double(cur->point.x()) << ' ';
+      std::cout << to_double(cur->point.y()) << ' ';
     }
-    cout << endl;
+    std::cout << std::endl;
     return true;
 }
 
