@@ -41,6 +41,9 @@
 
 #ifndef CGAL_USE_LEDA
 #  define CGAL_USE_CGAL_WINDOW
+#else
+// The following is needed for LEDA 4.4 due to min/max problems...
+#  define LEDA_NO_MIN_MAX_TEMPL
 #endif
 
 #include <CGAL/assertions.h>
