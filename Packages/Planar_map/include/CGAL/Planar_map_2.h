@@ -1386,10 +1386,13 @@ prev1_inside_hole(
             traits->point_is_left_low(curr->target()->point(),left) )
           b=true;
         else
-          if (traits->curve_compare_at_x_right(curr->curve(),
+	{
+          if (traits->point_is_left(left, curr->target()->point()) &&
+	      traits->curve_compare_at_x_right(curr->curve(),
                                                left_edge->curve(),
                                                left)==SMALLER ) 
             b=true;
+	}
       }
 
     if (b) {
@@ -1406,7 +1409,8 @@ prev1_inside_hole(
           traits->point_is_left_low(curr->source()->point(),left) )
         b=true;
       else
-        if (traits->curve_compare_at_x_right(curr->curve(),
+        if (traits->point_is_left(left, curr->source()->point()) &&
+	    traits->curve_compare_at_x_right(curr->curve(),
                                              left_edge->curve(),
                                              left)==SMALLER ) 
           b=true;
@@ -1434,7 +1438,10 @@ prev1_inside_hole(
 					prev1->target()->point()));
     }
     else
-      if (traits->curve_compare_at_x_right(cv,left_edge->curve(), 
+      if ((traits->point_is_left(left, traits->curve_source(cv)) ||
+	   traits->point_is_left(left, traits->curve_target(cv))) &&
+	  (! traits->curve_is_vertical(left_edge->curve())) &&
+	  traits->curve_compare_at_x_right(cv,left_edge->curve(), 
                                            left)==SMALLER ) {  
         return (traits->point_is_left(prev1->target()->point(),
                                       prev2->target()->point()));

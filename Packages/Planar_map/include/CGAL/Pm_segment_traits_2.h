@@ -24,6 +24,7 @@
 //                 Shai Hirsch       <shaihi@post.tau.ac.il>
 //                 Eugene Lipovetsky <eug@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
+//                 Ron Wein          <wein@post.tau.ac.il>
 //
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
 //
@@ -142,56 +143,63 @@ public:
   }
 
   /*! curve_compare_at_x() compares the y-coordinate of two given curves at
-   * the x-coordinate of a given point
+   * the x-coordinate of a given point.
+   * Preconditions: The point q is in the x range of the two curves.
    * \param cv1 the first curve
    * \param cv2 the second curve
    * \param q the point
-   * \return EQUAL if at least one of cv1 and cv2 is not defined at q's
-   * x-coordinate x(q). Otherwise, LARGER if cv1(x(q)) > cv2(x(q)), SMALLER if
-   * cv1(x(q)) < cv2(x(q), or else EQUAL.
+   * \return LARGER if cv1(x(q)) > cv2(x(q)), SMALLER if cv1(x(q)) < cv2(x(q),
+   *  or else EQUAL.
+   *
    * \todo replace indirect use curve_compare_at_x() with compare_y_at_x_2()
    */
   Comparison_result curve_compare_at_x(const X_curve_2 & cv1, 
 				       const X_curve_2 & cv2, 
 				       const Point_2 & q) const
   {
-    if (!curve_is_in_x_range(cv1, q) || !curve_is_in_x_range(cv2, q))
-      return EQUAL;
+    CGAL_precondition(curve_is_in_x_range(cv1, q));
+    CGAL_precondition(curve_is_in_x_range(cv2, q));
+
     return compare_y_at_x_2_object()(q, cv1, cv2);
   }
 
 #if !defined(HAS_LEFT_NOT)
   /*! curve_compare_at_x_left() compares the y value of two curves in an
    * epsilon environment to the left of the x value of the input point
+   * Preconditions: The point q is in the x range of the two curves, and both
+   * of them must be also be defined to its left.
    */
   Comparison_result curve_compare_at_x_left(const X_curve_2 & cv1,
                                             const X_curve_2 & cv2, 
                                             const Point_2 & q) const 
   {
-    // If one of the curves is vertical then return EQUAL.
-    Is_vertical_2 is_vertical = is_vertical_2_object();
-    if (is_vertical(cv1) || (is_vertical(cv2))) return EQUAL;
+    // The two curves must not be vertical.
+    CGAL_precondition(! curve_is_vertical(cv1));
+    CGAL_precondition(! curve_is_vertical(cv2));
 
-    // If one of the curves is not defined at q then return EQUAL.
-    Construct_vertex_2 construct_vertex = construct_vertex_2_object();
-    Less_x_2 less_x = less_x_2_object();
-    const Point_2 & source1 = construct_vertex(cv1, 0);
-    const Point_2 & target1 = construct_vertex(cv1, 1);
-    if (!(less_x(source1, q) || less_x(target1, q))) return EQUAL;
-    
-    const Point_2 & source2 = construct_vertex(cv2, 0);
-    const Point_2 & target2 = construct_vertex(cv2, 1);
-    if (!(less_x(source2, q) || less_x(target2, q))) return EQUAL;
+    // The two curve must be defined at q and also to its left.
+    CGAL_precondition_code(
+        Construct_vertex_2 construct_vertex = construct_vertex_2_object();
+	Less_x_2 less_x = less_x_2_object();
+	const Point_2 & source1 = construct_vertex(cv1, 0);
+	const Point_2 & target1 = construct_vertex(cv1, 1);
+	const Point_2 & source2 = construct_vertex(cv2, 0);
+	const Point_2 & target2 = construct_vertex(cv2, 1);
+	);
 
-    if (less_x(source1, q) && less_x(target1, q)) return EQUAL;
-    if (less_x(source2, q) && less_x(target2, q)) return EQUAL;
+    CGAL_precondition (less_x(source1, q) || less_x(target1, q));
+    CGAL_precondition (!(less_x(source1, q) && less_x(target1, q)));
     
-    // since the curve is continous 
+    CGAL_precondition (less_x(source2, q) || less_x(target2, q));
+    CGAL_precondition (!(less_x(source2, q) && less_x(target2, q)));
+    
+    // Since the curves are continuous, if they are not equal at q, the same
+    // result also applies to q's left.
     Comparison_result r = compare_y_at_x_2_object()(q, cv1, cv2);
     if (r != EQUAL) return r;     
     
     // <cv2> and <cv1> meet at a point with the same x-coordinate as q
-    // compare their derivatives
+    // compare their derivatives.
     return compare_slope_2_object()(cv2, cv1);
   }
 #else
@@ -217,30 +225,35 @@ public:
     
   /*! curve_compare_at_x_right() compares the y value of two curves in an
    * epsilon environment to the right of the x value of the input point
+   * Preconditions: The point q is in the x range of the two curves, and both
+   * of them must be also be defined to its right.
    */
   Comparison_result curve_compare_at_x_right(const X_curve_2 & cv1,
                                              const X_curve_2 & cv2, 
                                              const Point_2 & q) const 
   {
-    // If one of the curves is vertical then return EQUAL.
-    Is_vertical_2 is_vertical = is_vertical_2_object();
-    if (is_vertical(cv1) || (is_vertical(cv2))) return EQUAL;
+    // The two curves must not be vertical.
+    CGAL_precondition(! curve_is_vertical(cv1));
+    CGAL_precondition(! curve_is_vertical(cv2));
 
-    // If one of the curves is not defined at q then return EQUAL.
-    Construct_vertex_2 construct_vertex = construct_vertex_2_object();
-    Less_x_2 less_x = less_x_2_object();
-    const Point_2 & source1 = construct_vertex(cv1, 0);
-    const Point_2 & target1 = construct_vertex(cv1, 1);
-    if (!(less_x(q, source1) || less_x(q, target1))) return EQUAL;
+    // The two curve must be defined at q and also to its right.
+    CGAL_precondition_code(
+        Construct_vertex_2 construct_vertex = construct_vertex_2_object();
+	Less_x_2 less_x = less_x_2_object();
+	const Point_2 & source1 = construct_vertex(cv1, 0);
+	const Point_2 & target1 = construct_vertex(cv1, 1);
+	const Point_2 & source2 = construct_vertex(cv2, 0);
+	const Point_2 & target2 = construct_vertex(cv2, 1);
+	);
 
-    const Point_2 & source2 = construct_vertex(cv2, 0);
-    const Point_2 & target2 = construct_vertex(cv2, 1);
-    if (!(less_x(q, source2) || less_x(q, target2))) return EQUAL;
-
-    if (less_x(q, source1) && less_x(q, target1)) return EQUAL;
-    if (less_x(q, source2) && less_x(q, target2)) return EQUAL;
+    CGAL_precondition (less_x(q, source1) || less_x(q, target1));
+    CGAL_precondition (!(less_x(q, source1) && less_x(q, target1)));
     
-    // since the curve is continous (?)
+    CGAL_precondition (less_x(q, source2) || less_x(q, target2));
+    CGAL_precondition (!(less_x(q, source2) && less_x(q, target2)));
+    
+    // Since the curves are continuous, if they are not equal at q, the same
+    // result also applies to q's left.
     Comparison_result r = curve_compare_at_x(cv1, cv2, q);
     if (r != EQUAL) return r;     
     

@@ -144,11 +144,8 @@ public:
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
 
-    if (!curve_is_in_x_range(cv1,p) || !curve_is_in_x_range(cv2,p) )
-      return EQUAL;
-
-    if (curve_is_vertical(cv1) && curve_is_vertical(cv2))
-      return EQUAL; //otherwise - compare_y_at_x throws an assertion 
+    CGAL_precondition(curve_is_in_x_range(cv1,p));
+    CGAL_precondition(curve_is_in_x_range(cv2,p));
 
     typename X_curve_2::const_iterator pit_1   = cv1.begin(),
       pit_2   = cv2.begin();
@@ -183,22 +180,24 @@ public:
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
 
-    if (!curve_is_in_x_range(cv1,p) || !curve_is_in_x_range(cv2,p) )
-      return EQUAL;
+    // Check preconditions.
+    CGAL_precondition(curve_is_in_x_range(cv1,p));
+    CGAL_precondition(curve_is_in_x_range(cv2,p));
+    CGAL_precondition(! curve_is_vertical(cv1));
+    CGAL_precondition(! curve_is_vertical(cv2));
+    
+    CGAL_precondition_code(      
+        Point_2 leftmost1 = 
+	  (compare_x(curve_source(cv1),curve_target(cv1))==LARGER) ? 
+	  curve_target(cv1) : curve_source(cv1);
+	Point_2 leftmost2 = 
+	  (compare_x(curve_source(cv2),curve_target(cv2))==LARGER) ? 
+	  curve_target(cv2) : curve_source(cv2);
+	);
+    CGAL_precondition(compare_x(leftmost1,p) == SMALLER);
+    CGAL_precondition(compare_x(leftmost2,p) == SMALLER);
 
-    Point_2 leftmost1=(compare_x(curve_source(cv1),
-                                 curve_target(cv1))==LARGER) ?
-      curve_target(cv1) : curve_source(cv1);
-    Point_2 leftmost2=(compare_x(curve_source(cv2),
-                                 curve_target(cv2))==LARGER) ?
-      curve_target(cv2) : curve_source(cv2);
-
-    //special cases wher returns EQUAL
-    if (curve_is_vertical(cv1) || (curve_is_vertical(cv2))) return EQUAL;
-    if (compare_x(leftmost1,p)!=SMALLER || compare_x(leftmost2,p)!=SMALLER) {
-      return EQUAL;
-    }
-
+    // Compare.
     typename X_curve_2::const_iterator pit = cv1.begin();
     typename X_curve_2::const_iterator after = pit; ++after;
     
@@ -232,30 +231,24 @@ public:
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
 
-    if (!curve_is_in_x_range(cv1,p) || !curve_is_in_x_range(cv2,p))
-      return EQUAL;
+    // Check preconditions.
+    CGAL_precondition(curve_is_in_x_range(cv1,p));
+    CGAL_precondition(curve_is_in_x_range(cv2,p));
+    CGAL_precondition(! curve_is_vertical(cv1));
+    CGAL_precondition(! curve_is_vertical(cv2));
+    
+    CGAL_precondition_code(      
+        Point_2 rightmost1 = 
+	  (compare_x(curve_source(cv1),curve_target(cv1))==SMALLER) ?
+	  curve_target(cv1) : curve_source(cv1);
+	Point_2 rightmost2 = 
+	  (compare_x(curve_source(cv2),curve_target(cv2))==SMALLER) ?
+	  curve_target(cv2) : curve_source(cv2);
+ 	);
+    CGAL_precondition(compare_x(rightmost1,p) == LARGER);
+    CGAL_precondition(compare_x(rightmost2,p) == LARGER);
 
-    Point_2 rightmost1=(compare_x(curve_source(cv1),
-                                  curve_target(cv1))==SMALLER)
-      ? curve_target(cv1) : curve_source(cv1);
-    Point_2 rightmost2=(compare_x(curve_source(cv2),
-                                  curve_target(cv2))==SMALLER)
-      ? curve_target(cv2) : curve_source(cv2);
-
-    //special cases wher returns EQUAL
-    if (curve_is_vertical(cv1) || (curve_is_vertical(cv2))) return EQUAL;
-    if (compare_x(rightmost1,p)!=LARGER || compare_x(rightmost2,p)!=LARGER) {
-      return EQUAL;
-    }
-
-    //not defined right of curve:
-    //    CGAL_assertion(!point_is_same(rightmost1,p) &&
-    //                   !point_is_same(rightmost2,p)); 
-
-
-    if (!curve_is_in_x_range(cv1,p) || !curve_is_in_x_range(cv2,p) )
-      return EQUAL;
-
+    // Compare.
     typename X_curve_2::const_iterator pit=cv1.begin();
     typename X_curve_2::const_iterator after=pit; ++after;
     

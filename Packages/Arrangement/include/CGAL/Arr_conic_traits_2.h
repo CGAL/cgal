@@ -138,34 +138,28 @@ class Arr_conic_traits_2
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
+    CGAL_precondition(curve_is_in_x_range(curve1, p));
+    CGAL_precondition(curve_is_in_x_range(curve2, p));
 
     // Get the points on curve1 with the same x co-ordinate as p.
-    int    n1;
+    int      n1;
     Point_2  ps1[2];
 
     if (curve1.is_vertical_segment())
     {
-      // curve1 is a vertical segment.
-      if (compare_x (curve1.source(), p) != EQUAL)
+      // In case curve1 is a vertical segment, both the source and target 
+      // of the curve has the same x co-ordinate as p. 
+      // Make sure that ps1[0] has a smaller y value than ps1[1].
+      n1 = 2;
+      if (_compare_y (curve1.source(), curve1.target()) == SMALLER)
       {
-	// The curve's x co-ordinate is different than p's.
-	return (EQUAL);
+	ps1[0] = curve1.source();
+	ps1[1] = curve1.target();
       }
       else
       {
-	// Both the source and target of the curve has the same x co-ordinate
-	// as p. Make sure that ps1[0] has a smaller y value than ps1[1].
-	n1 = 2;
-	if (_compare_y (curve1.source(), curve1.target()) == SMALLER)
-	{
-	  ps1[0] = curve1.source();
-	  ps1[1] = curve1.target();
-	}
-	else
-	{
-	  ps1[0] = curve1.target();
-	  ps1[1] = curve1.source();
-	}
+	ps1[0] = curve1.target();
+	ps1[1] = curve1.source();
       }
     }
     else
@@ -173,48 +167,34 @@ class Arr_conic_traits_2
       // Find all points on curve1 with the same x co-ordinate as p.
       n1 = curve1.get_points_at_x (p, ps1);
 
-      if (n1 == 0)    // p is not in the x-range of curve1.
-	return (EQUAL);
-
       CGAL_assertion(n1 == 1);
     }
 
     // Get the points on curve2 with the same x co-ordinate as p.
-    int    n2;
+    int      n2;
     Point_2  ps2[2];
 
     if (curve2.is_vertical_segment())
     {
-      // curve2 is a vertical segment.
-      if (compare_x (curve2.source(), p) != EQUAL)
+      // In case curve2 is a vertical segment, both the source and target 
+      // of the curve has the same x co-ordinate as p. 
+      // Make sure that ps2[0] has a smaller y value than ps2[1].
+      n2 = 2;
+      if (_compare_y (curve2.source(), curve2.target()) == SMALLER)
       {
-	// The curve's x co-ordinate is different than p's.
-	return (EQUAL);
+	ps2[0] = curve2.source();
+	ps2[1] = curve2.target();
       }
       else
       {
-	// Both the source and target of the curve has the same x co-ordinate
-	// as p. Make sure that ps2[0] has a smaller y value than ps2[1].
-	n2 = 2;
-	if (_compare_y (curve2.source(), curve2.target()) == SMALLER)
-	{
-	  ps2[0] = curve2.source();
-	  ps2[1] = curve2.target();
-	}
-	else
-	{
-	  ps2[0] = curve2.target();
-	  ps2[1] = curve2.source();
-	}
+	ps2[0] = curve2.target();
+	ps2[1] = curve2.source();
       }
     }
     else
     {
       // Find all points on curve2 with the same x co-ordinate as p.
       n2 = curve2.get_points_at_x (p, ps2);
-
-      if (n2 == 0)    // p is not in the x-range of curve2.
-	return (EQUAL);
 
       CGAL_assertion(n2 == 1);
     }
@@ -263,17 +243,19 @@ class Arr_conic_traits_2
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
-    // If the curves are the same, they are equal to the left of p:
-    if (curve_is_same(curve1,curve2))
-      return (EQUAL);
+    // The two curve must not be vertical segments.
+    CGAL_precondition(! curve1.is_vertical_segment());
+    CGAL_precondition(! curve2.is_vertical_segment());
 
-    // Check the case of vertical segments: we assume that a vertical segment
-    // does not contain a point immediately to the left of p.
-    if (curve1.is_vertical_segment() || curve2.is_vertical_segment())
-      return (EQUAL);
+    // Check that both curves are defined to the left of p.
+    CGAL_precondition((compare_x(curve1.source(), p) == SMALLER) ||
+		      (compare_x(curve1.target(), p) == SMALLER));
+
+    CGAL_precondition((compare_x(curve2.source(), p) == SMALLER) ||
+		      (compare_x(curve2.target(), p) == SMALLER));
 
     // Get the points on curve1 with the same x co-ordinate as p.
-    int    n1;
+    int      n1;
     Point_2  ps1[2];
 
     if (curve1.contains_point(p))
@@ -286,11 +268,11 @@ class Arr_conic_traits_2
       n1 = curve1.get_points_at_x (p, ps1);
     }
 
-    if (n1 == 0)    // p is not in the x-range of curve1.
-      return (EQUAL);
+    // Make sure that there is exactly one point.
+    CGAL_assertion(n1 == 1);
     
     // Get the points on curve2 with the same x co-ordinate as p.
-    int    n2;
+    int      n2;
     Point_2  ps2[2];
 
     if (curve2.contains_point(p))
@@ -303,23 +285,14 @@ class Arr_conic_traits_2
       n2 = curve2.get_points_at_x (p, ps2);
     }
 
-    if (n2 == 0)    // p is not in the x-range of curve2.
+    // Make sure that there is exactly one point.
+    CGAL_assertion(n2 == 1);
+
+    // If the curves are the same, they are equal to the left of p:
+    if (curve_is_same(curve1,curve2))
       return (EQUAL);
 
-    // Check that both curves are defined to the left of p.
-    // If not, return EQUAL.
-    if ( (compare_x(curve1.source(), p) != SMALLER) &&
-         (compare_x(curve1.target(), p) != SMALLER) )
-      return (EQUAL);
-
-    if ( (compare_x(curve2.source(), p) != SMALLER) &&
-         (compare_x(curve2.target(), p) != SMALLER) )
-      return (EQUAL);
-
-    // If we reached here, make sure that there is only one point per curve.
-    // Only then compare the y co-ordinates of the two points.
-    CGAL_assertion(n1 == 1 && n2 == 1);
-
+    // Compare the y co-ordinates of the two points we have just found.
     Comparison_result result = _compare_y (ps1[0], ps2[0]);
 
     // In case the two curves do not intersect at the x co-ordinate of p,
@@ -341,17 +314,19 @@ class Arr_conic_traits_2
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
-    // If the two curves are the same, they are equal to the right of p:
-    if (curve_is_same(curve1,curve2))
-      return (EQUAL);
+    // The two curve must not be vertical segments.
+    CGAL_precondition(! curve1.is_vertical_segment());
+    CGAL_precondition(! curve2.is_vertical_segment());
 
-    // Check the case of vertical segments: we assume that a vertical segment
-    // does not contain a point immediately to the right of p.
-    if (curve1.is_vertical_segment() || curve2.is_vertical_segment())
-      return (EQUAL);
+    // Check that both curves are defined to the right of p.
+    CGAL_precondition((compare_x(curve1.source(), p) == LARGER) ||
+		      (compare_x(curve1.target(), p) == LARGER));
+
+    CGAL_precondition((compare_x(curve2.source(), p) == LARGER) ||
+		      (compare_x(curve2.target(), p) == LARGER));
 
     // Get the points on curve1 with the same x co-ordinate as p.
-    int    n1;
+    int      n1;
     Point_2  ps1[2];
 
     if (curve1.contains_point(p))
@@ -364,11 +339,11 @@ class Arr_conic_traits_2
       n1 = curve1.get_points_at_x (p, ps1);
     }
 
-    if (n1 == 0)    // p is not in the x-range of curve1.
-      return (EQUAL);
+    // Make sure we have a single point.
+    CGAL_assertion(n1 == 1);
     
     // Get the points on curve2 with the same x co-ordinate as p.
-    int    n2;
+    int      n2;
     Point_2  ps2[2];
 
     if (curve2.contains_point(p))
@@ -381,23 +356,14 @@ class Arr_conic_traits_2
       n2 = curve2.get_points_at_x (p, ps2);
     }
 
-    if (n2 == 0)    // p is not in the x-range of curve2.
+    // Make sure we have a single point.
+    CGAL_assertion(n2 == 1);
+
+    // If the two curves are the same, they are equal to the right of p:
+    if (curve_is_same(curve1,curve2))
       return (EQUAL);
 
-    // Check that both curves are defined to the right of p.
-    // If not, return EQUAL.
-    if ( (compare_x(curve1.source(), p) != LARGER) &&
-         (compare_x(curve1.target(), p) != LARGER) )
-      return (EQUAL);
-
-    if ( (compare_x(curve2.source(), p) != LARGER) &&
-         (compare_x(curve2.target(), p) != LARGER) )
-      return (EQUAL);
-
-    // If we reached here, make sure that there is only one point per curve.
-    // Only then compare the y co-ordinates of the two points.
-    CGAL_assertion(n1 == 1 && n2 == 1);
-
+    // Compare the y co-ordinates of the two points.
     Comparison_result result = _compare_y (ps1[0], ps2[0]);
 
     // In case the two curves do not intersect at the x co-ordinate of p,

@@ -18,6 +18,7 @@
 // revision      : 
 // revision_date : 
 // author(s)     : Eti Ezra <estere@post.tau.ac.il>
+//                 Ron Wein <wein@post.tau.ac.il>
 //
 //
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
@@ -295,10 +296,9 @@ protected:
                             Traits *traits_) : 
       intersect_p(ref_point), traits(traits_) {
       
-      Comparison_result result = traits->curve_compare_at_x_right(
-                                                cv1.get_curve(), 
-                                                cv2.get_curve(), 
-                                                ref_point.point());
+      Comparison_result result = _curve_compare_at_x_right(cv1.get_curve(), 
+							   cv2.get_curve(), 
+							   ref_point.point());
 
       if (result == SMALLER){
         curves.push_back(cv1);
@@ -374,10 +374,11 @@ protected:
             }
           }
           
-          Comparison_result result = traits->curve_compare_at_x_left(
-                                             cv_iter->get_curve(), 
-                                             point_node_cv_iter->get_curve(), 
-                                             intersect_p.point());
+          Comparison_result result = _curve_compare_at_x_left
+	                             (cv_iter->get_curve(), 
+				      point_node_cv_iter->get_curve(), 
+				      intersect_p.point());
+
           if (result == LARGER){
             merged_left_curves.push_back(*cv_iter);
             cv_iter++;
@@ -431,10 +432,11 @@ protected:
             }
           }
           
-          Comparison_result result = traits->curve_compare_at_x_right(
+          Comparison_result result = _curve_compare_at_x_right(
                                               cv_iter->get_curve(), 
                                               point_node_cv_iter->get_curve(), 
                                               intersect_p.point());
+
           if (result == SMALLER){
             merged_right_curves.push_back(*cv_iter);
             cv_iter++;
@@ -589,6 +591,74 @@ protected:
       return (traits->compare_xy(p1,p2));
     }
 
+    // Imitate the previous behaviour of the two functions: that is, return
+    // EQUAL in undefined cases.
+    Comparison_result _curve_compare_at_x_right (const X_curve& cv1,
+						 const X_curve& cv2,
+						 const Point& p) const
+    {
+      // In case the point is not in the x-range of both curves or that
+      // one of the curves is not defined at p's right, return EQUAL.
+      Comparison_result res1 = traits->compare_x(traits->curve_source(cv1),
+						 traits->curve_target(cv1));
+      Comparison_result res2 = traits->compare_x(traits->curve_source(cv2),
+						 traits->curve_target(cv2));
+      const Point_2& left1 = (res1 == SMALLER) ? traits->curve_source(cv1) :
+	traits->curve_target(cv1);
+      const Point_2& right1 = (res1 == LARGER) ? traits->curve_source(cv1) :
+	traits->curve_target(cv1);
+      const Point_2& left2 = (res2 == SMALLER) ? traits->curve_source(cv2) :
+	traits->curve_target(cv2);
+      const Point_2& right2 = (res2 == LARGER) ? traits->curve_source(cv2) :
+	traits->curve_target(cv2);
+
+      if (traits->compare_x (right1, p) != LARGER)
+	return (EQUAL);
+      else if (traits->compare_x (left1, p) == LARGER)
+	return (EQUAL);
+
+      if (traits->compare_x (right2, p) != LARGER)
+	return (EQUAL);
+      else if (traits->compare_x (left2, p) == LARGER)
+	return (EQUAL);
+
+      // Compare using the traits function:
+      return (traits->curve_compare_at_x_right (cv1, cv2, p));
+    }
+
+    Comparison_result _curve_compare_at_x_left (const X_curve& cv1,
+						const X_curve& cv2,
+						const Point& p) const
+    {
+      // In case the point is not in the x-range of both curves or that
+      // one of the curves is not defined at p's left, return EQUAL.
+      Comparison_result res1 = traits->compare_x(traits->curve_source(cv1),
+						 traits->curve_target(cv1));
+      Comparison_result res2 = traits->compare_x(traits->curve_source(cv2),
+						 traits->curve_target(cv2));
+      const Point_2& left1 = (res1 == SMALLER) ? traits->curve_source(cv1) :
+	traits->curve_target(cv1);
+      const Point_2& right1 = (res1 == LARGER) ? traits->curve_source(cv1) :
+	traits->curve_target(cv1);
+      const Point_2& left2 = (res2 == SMALLER) ? traits->curve_source(cv2) :
+	traits->curve_target(cv2);
+      const Point_2& right2 = (res2 == LARGER) ? traits->curve_source(cv2) :
+	traits->curve_target(cv2);
+
+      if (traits->compare_x (left1, p) != SMALLER)
+	return (EQUAL);
+      else if (traits->compare_x (right1, p) == SMALLER)
+	return (EQUAL);
+
+      if (traits->compare_x (left2, p) != SMALLER)
+	return (EQUAL);
+      else if (traits->compare_x (right2, p) == SMALLER)
+	return (EQUAL);
+
+      // Compare using the traits function:
+      return (traits->curve_compare_at_x_left (cv1, cv2, p));
+    }
+
     // hold the left most intersecting point.
     Point_plus               intersect_p;
     Curve_node_container     curves;   
@@ -654,9 +724,9 @@ protected:
         else if ( traits->curve_is_vertical(cv2.get_curve()) )
           return true;
     
-        result = traits->curve_compare_at_x_right (cv1.get_curve(), 
-                                                   cv2.get_curve(), 
-                                                   ref_point);
+        result = _curve_compare_at_x_right (cv1.get_curve(), 
+					    cv2.get_curve(), 
+					    ref_point);
         if (result == EQUAL)
           result = traits->curve_compare_at_x (cv1.get_curve(), 
                                                cv2.get_curve(), 
@@ -747,29 +817,30 @@ protected:
       // copying to first_cv and second_cv the original curves is not needed.
       if (!update_first_cv && !update_second_cv) 
         result =
-          traits->
-            curve_compare_at_x_right(cv1.get_curve(), cv2.get_curve(),  
-                                     // making an optimization attemp:
-                                 rightmost(cv1.get_rightmost_point().point(),
-                                           cv2.get_rightmost_point().point()));
+          _curve_compare_at_x_right
+	      (cv1.get_curve(), cv2.get_curve(),  
+	       // making an optimization attemp:
+	       rightmost(cv1.get_rightmost_point().point(),
+			 cv2.get_rightmost_point().point()));
       
       else if (update_first_cv && !update_second_cv)
         result =
-          traits->
-            curve_compare_at_x_right(first_cv, cv2.get_curve(), 
-                                 rightmost(cv1.get_rightmost_point().point(),
-                                           cv2.get_rightmost_point().point()));
+          _curve_compare_at_x_right
+             (first_cv, cv2.get_curve(), 
+	      rightmost(cv1.get_rightmost_point().point(),
+			cv2.get_rightmost_point().point()));
       else if (!update_first_cv && update_second_cv)
         result =
-          traits->curve_compare_at_x_right(cv1.get_curve(), second_cv, 
-                                 rightmost(cv1.get_rightmost_point().point(),
-                                           cv2.get_rightmost_point().point()));
+          _curve_compare_at_x_right
+	      (cv1.get_curve(), second_cv, 
+	       rightmost(cv1.get_rightmost_point().point(),
+			 cv2.get_rightmost_point().point()));
       else               // update_first_cv && update_second_cv is true.
         result =
-          traits->
-            curve_compare_at_x_right(first_cv, second_cv, 
-                                 rightmost(cv1.get_rightmost_point().point(),
-                                           cv2.get_rightmost_point().point()));
+          _curve_compare_at_x_right
+	      (first_cv, second_cv, 
+	       rightmost(cv1.get_rightmost_point().point(),
+			 cv2.get_rightmost_point().point()));
       
       if (result == EQUAL){
         if (!update_first_cv && !update_second_cv)
@@ -845,6 +916,41 @@ protected:
       Comparison_result res = traits->compare_xy(p1,p2);
       
       return ((res == SMALLER) ? p2 : p1);
+    }
+
+    // Imitate the previous behaviour of the function: that is, return
+    // EQUAL in undefined cases.
+    Comparison_result _curve_compare_at_x_right (const X_curve& cv1,
+						 const X_curve& cv2,
+						 const Point& p) const
+    {
+      // In case the point is not in the x-range of both curves or that
+      // one of the curves is not defined at p's right, return EQUAL.
+      Comparison_result res1 = traits->compare_x(traits->curve_source(cv1),
+						 traits->curve_target(cv1));
+      Comparison_result res2 = traits->compare_x(traits->curve_source(cv2),
+						 traits->curve_target(cv2));
+      const Point& left1 = (res1 == SMALLER) ? traits->curve_source(cv1) :
+	traits->curve_target(cv1);
+      const Point& right1 = (res1 == LARGER) ? traits->curve_source(cv1) :
+	traits->curve_target(cv1);
+      const Point& left2 = (res2 == SMALLER) ? traits->curve_source(cv2) :
+	traits->curve_target(cv2);
+      const Point& right2 = (res2 == LARGER) ? traits->curve_source(cv2) :
+	traits->curve_target(cv2);
+
+      if (traits->compare_x (right1, p) != LARGER)
+	return (EQUAL);
+      else if (traits->compare_x (left1, p) == LARGER)
+	return (EQUAL);
+
+      if (traits->compare_x (right2, p) != LARGER)
+	return (EQUAL);
+      else if (traits->compare_x (left2, p) == LARGER)
+	return (EQUAL);
+
+      // Compare using the traits function:
+      return (traits->curve_compare_at_x_right (cv1, cv2, p));
     }
       
     Traits  *traits;

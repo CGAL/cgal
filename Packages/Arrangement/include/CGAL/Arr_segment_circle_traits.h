@@ -126,9 +126,11 @@ class Arr_segment_circle_traits
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
+    CGAL_precondition(curve_is_in_x_range(curve1, p));
+    CGAL_precondition(curve_is_in_x_range(curve2, p));
 
     // Get the points on curve1 with the same x co-ordinate as p.
-    int    n1;
+    int      n1;
     Point_2  ps1[2];
 
     if (curve1.is_vertical_segment())
@@ -153,12 +155,11 @@ class Arr_segment_circle_traits
     {
       n1 = curve1.get_points_at_x (p.x(), ps1);
 
-      if (n1 == 0)    // p is not in the x-range of curve1.
-	return (EQUAL);
+      CGAL_assertion(n1 == 1);
     }
 
     // Get the points on curve2 with the same x co-ordinate as p.
-    int    n2;
+    int      n2;
     Point_2  ps2[2];
 
     if (curve2.is_vertical_segment())
@@ -183,8 +184,7 @@ class Arr_segment_circle_traits
     {
       n2 = curve2.get_points_at_x (p.x(), ps2);
 
-      if (n2 == 0)    // p is not in the x-range of curve2.
-	return (EQUAL);
+      CGAL_assertion(n2 == 1);
     }
 
     // Deal with vertical segments:
@@ -229,47 +229,56 @@ class Arr_segment_circle_traits
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
+    // The two curve must not be vertical segments.
+    CGAL_precondition(! curve1.is_vertical_segment());
+    CGAL_precondition(! curve2.is_vertical_segment());
+
+    // Check that both curves are defined to the left of p.
+    CGAL_precondition((compare_x(curve1.source(), p) == SMALLER) ||
+		      (compare_x(curve1.target(), p) == SMALLER));
+
+    CGAL_precondition((compare_x(curve2.source(), p) == SMALLER) ||
+		      (compare_x(curve2.target(), p) == SMALLER));
+
+    // Get the points on curve1 with the same x co-ordinate as p.
+    int      n1;
+    Point_2  ps1[2];
+
+    if (curve1.contains_point(p))
+    {
+      ps1[0] = p;
+      n1 = 1;
+    }
+    else
+    {
+      n1 = curve1.get_points_at_x (p.x(), ps1);
+    }
+
+    // Make sure that there is exactly one point.
+    CGAL_assertion(n1 == 1);
+    
+    // Get the points on curve2 with the same x co-ordinate as p.
+    int      n2;
+    Point_2  ps2[2];
+
+    if (curve2.contains_point(p))
+    {
+      ps2[0] = p;
+      n2 = 1;
+    }
+    else
+    {
+      n2 = curve2.get_points_at_x (p.x(), ps2);
+    }
+
+    // Make sure that there is exactly one point.
+    CGAL_assertion(n2 == 1);
+
     // If the curves are the same, they are equal to the left of p:
     if (curve_is_same(curve1,curve2))
       return (EQUAL);
 
-    // Check the case of vertical segments: we assume that a vertical segment
-    // does not contain a point immediately to the left of p.
-    if (curve1.is_vertical_segment() || curve2.is_vertical_segment())
-      return (EQUAL);
-
-    // Get the points on curve1 with the same x co-ordinate as p.
-    int    n1;
-    Point_2  ps1[2];
-
-    n1 = curve1.get_points_at_x (p.x(), ps1);
-
-    if (n1 == 0)    // p is not in the x-range of curve1.
-      return (EQUAL);
-    
-    // Get the points on curve2 with the same x co-ordinate as p.
-    int    n2;
-    Point_2  ps2[2];
-
-    n2 = curve2.get_points_at_x (p.x(), ps2);
-
-    if (n2 == 0)    // p is not in the x-range of curve2.
-      return (EQUAL);
-
-    // Check that both curves are defined to the left of p.
-    // If not, return EQUAL.
-    if ( (compare_x(curve1.source(), p) != SMALLER) &&
-         (compare_x(curve1.target(), p) != SMALLER) )
-      return (EQUAL);
-
-    if ( (compare_x(curve2.source(), p) != SMALLER) &&
-         (compare_x(curve2.target(), p) != SMALLER) )
-      return (EQUAL);
-
-    // If we reached here, make sure that there is only one point per curve.
-    // Only then compare the y co-ordinates of the two points.
-    CGAL_assertion(n1 == 1 && n2 == 1);
-
+    // Compare the y co-ordinates of the two points we have just found.
     Comparison_result result = _compare_y (ps1[0], ps2[0]);
 
     // In case the two curves do not intersect at the x co-ordinate of p,
@@ -430,47 +439,56 @@ class Arr_segment_circle_traits
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
+    // The two curve must not be vertical segments.
+    CGAL_precondition(! curve1.is_vertical_segment());
+    CGAL_precondition(! curve2.is_vertical_segment());
+
+    // Check that both curves are defined to the right of p.
+    CGAL_precondition((compare_x(curve1.source(), p) == LARGER) ||
+		      (compare_x(curve1.target(), p) == LARGER));
+
+    CGAL_precondition((compare_x(curve2.source(), p) == LARGER) ||
+		      (compare_x(curve2.target(), p) == LARGER));
+
+    // Get the points on curve1 with the same x co-ordinate as p.
+    int      n1;
+    Point_2  ps1[2];
+
+    if (curve1.contains_point(p))
+    {
+      ps1[0] = p;
+      n1 = 1;
+    }
+    else
+    {
+      n1 = curve1.get_points_at_x (p.x(), ps1);
+    }
+
+    // Make sure we have a single point.
+    CGAL_assertion(n1 == 1);
+    
+    // Get the points on curve2 with the same x co-ordinate as p.
+    int      n2;
+    Point_2  ps2[2];
+
+    if (curve2.contains_point(p))
+    {
+      ps2[0] = p;
+      n2 = 1;
+    }
+    else
+    {
+      n2 = curve2.get_points_at_x (p.x(), ps2);
+    }
+
+    // Make sure we have a single point.
+    CGAL_assertion(n2 == 1);
+
     // If the two curves are the same, they are equal to the right of p:
     if (curve_is_same(curve1,curve2))
       return (EQUAL);
 
-    // Check the case of vertical segments: we assume that a vertical segment
-    // does not contain a point immediately to the right of p.
-    if (curve1.is_vertical_segment() || curve2.is_vertical_segment())
-      return (EQUAL);
-
-    // Get the points on curve1 with the same x co-ordinate as p.
-    int    n1;
-    Point_2  ps1[2];
-
-    n1 = curve1.get_points_at_x (p.x(), ps1);
-
-    if (n1 == 0)    // p is not in the x-range of curve1.
-      return (EQUAL);
-    
-    // Get the points on curve2 with the same x co-ordinate as p.
-    int    n2;
-    Point_2  ps2[2];
-
-    n2 = curve2.get_points_at_x (p.x(), ps2);
-
-    if (n2 == 0)    // p is not in the x-range of curve2.
-      return (EQUAL);
-
-    // Check that both curves are defined to the right of p.
-    // If not, return EQUAL.
-    if ( (compare_x(curve1.source(), p) != LARGER) &&
-         (compare_x(curve1.target(), p) != LARGER) )
-      return (EQUAL);
-
-    if ( (compare_x(curve2.source(), p) != LARGER) &&
-         (compare_x(curve2.target(), p) != LARGER) )
-      return (EQUAL);
-
-    // If we reached here, make sure that there is only one point per curve.
-    // Only then compare the y co-ordinates of the two points.
-    CGAL_assertion(n1 == 1 && n2 == 1);
-
+    // Compare the y co-ordinates of the two points.
     Comparison_result result = _compare_y (ps1[0], ps2[0]);
 
     // In case the two curves do not intersect at the x co-ordinate of p,
@@ -864,13 +882,15 @@ class Arr_segment_circle_traits
       if (curve_compare_at_x_left (cv1, cv2, p) == LARGER)
       { 
 	// c1 is above c2:
-        return (!(curve_compare_at_x_left (cv2, cvx, p) == SMALLER &&
+        return (!cvx_is_left ||
+		!(curve_compare_at_x_left (cv2, cvx, p) == SMALLER &&
                   curve_compare_at_x_left (cv1, cvx, p) == LARGER));
       }
       else
       { 
 	// c2 is above c1:
-        return (curve_compare_at_x_left (cv1, cvx, p) == SMALLER &&
+        return (cvx_is_left &&
+		curve_compare_at_x_left (cv1, cvx, p) == SMALLER &&
                 curve_compare_at_x_left (cv2, cvx, p) == LARGER);
       }
     }
@@ -880,13 +900,15 @@ class Arr_segment_circle_traits
       if (curve_compare_at_x_right (cv1, cv2, p) == LARGER)
       {
 	// c1 is above c2:
-        return (curve_compare_at_x_right (cv2, cvx, p) == SMALLER &&
+        return (!cvx_is_left &&
+		curve_compare_at_x_right (cv2, cvx, p) == SMALLER &&
                 curve_compare_at_x_right (cv1, cvx, p) == LARGER);
       }
       else
       { 
 	// c2 is above c1:
-        return (!(curve_compare_at_x_right (cv1, cvx, p) == SMALLER &&
+        return (cvx_is_left ||
+		!(curve_compare_at_x_right (cv1, cvx, p) == SMALLER &&
                   curve_compare_at_x_right (cv2, cvx, p) == LARGER));
       }
     }

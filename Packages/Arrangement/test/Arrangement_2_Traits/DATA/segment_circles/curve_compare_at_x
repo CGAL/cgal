@@ -23,14 +23,13 @@ a 0 2 1 1 2 -1 2
 curve_compare_at_x        0 1 0 EQUAL.
 curve_compare_at_x        0 1 1 SMALLER.
 curve_compare_at_x        0 1 2 EQUAL.
-curve_compare_at_x        0 1 3 LARGER. 
+curve_compare_at_x        0 1 3 LARGER.
+curve_compare_at_x        0 2 4 EQUAL.
 
-curve_compare_at_x_left   0 1 0 EQUAL.         # Not defined to the left.
 curve_compare_at_x_left   0 1 2 SMALLER.
 curve_compare_at_x_left   0 1 4 LARGER.
 curve_compare_at_x_left   1 2 2 SMALLER.
 
 curve_compare_at_x_right  0 1 0 SMALLER.
 curve_compare_at_x_right  0 1 2 LARGER.
-curve_compare_at_x_right  0 1 4 EQUAL.         # Not defined to the right.
 curve_compare_at_x_right  1 2 2 SMALLER.

@@ -189,14 +189,14 @@ public:
   Comparison_result curve_compare_at_x(const X_curve_2& cv1, 
 				       const X_curve_2& cv2, 
 				       const Point_2& p) const {
-    CGAL_precondition(is_x_monotone(cv1));
-    CGAL_precondition(is_x_monotone(cv2));
+    CGAL_assertion(is_x_monotone(cv1));
+    CGAL_assertion(is_x_monotone(cv2));
 
-    if (!curve_is_in_x_range(cv1,p) || !curve_is_in_x_range(cv2,p) )
-      return EQUAL;
+    CGAL_precondition(curve_is_in_x_range(cv1, p));
+    CGAL_precondition(curve_is_in_x_range(cv2, p));
     
-    Point_2 p1=curve_calc_point(cv1,p);
-    Point_2 p2=curve_calc_point(cv2,p);
+    Point_2 p1 = curve_calc_point(cv1,p);
+    Point_2 p2 = curve_calc_point(cv2,p);
 
     return _compare_value(p1.y(),p2.y());
   }
@@ -206,21 +206,19 @@ public:
 					    const X_curve_2& cvb,
 					    const Point_2& p) const {
 
-    CGAL_precondition(is_x_monotone(cva));
-    CGAL_precondition(is_x_monotone(cvb));
+    CGAL_assertion(is_x_monotone(cva));
+    CGAL_assertion(is_x_monotone(cvb));
 
-    //cases in which the curve is not defined - return EQUAL 
-    if (!curve_is_in_x_range(cva,p) || !curve_is_in_x_range(cvb,p) )
-      return EQUAL;
+    // Both curves is must be defined at p and to its left. 
+    CGAL_precondition(curve_is_in_x_range(cva, p));
+    CGAL_precondition ((compare_x(curve_source(cva),p) == SMALLER) ||
+		       (compare_x(curve_target(cva),p) == SMALLER));
 
-    //check that both curves are defined to the left of p
-    if ( (compare_x(curve_source(cva),p)!=SMALLER) &&
-         (compare_x(curve_target(cva),p)!=SMALLER) )
-      return EQUAL;
-    if ( (compare_x(curve_source(cvb),p)!=SMALLER) &&
-         (compare_x(curve_target(cvb),p)!=SMALLER) )
-      return EQUAL;
+    CGAL_precondition(curve_is_in_x_range(cvb, p));
+    CGAL_precondition ((compare_x(curve_source(cvb),p) == SMALLER) ||
+		       (compare_x(curve_target(cvb),p) == SMALLER));
 
+    // Compare the two curves at x(p).
     Comparison_result r = curve_compare_at_x(cva, cvb, p);
     
     if ( r != EQUAL)
@@ -313,21 +311,19 @@ public:
   Comparison_result curve_compare_at_x_right(const X_curve_2& cva, 
 					     const X_curve_2& cvb,
 					     const Point_2& p) const {
-    CGAL_precondition(is_x_monotone(cva));
-    CGAL_precondition(is_x_monotone(cvb));
+    CGAL_assertion(is_x_monotone(cva));
+    CGAL_assertion(is_x_monotone(cvb));
 
-    //cases in which the curve is not defined - return EQUAL 
-    if (!curve_is_in_x_range(cva,p) || !curve_is_in_x_range(cvb,p) )
-      return EQUAL;
-    
-    //check that both curves are defined to the right of p
-    if ( (compare_x(curve_source(cva),p)!=LARGER) &&
-         (compare_x(curve_target(cva),p)!=LARGER) )
-      return EQUAL;
-    if ( (compare_x(curve_source(cvb),p)!=LARGER) &&
-         (compare_x(curve_target(cvb),p)!=LARGER) )
-      return EQUAL;
+    // Both curves is must be defined at p and to its right. 
+    CGAL_precondition(curve_is_in_x_range(cva, p));
+    CGAL_precondition ((compare_x(curve_source(cva),p) == LARGER) ||
+		       (compare_x(curve_target(cva),p) == LARGER));
 
+    CGAL_precondition(curve_is_in_x_range(cvb, p));
+    CGAL_precondition ((compare_x(curve_source(cvb),p) == LARGER) ||
+		       (compare_x(curve_target(cvb),p) == LARGER));
+
+    // Compare the two curves at x(p).
     Comparison_result r = curve_compare_at_x(cva, cvb, p);
     
     if ( r != EQUAL)
@@ -451,23 +447,25 @@ public:
     //4 cases - 
     if (cv0_is_left && cv1_is_left) {
       if (curve_compare_at_x_left(cv0,cv1,p)==LARGER) //cv0 above cv1
-        return ( !((curve_compare_at_x_left(cv1,cvx,p)==SMALLER)&&
-                   (curve_compare_at_x_left(cv0,cvx,p)==LARGER)) );
+        return (!cvx_is_left ||
+		!((curve_compare_at_x_left(cv1,cvx,p)==SMALLER)&&
+		  (curve_compare_at_x_left(cv0,cvx,p)==LARGER)) );
       else { //cv1 above cv0 
-        //below we assume that if cvx is not defined to the left of p
-        //the result is EQUAL (as defined in PM specs)
-        return ((curve_compare_at_x_left(cv0,cvx,p)==SMALLER)&&
+        return (cvx_is_left &&
+		(curve_compare_at_x_left(cv0,cvx,p)==SMALLER)&&
                 (curve_compare_at_x_left(cv1,cvx,p)==LARGER));
       }
     }
 
     if (!cv0_is_left && !cv1_is_left) {
       if (curve_compare_at_x_right(cv0,cv1,p)==LARGER) //cv0 above cv1
-        return ((curve_compare_at_x_right(cv1,cvx,p)==SMALLER)&&
+        return (!cvx_is_left &&
+		(curve_compare_at_x_right(cv1,cvx,p)==SMALLER)&&
                 (curve_compare_at_x_right(cv0,cvx,p)==LARGER));
       else //cv1 above cv0
-        return ( !((curve_compare_at_x_right(cv0,cvx,p)==SMALLER)&&
-                   (curve_compare_at_x_right(cv1,cvx,p)==LARGER)) );
+        return (cvx_is_left ||
+		!((curve_compare_at_x_right(cv0,cvx,p)==SMALLER)&&
+		  (curve_compare_at_x_right(cv1,cvx,p)==LARGER)) );
     }
 
     if (cv0_is_left && !cv1_is_left) {

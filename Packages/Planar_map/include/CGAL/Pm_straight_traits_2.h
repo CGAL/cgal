@@ -534,61 +534,12 @@ public:
     curve_compare_at_x(const X_curve &cv1, const X_curve &cv2, const Point &q) 
     const 
     {
-      //CGAL_assertion (curve_is_in_x_range(cv1, q));
-      //CGAL_assertion (curve_is_in_x_range(cv2, q));
-      if ((!curve_is_in_x_range(cv1, q)) || (!curve_is_in_x_range(cv2, q)))
-        return EQUAL;
+      CGAL_precondition(curve_is_in_x_range(cv1, q));
+      CGAL_precondition(curve_is_in_x_range(cv2, q));
       
       Point p1 = curve_calc_point(cv1, q);
       Point p2 = curve_calc_point(cv2, q);
       
-      if (curve_is_vertical(cv1))
-        {
-          if (curve_is_vertical(cv2))
-            {
-              // both cv1 and cv2 are vertical
-              if ( is_lower(curve_target(cv1), curve_source(cv2)) )
-                return SMALLER;
-              if ( is_higher(curve_source(cv1), curve_target(cv2)) )
-                return LARGER;
-              return SMALLER;
-            }
-          // cv1 is vertical and cv2 not
-          if ( is_lower(curve_target(cv1), p2) )
-            return SMALLER;
-          if ( is_higher(curve_source(cv1), p2) )
-            return LARGER;
-          return EQUAL;
-        }
-      
-      if (curve_is_vertical(cv2))
-        {
-          // cv2 is vertical and cv1- not
-          /*     bug fix (Oren)
-                 if (is_lower(curve_target(cv2), p1) )
-                 return LARGER;
-                 if ( is_higher(curve_source(cv2), p1) )
-                 return SMALLER;
-                    
-                 if ( is_higher(curve_source(cv2), p1) ) // bug fix (Oren)
-                 The answer should be independent of the curve's orientation !!
-                    
-                 p1 x--x               p1 x--x
-                 |                     /\
-                 |           versus    |
-                 \/cv2                 |cv2
-                 x                     x
-                    
-                 p                     p   
-          */
-          if (is_lower(lowest(curve_source(cv2),curve_target(cv2)), p1) )
-            return LARGER;
-          if ( is_higher(highest(curve_source(cv2),curve_target(cv2)), p1) )
-            return SMALLER;
-          return EQUAL;
-        }
-      
-      // both are not vertical
       if (is_higher(p1, p2)) return LARGER;
       if (is_lower(p1, p2)) return SMALLER;
       return EQUAL;
@@ -600,19 +551,13 @@ public:
                           const Point &q) const 
   {
     // cases  in which the function isn't defined
-    //CGAL_assertion(!curve_is_vertical(cv1));
-    //CGAL_assertion(!curve_is_vertical(cv2));
-    //CGAL_assertion(is_left(leftmost(curve_source(cv1),
-    //curve_target(cv1)), q));
-    //CGAL_assertion(is_left(leftmost(curve_source(cv2),
-    //curve_target(cv2)), q));
-                  
-    if (curve_is_vertical(cv1) || (curve_is_vertical(cv2))) return EQUAL;
-    if (!is_left(leftmost(curve_source(cv1), curve_target(cv1)), q))
-      return EQUAL;
-    if (!is_left(leftmost(curve_source(cv2), curve_target(cv2)), q))
-      return EQUAL;
-                  
+    CGAL_precondition(!curve_is_vertical(cv1));
+    CGAL_precondition(!curve_is_vertical(cv2));
+    CGAL_precondition(is_left(leftmost(curve_source(cv1),curve_target(cv1)), 
+			      q));
+    CGAL_precondition(is_left(leftmost(curve_source(cv2),curve_target(cv2)), 
+			      q));
+                                    
     Comparison_result r = curve_compare_at_x(cv1, cv2, q);
                   
     if ( r != EQUAL)
@@ -628,19 +573,13 @@ public:
                            const Point & q) const 
   {
     // cases  in which the function isn't defined
-    //CGAL_assertion(!curve_is_vertical(cv1));
-    //CGAL_assertion(!curve_is_vertical(cv2));
-    //CGAL_assertion(is_right(rightmost(curve_source(cv1), curve_target(cv1)),
-    //q));
-    //CGAL_assertion(is_right(rightmost(curve_source(cv2), curve_target(cv2)),
-    //q));
-      
-    if (curve_is_vertical(cv1) || (curve_is_vertical(cv2))) return EQUAL;
-    if (!is_right(rightmost(curve_source(cv1), curve_target(cv1)), q))
-      return EQUAL;
-    if (!is_right(rightmost(curve_source(cv2), curve_target(cv2)), q))
-      return EQUAL;
-      
+    CGAL_precondition(!curve_is_vertical(cv1));
+    CGAL_precondition(!curve_is_vertical(cv2));
+    CGAL_precondition(is_right(rightmost(curve_source(cv1), curve_target(cv1)),
+			       q));
+    CGAL_precondition(is_right(rightmost(curve_source(cv2), curve_target(cv2)),
+			       q));
+            
     Comparison_result r = curve_compare_at_x(cv1, cv2, q);
       
     if ( r != EQUAL)
