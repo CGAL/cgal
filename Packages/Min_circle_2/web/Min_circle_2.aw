@@ -9,9 +9,6 @@
 @! $Date$
 @! ============================================================================
  
-@p maximum_input_line_length = 180
-@p maximum_output_line_length = 180
-
 @documentclass[twoside]{article}
 @usepackage[latin1]{inputenc}
 @usepackage{a4wide2}
@@ -110,7 +107,7 @@ same manner. In general, for point sets $P$,$B$, define $mc(P,B)$ as the
 smallest circle enclosing $P$ that has the points of $B$ on the boundary
 (if defined). Although the algorithm finally delivers a circle
 $mc(P,\emptyset)$, it internally deals with circles that have a possibly
-nonempty set $B$. Here is the pseudocode of Welzl's method.  To compute
+nonempty set $B$. Here is the pseudo-code of Welzl's method.  To compute
 $mc(P)$, it is called with the pair $(P,\emptyset)$, assuming that
 $P=\{p_1,\ldots,p_n\}$ is stored in a linked list.
 
@@ -195,10 +192,10 @@ First, we declare the class template \ccc{CGAL_Min_circle_2}.
 
 The actual work of the algorithm is done in the private member
 functions \ccc{mc} and \ccc{compute_circle}. The former directly
-realizes the pseudocode of $\mc(P,B)$, the latter solves the basic
+realizes the pseudo-code of $\mc(P,B)$, the latter solves the basic
 case $\mc(\emptyset,B)$, see Section~\ref{sec:algo}.
 
-\emph{Workaround:} The GNU compiler (g++ 2.7.2[.?]) does not accept types
+\emph{Workaround:} The GNU compiler (g++ 2.7.2[.x]) does not accept types
 with scope operator as argument type or return type in class template
 member functions. Therefore, all member functions are implemented in
 the class interface.
@@ -237,7 +234,7 @@ The class interface looks as follows.
         @<Min_circle_2 predicates>
 
       private:
-        // Privat member functions
+        // Private member functions
         // -----------------------
         @<Min_circle_2 private member function `compute_circle'>
 
@@ -281,7 +278,7 @@ section, so we do not comment on it here.
     typedef           const Point *                Support_point_iterator;
 
     /**************************************************************************
-    WORKAROUND: The GNU compiler (g++ 2.7.2[.*]) does not accept types
+    WORKAROUND: The GNU compiler (g++ 2.7.2[.x]) does not accept types
     with scope operator as argument type or return type in class template
     member functions. Therefore, all member functions are implemented in
     the class interface.
@@ -375,7 +372,7 @@ sequence container \ccc{list} from STL~\cite{sl-stl-95}.
 The support set $S$ of at most three support points is stored in an
 array \ccc{support_points}, the actual number of support points is
 given by \ccc{n_support_points}. During the computations, the set of
-support points coincides with the set $B$ appearing in the pseudocode
+support points coincides with the set $B$ appearing in the pseudo-code
 for $\mc(P,B)$, see Section~\ref{sec:algo}.
 
 \emph{Workaround:} The array of support points is allocated dynamically,
@@ -390,7 +387,7 @@ array here.
 Finally, the actual circle is stored in a variable \ccc{circle}
 provided by the traits class object, by the end of computation equal to
 $mc(P)$. During computation, \ccc{tco.circle} equals the circle $mc$
-appearing in the pseudocode for $\mc(P,B)$, see Section~\ref{sec:algo}.
+appearing in the pseudo-code for $\mc(P,B)$, see Section~\ref{sec:algo}.
 
 @! ----------------------------------------------------------------------------
 \subsubsection{Constructors and Destructor}
@@ -777,14 +774,14 @@ corresponding predicates of class \ccc{Circle}.
 There is another way to build up $mc(P)$, other than by supplying
 the point set $P$ at once. Namely, $mc(P)$ can be built up
 incrementally, adding one point after another. If you look at the
-pseudocode in the introduction, this comes quite naturally. The
+pseudo-code in the introduction, this comes quite naturally. The
 modifying method \ccc{insert}, applied with point $p$ to a
 \ccc{CGAL_Min_circle_2<Traits>} object representing $mc(P)$,
 computes $mc(P \cup \{p\})$, where work has to be done only if $p$
 lies outside $mc(P)$. In this case, $mc(P \cup \{p\}) = mc(P,\{p\})$
 holds, so the private member function \ccc{mc} is called with
 support set $\{p\}$. After the insertion has been performed, $p$ is
-moved to the front of the point list, just like in the pseudocode in
+moved to the front of the point list, just like in the pseudo-code in
 Section~\ref{sec:algo}.
 
 @macro <Min_circle_2 modifiers> += @begin
@@ -1207,8 +1204,8 @@ noting that $|B| \leq 3$.
 This function computes the general circle $mc(P,B)$, where $P$ contains
 the points in the range $[$\ccc{points.begin()}$,$\ccc{last}$)$ and $B$
 is given by the first \ccc{n_sp} support points in the array
-\ccc{support_points}. The function is directly modelled after the
-pseudocode above.
+\ccc{support_points}. The function is directly modeled after the
+pseudo-code above.
 
 @macro <Min_circle_2 private member function `mc'> = @begin
     void
@@ -1255,7 +1252,7 @@ First, we declare the class template \ccc{CGAL_Optimisation_circle_2},
     class CGAL_Optimisation_circle_2;
 @end
 
-\emph{Workaround:} The GNU compiler (g++ 2.7.2[.?]) does not accept types
+\emph{Workaround:} The GNU compiler (g++ 2.7.2[.x]) does not accept types
 with scope operator as argument type or return type in class template
 member functions. Therefore, all member functions are implemented in
 the class interface.
@@ -1309,7 +1306,7 @@ section, so we do not comment on it here.
     typedef typename  _R::FT           Distance;
 
     /**************************************************************************
-    WORKAROUND: The GNU compiler (g++ 2.7.2[.*]) does not accept types
+    WORKAROUND: The GNU compiler (g++ 2.7.2[.x]) does not accept types
     with scope operator as argument type or return type in class template
     member functions. Therefore, all member functions are implemented in
     the class interface.
@@ -1443,7 +1440,7 @@ squared radius, resp.
 \subsubsection{Predicates}
 
 The following predicates perform in-circle tests and check for
-emptyness and degeneracy, resp.
+emptiness and degeneracy, resp.
 
 @macro <Optimisation_circle_2 predicates> = @begin
     inline
@@ -2778,7 +2775,9 @@ end of each file.
 \subsection{Min\_circle\_2.h}
 
 @file <include/CGAL/Min_circle_2.h> = @begin
-    @<Min_circle_2 header>("include/CGAL/Min_circle_2.h")
+    @<file header>(
+        "include/CGAL/Min_circle_2.h",
+        "2D Smallest Enclosing Circle")
 
     #ifndef CGAL_MIN_CIRCLE_2_H
     #define CGAL_MIN_CIRCLE_2_H
@@ -2836,7 +2835,9 @@ end of each file.
 \subsection{Min\_circle\_2.C}
 
 @file <include/CGAL/Min_circle_2.C> = @begin
-    @<Min_circle_2 header>("include/CGAL/Min_circle_2.C")
+    @<file header>(
+        "include/CGAL/Min_circle_2.C",
+        "2D Smallest Enclosing Circle")
 
     // Class implementation (continued)
     // ================================
@@ -2854,7 +2855,9 @@ end of each file.
 \subsection{Optimisation\_circle\_2.h}
 
 @file <include/CGAL/Optimisation_circle_2.h> = @begin
-    @<Optimisation_circle_2 header>("include/CGAL/Optimisation_circle_2.h")
+    @<file header>(
+        "include/CGAL/Optimisation_circle_2.h",
+        "2D Optimisation Circle")
 
     #ifndef CGAL_OPTIMISATION_CIRCLE_2_H
     #define CGAL_OPTIMISATION_CIRCLE_2_H
@@ -2900,7 +2903,9 @@ end of each file.
 \subsection{Optimisation\_circle\_2.C}
 
 @file <include/CGAL/Optimisation_circle_2.C> = @begin
-    @<Optimisation_circle_2 header>("include/CGAL/Optimisation_circle_2.C")
+    @<file header>(
+        "include/CGAL/Optimisation_circle_2.C",
+        "2D Optimisation Circle")
 
     // Class implementation (continued)
     // ================================
@@ -2923,7 +2928,9 @@ end of each file.
 \subsection{Min\_circle\_2\_traits\_2.h}
 
 @file <include/CGAL/Min_circle_2_traits_2.h> = @begin
-    @<Min_circle_2 header>("include/CGAL/Min_circle_2_traits_2.h")
+    @<file header>(
+        "include/CGAL/Min_circle_2_traits_2.h",
+        "default traits class for 2D Smallest Enclosing Circle")
 
     #ifndef CGAL_MIN_CIRCLE_2_TRAITS_2_H
     #define CGAL_MIN_CIRCLE_2_TRAITS_2_H
@@ -2959,7 +2966,9 @@ end of each file.
 \subsection{Min\_circle\_2\_adapterC2.h}
 
 @file <include/CGAL/Min_circle_2_adapterC2.h> = @begin
-    @<Min_circle_2 header>("include/CGAL/Min_circle_2_adapterC2.h")
+    @<file header>(
+        "include/CGAL/Min_circle_2_adapterC2.h",
+        "traits class adapter for 2D Smallest Enclosing Circle")
 
     #ifndef CGAL_MIN_CIRCLE_2_ADAPTERC2_H
     #define CGAL_MIN_CIRCLE_2_ADAPTERC2_H
@@ -2995,7 +3004,9 @@ end of each file.
 \subsection{Min\_circle\_2\_adapterH2.h}
 
 @file <include/CGAL/Min_circle_2_adapterH2.h> = @begin
-    @<Min_circle_2 header>("include/CGAL/Min_circle_2_adapterH2.h")
+    @<file header>(
+        "include/CGAL/Min_circle_2_adapterH2.h",
+        "traits class adapter for 2D Smallest Enclosing Circle")
 
     #ifndef CGAL_MIN_CIRCLE_2_ADAPTERH2_H
     #define CGAL_MIN_CIRCLE_2_ADAPTERH2_H
@@ -3031,7 +3042,9 @@ end of each file.
 \subsection{test\_Min\_circle\_2.C}
 
 @file <test/Optimisation/test_Min_circle_2.C> = @begin
-    @<Min_circle_2 header>("test/optimisation/test_Min_circle_2.C")
+    @<file header>(
+        "test/optimisation/test_Min_circle_2.C",
+        "test program for 2D Smallest Enclosing Circle")
 
     @<Min_circle_2 test (includes and typedefs)>
 
@@ -3079,22 +3092,20 @@ end of each file.
 
 @i ../file_header.awi
  
-@macro <Min_circle_2 header>(1) many = @begin
-    @<file header>("2D Smallest Enclosing Circle",@1,
-                   "Optimisation","Optimisation/Min_circle_2",
-                   "Sven Schönherr <sven@@inf.fu-berlin.de>",
-                   "Bernd Gärtner",
-                   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
-                   "$Revision$","$Date$")
-@end
+And here comes the specific file header for the product files of this
+web file.
 
-@macro <Optimisation_circle_2 header>(1) many = @begin
-    @<file header>("2D Optimisation Circle",@1,
-                   "Optimisation","Optimisation/Min_circle_2",
-                   "Sven Schönherr <sven@@inf.fu-berlin.de>",
-                   "Bernd Gärtner",
-                   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
-                   "$Revision$","$Date$")
+@macro <file header>(2) many = @begin
+    @<copyright notice>
+    @<file name>(@1)
+    @<file description>(
+        "Geometric Optimisation",
+        "Optimisation","Optimisation/Min_circle_2",
+        "$Revision$","$Date$",
+        "Sven Schönherr <sven@@inf.fu-berlin.de>",
+        "Bernd Gärtner",
+        "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
+        "@2")
 @end
 
 @! ============================================================================

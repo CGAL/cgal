@@ -8,7 +8,7 @@
 @! $Revision$
 @! $Date$
 @! ============================================================================
- 
+
 @documentclass[twoside]{article}
 @usepackage[latin1]{inputenc}
 @usepackage{a4wide2}
@@ -16,8 +16,6 @@
 @article
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{4}
-@p maximum_input_line_length = 120
-@p maximum_output_line_length = 120
 
 @thickline
 
@@ -84,7 +82,7 @@ h
 
 $\r$ is called a @em{representation} of $\C$.
 Note that the homogeneous point $(x,y,h)$ corresponds 
-to the cartesian point $(x/h, y/h)$ in the plane. Also, any cartesian 
+to the Cartesian point $(x/h, y/h)$ in the plane. Also, any Cartesian 
 point $p=(x,y)$ can be identified with the homogeneous point $(x,y,1)$,
 in which case (\ref{conic_def_hom}) assumes the form
 \begin{equation}
@@ -110,7 +108,7 @@ y
 + 2w = 0.
 \end{equation}
 
-Thus, under the condition $h\neq 0$, homogeneous and cartesian 
+Thus, under the condition $h\neq 0$, homogeneous and Cartesian 
 representation are equivalent, and we frequently switch between them.
 \footnote{The reason for scaling equations (\ref{conic_hom}) 
 and (\ref{conic_cart}) by a factor of 2 is purely technical -- we 
@@ -205,9 +203,9 @@ In addition, there is a geometric way of assigning sides to an oriented
 conic which does not depend on $\r$ (like an oriented circle has a bounded 
 side, independent from its orientation). To this end, we define the 
 @em{convex side} of a conic $\C$ as the the union of the convex 
-connected components of $\R^2\setminus \C$. The @em{nonconvex side} is 
-then just the union of the nonconvex components. Figure \ref{orientations}
-depicts the convex sides of an ellipse, hyperbola and parabola, labelled
+connected components of $\R^2\setminus \C$. The @em{non-convex side} is 
+then just the union of the non-convex components. Figure \ref{orientations}
+depicts the convex sides of an ellipse, hyperbola and parabola, labeled
 with the letter `$c$'. 
 
 \begin{figure}
@@ -221,19 +219,19 @@ with the letter `$c$'.
 \end{figure}
 
 A conic is defined to be @em{degenerate} if either its convex side or
-its nonconvex side is empty. 
+its non-convex side is empty. 
 Let us discuss the possibilities for this. First, the trivial conic
 is degenerate, with both sides being empty. The empty conic is degenerate,
-with the nonconvex side being empty. An ellipse is
+with the non-convex side being empty. An ellipse is
 degenerate if and only if it consists of just one point (and so the
 convex side is empty). A hyperbola is degenerate if and only if it 
 contains its center of symmetry $c$. In this case, the hyperbola is a
-pair of lines crossing at $c$, and so the nonconvex side is empty.
+pair of lines crossing at $c$, and so the non-convex side is empty.
 A degenerate parabola is either a pair of parallel lines 
-or just one line. In both cases, the nonconvex side is empty.
+or just one line. In both cases, the non-convex side is empty.
 
-In the nondegenerate case, the classification of points by positive 
-and negative side coincides with the one by convex and nonconvex side.
+In the non-degenerate case, the classification of points by positive 
+and negative side coincides with the one by convex and non-convex side.
 In the degenerate case, this exactly holds if positive or
 negative side disappear, like for a degenerate ellipse (but not for a
 degenerate hyperbola).
@@ -257,7 +255,7 @@ one, the negative side is empty.
 @! ---------------------------------------------------------------------------
 
 The volume of an ellipse $\E$, $\Vol(\E)$, is defined as the area of 
-its convex side. If $\E$ is nondegenerate and presented in center form 
+its convex side. If $\E$ is non-degenerate and presented in center form 
 (\ref{center_form}), consider the matrix 
 $$A := M / (2w - c^TMc).$$ It is easy to see that $A$ is 
 invariant under scaling $\r$ by any nonzero factor. The following
@@ -274,7 +272,7 @@ For this note that $\det(M)>0$ implies $\det(A)>0$.
 
 An object of the class @prg{CGAL_Conic_2<R>} stores an oriented
 conic $\C_{\r} = (\C(\r),\r)$ by its representation $\r$. The template 
-parameter @prg{R} is the representation type (homogeneous or cartesian). In
+parameter @prg{R} is the representation type (homogeneous or Cartesian). In
 the sequel, a conic always means an oriented conic.
 
 @macro <CGAL_Conic_2 declaration> = @begin
@@ -296,7 +294,7 @@ more specialized and needed only by the class template
  
 As a general rule, a method only qualifies for the public domain if 
 it can be specified without referring to particular values of $\r$, in
-other words, if its behaviour only depends on the equivalence class of
+other words, if its behavior only depends on the equivalence class of
 all positive multiples of $\r$. For example, this holds for the sign of 
 $\r(p)$, $p$ some point, but not for the value of $\r(p)$. As usual, there
 is an exception to this rule: we have public methods to retrieve the 
@@ -472,7 +470,7 @@ enumeration type.
 @end
 
 We have three more predicates that -- in combination with the above -- 
-yield a finer access to the type, namely a test for emptyness, triviality
+yield a finer access to the type, namely a test for emptiness, triviality
 and degeneracy, where both the empty and the trivial conic are also
 degenerate. 
 
@@ -542,7 +540,7 @@ side directly or ask whether the point lies on some specific side.
 
 @end
 
-Then we have the classification according to convex and nonconvex side. 
+Then we have the classification according to convex and non-convex side. 
 Because this is a natural generalization of the classification according
 to bounded and unbounded side, we `extend' the type @prg{CGAL_Bounded_side}.
 
@@ -616,7 +614,7 @@ coordinate level.
 @! ---------------------------------------------------------------------------
 
 We can obtain the conic $\C_{-\r}$ of opposite orientation, having positive 
-and negative sides interchanged (convex and nonconvex side stay the same,
+and negative sides interchanged (convex and non-convex side stay the same,
 of course). Note that if $\C_{\r}$ has zero orientation, so has $\C_{-\r}$. 
 
 @macro <CGAL_Conic_2 set methods> += @begin
@@ -737,16 +735,16 @@ $\C_{\r_1}$ and $\C_{\r_2}$.
 @subsubsection{Two pairs of lines through four points}
 @! ---------------------------------------------------------------------------
 
-The following method constructs two linepairs through four
+The following method constructs two line-pairs through four
 given points $p_1,p_2,p_3,p_4$, assumed to be in convex position. If
 the points are enumerated in clockwise or counterclockwise order, these
-will be the linepairs $\overline{p_1p_2}\cup\overline{p_3p_4}$ and
+will be the line-pairs $\overline{p_1p_2}\cup\overline{p_3p_4}$ and
 $\overline{p_2p_3}\cup\overline{p_4p_1}$. Otherwise, points are renamed
 first to achieve (counter)clockwise orientation. The two resulting
 conics are passed to the method by reference, and their orientations 
 depend on the points as described in the method @prg{set_linepair}.
 If $p_1,p_2,p_3,p_4$ are not in convex position, the method still
-computes two linepairs through the points, but it is not specified
+computes two line-pairs through the points, but it is not specified
 which ones. This is a static method.
 
 @macro <CGAL_Conic_2 private methods> += @begin
@@ -767,7 +765,7 @@ which ones. This is a static method.
 @! ---------------------------------------------------------------------------
 
 We have a method to construct an ellipse through $p_1,p_2,p_3,p_4$ in convex
-position, using two linepairs through the points as  
+position, using two line-pairs through the points as  
 obtained from a call to the method @prg{set_two_linepairs} with parameters
 $p_1,p_2,p_3,p_4$. The orientation of the ellipse is not specified. In case 
 the argument conics have not been constructed by the method 
@@ -880,7 +878,7 @@ As before, if $\E$ is not an ellipse, the result is meaningless.
 @! method works in image space, proceeding in two phases.
 @!
 @! Phase 1 draws the conic in $x$-direction. This means that the width
-@! of the output window is scanned pixelwise, for any $x$-value
+@! of the output window is scanned pixel-wise, for any $x$-value
 @! computing the at most two corresponding values $y_1,y_2$ such that
 @! $(x,y_1),(x,y_2)\in \C$. (This is done by solving a quadratic
 @! equation). The resulting pixels are stored for output, which is
@@ -980,14 +978,14 @@ and {\tt CGAL\_ConicCPA2<PT,DA>}}
 @! ---------------------------------------------------------------------------
 
 The two classes described in this section realize the functionality of
-the general class @prg{Conic_2<R>}, distinguished between cartesian and
-homegeneous representation. Unlike it is practice in the kernel, the
+the general class @prg{Conic_2<R>}, distinguished between Cartesian and
+homogeneous representation. Unlike it is practice in the kernel, the
 template parameters are not field and/or ring type but point and data
-accesor type. The reason is that the classes described here are also
+accessor type. The reason is that the classes described here are also
 used to build traits class adapters for the 
 class @prg{CGAL_Min_ellipse_2<Traits>},
 where the adapters themselves are templatized with a 
-point and data accesor type. 
+point and data accessor type. 
 
 To realize this scheme, the representation type @prg{R} of the 
 class @prg{Conic_2<R>} is enhanced with a data accessor class -- it will 
@@ -1039,11 +1037,11 @@ of a type @prg{DA} for the homogeneous representation would look as follows.
 
 @end
 
-In the cartesian case, @prg{DA} must declare a field type @prg{FT} and
+In the Cartesian case, @prg{DA} must declare a field type @prg{FT} and
 access via @prg{get} to the $x$- and $y$-coordinate of a point $p=(x,y)$
 of type @prg{FT}. @prg{PT} is expected to declare a constructor with two 
 arguments of type @prg{FT}. In addition, we need an assignment constructor. 
-A minimal interface of a type @prg{DA} in the cartesian case would
+A minimal interface of a type @prg{DA} in the Cartesian case would
 look as follows.
 
 @macro <CGAL_ConicCPA2 DA requirements> zero = @begin
@@ -1226,7 +1224,7 @@ determining the conic's type and then handling the three possible types in
 a @prg{case} statement. 
 
 @macro <CGAL_ConicHPA2 protected member functions> += @begin
-    void analyse () 
+    void analyse( ) 
     {
         RT d = det();
         type = (CGAL_Conic_type)(CGAL_sign(d));
@@ -1253,24 +1251,24 @@ a @prg{case} statement.
 
 
 @macro <CGAL_ConicCPA2 protected member functions> += @begin
-    void analyse () 
+    void analyse( ) 
     {
         FT d = det();
         type = (CGAL_Conic_type)(CGAL_sign(d));
         switch (type) {
         case CGAL_HYPERBOLA: 
             { 
-                @<analyse hyperbola, cartesian case>
+                @<analyse hyperbola, Cartesian case>
             }
             break;
         case CGAL_PARABOLA:
             {
-                @<analyse parabola, cartesian case>
+                @<analyse parabola, Cartesian case>
             }
             break;
         case CGAL_ELLIPSE:
             {
-                @<analyse ellipse, cartesian case>
+                @<analyse ellipse, Cartesian case>
             }
             break;
         }
@@ -1325,7 +1323,7 @@ side, equivalently $z<0$, or $z'>0$. Similarly, the orientation
 is negative in case of $z'<0$. For $z=z'=0$, 
 the hyperbola is degenerate, and so its orientation is zero. 
 
-A nondegenerate ellipse, on the other hand, has positive orientation 
+A non-degenerate ellipse, on the other hand, has positive orientation 
 if and only if its center is in the positive side, equivalently, if
 $z > 0$, or $z' > 0$. This is equivalent to $M$ being negative
 definite, or $r<0$. In case of the degenerate ellipse $\E=\{c\}$, we have
@@ -1347,7 +1345,7 @@ this, we get the equivalent condition $r>0$.
 @end
 
 
-@macro <analyse hyperbola, cartesian case> = @begin
+@macro <analyse hyperbola, Cartesian case> = @begin
     trivial = empty = false;
     FT z_prime = d*w() - u()*u()*s() - v()*v()*r() + u()*v()*t();
     o = (CGAL_Orientation)(CGAL_sign (z_prime));
@@ -1370,7 +1368,7 @@ this, we get the equivalent condition $r>0$.
 
 @end
 
-@macro <analyse ellipse, cartesian case> = @begin
+@macro <analyse ellipse, Cartesian case> = @begin
     trivial = false;
     FT z_prime = d*w() - u()*u()*s() - v()*v()*r() + u()*v()*t();
     if (CGAL_is_positive (r())) {
@@ -1390,9 +1388,9 @@ Assume that $r\neq 0$. Then the conic equation (\ref{conic_def_hom}) can
 be solved for $x$, obtaining
 $$x = \frac{-ty - u \pm \sqrt{2(tu - 2rv)y +u^2 - 4rw}}{2r}.$$
 
-The parabola is nondegenerate exactly if the factor $(tu - 2rv)$ is 
+The parabola is non-degenerate exactly if the factor $(tu - 2rv)$ is 
 nonzero, where we obtain a curved object. For $tu=2rv$, the parabola
-is either empty (this happens for $u^2<4rw$ when the radicand becomes
+is either empty (this happens for $u^2<4rw$ when the radicant becomes
 negative), a single line (if $u^2=4rw$), or a pair of lines (for
 $u^2>4rw$). Let us treat the degenerate case first. 
 
@@ -1410,7 +1408,7 @@ side).
 
 For $u^2 > 4rw$, we get a pair of parallel lines, of zero orientation
 (because both positive and negative sides are nonempty, while the
-nonconvex side is empty). 
+non-convex side is empty). 
 
 We can argue completely similar in the case $s\neq 0$. Here we get a
 degeneracy exactly if $tv = 2su$, and the discriminant $v^2-4sw$ determines
@@ -1422,9 +1420,9 @@ always positive orientation (because both positive and convex side
 are empty). If $u=v=0$ but $w\neq 0$, we get the empty conic, where
 the orientation is given by $w$. In any other case, we obtain a
 single line, this time with zero orientation, because
-it has nonempty positive and negative side but empty nonconvex side. 
+it has nonempty positive and negative side but empty non-convex side. 
 
-Now consider the nondegenerate case. We claim that the orientation is
+Now consider the non-degenerate case. We claim that the orientation is
 positive if and only if $r,s\leq 0$. To see this, note that in this case,
 the parabola can be written in the form
 $$\r(p) = -(\sqrt{-r} x - \sqrt{-s} y)^2 + ux + vy + w.$$
@@ -1496,7 +1494,7 @@ that the positive side is a convex set, thus equal to the convex side.
 
 @end
 
-@macro <analyse parabola, cartesian case> = @begin
+@macro <analyse parabola, Cartesian case> = @begin
     if (!CGAL_is_zero (r())) {
         trivial         = false;
         degenerate      = (t()*u() == FT(2)*r()*v());
@@ -1578,7 +1576,7 @@ $\r(p) = rx^2+sy^2+txy+uxh+vyh+wh^2$.
 
 @end
 
-The cartesian version is obtained for $h=1$, i.e. it computes the value
+The Cartesian version is obtained for $h=1$, i.e. it computes the value
 $\r(p) = rx^2+sy^2+txy+ux+vy+w$.
 
 @macro <CGAL_ConicCPA2 protected member functions> += @begin
@@ -1611,7 +1609,7 @@ data.
     CGAL_ConicHPA2 (RT r, RT s, RT t, RT u, RT v, RT w, const DA& da = DA())
         : dao( da), _r(r), _s(s), _t(t), _u(u), _v(v), _w(w)
     {
-        analyse (); 
+        analyse(); 
     }
 
 @end
@@ -1622,7 +1620,7 @@ data.
     CGAL_ConicCPA2 (FT r, FT s, FT t, FT u, FT v, FT w, const DA& da = DA())
         : dao( da), _r(r), _s(s), _t(t), _u(u), _v(v), _w(w)
     {
-        analyse ();
+        analyse();
     }
 
 @end
@@ -1686,7 +1684,7 @@ c = -M^{-1}
 \] 
 
 In the homogeneous representation, the value $-\det(M)$ serves as the
-$h$-component of the center, in the cartesian representation, we divide
+$h$-component of the center, in the Cartesian representation, we divide
 by it.
 
 @macro <CGAL_ConicHPA2 public member functions> += @begin
@@ -1884,7 +1882,7 @@ positive resp. negative side iff $\r(p)>0$ resp. $\r(p)<0$.
 
 Then we have the convex side queries. Under nonzero orientation,
 the side is determined by a conic evaluation. If the orientation is
-zero, we know that the nonconvex side is empty, see subsection
+zero, we know that the non-convex side is empty, see subsection
 \ref{orientation_sec}.
 
 @macro <CGAL_ConicHPA2 public member functions> += @begin
@@ -2020,7 +2018,7 @@ We provide tests for equality and inequality of two conics.
 A main difference between the public and the private set methods 
 is that the private ones do not analyse the conic. If a conic
 is constructed in a sequence of calls to set functions, it is more 
-efficient to do an anlysis only once for the final result, rather than
+efficient to do an analysis only once for the final result, rather than
 analysing any intermediate result. Therefore, the private set functions
 also do not allow to specify an orientation, because in order to orient the
 conic, an analysis would be necessary. Under this scheme, caution is in place,
@@ -2067,7 +2065,7 @@ whenever they call a private set method.
 \paragraph{Two pairs of lines through four points} ~
 @!----------------------------------------------------------------------------
 
-Here is the method to get two linepairs from four given points. It just
+Here is the method to get two line-pairs from four given points. It just
 brings the points into (counter)clockwise order and then calls the
 @prg{set_linepair} method for their two conic arguments, supplying the
 points in the right order. The reordering needs access to the 
@@ -2080,7 +2078,7 @@ y_1 & y_2 & y_3 \\
 h_1 & h_2 & h_3 
 \end{array}\right),$$
 see Lemma \ref{det_lemma} below. 
-The following macros define this determinant (the cartesian version is
+The following macros define this determinant (the Cartesian version is
 obtained by setting $h_i=1,i=1\ldots 3$). 
 
 @macro <h_orientation>(3) many = @begin
@@ -2176,7 +2174,7 @@ obtained by setting $h_i=1,i=1\ldots 3$).
 \paragraph{Some ellipse from two pairs of lines} ~
 @!----------------------------------------------------------------------------
 
-Assuming that we have constructed two linepairs $\C_{\r_1}, \C_{\r_2}$ 
+Assuming that we have constructed two line-pairs $\C_{\r_1}, \C_{\r_2}$ 
 using the method @prg{set_two_linepairs} with points $p_1,p_2,p_3,p_4$
 in convex position, an ellipse through the points can be obtained as a 
 linear combination $\C_{\r}$, $\r = \lambda \r_1 + \mu \r_2$, where 
@@ -2217,7 +2215,7 @@ $r_i,\ldots,w_i$ the components of $\r_i,i=1\ldots 2$.
 If $\C_{\r_1}, \C_{\r_2}$ are two conics, $p$ some point, it is easy to see 
 that the conic $\C_{\r}$ with $$\r = \r_2(p) \r_1 - \r_1(p) \r_2$$ is
 a conic containing the set $(\C_{\r_1} \cap \C_{\r_2}) \cup \{p\}.$ Exactly
-this conic is contructed here. 
+this conic is constructed here. 
 
 @macro<CGAL_ConicHPA2 private member functions> += @begin
     void set (const CGAL_ConicHPA2<PT,DA> &c1,
@@ -2275,8 +2273,11 @@ Hence
 $$\frac{d}{z^2} = \frac{d^3}{4q^2}, \quad q = dw - u^2 s + uvt - v^2r.$$
 
 It follows that 
-$$\sgn\left(\frac{\d}{\d \tau} \Vol(\E(\tau))\right) = -\sgn\left(\frac{d^2(3d'q-2dq')}{4q^3}\right) =
--\sgn \left( 3d'q-2dq'\right) \sgn (q).$$
+\[
+   \sgn\left(\frac{\d}{\d \tau} \Vol(\E(\tau))\right)
+   = -\sgn\left(\frac{d^2(3d'q-2dq')}{4q^3}\right)
+   = -\sgn \left( 3d'q-2dq'\right) \sgn (q).
+\]
 
 Consider the term $3d'q-2dq'=0$. We have
 
@@ -2380,7 +2381,7 @@ that $$u^3 = -b/2 + \sqrt{D}.$$
 Note that $u^3$ is a solution of the quadratic equation
 $$x^2 + bx - \left(\frac{a}{3}\right)^3 = 0.$$
 This means, if $a\neq 0$, then also $u\neq 0$. 
-If the discriminat $D$ is negative, $u$ is a complex number,
+If the discriminant $D$ is negative, $u$ is a complex number,
 otherwise it must be chosen as the real number 
 $$u := \sqrt[3]{-b/2 + \sqrt{D}}.$$
 \item Let $u$ be of the form $u = u_R - u_I \I$ (we possibly have $u_I=0$).
@@ -2764,7 +2765,7 @@ w &=& (-y_1x_2+x_1y_2)(-y_3x_4+x_3y_4).
 
 @end
 
-For the cartesian representation we proceed completely similar,
+For the Cartesian representation we proceed completely similar,
 replacing values $h_1,\ldots,h_4$ by 1.
 
 @macro <CGAL_ConicCPA2 public member functions> += @begin
@@ -2808,9 +2809,9 @@ Given $p_1 = (x_1, y_1, h_1)$,
 $p_2 = (x_2, y_2, h_2)$, $p_3 = (x_3, y_3, h_3)$, we give a formula for
 representing the ellipse of smallest volume containing $p_1,p_2,p_3$
 in the form of (\ref{conic_def_hom}). For this, we use the following 
-well-known formula for this ellipse in case of cartesian points.
+well-known formula for this ellipse in case of Cartesian points.
 \begin{Lemma}
-Let $q_1,q_2,q_3$ be noncollinear cartesian points. Then the smallest
+Let $q_1,q_2,q_3$ be non-collinear Cartesian points. Then the smallest
 ellipse containing $q_1,q_2,q_3$ can be written as the set of points
 $q=(x,y)$ satisfying
 \begin{equation}
@@ -2869,14 +2870,14 @@ h_1 & h_2 & h_3
 \end{array}\right)\right)^2 =
 (-h_1x_3y_2+x_1y_2h_3+h_1x_2y_3-x_1y_3h_2+h_2x_3y_1-x_2y_1h_3)^2.$
 
-After precomputing the values
+After pre-computing the values
 \[
 x_i^2, y_i^2, x_ih_i, y_ih_i, h_i^2,
 \] 
 for $i=1,\ldots,3$, the components of the vector $\delta\r/3$ are easy
 to obtain. Note that this vector is a legal representation of the ellipse
 if $\delta\neq 0$. This is the case if and only if $p_1,p_2,p_3$ are
-noncollinear, see Lemma \ref{det_lemma}. Moreover, one can show that
+non-collinear, see Lemma \ref{det_lemma}. Moreover, one can show that
 the formulas above determine an ellipse of negative orientation, regardless
 of the point triple orientation. This means, if the orientation
 was positive, we still need to flip the representation.  
@@ -2938,7 +2939,7 @@ was positive, we still need to flip the representation.
 
 @end
 
-As before, the cartesian version is obtained by setting 
+As before, the Cartesian version is obtained by setting 
 $h_1,h_2,h_3$ to 1.
 
 @macro<CGAL_ConicCPA2 public member functions> += @begin
@@ -3008,7 +3009,7 @@ also have a method available.
         CGAL_ConicHPA2<PT,DA> pair1, pair2;
         set_two_linepairs (p1, p2, p3, p4, pair1, pair2);
         set_ellipse (pair1, pair2);
-        analyse ();
+        analyse();
         if (o != _o) set_opposite();
     }
 
@@ -3059,7 +3060,7 @@ nontrivial conic through the points.
         CGAL_ConicHPA2<PT,DA> c2; c2.set_linepair (p1, p4, p2, p3);
         set_linear_combination (c2.evaluate (p5), c1, 
                                -c1.evaluate (p5), c2);
-        analyse ();
+        analyse();
         // precondition: all points distinct <=> conic nontrivial
         CGAL_kernel_precondition (!is_trivial());
         if (o != _o) set_opposite();
@@ -3075,7 +3076,7 @@ nontrivial conic through the points.
         CGAL_ConicCPA2<PT,DA> c2; c2.set_linepair (p1, p4, p2, p3);
         set_linear_combination (c2.evaluate (p5), c1, 
                                -c1.evaluate (p5), c2);
-        analyse ();
+        analyse();
         // precondition: all points distinct <=> conic nontrivial
         CGAL_kernel_precondition (!is_trivial());
         if (o != _o) set_opposite();
@@ -3143,11 +3144,11 @@ nontrivial conic through the points.
 
 Here we collect all types and functions that are independent of the
 representation type @prg{R}. These are the declarations of the enumeration
-types @prg{CGAL_Conic_type} and @prg{CGAL_Convex_side}, the conic ouput
+types @prg{CGAL_Conic_type} and @prg{CGAL_Convex_side}, the conic output
 function and the functions in connection with the solution of cubic equations.
 
 @file <include/CGAL/Conic_misc.h> = @begin
-@<Conic_2 header>("include/CGAL/Conic_misc.h")
+@<file header>("include/CGAL/Conic_misc.h","2D Conic")
 
 #ifndef CONIC_MISC_H
 #define CONIC_MISC_H
@@ -3176,7 +3177,7 @@ classes @prg{CGAL_ConicHPA2<PT,DA>} and/or  @prg{CGAL_ConicCPA2<PT,DA>} are
 included before that. 
 
 @file <include/CGAL/Conic_2.h> = @begin
-@<Conic_2 header>("include/CGAL/Conic_2.h")
+@<file header>("include/CGAL/Conic_2.h","2D Conic")
 
 #ifndef CGAL_CONIC_2_H
 #define CGAL_CONIC_2_H
@@ -3216,7 +3217,7 @@ included before that.
 Here is the class @prg{CGAL_ConicHPA2<PT,DA>}\ldots
 
 @file <include/CGAL/ConicHPA2.h> = @begin
-@<Conic_2 header>("include/CGAL/ConicHPA2.h")
+@<file header>("include/CGAL/ConicHPA2.h","2D Conic")
 
 #ifndef CGAL_CONICHPA2_H
 #define CGAL_CONICHPA2_H
@@ -3247,9 +3248,8 @@ Here is the class @prg{CGAL_ConicHPA2<PT,DA>}\ldots
 
 \ldots and the class @prg{CGAL_ConicCPA2<PT,DA>}.
 
-
 @file <include/CGAL/ConicCPA2.h> = @begin
-@<Conic_2 header>("include/CGAL/ConicCPA2.h")
+@<file header>("include/CGAL/ConicCPA2.h","2D Conic")
 
 // includes
 #ifndef CGAL_CONICCPA2_H
@@ -3283,13 +3283,20 @@ Here is the class @prg{CGAL_ConicHPA2<PT,DA>}\ldots
 
 @i ../file_header.awi
  
-@macro <Conic_2 header>(1) many = @begin
-    @<file header>("2D Conic",@1,
-                   "Optimisation","Optimisation/Conic_2",
-                   "Bernd Gärtner <gaertner@@inf.ethz.ch>",
-                   "Sven Schönherr",
-                   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
-                   "$Revision$","$Date$")
+And here comes the specific file header for the product files of this
+web file.
+
+@macro <file header>(2) many = @begin
+    @<copyright notice>
+    @<file name>(@1)
+    @<file description>(
+        "Geometric Optimisation",
+        "Optimisation","Optimisation/Conic_2",
+        "$Revision$","$Date$",
+        "Bernd Gärtner <gaertner@@inf.ethz.ch>",
+        "Sven Schönherr",
+        "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
+        "@2")
 @end
 
 @! ===== EOF ==================================================================
