@@ -91,6 +91,9 @@ public:
   typedef Triangulation_ds_cell_circulator_3<Tds>  Cell_circulator;
   typedef Triangulation_ds_facet_circulator_3<Tds> Facet_circulator;
 
+  // In 2D only :
+  typedef Triangulation_ds_face_circulator_3<Tds>  Face_circulator;
+
   Triangulation_data_structure_3() 
     : _dimension(-2), _number_of_vertices(0)
   {}
@@ -174,6 +177,24 @@ public:
       return c; 
     }
 
+  Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
+	                  Vertex_handle v2, Vertex_handle v3,
+		          Cell_handle n0, Cell_handle n1,
+			  Cell_handle n2, Cell_handle n3)
+    {
+      Cell_handle c = get_new_cell();
+      c->set_vertices(v0,v1,v2,v3);
+      c->set_neighbors(n0,n1,n2,n3);
+      return c; 
+    }
+
+  Cell_handle create_face()
+    {
+      CGAL_triangulation_precondition(dimension()<3);
+      Cell_handle c = get_new_cell();
+      return c; 
+    }
+
   Cell_handle create_face(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
     {
       CGAL_triangulation_precondition(dimension()<3);
@@ -184,15 +205,41 @@ public:
       return c; 
     }
 
-  Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
-	                  Vertex_handle v2, Vertex_handle v3,
-		          Cell_handle n0, Cell_handle n1,
-			  Cell_handle n2, Cell_handle n3)
+  // The following functions come from TDS_2.
+  Cell_handle create_face(Cell_handle f0, int i0,
+	                  Cell_handle f1, int i1,
+			  Cell_handle f2, int i2)
     {
-      Cell_handle c = get_new_cell();
-      c->set_vertices(v0,v1,v2,v3);
-      c->set_neighbors(n0,n1,n2,n3);
-      return c; 
+      CGAL_triangulation_precondition(dimension() <= 2);
+      Cell_handle newf = create_face(f0->vertex(cw(i0)),
+			             f1->vertex(cw(i1)),
+			             f2->vertex(cw(i2)));
+      set_adjacency(newf, 2, f0, i0);
+      set_adjacency(newf, 0, f1, i1);
+      set_adjacency(newf, 1, f2, i2);
+      return newf;
+    }
+
+  Cell_handle create_face(Cell_handle f0, int i0,
+	                  Cell_handle f1, int i1)
+    {
+      CGAL_triangulation_precondition(dimension() <= 2);
+      Cell_handle newf = create_face(f0->vertex(cw(i0)),
+			             f1->vertex(cw(i1)),
+			             f1->vertex(ccw(i1)));
+      set_adjacency(newf, 2, f0, i0);
+      set_adjacency(newf, 0, f1, i1);
+      return newf;
+    }
+
+  Cell_handle create_face(Cell_handle f, int i, Vertex_handle v)
+    {
+      CGAL_triangulation_precondition(dimension() <= 2);
+      Cell_handle newf = create_face(f->vertex(cw(i)),
+			             f->vertex(ccw(i)),
+				     v);
+      set_adjacency(newf, 2, f, i);
+      return newf;
     }
 
 private:
@@ -496,6 +543,13 @@ public:
     return Facet_circulator(ce, i, j, start, f);
   }
 
+  // 2D : circulates on the faces adjacent to a vertex.
+  Face_circulator incident_faces(Vertex_handle v) const
+  {
+    CGAL_triangulation_precondition( dimension() == 2 );
+    return Face_circulator(v, v->cell());
+  }
+
   // around a vertex
 private:
   template <class OutputIterator>
@@ -527,7 +581,8 @@ private:
       CGAL_triangulation_precondition(dimension() == 2);
 
       // TODO : in 2D, there's no real need for conflict_flag, we could use
-      // a smarter algorithm.
+      // a smarter algorithm.  We could use the 2D Face_circulator.
+      // Should we just have this Face_circulator ?
 
       // Flag values :
       // 1 : incident cell already visited
