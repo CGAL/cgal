@@ -28,4 +28,5 @@ int main() {
   W << polygon;
 
   W.read_mouse();         // wait for mouse-click
+  return 0;
 }
