@@ -6,6 +6,9 @@ include/CGAL/IO/Geomview_stream.h
 src/Geomview_stream.C
 
 CHANGES
+Ver 2.5 (27 July 1999)
+added std:: in front of "flush" ans "ends"
+
 Ver 2.4 (23 July 1999)
 included #if !defined in src/Geomview_stream.C
 because Geomview is not supported by M$C and BORLANDC

@@ -161,7 +161,7 @@ operator<<(Geomview_stream &gv,
            const Point_2<R> &p)
 {
     std::ostrstream os;
-    os << "p" << gv.point_count++ << ends ;
+    os << "p" << gv.point_count++ << std::endl ;
     char *id = os.str();
 
     gv << ascii
@@ -190,7 +190,7 @@ operator<<(Geomview_stream &gv,
            const Point_3<R> &p)
 {
     std::ostrstream os;
-    os << "p" << gv.point_count++ << ends ;
+    os << "p" << gv.point_count++ << std::endl ;
     char *id = os.str();
 
     gv << ascii
@@ -218,7 +218,7 @@ operator<<(Geomview_stream &gv,
            const Segment_2<R> &segment)
 {
     std::ostrstream os;
-    os << "seg" << gv.segment_count++ << ends ;
+    os << "seg" << gv.segment_count++ << std::endl ;
     char *id = os.str();
 
     gv << ascii
@@ -255,7 +255,7 @@ operator<<(Geomview_stream &gv,
            const Segment_3<R> &segment)
 {
     std::ostrstream os;
-    os << "seg" << gv.segment_count++ << ends ;
+    os << "seg" << gv.segment_count++ << std::endl ;
     char *id = os.str();
 
     gv << ascii
@@ -295,7 +295,7 @@ operator<<(Geomview_stream &gv,
            const Triangle_2<R> &t)
 {
     std::ostrstream os;
-    os << "tr" << gv.triangle_count++ << ends;
+    os << "tr" << gv.triangle_count++ << std::endl;
     char *id = os.str();
 
     gv << ascii
@@ -333,7 +333,7 @@ operator<<(Geomview_stream &gv,
            const Triangle_3<R> &t)
 {
     std::ostrstream os;
-    os << "tr" << gv.triangle_count++ << ends;
+    os << "tr" << gv.triangle_count++ << std::endl;
     char *id = os.str();
 
     gv << ascii
@@ -371,7 +371,7 @@ operator<<(Geomview_stream &gv,
            const Tetrahedron_3<R> &t)
 {
     std::ostrstream os;
-    os << "tetra" << gv.tetrahedron_count++ << ends ;
+    os << "tetra" << gv.tetrahedron_count++ << std::endl ;
     char *id = os.str();
 
     gv << ascii
@@ -444,7 +444,7 @@ operator<<(Geomview_stream &gv,
            const Tetrahedralization_simplex<V>* s)
 {
     std::ostrstream os;
-    os << "Simplex_" << (unsigned long int)s  << ends ;
+    os << "Simplex_" << (unsigned long int)s  << std::endl ;
     char *id = os.str();
 
     gv << ascii
@@ -488,7 +488,7 @@ operator<<(Geomview_stream &gv,
            const Tetrahedralization_vertex<P>* v)
 {
     std::ostrstream os;
-    os << "Vertex_" << (unsigned long int)v  << ends ;
+    os << "Vertex_" << (unsigned long int)v  << std::endl ;
     char *id = os.str();
     double x = to_double(v->point().x());
     double y = to_double(v->point().y());
@@ -568,7 +568,7 @@ parse_point(char* pickpoint,
             Point_3<R> &point)
 {
     std::strstream ss;
-    ss << pickpoint << ends ;
+    ss << pickpoint << std::endl ;
 
     double x, y, z, w;
     char parenthesis;
