@@ -48,7 +48,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="$(QTDIR)/bin/moc.exe -o alpha_shapes_2.moc alpha_shapes_2.C"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -98,7 +99,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="$(QTDIR)/bin/moc.exe -o alpha_shapes_2.moc alpha_shapes_2.C"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -226,25 +228,6 @@
 						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.h
 "
 						Outputs="Qt_widget_toolbar_layers.moc"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="alpha_shapes_2.h">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o alpha_shapes_2.moc alpha_shapes_2.C
-"
-						Outputs="alpha_shapes_2.moc"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o alpha_shapes_2.moc alpha_shapes_2.C
-"
-						Outputs="alpha_shapes_2.moc"/>
 				</FileConfiguration>
 			</File>
 			<File
