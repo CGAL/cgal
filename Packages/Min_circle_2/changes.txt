@@ -1,5 +1,8 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.29 on 18-Jan-2004
+- Remove obsolete CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC.
+
 Version 3.28 on 14-Nov-2003
 Replaced CGAL::Point_2<K>  with K::Point_2
 

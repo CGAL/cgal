@@ -1,5 +1,10 @@
 Changes done to the `Min_annulus_d' package
 
+Version 1.1.10 on 18-Jan-2004
+- Remove obsolete CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC.
+
+=========================== CGAL 3.0 =======================
+
 Version 1.1.9 on 26-Sep-2003
 - New file headers.
 

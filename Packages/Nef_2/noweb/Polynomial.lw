@@ -1459,7 +1459,6 @@ using namespace CGAL;
 #ifdef _MSC_VER
 #define MSCCAST(n) static_cast<RP>(n)
 #define Polynomial Polynomial_MSC
-CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(Integer)
 typedef std::iterator_traits<int*>::iterator_category iiii;
 #else
 #define MSCCAST(n) n

@@ -409,9 +409,6 @@ class MyPointH2DA {
     }
 };
 
-CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( MyPointC2)
-CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( MyPointH2)
-
 // main
 // ----
 int

@@ -2709,9 +2709,6 @@ representation) and corresponding data accessors.
             p = MyPointH2( hx, hy, hw);
         }
     };
-
-    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( MyPointC2)
-    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( MyPointH2)
 @end
 
 To test the traits class adapters we use the code coverage test function.
