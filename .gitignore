@@ -189,10 +189,15 @@ Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.pdf
 Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.ps
 Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.ps.gz
 Packages/Visibility_complex/demo/*.moc
+Packages/Visibility_complex/demo/Visibility_complex/*.moc
+Packages/Visibility_complex/demo/Visibility_complex/arrangments
 Packages/Visibility_complex/demo/arrangments
 Packages/Visibility_complex/doc_html
 Packages/Visibility_complex/doc_ps
 Packages/Visibility_complex/doxygen
+Packages/Visibility_complex/test/Visibility_complex/shortest_path
+Packages/Visibility_complex/test/Visibility_complex/visibility_complex_polygon
+Packages/Visibility_complex/test/Visibility_complex/visibility_complex_segment
 Packages/_QP_solver/*.aux
 Packages/_QP_solver/*.bbl
 Packages/_QP_solver/*.blg
