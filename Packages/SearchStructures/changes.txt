@@ -1,3 +1,6 @@
+Version 2.67 (22 April 2002)
+- Fix warning "conversion double to int".
+
 Version 2.66 (16 April 2002)
 - remove maintainer.
 
