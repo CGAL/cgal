@@ -1,0 +1,59 @@
+// general includes
+#include <iostream>
+#include <fstream>
+#include <cassert>
+
+// example that uses the Filtered_filtered kernel
+
+#include <CGAL/MP_Float.h>
+#include <CGAL/Filtered_kernel.h>
+
+// choose the kernel
+#include <CGAL/Simple_cartesian.h>
+
+// inexact kernel
+typedef CGAL::Simple_cartesian<double> CK;
+
+// exact kernel
+typedef CGAL::Simple_cartesian<CGAL::MP_Float> EK;
+
+typedef CGAL::Filtered_kernel<CK,EK>  Kernel;
+
+
+
+// typedefs for the traits and the algorithm
+
+#include <CGAL/Apollonius_graph_hierarchy_2.h>
+#include <CGAL/Apollonius_graph_euclidean_traits_2.h>
+
+typedef CGAL::Apollonius_graph_euclidean_traits_2<Kernel> Traits;
+
+// now we use the Apollonius graph hierarchy.
+// the hierarchy is faster for inputs consisting of about more than
+// 100,000 weighted points
+typedef CGAL::Apollonius_graph_hierarchy_2<Traits> Apollonius_graph;
+
+
+
+int main(int argc, char* argv[])
+{
+  assert( argc >= 2 );
+
+  std::ifstream ifs(argv[1]);
+  assert( ifs );
+
+  Apollonius_graph ag;
+  Apollonius_graph::Weighted_point wp;
+
+  // read the weighted points and insert them in the Apollonius graph
+  while ( ifs >> wp ) {
+    ag.insert(wp);
+  }
+
+  // validate the Apollonius graph
+  assert( ag.is_valid(true, 1) );
+
+  return 0;
+}
+
+
