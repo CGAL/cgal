@@ -1,21 +1,19 @@
 // Test program for Lazy_exact_nt<>.
 
-#include <CGAL/basic.h>
-#include <iostream>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/predicates_on_points_2.h>
+#include <iostream>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
 
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>
 typedef leda_real        Exact_NT;
 #else
-typedef CGAL::MP_Float   Exact_NT; // doesn't do exact sqrt() though
+typedef CGAL::Quotient<CGAL::MP_Float> Exact_NT; // doesn't do exact sqrt()
+namespace CGAL { Exact_NT sqrt(const Exact_NT &) { abort(); } }
 #endif
 
-// typedef CGAL::Lazy_exact_nt<int> NT;
 typedef CGAL::Lazy_exact_nt<Exact_NT> NT;
 // typedef Exact_NT NT;
 
