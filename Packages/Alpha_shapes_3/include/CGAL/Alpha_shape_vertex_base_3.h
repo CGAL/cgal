@@ -42,7 +42,7 @@ public:
 
   typedef typename Gt::Point_3 Point;
   typedef typename Gt::FT      NT;
-  typedef Alpha_status<NT>     Alpha_status;
+  typedef CGAL::Alpha_status<NT>     Alpha_status;
 
 private:
   Alpha_status* _as;

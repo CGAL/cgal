@@ -126,7 +126,7 @@ public:
   // Its regularized version is the subcomplex formed by the INTERIOR
   // cells and their faces
 
-  typedef Alpha_status< NT >                Alpha_status;
+  typedef CGAL::Alpha_status< NT >          Alpha_status;
   typedef std::vector< NT >                 Alpha_spectrum;
 
   typedef std::multimap< NT, Cell_handle >  Alpha_cell_map;
