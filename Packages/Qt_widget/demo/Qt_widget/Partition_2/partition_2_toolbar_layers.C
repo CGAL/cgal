@@ -1,39 +1,16 @@
 // ============================================================================
 //
 // Copyright (c) 1997-2000 The CGAL Consortium
-
 // This software and related documentation are part of the Computational
 // Geometry Algorithms Library (CGAL).
 // This software and documentation are provided "as-is" and without warranty
 // of any kind. In no event shall the CGAL Consortium be liable for any
 // damage of any kind. 
-//
-// Every use of CGAL requires a license. 
-//
-// Academic research and teaching license
-// - For academic research and teaching purposes, permission to use and copy
-//   the software and its documentation is hereby granted free of charge,
-//   provided that it is not a component of a commercial product, and this
-//   notice appears in all copies of the software and related documentation. 
-//
-// Commercial licenses
-// - Please check the CGAL web site http://www.cgal.org/index2.html for 
-//   availability.
-//
-// The CGAL Consortium consists of Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).
-//
 // ----------------------------------------------------------------------
 //
-// file          : src/Qt_widget_toolbar_layers.C
+// file          : partition_2_toolbar_layers.C
 // package       : Qt_widget
 // author(s)     : Ursu Radu
-// release       : CGAL-2.4
-// release_date  : 2002, May 16
-//
 // coordinator   : Laurent Rineau
 //
 // email         : contact@cgal.org
@@ -44,13 +21,8 @@
 
 #ifdef CGAL_USE_QT
 
-#include "Qt_widget_toolbar_layers.h"
-
-#include "Qt_layer_show_polygon.h"
-#include "Qt_layer_show_greene_approximation.h"
-#include "Qt_layer_show_ymonotone.h"
-#include "Qt_layer_show_optimal_convex_partition.h"
-#include "Qt_layer_show_polygon_points.h"
+#include "partition_2_toolbar_layers.h"
+#include "partition_2_layers.h"
 
 // icons
 #include <CGAL/IO/pixmaps/ymonotone.xpm>
@@ -149,6 +121,6 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, Cgal_Polygon
     delete button_group;
   };
 
-#include "Qt_widget_toolbar_layers.moc"
+#include "partition_2_toolbar_layers.moc"
 
 #endif

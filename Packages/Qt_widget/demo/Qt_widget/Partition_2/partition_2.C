@@ -32,8 +32,9 @@ int main(int, char*)
 #include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include "Qt_widget_toolbar.h"
-#include "Qt_widget_toolbar_layers.h"
+#include <CGAL/IO/Qt_widget_helpwindow.h>
+#include "partition_2_toolbar.h"
+#include "partition_2_toolbar_layers.h"
 
 #include <fstream>
 #include <iomanip>
@@ -83,6 +84,8 @@ public:
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
     menuBar()->insertItem( "&Help", help );
+    help->insertItem("How To", this, SLOT(howto()), Key_F1);
+    help->insertSeparator();
     help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
@@ -117,6 +120,7 @@ public slots:
   {
     widget->lock();
     widget->clear();
+    polygon.erase(polygon.vertices_begin(), polygon.vertices_end());
     // set the Visible Area to the Interval
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
     widget->unlock();
@@ -132,7 +136,7 @@ private slots:
     CGAL::random_polygon_2(100,
 			   std::back_inserter(polygon),
 			   Point_generator(1));
-    widget->redraw();
+    something_changed();
   }
 
   void get_new_object(CGAL::Object obj)
@@ -150,14 +154,24 @@ private slots:
   void about()
   {
     QMessageBox::about( this, my_title_string,
-      "Polygon partition demo,\n"
-      "Copyright CGAL @2001");
+      "Polygon partition demo\n"
+      "Copyright CGAL @2003");
   };
 
   void aboutQt()
   {
     QMessageBox::aboutQt( this, my_title_string );
   }
+
+  void howto(){
+    QString home;
+    home = "help/index.html";
+    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    help->resize(400, 400);
+    help->setCaption("Demo HowTo");
+    help->show();
+  }
+
   void new_window(){
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("View");
@@ -197,7 +211,7 @@ private slots:
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
     in >> polygon;
-    widget->redraw();
+    something_changed();
   }
 
 	

@@ -34,22 +34,22 @@ LDFLAGS = \
 
 all: partition_2
 
-Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
+partition_2_toolbar$(OBJ_EXT): partition_2_toolbar.C partition_2_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) partition_2_toolbar.C
 
-Qt_widget_toolbar.moc: Qt_widget_toolbar.h
-	$(QT_MOC) -o Qt_widget_toolbar.moc $<
+partition_2_toolbar.moc: partition_2_toolbar.h
+	$(QT_MOC) -o partition_2_toolbar.moc $<
 
-Qt_widget_toolbar_layers$(OBJ_EXT): Qt_widget_toolbar_layers.C \
-		Qt_widget_toolbar_layers.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_layers.C
+partition_2_toolbar_layers$(OBJ_EXT): partition_2_toolbar_layers.C \
+		partition_2_toolbar_layers.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) partition_2_toolbar_layers.C
 
-Qt_widget_toolbar_layers.moc: Qt_widget_toolbar_layers.h
-	$(QT_MOC) -o Qt_widget_toolbar_layers.moc $<
+partition_2_toolbar_layers.moc: partition_2_toolbar_layers.h
+	$(QT_MOC) -o partition_2_toolbar_layers.moc $<
 
 partition_2.moc: partition_2.C \
-		 Qt_widget_toolbar$(OBJ_EXT) \
-		 Qt_widget_toolbar_layers$(OBJ_EXT)
+		 partition_2_toolbar$(OBJ_EXT) \
+		 partition_2_toolbar_layers$(OBJ_EXT)
 	${QT_MOC} -o partition_2.moc partition_2.C
 
 partition_2$(OBJ_EXT): partition_2.C partition_2.moc
@@ -57,12 +57,12 @@ partition_2$(OBJ_EXT): partition_2.C partition_2.moc
 
 partition_2$(EXE_EXT): partition_2$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)partition_2 partition_2$(OBJ_EXT) \
-		Qt_widget_toolbar$(OBJ_EXT) \
-		Qt_widget_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
+		partition_2_toolbar$(OBJ_EXT) \
+		partition_2_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
 
 clean: partition_2.clean \
-       Qt_widget_toolbar_layers.clean \
-       Qt_widget_toolbar.clean
+       partition_2_toolbar_layers.clean \
+       partition_2_toolbar.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
