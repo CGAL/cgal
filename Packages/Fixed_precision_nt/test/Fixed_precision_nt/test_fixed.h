@@ -10,7 +10,6 @@
 #include <CGAL/Gmpz.h>
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/squared_distance_2.h>   // to avoid a g++ problem
 #include <CGAL/Point_2.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/predicates_on_points_2.h>
@@ -161,9 +160,11 @@ bool test_sphere3(InputIterator first, int N, int& p, int& z, int& n)
 
 
 
-
-int main(int argc, char* argv[])
+int main()
 {
+  // The following is necessary on Intel platforms.
+  CGAL::force_ieee_double_precision();
+
   std::cout <<"Test program for class CGAL::Fixed_precision_nt by"
        << " comparison to CGAL::Gmpz"
        <<std::endl<<std::endl;
