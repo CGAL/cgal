@@ -103,11 +103,11 @@ sub print_resultpage()
     my $pc_plus_2 = $platform_count + 2;
 
     print OUTPUT <<"EOF";
-<H3><A NAME="testresults">Test Results</H3>
+<H2><A NAME="testresults">Test Results</A></H2>
 <TABLE BORDER=1 CELLSPACING=2 CELLPADDING=5>
 <TR>
 <TD ALIGN=CENTER COLSPAN=$pc_plus_2>
-<FONT SIZE=+2>Test Suite Results $release_name</FONT></TD>
+<FONT SIZE="+2">Test Suite Results $release_name</FONT></TD>
 </TR>
 
 <TR ALIGN=CENTER>
@@ -154,9 +154,9 @@ EOF
 #	    "\n$release_name/$test_directory/TestReport_$platform.gz",
 #	    '">', "$resulttext</A></FONT></TD>\n";
 
-	    print OUTPUT '<TD ALIGN=CENTER><FONT SIZE=+2> <A HREF=',
+	    print OUTPUT '<TD ALIGN=CENTER><FONT SIZE="+2"> <A HREF="',
 	    "$release_name/$test_directory/TestReport_$platform.gz",
-	    '>', "$resulttext</A></FONT></TD>\n";
+	    '">', "$resulttext</A></FONT></TD>\n";
 	    ++$platform_num;
 
 	}
@@ -223,15 +223,15 @@ EOF
 	    print OUTPUT "<TD>?</TD><TD>?</TD>\n";
 	} elsif ($responsible eq 'Sylvain') {
 	    print OUTPUT "<TD>INRIA Sophia-Antipolis</TD>\n",
-		"<TD><A HREF=mailto:Sylvain.Pion\@sophia.inria.fr>",
+		'<TD><A HREF="mailto:Sylvain.Pion\@sophia.inria.fr">',
 		"Sylvain Pion</A></TD>\n";
 	} elsif ($responsible eq 'Geert') {
 	    print OUTPUT "<TD>Utrecht University</TD>\n",
-		"<TD><A HREF=mailto:geert\@cs.uu.nl>",
+		'<TD><A HREF="mailto:geert\@cs.uu.nl">',
 		"Geert-Jan Giezeman</A></TD>\n";
 	} elsif ($responsible eq 'Michael') {
 	    print OUTPUT "<TD>ETH Z&uuml;rich</TD>\n",
-		"<TD><A HREF=mailto:hoffmann\@inf.ethz.ch>",
+		'<TD><A HREF="mailto:hoffmann\@inf.ethz.ch">',
 		"Michael Hoffmann</A></TD>\n";
 	} else {
 	    print STDERR "Unknown responsible person.\n";
@@ -373,12 +373,14 @@ sub main()
 
 @known_platforms = (
     'i686_Linux-2.0.29_eg++-egcs-2.90.27_LEDA', 'Sylvain',
+    'i686_Linux-2.0.35_eg++-egcs-2.91.57_LEDA', 'Sylvain',
     'i686_Linux-2.0.29_eg++-egcs-2.91.57', 'Sylvain',
     'i686_Linux-2.0.29_eg++-egcs-2.91.57_LEDA', 'Sylvain',
     'mips_IRIX-5.3_g++-egcs-2.90.29_LEDA', 'Geert',
     'sparc_SunOS-5.5_g++-egcs-2.90.27_LEDA', 'Michael',
     'sparc_SunOS-5.6_g++-egcs-2.91.57_LEDA', 'Michael',
     'i686_Linux-2.0.29_g++-2.8.1_LEDA', 'Sylvain',
+    'i686_Linux-2.0.35_g++-2.8.1_LEDA', 'Sylvain',
     'sparc_SunOS-5.5_g++-2.8.1_LEDA', 'Michael',
     'sparc_SunOS-5.6_g++-2.8.1_LEDA', 'Michael',
     'mips_IRIX-6.2_CC-n32-7.20_LEDA', 'Michael',
