@@ -20,7 +20,7 @@
 #ifndef  CGAL_TOPOLOGICAL_MAP_H
 #define  CGAL_TOPOLOGICAL_MAP_H
 
-#include <CGAL/Polyhedron_iterator_3.h>
+#include <CGAL/HalfedgeDS_iterator.h>
 #include <CGAL/Planar_map_2/Pm_traits_wrap_2.h>
 
 CGAL_BEGIN_NAMESPACE
