@@ -1,3 +1,6 @@
+5 November 2004 Sylvain Pion
+- Remove warning.
+
 22 September 2004 Andreas Fabri
 - Copied Point.h and distance.h from examples to test, as relative include paths in #includes do not work
 

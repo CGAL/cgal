@@ -22,7 +22,8 @@
 
 #ifndef CGAL_WEIGHTED_MINKOWSKI_DISTANCE_H
 #define CGAL_WEIGHTED_MINKOWSKI_DISTANCE_H
-#include <math.h>
+
+#include <cmath>
 #include <CGAL/Kd_tree_rectangle.h>
 
 namespace CGAL {
@@ -82,7 +83,7 @@ namespace CGAL {
       assert(power >= FT(0));
       the_weights.resize(dim);
       std::copy(begin, end, the_weights.begin());
-      for (unsigned int i = 0; i < dim; ++i){
+      for (int i = 0; i < dim; ++i){
 	the_weights[i] = *begin;
 	++begin;
 	assert(the_weights[i]>=FT(0));
@@ -226,4 +227,5 @@ namespace CGAL {
   }; // class Weighted_Minkowski_distance
 
 } // namespace CGAL
-#endif // WEIGHTED_MINKOWSKI_DISTANCE_H
+
+#endif // CGAL_WEIGHTED_MINKOWSKI_DISTANCE_H
