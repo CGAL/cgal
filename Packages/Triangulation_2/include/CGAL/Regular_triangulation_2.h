@@ -255,7 +255,8 @@ copy_triangulation(const Self &tr )
   // not good
   // clear them and next
   // scan the hidden vertices to retablish the list in faces
-  typename Tds::Face_iterator_base baseit= this->_tds.face_iterator_base_begin();
+  typename Tds::Face_iterator_base 
+                       baseit= this->_tds.face_iterator_base_begin();
   for( ; baseit !=  this->_tds.face_iterator_base_end(); baseit++){
     baseit->vertex_list().clear();
   }

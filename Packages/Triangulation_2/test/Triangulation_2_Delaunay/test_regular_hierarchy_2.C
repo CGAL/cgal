@@ -32,11 +32,10 @@
 #include <CGAL/Triangulation_hierarchy_2.h>
 
 #include <CGAL/_test_cls_regular_triangulation_2.C>
-
-//#include <CGAL/_test_cls_regular_hierarchy_2.C>
+#include <CGAL/_test_cls_regular_hierarchy_2.C>
 
 //typedef CGAL::Regular_triangulation_euclidean_traits_2 <TestK,
-//double> RGt;
+//                                                       double> RGt;
 typedef CGAL::Regular_triangulation_euclidean_traits_2<Test_rep_cartesian> RGt;
 typedef CGAL::Regular_triangulation_vertex_base_2<RGt> Vbb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb> Vb;
@@ -58,7 +57,8 @@ int main()
   std::cout << "using  Cartesian  points "   <<  std::endl;
 
   std::cout << "Testing hierarchy" << std::endl;
-  _test_cls_reg_triangulation_2( Regular_hierarchy_cartesian() );
+  //_test_cls_regular_triangulation_2( Regular_hierarchy_cartesian() );
+  _test_cls_regular_hierarchy_2( Regular_hierarchy_cartesian());
 
 
   return 0;

@@ -11,9 +11,9 @@ _test_cls_regular_hierarchy_2( const Rh & )
   typedef typename Regular_hierarchy::Weighted_point   Weighted_point;
   typedef typename Regular_hierarchy::Bare_point       Bare_point;
  
-  _test_cls_reg_triangulation_2( Regular_hierarchy());
+  _test_cls_regular_triangulation_2( Regular_hierarchy());
   
-  int nn = 1000;
+  int nn = 500;
   std::cout << " insertion of " << nn << "  points" << std::endl;
   Regular_hierarchy rh;
 
@@ -21,9 +21,9 @@ _test_cls_regular_hierarchy_2( const Rh & )
   // std::ofstream output("data"); CGAL::set_binary_mode(output);
   for(int i = 0; i < nn ; i++){
     Bare_point p( rand.get_double(), rand.get_double());
-    Weighted_point wp(p, (rand.get_double())*1000);
+    Weighted_point wp(p, (rand.get_double())*100);
     //output <<  wp ;
-    //std::cerr << i << " " << std::endl ;
+    std::cerr << i << " " << std::endl ;
     rh.insert(wp);
     rh.is_valid();
   }

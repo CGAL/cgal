@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 7.66 ()
+- merged new design  (with TDS_Rebind) into main truncs
+
 ver 7.65 (12/04/03)
 - fixes for g++ 3.4.
 

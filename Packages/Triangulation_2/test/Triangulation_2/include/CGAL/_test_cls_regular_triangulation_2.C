@@ -21,6 +21,8 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
+#ifndef TEST_CLS_REGULAR_TRIANGULATION_C
+#define TEST_CLS_REGULAR_TRIANGULATION_C
 
 #include <iostream>
 #include <fstream>
@@ -47,7 +49,7 @@ _test_is_to_the_left( const Triangulation &T,
 
 template <class Triangulation>
 void 
-_test_cls_reg_triangulation_2( const Triangulation & )
+_test_cls_regular_triangulation_2( const Triangulation & )
 {
   typedef Triangulation                      Cls;
 
@@ -726,3 +728,5 @@ _test_regular_duality( const Del &T )
       ++ec;
     } while ( ec == done);
 }
+
+#endif //TEST_CLS_REGULAR_TRIANGULATION_C

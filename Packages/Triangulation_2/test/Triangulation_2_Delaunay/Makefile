@@ -38,7 +38,8 @@ LDFLAGS = $(TESTSUITE_LDFLAGS) \
 all:   \
 	test_delaunay_triangulation_2 \
 	test_regular_triangulation_2 \
-	test_delaunay_hierarchy_2
+	test_delaunay_hierarchy_2 \
+	test_regular_hierarchy_2
 
 test_delaunay_triangulation_2: test_delaunay_triangulation_2.o
 	$(CGAL_CXX) -o test_delaunay_triangulation_2 test_delaunay_triangulation_2.o $(LDFLAGS)

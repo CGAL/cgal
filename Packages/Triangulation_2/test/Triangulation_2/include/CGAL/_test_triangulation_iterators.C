@@ -20,6 +20,8 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
+#ifndef TEST_TRIANGULATION_ITERATORS_C
+#define TEST_TRIANGULATION_ITERATORS_C
 
 template < class Triangulation >
 void
@@ -176,3 +178,4 @@ _test_cls_edge_iterator( const Triangulation &T )
   return ne;
 }
 
+#endif //TEST_TRIANGULATION_ITERATORS_C
