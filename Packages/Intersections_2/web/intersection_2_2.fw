@@ -121,7 +121,7 @@ CGAL_intersection(const CGAL_Triangle_2<R> &tr1, const CGAL_Triangle_2<R>&tr2)
         return CGAL_Object(new CGAL_Wrapper< CGAL_Triangle_2<R> >(itr));
     }
     case is_t::POLYGON: {
-        typedef vector<CGAL_Point_2<R> > Container;
+        typedef CGAL_STD::vector<CGAL_Point_2<R> > Container;
         Container points(ispair.vertex_count());
         for (int i =0; i < ispair.vertex_count(); i++) {
             points[i] = ispair.vertex(i);
@@ -155,10 +155,9 @@ which it should do, probably.
 #ifndef CGAL_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
 #endif // CGAL_NUMBER_UTILS_H
-#ifndef CGAL_PROTECT_VECTOR_H
-#include <vector.h>
-#define CGAL_PROTECT_VECTOR_H
-#endif // CGAL_PROTECT_VECTOR_H
+#ifndef CGAL_STD_VECTOR_H
+#include <CGAL/std/vector>
+#endif
 
 template <class R>
 CGAL__Pointlist_2<R>::CGAL__Pointlist_2()
