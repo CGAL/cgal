@@ -1,5 +1,10 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
+3.4 (19 Jun 2001)
+
+     - Cleanup in binary_file_io.h.
+     - Fixed warnings about unused variables in File_writer_*.h.
+
 3.3 (18 Jun 2001)
 
      - Converted files in the demo and example directory to the new design.

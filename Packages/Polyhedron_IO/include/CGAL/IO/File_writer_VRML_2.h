@@ -56,7 +56,7 @@ public:
               << x << ' ' << y << ' ' << z << ',' << '\n';
     }
     void write_facet_header() const;
-    void write_facet_begin( std::size_t no) {
+    void write_facet_begin( std::size_t) {
         out() << "                            ";
     }
     void write_facet_vertex_index( std::size_t idx) { out() << idx << ',';}

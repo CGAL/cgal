@@ -59,15 +59,9 @@ public:
         out() << "\n# " << m_facets << " facets\n";
         out() << "# ------------------------------------------\n\n";
     }
-    void write_facet_begin( std::size_t) {  // no unused
-        out() << "f ";
-    }
-    void write_facet_vertex_index( std::size_t index) {
-        out() << ' ' << index + 1;
-    }
-    void write_facet_end() {
-        out() << '\n';
-    }
+    void write_facet_begin( std::size_t)            { out() << "f "; }
+    void write_facet_vertex_index( std::size_t idx) { out() << ' ' << idx+1; }
+    void write_facet_end()                          { out() << '\n'; }
 };
 
 CGAL_END_NAMESPACE
