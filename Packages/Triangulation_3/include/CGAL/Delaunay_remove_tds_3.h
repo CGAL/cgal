@@ -320,8 +320,8 @@ public:
     std::map<Vertex*, Vertex_3_2*>  vertex_map;
     typename std::map<Vertex*, Vertex_3_2*>::iterator map_it;
 
-    for(Facet_iterator fit = boundhole.begin() ; 
-	fit != boundhole.end(); 
+    for(Facet_iterator fit = boundhole.begin();
+	fit != boundhole.end();
 	++fit) {
       Face_3_2 * f = create_face();
 
@@ -413,10 +413,10 @@ public:
 
     Face_3_2 *f = &dummy;
 
-    for( Face_iterator fit = faces_begin(); fit != faces_end(); ++fit) {
-      f->set_n(&(*fit));
-      fit->set_p(f);
-      f = &(*fit);
+    for( Face_iterator fit2 = faces_begin(); fit2 != faces_end(); ++fit2) {
+      f->set_n(&(*fit2));
+      fit2->set_p(f);
+      f = &(*fit2);
       for(int i = 0; i < 3; i++) {
 	// we mark an edge only on one side
 	f->set_edge(i, (f < (f->neighbor(i))));
