@@ -1,3 +1,6 @@
+version 1.39 [af]
+- Moved doc from Optimization_ref to Optimisation_ref
+
 version 1.38 [rursu]
 - fixed demo/Largest_empty_rect_2/makefile for FreeBSD
 
