@@ -284,7 +284,7 @@ class Partial_exact_pricing
             }
         }
         N.erase( N.end()-m, N.end());
-        s = min( (int)(m*CGAL_NTS sqrt<double>(n)), n-m);
+        s = min( static_cast<int>(m * CGAL_CLIB_STD::sqrt(static_cast<double>(n))), n-m);
     }
     
     
