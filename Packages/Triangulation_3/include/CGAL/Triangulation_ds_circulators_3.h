@@ -46,8 +46,12 @@ public:
   // CONSTRUCTORS
 
   CGAL_Triangulation_ds_cell_circulator_3()
-    : _tds(NULL), _e(NULL), pos(NULL), prev(NULL)
-  {}
+    : _tds(NULL), _e(), pos(NULL), prev(NULL)
+  {
+    _e.first = NULL;
+    _e.second = 0;
+    _e.third = 0;
+  }
         
   CGAL_Triangulation_ds_cell_circulator_3(Tds * tds, Edge e)
     : _tds(tds), _e(e)
