@@ -61,6 +61,23 @@ z_equal(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
 
 template < class R >
 inline
+bool
+equal_xy(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
+{
+  return p.x() == q.x() && p.y() == q.y();
+}
+
+template < class R >
+inline
+bool
+equal_xyz(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
+{
+  return p.x() == q.x() && p.y() == q.y() && p.z() == q.z();
+}
+
+
+template < class R >
+inline
 Comparison_result
 compare_x(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
 {
