@@ -1,5 +1,3 @@
-#line 4562 "stl_extension.aw"
-#line 20 "cgal_header.awi"
 // ============================================================================
 //
 // Copyright (c) 1997, 1998, 1999 The CGAL Consortium
@@ -17,7 +15,6 @@
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 // package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
-#line 37 "cgal_header.awi"
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -28,7 +25,6 @@
 // Stl_Extensions: Iterator Adaptor.
 // ============================================================================
 
-#line 4566 "stl_extension.aw"
 
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
@@ -100,7 +96,6 @@ struct item : public In_place_list_base<item> {
 };
 int test_value_type( item*)           { return 1;}
 
-#line 24 "iterator_test.awi"
 // Global data structures.
 std::list<int>   L;
 std::vector<int> V;
@@ -239,8 +234,6 @@ int test_value_type( double*)              { return 3;}
 int test_distance_type( std::ptrdiff_t*)   { return 1;}
 int test_distance_type( char*)             { return 2;}
 int test_distance_type( double*)           { return 3;}
-#line 4638 "stl_extension.aw"
-#line 2283 "stl_extension.aw"
 void test_Iterator_identity() {
   {
     typedef In_place_list<item,false> List;
@@ -258,9 +251,6 @@ void test_Iterator_identity() {
     Iterator end(l.end());
     Assert_bidirectional_category(begin);
     Assert_bidirectional_category(end);
-    #line 312 "iterator_test.awi"
-    #line 235 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -353,8 +343,6 @@ void test_Iterator_identity() {
             ++k;
         } while (i != end);
     }
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -450,12 +438,8 @@ void test_Iterator_identity() {
         CGAL_assertion( i == begin);
         CGAL_assertion( su == 15);
     }
-#line 2302 "stl_extension.aw"
-    #line 484 "iterator_test.awi"
-    #line 479 "iterator_test.awi"
     CGAL::Assert_iterator( begin);
     CGAL::Assert_iterator( end);
-#line 2304 "stl_extension.aw"
 
     List l2 = l;
     const List& l1 = l2;
@@ -468,8 +452,6 @@ void test_Iterator_identity() {
     C_Iterator c_end(l1.end());
     Assert_bidirectional_category(c_begin);
     Assert_bidirectional_category(c_end);
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(c_begin);
@@ -565,12 +547,8 @@ void test_Iterator_identity() {
         CGAL_assertion( i == c_begin);
         CGAL_assertion( su == 15);
     }
-#line 2318 "stl_extension.aw"
-    #line 484 "iterator_test.awi"
-    #line 479 "iterator_test.awi"
     CGAL::Assert_iterator( c_begin);
     CGAL::Assert_iterator( c_end);
-#line 2320 "stl_extension.aw"
     l.destroy();
     l2.destroy();
   }
@@ -590,10 +568,6 @@ void test_Iterator_identity() {
     Iterator end(v.end());
     Assert_random_access_category(begin);
     Assert_random_access_category(end);
-    #line 361 "iterator_test.awi"
-    #line 312 "iterator_test.awi"
-    #line 235 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -686,8 +660,6 @@ void test_Iterator_identity() {
             ++k;
         } while (i != end);
     }
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -783,9 +755,6 @@ void test_Iterator_identity() {
         CGAL_assertion( i == begin);
         CGAL_assertion( su == 15);
     }
-    #line 317 "iterator_test.awi"
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -941,10 +910,6 @@ void test_Iterator_identity() {
             ++k;
         } while (i != end);
     }
-#line 2341 "stl_extension.aw"
-    #line 488 "iterator_test.awi"
-    #line 484 "iterator_test.awi"
-    #line 479 "iterator_test.awi"
     CGAL::Assert_iterator( begin);
     CGAL::Assert_iterator( end);
     { // Open own scope to hide local variables.
@@ -971,7 +936,6 @@ void test_Iterator_identity() {
         CGAL_assertion( !( i > i));
         CGAL_assertion( !( i < i));
     }
-#line 2343 "stl_extension.aw"
 
     Vector v2 = v;
     const Vector& v1 = v2;
@@ -984,9 +948,6 @@ void test_Iterator_identity() {
     C_Iterator c_end(v1.end());
     Assert_random_access_category(c_begin);
     Assert_random_access_category(c_end);
-    #line 317 "iterator_test.awi"
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(c_begin);
@@ -1122,10 +1083,6 @@ void test_Iterator_identity() {
         CGAL_assertion( i + (j-i) == j);
         CGAL_assertion( (j-i) + i == j);
     }
-#line 2357 "stl_extension.aw"
-    #line 488 "iterator_test.awi"
-    #line 484 "iterator_test.awi"
-    #line 479 "iterator_test.awi"
     CGAL::Assert_iterator( c_begin);
     CGAL::Assert_iterator( c_end);
     { // Open own scope to hide local variables.
@@ -1152,11 +1109,8 @@ void test_Iterator_identity() {
         CGAL_assertion( !( i > i));
         CGAL_assertion( !( i < i));
     }
-#line 2359 "stl_extension.aw"
   }
 }
-#line 4639 "stl_extension.aw"
-#line 2504 "stl_extension.aw"
 void test_Circulator_identity() {
   {
     typedef In_place_list<item,false> List;
@@ -1173,9 +1127,6 @@ void test_Circulator_identity() {
     typedef Circulator_identity<CircBase,item&,item*> Circulator;
     Circulator begin(CircBase( l.begin(),l.end()));
     Assert_bidirectional_category(begin);
-    #line 312 "iterator_test.awi"
-    #line 235 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -1268,8 +1219,6 @@ void test_Circulator_identity() {
             ++k;
         } while (i != begin);
     }
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -1365,9 +1314,6 @@ void test_Circulator_identity() {
         CGAL_assertion( i == begin);
         CGAL_assertion( su == 15);
     }
-#line 2522 "stl_extension.aw"
-    #line 435 "iterator_test.awi"
-    #line 386 "iterator_test.awi"
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( begin);
         CGAL::Assert_circulator( begin);
@@ -1427,7 +1373,6 @@ void test_Circulator_identity() {
         } while( i != j);
         CGAL_assertion( k == 5);
     }
-#line 2524 "stl_extension.aw"
 
     List l2 = l;
     const List& l1 = l2;
@@ -1439,8 +1384,6 @@ typedef Circulator_identity<ConstCircBase,const item&,
   const item*> C_Circulator;
 C_Circulator c_begin(ConstCircBase(l1.begin(),l1.end()));
 Assert_bidirectional_category(c_begin);
-#line 272 "iterator_test.awi"
-#line 173 "iterator_test.awi"
 { // Open own scope to hide local variables.
     // Check generally correct parameter properties.
     CGAL::Assert_circulator_or_iterator(c_begin);
@@ -1536,9 +1479,6 @@ Assert_bidirectional_category(c_begin);
     CGAL_assertion( i == c_begin);
     CGAL_assertion( su == 15);
 }
-#line 2537 "stl_extension.aw"
-#line 435 "iterator_test.awi"
-#line 386 "iterator_test.awi"
 { // Open own scope to hide local variables.
     CGAL::Assert_circulator( c_begin);
     CGAL::Assert_circulator( c_begin);
@@ -1598,7 +1538,6 @@ Assert_bidirectional_category(c_begin);
     } while( i != j);
     CGAL_assertion( k == 5);
 }
-#line 2539 "stl_extension.aw"
 l.destroy();
 l2.destroy();
   }
@@ -1617,10 +1556,6 @@ l2.destroy();
     typedef Circulator_identity<CircBase,int&,int*> Circulator;
     Circulator begin(CircBase( v.begin(),v.end()));
     Assert_random_access_category(begin);
-    #line 361 "iterator_test.awi"
-    #line 312 "iterator_test.awi"
-    #line 235 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -1713,8 +1648,6 @@ l2.destroy();
             ++k;
         } while (i != begin);
     }
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -1810,9 +1743,6 @@ l2.destroy();
         CGAL_assertion( i == begin);
         CGAL_assertion( su == 15);
     }
-    #line 317 "iterator_test.awi"
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -1968,10 +1898,6 @@ l2.destroy();
             ++k;
         } while (i != begin);
     }
-#line 2559 "stl_extension.aw"
-    #line 452 "iterator_test.awi"
-    #line 435 "iterator_test.awi"
-    #line 386 "iterator_test.awi"
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( begin);
         CGAL::Assert_circulator( begin);
@@ -2054,7 +1980,6 @@ l2.destroy();
         j++;
         CGAL_assertion( j - i == 0);
     }
-#line 2561 "stl_extension.aw"
 
     Vector v2 = v;
     const Vector& v1 = v2;
@@ -2066,9 +1991,6 @@ typedef Circulator_identity<ConstCircBase,const int&,
   const int*> C_Circulator;
 C_Circulator c_begin(ConstCircBase(v1.begin(),v1.end()));
 Assert_random_access_category(c_begin);
-#line 317 "iterator_test.awi"
-#line 272 "iterator_test.awi"
-#line 173 "iterator_test.awi"
 { // Open own scope to hide local variables.
     // Check generally correct parameter properties.
     CGAL::Assert_circulator_or_iterator(c_begin);
@@ -2204,10 +2126,6 @@ Assert_random_access_category(c_begin);
     CGAL_assertion( i + (j-i) == j);
     CGAL_assertion( (j-i) + i == j);
 }
-#line 2574 "stl_extension.aw"
-#line 452 "iterator_test.awi"
-#line 435 "iterator_test.awi"
-#line 386 "iterator_test.awi"
 { // Open own scope to hide local variables.
     CGAL::Assert_circulator( c_begin);
     CGAL::Assert_circulator( c_begin);
@@ -2290,11 +2208,8 @@ Assert_random_access_category(c_begin);
     j++;
     CGAL_assertion( j - i == 0);
 }
-#line 2576 "stl_extension.aw"
   }
 }
-#line 4640 "stl_extension.aw"
-#line 2880 "stl_extension.aw"
 void test_Iterator_project() {
   {
     typedef In_place_list<item,false> List;
@@ -2313,9 +2228,6 @@ void test_Iterator_project() {
     Iterator end(l.end());
     Assert_bidirectional_category(begin);
     Assert_bidirectional_category(end);
-    #line 312 "iterator_test.awi"
-    #line 235 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -2408,8 +2320,6 @@ void test_Iterator_project() {
             ++k;
         } while (i != end);
     }
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -2505,12 +2415,8 @@ void test_Iterator_project() {
         CGAL_assertion( i == begin);
         CGAL_assertion( su == 15);
     }
-#line 2900 "stl_extension.aw"
-    #line 484 "iterator_test.awi"
-    #line 479 "iterator_test.awi"
     CGAL::Assert_iterator( begin);
     CGAL::Assert_iterator( end);
-#line 2902 "stl_extension.aw"
 
     List l2 = l;
     const List& l1 = l2;
@@ -2523,8 +2429,6 @@ void test_Iterator_project() {
     C_Iterator c_end(l1.end());
     Assert_bidirectional_category(c_begin);
     Assert_bidirectional_category(c_end);
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(c_begin);
@@ -2620,12 +2524,8 @@ void test_Iterator_project() {
         CGAL_assertion( i == c_begin);
         CGAL_assertion( su == 15);
     }
-#line 2916 "stl_extension.aw"
-    #line 484 "iterator_test.awi"
-    #line 479 "iterator_test.awi"
     CGAL::Assert_iterator( c_begin);
     CGAL::Assert_iterator( c_end);
-#line 2918 "stl_extension.aw"
     l.destroy();
     l2.destroy();
   }
@@ -2646,9 +2546,6 @@ void test_Iterator_project() {
     Iterator end(l.end());
     Assert_bidirectional_category(begin);
     Assert_bidirectional_category(end);
-    #line 312 "iterator_test.awi"
-    #line 235 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -2741,8 +2638,6 @@ void test_Iterator_project() {
             ++k;
         } while (i != end);
     }
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -2838,12 +2733,8 @@ void test_Iterator_project() {
         CGAL_assertion( i == begin);
         CGAL_assertion( su == 15);
     }
-#line 2940 "stl_extension.aw"
-    #line 484 "iterator_test.awi"
-    #line 479 "iterator_test.awi"
     CGAL::Assert_iterator( begin);
     CGAL::Assert_iterator( end);
-#line 2942 "stl_extension.aw"
 
     List l2 = l;
     const List& l1 = l2;
@@ -2856,8 +2747,6 @@ void test_Iterator_project() {
     C_Iterator c_end(l1.end());
     Assert_bidirectional_category(c_begin);
     Assert_bidirectional_category(c_end);
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(c_begin);
@@ -2953,12 +2842,8 @@ void test_Iterator_project() {
         CGAL_assertion( i == c_begin);
         CGAL_assertion( su == 15);
     }
-#line 2956 "stl_extension.aw"
-    #line 484 "iterator_test.awi"
-    #line 479 "iterator_test.awi"
     CGAL::Assert_iterator( c_begin);
     CGAL::Assert_iterator( c_end);
-#line 2958 "stl_extension.aw"
     l.destroy();
     l2.destroy();
   }
@@ -2979,10 +2864,6 @@ void test_Iterator_project() {
     Iterator end(v.end());
     Assert_random_access_category(begin);
     Assert_random_access_category(end);
-    #line 361 "iterator_test.awi"
-    #line 312 "iterator_test.awi"
-    #line 235 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -3075,8 +2956,6 @@ void test_Iterator_project() {
             ++k;
         } while (i != end);
     }
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -3172,9 +3051,6 @@ void test_Iterator_project() {
         CGAL_assertion( i == begin);
         CGAL_assertion( su == 15);
     }
-    #line 317 "iterator_test.awi"
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -3330,10 +3206,6 @@ void test_Iterator_project() {
             ++k;
         } while (i != end);
     }
-#line 2980 "stl_extension.aw"
-    #line 488 "iterator_test.awi"
-    #line 484 "iterator_test.awi"
-    #line 479 "iterator_test.awi"
     CGAL::Assert_iterator( begin);
     CGAL::Assert_iterator( end);
     { // Open own scope to hide local variables.
@@ -3360,7 +3232,6 @@ void test_Iterator_project() {
         CGAL_assertion( !( i > i));
         CGAL_assertion( !( i < i));
     }
-#line 2982 "stl_extension.aw"
 
     Vector v2 = v;
     const Vector& v1 = v2;
@@ -3373,9 +3244,6 @@ void test_Iterator_project() {
     C_Iterator c_end(v1.end());
     Assert_random_access_category(c_begin);
     Assert_random_access_category(c_end);
-    #line 317 "iterator_test.awi"
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(c_begin);
@@ -3511,10 +3379,6 @@ void test_Iterator_project() {
         CGAL_assertion( i + (j-i) == j);
         CGAL_assertion( (j-i) + i == j);
     }
-#line 2996 "stl_extension.aw"
-    #line 488 "iterator_test.awi"
-    #line 484 "iterator_test.awi"
-    #line 479 "iterator_test.awi"
     CGAL::Assert_iterator( c_begin);
     CGAL::Assert_iterator( c_end);
     { // Open own scope to hide local variables.
@@ -3541,11 +3405,8 @@ void test_Iterator_project() {
         CGAL_assertion( !( i > i));
         CGAL_assertion( !( i < i));
     }
-#line 2998 "stl_extension.aw"
   }
 }
-#line 4641 "stl_extension.aw"
-#line 3140 "stl_extension.aw"
 void test_Circulator_project() {
   {
     typedef In_place_list<item,false> List;
@@ -3564,9 +3425,6 @@ void test_Circulator_project() {
       Circulator;
     Circulator begin(CircBase( l.begin(),l.end()));
     Assert_bidirectional_category(begin);
-    #line 312 "iterator_test.awi"
-    #line 235 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -3659,8 +3517,6 @@ void test_Circulator_project() {
             ++k;
         } while (i != begin);
     }
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -3756,9 +3612,6 @@ void test_Circulator_project() {
         CGAL_assertion( i == begin);
         CGAL_assertion( su == 15);
     }
-#line 3160 "stl_extension.aw"
-    #line 435 "iterator_test.awi"
-    #line 386 "iterator_test.awi"
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( begin);
         CGAL::Assert_circulator( begin);
@@ -3818,7 +3671,6 @@ void test_Circulator_project() {
         } while( i != j);
         CGAL_assertion( k == 5);
     }
-#line 3162 "stl_extension.aw"
 
     List l2 = l;
     const List& l1 = l2;
@@ -3830,8 +3682,6 @@ typedef Circulator_project<ConstCircBase,Ident,const item&,
   const item*> C_Circulator;
 C_Circulator c_begin(ConstCircBase(l1.begin(),l1.end()));
 Assert_bidirectional_category(c_begin);
-#line 272 "iterator_test.awi"
-#line 173 "iterator_test.awi"
 { // Open own scope to hide local variables.
     // Check generally correct parameter properties.
     CGAL::Assert_circulator_or_iterator(c_begin);
@@ -3927,9 +3777,6 @@ Assert_bidirectional_category(c_begin);
     CGAL_assertion( i == c_begin);
     CGAL_assertion( su == 15);
 }
-#line 3175 "stl_extension.aw"
-#line 435 "iterator_test.awi"
-#line 386 "iterator_test.awi"
 { // Open own scope to hide local variables.
     CGAL::Assert_circulator( c_begin);
     CGAL::Assert_circulator( c_begin);
@@ -3989,7 +3836,6 @@ Assert_bidirectional_category(c_begin);
     } while( i != j);
     CGAL_assertion( k == 5);
 }
-#line 3177 "stl_extension.aw"
 l.destroy();
 l2.destroy();
   }
@@ -4010,9 +3856,6 @@ l2.destroy();
       Circulator;
     Circulator begin(CircBase( l.begin(),l.end()));
     Assert_bidirectional_category(begin);
-    #line 312 "iterator_test.awi"
-    #line 235 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -4105,8 +3948,6 @@ l2.destroy();
             ++k;
         } while (i != begin);
     }
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -4202,9 +4043,6 @@ l2.destroy();
         CGAL_assertion( i == begin);
         CGAL_assertion( su == 15);
     }
-#line 3199 "stl_extension.aw"
-    #line 435 "iterator_test.awi"
-    #line 386 "iterator_test.awi"
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( begin);
         CGAL::Assert_circulator( begin);
@@ -4264,7 +4102,6 @@ l2.destroy();
         } while( i != j);
         CGAL_assertion( k == 5);
     }
-#line 3201 "stl_extension.aw"
 
     List l2 = l;
     const List& l1 = l2;
@@ -4276,8 +4113,6 @@ typedef Circulator_project<ConstCircBase,Ident,const item&,
   const item*> C_Circulator;
 C_Circulator c_begin(ConstCircBase(l1.begin(),l1.end()));
 Assert_bidirectional_category(c_begin);
-#line 272 "iterator_test.awi"
-#line 173 "iterator_test.awi"
 { // Open own scope to hide local variables.
     // Check generally correct parameter properties.
     CGAL::Assert_circulator_or_iterator(c_begin);
@@ -4373,9 +4208,6 @@ Assert_bidirectional_category(c_begin);
     CGAL_assertion( i == c_begin);
     CGAL_assertion( su == 15);
 }
-#line 3214 "stl_extension.aw"
-#line 435 "iterator_test.awi"
-#line 386 "iterator_test.awi"
 { // Open own scope to hide local variables.
     CGAL::Assert_circulator( c_begin);
     CGAL::Assert_circulator( c_begin);
@@ -4435,7 +4267,6 @@ Assert_bidirectional_category(c_begin);
     } while( i != j);
     CGAL_assertion( k == 5);
 }
-#line 3216 "stl_extension.aw"
 l.destroy();
 l2.destroy();
   }
@@ -4456,10 +4287,6 @@ l2.destroy();
       Circulator;
     Circulator begin(CircBase( v.begin(),v.end()));
     Assert_random_access_category(begin);
-    #line 361 "iterator_test.awi"
-    #line 312 "iterator_test.awi"
-    #line 235 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -4552,8 +4379,6 @@ l2.destroy();
             ++k;
         } while (i != begin);
     }
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -4649,9 +4474,6 @@ l2.destroy();
         CGAL_assertion( i == begin);
         CGAL_assertion( su == 15);
     }
-    #line 317 "iterator_test.awi"
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -4807,10 +4629,6 @@ l2.destroy();
             ++k;
         } while (i != begin);
     }
-#line 3238 "stl_extension.aw"
-    #line 452 "iterator_test.awi"
-    #line 435 "iterator_test.awi"
-    #line 386 "iterator_test.awi"
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( begin);
         CGAL::Assert_circulator( begin);
@@ -4893,7 +4711,6 @@ l2.destroy();
         j++;
         CGAL_assertion( j - i == 0);
     }
-#line 3240 "stl_extension.aw"
 
     Vector v2 = v;
     const Vector& v1 = v2;
@@ -4905,9 +4722,6 @@ typedef Circulator_project<ConstCircBase,Ident,const int&,
   const int*> C_Circulator;
 C_Circulator c_begin(ConstCircBase(v1.begin(),v1.end()));
 Assert_random_access_category(c_begin);
-#line 317 "iterator_test.awi"
-#line 272 "iterator_test.awi"
-#line 173 "iterator_test.awi"
 { // Open own scope to hide local variables.
     // Check generally correct parameter properties.
     CGAL::Assert_circulator_or_iterator(c_begin);
@@ -5043,10 +4857,6 @@ Assert_random_access_category(c_begin);
     CGAL_assertion( i + (j-i) == j);
     CGAL_assertion( (j-i) + i == j);
 }
-#line 3253 "stl_extension.aw"
-#line 452 "iterator_test.awi"
-#line 435 "iterator_test.awi"
-#line 386 "iterator_test.awi"
 { // Open own scope to hide local variables.
     CGAL::Assert_circulator( c_begin);
     CGAL::Assert_circulator( c_begin);
@@ -5129,11 +4939,8 @@ Assert_random_access_category(c_begin);
     j++;
     CGAL_assertion( j - i == 0);
 }
-#line 3255 "stl_extension.aw"
   }
 }
-#line 4642 "stl_extension.aw"
-#line 3354 "stl_extension.aw"
 struct NN {
   NN* nn;
   int key;
@@ -5161,8 +4968,6 @@ void test_Circulator_on_node() {
     Circulator;
     Circulator begin( start);
     Assert_forward_category(begin);
-    #line 235 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -5255,8 +5060,6 @@ void test_Circulator_on_node() {
             ++k;
         } while (i != begin);
     }
-#line 3383 "stl_extension.aw"
-    #line 386 "iterator_test.awi"
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( begin);
         CGAL::Assert_circulator( begin);
@@ -5303,7 +5106,6 @@ void test_Circulator_on_node() {
         } while( i != j);
         CGAL_assertion( k == 5);
     }
-#line 3385 "stl_extension.aw"
 
     typedef Circulator_on_node< NN,
       Project_next<NN>,
@@ -5314,7 +5116,6 @@ void test_Circulator_on_node() {
     C_Circulator;
     C_Circulator c_begin( start);
     Assert_forward_category(c_begin);
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(c_begin);
@@ -5374,8 +5175,6 @@ void test_Circulator_on_node() {
         CGAL_assertion( i == c_begin);
         CGAL_assertion( su == 15);
     }
-#line 3397 "stl_extension.aw"
-    #line 386 "iterator_test.awi"
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( c_begin);
         CGAL::Assert_circulator( c_begin);
@@ -5422,7 +5221,6 @@ void test_Circulator_on_node() {
         } while( i != j);
         CGAL_assertion( k == 5);
     }
-#line 3399 "stl_extension.aw"
     while ( start != end) {
       p = start->nn;
       delete start;
@@ -5430,8 +5228,6 @@ void test_Circulator_on_node() {
     }
   }
 }
-#line 4643 "stl_extension.aw"
-#line 3646 "stl_extension.aw"
 void test_N_step_adaptor() {
   {
     typedef In_place_list<item,false> List;
@@ -5454,9 +5250,6 @@ void test_N_step_adaptor() {
     Iterator end(l.end());
     Assert_bidirectional_category(begin);
     Assert_bidirectional_category(end);
-    #line 312 "iterator_test.awi"
-    #line 235 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -5549,8 +5342,6 @@ void test_N_step_adaptor() {
             ++k;
         } while (i != end);
     }
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -5646,12 +5437,8 @@ void test_N_step_adaptor() {
         CGAL_assertion( i == begin);
         CGAL_assertion( su == 15);
     }
-#line 3670 "stl_extension.aw"
-    #line 484 "iterator_test.awi"
-    #line 479 "iterator_test.awi"
     CGAL::Assert_iterator( begin);
     CGAL::Assert_iterator( end);
-#line 3672 "stl_extension.aw"
 
     List l2 = l;
     const List& l1 = l2;
@@ -5663,8 +5450,6 @@ C_Iterator c_begin(l1.begin());
 C_Iterator c_end(l1.end());
 Assert_bidirectional_category(c_begin);
 Assert_bidirectional_category(c_end);
-#line 272 "iterator_test.awi"
-#line 173 "iterator_test.awi"
 { // Open own scope to hide local variables.
     // Check generally correct parameter properties.
     CGAL::Assert_circulator_or_iterator(c_begin);
@@ -5760,12 +5545,8 @@ Assert_bidirectional_category(c_end);
     CGAL_assertion( i == c_begin);
     CGAL_assertion( su == 15);
 }
-#line 3685 "stl_extension.aw"
-#line 484 "iterator_test.awi"
-#line 479 "iterator_test.awi"
 CGAL::Assert_iterator( c_begin);
 CGAL::Assert_iterator( c_end);
-#line 3687 "stl_extension.aw"
 l.destroy();
 l2.destroy();
   }
@@ -5790,10 +5571,6 @@ l2.destroy();
     Iterator end(v.end());
     Assert_random_access_category(begin);
     Assert_random_access_category(end);
-    #line 361 "iterator_test.awi"
-    #line 312 "iterator_test.awi"
-    #line 235 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -5886,8 +5663,6 @@ l2.destroy();
             ++k;
         } while (i != end);
     }
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -5983,9 +5758,6 @@ l2.destroy();
         CGAL_assertion( i == begin);
         CGAL_assertion( su == 15);
     }
-    #line 317 "iterator_test.awi"
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -6141,10 +5913,6 @@ l2.destroy();
             ++k;
         } while (i != end);
     }
-#line 3713 "stl_extension.aw"
-    #line 488 "iterator_test.awi"
-    #line 484 "iterator_test.awi"
-    #line 479 "iterator_test.awi"
     CGAL::Assert_iterator( begin);
     CGAL::Assert_iterator( end);
     { // Open own scope to hide local variables.
@@ -6171,7 +5939,6 @@ l2.destroy();
         CGAL_assertion( !( i > i));
         CGAL_assertion( !( i < i));
     }
-#line 3715 "stl_extension.aw"
 
     Vector v2 = v;
     const Vector& v1 = v2;
@@ -6184,9 +5951,6 @@ l2.destroy();
     C_Iterator c_end(v1.end());
     Assert_random_access_category(c_begin);
     Assert_random_access_category(c_end);
-    #line 317 "iterator_test.awi"
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(c_begin);
@@ -6322,10 +6086,6 @@ l2.destroy();
         CGAL_assertion( i + (j-i) == j);
         CGAL_assertion( (j-i) + i == j);
     }
-#line 3729 "stl_extension.aw"
-    #line 488 "iterator_test.awi"
-    #line 484 "iterator_test.awi"
-    #line 479 "iterator_test.awi"
     CGAL::Assert_iterator( c_begin);
     CGAL::Assert_iterator( c_end);
     { // Open own scope to hide local variables.
@@ -6352,7 +6112,6 @@ l2.destroy();
         CGAL_assertion( !( i > i));
         CGAL_assertion( !( i < i));
     }
-#line 3731 "stl_extension.aw"
   }
   {
     typedef std::vector<int> Vector;
@@ -6375,10 +6134,6 @@ l2.destroy();
       Random_access_circulator_tag> Circulator;
     Circulator begin(CircBase( v.begin(),v.end()));
     Assert_random_access_category(begin);
-    #line 361 "iterator_test.awi"
-    #line 312 "iterator_test.awi"
-    #line 235 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -6471,8 +6226,6 @@ l2.destroy();
             ++k;
         } while (i != begin);
     }
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -6568,9 +6321,6 @@ l2.destroy();
         CGAL_assertion( i == begin);
         CGAL_assertion( su == 15);
     }
-    #line 317 "iterator_test.awi"
-    #line 272 "iterator_test.awi"
-    #line 173 "iterator_test.awi"
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
         CGAL::Assert_circulator_or_iterator(begin);
@@ -6726,10 +6476,6 @@ l2.destroy();
             ++k;
         } while (i != begin);
     }
-#line 3755 "stl_extension.aw"
-    #line 452 "iterator_test.awi"
-    #line 435 "iterator_test.awi"
-    #line 386 "iterator_test.awi"
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( begin);
         CGAL::Assert_circulator( begin);
@@ -6812,7 +6558,6 @@ l2.destroy();
         j++;
         CGAL_assertion( j - i == 0);
     }
-#line 3757 "stl_extension.aw"
 
     Vector v2 = v;
     const Vector& v1 = v2;
@@ -6824,9 +6569,6 @@ typedef N_step_adaptor<ConstCircBase,2,const int&,const int*,
   int,std::ptrdiff_t, Random_access_circulator_tag> C_Circulator;
 C_Circulator c_begin(ConstCircBase(v1.begin(),v1.end()));
 Assert_random_access_category(c_begin);
-#line 317 "iterator_test.awi"
-#line 272 "iterator_test.awi"
-#line 173 "iterator_test.awi"
 { // Open own scope to hide local variables.
     // Check generally correct parameter properties.
     CGAL::Assert_circulator_or_iterator(c_begin);
@@ -6962,10 +6704,6 @@ Assert_random_access_category(c_begin);
     CGAL_assertion( i + (j-i) == j);
     CGAL_assertion( (j-i) + i == j);
 }
-#line 3770 "stl_extension.aw"
-#line 452 "iterator_test.awi"
-#line 435 "iterator_test.awi"
-#line 386 "iterator_test.awi"
 { // Open own scope to hide local variables.
     CGAL::Assert_circulator( c_begin);
     CGAL::Assert_circulator( c_begin);
@@ -7048,11 +6786,8 @@ Assert_random_access_category(c_begin);
     j++;
     CGAL_assertion( j - i == 0);
 }
-#line 3772 "stl_extension.aw"
   }
 }
-#line 4644 "stl_extension.aw"
-#line 3911 "stl_extension.aw"
 void test_N_step_adaptor_derived() {
     {
         typedef In_place_list<item,false> List;
@@ -7074,9 +6809,6 @@ void test_N_step_adaptor_derived() {
         Iterator end(l.end());
         Assert_bidirectional_category(begin);
         Assert_bidirectional_category(end);
-        #line 312 "iterator_test.awi"
-        #line 235 "iterator_test.awi"
-        #line 173 "iterator_test.awi"
         { // Open own scope to hide local variables.
             // Check generally correct parameter properties.
             CGAL::Assert_circulator_or_iterator(begin);
@@ -7169,8 +6901,6 @@ void test_N_step_adaptor_derived() {
                 ++k;
             } while (i != end);
         }
-        #line 272 "iterator_test.awi"
-        #line 173 "iterator_test.awi"
         { // Open own scope to hide local variables.
             // Check generally correct parameter properties.
             CGAL::Assert_circulator_or_iterator(begin);
@@ -7266,12 +6996,8 @@ void test_N_step_adaptor_derived() {
             CGAL_assertion( i == begin);
             CGAL_assertion( su == 15);
         }
-#line 3934 "stl_extension.aw"
-        #line 484 "iterator_test.awi"
-        #line 479 "iterator_test.awi"
         CGAL::Assert_iterator( begin);
         CGAL::Assert_iterator( end);
-#line 3936 "stl_extension.aw"
 
         List l2 = l;
         const List& l1 = l2;
@@ -7281,8 +7007,6 @@ void test_N_step_adaptor_derived() {
         C_Iterator c_end(l1.end());
         Assert_bidirectional_category(c_begin);
         Assert_bidirectional_category(c_end);
-        #line 272 "iterator_test.awi"
-        #line 173 "iterator_test.awi"
         { // Open own scope to hide local variables.
             // Check generally correct parameter properties.
             CGAL::Assert_circulator_or_iterator(c_begin);
@@ -7378,12 +7102,8 @@ void test_N_step_adaptor_derived() {
             CGAL_assertion( i == c_begin);
             CGAL_assertion( su == 15);
         }
-#line 3947 "stl_extension.aw"
-        #line 484 "iterator_test.awi"
-        #line 479 "iterator_test.awi"
         CGAL::Assert_iterator( c_begin);
         CGAL::Assert_iterator( c_end);
-#line 3949 "stl_extension.aw"
         l.destroy();
         l2.destroy();
     }
@@ -7407,10 +7127,6 @@ void test_N_step_adaptor_derived() {
         typedef N_step_adaptor_derived<CircBase,2> Circulator;
         Circulator begin(CircBase( v.begin(),v.end()));
         Assert_random_access_category(begin);
-        #line 361 "iterator_test.awi"
-        #line 312 "iterator_test.awi"
-        #line 235 "iterator_test.awi"
-        #line 173 "iterator_test.awi"
         { // Open own scope to hide local variables.
             // Check generally correct parameter properties.
             CGAL::Assert_circulator_or_iterator(begin);
@@ -7503,8 +7219,6 @@ void test_N_step_adaptor_derived() {
                 ++k;
             } while (i != begin);
         }
-        #line 272 "iterator_test.awi"
-        #line 173 "iterator_test.awi"
         { // Open own scope to hide local variables.
             // Check generally correct parameter properties.
             CGAL::Assert_circulator_or_iterator(begin);
@@ -7600,9 +7314,6 @@ void test_N_step_adaptor_derived() {
             CGAL_assertion( i == begin);
             CGAL_assertion( su == 15);
         }
-        #line 317 "iterator_test.awi"
-        #line 272 "iterator_test.awi"
-        #line 173 "iterator_test.awi"
         { // Open own scope to hide local variables.
             // Check generally correct parameter properties.
             CGAL::Assert_circulator_or_iterator(begin);
@@ -7758,10 +7469,6 @@ void test_N_step_adaptor_derived() {
                 ++k;
             } while (i != begin);
         }
-#line 3974 "stl_extension.aw"
-        #line 452 "iterator_test.awi"
-        #line 435 "iterator_test.awi"
-        #line 386 "iterator_test.awi"
         { // Open own scope to hide local variables.
             CGAL::Assert_circulator( begin);
             CGAL::Assert_circulator( begin);
@@ -7844,7 +7551,6 @@ void test_N_step_adaptor_derived() {
             j++;
             CGAL_assertion( j - i == 0);
         }
-#line 3976 "stl_extension.aw"
 
         Vector v2 = v;
         const Vector& v1 = v2;
@@ -7855,9 +7561,6 @@ void test_N_step_adaptor_derived() {
         typedef N_step_adaptor_derived<ConstCircBase,2> C_Circulator;
         C_Circulator c_begin(ConstCircBase(v1.begin(),v1.end()));
         Assert_random_access_category(c_begin);
-        #line 317 "iterator_test.awi"
-        #line 272 "iterator_test.awi"
-        #line 173 "iterator_test.awi"
         { // Open own scope to hide local variables.
             // Check generally correct parameter properties.
             CGAL::Assert_circulator_or_iterator(c_begin);
@@ -7993,10 +7696,6 @@ void test_N_step_adaptor_derived() {
             CGAL_assertion( i + (j-i) == j);
             CGAL_assertion( (j-i) + i == j);
         }
-#line 3988 "stl_extension.aw"
-        #line 452 "iterator_test.awi"
-        #line 435 "iterator_test.awi"
-        #line 386 "iterator_test.awi"
         { // Open own scope to hide local variables.
             CGAL::Assert_circulator( c_begin);
             CGAL::Assert_circulator( c_begin);
@@ -8079,11 +7778,8 @@ void test_N_step_adaptor_derived() {
             j++;
             CGAL_assertion( j - i == 0);
         }
-#line 3990 "stl_extension.aw"
     }
 }
-#line 4645 "stl_extension.aw"
-#line 4160 "stl_extension.aw"
 void test_Inverse_index() {
   {
     typedef std::list<std::size_t> List;
@@ -8155,8 +7851,6 @@ void test_Inverse_index() {
     } while ( ++c != d);
   }
 }
-#line 4646 "stl_extension.aw"
-#line 4401 "stl_extension.aw"
 void test_Random_access_adaptor() {
   {
     typedef std::list<std::size_t> List;
@@ -8248,7 +7942,6 @@ void test_Random_access_adaptor() {
   }
   }
 }
-#line 4647 "stl_extension.aw"
 
 int main() {
   init_global_data();

@@ -1,5 +1,3 @@
-#line 111 "stl_extension.aw"
-#line 20 "cgal_header.awi"
 // ============================================================================
 //
 // Copyright (c) 1997, 1998, 1999 The CGAL Consortium
@@ -17,7 +15,6 @@
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 // package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
-#line 37 "cgal_header.awi"
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -28,7 +25,6 @@
 // STL like algorithms
 // ============================================================================
 
-#line 115 "stl_extension.aw"
 #ifndef CGAL_ALGORITHM_H
 #define CGAL_ALGORITHM_H 1
 
@@ -41,7 +37,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#line 1610 "stl_extension.aw"
 template < class ForwardIterator >
 std::pair< ForwardIterator, ForwardIterator >
 min_max_element(ForwardIterator first, ForwardIterator last)
@@ -57,7 +52,6 @@ min_max_element(ForwardIterator first, ForwardIterator last)
     }
   return result;
 }
-#line 1628 "stl_extension.aw"
 template < class ForwardIterator, class CompareMin, class CompareMax >
 std::pair< ForwardIterator, ForwardIterator >
 min_max_element(ForwardIterator first,
@@ -76,7 +70,6 @@ min_max_element(ForwardIterator first,
     }
   return result;
 }
-#line 1652 "stl_extension.aw"
 template < class ForwardIterator, class Predicate >
 ForwardIterator
 min_element_if(ForwardIterator first,
@@ -90,7 +83,6 @@ min_element_if(ForwardIterator first,
         result = first;
   return result;
 }
-#line 1668 "stl_extension.aw"
 template < class ForwardIterator, class Compare, class Predicate >
 ForwardIterator
 min_element_if(ForwardIterator first,
@@ -105,7 +97,6 @@ min_element_if(ForwardIterator first,
         result = first;
   return result;
 }
-#line 1685 "stl_extension.aw"
 template < class ForwardIterator, class Predicate >
 ForwardIterator
 max_element_if(ForwardIterator first,
@@ -119,7 +110,6 @@ max_element_if(ForwardIterator first,
         result = first;
   return result;
 }
-#line 1701 "stl_extension.aw"
 template < class ForwardIterator, class Compare, class Predicate >
 ForwardIterator
 max_element_if(ForwardIterator first,
@@ -135,7 +125,6 @@ max_element_if(ForwardIterator first,
   return result;
 }
 
-#line 124 "stl_extension.aw"
 
 CGAL_END_NAMESPACE
 
