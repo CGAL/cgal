@@ -65,7 +65,7 @@ class Priority_higher
                 search_nearest = s.Search_nearest();
         }
         //highest priority is smallest distance
-        bool operator() (Node_with_distance* n1, Node_with_distance* n2) const 
+        bool operator() (Node_with_distance* n1, Node_with_distance* n2) const
 	{
                 if (search_nearest) { return (n1->second > n2->second);}
                 else {return (n2->second > n1->second);}
@@ -85,7 +85,7 @@ class Distance_smaller
         }
 
         //highest priority is smallest distance
-        bool operator() (Item_with_distance* p1, Item_with_distance* p2) const 
+        bool operator() (Item_with_distance* p1, Item_with_distance* p2) const
        {
 		if (search_nearest) {return (p1->second > p2->second);}
                 else {return (p2->second > p1->second);}

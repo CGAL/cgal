@@ -59,12 +59,12 @@ namespace CGAL {
     typedef Points_container<Item> Self;
 
   private:
-    Points_list *p_list; // array of sorted lists of pointers to points
-    int built_coord;     // a coordinate for which the pointer list is built
+    Points_list *p_list;// array of sorted lists of pointers to points
+    int built_coord;    // a coordinate for which the pointer list is built
     //    Points points;// points container
-    Box<NT> bbox;        // bounding box, i.e. cell of node
-    Box<NT> tbox;        // tight bounding box, i.e. minimal enclosing bounding 
-	                     // box of points
+    Box<NT> bbox;       // bounding box, i.e. cell of node
+    Box<NT> tbox;       // tight bounding box, i.e. minimal enclosing bounding
+	                // box of points
 
     struct build_max_span_list : public std::unary_function<Item, void> {
       Points_list *x;
@@ -107,7 +107,8 @@ namespace CGAL {
     inline NT  max_tight_span_upper() const {
       return tbox.upper(max_tight_span_coord());}
 
-    inline NT max_spread() const { return  max_span_upper() -  max_span_lower(); }
+    inline NT max_spread() const 
+	{ return  max_span_upper() -  max_span_lower(); }
 
     inline NT max_tight_spread() const {
       return  max_tight_span_upper() -  max_tight_span_lower(); }
