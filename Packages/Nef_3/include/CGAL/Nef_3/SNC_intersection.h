@@ -110,7 +110,6 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   }
 
 #else // LINE3_LINE3_INTERSECTION
-/*
   bool does_intersect_internally( const Segment_3& s1, 
 				  const Segment_3& s2, 
 				  Point_3& p) const {
@@ -120,7 +119,6 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
       && s1.has_on(p));
     
   }
-*/
 
   bool does_intersect_internally( const Ray_3& s1, 
 				  const Segment_3& s2, 
@@ -182,7 +180,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     TRACEN( "-> point in facet? "<<locate_point_in_halffacet(p, f));
     return does_contain_internally( f, p);
   }
-  /*
+
   bool does_intersect_internally( const Segment_3& seg,
 				  Halffacet_const_handle f,
 				  Point_3& p) const { 
@@ -190,7 +188,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     return (does_intersect_internally(Ray_3(seg.source(),seg.target()),f,p)
 	    && seg.has_on(p));
   }
-  */
+
   Bounded_side locate_point_in_halffacet( const Point_3& p, 
 					  Halffacet_const_handle f) const {
     typedef Project_halfedge_point
