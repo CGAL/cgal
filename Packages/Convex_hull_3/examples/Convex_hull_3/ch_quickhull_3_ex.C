@@ -1,6 +1,7 @@
+//
+// file: examples/Convex_hull_3/ch_quickhull_3_ex.C
+//
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Segment_3.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/Convex_hull_traits_3.h>

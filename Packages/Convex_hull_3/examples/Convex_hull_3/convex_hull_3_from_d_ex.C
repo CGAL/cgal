@@ -1,5 +1,7 @@
+//
+// file: examples/Convex_hull_3/convex_hull_3_from_d_ex.C
+//
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/Polyhedron_default_traits_3.h>
@@ -12,7 +14,6 @@
 typedef CGAL::Cartesian<double>                R;
 typedef CGAL::Polyhedron_default_traits_3<R>   PolyTraits;
 typedef CGAL::Polyhedron_3< PolyTraits >       Polyhedron;
-
 
 int main()
 {
