@@ -1,9 +1,9 @@
-- virer le typedef 
-  typedef Weighted_point  Point_2; de  Regular_triangulation_euclidean_traits_2
-  et 
-  Triangulation_vertex_base_2.h
-  et surcharger le fonction point()  en 
-  Gt::Weigthed_point_2 point()
+- regarder le bug dans la test suite de TriangulationContrainte
+ revele par le lzigzag locate
+  semble venir de find_conflicts 
+  lorsque le point est localise sur une arete de l'enveloppe convexe
+le find_conflicts ne donne pas le meme resultat qu'on parte de la face finie
+ou de la face infini 
   
 - bencher Triangulation_2 avec un insert virtuel
   insert virtuel permettrait de resoudre le pb de design

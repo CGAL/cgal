@@ -440,7 +440,20 @@ Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
 test_conflict(const Point& p, Face_handle fh) const
   // true if point P lies inside the circle circumscribing face fh
 {
-  return ( side_of_oriented_circle(fh,p) == ON_POSITIVE_SIDE );
+  if (! is_infinite(fh))
+    return ( side_of_oriented_circle(fh,p) == ON_POSITIVE_SIDE );
+  
+  // fh is infinite 
+  // Returns true when p is inside the open half_plane or on the
+  // finite edge of fh
+  Oriented_side os = side_of_oriented_circle(fh,p);
+  if (os == ON_POSITIVE_SIDE) return true;
+  if (os == ON_ORIENTED_BOUNDARY){
+    int i = fh->index(infinite_vertex());
+    return collinear_between(fh->vertex(cw(i))->point(), p,
+			     fh->vertex(ccw(i))->point() );
+  }
+  return false;
 }
 
 template < class Gt, class Tds, class Itag >

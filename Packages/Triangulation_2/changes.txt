@@ -2,6 +2,11 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 13 April 2004 Mariette Yvinec
+- fixed test_conflict in Delaunay and Contrained_Delaunay.
+  It was not working when the query point was located 
+  on an edge of the convex hull
+
+13 April 2004 Mariette Yvinec
 - fixed a typedef in examples/Triangulation_2/regular.C
   (this bug was related to  changes in Regular_triangulation_euclidean_traits
   made on March 31)

@@ -62,7 +62,7 @@ public:
   
   Delaunay_triangulation_2(
 	       const Delaunay_triangulation_2<Gt,Tds> &tr)
-      : Triangulation_2<Gt,Tds>(tr)
+       : Triangulation_2<Gt,Tds>(tr)
   {   CGAL_triangulation_postcondition( is_valid() );  }
   
 // CHECK -QUERY
@@ -234,7 +234,20 @@ inline bool
 Delaunay_triangulation_2<Gt,Tds>::
 test_conflict(const Point  &p, Face_handle fh) const
 {
-  return (side_of_oriented_circle(fh,p) == ON_POSITIVE_SIDE);
+  if (! is_infinite(fh))
+    return ( side_of_oriented_circle(fh,p) == ON_POSITIVE_SIDE );
+  
+  // fh is infinite 
+  // Returns true when p is inside the open half_plane or on the
+  // finite edge of fh
+  Oriented_side os = side_of_oriented_circle(fh,p);
+  if (os == ON_POSITIVE_SIDE) return true;
+  if (os == ON_ORIENTED_BOUNDARY){
+    int i = fh->index(infinite_vertex());
+    return collinear_between(fh->vertex(cw(i))->point(), p,
+			     fh->vertex(ccw(i))->point() );
+  }
+  return false;
 }
 
 template < class Gt, class Tds >
