@@ -7838,6 +7838,62 @@ void test_N_step_adaptor_derived() {
         }
     }
 }
+struct Filt1 {
+  template < class I >
+  bool operator()(const I& i) const { return *i <= 5; }
+};
+
+struct Filt2 {
+  template < class I >
+  bool operator()(const I& i) const { return i->b <= 5; }
+};
+
+struct Filtest {
+  Filtest(int a) : b(a) {}
+  int b;
+};
+
+void test_Filter_iterator()
+{
+  {
+    typedef std::list< int > Cont;
+    typedef Cont::iterator iterator;
+    typedef Filter_iterator< iterator, Filt1 > FI1;
+    FI1 f;
+
+    Cont l;
+    l.push_back(3); l.push_back(8); l.push_back(1); l.push_back(6);
+    l.push_back(9); l.push_back(5); l.push_back(3); l.push_back(2);
+    l.push_back(6); l.push_back(4); l.push_back(7); l.push_back(9);
+    Filt1 fi;
+
+    FI1 f1(l.begin(), l.end(), fi);
+    ++f1;
+    f1++;
+    CGAL_assertion(*f1 == 9);
+    --f1;
+    f1--;
+    CGAL_assertion(
+      6 ==
+      std::distance(filter_iterator(l.begin(), l.end(), fi),
+                    filter_iterator(l.begin(), l.end(), fi, l.end())));
+  }
+  {
+    typedef std::list< Filtest > Cont;
+    typedef Cont::iterator iterator;
+    typedef Filter_iterator< iterator, Filt2 > FI1;
+
+    Cont l;
+    Filtest f1(3), f2(4), f3(5), f4(6);
+    l.push_back(f1); l.push_back(f2); l.push_back(f3); l.push_back(f4);
+    Filt2 fi;
+    FI1 f(l.begin(), l.end(), fi);
+    CGAL_assertion(
+      1 ==
+      std::distance(filter_iterator(l.begin(), l.end(), fi),
+                    filter_iterator(l.begin(), l.end(), fi, l.end())));
+  }
+}
 void test_Inverse_index() {
   {
     typedef std::list<std::size_t> List;
@@ -8010,15 +8066,21 @@ void test_Emptyset_iterator()
   *g = 3.0;
   ++g;
 }
+struct A {};
+struct B {
+  operator A() { return A(); }
+};
+
 void test_Oneset_iterator()
 {
-  int i = 1;
-  Oneset_iterator<int> e(i);
+  A a;
+  B b;
+  Oneset_iterator<A> e(a);
   Assert_output_category(e);
-  Oneset_iterator<int> f(e);
-  Oneset_iterator<int> g = f;
-  *g++ = 2;
-  *g = 3.0;
+  Oneset_iterator<A> f(e);
+  Oneset_iterator<A> g = f;
+  *g++ = a;
+  *g = b;
   ++g;
 }
 
@@ -8031,6 +8093,7 @@ int main() {
   test_Circulator_on_node();
   test_N_step_adaptor();
   test_N_step_adaptor_derived();
+  test_Filter_iterator();
   test_Inverse_index();
   test_Random_access_adaptor();
   test_Emptyset_iterator();
