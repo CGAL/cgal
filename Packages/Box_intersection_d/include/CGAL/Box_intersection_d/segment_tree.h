@@ -44,7 +44,7 @@ template< class RandomAccessIter1, class RandomAccessIter2,
           class Callback, class Traits >
 void all_pairs( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                 RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
-                Callback& callback, Traits traits )
+                Callback callback, Traits traits )
 {
     const int last_dim = Traits::dimension() - 1;
     for( RandomAccessIter1 p = p_begin; p != p_end; ++p ) {
@@ -67,7 +67,7 @@ template< class RandomAccessIter1, class RandomAccessIter2,
           class Callback, class Traits >
 void one_way_scan( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
-                   Callback& callback, Traits traits, int last_dim,
+                   Callback callback, Traits traits, int last_dim,
                    bool in_order = true )
 {
     typedef typename Traits::Compare Compare;
@@ -106,7 +106,7 @@ template< class RandomAccessIter1, class RandomAccessIter2,
 void modified_two_way_scan(
     RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
-    Callback& callback, Traits traits, int last_dim,
+    Callback callback, Traits traits, int last_dim,
     bool in_order = true )
 {
     typedef typename Traits::Compare Compare;
@@ -221,13 +221,13 @@ split_points( RandomAccessIter begin, RandomAccessIter end,
 
 #if BOX_INTERSECTION_DEBUG
  static int level = -1;
- #define DUMP(msg) { \
+ #define CGAL_BOX_INTERSECTION_DUMP(msg) { \
    for( unsigned int i = level; i; --i ) \
      std::cout << "  "; \
     std::cout << msg; \
   }
 #else
- #define DUMP(msg) ;
+ #define CGAL_BOX_INTERSECTION_DUMP(msg) ;
 #endif
 
 
@@ -273,7 +273,7 @@ template< class RandomAccessIter1, class RandomAccessIter2,
 void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
                    T lo, T hi,
-                   Callback& callback, Predicate_traits traits,
+                   Callback callback, Predicate_traits traits,
                    std::ptrdiff_t cutoff, int dim, bool in_order )
 {
     typedef typename Predicate_traits::Spanning   Spanning;
@@ -285,12 +285,12 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
 
 #if BOX_INTERSECTION_DEBUG
     Counter<int> bla( level );
-    //DUMP("----------------===========[ new node ]============-------------")
-    DUMP("range: [" << lo << "," << hi << ") dim " << dim << std::endl )
-    DUMP("intervals: " )
+    CGAL_BOX_INTERSECTION_DUMP("range: [" << lo << "," << hi << ") dim " 
+                                          << dim << std::endl )
+    CGAL_BOX_INTERSECTION_DUMP("intervals: " )
     //dump_box_numbers( i_begin, i_end, traits );
     dump_intervals( i_begin, i_end, traits, dim );
-    DUMP("points: " )
+    CGAL_BOX_INTERSECTION_DUMP("points: " )
     //dump_box_numbers( p_begin, p_end, traits );
     dump_points( p_begin, p_end, traits, dim );
 #endif
@@ -312,7 +312,7 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
         return;
 
     if( dim == 0 )  {
-        DUMP( "dim = 0. scanning ... " << std::endl )
+        CGAL_BOX_INTERSECTION_DUMP( "dim = 0. scanning ... " << std::endl )
         one_way_scan( p_begin, p_end, i_begin, i_end,
                       callback, traits, dim, in_order );
         return;
@@ -321,7 +321,7 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     if( std::distance( p_begin, p_end ) < cutoff ||
         std::distance( i_begin, i_end ) < cutoff  )
     {
-        DUMP( "scanning ... " << std::endl )
+        CGAL_BOX_INTERSECTION_DUMP( "scanning ... " << std::endl )
         modified_two_way_scan( p_begin, p_end, i_begin, i_end,
                                callback, traits, dim, in_order );
         return;
@@ -331,7 +331,8 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
         std::partition( i_begin, i_end, Spanning( lo, hi, dim ) );
 
     if( i_begin != i_span_end ) {
-        DUMP( "checking spanning intervals ... " << std::endl )
+        CGAL_BOX_INTERSECTION_DUMP( "checking spanning intervals ... " 
+                                    << std::endl )
         // make two calls for roots of segment tree at next level.
         segment_tree( p_begin, p_end, i_begin, i_span_end, inf, sup,
                       callback, traits, cutoff, dim - 1,  in_order );
@@ -343,9 +344,10 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     RandomAccessIter1 p_mid = split_points( p_begin, p_end, traits, dim, mi );
 
     if( p_mid == p_begin || p_mid == p_end )  {
-        DUMP( "unable to split points! ")
+        CGAL_BOX_INTERSECTION_DUMP( "unable to split points! ")
         //dump_points( p_begin, p_end, traits, dim );
-        DUMP( "performing modified two_way_san ... " << std::endl )
+        CGAL_BOX_INTERSECTION_DUMP( "performing modified two_way_san ... " 
+                                     << std::endl )
         modified_two_way_scan( p_begin, p_end, i_span_end, i_end,
                                callback, traits, dim, in_order );
         return;
@@ -355,13 +357,13 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     // separate left intervals.
     // left intervals have a low point strictly less than mi
     i_mid = std::partition( i_span_end, i_end, Lo_less( mi, dim ) );
-    DUMP("->left" << std::endl )
+    CGAL_BOX_INTERSECTION_DUMP("->left" << std::endl )
     segment_tree( p_begin, p_mid, i_span_end, i_mid, lo, mi,
                   callback, traits, cutoff, dim, in_order );
     // separate right intervals.
     // right intervals have a high point strictly higher than mi
     i_mid = std::partition( i_span_end, i_end, Hi_greater( mi, dim ) );
-    DUMP("->right"<< std::endl )
+    CGAL_BOX_INTERSECTION_DUMP("->right"<< std::endl )
     segment_tree( p_mid, p_end, i_span_end, i_mid, mi, hi,
                   callback, traits, cutoff, dim, in_order );
 }
