@@ -131,15 +131,16 @@ private:
   // added to make the test program of usual triangulations work
   // undocumented
 public:
+
+  // FIXME : This one could benefit from the hierarchy too.
+  Vertex_handle insert(const Point& p, Locate_type lt, Cell_handle loc, int li)
+  {
+    return Tr_Base::insert(p);
+  }
   
   Vertex_handle insert(const Point &p, Cell_handle start)
   {
     return Tr_Base::insert(p, start);
-  }
-
-  Vertex_handle insert(const Point& p, Locate_type lt, Cell_handle loc, int li)
-  {
-    return Tr_Base::insert(p);
   }
 
   Cell_handle locate(const Point& p, Locate_type& lt, int& li, int& lj,
@@ -306,10 +307,7 @@ insert(const Point &p)
 
   int level = 1;
   while (level <= vertex_level ){
-    if (positions[level] != NULL)
-      vertex = hierarchy[level]->insert(p, positions[level]);
-    else
-      vertex = hierarchy[level]->insert(p);
+    vertex = hierarchy[level]->insert(p, positions[level]);
     vertex->set_down((void *) &*previous);// link with level above
     previous->set_up((void *) &*vertex);
     previous=vertex;
