@@ -8,12 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 2000, December 10
+// release       : $CGAL_Revision: CGAL-2.4-I-62 $
+// release_date  : $CGAL_Date: 2002/03/12 $
 //
-// file          : ?/include/LEDA/allocator.h
-// package       : Kernel_basic (3.17)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
+// file          : include/LEDA/allocator.h
+// package       : Kernel_basic (3.81)
+// maintainer    : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 // author(s)     : ?
 // coordinator   : ?
 //
@@ -27,12 +27,14 @@
 #endif
 
 
-#include <LEDA/basic.h>
+#include <CGAL/LEDA_basic.h>
 
 // the following piece of code is programmed according to
 // the C++ standard clause 20.4.1
 
+
 template <class T> class leda_allocator;
+
 
 // specialize for void:
 template <> class leda_allocator<void> {
@@ -89,12 +91,12 @@ pointer allocate(size_type n, const_pointer = 0)
 /*{\Mop returns a pointer to a newly allocated memory range of size
         |n * sizeof(T)|.}*/
 { return 0 == n ? 0 : 
-         (T*) std_memory_mgr.allocate_bytes( n * sizeof(T) ); }
+         (T*) CGAL_LEDA_SCOPE::std_memory_mgr.allocate_bytes( n * sizeof(T) ); }
 
 void deallocate(pointer p, size_type n)
 /*{\Mop deallocates a memory range of |n * sizeof(T)| starting
         at |p|. \precond the memory range was obtained via |allocate(n)|.}*/
-{ std_memory_mgr.deallocate_bytes(p , n * sizeof(T)); }
+{ CGAL_LEDA_SCOPE::std_memory_mgr.deallocate_bytes(p , n * sizeof(T)); }
 
 pointer address(reference r)
 /*{\Mop returns |&r|.}*/
@@ -112,11 +114,12 @@ void destroy(pointer p)
 /*{\Mop destroys the object referenced via |p| by calling |p->~T()|.}*/
 { p->~T(); }
 
-size_type max_size() const { return std_memory_mgr.max_size(); }
+size_type max_size() const { return CGAL_LEDA_SCOPE::std_memory_mgr.max_size(); }
 /*{\Mop the largest value |n| for which the call |allocate(n,0)| 
     might succeed.}*/
 
 };
+
 
 /*{\Mimplementation Note that the above class template uses all kinds
 of modern compiler technology like member templates, partial specialization
