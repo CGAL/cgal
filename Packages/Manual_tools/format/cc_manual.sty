@@ -26,35 +26,88 @@
 \parskip 11pt plus 1pt minus 1pt
 \parindent 0pt
 
-\newdimen\typewidth          \typewidth=2.5cm
-\newdimen\callwidth          \callwidth=4.5cm
-\newdimen\callwidthl         \callwidthl=\textwidth  
-    \advance\callwidthl        -\typewidth  
-    \advance\callwidthl        -0.5cm
-\newdimen\extendedindent     \extendedindent=0.6cm
-\newdimen\callwidthext       \callwidthext=\callwidthl  
-    \advance\callwidthext      -\extendedindent
-\newdimen\callindentext      \callindentext=\textwidth  
-    \advance\callindentext     -\callwidthext
-\newdimen\createwidth        \createwidth=\textwidth
-    \advance\createwidth       -1cm
-\newdimen\createtextwidth    \createtextwidth=\textwidth
-    \advance\createtextwidth   -3cm
-\newdimen\descriptwidth      \descriptwidth=\textwidth
-    \advance\descriptwidth     -\typewidth
-    \advance\descriptwidth     -\callwidth
-    \advance\descriptwidth     -0.5cm 
- 
+
+% +--------------------------------------------------------------------------
+% | New Dimensions (for the CGAL Manual):
+% | Especially to format all multi column declarations.
+% |
+% | The dimensions \CCfirst and \CCsecond are set to the appropriate 
+% | values. Afterwards, the \CCinitWidths does the rest.
+% +--------------------------------------------------------------------------
+
+% redefine this macro to be \CCtrue to switch the alternative
+% three column formatting on.
+\def\CCalternateThreeColumn{\CCfalse}
+
+\newdimen\CCWindent
+\newdimen\CCWfirst
+\newdimen\CCWfirstlong
+\newdimen\CCWsecond
+\newdimen\CCWsecondlong
+\newdimen\CCWcomment
+\newdimen\CCWbetween
+\newdimen\CCWparam
+\newdimen\CCWparamindent
+
+\newdimen\CCWfunctionfirst
+\newdimen\CCWfunctionsecond
+\newdimen\CCWconstructorfirst
+\newdimen\CCWconstructorsecond
+
+% init them
+% ---------
+\CCWindent             = 0pt
+\CCWbetween            = 0.5cm
+\CCWparamindent        = 1.2cm
+
+\CCWfunctionfirst      = 2.5cm
+\CCWfunctionsecond     = 4.5cm
+\CCWconstructorfirst   = 0pt
+\CCWconstructorsecond  = 2.5cm
+
+
+\def\CCinitWidths{%
+    \CCWfirstlong              = \textwidth
+        \advance\CCWfirstlong   -\CCWindent
+    \CCWsecondlong             = \CCWfirstlong
+        \advance\CCWsecondlong  -\CCWfirst
+        \advance\CCWsecondlong  -\CCWbetween
+    \CCWcomment                = \CCWsecondlong
+        \advance\CCWcomment     -\CCWsecond
+        \advance\CCWcomment     -\CCWbetween
+    \CCWparam                  = \CCWfirst
+        \advance\CCWparam        \CCWbetween
+        \advance\CCWparam        \CCWparamindent
+}
+\CCinitWidths   
+
+% define macros for the vertical structuring
+% ------------------------------------------
+\def\CCtopskip{\smallskip}
+\def\CCreturnskip{\par\hspace*{\CCWindent}\hspace*{\CCWfirst}%
+                      \hspace*{\CCWbetween}}
+\def\CCmiddleskip{\par\hspace*{1cm}\hfill}
+\def\CCbottomskip{\par\smallskip}
+\def\CCbottombigskip{\par\bigskip}
+
+
 % +--------------------------------------------------------------------------
 % | Original LEDA Manual macros (shortcuts):
+% | Several new shortcuts for CGAL
 % |
 % | \CC, \gg, \nat, \real, \boxit
+% | \leda, \cgal, \protocgal, \plageo
 % +--------------------------------------------------------------------------
 \def\CC{C\raise.08ex\hbox{\tt ++}}
 \def\gg{g\hbox{\tt ++}}
-\def\nat{\hbox{\rm\vrule\kern-0.045em N}}
-\def\real{\hbox{\rm\vrule\kern-0.035em R}}
-\def\boxit#1{\vbox{\hrule\hbox{\vrule\kern3pt\vbox{#1}\kern3pt\vrule}\hrule}}
+\def\nat{\hbox{\rm I\kern-0.045em N}}
+\def\real{\hbox{\rm I\kern-0.035em R}}
+% \def\boxit#1{\vbox{\hrule\hbox{\vrule\kern3pt\vbox{#1}\kern3pt\vrule}\hrule}}
+
+\newcommand{\leda}{{\sc Leda}}
+\newcommand{\cgal}{{\sc Cgal}}
+\newcommand{\protocgal}{{\sc C++gal}}
+\newcommand{\plageo}{{\sc Plageo}}
 
 % +--------------------------------------------------------------------------
 % | Structuring macros (similar to LEDA Manual):
@@ -103,6 +156,11 @@
                    \classX%
                }{
                    \gdef\pureclassname{}%
+                   \gdef\puretemplatename{}%
+                   \gdef\classname{}%
+                   \gdef\classtemplatename{}%
+                   \gdef\purevar{}%
+                   \gdef\var{}%
                }
 
 \def\classX #1{%
@@ -135,6 +193,12 @@
                    \classtemplateX%
                }{
                    \gdef\pureclassname{}%
+                   \gdef\puretemplatename{}%
+                   \gdef\pureparameters{}%
+                   \gdef\classname{}%
+                   \gdef\classtemplatename{}%
+                   \gdef\purevar{}%
+                   \gdef\var{}%
                }
 
 \def\classtemplateX #1{%
@@ -170,37 +234,37 @@
                    \endgroup}
 
 \def\threecolumns #1#2{%
-                   \global\typewidth=#1
-                   \global\callwidth=#2
-                   \global\descriptwidth=\textwidth
-                   \global\advance\descriptwidth-\typewidth
-                   \global\advance\descriptwidth-\callwidth
-                   \global\advance\descriptwidth-0.5cm
-                   \global\callwidthl=\textwidth 
-                   \global\advance\callwidthl-\typewidth
-                   \global\advance\callwidthl-0.5cm
-                   \global\callwidthext=\callwidthl
-                   \global\advance\callwidthext-\extendedindent
-                   \global\callindentext=\textwidth 
-                   \global\advance\callindentext -\callwidthext
+                   \global\CCWfunctionfirst=#1
+                   \global\CCWfunctionsecond=#2
                    }
 
 \def\constructor {%
                    \begingroup\CCcatcode\constructorX}
 
 \def\constructorX #1{%
-                   \constructorcall #1\end
                    \endgroup
-                   \constructorXX}
+                   \constructorXX{#1}}
 
-\def\constructorXX #1{%
-                   \isEmpty{#1}\ifnum\CCbool=\CCfalse
-                       \hspace*{1cm}\hfill
-                       \parbox[t]{\createtextwidth}{\sloppy #1}\par
-                   \fi
-                   \bigskip
-                   }
+\long\def\constructorXX #1#2{%
+                   \constructorcall {#2}#1\end}
 
+
+% \CCglobalContinuation and \CCglobalDecl is used to fiddle an empty 
+% comment behind the other parameters of a declaration without parsing
+% these parameters as arguments (the catcodes are not set yet).
+% Compare the normal and the global version of a declaration macro.
+\gdef\CCglobalDecl{\CCfalse}
+\gdef\CCglobalContinuation #1{%
+                       \ifnum\CCglobalDecl=\CCtrue
+                           \def\CClocalCont{#1{}}
+                           \let\continuation=\CClocalCont
+                       \else
+                           \def\CClocalCont{#1}
+                           \let\continuation=\CClocalCont
+                       \fi
+                       \gdef\CCglobalDecl{\CCfalse}
+                       \continuation
+                     }
 
 % Methods and functions can contain the active character or the comment
 % character % of TeX's own character set. Therefore, we assign new
@@ -214,16 +278,69 @@
                        \functionX{1}}
 
 \def\functionX #1#2{%
-                       \smallskip
-                       \functioncall{#1}#2;\end
                        \endgroup
-                       \CCcomment}
+                       \CCglobalContinuation{\CCcomment{#1}{#2}}}
 
-\long\def\CCcommentX #1#2{%
-                       \isEmpty{#2}\ifnum\CCbool=\CCfalse
-                           #1\parbox[t]{\descriptwidth}{\sloppy #2}\hfill
-                       \fi\par
-                       \smallskip}
+\long\def\CCcomment #1#2#3{%
+                       \functioncall{#1}{#3}#2;\end}
+
+% A three! parameter macro to format template functions
+%   o  The 1st parameter contains the template parameters.
+%   o  The 2nd parameter contains the function declaration.
+%   o  The 3rd parameter contains the comment.
+\def\functiontemplate #1{\function}
+
+% typedef's, variables, and constants are like functions without parameters.
+\def\variable {%
+                       \begingroup\CCcatcode
+                       \variableX}
+
+\def\variableX #1{%
+                       \endgroup
+                       \CCglobalContinuation{\variableXX{#1}}}
+
+\long\def\variableXX #1#2{%
+                       \CCvariableDeclaration{#2}#1;\end}
+
+\def\typedef {\variable}
+
+
+% Enum's are formatted like constructors. There is exact one matching
+% pair of braces in the declaration.
+\def\enum {%
+                   \begingroup\CCcatcode
+                   \catcode`\[=1
+                   \catcode`\]=2
+                   \catcode`\{=12
+                   \catcode`\}=12
+                   \enumX}
+
+\begingroup
+\catcode`\[=1
+\catcode`\]=2
+\catcode`\{=12
+\catcode`\}=12
+\gdef\enumX {#1{#2}#3}[%
+                   \endgroup
+                   \CCglobalContinuation[\enumXX[#1\{#2\}#3]]]
+\endgroup
+
+\def\enumXX #1#2{%
+                   \CCenumDeclaration {#2}#1\end}
+
+
+
+% All simple macros work also at the global level. The following
+% `global' versions are only shortcuts to omit the comment parameter,
+% so that global declarations are always commented inbetween and not in
+% the last column. Note hat declarations always can extend in the last
+% column, so the previous column has not to be reshaped.
+
+\def\globalfunction         {\gdef\CCglobalDecl{\CCtrue}\function}
+\def\globalfunctiontemplate {\gdef\CCglobalDecl{\CCtrue}\functiontemplate}
+\def\globalenum             {\gdef\CCglobalDecl{\CCtrue}\enum}
+\def\globalvariable         {\gdef\CCglobalDecl{\CCtrue}\variable}
+\def\globaltypedef          {\gdef\CCglobalDecl{\CCtrue}\typedef}
 
 % Print one parameter in C++ style (including spaces).
 \def\CCstyle {%
@@ -365,92 +482,218 @@
 % | building blocks: the return type, their name, and the parameter
 % | list. An operator declaration will be detected.
 % +--------------------------------------------------------------------------
-\def\constructorcall #1(#2)#3\end {%
-                   \isEmpty{#2}\ifnum\CCbool=\CCtrue
-                       \mbox{\classtemplatename\ \ \CCfont\purevar ;}%
-                   \else\mbox{\classtemplatename
-                       \ \ {\CCfont \purevar( \CCprintParamList{#2});}}%
-                   \fi\par }
-
 % This box contains the formatting result. Its width influences the
 % column layout for longish declarations.
 \newbox\functioncallbox
 
 \newbox\returntypebox     % contains the return type
 \newbox\functionnamebox   % contains the function name
+\newbox\callnamebox       % contains the fct. name incl. variable for methods
+
+
+% Formats a constructor call.
+%   o  The 1st parameter contains the comment text (maybe empty).
+%   o  The 2st parameter contains the name of the constructor
+%   o  The 3rd parameter contains the parameter list (maybe empty).
+%   o  The 4th parameter contains the optional const specifier for methods.
+% The declaration has to be terminated with "\end".
+\def\constructorcall #1#2(#3)#4\end {%
+                       \CCWfirst  =\CCWconstructorfirst
+                       \CCWsecond =\CCWconstructorsecond
+                       \CCinitWidths
+                       \setbox\returntypebox=\hbox{}%
+                       \setbox\callnamebox=\hbox{\classtemplatename
+                                 \ \ \CCfont\purevar}%
+                       \setbox\functioncallbox=\hbox{\classtemplatename
+                                 \ \ \CCfont\purevar
+                                 \isEmpty{#3}\ifnum\CCbool=\CCfalse
+                                     ( \CCprintParamList{#3})%
+                                 \fi
+                                 ;}%
+                       \CClayoutThreeColumns{(}{#3}{)}{#1}%
+                     }
 
 % Formats a method or a function call.
 %   o  The 1st parameter contains a 0 for a method call, a 1 for a function.
-%   o  The 2nd parameter contains the beginning of the type declaration.
-%   o  The 3rd parameter contains the rest of the type and the function name.
-%   o  The 4th parameter contains the parameter list (maybe empty).
-%   o  The 5th parameter contains the optional const specifier for methods.
+%   o  The 2nd parameter contains the comment text (maybe empty).
+%   o  The 3rd parameter contains the beginning of the type declaration.
+%   o  The 4th parameter contains the rest of the type and the function name.
+%   o  The 5th parameter contains the parameter list (maybe empty).
+%   o  The 6th parameter contains the optional const specifier for methods.
 % The declaration has to be terminated with ";;\end" where the first ";"
-% has to be from the original call notation. The 6th parameter is there
+% has to be from the original call notation. The 7th parameter is there
 % to check for this ";".
-\def\functioncall #1#2 #3(#4)#5;#6\end{%
-                       \def\xparam{#6}\ifx\xparam\empty
+\def\functioncall #1#2#3 #4(#5)#6;#7\end{%
+                       \CCWfirst  =\CCWfunctionfirst
+                       \CCWsecond =\CCWfunctionsecond
+                       \CCinitWidths
+                       \def\xparam{#7}\ifx\xparam\empty
                            \errmessage{Missing ";" at the end of the 
                            declaration. A method or function
                            declaration has to end with a ";". 
                            Go ahead, I've inserted one}%
                        \fi
                        \def\CCextendedFormat{\ }% Switches ext. format OFF.
-                       \isOperator{#2 #3(#4)#5}\ifnum\CCbool=\CCtrue
-                           \isConversionOperator{#2 #3(#4)#5}
+                       \isOperator{#3 #4(#5)#6}\ifnum\CCbool=\CCtrue
+                           \isConversionOperator{#3 #4(#5)#6}
                            \ifnum\CCbool=\CCtrue
-                               \CCprintConversionOperator #2 #3(#4)#5\end
+                               \CCprintConversionOperator #3 #4(#5)#6\end
                            \else
-                               \CCseparateOperator #2 #3\end%
-                               \isParenthesisOperator{#2 #3(#4)#5}%
+                               \CCseparateOperator #3 #4\end%
+                               \isParenthesisOperator{#3 #4(#5)#6}%
                                \ifnum\CCbool=\CCtrue
                                    \setbox\functioncallbox=\hbox{{\CCfont 
-                                       \CCprintParOperator #1#2 #3(#4)#5\end}}
+                                       \CCprintParOperator #1#3 #4(#5)#6\end}}
                                \else
                                    \setbox\functioncallbox=\hbox{{\CCfont 
-                                       \CCprintOperator #1#2 #3(#4)#5\end}}
+                                       \CCprintOperator #1#3 #4(#5)#6\end}}
                                \fi
                            \fi
                        \else
-                           \CCseparateFunction{}#2 #3::\end%
+                           \CCseparateFunction{}#3 #4::\end%
                            \setbox\functioncallbox=\hbox{{\CCfont
                                \ifnum#1=0 \purevar.\fi
                                \unhcopy\functionnamebox(% 
-                               \isEmpty{#4}\ifnum\CCbool=\CCfalse
-                                   \ \CCprintParamList{#4}%
+                               \isEmpty{#5}\ifnum\CCbool=\CCfalse
+                                   \ \CCprintParamList{#5}%
                                \fi)}}
                        \fi
-                       \parbox[t]{\typewidth}{\sloppy 
-                           \unhbox\returntypebox\hfill}
-                       \ifdim\wd\functioncallbox>\callwidthl
-                           %  Switches ext. format ON.
-                           \def\CCextendedFormat{\\\hspace*{\callindentext}}%
-                           % Operators are assumed to fit in \callwidthl.
-                           % Otherwise, they are formatted as functions.
-                           {\CCfont \ifnum#1=0 
-                               \purevar.\fi\unhbox\functionnamebox(}
-                           \CCextendedFormat
-                           {\CCfont
-                               \isEmpty{#4}\ifnum\CCbool=\CCfalse
-                                   \CCprintParamList{#4}%
-                               \fi
-                           )}\hfill
-                           \gdef\CCcomment{\CCcommentX{\par
-                               \hspace*{1cm}\hfill}}
-                           \def\CCextendedFormat{\ }% Switches ext. format OFF.
-                       \else\ifdim\wd\functioncallbox>\callwidth 
-                           \parbox[t]{\callwidthl}{\unhbox\functioncallbox}
-                           \hfill
-                           \gdef\CCcomment{\CCcommentX{\par
-                               \hspace*{1cm}\hfill}}
-                       \else
-                           \parbox[t]{\callwidth}{\unhbox\functioncallbox}
-                           \hfill
-                           \gdef\CCcomment{\CCcommentX{}}
-                       \fi\fi
+                       \setbox\callnamebox=\hbox{{\CCfont
+                           \ifnum#1=0 \purevar.\fi
+                           \unhbox\functionnamebox}}%
+                       \CClayoutThreeColumns{(}{#5}{)}{#2}%
                      }
 
 \def\CCextendedFormat{\ }% Default: Extended Format switched OFF.
+
+% Formats a variable, typedef or constant.
+%   o  The 1st parameter contains the comment text (maybe empty).
+%   o  The 2nd parameter contains the beginning of the type declaration.
+%   o  The 3rd parameter contains the rest of the type and the function name.
+% The declaration has to be terminated with ";;\end" where the first ";"
+% has to be from the original call notation. The 4th parameter is there
+% to check for this ";".
+\def\CCvariableDeclaration #1#2 #3;#4\end{%
+                       \CCWfirst  =\CCWfunctionfirst
+                       \CCWsecond =\CCWfunctionsecond
+                       \CCinitWidths
+                       \def\xparam{#4}\ifx\xparam\empty
+                           \errmessage{Missing ";" at the end of the 
+                           declaration. A variable, typedef, or constant
+                           declaration has to end with a ";". 
+                           Go ahead, I've inserted one}%
+                       \fi
+                       \CCseparateVariable #2 #3=\end%
+                       \setbox\functioncallbox=\hbox{{\CCfont
+                           \unhcopy\functionnamebox;}}
+                       \setbox\callnamebox=\hbox{{\CCfont
+                           \unhbox\functionnamebox}}%
+                       \CClayoutThreeColumns{}{}{}{#1}%
+                     }
+
+\def\CCseparateVariable #1 #2=#3\end{%
+                       \CCseparateFunction{}#1 #2::\end%
+                       \def\xparam{#3}\ifx\xparam\empty
+                       \else
+                           \CCseparateVariableX #3\end
+                       \fi
+                     }
+\def\CCseparateVariableX #1=\end{%
+                     {\setbox0=\hbox{\unhbox\functionnamebox\ =#1}%
+                      \global\setbox\functionnamebox=\hbox{\unhbox0}}%
+                    }
+
+% Formats a enum declaration.
+%   o  The 1st parameter contains the comment text (maybe empty).
+%   o  The 2st parameter contains the `enum' keyword name.
+%   o  The 3rd parameter contains the parameter list (maybe empty).
+%   o  The 4th parameter contains an optional variable name.
+% The declaration has to be terminated with "\end".
+\def\CCenumDeclaration #1#2\{#3\}#4\end {%
+                       \CCWfirst  =\CCWconstructorfirst
+                       \CCWsecond =\CCWconstructorsecond
+                       \CCinitWidths
+                       \setbox\returntypebox=\hbox{}%
+                       \setbox\callnamebox=\hbox{\CCfont #2}%
+                       \setbox\functioncallbox=\hbox{\CCfont #2\{\
+                                 \isEmpty{#3}\ifnum\CCbool=\CCfalse
+                                     \CCprintParamList{#3}%
+                                 \fi
+                                 \};}%
+                       \CClayoutThreeColumns{\{}{#3}{\}}{#1}%
+                     }
+
+% Manual layout: generalized three column format
+%   o  The 1st parameter contains the opening brace.
+%   o  The 2nd parameter contains the parameter list, comma separated.
+%   o  The 3rd parameter contains the closing brace. 
+%   o  The 4th parameter contains the comment.
+% All paramters might be empty.
+% Global variables:
+%   o  \returntypebox    contains the formatted returntype (maybe empty)
+%   o  \callnamebox      contains the function/method/constructorname.
+%                        For methods, the variable is just prepended.
+%   o  \functioncallbox  contains the complete functioncall incl. parameters
+%                        as a oneliner.
+\def\CClayoutThreeColumns #1#2#3#4{%
+                       \CCtopskip
+                       \hspace*{\CCWindent}%
+                       \ifdim\CCWfirst>0pt % check for constructors
+                           \ifdim\wd\returntypebox>\CCWfirst
+                               \unhbox\returntypebox\CCreturnskip
+                           \else
+                               \parbox[t]{\CCWfirst}{\sloppy 
+                                   \unhbox\returntypebox}%
+                               \hspace*{\CCWbetween}%
+                           \fi
+                       \fi
+                       \ifdim\wd\functioncallbox>\CCWsecondlong
+                           % Operators are assumed to fit in \CCWsecondlong.
+                           % Otherwise, they are formatted as functions.
+                           \ifnum\CCalternateThreeColumn=\CCtrue
+                               %  Switches ext. format ON.
+                               {\setbox0=\hbox{\unhcopy\callnamebox #1 }%
+                                 \global\CCWparam=\wd0}%
+                               \ifdim\CCWfirst>0pt % check for constructors
+                                 \global\advance\CCWparam \CCWfirst
+                                 \global\advance\CCWparam \CCWbetween
+                               \fi
+                               \def\CCextendedFormat{\\\hspace*{\CCWparam}}%
+                               {\unhbox\callnamebox #1 }%
+                           \else
+                               %  Switches ext. format ON.
+                               \def\CCextendedFormat{\\\hspace*{\CCWparam}}%
+                               {\CCfont \unhbox\callnamebox #1}%
+                               \CCextendedFormat
+                           \fi
+                           {\CCfont
+                               \isEmpty{#2}\ifnum\CCbool=\CCfalse
+                                   \CCprintParamList{#2}%
+                               \fi
+                           #3}\hfill
+                           \isEmpty{#4}\ifnum\CCbool=\CCfalse
+                               \CCmiddleskip
+                               \parbox[t]{\CCWcomment}{\sloppy #4}\hfill
+                           \fi
+                           \def\CCextendedFormat{\ }% Switches ext. format OFF.
+                           \CCbottombigskip
+                       \else\ifdim\wd\functioncallbox>\CCWsecond
+                           \parbox[t]{\CCWsecondlong}{\unhbox\functioncallbox}%
+                           \hfill
+                           \isEmpty{#4}\ifnum\CCbool=\CCfalse
+                               \CCmiddleskip
+                               \parbox[t]{\CCWcomment}{\sloppy #4}\hfill
+                           \fi
+                           \CCbottombigskip
+                        \else
+                           \parbox[t]{\CCWsecond}{\unhbox\functioncallbox}%
+                           \hspace*{\CCWbetween}%
+                           \parbox[t]{\CCWcomment}{\sloppy #4}\hfill
+                           \CCbottomskip
+                      \fi\fi
+                     }
+
+
 
 % Set the two boxes, returntype and functionname, for an operator declaration.
 \def\CCseparateOperator #1operator#2\end{%
@@ -463,10 +706,14 @@
 % Set the two boxes, returntype and functionname, for a function declaration.
 % The part of the declaration has to be terminated with "::\end".
 \def\CCseparateFunction #1#2::#3\end{%
-                       \isEmpty{#3}\ifnum\CCbool=\CCtrue 
+                       \isEmpty{#3}\ifnum\CCbool=\CCtrue
                            \CCseparateFunctionXX{#1}#2 .\end%
                        \else
-                           \CCseparateFunction{#1#2::}#3\end%
+                           \hasLeadingSpace{#3}\ifnum\CCbool=\CCtrue
+                               \CCseparateFunction{#1#2:: }#3\end%
+                           \else
+                               \CCseparateFunction{#1#2::}#3\end%
+                           \fi
                        \fi}
 
 
@@ -496,11 +743,11 @@
                                \fi\fi
                            \else
                                \if#3&%
-                                   \CCseparateFunctionXX{#1 #2#3}#4\end%
+                                   \CCseparateFunctionXX{#1#2#3}#4\end%
                                \else\if#3*%
-                                   \CCseparateFunctionXX{#1 #2#3}#4\end%
+                                   \CCseparateFunctionXX{#1#2#3}#4\end%
                                \else
-                                   \CCseparateFunctionXX{#1 #2}#3#4\end%
+                                   \CCseparateFunctionXX{#1#2}#3#4\end%
                                \fi\fi
                            \fi
                        \fi}
@@ -522,7 +769,7 @@
 
 % Print a single C++ token (without spaces inbetween). Skip leading spaces.
 % The token has to be delimited by "\end".
-\def\CCprintSingleToken #1#2;{%
+\def\CCprintSingleToken #1#2;{%CCtrue
                    \CCprintChar #1%
                    \def\xbody{\CCprintSingleToken #2;}%
                    \isEmpty{#2}\ifnum\CCbool=\CCtrue \let\xnext=\relax
@@ -771,7 +1018,7 @@
                                \def\xxbody{\CCprintParamListX{#1#2}#3\end}%
                            \fi
                        \fi\fi
-                   \else\def\xxparams{#3}\ifx\xxparams\empty%
+                   \else\isEmpty{#3}\ifnum\CCbool=\CCtrue
                        \ifnum\nestinglevel=0
                            \CCprintParameter #1#2const.&.\end%
                        \else
@@ -786,14 +1033,14 @@
                            \def\xxbody{\CCprintParamListX{#1#2}#3\end}%
                        \fi
                    \fi\fi
-                   \def\xxparams{#3}\ifx\xxparams\empty\let\xxnext=\relax
+                   \isEmpty{#3}\ifnum\CCbool=\CCtrue \let\xxnext=\relax
                    \else\let\xxnext=\xxbody\fi
                    \xxnext}
 
 
 % If an operator is used, a specialized parameter parsing macro counts
 % the number of parameters and store the result in the three following boxes.
-% \NParamters is one of 0,1,2,3. In the case of 3, there are three or more 
+% \NParameters is one of 0,1,2,3. In the case of 3, there are three or more 
 % parameters, as it was possible for the ()-operator. Thei are all together
 % stored in \box\parameterXXX.
 \newcount\NParameters   % counts number of parameters for operators
@@ -840,7 +1087,7 @@
                                \def\xxxbody{\CCextractParamListX{#1#2}#3\end}%
                            \fi
                        \fi\fi
-                   \else\def\xxxparams{#3}\ifx\xxxparams\empty%
+                   \else\isEmpty{#3}\ifnum\CCbool=\CCtrue
                        \ifnum\nestinglevel=0
                            \advance\NParameters by1
                            \ifnum\NParameters=1 \setbox\parameterX=%
@@ -862,7 +1109,7 @@
                            \def\xxxbody{\CCextractParamListX{#1#2}#3\end}%
                        \fi
                    \fi\fi
-                   \def\xxxparams{#3}\ifx\xxxparams\empty\let\xxxnext=\relax
+                   \isEmpty{#3}\ifnum\CCbool=\CCtrue \let\xxxnext=\relax
                        \else\let\xxxnext=\xxxbody\fi
                    \xxxnext}
 
@@ -894,12 +1141,18 @@
 % Ignore leading spaces.
 \def\CCprintOwnClassParameter #1#2<#3#4\end{%
         \ifx\pureparameters\empty
-            \CCprintOwnClassX  #1#2 \end% no template case
+            \if>#3%
+                \CCprintOwnClassX  #1#2 \end% no template case
+            \else
+                \CCprintOwnClassXQX #1#2<#3#4\end%
+            \fi
         \else\if>#3%
             \CCprintOwnClassX  #1#2 \end% no template case
         \else
             \CCprintOwnClassXX{#1#2}<#3#4\end% template case ?
         \fi\fi}
+\def\CCprintOwnClassXQX #1#2<>\end{% strip the unneccessary <> from the end
+        \CCprintTokens #1#2\end}
 \def\CCprintOwnClassX #1 #2\end{% check for \classname
         \def\xparams{#1}\ifx\xparams\pureclassname
             \isEmpty{#2}\ifnum\CCbool=\CCtrue
@@ -959,9 +1212,12 @@
     \else
         \if&#2\CCprintParameter #1#3&#4#5\end%
         \else
-        \CCprintParameter #1#2#3 #4#5\end%
+            \if.#4\CCprintParameterXQ #1const #2#3&#4#5\end%
+            \else \CCprintParameter #1#2#3 #4#5\end%
+            \fi
         \fi
     \fi}
+\def\CCprintParameterXQ #1const.&.\end{\CCprintOwnClassParameter #1<>\end}
 
 % Print a C++ function or method return type. Strips a matching
 % "const ...&" pair.
@@ -971,8 +1227,11 @@
     \else
         \if&#2\CCprintReturnType #1#3&#4#5\end%
         \else
-        \CCprintReturnType #1#2#3 #4#5\end%
+            \if.#4\CCprintReturnTypeXQ #1const #2#3&#4#5\end%
+            \else \CCprintReturnType #1#2#3 #4#5\end%
+            \fi
         \fi
     \fi}
+\def\CCprintReturnTypeXQ #1const.&.\end{\CCprintTokens #1\end}
 
 

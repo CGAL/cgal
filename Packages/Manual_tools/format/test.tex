@@ -204,7 +204,8 @@ to the class, it is {\em not} removed.
                         const Dummy_Type &q,
                         Long_Type_Name_For_Fun Variable_Also_Long) const;
              }{ Even more longish declarations forces the parameters printed
-             one per line.}
+             one per line. This was the default formatting.}
+
 
 Reference or pointer parameters can occur on both sides of the
 separating space between the return type and the function or method
@@ -277,15 +278,14 @@ CGAL will use {\tt typedef}'s and the scope operator to define types.
 Here is an example for the scope operator within types.  The scope
 operator cannot be used within the function or method name.
 
-  \threecolumns{5.8cm}{2.8cm}
-  \function{Demo_Class::Nested_Class
-        foo(Demo_Class::Nested_Class p, Demo_Class q);}{
+  \threecolumns{5.8cm}{1.8cm}
+  \function{Rep_Class::Nested_Class
+        foo(Rep_Class::Nested_Class p, Demo_Class q);}{
          Declaration with scope.}
 
-Other features should be incorporated. These are: Preprocessor
-constants and macros, normal C variable declarations and constants,
-global functions and their associated file, enums, typedefs, structs
-similar to classes (more ?).
+  \function{Rep_Class :: Nested_Class
+        foo(Rep_Class :: Nested_Class p, Demo_Class q);}{
+         The same, surrounded by spaces.}
 
 \end{class}
 
@@ -297,6 +297,7 @@ similar to classes (more ?).
 This class template is given within a
 \verb"\begin{classtemplate}{Demo_Class<FT<RT> >}" environment.
 
+\creationvariable{p}
 \creation
 
 A current misbehaviour (or feature?) of the structuring macros is that
@@ -319,6 +320,122 @@ missing.
       right, with template parameters.}
 
 \end{classtemplate}
+
+% ----------------------------------------------------------------------
+\section{New Features Introduced with Version 1.8}
+
+\begin{class}{Demo_Class}
+
+A small set of handy abbreviations are added. Here they are all together:
+
+\begin{tabbing}
+  dum \= dummyyyyyyyy \= \kill
+  \> \verb+\CC+         \> \CC         \\
+  \> \verb+\gg+         \> \gg         \\
+  \> \verb+\nat+        \> \nat        \\
+  \> \verb+\real+       \> \real       \\
+%  \> \verb+\boxit{A}+   \> \boxit{A}   \\
+  \> \verb+\leda+       \> \leda       \\
+  \> \verb+\cgal+       \> \cgal       \\
+  \> \verb+\protocgal+  \> \protocgal  \\
+  \> \verb+\plageo+     \> \plageo  
+\end{tabbing}
+
+\def\CCalternateThreeColumn{\CCtrue}
+\creationvariable{p}
+\threecolumns{2.8cm}{2.8cm}
+
+  \constructor{Demo_Class( Paramter1 hx, 
+                           Paramter2 hy, 
+                           Paramter3 hw, 
+                           Paramter4 hw, 
+                           Paramter5 hw);}{
+     Longish parameter lists will be broken into several lines.
+     Therefore, the parameter {\tt $\backslash$CCalternateThreeColumn} was 
+     set to {\tt $\backslash$CCtrue}.}
+
+\def\CCalternateThreeColumn{\CCtrue}
+
+  \method{Demo_Class   
+             longish_naming( 
+                        const DGAL_HAff_transformation<FT,RT> &t,
+                        const Dummy_Type &q,
+                        Long_Type_Name Variable_Also_Long) const;
+             }{ Here, the alternative formatting was again switched on
+                by setting the parameter {\tt 
+                $\backslash$CCalternateThreeColumn} to {\tt 
+                $\backslash$CCtrue}.}
+
+  \method{Even_a_long_return_value
+             longish_naming( 
+                        const DGAL_HAff_transformation<FT,RT> &t,
+                        const Dummy_Type &q,
+                        Long_Type_Name Variable_Also_Long) const;
+             }{ Now, a long return value forces the function to start 
+                in the next line.}
+
+\def\CCalternateThreeColumn{\CCfalse}
+
+Function templates are written with the macro \verb+\functiontemplate+
+that has an additional parameter in front for the template
+parameters. They are visible in the manual because the user does not
+see them, but the parameters are necessary for the specification
+checking tool.
+
+\threecolumns{2.8cm}{8.7cm}
+
+\functiontemplate{R}{bool CGAL_is_intersecting( Point< R>, Point<
+  R>);}{comment.}
+
+Enum's are formatted similiar to constructors. Exactly on pair of
+matching braces has to be in the declaration.
+
+\enum{enum Short { A, B, C};}{ Comment.}
+
+\enum{enum Funny_type_name { A_couple_of_entries,
+    one_with_initialisation = 5, another = -3};}{ Comment.}
+
+We can even switch the alternative layout on:
+
+\gdef\CCalternateThreeColumn{\CCtrue}
+
+\enum{enum Funny_type_name { A_couple_of_entries,
+    one_with_initialisation = 5, another = -3};}{ Comment.}
+
+\threecolumns{3.5cm}{3.5cm}
+
+\variable{long int foo;}{Local variables are possible.}
+
+\variable{long int foo = 15;}{Initialisation.}
+
+\variable{const long int foo = 15;}{Make a constant.}
+
+\typedef{typedef int integer;}{Simple typedef.}
+
+\typedef{typedef List< int>  Integer_list;}{Typedef including template
+    parameters.}
+
+
+\end{class}
+
+Global functions and other global declarations can be written with the 
+normal macros that are used within class declarations. For convenience, 
+a set of {\em global\/} macros are provided that omit the last comment
+parameter. Global declarations are usually commented in the lines
+inbetween. So here comes a global function:
+
+\globalfunction{CGAL_intersection_type CGAL_Intersection_type(
+      Polygon_2< R>, Polygon_2< R>);}The same 
+as a function template:
+
+\globalfunctiontemplate{R}{CGAL_intersection_type CGAL_Intersection_type(
+      Polygon_2< R>, Polygon_2< R>);}A global enum.
+
+\globalenum{enum Funny_type_name { A_couple_of_entries,
+    one_with_initialisation = 5, another = -3};}
+
+\globalvariable{int CGAL_global;}Thats it.
+
 
 % ----------------------------------------------------------------------
 \begin{class}{Demo_Class}
