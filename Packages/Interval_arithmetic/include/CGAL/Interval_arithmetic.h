@@ -25,7 +25,12 @@
 // This file contains the description of the two classes:
 // - CGAL_Interval_nt_advanced  (do the FPU rounding mode changes yourself)
 // - CGAL_Interval_nt		("plug-in" version, derived from the other one)
-// The second one is slower.
+//
+// The differences are:
+// - The second one is slower.
+// - The first one supposes the rounding mode is set -> +infinity before
+// nearly all operations, and might set it -> +infinity when leaving, whereas
+// the second leaves the rounding -> nearest.
 
 #ifndef CGAL_INTERVAL_ARITHMETIC_H
 #define CGAL_INTERVAL_ARITHMETIC_H
@@ -41,6 +46,9 @@ struct CGAL_Interval_nt_advanced
 {
   typedef CGAL_Interval_nt_advanced IA;
   struct unsafe_comparison{};  // Exception class.
+  // Usefull constants.
+  const static double min_double = 5e-324; // MIN_DOUBLE (subnormal)
+  const static double max_double = 1.7976931348623157081e+308; // MAX_DOUBLE
 
 protected:
   double inf, sup;	// "inf" stores the OPPOSITE of the lower bound.
@@ -145,6 +153,14 @@ public:
   double upper_bound() const { return sup; }
 };
 
+// Two usefull constants.
+
+static const CGAL_Interval_nt_advanced CGAL_Interval_smallest
+(-CGAL_Interval_nt_advanced::min_double, CGAL_Interval_nt_advanced::min_double);
+
+static const CGAL_Interval_nt_advanced CGAL_Interval_largest
+(-HUGE_VAL, HUGE_VAL);
+
 
 inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator*
   (const CGAL_Interval_nt_advanced& d) const
@@ -218,7 +234,7 @@ inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator/
       return IA (-(sup/(-d.sup)), inf/(-d.sup));
   }
   else						/* 0 \in [d.inf;d.sup] */
-    return IA (-HUGE_VAL, HUGE_VAL);
+    return CGAL_Interval_largest; // IA (-HUGE_VAL, HUGE_VAL);
 	   // We could do slightly better -> [0;HUGE_VAL] when d.sup==0,
 	   // but is this worth ?
 }
@@ -322,9 +338,6 @@ ostream& operator<<(ostream& os, const CGAL_Interval_nt_advanced& d)
 struct CGAL_Interval_nt : public CGAL_Interval_nt_advanced
 {
 private:
-  // Private constructor for casts.
-  CGAL_Interval_nt(const CGAL_Interval_nt_advanced &d)
-      : CGAL_Interval_nt_advanced(d) {}
 
   // For this one to be overriden, it must be virtual...
 #if 0
@@ -338,6 +351,19 @@ private:
 #endif
 
 public:
+
+  // Constructors are identical.
+  CGAL_Interval_nt()
+      {}
+  CGAL_Interval_nt(const double d)
+      : CGAL_Interval_nt_advanced(d) {}
+  CGAL_Interval_nt(const double a, const double b)
+      : CGAL_Interval_nt_advanced(a,b) {}
+
+  // Private constructor for casts. (remade public)
+  CGAL_Interval_nt(const CGAL_Interval_nt_advanced &d)
+      : CGAL_Interval_nt_advanced(d) {}
+
   typedef CGAL_Interval_nt IA;
 
   friend IA     sqrt     (const IA &);
@@ -364,14 +390,6 @@ public:
     { return CGAL_compare((CGAL_Interval_nt_advanced) d,
 	                  (CGAL_Interval_nt_advanced) e);
     }
-
-  // Constructors are identical.
-  CGAL_Interval_nt()
-      {}
-  CGAL_Interval_nt(const double d)
-      : CGAL_Interval_nt_advanced(d) {}
-  CGAL_Interval_nt(const double a, const double b)
-      : CGAL_Interval_nt_advanced(a,b) {}
 
   // This particular one needs to be redefined, a pitty...
   IA operator-() const 
@@ -487,10 +505,9 @@ inline CGAL_Interval_nt sqrt(const CGAL_Interval_nt& d)
   return tmp;
 }
 
-inline CGAL_Interval_nt_advanced CGAL_to_interval_nt(const double d)
-{ return (CGAL_Interval_nt_advanced) d; }
-
-// Finally we source the "cast" functions from other NTs, when necessary.
+// Finally we source the CGAL_to_Interval_nt_advanced() "cast" functions from
+// other NTs, when necessary.
+// CGAL_to_Interval_nt() is templated below, only specialized for double.
 
 #ifdef CGAL_GMPZ_H
 #include <CGAL/Interval_arithmetic/IA_Gmpz.h>
@@ -511,5 +528,20 @@ inline CGAL_Interval_nt_advanced CGAL_to_interval_nt(const double d)
 #ifdef CGAL_RATIONAL_H
 #include <CGAL/Interval_arithmetic/IA_leda_rational.h>
 #endif
+
+inline CGAL_Interval_nt_advanced CGAL_to_Interval_nt_advanced(const double d)
+{ return CGAL_Interval_nt_advanced(d); }
+
+template <class FT>
+inline CGAL_Interval_nt CGAL_to_Interval_nt(const FT &z)
+{
+    CGAL_FPU_set_rounding_to_infinity();
+    CGAL_Interval_nt tmp(CGAL_to_Interval_nt_advanced(z));
+    CGAL_FPU_set_rounding_to_nearest();
+    return tmp;
+}
+
+inline CGAL_Interval_nt CGAL_to_Interval_nt(const double d)
+{ return CGAL_Interval_nt(d); }
 
 #endif // CGAL_INTERVAL_ARITHMETIC_H
