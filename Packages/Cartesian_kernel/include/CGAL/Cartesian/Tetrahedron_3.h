@@ -71,10 +71,10 @@ public:
 
   Self       transform(const Aff_transformation_3 &t) const
   {
-    return TetrahedronC3(t.transform(vertex(0)),
-                         t.transform(vertex(1)),
-                         t.transform(vertex(2)),
-                         t.transform(vertex(3)));
+    return Self(t.transform(vertex(0)),
+                t.transform(vertex(1)),
+                t.transform(vertex(2)),
+                t.transform(vertex(3)));
   }
 
   Orientation    orientation() const;

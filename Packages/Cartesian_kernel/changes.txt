@@ -1,3 +1,6 @@
+Version 6.1 (?? January 2001)
+- Borland fixes.
+
 Version 6.0 (12 January 2001)
 - Merged C2, C3 and Cartesian_basic in Cartesian_kernel.
 - Merged all .C files into their corresponding .h.

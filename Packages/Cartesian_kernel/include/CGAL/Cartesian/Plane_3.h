@@ -125,10 +125,10 @@ public:
   Self         transform(const Aff_transformation_3 &t) const
   {
     if (t.is_even())
-      return PlaneC3(t.transform(point()),
+      return Self(t.transform(point()),
                  t.transpose().inverse().transform(orthogonal_direction()));
     else
-      return PlaneC3( t.transform(point()),
+      return Self( t.transform(point()),
                - t.transpose().inverse().transform(orthogonal_direction()));
   }
 

@@ -81,7 +81,7 @@ public:
 
   Self        transform(const Aff_transformation_3 &t) const
   {
-    return RayC3(t.transform(source()), t.transform(second_point()));
+    return Self(t.transform(source()), t.transform(second_point()));
   }
 
   bool        is_degenerate() const;

@@ -91,7 +91,7 @@ public:
 
   Self        transform(const Aff_transformation_2 &t) const
   {
-    return RayC2(t.transform(source()), t.transform(second_point()));
+    return Self(t.transform(source()), t.transform(second_point()));
   }
 
   bool        is_horizontal() const;

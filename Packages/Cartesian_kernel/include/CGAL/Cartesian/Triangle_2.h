@@ -78,9 +78,9 @@ public:
   Self           opposite() const;
   Self           transform(const Aff_transformation_2 &t) const
   {
-    return TriangleC2(t.transform(vertex(0)),
-                      t.transform(vertex(1)),
-                      t.transform(vertex(2)));
+    return Self(t.transform(vertex(0)),
+                t.transform(vertex(1)),
+                t.transform(vertex(2)));
   }
 
   Orientation    orientation() const;

@@ -65,9 +65,9 @@ public:
 
   Self       transform(const Aff_transformation_3 &t) const
   {
-    return TriangleC3(t.transform(vertex(0)),
-                      t.transform(vertex(1)),
-                      t.transform(vertex(2)));
+    return Self(t.transform(vertex(0)),
+                t.transform(vertex(1)),
+                t.transform(vertex(2)));
   }
 
   bool       has_on(const Point_3 &p) const;

@@ -101,7 +101,7 @@ public:
 
   Self        transform(const Aff_transformation_3 &t) const
   {
-    return LineC3(t.transform(point()), t.transform(direction()));
+    return Self(t.transform(point()), t.transform(direction()));
   }
 };
 
