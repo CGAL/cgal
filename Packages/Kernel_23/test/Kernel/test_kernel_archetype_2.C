@@ -22,6 +22,7 @@
  
 
 #include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
 
 #define CGAL_NO_DEPRECATED_CODE
 #define CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS
