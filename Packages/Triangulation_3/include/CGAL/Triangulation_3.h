@@ -1768,7 +1768,7 @@ locate(const Point & p,
   case 0:
     {
       Vertex_iterator vit = finite_vertices_begin();
-      if ( p != vit->point() ) {
+      if ( ! geom_traits().equal( p, vit->point() ) ) {
 	lt = OUTSIDE_AFFINE_HULL;
       }
       else {

@@ -65,7 +65,9 @@ public:
 
   bool equal(const Point & p, const Point & q) const
   {
-    return (p == q);
+    return ( CGAL::compare_x(p, q)== EQUAL &&  
+	     CGAL::compare_y(p, q)== EQUAL &&
+	     CGAL::compare_z(p, q)== EQUAL );
   }
   
   Comparison_result compare_x(const Point & p, const Point & q) const

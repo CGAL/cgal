@@ -43,8 +43,13 @@
 
 CGAL_BEGIN_NAMESPACE 
 
+#ifndef CGAL_CFG_TYPENAME_BUG
 template < class Repres, class Weight = typename Repres::RT>
 class Regular_triangulation_euclidean_traits_3
+#else
+template < class Repres, class Weight = Repres::RT>
+class Regular_triangulation_euclidean_traits_3
+#endif // CGAL_CFG_TYPENAME_BUG
   : public Triangulation_geom_traits_3<Repres>
 {
 public:
