@@ -26,36 +26,6 @@
 #ifndef CGAL_POLYGON_DO_INTERSECT_2_H
 #define CGAL_POLYGON_DO_INTERSECT_2_H
 
-#include <CGAL/Pm_walk_along_line_point_location.h>
-
-#ifndef PLANAR_MAP_2
-#include <CGAL/Planar_map_2.h>
-#endif
-
-#ifndef CGAL_BOP_DEFAULT_DCEL_H
-#include <CGAL/Bop_default_dcel.h>
-#endif
-
-#ifndef CGAL_MAP_OVERLAY_DEFAULT_NOTIFIER_H
-#include <CGAL/Map_overlay_default_notifier.h>
-#endif
-
-#ifndef CGAL_MAP_OVERLAY_H
-#include <CGAL/Map_overlay.h>
-#endif
-
-#ifndef BOOLEAN_OPERATIONS_2_H
-#include <CGAL/Boolean_operations_2.h>
-#endif
-
-#include <CGAL/sweep_to_construct_planar_map_2.h>
-#include <CGAL/Polygon_2.h>
-
-#include <CGAL/Bops/Holes_split_dcel.h>
-#include <CGAL/Bops/Holes_split_notifier.h>
-#include <CGAL/Bops/Holes_split.h>
-#include <CGAL/Bops/Polygons_from_faces.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template <class Traits_>
