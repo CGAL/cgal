@@ -1,3 +1,6 @@
+2.5.1 (11 December 2001)
++ Made point-line distance computation significantly faster (10 to 30 times)
+
 2.5 (7 December 2001)
 + Added three classes that compute distance from a Point_2 to a fixed object.
   The object is either a line, a ray or a segment.

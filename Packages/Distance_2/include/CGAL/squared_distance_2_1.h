@@ -50,9 +50,7 @@ squared_distance(
 
 template <class R>
 class Squared_distance_to_line {
-    typename R::Vector_2 normal;
-    typename R::FT normal_sqlen;
-    typename R::Point_2 line_point;
+    typename R::RT  a, b, c, sqnorm;
   public:
     Squared_distance_to_line(typename R::Line_2 const &line);
     typename R::FT operator()(typename R::Point_2 const &pt) const;
@@ -65,38 +63,31 @@ squared_distance(
     const Line_2<R> &line)
 {
     typedef typename R::RT RT;
-    typedef typename R::FT FT;
-    typedef typename R::Vector_2 Vector_2;
-    RT x = line.a();
-    RT y = line.b();
-    Vector_2 normal(x, y);
-    Vector_2 diff = pt - line.point();
-    FT signdist = diff * normal;
-    return (typename R::FT)((signdist*signdist)/FT(x*x+y*y));
+    RT a = line.a();
+    RT b = line.b();
+    RT w = pt.hw();
+    RT n = a*pt.hx() + b*pt.hy() + wmult((R*)0, line.c(), w);
+    RT d = wmult((R*)0, a*a+b*b, w, w);
+    return R::make_FT(n*n, d);
 }
 
 template <class R>
 Squared_distance_to_line<R>::
 Squared_distance_to_line(typename R::Line_2 const &line)
-: line_point(line.point())
+: a(line.a()), b(line.b()), c(line.c())
 {
-    typedef typename R::RT RT;
-    typedef typename R::FT FT;
-    RT x = line.a();
-    RT y = line.b();
-    normal = Vector_2<R>(x, y);
-    normal_sqlen = FT(x*x+y*y);
+    sqnorm = a*a+b*b;
 }
 
 template <class R>
 typename R::FT Squared_distance_to_line<R>::
 operator()(typename R::Point_2 const &pt) const
 {
-    typedef typename R::FT FT;
-    typedef typename R::Vector_2 Vector_2;
-    Vector_2 diff = pt - line_point;
-    FT signdist = diff * normal;
-    return FT(signdist*signdist)/normal_sqlen;
+    typedef typename R::RT RT;
+    RT w = pt.hw();
+    RT n = a*pt.hx() + b*pt.hy() + wmult((R*)0, c, w);
+    RT d = wmult((R*)0, sqnorm, w, w);
+    return R::make_FT(n*n, d);
 }
 
 
