@@ -87,6 +87,9 @@ polygons_w_steiner_are_equal(Circulator1 orig_first, Circulator2 new_first)
       }
       else // points don't correspond
       {
+          typedef typename Kernel_traits<Point_2>::Kernel K;
+	  typename K::Collinear_2 collinear;
+	  typename K::Collinear_are_ordered_along_line_2  collinear_are_ordered_along_line;
          if (!collinear(prev_pt, *new_circ, *orig_circ))
          {
 #ifdef CGAL_PARTITION_CHECK_DEBUG

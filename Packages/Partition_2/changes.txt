@@ -1,3 +1,6 @@
+1.58 (16 September) [af]
+- Replaced global functions by kernel functors
+
 1.57 (16 September) [af]
 - Removed Polygon_traits from the testsuite
 
