@@ -2,6 +2,9 @@
 //	Revision History for package Installation
 //=====================================================================
 
+23 May 2004 Sylvain Pion
+- Doc changes for Boost.
+
 20 May 2004 Sylvain Pion
 - Add --disable-shared.
 

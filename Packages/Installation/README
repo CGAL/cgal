@@ -18,7 +18,7 @@ This distribution of CGAL includes:
                         file).  Others programs require geomview, which is 
                         available from www.geomview.org
                         Makefiles are provided for all programs and project 
-                        files for MSVC 6.0 IDE (experimental) are provided 
+                        files for MSVC IDE (experimental) are provided 
                         for many.
    doc_html/          - a directory containing the installation manual in
                         HTML format
@@ -31,7 +31,8 @@ This distribution of CGAL includes:
                         visual output.
                         Makefiles and project files for MSVC 6.0 IDE 
                         (experimental) are provided for all programs.
-   include/           - the include files for the library
+   include/CGAL       - the include files for the library
+   include/boost      - the include files for the Boost library
    install_cgal       - the script with which you can install CGAL
    INSTALL            - file containing information about the installation
                         process

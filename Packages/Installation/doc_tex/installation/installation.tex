@@ -17,6 +17,9 @@
 %% macro for GMP
 \newcommand{\gmp}{\textsc{Gmp}}
 
+%% macro for Boost
+\newcommand{\boost}{\textsc{Boost}}
+
 %% macro for Core
 \newcommand{\core}{\textsc{Core}}
 
@@ -65,6 +68,7 @@
 %% macros for WWW pages
 \newcommand{\cgalhomepage}{\path'http://www.cgal.org'}
 \newcommand{\gmppage}{\path'http://www.swox.com/gmp/'}
+\newcommand{\boostpage}{\path'http://www.boost.org/'}
 \newcommand{\corepage}{\path'http://www.cs.nyu.edu/exact/core/'}
 \newcommand{\ledapage}{\path'http://www.mpi-sb.mpg.de/LEDA'}
 \newcommand{\trolltechpage}{\path'http://www.trolltech.com'}
@@ -199,7 +203,12 @@ The directory \texttt{auxiliary} contains a distribution of the \gnu\
 Multiple Precision library \gmp\footnote{\gmppage}. The directory
 \texttt{src/Core} contains a distribution of the \core\ 
 library\footnote{\corepage} for robust numerical and geometric
-computation. Both libraries are not part of \cgal\ and have their own
+computation.
+
+The directory \texttt{include/boost} contains header files of the
+\boost\ project\footnote{\boostpage}.
+
+\gmp, \core\ and \boost\ are not part of \cgal\ and have their own
 licenses.
 
 \subsection{Visualization}\label{sec:vis}
@@ -216,7 +225,7 @@ If you have \leda\ installed, you might want to use
 \leda\ support.\index{visualization!LEDA}
 
 Some demo programs for 3D structures require the geomview program for
-visualisation.\index{visualization!geomview} This is available from
+visualization.\index{visualization!geomview} This is available from
 \path'http://www.geomview.org' (note that it does not run on \mswin).
 
 \section{Installing \cgal}
@@ -461,6 +470,11 @@ have to go to the \textit{gmp menu} (cf. Section~\ref{sec:gmp-menu}),
   menu} (cf. Section~\ref{sec:leda-menu}), or \textit{qt menu} (cf.
 Section~\ref{sec:qt-menu}), respectively.
 
+There is no menu for \boost\ because it is available in the
+\cgal\ installation by default.  If you want to specify an
+alternate \boost\ installation, you can use the \texttt{CUSTOM\_CXXFLAGS}
+facility.
+
 Finally you can build the \cgal\ libraries by typing \texttt{b}.
 However, it is recommended to run the \textit{setup test} -- which is
 available in all menus as option \texttt{t} -- before. The setup test
@@ -472,7 +486,7 @@ change the setup in a way that might affect the test result. If you
 want to redo \textit{all} tests, you have to choose option
 ``\texttt{a}'' from the main menu.  This also retests for
 \gmp/\leda/\qt\ installations in system directories. Otherwise, this
-is only done the first time you enable gmp/\leda/\qt\ support for an
+is only done the first time you enable \gmp/\leda/\qt\ support for an
 OS/compiler combination.
 
 \subsection{Files created during installation}\label{sec:filescreated}
@@ -1422,7 +1436,7 @@ a look at the \cgal\ homepage:
 \begin{alltt}
 \cgalhomepage
 \end{alltt}
-or send an email to \texttt{contact@cgal.org}.
+or send an email to \texttt{info at cgal dot org}.
 
 \subsection{Compiler version test execution failed}
 \label{sec:compvertestfails}
