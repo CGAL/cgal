@@ -62,8 +62,7 @@ typedef std::list<my_point<NT,SAVED_OBJECT> > Points_List;
 
 private:
   Rep_   _gt;
-  static std::map<const int,NT> angle_to_sines_appr;
-  static bool map_done;
+  std::map<const int,NT> angle_to_sines_appr;
   const double pi,half_pi,epsilon,rad_to_deg;
   int number_of_trees;
   std::list<std::pair<kd_tree *,NT> > kd_trees_list;
@@ -175,13 +174,8 @@ public:
     }
   }
 
-  static void init_angle_appr()
+  void init_angle_appr()
   {
-    if(map_done)
-      return;
-
-    map_done = true;
-
     angle_to_sines_appr[0] = NT(0);
     angle_to_sines_appr[1] = NT(115) / NT(6613);
     angle_to_sines_appr[2] = NT(57) / NT(1625);
@@ -447,13 +441,6 @@ public:
       result_list.push_back(my_point_iter->object);
   }
 };
-
-template<class NT,class SAVED_OBJECT>
-bool Multiple_kd_tree<NT,SAVED_OBJECT>::map_done(false);
-
-template<class Rep,class SAVED_OBJECT>
-  std::map<const int,typename Rep::FT> 
-      Multiple_kd_tree<Rep,SAVED_OBJECT>::angle_to_sines_appr;
 
 CGAL_END_NAMESPACE
 
