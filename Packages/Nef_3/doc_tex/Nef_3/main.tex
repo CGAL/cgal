@@ -80,7 +80,9 @@ structure that is closed under boolean operations and with all their
 generality. Starting from halfspaces (and also directly from oriented
 2-manifolds), we can work with set union, set intersection, set
 difference, set complement, interior, exterior, boundary, closure, and
-regularization operations. In essence, we can evaluate a CSG-tree with
+regularization operations (see Section~\ref{sectoinRegularized} 
+for an explaination of regularized
+set operations). In essence, we can evaluate a CSG-tree with
 halfspaces as primitives and convert it into a B-rep representation.
 
 In fact, we work with two data structures; one that represents the
@@ -218,8 +220,9 @@ lists all local pyramids for this example.
 The local pyramids of each vertex are represented by
 conceptually intersecting the local neighborhood with a small
 $\varepsilon$-sphere. This intersection forms a planar map on the
-sphere (see figure below), which together with the set-selection
-mark for each item forms a two-dimensional Nef polyhedron embedded in
+sphere (see next two figures), which together with the set-selection
+mark for each item (i.e. vertices, edges, loops and faces)
+forms a two-dimensional Nef polyhedron embedded in
 the sphere. We add the set-selection mark for the vertex and call the
 resulting structure the \emph{sphere map} of the vertex.  
 We use the prefix $s$ to distinguish the elements of the sphere map
@@ -229,14 +232,14 @@ for further details.
 \begin{ccTexOnly}
     \begin{center}
       \parbox{0.3\textwidth}{%
-          \includegraphics[width=0.3\textwidth]{Nef_3/fig/complex2}%
+          \includegraphics[width=0.3\textwidth]{Nef_3/fig/sphere_map}%
       }
     \end{center}
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
     <CENTER>
-        <img src="fig/complex2.gif" alt="Steps in making a cube."><P>
+        <img src="fig/sphere_map.png" alt="Steps in making a cube."><P>
     </CENTER>
 \end{ccHtmlOnly}
 
@@ -293,13 +296,13 @@ dimension.
         oriented facet, i.e., by using the opposite edge-use.
     \item[shells:]
         The volume boundary decomposes into different connected
-        components, the \emph{shells}. They consist of a connected set
+        components, the \emph{shells}. A shell consists of a connected set
         of facets, edges, and vertices incident to this volume. Facets 
         around an edge form a radial order that is captured in the
         radial order of \emph{sedges} around an \emph{svertex} in the
         sphere map. Using this information, we can trace a shell from
         one entry element with a graph search. We offer this graph
-        traversal in a visitor design pattern to the user.
+        traversal (to the user) in a visitor design pattern.
     \item[volumes:]
         A volume is defined by a set of shells, one outer shell containing
         the volume and several (or maybe none) inner shells separating voids
@@ -332,7 +335,7 @@ Section~\ref{subsectionNef_3Polyhedron} below.
 
 In order to handle unbounded Nef polyhedra conceptually in the same
 way as we handle bounded Nef polyhedra, we intersect them with a
-bounding volume of size $[-R,R]^3$, where $R$ is a symbolical
+bounding cubical volume of size $[-R,R]^3$, where $R$ is a symbolical
 unspecified value, which is finite but larger than all coordinate
 values that may occur in the bounded part of the polyhedron. As a
 result, each Nef polyhedron becomes bounded.  We call the boundary of
@@ -350,8 +353,8 @@ kernels---\ccc{CGAL::Extended_cartesian} and
 with a polynomial type as coordinate number type.
 
 As long as an extended kernel is used, the full functionality provided
-by the \ccc{CGAL::Nef_polyhedron_3} class is available. If kernel that 
-does not use polynomial to represent coordinates is used, it is not 
+by the \ccc{CGAL::Nef_polyhedron_3} class is available. If a kernel that 
+does not use polynomials to represent coordinates is used, it is not 
 possible to create or load unbounded Nef
 polyhedra, but all other operations work as expected. We provided both
 possibilities, since the restriction to bounded Nef polyhedra improves
@@ -361,6 +364,7 @@ polynomial), and runtime performance.
 
 % +========================================================================+%
 \section{Regularized Set Operations}
+\label{sectoinRegularized}
 % +========================================================================+
 
 Since manifolds are not closed under boolean operations, Requicha
@@ -661,21 +665,26 @@ the \ccc{Object_handle} can represent a \ccc{Vertex_const_handle}, a
 
 \ccIncludeExampleCode{Nef_3/point_location.C}
 
+% +========================================================================+
+\section{Visualiation}
+% +========================================================================+
+
+With the \ccc{Qt_widget_OpenGL} class an interface to OpenGL
+visualization via Qt is offered. The class knows how to handle
+mouse movements and clicks and how to move and scale the 
+3D object displayed in the widget. \ccc{Qt_widget_OpenGL} is
+a basis for writing Qt widgets displaying 3D objects. 
+A user can derive a new class from \ccc{Qt_widget_OpenGL} 
+which implements the drawing method and configures the context menus.
+
 % +------------------------------------------------------------------------+
 \subsection{Visualizing a 3D Nef polyhedron}
 
-With the \ccc{Nef_Visualizor_OpenGL_3} class an interface to OpenGL
-visualization is offered, however, it is intended for debugging and a
-first simple illustration. In particular, the GUI is fixed and not
-extensible. The \ccc{Nef_Visualizor_OpenGL_3} class offers a
-constructor from a Nef polyhedron, a \ccc{draw} function  which
-determines the state in which the Nef polyhedron is shown, and the
-\ccc{CGAL::OGL::start_viewer()}  function which opens the visualizor
-window and starts the event processing for the interactive control
-available in the viewer. The \ccc{CGAL::OGL::start_viewer()}  function
-never returns and the application must be terminated with the proper
-entry in the pop-up menu of the visualizer. The viewer is easy to use
-as can be seen in the following example.
+\ccc{Qt_widget_Nef_3} implements the drawing methods for displaying 
+instances of
+\ccc{Nef_polyhedron_3}. The following example shows how to set up 
+an QApplication with a main widget of type \ccc{Qt_widget_Nef_3} and
+how to start the viewer.
 
 \begin{ccTexOnly}
     \begin{center}
@@ -691,12 +700,15 @@ as can be seen in the following example.
     </CENTER>
 \end{ccHtmlOnly}
 
+
 \ccIncludeExampleCode{Nef_3/visualization_SNC.C}
 
 % +------------------------------------------------------------------------+
 \subsection{Visualizing a Sphere Map}
 
-A sphere map can be visualized using the interface between
+\ccc{Qt_widget_Nef_S2} is a widget implemented on the basis of 
+\ccc{Qt_widget_OpenGL}. It can be used to visualize the sphere map 
+of a vertex in a \ccc{Nef_polyhedron_3} using the interface between
 \ccc{Nef_polyhedron_S2} and \ccc{Nef_polyhedron_3}.
 
 \ccIncludeExampleCode{Nef_3/visualization_SM.C}
