@@ -11,9 +11,9 @@ Address:          Département d'Informatique de l'École Normale Supérieure
 
 URL:              http://www.di.ens.fr/~gecoal/Visibility_complex/Visibility_complex.tar.gz
 
-Version:          1.0.2 (22 July 2002)
+Version:          1.0.3 (23 March 2004)
 
-CGAL Versions:    2.2 and greater
+CGAL Versions:    2.4 and 3.0
 
 Supported Compilers & Platforms:
      sparc_SunOS-5.8_g++-2.95
@@ -56,6 +56,8 @@ Changes:
       1.0.1  fix for gcc-3.x compilers
       1.0.2  fix in the documentation
              added a small word about shortest path in the user manual
+      1.0.3  This version is usable with CGAL-3.0.
+             Perhaps does it still work with CGAL-2.2 but it is not sure.
 Installation:
       
 Documentation:
