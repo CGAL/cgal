@@ -74,5 +74,16 @@ int main()
     return 1;
   }
 
+  if (pm.is_point_in_face(p1, e[0]->face())) {
+    std::cerr << "Error: failed to determine point1 in face!" << std::endl;
+    return 1;
+  }
+
+  if (pm.is_point_in_face(p2, pm.unbounded_face())) {
+    std::cerr << "Error: failed to determine point2 in unbounded face!"
+              << std::endl;
+    return 1;
+  }
+
   return 0;
 }
