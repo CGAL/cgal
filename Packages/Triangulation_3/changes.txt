@@ -1,3 +1,6 @@
+Version 1.58 (7  June 01)
+- Cleanup vertex_3 and cell_3.
+
 Version 1.57 (5  June 01)
 - Add missing typename for MipsPro.
 

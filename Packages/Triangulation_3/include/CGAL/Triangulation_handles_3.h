@@ -23,13 +23,12 @@
 #ifndef CGAL_TRIANGULATION_HANDLES_3_H
 #define CGAL_TRIANGULATION_HANDLES_3_H
 
+#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Pointer.h>
 #include <CGAL/Triangulation_vertex_3.h>
 #include <CGAL/Triangulation_cell_3.h>
 #include <CGAL/Triangulation_iterators_3.h>
 #include <CGAL/Triangulation_circulators_3.h>
-
-#include <CGAL/Triangulation_short_names_3.h>
 
 CGAL_BEGIN_NAMESPACE
 

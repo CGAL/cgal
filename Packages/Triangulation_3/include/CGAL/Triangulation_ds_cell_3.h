@@ -27,8 +27,8 @@
 #ifndef CGAL_TRIANGULATION_DS_CELL_3_H
 #define CGAL_TRIANGULATION_DS_CELL_3_H
 
-#include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/Triangulation_short_names_3.h>
+#include <CGAL/Triangulation_utils_3.h>
 
 CGAL_BEGIN_NAMESPACE
 

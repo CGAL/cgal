@@ -31,10 +31,10 @@
 #include <list>
 #include <algorithm>
 
+#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/Triangulation_3.h>
 
-#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Delaunay_remove_tds_3.h>
 #include <CGAL/Triangulation_face_base_2.h>
 

@@ -23,52 +23,37 @@
 #ifndef CGAL_TRIANGULATION_CELL_3_H
 #define CGAL_TRIANGULATION_CELL_3_H
 
-#include <CGAL/Pointer.h>
-#include <CGAL/Triangulation_data_structure_3.h>
-
 #include <CGAL/Triangulation_short_names_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Gt, class Tds >
-class Triangulation_vertex_3;
-
-template < class Gt, class Tds >
-class Triangulation_vertex_handle_3;
-
-template < class Gt, class Tds >
-class Triangulation_cell_handle_3;
+template < class Gt, class Tds > class Triangulation_vertex_3;
+template < class Gt, class Tds > class Triangulation_vertex_handle_3;
+template < class Gt, class Tds > class Triangulation_cell_handle_3;
 
 template < class Gt, class Tds >
 class Triangulation_cell_3
   : public Tds::Cell
 {
-public:
-
-  typedef typename Gt::Point_3 Point;
-
   typedef typename Tds::Vertex Vtds;
   typedef typename Tds::Cell Ctds;
 
   typedef Triangulation_vertex_3<Gt,Tds> Vertex;
-
   typedef Triangulation_vertex_handle_3<Gt,Tds> Vertex_handle;
   typedef Triangulation_cell_handle_3<Gt,Tds> Cell_handle;
 
-  Triangulation_cell_3()
-    : Ctds()
-  { }
+public:
 
-//   Triangulation_cell_3(Tds& tds)
-//     : Ctds(tds)
-//   { }
+  typedef typename Gt::Point_3 Point;
+
+  Triangulation_cell_3()
+    : Ctds() {}
 
   Triangulation_cell_3(Vertex_handle v0,
 		       Vertex_handle v1,
 		       Vertex_handle v2,
 		       Vertex_handle v3)
-    : Ctds(&(*v0), &(*v1), &(*v2), &(*v3))
-  {}
+    : Ctds(&(*v0), &(*v1), &(*v2), &(*v3)) {}
     
   Triangulation_cell_3(Vertex_handle v0,
 		       Vertex_handle v1,
@@ -79,8 +64,7 @@ public:
 		       Cell_handle n2,
 		       Cell_handle n3)
     : Ctds(&(*v0), &(*v1), &(*v2), &(*v3), 
-	   &(*n0), &(*n1), &(*n2), &(*n3)) 
-  {}
+	   &(*n0), &(*n1), &(*n2), &(*n3)) {}
 
   // Vertex access functions
   Vertex_handle vertex(int i) const
@@ -119,11 +103,6 @@ public:
       return Ctds::mirror_vertex(i);
     }
 
-  int mirror_index(int i) const
-    {
-      return Ctds::mirror_index(i);
-    }
-  
   bool has_neighbor(Cell_handle c) const
   {
     return Ctds::has_neighbor( &(*c));
@@ -156,16 +135,6 @@ public:
     Ctds::set_neighbors(&(*n0), &(*n1), &(*n2), &(*n3));
   }
     
-  void set_vertices() 
-  {
-    Ctds::set_vertices();
-  }
-    
-  void set_neighbors() 
-  {
-    Ctds::set_neighbors();
-  }
-    
   void set_vertex(int i, Vertex_handle v)
   {
     Ctds::set_vertex(i, &(*v));
@@ -175,11 +144,6 @@ public:
   {
     Ctds::set_neighbor(i, &(*n));
   }
-
-//   bool is_valid(bool verbose = false, int level = 0) const
-//   {
-//     return Ctds::is_valid(verbose,level);
-//   }
 };
 
 CGAL_END_NAMESPACE

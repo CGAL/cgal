@@ -37,8 +37,10 @@
 #include <vector>
 
 #include <CGAL/triple.h>
-#include <CGAL/Triangulation_utils_3.h>
+
+#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/Triangulation_utils_3.h>
 
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
@@ -48,8 +50,6 @@
 
 #include <CGAL/Triangulation_ds_iterators_3.h>
 #include <CGAL/Triangulation_ds_circulators_3.h>
-
-#include <CGAL/Triangulation_short_names_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
