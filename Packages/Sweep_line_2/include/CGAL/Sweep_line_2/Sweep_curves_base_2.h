@@ -36,6 +36,7 @@
 #include <CGAL/In_place_list.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Arr_intersection_tags.h>
 
 #ifdef CGAL_SWEEP_LINE_DEBUG
 #define CGAL_SL_DEBUG(x) x
@@ -267,19 +268,23 @@ protected:
     compare_at_x and compare_at_x_right of the traits.
   */
   class Intersection_point_node {
-    typedef Curve_node                            Curve_node_;
+    typedef Curve_node                                  Curve_node_;
   public:
-    typedef  SweepLineTraits_2                    Traits;
-    typedef  Point_plus_                          Point_plus;
-    typedef  X_curve_plus_                        X_curve_plus;
-    typedef  typename Traits::X_curve             X_curve; 
-    typedef  typename Traits::Point               Point;
-    typedef  Intersection_point_node              Self;
-    typedef  std::vector<Curve_node_>             Curve_node_container;
-    typedef  typename Curve_node_container::iterator      
-	                                          Curve_node_iterator;
+    typedef  SweepLineTraits_2                          Traits;
+    typedef  Point_plus_                                Point_plus;
+    typedef  X_curve_plus_                              X_curve_plus;
+    typedef  typename Traits::X_curve_2                 X_curve_2; 
+    typedef  typename Traits::Point_2                   Point_2;
+    typedef  Intersection_point_node                    Self;
+    typedef  std::vector<Curve_node_>                   Curve_node_container;
+    typedef  typename Curve_node_container::iterator    Curve_node_iterator;
     typedef  typename Curve_node_container::const_iterator  
-                                             Curve_node_const_iterator;
+                                                Curve_node_const_iterator;
+    typedef typename Traits::Intersection_category      Intersection_category;
+
+      // Obsolete
+    typedef Point_2                                     Point;
+    typedef X_curve_2                                   X_curve;
 
     Intersection_point_node(Traits *traits_) : traits(traits_) {}
     
@@ -368,19 +373,36 @@ protected:
     bool is_left(const Point &p1, const Point &p2) const 
     { return (Compare_lexicographically_xy(p1, p2) == SMALLER); }
     
-    bool nearest_intersection_to_left(const X_curve& cv1,
-                                      const X_curve& cv2,
-                                      const Point& pt,
-                                      Point& p1,
-                                      Point& p2) const 
+    bool nearest_intersection_to_left(const X_curve_2 & cv1,
+                                      const X_curve_2 & cv2,
+                                      const Point_2 & pt,
+                                      Point_2 & p1, Point_2 & p2) const 
+    {
+      return nearest_intersection_to_left_imp(cv1, cv2, pt, p1, p2,
+                                              Intersection_category());
+    }
+
+    bool nearest_intersection_to_left_imp(const X_curve_2 & cv1,
+                                          const X_curve_2 & cv2,
+                                          const Point_2 & pt,
+                                          Point_2 & p1, Point_2 & p2,
+                                          Efficient_intersection_tag) const
+    {
+      return traits->nearest_intersection_to_left(cv1, cv2, pt, p1, p2);
+    }
+    
+    bool nearest_intersection_to_left_imp(const X_curve_2 & cv1,
+                                          const X_curve_2 & cv2,
+                                          const Point_2 & pt,
+                                          Point_2 & p1, Point_2 & p2,
+                                          Lazy_intersection_tag) const 
     { 
-      Point rpt = traits->point_reflect_in_x_and_y( pt);
-      X_curve rcv1 = traits->curve_reflect_in_x_and_y( cv1);
-      X_curve rcv2 = traits->curve_reflect_in_x_and_y( cv2);
+      Point_2 rpt = traits->point_reflect_in_x_and_y( pt);
+      X_curve_2 rcv1 = traits->curve_reflect_in_x_and_y( cv1);
+      X_curve_2 rcv2 = traits->curve_reflect_in_x_and_y( cv2);
       
-      Point rp1, rp2;
-      bool result = traits->nearest_intersection_to_right(rcv1, rcv2, 
-		      		                          rpt, 
+      Point_2 rp1, rp2;
+      bool result = traits->nearest_intersection_to_right(rcv1, rcv2, rpt, 
                                                           rp1, rp2);
     
       p1 = traits->point_reflect_in_x_and_y( rp1);
@@ -388,7 +410,7 @@ protected:
       
       return result;
     }
-    
+      
     Comparison_result Compare_lexicographically_xy(const Point& p1, 
                                                    const Point& p2) const
     {
