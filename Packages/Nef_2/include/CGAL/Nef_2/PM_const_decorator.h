@@ -30,7 +30,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/circulator.h>
-#include <CGAL/Hash_map.h>
+#include <CGAL/Unique_hash_map.h>
 #include <string>
 #include <list>
 #include <strstream>
@@ -580,7 +580,7 @@ PM_const_decorator<HDS>::
 number_of_face_cycles() const
 {
   unsigned int fc_num=0;
-  CGAL::Hash_map<Halfedge_const_handle,bool> visited; 
+  CGAL::Unique_hash_map<Halfedge_const_handle,bool> visited; 
     // init with bool() == false
   Halfedge_const_iterator eit =  phds->halfedges_begin();
   Halfedge_const_iterator eend = phds->halfedges_end();
@@ -600,7 +600,7 @@ number_of_connected_components() const
   typedef Vertex_const_iterator vc_handle;
   typedef Halfedge_around_vertex_const_circulator hvc_circulator;
   int comp_num=0;
-  CGAL::Hash_map< vc_handle, bool> handled(false); 
+  CGAL::Unique_hash_map< vc_handle, bool> handled(false); 
   vc_handle vit = vertices_begin(), vend = vertices_end();
   for ( ; vit != vend; ++vit) {
     if (handled[vit]) continue;
@@ -643,9 +643,8 @@ void print_as_leda_graph(std::ostream& os, const PMCDEC& D,
   typedef typename PMCDEC::Halfedge_const_iterator 
   Halfedge_const_iterator;
   int vn(1), en(1);  
-  CGAL::Hash_map<Vertex_const_iterator,int>     v_num;
-  CGAL::Hash_map<Halfedge_const_iterator,int> e_num;
-  CGAL::Hash_map<Halfedge_const_iterator,int> ec_num;
+  CGAL::Unique_hash_map<Vertex_const_iterator,int>   v_num;
+  CGAL::Unique_hash_map<Halfedge_const_iterator,int> e_num;
   os << "LEDA.GRAPH\n" << "point\n" << "int\n";
   os << D.number_of_vertices() << std::endl;
   Vertex_const_iterator vit;
@@ -655,7 +654,7 @@ void print_as_leda_graph(std::ostream& os, const PMCDEC& D,
      typename PMCDEC::Halfedge_around_vertex_const_circulator
        ecirc(D.first_out_edge(vit)),ecend(ecirc);
     int l=0;
-    CGAL_For_all(ecirc,ecend) ec_num[ecirc]=l++;
+    CGAL_For_all(ecirc,ecend) e_num[ecirc]=l++;
   }
   os << 2* D.number_of_edges() << std::endl;
   Halfedge_const_iterator eit;
@@ -666,7 +665,7 @@ void print_as_leda_graph(std::ostream& os, const PMCDEC& D,
     os << v_num[D.source(eit)] << " "
        << v_num[D.target(eit)] << " "
        << e_num[D.twin(eit)]   << " ";
-    os << "|{" << ec_num[eit] << "}|\n";
+    os << "|{" << e_num[eit] << "}|\n";
   }
   os << std::flush;
 }

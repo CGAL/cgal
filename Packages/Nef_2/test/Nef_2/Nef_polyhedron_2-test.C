@@ -285,8 +285,6 @@ int main()
 
   CGAL_IO_TEST(N1,N2);
 
-
-
   Nef_polyhedron::EK.print_statistics();
 }
   CGAL_TEST_END;

@@ -37,7 +37,7 @@
 #include <CGAL/Handle_for.h>
 #ifndef CGAL_SIMPLE_HDS
 #include <CGAL/Nef_2/HDS_items.h>
-#include <CGAL/Nef_2/HalfedgeDS_default.h>
+#include <CGAL/HalfedgeDS_default.h>
 #else
 #include <CGAL/Nef_2/HalfedgeDS_default_MSC.h>
 #endif
@@ -65,19 +65,19 @@ template <typename T>
 std::istream& operator>>(std::istream&, Nef_polyhedron_2<T>&);
 template <typename T>
 class Nef_polyhedron_2_rep : public Ref_counted
-{ 
+{ typedef Nef_polyhedron_2_rep<T> Self;
   friend class Nef_polyhedron_2<T>;
 #ifndef CGAL_SIMPLE_HDS
   struct HDS_traits {
     typedef typename T::Point_2 Point;
     typedef bool                Mark;
   };
-  typedef CGAL::HalfedgeDS_default<HDS_traits,HDS_items> Plane_map;
-  typedef CGAL::PM_const_decorator<Plane_map>            Const_decorator;
-  typedef CGAL::PM_decorator<Plane_map>                  Decorator;
-  typedef CGAL::PM_naive_point_locator<Decorator,T>      Slocator;
-  typedef CGAL::PM_point_locator<Decorator,T>            Locator;
-  typedef CGAL::PM_overlayer<Decorator,T>                Overlayer;
+  typedef CGAL_HALFEDGEDS_DEFAULT<HDS_traits,HDS_items> Plane_map;
+  typedef CGAL::PM_const_decorator<Plane_map>           Const_decorator;
+  typedef CGAL::PM_decorator<Plane_map>                 Decorator;
+  typedef CGAL::PM_naive_point_locator<Decorator,T>     Slocator;
+  typedef CGAL::PM_point_locator<Decorator,T>           Locator;
+  typedef CGAL::PM_overlayer<Decorator,T>               Overlayer;
 
 #else
   struct HDS_traits {
@@ -100,8 +100,9 @@ class Nef_polyhedron_2_rep : public Ref_counted
   void clear_locator() 
   { if ( pl_ ) delete pl_; pl_=0; }
 public:
-  Nef_polyhedron_2_rep() : pm_(), pl_(0) {}
-  ~Nef_polyhedron_2_rep() { pm_.erase_all(); clear_locator(); }
+  Nef_polyhedron_2_rep() : Ref_counted(), pm_(), pl_(0) {}
+  Nef_polyhedron_2_rep(const Self& R) : pm_(), pl_(0) {}
+  ~Nef_polyhedron_2_rep() { pm_.clear(); clear_locator(); }
 };
 
 /*{\Moptions print_title=yes }*/ 

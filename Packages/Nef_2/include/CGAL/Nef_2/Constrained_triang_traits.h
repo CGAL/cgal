@@ -29,7 +29,7 @@
 #define CGAL_PM_CONSTR_TRIANG_TRAITS_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Hash_map.h>
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/generic_sweep.h>
 #include <CGAL/Nef_2/PM_checker.h>
 #include <string>
@@ -143,7 +143,7 @@ public:
     Vertex_handle           event;
     Point                   p_sweep;
     Sweep_status_structure  SL;
-    CGAL::Hash_map<Halfedge_handle,ss_iterator> SLItem;
+    CGAL::Unique_hash_map<Halfedge_handle,ss_iterator> SLItem;
     const NEWEDGE&          Treat_new_edge;
     Halfedge_handle         e_low,e_high; // framing edges !
     Halfedge_handle         e_search;

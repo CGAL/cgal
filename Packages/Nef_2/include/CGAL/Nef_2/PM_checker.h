@@ -29,6 +29,7 @@
 #define CGAL_PM_CHECKER_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_2/PM_const_decorator.h>
 
 #define USING(t) typedef typename Base::t t
@@ -246,7 +247,7 @@ check_is_triangulation() const
   check_order_preserving_embedding();
   eb = check_boundary_is_clockwise_weakly_polygon();
 
-  CGAL::Hash_map< Halfedge_const_iterator, bool> on_boundary(false);
+  CGAL::Unique_hash_map< Halfedge_const_iterator, bool> on_boundary(false);
   Halfedge_around_face_const_circulator hit(eb), hend(hit);
   std::ostrstream error_status;
   CGAL::set_pretty_mode ( error_status );

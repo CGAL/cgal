@@ -29,7 +29,7 @@
 #define CGAL_PM_POINT_LOCATOR_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Hash_map.h>
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/Object.h>
 #include <CGAL/Nef_2/Constrained_triang_traits.h>
 #undef _DEBUG
@@ -221,7 +221,7 @@ public:
     Halfedge_const_handle e_res;
     Segment ss = s; // we shorten the segment iteratively
     Direction dso = K.construct_direction(K.target(s),p), d_res;
-    CGAL::Hash_map<Halfedge_const_handle,bool> visited(false);
+    CGAL::Unique_hash_map<Halfedge_const_handle,bool> visited(false);
     for(vit = vertices_begin(); vit != vertices_end(); ++vit) {
       Point p_res, vp = point(vit);
       if ( K.contains(ss,vp) ) {

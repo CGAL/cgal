@@ -30,7 +30,7 @@
 #define OBJECT_INDEX_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Hash_map.h>
+#include <CGAL/Unique_hash_map.h>
 #include <string>
 #include <strstream>
 
@@ -39,7 +39,7 @@ CGAL_BEGIN_NAMESPACE
 template <typename I>
 class Object_index {
   char _prefix;
-  CGAL::Hash_map<I,int> _index;
+  CGAL::Unique_hash_map<I,int> _index;
 public:
   Object_index() : _prefix('\0'), _index(-1) {}
   Object_index(I first, I beyond, char c=' ') : _prefix(c), _index(-1)

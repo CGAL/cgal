@@ -38,14 +38,16 @@ CGAL_BEGIN_NAMESPACE
 template < class Vertex_base>
 class HalfedgeDS_in_place_list_vertex
     : public Vertex_base, public CGAL::In_place_list_base<
-                      HalfedgeDS_in_place_list_vertex< Vertex_base> > {
+               HalfedgeDS_in_place_list_vertex<Vertex_base> > {
 public:
-    typedef HalfedgeDS_in_place_list_vertex< Vertex_base> Self;
+    typedef HalfedgeDS_in_place_list_vertex<Vertex_base> Self;
+    typedef CGAL::In_place_list_base<Self> Base2;
+
     typedef typename Vertex_base::Vertex_handle       Vertex_handle;
     typedef typename Vertex_base::Vertex_const_handle Vertex_const_handle;
-    HalfedgeDS_in_place_list_vertex() {}                     // down cast
-    HalfedgeDS_in_place_list_vertex( const Vertex_base& v)
-        : Vertex_base(v) {}
+    HalfedgeDS_in_place_list_vertex() : Vertex_base(), Base2() {}
+    HalfedgeDS_in_place_list_vertex( const Vertex_base& v) : 
+      Vertex_base(v) {}
     Self& operator=( const Self& v) {
         // This self written assignment avoids that assigning vertices will
         // overwrite the list linking of the target vertex.
@@ -57,15 +59,16 @@ public:
 template < class Halfedge_base>
 class HalfedgeDS_in_place_list_halfedge
     : public Halfedge_base, public CGAL::In_place_list_base<
-                  HalfedgeDS_in_place_list_halfedge< Halfedge_base> > {
+               HalfedgeDS_in_place_list_halfedge<Halfedge_base> > {
 public:
     typedef HalfedgeDS_in_place_list_halfedge< Halfedge_base> Self;
-    typedef typename Halfedge_base::Halfedge_handle       Halfedge_handle;
+    typedef CGAL::In_place_list_base<Self> Base2;
+    typedef typename Halfedge_base::Halfedge_handle Halfedge_handle;
     typedef typename Halfedge_base::Halfedge_const_handle
                                                     Halfedge_const_handle;
-    HalfedgeDS_in_place_list_halfedge() {}                   // down cast
-    HalfedgeDS_in_place_list_halfedge( const Halfedge_base& h)
-        : Halfedge_base(h) {}
+    HalfedgeDS_in_place_list_halfedge() : Halfedge_base(), Base2() {}
+    HalfedgeDS_in_place_list_halfedge( const Halfedge_base& h) : 
+      Halfedge_base(h) {}
     Self& operator=( const Self& h) {
         // This self written assignment avoids that assigning halfedges will
         // overwrite the list linking of the target halfedge.
@@ -77,12 +80,13 @@ public:
 template < class Face_base>
 class HalfedgeDS_in_place_list_face
     : public Face_base, public CGAL::In_place_list_base<
-                            HalfedgeDS_in_place_list_face< Face_base> > {
+               HalfedgeDS_in_place_list_face<Face_base> > {
 public:
-    typedef HalfedgeDS_in_place_list_face< Face_base>  Self;
+    typedef HalfedgeDS_in_place_list_face<Face_base> Self;
+    typedef CGAL::In_place_list_base<Self> Base2;
     typedef typename Face_base::Face_handle       Face_handle;
     typedef typename Face_base::Face_const_handle Face_const_handle;
-    HalfedgeDS_in_place_list_face() {}                   // down cast
+    HalfedgeDS_in_place_list_face() : Face_base(), Base2() {}
     HalfedgeDS_in_place_list_face( const Face_base& f) : Face_base(f) {}
     Self& operator=( const Self& f) {
         // This self written assignment avoids that assigning faces will
@@ -125,8 +129,8 @@ public:
     typedef typename Halfedge_list::const_iterator     Halfedge_const_iterator;
 
     typedef typename Face_wrapper::Face                Face_base;
-    typedef HalfedgeDS_in_place_list_face< Face_base>     Face;
-    typedef CGAL::In_place_list<Face,false>              Face_list;
+    typedef HalfedgeDS_in_place_list_face< Face_base>  Face;
+    typedef CGAL::In_place_list<Face,false>            Face_list;
     typedef typename Face_list::iterator               Face_handle;
     typedef typename Face_list::const_iterator         Face_const_handle;
     typedef typename Face_list::iterator               Face_iterator;

@@ -29,6 +29,8 @@
 #define CGAL_PM_DECORATOR_H
 #include <CGAL/Nef_2/PM_const_decorator.h>
 #include <CGAL/Nef_2/geninfo.h>
+#include <CGAL/Unique_hash_map.h>
+#include <vector>
 
 #define USING(t) typedef typename Base::t t
 #define HDSUSING(t) typedef typename HDS::t t
@@ -179,7 +181,7 @@ Plane_map& plane_map() const
 
 void clear() const
 /*{\Mop reinitializes |P| to the empty map.}*/
-{ phds->erase_all(); }
+{ phds->clear(); }
 
 Vertex_handle source(Halfedge_handle e) const
 /*{\Mop returns the source of |e|.}*/
@@ -715,8 +717,8 @@ void clone_skeleton(const HDS& H, const LINKDA& L) const
 
   PM_const_decorator<HDS> DC(H);
   CGAL_assertion((DC.check_integrity_and_topological_planarity(),1));
-  CGAL::Hash_map<Vertex_const_iterator,Vertex_handle>     Vnew;
-  CGAL::Hash_map<Halfedge_const_iterator,Halfedge_handle> Hnew;
+  CGAL::Unique_hash_map<Vertex_const_iterator,Vertex_handle>     Vnew;
+  CGAL::Unique_hash_map<Halfedge_const_iterator,Halfedge_handle> Hnew;
 
   /* First clone all objects and store correspondance in the two maps.*/
   Vertex_const_iterator vit, vend = H.vertices_end();
@@ -818,9 +820,9 @@ void PM_decorator<HDS>::clone(const HDS& H) const
 
   PM_const_decorator<HDS> DC(H);
   CGAL_assertion((DC.check_integrity_and_topological_planarity(),1));
-  CGAL::Hash_map<Vertex_const_iterator,Vertex_handle>     Vnew;
-  CGAL::Hash_map<Halfedge_const_iterator,Halfedge_handle> Hnew;
-  CGAL::Hash_map<Face_const_iterator,Face_handle>         Fnew;
+  CGAL::Unique_hash_map<Vertex_const_iterator,Vertex_handle>     Vnew;
+  CGAL::Unique_hash_map<Halfedge_const_iterator,Halfedge_handle> Hnew;
+  CGAL::Unique_hash_map<Face_const_iterator,Face_handle>         Fnew;
 
   /* First clone all objects and store correspondance in three maps.*/
   Vertex_const_iterator vit, vend = H.vertices_end();
@@ -887,8 +889,8 @@ clone_skeleton(const HDS& H, const LINKDA& L) const
 
   PM_const_decorator<HDS> DC(H);
   CGAL_assertion((DC.check_integrity_and_topological_planarity(),1));
-  CGAL::Hash_map<Vertex_const_iterator,Vertex_handle>     Vnew;
-  CGAL::Hash_map<Halfedge_const_iterator,Halfedge_handle> Hnew;
+  CGAL::Unique_hash_map<Vertex_const_iterator,Vertex_handle>     Vnew;
+  CGAL::Unique_hash_map<Halfedge_const_iterator,Halfedge_handle> Hnew;
 
   /* First clone all objects and store correspondance in the two maps.*/
   Vertex_const_iterator vit, vend = H.vertices_end();

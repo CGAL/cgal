@@ -31,7 +31,7 @@
 #include <CGAL/In_place_list.h>
 #include <CGAL/Nef_2/HalfedgeDS_items_decorator.h>
 #include <CGAL/Nef_2/HDS_items_MSC.h>
-#include <CGAL/Hash_map.h>
+#include <CGAL/Unique_hash_map.h>
 #include <iterator>
 
 CGAL_BEGIN_NAMESPACE
@@ -248,7 +248,7 @@ public:
         : Base(), nb_border_halfedges(0), nb_border_edges(0) {}
       // not used here.
 
-    ~HalfedgeDS_ipl_MSC() { erase_all(); }
+    ~HalfedgeDS_ipl_MSC() { clear(); }
 
     HalfedgeDS_ipl_MSC(const Self& hds)
     :  vertices( hds.vertices),
@@ -261,7 +261,7 @@ public:
 
     Self& operator=( const Self& hds)  {
         if ( this != &hds) {
-            erase_all();
+            clear();
             vertices            = hds.vertices;
             halfedges           = hds.halfedges;
             faces               = hds.faces;
@@ -421,7 +421,7 @@ public:
             faces_erase(first++);
     }
 
-    void erase_all() {
+    void clear() {
         vertices.destroy();
         edges_erase( halfedges.begin(), halfedges.end());
         faces.destroy();
@@ -483,12 +483,9 @@ HalfedgeDS_ipl_MSC<p_Traits>::
 pointer_update( const HalfedgeDS_ipl_MSC<p_Traits>& hds) {
     // Update own pointers assuming that they lived previously
     // in a halfedge data structure `hds' with lists.
-    typedef CGAL::Hash_map<Vertex_const_handle,Vertex_handle>     V_map;
-    typedef CGAL::Hash_map<Halfedge_const_handle,Halfedge_handle> H_map;
-    typedef CGAL::Hash_map<Face_const_handle,Face_handle>         F_map;
-    V_map v_map;
-    H_map h_map;
-    F_map f_map;
+    CGAL::Unique_hash_map<Vertex_const_handle,Vertex_handle>     v_map;
+    CGAL::Unique_hash_map<Halfedge_const_handle,Halfedge_handle> h_map;
+    CGAL::Unique_hash_map<Face_const_handle,Face_handle>         f_map;
     h_map[Halfedge_const_iterator()] = Halfedge_iterator();
     v_map[Vertex_const_iterator()]   = Vertex_iterator();
     f_map[Face_const_iterator()]     = Face_iterator();

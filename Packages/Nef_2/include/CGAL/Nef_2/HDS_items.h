@@ -125,7 +125,7 @@ struct HDS_items {
       void set_face(Face_handle f) { _f=f; }
       /*{\Mop makes |f| the incident face of |\Mvar|.}*/
 
-      Point&  point() { return _p; }
+      Point& point() { return _p; }
       /*{\Mop returns the embedding point of |\Mvar|.}*/
       const Point& point() const { return _p; }
 
@@ -133,7 +133,7 @@ struct HDS_items {
       /*{\Mop returns the mark of |\Mvar|.}*/
       const Mark& mark() const { return _m; }
 
-      GenPtr&       info()       { return _i; }
+      GenPtr& info() { return _i; }
       /*{\Mop returns a generic information slot of |\Mvar|.}*/
       const GenPtr& info() const { return _i; }
 

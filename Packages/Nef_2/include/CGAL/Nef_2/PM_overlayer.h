@@ -30,7 +30,7 @@
 #define CGAL_PM_OVERLAYER_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Hash_map.h>
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/Partition.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
 #include <CGAL/Nef_2/geninfo.h>
@@ -113,11 +113,11 @@ struct PMO_from_pm {
 
   const Decorator& G;
   const Const_decorator* pGI[2];
-  CGAL::Hash_map<IT,INFO>& M;
+  CGAL::Unique_hash_map<IT,INFO>& M;
   PMO_from_pm(const Decorator& Gi, 
               const Const_decorator* pG0, 
               const Const_decorator* pG1,
-              CGAL::Hash_map<IT,INFO>& Mi) : G(Gi),M(Mi) 
+              CGAL::Unique_hash_map<IT,INFO>& Mi) : G(Gi),M(Mi) 
  { pGI[0]=pG0; pGI[1]=pG1; }
 
  Vertex_handle new_vertex(const Point& p) const
@@ -371,7 +371,7 @@ and |\Mvar.mark(v,1) = D1.mark(f1)|.}*/
   Const_decorator PI[2];
   PI[0] = Const_decorator(P0); PI[1] = Const_decorator(P1);
   Seg_list Segments; int i;
-  CGAL::Hash_map<Seg_iterator,Seg_info> From;
+  CGAL::Unique_hash_map<Seg_iterator,Seg_info> From;
   for (i=0; i<2; ++i) {
     Vertex_const_iterator v;
     for(v = PI[i].vertices_begin(); v != PI[i].vertices_end(); ++v)
@@ -503,7 +503,7 @@ and the edges are unified.}*/
 {
   TRACEN("simplifying"); 
   typedef typename CGAL::Partition<Face_handle>::item partition_item;
-  CGAL::Hash_map<Face_iterator,partition_item> Pitem;
+  CGAL::Unique_hash_map<Face_iterator,partition_item> Pitem;
   CGAL::Partition<Face_handle> FP;
 
   Face_iterator f, fend = faces_end();
@@ -532,7 +532,7 @@ and the edges are unified.}*/
     }
   }
 
-  CGAL::Hash_map<Halfedge_handle,bool> linked(false);
+  CGAL::Unique_hash_map<Halfedge_handle,bool> linked(false);
   for (e = halfedges_begin(); e != eend; ++e) {
     if ( linked[e] ) continue;
     Halfedge_around_face_circulator hfc(e),hend(hfc);
@@ -693,7 +693,7 @@ template <class Below_info>
 void create_face_objects(const Below_info& D) const
 {
   TRACEN("create_face_objects()");
-  CGAL::Hash_map<Halfedge_handle,int> FaceCycle(-1);
+  CGAL::Unique_hash_map<Halfedge_handle,int> FaceCycle(-1);
   std::vector<Halfedge_handle>  MinimalHalfedge;
   int i=0;
   Halfedge_iterator e, eend = halfedges_end();
@@ -747,7 +747,7 @@ void create_face_objects(const Below_info& D) const
 template <class Below_info>
 Face_handle determine_face(Halfedge_handle e, 
   const std::vector<Halfedge_handle>& MinimalHalfedge,
-  const CGAL::Hash_map<Halfedge_handle,int>& FaceCycle,
+  const CGAL::Unique_hash_map<Halfedge_handle,int>& FaceCycle,
   const Below_info& D) const
 { TRACEN("determine_face "<<PE(e));
   Halfedge_handle e_min = MinimalHalfedge[FaceCycle[e]];
