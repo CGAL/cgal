@@ -5,7 +5,8 @@ the weighted Alpha Shape.
 
 ************************************************************************/
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Filtered_kernel.h>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -15,30 +16,14 @@ the weighted Alpha Shape.
 
 #include <CGAL/Weighted_point.h>
 #include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
-
-// #include <CGAL/Alpha_shape_vertex_base_2.h>
-
-// #include <CGAL/Triangulation_face_base_2.h>
-// #include <CGAL/Regular_triangulation_face_base_2.h>
-// #include <CGAL/Alpha_shape_face_base_2.h>
-
-// #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
-// Choose an exact number type.
-#ifdef CGAL_USE_LEDA
-#  include <CGAL/leda_integer.h>
-typedef leda_integer coord_type;
-#elif defined CGAL_USE_GMP
-#  include <CGAL/Gmpz.h>
-typedef CGAL::Gmpz coord_type;
-#else
-#  include <CGAL/MP_Float.h>
-typedef CGAL::MP_Float coord_type;
-#endif
 
-typedef CGAL::Cartesian<coord_type>  K;
+typedef double coord_type;
+
+typedef CGAL::Simple_cartesian<coord_type>  SC;
+typedef CGAL::Filtered_kernel<SC> K;
 typedef K::Point_2 Point_base;
 typedef CGAL::Weighted_point<Point_base,coord_type>  Point;
 typedef K::Segment_2  Segment;
@@ -75,20 +60,19 @@ typedef Alpha_shape_2::Edge_circulator  Edge_circulator;
 
 typedef Alpha_shape_2::Coord_type Coord_type;
 typedef Alpha_shape_2::Alpha_iterator Alpha_iterator;
-
+typedef Alpha_shape_2::Alpha_shape_edges_iterator Alpha_shape_edges_iterator;
 //---------------------------------------------------------------------
 
-std::vector<Gt::Segment>
-construct_alpha_shape(const std::list<Point> &V_p,
-		      const Coord_type &Alpha,
-		      bool mode)
+template <class InputIterator, class OutputIterator>
+void
+alpha_edges(InputIterator begin, InputIterator end,
+	    const Coord_type &Alpha,
+	    bool mode,
+	    OutputIterator out)
   // Generate Alpha Shape
 { 
   std::vector<Gt::Segment> V_seg;
-  Alpha_shape_2 A;
-  
-  int  n = A.make_alpha_shape(V_p.begin(), V_p.end());
-  std::cout << "Inserted " << n  << " points" << std::endl;
+  Alpha_shape_2 A(begin,end);
   
   if (mode) 
     { A.set_mode(Alpha_shape_2::GENERAL); } 
@@ -96,11 +80,14 @@ construct_alpha_shape(const std::list<Point> &V_p,
     { A.set_mode(Alpha_shape_2::REGULARIZED); };
   A.set_alpha(Alpha);
 
-  //  V_seg << A;
-  
-  return V_seg;
+  for(Alpha_shape_edges_iterator it =  A.alpha_shape_edges_begin();
+      it != A.alpha_shape_edges_end();
+      ++it){
+    *out++ = A.segment(*it);
+  }
 }
 
+//---------------------------------------------------------------------
 bool
 file_input(std::list<Point>& L)
 {
@@ -132,10 +119,12 @@ file_input(std::list<Point>& L)
 
 int main()
 {
-  std::list<Point> L;
-  file_input(L);
-  std::vector<Gt::Segment> V =
-    construct_alpha_shape(L,Coord_type(10000),Alpha_shape_2::GENERAL);
-  std::cout << "Weighted Alpha Shape computed" << std::endl;
+  std::list<Point> points;
+  file_input(points);
+  std::vector<Gt::Segment> segments;
+  alpha_edges(points.begin(), points.end(),
+	      Coord_type(10000),Alpha_shape_2::GENERAL,
+	      std::back_inserter(segments));
+  std::cout << segments.size() << " alpha shape edges." << std::endl;
   return 0;
 }
