@@ -141,88 +141,14 @@ class Kernel_checker
     typedef Predicate_checker<typename K1::X, typename K2::X, Conv> X; \
     X Y() const { return X(); }
 
-public:
-    CGAL_check_pred(Equal_2, equal_2_object)
-    CGAL_check_pred(Equal_x_2, equal_x_2_object)
-    CGAL_check_pred(Equal_y_2, equal_y_2_object)
-    CGAL_check_pred(Equal_xy_2, equal_xy_2_object)
-    CGAL_check_pred(Less_x_2, less_x_2_object)
-    CGAL_check_pred(Less_y_2, less_y_2_object)
-    CGAL_check_pred(Less_xy_2, less_xy_2_object)
-    CGAL_check_pred(Less_yx_2, less_yx_2_object)
-    CGAL_check_pred(Compare_x_2, compare_x_2_object)
-    CGAL_check_pred(Compare_y_2, compare_y_2_object)
-    CGAL_check_pred(Compare_xy_2, compare_xy_2_object)
-    CGAL_check_pred(Compare_y_at_x_2, compare_y_at_x_2_object)
-    CGAL_check_pred(Compare_distance_2, compare_distance_2_object)
-    CGAL_check_pred(Counterclockwise_in_between_2,
-	counterclockwise_in_between_2_object)
-    CGAL_check_pred(Leftturn_2, leftturn_2_object)
-    CGAL_check_pred(Collinear_2, collinear_2_object)
-    CGAL_check_pred(Orientation_2, orientation_2_object)
-    CGAL_check_pred(Side_of_oriented_circle_2,
-	    side_of_oriented_circle_2_object)
-    CGAL_check_pred(Side_of_bounded_circle_2, side_of_bounded_circle_2_object)
-    CGAL_check_pred(Is_horizontal_2, is_horizontal_2_object)
-    CGAL_check_pred(Is_vertical_2, is_vertical_2_object)
-    CGAL_check_pred(Is_degenerate_2, is_degenerate_2_object)
-    CGAL_check_pred(Has_on_2, has_on_2_object)
-    CGAL_check_pred(Collinear_has_on_2, collinear_has_on_2_object)
-    CGAL_check_pred(Has_on_bounded_side_2, has_on_bounded_side_2_object)
-    CGAL_check_pred(Has_on_unbounded_side_2, has_on_unbounded_side_2_object)
-    CGAL_check_pred(Has_on_boundary_2, has_on_boundary_2_object)
-    CGAL_check_pred(Has_on_positive_side_2, has_on_positive_side_2_object)
-    CGAL_check_pred(Has_on_negative_side_2, has_on_negative_side_2_object)
-    CGAL_check_pred(Oriented_side_2, oriented_side_2_object)
-    CGAL_check_pred(Are_ordered_along_line_2, are_ordered_along_line_2_object)
-    CGAL_check_pred(Are_strictly_ordered_along_line_2,
-	are_strictly_ordered_along_line_2_object)
-    CGAL_check_pred(Collinear_are_ordered_along_line_2,
-	collinear_are_ordered_along_line_2_object)
-    CGAL_check_pred(Collinear_are_strictly_ordered_along_line_2,
-	collinear_are_strictly_ordered_along_line_2_object)
+#define CGAL_Kernel_pred(X,Y,Z) CGAL_check_pred(Y, Z)
+#define CGAL_Kernel_cons(X,Y,Z)
+#define CGAL_Kernel_pred2(W,X,Y,Z) CGAL_check_pred(Y, Z)
+#define CGAL_Kernel_cons2(W,X,Y,Z)
 
-    CGAL_check_pred(Equal_3, equal_3_object)
-    CGAL_check_pred(Equal_x_3, equal_x_3_object)
-    CGAL_check_pred(Equal_y_3, equal_y_3_object)
-    CGAL_check_pred(Equal_z_3, equal_z_3_object)
-    CGAL_check_pred(Equal_xy_3, equal_xy_3_object)
-    CGAL_check_pred(Equal_xyz_3, equal_xyz_3_object)
-    CGAL_check_pred(Less_x_3, less_x_3_object)
-    CGAL_check_pred(Less_y_3, less_y_3_object)
-    CGAL_check_pred(Less_z_3, less_z_3_object)
-    CGAL_check_pred(Less_xy_3, less_xy_3_object)
-    CGAL_check_pred(Less_xyz_3, less_xyz_3_object)
-    CGAL_check_pred(Compare_x_3, compare_x_3_object)
-    CGAL_check_pred(Compare_y_3, compare_y_3_object)
-    CGAL_check_pred(Compare_z_3, compare_z_3_object)
-    CGAL_check_pred(Compare_xy_3, compare_xy_3_object)
-    CGAL_check_pred(Compare_xyz_3, compare_xyz_3_object)
-    CGAL_check_pred(Compare_distance_3, compare_distance_3_object)
-    CGAL_check_pred(Collinear_3, collinear_3_object)
-    CGAL_check_pred(Coplanar_3, coplanar_3_object)
-    CGAL_check_pred(Coplanar_orientation_3, coplanar_orientation_3_object)
-    CGAL_check_pred(Coplanar_side_of_bounded_circle_3,
-	    coplanar_side_of_bounded_circle_3_object)
-    CGAL_check_pred(Orientation_3, orientation_3_object)
-    CGAL_check_pred(Is_degenerate_3, is_degenerate_3_object)
-    CGAL_check_pred(Has_on_3, has_on_3_object)
-    CGAL_check_pred(Has_on_bounded_side_3, has_on_bounded_side_3_object)
-    CGAL_check_pred(Has_on_unbounded_side_3, has_on_unbounded_side_3_object)
-    CGAL_check_pred(Has_on_boundary_3, has_on_boundary_3_object)
-    CGAL_check_pred(Has_on_positive_side_3, has_on_positive_side_3_object)
-    CGAL_check_pred(Has_on_negative_side_3, has_on_negative_side_3_object)
-    CGAL_check_pred(Oriented_side_3, oriented_side_3_object)
-    CGAL_check_pred(Are_ordered_along_line_3, are_ordered_along_line_3_object)
-    CGAL_check_pred(Are_strictly_ordered_along_line_3,
-	    are_strictly_ordered_along_line_3_object)
-    CGAL_check_pred(Collinear_are_ordered_along_line_3,
-	    collinear_are_ordered_along_line_3_object)
-    CGAL_check_pred(Collinear_are_strictly_ordered_along_line_3,
-	    collinear_are_strictly_ordered_along_line_3)
-    CGAL_check_pred(Side_of_oriented_sphere_3,
-	    side_of_oriented_sphere_3_object)
-    CGAL_check_pred(Side_of_bounded_sphere_3, side_of_bounded_sphere_3_object)
+public:
+
+#include <CGAL/Kernel/interface_macros.h>
 };
 
 CGAL_END_NAMESPACE
