@@ -133,8 +133,13 @@ protected:
   typedef typename X_curve_2_container::iterator X_curve_2_container_iterator;
   typedef Point_plus_handle<Traits, Vertex_handle>
                                                Point_plus;
+#ifndef CGAL_CFG_MATCHING_BUG_1
   typedef typename std::map<Point_2, Point_plus, PointLessFunctor>
                                                PointContainer;
+#else
+  typedef std::map<Point_2, Point_plus, PointLessFunctor>
+                                               PointContainer;
+#endif
   typedef typename PointContainer::value_type  PointContainer_value_type; 
   typedef typename PointContainer::iterator    PointContainer_iterator;
   typedef Pm_point_node<Traits, Point_plus>    Point_node;
