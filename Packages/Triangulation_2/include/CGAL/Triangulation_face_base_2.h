@@ -9,8 +9,8 @@ template < class Gt >
 class CGAL_Triangulation_face_base_2 {
 
 public:
-  typedef typename Gt::Triangle Triangle;
-  typedef CGAL_Triangulation_face_base_2<Gt> Face_base;
+  // typedef typename Gt::Triangle Triangle;
+  typedef CGAL_Triangulation_face_base_2  Face_base;
 
   inline
   CGAL_Triangulation_face_base_2()
@@ -188,43 +188,51 @@ public:
     N[2] = n2;
   }
  
- //Miscelleanous
-  inline int ccw(int i) const
-  {
-    return (i+1) % 3;
-  }
-    
-  inline int cw(int i) const
-  {
-    return (i+2) % 3;
-  }
+//  //Miscelleanous HAS BEEMOVED TO Tds::Face
+//   inline int ccw(int i) const
+//   {
+//     return (i+1) % 3;
+//   }
+//     
+//   inline int cw(int i) const
+//   {
+//     return (i+2) % 3;
+//   }
    
- bool is_valid(bool verbose = false, int level = 0) const
-  {
-    bool result = true;
-    for(int i = 0; i < 3; i++) {
-      Face_base* n = (Face_base *)neighbor(i);
-            
-      // The following seems natural, but it may fail if the faces
-      // this and n are neighbors on two edges (1-dim triangulation,
-      // with infinite faces
-      // int ni = n->index(this);
+ 
+  //the following trivial is_valid to allow
+  // the user of derived face base classes 
+  // to add their own purpose checking
+bool is_valid() const
+  {return true;}
 
-      //  int ni = cw(n->index(vertex(cw(i))));
-      // CGAL_triangulation_assertion( this == n->neighbor(ni) );
-      // result = result && (vertex(cw(i)) == n->vertex(ccw(ni)));
-      // result = result && (vertex(ccw(i)) == n->vertex(cw(ni)));
-
-      int in;
-      if (! n->has_vertex(vertex(cw(i)),in )) return false;
-      in = cw(in); 
-      result = result && ( this == n->neighbor(in) );
-      result = result && (vertex(ccw(i)) == n->vertex(cw(in)));
-
-    }
-    return result;
-  }
-   
+  //is-valid has been moved to class Triangulation_ds_face_2
+//  bool is_valid(bool verbose = false, int level = 0) const
+//   {
+//     bool result = true;
+//     for(int i = 0; i < 3; i++) {
+//       Face_base* n = (Face_base *)neighbor(i);
+//             
+//       // The following seems natural, but it may fail if the faces
+//       // this and n are neighbors on two edges (1-dim triangulation,
+//       // with infinite faces
+//       // int ni = n->index(this);
+// 
+//       //  int ni = cw(n->index(vertex(cw(i))));
+//       // CGAL_triangulation_assertion( this == n->neighbor(ni) );
+//       // result = result && (vertex(cw(i)) == n->vertex(ccw(ni)));
+//       // result = result && (vertex(ccw(i)) == n->vertex(cw(ni)));
+// 
+//       int in;
+//       if (! n->has_vertex(vertex(cw(i)),in )) return false;
+//       in = cw(in); 
+//       result = result && ( this == n->neighbor(in) );
+//       result = result && (vertex(ccw(i)) == n->vertex(cw(in)));
+// 
+//     }
+//     return result;
+//   }
+//    
 
 private:
   void* V[3];
