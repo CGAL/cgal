@@ -2400,6 +2400,9 @@ end of each file.
     #ifndef CGAL_BASIC_H
     #  include <CGAL/basic.h>
     #endif
+    #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
+    #  include <CGAL/optimisation_assertions.h>
+    #endif
 
     @<Min_circle_2_adapterC2 interface and implementation>
 
@@ -2432,6 +2435,9 @@ end of each file.
     // includes
     #ifndef CGAL_BASIC_H
     #  include <CGAL/basic.h>
+    #endif
+    #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
+    #  include <CGAL/optimisation_assertions.h>
     #endif
 
     @<Min_circle_2_adapterH2 interface and implementation>
