@@ -80,9 +80,9 @@ int main(int argc, char **argv) {
   
   // Surface meshing
   Mesher mesher (T, O, C, tets_criteria);
+  mesher.refine_surface();
   mesher.refine_mesh();
-//   mesher.refine_surface();
-//   int i = 0;
+//   int i = 100;
 //   while(!mesher.done())
 //     {
 //       std::stringstream s;

@@ -34,7 +34,7 @@ int peanut_function (double, double, double);  // (c=(0,0,0), r=2)
 
 ///////////////// Definition of the current surface /////////////////
 int implicit_function (double x, double y, double z) {
-  return sphere_function(x,y,z);
+  return tanglecube_function(x,y,z);
 }
 
 ///////////////// Code for functions of famous surfaces /////////////////
