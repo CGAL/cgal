@@ -60,7 +60,6 @@ public:
   typedef typename Rep::Compare_y_3                Compare_y_3;
   typedef typename Rep::Compare_z_3                Compare_z_3;
   typedef typename Rep::Equal_3                    Equal_3;
-  typedef typename Rep::Collinear_3                Collinear_3;
   typedef typename Rep::Orientation_3              Orientation_3;
   typedef typename Rep::Coplanar_orientation_3     Coplanar_orientation_3;
   typedef typename Rep::Side_of_oriented_sphere_3  Side_of_oriented_sphere_3;

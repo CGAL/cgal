@@ -134,7 +134,6 @@ protected:
   Compare_y_3 compare_y;
   Compare_z_3 compare_z;
   Equal_3 equal;
-  Collinear_3 collinear;
   Orientation_3 orientation;
   Coplanar_orientation_3 coplanar_orientation;
   Construct_segment_3 construct_segment;
@@ -156,7 +155,6 @@ protected:
       compare_y = geom_traits().compare_y_3_object();
       compare_z = geom_traits().compare_z_3_object();
       equal = geom_traits().equal_3_object();
-      collinear = geom_traits().collinear_3_object();
       orientation = geom_traits().orientation_3_object();
       coplanar_orientation = geom_traits().coplanar_orientation_3_object();
       construct_segment = geom_traits().construct_segment_3_object();
@@ -360,7 +358,13 @@ public:
   }
 
   // PREDICATES ON POINTS ``TEMPLATED'' by the geom traits
-  
+
+  bool
+  collinear(const Point & p, const Point & q, const Point & r) const
+  {
+      return coplanar_orientation(p, q, r) == COLLINEAR;
+  }
+
   Bounded_side
   side_of_tetrahedron(const Point & p,
 		      const Point & p0, 
@@ -1302,18 +1306,16 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 
       //first tests whether p is coplanar with the current triangulation
       Facet_iterator finite_fit = finite_facets_begin();
-      if ( orientation( p, 
-			(*finite_fit).first->vertex(0)->point(),
+      if ( orientation( (*finite_fit).first->vertex(0)->point(),
 			(*finite_fit).first->vertex(1)->point(),
-			(*finite_fit).first->vertex(2)->point() ) 
-	   != DEGENERATE ) {
+			(*finite_fit).first->vertex(2)->point(),
+			p ) != DEGENERATE ) {
 	lt = OUTSIDE_AFFINE_HULL;
 	li = 3; // only one facet in dimension 2
 	return (*finite_fit).first;
       }
       // if p is coplanar, location in the triangulation
       // only the facet numbered 3 exists in each cell
-      Orientation o[3];
       while (1) {
 	  
 	if ( c->has_vertex(infinite,inf) ) {
@@ -1331,17 +1333,19 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	const Point & p0 = c->vertex( i )->point();
 	const Point & p1 = c->vertex( ccw(i) )->point();
 	const Point & p2 = c->vertex( cw(i) )->point();
-	o[0] = coplanar_orientation(p0,p1,p2,p);
+        Orientation o[3];
+	CGAL_triangulation_assertion(coplanar_orientation(p0,p1,p2)==POSITIVE);
+	o[0] = coplanar_orientation(p0,p1,p);
 	if ( o[0] == NEGATIVE ) {
 	  c = c->neighbor( cw(i) );
 	  continue;
 	}
-	o[1] = coplanar_orientation(p1,p2,p0,p);
+	o[1] = coplanar_orientation(p1,p2,p);
 	if ( o[1] == NEGATIVE ) {
 	  c = c->neighbor( i );
 	  continue;
 	}
-	o[2] = coplanar_orientation(p2,p0,p1,p);
+	o[2] = coplanar_orientation(p2,p0,p);
 	if ( o[2] == NEGATIVE ) {
 	  c = c->neighbor( ccw(i) );
 	  continue;
@@ -1700,19 +1704,18 @@ side_of_triangle(const Point & p,
   // ON_BOUNDARY if p lies on one of the edges
   // ON_UNBOUNDED_SIDE if p lies strictly outside the triangle
 {
-  CGAL_triangulation_precondition( ! collinear(p0,p1,p2) );
   CGAL_triangulation_precondition( orientation(p,p0,p1,p2) == COPLANAR );
 
-  // edge p0 p1 :
-  Orientation o0 = coplanar_orientation(p0,p1,p2,p);
-  // edge p1 p2 :
-  Orientation o1 = coplanar_orientation(p1,p2,p0,p);
-  // edge p2 p0 :
-  Orientation o2 = coplanar_orientation(p2,p0,p1,p);
+  Orientation o012 = coplanar_orientation(p0,p1,p2);
+  CGAL_triangulation_precondition( o012 != COLLINEAR );
 
-  if ( (o0 == NEGATIVE) || 
-       (o1 == NEGATIVE) ||
-       (o2 == NEGATIVE) ) {
+  Orientation o0; // edge p0 p1
+  Orientation o1; // edge p1 p2
+  Orientation o2; // edge p2 p0
+
+  if ((o0 = coplanar_orientation(p0,p1,p)) == opposite(o012) ||
+      (o1 = coplanar_orientation(p1,p2,p)) == opposite(o012) ||
+      (o2 = coplanar_orientation(p2,p0,p)) == opposite(o012)) {
     lt = OUTSIDE_CONVEX_HULL;
     return ON_UNBOUNDED_SIDE;
   }
@@ -1744,8 +1747,8 @@ side_of_triangle(const Point & p,
   case 2:
     {
       lt = VERTEX;
-      i = ( o0 == POSITIVE ) ? 2 :
-	  ( o1 == POSITIVE ) ? 0 :
+      i = ( o0 == o012 ) ? 2 :
+	  ( o1 == o012 ) ? 0 :
 	  1;
       return ON_BOUNDARY;
     }
@@ -1777,59 +1780,45 @@ side_of_facet(const Point & p,
   // lt has a meaning only when ON_BOUNDED_SIDE or ON_BOUNDARY
   // when they mean anything, li and lj refer to indices in the cell c 
   // giving the facet (c,i)
-{//side_of_facet
+{
   CGAL_triangulation_precondition( dimension() == 2 );
-  //      CGAL_triangulation_precondition( i == 3 );
-  //      if ( ! is_infinite(c,i) ) {
   if ( ! is_infinite(c,3) ) {
     // The following precondition is useless because it is written
     // in side_of_facet  
-    // 	CGAL_triangulation_precondition( orientation
-    // 					 (p, 
+    // 	CGAL_triangulation_precondition( orientation (p, 
     // 					  c->vertex(0)->point,
     // 					  c->vertex(1)->point,
-    // 					  c->vertex(2)->point)
-    // 					 == COPLANAR );
-    //	int i0, i1, i2; // indices in the considered facet
-    Bounded_side side;
+    // 					  c->vertex(2)->point) == COPLANAR );
     int i_t, j_t;
-    side = side_of_triangle(p,
+    Bounded_side side = side_of_triangle(p,
 			    c->vertex(0)->point(),
 			    c->vertex(1)->point(),
 			    c->vertex(2)->point(),
 			    lt, i_t, j_t);
     // indices in the original cell :
     li = ( i_t == 0 ) ? 0 :
-         ( i_t == 1 ) ? 1 :
-         2;
+         ( i_t == 1 ) ? 1 : 2;
     lj = ( j_t == 0 ) ? 0 :
-         ( j_t == 1 ) ? 1 :
-         2;
+         ( j_t == 1 ) ? 1 : 2;
     return side;
   }
   // else infinite facet
   int inf = c->index(infinite);
     // The following precondition is useless because it is written
     // in side_of_facet  
-    // 	CGAL_triangulation_precondition( orientation
-    // 					 (p,
+    // 	CGAL_triangulation_precondition( orientation (p,
     // 					  c->neighbor(inf)->vertex(0)->point(),
     // 					  c->neighbor(inf)->vertex(1)->point(),
     // 					  c->neighbor(inf)->vertex(2)->point())
     // 					 == COPLANAR );
-  int i1,i2; 
-  i2 = next_around_edge(inf,3);
-  i1 = 3-inf-i2;
-  Vertex_handle 
-    v1 = c->vertex(i1),
-    v2 = c->vertex(i2);
-	
-  // does not work in dimension 3
-  Cell_handle n = c->neighbor(inf);
-  // n must be a finite cell
-  Orientation o =
-    coplanar_orientation( v1->point(), v2->point(), 
-			  n->vertex(n->index(c))->point(), p );
+  int i2 = next_around_edge(inf,3);
+  int i1 = 3-inf-i2;
+  Vertex_handle v1 = c->vertex(i1),
+                v2 = c->vertex(i2);
+
+  CGAL_triangulation_assertion(coplanar_orientation(v1->point(), v2->point(),
+	                       c->mirror_vertex(inf)->point()) == POSITIVE);
+  Orientation o = coplanar_orientation(v1->point(), v2->point(), p);
   switch (o) {
   case POSITIVE:
     // p lies on the same side of v1v2 as vn, so not in f
@@ -1847,10 +1836,8 @@ side_of_facet(const Point & p,
     // p collinear with v1v2
     {
       int i_e;
-      Bounded_side side = 
-	side_of_segment( p, v1->point(), v2->point(), lt, i_e );
-      switch (side) {
-	// computation of the indices inthe original cell
+      switch (side_of_segment(p, v1->point(), v2->point(), lt, i_e)) {
+	// computation of the indices in the original cell
       case ON_BOUNDED_SIDE:
 	{
 	  // lt == EDGE ok
@@ -2395,26 +2382,23 @@ insert_outside_affine_hull(const Point & p, Vertex_handle v)
   switch ( dimension() ) {
   case 1:
     {
-      CGAL_triangulation_precondition_code
-	( Cell_handle c = infinite_cell();
-	  Cell_handle n = c->neighbor(c->index(infinite_vertex())); )
-      CGAL_triangulation_precondition( !collinear(p,
-						  n->vertex(0)->point(),
-						  n->vertex(1)->point()) );
-      // no reorientation : the first non-collinear point determines
-      // the orientation of the plane
-      reorient = false;
+      Cell_handle c = infinite_cell();
+      Cell_handle n = c->neighbor(c->index(infinite_vertex()));
+      Orientation o = coplanar_orientation(n->vertex(0)->point(),
+					   n->vertex(1)->point(), p);
+      CGAL_triangulation_precondition ( o != COLLINEAR );
+      reorient = o == NEGATIVE;
       break;
     }
   case 2:
     {
       Cell_handle c = infinite_cell();
       Cell_handle n = c->neighbor(c->index(infinite_vertex()));
-      Orientation oo = orientation( n->vertex(0)->point(),
-			            n->vertex(1)->point(),
-			            n->vertex(2)->point(), p );
-      CGAL_triangulation_precondition ( oo != COPLANAR );
-      reorient = oo == NEGATIVE;
+      Orientation o = orientation( n->vertex(0)->point(),
+			           n->vertex(1)->point(),
+			           n->vertex(2)->point(), p );
+      CGAL_triangulation_precondition ( o != COPLANAR );
+      reorient = o == NEGATIVE;
       break;
     }
   default:
@@ -2631,7 +2615,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
 {
   if ( ! (&(*c))->is_valid(dimension(),verbose,level) ) {
     if (verbose) { 
-      std::cerr << "combinatorically invalid cell";
+      std::cerr << "combinatorially invalid cell";
       for (int i=0; i <= dimension(); i++ )
 	std::cerr << c->vertex(i)->point() << ", ";
       std::cerr << std::endl;
@@ -2672,27 +2656,17 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
     }
   case 2:
     {
-      for ( int i=0; i<3; i++ ) {
-	if ( ! is_infinite ( c->neighbor(i)->vertex(c->neighbor(i)->index(c)) )
-	     && coplanar_orientation
-	     ( c->vertex(cw(i))->point(),
-	       c->vertex(ccw(i))->point(),
-	       c->vertex(i)->point(),
-	       c->neighbor(i)->vertex(c->neighbor(i)->index(c))->point()
-	       ) != NEGATIVE ) {
+	if (coplanar_orientation(c->vertex(0)->point(),
+	                         c->vertex(1)->point(),
+	                         c->vertex(2)->point()) != POSITIVE) {
 	  if (verbose)
 	      std::cerr << "badly oriented face "
 		        << c->vertex(0)->point() << ", " 
 		        << c->vertex(1)->point() << ", " 
-		        << c->vertex(2)->point() 
-		        << "with neighbor " << i
-		        << c->neighbor(i)->vertex(0)->point() << ", " 
-		        << c->neighbor(i)->vertex(1)->point() << ", " 
-		        << c->neighbor(i)->vertex(2)->point() << std::endl;
+		        << c->vertex(2)->point() << std::endl;
 	  CGAL_triangulation_assertion(false);
 	  return false;
 	}
-      }
       break;
     }
   case 1:

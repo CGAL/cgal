@@ -278,15 +278,11 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
     // is positively oriented
     Vertex_handle v1 = c->vertex( ccw(i3) ),
                   v2 = c->vertex( cw(i3) );
-    // does not work in dimension 3 :
-    // we need a fourth point to look at orientation with respect
-    // to v1v2
-    Cell_handle n = c->neighbor(i3);
-    Orientation o = coplanar_orientation( v1->point(), 
-			                  v2->point(), 
-			                  n->vertex(n->index(c))->point(), p );
+    CGAL_triangulation_assertion(coplanar_orientation(v1->point(), v2->point(),
+                                 (c->mirror_vertex(i3))->point()) == NEGATIVE);
+    Orientation o = coplanar_orientation(v1->point(), v2->point(), p);
     if ( o != ZERO )
-	return Bounded_side( -o );
+	return Bounded_side( o );
     // case when p collinear with v1v2
     return Bounded_side( power_test( v1->point(), v2->point(), p ) );
   }// dim 2
@@ -313,9 +309,10 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
   // is positively oriented
   Vertex_handle v1 = c->vertex( next_around_edge(i3,i) ),
                 v2 = c->vertex( next_around_edge(i,i3) );
-  Orientation o = coplanar_orientation( v1->point(),
-					v2->point(),
-					c->vertex(i)->point(), p );
+  Orientation o = (Orientation)
+                  (coplanar_orientation( v1->point(), v2->point(),
+					c->vertex(i)->point()) *
+                  coplanar_orientation( v1->point(), v2->point(), p));
   // then the code is duplicated from 2d case
   if ( o != ZERO )
       return Bounded_side( -o );

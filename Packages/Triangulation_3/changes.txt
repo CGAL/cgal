@@ -2,6 +2,8 @@ Version 1.75 (?? July 01)
 - Fix return type of Compare_distance_3 in the HierarchyTraits_3 doc.
 - Remove constructors for vertices in the doc.
 - Fix mirror_vertex() and mirror_index().
+- Replace Coplanar_orientation_3 taking 4 points, by the one taking 3 points.
+- Remove Collinear_3 from the traits.
 
 Version 1.74 (13 July 01)
 - copy_tds() cleanups.

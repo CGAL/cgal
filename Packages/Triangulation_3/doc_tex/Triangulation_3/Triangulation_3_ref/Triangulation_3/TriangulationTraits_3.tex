@@ -63,12 +63,6 @@ which tests whether points \ccc{p} and \ccc{q} are equal.}
 %
 \ccGlue
 %
-\ccNestedType{Collinear_3}{Predicate object. Must provide the operator 
-\ccc{bool operator()(Point p, Point q, Point r)}
-which tests whether points \ccc{p}, \ccc{q} and \ccc{r} are collinear.}
-%
-\ccGlue
-%
 \ccNestedType{Compare_x_3}{Predicate object. Must provide the operator 
 \ccc{Comparison_result operator()(Point p, Point q)}
 which returns \ccc{SMALLER, EQUAL} or \ccc{LARGER}
@@ -99,12 +93,9 @@ and returns COPLANAR if s lies on h.}
 \ccGlue
 %
 \ccNestedType{Coplanar_orientation_3}{Predicate object. Must provide
-the operator
-\ccc{Orientation operator()(Point q, Point r, Point s, Point test)}
-which returns the orientation of the points \ccc{(q, r, test)} in the plane
-defined and oriented by \ccc{(q, r, s)}.
-\ccPrecond{\ccc{q, r, s, test} are coplanar and \ccc{q, r, s} are not
-collinear.}
+the operator \ccc{Orientation operator()(Point p, Point q, Point r)}
+which returns \ccc{COLLINEAR} if the points are collinear.  Otherwise it must
+return a consistent orientation for any three points chosen in a same plane.
 }
 
 \ccHasModels
