@@ -1,24 +1,78 @@
-% to be written by pierre
-
 \label{sec:remeshing}
 
-Few words on remeshing (why it became a key ingredient of mesh
-processing).
+% few words on remeshing (why it became a key ingredient of mesh
+% processing).
+
+The process of replacing an arbitrary mesh by a faithful one with
+improved sampling, regularity and triangle quality is called
+remeshing. Most meshes, be they modeled or acquired by a scanning
+device, can this way be considerably improved in order to ease the
+visualization as well as the processing (see \cite{ss-dgp-01}). CGAL
+has proven successful at easing the combination of several components
+used for remeshing. We now give some details over the components used
+for isotropic~\cite{acdi-isr-03} as well as for anisotropic
+remeshing~\cite{acdld-apr-03}.
 
 \subsection{Isotropic Remeshing}
 
-Building blocks taken from CGAL:
-- Polyhedron (enriched halfedges to store 
-              uv coordinates per corner)
-- 2D constrained Delaunay triangulation
-- fast location in a triangulation (CGAL)
+% isotropic remeshing, what is that ?
 
-Algorithms:
-- Conformal parameterization
-- Error diffusion
-- Spanning tree
-- Lloyd relaxation to build a weighted 
-  centroidal Voronoi diagram
+Isotropic remeshing leads to well-shaped triangles, and thus
+high-quality meshes when the notion of quality is related to the shape
+of the triangles. Such meshes are important for applications where the
+quality of the mesh elements is critical.
+
+% main idea
+
+The main idea of the remeshing technique described in
+\cite{acdi-isr-03} is to cast the problem into the
+one of building a 2D centroidal Voronoi diagram over a set of newly
+sampled points. The key is to first parameterize the original mesh to
+obtain a bijective mapping and minimize the distortion due to the
+flattening process. The sampling and meshing stages are then
+considerably simpler on the planar parameter space (see
+Fig.\ref{fig:isotropic}).
+
+% figure isotropic remeshing
+\begin{figure}
+  \centering
+  \epsfig{file=figs/isotropic.eps, width=\linewidth}
+  \caption{Isotropic remeshing.}
+  \label{fig:isotropic}
+\end{figure}
+
+
+% CGAL components
+
+Two data structures from CGAL have been used to assembly the
+algorithm:
+
+\begin{itemize}
+
+\item 
+The \emph{Polyhedron} has been used to represent the input mesh, after
+having enriched its primitives to store $u,v$ parameter coordinates
+per halfedge in addition to the 3D coordinates per vertex.
+
+\item 
+After initial sampling the \emph{constrained Delaunay triangulation}
+has been used together with Lloyd's clustering algorithm to build a
+weighted centroidal Voronoi diagram over the newly sampled points in
+parameter space. The fast point location in a triangulation provided
+by CGAL has been used to determine the 3D coordinates of the sample
+points.
+
+\end{itemize}
+
+The CGAL kernel is used to template these two data structures as well
+as all algorithms involved in our remeshing technique
+(parameterization, error diffusion for sampling, Lloyd's clustering
+for sample placement and point location), which nicely unifies all
+components of the algorithm and provides us genericity for all
+geometric entities and predications. Notice that the filtered kernel
+provided by CGAL (add ref) provides us with the robustness required
+for complex models by mixing exact and approximate arithmetic in a
+transparent manner for the programmer.
 
 \subsection{Anisotropic Remeshing}
 
