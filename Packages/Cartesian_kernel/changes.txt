@@ -3,6 +3,7 @@ Version 6.31 (? October 2001)
 - Move #include<CGAL/Cartesian/redefine_names_[23].h> to [Simple_]Cartesian.h
   instead of in each Cartesian/*.h file.
 - Clean up advanced kernel support.
+- Use CGAL_TYPENAME_MSVC_NULL.
 
 Version 6.30 (3 October 2001)
 - typedefs cleanup.  Now the only public typedef of kernel classes is R.

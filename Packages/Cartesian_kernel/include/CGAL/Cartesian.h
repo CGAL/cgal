@@ -228,15 +228,15 @@ struct Cartesian
     typedef CGAL::Handle_for<CGAL::Twotuple<FT> >	Vector_handle_2;
     typedef CGAL::Handle_for<CGAL::Twotuple<FT> >	Direction_handle_2;
     typedef CGAL::Handle_for<CGAL::Threetuple<FT> >	Line_handle_2;
-    typedef CGAL::Handle_for<CGAL::Twotuple<typename Kernel_base::Point_2> >
-	                                                Ray_handle_2;
-    typedef CGAL::Handle_for<CGAL::Twotuple<typename Kernel_base::Point_2> >
-	                                                Segment_handle_2;
+    typedef CGAL::Handle_for<CGAL::Twotuple<CGAL_TYPENAME_MSVC_NULL
+	                     Kernel_base::Point_2> >    Ray_handle_2;
+    typedef CGAL::Handle_for<CGAL::Twotuple<CGAL_TYPENAME_MSVC_NULL
+	                     Kernel_base::Point_2> >    Segment_handle_2;
     typedef CGAL::Handle_for<CGAL::Circle_repC2<Self> >	Circle_handle_2;
-    typedef CGAL::Handle_for<CGAL::Threetuple<typename Kernel_base::Point_2> >
-	                                                Triangle_handle_2;
-    typedef CGAL::Handle_for<CGAL::Twotuple<typename Kernel_base::Point_2> >
-	                                                Iso_rectangle_handle_2;
+    typedef CGAL::Handle_for<CGAL::Threetuple<CGAL_TYPENAME_MSVC_NULL
+	                     Kernel_base::Point_2> >    Triangle_handle_2;
+    typedef CGAL::Handle_for<CGAL::Twotuple<CGAL_TYPENAME_MSVC_NULL
+	                     Kernel_base::Point_2> >    Iso_rectangle_handle_2;
     typedef CGAL::Handle                           Aff_transformation_handle_2;
 
     typedef CGAL::Handle_for<CGAL::Threetuple<FT> >	Point_handle_3;
@@ -244,17 +244,17 @@ struct Cartesian
     typedef CGAL::Handle_for<CGAL::Threetuple<FT> >	Direction_handle_3;
     typedef CGAL::Handle_for<CGAL::Line_repC3<Self> >	Line_handle_3;
     typedef CGAL::Handle_for<CGAL::Fourtuple<FT> >	Plane_handle_3;
-    typedef CGAL::Handle_for<CGAL::Twotuple<typename Kernel_base::Point_3> >
-	                                                Ray_handle_3;
-    typedef CGAL::Handle_for<CGAL::Twotuple<typename Kernel_base::Point_3> >
-	                                                Segment_handle_3;
+    typedef CGAL::Handle_for<CGAL::Twotuple<CGAL_TYPENAME_MSVC_NULL
+	                     Kernel_base::Point_3> >    Ray_handle_3;
+    typedef CGAL::Handle_for<CGAL::Twotuple<CGAL_TYPENAME_MSVC_NULL
+	                     Kernel_base::Point_3> >    Segment_handle_3;
     typedef CGAL::Handle_for<CGAL::Sphere_repC3<Self> >	Sphere_handle_3;
-    typedef CGAL::Handle_for<CGAL::Threetuple<typename Kernel_base::Point_3> >
-	                                                Triangle_handle_3;
-    typedef CGAL::Handle_for<CGAL::Fourtuple<typename Kernel_base::Point_3> >
-	                                                Tetrahedron_handle_3;
-    typedef CGAL::Handle_for<CGAL::Twotuple<typename Kernel_base::Point_3> >
-	                                                Iso_cuboid_handle_3;
+    typedef CGAL::Handle_for<CGAL::Threetuple<CGAL_TYPENAME_MSVC_NULL
+	                     Kernel_base::Point_3> >    Triangle_handle_3;
+    typedef CGAL::Handle_for<CGAL::Fourtuple<CGAL_TYPENAME_MSVC_NULL
+	                     Kernel_base::Point_3> >    Tetrahedron_handle_3;
+    typedef CGAL::Handle_for<CGAL::Twotuple<CGAL_TYPENAME_MSVC_NULL
+	                     Kernel_base::Point_3> >    Iso_cuboid_handle_3;
     typedef CGAL::Handle                           Aff_transformation_handle_3;
 
     // TODO: cleanup
