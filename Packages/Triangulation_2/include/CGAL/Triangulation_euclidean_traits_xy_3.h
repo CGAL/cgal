@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGALR_evision: CGAL-2.0-I-12 $
-// release_date  : $CGAL_Date: 1999/04/28 $
+// release       : $CGAL_Revision$
+// release_date  : $CGAL_Date$
 //
 // file          : Triangulation_euclidean_traits_xy_3.h
 // source        : $RCSfile$

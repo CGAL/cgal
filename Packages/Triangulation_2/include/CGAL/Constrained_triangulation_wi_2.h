@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision$
+// release_date  : $CGAL_Date$
 //
 // file          : include/CGAL/Constrained_triangulation_wi_2.h
 // source        : $RCSfile$
