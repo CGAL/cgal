@@ -85,8 +85,8 @@ private:
   void               addToolButton(QToolButton *b);
   int                nr_of_buttons;
 	
-  CGAL::Qt_widget_get_segment<K1>         segmentbut;
-  CGAL::Qt_widget_get_point<K1>           pointbut;
+  CGAL::Qt_widget_get_segment<K2>            segmentbut;
+  CGAL::Qt_widget_get_point<K2>              pointbut;
   CGAL::Qt_widget_get_polygon<Cgal_Polygon>  polygonbut;
 };//end class
 
