@@ -1,3 +1,6 @@
+24 July 2004 Sylvain Pion
+- create_testresult_page : recognize "pion".
+
 20 July 2004 Sylvain Pion
 - create_testresult_page : Identify "cgal" person.
 

@@ -631,6 +631,9 @@ sub email_address_in_html_format($)
 	if ($responsible eq 'baesken') {
 	    return '<A HREF="mailto:baesken@infsn2.informatik.uni-halle.de">'.
 		   "Matthias Baesken</A>$qualification";
+	} elsif ($responsible eq 'pion') {
+	    return '<A HREF="mailto:Sylvain.Pion@sophia.inria.fr">'.
+		   "Sylvain Pion</A>$qualification";
 	} elsif ($responsible eq 'spion') {
 	    return '<A HREF="mailto:Sylvain.Pion@sophia.inria.fr">'.
 		   "Sylvain Pion</A>$qualification";
