@@ -85,6 +85,7 @@ Saarbruecken@)
 
 CGAL_BEGIN_NAMESPACE
 
+
 #ifdef CGAL_HOMOGENEOUS_H
 template <class RT>
 inline RT wmult(Homogeneous<RT>*, const RT &a, const RT & w)
@@ -186,20 +187,25 @@ wdot(const Vector_2<R> &u,
     return  (u.hx()*v.hx() + u.hy()*v.hy());
 }
 
+
 #ifdef CGAL_HOMOGENEOUS_H
+
 template <class RT>
-RT wdot(const Point_2< Homogeneous<RT> > &p,
+inline
+RT wdot_impl(const Homogeneous<RT>*,const Point_2< Homogeneous<RT> > &p,
     const Point_2<Homogeneous<RT> > &q,
     const Point_2<Homogeneous<RT> > &r)
 {
     return  (q.hw()*p.hx() - p.hw()*q.hx())*(q.hw()*r.hx() - r.hw()*q.hx()) +
             (q.hw()*p.hy() - p.hw()*q.hy())*(q.hw()*r.hy() - r.hw()*q.hy());
 }
+
 #endif // CGAL_HOMOGENEOUS_H
 
 #ifdef CGAL_CARTESIAN_H
 template <class FT>
-FT wdot(const Point_2< Cartesian<FT> > &p,
+inline
+FT wdot_impl(const Cartesian<FT> *,const Point_2< Cartesian<FT> > &p,
     const Point_2< Cartesian<FT> > &q,
     const Point_2< Cartesian<FT> > &r)
 {
@@ -207,6 +213,15 @@ FT wdot(const Point_2< Cartesian<FT> > &p,
             (p.hy() - q.hy())*(r.hy() - q.hy());
 }
 #endif // CGAL_CARTESIAN_H
+
+
+template <class R>
+typename R::RT wdot(const Point_2< R > &p,
+    const Point_2< R > &q,
+    const Point_2< R > &r)
+{
+    return  wdot_impl(static_cast<R *>(0),p,q,r);
+}
 @}
 
 
@@ -240,7 +255,8 @@ wcross(const Vector_2<R> &u,
 
 #ifdef CGAL_HOMOGENEOUS_H
 template <class RT>
-RT wcross(const Point_2< Homogeneous<RT> > &p,
+inline
+RT wcross_impl(const Homogeneous<RT>*,const Point_2< Homogeneous<RT> > &p,
     const Point_2< Homogeneous<RT> > &q,
     const Point_2< Homogeneous<RT> > &r)
 {
@@ -252,13 +268,23 @@ RT wcross(const Point_2< Homogeneous<RT> > &p,
 
 #ifdef CGAL_CARTESIAN_H
 template <class FT>
-FT wcross(const Point_2< Cartesian<FT> > &p,
+inline
+FT wcross_impl(const Cartesian<FT> *, const Point_2< Cartesian<FT> > &p,
     const Point_2< Cartesian<FT> > &q,
     const Point_2< Cartesian<FT> > &r)
 {
     return (q.x()-p.x())*(r.y()-q.y()) - (q.y()-p.y())*(r.x()-q.x());
 }
 #endif // CGAL_CARTESIAN_H
+
+template <class R>
+typename R::RT wcross(const Point_2< R > &p,
+    const Point_2< R > &q,
+    const Point_2< R > &r)
+{
+   return wcross_impl(static_cast<R*>(0), p, q, r);
+}
+
 @}
 
 @C@<Routines that characterise angles@>
