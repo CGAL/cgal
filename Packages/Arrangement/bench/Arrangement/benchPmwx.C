@@ -68,8 +68,8 @@ typedef CGAL::Cartesian<WNT>                            Kernel;
 #define KERNEL_TYPE "Cartesian"
 #endif
 
-#if defined (USE_INSERT_TIGHT)
-#define INSERT_TYPE "Tight"
+#if defined (USE_INSERT_OLD)
+#define INSERT_TYPE "Old"
 #else
 #define INSERT_TYPE ""
 #endif
@@ -247,8 +247,8 @@ public:
     }
     Strategy strategy;
     Pmwx pm(&strategy);
-#if defined(USE_INSERT_TIGHT)
-    pm.insert_tight(m_curveList.begin(), m_curveList.end());
+#if defined(USE_INSERT_OLD)
+    pm.insert_old(m_curveList.begin(), m_curveList.end());
 #else
     pm.insert(m_curveList.begin(), m_curveList.end());
 #endif
@@ -278,8 +278,8 @@ public:
   {
     Strategy strategy;
     Pmwx pm(&strategy);
-#if defined(USE_INSERT_TIGHT)
-    pm.insert_tight(m_curveList.begin(), m_curveList.end());
+#if defined(USE_INSERT_OLD)
+    pm.insert_old(m_curveList.begin(), m_curveList.end());
 #else
     pm.insert(m_curveList.begin(), m_curveList.end());
 #endif

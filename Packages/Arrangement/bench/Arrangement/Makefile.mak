@@ -76,10 +76,10 @@ TARGET0 := $(TARGET0)LedaSegment
 LOBJDIR :=$(LOBJDIR)_leda_segment
 endif
 
-ifeq ($(USE_INSERT_TIGHT), 1)
-LCPPDEFS+= -DUSE_INSERT_TIGHT
-TARGET0 :=$(TARGET0)Tight
-LOBJDIR :=$(LOBJDIR)_tight
+ifeq ($(USE_INSERT_OLD), 1)
+LCPPDEFS+= -DUSE_INSERT_OLD
+TARGET0 :=$(TARGET0)Old
+LOBJDIR :=$(LOBJDIR)_old
 endif
 
 TARGET0 := $(TARGET0)$(EXEFILESUFFIX)
@@ -121,8 +121,8 @@ double:
 	$(MAKEF) "USE_DOUBLE=1"
 
 # 
-insert_tight:
-	$(MAKEF) "USE_INSERT_TIGHT=1"
+insert_old:
+	$(MAKEF) "USE_INSERT_OLD=1"
 
 my_kernel:
 	$(MAKEF) "USE_MY_KERNEL=1"
@@ -201,8 +201,8 @@ double_inst:
 	$(MAKEF) "USE_DOUBLE=1" install
 
 # 
-insert_tight_inst:
-	$(MAKEF) "USE_INSERT_TIGHT=1" install
+insert_old_inst:
+	$(MAKEF) "USE_INSERT_OLD=1" install
 
 my_kernel_inst:
 	$(MAKEF) "USE_MY_KERNEL=1" install
