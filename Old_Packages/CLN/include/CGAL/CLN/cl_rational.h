@@ -36,11 +36,15 @@ inline double	to_double	(const cl_RA &I) { return cl_double_approx(I); }
 
 // Specialized utilities.
 
+namespace NTS {
+
 inline bool is_negative		(const cl_RA &I) { return minusp(I); } 
 inline bool is_positive		(const cl_RA &I) { return plusp(I); }
 inline bool is_zero		(const cl_RA &I) { return zerop(I); }
 inline Comparison_result compare (const cl_RA &I, const cl_RA &J)
 { return Comparison_result(cl_compare(I,J)); }
+
+} // namespace NTS
 
 CGAL_END_NAMESPACE
 

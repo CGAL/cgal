@@ -3,7 +3,8 @@ Changes done to the CLN package.
 Version 1.8 on ?? ?? 2000.
 - New maintainer file.
 - Removed old workaround for operator>>(Quotient<cl_I>).
-  So CLN version >= 1.0.2 is required now.
+  CLN version >= 1.0.2 is required now.
+- Namespace NTS introduction.
 
 Version 1.7 on 27 October 1999.
 - Added IO include files by default.
