@@ -43,6 +43,8 @@ class Segment_d : public Handle_for< Pair_d<p_R> > {
   typedef Handle_for<Pair> Base;
   typedef Segment_d<p_R>   Self;
 
+  using Base::ptr;
+
 /*{\Mdefinition 
 An instance $s$ of the data type |Segment_d| is a directed straight
 line segment in $d$-dimensional Euclidian space connecting two points

@@ -43,6 +43,8 @@ class Line_d : public Handle_for< Pair_d<p_R> > {
   typedef Handle_for<Pair> Base;
   typedef Line_d<p_R>      Self;
 
+  using Base::ptr;
+
 /*{\Mdefinition 
 An instance of data type |Line_d| is an oriented line in
 $d$-dimensional Euclidian space.}*/

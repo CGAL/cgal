@@ -664,12 +664,10 @@ template <class R>
 bool
 Segment_d_Hyperplane_d_pair<R>::intersection(Segment_d& s)
 { if (!_known) intersection_type();
-  if (_result != LINE) return false;
+  if (_result != SEGMENT) return false;
   s = _s; return true;
 }
 
-
-
 CGAL_END_NAMESPACE
-#endif //CGAL_INTERSECTION_OBJECTS_D_H
 
+#endif //CGAL_INTERSECTION_OBJECTS_D_H

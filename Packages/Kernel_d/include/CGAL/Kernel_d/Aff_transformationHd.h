@@ -64,6 +64,8 @@ class Aff_transformationHd :
   typedef Handle_for<Rep> Base;
   typedef Aff_transformationHd<_RT,_LA> Self;
 
+  using Base::ptr;
+
 /*{\Mdefinition 
 An instance of the data type |\Mname| is an affine transformation of
 $d$-dimensional space. It is specified by a square matrix

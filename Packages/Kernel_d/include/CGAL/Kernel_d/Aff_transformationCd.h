@@ -55,6 +55,8 @@ class Aff_transformationCd :
   typedef Handle_for<Rep> Base;
   typedef Aff_transformationCd<_FT,_LA> Self;
 
+  using Base::ptr;
+
 public: 
 typedef _FT RT;
 typedef _FT FT;

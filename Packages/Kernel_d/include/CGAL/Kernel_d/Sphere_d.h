@@ -83,6 +83,9 @@ typedef Sphere_d_rep<R_>  Rep;
 typedef Handle_for<Rep>   Base;
 typedef Sphere_d<R_>      Self;
 typedef typename R_::Point_d Point_d;
+
+using Base::ptr;
+
 Sphere_d(const Base& b) : Base(b) {}
 
 typedef R_ R;

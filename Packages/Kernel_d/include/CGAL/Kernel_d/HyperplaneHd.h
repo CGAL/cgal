@@ -53,6 +53,8 @@ class HyperplaneHd : public Handle_for< Tuple_d<_RT,_LA> > {
   typedef Handle_for<Tuple> Base;
   typedef HyperplaneHd<_RT,_LA> Self;
 
+  using Base::ptr;
+
 /*{\Mdefinition An instance of data type |HyperplaneHd| is an
 oriented hyperplane in $d$ - dimensional space. A hyperplane $h$ is
 represented by coefficients $(c_0,c_1,\ldots,c_d)$ of type |RT|. At

@@ -44,6 +44,8 @@ class PointCd : public Handle_for< Tuple_d<_FT,_LA> > {
   typedef Handle_for<Tuple> Base;
   typedef PointCd<_FT,_LA> Self;
 
+  using Base::ptr;
+
 typename _LA::Vector& vector_rep() { return ptr()->v; }
 const typename _LA::Vector& vector_rep() const { return ptr()->v; }
 _FT& entry(int i) { return ptr()->v[i]; }

@@ -43,6 +43,8 @@ class Ray_d : public Handle_for< Pair_d<p_R> > {
   typedef Handle_for<Pair>  Base;
   typedef Ray_d<p_R>        Self;
 
+  using Base::ptr;
+
 /*{\Mdefinition
 An instance of data type |Ray_d| is a ray in $d$-dimensional
 Euclidian space. It starts in a point called the source of |\Mvar| and

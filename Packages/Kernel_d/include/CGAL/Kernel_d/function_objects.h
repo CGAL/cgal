@@ -30,6 +30,7 @@
 #include <CGAL/functional_base.h>
 
 CGAL_BEGIN_NAMESPACE
+
 namespace CGALi {
 
 template <class ToBeConstructed>
@@ -148,7 +149,7 @@ class Intersect
     template <class T1, class T2>
     CGAL::Object
     operator()(const T1& t1, const T2& t2) const
-    { return CGAL::intersection( t1, t2); }
+    { return intersection( t1, t2); }
 };
 
 } // end namespace CGALi

@@ -41,6 +41,8 @@ class HyperplaneCd : public Handle_for< Tuple_d<_FT,_LA> > {
   typedef Handle_for<Tuple> Base;
   typedef HyperplaneCd<_FT,_LA> Self;
 
+  using Base::ptr;
+
 const typename _LA::Vector& vector_rep() const { return ptr()->v; }
 _FT& entry(int i) { return ptr()->v[i]; }
 const _FT& entry(int i) const { return ptr()->v[i]; }

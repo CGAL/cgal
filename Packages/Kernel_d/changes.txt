@@ -1,5 +1,5 @@
-Kernel_d Package: Release changes
-----------------------------------------------------------------------
+22 June 2004 Sylvain Pion
+- Add some missing "using base::member;" and other fixes for g++ 3.4.
 
 27 Apr 2004 Sylvain Pion
 - Fix PGCC warning.

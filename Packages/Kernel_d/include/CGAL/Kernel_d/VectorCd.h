@@ -43,6 +43,9 @@ class VectorCd : public Handle_for< Tuple_d<_FT,_LA> > {
   typedef Handle_for<Tuple> Base;
   typedef VectorCd<_FT,_LA> Self;
 
+  using Base::ptr;
+  using Base::copy_on_write;
+
 typename _LA::Vector& vector_rep() { return ptr()->v; }
 const typename _LA::Vector& vector_rep() const { return ptr()->v; }
 _FT& entry(int i) { return ptr()->v[i]; }

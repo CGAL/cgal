@@ -54,6 +54,8 @@ class DirectionHd : public Handle_for< Tuple_d<_RT,_LA> > {
   typedef Handle_for<Tuple> Base;
   typedef DirectionHd<_RT,_LA> Self;
 
+  using Base::ptr;
+
 /*{\Mdefinition 
 A |DirectionHd| is a vector in the $d$-dimensional vector space
 where we forget about its length. We represent directions in

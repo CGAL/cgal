@@ -54,6 +54,9 @@ class VectorHd : public Handle_for< Tuple_d<_RT,_LA> > {
   typedef Handle_for<Tuple> Base;
   typedef VectorHd<_RT,_LA> Self;
 
+  using Base::ptr;
+  using Base::copy_on_write;
+
 /*{\Mdefinition
 An instance of data type |\Mname| is a vector of Euclidean space in
 dimension $d$. A vector $r = (r_0,\ldots,r_{ d - 1})$ can be represented

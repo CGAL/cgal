@@ -263,6 +263,8 @@ namespace CGAL {
     typedef Handle_for<Rep>                  Base;
     typedef Iso_box_d<Kernel>                Self;
 
+    using Base::ptr;
+
     typedef typename Kernel::RT       RT;
     typedef typename Kernel::FT       FT;
     typedef typename Kernel::Point_d  Point_d;
@@ -278,7 +280,8 @@ namespace CGAL {
 
     RT volume_nominator() const
     {
-      typedef typename CIRT::Iterator<Point_d,std::minus<RT> >::type Iter;
+      typedef typename CIRT::template Iterator<Point_d,std::minus<RT> >::type
+	      Iter;
       Iter b(ptr()->upper, ptr()->lower, Begin());
       Iter e(ptr()->upper, ptr()->lower, Cartesian_end());
       return std::accumulate(b, e, RT(1), std::multiplies<RT>());
@@ -320,7 +323,8 @@ public:
     Bounded_side bounded_side(const Point_d& p) const
     { 
       CGAL_precondition(p.dimension() == dimension());
-      typedef typename CIRT::Iterator<Point_d,Compare<RT> >::type Iter;
+      typedef typename CIRT::template Iterator<Point_d,Compare<RT> >::type
+	      Iter;
       
       Iter il(p, ptr()->lower, Begin());
       Iter ilend(p, ptr()->lower, Cartesian_end());
@@ -368,7 +372,8 @@ public:
     
     bool is_degenerate() const
     {
-      typedef typename CIRT::Iterator<Point_d,std::equal_to<RT> >::type Iter;
+      typedef typename CIRT::
+	      template Iterator<Point_d,std::equal_to<RT> >::type Iter;
       // omit homogenizing coordinates
       Iter e(ptr()->lower, ptr()->upper, Cartesian_end());
       return 

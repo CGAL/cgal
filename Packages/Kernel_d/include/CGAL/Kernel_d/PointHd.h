@@ -56,6 +56,8 @@ class PointHd : public Handle_for< Tuple_d<_RT,_LA> > {
   typedef Handle_for<Tuple> Base;
   typedef PointHd<_RT,_LA> Self;
 
+  using Base::ptr;
+
 /*{\Mdefinition 
 An instance of data type |\Mname| is a point of Euclidean space in
 dimension $d$. A point $p = (p_0,\ldots,p_{ d - 1 })$ in
