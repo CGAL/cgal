@@ -1,6 +1,9 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
 
+3.38 (9 Jan 2004)
+- Resubmit
+
 3.37 (8 Jan 2004)
 - Moved Handle concept documentation from Triangulation_2.
 
