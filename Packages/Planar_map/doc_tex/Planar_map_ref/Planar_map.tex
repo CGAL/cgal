@@ -198,9 +198,11 @@ The \ccc{Pm_dynamic_open_bounding_box} strategy is the one used by default by th
 \ccHeading{Reading Planar map}
 
 \ccMethod{bool read (istream &in);}
-{reading ccRefName\ from a given input stream.
-   The input stream should support the extractor operator (\ccc{>>}) for the \ccStyle{Point} 
-   and \ccStyle{X_curve} types of \ccc{Planar_map}. } 
+         {reading ccRefName\ from a given input stream. The input
+         stream should support the extractor operator (\ccc{>>}) for
+         the \ccStyle{Point} and \ccStyle{X_curve} types of
+         \ccc{Planar_map}. Note that the verbose format is not meant
+         to be read.}
 
 \ccStyle{template <class Scanner>}
 \ccMethod{bool read (istream &in, Scanner& scanner);}
