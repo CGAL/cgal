@@ -615,7 +615,7 @@ guess_os()
     else
 	$1 "WARNING: Could not determine architecture."
     fi
-    SYST="${_tmp}`${_uname} -s | ${_sed} 's/_//g'`-`${_uname} -r | ${_sed} 's/[(\/]/-/g' | ${_sed} 's/)//g' | ${_awk} '{print $1}'`"
+    SYST="${_tmp}`${_uname} -s | ${_sed} 's/_//g'`-`${_uname} -r | ${_sed} 's/(.*)//g' | ${_awk} '{print $1}'`"
     $1 "OS is \"${SYST}\"." 
 }
 
