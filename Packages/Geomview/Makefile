@@ -58,3 +58,4 @@ Doc_ps :
 
 clean:
 	$(MAKE) -C test/Geomview clean
+	$(MAKE) -C demo/Geomview clean
