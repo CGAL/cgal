@@ -1,3 +1,7 @@
+1.2.49 -08-10-2002
+-------------------
+	The qmainwindow.h header file was missing from some demo files. This fix it's only for Windows cause Linux didn't complain.
+
 1.2.48 - 25-10-2002
 -------------------
 	Removed precision problem in output operator for segments. The intersection between iso_rectangle and the segment is done in simple_cartesian<double>
