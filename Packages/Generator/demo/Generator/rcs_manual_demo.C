@@ -29,4 +29,6 @@ int main() {
             Point_generator( 0.5));
 
   W.read_mouse();      // wait for mouse-click:
+
+  return 0;
 }
