@@ -1,6 +1,3 @@
-# Created by the script create_makefile
-# This is the makefile for compiling a CGAL application.
-
 #---------------------------------------------------------------------#
 #                    include platform specific settings
 #---------------------------------------------------------------------#
@@ -39,24 +36,23 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                test_const_del_triangulation_2 \
-                test_constrained_triangulation_2 \
+                test_const_del_triangulation_2$(EXE_EXT) \
+                test_constrained_triangulation_2$(EXE_EXT) 
 
 test_const_del_triangulation_2$(EXE_EXT): test_const_del_triangulation_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_const_del_triangulation_2 test_const_del_triangulation_2$(OBJ_EXT) $(LDFLAGS)
+        $(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_const_del_triangulation_2 test_const_del_triangulation_2$(OBJ_EXT) $(LDFLAGS)
 
 test_constrained_triangulation_2$(EXE_EXT): test_constrained_triangulation_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_constrained_triangulation_2 test_constrained_triangulation_2$(OBJ_EXT) $(LDFLAGS)
+        $(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_constrained_triangulation_2 test_constrained_triangulation_2$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    test_const_del_triangulation_2.clean \
                    test_constrained_triangulation_2.clean 
-
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
 .C$(OBJ_EXT):
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+     $(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
