@@ -109,7 +109,7 @@ TriangleH3<R>::operator[](int i) const
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-typename R::FT
+typename TriangleH3<R>::FT
 TriangleH3<R>::squared_area() const
 { 
    VectorH3<R> v1 = vertex(1) - vertex(0);

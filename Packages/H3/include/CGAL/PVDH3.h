@@ -77,7 +77,7 @@ operator-   ( const VectorH3<R> &, const VectorH3<R> & );
 
 template <class R>
 CGAL_KERNEL_INLINE
-typename R::FT
+typename VectorH3<R>::FT
 operator*   ( const VectorH3<R> &, const VectorH3<R> & );
 
 template <class R>
@@ -790,7 +790,7 @@ operator-(const VectorH3<R>& u, const VectorH3<R>& v)
 
 template <class R>
 CGAL_KERNEL_INLINE
-typename R::FT
+typename VectorH3<R>::FT
 operator*(const VectorH3<R>& u, const VectorH3<R>& v)
 {
   typedef typename R::RT RT;

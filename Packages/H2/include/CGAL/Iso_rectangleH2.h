@@ -162,31 +162,31 @@ Iso_rectangleH2<R>::max() const
 
 template < class R >
 inline
-typename R::FT
+typename Iso_rectangleH2<R>::FT
 Iso_rectangleH2<R>::xmin() const
 { return  FT( min().hx() ) / FT( min().hw() ); }
 
 template < class R >
 inline
-typename R::FT
+typename Iso_rectangleH2<R>::FT
 Iso_rectangleH2<R>::ymin() const
 { return  FT( min().hy() ) / FT( min().hw() ); }
 
 template < class R >
 inline
-typename R::FT
+typename Iso_rectangleH2<R>::FT
 Iso_rectangleH2<R>::xmax() const
 { return  FT( max().hx() ) / FT( max().hw() ); }
 
 template < class R >
 inline
-typename R::FT
+typename Iso_rectangleH2<R>::FT
 Iso_rectangleH2<R>::ymax() const
 { return  FT( max().hy() ) / FT( max().hw() ); }
 
 template < class R >
 inline
-typename R::FT
+typename Iso_rectangleH2<R>::FT
 Iso_rectangleH2<R>::min_coord(int i) const
 { 
    CGAL_kernel_precondition ( i == 0 || i == 1 );
@@ -198,7 +198,7 @@ Iso_rectangleH2<R>::min_coord(int i) const
 
 template < class R >
 inline
-typename R::FT
+typename Iso_rectangleH2<R>::FT
 Iso_rectangleH2<R>::max_coord(int i) const
 { 
    CGAL_kernel_precondition ( i == 0 || i == 1 );
@@ -210,7 +210,7 @@ Iso_rectangleH2<R>::max_coord(int i) const
 
 template < class R >
 inline
-typename R::FT
+typename Iso_rectangleH2<R>::FT
 Iso_rectangleH2<R>::area() const
 { return  (xmax() - xmin()) * (ymax() - ymin()); }
 
