@@ -30,6 +30,57 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template< class RandomAccessIter1, class RandomAccessIter2,
+          class Callback >
+void box_intersection_all_pairs_d( 
+                RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
+                RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
+                Callback& callback,
+                Box_intersection_d::Topology
+                         topology = Box_intersection_d::CLOSED )
+{
+    typedef typename std::iterator_traits<RandomAccessIter1>::value_type
+        Box_type;
+    typedef Box_intersection_d::Box_traits_d< Box_type >
+            Box_traits;
+  
+    box_intersection_all_pairs_custom_d( p_begin, p_end, i_begin, i_end, 
+                                         callback, Box_traits(), topology );   
+}
+
+template< class RandomAccessIter1, class RandomAccessIter2,
+          class Callback, class BoxTraits >
+void box_intersection_all_pairs_custom_d( 
+                RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
+                RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
+                Callback& callback, BoxTraits traits,
+                Box_intersection_d::Topology
+                         topology = Box_intersection_d::CLOSED )
+{
+    if (topology == Box_intersection_d::CLOSED) {
+        typedef Box_intersection_d::Box_predicate_traits_d< BoxTraits, true >
+                Traits;
+        box_intersection_all_pairs_custom_predicates_d(
+                   p_begin, p_end, i_begin, i_end, callback, Traits() );
+    } else {
+        typedef Box_intersection_d::Box_predicate_traits_d< BoxTraits, false >
+                Traits;
+        box_intersection_all_pairs_custom_predicates_d(
+                   p_begin, p_end, i_begin, i_end, callback, Traits() );
+    }
+}
+
+
+template< class RandomAccessIter1, class RandomAccessIter2,
+          class Callback, class BoxPredicateTraits >
+void box_intersection_all_pairs_custom_predicates_d( 
+                RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
+                RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
+                Callback& callback, BoxPredicateTraits traits )
+{
+    Box_intersection_d::all_pairs( p_begin, p_end, i_begin, i_end, 
+                                   callback, traits );   
+}
 
 template< class RandomAccessIter, class Callback >
 void box_intersection_d(RandomAccessIter p_begin, RandomAccessIter p_end,

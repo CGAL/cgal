@@ -44,8 +44,9 @@ template< class RandomAccessIter1, class RandomAccessIter2,
           class Callback, class Traits >
 void all_pairs( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                 RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
-                Callback& callback, Traits traits, std::size_t last_dim )
+                Callback& callback, Traits traits )
 {
+    const std::size_t last_dim = Traits::get_dim() - 1;
     for( RandomAccessIter1 p = p_begin; p != p_end; ++p ) {
         for( RandomAccessIter2 i = i_begin; i != i_end; ++i ) {
             if (Traits::get_id(*p) >= Traits::get_id(*i) )

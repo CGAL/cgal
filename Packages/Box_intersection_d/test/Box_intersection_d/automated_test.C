@@ -34,32 +34,43 @@ bool test_failed = false;
 
 template< class NT, unsigned int DIM, bool CLOSED >
 struct _test {
-    typedef Util< NT, DIM, CLOSED > Util;
+    typedef Util< NT, DIM, CLOSED > Uti1;
 
 
 void
 operator()( const char* filename1, const char* filename2 )
 {
-    typename Util::Box_container boxes1, boxes2;
-    typename Util::Result_container result_all_pairs, result_tree;
+    typename Uti1::Box_container boxes1, boxes2;
+    typename Uti1::Result_container result_all_pairs, result_tree;
     FILE *infile1, *infile2;
     infile1 = fopen( filename1, "r");
     infile2 = fopen( filename2, "r");
 
-    Util::readBoxesFromFile( infile1, boxes1 );
-    Util::readBoxesFromFile( infile2, boxes2 );
+    Uti1::readBoxesFromFile( infile1, boxes1 );
+    Uti1::readBoxesFromFile( infile2, boxes2 );
 
     std::cout << std::endl;
-    typename Util::Storage_callback<>
+    typename Uti1::Storage_callback<>
         callback1( result_all_pairs ),
         callback2( result_tree );
 
-    std::cout << "all pairs ...... " << std::flush;
+    // invoke each interface routine at least once, to check if it still
+    // compiles
+    CGAL::box_intersection_all_pairs_d( 
+                boxes1.begin(), boxes1.end(),
+                boxes2.begin(), boxes2.end(),
+                callback1, 
+                CLOSED ? 
+                   CGAL::Box_intersection_d::CLOSED : 
+                   CGAL::Box_intersection_d::HALF_OPEN );
+    callback1.counter = 0;   
+    std::cout << "all pairs ......... " << std::flush;
     CGAL::Timer timer;
     timer.start();
-    CGAL::Box_intersection_d::all_pairs( boxes1.begin(), boxes1.end(),
-                                         boxes2.begin(), boxes2.end(),
-                                         callback1, Util::Traits(), 2 );
+    CGAL::box_intersection_all_pairs_custom_predicates_d( 
+                boxes1.begin(), boxes1.end(),
+                boxes2.begin(), boxes2.end(),
+                callback1, Uti1::Traits() );
     timer.stop();
     std::cout << "got " << callback1.counter << " intersections in "
               << timer.time() << " seconds." << std::endl;
@@ -70,32 +81,32 @@ operator()( const char* filename1, const char* filename2 )
     timer.start();
     CGAL::Box_intersection_d::one_way_scan( boxes1.begin(), boxes1.end(),
                                             boxes2.begin(), boxes2.end(),
-                                            callback2, Util::Traits(), 2 );
+                                            callback2, Uti1::Traits(), 2 );
     CGAL::Box_intersection_d::one_way_scan( boxes2.begin(), boxes2.end(),
                                             boxes1.begin(), boxes1.end(),
-                                            callback2, Util::Traits(), 2 );
+                                            callback2, Uti1::Traits(), 2 );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
               << timer.time() << " seconds." << std::endl;
     callback2.counter = 0;
     result_tree.clear();
 
-    std::cout << "segment tree ... " << std::flush;
+    std::cout << "segment tree ...... " << std::flush;
     timer.reset();
     timer.start();
     const unsigned int n = boxes1.size();
     const unsigned int cutoff = n < 2000 ? 6 : n / 100;
     CGAL::box_intersection_custom_predicates_d( boxes1.begin(), boxes1.end(),
                                                 boxes2.begin(), boxes2.end(),
-                                                callback2, Util::Traits(), cutoff );
+                                                callback2, Uti1::Traits(), cutoff );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
               << timer.time() << " seconds." << std::endl;
 
     if( callback1.counter != callback2.counter ) {
-        unsigned int missing    = Util::countMissingItems( result_all_pairs,
+        unsigned int missing    = Uti1::countMissingItems( result_all_pairs,
                                                      result_tree );
-        unsigned int duplicates = Util::countDuplicates( result_tree );
+        unsigned int duplicates = Uti1::countDuplicates( result_tree );
         std::cout << "!! failed !! " << missing  << " missing and "
              << duplicates << " duplicate intersections in tree result."
              << std::endl;
@@ -110,12 +121,14 @@ operator()( const char* filename1, const char* filename2 )
 }; // end class test
 
 int main( int argc, char ** argv ) {
-    _test<int,3,true> test;
-    for( unsigned int n = 1; n <= 6; ++n ) {
+    _test<int,3,true> test1;
+    _test<int,3,false> test2;
+     for( unsigned int n = 1; n <= 6; ++n ) {
         std::stringstream file1, file2;
         file1 << "data/test" << n << "_set1.box" << std::ends;
         file2 << "data/test" << n << "_set2.box" << std::ends;
-        test( file1.str().c_str(), file2.str().c_str() );
+        test1( file1.str().c_str(), file2.str().c_str() );
+        test2( file1.str().c_str(), file2.str().c_str() );
     }
     if ( test_failed)
         return 1;

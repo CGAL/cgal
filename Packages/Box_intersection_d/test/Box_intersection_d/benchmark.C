@@ -33,21 +33,21 @@ static unsigned int failed = 0;
 
 template< class NT, unsigned int DIM, bool CLOSED >
 struct _test {
-    typedef Util< NT, DIM, CLOSED > Util;
+    typedef Util< NT, DIM, CLOSED > Uti1;
 
 
 
 static void
 test_n( unsigned int n, std::ostream& outfile )
 {
-    typename Util::Box_container boxes1, boxes2;
+    typename Uti1::Box_container boxes1, boxes2;
     //Result_container result_allpairs, result_scanner, result_tree;
     std::cout << "generating random box sets with size "
               << n << " ... " << std::flush;
-    Util::fill_boxes( n, boxes1 );
-    Util::fill_boxes( n, boxes2 );
+    Uti1::fill_boxes( n, boxes1 );
+    Uti1::fill_boxes( n, boxes2 );
     std::cout << std::endl;
-    typename Util::Counter_callback callback1, callback2;
+    typename Uti1::Counter_callback callback1, callback2;
     CGAL::Timer timer, timer_scan;
     double time, time_scan;
     unsigned int problemsize = boxes1.size() + boxes2.size();
@@ -76,11 +76,11 @@ test_n( unsigned int n, std::ostream& outfile )
     for( unsigned int i = repetitions; i; --i ) {
         CGAL::Box_intersection_d::one_way_scan( boxes1.begin(), boxes1.end(),
                                                 boxes2.begin(), boxes2.end(),
-                                                callback1, Util::Traits(),
+                                                callback1, Uti1::Traits(),
                                                 DIM - 1 );
         CGAL::Box_intersection_d::one_way_scan( boxes2.begin(), boxes2.end(),
                                                 boxes1.begin(), boxes1.end(),
-                                                callback1, Util::Traits(),
+                                                callback1, Uti1::Traits(),
                                                 DIM - 1 );
     }
     timer_scan.stop();

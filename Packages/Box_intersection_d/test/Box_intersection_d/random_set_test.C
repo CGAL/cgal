@@ -33,36 +33,36 @@ static unsigned int failed = 0;
 
 template< class NT, std::size_t DIM, bool CLOSED >
 struct _test {
-typedef Util< NT, DIM, CLOSED > Util;
+typedef Util< NT, DIM, CLOSED > Uti1;
 
 static void
 test_n( unsigned int n,
         CGAL::Box_intersection_d::Setting
                              setting = CGAL::Box_intersection_d::BIPARTITE )
 {
-    typename Util::Box_container boxes1, boxes2;
+    typename Uti1::Box_container boxes1, boxes2;
     const unsigned int allpairs_max = 5000;
     //Result_container result_allpairs, result_scanner, result_tree;
     std::cout << "generating random box sets with size " << n
               << " ... " << std::flush;
-    Util::fill_boxes( n, boxes1 );
+    Uti1::fill_boxes( n, boxes1 );
     bool bipartite = setting == CGAL::Box_intersection_d::BIPARTITE;
 
     if( bipartite )
-        Util::fill_boxes( n, boxes2 );
+        Uti1::fill_boxes( n, boxes2 );
     else
         boxes2 = boxes1;
     std::cout << std::endl;
-    typename Util::Counter_callback callback0, callback1, callback2;
+    typename Uti1::Counter_callback callback0, callback1, callback2;
     CGAL::Timer timer;
 
     if( n < allpairs_max ) {
         std::cout << "all pairs ... " << std::flush;
         timer.start();
-        CGAL::Box_intersection_d::all_pairs( boxes1.begin(), boxes1.end(),
-                                             boxes2.begin(), boxes2.end(),
-                                             callback0, Util::Traits(),
-                                             DIM - 1 );
+        CGAL::box_intersection_all_pairs_custom_predicates_d( 
+                        boxes1.begin(), boxes1.end(),
+                        boxes2.begin(), boxes2.end(),
+                        callback0, Uti1::Traits() );
         timer.stop();
         std::cout << "got " << callback0.counter << " intersections in "
                   << timer.time() << " seconds."
@@ -73,12 +73,12 @@ test_n( unsigned int n,
     timer.start();
     CGAL::Box_intersection_d::one_way_scan( boxes1.begin(), boxes1.end(),
                                             boxes2.begin(), boxes2.end(),
-                                            callback1, Util::Traits(),
+                                            callback1, Uti1::Traits(),
                                             DIM - 1 );
     if( bipartite )
         CGAL::Box_intersection_d::one_way_scan( boxes2.begin(), boxes2.end(),
                                                 boxes1.begin(), boxes1.end(),
-                                                callback1, Util::Traits(),
+                                                callback1, Uti1::Traits(),
                                                 DIM - 1);
     timer.stop();
     std::cout << "got " << callback1.counter << " intersections in "
@@ -91,7 +91,7 @@ test_n( unsigned int n,
     unsigned int cutoff = n < 200 ? 6 : n < 2000 ? 20 : n / 50;
     CGAL::box_intersection_custom_predicates_d( boxes1.begin(), boxes1.end(),
                                       boxes2.begin(), boxes2.end(),
-                                      callback2, Util::Traits(),
+                                      callback2, Uti1::Traits(),
                                       cutoff, setting );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
