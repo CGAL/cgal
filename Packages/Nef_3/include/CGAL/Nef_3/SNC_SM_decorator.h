@@ -82,35 +82,38 @@ enum { BEFORE = -1, AFTER = 1 };
 
 typedef void*  GenPtr;
 
-#define USING(t) typedef typename Refs_::t t
-USING(Vertex_handle);
-USING(Vertex_const_handle);
-USING(SVertex); 
-USING(SVertex_const_handle);
-USING(SVertex_const_iterator);
-USING(SHalfedge); 
-USING(SHalfedge_const_handle); 
-USING(SHalfedge_const_iterator);
-USING(SFace);
-USING(SFace_const_handle);
-USING(SFace_const_iterator);
-USING(SHalfloop);
-USING(SHalfloop_const_handle);
-USING(SHalfloop_const_iterator);
-USING(SVertex_handle);
-USING(SVertex_iterator);
-USING(SHalfedge_handle); 
-USING(SHalfedge_iterator);
-USING(SFace_handle);
-USING(SFace_iterator);
-USING(SHalfloop_handle);
-USING(SHalfloop_iterator);
-USING(SObject_handle);
-USING(SHalfedge_around_svertex_const_circulator);
-USING(SHalfedge_around_sface_const_circulator);
-USING(SFace_cycle_const_iterator);
-USING(Infi_box); 
-#undef USING
+typedef typename Refs_::Vertex_handle             Vertex_handle;
+typedef typename Refs_::Vertex_const_handle       Vertex_const_handle;
+typedef typename Refs_::SVertex                   SVertex;
+typedef typename Refs_::SVertex_handle            SVertex_handle;
+typedef typename Refs_::SVertex_iterator          SVertex_iterator;
+typedef typename Refs_::SVertex_const_handle      SVertex_const_handle;
+typedef typename Refs_::SVertex_const_iterator    SVertex_const_iterator;
+typedef typename Refs_::SHalfedge                 SHalfedge;
+typedef typename Refs_::SHalfedge_handle          SHalfedge_handle;
+typedef typename Refs_::SHalfedge_iterator        SHalfedge_iterator;
+typedef typename Refs_::SHalfedge_const_handle    SHalfedge_const_handle;
+typedef typename Refs_::SHalfedge_const_iterator  SHalfedge_const_iterator;
+typedef typename Refs_::SFace                     SFace;
+typedef typename Refs_::SFace_handle              SFace_handle;
+typedef typename Refs_::SFace_iterator            SFace_iterator;
+typedef typename Refs_::SFace_const_handle        SFace_const_handle;
+typedef typename Refs_::SFace_const_iterator      SFace_const_iterator;
+typedef typename Refs_::SHalfloop                 SHalfloop;
+typedef typename Refs_::SHalfloop_handle          SHalfloop_handle;
+typedef typename Refs_::SHalfloop_iterator        SHalfloop_iterator;
+typedef typename Refs_::SHalfloop_const_handle    SHalfloop_const_handle;
+typedef typename Refs_::SHalfloop_const_iterator  SHalfloop_const_iterator;
+typedef typename Refs_::SObject_handle            SObject_handle;
+typedef typename Refs_::SHalfedge_around_svertex_const_circulator
+                        SHalfedge_around_svertex_const_circulator;
+typedef typename Refs_::SHalfedge_around_sface_const_circulator
+                        SHalfedge_around_sface_const_circulator;
+typedef typename Refs_::SFace_cycle_const_iterator
+                        SFace_cycle_const_iterator;
+
+typedef typename Refs_::Infi_box                  Infi_box; 
+
 
 /*{\Mtext Local types are handles, iterators and circulators of the
 following kind: |SVertex_handle|, |SVertex_iterator|, |SHalfedge_handle|,
@@ -627,12 +630,16 @@ void merge_edge_pairs_at_target(SHalfedge_handle e) const
   If |next(e)| was entry point of |face(e)| then |e| takes this role.
   The same holds for |twin(next(e))| and |face(twin(e))|.}*/
 {
-  TRACEN("merge_edge_pairs_at_target "<<PH(e));               // e  = (un,li), eo = (li,un)
-  SHalfedge_handle en = next(e), eno = twin(en), enn, enno,   // en = (li,ob), eno= (ob,li)
+  TRACEN("merge_edge_pairs_at_target "<<PH(e));     
+          // e  = (un,li), eo = (li,un)
+  SHalfedge_handle en = next(e), eno = twin(en), enn, enno,   
+          // en = (li,ob), eno= (ob,li)
                eo = twin(e) ;
   if ( is_closed_at_target(en) ) { enn = eo; enno=e; }
-  else { enn = next(en), enno = previous(eno); }              // enn= (ob,re), enno=(re,ob)
-  SVertex_handle v = target(e), vn = target(en);              // v = li,  vn = ob
+  else { enn = next(en), enno = previous(eno); }              
+          // enn= (ob,re), enno=(re,ob)
+  SVertex_handle v = target(e), vn = target(en);              
+          // v = li,  vn = ob
   CGAL_nef3_assertion(has_outdeg_two(v));
   SFace_handle f1 = face(en), f2 = face(eno);
   // transfer the opposite face cycles e-en-enn to e-enn
@@ -876,11 +883,6 @@ void set_marks_in_face_cycle(SHalfedge_handle e, Mark m) const
   CGAL_For_all(hfc,hend) mark(hfc) = mark(target(hfc)) = m;
 }
 
-Mark& mark_of_halfsphere(int i) const
-{ CGAL_nef3_assertion(i);
-  if (i<0) return psm_->m_neg_; 
-  return psm_->m_pos_; }
-
 GenPtr& info(SVertex_handle v) const
 { return v->info_; }
 GenPtr& info(SHalfedge_handle e) const
@@ -1097,9 +1099,6 @@ bool is_valid( Unique_hash_map<SVertex_handle,bool>& sv_hash,
     SFace_iterator f;
     CGAL_nef3_forall_sfaces(f,*this) 
       mark(f) = SP(m, mark(f));
-
-    mark_of_halfsphere(-1) = SP(m, mark_of_halfsphere(-1));
-    mark_of_halfsphere(+1) = SP(m, mark_of_halfsphere(+1));
   }
 
   template <typename Selection>
@@ -1118,9 +1117,6 @@ bool is_valid( Unique_hash_map<SVertex_handle,bool>& sv_hash,
     SFace_iterator f;
     CGAL_nef3_forall_sfaces(f,*this) 
       mark(f) = SP(mark(f),m);
-
-    mark_of_halfsphere(-1) = SP(mark_of_halfsphere(-1), m);
-    mark_of_halfsphere(+1) = SP(mark_of_halfsphere(+1), m);
   }
 
 }; // SNC_SM_decorator
