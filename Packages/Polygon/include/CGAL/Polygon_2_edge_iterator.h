@@ -151,17 +151,21 @@ class Polygon_2_edge_iterator {
     }
 #endif
 
+};
+
+
     // the global function distance_type can only be defined as a friend
     // function within the class due to compiler problems with g++
-    friend difference_type
+template <class _Traits,  class _Container>
+    typename _Container::difference_type
     distance_type(const Polygon_2_edge_iterator<_Traits,_Container>&)
-      { return difference_type(); }
+      { return _Container::difference_type(); }
 
-    friend
-    Segment_2* value_type(
+template <class _Traits,  class _Container>
+    typename _Traits::Segment_2* value_type(
       const Polygon_2_edge_iterator<_Traits,_Container>&)
-    { return (Segment_2*)(0); }
-};
+    { return (typename _Traits::Segment_2 *)(0); }
+
 
 //-----------------------------------------------------------------------//
 //                          implementation
