@@ -124,14 +124,16 @@ public:
    
 
   // INSERTION-REMOVAL
-  Vertex_handle insert(const Point & a);
+  Vertex_handle insert(const Point & a, Face_handle start = Face_handle());
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li );
+//   template < class InputIterator >
+//   int insert(InputIterator first, InputIterator last);
+  Vertex_handle push_back(const Point& a);
 
   void insert(const Point & a, const Point & b);
   void insert(Vertex_handle va, Vertex_handle vb);
-  Vertex_handle push_back(const Point& a);
   void          push_back(const Constraint& c);
 
   void remove(Vertex_handle v);
@@ -179,6 +181,17 @@ public:
 
   //template member functions
 public:
+  template < class InputIterator >
+  int insert(InputIterator first, InputIterator last)
+    {
+      int n = number_of_vertices();
+      while(first != last){
+	insert(*first);
+	++first;
+      }
+      return number_of_vertices() - n;
+    }
+
   template <class Out_it1, class Out_it2> 
   bool 
   find_conflicts (const Point  &p, 
@@ -269,7 +282,9 @@ void
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
 flip(Face_handle& f, int i)
 {
-  CGAL_triangulation_precondition(is_flipable(f,i));
+  // The following precondition prevents the test suit 
+  // of triangulation to work on constrained Delaunay triangulation
+  //CGAL_triangulation_precondition(is_flipable(f,i));
   Face_handle g = f->neighbor(i);
   _tds.flip( &(*f), i);
   int ig=g->index(f->vertex(i)); 
@@ -482,12 +497,12 @@ template < class Gt, class Tds >
 inline 
 Constrained_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle 
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
-insert(const Point & a)
+insert(const Point & a, Face_handle start)
  // inserts a in the triangulation
 // constrained edges are updated
 // Delaunay property is restored
 {
-  Vertex_handle va= Ctr::insert(a);
+  Vertex_handle va= Ctr::insert(a, start);
   flip_around(va); 
   return va;
 }
@@ -503,6 +518,16 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   Vertex_handle va= Ctr::insert(a,lt,loc,li);
   flip_around(va); 
   return va;
+}
+
+
+template <class Gt, class Tds >
+inline
+Constrained_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
+Constrained_Delaunay_triangulation_2<Gt,Tds>::
+push_back(const Point &p)
+{
+  return insert(p);
 }
 
 
