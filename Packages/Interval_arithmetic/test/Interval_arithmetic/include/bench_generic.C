@@ -68,24 +68,24 @@ void bench()
   assert( ! c.is_point()); \
 }
 
-  BENCH_MACRO_generic(,c = a + b, "+");
-  BENCH_MACRO_generic(,c = a * b, "*");
-  BENCH_MACRO_generic(,c = a / b, "/");
+  BENCH_MACRO_generic( ,c = a + b, "+");
+  BENCH_MACRO_generic( ,c = a * b, "*");
+  BENCH_MACRO_generic( ,c = a / b, "/");
 
   BENCH_MACRO_generic(c = 1;, c += b; c += b, "+= +=");
   BENCH_MACRO_generic(c = 1;, c += b; c -= b, "+= -=");
   BENCH_MACRO_generic(c = 1;, c *= b; c /= b, "*= /=");
 
-  BENCH_MACRO_generic(,c = sqrt(b), "sqrt");
-  BENCH_MACRO_generic(,c = square(b), "square");
-  BENCH_MACRO_generic(,c = c * dd, "ia*d");
-  BENCH_MACRO_generic(,c = dd * c, "d*ia");
-  BENCH_MACRO_generic(,c = c + dd, "ia+d");
-  BENCH_MACRO_generic(,c = dd + c, "d+ia");
-  BENCH_MACRO_generic(,c = c - dd, "ia-d");
-  BENCH_MACRO_generic(,c = dd - c, "d-ia");
-  BENCH_MACRO_generic(,c = dd / c, "d/ia");
-  BENCH_MACRO_generic(,c = c / dd, "ia/d");
+  BENCH_MACRO_generic( ,c = sqrt(b), "sqrt");
+  BENCH_MACRO_generic( ,c = square(b), "square");
+  BENCH_MACRO_generic( ,c = c * dd, "ia*d");
+  BENCH_MACRO_generic( ,c = dd * c, "d*ia");
+  BENCH_MACRO_generic( ,c = c + dd, "ia+d");
+  BENCH_MACRO_generic( ,c = dd + c, "d+ia");
+  BENCH_MACRO_generic( ,c = c - dd, "ia-d");
+  BENCH_MACRO_generic( ,c = dd - c, "d-ia");
+  BENCH_MACRO_generic( ,c = dd / c, "d/ia");
+  BENCH_MACRO_generic( ,c = c / dd, "ia/d");
 
 #if 1
   std::cout << a<<b<<c<<d<<std::endl;
