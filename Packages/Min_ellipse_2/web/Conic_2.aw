@@ -534,27 +534,27 @@ and negative side of $\C_{\r}$.  We can either retrieve the oriented
 side directly or ask whether the point lies on some specific side. 
 
 @macro <Conic_2 orientation access methods> += @begin   
-    CGAL::Oriented_side oriented_side (const CGAL::Point_2<R> &p) const
+    CGAL::Oriented_side oriented_side (const CGAL::Point_2<R>& p) const
     {
         return _Conic_2::oriented_side (p);
     }
 
-    bool has_on_positive_side (const CGAL::Point_2<R> &p) const
+    bool has_on_positive_side (const CGAL::Point_2<R>& p) const
     {
         return _Conic_2::has_on_positive_side (p);
     }
 
-    bool has_on_negative_side (const CGAL::Point_2<R> &p) const
+    bool has_on_negative_side (const CGAL::Point_2<R>& p) const
     {
         return _Conic_2::has_on_negative_side (p);
     }
 
-    bool has_on_boundary (const CGAL::Point_2<R> &p) const
+    bool has_on_boundary (const CGAL::Point_2<R>& p) const
     {
         return _Conic_2::has_on_boundary (p);
     }
         
-    bool has_on (const CGAL::Point_2<R> &p) const
+    bool has_on (const CGAL::Point_2<R>& p) const
     {
         return _Conic_2::has_on (p);
     }
@@ -573,17 +573,17 @@ to bounded and unbounded side, we `extend' the type @prg{Bounded_side}.
 @end 
 
 @macro <Conic_2 orientation access methods> += @begin   
-    Convex_side convex_side (const CGAL::Point_2<R> &p) const
+    Convex_side convex_side (const CGAL::Point_2<R>& p) const
     {
         return _Conic_2::convex_side (p);
     }
 
-    bool has_on_convex_side (const CGAL::Point_2<R> &p) const
+    bool has_on_convex_side (const CGAL::Point_2<R>& p) const
     {
         return _Conic_2::has_on_convex_side (p);
     }
 
-    bool has_on_nonconvex_side (const CGAL::Point_2<R> &p) const
+    bool has_on_nonconvex_side (const CGAL::Point_2<R>& p) const
     {
         return _Conic_2::has_on_nonconvex_side (p);
     }
@@ -658,8 +658,8 @@ $p_3\neq p_4$. The positive side is the region to the left resp. to
 the right of both oriented lines $\overline{p_1p_2}, \overline{p_3p_4}$.
 
 @macro <Conic_2 set methods> += @begin    
-    void set_linepair (const CGAL::Point_2<R> &p1, const CGAL::Point_2<R> &p2,
-                       const CGAL::Point_2<R> &p3, const CGAL::Point_2<R> &p4)
+    void set_linepair (const CGAL::Point_2<R>& p1, const CGAL::Point_2<R>& p2,
+                       const CGAL::Point_2<R>& p3, const CGAL::Point_2<R>& p4)
     {
         _Conic_2::set_linepair (p1, p2, p3, p4);
     }
@@ -678,8 +678,8 @@ Precondition is that $p_1,p_2,p_3$ are not collinear. The orientation of
 the ellipse is the orientation of the point triple. 
 
 @macro <Conic_2 set methods> += @begin
-    void set_ellipse (const CGAL::Point_2<R> &p1, const CGAL::Point_2<R> &p2,
-                      const CGAL::Point_2<R> &p3)
+    void set_ellipse (const CGAL::Point_2<R>& p1, const CGAL::Point_2<R>& p2,
+                      const CGAL::Point_2<R>& p3)
     {
         _Conic_2::set_ellipse (p1, p2, p3);
     }
@@ -698,8 +698,8 @@ will usually @em{not} be the smallest one passing through the points. The
 orientation of the ellipse can be specified and defaults to positive. 
 
 @macro <Conic_2 set methods> += @begin
-    void set_ellipse (const CGAL::Point_2<R> &p1, const CGAL::Point_2<R> &p2,
-                      const CGAL::Point_2<R> &p3, const CGAL::Point_2<R> &p4,
+    void set_ellipse (const CGAL::Point_2<R>& p1, const CGAL::Point_2<R>& p2,
+                      const CGAL::Point_2<R>& p3, const CGAL::Point_2<R>& p4,
                       CGAL::Orientation o = POSITIVE)
     {
         _Conic_2::set_ellipse (p1, p2, p3, p4, o);
@@ -717,9 +717,9 @@ distinct. The orientation can be specified but is automatically set to
 zero if the resulting conic has zero orientation.  
 
 @macro <Conic_2 set methods> += @begin         
-    void set (const CGAL::Point_2<R> &p1, const CGAL::Point_2<R> &p2,
-              const CGAL::Point_2<R> &p3, const CGAL::Point_2<R> &p4,
-              const CGAL::Point_2<R> &p5, 
+    void set (const CGAL::Point_2<R>& p1, const CGAL::Point_2<R>& p2,
+              const CGAL::Point_2<R>& p3, const CGAL::Point_2<R>& p4,
+              const CGAL::Point_2<R>& p5, 
               CGAL::Orientation o = POSITIVE)
     {
         _Conic_2::set (p1, p2, p3, p4, p5, o);
@@ -744,8 +744,8 @@ $\C_{\r_1}$ and $\C_{\r_2}$.
 
 @macro <Conic_2 private methods> += @begin
     void set_linear_combination (
-        const RT &a1, const Conic_2<R> &c1,
-        const RT &a2, const Conic_2<R> &c2)
+        const RT& a1, const Conic_2<R>& c1,
+        const RT& a2, const Conic_2<R>& c2)
     {
         _Conic_2::set_linear_combination (a1, c1, a2, c2);
     }
@@ -769,12 +769,12 @@ computes two line-pairs through the points, but it is not specified
 which ones. This is a static method.
 
 @macro <Conic_2 private methods> += @begin
-    static void set_two_linepairs (const CGAL::Point_2<R> &p1, 
-                                   const CGAL::Point_2<R> &p2,
-                                   const CGAL::Point_2<R> &p3,
-                                   const CGAL::Point_2<R> &p4,
-                                   Conic_2<R> &pair1, 
-                                   Conic_2<R> &pair2)
+    static void set_two_linepairs (const CGAL::Point_2<R>& p1, 
+                                   const CGAL::Point_2<R>& p2,
+                                   const CGAL::Point_2<R>& p3,
+                                   const CGAL::Point_2<R>& p4,
+                                   Conic_2<R>& pair1, 
+                                   Conic_2<R>& pair2)
     {
         _Conic_2::set_two_linepairs (p1, p2, p3, p4, pair1, pair2);
     }
@@ -794,8 +794,8 @@ the argument conics have not been constructed by the method
 conic is unspecified.   
 
 @macro <Conic_2 private methods> += @begin
-    void set_ellipse (const Conic_2<R> &pair1, 
-                      const Conic_2<R> &pair2)
+    void set_ellipse (const Conic_2<R>& pair1, 
+                      const Conic_2<R>& pair2)
     {
         _Conic_2::set_ellipse (pair1, pair2);
     }
@@ -818,8 +818,8 @@ $p\in \C_{\r_1}\cap \C_{\r_2}$. In case of nonzero orientation, the
 actual orientation of $\C_{\r}$ is unspecified. 
 
 @macro <Conic_2 private methods> += @begin
-    void set (const Conic_2<R> &c1, const Conic_2<R> &c2,
-              const CGAL::Point_2<R> &p)
+    void set (const Conic_2<R>& c1, const Conic_2<R>& c2,
+              const CGAL::Point_2<R>& p)
     {
         _Conic_2::set( c1, c2, p);  analyse();
     }
@@ -880,7 +880,7 @@ As before, if $\E$ is not an ellipse, the result is meaningless.
 
 @macro <Conic_2 I/O routines> = @begin
     template< class _R>
-    ostream& operator << ( ostream& os, const Conic_2<_R>& c)
+    std::ostream& operator << ( std::ostream& os, const Conic_2<_R>& c)
     {
         return( os << c.r() << ' ' << c.s() << ' ' << c.t() << ' '
                    << c.u() << ' ' << c.v() << ' ' << c.w());
@@ -916,7 +916,7 @@ the drawn curve(s).
 
     template< class R >
     CGAL::Window_stream&
-    operator << ( CGAL::Window_stream &ws, const CGAL::Conic_2<R>& c)
+    operator << ( CGAL::Window_stream& ws, const CGAL::Conic_2<R>& c)
     {
         // length of a pixel in window-coordinates
         double pixel = 1/ws.scale(); 
@@ -1053,7 +1053,7 @@ of a type @prg{DA} for the homogeneous representation would look as follows.
             // ring type
             typedef /* some CGAL-conform number type */ RT;
             // coordinate access
-            void get (const PT &p, RT &x, RT &y, RT &h);
+            void get (const PT& p, RT& x, RT& y, RT& h);
     };
 
 @end
@@ -1072,7 +1072,7 @@ look as follows.
             // field type
             typedef /* some CGAL-conform number type */ FT;
             // coordinate access
-            void get (const PT &p, FT &x, FT &y);
+            void get (const PT& p, FT& x, FT& y);
     };
 
 @end
@@ -1588,7 +1588,7 @@ homogeneous evaluation returns the value
 $\r(p) = rx^2+sy^2+txy+uxh+vyh+wh^2$.
 
 @macro <ConicHPA2 protected member functions> += @begin
-    RT evaluate (const PT &p) const
+    RT evaluate (const PT& p) const
     {
         RT x, y, h;
         dao.get (p, x, y, h);
@@ -1601,7 +1601,7 @@ The Cartesian version is obtained for $h=1$, i.e. it computes the value
 $\r(p) = rx^2+sy^2+txy+ux+vy+w$.
 
 @macro <ConicCPA2 protected member functions> += @begin
-    FT evaluate (const PT &p) const
+    FT evaluate (const PT& p) const
     {
         FT x, y;
         dao.get (p, x, y);
@@ -1907,7 +1907,7 @@ zero, we know that the non-convex side is empty, see subsection
 \ref{orientation_sec}.
 
 @macro <ConicHPA2 public member functions> += @begin
-    Convex_side convex_side (const PT &p) const 
+    Convex_side convex_side (const PT& p) const 
     {
         switch (o) {
         case CGAL::POSITIVE:
@@ -1921,12 +1921,12 @@ zero, we know that the non-convex side is empty, see subsection
         return( Convex_side( 0));
     }
 
-    bool has_on_convex_side (const PT &p) const
+    bool has_on_convex_side (const PT& p) const
     {
         return (convex_side (p) == ON_CONVEX_SIDE);
     } 
 
-    bool has_on_nonconvex_side (const PT &p) const
+    bool has_on_nonconvex_side (const PT& p) const
     {
         return (convex_side (p) == ON_NONCONVEX_SIDE);
     }
@@ -1934,7 +1934,7 @@ zero, we know that the non-convex side is empty, see subsection
 @end
 
 @macro <ConicCPA2 public member functions> += @begin
-    Convex_side convex_side (const PT &p) const 
+    Convex_side convex_side (const PT& p) const 
     {
         switch (o) {
         case CGAL::POSITIVE:
@@ -1948,12 +1948,12 @@ zero, we know that the non-convex side is empty, see subsection
         return( Convex_side( 0));
     }
 
-    bool has_on_convex_side (const PT &p) const
+    bool has_on_convex_side (const PT& p) const
     {
         return (convex_side (p) == ON_CONVEX_SIDE);
     } 
 
-    bool has_on_nonconvex_side (const PT &p) const
+    bool has_on_nonconvex_side (const PT& p) const
     {
         return (convex_side (p) == ON_NONCONVEX_SIDE);
     }
@@ -2054,8 +2054,8 @@ whenever they call a private set method.
 
 @macro<ConicHPA2 private member functions> += @begin
     void 
-    set_linear_combination (const RT &a1, const ConicHPA2<PT,DA> &c1,
-                            const RT &a2, const ConicHPA2<PT,DA> &c2)
+    set_linear_combination (const RT& a1, const ConicHPA2<PT,DA>& c1,
+                            const RT& a2, const ConicHPA2<PT,DA>& c2)
     {
         _r = a1 * c1.r() + a2 * c2.r();
         _s = a1 * c1.s() + a2 * c2.s();
@@ -2069,8 +2069,8 @@ whenever they call a private set method.
 
 @macro<ConicCPA2 private member functions> += @begin
     void 
-    set_linear_combination (const FT &a1, const ConicCPA2<PT,DA> &c1,
-                            const FT &a2, const ConicCPA2<PT,DA> &c2)
+    set_linear_combination (const FT& a1, const ConicCPA2<PT,DA>& c1,
+                            const FT& a2, const ConicCPA2<PT,DA>& c2)
     {
         _r = a1 * c1.r() + a2 * c2.r();
         _s = a1 * c1.s() + a2 * c2.s();
@@ -2117,12 +2117,12 @@ obtained by setting $h_i=1,i=1\ldots 3$).
 @end
 
 @macro<ConicHPA2 private member functions> += @begin   
-    static void set_two_linepairs (const PT &p1, 
-                                   const PT &p2,
-                                   const PT &p3,
-                                   const PT &p4,
-                                   ConicHPA2<PT,DA> &pair1, 
-                                   ConicHPA2<PT,DA> &pair2)
+    static void set_two_linepairs (const PT& p1, 
+                                   const PT& p2,
+                                   const PT& p3,
+                                   const PT& p4,
+                                   ConicHPA2<PT,DA>& pair1, 
+                                   ConicHPA2<PT,DA>& pair2)
     {
         RT x1, y1, h1, x2, y2, h2, x3, y3, h3, x4, y4, h4;
         const DA& da = pair1.da();
@@ -2155,12 +2155,12 @@ obtained by setting $h_i=1,i=1\ldots 3$).
 
 
 @macro<ConicCPA2 private member functions> += @begin
-    static void set_two_linepairs (const PT &p1, 
-                                   const PT &p2,
-                                   const PT &p3,
-                                   const PT &p4,
-                                   ConicCPA2<PT,DA> &pair1, 
-                                   ConicCPA2<PT,DA> &pair2)
+    static void set_two_linepairs (const PT& p1, 
+                                   const PT& p2,
+                                   const PT& p3,
+                                   const PT& p4,
+                                   ConicCPA2<PT,DA>& pair1, 
+                                   ConicCPA2<PT,DA>& pair2)
     {
         FT x1, y1, x2, y2, x3, y3, x4, y4;      
         const DA& da = pair1.da();
@@ -2206,8 +2206,8 @@ linear combination $\C_{\r}$, $\r = \lambda \r_1 + \mu \r_2$, where
 $r_i,\ldots,w_i$ the components of $\r_i,i=1\ldots 2$.
 
 @macro<ConicHPA2 private member functions> += @begin
-    void set_ellipse (const ConicHPA2<PT,DA> &pair1, 
-                      const ConicHPA2<PT,DA> &pair2)
+    void set_ellipse (const ConicHPA2<PT,DA>& pair1, 
+                      const ConicHPA2<PT,DA>& pair2)
     {
         RT b = RT(2) * (pair1.r() * pair2.s() + pair1.s() * pair2.r()) -
                pair1.t() * pair2.t();
@@ -2218,8 +2218,8 @@ $r_i,\ldots,w_i$ the components of $\r_i,i=1\ldots 2$.
 @end
 
 @macro<ConicCPA2 private member functions> += @begin
-    void set_ellipse (const ConicCPA2<PT,DA> &pair1, 
-                      const ConicCPA2<PT,DA> &pair2)
+    void set_ellipse (const ConicCPA2<PT,DA>& pair1, 
+                      const ConicCPA2<PT,DA>& pair2)
     {
         FT b = FT(2) * (pair1.r() * pair2.s() + pair1.s() * pair2.r()) -
                pair1.t() * pair2.t();
@@ -2239,9 +2239,9 @@ a conic containing the set $(\C_{\r_1} \cap \C_{\r_2}) \cup \{p\}.$ Exactly
 this conic is constructed here. 
 
 @macro<ConicHPA2 private member functions> += @begin
-    void set (const ConicHPA2<PT,DA> &c1,
-              const ConicHPA2<PT,DA> &c2,
-              const PT &p)
+    void set (const ConicHPA2<PT,DA>& c1,
+              const ConicHPA2<PT,DA>& c2,
+              const PT& p)
     {
         set_linear_combination (c2.evaluate(p), c1, -c1.evaluate(p), c2);
     }
@@ -2249,9 +2249,9 @@ this conic is constructed here.
 @end
 
 @macro<ConicCPA2 private member functions> += @begin
-    void set (const ConicCPA2<PT,DA> &c1,
-              const ConicCPA2<PT,DA> &c2,
-              const PT &p)
+    void set (const ConicCPA2<PT,DA>& c1,
+              const ConicCPA2<PT,DA>& c2,
+              const PT& p)
     {
         set_linear_combination (c2.evaluate(p), c1, -c1.evaluate(p), c2);
     }
@@ -2461,7 +2461,7 @@ $p(\tau)$ is not a constant function.
 @macro <function solve_cubic> zero = @begin
     template < class NT >
     int solve_cubic (NT c3, NT c2, NT c1, NT c0, 
-                     NT &r1, NT &r2, NT &r3) 
+                     NT& r1, NT& r2, NT& r3) 
     {
         if (c3 == 0.0) {
             // quadratic equation
@@ -2755,8 +2755,8 @@ w &=& (-y_1x_2+x_1y_2)(-y_3x_4+x_3y_4).
 \end{eqnarray*}
 
 @macro <ConicHPA2 public member functions> += @begin
-    void set_linepair (const PT &p1, const PT &p2, const PT &p3,
-                       const PT &p4, const DA &da = DA()) 
+    void set_linepair (const PT& p1, const PT& p2, const PT& p3,
+                       const PT& p4, const DA& da = DA()) 
     {
         RT x1, y1, h1, x2, y2, h2, x3, y3, h3, x4, y4, h4;
         da.get (p1, x1, y1, h1);
@@ -2792,7 +2792,7 @@ For the Cartesian representation we proceed completely similar,
 replacing values $h_1,\ldots,h_4$ by 1.
 
 @macro <ConicCPA2 public member functions> += @begin
-    void set_linepair (const PT &p1, const PT &p2, const PT &p3, const PT &p4)
+    void set_linepair (const PT& p1, const PT& p2, const PT& p3, const PT& p4)
     {
         FT x1, y1, x2, y2, x3, y3, x4, y4;
         dao.get (p1, x1, y1);
@@ -2906,7 +2906,7 @@ of the point triple orientation. This means, if the orientation
 was positive, we still need to flip the representation.  
 
 @macro<ConicHPA2 public member functions> += @begin
-    void set_ellipse (const PT &p1, const PT &p2, const PT &p3)
+    void set_ellipse (const PT& p1, const PT& p2, const PT& p3)
     {
         RT x1, y1, h1, x2, y2, h2, x3, y3, h3;
         dao.get (p1, x1, y1, h1);
@@ -2966,7 +2966,7 @@ As before, the Cartesian version is obtained by setting
 $h_1,h_2,h_3$ to 1.
 
 @macro<ConicCPA2 public member functions> += @begin
-    void set_ellipse (const PT &p1, const PT &p2, const PT &p3)
+    void set_ellipse (const PT& p1, const PT& p2, const PT& p3)
     {
         FT x1, y1, x2, y2, x3, y3;
         dao.get (p1, x1, y1);
@@ -3025,8 +3025,8 @@ pairs of lines through the four points. For constructing this pair, we
 also have a method available.  
 
 @macro<ConicHPA2 public member functions> += @begin
-    void set_ellipse (const PT &p1, const PT &p2,
-                      const PT &p3, const PT &p4,
+    void set_ellipse (const PT& p1, const PT& p2,
+                      const PT& p3, const PT& p4,
                       CGAL::Orientation _o = POSITIVE) 
     {
         ConicHPA2<PT,DA> pair1, pair2;
@@ -3040,8 +3040,8 @@ also have a method available.
 
 
 @macro<ConicCPA2 public member functions> += @begin
-    void set_ellipse (const PT &p1, const PT &p2,
-                      const PT &p3, const PT &p4,
+    void set_ellipse (const PT& p1, const PT& p2,
+                      const PT& p3, const PT& p4,
                       CGAL::Orientation _o = POSITIVE) 
     {
         ConicCPA2<PT,DA> pair1, pair2;
@@ -3076,8 +3076,8 @@ $p_1,\ldots,p_5$. In case all points are distinct, this is the unique
 nontrivial conic through the points. 
 
 @macro<ConicHPA2 public member functions> += @begin
-    void set (const PT &p1, const PT &p2, const PT &p3, const PT &p4,
-              const PT &p5, CGAL::Orientation _o = POSITIVE)
+    void set (const PT& p1, const PT& p2, const PT& p3, const PT& p4,
+              const PT& p5, CGAL::Orientation _o = POSITIVE)
     {
         ConicHPA2<PT,DA> c1; c1.set_linepair (p1, p2, p3, p4);
         ConicHPA2<PT,DA> c2; c2.set_linepair (p1, p4, p2, p3);
@@ -3092,8 +3092,8 @@ nontrivial conic through the points.
 @end
 
 @macro<ConicCPA2 public member functions> += @begin
-    void set (const PT &p1, const PT &p2, const PT &p3, const PT &p4,
-              const PT &p5, CGAL::Orientation _o = POSITIVE)
+    void set (const PT& p1, const PT& p2, const PT& p3, const PT& p4,
+              const PT& p5, CGAL::Orientation _o = POSITIVE)
     {
         ConicCPA2<PT,DA> c1; c1.set_linepair (p1, p2, p3, p4);
         ConicCPA2<PT,DA> c2; c2.set_linepair (p1, p4, p2, p3);
@@ -3114,14 +3114,14 @@ nontrivial conic through the points.
 
 @macro <ConicHPA2 I/O routines> = @begin
     template< class _PT, class _DA>
-    ostream& operator << ( ostream& os, const ConicHPA2<_PT,_DA>& c)
+    std::ostream& operator << ( std::ostream& os, const ConicHPA2<_PT,_DA>& c)
     {
         return( os << c.r() << ' ' << c.s() << ' ' << c.t() << ' '
                    << c.u() << ' ' << c.v() << ' ' << c.w());
     }
 
     template< class _PT, class _DA>
-    istream& operator >> ( istream& is, ConicHPA2<_PT,_DA>& c)
+    std::istream& operator >> ( std::istream& is, ConicHPA2<_PT,_DA>& c)
     {
         typedef           ConicHPA2<_PT,_DA>  Conic;
         typedef  typename _DA::RT                  RT;
@@ -3136,14 +3136,14 @@ nontrivial conic through the points.
 
 @macro <ConicCPA2 I/O routines> = @begin
     template< class _PT, class _DA>
-    ostream& operator << ( ostream& os, const ConicCPA2<_PT,_DA>& c)
+    std::ostream& operator << ( std::ostream& os, const ConicCPA2<_PT,_DA>& c)
     {
         return( os << c.r() << ' ' << c.s() << ' ' << c.t() << ' '
                    << c.u() << ' ' << c.v() << ' ' << c.w());
     }
 
     template< class _PT, class _DA>
-    istream& operator >> ( istream& is, ConicCPA2<_PT,_DA>& c)
+    std::istream& operator >> ( std::istream& is, ConicCPA2<_PT,_DA>& c)
     {
         typedef           ConicCPA2<_PT,_DA>  Conic;
         typedef  typename _DA::FT                  FT;
