@@ -177,7 +177,7 @@ typedef CGAL::Kd_tree_traits_point<My_point> Traits;
 typedef CGAL::Orthogonal_standard_search<Traits, Point3D_distance<My_point> > 
 NN_orthogonal_search;
 
-typedef std::vector<Traits::Item> Vector;
+typedef std::vector<Traits::Point> Vector;
 
 int main() {
 
@@ -205,10 +205,10 @@ int main() {
   Point3D_distance<My_point> tr_dist;
 
   // nearest neighbour searching 
-  std::vector<NN_orthogonal_search::Item_with_distance> nearest_neighbour;
+  std::vector<NN_orthogonal_search::Point_with_distance> nearest_neighbour;
   
   // furthest neighbour searching 
-  std::vector<NN_orthogonal_search::Item_with_distance> furthest_neighbour;
+  std::vector<NN_orthogonal_search::Point_with_distance> furthest_neighbour;
   
   for (int i=0; i < query_point_number; i++) { 
      // nearest neighbour searching

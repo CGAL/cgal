@@ -13,11 +13,11 @@ typedef R::Point_d Point;
 
 typedef Point::R::FT NT;
 
-typedef CGAL::Iso_rectangle_d<R> Rectangle;
+typedef CGAL::Iso_rectangle_d<R> Iso_rectangle;
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
 
 typedef CGAL::Fuzzy_sphere_d<Point> Sphere;
-typedef CGAL::Fuzzy_iso_box_d<Point,Rectangle> Box;
+typedef CGAL::Fuzzy_iso_box_d<Point,Iso_rectangle> Box;
 
 int main() {
 

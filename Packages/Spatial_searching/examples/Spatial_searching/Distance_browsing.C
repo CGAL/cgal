@@ -71,12 +71,12 @@ int main() {
 
   Distance tr_dist(dim);
   
-  std::vector<NN_priority_search::Item_with_distance> elements_in_query; 
+  std::vector<NN_priority_search::Point_with_distance> elements_in_query; 
   elements_in_query.reserve(data_point_number);
 
   NN_priority_search NN(d, query_item, tr_dist, 0.0);
 
-  std::vector<NN_priority_search::Item_with_distance>::iterator 
+  std::vector<NN_priority_search::Point_with_distance>::iterator 
   it = elements_in_query.begin();
 
   int n=10;

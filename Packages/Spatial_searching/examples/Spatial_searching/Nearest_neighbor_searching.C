@@ -10,7 +10,7 @@ typedef CGAL::Creator_uniform_2<double,Point> Creator;
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
 typedef CGAL::Orthogonal_standard_search<Traits> Neighbor_search;
 
-typedef std::vector<Traits::Item> Vector;
+typedef std::vector<Traits::Point> Vector;
 
 int main() {
   
@@ -32,7 +32,7 @@ int main() {
   Vector query_points;
   CGAL::copy_n( h, query_point_number, std::back_inserter(query_points));
 
-  std::vector<Neighbor_search::Item_with_distance> nearest_neighbor;
+  std::vector<Neighbor_search::Point_with_distance> nearest_neighbor;
   
   for (int i=0; i < query_point_number; i++) { 
      Neighbor_search N(d, query_points[i]); 

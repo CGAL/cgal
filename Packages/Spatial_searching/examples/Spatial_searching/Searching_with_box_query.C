@@ -21,12 +21,12 @@ typedef CGAL::Cartesian_d<double> R;
 typedef CGAL::Point_d<R> Point;
 typedef Point::R::FT NT;
 
-typedef CGAL::Iso_rectangle_d<R> Rectangle;
+typedef CGAL::Iso_rectangle_d<R> Iso_rectangle;
 typedef CGAL::Plane_separator<NT> Separator;
 
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
-typedef CGAL::Manhattan_distance_rectangle_point<Rectangle,Point> L1_distance;
-typedef CGAL::General_standard_search<Traits, L1_distance, Rectangle> 
+typedef CGAL::Manhattan_distance_rectangle_point<Iso_rectangle,Point> L1_distance;
+typedef CGAL::General_standard_search<Traits, L1_distance, Iso_rectangle> 
 NN_standard_search;
   
 
@@ -67,7 +67,7 @@ int main() {
   Point P(p[0],p[1],p[2],1000);
   Point Q(q[0],q[1],q[2],1000);
 
-  Rectangle query_rectangle(P,Q);
+  Iso_rectangle query_rectangle(P,Q);
 
   std::vector<NN_standard_search::Point_with_distance> nearest_neighbours;
   

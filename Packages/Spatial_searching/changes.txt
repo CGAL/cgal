@@ -1,3 +1,8 @@
+Version 3.32 (20 July 2003) [af]
+- fixed makefile problem on Irix
+- fixed typo Item -> Point, Item_list > Point_list
+- Replaced Rectangle with Iso_rectangle to avoid nameclash on mingw/g++
+
 Version 3.30 (11 July 2003)
 rursu:
  - removed "\" character in demo makefile trying to solve problem 
