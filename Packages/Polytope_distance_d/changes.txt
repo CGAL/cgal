@@ -1,5 +1,8 @@
 Changes done to the `Polytope_distance_d' package
 
+Version 0.4 on 12-Sep-2000
+- documentation split up into user and reference manual parts.
+
 Version 0.3 on 06-Sep-2000
 - adapted to "enhanced" QP solver
 - enabled partial exact/filtered pricing
