@@ -12,8 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/Interval_arithmetic/IA_leda_bigfloat.h
-// revision      : 1.7
-// revision_date : 1 July 1998
+// revision      : $Revision$
+// revision_date : $Date$
 // package       : Interval Arithmetic
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
