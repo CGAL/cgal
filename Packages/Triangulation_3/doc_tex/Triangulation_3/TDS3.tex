@@ -380,10 +380,10 @@ int main()
 This section describes the concepts for a 3D-triangulation data
 structure, its vertices and cells.
 
-\begin{ccClassTemplate}{Tds<Vb,Fb>}
 \subsection{Concepts for a 3D-Triangulation Data Structure}
 \label{TDS3-sec-concept} 
 
+\begin{ccClassTemplate}{Tds<Vb,Fb>}
 The triangulation data structure must be able to represent a
 triangulation of a topological sphere $S^d$ of $\R^{d+1}$, for 
 $d \in \{-1,0,1,2,3\}$.
@@ -839,11 +839,10 @@ for faces of maximal dimension instead of cells.
 
 	\end{ccClassTemplate} 
 
-	\begin{ccClass}{Tds::Vertex}
 	\subsection{Concept for the Vertex of a 3D-Triangulation Data Structure} 
 	\label{TDS3-sec-concept-Tds_Vertex}
 
-	
+	\begin{ccClass}{Tds::Vertex}
 \ccCreationVariable{v}
 
 The vertex class of a 3D-triangulation data structure must define
@@ -913,10 +912,10 @@ a precise indication on the kind of invalidity encountered.}
 
 	\end{ccClass} 
 
-	\begin{ccClass}{Tds::Cell}
 	\subsection{Concept for the Cell of a 3D-Triangulation Data Structure} 
 	\label{TDS3-sec-concept-Tds_Cell}
 
+	\begin{ccClass}{Tds::Cell}
 
 \ccCreationVariable{c}
 
@@ -1041,10 +1040,10 @@ a precise indication of the kind of invalidity encountered.}
 
 	\end{ccClass} 
 
-\begin{ccClassTemplate}{Triangulation_data_structure_3<Vb,Cb>}
-\section{A model of Triangulation Data Structure \ccClassTemplateName}
+\section{A model of Triangulation Data Structure}
 \label{TDS3-sec-class}
 
+\begin{ccClassTemplate}{Triangulation_data_structure_3<Vb,Cb>}
 This class is a model for the concept of a 3D-triangulation data structure
 described in Section~\ref{TDS3-sec-concept} and provides the optional
 geometric functionalities. It is templated by base classes for
@@ -1074,9 +1073,8 @@ cell concept described in Section~\ref{TDS3-sec-concept-Tds_Cell}.
 \section{Concepts for the Base Vertices and Cells}
 \label{TDS3-sec-concept-Base}
 
-	\begin{ccClass}{Vertex_base}
 	\subsection{Concept for the Base Vertex}
-
+	\begin{ccClass}{Vertex_base}
 \ccCreationVariable{v}
 
 At the bottom level, a vertex provides access to
@@ -1156,9 +1154,9 @@ optional point and other possible information.}
 
 	\end{ccClass}
 
-	\begin{ccClass}{Cell_base}
 	\subsection{Concept for the Base Cell }
 
+	\begin{ccClass}{Cell_base}
 \ccCreationVariable{c}
 
 At the base level, a cell stores \ccc{void*} pointers to its four
@@ -1284,20 +1282,20 @@ The same include file proposes the two classes described in
 Sections~\ref{TDS3-sec-class-Base_Vertex} 
 and~\ref{TDS3-sec-class-Base_Vertex_pointer}.
 
-	\begin{ccClassTemplate}{Triangulation_vertex_base_3<Traits>}
-	\subsection{The Base Class \protect \ccClassTemplateName}
+	\subsection{A Base Class for vertices}
 	\label{TDS3-sec-class-Base_Vertex}
 
+	\begin{ccClassTemplate}{Triangulation_vertex_base_3<Traits>}
 With this class, a vertex stores a point, which means that the points
 of the user will be duplicated. This allows the user to delete his
 points before the deletion of the triangulation.
 
 	\end{ccClassTemplate} 
 
-	\begin{ccClassTemplate}{Triangulation_vertex_base_pointer_3<Traits>}
-	\subsection{The Base Class \protect \ccClassTemplateName}
+	\subsection{Another Base Class for vertices}
 	\label{TDS3-sec-class-Base_Vertex_pointer}
 
+	\begin{ccClassTemplate}{Triangulation_vertex_base_pointer_3<Traits>}
 This base class offers the same functionalities that the class
 \ccc{Triangulation_vertex_base_3}. The difference between them is that 
 it does not copy points. The user should of course be careful not to
@@ -1305,9 +1303,9 @@ delete his points while the triangulation is using them.
 
 	\end{ccClassTemplate}
 
-	\begin{ccClassTemplate}{Triangulation_cell_base_3<Traits>}
-	\subsection{The Base Class \protect \ccClassTemplateName}
+	\subsection{A Base Class for cells}
 
+	\begin{ccClassTemplate}{Triangulation_cell_base_3<Traits>}
 This class is provided by \cgal\ as a base cell class, and is similar
 to the base vertex classes. (See
 Sections~\ref{TDS3-sec-class-Base_Vertex}
