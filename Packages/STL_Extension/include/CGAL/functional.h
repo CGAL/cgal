@@ -37,6 +37,208 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// +----------------------------------------------------------------------+
+// | Functor Adaptors for Swapping Arguments
+// +----------------------------------------------------------------------+
+
+namespace CGALi {
+
+  template < class F, int i, class A > struct Swapper;
+
+  template < class F >
+  struct Swapper< F, 1, Arity_tag< 2 > > {
+    typedef typename F::result_type result_type;
+    typedef typename F::Arity       Arity;
+  
+    Swapper(const F& f_) : f(f_) {}
+  
+    template < class A1, class A2 >
+    result_type operator()
+    (const A1& a1, const A2& a2) const
+    { return f(a2, a1); }
+  
+  protected:
+    F f;
+  };
+  template < class F >
+  struct Swapper< F, 1, Arity_tag< 3 > > {
+    typedef typename F::result_type result_type;
+    typedef typename F::Arity       Arity;
+  
+    Swapper(const F& f_) : f(f_) {}
+  
+    template < class A1, class A2, class A3 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3) const
+    { return f(a2, a1, a3); }
+  
+  protected:
+    F f;
+  };
+  template < class F >
+  struct Swapper< F, 2, Arity_tag< 3 > > {
+    typedef typename F::result_type result_type;
+    typedef typename F::Arity       Arity;
+  
+    Swapper(const F& f_) : f(f_) {}
+  
+    template < class A1, class A2, class A3 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3) const
+    { return f(a1, a3, a2); }
+  
+  protected:
+    F f;
+  };
+  template < class F >
+  struct Swapper< F, 1, Arity_tag< 4 > > {
+    typedef typename F::result_type result_type;
+    typedef typename F::Arity       Arity;
+  
+    Swapper(const F& f_) : f(f_) {}
+  
+    template < class A1, class A2, class A3, class A4 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3, const A4& a4) const
+    { return f(a2, a1, a3, a4); }
+  
+  protected:
+    F f;
+  };
+  template < class F >
+  struct Swapper< F, 2, Arity_tag< 4 > > {
+    typedef typename F::result_type result_type;
+    typedef typename F::Arity       Arity;
+  
+    Swapper(const F& f_) : f(f_) {}
+  
+    template < class A1, class A2, class A3, class A4 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3, const A4& a4) const
+    { return f(a1, a3, a2, a4); }
+  
+  protected:
+    F f;
+  };
+  template < class F >
+  struct Swapper< F, 3, Arity_tag< 4 > > {
+    typedef typename F::result_type result_type;
+    typedef typename F::Arity       Arity;
+  
+    Swapper(const F& f_) : f(f_) {}
+  
+    template < class A1, class A2, class A3, class A4 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3, const A4& a4) const
+    { return f(a1, a2, a4, a3); }
+  
+  protected:
+    F f;
+  };
+  template < class F >
+  struct Swapper< F, 1, Arity_tag< 5 > > {
+    typedef typename F::result_type result_type;
+    typedef typename F::Arity       Arity;
+  
+    Swapper(const F& f_) : f(f_) {}
+  
+    template < class A1, class A2, class A3, class A4, class A5 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5) const
+    { return f(a2, a1, a3, a4, a5); }
+  
+  protected:
+    F f;
+  };
+  template < class F >
+  struct Swapper< F, 2, Arity_tag< 5 > > {
+    typedef typename F::result_type result_type;
+    typedef typename F::Arity       Arity;
+  
+    Swapper(const F& f_) : f(f_) {}
+  
+    template < class A1, class A2, class A3, class A4, class A5 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5) const
+    { return f(a1, a3, a2, a4, a5); }
+  
+  protected:
+    F f;
+  };
+  template < class F >
+  struct Swapper< F, 3, Arity_tag< 5 > > {
+    typedef typename F::result_type result_type;
+    typedef typename F::Arity       Arity;
+  
+    Swapper(const F& f_) : f(f_) {}
+  
+    template < class A1, class A2, class A3, class A4, class A5 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5) const
+    { return f(a1, a2, a4, a3, a5); }
+  
+  protected:
+    F f;
+  };
+  template < class F >
+  struct Swapper< F, 4, Arity_tag< 5 > > {
+    typedef typename F::result_type result_type;
+    typedef typename F::Arity       Arity;
+  
+    Swapper(const F& f_) : f(f_) {}
+  
+    template < class A1, class A2, class A3, class A4, class A5 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5) const
+    { return f(a1, a2, a3, a5, a4); }
+  
+  protected:
+    F f;
+  };
+
+} // namespace CGALi
+
+template < class F, int i = 1 >
+struct Swap {
+  typedef CGALi::Swapper< F, i, typename Arity_traits< F >::Arity > Type;
+};
+
+template < class F > inline
+typename Swap< F, 1 >::Type
+swap_1(const F& f) {
+  typedef typename Swap< F, 1 >::Type S;
+  return S(f);
+}
+
+template < class F > inline
+typename Swap< F, 2 >::Type
+swap_2(const F& f) {
+  typedef typename Swap< F, 2 >::Type S;
+  return S(f);
+}
+
+template < class F > inline
+typename Swap< F, 3 >::Type
+swap_3(const F& f) {
+  typedef typename Swap< F, 3 >::Type S;
+  return S(f);
+}
+
+template < class F > inline
+typename Swap< F, 4 >::Type
+swap_4(const F& f) {
+  typedef typename Swap< F, 4 >::Type S;
+  return S(f);
+}
+
+// +----------------------------------------------------------------------+
+// | Binding Arguments of a Functor
+// +----------------------------------------------------------------------+
+
 namespace CGALi {
   // Using (F::arity - 1) here gives an ICE on gcc 2.95
   template < class F, class R, class A, int i >
@@ -326,6 +528,10 @@ bind_5(const F& f, const A& a) {
   return B(f, a);
 }
 
+
+// +----------------------------------------------------------------------+
+// | Composing Functors
+// +----------------------------------------------------------------------+
 
 namespace CGALi {
   struct Not_used { typedef Arity_tag< -1 > Arity; };

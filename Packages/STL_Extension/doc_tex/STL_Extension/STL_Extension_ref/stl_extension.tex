@@ -446,6 +446,498 @@
 
 \end{ccRefFunction}
 
+%% +-----------------------------------------------------------------+
+
+\begin{ccRefFunction}{swap_1}
+  \ccDefinition The function \ccRefName\ is used to swap the arguments
+  of a functor. The result is a functor $f'$ that calls the original
+  functor $f$ with the first two arguments exchanged, that is
+  $f'(x,y,\ldots)= f(y,x,\ldots)$.
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccFunction{template < class F > typename Swap<F,1>::Type
+    swap_1(const F& f);}{returns a functor equivalent to \ccc{f}, but
+    where the first two arguments are exchanged.
+    \ccCommentHeading{Requirements} F is a model for
+    \ccc{AdaptableFunctor} with arity $2 \le ar \le 5$.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Swap<F,i>}\\
+  \ccRefIdfierPage{CGAL::swap_2}\\
+  \ccRefIdfierPage{CGAL::swap_3}\\
+  \ccRefIdfierPage{CGAL::swap_4}\\
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{swap_2}
+  \ccDefinition The function \ccRefName\ is used to swap the arguments
+  of a functor. The result is a functor $f'$ that calls the original
+  functor $f$ with the second and third argument exchanged, that is
+  $f'(x,y,z,\ldots)= f(x,z,y,\ldots)$.
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccFunction{template < class F > typename Swap<F,2>::Type
+    swap_2(const F& f);}{returns a functor equivalent to \ccc{f}, but
+    where the second and third argument are exchanged.
+    \ccCommentHeading{Requirements} F is a model for
+    \ccc{AdaptableFunctor} with arity $3 \le ar \le 5$.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Swap<F,i>}\\
+  \ccRefIdfierPage{CGAL::swap_1}\\
+  \ccRefIdfierPage{CGAL::swap_3}\\
+  \ccRefIdfierPage{CGAL::swap_4}\\
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{swap_3}
+  \ccDefinition The function \ccRefName\ is used to swap the arguments
+  of a functor. The result is a functor $f'$ that calls the original
+  functor $f$ with the third and fourth argument exchanged, that is
+  $f'(w,x,y,z,\ldots)= f(w,x,z,y,\ldots)$.
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccFunction{template < class F > typename Swap<F,3>::Type
+    swap_3(const F& f);}{returns a functor equivalent to \ccc{f}, but
+    where the third and fourth argument are exchanged.
+    \ccCommentHeading{Requirements} F is a model for
+    \ccc{AdaptableFunctor} with arity $4 \le ar \le 5$.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Swap<F,i>}\\
+  \ccRefIdfierPage{CGAL::swap_1}\\
+  \ccRefIdfierPage{CGAL::swap_2}\\
+  \ccRefIdfierPage{CGAL::swap_4}\\
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{swap_4}
+  \ccDefinition The function \ccRefName\ is used to swap the arguments
+  of a functor. The result is a functor $f'$ that calls the original
+  functor $f$ with the fourth and fifth argument exchanged, that is
+  $f'(v,w,x,y,z)= f(v,w,x,z,y)$.
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccFunction{template < class F > typename Swap<F,4>::Type
+    swap_4(const F& f);}{returns a functor equivalent to \ccc{f}, but
+    where the fourth and fifth argument are exchanged.
+    \ccCommentHeading{Requirements} F is a model for
+    \ccc{AdaptableFunctor} with arity $5$.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Swap<F,i>}\\
+  \ccRefIdfierPage{CGAL::swap_1}\\
+  \ccRefIdfierPage{CGAL::swap_2}\\
+  \ccRefIdfierPage{CGAL::swap_3}\\
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{bind_1}
+  \ccDefinition The function \ccRefName\ is used to bind the first
+  argument of a functor to some specific value. The result is a
+  functor that takes one argument less and calls the original functor
+  where the first argument is set to the bound value.
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccThree{Bind< F, A, 1 >::Type}{bind_1}{}
+  
+  \ccFunction{template < class F, class A > Bind< F, A, 1 >::Type
+    bind_1(const F& f, const A& a);}{returns a functor equivalent to
+    \ccc{f}, but where the first argument is bound (fixed) to \ccc{a}.
+    \ccCommentHeading{Requirements} F is a model for
+    \ccc{AdaptableFunctor}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Bind<F,A,i>}\\
+  \ccRefIdfierPage{CGAL::bind_2}\\
+  \ccRefIdfierPage{CGAL::bind_3}\\
+  \ccRefIdfierPage{CGAL::bind_4}\\
+  \ccRefIdfierPage{CGAL::bind_5}\\ 
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{bind_2}
+  \ccDefinition The function \ccRefName\ is used to bind the second
+  argument of a functor to some specific value. The result is a
+  functor that takes one argument less and calls the original functor
+  where the second argument is set to the bound value.
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccThree{Bind< F, A, 1 >::Type}{bind_1}{}
+  
+  \ccFunction{template < class F, class A > Bind< F, A, 2 >::Type
+    bind_2(const F& f, const A& a);}{returns a functor equivalent to
+    \ccc{f}, but where the second argument is bound (fixed) to
+    \ccc{a}.  \ccCommentHeading{Requirements} F is a model for
+    \ccc{AdaptableFunctor}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Bind<F,A,i>}\\
+  \ccRefIdfierPage{CGAL::bind_1}\\
+  \ccRefIdfierPage{CGAL::bind_3}\\
+  \ccRefIdfierPage{CGAL::bind_4}\\
+  \ccRefIdfierPage{CGAL::bind_5}\\ 
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{bind_3}
+  \ccDefinition The function \ccRefName\ is used to bind the third
+  argument of a functor to some specific value. The result is a
+  functor that takes one argument less and calls the original functor
+  where the third argument is set to the bound value.
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccThree{Bind< F, A, 1 >::Type}{bind_1}{}
+  
+  \ccFunction{template < class F, class A > Bind< F, A, 3 >::Type
+    bind_3(const F& f, const A& a);}{returns a functor equivalent to
+    \ccc{f}, but where the third argument is bound (fixed) to \ccc{a}.
+    \ccCommentHeading{Requirements} F is a model for
+    \ccc{AdaptableFunctor}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Bind<F,A,i>}\\
+  \ccRefIdfierPage{CGAL::bind_1}\\
+  \ccRefIdfierPage{CGAL::bind_2}\\
+  \ccRefIdfierPage{CGAL::bind_4}\\
+  \ccRefIdfierPage{CGAL::bind_5}\\ 
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{bind_4}
+  \ccDefinition The function \ccRefName\ is used to bind the fourth
+  argument of a functor to some specific value. The result is a
+  functor that takes one argument less and calls the original functor
+  where the fourth argument is set to the bound value.
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccThree{Bind< F, A, 1 >::Type}{bind_1}{}
+  
+  \ccFunction{template < class F, class A > Bind< F, A, 4 >::Type
+    bind_4(const F& f, const A& a);}{returns a functor equivalent to
+    \ccc{f}, but where the fourth argument is bound (fixed) to
+    \ccc{a}.  \ccCommentHeading{Requirements} F is a model for
+    \ccc{AdaptableFunctor}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Bind<F,A,i>}\\
+  \ccRefIdfierPage{CGAL::bind_1}\\
+  \ccRefIdfierPage{CGAL::bind_2}\\
+  \ccRefIdfierPage{CGAL::bind_3}\\
+  \ccRefIdfierPage{CGAL::bind_5}\\ 
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{bind_5}
+  \ccDefinition The function \ccRefName\ is used to bind the fifth
+  argument of a functor to some specific value. The result is a
+  functor that takes one argument less and calls the original functor
+  where the fifth argument is set to the bound value.
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccThree{Bind< F, A, 1 >::Type}{bind_1}{}
+  
+  \ccFunction{template < class F, class A > Bind< F, A, 5 >::Type
+    bind_5(const F& f, const A& a);}{returns a functor equivalent to
+    \ccc{f}, but where the fifth argument is bound (fixed) to \ccc{a}.
+    \ccCommentHeading{Requirements} F is a model for
+    \ccc{AdaptableFunctor}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Bind<F,A,i>}\\
+  \ccRefIdfierPage{CGAL::bind_1}\\
+  \ccRefIdfierPage{CGAL::bind_2}\\
+  \ccRefIdfierPage{CGAL::bind_3}\\
+  \ccRefIdfierPage{CGAL::bind_4}\\ 
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{compose}
+  \ccDefinition The function \ccRefName\ is used to compose functors
+  $f_0,\,\ldots,\,f_n$ into each other, thereby creating a new functor
+  $f$. The first argument $f_0$ always denotes the base functor, for
+  which the remaining functors $f_1,\,\ldots,\,f_n$ provide the
+  arguments. If we denote the arity of a functor $f$ by $ar(f)$, then
+  $ar(f) = \sum_{i=1}^n ar(f_i)$, i.e. the arguments of $f$ are
+  distributed among $f_1,\,\ldots,\,f_n$ according to their respective
+  arity. Between one and three functors can be composed into the base
+  functor, giving raise to a functor of arity at most five.
+  
+  As an example, consider a binary functor $f_0$ and two functors
+  $f_1$ and $f_2$, with arity three and two, respectively. Composing
+  $f_1$ and $f_2$ into $f_0$ yields a new functor
+  $$
+  f\::\:(x_0,\,x_1,\,x_2,\,x_3,\,x_4) \mapsto
+  f_0\left(f_1(x_0,\,x_1,\,x_2),\,f_2(x_3,\,x_4)\right)
+  $$
+  with arity five. 
+
+  \ccInclude{CGAL/functional.h}
+  
+  \ccFunction{template < class F0, class F1 > typename Compose< F0, F1
+    >::Type compose(const F0& f0, const F1& f1);}{returns the functor
+    \ccc{f0}(\ccc{f1}($\cdot$)) with the same arity as \ccc{f1}.
+    \ccCommentHeading{Requirements} \ccc{f0} is unary function
+    (arity~1). \ccc{f0} and \ccc{f1} are models for
+    \ccc{AdaptableFunctor}.}
+  
+  \ccFunction{template < class F0, class F1, class F2 > typename
+    Compose< F0, F1, F2 >::Type compose(const F0& f0, const F1& f1,
+    const F2& f2);}{returns the functor
+    \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$)) with arity equal
+    to $ar(\ccc{f1})+ar(\ccc{f2})$. \ccCommentHeading{Requirements}
+    \ccc{f0} is binary function (arity~2). \ccc{f0}, \ccc{f1}, and
+    \ccc{f2} are models for \ccc{AdaptableFunctor}.}
+  
+  \ccFunction{template < class F0, class F1, class F2, class F3 >
+    typename Compose< F0, F1, F2, F3 >::Type compose(const F0& f0,
+    const F1& f1, const F2& f2, const F3& f3);}{returns the functor
+    \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$),$\,$\ccc{f3}($\cdot$))
+    with arity equal to $ar(\ccc{f1})+ar(\ccc{f2})+ar(\ccc{f3})$.
+    \ccCommentHeading{Requirements} \ccc{f0} is ternary function
+    (arity~3). \ccc{f0}, \ccc{f1}, \ccc{f2}, and \ccc{f3} are models
+    for \ccc{AdaptableFunctor}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Compose<F0,F1,F2,F3>}\\
+  \ccRefIdfierPage{CGAL::compose_shared}\\
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{compose_shared}
+  \ccDefinition The function \ccRefName\ is used to compose functors
+  $f_0,\,\ldots,\,f_n$ into each other, thereby creating a new functor
+  $f$. The first argument $f_0$ always denotes the base functor, for
+  which the remaining functors $f_1,\,\ldots,\,f_n$ provide the
+  arguments. Contrary to the function \ccc{compose}, the arguments of
+  $f$ are not split among $f_1,\,\ldots,\,f_n$, but instead shared by
+  all the functors. Therefore, all the functors $f_1,\,\ldots,\,f_n$
+  must have the same arity, which is also the arity of the composed
+  functor $f$. Two or three functors can be composed into the base
+  functor, giving raise to a functor of arity at most five.
+  
+  As an example, consider a binary functor $f_0$ and two binary
+  functors $f_1$ and $f_2$. Composing $f_1$ and $f_2$ into $f_0$
+  yields a new binary functor
+  $$
+  f\::\: (x_0,\,x_1) \mapsto
+  f_0\left(f_1(x_0,\,x_1),\,f_2(x_0,\,x_1)\right)\;.
+  $$
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccFunction{template < class F0, class F1, class F2 > typename
+    Compose_shared< F0, F1, F2 >::Type compose_shared(const F0& f0,
+    const F1& f1, const F2& f2);}{returns the functor
+    \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$)) with the same
+    arity as $f1$ (and $f2$). \ccCommentHeading{Requirements} \ccc{f0}
+    is \ccc{AdaptableFunctor} of arity~2. \ccc{f1} and \ccc{f2} are
+    \ccc{AdaptableFunctor}s having the same arity.}
+  
+  \ccFunction{template < class F0, class F1, class F2, class F3 >
+    typename Compose_shared< F0, F1, F2, F3 >::Type
+    compose_shared(const F0& f0, const F1& f1, const F2& f2, const F3&
+    f3);}{returns the functor
+    \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$),$\,$\ccc{f3}($\cdot$))
+    with the same arity as $f1$ (and $f2$, $f3$).
+    \ccCommentHeading{Requirements} \ccc{f0} is \ccc{AdaptableFunctor}
+    of arity~3. \ccc{f1}, \ccc{f2}, and \ccc{f3} are
+    \ccc{AdaptableFunctor}s having the same arity.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Compose_shared<F0,F1,F2,F3>}\\
+  \ccRefIdfierPage{CGAL::compose}\\
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefClass}{Swap<F,i>}
+  \ccDefinition The class \ccRefName\ is used to specify the type of a
+  functor where the arguments \ccc{i} and \ccc{i+1} have been swapped.
+  The class is used in conjunction with the \ccc{swap} functions.
+
+  \ccInclude{CGAL/functional.h}
+
+  \ccTypes
+  \ccNestedType{Type}{the functor type.}
+  
+  \ccHeading{Notes} This class encapsulates differences in
+  implementation across various platforms. But in any case, \ccc{Type}
+  refers to a model of \ccc{AdaptableFunctor}.
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::swap_1}\\
+  \ccRefIdfierPage{CGAL::swap_2}\\
+  \ccRefIdfierPage{CGAL::swap_3}\\
+  \ccRefIdfierPage{CGAL::swap_4}\\
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefClass}
+
+\begin{ccRefClass}{Bind<F,A,i>}
+  \ccDefinition The class \ccRefName\ is used to specify the type of a
+  bound functor of type \ccc{F}, i.e. where the \ccc{i}-th argument is
+  bound to some object of type \ccc{A}. The class is used in
+  conjunction with the \ccc{bind} functions.
+
+  \ccInclude{CGAL/functional.h}
+
+  \ccTypes
+  \ccNestedType{Type}{the bound type.}
+  
+  \ccHeading{Notes} This class encapsulates the differences in
+  implementation of the binders across various platforms. But in any
+  case, \ccc{Type} refers to a model of \ccc{AdaptableFunctor}.
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::bind_1}\\
+  \ccRefIdfierPage{CGAL::bind_2}\\
+  \ccRefIdfierPage{CGAL::bind_3}\\
+  \ccRefIdfierPage{CGAL::bind_4}\\
+  \ccRefIdfierPage{CGAL::bind_5}\\ 
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefClass}
+
+\begin{ccRefClass}{Compose<F0,F1,F2,F3>}
+  \ccDefinition The class \ccRefName\ is used to specify the type of a
+  composed functor, i.e. the functor that results from composing
+  functors of type \ccc{F1}, \ccc{F2}, and \ccc{F3}, into a functor of
+  type \ccc{F0}. The arguments \ccc{F2} and \ccc{F3} are optional,
+  such that between two and four functors can participate in the
+  composition. The class is used in conjunction with the \ccc{compose}
+  function; see there for an explanation on how exactly the functors
+  are combined.
+
+  \ccInclude{CGAL/functional.h}
+  
+  \ccTypes
+  \ccNestedType{Type}{type of the composed functor.}
+  
+  \ccHeading{Notes} This class encapsulates the differences in
+  implementation of the composers across various platforms. But in any
+  case, \ccc{Type} refers to a model of \ccc{AdaptableFunctor}.
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::compose}\\
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefClass}
+
+\begin{ccRefClass}{Compose_shared<F0,F1,F2,F3>}
+  \ccDefinition The class \ccRefName\ is used to specify the type of a
+  composed functor, i.e. the functor that results from composing
+  functors of type \ccc{F1}, \ccc{F2}, and \ccc{F3}, into a functor of
+  type \ccc{F0}. The arguments \ccc{F2} and \ccc{F3} are optional,
+  such that between two and four functors can participate in the
+  composition. The class is used in conjunction with the
+  \ccc{compose_shared} function; see there for an explanation on how
+  exactly the functors are combined.
+
+  \ccInclude{CGAL/functional.h}
+  
+  \ccTypes
+  \ccNestedType{Type}{type of the composed functor.}
+  
+  \ccHeading{Notes} This class encapsulates the differences in
+  implementation of the composers across various platforms. But in any
+  case, \ccc{Type} refers to a model of \ccc{AdaptableFunctor}.
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::compose_shared}\\
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefClass}
+
+\begin{ccRefFunctionObjectConcept}{AdaptableFunctor}
+  
+  \ccDefinition The concept \ccRefName\ defines an adaptable functor,
+  i.e. a functor that can be used with function object adaptors such
+  as binders and composers.
+
+  \ccTypes 
+  
+  \ccTwo{Arity}{}
+  \ccNestedType{result_type}{return type of the functor.}
+  \ccNestedType{Arity}{defines the arity of the functor, i.e. the
+    number of arguments it takes. The class has to be a specialization
+    of \ccc{CGAL::Arity_tag<int>}, where the template parameter
+    corresponds to the arity of the functor, e.g.
+    \ccc{CGAL::Arity_tag<2>} for binary functors.}
+  
+  \ccOperations
+  
+  \ccTagFullDeclarations\ccCreationVariable{f}
+  \ccMethod{type0 operator()(type1 a1, type2 a2, ..., typen an)
+    const;}{(as many arguments as defined by \ccc{Arity})\\returns
+    \ccc{f(a1,...an)}.}  \ccTagDefaults
+    
+  \ccHeading{Notes} Alternatively, the type can be defined in a
+  specialization of \ccc{CGAL::Arity_traits<>} for the functor. This
+  is useful where existing classes cannot be changed easily, e.g. like
+  the functors from the standard library.
+  
+  \ccHasModels All functors from the standard library, and all
+  functors from the CGAL kernels which have a well-defined arity.
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Arity_tag<int>}\\
+  \ccRefIdfierPage{CGAL::Arity_traits<F>}
+
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefClass}{Arity_tag<int>}
+  
+  \ccDefinition The class \ccRefName\ is used to define the arity of a
+  functor, i.e. the number of arguments it takes. It is used as a
+  compile time tag only, that is objects of this type are never
+  created anywhere.
+
+  \ccInclude{CGAL/functional_base.h}
+
+  \ccSeeAlso
+  \ccRefConceptPage{AdaptableFunctor}
+
+\end{ccRefClass}
+
+\begin{ccRefClass}{Arity_traits<F>}
+  
+  \ccDefinition The class \ccRefName\ is used to define the arity of a
+  functor, i.e. the number of arguments it takes. It is used as a
+  compile time tag only, that is objects of this type are never
+  created anywhere. Specializations of \ccRefName\ can be defined,
+  where existing functors cannot be changed easily to contain their
+  \ccc{Arity} type.
+
+  \ccInclude{CGAL/functional_base.h}
+
+  \ccNestedType{Arity}{\ccc{F::Arity}}
+
+  \ccSeeAlso
+  \ccRefConceptPage{AdaptableFunctor}\\
+  \ccRefIdfierPage{CGAL::Arity_tag<int>}
+
+\end{ccRefClass}
+
 %% +=========================================================================+
 
 \begin{ccRefFunctionObjectConcept}{Projection_object}
@@ -1169,742 +1661,6 @@
 
   \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
 \end{ccRefFunctionObjectClass}
-
-%% +-----------------------------------------------------------------+
-
-\begin{ccRefFunctionObjectConcept}{AdaptableFunctor}
-  
-  \ccDefinition The concept \ccRefName\ defines an adaptable functor,
-  i.e. a functor that can be used with function object adaptors such
-  as binders and composers.
-
-  \ccTypes 
-  
-  \ccTwo{Arity}{}
-  \ccNestedType{result_type}{return type of the functor.}
-  \ccNestedType{Arity}{defines the arity of the functor, i.e. the
-    number of arguments it takes. The class has to be a specialization
-    of \ccc{CGAL::Arity_tag<int>}, where the template parameter
-    corresponds to the arity of the functor, e.g.
-    \ccc{CGAL::Arity_tag<2>} for binary functors.}
-  
-  \ccOperations
-  
-  \ccTagFullDeclarations\ccCreationVariable{f}
-  \ccMethod{type0 operator()(type1 a1, type2 a2, ..., typen an)
-    const;}{(as many arguments as defined by \ccc{Arity})\\returns
-    \ccc{f(a1,...an)}.}  \ccTagDefaults
-    
-  \ccHeading{Notes} Alternatively, the type can be defined in a
-  specialization of \ccc{CGAL::Arity_traits<>} for the functor. This
-  is useful where existing classes cannot be changed easily, e.g. like
-  the functors from the standard library.
-  
-  \ccHasModels All functors from the standard library, and all
-  functors from the CGAL kernels which have a well-defined arity.
-  
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Arity_tag<int>}\\
-  \ccRefIdfierPage{CGAL::Arity_traits<F>}
-
-\end{ccRefFunctionObjectConcept}
-
-\begin{ccRefClass}{Arity_tag<int>}
-  
-  \ccDefinition The class \ccRefName\ is used to define the arity of a
-  functor, i.e. the number of arguments it takes. It is used as a
-  compile time tag only, that is objects of this type are never
-  created anywhere.
-
-  \ccInclude{CGAL/functional_base.h}
-
-  \ccSeeAlso
-  \ccRefConceptPage{AdaptableFunctor}
-
-\end{ccRefClass}
-
-\begin{ccRefClass}{Arity_traits<F>}
-  
-  \ccDefinition The class \ccRefName\ is used to define the arity of a
-  functor, i.e. the number of arguments it takes. It is used as a
-  compile time tag only, that is objects of this type are never
-  created anywhere. Specializations of \ccRefName\ can be defined,
-  where existing functors cannot be changed easily to contain their
-  \ccc{Arity} type.
-
-  \ccInclude{CGAL/functional_base.h}
-
-  \ccNestedType{Arity}{\ccc{F::Arity}}
-
-  \ccSeeAlso
-  \ccRefConceptPage{AdaptableFunctor}\\
-  \ccRefIdfierPage{CGAL::Arity_tag<int>}
-
-\end{ccRefClass}
-
-\begin{ccRefClass}{Bind<F,A,i>}
-  \ccDefinition The class \ccRefName\ is used to specify the type of a
-  bound functor of type \ccc{F}, i.e. where the \ccc{i}-th argument is
-  bound to some object of type \ccc{A}. The class is used in
-  conjunction with the \ccc{bind} functions.
-
-  \ccInclude{CGAL/functional.h}
-
-  \ccTypes
-  \ccNestedType{Type}{the bound type.}
-  
-  \ccHeading{Notes} This class encapsulates the differences in
-  implementation of the binders across various platforms. But in any
-  case, \ccc{Type} refers to a model of \ccc{AdaptableFunctor}.
-
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::bind_1}\\
-  \ccRefIdfierPage{CGAL::bind_2}\\
-  \ccRefIdfierPage{CGAL::bind_3}\\
-  \ccRefIdfierPage{CGAL::bind_4}\\
-  \ccRefIdfierPage{CGAL::bind_5}\\ 
-  \ccRefConceptPage{AdaptableFunctor}
-  
-\end{ccRefClass}
-
-\begin{ccRefFunction}{bind_1}
-  \ccDefinition The function \ccRefName\ is used to bind the first
-  argument of a functor to some specific value. The result is a
-  functor that takes one argument less and calls the original functor
-  where the first argument is set to the bound value.
-  
-  \ccInclude{CGAL/functional.h}
-  
-  \ccThree{Bind< F, A, 1 >::Type}{bind_1}{}
-  
-  \ccFunction{template < class F, class A > Bind< F, A, 1 >::Type
-    bind_1(const F& f, const A& a);}{returns a functor equivalent to
-    \ccc{f}, but where the first argument is bound (fixed) to \ccc{a}.
-    \ccCommentHeading{Requirements} F is a model for
-    \ccc{AdaptableFunctor}.}
-  
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Bind<F,A,i>}\\
-  \ccRefIdfierPage{CGAL::bind_2}\\
-  \ccRefIdfierPage{CGAL::bind_3}\\
-  \ccRefIdfierPage{CGAL::bind_4}\\
-  \ccRefIdfierPage{CGAL::bind_5}\\ 
-  \ccRefConceptPage{AdaptableFunctor}
-  
-\end{ccRefFunction}
-
-\begin{ccRefFunction}{bind_2}
-  \ccDefinition The function \ccRefName\ is used to bind the second
-  argument of a functor to some specific value. The result is a
-  functor that takes one argument less and calls the original functor
-  where the second argument is set to the bound value.
-  
-  \ccInclude{CGAL/functional.h}
-  
-  \ccThree{Bind< F, A, 1 >::Type}{bind_1}{}
-  
-  \ccFunction{template < class F, class A > Bind< F, A, 2 >::Type
-    bind_2(const F& f, const A& a);}{returns a functor equivalent to
-    \ccc{f}, but where the second argument is bound (fixed) to
-    \ccc{a}.  \ccCommentHeading{Requirements} F is a model for
-    \ccc{AdaptableFunctor}.}
-  
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Bind<F,A,i>}\\
-  \ccRefIdfierPage{CGAL::bind_1}\\
-  \ccRefIdfierPage{CGAL::bind_3}\\
-  \ccRefIdfierPage{CGAL::bind_4}\\
-  \ccRefIdfierPage{CGAL::bind_5}\\ 
-  \ccRefConceptPage{AdaptableFunctor}
-  
-\end{ccRefFunction}
-
-\begin{ccRefFunction}{bind_3}
-  \ccDefinition The function \ccRefName\ is used to bind the third
-  argument of a functor to some specific value. The result is a
-  functor that takes one argument less and calls the original functor
-  where the third argument is set to the bound value.
-  
-  \ccInclude{CGAL/functional.h}
-  
-  \ccThree{Bind< F, A, 1 >::Type}{bind_1}{}
-  
-  \ccFunction{template < class F, class A > Bind< F, A, 3 >::Type
-    bind_3(const F& f, const A& a);}{returns a functor equivalent to
-    \ccc{f}, but where the third argument is bound (fixed) to \ccc{a}.
-    \ccCommentHeading{Requirements} F is a model for
-    \ccc{AdaptableFunctor}.}
-  
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Bind<F,A,i>}\\
-  \ccRefIdfierPage{CGAL::bind_1}\\
-  \ccRefIdfierPage{CGAL::bind_2}\\
-  \ccRefIdfierPage{CGAL::bind_4}\\
-  \ccRefIdfierPage{CGAL::bind_5}\\ 
-  \ccRefConceptPage{AdaptableFunctor}
-  
-\end{ccRefFunction}
-
-\begin{ccRefFunction}{bind_4}
-  \ccDefinition The function \ccRefName\ is used to bind the fourth
-  argument of a functor to some specific value. The result is a
-  functor that takes one argument less and calls the original functor
-  where the fourth argument is set to the bound value.
-  
-  \ccInclude{CGAL/functional.h}
-  
-  \ccThree{Bind< F, A, 1 >::Type}{bind_1}{}
-  
-  \ccFunction{template < class F, class A > Bind< F, A, 4 >::Type
-    bind_4(const F& f, const A& a);}{returns a functor equivalent to
-    \ccc{f}, but where the fourth argument is bound (fixed) to
-    \ccc{a}.  \ccCommentHeading{Requirements} F is a model for
-    \ccc{AdaptableFunctor}.}
-  
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Bind<F,A,i>}\\
-  \ccRefIdfierPage{CGAL::bind_1}\\
-  \ccRefIdfierPage{CGAL::bind_2}\\
-  \ccRefIdfierPage{CGAL::bind_3}\\
-  \ccRefIdfierPage{CGAL::bind_5}\\ 
-  \ccRefConceptPage{AdaptableFunctor}
-  
-\end{ccRefFunction}
-
-\begin{ccRefFunction}{bind_5}
-  \ccDefinition The function \ccRefName\ is used to bind the fifth
-  argument of a functor to some specific value. The result is a
-  functor that takes one argument less and calls the original functor
-  where the fifth argument is set to the bound value.
-  
-  \ccInclude{CGAL/functional.h}
-  
-  \ccThree{Bind< F, A, 1 >::Type}{bind_1}{}
-  
-  \ccFunction{template < class F, class A > Bind< F, A, 5 >::Type
-    bind_5(const F& f, const A& a);}{returns a functor equivalent to
-    \ccc{f}, but where the fifth argument is bound (fixed) to \ccc{a}.
-    \ccCommentHeading{Requirements} F is a model for
-    \ccc{AdaptableFunctor}.}
-  
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Bind<F,A,i>}\\
-  \ccRefIdfierPage{CGAL::bind_1}\\
-  \ccRefIdfierPage{CGAL::bind_2}\\
-  \ccRefIdfierPage{CGAL::bind_3}\\
-  \ccRefIdfierPage{CGAL::bind_4}\\ 
-  \ccRefConceptPage{AdaptableFunctor}
-  
-\end{ccRefFunction}
-
-\begin{ccRefFunction}{compose}
-  \ccDefinition The function \ccRefName\ is used to compose functors
-  $f_0,\,\ldots,\,f_n$ into each other, thereby creating a new functor
-  $f$. The first argument $f_0$ always denotes the base functor, for
-  which the remaining functors $f_1,\,\ldots,\,f_n$ provide the
-  arguments. If we denote the arity of a functor $f$ by $ar(f)$, then
-  $ar(f) = \sum_{i=1}^n ar(f_i)$, i.e. the arguments of $f$ are
-  distributed among $f_1,\,\ldots,\,f_n$ according to their respective
-  arity. Between one and three functors can be composed into the base
-  functor, giving raise to a functor of arity at most five.
-  
-  As an example, consider a binary functor $f_0$ and two functors
-  $f_1$ and $f_2$, with arity three and two, respectively. Composing
-  $f_1$ and $f_2$ into $f_0$ yields a new functor
-  $$
-  f\::\:(x_0,\,x_1,\,x_2,\,x_3,\,x_4) \mapsto
-  f_0\left(f_1(x_0,\,x_1,\,x_2),\,f_2(x_3,\,x_4)\right)
-  $$
-  with arity five. 
-
-  \ccInclude{CGAL/functional.h}
-  
-  \ccFunction{template < class F0, class F1 > typename Compose< F0, F1
-    >::Type compose(const F0& f0, const F1& f1);}{returns the functor
-    \ccc{f0}(\ccc{f1}($\cdot$)) with the same arity as \ccc{f1}.
-    \ccCommentHeading{Requirements} \ccc{f0} is unary function
-    (arity~1). \ccc{f0} and \ccc{f1} are models for
-    \ccc{AdaptableFunctor}.}
-  
-  \ccFunction{template < class F0, class F1, class F2 > typename
-    Compose< F0, F1, F2 >::Type compose(const F0& f0, const F1& f1,
-    const F2& f2);}{returns the functor
-    \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$)) with arity equal
-    to $ar(\ccc{f1})+ar(\ccc{f2})$. \ccCommentHeading{Requirements}
-    \ccc{f0} is binary function (arity~2). \ccc{f0}, \ccc{f1}, and
-    \ccc{f2} are models for \ccc{AdaptableFunctor}.}
-  
-  \ccFunction{template < class F0, class F1, class F2, class F3 >
-    typename Compose< F0, F1, F2, F3 >::Type compose(const F0& f0,
-    const F1& f1, const F2& f2, const F3& f3);}{returns the functor
-    \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$),$\,$\ccc{f3}($\cdot$))
-    with arity equal to $ar(\ccc{f1})+ar(\ccc{f2})+ar(\ccc{f3})$.
-    \ccCommentHeading{Requirements} \ccc{f0} is ternary function
-    (arity~3). \ccc{f0}, \ccc{f1}, \ccc{f2}, and \ccc{f3} are models
-    for \ccc{AdaptableFunctor}.}
-  
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Compose<F0,F1,F2,F3>}\\
-  \ccRefIdfierPage{CGAL::compose_shared}\\
-  \ccRefConceptPage{AdaptableFunctor}
-  
-\end{ccRefFunction}
-
-\begin{ccRefFunction}{compose_shared}
-  \ccDefinition The function \ccRefName\ is used to compose functors
-  $f_0,\,\ldots,\,f_n$ into each other, thereby creating a new functor
-  $f$. The first argument $f_0$ always denotes the base functor, for
-  which the remaining functors $f_1,\,\ldots,\,f_n$ provide the
-  arguments. Contrary to the function \ccc{compose}, the arguments of
-  $f$ are not split among $f_1,\,\ldots,\,f_n$, but instead shared by
-  all the functors. Therefore, all the functors $f_1,\,\ldots,\,f_n$
-  must have the same arity, which is also the arity of the composed
-  functor $f$. Two or three functors can be composed into the base
-  functor, giving raise to a functor of arity at most five.
-  
-  As an example, consider a binary functor $f_0$ and two binary
-  functors $f_1$ and $f_2$. Composing $f_1$ and $f_2$ into $f_0$
-  yields a new binary functor
-  $$
-  f\::\: (x_0,\,x_1) \mapsto
-  f_0\left(f_1(x_0,\,x_1),\,f_2(x_0,\,x_1)\right)\;.
-  $$
-  
-  \ccInclude{CGAL/functional.h}
-  
-  \ccFunction{template < class F0, class F1, class F2 > typename
-    Compose_shared< F0, F1, F2 >::Type compose_shared(const F0& f0,
-    const F1& f1, const F2& f2);}{returns the functor
-    \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$)) with the same
-    arity as $f1$ (and $f2$). \ccCommentHeading{Requirements} \ccc{f0}
-    is \ccc{AdaptableFunctor} of arity~2. \ccc{f1} and \ccc{f2} are
-    \ccc{AdaptableFunctor}s having the same arity.}
-  
-  \ccFunction{template < class F0, class F1, class F2, class F3 >
-    typename Compose_shared< F0, F1, F2, F3 >::Type
-    compose_shared(const F0& f0, const F1& f1, const F2& f2, const F3&
-    f3);}{returns the functor
-    \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$),$\,$\ccc{f3}($\cdot$))
-    with the same arity as $f1$ (and $f2$, $f3$).
-    \ccCommentHeading{Requirements} \ccc{f0} is \ccc{AdaptableFunctor}
-    of arity~3. \ccc{f1}, \ccc{f2}, and \ccc{f3} are
-    \ccc{AdaptableFunctor}s having the same arity.}
-  
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Compose_shared<F0,F1,F2,F3>}\\
-  \ccRefIdfierPage{CGAL::compose}\\
-  \ccRefConceptPage{AdaptableFunctor}
-  
-\end{ccRefFunction}
-
-\begin{ccRefClass}{Compose<F0,F1,F2,F3>}
-  \ccDefinition The class \ccRefName\ is used to specify the type of a
-  composed functor, i.e. the functor that results from composing
-  functors of type \ccc{F1}, \ccc{F2}, and \ccc{F3}, into a functor of
-  type \ccc{F0}. The arguments \ccc{F2} and \ccc{F3} are optional,
-  such that between two and four functors can participate in the
-  composition. The class is used in conjunction with the \ccc{compose}
-  function; see there for an explanation on how exactly the functors
-  are combined.
-
-  \ccInclude{CGAL/functional.h}
-  
-  \ccTypes
-  \ccNestedType{Type}{type of the composed functor.}
-  
-  \ccHeading{Notes} This class encapsulates the differences in
-  implementation of the composers across various platforms. But in any
-  case, \ccc{Type} refers to a model of \ccc{AdaptableFunctor}.
-
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::compose}\\
-  \ccRefConceptPage{AdaptableFunctor}
-  
-\end{ccRefClass}
-
-\begin{ccRefClass}{Compose_shared<F0,F1,F2,F3>}
-  \ccDefinition The class \ccRefName\ is used to specify the type of a
-  composed functor, i.e. the functor that results from composing
-  functors of type \ccc{F1}, \ccc{F2}, and \ccc{F3}, into a functor of
-  type \ccc{F0}. The arguments \ccc{F2} and \ccc{F3} are optional,
-  such that between two and four functors can participate in the
-  composition. The class is used in conjunction with the
-  \ccc{compose_shared} function; see there for an explanation on how
-  exactly the functors are combined.
-
-  \ccInclude{CGAL/functional.h}
-  
-  \ccTypes
-  \ccNestedType{Type}{type of the composed functor.}
-  
-  \ccHeading{Notes} This class encapsulates the differences in
-  implementation of the composers across various platforms. But in any
-  case, \ccc{Type} refers to a model of \ccc{AdaptableFunctor}.
-
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::compose_shared}\\
-  \ccRefConceptPage{AdaptableFunctor}
-  
-\end{ccRefClass}
-
-
-%% \begin{ccRefFunctionObjectConcept}{AdaptableUnaryFunction}
-  
-%%   \ccDefinition The concept \ccRefName\ defines an adaptable unary
-%%   function, i.e. a unary function class that can be used with function
-%%   object adaptors such as binders and composers.
-
-%%   \ccThree{AdaptableBinaryFunction&}{f( argument_type a)MMM}{}
-%%   \ccThreeToTwo
-%%   \ccCreationVariable{f} 
-  
-%%   \ccTypes 
-  
-%%   \ccNestedType{argument_type}{argument type.}
-%%   \ccGlue\ccNestedType{result_type}{result type.}
-
-%%   \ccCreation
-
-%%   \ccConstructor{AdaptableUnaryFunction();}{default constructor.}
-%%   \ccGlue
-%%   \ccConstructor{AdaptableUnaryFunction(const AdaptableUnaryFunction&
-%%     f1);}{copy constructor.}
-  
-%%   \ccOperations
-  
-%%   \ccMemberFunction{AdaptableUnaryFunction& operator=( const
-%%     AdaptableUnaryFunction& f1);}{assignment.}
-%%   \ccGlue
-%%   \ccMemberFunction{result_type operator()( const argument_type&
-%%     a);}{function call.}
-  
-%%   \ccSeeAlso
-  
-%%   \ccAnchor{http://www.sgi.com/Technology/STL/AdaptableUnaryFunction.html}{STL
-%%     Programmer's Guide}.
-%% \end{ccRefFunctionObjectConcept}
-
-%% %% +-----------------------------------------------------------------+
-%% \begin{ccRefFunctionObjectConcept}{AdaptableBinaryFunction}
-  
-%%   \ccDefinition The concept \ccRefName\ defines an adaptable binary
-%%   function, i.e. a binary function class that can be used with
-%%   function object adaptors such as binders and composers.
-
-%%   \ccCreationVariable{f} 
-  
-%%   \ccTypes 
-  
-%%   \ccNestedType{first_argument_type}{type of the first argument.}
-%%   \ccGlue\ccNestedType{second_argument_type}{type of the second
-%%     argument.}
-%%   \ccGlue\ccNestedType{result_type}{result type.}
-
-%%   \ccCreation
-  
-%%   \ccConstructor{AdaptableBinaryFunction();}{default constructor.}
-%%   \ccGlue
-%%   \ccConstructor{AdaptableBinaryFunction(const
-%%     AdaptableBinaryFunction& f1);}{copy constructor.}
-
-%%   \ccOperations
-  
-%%   \ccMemberFunction{AdaptableBinaryFunction& operator=( const
-%%     AdaptableBinaryFunction& f1);}{assignment.}
-
-%%   \ccMemberFunction{result_type operator()( const first_argument_type&
-%%     a, const second_argument_type& b);}{function call.}
-  
-%%   \ccSeeAlso
-  
-%%   \ccAnchor{http://www.sgi.com/Technology/STL/AdaptableBinaryFunction.html}{STL
-%%     Programmer's Guide}.
-
-%% \end{ccRefFunctionObjectConcept}
-
-%% %% +-----------------------------------------------------------------+
-
-%% \begin{ccRefFunctionObjectClass}{Unary_compose_1<Op1, Op2>}
-%%   \label{sectionComposeFunctionClasses}
-  
-%%   \ccDefinition The class \ccRefName\ represents the composition of
-%%   two unary functions of type \ccc{Op1} and \ccc{Op2}.
-
-%%   \ccInclude{CGAL/function_objects.h}
-  
-%%   \ccIsModel
-%%   \ccRefConceptPage{AdaptableUnaryFunction}
-
-%%   \ccHeading{Requirements}
-%%   \begin{enumerate}
-%%   \item \ccc{Op1} and \ccc{Op2} are both models for
-%%     \ccc{AdaptableUnaryFunction}.
-%%   \item \ccc{Op2::result_type} is convertible to
-%%     \ccc{Op1::argument_type}.
-%%   \end{enumerate}
-
-%%   \ccTypes
-%%   \ccNestedType{argument_type}{typedef to \ccc{Op2::argument_type}.}
-%%   \ccNestedType{result_type}{typedef to \ccc{Op1::result_type}.}
-  
-%%   \ccCreation\ccCreationVariable{comp} 
-%%   \ccConstructor{Unary_compose_1(const Op1& o1, const Op2&
-%%     o2);}{create \ccVar\ as composition $\ccc{o1}~\circ~\ccc{o2}$.}
-
-%%   \ccOperations
-%%   \ccMethod{result_type operator()(const argument_type& x) const;}{
-%%     returns \ccc{o1(o2(x))}.}
-
-%%   \ccSeeAlso
-%%   \ccRefIdfierPage{CGAL::compose1_1}
-%% \end{ccRefFunctionObjectClass}
-
-%% \begin{ccRefFunction}{compose1_1}
-  
-%%   \ccDefinition The function \ccRefName\ composes two unary functions
-%%   into a unary function.
-
-%%   \ccInclude{CGAL/function_objects.h}
-  
-%%   \ccGlobalFunction{template < class Op1, class Op2 >
-%%     Unary_compose_1<Op1, Op2> compose1_1( const Op1& o1, const Op2&
-%%     o2);}{returns an \ccc{AdaptableUnaryFunction} representing the
-%%     composition $\ccc{o1}~\circ~\ccc{o2}$.}
-%%   \ccCommentHeading{Requirements}
-%%   \begin{enumerate}
-%%   \item \ccc{Op1} and \ccc{Op2} are both models for
-%%     \ccc{AdaptableUnaryFunction}.
-%%   \item \ccc{Op2::result_type} is convertible to
-%%     \ccc{Op1::argument_type}.
-%%   \end{enumerate}
-
-%%   \ccSeeAlso
-%%   \ccRefIdfierPage{CGAL::Unary_compose_1<Op1, Op2>}\\
-%%   \ccRefConceptPage{AdaptableUnaryFunction}
-%%   \ccTagDefaults
-%% \end{ccRefFunction}
-
-%% %% +-----------------------------------------------------------------+
-
-%% \begin{ccRefFunctionObjectClass}{Unary_compose_2<Op1, Op2>}
-  
-%%   \ccDefinition The class \ccRefName\ represents the composition of a
-%%   unary function and a binary function of type \ccc{Op1}, \ccc{Op2},
-%%   respectively. The result is again a binary function.
-
-%%   \ccInclude{CGAL/function_objects.h}
-  
-%%   \ccIsModel
-%%   \ccRefConceptPage{AdaptableBinaryFunction}
-
-%%   \ccHeading{Requirements}
-%%   \begin{enumerate}
-%%   \item \ccc{Op1} is a model for \ccc{AdaptableUnaryFunction}.
-%%   \item \ccc{Op2} is a model for \ccc{AdaptableBinaryFunction}.
-%%   \item \ccc{Op2::result_type} is convertible to
-%%     \ccc{Op1::argument_type}.
-%%   \end{enumerate}
-  
-%%   \ccTypes
-%%   \ccNestedType{first_argument_type}{typedef to
-%%     \ccc{Op2::first_argument_type}.}
-%%   \ccNestedType{second_argument_type}{typedef to
-%%     \ccc{Op2::second_argument_type}.}
-%%   \ccNestedType{result_type}{typedef to \ccc{Op1::result_type}.}
-  
-%%   \ccCreation\ccCreationVariable{comp} 
-%%   \ccConstructor{Unary_compose_2(const Op1& o1, const Op2&
-%%     o2);}{create \ccVar\ as composition $\ccc{o1}~\circ~\ccc{o2}$.}
-  
-%%   \ccOperations
-%%   \ccMethod{result_type operator()(const first_argument_type& x, const
-%%     second_argument_type& y) const;}{ returns \ccc{o1(o2(x, y))}.}
-
-%%   \ccSeeAlso
-%%   \ccRefIdfierPage{CGAL::compose1_2}\\
-%%   \ccRefConceptPage{AdaptableUnaryFunction}
-%% \end{ccRefFunctionObjectClass}
-
-%% \begin{ccRefFunction}{compose1_2}
-  
-%%   \ccDefinition The function \ccRefName\ composes a unary function and
-%%   a binary function into a binary function.
-
-%%   \ccInclude{CGAL/function_objects.h}
-  
-%%   \ccGlobalFunction{template < class Op1, class Op2 >
-%%     Unary_compose_2<Op1, Op2> compose1_2( const Op1& o1, const Op2&
-%%     o2);}{returns an \ccc{AdaptableBinaryFunction} representing the
-%%     composition $\ccc{o1}~\circ~\ccc{o2}$.}
-%%   \ccCommentHeading{Requirements}
-%%   \begin{enumerate}
-%%   \item \ccc{Op1} is a model for \ccc{AdaptableUnaryFunction}.
-%%   \item \ccc{Op2} is a model for \ccc{AdaptableBinaryFunction}.
-%%   \item \ccc{Op2::result_type} is convertible to
-%%     \ccc{Op1::argument_type}.
-%%   \end{enumerate}
-
-%%   \ccSeeAlso
-%%   \ccRefIdfierPage{CGAL::Unary_compose_2<Op1, Op2>}\\
-%%   \ccRefConceptPage{AdaptableUnaryFunction}\\
-%%   \ccRefConceptPage{AdaptableBinaryFunction}
-%%   \ccTagDefaults
-%% \end{ccRefFunction}
-
-%% %% +-----------------------------------------------------------------+
-
-%% \begin{ccRefFunctionObjectClass}{Binary_compose_1<Op1, Op2, Op3>}
-  
-%%   \ccDefinition The class \ccRefName\ represents the composition of a
-%%   binary function and two unary functions of type \ccc{Op1},
-%%   \ccc{Op2}, \ccc{Op3}, respectively. The result is a unary function.
-
-%%   \ccInclude{CGAL/function_objects.h}
-  
-%%   \ccIsModel
-%%   \ccRefConceptPage{AdaptableUnaryFunction}
-
-%%   \ccHeading{Requirements}
-%%   \begin{enumerate}
-%%   \item \ccc{Op1} is a model for \ccc{AdaptableBinaryFunction}.
-%%   \item \ccc{Op2} and \ccc{Op3} are both models for
-%%     \ccc{AdaptableUnaryFunction}.
-%%   \item \ccc{Op2::argument_type} is convertible to
-%%     \ccc{Op3::argument_type}.
-%%   \item \ccc{Op2::result_type} is convertible to
-%%     \ccc{Op1::first_argument_type}.
-%%   \item \ccc{Op3::result_type} is convertible to
-%%     \ccc{Op1::second_argument_type}.
-%%   \end{enumerate}
-  
-%%   \ccTypes
-%%   \ccNestedType{argument_type}{typedef to \ccc{Op2::argument_type}.}
-%%   \ccNestedType{result_type}{typedef to \ccc{Op1::result_type}.}
-  
-%%   \ccCreation\ccCreationVariable{comp} 
-  
-%%   \ccConstructor{Binary_compose_1(const Op1& o1, const Op2& o2, const
-%%     Op3& o3);}{create \ccVar\ as composition of \ccc{o1} with \ccc{o2}
-%%     and \ccc{o3}.}
-  
-%%   \ccOperations
-%%   \ccMethod{result_type operator()(const argument_type& x)
-%%     const;}{returns \ccc{o1(o2(x),o3(x))}.}
-
-%%   \ccSeeAlso
-%%   \ccRefIdfierPage{CGAL::compose2_1}\\
-%%   \ccRefConceptPage{AdaptableUnaryFunction}\\
-%%   \ccRefConceptPage{AdaptableBinaryFunction}
-%% \end{ccRefFunctionObjectClass}
-
-%% \begin{ccRefFunction}{compose2_1}
-  
-%%   \ccDefinition The function \ccRefName\ composes a binary function
-%%   and two unary functions into a unary function.
-
-%%   \ccInclude{CGAL/function_objects.h}
-  
-%%   \ccGlobalFunction{template < class Op1, class Op2, class Op3 >
-%%     Binary_compose_1<Op1, Op2, Op3> compose2_1( const Op1& o1, const
-%%     Op2& o2, const Op3& o3);}{returns an \ccc{AdaptableUnaryFunction}
-%%     representing the composition
-%%     $x~\mapsto~\ccc{o1}(\ccc{o2}(x),\ccc{o3}(x))$.}
-  
-%%   \ccCommentHeading{Requirements}
-%%   \begin{enumerate}
-%%   \item \ccc{Op1} is a model for \ccc{AdaptableBinaryFunction}.
-%%   \item \ccc{Op2} and \ccc{Op3} are both models for
-%%     \ccc{AdaptableUnaryFunction}.
-%%   \item \ccc{Op2::argument_type} is convertible to
-%%     \ccc{Op3::argument_type}.
-%%   \item \ccc{Op2::result_type} is convertible to
-%%     \ccc{Op1::first_argument_type}.
-%%   \item \ccc{Op3::result_type} is convertible to
-%%     \ccc{Op1::second_argument_type}.
-%%   \end{enumerate}
-
-%%   \ccSeeAlso
-%%   \ccRefIdfierPage{CGAL::Binary_compose_1<Op1, Op2, Op3>}\\
-%%   \ccRefConceptPage{AdaptableUnaryFunction}\\
-%%   \ccRefConceptPage{AdaptableBinaryFunction}
-%%   \ccTagDefaults
-%% \end{ccRefFunction}
-
-%% \begin{ccRefFunctionObjectClass}{Binary_compose_2<Op1, Op2, Op3>}
-  
-%%   \ccDefinition The class \ccRefName\ represents the composition of a
-%%   binary function and two unary functions of type \ccc{Op1},
-%%   \ccc{Op2}, \ccc{Op3}, respectively. The result is a binary function.
-
-%%   \ccInclude{CGAL/function_objects.h}
-  
-%%   \ccIsModel
-%%   \ccRefConceptPage{AdaptableBinaryFunction}
-
-%%   \ccHeading{Requirements}
-%%   \begin{enumerate}
-%%   \item \ccc{Op1} is a model for \ccc{AdaptableBinaryFunction}.
-%%   \item \ccc{Op2} and \ccc{Op3} are both models for
-%%     \ccc{AdaptableUnaryFunction}.
-%%   \item \ccc{Op2::result_type} is convertible to
-%%     \ccc{Op1::first_argument_type}.
-%%   \item \ccc{Op3::result_type} is convertible to
-%%     \ccc{Op1::second_argument_type}.
-%%   \end{enumerate}
-  
-%%   \ccTypes
-%%   \ccNestedType{first_argument_type}{typedef to
-%%     \ccc{Op2::argument_type}.}
-%%   \ccNestedType{second_argument_type}{typedef to
-%%     \ccc{Op3::argument_type}.}
-%%   \ccNestedType{result_type}{typedef to \ccc{Op1::result_type}.}
-  
-%%   \ccCreation\ccCreationVariable{comp} 
-  
-%%   \ccConstructor{Binary_compose_2(const Op1& o1, const Op2& o2, const
-%%     Op3& o3);}{create \ccVar\ as composition of \ccc{o1} with \ccc{o2}
-%%     and \ccc{o3}.}
-  
-%%   \ccOperations
-%%   \ccMethod{result_type operator()(const first_argument_type& x, const
-%%     second_argument_type& y) const;}{returns \ccc{o1(o2(x),o3(y))}.}
-
-%%   \ccSeeAlso
-%%   \ccRefIdfierPage{CGAL::compose2_2}\\
-%%   \ccRefConceptPage{AdaptableUnaryFunction}\\
-%%   \ccRefConceptPage{AdaptableBinaryFunction}
-%% \end{ccRefFunctionObjectClass}
-
-%% \begin{ccRefFunction}{compose2_2}
-  
-%%   \ccDefinition The function \ccRefName\ composes a binary function
-%%   and two unary functions into a binary function.
-
-%%   \ccInclude{CGAL/function_objects.h}
-  
-%%   \ccGlobalFunction{template < class Op1, class Op2, class Op3 >
-%%     Binary_compose_2<Op1, Op2, Op3> compose2_2( const Op1& o1, const
-%%     Op2& o2, const Op3& o3);}{returns an \ccc{AdaptableUnaryFunction}
-%%     representing the composition
-%%     $x~\mapsto~\ccc{o1}(\ccc{o2}(x),\ccc{o3}(y))$.}
-  
-%%   \ccCommentHeading{Requirements}
-%%   \begin{enumerate}
-%%   \item \ccc{Op1} is a model for \ccc{AdaptableBinaryFunction}.
-%%   \item \ccc{Op2} and \ccc{Op3} are both models for
-%%     \ccc{AdaptableUnaryFunction}.
-%%   \item \ccc{Op2::result_type} is convertible to
-%%     \ccc{Op1::first_argument_type}.
-%%   \item \ccc{Op3::result_type} is convertible to
-%%     \ccc{Op1::second_argument_type}.
-%%   \end{enumerate}
-
-%%   \ccSeeAlso
-%%   \ccRefIdfierPage{CGAL::Binary_compose_2<Op1, Op2, Op3>}\\
-%%   \ccRefConceptPage{AdaptableUnaryFunction}\\
-%%   \ccRefConceptPage{AdaptableBinaryFunction}
-%%   \ccTagDefaults
-%%\end{ccRefFunction}
 
 %% +=========================================================================+
 

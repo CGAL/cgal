@@ -33,7 +33,10 @@
 
 namespace CGAL {
 
-// the tag class to define a functors arity (== #args)
+// +----------------------------------------------------------------------+
+// | Defining a Functors Arity (== #arguments)
+// +----------------------------------------------------------------------+
+
 template < int i > struct Arity_tag { enum { arity = i }; };
 // use to deduce arity of functors
 // --> allows binding std functors

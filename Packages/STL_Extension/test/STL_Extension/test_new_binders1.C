@@ -1,6 +1,10 @@
 #include <CGAL/basic.h>
 #include <CGAL/functional.h>
 
+using CGAL::swap_1;
+using CGAL::swap_2;
+using CGAL::swap_3;
+using CGAL::swap_4;
 using CGAL::bind_1;
 using CGAL::bind_2;
 using CGAL::bind_3;
@@ -173,6 +177,36 @@ int main()
   cout << compose_shared(f3, f2, f2, f2)(2, 3) << endl;
   cout << compose_shared(f3, f1, f1, f1)(2) << endl;
   cout << compose_shared(f3, f0, f0, f0)() << endl;
+
+  cout << swap_1(f2)(1, 2) << endl;
+  cout << swap_1(f3)(1, 2, 3) << endl;
+  cout << swap_1(f4)(1, 2, 3, 4) << endl;
+  cout << swap_1(f5)(1, 2, 3, 4, 5) << endl;
+  cout << swap_2(f3)(1, 2, 3) << endl;
+  cout << swap_2(f4)(1, 2, 3, 4) << endl;
+  cout << swap_2(f5)(1, 2, 3, 4, 5) << endl;
+  cout << swap_3(f4)(1, 2, 3, 4) << endl;
+  cout << swap_3(f5)(1, 2, 3, 4, 5) << endl;
+  cout << swap_4(f5)(1, 2, 3, 4, 5) << endl;
+
+  if (!(swap_1(f2)(1, 2) == f2(2, 1))) return 1;
+  if (!(swap_1(f3)(1, 2, 3) == f3(2, 1, 3))) return 1;
+  if (!(swap_1(f4)(1, 2, 3, 4) == f4(2, 1, 3, 4))) return 1;
+  if (!(swap_1(f5)(1, 2, 3, 4, 5) == f5(2, 1, 3, 4, 5))) return 1;
+  if (!(swap_2(f3)(1, 2, 3) == f3(1, 3, 2))) return 1;
+  if (!(swap_2(f4)(1, 2, 3, 4) == f4(1, 3, 2, 4))) return 1;
+  if (!(swap_2(f5)(1, 2, 3, 4, 5) == f5(1, 3, 2, 4, 5))) return 1;
+  if (!(swap_3(f4)(1, 2, 3, 4) == f4(1, 2, 4, 3))) return 1;
+  if (!(swap_3(f5)(1, 2, 3, 4, 5) == f5(1, 2, 4, 3, 5))) return 1;
+  if (!(swap_4(f5)(1, 2, 3, 4, 5) == f5(1, 2, 3, 5, 4))) return 1;
+
+  // test combination
+  cout << bind_1(swap_1(f2), 5)(1) << endl;
+  cout << bind_1(swap_2(f3), 5)(1, 2) << endl;
+  cout << bind_1(swap_3(f4), 5)(1, 2, 3) << endl;
+  cout << bind_1(swap_4(f5), 5)(1, 2, 3, 4) << endl;
+  cout << compose(swap_1(f2), swap_1(f2), swap_2(f3))(1, 2, 3, 4, 5) << endl;
+  cout << compose(bind_1(f2, 5), bind_3(f4, 4))(1, 2, 3) << endl;
 
   return 0;
 }

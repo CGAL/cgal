@@ -70,6 +70,181 @@ namespace CGALi {
 
 #endif // CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
 } // namespace CGALi
+namespace CGALi {
+
+  template < class F >
+  struct Swapper_1 {
+    typedef typename F::result_type result_type;
+    typedef typename F::Arity       Arity;
+  
+    Swapper_1(const F& f_) : f(f_) {}
+  
+    template < class A1, class A2 >
+    result_type operator()
+    (const A1& a1, const A2& a2) const
+    { return f(a2, a1); }
+  
+    template < class A1, class A2, class A3 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3) const
+    { return f(a2, a1, a3); }
+  
+    template < class A1, class A2, class A3, class A4 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3, const A4& a4) const
+    { return f(a2, a1, a3, a4); }
+  
+    template < class A1, class A2, class A3, class A4, class A5 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3,
+     const A4& a4, const A5& a5) const
+    { return f(a2, a1, a3, a4, a5); }
+  
+  protected:
+    F f;
+  };
+  
+  template < class F >
+  struct Swapper_2 {
+    typedef typename F::result_type result_type;
+    typedef typename F::Arity       Arity;
+  
+    Swapper_2(const F& f_) : f(f_) {}
+  
+    template < class A1, class A2 >
+    result_type operator()
+    (const A1& a1, const A2& a2) const
+    { return f(a1, a2); }
+  
+    template < class A1, class A2, class A3 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3) const
+    { return f(a1, a3, a2); }
+  
+    template < class A1, class A2, class A3, class A4 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3, const A4& a4) const
+    { return f(a1, a3, a2, a4); }
+  
+    template < class A1, class A2, class A3, class A4, class A5 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3,
+     const A4& a4, const A5& a5) const
+    { return f(a1, a3, a2, a4, a5); }
+  
+  protected:
+    F f;
+  };
+  
+  template < class F >
+  struct Swapper_3 {
+    typedef typename F::result_type result_type;
+    typedef typename F::Arity       Arity;
+  
+    Swapper_3(const F& f_) : f(f_) {}
+  
+    template < class A1, class A2 >
+    result_type operator()
+    (const A1& a1, const A2& a2) const
+    { return f(a1, a2); }
+  
+    template < class A1, class A2, class A3 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3) const
+    { return f(a1, a2, a3); }
+  
+    template < class A1, class A2, class A3, class A4 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3, const A4& a4) const
+    { return f(a1, a2, a4, a3); }
+  
+    template < class A1, class A2, class A3, class A4, class A5 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3,
+     const A4& a4, const A5& a5) const
+    { return f(a1, a2, a4, a3, a5); }
+  
+  protected:
+    F f;
+  };
+  
+  template < class F >
+  struct Swapper_4 {
+    typedef typename F::result_type result_type;
+    typedef typename F::Arity       Arity;
+  
+    Swapper_4(const F& f_) : f(f_) {}
+  
+    template < class A1, class A2 >
+    result_type operator()
+    (const A1& a1, const A2& a2) const
+    { return f(a1, a2); }
+  
+    template < class A1, class A2, class A3 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3) const
+    { return f(a1, a2, a3); }
+  
+    template < class A1, class A2, class A3, class A4 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3, const A4& a4) const
+    { return f(a1, a2, a3, a4); }
+  
+    template < class A1, class A2, class A3, class A4, class A5 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3,
+     const A4& a4, const A5& a5) const
+    { return f(a1, a2, a3, a5, a4); }
+  
+  protected:
+    F f;
+  };
+  
+
+  template < class F >
+  struct Swap_helper {
+    template < int i > struct Help;
+    template <> struct Help< 1 > { typedef Swapper_1< F > Type; };
+    template <> struct Help< 2 > { typedef Swapper_2< F > Type; };
+    template <> struct Help< 3 > { typedef Swapper_3< F > Type; };
+    template <> struct Help< 4 > { typedef Swapper_4< F > Type; };
+  };
+
+} // namespace CGALi
+
+template < class F, int i = 1 >
+struct Swap {
+  typedef CGALi::Swap_helper< F >::Help< i >::Type Type;
+};
+
+template < class F > inline
+typename Swap< F, 1 >::Type
+swap_1(const F& f) {
+  typedef typename Swap< F, 1 >::Type S;
+  return S(f);
+}
+
+template < class F > inline
+typename Swap< F, 2 >::Type
+swap_2(const F& f) {
+  typedef typename Swap< F, 2 >::Type S;
+  return S(f);
+}
+
+template < class F > inline
+typename Swap< F, 3 >::Type
+swap_3(const F& f) {
+  typedef typename Swap< F, 3 >::Type S;
+  return S(f);
+}
+
+template < class F > inline
+typename Swap< F, 4 >::Type
+swap_4(const F& f) {
+  typedef typename Swap< F, 4 >::Type S;
+  return S(f);
+}
+
 template < class F, class A >
 struct Binder_1 {
   typedef typename F::result_type result_type;
