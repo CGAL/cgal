@@ -46,7 +46,7 @@ class Triangulation_hierarchy_3
 public:
   typedef Tr                                   Tr_Base;
   typedef typename Tr_Base::Geom_traits        Geom_traits;
-  typedef typename Geom_traits::Point_3        Point;
+  typedef typename Tr_Base::Point              Point;
   typedef typename Tr_Base::Vertex_handle      Vertex_handle;
   typedef typename Tr_Base::Cell_handle        Cell_handle;
   typedef typename Tr_Base::Vertex_iterator    Vertex_iterator;
