@@ -41,17 +41,18 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-.PHONY: test bench bench4
+.PHONY: test bench bench4 bench_isolate
 
 all: test bench
 
-test:  tst0 tst1 tst2 tst5
+test:  tst0 tst1 tst2 tst5 tstlink
 	./tst0
 	./tst1
 	./tst2
 	./tst5
+	./tstlink
 
-bench_isolate:
+bench_isolate: ./a.out
 	./a.out
 
 bench4: tst4
@@ -71,23 +72,31 @@ tst3.o: tst3.C include/bench_generic.C
 
 tst4.o: tst4.C include/bench_generic.C
 
+tstlink1.o: tstlink1.C include/tstlink.h
+
+tstlink2.o: tstlink2.C include/tstlink.h
+
+
 tst0: tst0.o
-	$(CGAL_CXX) -o tst0 tst0.o $(LDFLAGS)
+	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 tst1: tst1.o
-	$(CGAL_CXX) -o tst1 tst1.o $(LDFLAGS)
+	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 tst2: tst2.o
-	$(CGAL_CXX) -o tst2 tst2.o $(LDFLAGS)
+	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 tst3: tst3.o
-	$(CGAL_CXX) -o tst3 tst3.o $(LDFLAGS)
+	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 tst4: tst4.o
-	$(CGAL_CXX) -o tst4 tst4.o $(LDFLAGS)
+	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 tst5: tst5.o
-	$(CGAL_CXX) -o tst5 tst5.o $(LDFLAGS)
+	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
+
+tstlink: tstlink1.o tstlink2.o
+	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 clean:
 	rm -f *.o *.bb *.bbg *.da *.gcov core tst?
