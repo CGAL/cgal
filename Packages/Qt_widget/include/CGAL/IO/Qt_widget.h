@@ -527,8 +527,10 @@ Qt_widget& operator<<(Qt_widget& w, const Segment_2<R>& s)
   //if is here, the segment intersect the screen boundaries or is inside
   int x1, y1, x2, y2;
   Segment_2<R>  sr;
-  if(s.source().x() >= xr1 && s.target().x() <= xr2 && 
-     s.source().y() >= yr1 && s.target().y() <= yr2)//true if the segment is inside
+  if(s.source().x() >= xr1 && s.source().x() <= xr2 &&
+     s.target().x() >= xr1 && s.target().x() <= xr2 && 
+     s.source().y() >= yr1 && s.source().x() <= yr2 &&
+     s.target().y() >= yr1 && s.target().y() <= yr2)//true if the segment is inside
     sr = s;
   else{
     Iso_rectangle_2<R> r = Iso_rectangle_2<R>(Point_2<R>(xr1, yr1), Point_2<R>(xr2, yr2));
