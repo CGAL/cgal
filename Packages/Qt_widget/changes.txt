@@ -1,3 +1,7 @@
+1.2.28
+------
+Put some remark in the doc about Qpl license.
+
 1.2.27
 ------
 I have removed Qt_widget_ref from doc_tex/support/Qt_widget
