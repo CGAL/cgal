@@ -1,3 +1,6 @@
+3.12 (?? Mar 2001)
+- Fix too long lines.
+
 3.11 (17 Mar 2001)
 - Added constructor Vector(Point, Point). 
 

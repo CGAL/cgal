@@ -82,7 +82,8 @@ Comparison_result
 compare_x(const Point_3<R> &p, const Point_3<R> &q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return compare_x(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q));
+  return compare_x(static_cast<const RPoint_3&>(p),
+	           static_cast<const RPoint_3&>(q));
 }
 
 
@@ -92,7 +93,8 @@ Comparison_result
 compare_y(const Point_3<R> &p, const Point_3<R> &q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return compare_y(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q));
+  return compare_y(static_cast<const RPoint_3&>(p),
+	           static_cast<const RPoint_3&>(q));
 }
 
 
@@ -102,7 +104,8 @@ Comparison_result
 compare_z(const Point_3<R> &p, const Point_3<R> &q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return compare_z(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q));
+  return compare_z(static_cast<const RPoint_3&>(p),
+	           static_cast<const RPoint_3&>(q));
 }
 
 template < class R >
@@ -112,7 +115,8 @@ x_equal(const Point_3<R> &p,
         const Point_3<R> &q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return x_equal(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q));
+  return x_equal(static_cast<const RPoint_3&>(p),
+	         static_cast<const RPoint_3&>(q));
 }
 
 template < class R >
@@ -122,7 +126,8 @@ y_equal(const Point_3<R> &p,
         const Point_3<R> &q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return y_equal(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q));
+  return y_equal(static_cast<const RPoint_3&>(p),
+	         static_cast<const RPoint_3&>(q));
 }
 
 template < class R >
@@ -132,7 +137,8 @@ z_equal(const Point_3<R> &p,
         const Point_3<R> &q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return z_equal(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q));
+  return z_equal(static_cast<const RPoint_3&>(p),
+	         static_cast<const RPoint_3&>(q));
 }
 
 template < class R >
@@ -144,8 +150,10 @@ coplanar(const Point_3<R> &p,
          const Point_3<R> &s)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return ( coplanar(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q),
-                         static_cast<const RPoint_3&>(r), static_cast<const RPoint_3&>(s)) );
+  return coplanar(static_cast<const RPoint_3&>(p),
+	          static_cast<const RPoint_3&>(q),
+                  static_cast<const RPoint_3&>(r),
+		  static_cast<const RPoint_3&>(s));
 }
 
 template < class R >
@@ -184,8 +192,7 @@ collinear_are_ordered_along_line(const Point_3<R> &p,
   typedef typename  R::Point_3_base  RPoint_3;
   return collinear_are_ordered_along_line(static_cast<const RPoint_3&>(p),
                                           static_cast<const RPoint_3&>(q),
-                                          static_cast<const RPoint_3&>(r)
-                                              );
+                                          static_cast<const RPoint_3&>(r));
 }
 
 template < class R >
@@ -209,23 +216,25 @@ collinear_are_strictly_ordered_along_line(const Point_3<R> &p,
                                           const Point_3<R> &r)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return collinear_are_strictly_ordered_along_line(static_cast<const RPoint_3&>(p),
-                                                   static_cast<const RPoint_3&>(q),
-                                                   static_cast<const RPoint_3&>(r)
-                                              );
+  return collinear_are_strictly_ordered_along_line(
+	       static_cast<const RPoint_3&>(p),
+	       static_cast<const RPoint_3&>(q),
+	       static_cast<const RPoint_3&>(r));
 }
 
 template < class R >
 inline
 Orientation
 orientation(const Point_3<R> &p,
-                 const Point_3<R> &q,
-                 const Point_3<R> &r,
-                 const Point_3<R> &s)
+            const Point_3<R> &q,
+            const Point_3<R> &r,
+            const Point_3<R> &s)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return orientation(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q),
-                     static_cast<const RPoint_3&>(r), static_cast<const RPoint_3&>(s));
+  return orientation(static_cast<const RPoint_3&>(p),
+	             static_cast<const RPoint_3&>(q),
+                     static_cast<const RPoint_3&>(r),
+		     static_cast<const RPoint_3&>(s));
 }
 
 template <class R >
