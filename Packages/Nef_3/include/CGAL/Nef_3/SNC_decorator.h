@@ -32,6 +32,7 @@
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
 #include <CGAL/Nef_3/SNC_ray_shooter.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
+#include <CGAL/Nef_3/binop_intersection_tests.h>
 
 // #include <CGAL/Nef_3/SegRay.h>
 #include <CGAL/IO/Verbose_ostream.h>
@@ -133,54 +134,54 @@ public:
   SNC_decorator(SNC_structure& W) : sncp_(&W) {}
   SNC_structure* sncp() const { return sncp_; }
 
-  Vertex_handle vertex( Halfedge_handle e) const
+  static Vertex_handle vertex( Halfedge_handle e)
   { return e->center_vertex_; }
-  Vertex_const_handle vertex( Halfedge_const_handle e) const
+  static Vertex_const_handle vertex( Halfedge_const_handle e)
   { return e->center_vertex_; }
-  Halfedge_handle twin( Halfedge_handle e) const
+  static Halfedge_handle twin( Halfedge_handle e)
   { return e->twin_; }
-  Vertex_handle source( Halfedge_handle e) const
+  static Vertex_handle source( Halfedge_handle e)
   { return e->center_vertex_; }
-  Vertex_handle target( Halfedge_handle e) const
+  static Vertex_handle target( Halfedge_handle e)
   { return source(twin(e)); }
-  SFace_handle sface( Halfedge_handle e) const
+  static SFace_handle sface( Halfedge_handle e)
   { return e->incident_sface_; }
-  SFace_const_handle sface( Halfedge_const_handle e) const
+  static SFace_const_handle sface( Halfedge_const_handle e)
   { return e->incident_sface_; }
   /* SVertex queries*/
 
-  Vertex_handle vertex(SHalfedge_handle e) const
+  static Vertex_handle vertex(SHalfedge_handle e)
   { return vertex(e->source_); }
-  SHalfedge_handle twin(SHalfedge_handle e) const
+  static SHalfedge_handle twin(SHalfedge_handle e)
   { return e->twin_; }
-  Vertex_handle source(SHalfedge_handle e) const
+  static Vertex_handle source(SHalfedge_handle e)
   { return e->source_->center_vertex_; }
-  Vertex_handle source(SHalfedge e) const
+  static Vertex_handle source(SHalfedge e)
   { return e.source_->center_vertex_; }
-  Vertex_handle target(SHalfedge_handle e) const
+  static Vertex_handle target(SHalfedge_handle e)
   { return e->twin_->source_->twin_->center_vertex_; }
-  SHalfedge_handle previous(SHalfedge_handle e) const
+  static SHalfedge_handle previous(SHalfedge_handle e)
   { return e->prev_; }
-  SHalfedge_handle next(SHalfedge_handle e) const
+  static SHalfedge_handle next(SHalfedge_handle e)
   { return e->next_; }
-  Halffacet_handle facet(SHalfedge_handle e) const
+  static Halffacet_handle facet(SHalfedge_handle e)
   { return e->incident_facet_; }
-  SFace_handle sface(SHalfedge_handle e) const
+  static SFace_handle sface(SHalfedge_handle e)
   { return e->incident_sface_; }
-  Halfedge_handle ssource(SHalfedge_handle e) const
+  static Halfedge_handle ssource(SHalfedge_handle e)
   { return e->source_; }
-  Halfedge_handle starget(SHalfedge_handle e) const
+  static Halfedge_handle starget(SHalfedge_handle e)
   { return e->twin_->source_; }
   /* SHalfedge queries */
 
-  const Mark& mark(SHalfedge_handle e) const
+  static const Mark& mark(SHalfedge_handle e)
   /*{\Mop returns the mark associated to |e| as
   a sphere object. This is temporary information!!!}*/
   { return e->tmp_mark(); }
 
-  const Sphere_circle& tmp_circle(SHalfedge_handle e) const
+  static const Sphere_circle& tmp_circle(SHalfedge_handle e)
   { return e->tmp_circle(); }
-  const Sphere_circle& tmp_circle(SHalfloop_handle l) const
+  static const Sphere_circle& tmp_circle(SHalfloop_handle l)
   { return l->tmp_circle(); }
 
   std::string debug(SHalfedge_handle e) const
@@ -189,29 +190,29 @@ public:
     return os.str();
   }
 
-  SHalfloop_handle twin( SHalfloop_handle l) const
+  static SHalfloop_handle twin( SHalfloop_handle l)
   { return l->twin_; }
-  Halffacet_handle facet( SHalfloop_handle l) const
+  static Halffacet_handle facet( SHalfloop_handle l)
   { return l->incident_facet_; }
-  Vertex_handle vertex( SHalfloop_handle l) const
+  static Vertex_handle vertex( SHalfloop_handle l)
   { return l->incident_sface_->center_vertex_; }
-  SFace_handle sface( SHalfloop_handle l) const
+  static SFace_handle sface( SHalfloop_handle l)
   { return l->incident_sface_; }
-  SFace_const_handle sface( SHalfloop_const_handle l) const
+  static SFace_const_handle sface( SHalfloop_const_handle l)
   { return l->incident_sface_; }
   /* SHalfloop queries */
 
-  Vertex_handle vertex(SFace_handle f) const
+  static Vertex_handle vertex(SFace_handle f)
   { return f->center_vertex_; }
-  Volume_handle volume(SFace_handle f) const
+  static Volume_handle volume(SFace_handle f)
   { return f->incident_volume_; }
   /* SHalffacet queries */
 
-  Halffacet_handle twin(Halffacet_handle f) const
+  static Halffacet_handle twin(Halffacet_handle f)
   { return f->twin_; }
-  Volume_handle volume(Halffacet_handle f) const
+  static Volume_handle volume(Halffacet_handle f)
     { return f->volume_; }
-  Volume_const_handle volume(Halffacet_const_handle f) const
+  static Volume_const_handle volume(Halffacet_const_handle f)
     { return f->volume_; }
   /* Halffacet queries */
 
@@ -232,11 +233,11 @@ public:
   }
 
   // attributes::
-  Point_3& point(Vertex_handle v) const
+  static Point_3& point(Vertex_handle v)
   { return v->point(); }
-  const Point_3& point(Vertex_const_handle v) const
+  static const Point_3& point(Vertex_const_handle v)
   { return v->point(); }
-  Point_3 standard_point(Vertex_handle v) const {
+  static Point_3 standard_point(Vertex_handle v)  {
     Point_3 ep = v->point();
     return Point_3(ep.hx().eval_at(1000), 
 		   ep.hy().eval_at(1000), 
@@ -253,11 +254,11 @@ public:
     return Sphere_point(pt-ps);
   }
 
-  Segment_3 segment(Halfedge_handle e) const
+  static Segment_3 segment(Halfedge_handle e)
   { return Segment_3(point(source(e)),
 		     point(target(e))); }
 
-  Plane_3& plane(Halffacet_handle f) const
+  static Plane_3& plane(Halffacet_handle f)
   { return f->plane(); }
 
   Vector_3 orthogonal_vector(Halffacet_handle f) const
@@ -411,12 +412,12 @@ public:
 
   // returns true if |v| is part of the infinimaximal box. ###################
   // Needs to be fixed for true infbox! LK! ##################################
-  bool is_infbox_vertex( Vertex_handle v) const {
+  static bool is_infbox_vertex( Vertex_handle v) {
       return !Infi_box::is_standard(v->point());
   }
 
   /* returns true if |f| is part of the infinimaximal box.*/
-  bool is_infbox_facet(Halffacet_handle f) const {
+  static bool is_infbox_facet(Halffacet_handle f) {
     return !Infi_box::is_standard(f->plane());
   }
 
@@ -810,10 +811,12 @@ public:
 //#define CGAL_NEF3_DUMP_SNC_OPERATORS
 
   template <typename Selection>
-    void binary_operation( SNC_structure& snc1i, 
-			   const Selection& BOP,
-			   SNC_structure& result)
-    /*{\opPerforms a binary operation defined on |BOP| between two
+  void binary_operation( SNC_structure& snc1i,
+                         const Selection& BOP,
+                         SNC_structure& result,
+                         binop_intersection_tests<SNC_decorator,
+                                                  Selection>& tests_impl )
+  /*{\opPerforms a binary operation defined on |BOP| between two
       SNC structures.  The input structures are not modified and the
       result of the operation is stored in |result|.
       \precondition: the structure |result| is empty.}*/ {
@@ -906,82 +909,8 @@ public:
     CGAL_nef3_forall_vertices( v0, result) TRACEN(point(v0)<<&*(v0->sncp_));
     TRACEN("end vertices"<<std::endl);
 
-    SNC_intersection is(*sncp());
+    tests_impl( *this, BOP, *sncp(), snc1i, result );
 
-    TRACEN("start edge0 face1");
-    Halfedge_iterator e0, e1;
-    Halffacet_iterator f0, f1;
-    Unique_hash_map<Halfedge_handle, bool> Ignore_halfedge(false);
-    CGAL_nef3_forall_halfedges( e0, *sncp()) {
-      TRACEN(PH(e0));
-      if(!Ignore_halfedge[e0]) {
-	CGAL_nef3_forall_facets( f1, snc1i) { 
-	  if(Infi_box::degree(plane(f1).d())>0) continue;
-	  Point_3 ip;
-	  if( is.does_intersect_internally( segment(e0), f1, ip )) {
-	    TRACEN(" edge0 face1 intersection...");
-	    ip = normalized(ip);
-	    v0 = qualify_with_respect( ip, *sncp(), result);
-	    v1 = qualify_with_respect( ip, snc1i, result);
-	    binop_local_views( v0, v1, BOP, result);
-	    result.delete_vertex(v0);
-	    result.delete_vertex(v1);
-	    Ignore_halfedge[twin(e0)]=true;
-	  }
-	}
-      }
-    }
-    
-    TRACEN("start edge1 face0");
-    CGAL_nef3_forall_edges( e1, snc1i) { 
-      CGAL_nef3_forall_facets( f0, *sncp()) { 
-	if(Infi_box::degree(plane(f0).d())>0) continue;
-	Point_3 ip;
-	if( is.does_intersect_internally( segment(e1), f0, ip )) {
-	  TRACEN(" edge1 face0 intersection...");
-	  ip = normalized(ip);
-	  Halffacet_cycle_iterator it; 
-	  CGAL_nef3_forall_facet_cycles_of(it,f0){ 
-	    TRACEN("facet cycle");
-	    SHalfedge_handle es;
-	    if ( assign(es,it)) {
-	      SHalfedge_around_facet_circulator start(es), end(es);
-	      CGAL_For_all(start,end) {
-		TRACEN("vertex " << PH(source(previous(start))));
-	      }
-	    }
-	  }
-	  
-	  v1 = qualify_with_respect( ip, snc1i, result);
-	  v0 = qualify_with_respect( ip, *sncp(), result);
-
-	  binop_local_views( v0, v1, BOP, result);
-	  result.delete_vertex(v0);
-	  result.delete_vertex(v1);
-	}
-      }
-    }
-
-    //        SETDTHREAD(19*37);
-
-    TRACEN("start edge0 edge1");
-    TRACEN("=> edge edge intersection");
-    CGAL_nef3_forall_edges( e0, *sncp()) { 
-      CGAL_nef3_forall_edges( e1, snc1i) {
-	Point_3 ip;
-	if( is.does_intersect_internally( segment(e0), segment(e1), ip )) {
-	  TRACEN(" edge0 edge1 intersection..." << ip);
-	  ip = normalized(ip);
-	  Vertex_handle v0, v1;
-	  v0 = qualify_with_respect( ip, *sncp(), result);
-	  v1 = qualify_with_respect( ip, snc1i, result);
-
-	  binop_local_views( v0, v1,BOP, result);
-	  result.delete_vertex(v0);
-	  result.delete_vertex(v1);
-	}
-      }
-    }
     TRACEN("=> resultant vertices: ");
     CGAL_nef3_forall_vertices( v0, result) {
       TRACEN(&*v0<<" "<<point(v0)<<&*(v0->sncp_));
