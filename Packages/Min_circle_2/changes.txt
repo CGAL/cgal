@@ -1,5 +1,8 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.9 on 12-Sep-2000
+- documentation split up into user and reference manual parts.
+
 Version 3.8.3 on 10-Aug-2000
 - no changes (problem with download script)
 
