@@ -60,12 +60,7 @@ template < class R >
 bool
 DirectionC3<R CGAL_CTAG>::operator==(const DirectionC3<R CGAL_CTAG> &d) const
 {
-  return  ( dx()*d.dy() == dy()*d.dx() )
-        &&( dx()*d.dz() == dz()*d.dx() )
-        &&( dy()*d.dz() == dz()*d.dy() )
-        &&( CGAL::sign( dx() ) == CGAL::sign( d.dx() ) )
-        &&( CGAL::sign( dy() ) == CGAL::sign( d.dy() ) )
-        &&( CGAL::sign( dz() ) == CGAL::sign( d.dz() ) );
+  return equal_directionC3(dx(), dy(), dz(), d.dx(), d.dy(), d.dz());
 }
 
 template < class R >

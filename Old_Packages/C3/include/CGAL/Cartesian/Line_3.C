@@ -153,6 +153,7 @@ LineC3<R CGAL_CTAG>::Point_3
 LineC3<R CGAL_CTAG>::
 projection(const LineC3<R CGAL_CTAG>::Point_3 &p) const
 {
+  // Use a construction on FT for this?
   return point() + ( ((direction().vector() * (p - point())) /
                       (direction().vector() * direction().vector()))
                      * direction().vector() );

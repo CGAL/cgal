@@ -115,7 +115,9 @@ compare_z(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
 }
 
 template < class R >
-bool collinear(const PointC3<R CGAL_CTAG> &p,
+inline
+bool
+collinear(const PointC3<R CGAL_CTAG> &p,
                const PointC3<R CGAL_CTAG> &q,
                const PointC3<R CGAL_CTAG> &r)
 {
@@ -195,7 +197,6 @@ collinear_are_ordered_along_line(const PointC3<R CGAL_CTAG> &p,
                                             r.x(),r.y(),r.z());
 }
 
-
 template < class R >
 inline
 bool
@@ -207,7 +208,6 @@ are_strictly_ordered_along_line(const PointC3<R CGAL_CTAG> &p,
          ? collinear_are_strictly_ordered_along_line(p, q, r)
          : false;
 }
-
 
 template < class R >
 inline
@@ -221,7 +221,6 @@ collinear_are_strictly_ordered_along_line(const PointC3<R CGAL_CTAG> &p,
                                                      q.x(),q.y(),q.z(),
                                                      r.x(),r.y(),r.z());
 }
-
 
 template <class R >
 Oriented_side
@@ -238,7 +237,6 @@ side_of_oriented_sphere(const PointC3<R CGAL_CTAG> &p,
                                    test.x(),test.y(),test.z());
 }
 
-
 template <class R >
 Bounded_side
 side_of_bounded_sphere(const PointC3<R CGAL_CTAG> &p,
@@ -253,7 +251,6 @@ side_of_bounded_sphere(const PointC3<R CGAL_CTAG> &p,
                                   s.x(),s.y(),s.z(),
                                   test.x(),test.y(),test.z());
 }
-
 
 CGAL_END_NAMESPACE
 

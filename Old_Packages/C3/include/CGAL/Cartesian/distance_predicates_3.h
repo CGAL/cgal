@@ -112,6 +112,7 @@ has_smaller_signed_dist_to_plane(const PlaneC3<R CGAL_CTAG> &h,
                                                 p.x(),p.y(),p.z(),
                                                 q,x(),q.y(),q.z());
 }
+
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
 Comparison_result
@@ -159,7 +160,6 @@ has_smaller_signed_dist_to_plane(const PointC3<R CGAL_CTAG> &hp,
                                             p.x(),p.y(),p.z(),
                                             q,x(),q.y(),q.z());
 }
-
 
 CGAL_END_NAMESPACE
 

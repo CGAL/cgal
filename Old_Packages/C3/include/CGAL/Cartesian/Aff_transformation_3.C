@@ -16,7 +16,18 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-Aff_transformationC3<R CGAL_CTAG>::Aff_transformationC3()
+Aff_transformationC3<R CGAL_CTAG>::
+Aff_transformationC3()
+{
+  FT ft1(1), ft0(0);
+  PTR = new Aff_transformation_repC3<R>(ft1, ft0, ft0,
+                                        ft0, ft1, ft0,
+                                        ft0, ft0, ft1);
+}
+
+template < class R >
+Aff_transformationC3<R CGAL_CTAG>::
+Aff_transformationC3(const Identity &)
 {
   FT ft1(1), ft0(0);
   PTR = new Aff_transformation_repC3<R>(ft1, ft0, ft0,

@@ -2,6 +2,10 @@
 #define CGAL_CTAG
 #endif
 
+#include <CGAL/Cartesian/constructions_on_planes_3.h>
+#include <CGAL/Cartesian/distance_computations_3.h>
+#include <CGAL/Cartesian/predicates_on_planes_3.h>
+
 #ifndef CGAL_CARTESIAN_PLANE_3_C
 #define CGAL_CARTESIAN_PLANE_3_C
 
@@ -32,28 +36,9 @@ PlaneC3<R CGAL_CTAG>::new_rep(const PlaneC3<R CGAL_CTAG>::Point_3 &p,
                               const PlaneC3<R CGAL_CTAG>::Point_3 &q,
                               const PlaneC3<R CGAL_CTAG>::Point_3 &r)
 {
-  FT rpx = p.x()-r.x();
-  FT rpy = p.y()-r.y();
-  FT rpz = p.z()-r.z();
-  FT rqx = q.x()-r.x();
-  FT rqy = q.y()-r.y();
-  FT rqz = q.z()-r.z();
-  // Cross product rp * rq.
-  FT A = rpy*rqz - rqy*rpz;
-  FT B = rpz*rqx - rqz*rpx;
-  FT C = rpx*rqy - rqx*rpy;
-  FT D = - A*r.x() - B*r.y() - C*r.z();
-  PTR = new _Fourtuple<FT>(A, B, C, D);
+  PlaneC3<R CGAL_CTAG> h = plane_from_points(p,q,r);
+  new_rep(h.a(), h.b(), h.c(), h.d());
 }
-
-
-CGAL_END_NAMESPACE
-
-#ifndef CGAL_CARTESIAN_LINE_3_H
-#include <CGALCartesian//Line_3.h>
-#endif // CGAL_CARTESIAN_LINE_3_H
-
-CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
@@ -86,9 +71,8 @@ PlaneC3<R CGAL_CTAG>::
 PlaneC3(const PlaneC3<R CGAL_CTAG>::Point_3 &p,
         const PlaneC3<R CGAL_CTAG>::Direction_3 &d)
 {
-  new_rep(d.dx(), d.dy(),
-          d.dz(),
-          -d.dx() * p.x() - d.dy() * p.y() - d.dz() * p.z());
+  PlaneC3<R CGAL_CTAG> h = plane_from_point_direction(p,d);
+  new_rep(h.a(), h.b(), h.c(), h.d());
 }
 
 template < class R >
@@ -97,7 +81,9 @@ PlaneC3<R CGAL_CTAG>::
 PlaneC3(const PlaneC3<R CGAL_CTAG>::Point_3 &p,
         const PlaneC3<R CGAL_CTAG>::Vector_3 &v)
 {
-  new_rep(v.x(), v.y(), v.z(), -v.x() * p.x() - v.y() * p.y() - v.z() * p.z());
+  FT a, b, c, d;
+  plane_from_point_directionC3(p.x(),p.y(),p.z(),v.x(),v.y(),v.z(),a,b,c,d);
+  new_rep(a, b, c, d);
 }
 
 template < class R >
@@ -206,12 +192,7 @@ template < class R >
 PlaneC3<R CGAL_CTAG>::Point_3
 PlaneC3<R CGAL_CTAG>::point() const
 {
-  if (a() != FT(0)) // not parallel to x-axis
-    return PlaneC3<R CGAL_CTAG>::Point_3(-d()/a(), FT(0), FT(0));
-  if (b() != FT(0)) // not parallel to y-axis
-    return PlaneC3<R CGAL_CTAG>::Point_3(FT(0), -d()/b(), FT(0));
-  // parallel to xy-plane => intersects z-axis
-  return PlaneC3<R CGAL_CTAG>::Point_3(FT(0), FT(0), -d()/c());
+  return point_on_plane(*this);
 }
 
 template < class R >
@@ -338,22 +319,25 @@ transform(const PlaneC3<R CGAL_CTAG>::Aff_transformation_3& t) const
 }
 
 template < class R >
+inline
 Oriented_side
 PlaneC3<R CGAL_CTAG>::
 oriented_side(const PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  return Oriented_side(CGAL::sign(a()*p.x() + b()*p.y() + c()*p.z() +d()));
+  return side_of_oriented_plane(*this,p);
 }
 
 template < class R >
+inline
 bool
 PlaneC3<R CGAL_CTAG>::
 has_on_boundary(const  PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  return (a()*p.x() + b()*p.y() + c()*p.z() +d()) == FT(0);
+  return oriented_side(p) == ON_ORIENTED_BOUNDARY;
 }
 
 template < class R >
+inline
 bool
 PlaneC3<R CGAL_CTAG>::
 has_on(const  PlaneC3<R CGAL_CTAG>::Point_3 &p) const
@@ -362,32 +346,38 @@ has_on(const  PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 }
 
 template < class R >
+inline
 bool
 PlaneC3<R CGAL_CTAG>::
 has_on_boundary(const  PlaneC3<R CGAL_CTAG>::Line_3 &l) const
 {
   return has_on_boundary(l.point())
-         &&  has_on_boundary(l.point() + l.direction().vector());
+     &&  has_on_boundary(l.point() + l.direction().vector());
 }
 
 template < class R >
+inline
 bool
 PlaneC3<R CGAL_CTAG>::
 has_on_positive_side(const  PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  return (a()*p.x() + b()*p.y() + c()*p.z() +d()) > FT(0);
+  return oriented_side(p) == ON_POSITIVE_SIDE;
 }
 
 template < class R >
+inline
 bool
 PlaneC3<R CGAL_CTAG>::
 has_on_negative_side(const  PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  return (a()*p.x() + b()*p.y() + c()*p.z() +d()) < FT(0);
+  return oriented_side(p) == ON_NEGATIVE_SIDE;
 }
 
 template < class R >
-bool PlaneC3<R CGAL_CTAG>::is_degenerate() const
+inline
+bool
+PlaneC3<R CGAL_CTAG>::
+is_degenerate() const
 {
   return (a() == FT(0)) && (b() == FT(0)) && (c() == FT(0));
 }

@@ -23,8 +23,8 @@
 // ==========================================================================
 
 
-#ifndef CGAL_PREDICATES_ON_FTC3_H
-#define CGAL_PREDICATES_ON_FTC3_H
+#ifndef CGAL_PREDICATES_KERNEL_FTC3_H
+#define CGAL_PREDICATES_KERNEL_FTC3_H
 
 #ifndef CGAL_DETERMINANT_H
 #include <CGAL/determinant.h>
@@ -117,6 +117,28 @@ collinear_are_strictly_ordered_along_lineC3(
   return false; // p==q
 }
 
+template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+bool
+equal_directionC3(const FT &dx1, const FT &dy1, const FT &dz1,
+                  const FT &dx2, const FT &dy2, const FT &dz2)
+{
+  return ( dx1*dy2 == dy1*dx2 )
+       &&( dx1*dz2 == dz1*dx2 )
+       &&( dy1*dz2 == dz1*dy2 )
+       &&( CGAL::sign(dx1) == CGAL::sign(dx2) )
+       &&( CGAL::sign(dy1) == CGAL::sign(dy2) )
+       &&( CGAL::sign(dz1) == CGAL::sign(dz2) );
+}
+
+template <class FT >
+CGAL_KERNEL_LARGE_INLINE
+Oriented_side
+side_of_oriented_planeC3(const FT &a,const FT &b,const FT &c,const FT &d,
+                         const FT &px, const FT &py, const FT &pz)
+{
+  return Oriented_side(CGAL::sign(a*px + b*py + c*pz +d));
+}
 
 template <class FT >
 CGAL_KERNEL_LARGE_INLINE
@@ -303,4 +325,4 @@ CGAL_END_NAMESPACE
 #endif // CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC3_H
 #endif
 
-#endif // CGAL_PREDICATES_ON_FTC3_H
+#endif // CGAL_PREDICATES_KERNEL_FTC3_H

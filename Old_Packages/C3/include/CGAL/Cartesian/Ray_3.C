@@ -2,6 +2,8 @@
 #define CGAL_CTAG
 #endif
 
+#include <CGAL/Cartesian/distance_computations_3.h>
+
 #ifndef CGAL_CARTESIAN_RAY_3_C
 #define CGAL_CARTESIAN_RAY_3_C
 

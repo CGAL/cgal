@@ -23,8 +23,8 @@
 // ==========================================================================
 
 
-#ifndef CGAL_BASIC_CONSTRUCTIONS_FTC3_H
-#define CGAL_BASIC_CONSTRUCTIONS_FTC3_H
+#ifndef CGAL_CONSTRUCTIONS_KERNEL_FTC3_H
+#define CGAL_CONSTRUCTIONS_KERNEL_FTC3_H
 
 #ifndef CGAL_DETERMINANT_H
 #include <CGAL/determinant.h>
@@ -87,6 +87,50 @@ circumcenterC3( const FT &px, const FT &py, const FT &pz,
   z = sz + num_z*inv;
 }
 
+template <class FT> 
+CGAL_KERNEL_MEDIUM_INLINE
+void            
+plane_from_pointsC3(const FT &px, const FT &py, const FT &pz,
+                    const FT &qx, const FT &qy, const FT &qz,
+                    const FT &rx, const FT &ry, const FT &rz,
+		    FT &pa, FT &pb, FT &pc, FT &pd)
+{
+  FT rpx = px-rx;
+  FT rpy = py-ry;
+  FT rpz = pz-rz;
+  FT rqx = qx-rx;
+  FT rqy = qy-ry;
+  FT rqz = qz-rz;
+  // Cross product rp * rq
+  pa = rpy*rqz - rqy*rpz;
+  pb = rpz*rqx - rqz*rpx;
+  pc = rpx*rqy - rqx*rpy;
+  pd = - pa*rx - pb*ry - pc*rz;
+}
+
+template <class FT>
+CGAL_KERNEL_MEDIUM_INLINE
+void
+plane_from_point_directionC3(const FT &px, const FT &py, const FT &pz,
+                             const FT &dx, const FT &dy, const FT &dz,
+                             FT &pa, FT &pb, FT &pc, FT &pd)
+{
+  // d is the normal direction
+  pa = dx; pb = dy; pc = dz; pd = -dx*px - dy*py - dz*pz;
+}
+
+template <class FT>
+CGAL_KERNEL_MEDIUM_INLINE
+void
+point_on_planeC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
+                 FT &x, FT &y, FT &z)
+{
+  x = y = z = FT(0);
+  if (pa != FT(0))      x = -pd/pa;
+  else if (pb != FT(0)) y = -pd/pb;
+  else                  z = -pd/pc;
+}
+
 template <class FT>
 CGAL_KERNEL_MEDIUM_INLINE
 void
@@ -107,7 +151,6 @@ projectionC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
   y = py - lambda * pb;
   z = pz - lambda * pc;
 }
-
 
 template < class FT >
 CGAL_KERNEL_INLINE
@@ -151,7 +194,6 @@ scaled_distance_to_planeC3(
                            prx-px,pry-py,prz-pz);
 }
 
-
 CGAL_END_NAMESPACE
 
-#endif // CGAL_BASIC_CONSTRUCTIONS_FTC3_H
+#endif // CGAL_CONSTRUCTIONS_KERNEL_FTC3_H
