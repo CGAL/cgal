@@ -28,7 +28,9 @@
 #ifdef CGAL_TRIANGULATION_2_H
 #ifndef CGAL_WINDOW_STREAM_TRIANGULATION_2_H
 #define CGAL_WINDOW_STREAM_TRIANGULATION_2_H
+
 CGAL_BEGIN_NAMESPACE
+
 template < class Gt, class Tds>
 Window_stream&
 operator<<(Window_stream& os,  const Triangulation_2<Gt, Tds> &t)
@@ -81,7 +83,7 @@ operator<<(Window_stream& os, const Weighted_point< Point, We > &p)
          rr = to_double(p.weight());
 
   os<<p.point();
-  os.draw_circle(cx, cy , sqrt(rr));
+  os.draw_circle(cx, cy , CGAL_CLIB_STD::sqrt(rr));
   return os;
 }
 
@@ -94,7 +96,8 @@ Window_stream& operator>>(Window_stream &os, Weighted_point< Point, We > &wp)
   //os.read_mouse(x1,y1);
   Point center(cx,cy);
 
-  We sr = We (sqrt( CGAL_NTS square(cx-x1)+ CGAL_NTS square(cy-y1) ) );
+  We sr = We(CGAL_CLIB_STD::sqrt( CGAL_NTS square(cx-x1)+ 
+				 CGAL_NTS square(cy-y1) ) );
 
   os.draw_circle(cx, cy , sr);
   wp = Weighted_point< Point, We >(center, CGAL_NTS square(sr));

@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.99 (22/6/01)
+- fixed minor bugs in Triangulation/demo.C and regular_demo.C
+
 Ver 4.98 (14/6/01)
 - fixed problems related to the change from Less_distance_to_point_2
 to Compare_distance_2
