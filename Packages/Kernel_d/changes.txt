@@ -1,5 +1,7 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.109 (14 Jan 2004) [af]
+- Added Iso_box_d and Construct_iso_box_d 
 
 0.108 (11 Jan 2004)
 - _R -> R_ to please Darwin.
