@@ -73,7 +73,7 @@ operator-(const VectorH2<R>& u, const VectorH2<R>& v);
 
 template <class R>
 CGAL_KERNEL_INLINE
-typename R::FT
+typename VectorH2<R>::FT
 operator*(const VectorH2<R>& u, const VectorH2<R>& v);
 
 template <class R>
