@@ -117,10 +117,22 @@ public:
       return number_of_vertices() - n;
     }
 
-  void remove_degree_3(Vertex_handle  v);
-  void remove_first(Vertex_handle  v);
-  void remove_second(Vertex_handle v);
-  void remove(Vertex_handle  v);
+  void remove(Vertex_handle v);
+
+  void remove_degree_3(Vertex_handle v)
+  {
+      remove(v);
+  }
+
+  void remove_first(Vertex_handle v)
+  {
+      remove(v);
+  }
+
+  void remove_second(Vertex_handle v)
+  {
+      remove(v);
+  }
 
   //LOCATE
   Cell_handle locate(const Point& p, Locate_type& lt, int& li, int& lj) const;
@@ -303,7 +315,7 @@ insert(const Point &p)
   // locate using hierarchy
   Cell_handle positions[Triangulation_hierarchy_3__maxlevel];
   locate(p,lt,i,j,positions);
-  //insert at level 0
+  // insert at level 0
   Vertex_handle vertex = hierarchy[0]->insert(p,positions[0]);
   Vertex_handle previous = vertex;
   Vertex_handle first = vertex;
@@ -322,7 +334,7 @@ insert(const Point &p)
 template <class Tr>
 void 
 Triangulation_hierarchy_3<Tr>::
-remove(Vertex_handle v )
+remove(Vertex_handle v)
 {
   void * u=v->up();
   int l = 0;
@@ -332,30 +344,6 @@ remove(Vertex_handle v )
     if (l>Triangulation_hierarchy_3__maxlevel) break;
     v=(Vertex*)u; u=v->up();
   }
-}
-
-template <class Tr>
-inline void 
-Triangulation_hierarchy_3<Tr>::
-remove_degree_3(Vertex_handle v )
-{
-  remove(v);
-}
-
-template <class Tr>
-inline void 
-Triangulation_hierarchy_3<Tr>::
-remove_first(Vertex_handle v )
-{
-  remove(v);
-}
-
-template <class Tr>
-inline void 
-Triangulation_hierarchy_3<Tr>::
-remove_second(Vertex_handle v )
-{
-  remove(v);
 }
 
 template <class Tr>
