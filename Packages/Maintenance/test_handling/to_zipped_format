@@ -25,6 +25,7 @@ sub reformat_results($)
     $_ = shift;
     s/\.tar//;
     my $platform = $_;
+    system("dos2unix ${platform}.txt ${platform}.txt");
     open (PLATFORM_RESULTS,"<${platform}.txt") or return;
     while (/^\s*$/) {
 	$_= <PLATFORM_RESULTS>;
