@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1997 The CGAL Consortium
+// Copyright (c) 1997-2003 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -14,11 +14,10 @@
 // file          : include/CGAL/config.h
 // package       : Configuration
 // maintainer    : Geert-Jan Giezeman <geert@cs.uu.nl>
-// source        :
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
-//                 Michael Hoffmann
+// author(s)     : Wieger Wesselink 
+//                 Michael Hoffmann <hoffmann@inf.ethz.ch>
 //
 // coordinator   : Utrecht University
 //
@@ -106,6 +105,13 @@
 
 #ifndef CGAL_CFG_NO_LONG_LONG
 #  define CGAL_USE_LONG_LONG
+#endif
+
+#ifdef CGAL_CFG_MATCHING_BUG_4
+#  define CGAL_WRAP(K) Matching_bug_wrapper<K>
+#  include <CGAL/Matching_bug_wrapper.h>
+#else
+#  define CGAL_WRAP(K) K
 #endif
 
 //----------------------------------------------------------------------//
