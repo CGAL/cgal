@@ -1,3 +1,7 @@
+3.103  (7 January 2003)
+- Hardcode CGAL_ALLOCATOR to std::allocator, so that libCGAL does not depend
+  on LEDA anymore.
+
 3.102  (10 December 2002)
 - Remove CGAL_NO_LEDA_HANDLE : always use CGAL's handles.
 
