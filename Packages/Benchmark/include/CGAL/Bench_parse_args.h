@@ -91,12 +91,14 @@ public:
     STRATEGY_WALK,
     STRATEGY_SIMPLE,
     STRATEGY_TRIANGLE,
+    STRATEGY_LANDMARKS,
     STRATEGY_DUMMY,
     STRATEGY_T,
     STRATEGY_N,
     STRATEGY_W,
     STRATEGY_S,
     STRATEGY_G,
+	STRATEGY_L,
     STRATEGY_D
   };
     
@@ -203,7 +205,8 @@ public:
   \t\t\t\t\tw[alk]\t\t(0x4)\n\
   \t\t\t\t\ts[imple]\t(0x8)\n\
   \t\t\t\t\t[trian]g[le]\t(0x10)\n\
-  \t\t\t\t\td[ummy]\t\t(0x20)\n\
+  \t\t\t\t\tl[enmarks]\t(0x20)\n\
+  \t\t\t\t\td[ummy]\t\t(0x40)\n\
   \t\tstrategy_mask=<mask>\n\
   \t\tsm=<mask>\tset bench strategy mask to <mask>\n\
   \t\th[eader]=<bool>\tprint header (default true)\n\
@@ -431,6 +434,9 @@ private:
         case STRATEGY_TRIANGLE:
         case STRATEGY_G:
           m_strategy_mask = 0x1 << STRATEGY_TRIANGLE; return 0;
+        case STRATEGY_LANDMARKS:
+        case STRATEGY_L:
+          m_strategy_mask = 0x1 << STRATEGY_LANDMARKS; return 0;
         case STRATEGY_DUMMY:
         case STRATEGY_D:
           m_strategy_mask = 0x1 << STRATEGY_DUMMY; return 0;

@@ -37,7 +37,7 @@ char * Bench_parse_args::s_type_opts[] =
    "i", "a", "d", "l", "c", "p", NULL};
 
 char * Bench_parse_args::s_strategy_opts[] =
-  {"trapezoidal", "naive", "walk","simple","triangle", "dummy", "t", "n", "w", "s", "g", "d"};
+  {"trapezoidal", "naive", "walk","simple","triangle", "landmarks","dummy", "t", "n", "w", "s", "g","l", "d"};
 
 char * Bench_parse_args::s_bool_opts[] =
   {"true", "false", "t", "f", NULL};
