@@ -1,5 +1,5 @@
 encodeQpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
-				d::Matrix, fpath::string)
+				d::Matrix, desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
 
 	Dimensions := LinearAlgebra[Dimensions];
@@ -9,10 +9,12 @@ encodeQpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 
 	m := Dimensions(a)[1]; 
 	n := Dimensions(a)[2];
-	    
+	
+	writeDescription(fd, desc);
+   
 	writeTags(fd, "r", 0, isSymmetric(d),
-		hasNoInequalities(rel, m));
-		
+		hasNoInequalities(a, rel, m));
+
 	fprintf(fd, "%s", "dimensions\n");
 	fprintf(fd, "%d%s%d%s", m, " ", n, "\n");
 	fprintf(fd, "%s", "\n");
@@ -55,7 +57,7 @@ encodeQpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 end proc;
 
 encodeLpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix, 
-				fpath::string)
+				desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
 
 	Dimensions := LinearAlgebra[Dimensions];
@@ -65,9 +67,11 @@ encodeLpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 
 	m := Dimensions(a)[1]; 
 	n := Dimensions(a)[2];
+	
+	writeDescription(fd, desc);
 	    
 	writeTags(fd, "r", 1, 1,
-		hasNoInequalities(rel, m));
+		hasNoInequalities(a, rel, m));
 		
 	fprintf(fd, "%s", "dimensions\n");
 	fprintf(fd, "%d%s%d%s", m, " ", n, "\n");
@@ -105,7 +109,7 @@ end proc;
 
 
 encodeQpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
-				d::Matrix, fpath::string)
+				d::Matrix, desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
 
 	Dimensions := LinearAlgebra[Dimensions];
@@ -114,9 +118,11 @@ encodeQpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	
 
 	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
+	
+	writeDescription(fd, desc);
 	    
 	writeTags(fd, "f", 0, isSymmetric(d),
-		hasNoInequalities(rel, m));
+		hasNoInequalities(a, rel, m));
 	    
 	    
 	fprintf(fd, "%s", "dimensions\n");
@@ -160,7 +166,7 @@ encodeQpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 end proc;
 
 encodeLpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
-				fpath::string)
+				desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
 
 	Dimensions := LinearAlgebra[Dimensions];
@@ -171,7 +177,7 @@ encodeLpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
 	    
 	writeTags(fd, "f", 1, 1,
-		hasNoInequalities(rel, m));
+		hasNoInequalities(a, rel, m));
 	    
 	    
 	fprintf(fd, "%s", "dimensions\n");
@@ -220,7 +226,7 @@ encodeQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
 	    
 	writeTags(fd, "i", 0, isSymmetric(d),
-		hasNoInequalities(rel, m));
+		hasNoInequalities(a, rel, m));
 	    
 	    
 	fprintf(fd, "%s", "dimensions\n");
@@ -275,7 +281,7 @@ encodeLpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
 	    
 	writeTags(fd, "i", 1, 1,
-		hasNoInequalities(rel, m));
+		hasNoInequalities(a, rel, m));
 	    
 	    
 	fprintf(fd, "%s", "dimensions\n");
@@ -427,6 +433,21 @@ writeTags:=proc(fileDesc, inputDataType, isLinear, isSymmetric, hasNoInequalitie
 	fprintf(fileDesc, "\n");
 end proc;
 
+writeDescription:=proc(fileDesc, desc)
+	local q, r, i, line;
+	line := 79;
+	q := iquo(length(desc), line);
+	r := irem(length(desc), line);
+	for i from 1 by 1 to q do
+	    fprintf(fileDesc, "%s%s%s", "#", desc[(i-1)*line+1 .. i*line], "\n");
+	end do; 
+	if (r > 0) then
+	    fprintf(fileDesc, "%s%s%s", "#", desc[q*line+1 .. length(desc)],
+	        "\n");
+	fi;
+	fprintf(fileDesc, "%s", "\n");
+end proc;
+
 isLinear:=proc(D, n)
 	local zero, ret;
 	
@@ -439,14 +460,15 @@ isLinear:=proc(D, n)
 	return ret;
 end proc;
 
-hasNoInequalities:=proc(relop, m)
+hasNoInequalities:=proc(a, relop, m)
 	local zero, ret;
 	
 	zero:=LinearAlgebra[ZeroMatrix](m,1);
-	if (LinearAlgebra[Equal](relop, zero)) then
-		ret := 1;
+	if (LinearAlgebra[Equal](relop, zero) and 
+	    LinearAlgebra[Rank](a) = m) then
+	    ret := 1;
 	else
-		ret := 0;
+	    ret := 0;
 	fi;
 	return ret;
 end proc;
