@@ -43,6 +43,10 @@ struct D {
     D( N i) : b(i) {}
 };
 
+template < template < class T > class HDS>
+void fct(HDS<int> h1 ) { // here it does not compile } 
+
+
 int main() {
     C<A> c(1);
     D< double, A> d( 3.8);
