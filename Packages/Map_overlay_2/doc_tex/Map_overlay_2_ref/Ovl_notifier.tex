@@ -1,0 +1,60 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Ovl_incremental_algorithm.tex (Map_overlay)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: ovl (Map_overlay_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%**************************************************************************
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
+\begin{ccRefClass}{Map_overlay_default_notifier<Subdivision>}
+\label{OVL_sec:notifier}
+
+The \ccRefName\ class keeps on updating the pointers in the 
+DCEL overlay to the components of the creators.
+The \ccRefName class overrides only the functions {\it add\_edge} 
+and {\it split\_edge} of the basic notifier defined for \ccc{Planar_Map}
+(see Chapter~\ref{I1_ChapterPlanarMap}). In our implementation these functions update 
+the pointers of the halfedges and the vertices in the DCEL presenting the overlay.
+In order to update the creator face pointers, we define a new function in our notifier, 
+which traverses all features in the overlay in a DFS manner and updates the 
+corresponding pointers. This function in invoked once we have terminated 
+inserting into the overlay all the curves of both creators.
+We did not use the {\it split\_face} function in order to update a face pointers, 
+since it is invoked each time a cycle in the DCEL is closed, and hence, degrade perfomance.
+
+The \ccRefName class also provides access functions to the pointers of the 
+creator components. As a result, users can get all the infomation regards the 
+faces, halfedges and vertices of the creators that are laying above a certain feature 
+in the overlay.
+
+\ccInclude{CGAL/Map_overlay_default_notifier.h}
+
+\ccIsModel
+  \ccc{MapOverlayNotifier_2}
+
+\ccInheritsFrom
+  \ccc{Subdivision::Change_notification}
+
+\ccSeeAlso
+   Discussion of the overlay notification is summerized in the introduction
+   of \ccc{Map_overlay} reference pages\lcTex{ (\ccRefPage{Ovl_Ref_intro})}.
+
+\end{ccRefClass}
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
