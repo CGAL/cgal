@@ -1,4 +1,4 @@
-2.14   (?? Jan 2001)
+2.14   (18 Jan 2001)
 - Remove Triangle_repH2 copy ctor, since it caused a warning.
 
 2.13   (11 Oct 2000)
