@@ -196,21 +196,271 @@ protected:
   void InitCurve(X_curve_2 &curve);
   void UpdateEventCurves(Event *e, SubCurve *subCurve);
 
+  /*! The main loop to calculate intersections among the curves
+    Looping over the events in the queue, for each event we first
+    handle the curves that are tothe left of the event point (i.e., 
+    curves that we are done with), and then we look at the curves 
+    to the right of the point, which means we attept to find intersections
+    between them and their neighbours on the sweep line.
+  */
   template <class OutpoutIterator>
-    void PerformIntersection(OutpoutIterator out);
+  void PerformIntersection(OutpoutIterator out)
+  {
+    std::list<Event *> miniq;
+    EventQueueIter eventIter = m_queue->begin();
+    m_prevPos = eventIter->first;
+    Point_2 referencePoint;
 
+    while ( eventIter != m_queue->end() )
+    {
+      const Point_2 *p = &(eventIter->first);
+      if ( m_traits->compare_x(m_sweepLinePos, *p) == SMALLER )
+        m_prevPos = m_sweepLinePos;
+      m_sweepLinePos = *p;
+      m_currentPos = *p;
+      referencePoint = *p;
+      while (eventIter != m_queue->end() && 
+             m_traits->compare_x(eventIter->first, referencePoint) == EQUAL) {
+        p = &(eventIter->first);
+        m_currentEvent = eventIter->second;
+        SL_DEBUG(std::cout << "--------------------------------------"
+                 << std::endl;
+                 std::cout << "------------- " << *p << " --------------"
+                 << std::endl;
+                 std::cout << "--------------------------------------"
+                 << std::endl;
+                 PrintStatusLine();
+                 m_currentEvent->Print();
+                 std::cout << "--------------------------------------"
+                 << std::endl;
+                 std::cout << "--------------------------------------"
+                 << std::endl;
+                 )
+
+        FirstPass();
+        HandleLeftCurves_for_subcurves(*p, out);
+
+        miniq.push_back(m_currentEvent);
+        ++eventIter;
+      }
+
+      m_queue->erase(m_queue->begin(), eventIter);
+
+      typename std::list<Event *>::iterator itt = miniq.begin();
+      while ( itt != miniq.end())
+      {
+        m_currentEvent = *itt;
+        HandleRightCurves();
+        ++itt;
+      }
+      miniq.clear();
+      eventIter = m_queue->begin();
+    }
+  }
+
+  /*! The main loop to calculate intersections among the curves
+    Looping over the events in the queue, for each event we first
+    handle the curves that are tothe left of the event point (i.e., 
+    curves that we are done with), and then we look at the curves 
+    to the right of the point, which means we attept to find intersections
+    between them and their neighbours on the sweep line.
+  */
   template <class OutpoutIterator>
-    void PerformIntersection_for_points(bool includeEndPoints,
-					OutpoutIterator out);
+  void PerformIntersection_for_points(bool includeEndPoints,
+					OutpoutIterator out)
+  {
+    std::list<Event *> miniq;
+    EventQueueIter eventIter = m_queue->begin();
+    m_prevPos = eventIter->first;
+    Point_2 referencePoint;
+
+    while ( eventIter != m_queue->end() )
+    {
+      const Point_2 *p = &(eventIter->first);
+      if ( m_traits->compare_x(m_sweepLinePos, *p) == SMALLER )
+        m_prevPos = m_sweepLinePos;
+      m_sweepLinePos = *p;
+      m_currentPos = *p;
+      referencePoint = *p;
+      while (eventIter != m_queue->end() && 
+             m_traits->compare_x(eventIter->first, referencePoint) == EQUAL) {
+        p = &(eventIter->first);
+        m_currentEvent = eventIter->second;
+        SL_DEBUG(std::cout << "--------------------------------------"
+                 << std::endl;
+                 std::cout << "------------- " << *p << " --------------"
+                 << std::endl;
+                 std::cout << "--------------------------------------"
+                 << std::endl;
+                 PrintStatusLine();
+                 m_currentEvent->Print();
+                 std::cout << "--------------------------------------"
+                 << std::endl;
+                 std::cout << "--------------------------------------"
+                 << std::endl;
+        )
+
+        FirstPass();
+        HandleLeftCurves_for_points(*p, includeEndPoints, out);
+
+        miniq.push_back(m_currentEvent);
+        ++eventIter;
+      }
+
+      m_queue->erase(m_queue->begin(), eventIter);
+
+      typename std::list<Event *>::iterator itt = miniq.begin();
+      while ( itt != miniq.end())
+      {
+        m_currentEvent = *itt;
+        HandleRightCurves();
+        ++itt;
+      }
+      miniq.clear();
+      eventIter = m_queue->begin();
+    }
+  }
 
   void FirstPass();
 
+  /*! For each left-curve, if it is the "last" subcurve, i.e., the 
+    event point is the right-edge of the original curve, the 
+    last sub curve is created and added to the result. Otherwise
+    the curve is added as is to the result.
+  */
   template <class OutpoutIterator>
-    void HandleLeftCurves_for_subcurves(const Point_2 &p, OutpoutIterator out);
+  void HandleLeftCurves_for_subcurves(const Point_2 &p, OutpoutIterator out)
+  {
+    SL_DEBUG(std::cout << "Handling left curve" << std::endl;)
+    SL_DEBUG(m_currentEvent->Print();)
+    EventCurveIter leftCurveIter = m_currentEvent->leftCurvesBegin();
+    m_currentPos = m_prevPos;
+    while ( leftCurveIter != m_currentEvent->leftCurvesEnd() )  // ** fix here
+    {
+      SubCurve *leftCurve = *leftCurveIter; 
+      const X_curve_2 &cv = leftCurve->getCurve();
+      const Point_2 &lastPoint = leftCurve->getLastPoint();
 
+      if ( leftCurve->isSource(p))
+      {
+        if ( !leftCurve->isTarget(lastPoint) )
+        {
+          X_curve_2 a,b;
+          m_traits->curve_split(cv, a, b, lastPoint);
+          *out = a; ++out;
+        } else {
+          *out = cv; ++out;
+        }
+      } else if ( leftCurve->isTarget(p))
+      {
+        if ( !leftCurve->isSource(lastPoint))
+        {
+          X_curve_2 a,b;
+          m_traits->curve_split(cv, a, b, lastPoint);
+          *out = b; ++out;
+        } else {
+          *out = cv; ++out;
+        }
+
+      } else { 
+        X_curve_2 a,b;
+        if ( leftCurve->isSource(lastPoint)) {
+          m_traits->curve_split(cv, a, b, p);
+          *out = a; ++out;
+        } else if ( leftCurve->isTarget(lastPoint)) {
+          m_traits->curve_split(cv, b, a, p);
+          *out = a; ++out;
+        } else {
+          const X_curve_2 &lastCurve = leftCurve->getLastCurve();
+          if ( leftCurve->isSourceLeftToTarget() ) {
+            m_traits->curve_split(lastCurve, a, b, p);
+            *out = a; ++out;
+          } else {
+            m_traits->curve_split(lastCurve, b, a, p);
+            *out = a; ++out;
+          }
+        }
+        leftCurve->setLastPoint(p);
+        leftCurve->setLastCurve(b); 
+      }
+      m_currentPos = m_prevPos;
+      SL_DEBUG(PrintStatusLine();)
+      PRINT_ERASE(leftCurve);
+
+      // when a curve is deleted from the sweep line for good (i.e., 
+      // the sweepline position is at the end of the curve), and it 
+      // is not the first or last on the sweep line, its top neighbour 
+      // and bottom neighbour become neighbours and we need to check 
+      // for intersection.
+      StatusLineIter sliter = m_statusLine->find(leftCurve);
+      assert(sliter!=m_statusLine->end());
+      StatusLineIter end = m_statusLine->end(); --end;
+      if ( leftCurve->isEndPoint(p) && 
+           sliter != m_statusLine->begin() && sliter != end) 
+      {
+        StatusLineIter prev = sliter; --prev;
+        StatusLineIter next = sliter; ++next;
+        Intersect(*prev, *next);
+      } 
+
+      m_currentPos = m_prevPos;
+      m_statusLine->erase(sliter);
+      ++leftCurveIter;
+    }
+  }
+
+  /*! For each left-curve, if it is the "last" subcurve, i.e., the 
+    event point is the right-edge of the original curve, the 
+    last sub curve is created and added to the result. Otherwise
+    the curve is added as is to the result.
+  */
   template <class OutpoutIterator>
-    void HandleLeftCurves_for_points(const Point_2 &p, bool includeEndPoints,
-				     OutpoutIterator out);
+  void HandleLeftCurves_for_points(const Point_2 &p, bool includeEndPoints,
+                                   OutpoutIterator out)
+  {
+    SL_DEBUG(std::cout << "Handling left curve" << std::endl;)
+    SL_DEBUG(m_currentEvent->Print();)
+    if ( !m_currentEvent->hasLeftCurves() )
+    {
+      if ( includeEndPoints )
+        *out = p; ++out;    
+      return;
+    }
+    EventCurveIter leftCurveIter = m_currentEvent->leftCurvesBegin();
+    m_currentPos = m_prevPos;
+    bool isEndPoint = true;
+    while ( leftCurveIter != m_currentEvent->leftCurvesEnd() )  // ** fix here
+    {
+      m_currentPos = m_prevPos;
+      SL_DEBUG(PrintStatusLine();)
+      SubCurve *leftCurve = *leftCurveIter; 
+      isEndPoint &= leftCurve->isEndPoint(p);
+      PRINT_ERASE(leftCurve);
+
+      // when a curve is deleted from the sweep line for good (i.e., 
+      // the sweepline position is at the end of the curve), and it 
+      // is not the first or last on the sweep line, its top neighbour 
+      // and bottom neighbour become neighbours and we need to check 
+      // for intersection.
+      StatusLineIter sliter = m_statusLine->find(leftCurve);
+      assert(sliter!=m_statusLine->end());
+      StatusLineIter end = m_statusLine->end(); --end;
+      if ( leftCurve->isEndPoint(p) && 
+           sliter != m_statusLine->begin() && sliter != end) 
+      {
+        StatusLineIter prev = sliter; --prev;
+        StatusLineIter next = sliter; ++next;
+        Intersect(*prev, *next);
+      } 
+
+      m_currentPos = m_prevPos;
+      m_statusLine->erase(sliter);
+      ++leftCurveIter;
+    }
+
+    if ( includeEndPoints || !isEndPoint )
+      *out = p; ++out;
+  }
   
   void HandleRightCurves();
   Event *Intersect(SubCurve *c1, SubCurve *c2);
@@ -407,128 +657,6 @@ UpdateEventCurves(Event *e, SubCurve *subCurve)
   }
 }
 
-/*! The main loop to calculate intersections among the curves
-    Looping over the events in the queue, for each event we first
-    handle the curves that are tothe left of the event point (i.e., 
-    curves that we are done with), and then we look at the curves 
-    to the right of the point, which means we attept to find intersections
-    between them and their neighbours on the sweep line.
- */
-template <class CurveInputIterator,  class SweepLineTraits_2>
-template <class OutpoutIterator>
-inline void 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2>::
-PerformIntersection(OutpoutIterator out)
-{
-  std::list<Event *> miniq;
-  EventQueueIter eventIter = m_queue->begin();
-  m_prevPos = eventIter->first;
-  Point_2 referencePoint;
-
-  while ( eventIter != m_queue->end() )
-  {
-    const Point_2 *p = &(eventIter->first);
-    if ( m_traits->compare_x(m_sweepLinePos, *p) == SMALLER )
-      m_prevPos = m_sweepLinePos;
-    m_sweepLinePos = *p;
-    m_currentPos = *p;
-    referencePoint = *p;
-    while ( eventIter != m_queue->end() && 
-	    m_traits->compare_x(eventIter->first, referencePoint) == EQUAL ) {
-      p = &(eventIter->first);
-      m_currentEvent = eventIter->second;
-      SL_DEBUG(
-	std::cout << "--------------------------------------" << std::endl;
-	std::cout << "------------- " << *p << " --------------" << std::endl;
-	std::cout << "--------------------------------------" << std::endl;
-	PrintStatusLine();
-	m_currentEvent->Print();
-	std::cout << "--------------------------------------" << std::endl;
-	std::cout << "--------------------------------------" << std::endl;
-      )
-
-      FirstPass();
-      HandleLeftCurves_for_subcurves(*p, out);
-
-      miniq.push_back(m_currentEvent);
-      ++eventIter;
-    }
-
-    m_queue->erase(m_queue->begin(), eventIter);
-
-    typename std::list<Event *>::iterator itt = miniq.begin();
-    while ( itt != miniq.end())
-    {
-      m_currentEvent = *itt;
-      HandleRightCurves();
-      ++itt;
-    }
-    miniq.clear();
-    eventIter = m_queue->begin();
-  }
-}
-
-/*! The main loop to calculate intersections among the curves
-    Looping over the events in the queue, for each event we first
-    handle the curves that are tothe left of the event point (i.e., 
-    curves that we are done with), and then we look at the curves 
-    to the right of the point, which means we attept to find intersections
-    between them and their neighbours on the sweep line.
- */
-template <class CurveInputIterator,  class SweepLineTraits_2>
-template <class OutpoutIterator>
-inline void 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2>::
-PerformIntersection_for_points(bool includeEndPoints, OutpoutIterator out)
-{
-  std::list<Event *> miniq;
-  EventQueueIter eventIter = m_queue->begin();
-  m_prevPos = eventIter->first;
-  Point_2 referencePoint;
-
-  while ( eventIter != m_queue->end() )
-  {
-    const Point_2 *p = &(eventIter->first);
-    if ( m_traits->compare_x(m_sweepLinePos, *p) == SMALLER )
-      m_prevPos = m_sweepLinePos;
-    m_sweepLinePos = *p;
-    m_currentPos = *p;
-    referencePoint = *p;
-    while ( eventIter != m_queue->end() && 
-	    m_traits->compare_x(eventIter->first, referencePoint) == EQUAL ) {
-      p = &(eventIter->first);
-      m_currentEvent = eventIter->second;
-      SL_DEBUG(
-	std::cout << "--------------------------------------" << std::endl;
-	std::cout << "------------- " << *p << " --------------" << std::endl;
-	std::cout << "--------------------------------------" << std::endl;
-	PrintStatusLine();
-	m_currentEvent->Print();
-	std::cout << "--------------------------------------" << std::endl;
-	std::cout << "--------------------------------------" << std::endl;
-      )
-
-      FirstPass();
-      HandleLeftCurves_for_points(*p, includeEndPoints, out);
-
-      miniq.push_back(m_currentEvent);
-      ++eventIter;
-    }
-
-    m_queue->erase(m_queue->begin(), eventIter);
-
-    typename std::list<Event *>::iterator itt = miniq.begin();
-    while ( itt != miniq.end())
-    {
-      m_currentEvent = *itt;
-      HandleRightCurves();
-      ++itt;
-    }
-    miniq.clear();
-    eventIter = m_queue->begin();
-  }
-}
-
 /*! This pass comes to take care of cases in which we reach an
     event point that is an end point of a curve, and also ends 
     on another curve:
@@ -587,152 +715,6 @@ FirstPass()
   }
 
   SL_DEBUG(std::cout << "First pass - done\n" ;)
-}
-
-/*! For each left-curve, if it is the "last" subcurve, i.e., the 
-    event point is the right-edge of the original curve, the 
-    last sub curve is created and added to the result. Otherwise
-    the curve is added as is to the result.
-*/
-template <class CurveInputIterator,  class SweepLineTraits_2>
-template <class OutpoutIterator>
-inline void 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2>::
-HandleLeftCurves_for_subcurves(const Point_2 &p, OutpoutIterator out)
-{
-  SL_DEBUG(std::cout << "Handling left curve" << std::endl;)
-  SL_DEBUG(m_currentEvent->Print();)
-  EventCurveIter leftCurveIter = m_currentEvent->leftCurvesBegin();
-  m_currentPos = m_prevPos;
-  while ( leftCurveIter != m_currentEvent->leftCurvesEnd() )  // ** fix here
-  {
-    SubCurve *leftCurve = *leftCurveIter; 
-    const X_curve_2 &cv = leftCurve->getCurve();
-    const Point_2 &lastPoint = leftCurve->getLastPoint();
-
-    if ( leftCurve->isSource(p))
-    {
-      if ( !leftCurve->isTarget(lastPoint) )
-      {
-	X_curve_2 a,b;
-	m_traits->curve_split(cv, a, b, lastPoint);
-	*out = a; ++out;
-      } else {
-	*out = cv; ++out;
-      }
-    } else if ( leftCurve->isTarget(p))
-    {
-      if ( !leftCurve->isSource(lastPoint))
-      {
-	X_curve_2 a,b;
-	m_traits->curve_split(cv, a, b, lastPoint);
-	*out = b; ++out;
-      } else {
-	*out = cv; ++out;
-      }
-
-    } else { 
-      X_curve_2 a,b;
-      if ( leftCurve->isSource(lastPoint)) {
-	m_traits->curve_split(cv, a, b, p);
-	*out = a; ++out;
-      } else if ( leftCurve->isTarget(lastPoint)) {
-	m_traits->curve_split(cv, b, a, p);
-	*out = a; ++out;
-      } else {
-	const X_curve_2 &lastCurve = leftCurve->getLastCurve();
-	if ( leftCurve->isSourceLeftToTarget() ) {
-	  m_traits->curve_split(lastCurve, a, b, p);
-	  *out = a; ++out;
-	} else {
-	  m_traits->curve_split(lastCurve, b, a, p);
-	  *out = a; ++out;
-	}
-      }
-      leftCurve->setLastPoint(p);
-      leftCurve->setLastCurve(b); 
-    }
-    m_currentPos = m_prevPos;
-    SL_DEBUG(PrintStatusLine();)
-    PRINT_ERASE(leftCurve);
-
-    // when a curve is deleted from the sweep line for good (i.e., 
-    // the sweepline position is at the end of the curve), and it 
-    // is not the first or last on the sweep line, its top neighbour 
-    // and bottom neighbour become neighbours and we need to check 
-    // for intersection.
-    StatusLineIter sliter = m_statusLine->find(leftCurve);
-    assert(sliter!=m_statusLine->end());
-    StatusLineIter end = m_statusLine->end(); --end;
-    if ( leftCurve->isEndPoint(p) && 
-	 sliter != m_statusLine->begin() && sliter != end) 
-    {
-      StatusLineIter prev = sliter; --prev;
-      StatusLineIter next = sliter; ++next;
-      Intersect(*prev, *next);
-    } 
-
-    m_currentPos = m_prevPos;
-    m_statusLine->erase(sliter);
-    ++leftCurveIter;
-  }
-}
-
-/*! For each left-curve, if it is the "last" subcurve, i.e., the 
-    event point is the right-edge of the original curve, the 
-    last sub curve is created and added to the result. Otherwise
-    the curve is added as is to the result.
-*/
-template <class CurveInputIterator,  class SweepLineTraits_2>
-template <class OutpoutIterator>
-inline void 
-Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2>::
-HandleLeftCurves_for_points(const Point_2 &p, bool includeEndPoints, 
-			    OutpoutIterator out)
-{
-  SL_DEBUG(std::cout << "Handling left curve" << std::endl;)
-  SL_DEBUG(m_currentEvent->Print();)
-  if ( !m_currentEvent->hasLeftCurves() )
-  {
-    if ( includeEndPoints )
-      *out = p; ++out;    
-    return;
-  }
-  EventCurveIter leftCurveIter = m_currentEvent->leftCurvesBegin();
-  m_currentPos = m_prevPos;
-  bool isEndPoint = true;
-  while ( leftCurveIter != m_currentEvent->leftCurvesEnd() )  // ** fix here
-  {
-    m_currentPos = m_prevPos;
-    SL_DEBUG(PrintStatusLine();)
-    SubCurve *leftCurve = *leftCurveIter; 
-    isEndPoint &= leftCurve->isEndPoint(p);
-    PRINT_ERASE(leftCurve);
-
-    // when a curve is deleted from the sweep line for good (i.e., 
-    // the sweepline position is at the end of the curve), and it 
-    // is not the first or last on the sweep line, its top neighbour 
-    // and bottom neighbour become neighbours and we need to check 
-    // for intersection.
-    StatusLineIter sliter = m_statusLine->find(leftCurve);
-    assert(sliter!=m_statusLine->end());
-    StatusLineIter end = m_statusLine->end(); --end;
-    if ( leftCurve->isEndPoint(p) && 
-	 sliter != m_statusLine->begin() && sliter != end) 
-    {
-      StatusLineIter prev = sliter; --prev;
-      StatusLineIter next = sliter; ++next;
-      Intersect(*prev, *next);
-    } 
-
-    m_currentPos = m_prevPos;
-    m_statusLine->erase(sliter);
-    ++leftCurveIter;
-  }
-
-  if ( includeEndPoints || !isEndPoint )
-    *out = p; ++out;
-
 }
 
 
