@@ -25,7 +25,11 @@ lib:
 
 # compile the doc_tex in a .dvi file.
 doc:
-	TEXINPUTS="`pwd`/demo:$$TEXINPUTS"; cd doc_tex/support/Qt_widget; latex wrapper.tex
+	TEXINPUTS="`pwd`/demo:$$TEXINPUTS";\
+	cd doc_tex/support/Qt_widget;\
+	latex wrapper.tex; \
+	cd ../Qt_widget_ref; \
+	latex wrapper.tex
 
 # show the doc
 show-doc: doc
