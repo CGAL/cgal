@@ -1,0 +1,15 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructBisector_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::Point_3&p, 
+                                             const Kernel::Point_3&q );}
+{constructs the bisector plane of $p$ and $q$.
+The bisector is oriented in such a way that \ccc{p} lies on its
+positive side. \ccPrecond{\ccc{p} and \ccc{q} are not equal.}}
+
+\ccRefines
+AdaptableFunctor (with two arguments)
+
+\end{ccRefFunctionObjectConcept}

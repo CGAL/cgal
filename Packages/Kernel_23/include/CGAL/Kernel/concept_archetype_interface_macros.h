@@ -265,6 +265,12 @@ CGAL_Kernel_cons(Construct_bisector_2,
 #endif
 
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || \
+    defined(CGAL_CA_CONSTRUCT_BISECTOR_3)
+CGAL_Kernel_cons(Construct_bisector_3,
+		 construct_bisector_3_object)
+#endif
+
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || \
     defined(CGAL_CA_CONSTRUCT_CENTER_2)
 CGAL_Kernel_cons(Construct_center_2,
 		 construct_center_2_object)

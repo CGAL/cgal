@@ -627,6 +627,11 @@ test_new_3(const R& rep)
   Angle tmp46 = angle(p2,p3,p4);
   (void) tmp46;
   
+  typename R::Construct_bisector_3 construct_bisector
+        = rep.construct_bisector_3_object();
+  Plane_3 tmp47 = construct_bisector(p2,p3);
+  (void) tmp47;
+
   // kill warnings ...
   use(v1); use(d1); use(s1); use(l1); use(l4); use(l5);
   use(l6); use(d4); use(d5); use(d6); use(d7); use(r1);

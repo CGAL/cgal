@@ -1,0 +1,60 @@
+// Copyright (c) 2003  Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Sylvain Pion
+
+#ifndef CGAL__TEST_FCT_PLANE_3_H
+#define CGAL__TEST_FCT_PLANE_3_H
+
+template <class R>
+bool
+_test_fct_plane_3(const R& )
+{
+ std::cout << "Testing functions Plane_3" ;
+
+ typedef typename  R::RT       RT;
+ typedef typename  R::FT       FT;
+ typedef typename  R::Point_3  Point_3;
+ typedef typename  R::Plane_3  Plane_3;
+
+ Point_3 p1 ( RT(18), RT(12), RT(3), RT(3) );  // ( 6, 4, 1)
+ Point_3 p2 ( RT(18), RT(15), RT(3), RT(3) );  // ( 6, 5, 1)
+ Point_3 p3 ( RT(18), RT( 9), RT(3), RT(3) );  // ( 6, 3, 1)
+ Point_3 p4 ( RT(28), RT(40), RT(4), RT(4) );  // ( 7,10, 1)
+ Point_3 p5 ( RT(12), RT(40), RT(4), RT(4) );  // ( 3,10, 1)
+ Point_3 p6 ( RT(28), RT(12), RT(4), RT(4) );  // ( 7, 3, 1)
+ Point_3 p7 ( RT(18), RT( 6), RT(3), RT(3) );  // ( 6, 2, 1)
+ Point_3 p8 ( RT(24), RT( 9), RT(3), RT(3) );  // ( 8, 3, 1)
+ Point_3 p9 ( RT( 6), RT(10), RT(1), RT(1) );  // ( 6,10, 1)
+ Point_3 p10( RT( 8), RT( 5), RT(1), RT(1) );  // ( 8, 5, 1)
+ Point_3 p11( RT( 7), RT( 5), RT(1), RT(1) );  // ( 7, 5, 1)
+ Point_3 p12( RT( 0), RT( 4), RT(1), RT(1) );  // ( 0, 4, 1)
+ Point_3 p13( RT(18), RT(12), RT(0), RT(3) );  // ( 6, 4, 0)
+
+ // bisector construction
+ Plane_3 bp1 = CGAL::bisector(p2, p3);
+ Plane_3 bp2 = CGAL::bisector(p3, p2);
+ assert(bp1 == Plane_3(p12, p1, p13));
+ assert(bp2 == Plane_3(p1, p12, p13));
+ assert(bp1.oriented_side(p2) == CGAL::ON_POSITIVE_SIDE);
+
+ std::cout << "done" << std::endl;
+ return true;
+}
+
+#endif // CGAL__TEST_FCT_PLANE_3_H

@@ -113,6 +113,8 @@ CGAL_Kernel_cons(Construct_base_vector_3,
 		 construct_base_vector_3_object)
 CGAL_Kernel_cons(Construct_bisector_2,
 		 construct_bisector_2_object)
+CGAL_Kernel_cons(Construct_bisector_3,
+		 construct_bisector_3_object)
 CGAL_Kernel_cons(Construct_center_2,
 		 construct_center_2_object)
 CGAL_Kernel_cons(Construct_center_3,

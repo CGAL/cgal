@@ -747,6 +747,20 @@ public:
 };
 
 template <typename K>
+class Construct_bisector_3
+{
+    typedef typename K::Point_3 Point_3;
+    typedef typename K::Plane_3 Plane_3;
+public:
+    typedef Plane_3          result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    Plane_3
+    operator()(const Point_3&, const Point_3&) const
+    { Plane_3 obj; return obj; }
+};
+
+template <typename K>
 class Construct_center_2
 {
     typedef typename K::Point_2   Point_2;

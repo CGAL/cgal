@@ -27,6 +27,7 @@
 #include "_test_cls_point_3.h"
 #include "_test_fct_point_vector_3.h"
 #include "_test_fct_point_3.h"
+#include "_test_fct_plane_3.h"
 #include "_test_cls_direction_3.h"
 #include "_test_cls_plane_3.h"
 #include "_test_cls_line_3.h"
@@ -48,6 +49,7 @@ _test_3(const R& r)
  && _test_cls_point_3(r)
  && _test_fct_point_vector_3(r)
  && _test_fct_point_3(r)
+ && _test_fct_plane_3(r)
  && _test_cls_direction_3(r)
  && _test_cls_plane_3( r )
  && _test_cls_line_3( r )
