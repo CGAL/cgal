@@ -393,10 +393,10 @@ private:
   typedef Svd_arrangement_type_ftC2<ET,MTag,ITag>            ET_Predicate;
 
 public:
+  typedef typename IT_Predicate::result_type   result_type;
 
   inline
-  std::pair<int,int>
-  operator()(const FT v[],  const char site_types[]) const
+  result_type operator()(const FT v[],  const char site_types[]) const
   {
     try {
       Protect_FPU_rounding<Protected> Protection;
@@ -495,7 +495,7 @@ public:
       for (unsigned int i = 0; i < 60; i++) {
 	v_IT[i] = v[i].interval();
       }
-      return IT_Predicate()(v_IT, site_types, mtag, itag);
+      return IT_Predicate()(v_IT, site_types);
     }
     catch (Interval_nt_advanced::unsafe_comparison) {
       Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
@@ -508,7 +508,7 @@ public:
 	v_ET[i] = v[i].exact();
       }
 
-      return ET_Predicate()(v_ET, site_types, mtag, itag);
+      return ET_Predicate()(v_ET, site_types);
     }
   }
 };
