@@ -2,6 +2,10 @@
 //	Revision History for package Matrix_search
 //=====================================================================
 
+1.61 15/07/2003 rursu:
+	- fixed rectangular_p_center_2.C (added CGAL::)
+
+
 1.60 10/07/2003 rursu:
 	- replaced Leda based demo by Qt based demo
 

@@ -120,7 +120,7 @@ public:
 
       centers.clear();
       if(list_of_points.size() > 3)
-        rectangular_p_center_2(
+        CGAL::rectangular_p_center_2(
           list_of_points.begin(),
           list_of_points.end(),
           std::back_inserter(centers),
