@@ -2,6 +2,12 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 
+Ver 5.21 (14/9/01)
+- added member functions to query the constraint hierarchy
+  in Constrained_triangulation_plus_h_2.h
+- added test for Constrained_triangulation_plus_h_2
+- added operator()> in Pointer
+
 Ver 5.20 (10/9/01)
 - changed creators of Pointer for Spion needs
 
