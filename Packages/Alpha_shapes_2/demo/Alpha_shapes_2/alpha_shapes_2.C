@@ -230,7 +230,7 @@ public slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    Qt_help_window *help = new Qt_help_window(home, ".", 0, "help viewer");
+    CGAL::Qt_help_window *help = new CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
     help->show();
@@ -468,7 +468,7 @@ main(int argc, char **argv)
   app.setMainWidget(&win);
   win.setCaption(my_title_string);
   win.setMouseTracking(TRUE);
-  QPixmap cgal_icon = QPixmap(demoicon_xpm);
+  QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
   win.setIcon(cgal_icon);
   win.show();
   win.init_coordinates();

@@ -1,4 +1,7 @@
 
+Version 11.42 [rursu]
+- Qt_help_window class is in the namespace CGAL
+
 Version 11.41
 - Demo use the new class Qt_help_window instead of HelpWindow
 
