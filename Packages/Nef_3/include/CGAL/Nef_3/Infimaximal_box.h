@@ -149,6 +149,11 @@ class Infimaximal_box {
     return false; 
   }
 
+  template <typename Halfedge_handle>
+  static bool is_type4(Halfedge_handle e) {return false;}
+
+  template <typename Halfedge_handle>
+  static bool is_type3(Halfedge_handle e) {return false;}
 };
 
 template <class Kernel>
@@ -164,6 +169,7 @@ class Infimaximal_box<Tag_true, Kernel> {
   typedef typename Kernel::Point_3               Point_3;
   typedef typename Kernel::Plane_3               Plane_3;
   typedef typename Kernel::Vector_3              Vector_3;
+  typedef typename Kernel::Direction_3           Direction_3;
 
   //  typedef typename SNC_structure::Sphere_point   Sphere_point;
   //  typedef typename SNC_structure::Sphere_circle  Sphere_circle;
@@ -218,7 +224,7 @@ class Infimaximal_box<Tag_true, Kernel> {
 
   static Point_3 target_for_ray_shoot_on_minus_x_direction(Point_3 p) {
     CGAL_warning( Kernel::is_standard(p));
-    return Kernel::epoint( -1, 0, 0, p.hy()[0], 0, p.hz()[0], p.hw()[0]);
+    return Point(RT(0,-1), RT(p.hy()[0]), RT(p.hz()[0]), RT(p.hw()[0]));
   }
 
   static Standard_point standard_point(Point_3 p, NT d=1) {
@@ -246,11 +252,15 @@ class Infimaximal_box<Tag_true, Kernel> {
   }
 
   static Point_3 create_extended_point(NT x, NT y, NT z) {
-    return Kernel::epoint(x,0,y,0,z,0,1);
+    return Point_3(RT(0,x), RT(0,y), RT(0,z), RT(1));
   }
 
   static Plane_3 create_extended_plane(NT a, NT b, NT c, NT d) {
     return Plane_3(a,b,c,RT(0,d));
+  }
+
+  static Point_3 create_extended_point(NT a0,NT a1,NT b0,NT b1,NT c0,NT c1,NT d) {
+    return Point_3(RT(a0,a1),RT(b0,b1),RT(c0,c1),RT(d));
   }
 
   template <typename SNC_structure>
@@ -328,6 +338,51 @@ class Infimaximal_box<Tag_true, Kernel> {
 	 is_edge_on_infibox(sh->twin()->source()))
 	return true;
 
+    return false;
+  }
+
+  template <typename Halfedge_handle>
+  static bool is_type4(Halfedge_handle e) {
+
+    Point_3 p(e->center_vertex()->point());
+    Direction_3 d(e->vector());
+
+    if((p.hx().degree() > 0 || 
+	d == Direction_3(1,0,0) ||
+	d == Direction_3(-1,0,0)) &&
+       (p.hy().degree() > 0 || 
+	d == Direction_3(0,1,0) ||
+	d == Direction_3(0,-1,0)) &&
+       (p.hz().degree() > 0 || 
+	d == Direction_3(0,0,1) ||
+	d == Direction_3(0,0,-1)))
+      return true;
+    return false;
+  }
+
+  template <typename Halfedge_handle>
+  static bool is_type3(Halfedge_handle e) {
+
+    Point_3 p(e->center_vertex()->point());
+    Direction_3 d(e->vector());
+    
+    if(d == Direction_3(1,0,0) || d == Direction_3(-1,0,0)) {
+      if(p.hy().degree()>1)
+	return true;
+      return false;
+    }
+    if(d == Direction_3(0,1,0) || d == Direction_3(0,-1,0)) {
+      if(p.hx().degree()>1)
+	return true;
+      return false;
+    }
+    if(d == Direction_3(0,0,1) || d == Direction_3(0,0,-1)) {
+      if(p.hx().degree()>1)
+	return true;
+      return false;
+    }
+
+    CGAL_assertion_msg(0,"this line shall not be reached");
     return false;
   }
 
