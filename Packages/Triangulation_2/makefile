@@ -2,7 +2,6 @@
 
 PACKAGE=Triangulation
 
-WWW=/u/www/0/www/htdocs/files/equipes/prisme
 WWW_CGAL=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Triangulation_2
 TMP_file=/tmp/submit-mail
@@ -19,9 +18,9 @@ package:
 	@echo "---- make Test                ----"
 	@echo "---- make Doc --------------------"
 	@echo "---- editer changes.txt       ----"
-	@echo "---- make VERSION=4.42 Version ---"
+	@echo "---- make VERSION=4.44 Version ---"
 	@echo "---- cvs commit ------------------"
-	@echo "---- make VERSION=4.42 Tag -------"
+	@echo "---- make VERSION=4.44 Tag -------"
 	@echo "---- make Submit -----------------"
 	@echo "----------------------------------"
 

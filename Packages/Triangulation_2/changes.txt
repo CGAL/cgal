@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.44(21 June 00)
+Fixed bugs in Comstrained and Delaunay_constrained triangulations
+add test of Delaunay_constrained triangulations
+
 Ver 4.43 (15 June 00)
 Fixed the predicates 
  oriented_side(...) and  bounded_side(...)
