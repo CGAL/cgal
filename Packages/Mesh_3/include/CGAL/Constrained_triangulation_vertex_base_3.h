@@ -10,8 +10,7 @@ class Constrained_triangulation_vertex_base_3
 public:
   typedef typename Vb::Vertex_handle  Vertex_handle;
   typedef typename Vb::Cell_handle    Cell_handle;
-  typedef typename Vb::Point          Bare_point;
-  typedef typename Gt::Weighted_point Point;
+  typedef typename Vb::Point          Point;
 
   template < class TDS2 >
   struct Rebind_TDS {
