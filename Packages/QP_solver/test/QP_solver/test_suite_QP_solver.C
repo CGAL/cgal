@@ -117,8 +117,12 @@ void init_row_types(std::vector<int>& rel,typename Rep::Row_type*& row_types);
 template<typename T>
 bool read_instance(std::ifstream& from, Matrix<T>& a,
 	std::vector<int>& rel, Vector<T>& b,
-	Vector<T>& c, Matrix<T>& d);
+	Vector<T>& c, Matrix<T>& d, CGAL::Tag_true Is_linear);
 
+template<typename T>
+bool read_instance(std::ifstream& from, Matrix<T>& a,
+	std::vector<int>& rel, Vector<T>& b,
+	Vector<T>& c, Matrix<T>& d, CGAL::Tag_false Is_linear);
 	
 template<typename T>
 bool read_matrix(std::ifstream& from, int m, int n,
@@ -171,6 +175,7 @@ int map_pricing_strategy_abrev(const std::string& abbrev);
 
 template <typename Rep>
 void set_pricing_strategy(CGAL::QPE_pricing_strategy<Rep>*& strat, int index);
+
 
 std::vector<std::string> tag_names_table(0);
 std::vector<std::string> pricing_strat_abrev_table(0);
@@ -295,7 +300,8 @@ bool doIt(int verbose, int pricing_strategy_index, std::ifstream& from) {
 		    strat(static_cast<CGAL::QPE_pricing_strategy<Repr>*>(0));
 	bool instance_read, sol_solver_valid;	
 
-	instance_read = read_instance<Input_type>(from, A, rel, b, c, D);
+	instance_read = read_instance<Input_type>(from, A, rel, b, c, D,
+	    Is_linear());
 	if (instance_read) {
 		init_row_types<Repr>(rel, row_types);
 		solver.set_verbosity( verbose);
@@ -337,7 +343,7 @@ void init_row_types(std::vector<int>& rel,typename Rep::Row_type*& row_types) {
 template<typename T>
 bool read_instance(std::ifstream& from, Matrix<T>& a,
 	std::vector<int>& rel, Vector<T>& b,
-	Vector<T>& c, Matrix<T>& d) {
+	Vector<T>& c, Matrix<T>& d, CGAL::Tag_false) {		//QP case
 	
 	int m, n;
 	bool token_read, matrix_read;
@@ -414,7 +420,6 @@ bool read_instance(std::ifstream& from, Matrix<T>& a,
 		error("could not match token c");
 		return false;
 	}
-	
 	// read objfunc D
 	token_read = read_token(from, "D");
 	if (token_read) {
@@ -430,6 +435,90 @@ bool read_instance(std::ifstream& from, Matrix<T>& a,
 	}
 	return true;
 }
+
+template<typename T>
+bool read_instance(std::ifstream& from, Matrix<T>& a,
+	std::vector<int>& rel, Vector<T>& b,
+	Vector<T>& c, Matrix<T>& d, CGAL::Tag_true) {		//LP case
+	
+	int m, n;
+	bool token_read, matrix_read;
+		
+	// read dimensions
+	token_read = read_token(from, "dimensions");
+	if (token_read) {
+		message("dimensions token matched", debug);
+		from >> m; from >> n;
+		if (!from.good()) {
+			error("could not read dimensions");
+			return false;
+		}
+		std::cout << "m= " << m << " n= " << n << "\n";
+	} else {
+		error("could not match token dimensions");
+		return false;
+	}
+	
+	// read constraint matrix A
+	token_read = read_token(from, "A");
+	if (token_read) {
+		message("A token matched", debug);
+		matrix_read = read_matrix_transposed<T>(from, m, n, a);
+		if (!matrix_read) {
+			error("could not read matrix A");
+			return false;
+		}
+	} else {
+		error("could not match token A");
+		return false;
+	}
+	
+	// read rel operators
+	token_read = read_token(from, "rel");
+	if (token_read) {
+		message("rel token matched", debug);
+		matrix_read = read_int_vector(from, m, rel);
+		if (!matrix_read) {
+			error("could not read matrix rel");
+			return false;
+		}
+	} else {
+		error("could not match token rel");
+		return false;
+	}
+	
+	// read rhs b
+	token_read = read_token(from, "b");
+	if (token_read) {
+		message("b token matched", debug);
+		matrix_read = read_vector<T>(from, m, b);
+		if (!matrix_read) {
+			error("could not read matrix b");
+			return false;
+		}
+
+	} else {
+		error("could not match token b");
+		return false;
+	}
+	
+	// read objfunc c
+	token_read = read_token(from, "c");
+	if (token_read) {
+		message("c token matched", debug);
+		matrix_read = read_vector<T>(from, n, c);
+		if (!matrix_read) {
+			error("could not read matrix c");
+			return false;
+		}
+
+	} else {
+		error("could not match token c");
+		return false;
+	}
+	return true;
+}
+
 
 template<typename T>
 bool read_matrix(std::ifstream& from, int m, int n,
@@ -634,12 +723,12 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
 			break;
-	
+	*/
 	case  2:	doIt<CGAL::Gmpq,CGAL::Tag_false,CGAL::Tag_true,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
 			break;
-	
+	/*
 	case  3:	doIt<CGAL::Gmpq,CGAL::Tag_false,CGAL::Tag_true,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
@@ -653,7 +742,7 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
 			break;
-	
+	*/
 	case  6:	doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_true,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
@@ -663,7 +752,7 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
 			break;
-        */
+        /*
 	case  8:	doIt<GMP::Double,CGAL::Tag_false,CGAL::Tag_false,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
@@ -825,6 +914,6 @@ void set_pricing_strategy(CGAL::QPE_pricing_strategy<Rep>*& strat, int index) {
 			break;
 	}
 }
- 
+
 
 // ===== EOF ==================================================================
