@@ -281,20 +281,14 @@ public:
       // clears the structure
       Dt::clear();
 
-      _interval_face_map.erase(_interval_face_map.begin(),
-			       _interval_face_map.end());
-      _interval_edge_map.erase(_interval_edge_map.begin(),
-			       _interval_edge_map.end());
-      _interval_vertex_map.erase(_interval_vertex_map.begin(),
-				 _interval_vertex_map.end());
+      _interval_face_map.clear();
+      _interval_edge_map.clear();
+      _interval_vertex_map.clear();
     
-      _alpha_spectrum.erase(_alpha_spectrum.begin(),
-			    _alpha_spectrum.end());
+      _alpha_spectrum.clear();
 
-      Alpha_shape_vertices_list.erase(Alpha_shape_vertices_list.begin(),
-				      Alpha_shape_vertices_list.end());
-      Alpha_shape_edges_list.erase(Alpha_shape_edges_list.begin(),
-				   Alpha_shape_edges_list.end());
+      Alpha_shape_vertices_list.clear();
+      Alpha_shape_edges_list.clear();
     
       set_alpha(Coord_type(0)); 
       set_mode(GENERAL);
@@ -433,42 +427,59 @@ private:
 
 public:
 
-  Alpha_shape_vertices_iterator Alpha_shape_vertices_begin()
+  Alpha_shape_vertices_iterator alpha_shape_vertices_begin()
     { 
-      Alpha_shape_vertices_list.erase(Alpha_shape_vertices_list.begin(), 
-				      Alpha_shape_vertices_list.end());
+      Alpha_shape_vertices_list.clear();
       std::back_insert_iterator< std::list< Vertex_handle > > 
 	V_it(Alpha_shape_vertices_list);
       get_alpha_shape_vertices(V_it);
       return Alpha_shape_vertices_list.begin();
     }
 
+
+
+  // for backward compatibility
+  Alpha_shape_vertices_iterator Alpha_shape_vertices_begin()
+    {
+      return alpha_shape_vertices_begin();
+    }
   //---------------------------------------------------------------------
+
+  Alpha_shape_vertices_iterator alpha_shape_vertices_end()
+    {
+      return Alpha_shape_vertices_list.end();
+    }
 
   Alpha_shape_vertices_iterator Alpha_shape_vertices_end()
     {
       return Alpha_shape_vertices_list.end();
     }
-
   //---------------------------------------------------------------------
 
-  Alpha_shape_edges_iterator Alpha_shape_edges_begin()
+  Alpha_shape_edges_iterator alpha_shape_edges_begin()
     {
-      Alpha_shape_edges_list.erase(Alpha_shape_edges_list.begin(), 
-				   Alpha_shape_edges_list.end());
+      Alpha_shape_edges_list.clear();
       std::back_insert_iterator< std::list<Edge > > 
 	E_it(Alpha_shape_edges_list);
       get_alpha_shape_edges(E_it);
       return Alpha_shape_edges_list.begin();
     }
 
+  Alpha_shape_edges_iterator Alpha_shape_edges_begin()
+  {
+    return alpha_shape_edges_begin();
+  }
   //---------------------------------------------------------------------
+
+  Alpha_shape_edges_iterator alpha_shape_edges_end()
+    {
+      return Alpha_shape_edges_list.end();
+    }
 
   Alpha_shape_edges_iterator Alpha_shape_edges_end()
     {
       return Alpha_shape_edges_list.end();
     }
-
 public: 
   
   // Traversal of the alpha-Values
