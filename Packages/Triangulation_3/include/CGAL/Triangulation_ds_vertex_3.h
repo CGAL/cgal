@@ -96,6 +96,15 @@ public:
   int _order_of_creation;
 };
 
+template < class VH>
+class Vertex_tds_compare_order_of_creation {
+public:
+  bool operator()(VH u, VH v){
+    return ( u->get_order_of_creation()
+	     < v->get_order_of_creation() );
+  }
+};
+
 template <class Vb, class Cb >
 bool
 Triangulation_ds_vertex_3<Vb,Cb>::is_valid

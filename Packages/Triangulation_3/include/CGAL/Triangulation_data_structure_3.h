@@ -2380,9 +2380,22 @@ copy_tds(const Tds & tds, Vertex* vert )
       return vert;
 
   // Create the vertices.
+  // the vertices must be indexed by their order of creation so
+  // that when reread from file, the orders of vertices are the
+  // same - important for remove 
+  std::vector<Vertex*> TV(n);
+  int i = 0;
+
   for (Vertex_iterator vit = tds.vertices_begin();
        vit != tds.vertices_end(); ++vit)
-      V[&(*vit)] = new Vertex( *vit );
+    TV[i++] = &*vit; 
+  
+  CGAL_triangulation_assertion( i == n ); 
+  std::sort(TV.begin(), TV.end(), 
+	    Vertex_tds_compare_order_of_creation<Vertex*>()); 
+
+  for (i=0; i <= n-1; i++) 
+    V[ TV[i] ] = new Vertex( *TV[i] );
 
   // Create the cells.
   for (Cell* cit = tds._list_of_cells._next_cell;
