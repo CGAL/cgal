@@ -29,8 +29,8 @@
 #endif
 #include <CGAL/Planar_map_2/Pm_change_notification.h>
 
-#include <CGAL/Sweep_line_2/Pmwx_aggregate_insert_tight.h>
 #include <CGAL/Sweep_line_2/Pmwx_aggregate_insert.h>
+#include <CGAL/Sweep_line_2/Pmwx_aggregate_insert_old.h>
 
 
 #ifndef CGAL_PM_COUNT_OPERATIONS_TIMES
@@ -1195,11 +1195,11 @@ public:
 
   // inserts a given curve container into the map using Eti's sweep
   template <class X_monotone_curve_2_iterator>
-  Halfedge_iterator insert(const X_monotone_curve_2_iterator & begin,
-                           const X_monotone_curve_2_iterator & end,
-                           Change_notification * en = NULL)
+  Halfedge_iterator insert_old(const X_monotone_curve_2_iterator & begin,
+			       const X_monotone_curve_2_iterator & end,
+			       Change_notification * en = NULL)
   {
-    typedef Pmwx_aggregate_insert<X_monotone_curve_2_iterator, Traits, 
+    typedef Pmwx_aggregate_insert_old<X_monotone_curve_2_iterator, Traits, 
                                   Self ,Change_notification> Pmwx_agg_insert;
     Pmwx_agg_insert p(traits);
     p.insert_curves(begin, end, *this, en);
@@ -1209,11 +1209,11 @@ public:
 
   // inserts a given curve container into the map using Tali's sweep
   template <class X_monotone_curve_2_iterator>
-  Halfedge_iterator insert_tight(const X_monotone_curve_2_iterator & begin,
-                                 const X_monotone_curve_2_iterator & end,
-                                 Change_notification * en = NULL)
+  Halfedge_iterator insert(const X_monotone_curve_2_iterator & begin,
+			   const X_monotone_curve_2_iterator & end,
+			   Change_notification * en = NULL)
   {
-    typedef Pmwx_aggregate_insert_tight<X_monotone_curve_2_iterator, Traits, 
+    typedef Pmwx_aggregate_insert<X_monotone_curve_2_iterator, Traits, 
                                   Self ,Change_notification> Pmwx_agg_insert;
     Pmwx_agg_insert p(traits);
     p.insert_curves(begin, end, *this, en);
