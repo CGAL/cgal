@@ -1,3 +1,8 @@
+
+Version 4.165 on 11 May 2003 [af]
+- Removed Interval_base
+- Function to_interval now returns std::pair<double,double>
+
 Version 4.164 on 11 May 2003 [mh]
 - Changed names in kernel rebind/base mechanism
 
