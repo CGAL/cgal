@@ -1,3 +1,6 @@
+25 March 2004 Radu Ursu
+- made the doc work with the current implementation of the manual tools
+
 26 Feb 2004 Andreas Fabri
 - Bugfixes
 
