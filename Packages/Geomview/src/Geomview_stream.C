@@ -74,7 +74,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
     // Communication between CGAL and geomview should be possible
     // in two directions. To achieve this we open two pipes
 
-    std::cout << "Starting Geomview..." << flush ;
+    std::cout << "Starting Geomview..." << std::flush ;
     if (pipe(pipe_out) < 0) {
         std::cerr << "out pipe failed" << std::endl ;
         exit(-1);
@@ -99,7 +99,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         dup(pipe_in[1]);    // we connect it to the pipe
         if (machine && (strlen(machine)>0)) {
             std::ostrstream os;
-            os << " rgeomview " << machine << ":0.0" << ends ;
+            os << " rgeomview " << machine << ":0.0" << std::ends ;
             std::ostrstream logos;
             execlp("rsh", "rsh", machine, "-l", login, os.str(), (char *)0);
         } else {
@@ -295,7 +295,7 @@ Geomview_stream::operator<<(int i)
     } else {
         // transform the int in a character sequence and put whitespace around
         std::ostrstream str;
-        str << i << ' ' << ends;
+        str << i << ' ' << std::ends;
         char *bptr = str.str();
         ::write(out, bptr, int(strlen(bptr)));
     }
@@ -314,7 +314,7 @@ Geomview_stream::operator<<(double d)
     } else {
         // 'copy' the float in a string and append a blank
         std::ostrstream str;
-        str << f << " " << ends ;
+        str << f << " " << std::ends ;
         char *bptr = str.str();
 
         ::write(out, bptr, int(strlen(bptr)));
@@ -327,7 +327,7 @@ Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_2 &bbox)
 {
     std::ostrstream os;
-    os << "bbox" << gv.bbox_count++ << ends ;
+    os << "bbox" << gv.bbox_count++ << std::ends ;
     char *id = os.str();
 
     gv << ascii
@@ -350,7 +350,7 @@ Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_3 &bbox)
 {
     std::ostrstream os;
-    os << "bbox" << gv.bbox_count++ << ends ;
+    os << "bbox" << gv.bbox_count++ << std::ends ;
     char *id = os.str();
 
     gv << ascii
