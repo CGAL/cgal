@@ -289,6 +289,28 @@ sub append_maintainer_file_to_version_file()
     close(MAINTAINER);
 }
 
+sub filenames_of_package_ok($)
+{
+    my $rc;
+    $rc = system("/projects/CGAL/admin_scripts/check_filenames_of_package \"$_[0]\" . >tmpmsg.$$");
+    open CHECK_MSGS, "<tmpmsg.$$";
+    while (<CHECK_MSGS>) {
+	chomp;
+	log_msg($_);
+    }
+    close CHECK_MSGS;
+    unlink "tmpmsg.$$";
+
+    $rc >>= 8;
+    if ($rc == 1) {
+        log_msg("ERROR: sorry, there was an internal error at Utrecht.")
+    }
+    if ($rc == 2) {
+        log_msg("ERROR: Your submissions contains files that are in use in another package")
+    }
+    return ($rc == 0);
+}
+
 sub check_package($)
 {
     my ($version, $prev_version, $package_maintainer);
@@ -324,6 +346,9 @@ sub check_package($)
 #	log_msg "WARNING: File changes.txt is missing!";
 #    }
 
+    if ( ! filenames_of_package_ok($_[0])) {
+        return 0;
+    }
     check_codefiles("$_[0] ($version)", "$package_maintainer");
     if (defined($prev_version)) {
 	log_msg "Version $version will replace $prev_version";
