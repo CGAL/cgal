@@ -142,12 +142,11 @@ template <class Gt>
 Qt_widget& operator<<(Qt_widget& widget, const Moebius_edge_2<Gt>& e)
 {
   typedef Moebius_edge_2<Gt> Edge;
-  typedef Edge::Point Point;
-  //  typedef Edge::Segment Segment;
-  typedef Edge::Ray Ray;
-  typedef Edge::Direction Direction;
+  typedef typename Edge::Point Point;
+  typedef typename Edge::Ray Ray;
+  typedef typename Edge::Direction Direction;
 
-  typedef Edge::Const_iterator Iterator;
+  typedef typename Edge::Const_iterator Iterator;
   Iterator it = e.begin ();
   Iterator end = e.end ();
 

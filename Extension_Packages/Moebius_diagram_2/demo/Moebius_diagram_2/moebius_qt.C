@@ -17,6 +17,7 @@ int main(int, char*)
 #else
 
 #include "moebius_cgal_types.h"
+#include "timer.h"
 
 //Qt_widget headers
 #include <CGAL/IO/Qt_widget.h>
@@ -29,7 +30,9 @@ int main(int, char*)
 #include "moebius_2_qt_toolbar_layers.h"
 
 //Qt headers
-#include <qplatinumstyle.h>
+//#include <qplatinumstyle.h>
+#include <qcommonstyle.h>
+
 #include <qapplication.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
@@ -90,35 +93,35 @@ void load (std::ifstream &fin)
   std::istream_iterator<WPoint> start (fin);
   std::istream_iterator<WPoint> stop;
 
-  //  struct tms _tms;
+  struct tms _tms;
   double _delay;
-  //timer _timer, _total;
+  timer _timer, _total;
 
-  //_total.restart ();
-  //_timer.restart ();
+  _total.restart ();
+  _timer.restart ();
   md.init (start, stop);
-  //_delay = _timer.elapsed (&_tms);
+  _delay = _timer.elapsed (&_tms);
   std::cout << "     init: ";
-  //print_delay (std::cout, _delay, &_tms);
+  print_delay (std::cout, _delay, &_tms);
   std::cout << "\n";
   
-  //_timer.restart ();
+  _timer.restart ();
   md.build ();
-  //_delay = _timer.elapsed (&_tms);
+  _delay = _timer.elapsed (&_tms);
   std::cout << "    build: ";
-  //print_delay (std::cout, _delay, &_tms);
+  print_delay (std::cout, _delay, &_tms);
   std::cout << "\n";
 
-  //_timer.restart ();
+  _timer.restart ();
   md.construct ();
-  //_delay = _timer.elapsed (&_tms);
+  _delay = _timer.elapsed (&_tms);
   std::cout << "construct: ";
-  //print_delay (std::cout, _delay, &_tms);
+  print_delay (std::cout, _delay, &_tms);
   std::cout << "\n";
 
-  //_delay = _total.elapsed (&_tms);
+  _delay = _total.elapsed (&_tms);
   std::cout << "    total: ";
-  //print_delay (std::cout, _delay, &_tms);
+  print_delay (std::cout, _delay, &_tms);
   std::cout << "\n";
 }
 

@@ -75,8 +75,8 @@ void qt_draw_arc (Qt_widget& w, const Circle_2<K>& c,
   static const double raddeg = 180 / 3.14159265358979;
   double cx = CGAL::to_double (c.center().x());
   double cy = CGAL::to_double (c.center().y());
-  double rx = w.x_pixel_dist (std::sqrt (CGAL::to_double (c.squared_radius())));
-  double ry = w.y_pixel_dist (std::sqrt (CGAL::to_double (c.squared_radius())));
+  int rx = w.x_pixel_dist (std::sqrt (CGAL::to_double (c.squared_radius())));
+  int ry = w.y_pixel_dist (std::sqrt (CGAL::to_double (c.squared_radius())));
 
   int icx = w.x_pixel (cx);
   int icy = w.y_pixel (cy);

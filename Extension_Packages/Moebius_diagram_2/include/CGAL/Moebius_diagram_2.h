@@ -30,14 +30,13 @@ class Moebius_cell_base_3 : public Cb
 {
   signed char _side;
   char _inter_facet[4];
-  char _inter_edge[4][4];
+  char _inter_edge[6];
 
  public:
   void init () {
     _side = 0;
     for (int i = 0; i < 4; ++i) _inter_facet[i] = (char) 0;
-    for (int i = 0; i < 4; ++i)
-      for (int j = 0; j < 4; ++j) _inter_edge[i][j] = (char) 0;
+    for (int i = 0; i < 6; ++i) _inter_edge[i] = (char) 0;
   }
 
   typedef typename Cb::Triangulation_data_structure Tds;
@@ -71,7 +70,7 @@ class Moebius_cell_base_3 : public Cb
   void set_side (const CGAL::Bounded_side &s) {
     _side = (((signed char) s) << 1) | 1;
   }
-
+  
   bool side_is_set () const { 
     return (_side & 1) != 0;
   }
@@ -82,54 +81,47 @@ class Moebius_cell_base_3 : public Cb
   }
 
   void set_inter_facet (int f, int n) 
-    {
-      CGAL_precondition (0 <= f && f < 4);
-      //      CGAL_precondition (0 <= n && n <= 2);
-      _inter_facet[f] = (char) n;
-    }
+  {
+    CGAL_precondition (0 <= f && f < 4);
+    _inter_facet[f] = (char) n;
+  }
 
   void set_inter_facet (Vertex_handle f, int n) 
-    {
-      set_inter_facet (index (f), n);
-    }
+  { set_inter_facet (index (f), n); }
 
   void set_inter_edge (int e1, int e2, int inter) 
-    {
-      CGAL_precondition (0 <= e1 && e1 < 4);
-      CGAL_precondition (0 <= e2 && e2 < 4);
-      CGAL_precondition (e1 != e2);
-      _inter_edge[e1][e2] = _inter_edge[e2][e1] = (char) inter;
-    }
+  { _inter_edge[edge_index (e1, e2)] = (char) inter; }
 
   void set_inter_edge (Vertex_handle e1, Vertex_handle e2, int inter) 
-    {
-      set_inter_edge (index (e1), index (e2), inter);
-    }
+  { set_inter_edge (index (e1), index (e2), inter); }
 
   int inter_facet (int f)
-    {
-      CGAL_precondition (0 <= f && f < 4);
-      return _inter_facet[f];
-    }
+  {
+    CGAL_precondition (0 <= f && f < 4);
+    return _inter_facet[f];
+  }
 
   int inter_facet (Vertex_handle v)
-    {
-      return inter_facet (index (v));
-    }
+  { return inter_facet (index (v)); }
 
   int inter_edge (int e1, int e2)
-    {
-      CGAL_precondition (0 <= e1 && e1 < 4);
-      CGAL_precondition (0 <= e2 && e2 < 4);
-      CGAL_precondition (e1 != e2);
-      return _inter_edge[e1][e2];
-    }
+  { return _inter_edge[edge_index (e1, e2)]; }
 
   int inter_edge (Vertex_handle e1, Vertex_handle e2)
-    {
-      return inter_edge (index (e1), index (e2));
-    }
-
+  { return inter_edge (index (e1), index (e2)); }
+private:
+  static int edge_index (int i, int j)
+  {
+    static const int tab[4][4] = { {-1, 0, 1, 2 },
+				   { 0,-1, 3, 4 },
+				   { 1, 3,-1, 5 },
+				   { 2, 4, 5,-1 } };
+    CGAL_precondition (0 <= i && i < 4);
+    CGAL_precondition (0 <= j && j < 4);
+    CGAL_precondition (i != j);
+      
+    return tab[i][j];
+  }
 
 };
 
@@ -170,8 +162,8 @@ class Moebius_diagram_2
   typedef Moebius_circulator_3<Regular_tds> Circulator;
   typedef Moebius_edge_2<Gt> Moebius_edge;
   typedef std::list<Moebius_edge> Diagram;
-  typedef Diagram::iterator Moebius_edge_iterator;
-  typedef Diagram::const_iterator Moebius_edge_const_iterator;
+  typedef typename Diagram::iterator Moebius_edge_iterator;
+  typedef typename Diagram::const_iterator Moebius_edge_const_iterator;
 
   typedef typename RT_3::Vertex_handle Vertex_handle;
   typedef typename RT_3::Vertex_iterator Vertex_iterator;
@@ -597,13 +589,12 @@ class Moebius_diagram_2
     return inter;
   }
 
-  int real_build_facet (const CGAL::Orientation o,
+  int real_build_facet (const Orientation o,
 			const Vertex_handle &p,
 			const Vertex_handle &q,
 			const Vertex_handle &r) {
     if (o == CGAL::ZERO) {
-      CGAL::Orientation or = moebius_orientation (q, r);
-      if (or == CGAL::ZERO) return 1;
+      if (moebius_orientation (q, r) == CGAL::ZERO) return 1;
       if (circle_cross_line (q, r, p)) return 2;
       return 0;
     }
@@ -1103,7 +1094,7 @@ template <class Gt>
 Qt_widget& operator<<(Qt_widget& widget, const Moebius_diagram_2<Gt>& d)
 {
   typedef Moebius_diagram_2<Gt> Diagram;
-  typedef Diagram::Moebius_edge_const_iterator Iterator;
+  typedef typename Diagram::Moebius_edge_const_iterator Iterator;
 
   Iterator i = d.moebius_edges_const_begin (), end = d.moebius_edges_const_end ();
   while (i != end) {
