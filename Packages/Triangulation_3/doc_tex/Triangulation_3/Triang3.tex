@@ -365,7 +365,28 @@ and it is described by the \ccc{TriangulationDataStructure_3} concept
 \lcTex{(\ccRefPage{TriangulationDataStructure_3})}.  This model is itself
 parameterized by a vertex base and a cell base classes, which gives the
 possibility to customize the vertices and cells used by the triangulation data
-structure, and hence by the geometric triangulation using it.
+structure, and hence by the geometric triangulation using it.  Depending on the
+kind of triangulation used, the requirements on the vertex and cell base
+classes vary, and are expressed by various concepts, following the refinement
+diagram shown in Figure~\ref{T3-concept-hierarchy}.
+
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=13cm]{concept_hierarchy.eps}
+\end{center}
+\end{ccTexOnly}
+\caption{Concepts refinement hierarchy for the vertex and cell base classes
+parameters.
+\label{T3-concept-hierarchy}}
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src="./concept_hierarchy.gif" align=center
+ alt="Concepts refinement hierarchy for the vertex and cell base classes
+parameters.">
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
 
 A default value for the triangulation data structure parameter is provided in
 all the triangulation classes, so it need not be specified by the user unless
@@ -432,13 +453,13 @@ template < class GT >
 class My_vertex
   : public Triangulation_vertex_base<GT>
 {
-  typedef Triangulation_vertex_base<GT>  Base;
+  typedef Triangulation_vertex_base<GT>  Vb;
 public:
-  typedef typename Base::Point           Point;
+  typedef typename Vb::Point             Point;
 
   My_vertex() {}
-  My_vertex(const Point&p)          : Base(p) {}
-  My_vertex(const Point&p, void *c) : Base(p, c) {}
+  My_vertex(const Point&p)          : Vb(p) {}
+  My_vertex(const Point&p, void *c) : Vb(p, c) {}
 ...
 };
 
@@ -449,26 +470,26 @@ typedef Triangulation_3<GT, My_TDS>                                     Tr;
 ...
 \end{ccExampleCode}
 
-While now, what has to be written is:
+While now, what must be written is:
 \begin{ccExampleCode}
 ...
-template < class GT, class Base = Triangulation_vertex_base<GT> >
+template < class GT, class Vb = Triangulation_vertex_base<GT> >
 class My_vertex
-  : public Base
+  : public Vb
 {
 public:
-  typedef typename Base::Point           Point;
-  typedef typename Base::Cell_handle     Cell_handle;
+  typedef typename Vb::Point           Point;
+  typedef typename Vb::Cell_handle     Cell_handle;
 
   template < class TDS2 >
   struct Rebind_TDS {
-    typedef typename Base::template Rebind_TDS<TDS2>::Other  Base2;
-    typedef My_vertex<GT, Base2>                             Other;
+    typedef typename Vb::template Rebind_TDS<TDS2>::Other  Vb2;
+    typedef My_vertex<GT, Vb2>                             Other;
   };
 
   My_vertex() {}
-  My_vertex(const Point&p)                : Base(p) {}
-  My_vertex(const Point&p, Cell_handle c) : Base(p, c) {}
+  My_vertex(const Point&p)                : Vb(p) {}
+  My_vertex(const Point&p, Cell_handle c) : Vb(p, c) {}
 ...
 };
 ... // The rest has not changed
@@ -513,7 +534,7 @@ this way.
 When the user needs to add a type in a vertex which depends on the
 \ccc{TriangulationDataStructure_3} (e.g. a \ccc{Vertex_handle} or
 \ccc{Cell_handle}), then he has to derive his own vertex base class,
-like the following example shows.
+as the following example shows.
 
 \ccIncludeExampleCode{Triangulation_3/example_adding_handles.C}
 

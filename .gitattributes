@@ -1853,6 +1853,9 @@ Packages/Triangulation_3/doc_tex/TriangulationDS_3_ref/topo-insert_outside_affin
 Packages/Triangulation_3/doc_tex/TriangulationDS_3_ref/utils.eps -text
 Packages/Triangulation_3/doc_tex/TriangulationDS_3_ref/utils.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/TriangulationDS_3_ref/utils.ipe -text
+Packages/Triangulation_3/doc_tex/Triangulation_3/concept_hierarchy.eps -text
+Packages/Triangulation_3/doc_tex/Triangulation_3/concept_hierarchy.fig -text
+Packages/Triangulation_3/doc_tex/Triangulation_3/concept_hierarchy.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/Triangulation_3/derivation.eps -text
 Packages/Triangulation_3/doc_tex/Triangulation_3/derivation.fig -text
 Packages/Triangulation_3/doc_tex/Triangulation_3/derivation.gif -text svneol=unset#unset
@@ -1921,6 +1924,9 @@ Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/topo-insert_outside
 Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/utils.eps -text
 Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/utils.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/utils.ipe -text
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3/concept_hierarchy.eps -text
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3/concept_hierarchy.fig -text
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3/concept_hierarchy.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/derivation.eps -text
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/derivation.fig -text
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/derivation.gif -text svneol=unset#unset
