@@ -24,12 +24,15 @@ my (
     $VERSION,
     $MAIN_DIR,
     $PARENT_DIR,
+    $WEBDIR,
+    $VERSIONSDIR,
     $release_date
  ); 
 
 my $TESTING = 1;
 
 if ($TESTING) {
+    print STDERR "Testing !!!\n\n";
     $PACKAGEDIR='/users/geert/CGAL/tmp/packages';
     $ALL_RESULTS_DIR='/users/geert/CGAL/tmp/results';
     $LOCKFILE='/users/geert/CGAL/tmp/collect_submission.lock';
@@ -39,6 +42,8 @@ if ($TESTING) {
     $ALL_RESULTS_DIR='/users/www/CGAL/Members/Develop/testsuite';
     $LOCKFILE='/projects/CGAL/submissions/autohandle/data/collect_submission.lock';
     $last_version_file = '/projects/CGAL/lib/last_internal_release'; 
+    $WEBDIR='/users/www/CGAL/Members/Develop/updates';
+    $VERSIONSDIR='/projects/CGAL/Releases/Versions';
 }
 
 my $SCRIPTDIR=
@@ -176,15 +181,14 @@ sub set_version_in_config()
 }
 
 #---------------------------------------------------------------#
-# CreateExampleTestDirs
+# CreateSrcTestDir
 #---------------------------------------------------------------#
 
-sub CreateExampleTestDirs()
+sub CreateSrcTestDir()
 {
-    my $DIR;
-# Also create src testdir
 
     system('cp', '-r', 'src', 'test');
+    rename('test/src/makefile_lib','test/src/makefile');
     open(CGAL_TEST,">test/src/cgal_test");
     print CGAL_TEST <<'EOF';
 #! /bin/sh
@@ -243,7 +247,16 @@ fi
 EOF
 
     close(CGAL_TEST);
-    chmod 0755, 'src/test/cgal_test';
+    chmod 0755, 'test/src/cgal_test';
+}
+
+#---------------------------------------------------------------#
+# CreateExampleTestDirs
+#---------------------------------------------------------------#
+
+sub CreateExampleTestDirs()
+{
+    my $DIR;
 
     print "Creating example test directories ...\n";
     chdir 'examples' or return;
@@ -520,6 +533,7 @@ unlock;
 print VERSIONS sort @package_versions;
 close VERSIONS;
 make_src_makefiles;
+CreateSrcTestDir;
 CreateExampleTestDirs;
 make_testscripts;
 set_file_headers if !$TESTING;
@@ -528,4 +542,8 @@ make_results_page;
 chdir $PARENT_DIR or die;
 system("tar cf - $VERSION | gzip > $VERSION.tar.gz");
  
+if (! $TESTING) {
+   system("cp", "$VERSION.tar.gz", "$WEBDIR");
+   system("cp", "versions_$VERSION", "$VERSIONSDIR");
+}
 
