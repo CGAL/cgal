@@ -29,14 +29,14 @@
 #include <CGAL/Pm_straight_traits_2.h>
 #endif
 
-#ifndef CGAL_CGAL_WINDOW_H
-#include <CGAL/IO/cgal_window.h>
+#ifndef CGAL_LEDA_WINDOW_H
+#include <CGAL/IO/leda_window.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
 
 template <class R> 
-CGAL::window& operator<<(CGAL::window& os,const Straight_2_<R>& cv)
+leda_window& operator<<(leda_window& os,const Straight_2_<R>& cv)
 {
 	typedef Straight_2_<R> Straight;
 	switch(cv.current_state())
@@ -74,12 +74,12 @@ CGAL::window& operator<<(CGAL::window& os,const Straight_2_<R>& cv)
 		cv.current_state()==Straight::SEGMENT||
 		cv.current_state()==Straight::RAY||
 		cv.current_state()==Straight::LINE,
-		"\nUnknown type in  CGAL::window& operator<<(CGAL::window& os,\
+		"\nUnknown type in  leda_window& operator<<(leda_window& os,\
 const Straight& cv)");
 	return os;
 }
 template <class R> 
-CGAL::window& operator>>(CGAL::window& os,const Straight_2_<R>& cv)
+leda_window& operator>>(leda_window& os,const Straight_2_<R>& cv)
 {
 	typedef Straight_2_<R> Straight;
 	switch(cv.current_state())
@@ -117,7 +117,7 @@ CGAL::window& operator>>(CGAL::window& os,const Straight_2_<R>& cv)
 		cv.get_type()==Straight::SEGMENT||
 		cv.get_type()==Straight::RAY||
 		cv.get_type()==Straight::LINE,
-		"\nUnknown type in  CGAL::window& operator>>(CGAL::window& os,"
+		"\nUnknown type in  leda_window& operator>>(leda_window& os,"
 		<< "const Straight& cv)");
 	return os;
 }
