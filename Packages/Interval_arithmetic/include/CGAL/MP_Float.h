@@ -273,7 +273,7 @@ sign (const MP_Float &a)
   return a.sign();
 }
 
-static
+inline
 Comparison_result
 compare (const MP_Float & a, const MP_Float & b)
 {
@@ -388,7 +388,7 @@ MP_Float::operator/(const MP_Float &d) const
   return MP_Float(CGAL::to_double(*this)/CGAL::to_double(d));
 }
 
-static
+inline
 MP_Float
 sqrt(const MP_Float &d)
 {
@@ -419,7 +419,7 @@ to_double(const MP_Float &b)
 }
 
 // FIXME : This function deserves proper testing...
-static
+inline
 Interval_base
 to_interval(const MP_Float &b)
 {
@@ -494,7 +494,7 @@ number_type_tag(const MP_Float &)
   return Number_tag();
 }
 
-static
+inline
 std::ostream &
 operator<< (std::ostream & os, const MP_Float &b)
 {
@@ -523,7 +523,7 @@ operator<< (std::ostream & os, const MP_Float &b)
   return os;
 }
 
-static
+inline
 std::istream &
 operator>> (std::istream & is, MP_Float &b)
 {
