@@ -1,3 +1,8 @@
+05 May 2004 Radu Ursu
+- put the new version of gmp for windows (cygwin)
+- the dll is named libgmp-3.dll but I will see if I can change that name to 
+  gmp.dll in the future
+
 29 Apr 2004  Sylvain Pion
 - Upgrade GMP to 4.1.3.
 
