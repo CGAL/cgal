@@ -9,12 +9,10 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 1999, July 28
+// release_date  :
 //
 // file          : IO/Verbose_ostream.h
 // package       : Stream_support (2.4)
-// chapter       : $CGAL_Chapter: Stream Support $
-// source        : support.fw
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
@@ -25,11 +23,9 @@
 // ======================================================================
 
 #ifndef CGAL_IO_VERBOSE_OSTREAM_H
-#define CGAL_IO_VERBOSE_OSTREAM_H 1
-#ifndef CGAL_PROTECT_IOSTREAM
+#define CGAL_IO_VERBOSE_OSTREAM_H
+
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -59,10 +55,10 @@ public:
     Verbose_ostream&  operator<<( float f)               { CGAL__VERB(f);}
     Verbose_ostream&  operator<<( unsigned int a)        { CGAL__VERB(a);}
     Verbose_ostream&  operator<<( unsigned long l)       { CGAL__VERB(l);}
-#ifdef _LONGLONG
-    Verbose_ostream&  operator<<( long long l)           { CGAL__VERB(l);}
-    Verbose_ostream&  operator<<( unsigned long long l)  { CGAL__VERB(l);}
-#endif /* _LONGLONG */
+#ifdef CGAL_HAS_INTEGER64
+    Verbose_ostream&  operator<<( Integer64 l)           { CGAL__VERB(l);}
+    Verbose_ostream&  operator<<( UInteger64 l)          { CGAL__VERB(l);}
+#endif
     Verbose_ostream&  operator<<( void* p)               { CGAL__VERB(p);}
     Verbose_ostream&  operator<<( short i)               { CGAL__VERB(i);}
     Verbose_ostream&  operator<<( unsigned short i)      { CGAL__VERB(i);}
@@ -87,8 +83,9 @@ public:
         return *this;
     }
 };
+
 #undef CGAL__VERB
 
 CGAL_END_NAMESPACE
-#endif // CGAL_IO_VERBOSE_OSTREAM_H //
-// EOF //
+
+#endif // CGAL_IO_VERBOSE_OSTREAM_H
