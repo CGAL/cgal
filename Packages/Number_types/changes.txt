@@ -1,4 +1,7 @@
 20 June 2004 Sylvain Pion
+- GMPXX : No need to forward abs() and sqrt() when CGAL_USE_ADL_FOR_NT.
+
+20 June 2004 Sylvain Pion
 - Use CGAL_USE_ADL_FOR_NT instead of hardcoding a test for g++ 3.4
   in previous change.
 

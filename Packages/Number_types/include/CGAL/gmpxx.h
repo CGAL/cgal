@@ -70,6 +70,7 @@ struct Rational_traits<mpq_class> {
   { return mpq_class(n, d); } 
 };
 
+#ifndef CGAL_USE_ADL_FOR_NT
 template < typename T, typename U >
 inline
 ::__gmp_expr<T, T>
@@ -77,6 +78,7 @@ sqrt(const ::__gmp_expr<T, U> &e)
 {
     return ::sqrt(e);
 }
+#endif
 
 template < typename T, typename U >
 inline
@@ -144,11 +146,13 @@ to_interval (const mpq_class & q)
   return  quot.pair();
 }
 
+#ifndef CGAL_USE_ADL_FOR_NT
 // These are necessary due to expression-templates.
 template < typename T, typename U >
 inline
 ::__gmp_expr<T, T>
 abs(const ::__gmp_expr<T, U>& x) { return ::abs(x); }
+#endif
 
 template < typename T, typename U >
 inline
