@@ -215,6 +215,17 @@ stream is in ascii mode.}
  sent to \ccc{cerr}.  Returns the previous value. By default tracing is
  off.}
 
+\ccMethod{bool get_raw();}
+{Returns \ccc{true} iff raw mode is on.}
+
+\ccMethod{bool set_raw(bool b);} 
+{Sets raw mode.  In raw mode, kernel points are output without headers and
+ footers, just the coordinates (in binary or ascii mode).  This allows the
+ implementation of the stream functions for other objects to re-use the
+ code for points internally, by temporary saving the raw mode to true, and
+ restoring it after.
+   Returns the previous value. By default, raw mode is off.}
+
 \ccMethod{bool in_binary_mode();}
 {Returns \ccc{true} iff \ccVar\ is in binary mode.}
 
