@@ -2,6 +2,10 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 Ver 6.10 (xx/xx/xx)
+- changed NULL default Face_handle argument to Face_handle(NULL)
+  in Triangulation_data_structure_2.h for vcc
+- move code for operator*() and ->() inside class definition
+  in Triangulation_ds_circulator_2.h
 - changed const Face_handle& en Face_handle in /Triangulation_2.h
 - added doc example and demo for Constrained_triangulation_plus_2
 - added off_file_input() to read in off files

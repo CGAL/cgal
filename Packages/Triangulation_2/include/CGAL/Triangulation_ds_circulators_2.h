@@ -65,14 +65,30 @@ public:
   Face_circulator operator++(int);
   Face_circulator& operator--();
   Face_circulator operator--(int);
-  Face& operator*() const  ;
-  Face* operator->() const ;
-   
+  //Face& operator*() const  ;
+  //Face* operator->() const ;
+
   bool operator==(const Face_circulator &fc) const ;
   bool operator!=(const Face_circulator &fc) const;
   bool is_empty() const;
   bool operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
-  bool operator!=(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
+  bool operator!=(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n))
+    const;
+
+  Face&
+  operator*() const
+  {
+    CGAL_triangulation_precondition(pos != NULL && _v != NULL);
+    return const_cast<Face&>(*pos);
+  }
+  
+
+  Face*
+  operator->() const
+  {
+    CGAL_triangulation_precondition(pos != NULL && _v != NULL);
+    return const_cast<Face*>(pos) ;
+  }
   
   
 };
@@ -109,14 +125,29 @@ public:
   Vertex_circulator  operator++(int);
   Vertex_circulator& operator--();
   Vertex_circulator  operator--(int);
-  Vertex& operator*() const ;
-  Vertex* operator->() const; 
+  // Vertex& operator*() const ;
+  // Vertex* operator->() const; 
  
   bool operator==(const Vertex_circulator &vc) const;
   bool operator!=(const Vertex_circulator &vc) const;
   bool is_empty() const;
   bool operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
   bool operator!=(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
+
+  Vertex&
+  operator*() const
+  {
+    CGAL_triangulation_precondition(pos != NULL && _v != NULL);
+    return *(pos->vertex(_ri));
+  }
+
+  Vertex*
+  operator->() const
+  {
+    CGAL_triangulation_precondition(pos != NULL && _v != NULL);
+    return &*(pos->vertex(_ri));
+  }
+
 };
 
 
@@ -133,9 +164,10 @@ public:
   typedef Triangulation_ds_edge_circulator_2<Tds>  Edge_circulator;
   typedef typename Tds::Face                       Face;
   typedef typename Tds::Vertex                     Vertex;
+  typedef typename Tds::Edge                       Edge;
   typedef typename Tds::Face_handle                Face_handle;
   typedef typename Tds::Vertex_handle              Vertex_handle;
-  typedef std::pair<Face_handle, int>              Edge;  
+  //typedef std::pair<Face_handle, int>              Edge;  
 
 private:
   int _ri;
@@ -150,7 +182,7 @@ public:
   Triangulation_ds_edge_circulator_2( Vertex_handle v, 
 				      Face_handle f= Face_handle());
 
-  Edge operator*() const ;
+  //Edge operator*() const ;
   Edge_circulator& operator++();
   Edge_circulator operator++(int);
   Edge_circulator& operator--();
@@ -161,6 +193,14 @@ public:
   bool is_empty() const;
   bool operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
   bool operator!=(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
+
+  Edge operator*() const
+  {
+    CGAL_triangulation_precondition(pos != NULL && _v != NULL);
+    return std::make_pair(const_cast<Face*>(pos)->handle(), _ri);
+  }
+
+
  };
 
 
@@ -222,6 +262,7 @@ operator--(int)
   return tmp;
 }
 
+/*
 template < class Tds >
 inline 
 typename Tds::Face&
@@ -241,7 +282,7 @@ operator->() const
   CGAL_triangulation_precondition(pos != NULL && _v != NULL);
   return const_cast<Face*>(pos) ;
 }
-
+*/
 
 template < class Tds >
 inline bool
@@ -363,7 +404,7 @@ operator--(int)
   return tmp;
 }
 
-
+/*
 template < class Tds >
 inline 
 typename Tds::Vertex&
@@ -383,6 +424,7 @@ operator->() const
    CGAL_triangulation_precondition(pos != NULL && _v != NULL);
    return &*(pos->vertex(_ri));
 }
+*/
 
 template < class Tds >
 inline bool
@@ -444,15 +486,16 @@ Triangulation_ds_edge_circulator_2(Vertex_handle v, Face_handle f)
 }
 
 
-template < class Tds >
-inline std::pair<typename Tds::Face_handle, int> 
-Triangulation_ds_edge_circulator_2<Tds> ::
-operator*() const
-{
-   CGAL_triangulation_precondition(pos != NULL && _v != NULL);
-   return std::make_pair(const_cast<Face*>(pos)->handle(), _ri);
 
-}
+// template < class Tds >
+// inline std::pair<typename Tds::Face_handle, int> 
+// Triangulation_ds_edge_circulator_2<Tds> ::
+// operator*() const
+// {
+//    CGAL_triangulation_precondition(pos != NULL && _v != NULL);
+//    return std::make_pair(const_cast<Face*>(pos)->handle(), _ri);
+
+// }
 
 
 template < class Tds >

@@ -202,15 +202,15 @@ public:
   }
   
   Face_circulator incident_faces(Vertex_handle v, 
-				 Face_handle f =  NULL) const{
+				 Face_handle f =  Face_handle(NULL)) const{
     return v->incident_faces(f);
   }
   Vertex_circulator incident_vertices(Vertex_handle v, 
-				       Face_handle f = NULL) const{
+				       Face_handle f = Face_handle(NULL)) const{
     return v->incident_vertices(f);
   }
   Edge_circulator incident_edges(Vertex_handle v, 
-				 Face_handle f = NULL) const{
+				 Face_handle f = Face_handle(NULL)) const{
     return v->incident_edges(f);
   }
 
@@ -224,7 +224,7 @@ public:
   Vertex_handle insert_dim_up(Vertex_handle w = Vertex_handle(), 
 			      bool orient=true);
 
-  void remove_degree_3(Vertex_handle v, Face_handle f = NULL);
+  void remove_degree_3(Vertex_handle v, Face_handle f = Face_handle(NULL));
   void remove_1D(Vertex_handle v); 
    
   void remove_second(Vertex_handle v);
