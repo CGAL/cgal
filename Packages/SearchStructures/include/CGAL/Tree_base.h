@@ -88,6 +88,9 @@ struct tree_node_base {
   tree_node_base()
     :parent_link(0), left_link(0), right_link(0)
   {}
+  tree_node_base(void* ll, void* rl)
+    :parent_link(0), left_link(ll), right_link(rl)
+  {}
 };
 
 
@@ -167,9 +170,9 @@ public:
 					   oit *dummy=0) = 0; 
 #endif
   virtual bool is_inside( C_Window const &win,
-			  C_Data const& object)=0;  
-  virtual bool is_anchor()=0;
-  virtual bool is_valid()=0;
+			  C_Data const& object) const =0;  
+  virtual bool is_anchor()const =0;
+  virtual bool is_valid()const =0;
 };
 
 
@@ -282,18 +285,18 @@ public:
     return out;
   }
 #endif
-  bool is_valid(){ return true;}
+  bool is_valid()const{ return true;}
 
 protected:
 
   bool is_inside( C_Window const &win, 
-		  C_Data const& object)
+		  C_Data const& object) const
   {     
     USE_ARGUMENT(win);
     USE_ARGUMENT(object);
     return true;
   }
-  bool is_anchor(){return true;}
+  bool is_anchor()const {return true;}
 };
 
 CGAL_END_NAMESPACE

@@ -65,27 +65,22 @@ struct segment_tree_node: public tree_node_base
 public:
   friend class Segment_tree_d< C_Data,  C_Window,  C_Interface>;
   
-  segment_tree_node(){
-    sublayer = 0; //(tree_base_type *)
-		      left_link = TREE_BASE_NULL;
-    right_link = TREE_BASE_NULL;
-  }
+  segment_tree_node()
+    : tree_node_base(TREE_BASE_NULL, TREE_BASE_NULL), sublayer(0)
+  {}
+
   segment_tree_node(segment_tree_node * p_left,
 		    segment_tree_node * p_right,
 		    const Key p_left_key,
 		    const Key p_right_key)
-    {
-      left_link =p_left;
-      right_link =p_right;
-      left_key = p_left_key;
-      right_key = p_right_key;
-      sublayer = 0; //(tree_base_type *) 
-			} 
+    : tree_node_base(p_left,p_right), left_key(p_left_key), right_key(p_right_key), sublayer(0)
+  {}
+
   
   ~segment_tree_node(){
-    objects.erase(objects.begin(), objects.end());
+    objects.clear();
     if (sublayer != 0)//(tree_base_type *)
-			delete sublayer;
+      delete sublayer;
   }
 };
 
@@ -115,34 +110,37 @@ protected:
   bool is_build;
 
 
-  bool is_less_equal(const Key x, const Key  y)
+  bool is_less_equal(const Key& x, const Key&  y) const
   {
     return (!interface.comp(y,x));
   }   
   
   static link_type& left(link_type x) { 
-    return CGAL__static_cast(link_type&, (*x).left_link);
+        return CGAL__static_cast(link_type&, (*x).left_link);
+    //    return static_cast<link_type&>((*x).left_link);
   }
   static link_type& right(link_type x) {
-     return CGAL__static_cast(link_type&, (*x).right_link); 
+    return CGAL__static_cast(link_type&, (*x).right_link); 
+    //return static_cast<link_type&>((*x).right_link); 
    }
   static link_type& parent(link_type x) {
-    return CGAL__static_cast(link_type&, (*x).parent_link);
+        return CGAL__static_cast(link_type&, (*x).parent_link);
+	//return static_cast<link_type&>( (*x).parent_link);
   }
 
   link_type header;
   link_type node;
   link_type rightmost(){return right(header);}
   link_type leftmost(){return left(header);}
-  link_type root(){
+  link_type root() const{
     if(header!=0)
-      return CGAL__static_cast(link_type&, header->parent_link); 
+      return CGAL__static_cast(link_type&,header->parent_link); 
     // return parent(header);
     else return 0;
   }
   
   // returns true, if the object lies inside of win
-  bool is_inside( C_Window const &win,  C_Data const& object)
+  bool is_inside( C_Window const &win,  C_Data const& object) const
   {
     if(is_less_equal(interface.get_left_win(win), interface.get_left(object)) 
        && is_less_equal(interface.get_right(object),
@@ -155,7 +153,7 @@ protected:
   }
 
   // this tree is not a recursion anchor
-  bool is_anchor()
+  bool is_anchor() const
   { return false;}  
 
   void insert_segment(link_type v,  C_Data& element)
@@ -407,7 +405,7 @@ protected:
      return result;
    }
   
-  bool is_valid(link_type& v)
+  bool is_valid(link_type& v) const
   {
     if (v->sublayer != 0)//(tree_base_type *)
     {
@@ -451,17 +449,13 @@ public:
 
   // construction of a tree
   Segment_tree_d(Segment_tree_d const &sub_tree, bool):
-    sublayer_tree(sub_tree.sublayer_tree->clone()), is_build(false)
-  {
-    header = TREE_BASE_NULL;
-  }
+    sublayer_tree(sub_tree.sublayer_tree->clone()), is_build(false), header(TREE_BASE_NULL)
+  {}
 
   // construction of a tree, definition of the prototype of sublayer tree
   Segment_tree_d(tree_base<C_Data, C_Window> const &sub_tree):
-    sublayer_tree(sub_tree.clone()), is_build(false)
-  {
-    header = TREE_BASE_NULL;
-  }
+    sublayer_tree(sub_tree.clone()), is_build(false), header(TREE_BASE_NULL)
+  {}
 
   // destruction 
   ~Segment_tree_d()
@@ -680,7 +674,7 @@ public:
     return result;
   }
 
-  bool is_valid()
+  bool is_valid() const
   {
     link_type v= root();
     if(v!=TREE_BASE_NULL)

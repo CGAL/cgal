@@ -71,10 +71,8 @@ public:
 
 
   Segment_tree_1()
-  {
-    Tree_anchor = new Tree_anchor_type;
-    CSegment_tree_1 = new Segment_tree_1_type(*Tree_anchor);
-  }
+    : Tree_anchor(new Tree_anchor_type), CSegment_tree_1(new Segment_tree_1_type(*Tree_anchor))
+  {}
   
   template <class T>
   Segment_tree_1(T& first, 

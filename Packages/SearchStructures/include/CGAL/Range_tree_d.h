@@ -66,31 +66,24 @@ struct range_tree_node: public tree_node_base
 public:
   friend class Range_tree_d< C_Data,  C_Window,  C_Interface>;
   
-  range_tree_node() 
-  {
-    sublayer = 0;// (tree_base_type *)0; 
-  }
+  range_tree_node()
+    : sublayer(0)  // (tree_base_type *)0; 
+  {} 
+  
   
   range_tree_node( range_tree_node    * p_left,
 		   range_tree_node    * p_right,
 		   const  Data & v_obj,
-		   const  Key  & v_key ) :
-    object( v_obj ), key( v_key )
-  {
-    left_link = p_left;
-    right_link = p_right;
-    sublayer = 0;//(tree_base_type *)0; 
-  }
+		   const  Key  & v_key )
+    : tree_node_base(p_left, p_right), object( v_obj ), key( v_key ), sublayer(0)//(tree_base_type *)0; 
+  {}
   
   range_tree_node( range_tree_node    * p_left,
 		   range_tree_node    * p_right,
-		   const  Key  & v_key ) :
-    key( v_key )
-  {
-    left_link = p_left;
-    right_link = p_right;
-    sublayer = 0;//(tree_base_type *)0; 
-  }
+		   const  Key  & v_key )
+    : tree_node_base(p_left, p_right), key( v_key ), sublayer(0)//(tree_base_type *)0; 
+  {}
+
   virtual ~range_tree_node()
   {
     if (sublayer != 0) //(tree_base_type *)
@@ -152,7 +145,7 @@ protected:
   link_type node;
   link_type rightmost(){return right(header);}
   link_type leftmost(){return left(header);}
-  link_type root(){
+  link_type root() const {
     if(header!=0) //TREE_BASE_NULL
       return CGAL__static_cast(link_type&, header->parent_link);
     // return parent(header);
@@ -160,16 +153,16 @@ protected:
       return 0; //TREE_BASE_NULL
   }
 
-  bool is_less_equal(const Key  x, const Key  y)
+  bool is_less_equal(const Key&  x, const Key&  y) const
   {
     return (!interface.comp(y,x));
   }  
   
   // this tree is not a recursion anchor
-  bool is_anchor(){return false;}
+  bool is_anchor() const {return false;}
 
   // returns true, if the object lies inside of win
-  bool is_inside( C_Window const &win,  C_Data const& object)
+  bool is_inside( C_Window const &win,  C_Data const& object) const
   {
     if(is_less_equal(interface.get_left(win), interface.get_key(object)) 
        && interface.comp(interface.get_key(object),interface.get_right(win)))
@@ -371,7 +364,7 @@ protected:
   }
 
   bool is_valid(link_type& v, link_type&  leftmost_child, 
-		link_type& rightmost_child)
+		link_type& rightmost_child) const
   {
     link_type leftmost_child_l, rightmost_child_l,  leftmost_child_r, 
       rightmost_child_r;
@@ -408,17 +401,13 @@ public:
 
   // construction of a tree
   Range_tree_d(Range_tree_d const &fact, bool):
-    sublayer_tree(fact.sublayer_tree->clone()), is_build(false)
-  {
-    header = 0; //TREE_BASE_NULL
-  }
+    sublayer_tree(fact.sublayer_tree->clone()), is_build(false), header(0)
+  {}
 
   // construction of a tree
   Range_tree_d(tree_base<C_Data, C_Window> const &fact):
-    sublayer_tree(fact.clone()), is_build(false)
-  {
-    header = 0; //TREE_BASE_NULL
-  }
+    sublayer_tree(fact.clone()), is_build(false), header(0) 
+  {}
 
   // destruction
   virtual ~Range_tree_d()
@@ -637,7 +626,7 @@ public:
     return window_query_impl(win, result);
   }
 
-  bool is_valid()
+  bool is_valid() const
   {
     link_type u,v,w;
     u=v=w=root();
