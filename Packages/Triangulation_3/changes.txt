@@ -1,7 +1,7 @@
-Version 1.53 (?? May 01)
+Version 1.53 (23 May 01)
 - Put Triangulation_hierarchy_vertex_base_3 in its own file.
 - VC++ for()-scope workaround.
-- exmaple_tds.C update to the new TDS::insert() interface.
+- example_tds.C update to the new TDS::insert() interface.
 
 Version 1.52 (22 May 01)
 - Regular works again.
