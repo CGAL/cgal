@@ -50,7 +50,7 @@ test_sqrt(NT, CGAL::Tag_false)
 
 template < class NT >
 bool
-test_gcd(NT z, CGAL::Tag_true)
+test_gcd(NT , CGAL::Tag_true)
 {
   // div
   NT eleven(11);
@@ -82,6 +82,7 @@ test_gcd(NT x, CGAL::Tag_false)
   return test_sqrt(x, has_sqrt);
 }
 
+
 template < class NT >
 bool
 test_basic_operators(const NT&)
@@ -90,22 +91,23 @@ test_basic_operators(const NT&)
   NT one(1);
 
   NT a = zero + one;
+  (void)a;
   NT b = zero - one;
   a = zero * one;
   a += b;
   a -= b;
-  a *= b;
-  a = -b;
+  a *= b; (void)a;
+  a =  -b;
 
   bool d;
-  d = a<b;
-  d = a>b;
-  d = a<=b;
-  d = a>=b;
-  d = a==b;
-  d = a!=b;
+  d = a<b; (void)d;
+  d = a>b; (void)d;
+  d = a<=b; (void)d;
+  d = a>=b; (void)d;
+  d = a==b; (void)d;
+  d = a!=b; (void)d;
 
-  return true;
+return true;
 }
 
 template < class NT >
