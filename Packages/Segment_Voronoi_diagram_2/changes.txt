@@ -1,3 +1,11 @@
+22 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+- added functors for some predicates that did not have
+- removed the macro USE_SET_METHODS
+- removed unnecessary constructors from the various site classes
+- the cartesian converter now makes use of the intersections tag
+- fixed filtered traits to work with gcc 2.95.3
+
+
 20 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - rewrote code for filtered traits to improve efficiency;
   the traits functor do not go through the number type level now
