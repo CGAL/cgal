@@ -1,11 +1,32 @@
-#ifndef Postscript_STREAM
-#define Postscript_STREAM
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/IO/PS_Stream.h
+// package       : PS_Stream
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     :
+// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+//
+// ======================================================================
 
-// For g++ compiler... //
+#ifndef CGAL_IO_PS_STREAM_H
+#define CGAL_IO_PS_STREAM_H
 
-#include <CGAL/Cartesian.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <CGAL/basic.h>
+
+#include <cstdlib>
+#include <cstdio>
 #include <string>
 #include <iostream>
 #include <iomanip>
@@ -15,8 +36,7 @@
 #include <iterator>
 #include <list>
 
-#include <CGAL/config.h>
-#include <LEDA/basic.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Direction_2.h>
@@ -573,7 +593,6 @@ PS_Stream & operator <<(PS_Stream& ps,const Parabola<R>& p)
   return ps;
 }
 
-
 #endif // PARABOLA_2_H
 #ifdef CGAL_TRIANGLE_2_H
 
@@ -601,7 +620,6 @@ PS_Stream & operator <<(PS_Stream& ps,const Triangle_2<R>& t)
   ps.os() << "st" <<endl;
   return ps;
 }
-
 
 #endif // CGAL_TRIANGLE_2_H
 #ifdef CGAL_ISO_RECTANGLE_2_H
@@ -662,9 +680,6 @@ PS_Stream & operator <<(PS_Stream& ps, const Circle_2<R>& c)
 
 #endif // CGAL_CIRCLE_2_H
 
-
-
 CGAL_END_NAMESPACE
 
-
-#endif  // Postscript_STREAM
+#endif // CGAL_IO_PS_STREAM_H
