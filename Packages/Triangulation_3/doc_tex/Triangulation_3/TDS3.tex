@@ -500,12 +500,20 @@ infinite vertex is a standard vertex and is thus also counted.}
 
 \ccMethod{bool is_vertex(Vertex* v) const;}
 {Tests whether \ccc{v} is a vertex of \ccVar.}
+
+\ccMethod{bool is_edge(Cell* c, int i, int j) const;}
+{Tests whether \ccc{(c,i,j)} is an edge of \ccVar. Answers \ccc{false} when
+\ccc{dimension()} $<1$ .}
 \ccGlue
 \ccMethod{bool is_edge(Vertex* u, Vertex* v, 
 			Cell* & c, int & i, int & j) const;}
 {Tests whether \ccc{(u,v)} is an edge of \ccVar. If the edge is found,
 it computes a cell \ccc{c} having this edge and the indices \ccc{i}
 and \ccc{j} of the vertices \ccc{u} and \ccc{v}, in this order.}
+
+\ccMethod{ bool is_facet(Cell* c, int i) const;}
+{Tests whether \ccc{(c,i)} is a facet of \ccVar. Answers \ccc{false} when
+\ccc{dimension()} $<2$ .}
 \ccGlue
 \ccMethod{bool is_facet(Vertex* u, Vertex* v, Vertex* w, 
 			Cell* & c, int & i, int & j, int & k) const;}
@@ -513,7 +521,10 @@ and \ccc{j} of the vertices \ccc{u} and \ccc{v}, in this order.}
 it computes a cell \ccc{c} having this facet and the indices \ccc{i},
 \ccc{j} and \ccc{k} of the vertices \ccc{u}, \ccc{v} and \ccc{w}, in
 this order.} 
-\ccGlue
+
+\ccMethod{bool is_cell(Cell* c) const;}
+{Tests whether \ccc{c} is a cell of \ccVar. Answers \ccc{false} when
+\ccc{dimension()} $<3$ .}
 \ccMethod{bool is_cell(Vertex* u, Vertex* v, Vertex* w, Vertex* t,
 			Cell* & c, int & i, int & j, int & k, int & l) const;}
 {Tests whether \ccc{(u,v,w,t)} is a cell of \ccVar. If the cell
@@ -521,7 +532,67 @@ this order.}
 and \ccc{l} of the vertices \ccc{u}, \ccc{v}, \ccc{w} and \ccc{t} in
 \ccc{c}, in this order.} 
 
-\ccModifiers
+\ccHeading{Flips}
+
+Two kinds of flips exist for a three-dimensional triangulation. They
+are reciprocal. To be flipped, an edge must be incident to three
+tetrahedra. During the flip, these three tetrahedra disappear and two
+tetrahedra appear. Figure~\ref{TDS3-fig-flips}(left) shows the
+edge that is flipped as bold dashed, and one of its three incident
+facets is shaded. On the right, the facet shared by the two new
+tetrahedra is dashed. 
+
+Flips are possible only if the tetrahedra to be created do not already 
+exist.
+
+\begin{ccTexOnly}
+\begin{figure}
+\begin{center} 
+\includegraphics{flips.eps}
+\end{center}
+\caption{Flips \label{TDS3-fig-flips}}
+\end{figure} 
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<img border=0 src="./flips.gif" align=center
+alt="Flips">
+\end{ccHtmlOnly}
+
+The following methods guarantee the validity of the resulting 3D
+combinatorial triangulation.
+
+\textit{Flips for a 2d triangulation are not implemented yet}
+
+\ccMethod{bool flip(Edge e);}
+\ccGlue
+\ccMethod{bool flip(Cell* c, int i, int j);}
+{Before flipping, these methods check that edge \ccc{e=(c,i,j)} is
+flippable (which is quite expensive). They return \ccc{false} or
+\ccc{true} according to this test.}
+
+\ccMethod{void flip_flippable(Edge e);}
+\ccGlue
+\ccMethod{void flip_flippable(Cell* c, int i, int j);}
+{Should be preferred to the previous methods when the edge is
+known to be flippable.
+\ccPrecond{The edge is flippable.}}
+
+\ccMethod{bool flip(Facet f);}
+\ccGlue
+\ccMethod{bool flip(Cell* c, int i);}
+{Before flipping, these methods check that facet \ccc{f=(c,i)} is
+flippable (which is quite expensive). They return \ccc{false} or
+\ccc{true} according to this test.} 
+
+\ccMethod{void flip_flippable(Facet f);}
+\ccGlue
+\ccMethod{void flip_flippable(Cell* c, int i);}
+{Should be preferred to the previous methods when the facet is
+known to be flippable.
+\ccPrecond{The facet is flippable.}}
+
+\ccHeading{Insertions}
 
 The following modifier member functions guarantee
 the combinatorial validity of the resulting triangulation.
@@ -646,6 +717,10 @@ being initialized with \ccc{NULL}.}
 		     Cell* n0, Cell* n1, Cell* n2, Cell* n3);}
 {Creates a cell, initializes its vertices and neighbors, and adds it
 into the triangulation data structure.}
+
+\ccMethod{void delete_cell( Cell* c );}
+{Removes the cell from the triangulation data structure and deletes it.
+\ccPrecond{The cell is a cell of \ccVar.}}
 
 \end{ccAdvanced}
 
@@ -921,6 +996,13 @@ computes its index \ccc{i} in \ccVar.}
 {Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar,  and
 computes its index \ccc{i} in \ccVar.}
 
+\ccMethod{Vertex* mirror_vertex(int i) const;}
+{Returns the vertex of the neighbor of \ccVar that is opposite to \ccVar.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccMethod{int mirror_index(int i) const;}
+{Returns the index of \ccVar in its \ccc{i^{\rm th}} neighbor.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+
 \ccHeading{Setting}
 
 \ccMethod{void set_vertex(int i, Vertex* v);}
@@ -1049,7 +1131,7 @@ structure alone.}}}
 {Sets the incident cell.}
 
 \ccHeading{Checking}
-\ccMethod{bool is_valid() const;}
+\ccMethod{bool is_valid(bool verbose=false) const;}
 {Performs any desired geometric test on a vertex. Checks that the
 pointer to an incident cell is not \ccc{NULL}.}
 
