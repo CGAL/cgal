@@ -204,7 +204,11 @@ located in  \ccc{lt,loc,li}.}
 returns the number of new vertices created by the insertion of previously
 hidden points.}
 
-\ccHeading{Duality}
+\ccHeading{Dual power diagram}
+\ccIndexMainItem{power diagram}
+The following member functions provide the elements of the
+dual power diagram.
+
 \ccMethod{Point weighted_circumcenter(const Face_handle &f) const;}
 {returns the center of the circle orthogonal to the three weighted
 points corresponding to the vertices of face \ccc{f}.
@@ -227,7 +231,10 @@ otherwise.  }
 \ccMethod{Object dual(const Edge_iterator& ei) const;}
 {Idem}
 
-
+\ccMethod{
+template < class Stream>
+  Stream& draw_dual(Stream & ps);}
+{output the dual power diagram to stream ps.}
 
 \ccPredicates
 \ccThree{Oriented_side}{side_of_}{}
@@ -251,7 +258,6 @@ and additionally test the regularity of the triangulation. This method is
  mainly  useful for debugging Delaunay triangulation algorithms designed by
  the user.}
 \end{ccAdvanced}
-
 
 
 

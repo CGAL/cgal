@@ -66,7 +66,7 @@ protected:
 
 public:
   Constrained_triangulation_plus_2(const Geom_traits& gt=Geom_traits()) 
-    : Triangulation() { }
+    : Triangulation(gt) { }
 
   // copy constructrue et effectation operateur a revoir
 //   Constrained_triangulation_plus_2(

@@ -202,7 +202,10 @@ i. e. when \ccc{p} coincides with a vertex of the triangulation.}
 
 
 
-\ccHeading{Duality}
+\ccHeading{Voronoi diagram}
+\ccIndexMainItem{Voronoi diagram}
+The following member functions provide the elements of the
+dual Voronoi diagram.
 
 \ccMethod{Point dual(const Face_handle &f) const;}
 {Returns the center of the circle circumscribed to face \ccc{f}.
@@ -224,6 +227,10 @@ are infinite and the bisector line is returned.}
 \ccMethod{Object dual(const Edge_iterator& ei) const;}
 {Idem}
 
+\ccMethod{
+template < class Stream>
+  Stream& draw_dual(Stream & ps);}
+{output the dual voronoi diagram to stream ps.}
 
 
 \ccPredicates
@@ -250,17 +257,6 @@ and additionally test the Delaunay property. This method is
  the user.}
 \end{ccAdvanced}
 
-\ccHeading{I/O}
-The I/O operators for \ccc{iostream} and for
-the window stream are simply those defined for the base class
-\ccc{Triangulation_2<Traits, Tds>}.
-In addition, there is a template member function to ouput
-the dual Voronoi diagram on a stream
-
-\ccMethod{
-template < class Stream>
-  Stream& draw_dual(Stream & ps);}
-{output the dual voronoi diagram to stream ps.}
 
 
 

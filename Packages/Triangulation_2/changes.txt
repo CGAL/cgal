@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 5.14 (??)
+- doc fixes : add an index entry for Voronoi and power diagram
+
 Ver 5.13 (24/7/01)
 - added missing data file for examples/Triangulation/voronoi.C
 
