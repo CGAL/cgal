@@ -39,8 +39,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
-template <class FT_, class Container  = std::vector<leda_rat_point > >
+template <class FT_, class Container = std::vector<leda_rat_point > >
 class Arr_leda_polyline_traits : public leda_rat_kernel_traits
 {
 public:
