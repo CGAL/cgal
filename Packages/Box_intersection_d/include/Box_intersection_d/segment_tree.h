@@ -1,8 +1,8 @@
-#ifndef CGAL_BBOX_SEGMENT_TREE_H
-#define CGAL_BBOX_SEGMENT_TREE_H
+#ifndef CGAL_BOX_INTERSECTION_D_SEGMENT_TREE_H
+#define CGAL_BOX_INTERSECTION_D_SEGMENT_TREE_H
 
-#include <bbox/one_way_scan.h>
-#include <bbox/modified_two_way_scan.h>
+#include <Box_intersection_d/one_way_scan.h>
+#include <Box_intersection_d/modified_two_way_scan.h>
 
 #include <algorithm>
 #include <iterator>
@@ -12,7 +12,7 @@
 #include <cassert>
 
 #ifdef USE_MY_NUMERIC_LIMITS
-  #include <bbox/limits>
+  #include <Box_intersection_d/limits>
 #else
   #include <limits>
 #endif

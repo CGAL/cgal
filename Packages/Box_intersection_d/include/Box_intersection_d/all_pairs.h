@@ -1,5 +1,5 @@
-#ifndef CGAL_BBOX_ALL_PAIRS_H
-#define CGAL_BBOX_ALL_PAIRS_H
+#ifndef CGAL_BOX_INTERSECTION_D_ALL_PAIRS_H
+#define CGAL_BOX_INTERSECTION_D_ALL_PAIRS_H
 
 #include <algorithm>
 

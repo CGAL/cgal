@@ -1,5 +1,5 @@
-#ifndef CGAL_BBOX_BOX_TRAITS_H
-#define CGAL_BBOX_BOX_TRAITS_H
+#ifndef CGAL_BOX_INTERSECTION_D_BOX_TRAITS_H
+#define CGAL_BOX_INTERSECTION_D_BOX_TRAITS_H
 
 #include <algorithm>
 #include <functional>
@@ -16,7 +16,7 @@ public:
 };
 unsigned int UniqueNumbers::n = 0;
 
-template< class T = double, unsigned int DIM >
+template< class T, unsigned int DIM >
 struct Default_Bbox_d : public UniqueNumbers {
     typedef T NumberType;
     Default_Bbox_d() { init(); }

@@ -1,5 +1,5 @@
-#include <bbox/box_traits.h>
-#include <bbox/segment_tree.h>
+#include <Box_intersection_d/box_traits.h>
+#include <Box_intersection_d/segment_tree.h>
 
 #include <iostream>
 #include <cstdlib>
