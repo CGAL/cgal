@@ -11,7 +11,7 @@
 // release       : $$
 // release_date  : $$
 //
-// file          : include/CGAL/Pm_segment_traits_leda_kernel.h
+// file          : include/CGAL/Pm_segment_traits_leda_kernel_2.h
 // package       : Planar_map (5.87)
 // maintainer    : Efi Fogel         <efif@post.tau.ac.il>
 // source        : 
