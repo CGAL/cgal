@@ -61,26 +61,6 @@ public:
 };
 
 inline
-bool
-Bbox_2::operator==(const Bbox_2 &b) const
-{
-  return    xmin() == b.xmin() && xmax() == b.xmax()
-         && ymin() == b.ymin() && ymax() == b.ymax();
-}
-
-inline
-bool
-Bbox_2::operator!=(const Bbox_2 &b) const
-{
-  return ! (b == *this);
-}
-
-inline
-int
-Bbox_2::dimension() const
-{ return 2; }
-
-inline
 double
 Bbox_2::xmin() const
 { return Ptr()->e0; }
@@ -99,6 +79,26 @@ inline
 double
 Bbox_2::ymax() const
 { return Ptr()->e3; }
+
+inline
+bool
+Bbox_2::operator==(const Bbox_2 &b) const
+{
+  return    xmin() == b.xmin() && xmax() == b.xmax()
+         && ymin() == b.ymin() && ymax() == b.ymax();
+}
+
+inline
+bool
+Bbox_2::operator!=(const Bbox_2 &b) const
+{
+  return ! (b == *this);
+}
+
+inline
+int
+Bbox_2::dimension() const
+{ return 2; }
 
 inline
 double
