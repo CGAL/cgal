@@ -168,9 +168,9 @@ main()
     
     char vertices_message[80];
     int num( points.size());
-    sprintf( vertices_message,
-             "Polygon has %d vertices.",
-             num);
+    std::sprintf( vertices_message,
+                  "Polygon has %d vertices.",
+                  num);
     W.message( vertices_message);
     
     
