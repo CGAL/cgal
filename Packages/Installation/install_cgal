@@ -864,6 +864,7 @@ set_compiler_flags()
 	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    PRINT_STACKTRACE_PROGRAM="gdb"
+	    EXE_EXT=".exe"
 	    ;;
 	*)
 	    #### settings for unknown compiler 
@@ -1220,6 +1221,7 @@ test_compiler_specifica()
 	    "${_NO}" \
 	  && _link_run_test \
 	    "${_tmp_name}" \
+	    "`compiler_test_libpathflags` " \
 	    "`compiler_test_ldflags` " \
 	    "$1" \
 	    "${_NO}"
@@ -1386,6 +1388,11 @@ compiler_test_cxxflags()
 	"${CUSTOM_CXXFLAGS} ${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}` "
 }
 
+compiler_test_libpathflags()
+{
+    return 0;
+}
+
 compiler_test_ldflags()
 {
     ${_printf} "%s" "${CUSTOM_LDFLAGS} ${ADDITIONAL_LDFLAGS} `math_ldflags`"
@@ -1404,10 +1411,21 @@ gmp_cxxflags()
     fi
 }
 
+gmp_libpathflags()
+{
+    if [ -n "${SEPARATE_LIBPATH}" -a -n "${GMP_SUPPORT}" ]; then
+	if [ "${GMP_INSTALLATION}" != 'c' -a \
+             "${GMP_INSTALLATION}" != 's' ]; then
+	    libpath_option "`_where_is 'GMP_LIB_DIR'`"
+	    ${_printf} "%s" "`rpath_directive 'GMP_LIB_DIR'` "
+	fi
+    fi
+}
+
 gmp_ldflags()
 {
     if [ -n "${GMP_SUPPORT}" ]; then
-	if [ "${GMP_INSTALLATION}" != 'c' -a \
+	if [ -z "${SEPARATE_LIBPATH}" -a "${GMP_INSTALLATION}" != 'c' -a \
              "${GMP_INSTALLATION}" != 's' ]; then
 	    libpath_option "`_where_is 'GMP_LIB_DIR'`"
 	    ${_printf} "%s" "`rpath_directive 'GMP_LIB_DIR'` "
@@ -1446,10 +1464,21 @@ cln_cxxflags()
     fi
 }
 
+cln_libpathflags()
+{
+    if [ -n "${SEPARATE_LIBPATH}" -a -n "${CLN_SUPPORT}" ]; then
+	if [ "${CLN_INSTALLATION}" != 'c' -a \
+             "${CLN_INSTALLATION}" != 's' ]; then
+	    libpath_option "`_where_is 'CLN_LIB_DIR'`"
+	    ${_printf} "%s" "`rpath_directive 'CLN_LIB_DIR'` "
+	fi
+    fi
+}
+
 cln_ldflags()
 {
     if [ -n "${CLN_SUPPORT}" ]; then
-	if [ "${CLN_INSTALLATION}" != 'c' -a \
+	if [ -z "${SEPARATE_LIBPATH}" -a "${CLN_INSTALLATION}" != 'c' -a \
              "${CLN_INSTALLATION}" != 's' ]; then
 	    libpath_option "`_where_is 'CLN_LIB_DIR'`"
 	    ${_printf} "%s" "`rpath_directive 'CLN_LIB_DIR'` "
@@ -1488,10 +1517,20 @@ leda_cxxflags()
     fi
 }
 
+leda_libpathflags()
+{
+    if [ -n "${SEPARATE_LIBPATH}" -a -n "${LEDA_SUPPORT}" ]; then
+	if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
+	    libpath_option "`_where_is 'LEDA_LIB_DIR'`"
+	    ${_printf} "%s" "`rpath_directive 'LEDA_LIB_DIR'` "
+	fi
+    fi
+}
+
 leda_ldflags()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
-	if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
+	if [ -z "${SEPARATE_LIBPATH}" -a -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
 #	    ${_printf} "%s" "${START_LD_OPT}"
 	    libpath_option "`_where_is 'LEDA_LIB_DIR'`"
 	    ${_printf} "%s" "`rpath_directive 'LEDA_LIB_DIR'` "
@@ -1522,12 +1561,6 @@ leda_test_ldflags()
 compiler_flags()
 {
     ${_printf} "%s" "${CUSTOM_CXXFLAGS} `cgal_cxxflags``leda_cxxflags``gmp_cxxflags``cln_cxxflags`"
-}
-
-# print ldflags for current setting
-linker_flags()
-{
-    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags` `lib_option CGAL``leda_ldflags``gmp_ldflags``cln_ldflags``math_ldflags`"
 }
 
 # print ldflags for current setting (do not link with cgal lib,
@@ -2446,18 +2479,19 @@ cleanup_after_link_run()
 }
 
 # run a link&run test named $1, return 0, iff ok
-# if $2 is empty, use standard linker flags
-# if $2 is non-empty, use it as linker flags
-# if $3 is non-zero, inform about eventually occurring problems
+# if $2 is non-empty, use it as libpath flags
+# if $3 is empty, use standard linker flags
+# if $3 is non-empty, use it as linker flags
+# if $4 is non-zero, inform about eventually occurring problems
 _link_run_test()
 {
     # set flags
-    if [ -z "$2" ]; then
+    if [ -z "${3}" ]; then
 	_flags="`linker_flags_no_cgal_lib`"
     else
-	_flags="$2"
+	_flags="${3}"
     fi
-    _flags="`output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${_flags}"
+    _flags="${2}`output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${_flags}"
 
     # link
     _link=`compiler_bin`
@@ -2485,14 +2519,14 @@ _link_run_test()
 	if [ $j = 0 ]; then
 	    log_print "$1 test execution succeeded."
 	else
-	    if [ -n "$3" ]; then
+	    if [ -n "${4}" ]; then
 		log_print "ERROR: $1 test execution FAILED."
 	    else
 		log_print "remark: $1 test execution failed."
 	    fi
 	fi
     else
-	if [ -n "$3" ]; then
+	if [ -n "${4}" ]; then
 	    log_print "ERROR: $1 test linking FAILED."
 	else
 	    log_print "remark: $1 test linking failed."
@@ -2503,7 +2537,7 @@ _link_run_test()
 	cleanup_after_link_run
 	return 0
     else
-	if [ -n "$3" ]; then
+	if [ -n "${4}" ]; then
 	    if [ -n "${INSTALL_INTERACTIVE}" ]; then
 		log_print "ERROR: $1 test FAILED."
 		write_buffer "\n"
@@ -2523,7 +2557,7 @@ _link_run_test()
 		    "--------------------------------------------------------"
 	    fi
 	else
-	    ${_printf} "%s\n" " no."
+	    ${_printf} "%s\n" " ${5:-no.}"
 	fi
 	cleanup_after_link_run
 	return 1
@@ -2569,7 +2603,7 @@ test_for_leda_lib_in_sys_lib()
 	return 0;
     }" > ${TMP_CXX_FILE}.C
     if _compile_test "LEDA syslibs" "${CUSTOM_CXXFLAGS} " "$1"; then
-	if _link_run_test "LEDA syslibs" \
+	if _link_run_test "LEDA syslibs" "" \
 	    "${CUSTOM_LDFLAGS} `leda_lib_option P``leda_lib_option G``leda_lib_option L``math_ldflags`" "$1"; then
 	    NEED_EXTRA_LEDA_LDIR=''
 	    return 0
@@ -2600,7 +2634,8 @@ test_leda()
 	    }' > ${TMP_CXX_FILE}.C
 
 	if _compile_test LEDA "`leda_test_cxxflags`" $1 && \
-	    _link_run_test LEDA "`leda_test_ldflags`" $1
+	    _link_run_test LEDA \
+		"`leda_libpathflags`" "`leda_test_ldflags`" $1
 	then
 	    LEDA_TEST_PASSED='y'
 	    return 0
@@ -2647,10 +2682,12 @@ test_stl_general()
     
     if [ -z "$1" ]; then
 	_compile_test "${2}" "`compiler_test_cxxflags` " '' && \
-	    _link_run_test "${2}" "`compiler_test_ldflags` " ''
+	    _link_run_test "${2}" \
+		"`compiler_test_libpathflags` " "`compiler_test_ldflags` " ''
     else
 	_compile_test "${2}" "`compiler_test_cxxflags` " $1 && \
-	    _link_run_test "${2}" "`compiler_test_ldflags` " $1 
+	    _link_run_test "${2}" \
+		"`compiler_test_libpathflags` " "`compiler_test_ldflags` " $1 
     fi
     return $?
 }
@@ -2683,7 +2720,8 @@ test_gmp()
 	}' > ${TMP_CXX_FILE}.C
 
 	if _compile_test "$1" "`gmp_test_cxxflags`" "$2" && \
-	    _link_run_test "$1" "`gmp_test_ldflags`" "$2"
+	    _link_run_test "$1" \
+		"`gmp_libpathflags`" "`gmp_test_ldflags`" "$2"
 	then
 	    GMP_TEST_PASSED='y'
 	    return 0
@@ -2721,7 +2759,8 @@ test_cln()
 	}' > ${TMP_CXX_FILE}.C
 
 	if _compile_test "$1" "`cln_test_cxxflags`" "$2" && \
-	    _link_run_test "$1" "`cln_test_ldflags`" "$2"
+	    _link_run_test "$1" \
+		"`cln_libpathflags`" "`cln_test_ldflags`" "$2"
 	then
 	    CLN_TEST_PASSED='y'
 	    return 0
@@ -4273,9 +4312,13 @@ create_include_makefile()
 	;;
     *CYGWIN*)
 	case `compiler_description` in
-	    *VC++*|*GNU*)
+	    *VC++*)
 		${_printf} "%s\n" \
 		    "CGAL_EXTRA_OBJECTS = workaround_4_ms.obj" >> ${FILE}
+	    ;;
+	    *GNU*)
+		${_printf} "%s\n" \
+		    "CGAL_EXTRA_OBJECTS = workaround_4_ms.o" >> ${FILE}
 	    ;;
 	esac
 	;;
