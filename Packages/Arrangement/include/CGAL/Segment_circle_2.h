@@ -26,13 +26,8 @@
 // A modified version that specializes in segments and circular arcs.
 // This class does NOT support general conic arcs
 
-#ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
-#endif // CGAL_CARTESIAN_H
-
-#ifndef CGAL_CONIC_2_H
 #include <CGAL/Conic_2.h>
-#endif // CGAL_CONIC_2_H
 
 #include <fstream>
 #include <list>
@@ -46,8 +41,7 @@ CGAL_BEGIN_NAMESPACE
 // The roots area must be at least of size 2.
 // 
 template <class NT>
-static int _solve_quadratic_eq (const NT& a, const NT& b, const NT& c,
-				NT* roots)
+int _solve_quadratic_eq (const NT& a, const NT& b, const NT& c, NT* roots)
 {
   static const NT _zero = NT(0);
   static const NT _two  = NT(2);
@@ -153,8 +147,8 @@ class Segment_circle_2
       // The supporting conic is a vertical line, of the form x = CONST.
       _conic.set (_zero, _zero, _zero,    // r = s = t = 0
                   _one,                   // u = 1
-		  _zero,                  // v = 0
-		  -_source.x());          // w = -CONST
+                  _zero,                  // v = 0
+                  -_source.x());          // w = -CONST
     }
     else
     {
@@ -171,9 +165,9 @@ class Segment_circle_2
 
       // Now we can set:
       _conic.set (_zero, _zero, _zero,    // r = s = t = 0
-		  A,                      // u = A
-		  -_one,                  // v = -1
-		  B);                     // w = B
+                  A,                      // u = A
+                  -_one,                  // v = -1
+                  B);                     // w = B
     }        
   }
 
@@ -182,7 +176,7 @@ class Segment_circle_2
   // The source and the target must be on the conic boundary and must
   // not be the same.
   Segment_circle_2 (const Circle& circle,
-		    const Point& source, const Point& target) :
+                    const Point& source, const Point& target) :
     _deg(2),
     _source(source),
     _target(target),
@@ -213,18 +207,18 @@ class Segment_circle_2
     if (circle.orientation() == CGAL::COUNTERCLOCKWISE)
     {
       _conic.set (_minus_one, _minus_one,      // r = s = -1
-		  _zero,                       // t = 0
-		  _two*x0,
-		  _two*y0,
-		  r_squared - x0*x0 - y0*y0);
+                  _zero,                       // t = 0
+                  _two*x0,
+                  _two*y0,
+                  r_squared - x0*x0 - y0*y0);
     }
     else
     {
       _conic.set (_one, _one,                  // r = s = 1
-		  _zero,                       // t = 0
-		  _minus_two*x0,
-		  _minus_two*y0,
-		  x0*x0 + y0*y0 - r_squared);
+                  _zero,                       // t = 0
+                  _minus_two*x0,
+                  _minus_two*y0,
+                  x0*x0 + y0*y0 - r_squared);
     }
   }
 
@@ -252,18 +246,18 @@ class Segment_circle_2
     if (circle.orientation() == CGAL::COUNTERCLOCKWISE)
     {
       _conic.set (_minus_one, _minus_one,      // r = s = -1
-		  _zero,                       // t = 0
-		  _two*x0,
-		  _two*y0,
-		  r_squared - x0*x0 - y0*y0);
+                  _zero,                       // t = 0
+                  _two*x0,
+                  _two*y0,
+                  r_squared - x0*x0 - y0*y0);
     }
     else
     {
       _conic.set (_one, _one,                  // r = s = 1
-		  _zero,                       // t = 0
-		  _minus_two*x0,
-		  _minus_two*y0,
-		  x0*x0 + y0*y0 - r_squared);
+                  _zero,                       // t = 0
+                  _minus_two*x0,
+                  _minus_two*y0,
+                  x0*x0 + y0*y0 - r_squared);
     }
 
     // Set a fictitious source and destination.
@@ -276,7 +270,7 @@ class Segment_circle_2
   // The source and the target must be on the conic boundary and must
   // not be the same.
   Segment_circle_2 (const Conic& conic,
-	            const Point& source, const Point& target) :
+                    const Point& source, const Point& target) :
     _conic(conic),
     _source(source),
     _target(target),
@@ -293,7 +287,7 @@ class Segment_circle_2
     static const NT _zero = 0;
 
     if (conic.r() == _zero && conic.s() == _zero && conic.t() == _zero &&
-	(conic.u() != _zero || conic.v() != _zero))
+        (conic.u() != _zero || conic.v() != _zero))
     {
       _deg = 1;
       return;
@@ -437,8 +431,8 @@ class Segment_circle_2
     {
       if (is_full_conic() || _is_strictly_between_endpoints(ps[i]))
       {
-	vpts[m] = ps[i];
-	m++;
+        vpts[m] = ps[i];
+        m++;
       }
     }
 
@@ -468,8 +462,8 @@ class Segment_circle_2
     {
       if (is_full_conic() || _is_strictly_between_endpoints(ps[i]))
       {
-	hpts[m] = ps[i];
-	m++;
+        hpts[m] = ps[i];
+        m++;
       }
     }
 
@@ -513,7 +507,7 @@ class Segment_circle_2
       ps[m] = Point (x, ys[i]);
 
       if (is_full_conic() || _is_between_endpoints(ps[m]))
-	m++;
+        m++;
     }
 
     // Return the number of points on the arc.
@@ -543,7 +537,7 @@ class Segment_circle_2
       ps[m] = Point (xs[i], y);
 
       if (is_full_conic() || _is_between_endpoints(ps[m]))
-	m++;
+        m++;
     }
 
     // Return the number of points on the arc.
@@ -554,14 +548,14 @@ class Segment_circle_2
   Segment_circle_2 flip () const
   {
     Conic           opp_conic (-_conic.r(), -_conic.s(), -_conic.t(),
-			       -_conic.u(), -_conic.v(), -_conic.w());
+                               -_conic.u(), -_conic.v(), -_conic.w());
 
     return (Segment_circle_2<NT> (opp_conic, _target, _source));
   }
 
   // Get the partial derivatives of the arc at a given point.
   void partial_derivatives (const Point& p, 
-		            NT& dC_dx, NT& dC_dy) const
+                            NT& dC_dx, NT& dC_dy) const
   {
     // Make sure p is contained in the arc.
     CGAL_precondition(contains_point(p));
@@ -584,13 +578,13 @@ class Segment_circle_2
   // ps must be allocated at the size of 4.
   // The function returns the number of actual intersection point.
   int intersections_with (const Segment_circle_2<NT>& arc,
-			  Point* ps) const
+                          Point* ps) const
   {
     // For simplicity, assume that (*this) has the higher degree.
     if (_deg == 1 && arc._deg == 2)
     {
       return (arc.intersections_with (*this,
-				      ps));
+                                      ps));
     }
 
     // Check the case when one of the two arcs is a vertical segment.
@@ -606,7 +600,7 @@ class Segment_circle_2
     {
       // Both arcs are vertical segments: there should be no intersections.
       if (vertical_P != NULL)
-	return (0);
+        return (0);
       
       vertical_P = &arc;
       other_P = this;
@@ -626,12 +620,12 @@ class Segment_circle_2
 
       for (j = 0; j < n_ys; j++)
       {
-	// Store this point only if it is contained on the other arc.
-	if (vertical_P->contains_point(xps[j]))
-	{
-	  ps[n] = xps[j];
-	  n++;
-	}
+        // Store this point only if it is contained on the other arc.
+        if (vertical_P->contains_point(xps[j]))
+        {
+          ps[n] = xps[j];
+          n++;
+        }
       }
       return (n);
     }
@@ -686,12 +680,12 @@ class Segment_circle_2
       
       for (j = 0; j < n_ys; j++)
       {
-	// Store this point only if it is contained on the other arc.
-	if (arc.contains_point(xps[j]))
-	{
-	  ps[n] = xps[j];
-	  n++;
-	}
+        // Store this point only if it is contained on the other arc.
+        if (arc.contains_point(xps[j]))
+        {
+          ps[n] = xps[j];
+          n++;
+        }
       }
     }
 
@@ -703,7 +697,7 @@ class Segment_circle_2
   // The function computes the number of overlapping arcs (2 at most), and
   // returns their number (0 means there is not overlap).
   int overlaps (const Segment_circle_2<NT>& arc,
-		Segment_circle_2<NT>* ovlp_arcs) const
+                Segment_circle_2<NT>* ovlp_arcs) const
   {
     // Two arcs can overlap only if their base conics are identical.
     if (_conic != arc._conic)
@@ -721,8 +715,8 @@ class Segment_circle_2
       // That mean both arcs are really segments, so they are identical
       // if their endpoints are the same.
       if ((_source == arc._source && _target == arc._target) ||
-	  (_source == arc._target && _target == arc._source))
-	identical = true;
+          (_source == arc._target && _target == arc._source))
+        identical = true;
     }
     else
     {
@@ -730,8 +724,8 @@ class Segment_circle_2
       // are identical only if their source and target are the same and the
       // orientation is the same, or vice-versa if the orientation is opposite.
       if ((same_or && _source == arc._source && _target == arc._target) ||
-	  (!same_or && _source == arc._target && _target == arc._source))
-	identical = true;
+          (!same_or && _source == arc._target && _target == arc._source))
+        identical = true;
     }
 
     if (identical)
@@ -759,10 +753,10 @@ class Segment_circle_2
 
     if (orient1 == 0)
       orient1 = (compare_lexicographically_xy (_source, _target) 
-		 == LARGER) ? 1 : -1;
+                 == LARGER) ? 1 : -1;
     if (orient2 == 0)
       orient2 = (compare_lexicographically_xy (arc._source, arc._target) 
-		 == LARGER) ? 1 : -1;
+                 == LARGER) ? 1 : -1;
 
     if (orient1 == orient2)
     {
@@ -779,26 +773,26 @@ class Segment_circle_2
     {
       if (_is_strictly_between_endpoints(*arc_targetP))
       {
-	// Check the next special case (when there are 2 overlapping arcs):
-	if (arc._is_strictly_between_endpoints(_source) &&
+        // Check the next special case (when there are 2 overlapping arcs):
+        if (arc._is_strictly_between_endpoints(_source) &&
             arc._is_strictly_between_endpoints(_target))
-	{
-	  ovlp_arcs[0] = Segment_circle_2<NT>(_conic, _source, *arc_targetP);
-	  ovlp_arcs[1] = Segment_circle_2<NT>(_conic, *arc_sourceP, _target);
-	  return (2);
-	}
+        {
+          ovlp_arcs[0] = Segment_circle_2<NT>(_conic, _source, *arc_targetP);
+          ovlp_arcs[1] = Segment_circle_2<NT>(_conic, *arc_sourceP, _target);
+          return (2);
+        }
 
-	// Case 1 - *this:     +----------->     
+        // Case 1 - *this:     +----------->     
         //            arc:       +=====>
-	ovlp_arcs[0] = Segment_circle_2<NT>(_conic, *arc_sourceP,*arc_targetP);
-	return (1);
+        ovlp_arcs[0] = Segment_circle_2<NT>(_conic, *arc_sourceP,*arc_targetP);
+        return (1);
       }
       else
       {
-	// Case 2 - *this:     +----------->     
+        // Case 2 - *this:     +----------->     
         //            arc:               +=====>
-	ovlp_arcs[0] = Segment_circle_2<NT>(_conic, *arc_sourceP, _target);
-	return (1);
+        ovlp_arcs[0] = Segment_circle_2<NT>(_conic, *arc_sourceP, _target);
+        return (1);
       }
     }
     else if (_is_strictly_between_endpoints(*arc_targetP))
@@ -811,7 +805,7 @@ class Segment_circle_2
     }
     else if (arc._is_between_endpoints(_source) &&
              arc._is_between_endpoints(_target) &&
-	     (arc._is_strictly_between_endpoints(_source) ||
+             (arc._is_strictly_between_endpoints(_source) ||
               arc._is_strictly_between_endpoints(_target)))
     {
       // Case 4 - *this:     +----------->     
@@ -862,9 +856,9 @@ class Segment_circle_2
       NT   lambda;
 
       if (_source.x() != _target.x())
-	lambda = (p.x() - _source.x()) / (_target.x() - _source.x());
+        lambda = (p.x() - _source.x()) / (_target.x() - _source.x());
       else
-	lambda = (p.y() - _source.y()) / (_target.y() - _source.y());
+        lambda = (p.y() - _source.y()) / (_target.y() - _source.y());
 
       return (lambda > _zero && lambda < _one);
     }
@@ -884,9 +878,9 @@ class Segment_circle_2
     // Solve the quadratic equation for a given x and find the y values:
     //  s*y^2 + (t*x + v)*y + (r*x^2 + u*x + w) = 0
     return (_solve_quadratic_eq (_conic.s(),
-				 x*_conic.t() + _conic.v(),
-				 x*(x*_conic.r() + _conic.u()) + _conic.w(),
-				 ys));
+                                 x*_conic.t() + _conic.v(),
+                                 x*(x*_conic.r() + _conic.u()) + _conic.w(),
+                                 ys));
   }
 
   // Find the x-coordinates of the conic at a given y-coordinate.
@@ -896,9 +890,9 @@ class Segment_circle_2
     // Solve the quadratic equation for a given y and find the x values:
     //  r*x^2 + (t*y + u)*x + (s*y^2 + v*y + w) = 0
     return (_solve_quadratic_eq (_conic.r(),
-				 y*_conic.t() + _conic.u(),
-				 y*(y*_conic.s() + _conic.v()) + _conic.w(),
-				 xs));
+                                 y*_conic.t() + _conic.u(),
+                                 y*(y*_conic.s() + _conic.v()) + _conic.w(),
+                                 xs));
   }
   
   // Find the vertical tangency points of the conic.
