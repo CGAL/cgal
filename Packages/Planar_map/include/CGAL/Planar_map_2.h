@@ -79,9 +79,13 @@ public:
   typedef Topological_map<Dcel> TPM;
   typedef typename TPM::Vertex_iterator Vertex_iterator;
   typedef typename TPM::Halfedge_iterator Halfedge_iterator;
+  typedef typename TPM::Edge_iterator Edge_iterator;
+
   typedef typename TPM::Face_iterator Face_iterator;
   typedef typename TPM::Vertex_const_iterator Vertex_const_iterator;
   typedef typename TPM::Halfedge_const_iterator Halfedge_const_iterator;
+  typedef typename TPM::Edge_const_iterator Edge_const_iterator;
+
   typedef typename TPM::Face_const_iterator Face_const_iterator;
   typedef typename TPM::Vertex_handle Vertex_handle;
   typedef typename TPM::Vertex_const_handle Vertex_const_handle;

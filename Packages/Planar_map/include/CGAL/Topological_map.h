@@ -56,8 +56,12 @@ public:
   // SunPro CC 4.2 happy. (And they are used.)
   typedef typename  Dcel::Vertex_iterator          TR_VI;
   typedef typename  Dcel::Vertex_const_iterator    TR_C_VI;
+
   typedef typename  Dcel::Halfedge_iterator        TR_HI;
   typedef typename  Dcel::Halfedge_const_iterator  TR_C_HI;
+
+  typedef typename  Dcel::Edge_iterator        TR_EI;
+  typedef typename  Dcel::Edge_const_iterator  TR_C_EI;
 
   typedef typename  Dcel::Face_iterator           TR_FI;
   typedef typename  Dcel::Face_const_iterator     TR_C_FI;
@@ -94,6 +98,16 @@ public:
   TR_C_HI, TR_HI,
   Halfedge,
   Difference, iterator_category>       Halfedge_const_iterator;
+
+  typedef _Polyhedron_iterator<
+  TR_EI,
+  Halfedge,
+  Difference, iterator_category>       Edge_iterator;
+  
+  typedef _Polyhedron_const_iterator<
+  TR_C_EI, TR_EI,
+  Halfedge,
+  Difference, iterator_category>       Edge_const_iterator;
   
   typedef _Polyhedron_iterator<
   TR_FI,
@@ -545,6 +559,26 @@ public:
   Halfedge_const_iterator halfedges_end() const
   { 
     return TR_C_HI(d.halfedges_end()); 
+  }
+
+  Edge_iterator edges_begin() 
+  {
+    return TR_EI(d.edges_begin()); 
+  }
+  
+  Edge_const_iterator edges_begin() const
+  {
+    return TR_C_EI(d.edges_begin()); 
+  }
+  
+  Edge_iterator edges_end() 
+  { 
+    return TR_EI(d.edges_end()); 
+  }
+
+  Edge_const_iterator edges_end() const
+  { 
+    return TR_C_EI(d.edges_end()); 
   }
   
   Vertex_iterator vertices_begin() 

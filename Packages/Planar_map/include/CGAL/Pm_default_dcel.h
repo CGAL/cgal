@@ -32,6 +32,7 @@
 #endif
 #include <list>
 #include <map>
+#include <CGAL/N_step_adaptor.h>
 #ifndef CGAL_IN_PLACE_LIST_H
 #include <CGAL/In_place_list.h>
 #endif
@@ -370,10 +371,12 @@ public:
   typedef typename Vertex_list::iterator      Vertex_iterator;
   typedef typename Halfedge_list::iterator    Halfedge_iterator;
   typedef typename Face_list::iterator       Face_iterator;
+  typedef CGAL::N_step_adaptor< Halfedge_iterator, 2> Edge_iterator;
   
   typedef typename Vertex_list::const_iterator    Vertex_const_iterator;
   typedef typename Halfedge_list::const_iterator  Halfedge_const_iterator;
   typedef typename Face_list::const_iterator     Face_const_iterator;
+  typedef CGAL::N_step_adaptor< Halfedge_const_iterator, 2> Edge_const_iterator;
   
   // CREATION
 
@@ -406,7 +409,9 @@ public:
   Halfedge_iterator halfedges_end()    { return halfedges.end();}
   Face_iterator    faces_begin()     { return faces.begin();}
   Face_iterator    faces_end()       { return faces.end();}
-  
+  Edge_iterator     edges_begin() { return halfedges.begin();}  
+  Edge_iterator     edges_end() { return halfedges.end();}  
+
   // The constant iterators and circulators.
 
   Vertex_const_iterator   vertices_begin()  const{ return vertices.begin();}
@@ -415,6 +420,8 @@ public:
   Halfedge_const_iterator halfedges_end()   const{ return halfedges.end();}
   Face_const_iterator    faces_begin()    const{ return faces.begin();}
   Face_const_iterator    faces_end()      const{ return faces.end();}
+  Edge_const_iterator    edges_begin() const{ return halfedges.begin();}  
+  Edge_const_iterator    edges_end() const{ return halfedges.end();}  
   
   // Insertion
   //
