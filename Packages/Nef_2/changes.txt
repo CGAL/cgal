@@ -1,6 +1,9 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.52 (11 Jan 2004)
+- Change _R to R_ to please Darwin.
+
 1.51 (27 Nov 2003) [rursu]
 - removed Polynomial-test from cgal_test in test directory.
 

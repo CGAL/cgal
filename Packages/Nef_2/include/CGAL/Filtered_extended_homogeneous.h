@@ -91,14 +91,14 @@ public:
 
 
   // only for visualization:
-  static void set_R(const RT& R) { _R = R; }
+  static void set_R(const RT& R) { R_ = R; }
   RT eval_at(const RT& r) const { return _m*r+_n; }
-  RT eval_at_R() const { return _m*_R+_n; }
+  RT eval_at_R() const { return _m*R_+_n; }
 protected:
-  static RT _R;
+  static RT R_;
 };
 
-template <class RT> RT SPolynomial<RT>::_R;
+template <class RT> RT SPolynomial<RT>::R_;
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template <typename RT>
@@ -138,7 +138,7 @@ bool operator<(const SPolynomial<RT>& p1, int i)
 
 template <class RT> 
 inline double to_double(const SPolynomial<RT>& p) 
-{ return (CGAL::to_double(p.eval_at(SPolynomial<RT>::_R))); }
+{ return (CGAL::to_double(p.eval_at(SPolynomial<RT>::R_))); }
 
 template <class RT> 
 std::ostream& operator<<(std::ostream& os, const SPolynomial<RT>& p)
