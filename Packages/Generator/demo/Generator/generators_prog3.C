@@ -24,8 +24,8 @@ int main() {
 
     // Create 125 points from a 5 x 5 x 5 grid. Note that the double
     // arithmetic _is_ sufficient to produce exact integer grid points.
-    CGAL::points_on_square_grid_3(10, 125, std::back_inserter(points), 
-                                  Creator());
+    CGAL::points_on_cube_grid_3(10, 125, std::back_inserter(points), 
+                                Creator());
 
     // Check that we have really created 1000 points.
     assert( points.size() == 125);

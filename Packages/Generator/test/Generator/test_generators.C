@@ -115,14 +115,14 @@ void test_point_generators_3() {
     Random_points_in_cube_3<Point_3,Creator>        g3( 100.0);
     CGAL::copy_n( g2, 100, std::back_inserter(points));
     CGAL::copy_n( g3, 100, std::back_inserter(points));
-    points_on_square_grid_3( 50.0, (std::size_t)1,
-                             std::back_inserter(points), Creator());
-    points_on_square_grid_3( 50.0, (std::size_t)2,
-                             std::back_inserter(points), Creator());
-    points_on_square_grid_3( 50.0, (std::size_t)3,
-                             std::back_inserter(points), Creator());
-    points_on_square_grid_3( 50.0, (std::size_t)94,
-                             std::back_inserter(points), Creator());
+    points_on_cube_grid_3( 50.0, (std::size_t)1,
+                           std::back_inserter(points), Creator());
+    points_on_cube_grid_3( 50.0, (std::size_t)2,
+                           std::back_inserter(points), Creator());
+    points_on_cube_grid_3( 50.0, (std::size_t)3,
+                           std::back_inserter(points), Creator());
+    points_on_cube_grid_3( 50.0, (std::size_t)94,
+                           std::back_inserter(points), Creator());
     random_selection( points.begin(), points.end(), 100,
                       std::back_inserter(points));
 

@@ -1,6 +1,9 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
-2.53 (20 Mar 2002)
+2.54 (21 Mar 2002)
+   - converted to new manual style
+
+2.53 (21 Mar 2002)
    - changed demo to use double instead of int in point creator to get
      rid of warning
 

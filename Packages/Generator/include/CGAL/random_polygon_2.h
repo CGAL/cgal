@@ -32,6 +32,7 @@
 #include <vector>
 #include <assert.h>
 #include <CGAL/Random_polygon_2_sweep.h>
+#include <CGAL/Kernel_traits.h>
 
 namespace CGAL {
 
@@ -80,17 +81,9 @@ OutputIterator random_polygon_2( int n,  OutputIterator result,
                                  const PointGenerator& pg )
 {
    typedef typename std::iterator_traits<PointGenerator>::value_type  Point_2;
-   return _random_polygon_2(n, result, pg, reinterpret_cast<Point_2*>(0));
+   typedef typename Kernel_traits<Point_2>::Kernel   K;
+   return random_polygon_2(n, result, pg, K());
 }
-
-template <class PointGenerator, class OutputIterator, class R>
-inline
-OutputIterator _random_polygon_2( int n,  OutputIterator result, 
-                                 const PointGenerator& pg, Point_2<R>*)
-{
-   return random_polygon_2(n, result, pg, R());
-}
-
 
 template <class ForwardIterator, class Traits>
 bool duplicate_points(ForwardIterator first, ForwardIterator beyond, 
@@ -109,15 +102,10 @@ template <class ForwardIterator>
 bool duplicate_points(ForwardIterator first, ForwardIterator beyond)
 {
    typedef typename std::iterator_traits<ForwardIterator>::value_type  Point_2;
-   return _duplicate_points(first, beyond, reinterpret_cast<Point_2*>(0));
+   typedef typename Kernel_traits<Point_2>::Kernel   K;
+   return duplicate_points(first, beyond, K());
 }
 
-template <class ForwardIterator, class R>
-bool _duplicate_points(ForwardIterator first, ForwardIterator beyond,
-                       Point_2<R>*)
-{
-   return duplicate_points(first, beyond, R());
-}
 
 // Copies the first n points from the input iterator to the output iterator,
 // removing any duplicates.  Thus fewer than n points may be inserted into
@@ -150,16 +138,10 @@ OutputIterator copy_n_unique(InputIterator first, Size n,
                              OutputIterator result)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type  Point_2;
-   return _copy_n_unique(first, n, result, reinterpret_cast<Point_2*>(0));
+   typedef typename Kernel_traits<Point_2>::Kernel  K;
+   return copy_n_unique(first, n, result, K());
 }
 
-template <class InputIterator, class Size, class OutputIterator, class R>
-inline
-OutputIterator _copy_n_unique(InputIterator first, Size n, 
-                              OutputIterator result, Point_2<R>*)
-{
-   return copy_n_unique(first, n, result, R());
-}
 
 } // namespace CGAL
 

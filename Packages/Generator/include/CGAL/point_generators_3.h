@@ -145,7 +145,7 @@ generate_point() {
 
 template <class OutputIterator, class Creator>
 OutputIterator
-points_on_square_grid_3( double a, std::size_t n, 
+points_on_cube_grid_3( double a, std::size_t n, 
                          OutputIterator o, Creator creator)
 {
     if  (n == 0)
@@ -189,7 +189,7 @@ points_on_square_grid_3( double a, std::size_t n,
 
 template <class OutputIterator>
 OutputIterator
-points_on_square_grid_3( double a, std::size_t n, OutputIterator o)
+points_on_cube_grid_3( double a, std::size_t n, OutputIterator o)
 {
     typedef std::iterator_traits<OutputIterator> ITraits;
     typedef typename ITraits::value_type         P;
