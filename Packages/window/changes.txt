@@ -1,3 +1,7 @@
+2.8.12  (18 Sep 2001)
+- changed esprit_logo.xpm to add (char*) types for strings to prevent warnings
+  for SUNPRO compiler.
+
 2.8.11  (29 Aug 2001)
 - changed ccSection commands to section commands since the former don't
   work with the pdf converter
