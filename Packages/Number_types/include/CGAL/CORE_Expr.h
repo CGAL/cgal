@@ -75,7 +75,7 @@ inline
 Comparison_result
 compare(const CORE::Expr& e1, const CORE::Expr& e2)
 {
-  return e1.cmp(e2);
+  return Comparison_result(e1.cmp(e2));
 }
 
 // Should not be inline, but, well...
@@ -85,6 +85,7 @@ to_interval (const CORE::Expr & e)
 {
   std::pair<double,double> result;
   e.doubleInterval(result.first, result.second);
+  return result;
 }
 
 namespace NTS {
