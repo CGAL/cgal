@@ -52,6 +52,26 @@
 % used instead of \end to terminate pattern matching. 
 \newcommand{\ccEnd}{}\def\ccEnd{\ccNeverToEval}  
 
+% restarts chapter number at 1 with each new part of manual; otherwise
+% chapter numbers are continuous
+\newcommand{\ccNumberChaptersByPart}{\@addtoreset{chapter}{part}}
+\newcommand{\ccMultiplePartsToc}{}
+
+% example listing
+% ---------------
+\newcommand{\listofexamples}{\addcontentsline{toc}{chapter}{List of Examples}
+                             {\Large \textbf{List of Examples}}
+                             \@starttoc{xmp}}
+\newcommand{\l@example}{\@dottedtocline{1}{0em}{2.3em}}
+
+% listing of reference pages
+% --------------------------
+\newcommand{\listofrefpages}{\addcontentsline{toc}{chapter}{Alphabetrical List of Reference Pages}
+                             {\Large \textbf{Alphabetical List of Reference Pages}}
+                             \@starttoc{ref}}
+\newcommand{\l@refpage}{\@dottedtocline{1}{0em}{2.3em}}
+
+
 % ___________________________________________________________________________
 % ###########################################################################
 % |
@@ -115,17 +135,19 @@
 \newdimen\ccwConstructorFirst
 \newdimen\ccwConstructorSecond
 
+
 % init them
 % ---------
-\ccwIndent             = 0pt
-\ccwRightMargin        = 0pt
-\ccwBetween            = 0.5cm
-\ccwParamIndent        = 1.2cm
+\ccwIndent              = 0pt
+\ccwRightMargin         = 0pt
+\ccwBetween             = 0.5cm
+\ccwParamIndent         = 1.2cm
+ 
+\ccwFunctionFirst       = 2.5cm
+\ccwFunctionSecond      = 4.5cm
+\ccwConstructorFirst    = -1\ccwBetween
+\ccwConstructorSecond   = 2.5cm
 
-\ccwFunctionFirst      = 2.5cm
-\ccwFunctionSecond     = 4.5cm
-\ccwConstructorFirst   = -1\ccwBetween
-\ccwConstructorSecond  = 2.5cm
 
 % This initialisation is called prior to each declaration formatting.
 % All boxes will be positioned from left. The exception is the comment
@@ -177,9 +199,9 @@
 
 \newcommand{\ccReverseTopSkip}{\vspace{-\smallskipamount}}
 \newcommand{\ccReturnSkip}{\par\hspace*{\ccwIndent}\hspace*{\ccwFirst}%
-                      \hspace*{\ccwBetween}}
-\newcommand{\ccMiddleSkip}{\par\hspace*{1cm}\hfill} % aligns commentblock 
-                                                    % to the right
+                           \hspace*{\ccwBetween}}
+\newcommand{\ccMiddleSkip}{\par\hspace*{1cm}\hfill}      % aligns commentblock 
+                                                         % to the right
 \newcommand{\ccReverseBottomSkip}{\vspace{-\smallskipamount}}
 \newcommand{\ccReverseBottomBigSkip}{\vspace{-\bigskipamount}}
 
@@ -728,6 +750,7 @@
 \newcommand{\ccDefinition     }{\ccHeading{Definition}}
 \newcommand{\ccIsModel        }{\ccHeading{Is Model for the Concept}}
 \newcommand{\ccInheritsFrom   }{\ccHeading{Inherits From}}
+\newcommand{\ccRequirements   }{\ccHeading{Requirements}}
 \newcommand{\ccParameters     }{\ccHeading{Parameters}}
 \newcommand{\ccConstants      }{\ccHeading{Constants}}
 \newcommand{\ccTypes          }{\ccHeading{Types}}
@@ -739,6 +762,7 @@
 \newcommand{\ccModifiers      }{\ccHeading{Modifiers}}
 \newcommand{\ccHasModels      }{\ccHeading{Has Models}}
 \newcommand{\ccGeneralizes    }{\ccHeading{Generalizes}}
+\newcommand{\ccRefines        }{\ccHeading{Refines}}
 \newcommand{\ccSeeAlso        }{\ccHeading{See Also}}
 \newcommand{\ccImplementation }{\ccHeading{Implementation}}
 \newcommand{\ccExample        }{\ccHeading{Example}}
@@ -752,6 +776,7 @@
 %}
 \newcommand{\ccPrecond  }{\ccCommentHeading{Precondition}}
 \newcommand{\ccPostcond }{\ccCommentHeading{Postcondition}}
+\newcommand{\ccRequire  }{\ccCommentHeading{Requirement}}
 
 \newenvironment{ccAdvanced}{%
     \setlength{\ccRefTabLift}{2\ccRefTabLift}
@@ -909,11 +934,11 @@
                    \endgroup
                    \gdef\ccPureRefName{#1}%
                    \ifnum\ccCurrentIndexCat=\ccIndexConceptCat%
-                      \renewcommand{\ccRefName}{{{
-                        \ccPrintUnderscoreSeparatedTokens #1\ccEnd\ccEndFont}}}%
+                      \renewcommand{\ccRefName}{{{%
+                        \ccPrintTokens #1\ccEnd\ccEndFont}}}%
                    \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat%
-                      \renewcommand{\ccRefName}{{{
-                        \ccPrintUnderscoreSeparatedTokens #1\ccEnd\ccEndFont}}}%
+                      \renewcommand{\ccRefName}{{{%
+                        \ccPrintTokens #1\ccEnd\ccEndFont}}}%
                    \else
                       \renewcommand{\ccRefName}{{{\ccFont 
                         \ccPrintTokens #1\ccEnd\ccEndFont}}}%
@@ -928,6 +953,7 @@
                    \ifnum\ccAutoIndex=\ccTrue%
                       \ccIndexRefDeclarationBegin%
                    \fi%
+                   \addcontentsline{ref}{refpage}{\protect\ccc{\ccPureRefName}}
                }
 
 %% if there's an optional argument (used to specify the scope of a ceratin
@@ -945,7 +971,6 @@
 \newcommand{\ccRefSection}{}
 \gdef\ccRefSection #1{\begingroup\ccCatcode\ccRefSectionX{#1}}
 \gdef\ccRefSectionX #1#2{\endgroup\section*{%
-    \ifnum\ccRefPageBreak=\ccTrue
     \ifnum\ccNewRefManualStyle=\ccTrue 
        \ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat
           \ccDrawRefTabs{FunctionObjectConcept}{#2}\\ 
@@ -955,16 +980,20 @@
           \ccDrawRefTabs{#1}{#2}\\ 
        \fi\fi
     \else #1 \fi
-    \fi
     \expandafter\ccPrintTokens\ccRefPureGlobalScope\ccEnd%
-    % for concepts, the only "special" character allowed is the underscore
-    \ifnum\ccCurrentIndexCat=\ccIndexConceptCat%
-       {\expandafter\ccPrintUnderscoreSeparatedTokens\ccPureRefScope #2\ccEnd}%
-    \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat%
-       {\expandafter\ccPrintUnderscoreSeparatedTokens\ccPureRefScope #2\ccEnd}%
-    \else
+%    % for concepts, the only "special" character allowed is the underscore
+%
+%    Removed this checking to allow for templated concepts, but these are
+%    definitely exceptional concepts.  Most concepts should not be templated.
+%
+%    \ifnum\ccCurrentIndexCat=\ccIndexConceptCat%
+%       {\expandafter\ccPrintUnderscoreSeparatedTokens\ccPureRefScope #2\ccEnd}%
+%    \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat%
+%       {\expandafter\ccPrintUnderscoreSeparatedTokens\ccPureRefScope #2\ccEnd}%
+%    \else
        {\expandafter\ccPrintTokens\ccPureRefScope #2\ccEnd}%
-    \fi\fi}%
+%    \fi\fi
+    }%
     \ifnum\ccNewRefManualStyle=\ccTrue
     \ifnum\ccCurrentIndexCat=\ccIndexConceptCat%
         \markboth{\ccRefCategory : \ \protect\ccRefScope
@@ -1061,12 +1090,36 @@
 \newcommand{\ccRefLabel}{\begingroup\ccCatcode\ccRefLabelX}
 \def\ccRefLabelX #1{\endgroup\label{ccRef_#1}}
 
+\newcommand{\ccSetPageRefStyle}[1]{
+   \ifnum#1=\ccAtMarginFillStyle
+      \ccPageRefStyle=#1
+   \else\ifnum#1=\ccNotAtMarginStyle
+      \ccPageRefStyle=#1
+   \else
+      \errmessage{PageRefStyle #1 not defined; page reference style unchanged}
+   \fi\fi\fi
+}
+
+\newcommand{\ccRefPageNumAtMargin}{}
+\gdef\ccRefPageNumAtMargin{\ccTrue}
+\newcommand{\ccRefPageFill}{\dotfill}
 \newcommand{\ccRefIdfierPage}{\begingroup\ccCatcode\ccRefIdfierPageX}
-\def\ccRefIdfierPageX #1{\endgroup\ccc{#1}\hfill \ccRefPage{#1}}
+\def\ccRefIdfierPageX #1{\endgroup%
+   \ifnum\ccRefPageNumAtMargin=\ccTrue
+      \ccc{#1}\ccRefPageFill \ccRefPage{#1}
+   \else
+      \ccc{#1} (pg. \pageref{ccRef_#1})
+   \fi
+}
 
 \newcommand{\ccRefConceptPage}{\begingroup\ccCatcode\ccRefConceptPageX}
 \def\ccRefConceptPageX #1{\endgroup%
-\ccPrintUnderscoreSeparatedTokens #1\ccEnd\ccEndFont \hfill \ccRefPage{#1}}
+   \ifnum\ccRefPageNumAtMargin=\ccTrue
+      \ccPrintTokens #1\ccEnd\ccEndFont \ccRefPageFill \ccRefPage{#1}
+   \else
+      \ccPrintTokens #1\ccEnd\ccEndFont\ (pg. \pageref{ccRef_#1})
+   \fi
+}
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -1457,6 +1510,7 @@
 
 \newcommand{\ccTexHtml}[2]{#1}
 \newcommand{\ccAnchor}[2]{#2}
+%\newcommand{\ccAnchor}[3][t]{#3}
 \newenvironment{ccTexOnly}{}{}
 \newenvironment{ccHtmlOnly}{\begingroup\ccHtmlCatcode \ccParseHtmlOnlyBody}{
                             \endgroup}
@@ -1502,6 +1556,8 @@
 \newcommand{\ccHtmlNoClassFile}{}
 \newcommand{\ccHtmlNoClassLinks}{}
 \newcommand{\ccHtmlNoClassIndex}{}
+\newcommand{\ccHtmlNoRefLinks}{}
+\newcommand{\ccHtmlNoRefIndex}{}
 \newcommand{\ccHtmlNoLinks}{}
 \newcommand{\ccHtmlNoIndex}{}
 \newcommand{\ccHtmlLinksOn}{}
@@ -1818,6 +1874,9 @@
                                            \ifnum\ccAutoIndex=\ccTrue%
                                              \ccIndexOperator#1#3 #4,#5,\ccEnd%
                                            \fi%
+                                           \ccOperatorNonFunctionCall
+                                               {#1}{#2}#3 #4(#5)#6;#7\ccEnd
+                                           \ccBool=\ccTrue
                                        \fi
                                    \fi
                                \fi
@@ -1852,6 +1911,27 @@
                      }
 
 
+% This macro is used to format function operators such as "operator*(....)",
+% if they are not formatted in operator notation.
+\def\ccOperatorNonFunctionCall #1#2#3 #4(#5)#6;#7\ccEnd{%
+%                       \def\ccExtendedFormat{\ }% Switches ext. format OFF.
+                       \ccSeparateFunction{}#3 #4::\ccEnd%
+                       \setbox\returntypebox=\hbox{{\ccFont
+                                   \unhcopy\templatedeclbox
+                                   \unhbox\returntypebox
+                       }}
+                       \setbox\functioncallbox=\hbox{{\ccFont
+                               \ifnum#1=0 \ccVar.\fi
+                               \unhcopy\functionnamebox(% 
+                               \isEmpty{#5}\ifnum\ccBool=\ccFalse
+                                       \ \ccPrintParamList{#5)#6}%
+                               \fi)\unhcopy\trailingconstbox}}
+                       \setbox\callnamebox=\hbox{{\ccFont
+                               \ifnum#1=0 \ccVar.\fi
+                               \unhbox\functionnamebox}}%
+                       \ccLayoutThreeColumns{(}{#5)#6}{)\unhbox
+                               \trailingconstbox}{#2}%
+                     }
 
 % This macro is used to format function operators "operator()(....)",
 % if they are not formatted in operator notation.
@@ -2253,37 +2333,50 @@
                    \fi
                    \xqnext}
 
-\gdef\ccUnderscoreCatcode {%
-              \catcode`\_=12
+\newcommand{\ccConceptStyle}{%
+                       \begingroup\ccCatcode\ccConceptStyleX
+}
+\def\ccConceptStyleX #1{%
+                       {\ccPrintTokens #1\ccEnd\ccEndFont}\endgroup
 }
 
-\newcommand{\ccOnlyUnderscores}{%
-    \begingroup\ccUnderscoreCatcode\ccOnlyUnderscoresX
-}
-\def\ccOnlyUnderscoresX #1{%
-     {\ccPrintUnderscoreSeparatedTokens #1\ccEnd\ccEndFont}\endgroup
-}
-
-\def\ccPrintUnderscoreSeparatedTokens #1\ccEnd{%
-    \isEmpty{#1}\ifnum\ccBool=\ccFalse
-        \ccPrintUnderscoreSeparatedTokensX #1\ccEnd
-    \fi
-}
-\def\ccPrintUnderscoreSeparatedTokensX #1#2\ccEnd{%
-                   \ccPrintCharOrUnderscore #1%
-                   \def\xqbody{\ccPrintUnderscoreSeparatedTokensX #2\ccEnd}%
-                   \isEmpty{#2}\ifnum\ccBool=\ccTrue
-                       \let\xqnext=\relax
-                   \else
-                       \let\xqnext=\xqbody
-                   \fi
-                   \xqnext}
-% Print a character of a C++ declaration. Special handling of _<>&.
-\def\ccPrintCharOrUnderscore #1{%
-                   \if_#1\ccUnderscore
-                   \else\ifx\_#1\ccUnderscore
-                   \else #1%
-                   \fi\fi}
+%
+% The following commands can be used to print tokens that can include
+% underscores and no other special characters.  This is normally the way
+% concepts appear, but since there are (apparently) exceptional concepts
+% that are templated, these commands are no longer used
+%
+%\gdef\ccUnderscoreCatcode {%
+%              \catcode`\_=12
+%}
+%
+%\newcommand{\ccOnlyUnderscores}{%
+%    \begingroup\ccUnderscoreCatcode\ccOnlyUnderscoresX
+%}
+%\def\ccOnlyUnderscoresX #1{%
+%     {\ccPrintUnderscoreSeparatedTokens #1\ccEnd\ccEndFont}\endgroup
+%}
+%
+%\def\ccPrintUnderscoreSeparatedTokens #1\ccEnd{%
+%    \isEmpty{#1}\ifnum\ccBool=\ccFalse
+%        \ccPrintUnderscoreSeparatedTokensX #1\ccEnd
+%    \fi
+%}
+%\def\ccPrintUnderscoreSeparatedTokensX #1#2\ccEnd{%
+%                   \ccPrintCharOrUnderscore #1%
+%                   \def\xqbody{\ccPrintUnderscoreSeparatedTokensX #2\ccEnd}%
+%                   \isEmpty{#2}\ifnum\ccBool=\ccTrue
+%                       \let\xqnext=\relax
+%                   \else
+%                       \let\xqnext=\xqbody
+%                   \fi
+%                   \xqnext}
+%% Print a character of a C++ declaration. Special handling of _<>&.
+%\def\ccPrintCharOrUnderscore #1{%
+%                   \if_#1\ccUnderscore
+%                   \else\ifx\_#1\ccUnderscore
+%                   \else #1%
+%                   \fi\fi}
 
 
 % +--------------------------------------------------------------------------

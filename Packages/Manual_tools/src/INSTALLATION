@@ -18,11 +18,11 @@ Installation of the Supporting Tools:
      *  Unix environment with tools like grep, sed, ...
 
 
-(2)  The scripts cc_patch_anchor_filter, cc_patch_anchor_pages and
-     cc_patch_anchor_toc_index are Perl scripts. The first line in
-     these scripts might need adaption to where the Perl interpreter
-     is located. These changes need to be done before installing these
-     scripts.
+(2)  The scripts cc_patch_anchor_filter, cc_patch_anchor_pages, 
+     cc_remove_unwanted_links, and cc_patch_anchor_toc_index are Perl 
+     scripts. The first line in these scripts might need adaption to 
+     where the Perl interpreter is located. These changes need to be done 
+     before installing these scripts.
 
 
 (3)  Configuring the installation and the use of the tools:

@@ -1,4 +1,4 @@
-#!/opt/gnu/bin/perl -swi.unfixed
+#!/usr/local/bin/perl -swi.unfixed
 #
 # ===========================================================================
 #
@@ -9,16 +9,17 @@
 #
 # script for post-processing of a CGAL reference manual .ind file to 
 #   -- remove commas and page numbers after "see also" entries
-#   -- insert an explanation of the use boldface 
+#   -- insert an explanation of the use of boldface 
+#   -- insert a table of contents command
 #   -- insert blank lines between main entries with the CGAL_ prefix 
 #      when the letter after the prefix changes
 #   -- insert hyphenation clues in names with underscores
 #   -- insert a space between characters in () and [] operators
-#   -- to separate the current d-digit page number entry into a 
+#   -- separate the current d-digit page number entry into a 
 #      one-digit part number (the first of the d digits) and a 
 #      (d-1)-digit page number if the -p option is used.
 #
-# Usage: indexfix [-p] <filname.ind>
+# Usage: index_fix [-p] <filname.ind>
 # ===========================================================================
 #
 

@@ -17,6 +17,7 @@
 
 #include <stdio.h>
 #include <mstring.h>
+#include <output.h>
 
 const char SEPARATOR = '\001';
 

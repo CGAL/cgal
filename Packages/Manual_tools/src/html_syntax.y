@@ -69,6 +69,7 @@ int yyerror( char *s);
 /* Special TeX Parsing    */
 /* ---------------------- */
 %token             CHAPTER
+%token             PART
 
 /* C++ Parsing            */
 /* ---------------------- */
@@ -101,6 +102,10 @@ stmt:             error               {}
                 | direct_string       {}
                 | CHAPTER '{' comment_sequence '}'  {
 		                          handleChapter( * $3); 
+                                          delete_list( $3);
+                                      }
+                | PART '{' comment_sequence '}'  {
+		                          handlePart( * $3); 
                                           delete_list( $3);
                                       }
 		| BEGINCLASS          {   handleClassEnvironment(); }

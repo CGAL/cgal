@@ -68,6 +68,8 @@
 \newcommand{\ccHtmlNoLinks}{\gdef{\lciIfHtmlLinks}{\lcFalse}}
 \newcommand{\ccHtmlNoIndex}{\gdef{\lciIfHtmlIndex}{\lcFalse}}
 
+\newcommand{\ccHtmlNoRefLinks}{\gdef{\lciIfHtmlClassLinks}{\lcFalse}}
+\newcommand{\ccHtmlNoRefIndex}{\gdef{\lciIfHtmlClassIndex}{\lcFalse}}
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -317,7 +319,8 @@
 \newcommand{\lcRawHtmlExpanded}[1]{\lciRawOutput{#X1}}
 \newcommand{\lcRawAscii}[1]{}
 
-\newcommand{\lcAnchor}[2]{\lcRawHtml{<A HREF="#C1">}#2\lcRawHtml{</A>}}
+\newcommand{\lcAnchor}[2]{%
+    \lcRawHtml{<A HREF="#C1" TARGET="_top">}#2\lcRawHtml{</A>}}
 
 
 % ___________________________________________________________________________

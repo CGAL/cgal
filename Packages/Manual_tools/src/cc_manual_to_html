@@ -46,6 +46,7 @@
 # The environment variable LATEX_CONV_HEADER is used as default. 
 # If it is not set, the default setting is empty and include files are not
 # linked.
+
 set header = ""
 if ($?LATEX_CONV_HEADER) then
     set header = "-header ${LATEX_CONV_HEADER}"
@@ -55,7 +56,7 @@ endif
 # They are not necessarily supposed to be set in the environment.
 if ( ! $?LATEX_CONV_DATE)    set LATEX_CONV_DATE   = `date +"%a, %B %e, %Y"`
 if ( ! $?LATEX_CONV_AUTHOR)  set LATEX_CONV_AUTHOR = \
-            'The <A HREF="http://www.cs.uu.nl/CGAL/">CGAL Project</A>'
+            'The <A HREF="http://www.cgal.org">CGAL Project</A>'
 if ( ! $?LATEX_CONV_TITLE)   set LATEX_CONV_TITLE  = "Reference Manual"
 if ( ! $?LATEX_CONV_RELEASE) set LATEX_CONV_RELEASE = 
 
@@ -88,6 +89,7 @@ set show_main_switch = 0
 set extended_switch  = 0
 set extract_opt      = ""
 set quiet_switch     = 0;
+set ref_part_switch  = 0;
 
 set FLEX = "flex -t -8 -w"
 
@@ -96,6 +98,7 @@ set FLEX = "flex -t -8 -w"
 
 if ( $#argv < 1) goto usage
 set in_files = ""
+set ref_files = ""
 
 while ($#argv > 0)
     if ( "$1" == "-h") goto usage
@@ -115,6 +118,12 @@ while ($#argv > 0)
 
     if ( "$1" == "-extended") then
 	set extended_switch = 1
+	shift
+        continue
+    endif
+
+    if ( "$1" == "-ref_manual") then
+	set ref_part_switch = 1
 	shift
         continue
     endif
@@ -290,9 +299,18 @@ while ($#argv > 0)
         continue
     endif
 
-    set in_files = "$in_files $1"
+    if ($ref_part_switch == 1) then
+      set ref_files = "$ref_files $1"
+    else
+      set in_files = "$in_files $1"
+    endif
     shift
 end
+
+if ( $ref_part_switch && $extended_switch == 0 ) then
+   echo "error:  switch -ref_manual is valid only when the -extended switch is used."
+   goto usage
+endif
 
 if ( $?DEBUG) echo "# DEBUG defined; all actions will be echoed."
 
@@ -307,7 +325,7 @@ if ( $?DEBUG || $default_switch == 1) then
     echo "  out_path           = ${out_path}"
     echo "  header             = ${header}"
     echo "  config_path        = ${config_path}"
-    echo "  input_files        = ${in_files}"
+    echo "  input_files        = ${in_files} ${ref_files}"
     echo "  aux_file           = ${aux_file}"
     echo "  bbl_file           = ${bbl_file}"
     echo "  extract_opt        = ${extract_opt}"
@@ -315,7 +333,7 @@ if ( $?DEBUG || $default_switch == 1) then
 endif
 if ( $default_switch) goto end_of_script
 
-if ( "$in_files" == "") goto usage
+if ( "$in_files" == "" && "$ref_files" == "" ) goto usage
 
 set config_html = "${config_path}/html"
 set config_gif  = "${config_path}/gif"
@@ -333,7 +351,7 @@ if ( -d ${new_tmp_path}) then
     echo "         It will be removed."
     \rm -r ${new_tmp_path}
 endif
-\mkdir ${new_tmp_path}
+\mkdir -p ${new_tmp_path}
 
 if ( ! $quiet_switch) echo "[$prog_name "'$Revision$'
 
@@ -345,9 +363,9 @@ set options = "${header} -config ${config_path} -tmp ${new_tmp_path} ${aux_file}
 
 if ( $?DEBUG) echo "# Step 1: convert each LaTeX file into an HTML file."
 if ($show_main_switch) then
-    cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} -main main.html ${in_files}
+    cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} -main main.html ${in_files} ${ref_files}
 else
-    cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} ${in_files} >/dev/null
+    cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} ${in_files} ${ref_files} >/dev/null
 endif
 
 # Step 2: generate the hyperlinks. The anchor filter.
@@ -417,10 +435,10 @@ extended_conversion:
 # Step 0: create subdirectories.
 # ------------------------------
 if ( $?DEBUG) echo "# Step 0: create subdirectories."
-foreach f ($in_files)
-    \mkdir ${new_tmp_path}/$f:h
+foreach f ($in_files $ref_files)
+    \mkdir -p ${new_tmp_path}/$f:h
     if ( ! -d ${out_path}/$f:h) then
-        \mkdir ${out_path}/$f:h
+        \mkdir -p ${out_path}/$f:h
     endif
 end
 
@@ -436,16 +454,23 @@ endif
 # Step 1: convert each LaTeX file into an HTML file.
 # --------------------------------------------------
 if ( $?DEBUG) echo "# Step 1: convert each LaTeX file into an HTML file."
-foreach f ($in_files)
+foreach f ($in_files $ref_files)
     if ( ! $quiet_switch) echo "[converting package $f"
     set options = "${header} -config ${config_path} -tmp ${new_tmp_path}/$f:h -noheader"
-#    cd $f:h
-#    cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} $f:t >/dev/null
-#    cd ..
-    setenv LATEX_CONV_INPUTS "$f:h:$orig_INPUTS"
+    set dir = $f:h
+    setenv LATEX_CONV_INPUTS "${dir}:$orig_INPUTS"
     cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} $f:t >/dev/null
     if ( ! $quiet_switch) echo "]"
 end
+
+#foreach f ($ref_files)
+#    if ( ! $quiet_switch) echo "[converting package $f"
+#    set options = "${header} -config ${config_path} -tmp ${new_tmp_path}/$f:h -noheader"
+#    set dir = $f:h
+#    setenv LATEX_CONV_INPUTS "${dir}:${dir}/..:$orig_INPUTS"
+#    cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} $f:t >/dev/null
+#    if ( ! $quiet_switch) echo "]"
+#end
 
 setenv LATEX_CONV_INPUTS "$orig_INPUTS"
 
@@ -453,7 +478,7 @@ setenv LATEX_CONV_INPUTS "$orig_INPUTS"
 # ---------------------------------------------------------
 if ( ! $quiet_switch) echo "creating local anchor filter,"
 if ( $?DEBUG) echo "# Step 2: generate the hyperlinks. The anchor filter"
-foreach f ($in_files)
+foreach f ($in_files $ref_files)
     \cat ${config_html}/cc_anchor_header ${new_tmp_path}/$f:h/cc_anchor_rules ${config_html}/cc_anchor_footer > ${new_tmp_path}/cc_anchor_filter.yy
 
     ${FLEX} ${new_tmp_path}/cc_anchor_filter.yy > ${new_tmp_path}/cc_anchor_filter.c
@@ -500,7 +525,7 @@ if ( $?DEBUG) echo "# Step 4: generate the global hyperlinks. The anchor filter"
 cat ${config_html}/cc_anchor_header ${new_tmp_path}/cc_anchor_rules > ${new_tmp_path}/cc_anchor_filter.yy
 # make uplink for images provided by the converter point into common gif dir
 # echo '"SRC=\"../cc_"[^"]*".gif\""    { fputs( "SRC=\"../gif", stdout); fputs( yytext+7, stdout);}' >> ${new_tmp_path}/cc_anchor_filter.yy
-foreach f ($in_files)
+foreach f ($in_files $ref_files)
     \cat ${new_tmp_path}/$f:h/cc_anchor_rules >> ${new_tmp_path}/cc_anchor_filter.yy
 end
 \cat ${config_html}/cc_anchor_footer >> ${new_tmp_path}/cc_anchor_filter.yy
@@ -512,7 +537,7 @@ ${CC} -o ${new_tmp_path}/cc_anchor_filter ${new_tmp_path}/cc_anchor_filter.c
 if (-r cc_anchor_filter.o) \rm cc_anchor_filter.o
 
 if ( ! $quiet_switch) echo -n ", applying global anchor filter"
-foreach f ($in_files)
+foreach f ($in_files $ref_files)
     # Filtering all HTML files globally.
     # ----------------------------------
     if ( $?DEBUG) echo "# Filtering all HTML files globally."
@@ -532,17 +557,40 @@ ${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/biblio.html > ${out_path}/bib
 
 if ( $?DEBUG) echo "# Converting the index."
 \mv ${new_tmp_path}/cc_index_body ${new_tmp_path}/cc_index_body.bak
-set options = "${header} -config ${config_path} -tmp ${new_tmp_path} -onlyheader cc_toc_footer cc_toc_header cc_index_footer cc_index_header"
-cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} >/dev/null
-\cat ${new_tmp_path}/cc_toc_header > ${new_tmp_path}/contents.html
-\cat ${new_tmp_path}/cc_index_body.bak >> ${new_tmp_path}/cc_index_body
 
-foreach f ($in_files)
+if ( $ref_part_switch ) then
+   set options = "${header} -config ${config_path} -tmp ${new_tmp_path} -onlyheader cc_toc_w_parts_footer cc_toc_w_parts_header cc_index_footer cc_index_header"
+   cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} >/dev/null
+   \cat ${new_tmp_path}/cc_toc_w_parts_header > ${new_tmp_path}/contents.html
+   \cat ${new_tmp_path}/cc_index_body.bak >> ${new_tmp_path}/cc_index_body
+
+else
+   set options = "${header} -config ${config_path} -tmp ${new_tmp_path} -onlyheader cc_toc_footer cc_toc_header cc_index_footer cc_index_header"
+   cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} >/dev/null
+   \cat ${new_tmp_path}/cc_toc_header > ${new_tmp_path}/contents.html
+   \cat ${new_tmp_path}/cc_index_body.bak >> ${new_tmp_path}/cc_index_body
+endif
+
+foreach f ($in_files $ref_files)
     \cat ${new_tmp_path}/$f:h/cc_index_body >> ${new_tmp_path}/cc_index_body
     \cat ${new_tmp_path}/$f:h/contents.html >> ${new_tmp_path}/contents.html
 end
 
-\cat ${new_tmp_path}/cc_toc_footer >> ${new_tmp_path}/contents.html
+if ( $ref_part_switch ) then
+   \cat ${new_tmp_path}/cc_toc_w_parts_footer >> ${new_tmp_path}/contents.html
+   sed 's/[<][\!]-- Start of new manual part --[>]/<\/OL><\!-- Start of new manual part -->/' ${new_tmp_path}/contents.html > ${new_tmp_path}/edited_contents.html
+   \mv ${new_tmp_path}/edited_contents.html ${new_tmp_path}/contents.html
+#   sed -e '{ 
+#/^[<][\!]-- End of cc_toc_w_parts_header --[>]/ { 
+#N 
+#s/[<]\/OL[>]// 
+#} 
+#}' ${new_tmp_path}/edited_contents.html > ${new_tmp_path}/new.html 
+#   \rm ${new_tmp_path}/edited_contents.html 
+else
+   \cat ${new_tmp_path}/cc_toc_footer >> ${new_tmp_path}/contents.html
+endif
+
 cc_index_sort -ger ${new_tmp_path}/cc_index_body | sed 's/[<][\!]sort[^\!]*[\!][>]//' >  ${new_tmp_path}/cc_index_sorted
 
 \cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/cc_index_sorted ${new_tmp_path}/cc_index_footer > ${new_tmp_path}/cc_index
@@ -555,7 +603,7 @@ ${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/contents.html | cc_remove_unw
 # -------------------------------------------------------
 if ( ! $quiet_switch) echo -n ", copying image files"
 
-if ( ! -d ${out_path}/gif) \mkdir ${out_path}/gif
+if ( ! -d ${out_path}/gif) \mkdir -p ${out_path}/gif
 set image_files = `cat ${out_path}/*.html ${out_path}/*/*.html | cc_extract_images | \sort | \uniq`
 foreach f ($image_files)
     if ( -r ${config_gif}/$f) then
@@ -573,6 +621,8 @@ echo "$prog_name "'$Revision$'" (c) Lutz Kettner"
 echo "Usage: $prog_name [<options>] <tex-files...>"
 echo "           -defaults           show the settings of the internal variables."
 echo "           -extended           extended organization among multiple dir's."
+echo "           -ref_manual         reference manual input files (requires -extended)."
+echo "                               All input files following this switch will"echo "                               be part of the reference manual"
 echo "           -show_main          put the result for the main file in main.html."
 echo "           -date     <text>    set a date for the manual."
 echo "           -release  <text>    set a release number for the manual."

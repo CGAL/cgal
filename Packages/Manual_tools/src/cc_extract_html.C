@@ -468,10 +468,7 @@ main( int argc, char **argv) {
     init_commandline_args();
     init_internal_macros();
     current_ostream  = 0;
-/*
-    if ( ! include_stack.push_tex_file( config_path + sty_filename))
-	exit(1);
-*/
+
     if (!include_stack.push_tex_file_w_input_dirs(config_path + sty_filename))
 	exit(1);
 
@@ -509,9 +506,12 @@ main( int argc, char **argv) {
 					   macroX( "\\lciAnchorFilename"));
     contents_stream = open_file_for_write( tmp_path +
 					   macroX( "\\lciContentsFilename"));
+/*
     if ( ! noheader_switch)
 	copy_and_filter_config_file( macroX( "\\lciTocHeader"), 
 				     *contents_stream);
+*/
+
     index_stream    = open_file_for_write( tmp_path +
 					   macroX( "\\lciIndexFilename"));
     if ( ! noheader_switch)
@@ -542,10 +542,6 @@ main( int argc, char **argv) {
 	    current_filename = main_filename;
 	    insertInternalGlobalMacro( "\\lciOutputFilename",current_filename);
 	}
-/*
-	if ( include_stack.push_tex_file( parameters[i]))
-	    yyparse();
-*/
 	if ( include_stack.push_tex_file_w_input_dirs( parameters[i]))
 	    yyparse();
 

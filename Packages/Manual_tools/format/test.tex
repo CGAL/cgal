@@ -64,7 +64,11 @@ class etc. The necessary include files.
 
 \ccAccessFunctions
 
-\ccPrecond Specific conditions can be stated as preconditions in any place.
+\ccPrecond Specific conditions to be checked at run time can be stated 
+           as preconditions in any place.
+
+\ccRequire Specific conditions to be checked at compile time 
+           can be stated as preconditions in any place.
 
 \ccCreation Constructors are defined and explained here.
 
@@ -510,6 +514,10 @@ We can even switch the alternative layout on:
 
 \ccGlobalFunction{Intersection_type CGAL_intersection_type(
       Polygon_2< R>, Polygon_2< R>);}
+
+\ccRequirements
+  The list of compile time requirements for this funciton should be put 
+  under this heading.
 
 \ccGlobalEnum{enum global_enum { A_couple_of_entries3,
     one_with_initialisation3 = 5, another3 = -3};}
@@ -1083,6 +1091,62 @@ The same for a global function and struct.
                                 not linked.}
   \ccGlue
   \ccStruct{struct GlobalY {};}{a global struct indexed and linked.}
+
+Try it for a reference environment.
+
+\ccFunction{
+     bool link6(const UnlinkedRefClassA& a, const B& b);}{%
+             UnlinkedRefClass is not linked.
+}
+
+\ccHtmlNoRefIndex\ccHtmlNoRefLinks
+\begin{ccRefClass}{UnlinkedRefClassA}
+\ccCreationVariable{a}
+
+A class \ccRefName\ with \verb+\ccHtmlNoRefIndex+ and
+\verb+\ccHtmlNoRefLinks+ to suppress cross linking:
+
+  \ccMethod{
+     bool link7(const UnlinkedRefClassA& a, const B& b);}{%
+             a method is never indexed.
+         }
+  \ccGlue
+  \ccStruct{struct LocalX {};}{a nested struct is not indexed.}
+\end{ccRefClass}
+
+And now try removing links from certain sections of the text.
+
+\begin{ccClass}{turn_off}
+
+\ccDefinition
+
+Class that creates unwanted links so we turn them off
+using \verb+\ccHtmlLinksOff+, \verb+\ccHtmlLinksOn+, and
+\verb+\ccHtmlNoLinksFrom+.
+
+A link to this \ccc{turn_off} should be here, but \ccHtmlLinksOff not
+to this \ccc{turn_off} nor this other \ccc{turn_off}\ccHtmlLinksOn as they
+are between \verb+\ccHtmlLinksOff+ and \verb+\ccHtmlLinksOn+ commands.
+However this \ccc{turn_off} link should be there.  This
+\ccHtmlNoLinksFrom{\ccc{turn_off} and this other \ccc{turn_off}}, which
+are inside the argument of a \verb+\ccHtmlNoLinksFrom+ command, should
+not be linked.
+
+\end{ccClass}
+
+\ccFunction{
+     bool turn_off(const A& a, const B& b);}{%
+             a function name that is linked.
+         }
+
+\ccHtmlLinksOff
+\ccFunction{
+   bool test_me(const turn_off& T);}{%
+      The \ccc{turn_offs} here should not be linked
+   }
+\ccHtmlLinksOn
+
+
 
 
 % ----------------------------------------------------------------------
@@ -1825,17 +1889,53 @@ A nice class herin.
 
 \begin{ccRefClass}{Circulator_from_container<C>}
 
-This is a ref class and should produce an index entry without the template
-parameter...
+This is a ref class \ccRefName\ and should produce an index entry 
+without the template parameter...
 \end{ccRefClass}
 
 \begin{ccRefConcept}{Concept}
+The reference concept \ccRefName\ is talked about here...
+\end{ccRefConcept}
+
+\begin{ccRefConcept}[Scope::]{Concept}
 A reference concept is talked about here...
+
+\ccTypes
+\ccNestedType{Vertex}{is the scope prefix correct here?}
+
 \end{ccRefConcept}
 
 \begin{ccRefConcept}{Concept_name}
-A reference concept with an underscore in the name is talked about here...
+Reference concept \ccRefName, which has an underscore in its name is 
+talked about here...
 \end{ccRefConcept}
+
+\begin{ccRefConcept}{Concept<Template_parameter>}
+
+\ccRefName\ is a templated concept.  The concept name should still be in
+the default font, but there shouldn't be any problems with the template
+parameter name.  The index entry for this should not include the template
+parameter.
+
+\ccTypes
+
+\ccNestedType{Type1}{some type}
+\ccNestedType{Type2}{some other type}
+
+\ccCreationVariable{tc}
+\ccPredicates
+
+\ccMethod{void do_nothing(T& t);}{}
+
+\end{ccRefConcept}
+
+\begin{ccRefConstant}{GLOBAL}
+The constant \ccRefName\ is talked about there
+\end{ccRefConstant}
+
+\begin{ccRefConstant}[Concept::]{GLOBAL}
+The constant \ccRefScope\ccRefName\ is talked about there
+\end{ccRefConstant}
 
 \begin{ccRefEnum}[Class::]{Enum}
 A reference enumeration is talked about here...
@@ -1852,6 +1952,22 @@ A reference function is talked about here...
 \begin{ccRefFunction}{Function}
 A reference function is talked about here...
 \end{ccRefFunction}
+
+\begin{ccRefFunctionObjectClass}{FOClass}
+Function object class \ccRefName\ is talked about here...
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}[Kernel::]{FOConcept}
+Function object class \ccRefScope\ccRefName\ is talked about here...
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectConcept}{FOConcept}
+Function object concept \ccRefName\ is talked about here...
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefFunctionObjectConcept}[Kernel::]{FOConcept}
+Function object concept \ccRefScope\ccRefName\ is talked about here...
+\end{ccRefFunctionObjectConcept}
 
 \begin{ccRefVariable}[Class::]{Variable}
 A reference variable is talked about here...
@@ -1877,8 +1993,35 @@ Some function object concept or other.  Is the ``Kernel'' prefix there?
 Some function object class or other.
 \end{ccRefFunctionObjectClass}
 
-\ccRefIdfierPage{Macro} \\
+\ccRefIdfierPage{Macro} 
+
+Setting \verb|\ccRefPageFill| to \verb|\hfill|
+
+\renewcommand{\ccRefPageFill}{\hfill}
 \ccRefConceptPage{Concept_name}
+
+\begin{ccRefConcept}{HDS<T,I,A>}
+
+This page number should be with dot fill at the edge of the page
+\renewcommand{\ccRefPageFill}{\dotfill}
+
+\ccRefIdfierPage{HDS<T,I,A>} \\
+\ccRefConceptPage{HDS<T,I,A>} \\
+
+This page number should be (pg. \#):
+
+\gdef\ccRefPageNumAtMargin{\ccFalse}
+\ccRefIdfierPage{HDS<T,I,A>} \\
+\ccRefConceptPage{HDS<T,I,A>} \\
+
+This page number should again be with dot fill at the edge of the page
+
+\gdef\ccRefPageNumAtMargin{\ccTrue}
+\ccRefIdfierPage{HDS<T,I,A>} \\
+\ccRefConceptPage{HDS<T,I,A>} \\
+
+\end{ccRefConcept}
+
 
 % ----------------------------------------------------------------------
 \bibliographystyle{plain}

@@ -321,6 +321,15 @@ declarations that come between the commands
 \verb|\ccHtmlNoLinks| 
 & no cross linking for the following declaration
 \ccIndexEntry{HtmlNoLinks}\\ \hline
+
+\verb|\ccHtmlNoRefIndex| 
+& no indexing of the identifier of the following reference page
+\ccIndexEntry{HtmlNoRefIndex}\\ \hline
+
+\verb|\ccHtmlNoRefLinks| 
+& no cross linking for the identifier of the following reference page
+\ccIndexEntry{HtmlNoRefLinks}\\ \hline
+
 \verb|\begin{ccHtmlOnly}| & \\
 \VarText{HTML text}       & \VarText{HTML text} is ignored by \LaTeX\
                             and included as raw HTML by 
@@ -401,6 +410,11 @@ appear in the manual
 & \ccModifiers
 \ccIndexEntry{Modifiers} \\ \hline
 
+\verb|\ccMultiplePartsToc| 
+& tells the HTML converter to format the table of contents for a manuals 
+  with multiple \verb|\part| commands.
+\ccIndexEntry{MultiplePartsToc} \\ \hline
+
 &\verb+\begin{ccClass}{Gnu<T>}+ \\
 \verb|\ccNestedType{|\VarText{declaration}\verb|}{|\VarText{comment}\verb|}|  
 &\verb+\ccNestedType{ Stampede}{comment}+ \\
@@ -412,6 +426,10 @@ appear in the manual
 if true, each reference manual environment starts a new page and tabs 
 will mark the edges of these pages 
 \ccIndexEntry{NewRefManualStyle} \\ \hline
+
+\verb|\ccNumberChaptersByPart| 
+& After each \verb+\part+ command start numbering chapters at 1 again.
+\ccIndexEntry{NumberChaptersByPart} \\ \hline
 
 \verb|\ccOpenAngle| 
 & \leavevmode\ccOpenAngle
@@ -577,6 +595,10 @@ margin and ``page $x$'' on the right margin, where $x$ is the page on which
 the reference page for \VarText{identifier} begins
 \ccIndexEntry{RefIdfierPage} \\ \hline
 
+\verb|\ccRefines| 
+& \ccRefines
+\ccIndexEntry{Refines} \\ \hline
+
 \verb|\ccRefLabel{|\VarText{label name}\verb|}| 
 & defines a label called \VarText{label name} that can be referred to by
 \verb|\ccRefIdfierPage| or \verb|\ccRefPage|
@@ -607,18 +629,32 @@ environmnet, formatted using \verb|\ccc|
 \verb|ccRef*| environment
 \ccIndexEntry{RefPageBegin}\\ \hline
 
-%\verb|\gdef\ccRefPageBreak{|\VarText{bool}\verb|}| 
-%& \VarText{bool} is either \verb|\ccTrue| (default) or \verb|\ccFalse| 
-% if true, causes a page break at the beginning and end of each 
-%\verb|ccRef*| environment when \verb|\ccNewRefManualStyle| is also
-%set to \verb|\ccTrue|;  if false, no page breaks will happen until 
-%\verb|\ccRefPageBreak| is set to true.
-%\ccIndexEntry{RefPageBreak}\\ \hline
+\verb|\gdef\ccRefPageBreak{|\VarText{bool}\verb|}| 
+& \VarText{bool} is either \verb|\ccTrue| (default) or \verb|\ccFalse| 
+ if true, causes a page break at the beginning and end of each 
+\verb|ccRef*| environment when \verb|\ccNewRefManualStyle| is also
+set to \verb|\ccTrue|;  if false, no page breaks will happen until 
+\verb|\ccRefPageBreak| is set to true.
+\ccIndexEntry{RefPageBreak}\\ \hline
 
 \verb|\renewcommand\ccRefPageEnd{|\VarText{cmd}\verb|}| 
 & causes \VarText{cmd} to be executed at the end of each
 \verb|ccRef*| environment
 \ccIndexEntry{RefPageEnd}\\ \hline
+
+\verb|\renewcommand\ccRefPageFill{|\VarText{cmd}\verb|}| 
+& causes \VarText{cmd} to be executed to fill the space between an identifier
+and a page number in the commands \verb|\ccRefIdfierPage| and 
+\verb|\ccRefConceptPage|.  Default command is \verb|\dotfill|.
+\ccIndexEntry{RefPageFill}\\ \hline
+
+\verb|\gdef\ccRefPageNumAtMargin{|\VarText{bool}\verb|}| 
+& If this is set to \verb|\ccTrue| (default), the page numbers produced
+  by \verb|\ccRefIdfierPage| and \verb|\ccRefConceptPage| appear at the 
+  right margin with the space in between filled using 
+  \verb|\ccRefPageFill|.  When set to \verb|\ccFalse|, the page numbers 
+  appear directly after the name using the following format ``(pg. \#)''.
+\ccIndexEntry{RefPageNumAtMargin}\\ \hline
 
 \verb|\ccRefScope| 
 & contains the text given as the optional argument to the current \verb|\ccRef*|
@@ -645,6 +681,12 @@ saved by the last use of \verb|\ccSaveThreeColumns|.
 &restores the value of \verb|\ccConstructorFirst| 
 saved by the last use of \verb|\ccSaveTwoColumns|.
 \ccIndexEntry{RestoreTwoColumns} \\ \hline
+
+\verb|\ccRequire| & \ccRequire
+\ccIndexEntry{Require} \\ \hline
+
+\verb|\ccRequirements| & \ccRequirements
+\ccIndexEntry{Requirements} \\ \hline
 
 \verb|\ccRevision| 
 &\ccRevision
@@ -921,6 +963,13 @@ formatted using \verb|\ccc|
 & \leda
 \Mindex{leda} \\ \hline
 
+\verb|\listofrefpages| 
+& produces a file with extension \texttt{.ref} that contains a list of
+  all the reference pages.  When \LaTeX\ is run again this list will
+  be inserted at the place where the command appears.  Sort the \texttt{.ref}
+  file before the second run of \LaTeX\ to get a sorted list of 
+  reference pages.
+\Mindex{listofrefpages} \\ \hline
 
 \verb|\N| 
 & \N

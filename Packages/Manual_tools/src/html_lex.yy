@@ -811,6 +811,22 @@ number          {digit}+
 		    return CHAPTER;
 }
 
+ /* Part      */
+ /* ------------ */
+<INITIAL,AllttMode>[\\]lciPart[*]?{seps}  {
+		    return PART;
+}
+
+ /* start of document      */
+ /* ---------------------- */
+<INITIAL>[\\]lciStartToc  {
+    if ( ! noheader_switch)
+        copy_and_filter_config_file( macroX( "\\lciTocHeader"),
+                                     *contents_stream);
+    break;
+}
+
+
  /* Different keywords from the manual style triggering C++ formatting */
  /* ------------------------------------------------------------------ */
 <INITIAL,AllttMode>[\\]begin{seps}[\{]{seps}lciClass{seps}[\}]   {

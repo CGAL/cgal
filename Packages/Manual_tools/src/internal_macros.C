@@ -183,11 +183,14 @@ string handleHtmlCrossLink( string key, bool tmpl_class) {
 
 static int next_class_link_counter = 0;
 static int next_class_link_last    = 0;
+static int chapter_num = 0;
 
 string chapter_title;
+string part_title = "";
 
 void handleChapter(  const Buffer_list& T) {
     next_class_link_last = 0;
+    chapter_num++;
     //string new_main_filename = macroX( "\\lciInputPath")
     //                         + macroX( "\\lciChapterPrefix")
     //                         + macroX( "\\lciInputFilenameBase")
@@ -223,6 +226,25 @@ void handleChapter(  const Buffer_list& T) {
     // table of contents
     *contents_stream << "    <LI> <A HREF=\"" << main_filename 
 		     << "\">" << chapter_title << "</A>" << endl;
+}
+
+void handlePart(  const Buffer_list& T) {
+
+    if (!part_title.empty()) // end previous part 
+    {
+       *contents_stream << "</OL>"  << endl;
+       *contents_stream << "<!-- End of manual part -->"  << endl;
+    }
+    
+    part_title = string( text_block_to_string( T));
+
+    // add new part title to table of contents
+    *contents_stream << "<!-- Start of new manual part -->"  << endl;
+    *contents_stream << "<H3>" << part_title << "</H3>" << endl; 
+    if ( macroIsTrue( "\\lciIfNumberChaptersByPart") )
+       *contents_stream << "<OL>" << endl; 
+    else 
+       *contents_stream << "<OL START=" << chapter_num+1 << ">" << endl;
 }
 
 void handleBiblio(  const Buffer_list& T) {
@@ -291,7 +313,8 @@ void handleClassFileEnd( void) {
 
 void handleClassEnvironment() {
     string ref_scope_name = macroX("\\ccPureRefScope");
-    template_class_name = ref_scope_name + macroX("\\ccPureClassTemplateName");
+//    template_class_name = ref_scope_name + macroX("\\ccPureClassTemplateName");
+    template_class_name = macroX("\\ccPureClassTemplateName");
     string formatted_template_class_name = 
 	convert_C_to_html( template_class_name);
     class_name = macroX( "\\ccPureClassName");

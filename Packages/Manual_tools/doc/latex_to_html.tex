@@ -321,7 +321,7 @@ recommendations follow from these conventions.
     No two classes, concepts, etc., of the same name in one manual.
 \end{itemize}
 
-Section~\ref{sectionHtmlExtended} describes a new, extended conversion
+Section~\ref{sectionHtmlExtended} describes an extended conversion
 model using multiple directories to overcome the filename problem.
 Section~\ref{sectionHTMLsupport} explains how the file generation of
 reference pages and class environments can be customized with
@@ -392,8 +392,10 @@ Available command line options for {\tt cc\_manual\_to\_html} are:
 
 \begin{tabular}{ll}
     {\tt -defaults}        & show the settings of the internal variables.\\
-    {\tt -extended}        & new extended conversion model, see
+    {\tt -extended}        & extended conversion model, see
                                 Section~\ref{sectionHtmlExtended} \\
+    {\tt -ref\_manual}     & for manuals split into user and reference parts, 
+                               see Section~\ref{sectionHtmlExtended} \\
     {\tt -show\_main}      & print the translation result for the main
                                file to stdout.\\
     {\tt -date <text>}     & set a date for the manual. Default: system date.\\
@@ -484,7 +486,7 @@ current directory).
 \index{subdirectories}\index{multiple directories}
 
 The restriction to keep all files in one directory is weakened with
-the new capabilities of the {\tt cc\_manual\_to\_html} script. Use the
+the capabilities of the {\tt cc\_manual\_to\_html} script. Use the
 {\tt -extended} option to activate it. However, the actual converter
 {\tt cc\_extract\_html} has not changed and does not support
 subdirectories. Similar to \TeX, subdirectories in \verb+\input+ and
@@ -508,18 +510,30 @@ processing the subdirectory.  This allows different subdirectories
 to have files with the same name. 
 \index{LATEX_CONV_INPUTS@{\tt LATEX\_CONV\_INPUTS}}
 
-The file structure proposed here looks as follows. The manual is split
-up into different parts, each part in its own subdirectory. Each part
-could be converted for its own using the old conversion mode, e.g., no
+The file structure proposed here is as follows. The manual is split
+into different parts, each part in its own subdirectory. Each part
+could be converted on its own using the non-extended conversion mode, e.g., no
 additional subdirectories. Each part has its own main \LaTeX\ file
 that includes all other files of this part. (It might be necessary to
 have a separate main file to create the manual using \LaTeX.) The {\tt
   cc\_manual\_to\_html} script is called in the common parent
-directory with all main files from all parts at once. The main files
-are given with their relative path. The bibliography files must be
+directory with all main files from all parts at once.  The main files
+are given with their relative paths. The bibliography files must be
 supplied to the script using the {\tt -bbl} and {\tt -aux} options
 (instead of giving the {\tt *.bbl} file directly as a \LaTeX\ file).
-The script converts each part independently and generates the
+
+For manuals with their source files split into subdirectories in this
+way and for which one set of subdirectories corresponds to a user manual
+and the other set corresonds to a reference manual, the {\tt -ref\_manual}
+option should be used in conjunction with {\tt -extended}.  This will 
+cause the two manuals to have a common table of contents and to be
+easily hyperlinked together.  All input files following the {\tt -ref\_manual}
+option will be considered part of the reference manual.  Thus, the first 
+input file following this option should contain the 
+{\texttt \\part\{<part title>\}} command giving the title of the reference 
+manual.\index{ref_manual@{\tt ref\_manual}}\index{part@{\tt \protect$\backslash$part}}. 
+
+The script converts each subdirectory independently and generates the
 automatic hyper-links locally. It then collects the table of contents,
 index files, and hyper-linking rules globally and applies the
 hyper-linking rules once again on all files. This way, local classes
@@ -539,12 +553,15 @@ auxiliary files).
 
 \index{example} 
 In the source code distribution is an example manual with three parts
-in the directory {\tt Tools/src/test\_html/} which can be converted
+in the directory {\tt Tools/src/test\_html/extended} which can be converted
 with the script {\tt convert} located in the same directory. This
 script calls the {\tt cc\_manual\_to\_html} converter with the
-appropriate parameters for the example.
-
-
+appropriate parameters for the example.  There is a second example in
+{\tt Tools/example/test\_html/extended\_with\_ref} that shows the conversion
+of a user manual and reference manual using the {\tt -ref\_manual} 
+option.  Again, the script {\tt convert} in this directory does the
+conversion.  Further examples can be found in the \texttt{Tools/examples}
+directory.
 
 % -------------------------------------------------------
 \section{Conversion Capabilities and Unsupported Features}

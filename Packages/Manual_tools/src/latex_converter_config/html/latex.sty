@@ -158,7 +158,7 @@
 % |
 % ###########################################################################
 
-\newenvironment{document}{}{\lciEndOfConversion\gdef{\lciEndOfConversion}{}}
+\newenvironment{document}{\lciStartToc}{\lciEndOfConversion\gdef{\lciEndOfConversion}{}}
 
 %% print remaining footnotes at the end of the conversion
 \lciPrependToGlobalDef{\lciEndOfConversion}{\lciPrintFootnotes}
@@ -943,6 +943,11 @@
 % |
 % ###########################################################################
 
+\newcommand{\part}[1]{\lciPrintFootnotes\lciResetFootnotes%
+    \gdef{\lciIfHtmlLinks}{\lcTrue}%
+    \gdef{\lciIfHtmlIndex}{\lcTrue}%
+    \lciPart{#1}}
+
 \newcommand{\chapter}[1]{\lciPrintFootnotes\lciResetFootnotes%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
@@ -993,9 +998,12 @@
 
 \newcommand{\appendix}{}
 
+\newcommand{\minitoc}{}
 \newcommand{\tableofcontents}{}
 \newcommand{\listoffigures}{}
 \newcommand{\listoftables}{}
+%\newcommand{\listofexamples}{}
+\newcommand{\listofrefpages}{}
 
 \gdef\thesecnumdepth{2}  %% yet not supported
 \gdef\thetocdepth{2}     %% yet not supported

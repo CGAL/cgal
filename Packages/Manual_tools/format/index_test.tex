@@ -1746,6 +1746,19 @@ types\ccIndexClassTypes
 
 \begin{ccRefConcept}{Concept}
 A reference concept is talked about here...
+
+The class name should not appear as an argument in this constructor
+
+\ccCreation
+\ccConstructor{Concept(Concept& c);}{copy constructor}
+
+\ccOperations
+
+\ccMethod{C operator=(C c);}{Concept name should appear in the concept font
+                          in the index}
+
+\ccMethod{void foo(C c);}{Concept name should appear in the concept font
+                     in the index}
 \pagebreak
 \end{ccRefConcept}
 

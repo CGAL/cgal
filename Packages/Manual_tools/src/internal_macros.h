@@ -22,6 +22,7 @@
 void init_internal_macros();
 
 void handleChapter(  const Buffer_list& T);
+void handlePart(  const Buffer_list& T);
 void handleBiblio(  const Buffer_list& T);
 
 void handleClassEnvironment();
