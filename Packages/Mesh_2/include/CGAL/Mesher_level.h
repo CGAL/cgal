@@ -44,6 +44,11 @@ struct Null_mesh_visitor {
   void after_no_insertion(E, P, Z) const {}
 };
 
+template <typename Previous>
+class Generic_visitor 
+{
+}; // end class Generic_visitor
+
 struct Null_mesher_level {
 
   template <typename Visitor>
@@ -136,17 +141,16 @@ public:
   /** \name FUNCTIONS IMPLEMENTED IN THE CLASS \c Derived */
 
   /**  Access to the triangulation */
-  //@{
   Triangulation& triangulation()
   {
     return derived().triangulation_ref_impl();
   }
 
+  /**  Access to the triangulation */
   const Triangulation& triangulation() const
   {
     return derived().triangulation_ref_impl();
   }
-  //@}
 
   Vertex_handle insert(Point p, Zone& z)
   {

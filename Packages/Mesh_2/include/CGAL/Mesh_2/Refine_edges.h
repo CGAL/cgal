@@ -41,34 +41,6 @@ namespace CGAL {
 
 namespace Mesh_2 {
 
-  template <typename Tr>
-  class Refine_edges_triangulation_mesher_level_traits_2
-  {
-  public:
-    typedef Tr Triangulation;
-    typedef typename Tr::Point Point;
-    typedef typename Tr::Face_handle Face_handle;
-    typedef typename Tr::Edge Edge;
-    typedef typename Tr::Vertex_handle Vertex_handle;
-    typedef typename Tr::Locate_type Locate_type;
-
-    typedef Triangulation_mesher_level_traits_2<Tr> Std_traits;
-
-    typedef typename Std_traits::Zone Zone;
-
-  private:
-    Edge edge;
-
-  public:
-    void set_edge(const Edge e)
-    {
-      edge = e;
-    }
-
-
-    
-  }; // end Refine_edges_triangulation_mesher_level_traits_2
-
   namespace details {
 
     /** This class defines several auxiliary types for \c Refine_edges. */
@@ -298,10 +270,9 @@ public:
   typedef typename Tr::Point Point;
   typedef typename Tr::Geom_traits Geom_traits;
 
-  typedef typename Triangulation_mesher_level_traits_2<Tr>::Zone Zone;
+  typedef Triangulation_mesher_level_traits_2<Tr> Triangulation_traits;
 
-  typedef Refine_edges_triangulation_mesher_level_traits_2<Tr>
-    Triangulation_traits;
+  typedef typename Triangulation_traits::Zone Zone;
 
   typedef typename details::Refine_edges_base_types<Tr>::Constrained_edge
                                Constrained_edge;
@@ -630,8 +601,7 @@ public:  /** \name DEBUGGING FUNCTIONS */
     template <typename Tr, typename Self>
     struct Refine_edges_types
     {
-      typedef Refine_edges_triangulation_mesher_level_traits_2<Tr>
-        Triangulation_traits;
+      typedef Triangulation_mesher_level_traits_2<Tr> Triangulation_traits;
 
       typedef Mesher_level <
 	Tr,

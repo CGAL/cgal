@@ -140,7 +140,7 @@ public:
     return triangulation_ref_impl().circumcenter(f);
   }
 
-  /** Do nothing */
+  /** \todo ?? */
   void before_conflicts_impl(const Face_handle&, const Point&)
   { /// @todo modularize
     previous.set_imperative_refinement(current_badness == 

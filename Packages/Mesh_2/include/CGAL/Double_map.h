@@ -28,7 +28,7 @@
 namespace CGAL {
 
 template <class _Key, class _Data, class _Direct_order = std::less<_Key>, 
-	  class _Reverse_order = std::less<_Data> >
+          class _Reverse_order = std::less<_Data> >
 class Double_map
 {
 public:
@@ -37,15 +37,16 @@ public:
   typedef _Direct_order Direct_order;
   typedef _Reverse_order Reverse_order;
   
-  typedef std::map <Key, Data, Direct_order> Direct_func;
   typedef std::multimap <Data, Key, Reverse_order> Reverse_func;
+  typedef typename Reverse_func::iterator reverse_iterator;
+  typedef std::map <Key, reverse_iterator, Direct_order> Direct_func;
 
-  typedef std::pair<Key, Data> Direct_entry;
+  typedef std::pair<Key, reverse_iterator> Direct_entry;
   typedef std::pair<Data, Key> Reverse_entry;
 
   typedef typename Direct_func::size_type size_type;
 
-  typedef typename Reverse_func::iterator reverse_iterator;
+
   typedef typename Direct_func::iterator direct_iterator;
   typedef reverse_iterator iterator;
   typedef typename Direct_func::const_iterator direct_const_iterator;
@@ -88,13 +89,14 @@ public :
   // Assignation
   bool insert(const Key& k, const Data& d)
     {
-      std::pair<direct_iterator, bool> 
-	direct_result = direct_func.insert(Direct_entry(k, d));
+      direct_iterator direct_hint = direct_func.find(k);
 
-      if (direct_result.second != true)
-	return false;
-
-      reverse_func.insert(Reverse_entry(d, k));
+      if(direct_hint != direct_func.end())
+        return false;
+      
+      reverse_iterator reverse_it = reverse_func.insert(Reverse_entry(d, k));
+      
+      direct_func.insert(direct_hint, Direct_entry(k, reverse_it));
 
       CGAL_assertion(is_valid());
       return(true);
@@ -115,6 +117,7 @@ public :
       reverse_iterator rit = reverse_func.begin();
       direct_iterator pos = direct_func.find(rit->second);
       assert(pos != direct_func.end());
+      assert(pos->second == rit);
       
       direct_func.erase(pos);
       reverse_func.erase(rit);
@@ -131,22 +134,12 @@ public :
     return direct_func.end();
   }
 
-  class Second_is {
-    Key k;
-  public:
-    Second_is(const Key& _k): k(_k) {};
-    bool operator()(const Reverse_entry& p) const 
-      {
-	return p.second == k;
-      }
-  };
-
   void dump_direct_func(std::ostream& out)
     {
       for(typename Direct_func::iterator it = direct_func.begin();
 	  it != direct_func.end();
 	  ++it)
-	out << it->second << " " 
+	out << it->second->first << " " 
 	    << "("
 	    << it->first->vertex(0)->point() << ", "
 	    << it->first->vertex(1)->point() << ", "
@@ -174,19 +167,16 @@ void
 Double_map<_Key, _Data, _Direct_order, _Reverse_order>::
 erase(Key& k)
 {
+  CGAL_assertion(is_valid());
   direct_iterator pos = direct_func.find(k);
   if (pos == direct_func.end())
     return;
   else
     {
-      const Data& d = pos->second;
-
-      reverse_iterator lb = reverse_func.lower_bound(d);
-      reverse_iterator ub = reverse_func.upper_bound(d);
-
       direct_func.erase(pos);
-      reverse_func.erase(std::find_if(lb, ub, Second_is(k)));
+      reverse_func.erase(pos->second);
     }
+
   CGAL_assertion(is_valid());
 }
 

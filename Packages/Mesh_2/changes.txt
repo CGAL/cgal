@@ -1,3 +1,6 @@
+8 March 2005 Laurent Rineau
+- new Double_map.h
+
 28 February 2005 Laurent Rineau
 - Added macro CGAL_MESH_2_DEBUG_DRAW and Debug_layer.h in mesh_demo, to debug
 calls to widget->redraw(). Not activated by default.
