@@ -1,3 +1,5 @@
+2.3.9  bug fix
+
 2.3.8  and still more handle()s and *(& removed
 
 2.3.5  Vertex::handle() no longer exists
