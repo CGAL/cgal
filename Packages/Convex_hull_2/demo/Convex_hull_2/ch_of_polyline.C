@@ -21,9 +21,7 @@
 // ============================================================================
  
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/ch_melkman.C>
 #ifdef CGAL_USE_LEDA
@@ -33,7 +31,8 @@
 #include <CGAL/IO/polygonal_2.h>
 #include <CGAL/IO/Ostream_iterator.h>
 
-typedef   CGAL::Point_2<CGAL::Cartesian<double> >        Point_2;
+typedef  CGAL::Cartesian<double>      K;
+typedef  K::Point_2                   Point_2;
 
 CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(Point_2*)
 
