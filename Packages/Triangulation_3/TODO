@@ -12,6 +12,7 @@ Doc
 - hierarchie
 - traits class
 - ameliorer user manual
+- verifier requirements sur la cell_base pour output/input stream 
 - revoir les anciennes corrections de JF Dufourd
 
 TDS
