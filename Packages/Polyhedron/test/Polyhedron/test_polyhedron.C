@@ -144,6 +144,62 @@ Build_tetrahedron_2<HDS>:: operator()( HDS& target) {
     }
 }
 
+// A polyhedron modifier that creates a tetrahedron, but using the
+// new methods and tests in the incremental builder.
+template < class HDS >
+class Build_tetrahedron_3 : public CGAL::Modifier_base<HDS> {
+public:
+    Build_tetrahedron_3() {}
+        // creates the modifier.
+    void operator()( HDS& target);
+        // builds a tetrahedron.
+        // Postcondition: `target' is a valid polyhedral surface.
+};
+
+template < class HDS >
+void
+Build_tetrahedron_3<HDS>:: operator()( HDS& target) {
+    CGAL::Polyhedron_incremental_builder_3<HDS> B( target, true);
+    B.begin_surface( 6, 4, 12); // two vertices are removed later
+    // Point coordinates suitable for integer coordinates.
+    typedef typename HDS::Vertex_handle Vertex_handle;
+    typedef typename HDS::Vertex        Vertex;
+    typedef typename Vertex::Point      Point;
+    Vertex_handle v0 = B.add_vertex( Point( 0, 0, 1));
+    Vertex_handle v1 = B.add_vertex( Point( 1, 1, 1));
+    Vertex_handle v2 = B.add_vertex( Point( 0, 1, 0));
+    Vertex_handle v3 = B.add_vertex( Point( 1, 0, 0));
+    B.add_vertex( Point( 2, 3, 2)); // this vertex is removed later
+    B.add_vertex( Point( 2, 2, 2)); // this vertex is removed later
+    CGAL_assertion( v0 == B.vertex(0));
+    CGAL_assertion( v1 == B.vertex(1));
+    CGAL_assertion( v2 == B.vertex(2));
+    CGAL_assertion( v3 == B.vertex(3));
+    std::size_t t1[] = { 1, 3, 0};
+    CGAL_assertion( B.test_facet( t1, t1+3));
+    B.add_facet( t1, t1+3);
+    CGAL_assertion( ! B.test_facet( t1, t1+3));
+    std::size_t t2[] = { 2, 1, 0};
+    CGAL_assertion( B.test_facet( t2, t2+3));
+    B.add_facet( t2, t2+3);
+    CGAL_assertion( ! B.test_facet( t2, t2+3));
+    std::size_t t3[] = { 3, 2, 0};
+    CGAL_assertion( B.test_facet( t3, t3+3));
+    B.add_facet( t3, t3+3);
+    CGAL_assertion( ! B.test_facet( t3, t3+3));
+    std::size_t t4[] = { 2, 3, 1};
+    CGAL_assertion( B.test_facet( t4, t4+3));
+    B.add_facet( t4, t4+3);
+    CGAL_assertion( ! B.test_facet( t4, t4+3));
+    std::size_t t5[] = { 2, 4, 5}; // non-manifold at vertex
+    CGAL_assertion( ! B.test_facet( t5, t5+3));
+    bool removed = B.remove_unconnected_vertices();
+    CGAL_assertion( removed);
+    B.end_surface();
+}
+
+
+
 
 void test_Polyhedron() {
     typedef CGAL::Cartesian<double>                     Kernel;
@@ -345,6 +401,14 @@ void test_Polyhedron() {
         CGAL_assertion( P2.empty());
         Build_tetrahedron_2<HDS> modifier2;
         P2.delegate( modifier2);
+        CGAL_assertion( P2.is_tetrahedron(P2.halfedges_begin()));
+        P2.normalize_border();
+        CGAL_assertion( P2.is_valid( false, 1));
+
+        P2.clear();
+        CGAL_assertion( P2.empty());
+        Build_tetrahedron_3<HDS> modifier3;
+        P2.delegate( modifier3);
         CGAL_assertion( P2.is_tetrahedron(P2.halfedges_begin()));
         P2.normalize_border();
         CGAL_assertion( P2.is_valid( false, 1));
