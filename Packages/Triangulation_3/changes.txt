@@ -1,2 +1,6 @@
+Version 1.1 (24 June 99)
+Bug fixes in memory management (too much cleaning...)
+testsuite was failing on Linux
+
 Version 1.0 (23 June 99)
 - Initial release !!!

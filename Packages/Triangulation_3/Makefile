@@ -57,6 +57,7 @@ $(Package).tar.gz:
 	--exclude=Regular_triangulation_geom_traits_3.h \
 	--exclude=Weighted_point_3.h \
 	--exclude=TODO \
+	--exclude=.nfs*\
 	version description.txt changes.txt \
 	demo include doc_tex doc_ps test examples
 
