@@ -841,13 +841,12 @@ set_compiler_flags()
 	    ;;
 	*mwcc.exe*|*MWCC*)
 	    #### settings Metroworks C++ compiler 
-	    ADDITIONAL_CXXFLAGS="-lang c++"
+	    ADDITIONAL_CXXFLAGS="-gccincludes -lang c++ -msgstyle gcc "
 	    CGAL_LIB_CXXFLAGS=""
 	    CGAL_LIB_CREATE=""
 	    CGAL_OBJ_PREFIX="+"
 	    WINDOW_DIR=""
 	    XLIBS=""
-	    WINDOWS_COMPILER="y"
 	    SUFFIX_LIST=".obj .exe"
 	    OBJ_EXT=".obj"
 	    LIB_SUFFIX=".lib"
@@ -1679,6 +1678,7 @@ EOF4
     case $1 in
   	*bcc32.exe*|*BCC32*) EXE_OPT="-P -e";;
 	*CL.*|*cl.*)         EXE_OPT="-TP -GR -GX -nologo -Fp";;
+        *mwcc.exe*|*MWCC*)   EXE_OPT="-gccincludes -lang c++ -msgstyle gcc -o ";
     esac
     _flags="${TMP_CXX_FILE}.C ${EXE_OPT}${TMP_CXX_FILE}"
 
@@ -1941,6 +1941,7 @@ search_for_compilers()
 	    _search_compiler bcc32.exe bcc32.exe ''
 	    _search_compiler CL.EXE CL.EXE ''
 	    _search_compiler gcc g++ ''
+	    _search_compiler mwcc.exe mwcc.exe ''
 	    ;;
 	*)
 	    _search_compiler gcc g++ ''
