@@ -463,7 +463,7 @@ OutputIterator partition_y_monotone_2(InputIterator first,
                     Indirect_edge_compare<Circulator, Traits> > Tree;
    Tree tree;
 
-   typename Circulator_list<Circulator>::iterator it = circulators.begin();
+   std::vector<Circulator>::iterator it = circulators.begin();
    for (; it != circulators.end(); it++) {
       switch (partition_y_mono_vertex_type(*it, traits)) 
       {
