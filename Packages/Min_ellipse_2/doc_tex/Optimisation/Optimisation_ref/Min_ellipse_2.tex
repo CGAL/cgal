@@ -1,0 +1,195 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Section: 2D Smallest Enclosing Ellipse
+% -----------------------------------------------------------------------------
+% source: Min_ellipse_2.tex
+% author: Sven Schönherr (sven@inf.fu-berlin.de)
+% $Id$
+% =============================================================================
+ 
+\begin{ccClassTemplate}{CGAL_Min_ellipse_2<R>}
+\ccSection{2D Smallest Enclosing Ellipse}
+
+\ccDefinition
+
+An object of the class \ccClassTemplateName\ is the unique smallest
+enclosing ellipse of a set of points in two-dimensional euclidean
+space $\E_2$. For point sets $P$ and $B$ we denote by
+$\textit{me}(P,B)$ the smallest ellipse that contains all points of
+$P$ and has (at least) the points of $B$ on the boundary. Note that
+$\textit{me}(P,B)$ can be degenerate, i.e.\ $\textit{me}(P,B) =
+\emptyset$ if $P \cup B = \emptyset$, $\textit{me}(P,B) = \{p\}$ if $P
+\cup B = p$, and $\textit{me}(P,B) = \{ (1-\lambda)p + \lambda q \mid
+0 \leq \lambda \leq 1 \}$ if $P \cup B = \{p,q\}$. If $B \neq
+\emptyset$ then $\textit{me}(P,B)$ may be undefined, i.e.\ there is no
+ellipse containing $P$ with $B$ on the boundary.
+
+The smallest enclosing ellipse of a point set $P$ is determined by at
+most five points on the boundary. A minimal subset $S$ of $P$ with
+$\textit{me}(S,\emptyset) = \textit{me}(P,\emptyset)$ is called a {\em
+support set}, the points in $S$ are the {\em support points}.  Note
+that in general the set $S$ is not unique.
+
+The underlying algorithm can cope with all kinds of input, e.g.\ one
+or both of the point sets $P$ or $B$ may be empty, $B$ may contain
+more than five points, or some points may occure more than once in $P$
+or $B$. The algorithm computes a support set $S$, which remains fixed
+until the next update operation.
+
+
+\ccCreation
+\ccCreationVariable{min_ellipse}
+
+\ccSetThreeColumns
+  {CGAL_Bounded_side}
+  {}
+  {returns \ccStyle{CGAL_ON_BOUNDED_SIDE}, \ccStyle{CGAL_ON_BOUNDARY},}
+\ccPropagateThreeToTwoColumns
+
+\ccStyle{#include <CGAL/Min_ellipse_2.h>}
+
+\ccConstructor{ CGAL_Min_ellipse_2( );}{
+        introduces a variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to $\textit{me}(\emptyset,\emptyset)$,
+        i.e.\ to the empty set.
+        \ccPostcond \ccVar\ccStyle{.is_degenerate()}.}
+
+\ccHidden
+\ccConstructor{ CGAL_Min_ellipse_2(
+                const CGAL_Min_ellipse_2<R>& min_ellipse2);}{
+        copy constructor.}
+
+\ccConstructor{ CGAL_Min_ellipse_2( const Point_2<R>& p);}{
+        introduces a variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to $\textit{me}(\emptyset,\{\ccStyle{p}\})$,
+        i.e.\ to the set $\{\ccStyle{p}\}$.
+        \ccPostcond \ccVar\ccStyle{.is_degenerate()}.}
+
+\ccConstructor{ CGAL_Min_ellipse_2( const Point_2<R>& p,
+                                    const Point_2<R>& q);}{
+        introduces a variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to
+        $\textit{me}(\emptyset,\{\ccStyle{p},\ccStyle{q}\})$,
+        i.e.\ to the set $\{ (1-\lambda)p + \lambda q \mid
+        0 \leq \lambda \leq 1 \}$
+        \ccPostcond \ccVar\ccStyle{.is_degenerate()}.}
+
+\ccConstructor{ CGAL_Min_ellipse_2( const Point_2<R>& p1,
+                                    const Point_2<R>& p2,
+                                    const Point_2<R>& p3);}{
+        introduces a variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to $\textit{me}(\emptyset,
+        \{\ccStyle{p1},\ccStyle{p2},\ccStyle{p3}\})$,
+        i.e.\ to the unique smallest ellipse with \ccStyle{p1},
+        \ccStyle{p2} and \ccStyle{p3} on the boundary.}
+
+\ccConstructor{ CGAL_Min_ellipse_2( const Point_2<R>& p1,
+                                    const Point_2<R>& p2,
+                                    const Point_2<R>& p3,
+                                    const Point_2<R>& p4);}{
+        introduces a variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to $\textit{me}(\emptyset,
+        \{\ccStyle{p1},\ccStyle{p2},\ccStyle{p3},\ccStyle{p4}\})$,
+        i.e.\ to the unique smallest ellipse with \ccStyle{p1},
+        \ccStyle{p2}, \ccStyle{p3} and \ccStyle{p4} on the boundary.}
+
+\ccConstructor{ CGAL_Min_ellipse_2( const Point_2<R>& p1,
+                                    const Point_2<R>& p2,
+                                    const Point_2<R>& p3,
+                                    const Point_2<R>& p4,
+                                    const Point_2<R>& p5);}{
+        introduces a variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to $\textit{me}(\emptyset,
+        \{\ccStyle{p1},\ccStyle{p2},\ccStyle{p3},\ccStyle{p4},\ccStyle{p5}\})$,
+        i.e.\ to the unique ellipse with \ccStyle{p1}, \ccStyle{p2},
+        \ccStyle{p3}, \ccStyle{p4} and \ccStyle{p5} on the boundary.}
+
+\ccConstructor{ CGAL_Min_ellipse_2( forward_iterator< Point_2<R> > first,
+                                    forward_iterator< Point_2<R> > last,
+                                    bool randomize = false);}{
+        introduces a variable \ccVar\ of type \ccClassTemplateName. It
+        is initialized to $\textit{me}(P,\emptyset)$ with $P$ being
+        the set of points in the range
+        $[\ccStyle{first},\ccStyle{last})$. If \ccStyle{randomize} is
+        \ccStyle{true}, a random permutation of $P$ is computed in
+        advance.}
+
+\ccConstructor{ CGAL_Min_ellipse_2( forward_iterator< Point_2<R> > p_first,
+                                    forward_iterator< Point_2<R> > p_last,
+                                    forward_iterator< Point_2<R> > b_first,
+                                    forward_iterator< Point_2<R> > b_last,
+                                    bool randomize = false);}{
+        introduces a variable \ccVar\ of type \ccClassTemplateName. It
+        is initialized to $\textit{me}(P,B)$ with $P$ being the set of
+        points in the range $[\ccStyle{p_first},\ccStyle{p_last})$ and
+        $B$ being the set of points in the range
+        $[\ccStyle{b_first},\ccStyle{b_last})$. If \ccStyle{randomize}
+        is \ccStyle{true}, a random permutation of $P$ is computed in
+        advance.}
+
+
+\ccHeading{Access operations}
+
+\ccMemberFunction{ int number_of_points( ) const;}{
+        returns the number of points of \ccVar, i.e.\ $|P|+|B|$.}
+
+\ccMemberFunction{ int number_of_support_points( ) const;}{
+        returns the number of support points of \ccVar, i.e.\ $|S|$.}
+
+\ccMemberFunction{ const CGAL_Point_2<R>& point( int i) const;}{
+        returns the \ccStyle{i}'th point of \ccVar. Between two update
+        operations any call to \ccVar\ccStyle{.point(i)} with the same
+        \ccStyle{i} returns the same point.
+        \ccPrecond $0 \leq \ccStyle{i} < \ccVar\ccStyle{.number_of_points()}$.}
+
+\ccMemberFunction{ const CGAL_Point_2<R>& support_point( int i) const;}{
+        returns the \ccStyle{i}'th support point of \ccVar. Between
+        two update operations any call to
+        \ccVar\ccStyle{.support_point(i)} with the same \ccStyle{i}
+        returns the same point.
+        \ccPrecond $0 \leq \ccStyle{i} <
+        \ccVar\ccStyle{.number_of_support_points()}$.}
+
+\ccMemberFunction{ const CGAL_Point_2<R>& operator [] ( int i) const;}{
+        returns \ccVar\ccStyle{.point( i)}.}
+
+\ccMemberFunction{ CGAL_Bbox_2 bbox( ) const;}{
+        returns a bounding box containing \ccVar.}
+
+
+\ccHeading{Update operations}
+
+\ccMemberFunction{ void insert( const CGAL_Point_2<R>& p);}{
+        inserts \ccStyle{p} in \ccVar\ and recomputes the smallest
+        enclosing ellipse.}
+
+
+\ccHeading{Tests}
+
+\ccMemberFunction{ CGAL_Bounded_side
+                   bounded_side( const CGAL_Point_2<R>& p) const;}{
+        returns \ccStyle{CGAL_ON_BOUNDED_SIDE},
+        \ccStyle{CGAL_ON_BOUNDARY}, or
+        \ccStyle{CGAL_ON_UNBOUNDED_SIDE} iff \ccStyle{p} lies inside,
+        on the boundary, or outside of \ccVar, respectively.}
+
+\ccMemberFunction{ bool has_on_bounded_side( const CGAL_Point_2<R>& p) const;}{
+        returns \ccStyle{true}, iff \ccStyle{p} lies inside \ccVar.}
+
+\ccMemberFunction{ bool has_on_boundary( const CGAL_Point_2<R>& p) const;}{
+        returns \ccStyle{true}, iff \ccStyle{p} lies on the boundary
+        of \ccVar.}
+
+\ccMemberFunction{ bool
+                   has_on_unbounded_side( const CGAL_Point_2<R>& p) const;}{
+        returns \ccStyle{true}, iff \ccStyle{p} lies outside of \ccVar.}
+
+\ccMemberFunction{ bool is_degenerate( ) const;}{
+        returns \ccStyle{true}, iff \ccVar\ is degenerate.}
+
+\ccMemberFunction{ bool is_undefined( ) const;}{
+        returns \ccStyle{true}, iff \ccVar\ is undefined.}
+
+\end{ccClassTemplate}
+
+% ===== EOF ===================================================================
