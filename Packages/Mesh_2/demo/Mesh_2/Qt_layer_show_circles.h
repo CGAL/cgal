@@ -101,7 +101,7 @@ public:
 	}
     };
 
-  void leaveEvent(QEvent *e)
+  void leaveEvent(QEvent)
     {
       if (tr->dimension()<1) return;      
       if(do_erase)
