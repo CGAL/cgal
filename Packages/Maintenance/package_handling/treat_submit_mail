@@ -1,11 +1,10 @@
-#!/sw/bin/perl5 -w
+#!/sw/bin/perl -w
 
 use strict;
 
 my $treated_messages_log =
 	'/projects/CGAL/submissions/autohandle/data/treated_submit_messages';
 my $install_submission_program =
-#	'/projects/CGAL/submissions/install_www_submission';
 	'/projects/CGAL/admin_scripts/install_www_submission';
 
 my $scripts_dir= '/projects/CGAL/admin_scripts';
@@ -30,6 +29,7 @@ my @trusted_hosts = (
 	'inf.fu-berlin.de',
 	'uni-trier.de',
 	'clipper.ens.fr',
+	'schtroumpf.ens.fr',
 	'eleves.ens.fr',
 	'cs.unc.edu',
         'twi.tudelft.nl',
@@ -62,7 +62,7 @@ sub is_trusted_url($)
 {
     my $URL = shift;
     foreach (@trusted_hosts) {
-	if ($URL =~ m|^\s*http://[\.\w-]+\.$_/|) {
+	if ($URL =~ m|^\s*http://[\.\w-]+\.$_[/:]|) {
 	    return 1;
 	}
     }
@@ -117,7 +117,7 @@ TOTHIER
 close NOTICE;
 	return;
     }
-    if (system("$install_submission_program", "$Sender", "$URL") == 0)
+    if (system("$install_submission_program", "$URL") == 0)
     {     ++$no_of_succesful_submissions; }
 }
 
