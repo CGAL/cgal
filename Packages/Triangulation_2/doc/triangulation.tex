@@ -209,7 +209,7 @@ deal only with triangular faces. Therefore, we let
 each  convex hull edge be incident 
 to an \ccc{infinite} 
 face having as third vertex an auxiliary vertex
-called the \ccc{infinite_vertex}.
+called the \ccc{infinite vertex}.
  In that way, each edge is incident to exactly two faces
 and special cases at the
 boundary of the convex hull are simpler to deal with.
@@ -237,7 +237,7 @@ as a set of  triangular,  finite and
 infinite faces. 
 Although it is convenient to draw a triangulation as in
 figure~\ref{I1_Fig_infinite_vertex}, note that
-the \ccc{infinite_vertex} has no significant
+the \ccc{infinite vertex} has no significant
 coordinates and that no geometric predicate can be applied on it
 or on an infinite face.
 
@@ -365,9 +365,9 @@ An \ccc{Edge(f,i)} is edge number \ccc{i} of face \ccc{f}.}
 \ccThree{typedef Gt::Triangle}{}{the triangulation data structure type}
 \ccThreeToTwo
 The vertices and faces of the triangulations are accessed through 
-\ccc{handles}, \ccc{iterators} and \ccc{circulators}. 
- A handle is a type which supports the two
-dereference operators \ccc{operator*} and \ccc{operator->}.
+\ccc{handles}\footnote{ A handle is a type which supports the two
+dereference operators \ccc{operator*} and \ccc{operator->}.}, 
+\ccc{iterators} and \ccc{circulators}. 
 The iterators and circulators
 are all bidirectional and non mutable.
 The circulators and iterators are assignable to the 
@@ -377,18 +377,33 @@ The edges of the triangulation can also be visited through iterators
 and circulators,
 the edge circulators and iterators
 are also bidirectional and non mutable.
+In the following, we qualify as {\it infinite} any face or edge 
+incident  to the infinite vertex or the infinite vertex itself.
+ Any other feature (face, edge or vertex) of the triangulation is said 
+to be {\it finite}.
+Some iterators (the \ccc{All} iterators ) allows to visit finite or 
+infinite feature while others (the \ccc{Finite} iterators) visit only
+finite features. Circulators visit infinite features as well as finite 
+ones.
 
 \ccNestedType{Vertex_handle}{handle to a vertex}
 \ccGlue
 \ccNestedType{Face_handle}{handle to a facet}
 
 
-\ccNestedType{Face_iterator}{iterator over faces.}
+\ccNestedType{All_faces_iterator}{iterator over all faces.}
 \ccGlue
-\ccNestedType{Edge_iterator
+\ccNestedType{All_edges_iterator
 }{iterator over all edges.}
 \ccGlue
-\ccNestedType{Vertex_iterator}{iterator over vertices.}
+\ccNestedType{All_vertices_iterator}{iterator over all vertices.}
+
+\ccNestedType{Finite_faces_iterator}{iterator over finite faces.}
+\ccGlue
+\ccNestedType{Finite_edges_iterator
+}{iterator over finite edges.}
+\ccGlue
+\ccNestedType{Finite_vertices_iterator}{iterator over finite vertices.}
 
 
 \ccNestedType{Line_face_circulator}{circulator over faces intersected by a line.}
@@ -406,13 +421,12 @@ are also bidirectional and non mutable.
 The triangulation class also defines the following enum type to specify
 which case occurs when locating a point in the triangulation.
 
-\ccEnum{enum Locate_type {VERTEX=0, EDGE, FACE, OUTSIDE,
-COLLINEAR_OUTSIDE};}{The locate type is OUTSIDE when the point
-is  outside the convex hull. \\
-The locate type is \ccc{COLLINEAR_OUTSIDE} 
-when the triangulation is 1-dimensional and the point is
-collinear  with the triangulation 
-and outside the convex hull.}
+\ccEnum{enum Locate_type {VERTEX=0, EDGE, FACE, OUTSIDE_CONVEX_HULL,
+OUTSIDE_AFFINE_HULL};}{The locate type is \ccc{OUTSIDE_CONVEX_HULL} when the point
+is  outside the convex hull but in the affine hull of the current triangulation. \\
+The locate type is \ccc{OUTSIDE_AFFINE_HULL} 
+when the point is outside the affine hull
+of the current triangulation.}
 
 \ccCreation
 \ccCreationVariable{t}
@@ -461,17 +475,15 @@ empty triangulation.}
 {Returns the number of finite vertices.}
 \ccGlue
 \ccMethod{int number_of_faces() const;}
-{Returns the total number of finite and infinite faces.}
+{Returns the total number of finite faces.}
 
 
-\ccHeading{Finite and Infinite Vertices and Faces}
+\ccHeading{Test triangulation features}
 
-As previously said, the triangulation is a collection of
-triangular faces which are  are finite or infinite
-where an infinite face is a face incident  to the
-\ccc{infinite_vertex}.
-Similarly we call \ccc{infinite}
-an edge incident to the \ccc{infinite_vertex}.
+The class \ccClassTemplateName\ provides method to test
+the finite or infinite caracter of any feature,
+and also methods to test the presence in the triangulation
+of a particular feature (edge or face).
 
 \ccThree{bool }{t.is_infinite( Face_handle f, int i)x}{}
 \ccMethod{bool
@@ -508,12 +520,44 @@ an edge incident to the \ccc{infinite_vertex}.
 \ccMethod{Vertex_handle finite_vertex() const;}
 {a vertex distinct from  the \ccc{infinite_vertex}.}
 
+\ccThree{bool }{t.is_infinite( Face_handle f, int i)x}{}
+\ccMethod{bool is_edge(Vertex_handle va, Vertex_handle vb);}
+{\ccc{true} if there is an edge having \ccc{va} and \ccc{vb} as
+vertices.}
+\ccGlue
+\ccMethod{bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr,
+	       int & i);}
+{ as above. In addition, if \ccc{true} is returned,  the edge with
+vertices \ccc{va} and \ccc{vb} is the edge \ccc{e=(fr,i)} where
+\ccc{fr} is a handle to the face incident to \ccc{e} and 
+on the right side of the oriented line from \ccc{va} to \ccc{vb}.}
+\ccGlue
+\ccMethod{bool includes_edge(Vertex_handle va, Vertex_handle & vb,
+		     Face_handle& fr, int & i);}
+{\ccc{true} if the line segment from \ccc{va} to \ccc{vb} includes
+an edge \ccc{e} incident to \ccc{va}. If \ccc{true}, \ccc{vb} becomes
+the other vertex of \ccc{e}, \ccc{e} is the edge \ccc={(fr,i)} where
+\ccc{fr} is a handle to the face incident to \ccc{e} and 
+on the right side of the oriented line from \ccc{va} to \ccc{vb}.}
+\ccGlue
+\ccMethod{bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3);}
+{\ccc{true} if there is a face having \ccc{v1}, \ccc{v2} and a\ccc{v3} 
+as vertices. This function is NOT YET implemented.}
+\ccGlue
+\ccMethod{bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
+      Face_handle &fr);}
+{as above. In addition,if \ccc{true} is returned, fr is a handle
+to the face with  \ccc{v1}, \ccc{v2} and a\ccc{v3} 
+as vertices. This function is NOT YET implemented.} 
+
+
 \ccHeading{Queries}
 
-The class \ccClassTemplateName\  provides two functions to locate
+The class \ccClassTemplateName\  provides methods to locate
 a given point with respect to a triangulation. It provides
-also one function to test if a given point is inside a finite face
-or not.
+methods to locate a point with respect to
+a given  finite face of the triangulation.
+
 
 \ccMethod{Face_handle
           locate(const Point& query,
@@ -522,24 +566,20 @@ or not.
 that contains the query in its interior or on its
  boundary is returned.\\
 If the point \ccc{query} lies outside the convex hull of the
-triangulation,
-the retuned face is
-an infinite face $(\infty, p, q)$ such that
+triangulation but in the affine hull,
+the returned face is an infinite face which is a proof of the point's
+location :
+for a two dimensional triangulation, it is a face $(\infty, p, q)$ 
+such that
 \ccc{query} lies to the left  of the oriented line $pq$ 
-(the rest of the triangulation lies to the right of this line.) \\
-If the triangulation is 1-dim and 
-\ccc{query} collinear with it but outside (locate type
-\ccc{COLLINEAR_OUTSIDE}) 
- the returned face is the infinite face $(\infty, p, q)$
-such that $q$ is the vertex of the triangulation
-nearest to \ccc{query}. \\
-If the triangulation is $0$-dimensional (i.e. has no vertex or only
-one) the returned \ccc{Face_handle} is NULL. \\
+(the rest of the triangulation lying to the right of this line),
+for a degenerate one dimensional triangulation it is the (degenarate
+one dimensional) face $(\infty, p, NULL)$ such that \ccc{query}
+and the triangulation lie on either side of \ccc{p}. \\
+If the point \ccc{query} lies outside the affine hull,
+the returned \ccc{Face_handle} is \ccc{NULL}. 
 The optional \ccc{Face_handle} argument, if provided, is used as a hint
 of where the locate process has to start its search.}
-
-
-
 
 \ccMethod{Face_handle
           locate(const Point& query,
@@ -549,22 +589,30 @@ of where the locate process has to start its search.}
 {Same as above. Additionally, the parameters \ccc{lt}
  and \ccc{li}
 describe where the query point is located. 
-The variable \ccc{lt} is set to the locate type of the query and
+The variable \ccc{lt} is set to the locate type of the query.
 the variable \ccc{li}
 is set to the index of the vertex or to the index 
 of the vertex opposite to the
 edge, if the point lies respectively on a vertex or on an edge. 
 Be carefull that \ccc{li}
-has no meaning when the query type is \ccc{FACE}, \ccc{OUTSIDE}, 
-\ccc{COLLINEAR_OUTSIDE} or when the
-triangulation is $0$-dimensional.
-\ccPrecond \ccVar\ has at least two vertices.}
+has no meaning when the query type is \ccc{FACE}, \ccc{OUTSIDE_CONVEX_HULL}, 
+or \ccc{OUTSIDE_AFFINE_HULL} or when the
+triangulation is $0$-dimensional.}
 
 \ccMethod{Oriented_side
            oriented_side(Face_handle f,
                          const Point& p) const;}
 {Returns on which side of the oriented boundary of \ccc{f} lies 
 the point \ccc{p}. \ccPrecond \ccc{f} is finite.}
+
+\ccMethod{Oriented_side
+ side_of_oriented_circle(Face_handle f, const Point & p);}
+{Returns on which side of the circumcircle  of face \ccc{f} lies 
+the point \ccc{p}. The circle is assumed to be counterclokwisely
+oriented, so its positive
+side correspond to its bounded side.
+This predicate is available only if the corresponding predicates on
+points is provided in the geometric traits class.}
 
 \ccHeading{Insertion, Removal and other Modifiers}
 
@@ -599,10 +647,10 @@ algorithm of where to start.
 \ccMethod{Vertex_handle 
           insert(const Point& p,
                  Locate_type& lt,
-                 Face_handle f =Face_handle());}
-{Same as above. Additionally, parameter \ccc{lt} describes where point 
- \ccc{p} was located before updating the triangulation 
- (see \ccc{locate}).}
+                 Face_handle loc, int li );}
+{Same as above except that the location of the point
+ \ccc{p} to be inserted is assumed to be given by
+\ccc{(lt,loc,i)} (see the description of the \ccc{locate} method above.)}
 
 \ccMethod{Vertex_handle push_back(const Point& p);}
 {Equivalent to \ccc{insert(p)}.}
@@ -688,21 +736,31 @@ The following member functions offer more specialized versions of the
 insertion or removal operation to be used when one knows to be in the
 corresponding case.
 
-\ccMethod{void insert_first(Vertex_handle v);} {Inserts the first finite  vertex .}
-\ccMethod{void insert_second(Vertex_handle v);} {Inserts the second finite  vertex .}
-\ccMethod{void insert_in_face(Vertex_handle v,Face_handle f);} {Inserts vertex \ccc{v} in face
+\ccMethod{Vertex_handle insert_first(const Point& p);} 
+{Inserts the first finite  vertex .}
+\ccMethod{Vertex_handle insert_second(const Point& p);} 
+{Inserts the second finite  vertex .}
+\ccMethod{Vertex_handle insert_in_face(const Point& p,Face_handle f);} {Inserts vertex \ccc{v} in face
 \ccc{f}. Face \ccc{f} is modified,
 two new faces are created.
 \ccPrecond{The point in vertex \ccc{v} lies inside face \ccc{f}.}}
-\ccMethod{void insert_in_edge(Vertex_handle v, Face_handle f, int i);} 
+\ccMethod{Vertex_handle insert_in_edge(const Point& p, Face_handle f, int i);} 
 {Inserts vertex v in edge \ccc{i} of \ccc{f}.
 \ccPrecond{The point in vertex \ccc{v} lies on the edge opposite to 
 the vertex \ccc{i} of face \ccc{f}.}}
-\ccMethod{void insert_collinear_outside(Vertex * v, Face * loc, int li);}
-{Inserts in a 1 dimensional triangulation
- a vertex which is collinear to the triangulation and outside the convex hull.
+\ccMethod{Vertex_handle insert_outside_convex_hull(const Point& p, Face_handle f);}
+{Inserts 
+ a point which is outside the convex hull  but in the affine hull.
+Face handle \ccc{f} is assumed to point to a an infinite face
+which is a prove of the point's location (see the description of the
+\ccc{locate} method above.)
 \ccPrecond{
- \ccc{loc->vertex(li)} is the vertex of the triangulation closest to \ccc{v}.}}
+ \ccc{f} point to a face which is a proof  of the location
+of\ccc{f}.}}
+\ccMethod{Vertex_handle insert_outside_affine_hull(const Point& p);}
+{Inserts 
+ a point which is outside the affine hull.}
+
 \ccMethod{void remove_degree_3(Vertex_handle v);}
 {Removes a vertex of degree three. Two of the incident faces are destroyed,
 the third one is modified.
@@ -728,28 +786,46 @@ that allow to traverse it (completely or partially).
 
 \ccHeading{Face, Edge and Vertex Iterators}
 
-The following iterators allow respectively to visit all
-finite faces, all finite edges and all finite vertices
+The following iterators allow respectively to visit 
+finite faces,  finite edges and  finite vertices
 of the triangulation. These iterators are non mutable, bidirectional
 and their value types are respectively
 \ccc{Face}, \ccc{Edge} and \ccc{Vertex}. 
 They are all invalidated by any change in the triangulation.
 
-\ccThree{Vertex_iterator}{t.vertices_begin()x}{}
-\ccMethod{Vertex_iterator vertices_begin() const;}{Starts at an arbitrary finite vertex}
+\ccThree{Vertex_iterator}{t.finite_vertices_begin()x}{}
+\ccMethod{Vertex_iterator finite_vertices_begin() const;}{Starts at an arbitrary finite vertex}
 \ccGlue
-\ccMethod{Vertex_iterator vertices_end() const;}{Past-the-end iterator}
+\ccMethod{Vertex_iterator finite_vertices_end() const;}{Past-the-end iterator}
 
-\ccMethod{Edge_iterator edges_begin() const;}{Starts at an arbitrary finite edge}
+\ccMethod{Edge_iterator finite_edges_begin() const;}{Starts at an arbitrary finite edge}
 \ccGlue
-\ccMethod{Edge_iterator edges_end() const;}{Past-the-end iterator}
+\ccMethod{Edge_iterator finite_edges_end() const;}{Past-the-end iterator}
 
-\ccMethod{Face_iterator faces_begin() const;}{Starts at an arbitrary finite face}
+\ccMethod{Face_iterator finite_faces_begin() const;}{Starts at an arbitrary finite face}
 \ccGlue
-\ccMethod{Face_iterator faces_end() const;}{Past-the-end iterator}
+\ccMethod{Face_iterator finite_faces_end() const;}{Past-the-end iterator}
 
 
+The following iterators allow respectively to visit all
+(finite or infinite) faces, edges and vertices
+of the triangulation. These iterators are non mutable, bidirectional
+and their value types are respectively
+\ccc{Face}, \ccc{Edge} and \ccc{Vertex}. 
+They are all invalidated by any change in the triangulation.
 
+\ccThree{Vertex_iterator}{t.all_vertices_begin()x}{}
+\ccMethod{Vertex_iterator all_vertices_begin() const;}{Starts at an arbitrary  vertex}
+\ccGlue
+\ccMethod{Vertex_iterator all_vertices_end() const;}{Past-the-end iterator}
+
+\ccMethod{Edge_iterator all_edges_begin() const;}{Starts at an arbitrary edge}
+\ccGlue
+\ccMethod{Edge_iterator all_edges_end() const;}{Past-the-end iterator}
+
+\ccMethod{Face_iterator all_faces_begin() const;}{Starts at an arbitrary face}
+\ccGlue
+\ccMethod{Face_iterator all_faces_end() const;}{Past-the-end iterator}
 
 \ccThree{Line_face_circulator}{T.line_walk(Point p, }{}
 \ccHeading{Line Face Circulator}
@@ -925,14 +1001,18 @@ a clockwise traversal of the convex hull.
           segment(const Edge_iterator& ei) const;}
 {Returns the line segment corresponding to edge \ccc{*ei}.
 \ccPrecond \ccc{*ei} is a finite edge.}
-
+\ccGlue
+\ccMethod{Point circumcenter(Face_handle  f) const;}
+{Compute the circumcenter of the face pointed to by f. This function
+is available only if the correspoding function is provided in the
+geometric traits.}
 
 \begin{ccAdvanced}
 
 \ccHeading{Setting}
-\ccMethod{void set_finite_vertex(const Vertex_handle&  v);}{}
-\ccGlue
 \ccMethod{void set_infinite_vertex(const Vertex_handle&  v);}{}
+\ccGlue
+\ccMethod{void set_dimension(int n);}{}
 \ccGlue
 \ccMethod{void set_number_of_vertices(int n);}{}
 
@@ -987,7 +1067,7 @@ and \ccc{Segment}.}
 The following code fragment creates a  triangulation of 2D points
 for the  usual Euclidean metric. The points are read from {\tt cin},
 inserted in the triangulation 
-and finally on the convex hull are written to {\tt cout}. 
+and finally points on the convex hull are written to {\tt cout}. 
 %The
 %{\tt while} loop can be replaced by the code in the comment,
 %as the triangulation class has an \ccc{insert} member
@@ -1001,7 +1081,6 @@ and finally on the convex hull are written to {\tt cout}.
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 
 using namespace CGAL;
-using namespace std;
 
 typedef Cartesian<leda_rational> Rep;
 typedef Triangulation_euclidean_traits_2<Rep> Gt;
@@ -1015,7 +1094,7 @@ typedef Triangulation::Vertex_circulator Vertex_circulator;
     Triangulation t();
 
     Point p;
-    while (cin >> p){
+    while (std::cin >> p){
         t.insert(p);
     }
 
@@ -1024,7 +1103,7 @@ typedef Triangulation::Vertex_circulator Vertex_circulator;
 
     if (vc != NULL) {
         do{
-            cout << vc->point();
+            std::cout << vc->point();
         }while(++vc != done);
     }
 }
@@ -1040,8 +1119,8 @@ on average if the vertices are distributed uniformly at random.
 
 Insertion of a point is done by locating a face that contains the
 point, and then splitting this face.
-If the point falls outside the convex hull is restored 
-by flips.  Apart from the location, insertion takes a time 
+If the point falls outside the convex hull, the triangulation
+ is restored by flips.  Apart from the location, insertion takes a time 
 time \ccTexHtml{$O(1)$}{O(1)}. This bound is only an amortized bound
 for points located outside the convex hull.
 
@@ -1050,8 +1129,9 @@ retriangulating the hole. Removal takes time \ccTexHtml{$O(d^2)$}{O(d^2)} in the
 case, if \ccTexHtml{$d$}{d} is the degree of the removed vertex,
 which is \ccTexHtml{$O(1)$}{O(1)} for a random vertex.
 
-The face, edge, and vertex iterators are 
-derived from the corresponding iterators
+The face, edge, and vertex iterators on finite features
+are derived from their counterparts visiting all (finite and infinite)
+feautures which are themselves derived from the corresponding iterators
 of the triangulation data structure.
 
 \end{ccClassTemplate}
@@ -1301,13 +1381,14 @@ to the vertex with index \ccc{i}.
 {Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar,  and
 compute the index \ccc{i} of the neighbor.}
 
-%
-%\ccHeading{Modifier}
-%\ccMethod{void insert_in_face(Vertex_handle v);}{}
-%\ccGlue
-%\ccMethod{void insert_on_edge(Vertex_handle v, int i);}{}
-%\ccGlue
-%\ccMethod{void insert_out(const Vertex_handle& v, int i);){}
+\ccHeading{Other Access Functions}
+\ccMethod{int mirror_index(int i) const;}
+{Returns the index of the face \ccc{f} as a neighbor
+of its neighbor \ccc{f.neighbor(i)}.}
+\ccMethod{Vertex_handle mirror_vertex(int i) const;}
+{Returns the vertex of \ccc{f.neighbor(i)}
+which is opposite to \ccc{f}.}
+
 
 
 \ccHeading{Miscellaneous} 
@@ -1403,7 +1484,23 @@ return \ccc{EQUAL}.}
                                        const Point& p1,
                                        const Point& p2);}
 {Orientation test. }
+\ccGlue
+\ccMethod{Oriented_side side_of_oriented_circle(const Point &p,
+					const Point &q,
+					const Point &r,
+					const Point &s) const;}
+{Returns the oriented side of the query point \ccc{s}
+with respect to the oriented circle going through \ccc{p,q,r}
+in that order. This predicates is required
+only if the function 
+\ccc{ oriented_side(const Face_handle& f, const Point &p)}
+is explicitely called by the user.}
 
+\ccHeading{Construction}
+\ccMethod{Point circumcenter(const Point &p, const Point &q, const Point &r) const; }
+{Returns the center of the circle through \ccc{(p,q,r)}
+This method is required only if the function
+\ccc{circumcenter(Face_handle  f)} is called by the user.}
 \end{ccClass}
 
 
@@ -1549,13 +1646,6 @@ incident to a given vertex. They are all bidirectional and non mutable.
 \ccConstructor{Tds()}
 {A default constructor.}
 
-\ccConstructor{Tds( Vertex* v)}
-{Introduces a triangulation data structure \ccVar\ that is initialized with a
-set of 
-vertices and faces that are linked to vertex \ccc{v}. If \ccc{v}
-has no incident face the triangulation consists only of \ccc{v}.
-Otherwise \ccc{v} must be the vertex at infinity.}
-
 \ccConstructor{Tds( const Tds& tds1)}
 {Copy constructor. All the vertices and faces are duplicated.}
 
@@ -1573,51 +1663,28 @@ when tds1 is deleted after that.}
 \ccAccessFunctions
 \ccThree{Vertex*}{tds.is_infinite(Edge_circulator& ec)x}{}
 \ccMethod{int dimension() const;}
-{The dimension of the convex hull.}
+{The dimension of the triangulation.}
 \ccGlue
 \ccMethod{int number_of_vertices() const;}
-{The number of finite vertices.}
-
-\ccHeading{Finite and Infinite Vertices and Faces}
-
-\ccMethod{bool
-          is_infinite(Vertex* v) const;}
-{\ccc{true}, iff \ccc{v} points to  the \ccc{infinite_vertex}.}
+{The number of vertices in the data structure.}
 \ccGlue
-\ccMethod{bool
-          is_infinite(Face* f) const;}
-{\ccc{true}, iff face \ccc{f} is infinite.}
+\ccMethod{int number_of_faces() const ;}
+{The number of two dimensional faces in the data structure.}
 \ccGlue
-\ccMethod{bool
-          is_infinite(Face* f, int i) const;}
-{\ccc{true}, iff edge \ccc{(f,i)} is infinite.}
+\ccMethod{int number_of_edges() const;}
+{The number of edges  in the triangulation data structure.}
 \ccGlue
-\ccMethod{bool is_infinite(Edge e) const;}
-{\ccc{true}, iff edge \ccc{e} is infinite.}
-\ccGlue
-\ccMethod{bool is_infinite(Edge_circulator ec) const;}
-{\ccc{true}, iff edge \ccc{*ec} is infinite.}
-\ccGlue
-\ccMethod{bool is_infinite(Edge_iterator ei e) const;}
-{\ccc{true}, iff edge \ccc{*ei} is infinite.}
-\ccGlue
-\ccMethod{Face* infinite_face() const;}
-{a face incident to the \ccc{infinite_vertex}.}
-\ccGlue
-\ccMethod{Vertex*
-          infinite_vertex();}
-{the infinite vertex.}
-\ccGlue
-\ccMethod{Vertex* finite_vertex() const;}
-{a vertex different from the \ccc{infinite_vertex}.}
-
+\ccMethod{number_of_full_dim_faces() const;}
+{The number of full dimensional faces 
+(i.e. faces of dimension equal to the dimension
+of the triangulation). This is the actual
+number of faces stored in the triangulation data structure.}
 
 \ccHeading{Setting}
 \ccMethod{void set_number_of_vertices(int n);}{}
 \ccGlue
-\ccMethod{void set_finite_vertex(Vertex*  v);}{}
-\ccGlue
-\ccMethod{void set_infinite_vertex(Vertex*  v);}{}
+\ccMethod{void set_dimension (int n);}{}
+
 
 \ccHeading{Modifiers}
 The following modifier member functions  guarantee
@@ -1644,15 +1711,27 @@ diagonal of the quadrilateral formed by \ccc{f} and  \ccc{f->neighbor(i)}.}
 \end{ccHtmlOnly} 
 
 
-\ccMethod{void insert_first(Vertex* v);} {inserts the first finite
-vertex .}
+\ccMethod{Vertex* insert_first(Vertex* v);} {creates the first 
+vertex and returns a pointer to it.}
 \ccGlue
-\ccMethod{void insert_second(Vertex* v);} {inserts the second finite
-vertex .}
+\ccMethod{Vertex* insert_second(Vertex* v);} {creates the second finite
+vertex and returns a pointer to it.}
+\ccMethod{Vertex* insert_in_edge(Vertex* v, Face* f, int i);} {adds a
+vertex \ccc{v} splitting 
+edge \ccc{i} of face \ccc{f}. Return a  pointer to \ccc{v}.}
 \ccGlue
-\ccMethod{void insert_in_face(Vertex* v,Face* f);} {inserts \ccc{v} in face
-\ccc{f}. Face \ccc{f} is modified,
-two new faces are created.}
+\ccMethod{Vertex* insert_in_face(Vertex* v,Face* f);} {adds a vertex
+\ccc{v} splitting  face
+\ccc{f} in three. Face \ccc{f} is modified,
+two new faces are created. Return a  pointer to \ccc{v} }
+\ccGlue
+\ccMethod{Vertex* insert_dim_up(Vertex* w, bool orient=true);} {adds
+a vertex \ccc{v}, increasing by one the dimension of the triangulation.
+Vertex \ccc{v} is and the existing vertex \ccc{w} are linked to all 
+the vertices of the triangulation. 
+The boolean orient decides the final orientation of all 
+faces. A pointer to vertex \ccc{v} is returned.
+}
 
 \begin{ccTexOnly}
 \begin{figure}
@@ -1668,12 +1747,7 @@ two new faces are created.}
 
 
 
-\ccMethod{void insert_in_edge(Vertex* v, Face* f, int i);} {inserts
-\ccc{v} in edge \ccc{i} of face \ccc{f}.}
-\ccMethod{void insert_collinear_outside(Vertex * v, Face * loc, int li);}
-{inserts in a 1 dimensional triangulation
- a vertex which is collinear to the triangulation and outside the convex hull.
- \ccc{loc->vertex(li)} is the vertex of the triangulation closest to \ccc{v}.}
+
 \ccMethod{void remove_degree_3(Vertex* v, Face *f=NULL);}
 {removes a vertex of degree 3. Two of the incident faces are destroyed,
 the third one is modified.
@@ -1682,11 +1756,20 @@ and will be the modified face.
 \ccPrecond{Vertex
 \ccc{v} is a finite vertex with degree 3
 and, if specified, face \ccc{f} is incident to \ccc{v}.}}
-\ccMethod{void remove_second(Vertex* v);}{removes the before last
-finite vertex.}
-\ccGlue
-\ccMethod{void remove_first(Vertex* v);}{removes the last finite vertex.}
 
+
+
+\ccMethod{void remove_second(Vertex* v);}{removes the before last
+vertex.}
+\ccGlue
+\ccMethod{void remove_first(Vertex* v);}{removes the last vertex.}
+\ccGlue
+\ccMethod{void remove_dim_down(Vertex* v);}
+{removes vertex \ccc{v} incident to all other vertices
+which decreases by one the dimension of the triangulation.
+\ccPrecond{if the dimension is 2, the number of vertices is more than
+3,
+if the dimension is 1, the number of vertices is 2.} }
 
 
 
@@ -1712,9 +1795,6 @@ finite vertex.}
 \ccGlue
 \ccMethod{int cw(int i) const;}
 {returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
-\ccGlue
-\ccMethod{int number_of_faces() const;}
-{returns the number of finite faces.}
 \ccGlue
 \ccMethod{bool is_valid();}{checks the combinatorial validity of the
 triangulation: call the \ccc{is_valid()} member function for each vertex and 
