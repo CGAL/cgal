@@ -1,5 +1,15 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.26 on 11 October 1999
+- New class Double_IEEE (in Double_IEEE.h), which is a wrapper for a double,
+  but with corrected operators so that it's IEEE 754 compliant (enough).
+- Replaced lot's of .inf() and .sup() by ._inf and ._sup, using friend
+  functions.  Hopefully it's work... faster.
+- Remove special version of operator*(IA, double) and operator/(IA, double).
+  They were faster than the normal one, but not that used, and potentially
+  risky.
+- Put overlap_action() private. 
+
 Version 4.25 on 11 October 1999
 - Borland version of the rounding mode changes.
 

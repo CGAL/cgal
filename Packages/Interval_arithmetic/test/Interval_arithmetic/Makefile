@@ -18,6 +18,7 @@ CXXFLAGS = \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
 	-g -Wall -W
+	# -g -Wall -W
 	# -O2 -Wall -W
 	# /Oi /Fatst2.s
 	# /Fatst1.s
@@ -38,6 +39,7 @@ CXXFLAGS = \
 	# -fhonor-std
 	# -frepo
 	# -pedantic
+	# -DLOOPS=10000000
 
 #---------------------------------------------------------------------#
 #                    linker flags
