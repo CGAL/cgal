@@ -56,6 +56,7 @@ LDFLAGS = Interval_arithmetic.o \
 
 % : %.o
 	$(CGAL_CXX) $+ $(LDFLAGS) -o $@
+	./$@
 
 EXE_EXT  =
 OBJ_EXT  = .o
@@ -64,14 +65,6 @@ OBJECTS  := $(SOURCES:.C=$(OBJ_EXT))
 PROGRAMS := $(SOURCES:.C=$(EXE_EXT))
 
 all: ../../src/Interval_arithmetic.o $(PROGRAMS)
-	./tst0
-	./tst1
-	./tst2
-	./tst3
-	./tst4
-	./tst5 # ./tst6
-	./tst7
-	./tst_static_adaptatif
 
 clean:
 	rm -f *$(OBJ_EXT) $(PROGRAMS) *.bb *.bbg *.da *.gcov core *.rpo .pure
