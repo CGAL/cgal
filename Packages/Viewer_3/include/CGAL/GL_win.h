@@ -198,6 +198,8 @@ void set_light();
 
 void set_light(bool);
 
+void draw_ps();
+
 };
 
 
@@ -239,6 +241,45 @@ void GL_win::set_light(float x,float y , float z, float* diff, float
     glMaterialf(GL_FRONT, GL_SHININESS, s);
     glEnable(GL_COLOR_MATERIAL);
 }
+
+//#### POST SCRIPT : envoie le graph de scene dans le post script.
+void GL_win::draw_ps()
+{
+#ifdef USE_THREAD
+      pthread_mutex_lock(&Synchronizer::sgMutex);
+#endif
+      Scene_graph::iterator it;
+      double* t= SCG.get_translation();
+      double trans_mat[16];
+      // on declare la variable ps_stream (a faire)
+      //   ps_steam ps;
+      // on parcoure le graph de scene, groupe apres groupe.
+      for (it=SCG.begin() ; it!=SCG.end() ; it++) {
+	// On s'occupe de la matrice de transformation globale.
+	glLoadIdentity();
+	glPushMatrix();
+	glTranslated(t[0],-t[1],0);
+	glTranslatef(SCG.get_center(1),SCG.get_center(2),SCG.get_center(3));
+        glMultMatrixd(SCG.get_rotation());
+	glTranslatef(-SCG.get_center(1),-SCG.get_center(2),-SCG.get_center(3));
+	if (!group)
+	  glGetDoublev(GL_MODELVIEW_MATRIX,global_matrix);
+  	glMultMatrixd(it->get_group_translation());
+	glMultMatrixd(it->get_group_rotation());
+        glGetDoublev(GL_MODELVIEW_MATRIX,trans_mat);
+        // la matrice de transformation globale trans_mat est envoyee
+	// une fois pour chaque groupe.
+	//        ps << trans_mat;
+	//        it->group_to_ps(ps);
+      }
+	glPopMatrix();
+	std::cout << "Post_script not yet implemented!!" << std::endl;
+#ifdef USE_THREAD
+      pthread_mutex_unlock(&Synchronizer::sgMutex);
+#endif
+    }
+
+
 
 
 void GL_win::draw_scene()

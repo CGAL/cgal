@@ -32,6 +32,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// Pour le post-script : ecrire pour chaque objet une fonction to_ps()
+// exemple donne dans Drawable_point_3
+
+
+
+
 
 //#### DRAWABLE POINT #######
 template<class Point3>
@@ -111,6 +117,11 @@ public:
       }
     }
 
+  // void to_ps(Ps_stream &ps)
+  // {
+  //  ps << pt;
+  //}
+
 };
 
 
@@ -178,6 +189,8 @@ void draw()
    glEndList();
   }
   }
+
+
 };
 
 

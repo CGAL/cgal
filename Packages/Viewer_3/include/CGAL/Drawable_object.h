@@ -71,6 +71,7 @@ public:
         return o_center[2];
       return 0;
     }
+
   void set_style(Style s) 
     {
       style=s; 
@@ -91,6 +92,10 @@ public:
   void set_color1(Color c) {color=c;}
   void set_color2(Color c) {col2=c;}
   virtual void add_point(double x, double y, double z) {}
+
+  //POUR le postscript : mettre la bonne signature
+  //  virtual void to_ps(Ps_stream &ps){}
+
 
 };
 

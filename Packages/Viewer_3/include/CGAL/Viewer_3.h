@@ -94,6 +94,7 @@ typedef Point_3<Cartesian<double> >   Point3;
   Fl_Choice        *group_but;
   Fl_Menu_Button   *group_men;
   Fl_Button        *light_but;
+  Fl_Button        *ps_but;
   Fl_Button        *user_but;
   Fl_Window        *light_win;
   Fl_Window        *para_win;
@@ -553,6 +554,13 @@ static void user_cb(Fl_Widget* w, void* v)
 {
   Viewer_3* W= (Viewer_3*) v;
   W->default_impl(W->canvas,W);
+}
+
+
+static void ps_cb(Fl_Widget* w, void* v)
+{
+  Viewer_3* W= (Viewer_3*) v;
+  W->canvas->draw_ps();
 }
 
 static void light_cb(Fl_Widget* w, void* v)
@@ -1134,6 +1142,9 @@ void Viewer_3::init_window()
 
   light_but = new Fl_Button(110,5,80,25,"Set light");
   light_but->callback(light_cb,(void*)this);
+
+  ps_but = new Fl_Button(110,35,80,25,"PostScript");
+  ps_but->callback(ps_cb,(void*)this);
 
   para_but = new Fl_Button(195,5,80,25,"Parameters");
   para_but->callback(para_cb,(void*)this);

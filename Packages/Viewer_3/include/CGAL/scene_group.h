@@ -129,6 +129,19 @@ void set_identity()
 	    LD[i]->draw();
     }
 
+  //##### POSTSCRIPT : donner la bonne signature!!!!!!!!
+
+  // Parcours le groupe et envoie chaque objet dans le ps_stream.
+//   void group_to_ps(Post_script_stream &ps)
+//     {
+// 	for (int i = 0; i< (int) LD.size() ; i++) 
+// 	    LD[i]->to_ps(ps);
+//     }
+
+
+
+
+
   void draw_visible()
     {
       for (int i = 0; i< (int) LD.size() ; i++) 
