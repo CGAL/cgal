@@ -45,12 +45,12 @@ _test_cls_face_iterator( const Triangulation &T )
 {
   typedef typename Triangulation::Finite_faces_iterator   
                                   Finite_faces_iterator;
-
+  
   int n_finite = 0;
   Finite_faces_iterator fit;
+
   for (fit = T.finite_faces_begin(); fit != T.finite_faces_end(); ++fit)
     n_finite++;
-
   assert(n_finite == T.number_of_faces());
   
   //test for operator -- and pre incrementation decrementation
@@ -58,8 +58,9 @@ _test_cls_face_iterator( const Triangulation &T )
   else if (n_finite >1) {
     fit = T.finite_faces_begin();
     fit++;fit--;assert(fit== T.finite_faces_begin());
-    assert(&(*fit) == &(*(fit++)));
-    assert(&(*fit) == &(*(fit--)));
+    //assert(&(*fit) == &(*(fit++)));
+    //assert(&(*fit) == &(*(fit--)));
+    for (int j = 0; j < 3; j++) assert(fit->vertex(j) == (*fit).vertex(j));
     assert(fit== T.finite_faces_begin());
     { for (int i = 0 ; i < n_finite-1 ; ++i) ++fit; }
     { for (int i = 0 ; i < n_finite-1 ; ++i) --fit; }
@@ -88,8 +89,9 @@ _test_cls_vertex_iterator( const Triangulation &T )
   if(n==0) assert(vit == T.finite_vertices_end());
   else if (n > 1){
     vit++; vit--; assert(vit== T.finite_vertices_begin()); 
-    assert(&(*vit) == &(*(vit++)));  
-    assert(&(*vit) == &(*(vit--)));
+    //assert(&(*vit) == &(*(vit++))); does not work on all compiler 
+    //assert(&(*vit) == &(*(vit--))); does not work on all compiler
+    assert (vit->face() == (*vit).face());
     assert(vit== T.finite_vertices_begin()); 
     { for (int i = 0 ; i < n-1 ; ++i) ++vit; }
     { for (int i = 0 ; i < n-1 ; ++i) --vit; }
