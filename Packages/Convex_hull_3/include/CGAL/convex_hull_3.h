@@ -767,10 +767,7 @@ template < class InputIterator, class Traits, class Items,
 #endif
            class HDS, class Alloc>
 void convex_hull_3(InputIterator first, InputIterator beyond, 
-                   Polyhedron_3<Traits,Items,HDS,Alloc>& polyhedron 
-                   CGAL_MSVC_DUMMY_ARGUMENT) 
-
-
+                   Polyhedron_3<Traits,Items,HDS,Alloc>& polyhedron )
 
 #else
 
