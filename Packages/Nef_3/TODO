@@ -1,6 +1,9 @@
 Nef_3 Package: TODO
 ---------------------------------------------------------------------
 
+- Test newell code
+- Change Partition to Union_find
+- Incorporate code from Facet_plane_3 into main file
 - Synthesizing volumes from SM representation
 - Simplification of the SNC structure
 - Simplify during the construction from polyhedral surfaces
