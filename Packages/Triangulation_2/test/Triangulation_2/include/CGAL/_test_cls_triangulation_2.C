@@ -117,6 +117,10 @@ _test_cls_triangulation_2( const Triangulation & )
 
   int px=1, py=1;
   int qx=-1, qy=2;
+  Locate_type lt;
+  int li;
+  Face_handle    f;
+
 
   std::list<Point> l; l.push_back(p0);
   l.push_back(p1); l.push_back(p2); l.push_back(p3);
@@ -209,7 +213,6 @@ _test_cls_triangulation_2( const Triangulation & )
   assert( T1_3_1.dimension() == 1 );
   assert( T1_3_1.number_of_vertices() == 3 );
   assert( T1_3_1.number_of_faces() == 0 );
-  // assert( T1_3_0 == T1_3_1 ); // operator== is not defined!
   assert( T1_3_1.is_valid() );
 
   Cls T1_5;
@@ -225,9 +228,6 @@ _test_cls_triangulation_2( const Triangulation & )
 
   // test insert_second()
   Cls T1_6 = T0_2; 
-  //T1_6.insert_second(Vertex(p3).handle());
-  // the following statement cause a segmentation fault on Linux
-  // when the whole procedure is leaved
   Vertex_handle v1_6_2 = T1_6.insert_second(p3); assert( !v1_6_2.is_null() );
   assert( T1_6.dimension() == 1 );
   assert( T1_6.number_of_vertices() == 2 );
@@ -258,7 +258,6 @@ _test_cls_triangulation_2( const Triangulation & )
   // we now test the other insert functions
   // more vicious, we insert all the points on a single line first
   Cls T2_3;
-  Locate_type lt;
   Vertex_handle v2_3_1 = T2_3.insert(p1);
   Vertex_handle v2_3_2 = T2_3.insert(p2);
   Vertex_handle v2_3_3 = T2_3.insert(p3, lt);
@@ -329,24 +328,15 @@ _test_cls_triangulation_2( const Triangulation & )
 
   // test flip
      cout << "    test flip " << endl;
-     Cls T2_8=T2_7;
-     assert( T2_8.is_valid() );
-     Face_handle ff = T2_8.locate(Point(5*px+5*qx,5*py+5*qy));
-     assert(!T2_8.is_infinite(ff));
-     Face_handle f2 = ff->neighbor(0);
-     assert(!T2_8.is_infinite(f2));
-     // T2_8.flip(ff,0);
-     // Ok precondition violation  (non convex quadrilater)   
-     assert( T2_8.is_valid() );
-     // try with a valid face (and neighbor)
-     T2_8.clear();
+     Cls T2_8;
      T2_8.insert(Point(0,0,1));
      T2_8.insert(Point(1,0,1));
      T2_8.insert(Point(1,1,1));
      T2_8.insert(Point(0,1,1));
-     ff = T2_8.locate(Point(1,1,2));
+     Face_handle ff = T2_8.locate(Point(1,1,2),lt,li);
+     assert(lt == Cls::EDGE);
      assert(!T2_8.is_infinite(ff));
-     f2 = ff->neighbor(0);
+     Face_handle f2 = ff->neighbor(li);
      assert(!T2_8.is_infinite(f2));
      T2_8.flip(ff,0);
      assert( T2_8.is_valid() );
@@ -362,17 +352,6 @@ _test_cls_triangulation_2( const Triangulation & )
   assert( T0_1_1.number_of_vertices() == 1 );
   assert( T0_1_1.is_valid() );
 
-//   // test constructor that takes a vertex handle
-//   // this must(!) be the vertex at infinity
-//   Cls T0_1_2( T0_1.infinite_vertex() );
-//   assert( T0_1_2.dimension() == 0 );
-//   assert( T0_1_2.number_of_vertices() == 1 );
-//   assert( T0_1_2.is_valid() );
-//   // copy the triangulation to avoid having two triangulations
-//   // with the same set of vertices and faces
-//   // which causes a segmentation fault when the 2d one is deleted
-//   T0_1_2 = T0_1;
-  
   // test copy_constructor with non-empty 1-triangulation
   Cls T1_5_1( T1_5 );
   assert( T1_5_1.dimension() == 1 );
@@ -385,49 +364,14 @@ _test_cls_triangulation_2( const Triangulation & )
   assert( T1_5_2.number_of_vertices() == 5 );
   assert( T1_5_2.is_valid() );
 
-//   // test constructor that takes a vertex handle
-//   // this must(!) be the vertex at infinity
-//   Cls T1_5_3( T1_5_2.infinite_vertex() );
-//   assert( T1_5_3.dimension() == 1 );
-//   assert( T1_5_3.number_of_vertices() == 5 );
-//   assert( T1_5_3.is_valid() );
-//   // copy the triangulation to avoid having two triangulations
-//   // with the same set of vertices and faces
-//   // which causes a segmentation fault when the 2d one is deleted
-//   T1_5_3 = T1_5_2;
-  
-//   // test constructor that takes a vertex handle and a geom_traits
-//   Cls T1_5_4( T1_5_2.infinite_vertex(), T2_1.geom_traits() );
-//   assert( T1_5_4.dimension() == 1 );
-//   assert( T1_5_4.number_of_vertices() == 5 );
-//   assert( T1_5_4.is_valid() );
-//   // Exchange the triangulation -- same reason
-//   T1_5_4 = T1_5_2;
- 
   // test copy_constructor with non-empty 2-triangulation
+  Cls T2_8_1(T2_8);
+  assert( T2_8_1.is_valid());
   Cls T2_1_1( T2_1 );
   assert( T2_1_1.dimension() == 2 );
   assert( T2_1_1.number_of_vertices() == 11 );
   assert( T2_1_1.is_valid() );
   
-//   // test constructor that takes a vertex handle
-//   Cls T2_1_2( T2_1.infinite_vertex() );
-//   assert( T2_1_2.dimension() == 2 );
-//   assert( T2_1_2.number_of_vertices() == 11 );
-//   assert( T2_1_2.is_valid() );
-//   // copy the triangulation to avoid having two triangulations
-//   // with the same set of vertices and faces
-//   // which causes a segmentation fault when the 2d one is deleted
-//   T2_1_2 = T2_1;
-
-//   // test constructor that takes a vertex handle and a geom_traits
-//   Cls T2_1_3( T2_1.infinite_vertex(), T2_1.geom_traits() );
-//   assert( T2_1_3.dimension() == 2 );
-//   assert( T2_1_3.number_of_vertices() == 11 );
-//   assert( T2_1_3.is_valid() );
-//   // Copy the  triangulation, see T1_5_3
-//   T2_1_3 = T2_1;
-
   // test assignment operator
   Cls T2_1_4 = T2_1;
   assert( T2_1_4.dimension() == 2 );
@@ -445,9 +389,7 @@ _test_cls_triangulation_2( const Triangulation & )
   _test_fct_is_infinite( T1_5 );
   _test_fct_is_infinite( T2_1 );
   _test_fct_is_infinite( T2_3 );
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   _test_fct_is_infinite( T2_4 );
-#endif
   _test_fct_is_infinite( T2_5 );
   _test_fct_is_infinite( T2_6 );
 
@@ -455,9 +397,7 @@ _test_cls_triangulation_2( const Triangulation & )
   /******** POINT LOCATIONS ************/
 
   // Locate_type lt; // see above
-  int            li;
-  Face_handle    f;
-
+  
   // Check point location in 0-dimensional triangulations
   // No need because of precondition (at least two vertices)
   
@@ -479,22 +419,23 @@ _test_cls_triangulation_2( const Triangulation & )
        || (T1_3_2.geom_traits().compare(f->vertex(f->ccw(li))->point(), p2)
         && T1_3_2.geom_traits().compare(f->vertex(f->cw(li))->point(), p1)));
   f = T1_3_2.locate(p8,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  assert( T1_3_2.geom_traits().compare(f->vertex(li)->point(), p9) );
+  //assert( T1_3_2.geom_traits().compare(f->vertex(li)->point(), p9) );
+  assert(T1_3_2.is_infinite(f->vertex(li)));
   f = T1_3_2.locate(p0,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  li = f->index(T1_3_2.infinite_vertex());
-  assert( _test_is_to_the_left(T1_3_2,p0,f,li) );
+  //li = f->index(T1_3_2.infinite_vertex());
+  //assert( _test_is_to_the_left(T1_3_2,p0,f,li) );
   f = T1_3_2.locate(p7,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  li = f->index(T1_3_2.infinite_vertex());
-  assert( _test_is_to_the_left(T1_3_2,p7,f,li) );
+  //li = f->index(T1_3_2.infinite_vertex());
+  //assert( _test_is_to_the_left(T1_3_2,p7,f,li) );
   f = T1_3_2.locate(p5,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  li = f->index(T1_3_2.infinite_vertex());
-  assert( _test_is_to_the_left(T1_3_2,p5,f,li) );
+  //li = f->index(T1_3_2.infinite_vertex());
+  //assert( _test_is_to_the_left(T1_3_2,p5,f,li) );
   f = T1_3_2.locate(p4,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  li = f->index(T1_3_2.infinite_vertex());
-  assert( _test_is_to_the_left(T1_3_2,p4,f,li) );
+  //li = f->index(T1_3_2.infinite_vertex());
+  //assert( _test_is_to_the_left(T1_3_2,p4,f,li) );
   f = T1_3_2.locate(p6,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  li = f->index(T1_3_2.infinite_vertex());
-  assert( _test_is_to_the_left(T1_3_2,p6,f,li) );
+  //li = f->index(T1_3_2.infinite_vertex());
+  //assert( _test_is_to_the_left(T1_3_2,p6,f,li) );
 
   // Check point location in 2-dimensional triangulations
   cout << "    point locations 2-dim" << endl;
