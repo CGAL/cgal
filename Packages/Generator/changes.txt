@@ -1,9 +1,14 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
-2.58 (24 Apr 2002)
+2.59 (24 Apr 2002)
    - in deletion_event in Random_polygon_2_sweep, removed use of
      prev_seg iterator after it was erased (replaced with thing it
      was pointing to before erased).
+
+2.58 (24 Apr 2002)
+   - added debugging statements and made the break condition in 
+     make_simple_polygon a bit more careful in an attempt to avoid
+     infinite loops when things go very wrong.
 
 2.57 (23 Apr 2002)
    - added cast to Creator argument type to get rid of warnings for 
