@@ -804,13 +804,13 @@ protected:
     return (compare_x (cv1.pt, cv2.ps) == SMALLER);
   }
 
-  /*! ixx
+  /*! 
+   * This function is required for the Landmarks Point Location 
    * Return the location of the given point with respect to the two query
    * points.
    * \param p - the refernce point.
    * \param q - first query point
    * \param r - second query point
-   * \pre p is in the x-range of cv.
    * \return SMALLER if q is closer to p than r
    *         LARGER if r is closer to p
    *         or else (if q and r are in equal distance from p) EQUAL.
