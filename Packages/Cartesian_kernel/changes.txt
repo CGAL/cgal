@@ -1,3 +1,6 @@
+Version 102.1 (1 October 2003) [af]
+- A messed up cgal_submit forces us to increase the version number
+
 Version 6.104 (1 October 2003) [af]
 - Added maintainer
 
