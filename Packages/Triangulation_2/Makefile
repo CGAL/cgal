@@ -16,7 +16,7 @@ package:
 	@echo "----------------------------------"
 	@echo "---- cvs update; -----------------"
 	@echo "---- make Test ; ------------ ----"
-	@echo "---- make VERSION=4.86 Doc -------"
+	@echo "---- make Doc --------------------"
 	@echo "---- editer changes.txt       ----"
 #	@echo "---- make VERSION=4.85 Version ---"
 #	@echo "---- cvs commit ------------------"
@@ -78,14 +78,22 @@ Doc : Doc_ps Doc_html
 
 
 Doc_ps:
-	cd doc_ps; rm -f Triangulation_2.ps.gz;
+	cd doc_ps; rm -f Triangulation_2.ps.gz; 
 	cd doc_tex/basic/Triangulation_2;\
 	latex wrapper.tex; bibtex wrapper; \
 	latex wrapper.tex; latex wrapper.tex; \
 	dvips -o Triangulation_2.ps wrapper.dvi; \
 	gzip Triangulation_2.ps;\
 	rm -f *.aux *.log *.dvi  *.blg *.bbl *.toc ;
-	mv doc_tex/basic/Triangulation_2/Triangulation_2.ps.gz doc_ps ; 
+	mv doc_tex/basic/Triangulation_2/Triangulation_2.ps.gz doc_ps ;
+	cd doc_ps; rm -f TDS_2.ps.gz; 
+	cd doc_tex/basic/TDS_2;\
+	latex wrapper.tex; bibtex wrapper; \
+	latex wrapper.tex; latex wrapper.tex; \
+	dvips -o TDS_2.ps wrapper.dvi; \
+	gzip TDS_2.ps;\
+	rm -f *.aux *.log *.dvi  *.blg *.bbl *.toc ;
+	mv doc_tex/basic/TDS_2/TDS_2.ps.gz doc_ps ;
 	cd doc_ps; rm -f pointer.ps.gz;
 	cd doc_tex/support/Handle;\
 	latex wrapper.tex; bibtex wrapper; \
@@ -98,9 +106,11 @@ Doc_ps:
 
 Doc_html :
 	cd doc_tex/basic/Triangulation_2; \
-	cc_manual_to_html -title Triangulations \
-	-release $(VERSION) \
+	cc_manual_to_html -title Triangulation_2 \
 	-o ../../../doc_html/basic/Triangulation_2 main.tex
+	cd doc_tex/basic/TDS_2; \
+	cc_manual_to_html -title Triangulation_data_structure_2 \
+	-o ../../../doc_html/basic/TDS_2 main.tex
 	cd doc_tex/support/Handle; \
 	cc_manual_to_html -title Handles \
 	-release $(VERSION) \

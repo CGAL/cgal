@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 5.15 (27/7/01)
+- putt the two chapters of the doc (TDS and Triangulation)
+in separate directories, each with its own _ref subdirectory
+
 Ver 5.14 (26/7/01)
 - fixed typos in the doc
 - add an index entries for Voronoi and power diagram
