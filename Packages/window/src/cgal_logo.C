@@ -20,6 +20,11 @@
 // coordinator   : MPI, Saarbruecken 
 // ============================================================================
 /* XPM */
+
+#include <CGAL/basic.h>
+
+CGAL_BEGIN_NAMESPACE
+
 #if !defined(__LEDA__) || (__LEDA__ > 400)
 const char * cgal_logo[] = {
 #else
@@ -92,3 +97,4 @@ char * cgal_logo[] = {
 ".............................................................",
 "............................................................."};
 
+CGAL_END_NAMESPACE
