@@ -3174,8 +3174,8 @@ function and the functions in connection with the solution of cubic equations.
 @file <include/CGAL/Conic_misc.h> = @begin
     @<file header>("include/CGAL/Conic_misc.h","2D Conic")
 
-    #ifndef CONIC_MISC_H
-    #define CONIC_MISC_H
+    #ifndef CGAL_CONIC_MISC_H
+    #define CGAL_CONIC_MISC_H
 
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
     #  include <CGAL/optimisation_assertions.h>
@@ -3194,7 +3194,7 @@ function and the functions in connection with the solution of cubic equations.
 
     @<namespace end>("CGAL")
     
-    #endif // CONIC_MISC_H
+    #endif // CGAL_CONIC_MISC_H
 
     @<end of file line>
 @end
