@@ -53,7 +53,7 @@ class Triangulation_vertex_handle_3
   :public Pointer<Triangulation_vertex_3<Gt,Tds> > 
 {
 public:
-  typedef Pointer<Triangulation_vertex_3<Gt,Tds> > Pointer;
+  typedef Pointer<Triangulation_vertex_3<Gt,Tds> > Ptr;
   typedef Triangulation_vertex_3<Gt,Tds> Vertex;
   typedef Triangulation_vertex_handle_3<Gt,Tds> Vertex_handle;
   
@@ -61,22 +61,22 @@ public:
   
   inline 
   Triangulation_vertex_handle_3()
-    : Pointer(NULL)
+    : Ptr(NULL)
   {}
 
   inline  
   Triangulation_vertex_handle_3(const Vertex* v)
-    : Pointer((Vertex*)v)
+    : Ptr((Vertex*)v)
     {}
 
   inline  
   Triangulation_vertex_handle_3(const Vertex_iterator & vit)
-    : Pointer(&(*vit))
+    : Ptr(&(*vit))
     {}
   
   inline Vertex_handle & operator=(const Vertex* & v)
   {
-    ptr() = v ;
+    ptr() = const_cast<Vertex*>(v) ;
     return *this;
   }
     
@@ -100,7 +100,7 @@ class Triangulation_cell_handle_3
   :public Pointer<Triangulation_cell_3<Gt,Tds> > 
 {
 public:
-  typedef Pointer<Triangulation_cell_3<Gt,Tds> > Pointer;
+  typedef Pointer<Triangulation_cell_3<Gt,Tds> > Ptr;
   typedef Triangulation_cell_3<Gt,Tds> Cell;
   typedef Triangulation_cell_handle_3<Gt,Tds> Cell_handle;
   
@@ -109,27 +109,27 @@ public:
   
   inline 
   Triangulation_cell_handle_3()
-    : Pointer(NULL)
+    : Ptr(NULL)
   {}
 
   inline  
   Triangulation_cell_handle_3(const Cell* c)
-    : Pointer((Cell*)c)
+    : Ptr((Cell*)c)
   {}
 
   inline  
   Triangulation_cell_handle_3(const Cell_iterator & cit)
-    : Pointer(&(*cit))
+    : Ptr(&(*cit))
   {}
   
   inline  
   Triangulation_cell_handle_3(const Cell_circulator & ccir)
-    : Pointer(&(*ccir))
+    : Ptr(&(*ccir))
   {}
 
   inline Cell_handle & operator=(const Cell* & c)
   {
-    ptr() = c ;
+    ptr() = const_cast<Cell*>(c) ;
     return *this;
   }
     
