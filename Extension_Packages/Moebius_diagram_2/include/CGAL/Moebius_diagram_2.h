@@ -4,7 +4,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
-#include <CGAL/Pointer.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Regular_triangulation_3.h>
