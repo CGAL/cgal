@@ -178,10 +178,10 @@ public:
     std::swap(free_list, c.free_list);
   }
 
-  iterator begin() { return iterator(first_item); }
+  iterator begin() { return iterator(first_item, 0, 0); } // , 0, 0
   iterator end()   { return iterator(last_item, 0); }
 
-  const_iterator begin() const { return const_iterator(first_item); }
+  const_iterator begin() const { return const_iterator(first_item, 0, 0); } // , 0, 0
   const_iterator end()   const { return const_iterator(last_item, 0); }
 
   reverse_iterator rbegin() { return reverse_iterator(end()); }
@@ -191,6 +191,130 @@ public:
   rbegin() const { return const_reverse_iterator(end()); }
   const_reverse_iterator
   rend()   const { return const_reverse_iterator(begin()); }
+
+
+  // inserts a default constructed item.
+  iterator construct_insert()
+  {
+    if (free_list == NULL)
+      allocate_new_block();
+
+    pointer ret = free_list;
+    free_list = clean_pointee(ret);
+    new (ret) value_type();
+    CGAL_assertion(type(ret) == USED);
+    ++size_;
+    return iterator(ret, 0);
+  }
+  // Special insert methods that construct the objects in place
+  // (just forward the arguments to the constructor, to optimize a copy.
+  template < typename T1 >
+  iterator construct_insert(T1 t1)
+  {
+    if (free_list == NULL)
+      allocate_new_block();
+
+    pointer ret = free_list;
+    free_list = clean_pointee(ret);
+    new (ret) value_type(t1);
+    CGAL_assertion(type(ret) == USED);
+    ++size_;
+    return iterator(ret, 0);
+  }
+  template < typename T1, typename T2 >
+  iterator construct_insert(T1 t1, T2 t2)
+  {
+    if (free_list == NULL)
+      allocate_new_block();
+
+    pointer ret = free_list;
+    free_list = clean_pointee(ret);
+    new (ret) value_type(t1, t2);
+    CGAL_assertion(type(ret) == USED);
+    ++size_;
+    return iterator(ret, 0);
+  }
+  template < typename T1, typename T2, typename T3 >
+  iterator construct_insert(T1 t1, T2 t2, T3 t3)
+  {
+    if (free_list == NULL)
+      allocate_new_block();
+
+    pointer ret = free_list;
+    free_list = clean_pointee(ret);
+    new (ret) value_type(t1, t2, t3);
+    CGAL_assertion(type(ret) == USED);
+    ++size_;
+    return iterator(ret, 0);
+  }
+  template < typename T1, typename T2, typename T3, typename T4 >
+  iterator construct_insert(T1 t1, T2 t2, T3 t3, T4 t4)
+  {
+    if (free_list == NULL)
+      allocate_new_block();
+
+    pointer ret = free_list;
+    free_list = clean_pointee(ret);
+    new (ret) value_type(t1, t2, t3, t4);
+    CGAL_assertion(type(ret) == USED);
+    ++size_;
+    return iterator(ret, 0);
+  }
+  template < typename T1, typename T2, typename T3, typename T4, typename T5 >
+  iterator construct_insert(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5)
+  {
+    if (free_list == NULL)
+      allocate_new_block();
+
+    pointer ret = free_list;
+    free_list = clean_pointee(ret);
+    new (ret) value_type(t1, t2, t3, t4, t5);
+    CGAL_assertion(type(ret) == USED);
+    ++size_;
+    return iterator(ret, 0);
+  }
+
+  template < typename T1, typename T2, typename T3, typename T4, typename T5, typename T6 >
+  iterator construct_insert(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6)
+  {
+    if (free_list == NULL)
+      allocate_new_block();
+
+    pointer ret = free_list;
+    free_list = clean_pointee(ret);
+    new (ret) value_type(t1, t2, t3, t4, t5, t6);
+    CGAL_assertion(type(ret) == USED);
+    ++size_;
+    return iterator(ret, 0);
+  }
+
+  template < typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7 >
+  iterator construct_insert(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7)
+  {
+    if (free_list == NULL)
+      allocate_new_block();
+
+    pointer ret = free_list;
+    free_list = clean_pointee(ret);
+    new (ret) value_type(t1, t2, t3, t4, t5, t6, t7);
+    CGAL_assertion(type(ret) == USED);
+    ++size_;
+    return iterator(ret, 0);
+  }
+
+  template < typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8 >
+  iterator construct_insert(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8)
+  {
+    if (free_list == NULL)
+      allocate_new_block();
+
+    pointer ret = free_list;
+    free_list = clean_pointee(ret);
+    new (ret) value_type(t1, t2, t3, t4, t5, t6, t7, t8);
+    CGAL_assertion(type(ret) == USED);
+    ++size_;
+    return iterator(ret, 0);
+  }
 
   iterator insert(const T &t)
   {
@@ -530,8 +654,22 @@ namespace CGALi {
     // Only Compact_container should access these constructors.
     friend class Compact_container<value_type, typename DSC::allocator_type>;
 
-    // For begin()
-    explicit CC_iterator(pointer ptr)
+  public:
+    
+    // For the construction from NULL
+    // The construction  from NULL is a non-documented feature
+    // which might disappear in the future.
+    // It is currently needed in the triangulation code.
+    CC_iterator(CGAL_NULL_TYPE CGAL_assertion_code(n))
+    : p(NULL)
+    {
+      CGAL_assertion( n == NULL);
+    }
+  
+  private:   
+  
+    // For begin() 
+    CC_iterator(pointer ptr, int, int)
     : p(ptr)
     {
       if (p == NULL) // empty container.
@@ -540,8 +678,6 @@ namespace CGALi {
       if (DSC::type(p) == DSC::FREE)
         increment();
     }
-
-  private:
     // Construction from raw pointer and for end().
     CC_iterator(pointer ptr, int)
     : p(ptr) {}
@@ -596,6 +732,11 @@ namespace CGALi {
     reference operator*() const { return *p; }
     pointer   operator->() const { return p; }
 
+    bool operator<(const CC_iterator& other) const
+    {
+      return p < other.p;
+    }
+
     // Can itself be used for bit-squatting.
     void *   for_compact_container() const { return (void *) p; }
     void * & for_compact_container()       { return (void * &) p; }
@@ -641,6 +782,67 @@ namespace CGALi {
                   const CC_iterator<DSC, Val*, Val&> &lhs)
   { return &*rhs != &*lhs; }
 
+  // and now the same for comparison with NULL
+
+  template < class DSC, class Ptr, class Ref >
+  inline
+  bool operator==(const CC_iterator<DSC, Ptr, Ref> &rhs,
+		  CGAL_NULL_TYPE CGAL_assertion_code(n))
+  { 
+    CGAL_assertion( n == NULL);
+    return &*rhs != NULL; 
+  }
+
+  template < class DSC, class Val >
+  inline
+  bool operator==(const CC_iterator<DSC, Val*, Val&> &rhs,
+		  CGAL_NULL_TYPE CGAL_assertion_code(n))
+  { 
+    CGAL_assertion( n == NULL);
+    return &*rhs != NULL; 
+  }
+
+
+  template < class DSC, class Val >
+  inline
+  bool operator==(const CC_iterator<DSC, const Val*, const Val&> &rhs,
+		  CGAL_NULL_TYPE CGAL_assertion_code(n))
+  { 
+    CGAL_assertion( n == NULL);
+    return &*rhs != NULL; 
+  }
+
+  
+  template < class DSC, class Ptr, class Ref >
+  inline
+  bool operator!=(const CC_iterator<DSC, Ptr, Ref> &rhs,
+		  CGAL_NULL_TYPE CGAL_assertion_code(n))
+  { 
+    CGAL_assertion( n == NULL);
+    return &*rhs != NULL; 
+  }
+
+  template < class DSC, class Val >
+  inline
+  bool operator!=(const CC_iterator<DSC, Val*, Val&> &rhs,
+                  CGAL_NULL_TYPE CGAL_assertion_code(n))
+  { 
+    CGAL_assertion( n == NULL);
+    return &*rhs != NULL; 
+  }
+
+  template < class DSC, class Val >
+  inline
+  bool operator!=(const CC_iterator<DSC, const Val*, const Val&> &rhs,
+                  CGAL_NULL_TYPE CGAL_assertion_code(n))
+  { 
+    CGAL_assertion( n == NULL);
+    return &*rhs != NULL; 
+  }
+
+  
+
+
 #else
   template < class DSC, class Ptr1, class Ref1, class Ptr2, class Ref2 >
   inline
@@ -650,6 +852,16 @@ namespace CGALi {
     return &*rhs == &*lhs;
   }
 
+ template < class DSC, class Ptr1, class Ref1>
+  inline
+  bool operator==(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
+                  const CGAL_NULL_TYPE CGAL_assertion_code(n))
+  {
+    CGAL_assertion( n == NULL);
+    return &*rhs == NULL;
+  }
+
+
   template < class DSC, class Ptr1, class Ref1, class Ptr2, class Ref2 >
   inline
   bool operator!=(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
@@ -657,6 +869,16 @@ namespace CGALi {
   {
     return &*rhs != &*lhs;
   }
+
+ template < class DSC, class Ptr1, class Ref1>
+  inline
+  bool operator!=(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
+		  const CGAL_NULL_TYPE CGAL_assertion_code(n))
+  {
+    CGAL_assertion( n == NULL);
+    return &*rhs != NULL;
+  }
+
 #endif
 
 } // namespace CGALi
