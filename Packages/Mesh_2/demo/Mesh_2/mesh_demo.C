@@ -621,7 +621,7 @@ public slots:
 	yspan = (ymax-ymin)/2;
 
       widget->set_window(xmin-1.1*xspan, xmax+1.1*xspan, 
-			 ymin-1.1*yspan, ymax+1.1*yspan);
+			 ymin-1.1*yspan, ymax+1.1*yspan, true);
 
       seeds.clear();
       is_mesh_initialized=false;
