@@ -25,7 +25,7 @@
 namespace CGAL {
 
 struct Null_mesh_visitor {
-  Null_mesh_visitor previous_level() const { return *this; }
+  const Null_mesh_visitor& previous_level() const { return *this; }
 
   template <typename E, typename P>
   void before_conflicts(E, P) const {}
