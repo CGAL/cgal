@@ -1,3 +1,6 @@
+25 August 2004 Andreas Fabri
+- changes in doc_tex for pdflatex
+
 26 March 2004 Radu Ursu
 -made doc work with the current implementation of the Manual tools
 
