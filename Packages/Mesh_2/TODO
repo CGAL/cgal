@@ -7,7 +7,9 @@
 
 - do not use default constructor of Geom_traits
 
-- Rewrite Double_map.h
+- Rewrite Double_map.h [!]
+
+- draw() called twice in mesh_demo [!]
 
 Before CGAL-3.1:
 
