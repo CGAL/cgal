@@ -48,7 +48,7 @@ typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > K;
 typedef CGAL::Triangulation_3<K> Triangulation;
 typedef CGAL::Delaunay_triangulation_3<K> Delaunay;
 
-typedef Triangulation::Finite_vertex_iterator Finite_vertex_iterator;
+typedef Triangulation::Finite_vertices_iterator Finite_vertices_iterator;
 
 typedef Triangulation::Cell_handle Cell_handle;
 typedef Triangulation::Locate_type Locate_type;
@@ -84,8 +84,8 @@ void visu_edge(CGAL::Geomview_stream & os, const TRIANGULATION & T,
 template<class TRIANGULATION>
 void visu_vertices(CGAL::Geomview_stream & os, const TRIANGULATION & T)
 {
-  Finite_vertex_iterator vit = T.finite_vertices_begin();
-  Finite_vertex_iterator vdone = T.finite_vertices_end();
+  Finite_vertices_iterator vit = T.finite_vertices_begin();
+  Finite_vertices_iterator vdone = T.finite_vertices_end();
   
   if ( vit == vdone ) { std::cout << "no vertex" << std::endl ;}
   else {

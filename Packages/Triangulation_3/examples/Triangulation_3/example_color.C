@@ -40,7 +40,7 @@ int main()
   T.insert(Point(2,2,2));  
   T.insert(Point(-1,0,1));  
 
-  Delaunay::Finite_vertex_iterator vit;
+  Delaunay::Finite_vertices_iterator vit;
   std::set<Delaunay::Vertex_handle> adjacent;
   for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit) {
     T.incident_vertices( &*vit, adjacent);

@@ -61,10 +61,10 @@ public:
   typedef typename Tr_Base::Facet_iterator      Facet_iterator;
   typedef typename Tr_Base::Edge_iterator       Edge_iterator;
 
-  typedef typename Tr_Base::Finite_vertex_iterator Finite_vertex_iterator;
-  typedef typename Tr_Base::Finite_cell_iterator   Finite_cell_iterator;
-  typedef typename Tr_Base::Finite_facet_iterator  Finite_facet_iterator;
-  typedef typename Tr_Base::Finite_edge_iterator   Finite_edge_iterator;
+  typedef typename Tr_Base::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename Tr_Base::Finite_cells_iterator   Finite_cells_iterator;
+  typedef typename Tr_Base::Finite_facets_iterator  Finite_facets_iterator;
+  typedef typename Tr_Base::Finite_edges_iterator   Finite_edges_iterator;
 
   typedef typename Gt::Weighted_point              Weighted_point;
 
@@ -525,7 +525,7 @@ is_valid(bool verbose, int level) const
   switch ( dimension() ) {
   case 3:
     {
-      Finite_cell_iterator it;
+      Finite_cells_iterator it;
       for ( it = finite_cells_begin(); it != finite_cells_end(); ++it ) {
 	is_valid_finite(it->handle());
 	for ( i=0; i<4; i++ ) {
@@ -543,7 +543,7 @@ is_valid(bool verbose, int level) const
     }
   case 2:
     {
-      Finite_facet_iterator it;
+      Finite_facets_iterator it;
       for ( it = finite_facets_begin(); it != finite_facets_end(); ++it ) {
 	is_valid_finite((*it).first);
 	for ( i=0; i<3; i++ ) {
@@ -563,7 +563,7 @@ is_valid(bool verbose, int level) const
     }
   case 1:
     {
-      Finite_edge_iterator it;
+      Finite_edges_iterator it;
       for ( it = finite_edges_begin(); it != finite_edges_end(); ++it ) {
 	is_valid_finite((*it).first);
 	for ( i=0; i<2; i++ ) {

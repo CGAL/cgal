@@ -80,10 +80,10 @@ public:
   typedef typename Tr_Base::Edge_iterator   Edge_iterator;
   typedef typename Tr_Base::Vertex_iterator Vertex_iterator;
 
-  typedef typename Tr_Base::Finite_vertex_iterator Finite_vertex_iterator;
-  typedef typename Tr_Base::Finite_cell_iterator   Finite_cell_iterator;
-  typedef typename Tr_Base::Finite_facet_iterator  Finite_facet_iterator;
-  typedef typename Tr_Base::Finite_edge_iterator   Finite_edge_iterator;
+  typedef typename Tr_Base::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename Tr_Base::Finite_cells_iterator   Finite_cells_iterator;
+  typedef typename Tr_Base::Finite_facets_iterator  Finite_facets_iterator;
+  typedef typename Tr_Base::Finite_edges_iterator   Finite_edges_iterator;
 
   typedef typename Tr_Base::Locate_type Locate_type;
 
@@ -233,7 +233,7 @@ public:
   template < class Stream> 		
   Stream& draw_dual(Stream & os)
     {
-      Finite_facet_iterator fit = finite_facets_begin();
+      Finite_facets_iterator fit = finite_facets_begin();
       for (; fit != finite_facets_end(); ++fit) {
 	Object o = dual(*fit);
 	Point p;
@@ -813,7 +813,7 @@ is_valid(bool verbose, int level) const
   switch ( dimension() ) {
   case 3:
     {
-      Finite_cell_iterator it;
+      Finite_cells_iterator it;
       for ( it = finite_cells_begin(); it != finite_cells_end(); ++it ) {
 	is_valid_finite(it->handle());
 	for (int i=0; i<4; i++ ) {
@@ -831,7 +831,7 @@ is_valid(bool verbose, int level) const
     }
   case 2:
     {
-      Finite_facet_iterator it;
+      Finite_facets_iterator it;
       for ( it = finite_facets_begin(); it != finite_facets_end(); ++it ) {
 	is_valid_finite((*it).first);
 	for (int i=0; i<2; i++ ) {
@@ -850,7 +850,7 @@ is_valid(bool verbose, int level) const
     }
   case 1:
     {
-      Finite_edge_iterator it;
+      Finite_edges_iterator it;
       for ( it = finite_edges_begin(); it != finite_edges_end(); ++it )
 	is_valid_finite((*it).first);
       break;

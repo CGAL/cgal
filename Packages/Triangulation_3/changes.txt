@@ -1,3 +1,7 @@
+Version 1.89 (?? September 01)
+- Finite_vertex_iterator -> Finite_vertices_iterator, idem for cell, facet and
+  edge.
+
 Version 1.88 (17 September 01)
 - Use Pointer<> directly, no need for Triangulation_*_handle_3<>.
 - New internal function in Delaunay : nearest_vertex_in_cell().

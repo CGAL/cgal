@@ -30,8 +30,7 @@ template < class Triangulation >
 int
 _test_circulator( const Triangulation &T )
 {
-  typedef typename Triangulation::Finite_edge_iterator    Finite_edge_iterator;
-  typedef typename Triangulation::Finite_vertex_iterator  Finite_vertex_iterator;
+  typedef typename Triangulation::Finite_edges_iterator   Finite_edges_iterator;
   typedef typename Triangulation::Edge_iterator    Edge_iterator;
   typedef typename Triangulation::Vertex_iterator  Vertex_iterator;
   typedef typename Triangulation::Facet_circulator Facet_circulator;
@@ -44,7 +43,7 @@ _test_circulator( const Triangulation &T )
   int n = 0;
   Cell_circulator cc, cc0;
   Edge_iterator eit;
-  Finite_edge_iterator feit;
+  Finite_edges_iterator feit;
 
   // testing incident_cells(edge *); 
 //   for (eit=T.edges_begin(); eit!=T.edges_end();  eit++)
