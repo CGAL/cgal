@@ -1,22 +1,31 @@
-\def\Ipe#1{\def\IPEfile{#1}\input{#1}}
+% +------------------------------------------------------------------------+
+% | Reference manual chapter: overlay_ref.tex (Map Overlay)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: ovl (Map Overlay)
+% | 
+% +------------------------------------------------------------------------+
 
-\renewcommand{\Re}{{\rm I\!\hspace{-0.025em} R}}
+%+----------------------------------------------------------------------------80
+%| update log
+%|
+%| 01 April 2002 - Eti Ezra
+%|    Separated from map_overlay.tex (See previous changes in change log there).
+%|     
+%+----------------------------------------------------------------------------80
 
-\def\C{{\cal C}}
-\def\G{{\cal G}}
-\def\F{{\cal F}}
-\def\I{{\cal I}}
-\def\U{{\cal U}}
-\def\M{{\cal M}}
-\def\eps{{\varepsilon}}
-\def\bd{{\partial}}
-\def\dm{{\cal D}}
 
-\chapter{2D Map Overlay} 
-\label{I1_ChapterMapOverlay_2}
+% +========================================================================+
+%   Introduction
+% +========================================================================+
+%\clearpage
+%\section{Reference Pages for 2D Planar Maps}
+%\ccRefLabel{Pm_Ref_intro}
 
+\chapter{2D Map Overlay}
+\label{chap:map_overlay_2_ref}
+\ccRefLabel{Ovl_Ref_intro}
 \section{Introduction}
-\label{OVL_sec:example}
 
 Given two planar subdivisions $S_1$ and $S_2$, the overlay of 
 $S_1$ and $S_2$, denoted by $O(S_1,S_2)$ is the subdivision 
@@ -28,48 +37,66 @@ regarding its creators, namely, every feature of $O(S_1,S_2)$ holds pointers
 to the respected features from $S_1$ and $S_2$ which caused its creation.
 When a feature $f \in O(S_1,S_2)$ is contained in two other features 
 $f_1 \in S_1$ and $f_2 \in S_2$, we say that $f_1$ and $f_2$ 
-lay {\em above} $f$, alternatively, we say that $f$ is {\em below} $f_1$ and $f_2$.
+lay {\em above} $f$, alternatively, we say that 
+$f$ is {\em below} $f_1$ and $f_2$.
+
 Every feature in the overlay $O(S_1, S_2)$ maintains the 
 information regarding the features from $S_1$ and $S_2$ laying above it.
-
-The subdivision, representing the overlay and its two creators, 
-can be either a {\it planar map} (see Chapter~\ref{I1_ChapterPlanarMap}) 
-or a {\it planar map with intersections} (see Chapter~\ref{I1_ChapterPmwx}).
-%or an {\it arrangement} (see Chapter~\ref{I1_ChapterArrangement_2}).
-
+This information is maintained in the basic components of the DCEL, 
+which implies that each face denoted by $f$ of the DCEL contains two pointers 
+to the two faces of $S_1$ and $S_2$  above it. 
+In the same way, each halfedge $e$ contains two pointers to the halfedges 
+from $S_1$ and $S_2$ created it, note that we need two pointers in the 
+case of overlapping curves. 
+Each halfedge $e$ also maintains two pointers to the faces of the creators above it. 
+In some cases such a pointer is simply the face to the side of the halfedge 
+above $e$, and hence, maintaining the face pointer does not add any new information. 
+However, the latter information is necessary when $e$ lays on the interior of a creator face. 
+In such cases we can not access this information through the halfedges of the creators. 
+In most such cases $e$ is a hole in a face of the overlay.
+In the same way, each vertex $v$ of the DCEL contains two pointers to the 
+possibly two vertices of $S_1$ and $S_2$ above it, 
+as well as two pointers to the possibly respected halfedges of $S_1$ and $S_2$ 
+contain it. In some cases a pointer to the creator halfedge can be obtained by 
+accessing one of the halfedges animating from the vertex laying above $v$.
+In this case we pick one such halfedge arbitrarily.
+However, when dealing with cases in which $v$ is an intersection of two edges, 
+we can not simply access this data through a vertex of the creator.
+In addition, $v$ also contains two pointers to the 
+faces of the creators above it. 
+If $v$ is laying on the boundary of some faces of its creators, 
+we choose one such face arbitrarily.
+Maintaining the latter information is necessary 
+in case $v$ lays on the interior of a creator face.
 Figure~\ref{OVL_sec:overlay_example} displays an overlay of two given rectangles.
 
-% \begin{figure}
-%     \begin{center}
-%         \ \psfig{figure=overlay_example.ps,width=14cm} \
-%     \end{center}
-%     \vspace{-2ex}
-%     \caption{Two rectangles (left) and their overlay (right). We denote the subdivision 
-%        induced by the first rectangle by $S_1$ and the second by $S_2$. 
-%        The face $f$ of the overlay is below $f_1$ and the unbounded face of $S_2$. 
-%        The halfedge $e$ of the overlay contains a halfedge pointer to $e_2$ and two faces pointers 
-%        to $f_1$ and to $f_2$. The vertex $v$ of the overlay points to $v_2$, contains a halfedge 
-%        pointer to $e_2$ and is lying below $f_1$ and $f_2$.}
-%     \label{OVL_sec:overlay_example}
-% \end{figure}
-
 \begin{figure}[h]
-\begin{ccTexOnly}
-    \centerline{
-      \includegraphics{overlay_example.ps}
-    }
-\end{ccTexOnly}
-\caption{Two rectangles (left) and their overlay (right). We denote the subdivision 
-induced by the first rectangle by $S_1$ and the second by $S_2$. 
-The face $f$ of the overlay is below $f_1$ and the unbounded face of $S_2$. 
-The halfedge $e$ of the overlay contains a halfedge pointer to $e_2$ and two faces pointers 
-to $f_1$ and to $f_2$. The vertex $v$ of the overlay points to $v_2$, contains a halfedge 
-pointer to $e_2$ and is lying below $f_1$ and $f_2$.
-\label{OVL_sec:overlay_example}}
+    \begin{ccTexOnly}
+        \centerline{
+           \includegraphics{overlay_example.ps}
+           }
+    \end{ccTexOnly}
+    \caption{Two rectangles (left) and their overlay (right). We denote the subdivision 
+       induced by the first rectangle by $S_1$ and the second by $S_2$. 
+       The face $f$ of the overlay is below $f_1$ and the unbounded face of $S_2$. 
+       The halfedge $e$ of the overlay contains a halfedge pointer to $e_2$ 
+       and two faces pointers to $f_1$ and to $f_2$. 
+       The vertex $v$ of the overlay points to $v_2$, contains a halfedge 
+       pointer to $e_2$ and is lying below $f_1$ and $f_2$.}
+    \label{OVL_sec:overlay_example}
 \end{figure}
 
+\begin{ccTexOnly}
+
+The subdivision, representing the overlay and its two creators, 
+can be either a \ccStyle{Planar_Map} 
+(see Chapter~\ref{I1_ChapterPlanarMap}) 
+or a \ccStyle{Planar_Map_with_Intersections} 
+(see Chapter~\ref{I1_ChapterPmwx}).
+%or an {\it arrangement} (see Chapter~\ref{I1_ChapterArrangement_2}).
+
 \section{Software Design}
-The \ccc{Map_overlay<Subdivision,Notifier>} class 
+The \ccc{Map_overlay_2<Subdivision,Notifier>} class 
 is a data structure for maintaining 2D map overlay.
 The data structure maintains the subdivision obtained by overlaying 
 the two creators,
@@ -77,23 +104,39 @@ and also contains two pointers to these creators.
 The underlying combinatorial structure is determined by the
 (i) {\it Subdivision} which presents the subdivision type of the arrangement 
 representing the overlay and its two creators. 
-In our usage, {\it Subdivision} is a \ccc{Planar Map}, 
-a \ccc{Planar Map With Intersections}.
+In our usage, {\it Subdivision} is a \ccStyle{Planar_Map} or, 
+a \ccStyle{Planar_Map_With_Intersections}.
 % or an a \ccc{Arrangement}.
 Notice that the choice of a subdivision type determines the choice 
 of a DCEL and a traits class.
-(ii) {\it Notifier>} is the notifier class used to update the overlay features. 
+(ii) {\it Notifier} is the notifier class used to update the overlay features. 
 {\it Notifier} should be a model of the 
 \ccc{PlanarMapWithIntersectionsChangeNotification_2} concept.
 
-\paragraph{Map Overlay Algorithms:}
+\subsection*{Example of an Overlaying Two Subdivisions of Line Segments:}
+The following example demonstrates a simple usage of the 
+\ccc{Map_overlay_2<Subdivision,Notifier>} package.
+In this example we construct two planar maps of line segments. 
+Then we construct their overlay when using the sweep-line algorithm, which is 
+the default algorithm for the overlay construction. 
+After the overlay is constructed, we write its corresponding planar map to the 
+standard output stream. 
+
+\ccIncludeExampleCode{Map_overlay_2/example1.C}
+The input of the program is a text file containing two lists of segments, 
+each of which represents an input subdivision.
+\ccIncludeExampleCode{Map_overlay_2/example1.cin}
+
+The output of the program looks like this:
+\ccIncludeExampleCode{Map_overlay_2/example1.cout}
+
+\section{Map Overlay Algorithms}
 The input to our algorithms are two planar subdivisions denoted by $S_1$ and $S_2$ having 
 $N$ vertices in total. The overlay of $S_1$ and $S_2$ has $N+k$ vertices, 
-while $k$ is the number of intersections between 
-$S_1$ and $S_2$. 
+while $k$ is the number of intersections between $S_1$ and $S_2$. 
 Consequentially, the combinatorial complexity of the overlay is quadratic 
 in the size of $S_1$ and $S_2$ in the worst case.
-We deviced and implementated two different algorithms for computing the map-overlay 
+We devised and implemented two different algorithms for computing the map-overlay 
 of two given planar subdivisions, 
 which we refer to as the {\it incremental} algorithm and the {\it sweep-line} algorithm. 
 In general, each of these algorithms constructs the overlay by inserting 
@@ -102,45 +145,120 @@ and maintaining within each input curve its corresponding halfedge.
 The latter information is needed when using the notifier in order to
 update the creator pointers. 
 
-Our experimets show that the sweep-line algorithm is much faster than the incremental algorithm,
-and hence, users are most encouraged to employ the sweep-line algorithm 
-and use \ccc{Planar Map} as their subdivision. 
+\subsection*{The Incremental Algorithm}
+\label{sec:MapOverlayIncremental}
+The incremental algorithm constructs the arrangement induced by $O(S_1,S_2)$ 
+by inserting all curves of $S_1$ and $S_2$ one by one in a random order. 
+The implementation of the incremental algorithm is almost immediate when using 
+the \ccStyle{Planar_Map_With_Intersections} class: We simply derive the overlay object from the 
+\ccStyle{Planar_Map_With_Intersections} class, 
+and insert into it all curves of both creators.
+Handling degenerate cases is gained directly from the usage of the 
+\ccStyle{Planar_Map_With_Intersection} class.
 
-\paragraph{Map Overlay DCEL:}
+\subsection*{The Sweep Line Algorithm}
+\label{sec:MapOverlaySweepLine}
+The sweep-line algorithm constructs the arrangement, induced by $O(S_1,S_2)$, 
+by sweeping all curves in $S_1$ and in $S_2$ simultaneously. 
+In our implementation we employ the \ccc{Sweep Line} package~\ref{I1_ChapterSweepLine}. 
+The sweep-line algorithm requires $O(N\log{N} + k\log{N})$ time 
+(if there are no overlapping curves in the input), 
+where $N$ and $k$ are defined as before.
+
+Supports degenerate cases, such as, vertical curves, 
+several curves meeting in a common point, tangency between two 
+different curves and overlapping curves, 
+is achieved directly by using the \ccc{Sweep Line} package.
+Due to the support in overlapping curves, the running time of our algorithm is becoming 
+$O(N\log{N} + S\log{N})$, where $S$ is the overall number of the resulting subcurves, which 
+are disjoint in their interior. Notice that, when there are no overlaps, this is equal to 
+$O(N\log{N} + k\log{N})$, since in this case $S=O(k)$.
+
+An important advancement, achieved by using the sweep-line algorithm, 
+as shown by our experimental results,
+is the ability to construct the overlay much faster.
+%than constructing it by using the {\em Planar\_Map\_with\_Intersections} package.
+In general, it is much faster to perform the sweep-line algorithm on
+the collection of input curves in order to produce their planar map,
+rather using the \ccc{Planar_map_with_intersections_2<Planar_map>} package,
+due to an efficient calculation of intersections and avoiding the usage of
+point location operations when inserting curves to the subdivision associated with the overlay
+(when using the sweep-line algorithm this subdivision 
+should be a \ccStyle{Planar_Map}, as recommended in~\ref{I1_ChapterSweepLine}).
+
+In addition, the sweep-line implementation has been optimized in order to
+save the usage of geometric predicates. 
+Hence, users are most encouraged to employ the sweep-line algorithm 
+and use \ccc{Planar_Map} as their subdivision. 
+
+\subsection*{Example of using the incremental algorithm}
+The following example demonstrates a usage of the 
+\ccc{Map_overlay_2<Subdivision,Notifier>} package, 
+while employing the incremental algorithm for constructing the overlay.
+In this example we construct two planar maps of intersecting line segments. 
+Then we construct their overlay when using the incremental algorithm. 
+After the overlay is constructed, we write to the standard output stream 
+the planar map with intersections it holds. 
+
+\ccIncludeExampleCode{Map_overlay_2/example2.C}
+The input of the program is a text file containing two lists of segments, 
+each of which represents an input subdivision.
+\ccIncludeExampleCode{Map_overlay_2/example2.cin}
+
+The output of the program looks like this:
+\ccIncludeExampleCode{Map_overlay_2/example2.cout}
+
+\section{Map Overlay DCEL}
 The \ccc{Map_overlay_default_dcel<Traits,Vertex_base,Halfedge_base,Face_base>}
 class is the data structure representing the DCEL of the overlay. 
 The basic components of the DCEL of the overlay are built 
-on top of the basic components of the \ccc{Planar Map} or the \ccc{Planar Map With Intersections} 
+on top of the basic components of the \ccStyle{Planar_Map} or 
+the \ccStyle{Planar_Map_With_Intersections} 
 (depending on the subdivision we choose in order to represent the overlay and its 
 two creators).
 
 The additional information we maintain in these components is the pointers 
 to the creator components.
-Each feature of the overlay points to the features of the creartors above it.
+Each feature of the overlay points to the features of the creators above it.
 This information is maintained in the basic components of the DCEL of the overlay, 
-which implies that each face denoted by $f$ of $O(S_1, S_2)$ contains two pointers 
+which implies that each face denoted by $f$ of the DCEL contains two pointers 
 to the two faces of $S_1$ and $S_2$  above it. 
 In the same way, each halfedge $e$ contains two pointers to the halfedges 
-from $S_1$ and $S_2$ created it, note that we need two pointers in the case of overlapping curves. 
+from $S_1$ and $S_2$ created it, note that we need two pointers in the case 
+of overlapping curves. 
 Each halfedge $e$ also maintains two pointers to the faces of the creators above it. 
-Finally, each vertex $v$ of the DCEL of the overlay contains two pointers to the 
+In some cases such a pointer is simply the face to the side of the halfedge 
+above $e$, and hence, maintaining the face pointer does not add any new information. 
+However, the latter information is necessary when $e$ lays on the interior of a creator face. 
+In such cases we can not access this information through the halfedges of the creators. 
+In most such cases $e$ is a hole in a face of the overlay.
+In the same way, each vertex $v$ of the DCEL contains two pointers to the 
 possibly two vertices of $S_1$ and $S_2$ above it, 
 as well as two pointers to the possibly respected halfedges of $S_1$ and $S_2$ 
-contain it, and in addition, $v$ contains two pointers to the 
-faces of the creators above it. If $v$ is laying on the boundary of some faces of its creators, 
+contain it. In some cases a pointer to the creator halfedge can be obtained by 
+accessing one of the halfedges animating from the vertex laying above $v$.
+In this case we pick one such halfedge arbitrarily.
+However, when dealing with cases in which $v$ is an intersection of two edges, 
+we can not simply access this data through a vertex of the creator.
+In addition, $v$ also contains two pointers to the 
+faces of the creators above it. 
+If $v$ is laying on the boundary of some faces of its creators, 
 we choose one such face arbitrarily.
+Maintaining the latter information is necessary 
+in case $v$ lays on the interior of a creator face.
+Figure~\ref{fig:overlay_example} displays an overlay of two given rectangles.
 
-\paragraph{Map Overlay Notifier:}
-Updating the DCEL additional attributes is performed by the {\em notifier} class.
-We extend and override the notification functions of the basic {\em notifier}, defined 
-in the \ccc{Planar_Map} package (see Chapter~\ref{I1_ChapterPlanarMap}), 
-to update the corresponding features constructed by the overlay. 
+\section{Map Overlay Notifier}
+Updating the DCEL additional attributes is performed by the {\em Notifier} class.
+We extend and override the notification functions of the basic {\em Notifier}, defined 
+in the \ccc{Planar_Map_2<Dcel,Traits>} package (see Chapter~\ref{I1_ChapterPlanarMap}), 
+in order to update the corresponding features constructed by the overlay. 
 
 The \ccc{Map_overlay_default_notifier<Subdivision>} class 
 keeps on updating the additional information in the DCEL.
 It updates the pointers to the components of the creators.
 The notifier class overrides only the functions \ccStyle{add_edge} 
-and \ccStyle{split_edge} of the basic notifier defined for \ccc{Planar_Map}.
+and \ccStyle{split_edge} of the basic notifier defined for \ccStyle{Planar_Map}.
 In our implementation these functions update 
 the pointers of the halfedges and the vertices in the DCEL 
 presenting the overlay, see Chapter~\ref{I1_ChapterPlanarMap} for details.
@@ -151,18 +269,61 @@ inserting into the overlay all the curves of $S_1$ and $S_2$.
 We did not use the \ccStyle{split_face} function in order to update a face pointers, 
 since it is invoked each time a cycle in the DCEL is closed and degrade performance. 
 
-\subsection{Example of an Overlaying Two Subdivisions of Line Segments:}
-The following example demonstrates a simple usage of the {\it Map Overlay} package.
-In this example we construct two planar maps of line segments. 
-Then we construct their overlay when using the sweep-line algorithm, which is 
-the default algorithm for the overlay construction. 
-After the overlay is constructed, we write its corresponding planar map to the 
-standatd output stream. 
+\section{Boolean Operations:}
+One of the most natural usage of the \ccc{Map_overlay_2<Subsection,Notifier>} utilities, 
+is performing boolean operations on planar subdivisions in general, 
+and specifically on polygons.
 
-\ccIncludeExampleCode{Map_overlay_2/example1.C}
+An object of the \ccc{Boolean_operations_2<Map_overlay>} class is initialized with 
+two input subdivisions. In the initialization step, it constructs the overlay 
+of the two input subdivisions. By constructing the overlay, all boolean operations, 
+on the two input subdivisions, can be easily provided.
+The  \ccc{Boolean_operations_2<Map_overlay>} class provides methods for 
+performing an intersection, union, symmetric difference and difference on the two 
+input subdivisions. The output of such operations are all resulting vertices, halfedges 
+and faces.
+
+\paragraph{DCEL}
+\ccRefLabel{Bops_dcel}
+When performing boolean operations, the overlay of the two input subdivisions is 
+constructed. Hence, naturally, users may define the input subdivisions DCEL as the 
+\ccc{Map_overlay_2<Subdivision,Notifier>} DCEL. 
+However, an extra functionality is required: We may be interested 
+to define our boolean operations only on {\it some} features of the input subdivisions.
+For instance, we would like to ignore the unbounded faces of the input subdivisions.
+In order to achieve this functionality, we define a DCEL for the 
+\ccc{Boolean_operations_2<Map_overlay>} class. 
+The \ccc{Boolean_operations_2<Map_overlay>} DCEL is very similar to 
+the \ccc{Map_overlay_2<Subdivision,Notifier>} DCEL.
+As a matter of fact, the basic components 
+of the \ccc{Boolean_operations_2<Map_overlay>} DCEL are 
+derived from those of the \ccc{Map_overlay_2<Subdivision,Notifier>} DCEL, 
+and in addition they contain a boolean flag indicating, 
+whether a component (vertex, halfedge or face) is ignored 
+when performing boolean operations.
+
+\subsection*{Example of Performing Boolean Operations on Two Planar Maps of Line Segments:}
+The following example demonstrates a simple usage of the \ccStyle{Boolean_Operations} class.
+In this example we construct two planar maps of line segments. 
+Then we construct a \ccStyle{Boolean_Operations} object corresponds 
+having these two subsections as input. 
+After this object is constructed, we perform an intersection on the two subsections. 
+In this example, we are interested only in the halfedges in the intersection.
+Finally, we write all resulting halfedges to the standard output stream. 
+
+\ccIncludeExampleCode{Boolean_operations_2/example1.C}
 The input of the program is a text file containing two lists of segments, 
 each of which represents an input subdivision.
-\ccIncludeExampleCode{Map_overlay_2/example1.cin}
+\ccIncludeExampleCode{Boolean_operations_2/example1.cin}
 
 The output of the program looks like this:
-\ccIncludeExampleCode{Map_overlay_2/example1.cout}
+\ccIncludeExampleCode{Boolean_operations_2/example1.cout}
+
+\end{ccTexOnly}    
+
+
+
+
+
+
+
