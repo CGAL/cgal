@@ -1,3 +1,10 @@
+Version 1.46 (?? ??? 01)
+- violates() optimization (remove() speed up). [syl]
+- find_conflicts*() optimisation (insert() speed up). [syl]
+- rand4() can now be inline (locate() speed up). [syl]
+- New internal typedef Conflict_set to allow later testing of hash_set<>. [syl]
+- Various cleanups.
+
 Version 1.45 (22 dec 00)
 - point() of vertex_base returns a const ref instead of a Point. [syl]
 - locate() improvements (remembering). [syl]
