@@ -1,5 +1,9 @@
+Version 0.18 (9 October 2003) [af]
+- added CORE_INLINE to some declarations, because they are at definition
+- helped Sgi to match sqrt function
+
 Version 0.17 (7 October 2003) [af]
-- Moved the body of function ceilLg5 from ExpreRep.h to Expr.cpp
+- Moved the body of function ceilLg5 from ExprRep.h to Expr.cpp
 
 Version 0.16 (4 October 2003)
 - Removed duplicate definitions

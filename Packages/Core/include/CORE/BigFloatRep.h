@@ -65,13 +65,13 @@ private:
 public:  
   //  constructors
   BigFloatRep(double);
-  BigFloatRep(const BigInt& I = 0, unsigned long u = 0, long l = 0); //inline
-  BigFloatRep(const char *);  //inline
+  CORE_INLINE BigFloatRep(const BigInt& I = 0, unsigned long u = 0, long l = 0);
+  CORE_INLINE BigFloatRep(const char *);
   
-  BigRat BigRatize() const;   //inline
+  CORE_INLINE BigRat BigRatize() const;
   
   //  the destructor
-  ~BigFloatRep(); //inline
+  CORE_INLINE ~BigFloatRep();
 
   CORE_MEMORY(BigFloatRep)
   
