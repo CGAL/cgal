@@ -1,5 +1,8 @@
 Changes done to the `Min_circle_2' package
 
+- Constructor with two points makes a copy of the points
+  as const Point& leads to matching problem for Intel/net.2003
+
 Version 3.25 on 6-Oct-2003
 - Seems the last submission failed...
 
