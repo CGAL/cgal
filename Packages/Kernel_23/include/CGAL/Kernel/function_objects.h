@@ -255,7 +255,7 @@ namespace CommonKernelFunctors {
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
-    { return squared_distance(t1, t2); }
+    { return CGALi::squared_distance(t1, t2, K()); }
   };
 
   template <typename K>
@@ -270,7 +270,7 @@ namespace CommonKernelFunctors {
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
-    { return squared_distance(t1, t2); }
+    { return CGALi::squared_distance(t1, t2, K()); }
   };
 
   template <typename K>
