@@ -150,14 +150,3 @@ else
     (compile_and_run test_pmwx $WALK   $CGAL_POLYLINE_LEDA_TRAITS)
     (compile_and_run test_pmwx $SIMPLE $CGAL_POLYLINE_LEDA_TRAITS)
 fi
-
-
-
-
-
-
-
-
-
-
-
