@@ -101,7 +101,7 @@ class Nef_polyhedron_2_rep : public Ref_counted
   { if ( pl_ ) delete pl_; pl_=0; }
 public:
   Nef_polyhedron_2_rep() : Ref_counted(), pm_(), pl_(0) {}
-  Nef_polyhedron_2_rep(const Self& R) : pm_(), pl_(0) {}
+  Nef_polyhedron_2_rep(const Self& R) : Ref_counted(), pm_(), pl_(0) {}
   ~Nef_polyhedron_2_rep() { pm_.clear(); clear_locator(); }
 };
 
