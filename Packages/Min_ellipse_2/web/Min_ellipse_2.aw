@@ -1168,11 +1168,8 @@ pseudo-code above.
                 me( point_iter, n_sp+1);
 
                 // move current point to front
-                if ( point_iter != points.begin()) {            // p not first?
-                    points.push_front( p);
-                    points.erase( point_iter++); }
-                else
-                    ++point_iter; }
+		points.splice( points.begin(), points, point_iter++); }
+
             else
                 ++point_iter; }
     }
