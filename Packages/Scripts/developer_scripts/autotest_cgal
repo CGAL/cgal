@@ -348,7 +348,7 @@ copy_old_stuff()
 	printf "."
 	printf "copying ${i}\n" >> ${ACTUAL_LOGFILE}
 	newdir=`dirname ${i} | \
-	    sed "s%${OLD_CGAL_LIB_DIR}%${CGAL_LIB_DIR}%g`
+	    sed "s%${OLD_CGAL_LIB_DIR}%${CGAL_LIB_DIR}%g"`
 	mkdir -p ${newdir}
 	if [ ${?} != 0 ]; then
 	    error "Could not mkdir ${newdir}"
@@ -438,17 +438,19 @@ fi
 if [ ! -f "LATEST" ]; then
   error "COULD NOT DOWNLOAD LATEST!"
 fi
-if [ ! -r "RELEASE_NR" ]; then
-  touch "RELEASE_NR"
-fi
+if [ -r "RELEASE_NR" ]; then
   cmp LATEST RELEASE_NR > ${ACTUAL_LOGFILE}
-  if [ ${?} != 0 ]; then
-#   echo "The diff is different!!"
-    for i in `cat LATEST`
-    do
-      CGAL_LOCATION="${CGAL_URL}/${i}";
-      CGAL_ZIPFILE="${i}";
-    done
+  if [ ! ${?} != 0 ]; then
+    rm -f $LOCK_FILE;
+    exit 1;
+  fi
+fi
+
+  for i in `cat LATEST`
+  do
+    CGAL_LOCATION="${CGAL_URL}/${i}";
+    CGAL_ZIPFILE="${i}";
+  done
 
   CGAL_RELEASE_ID=`echo $CGAL_ZIPFILE | sed "s/.tar.gz//"`
   if [ ! "${CGAL_RELEASE_ID}" = "${CGAL_ZIPFILE}" ]; then
@@ -538,7 +540,5 @@ run_test
 # restore settings:
 cd ${CGAL_ROOT}
 cp LATEST RELEASE_NR
-
-fi
-rm -rf $LOCK_FILE;
+rm -f $LOCK_FILE;
 # EOF

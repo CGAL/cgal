@@ -1,3 +1,9 @@
+23 April 2004 Radu Ursu
+- autotest_cgal copies the gmp.h from the 
+    include/CGAL/config/$compiler_specific directory
+- no more warning of "cmp: EOF on RELEASE_NR" in autotest_cgal
+
+
 20 April 2004 Radu Ursu
 - rolled back changes to create_internal_release to version 1.13 (14 April) 
   until Sylvain comes back to work. 
