@@ -458,9 +458,9 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	    bound[0]->set_neighbor(1,bound[1]);
 	  }
 	  else {
-	    bound[1] = new Cell(bound[0]->vertex(0), v, NULL, NULL,
-				bound[0], bound[0]->neighbor(1), NULL, NULL);
-	    _tds.add_cell(&(*bound[1]));
+	    bound[1] = (Cell *)
+		_tds.create_cell(&(*bound[0]->vertex(0)), &(*v), NULL, NULL,
+			 &(*bound[0]), &(*bound[0]->neighbor(1)), NULL, NULL);
 	    bound[0]->neighbor(1)->set_neighbor(0,bound[1]);
 	    bound[0]->vertex(0)->set_cell(bound[1]);
 
