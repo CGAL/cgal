@@ -61,31 +61,33 @@ void bench()
   std::cout << c << "\t=\t" << t.time()-dt << std::endl;
 
 #define BENCH_MACRO_generic(init, op1, op2) { \
-  dt = t.time(); t.start(); init \
+  dt = t.time(); t.start(); init; \
   for (i=0; i<loops; i++) { op1; } \
   t.stop(); \
   std::cout << c << "\t" << op2 << "\t" << t.time()-dt << std::endl; \
   assert( ! c.is_point()); \
 }
 
-  BENCH_MACRO_generic( ,c = a + b, "+");
-  BENCH_MACRO_generic( ,c = a * b, "*");
-  BENCH_MACRO_generic( ,c = a / b, "/");
+#define EMPTY do {} while(0)
 
-  BENCH_MACRO_generic(c = 1;, c += b; c += b, "+= +=");
-  BENCH_MACRO_generic(c = 1;, c += b; c -= b, "+= -=");
-  BENCH_MACRO_generic(c = 1;, c *= b; c /= b, "*= /=");
+  BENCH_MACRO_generic(EMPTY, c = a + b, "+");
+  BENCH_MACRO_generic(EMPTY, c = a * b, "*");
+  BENCH_MACRO_generic(EMPTY, c = a / b, "/");
 
-  BENCH_MACRO_generic( ,c = sqrt(b), "sqrt");
-  BENCH_MACRO_generic( ,c = square(b), "square");
-  BENCH_MACRO_generic( ,c = c * dd, "ia*d");
-  BENCH_MACRO_generic( ,c = dd * c, "d*ia");
-  BENCH_MACRO_generic( ,c = c + dd, "ia+d");
-  BENCH_MACRO_generic( ,c = dd + c, "d+ia");
-  BENCH_MACRO_generic( ,c = c - dd, "ia-d");
-  BENCH_MACRO_generic( ,c = dd - c, "d-ia");
-  BENCH_MACRO_generic( ,c = dd / c, "d/ia");
-  BENCH_MACRO_generic( ,c = c / dd, "ia/d");
+  BENCH_MACRO_generic(c = 1, c += b; c += b, "+= +=");
+  BENCH_MACRO_generic(c = 1, c += b; c -= b, "+= -=");
+  BENCH_MACRO_generic(c = 1, c *= b; c /= b, "*= /=");
+
+  BENCH_MACRO_generic(EMPTY, c = sqrt(b), "sqrt");
+  BENCH_MACRO_generic(EMPTY, c = square(b), "square");
+  BENCH_MACRO_generic(EMPTY, c = c * dd, "ia*d");
+  BENCH_MACRO_generic(EMPTY, c = dd * c, "d*ia");
+  BENCH_MACRO_generic(EMPTY, c = c + dd, "ia+d");
+  BENCH_MACRO_generic(EMPTY, c = dd + c, "d+ia");
+  BENCH_MACRO_generic(EMPTY, c = c - dd, "ia-d");
+  BENCH_MACRO_generic(EMPTY, c = dd - c, "d-ia");
+  BENCH_MACRO_generic(EMPTY, c = dd / c, "d/ia");
+  BENCH_MACRO_generic(EMPTY, c = c / dd, "ia/d");
 
 #if 1
   std::cout << a<<b<<c<<d<<std::endl;
