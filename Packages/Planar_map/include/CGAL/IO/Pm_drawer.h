@@ -38,10 +38,6 @@
 #define CGAL_PROTECT_CSTDDEF
 #endif
 
-#ifndef CGAL_LEDA_WINDOW_H
-#include <CGAL/IO/leda_window.h>
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 
