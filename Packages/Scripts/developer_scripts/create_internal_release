@@ -231,6 +231,36 @@ EOF
     chdir '../..' or die;
 }
 
+#-----------------------------------------------------------------------#
+# create version.tex in the doc_tex/version.h                           #
+#-----------------------------------------------------------------------#
+
+sub create_version_tex_file()
+{
+    chdir "$RELEASEDIR/$VERSION/doc_tex" or die;
+    open(TEMPFILE, ">tempfile") or die;
+#if VERSION starts with CGAL-, we remove "CGAL-" from version
+#the $newver variable will store the right version
+    if ($result = $VERSION =~ /CGAL-(.*)/){
+        $newver = $1;
+    } else {
+        $newver = $VERSION;
+    }
+
+    print TEMPFILE << 'EOF';
+%% This file is automatically created by create_internal_release.
+%% Do not edit manually.
+
+EOF
+    print TEMPFILE "\\newcommand{\\cgalversion}{$newver}\n";
+
+    close TEMPFILE || die "Error closing temporary file: $!\n";
+    system('mv', "tempfile", 'version.tex');
+    chdir '../..' or die;
+}
+
+
+
 sub make_src_makefiles(){
   chdir "$RELEASEDIR/$VERSION" or die;
   chdir 'src' or die;
@@ -928,6 +958,7 @@ CreateConfigurationTestdir();
 CreateDemoTestDirs();
 CreateExampleTestDirs();
 create_version_file();
+create_version_tex_file();
 make_testscripts();
 set_file_headers();
 make_src_makefiles();
