@@ -1,5 +1,9 @@
 Changes done to the `Min_annulus_d' package
 
+Version 1.1 on 09-Jul-2001
+- replaced template parameter 'R' by 'K'
+- fixed warning message of test program when no number type is available
+
 Version 1.0.5 on 21-Mar-2001
 - still playing around with the file header
 
