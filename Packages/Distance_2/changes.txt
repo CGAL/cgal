@@ -1,3 +1,7 @@
+2.3.6 (11 October 2000)
++ changed name of identifier or (a reserved name).
+
+----
 2.3.5 (19 June 2000)
 + Qualified calls to 'abs' and 'sign' by CGAL_NTS
 
