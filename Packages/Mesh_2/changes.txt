@@ -1,3 +1,7 @@
+22 July 2004 Laurent Rineau
+- patch a bug in Delaunay_mesh_2<Tr>: virtual_insert_in_the_edge was
+  forcing the insertion of a point on a EDGE.
+
 4 July 2004 Andreas Fabri
 - In Delaunay_mesh_2: Removed const& on an object in a stack that gets popped before it gets used
 

@@ -566,17 +566,13 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
 
   List_of_face_handles zone_of_p;
 
-  // deconstrain the edge before finding the conflicts
+  // deconstrain the edge
   fh->set_constraint(edge_index,false);
   fh->neighbor(edge_index)->set_constraint(fh->mirror_index(edge_index),false);
 
   get_conflicts_and_boundary(p, 
 			     std::back_inserter(zone_of_p), 
 			     Emptyset_iterator(), fh);
-
-  // reconstrain the edge
-  fh->set_constraint(edge_index,true);
-  fh->neighbor(edge_index)->set_constraint(fh->mirror_index(edge_index),true);
 
   for(typename List_of_face_handles::iterator fh_it = zone_of_p.begin();
       fh_it != zone_of_p.end();
@@ -586,15 +582,14 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   extras().signal_before_inserted_vertex_in_edge(static_cast<const Tr&>(*this),
 					       fh, edge_index, p);
 
-  Vertex_handle vp = insert(p, Base::EDGE, fh, edge_index);
-  // TODO, WARNING: this is not robust!
-  // We should deconstrained the constrained edge, insert the two
-  // subconstraints and re-constrain them
+  Vertex_handle vp = insert(p, fh);
 
-  //  CGAL_assertion(is_bad_faces_valid());
+  // re-insert the two constrained edges
+  insert_constraint(va, vp);
+  insert_constraint(vp, vb);
 
   extras().signal_after_inserted_vertex_in_edge(static_cast<const Tr&>(*this),
-					      vp);
+						vp);
 
   int dummy; 
   // if we put edge_index instead of dummy, Intel C++ does not find
@@ -646,18 +641,21 @@ is_bad_faces_valid()
 	& vc = fh->vertex(2);
 
       Face_handle fh2;
-      if( ! ( is_face(va, vb, vc, fh2) && (fh == fh2) && 
-	  fh->is_marked() && is_bad(fh) ) )
+      Quality q;
+      bool face = ( is_face(va, vb, vc, fh2) && fh == fh2 );
+      bool marked = fh->is_marked();
+      bool bad = is_bad(fh, q);
+      if( ! ( face && marked && bad ) )
 	{
 	  result = false;
 	  std::cerr << "Invalid bad face: (" << va->point() << ", "
 		    << vb->point() << ", " << vc->point() << ")" << std::endl;
-	  if( ! is_face(va, vb, vc, fh2) || fh != fh2 )
+	  if( ! face )
 	    std::cerr << "(not a face)" << std::endl;
-	  if( ! fh->is_marked() )
+	  if( ! marked )
 	    std::cerr << "(not marked)" << std::endl;
-	  if( ! is_bad(fh) )
-	    std::cerr << "(not bad)" << std::endl;
+	  if( ! bad )
+	    std::cerr << "(not bad, quality=" << q << ")" << std::endl;
 	}
     }
 
