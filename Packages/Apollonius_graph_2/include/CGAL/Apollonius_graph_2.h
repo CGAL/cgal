@@ -172,6 +172,14 @@ public:
     return DG::geom_traits();
   }
 
+  inline int dimension() const {
+    return _tds.dimension();
+  }
+
+  inline int number_of_faces() const {
+    return _tds.number_of_faces();
+  }
+
   inline int number_of_vertices() const {
     return DG::number_of_vertices();
   }

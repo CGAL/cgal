@@ -16,3 +16,5 @@
 - change the draw_* methods to write_* in Apollonius_graph_2.{h,C}
 - check the typedefs.h file in the demo directory to make sure that
   definitions make sense
+- add two methods in Apollonius_graph_2: dimension() and number_of_faces();
+  also update the doc on this
