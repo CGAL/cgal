@@ -31,12 +31,14 @@
 
 # C++ Compiler Options:
 # CXXFLAGS = -v
+CXXFLAGS = -O2
 
 # C Compiler: Gnu gcc 2.6.3 (or above) or the usual system cc:
 # CC = gcc
 
 # C Preprocessor Flags: (e.g. -g or -O or STL include path)
 # CPPFLAGS = -g
+CPPFLAGS = -O2
 
 # Linker Flags:
 # LDFLAGS = 
