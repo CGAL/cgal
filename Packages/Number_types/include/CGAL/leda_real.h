@@ -39,6 +39,10 @@ template <> struct Number_type_traits<leda_real> {
   typedef Tag_false Has_gcd;
   typedef Tag_true  Has_division;
   typedef Tag_true  Has_sqrt;
+
+  typedef Tag_true  Has_exact_ring_operations;
+  typedef Tag_true  Has_exact_division;
+  typedef Tag_true  Has_exact_sqrt;
 };
 
 #ifndef CGAL_NO_NAMESPACE

@@ -82,6 +82,16 @@ public:
             {inc_mul_count(); m_rep *= n.m_rep; return *this;}
     Counted_number const & operator/=(Counted_number const &n) 
             {inc_div_count(); m_rep /= n.m_rep; return *this;}
+
+  typedef typename Number_type_traits<NT>::Has_gcd       Has_gcd;
+  typedef typename Number_type_traits<NT>::Has_division  Has_division;
+  typedef typename Number_type_traits<NT>::Has_sqrt      Has_sqrt;
+
+  typedef typename Number_type_traits<NT>::Has_exact_sqrt Has_exact_sqrt;
+  typedef typename Number_type_traits<NT>::Has_exact_division
+  Has_exact_division;
+  typedef typename Number_type_traits<NT>::Has_exact_ring_operations
+  Has_exact_ring_operations;
 };
 
 template <class NT>

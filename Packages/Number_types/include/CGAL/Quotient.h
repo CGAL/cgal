@@ -40,6 +40,7 @@
 #endif
 
 #include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Number_type_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -71,6 +72,11 @@ class Quotient
   typedef Tag_false  Has_gcd;
   typedef Tag_true   Has_division;
   typedef typename Number_type_traits<NT_>::Has_sqrt  Has_sqrt;
+
+  typedef Tag_true   Has_exact_division;
+  typedef typename Number_type_traits<NT_>::Has_exact_sqrt Has_exact_sqrt;
+  typedef typename Number_type_traits<NT_>::Has_exact_ring_operations
+  Has_exact_ring_operations;
 
   Quotient() : num(0), den(1) {}
 
@@ -816,6 +822,19 @@ gcd(const NT&, const NT&)
 */
 
 #undef CGAL_int
+
+// Rational traits
+template < class NT >
+struct Rational_traits< Quotient<NT> >
+{
+  typedef NT RT;
+
+  RT numerator   (const Quotient<NT>& r) const { return r.numerator(); }
+  RT denominator (const Quotient<NT>& r) const { return r.denominator(); }
+  
+  Quotient<NT> make_rational(const RT & n, const RT & d) const
+  { return Quotient<NT>(n, d); } 
+};
 
 CGAL_END_NAMESPACE
 

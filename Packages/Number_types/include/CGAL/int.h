@@ -35,6 +35,10 @@ template <> struct Number_type_traits<int> {
   typedef Tag_true   Has_gcd;
   typedef Tag_false  Has_division;
   typedef Tag_false  Has_sqrt;
+
+  typedef Tag_false  Has_exact_ring_operations;
+  typedef Tag_false  Has_exact_division;
+  typedef Tag_false  Has_exact_sqrt;
 };
 
 inline
@@ -69,65 +73,16 @@ io_Operator
 io_tag(int)
 { return io_Operator(); }
 
-// unsigned int
-
-template <> struct Number_type_traits<unsigned int> {
-  typedef Tag_true  Has_gcd;
-  typedef Tag_false  Has_division;
-  typedef Tag_false  Has_sqrt;
-};
-
-inline
-unsigned int
-div(unsigned int i1, unsigned int i2)
-{ return i1 / i2; }
-
-inline
-double
-to_double(unsigned int i)
-{ return static_cast<double>(i); }
-
-inline
-bool
-is_finite(unsigned int)
-{ return true; }
-
-inline
-bool
-is_valid(unsigned int)
-{ return true; }
-
-inline
-io_Operator
-io_tag(unsigned int)
-{ return io_Operator(); }
-
-inline
-unsigned int
-is_negative(unsigned int)
-{ return false; }
-  
-inline
-Sign
-sign(unsigned int i) 
-{ return is_positive(i) ? POSITIVE : ZERO; }
-  
-inline
-unsigned int
-is_positive(unsigned int i)
-{ return i != 0; }
-
-inline
-unsigned int
-abs(unsigned int i)
-{ return i; }
-
 // long
 
 template <> struct Number_type_traits<long int> {
   typedef Tag_true   Has_gcd;
   typedef Tag_false  Has_division;
   typedef Tag_false  Has_sqrt;
+
+  typedef Tag_false  Has_exact_ring_operations;
+  typedef Tag_false  Has_exact_division;
+  typedef Tag_false  Has_exact_sqrt;
 };
 
 inline
@@ -155,65 +110,16 @@ io_Operator
 io_tag(long int)
 { return io_Operator(); }
 
-// long
-
-template <> struct Number_type_traits<unsigned long int> {
-  typedef Tag_true   Has_gcd;
-  typedef Tag_false  Has_division;
-  typedef Tag_false  Has_sqrt;
-};
-
-inline
-unsigned long int
-div(unsigned long int i1, unsigned long int i2)
-{ return i1 / i2; }
-
-inline
-double
-to_double(unsigned long int i)
-{ return static_cast<double>(i); }
-
-inline
-bool
-is_finite(unsigned long int)
-{ return true; }
-
-inline
-bool
-is_valid(unsigned long int)
-{ return true; }
-
-inline
-io_Operator
-io_tag(unsigned long int)
-{ return io_Operator(); }
-
-inline
-unsigned long int
-is_negative(unsigned long int) 
-{ return false; }
-  
-inline
-Sign
-sign(unsigned long int i) 
-{ return is_positive(i) ? POSITIVE : ZERO; }
-  
-inline
-unsigned long int
-is_positive(unsigned long int i)
-{ return i != 0; }
-
-inline
-unsigned long int
-abs(unsigned long int i)
-{ return i; }
-
 // short
 
 template <> struct Number_type_traits<short int> {
   typedef Tag_true   Has_gcd;
   typedef Tag_false  Has_division;
   typedef Tag_false  Has_sqrt;
+
+  typedef Tag_false  Has_exact_ring_operations;
+  typedef Tag_false  Has_exact_division;
+  typedef Tag_false  Has_exact_sqrt;
 };
 
 inline
@@ -248,57 +154,6 @@ io_Operator
 io_tag(short int)
 { return io_Operator(); }
 
-// unsigned short
-
-template <> struct Number_type_traits<unsigned short int> {
-  typedef Tag_true   Has_gcd;
-  typedef Tag_false  Has_division;
-  typedef Tag_false  Has_sqrt;
-};
-
-inline
-unsigned short int
-div(unsigned short int i1, unsigned short int i2)
-{ return i1 / i2; }
-
-inline
-double
-to_double(unsigned short int i)
-{ return static_cast<double>(i); }
-
-inline
-bool
-is_finite(unsigned short int)
-{ return true; }
-
-inline
-bool
-is_valid(unsigned short int)
-{ return true; }
-
-inline
-io_Operator
-io_tag(unsigned short int)
-{ return io_Operator(); }
-
-inline
-unsigned short int
-is_negative(unsigned short int) 
-{ return false; }
-  
-inline
-Sign
-sign(unsigned short int i) 
-{ return is_positive(i) ? POSITIVE : ZERO; }
-  
-inline
-unsigned short int
-is_positive(unsigned short int i)
-{ return i != 0; }
-
-inline
-unsigned short int abs(unsigned short int i)
-{ return i; }
 
 // Note : "long long" support is in <CGAL/long_long.h>
 

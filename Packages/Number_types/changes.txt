@@ -1,3 +1,10 @@
+1 September 2004 Menelaos Karavelas
+- added the following tags in number type traits: Has_exact_sqrt,
+  Has_exact_ring_operations, Has_exact_division
+- created default Rational_traits and moved applied the old rational
+  traits to Quotient<NT>
+- removed unsigned number types
+
 1 September 2004 Sylvain Pion
 - number_utils.h : remove #include <CGAL/kernel_basic.h>.
 

@@ -29,6 +29,10 @@ CGAL_BEGIN_NAMESPACE
 
 template < class NT >
 struct Number_type_traits {
+  typedef typename NT::Has_exact_ring_operations  Has_exact_ring_operations;
+  typedef typename NT::Has_exact_division         Has_exact_division;
+  typedef typename NT::Has_exact_sqrt             Has_exact_sqrt;
+
   typedef typename NT::Has_gcd       Has_gcd;
   typedef typename NT::Has_division  Has_division;
   typedef typename NT::Has_sqrt      Has_sqrt;
@@ -36,13 +40,13 @@ struct Number_type_traits {
 
 template < class Rational >
 struct Rational_traits {
-  typedef typename Rational::NT RT;
+  typedef Rational RT;
 
-  RT numerator   (const Rational & r) const { return r.numerator(); }
-  RT denominator (const Rational & r) const { return r.denominator(); }
+  const RT& numerator   (const Rational& r) const { return r; }
+  RT denominator (const Rational&) const { return RT(1); }
   
   Rational make_rational(const RT & n, const RT & d) const
-  { return Rational(n, d); } 
+  { return n / d; }
 };
 
 // number type tags

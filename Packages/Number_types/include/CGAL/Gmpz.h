@@ -94,8 +94,12 @@ class Gmpz
   typedef Handle_for<Gmpz_rep> Base;
 public:
   typedef Tag_true  Has_gcd;
-  typedef Tag_false Has_division;
+  typedef Tag_true  Has_division;
   typedef Tag_true  Has_sqrt;
+
+  typedef Tag_true  Has_exact_ring_operations;
+  typedef Tag_false Has_exact_division;
+  typedef Tag_false Has_exact_sqrt;
 
   Gmpz() // {} we can't do that since the non-const mpz() is called.
     : Base(Gmpz_rep()) {}
