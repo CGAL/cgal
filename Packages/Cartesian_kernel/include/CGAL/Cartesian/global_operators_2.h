@@ -19,8 +19,8 @@
 //
 // ======================================================================
 
-#ifndef CGAL_CARTESIAN_GLOBAL_OPERATORS_2_C
-#define CGAL_CARTESIAN_GLOBAL_OPERATORS_2_C
+#ifndef CGAL_CARTESIAN_GLOBAL_OPERATORS_2_H
+#define CGAL_CARTESIAN_GLOBAL_OPERATORS_2_H
 
 #include <CGAL/Cartesian/redefine_names_2.h>
 
@@ -100,4 +100,4 @@ operator*(const VectorC2<R CGAL_CTAG> &w, const typename R::FT &c)
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CARTESIAN_GLOBAL_OPERATORS_2_C
+#endif // CGAL_CARTESIAN_GLOBAL_OPERATORS_2_H

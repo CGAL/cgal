@@ -303,4 +303,4 @@ operator>>(std::istream& is, Iso_cuboidC3<R CGAL_CTAG>& r)
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CARTESIAN_ISO_CUBOID_3_C
+#endif // CGAL_CARTESIAN_ISO_CUBOID_3_H
