@@ -1,3 +1,7 @@
+
+Version 4.04 (10 September 2003) [rursu]
+- Qt_help_window is in the CGAL namespace now
+
 Version 3.46 (08 September 2003) [rursu]
 - demo use now the new help class Qt_help_window instead of HelpWindow
 - demo use the new demo icon demoicon
