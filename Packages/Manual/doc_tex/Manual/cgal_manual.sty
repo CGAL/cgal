@@ -32,9 +32,25 @@
 % +------------------------------------------------------------------------+
 
 % CGAL release and date, adapt this to the current release
-\newcommand{\cgalrelease}{3.1-I}
+%\newcommand{\cgalrelease}{3.1-I}
 % \newcommand{\cgalreleasedate}{November 2003} % use this for public releases
-\newcommand{\cgalreleasedate}{\today} % use this for internal releases
+%\newcommand{\cgalreleasedate}{\today} % use this for internal releases
+
+% Read version.tex for release number
+\lcTex{\catcode`@=11}
+\lcTex{\@input{version.tex}%
+  \ifx\cgalversion\@ClearUndefdMacro \gdef\cgalversion{Separate Build}\else
+    \xdef\cgalversion{Release \cgalversion}\fi
+  \ifx\cgalversiondate\@ClearUndefdMacro \gdef\cgalversiondate{\today}\fi}
+\lcTex{\catcode`@=12}
+
+\lcHtml{\lciIfFileExists{version.tex}{\input{version.tex}}{}%
+  \lciIfDefined{\cgalversion}%
+    {\xdef\cgalTmpVersion{\cgalversion}%
+      \gdef\cgalversion{Release \cgalTmpVersion}}%
+    {\gdef\cgalversion{Separate Build}}%
+  \lciIfDefined{\cgalversiondate}{}{\gdef\cgalversiondate{\today}}}
+
 
 % set this to true for generating the pdf version of the manual (using
 % ps2pdf from ghostscript).  If this is true when creating postscript,
