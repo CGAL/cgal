@@ -69,86 +69,13 @@ template <class Traits>
 class K3_tree
 {
 public:
-  class Objects_along_ray;
-  class Objects_around_segment;
   friend class Objects_along_ray;
   friend class Objects_around_segment;
+
 public:
   <<declaration of local types>>
-private:
-  Traits traits;
-  Node* root;
-  int max_depth;
-  Bounding_box_3 bounding_box;
+
 public:
-  K3_tree( const Object_list& objects) {
-    <<compute the maximum depth of the subdivision>>
-    <<compute the bounding box of the input objects>>
-    root = build_kdtree( objects, 0);
-  }
-  const Object_list& objects_around_point( const Point_3& p) const {
-    return locate( p, root);
-  }
-  Objects_along_ray objects_along_ray( const Ray_3& r) const {
-    return Objects_along_ray( *this, r);
-  }
-  Object_list objects_around_segment( const Segment_3& s) const {
-    Object_list O;
-    <<get all objects on the cells intersected by s>>
-    return O;
-  }
-  bool is_point_on_cell( const Point_3& p, const typename Objects_around_segment::Iterator& target) const {
-    return is_point_on_cell( p, target.get_node(), root);
-  }
-
-  template<typename SNCd>
-  class BBox_updater {
-    SNCd D;
-    Bounding_box_3 b;
-
-  public:	
-    BBox_updater(const SNCd& sncd) : D(sncd), b(Point_3(0,0,0),Point_3(0,0,0)) {}
-
-    void pre_visit(const Node* n) {}
-    void post_visit(const Node* n) {
-      typename Object_list::const_iterator o;
-      for( o = n->objects().begin(); o != n->objects().end(); ++o) {
-        Vertex_handle v;
-        if( assign( v, *o)) {
-	  Point_3 p(D.point(v));
-          b = b + Bounding_box_3(p,p);
-        }
-      }
-    }
-
-    Bounding_box_3 box() const{
-      return b;
-    }
-    
-  };
-
-  template <typename Visitor>
-  void visit_k3tree(const Node* current, Visitor& V) const {
-    V.pre_visit(current);
-    if(current->left() != 0) {
-      visit_k3tree(current->left(), V);
-      visit_k3tree(current->right(), V);
-    }
-    V.post_visit(current);
-  }
-
-  void transform(const Aff_transformation_3& t) {
-    // TODO: Bounding box must be updated/transformed, too
-    if(root != 0)
-      root->transform(t);
-
-    SNC_decorator D;
-    BBox_updater<SNC_decorator> bbup(D);
-    visit_k3tree(root, bbup);
-    bounding_box = bbup.box();
-  }
-
- public:
   class Objects_around_segment 
   {
    public:
@@ -226,7 +153,8 @@ public:
   public:
     Objects_along_ray( const K3_tree& k, const Ray_3& r) {
       TRACEN("Objects_along_ray: input ray: "<<r);
-      CGAL_assertion( Vector_3(r.direction()) == Vector_3( -1, 0, 0));
+      Vector_3 vec(r.to_vector());
+      CGAL_assertion(vec == Vector_3( -1, 0, 0));
       // First of all, we need to find out wheather we are working over an extended kernel or on a standard kernel. As precondition we have that ray is oriented in the minus x axis direction.  When having an extended kernel, the ray can be subtituted by a segment with the endpoint on the 'intersection' between the ray and the bounding infimaximal box.  In the presence of a standard kernel, the intersection is computed with the bounding box with the vertices of the Nef polyhedron.
       Point_3 p(r.source()), q;
       Bounding_box_3 b = k.bounding_box;
@@ -243,6 +171,80 @@ public:
       Base::initialize( k, Segment_3( p, q));
     }
   };
+
+private:
+  Traits traits;
+  Node* root;
+  int max_depth;
+  Bounding_box_3 bounding_box;
+public:
+  K3_tree( const Object_list& objects) {
+    <<compute the maximum depth of the subdivision>>
+    <<compute the bounding box of the input objects>>
+    root = build_kdtree( objects, 0);
+  }
+  const Object_list& objects_around_point( const Point_3& p) const {
+    return locate( p, root);
+  }
+  Objects_along_ray objects_along_ray( const Ray_3& r) const {
+    return Objects_along_ray( *this, r);
+  }
+  Object_list objects_around_segment( const Segment_3& s) const {
+    Object_list O;
+    <<get all objects on the cells intersected by s>>
+    return O;
+  }
+  bool is_point_on_cell( const Point_3& p, const typename Objects_around_segment::Iterator& target) const {
+    return is_point_on_cell( p, target.get_node(), root);
+  }
+
+  template<typename SNCd>
+  class BBox_updater {
+    SNCd D;
+    Bounding_box_3 b;
+
+  public:	
+    BBox_updater(const SNCd& sncd) : D(sncd), b(Point_3(0,0,0),Point_3(0,0,0)) {}
+
+    void pre_visit(const Node* n) {}
+    void post_visit(const Node* n) {
+      typename Object_list::const_iterator o;
+      for( o = n->objects().begin(); o != n->objects().end(); ++o) {
+        Vertex_handle v;
+        if( assign( v, *o)) {
+	  Point_3 p(D.point(v));
+          b = b + Bounding_box_3(p,p);
+        }
+      }
+    }
+
+    Bounding_box_3 box() const{
+      return b;
+    }
+    
+  };
+
+  template <typename Visitor>
+  void visit_k3tree(const Node* current, Visitor& V) const {
+    V.pre_visit(current);
+    if(current->left() != 0) {
+      visit_k3tree(current->left(), V);
+      visit_k3tree(current->right(), V);
+    }
+    V.post_visit(current);
+  }
+
+  void transform(const Aff_transformation_3& t) {
+    // TODO: Bounding box must be updated/transformed, too
+    if(root != 0)
+      root->transform(t);
+
+    SNC_decorator D;
+    BBox_updater<SNC_decorator> bbup(D);
+    visit_k3tree(root, bbup);
+    bounding_box = bbup.box();
+  }
+
   <<definition of k3 tree display method>>
   <<definition of k3 tree update method>>
   <<definition of the k3 tree destructor>>
