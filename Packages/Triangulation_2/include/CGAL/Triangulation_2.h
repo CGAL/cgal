@@ -117,7 +117,7 @@ public:
     : _gt(tr._gt)
     {
       _infinite_vertex = (Vertex *) _tds.copy_tds(tr._tds, &(*tr.infinite));
-    } 
+      } 
  
 
   //Assignement
@@ -128,10 +128,16 @@ public:
   }
 
   // Helping functions
+  void init()
+    {
+       _infinite_vertex = new Vertex();
+       _tds = Tds( &(*_infinite_vertex));
+    }
    
   void  copy_triangulation(const CGAL_Triangulation_2 &tr)
   {
     clear();
+    _infinite_vertex.Delete();
     _infinite_vertex = (Vertex *) _tds.copy_tds(tr._tds, &(*tr._infinite_vertex));
      _gt = tr._gt;
   }
@@ -152,8 +158,7 @@ public:
   void clear()
   {
     _tds.clear(); //detruit tous les sommets et toutes les faces
-    _infinite_vertex = new Vertex;
-    _tds = Tds( &(*_infinite_vertex));
+     init();
   }
 
 
