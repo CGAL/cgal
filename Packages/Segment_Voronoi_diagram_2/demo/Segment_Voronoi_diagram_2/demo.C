@@ -75,7 +75,7 @@ public:
     num_selected = 0;
 
     is_remove_mode = false;
-    input_mode = SEGMENT;
+    input_mode = SVD_SEGMENT;
     is_snap_mode = false;
 
     widget = new CGAL::Qt_widget(this);
@@ -177,7 +177,7 @@ private slots:
       return;
 #endif
     }
-    if ( input_mode == POINT ) {
+    if ( input_mode == SVD_POINT ) {
       if ( is_snap_mode ) {
 	Point p;
 	if ( CGAL::assign(p, obj) ) {
@@ -197,7 +197,7 @@ private slots:
       if ( CGAL::assign(p, obj) ) {
 	svd.insert(p);
       }
-    } else if ( input_mode == SEGMENT ) {
+    } else if ( input_mode == SVD_SEGMENT ) {
       Segment s;
 
       if ( is_snap_mode ) {	
@@ -215,7 +215,7 @@ private slots:
 	  svd.insert(s);
 	}
       }
-    } else if ( input_mode == POLYGON ) {
+    } else if ( input_mode == SVD_POLYGON ) {
       Polygon pgn;
       if ( CGAL::assign(pgn, obj) ) {
 	for (int i = 0; i < pgn.size(); i++ ) {
@@ -239,10 +239,10 @@ private slots:
 	get_segment.deactivate();
 	get_polygon.deactivate();
       } else {
-	if ( input_mode == SEGMENT ) {
+	if ( input_mode == SVD_SEGMENT ) {
 	  get_point.deactivate();
 	  get_segment.activate();
-	} else if ( input_mode == POLYGON ) {
+	} else if ( input_mode == SVD_POLYGON ) {
 	  get_point.deactivate();
 	  get_polygon.activate();
 	}
@@ -254,15 +254,15 @@ private slots:
   void get_input_mode(Input_mode im) {
     input_mode = im;
 
-    if ( input_mode == POINT ) {
+    if ( input_mode == SVD_POINT ) {
       get_point.activate();
       get_segment.deactivate();
       get_polygon.deactivate();
-    } else if ( input_mode == SEGMENT ) {
+    } else if ( input_mode == SVD_SEGMENT ) {
       get_point.deactivate();
       get_segment.activate();
       get_polygon.deactivate();
-    } else if ( input_mode == POLYGON ) {
+    } else if ( input_mode == SVD_POLYGON ) {
       get_point.deactivate();
       get_segment.deactivate();
       get_polygon.activate();

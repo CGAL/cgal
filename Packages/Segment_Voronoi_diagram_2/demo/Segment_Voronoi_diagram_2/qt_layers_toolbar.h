@@ -26,14 +26,14 @@
 #include <CGAL/IO/pixmaps/holddown.xpm>
 //#include "remove.xpm"
 
-typedef enum { POINT, SEGMENT, POLYGON } Input_mode;
+typedef enum { SVD_POINT, SVD_SEGMENT, SVD_POLYGON } Input_mode;
 
 class Layers_toolbar : public QObject
 {
   Q_OBJECT
 public:
   Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, SVD_2& svd)
-    : nr_of_buttons(0), input_mode(SEGMENT) {
+    : nr_of_buttons(0), input_mode(SVD_SEGMENT) {
 
     showVD = new Voronoi_diagram_layer<SVD_2>(svd);
     showSI = new Sites_layer<SVD_2>(svd);
@@ -196,11 +196,11 @@ private slots:
       but[3]->toggle();
       return;
     }
-    if ( input_mode == SEGMENT ) { but[4]->toggle(); }
-    if ( input_mode == POLYGON ) { but[5]->toggle(); }
+    if ( input_mode == SVD_SEGMENT ) { but[4]->toggle(); }
+    if ( input_mode == SVD_POLYGON ) { but[5]->toggle(); }
 
-    input_mode = POINT;
-    emit inputModeChanged( POINT );
+    input_mode = SVD_POINT;
+    emit inputModeChanged( SVD_POINT );
   }
 
   void input_segments_mode() {
@@ -208,11 +208,11 @@ private slots:
       but[4]->toggle();
       return;
     }
-    if ( input_mode == POINT ) { but[3]->toggle(); }
-    if ( input_mode == POLYGON ) { but[5]->toggle(); }
+    if ( input_mode == SVD_POINT ) { but[3]->toggle(); }
+    if ( input_mode == SVD_POLYGON ) { but[5]->toggle(); }
 
-    input_mode = SEGMENT;
-    emit inputModeChanged( SEGMENT );
+    input_mode = SVD_SEGMENT;
+    emit inputModeChanged( SVD_SEGMENT );
   }
 
   void input_polygons_mode() {
@@ -220,11 +220,11 @@ private slots:
       but[5]->toggle();
       return;
     }
-    if ( input_mode == POINT ) { but[3]->toggle(); }
-    if ( input_mode == SEGMENT ) { but[4]->toggle(); }
+    if ( input_mode == SVD_POINT ) { but[3]->toggle(); }
+    if ( input_mode == SVD_SEGMENT ) { but[4]->toggle(); }
 
-    input_mode = POLYGON;
-    emit inputModeChanged( POLYGON );
+    input_mode = SVD_POLYGON;
+    emit inputModeChanged( SVD_POLYGON );
   }
 
   void remove_mode() {
