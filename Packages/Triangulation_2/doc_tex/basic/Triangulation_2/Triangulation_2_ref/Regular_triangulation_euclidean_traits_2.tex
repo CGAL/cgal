@@ -45,6 +45,33 @@ Point_2;}{}
 \ccGlue
 \ccNestedType{Power_test_degenerated_2}{}
 
+The following types are required if member functions  relative to the
+dual power diagram are called 
+\ccNestedType{Line_2}{The line type.}
+\ccGlue
+\ccNestedType{Direction_2}{The direction of a line.}
+\ccGlue
+\ccNestedType{Ray_2}{The type for ray.}
+\ccGlue
+\ccNestedType{Construct_weighted_circumcenter_2}{Constructor object. Provides
+the operator 
+\ccc{ Point_2 operator()(Weigthed_point_2 p, Weigthed_point_2 q, Weigthed_point_2 r)} which returns
+the center of the circle orthogonal to the three weighted points  \ccc{p, q} anf \ccc{r}.}
+\ccGlue
+\ccNestedType{Construct_radical_axis_2}{Constructor object. Provides
+the operator 
+\ccc{ Line_2 operator()(Weigthed_point_2 p, Weigthed_point_2 q)} which 
+construct the radical axis of the two weighted points  \ccc{p} and
+\ccc{q}}
+\ccGlue
+\ccNestedType{Construct_direction_of_line_2}{Constructor object  to build
+the direction of a line. Must provide 
+\ccc{Direction_2 operator()(Line_2 l);}.}
+\ccGlue
+\ccNestedType{Construct_ray_2}{A constructor object  to build
+a ray from a point and a direction. Must provide
+\ccc{Ray_2 operator() ( Point_2 p, Direction_2 d);}}
+
 \ccHeading{Access to predicate objects}
 \ccMethod{Power_test_2 power_test_2_object();}{}
 \ccGlue
@@ -53,6 +80,18 @@ Point_2;}{}
 
 
 
+\ccHeading{Access to constructor objects}
+These member functions are required if functions  relative to the
+dual power diagram are called 
+\ccMethod{Construct_weighted_circumcenter_2
+  construct_weighted_circumcenter_2_object();}{}
+\ccGlue
+\ccMethod{Construct_radical_axis_2
+  construct_radical_axis_2_object();}
+\ccGlue
+\ccMethod{Construct_direction_of_line_2 construct_direction_of_line_2_object();} {}
+\ccGlue
+\ccMethod{Construct_ray_2 construct_ray_2_object();} {}
 
 \ccSeeAlso
 \ccc{Regular_triangulation_traits_2} \\

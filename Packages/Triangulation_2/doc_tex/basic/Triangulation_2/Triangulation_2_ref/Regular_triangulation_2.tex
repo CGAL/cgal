@@ -205,14 +205,17 @@ located in  \ccc{lt,loc,li}.}
 returns the number of new vertices created by the insertion of previously
 hidden points.}
 
-\ccHeading{Duality, NOT YET IMPLEMENTED}
-
-\ccMethod{Point dual(const Face_handle &f) const;}
-{NOT YET IMPLEMENTED, returns the center of the power circle corresponding to face \ccc{f}.
+\ccHeading{Duality}
+\ccMethod{Point weighted_circumcenter(const Face_handle &f) const;}
+{returns the center of the circle orthogonal to the three weighted
+points corresponding to the vertices of face \ccc{f}.
 \ccPrecond \ccc{f} is not infinite}
 
+\ccMethod{Point dual(const Face_handle &f) const;}
+{same as weighted_circumcenter}
+
 \ccMethod{Object dual(const Edge &e) const;}
-{NOT YET IMPLEMENTED. If both incident faces are finite, returns a segment whose endpoints are the
+If both incident faces are finite, returns a segment whose endpoints are the
 duals of each incident face. If only one incident face is finite, returns a
 ray whose endpoint is the dual of the finite incident face and supported by
 the line which is the bisector of the edge's endpoints. If both incident faces
@@ -220,10 +223,10 @@ are infinite, returns the line which is the bisector of the edge's endpoints
 otherwise.  }
 
 \ccMethod{Object dual(const Edge_circulator& ec) const;}
-{NOT YET IMPLEMENTED, Idem}
+{Idem}
 
 \ccMethod{Object dual(const Edge_iterator& ei) const;}
-{NOT YET IMPLEMENTED, Idem}
+{Idem}
 
 
 
