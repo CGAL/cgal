@@ -30,16 +30,9 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                CustomPoint1$(EXE_EXT) \
-                CustomPoint2$(EXE_EXT) \
                 Example$(EXE_EXT) \
-                Polygon$(EXE_EXT) 
-
-CustomPoint1$(EXE_EXT): CustomPoint1$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CustomPoint1 CustomPoint1$(OBJ_EXT) $(LDFLAGS)
-
-CustomPoint2$(EXE_EXT): CustomPoint2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CustomPoint2 CustomPoint2$(OBJ_EXT) $(LDFLAGS)
+                Polygon$(EXE_EXT) \
+                polygon_algorithms$(EXE_EXT) 
 
 Example$(EXE_EXT): Example$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Example Example$(OBJ_EXT) $(LDFLAGS)
@@ -47,11 +40,13 @@ Example$(EXE_EXT): Example$(OBJ_EXT)
 Polygon$(EXE_EXT): Polygon$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polygon Polygon$(OBJ_EXT) $(LDFLAGS)
 
+polygon_algorithms$(EXE_EXT): polygon_algorithms$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polygon_algorithms polygon_algorithms$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
-                   CustomPoint1.clean \
-                   CustomPoint2.clean \
                    Example.clean \
-                   Polygon.clean 
+                   Polygon.clean \
+                   polygon_algorithms.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
