@@ -7,10 +7,11 @@
 //	actual revision
 //---------------------------------------------------------------------
 
-GLOB: Document --build-all (<- Sylvain)
+GLOB: - Document --build-all
 GLOB: Fixes for QT.
 GLOB: src/Interval_arithmetic/workaround_4_ms.obj is no longer necessary.
 GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.
+GLOB: Updated windos install for gmp to V4.0.1.
 GLOB: Removed include/compilers/vc7 from include path for VC7.
 GLOB: QT fixed from Radu.
 GLOB: Yet other fixes for Qt (Qt support hasn't been yet tested enough)
