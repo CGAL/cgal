@@ -844,7 +844,7 @@ Alpha_shape_2<Dt>::initialize_interval_vertex_map()
 
       alpha_max_v = Coord_type(0);    
       alpha_mid_v = (!_interval_face_map.empty() ?
-		     _interval_face_map.end()->first :
+		     (--_interval_face_map.end())->first :
 		     Coord_type(0));
 
       //----------------- examine incident edges --------------------------
@@ -1367,7 +1367,7 @@ Alpha_shape_2<Dt>::find_alpha_solid() const
        vertex_it != vertices_end();
        ++vertex_it) 
     {
-      Coord_type alpha_min_v = _interval_face_map.end()->first;
+      Coord_type alpha_min_v = (--_interval_face_map.end())->first;
 
       Face_circulator face_circ = vertex_it->incident_faces();
       Face_circulator  done = face_circ;

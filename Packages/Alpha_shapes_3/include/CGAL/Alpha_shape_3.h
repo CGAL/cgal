@@ -1026,7 +1026,7 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map()
 
 	  alpha_max_v = 0;    
 	  alpha_mid_v = (!_interval_cell_map.empty() ?
-			 _interval_cell_map.end()->first :
+			 (--_interval_cell_map.end())->first :
 			 0);
 
 	  //-------------- examine incident simplices -------------------------
@@ -1189,7 +1189,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 
   typedef long Key;
 
-  std::map< Key, int, less< Key > > V;
+  std::map< Key, int, std::less< Key > > V;
 
   int number_of_vertices = 0;
 
@@ -1823,10 +1823,10 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
        vertex_it != vertices_end();
        ++vertex_it)
     {
-      if (! is_infinite(vertex_it->handle()))
+      if (!is_infinite(vertex_it->handle()))
 	{
 	  // consider only finite vertices
-	  Coord_type alpha_min_v = _interval_cell_map.end()->first;
+	  Coord_type alpha_min_v = (--_interval_cell_map.end())->first;
 
 	  //------------------------------------------
 // 	    Cell_circulator cell_circ =
