@@ -470,7 +470,8 @@ public:
     {
       Alpha_shape_facets_list.erase(Alpha_shape_facets_list.begin(), 
 				    Alpha_shape_facets_list.end());
-      std::back_insert_iterator< std::list< Facet > > E_it(Alpha_shape_facets_list);
+      std::back_insert_iterator< std::list< Facet > > 
+	E_it(Alpha_shape_facets_list);
       get_alpha_shape_facets(E_it);
       return Alpha_shape_facets_list.begin();
     }
@@ -703,19 +704,21 @@ private:
     {
       int i0=(i+1)&3, i1=(i+2)&3, i2=(i+3)&3;
 
-      Bounded_side b = Gt().side_of_bounded_sphere_3_object()(s->vertex(i0)->point(),
-							      s->vertex(i1)->point(),
-							      s->vertex(i2)->point(),
-							      s->vertex(i)->point());
+      Bounded_side b = 
+	Gt().side_of_bounded_sphere_3_object()(s->vertex(i0)->point(),
+					       s->vertex(i1)->point(),
+					       s->vertex(i2)->point(),
+					       s->vertex(i)->point());
  
       return (b == ON_BOUNDED_SIDE) ? true : false;
     }
   
   bool is_attached(Cell_handle s, int i0, int i1, int i) const
     {
-      Bounded_side b = Gt().side_of_bounded_sphere_3_object()(s->vertex(i0)->point(),
-							      s->vertex(i1)->point(),
-							      s->vertex(i)->point());
+      Bounded_side b = 
+	Gt().side_of_bounded_sphere_3_object()(s->vertex(i0)->point(),
+					       s->vertex(i1)->point(),
+					       s->vertex(i)->point());
  
       return (b == ON_BOUNDED_SIDE) ? true : false;
     } 
@@ -856,11 +859,13 @@ Alpha_shape_3<Dt>::initialize_interval_facet_map(void)
 	    {
 	      if (! is_infinite(pNeighbor))
 		{
-		  interval =  (is_attached(pNeighbor, pNeighbor->index(pCell))) ?
+		  interval =  (is_attached(pNeighbor, 
+					   pNeighbor->index(pCell))) ?
 		    make_triple(UNDEFINED,
 				pNeighbor->get_alpha(),
 				INFINITY):
-		    make_triple(squared_radius(pNeighbor, pNeighbor->index(pCell)), 
+		    make_triple(squared_radius(pNeighbor, 
+					       pNeighbor->index(pCell)), 
 				pNeighbor->get_alpha(), 
 				INFINITY);
 		}
@@ -972,7 +977,8 @@ Alpha_shape_3<Dt>::initialize_interval_edge_map(void)
 	      else
 		{
 		  // test whether the vertex with index j
-		  // is inside the sphere defined by the edge e = (s, cw(i,j), ccw(i,j))
+		  // is inside the sphere defined by the edge e = (s, cw(i,j), 
+		  //                                               ccw(i,j))
 		  b_attached = is_attached(s, cw(i,j), ccw(i,j), j);
 
 		  Interval3 interval3 = find_interval(const_facet(s, i));
@@ -1048,7 +1054,7 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map(void)
 			 _interval_cell_map.back().first :
 			 0);
 
-	  //-------------- examine incident simplices --------------------------
+	  //-------------- examine incident simplices -------------------------
 	  // we use a different definition than Edelsbrunner and Muecke
 	  // singular means not incident to any 3-dimensional face
 	  // regular means incident to a 3-dimensional face
@@ -1070,8 +1076,8 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map(void)
 		  else
 		    {
 		      alpha_s = find_interval(s);
-		      // if we define singular as not incident to a 3-dimensional
-		      // cell
+		      // if we define singular as not incident to a 
+		      // 3-dimensional cell
 		      alpha_mid_v = std::min(alpha_mid_v, alpha_s);
 		    
 		      if (alpha_max_v != INFINITY)
@@ -1102,8 +1108,8 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map(void)
 		    else
 		      {
 			alpha_s = find_interval(s);
-			// if we define singular as not incident to a 3-dimensional
-			// cell
+			// if we define singular as not incident to a
+                        // 3-dimensional cell
 			alpha_mid_v = std::min(alpha_mid_v, alpha_s);
 		    
 			if (alpha_max_v != INFINITY)
@@ -1302,7 +1308,8 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 	      if (A.classify(s) == Alpha_shape_3<Dt>::EXTERIOR)
 		{ 
 		  // take the reverse cell
-		  typename Alpha_shape_3<Dt>::Cell_handle pNeighbor = s->neighbor(i);
+		  typename Alpha_shape_3<Dt>::Cell_handle 
+		    pNeighbor = s->neighbor(i);
 		  i = pNeighbor->index(s);
 		  s = pNeighbor;
 		}
@@ -1410,7 +1417,8 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 		      s = pNeighbor;
 		    }
 	  
-		  CGAL_triangulation_assertion(A.classify(s) == Alpha_shape_3<Dt>::INTERIOR);
+		  CGAL_triangulation_assertion(A.classify(s) == 
+					       Alpha_shape_3<Dt>::INTERIOR);
 
 		  i0=(i+1)&3, i1=(i+2)&3, i2=(i+3)&3;
 
@@ -1419,7 +1427,9 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 		     << V[(Key)&(*s->vertex(i2))] << endl;
 		  
 		}
-	      else // pInterval->second == A.INFINITY || pInterval->second >= A.get_alpha())      
+	      else // (pInterval->second == A.INFINITY || 
+		   //  pInterval->second >= A.get_alpha()))
+
 		// pInterval->second == A.INFINITY happens only for convex hull 
 		// of dimension 2 thus singular
 		{
@@ -1457,7 +1467,8 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 //   Interval_facet_map::const_iterator face_alpha_it;
 
 //   const Alpha_shape_3<Dt>::Interval3* pInterval;
-//  // std::cout << "nombre de facettes totales: " << A._interval_facet_map.size() << 
+//  // std::cout << "nombre de facettes totales: " << 
+//  // A._interval_facet_map.size() << 
 //  //   std::endl;
 //  // int ind(0);
 //   if (A.get_mode() == Alpha_shape_3<Dt>::REGULARIZED)
@@ -1614,7 +1625,8 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 
 //---------------------------------------------------------------------
 template <class Dt>
-std::back_insert_iterator< std::list<typename Alpha_shape_3<Dt>::Vertex_handle > >
+std::back_insert_iterator< 
+       std::list<typename Alpha_shape_3<Dt>::Vertex_handle > >
 Alpha_shape_3<Dt>::get_alpha_shape_vertices(std::back_insert_iterator<
 					    std::list<Vertex_handle > > 
 					    result) const
@@ -1643,7 +1655,8 @@ Alpha_shape_3<Dt>::get_alpha_shape_vertices(std::back_insert_iterator<
 	// write the vertex
 	{
 	  v = (*vertex_alpha_it).second;
-	  CGAL_triangulation_assertion(classify(v) == Alpha_shape_3<Dt>::REGULAR);
+	  CGAL_triangulation_assertion(classify(v) == 
+				       Alpha_shape_3<Dt>::REGULAR);
 	  *result++ = v;
 	}
     }
@@ -1656,7 +1669,8 @@ Alpha_shape_3<Dt>::get_alpha_shape_vertices(std::back_insert_iterator<
 	   ++vertex_alpha_it)
 	{
 	  v = (*vertex_alpha_it).second;
-	  CGAL_triangulation_assertion(classify(v) == Alpha_shape_3<Dt>::SINGULAR);
+	  CGAL_triangulation_assertion(classify(v) == 
+				       Alpha_shape_3<Dt>::SINGULAR);
 
 	  *result++ = v;
 	}
@@ -1667,7 +1681,8 @@ Alpha_shape_3<Dt>::get_alpha_shape_vertices(std::back_insert_iterator<
 //---------------------------------------------------------------------
 
 template <class Dt>
-std::back_insert_iterator<std::list<std::pair< typename Alpha_shape_3<Dt>::Cell_handle, int > > >
+std::back_insert_iterator<
+       std::list<std::pair< typename Alpha_shape_3<Dt>::Cell_handle, int > > >
 Alpha_shape_3<Dt>::get_alpha_shape_facets(std::back_insert_iterator<
 					  std::list<
 					  std::pair< Cell_handle, int > > > 
@@ -1706,7 +1721,8 @@ Alpha_shape_3<Dt>::get_alpha_shape_facets(std::back_insert_iterator<
 	    // which might be infinity 
 	    // visualize the boundary
 	    {
-	      CGAL_triangulation_assertion(classify((*face_alpha_it).second.first,
+	      CGAL_triangulation_assertion(classify(
+                                 (*face_alpha_it).second.first,
 				 (*face_alpha_it).second.second) ==
 			Alpha_shape_3<Dt>::REGULAR);
 	      *result++ = Facet((*face_alpha_it).second.first,
@@ -1738,7 +1754,8 @@ Alpha_shape_3<Dt>::get_alpha_shape_facets(std::back_insert_iterator<
 		// which might be infinity 
 		// visualize the boundary
 		{
-		  CGAL_triangulation_assertion(classify((*face_alpha_it).second.first,
+		  CGAL_triangulation_assertion(classify(
+                                     (*face_alpha_it).second.first,
 				     (*face_alpha_it).second.second) ==
 			    Alpha_shape_3<Dt>::REGULAR);
 		  *result++ = Facet((*face_alpha_it).second.first,
@@ -1754,7 +1771,8 @@ Alpha_shape_3<Dt>::get_alpha_shape_facets(std::back_insert_iterator<
 		// which might be infinity 
 		// visualize the boundary
 		{
-		  CGAL_triangulation_assertion(classify((*face_alpha_it).second.first,
+		  CGAL_triangulation_assertion(classify(
+                                     (*face_alpha_it).second.first,
 				     (*face_alpha_it).second.second) ==
 			    Alpha_shape_3<Dt>::REGULAR || 
 			    classify((*face_alpha_it).second.first,
@@ -1961,7 +1979,8 @@ Alpha_shape_3<Dt>::find_optimal_alpha(int nb_components)
       middle = first + half;
 
 #ifdef DEBUG
-      cerr << "first : " << *first << " last : " << ((first+len != last) ? *(first+len) : *(last-1))
+      cerr << "first : " << *first << " last : " 
+           << ((first+len != last) ? *(first+len) : *(last-1))
 	   << " mid : " << *middle 
 	   << " nb comps : " << number_solid_components(*middle) << endl;
 #endif // DEBUG
