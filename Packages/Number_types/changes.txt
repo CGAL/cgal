@@ -1,3 +1,6 @@
+29 March 2004 Radu Ursu
+- rolled back some changes in doc_tex/NumberTypeSupport_ref/main.tex 
+
 26 March 2004 Radu Ursu
 -made doc work with the new implementation of the Manual tools
 
