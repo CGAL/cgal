@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: -O replaced by -O2 for the Intel compiler.
 GLOB: added licensing information about Qt widget stuff
 GLOB: updated for release 2.4
 ALL : Remove traces of KCC/EGCS and CGAL_CC.

@@ -5639,7 +5639,7 @@ create_include_makefile()
   # CGAL_LIB_CXXFLAGS
   # 
   ${_printf} "%s\\\\\n" "CGAL_LIB_CXXFLAGS = " >> ${FILE}
-  makefile_print_line "${CGAL_LIB_CXXFLAGS} -O" >> ${FILE}
+  makefile_print_line "${CGAL_LIB_CXXFLAGS} -O2" >> ${FILE}
   ${_printf} "\t%s\n" "\$(CGAL_CXXFLAGS)" >> ${FILE}
 
   # 
@@ -5663,7 +5663,7 @@ create_include_makefile()
   # CGAL_SHARED_LIB_CXXFLAGS
   # 
   ${_printf} "%s\\\\\n" "CGAL_SHARED_LIB_CXXFLAGS = " >> ${FILE}
-  makefile_print_line "${CGAL_SHARED_LIB_CXXFLAGS} -O" >> ${FILE}
+  makefile_print_line "${CGAL_SHARED_LIB_CXXFLAGS} -O2" >> ${FILE}
   ${_printf} "\t%s\n" "\$(CGAL_CXXFLAGS)" >> ${FILE}
 
   # 
