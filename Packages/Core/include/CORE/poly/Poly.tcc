@@ -39,7 +39,7 @@ template <class NT>
   }
 
 template <class NT>
-  Polynomial<NT>::Polynomial<NT>(int n) {
+  Polynomial<NT>::Polynomial(int n) {
     assert(n>= -1);
     degree = n;
     if (n == -1) return;	// return the zero polynomial!
@@ -50,7 +50,7 @@ template <class NT>
   }
 
 template <class NT>
-  Polynomial<NT>::Polynomial<NT>(int n, NT * c) {
+  Polynomial<NT>::Polynomial(int n, NT * c) {
     assert("array c has n+1 elements");
     degree = n; 
     if (n >= 0) {
@@ -64,7 +64,7 @@ template <class NT>
 // Constructor from a vector of NT's
 ///////////////////////////////////////
 template <class NT>
-  Polynomial<NT>::Polynomial<NT>(const VecNT & vN) {
+  Polynomial<NT>::Polynomial(const VecNT & vN) {
     degree = vN.size()-1; 
     if (degree >= 0) {
 	coeff = new NT[degree+1];
@@ -74,7 +74,7 @@ template <class NT>
   }
 
 template <class NT>
-  Polynomial<NT>::Polynomial<NT>(const Polynomial<NT> & p) {
+  Polynomial<NT>::Polynomial(const Polynomial<NT> & p) {
     coeff = NULL;
     *this = p;	// reduce to assignment operator=
   }
@@ -82,7 +82,7 @@ template <class NT>
 // Constructor from a Character string of coefficients
 ///////////////////////////////////////
 template <class NT>
-  Polynomial<NT>::Polynomial<NT>(int n, const char * s[]) {
+  Polynomial<NT>::Polynomial(int n, const char * s[]) {
     assert("array s has n+1 elements");
     degree = n;
     if (n >= 0) {
@@ -93,7 +93,7 @@ template <class NT>
   }
 
 template <class NT>
-  Polynomial<NT>::~Polynomial<NT>() {
+  Polynomial<NT>::~Polynomial() {
      if (degree >= 0)
 	delete[] coeff;
   }
