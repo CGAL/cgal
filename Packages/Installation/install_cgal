@@ -581,16 +581,35 @@ _sunpro_version()
 }
 
 # give version numbers for IRIX MIPSPRO CC
+# ($* is full path to executable)
 _sgi_version()
 {
     case ${SYST} in
 	*IRIX*5.*)
-	    ${_printf} "`${_showprods} -nM | ${_fgrep} \"C++,\" | \
-		${_fgrep} c++_dev | ${_awk} '{print $5}'`"
+	    ${_printf} "`${_versions} -b c++_dev | ${_fgrep} c++_dev | \
+		${_awk} '{print $5}'`"
 	    ;;
 	*IRIX*6.*)
-	    ${_printf} "`${_showprods} -nM | ${_fgrep} \"c++_dev\" | \
-		${_fgrep} \"irix\" | ${_awk} '{print $(NF-3)}'`"
+	    # CC -version should be fine
+	    if ${*} -version >/dev/null 2>&1; then
+		 ${*} -version 2>&1 | ${_awk} '{print $(NF)}'
+	    else
+	    # ... but not for CC -32
+		# use versions - looks either like this:
+		# I  c++_dev              03/11/97  C++, 7.1
+		# (version nr on position 5)
+		# or like that:
+		# I  c++_dev              11/27/97  C++ Headers and Libraries, 7.2 on irix 6.2
+		# (version nr on position 8)
+		_tmp="`${_versions} -b c++_dev | ${_fgrep} c++_dev | \
+		    ${_awk} '{print $5}'`"
+		if [ "${_tmp}" = "Headers" ]; then
+		    ${_versions} -b c++_dev | ${_fgrep} c++_dev | \
+			${_awk} '{print $8}'
+		else
+		    ${_printf} "${_tmp}" 
+		fi
+	    fi
 	    ;;
     esac
 }
@@ -637,8 +656,8 @@ set_compiler_flags()
 	    WINDOW_DIR="/usr/lib/X11"
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    ;;
-	*IRIX*g++-egcs*)
-	    #### settings for egcs on irix
+	*IRIX*g++-egcs*|*IRIX*g++-2.8*)
+	    #### settings for egcs/gcc2.8 on irix
 	    ADDITIONAL_CXXFLAGS=
 	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
@@ -894,7 +913,7 @@ get_compiler_version()
     case `${_basename} ${1:-${COMPILER}}` in
 	*CC*)
 	    case ${SYST} in
-		*IRIX*)  _check_for_sysutil showprods y
+		*IRIX*)  _check_for_sysutil versions y
 			 _sgi_version "$*"
 			 ;;
 		*SunOS*) _sunpro_version "$*"
