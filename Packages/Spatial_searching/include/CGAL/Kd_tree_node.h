@@ -68,6 +68,10 @@ namespace CGAL {
 	// default constructor
 	Kd_tree_node() {};
 
+	Kd_tree_node(Node_type t ) : the_node_type(t) {};
+
+	Kd_tree_node(int n_, Node_type t ) : n(n_), the_node_type(t) {};
+
         // members for all nodes
 	inline bool is_leaf() const { return (the_node_type==LEAF);}
 
