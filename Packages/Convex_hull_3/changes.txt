@@ -1,3 +1,6 @@
+2.25    (26 July 2001)
+- made changes necessary for manual split
+
 2.24    (25 July 2001)
 - added dummy main program to demos requiring geomview
 
