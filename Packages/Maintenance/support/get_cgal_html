@@ -1,4 +1,7 @@
 #!/bin/sh
 
-/sw/bin/w3mir -cfgfile /projects/CGAL/submissions/autohandle/data/cgal_w3mir_cfg $1
+WGETRC=/projects/CGAL/admin_scripts/DATA/wgetrc
+export WGETRC
+
+/sw/bin/wget $1
 
