@@ -52,8 +52,7 @@ public:
 	&& test_y()==p.test_y() 
 	&& test_z()==p.test_z() ; }
 
-  bool   uncompare(const Point &p) const { return !compare(p); }
-
+  bool   uncompare(const Point &p) const { return ( ! compare(p)); }
   Point  &operator=(const Point &p) 
     { _x=p.test_x(); _y=p.test_y();_z=p.test_z();  return *this; }
   void   test_set(TESTFT x, TESTFT y, TESTFT z) { _x=x; _y=y; _z=z;}
@@ -201,7 +200,7 @@ CGAL::Comparison_result compare() const
 {
   Point::TESTFT d01 = sqr(_p0.test_x()-_p1.test_x()) + sqr(_p0.test_y()-_p1.test_y()) + sqr(_p0.test_z()-_p1.test_z()) ;
   Point::TESTFT d02 = sqr(_p0.test_x()-_p2.test_x()) + sqr(_p0.test_y()-_p2.test_y()) + sqr(_p0.test_z()-_p1.test_z());
-  return CGAL::compare( d01,d02);
+  return CGAL_NTS compare( d01,d02);
 }
 };
 
@@ -229,15 +228,15 @@ _Triangulation_test_traits_3 &operator=
 
 static
 CGAL::Comparison_result compare_x(const Point &p, const Point &q)
-{ return CGAL::compare(p.test_x(),q.test_x()); }
+{ return CGAL_NTS compare(p.test_x(),q.test_x()); }
 
 static
 CGAL::Comparison_result compare_y(const Point &p, const Point &q)
-{ return CGAL::compare(p.test_y(), q.test_y()); }
+{ return CGAL_NTS compare(p.test_y(), q.test_y()); }
 
 static
 CGAL::Comparison_result compare_z(const Point &p, const Point &q)
-{ return CGAL::compare(p.test_z(), q.test_z()); }
+{ return CGAL_NTS compare(p.test_z(), q.test_z()); }
 
 static
 bool equal(const Point &p, const Point &q)
