@@ -39,6 +39,7 @@
 #include <functional>
 #include <algorithm>
 #include <iterator>
+#include <numeric>
 
 
 CGAL_BEGIN_NAMESPACE

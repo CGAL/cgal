@@ -465,6 +465,13 @@ to_double( ) const
     return ldexp( m.to_double(), e);
 }
 
+// Also add global function in this namespace for Koenig lookup.
+inline
+double
+to_double(const Double &d)
+{
+    return d.to_double();
+}
 
 // access functions to the internal representation
 // -----------------------------------------------
@@ -501,7 +508,7 @@ operator << ( std::ostream& out, const Double& d)
 }
 
 
-}; // namespace GMP
+} // namespace GMP
 
 #endif // GMP_DOUBLE_H
 

@@ -1,4 +1,5 @@
-Changes done to the `_QP_solver' package
+24 June 2004  Sylvain Pion
+- g++ 3.4 fixes.
 
 Version 0.9.21 on 9-Dec-2003
 - Fix Number_type_traits<Double>.

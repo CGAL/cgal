@@ -31,9 +31,7 @@ template<> struct Number_type_traits<GMP::Double> {
   typedef Tag_false  Has_sqrt;
 };
 
-inline
-double
-to_double( GMP::Double d) { return d.to_double(); }
+using GMP::to_double;
 
 inline
 bool is_finite( GMP::Double) { return true; }
