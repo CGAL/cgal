@@ -166,6 +166,10 @@ public:
   typedef Triangulation_euclidean_traits_2 <R>  Traits;
   typedef typename Traits::Point_2              Bare_point;
   typedef Weighted_point <Bare_point, W>        Weighted_point;
+  // This is required for the point() function of vertex base class
+  // to be correctly return a weighted_point;
+  // patch 27/11/00
+  typedef Weighted_point                        Point_2;
 
   typedef CGAL::Power_test_2<Bare_point, W>     Power_test_2;
   typedef CGAL::Power_test_degenerated_2<Bare_point, W>  
