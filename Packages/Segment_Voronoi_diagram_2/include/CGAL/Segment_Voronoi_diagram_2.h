@@ -274,31 +274,31 @@ public:
   const Data_structure&   ds() const { return this->_tds; }
   const Point_container&  point_container() const { return pc_; }
 
-  size_type number_of_input_sites() const {
+  inline size_type number_of_input_sites() const {
     return isc_.size();
   }
 
-  size_type number_of_output_sites() const {
+  inline size_type number_of_output_sites() const {
     return number_of_vertices();
   }
 
-  size_type number_of_vertices() const {
+  inline size_type number_of_vertices() const {
     return DG::number_of_vertices();
   }
 
-  size_type number_of_faces() const {
+  inline size_type number_of_faces() const {
     return DG::number_of_faces();
   }
 
-  Vertex_handle infinite_vertex() const {
+  inline Vertex_handle infinite_vertex() const {
     return DG::infinite_vertex();
   }
 
-  Face_handle infinite_face() const {
+  inline Face_handle infinite_face() const {
     return DG::infinite_face();
   }
 
-  Vertex_handle finite_vertex() const {
+  inline Vertex_handle finite_vertex() const {
     return DG::finite_vertex();
   }
 
@@ -308,55 +308,55 @@ public:
 public:
   // TRAVERSAL OF THE DUAL GRAPH
   //----------------------------
-  Finite_faces_iterator finite_faces_begin() const {
+  inline Finite_faces_iterator finite_faces_begin() const {
     return DG::finite_faces_begin();
   }
 
-  Finite_faces_iterator finite_faces_end() const {
+  inline Finite_faces_iterator finite_faces_end() const {
     return DG::finite_faces_end();
   }
 
-  Finite_vertices_iterator finite_vertices_begin() const {
+  inline Finite_vertices_iterator finite_vertices_begin() const {
     return DG::finite_vertices_begin();
   }
 
-  Finite_vertices_iterator finite_vertices_end() const {
+  inline Finite_vertices_iterator finite_vertices_end() const {
     return DG::finite_vertices_end();
   }
 
-  Finite_edges_iterator finite_edges_begin() const {
+  inline Finite_edges_iterator finite_edges_begin() const {
     return DG::finite_edges_begin();    
   }
 
-  Finite_edges_iterator finite_edges_end() const {
+  inline Finite_edges_iterator finite_edges_end() const {
     return DG::finite_edges_end();    
   }
 
-  All_faces_iterator all_faces_begin() const {
+  inline All_faces_iterator all_faces_begin() const {
     return DG::all_faces_begin();
   }
 
-  All_faces_iterator all_faces_end() const {
+  inline All_faces_iterator all_faces_end() const {
     return DG::all_faces_end();
   }
 
-  All_vertices_iterator all_vertices_begin() const {
+  inline All_vertices_iterator all_vertices_begin() const {
     return DG::all_vertices_begin();
   }
 
-  All_vertices_iterator all_vertices_end() const {
+  inline All_vertices_iterator all_vertices_end() const {
     return DG::all_vertices_end();
   }
 
-  All_edges_iterator all_edges_begin() const {
+  inline All_edges_iterator all_edges_begin() const {
     return DG::all_edges_begin();
   }
 
-  All_edges_iterator all_edges_end() const {
+  inline All_edges_iterator all_edges_end() const {
     return DG::all_edges_end();
   }
 
-  Input_sites_iterator input_sites_begin() const {
+  inline Input_sites_iterator input_sites_begin() const {
 #if STORE_INPUT_SITES
     return isc_.begin();
 #else
@@ -364,7 +364,7 @@ public:
 #endif
   }
 
-  Input_sites_iterator input_sites_end() const {
+  inline Input_sites_iterator input_sites_end() const {
 #if STORE_INPUT_SITES
     return isc_.end();
 #else
@@ -372,30 +372,30 @@ public:
 #endif
   }
 
-  Output_sites_iterator output_sites_begin() const {
+  inline Output_sites_iterator output_sites_begin() const {
     return Output_sites_iterator(finite_vertices_begin());
   }
 
-  Output_sites_iterator output_sites_end() const {
+  inline Output_sites_iterator output_sites_end() const {
     return Output_sites_iterator(finite_vertices_end());    
   }
 
 public:
   // CIRCULATORS
   //------------
-  Face_circulator
+  inline Face_circulator
   incident_faces(Vertex_handle v,
 		 Face_handle f = Face_handle()) const {
     return DG::incident_faces(v, f);
   }
 
-  Vertex_circulator
+  inline Vertex_circulator
   incident_vertices(Vertex_handle v,
 		    Face_handle f = Face_handle()) const { 
     return DG::incident_vertices(v, f);
   }
 
-  Edge_circulator
+  inline Edge_circulator
   incident_edges(Vertex_handle v,
 		 Face_handle f = Face_handle()) const {
     return DG::incident_edges(v, f);
@@ -404,23 +404,23 @@ public:
 public:
   // PREDICATES
   //-----------
-  bool is_infinite(const Vertex_handle& v) const {
+  inline bool is_infinite(const Vertex_handle& v) const {
     return DG::is_infinite(v);
   }
 
-  bool is_infinite(const Face_handle& f) const {
+  inline bool is_infinite(const Face_handle& f) const {
     return DG::is_infinite(f);
   }
 
-  bool is_infinite(const Face_handle& f, int i) const {
+  inline bool is_infinite(const Face_handle& f, int i) const {
     return DG::is_infinite(f, i);
   }
 
-  bool is_infinite(const Edge& e) const {
+  inline bool is_infinite(const Edge& e) const {
     return is_infinite(e.first, e.second);
   }
 
-  bool is_infinite(const Edge_circulator& ec) const {
+  inline bool is_infinite(const Edge_circulator& ec) const {
     return DG::is_infinite(ec);
   }
 
@@ -428,7 +428,7 @@ public:
   // INSERTION METHODS
   //------------------
   template<class Input_iterator>
-  size_type insert(Input_iterator first, Input_iterator beyond) {
+  inline size_type insert(Input_iterator first, Input_iterator beyond) {
     return insert(first, beyond, Tag_false());
   }
 
@@ -458,13 +458,13 @@ public:
   }
 
   // insert a point
-  Vertex_handle  insert(const Point_2& p) {
+  inline Vertex_handle insert(const Point_2& p) {
     // update input site container
     register_input_site(p);
     return insert_point(p, Vertex_handle());
   }
 
-  Vertex_handle  insert(const Point_2& p, Vertex_handle vnear) {
+  inline Vertex_handle insert(const Point_2& p, Vertex_handle vnear) {
     // update input site container
     register_input_site(p);
     return insert_point(p, vnear);
@@ -473,21 +473,21 @@ public:
 protected:
   // insert a point without registering it in the input sites
   // container: useful for the hierarchy
-  Vertex_handle  insert_no_register(const Point_2& p,
-				    Vertex_handle vnear) {
+  inline Vertex_handle insert_no_register(const Point_2& p,
+					  Vertex_handle vnear) {
     return insert_point(p, vnear);
   }
 
 public:
   // insert a segment
-  Vertex_handle  insert(const Point_2& p0, const Point_2& p1) {
+  inline Vertex_handle insert(const Point_2& p0, const Point_2& p1) {
     // update input site container
     register_input_site(p0, p1);
     return insert_segment(Site_2::construct_site_2(p0, p1), Vertex_handle());
   }
 
-  Vertex_handle  insert(const Point_2& p0, const Point_2& p1, 
-			Vertex_handle vnear) {
+  inline Vertex_handle insert(const Point_2& p0, const Point_2& p1, 
+			      Vertex_handle vnear) {
     // update input site container
     register_input_site(p0, p1);
     return insert_segment(Site_2::construct_site_2(p0, p1), vnear);
@@ -519,7 +519,7 @@ public:
 #endif
 
 protected:
-  void register_input_site(const Point_2& p)
+  inline void register_input_site(const Point_2& p)
   {
 #if STORE_INPUT_SITES
     isc_.push_back(Site_2(p));
@@ -528,7 +528,7 @@ protected:
 #endif
   }
 
-  void register_input_site(const Point_2& p0, const Point_2& p1)
+  inline void register_input_site(const Point_2& p0, const Point_2& p1)
   {
 #if STORE_INPUT_SITES
     isc_.push_back(Site_2(p0, p1));
@@ -537,7 +537,7 @@ protected:
 #endif
   }
 
-  void register_input_site(const Site_2& t)
+  inline void register_input_site(const Site_2& t)
   {
     CGAL_precondition( t.is_exact() );
     if ( t.is_point() ) {
@@ -574,11 +574,11 @@ protected:
 					Vertex_handle vnear);
 
   template<class ITag>
-  Vertex_handle  insert_intersecting_segment(const Storage_site_2& ss,
-					     const Site_2& t,
-					     Vertex_handle v,
-					     ITag tag)
-  {
+  inline
+  Vertex_handle insert_intersecting_segment(const Storage_site_2& ss,
+					    const Site_2& t,
+					    Vertex_handle v,
+					    ITag tag) {
     return insert_intersecting_segment_with_tag(ss, t, v, tag);
   }
 
@@ -597,18 +597,18 @@ protected:
 public:
   // NEAREST NEIGHBOR LOCATION
   //--------------------------
-  Vertex_handle  nearest_neighbor(const Point_2& p) const {
+  inline Vertex_handle nearest_neighbor(const Point_2& p) const {
     return nearest_neighbor(Site_2::construct_site_2(p), Vertex_handle());
   }
 
-  Vertex_handle  nearest_neighbor(const Point_2& p,
-				  Vertex_handle vnear) const {
+  inline Vertex_handle nearest_neighbor(const Point_2& p,
+					Vertex_handle vnear) const {
     return nearest_neighbor(Site_2::construct_site_2(p), vnear);
   }
 
 protected:
-  Vertex_handle  nearest_neighbor(const Site_2& p,
-				  Vertex_handle vnear) const;
+  Vertex_handle nearest_neighbor(const Site_2& p,
+				 Vertex_handle vnear) const;
 
 
 public:
@@ -694,11 +694,11 @@ protected:
   //------------------------------------------------------------------
 
   // getting the symmetric edge
-  Edge sym_edge(const Edge e) const {
+  inline Edge sym_edge(const Edge e) const {
     return sym_edge(e.first, e.second);
   }
 
-  Edge sym_edge(const Face_handle& f, int i) const {
+  inline Edge sym_edge(const Face_handle& f, int i) const {
     Face_handle f_sym = f->neighbor(i);
     return Edge(  f_sym, f_sym->index( f->mirror_vertex(i) )  );
   }
@@ -715,39 +715,39 @@ protected:
     return Edge(f, ccw(i));
   }
 
-  Edge flip(Edge e) {
+  inline Edge flip(Edge e) {
     return flip(e.first, e.second);
   }
 
-  bool is_degree_2(const Vertex_handle& v) const {
+  inline bool is_degree_2(const Vertex_handle& v) const {
     Face_circulator fc = v->incident_faces();
     Face_circulator fc1 = fc;
     ++(++fc1);
     return ( fc == fc1 );
   }
 
-  Vertex_handle insert_degree_2(Edge e) {
+  inline Vertex_handle insert_degree_2(Edge e) {
     return this->_tds.insert_degree_2(e.first,e.second);
   }
 
-  Vertex_handle insert_degree_2(Edge e, const Storage_site_2& ss) {
+  inline Vertex_handle insert_degree_2(Edge e, const Storage_site_2& ss) {
     Vertex_handle v = insert_degree_2(e);
     v->set_site(ss);
     return v;
   }
 
-  void remove_degree_2(Vertex_handle v) {
+  inline void remove_degree_2(Vertex_handle v) {
     CGAL_precondition( is_degree_2(v) );
     this->_tds.remove_degree_2(v);
   }
 
-  Vertex_handle create_vertex(const Storage_site_2& ss) {
+  inline Vertex_handle create_vertex(const Storage_site_2& ss) {
     Vertex_handle v = this->_tds.create_vertex();
     v->set_site(ss);
     return v;
   }
 
-  Vertex_handle create_vertex_dim_up(const Storage_site_2& ss) {
+  inline Vertex_handle create_vertex_dim_up(const Storage_site_2& ss) {
     Vertex_handle v = this->_tds.insert_dim_up(infinite_vertex());
     v->set_site(ss);
     return v;
@@ -756,17 +756,18 @@ protected:
 protected:
   // HELPER METHODS FOR CREATING STORAGE SITES
   //------------------------------------------
-  Storage_site_2 create_storage_site(const Point_2& p) {
+  inline Storage_site_2 create_storage_site(const Point_2& p) {
     Point_handle ph = pc_.insert(p);
     return Storage_site_2(ph);
   }
 
-  Storage_site_2 create_storage_site(Vertex_handle v0,
-				     Vertex_handle v1) {
+  inline Storage_site_2 create_storage_site(Vertex_handle v0,
+					    Vertex_handle v1) {
     return Storage_site_2( v0->storage_site().point_handle(0),
 			   v1->storage_site().point_handle(0) );
   }
 
+  inline
   Storage_site_2 split_storage_site(const Storage_site_2& ss0,
 				    const Storage_site_2& ss1,
 				    unsigned int i, const Tag_false&)
@@ -871,12 +872,14 @@ protected:
     }
   }
 
+  inline
   Storage_site_2 create_storage_site(const Storage_site_2& ss0,
 				     const Storage_site_2& ss1) {
     return Storage_site_2( ss0.point_handle(0), ss0.point_handle(1),
 			   ss1.point_handle(0), ss1.point_handle(1) );
   }
 
+  inline
   Storage_site_2 create_storage_site(const Storage_site_2& ss0,
 				     const Storage_site_2& ss1,
 				     bool is_first_exact) {
@@ -885,6 +888,7 @@ protected:
 			   is_first_exact);
   }
 
+  inline
   Storage_site_2 create_storage_site_type1(const Storage_site_2& ss0,
 					   const Storage_site_2& ss1,
 					   const Storage_site_2& ss2) {
@@ -893,6 +897,7 @@ protected:
 			   ss2.point_handle(0), ss2.point_handle(1));
   }
 
+  inline
   Storage_site_2 create_storage_site_type2(const Storage_site_2& ss0,
 					   const Storage_site_2& ss1,
 					   const Storage_site_2& ss2) {
@@ -907,17 +912,17 @@ protected:
   // METHODS FOR ACCESSING THE PRIMAL GRAPH
   //---------------------------------------
   // used primarily for visualization
-  Point_2  primal(const Face_handle& f) const {
+  inline Point_2 primal(const Face_handle& f) const {
     return circumcenter(f);
   }
 
-  Object   primal(const Edge e) const;
+  Object primal(const Edge e) const;
 
-  Object   primal(const Edge_circulator& ec) const {
+  inline Object primal(const Edge_circulator& ec) const {
     return primal(*ec); 
   }
 
-  Object   primal(const Finite_edges_iterator& ei) const {
+  inline Object primal(const Finite_edges_iterator& ei) const {
     return primal(*ei);
   }
 
@@ -940,15 +945,15 @@ protected:
   //protected:
 public:
   // wrappers for constructions
-  Point_2 circumcenter(const Face_handle& f) const {
+  inline Point_2 circumcenter(const Face_handle& f) const {
     CGAL_precondition( this->dimension()==2 || !is_infinite(f) );
     return circumcenter(f->vertex(0)->site(),
 			f->vertex(1)->site(),
 			f->vertex(2)->site());
   }
 
-  Point_2 circumcenter(const Site_2& t0, const Site_2& t1, 
-		       const Site_2& t2) const {
+  inline Point_2 circumcenter(const Site_2& t0, const Site_2& t1, 
+			      const Site_2& t2) const {
     return
     geom_traits().construct_svd_vertex_2_object()(t0, t1, t2);
   }
@@ -994,22 +999,22 @@ protected:
   Construct_svd_bisector_segment_2;
 
   // access
-  Construct_svd_circle_2
+  inline Construct_svd_circle_2
   construct_svd_circle_2_object() const{
     return Construct_svd_circle_2();
   }
 
-  Construct_svd_bisector_2
+  inline Construct_svd_bisector_2
   construct_svd_bisector_2_object() const {
     return Construct_svd_bisector_2();
   }
 
-  Construct_svd_bisector_ray_2
+  inline Construct_svd_bisector_ray_2
   construct_svd_bisector_ray_2_object() const {
     return Construct_svd_bisector_ray_2();
   }
 
-  Construct_svd_bisector_segment_2
+  inline Construct_svd_bisector_segment_2
   construct_svd_bisector_segment_2_object() const { 
     return Construct_svd_bisector_segment_2(); 
   }
@@ -1017,16 +1022,19 @@ protected:
 protected:
   // WRAPPERS FOR GEOMETRIC PREDICATES
   //----------------------------------
+  inline
   bool same_points(const Site_2& p, const Site_2& q) const {
     return geom_traits().are_same_points_2_object()(p, q);
   }
 
+  inline
   bool same_segments(const Site_2& t, Vertex_handle v) const {
     if ( is_infinite(v) ) { return false; }
     if ( t.is_point() || v->site().is_point() ) { return false; }
     return same_segments(t, v->site());
   }
 
+  inline
   bool same_segments(const Site_2& p, const Site_2& q) const {
     CGAL_precondition( p.is_segment() && q.is_segment() );
 
@@ -1037,6 +1045,7 @@ protected:
        same_points(p.target_site(), q.source_site()));
   }
 
+  inline
   bool is_endpoint_of_segment(const Site_2& p, const Site_2& s) const
   {
     CGAL_precondition( p.is_point() && s.is_segment() );
@@ -1044,6 +1053,7 @@ protected:
 	     same_points(p, s.target_site()) );
   }
 
+  inline
   bool is_degenerate_segment(const Site_2& s) const {
     CGAL_precondition( s.is_segment() );
     return same_points(s.source_site(), s.target_site());
@@ -1053,23 +1063,28 @@ protected:
   //   ON_POSITIVE_SIDE if q is closer to t1
   //   ON_NEGATIVE_SIDE if q is closer to t2
   //   ON_ORIENTED_BOUNDARY if q is on the bisector of t1 and t2
+  inline
   Oriented_side side_of_bisector(const Site_2 &t1, const Site_2 &t2,
 				 const Site_2 &q) const {
     return geom_traits().oriented_side_of_bisector_2_object()(t1, t2, q);
   }
 
+  inline
   Sign incircle(const Site_2 &t1, const Site_2 &t2,
 		const Site_2 &t3, const Site_2 &q) const {
     return geom_traits().vertex_conflict_2_object()(t1, t2, t3, q);
   }
 
+  inline
   Sign incircle(const Site_2 &t1, const Site_2 &t2,
 		const Site_2 &q) const {
     return geom_traits().vertex_conflict_2_object()(t1, t2, q);
   }
 
+  inline
   Sign incircle(const Face_handle& f, const Site_2& q) const;
 
+  inline
   Sign incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 		const Vertex_handle& v) const {
     CGAL_precondition( !is_infinite(v0) && !is_infinite(v1)
@@ -1081,16 +1096,24 @@ protected:
   Sign incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 		const Vertex_handle& v2, const Vertex_handle& v) const;
 
-
-  
+  inline
   bool finite_edge_interior(const Site_2& t1, const Site_2& t2,
 			    const Site_2& t3, const Site_2& t4,
 			    const Site_2& q,  Sign sgn) const {
+#if 0
+    std::cout << "t1: " << t1 << std::endl;
+    std::cout << "t2: " << t2 << std::endl;
+    std::cout << "t3: " << t3 << std::endl;
+    std::cout << "t4: " << t4 << std::endl;
+    std::cout << "q : " << q << std::endl;
+    std::cout << "sign: " << sgn << std::endl;
+#endif
     return
       geom_traits().finite_edge_interior_conflict_2_object()
       (t1,t2,t3,t4,q,sgn);
   }
 
+  inline
   bool finite_edge_interior(const Face_handle& f, int i,
 			    const Site_2& q, Sign sgn) const {
     CGAL_precondition( !is_infinite(f) &&
@@ -1101,6 +1124,7 @@ protected:
 				 f->mirror_vertex(i)->site(), q, sgn);
   }
 
+  inline
   bool finite_edge_interior(const Vertex_handle& v1, const Vertex_handle& v2,
 			    const Vertex_handle& v3, const Vertex_handle& v4,
 			    const Vertex_handle& v, Sign sgn) const {
@@ -1112,6 +1136,7 @@ protected:
 				 v->site(), sgn);
   }
 
+  inline
   bool finite_edge_interior(const Site_2& t1, const Site_2& t2,
 			    const Site_2& t3, const Site_2& q,
 			    Sign sgn) const {
@@ -1119,7 +1144,7 @@ protected:
     geom_traits().finite_edge_interior_conflict_2_object()(t1,t2,t3,q,sgn);
   }
 
-
+  inline
   bool finite_edge_interior(const Site_2& t1, const Site_2& t2,
 			    const Site_2& q,  Sign sgn) const {
     return
@@ -1133,6 +1158,7 @@ protected:
 			    const Vertex_handle& v3, const Vertex_handle& v4,
 			    const Vertex_handle& v, Sign, int) const;
 
+  inline
   bool infinite_edge_interior(const Site_2& t2, const Site_2& t3,
 			      const Site_2& t4, const Site_2& q,
 			      Sign sgn) const {
@@ -1167,18 +1193,64 @@ protected:
 		     const Vertex_handle& v,
 		     Sign sgn) const;
 
-  Arrangement_type arrangement_type(const Site_2& t, Vertex_handle v) const;
+  inline Arrangement_type
+  arrangement_type(const Site_2& t, const Vertex_handle& v) const {
+    if ( is_infinite(v) ) { return AT2::DISJOINT; }
+    return arrangement_type(t, v->site());
+  }
+
   Arrangement_type arrangement_type(const Site_2& p, const Site_2& q) const;
 
+  inline
   bool are_parallel(const Site_2& p, const Site_2& q) const {
     return geom_traits().are_parallel_2_object()(p, q);
   }
 
-  Oriented_side
+  inline Oriented_side
   oriented_side(const Site_2& s1, const Site_2& s2, const Site_2& s3,
 		const Site_2& supp, const Site_2& p) const {
     CGAL_precondition( supp.is_segment() && p.is_point() );
     return geom_traits().oriented_side_2_object()(s1, s2, s3, supp, p);
+  }
+
+  Vertex_handle first_endpoint_of_segment(const Vertex_handle& v) const {
+    CGAL_assertion( v->is_segment() );
+    Site_2 fe = v->site().source_site();
+    Vertex_circulator vc_start = v->incident_vertices();
+    Vertex_circulator vc = vc_start;
+    do {
+      // Vertex_handle vv(vc);
+      if ( !is_infinite(vc) && vc->is_point() ) {
+	if ( same_points(fe, vc->site()) ) {
+	  return Vertex_handle(vc);
+	}
+      }
+      vc++;
+    } while ( vc != vc_start );
+
+    // we should never reach this point
+    CGAL_assertion( false );
+    return Vertex_handle();
+  }
+
+  Vertex_handle second_endpoint_of_segment(const Vertex_handle& v) const {
+    CGAL_assertion( v->is_segment() );
+    Site_2 fe = v->site().target_site();
+    Vertex_circulator vc_start = v->incident_vertices();
+    Vertex_circulator vc = vc_start;
+    do {
+      //      Vertex_handle vv(vc);
+      if ( !is_infinite(vc) && vc->is_point() ) {
+	if ( same_points(fe, vc->site()) ) {
+	  return Vertex_handle(vc);
+	}
+      }
+      vc++;
+    } while ( vc != vc_start );
+
+    // we should never reach this point
+    CGAL_assertion( false );
+    return Vertex_handle();
   }
 
 }; // Segment_Voronoi_diagram_2

@@ -300,6 +300,10 @@ insert_point(const Storage_site_2& ss, const Site_2& t,
 
       Vertex_triple vt = insert_exact_point_on_segment(ss, t, vnearest);
       return vt.first;
+    } else {
+      // the point to be inserted does not belong to the interior of a
+      // segment
+      CGAL_assertion( at_res == AT2::DISJOINT );
     }
   }
 
@@ -320,6 +324,7 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 
   // find the first conflict
 
+#ifndef NDEBUG
   // verify that there are no intersections...
   Vertex_circulator vc = vnearest->incident_vertices();
   Vertex_circulator vc_start = vc;
@@ -330,6 +335,7 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
     CGAL_assertion( at_res == AT2::DISJOINT );
     ++vc;
   } while ( vc != vc_start );
+#endif
 
   // first look for conflict with vertex
   Face_circulator fc_start = vnearest->incident_faces();
@@ -343,6 +349,9 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
     Face_handle f(fc);
 
     s = incircle(f, t);
+
+    //    std::cout << "t: " << t << std::endl;
+    //    std::cout << "incircle: " << s << std::endl;
 
     sign_map[f] = s;
 
@@ -369,7 +378,15 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 
       if ( s1 == s2 ) {
 	interior_in_conflict = edge_interior(e, t, s1);
+      } else {
+	// It seems that there was a problem here when one of the
+	// signs was positive and the other zero. In this case we
+	// still check pretending that both signs where positive
+	interior_in_conflict = edge_interior(e, t, POSITIVE);
       }
+
+      std::cout << "t: " << t << std::endl;
+      std::cout << "interior: " << interior_in_conflict << std::endl;
 
       if ( interior_in_conflict ) { break; }
       ++ec;
@@ -484,12 +501,10 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   // now I need to update the sites for vertices v1 and v2
   Vertex_handle v1 = qq.first;
   Storage_site_2 ssv1 = split_storage_site(ssitev, ss, 0, itag);
-  Site_2 sv1 = ssv1.site();
   v1->set_site( ssv1 );
 
   Vertex_handle v2 = qq.second;
   Storage_site_2 ssv2 = split_storage_site(ssitev, ss, 1, itag);
-  Site_2 sv2 = ssv2.site();
   v2->set_site( ssv2 );
 
   Vertex_handle vsx =
@@ -606,55 +621,12 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   CGAL_precondition( number_of_vertices() >= 2 );
 
   CGAL_assertion( vnearest != Vertex_handle() );
-  // MK: add here code that checks if the inserted segment has already
-  // been inserted; MAYBE THIS IS NOT NEEDED; I ALREADY DO IT IN
-  // arrangement_type
-
-#if 0
-  // check for arrangement type with nearest neighbor
-  Arrangement_type at_res = arrangement_type(t, vnearest);
-  if ( vnearest->is_segment() ) {
-    if ( at_res == AT2::DISJOINT || at_res == AT2::TOUCH_1 ||
-	 at_res == AT2::TOUCH_2 || at_res == AT2::TOUCH_11 ||
-	 at_res == AT2::TOUCH_12 || at_res == AT2::TOUCH_21 ||
-	 at_res == AT2::TOUCH_22 ) {
-      // do nothing
-    } else if ( at_res == AT2::IDENTICAL ) {
-      return vnearest;
-    } else if ( at_res == AT2::CROSSING ) {
-      Intersections_tag itag;
-      return insert_intersecting_segment(ss, t, vnearest, itag);
-    } else {
-      // MK::ERROR:: not ready yet
-      CGAL_assertion( false );
-    }
-  } else {
-    CGAL_assertion( vnearest->is_point() );
-    if ( at_res == AT2::INTERIOR ) {
-      CGAL_assertion( vnearest->is_point() );
-      Storage_site_2 svn = vnearest->storage_site();
-      if ( svn.is_exact() ) {
-	Intersections_tag itag;
-	Storage_site_2 ss1 = split_storage_site(ss, svn, 0, itag);
-	Storage_site_2 ss2 = split_storage_site(ss, svn, 1, itag);
-	insert_segment_interior(ss1.site(), ss1, vnearest);
-	return insert_segment_interior(ss2.site(), ss2, vnearest);
-      } else {
-	// MK::ERROR:: not ready yet
-	CGAL_assertion( false );
-      }
-    }
-  }
-#endif
-
-  //  std::cout << "chk 1" << std::endl;
 
   // find the first conflict
 
   // first look if there are intersections...
   Vertex_circulator vc = vnearest->incident_vertices();
   Vertex_circulator vc_start = vc;
-  //  std::cout << "--------------" << std::endl;
   do {
     Vertex_handle vv(vc);
     if ( is_infinite(vv) ) {
@@ -663,27 +635,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
     }
 
     Arrangement_type at_res = arrangement_type(t, vv);
-#if 0
-    if ( is_infinite(vv) ) {
-      std::cout << "v: inf";
-    } else {
-      std::cout << "v: " << vv->site();
-      if ( vv->storage_site().is_exact() ) {
-	std::cout << " exact";
-      } else {
-	std::cout << " inexact";
-      }
-    }
-    std::cout << std::endl;
-    std::cout << "t: " << t;
-    if ( t.is_exact() ) {
-      std::cout << " exact";
-    } else {
-      std::cout << " inexact";
-    }
-    std::cout << std::endl;
-    std::cout << "at: " << at_res << std::endl;
-#endif
+
     if ( vv->is_segment() ) {
       if ( at_res == AT2::DISJOINT || at_res == AT2::TOUCH_1 ||
 	   at_res == AT2::TOUCH_2 || at_res == AT2::TOUCH_11 ||
@@ -695,31 +647,48 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
       } else if ( at_res == AT2::CROSSING ) {
 	Intersections_tag itag;
 	return insert_intersecting_segment(ss, t, vv, itag);
+      } else if ( at_res == AT2::TOUCH_11_INTERIOR_1 ) {
+	Intersections_tag itag;
+	// MK::ERROR: this works only if vv has is_exact(1)
+	Point_handle ph = vv->storage_site().point_handle(1);
+	Storage_site_2 ssi(ph);
+	Storage_site_2 sss = split_storage_site(ss, ssi, 1, itag);
+	Vertex_handle vp = second_endpoint_of_segment(vv);
+	return insert_segment_interior(sss.site(), sss, vp);
+      } else if ( at_res == AT2::TOUCH_12_INTERIOR_1 ) {
+	Intersections_tag itag;
+	// MK::ERROR: this works only if vv has is_exact(0)
+	//	CGAL_assertion( false );
+	Point_handle ph = vv->storage_site().point_handle(0);
+	Storage_site_2 ssi(ph);
+	Storage_site_2 sss = split_storage_site(ss, ssi, 0, itag);
+	Vertex_handle vp = first_endpoint_of_segment(vv);
+	return insert_segment_interior(sss.site(), sss, vp);
       } else {
-	// MK::ERROR:: not ready yet
-	std::cout << "at: " << at_res << std::endl;
+	// this should never be reached; the only possible values for
+	// at_res are DISJOINT, CROSSING, TOUCH_11_INTERIOR_1
+	// and TOUCH_12_INTERIOR_1
 	CGAL_assertion( false );
       }
     } else {
       CGAL_assertion( vv->is_point() );
       if ( at_res == AT2::INTERIOR ) {
-	Storage_site_2 svv = vv->storage_site();
-	if ( svv.is_exact() ) {
+	Storage_site_2 ssvv = vv->storage_site();
+	if ( ssvv.is_exact() ) {
 	  Intersections_tag itag;
-	  Storage_site_2 ss1 = split_storage_site(ss, svv, 0, itag);
-	  Storage_site_2 ss2 = split_storage_site(ss, svv, 1, itag);
+	  Storage_site_2 ss1 = split_storage_site(ss, ssvv, 0, itag);
+	  Storage_site_2 ss2 = split_storage_site(ss, ssvv, 1, itag);
 	  insert_segment_interior(ss1.site(), ss1, vv);
 	  return insert_segment_interior(ss2.site(), ss2, vv);
 	} else {
-	  // MK::ERROR:: not ready yet
+	  // this should never be reached; the only possible values for
+	  // at_res are DISJOINT and INTERIOR
 	  CGAL_assertion( false );
 	}
       }
     }
     ++vc;
   } while ( vc != vc_start );
-
-  //  std::cout << "chk 2" << std::endl;
 
   // first look for conflict with vertex
   Face_circulator fc_start = vnearest->incident_faces();
@@ -746,8 +715,6 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   // segments must have a conflict with at least one vertex
   CGAL_assertion( s == NEGATIVE );
 
-  //  std::cout << "chk 3" << std::endl;
-
   // we are in conflict with a Voronoi vertex; start from that and 
   // find the entire conflict region and then repair the diagram
   List l;
@@ -761,44 +728,39 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT 
   // REGION AND EXPANDS THE CONFLICT REGION.
   initialize_conflict_region(start_f, l);
-
-  //  std::cout << "chk 4" << std::endl;
-
   expand_conflict_region(start_f, t, ss, l, fm, sign_map, vcross);
 
-  //  std::cout << "chk 5" << std::endl;
-
+  CGAL_assertion( vcross.third == AT2::DISJOINT ||
+		  vcross.third == AT2::CROSSING ||
+		  vcross.third == AT2::INTERIOR );
 
   // the following condition becomes true only if intersecting
   // segments are found
   if ( vcross.first ) {
     if ( t.is_segment() ) {
       if ( vcross.third == AT2::CROSSING ) {
-	//	std::cout << "chk 6" << std::endl;
 	Intersections_tag itag;
 	return insert_intersecting_segment(ss, t, vcross.second, itag);
       } else if ( vcross.third == AT2::INTERIOR ) {
-	//	std::cout << "chk 7" << std::endl;
 	Storage_site_2 ssvv = vcross.second->storage_site();
 	Intersections_tag itag;
 	Storage_site_2 ss1 = split_storage_site(ss, ssvv, 0, itag);
 	Storage_site_2 ss2 = split_storage_site(ss, ssvv, 1, itag);
 	insert_segment_interior(ss1.site(), ss1, vcross.second);
 	return insert_segment_interior(ss2.site(), ss2, vcross.second);
+      } else {
+	// this should never be reached; the only possible values for
+	// vcross.third are CROSSING, INTERIOR and DISJOINT
+	CGAL_assertion( false );
       }
     }
   }
-
-  //  std::cout << "chk 8" << std::endl;
-
 
   // no intersecting segment has been found; we insert the segment as
   // usual...
   Vertex_handle v = create_vertex(ss);
 
   retriangulate_conflict_region(v, l, fm);
-
-  //  std::cout << "chk 9" << std::endl;
 
   return v;
 }
@@ -845,25 +807,15 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   Storage_site_2 ss3, ss4;
   Site_2 s3, s4;
   if ( t.is_exact(0) ) {
-    //    s3 = Site_2(t.point(0), t.point(1),
-    //		sitev.point(0), sitev.point(1), true);
     ss3 = create_storage_site(ss, ssitev, true);
   } else {
-    //    s3 = Site_2(t.point(0), t.point(1),
-    //		t.point(2), t.point(3),
-    //		sitev.point(0), sitev.point(1));
     ss3 = create_storage_site_type1(ss, ss, ssitev);
   }
   s3 = ss3.site();
 
   if ( t.is_exact(1) ) {
-    //    s4 = Site_2(t.point(0), t.point(1),
-    //		sitev.point(0), sitev.point(1), false);
     ss4 = create_storage_site(ss, ssitev, false);
   } else {
-    //    s4 = Site_2(t.point(0), t.point(1),
-    //		sitev.point(0), sitev.point(1),
-    //		t.point(4), t.point(5));
     ss4 = create_storage_site_type2(ss, ssitev, ss);
   }
   s4 = ss4.site();
@@ -930,15 +882,16 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
 
 	Arrangement_type at_res = arrangement_type(t, vf);
 
+	CGAL_assertion( vcross.third == AT2::DISJOINT ||
+			vcross.third == AT2::CROSSING ||
+			vcross.third == AT2::INTERIOR );
+
 	if ( vf->is_segment() ) {
 	  CGAL_assertion( at_res != AT2::IDENTICAL );
+	  CGAL_assertion( at_res != AT2::TOUCH_11_INTERIOR_1 );
+	  CGAL_assertion( at_res != AT2::TOUCH_12_INTERIOR_1 );
 
-	  if ( at_res == AT2::DISJOINT || at_res == AT2::TOUCH_1 ||
-	       at_res == AT2::TOUCH_2 || at_res == AT2::TOUCH_11 ||
-	       at_res == AT2::TOUCH_12 || at_res == AT2::TOUCH_21 ||
-	       at_res == AT2::TOUCH_22 ) {
-	    // do nothing
-	  } else if ( at_res == AT2::CROSSING ) {
+	  if ( at_res == AT2::CROSSING ) {
 	    vcross.first = true;
 	    vcross.second = vf;
 	    vcross.third = AT2::CROSSING;
@@ -946,9 +899,14 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
 	    fm.clear();
 	    return;
 	  } else {
-	    // MK::ERROR:: not ready yet
-	    std::cout << "at: " << at_res << std::endl;
-	    CGAL_assertion( false );
+	    CGAL_assertion ( at_res == AT2::DISJOINT ||
+			     at_res == AT2::TOUCH_1 ||
+			     at_res == AT2::TOUCH_2 ||
+			     at_res == AT2::TOUCH_11 ||
+			     at_res == AT2::TOUCH_12 ||
+			     at_res == AT2::TOUCH_21 ||
+			     at_res == AT2::TOUCH_22 );
+	    // we do nothing in these cases
 	  }
 	} else {
 	  CGAL_assertion( vf->is_point() );
@@ -1468,23 +1426,41 @@ arrangement_type(const Site_2& p, const Site_2& q) const
   typedef typename AT2::result_type                 Arrangement_type;
 
   Arrangement_type res = geom_traits().arrangement_type_2_object()(p, q);
-  
-#if 0
-  // MK::ERROR:: this has to be changed
-  if ( res == AT2::DISJOINT || res == AT2::TOUCH_11 ||
-       res == AT2::TOUCH_12 || res == AT2::TOUCH_21 ||
-       res == AT2::TOUCH_22 || res == AT2::INTERIOR ||
-       res == AT2::IDENTICAL || res == AT2::TOUCH_1 ||
-       res == AT2::TOUCH_2 ) {
-    return res;
-  }
 
-  //  print_error_message(Intersections_tag());
+  // The valeus that have to be treated are the following:
+  // DISJOINT, TOUCH_1, TOUCH_2, CROSSING, IDENTICAL, INTERIOR,
+  // TOUCH_11_INTERIOR_1, TOUCH_12_INTERIOR_1, TOUCH_21_INTERIOR_1 and
+  // TOUCH_22_INTERIOR_1.
+  //
+  // The remaining values will either never appear because of one of
+  // the following reasons:
+  // 1. we insert the endpoints of the segments first and then the
+  //    interior (OVERLAPPING_*, INTERIOR_*, TOUCH_*_INTERIOR_2).
+  // 2. the values have no meaning since we consider the segments to
+  //    be open (TOUCH_INTERIOR_*). In this case, the conflict will
+  //    appear when we test with the endpoint.
+  // 3. a conflict will first happen with an endpoint before testing
+  //    for the segment (TOUCH_2*_INTERIOR_1). In this case the
+  //    segment to be inserted will first find an endpoint in its
+  //    interior before actually finding that there is another segment
+  //    it overlaps with.
 
-  CGAL_assertion( res == AT2::CROSSING );
+  CGAL_assertion( res != AT2::INTERIOR_1 );
+  CGAL_assertion( res != AT2::INTERIOR_2 );
 
-  return res;
-#else
+  CGAL_assertion( res != AT2::OVERLAPPING_11 );
+  CGAL_assertion( res != AT2::OVERLAPPING_12 );
+  CGAL_assertion( res != AT2::OVERLAPPING_21 );
+  CGAL_assertion( res != AT2::OVERLAPPING_22 );
+
+  CGAL_assertion( res != AT2::TOUCH_11_INTERIOR_2 );
+  CGAL_assertion( res != AT2::TOUCH_21_INTERIOR_2 );
+  CGAL_assertion( res != AT2::TOUCH_12_INTERIOR_2 );
+  CGAL_assertion( res != AT2::TOUCH_22_INTERIOR_2 );
+
+  CGAL_assertion( res != AT2::TOUCH_21_INTERIOR_1 );
+  CGAL_assertion( res != AT2::TOUCH_22_INTERIOR_1 );
+
   if ( res == AT2::TOUCH_INTERIOR_12 || res == AT2::TOUCH_INTERIOR_21 ||
        res == AT2::TOUCH_INTERIOR_11 || res == AT2::TOUCH_INTERIOR_22 ) {
     return AT2::DISJOINT;
@@ -1495,27 +1471,6 @@ arrangement_type(const Site_2& p, const Site_2& q) const
   }
 
   return res;
-#endif
-}
-
-
-template<class Gt, class DS, class LTag>
-typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Arrangement_type
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-arrangement_type(const Site_2& t, Vertex_handle v) const
-{
-  if ( is_infinite(v) ) { return AT2::DISJOINT; }
-  // add here the cases where t is a segment and intersects a point
-  // and t is a point and lies in a segment
-
-  //  if ( !t.is_segment() || !v->is_segment() ) { return AT2::DISJOINT; }
-
-#if 0
-  return same_segments(t, v->site());
-#endif
-
-  Arrangement_type at_res = arrangement_type(t, v->site());
-  return at_res;
 }
 
 //--------------------------------------------------------------------
