@@ -91,6 +91,18 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\..\..\src\CGALQt\Qt_widget.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\src\CGALQt\Qt_widget_layer.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\src\CGALQt\Qt_widget_standard_toolbar.C
+# End Source File
+# Begin Source File
+
 SOURCE=.\tutorial5.C
 # End Source File
 # End Group
