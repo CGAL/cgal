@@ -1,0 +1,114 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page:  Polygons_union_2.tex (Map_overlay)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: ovl (Map_overlay_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+% +========================================================================+
+%   Map Overlay
+% +========================================================================+
+\begin{ccRefFunctionObjectClass}{Polygons_union_2<Traits>}
+\label{OVL_sec:polygon_union}
+    
+\ccDefinition
+The class \ccClassTemplateName\ is a function object,
+returning the union of two given polygons.
+
+
+\ccInclude{CGAL/Polygons_bops_2.h}
+  
+
+The \ccClassTemplateName\ class contains one function
+object for computing the union on two input polygons.
+This function returns three containers (as output iterators):
+the first container is the points in the union, 
+the second is the subcurves in the union,
+and the third is all polygons in the union.
+The three output containers are given as templated 
+output iterators.
+
+\ccMethod{
+   template <class Polygon,
+   class PolygonOutputIterator,
+   class CurvesOutputIterator,
+   class PointsOutputIterator>    
+   void 
+   operator()(
+   const Polygon& polygon1,
+   const Polygon& polygon2,
+   PolygonOutputIterator polygons,
+   CurvesOutputIterator curves,
+   PointsOutputIterator points);}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item
+   \ccc{Traits} is a model to the \ccc{PolygonBopsTraits_2} concept.
+   \item
+   \ccc{Polygon} is a model of the CGAL polygon.
+   \item
+   \ccc{PolygonOutputIterator::value_type} is a Polygon.
+   \item    
+   \ccc{CurvesOutputIterator::value_type} is equivalent to \ccc{Traits::Curve_2}.
+   \item
+   \ccc{PointsOutputIterator::value_type} is equivalent to \ccc{Traits::Point_2}.
+\end{enumerate}
+
+\ccSeeAlso
+
+\ccc{CGAL::Polygons_do_intersect_2} \\
+\ccc{CGAL::Polygons_intersection_2} \\
+\ccc{CGAL::Polygons_difference_2} \\
+\ccc{CGAL::Polygons_symmetric_difference_2} \\
+
+% \ccImplementation
+
+% The implementation uses the container $map$ defined in STL for
+% implementing the event queue and the status line. The implementation
+% also keeps per each input curve an associated container of all its
+% intersection points ordered from left to right, and also keeps per
+% each event point all its outcoming curves. The complexity of this
+% algorithm is $O(n\log{n} + k\log{n})$ where $n$ is the number of the input
+% curves and $k$ is the number of intersection points induced by these
+% curves.
+
+\ccExample
+\label{sec:example1_polygon_bops}
+The following example is a demonstration of the usage of the 
+\ccClassTemplateName\. 
+The two input polygons are the unit square,
+defined by the coordinates: 
+$(0,0)$, $(0,1)$, $(1,0)$, $(1,1)$, 
+and a triangle defined by the coordinates:
+$(1,7)$, $(10,7)$, $(5,1)$,
+
+\ccIncludeExampleCode{Polygon_bops/example1.C}
+
+And the output of the program looks like this:
+
+\ccIncludeExampleCode{Polygons_bops/example1.cout}
+
+\end{ccRefClass}
+
+% FILL IN THE REST OF THE FILES
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
+
+

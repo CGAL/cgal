@@ -1,0 +1,81 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polygons_do_intersect_2.tex (Map_overlay)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: ovl (Map_overlay_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+% +========================================================================+
+%   Map Overlay
+% +========================================================================+
+\begin{ccRefFunctionObjectClass}{Polygons_do_intersect_2<Traits>}
+\label{OVL_sec:polygon_do_intersect}
+    
+\ccDefinition
+The class \ccClassTemplateName\ is a function object,
+checking whether two given polygons have a non-empty 
+intersection.
+
+
+\ccInclude{CGAL/Polygons_bops_2.h}
+  
+
+The \ccClassTemplateName\ class contains one function
+object checking whether the two given polygons intersect.
+This function returns a boolean flag, 
+indicating whether the intersection is non-empty.
+
+\ccMethod{
+   template <class Polygon>
+   bool 
+   operator()(const Polygon& polygon1,
+   const Polygon& polygon2);}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item
+   \ccc{Traits} is a model to the \ccc{PolygonBopsTraits_2} concept.
+   \item
+   \ccc{Polygon} is a model of the CGAL polygon.
+\end{enumerate}
+
+\ccSeeAlso
+
+\ccc{CGAL::Polygons_intersection_2} \\
+\ccc{CGAL::Polygons_union_2} \\
+\ccc{CGAL::Polygons_difference_2} \\
+\ccc{CGAL::Polygons_symmetric_difference_2} \\
+
+% \ccImplementation
+
+% The implementation uses the container $map$ defined in STL for
+% implementing the event queue and the status line. The implementation
+% also keeps per each input curve an associated container of all its
+% intersection points ordered from left to right, and also keeps per
+% each event point all its outcoming curves. The complexity of this
+% algorithm is $O(n\log{n} + k\log{n})$ where $n$ is the number of the input
+% curves and $k$ is the number of intersection points induced by these
+% curves.
+
+
+\end{ccRefClass}
+
+% FILL IN THE REST OF THE FILES
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+

@@ -1,0 +1,102 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polygons_difference_2.tex (Map_overlay)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: ovl (Map_overlay_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+% +========================================================================+
+%   Map Overlay
+% +========================================================================+
+\begin{ccRefFunctionObjectClass}{Polygons_difference_2<Traits>}
+\label{OVL_sec:polygon_difference}
+    
+\ccDefinition
+The class \ccClassTemplateName\ is a function object,
+returning the difference between two given polygons.
+
+
+\ccInclude{CGAL/Polygons_bops_2.h}
+  
+
+The \ccClassTemplateName\ class contains one function
+object for computing the difference of two input polygons.
+This function returns three containers (as output iterators):
+the first container is the points in the difference, 
+the second is the subcurves in the difference,
+and the third is all polygons in the difference.
+The three output containers are given as templated 
+output iterators.
+
+\ccMethod{
+   template <class Polygon,
+   class PolygonOutputIterator,
+   class CurvesOutputIterator,
+   class PointsOutputIterator>    
+   void 
+   operator()(
+   const Polygon& polygon1,
+   const Polygon& polygon2,
+   PolygonOutputIterator polygons,
+   CurvesOutputIterator curves,
+   PointsOutputIterator points);}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item
+   \ccc{Traits} is a model to the \ccc{PolygonBopsTraits_2} concept.
+   \item
+   \ccc{Polygon} is a model of the CGAL polygon.
+   \item
+   \ccc{PolygonOutputIterator::value_type} is a Polygon.
+   \item    
+   \ccc{CurvesOutputIterator::value_type} is equivalent to \ccc{Traits::Curve_2}.
+   \item
+   \ccc{PointsOutputIterator::value_type} is equivalent to \ccc{Traits::Point_2}.
+\end{enumerate}
+
+\ccSeeAlso
+
+\ccc{CGAL::Polygons_do_intersect_2} \\
+\ccc{CGAL::Polygons_intersection_2} \\
+\ccc{CGAL::Polygons_union_2} \\
+\ccc{CGAL::Polygons_symmetric_difference_2} \\
+
+% \ccImplementation
+
+% The implementation uses the container $map$ defined in STL for
+% implementing the event queue and the status line. The implementation
+% also keeps per each input curve an associated container of all its
+% intersection points ordered from left to right, and also keeps per
+% each event point all its outcoming curves. The complexity of this
+% algorithm is $O(n\log{n} + k\log{n})$ where $n$ is the number of the input
+% curves and $k$ is the number of intersection points induced by these
+% curves.
+
+
+\end{ccRefClass}
+
+% FILL IN THE REST OF THE FILES
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "Polygons_do_intersect_2"
+%%% End: 
