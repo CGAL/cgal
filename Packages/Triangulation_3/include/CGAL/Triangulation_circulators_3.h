@@ -41,7 +41,7 @@ class CGAL_Triangulation_cell_circulator_3
   : public CGAL_Bidirectional_circulator_base<CGAL_Triangulation_cell_3<Gt,Tds>, ptrdiff_t, size_t>
 {
 public:
-  typedef typename Tds::Cell CTriangulation_data_structure_3;
+  typedef typename Tds::Cell Ctds;
   typedef typename Tds::Cell_circulator Circulator_base;
 
   typedef CGAL_Triangulation_cell_3<Gt,Tds> Cell;
@@ -58,7 +58,7 @@ public:
     {}
 
   CGAL_Triangulation_cell_circulator_3(Triangulation_3 * tr, Edge e)
-    : _cb( &(tr->_Triangulation_data_structure_3), e ), _tr(tr)
+    : _cb( &(tr->_tds), e ), _tr(tr)
     {}
   
   CGAL_Triangulation_cell_circulator_3(const Cell_circulator & ccir)
@@ -89,12 +89,14 @@ public:
   operator++()
   {
     ++_cb;
+    return *this;
   }
 
   Cell_circulator &
   operator--()
   {
     --_cb;
+    return *this;
   }
 
   Cell_circulator
