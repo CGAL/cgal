@@ -26,6 +26,29 @@
 
 #include <CGAL/squared_distance_2.h>
 
+#include "_test_cls_line_new_2.h"
+#include "_test_cls_segment_new_2.h"
+#include "_test_cls_ray_new_2.h"
+#include "_test_cls_triangle_new_2.h"
+#include "_test_cls_circle_new_2.h"
+#include "_test_cls_iso_rectangle_new_2.h"
+
+
+template <class R>
+bool
+_test_cls_new_2(const R& r)
+{
+ return  
+   _test_cls_line_new_2( r )
+   && _test_cls_segment_new_2( r )
+   && _test_cls_ray_new_2( r )  
+   && _test_cls_triangle_new_2( r )
+   && _test_cls_circle_new_2( r )
+   && _test_cls_iso_rectangle_new_2( r )
+   ;
+}
+
+
 // To kill "unused" warnings.
 template < typename T >
 void use(const T&) {}
@@ -163,7 +186,7 @@ test_new_2(const R& rep)
   Object_2 obj = construct_object(rec2);
            obj = construct_object(t1);
            obj = construct_object(c41);
-           obj = construct_object(d6);
+	   obj = construct_object(d6);
            obj = construct_object(l6);
 
 #ifndef CGAL_NO_DEPRECATED_CODE
