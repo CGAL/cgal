@@ -32,7 +32,7 @@ int check1(std::list<Vertex_handle> L)
   int w=0;
   
   for(; it != L.end();it++){
-    if (ar1[i] != PSet.pos(*it)) w=1;
+    if (ar1[i] != (*it)->point()) w=1;
     i++;
   }
   
@@ -49,7 +49,7 @@ int check2(std::list<Vertex_handle> L)
   int w=0;
     
   for(; it != L.end();it++){
-    if (ar2[i] != PSet.pos(*it)) w=1;
+    if (ar2[i] != (*it)->point()) w=1;
     i++;
   }
   if (w==1) cout << "check2 failed!\n";
@@ -65,7 +65,7 @@ int check3(std::list<Vertex_handle> L)
  int w=0;
     
  for(; it != L.end();it++){
-    if (ar3[i] != PSet.pos(*it)) w=1;
+    if (ar3[i] != (*it)->point()) w=1;
     i++;
  }
  
@@ -102,7 +102,7 @@ int main()
   Lr.push_back(p7); Lr.push_back(p8); Lr.push_back(p9);
   Lr.push_back(p10); 
 
-  PSet.init(Lr.begin(),Lr.end()); 
+  PSet.insert(Lr.begin(),Lr.end()); 
 
   cout << "insert!\n"; cout.flush();
   PSet.insert(pnew);
@@ -116,7 +116,7 @@ int main()
 
   std::list<Vertex_handle>::const_iterator it;
   for (it=LV.begin();it != LV.end(); it++)
-     cout << PSet.pos(*it) << "\n";      
+     cout << (*it)->point() << "\n";      
      
   w1 = check1(LV);
  
@@ -125,7 +125,7 @@ int main()
   LV.clear();
   PSet.range_search(p1,p2,p3,back_inserter(LV));
   for (it=LV.begin();it != LV.end(); it++)
-     cout << PSet.pos(*it) << "\n";
+     cout << (*it)->point() << "\n";
     
   w2 = check2(LV);    
   LV.clear();
@@ -139,7 +139,7 @@ int main()
   
   PSet.range_search(pt1,pt2,pt3,pt4,back_inserter(LV));
   for (it=LV.begin();it != LV.end(); it++)
-    cout << PSet.pos(*it) << "\n"; 
+    cout << (*it)->point() << "\n"; 
 
   w3 = check3(LV);
   

@@ -8,14 +8,14 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.3-I-80 $
-// release_date  : $CGAL_Date: 2001/07/06 $
+// release       : 
+// release_date  : 
 //
 // file          : include/CGAL/Point_set_2.h
-// package       : Point_set_2 (2.2.1)
+// package       : Point_set_2 (2.2.2)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.2.1
-// revision_date : 10 July 2001 
+// revision      : 2.2.2
+// revision_date : 13 July 2001 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -110,48 +110,10 @@ public:
    Point_set_2(InputIterator first, InputIterator last)
    { 
      init_vertex_marks();    
-     init(first,last);
+     insert(first,last);
    }
    
    ~Point_set_2() {}
-   
-   template<class InputIterator>
-   void init(InputIterator first, InputIterator last)
-   { 
-    clear();
-    insert(first,last);
-    init_vertex_marks();
-  } 
-
-
-   std::list<Point>  points() const
-   { std::list <Point> L;
-     Vertex_iterator vit = finite_vertices_begin();
-     for(;vit != finite_vertices_end(); vit++) {
-        Vertex v = *vit;
-	L.push_back(v.point());
-     }
-     return L;
-   }
-
-   template<class OutputIterator>
-   OutputIterator points(OutputIterator out)
-   {    
-     Vertex_iterator vit = finite_vertices_begin();
-     for (; vit != finite_vertices_end(); vit++) { *out= (*vit).point(); out++; }       
-     return out;
-   }
-   
-   template<class OutputIterator>
-   OutputIterator segments(OutputIterator out)
-   {    
-     Edge_iterator eit = finite_edges_begin();
-     for (; eit != finite_edges_end(); eit++) { 
-       *out= segment(eit); 
-       out++;
-     }       
-     return out;
-   }     
    
    template<class OutputIterator>
    OutputIterator vertices(OutputIterator res)
@@ -160,22 +122,8 @@ public:
     Vertex_iterator vit = finite_vertices_begin();
     for (; vit != finite_vertices_end(); vit++) { *res= (*vit).handle(); res++; }  
     return res;   
-   }
+   }   
    
-   template<class OutputIterator>
-   OutputIterator edges(OutputIterator out)
-   {    
-     Edge_iterator eit = finite_edges_begin();
-     for (; eit != finite_edges_end(); eit++) { 
-       *out = *eit;
-     }   
-     return out;
-   }        
-   
-
-   // -------------------------------------------------------------------------
-   // locate removed; use the locate - operations inherited from triangulation
-   // -------------------------------------------------------------------------
 
    Vertex_handle lookup(Point p) const
    { 
@@ -496,46 +444,6 @@ public:
      return res;     
    }
  
-   bool     IS_NON_DIAGRAM_DART(Edge e) const
-   { 
-    Face_handle f1 = e.first;
-    Face_handle f2 = f1->neighbor(e.second);
-    int i = e.second;
-
-    // flip test
-    Point a = f1->vertex(cw(i))->point();
-    Point b = f1->vertex(i)->point();
-    Point c = f1->vertex(ccw(i))->point();
-    Point d = f1->mirror_vertex(i)->point();
-
-    if ((tr_orientation(a,b,c)==LEFTTURN) && (tr_orientation(b,c,d)==LEFTTURN) && 
-        (tr_orientation(c,d,a)==LEFTTURN) && (tr_orientation(d,a,c)==LEFTTURN) && 
-        (tr_so_circle(a,b,c,d)==ON_ORIENTED_BOUNDARY) )
-        return true;
-    return false;
-  }
-  
-  bool is_non_diagram_edge(Edge e) const
-  {
-    return IS_NON_DIAGRAM_DART(e); 
-  }
-
-   Edge get_cur_dart()  const { return cur_dart; }
-   void set_cur_dart(Edge e)  { cur_dart = e;    }
-   void set_hull_dart(Edge e) { hull_dart = e;   }
-
-   Point pos(Vertex_handle v) const
-   { return v->point(); }
-    
-   Point pos_source(Edge e) const
-   { return segment(e).source(); }
-    
-   Point pos_target(Edge e) const
-   { return segment(e).target(); }
-    
-   Segment seg(Edge e) const           
-   { return segment(e); }
-
 };
 
 

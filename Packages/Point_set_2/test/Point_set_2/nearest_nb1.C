@@ -30,7 +30,7 @@ int check1(std::list<Vertex_handle> L)
   int w=0;
   
   for(; it != L.end();it++){
-    if (ar1[i] != PSet.pos(*it)) w=1;
+    if (ar1[i] != (*it)->point()) w=1;
     i++;
   }
   return w;
@@ -58,7 +58,7 @@ int main()
   Lr.push_back(p7); Lr.push_back(p8); Lr.push_back(p9);
   Lr.push_back(p10); 
   
-  PSet.init(Lr.begin(),Lr.end()); 
+  PSet.insert(Lr.begin(),Lr.end()); 
   
    // init 
   ar1[0]=p4; ar1[1]=p5; ar1[2]=p3; ar1[3]=p7; ar1[4]=p8; 
@@ -67,9 +67,9 @@ int main()
 
   // nearest neighbor ...  
   Vertex_handle v = PSet.nearest_neighbor(actual);
-  std::cout << "Nearest neighbor:" << PSet.pos(v) << "\n";
+  std::cout << "Nearest neighbor:" << v->point() << "\n";
   
-  if (PSet.pos(v) == p4) w1=0; else w1=1;
+  if (v->point() == p4) w1=0; else w1=1;
   
   // k nearest neighbors ...
   std::list<Vertex_handle> L;
@@ -79,7 +79,7 @@ int main()
   std::cout << "actual point: " << actual << "\n";
     
   for (it=L.begin();it != L.end(); it++)
-      std::cout << PSet.pos(*it) << "\n";
+      std::cout << (*it)->point() << "\n";
      
    w2=check1(L);
    
@@ -89,16 +89,7 @@ int main()
    Point_set_2<K,Tds> PSet4(Lr.begin(),Lr.end());
    
    // init ...
-   PSet2.init(Lr.begin(),Lr.end());
-   
-   //get points/segments ...
-   std::list<Point_2<K> >    ptlist;
-   std::list<Segment_2<K> >  seglist;
-   
-   PSet3.points(std::back_inserter(ptlist));
-   PSet3.segments(std::back_inserter(seglist));
-   
-   PSet3.clear();
+   PSet2.insert(Lr.begin(),Lr.end());
    
    PSet4.lookup(actual);
    
