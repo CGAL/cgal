@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <bench name_length="64" header="false">
-  <clo name="format" command="-If="/>
-  <clo name="samples" command="-s"/> 
-  <clo name="header" command="-bh="/> 
-  <clo name="name_length" command="-bnl="/> 
-  <clo name="type_mask" command="-btm="/> 
-  <clo name="strategy_mask" command="-bsm="/> 
+  <clo name="format" string="-If="/>
+  <clo name="samples" string="-s"/> 
+  <clo name="header" string="-bh="/> 
+  <clo name="name_length" string="-bnl="/> 
+  <clo name="type_mask" string="-btm="/> 
+  <clo name="strategy_mask" string="-bsm="/> 
 
   <file name="eurcut.dat" format="rat" curves="3099"
     vertices="3078" halfedges="6198" faces="39"></file>
