@@ -257,7 +257,7 @@ Sweep_line_subcurve(int id, X_curve_2 &curve, Point_2 *reference,
   m_referencePoint = reference;
   m_source = traits->curve_source(curve);
   m_target = traits->curve_target(curve);
-  Comparison_result res = traits->compare_x(m_source, m_target);
+  Comparison_result res = traits->compare_xy(m_source, m_target);
   if ( res  == LARGER )
   {
     m_lastPoint = m_target; 
@@ -268,19 +268,6 @@ Sweep_line_subcurve(int id, X_curve_2 &curve, Point_2 *reference,
     m_lastPoint = m_source; 
     m_isRightSide = true;
 
-  } else // EQUAL
-  {
-    res = traits->compare_y(m_source, m_target);
-    if ( res  == LARGER )
-    {
-      m_lastPoint = m_target; 
-      m_isRightSide = false;
-    }
-    else if ( res == SMALLER )
-    {
-      m_lastPoint = m_source; 
-      m_isRightSide = true;
-    }
   }
 }
 

@@ -353,7 +353,7 @@ public:
       VerticalXPointListIter iter = m_verticalCurveXPoints.begin();
       while ( iter != m_verticalCurveXPoints.end() )
       {
-	if ( m_traits->compare_y(*iter, p) == SMALLER )
+	if ( m_traits->compare_xy(*iter, p) == SMALLER )
 	  ++iter; 
 	else
 	  break;

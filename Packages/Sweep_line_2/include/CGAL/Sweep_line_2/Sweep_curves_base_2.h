@@ -126,20 +126,9 @@ protected:
   private:
     const Point& leftmost(const Point &p1, const Point &p2) const
     {
-      Comparison_result rx = traits->compare_x(p1,p2);
-      if (rx == SMALLER)
-        return p1;
-      else if (rx == LARGER)
-      return p2;
-      else{
-        Comparison_result ry = traits->compare_y(p1,p2);
-        if (ry == SMALLER)
-        return p1;
-        else if (ry == LARGER)
-          return p2;
-        return p1; // otherwise - does not compile at
-        // i686_CYGWINNT-5.0-1.3.1_bcc32.
-      }
+      Comparison_result res = traits->compare_xy(p1,p2);
+
+      return ((res == SMALLER) ? p1 : p2);
     }
   };
   
@@ -544,21 +533,10 @@ protected:
 
   protected:
     const Point& rightmost(const Point &p1, const Point &p2) const
-    { 
-      Comparison_result rx = traits->compare_x(p1,p2);
-      if (rx == SMALLER)
-        return p2;
-      else if (rx == LARGER)
-        return p1;
-      else{  // EQUAL
-        Comparison_result ry = traits->compare_y(p1,p2);
-        if (ry == SMALLER)
-          return p2;
-        else if (ry == LARGER)
-          return p1;
-        return p1; // otherwise - does not compile at
-        // i686_CYGWINNT-5.0-1.3.1_bcc32.
-      }
+    {
+      Comparison_result res = traits->compare_xy(p1,p2);
+
+      return ((res == SMALLER) ? p2 : p1);
     }
     
     bool is_right(const Point &p1, const Point &p2) const 
@@ -608,20 +586,7 @@ protected:
     Comparison_result Compare_lexicographically_xy(const Point& p1, 
                                                    const Point& p2) const
     {
-      Comparison_result rx = traits->compare_x(p1,p2);
-      if (rx == SMALLER)
-        return SMALLER;
-      else if (rx == LARGER)
-        return LARGER;
-      
-      else{  // EQUAL x
-        Comparison_result ry = traits->compare_y(p1,p2);
-        if (ry == SMALLER)
-          return SMALLER;
-        else if (ry == LARGER)
-          return LARGER;
-      }  
-      return EQUAL;  // otherwise - EQUAL
+      return (traits->compare_xy(p1,p2));
     }
 
     // hold the left most intersecting point.
@@ -637,22 +602,11 @@ protected:
     
     less_point_xy(Traits *traits_) : traits(traits_) {}
     
-    inline  bool operator()(const Point& p1, const Point& p2) const { 
-      Comparison_result rx = traits->compare_x(p1,p2);
-      if (rx == SMALLER)
-        return true;
-      else if (rx == LARGER)
-        return false;
-      else{  // EQUAL
-        Comparison_result ry = traits->compare_y(p1,p2);
-        if (ry == SMALLER)
-          return true;
-        else if (ry == LARGER)
-          return false;
-      }
-      
-      return false;  // get here only if p1 == p2.
+    inline  bool operator()(const Point& p1, const Point& p2) const
+    { 
+      return (traits->compare_xy(p1,p2) == SMALLER);
     }
+
   private:
     Traits *traits;
   };
@@ -888,21 +842,9 @@ protected:
       
     const Point& rightmost(const Point &p1, const Point &p2) const
     { 
-      //Comparison_result rx = CGAL::compare_lexicographically_xy(p1, p2);
-      Comparison_result rx = traits->compare_x(p1,p2);
-      if (rx == SMALLER)
-        return p2;
-      else if (rx == LARGER)
-        return p1;
-      else{  // EQUAL
-        Comparison_result ry = traits->compare_y(p1,p2);
-        if (ry == SMALLER)
-          return p2;
-        else if (ry == LARGER)
-          return p1;
-        return p1; // otherwise - does not compile at
-        // i686_CYGWINNT-5.0-1.3.1_bcc32.
-      }
+      Comparison_result res = traits->compare_xy(p1,p2);
+      
+      return ((res == SMALLER) ? p2 : p1);
     }
       
     Traits  *traits;
@@ -1521,21 +1463,7 @@ protected:
   Comparison_result Compare_lexicographically_xy(const Point& p1, 
                                                  const Point& p2) const
   {
-    Comparison_result rx = traits->compare_x(p1,p2);
-      if (rx == SMALLER)
-        return SMALLER;
-      else if (rx == LARGER)
-        return LARGER;
-      
-      else{  // EQUAL x
-        Comparison_result ry = traits->compare_y(p1,p2);
-        if (ry == SMALLER)
-          return SMALLER;
-        else if (ry == LARGER)
-          return LARGER;
-      }
-      
-      return EQUAL;  // otherwise - EQUAL
+    return (traits->compare_xy(p1,p2));
   }
 
 #if defined SWEEP_DEBUG_MODE
@@ -1653,15 +1581,6 @@ protected:
   void  print_points_on_curves(const _Curve_node& cv);
 #endif
 
-#if 0
-  // This doesn't compile with MSVC 6.0
-  friend class  Less_xy; // less_point_xy;
-  friend class  Less_yx; // less_curve_xy;
-#else
-  friend class less_point_xy;
-  friend class less_curve_xy;
-#endif
-    
   Traits   *traits;
   bool      use_delete_traits;
   bool      intersection_exist_;

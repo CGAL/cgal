@@ -37,22 +37,11 @@ public:
   
   Point_less_functor(Traits *traits) : m_traits(traits) {}
   
-  bool operator()(const Point& p1, const Point& p2) const { 
-
-    Comparison_result rx = m_traits->compare_x(p1,p2);
-    if (rx == SMALLER)
-      return true;
-    if (rx == LARGER)
-      return false;
-
-    Comparison_result ry = m_traits->compare_y(p1,p2);
-    if (ry == SMALLER)
-      return true;
-    else if (ry == LARGER)
-      return false;
-  
-    return false;  // get here only if p1 == p2.
+  bool operator()(const Point& p1, const Point& p2) const 
+  { 
+    return (m_traits->compare_xy(p1,p2) == SMALLER);
   }
+
 private:
 
   /*! a pointer to a trits class */
