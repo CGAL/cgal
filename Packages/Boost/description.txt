@@ -2,3 +2,11 @@ The Boost module contains an import (in the CVS sense) of the Boost library.
 Currently only the include files are there.
 It also contains some test programs to evaluate the portability of some
 Boost libraries.
+
+Here are the commands used to perform the import :
+cd boost_1_32_0/boost
+cvs import -m "Import of Boost v. 1.32.0" -I ! CGAL/Packages/Boost/include/boost BOOST BOOST_1_32_0
+cd ~/tmp
+cvs checkout -jBOOST_1_31_0 -jBOOST_1_32_0 Boost
+cd Boost
+cvs commit
