@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+24 November 2004 Sylvain Pion
+- doc : Use bdty-tcgal-00 from geom.bib.
+
 19 novembre Mariette
  - fixed typo in doc file : Delaunay_triangulation_2.tex
 
