@@ -65,7 +65,7 @@ void print_container(C c)
     for (it = --c.end(); it != c.begin(); it--) {
       std::cout << " " << (*it);
     }
-    std::cout << *(--it);
+    std::cout << " " << *it;
     std::cout << std::endl << std::endl;
   }
 }
