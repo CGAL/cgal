@@ -8,6 +8,7 @@
 
 # Tell where the script is.
 SCRIPT = ../../../examples/Interval_arithmetic/filtered_predicate_converter
+BASE = $(CGAL)/include/CGAL
 
 # Tell which files must be treated.
 OBJECTS = predicates_on_ftC2.h \
@@ -19,13 +20,15 @@ OBJECTS = predicates_on_ftC2.h \
           predicates/Regular_triangulation_rtH3.h \
           predicates/in_smallest_orthogonalcircle_ftC2.h
 
+ALL_DEP = $(BASE)/predicates/sign_of_determinant.h
+
 #### Don't touch below.
 
-% :: $(CGAL)/include/CGAL/% $(SCRIPT)
-	$(SCRIPT) -p < $< > $@
+% :: $(BASE)/% $(SCRIPT)
+	perl $(SCRIPT) -p -d $(ALL_DEP) -l static_infos/$@ -i $< -o $@
 
-predicates/% : $(CGAL)/include/CGAL/predicates/% $(SCRIPT)
-	$(SCRIPT) -p < $< > $@
+predicates/% : $(BASE)/predicates/% $(SCRIPT)
+	perl $(SCRIPT) -p -d $(ALL_DEP) -l static_infos/$@ -i $< -o $@
 
 all: $(OBJECTS)
 
