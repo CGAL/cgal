@@ -36,8 +36,7 @@ LDFLAGS = \
 all:            \
                 conform$(EXE_EXT) \
                 mesh_class$(EXE_EXT) \
-                mesh_global$(EXE_EXT) \
-                polygon2poly$(EXE_EXT) 
+                mesh_global$(EXE_EXT)
 
 conform$(EXE_EXT): conform$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)conform conform$(OBJ_EXT) $(LDFLAGS)
