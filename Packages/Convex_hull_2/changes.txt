@@ -3,7 +3,10 @@
   for backward compatability, but it's undocumented)
 - in traits classes switched from use of CGAL::Point_2<R> to K::Point_2, etc.
 - introduced traits classes with capitalized names and made the uncapitalized
-  ones simply typedefs for the new ones
+  ones simply typedefs for the new ones, but couldn't introduce the right file
+  names for these since the uncapitalized ones need to be there for backward
+  compatability and Windows can't handle fine names that differ in 
+  capitalization only.
 - added example to doc
 - changed wording for default traits class in doc
 - added implementation sections in function ref. pages
