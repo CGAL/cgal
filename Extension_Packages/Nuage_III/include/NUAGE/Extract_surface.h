@@ -333,8 +333,6 @@ public:
     if (it12 != NULL)
       {    
 	result = it12->second;
-	//af: Why the following line? 
-	key = Edge_like(key.first, key.second);
 	return true;
       }
 
@@ -353,7 +351,6 @@ public:
     Next_border_elt* it12 =  key.first->get_border_elt(key.second);
     if (it12 != NULL)
       {    
-	key = Edge_like(key.first, key.second);
 	return true;
       }
 
