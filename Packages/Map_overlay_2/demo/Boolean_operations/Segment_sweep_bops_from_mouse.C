@@ -37,6 +37,8 @@ int main()
 
 #else
 
+#include <vector>
+
 #include <CGAL/Arr_leda_segment_exact_traits.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Planar_map_2.h>
@@ -59,14 +61,16 @@ int main()
 #include <CGAL/Boolean_operations_2.h>
 #endif
 
+#include <CGAL/leda_rational.h>
 #include <LEDA/rat_window.h>
-#include <CGAL/Draw_preferences.h>
-#include <vector>
+#include <CGAL/IO/Pm_Window_stream.h>
+#include <CGAL/Bops_utility.h>
 
 #if defined(LEDA_NAMESPACE)
 using namespace leda;
 #endif
 
+typedef leda_rational                                NT;
 typedef CGAL::Arr_leda_segment_exact_traits         Traits;
 
 typedef Traits::Point_2                             Point;
@@ -86,42 +90,12 @@ typedef Bops::Vertices_container                   Vertices_container;
 
 typedef CGAL::Pm_walk_along_line_point_location<PM>             PmWalkPL;
 
-//I had to add these in global namespace for the program to compile
-
-/*
-  CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
-  const Point& p)
-  {
-  //return os << leda_point(p.xcoordD(),p.ycoordD());
-  return os << p.to_point();
-  }
-  
-  
-  CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
-  const X_curve &c)
-  {
-  return os << c.to_segment();
-  }*/
-
 // global variables are used so that the redraw function for the LEDA window
 // can be defined to draw information found in these variables.
 static PmWalkPL pm_walk1, pm_walk2;
 static PM pm1(&pm_walk1); 
 static PM pm2(&pm_walk2);
-static CGAL::Window_stream W(700, 700, "CGAL - Segment Arrangement Demo");
-
-CGAL_BEGIN_NAMESPACE
-Window_stream& operator<<(Window_stream& os, const PM &pm)
-{
-  My_Arr_drawer< PM,
-                 PM::Ccb_halfedge_const_circulator, 
-                 PM::Holes_const_iterator> drawer(os);
-  
-  draw_pm(pm, drawer, os);
-  
-  return os;
-}
-CGAL_END_NAMESPACE
+static CGAL::Window_stream W(700, 700, "CGAL - Segment Boolean-Operations Demo");
 
 // redraw function for the LEDA window. 
 // used automatically when window reappears.
@@ -138,7 +112,7 @@ void redraw(CGAL::Window_stream * wp)
   wp->stop_buffering();
 }
 
-void  draw_and_locate_maps (Bops& bops , 
+/*void  draw_and_locate_maps (Bops& bops , 
                             const PM& pm1, 
                             const PM& pm2, 
                             CGAL::Window_stream& W)
@@ -244,21 +218,12 @@ void  draw_and_locate_maps (Bops& bops ,
         PM::Vertex_const_handle vh = *v_iter;
         //Vertex_const_iterator vh = v_iter;
         
-        /*if (tmp_notf.get_first_halfedge_above(vh) != vh->incident_halfedges() && tmp_notf.get_second_halfedge_above(vh) != vh->incident_halfedges())
-          W.set_color(leda_violet);
-          else if (tmp_notf.get_first_halfedge_above(vh) != vh->incident_halfedges())
-          W<<CGAL::BLUE;
-          else if (tmp_notf.get_second_halfedge_above(vh) != vh->incident_halfedges())
-          W << CGAL::RED;
-          else
-          W << CGAL::ORANGE;*/
-        
         W.set_color(leda_violet);
         W << vh->point();
       }
     }
   }
-}
+}*/
 
 
 int  read_planar_map(PM& pm, CGAL::Window_stream& W)
@@ -325,8 +290,6 @@ int main()
 {
   double x0=-700,x1=700,y0=-700;
   
-  cout<<"bogi"<<endl;
-  
   W.init(x0,x1,y0);
   W.set_redraw(redraw);
   W.set_mode(leda_src_mode);
@@ -339,7 +302,6 @@ int main()
   W.button("Union",5);
   W.button("Symmetric Difference",6);
   W.button("Exit",7);
-  
   W.display();
   
   //read input from window
@@ -400,10 +362,14 @@ int main()
     }
   
   if (pm1.halfedges_begin() != pm1.halfedges_end() && 
-      pm2.halfedges_begin() != pm2.halfedges_end() )
-    draw_and_locate_maps(bops,pm1,pm2,W);
+      pm2.halfedges_begin() != pm2.halfedges_end() ){
+    CGAL::Bops_utility<PM,NT> utility;
+    utility.draw_and_locate_maps(bops,pm1,pm2,W);
+  }
  
   return 0;  
 }
 
 #endif // CGAL_USE_LEDA
+
+

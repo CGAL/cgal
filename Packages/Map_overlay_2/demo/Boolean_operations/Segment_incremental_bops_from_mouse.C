@@ -37,33 +37,36 @@ int main()
 
 #else
 
+#include <vector>
+
 #include <CGAL/Arr_leda_segment_exact_traits.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Pm_with_intersections.h>
-
 
 #include <CGAL/Bop_default_dcel.h>
 #include <CGAL/Map_overlay.h>
 #include <CGAL/Map_overlay_incremental.h>
 #include <CGAL/Boolean_operations_2.h>
 
-
+#include <CGAL/leda_rational.h>
 #include <LEDA/rat_window.h>
-#include <CGAL/Draw_preferences.h>
-#include <vector>
+#include <CGAL/IO/Pm_Window_stream.h>
+#include <CGAL/Bops_utility.h>
+
 
 #if defined(LEDA_NAMESPACE)
 using namespace leda;
 #endif
 
-typedef CGAL::Arr_leda_segment_exact_traits            Traits;
+typedef leda_rational                                NT;
+typedef CGAL::Arr_leda_segment_exact_traits          Traits;
 
-typedef Traits::Point                                  Point;
-typedef Traits::X_curve                                X_curve;
+typedef Traits::Point                                Point;
+typedef Traits::X_curve                              X_curve;
 
-typedef CGAL::Bop_default_dcel<Traits>                Dcel;
-typedef CGAL::Planar_map_2<Dcel, Traits>              PM;
-typedef CGAL::Planar_map_with_intersections_2<PM>     Pmwx;
+typedef CGAL::Bop_default_dcel<Traits>               Dcel;
+typedef CGAL::Planar_map_2<Dcel, Traits>             PM;
+typedef CGAL::Planar_map_with_intersections_2<PM>    Pmwx;
 
 typedef CGAL::Map_overlay_default_notifier<PM>      MapOverlay_change_notification;
 typedef CGAL::Map_overlay_incremental<Pmwx, MapOverlay_change_notification>   
@@ -77,42 +80,12 @@ typedef Bops::Faces_container                      Faces_container;
 typedef Bops::Halfedges_container                  Halfedges_container;
 typedef Bops::Vertices_container                   Vertices_container;
 
-//I had to add these in global namespace for the program to compile
-
-/*
-  CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
-  const Point& p)
-  {
-  //return os << leda_point(p.xcoordD(),p.ycoordD());
-  return os << p.to_point();
-  }
-  
-  
-  CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
-  const X_curve &c)
-  {
-  return os << c.to_segment();
-  }*/
-
 // global variables are used so that the redraw function for the LEDA window
 // can be defined to draw information found in these variables.
 //static PmWalkPL pm_walk1, pm_walk2;
 static Pmwx pmwx1; 
 static Pmwx pmwx2;
-static CGAL::Window_stream W(700, 700, "CGAL - Segment Boolean operations Demo");
-
-CGAL_BEGIN_NAMESPACE
-Window_stream& operator<<(Window_stream& os, const PM &pm)
-{
-  My_Arr_drawer< PM,
-                 PM::Ccb_halfedge_const_circulator, 
-                 PM::Holes_const_iterator> drawer(os);
-  
-  draw_pm(pm, drawer, os);
-  
-  return os;
-}
-CGAL_END_NAMESPACE
+static CGAL::Window_stream W(700, 700, "CGAL - Segment Boolean-Operations Demo");
 
 // redraw function for the LEDA window. 
 // used automatically when window reappears.
@@ -128,7 +101,7 @@ void redraw(CGAL::Window_stream * wp)
   wp->stop_buffering();
 }
 
-void  draw_and_locate_maps (Bops& bops , 
+/*void  draw_and_locate_maps (Bops& bops , 
                             const Pmwx& arr1, 
                             const Pmwx& arr2, 
                             CGAL::Window_stream& W)
@@ -233,24 +206,15 @@ void  draw_and_locate_maps (Bops& bops ,
         Pmwx::Vertex_const_handle vh = *v_iter;
         //Vertex_const_iterator vh = v_iter;
         
-        /*if (tmp_notf.get_first_halfedge_above(vh) != vh->incident_halfedges() && tmp_notf.get_second_halfedge_above(vh) != vh->incident_halfedges())
-          W.set_color(leda_violet);
-          else if (tmp_notf.get_first_halfedge_above(vh) != vh->incident_halfedges())
-          W<<CGAL::BLUE;
-          else if (tmp_notf.get_second_halfedge_above(vh) != vh->incident_halfedges())
-          W << CGAL::RED;
-          else
-          W << CGAL::ORANGE;*/
-        
         W.set_color(leda_violet);
         W << vh->point();
       }
     }
   }
-}
+}*/
 
 
-int  read_planar_map(Pmwx& pmwx, CGAL::Window_stream& W)
+int  read_pmwx(Pmwx& pmwx, CGAL::Window_stream& W)
 {
   std::vector<Point> cv1;
   Point pnt;
@@ -282,7 +246,6 @@ int  read_planar_map(Pmwx& pmwx, CGAL::Window_stream& W)
           W << CGAL::GREEN;
           
           if (!begin) {
-            cout<<"bogi1"<<endl;
             if ( cv1[0] == cv1[1] ){
               //Error. Segment has a zero length.
               W.set_status_string("Error. Segment has a zero length.");
@@ -304,8 +267,6 @@ int  read_planar_map(Pmwx& pmwx, CGAL::Window_stream& W)
 int main()
 {
   double x0=-700,x1=700,y0=-700;
-  
-  cout<<"bogi"<<endl;
   
   W.init(x0,x1,y0);
   W.set_redraw(redraw);
@@ -336,10 +297,10 @@ int main()
      int b = W.get_mouse(x,y);
      if (b==1){
        std::cout<<"Insert first map"<<std::endl;
-       b = read_planar_map(pmwx1,W);
+       b = read_pmwx(pmwx1,W);
        if (b==2){
          std::cout<<"Insert second map"<<std::endl;
-         b=read_planar_map(pmwx2,W);
+         b=read_pmwx(pmwx2,W);
        }
      }
      if (b==3)
@@ -380,8 +341,10 @@ int main()
     }
   
   if (pmwx1.halfedges_begin() != pmwx1.halfedges_end() && 
-      pmwx2.halfedges_begin() != pmwx2.halfedges_end() )
-    draw_and_locate_maps(bops,pmwx1,pmwx2,W);
+      pmwx2.halfedges_begin() != pmwx2.halfedges_end() ){
+    CGAL::Bops_utility<Pmwx,NT> utility;
+    utility.draw_and_locate_maps(bops,pmwx1,pmwx2,W);
+  }
  
   return 0;  
 }
