@@ -1,3 +1,6 @@
+3.67   (26 November 2001)
+- Missing namespace CGAL in tags.h.
+
 3.66   (23 November 2001)
 - [Simple_]Handle_for new ptr access : const/non-const Ptr/ptr.
 

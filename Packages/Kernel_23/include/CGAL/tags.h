@@ -29,6 +29,8 @@
 #include <CGAL/number_type_tags.h>
 #include <CGAL/IO/io_tags.h>
 
+CGAL_BEGIN_NAMESPACE
+
 // Two struct's to denote boolean compile time decisions.
 
 struct Tag_true  {};
@@ -64,5 +66,7 @@ template < class T>
 inline
 void
 assert_equal_types( const T&, const T&) {}
+
+CGAL_END_NAMESPACE
 
 #endif // CGAL_TAGS_H
