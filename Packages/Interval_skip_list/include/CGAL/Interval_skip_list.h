@@ -146,7 +146,8 @@ namespace CGAL {
 
 
     // remove node x, which has updated vector update.
-    void remove(IntervalSLnode<Interval>* x, IntervalSLnode<Interval>** update);
+    void remove(IntervalSLnode<Interval>* x, 
+		IntervalSLnode<Interval>** update);
 
 
     // remove markers for Interval I starting at left, the left endpoint
@@ -364,10 +365,12 @@ namespace CGAL {
 
 
   //template <class Interval_>
-  //Compact_container<IntervalListElt<Interval_> > IntervalList<Interval_>::compact_container;
+  //Compact_container<IntervalListElt<Interval_> > 
+  //   IntervalList<Interval_>::compact_container;
 
   template <class Interval_>
-  DS_Container<IntervalListElt<Interval_> > IntervalList<Interval_>::compact_container;
+  DS_Container<IntervalListElt<Interval_> > 
+    IntervalList<Interval_>::compact_container;
 
 
   template <class Interval_>
@@ -507,7 +510,8 @@ namespace CGAL {
   }
 
   template <class Interval>
-  std::ostream& operator<<(std::ostream& os, const Interval_skip_list<Interval>& isl)
+  std::ostream& operator<<(std::ostream& os, 
+			   const Interval_skip_list<Interval>& isl)
   {
     isl.print(os);
     return os;
@@ -594,8 +598,9 @@ template <class Interval>
 
   template <class Interval>
   void 
-  Interval_skip_list<Interval>::adjustMarkersOnInsert(IntervalSLnode<Interval>* x,
-						    IntervalSLnode<Interval>** update)
+  Interval_skip_list<Interval>::adjustMarkersOnInsert
+                                    (IntervalSLnode<Interval>* x,
+				     IntervalSLnode<Interval>** update)
   {
     // Phase 1:  place markers on edges leading out of x as needed.
 
@@ -624,18 +629,21 @@ template <class Interval>
 	  // promote m
 	  
 	  // remove m from level i path from x->forward[i] to x->forward[i+1]
-	  removeMarkFromLevel(*m->getInterval(),i,x->forward[i],x->forward[i+1]);
+	  removeMarkFromLevel(*m->getInterval(),
+			      i,
+			      x->forward[i],
+			      x->forward[i+1]);
 	  // add m to newPromoted
 	  newPromoted.insert(m->getInterval());
 	} else {
 	  // place m on the level i edge out of x
 	  x->markers[i]->insert(m->getInterval());
-	  // do *not* place m on x->forward[i] because it must already be there. 
+	  // do *not* place m on x->forward[i]; it must already be there. 
 	}
       }
       
       for(m = promoted.get_first(); m != NULL; m = promoted.get_next(m)) {
-	if(!m->getInterval()->contains_interval(x->key, x->forward[i+1]->key)) {
+	if(!m->getInterval()->contains_interval(x->key, x->forward[i+1]->key)){
 	  // Then m does not need to be promoted higher.
 	  // Place m on the level i edge out of x and remove m from promoted.
 	  x->markers[i]->insert(m->getInterval());
@@ -647,7 +655,10 @@ template <class Interval>
 	  // continue to promote m
 	  // Remove m from the level i path from x->forward[i]
 	  // to x->forward[i+1].
-	  removeMarkFromLevel(*(m->getInterval()),i,x->forward[i],x->forward[i+1]);
+	  removeMarkFromLevel(*(m->getInterval()),
+			      i,
+			      x->forward[i],
+			      x->forward[i+1]);
 	}
       }
       promoted.removeAll(&removePromoted);
@@ -674,7 +685,9 @@ template <class Interval>
     
     for (i=0; (i <= x->level() - 2) && !update[i+1]->isHeader(); i++) {
       tempMarkList.copy(update[i]->markers[i]);
-      for(m = tempMarkList.get_first(); m != NULL; m = tempMarkList.get_next(m)){
+      for(m = tempMarkList.get_first(); 
+	  m != NULL; 
+	  m = tempMarkList.get_next(m)){
 	if(m->getInterval()->contains_interval(update[i+1]->key,x->key)) {
 	  // m needs to be promoted
 	  // add m to newPromoted
@@ -746,8 +759,9 @@ template <class Interval>
 
   template <class Interval>
   void
-  Interval_skip_list<Interval>::adjustMarkersOnDelete(IntervalSLnode<Interval>* x,
-						    IntervalSLnode<Interval>** update)
+  Interval_skip_list<Interval>::adjustMarkersOnDelete
+                                        (IntervalSLnode<Interval>* x,
+					 IntervalSLnode<Interval>** update)
   {
     // x is node being deleted.  It is still in the list.
     // update is the update vector for x.
@@ -977,7 +991,7 @@ template <class Interval>
     IntervalSLnode<Interval>* x = left;
     if (I->contains(x->key)) x->eqMarkers->insert(I);
     int i = 0;  // start at level 0 and go up
-    while(x->forward[i]!=0 && I->contains_interval(x->key,x->forward[i]->key)) {
+    while(x->forward[i]!=0 && I->contains_interval(x->key,x->forward[i]->key)){
       // find level to put mark on
       while(i!=x->level()-1 
             && x->forward[i+1] != 0
@@ -1038,7 +1052,7 @@ template <class Interval>
             && x->forward[i+1] != 0
             && I.contains_interval(x->key,x->forward[i+1]->key))
 	i++;
-      // Remove mark from current level i edge since it is the highest edge out 
+      // Remove mark from current level i edge since it is the highest edge out
       // of x that contains I, except in the case where current level i edge
       // is null, in which case there are no markers on it.
       if (x->forward[i] != 0) { 
