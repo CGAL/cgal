@@ -32,8 +32,6 @@
 
 #include <CGAL/basic.h>
 
-#include <utility>
-
 #ifndef CGAL_CFG_NO_LOCALE
 #  include <locale>
 #else
