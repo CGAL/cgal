@@ -51,10 +51,6 @@
 
 #include <CGAL/Triangulation_short_names_3.h>
 
-// TODO:
-// - remove the old code create_star() (Regular still uses it).
-// - improve memory management (use a list of cell arrays instead, etc...)
-
 CGAL_BEGIN_NAMESPACE
 
 template <class TDS> class Triangulation_ds_cell_iterator_3;
@@ -374,8 +370,6 @@ public:
     // -- changes the dimension
     // -- if (reorient) the orientation of the cells is modified
 
-  typedef std::set<void *> Conflict_set;
-
   // This one takes a function object to recursively determine the cells in
   // conflict, then inserts by starring.
   // Maybe we need _2 and _3 versions ?
@@ -392,8 +386,7 @@ public:
       find_conflicts_3(c, ccc, i, tester);
 
       // Create the new cells, and returns one of them.
-      Cell * nouv;
-      nouv = create_star2_3( &w, ccc, i );
+      Cell * nouv = create_star2_3( &w, ccc, i );
       w.set_cell( nouv );
 
       move_temporary_free_cells_to_free_list();
@@ -406,8 +399,7 @@ public:
       find_conflicts_2(c, ccc, i, tester);
 
       // Create the new cells, and returns one of them.
-      Cell * nouv;
-      nouv = create_star2_2( &w, ccc, i );
+      Cell * nouv = create_star2_2( &w, ccc, i );
       w.set_cell( nouv );
 
       move_temporary_free_cells_to_free_list();
@@ -471,20 +463,6 @@ private:
   Cell * create_star2_3(Vertex* v, Cell* c, int li,
 	                Cell * prev_c = NULL, Vertex * prev_v = NULL);
   Cell * create_star2_2(Vertex* v, Cell* c, int li );
-
-#if 1
-public:
-  // for Regular (shall this go away one day ?)
-  void star_region(Conflict_set & region, Vertex* v, Cell* c, int li);
-    // region is a set of connected cells
-    // c belongs to region and has facet li on the boundary of region 
-    // replaces the cells in region  
-    // by linking v to the boundary of region 
-
-private:
-  Cell* create_star(Conflict_set & region, Vertex* v, Cell* c, int li);
-    // creates the cells needed by star_region
-#endif
 
 public:
 
@@ -2150,13 +2128,12 @@ insert_increase_dimension(const Vertex & w, // new vertex
   }// end switch
     
   return v;
-} // end insert_increase_dimension
+}
 
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Cell*
 Triangulation_data_structure_3<Vb,Cb>::
 create_star2_3(Vertex* v, Cell* c, int li, Cell * prev_c, Vertex * prev_v)
-// TODO: We should try to combine it with find_conflicts if possible.
 {
   CGAL_triangulation_assertion( dimension() == 3);
 #if 1
@@ -2296,128 +2273,6 @@ create_star2_2(Vertex* v, Cell* c, int li )
   cur->set_neighbor( 2, cnew );
   return cnew;
 }
-
-#if 1 // only used by Regular these days.
-template <class Vb, class Cb >
-void
-Triangulation_data_structure_3<Vb,Cb>::
-star_region(Conflict_set & region, Vertex* v, Cell* c, int li )
-  // region is a set of connected cells
-  // c belongs to region and has facet li on the boundary of region 
-  // replaces the cells in region  
-  // by linking v to the boundary of region
-{
-  CGAL_triangulation_precondition( dimension() >= 2 );
-  CGAL_triangulation_precondition( region.find( (Conflict_set::value_type) c )
-				   != region.end() );
-
-  // does not check whether region is connected 
-  Cell* nouv = create_star( region, v, c, li );
-  v->set_cell( nouv );
-  Conflict_set::const_iterator it;
-  for( it = region.begin(); it != region.end(); ++it)
-    delete (Cell *) *it;
-}
-
-template <class Vb, class Cb >
-Triangulation_data_structure_3<Vb,Cb>::Cell*
-Triangulation_data_structure_3<Vb,Cb>::
-create_star(Conflict_set & region, Vertex* v, Cell* c, int li )
-  // creates the cells needed by star_region
-{
-  Cell* cnew;
-  if ( dimension() == 3 ) {
-    int i[3];
-    if ( (li%2) == 1 ) {
-      i[0] = (li+1)&3;
-      i[1] = (li+2)&3;
-      i[2] = (li+3)&3;
-    }
-    else {
-      i[0] = (li+2)&3;
-      i[1] = (li+1)&3;
-      i[2] = (li+3)&3;
-    }
-    Cell * c_li = c->neighbor(li);
-    cnew = create_cell( c->vertex(i[0]), c->vertex(i[1]), c->vertex(i[2]), v,
-			NULL, NULL, NULL, c_li );
-    c_li->set_neighbor( c_li->index(c), cnew);
-
-    // look for the other three neighbors of cnew
-    for (int ii=0; ii<3; ii++) {
-      cnew->vertex(ii)->set_cell(cnew);
-      // indices of the vertices of cnew such that i[ii],j1,j2,li positive
-      int j1 = next_around_edge(i[ii],li);
-      int j2 = 6-i[ii]-li-j1;
-      // turn around the oriented edge j1 j2
-      Cell *cur = c;
-      Cell *n = c->neighbor(i[ii]);
-      CGAL_triangulation_assertion( next_around_edge(j1,j2)==i[ii] );//debug
-      while (true) {
-	j1 = n->index( cur->vertex(j1) );
-	j2 = n->index( cur->vertex(j2) );
-	if ( region.find( (Conflict_set::value_type) n ) == region.end() )
-	  break; //not in conflict
-	CGAL_triangulation_assertion( n != c );
-	cur = n;
-	n = n->neighbor( next_around_edge(j1,j2) );
-      }
-      // now n is outside region, cur is inside
-      if ( n->neighbor( next_around_edge(j2,j1) ) == cur ) {
-	// neighbor relation is reciprocical, ie
-	// the cell we are looking for is not yet created
-	cnew->set_neighbor(ii,create_star(region,v,cur,cur->index(n)));
-	continue;
-      }
-      // else the cell we are looking for was already created
-      cnew->set_neighbor(ii,n->neighbor( next_around_edge(j2,j1) ));
-    }
-    return cnew;
-  } // endif dimension 3
-    
-  // else dimension 2 
-  // i1 i2 such that v,i1,i2 positive
-  int i1=ccw(li);
- // traversal of the boundary of region in ccw order to create all
-  // the new facets
-  Cell* bound = c;
-  Vertex* v1 = c->vertex(i1);
-  int ind = c->neighbor(li)->index(c); // to be able to find the
-  // first cell that will be created 
-  Cell* cur;
-  Cell* pnew = NULL;
-  do {
-    cur = bound;
-    // turn around v2 until we reach the boundary of region
-    while ( region.find( (Conflict_set::value_type) cur->neighbor(cw(i1)) ) !=
-	    region.end() ) {
-      // neighbor in conflict
-      cur = cur->neighbor(cw(i1));
-      i1 = cur->index( v1 );
-    }
-    // here cur has an edge on the boundary of region
-    cnew = create_cell( v, v1, cur->vertex( ccw(i1) ), NULL,
-			cur->neighbor(cw(i1)), NULL, pnew, NULL);
-    cur->neighbor(cw(i1))->set_neighbor
-      ( cur->neighbor(cw(i1))->index(cur), cnew );
-    // pnew is null at the first iteration
-    v1->set_cell(cnew);
-    //pnew->set_neighbor( cw(pnew->index(v1)), cnew );
-    if (pnew) { pnew->set_neighbor( 1, cnew );}
-
-    bound = cur;
-    i1 = ccw(i1);
-    v1 = bound->vertex(i1);
-    pnew = cnew;
-    //} while ( ( bound != c ) || ( li != cw(i1) ) );
-  } while ( v1 != c->vertex(ccw(li)) );
-  // missing neighbors between the first and the last created cells
-  cur = c->neighbor(li)->neighbor(ind); // first created cell
-  cnew->set_neighbor( 1, cur );
-  cur->set_neighbor( 2, cnew );
-  return cnew;
-}
-#endif
 
 template <class Vb, class Cb >
 void
