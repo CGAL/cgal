@@ -192,7 +192,7 @@ class Simplicity_test_2 {
           const Simplicity_test_2<ForwardIterator, Traits>* s0, int n)
           : status(EdgeComp(s0)), s(s0)
         {
-	  index.resize(n,status.end());
+	  index.insert(index.end(),n,status.end());
         }
 
         bool is_valid()
