@@ -814,11 +814,10 @@ The macros are then |CGAL_forall_svertices_of(v,V)|,
 
 void transform( const Aff_transformation_3& linear) {
   TRACEN("transform sphere map of vertex" << center_vertex()->point());
-    typedef typename Aff_transformation_3::RT RT;
     // The affine transformation is linear, i.e., no translation part.
-    CGAL_precondition( linear.hm(0,3) == RT(0) && 
-                       linear.hm(1,3) == RT(0) && 
-                       linear.hm(2,3) == RT(0));
+    CGAL_precondition( linear.hm(0,3) == 0 && 
+                       linear.hm(1,3) == 0 && 
+                       linear.hm(2,3) == 0);
 
     TRACEN(linear);
     for (SVertex_iterator i = svertices_begin(); i != svertices_end(); ++i)

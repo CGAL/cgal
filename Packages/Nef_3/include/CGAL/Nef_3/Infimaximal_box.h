@@ -44,6 +44,7 @@ struct Is_extended_kernel<Extended_homogeneous_3<NT> > {
 template <class T, class Kernel>
 class Infimaximal_box {
 
+ public:
   typedef typename Kernel::RT               NT;
   typedef typename Kernel::RT               RT;
   typedef Kernel                            Standard_kernel;
@@ -54,8 +55,6 @@ class Infimaximal_box {
   typedef Plane_3                           Standard_plane;
   typedef Vector_3                          Standard_vector;
   typedef Point_3                           Standard_point;
-
- public:
 
   static bool standard_kernel() {
     return true;
@@ -155,6 +154,7 @@ class Infimaximal_box {
 template <class Kernel>
 class Infimaximal_box<Tag_true, Kernel> {
 
+ public:
   typedef typename Kernel::RT                    RT;
   typedef typename Kernel::RT::NT                NT;
   typedef typename Kernel::Standard_kernel       Standard_kernel;
@@ -173,9 +173,6 @@ class Infimaximal_box<Tag_true, Kernel> {
   enum Boundary { EXCLUDED=0, INCLUDED=1 };
   
   static const int RADIUS = 10000000;
-
- public:
-
 
   static bool standard_kernel() {
     return false;

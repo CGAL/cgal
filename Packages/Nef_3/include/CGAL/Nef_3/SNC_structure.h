@@ -66,12 +66,11 @@ graphs of the vertices of a Nef polyhedron, which describe the
 point set completely. All other concepts are either derived from
 the local graph or added for the comfort of the user.}*/
 
-  typedef Items_                 Items;
-  typedef SNC_structure<Items>   Self;
-
 public:
   /*{\Mtypes 7}*/
 
+  typedef Items_                             Items;
+  typedef SNC_structure<Items>               Self;
   typedef SNC_decorator<Self>                SNC_decorator;
 
   typedef typename Items::Kernel        Kernel;

@@ -1,4 +1,4 @@
-#line 906 "k3_tree.nw"
+#line 909 "k3_tree.nw"
 #ifndef SNC_K3_TREE_TRAITS_H
 #define SNC_K3_TREE_TRAITS_H
 
@@ -83,9 +83,10 @@ public:
 
 template <class SNCstructure>
 class SNC_k3_tree_traits {
-  typedef typename SNCstructure::Kernel Kernel;
 
 public:
+  typedef typename SNCstructure::Kernel Kernel;
+
   typedef SNCstructure SNC_structure;
   typedef typename SNCstructure::Infi_box Infimaximal_box;
   typedef typename SNCstructure::Vertex_handle Vertex_handle;

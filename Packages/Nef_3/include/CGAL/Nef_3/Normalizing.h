@@ -119,7 +119,7 @@ CGAL::Sphere_direction<R> normalized(CGAL::Sphere_direction<R>& c)
 
 template <typename R>
 CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h) { 
-  
+
   CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
   
   typedef typename R::RT     RT;

@@ -53,6 +53,7 @@ CGAL_BEGIN_NAMESPACE
 
 template <typename Map>
 class SNC_decorator : public SNC_const_decorator<Map> { 
+ public:
   typedef Map SNC_structure;
   typedef typename Map::Sphere_map Sphere_map;
   typedef SNC_decorator<SNC_structure>                 Self;
@@ -68,7 +69,6 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   SNC_structure* sncp_;
   SNC_point_locator* pl0;
 
-public:
   typedef SM_decorator_traits<Map>  Decorator_traits;
 
   typedef typename SNC_structure::Vertex_handle Vertex_handle;

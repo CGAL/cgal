@@ -35,6 +35,7 @@ CGAL_BEGIN_NAMESPACE
 template <typename SNC_structure>
 class SNC_point_locator
 {
+ public:
   class Intersection_call_back;
   typedef SNC_point_locator<SNC_structure> Self;
 

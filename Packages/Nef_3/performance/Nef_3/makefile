@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-MY_DIR = /home/hachenb/CGAL
+MY_DIR = /KM/usr/hachenb/CGAL2
 HOME = /KM/guests/granados
 LOCAL = $(MY_DIR)/local/include
 NEF3 = $(MY_DIR)/Nef_3/include 
@@ -24,7 +24,7 @@ BBOX = $(MY_DIR)/Nef_3/bbox/include
 
 CUSTOM_CXXFLAGS = -I$(LOCAL) -I$(NEF3) -I$(NEFS2) -I$(BBOX) -I$(K3TREE)
 
-CGAL_CXX = g++
+CGAL_CXX = g++-3.2 -O
 
 CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
@@ -56,14 +56,18 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                union_of_rotated_cylinders$(EXE_EXT) 
+                union_of_rotated_cylinders$(EXE_EXT) \
+	        union_of_small_objects$(EXE_EXT)
 
 
 union_of_rotated_cylinders$(EXE_EXT): union_of_rotated_cylinders$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)union_of_rotated_cylinders union_of_rotated_cylinders$(OBJ_EXT) $(LDFLAGS)
+union_of_small_objects$(EXE_EXT): union_of_small_objects$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)union_of_small_objects union_of_small_objects$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   union_of_rotated_cylinders.clean
+                   union_of_rotated_cylinders.clean \
+	           union_of_small_objects.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

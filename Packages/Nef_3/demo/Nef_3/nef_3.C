@@ -35,8 +35,7 @@
 #include <CGAL/leda_integer.h>
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Extended_homogeneous_3.h>
-#include <CGAL/Simple_cartesian.h>
-//#include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/rational_rotation.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Nef_3/Visualizor.h>
@@ -55,20 +54,19 @@ using std::endl;
 using std::strcmp;
 using std::exit;
 
-
-
-
 // #define CGAL_USE_EXTENDED_KERNEL
 
 // typedef CGAL::Gmpz                         NT;
 typedef leda_integer                       NT;
+
 #ifdef CGAL_USE_EXTENDED_KERNEL
 typedef CGAL::Extended_homogeneous_3<NT>   Kernel;
 const char *kernelversion = "Extended homogeneous 3d kernel (tm).";
 #else // #elif CGAL_USE_SIMPLE_KERNEL
-// typedef CGAL::Lazy_exact_nt<NT>  LNT;
-// typedef CGAL::Simple_homogeneous<LNT>  Kernel;
-typedef CGAL::Simple_homogeneous<NT> Kernel;
+typedef CGAL::Simple_homogeneous<NT>       Kernel;
+//typedef CGAL::Lazy_exact_nt<NT>  LNT;
+//typedef CGAL::Simple_homogeneous<LNT>  Kernel;
+
 const char *kernelversion = "Simple homogeneous kernel (tm).";
 #endif
 

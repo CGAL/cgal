@@ -113,18 +113,20 @@ void ending_segment(Vertex_handle v, I it) const {}
 template <typename Point, typename Plane, typename Handle>
 class Halffacet_geometry { 
 
-typedef Point Point_3;
-typedef Plane Plane_3;
-typedef Vertex_point<Point,Handle>  Point_2;
-typedef std::pair<Point_2,Point_2>  Segment_2;
+ public:
+  typedef Point Point_3;
+  typedef Plane Plane_3;
+  typedef Vertex_point<Point,Handle>  Point_2;
+  typedef std::pair<Point_2,Point_2>  Segment_2;
 
+ private:
   // the underlying plane:
   Plane_3 h;
 
   Point_3 above(const Point_3& p) const
   { return p + h.orthogonal_vector(); }
 
-public:
+ public:
 
 Halffacet_geometry(const Plane_3& hi) : h(hi) {}
 

@@ -68,6 +68,7 @@ struct Compare_triangle_3 {
 template <class Traits>
 class K3_tree
 {
+public:
   class Objects_along_ray;
   class Objects_around_segment;
   friend class Objects_along_ray;
@@ -147,9 +148,10 @@ public:
     bounding_box = bbup.box();
   }
 
-
+ public:
   class Objects_around_segment 
   {
+   public:
     class Iterator;
   protected:
     Traits traits;
@@ -217,6 +219,7 @@ public:
       <<definition of segment intersection iteration methods>>
     };
   };
+
   class Objects_along_ray : public Objects_around_segment
   {
     typedef Objects_around_segment Base;
@@ -987,9 +990,10 @@ public:
 
 template <class SNCstructure>
 class SNC_k3_tree_traits {
-  typedef typename SNCstructure::Kernel Kernel;
 
 public:
+  typedef typename SNCstructure::Kernel Kernel;
+
   typedef SNCstructure SNC_structure;
   typedef typename SNCstructure::Infi_box Infimaximal_box;
   typedef typename SNCstructure::Vertex_handle Vertex_handle;

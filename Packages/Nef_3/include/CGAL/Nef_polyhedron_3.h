@@ -73,6 +73,7 @@ class Nef_polyhedron_3_rep
 { 
   typedef Nef_polyhedron_3_rep<T>                     Self;
   friend class Nef_polyhedron_3<T>;
+ public:
   typedef CGAL::SNC_structure<T>                       SNC_structure;
   typedef CGAL::SNC_decorator<SNC_structure>           SNC_decorator;
   typedef CGAL::SNC_const_decorator<SNC_structure>     SNC_const_decorator;
@@ -97,6 +98,7 @@ class Nef_polyhedron_3_rep
   typedef CGAL::SNC_SM_visualizor<SNC_structure>       SM_visualizor;
 #endif // CGAL_NEF3_SM_VISUALIZOR
 
+ private:
   SNC_structure snc_;
   SNC_point_locator* pl_;
   
@@ -157,8 +159,10 @@ protected:
   struct XOR { bool operator()(bool b1, bool b2, bool inverted=false) const 
     { return (b1&&!b2)||(!b1&&b2); } };
 
+ public:
   typedef Nef_polyhedron_3_rep<Items>           Nef_rep;
   typedef typename Nef_rep::SNC_structure       SNC_structure;
+ protected:
   typedef typename Nef_rep::SNC_decorator       SNC_decorator;
   typedef typename Nef_rep::SNC_constructor     SNC_constructor;
   //typedef typename Nef_rep::SNC_walker          SNC_walker;
