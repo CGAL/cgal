@@ -62,6 +62,7 @@ public:
     : RIso_rectangle_2(min_hx, min_hy, max_hx, max_hy, hw)
   {}
 
+  /*
   CGAL::Point_2<R>
   min() const
   { return RIso_rectangle_2::min(); }
@@ -77,7 +78,7 @@ public:
   CGAL::Point_2<R>
   operator[](int i) const
   { return vertex(i); }
-
+*/
   CGAL::Iso_rectangle_2<R>
   transform(const CGAL::Aff_transformation_2<R> &t) const
   { return  RIso_rectangle_2::transform(t); }
