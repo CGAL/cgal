@@ -27,7 +27,6 @@
 #include <iostream>
 #include <fstream>
 
-//#include <vector>
 
 #include <CGAL/_test_fct_is_infinite.C>
 #include <CGAL/_test_triangulation_iterators.C>
@@ -423,7 +422,7 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   T2_3_1.insert(wp12); //hidden in face
   T2_3_1.is_valid(verbose);
 
-  // insertion of hidding vertices
+  // insertion of hiding vertices (only wp22 is a hiding vertex)
   Vertex_handle V2_31_17 = T2_3_1.insert(wp17);
   T2_3_1.is_valid(verbose);
   Vertex_handle V2_31_29 = T2_3_1.insert(wp29);
@@ -569,6 +568,85 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   s = T2_3.segment(v2_3_6->incident_edges()); assert( &s == &s );
   s = T2_3.segment(T2_3.finite_edges_begin()); assert( &s == &s );
 
+
+  /***************************/
+  /***** get_conflicts ******/
+  std:: cout << "    get conflicts " << std::endl;
+  std::list<Face_handle> conflicts;
+  std::list<Edge>  hole_bd;
+  std::list<Vertex_handle>  hidden_vertices;
+  std::back_insert_iterator<std::list<Face_handle> > c_inserter(conflicts);
+  std::back_insert_iterator<std::list<Edge> > be_inserter(hole_bd);
+  std::back_insert_iterator<std::list<Vertex_handle> > v_inserter(hidden_vertices);
+  CGAL::Triple<std::back_insert_iterator<std::list<Face_handle> >,
+     std::back_insert_iterator<std::list<Edge> >, 
+     std::back_insert_iterator<std::list<Vertex_handle> > >
+    tit(c_inserter,be_inserter,v_inserter);
+  std::pair<std::back_insert_iterator<std::list<Face_handle> >,
+    std::back_insert_iterator<std::list<Edge> > > 
+    cbe_pit(c_inserter,be_inserter);
+  std::pair<std::back_insert_iterator<std::list<Face_handle> >,
+    std::back_insert_iterator<std::list<Vertex_handle> > > 
+    cv_pit(c_inserter,v_inserter);
+  std::pair<std::back_insert_iterator<std::list<Edge> >,
+    std::back_insert_iterator<std::list<Vertex_handle> > > 
+    bev_pit(be_inserter,v_inserter);
+  //point that exists:
+  tit = T2_3.get_conflicts_and_boundary_and_hidden_vertices(wp5, 
+							    std::back_inserter(conflicts),
+							    std::back_inserter(hole_bd),
+							    std::back_inserter(hidden_vertices));
+  assert(conflicts.empty() && hole_bd.empty() && hidden_vertices.empty());
+ 
+  //hidden vertices:
+  tit = T2_3.get_conflicts_and_boundary_and_hidden_vertices(wp16, 
+							    std::back_inserter(conflicts),
+							    std::back_inserter(hole_bd),
+							    std::back_inserter(hidden_vertices));
+  tit = T2_3.get_conflicts_and_boundary_and_hidden_vertices(wp19, 
+							    std::back_inserter(conflicts),
+							    std::back_inserter(hole_bd),
+							    std::back_inserter(hidden_vertices));
+  loc = T2_3.locate(p12,lt,li); assert( lt == Cls::FACE );
+  tit = T2_3.get_conflicts_and_boundary_and_hidden_vertices(wp12, 
+							    std::back_inserter(conflicts),
+							    std::back_inserter(hole_bd),
+							    std::back_inserter(hidden_vertices), loc);
+  c_inserter = tit.first;
+  be_inserter = tit.second;
+  v_inserter = tit.third;
+  assert(conflicts.empty() && hole_bd.empty() && hidden_vertices.empty());
+  
+  //non-hiding vertex:
+  v_inserter = T2_3.get_hidden_vertices(wp17,std::back_inserter(hidden_vertices));
+  cbe_pit = T2_3.get_conflicts_and_boundary(wp17, 
+					    std::back_inserter(conflicts),
+					    std::back_inserter(hole_bd));
+  assert(hidden_vertices.empty());
+  assert(hole_bd.size() == conflicts.size() + 2);
+  c_inserter = cbe_pit.first;
+  be_inserter =cbe_pit.second;	
+  conflicts.clear();
+  hole_bd.clear();
+  
+  //hiding vertex:
+  cv_pit = T2_3.get_conflicts_and_hidden_vertices(wp22, 
+						  std::back_inserter(conflicts),
+						  std::back_inserter(hidden_vertices));
+  c_inserter = cv_pit.first;
+  v_inserter = cv_pit.second;
+  hidden_vertices.clear();
+  
+  bev_pit = T2_3.get_boundary_of_conflicts_and_hidden_vertices(wp22, 
+							       std::back_inserter(hole_bd),
+							       std::back_inserter(hidden_vertices));
+  be_inserter = bev_pit.first;
+  v_inserter = bev_pit.second;
+  //std::cout << "hidden " << hidden_vertices.size()<<" bound " << hole_bd.size() << " hole " << conflicts.size()<<std::endl;
+  assert(hole_bd.size() <= conflicts.size() + 2);
+  conflicts.clear();
+  hole_bd.clear();
+  hidden_vertices.clear();
   /********************/
   /***** Duality ******/
   std::cout << "    duality" << std::endl;
