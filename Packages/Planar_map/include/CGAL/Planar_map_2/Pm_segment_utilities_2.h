@@ -11,7 +11,7 @@
 // release       : $$
 // release_date  : $$
 //
-// file          : include/CGAL/Planar_map_2/Pm_segment_utilities.h
+// file          : include/CGAL/Planar_map_2/Pm_segment_utilities_2.h
 // package       : Planar_map (5.80)
 // maintainer    : Efi Fogel         <efif@post.tau.ac.il>
 // source        : 
