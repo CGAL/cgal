@@ -1,3 +1,5 @@
+#include <CGAL/basic.h>
+
 #if defined(CGAL_USE_CGAL_WINDOW)
 
 #include <CGAL/LEDA/window.h>
