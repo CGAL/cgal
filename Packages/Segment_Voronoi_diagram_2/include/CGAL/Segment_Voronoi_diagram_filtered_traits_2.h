@@ -149,6 +149,7 @@ public:
   typedef typename CK::FT               FT;
   typedef typename CK::RT               RT;
 
+  typedef typename CK::Rep_tag          Rep_tag;
 
 public:
   // CONSTRUCTIONS

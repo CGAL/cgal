@@ -24,8 +24,8 @@
 
 
 
-#ifndef CGAL_SEGMENT_VORONOI_DIAGRAM_VORONOI_VERTEX_SQRT_FIELD_C2_H
-#define CGAL_SEGMENT_VORONOI_DIAGRAM_VORONOI_VERTEX_SQRT_FIELD_C2_H
+#ifndef CGAL_SEGMENT_VORONOI_DIAGRAM_VORONOI_VERTEX_SQRT_FIELD_H2_H
+#define CGAL_SEGMENT_VORONOI_DIAGRAM_VORONOI_VERTEX_SQRT_FIELD_H2_H
 
 
 
@@ -649,10 +649,6 @@ private:
 
   //--------------------------------------------------------------------------
 
-  //************************************************************************
-  //************************************************************************
-
-
   template<class Type>
   Sign incircle(const Point_2& t, Type type) const
   {
@@ -662,8 +658,7 @@ private:
 
     FT r2 = squared_radius();
 
-    FT d2 = CGAL::square(x() - t.x()) +
-      CGAL::square(y() - t.y());
+    FT d2 = CGAL::square(x() - t.x()) + CGAL::square(y() - t.y());
 
     return Sign( CGAL::compare(d2, r2) );
   }
@@ -708,7 +703,11 @@ private:
   Oriented_side
   oriented_side(const Line_2& l, const Point_2& p) const
   {
-    Line_2 l1(l.b(), -l.a(), l.a() * y() - l.b() * x());
+    Line_2 l1(l.b() * hw(), -l.a() * hw(), l.a() * hy() - l.b() * hx());
+
+    if ( hw() < 0 ) {
+      l1 = Line_2(-l1.a(), -l1.b(), -l1.c());
+    }
 
     return oriented_side_of_line(l1, p);
   }
@@ -922,19 +921,18 @@ public:
   //--------------------------------------------------------------------------
   //--------------------------------------------------------------------------
 
+  FT x() const { return FT(hx()) / FT(hw()); }
+  FT y() const { return FT(hy()) / FT(hw()); }
 
-  FT x() const { return hx() / hw(); }
-  FT y() const { return hy() / hw(); }
-
-  FT hx() const {
+  RT hx() const {
     return ux;
   }
 
-  FT hy() const {
+  RT hy() const {
     return uy;
   }
 
-  FT hw() const {
+  RT hw() const {
     return uz;
   }
 
@@ -968,7 +966,7 @@ public:
       return p_ref();
     }
     
-    return Point_2(x(), y());
+    return Point_2(hx(), hy(), hw());
   }
 
 
@@ -988,7 +986,7 @@ public:
   vertex_t type() const { return v_type; }
 
 public:
-  Svd_voronoi_vertex_sqrt_field_C2(const Site_2& p,
+  Svd_voronoi_vertex_sqrt_field_H2(const Site_2& p,
 				   const Site_2& q,
 				   const Site_2& r)
     : p_(p), q_(q), r_(r)
@@ -1008,10 +1006,11 @@ public:
 
   //--------------------------------------------------------------------------
 
-
   Orientation orientation(const Line_2& l) const 
   {
-    Sign s = CGAL::sign(l.a() * x() + l.b() * y() + l.c());
+    Sign s_w = CGAL::sign( hw() );
+    Sign s1 = CGAL::sign(l.a() * hx() + l.b() * hy() + l.c() * hw());
+    Sign s = Sign(s1 * s_w);
 
     if ( s == ZERO ) { return COLLINEAR; }
     return ( s == POSITIVE ) ? LEFT_TURN : RIGHT_TURN;
@@ -1035,7 +1034,7 @@ private:
   // index that indicates the refence point for the case PPS
   short pps_idx;
 
-  FT ux, uy, uz;
+  RT ux, uy, uz;
 };
 
 
@@ -1045,4 +1044,4 @@ CGAL_END_NAMESPACE
 
 
 
-#endif // CGAL_SEGMENT_VORONOI_DIAGRAM_VORONOI_VEFTEX_SQRT_FIELD_C2_H
+#endif // CGAL_SEGMENT_VORONOI_DIAGRAM_VORONOI_VEFTEX_SQRT_FIELD_H2_H

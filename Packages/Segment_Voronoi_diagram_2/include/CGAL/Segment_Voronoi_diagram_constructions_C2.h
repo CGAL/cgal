@@ -30,7 +30,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
 
-#include <CGAL/predicates/Segment_Voronoi_diagram_vertex_C2.h>
+//#include <CGAL/predicates/Segment_Voronoi_diagram_vertex_C2.h>
+#include <CGAL/predicates/Segment_Voronoi_diagram_vertex_2.h>
 
 #include <CGAL/Parabola_2.h>
 #include <CGAL/Parabola_segment_2.h>
