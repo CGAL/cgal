@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+24 August 2004 Mariette
+ - added a Weighted_tag in Triangulation_2 and Regular_triangulation_2
+ - fixed the pb of copy_triangulation for hierarchies of regular triangulation
+
 13 August 2004 Sylvain Pion
 - T_hierarchy_vertex_base : remove useless and dubious "if (this)".
 
