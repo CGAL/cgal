@@ -808,20 +808,19 @@ Triangulation_data_structure_3<Vb,Cb>::
 is_edge(Vertex* u, Vertex* v, 
 	Cell* & c, int & i, int & j) const
   // returns false when dimension <1
-    {
-      if (u==v) return false;
-
-      Edge_iterator it = edges_begin();
-      while ( it != edges_end() ) {
-	if ( ( ((*it).first)->has_vertex(u,i) )
-	     && ( ((*it).first)->has_vertex(v,j) ) ) {
-	  c = (*it).first;
-	  return true;
-	}
-	++it;
-      }
-      return false;
+{
+  if (u==v) return false;
+  
+  Cell* tmp = _list_of_cells._next_cell;
+  while ( tmp != past_end_cell() ) {
+    if ( (tmp->has_vertex(u,i)) && (tmp->has_vertex(v,j)) ) {
+      return true; 
+      c = tmp;
     }
+    tmp = tmp->_next_cell;
+  }
+  return false;
+} 
 
 template < class Vb, class Cb>
 bool
@@ -835,10 +834,10 @@ is_edge(Cell* c, int i, int j) const
   if ( (dimension() == 2) && ((i>2) || (j>2)) ) return false;
   if ((i>3) || (j>3)) return false;
 
-  Edge_iterator it = edges_begin();
-  while ( it != edges_end() ) {
-    if ( (*it).first == c ) return true;
-    ++it;
+  Cell* tmp = _list_of_cells._next_cell;
+  while ( tmp != past_end_cell() ) {
+    if (tmp == c) return true;
+    tmp = tmp->_next_cell;
   }
   return false;
 }
