@@ -76,7 +76,7 @@ struct Static_filter_error
   bool operator< (const Sfe &f) const
   {
       double e;
-      compare(*this, f, e);
+      compare_SAF(*this, f, e);
       std::cerr << "Static error is" << e << endl;
       abort();
       return false;
@@ -129,9 +129,9 @@ sqrt(const Static_filter_error &f)
 
 inline
 Comparison_result
-compare(const Static_filter_error &a,
-       	const Static_filter_error &b,
-       	double &epsilon)
+compare_SAF(const Static_filter_error &a,
+       	    const Static_filter_error &b,
+       	    double &epsilon)
 {
   Static_filter_error c = a-b;
   epsilon = c.error();
@@ -140,7 +140,7 @@ compare(const Static_filter_error &a,
 
 inline
 Sign
-sign(const Static_filter_error &a, double &epsilon)
+sign_SAF(const Static_filter_error &a, double &epsilon)
 {
   epsilon = a.error();
   return ZERO; // ??
