@@ -92,6 +92,8 @@ public:
   inline void set_data(NT inp_x1,NT inp_y1,NT inp_x2,NT inp_y2);
   void determine_direction();
   bool equal(Segment_2 s);
+  Segment_data(const Segment_data &other);
+  // !!!! need operator =
 };
 
 template<class Rep_>
@@ -177,18 +179,22 @@ public:
   static inline void set_direction(Direction dir) {seg_dir = dir;}
   static inline bool get_erase_hp() {return(erase_hp);}
 
+  // ctor
   Snap_rounding_2(Segment_const_iterator begin,
                   Segment_const_iterator end,
                   NT inp_pixel_size,bool inp_do_isr = true,
                   int inp_number_of_kd_trees = default_number_of_kd_trees);
+  // ctor
   Snap_rounding_2(NT inp_pixel_size,bool inp_do_isr = true,
                   int inp_number_of_kd_trees = default_number_of_kd_trees);
+  // cctor
+  Snap_rounding_2(const Snap_rounding_2 &other);
 
 #ifdef ISR_DEBUG
   template<class Out>
   void output_distances(Out &o);
 #endif
-  // !!!! change names to output ans input
+  // !!!! change names to output and input
   const Polyline_const_iterator polylines_begin();
   const Polyline_const_iterator polylines_end();
 
@@ -260,15 +266,26 @@ int max_rec = 1,cur_rec = -1,cur_max,needed_hp = 0,unneeded_hp = 0;
 int needed_hp = 0,unneeded_hp = 0;
 #endif
 
+// ctor
 template<class Rep_>
 Segment_data<Rep_>::Segment_data() {}
 template<class Rep_>
 Segment_data<Rep_>::Segment_data(NT inp_x1,NT inp_y1,NT inp_x2,NT inp_y2) :
                     x1(inp_x1),y1(inp_y1),x2(inp_x2),y2(inp_y2) {}
 
+// cctor
 template<class Rep_>
+Segment_data<Rep_>::Segment_data(const Segment_data &other)
+{
+  x1 = other.x1;
+  y1 = other.y1;
+  x2 = other.x2;
+  y2 = other.y2;
+}
+
+/*template<class Rep_>
 void Segment_data<Rep_>::debug() const {std::cerr << "Segment (" << x1 << ","
-     << y1 << "):(" << x2 << ":" << y2 << ")\n";}
+<< y1 << "):(" << x2 << ":" << y2 << ")\n";}*/
 
 template<class Rep_>
 typename Rep_::FT Segment_data<Rep_>::get_x1() {return(x1);}
@@ -285,12 +302,12 @@ typename Rep_::FT Segment_data<Rep_>::get_y2() {return(y2);}
 template<class Rep_>
 inline void Segment_data<Rep_>::set_data(NT inp_x1,NT inp_y1,NT inp_x2,
             NT inp_y2)
-  {
-     x1 = inp_x1;
-     y1 = inp_y1;
-     x2 = inp_x2;
-     y2 = inp_y2;
-  }
+{
+   x1 = inp_x1;
+   y1 = inp_y1;
+   x2 = inp_x2;
+   y2 = inp_y2;
+}
 
 template<class Rep_>
 bool Segment_data<Rep_>::equal(Segment_2 s)
@@ -788,10 +805,6 @@ void Snap_rounding_2<Rep_>::iterate()
   }
 
 template<class Rep_>
-/*Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
-  begin,Segment_const_iterator end,
-  NT inp_pixel_size,bool inp_do_isr = true,int inp_number_of_kd_trees =
-  default_number_of_kd_trees)*/
 Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
   begin,Segment_const_iterator end,
   NT inp_pixel_size,bool inp_do_isr,int inp_number_of_kd_trees)
@@ -812,6 +825,20 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
       ++number_of_segments;
       ++begin;
     }
+  }
+
+// cctor
+template<class Rep_>
+Snap_rounding_2<Rep_>::Snap_rounding_2(const Snap_rounding_2 &other)
+  {
+    erase_hp = false;
+    wheteher_to_do_isr = other.wheteher_to_do_isr;
+    pixel_size = other.pixel_size;
+    number_of_segments = other.number_of_segments;
+    number_of_kd_trees = other.number_of_kd_trees;
+    need_sr = true;
+    seg_list = other.seg_list;
+    seg_2_list = other.seg_2_list;
   }
 
 template<class Rep_>
