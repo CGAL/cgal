@@ -12,7 +12,7 @@
 // release_date  :
 // 
 // source        :
-// file          : test_triangulation_geom_traits_2.C
+// file          : test_triangulation_geom_traits.C
 // revision      : 
 // revision_date : 
 // author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
