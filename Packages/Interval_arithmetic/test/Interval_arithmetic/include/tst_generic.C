@@ -53,13 +53,17 @@ bool square_root_test()
   while (++i < 500)
   {
     IA_nt b = CGAL::sqrt(a);
-    DEBUG( std::cout << a-1 << std::endl; )
+    DEBUG ( std::cout << a-1.0 << std::endl; )
     if ( b.is_same(a) )
       break;
     a = b;
   };
-  DEBUG( std::cout << i; )
-  a -= 1;
+  a -= 1.0;
+  DEBUG (
+  std::cout << "i          = " << i << std::endl;
+  std::cout << "sup = -inf : " << (a.sup() == -a.inf()) << std::endl;
+  std::cout << "width ok ? : " << (-a.inf() == 1/(double(1<<30)*(1<<22))) << std::endl;
+  ) // DEBUG
   return i==54 && a.sup() == - a.inf() && a.sup() == 1/(double(1<<30)*(1<<22));
 }
 
@@ -282,12 +286,30 @@ bool is_valid_test()
 
 // Test the is_finite() function.
 
+bool test_ieee_equality(double d)
+{
+  return CGAL::is_finite(d);
+  // return d == d;
+}
+
 bool is_finite_test()
 {
   bool tmpflag, flag = true;
   const double inf = 1.0/zero;
+  const double nan = inf-inf;
   const IA_nt a(inf, inf), b(-inf,inf), c(-inf, 0), d(0,inf);
   const IA_nt e(0,1), f(0,0);
+
+  DEBUG(
+  using CGAL::is_finite;
+  std::cout << "Test de is_finite(double)" << std::endl;
+  std::cout << "is_finite( " << inf << " ) = " << is_finite(inf) << std::endl;
+  std::cout << "is_finite( " << 0.0 << " ) = " << is_finite(0.0) << std::endl;
+  std::cout << "is_finite( " << 1.0 << " ) = " << is_finite(1.0) << std::endl;
+  std::cout << "is_finite( " << -1.0 << " ) = " << is_finite(-1.0) << std::endl;
+  std::cout << "is_finite( " << -inf << " ) = " << is_finite(-inf) << std::endl;
+  std::cout << "is_finite( " << nan << " ) = " << is_finite(nan) << std::endl;
+  )
 
   tmpflag = CGAL::is_finite(a);
   DEBUG( std::cout << std::endl; )
