@@ -69,7 +69,7 @@ CGAL_KERNEL_CTOR_INLINE
 RayC2<R CGAL_CTAG>::RayC2(const typename RayC2<R CGAL_CTAG>::Point_2 &sp,
                           const typename RayC2<R CGAL_CTAG>::Direction_2 &d)
 {
-  PTR = new _Twotuple<Point_2>(sp, sp + d.vector());
+  PTR = new _Twotuple<Point_2>(sp, sp + d.to_vector());
 }
 
 template < class R >

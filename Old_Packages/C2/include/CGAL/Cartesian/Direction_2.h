@@ -89,7 +89,7 @@ public:
   bool     counterclockwise_in_between( const Self &d1, const Self &d2) const;
   int      id() const;
 
-  Vector_2 vector() const;
+  Vector_2 to_vector() const;
 
   Self     perpendicular(const Orientation &o) const;
   Self     transform(const Aff_transformation_2 &t) const;

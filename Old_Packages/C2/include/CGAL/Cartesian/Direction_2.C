@@ -152,7 +152,7 @@ DirectionC2<R CGAL_CTAG>::counterclockwise_in_between
 template < class R >
 inline
 typename DirectionC2<R CGAL_CTAG>::Vector_2
-DirectionC2<R CGAL_CTAG>::vector() const
+DirectionC2<R CGAL_CTAG>::to_vector() const
 {
   return Vector_2(*this);
 }
@@ -220,7 +220,7 @@ template < class R >
 std::ostream
 &operator<<(std::ostream &os, const DirectionC2<R CGAL_CTAG> &d)
 {
-    typename R::Vector_2 v = d.vector();
+    typename R::Vector_2 v = d.to_vector();
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
         return os << v.x() << ' ' << v.y();

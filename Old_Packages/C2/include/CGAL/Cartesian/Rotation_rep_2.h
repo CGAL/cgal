@@ -64,8 +64,8 @@ public:
     FT cos_num;
     FT denom;
 
-    rational_rotation_approximation(d.vector().x(),
-                                    d.vector().y(),
+    rational_rotation_approximation(d.to_vector().x(),
+                                    d.to_vector().y(),
                                     sin_num,
                                     cos_num,
                                     denom,
@@ -89,7 +89,7 @@ public:
 
   Direction_2  transform(const Direction_2 &d) const
   {
-    Vector_2  v = d.vector();
+    Vector_2  v = d.to_vector();
     return Direction_2(_cosinus * v.x() - _sinus * v.y(),
                        _sinus * v.x() + _cosinus * v.y());
   }

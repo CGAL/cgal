@@ -1,5 +1,6 @@
-
+Version 3.3.7 (October 7 1999)
 - Various predicates and constructions cleanups and speedups [Sylvain].
+- Changed vector to to_vector in Direction
 
 Version 3.3.6 (September 30 1999)
 - Forgot std:: qualifier for endl in Circle_2.C

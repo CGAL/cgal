@@ -3,13 +3,13 @@
 CVS_MODULE_NAME=C2
 Package=C2
 
-.PHONY: Package Test Submit Version Rtag
+.PHONY: package test submit version rtag
 
 WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
-Package: clean $(Package).tar.gz
+package: clean $(Package).tar.gz
 	@echo "----------------------------------"
 	@echo "------------ Penser à: -----------"
 	@echo "----------------------------------"
@@ -25,19 +25,19 @@ Package: clean $(Package).tar.gz
 symlinks:
 	cd include/CGAL/Cartesian ; sh ./create_symlinks_2
 
-Test:
+test:
 	cd test/Kernel; ./cgal_test
 
-Version:
+version:
 	echo "$(VERSION) (" `date +"%e %b %Y"` ")" > version
 
-Commit:
+commit:
 	cvs commit
 
-Rtag:
+rtag:
 	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/g"` $(CVS_MODULE_NAME)
 
-Submit: Package
+submit: package
 	cp $(Package).tar.gz version long_description.txt description.txt \ 
 	changes.txt $(WWW_dir)
 	echo > $(TMP_file)

@@ -123,7 +123,7 @@ friend class Scaling_repC2<R>;
   // note that a direction is not translated
   Direction_2 transform(const Direction_2& dir) const
   {
-    Vector_2 v = dir.vector();
+    Vector_2 v = dir.to_vector();
     return Direction_2(t11 * v.x() + t12 * v.y(),
                        t21 * v.x() + t22 * v.y());
   }
