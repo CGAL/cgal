@@ -1,6 +1,10 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.15 (2 May 2002)
+     - enclose the temporary variable in a small scope to ensure it
+       is destroyed earlier for SunPRO compiler
+
 1.14 (29 Apr 2002)
      - added missing cstddef include
 

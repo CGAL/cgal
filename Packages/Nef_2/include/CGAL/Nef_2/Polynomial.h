@@ -1901,7 +1901,7 @@ void Polynomial<int>::pseudo_div(
   }
   // now we know fd >= gd and f>=g
   int qd=fd-gd, delta=qd+1, rd=fd;
-  q = Polynomial<int>( std::size_t(delta) );
+  { q = Polynomial<int>( std::size_t(delta) ); }; // workaround for SUNPRO
   int G = g[gd]; // highest order coeff of g
   D = G; while (--delta) D*=G; // D = G^delta
   Polynomial<int> res = Polynomial<int>(D)*f;
@@ -2066,7 +2066,7 @@ void Polynomial<NT>::pseudo_div(
   }
   // now we know fd >= gd and f>=g
   int qd=fd-gd, delta=qd+1, rd=fd;
-  q = Polynomial<NT>( std::size_t(delta) );
+  { q = Polynomial<NT>( std::size_t(delta) ); }; // workaround for SunPRO
   NT G = g[gd]; // highest order coeff of g
   D = G; while (--delta) D*=G; // D = G^delta
   Polynomial<NT> res = Polynomial<NT>(D)*f;
