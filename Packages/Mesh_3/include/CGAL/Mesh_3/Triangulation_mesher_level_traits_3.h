@@ -41,6 +41,8 @@ struct Triangulation_mesher_level_traits_3
   public:
     typedef typename Cells::iterator Cells_iterator;
     typedef typename Facets::iterator Facets_iterator;
+    typedef typename Cells::const_iterator Cells_const_iterator;
+    typedef typename Facets::const_iterator Facets_const_iterator;
 
     Cells cells;
     Facets boundary_facets;

@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Complex_2_in_triangulation_cell_base_3.h>
+#include <CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Implicit_surfaces_mesher_3.h>
 #include <CGAL/Chew_4_surfaces/Criteria/Standard_criteria.h>
@@ -18,7 +19,8 @@
 
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Triangulation_vertex_base_3<K> Vb;
-typedef CGAL::Complex_2_in_triangulation_cell_base_3<K> Cb;
+typedef CGAL::Complex_2_in_triangulation_cell_base_3<K> CCb;
+typedef CGAL::Mesh_3::Complex_2_in_triangulation_cell_base_3<K, CCb> Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 typedef CGAL::Delaunay_triangulation_3<K, Tds> Del;
 typedef Function <K::FT> Func;

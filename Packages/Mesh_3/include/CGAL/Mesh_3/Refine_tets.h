@@ -37,6 +37,7 @@ class Refine_tets_base
 
   typedef typename Tr::Facet Facet;
 
+public:
   typedef typename Criteria::Quality Quality;
 
 public:
@@ -53,12 +54,7 @@ private:
 
   bool should_be_refined(const Cell_handle c, Quality& qual) const
   {
-    const Point& p = c->vertex(0)->point();
-    const Point& q = c->vertex(1)->point();
-    const Point& r = c->vertex(2)->point();
-    const Point& s = c->vertex(3)->point();
-
-    return criteria.is_bad_object()(p,q,r,s,qual);
+    return criteria.is_bad_object()(c,qual);
   }
 
   bool should_be_refined(const Cell_handle c) const
@@ -67,11 +63,15 @@ private:
     return should_be_refined(c, q);
   }
 
-  bool test_cell(const Cell_handle c)
+  bool test_if_cell_is_bad(const Cell_handle c)
   {
     Quality q;
-    if( cit->is_is_domain() && should_be_refined(cit, q) )
-      tets_to_refine.add_element(cit, q);
+    if( c->is_in_domain() && should_be_refined(c, q) )
+      {
+	tets_to_refine.add_element(c, q);
+	return true;
+      }
+    return false;
   }
 
 public:
@@ -99,10 +99,10 @@ public:
 
   void do_scan_triangulation()
   {
-    for(typename Tr::Cell_iterator cit = tr.finite_cells_begin();
+    for(typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
         cit != tr.finite_cells_end();
         ++cit)
-      test_cell(cit);
+      test_if_cell_is_bad(cit);
   }
 
   bool is_no_longer_element_to_refine() const 
@@ -110,7 +110,7 @@ public:
     return tets_to_refine.empty();
   }
 
-  Facet do_get_next_element()
+  Cell_handle do_get_next_element()
   {
     return tets_to_refine.get_next_element();
   }
@@ -138,7 +138,7 @@ public:
   {}
 
   std::pair<bool, bool> do_private_test_point_conflict(const Point&,
-                                               Zone& )
+						       Zone& )
   {
     return std::make_pair(true, true);
   }
@@ -150,8 +150,12 @@ public:
   }
 
   void do_before_insertion(const Cell_handle&, const Point&,
-                           const Zone&)
+                           Zone& zone)
   {
+    for(typename Zone::Cells_iterator cit = zone.cells.begin();
+	cit != zone.cells.end();
+	++cit)
+      tets_to_refine.remove_element(*cit);
   }
 
   void do_after_insertion(const Vertex_handle& v)
@@ -163,12 +167,19 @@ public:
 
     tr.incident_cells(v, std::back_inserter(incident_cells));
 
-    for(Cell_iterator it = incident_cells.begin();
-        it != incident_cells.end();
-        ++it)
-      test_cell(cit);
+    for(Cell_iterator cit = incident_cells.begin();
+        cit != incident_cells.end();
+        ++cit)
+      {
+	(*cit)->set_in_domain(true);
+	test_if_cell_is_bad(*cit);
+      }
   }
 
+  void do_after_no_insertion(const Cell_handle&, const Point&,
+                             const Zone& )
+  {
+  }
 }; // end Refine_tets_base  
 
   namespace tets {
@@ -262,27 +273,27 @@ public:
 template <typename Tr,
           typename Criteria,
           typename Base = Refine_tets_base<Tr, Criteria>,
-          typename Edges_level = Refine_edges<Tr>
+          typename Facets_level = Refine_facets<Tr>
  >
 class Refine_tets : 
   public Base, 
   public Mesher_level <
     Triangulation_mesher_level_traits_3<Tr>,
-    Refine_tets<Tr, Base, Edges_level>,
-    typename Tr::Facet,
-    Edges_level
+    Refine_tets<Tr, Criteria, Base, Facets_level>,
+    typename Tr::Cell_handle,
+    Facets_level
   >
 {
 public:
-  typedef Refine_tets<Tr, Base> Self;
+  typedef Refine_tets<Tr, Criteria, Base, Facets_level> Self;
   typedef Mesher_level <
     Triangulation_mesher_level_traits_3<Tr>,
-    Refine_tets<Tr, Base, Edges_level>,
-    typename Tr::Facet,
-    Edges_level
+    Refine_tets<Tr, Criteria, Base, Facets_level>,
+    typename Tr::Cell_handle,
+    Facets_level
   > Mesher;
-  Refine_tets(Tr& t, Criteria crit, Edges_level& edges_level)
-    : Base(t, crit), Mesher(edges_level) {}
+  Refine_tets(Tr& t, Criteria crit, Facets_level& facets_level)
+    : Base(t, crit), Mesher(facets_level) {}
 };
 
 }; // end namespace Mesh_3

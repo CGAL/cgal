@@ -48,11 +48,11 @@ public:
       
     Is_bad(const double bound) : B(bound) {};
       
-    bool operator()(const Cell_handle& fh,
+    bool operator()(const Cell_handle& c,
                     Quality& qual) const
     {
       typedef typename Tr::Geom_traits Geom_traits;
-      typedef typename Geom_traits::Compute_squared_circum_radius_3 Radius;
+      typedef typename Geom_traits::Compute_squared_radius_3 Radius;
 
       if( B==0 )
         {
@@ -64,8 +64,8 @@ public:
     const Point_3& r = c->vertex(2)->point();
     const Point_3& s = c->vertex(3)->point();
 
-      Radius radius = Geom_traits().compute_squared_circum_radius_3_object();
-      qual = B / radius(p, q, r, s);
+      Radius radius = Geom_traits().compute_squared_radius_3_object();
+      qual = B / to_double(radius(p, q, r, s));
       return qual < 1.;
     };
   };

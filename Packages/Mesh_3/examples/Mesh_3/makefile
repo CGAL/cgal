@@ -18,6 +18,7 @@ OTHER_CXXFLAGS?=
 CXXFLAGS = -I ../../../Mesh_2/include \
            -I ../../../Chew_4_surfaces/include \
 	   -I../../include \
+	   -I../../../Triangulation_3/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(OTHER_CXXFLAGS)

@@ -26,7 +26,7 @@ namespace CGAL {
       {
         CGAL_assertion(!m.empty());
         
-        return m.front()->first;
+        return m.front()->second;
 
       }
 
@@ -40,7 +40,7 @@ namespace CGAL {
         m.pop_front();
       }
 
-      void remove_element(const Element& e)
+      void remove_element(Element& e)
       {
         m.erase(e);
       }

@@ -27,7 +27,7 @@ namespace CGAL {
 
   namespace Mesh_3 
   {
-    
+  }
 
 template <
   typename Tr,
@@ -38,6 +38,8 @@ template <
 class Implicit_surfaces_mesher_3
 {
 public:
+  typedef typename Tr::Point Point;
+  
   typedef typename
      Chew_4_surfaces::Chew_4_surfaces<Tr,
                                       Oracle,
@@ -49,24 +51,48 @@ public:
                                                                 Tets_criteria>,
                                        Facets_level> Tets_level;
 
+  typedef Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
+
 private:
   Null_mesher_level null_mesher_level;
   Null_mesh_visitor null_visitor;
 
+  C2t3 c2t3;
+  Oracle& oracle;
   Facets_level facets;
   Tets_level tets;
 
   bool initialized;
 
 public:
-  Implicit_surfaces_mesher_3(Tr& t, Oracle& s,
+  Implicit_surfaces_mesher_3(Tr& t, Oracle& o,
                              Facets_criteria& c,
                              Tets_criteria tets_crit)
-    : facets(t, s, c), tets(t, tets_crit, facets), initialized(false)
+    : c2t3(t), oracle(o), 
+      facets(t, c2t3, oracle, c), tets(t, tets_crit, facets),
+      initialized(false)
   {}
 
   void init()
   {
+    Tr& tr = tets.get_triangulation_ref();
+
+    typedef typename Tr::Geom_traits Geom_traits;
+    typename Geom_traits::Construct_circumcenter_3 circumcenter = 
+      tr.geom_traits().construct_circumcenter_3_object();
+
+    for(typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
+	cit != tr.finite_cells_end();
+	++cit)
+      {
+	const Point& p = cit->vertex(0)->point();
+	const Point& q = cit->vertex(1)->point();
+	const Point& r = cit->vertex(2)->point();
+	const Point& s = cit->vertex(3)->point();
+
+	cit->set_in_domain(oracle.surf_equation(circumcenter(p,q,r,s))<0.);
+      }
+    
     facets.scan_triangulation();
     tets.scan_triangulation();
     initialized = true;
