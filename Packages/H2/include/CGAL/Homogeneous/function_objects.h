@@ -124,6 +124,7 @@ namespace HomogeneousKernelFunctors {
   using CommonKernelFunctors::Less_rotate_ccw_2;
   using CommonKernelFunctors::Oriented_side_2;
   using CommonKernelFunctors::Oriented_side_3;
+#ifndef CGAL_NO_DEPRECATED_CODE
   using CommonKernelFunctors::Equal_xy_2;
   using CommonKernelFunctors::Leftturn_2;
   using CommonKernelFunctors::Equal_xyz_3;
@@ -146,6 +147,7 @@ namespace HomogeneousKernelFunctors {
   using CommonKernelFunctors::Construct_aff_transformation_2;
   using CommonKernelFunctors::Construct_aff_transformation_3;
   using CommonKernelFunctors::Compute_y_at_x_2;
+#endif
 #endif
 
   template <typename K>
@@ -2778,7 +2780,7 @@ namespace HomogeneousKernelFunctors {
 	        const Point_3& r, const Point_3& t) const
     {
       Point_3 center = circumcenter(p, q, r);
-      return Bounded_side( cmp_dist_to_point(center, p, t) );
+      return Bounded_side( compare_distance_to_point(center, p, t) );
     } // FIXME
 
     Bounded_side

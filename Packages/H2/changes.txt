@@ -1,3 +1,7 @@
+2.90 (2 June 2003)
+- -DCGAL_NO_DEPRECATED_CODE fixes.
+- Replace deprecated function cmp_dist_to_point().
+
 2.89 (2 June 2003) [af]
 - bbox() now uses to_interval for PointH2 and CircleH2
 
