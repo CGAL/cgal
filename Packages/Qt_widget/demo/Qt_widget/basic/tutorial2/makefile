@@ -46,7 +46,8 @@ tut2$(OBJ_EXT): tutorial2.C
 tut2$(EXE_EXT): tut2$(OBJ_EXT) $(SOURCES)
 	$(CGAL_CXX)  $(EXE_OPT)tutorial2 tutorial2$(OBJ_EXT) $(LDFLAGS)
 
-#clean: first.clean
+clean:
+	rm -f tutorial2.o
 
 #---------------------------------------------------------------------#
 #                    suffix rules
