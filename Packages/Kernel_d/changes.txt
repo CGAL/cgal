@@ -1,6 +1,9 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
 
+0.108 (11 Jan 2004)
+- _R -> R_ to please Darwin.
+
 0.107 (25 Nov 2003) [rursu]
 - Removed Delaunay_d and Convex_hull_d files that went to Convex_hull_d package
 

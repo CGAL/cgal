@@ -62,8 +62,8 @@ public:
 
 /*{\Manpage {Sphere_d}{R}{Simple Spheres}{S}}*/ 
 
-template <class _R>
-class Sphere_d : public Handle_for< Sphere_d_rep<_R> > {
+template <class R_>
+class Sphere_d : public Handle_for< Sphere_d_rep<R_> > {
 
 /*{\Mdefinition 
 An instance $S$ of the data type |Sphere_d| is an oriented sphere in
@@ -79,13 +79,13 @@ to the orientation of the defining points, i.e., |orientation(A)|. }*/
 public: 
 /*{\Mtypes 4}*/
 
-typedef Sphere_d_rep<_R>  Rep;
+typedef Sphere_d_rep<R_>  Rep;
 typedef Handle_for<Rep>   Base;
-typedef Sphere_d<_R>      Self;
-typedef typename _R::Point_d Point_d;
+typedef Sphere_d<R_>      Self;
+typedef typename R_::Point_d Point_d;
 Sphere_d(const Base& b) : Base(b) {}
 
-typedef _R R;
+typedef R_ R;
 /*{\Mtypemember the representation type.}*/
 
 typedef typename R::RT RT;
