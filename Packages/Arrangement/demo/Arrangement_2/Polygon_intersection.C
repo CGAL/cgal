@@ -1,3 +1,9 @@
+#ifndef CGAL_USE_LEDA
+
+// this demo uses LEDA
+ 
+#else
+
 #include "Polygon_intersection.h"
 
 /////////////////////////////////////////////////////////////////////
@@ -157,3 +163,5 @@ bool intersect_polygons(Polygon_list &in_poly_list,
 
   if (out_poly_list.empty()) return 0; else return 1;
 }
+
+#endif
