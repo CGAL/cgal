@@ -1640,6 +1640,17 @@ private:
 
 
 @O@<../include/CGAL/IO/Geomview_stream.h@>==@{@-
+@<CGAL notice head@>
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/IO/Geomview_stream.h
+// source        : web/geomview.fw
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Andreas Fabri
+@<CGAL notice tail@>
+
 #ifndef CGAL_GEOMVIEW_STREAM_H
 #define CGAL_GEOMVIEW_STREAM_H
 
@@ -1678,6 +1689,16 @@ private:
 \subsection{The Source File}
 
 @O@<../src/Geomview_stream.C@>==@{@-
+@<CGAL notice head@>
+// release       :
+// release_date  :
+//
+// file          : src/Geomview_stream.C
+// source        : web/Geomview_stream.fw
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Andreas Fabri
+@<CGAL notice tail@>
 
 #include <CGAL/IO/Geomview_stream.h>
 
