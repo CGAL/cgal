@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Added kcc version detection as by Stefan.
 GLOB: Corrected SAVE_THE_BLANK fix for KCC.
 GLOB: Fixed guess_os as suggested by Dima,
 GLOB: to remove '()/', needed for cygwin-1.1.
