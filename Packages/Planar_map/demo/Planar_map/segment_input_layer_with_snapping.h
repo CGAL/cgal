@@ -34,6 +34,18 @@ private:
   //true if the user selected the first vertex
   Point_2                       old_point;
   QCursor                       cursor;
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  typedef CGAL::Qt_widget_get_segment<R> Base;
+  using Base::x1;
+  using Base::y1;
+  using Base::x2;
+  using Base::y2;
+  using Base::widget;  
+  using Base::firstpoint;
+  using Base::oldcursor;
+#endif
+  
 public:
   typedef typename R::Segment_2	Segment;
   typedef typename R::Point_2   Point;
