@@ -88,7 +88,8 @@ public:
 
 
 
-  //  void set_color(Color c) {color=c;}
+  void set_color1(Color c) {color=c;}
+  void set_color2(Color c) {col2=c;}
   virtual void add_point(double x, double y, double z) {}
 
 };

@@ -21,6 +21,8 @@
 //
 // ============================================================================
 #include <CGAL/GL_win.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Point_3.h>
 extern "C" {
 #include <stdio.h>
 }
@@ -57,6 +59,7 @@ public:
 typedef void (*User_ctr_win)(GL_win *,Viewer_3 *);
 
 private:
+typedef Point_3<Cartesian<double> >   Point3;
   User_ctr_win default_impl;
   int scale;
 #ifdef USE_THREAD
@@ -65,7 +68,8 @@ private:
   int group ;
 
   int clip_plane;
-  Color obj_color;
+  Color obj_color1;
+  Color obj_color2;
   Size  obj_size;
   Style obj_style;
   Precision obj_precision;
@@ -114,6 +118,8 @@ void remove_line(int);
 void insert_in_group(int, Drawable_object*);
 
 void rebuild_graph();
+
+void update_color();
 
   // PUBLIC PART
 public:
@@ -179,8 +185,8 @@ void set_precision(Precision );
 Precision get_precision();
 
   //for the color
-void set_color(Color);
-Color get_color();
+void set_color(Color,int);
+  Color get_color(int); // 1 for the first color, anything for the second.
 
   // the number of groups in the scene graph
 int get_group();
@@ -196,17 +202,17 @@ void main_loop();
 
 void set_style_in_selection(Style);
 
-void set_color_in_selection(Color);
 
 
-Viewer_3() : scale(500), group(1){init_window();obj_color=RED; obj_size=10 ; obj_precision = 20 ; obj_style = FILL;}
+
+Viewer_3() : scale(500), group(1){init_window();obj_color1=RED; obj_color2=BLACK;obj_size=10 ; obj_precision = 20 ; obj_style = FILL;}
 
 
 ~Viewer_3(){}
 
 
 Viewer_3(GLsizei s) :
-  scale(s)  , group(1)  {init_window(); obj_color=RED; obj_size=10 ;
+  scale(s)  , group(1)  {init_window(); obj_color1=RED;obj_color2=BLACK; obj_size=10 ;
   obj_precision = 20 ; obj_style = FILL; default_impl=custom_win ;}
    
 
@@ -300,37 +306,37 @@ static void col_cb(Fl_Widget* w, void* v)
     Fl_Choice* c = (Fl_Choice*) w;
     switch (c->value()) {
     case 0:
-      W->set_color(BLACK);
+      W->set_color(BLACK,1);
       break;
     case 1:
-      W->set_color(WHITE);
+      W->set_color(WHITE,1);
       break;
     case 2:
-      W->set_color(GRAY);
+      W->set_color(GRAY,1);
       break;
     case 3:
-      W->set_color(RED);
+      W->set_color(RED,1);
       break;
     case 4:
-      W->set_color(YELLOW);
+      W->set_color(YELLOW,1);
       break;
     case 5:
-      W->set_color(ORANGE);
+      W->set_color(ORANGE,1);
       break;
     case 6:
-      W->set_color(VIOLET);
+      W->set_color(VIOLET,1);
       break;
     case 7:
-      W->set_color(PURPLE);
+      W->set_color(PURPLE,1);
       break;
     case 8:
-      W->set_color(DEEPBLUE);
+      W->set_color(DEEPBLUE,1);
       break;
     case 9:
-      W->set_color(BLUE);
+      W->set_color(BLUE,1);
       break;
     case 10:
-      W->set_color(GREEN);
+      W->set_color(GREEN,1);
       break;
     }
     W->display();
@@ -342,37 +348,37 @@ static void col2_cb(Fl_Widget* w, void* v)
   Fl_Choice* c =(Fl_Choice*) w;
   switch(c->value()) {
     case 0:
-      W->set_color_in_selection(BLACK);
+      W->set_color(BLACK,2);
       break;
    case 1:
-       W->set_color_in_selection(WHITE);
+       W->set_color(WHITE,2);
       break;
    case 2:
-       W->set_color_in_selection(GRAY);
+       W->set_color(GRAY,2);
       break;
    case 3:
-       W->set_color_in_selection(RED);
+       W->set_color(RED,2);
       break;
    case 4:
-       W->set_color_in_selection(YELLOW);
+       W->set_color(YELLOW,2);
       break;
    case 5:
-       W->set_color_in_selection(ORANGE);
+       W->set_color(ORANGE,2);
       break;
    case 6:
-       W->set_color_in_selection(VIOLET);
+       W->set_color(VIOLET,2);
       break;
    case 7:
-       W->set_color_in_selection(PURPLE);
+       W->set_color(PURPLE,2);
       break;
    case 8:
-       W->set_color_in_selection(DEEPBLUE);
+       W->set_color(DEEPBLUE,2);
       break;
    case 9:
-       W->set_color_in_selection(BLUE);
+       W->set_color(BLUE,2);
       break;
    case 10:
-       W->set_color_in_selection(GREEN);
+       W->set_color(GREEN,2);
       break;
   }
   W->display();
@@ -511,23 +517,33 @@ static void shy_cb(Fl_Widget* w, void* v)
 
 static void style_cb(Fl_Widget* w, void* v)
 {
+  static int old_val = 0;
   Viewer_3* W= (Viewer_3*) v;
   Fl_Menu_Button* b = (Fl_Menu_Button*) w;
   switch (b->value()) {
   case 0: 
     W->set_style_in_selection(FOS1);
+    old_val = 0;
     break;
   case 1: 
     W->set_style_in_selection(FOS2);
+    old_val = 1;
     break;
   case 2: 
     W->set_style_in_selection(FOS3);
+    old_val = 2;
     break;
   case 3: 
     W->set_style_in_selection(FOS4);
+    old_val = 3;
     break;
   case 4: 
     W->set_style_in_selection(FOS5);
+    old_val = 4;
+    break;
+  case 5:
+    W->update_color();
+    b->value(old_val);
     break;
   }
   W->display();
@@ -677,16 +693,16 @@ static void insert_cb(Fl_Widget* w, void* v)
       if (i<=W->scene->size()) {
           std::vector<double> v = W->canvas->get_real_point(((char*)
 					     W->scene->data(i))[0],p);
-          Drawable_point_3<int>* dp=new
-	    Drawable_point_3<int>(v[0],v[1],v[2],W->obj_color,
+          Drawable_point_3<Point3>* dp=new
+	    Drawable_point_3<Point3>(v[0],v[1],v[2],W->obj_color1,
 				   W->obj_style,W->obj_size,W->obj_precision);
 	  W->add_drawable(dp,((char*) W->scene->data(i))[0]);
       }
 	break;
     case 2:
       std::vector<double> v = W->canvas->get_real_point(W->group+1,p);
-      Drawable_point_3<int>* dp=new
-	Drawable_point_3<int>(v[0],v[1],v[2],W->obj_color,
+      Drawable_point_3<Point3>* dp=new
+	Drawable_point_3<Point3>(v[0],v[1],v[2],W->obj_color1,
 				   W->obj_style,W->obj_size,W->obj_precision);
       W->add_drawable(dp,W->group +1);
     }
@@ -935,7 +951,7 @@ void Viewer_3::delete_selection()
 
 void Viewer_3::set_style_in_selection(Style s)
 {
-  char* v = new char(2);
+  char* v;
   for (int i=1 ; i<=scene->size() ; i++) {
     if ((scene->selected(i)) && (((char*) scene->data(i))[1] !=0)) {
       v=(char*) scene->data(i);   
@@ -945,19 +961,19 @@ void Viewer_3::set_style_in_selection(Style s)
   }
 }
 
-void Viewer_3::set_color_in_selection(Color c)
+void Viewer_3::update_color()
 {
-  char* v = new char(2);
+  char* v;
   for (int i=1 ; i<=scene->size() ; i++) {
     if ((scene->selected(i)) && (((char*) scene->data(i))[1] !=0)) {
-      v=(char*) scene->data(i);   
+      v=(char*) scene->data(i);
+      std::cerr << v[0] << " " << v[1] << std::endl;   
       Drawable_object* obj= canvas->get_drawable(v[0],v[1]);
-      obj->set_colors(c,get_color());
+      obj->set_colors(obj_color1,obj_color2);
     }
   }
+
 }
-
-
 
 void Viewer_3::rebuild_graph()
 {
@@ -1075,6 +1091,7 @@ void Viewer_3::init_window()
   style_but->add("Wire hidden lines");
   style_but->add("Facets");
   style_but->add("Tubes");
+  style_but->add("updates colors");
   style_but->callback(style_cb,(void*)this);
   
   mvplan_sld = new Fl_Roller(size - 360, size -35, 100, 25, 0);
@@ -1166,7 +1183,8 @@ void Viewer_3::init_window()
 
   Fl_Button* closep_but = new Fl_Button(150,105,80,30,"close");
   closep_but->callback(close_cb,(void*)this);
-  
+
+
   Fl_Choice* bgcol_but = new Fl_Choice(130,20, 120 ,25,"Background");
   bgcol_but->down_box(FL_DOWN_BOX);
   bgcol_but->callback(bg_cb,(void*)this);
@@ -1361,13 +1379,18 @@ Precision Viewer_3::get_precision()
       return obj_precision;
     }
 
-void Viewer_3::set_color(Color c)
+void Viewer_3::set_color(Color c, int i)
     {
-      obj_color=c;
+      if (i==1)
+	obj_color1=c;
+      else
+	obj_color2=c;
     }
-Color Viewer_3::get_color()
+Color Viewer_3::get_color(int i)
     {
-      return obj_color;
+      if (i==1)
+	return obj_color1;
+      return obj_color1;
     }
 
 int Viewer_3::get_group()
