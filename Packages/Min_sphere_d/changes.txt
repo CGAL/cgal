@@ -115,3 +115,6 @@ Changes from 2.28:
 
 Changes from 2.29/2.30:
    - Use Kernel_d.
+
+Changes from 2.30/2.31:
+   - Remove old workaround flags.
