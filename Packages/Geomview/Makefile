@@ -33,9 +33,8 @@ submit:
 	rm -rf Geomview.tar.gz
 	tar -zcvf Geomview.tar.gz\
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
-	--exclude=TODO \
 	version maintainer description.txt changes.txt \
-	include src test doc_tex doc_ps
+	demo include src test doc_tex doc_ps
 	cp -f Geomview.tar.gz *.txt version $(WWW_dir)
 	cp -f doc_ps/Geomview.ps.gz $(WWW_dir)/doc_ps/
 	echo > $(TMP_file)
