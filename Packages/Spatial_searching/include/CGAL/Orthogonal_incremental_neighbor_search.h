@@ -363,10 +363,6 @@ class Iterator_implementation {
 
 class iterator;
 
-    typedef std::vector<Node_with_distance*> Node_with_distance_vector;
-
-    typedef std::vector<Point_with_distance*> Point_with_distance_vector;
-
     typedef std::vector<FT> Distance_vector;
 
     public:
