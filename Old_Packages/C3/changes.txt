@@ -1,7 +1,7 @@
-Version 4.1 (October ?? 1999)
+Version 4.0.1 (October 28 1999)
 - Filter related typo in kernel_ftC3.h [Sylvain]
 - Changed cmp_signed_dist_to_planeC3() to cmp_signed_dist_to_directionC3()
-  and related has_...().
+  and related has_...(). [Syl]
 - Optimized cmp_signed_dist_to_planeC3(5 points) [Syl].
 - Cartesian/distance_predicates_3.h cleanup [Syl].
 - Changed //CGAL_NO_FILTER_BEGIN&END to per predicate /*CGAL_NO_FILTER*/ [Syl].
