@@ -23,6 +23,8 @@ int main(int, char*)
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Mesh_2.h>
 #include <CGAL/Mesh_default_traits_2.h>
+#include <CGAL/Mesh_face_base_2.h>
+
 #include <CGAL/point_generators_2.h>
 
 #include <CGAL/IO/Qt_widget.h>
@@ -34,7 +36,7 @@ int main(int, char*)
 #include <CGAL/IO/pixmaps/polygon.xpm>
 #include <CGAL/IO/pixmaps/point.xpm>
 #include <CGAL/IO/pixmaps/points.xpm>
-#include <CGAL/IO/pixmaps/line.xpm>
+#include <CGAL/IO/pixmaps/constrained.xpm>
 #include <CGAL/IO/pixmaps/circle.xpm>
 #include <CGAL/IO/pixmaps/triangulation.xpm>
 
@@ -67,7 +69,7 @@ struct K : public Kernel {};
 typedef K::FT                           FT;
 
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
-typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
+typedef CGAL::Mesh_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
 //typedef CGAL::Triangulation_euclidean_traits_2<K> Geomtraits;
 typedef K Geomtraits;
@@ -89,6 +91,27 @@ CGAL::Qt_widget& operator<< (CGAL::Qt_widget& w, const Mesh& mesh)
   w.unlock();
   return w;
 }
+
+namespace {
+
+  class Seeds_wrapper_point : public Point {
+  public:
+    Seeds_wrapper_point(const Point& p): Point(p) {};
+
+    inline Point point() const { return *this; };
+  };
+
+  class Seeds : public std::list<Seeds_wrapper_point> {
+  public:
+    typedef std::list<Seeds_wrapper_point> List;
+    typedef List::const_iterator const_iterator;
+    typedef const_iterator Vertex_iterator;
+
+    inline const_iterator vertices_begin() { return begin(); }
+    inline const_iterator vertices_end() { return end(); }
+  };
+
+};
 
 class MyWindow : public QMainWindow
 {
@@ -112,6 +135,10 @@ public:
 
       // LAYERS
       show_points = new CGAL::Qt_layer_show_points<Mesh>(mesh);
+      show_seeds = new CGAL::Qt_layer_show_points<Seeds>(seeds,
+							 CGAL::BLUE,
+							 5,
+							 CGAL::CROSS);
       show_triangulation = 
 	new CGAL::Qt_layer_show_triangulation<Mesh>(mesh);
       show_constraints = 
@@ -134,6 +161,10 @@ public:
       get_polygon = new CGAL::Qt_widget_get_polygon<Polygon>();
       widget->attach(get_polygon);
       get_polygon->deactivate();
+
+      get_seed = new CGAL::Qt_widget_get_point<K>();
+      widget->attach(get_seed);
+      get_seed->deactivate();
 
       connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
 	      this, SLOT(get_cgal_object(CGAL::Object)));
@@ -193,15 +224,25 @@ public:
 			"Point", "Insert points", 
 			this, SLOT(fake_slot()), 
 			toolbarInputs, "point");
+      QToolButton *pbSeed = 
+	new QToolButton(QPixmap( (const char**)point_xpm ),
+			"Seed", "Insert a seed to define a region to mesh", 
+			this, SLOT(fake_slot()), 
+			toolbarInputs, "seed");
+
       pbPoint->setToggleButton(true);
       pbPolygon->setToggleButton(true);
+      pbSeed->setToggleButton(true);
       bgChooseInputs->insert(pbPoint);
       bgChooseInputs->insert(pbPolygon);
+      bgChooseInputs->insert(pbSeed);
 
       connect(pbPoint, SIGNAL(stateChanged(int)),
 	      get_point, SLOT(stateChanged(int)));
       connect(pbPolygon, SIGNAL(stateChanged(int)),
 	      get_polygon, SLOT(stateChanged(int)));
+      connect(pbSeed, SIGNAL(stateChanged(int)),
+	      get_seed, SLOT(stateChanged(int)));
 
       pbPolygon->setOn(true);
 
@@ -218,6 +259,17 @@ public:
       connect(pbShowPoints, SIGNAL(stateChanged(int)),
 	      show_points, SLOT(stateChanged(int)));
 
+      QToolButton *pbShowSeeds
+	= new QToolButton(QPixmap( (const char**)points_xpm ),
+			  "Show seeds", "Display seeds that define the "
+			  "region to mesh",
+			  this, SLOT(fake_slot()), 
+			  toolbarLayers, "show points");
+      pbShowSeeds->setToggleButton(true);
+      pbShowSeeds->setOn(true);
+      connect(pbShowSeeds, SIGNAL(stateChanged(int)),
+	      show_seeds, SLOT(stateChanged(int)));
+
       QToolButton *pbShowTriangulation 
 	= new QToolButton(QPixmap( (const char**)triangulation_xpm ),
 			  "Show triangulation", "Display mesh edges", 
@@ -230,7 +282,7 @@ public:
 	      show_triangulation, SLOT(stateChanged(int)));
 
       QToolButton *pbShowConstraints 
-	= new QToolButton(QPixmap( (const char**)line_xpm ),
+	= new QToolButton(QPixmap( (const char**)constrained_xpm ),
 			  "Show constraints", "Display mesh constraints edges",
 			  this, SLOT(fake_slot()), 
 			  toolbarLayers,
@@ -258,6 +310,7 @@ public:
       bgLayers->insert(pbShowPoints);
       bgLayers->insert(pbShowTriangulation);
       bgLayers->insert(pbShowConstraints);
+      bgLayers->insert(pbShowSeeds);
       //      bgLayers->insert(pbShowCircles);
       connect(bgLayers, SIGNAL(clicked(int)),
 	      widget, SLOT(redraw()));
@@ -316,7 +369,10 @@ public slots:
       Polygon poly;
       
       if(CGAL::assign(p,obj))
-	mesh.insert(p);
+	if(get_seed->is_active())
+	  seeds.push_back(p);
+	else
+	  mesh.insert(p);
       else
 	if (CGAL::assign(poly,obj))
 	  for(Polygon::Edge_const_iterator it=poly.edges_begin();
@@ -384,6 +440,7 @@ public slots:
     {
       if(!is_mesh_initialized)
 	{
+	  saveTriangulationUrgently("last_input.edg");
 	  mesh.init();
 	  is_mesh_initialized=true;
 	}
@@ -397,6 +454,7 @@ public slots:
 	{
 	  mesh.init();
 	  is_mesh_initialized=true;
+	  saveTriangulationUrgently("last_input.edg");
 	}
       mesh.refine_step();
       widget->redraw();
@@ -466,11 +524,15 @@ private:
   Mesh mesh;
   bool is_mesh_initialized;
 
+  Seeds seeds;
+
   CGAL::Qt_widget* widget;
   CGAL::Qt_widget_get_point<K>* get_point;
+  CGAL::Qt_widget_get_point<K>* get_seed;
   CGAL::Qt_widget_get_polygon<Polygon>* get_polygon;
 
   CGAL::Qt_layer_show_points<Mesh>* show_points;
+  CGAL::Qt_layer_show_points<Seeds>* show_seeds;
   CGAL::Qt_layer_show_triangulation<Mesh>* show_triangulation;
   CGAL::Qt_layer_show_triangulation_constraints<Mesh>* show_constraints;
   CGAL::Qt_layer_show_circles<Mesh>* show_circles;

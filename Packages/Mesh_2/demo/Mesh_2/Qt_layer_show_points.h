@@ -28,26 +28,31 @@ namespace CGAL {
 template <class T>
 class Qt_layer_show_points : public Qt_widget_layer {
 public:
-  typedef typename T::Point           Point;
-  typedef typename T::Segment         Segment;
-  typedef typename T::Vertex          Vertex;
+//   typedef typename T::Point           Point;
+//   typedef typename T::Segment         Segment;
+//   typedef typename T::Vertex          Vertex;
   typedef typename T::Vertex_iterator	Vertex_iterator;
 
-  Qt_layer_show_points(T &t) : tr(t){};
+  Qt_layer_show_points(T &t, Color c=CGAL::GREEN, int pointsize=3, 
+		       PointStyle pointstyle = CGAL::DISC)
+    : tr(t), color(c), size(pointsize), style(pointstyle) {};
 
   void draw()
   {  
     Vertex_iterator it = tr.vertices_begin(), 
 		beyond = tr.vertices_end();
-    *widget << CGAL::GREEN << CGAL::PointSize (3) 
-		<< CGAL::PointStyle (CGAL::DISC);    
-    while(it != beyond) {      
+    *widget << color << CGAL::PointSize (size) 
+		<< CGAL::PointStyle (style);
+    while(it != beyond) {
       *widget << (*it).point();
       ++it;
     }
   };
 private:
   T	&tr;
+  Color color;
+  int size;
+  PointStyle style;
   
 };//end class 
 

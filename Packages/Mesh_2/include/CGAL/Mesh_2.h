@@ -3,6 +3,7 @@
 #include <CGAL/basic.h>
 #include <list>
 #include <map>
+#include <queue>
 #include <iostream>
 #include <fstream>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -58,20 +59,17 @@ public:
   typedef typename Tr::Geom_traits Geom_traits;
   typedef typename Tr::Triangulation_data_structure Tds;
   typedef typename Geom_traits::FT FT;
-  //  typedef FT      Length;
   typedef FT      Squared_length;
 
   typedef typename Tr::Vertex                 Vertex;
   typedef typename Tr::Edge                   Edge;
-  //  typedef typename Tr::Edge_iterator          Edge_iterator;
   typedef typename Tr::Finite_edges_iterator  Finite_edges_iterator;
   typedef typename Tr::Edge_circulator        Edge_circulator;
   typedef typename Tr::Face_handle            Face_handle;
-//   typedef typename Tr::Face_iterator          Face_iterator;
   typedef typename Tr::Finite_faces_iterator  Finite_faces_iterator;
+  typedef typename Tr::All_faces_iterator  All_faces_iterator;
   typedef typename Tr::Face_circulator        Face_circulator;
   typedef typename Tr::Vertex_handle          Vertex_handle;
-  //  typedef typename Tr::Vertex_iterator        Vertex_iterator;
   typedef typename Tr::Vertex_circulator      Vertex_circulator;
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
 
@@ -82,7 +80,6 @@ public:
 
   typedef typename Tr::Point                  Point;
 
-//   typedef typename Tr::Constraint             Constraint;
   typedef typename Tr::List_constraints       List_constraints;
 
 public:
@@ -227,10 +224,15 @@ public:
   void refine();
   void conform();
   void init();
+  void mark_convex_hull();
+
+  // It is an iterator of points
+  template <class It> void init(It begin, It end);
+  template <class It> void mark_facets(It begin, It end);
+
   void process_one_edge();
   void process_one_face();
   void refine_step();
-
   //CHECK
   bool is_encroached(const Vertex_handle va, 
 		     const Vertex_handle vb,
@@ -859,6 +861,8 @@ is_encroached(const Vertex_handle va, const Vertex_handle vb,
 }
 
 // WARNING, TODO: NOT ALL VERTICES, ONLY THE TWO NEIGHBORS
+// TODO: si les graines sont utilisées, il faut tester uniquement avec 
+// les vertex dans les faces marquées.
 template <class Tr>
 bool Mesh_2<Tr>::
 is_encroached(const Vertex_handle va, const Vertex_handle vb) const
@@ -1002,6 +1006,17 @@ init()
   create_clusters();
   fill_edge_queue();
   fill_facette_map();
+  mark_convex_hull();
+}
+
+template <class Tr>
+template <class It>
+inline
+void Mesh_2<Tr>::
+init(It begin, It end)
+{
+  init();
+  mark_facets(begin, end);
 }
 
 template <class Tr>
@@ -1043,6 +1058,56 @@ refine_step()
     if ( !Bad_faces.empty() )
       process_one_face();
 }
+
+template <class Tr>
+void Mesh_2<Tr>::
+mark_convex_hull()
+{
+  for(Finite_faces_iterator fit=finite_faces_begin();
+      fit!=finite_faces_end();
+      ++fit)
+    fit->set_marked(true);
+  infinite_face()->set_marked(false);
+}
+
+template <class Tr>
+template <class It>
+void Mesh_2<Tr>::
+mark_facets(It begin, It end)
+{
+  for(All_faces_iterator it=all_faces_begin();
+      it!=all_faces_end();
+      ++it)
+    it->set_marked(false);
+  
+  for(It it=begin; it!=end; ++it)
+    {
+      std::queue<Face_handle> face_queue;
+      Face_handle fh=locate(*it);
+      CGAL_warning_msg(fh==NULL,"Point lies outside affine hull.");
+      if(fh!=NULL)
+      {
+	face_queue.push(fh);
+	fh->set_marked(true);
+      }
+      while( !face_queue.empty() )
+	{
+	  Face_handle fh = face_queue.front();
+	  face_queue.pop();
+	  for(int i=0;i<3;i++)
+	    {
+	      const Face_handle& nb = fh->neighbor(i);
+	      if( !fh->is_constrained(i) && !nb->is_marked() )
+		{
+		  nb->set_marked(true);
+		  face_queue.push(nb);
+		}
+	    }
+	}
+    }
+  infinite_face()->set_marked(false);
+}
+
 CGAL_END_NAMESPACE
 
 
