@@ -42,6 +42,15 @@ class CGAL_Interval_nt_advanced
   friend double CGAL_to_double(const CGAL_Interval_nt_advanced& d);
 
 public:
+
+  CGAL_Interval_nt_advanced() {}
+
+  CGAL_Interval_nt_advanced(const double d)
+  {
+    inf = -d;
+    sup = d;
+  }
+
   CGAL_Interval_nt_advanced(const double i, const double s)
   {
 #ifndef CGAL_NO_PRECONDITIONS
@@ -49,12 +58,6 @@ public:
 #endif
     inf = -i;
     sup = s;
-  }
-
-  CGAL_Interval_nt_advanced(const double d = 0.0)
-  {
-    inf = -d;
-    sup = d;
   }
 
   CGAL_Interval_nt_advanced& operator=(const CGAL_Interval_nt_advanced& d)
@@ -170,7 +173,7 @@ public:
 
   bool is_valid() const
   {
-    return CGAL_is_valid(inf) && CGAL_is_valid(sup) && (sup > -inf);
+    return CGAL_is_valid(inf) && CGAL_is_valid(sup) && (sup >= -inf);
   }
 
   bool is_finite() const
@@ -249,7 +252,8 @@ class CGAL_Interval_nt : public CGAL_Interval_nt_advanced
 
 public:
 
-  CGAL_Interval_nt(const double d = 0.0)
+  CGAL_Interval_nt() {}
+  CGAL_Interval_nt(const double d)
       : CGAL_Interval_nt_advanced(d) {}
   CGAL_Interval_nt(const double a, const double b)
       : CGAL_Interval_nt_advanced(a,b) {}
