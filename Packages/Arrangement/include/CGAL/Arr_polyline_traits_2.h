@@ -87,10 +87,11 @@ protected:
      */
     template <class Container>
     My_polyline_2 (const Container& points) :
-      Base(points.size() - 1)
+      Base((points.size() >= 2) ? (points.size() - 1) : 0)
     {
-      CGAL_precondition(points.size() >= 2);
-
+      if (points.size() < 2)
+        return;
+      
       typename Container::const_iterator ps = points.begin();
       typename Container::const_iterator pt = ps; pt++;
       int                                i = 0;
