@@ -1,5 +1,13 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.20 on 8 July 1999
+- Changed back __asm__ to asm.
+- Removed tstlink in the test-suite (which was not submitted anyway).
+- Test CGAL_USE_GMP before using Gmpz.h.
+- Documented the caching feature Cache_t of Filtered_Exact<>.
+- Documented Interval_nt_advanced::number_of_failures.
+- Documented .exact(), .interval() and .value().
+
 Version 4.19 on 6 July 1999
 - The script now locally (in the produced file) defines
   "CGAL_DONT_NEED_FILTER", so the user can conditionnaly exclude some code

@@ -81,10 +81,7 @@ Concerning the doc:
   expliquer comment utiliser les filtres. Peut-être une référence à ton
   chapitre sur l'arithmétique d'intervalles..."
 - add a pointer to my MISC'99 paper.
-- Document "IA::number_of_failures", once overlap_action() is made
-  customisable.
-- Documenter le mécanisme de cache.
-- Documenter .exact(), .interval() et .value().
+- document overlap_action(), when it is made customisable.
 - Passer au nouveau format de doc.
 
 Concerning the test-suite:
