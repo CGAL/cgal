@@ -1,5 +1,4 @@
-// Test program for Geomview_stream with kernel objects.  It's mostly a
-// compilation test, I do not verify the output automatically.
+// Demo program for Geomview_stream with kernel objects.
 //
 //  Sylvain Pion, 2000.
 
@@ -18,26 +17,17 @@
 
 #include <CGAL/IO/Geomview_stream.h>
 
-#include <unistd.h> // for sleep()
+#include <unistd.h>
 
-typedef CGAL::Cartesian<double> K;
-
-void test_parse_point()
-{
-  const char *test_point="( 123 456 789 1 )";
-  K::Point_3 p;
-  CGAL::parse_point(test_point, p);
-  CGAL_assertion(p == K::Point_3(123, 456, 789));
-}
+typedef CGAL::Cartesian<int> K;
 
 int main()
 {
-  test_parse_point();
-
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0, 0, 0, 350, 350, 350));
-  gv.set_trace(true);
 
-  gv.clear(); // remove pickplane.
+  // gv.set_trace(true);
+  gv.clear(); // remove the pickplane.
+
   gv << K::Point_2 (200, 100);
   gv << K::Point_3 (200, 100, 100);
   gv << K::Segment_2 (K::Point_2(200, 100),
@@ -59,6 +49,7 @@ int main()
   gv << CGAL::Bbox_3(10, 10, 10, 30, 30, 30);
 
   gv.look_recenter();
+
   sleep(10);
 
   return 0;
