@@ -1,0 +1,3 @@
+This package computes the dual of the Voronoi diagram for a
+set of segments on the plane that form a planar straight line graph.
+
