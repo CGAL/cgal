@@ -230,14 +230,17 @@
 % +--------------------------------------------------------------------------
 % | A handy macro to include files in verbatim mode.
 % +--------------------------------------------------------------------------
-\newcommand{\ccIncludeVerbatim}[1]{\lciParseFile{\lciLocalVerbatim}{#1}}
+\newcommand{\ccIncludeVerbatim}[1]{\lciParseFile{\ccExampleXCodeX}{#1}}
 
 % +--------------------------------------------------------------------------
 % | C++ Program Examples
 % +--------------------------------------------------------------------------
 % Environment to format contents as C++ code
 \newenvironment{ccExampleCode}{%
-    \lciParseUntilEndToken{\lciLocalVerbatim}{ccExampleCode}}{}
+    \lciParseUntilEndToken{\ccExampleXCodeX}{ccExampleCode}}{}
+\newcommand{\ccExampleXCodeX}[1]{%
+    \lcRawHtml{<pre class="ExampleCode">}%
+    \lciAsciiOutputN{#L1}#1\lcRawHtml{</pre>}}
 
 % Format exernal file:  #1  the file name.
 \newcommand{\ccIncludeExampleCode}[1]{\ccIncludeVerbatim{#1}}

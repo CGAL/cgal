@@ -88,5 +88,8 @@ div.NavPrev            { background-color: #c0ffc0; }
 /* ----------------------------------------------------------------------- */
 div.AdvancedBlock      { background-color: #c0d0ff; }
 
-
-
+/* ----------------------------------------------------------------------- */
+/* verbatim and example code environments
+/* ----------------------------------------------------------------------- */
+pre.Verbatim           { }
+pre.ExampleCode        { background-color: #d0d0d0; }

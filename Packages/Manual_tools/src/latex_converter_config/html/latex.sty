@@ -1292,7 +1292,7 @@
 \newcommand{\item@o}{\lcRawHtml{<DT><B>}#1\lcRawHtml{</B><DD>}}
 
 \newcommand{\lciLocalVerbatim}[1]{%
-    \lcRawHtml{<PRE>}\lciAsciiOutputN{#L1}#1\lcRawHtml{</PRE>}}
+  \lcRawHtml{<pre class="Verbatim">}\lciAsciiOutputN{#L1}#1\lcRawHtml{</pre>}}
 \newenvironment{verbatim}{%
     \lciParseUntilEndToken{\lciLocalVerbatim}{verbatim}}{}
 \newenvironment{verbatim*}{%
