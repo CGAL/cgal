@@ -90,7 +90,7 @@ on the extended geometric objects.
 \ccNestedType{Direction_2}{extended directions. 
 }
 
-\ccEnum{enum point_type { SWCORNER,  LEFTFRAME,  NWCORNER,  LOWERFRAME,  STANDARD,  UPPERFRAME,  SECORNER,  RIGHTFRAME,  NECORNER }}{a type descriptor for extended points. 
+\ccEnum{enum Point_type { SWCORNER,  LEFTFRAME,  NWCORNER,  BOTTOMFRAME,  STANDARD,  TOPFRAME,  SECORNER,  RIGHTFRAME,  NECORNER }}{a type descriptor for extended points. 
 }
 
 \ccSetOneOfTwoColumns{2cm}
@@ -121,7 +121,7 @@ class of all the rays underlying the ray starting in \ccc{p} in direction \ccc{d
 class of all the rays underlying the oriented line opposite to \ccc{l}.  
 }
 
-\ccMethod{point_type type(const Point_2& p) ;}{determines the type of \ccc{p} and returns it. 
+\ccMethod{Point_type type(const Point_2& p) ;}{determines the type of \ccc{p} and returns it. 
 }
 
 \ccMethod{bool is_standard(const Point_2& p) ;}{returns \ccc{true} iff \ccc{p} is a standard point. 
@@ -188,7 +188,7 @@ through \ccc{p1p2}.
 }
 
 \ccMethod{Point_2 intersection(   const Segment_2& s1, const Segment_2& s2) ;}{returns the point of intersection of the lines supported by 
-\ccc{s1} and \ccc{s2}. The algorithm asserts that this intersection point exists. 
+\ccc{s1} and \ccc{s2}. \ccPrecond the intersection point exists. 
 }
 
 \ccMethod{Direction_2 construct_direction(   const Point_2& p1, const Point_2& p2) ;}{returns the direction of the vector \ccc{p2} - \ccc{p1}. 
@@ -210,7 +210,8 @@ Point_2& p2, const Point_2& p3, const Point_2& p4) ;}{returns true iff
 $\|p1-p2\| < \|p3-p4\|$.  }
 
 \ccMethod{const char* output_identifier() ;}{returns a unique
-identifier for kernel object IO.  }
+identifier for kernel object Input/Output. Usually this should be the
+name of the model.}
 
 \ccHasModels        
 

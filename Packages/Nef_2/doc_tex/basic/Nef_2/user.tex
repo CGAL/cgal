@@ -35,12 +35,13 @@ point set).
 \begin{ccTexOnly}
 \begin{center}
 \scalebox{0.5}{\includegraphics{Nef_2_ref/halfplane.ps}}
+\hspace{1cm}
 \scalebox{0.5}{\includegraphics{Nef_2_ref/complex.ps}}
 \end{center}
 \end{ccTexOnly}
 \caption{Two nef polyhedra in the plane. A halfspace on the left and a
 complex polyhedron on the right. Note that the points on the squared
-boundary are at infinity.}\label{nefexamples}      
+boundary are at infinity.}\label{nefexamples}    
 \begin{ccHtmlOnly}
 <CENTER>
 <IMG BORDER=0 SRC="./halfplane.gif" ALIGN=center
@@ -171,19 +172,15 @@ equation)
 \begin{ccExampleCode}
 CGAL::Nef_polyhedron_2< CGAL::Extended_cartesian<FT> >::Point 
   == CGAL::Cartesian<FT>::Point_2
-CGAL::Nef_polyhedron_2< CGAL::Extended_cartesian<FT> >::Line
-  == CGAL::Cartesian<FT>::Line_2
 
 CGAL::Nef_polyhedron_2< CGAL::Extended_homogeneous<RT> >::Point
    == CGAL::Homogeneous<RT>::Point_2
-CGAL::Nef_polyhedron_2< CGAL::Extended_homogeneous<RT> >::Line
-   == CGAL::Homogeneous<RT>::Line_2
 
 CGAL::Nef_polyhedron_2< CGAL::Filtered_extended_homogeneous<RT> >::Point
    == CGAL::Homogeneous<RT>::Point_2
-CGAL::Nef_polyhedron_2< CGAL::Filtered_extended_homogeneous<RT> >::Line
-   == CGAL::Homogeneous<RT>::Line_2
 \end{ccExampleCode}
+Similar equations hold for the types \ccc{Line} and \ccc{Direction} in
+the local scope of \ccc{Nef_polyhedron_2<...>}.
 
 \begin{ccAdvanced}
 For its notions and requirements see \ccc{ExtendedKernelTraits_2}.

@@ -39,10 +39,11 @@ typedef  Nef_polyhedron::Point     Point;
 typedef  Nef_polyhedron::Line      Line;
 typedef  Nef_polyhedron::Direction Direction;
 typedef  Nef_polyhedron::Object_handle Object_handle;
-typedef  Nef_polyhedron::Const_decorator Const_decorator;
-typedef  Const_decorator::Vertex_const_handle Vertex_const_handle;
-typedef  Const_decorator::Halfedge_const_handle Halfedge_const_handle;
-typedef  Const_decorator::Face_const_handle Face_const_handle;
+typedef  Nef_polyhedron::Explorer Explorer;
+typedef  Nef_polyhedron::Topological_explorer TExplorer;
+typedef  Explorer::Vertex_const_handle Vertex_const_handle;
+typedef  Explorer::Halfedge_const_handle Halfedge_const_handle;
+typedef  Explorer::Face_const_handle Face_const_handle;
 
 #include <LEDA/panel.h>
 #include <LEDA/list.h>
@@ -267,9 +268,9 @@ void unop(int i)
 }
 
 void draw(Object_handle h)
-{ CGAL::PM_visualizor<Const_decorator,EKernel> 
+{ CGAL::PM_visualizor<TExplorer,EKernel> 
     PMV(*pW,pN->explorer(),pN->EPD,
-        CGAL::PM_DefColor<Const_decorator>(CGAL::RED,CGAL::RED,6,6) );
+        CGAL::PM_DefColor<TExplorer>(CGAL::RED,CGAL::RED,6,6) );
   leda_drawing_mode prev = pW->set_mode(leda_xor_mode);
   Vertex_const_handle vh; Halfedge_const_handle eh; Face_const_handle fh; 
   if ( assign(vh,h) ) PMV.draw(vh); 
@@ -299,7 +300,7 @@ int main(int argc, char* argv[])
 
   W.init(-CGAL::frame_default,CGAL::frame_default,-CGAL::frame_default);
   W.set_show_coordinates(true);
-  W.set_grid_mode(1);
+  W.set_grid_mode(5);
   W.set_node_width(3);
   W.set_redraw(&win_redraw_handler);
   W.display(0,0);

@@ -1,14 +1,12 @@
 % begin cgal manual page
 
-\begin{ccRefClass}{Const_decorator}\ccCreationVariable{D}
-
-\ccSection{Topological plane map exploration}
+\begin{ccRefClass}{Topological_explorer}\ccCreationVariable{D}
 
 \ccDefinition
 
-An instance \ccc{D} of the data type \ccc{Const_decorator} is a 
-decorator for interfacing the topological structure of a plane map \ccc{P} 
-(read-only).
+An instance \ccc{D} of the data type \ccc{Topological_explorer} is a
+decorator for interfacing the topological structure of a plane map
+\ccc{P} (read-only).
 
 A plane map \ccc{P} consists of a triple $(V, E, F)$ of vertices,
 edges, and faces. We collectively call them objects. An edge \ccc{e}
@@ -48,16 +46,10 @@ There can also be trivial face cycles in form of isolated vertices in
 the interior of a face. Each such vertex \ccc{v} knows its surrounding
 face \ccc{f = face(v)}. 
 
-We call the embedded map \ccc{(V,E)} also the $1$-skeleton of \ccc{P}.
-
 Plane maps are attributed, for each object $u \in V \cup E \cup F$ we
 attribute an information \ccc{mark(u)} of type \ccc{Mark}. \ccc{Mark}
 fits the concepts assignable, default-constructible, and
 equal-comparable.
-
-
-
-\ccSetOneOfTwoColumns{6cm}
 
 \ccTypes
 
@@ -66,8 +58,7 @@ equal-comparable.
 \ccNestedType{Point}{The point type of vertices.}
 
 \ccNestedType{Mark}{
-All objects (vertices, edges, faces) are attributed by a \ccc{Mark} object. 
-}
+All objects (vertices, edges, faces) are attributed by a \ccc{Mark} object.}
 
 \ccNestedType{Size_type}{The size type.}
 
@@ -95,13 +86,6 @@ convertible to \ccc{Halfedge_const_handle}.
 iterating all isolated vertices of a face \ccc{f}. 
 The type generalizes \ccc{Vertex_const_handle}. 
 }
-
-\ccSetOneOfTwoColumns{3cm}
-
-\ccCreation
-
-\ccConstructor{Const_decorator(const Plane_map& P)}{
-constructs a plane map decorator exploring \ccc{P}. }
 
 \ccSetTwoOfThreeColumns{4cm}{4cm}
 
@@ -186,10 +170,7 @@ returns the past-the-end iterator of \ccc{f}. }
   returns the past the end iterator of \ccc{f}.}
 
 \ccHeading{Associated Information}
-The type \ccc{Mark} is the general attribute of an object. The type
-\ccc{GenPtr} is equal to type \ccc{void*}. 
-
-
+The type \ccc{Mark} is the general attribute of an object. 
 
 \ccMethod{const Point& point(Vertex_const_handle v) ;}{
   returns the embedding of \ccc{v}. }
@@ -202,15 +183,6 @@ The type \ccc{Mark} is the general attribute of an object. The type
 
 \ccMethod{const Mark& mark(Face_const_handle f) ;}{
   returns the mark of \ccc{f}. }
-
-\ccMethod{const GenPtr& info(Vertex_const_handle v) ;}{
-  returns a generic information slot. }
-
-\ccMethod{const GenPtr& info(Halfedge_const_handle e) ;}{
-  returns a generic information slot. }
-
-\ccMethod{const GenPtr& info(Face_const_handle f) ;}{
-  returns a generic information slot. }
 
 \ccHeading{Statistics and Integrity} 
 

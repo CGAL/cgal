@@ -148,8 +148,11 @@ where each function returns \ccc{true} iff the assignment to
 \ccc{h} was done. 
 }
 
-\ccEnum{enum Location_mode { DEFAULT,  NAIVE,  LMWT }}{
-selection flag for the point location mode. }
+\ccEnum{enum Location_mode { DEFAULT, NAIVE, LMWT}}{ selection
+flag\footnote {LMWT = Locally Minimum Weight Triangulation, a locally
+optimized constrained triangulation where the weight corresponds to
+the lenght of the edges of the triangulation.} for the point location
+mode.}
 
 \ccSetTwoOfThreeColumns{3cm}{1cm}
 
@@ -272,19 +275,15 @@ map to corresponding types of the standard CGAL geometry kernel
 \begin{ccExampleCode}
 CGAL::Nef_polyhedron_2< CGAL::Extended_cartesian<FT> >::Point
   == CGAL::Cartesian<FT>::Point_2
-CGAL::Nef_polyhedron_2< CGAL::Extended_cartesian<FT> >::Line
-  == CGAL::Cartesian<FT>::Line_2
 
 CGAL::Nef_polyhedron_2< CGAL::Extended_homogeneous<RT> >::Point
    == CGAL::Homogeneous<RT>::Point_2
-CGAL::Nef_polyhedron_2< CGAL::Extended_homogeneous<RT> >::Line
-   == CGAL::Homogeneous<RT>::Line_2
 
 CGAL::Nef_polyhedron_2< CGAL::Filtered_extended_homogeneous<RT> >::Point
    == CGAL::Homogeneous<RT>::Point_2
-CGAL::Nef_polyhedron_2< CGAL::Filtered_extended_homogeneous<RT> >::Line
-   == CGAL::Homogeneous<RT>::Line_2
 \end{ccExampleCode}
+The same holds for the types \ccc{Line_2} and \ccc{Direction_2} in the
+local scope of \ccc{Nef_polyhedron_2<...>}.
 
 \end{ccRefClass}
 

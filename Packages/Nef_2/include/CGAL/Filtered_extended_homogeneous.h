@@ -975,8 +975,8 @@ CheckDirection convert(const Direction_2& d) const
 
 
 
-enum point_type { SWCORNER=1, LEFTFRAME, NWCORNER, 
-                  LOWERFRAME, STANDARD, UPPERFRAME,
+enum Point_type { SWCORNER=1, LEFTFRAME, NWCORNER, 
+                  BOTTOMFRAME, STANDARD, TOPFRAME,
                   SECORNER, RIGHTFRAME, NECORNER };
 
 Standard_RT dx(const Standard_line_2& l) const { return l.b(); }
@@ -984,7 +984,7 @@ Standard_RT dy(const Standard_line_2& l) const { return -l.a(); }
 Standard_FT abscissa_distance(const Standard_line_2& l) const 
 { return Standard_kernel::make_FT(-l.c(),l.b()); }
 
-point_type determine_type(const Standard_line_2& l) const
+Point_type determine_type(const Standard_line_2& l) const
 {
   // TRACEN("determine_type "<<l);
   Standard_RT adx = CGAL_NTS abs(dx(l)), ady = CGAL_NTS abs(dy(l));
@@ -1001,13 +1001,13 @@ point_type determine_type(const Standard_line_2& l) const
     else        return RIGHTFRAME;
   } else if (sdy < 0 && ( cmp_dx_dy < 0 || cmp_dx_dy == 0 && 
              abscissa_distance(l) < Standard_FT(0))) {
-    return LOWERFRAME;
+    return BOTTOMFRAME;
   } else if (sdy > 0 && ( cmp_dx_dy < 0 || cmp_dx_dy == 0 && 
              abscissa_distance(l) > Standard_FT(0))) {
-    return UPPERFRAME;
+    return TOPFRAME;
   }
   CGAL_assertion_msg(false," determine_type: degenerate line.");
-  return (point_type)-1; // never come here
+  return (Point_type)-1; // never come here
 }
 
 Point_2 epoint(const Standard_RT& m1, const Standard_RT& n1, 
@@ -1020,7 +1020,7 @@ public:
 Point_2 construct_point(const Standard_point_2& p) const
 { return Point_2(p.hx(), p.hy(), p.hw()); }
 
-Point_2 construct_point(const Standard_line_2& l, point_type& t) const
+Point_2 construct_point(const Standard_line_2& l, Point_type& t) const
 {
   t = determine_type(l);
   // TRACEN("construct_point(line)"<<l<<" "<<t);
@@ -1034,9 +1034,9 @@ Point_2 construct_point(const Standard_line_2& l, point_type& t) const
                      break; 
     case RIGHTFRAME: res = epoint( l.b(), 0, -l.a(), -l.c(), l.b()); 
                      break; 
-    case LOWERFRAME: res = epoint( l.b(), -l.c(), -l.a(), 0, l.a()); 
+    case BOTTOMFRAME: res = epoint( l.b(), -l.c(), -l.a(), 0, l.a()); 
                      break; 
-    case UPPERFRAME: res = epoint(-l.b(), -l.c(),  l.a(), 0, l.a()); 
+    case TOPFRAME: res = epoint(-l.b(), -l.c(),  l.a(), 0, l.a()); 
                      break; 
     default: CGAL_assertion_msg(0,"EPoint type not correct!");
   }
@@ -1045,10 +1045,10 @@ Point_2 construct_point(const Standard_line_2& l, point_type& t) const
 
 Point_2 construct_point(const Standard_point_2& p1, 
                         const Standard_point_2& p2, 
-                        point_type& t) const
+                        Point_type& t) const
 { return construct_point(Standard_line_2(p1,p2),t); }
 Point_2 construct_point(const Standard_line_2& l) const
-{ point_type dummy; return construct_point(l,dummy); }
+{ Point_type dummy; return construct_point(l,dummy); }
 Point_2 construct_point(const Standard_point_2& p1, 
                         const Standard_point_2& p2) const
 { return construct_point(Standard_line_2(p1,p2)); }
@@ -1056,9 +1056,9 @@ Point_2 construct_point(const Standard_point_2& p,
                         const Standard_direction_2& d) const
 { return construct_point(Standard_line_2(p,d)); }
 Point_2 construct_opposite_point(const Standard_line_2& l) const
-{ point_type dummy; return construct_point(l.opposite(),dummy); }
+{ Point_type dummy; return construct_point(l.opposite(),dummy); }
 
-point_type type(const Point_2& p) const
+Point_type type(const Point_2& p) const
 {
   if (p.is_standard()) return STANDARD;
   // now we are on the square frame
@@ -1073,8 +1073,8 @@ point_type type(const Point_2& p) const
     else        return LEFTFRAME;
   }
   if (rx<ry) {
-    if (sy > 0) return UPPERFRAME;
-    else        return LOWERFRAME;
+    if (sy > 0) return TOPFRAME;
+    else        return BOTTOMFRAME;
   }
   // now (rx == ry) 
   if (sx==sy) {

@@ -25,7 +25,6 @@
 //
 // implementation: Extended cartesian kernel
 // ============================================================================
- 
 #ifndef CGAL_EXTENDED_CARTESIAN_H
 #define CGAL_EXTENDED_CARTESIAN_H
 
@@ -109,8 +108,8 @@ typedef typename Base::Line_2       Line_2;
 typedef typename Base::Direction_2  Direction_2;
 /*{\Xtypemember extended directions.}*/
 
-enum point_type { SWCORNER=1, LEFTFRAME, NWCORNER, 
-                  LOWERFRAME, STANDARD, UPPERFRAME,
+enum Point_type { SWCORNER=1, LEFTFRAME, NWCORNER, 
+                  BOTTOMFRAME, STANDARD, TOPFRAME,
                   SECORNER, RIGHTFRAME, NECORNER };
 /*{\Xenum a type descriptor for extended points.}*/
 
@@ -127,12 +126,12 @@ Point_2 construct_point(const Standard_point_2& p) const
 standard point |p|.}*/
 { return Point_2(p.x(), p.y()); }
 
-Point_2 construct_point(const Standard_line_2& l, point_type& t) const
+Point_2 construct_point(const Standard_line_2& l, Point_type& t) const
 /*{\Xop creates an extended point initialized to the equivalence
 class of all the rays underlying the oriented line |l|. 
 |t| returns the type of the new extended point.}*/
 { 
-  t = (point_type)Line_to_epoint<Standard_kernel>::determine_type(l);
+  t = (Point_type)Line_to_epoint<Standard_kernel>::determine_type(l);
   Point_2 res;
   switch (t) {
     case SWCORNER:   res = epoint(-1, 0, -1, 0); break;
@@ -143,9 +142,9 @@ class of all the rays underlying the oriented line |l|.
       res = epoint(-1, 0,  l.a()/l.b(), -l.c()/l.b()); break; 
     case RIGHTFRAME: 
       res = epoint( 1, 0, -l.a()/l.b(), -l.c()/l.b()); break; 
-    case LOWERFRAME: 
+    case BOTTOMFRAME: 
       res = epoint( l.b()/l.a(), -l.c()/l.a(), -1, 0); break; 
-    case UPPERFRAME: 
+    case TOPFRAME: 
       res = epoint(-l.b()/l.a(), -l.c()/l.a(),  1, 0); break; 
     default: CGAL_assertion_msg(0,"EPoint type not correct!");
   }
@@ -154,7 +153,7 @@ class of all the rays underlying the oriented line |l|.
 
 Point_2 construct_point(const Standard_point_2& p1, 
                         const Standard_point_2& p2, 
-                        point_type& t) const
+                        Point_type& t) const
 /*{\Xop creates an extended point and initializes it to the equivalence
 class of all the rays underlying the oriented line |l(p1,p2)|. 
 |t| returns the type of the new extended point.}*/
@@ -163,7 +162,7 @@ class of all the rays underlying the oriented line |l(p1,p2)|.
 Point_2 construct_point(const Standard_line_2& l) const
 /*{\Xop creates an extended point and initializes it to the equivalence
 class of all the rays underlying the oriented line |l|. }*/
-{ point_type dummy; return construct_point(l,dummy); }
+{ Point_type dummy; return construct_point(l,dummy); }
 
 Point_2 construct_point(const Standard_point_2& p1, 
                         const Standard_point_2& p2) const
@@ -180,9 +179,9 @@ class of all the rays underlying the ray starting in |p| in direction |d|.}*/
 Point_2 construct_opposite_point(const Standard_line_2& l) const
 /*{\Xop creates an extended point and initializes it to the equivalence
 class of all the rays underlying the oriented line opposite to |l|. }*/
-{ point_type dummy; return construct_point(l.opposite(),dummy); }
+{ Point_type dummy; return construct_point(l.opposite(),dummy); }
 
-point_type type(const Point_2& p) const
+Point_type type(const Point_2& p) const
 /*{\Xop determines the type of |p| and returns it.}*/
 {
   CGAL_assertion(p.x().degree()>=0 && p.y().degree()>=0 );
@@ -200,8 +199,8 @@ point_type type(const Point_2& p) const
     else        return LEFTFRAME;
   }
   if (rx<ry) {
-    if (sy > 0) return UPPERFRAME;
-    else        return LOWERFRAME;
+    if (sy > 0) return TOPFRAME;
+    else        return BOTTOMFRAME;
   }
   // now (rx == ry) 
   if (sx==sy) {

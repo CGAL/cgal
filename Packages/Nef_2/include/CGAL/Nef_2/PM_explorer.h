@@ -41,12 +41,6 @@ PM_explorer#Explorer
 }*/
 /*{\Manpage {PM_explorer}{}{Plane map exploration}{E}}*/
 
-/*{\Xdefinition An instance |\Mvar| of the data type |\Mname| is a
-decorator to explore the structure of a plane map. It is generic with
-respect to two template concepts.  |PMCDEC| has to be a decorator
-model of our |PM_const_decorator| concept. |GEOM| has to be a model of
-our extended geometry kernel concept.}*/
-
 /*{\Mdefinition An instance |\Mvar| of the data type |\Mname| is a
 decorator to explore the structure of the plane map underlying the
 Nef polyhedron. It inherits all topological adjacency exploration
@@ -75,7 +69,7 @@ however they are topologically closed by the frame edges. No standard
 point can be placed outside the frame.}{10cm}
 }*/
 
-/*{\Mgeneralization Const_decorator}*/
+/*{\Mgeneralization Topological_explorer}*/
 
 template <typename PMCDEC, typename GEOM>
 class PM_explorer : public PMCDEC
@@ -84,17 +78,15 @@ class PM_explorer : public PMCDEC
   const GEOM* pK;
 public:
 /*{\Mtypes 4}*/
-typedef PMCDEC Const_decorator;
-/*{\Xtypemember equals |PMCDEC|. Add link to PMCDEC model.}*/
+typedef PMCDEC Topological_explorer;
+/*{\Mtypemember The base class.}*/
 typedef typename PMCDEC::Plane_map Plane_map;
 /*{\Xtypemember equals |PMCDEC::Plane_map|, the underlying plane map type.}*/
 typedef GEOM Geometry;
 /*{\Xtypemember equals |GEOM|. Add link to GEOM model.\\
 \precond |Geometry::Point_2| equals |Plane_map::Point|. }*/
-
 typedef typename GEOM::Standard_point_2 Point;
 /*{\Mtypemember the point type of finite vertices.}*/
-
 typedef typename GEOM::Standard_ray_2   Ray;
 /*{\Mtypemember the ray type of vertices on the frame.}*/
 
@@ -115,7 +107,7 @@ typedef typename Base::Hole_const_iterator
 
 
 /*{\Mtext Iterators, handles, and circulators are inherited from 
-|Const_decorator|.}*/
+|Topological_explorer|.}*/
 
 /*{\Mcreation 3}*/
 /*{\Mtext |\Mname| is copy constructable and assignable. An object

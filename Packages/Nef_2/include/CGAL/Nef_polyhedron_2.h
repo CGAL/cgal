@@ -160,13 +160,11 @@ protected:
   typedef Nef_polyhedron_2_rep<T>           Nef_rep;
   typedef typename Nef_rep::Plane_map       Plane_map;
   typedef typename Nef_rep::Decorator       Decorator;
+  typedef typename Nef_rep::Const_decorator Const_decorator;
   typedef typename Nef_rep::Overlayer       Overlayer;
   //typedef typename Nef_rep::T               Transformer;
   typedef typename Nef_rep::Slocator        Slocator;
   typedef typename Nef_rep::Locator         Locator;
-  public:
-  typedef typename Nef_rep::Const_decorator Const_decorator;
-  protected:
 
   Plane_map& pm() { return ptr->pm_; } 
   const Plane_map& pm() const { return ptr->pm_; } 
@@ -589,6 +587,7 @@ public:
   access to this structure.}*/
 
   /*{\Mtypes 3}*/
+  typedef Const_decorator Topological_explorer;
   typedef CGAL::PM_explorer<Const_decorator,T> Explorer;
   /*{\Mtypemember a decorator to examine the underlying plane map. 
   See the manual page of |Explorer|.}*/
@@ -818,7 +817,7 @@ std::istream& operator>>
     std::cerr << "Nef_polyhedron_2 input corrupted." << std::endl;
     NP = Nef_polyhedron_2<T>();
   }
-  typename Nef_polyhedron_2<T>::Const_decorator D(NP.explorer());
+  typename Nef_polyhedron_2<T>::Topological_explorer D(NP.explorer());
   D.check_integrity_and_topological_planarity();
   return is;
 }

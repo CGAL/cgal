@@ -44,13 +44,13 @@ const Nef_polyhedron_2<T>& P)
   typedef Nef_polyhedron_2<T> Polyhedron;
   typedef typename T::RT RT;
   typedef typename T::Standard_RT Standard_RT;
-  typedef typename Polyhedron::Const_decorator  Const_decorator;
+  typedef typename Polyhedron::Topological_explorer TExplorer;
   typedef typename Polyhedron::Point            Point;
   typedef typename Polyhedron::Line             Line;
-  typedef CGAL::PM_BooleColor<Const_decorator> BooleColor;
-  typedef CGAL::PM_visualizor<Const_decorator,T,BooleColor> Visualizor;
+  typedef CGAL::PM_BooleColor<TExplorer> BooleColor;
+  typedef CGAL::PM_visualizor<TExplorer,T,BooleColor> Visualizor;
 
-  Const_decorator D = P.explorer();
+  TExplorer D = P.explorer();
   const T& E = Nef_polyhedron_2<T>::EPD;
 
   Standard_RT frame_radius = frame_default;

@@ -63,7 +63,7 @@ int main()
   EDec D;
   CGAL::set_pretty_mode ( std::cerr );
   Point ps1(0,0), ps2(1,1), ps3(1,0), ps4(0,1), ps5(1,1,2);
-  EDec::point_type t1,t2,t3;
+  EDec::Point_type t1,t2,t3;
   EP eps1 = D.construct_point(ps1);
   EP eps2 = D.construct_point(ps2); 
   EP eps3 = D.construct_point(ps3);
@@ -81,8 +81,8 @@ int main()
   CGAL_TEST(D.type(D.NW())==EDec::NWCORNER);
   CGAL_TEST(D.type(D.SE())==EDec::SECORNER);
   CGAL_TEST(D.type(D.NE())==EDec::NECORNER);
-  CGAL_TEST(D.type(epn1)==EDec::LOWERFRAME);
-  CGAL_TEST(D.type(epn2)==EDec::UPPERFRAME);
+  CGAL_TEST(D.type(epn1)==EDec::BOTTOMFRAME);
+  CGAL_TEST(D.type(epn2)==EDec::TOPFRAME);
   CGAL_TEST(D.type(epn3)==EDec::RIGHTFRAME);
   CGAL_TEST(D.type(eps1)==EDec::STANDARD);
 
@@ -172,7 +172,7 @@ int main()
   EDec D;
   CGAL::set_pretty_mode ( std::cerr );
   Point ps1(0,0), ps2(1,1), ps3(1,0), ps4(0,1), ps5(1,1,2);
-  EDec::point_type t1,t2,t3;
+  EDec::Point_type t1,t2,t3;
   EP eps1 = D.construct_point(ps1);
   EP eps2 = D.construct_point(ps2); 
   EP eps3 = D.construct_point(ps3);
@@ -190,8 +190,8 @@ int main()
   CGAL_TEST(D.type(D.NW())==EDec::NWCORNER);
   CGAL_TEST(D.type(D.SE())==EDec::SECORNER);
   CGAL_TEST(D.type(D.NE())==EDec::NECORNER);
-  CGAL_TEST(D.type(epn1)==EDec::LOWERFRAME);
-  CGAL_TEST(D.type(epn2)==EDec::UPPERFRAME);
+  CGAL_TEST(D.type(epn1)==EDec::BOTTOMFRAME);
+  CGAL_TEST(D.type(epn2)==EDec::TOPFRAME);
   CGAL_TEST(D.type(epn3)==EDec::RIGHTFRAME);
   CGAL_TEST(D.type(eps1)==EDec::STANDARD);
 
@@ -278,7 +278,7 @@ int main()
   EDec D;
   CGAL::set_pretty_mode ( std::cerr );
   Point ps1(0,0), ps2(1,1), ps3(1,0), ps4(0,1), ps5(1,1,2);
-  EDec::point_type t1,t2,t3;
+  EDec::Point_type t1,t2,t3;
   EP eps1 = D.construct_point(ps1);
   EP eps2 = D.construct_point(ps2); 
   EP eps3 = D.construct_point(ps3);
@@ -296,8 +296,8 @@ int main()
   CGAL_TEST(D.type(D.NW())==EDec::NWCORNER);
   CGAL_TEST(D.type(D.SE())==EDec::SECORNER);
   CGAL_TEST(D.type(D.NE())==EDec::NECORNER);
-  CGAL_TEST(D.type(epn1)==EDec::LOWERFRAME);
-  CGAL_TEST(D.type(epn2)==EDec::UPPERFRAME);
+  CGAL_TEST(D.type(epn1)==EDec::BOTTOMFRAME);
+  CGAL_TEST(D.type(epn2)==EDec::TOPFRAME);
   CGAL_TEST(D.type(epn3)==EDec::RIGHTFRAME);
   CGAL_TEST(D.type(eps1)==EDec::STANDARD);
 

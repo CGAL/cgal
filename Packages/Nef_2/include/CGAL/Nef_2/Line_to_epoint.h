@@ -37,8 +37,8 @@ struct Line_to_epoint {
   typedef typename Kernel::RT RT;
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Line_2 Line_2;
-  enum point_type { SWCORNER=1, LEFTFRAME, NWCORNER, 
-                    LOWERFRAME, STANDARD, UPPERFRAME,
+  enum Point_type { SWCORNER=1, LEFTFRAME, NWCORNER, 
+                    BOTTOMFRAME, STANDARD, TOPFRAME,
                     SECORNER, RIGHTFRAME, NECORNER };
 
 
@@ -48,7 +48,7 @@ struct Line_to_epoint {
   static FT ordinate_distance(const Line_2& l)
   { return Kernel::make_FT(-l.c(),l.b()); }
 
-  static point_type determine_type(const Line_2& l)
+  static Point_type determine_type(const Line_2& l)
   {
     RT adx = CGAL_NTS abs(dx(l)), ady = CGAL_NTS abs(dy(l));
     int sdx = CGAL_NTS sign(dx(l)), sdy = CGAL_NTS sign(dy(l));
@@ -63,13 +63,13 @@ struct Line_to_epoint {
       else        return RIGHTFRAME;
     } else if (sdy < 0 && ( cmp_dx_dy < 0 || cmp_dx_dy == 0 && 
                ordinate_distance(l) < FT(0))) {
-      return LOWERFRAME;
+      return BOTTOMFRAME;
     } else if (sdy > 0 && ( cmp_dx_dy < 0 || cmp_dx_dy == 0 && 
                ordinate_distance(l) > FT(0))) {
-      return UPPERFRAME;
+      return TOPFRAME;
     }
     CGAL_assertion_msg(false," determine_type: degenerate line.");
-    return (point_type)-1; // never come here
+    return (Point_type)-1; // never come here
   }
 
 

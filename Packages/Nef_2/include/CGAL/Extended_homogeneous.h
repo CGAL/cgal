@@ -144,8 +144,8 @@ on the extended geometric objects.}*/
   typedef typename Base::Line_2       Line_2;
   // used only internally
 
-  enum point_type { SWCORNER=1, LEFTFRAME, NWCORNER, 
-                    LOWERFRAME, STANDARD, UPPERFRAME,
+  enum Point_type { SWCORNER=1, LEFTFRAME, NWCORNER, 
+                    BOTTOMFRAME, STANDARD, TOPFRAME,
                     SECORNER, RIGHTFRAME, NECORNER };
   /*{\Menum a type descriptor for extended points.}*/
 
@@ -156,9 +156,9 @@ on the extended geometric objects.}*/
                                 const Standard_RT& n3) const
   { return Point_2(RT(n1,m1),RT(n2,m2),RT(n3)); }
 
-  Point_2 construct_point(const Standard_line_2& l, point_type& t) const
+  Point_2 construct_point(const Standard_line_2& l, Point_type& t) const
   { 
-    t = (point_type)Line_to_epoint<Standard_kernel>::determine_type(l);
+    t = (Point_type)Line_to_epoint<Standard_kernel>::determine_type(l);
     Point_2 res;
     switch (t) {
       case SWCORNER:   res = epoint(-1, 0, -1, 0, 1); break;
@@ -169,9 +169,9 @@ on the extended geometric objects.}*/
         res = epoint(-l.b(), 0,  l.a(), -l.c(), l.b()); break; 
       case RIGHTFRAME: 
         res = epoint( l.b(), 0, -l.a(), -l.c(), l.b()); break; 
-      case LOWERFRAME: 
+      case BOTTOMFRAME: 
         res = epoint( l.b(), -l.c(), -l.a(), 0, l.a()); break; 
-      case UPPERFRAME:
+      case TOPFRAME:
         res = epoint(-l.b(), -l.c(),  l.a(), 0, l.a()); break; 
       default: CGAL_assertion_msg(0,"EPoint type not correct!");
     }
@@ -208,7 +208,7 @@ on the extended geometric objects.}*/
 
   Point_2 construct_point(const Standard_point_2& p1, 
                           const Standard_point_2& p2, 
-                          point_type& t) const
+                          Point_type& t) const
   /*{\Xop creates an extended point and initializes it to the equivalence
   class of all the rays underlying the oriented line |l(p1,p2)|. 
   |t| returns the type of the new extended point.}*/
@@ -217,7 +217,7 @@ on the extended geometric objects.}*/
   Point_2 construct_point(const Standard_line_2& l) const
   /*{\Mop creates an extended point and initializes it to the equivalence
   class of all the rays underlying the oriented line |l|. }*/
-  { point_type dummy; return construct_point(l,dummy); }
+  { Point_type dummy; return construct_point(l,dummy); }
 
   Point_2 construct_point(const Standard_point_2& p1, 
                           const Standard_point_2& p2) const
@@ -234,10 +234,10 @@ on the extended geometric objects.}*/
   Point_2 construct_opposite_point(const Standard_line_2& l) const
   /*{\Mop creates an extended point and initializes it to the equivalence
   class of all the rays underlying the oriented line opposite to |l|. }*/
-  { point_type dummy; return construct_point(l.opposite(),dummy); }
+  { Point_type dummy; return construct_point(l.opposite(),dummy); }
 
 
-  point_type type(const Point_2& p) const
+  Point_type type(const Point_2& p) const
   /*{\Mop determines the type of |p| and returns it.}*/
   {
     CGAL_assertion(p.hx().degree()>=0 && p.hy().degree()>=0 );
@@ -256,8 +256,8 @@ on the extended geometric objects.}*/
       else        return LEFTFRAME;
     }
     if (rx<ry) {
-      if (sy > 0) return UPPERFRAME;
-      else        return LOWERFRAME;
+      if (sy > 0) return TOPFRAME;
+      else        return BOTTOMFRAME;
     }
     // now (rx == ry) 
     if (sx==sy) {
@@ -515,7 +515,7 @@ on the extended geometric objects.}*/
   }
 
   const char* output_identifier() const { return "Extended_homogeneous"; }
-  /*{\Mop returns a unique identifier for kernel object IO.}*/
+  /*{\Mop returns a unique identifier for kernel object input/output.}*/
 
 
 
