@@ -25,19 +25,12 @@
 #define CGAL_EXACT_PREDICATES_INEXACT_CONSTRUCTIONS_KERNEL_H
 
 #include <CGAL/Simple_cartesian.h>
-// We don't use Filtered_kernel at the moment because it's slower
-// that Filtered_exact.
-// #include <CGAL/Filtered_kernel.h>
-
-#ifdef CGAL_CFG_MATCHING_BUG_2
-#  define CGAL_IA_CT        double
-#  define CGAL_IA_PROTECTED true
-#  define CGAL_IA_CACHE     No_Filter_Cache
-#  define CGAL_IA_ET        CGAL::MP_Float
-#endif
-
 #include <CGAL/MP_Float.h>
 #include <CGAL/Filtered_exact.h>
+
+// We don't use Filtered_kernel at the moment because it's slower
+// that Filtered_exact, and the power tests are not supported yet.
+// #include <CGAL/Filtered_kernel.h>
 
 CGAL_BEGIN_NAMESPACE
 
