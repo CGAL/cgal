@@ -391,8 +391,8 @@ private:
       return Point_2(x,y,leda_integer(1));
     }
     else {
-      g = gcd(x, y);
-      g = gcd(g, w);
+      g = leda::gcd(x, y);
+      g = leda::gcd(g, w);
 
       return Point_2(x/g,y/g,w/g);
     }
