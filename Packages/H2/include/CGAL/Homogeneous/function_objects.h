@@ -45,7 +45,7 @@ namespace HomogeneousKernelFunctors {
   using CommonKernelFunctors::Bounded_side_2;
   using CommonKernelFunctors::Bounded_side_3;
   using CommonKernelFunctors::Compute_area_2;
-  using CommonKernelFunctors::Compute_squared_area_3;
+  using CommonKernelFunctors::Compute_area_3;
   using CommonKernelFunctors::Compute_squared_distance_2;
   using CommonKernelFunctors::Compute_squared_distance_3;
   using CommonKernelFunctors::Compute_squared_length_2;
@@ -135,6 +135,7 @@ namespace HomogeneousKernelFunctors {
   // For lazyness...
   using CartesianKernelFunctors::Are_parallel_2;
   using CartesianKernelFunctors::Are_parallel_3;
+  using CartesianKernelFunctors::Compute_squared_area_3;
 
   template <typename K>
   class Angle_2

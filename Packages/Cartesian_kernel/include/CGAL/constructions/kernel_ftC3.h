@@ -423,6 +423,28 @@ bisector_of_planesC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
   }
 }
 
+template < class FT >
+FT
+squared_areaC3(const FT &px, const FT &py, const FT &pz,
+	       const FT &qx, const FT &qy, const FT &qz,
+	       const FT &rx, const FT &ry, const FT &rz)
+{
+    // Compute vectors pq and pr, then the cross product,
+    // then 1/4 of its squared length.
+    FT dqx = qx-px;
+    FT dqy = qy-py;
+    FT dqz = qz-pz;
+    FT drx = rx-px;
+    FT dry = ry-py;
+    FT drz = rz-pz;
+
+    FT vx = dqy*drz-dqz*dry;
+    FT vy = dqz*drx-dqx*drz;
+    FT vz = dqx*dry-dqy*drx;
+
+    return (CGAL_NTS square(vx) + CGAL_NTS square(vy) + CGAL_NTS square(vz))/4;
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CONSTRUCTIONS_KERNEL_FTC3_H

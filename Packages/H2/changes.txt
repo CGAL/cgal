@@ -1,3 +1,7 @@
+2.110 (17 December 2003)
+- Added Compute_area_3, and a version of Compute_squared_area_3 taking 3
+  points.
+
 2.109 (8 December 2003)
 - Homogeneous_converter : add a "using Enum_operator::operator();" otherwise
   it's ignored.

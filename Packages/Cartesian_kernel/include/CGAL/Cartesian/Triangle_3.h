@@ -121,10 +121,7 @@ CGAL_KERNEL_MEDIUM_INLINE
 typename TriangleC3<R>::FT
 TriangleC3<R>::squared_area() const
 {
-  typename R::Vector_3 v1 = vertex(1)-vertex(0);
-  typename R::Vector_3 v2 = vertex(2)-vertex(0);
-  typename R::Vector_3 v3 = cross_product(v1, v2);
-  return (v3.squared_length())/FT(4);
+  return CGAL::squared_area(vertex(0), vertex(1), vertex(2), R());
 }
 
 template < class R >

@@ -49,7 +49,7 @@ namespace CartesianKernelFunctors {
   using CommonKernelFunctors::Bounded_side_2;
   using CommonKernelFunctors::Bounded_side_3;
   using CommonKernelFunctors::Compute_area_2;
-  using CommonKernelFunctors::Compute_squared_area_3;
+  using CommonKernelFunctors::Compute_area_3;
   using CommonKernelFunctors::Compute_squared_distance_2;
   using CommonKernelFunctors::Compute_squared_distance_3;
   using CommonKernelFunctors::Compute_squared_length_2;
@@ -752,6 +752,31 @@ namespace CartesianKernelFunctors {
     Comparison_result
     operator()( const Point_3& p, const Point_3& q) const
     { return CGAL_NTS compare(p.z(), q.z()); }
+  };
+
+  template <typename K>
+  class Compute_squared_area_3
+  {
+    typedef typename K::FT                FT;
+    typedef typename K::Point_3           Point_3;
+    typedef typename K::Triangle_3        Triangle_3;
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    FT
+    operator()( const Triangle_3& t ) const
+    {
+	return this->operator()(t.vertex(0), t.vertex(1), t.vertex(2));
+    }
+
+    FT
+    operator()( const Point_3& p, const Point_3& q, const Point_3& r ) const
+    {
+	return squared_areaC3(p.x(), p.y(), p.z(),
+                              q.x(), q.y(), q.z(),
+                              r.x(), r.y(), r.z());
+    }
   };
 
   // FIXME
