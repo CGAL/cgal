@@ -166,9 +166,13 @@ public:
   class  SweepLinePlanarmap {};
 
   Sweep_line_tight_2()  : m_traits(new Traits()), m_traitsOwner(true),
-    m_includeEndPoints(true), m_found_intersection(false)  {}
+    m_includeEndPoints(true), m_found_intersection(false)  
+  {
+  }
   Sweep_line_tight_2(Traits *t) : m_traits(t), m_traitsOwner(false),
-    m_includeEndPoints(true), m_found_intersection(false) {}
+    m_includeEndPoints(true), m_found_intersection(false) 
+  {
+  }
 
   virtual ~Sweep_line_tight_2();
 
@@ -350,6 +354,7 @@ protected:
     m_currentPos = m_prevPos;
     const Point_2 &eventPoint = m_currentEvent->getPoint();
 
+    m_use_hint_for_erase = false;
     while ( leftCurveIter != m_currentEvent->leftCurvesEnd() )  // ** fix here
     {
       Subcurve *leftCurve = *leftCurveIter; 
@@ -403,6 +408,7 @@ protected:
       // remove curve from the status line (also checks intersection 
       // between the neighbouring curves)
       RemoveCurveFromStatusLine(leftCurve);
+      m_use_hint_for_erase = true;
 
       m_currentPos = m_prevPos;
       ++leftCurveIter;
@@ -715,11 +721,12 @@ protected:
     // delete the curve from the status line
     EventCurveIter leftCurveIter = m_currentEvent->leftCurvesBegin();
     m_currentPos = m_prevPos;
+    m_use_hint_for_erase = false;
     while ( leftCurveIter != m_currentEvent->leftCurvesEnd() )
     {
       // before deleting check new neighbors that will become after deletion
       RemoveCurveFromStatusLine(*leftCurveIter);
-
+      m_use_hint_for_erase = true;
       PRINT_ERASE((*leftCurveIter));
       m_currentPos = m_prevPos;
       ++leftCurveIter;
@@ -800,6 +807,12 @@ protected:
   /*! when an intersection point is found this is turned to true */
   bool m_found_intersection;
 
+  /*! An iterator of the  status line that is used as a hint for inserts. */
+  StatusLineIter m_status_line_insert_hint;
+
+  /*! A an indication wether the hint can be used to erase from the status line */
+  bool m_use_hint_for_erase;
+
   /*! a counter the is used to assign unique ids to the curves. */
   int m_curveId;
 
@@ -850,6 +863,7 @@ Init(CurveInputIterator begin, CurveInputIterator end)
   m_comp_param = new CompareParams(m_traits);
   StatusLineCurveLess slcurveless(m_comp_param);
   m_statusLine = new StatusLine(slcurveless);
+  m_status_line_insert_hint = m_statusLine->begin();
 
 #ifndef NDEBUG
   m_eventId = 0;
@@ -960,6 +974,7 @@ FirstPass()
   m_currentPos = m_sweepLinePos;
 
   m_comp_param->m_compare_func = 0;
+  bool first_time = true;
   while ( rightIter != m_currentEvent->rightCurvesEnd())
   {
     // if the point is not an end point, skip it
@@ -968,22 +983,16 @@ FirstPass()
       continue;
     }
 
-#if 0
-// improve here
-    StatusLineIter slIter = m_statusLine->begin();
-    while ( slIter != m_statusLine->end() ) 
-    {
-      if (m_traits->curve_is_in_x_range((*slIter)->getCurve(), p) &&
-	  m_traits->curve_get_point_status((*slIter)->getCurve(), p)==EQUAL &&
-	  !(*slIter)->isEndPoint(p))
-      {
-	m_currentEvent->addCurveToRight(*slIter);
-	m_currentEvent->addCurveToLeft(*slIter, m_prevPos);
-      }
+    // if this is the first curve, we look for its place in the status line, otherwise
+    // we use the previoussearch as a hint
+    StatusLineIter slIter;
+    if ( first_time ) {
+      slIter = m_statusLine->lower_bound(*rightIter);
+      m_status_line_insert_hint = slIter; 
+      first_time = false;
+    } else {
       ++slIter;
     }
-#else
-    StatusLineIter slIter = m_statusLine->lower_bound(*rightIter);
     StatusLineIter prev = slIter;
     StatusLineIter next = slIter;
  
@@ -1019,7 +1028,7 @@ FirstPass()
 	  break;
       }    
     } 
-#endif // 1
+
     ++rightIter;
   }
   m_comp_param->m_compare_func = 1;
@@ -1266,11 +1275,12 @@ HandleRightCurves()
       PRINT_INSERT(tmp1);
     )
 
-    std::pair<StatusLineIter, bool> tmp =
-      m_statusLine->insert(*(m_currentEvent->rightCurvesBegin()));
-    StatusLineIter slIter = tmp.first;
+    StatusLineIter slIter = m_statusLine->insert(
+                            m_status_line_insert_hint, *(m_currentEvent->rightCurvesBegin()));
+    m_status_line_insert_hint = slIter; ++m_status_line_insert_hint;
 
     SL_DEBUG(PrintStatusLine();)
+
     // if this is the only curve on the status line, nothing else to do
     if ( m_statusLine->size() == 1 )
       return;
@@ -1327,8 +1337,8 @@ HandleRightCurves()
     EventCurveIter rightCurveEnd = m_currentEvent->rightCurvesEnd();
 
     PRINT_INSERT(*firstOne);
-    std::pair<StatusLineIter, bool> tmp = m_statusLine->insert(*firstOne);
-    StatusLineIter slIter = tmp.first;
+
+    StatusLineIter slIter = m_statusLine->insert(m_status_line_insert_hint, *firstOne);
 
     SL_DEBUG(PrintStatusLine();)
     if ( slIter != m_statusLine->begin() )
@@ -1360,6 +1370,7 @@ HandleRightCurves()
       PRINT_INSERT(*currentOne);
       ++slIter;
       slIter = m_statusLine->insert(slIter, *currentOne);
+
       SL_DEBUG(PrintStatusLine(););
       if ( DoCurvesOverlap(*currentOne, *prevOne))
       {
@@ -1375,6 +1386,7 @@ HandleRightCurves()
       prevOne = currentOne;
       ++currentOne;
     }
+    m_status_line_insert_hint = slIter; ++m_status_line_insert_hint;
 
     lastOne = currentOne; --lastOne;
     m_currentPos = m_sweepLinePos;
@@ -1439,7 +1451,15 @@ RemoveCurveFromStatusLine(Subcurve *leftCurve)
   SL_DEBUG(std::cout << "RemoveCurveFromStatusLine\n";)
   SL_DEBUG(PrintStatusLine();)
   SL_DEBUG(leftCurve->Print();)
-  StatusLineIter sliter = m_statusLine->find(leftCurve);
+
+  StatusLineIter sliter;
+  if ( m_use_hint_for_erase ) {
+    sliter = m_status_line_insert_hint;
+  } else {
+    sliter = m_statusLine->find(leftCurve);
+  }
+
+  m_status_line_insert_hint = sliter; ++m_status_line_insert_hint;
   if ( !leftCurve->isEndPoint(m_currentEvent->getPoint())) {
     m_statusLine->erase(sliter);
     return;
@@ -1668,15 +1688,18 @@ DoCurvesOverlap(Subcurve *c1, Subcurve *c2)
 {
   SL_DEBUG(std::cout << "DoCurvesOverlap " << m_sweepLinePos << "\n" 
 	    << "\t" << c1->getCurve() << "\n"
-	   << "\t" << c2->getCurve() << "\n";)
-#if 0
-// improve here...
+	    << "\t" << c2->getCurve() << "\n";)
+
   if ((m_traits->curve_compare_at_x(c1->getCurve(),
 				    c2->getCurve(),
-				    m_sweepLinePos) != EQUAL) ||
-      (m_traits->curve_compare_at_x_right(c1->getCurve(),
-					  c2->getCurve(),
-					  m_sweepLinePos) != EQUAL))
+				    m_sweepLinePos) != EQUAL))
+    return false;
+
+#if 0
+  // improve here...
+  if (m_traits->curve_compare_at_x_right(c1->getCurve(),
+					 c2->getCurve(),
+					 m_prevPos) != EQUAL)
     return false;
 #endif
 

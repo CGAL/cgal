@@ -77,18 +77,28 @@ public:
 
   bool compare_at(const Subcurve* c1, const Subcurve* c2)  const 
   {
+#if 1  // this may ot work with conics. Need to verify
     const Point_2 *p = c1->getReferencePoint();
     Comparison_result r = 
       m_compare_param->m_traits->curve_compare_at_x(c1->getCurve(), 
-				   c2->getCurve(), 
-				   *p);
+    				   c2->getCurve(), 
+    				   *p);
     if ( r == SMALLER) {
       return true;
     } 
     return false;
+#else
+    if ( m_compare_param->m_traits->curve_get_point_status(c2->getCurve(),
+                                                          c1->getLeftEnd())
+	 == LARGER)
+      return true;
+    return false;
+#endif
   }
 
-  bool compare_right(const Subcurve* c1, const Subcurve* c2)  const {
+  bool compare_right(const Subcurve* c1, const Subcurve* c2)  const 
+  {
+
     const Point_2 *p = c1->getReferencePoint();
 #if 0
     std::cout << "\t\tComparing between:" << *p << "\n"
@@ -102,9 +112,7 @@ public:
     if ( t->curve_is_vertical(cv1) )
     {
       if (t->curve_is_in_x_range(cv2, c1->getSource()) &&
-	  t->curve_get_point_status(cv2, c1->getSource()) == LARGER &&
-	  t->curve_is_in_x_range(cv2, c1->getTarget()) &&
-	  t->curve_get_point_status(cv2, c1->getTarget()) == LARGER)
+	  t->curve_get_point_status(cv2, c1->getTopEnd()) == LARGER )
       {
 	return true;
       }
@@ -113,9 +121,7 @@ public:
     if ( t->curve_is_vertical(cv2))
     {
       if (t->curve_is_in_x_range(cv1, c2->getSource()) &&
-	  t->curve_get_point_status(cv1, c2->getSource()) == SMALLER &&
-	  t->curve_is_in_x_range(cv1, c2->getTarget()) &&
-	  t->curve_get_point_status(cv1, c2->getTarget()) == SMALLER)
+	  t->curve_get_point_status(cv1, c2->getBottomEnd()) == SMALLER)
       {
 	return true;
       }
@@ -131,7 +137,6 @@ public:
       r = t->curve_compare_at_x_right(c1->getCurve(), 
 					     c2->getCurve(), 
 					     *p);
-
     if ( r == SMALLER) {
       return true;
     } 
