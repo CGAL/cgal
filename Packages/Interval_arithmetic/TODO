@@ -1,43 +1,5 @@
-Concerning the new design of the Filtered_Exact_Cartesian <CT,ET>:
-------------------------------------------------------------------
-- In Cartesian<>, we currently have:
-template < class R >
-inline
-Orientation
-orientation(const PointC2<R CGAL_CTAG> &p,
-            const PointC2<R CGAL_CTAG> &q,
-            const PointC2<R CGAL_CTAG> &r)
-{
-    return orientationC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
-}                                                                     
-- We'll get something along the lines of LOOK:
-template < class R >
-inline
-Orientation
-orientation(const PointFEC2<R CGAL_CTAG> &p,
-            const PointFEC2<R CGAL_CTAG> &q,
-            const PointFEC2<R CGAL_CTAG> &r)
-{
-    try {
-        return orientationC2(p.interval_x(), p.interval_y(),
-                             q.interval_x(), q.interval_y(),
-                             r.interval_x(), r.interval_y());
-    }
-    catch (...) {
-        return orientationC2(p.exact_x(), p.exact_y(),
-                             q.exact_x(), q.exact_y(),
-                             r.exact_x(), r.exact_y());
-    };
-}                                                                               
-- PointFEC2<> will have:
-  additional virtual member functions: .interval_x(), .exact_x()...
-  additional data member, depending on the exact derivation of it.
-- PointFEC2_midpoint<> will derive from PointFEC2<>, and have the necessary
-  stuff...  Have a look at how midpoint() must look like...
-
-
-Concerning the new filters:
----------------------------
+Concerning the static filters:
+------------------------------
 - What to do with branches (e.g. collinearC3() and power_test()):
   - The epsilon computation type should return ZERO/EQUAL as default.
     This way, collinearC3() works.
@@ -48,7 +10,7 @@ Concerning the new filters:
 - /*DEGREE=2*/ attribute to the arguments ?
 - /*CGAL_NO_FILTER*/ attribute instead of //CGAL_FILTER(BEGIN|END) ?
 - Long term: match operator<(a,b) and co ?
-- Or use G++ interface as a parser ?
+- Or use G++'s interface as a parser ?
 - # of bounds  : one per predicate, or one per argument ?  give choice.
 - # of epsilons: one per predicate, or one set per sub-predicate ?  choice.
 - Check that the compiler optimizes the epsilon computation
@@ -111,6 +73,10 @@ Concerning the new filters:
 
 Concerning the main code:
 -------------------------
+- Try to use asm() to clobber the adress of a double variable (read AND write),
+  instead of the volatile trick.  If it's faster...
+- Have determinant_by_formula() overloading for Lazy_exact_nt<> ?
+  And what about for Interval_nt<> too ?
 - There are problems with Handle_for if the allocator is not standard, because
   I allocate with new.  Handle_for cannot work because the allocation doesn't
   work for virtual derived types from RefCounted.  I guess that's why it fails
@@ -118,11 +84,11 @@ Concerning the main code:
   clue.
 - GCC 2.96 fails right now (and in a different way with -g and -O2...).......
   Maybe it's temporary, so let's wait and retry later... [ today's 14 June 00 ]
-- in _FPU.h, some functions are outside namespace CGAL...
+- KCC 4.0 fails when optimizing...
 - Check if the symbols beginning with an underscore must be fixed.
+  Move IA/_FPU.h to CGAL/FPU.h (keeping the CVS history) ?
 - Use STL's relational operators from <utility>.  Check produced code before
   switching for all...
-- KCC and GCC 3 support.
 - Turn CGAL_IA_CHECK_RESTRICT into an [expensive] assertion ?
 - volatile should be removed from FPU_empiric_test() now that we enforce this
   everywhere.
@@ -130,9 +96,6 @@ Concerning the main code:
   (i.e. just before the actual FP operations that need to be done at run time)
   And go towards an ISO C9X compliant implementation.
 - Mark the cache as "mutable" (see Stroustrup, page 232) ?
-- Replace the NT wrapping, by Filtered_Cartesian<FT>, a new kernel ?
-  this would be cleaner, and won't rely on some optimizations in the compiler,
-  won't need partial specialization...
 - Get rid of convert_to() ?  This is a mess for nothing (benchmark first).
   Target convert_from_to (const Target, const Source) is fine ?
   It could maybe be made better this way:
@@ -150,7 +113,6 @@ Concerning the main code:
 ? See the C++ Standard numeric_limits<>, section 18.2.
 ? See C9X and http://http.cs.berkeley.edu/~fateman/fp98/korenF/node3.html.
 ? Implement convert_to for: long double, long long (CGAL..._64), CLN.
-- Should IA_nt _privately_ derive from IA_nt_advanced ?
 
 Concerning the script:
 ----------------------
@@ -159,12 +121,12 @@ Concerning the script:
 
 Concerning the doc:
 -------------------
-- Documentation seriously needs to be updated !!!!
+- Documentation seriously needs to be updated before the next public release !
+- Use the new doc format.
 - In the 2.0 HTML doc, my enums are indexed twice.
   probably a cc_manual compliance bug from me.
   Idem, my fct to_double(Ia) is not the same as the others...
 - add a pointer to my MISC'99 paper.
-- Use the new doc format.
 - DOCUMENT the script, the new static stuff, the Lazy_exact_nt<> ...
 - Add a long_description.txt file, with the directory/file structure of the
   package (see RV's mail in folder "cgal", from 23/9/99).
