@@ -1,5 +1,8 @@
 Changes done to the `Polytope_distance_d' package
 
+Version 1.1.6 on 17-Jun-2003
+- \ccFont -> \ccc
+
 Version 1.1.5 on 13-Apr-2002
 - Missing typename
 

@@ -30,13 +30,13 @@ two concentric spheres with radii $r$ and $R$, $r \leq R$) enclosing a
 finite set of points in $d$-dimensional Euclidean space $\E_d$, where the
 difference $R^2-r^2$ is minimal. For a point set $P$ we denote by $ma(P)$
 the smallest annulus that contains all points of $P$.  Note that $ma(P)$
-can be degenerate\ccIndexSubitem[t]{degeneracies}{\ccFont Min_annulus_d},
+can be degenerate\ccIndexSubitem[t]{degeneracies}{\ccc{Min_annulus_d}},
 i.e.~$ma(P)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ if
 $P=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ and $ma(P)=\{p\}$ if
 $P=\{p\}$.
 
 An inclusion-minimal subset $S$ of $P$ with $ma(S)=ma(P)$ is called a
-\emph{support set}\ccIndexSubitem[t]{support set}{\ccFont Min_annulus_d},
+\emph{support set}\ccIndexSubitem[t]{support set}{\ccc{Min_annulus_d}},
 the points in $S$ are the \emph{support points}.  A support set has size at
 most $d+2$, and all its points lie on the boundary of $ma(P)$. In general,
 the support set is not necessarily unique.
@@ -142,7 +142,7 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 \ccMemberFunction{ int  number_of_support_points( ) const;}{
         returns the number of support points of \ccVar, i.e.~$|S|$.}
-\ccIndexSubitem[t]{support set}{\ccFont Min_annulus_d}
+\ccIndexSubitem[t]{support set}{\ccc{Min_annulus_d}}
 
 \ccMemberFunction{ int  number_of_inner_support_points( ) const;}{
         returns the number of support points of \ccVar{}
@@ -277,7 +277,7 @@ unbounded side equals the whole space $\E_d$.
 \ccMemberFunction{ bool  is_degenerate( ) const;}{
         returns \ccc{true}, iff \ccVar\ is degenerate, i.e.~if \ccVar\
         is empty or equal to a single point.}
-\ccIndexSubitem[t]{degeneracies}{\ccFont Min_annulus_d}
+\ccIndexSubitem[t]{degeneracies}{\ccc{Min_annulus_d}}
 
 % -----------------------------------------------------------------------------
 \ccModifiers
@@ -312,7 +312,7 @@ unbounded side equals the whole space $\E_d$.
 % -----------------------------------------------------------------------------
 \ccHeading{Validity Check}
 \ccIndexMemberFunctionGroup{validity check}
-\ccIndexSubitem[t]{validity check}{\ccFont Min_annulus_d}
+\ccIndexSubitem[t]{validity check}{\ccc{Min_annulus_d}}
 
 An object \ccVar\ is valid, iff
 \begin{itemize}
@@ -379,8 +379,9 @@ validity check.
 
 The problem of finding the smallest enclosing annulus of a finite point set
 can be formulated as an optimization problem with linear constraints and a
-linear objective function\ccIndexSubitem[t]{linear program}{\ccFont
-  Min_annulus_d}. The solution is obtained using our exact
+linear objective
+function\ccIndexSubitem[t]{linear program}{\ccc{Min_annulus_d}}.
+The solution is obtained using our exact
 solver for linear and quadratic programs~\cite{gs-eegqp-00}.
 
 The creation time is almost always linear in the number of points.  Access
