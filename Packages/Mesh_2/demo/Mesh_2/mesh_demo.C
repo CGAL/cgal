@@ -745,9 +745,12 @@ public slots:
 
   void setBound() 
     {
-      double bound = QInputDialog::getDouble( "Set bound",
-					      "Please enter a new bound",
-					      traits.bound());
+      double bound = QInputDialog::getDouble( "Set angle bound",
+					      "Please enter a new bound for squared minimum sine of triangles times 4",
+					      traits.bound(), // init
+					      -2147483647, // from
+					      2147483647, // to
+					      6); // decimals
       traits.set_bound(bound);
       if( mesh != 0 )
 	mesh->set_geom_traits(traits);
@@ -756,9 +759,12 @@ public slots:
   void setSizeBound() 
     {
       double bound = 
-	QInputDialog::getDouble( "Set bound",
-				 "Please enter a new bound",
-				 traits.size_bound());
+	QInputDialog::getDouble( "Set size bound",
+				 "Please enter a new bound for minimum lenght of the triangles edges",
+				 traits.size_bound(), // init
+				 -2147483647, // from
+				 2147483647, // to
+				 6); // decimals
       traits.set_size_bound(bound);
       if ( mesh != 0 )
 	mesh->set_geom_traits(traits);
