@@ -41,10 +41,8 @@
 
 \newcommand{\mc}{\texttt{mc}}
 
-\newcommand{\ccSeeAlso}{\ccHeading{See Also}}
-
 \newcommand{\linebreakByHand}{\ccTexHtml{\\}{}}
-\newcommand{\SaveSpaceByHand}[2]{\ccTexHtml{#1}{#2}}
+\newcommand{\SaveSpaceByHand}{}  %%%%% [2]{\ccTexHtml{#1}{#2}}
 
 @! ============================================================================
 @! Title
@@ -2229,15 +2227,13 @@ homogeneous representation with number type \ccc{CGAL_Gmpz}.
     #include <fstream.h>
 
     #ifdef CGAL_USE_LEDA
-    #  include <CGAL/Integer.h>
-    #  include <LEDA/REDEFINE_NAMES.h>
-       typedef  integer				Rt;
-       typedef  CGAL_Quotient< integer >	Ft;
-    #  include <LEDA/UNDEFINE_NAMES.h>
+    #  include <CGAL/leda_integer.h>
+       typedef  leda_integer			 Rt;
+       typedef  CGAL_Quotient< leda_integer >	 Ft;
     #else
     #  include <CGAL/Gmpz.h>
-       typedef  CGAL_Gmpz			Rt;
-       typedef  CGAL_Quotient< CGAL_Gmpz >	Ft;
+       typedef  CGAL_Gmpz			 Rt;
+       typedef  CGAL_Quotient< CGAL_Gmpz >	 Ft;
     #endif
 
     typedef  CGAL_Cartesian< Ft >		 RepC;
