@@ -1,32 +1,23 @@
-// ============================================================================
+// Copyright (c) 1997, 1998, 1999, 2000  Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// Copyright (c) 1997, 1998, 1999, 2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// ----------------------------------------------------------------------------
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// release       : $CGAL_Revision: $
-// release_date  : $CGAL_Date: $
-//
-// file          : include/CGAL/vector.h
-// package       : $CGAL_Package: STL_Extension $
-// chapter       : $CGAL_Chapter: STL Extensions for CGAL $
-//
-// revision      : $Revision$
-// revision_date : $Date$
-//
-// author(s)     : Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
+// Author(s)     : Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
-// maintainer    : Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
-// coordinator   : ETH Zurich
-//
-// A vector container class: internal replacement that works with declared
-// but not yet defined types as they occur with cyclic type dependencies
-// with templates.
-// ============================================================================
 
 #ifndef CGAL_VECTOR_H
 #define CGAL_VECTOR_H 1

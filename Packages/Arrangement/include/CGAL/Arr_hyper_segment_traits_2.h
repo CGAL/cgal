@@ -1,27 +1,21 @@
-// ======================================================================
+// Copyright (c) 1997  Tel-Aviv University (Israel).
+// All rights reserved.
 //
-// Copyright (c) 1997 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $$
-// release_date  : $$
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/Arr_hyper_segment_traits_2.h
-// package       : Arrangement_2 (5.87)
-// maintainer    : Efi Fogel         <efif@post.tau.ac.il>
-// source        : 
-// revision      : 
-// revision_date : 
-// author(s)     : Ron Wein          <wein@post.tau.ac.il>
-//
-// coordinator   : Tel-Aviv University (Dan Halperin <danha@post.tau.ac.il>)
-//
-// ======================================================================
+// Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 #ifndef CGAL_ARR_HYPER_SEGMENT_TRAITS_2_H
 #define CGAL_ARR_HYPER_SEGMENT_TRAITS_2_H
 

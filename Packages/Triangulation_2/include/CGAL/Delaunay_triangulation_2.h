@@ -1,25 +1,21 @@
-// ======================================================================
+// Copyright (c) 1997  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// Copyright (c) 1997 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/Delaunay_triangulation_2.h
-// source        : $RCSfile$
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Mariette Yvinec
-//
-// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
-//
-// ======================================================================
+// Author(s)     : Mariette Yvinec
 
 
 

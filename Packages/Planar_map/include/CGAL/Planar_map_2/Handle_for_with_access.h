@@ -1,26 +1,21 @@
-// ======================================================================
+// Copyright (c) 1999  Tel-Aviv University (Israel).
+// All rights reserved.
 //
-// Copyright (c) 1999 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------
-// 
-// release       : $CGAL_Revision: CGAL-2.2-I-26 $
-// release_date  : $CGAL_Date: 2000/07/11 $
-// 
-// file          : include/CGAL/Planar_map_2/Handle_for_with_access.h
-// package       : Planar_map
-// maintainer    : Oren Nechushtan <theoren@math.tau.ac.il>
-// revision      : 1.0
-// revision_date : 27 Jun 2000 
-// author(s)     : Oren Nechushtan
-// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// ======================================================================
+// Author(s)     : Oren Nechushtan
  
 
 #ifndef CGAL_PLANAR_MAP_2_HANDLE_FOR_WITH_ACCESS_H

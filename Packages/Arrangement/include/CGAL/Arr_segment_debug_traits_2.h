@@ -1,28 +1,22 @@
-// ======================================================================
+// Copyright (c) 1997  Tel-Aviv University (Israel).
+// All rights reserved.
 //
-// Copyright (c) 1997 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : 
-// release_date  : 1999, October 13
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/Arr_segment_debug_traits_2.h
-// package       : arr (1.03)
-// source        :
-// revision      :
-// revision_date :
-// author(s)     : Eran Leiserowitz <leiserow@post.tau.ac.il>
+// Author(s)     : Eran Leiserowitz <leiserow@post.tau.ac.il>
 //                 Efi Fogel    <efif@post.tau.ac.il>
-//
-// coordinator   : Tel-Aviv University (Dan Halperin)
-// chapter       : Arrangement_2
-//
-// ======================================================================
 
 
 #ifndef CGAL_ARR_SEGMENT_DEBUG_EXACT_TRAITS_H

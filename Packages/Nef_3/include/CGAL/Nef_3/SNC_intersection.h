@@ -1,30 +1,22 @@
-// ============================================================================
+// Copyright (c) 1997-2002  Max-Planck-Institute Saarbrucken (Germany).
+// All rights reserved.
 //
-// Copyright (c) 1997-2002 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision: $
-// release_date  : $CGAL_Date: $
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/Nef_3/SNC_intersection.h
-// package       : Nef_3
-// chapter       : 3D-Nef Polyhedra
-//
-// revision      : $Revision$
-// revision_date : $Date$
-//
-// author(s)     : Michael Seel       <seel@mpi-sb.mpg.de>
+// Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de>
 //                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de> 
-// maintainer    : Peter Hachenberger <hachenberger@mpi-sb.mpg.de> 
-// coordinator   : MPI Saarbruecken
-//
-// SNC_intersection.h 
-// ============================================================================
 #ifndef CGAL_SNC_INTERSECTION_H
 #define CGAL_SNC_INTERSECTION_H
 

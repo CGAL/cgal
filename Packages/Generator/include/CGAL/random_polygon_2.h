@@ -1,29 +1,22 @@
-// ============================================================================
+// Copyright (c) 2000  Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// Copyright (c) 2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// ----------------------------------------------------------------------------
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// release       : $CGAL_Revision $
-// release_date  : $CGAL_Date $
-//
-// file          : include/CGAL/random_polygon_2.h
-// package       : $CGAL_Package: Generator 2.12 (28 Jul 1999) $
-// chapter       : Geometric Object Generators
-//
-// revision      : $Revision$
-// revision_date : $Date$
-//
-// author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
-//
-// coordinator   : ETH Zurich (Bernd Gaertner <gaertner@inf.ethz.ch>)
-//
-// implementation: Random Simple Polygons
-// ============================================================================
+// Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 #ifndef CGAL_RANDOM_POLYGON_2_H
 #define CGAL_RANDOM_POLYGON_2_H
 

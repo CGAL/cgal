@@ -1,30 +1,21 @@
-// ============================================================================
+// Copyright (c) 2000  Max-Planck-Institute Saarbrucken (Germany).
+// All rights reserved.
 //
-// Copyright (c) 2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision $
-// release_date  : $CGAL_Date $
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/partition_2.h
-// package       : $CGAL_Package: Partition_2 $
-// maintainer    : Susan Hert <hert@mpi-sb.mpg.de>
-// chapter       : Planar Polygon Partitioning
-//
-// revision      : $Revision$
-// revision_date : $Date$
-//
-// author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
-//
-// coordinator   : MPI (Susan Hert <hert@mpi-sb.mpg.de>)
-//
-// implementation: Polygon partitioning functions
-// ============================================================================
+// Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
 #ifndef CGAL_PARTITION_H
 #define CGAL_PARTITION_H

@@ -1,29 +1,21 @@
-// ============================================================================
+// Copyright (c) 1997-2002  Max-Planck-Institute Saarbrucken (Germany).
+// All rights reserved.
 //
-// Copyright (c) 1997-2002 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related docuhmentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision: $
-// release_date  : $CGAL_Date: $
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/Nef_3/SNC_constructor.h
-// package       : Nef_3
-// chapter       : 3D-Nef Polyhedra
-//
-// revision      : $Revision$
-// revision_date : $Date$
-//
-// author(s)     : Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
-// maintainer    : Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
-// coordinator   : MPI Saarbruecken
-//
-// helper functions for normalizing Plane_3, etc.
-// ============================================================================
+// Author(s)     : Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_NORMALIZING_H
 #define CGAL_NORMALIZING_H
 

@@ -1,28 +1,22 @@
-// ======================================================================
+// Copyright (c) 1997  Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// Copyright (c) 1997 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// ----------------------------------------------------------------------
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// release       : 
-// release_date  : 1999, April 07
-//
-// file          : Modifier_base.h
-// package       : Modifier (1.2)
-// chapter       : $CGAL_Chapter: Protected access to the internal repr.$
-// source        : modifier.fw
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
-//
-// coordinator   : INRIA, Sophia Antipolis
-//
-// Modifier providing protected access to internal representations.
-// ======================================================================
+// Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 
 #ifndef CGAL_MODIFIER_BASE_H
 #define CGAL_MODIFIER_BASE_H 1

@@ -1,29 +1,21 @@
-// ======================================================================
+// Copyright (c) 1997-2000  ETH Zurich (Switzerland).
+// All rights reserved.
 //
-// Copyright (c) 1997-2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-64 $
-// release_date  : $CGAL_Date: 2002/03/18 $
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/Width_3.h
-// package       : Width_3 (1.13)
-// maintainer    : Thomas Herrmann <herrmann@ifor.math.ethz.ch>
-// chapter       : Geometric Optimisation
-//
-// revision      : $Revision$
-// revision_date : $Date$
-//
-// author(s)     : Thomas Herrmann, Lutz Kettner
-// coordinator   : ETH Zuerich (Bernd Gaertner <gaertner@inf.ethz.ch>)
-//
-// implementation: 3D Width of a Point Set
-// ======================================================================
+// Author(s)     : Thomas Herrmann, Lutz Kettner
 
 #ifndef CGAL_WIDTH_3_H
 #define CGAL_WIDTH_3_H

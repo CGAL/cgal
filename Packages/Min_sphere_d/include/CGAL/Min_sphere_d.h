@@ -1,29 +1,22 @@
-// ============================================================================
+// Copyright (c) 1997  ETH Zurich (Switzerland).
+// All rights reserved.
 //
-// Copyright (c) 1997 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision: CGAL-wip $
-// release_date  : $CGAL_Date$
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// chapter       : $CGAL_Chapter: Optimisation $
-// package       : $CGAL_Package: MinSphere $
-// file          : include/CGAL/Min_sphere_d.h
-// source        : web/Optimisation/Min_sphere_d.aw
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Sven Schönherr <sven@inf.fu-berlin.de>
+// Author(s)     : Sven Schönherr <sven@inf.fu-berlin.de>
 //                 Bernd Gärtner
-//
-// coordinator   : ETH Zurich (Bernd Gärtner <gaertner@inf.ethz.ch>)
-//
-// implementation: dD Smallest Enclosing Sphere
-// ============================================================================
 
 #ifndef CGAL_MIN_SPHERE_D_H
 #define CGAL_MIN_SPHERE_D_H

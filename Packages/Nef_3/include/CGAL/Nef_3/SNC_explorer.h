@@ -1,30 +1,21 @@
-// ============================================================================
+// Copyright (c) 1997-2000  Max-Planck-Institute Saarbrucken (Germany).
+// All rights reserved.
 //
-// Copyright (c) 1997-2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_$
-// release_date  : $CGAL_Date$
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/Nef_2/SNC_explorer.h
-// package       : Nef_3 
-// chapter       : Nef Polyhedra
-//
-// source        : 
-// revision      : $Revision$
-// revision_date : 
-//
-// author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
-// maintainer    : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
-// coordinator   : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
-//
-// implementation: Nef polyhedra in space
-// ============================================================================
+// Author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
 #ifndef CGAL_SNC_EXPLORER_H
 #define CGAL_SNC_EXPLORER_H

@@ -1,27 +1,21 @@
-// ============================================================================
+// Copyright (c) 1997-2001  ETH Zurich (Switzerland).
+// All rights reserved.
 //
-// Copyright (c) 1997-2001 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision: CGAL-I $
-// release_date  : $CGAL_Date$
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/_QP_solver/Basis_inverse.h
-// package       : $CGAL_Package: _QP_solver $
-//
-// revision      : 0.2
-// revision_date : 2000/08/11
-//
-// author(s)     : Sven Schönherr <sven@inf.ethz.ch>
-// coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
-//
-// implementation: Basis inverse used in the solver for Quadratic Programs
-// ============================================================================
+// Author(s)     : Sven Schönherr <sven@inf.ethz.ch>
                                                                                
 
 #ifndef CGAL_BASIS_INVERSE_H

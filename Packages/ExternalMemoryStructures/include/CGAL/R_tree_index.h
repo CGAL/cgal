@@ -1,29 +1,21 @@
-// ======================================================================
+// Copyright (c) 1998  ETH Zurich (Switzerland).
+// All rights reserved.
 //
-// Copyright (c) 1998 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : 
-// release_date  : 2000, August 11
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/ExternalMemoryStructures/R_tree_index.h
-// package       : ExternalMemoryStructures (0.631)
-// maintainer    : Philipp Kramer <kramer@inf.ethz.ch>
-// chapter       : $CGAL_Chapter: Basic / External Data Structures $
-// source        : 
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Gabriele Neyer<neyer@inf.ethz.ch>
-//
-// coordinator   : ETH Zurich (Peter Widmayer <widmayer@inf.ethz.ch>)
-//
-// Implementation of the R_tree_index.
-// ======================================================================
+// Author(s)     : Gabriele Neyer<neyer@inf.ethz.ch>
 #ifndef __R_tree_index_H__
 #define __R_tree_index_H__
 #include<CGAL/R_tree_index_implementations.h>

@@ -1,29 +1,23 @@
-// ======================================================================
+// Copyright (c) 1997  Tel-Aviv University (Israel).
+// All rights reserved.
 //
-// Copyright (c) 1997 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : 
-// release_date  : 1999, October 13
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/Pm_naive_point_location.h
-// package       : pm (4.08)
-// source        : 
-// revision      : 
-// revision_date : 
-// author(s)     : Iddo Hanniel <hanniel@post.tau.ac.il>
+// Author(s)     : Iddo Hanniel <hanniel@post.tau.ac.il>
 //                 Oren Nechushtan <theoren@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
-//
-// coordinator   : Tel-Aviv University (Dan Halperin <danha@post.tau.ac.il>)
-//
-// Chapter       : 
-// ======================================================================
 #ifndef CGAL_PM_NAIVE_POINT_LOCATION_H
 #define CGAL_PM_NAIVE_POINT_LOCATION_H
 

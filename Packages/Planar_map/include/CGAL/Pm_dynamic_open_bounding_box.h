@@ -1,30 +1,21 @@
-// ======================================================================
+// Copyright (c) 1997  Tel-Aviv University (Israel).
+// All rights reserved.
 //
-// Copyright (c) 1997 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : 
-// release_date  : 1999, October 13
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/Pm_dynamic_open_bounding_box.h
-// package       : pm (4.20)
-// source        : 
-// revision      : 
-// revision_date : 
-// author(s)     : Oren Nechushtan <theoren@math.tau.ac.il>
-//                 
-//
-// coordinator   : Tel-Aviv University (Dan Halperin)
-//
-// Chapter       : 
-// email         : cgal@cs.uu.nl
-//
-// ======================================================================
+// Author(s)     : Oren Nechushtan <theoren@math.tau.ac.il>
 
 #ifndef CGAL_PM_DYNAMIC_OPEN_BOUNDING_BOX_H
 #define CGAL_PM_DYNAMIC_OPEN_BOUNDING_BOX_H

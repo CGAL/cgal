@@ -1,25 +1,21 @@
-// ======================================================================
+// Copyright (c) 1999  Martin-Luther-University Halle-Wittenberg (Germany).
+// All rights reserved.
 //
-// Copyright (c) 1999 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : 
-// release_date  : 
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/nearest_neighbor_delaunay_2.h
-// package       : Point_set_2 (2.3.3)
-// maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.3.3
-// revision_date : 16 Oct 2002 
-// author(s)     : Matthias Baesken
-//
-// coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
-// ======================================================================
+// Author(s)     : Matthias Baesken
 
 #ifndef CGAL_NEAREST_NEIGHBOR_DELAUNAY_2_H
 #define CGAL_NEAREST_NEIGHBOR_DELAUNAY_2_H

@@ -1,23 +1,21 @@
-// ======================================================================
+// Copyright (c) 2000  Tel-Aviv University (Israel).
+// All rights reserved.
 //
-// Copyright (c) 2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-65 $
-// release_date  : $CGAL_Date: 2002/03/19 $
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/Pm_with_intersections.h
-// package       : Arrangement (2.38)
-// maintainer    : Eyal Flato <flato@math.tau.ac.il>
-// author(s)     : Eyal flato <flato@math.tau.ac.il>
-// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
-//
-// ======================================================================
+// Author(s)     : Eyal flato <flato@math.tau.ac.il>
 
 #ifndef CGAL_PLANAR_MAP_WITH_INTERSECTIONS_H
 #define CGAL_PLANAR_MAP_WITH_INTERSECTIONS_H

@@ -1,23 +1,22 @@
 
-// ============================================================================
+// Copyright (c) 2000  Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// Copyright (c) 2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// ----------------------------------------------------------------------------
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// release       : $CGAL_Revision:  $
-// release_date  : $CGAL_Date:  $
-//
-// file          : include/CGAL/Iso_rectangle_2_Point_2_intersection.h
-// source        : intersection_2_2.fw
-// author(s)     : Geert-Jan Giezeman
-//
-// coordinator   : MPI, Saarbruecken
-//
-// ============================================================================
+// Author(s)     : Geert-Jan Giezeman
 
 #include <CGAL/Point_2_Iso_rectangle_2_intersection.h>

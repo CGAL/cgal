@@ -1,23 +1,21 @@
-// ======================================================================
+// Copyright (c) 2001  Tel-Aviv University (Israel).
+// All rights reserved.
 //
-// Copyright (c) 2001 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $$
-// release_date  : $$
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/Conic_arc_2_Window_stream.h
-// package       : Arrangement (2.19)
-// maintainer    : Eyal Flato <flato@math.tau.ac.il>
-// author(s)     : Ron Wein <wein@post.tau.ac.il>
-// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
-//
-// ======================================================================
+// Author(s)     : Ron Wein <wein@post.tau.ac.il>
 #ifndef CGAL_CONIC_ARC_2_WINDOW_STREAM_H
 #define CGAL_CONIC_ARC_2_WINDOW_STREAM_H
 

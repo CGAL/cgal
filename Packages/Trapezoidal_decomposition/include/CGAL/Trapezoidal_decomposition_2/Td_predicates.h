@@ -1,31 +1,22 @@
-// ======================================================================
+// Copyright (c) 1997  Tel-Aviv University (Israel).
+// All rights reserved.
 //
-// Copyright (c) 1997 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release		 : 
-// release_date  : 1999, October 13
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file 		 : include/CGAL/Trapezoidal_decomposition_2/Td_predicates.h
-// package		 : Trapezoidal decomposition 2
-// source		 : 
-// revision 	 : 
-// revision_date : 
-// author(s)	 : Oren Nechushtan <theoren@math.tau.ac.il>
+// Author(s)	 : Oren Nechushtan <theoren@math.tau.ac.il>
 //		   Iddo Hanniel <hanniel@math.tau.ac.il>
-//
-// maintainer(s) : Oren Nechushtan <theoren@math.tau.ac.il>
-//
-//
-// coordinator	 : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
-//
-// Chapter		 : 
-// ======================================================================
 #ifndef CGAL_TD_PREDICATES_H
 #define CGAL_TD_PREDICATES_H
 

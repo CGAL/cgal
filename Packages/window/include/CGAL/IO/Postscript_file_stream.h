@@ -1,26 +1,22 @@
-// ======================================================================
+// Copyright (c) 1999  Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// Copyright (c) 1999 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// ----------------------------------------------------------------------
-// 
-// release       : $CGAL_Revision: CGAL-2.4-I-65 $
-// release_date  : $CGAL_Date: 2002/03/19 $
-// 
-// file          : include/CGAL/IO/Postscript_file_stream.h
-// package       : window (2.8.22)
-// maintainer    : Susan Hert <hert@mpi-sb.mpg.de>
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Stefan Schirra
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
-// ======================================================================
+// Author(s)     : Stefan Schirra
  
 
 #ifndef CGAL_POSTSCRIPT_FILE_STREAM_H
