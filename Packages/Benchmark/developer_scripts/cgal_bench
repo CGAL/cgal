@@ -90,7 +90,7 @@ my $maxSvr = 10;
 my $curSvr = $maxSvr;
 
 my @Attrs;
-my %Files;
+my %Files = ();
 my %Clos = ();
 my $elementRoot;
 
@@ -136,19 +136,16 @@ sub start_handler
     $parentEnable = $parentAttrTable->{'enable'};
   }
 
-  # Initialize attributes:
+  # Create attributes:
   $attrTable = {};
-  $attrTable->{'enable'} = $parentEnable;
-  $attrTable->{'samples'} = $parentAttrTable->{'samples'}
-    if ($parentAttrTable && exists($parentAttrTable->{'samples'}));
-  $attrTable->{'name_length'} = $parentAttrTable->{'name_length'}
-    if ($parentAttrTable && exists($parentAttrTable->{'name_length'}));
-  $attrTable->{'header'} = $parentAttrTable->{'header'}
-    if ($parentAttrTable && exists($parentAttrTable->{'header'}));
-  $attrTable->{'type_mask'} = $parentAttrTable->{'type_mask'}
-    if ($parentAttrTable && exists($parentAttrTable->{'type_mask'}));
-  $attrTable->{'strategy_mask'} = $parentAttrTable->{'strategy_mask'}
-    if ($parentAttrTable && exists($parentAttrTable->{'strategy_mask'}));
+
+  # Initialize attributes:
+  if (($currentElement ne 'file') && ($currentElement ne 'clo')) {
+    for $attr (keys %$parentAttrTable) {
+      $attrTable->{$attr} = $parentAttrTable->{$attr};
+    }
+    $attrTable->{'enable'} = $parentEnable;
+  }
 
   push @Attrs, $attrTable;
   
@@ -373,25 +370,14 @@ sub processStartCmd
 
   my $fileAttrTable = $Files{$attrTable->{'file'}};
   my $filename = $fileAttrTable->{'name'};
-  my $format = $fileAttrTable->{'format'};
-  my $samples = $attrTable->{'samples'} if exists($attrTable->{'samples'});
-  my $nameLength = $attrTable->{'name_length'}
-    if exists($attrTable->{'name_length'});
-  my $header = $attrTable->{'header'} if exists($attrTable->{'header'});
-  my $type_mask = $attrTable->{'type_mask'}
-    if exists($attrTable->{'type_mask'});
-  my $strategy_mask = $attrTable->{'strategy_mask'}
-    if exists($attrTable->{'strategy_mask'});
-
   my $command = $currentElement;
   @args = ();
   push @args, $command;
 
-  push @args, '-If=' . $format;
-
   foreach $clo (keys %Clos) {
-    $cmd = $Clos{$clo}->{'command'};
-    push @args, $cmd . $fileAttrTable->{$clo} if exists($fileAttrTable->{$clo});
+    $cmd = $Clos{$clo}->{'string'};
+    push @args, $cmd . $fileAttrTable->{$clo}
+      if exists($fileAttrTable->{$clo});
     push @args, $cmd . $attrTable->{$clo} if exists($attrTable->{$clo});
   }
 
@@ -400,11 +386,10 @@ sub processStartCmd
 
   # print command
   printInfo("@args", 1) if ($verboseLevel > 1);
-
   printInfo('.', 0);
 
   printInfo("@args", 1);
-  if (0) {
+  if (1) {
   $rc = 0xffff & system @args;
   print("system(%s) returned %#04x: ", "@args", $rc) if ($verboseLevel > 1);
   if ($rc == 0) {
