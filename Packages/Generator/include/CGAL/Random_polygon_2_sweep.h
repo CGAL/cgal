@@ -101,6 +101,13 @@ public:
     typedef i_polygon::Edge_data<Less_segs>                  Edge_data;
     typedef i_polygon::Vertex_data_base<ForwardIterator, PolygonTraits>
                                                              Base_class;
+
+    using Base_class::next;
+    using Base_class::prev;
+    using Base_class::point;
+    using Base_class::index_at_rank;
+    using Base_class::ordered_left_to_right;
+
     std::vector<Edge_data> edges;
     Vertex_index conflict1, conflict2; // Intersecting edges.
 
@@ -239,7 +246,7 @@ insertion_event(Tree *tree, Vertex_index prev_vt,
     switch(orientation_2(point(prev_vt), point(mid_vt), point(next_vt))) {
       case LEFT_TURN: left_turn = true; break;
       case RIGHT_TURN: left_turn = false; break;
-      case COLLINEAR: //found conflict prev_vt-seg - mid_vt-seg
+      default: //found conflict prev_vt-seg - mid_vt-seg
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
             std::cout << "conflict2 is next_vt" << std::endl;
 #endif

@@ -1,5 +1,6 @@
-Generator Package: Release changes:
----------------------------------------------------------------------
+24 June 2004 Sylvain Pion
+- Compile fixes for g++ 3.4.
+
 25 March 2004 Radu Ursu
 - made doc work with the new implementation of the Manual tools
 
