@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.3-I-44 $
 // release_date  : $CGAL_Date: 2001/03/09 $
 //
-// file          : include/CGAL/IO/drawer_pm.h
+// file          : include/CGAL/IO/draw_pm.h
 // package       : pm (5.45)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // source        : 
