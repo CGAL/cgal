@@ -28,8 +28,6 @@
 \RCSdef{\rcsrevision}{$Revision$}
 \RCSdefDate{\rcsdate}{$Date$}
 
-@!thickline
-
 @t vskip 5 mm
 @t title titlefont centre "CGAL -- Random Numbers Generator*"
 @t vskip 1 mm
@@ -39,7 +37,6 @@
 \smallskip
 \centerline{\rcsrevision\ , \rcsdate}
 @t vskip 1 mm
-@!thickline
 
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
 \footnotetext[1]{This work was supported by the ESPRIT IV LTR Project
@@ -64,33 +61,35 @@ performs some correctness checks. Finally the product files are
 created in Section~4.
 
 \tableofcontents
-\clearpage
 
 @! ============================================================================
 @! Specification
 @! ============================================================================
 
+\clearpage
 \section{Specification}
 
 \renewcommand{\ccSection}{\ccSubsection}
 \renewcommand{\ccFont}{\tt}
 \renewcommand{\ccEndFont}{}
+\ccSetThreeColumns{CGAL_Random}{random.restore_seed( Seed seed)}{}
+\ccPropagateThreeToTwoColumns
 \input{../spec/Random.tex}
-\clearpage
 
 @! ============================================================================
 @! Implementation
 @! ============================================================================
 
+\clearpage
 \section{Implementation}
 
 This section describes the implementation of the random numbers
-generator. We use the C library function @prg{erand48} to generate the
-random numbers. It behaves like the well-known function @prg{drand48} but
+generator. We use the C library function \ccc{erand48} to generate the
+random numbers. It behaves like the well-known function \ccc{drand48} but
 operates on a user supplied storage for the 48-Bit seed. This makes different
 instances of the random number generator independent.
 
-First, we declare the class @prg{CGAL_Random}.
+First, we declare the class \ccc{CGAL_Random}.
 
 @macro<Random declaration> = @begin
     class CGAL_Random;
@@ -132,12 +131,26 @@ section, so we do not comment on it here.
     void    restore_seed( Seed const& seed);
 @end
 
-  
+
 \pagebreak
+
+\subsection{Global Variable}
+
+The global variable \ccc{CGAL_random} is the default random numbers
+generator.
+
+@macro <Random global variable declaration> = @begin
+    extern  CGAL_Random  CGAL_random;
+@end
+
+@macro <Random global variable definition> = @begin
+    CGAL_Random  CGAL_random;
+@end
+
 
 \subsection{Private Data Members}
 
-The seed is stored in an array of three @prg{unsigned short}s.
+The seed is stored in an array of three \ccc{unsigned short}s.
 
 @macro <Random private data members> = @begin
     // data members
@@ -180,8 +193,8 @@ time.
 
 \subsection{Operations}
 
-The C library function @prg{erand48} returns a random @prg{double},
-uniformly chosen from the interval $[@prg{0.0},@prg{1.0})$.
+The C library function \ccc{erand48} returns a random \ccc{double},
+uniformly chosen from the interval $[\ccc{0.0},\ccc{1.0})$.
 The result is converted to a number in the given range.
 
 @macro <Random operations> = @begin
@@ -220,12 +233,12 @@ The result is converted to a number in the given range.
 @end
 
 
-\subsection{Seed Operations}
+\subsection{Seed Functions}
 
-The seed operations just copy the internal seed to or from the given
+The seed functions just copy the internal seed to or from the given
 seed variable, respectively.
 
-@macro <Random seed operations> = @begin
+@macro <Random seed functions> = @begin
     void
     CGAL_Random::
     save_seed( Seed& seed) const
@@ -249,55 +262,55 @@ seed variable, respectively.
 @! Test
 @! ============================================================================
 
+\clearpage
 \section{Test}
 
-We call each function of class @prg{CGAL_Random} at least once to
+We call each function of class \ccc{CGAL_Random} at least once to
 ensure code coverage. In addition, we check if the generated random
 numbers lie in the given ranges, and if two random numbers generators
 initialized with the same seed generate the same sequence of random
 numbers.
 
 @macro <Random tests> = @begin
-    CGAL_Random        rnd;
     CGAL_Random::Seed  seed;
-    rnd.save_seed( seed);
+    CGAL_random.save_seed( seed);
 
     // test get_bool
     {
-	bool b = rnd.get_bool();
-	CGAL_assertion( ! b || b);
+	bool b = CGAL_random.get_bool();
+	assert( ! b || b);
     }
 
     // test get_int
     {
-        int  l = rnd.get_int( -100, 0);
-	int  u = rnd.get_int( 0, 1000);
-	int  i = rnd.get_int( l, u);
-	CGAL_assertion( ( l <= i) && ( i < u));
+        int  l = CGAL_random.get_int( -100, 0);
+	int  u = CGAL_random.get_int( 0, 1000);
+	int  i = CGAL_random.get_int( l, u);
+	assert( ( l <= i) && ( i < u));
     }
 
     // test get_double
     {
-        double  l = rnd.get_double( -123.45, -0.99);
-	double  u = rnd.get_double( 22.0/7.0, 33.3);
-	double  d = rnd.get_double( l, u);
-	CGAL_assertion( ( l <= d) && ( d < u));
+        double  l = CGAL_random.get_double( -123.45, -0.99);
+	double  u = CGAL_random.get_double( 22.0/7.0, 33.3);
+	double  d = CGAL_random.get_double( l, u);
+	assert( ( l <= d) && ( d < u));
     }
 
     // test operator()
     {
-	int  i = rnd( 5555);
-	CGAL_assertion( ( 0 <= i) && ( i < 5555));
+	int  i = CGAL_random( 5555);
+	assert( ( 0 <= i) && ( i < 5555));
     }
 
     // test seed functions
     {
-	rnd.restore_seed( seed);		// now `rnd' and `rnd2'
-	CGAL_Random rnd2( seed);		// have the same seed
+	CGAL_random.restore_seed( seed);	// `CGAL_Random' and `rnd'
+	CGAL_Random rnd( seed);			// have the same seed now
 
-	CGAL_assertion( rnd.get_bool()          == rnd2.get_bool());
-	CGAL_assertion( rnd.get_int( -100, 100) == rnd2.get_int( -100, 100));
-	CGAL_assertion( rnd.get_double()        == rnd2.get_double());
+	assert( CGAL_random.get_bool()         == rnd.get_bool());
+	assert( CGAL_random.get_int( -100,100) == rnd.get_int( -100,100));
+	assert( CGAL_random.get_double()       == rnd.get_double());
     }
 @end
 
@@ -305,8 +318,7 @@ numbers.
 @! Files
 @! ==========================================================================
 
-\pagebreak
-
+\clearpage
 \section{Files}
 
 @file <Random.h> = @begin
@@ -327,6 +339,10 @@ numbers.
     #endif
 
     @<Random interface>
+
+    // Global variables
+    // ================
+    @<Random global variable declaration>
 
     @<dividing line>
 
@@ -350,20 +366,21 @@ numbers.
     // constructors
     @<Random constructors>
 
-    // ssed operations
-    @<Random seed operations>
+    // seed functions
+    @<Random seed functions>
+
+    // Global variables
+    // ================
+    @<Random global variable definition>
 
     @<end of file line>
 @end
-
-\pagebreak
 
 @file <test_Random.C> = @begin
     @<Random header>("test/test_Random.C")
 
     #include <CGAL/Random.h>
-
-    #define CGAL_assertion CGAL_kernel_assertion
+    #include <assert.h>
 
     int
     main( int, char**)

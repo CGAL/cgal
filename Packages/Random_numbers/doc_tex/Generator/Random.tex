@@ -29,21 +29,24 @@ It can be very usefull, e.g.\ for debugging, to reproduce a sequence
 of random numbers.  This can be done using the seed functions
 described below.
 
-
 \ccInclude{CGAL/Random.h}
-\ccCreationVariable{random}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Global Variables}
+
+\ccVariable{ CGAL_Random CGAL_random;}{
+          This global variable is used as the
+          default random numbers generator.}
 
 % -----------------------------------------------------------------------------
 \ccTypes
-
-\ccSetThreeColumns{double}{\ccVar.restore_seed( Seed seed)}{}
-\ccPropagateThreeToTwoColumns
 
 \ccUnchecked
 \ccNestedType{Seed}{Seed type.}
 
 % -----------------------------------------------------------------------------
 \ccCreation
+\ccCreationVariable{random}
 
 \ccConstructor{ CGAL_Random( );}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.}
