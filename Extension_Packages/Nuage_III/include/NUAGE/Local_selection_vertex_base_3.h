@@ -62,7 +62,6 @@ public:
 private:
 
   int _mark;
-  int _visu_index;
   int _post_mark;
   Intern_successors_type* _incident_border;
 
@@ -83,7 +82,7 @@ public:
 
   Local_selection_vertex_base_3()
     : CGAL::Triangulation_vertex_base_3<Gt>(), _mark(-1), 
-    _visu_index(-1), _post_mark(-1), 
+    _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
     ir_first(incidence_requests.end()), ir_last(incidence_requests.end())
     {
@@ -95,7 +94,7 @@ public:
   
   Local_selection_vertex_base_3(const Point & p)
     : CGAL::Triangulation_vertex_base_3<Gt>(p), _mark(-1), 
-      _visu_index(-1), _post_mark(-1), 
+    _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
     ir_first(incidence_requests.end()), ir_last(incidence_requests.end())
     {
@@ -107,7 +106,7 @@ public:
   
   Local_selection_vertex_base_3(const Point & p, void* f)
     : CGAL::Triangulation_vertex_base_3<Gt>(p, f), _mark(-1), 
-      _visu_index(-1), _post_mark(-1), 
+    _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
     ir_first(incidence_requests.end()), ir_last(incidence_requests.end())
     {
@@ -119,7 +118,7 @@ public:
 
   Local_selection_vertex_base_3(void* f)
     : CGAL::Triangulation_vertex_base_3<Gt>(f), _mark(-1), 
-      _visu_index(-1), _post_mark(-1), 
+    _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
     ir_first(incidence_requests.end()), ir_last(incidence_requests.end())
     {
@@ -180,8 +179,6 @@ public:
       _incident_border->second->first = NULL;
       _mark = -1;
       _post_mark = -1;
-      // Attention ne pas toucher a visu index sous peine de tout casser dans la 
-      // visu de la partie deja reconstruite
     }
 
   //-------------------------------------------------------------------
@@ -398,22 +395,22 @@ public:
 
   //-------------------------------------------------------------------
 
-  inline bool is_on_border()
+  inline bool is_on_border() const
     {
       return (_mark > 0);
     }
 
-  inline bool not_interior()
+  inline bool not_interior() const
     {
       return (_mark != 0);
     }
 
-  inline int number_of_incident_border()
+  inline int number_of_incident_border() const
     {
       return _mark;
     }
 
-  inline bool is_exterior()
+  inline bool is_exterior() const
     {
       return (_mark < 0);
     }
@@ -439,18 +436,6 @@ public:
 	  _incident_border = NULL;
 	  erase_incidence_request();
 	}
-    }
-
-  //-------------------------------------------------------------------
-
-  inline void set_visu_index(const int& i)
-    {
-      _visu_index = i;
-    }
-  
-  inline int get_visu_index()
-    {
-      return _visu_index;
     }
 
   //-------------------------------------------------------------------
