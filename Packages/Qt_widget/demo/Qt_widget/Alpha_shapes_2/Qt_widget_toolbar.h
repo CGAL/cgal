@@ -22,19 +22,9 @@
 #ifndef CGAL_QT_WIDGET_TOOLBAR_H
 #define CGAL_QT_WIDGET_TOOLBAR_H
 
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Alpha_shape_vertex_base_2.h>
-#include <CGAL/Alpha_shape_face_base_2.h>
-#include <CGAL/Alpha_shape_euclidean_traits_2.h>
-#include <CGAL/Triangulation_face_base_2.h>
-#include <CGAL/Alpha_shape_face_base_2.h>
-#include <CGAL/Alpha_shape_2.h>
-
-
 
 // TODO: check if some of those includes shouldn't be in the .C file
+#include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
 #include "Qt_widget_move_point.h"
 #include <CGAL/IO/Qt_widget_get_point.h>
@@ -45,15 +35,8 @@
 #include <qbuttongroup.h>
 #include <qmainwindow.h>
 
-typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>  Rp;
-typedef CGAL::Alpha_shape_euclidean_traits_2<Rp> Gt;
-typedef CGAL::Alpha_shape_vertex_base_2<Gt>	  Vb;
-typedef CGAL::Triangulation_face_base_2<Gt>	  Df;
-typedef CGAL::Alpha_shape_face_base_2<Gt, Df>	  Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Delaunay;
-
+typedef double CoordT;
+typedef CGAL::Cartesian<CoordT> RP;
 namespace CGAL {
 
 class Tools_toolbar : public QObject
@@ -75,7 +58,7 @@ private:
   QButtonGroup  *button_group;
   int			nr_of_buttons;
 	
-  CGAL::Qt_widget_get_point<Rp>	    pointbut;
+  CGAL::Qt_widget_get_point<RP> 	    pointbut;
   CGAL::Qt_widget_movepoint<Delaunay> movepointbut;
 };//end class
 

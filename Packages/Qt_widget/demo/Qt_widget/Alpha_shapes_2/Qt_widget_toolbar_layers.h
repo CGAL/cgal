@@ -21,18 +21,9 @@
 #ifndef CGAL_QT_WIDGET_TOOLBAR_LAYERS_H
 #define CGAL_QT_WIDGET_TOOLBAR_LAYERS_H
 
-//CGAL
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Alpha_shape_vertex_base_2.h>
-#include <CGAL/Alpha_shape_face_base_2.h>
-#include <CGAL/Alpha_shape_euclidean_traits_2.h>
-#include <CGAL/Triangulation_face_base_2.h>
-#include <CGAL/Alpha_shape_face_base_2.h>
-#include <CGAL/Alpha_shape_2.h>
 
 //Qt_widget
+#include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
 
 //Qt_widget_layer
@@ -47,15 +38,6 @@
 #include <qtoolbar.h>
 #include <qstatusbar.h>
 #include <qbuttongroup.h>
-
-typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>  Rp;
-typedef CGAL::Alpha_shape_euclidean_traits_2<Rp> Gt;
-typedef CGAL::Alpha_shape_vertex_base_2<Gt>	  Vb;
-typedef CGAL::Triangulation_face_base_2<Gt>	  Df;
-typedef CGAL::Alpha_shape_face_base_2<Gt, Df>	  Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Delaunay;
 
 namespace CGAL {
 

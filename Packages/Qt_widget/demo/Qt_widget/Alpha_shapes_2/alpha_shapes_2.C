@@ -15,26 +15,8 @@ int main(int, char*)
 #else
 
 
-//STL 
-#include <fstream>
-#include <stack>
-#include <set>
-#include <string>
 
-//CGAL
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/squared_distance_2.h> 
-#include <CGAL/Point_2.h>
-#include <CGAL/predicates_on_points_2.h>
-#include <CGAL/Triangulation_euclidean_traits_2.h>
-#include <CGAL/Triangulation_2.h>
-#include <CGAL/point_generators_2.h>
-#include <CGAL/Regular_triangulation_2.h>
-#include <CGAL/Regular_triangulation_face_base_2.h>
-#include <CGAL/Alpha_shape_vertex_base_2.h> 
-#include <CGAL/Alpha_shape_face_base_2.h> 
-#include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
+#include "cgal_types.h"
 
 //Qt_widget
 #include "Qt_widget_toolbar_layers.h"
@@ -44,64 +26,30 @@ int main(int, char*)
 #include <CGAL/IO/Qt_widget_Alpha_shape_2.h>
 #include "Qt_widget_toolbar.h"
 
+//STL 
+#include <fstream>
+#include <stack>
+#include <set>
+#include <string>
 
 
 //Qt
-#include <qplatinumstyle.h>
 #include <qapplication.h>
-#include <qmainwindow.h>
-#include <qstatusbar.h>
 #include <qfiledialog.h>
+#include <qimage.h>
+#include <qinputdialog.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qmainwindow.h>
 #include <qmessagebox.h>
-#include <qpopupmenu.h>
 #include <qmenubar.h>
+#include <qpopupmenu.h>
+#include <qplatinumstyle.h>
+#include <qslider.h>
+#include <qstatusbar.h>
+#include <qtimer.h>
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
-#include <qfiledialog.h>
-#include <qtimer.h>
-#include <qslider.h>
-#include <qlayout.h>
-#include <qinputdialog.h>
-
-
-
-
-typedef double                      Coord_type;
-typedef CGAL::Cartesian<Coord_type> Rep;
-typedef CGAL::Point_2<Rep>          Point;
-typedef CGAL::Segment_2<Rep>        Segment;
-typedef CGAL::Line_2<Rep>           Line;
-typedef CGAL::Triangle_2<Rep>       Triangle;
-
-typedef CGAL::Triangulation_2<Rep>  Triangulation;
-typedef std::list<Point>            CGALPointlist;
-
-typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<Rep> Gt_w;
-typedef CGAL::Alpha_shape_vertex_base_2<Gt_w>              Av_w;
-typedef CGAL::Regular_triangulation_face_base_2<Gt_w>      Rf_w;
-typedef CGAL::Alpha_shape_face_base_2<Gt_w,Rf_w>           Af_w;
-typedef CGAL::Triangulation_default_data_structure_2<Gt_w,Av_w,Af_w> 
-                                                           Tds_w;
-typedef CGAL::Regular_triangulation_2<Gt_w,Tds_w>          Rt_w;
-typedef CGAL::Alpha_shape_2<Rt_w>                          Alpha_shape_w;
-
-typedef CGAL::Alpha_shape_2<Delaunay>  Alpha_shape;
-typedef Alpha_shape::Face  Face;
-typedef Alpha_shape::Vertex Vertex;
-typedef Alpha_shape::Edge Edge;
-typedef Alpha_shape::Face_handle  Face_handle;
-typedef Alpha_shape::Vertex_handle Vertex_handle;
-typedef Alpha_shape::Face_circulator  Face_circulator;
-typedef Alpha_shape::Vertex_circulator  Vertex_circulator;
-typedef Alpha_shape::Locate_type Locate_type;
-typedef Alpha_shape::Face_iterator  Face_iterator;
-typedef Alpha_shape::Vertex_iterator  Vertex_iterator;
-typedef Alpha_shape::Edge_iterator  Edge_iterator;
-typedef Alpha_shape::Edge_circulator  Edge_circulator;
-typedef Alpha_shape::Coord_type Coord_type;
-typedef Alpha_shape::Alpha_iterator Alpha_iterator;
-
-
 
 const QString my_title_string("Alpha_shapes_2 Demo with"
 			      " CGAL Qt_widget");
@@ -125,19 +73,47 @@ private:
   }
 };
 
+class Layout_widget : public QWidget{
+public:
+  Layout_widget(QWidget *parent, const char *name=0):
+      QWidget(parent, name) {    
+    QBoxLayout *topLayout = new QVBoxLayout( this, 5 );
+    QBoxLayout *topLayout1 = new QHBoxLayout( this, 5 );
+    slider = new QSlider(0, 10000, 1, 10, Qt::Vertical, this, "slider1");
+    label = new QLabel(this, "label");
+    label->setText("The current alpha value: 0.001");
+    //QBoxLayout *bottomLayout = new QVBoxLayout( topLayout );
+    widget = new CGAL::Qt_widget(this);
+    topLayout1->addWidget(widget);
+    topLayout1->addWidget(slider);
+    topLayout->addWidget(label);
+    topLayout->addLayout(topLayout1);
+  }
+  ~Layout_widget(){}
+  CGAL::Qt_widget* get_qt_widget(){return widget;}
+  QSlider*  get_slider(){return slider;}
+  QLabel*   get_label(){return label;}
+private:
+	CGAL::Qt_widget *widget;
+  QSlider         *slider;
+  QLabel          *label;
+};
 class MyWindow : public QMainWindow
 {
   Q_OBJECT
 public:
-  MyWindow(int w, int h): win(this) {
-  setCentralWidget(&win);
+  MyWindow(int w, int h) {
+  Layout_widget *cwidget = new Layout_widget(this);
+  widget = cwidget->get_qt_widget();
+  slider = cwidget->get_slider();
+  label  = cwidget->get_label();
+  setCentralWidget(cwidget);
 
   //create a timer for checking if somthing changed
   QTimer *timer = new QTimer( this );
   connect( timer, SIGNAL(timeout()),
            this, SLOT(timerDone()) );
   timer->start( 200, FALSE );
-
 
   // file menu
   QPopupMenu * file = new QPopupMenu( this );
@@ -150,9 +126,11 @@ public:
   file->insertItem("&Save Triangulation", 
 		   this, SLOT(save_triangulation()), CTRL+Key_T);
   file->insertSeparator();
+  file->insertItem("&Load Image", 
+		   this, SLOT(load_image()), CTRL+Key_I);
+  file->insertSeparator();
   file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
   file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
-
 
   // drawing menu
   QPopupMenu * edit = new QPopupMenu( this );
@@ -170,30 +148,31 @@ public:
 
   //the new tools toolbar
   setUsesBigPixmaps(TRUE);
-  newtoolbar = new CGAL::Tools_toolbar(&win, this, &tr1);	
+  newtoolbar = new CGAL::Tools_toolbar(widget, this, &tr1);	
   //the new scenes toolbar
-  vtoolbar = new CGAL::Layers_toolbar(&win, this, &tr1);
+  vtoolbar = new CGAL::Layers_toolbar(widget, this, &tr1);
   //the standard toolbar
-  stoolbar = new CGAL::Qt_widget_standard_toolbar (&win, this);
+  stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
   this->addToolBar(stoolbar->toolbar(), Top, FALSE);
   this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
   this->addToolBar(vtoolbar->toolbar(), Top, FALSE);
   
-  win << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
+  *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
 
   resize(w,h);
-  win.show();
-
-  win.setMouseTracking(TRUE);
+  widget->show();
+  widget->setMouseTracking(TRUE);
 	
   //connect the widget to the main function that receives the objects
-  connect(&win, SIGNAL(new_cgal_object(CGAL::Object)), 
+  connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
     this, SLOT(get_new_object(CGAL::Object)));
+
+  connect(slider, SIGNAL(valueChanged(int)), this, SLOT(slider_changed(int)));
 
   //application flag stuff
   old_state = 0;
   //layers
-  win.attach(&alpha_shape_layer);
+  widget->attach(&alpha_shape_layer);
   alpha_index = 0.001;
   };
 
@@ -209,22 +188,30 @@ signals:
 public slots:
   void set_window(double xmin, double xmax, double ymin, double ymax)
   {
-    win.set_window(xmin, xmax, ymin, ymax);
+    widget->set_window(xmin, xmax, ymin, ymax);
   }
   void new_instance()
   {
-    win.lock();
-    win.clear();
+    widget->lock();
+    widget->clear();
     tr1.clear();
     A.clear();
     L.clear();
-    win.clear_history();
-    win.set_window(-1.1, 1.1, -1.1, 1.1); 
+    widget->clear_history();
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
     // set the Visible Area to the Interval
-    win.unlock();
+    widget->unlock();
     something_changed();
   }
 
+  void load_image(){
+    QString s( QFileDialog::getOpenFileName( QString::null,
+		    "Image files (*.bmp)", this ) );
+    if ( s.isEmpty() )
+        return;
+    QImage img(s);
+    widget->get_painter().drawImage(0, 0, img, 0, 0, widget->width(), widget->height(), 0);
+  }
 private slots:
   void get_new_object(CGAL::Object obj)
   {
@@ -264,14 +251,15 @@ private slots:
 		 "Between 0 and 1", alpha_index, 0, 1, 3, &ok, this );
     if ( ok ){
       alpha_index = res;
-      win.redraw();
+      slider->setValue(res*10000);
+      widget->redraw();
     }
   }
 
   void timerDone()
   {
     if(old_state!=current_state){
-      win.redraw();
+      widget->redraw();
       old_state = current_state;
     }
   }	
@@ -280,23 +268,22 @@ private slots:
   {
     tr1.clear();
     A.clear();
-    win.clear_history();
-    win.lock();
-    win.set_window(-1.1, 1.1, -1.1, 1.1); 
+    widget->clear_history();
+    widget->lock();
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
     // set the Visible Area to the Interval
 
     // send resizeEvent only on show.
-    win.unlock();
+    widget->unlock();
     CGAL::Random_points_in_disc_2<Point> g(0.5);
     for(int count=0; count<200; count++) {
       tr1.insert(*g);
       L.push_back(*g++);
     }
     A.make_alpha_shape(L.begin(), L.end());
-    win.redraw();
+    widget->redraw();
     something_changed();
   }
-	
   void save_triangulation()
   {
     QString fileName = 
@@ -308,8 +295,6 @@ private slots:
       out << tr1 << std::endl;    
     }
   }
-
-	
 
   void load_triangulation()
   {
@@ -332,17 +317,23 @@ private slots:
     something_changed();
   }
 
-	
+  void slider_changed(int new_value)	{
+    alpha_index = 0.0001 * new_value;
+    label->setText(QString("The current alpha value: ") + QString::number(alpha_index));
+    widget->redraw();
+  }
 
 private:
-  
-  CGAL::Qt_widget	    win;		
-  CGAL::Tools_toolbar	    *newtoolbar;
-  CGAL::Layers_toolbar	    *vtoolbar;
-  CGAL::Qt_widget_standard_toolbar    *stoolbar;
-  //if a CGAL::Point is received should be true
-  int			    old_state;
-  Qt_layer_show_alpha_shape alpha_shape_layer;		
+  CGAL::Qt_widget         *widget;		
+  CGAL::Tools_toolbar     *newtoolbar;
+  CGAL::Layers_toolbar    *vtoolbar;
+  CGAL::Qt_widget_standard_toolbar
+                          *stoolbar;
+  int                     old_state;
+  Qt_layer_show_alpha_shape
+                          alpha_shape_layer;
+  QSlider                 *slider;
+  QLabel                  *label;
 };
 
 #include "alpha_shapes_2.moc"
