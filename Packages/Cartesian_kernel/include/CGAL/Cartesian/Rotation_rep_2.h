@@ -36,7 +36,6 @@ friend class Scaling_repC2<R>;
 public:
   typedef Aff_transformation_rep_baseC2<R> Aff_t_base;
   typedef typename Aff_t_base::FT                FT;
-  typedef typename Aff_t_base::RT                RT;
   typedef typename Aff_t_base::Point_2           Point_2;
   typedef typename Aff_t_base::Vector_2          Vector_2;
   typedef typename Aff_t_base::Direction_2       Direction_2;

@@ -52,7 +52,6 @@ class Aff_transformationC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
 public:
   typedef R_                               R;
   typedef typename R::FT                   FT;
-  typedef typename R::FT                   RT;
   typedef Aff_transformation_rep_baseC3<R> Aff_t_base;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL

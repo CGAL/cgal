@@ -31,51 +31,41 @@ template < class R_ >
 class SegmentC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Segment_handle_2
 {
-public:
-  typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
+  typedef typename R_::FT                        FT;
 
-  typedef typename R::Segment_handle_2          Segment_handle_2_;
-  typedef typename Segment_handle_2_::element_type Segment_ref_2;
+  typedef typename R_::Segment_handle_2          base;
+  typedef typename base::element_type            rep;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef SegmentC2<R,Cartesian_tag>            Self;
-  typedef typename R::Point_2                   Point_2;
-  typedef typename R::Vector_2                  Vector_2;
-  typedef typename R::Direction_2               Direction_2;
-  typedef typename R::Line_2                    Line_2;
-  typedef typename R::Ray_2                     Ray_2;
-  typedef typename R::Triangle_2                Triangle_2;
-  typedef typename R::Iso_rectangle_2           Iso_rectangle_2;
-  typedef typename R::Aff_transformation_2      Aff_transformation_2;
-  typedef typename R::Circle_2                  Circle_2;
+  typedef typename R_::Point_2                   Point_2;
+  typedef typename R_::Vector_2                  Vector_2;
+  typedef typename R_::Direction_2               Direction_2;
+  typedef typename R_::Line_2                    Line_2;
+  typedef typename R_::Aff_transformation_2      Aff_transformation_2;
 #else
-  typedef SegmentC2<R>                          Self;
-  typedef typename R::Point_2_base              Point_2;
-  typedef typename R::Vector_2_base             Vector_2;
-  typedef typename R::Direction_2_base          Direction_2;
-  typedef typename R::Line_2_base               Line_2;
-  typedef typename R::Ray_2_base                Ray_2;
-  typedef typename R::Triangle_2_base           Triangle_2;
-  typedef typename R::Iso_rectangle_2_base      Iso_rectangle_2;
-  typedef typename R::Aff_transformation_2_base Aff_transformation_2;
-  typedef typename R::Circle_2_base             Circle_2;
+  typedef typename R_::Point_2_base              Point_2;
+  typedef typename R_::Vector_2_base             Vector_2;
+  typedef typename R_::Direction_2_base          Direction_2;
+  typedef typename R_::Line_2_base               Line_2;
+  typedef typename R_::Aff_transformation_2_base Aff_transformation_2;
 #endif
 
+public:
+  typedef R_                                     R;
+
   SegmentC2()
-    : Segment_handle_2_(Segment_ref_2()) {}
+    : base(rep()) {}
 
   SegmentC2(const Point_2 &sp, const Point_2 &ep)
-    : Segment_handle_2_(Segment_ref_2(sp, ep)) {}
+    : base(rep(sp, ep)) {}
 
   bool        is_horizontal() const;
   bool        is_vertical() const;
   bool        has_on(const Point_2 &p) const;
   bool        collinear_has_on(const Point_2 &p) const;
 
-  bool        operator==(const Self &s) const;
-  bool        operator!=(const Self &s) const;
+  bool        operator==(const SegmentC2 &s) const;
+  bool        operator!=(const SegmentC2 &s) const;
 
   const Point_2 &   source() const
   {
@@ -99,10 +89,10 @@ public:
 
   Direction_2 direction() const;
   Line_2      supporting_line() const;
-  Self        opposite() const;
-  Self        transform(const Aff_transformation_2 &t) const
+  SegmentC2        opposite() const;
+  SegmentC2        transform(const Aff_transformation_2 &t) const
   {
-    return Self(t.transform(source()), t.transform(target()));
+    return SegmentC2(t.transform(source()), t.transform(target()));
   }
 
   bool        is_degenerate() const;

@@ -30,58 +30,56 @@ template < class R_ >
 class DirectionC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Direction_handle_3
 {
-public:
-  typedef R_                               R;
-  typedef typename R::FT                   FT;
-  typedef typename R::RT                   RT;
+  typedef typename R_::FT                   FT;
 
-  typedef typename R::Direction_handle_3   Direction_handle_3_;
-  typedef typename Direction_handle_3_::element_type Direction_ref_3;
+  typedef typename R_::Direction_handle_3   base;
+  typedef typename base::element_type       rep;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef DirectionC3<R CGAL_CTAG>         Self;
-  typedef typename R::Vector_3             Vector_3;
-  typedef typename R::Line_3               Line_3;
-  typedef typename R::Ray_3                Ray_3;
-  typedef typename R::Segment_3            Segment_3;
-  typedef typename R::Aff_transformation_3 Aff_transformation_3;
+  typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Line_3               Line_3;
+  typedef typename R_::Ray_3                Ray_3;
+  typedef typename R_::Segment_3            Segment_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 #else
-  typedef DirectionC3<R>                   Self;
-  typedef typename R::Vector_3_base        Vector_3;
-  typedef typename R::Line_3_base          Line_3;
-  typedef typename R::Ray_3_base           Ray_3;
-  typedef typename R::Segment_3_base       Segment_3;
-  typedef typename R::Aff_transformation_3_base Aff_transformation_3;
+  typedef typename R_::Vector_3_base        Vector_3;
+  typedef typename R_::Line_3_base          Line_3;
+  typedef typename R_::Ray_3_base           Ray_3;
+  typedef typename R_::Segment_3_base       Segment_3;
+  typedef typename R_::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
+public:
+  typedef R_                                R;
+
   DirectionC3()
-    : Direction_handle_3_(Direction_ref_3()) {}
+    : base(rep()) {}
 
   DirectionC3(const Vector_3 &v)
-    : Direction_handle_3_(v) {}
+    : base(v) {}
 
   DirectionC3(const Line_3 &l)
-    : Direction_handle_3_(l.direction()) {}
+    : base(l.direction()) {}
 
   DirectionC3(const Ray_3 &r)
-    : Direction_handle_3_(r.direction()) {}
+    : base(r.direction()) {}
 
   DirectionC3(const Segment_3 &s)
-    : Direction_handle_3_(s.direction()) {}
+    : base(s.direction()) {}
 
   DirectionC3(const FT &x, const FT &y, const FT &z)
-    : Direction_handle_3_(Direction_ref_3(x, y, z)) {}
+    : base(rep(x, y, z)) {}
 
-  bool           operator==(const Self &d) const;
-  bool           operator!=(const Self &d) const;
+  bool           operator==(const DirectionC3 &d) const;
+  bool           operator!=(const DirectionC3 &d) const;
 
   Vector_3       to_vector() const;
-  Self           transform(const Aff_transformation_3 &t) const
+  DirectionC3           transform(const Aff_transformation_3 &t) const
   {
     return t.transform(*this);
   }
 
-  Self           operator-() const;
+  DirectionC3           operator-() const;
 
   const FT & delta(int i) const;
   const FT & dx() const

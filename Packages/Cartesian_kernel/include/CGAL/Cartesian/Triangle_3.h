@@ -30,42 +30,40 @@ template <class R_>
 class TriangleC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Triangle_handle_3
 {
-public:
-  typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
+  typedef typename R_::FT                        FT;
 
-  typedef typename R::Triangle_handle_3         Triangle_handle_3_;
-  typedef typename Triangle_handle_3_::element_type Triangle_ref_3;
+  typedef typename R_::Triangle_handle_3         base;
+  typedef typename base::element_type            rep;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef TriangleC3<R CGAL_CTAG>               Self;
-  typedef typename R::Point_3                   Point_3;
-  typedef typename R::Vector_3                  Vector_3;
-  typedef typename R::Plane_3                   Plane_3;
-  typedef typename R::Aff_transformation_3      Aff_transformation_3;
+  typedef typename R_::Point_3                   Point_3;
+  typedef typename R_::Vector_3                  Vector_3;
+  typedef typename R_::Plane_3                   Plane_3;
+  typedef typename R_::Aff_transformation_3      Aff_transformation_3;
 #else
-  typedef TriangleC3<R>                         Self;
-  typedef typename R::Point_3_base              Point_3;
-  typedef typename R::Vector_3_base             Vector_3;
-  typedef typename R::Plane_3_base              Plane_3;
-  typedef typename R::Aff_transformation_3_base Aff_transformation_3;
+  typedef typename R_::Point_3_base              Point_3;
+  typedef typename R_::Vector_3_base             Vector_3;
+  typedef typename R_::Plane_3_base              Plane_3;
+  typedef typename R_::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
+public:
+  typedef R_                                     R;
+
   TriangleC3()
-    : Triangle_handle_3_(Triangle_ref_3()) {}
+    : base(rep()) {}
 
   TriangleC3(const Point_3 &p, const Point_3 &q, const Point_3 &r)
-    : Triangle_handle_3_(Triangle_ref_3(p, q, r)) {}
+    : base(rep(p, q, r)) {}
 
-  bool       operator==(const Self &t) const;
-  bool       operator!=(const Self &t) const;
+  bool       operator==(const TriangleC3 &t) const;
+  bool       operator!=(const TriangleC3 &t) const;
 
   Plane_3    supporting_plane() const;
 
-  Self       transform(const Aff_transformation_3 &t) const
+  TriangleC3       transform(const Aff_transformation_3 &t) const
   {
-    return Self(t.transform(vertex(0)),
+    return TriangleC3(t.transform(vertex(0)),
                 t.transform(vertex(1)),
                 t.transform(vertex(2)));
   }

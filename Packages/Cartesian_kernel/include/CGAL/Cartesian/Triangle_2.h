@@ -31,54 +31,40 @@ template <class R_>
 class TriangleC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Triangle_handle_2
 {
-public:
-  typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
+  typedef typename R_::FT                        FT;
 
-  typedef typename R::Triangle_handle_2         Triangle_handle_2_;
-  typedef typename Triangle_handle_2_::element_type Triangle_ref_2;
+  typedef typename R_::Triangle_handle_2         base;
+  typedef typename base::element_type            rep;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef TriangleC2<R,Cartesian_tag>           Self;
-  typedef typename R::Point_2                   Point_2;
-  typedef typename R::Vector_2                  Vector_2;
-  typedef typename R::Direction_2               Direction_2;
-  typedef typename R::Line_2                    Line_2;
-  typedef typename R::Ray_2                     Ray_2;
-  typedef typename R::Segment_2                 Segment_2;
-  typedef typename R::Iso_rectangle_2           Iso_rectangle_2;
-  typedef typename R::Aff_transformation_2      Aff_transformation_2;
-  typedef typename R::Circle_2                  Circle_2;
+  typedef typename R_::Point_2                   Point_2;
+  typedef typename R_::Vector_2                  Vector_2;
+  typedef typename R_::Aff_transformation_2      Aff_transformation_2;
 #else
-  typedef TriangleC2<R>                         Self;
-  typedef typename R::Point_2_base              Point_2;
-  typedef typename R::Vector_2_base             Vector_2;
-  typedef typename R::Direction_2_base          Direction_2;
-  typedef typename R::Line_2_base               Line_2;
-  typedef typename R::Ray_2_base                Ray_2;
-  typedef typename R::Segment_2_base            Segment_2;
-  typedef typename R::Iso_rectangle_2_base      Iso_rectangle_2;
-  typedef typename R::Aff_transformation_2_base Aff_transformation_2;
-  typedef typename R::Circle_2_base             Circle_2;
+  typedef typename R_::Point_2_base              Point_2;
+  typedef typename R_::Vector_2_base             Vector_2;
+  typedef typename R_::Aff_transformation_2_base Aff_transformation_2;
 #endif
 
+public:
+  typedef R_                                    R;
+
   TriangleC2()
-    : Triangle_handle_2_(Triangle_ref_2()) {}
+    : base(rep()) {}
 
   TriangleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
-    : Triangle_handle_2_(Triangle_ref_2(p, q, r)) {}
+    : base(rep(p, q, r)) {}
 
-  bool           operator==(const Self &s) const;
-  bool           operator!=(const Self &s) const;
+  bool           operator==(const TriangleC2 &s) const;
+  bool           operator!=(const TriangleC2 &s) const;
 
   const Point_2 & vertex(int i) const;
   const Point_2 & operator[](int i) const;
 
-  Self           opposite() const;
-  Self           transform(const Aff_transformation_2 &t) const
+  TriangleC2           opposite() const;
+  TriangleC2           transform(const Aff_transformation_2 &t) const
   {
-    return Self(t.transform(vertex(0)),
+    return TriangleC2(t.transform(vertex(0)),
                 t.transform(vertex(1)),
                 t.transform(vertex(2)));
   }

@@ -32,40 +32,26 @@ template <class R_ >
 class CircleC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Circle_handle_2
 {
-public:
-  typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
+  typedef typename R_::FT                        FT;
 
-  typedef typename R::Circle_handle_2           Circle_handle_2_;
-  typedef typename Circle_handle_2_::element_type Circle_ref_2;
+  typedef typename R_::Circle_handle_2           base;
+  typedef typename base::element_type            rep;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef CircleC2<R,Cartesian_tag>             Self;
-  typedef typename R::Point_2                   Point_2;
-  typedef typename R::Vector_2                  Vector_2;
-  typedef typename R::Direction_2               Direction_2;
-  typedef typename R::Line_2                    Line_2;
-  typedef typename R::Ray_2                     Ray_2;
-  typedef typename R::Triangle_2                Triangle_2;
-  typedef typename R::Segment_2                 Segment_2;
-  typedef typename R::Iso_rectangle_2           Iso_rectangle_2;
-  typedef typename R::Aff_transformation_2      Aff_transformation_2;
+  typedef typename R_::Point_2                   Point_2;
+  typedef typename R_::Vector_2                  Vector_2;
+  typedef typename R_::Aff_transformation_2      Aff_transformation_2;
 #else
-  typedef CircleC2<R>                           Self;
-  typedef typename R::Point_2_base              Point_2;
-  typedef typename R::Vector_2_base             Vector_2;
-  typedef typename R::Direction_2_base          Direction_2;
-  typedef typename R::Line_2_base               Line_2;
-  typedef typename R::Ray_2_base                Ray_2;
-  typedef typename R::Triangle_2_base           Triangle_2;
-  typedef typename R::Segment_2_base            Segment_2;
-  typedef typename R::Iso_rectangle_2_base      Iso_rectangle_2;
-  typedef typename R::Aff_transformation_2_base Aff_transformation_2;
+  typedef typename R_::Point_2_base              Point_2;
+  typedef typename R_::Vector_2_base             Vector_2;
+  typedef typename R_::Aff_transformation_2_base Aff_transformation_2;
 #endif
 
+public:
+  typedef R_                                     R;
+
   CircleC2()
-    : Circle_handle_2_() {}
+    : base() {}
 
   CircleC2(const Point_2 &center, const FT &squared_radius = FT(0),
            const Orientation &orient = COUNTERCLOCKWISE) // Is this new?
@@ -73,14 +59,14 @@ public:
     CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &&
                               ( orient    != COLLINEAR) );
 
-    initialize_with(Circle_ref_2(center, squared_radius, orient));
+    initialize_with(rep(center, squared_radius, orient));
   }
 
   CircleC2(const Point_2 &center, const Orientation &orient) // Is this new?
   {
     CGAL_kernel_precondition( orient != COLLINEAR );
 
-    initialize_with(Circle_ref_2(center, FT(0), orient));
+    initialize_with(rep(center, FT(0), orient));
   }
 
   CircleC2(const Point_2 &p, const Point_2 &q,
@@ -92,9 +78,9 @@ public:
       Point_2 center = midpoint(p, q);
       FT      squared_radius = squared_distance(p, center);
 
-      initialize_with(Circle_ref_2(center, squared_radius, orient));
+      initialize_with(rep(center, squared_radius, orient));
     } else
-      initialize_with(Circle_ref_2(p, FT(0), orient));
+      initialize_with(rep(p, FT(0), orient));
   }
 
   CircleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
@@ -105,11 +91,11 @@ public:
     Point_2 center = circumcenter(p, q, r);
     FT      squared_radius = squared_distance(p, center);
 
-    initialize_with(Circle_ref_2(center, squared_radius, orient));
+    initialize_with(rep(center, squared_radius, orient));
   }
 
-  bool           operator==(const Self &s) const;
-  bool           operator!=(const Self &s) const;
+  bool           operator==(const CircleC2 &s) const;
+  bool           operator!=(const CircleC2 &s) const;
 
   const Point_2 & center() const
   {
@@ -126,11 +112,11 @@ public:
    return Ptr()->orient;
   }
 
-  Self           opposite() const;
+  CircleC2           opposite() const;
 
 //  EllipseC2<FT> transform(const Aff_transformation_2 &t) const;
 
-  Self           orthogonal_transform(const Aff_transformation_2 &t) const;
+  CircleC2           orthogonal_transform(const Aff_transformation_2 &t) const;
 
   Oriented_side  oriented_side(const Point_2 &p) const;
   Bounded_side   bounded_side(const Point_2 &p) const;

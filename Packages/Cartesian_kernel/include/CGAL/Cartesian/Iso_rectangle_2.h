@@ -30,40 +30,24 @@ template <class R_>
 class Iso_rectangleC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Iso_rectangle_handle_2
 {
-public:
-  typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
+  typedef typename R_::FT                        FT;
 
-  typedef typename R::Iso_rectangle_handle_2    Iso_rectangle_handle_2_;
-  typedef typename Iso_rectangle_handle_2_::element_type Iso_rectangle_ref_2;
+  typedef typename R_::Iso_rectangle_handle_2    base;
+  typedef typename base::element_type            rep;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef Iso_rectangleC2<R,Cartesian_tag>      Self;
-  typedef typename R::Point_2                   Point_2;
-  typedef typename R::Vector_2                  Vector_2;
-  typedef typename R::Direction_2               Direction_2;
-  typedef typename R::Line_2                    Line_2;
-  typedef typename R::Ray_2                     Ray_2;
-  typedef typename R::Triangle_2                Triangle_2;
-  typedef typename R::Segment_2                 Segment_2;
-  typedef typename R::Aff_transformation_2      Aff_transformation_2;
-  typedef typename R::Circle_2                  Circle_2;
+  typedef typename R_::Point_2                   Point_2;
+  typedef typename R_::Aff_transformation_2      Aff_transformation_2;
 #else
-  typedef Iso_rectangleC2<R>                    Self;
-  typedef typename R::Point_2_base              Point_2;
-  typedef typename R::Vector_2_base             Vector_2;
-  typedef typename R::Direction_2_base          Direction_2;
-  typedef typename R::Line_2_base               Line_2;
-  typedef typename R::Ray_2_base                Ray_2;
-  typedef typename R::Triangle_2_base           Triangle_2;
-  typedef typename R::Segment_2_base            Segment_2;
-  typedef typename R::Aff_transformation_2_base Aff_transformation_2;
-  typedef typename R::Circle_2_base             Circle_2;
+  typedef typename R_::Point_2_base              Point_2;
+  typedef typename R_::Aff_transformation_2_base Aff_transformation_2;
 #endif
 
+public:
+  typedef R_                                     R;
+
   Iso_rectangleC2()
-    : Iso_rectangle_handle_2_(Iso_rectangle_ref_2()) {}
+    : base(rep()) {}
 
   Iso_rectangleC2(const Point_2 &p, const Point_2 &q)
   { // FIXME : construction
@@ -72,30 +56,30 @@ public:
     else               { minx = q.x(); maxx = p.x(); }
     if (p.y() < q.y()) { miny = p.y(); maxy = q.y(); }
     else               { miny = q.y(); maxy = p.y(); }
-    initialize_with(Iso_rectangle_ref_2(Point_2(minx, miny),
+    initialize_with(rep(Point_2(minx, miny),
 	                                Point_2(maxx, maxy)));
   }
 
-  Iso_rectangleC2(const RT& min_x, const RT& min_y, 
-                  const RT& max_x, const RT& max_y)
+  Iso_rectangleC2(const FT& min_x, const FT& min_y, 
+                  const FT& max_x, const FT& max_y)
   {
-    initialize_with(Iso_rectangle_ref_2(Point_2(min_x, min_y),
+    initialize_with(rep(Point_2(min_x, min_y),
 	                                Point_2(max_x, max_y)));
   }
 
-  Iso_rectangleC2(const RT& min_hx, const RT& min_hy, 
-                  const RT& max_hx, const RT& max_hy, const RT& hw)
+  Iso_rectangleC2(const FT& min_hx, const FT& min_hy, 
+                  const FT& max_hx, const FT& max_hy, const FT& hw)
   {
-    if (hw == RT(1))
-       initialize_with(Iso_rectangle_ref_2(Point_2(min_hx, min_hy),
+    if (hw == FT(1))
+       initialize_with(rep(Point_2(min_hx, min_hy),
 	                                   Point_2(max_hx, max_hy)));
     else
-       initialize_with(Iso_rectangle_ref_2(Point_2(min_hx/hw, min_hy/hw),
+       initialize_with(rep(Point_2(min_hx/hw, min_hy/hw),
 	                                   Point_2(max_hx/hw, max_hy/hw)));
   }
 
-  bool            operator==(const Self &s) const;
-  bool            operator!=(const Self &s) const;
+  bool            operator==(const Iso_rectangleC2 &s) const;
+  bool            operator!=(const Iso_rectangleC2 &s) const;
 
   const Point_2 & min() const
   {
@@ -108,11 +92,11 @@ public:
   Point_2 vertex(int i) const;
   Point_2 operator[](int i) const;
 
-  Self transform(const Aff_transformation_2 &t) const
+  Iso_rectangleC2 transform(const Aff_transformation_2 &t) const
   {
     // FIXME : We need a precondition like this!!!
     // CGAL_kernel_precondition(t.is_axis_preserving());
-    return Self(t.transform(vertex(0)), t.transform(vertex(2)));
+    return Iso_rectangleC2(t.transform(vertex(0)), t.transform(vertex(2)));
   }
 
   Bounded_side    bounded_side(const Point_2 &p) const;

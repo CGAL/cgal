@@ -1,3 +1,6 @@
+Version 6.30 (3 October 2001)
+- typedefs cleanup.  Now the only public typedef of kernel classes is R.
+
 Version 6.29 (2 October 2001)
 - Access functions of objects (like .x() ) now return const references.
 

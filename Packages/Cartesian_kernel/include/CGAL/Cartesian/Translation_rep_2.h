@@ -33,7 +33,6 @@ friend class Scaling_repC2<R>;
 
 public:
   typedef typename R::FT                         FT;
-  typedef typename R::RT                         RT;
   typedef Aff_transformation_rep_baseC2<R>       Aff_t_base;
   typedef Aff_transformation_repC2<R>            Transformation;
   typedef Translation_repC2<R>                   Translation;

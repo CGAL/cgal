@@ -32,58 +32,41 @@ template < class R_ >
 class PointC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Point_handle_2
 {
-public:
-  typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
+  typedef typename R_::FT                        FT;
 
-  // Guess why we have the trailing underscore ?  Yes, that's it : VC++ !
-  typedef typename R::Point_handle_2		Point_handle_2_;
-  typedef typename Point_handle_2_::element_type	Point_ref_2;
+  typedef typename R_::Point_handle_2		 base;
+  typedef typename base::element_type	         rep;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef PointC2<R,Cartesian_tag>              Self;
-  typedef typename R::Vector_2                  Vector_2;
-  typedef typename R::Direction_2               Direction_2;
-  typedef typename R::Line_2                    Line_2;
-  typedef typename R::Ray_2                     Ray_2;
-  typedef typename R::Triangle_2                Triangle_2;
-  typedef typename R::Segment_2                 Segment_2;
-  typedef typename R::Iso_rectangle_2           Iso_rectangle_2;
-  typedef typename R::Aff_transformation_2      Aff_transformation_2;
-  typedef typename R::Circle_2                  Circle_2;
+  typedef typename R_::Vector_2                  Vector_2;
+  typedef typename R_::Aff_transformation_2      Aff_transformation_2;
 #else
-  typedef PointC2<R>                            Self;
-  typedef typename R::Vector_2_base             Vector_2;
-  typedef typename R::Direction_2_base          Direction_2;
-  typedef typename R::Line_2_base               Line_2;
-  typedef typename R::Ray_2_base                Ray_2;
-  typedef typename R::Triangle_2_base           Triangle_2;
-  typedef typename R::Segment_2_base            Segment_2;
-  typedef typename R::Iso_rectangle_2_base      Iso_rectangle_2;
-  typedef typename R::Aff_transformation_2_base Aff_transformation_2;
-  typedef typename R::Circle_2_base             Circle_2;
+  typedef typename R_::Vector_2_base             Vector_2;
+  typedef typename R_::Aff_transformation_2_base Aff_transformation_2;
 #endif
 
+public:
+  typedef R_                                     R;
+
   PointC2()
-    : Point_handle_2_(Point_ref_2()) {}
+    : base(rep()) {}
 
   PointC2(const Origin &)
-    : Point_handle_2_(Point_ref_2(FT(0), FT(0))) {}
+    : base(rep(FT(0), FT(0))) {}
 
   PointC2(const FT &x, const FT &y)
-    : Point_handle_2_(Point_ref_2(x, y)) {}
+    : base(rep(x, y)) {}
 
   PointC2(const FT &hx, const FT &hy, const FT &hw)
   {
     if (hw != FT(1))
-      initialize_with( Point_ref_2(hx/hw, hy/hw) );
+      initialize_with( rep(hx/hw, hy/hw) );
     else
-      initialize_with( Point_ref_2(hx, hy) );
+      initialize_with( rep(hx, hy) );
   }
 
   PointC2(const Vector_2 &v)
-    : Point_handle_2_(v) {}
+    : base(v) {}
 
   const FT& x() const
   {
@@ -119,20 +102,20 @@ public:
       return 2;
   }
 
-  bool operator==(const Self &p) const
+  bool operator==(const PointC2 &p) const
   {
       if (identical(p))
 	  return true;
       return equal_xy(*this, p);
   }
-  bool operator!=(const Self &p) const
+  bool operator!=(const PointC2 &p) const
   {
       return !(*this == p);
   }
 
   Bbox_2 bbox() const;
 
-  Self transform(const Aff_transformation_2 &t) const
+  PointC2 transform(const Aff_transformation_2 &t) const
   {
     return t.transform(*this);
   }

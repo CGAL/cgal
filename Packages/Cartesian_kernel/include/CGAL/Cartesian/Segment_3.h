@@ -30,39 +30,37 @@ template < class R_ >
 class SegmentC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Segment_handle_3
 {
-public:
-  typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
+  typedef typename R_::FT                        FT;
 
-  typedef typename R::Segment_handle_3          Segment_handle_3_;
-  typedef typename Segment_handle_3_::element_type Segment_ref_3;
+  typedef typename R_::Segment_handle_3          base;
+  typedef typename base::element_type            rep;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef SegmentC3<R CGAL_CTAG>                Self;
-  typedef typename R::Point_3                   Point_3;
-  typedef typename R::Direction_3               Direction_3;
-  typedef typename R::Line_3                    Line_3;
-  typedef typename R::Aff_transformation_3      Aff_transformation_3;
+  typedef typename R_::Point_3                   Point_3;
+  typedef typename R_::Direction_3               Direction_3;
+  typedef typename R_::Line_3                    Line_3;
+  typedef typename R_::Aff_transformation_3      Aff_transformation_3;
 #else
-  typedef SegmentC3<R>                          Self;
-  typedef typename R::Point_3_base              Point_3;
-  typedef typename R::Direction_3_base          Direction_3;
-  typedef typename R::Line_3_base               Line_3;
-  typedef typename R::Aff_transformation_3_base Aff_transformation_3;
+  typedef typename R_::Point_3_base              Point_3;
+  typedef typename R_::Direction_3_base          Direction_3;
+  typedef typename R_::Line_3_base               Line_3;
+  typedef typename R_::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
+public:
+  typedef R_                                     R;
+
   SegmentC3()
-    : Segment_handle_3_(Segment_ref_3()) {}
+    : base(rep()) {}
 
   SegmentC3(const Point_3 &sp, const Point_3 &ep)
-    : Segment_handle_3_(Segment_ref_3(sp, ep)) {}
+    : base(rep(sp, ep)) {}
 
   bool        has_on(const Point_3 &p) const;
   bool        collinear_has_on(const Point_3 &p) const;
 
-  bool        operator==(const Self &s) const;
-  bool        operator!=(const Self &s) const;
+  bool        operator==(const SegmentC3 &s) const;
+  bool        operator!=(const SegmentC3 &s) const;
 
   const Point_3 &   source() const
   {
@@ -86,10 +84,10 @@ public:
 
   Direction_3 direction() const;
   Line_3      supporting_line() const;
-  Self        opposite() const;
-  Self        transform(const Aff_transformation_3 &t) const
+  SegmentC3        opposite() const;
+  SegmentC3        transform(const Aff_transformation_3 &t) const
   {
-    return Self(t.transform(source()), t.transform(target()));
+    return SegmentC3(t.transform(source()), t.transform(target()));
   }
 
   bool        is_degenerate() const;

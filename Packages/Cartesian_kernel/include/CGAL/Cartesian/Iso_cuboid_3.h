@@ -30,26 +30,24 @@ template < class R_ >
 class Iso_cuboidC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Iso_cuboid_handle_3
 {
-public:
-  typedef R_                               R;
-  typedef typename R::FT                   FT;
-  typedef typename R::RT                   RT;
+  typedef typename R_::FT                   FT;
 
-  typedef typename R::Iso_cuboid_handle_3  Iso_cuboid_handle_3_;
-  typedef typename Iso_cuboid_handle_3_::element_type Iso_cuboid_ref_3;
+  typedef typename R_::Iso_cuboid_handle_3  base;
+  typedef typename base::element_type       rep;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef Iso_cuboidC3<R CGAL_CTAG>        Self;
-  typedef typename R::Point_3              Point_3;
-  typedef typename R::Aff_transformation_3 Aff_transformation_3;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 #else
-  typedef Iso_cuboidC3<R>                  Self;
-  typedef typename R::Point_3_base         Point_3;
-  typedef typename R::Aff_transformation_3_base Aff_transformation_3;
+  typedef typename R_::Point_3_base         Point_3;
+  typedef typename R_::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
+public:
+  typedef R_                                R;
+
   Iso_cuboidC3()
-    : Iso_cuboid_handle_3_(Iso_cuboid_ref_3()) {}
+    : base(rep()) {}
 
   Iso_cuboidC3(const Point_3 &p, const Point_3 &q)
   { // FIXME : construction
@@ -60,33 +58,33 @@ public:
     else               { miny = q.y(); maxy = p.y(); }
     if (p.z() < q.z()) { minz = p.z(); maxz = q.z(); }
     else               { minz = q.z(); maxz = p.z(); }
-    initialize_with(Iso_cuboid_ref_3(Point_3(minx, miny, minz),
+    initialize_with(rep(Point_3(minx, miny, minz),
 				     Point_3(maxx, maxy, maxz)));
   }
 
-  Iso_cuboidC3(const RT& min_x, const RT& min_y, const RT& min_z,
-               const RT& max_x, const RT& max_y, const RT& max_z)
+  Iso_cuboidC3(const FT& min_x, const FT& min_y, const FT& min_z,
+               const FT& max_x, const FT& max_y, const FT& max_z)
   {
-    initialize_with(Iso_cuboid_ref_3(Point_3(min_x, min_y, min_z),
+    initialize_with(rep(Point_3(min_x, min_y, min_z),
 				     Point_3(max_x, max_y, max_z)));
   }
 
-  Iso_cuboidC3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
-               const RT& max_hx, const RT& max_hy, const RT& max_hz, 
-               const RT& hw)
+  Iso_cuboidC3(const FT& min_hx, const FT& min_hy, const FT& min_hz,
+               const FT& max_hx, const FT& max_hy, const FT& max_hz, 
+               const FT& hw)
   {
-    if (hw == RT(1))
-       initialize_with(Iso_cuboid_ref_3(Point_3(min_hx, min_hy, min_hz),
+    if (hw == FT(1))
+       initialize_with(rep(Point_3(min_hx, min_hy, min_hz),
 				        Point_3(max_hx, max_hy, max_hz)));
     else
        initialize_with(
-         Iso_cuboid_ref_3(Point_3(min_hx/hw, min_hy/hw, min_hz/hw),
+         rep(Point_3(min_hx/hw, min_hy/hw, min_hz/hw),
                           Point_3(max_hx/hw, max_hy/hw, max_hz/hw)));
   }
 
 
-  bool operator==(const Self& s) const;
-  bool operator!=(const Self& s) const;
+  bool operator==(const Iso_cuboidC3& s) const;
+  bool operator!=(const Iso_cuboidC3& s) const;
 
   const Point_3 & min() const
   {
@@ -99,9 +97,9 @@ public:
   Point_3 vertex(int i) const;
   Point_3 operator[](int i) const;
 
-  Self transform(const Aff_transformation_3 &t) const
+  Iso_cuboidC3 transform(const Aff_transformation_3 &t) const
   {
-    return Self(t.transform(min()), t.transform(max()));
+    return Iso_cuboidC3(t.transform(min()), t.transform(max()));
   }
 
   Bounded_side bounded_side(const Point_3& p) const;

@@ -30,39 +30,37 @@ template < class R_ >
 class RayC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Ray_handle_3
 {
-public:
-  typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
+  typedef typename R_::FT                        FT;
 
-  typedef typename R::Ray_handle_3              Ray_handle_3_;
-  typedef typename Ray_handle_3_::element_type   Ray_ref_3;
+  typedef typename R_::Ray_handle_3              base;
+  typedef typename base::element_type            rep;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef RayC3<R CGAL_CTAG>                    Self;
-  typedef typename R::Point_3                   Point_3;
-  typedef typename R::Direction_3               Direction_3;
-  typedef typename R::Line_3                    Line_3;
-  typedef typename R::Aff_transformation_3      Aff_transformation_3;
+  typedef typename R_::Point_3                   Point_3;
+  typedef typename R_::Direction_3               Direction_3;
+  typedef typename R_::Line_3                    Line_3;
+  typedef typename R_::Aff_transformation_3      Aff_transformation_3;
 #else
-  typedef RayC3<R>                              Self;
-  typedef typename R::Point_3_base              Point_3;
-  typedef typename R::Direction_3_base          Direction_3;
-  typedef typename R::Line_3_base               Line_3;
-  typedef typename R::Aff_transformation_3_base Aff_transformation_3;
+  typedef typename R_::Point_3_base              Point_3;
+  typedef typename R_::Direction_3_base          Direction_3;
+  typedef typename R_::Line_3_base               Line_3;
+  typedef typename R_::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
+public:
+  typedef R_                                     R;
+
   RayC3()
-    : Ray_handle_3_(Ray_ref_3()) {}
+    : base(rep()) {}
 
   RayC3(const Point_3 &sp, const Point_3 &secondp)
-    : Ray_handle_3_(Ray_ref_3(sp, secondp)) {}
+    : base(rep(sp, secondp)) {}
 
   RayC3(const Point_3 &sp, const Direction_3 &d)
-    : Ray_handle_3_(Ray_ref_3(sp, sp + d.to_vector())) {}
+    : base(rep(sp, sp + d.to_vector())) {}
 
-  bool        operator==(const Self &r) const;
-  bool        operator!=(const Self &r) const;
+  bool        operator==(const RayC3 &r) const;
+  bool        operator!=(const RayC3 &r) const;
 
   const Point_3 &   start() const;
   const Point_3 &   source() const
@@ -77,11 +75,11 @@ public:
 
   Direction_3 direction() const;
   Line_3      supporting_line() const;
-  Self        opposite() const;
+  RayC3        opposite() const;
 
-  Self        transform(const Aff_transformation_3 &t) const
+  RayC3        transform(const Aff_transformation_3 &t) const
   {
-    return Self(t.transform(source()), t.transform(second_point()));
+    return RayC3(t.transform(source()), t.transform(second_point()));
   }
 
   bool        is_degenerate() const;

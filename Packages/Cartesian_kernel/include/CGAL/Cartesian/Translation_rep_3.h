@@ -32,7 +32,6 @@ class Translation_repC3 : public Aff_transformation_rep_baseC3<R>
 
 public:
   typedef typename R::FT                                FT;
-  typedef typename R::RT                                RT;
   typedef Aff_transformation_rep_baseC3<R>              Transformation_base_3;
   typedef Aff_transformation_repC3<R>                   Transformation_3;
   typedef Translation_repC3<R>                          Translation_3;

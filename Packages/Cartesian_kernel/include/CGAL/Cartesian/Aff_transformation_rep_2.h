@@ -32,7 +32,6 @@ class Aff_transformation_rep_baseC2
 {
 public:
   typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef typename R::Point_2                   Point_2;
@@ -79,7 +78,6 @@ class Aff_transformation_repC2
 {
 public:
   typedef typename R::FT                              FT;
-  typedef typename R::RT                              RT;
   typedef Aff_transformation_repC2<R>                 Self;
   typedef Aff_transformation_rep_baseC2<R>            Aff_t_base;
   typedef typename Aff_t_base::Point_2                Point_2;

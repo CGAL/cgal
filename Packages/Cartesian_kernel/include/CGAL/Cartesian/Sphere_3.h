@@ -31,28 +31,26 @@ template <class R_>
 class SphereC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Sphere_handle_3
 {
-public:
-  typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
+  typedef typename R_::FT                        FT;
 
-  typedef typename R::Sphere_handle_3           Sphere_handle_3_;
-  typedef typename Sphere_handle_3_::element_type Sphere_ref_3;
+  typedef typename R_::Sphere_handle_3           base;
+  typedef typename base::element_type            rep;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef SphereC3<R CGAL_CTAG>                 Self;
-  typedef typename R::Point_3                   Point_3;
-  typedef typename R::Vector_3                  Vector_3;
-  typedef typename R::Aff_transformation_3      Aff_transformation_3;
+  typedef typename R_::Point_3                   Point_3;
+  typedef typename R_::Vector_3                  Vector_3;
+  typedef typename R_::Aff_transformation_3      Aff_transformation_3;
 #else
-  typedef SphereC3<R>                           Self;
-  typedef typename R::Point_3_base              Point_3;
-  typedef typename R::Vector_3_base             Vector_3;
-  typedef typename R::Aff_transformation_3_base Aff_transformation_3;
+  typedef typename R_::Point_3_base              Point_3;
+  typedef typename R_::Vector_3_base             Vector_3;
+  typedef typename R_::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
+public:
+  typedef R_                                     R;
+
   SphereC3()
-    : Sphere_handle_3_() {}
+    : base() {}
 
   SphereC3(const Point_3 &center, const FT &squared_radius,
            const Orientation &o = COUNTERCLOCKWISE)
@@ -60,7 +58,7 @@ public:
     CGAL_kernel_precondition( (squared_radius >= FT(0)) &&
                               (o != COLLINEAR) );
 
-    initialize_with(Sphere_ref_3(center, squared_radius, o));
+    initialize_with(rep(center, squared_radius, o));
   }
 
   // Sphere passing through and oriented by p,q,r,s
@@ -71,7 +69,7 @@ public:
     Point_3 center = circumcenter(p, q, r, s);
     FT      squared_radius = squared_distance(p, center);
 
-    initialize_with(Sphere_ref_3(center, squared_radius, orient));
+    initialize_with(rep(center, squared_radius, orient));
   }
 
   // Sphere with great circle passing through p,q,r, oriented by o
@@ -83,7 +81,7 @@ public:
     Point_3 center = circumcenter(p, q, r);
     FT      squared_radius = squared_distance(p, center);
 
-    initialize_with(Sphere_ref_3(center, squared_radius, o));
+    initialize_with(rep(center, squared_radius, o));
   }
 
   // Sphere with diameter pq and orientation o
@@ -95,7 +93,7 @@ public:
     Point_3 center = midpoint(p, q);
     FT      squared_radius = squared_distance(p, center);
 
-    initialize_with(Sphere_ref_3(center, squared_radius, o));
+    initialize_with(rep(center, squared_radius, o));
   }
 
   SphereC3(const Point_3 &center,
@@ -103,11 +101,11 @@ public:
   {
     CGAL_kernel_precondition(o != COLLINEAR);
 
-    initialize_with(Sphere_ref_3(center, FT(0), o));
+    initialize_with(rep(center, FT(0), o));
   }
 
-  bool operator==(const Self &) const;
-  bool operator!=(const Self &) const;
+  bool operator==(const SphereC3 &) const;
+  bool operator!=(const SphereC3 &) const;
 
   const Point_3 & center() const
   {
@@ -124,7 +122,7 @@ public:
       return Ptr()->orient;
   }
 
-  Self orthogonal_transform(const Aff_transformation_3 &t) const
+  SphereC3 orthogonal_transform(const Aff_transformation_3 &t) const
   {
     // FIXME: precond: t.is_orthogonal() (*UNDEFINED*)
     Vector_3 vec(FT(1), FT(0));               // unit vector
@@ -141,7 +139,7 @@ public:
   bool is_degenerate() const;
 
   // Returns a circle with opposite orientation
-  Self opposite() const;
+  SphereC3 opposite() const;
 
   Oriented_side  oriented_side(const Point_3 &p) const;
   //! precond: ! x.is_degenerate() (when available)

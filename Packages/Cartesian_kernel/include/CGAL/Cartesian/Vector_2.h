@@ -30,66 +30,52 @@ template < class R_ >
 class VectorC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Vector_handle_2
 {
-public:
-  typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
+  typedef typename R_::FT                        FT;
 
-  typedef typename R::Vector_handle_2		Vector_handle_2_;
-  typedef typename Vector_handle_2_::element_type	Vector_ref_2;
+  typedef typename R_::Vector_handle_2		 base;
+  typedef typename base::element_type	         rep;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef VectorC2<R,Cartesian_tag>             Self;
-  typedef typename R::Point_2                   Point_2;
-  typedef typename R::Direction_2               Direction_2;
-  typedef typename R::Line_2                    Line_2;
-  typedef typename R::Ray_2                     Ray_2;
-  typedef typename R::Triangle_2                Triangle_2;
-  typedef typename R::Segment_2                 Segment_2;
-  typedef typename R::Iso_rectangle_2           Iso_rectangle_2;
-  typedef typename R::Aff_transformation_2      Aff_transformation_2;
-  typedef typename R::Circle_2                  Circle_2;
+  typedef typename R_::Point_2                   Point_2;
+  typedef typename R_::Direction_2               Direction_2;
+  typedef typename R_::Aff_transformation_2      Aff_transformation_2;
 #else
-  typedef VectorC2<R>                           Self;
-  typedef typename R::Point_2_base              Point_2;
-  typedef typename R::Direction_2_base          Direction_2;
-  typedef typename R::Line_2_base               Line_2;
-  typedef typename R::Ray_2_base                Ray_2;
-  typedef typename R::Triangle_2_base           Triangle_2;
-  typedef typename R::Segment_2_base            Segment_2;
-  typedef typename R::Iso_rectangle_2_base      Iso_rectangle_2;
-  typedef typename R::Aff_transformation_2_base Aff_transformation_2;
-  typedef typename R::Circle_2_base             Circle_2;
+  typedef typename R_::Point_2_base              Point_2;
+  typedef typename R_::Direction_2_base          Direction_2;
+  typedef typename R_::Aff_transformation_2_base Aff_transformation_2;
 #endif
 
+public:
+  typedef R_                                     R;
+
   VectorC2()
-    : Vector_handle_2_(Vector_ref_2()) {}
+    : base(rep()) {}
 
   VectorC2(const Null_vector &)
-    : Vector_handle_2_(Vector_ref_2(FT(0), FT(0))) {}
+    : base(rep(FT(0), FT(0))) {}
 
   VectorC2(const Point_2 &p)
-    : Vector_handle_2_(p) {}
+    : base(p) {}
 
   VectorC2(const Point_2 &a, const Point_2 &b)
-    : Vector_handle_2_(b-a) {}
+    : base(b-a) {}
 
   VectorC2(const Direction_2 &d)
-    : Vector_handle_2_(d) {}
+    : base(d) {}
 
   VectorC2(const FT &x, const FT &y)
-    : Vector_handle_2_(Vector_ref_2(x, y)) {}
+    : base(rep(x, y)) {}
 
   VectorC2(const FT &hx, const FT &hy, const FT &hw)
   {
     if (hw != FT(1))
-      initialize_with(Vector_ref_2(hx/hw, hy/hw));
+      initialize_with(rep(hx/hw, hy/hw));
     else
-      initialize_with(Vector_ref_2(hx, hy));
+      initialize_with(rep(hx, hy));
   }
 
-  bool operator==(const Self &v) const;
-  bool operator!=(const Self &v) const;
+  bool operator==(const VectorC2 &v) const;
+  bool operator!=(const VectorC2 &v) const;
   bool operator==(const Null_vector &) const;
   bool operator!=(const Null_vector &p) const;
 
@@ -124,16 +110,16 @@ public:
       return 2;
   }
 
-  Self operator+(const Self &w) const;
-  Self operator-(const Self &w) const;
-  Self operator-() const;
-  FT operator*(const Self &w) const;
+  VectorC2 operator+(const VectorC2 &w) const;
+  VectorC2 operator-(const VectorC2 &w) const;
+  VectorC2 operator-() const;
+  FT operator*(const VectorC2 &w) const;
   FT squared_length() const;
-  Self operator/(const FT &c) const;
+  VectorC2 operator/(const FT &c) const;
   Direction_2 direction() const;
 
-  Self perpendicular(const Orientation &o) const;
-  Self transform(const Aff_transformation_2 &t) const
+  VectorC2 perpendicular(const Orientation &o) const;
+  VectorC2 transform(const Aff_transformation_2 &t) const
   {
     return t.transform(*this);
   }

@@ -30,49 +30,37 @@ template < class R_ >
 class RayC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Ray_handle_2
 {
-public:
-  typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
+  typedef typename R_::FT                        FT;
 
-  typedef typename R::Ray_handle_2              Ray_handle_2_;
-  typedef typename Ray_handle_2_::element_type   Ray_ref_2;
+  typedef typename R_::Ray_handle_2              base;
+  typedef typename base::element_type            rep;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef RayC2<R,Cartesian_tag>                Self;
-  typedef typename R::Point_2                   Point_2;
-  typedef typename R::Vector_2                  Vector_2;
-  typedef typename R::Direction_2               Direction_2;
-  typedef typename R::Line_2                    Line_2;
-  typedef typename R::Triangle_2                Triangle_2;
-  typedef typename R::Segment_2                 Segment_2;
-  typedef typename R::Iso_rectangle_2           Iso_rectangle_2;
-  typedef typename R::Aff_transformation_2      Aff_transformation_2;
-  typedef typename R::Circle_2                  Circle_2;
+  typedef typename R_::Point_2                   Point_2;
+  typedef typename R_::Direction_2               Direction_2;
+  typedef typename R_::Line_2                    Line_2;
+  typedef typename R_::Aff_transformation_2      Aff_transformation_2;
 #else
-  typedef RayC2<R>                              Self;
-  typedef typename R::Point_2_base              Point_2;
-  typedef typename R::Vector_2_base             Vector_2;
-  typedef typename R::Direction_2_base          Direction_2;
-  typedef typename R::Line_2_base               Line_2;
-  typedef typename R::Triangle_2_base           Triangle_2;
-  typedef typename R::Segment_2_base            Segment_2;
-  typedef typename R::Iso_rectangle_2_base      Iso_rectangle_2;
-  typedef typename R::Aff_transformation_2_base Aff_transformation_2;
-  typedef typename R::Circle_2_base             Circle_2;
+  typedef typename R_::Point_2_base              Point_2;
+  typedef typename R_::Direction_2_base          Direction_2;
+  typedef typename R_::Line_2_base               Line_2;
+  typedef typename R_::Aff_transformation_2_base Aff_transformation_2;
 #endif
 
+public:
+  typedef R_                                     R;
+
   RayC2()
-    : Ray_handle_2_(Ray_ref_2()) {}
+    : base(rep()) {}
 
   RayC2(const Point_2 &sp, const Point_2 &secondp)
-    : Ray_handle_2_(Ray_ref_2(sp, secondp)) {}
+    : base(rep(sp, secondp)) {}
 
   RayC2(const Point_2 &sp, const Direction_2 &d)
-    : Ray_handle_2_(Ray_ref_2(sp, sp + d.to_vector())){}
+    : base(rep(sp, sp + d.to_vector())){}
 
-  bool        operator==(const Self &r) const;
-  bool        operator!=(const Self &r) const;
+  bool        operator==(const RayC2 &r) const;
+  bool        operator!=(const RayC2 &r) const;
 
   const Point_2 &     start() const;
   const Point_2 &     source() const
@@ -87,11 +75,11 @@ public:
 
   Direction_2 direction() const;
   Line_2      supporting_line() const;
-  Self        opposite() const;
+  RayC2        opposite() const;
 
-  Self        transform(const Aff_transformation_2 &t) const
+  RayC2        transform(const Aff_transformation_2 &t) const
   {
-    return Self(t.transform(source()), t.transform(second_point()));
+    return RayC2(t.transform(source()), t.transform(second_point()));
   }
 
   bool        is_horizontal() const;

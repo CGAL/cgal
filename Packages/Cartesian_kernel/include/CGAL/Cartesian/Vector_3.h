@@ -30,54 +30,52 @@ template < class R_ >
 class VectorC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Vector_handle_3
 {
-public:
-  typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
+  typedef typename R_::FT                        FT;
 
-  typedef typename R::Vector_handle_3	   	Vector_handle_3_;
-  typedef typename Vector_handle_3_::element_type   	Vector_ref_3;
+  typedef typename R_::Vector_handle_3	   	 base;
+  typedef typename base::element_type   	 rep;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef VectorC3<R CGAL_CTAG>                 Self;
-  typedef typename R::Point_3                   Point_3;
-  typedef typename R::Direction_3               Direction_3;
-  typedef typename R::Aff_transformation_3      Aff_transformation_3;
+  typedef typename R_::Point_3                   Point_3;
+  typedef typename R_::Direction_3               Direction_3;
+  typedef typename R_::Aff_transformation_3      Aff_transformation_3;
 #else
-  typedef VectorC3<R>                           Self;
-  typedef typename R::Point_3_base              Point_3;
-  typedef typename R::Direction_3_base          Direction_3;
-  typedef typename R::Aff_transformation_3_base Aff_transformation_3;
+  typedef typename R_::Point_3_base              Point_3;
+  typedef typename R_::Direction_3_base          Direction_3;
+  typedef typename R_::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
+public:
+  typedef R_                                     R;
+
   VectorC3()
-    : Vector_handle_3_(Vector_ref_3()) {}
+    : base(rep()) {}
 
   VectorC3(const Null_vector &)
-    : Vector_handle_3_(Vector_ref_3(FT(0), FT(0), FT(0))) {}
+    : base(rep(FT(0), FT(0), FT(0))) {}
 
   VectorC3(const Point_3 &p)
-    : Vector_handle_3_(p) {}
+    : base(p) {}
 
   VectorC3(const Point_3 &a, const Point_3 &b)
-    : Vector_handle_3_(b-a) {}
+    : base(b-a) {}
 
   VectorC3(const Direction_3 &d)
-    : Vector_handle_3_(d) {}
+    : base(d) {}
 
   VectorC3(const FT &x, const FT &y, const FT &z)
-    : Vector_handle_3_(Vector_ref_3(x, y, z)) {}
+    : base(rep(x, y, z)) {}
 
   VectorC3(const FT &x, const FT &y, const FT &z, const FT &w)
   {
     if (w != FT(1))
-      initialize_with(Vector_ref_3(x/w, y/w, z/w));
+      initialize_with(rep(x/w, y/w, z/w));
     else
-      initialize_with(Vector_ref_3(x, y, z));
+      initialize_with(rep(x, y, z));
   }
 
-  bool operator==(const Self &p) const;
-  bool operator!=(const Self &p) const;
+  bool operator==(const VectorC3 &p) const;
+  bool operator!=(const VectorC3 &p) const;
 
   bool operator==(const Null_vector &) const;
   bool operator!=(const Null_vector &) const;
@@ -121,14 +119,14 @@ public:
       return 3;
   }
 
-  Self operator+(const Self &w) const;
-  Self operator-(const Self &w) const;
-  Self operator-() const;
-  Self operator/(const FT &c) const;
-  FT operator*(const Self &w) const;
+  VectorC3 operator+(const VectorC3 &w) const;
+  VectorC3 operator-(const VectorC3 &w) const;
+  VectorC3 operator-() const;
+  VectorC3 operator/(const FT &c) const;
+  FT operator*(const VectorC3 &w) const;
   FT squared_length() const;
   Direction_3 direction() const;
-  Self transform(const Aff_transformation_3 &t) const
+  VectorC3 transform(const Aff_transformation_3 &t) const
   {
     return t.transform(*this);
   }

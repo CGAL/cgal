@@ -47,25 +47,23 @@ template < class R_ >
 class Aff_transformationC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Aff_transformation_handle_2
 {
-public:
-  typedef R_                               R;
-  typedef typename R::FT                   FT;
-  typedef typename R::RT                   RT;
-  typedef Aff_transformation_rep_baseC2<R> Aff_t_base;
+  typedef typename R_::FT                   FT;
+  typedef Aff_transformation_rep_baseC2<R_> Aff_t_base;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef Aff_transformationC2<R,Cartesian_tag> Self;
-  typedef typename R::Point_2              Point_2;
-  typedef typename R::Vector_2             Vector_2;
-  typedef typename R::Direction_2          Direction_2;
-  typedef typename R::Line_2               Line_2;
+  typedef typename R_::Point_2              Point_2;
+  typedef typename R_::Vector_2             Vector_2;
+  typedef typename R_::Direction_2          Direction_2;
+  typedef typename R_::Line_2               Line_2;
 #else
-  typedef Aff_transformationC2<R>          Self;
-  typedef typename R::Point_2_base         Point_2;
-  typedef typename R::Vector_2_base        Vector_2;
-  typedef typename R::Direction_2_base     Direction_2;
-  typedef typename R::Line_2_base          Line_2;
-#endif // CGAL_CFG_NO_ADVANCED_KERNEL
+  typedef typename R_::Point_2_base         Point_2;
+  typedef typename R_::Vector_2_base        Vector_2;
+  typedef typename R_::Direction_2_base     Direction_2;
+  typedef typename R_::Line_2_base          Line_2;
+#endif
+
+public:
+  typedef R_                                R;
    
   Aff_transformationC2()
   {
@@ -163,7 +161,7 @@ public:
   operator()(const Line_2 &l) const
   { return transform(l); }
 
-  Self inverse() const { return ptr()->inverse(); }
+  Aff_transformationC2 inverse() const { return ptr()->inverse(); }
 
   bool is_even() const { return ptr()->is_even(); }
   bool is_odd() const { return ! (ptr()->is_even()); }
@@ -173,7 +171,7 @@ public:
   FT m(int i, int j) const { return cartesian(i,j); }
   FT hm(int i, int j) const { return cartesian(i,j); }
 
-  Self operator*(const Self &t) const
+  Aff_transformationC2 operator*(const Aff_transformationC2 &t) const
   {
     return (*ptr()) * (*t.ptr());
   }
@@ -203,9 +201,6 @@ operator<<(std::ostream& os, const Aff_transformationC2<R CGAL_CTAG>& t)
   return os;
 }
 #endif // CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATIONC2
-#endif // CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATIONC2
 
 CGAL_END_NAMESPACE
 

@@ -31,58 +31,48 @@ template < class R_ >
 class LineC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public R_::Line_handle_2
 {
-public:
-  typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
+  typedef typename R_::FT                        FT;
 
-  typedef typename R::Line_handle_2             Line_handle_2_;
-  typedef typename Line_handle_2_::element_type  Line_ref_2;
+  typedef typename R_::Line_handle_2             base;
+  typedef typename base::element_type            rep;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef LineC2<R,Cartesian_tag>               Self;
-  typedef typename R::Point_2                   Point_2;
-  typedef typename R::Vector_2                  Vector_2;
-  typedef typename R::Direction_2               Direction_2;
-  typedef typename R::Ray_2                     Ray_2;
-  typedef typename R::Triangle_2                Triangle_2;
-  typedef typename R::Segment_2                 Segment_2;
-  typedef typename R::Iso_rectangle_2           Iso_rectangle_2;
-  typedef typename R::Aff_transformation_2      Aff_transformation_2;
-  typedef typename R::Circle_2                  Circle_2;
+  typedef typename R_::Point_2                   Point_2;
+  typedef typename R_::Direction_2               Direction_2;
+  typedef typename R_::Ray_2                     Ray_2;
+  typedef typename R_::Segment_2                 Segment_2;
+  typedef typename R_::Aff_transformation_2      Aff_transformation_2;
 #else
-  typedef LineC2<R>                             Self;
-  typedef typename R::Point_2_base              Point_2;
-  typedef typename R::Vector_2_base             Vector_2;
-  typedef typename R::Direction_2_base          Direction_2;
-  typedef typename R::Ray_2_base                Ray_2;
-  typedef typename R::Triangle_2_base           Triangle_2;
-  typedef typename R::Segment_2_base            Segment_2;
-  typedef typename R::Iso_rectangle_2_base      Iso_rectangle_2;
-  typedef typename R::Aff_transformation_2_base Aff_transformation_2;
-  typedef typename R::Circle_2_base             Circle_2;
+  typedef typename R_::Point_2_base              Point_2;
+  typedef typename R_::Direction_2_base          Direction_2;
+  typedef typename R_::Ray_2_base                Ray_2;
+  typedef typename R_::Segment_2_base            Segment_2;
+  typedef typename R_::Aff_transformation_2_base Aff_transformation_2;
 #endif
 
+public:
+  typedef R_                                     R;
+
   LineC2()
-    : Line_handle_2_(Line_ref_2()) {}
+    : base(rep()) {}
 
   LineC2(const Point_2 &p, const Point_2 &q)
-    : Line_handle_2_(line_from_points(p, q)) {}
+    : base(line_from_points(p, q)) {}
 
   LineC2(const FT &a, const FT &b, const FT &c)
-    : Line_handle_2_(Line_ref_2(a, b, c)) {}
+    : base(rep(a, b, c)) {}
 
   LineC2(const Segment_2 &s)
-    : Line_handle_2_(line_from_points(s.source(), s.target())) {}
+    : base(line_from_points(s.source(), s.target())) {}
 
   LineC2(const Ray_2 &r)
-    : Line_handle_2_(line_from_points(r.point(0), r.point(1))) {}
+    : base(line_from_points(r.point(0), r.point(1))) {}
 
   LineC2(const Point_2 &p, const Direction_2 &d)
-    : Line_handle_2_(line_from_point_direction(p, d)) {}
+    : base(line_from_point_direction(p, d)) {}
 
-  bool            operator==(const Self &l) const;
-  bool            operator!=(const Self &l) const;
+  bool            operator==(const LineC2 &l) const;
+  bool            operator!=(const LineC2 &l) const;
 
   const FT & a() const
   {
@@ -100,8 +90,8 @@ public:
   FT              x_at_y(const FT &y) const;
   FT              y_at_x(const FT &x) const;
 
-  Self            perpendicular(const Point_2 &p) const;
-  Self            opposite() const;
+  LineC2            perpendicular(const Point_2 &p) const;
+  LineC2            opposite() const;
   Point_2         point(int i) const;
 
   Point_2         point() const;
@@ -119,7 +109,7 @@ public:
   bool            is_vertical() const;
   bool            is_degenerate() const;
 
-  Self            transform(const Aff_transformation_2 &t) const
+  LineC2            transform(const Aff_transformation_2 &t) const
   {
     return LineC2<R CGAL_CTAG>(t.transform(point(0)),
                                t.transform(direction()));
