@@ -44,23 +44,14 @@
 
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Number_type_traits.h>
+#include <CGAL/Kernel/mpl.h>
 
 #include <boost/operators.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
-
-  // Mini helper to prevent clashes when T == T2.
-  template < typename T, typename T2 >
-  struct Int_if_not { typedef T2 type; };
-
-  template < typename T >
-  struct Int_if_not<T, T> { struct type{}; };
-
-} // namespace CGALi
-
-#define CGAL_int(T) typename CGALi::Int_if_not<T, int>::type
+#define CGAL_int(T)    typename First_if_different<int,    T>::Type
+#define CGAL_double(T) typename First_if_different<double, T>::Type
 
 // Simplify the quotient numerator/denominator.
 // Currently the default template doesn't do anything.
@@ -93,7 +84,7 @@ class Quotient
   Quotient(const NT& n)
     : num(n), den(1) {}
 
-  Quotient(const typename CGALi::Int_if_not<NT, double>::type & n)
+  Quotient(const CGAL_double(NT) & n)
     : num(n), den(1) {}
 
   Quotient(const CGAL_int(NT) & n)
@@ -548,6 +539,7 @@ gcd(const NT&, const NT&)
 { return NT(1); }
 */
 
+#undef CGAL_double
 #undef CGAL_int
 
 // Rational traits

@@ -1,3 +1,7 @@
+13 March 2005 Sylvain Pion
+- Quotient.h : Use Kernel/mpl.h's First_if_different<>, instead of redefining
+  a local equivalent.
+
 8 March 2005 Sylvain Pion
 - Use <boost/operators.hpp> to simplify Gmpz and Gmpq.
 
