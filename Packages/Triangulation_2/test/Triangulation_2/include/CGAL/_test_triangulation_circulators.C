@@ -43,7 +43,8 @@ _test_circulators( const Triangulation &T )
   for (vit = T.all_vertices_begin(); vit != T.all_vertices_end(); ++vit)
     {
       vc0 = vc = T.incident_vertices( vit, vit->face() );
-      if( !vc.is_empty()){
+      //if( !vc.is_empty()){
+      if( vc != CGAL_CIRC_NULL){
 	do {
 	  vc++; nvi++;
 	} while (vc != vc0);
