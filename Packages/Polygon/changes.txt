@@ -1,3 +1,6 @@
+4.32 (1 Dec 2003)
+- Better documentation of the required Compute_area_2.
+
 4.31 (1 Dec 2003)
 - Use compute_area_2(3 points) instead of construcing a temporary triangle.
 
