@@ -17,8 +17,8 @@
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef MESH_2_REFINE_EDGES_VISITOR_H
-#define MESH_2_REFINE_EDGES_VISITOR_H
+#ifndef CGAL_MESH_2_REFINE_EDGES_VISITOR_H
+#define CGAL_MESH_2_REFINE_EDGES_VISITOR_H
 
 #include <CGAL/Mesher_level.h>
 
@@ -154,4 +154,4 @@ public:
 } // end namespace Mesh_2
 } // end namespace CGAL
 
-#endif // MESH_2_REFINE_EDGES_VISITOR_H
+#endif // CGAL_MESH_2_REFINE_EDGES_VISITOR_H
