@@ -1,3 +1,16 @@
+21 May 2004:  Menelaos Karavelas
+Documentation:
+- removed the template paramater PC from most of the doc
+- removed the ITag template parameter in the doc; as a result new
+  classes where added
+- removed the Simple_container related stuff
+- made other minor changes suggested by Sylvain
+Code:
+- added concept checking for the Method_tag for the traits classes
+- removed the second template parameter from the two storage site
+  classes; the paramater was useless since the Point_handle type is
+  now hard-coded
+
 13 May 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - removed the internally used macro USE_SC
 - re-added code that was removed in the presence of g++-2.95.3; this
