@@ -134,7 +134,8 @@ public:
 
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
-    Object_handle  operator->() const { CGAL_nef_assertion_msg(0,"not impl."); }
+    Object_handle  operator->() const 
+    { CGAL_nef_assertion_msg(0,"not impl."); }
   };
 
   class Face_cycle_const_iterator : public Object_const_iterator 
@@ -164,7 +165,8 @@ public:
 
     operator Object_handle() const { return Ibase::operator*(); }
     const Object_handle& operator*() const { return Ibase::operator*(); }
-    Object_handle  operator->() const { CGAL_nef_assertion_msg(0,"not impl."); }
+    Object_handle  operator->() const 
+    { CGAL_nef_assertion_msg(0,"not impl."); }
   };
 
   /*{\Mcreation 3}*/
