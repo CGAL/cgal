@@ -1587,6 +1587,7 @@ qt_cxxflags()
 		include_dir_option "`_where_is 'QT_INCL_DIR'`"
 	    fi
 	fi
+        ${_printf} "%s" "${CGAL_QT_CXXFLAGS} "
     fi
 }
 
@@ -4547,7 +4548,8 @@ qt_menu()
 	    "${_bold_on}<E>${_bold_off}  Use \$QTDIR as Qt directory."
 		    fi
 		else
-		    print_line     "     ${QT_DIR} <defined in \$QTDIR>"
+		    _tmp1="`posix_path ${QT_DIR}`"
+		    print_line     "     ${_tmp1} <defined in \$QTDIR>"
 		fi
 	    else
 		print_line     "${_bold_on}<B>${_bold_off}  Basic mode"
@@ -5307,7 +5309,7 @@ write_linker_flags()
     fi
     # QLIBS = LIBS + special qt libs
     if [ -n "${WINDOWS_COMPILER}" ]; then
-	QLIBS="${LIBS} `lib_option qtmain` `lib_option qt-mt230nc`"
+	QLIBS="${LIBS} `lib_option CGALQt` `lib_option qtmain` `lib_option qt-mt230nc`"
     else
 	QLIBS="${LIBS} `lib_option qt` `lib_option CGALQt`"
     fi
