@@ -63,6 +63,7 @@ public:
   typedef typename Triangulation::Vertex_handle Vertex_handle;
   typedef typename Triangulation::Face_handle Face_handle;
   typedef typename Triangulation::Locate_type Locate_type;
+  typedef typename Triangulation::All_faces_iterator All_faces_iterator;
   typedef typename Triangulation::Face_circulator Face_circulator;
   typedef typename Triangulation::Edge_circulator Edge_circulator;
   typedef typename Triangulation::Vertex_circulator Vertex_circulator;
