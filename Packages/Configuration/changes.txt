@@ -1,4 +1,8 @@
 //-----------------------------------------------------------------------//
+// 1.48
++ Added file Borland_fixes.h that gets included by config.h
+
+//-----------------------------------------------------------------------//
 // 1.47
 + Added strlen to namespace std under MSVC
 
