@@ -71,29 +71,29 @@ public:
     std::cout<<"in add_edge" << std::endl;
 #endif
 
-    if ((CGAL::compare_lexicographically_xy(e->source()->point(), 
-                                            e->target()->point()) == CGAL::SMALLER && 
-         CGAL::compare_lexicographically_xy(orig_halfedge1->source()->point(), 
-                                            orig_halfedge1->target()->point()) == CGAL::SMALLER) || 
-        (CGAL::compare_lexicographically_xy(e->source()->point(), 
-                                            e->target()->point()) == CGAL::LARGER && 
-         CGAL::compare_lexicographically_xy(orig_halfedge1->source()->point(), 
-                                            orig_halfedge1->target()->point()) == CGAL::LARGER)){
+    if (CGAL::compare_lexicographically_xy(e->source()->point(), 
+                                           e->target()->point()) == 
+        CGAL::compare_lexicographically_xy(orig_halfedge1->source()->point(), 
+                                           orig_halfedge1->target()->point())) {
+      // e has the same orientation as orig_halfedge1
       if (first_halfedge){
         set_first_halfedge_above(Halfedge_handle(e), orig_halfedge1);
         set_first_halfedge_above(Halfedge_handle(e->twin()), orig_halfedge1->twin());
-        //e->twin()->set_first_halfedge_above(orig_halfedge1->twin().operator->());
+
+        set_first_halfedge_above(Vertex_handle(e->source()), orig_halfedge1);
+        set_first_halfedge_above(Vertex_handle(e->target()), orig_halfedge1);
       }
       else{ 
         set_second_halfedge_above(Halfedge_handle(e), orig_halfedge1);
         set_second_halfedge_above(Halfedge_handle(e->twin()), orig_halfedge1->twin());
-
-        //e->set_second_halfedge_above(orig_halfedge1.operator->());
-        //e->twin()->set_second_halfedge_above(orig_halfedge1->twin().operator->());
+       
+        set_second_halfedge_above(Vertex_handle(e->source()), orig_halfedge1);
+        set_second_halfedge_above(Vertex_handle(e->target()), orig_halfedge1);
       }
     }
     
-    else 
+    else {  // e has the same orientation as orig_halfedge2
+      
       /*if ((CGAL::compare_lexicographically_xy(e->source()->point(), 
         e->target()->point()) == CGAL::SMALLER && 
         CGAL::compare_lexicographically_xy(orig_halfedge2->source()->point(), 
@@ -102,11 +102,13 @@ public:
         e->target()->point()) == CGAL::LARGER && 
         CGAL::compare_lexicographically_xy(orig_halfedge2->source()->point(), 
         orig_halfedge2->target()->point()) == CGAL::LARGER))*/
-      {
         if (first_halfedge){
           set_first_halfedge_above(Halfedge_handle(e), orig_halfedge2);
           set_first_halfedge_above(Halfedge_handle(e->twin()), orig_halfedge2->twin());
-          
+       
+          set_first_halfedge_above(Vertex_handle(e->source()), orig_halfedge2);
+          set_first_halfedge_above(Vertex_handle(e->target()), orig_halfedge2);
+
           //e->set_first_halfedge_above(orig_halfedge2.operator->());
           //e->twin()->set_first_halfedge_above(orig_halfedge2->twin().operator->());
         }
@@ -114,6 +116,9 @@ public:
           set_second_halfedge_above(Halfedge_handle(e), orig_halfedge2);
           set_second_halfedge_above(Halfedge_handle(e->twin()), orig_halfedge2->twin());
           
+          set_second_halfedge_above(Vertex_handle(e->source()), orig_halfedge2);
+          set_second_halfedge_above(Vertex_handle(e->target()), orig_halfedge2);
+
           //e->set_second_halfedge_above(orig_halfedge2.operator->());
           //e->twin()->set_second_halfedge_above(orig_halfedge2->twin().operator->());
         }
@@ -129,9 +134,9 @@ public:
   {
 #ifdef CGAL_SWEEP_LINE_DEBUG
     std::cout<<"is split_edge" << std::endl;
-    if (new_edge->get_first_halfedge_above() != NULL)
+    if (new_edge->get_first_halfedge_above() != 0)
       cout<<"new blue edge ";
-    if (new_edge->get_second_halfedge_above() != NULL)
+    if (new_edge->get_second_halfedge_above() != 0)
       cout<<"new red edge ";
     cout<<"\n";
 #endif
@@ -142,10 +147,24 @@ public:
     new_edge->twin()->set_first_halfedge_above(orig_edge->twin()->get_first_halfedge_above());
     new_edge->twin()->set_second_halfedge_above(orig_edge->twin()->get_second_halfedge_above());
 
+    // upadate halfedge above the edge points of new_edge.
+    if (get_first_halfedge_above(orig_edge) != orig_edge){
+      set_first_halfedge_above(Vertex_handle(new_edge->source()), 
+                               get_first_halfedge_above(orig_edge));
+      set_first_halfedge_above(Vertex_handle(new_edge->target()), 
+                               get_first_halfedge_above(orig_edge));
+    }
+    if (get_second_halfedge_above(orig_edge) != orig_edge){
+      set_second_halfedge_above(Vertex_handle(new_edge->source()), 
+                                get_second_halfedge_above(orig_edge));
+      set_second_halfedge_above(Vertex_handle(new_edge->target()), 
+                                get_second_halfedge_above(orig_edge));
+    }
+
 #ifdef CGAL_SWEEP_LINE_DEBUG
-    if (orig_edge->get_first_halfedge_above() != NULL)
+    if (orig_edge->get_first_halfedge_above() != 0)
       cout<<"blue edge ";
-    if (orig_edge->get_second_halfedge_above() != NULL)
+    if (orig_edge->get_second_halfedge_above() != 0)
       cout<<"red edge ";
     cout<<"\n";
 #endif
@@ -180,81 +199,89 @@ public:
     set_second_face_above(unbounded, second_creator.unbounded_face());
     unbounded->set_color(Face::BLACK);
 
-    for (Holes_iterator hit = unbounded->holes_begin(); hit != unbounded->holes_end(); ++hit) {
+    for (Holes_iterator hit = unbounded->holes_begin(); 
+         hit != unbounded->holes_end(); ++hit) {
       Ccb_halfedge_circulator begin_halfedge(*hit);
       do {
-        list<Face_handle>  faces_queue;  // a queue to hold all faces involed with hit.
-        
-        Face_handle begin_face = begin_halfedge->twin()->face();  // gives a face that touch the unbounded.
+        // a queue to hold all faces involed with hit.
+        std::list<Face_handle>  faces_queue;  
+        // gives a face that lie to the unbounded face.
+        Face_handle begin_face = begin_halfedge->twin()->face();  
         if (begin_face->get_color() == Face::WHITE){
           //std::cout<<"begin edge is :" <<begin_halfedge->curve()<<"\n";
 
           Ccb_halfedge_circulator ccb_cir = begin_face->outer_ccb();
           
           do{
-            if (ccb_cir->get_first_halfedge_above() != NULL){
+            if (ccb_cir->get_first_halfedge_above() != 0){
 #ifdef CGAL_SWEEP_LINE_DEBUG
               if (get_first_halfedge_above(ccb_cir)->face()->is_unbounded())
                 std::cout<<"Face (of first halfedge) above begin_face->outer_ccb() is unbounded"<<std::endl;
-              std::cout<<"ccb_cir->get_first_halfedge_above() != NULL" << std::endl;
+              std::cout<<"ccb_cir->get_first_halfedge_above() != 0" << std::endl;
 #endif
-              set_first_face_above(begin_face, get_first_halfedge_above(ccb_cir)->face());
+              set_first_face_above(begin_face, 
+                                   get_first_halfedge_above(ccb_cir)->face());
               //begin_face->set_first_face_above (tmp_ovl.get_first_halfedge_above(ccb_cir)->face().operator->());
               //begin_face->set_first_face_above(((Halfedge*) ccb_cir->get_first_halfedge_above())->face().operator->());
             }
-            if (ccb_cir->get_second_halfedge_above() != NULL){
+            if (ccb_cir->get_second_halfedge_above() != 0){
 #ifdef CGAL_SWEEP_LINE_DEBUG
               if (get_second_halfedge_above(ccb_cir)->face()->is_unbounded())
                 std::cout<<"Face above (ofsecond halfedge) begin_face->outer_ccb() is unbounded"<<std::endl;
-              std::cout<<"ccb_cir->get_second_halfedge_above() != NULL" << std::endl;
+              std::cout<<"ccb_cir->get_second_halfedge_above() != 0" << std::endl;
 #endif
                 
-              set_second_face_above(begin_face, get_second_halfedge_above(ccb_cir)->face());
+              set_second_face_above(begin_face, 
+                                    get_second_halfedge_above(ccb_cir)->face());
               //begin_face->set_second_face_above(tmp_ovl.get_second_halfedge_above(ccb_cir)->face().operator->());
               //begin_face->set_second_face_above( ((Halfedge*) ccb_cir->get_second_halfedge_above())->face().operator->());
             }
           } while (++ccb_cir != begin_face->outer_ccb());
           
           do{
-            if (ccb_cir->get_first_face_above() != NULL && begin_face->get_first_face_above() == NULL){
+            if (ccb_cir->get_first_face_above() != 0 && 
+                begin_face->get_first_face_above() == 0){
 #ifdef CGAL_SWEEP_LINE_DEBUG
               if (get_first_face_above(ccb_cir)->is_unbounded())
                 std::cout<<"First face above ccb_cir of begin_face is unbounded"<<std::endl;
-              std::cout<<"ccb_cir->get_first_face_above() != NULL" << std::endl;
+              std::cout<<"ccb_cir->get_first_face_above() != 0" << std::endl;
 #endif
                 
-              set_first_face_above(begin_face, get_first_face_above(ccb_cir));
+              set_first_face_above(begin_face, 
+                                   get_first_face_above(ccb_cir));
               //begin_face->set_first_face_above(ccb_cir->get_first_face_above());
             }
             
-            else if (ccb_cir->get_second_face_above() != NULL &&  begin_face->get_second_face_above() == NULL){
+            else if (ccb_cir->get_second_face_above() != 0 &&  
+                     begin_face->get_second_face_above() == 0){
 #ifdef CGAL_SWEEP_LINE_DEBUG
               if (get_second_face_above(ccb_cir)->is_unbounded())
                 std::cout<<"Second face above ccb_cir of begin_face is unbounded"<<std::endl;
-              cout<<"ccb_cir->get_second_face_above() != NULL" << std::endl;
+              cout<<"ccb_cir->get_second_face_above() != 0" << std::endl;
 #endif
               
-              set_second_face_above(begin_face, get_second_face_above(ccb_cir));
+              set_second_face_above(begin_face, 
+                                    get_second_face_above(ccb_cir));
               //begin_face->set_second_face_above(ccb_cir->get_second_face_above());  
             }
           } while (++ccb_cir != begin_face->outer_ccb());
           
-          // checking wether one of the face pointer is NULL - if it is - it must be under an unbounded creator face.
-          if (begin_face->get_first_face_above() == NULL){
+          // checking wether one of the face pointer is 0 - if it is - it must be under an unbounded creator face.
+          if (begin_face->get_first_face_above() == 0){
 #ifdef CGAL_SWEEP_LINE_DEBUG
-            std::cout<<"first face above begin_face is NULL - putting unbounded"<<std::endl;
+            std::cout<<"first face above begin_face is 0 - putting unbounded"<<std::endl;
 #endif
             
             set_first_face_above(begin_face, first_creator.unbounded_face());
             //begin_face->set_first_face_above(first_creator.unbounded_face().operator->());
           }
    
-          if (begin_face->get_second_face_above() == NULL){
+          if (begin_face->get_second_face_above() == 0){
 #ifdef CGAL_SWEEP_LINE_DEBUG
-            std::cout<<"second face above begin_face is NULL - putting unbounded"<<std::endl;
+            std::cout<<"second face above begin_face is 0 - putting unbounded"<<std::endl;
 #endif
             
-            set_second_face_above(begin_face, second_creator.unbounded_face());
+            set_second_face_above(begin_face,second_creator.unbounded_face());
             //begin_face->set_second_face_above(second_creator.unbounded_face().operator->());
           }
 
@@ -271,7 +298,8 @@ public:
 #ifdef CGAL_SWEEP_LINE_DEBUG
             cout<<"got queue face\n";
 #endif
-            for (Holes_iterator face_h_it = face->holes_begin(); face_h_it != face->holes_end(); ++face_h_it) {
+            for (Holes_iterator face_h_it = face->holes_begin(); 
+                 face_h_it != face->holes_end(); ++face_h_it) {
               Ccb_halfedge_circulator face_cc(*face_h_it);
               
               do {
@@ -279,13 +307,17 @@ public:
                 Face_handle  next_hole_face = next_hole_edge->face();
                 
                 if (next_hole_face->get_color() == Face::WHITE){  
-                  if (next_hole_edge->get_first_halfedge_above() == NULL && face->get_first_face_above() != NULL){
-                    set_first_face_above(next_hole_edge, get_first_face_above(face));
+                  if (next_hole_edge->get_first_halfedge_above() == 0 && 
+                      face->get_first_face_above() != 0){
+                    set_first_face_above(next_hole_edge, 
+                                         get_first_face_above(face));
                     //next_hole_edge->set_first_face_above(face->get_first_face_above());
                   }
                   
-                  if (next_hole_edge->get_second_halfedge_above() == NULL && face->get_second_face_above() != NULL){
-                    set_second_face_above(next_hole_edge, get_second_face_above(face));
+                  if (next_hole_edge->get_second_halfedge_above() == 0 && 
+                      face->get_second_face_above() != 0){
+                    set_second_face_above(next_hole_edge, 
+                                          get_second_face_above(face));
                     //next_hole_edge->set_second_face_above(face->get_second_face_above()); 
                   }
                   
@@ -294,14 +326,16 @@ public:
                   Ccb_halfedge_circulator next_hole_cc = next_hole_face->outer_ccb();
                   
                   do{
-                    if (next_hole_cc->get_first_halfedge_above() != NULL){
-                      set_first_face_above(next_hole_face, get_first_halfedge_above(next_hole_cc)->face());
+                    if (next_hole_cc->get_first_halfedge_above() != 0){
+                      set_first_face_above(next_hole_face, 
+                                           get_first_halfedge_above(next_hole_cc)->face());
                       //next_hole_face->set_first_face_above(tmp_ovl.get_first_halfedge_above(next_hole_cc)->face().operator->());
                       //next_hole_face->set_first_face_above(((Halfedge*) next_hole_cc->get_first_halfedge_above())->face().operator->());
                       //cout<<next_hole_cc->curve()<<" got blue above\n"; 
                     }
-                    if (next_hole_cc->get_second_halfedge_above() != NULL){
-                      set_second_face_above(next_hole_face, get_second_halfedge_above(next_hole_cc)->face());
+                    if (next_hole_cc->get_second_halfedge_above() != 0){
+                      set_second_face_above(next_hole_face, 
+                                            get_second_halfedge_above(next_hole_cc)->face());
                       //next_hole_face->set_second_face_above(tmp_ovl.get_second_halfedge_above(next_hole_cc)->face().operator->());
                       //next_hole_face->set_second_face_above(((Halfedge*) next_hole_cc->get_second_halfedge_above())->face().operator->());
                       //std::cout<<next_hole_cc->curve()<<" got red above\n";
@@ -309,14 +343,18 @@ public:
                   } while (++next_hole_cc != next_hole_face->outer_ccb());
 
                   do{
-                    if (next_hole_cc->get_first_face_above() != NULL && next_hole_face->get_first_face_above() == NULL){
-                      set_first_face_above(next_hole_face, get_first_face_above(next_hole_cc));
+                    if (next_hole_cc->get_first_face_above() != 0 && 
+                        next_hole_face->get_first_face_above() == 0){
+                      set_first_face_above(next_hole_face, 
+                                           get_first_face_above(next_hole_cc));
                       //next_hole_face->set_first_face_above(next_hole_cc->get_first_face_above());
                       //cout<<next_hole_cc->curve()<<" got blue above\n";
                     }
                     
-                    if (next_hole_cc->get_second_face_above() != NULL && next_hole_face->get_second_face_above() == NULL){
-                      set_second_face_above(next_hole_face, get_second_face_above(next_hole_cc));
+                    if (next_hole_cc->get_second_face_above() != 0 && 
+                        next_hole_face->get_second_face_above() == 0){
+                      set_second_face_above(next_hole_face, 
+                                            get_second_face_above(next_hole_cc));
                       //next_hole_face->set_second_face_above(next_hole_cc->get_second_face_above());
                       //std::cout<<next_hole_cc->curve()<<" got red above\n";
                     }
@@ -338,13 +376,17 @@ public:
               Face_handle  next_face = next_edge->face();  // get the neighbor edge.
               
               if (next_face->get_color() == Face::WHITE){  
-                if (next_edge->get_first_halfedge_above() == NULL && face->get_first_face_above() != NULL){  //there was a bug here!
-                  set_first_face_above(next_edge, get_first_face_above(face));
+                if (next_edge->get_first_halfedge_above() == 0 && 
+                    face->get_first_face_above() != 0){  //there was a bug here!
+                  set_first_face_above(next_edge, 
+                                       get_first_face_above(face));
                   //next_edge->set_first_face_above(face->get_first_face_above());
                 }
                 
-                if (next_edge->get_second_halfedge_above() == NULL && face->get_second_face_above() != NULL){
-                  set_second_face_above(next_edge, get_second_face_above(face));
+                if (next_edge->get_second_halfedge_above() == 0 && 
+                    face->get_second_face_above() != 0){
+                  set_second_face_above(next_edge, 
+                                        get_second_face_above(face));
                   //next_edge->set_second_face_above(face->get_second_face_above());
                 }
                 
@@ -353,14 +395,16 @@ public:
                 Ccb_halfedge_circulator next_cc = next_face->outer_ccb();
                 
                 do{
-                  if (next_cc->get_first_halfedge_above() != NULL){
-                    set_first_face_above(next_face, get_first_halfedge_above(next_cc)->face());
+                  if (next_cc->get_first_halfedge_above() != 0){
+                    set_first_face_above(next_face, 
+                                         get_first_halfedge_above(next_cc)->face());
                     //next_face->set_first_face_above(tmp_ovl.get_first_halfedge_above(next_cc)->face().operator->());
                     //next_face->set_first_face_above(((Halfedge*) next_cc->get_first_halfedge_above())->face().operator->());
                     //std::cout<<next_cc->curve()<<" got blue above\n";
                   }                  
-                  if (next_cc->get_second_halfedge_above() != NULL){
-                    set_second_face_above(next_face, get_second_halfedge_above(next_cc)->face());
+                  if (next_cc->get_second_halfedge_above() != 0){
+                    set_second_face_above(next_face, 
+                                          get_second_halfedge_above(next_cc)->face());
                     //next_face->set_second_face_above(tmp_ovl.get_second_halfedge_above(next_cc)->face().operator->());
                     //next_face->set_second_face_above(((Halfedge*) next_cc->get_second_halfedge_above())->face().operator->());
                     //std::cout<<next_cc->curve()<<" got red above\n";
@@ -368,20 +412,24 @@ public:
                 } while (++next_cc != next_face->outer_ccb());
                 
                 do{ // now updating next_face with faces above it that came from its neighbors.
-                  if (next_cc->get_first_face_above() != NULL && next_face->get_first_face_above() == NULL){
+                  if (next_cc->get_first_face_above() != 0 && 
+                      next_face->get_first_face_above() == 0){
                     //Face* f = (Face *) (next_cc->get_first_face_above());
                     //if (!(f->is_unbounded()))  // this line crashes.
                     //  cout<<"face to next_cc side is bounded\n";
 
                    
 
-                    set_first_face_above(next_face, get_first_face_above(next_cc));
+                    set_first_face_above(next_face, 
+                                         get_first_face_above(next_cc));
                     //next_face->set_first_face_above(next_cc->get_first_face_above());  
                   }
-                  if (next_cc->get_second_face_above() != NULL && next_face->get_second_face_above() == NULL){
+                  if (next_cc->get_second_face_above() != 0 && 
+                      next_face->get_second_face_above() == 0){
                     //cout<<"bogi red face1\n";
                     
-                    set_second_face_above(next_face, get_second_face_above(next_cc));
+                    set_second_face_above(next_face, 
+                                          get_second_face_above(next_cc));
                     
                     //next_face->set_second_face_above(next_cc->get_second_face_above());  
                     //cout<<"bogi red face2\n";
