@@ -38,8 +38,10 @@
 
 #ifdef  _MSC_VER
 using namespace std; // MSC hates "using std::{blah};"....
-#define typename     // preventing MSVC 6.0 "error C2899:
+#  if _MSC_VER < 1300
+#    define typename     // preventing MSVC 6.0 "error C2899:
                      // typename cannot be used outside a template
+#  endif  // MSVC 6.0
 #else
 using std::iterator_traits;
 #endif // _MSC_VER

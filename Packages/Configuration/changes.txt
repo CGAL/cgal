@@ -1,3 +1,6 @@
+2.7
++ Small fix to CGAL_CFG_NO_ITERATOR_TRAITS.C for MSVX 7
+
 2.6 (8 January 2001)
 + Adapted CGAL_CFG_NO_LONGNAME_PROBLEM.C to remove warning
 
