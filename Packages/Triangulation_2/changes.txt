@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 5.17 (31/7/01)
+- Susan moved doc_tex/*_ref directories up one level and fixed htmlfiles
+  accordingly
+
 Ver 5.16 (27/7/01)
 - Susan made changes necessary for the manual split and added missing
   ref pages in TDS_2_ref directory
