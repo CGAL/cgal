@@ -1,5 +1,8 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.10.3 on 19-Mar-2001
+- no changes (bug in submission script)
+
 Version 3.10.2 on 19-Mar-2001
 - moved to cvs-server
 
