@@ -87,7 +87,8 @@ int overflow_test()
     b = b * b;
     c *= c;
     d = d * d;
-    DEBUG( cout << a << b << c << d << endl; )
+    // DEBUG( cout << a << b << c << d << endl; )
+    DEBUG( cout << a << endl; )
   }
 
   return ( (a.lower_bound() !=  HUGE_VAL) && (a.upper_bound() == HUGE_VAL) &&
@@ -164,12 +165,66 @@ int multiplication_test()
   i = a * e;
   j = j;
 
-  return -1;
+  return 1;
+}
+
+// Here we test the specialized functions for IA.
+// They are usually templated in CGAL, but I've overriden them.
+
+int utility_test()
+{
+  bool tmpflag, flag = true;
+  const IA a(-1,1), b(-1,0), c(0,0), d(0,1), e(1,2), f(-2,-1), g(1);
+  IA h = (IA)1/c;
+
+  tmpflag = (CGAL_sign(c) == CGAL_ZERO) &&
+            (CGAL_sign(e) == CGAL_POSITIVE) &&
+            (CGAL_sign(f) == CGAL_NEGATIVE) ;
+  DEBUG( cout << "Sign test :\t" << tmpflag << endl; )
+  flag = flag && tmpflag;
+
+  tmpflag = CGAL_abs(a).is_same(IA(0,1)) && CGAL_abs(b).is_same(IA(0,1)) &&
+            CGAL_abs(c).is_same(IA(0,0)) && CGAL_abs(d).is_same(IA(0,1)) &&
+            CGAL_abs(e).is_same(IA(1,2)) && CGAL_abs(f).is_same(IA(1,2)) &&
+            CGAL_abs(g).is_same(g) ;
+  DEBUG( cout << "CGAL_abs test :\t" << tmpflag << endl; )
+  flag = flag && tmpflag;
+
+  tmpflag = CGAL_is_valid(a) && CGAL_is_valid(h);
+  DEBUG( cout << "CGAL_is_valid test :\t" << tmpflag << endl; )
+  flag = flag && tmpflag;
+
+  tmpflag = CGAL_is_finite(a) && !CGAL_is_finite(h);
+  DEBUG( cout << "CGAL_is_finite test :\t" << tmpflag << endl; )
+  flag = flag && tmpflag;
+
+  tmpflag = CGAL_max(a,d).is_same(IA(0,1));
+  DEBUG( cout << "CGAL_max test :\t" << tmpflag << endl; )
+  flag = flag && tmpflag;
+
+  tmpflag = CGAL_min(a,b).is_same(IA(-1,0));
+  DEBUG( cout << "CGAL_max test :\t" << tmpflag << endl; )
+  flag = flag && tmpflag;
+
+  tmpflag = CGAL_sign(f) == CGAL_NEGATIVE;
+  DEBUG( cout << "CGAL_sign test :\t" << tmpflag << endl; )
+  flag = flag && tmpflag;
+
+  tmpflag = (CGAL_compare(b,e) == CGAL_SMALLER)
+         && (CGAL_compare(g,g) == CGAL_EQUAL);
+  DEBUG( cout << "CGAL_compare test :\t" << tmpflag << endl; )
+  flag = flag && tmpflag;
+
+  return flag;
 }
 
 
 int main()
 {
+  // unsigned short rd_mode;
+  // GETFPCW(rd_mode);
+  // cout << hex << rd_mode << endl;
+
 #ifdef ADVANCED
   CGAL_FPU_set_rounding_to_infinity();
   cout << "Stress-testing the class CGAL_Interval_nt_advanced.\n";
@@ -177,39 +232,79 @@ int main()
   cout << "Stress-testing the class CGAL_Interval_nt.\n";
 #endif
 
+#if 0
+// Note: it works with -O3, but not -g... (at least, with latest eg++) !?!?!?
+  double a = 2.1; // Check 2.0 too.
+  a = a*a; a = a*a; a = a*a; a = a*a; a = a*a; a = a*a; a = a*a; a = a*a;
+  double b = -a;
+  b = b*a;
+  b = b*a;
+  b = b*a;
+  b = b*a;
+  IA c = 2.1;
+  c *= c; c *= c; c *= c; c *= c; c *= c; c *= c; c *= c; c *= c;
+  c *= c; c *= c; c *= c; c *= c; c *= c; c *= c; c *= c; c *= c;
+  IA d = 2.0;
+  d += d; d += d; d += d; d += d; d += d; d += d; d += d; d += d;
+  d += d; d += d; d += d; d += d; d += d; d += d; d += d; d += d;
+  d += d; d += d; d += d; d += d; d += d; d += d; d += d; d += d;
+  d += d; d += d; d += d; d += d; d += d; d += d; d += d; d += d;
+  d += d; d += d; d += d; d += d; d += d; d += d; d += d; d += d;
+  d += d; d += d; d += d; d += d; d += d; d += d; d += d; d += d;
+#endif
+
   bool tmpflag, flag = true;
   cout.precision(20);
+
+#if 0
+cout << a << "  " << CGAL_is_finite(a) << CGAL_is_valid(a) << endl;
+cout << b << "  " << CGAL_is_finite(b) << CGAL_is_valid(b) << endl;
+cout << c << "  " << CGAL_is_finite(c) << CGAL_is_valid(c);
+cout << CGAL_is_finite(c.lower_bound()) << CGAL_is_valid(c.lower_bound());
+cout << CGAL_is_finite(c.upper_bound()) << CGAL_is_valid(c.upper_bound())<<endl;
+cout << d << "  " << CGAL_is_finite(d) << CGAL_is_valid(d);
+cout << CGAL_is_finite(d.lower_bound()) << CGAL_is_valid(d.lower_bound());
+cout << CGAL_is_finite(d.upper_bound()) << CGAL_is_valid(d.upper_bound())<<endl;
+#endif
 
   cout << "Printing test:" << endl;
   cout << (IA)-.7 << endl << (IA)7/10 << endl << (IA)1/0 << endl;
 
-  cout << "Do square_root_test() ";
+  cout << "Do square_root_test()   \t";
   tmpflag = square_root_test();
   cout << tmpflag << endl;
   flag = tmpflag && flag;
 
-  cout << "Do spiral_test() ";
+  // GETFPCW(rd_mode);
+  // cout << hex << rd_mode << endl;
+
+  cout << "Do spiral_test()        \t";
   tmpflag = spiral_test();
   cout << tmpflag << endl;
   flag = tmpflag && flag;
 
-  cout << "Do overflow_test() ";
+  cout << "Do overflow_test()      \t";
   tmpflag = overflow_test();
   cout << tmpflag << endl;
   flag = tmpflag && flag;
 
-  cout << "Do underflow_test() ";
+  cout << "Do underflow_test()     \t";
   tmpflag = underflow_test();
   cout << tmpflag << endl;
   flag = tmpflag && flag;
 
-  cout << "Do division_test() ";
+  cout << "Do division_test()      \t";
   tmpflag = division_test();
   cout << tmpflag << endl;
   flag = tmpflag && flag;
 
-  cout << "Do multiplication_test() ";
+  cout << "Do multiplication_test()\t";
   tmpflag = multiplication_test();
+  cout << tmpflag << endl;
+  flag = tmpflag && flag;
+
+  cout << "Do utility_test()       \t";
+  tmpflag = utility_test();
   cout << tmpflag << endl;
   flag = tmpflag && flag;
 
