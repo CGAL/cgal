@@ -54,8 +54,6 @@ CGAL_INSTALL_VERSION='$Revision$'
 # ---------------------------------------------
 CGAL_INSTALL_CONF_VERSION='1.1'
 # ---------------------------------------------
-CGAL_LIB_NAME='libCGAL'
-# ---------------------------------------------
 CGAL_DIR=`pwd`
 
 # -------------------------------------------------------
@@ -637,7 +635,7 @@ _gpp_version()
 _borland_version()
 {
     ${_printf} "%s" \
-    "`${*}|head -1 | ${_awk} '{print $3}'`"
+    "`${*} | head -1 | ${_awk} '{print $3}'`"
 }
 
 # give version numbers for Microsoft Visual C++
@@ -645,7 +643,8 @@ _borland_version()
 _microsoft_vc_version()
 {
     ${_printf} "%s" \
-    "`${*} 2>&1 |head -1 | ${_awk} '{print $8}'`"
+    "`${*} 2>&1 | head -1 | ${_awk} '{print $7,$8}' | \
+		${_sed} 's/, fuer//;s/Version //'`"
 }
 
 # give version numbers for SUNPRO CC
@@ -716,6 +715,7 @@ set_compiler_flags()
 
     # defaults:
     ADDITIONAL_CXXFLAGS=
+    ADDITIONAL_LDFLAGS=
     CGAL_LIB_CXXFLAGS=
     CGAL_LIB_LDFLAGS=
     CGAL_LIB_CREATE="ar cr "
@@ -768,7 +768,7 @@ set_compiler_flags()
 	    SEPARATE_LIBPATH="y"
             LIB_CREATION_COMMANDS="tlib @borland_lib_creation"
 	    ;;
-	*CL.EXE*)
+	*CL.EXE*|*cl.exe*)
 	    #### settings Microsoft Visual C++ compiler 
 	    ADDITIONAL_CXXFLAGS="-TP -GR -GX"
 	    CGAL_LIB_CXXFLAGS="-TP"
@@ -795,6 +795,15 @@ set_compiler_flags()
 	    #### settings for sgi mipspro compiler on irix5
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
+	    RUNTIME_LINKER_FLAG="-rpath "
+	    PRINT_STACKTRACE_PROGRAM="dbx"
+	    ;;
+	*IRIX*6.*CC*7.3*)
+	    #### settings for sgi mipspro compiler V7.3 on irix6
+	    ADDITIONAL_CXXFLAGS="-LANG:std"
+	    ADDITIONAL_LDFLAGS="-LANG:std"
+	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    PRINT_STACKTRACE_PROGRAM="dbx"
@@ -842,7 +851,7 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
-	*CYGWINNT*g++-egcs*)
+	*CYGWIN*g++-egcs*)
 	    #### settings for egcs/gcc2.8 on linux
 	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
@@ -1303,6 +1312,7 @@ cgal_ldflags()
     if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
 	${_printf} "%s" "/`full_ostype` "
     fi
+    ${_printf} "%s" "${ADDITIONAL_LDFLAGS} "
 }
 
 #---------------------------------------------------------
@@ -1316,7 +1326,7 @@ compiler_test_cxxflags()
 
 compiler_test_ldflags()
 {
-    ${_printf} "%s" "${CUSTOM_LDFLAGS} -lm "
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} ${ADDITIONAL_LDFLAGS} -lm "
 }
 
 #---------------------------------------------------------
@@ -1473,7 +1483,7 @@ get_compiler_version()
     case `_real_basename ${1:-${COMPILER}}` in
 	*bcc32*|*BCC32*)
 		_borland_version "$*";;
-	*CL.EXE*)
+	*CL.EXE*|*cl.exe*)
 		_microsoft_vc_version "$*";;
 	*CC*)
 	    case ${SYST} in
@@ -1496,7 +1506,7 @@ get_compiler_description()
     case ${1:-${COMPILER}} in
 	*bcc32*)
 	    ${_printf} "%s" "Borland";;
-	*CL.EXE*)
+	*CL.EXE*|*cl.exe*)
 	    ${_printf} "%s" "VC++";;
 	*CC*-32*)
 	    ${_printf} "%s" "MIPSPRO (o32)";;
@@ -2076,9 +2086,10 @@ check_GMP_LIB_DIR()
 {
     if [ -n "${GMP_LIB_DIR}" ]; then
 	if [ ! -r ${GMP_LIB_DIR}/libgmp.a -a \
+	     ! -r ${GMP_LIB_DIR}/gmp.lib -a \
 	     ! -r ${GMP_LIB_DIR}/libgmp.so ]; then 
 	    $1 "WARNING: GMP_LIB_DIR should contain"
-	    $1 "         libgmp.a or libgmp.so." 
+	    $1 "      libgmp.a, libgmp.so or gmp.lib." 
 	else
 	    return 1
 	fi
@@ -2190,7 +2201,9 @@ check_LEDA_INCL_DIR()
 check_LEDA_LIB_DIR()
 {
     if [ -n "${LEDA_LIB_DIR}" ]; then
-	if [ ! -r $LEDA_LIB_DIR/libL${LIB_SFX} -a ! -r $LEDA_LIB_DIR/libL.so ]; then
+	if [ ! -r $LEDA_LIB_DIR/libL.a -a \
+	     ! -r $LEDA_LIB_DIR/libL${LIB_SFX} -a \
+	     ! -r $LEDA_LIB_DIR/libL.so ]; then
 	    $1 "WARNING: LEDA_LIB_DIR should contain libL.${LIB_SFX} or libL.so." 
 	else
 	    return 1
@@ -2680,7 +2693,7 @@ print_os_setting()
 set_lib_compiled_flag()
 {
     # does there exist a lib for this os/compiler?
-    if [ -r ${CGAL_LIB_DIR}/`full_ostype`/${CGAL_LIB_NAME}.a ]; then
+    if [ -r ${CGAL_LIB_DIR}/`full_ostype`/${CGAL_LIBNAME} ]; then
 	LIB_COMPILED='ok'
     else
 	LIB_COMPILED=''
@@ -4027,7 +4040,7 @@ write_linker_flags()
   # CGAL_LDFLAGS
   #
   ${_printf} "\n%s\\\\\n" "CGAL_LDFLAGS = " >> ${FILE}
-  makefile_print_line "${START_LD_OPTIONS} \$(CGAL_LD_LIBPATH)" >> ${FILE}
+  makefile_print_line "${START_LD_OPTIONS} \$(CGAL_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
   makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
   ${_printf} "\t%s\n\n" "${LIBS}" >> ${FILE}
 
@@ -4160,11 +4173,12 @@ create_include_makefile()
   # 
   # CGAL_LIB_CREATE
   # 
-  ${_printf} "%s" "CGAL_LIB_DESTINATION = " >> ${FILE}
-  concat_path "\$(CGAL_LIB_DIR)" "\$(CGAL_OS_COMPILER)" >> ${FILE}
+  ${_printf} "%s\n\n" "CGAL_LIB_CREATE = ${CGAL_LIB_CREATE}" >> ${FILE}
+  ${_printf} "%s" "CGAL_LIB_DESTINATION = ${CGAL_LIB_DIR}/\$(CGAL_OS_COMPILER)" >> ${FILE}
+#concat_path "\$(CGAL_LIB_DIR)" "\$(CGAL_OS_COMPILER)" >> ${FILE}
   ${_printf} "\n\n"  >> ${FILE}
-# ${_printf} "lib_platform_dependent:\n"  >> ${FILE}
 # This breaks everything
+# ${_printf} "lib_platform_dependent:\n"  >> ${FILE}
 #  if [ -n "$LIB_CREATION_COMMANDS" ]; then
 #    ${_printf} "\t%s\n\n" "$LIB_CREATION_COMMANDS" >> ${FILE}
 #  else
@@ -4356,9 +4370,16 @@ build_cgal()
 	${_printf} "\n${_LEFTSPACE}%s\n" \
 	"----------------------------------------------------------" \
 	    >> ${INSTALL_RIS_LOGFILE}
-	if _do_compile sharedlib; then
-	    ${_rm} -f ${CGAL_DIR}/.upgrade-tag
-	fi
+	case ${CGAL_OS_COMPILER} in
+	    *CYGWIN*)
+		${_printf} "%s\n" \
+		"${_LEFTSPACE}No shared libraries on this platform!"
+		;;
+	    *)  if _do_compile sharedlib; then
+		    ${_rm} -f ${CGAL_DIR}/.upgrade-tag
+		fi
+		;;
+	esac
     fi
     write_buffer "\n"
     print_filled_line
@@ -4559,8 +4580,8 @@ main_menu()
 {
     while [ 0 ]; do
 	menu_header 'Main'
-	if [ -r ${CGAL_LIB_DIR}/`full_ostype`/${CGAL_LIB_NAME}.a ]; then
-	    print_line "Libs built:          `_get_timestamp ${CGAL_LIB_DIR}/\`full_ostype\`/${CGAL_LIB_NAME}.a`"
+	if [ -r ${CGAL_LIB_DIR}/`full_ostype`/${CGAL_LIBNAME} ]; then
+	    print_line "Libs built:          `_get_timestamp ${CGAL_LIB_DIR}/\`full_ostype\`/${CGAL_LIBNAME}`"
 	else
 	    print_line "There are no libs for this os/compiler."
 	fi
