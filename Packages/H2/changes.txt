@@ -1,3 +1,6 @@
+2.46   (19 November 2001)
+- Fixes BCC bug in Distance_2 test-suite.
+
 2.45   (29 October 2001)
 - Submission bug.
 

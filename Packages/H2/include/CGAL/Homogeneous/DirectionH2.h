@@ -215,7 +215,7 @@ template <class R >
 CGAL_KERNEL_INLINE
 typename DirectionH2<R>::Vector_2
 DirectionH2<R>::to_vector() const
-{ return typename DirectionH2<R>::Vector_2( x(), y() ); }
+{ return Vector_2(*this); }
 
 
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONH2
