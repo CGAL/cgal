@@ -52,7 +52,7 @@ template <class IteratorForward, class R>
 Bounded_side bounded_side_3(IteratorForward first,
 			    IteratorForward last,
                             const Point_3<R>& point,
-                            Plane_3<R> plane = Plane_3<R>(0,0,0,0)) {
+                            typename R::Plane_3 plane = typename R::Plane_3(0,0,0,0)) {
   typedef typename R::Point_2 Point_2;
   typedef typename R::Point_3 Point_3;
   typedef typename R::Vector_3 Vector_3;
