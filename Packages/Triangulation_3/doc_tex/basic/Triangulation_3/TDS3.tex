@@ -676,17 +676,17 @@ into the triangulation data structure.}
 {Starts at an arbitrary cell incident to \ccc{e}.
 \ccPrecond{\ccVar.\ccc{dimension()}~$=3$}}
 \ccGlue
-\ccMethod{Cell_circulator incident_cells(Cell* ce, int i, int j) const;}
-{Idem for edge \ccc{(i,j)} of \ccc{ce}.}
+\ccMethod{Cell_circulator incident_cells(Cell* c, int i, int j) const;}
+{Idem for edge \ccc{(i,j)} of \ccc{c}.}
 \ccGlue
-\ccMethod{Cell_circulator incident_cells(const Edge & e, Cell* c) const;}
-{Starts at cell \ccc{c}.
-\ccPrecond{\ccVar.\ccc{dimension()}~$=3$ and \ccc{c} is incident to
+\ccMethod{Cell_circulator incident_cells(const Edge & e, Cell* start) const;}
+{Starts at cell \ccc{start}.
+\ccPrecond{\ccVar.\ccc{dimension()}~$=3$ and \ccc{start} is incident to
 \ccc{e}.}}
 \ccGlue
-\ccMethod{Cell_circulator incident_cells(Cell* ce, int i, int j, Cell* c)
+\ccMethod{Cell_circulator incident_cells(Cell* c, int i, int j, Cell* start)
 const;}
-{Idem for edge \ccc{(i,j)} of \ccc{ce}.}
+{Idem for edge \ccc{(i,j)} of \ccc{c}.}
 
 \ccMethod{Facet_circulator incident_facets(Edge e) const;}
 {Starts at an arbitrary facet incident to \ccc{e}.\\
