@@ -13,8 +13,8 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = $(CGAL_CXXFLAGS) \
-           -I../../include \
+CXXFLAGS = -I../../include \
+           $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
