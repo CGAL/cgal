@@ -417,6 +417,136 @@ public:
   /*{\Mop produces the sphere map representing thp,e box corner in
           direction $(x,y,z)$.}*/
 
+  template<typename Forward_iterator>  
+  void add_outer_sedge_cycle(Vertex_handle v, 
+			     Forward_iterator start,
+			     Forward_iterator end, 
+			     bool orient) {
+    
+    CGAL_assertion(start!=end);
+    
+    v->mark() = true;
+    SM_decorator SD(&*v);
+    
+    Forward_iterator si;
+    for(si=start; si!=end; ++si)
+      SD.new_svertex(*si);
+    
+    SHalfedge_handle se,se_prev;
+    std::list<SHalfedge_handle> se_list;
+    SVertex_iterator sv(SD.svertices_begin()), sv_next(sv);
+    for(;sv!=SD.svertices_end();++sv) {
+      ++sv_next;
+      sv->mark()=true;
+      if(sv_next==SD.svertices_end()) sv_next=SD.svertices_begin();
+      se=SD.new_shalfedge_pair(sv,sv_next);
+      se_list.push_back(se);
+      se->mark() = se->twin()->mark() = true;
+     if(sv!=SD.svertices_begin()) {
+	se->sprev() = se_prev;
+	se_prev->snext() = se;
+	se->twin()->snext() = se_prev->twin();
+	se_prev->twin()->sprev() = se->twin();
+      }
+     se_prev = se;
+    }
+    
+    se=*se_list.begin();
+    se->sprev() = se_prev;
+    se_prev->snext() = se;
+    se->twin()->snext() = se_prev->twin();
+    se_prev->twin()->sprev() = se->twin();
+
+    typename std::list<SHalfedge_handle>::iterator seli;
+    for(seli=se_list.begin();seli!=se_list.end();++seli) {
+      se = *seli;
+      se->circle() = Sphere_circle(se->source()->point(), se->snext()->source()->point());
+      if(orient && seli==se_list.begin())
+	 se->circle() = Sphere_circle(se->snext()->source()->point(), se->source()->point());
+      se->circle() = normalized(se->circle());
+      se->twin()->circle() = se->circle().opposite();
+    }
+    
+    SFace_handle sfa = SD.new_sface();
+    SFace_handle sfi = SD.new_sface();
+
+    sfi->mark()=true;
+    sfa->mark()=false;
+
+    se=*se_list.begin();
+    SD.link_as_face_cycle(se,sfi);
+    SD.link_as_face_cycle(se->twin(),sfa);
+  }
+
+  template<typename Forward_iterator>  
+  void add_inner_sedge_cycle(Vertex_handle v, 
+			     Forward_iterator start,
+			     Forward_iterator end, 
+			     bool orient, bool camera) {
+    CGAL_assertion(start!=end);
+
+    v->mark() = true;
+    SM_decorator SD(&*v);
+
+    Forward_iterator si;
+    std::list<SVertex_handle> sv_list;
+    for(si=start; si!=end; ++si)
+      sv_list.push_back(SD.new_svertex(*si));
+    
+    SHalfedge_handle se, se_prev;
+    typename std::list<SVertex_handle>::iterator 
+      sv(sv_list.begin()), sv_next(sv);
+    std::list<SHalfedge_handle> se_list;
+    
+    for(;sv!=sv_list.end();++sv) {
+      ++sv_next;
+      (*sv)->mark()=true;
+      if(sv_next==sv_list.end()) sv_next=sv_list.begin();
+      se=SD.new_shalfedge_pair(*sv,*sv_next);
+      se_list.push_back(se);
+      se->mark() = se->twin()->mark() = true;
+      if(sv!=sv_list.begin()) {
+	se->prev() = se_prev;
+	se_prev->next() = se;
+	se->twin()->next() = se_prev->twin();
+	se_prev->twin()->prev() = se->twin();
+      }
+      se_prev = se;
+    }
+
+    se=*se_list.begin();
+    se->prev() = se_prev;
+    se_prev->next() = se;
+    se->twin()->next() = se_prev->twin();
+    se_prev->twin()->prev() = se->twin();
+
+    typename std::list<SHalfedge_handle>::iterator seli;
+    for(seli=se_list.begin();seli!=se_list.end();++seli) {
+      se = *seli;
+      se->circle() = Sphere_circle(se->source()->point(), se->snext()->source()->point());
+      if(orient && seli==se_list.begin())
+	 se->circle() = Sphere_circle(se->snext()->source()->point(), se->source()->point());
+      se->circle() = normalized(se->circle());
+      se->twin()->circle() = se->circle().opposite();
+    }  
+
+    SFace_handle sfa,sfi;
+    if(camera) {
+      sfa = ++SD.sfaces_begin();
+      sfi = SD.new_sface();
+      sfi->mark()=false;
+    } else {
+      sfa = SD.new_sface();
+      sfi = SD.new_sface();
+      sfa->mark()=true;
+      sfi->mark()=false;
+    }
+
+    se=*se_list.begin();
+    SD.link_as_face_cycle(se,sfi);
+    SD.link_as_face_cycle(se->twin(),sfa);
+  }
+
   Vertex_handle create_for_infibox_overlay(Vertex_const_handle vin) const {
 
     Unique_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
@@ -880,6 +1010,8 @@ public:
       //    progress++;
       Point_3 p = point(vertex(e));
       Point_3 q = p + e->vector();
+      TRACE(" segment("<<p<<", "<<q<<")"<<
+	    " direction("<<e->vector()<<")");
       Standard_point_3 sp = Infi_box::standard_point(p,eval);
       Standard_point_3 sq = Infi_box::standard_point(q,eval);
       Pluecker_line_3  l( sp, sq);
@@ -902,9 +1034,7 @@ public:
       //TRACEN(Infi_box::standard_point(point(vertex(e)))+
       //   Vector_3(point(e))); 
       
-      TRACEN(" segment("<<p<<", "<<q<<")"<<
-	     " direction("<<e->vector()<<")"<<
-	     " line("<<l<<")"<<" inverted="<<inverted);
+      TRACEN(" line("<<l<<")"<<" inverted="<<inverted);
     }
     
     typename Pluecker_line_map::iterator it;
@@ -1019,10 +1149,10 @@ public:
 	     twin(Dt.source(cet)) == D.source(ce) ) 
           break;
       
-      /*    DEBUG 
+      //    DEBUG 
 	    
-      if( Dt.circle(cet) != D.circle(ce).opposite() ) {
-      TRACEN("assertion failed!");
+      if( Dt.circle(cet) != D.circle(ce).opposite() )
+	TRACEN("assertion failed!");
       
       TRACEN("vertices " << point(vertex(e)) << 
       "    "      << point(vertex(et)));
@@ -1033,12 +1163,12 @@ public:
       CGAL_For_all(sc,cee)
       TRACEN("sseg@E addr="<<&*sc<<
       " src="<<D.point(D.source(sc))<<
-      " tgt="<<D.point(D.target(sc))<<endl<<
+      " tgt="<<D.point(D.target(sc))<<std::endl<<
       " circle=" << D.circle(sc));
       CGAL_For_all(sct,cete)
       TRACEN("sseg@ET addr="<<&*sct<<
       " src="<<Dt.point(Dt.source(sct))<<
-      " tgt="<<Dt.point(Dt.target(sct))<<endl<<
+      " tgt="<<Dt.point(Dt.target(sct))<<std::endl<<
       " circle=" << Dt.circle(sct));
       
       #ifdef SM_VISUALIZOR
@@ -1052,9 +1182,7 @@ public:
       char c;
       cin >> c;
       #endif
-    }
-      */
-      
+
       CGAL_assertion( Dt.circle(cet) == D.circle(ce).opposite() ); 
       CGAL_assertion( twin(Dt.source(cet)) == D.source(ce)); 
       CGAL_For_all(ce,cee) { 
@@ -1223,7 +1351,7 @@ public:
 	  TRACEN("Shell #" << i << " is closed");
 	  SM_decorator SD(&*v);
 	  Volume_handle c = this->sncp()->new_volume();
-	  mark(c) = SD.mark(f);
+	  mark(c) = SD.mark(f); // TODO: test if line is redundant
 	  link_as_inner_shell(f, c );
 	  TRACE( "Shell #" << i <<" linked as inner shell");
 	  TRACEN( "(sface" << (CGAL::assign(sfc,o)?"":" not") << " hit case)");
@@ -1247,6 +1375,7 @@ public:
       TRACEN( "Outer shell #" << ShellSf[f] << " volume?");
       Volume_handle c = determine_volume( MinimalSFace[ShellSf[f]], 
 					  MinimalSFace, ShellSf );
+      c->mark() = f->mark();
       link_as_outer_shell( f, c );
     } 
   }
@@ -2021,8 +2150,6 @@ public:
   }
 
   void build_external_structure() {
-    //    SNC_io_parser<SNC_structure> O0(std::cout,*this->sncp());
-    //    O0.print();
     //    SETDTHREAD(19*43*131);
 
 #ifdef CGAL_NEF3_TIMER_EXTERNAL_STRUCTURE
@@ -2041,7 +2168,8 @@ public:
       std::cout << "Runtime_pluecker: " 
 		<< timer_pluecker.time() << std::endl;
 #endif   
-
+     //    SNC_io_parser<SNC_structure> O0(std::cout,*this->sncp());
+     //    O0.print();
     link_shalfedges_to_facet_cycles();
     categorize_facet_cycles_and_create_facets();
     create_volumes();

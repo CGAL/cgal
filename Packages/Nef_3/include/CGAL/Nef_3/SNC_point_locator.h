@@ -338,6 +338,7 @@ public:
     return result;
   }
 
+#ifdef CGAL_NEF3_POINT_LOCATION_BY_RAY_SHOOTING
   virtual Object_handle locate( const Point_3& p) const {
     TIMER(pl_t.start());
     CGAL_assertion( initialized);
@@ -391,10 +392,87 @@ public:
       _TRACEN("shooting ray to determine the volume");
       Ray_3 r( p, Vector_3( -1, 0, 0));
       result = Object_handle(determine_volume(r));
-    }
+    }    TIMER(pl_t.start());
     TIMER(pl_t.stop());
     return result;
   }
+#else
+  virtual Object_handle locate( const Point_3& p) const {
+    CGAL_assertion( initialized);
+    _TRACEN( "locate "<<p);
+    typename SNC_structure::FT min_distance;
+    typename SNC_structure::FT tmp_distance;
+    Object_handle result;
+    Vertex_handle v;
+    Halfedge_handle e;
+    Halffacet_handle f;
+    Halffacet_triangle_handle t;
+    Object_list candidates = candidate_provider->objects_around_point(p);
+    Object_list_iterator o = candidates.begin();
+
+    if(candidates.empty())
+      return Base(*this).volumes_begin();
+
+    CGAL::assign(v,*o);
+    CGAL_assertion(CGAL::assign(v,*o));
+    if(p==point(v))
+      return Object_handle(v);
+    min_distance = CGAL::squared_distance(point(v),p);
+    result = Object_handle(v);
+    ++o;
+    while(o!=candidates.end() && CGAL::assign(v,*o)) {
+      if ( p == point(v)) {
+        _TRACEN("found on vertex "<<point(v));
+        return Object_handle(v);
+      }
+      tmp_distance = CGAL::squared_distance(v->point(),p);
+      if(tmp_distance < min_distance) {
+	result = Object_handle(v);
+        min_distance = tmp_distance;
+      }
+      ++o;
+    }     
+
+    CGAL::assign(v, result);
+    Segment_3 s(p,point(v));
+    Point_3 ip;
+
+    for(;o!=candidates.end();++o) {
+      if( CGAL::assign( e, *o)) {
+        if (is.does_contain_internally(Segment_3(e->source()->point(),e->twin()->source()->point()), p) ) {
+          _TRACEN("found on edge "<<Segment_3(e->source()->point(),e->twin()->source()->point()));
+          return Object_handle(e);
+        }
+      } else if( CGAL::assign( f, *o)) {
+        if ( is.does_contain_internally( f, p) ) {
+          _TRACEN("found on facet...");
+          return Object_handle(f);
+        }
+        if( is.does_intersect_internally(s,f,ip)) {	
+          s = Segment_3(p, ip);
+	  result = Object_handle(f);
+        }
+      } else CGAL_assertion_msg(false, "wrong handle type");
+    }
+
+    if( CGAL::assign( v, result)) {
+      _TRACEN("vertex hit, obtaining volume...");
+      f = get_visible_facet( v, Ray_3(p, point(v)));
+      if( f != Halffacet_handle())
+        return volume(f);
+      SM_decorator SD(&*v); // now, the vertex has no incident facets
+      CGAL_assertion( SD.number_of_sfaces() == 1);
+      return volume(SD.sfaces_begin());
+    } else if( CGAL::assign( f, result)) {
+      _TRACEN("facet hit, obtaining volume...");
+      if(f->plane().oriented_side(p) == ON_NEGATIVE_SIDE)
+	f = f->twin();
+      return Object_handle(f->incident_volume());
+    }
+    CGAL_assertion_msg(false, "wrong handle type");
+    return Object_handle();
+  }
+#endif
 
   virtual void intersect_with_edges_and_facets( Halfedge_const_handle e0,
 	const typename SNC_point_locator::Intersection_call_back& call_back) const {

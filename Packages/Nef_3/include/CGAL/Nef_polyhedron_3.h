@@ -289,6 +289,7 @@ protected:
   void init_cube_vertices_depending_on_h(const Plane_3& p);
   void add_h_to_local_view_of_v();
   
+ public:
   void build_external_structure() {
     SNC_constructor C(snc(), pl());
     C.build_external_structure();
@@ -581,7 +582,7 @@ protected:
  public:
    
   void clear(Content space = EMPTY)
-    { *this = Nef_polyhedron_3(space, pl->clone()); }
+    { *this = Nef_polyhedron_3(space, pl()->clone()); }
   /*{\Mop makes |\Mvar| the empty set if |space == EMPTY| and the
   full space if |space == COMPLETE|.}*/
 
@@ -628,6 +629,7 @@ protected:
     *this = Nef_polyhedron_3<Kernel,Items, Mark>(rsnc, new SNC_point_locator_default);
   }
 
+ public:
   Nef_polyhedron_3( const SNC_structure& W, 
 		    SNC_point_locator* _pl = new SNC_point_locator_default,
 		    bool clone_pl = true,
