@@ -129,11 +129,13 @@ public:
     CGAL_Filter_cons(Construct_ray_2, construct_ray_2_object)
     CGAL_Filter_cons(Construct_circle_2, construct_circle_2_object)
     CGAL_Filter_cons(Construct_triangle_2, construct_triangle_2_object)
-    CGAL_Filter_cons(Construct_iso_rectangle_2, construct_iso_rectangle_2_object)
+    CGAL_Filter_cons(Construct_iso_rectangle_2,
+	    construct_iso_rectangle_2_object)
     CGAL_Filter_cons(Construct_aff_transformation_2,
 	    construct_aff_transformation_2_object)
     CGAL_Filter_cons(Construct_point_on_2, construct_point_on_2_object)
-    CGAL_Filter_cons(Construct_second_point_on_2, construct_second_point_on_2_object)
+    CGAL_Filter_cons(Construct_second_point_on_2,
+	    construct_second_point_on_2_object)
     CGAL_Filter_cons(Construct_source_point_2, construct_source_point_2_object)
     CGAL_Filter_cons(Construct_target_point_2, construct_target_point_2_object)
     CGAL_Filter_cons(Construct_min_point_2, construct_min_point_2_object)
@@ -156,16 +158,20 @@ public:
     CGAL_Filter_cons(Construct_opposite_segment_2,
 	construct_opposite_segment_2_object)
     CGAL_Filter_cons(Construct_opposite_ray_2, construct_opposite_ray_2_object)
-    CGAL_Filter_cons(Construct_opposite_line_2, construct_opposite_line_2_object)
+    CGAL_Filter_cons(Construct_opposite_line_2,
+	    construct_opposite_line_2_object)
     CGAL_Filter_cons(Construct_opposite_triangle_2,
 	construct_opposite_triangle_2_object)
-    CGAL_Filter_cons(Construct_opposite_circle_2, construct_opposite_circle_2_object)
+    CGAL_Filter_cons(Construct_opposite_circle_2,
+	    construct_opposite_circle_2_object)
     CGAL_Filter_cons(Assign_2, assign_2_object)
     CGAL_Filter_cons(Transform_2, transform_2_object)
     CGAL_Filter_cons(Intersect_2, intersect_2_object)
     CGAL_Filter_cons(Compute_y_at_x_2, compute_y_at_x_2_object)
-    CGAL_Filter_cons(Compute_squared_distance_2, Compute_squared_distance_2_object)
-    CGAL_Filter_cons(Compute_squared_length_2, Compute_squared_length_2_object)
+    CGAL_Filter_cons(Compute_squared_distance_2,
+	    Compute_squared_distance_2_object)
+    CGAL_Filter_cons(Compute_squared_length_2,
+	    Compute_squared_length_2_object)
     CGAL_Filter_cons(Compute_squared_radius_2, Compute_squared_radius_2_object)
 
 
@@ -186,7 +192,8 @@ public:
     CGAL_Filter_pred(Leftturn_2, leftturn_2_object)
     CGAL_Filter_pred(Collinear_2, collinear_2_object)
     CGAL_Filter_pred(Orientation_2, orientation_2_object)
-    CGAL_Filter_pred(Side_of_oriented_circle_2, side_of_oriented_circle_2_object)
+    CGAL_Filter_pred(Side_of_oriented_circle_2,
+	    side_of_oriented_circle_2_object)
     CGAL_Filter_pred(Side_of_bounded_circle_2, side_of_bounded_circle_2_object)
     CGAL_Filter_pred(Is_horizontal_2, is_horizontal_2_object)
     CGAL_Filter_pred(Is_vertical_2, is_vertical_2_object)
@@ -222,7 +229,8 @@ public:
     CGAL_Filter_cons(Construct_aff_transformation_3,
 	construct_aff_transformation_3_object)
     CGAL_Filter_cons(Construct_point_on_3, construct_point_on_3_object)
-    CGAL_Filter_cons(Construct_second_point_on_3, construct_second_point_on_3_object)
+    CGAL_Filter_cons(Construct_second_point_on_3,
+	    construct_second_point_on_3_object)
     CGAL_Filter_cons(Construct_source_point_3, construct_source_point_3_object)
     CGAL_Filter_cons(Construct_target_point_3, construct_target_point_3_object)
     CGAL_Filter_cons(Construct_min_point_3, construct_min_point_3_object)
@@ -231,7 +239,8 @@ public:
 	construct_direction_of_line_3_object)
     CGAL_Filter_cons(Construct_direction_of_ray_3,
 	construct_direction_of_ray_3_object)
-    CGAL_Filter_cons(Construct_supporting_line_3, construct_supporting_line_3_object)
+    CGAL_Filter_cons(Construct_supporting_line_3,
+	    construct_supporting_line_3_object)
     CGAL_Filter_cons(Construct_perpendicular_plane_3,
 	construct_perpendicular_plane_3_object)
     CGAL_Filter_cons(Construct_perpendicular_line_3,
@@ -243,14 +252,17 @@ public:
     CGAL_Filter_cons(Construct_opposite_segment_3,
 	construct_opposite_segment_3_object)
     CGAL_Filter_cons(Construct_opposite_ray_3, construct_opposite_ray_3_object)
-    CGAL_Filter_cons(Construct_opposite_line_3, construct_opposite_line_3_object)
-    CGAL_Filter_cons(Construct_opposite_plane_3, construct_opposite_plane_3_object)
+    CGAL_Filter_cons(Construct_opposite_line_3,
+	    construct_opposite_line_3_object)
+    CGAL_Filter_cons(Construct_opposite_plane_3,
+	    construct_opposite_plane_3_object)
     CGAL_Filter_cons(Construct_supporting_plane_3,
 	construct_supporting_plane_3_object)
     CGAL_Filter_cons(Transform_3, transform_3_object)
     CGAL_Filter_cons(Assign_3, assign_3_object)
     CGAL_Filter_cons(Intersect_3, intersect_3_object)
-    CGAL_Filter_cons(Compute_squared_distance_3, compute_squared_distance_3_object)
+    CGAL_Filter_cons(Compute_squared_distance_3,
+	    compute_squared_distance_3_object)
     CGAL_Filter_cons(Compute_squared_length_3, compute_squared_length_3_object)
     CGAL_Filter_cons(Compute_squared_radius_3, compute_squared_radius_3_object)
 
@@ -290,7 +302,8 @@ public:
 	    collinear_are_ordered_along_line_3_object)
     CGAL_Filter_pred(Collinear_are_strictly_ordered_along_line_3,
 	    collinear_are_strictly_ordered_along_line_3)
-    CGAL_Filter_pred(Side_of_oriented_sphere_3, side_of_oriented_sphere_3_object)
+    CGAL_Filter_pred(Side_of_oriented_sphere_3,
+	    side_of_oriented_sphere_3_object)
     CGAL_Filter_pred(Side_of_bounded_sphere_3, side_of_bounded_sphere_3_object)
 
     // Constructive predicates

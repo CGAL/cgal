@@ -33,8 +33,9 @@ CGAL_BEGIN_NAMESPACE
 
 // TODO :
 // - each predicate in the default kernel should define a tag that says if it
-//   wants to be filtered or not (=> all homogeneous predicate define this tag).
-//   We could even test-suite that automatically.
+//   wants to be filtered or not (=> all homogeneous predicate define this
+//   tag).  We could even test-suite that automatically.  It makes a strong
+//   new requirement on the kernel though...
 // - same thing for constructions => virtual operator() ?
 // - similarly, constructions should have a tag saying if they can throw or
 //   not, or we let all this up to the compiler optimizer to figure out ?
