@@ -16,38 +16,40 @@
 // $Name$
 //
 // Author(s)     : Julia Floetotto
-#ifndef CGAL_GRADIENT_FITTING_H
-#define CGAL_GRADIENT_FITTING_H
+#ifndef CGAL_SIBSON_GRADIENT_FITTING_H
+#define CGAL_SIBSON_GRADIENT_FITTING_H
 
 #include <utility>
 #include <CGAL/double.h>
 
+#include <CGAL/natural_neighbor_coordinates_2.h>
+
 CGAL_BEGIN_NAMESPACE 
 
-
 template < class ForwardIterator, class Functor, class Traits>
-typename Traits::Vector 
+typename Traits::Vector
 sibson_gradient_fitting(ForwardIterator first, ForwardIterator beyond,
 			const typename
 			std::iterator_traits<ForwardIterator>::
 			value_type::second_type&
 			norm, const typename
-			std::iterator_traits<ForwardIterator>::value_type::
-			first_type& p, 
-			Functor f,
+			std::iterator_traits<ForwardIterator>::value_type
+			::first_type& p, Functor function_value,
 			const Traits& traits)
 {  
+  CGAL_precondition( first!=beyond && norm!=0);
   typedef typename Traits::Aff_transformation Aff_transformation;
   typedef typename Traits::FT                 Coord_type;
   
-  typename Functor::result_type fn =  f(p);
+  typename Functor::result_type fn =  function_value(p);
+  CGAL_assertion(fn.second); //function value of p is valid
   
   typename Traits::Vector pn = 
     traits.construct_vector_object()(NULL_VECTOR);
   Aff_transformation scaling, m,
     Hn(traits.construct_null_matrix_object()());
   
-  for(;first!=beyond; first++){
+  for(;first!=beyond; ++first){
     Coord_type square_dist = traits.compute_squared_distance_object()
       (first->first, p);
     Coord_type  scale(first->second/(norm*square_dist));
@@ -55,8 +57,10 @@ sibson_gradient_fitting(ForwardIterator first, ForwardIterator beyond,
       traits.construct_vector_object()(p, first->first);
  
     //compute the vector pn:
+    typename Functor::result_type f = function_value(first->first);
+    CGAL_assertion(f.second);//function value of first->first is valid
     pn = pn + traits.construct_scaled_vector_object()
-      (d,scale * (f(first->first) - fn));  
+      (d,scale * (f.first - fn.first));  
     
     //compute the matrix Hn:
     m = traits.construct_outer_product_object()(d);
@@ -65,7 +69,44 @@ sibson_gradient_fitting(ForwardIterator first, ForwardIterator beyond,
     Hn =  traits.construct_sum_matrix_object()(Hn, scaling * m);   
   }
 
-  return (Hn.inverse()).transform(pn);
+  return Hn.inverse().transform(pn);
+};
+
+
+template < class Triangul, class OutputIterator,  class Functor, class
+CoordFunctor, class Traits>
+OutputIterator
+sibson_gradient_fitting(const Triangul& tr, 
+			OutputIterator out,
+			Functor function_value, 
+			CoordFunctor compute_coordinates,
+			const Traits& traits)
+{
+  typedef typename Traits::Point                        Point;
+  typedef typename Traits::FT                           Coord_type;
+  
+  std::vector< std::pair< Point, Coord_type > > coords;
+  Coord_type norm;
+  
+  typename Triangul::Finite_vertices_iterator 
+    vit = tr.finite_vertices_begin();
+  for(; vit != tr.vertices_end(); ++vit)
+    //test if vit is a convex hull vertex:
+    //otherwise do nothing
+    if(!tr.is_edge(vit, tr.infinite_vertex())){
+      norm = 
+	compute_coordinates(tr, vit,
+			    std::back_inserter(coords)).second;
+      *out++= 
+	std::make_pair(vit->point(),
+		       sibson_gradient_fitting(coords.begin(), 
+					       coords.end(),
+					       norm, vit->point(),
+					       function_value,
+					       traits));
+      coords.clear();
+    }
+  return out;
 };
 
 //the following functions allow to fit the gradients for all points in 
@@ -77,72 +118,39 @@ template < class Dt, class OutputIterator,  class Functor, class Traits>
 OutputIterator
 sibson_gradient_fitting_nn_2(const Dt& dt, 
 				   OutputIterator out,
-				   Functor f,
+				   Functor function_value,
 				   const Traits& traits)
 {
-  typedef typename Traits::Point                        Point;
-  typedef typename Traits::FT                           Coord_type;
-  
-  std::vector< std::pair< Point, Coord_type > > coords;
-  Coord_type norm;
-  
-  typename Dt::Finite_vertices_iterator vit = dt.finite_vertices_begin();
-  for(; vit != dt.vertices_end(); vit++){
-    //test if vit is a convex hull vertex:
-    if(dt.is_edge(vit, dt.infinite_vertex()))
-      *out++= std::make_pair(vit->point(), 
-			     traits.construct_vector_object()
-			     (NULL_VECTOR));
-    else{
-      norm = 
-	natural_neighbor_coordinates_2(dt, vit,
-				       std::back_inserter(coords)).second;
-      *out++= std::make_pair(vit->point(), 
-			     sibson_gradient_fitting(coords.begin(), 
-						     coords.end(),
-						     norm, vit->point(),
-						     f, traits));
-      coords.clear();
-    }
-  }
-  return out;
-};
 
-// //fitting of function gradients using regular_neighbor_2:
-// template < class Rt, class OutputIterator,  class Functor, class Traits>
-// OutputIterator
-// sibson_gradient_fitting_rn_2(const Rt& rt, 
-// 				   OutputIterator out,
-// 				   Functor f,
-// 				   const Traits& traits)
-// {
-//   typedef typename Traits::Point                        Point;
-//   typedef typename Traits::FT                           Coord_type;
   
-//   std::vector< std::pair< Point, Coord_type > > coords;
-//   Coord_type norm;
+  typedef typename std::back_insert_iterator< std::vector< std::pair<
+    typename Traits::Point,typename  Traits::FT > > >   CoordInserter;
+
+  return sibson_gradient_fitting
+    (dt, out, function_value, 
+     natural_neighbor_coordinates_2_object< Dt, CoordInserter >(),
+     traits); 
+}
+
+template < class Rt, class OutputIterator,  class Functor, class Traits>
+OutputIterator
+sibson_gradient_fitting_rn_2(const Rt& rt, 
+				   OutputIterator out,
+				   Functor function_value,
+				   const Traits& traits)
+{
+
   
-//   typename Rt::Finite_vertices_iterator vit = rt.finite_vertices_begin();
-//   for(; vit != dt.vertices_end(); vit++){
-//     //test if vit is a convex hull vertex:
-//     if(dt.is_edge(vit, dt.infinite_vertex()))
-//       *out++= std::make_pair(vit->point(),traits.
-//			     construct_vector_object()(NULL_VECTOR)); 
-//     else{
-//       norm = 
-// 	natural_neighbor_coordinates_2(dt, vit,
-// 				       std::back_inserter(coords)).second;
-//       *out++= std::make_pair(vit->point(), 
-// 			     sibson_gradient_fitting(coords.begin(), 
-// 							   coords.end(),
-// 							   norm, vit->point(),
-// 							   f, traits));
-//       coords.clear();
-//     }
-//   }
-//   return out;
-// };
+  typedef typename std::back_insert_iterator< std::vector< std::pair<
+    typename Traits::Point,typename  Traits::FT > > >   CoordInserter;
+
+  return sibson_gradient_fitting
+    (rt, out, function_value, 
+     regular_neighbor_coordinates_2_object< Rt, CoordInserter >(),
+     traits); 
+}
+
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_GRADIENT_FITTING_H
+#endif // CGAL_SIBSON_GRADIENT_FITTING_H
