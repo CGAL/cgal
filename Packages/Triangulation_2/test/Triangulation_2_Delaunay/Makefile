@@ -23,15 +23,6 @@ CXXFLAGS = \
 	$(LONG_NAME_PROBLEM_CXXFLAGS) \
 	-g 
 
-#   -pedantic     
-##To test the Kernel
-#	-I../../../Kernel/C2/include \
-#	-I../../../Kernel/C3/include \
-#	-I../../../Kernel/Cartesian_basic/include \
-
-
-
-
 
 #---------------------------------------------------------------------#
 #                    linker flags

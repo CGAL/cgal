@@ -232,7 +232,7 @@ public:
   Edge_iterator    operator--(int);
 
   Edge      operator*() const
-    {return std::make_pair(const_cast<Face*>(pos), index);}
+    {return std::make_pair(const_cast<Face*>(pos)->handle(), index);}
 
 private: 
   void increment();

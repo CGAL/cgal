@@ -55,7 +55,7 @@ weighted_circumcenter(const Weighted_point< Point,We >& p,
 		      Cartesian_tag )
 {
   
-  typename Point::RT x,y;
+  typename Point::R::RT x,y;
   weighted_circumcenterC2(p.x(),p.y(),p.weight(),
 			  q.x(),q.y(),q.weight(),
 			  r.x(),r.y(),r.weight(),x,y);
@@ -71,7 +71,7 @@ weighted_circumcenter(const Weighted_point< Point,We >& p,
 		      Homogeneous_tag )
 {
   
-  typename Point::RT x,y,w;
+  typename Point::R::RT x,y,w;
   weighted_circumcenterH2(p.hx(),p.hy(),p.hw(),p.weight(),
 			  q.hx(),q.hy(),q.hw(),q.weight(),
 			  r.hx(),r.hy(),r.hw(),r.weight(),
@@ -115,8 +115,8 @@ radical_axis(const Weighted_point< Point,We >& p,
 	     const Weighted_point< Point,We >& q,
 	     Cartesian_tag )
 {
-  typedef typename Point::RT RT;
-  typedef typename Point::R  Rep;
+  typedef typename Point::R::RT RT;
+  typedef typename Point::R     Rep;
   RT a,b,c;
   radical_axisC2(p.x(),p.y(),p.weight(),q.x(),q.y(),q.weight(),a,b,c);
   return Line_2<Rep>(a,b,c);
@@ -129,8 +129,8 @@ radical_axis(const Weighted_point< Point,We >& p,
 	     const Weighted_point< Point,We >& q,
 	      Homogeneous_tag)
 {
-  typedef typename Point::RT RT;
-  typedef typename Point::R  Rep;
+  typedef typename Point::R::RT RT;
+  typedef typename Point::R     Rep;
   RT a,b,c;
   radical_axisH2(p.hx(),p.hy(), p.hw(), p.weight(),
 		 q.hx(),q.hy(), q.hw(), q.weight(),a,b,c);
@@ -173,7 +173,7 @@ power_test(const Weighted_point<Point, Weight> &p,
            const Weighted_point<Point, Weight> &t,
 	   Cartesian_tag )
 {
-  typedef typename Point::FT  FT;
+  typedef typename Point::R::FT  FT;
   return power_testC2(p.x(), p.y(), FT(p.weight()),
 		      q.x(), q.y(), FT(q.weight()),
 		      r.x(), r.y(), FT(r.weight()),
@@ -189,7 +189,7 @@ power_test(const Weighted_point<Point, Weight> &p,
            const Weighted_point<Point, Weight> &t,
 	   Homogeneous_tag )
 {
-  typedef typename Point::RT  RT;
+  typedef typename Point::R::RT  RT;
   return power_testH2(p.hx(), p.hy(), p.hw(), RT(p.weight()),
 		      q.hx(), q.hy(), q.hw(), RT(q.weight()),
 		      r.hx(), r.hy(), r.hw(), RT(r.weight()),
@@ -216,7 +216,7 @@ power_test(const Weighted_point<Point, Weight> &p,
            const Weighted_point<Point, Weight> &t,
 	   Cartesian_tag )
 {
-    typedef typename Point::FT  FT;
+    typedef typename Point::R::FT  FT;
     return power_testC2(p.x(), p.y(), FT(p.weight()),
                         q.x(), q.y(), FT(q.weight()),
                         t.x(), t.y(), FT(t.weight()));
@@ -231,7 +231,7 @@ power_test(const Weighted_point<Point, Weight> &p,
            const Weighted_point<Point, Weight> &t,
 	   Homogeneous_tag )
 {
-   typedef typename Point::RT  RT;
+   typedef typename Point::R::RT  RT;
     return power_testH2(p.hx(), p.hy(), p.hw(), RT(p.weight()),
                         q.hx(), q.hy(), q.hw(), RT(q.weight()),
                         t.hx(), t.hy(), t.hw(), RT(t.weight()));

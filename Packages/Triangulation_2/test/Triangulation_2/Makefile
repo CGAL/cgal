@@ -4,8 +4,9 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
+CGAL_MAKEFILE = /u/papillon/0/prisme_util/CGAL/CGAL-I/make/makefile_sparc_SunOS-5.6_CC-5.3
 
-CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.18_g++-3.1.
+#CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.18_g++-3.1.
 
 #makefile_i686_Linux-2.2.18_g++-3.1.
 

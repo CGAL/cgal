@@ -2,6 +2,9 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 Ver 6.03 ()
+- get rid of references to type Point in 
+  Triangulation_data_structure_2 and Triangulation_ds_vertex_2
+- fixed missing typedefs in Triangulation_ds_iterator_2
 - fixed window-input in demos demo.C and Delaunay.C
 - readded files :
   Triangulation_data_structure_using_list_2.h 
