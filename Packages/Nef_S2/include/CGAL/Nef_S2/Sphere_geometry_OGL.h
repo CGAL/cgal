@@ -202,7 +202,6 @@ public:
 
 };
 
-
 template <typename R>
 VSegment approximate(const CGAL::Sphere_circle<R>& s)
 {
@@ -224,10 +223,11 @@ VSegment approximate(const CGAL::Sphere_circle<R>& s)
            v0.y(),v1.y(),v2.y(),
            v0.z(),v1.z(),v2.z());
   VSegment S(units);
-  for (int i=0; i<units; ++i) 
-    S[i] = VPoint(cos(2*M_PI*i/double(units)),
-                  sin(2*M_PI*i/double(units)),
+  for (int i=0; i<units; ++i) {
+    S[i] = VPoint(cos(2.0*M_PI*i/double(units)),
+                  sin(2.0*M_PI*i/double(units)),
                   0.0);
+  }
   VSegment::iterator it;
   for(it = S.begin(); it != S.end(); ++it) *it = T(*it); 
   return S;
@@ -265,9 +265,10 @@ public:
     glColor3ub(c_.red(),c_.green(),c_.blue()); 
     glBegin(GL_LINE_LOOP);
     VSegment::const_iterator it;
-    for(it = begin(); it != end(); ++it) 
+    for(it = begin(); it != end(); ++it) {
       glNormal3d(it->x(),it->y(),it->z());
       glVertex3d(it->x(),it->y(),it->z());
+    }
     glEnd();
   }
 

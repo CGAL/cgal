@@ -33,8 +33,7 @@ CXXFLAGS = \
            $(EXTRA_FLAGS) \
            -Iinclude -I$(X_DIR)/include -I$(X_GLUTDIR)/include\
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           $(DEBUG_OPT)
+           $(LONG_NAME_PROBLEM_CXXFLAGS) $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -68,11 +67,15 @@ Sphere_geometry-demo$(EXE_EXT): Sphere_geometry-demo$(OBJ_EXT)
 SM_overlayer-demo$(EXE_EXT): SM_overlayer-demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)SM_overlayer-demo SM_overlayer-demo$(OBJ_EXT) $(LDFLAGS)
 
+SM_triangulator-demo$(EXE_EXT): SM_triangulator-demo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)SM_triangulator-demo SM_triangulator-demo$(OBJ_EXT) $(LDFLAGS)
+
 clean:  \
 	Nef_polyhedron_S2-demo.clean \
 	Nef_polyhedron_S2-demo2.clean \
 	Sphere_geometry-demo.clean \
-	SM_overlayer-demo.clean
+	SM_overlayer-demo.clean \
+	SM_triangulator-demo.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
