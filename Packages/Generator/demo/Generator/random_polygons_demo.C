@@ -1,27 +1,6 @@
-// ============================================================================
-//
-// Copyright (c) 2000 The GALIA Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       : $CGAL_Revision $
-// release_date  : $CGAL_Date $
-//
-// file          : demo/Generator/random_polys_demo.C
-// package       : $CGAL_Package: Generator 2.12 (28 Jul 1999) $
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
-//
-// coordinator   : ETH Zurich (Bernd Gaertner <gaertner@inf.ethz.ch>)
-//
-// Random Simple Polygons: Demo Program
-// ============================================================================
-
+// file : demo/Generator/random_polygons_demo.C
+// --------------------------------------------
+// program generating random simple polygons
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
@@ -53,7 +32,7 @@
 
 typedef double                             NT;
 typedef CGAL::Cartesian<NT>                K;
-typedef CGAL::Vector_2<K>                  Vector_2;
+typedef K::Vector_2                        Vector_2;
 typedef CGAL::Polygon_traits_2<K>          Traits;
 typedef Traits::Point_2                    Point_2;
 typedef std::list<Point_2>                 Container;
@@ -62,13 +41,11 @@ typedef Polygon_2::Vertex_iterator         Vertex_iterator;
 typedef Polygon_2::Vertex_const_iterator   Vertex_const_iterator;
 typedef CGAL::Aff_transformation_2<K>      Transformation_2;
 
-enum Button_nums {QUIT=4, RANDOM_POINT_SET, INPUT_POINT_SET, 
-                  SIMPLE_POLYGON};
+enum Button_nums {QUIT=4, RANDOM_POINT_SET, INPUT_POINT_SET, SIMPLE_POLYGON};
 
 const int WINDOW_SIZE = 500;
 const int MAX_POLY_SIZE = 100;
 const double RADIUS = 0.9 * WINDOW_SIZE/2.0;
-
 
 Transformation_2 translate(CGAL::TRANSLATION, 
                            Vector_2(WINDOW_SIZE/2.0, WINDOW_SIZE/2.0));
