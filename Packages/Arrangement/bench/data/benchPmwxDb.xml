@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <bench name_length="64" header="false" type_mask="0x3">
+  <class name="cls111" key="naive PMWX Segments Cartesian Leda Rat"/>
+  <class name="cls112" key="walk PMWX Segments Cartesian Leda Rat"/>
+  <class name="cls121" key="naive PMWX Segments Leda Leda Rat"/>
+  <class name="cls122" key="walk PMWX Segments Leda Leda Rat"/>
+  <class name="cls131" key="naive PMWX Segments Cartesian Lazy Leda Rat"/>
+  <class name="cls132" key="walk PMWX Segments Cartesian Lazy Leda Rat"/>
+  <class name="cls141" key="naive PMWX Segments Cartesian Quotient"/>
+  <class name="cls142" key="walk PMWX Segments Cartesian Quotient"/>
+  <class name="cls151" key="naive PMWX Segments Cartesian Lazy Quotient MP"/>
+  <class name="cls152" key="walk PMWX Segments Cartesian Lazy Quotient MP"/>
+  <class name="cls161" key="naive PMWX Segments Cartesian Gmpq"/>
+  <class name="cls162" key="walk PMWX Segments Cartesian Gmpq"/>
+  <class name="cls171" key="naive PMWX Segments Cartesian Lazy Gmpq"/>
+  <class name="cls172" key="walk PMWX Segments Cartesian Lazy Gmpq"/>
+
+  <class name="cls211" key="naive PMWX Cached Segments Cartesian Leda Rat"/>
+  <class name="cls212" key="walk PMWX Cached Segments Cartesian Leda Rat"/>
+  <class name="cls221" key="naive PMWX Cached Segments Leda Leda Rat"/>
+  <class name="cls222" key="walk PMWX Cached Segments Leda Leda Rat"/>
+  <class name="cls231" key="naive PMWX Cached Segments Cartesian Lazy Leda Rat"/>
+  <class name="cls232" key="walk PMWX Cached Segments Cartesian Lazy Leda Rat"/>
+  <class name="cls241" key="naive PMWX Cached Segments Cartesian Quotient"/>
+  <class name="cls242" key="walk PMWX Cached Segments Cartesian Quotient"/>
+  <class name="cls251" key="naive PMWX Cached Segments Cartesian Lazy Quotient MP"/>
+  <class name="cls252" key="walk PMWX Cached Segments Cartesian Lazy Quotient MP"/>  
+  <class name="cls261" key="naive PMWX Cached Segments Cartesian Gmpq"/>
+  <class name="cls262" key="walk PMWX Cached Segments Cartesian Gmpq"/>
+  <class name="cls271" key="naive PMWX Cached Segments Cartesian Lazy Gmpq"/>
+  <class name="cls272" key="walk PMWX Cached Segments Cartesian Lazy Gmpq"/>  
+
   <clo name="format" string="-If="/>
   <clo name="samples" string="-s"/> 
   <clo name="header" string="-bh="/> 
