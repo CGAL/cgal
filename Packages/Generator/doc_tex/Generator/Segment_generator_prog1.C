@@ -1,0 +1,54 @@
+/*  Segment_generator_prog1.C       */
+/*  ------------------------------- */
+/*  CGAL example program for the generic segment generator. */
+
+#include <assert.h>
+#include <vector.h>
+#include <algo.h>
+#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/point_generators_2.h>
+#include <CGAL/Segment_generator.h>
+#include <CGAL/ncopy.h>
+#include <CGAL/IO/Window_stream.h>  /* only for visualization used */
+
+typedef CGAL_Cartesian<double>  R;
+typedef CGAL_Point_2<R>         Point;
+typedef CGAL_Segment_2<R>       Segment;
+
+int main()
+{
+    /* Create test segment set. Prepare a vector for 200 segments. */
+    vector<Segment> segs;
+    segs.reserve(200);
+
+    /* Prepare point generator for the horizontal segment, length 200. */
+    typedef  CGAL_Random_points_on_segment_2<Point>  P1;
+    P1 p1( Point(-100,0), Point(100,0));
+    
+    /* Prepare point generator for random points on circle, radius 250. */
+    typedef  CGAL_Random_points_on_circle_2<Point>  P2;
+    P2 p2( 250);
+    
+    /* Create 200 segments. */
+    CGAL_Segment_generator<Segment, P1, P2> g( p1, p2);
+    CGAL_ncopy( g, 200, back_inserter( segs));
+
+    /* Visualize segments. Can be omitted, see example programs */
+    /* in the CGAL source code distribution. */
+    CGAL_Window_stream W(512, 512);
+    W.init(-256.0, 255.0, -256.0);
+    W << CGAL_BLACK;
+    for( vector<Segment>::iterator i = segs.begin(); i != segs.end(); i++)
+	W << *i;
+
+    /*  Wait for program termination. */
+    char c;
+    cout << " Type any character to continue: " << endl;
+    cin >> c;
+    cout << " done" << endl;
+
+    return 0;
+}
