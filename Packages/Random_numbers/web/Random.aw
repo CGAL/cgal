@@ -100,10 +100,10 @@ The class interface looks as follows.
 @macro <Random interface> = @begin
     class CGAL_Random {
       public:
-	@<Random public interface>
+        @<Random public interface>
 
       private:
-	@<Random private data members>
+        @<Random private data members>
     };
 @end   
 
@@ -114,7 +114,7 @@ section, so we do not comment on it here.
 
 @macro <Random public interface> = @begin
     // types
-    typedef  unsigned short  Seed[3];			// 48 Bits
+    typedef  unsigned short  Seed[3];                   // 48 Bits
 
     // creation
     CGAL_Random( );
@@ -159,7 +159,7 @@ The seed is stored in an array of three \ccc{unsigned short}s.
 
 @macro <Random private data members> = @begin
     // data members
-    unsigned short  _seed[3];				// 48 Bits
+    unsigned short  _seed[3];                           // 48 Bits
 @end
 
 
@@ -176,31 +176,31 @@ time.
     CGAL_Random::
     CGAL_Random( )
     {
-	// get system's microseconds
-	timeval tv;
-	gettimeofday( &tv, NULL);
-	unsigned long  ms = tv.tv_sec*1000000+tv.tv_usec;
+        // get system's microseconds
+        timeval tv;
+        gettimeofday( &tv, NULL);
+        unsigned long  ms = tv.tv_sec*1000000+tv.tv_usec;
 
-	// initialize random numbers generator
-	_seed[ 0] = _seed[ 2] = CGAL_static_cast( unsigned short, ms >> 16);
-	_seed[ 1] =             CGAL_static_cast( unsigned short, ms & 65535);
+        // initialize random numbers generator
+        _seed[ 0] = _seed[ 2] = CGAL_static_cast( unsigned short, ms >> 16);
+        _seed[ 1] =             CGAL_static_cast( unsigned short, ms & 65535);
     }
 
     CGAL_Random::
     CGAL_Random( Seed seed)
     {
-	// initialize random numbers generator
-	_seed[ 0] = seed[ 0];
-	_seed[ 1] = seed[ 1];
-	_seed[ 2] = seed[ 2];
+        // initialize random numbers generator
+        _seed[ 0] = seed[ 0];
+        _seed[ 1] = seed[ 1];
+        _seed[ 2] = seed[ 2];
     }
 
     CGAL_Random::
     CGAL_Random( long init)
     {
-	// initialize random numbers generator
-	_seed[ 0] = _seed[ 2] = CGAL_static_cast( unsigned short,init >> 16);
-	_seed[ 1] =             CGAL_static_cast( unsigned short,init & 65535);
+        // initialize random numbers generator
+        _seed[ 0] = _seed[ 2] = CGAL_static_cast( unsigned short,init >> 16);
+        _seed[ 1] =             CGAL_static_cast( unsigned short,init & 65535);
     }
 
 @end
@@ -222,7 +222,7 @@ The result is converted to a number in the given range.
     CGAL_Random::
     get_bool( )
     {
-	return( CGAL_static_cast( bool, ( erand48( _seed) >= 0.5)));
+        return( CGAL_static_cast( bool, ( erand48( _seed) >= 0.5)));
     }
 
     inline
@@ -230,8 +230,8 @@ The result is converted to a number in the given range.
     CGAL_Random::
     get_int( int lower, int upper)
     {
-	return( lower + CGAL_static_cast( int,
-	          CGAL_static_cast( double, upper-lower) * erand48( _seed)));
+        return( lower + CGAL_static_cast( int,
+                  CGAL_static_cast( double, upper-lower) * erand48( _seed)));
     }
 
     inline
@@ -239,7 +239,7 @@ The result is converted to a number in the given range.
     CGAL_Random::
     get_double( double lower, double upper)
     {
-	return( lower + ( upper-lower) * erand48( _seed));
+        return( lower + ( upper-lower) * erand48( _seed));
     }
 
     inline
@@ -247,7 +247,7 @@ The result is converted to a number in the given range.
     CGAL_Random::
     operator () ( int upper)
     {
-	return( get_int( 0, upper));
+        return( get_int( 0, upper));
     }
 @end
 
@@ -262,18 +262,18 @@ seed variable, respectively.
     CGAL_Random::
     save_seed( Seed& seed) const
     {
-	seed[ 0] = _seed[ 0];
-	seed[ 1] = _seed[ 1];
-	seed[ 2] = _seed[ 2];
+        seed[ 0] = _seed[ 0];
+        seed[ 1] = _seed[ 1];
+        seed[ 2] = _seed[ 2];
     }
 
     void
     CGAL_Random::
     restore_seed( Seed const& seed)
     {
-	_seed[ 0] = seed[ 0];
-	_seed[ 1] = seed[ 1];
-	_seed[ 2] = seed[ 2];
+        _seed[ 0] = seed[ 0];
+        _seed[ 1] = seed[ 1];
+        _seed[ 2] = seed[ 2];
     }
 @end
 
@@ -288,10 +288,10 @@ The equality test compares the internal seeds of the two operands.
     CGAL_Random::
     operator == ( CGAL_Random const& rnd) const
     {
-	return( CGAL_static_cast( bool,
-		    ( _seed[ 0] == rnd._seed[ 0]) &&
-		    ( _seed[ 1] == rnd._seed[ 1]) &&
-		    ( _seed[ 2] == rnd._seed[ 2]) ) );
+        return( CGAL_static_cast( bool,
+                    ( _seed[ 0] == rnd._seed[ 0]) &&
+                    ( _seed[ 1] == rnd._seed[ 1]) &&
+                    ( _seed[ 2] == rnd._seed[ 2]) ) );
     }
 @end
 
@@ -314,47 +314,47 @@ numbers.
 
     // test get_bool
     {
-	bool b = CGAL_random.get_bool();
-	assert( ! b || b);
+        bool b = CGAL_random.get_bool();
+        assert( ! b || b);
     }
 
     // test get_int
     {
         int  l = CGAL_random.get_int( -100, 0);
-	int  u = CGAL_random.get_int( 0, 1000);
-	int  i = CGAL_random.get_int( l, u);
-	assert( ( l <= i) && ( i < u));
+        int  u = CGAL_random.get_int( 0, 1000);
+        int  i = CGAL_random.get_int( l, u);
+        assert( ( l <= i) && ( i < u));
     }
 
     // test get_double
     {
         double  l = CGAL_random.get_double( -123.45, -0.99);
-	double  u = CGAL_random.get_double( 22.0/7.0, 33.3);
-	double  d = CGAL_random.get_double( l, u);
-	assert( ( l <= d) && ( d < u));
+        double  u = CGAL_random.get_double( 22.0/7.0, 33.3);
+        double  d = CGAL_random.get_double( l, u);
+        assert( ( l <= d) && ( d < u));
     }
 
     // test operator()
     {
-	int  i = CGAL_random( 5555);
-	assert( ( 0 <= i) && ( i < 5555));
+        int  i = CGAL_random( 5555);
+        assert( ( 0 <= i) && ( i < 5555));
     }
 
     // test seed functions
     {
-	CGAL_random.restore_seed( seed);	// `CGAL_Random' and `rnd'
-	CGAL_Random rnd( seed);			// have the same seed now
-	assert( CGAL_random.get_bool()         == rnd.get_bool()        );
-	assert( CGAL_random.get_int( -100,100) == rnd.get_int( -100,100));
-	assert( CGAL_random.get_double()       == rnd.get_double()      );
-	assert( CGAL_random                    == rnd                   );
+        CGAL_random.restore_seed( seed);        // `CGAL_Random' and `rnd'
+        CGAL_Random rnd( seed);                 // have the same seed now
+        assert( CGAL_random.get_bool()         == rnd.get_bool()        );
+        assert( CGAL_random.get_int( -100,100) == rnd.get_int( -100,100));
+        assert( CGAL_random.get_double()       == rnd.get_double()      );
+        assert( CGAL_random                    == rnd                   );
 
-	long init = CGAL_random( 9999);
-	CGAL_Random rnd1( init), rnd2( init);
-	assert( rnd1.get_bool()         == rnd2.get_bool()        );
-	assert( rnd1.get_int( -100,100) == rnd2.get_int( -100,100));
-	assert( rnd1.get_double()       == rnd2.get_double()      );
-	assert( rnd1                    == rnd2                   );
+        long init = CGAL_random( 9999);
+        CGAL_Random rnd1( init), rnd2( init);
+        assert( rnd1.get_bool()         == rnd2.get_bool()        );
+        assert( rnd1.get_int( -100,100) == rnd2.get_int( -100,100));
+        assert( rnd1.get_double()       == rnd2.get_double()      );
+        assert( rnd1                    == rnd2                   );
     }
 @end
 
@@ -431,7 +431,7 @@ numbers.
     int
     main( int, char**)
     {
-	@<Random tests>
+        @<Random tests>
     }
 
     @<end of file line>
@@ -440,11 +440,11 @@ numbers.
 @i ../file_header.awi
 
 @macro <Random header>(1) many = @begin
-    @<file header>("Random Numbers Generator",@1,"Random",
-		   "Sven Schönherr <sven@@inf.fu-berlin.de>",
-		   "N.N.",
-		  "MPI Saarbrucken (Stefan Schirra <stschirr@@mpi-sb.mpg.de>)",
-		   "$Revision$","$Date$")
+    @<file header>("Random Numbers Generator",@1,"Random","Random/Random",
+                   "Sven Schönherr <sven@@inf.fu-berlin.de>",
+                   "N.N.",
+                  "MPI Saarbrucken (Stefan Schirra <stschirr@@mpi-sb.mpg.de>)",
+                   "$Revision$","$Date$")
 @end
 
 @! ===== EOF ==================================================================
