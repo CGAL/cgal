@@ -1,4 +1,4 @@
-4.9      (?? Feb 01)
+4.9      (20 Feb 01)
 - Remove references to __GNUC__ and CGAL_NO_STL_PROVIDED_REL_OPS.
 
 4.8      (13 Feb 01)
