@@ -826,12 +826,13 @@ dimension~3, $i,j \in \{0,1,2\}$ in dimension~2, $i,j \in \{0,1\}$ in
 dimension~1.}} 
 
 \ccMethod{Vertex_handle insert_outside_convex_hull(const Point & p,
-					Cell_handle c,
-					int li, int lj=0);}
-{The cell \ccc{c}, together with \ccc{li} and possibly \ccc{lj}, give a
-separator (facet, edge or vertex, depending on the dimension) for
-\ccc{p} from the triangulation (see the description of method
-\ccc{locate()} for more details on the way the separator is represented).\\
+					Cell_handle c);}
+%					int li, int lj=0);}
+{%The cell \ccc{c}, together with \ccc{li} and possibly \ccc{lj}, give a
+%separator (facet, edge or vertex, depending on the dimension) for
+%\ccc{p} from the triangulation (see the description of method
+%\ccc{locate()} for more details on the way the separator is represented).\\
+The cell \ccc{c} must be an infinite face containing \ccVar.\\
 Links \ccc{p} to all  points in the triangulation that are visible from
 \ccc{p}. Updates consequently the infinite faces. See
 Figure~\ref{Triangulation3-fig-insert_outside_convex_hull}.

@@ -153,7 +153,7 @@ alt="2D simplex and a 1D geometric embedding">
 \end{ccHtmlOnly}
 \end{itemize}
 
-The last two cases are defined uniquely:
+The last three cases are defined uniquely:
 \begin{itemize}
 \item \emph{dimension 0.} A 0-dimensional triangulation is the
 boundary of a 1-dimensional simplex (an edge), which consists of 2
@@ -164,6 +164,8 @@ two vertices are disconnected.
 0-dimensional simplex, that is a sole vertex, which will be
 geometrically embedded as an ``empty'' triangulation, only having one
 infinite vertex.
+\item \emph{dimension -2.} The triangulation data structure has no
+vertex. There is no associated geometric triangulation. 
 \end{itemize} 
 
 Note that the notion of infinite vertex has no meaning for the
@@ -327,7 +329,7 @@ int main()
   std::vector<TDSVertex> V(5);
   std::vector<TDSVertex*> PV(7);
 
-  PV[0] = T.insert_outside_affine_hull(V[0]);
+  PV[0] = T.insert_increase_dimension(V[0]);
   assert( T.number_of_vertices() == 1 );
   assert( T.dimension() == -1 );
   assert( T.is_valid() );
@@ -335,7 +337,7 @@ int main()
   int i;
   // each of the following insertions of vertices increases the dimension
   for ( i=1; i<5; i++ ) {
-    PV[i] = T.insert_outside_affine_hull(V[i], PV[0]);
+    PV[i] = T.insert_increase_dimension(V[i], PV[0]);
     assert( T.number_of_vertices() == i+1 );
     assert( T.dimension() == i-1 );
     assert( T.is_valid() );
@@ -553,7 +555,7 @@ split into 2 new edges.
 \{0,1,2,3\}$ in dimension~3, $i,j \in \{0,1,2\}$ in dimension~2, $i,j
 \in \{0,1\}$ in dimension~1.}}
 
-\ccMethod{Vertex * insert_outside_affine_hull(
+\ccMethod{Vertex * insert_increase_dimension(
 			const Vertex & v, 
 			Vertex* star = NULL, 
 			bool reorient = false);}
@@ -580,13 +582,13 @@ is a vertex of \ccVar.}}
 \begin{center} 
 \includegraphics{topo-insert_outside_affine_hull.eps} 
 \end{center}
-\caption{\protect\ccc{insert_outside_affine_hull} (1-dimensional case) \label{TDS3-fig-topo-insert_outside_affine_hull}}
+\caption{\protect\ccc{insert_increase_dimension} (1-dimensional case) \label{TDS3-fig-topo-insert_outside_affine_hull}}
 \end{figure} 
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
 <img border=0 src="./topo-insert_outside_affine_hull.gif" align=center
-alt="insert_outside_affine_hull} (1-dimensional case)">
+alt="insert_increase_dimension} (1-dimensional case)">
 \end{ccHtmlOnly}
 
 \ccMethod{void remove_degree_dplus1(Vertex* v, Cell *f = NULL);}
