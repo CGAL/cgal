@@ -15,7 +15,8 @@
 // source        : 
 // revision      : 1.8a
 // revision_date : 13 Mar 1998
-// author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
+// author(s)     : Geert-Jan Giezeman <geert@cs.uu.nl>
+//                 Wieger Wesselink
 //
 // coordinator   : Utrecht University
 //
@@ -51,14 +52,66 @@ CGAL_BEGIN_NAMESPACE
 //                          Polygon_2
 //-----------------------------------------------------------------------//
 
+#ifdef CGAL_POLYGON_2_CONST_ITER
+
+template <class It>
+inline
+typename std::iterator_traits<It>::pointer address(It it)
+{
+    return it.operator->();
+}     
+
+template <class Struct>
+inline
+Struct* address(Struct *p)
+{
+    return p;
+}
+
+template <class Struct>
+inline
+Struct const* address(Struct const*p)
+{
+    return p;
+}
+
+template <class It>
+struct Polygon_vertex_iterator_2
+{
+    typedef typename std::iterator_traits<It>::value_type value_type;
+    typedef typename std::iterator_traits<It>::iterator_category
+            iterator_category;
+    typedef typename std::iterator_traits<It>::difference_type difference_type;
+    typedef value_type const * pointer;
+    typedef value_type const & reference;
+    // more typedefs
+    Polygon_vertex_iterator_2() {}
+    Polygon_vertex_iterator_2(It it) : m_it(it) {}
+    Polygon_vertex_iterator_2 operator=(Polygon_vertex_iterator_2 const & it)
+        { m_it = it.m_it; return *this;}
+    Polygon_vertex_iterator_2 operator=(It const & it)
+        { m_it = it; return *this;}
+    bool operator==(Polygon_vertex_iterator_2 const &o) const
+        { return m_it == o.m_it; }
+    bool operator!=(Polygon_vertex_iterator_2 const &o) const
+        { return m_it != o.m_it; }
+    reference operator*() const {return *m_it;}
+    pointer operator->() const { return address(m_it);}
+    Polygon_vertex_iterator_2 & operator++()
+    	{ ++m_it; return *this;}
+    Polygon_vertex_iterator_2 operator++(int)
+    	{ Polygon_vertex_iterator_2 result = *this; ++m_it; return result;}
+    It implementation_it() const {return m_it;}
+    // should be private and friend of Polygon_2
+private:
+    It m_it;
+};
+
+#endif // CGAL_POLYGON_2_CONST_ITER
 
 template <class Traits_P, class Container_P
         = std::vector<CGAL_TYPENAME_MSVC_NULL Traits_P::Point_2> >
 class Polygon_2 {
-
-  private:
-    Container_P d_container;
-    Traits_P traits;
 
   public:
     //--------------------------------------------------------
@@ -85,14 +138,24 @@ class Polygon_2 {
     typedef typename Container_P::const_iterator const_iterator;
     //-------------------------------------------------------//
 
-    typedef iterator Vertex_iterator;
-    typedef const_iterator Vertex_const_iterator;
+#ifdef CGAL_POLYGON_2_CONST_ITER
+    typedef Polygon_vertex_iterator_2<typename Container::iterator>
+             Vertex_iterator;
+    typename Container::iterator get_container_iterator(Vertex_iterator vit)
+    {return vit.implementation_it();}
+#else // CGAL_POLYGON_2_CONST_ITER
+    typedef typename Container::iterator Vertex_iterator;
+    typename Container::iterator get_container_iterator(Vertex_iterator vit)
+    {return vit;}
+#endif // CGAL_POLYGON_2_CONST_ITER
+    typedef Vertex_iterator Vertex_const_iterator;
 
-    typedef Bidirectional_circulator_from_container<Container_P>
-            Vertex_circulator;
+//    typedef Bidirectional_circulator_from_container<Container_P>
+//            Vertex_circulator;
 
     typedef Bidirectional_const_circulator_from_container<Container_P>
             Vertex_const_circulator;
+    typedef Vertex_const_circulator Vertex_circulator;
 
     typedef Polygon_2_edge_iterator<Traits_P,Container_P>
             Edge_const_iterator;
@@ -104,24 +167,25 @@ class Polygon_2 {
     //             Creation
     //--------------------------------------------------------
 
-    Polygon_2(Traits p_traits = Traits()) : traits(p_traits)
+    Polygon_2(Traits p_traits = Traits()) : traits(p_traits), m_flags(CF_EMPTY)
       { }
 
     Polygon_2(const Polygon_2<Traits_P,Container_P>& polygon)
-      : d_container(polygon.d_container), traits(polygon.traits) { }
+      : d_container(polygon.d_container), traits(polygon.traits),
+        m_flags(CF_EMPTY) { }
 
-    Polygon_2<Traits_P,Container_P>&
+    Polygon_2<Traits_P, Container_P>&
     operator=(const Polygon_2<Traits_P,Container_P>& polygon)
     {
       d_container = polygon.d_container;
-      traits = polygon.traits;
+      invalidate_cache();
       return *this;
     }
 
     ~Polygon_2()
       { }
 
-#ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
+#if 0  // #ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
     // the following typedefs are required for Sun C++ 4.2
     typedef typename std::vector<Point_2>::const_iterator         v_ci;
     typedef typename std::vector<Point_2>::const_reverse_iterator v_cri;
@@ -152,7 +216,7 @@ class Polygon_2 {
    template <class InputIterator>
     Polygon_2(InputIterator first, InputIterator last,
             Traits p_traits = Traits())
-        : d_container(first,last), traits(p_traits) {}
+        : d_container(first,last), traits(p_traits), m_flags(CF_EMPTY) {}
 //      { std::copy(first, last, std::back_inserter(d_container)); }
 
 /*
@@ -173,31 +237,59 @@ class Polygon_2 {
     //             Operations
     //--------------------------------------------------------
 
-    Vertex_iterator insert(Vertex_iterator position, const Point_2& x)
-      { return d_container.insert(position,x); }
+    void set(Vertex_iterator pos, const Point_2& x)
+     { invalidate_cache(); *get_container_iterator(pos) = x; }
+
+//    void set(Vertex_circulator pos, const Point_2& x)
+//     { invalidate_cache();
+//       typename Container::iterator pos1;
+//       pos1 = pos.current_iterator();
+//       *pos1 = x;
+//     }
+
+    Vertex_iterator insert(Vertex_iterator pos, const Point_2& x)
+      { invalidate_cache();
+        return d_container.insert(get_container_iterator(pos),x);
+      }
+
+//    Vertex_iterator insert(Vertex_circulator pos, const Point_2& x)
+//      { invalidate_cache();
+//        return d_container.insert(pos.current_iterator(),x);
+//      }
 
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
     template <class InputIterator>
-    void insert(Vertex_iterator position,
+    void insert(Vertex_iterator pos,
                 InputIterator first,
                 InputIterator last)
-      { d_container.insert(position, first, last); }
+      { d_container.insert(get_container_iterator(pos), first, last); }
+
+//    template <class InputIterator>
+//    void insert(Vertex_circulator pos,
+//                InputIterator first,
+//                InputIterator last)
+//      { d_container.insert(pos.current_iterator(), first, last); }
 #endif
 
     void push_back(const Point_2& x)
-      { d_container.insert(d_container.end(), x); }
+      { invalidate_cache(); d_container.insert(d_container.end(), x); }
 
-    void erase(Vertex_iterator position)
-      { d_container.erase(position); }
+    void erase(Vertex_iterator pos)
+      { invalidate_cache(); d_container.erase(get_container_iterator(pos)); }
+
+//    void erase(Vertex_circulator pos)
+//      { invalidate_cache(); d_container.erase(pos.current_iterator()); }
 
     void erase(Vertex_iterator first, Vertex_iterator last)
-      { d_container.erase(first,last); }
+      { invalidate_cache();
+      d_container.erase(get_container_iterator(first),
+                        get_container_iterator(last)); }
 
     void reverse_orientation()
     {
       if (size() <= 1)
         return;
-
+      invalidate_cache(); 
       typename Container_P::iterator i = d_container.begin();
       std::reverse(++i, d_container.end());
     }
@@ -206,20 +298,20 @@ class Polygon_2 {
     //             Traversal of a polygon
     //--------------------------------------------------------
 
-    Vertex_iterator vertices_begin()
-      { return d_container.begin(); }
+//    Vertex_iterator vertices_begin()
+//      { return d_container.begin(); }
 
-    Vertex_iterator vertices_end()
-      { return d_container.end(); }
+//    Vertex_iterator vertices_end()
+//      { return d_container.end(); }
 
     Vertex_const_iterator vertices_begin() const
-      { return d_container.begin(); }
+      { return const_cast<Polygon_2&>(*this).d_container.begin(); }
 
     Vertex_const_iterator vertices_end() const
-      { return d_container.end(); }
+      { return const_cast<Polygon_2&>(*this).d_container.end(); }
 
-    Vertex_circulator vertices_circulator()
-      { return Vertex_circulator(&d_container, d_container.begin()); }
+//    Vertex_circulator vertices_circulator()
+//      { return Vertex_circulator(&d_container, d_container.begin()); }
 
     Vertex_const_circulator vertices_circulator() const
       { return Vertex_const_circulator(&d_container, d_container.begin()); }
@@ -238,22 +330,32 @@ class Polygon_2 {
     //--------------------------------------------------------
 
     bool is_simple() const
-      { return is_simple_2(d_container.begin(), d_container.end(), traits); }
+    { if (!is_cached(CF_SIMPLE)) {
+         m_simple = is_simple_2(d_container.begin(), d_container.end(), traits);
+	 mark_cached(CF_SIMPLE);
+      }
+      return m_simple;
+    }
 
     bool is_convex() const
-    {
-      return is_convex_2(d_container.begin(), d_container.end(), traits);
+    { if (!is_cached(CF_CONVEX)) {
+         m_convex = is_convex_2(d_container.begin(), d_container.end(), traits);
+	 mark_cached(CF_CONVEX);
+      }
+      return m_convex;
     }
 
     Orientation orientation() const
-    {
-      CGAL_polygon_precondition(is_simple());
-      return orientation_2(d_container.begin(), d_container.end(), traits);
+    { if (!is_cached(CF_ORIENTATION)) {
+         m_orientation = orientation_2(d_container.begin(),
+                                       d_container.end(), traits);
+	 mark_cached(CF_ORIENTATION);
+      }
+      return m_orientation;
     }
 
     Oriented_side oriented_side(const Point_2& value) const
     {
-      CGAL_polygon_precondition(is_simple());
       return oriented_side_2(d_container.begin(), d_container.end(),
                                   value, traits);
     }
@@ -266,54 +368,80 @@ class Polygon_2 {
     }
 
     Bbox_2 bbox() const
-      {  return bbox_2(d_container.begin(), d_container.end()); }
+    { if (!is_cached(CF_BBOX)) {
+         m_bbox = bbox_2(d_container.begin(), d_container.end()); 
+	 mark_cached(CF_BBOX);
+      }
+      return m_bbox;
+    }
 
     FT area() const
-    {
-      FT area(0);
-      area_2(d_container.begin(), d_container.end(), area, traits);
-      return area;
+    { if (!is_cached(CF_AREA)) {
+         area_2(d_container.begin(), d_container.end(), m_area, traits);
+	 mark_cached(CF_AREA);
+      }
+      return m_area;
     }
 
     Vertex_const_iterator left_vertex() const
-    {
-      return left_vertex_2(d_container.begin(), d_container.end(), traits);
+    { if (!is_cached(CF_LEFT)) {
+         Polygon_2 &self = const_cast<Polygon_2&>(*this);
+         m_left = left_vertex_2(self.d_container.begin(),
+                                self.d_container.end(), traits);
+	 mark_cached(CF_LEFT);
+      }
+      return m_left;
     }
 
-    Vertex_iterator left_vertex()
-    {
-      return left_vertex_2(d_container.begin(), d_container.end(), traits);
-    }
+    //Vertex_iterator left_vertex()
+    //{
+      //return left_vertex_2(d_container.begin(), d_container.end(), traits);
+    //}
 
     Vertex_const_iterator right_vertex() const
-    {
-      return right_vertex_2(d_container.begin(), d_container.end(), traits);
+    { if (!is_cached(CF_RIGHT)) {
+         Polygon_2 &self = const_cast<Polygon_2&>(*this);
+         m_right = right_vertex_2(self.d_container.begin(),
+                                  self.d_container.end(), traits);
+	 mark_cached(CF_RIGHT);
+      }
+      return m_right;
     }
 
-    Vertex_iterator right_vertex()
-    {
-      return right_vertex_2(d_container.begin(), d_container.end(), traits);
-    }
+//    Vertex_iterator right_vertex()
+//    {
+//      return right_vertex_2(d_container.begin(), d_container.end(), traits);
+//    }
 
     Vertex_const_iterator top_vertex() const
-    {
-      return top_vertex_2(d_container.begin(), d_container.end(), traits);
+    { if (!is_cached(CF_TOP)) {
+         Polygon_2 &self = const_cast<Polygon_2&>(*this);
+         m_top = top_vertex_2(self.d_container.begin(),
+                              self.d_container.end(), traits);
+	 mark_cached(CF_TOP);
+      }
+      return m_top;
     }
 
-    Vertex_iterator top_vertex()
-    {
-      return top_vertex_2(d_container.begin(), d_container.end(), traits);
-    }
+//    Vertex_iterator top_vertex()
+//    {
+//      return top_vertex_2(d_container.begin(), d_container.end(), traits);
+//    }
 
     Vertex_const_iterator bottom_vertex() const
-    { 
-      return bottom_vertex_2(d_container.begin(), d_container.end(), traits);
+    { if (!is_cached(CF_BOTTOM)) {
+         Polygon_2 &self = const_cast<Polygon_2&>(*this);
+         m_bottom = bottom_vertex_2(self.d_container.begin(),
+                                    self.d_container.end(), traits);
+	 mark_cached(CF_BOTTOM);
+      }
+      return m_bottom;
     }
 
-    Vertex_iterator bottom_vertex()
-    {
-      return bottom_vertex_2(d_container.begin(), d_container.end(), traits);
-    }
+//    Vertex_iterator bottom_vertex()
+//    {
+//      return bottom_vertex_2(d_container.begin(), d_container.end(), traits);
+//    }
 
     bool is_counterclockwise_oriented() const
       { return orientation() == COUNTERCLOCKWISE; }
@@ -345,16 +473,16 @@ class Polygon_2 {
 
 #ifndef CGAL_CFG_NO_LAZY_INSTANTIATION
     const Point_2& vertex(int i) const
-      { return *(vertices_begin() + i); }
+      { return *(d_container.begin() + i); }
 
-    Point_2& vertex(int i)
-      { return *(vertices_begin() + i); }
+//    Point_2& vertex(int i)
+//      { return *(d_container.begin() + i); }
 
     const Point_2& operator[](int i) const
       { return vertex(i); }
 
-    Point_2& operator[](int i)
-      { return vertex(i); }
+//    Point_2& operator[](int i)
+//      { return vertex(i); }
 
     Segment_2 edge(int i) const
       { return *(edges_begin() + i); }
@@ -378,6 +506,26 @@ class Polygon_2 {
 
 
     Traits_P const &traits_member() const { return traits;}
+
+  private:
+    enum Cache_flags {CF_EMPTY=0,
+            CF_SIMPLE=1<<0, CF_CONVEX=1<<1, CF_ORIENTATION=1<<2,
+            CF_BBOX=1<<3, CF_AREA=1<<4, CF_LEFT=1<<5,
+	    CF_RIGHT=1<<6, CF_BOTTOM=1<<7, CF_TOP=1<<8};
+    Container_P d_container;
+    Traits_P traits;
+    // cache
+    mutable Cache_flags m_flags;
+    mutable Bbox_2 m_bbox;
+    mutable FT m_area;
+    mutable Vertex_iterator m_left, m_right, m_bottom, m_top;
+    mutable bool m_simple :1;
+    mutable bool m_convex:1;
+    mutable Orientation m_orientation:2;
+    void invalidate_cache() { m_flags = CF_EMPTY;}
+    bool is_cached(Cache_flags f) const { return m_flags & f;}
+    void mark_cached(Cache_flags f) const
+       { m_flags = Cache_flags((m_flags & ~f) | f); }
 };
 
 //-----------------------------------------------------------------------//
