@@ -231,9 +231,13 @@ private:
 public:
   // CONSTRUCTOR
   //============
+#ifdef _MSC_VER
+  Edge_list(const Edge& e = Edge(typename Edge::first_type(),-1) )
+    : emap(), front_(e), size_(0) {}
+#else
   Edge_list(const Edge& e = List_item::sentinel_edge() )
     : emap(), front_(e), size_(0) {}
-
+#endif
 
   // PREDICATES
   //===========
