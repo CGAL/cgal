@@ -1,3 +1,6 @@
+Version 3.7 (19 May 00)
+fixed construct_iso_rectangle_2_object() 
+
 Version 3.6 (16 May 2000)
 added missing construct_iso_rectangle_2_object() 
 
