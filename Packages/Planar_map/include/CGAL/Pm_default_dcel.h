@@ -21,6 +21,7 @@
 #define CGAL_PM_DEFAULT_DCEL_H
 
 #include <CGAL/basic.h>
+#include <CGAL/memory.h>
 #include <list>
 #include <map>
 #include <CGAL/N_step_adaptor.h>
@@ -367,7 +368,8 @@ protected:
 };
 
 /*! A Dcel Class Using Lists */
-template <class V, class H, class F>
+template < class V, class H, class F ,
+           class Allocator = CGAL_ALLOCATOR(int) >
 class Pm_dcel {
 public:
   typedef Pm_dcel<V,H,F>        Self;
@@ -381,6 +383,21 @@ protected:
   typedef In_place_list<Halfedge,false> Halfedge_list;
   typedef In_place_list<Face,false>     Face_list;
 
+  // Vertex allocator
+  typedef typename Allocator::template rebind<Vertex>    Vertex_alloc_rebind;
+  typedef typename Vertex_alloc_rebind::other            Vertex_allocator;
+
+  // Halfedge allocator
+  typedef typename Allocator::template rebind<Halfedge>  Halfedge_alloc_rebind;
+  typedef typename Halfedge_alloc_rebind::other          Halfedge_allocator;
+
+  // Face allocator
+  typedef typename Allocator::template rebind<Face>      Face_alloc_rebind;
+  typedef typename Face_alloc_rebind::other              Face_allocator;
+
+
+
+
 public:
   typedef typename Halfedge_list::size_type             Size;
   typedef typename Halfedge_list::size_type             size_type;
@@ -392,6 +409,13 @@ protected:
   Vertex_list vertices;
   Halfedge_list halfedges;
   Face_list faces;
+  
+  // three allocators (Vertex , Halfedge , Face)
+  Vertex_allocator   m_vertex_allocator;
+  Halfedge_allocator m_halfedge_allocator;
+  Face_allocator     m_face_allocator;
+ 
+
 
 public:
   typedef typename Vertex_list::iterator                Vertex_iterator;
@@ -465,13 +489,17 @@ public:
   // opposite pointers are automatically set.
   
   Vertex* new_vertex() {
-    Vertex* v = new Vertex;
+    //Vertex* v = new Vertex;
+    Vertex *v = m_vertex_allocator.allocate(1);
+    m_vertex_allocator.construct(v, Vertex());
     vertices.push_back( *v);
     return v;
   }
   
   Vertex* new_vertex( const Vertex* w) {
-    Vertex* v = new Vertex(*w);
+    //Vertex* v = new Vertex(*w);
+    Vertex *v = m_vertex_allocator.allocate(1);
+    m_vertex_allocator.construct(v, *w);
     vertices.push_back( *v);
     return v;
   }
@@ -485,13 +513,17 @@ public:
   */
 
   Halfedge * new_halfedge() {
-    Halfedge * h = new Halfedge;
+    //Halfedge * h = new Halfedge;
+    Halfedge * h = m_halfedge_allocator.allocate(1);
+    m_halfedge_allocator.construct(h, Halfedge());
     halfedges.push_back(*h);
     return h;
   }
 
   Halfedge * new_halfedge(const Halfedge * he) {
-    Halfedge * h = new Halfedge( *he);
+    //Halfedge * h = new Halfedge( *he);
+    Halfedge * h = m_halfedge_allocator.allocate(1);
+    m_halfedge_allocator.construct(h, *he);
     halfedges.push_back(*h);
     return h;
   }
@@ -528,13 +560,17 @@ public:
   }*/
 
   Face * new_face() {
-    Face * f = new Face;
+    //Face * f = new Face;
+    Face * f = m_face_allocator.allocate(1);
+    m_face_allocator.construct(f, Face());
     faces.push_back(*f);
     return f;
   }
   
   Face * new_face(const Face * g) {
-    Face * f = new Face(*g);
+    //Face * f = new Face(*g);
+    Face * f = m_face_allocator.allocate(1);
+    m_face_allocator.construct(f, *g);
     faces.push_back(*f);
     return f;
   }
@@ -547,12 +583,16 @@ public:
 
   void delete_vertex(Vertex * v) {
     vertices.erase(v);
-    delete v;
+    m_vertex_allocator.destroy(v);
+    m_vertex_allocator.deallocate(v,1);
+    //delete v;
   }
   
   void delete_halfedge(Halfedge * h) {
     halfedges.erase(h);
-    delete h;
+    m_halfedge_allocator.destroy(h);
+    m_halfedge_allocator.deallocate(h,1);
+    //delete h;
   }
     
   void delete_edge(Halfedge * h) {
@@ -564,7 +604,9 @@ public:
 
   void delete_face(Face * f) {
     faces.erase(f);
-    delete f;
+    m_face_allocator.destroy(f);
+    m_face_allocator.deallocate(f,1);
+    //delete f;
   }
   
   void delete_all() {
