@@ -19,12 +19,11 @@
 \ccDefinition
   
 Given a set of points in the plane, the class \ccRefName\ is a data
-structure that maintains the iso-rectangle with the largest area among
-all iso-rectangles that are in the bounding box of the point set, and
+structure that maintains an iso-rectangle with the largest area among
+all iso-rectangles that are in a given iso-rectangle, and
 that do not contain any point of the point set.
 
-The class \ccRefName\ expects a model of a \ccc{geometric traits
-class} as its template argument.  
+The class \ccRefName\ expects a model of the concept \ccc{LargestEmptyIsoRectangleTraits_2} as its template argument.  
 
 \ccInclude{CGAL/Largest_empty_iso_rectangle_2.h}
 
@@ -34,7 +33,7 @@ The class \ccClassTemplateName\ defines the following types:
 
 \ccThreeToTwo
 
-\ccTypedef{typedef Traits Geom_traits;}{}
+\ccTypedef{typedef T Traits;}{}
 
 \ccTypedef{typedef Traits::Point_2 Point_2;}{}
 \ccGlue
@@ -49,9 +48,6 @@ It is invalidated by any insertion or removal of a point.
 \ccNestedType{const_iterator}{Iterator over the points.}
 
 
-
-
-
 \ccCreation
 \ccCreationVariable{l}  %% choose variable name
 \ccSetTwoColumns{Qt_widget}{}
@@ -59,7 +55,7 @@ It is invalidated by any insertion or removal of a point.
 
 \ccConstructor{Largest_empty_iso_rectangle_2<Traits>
 (const Iso_rectangle_2 &b);}
-{Constructor.} 
+{Constructor. The iso-rectangle \ccc{b} is the one in which the largest ist computed.} 
 
 \ccFunction{void ~Largest_empty_iso_rectangle_2<Traits>();}
 {Destructor.}
@@ -71,8 +67,7 @@ It is invalidated by any insertion or removal of a point.
 
 \ccMethod{Largest_empty_iso_rectangle_2<Traits>
 	operator=(const Largest_empty_iso_rectangle_2<Traits> & tr);}
-{not yet implemented. Data structure is duplicated, and modifying one copy after the 
-duplication does not modify the other copy.}
+{}
 
 
 
@@ -97,14 +92,13 @@ Note that these points are almost never on a corner of an iso-rectangle.}
 \ccGlue
 \ccMethod{Iso_rectangle_2  get_largest_empty_iso_rectangle();}
 {Returns the largest empty iso-rectangle. Note that the two
-point defining the iso-rectangle are almost never part of 
+points defining the iso-rectangle are almost never part of 
 the point set.}
 \ccGlue
 \ccMethod{Iso_rectangle_2 get_bounding_box();}
-{Returns  the bounding box;}
+{Returns  the iso-rectangle passed in the constructor.}
 \ccHeading{Insertion}
 
-A word to degeneracies.
 
 \ccMethod{void 
   insert(const Point_2& p);}
@@ -120,8 +114,8 @@ A word to degeneracies.
           insert(InputIterator first, InputIterator last);}
 {Inserts the points in the range $\left[\right.$\ccc{first},
 \ccc{last}$\left.\right)$.  Returns the number of inserted points.
-\ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
-\ccc{Point}.}}
+{\em Requirement:} The \ccc{value_type} of \ccc{first} and \ccc{last} is
+\ccc{Point}.}
 
 \ccHeading{Removal}
 
