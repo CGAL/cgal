@@ -365,8 +365,12 @@ numbers.
 \clearpage
 \section{Files}
 
+@! ----------------------------------------------------------------------------
+@! Random.h
+@! ----------------------------------------------------------------------------
+
 @file <include/CGAL/Random.h> = @begin
-    @<Random header>("include/CGAL/Random.h")
+    @<file header>("include/CGAL/Random.h","Random Numbers Generator")
 
     #ifndef CGAL_RANDOM_H
     #define CGAL_RANDOM_H
@@ -402,8 +406,12 @@ numbers.
     @<end of file line>
 @end
 
+@! ----------------------------------------------------------------------------
+@! Random.C
+@! ----------------------------------------------------------------------------
+
 @file <src/Random.C> = @begin
-    @<Random header>("src/Random.C")
+    @<file header>("src/Random.C","Random Numbers Generator")
 
     #include <CGAL/Random.h>
 
@@ -422,8 +430,14 @@ numbers.
     @<end of file line>
 @end
 
+@! ----------------------------------------------------------------------------
+@! test_Random.C
+@! ----------------------------------------------------------------------------
+
 @file <test/Random/test_Random.C> = @begin
-    @<Random header>("test/Random/test_Random.C")
+    @<file header>(
+        "test/Random/test_Random.C",
+        "test program for Random Numbers Generator")
 
     #include <CGAL/Random.h>
     #include <assert.h>
@@ -432,19 +446,31 @@ numbers.
     main( int, char**)
     {
         @<Random tests>
+
+        return( 0);
     }
 
     @<end of file line>
 @end
 
+@! ----------------------------------------------------------------------------
+@! File Header
+@! ----------------------------------------------------------------------------
+
+\subsection*{File Header}
+
 @i ../file_header.awi
 
-@macro <Random header>(1) many = @begin
-    @<file header>("Random Numbers Generator",@1,"Random","Random/Random",
-                   "Sven Schönherr <sven@@inf.fu-berlin.de>",
-                   "N.N.",
-                  "MPI Saarbrucken (Stefan Schirra <stschirr@@mpi-sb.mpg.de>)",
-                   "$Revision$","$Date$")
-@end
+@macro <file header>(2) many = @begin
+    @<copyright notice>
+    @<file name>(@1)
+    @<file description>(
+        "Random Sources and Geometric Object Generators",
+        "Random","Random/Random",
+        "$Revision$","$Date$",
+        "Sven Schönherr <sven@@inf.fu-berlin.de>","N.N.",
+        "MPI Saarbrücken (Stefan Schirra <stschirr@@mpi-sb.mpg.de>)",
+        "@2")
+@end    
 
 @! ===== EOF ==================================================================
