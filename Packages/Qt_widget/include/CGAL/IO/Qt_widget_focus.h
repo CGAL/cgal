@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_widget_zoom.h
+// file          : include/CGAL/IO/Qt_widget_focus.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
