@@ -8,18 +8,17 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-wip $
+// release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
 // file          : demo/Min_circle_2/demo_Min_circle_2.C
-// package       : Min_circle_2
+// package       : $CGAL_Package: Min_circle_2 $
 // chapter       : Geometric Optimisation
 //
 // revision      : $Revision$
 // revision_date : $Date$
 //
-// author(s)     : Sven Schönherr
-// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
+// author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // demo program  : 2D Smallest Enclosing Circle

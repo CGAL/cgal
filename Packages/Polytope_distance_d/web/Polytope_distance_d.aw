@@ -2006,10 +2006,10 @@ web file.
     @<copyright notice>
     @<file name>(@1)
     @<file description>(
+        "Polytope_distance_d",
         "Geometric Optimisation",
-        "Polytope_distance_d", "Polytope_distance_d",
+        "Polytope_distance_d",
         "$Revision$","$Date$",
-        "Sven Schönherr",
         "Sven Schönherr <sven@@inf.ethz.ch>",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")

@@ -30,32 +30,31 @@ file.
 
 @macro <file name>(1) zero many = @begin
 //
-// release       : $CGAL_Revision: CGAL-wip $
+// release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
 // file          : @1
 @end
 
 The following macro for the file description is parameterized with the
-name of the corresponding chapter in the reference manual, the name of
-the package the file belongs to, the name and the RCS variables
+name of the package the file belongs to, the name of the corresponding
+chapter in the reference manual, the name and the RCS variables
 @em{Revision} and @em{Date} of the source file, the name(s) of the
-author(s) and the maintainer, the coordinating site, and a short
-description of the contents of the file.
+author(s), the coordinating site, and a short description of the
+contents of the file.
 
-@macro <file description>(9) zero many = @begin
-// package       : $CGAL_Package: @2 WIP $
-// chapter       : @1
+@macro <file description>(8) zero many = @begin
+// package       : $CGAL_Package: @1 $
+// chapter       : @2
 //
 // source        : web/@3.aw
 // revision      : @4
 // revision_date : @5
 //    
 // author(s)     : @6
-// maintainer    : @7
-// coordinator   : @8
+// coordinator   : @7
 //
-// implementation: @9
+// implementation: @8
 // ============================================================================
 @end
 

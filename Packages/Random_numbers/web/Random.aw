@@ -565,10 +565,10 @@ numbers.
     @<copyright notice>
     @<file name>(@1)
     @<file description>(
+        "Random_numbers",
         "Random Numbers Generator",
-        "Random_numbers", "Random",
+        "Random",
         "$Revision$","$Date$",
-        "Sven Schönherr",
         "Sven Schönherr <sven@@inf.ethz.ch>",
         "INRIA Sophia-Antipolis",
         "@2")

@@ -534,10 +534,10 @@ web file.
     @<copyright notice>
     @<file name>(@1)
     @<file description>(
+        "Optimisation_basic",
         "Geometric Optimisation",
-        "Optimisation_basic", "Optimisation_d_traits",
+        "Optimisation_d_traits",
         "$Revision$","$Date$",
-        "Sven Schönherr",
         "Sven Schönherr <sven@@inf.ethz.ch>",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")

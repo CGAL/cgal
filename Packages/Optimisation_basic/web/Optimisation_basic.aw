@@ -478,10 +478,10 @@ web file.
     @<copyright notice>
     @<file name>(@1)
     @<file description>(
+        "Optimisation_basic",
         "Geometric Optimisation",
-        "Optimisation_basic","Optimisation_basic",
+        "Optimisation_basic",
         "$Revision$","$Date$",
-        "Sven Schönherr",
         "Sven Schönherr <sven@@inf.ethz.ch>",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")
@@ -491,11 +491,11 @@ web file.
     @<copyright notice>
     @<file name>(@1)
     @<file description>(
+        "Optimisation_basic",
         "Geometric Optimisation",
-        "Optimisation_basic","Optimisation_basic",
+        "Optimisation_basic",
         "$Revision$","$Date$",
-        "@3, Sven Schönherr",
-        "Sven Schönherr <sven@@inf.ethz.ch>",
+        "@3, Sven Schönherr <sven@@inf.ethz.ch>",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")
 @end

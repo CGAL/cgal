@@ -8,18 +8,17 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-wip $
+// release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
 // file          : examples/Optimisation/example_Min_ellipse_2.C
-// package       : Min_ellipse_2
+// package       : $CGAL_Package: Min_ellipse_2 $
 // chapter       : Geometric Optimisation
 //
 // revision      : $Revision$
 // revision_date : $Date$
 //
-// author(s)     : Sven Schönherr, Bernd Gärtner
-// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
+// author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // example progr.: 2D Smallest Enclosing Ellipse
