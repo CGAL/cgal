@@ -1,3 +1,7 @@
+2.29
+- Outsourced sun fixes to Sun_fixes.h.
+- Added fix to enable member templates in stdlib.
+
 2.28
 - Remove obsolete CGAL_CFG_NO_MUTABLE
 - Define CGAL_VC7_BUG_PROTECTED
