@@ -9,6 +9,45 @@ predicates.
 
 
 Versions
+
+2.6 (18 Oct 1999)
+  M$ VC++
+
+2.5 (18 May 1999)
+  doc
+
+2.4 (17 May 1999)
+
+2.3 (10 May 1999)
+  small bug in test suite
+
+2.2 ( 7 May 1999)
+  remove warnings in test suite
+
+2.1 (30 Apr 99)
+  few compiler problems, few minors corrections in documentation.
+
+2.0 (20 Apr 99)
+  namespace CGAL
+
+1.7 (16 Dec 98)
+  warnings removal. CGAL_warning, cast of CGAL_Sign for printing
+
+1.6 (9 Dec 98)
+  warnings removal. CGAL_warning, cast of CGAL_Sign for printing
+
+1.5 (3 Dec 98)
+  errors in headers
+
+1.4 (3 Dec 98)
+  bugs in makefiles
+
+1.3 (27 Nov 98)
+  change the name from Fixed to Fixed_precision_nt
+
+1.2 (26 Nov 98)
+  correct minor bugs
+
 1.0 (Nov 98)
   Predicates :
     CGAL_orientationC2
@@ -20,39 +59,6 @@ Versions
     CGAL_orientationC3
     CGAL_side_of_oriented_sphereC3
   are waiting for predicates_on_ftC3.h
-
-1.2 (26 Nov 98)
-  correct minor bugs
-
-1.3 (27 Nov 98)
-  change the name from Fixed to Fixed_precision_nt
-
-1.4 (3 Dec 98)
-  bugs in makefiles
-1.5 (3 Dec 98)
-  errors in headers
-
-1.6 (9 Dec 98)
-  warnings removal. CGAL_warning, cast of CGAL_Sign for printing
-1.7 (16 Dec 98)
-  warnings removal. CGAL_warning, cast of CGAL_Sign for printing
-
-2.0 (20 Apr 99)
-  namespace CGAL
-
-2.1 (30 Apr 99)
-  few compiler problems, few minors corrections in documentation.
-
-2.2 ( 7 May 1999)
-  remove warnings in test suite
-
-2.3 (10 May 1999)
-  small bug in test suite
-
-2.4 (17 May 1999)
-2.5 (18 May 1999)
-  doc
-
 
 CONTENTS:
 

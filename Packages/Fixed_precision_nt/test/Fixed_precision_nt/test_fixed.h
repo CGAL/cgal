@@ -1,9 +1,9 @@
 #include <CGAL/basic.h>
-#include <stdio.h>
-#include <string.h>
-#include <iostream.h>
-#include <fstream.h>
-#include <strstream.h>
+#include <cstdio>
+#include <cstring>
+#include <iostream>
+#include <fstream>
+#include <strstream>
 
 
 #include <CGAL/Fixed_precision_nt.h>
@@ -50,8 +50,8 @@ bool test_orient2(InputIterator first, int N, int& p, int& z, int& n)
     CGAL::Orientation oF( CGAL::orientation(p1,p2,p3));
     CGAL::Orientation oG( CGAL::orientation(P1,P2,P3));
     if (oF != oG) {
-      cout << "---------- Problem"<<p1<<p2<<p3<<(int)oF<<endl
-	   << " diff from        "<<P1<<P2<<P3<<(int)oG<<endl;
+      std::cout << "---------- Problem"<<p1<<p2<<p3<<(int)oF<<std::endl
+	   << " diff from        "<<P1<<P2<<P3<<(int)oG<<std::endl;
       result = false;
     }
     switch(oF){
@@ -60,7 +60,7 @@ bool test_orient2(InputIterator first, int N, int& p, int& z, int& n)
     case CGAL::NEGATIVE : n++; break;
     }
   }
-  cout << "answers : "<<p << " +;  "<<z<<" 0;  "<<n<<" -;"<<endl;
+  std::cout << "answers : "<<p << " +;  "<<z<<" 0;  "<<n<<" -;"<<std::endl;
   return result;
 }
 
@@ -80,8 +80,8 @@ bool test_orient3(InputIterator first, int N, int& p, int& z, int& n)
     CGAL::Orientation oF( CGAL::orientation(p1,p2,p3,p4));
     CGAL::Orientation oG( CGAL::orientation(P1,P2,P3,P4));
     if (oF != oG) {
-      cout << "---------- Problem"<<p1<<p2<<p3<<p4<<(int)oF<<endl
-	   << " diff from        "<<P1<<P2<<P3<<P4<<(int)oG<<endl;
+      std::cout << "---------- Problem"<<p1<<p2<<p3<<p4<<(int)oF<<std::endl
+	   << " diff from        "<<P1<<P2<<P3<<P4<<(int)oG<<std::endl;
       result = false;
     }
     switch(oF){
@@ -90,7 +90,7 @@ bool test_orient3(InputIterator first, int N, int& p, int& z, int& n)
     case CGAL::NEGATIVE : n++; break;
     }
   }
-  cout << "answers : "<<p << " +;  "<<z<<" 0;  "<<n<<" -;"<<endl;
+  std::cout << "answers : "<<p << " +;  "<<z<<" 0;  "<<n<<" -;"<<std::endl;
   return result;
 }
 
@@ -112,8 +112,8 @@ bool test_sphere2(InputIterator first, int N, int& p, int& z, int& n)
     if ( oG
 	 && (! CGAL::Fixed_precision_nt::is_perturbed_incircle()) 
 	 && (oF != oG) ) {
-      cout << "---------- Problem"<<p1<<p2<<p3<<p4<<(int)oF<<endl
-	   << " diff from        "<<P1<<P2<<P3<<P4<<(int)oG<<endl;
+      std::cout << "---------- Problem"<<p1<<p2<<p3<<p4<<(int)oF<<std::endl
+	   << " diff from        "<<P1<<P2<<P3<<P4<<(int)oG<<std::endl;
       result = false;
     }
     switch(oF){
@@ -122,7 +122,7 @@ bool test_sphere2(InputIterator first, int N, int& p, int& z, int& n)
     case CGAL::NEGATIVE : n++; break;
     }
   }
-  cout << "answers : "<<p << " +;  "<<z<<" 0;  "<<n<<" -;"<<endl;
+  std::cout << "answers : "<<p << " +;  "<<z<<" 0;  "<<n<<" -;"<<std::endl;
   return result;
 }
 
@@ -145,8 +145,8 @@ bool test_sphere3(InputIterator first, int N, int& p, int& z, int& n)
     if ( oG
 	 && (! CGAL::Fixed_precision_nt::is_perturbed_insphere())
 	 && (oF != oG)) {
-      cout << "---------- Problem"<<p1<<p2<<p3<<p4<<p5<<(int)oF<<endl
-	   << " diff from        "<<P1<<P2<<P3<<P4<<P5<<(int)oG<<endl;
+      std::cout << "---------- Problem"<<p1<<p2<<p3<<p4<<p5<<(int)oF<<std::endl
+	   << " diff from        "<<P1<<P2<<P3<<P4<<P5<<(int)oG<<std::endl;
       result = false;
     }
     switch(oF){
@@ -155,7 +155,7 @@ bool test_sphere3(InputIterator first, int N, int& p, int& z, int& n)
     case CGAL::NEGATIVE : n++; break;
     }
   }
-  cout << "answers : "<<p << " +;  "<<z<<" 0;  "<<n<<" -;"<<endl;
+  std::cout << "answers : "<<p << " +;  "<<z<<" 0;  "<<n<<" -;"<<std::endl;
   return result;
 }
 
@@ -164,16 +164,16 @@ bool test_sphere3(InputIterator first, int N, int& p, int& z, int& n)
 
 int main(int argc, char* argv[])
 {
-  cout <<"Test program for class CGAL::Fixed_precision_nt by"
+  std::cout <<"Test program for class CGAL::Fixed_precision_nt by"
        << " comparison to CGAL::Gmpz"
-       <<endl<<endl;
+       <<std::endl<<std::endl;
 
 #ifdef FIXED_ARE_INTEGERS
-    cout <<"Fixed_precision_nt are integers "<<endl;
+    std::cout <<"Fixed_precision_nt are integers "<<std::endl;
   float MAX=16000000.0;
   // max is about 2^24, thus a fixed is an integer.
 #else
-    cout <<"Fixed_precision_nt are not integers"<<endl;
+    std::cout <<"Fixed_precision_nt are not integers"<<std::endl;
   float MAX=1020.0;
   //something else bigger than fixed sized data below
 #endif
@@ -185,8 +185,8 @@ int main(int argc, char* argv[])
 #ifdef FIXED_ARE_INTEGERS
   test_result &= (CGAL::Fixed_precision_nt(12345.6) 
 		  == CGAL::Fixed_precision_nt(12346.4) );
-  cout << "Verifying rounding on Fixed_precision_nt     "<<endl;
-  cout << ((test_result) ? " OK " : "        FAILED --------") << endl;
+  std::cout << "Verifying rounding on Fixed_precision_nt     "<<std::endl;
+  std::cout << ((test_result) ? " OK " : "        FAILED --------") << std::endl;
   test_all &= test_result; test_result = true;
 #endif
 
@@ -195,7 +195,7 @@ int main(int argc, char* argv[])
   //  CGAL::Fixed_precision_nt fi(2*MAX); // overflow causes warning
   //  in test suite, thus this line is removed
 
-  cout << "Verifying basic arithemtic on Fixed_precision_nt     "<<endl;
+  std::cout << "Verifying basic arithemtic on Fixed_precision_nt     "<<std::endl;
   test_result &= (f1+f2==f3);
   test_result &= (f4/f2==f2);
   test_result &= (f4-f1==f3);
@@ -212,9 +212,9 @@ int main(int argc, char* argv[])
   f2 *= f2;
   f2 /= f1;
   f2 -= f4;
-  cout <<"60="<< f2<<endl;
+  std::cout <<"60="<< f2<<std::endl;
 
-  cout << ((test_result) ? " OK " : "        FAILED --------") << endl;
+  std::cout << ((test_result) ? " OK " : "        FAILED --------") << std::endl;
   test_all &= test_result; test_result = true;
 
   CGAL::Random_points_in_square_2<Point2,
@@ -226,9 +226,9 @@ int main(int argc, char* argv[])
     Rnd3 ( CGAL::Fixed_precision_nt::upper_bound() );
 
   int N=1000;
-  cout << "Verifying 2D orientation test on "<<N<<" random tests"<<endl;
+  std::cout << "Verifying 2D orientation test on "<<N<<" random tests"<<std::endl;
   test_result &= test_orient2(Rnd2,N,p,z,n);
-  cout << ((test_result) ? " OK " : "        FAILED --------") << endl;
+  std::cout << ((test_result) ? " OK " : "        FAILED --------") << std::endl;
   test_all &= test_result; test_result = true;
 
 
@@ -248,10 +248,10 @@ int main(int argc, char* argv[])
 	   64.4*CGAL::Fixed_precision_nt::unit_value()),
                                                     // fixed rounding
   };  
-  cout << "Verifying 2D orientation test on collinear points"<<endl;
+  std::cout << "Verifying 2D orientation test on collinear points"<<std::endl;
   test_result &= test_orient2(colin,colinN,p,z,n);
   test_result &= (z==colinN);
-  cout << ((test_result) ? " OK " : "        FAILED --------") << endl;
+  std::cout << ((test_result) ? " OK " : "        FAILED --------") << std::endl;
   test_all &= test_result; test_result = true;
 
 
@@ -271,17 +271,17 @@ int main(int argc, char* argv[])
 	   64.6*CGAL::Fixed_precision_nt::unit_value()),
                                                     // fixed rounding
   };
-  cout << "Verifying 2D orientation test on positive triples"<<endl;
+  std::cout << "Verifying 2D orientation test on positive triples"<<std::endl;
   test_result &= test_orient2(pos,posN,p,z,n);
   test_result &= (p==posN);
-  cout << ((test_result) ? " OK " : "        FAILED --------") << endl;
+  std::cout << ((test_result) ? " OK " : "        FAILED --------") << std::endl;
   test_all &= test_result; test_result = true;
 
 
 
-  cout << "Verifying incircle test on "<<N<<" random tests"<<endl;
+  std::cout << "Verifying incircle test on "<<N<<" random tests"<<std::endl;
   test_result &= test_sphere2(Rnd2,N,p,z,n);
-  cout << ((test_result) ? " OK " : "        FAILED --------") << endl;
+  std::cout << ((test_result) ? " OK " : "        FAILED --------") << std::endl;
   test_all &= test_result; test_result = true;
 
 
@@ -314,34 +314,34 @@ int main(int argc, char* argv[])
   };
 
 
-  cout << "Verifying incircle test on cocircular points"<<endl;
+  std::cout << "Verifying incircle test on cocircular points"<<std::endl;
   CGAL::Fixed_precision_nt::unperturb_incircle();
   test_result &= ! CGAL::Fixed_precision_nt::is_perturbed_incircle();
   test_result &= test_sphere2(cocirc,cocircN,p,z,n);
   test_result &= (z==cocircN);
-  cout << ((test_result) ? " OK " : "        FAILED --------") << endl;
+  std::cout << ((test_result) ? " OK " : "        FAILED --------") << std::endl;
   test_all &= test_result; test_result = true;
 
-  cout<<"Verifying perturbed incircle test on cocircular points"<<endl;
+  std::cout<<"Verifying perturbed incircle test on cocircular points"<<std::endl;
   CGAL::Fixed_precision_nt::perturb_incircle();
   test_result &= CGAL::Fixed_precision_nt::is_perturbed_incircle();
   (void) test_sphere2(cocirc,cocircN,p,z,n);
   test_result &= ((z==cocirccolinN)&&(n+z+p==cocircN));
-  cout << ((test_result) ? " OK " : "        FAILED --------") << endl;
+  std::cout << ((test_result) ? " OK " : "        FAILED --------") << std::endl;
   test_all &= test_result; test_result = true;
 
 
-  cout <<"Verifying 3D orientation test on "<<N<<" random tests"<<endl;
+  std::cout <<"Verifying 3D orientation test on "<<N<<" random tests"<<std::endl;
   test_result &= test_orient3(Rnd3,N,p,z,n);
-  cout << "Verifying insphere test on "<<N<<" random tests"<<endl;
+  std::cout << "Verifying insphere test on "<<N<<" random tests"<<std::endl;
   test_result &= test_sphere3(Rnd3,N,p,z,n);
   CGAL::Fixed_precision_nt::perturb_insphere();
-  cout << ((test_result) ? " OK " : "        FAILED --------") << endl;
+  std::cout << ((test_result) ? " OK " : "        FAILED --------") << std::endl;
 
-  cout <<endl<<endl
+  std::cout <<std::endl<<std::endl
        << ((test_all) ? "test succeeds" 
                          : "TEST FAILED   TEST FAILED   TEST FAILED")
-       <<endl;
+       <<std::endl;
   return ! test_all;
 }
 

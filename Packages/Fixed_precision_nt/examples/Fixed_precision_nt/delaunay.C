@@ -1,9 +1,9 @@
 #include <CGAL/basic.h>
-#include <stdio.h>
-#include <string.h>
-#include <iostream.h>
-#include <fstream.h>
-#include <strstream.h>
+#include <cstdio>
+#include <cstring>
+#include <iostream>
+#include <fstream>
+#include <strstream>
 
 #include <CGAL/Triangulation_short_names_2.h>
 
@@ -46,12 +46,12 @@ int main(int argc, char* argv[])
       Creator_uniform_2<double,Point_> > Input ( 1.0 );
 
     int N; if (argc==2) sscanf(argv[1], "%d", &N); 
-    else {N=100; cerr<<"usage : "<<argv[0]<<" nb-of-points"<<endl<<endl;}
-    cout << "Delaunay of "<<N<<" random points"<<endl;
+    else {N=100; cerr<<"usage : "<<argv[0]<<" nb-of-points"<<std::endl<<std::endl;}
+    std::cout << "Delaunay of "<<N<<" random points"<<std::endl;
     t.start();
     while(N--) D.insert( *++Input);
     t.stop();
-    cout << " in "<<t.time()<<" seconds"<<endl;
+    std::cout << " in "<<t.time()<<" seconds"<<std::endl;
     return 0;
 }
 
