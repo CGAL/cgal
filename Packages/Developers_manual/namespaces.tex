@@ -185,8 +185,8 @@ point of definition. Here is a small example:
 
 There is a ambiguity, because both the scope enclosing the point of 
 instantiation and the scope enclosing the point of definition contain
-a \ccc{mix} function. The mips compiler on {\sc IRIX} and the Kai \CC\
-compiler complain about this ambiguity: 
+a \ccc{mix} function. The mips compiler on {\sc IRIX} 
+complains about this ambiguity: 
 
 {\small
 \begin{verbatim}
@@ -206,24 +206,6 @@ cc-1282 CC: ERROR File = poi.C, Line = 11
 
 1 error detected in the compilation of "poi.C".
 \end{verbatim}
-
-\bigskip
-\begin{verbatim}
-bash-2.03$ /opt/kaic++/KCC_BASE/bin/KCC poi.C
-        Recompiling poi.o
-"poi.C", line 11: error: more than one instance of overloaded function "mix"
-          matches the argument list:
-            function template "B::mix(const T &, const T &)"
-            function template "A::mix(const T &, const T &)"
-            argument types are: (const double, const double)
-  { return mix( a1, a2); }
-           ^
-          detected during instantiation of
-                    "const T &A::use(const T &, const T &) [with T=double]" 
-
-1 error detected in the compilation of "poi.C".
-\end{verbatim}
-
 }
 There wouldn't be any problems, if \verb+B::use_use()+ would be a template
 function as well, because this would move the point of instantiation
