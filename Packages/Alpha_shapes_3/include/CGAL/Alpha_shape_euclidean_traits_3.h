@@ -48,7 +48,7 @@ CGAL_BEGIN_NAMESPACE
 //------------------ Function Objects ---------------------------------
 
 template < class return_type, class T >
-class Compute_squared_radius_3
+class Compute_squared_radius_circumsphere_3
 {
 public:
   typedef return_type result_type;
@@ -80,15 +80,15 @@ public:
   typedef typename Triangulation_geom_traits_3<R>::Point_3 Point_3;
   typedef typename Triangulation_geom_traits_3<R>::Segment_3 Segment_3;
 
-  typedef Compute_squared_radius_3<Coord_type, Point_3> 
-  Compute_squared_radius_3;
+  typedef Compute_squared_radius_circumsphere_3<Coord_type, Point_3> 
+  Compute_squared_radius_circumsphere_3;
   typedef typename R::Side_of_bounded_sphere_3 Side_of_bounded_sphere_3;
 
   //---------------------------------------------------------------------
 
-  Compute_squared_radius_3 compute_squared_radius_3_object() const
+  Compute_squared_radius_circumsphere_3 compute_squared_radius_3_object() const
     {
-      return Compute_squared_radius_3();
+      return Compute_squared_radius_circumsphere_3();
     }
   //---------------------------------------------------------------------
   

@@ -91,7 +91,6 @@ typedef Alpha_shape_3::Alpha_iterator Alpha_iterator;
 void
 Construct_Alpha_shape(const std::list<Point> &V_p,
 		      Alpha_shape_3::Mode mode,
-		      CGAL::Geomview_stream & gv,
 		      Alpha_shape_3& A)
   // Generate Alpha Shape
 { 
@@ -168,7 +167,7 @@ int main()
   std::list<Point> L;
 
   file_input(L);  
-  Construct_Alpha_shape(L,Alpha_shape_3::GENERAL,gv,A);
+  Construct_Alpha_shape(L,Alpha_shape_3::GENERAL,A);
 
   std::cout << "Alpha Shape computed" << std::endl;
 

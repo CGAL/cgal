@@ -25,7 +25,7 @@
 #ifndef ALPHA_SHAPE_CELL_BASE_3_H
 #define ALPHA_SHAPE_CELL_BASE_3_H
 
-#include <vector.h>
+#include <vector>
 #include <CGAL/triple.h>
 
 //-------------------------------------------------------------------
