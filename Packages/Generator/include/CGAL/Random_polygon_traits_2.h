@@ -52,8 +52,19 @@ class Random_polygon_traits_2
     typedef typename R::FT                FT;
     typedef typename R::Point_2           Point_2;
     typedef typename R::Segment_2         Segment_2;
+    typedef typename R::Direction_2       Direction_2;
     typedef typename R::Vector_2          Vector_2;
     typedef typename R::Less_yx_2         Less_yx_2;
+    typedef typename R::Less_xy_2         Less_xy_2;
+    typedef typename R::Orientation_2     Orientation_2;
+
+    Less_xy_2
+    less_xy_2_object()
+    { return Less_xy_2(); }
+
+    Orientation_2
+    orientation_2_object()
+    { return Orientation_2(); }
 
     bool lexicographically_yx_smaller_or_equal(const Point_2& p,
                                                const Point_2& q) const
@@ -68,6 +79,7 @@ class Random_polygon_traits_2
       // to distinguish between cartesian and homogeneous coordinates
       // (for efficiency reasons)
     }
+
 
     bool is_negative(const FT& x) const
     {
@@ -95,7 +107,7 @@ class Random_polygon_traits_2
     bool have_equal_direction(const Vector_2& v1,
                               const Vector_2& v2 ) const
     {
-       return ::CGAL::Direction_2<R>(v1) == ::CGAL::Direction_2<R>(v2);
+       return Direction_2(v1) == Direction_2(v2);
     }
 };
 
