@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = $(UTIL)/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.18_g++-2.95.3_LEDA
+CGAL_MAKEFILE = $(UTIL)/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.18_g++-2.95.3
 include $(CGAL_MAKEFILE)
 
 
@@ -35,7 +35,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: points voronoi colored_face triangulation_prog1 terrain regular
+all: points voronoi colored_face triangulation_prog1 terrain regular constrained
 
 points: points.o
 	$(CGAL_CXX) -o points points.o $(LDFLAGS)
