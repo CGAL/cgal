@@ -236,19 +236,19 @@ protected:
   
   void initialize_infibox_vertices(Content space) {
     SNC_constructor C(snc());
-    Infi_box::initialize_infibox_vertices(C, space == COMPLETE);
+    Infi_box::initialize_infibox_vertices(C, space==COMPLETE);
   }
 
   void initialize_simple_cube_vertices(Content space) {
     SNC_constructor C(snc());
-    C.create_extended_box_corner( 1, 1, 1, space == COMPLETE);
-    C.create_extended_box_corner(-1, 1, 1, space == COMPLETE);
-    C.create_extended_box_corner( 1,-1, 1, space == COMPLETE);
-    C.create_extended_box_corner(-1,-1, 1, space == COMPLETE);
-    C.create_extended_box_corner( 1, 1,-1, space == COMPLETE);
-    C.create_extended_box_corner(-1, 1,-1, space == COMPLETE);
-    C.create_extended_box_corner( 1,-1,-1, space == COMPLETE);
-    C.create_extended_box_corner(-1,-1,-1, space == COMPLETE);
+    C.create_box_corner( INT_MAX, INT_MAX, INT_MAX, space );
+    C.create_box_corner(-INT_MAX, INT_MAX, INT_MAX, space );
+    C.create_box_corner( INT_MAX,-INT_MAX, INT_MAX, space );
+    C.create_box_corner(-INT_MAX,-INT_MAX, INT_MAX, space );
+    C.create_box_corner( INT_MAX, INT_MAX,-INT_MAX, space );
+    C.create_box_corner(-INT_MAX, INT_MAX,-INT_MAX, space );
+    C.create_box_corner( INT_MAX,-INT_MAX,-INT_MAX, space );
+    C.create_box_corner(-INT_MAX,-INT_MAX,-INT_MAX, space );
   }
 
   /*
@@ -354,7 +354,7 @@ public:
     OK = OK && in;
     OK = OK && snc().load(in);
     if(!OK)
-        std::cerr << "Failure while loading data" << std::endl;
+      std::cerr << "Failure while loading data" << std::endl;
   }
 
   template <class HDS>
@@ -575,18 +575,6 @@ public:
   void simplify() {
     snc().simplify();
   }
-
-  template< class Selection >
-  Nef_polyhedron_3<T> bin_op( Nef_polyhedron_3<T>& N1,
-                              const Selection& BOP,
-                              binop_intersection_tests<SNC_decorator,
-                                                       Selection>& tests_impl )
-  {
-    SNC_structure rsnc;
-    SNC_decorator D(snc());
-    D.binary_operation( N1.snc(), BOP, rsnc, tests_impl );
-    return Nef_polyhedron_3<T> (rsnc);
-  }
   
  public:
   void extract_complement();
@@ -651,47 +639,14 @@ public:
     return res;
   }
 
-  Nef_polyhedron_3<T>
-  intersection(Nef_polyhedron_3<T>& N1,
-               CGAL::binop_intersection_tests<SNC_decorator, AND>& tests_impl )
-  {
-    TRACEN(" intersection between nef3 "<<&*this<<" and "<<&N1);
-    return bin_op( N1, AND(), tests_impl );
-  }
-
-  Nef_polyhedron_3<T>
-  join(Nef_polyhedron_3<T>& N1,
-       CGAL::binop_intersection_tests<SNC_decorator, OR>& tests_impl )
-  {
-    TRACEN(" join between nef3 "<<&*this<<" and "<<&N1);
-    return bin_op( N1, OR(), tests_impl );
-  }
-
-  Nef_polyhedron_3<T>
-  difference(Nef_polyhedron_3<T>& N1,
-             CGAL::binop_intersection_tests<SNC_decorator, DIFF>& tests_impl )
-  {
-    TRACEN(" difference between nef3 "<<&*this<<" and "<<&N1);
-    return bin_op( N1, DIFF(), tests_impl );
-  }
-
-  Nef_polyhedron_3<T>
-  symmetric_difference(Nef_polyhedron_3<T>& N1,
-                       CGAL::binop_intersection_tests<SNC_decorator,
-                                                      XOR>& tests_impl )
-  {
-    TRACEN(" symmetric difference between nef3 "<<&*this<<" and "<<&N1);
-    return bin_op( N1, XOR(), tests_impl );
-  }
-
-  Nef_polyhedron_3<T> intersection(Nef_polyhedron_3<T>& N1 )
+  Nef_polyhedron_3<T> intersection(Nef_polyhedron_3<T>& N1)
     /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/ {
+ 
     TRACEN(" intersection between nef3 "<<&*this<<" and "<<&N1);
     AND _and;
-    CGAL::binop_intersection_tests_allpairs<SNC_decorator, AND> tests_impl;
     SNC_structure rsnc;
     SNC_decorator D(snc());
-    D.binary_operation( N1.snc(), _and, rsnc, tests_impl );
+    D.binary_operation( N1.snc(), _and, rsnc);
     Nef_polyhedron_3<T> res(rsnc);
     //    res.clear_box_marks();
     return res;
@@ -701,10 +656,9 @@ public:
   /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/ { 
     TRACEN(" join between nef3 "<<&*this<<" and "<<&N1);
     OR _or;
-    CGAL::binop_intersection_tests_allpairs<SNC_decorator, OR> tests_impl;
     SNC_structure rsnc;
     SNC_decorator D(snc());
-    D.binary_operation( N1.snc(), _or, rsnc, tests_impl);
+    D.binary_operation( N1.snc(), _or, rsnc);
     Nef_polyhedron_3<T> res(rsnc);
     //    res.clear_box_marks();
     return res;
@@ -714,10 +668,9 @@ public:
   /*{\Mop returns |\Mvar| $-$ |N1|. }*/ { 
     TRACEN(" difference between nef3 "<<&*this<<" and "<<&N1);
     DIFF _diff;
-    CGAL::binop_intersection_tests_allpairs<SNC_decorator, DIFF> tests_impl;
     SNC_structure rsnc;
     SNC_decorator D(snc());
-    D.binary_operation( N1.snc(), _diff, rsnc, tests_impl);
+    D.binary_operation( N1.snc(), _diff, rsnc);
     Nef_polyhedron_3<T> res(rsnc);
     //    res.clear_box_marks();
     return res;
@@ -728,15 +681,13 @@ public:
           |T - \Mvar|. }*/ {
     TRACEN(" symmetic difference between nef3 "<<&*this<<" and "<<&N1);
     XOR _xor;
-    CGAL::binop_intersection_tests_allpairs<SNC_decorator, XOR> tests_impl;
     SNC_structure rsnc;
     SNC_decorator D(snc());
-    D.binary_operation( N1.snc(), _xor, rsnc, tests_impl);
+    D.binary_operation( N1.snc(), _xor, rsnc);
     Nef_polyhedron_3<T> res(rsnc);
     //    res.clear_box_marks();
     return res;
   }
-
 
   /*{\Mtext Additionally there are operators |*,+,-,^,!| which
   implement the binary operations \emph{intersection}, \emph{union},
@@ -969,12 +920,8 @@ template <typename T>
 Nef_polyhedron_3<T>::
 Nef_polyhedron_3(Content space) : Base(Nef_rep()) {
   TRACEN("construction from empty or space.");
-  if(Infi_box::extended_Kernel()) {
-    SNC_constructor C(snc());
-    Infi_box::initialize_infibox_vertices(C,space == COMPLETE);
-    //  initialize_simple_cube_vertices(space);
-    build_external_structure();
-  }
+  initialize_simple_cube_vertices(space);
+  build_external_structure();
 }
 
 template <typename T>
@@ -1028,12 +975,23 @@ void Nef_polyhedron_3<T>::extract_interior() {
   SNC_decorator D(snc());
   Vertex_iterator v;
   CGAL_nef3_forall_vertices(v,D){
-    D.mark(v) = false;
-    SM_decorator SM(v);
-    SM.extract_interior();
+    //    if(Infi_box::is_standard(v->point())) {
+      D.mark(v) = false;
+      SM_decorator SM(v);
+      SM.extract_interior();
+      //    }
   }
   Halffacet_iterator f;
   CGAL_nef3_forall_facets(f,D) D.mark(f) = false;
+
+  /*
+  int count = 0;
+  Volume_iterator c;
+  CGAL_nef3_forall_volumes(c,D) {
+    count++;
+    if(count > 2) D.mark(c) = true;
+  }
+  */
 
   simplify();
 }
@@ -1054,6 +1012,7 @@ void Nef_polyhedron_3<T>::extract_boundary() {
   CGAL_nef3_forall_facets(f,D) D.mark(f) = true;
   Volume_iterator c;
   CGAL_nef3_forall_volumes(c,D) D.mark(c) = false;
+  //  clear_box_marks();
   simplify();
 }
 
