@@ -95,6 +95,9 @@ int main(int argc, char* argv[])
   PM pm;
   std::cin >> pm;
  
+  std::cout<<"* * * Demonstrating the usage of defining user attributes for Planar map components"<<std::endl<<std::endl;
+  std::cout << std::endl;
+  
   // updating the colors for halfedge and vertex.
   for (Vertex_iterator v_iter = pm.vertices_begin(); 
        v_iter != pm.vertices_end(); 
@@ -102,8 +105,14 @@ int main(int argc, char* argv[])
     v_iter->set_color("BLUE");
 
  //printing pm to output stream with the user attributes.
+  std::cout << "* * * Printing the Planar map" << std::endl;
+  std::cout << std::endl;
+  
   Pm_my_file_writer<PM>  writer(std::cout, pm); 
   write_pm(pm, writer, std::cout);
 
   return 0;
 }
+
+
+
