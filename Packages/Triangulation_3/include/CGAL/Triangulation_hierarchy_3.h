@@ -305,10 +305,13 @@ insert(const Point &p)
   Vertex_handle vertex=hierarchy[0]->insert(p,positions[0]);
   Vertex_handle previous=vertex;
   Vertex_handle first = vertex;
-      
+
   int level  = 1;
   while (level <= vertex_level ){
-    vertex=hierarchy[level]->insert(p,positions[level]);
+    if (positions[level] != NULL)
+      vertex=hierarchy[level]->insert(p,positions[level]);
+    else
+      vertex=hierarchy[level]->insert(p);
     vertex->set_down((void *) &*previous);// link with level above
     previous->set_up((void *) &*vertex);
     previous=vertex;
@@ -366,6 +369,7 @@ remove_second(Vertex_handle v )
 }
 
 template <class Tr>
+inline
 Triangulation_hierarchy_3<Tr>::Cell_handle 
 Triangulation_hierarchy_3<Tr>::
 locate(const Point& p, Locate_type& lt, int& li, int& lj) const
@@ -376,6 +380,7 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj) const
 }
 
 template <class Tr>
+inline
 Triangulation_hierarchy_3<Tr>::Cell_handle 
 Triangulation_hierarchy_3<Tr>::
 locate(const Point& p) const
@@ -407,7 +412,10 @@ locate(const Point& p,
   }
   for (int i=level+1; i<Triangulation_hierarchy_3__maxlevel;++i) pos[i]=0;
   while(level > 0) {
-    pos[level]=position=hierarchy[level]->locate(p,position);  
+    if (position != NULL)
+      pos[level]=position=hierarchy[level]->locate(p,position);
+    else
+      pos[level]=position=hierarchy[level]->locate(p);
     // locate at that level from "position"
     // result is stored in "position" for the next level
     // find the nearest between vertices 0 and 1
@@ -415,8 +423,8 @@ locate(const Point& p,
       nearest = position->vertex(1);
     else if (hierarchy[level]->is_infinite(position->vertex(1)))
       nearest = position->vertex(0);
-     else if ( closer(position->vertex(0)->point(),
-		      position->vertex(1)->point()))
+    else if ( closer(position->vertex(0)->point(),
+		     position->vertex(1)->point()))
       nearest = position->vertex(0);
     else
       nearest = position->vertex(1);
@@ -430,7 +438,10 @@ locate(const Point& p,
     position = nearest->cell();                // incident cell
     --level;
   }
-  pos[0]=hierarchy[level]->locate(p,position,lt,li,lj);  // at level 0
+  if (position != NULL)
+    pos[0]=hierarchy[level]->locate(p,position,lt,li,lj);  // at level 0
+  else
+    pos[0]=hierarchy[level]->locate(p,lt,li,lj);  // at level 0
 }
 
 
