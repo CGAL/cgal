@@ -54,7 +54,7 @@ segment_Voronoi_diagram_2$(EXE_EXT): segment_Voronoi_diagram_2$(OBJ_EXT)
 	segment_Voronoi_diagram_2$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   segment_Voronoi_diagram_2.clean 
+                   segment_Voronoi_diagram_2.clean ; rm -f *.moc
 
 #---------------------------------------------------------------------#
 #                    suffix rules
