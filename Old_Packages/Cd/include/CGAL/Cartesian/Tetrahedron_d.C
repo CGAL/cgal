@@ -302,7 +302,7 @@ std::ostream &operator<<(std::ostream &os, const TetrahedronCd<R CGAL_CTAG> &t)
     case IO::BINARY :
         return os << t[0]  << t[1]  << t[2] << t[3];
     default:
-        os << "TetrahedronCd(" << t[0] <<  ", " << t[1] <<   ", " << t[2] ;
+        os << "TetrahedronCd(" << t[0] <<  ", " << t[1] <<   ", " << t[2];
         os <<  ", " << t[3] << ")";
         return os;
     }

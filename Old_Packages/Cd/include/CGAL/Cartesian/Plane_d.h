@@ -43,8 +43,8 @@ public:
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
-  typedef const RT*                             const_iterator ;
-  typedef RT*                                   iterator ;
+  typedef const RT*                             const_iterator;
+  typedef RT*                                   iterator;
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef PlaneCd<R,Cartesian_tag>              Self;
   typedef typename R::Point_d                   Point_d;

@@ -128,7 +128,7 @@ public:
   // it's amazing there is no such adaptor for iterators
   // so we must step manually by column_dimension()
   const_iterator column_begin(int j) const { return begin() + j; }
-  const_iterator column_end(int j)   const { return end() + j ; }
+  const_iterator column_end(int j)   const { return end() + j; }
 
   void swap_columns(int j, int k);
 
@@ -138,7 +138,7 @@ public:
   iterator       row_begin()               { return ptr()->e + i*_cdim; }
   iterator       row_end()                 { return ptr()->e + (i+1)*_cdim; }
   iterator       column_begin(int j)       { return begin() + j; }
-  iterator       column_end(int j)         { return end() + j ; }
+  iterator       column_end(int j)         { return end() + j; }
 
 // debug:
   void print() const { std::cout << *this; }

@@ -1,3 +1,6 @@
+Ver 1.5 (?? ????  2000)
+- Minor cleanups. [syl]
+
 Ver 1.4 (27 June  2000)
 - CGAL_NTS fixes [syl].
 - Re-added headers [syl].

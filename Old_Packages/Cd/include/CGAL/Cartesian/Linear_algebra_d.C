@@ -100,7 +100,7 @@ Gaussian_elimination(const Linear_algebraCd<FT>::Matrix &M,
     // Total pivoting, without looking for the maximum entry
     for (i=k,j=k;
          j<cdim && U[i][j] == FT(0);
-         (++i==dim)? ++j,i=k : 0 ) ;
+         (++i==dim)? ++j,i=k : 0 );
     //DEBUG: std::cerr << "before swap [k="<<k<<"] :";
     //std::cerr << " found i="<<i<<" and j="<<j<<std::endl;
     //DEBUG: std::cerr << U << std::endl;

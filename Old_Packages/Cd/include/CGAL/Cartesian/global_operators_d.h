@@ -86,7 +86,7 @@ inline
 VectorCd<R CGAL_CTAG>
 operator-(const PointCd<R CGAL_CTAG> &p, const Origin &)
 {
-  return VectorCd<R CGAL_CTAG>(p) ;
+  return VectorCd<R CGAL_CTAG>(p);
 }
 
 template < class R >
@@ -94,7 +94,7 @@ inline
 VectorCd<R CGAL_CTAG>
 operator-(const Origin &, const PointCd<R CGAL_CTAG> &p)
 {
-  return - VectorCd<R CGAL_CTAG>(p) ;
+  return - VectorCd<R CGAL_CTAG>(p);
 }
 
 template < class R >

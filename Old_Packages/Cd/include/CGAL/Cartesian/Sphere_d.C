@@ -43,7 +43,7 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SphereC3<R CGAL_CTAG>::SphereC3()
 {
-  PTR = new Sphere_repC3<R> ;
+  PTR = new Sphere_repC3<R>;
 }
 
 template < class R >
@@ -332,7 +332,7 @@ std::ostream &operator<<(std::ostream &os, const SphereC3<R CGAL_CTAG> &c)
         write(os, (int)c.orientation());
         break;
     default:
-        os << "SphereC3(" << c.center() <<  ", " << c.squared_radius() ;
+        os << "SphereC3(" << c.center() <<  ", " << c.squared_radius();
         switch (c.orientation()) {
         case CLOCKWISE:
             os << ", clockwise)";

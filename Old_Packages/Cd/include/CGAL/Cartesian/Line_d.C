@@ -135,7 +135,7 @@ inline
 long
 LineCd<R CGAL_CTAG>::id() const
 {
-  return (long) PTR ;
+  return (long) PTR;
 }
 
 template < class R >
@@ -143,7 +143,7 @@ inline
 int
 LineCd<R CGAL_CTAG>::dimension() const
 {
-  return ptr()->e0.dimension() ;
+  return ptr()->e0.dimension();
 }
 
 template < class R >

@@ -12,22 +12,18 @@
 // release_date  :
 // 
 // source        : ddim_points.fw
-// file          : PointCd.h
+// file          : include/CGAL/PointCd.h
 // revision      : 2.2.3
 // revision_date : 14 Sep 1999 
-// author(s)     : Sven Schoenherr
-//                 Bernd Gaertner
+// author(s)     : Sven Schoenherr, Bernd Gaertner
+// coordinator   : INRIA, Sophia-Antipolis (Mariette.Yvinec@sophia.inria.fr)
 //
-// coordinator   : INRIA, Sophia-Antipolis (<Herve.Bronnimann@sophia.inria.fr>)
 // ============================================================================
- 
 
 #ifndef CGAL_POINTCD_H
 #define CGAL_POINTCD_H
 
-#ifndef D_TUPLE_H
 #include <CGAL/d_tuple.h>
-#endif // D_TUPLE_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -93,13 +89,8 @@ const _d_tuple<FT>* PointCd<FT>::ptr() const
 }
 CGAL_END_NAMESPACE
 
-
-#ifndef CGAL_ORIGIN_H
 #include <CGAL/Origin.h>
-#endif // CGAL_ORIGIN_H
-#ifndef CGAL_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
-#endif // CGAL_NUMBER_UTILS_H
 
 CGAL_BEGIN_NAMESPACE
 
