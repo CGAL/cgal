@@ -212,7 +212,7 @@ public slots:
 
 private:
   CGAL::Qt_widget* widget;
-  CGAL::Qt_widget_tool* point_factory;
+  CGAL::Qt_widget_layer* point_factory;
   std::list<Constraint> lc;
   Constrained_triangulation ct;
 };
