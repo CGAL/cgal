@@ -69,6 +69,7 @@ io_tag(const leda_real &)
 { return io_Operator(); }
 
 #ifndef CGAL_CFG_NO_NAMESPACE
+#ifndef CGAL_USE_ADL_FOR_NT
 inline
 Sign
 sign(const leda_real& r)
@@ -81,6 +82,7 @@ compare(const leda_real& r1, const leda_real& r2)
   int c = CGAL_LEDA_SCOPE::compare(r1,r2);
   return (c < 0) ? SMALLER : ((0 < c) ?  LARGER : EQUAL);
 }
+#endif // CGAL_USE_ADL_FOR_NT
 #endif // CGAL_CFG_NO_NAMESPACE
 
 inline

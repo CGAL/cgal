@@ -75,10 +75,12 @@ io_tag(const leda_rational &)
 { return io_Operator(); }
 
 #ifndef CGAL_CFG_NO_NAMESPACE
+#ifndef CGAL_USE_ADL_FOR_NT
 inline
 Sign
 sign(const leda_rational& r)
 { return (Sign) CGAL_LEDA_SCOPE::sign(r); }
+#endif // CGAL_USE_ADL_FOR_NT
 #endif // CGAL_CFG_NO_NAMESPACE
 
 inline

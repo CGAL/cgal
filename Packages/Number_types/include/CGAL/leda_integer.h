@@ -64,10 +64,12 @@ io_tag(const leda_integer &)
 { return io_Operator(); }
 
 #ifndef CGAL_CFG_NO_NAMESPACE
+#ifndef CGAL_USE_ADL_FOR_NT
 inline
 Sign
 sign(const leda_integer& n)
 { return (Sign) CGAL_LEDA_SCOPE::sign(n); }
+#endif // CGAL_USE_ADL_FOR_NT
 #endif
 
 inline

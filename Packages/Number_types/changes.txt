@@ -1,4 +1,7 @@
 24 June 2004 Sylvain Pion
+- Protect some leda number type functions against CGAL_USE_ADL_FOR_NT.
+
+24 June 2004 Sylvain Pion
 - Use CGAL_NTS instead of CGAL:: in Quotient::to_double.
 
 20 June 2004 Sylvain Pion
