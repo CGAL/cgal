@@ -32,7 +32,8 @@ typedef CGAL::Exact_predicates_tag              Itag;
 
 typedef CGAL::Constrained_Delaunay_triangulation_2<Rep, TDS, Itag>
                                                 CT;
-typedef CGAL::Triangulation_hierarchy_2<CT> CDT;
+typedef CGAL::Triangulation_hierarchy_2<CT>     CDT;
+typedef CDT::Vertex_iterator                    Vertex_iterator;
 typedef CDT::Constraint                         Constraint;
 typedef CDT::Vertex_handle                      Vertex_handle;
 typedef CGAL::Partition_traits_2<Rep>           Traits;

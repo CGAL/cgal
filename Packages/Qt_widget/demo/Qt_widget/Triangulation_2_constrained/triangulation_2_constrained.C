@@ -86,6 +86,7 @@ const QString my_title_string("Constrained Triangulation Demo with"
 
 CDT   ct;
 int   current_state;
+Coord_type        xmin, ymin, xmax, ymax;
 
 class Window : public QMainWindow
 {
@@ -235,7 +236,7 @@ private slots:
     Window *ed = new Window(500, 500);
     ed->setCaption("Layer");
     ed->show();
-    ed->set_window(-1.1, 1.1, -1.1, 1.1);
+    ed->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }
 
@@ -286,6 +287,19 @@ private slots:
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
     in >> ct;
+    Vertex_iterator it = ct.vertices_begin();
+    while(it != ct.vertices_end()) {
+      if(xmin > (*it).point().x())
+	xmin = (*it).point().x();
+      if(xmax < (*it).point().x())
+	xmax = (*it).point().x();
+      if(ymin > (*it).point().y())
+	ymin = (*it).point().y();
+      if(ymax < (*it).point().y())
+	ymax = (*it).point().y();
+      it++;
+    }
+    widget->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }
 
