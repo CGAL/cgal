@@ -23,7 +23,7 @@ typedef CGAL::Filtered_exact<inexact_type,exact_type>  number_t;
 
 #include <CGAL/Simple_cartesian.h>
 
-typedef CGAL::Simple_cartesian<number_t>   Kernel;
+struct Kernel : CGAL::Simple_cartesian<number_t> {};
 
 #include <CGAL/Number_type_traits.h>
 
