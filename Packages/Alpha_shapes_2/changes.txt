@@ -1,3 +1,7 @@
+22 February 2004 [af]
+- Replaced tail recursion of Alpha_shape_2::traverse()
+- Replaced set/map with Unique_hash_map
+
 Version 11.50 (09 February 2004) [rursu]
 - Updated headers for examples
 
