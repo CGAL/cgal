@@ -22,6 +22,7 @@ CXXFLAGS = \
 	 $(CGAL_CXXFLAGS) \
 	 $(TESTSUITE_CXXFLAGS) \
 	-W -Wall \
+	-DCGAL_CHECK_EXPENSIVE \
 	-g # -Wold-style-cast # -pedantic
         # -I$(HOME)/prog/Cgal/Kernel_basic/include \
         # -I$(HOME)/prog/Cgal/Cartesian_kernel/include \
