@@ -25,15 +25,20 @@
 #define CGAL_IA_GMPZ_H
 
 // We choose the lazy approach, which is good enough: we take the double
-// approximation, which is guaranted 1 bit error max, and return an interval
-// around this value.
+// approximation, which is guaranted 1 bit error max (when rounding to
+// nearest), and return an interval around this value.
+// It should be much faster to have a low level function especially designed
+// for that using rounding to infinity.
 
 inline CGAL_Interval_nt_advanced CGAL_convert_to (const CGAL_Gmpz &z)
 {
 #ifndef CGAL_NO_PRECONDITIONS
     CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
 #endif
-    return CGAL_Interval_nt_advanced (CGAL_to_double(z)) +
+    CGAL_FPU_set_rounding_to_nearest();
+    double approx = CGAL_to_double(z);
+    CGAL_FPU_set_rounding_to_infinity();
+    return CGAL_Interval_nt_advanced (approx) +
 	   CGAL_Interval_nt_advanced::smallest;
 }
 

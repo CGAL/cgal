@@ -29,9 +29,12 @@ inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_real &z)
 #ifndef CGAL_NO_PRECONDITIONS
     CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
 #endif
+    CGAL_FPU_set_rounding_to_nearest();
+    const double approx = CGAL_to_double(z);
     const double rel_error = z.get_double_error();
+    CGAL_FPU_set_rounding_to_infinity();
     return ( CGAL_Interval_nt_advanced(-rel_error,rel_error) + 1 )
-	 * CGAL_Interval_nt_advanced(CGAL_to_double(z));
+	 * CGAL_Interval_nt_advanced(approx);
 }
 
 #endif	 // CGAL_IA_LEDA_REAL_H
