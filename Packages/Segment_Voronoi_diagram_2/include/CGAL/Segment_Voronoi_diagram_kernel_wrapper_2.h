@@ -176,7 +176,8 @@ public:
     return convert_site(t, intersections_tag());
   }
 
-#if defined(CGAL_CFG_USING_BASE_MEMBER_BUG) || defined(_MSC_VER)
+#if defined(CGAL_CFG_USING_BASE_MEMBER_BUG) || defined(_MSC_VER) \
+    || defined(__sgi)
   K2_Point_2
   operator()(const K1_Point_2& p) const
   {
