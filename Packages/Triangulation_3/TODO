@@ -33,12 +33,6 @@ TEST SUITE
 - faire tourner GCOV sur la test-suite, et rajouter ce qu'il faut pour
   atteindre 100%.
 
-Doc
-- (revoir les anciennes corrections de JF Dufourd)
-
-Exemples - demo
-- en rajouter si bonnes idees...
-
 TDS
 - reflechir a un support de facettes explicites (cf papier de Giesen)
 - nettoyer les trucs 2d only (face_circulator etc)
@@ -69,6 +63,9 @@ T3
   cf Polyhedron_3, file I/O.
 
 Delaunay
+- faire en sorte que les constructions pour Voronoi ne soient plus 
+qu'optionnelles dans la traits, et requises seulement si les fonctions 
+dual sont effectivement utilisees
 - remplacer les create_face du remove2D par des create_cell et virer 
   les create_face de la tds
 - optimiser remove :
