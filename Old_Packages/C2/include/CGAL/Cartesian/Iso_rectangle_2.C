@@ -2,10 +2,10 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri, Herve Bronnimann
 
-#ifndef CGAL_CARTESIAN_ISO_RECTANGLE_2_C
-#define CGAL_CARTESIAN_ISO_RECTANGLE_2_C
+#ifndef CGAL_CARTESIAN_ISOR_ECTANGLE_2_C
+#define CGAL_CARTESIAN_ISOR_ECTANGLE_2_C
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
+#ifndef CGAL_CARTESIANR_EDEFINE_NAMES_2_H
 #define CGAL_CTAG
 #endif
 
@@ -238,7 +238,7 @@ transform(const typename Iso_rectangleC2<R CGAL_CTAG>::Aff_transformation_2 &t)
                              t.transform(vertex(2)));
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLEC2
+#ifndef CGAL_NO_OSTREAM_INSERT_ISOR_ECTANGLEC2
 template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Iso_rectangleC2<R CGAL_CTAG> &r)
@@ -252,9 +252,9 @@ operator<<(std::ostream &os, const Iso_rectangleC2<R CGAL_CTAG> &r)
         return os << "Iso_rectangleC2(" << r[0] << ", " << r[2] << ")";
     }
 }
-#endif // CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLEC2
+#endif // CGAL_NO_OSTREAM_INSERT_ISOR_ECTANGLEC2
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLEC2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_ISOR_ECTANGLEC2
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 std::istream &
@@ -267,7 +267,7 @@ operator>>(std::istream &is, Iso_rectangleC2<R CGAL_CTAG> &r)
     r = Iso_rectangleC2<R CGAL_CTAG>(p, q);
     return is;
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLEC2
+#endif // CGAL_NO_ISTREAM_EXTRACT_ISOR_ECTANGLEC2
 
 CGAL_END_NAMESPACE
 
@@ -275,4 +275,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif // CGAL_CARTESIAN_ISO_RECTANGLE_2_C
+#endif // CGAL_CARTESIAN_ISOR_ECTANGLE_2_C

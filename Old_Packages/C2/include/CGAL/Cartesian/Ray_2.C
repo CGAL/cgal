@@ -2,10 +2,10 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri, Herve Bronnimann
 
-#ifndef CGAL_CARTESIAN_RAY_2_C
-#define CGAL_CARTESIAN_RAY_2_C
+#ifndef CGAL_CARTESIANR_AY_2_C
+#define CGAL_CARTESIANR_AY_2_C
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
+#ifndef CGAL_CARTESIANR_EDEFINE_NAMES_2_H
 #define CGAL_CTAG
 #endif
 
@@ -212,7 +212,7 @@ collinear_has_on(const typename RayC2<R CGAL_CTAG>::Point_2 &p) const
     }
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_RAYC2
+#ifndef CGAL_NO_OSTREAM_INSERTR_AYC2
 template < class R >
 std::ostream &
 operator<<(std::ostream &os, const RayC2<R CGAL_CTAG> &r)
@@ -226,9 +226,9 @@ operator<<(std::ostream &os, const RayC2<R CGAL_CTAG> &r)
         return os << "RayC2(" << r.source() <<  ", " << r.direction() << ")";
     }
 }
-#endif // CGAL_NO_OSTREAM_INSERT_RAYC2
+#endif // CGAL_NO_OSTREAM_INSERTR_AYC2
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_RAYC2
+#ifndef CGAL_NO_ISTREAM_EXTRACTR_AYC2
 template < class R >
 std::istream &
 operator>>(std::istream &is, RayC2<R CGAL_CTAG> &r)
@@ -241,7 +241,7 @@ operator>>(std::istream &is, RayC2<R CGAL_CTAG> &r)
     r = RayC2<R CGAL_CTAG>(p, d);
     return is;
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_RAYC2
+#endif // CGAL_NO_ISTREAM_EXTRACTR_AYC2
 
 CGAL_END_NAMESPACE
 
@@ -249,4 +249,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif // CGAL_CARTESIAN_RAY_2_C
+#endif // CGAL_CARTESIANR_AY_2_C

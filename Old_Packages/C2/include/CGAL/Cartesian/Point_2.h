@@ -10,16 +10,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class _R >
+template < class R_ >
 class PointC2
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
 // This is a partial specialization
-<_R,Cartesian_tag>
+<R_,Cartesian_tag>
 #endif
  : public Handle // Later we will use the handles of Lutz and Michael
 {
 public:
-  typedef _R                                    R;
+  typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL

@@ -2,8 +2,8 @@
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann
 
-#ifndef CGAL_CARTESIAN_SCALING_REP_2_H
-#define CGAL_CARTESIAN_SCALING_REP_2_H
+#ifndef CGAL_CARTESIAN_SCALINGR_EP_2_H
+#define CGAL_CARTESIAN_SCALINGR_EP_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -122,4 +122,4 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CARTESIAN_ROTATION_REP_2_H
+#endif // CGAL_CARTESIANR_OTATIONR_EP_2_H

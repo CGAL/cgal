@@ -2,8 +2,8 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri, Herve Bronnimann
 
-#ifndef CGAL_CARTESIAN_CIRCLE_REP_2_H
-#define CGAL_CARTESIAN_CIRCLE_REP_2_H
+#ifndef CGAL_CARTESIAN_CIRCLER_EP_2_H
+#define CGAL_CARTESIAN_CIRCLER_EP_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -33,4 +33,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CARTESIAN_CIRCLE_REP_2_H
+#endif // CGAL_CARTESIAN_CIRCLER_EP_2_H

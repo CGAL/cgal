@@ -2,8 +2,8 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri, Herve Bronnimann
 
-#ifndef CGAL_CARTESIAN_ROTATION_REP_2_H
-#define CGAL_CARTESIAN_ROTATION_REP_2_H
+#ifndef CGAL_CARTESIANR_OTATIONR_EP_2_H
+#define CGAL_CARTESIANR_OTATIONR_EP_2_H
 
 #include <CGAL/rational_rotation.h>
 
@@ -164,4 +164,4 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CARTESIAN_ROTATION_REP_2_H
+#endif // CGAL_CARTESIANR_OTATIONR_EP_2_H

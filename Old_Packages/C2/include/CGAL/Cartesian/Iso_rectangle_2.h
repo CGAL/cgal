@@ -2,24 +2,24 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri, Herve Bronnimann
 
-#ifndef CGAL_CARTESIAN_ISO_RECTANGLE_2_H
-#define CGAL_CARTESIAN_ISO_RECTANGLE_2_H
+#ifndef CGAL_CARTESIAN_ISOR_ECTANGLE_2_H
+#define CGAL_CARTESIAN_ISOR_ECTANGLE_2_H
 
 #include <CGAL/Cartesian/redefine_names_2.h>
 #include <CGAL/Twotuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class _R>
+template <class R_>
 class Iso_rectangleC2
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
 // This is a partial specialization
-<_R,Cartesian_tag>
+<R_,Cartesian_tag>
 #endif
   : public Handle
 {
 public:
-  typedef _R                                    R;
+  typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
@@ -88,4 +88,4 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/Iso_rectangle_2.C>
 #endif 
 
-#endif // CGAL_CARTESIAN_ISO_RECTANGLE_2_H
+#endif // CGAL_CARTESIAN_ISOR_ECTANGLE_2_H

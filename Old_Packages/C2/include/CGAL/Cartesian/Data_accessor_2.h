@@ -10,15 +10,15 @@
 CGAL_BEGIN_NAMESPACE
 
 // 2D Cartesian point data accessor
-template < class _R >
+template < class R_ >
 class Data_accessorC2
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
 // This is a partial specialization
-<_R,Cartesian_tag>
+<R_,Cartesian_tag>
 #endif
 {
 public:
-    typedef _R                           R;
+    typedef R_                           R;
     typedef typename R::FT               FT;
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
     typedef  typename R::Point_2          Point;

@@ -7,7 +7,7 @@
 
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
+#ifndef CGAL_CARTESIANR_EDEFINE_NAMES_2_H
 #define CGAL_CTAG
 #endif
 
