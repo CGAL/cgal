@@ -110,7 +110,8 @@ public:
 		   faces_to_be_removed, List_edges & new_edges);
 
 
-   class Less_edge : std::binary_function<Edge, Edge, bool>
+   class Less_edge 
+     :  public std::binary_function<Edge, Edge, bool>
     {
     public:
       Less_edge() {}
@@ -712,7 +713,7 @@ operator<<(std::ostream& os, const Constrained_triangulation_2<Gt,Tds> &ct)
 
 CGAL_END_NAMESPACE
 
-#endif CGAL_CONSTRAINED_TRIANGULATION_2_H
+#endif //CGAL_CONSTRAINED_TRIANGULATION_2_H
 
 
 

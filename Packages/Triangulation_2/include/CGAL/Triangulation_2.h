@@ -1354,7 +1354,8 @@ march_locate_1D(const Point& t,
 					      t);
   if(pqt == RIGHTTURN || pqt == LEFTTURN) {
     lt = OUTSIDE_AFFINE_HULL;
-    return f;
+    //return f;
+    return Face_handle();
   }
 
   int i= f->index(ff);
