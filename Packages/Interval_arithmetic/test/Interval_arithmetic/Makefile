@@ -11,14 +11,11 @@ include $(CGAL_MAKEFILE)
 # CGAL_CXX=purify g++
 # CGAL_LDFLAGS= $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)/libCGAL.a \
               # -L$(GMP_LIB_DIR) -lgmp -lm \
-# -I../../include -I$(HOME)/CGAL-2.1-I-9.modified/include \
 
 CXXFLAGS = \
         -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-g -Wall -W
-	# -g -Wall -W
 	# -O2 -Wall -W
 	# /Oi /Fatst2.s
 	# /Fatst1.s

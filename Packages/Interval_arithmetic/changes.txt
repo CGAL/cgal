@@ -1,5 +1,10 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.27 on 12 October 1999
+- Fixes for Visual C++.  Most tests pass correctly now.
+- New file "KNOWN_PROBLEMS" (in CVS, not submitted) that describes all
+  IEEE related problems found in this package, as well as the workarounds.
+
 Version 4.26 on 11 October 1999
 - New class Double_IEEE (in Double_IEEE.h), which is a wrapper for a double,
   but with corrected operators so that it's IEEE 754 compliant (enough).
