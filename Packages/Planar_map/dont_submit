@@ -1,4 +1,5 @@
 Planar_map.dxy
 include/CGAL/Pm_segment_slim_traits.h
 include/CGAL/Pm_segment_shai_traits.h
+include/CGAL/Planar_map_2/Planar_map_misc_slim.h
 bench
