@@ -361,7 +361,7 @@ public:
       return false;
     if ( s1.has_on(s2.source()) || s1.has_on(s2.target()) ||
 	 s2.has_on(s1.source()) || s2.has_on(s1.target()))
-      /* the segments does intersect at one endpoint */
+      /* the segments intersect at one endpoint */
       return false;
     Object o = intersection(Line_3(ray), Line_3(s)); 
     if ( !assign(p, o))
