@@ -95,7 +95,7 @@ int main()
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
   typedef leda_rational                                 NT;
-  typedef CGAL::Arr_leda_segment_exact_traits<NT>       Traits;
+  typedef CGAL::Arr_leda_segment_exact_traits           Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
   typedef CGAL::Quotient<int>                  NT;
