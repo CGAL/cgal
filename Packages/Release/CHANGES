@@ -1,3 +1,347 @@
+----------------------------- Release 3.0 ------------------------------------
+Version 3.0 differs from version 2.4 in the platforms that are supported, in
+functionality, and in licensing. There have also been a number of bug fixes for
+this release.
+
+The license has been changed to either the LGPL (GNU Lesser General Public
+License v2.1) or the QPL (Q Public License v1.0) depending on each package.
+So CGAL remains free of use for you, if your usage meets the criteria of these
+licenses, otherwise, a commercial license has to be purchased from Geometry
+Factory (www.geometryfactory.com).
+
+
+Additional supported platforms:
+
+    * MS Visual C++, version 7.1.
+    * SunPro CC versions 5.4 and 5.5 on Solaris
+    * GNU g++ versions 3.2 and 3.3 on Linux, Solaris, Irix and FreeBSD.
+    * MipsPRO CC 7.30 and 7.40 with both the n32 and n64 ABIs.
+
+Platforms not supported anymore:
+
+    * MS Visual C++, version 6.
+    * GNU g++ 2.95.2 (2.95.3 is still supported)
+    * Kai C++ and Borland C++, all versions
+
+
+The following functionality has been added or changed:
+
+    * The CORE library (http://www.cs.nyu.edu/exact/core/) for exact
+      computations is now distributed as part of CGAL as well.
+
+All:
+----
+
+    * All demos have been switched from LEDA window to QT.
+
+Kernel:
+-------
+
+    * 3 typedefs have been added to ease the choice of a robust and fast kernel:
+      - Exact_predicates_inexact_constructions_kernel
+      - Exact_predicates_exact_constructions_kernel
+      - Exact_predicates_exact_constructions_kernel_with_sqrt
+    * Progress has been made towards the complete adaptability and
+      extensibility of our kernels.
+    * New faster Triangle_3 intersection test routines.
+    * Added a Kernel concept archetype to check that generic algorithms
+      don't use more functionality than they should.
+    * A few more miscellaneous functions.
+
+Basic Library:
+--------------
+
+    * Min_sphere_of_spheres_d (new package): Algorithms to compute the smallest
+      enclosing sphere of a given set of spheres in R^d.  The package provides
+      an algorithm with maximal expected running time $O(2^{O(d)} n)$ and a
+      fast and robust heuristic (for dimension less than 30).
+
+    * Spatial Searching (new package): Provides exact and approximate distance
+      browsing in a set of points in $d$-dimensional space using
+      implementations of algorithms supporting:
+        - both nearest and furthest neighbor searching
+        - both exact and approximate searching
+        - (approximate) range searching
+        - (approximate) $k$-nearest and $k$-furthest neighbor searching
+        - (approximate) incremental nearest and incremental furthest neighbor
+          searching
+        - query items representing points and spatial objects.
+
+    * Largest_empty_rectangle_2 (new package in Geometric Optimization):
+       Given a set of points in the plane, the class
+       Largest_empty_iso_rectangle_2<T> is a data structure that
+       maintains an iso-rectangle with the largest area among all
+       iso-rectangles that are inside a given iso-rectangle bounding box,
+       and that do not contain any point of the point set.
+
+    * Kd-tree : this package is deprecated, its documentation is removed.
+      It is replaced by the Spatial Searching package.
+
+    * Triangulations 2D and 3D:
+      - The classes Triangulation_data_structure_2 (and 3), which implements
+        the data structure for 2D triangulation class, now makes use of
+        CGAL::Compact_container (see Support Library section below).
+      - The triangulation classes use a Rebind mecanism to provide
+        the full flexibility on Vertex and Face base classes.
+        This means that it is possible for the user to derive its own Face
+        of Vertex base class, adding a functionality that makes use of
+        types defined by the triangulation data structure like Face_handle
+        or Vertex_handle.
+      - New classes Triangulation_vertex_base_with_info_2 (and 3) and
+	Triangulation_face_base_with_info_2 (and 3) to make easier the
+        customisation of base classes in most cases.
+
+    * Triangulations 2D:
+      - Regular triangulation provides an easy access to hidden points.
+      - The Triangulation_hierarchy_2, which provide an efficient location
+	data structure, can now be used with any 2D triangulation class plugged
+        in (including Regular triangulations).
+
+    * Triangulations 3D:
+      - faster vertex removal function in Delaunay_triangulation_3.
+      - Delaunay_triangulation_3 is now independent of the order of insertions
+        of the points (in case of degenerate cosphericity).
+      - Regular_triangulation_3 now hides vertices (and updates itself) when
+        inserting a coinciding point with greater weight.  This required a new
+        predicate.
+      - deprecated functions: copy_triangulation(), push_back(),
+        set_number_of_vertices().
+      - Triangulation_3 now gives non-const access to the data structure.
+
+    * Planar Maps and Arrangements:
+        - Traits classes.
+          1. New traits hierarchy and interface:
+             The set of requirements was made sound and complete. A
+             couple of requirements were eliminated, few others were
+             redefined, and some were renamed. A hierarchy of three
+             traits classes for the Planar_map_2,
+             Planar_map_with_intersections_2, and Arrangement_2 types was
+             established to include only the necessary requirements at
+             each level. It was determined that for the aggregate
+             insertion-operation based on a sweep-line algorithm only a
+             subset of the requirements is needed. Preconditions were
+             added where appropriate to tighten the requirements further.
+
+             The following functions have been renamed:
+                * point_is_same() renamed to point_equal()
+                * curve_is_same() renamed to curve_equal()
+                * curve_is_in_x_range() renamed to point_in_x_range()
+                * curve_compare_at_x() renamed to curves_compare_y_at_x()
+                  Furthermore, a precondition has been added that the
+                  reference point is in the x-range of both curves.
+                * curve_compare_at_x_right() renamed to
+                  curves_compare_y_at_x_to_right().
+                  Furthermore, a precondition has been added that both
+                  curves are equal at the reference point and defined to
+                  its right.
+                * curve_compare_at_x_left() renamed to
+                  curves_compare_y_at_x_to_left().
+                  Furthermore, a precondition has been added that both
+                  curves are equal at the reference point and defined to
+                  its right.
+                * curve_get_point_status() renamed to
+                  curve_compare_y_at_x().
+                  Furthermore, a precondition has been added that the
+                  point is in the x-range of the curve. Consequently, the
+                  function now returns a Comparison_result (instead of a
+                  special enum).
+                * make_x_monotone() renamed to curve_make_x_monotone()
+                  See more details below.
+                * curve_flip() renamed to curve_opposite()
+
+             The following functions have been removed:
+                - curve_is_between_cw()
+                - point_to_left()
+                - point_to_right()
+                - is_x_monotone()
+                - point_reflect_in_x_and_y()
+                - curve_reflect_in_x_and_y()
+                - do_intersect_to_right()
+                - do_intersect_to_left()
+
+             Most functions, are required by the PlanarMapTraits_2
+             concept, except for the make_x_monotone(),
+             nearest_intersection_to_right(),
+             nearest_intersection_to_left(), curves_overlap() and
+             curve_opposite(). PlanarMapWithIntersectionsTraits_2
+             requires all these functions, except curve_opposite(),
+             needed only by the ArrangementTraits_2 concept.
+
+             Furthermore, the two functions curve_compare_at_x_left() and
+             nearest_intersection_to_left() can be omitted, if the two
+             functions point_reflect_in_x() and curve_reflect_in_x() are
+             implemented. Reflection can be avoided, if the two _left
+             functions are supplied.
+
+          2. The type X_curve_2 of the PlanarMapWithIntersectionsTraits_2
+             concept was renamed to X_monotone_curve_2, and the
+             distinction between this type and the Curve_2 type was made
+             firm. The method is_x_monotone() of the
+             PlanarMapWithIntersectionsTraits_2 concept was removed. The
+             related method curve_make_x_monotone() is now called for
+             each input curve of type Curve_2 when curves are inserted
+             into a Planar_map_with_intersections_2 to subdivide the
+             input curve into x-monotone sub-curves (and in case the
+             curve is already x-monotone, this function is responsible
+             for casting it to an x-monotone curve).
+
+          3. New and improved traits classes:
+                * Conic traits - Arr_conic_traits_2
+                  Support finite segments of ellipses, hyperbolas and
+                  parabolas, as well as line segments. The traits require
+                  an exact real number-type, such as leda_real or CORE::Expr.
+
+                * Segment cached traits - Arr_segment_cached_traits_2
+                  This class uses an improved representation for segments
+                  that helps avoiding cascaded computations, thus
+                  achieving faster running times. To work properly, an
+                  exact rational number-type should be used.
+
+                * Polyline traits - Arr_polyline_traits_2
+                  The polyline traits class has been reimplemented to
+                  work in a more efficient, generic manner. The new class
+                  replaces the obsolete Arr_polyline_traits class. It is
+                  parameterized with a segment traits class.
+
+                * Hyperbola and segment traits - Arr_hyper_segment_traits_2
+                  Supports line segments and segments of canonical
+                  hyperbolas.
+
+          4. Removed old traits class:
+                a) The models of the PlanarMapWithIntersectionsTraits_2
+                   concept below became obsolete, as the new conic
+                   traits, namely Arr_conic_traits_2, supports the same
+                   functionality and is much more efficient.
+                      - Arr_circles_real_traits
+                      - Arr_segment_circle_traits
+
+                b) The segment traits class and the new polyline traits
+                   class were reimplemented using standard CGAL-kernel
+                   calls. This essentially eliminated the corresponding
+                   leda traits classes, namely:
+                      - Pm_leda_segment_traits_2
+                      - Arr_leda_segment_traits_2
+                      - Arr_leda_polyline_traits
+                   With the use of the Leda_rat_kernel new external
+                   package the same functionality can be achieved with
+                   less overhead and more efficiency.
+
+     - The Sweep_line_2 package was reimplemented. As a consequence it
+       is much more efficient, its traits is tighter (namely neither the
+       two _left nor the reflection functions are required), and its
+       interface has changed a bit.
+          1. The following global functions have been removed:
+                - sweep_to_produce_subcurves_2()
+                - sweep_to_produce_points_2()
+                - sweep_to_construct_planar_map_2()
+
+             Instead, the public methods of the Sweep_line_2 class listed
+             below were introduced:
+                * get_subcurves() - Given a container of curves, this
+                  function returns a list of curves that are created by
+                  intersecting the input curves.
+
+                * get_intersection_points() - Given a range of curves,
+                  this function returns a list of points that are the
+                  intersection points of the curves.
+
+                * get_intersecting_curves() - Given a range of curves,
+                  this function returns an iterator to the beginning of
+                  a range that contains the list of curves for each
+                  intersection point between any two curves in the
+                  specified range.
+
+          2. It is possible to construct a planar map with intersections
+             (or an arrangement) by inserting a range of curves into an
+             empty map. This will invoke the sweep-line process to
+             construct the map more efficiently.
+
+     - New interface functions to the Planar_map_with_intersections_2 class.
+       The Planar_map_with_intersections_2 class maintains a planar map
+       of input curves that possibly intersect each other and are not
+       necessarily x-monotone. If an input curve, or a set of input
+       curves, are known to be x-monotone and pairwise disjoint, the new
+       functions below can be used to insert them into the map
+       efficiently.
+          1. Halfedge_handle
+             non_intersecting_insert(const X_monotone_curve_2 & cv,
+                                     Change_notification * en = NULL)
+
+          2. Halfedge_iterator
+             non_intersecting_insert(const X_monotone_curve_2_iterator & begin,
+                                     const X_monotone_curve_2_iterator & end,
+                                     Change_notification * en = NULL)
+
+          3. Halfedge_handle
+             non_intersecting_insert_in_face_interior(const X_monotone_curve_2 & cv,
+                                                      Face_handle f,
+                                                      Change_notification * en = NULL)
+
+          4.  Halfedge_handle
+              non_intersecting_insert_from_vertex(const X_monotone_curve_2 & cv,
+                                                  Halfedge_handle h,
+                                                  Change_notification * en = NULL)
+
+          5.  Halfedge_handle
+              non_intersecting_insert_at_vertices(const X_monotone_curve_2 & cv,
+                                                  Halfedge_handle h1,
+                                                  Halfedge_handle h2,
+                                                  Change_notification * en = NULL)
+          6.  Halfedge_handle
+              non_intersecting_insert_from_vertex(const X_monotone_curve_2 & cv,
+                                                  Vertex_handle v1,
+                                                  Change_notification * en = NULL)
+          7.  Halfedge_handle
+              non_intersecting_insert_at_vertices(const X_monotone_curve_2 & cv,
+                                                  Vertex_handle v1,
+                                                  Vertex_handle v2,
+                                                  Change_notification * en = NULL)
+
+    *
+
+Support Library:
+----------------
+
+    * New container class Compact_container, which (roughly) provides the
+      flexibility of std::list, with the memory compactness of std::vector.
+
+    * Geomview_stream: added a function
+      gv.draw_triangles(InputIterator begin, InputIterator end)
+      which draws a set of triangles much more quickly than one by one.
+
+    * Number types:
+      - number types are now required to provide a function:
+        std::pair<double, double>  to_interval(const NT &).
+      - number types are now required to provide mixed operators with "int".
+      - CLN support removed.
+      - faster square() for MP_Float.
+
+    * Qt_widget:
+      - New classes:
+	- Qt_help_window: provides a simple way to show some helpful
+	  information about a demo as an HTML page.
+	- Qt_widget_history: provides basic functionality to manipulate
+	  intervals of Qt_widget class. The current visible area of Qt_widget
+          is mapped to an interval. Each interval could be stored in the
+	  Qt_widget_history object. So you can use this object to navigate in
+          history.  It is mostly used by Qt_widget_standard_toolbar.
+      - Changes:
+	- Qt_widget_standard_toolbar: is derived from QToolBar class, so pay
+	  attention to modify your code, if you used this class. Some public
+	  methods were introduced to control the history object that the
+          toolbar use to navigate.
+	- the icons are now part of libCGALQt.
+      - Deprecated members of Qt_widget:
+        - add_to_history(), clear_history(), back(), forth(): use forward(),
+          back() and clear_history() of the Qt_widget_standard_toolbar instead.
+        - custom_redraw(): use redraw_on_back() and redraw_on_front() instead.
+      - Optimizations:
+        the output operators of the following classes have been optimized:
+        - CGAL::Segment_2  (now tests for intersection with the drawing area)
+        - CGAL::Triangle_2 (now tests for intersection with the drawing area)
+        - CGAL::Triangulation_2 (is optimized for faster display on zooming)
+
+
 
 ----------------------------- Release 2.4 ------------------------------------
 Version 2.4 differs from version 2.3 in the platforms that are supported and
@@ -490,4 +834,3 @@ Additions to release 0.9 include:
 Initial (beta) release of the CGAL library.
 
 ------------------------------------------------------------------------------
-EOF
