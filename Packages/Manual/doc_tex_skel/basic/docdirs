@@ -23,5 +23,6 @@ Alpha_shapes_3
 Apollonius_graph_2
 Optimisation
 Point_set_2
+Interval_skip_list
 SearchStructures
 Spatial_searching
