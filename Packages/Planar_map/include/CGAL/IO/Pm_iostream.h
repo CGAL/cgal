@@ -20,63 +20,31 @@
 #ifndef CGAL_PM_IOSTREAM_H
 #define CGAL_PM_IOSTREAM_H
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif
-
-#ifndef CGAL_PLANAR_MAP_2_H
 #include <CGAL/Planar_map_2.h>
-#endif
-
-//#ifndef CGAL_INVERSE_INDEX_H
-//#include <CGAL/Inverse_index.h>
-//#endif
-
-#ifndef CGAL_IO_PM_FILE_WRITER_H
 #include <CGAL/IO/Pm_file_writer.h>
-#endif // CGAL_IO_PM_FILE_WRITER_H
-
-#ifndef CGAL_IO_WRITE_PM_H
 #include <CGAL/IO/write_pm.h>
-#endif // CGAL_IO_WRITE_PM_H
 
 #include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class Dcel, class Traits> inline
-::std::ostream & operator << (::std::ostream & o,
-                              const Planar_map_2<Dcel,Traits> & pm) 
+std::ostream & operator <<(std::ostream & out,
+                           const Planar_map_2<Dcel,Traits> & pm) 
 {
-
-  Pm_file_writer< Planar_map_2<Dcel,Traits> >  writer(o, pm);
-  
-  write_pm(pm, writer, o);
-  
-  return o;
+  Pm_file_writer< Planar_map_2<Dcel,Traits> >  writer(out, pm);
+  write_pm(pm, writer, out);
+  return out;
 }
  
 template <class Dcel, class Traits> inline
-::std::istream & operator >> (std::istream& in, Planar_map_2<Dcel,Traits> & pm)
+::std::istream & operator >> (std::istream & in, Planar_map_2<Dcel,Traits> & pm)
 {
-  
-  pm.read(std::cin);
-
+  pm.read(in);
   return in;
 }
 
 CGAL_END_NAMESPACE
 
-
 #endif
-
-
-
-
-
-
-
-
-
-
-
