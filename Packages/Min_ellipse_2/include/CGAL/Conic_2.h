@@ -68,7 +68,7 @@ class Conic_2 : public _R::Conic_2_base {
     {}
     
     Conic_2 (RT r, RT s, RT t, RT u, RT v, RT w)
-        : R::Conic_2 (r, s, t, u, v, w)
+        : _Conic_2 (r, s, t, u, v, w)
     {}
     
     
