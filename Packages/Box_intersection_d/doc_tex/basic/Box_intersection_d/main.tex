@@ -123,7 +123,7 @@ First, for each geometric primitive, a bounding box has to be computed. Any boun
 
 If the used box class is derived from the default bounding box (or at least has the same fields), there is no need to specify a box adapter. When no box adapter is given, it is assumed that the default box adapter can be used to access the supplied boxes. A minimal example using just the defaults demonstrates the invocation:
 
-\ccIncludeExampleCode{../../examples/Box_intersection_d/minimal.cc}
+\ccIncludeExampleCode{../../../examples/Box_intersection_d/minimal.cc}
 
 Here, the box type is exactly the default box using three dimensions and \texttt{double} as the underlying number type. A number of boxes is filled with random data and all box intersections are reported as pairs of numbers. The callback has to accept two boxes of type similar to the iterator's value type.
 
@@ -145,16 +145,16 @@ In general:
 All examples use closed boxes and the bipartite setting. \texttt{fill\_boxes}, \texttt{callback} and \texttt{main} are almost identical.
 \subsection*{Minimal Example}
 Minimal example using random boxes. Boxes are default boxes without any geometric primitives inside. Each intersection is directly reported as a pair of numbers.
-\ccIncludeExampleCode{../../examples/Box_intersection_d/minimal.cc}
+\ccIncludeExampleCode{../../../examples/Box_intersection_d/minimal.cc}
 
 \subsection*{Custom Box}
 box containing some nondeterministic primitive.
-\ccIncludeExampleCode{../../examples/Box_intersection_d/custombox.cc}
+\ccIncludeExampleCode{../../../examples/Box_intersection_d/custombox.cc}
 
 \subsection*{Custom BoxAdapter }
 Here, a bounding box is a cube. This saves some space, at the expense of precision. The custom box only contains a vector to the minimal point plus a size for all three dimensions.
 
-\ccIncludeExampleCode{../../examples/Box_intersection_d/customadapter.cc}
+\ccIncludeExampleCode{../../../examples/Box_intersection_d/customadapter.cc}
 
 
 %% EOF %%
