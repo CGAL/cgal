@@ -112,7 +112,7 @@ public:
    */
   void curve_split(const X_monotone_curve_2 & cv,
                    X_monotone_curve_2 & c1, X_monotone_curve_2 & c2, 
-                   const Point_2 & split_pt)
+                   const Point_2 & split_pt) const
   {
     //split curve at split point (x coordinate) into c1 and c2
     CGAL_precondition(curve_compare_y_at_x(split_pt, cv) == EQUAL);
