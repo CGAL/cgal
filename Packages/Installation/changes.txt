@@ -2,6 +2,9 @@
 //	Revision History for package Installation
 //=====================================================================
 
+22 July 2004 Sylvain Pion
+- Remove -Xlinker before -shared for Linux/g++.
+
 21 July 2004 Radu Ursu
 - added psapi.lib for Windows compilers in CGAL_LDFLAGS, CGAL_QT_LDFLAGS,
   CGAL_WINDOW_LDFLAGS needed for Memory_sizer
