@@ -45,8 +45,8 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Dcel,class Traits>
-Window_stream& operator << (Window_stream & os, const Planar_map_2<Dcel,
-                            Traits> & pm)
+Window_stream & operator << (Window_stream & os,
+                             const Planar_map_2<Dcel,Traits> & pm)
 {
   Pm_drawer< Planar_map_2<Dcel,Traits>, Window_stream>  drawer(os);
   

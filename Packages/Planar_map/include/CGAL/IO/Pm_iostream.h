@@ -53,7 +53,8 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Dcel, class Traits> inline
-::std::ostream& operator << (::std::ostream& o, const Planar_map_2<Dcel,Traits>& pm) 
+::std::ostream & operator << (::std::ostream & o,
+                              const Planar_map_2<Dcel,Traits> & pm) 
 {
 
   Pm_file_writer< Planar_map_2<Dcel,Traits> >  writer(o, pm);
@@ -64,7 +65,8 @@ template <class Dcel, class Traits> inline
 }
  
 template <class Dcel, class Traits> inline
-::std::istream& operator >> ( std::istream& in, Planar_map_2<Dcel,Traits>& pm) {
+::std::istream & operator >> (std::istream& in, Planar_map_2<Dcel,Traits> & pm)
+{
   
   pm.read(std::cin);
 
