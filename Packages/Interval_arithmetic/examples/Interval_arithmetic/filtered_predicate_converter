@@ -16,6 +16,25 @@
 # See the CGAL documentation:
 # Support Library, Number Types, Filtered_exact.
 
+# Parse command line options.
+require 'getopt.pl';
+Getopt('io');
+$CGAL='';
+$pedantic=$opt_p;
+if ($opt_h) {
+  print STDERR "Usage: filtered_predicate_converter [options]
+    -i file : specify the input source file [default is stdin]
+    -o file : specify the output file       [default is stdout]
+    -p      : be pedantic (changes warnings into errors)
+    -h      : print this help\n";
+  exit;
+}
+if (not $opt_i) { $opt_i = "-"; }
+if (not $opt_o) { $opt_o = "-"; }
+
+open(FI, "<$opt_i") || die "Couldn't open input file \"$opt_i\"\n";
+open(FO, ">$opt_o") || die "Couldn't open output file \"$opt_o\"\n";
+
 
 $old_protect_name="";	# contains the protect macro name, e.g. CGAL_BASIC_H:
 			# It is set by $treat_CGAL_header().
@@ -26,12 +45,13 @@ $line=0;		# current line number.
 sub warning {
   local ($_) = @_;
   print STDERR "// Warning [line $line]: $_\n";
+  exit if $pedantic;
 }
 
 # Treats the CGAL header.
 sub treat_CGAL_header {
   # skip the old header.
-  while (<>)
+  while (<FI>)
   {
     $line++;
     # get $file_name from the "file:" field in the headers.
@@ -53,7 +73,7 @@ sub treat_CGAL_header {
   }
 
   # put the new header.
-  print
+  print FO
 "// ======================================================================
 //
 // Copyright (c) 1999 The CGAL Consortium
@@ -82,12 +102,12 @@ sub treat_CGAL_header {
 
 # Skips a "CGAL_NO_FILTER" section.
 sub skip_no_filter_section {
-  while (<>) { $line++; last if /\/\/CGAL_NO_FILTER_END/; }
+  while (<FI>) { $line++; last if /\/\/CGAL_NO_FILTER_END/; }
 }
 
 # Skips the old body of the function.
 sub skip_old_body {
-  while (<>) { $line++; last if /^}$/; }
+  while (<FI>) { $line++; last if /^}$/; }
 }
 
 # Warns if the return type is not known
@@ -102,33 +122,33 @@ sub check_known_type {
 # Puts the new body 
 sub put_new_body {
   local ($result_type, $function_name, @args) = @_;
-  print "{
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
+  print FO "{
+  ${CGAL}FPU_CW_t backup = ${CGAL}FPU_get_and_set_cw(${CGAL}FPU_cw_up);
   try
   {
     $result_type result = $function_name(\n";
   foreach (@args) {
-    print "\t\t$_.interval()";
-    if ($_ eq $args[$#args]) { print ");\n"; } else { print ",\n"; }
+    print FO "\t\t$_.interval()";
+    if ($_ eq $args[$#args]) { print FO ");\n"; } else { print FO ",\n"; }
   }
-  print "    CGAL::FPU_set_cw(backup);
+  print FO "    ${CGAL}FPU_set_cw(backup);
     return result;
   } 
-  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
+  catch (${CGAL}Interval_nt_advanced::unsafe_comparison)
   {
-    CGAL::FPU_set_cw(backup);
+    ${CGAL}FPU_set_cw(backup);
     return $function_name(\n";
   foreach (@args) {
-    print "\t\t$_.exact()";
-    if ($_ eq $args[$#args]) { print ");\n"; } else { print ",\n"; }
+    print FO "\t\t$_.exact()";
+    if ($_ eq $args[$#args]) { print FO ");\n"; } else { print FO ",\n"; }
   }
-  print "  }\n}\n";
+  print FO "  }\n}\n";
 }
 
 # Treat the declaration of a function.
 sub parse_function_declaration {
   local ($inline_decl, $return_type, $function_name, @args, $in_decl);
-  while (<>) {
+  while (<FI>) {
     $line++;
     # get the eventual inline declaration.
     if (/(CGAL_.*INLINE|inline)/) {
@@ -172,18 +192,18 @@ sub parse_function_declaration {
 sub put_new_function_declaration {
   local ($inline_decl, $return_type, $function_name, @args) = @_;
   # The template line would be more pretty without the MipsPro hack...
-  print
+  print FO
 "#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif\n";
   # By default, we do not inline the filtered version.
-  print "/* $inline_decl */\n" if $inline_decl;
-  print "$return_type\n";
-  print "$function_name(\n";
+  print FO "/* $inline_decl */\n" if $inline_decl;
+  print FO "$return_type\n";
+  print FO "$function_name(\n";
   foreach (@args) {
-    print "    const CGAL::Filtered_exact ";
-    print "<CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &$_";
-    if ($_ eq $args[$#args]) { print ")\n"; } else { print ",\n"; }
+    print FO "    const ${CGAL}Filtered_exact ";
+    print FO "<CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &$_";
+    if ($_ eq $args[$#args]) { print FO ")\n"; } else { print FO ",\n"; }
   }
 }
 
@@ -201,7 +221,7 @@ foreach (@CGAL_enum_types) {
 
 treat_CGAL_header();
 
-while (<>)
+while (<FI>)
 {
   $line++;
   # Treat the CGAL_NO_FILTER_BEGIN/CGAL_NO_FILTER_END section.
@@ -226,8 +246,12 @@ while (<>)
     next;
   }
 
+  # Detect if we are in namespace CGAL:
+  $CGAL="" if /CGAL_BEGIN_NAMESPACE/;
+  $CGAL="CGAL::" if /CGAL_END_NAMESPACE/;
+
   # Basically for the rest, we copy everything,
   # just update the protect macro name.
   s/$old_protect_name/$new_protect_name/g;
-  print $_;
+  print FO $_;
 }
