@@ -3,7 +3,7 @@
 % Put here the definition of the algorithm (theory)
 Let $C:=\{c_1, \ldots c_n\}$ be the set of curves for which we want 
 to compute all intersections. We want to avoid testing pairs of segments 
-that are fat apart. To find the intersecting pairs we imagine sweeping  
+that are far apart. To find the intersecting pairs we imagine sweeping  
 a line $l$ from left to right over the plane, starting from a position 
 left to all curves. While we sweep the imaginary line, we keep track of all 
 curves intersecting it.
@@ -11,13 +11,15 @@ curves intersecting it.
 This type of algorithm is called a {\em plane sweep algorithm} and the line 
 $l$ is called the {\em sweep line}. The {\em status} of the sweep line if 
 the set of curves intersecting it. The status changes while the sweep line 
-moves to right, but nor continuously. Only at particular points is an update of the status required. We call these points the {\em event points} of the 
+moves to right, but not continuously. Only at particular points is an update of the status required. We call these points the {\em event points} of the 
 plane sweep algorithm. In this algorithm we initialize the event points with 
 the endpoints of the curves.
 
 % Put here a description of what's in this chapter
 
 This chapter describes the functions provided in
-\cgal\ for constructing planar map induced by a collection of planar curves 
-as well as functions for producing the corresponding disjoint-interior 
-subcurves and intersection points.
+\cgal\ for producing the corresponding disjoint-interior 
+subcurves and intersection points of a given collection 
+$C:=\{c_1, \ldots c_n\}$ of planar curves, 
+as well as constructing planar maps induced by the above 
+collection.
