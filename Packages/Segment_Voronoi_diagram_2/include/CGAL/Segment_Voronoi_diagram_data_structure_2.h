@@ -100,6 +100,10 @@ public:
   Quadruple<Vertex_handle, Vertex_handle, Face_handle, Face_handle>
   split_vertex(Vertex_handle v, Face_handle f1, Face_handle g1)
   {
+    CGAL_precondition( dimension() == 2 );
+    CGAL_precondition( f1 != Face_handle(NULL) && f1->has_vertex(v) );
+    CGAL_precondition( g1 != Face_handle(NULL) && g1->has_vertex(v) );
+
     typedef Vertex_handle VH;
     typedef Face_handle   FH;
 
@@ -122,9 +126,9 @@ public:
     std::list<Face_handle> lst;
     std::list<int>         idx;
 
-    Face_circulator fc(v, f2);
+    Face_circulator fc(v, g1);
     Face_handle ff(fc);
-    while ( ff != g1 ) {
+    while ( ff != f2 ) {
       lst.push_back( ff );
       idx.push_back( ff->index(v) );
       fc++;
@@ -155,7 +159,7 @@ public:
     typename std::list<Face_handle>::iterator lit = lst.begin();
     typename std::list<int>::iterator         iit = idx.begin();
     for (; lit != lst.end(); ++lit, ++iit) {
-      lit->set_vertex(*iit, v2);
+      (*lit)->set_vertex(*iit, v2);
     }
 
     lst.clear();
@@ -172,11 +176,63 @@ public:
     return Quadruple<VH, VH, FH, FH>(v1, v2, f, g);
   }
 
+#if 0
+  void
+  flip(Face_handle f, int i)
+  {
+    CGAL_precondition( dimension()==2 );
+    
+    // AWDG CHANGE
+    // flip sould never be called if i and its mirror vertex are the same
+    CGAL_precondition( f->vertex(i) != f->mirror_vertex(i) );
+    
+    Face_handle n  = f->neighbor(i);
+    // this another change: we make sure that the index of f is given
+     // through the mirror vertex
+     int ni = n->index( f->mirror_vertex(i) );
+     // old code is here
+     //  int ni = n->index(f);
 
+     Vertex_handle  v_cw = f->vertex(cw(i));
+     Vertex_handle  v_ccw = f->vertex(ccw(i));
+
+     // bl == bottom left, tr == top right
+     Face_handle tr = f->neighbor(ccw(i));
+     Face_handle bl = n->neighbor(ccw(ni));
+     int bli, tri;
+     // same change here: the indices for bl and tr are given through
+     // their mirror vertices
+     bli = bl->index( n->mirror_vertex(ccw(ni)) );
+     tri = tr->index( f->mirror_vertex(ccw(i)) );
+     // old code is here
+     //  bli = bl->index(n);
+     //  tri = tr->index(f);
+
+     f->set_vertex(cw(i), n->vertex(ni));
+     n->set_vertex(cw(ni), f->vertex(i));
+
+     // update the neighborhood relations
+     f->set_neighbor(i, bl);
+     bl->set_neighbor(bli, f);
+
+     f->set_neighbor(ccw(i), n);
+     n->set_neighbor(ccw(ni), f);
+
+     n->set_neighbor(ni, tr);
+     tr->set_neighbor(tri, n);
+
+     if(v_cw->face() == f) {
+       v_cw->set_face(n);
+     }
+
+     if(v_ccw->face() == n) {
+       v_ccw->set_face(f);
+     }
+   }
+#endif
 };
 
 
 CGAL_END_NAMESPACE
 
 #endif // CGAL_SEGMENT_VORONOI_DIAGRAM_DATA_STRUCTURE_2_H
-
