@@ -52,6 +52,8 @@
     \ccGlobalScope\ccc{ON_BOUNDARY},}
   \ccPropagateThreeToTwoColumns}
 
+\newcommand{\ccRequirements}{\ccHeading{Requirements}}
+\newcommand{\ccRequire}{\ccCommentHeading{Requirements}}
 
 @! ============================================================================
 @! Title
@@ -168,13 +170,6 @@ is the negative value of the objective function at $x^*$.
 in the \cgal\ Reference Manual.
 
 @! ----------------------------------------------------------------------------
-@! Concept: Min_sphere_d_traits
-@! ----------------------------------------------------------------------------
-
-\subsectionRef{Concept}{Min\_sphere\_d\_traits}
-\input{../doc_tex/basic/Optimisation/Optimisation_ref/Min_sphere_d_traits.tex}
-
-@! ----------------------------------------------------------------------------
 @! Class: Min_sphere_d
 @! ----------------------------------------------------------------------------
 
@@ -204,6 +199,13 @@ in the \cgal\ Reference Manual.
 \subsectionRef{Class}{%
   CGAL::Min\_sphere\_d\_traits\_d\texttt{<}R,ET,NT\texttt{>}}
 \input{../doc_tex/basic/Optimisation/Optimisation_ref/Min_sphere_d_traits_d.tex}
+
+@! ----------------------------------------------------------------------------
+@! Concept: Min_sphere_d_traits
+@! ----------------------------------------------------------------------------
+
+\subsectionRef{Concept}{Min\_sphere\_d\_traits}
+\input{../doc_tex/basic/Optimisation/Optimisation_ref/Min_sphere_d_traits.tex}
 
 
 @! ============================================================================
