@@ -1,3 +1,6 @@
+30 April 2004 Andreas Fabri
+- replaced global function calls with kernel functors
+
 30 April 2004 Radu Ursu
 - moved demo/* to demo/Visibility_complex/*
 
