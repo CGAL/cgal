@@ -55,6 +55,22 @@ std::ostream& operator<<(std::ostream& os,
   const std::pair< Vertex_point<P,H>, Vertex_point<P,H> > & s)
 { os << s.first << s.second; return os; }
 
+template <typename P, typename SE>
+struct Sort_sedges {
+  bool operator()(SE e1, SE e2) {
+    P p1[2], p2[2];
+    p1[0] = e1->source()->center_vertex()->point();
+    p1[1] = e1->twin()->source()->twin()->center_vertex()->point();
+    p2[0] = e2->source()->center_vertex()->point();
+    p2[1] = e2->twin()->source()->twin()->center_vertex()->point();
+    int i1(0), i2(0);
+    if(CGAL::lexicographically_xyz_smaller(p1[1],p1[0])) i1 = 1;
+    if(CGAL::lexicographically_xyz_smaller(p2[1],p2[0])) i2 = 1;
+    if(p1[i1] != p2[i2]) return CGAL::lexicographically_xyz_smaller(p1[i1],p2[i2]);
+    if(p1[1-i1] != p2[1-i2]) return CGAL::lexicographically_xyz_smaller(p1[1-i1],p2[1-i2]);
+    return i1<i2;
+  }
+};
 
 //--------------------------------------------------------------------------
 /* The following type is an output model for our generic segment
@@ -325,7 +341,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
 
   Segment_list Segments;
   SHalfedge_handle e; SHalfloop_handle l;
-  typename std::list<SHalfedge_handle>::iterator eit;
+  typename std::list<SHalfedge_handle>::iterator eit,epred;
   typename std::list<SHalfloop_handle>::iterator lit;
 
   // the output decorator for the facet plane sweep
@@ -341,19 +357,14 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   Halffacet_geometry G(plane_supporting_facet);
 
   /* We first separate sedges and sloops, and fill a list of segments
-     to trigger a sweep. Note that we only allow those edges that are
-     directed from lexicographically smaller to larger vertices.  */
-  // Insertion of SHalfedges into Segments is shifted below in order
-  // to guarantee that there are no gaps in the overlay.
+     to trigger a sweep. */
 
   for ( ; start != end; ++start ) {
     if ( CGAL::assign(e,*start) ) {
       SHalfedges.push_back(e); 
-    } else if ( CGAL::assign(l,*start) ) { 
+    } else if ( CGAL::assign(l,*start) ) {
       SHalfloops.push_back(l); 
-      TRACEN("  appending loop " << point(vertex(l))); 
-      Segments.push_back(segment(l)); }
-    else 
+    } else 
       CGAL_assertion_msg(0,"Damn wrong handle.");
   }
 
@@ -370,16 +381,11 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     TRACEN("\n  facet cycle numbering "<<i);
     CGAL_For_all(hfc,hend) {
       FacetCycle[hfc]=i; // assign face cycle number
-      if(compare_xy(point(source(hfc)),
-		    point(target(hfc))) < 0) {
-	TRACEN("  appending edge "<< debug(hfc));
-	Segments.push_front(segment(hfc)); 
-	From[Segments.begin()] = SHalfedge_handle(hfc);
-      }
       if ( CGAL::lexicographically_xyz_smaller(point(target(hfc)), 
 					       point(target(e_min))))
 	e_min = hfc;
-      TRACEN(debug(hfc));
+      TRACEN(debug(hfc) << "=?" << point(source(hfc)) << " " << point(target(hfc)) 
+	     << "cmpxy: " << compare_xy(point(source(hfc)),point(target(hfc))));
     } TRACEN("");
     MinimalEdge.push_back(e_min);
     ++i;
@@ -434,18 +440,44 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   if(!do_sweep) return; 
 #endif
 
-#ifdef CGAL_NEF3_TIMER_PLANE_SWEEP
+#ifdef CGAL_NEF3_TIMER_PLANE_SWEEPS
   number_of_plane_sweeps++;
-  timer_plane_sweep.start();
+  timer_plane_sweeps.start();
 #endif
 
+  //  Note that we only allow those edges that are
+  //  directed from lexicographically smaller to larger vertices. 
+  //  Insertion of SHalfedges into Segments is shifted below in order
+  //  to guarantee that there are no gaps in the overlay.
+
+  SHalfedges.sort(Sort_sedges<Point_3,SHalfedge_handle>());
+  for(eit = SHalfedges.begin();eit != SHalfedges.end();) {
+    TRACEN("  appending edge "<< debug(*eit));
+    Segments.push_front(segment(*eit)); 
+    From[Segments.begin()] = *eit;
+    epred=eit;
+    ++eit;
+    if(eit != SHalfedges.end()) 
+      TRACEN("test " << std::endl << "  " << debug(*epred) 
+	     << std::endl << "  " << debug(*eit));
+    if(eit != SHalfedges.end() && 
+       point(source(*epred))== point(target(*eit)) &&  
+       point(source(*eit))  == point(target(*epred)))
+      ++eit;
+  }
+
+  CGAL_forall_iterators(lit,SHalfloops) {
+    TRACEN("  appending loop " << point(vertex(*lit))); 
+    Segments.push_back(segment(*lit));
+  }
+    
   std::vector<SHalfedge_handle> Edge_of(Segments.size()+1);
   Halffacet_output O(From,Edge_of);
   Halffacet_sweep FS(typename Halffacet_sweep::INPUT(
     Segments.begin(),Segments.end()), O, G); FS.sweep();
 
-#ifdef CGAL_NEF3_TIMER_PLANE_SWEEP
-  timer_plane_sweep.stop();
+#ifdef CGAL_NEF3_TIMER_PLANE_SWEEPS
+  timer_plane_sweeps.stop();
 #endif
 
   CGAL_forall_iterators(eit,SHalfedges) { e=*eit;
@@ -459,13 +491,13 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     SHalfedge_handle e_below = 
       Edge_of[geninfo<unsigned>::access(info(vertex(l)))];
     
+    CGAL_assertion( e_below != SHalfedge_handle() );
     TRACEN("link sloop at vertex "<< point(vertex(l)));
     TRACEN("e_below "  << debug(e_below));
     TRACEN("next    "  << debug(next(e_below)));
     TRACEN("next    "  << debug(next(next(e_below))));
     TRACEN("next    "  << debug(next(next(next(e_below)))));
     TRACEN("next    "  << debug(next(next(next(next(e_below))))));
-    CGAL_assertion( e_below != SHalfedge_handle() );
     link_as_interior_loop(l,facet(e_below));
     link_as_interior_loop(twin(l),twin(facet(e_below)));
   }

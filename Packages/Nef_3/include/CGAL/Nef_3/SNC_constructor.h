@@ -1067,7 +1067,7 @@ public:
   the facets. \precond |link_shalfedges_to_facet_cycles()| was called
   before.}*/
 
-    //    SETDTHREAD(43*31);
+    //    SETDTHREAD(43*31*23);
     TRACEN(">>>>>categorize_facet_cycles_and_create_facets");
     
     typedef std::list<Object_handle> Object_list;
@@ -1080,7 +1080,7 @@ public:
     
     Map_planes M;
     SHalfedge_iterator e;
-    CGAL_forall_sedges(e,*this->sncp()) {
+    CGAL_forall_shalfedges(e,*this->sncp()) {
       //    progress++;
       Sphere_circle c(circle(e));
       Plane_3 h = c.plane_through(point(vertex(e)));
@@ -1089,11 +1089,8 @@ public:
 	     point(target(SD.target(e))) << 
 	     " has plane " << h << " has circle " << circle(e) << 
 	     " has signum " << sign_of(h));
-      if ( sign_of(h)<0 ) 
-	h = h.opposite();
-      //   CGAL_assertion( h == normalized(h));
+      if ( sign_of(h)<0 ) continue;
       M[normalized(h)].push_back(Object_handle(twin(e)));
-      M[normalized(h)].push_back(Object_handle(e));
       TRACEN(" normalized as " << normalized(h)); 
     }
     SHalfloop_iterator l;
