@@ -15,8 +15,9 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
-	   -Wall -O6 -mcpu=ultrasparc # -fprofile-arcs -ftest-coverage
+	   -g -O -Wall # -mcpu=ultrasparc -fprofile-arcs -ftest-coverage
            #-O2 -xtarget=ultra2
+	   #-Winline
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -30,9 +31,13 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: tst1 tst2 tst3 tst4
+all: test bench
+
+test:  tst1 tst2
 	./tst1
 	./tst2
+
+bench: tst3 tst4
 	./tst3
 	./tst4
 
