@@ -656,7 +656,7 @@ static void initialize_olg()
 
   GLfloat light_ambient[4] = { 1.0, 1.0, 1.0, 1.0 };
   GLfloat light_diffuse[] =  { 1.0, 1.0, 1.0, 1.0 };    // white diffuse light 
-  GLfloat light_position[] = { 20.0, 30.0, -50.0, 0.0 }; // infinite location
+  GLfloat light_position[] = { 2.0, 3.0, -4.0, 0.0 }; // infinite location
   //GLfloat light_position[] = { 3.0, 5.0, 4.5, 1.0};
 
   glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);
@@ -908,15 +908,14 @@ public:
 
   void draw() const
   { 
-    SETDTHREAD(53);
+      //SETDTHREAD(53);
     Vertex_iterator v;
     CGAL_nef3_forall_vertices(v,*sncp()) draw(v);
     ppoly_->bbox() = sncp()->bounded_bbox();
     Halfedge_iterator e;
     CGAL_nef3_forall_edges(e,*sncp()) draw(e);
     Halffacet_iterator f;
-    int i = 0;
-    CGAL_nef3_forall_facets(f,*sncp()) { if(i<22) draw(f); ++i;}
+    CGAL_nef3_forall_facets(f,*sncp()) draw(f);
   }
 
 }; // SNC_visualizor_OGL<SNC_>
