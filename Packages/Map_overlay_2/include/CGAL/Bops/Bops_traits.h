@@ -8,20 +8,16 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-84 $
-// release_date  : $CGAL_Date: 2002/05/01 $
+// release       : $CGAL_Revision: CGAL-2.5-I-11 $
+// release_date  : $CGAL_Date: 2002/08/04 $
 //
-// file          : include/CGAL/Pm_segment_traits_2.h
-// package       : Planar_map (5.109)
-// maintainer    : Eyal Flato <flato@math.tau.ac.il>
+// file          : include/CGAL/Bops_traits.h
+// package       : Map_overlay (1.12)
+// maintainer    : Efi Fogel <efif@math.tau.ac.il>
 // source        : 
 // revision      : 
 // revision_date : 
-// author(s)     : Iddo Hanniel <hanniel@math.tau.ac.il>
-//                 Eyal Flato
-//                 Oren Nechushtan <theoren@math.tau.ac.il>
-//                 Shai Hirsch <shaihi@post.tau.ac.il>
-//                 Efi Fogel <efifogel@post.tau.ac.il>
+// author(s)     : Eti Ezra          <estere@post.tau.ac.il>
 //
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
 //

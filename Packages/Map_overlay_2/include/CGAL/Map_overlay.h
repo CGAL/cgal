@@ -1,3 +1,28 @@
+// ======================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.5-I-11 $
+// release_date  : $CGAL_Date: 2002/08/04 $
+//
+// file          : include/CGAL/Map_overlay.h
+// package       : Map_overlay (1.12)
+// maintainer    : Efi Fogel <efif@math.tau.ac.il>
+// source        : 
+// revision      : 
+// revision_date : 
+// author(s)     : Eti Ezra          <estere@post.tau.ac.il>
+//
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+//
+// Chapter       : 
+// ======================================================================
 #ifndef CGAL_MAP_OVERLAY_H
 #define CGAL_MAP_OVERLAY_H
 
@@ -25,42 +50,47 @@
 CGAL_BEGIN_NAMESPACE
 
 template  <class Subdivision_, 
-           class Change_notification_ = Map_overlay_default_notifier<Subdivision_> > 
+           class Change_notification_ = 
+                 Map_overlay_default_notifier<Subdivision_> > 
 class  Map_overlay_2 {
 public:  
   
-  typedef Subdivision_                                          Subdivision;
-  typedef Change_notification_                                  Change_notification;
-  typedef typename Subdivision::Planar_map                      Planar_map;
-  //typedef typename Subdivision::Pmwx                          Pmwx;
-  typedef typename Subdivision::Vertex                          Vertex;
-  typedef typename Subdivision::Face                            Face;
-  typedef typename Subdivision::Halfedge                        Halfedge;
-  typedef typename Subdivision::Vertex_handle                   Vertex_handle;
-  typedef typename Subdivision::Halfedge_handle                 Halfedge_handle;
-  typedef typename Subdivision::Face_handle                     Face_handle;
-  typedef typename Subdivision::Vertex_const_handle             Vertex_const_handle;
-  typedef typename Subdivision::Halfedge_const_handle           Halfedge_const_handle;
-  typedef typename Subdivision::Face_const_handle               Face_const_handle;
-  typedef typename Subdivision::Vertex_iterator                 Vertex_iterator;
-  typedef typename Subdivision::Halfedge_iterator               Halfedge_iterator;
-  typedef typename Subdivision::Face_iterator                   Face_iterator;
-  typedef typename Subdivision::Vertex_const_iterator           Vertex_const_iterator;
-  typedef typename Subdivision::Halfedge_const_iterator         Halfedge_const_iterator;
-  typedef typename Subdivision::Face_const_iterator             Face_const_iterator;
-  typedef typename Subdivision::Ccb_halfedge_circulator         Ccb_halfedge_circulator;
-  typedef typename Subdivision::Ccb_halfedge_const_circulator   Ccb_halfedge_const_circulator;
-  typedef typename Subdivision::Holes_iterator                  Holes_iterator;
-  typedef typename Subdivision::Holes_const_iterator            Holes_const_iterator;
-  typedef typename Subdivision::Locate_type                     Locate_type;
-  //typedef typename Subdivision::Point_location_base             Point_location_base;
+  typedef Subdivision_                                Subdivision;
+  typedef Change_notification_                        Change_notification;
+  typedef typename Subdivision::Planar_map            Planar_map;
+  //typedef typename Subdivision::Pmwx                Pmwx;
+  typedef typename Subdivision::Vertex                Vertex;
+  typedef typename Subdivision::Face                  Face;
+  typedef typename Subdivision::Halfedge              Halfedge;
+  typedef typename Subdivision::Vertex_handle         Vertex_handle;
+  typedef typename Subdivision::Halfedge_handle       Halfedge_handle;
+  typedef typename Subdivision::Face_handle           Face_handle;
+  typedef typename Subdivision::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Subdivision::Halfedge_const_handle   Halfedge_const_handle;
+  typedef typename Subdivision::Face_const_handle       Face_const_handle;
+  typedef typename Subdivision::Vertex_iterator         Vertex_iterator;
+  typedef typename Subdivision::Halfedge_iterator       Halfedge_iterator;
+  typedef typename Subdivision::Face_iterator           Face_iterator;
+  typedef typename Subdivision::Vertex_const_iterator   Vertex_const_iterator;
+  typedef typename Subdivision::Halfedge_const_iterator  
+                                                      Halfedge_const_iterator;
+  typedef typename Subdivision::Face_const_iterator     Face_const_iterator;
+  typedef typename Subdivision::Ccb_halfedge_circulator 
+                                                     Ccb_halfedge_circulator;
+  typedef typename Subdivision::Ccb_halfedge_const_circulator   
+                                               Ccb_halfedge_const_circulator;
+  typedef typename Subdivision::Holes_iterator          Holes_iterator;
+  typedef typename Subdivision::Holes_const_iterator    Holes_const_iterator;
+  typedef typename Subdivision::Locate_type             Locate_type;
+  //typedef typename Subdivision::Point_location_base    Point_location_base;
 
-  typedef typename Subdivision::Traits                         Traits;
-  typedef typename Traits::X_curve_2                           X_curve_2;  
-  typedef typename Traits::Point_2                             Point_2;
+  typedef typename Subdivision::Traits                  Traits;
+  typedef typename Traits::X_curve_2                    X_curve_2;  
+  typedef typename Traits::Point_2                      Point_2;
 
-  typedef Map_overlay_base<Subdivision, Change_notification>   Map_overlay_base;
-  typedef Map_overlay_sweep<Subdivision, Change_notification>  Map_overlay_sweep;
+  typedef Map_overlay_base<Subdivision, Change_notification>  Map_overlay_base;
+  typedef Map_overlay_sweep<Subdivision, Change_notification> 
+                                                             Map_overlay_sweep;
   
   typedef Pm_point_location_base<Planar_map> Point_location_base;
   
@@ -125,7 +155,9 @@ public:
     ovl_alg(new Map_overlay_sweep), 
     use_delete_notf(true), use_delete_ovl(true)
   {
-    ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, *arr_);
+    ovl_alg->map_overlay(ovl1.subdivision(), 
+                         ovl2.subdivision(), 
+                         ovl_change_notf, *arr_);
   }
   
   Map_overlay_2 (const Self &ovl1, const Self &ovl2, 
@@ -136,14 +168,11 @@ public:
                                             &(ovl2.subdivision()) )), 
     ovl_alg(new Map_overlay_sweep),
     use_delete_notf(true), use_delete_ovl(true)
-  {
-    //int c_sweep_t;
-    //c_sweep_t = clock();
-    
-    ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, *arr_);
-    
-    //c_sweep_t = clock() - c_sweep_t;
-    //std::cout<<"The time required by sweep line : "<< (double) c_sweep_t / (double) CLOCKS_PER_SEC<<std::endl;
+  {    
+    ovl_alg->map_overlay(ovl1.subdivision(), 
+                         ovl2.subdivision(), 
+                         ovl_change_notf, 
+                         *arr_);
   }
 
   Map_overlay_2 (const Self &ovl1, 
@@ -154,7 +183,10 @@ public:
     ovl_change_notf(pmwx_change_notf), ovl_alg(new Map_overlay_sweep),
     use_delete_notf(false), use_delete_ovl(true)
   {
-    ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, *arr_);
+    ovl_alg->map_overlay(ovl1.subdivision(), 
+                         ovl2.subdivision(), 
+                         ovl_change_notf, 
+                         *arr_);
   }
 
   Map_overlay_2 (const Self &ovl1, 
@@ -166,7 +198,10 @@ public:
     ovl_change_notf(pmwx_change_notf), ovl_alg(new Map_overlay_sweep),
     use_delete_notf(false), use_delete_ovl(true)
   {
-    ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, *arr_);
+    ovl_alg->map_overlay(ovl1.subdivision(), 
+                         ovl2.subdivision(), 
+                         ovl_change_notf, 
+                         *arr_);
   }
   
   
@@ -180,7 +215,10 @@ public:
     ovl_alg(ovl_ptr), 
     use_delete_notf(true), use_delete_ovl(false)
   {
-    ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, *arr_);
+    ovl_alg->map_overlay(ovl1.subdivision(), 
+                         ovl2.subdivision(), 
+                         ovl_change_notf, 
+                         *arr_);
   }
   
   Map_overlay_2 (const Self &ovl1, 
@@ -194,7 +232,10 @@ public:
     ovl_alg(ovl_ptr), 
     use_delete_notf(true), use_delete_ovl(false)
   {
-    ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, *arr_);
+    ovl_alg->map_overlay(ovl1.subdivision(), 
+                         ovl2.subdivision(), 
+                         ovl_change_notf, 
+                         *arr_);
   }
   
   
@@ -207,7 +248,10 @@ public:
     ovl_change_notf(pmwx_change_notf), ovl_alg(ovl_ptr),
     use_delete_notf(false), use_delete_ovl(false)
   {
-    ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, *arr_);
+    ovl_alg->map_overlay(ovl1.subdivision(), 
+                         ovl2.subdivision(), 
+                         ovl_change_notf, 
+                         *arr_);
   }
 
   Map_overlay_2 (const Self &ovl1, 
@@ -220,7 +264,10 @@ public:
     ovl_change_notf(pmwx_change_notf), ovl_alg(ovl_ptr),
     use_delete_notf(false), use_delete_ovl(false)
   {
-    ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, *arr_);
+    ovl_alg->map_overlay(ovl1.subdivision(), 
+                         ovl2.subdivision(), 
+                         ovl_change_notf, 
+                         *arr_);
   }
   
   // ------------------- Copy contructor -----------------------------
@@ -285,12 +332,14 @@ public:
   
   
 private:
-  // Saving the subdivision as a pointer is crucial.
-  // Since the overlay has levels of creators, we make sure this way all levels are valid.
-  // For example, it is possible to create a map overlay of two subdivisions (rather than
-  // two map overlays) using the converter and no harm is done: the converter saves its 
-  // corresponding map overlay as the creator. If the usage is not by pointers, a temporary 
-  // value of map overlay may be constructed by the converter and may cause memory fligh.
+  // Saving the subdivision as a pointer is crucial.  Since the
+  // overlay has levels of creators, we make sure this way all levels
+  // are valid.  For example, it is possible to create a map overlay
+  // of two subdivisions (rather than two map overlays) using the
+  // converter and no harm is done: the converter saves its
+  // corresponding map overlay as the creator. If the usage is not by
+  // pointers, a temporary value of map overlay may be constructed by
+  // the converter and may cause memory fligh.
   Subdivision                       *arr_;
   const Self                        *sub_division1, *sub_division2;
   Change_notification               *ovl_change_notf;

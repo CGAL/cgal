@@ -1,3 +1,28 @@
+// ======================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.5-I-11 $
+// release_date  : $CGAL_Date: 2002/08/04 $
+//
+// file          : include/CGAL/Map_overlay_sweep.h
+// package       : Map_overlay (1.12)
+// maintainer    : Efi Fogel <efif@math.tau.ac.il>
+// source        : 
+// revision      : 
+// revision_date : 
+// author(s)     : Eti Ezra          <estere@post.tau.ac.il>
+//
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+//
+// Chapter       : 
+// ======================================================================
 #ifndef CGAL_MAP_OVERLAY_SWEEP_H
 #define CGAL_MAP_OVERLAY_SWEEP_H
 
@@ -57,25 +82,30 @@ struct Map_overlay_sweep_utils {
     //typedef typename Arrangement::Halfedge_handle Halfedge_handle;
     typedef typename PM::Halfedge_const_handle Halfedge_const_handle;
     
-    X_curve_plus_id_handle() : curve(), parent(), first_map_(true), flipped_(false) {};
-    
-    //Arr_X_curve_plus(const curve &cv, Halfedge_handle h, bool b) : curve(cv), parent(h), first_map(b) {}
+    X_curve_plus_id_handle() : 
+      curve(), parent(), first_map_(true), flipped_(false) {};
     
     X_curve_plus_id_handle(const curve &cv, Halfedge_const_handle h, 
-                           bool first_map, bool flipped, unsigned int id = 0) : 
+                           bool first_map, bool flipped, unsigned int id = 0) :
       curve(cv), parent(h), first_map_(first_map), flipped_(flipped), id_(id){}
     
     //Arr_X_curve_plus(Halfedge_handle h, bool b) : curve(h->curve()), parent(h), first_map(b) {}
     
-    X_curve_plus_id_handle(Halfedge_const_handle h, bool  first_map, bool flipped, unsigned int id = 0) : 
-      curve(h->curve()), parent(h), first_map_(first_map), flipped_(flipped), id_(id) {}
+    X_curve_plus_id_handle(Halfedge_const_handle h, 
+                           bool  first_map, bool flipped, 
+                           unsigned int id = 0) : 
+      curve(h->curve()), parent(h), 
+      first_map_(first_map), flipped_(flipped), id_(id) {}
     
     // used when no Halfedge_handle is supplied.
-    X_curve_plus_id_handle(const curve &cv, bool first_map, bool flipped, unsigned int id = 0) : 
-      curve(cv), parent(),  first_map_(first_map), flipped_(flipped), id_(id) {};
+    X_curve_plus_id_handle(const curve &cv, bool first_map, 
+                           bool flipped, unsigned int id = 0) : 
+      curve(cv), parent(),  first_map_(first_map), 
+      flipped_(flipped), id_(id) {};
     
     X_curve_plus_id_handle(const X_curve_plus_id_handle &cv) : 
-      curve(cv), parent(cv.parent), first_map_(cv.first_map()), flipped_(cv.flipped()), id_(cv.id()) {}
+      curve(cv), parent(cv.parent), first_map_(cv.first_map()), 
+      flipped_(cv.flipped()), id_(cv.id()) {}
     
     ~X_curve_plus_id_handle(){}
     
@@ -160,7 +190,8 @@ public:
   typedef typename  Traits::X_curve               X_curve;
   typedef typename  Traits::Point                 Point;
 
-  typedef Sweep_curves_base_2<Curve_iterator, Traits, Point_plus, X_curve_plus>  Base;
+  typedef Sweep_curves_base_2<Curve_iterator, Traits, Point_plus, X_curve_plus>
+                                                                         Base;
   
   typedef typename Base::Curve_node                  Curve_node;
   typedef typename Base::Intersection_point_node     Intersection_point_node;
@@ -174,29 +205,32 @@ public:
   typedef typename Base::Event_queue                 Event_queue;
   typedef typename Base::Status_line                 Status_line;
   
-  typedef typename Vertices_points_plus::value_type  Vertices_points_plus_value_type; 
+  typedef typename Vertices_points_plus::value_type  
+                                             Vertices_points_plus_value_type; 
   typedef typename Event_queue::value_type           Event_queue_value_type;
   typedef typename Status_line::value_type           Status_line_value_type;
   
-  typedef typename Vertices_points_plus::iterator   Vertices_points_plus_iterator;  
+  typedef typename Vertices_points_plus::iterator   
+                                               Vertices_points_plus_iterator;  
   typedef typename Event_queue::iterator            Event_queue_iterator;  
   typedef typename Status_line::iterator            Status_line_iterator; 
   typedef typename std::list<Curve_node>::iterator  list_Curve_node_iterator;
   
-  typedef std::list<X_curve_plus>                    X_curve_plus_list;
-  typedef X_curve_plus_list::iterator                X_curve_plus_list_iterator;
+  typedef std::list<X_curve_plus>                   X_curve_plus_list;
+  typedef X_curve_plus_list::iterator               X_curve_plus_list_iterator;
   
-  /*typedef Curve_node::Points_iterator                                    Points_iterator;  
-    typedef Curve_node::Points_const_iterator                              Points_const_iterator;
-    typedef Intersection_point_node::Curve_node_iterator                   Curve_node_iterator;
-    typedef Intersection_point_node::Curve_node_const_iterator             Curve_node_const_iterator;
-    
-    typedef std::pair<Curve_node, X_curve_plus>                                    Curve_pair;
-    
-    typedef std::map<Point, Point_plus, less_xy<Point> >                           Vertices_points_plus;
-    typedef std::multimap<Point, Intersection_point_node, less_xy<Point> >         Event_queue;
-    typedef std::multimap<Curve_node, X_curve_plus, less_yx<Curve_node> >          Status_line;*/
-
+  //typedef Curve_node::Points_iterator Points_iterator; typedef
+  //Curve_node::Points_const_iterator Points_const_iterator; typedef
+  //Intersection_point_node::Curve_node_iterator Curve_node_iterator;
+  //typedef Intersection_point_node::Curve_node_const_iterator
+  //Curve_node_const_iterator;
+  //      typedef std::pair<Curve_node, X_curve_plus> Curve_pair;
+  //      typedef std::map<Point, Point_plus, less_xy<Point> >
+  //      Vertices_points_plus; typedef std::multimap<Point,
+  //      Intersection_point_node, less_xy<Point> > Event_queue;
+  //      typedef std::multimap<Curve_node, X_curve_plus,
+  //      less_yx<Curve_node> > Status_line;
+  
   void  map_overlay(const PM &a1, 
                     const PM &a2, 
                     Map_overlay_change_notification *pm_change_notf, 
@@ -241,7 +275,10 @@ public:
                        //                     traits.curve_target(cv))) );
     }
 
-    sweep_curves_to_planar_map(curves.begin(), curves.end(), pm_change_notf, result);
+    sweep_curves_to_planar_map(curves.begin(), 
+                               curves.end(), 
+                               pm_change_notf, 
+                               result);
 
     pm_change_notf->update_all_faces(result);
   }
@@ -270,56 +307,6 @@ private:
          cv_iter !=  curves_end; ++cv_iter, ++n);
     cout<<"number of edges on input "<< n <<std::endl;
 #endif
-
-    /*
-    // first handling the case of which results is not empty: since we are sweeping the curves we have to take all 
-    //the curves of result and 'paste' it to the input curves, then we have to clear result.
-    X_curve_list  subdivision_curves;
-    for (Halfedge_iterator h_iter = result.halfedges_begin(); 
-    h_iter != result.halfedges_end(); ++h_iter, ++h_iter)
-    subdivision_curves.push_back(h_iter->curve());
-    
-    result.clear();
-    
-    // Now, creating all the point_plus handle: for any pair of overlapping points from the input we ensure we have only one handle. - not having such a structure as input_vertices caused a bug.
-    Vertices_points_plus  input_vertices;
-    for (X_curve_list_iterator  cv_iter = subdivision_curves.begin(); 
-    cv_iter !=  subdivision_curves.end(); ++cv_iter){
-    
-    if (input_vertices.find(traits.curve_source(*cv_iter)) == 
-    input_vertices.end())  
-    input_vertices.insert(Vertices_points_plus_value_type(traits.curve_source(*cv_iter), 
-    Point_plus(traits.curve_source(*cv_iter))) );
-    if (input_vertices.find(traits.curve_target(*cv_iter)) == 
-    input_vertices.end())  
-    input_vertices.insert(Vertices_points_plus_value_type
-    (traits.curve_target(*cv_iter), 
-    Point_plus(traits.curve_target(*cv_iter))) );
-    }*/
-    
-    /*
-    // splitting all curves to x-monotone curves.
-    X_curve_list  x_monotone_curves;
-    for (Curve_iterator cv_iter = curves_begin; 
-    cv_iter != curves_end; ++cv_iter){
-    if (!traits.is_x_monotone(*cv_iter)) {
-    X_curve_list x_monotone_subcurves;
-    traits.make_x_monotone(*cv_iter, x_monotone_subcurves);
-    
-    #ifdef  CGAL_SWEEP_LINE_DEBUG
-        std::cout<<"printing x-monotone parts"<<std::endl;
-        #endif
-        for(X_curve_list_iterator iter = x_monotone_subcurves.begin(); 
-        iter != x_monotone_subcurves.end(); ++iter){
-        #ifdef  CGAL_SWEEP_LINE_DEBUG
-        std::cout<<*iter<<endl;
-        #endif
-        x_monotone_curves.push_back(*iter);  
-        }
-        }
-        else
-        x_monotone_curves.push_back(*cv_iter);
-        }*/
     
     /*
       // now adding to the x-monotone container all the curves 

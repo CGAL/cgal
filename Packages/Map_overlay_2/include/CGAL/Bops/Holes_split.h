@@ -1,3 +1,28 @@
+// ======================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.5-I-11 $
+// release_date  : $CGAL_Date: 2002/08/04 $
+//
+// file          : include/CGAL/Bops/Holes_split.h
+// package       : Map_overlay (1.12)
+// maintainer    : Efi Fogel <efif@math.tau.ac.il>
+// source        : 
+// revision      : 
+// revision_date : 
+// author(s)     : Eti Ezra          <estere@post.tau.ac.il>
+//
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+//
+// Chapter       : 
+// ======================================================================
 #ifndef CGAL_HOLES_SPLIT_H
 #define CGAL_HOLES_SPLIT_H
 
@@ -19,7 +44,7 @@ CGAL_BEGIN_NAMESPACE
 template <class Planar_map_, class Notifier_, class BopsTraits_2_ >
 class Holes_split {
   //typedef enum { EPSILON=0.01 }; 
-  static const double EPSILON=0.01;  //change it to work on VC++.
+  static const int EPSILON=1;  //change it to work on VC++.
   
   typedef  Planar_map_    Planar_map;
   typedef  Notifier_      Notifier;
@@ -103,7 +128,7 @@ class Holes_split {
     //cout<< v->point().xcoordD()<<","<<v->point().ycoordD() << endl;
     
     Locate_type lt;
-    double eps = up? EPSILON: -EPSILON;
+    int eps = up? EPSILON: -EPSILON;
     Point pertrubed_p = Point(v->point().x(), 
                               v->point().y() + eps);
     //cout<<"pertrubed_p="<< pertrubed_p.xcoordD()<<","<<pertrubed_p.ycoordD() << endl;
@@ -112,8 +137,8 @@ class Holes_split {
     // vertical_ray_shoot will return the vertex of of in
     // pmwx (that's how it is defined when we shoot a vertical ray
     // from a feature that exists in the map.
-    Halfedge_handle h = pm.vertical_ray_shoot(pertrubed_p, lt, up);
-    
+    //Halfedge_handle h = pm.vertical_ray_shoot(pertrubed_p, lt, up);
+    Halfedge_handle h = pm.vertical_ray_shoot(v->point(), lt, up);
     //cout <<"h->curve()="<<h->curve()<<endl;
     
     if (h->face()->is_unbounded())

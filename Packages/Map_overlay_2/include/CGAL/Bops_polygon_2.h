@@ -1,3 +1,28 @@
+// ======================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.5-I-11 $
+// release_date  : $CGAL_Date: 2002/08/04 $
+//
+// file          : include/CGAL/Bop_polygon_2.h
+// package       : Map_overlay (1.12)
+// maintainer    : Efi Fogel <efif@math.tau.ac.il>
+// source        : 
+// revision      : 
+// revision_date : 
+// author(s)     : Eti Ezra          <estere@post.tau.ac.il>
+//
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+//
+// Chapter       : 
+// ======================================================================
 #ifndef CGAL_BOPS_POLYGON_2_H
 #define CGAL_BOPS_POLYGON_2_H
 
@@ -43,7 +68,7 @@ bool do_intersect(const Polygon& A,
   typedef Planar_map_2<Dcel,Traits>         Planar_map;
   typedef Map_overlay_2<Planar_map>         MapOverlay;
   typedef Boolean_operations_2<MapOverlay>  Bops;
-  typedef CGAL::Pm_walk_along_line_point_location<Planar_map>   PmWalkPL;
+  typedef Pm_walk_along_line_point_location<Planar_map>   PmWalkPL;
   
   typedef Bops::Faces_container           Faces_container;
   typedef Bops::Halfedges_container       Halfedges_container;
@@ -55,9 +80,12 @@ bool do_intersect(const Polygon& A,
   Planar_map pm1(&pm_walk1), pm2(&pm_walk2);
   
   typename Polygon::Edge_const_itertor edge_iter;
-  for (edge_iter = A.edges_begin(); edge_iter != A.edges_end(); ++edge_iter)
+  for (edge_iter = A.edges_begin(); 
+       edge_iter != A.edges_end(); ++edge_iter)
     pm1.insert(*edge_iter);
-  for (edge_iter = B.edges_begin(); edge_iter != B.edges_end(); ++edge_iter)
+  
+  for (edge_iter = B.edges_begin(); 
+       edge_iter != B.edges_end(); ++edge_iter)
     pm2.insert(*edge_iter);
   
   pm1.unbounded_face()->set_ignore_bop(false); 

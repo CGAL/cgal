@@ -1,3 +1,28 @@
+// ======================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.5-I-11 $
+// release_date  : $CGAL_Date: 2002/08/04 $
+//
+// file          : include/CGAL/Map_overlay_default_dcel.h
+// package       : Map_overlay (1.12)
+// maintainer    : Efi Fogel <efif@math.tau.ac.il>
+// source        : 
+// revision      : 
+// revision_date : 
+// author(s)     : Eti Ezra          <estere@post.tau.ac.il>
+//
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+//
+// Chapter       : 
+// ======================================================================
 #ifndef CGAL_MAP_OVERLAY_DEFAULT_DCEL_H
 #define CGAL_MAP_OVERLAY_DEFAULT_DCEL_H 
 
@@ -102,20 +127,6 @@ public:
   
   COLOR get_color() const { return color;}
 
-  /*int  const get_num_faces_above() const
-    {
-    int res = 0;
-    
-    if (get_first_face_above() == 0 && get_second_face_above() == 0)
-    return 0;
-      else if (get_first_face_above())
-      res += ((const_pointer) get_first_face_above())->get_num_faces_above() + 1;
-      if (get_second_face_above())
-      res += ((const_pointer) get_second_face_above())->get_num_faces_above() + 1;
-      
-      return res;
-      }*/
-
   virtual void assign(const_ref f)
   {
     operator=(f);  
@@ -192,17 +203,21 @@ public:
   void  set_first_halfedge_above(const void* const halfedge)
   {
     // updating only if the value is not 0 and not already in the array.
-    if (halfedge &&  halfedges_above[0] != halfedge && halfedges_above[1] != halfedge){
-      halfedges_above[0] = halfedge;
-    }
+    if (halfedge &&  halfedges_above[0] != halfedge && 
+        halfedges_above[1] != halfedge)
+      {
+        halfedges_above[0] = halfedge;
+      }
   }
   
    void  set_second_halfedge_above(const void* const halfedge)
   {
     // updating only if the value is not 0 and not already in the array.
-    if (halfedge &&  halfedges_above[0] != halfedge && halfedges_above[1] != halfedge){
-      halfedges_above[1] = halfedge;
-    }
+    if (halfedge &&  halfedges_above[0] != halfedge && 
+        halfedges_above[1] != halfedge)
+      {
+        halfedges_above[1] = halfedge;
+      }
   }
   
   const void* const get_first_halfedge_above() const
@@ -219,17 +234,19 @@ public:
   void  set_first_face_above(const void*  face)
   {
     // updating only if the value is not 0 and not already in the array.
-    if (face &&  faces_above[0] != face && faces_above[1] != face){
-      faces_above[0] = face;
-    }
+    if (face &&  faces_above[0] != face && faces_above[1] != face)
+      {
+        faces_above[0] = face;
+      }
   }
   
   void  set_second_face_above (const void*  face)
   {
     // updating only if the value is not 0 and not already in the array.
-    if (face &&  faces_above[0] != face && faces_above[1] != face){      
-      faces_above[1] = face;
-    }
+    if (face &&  faces_above[0] != face && faces_above[1] != face)
+      {
+        faces_above[1] = face;
+      }
   }
 
   void reset()
@@ -332,29 +349,36 @@ public:
     return *this;
   }
 
-  void  set_first_vertex_above(const void* const vertex) {
+  void  set_first_vertex_above(const void* const vertex) 
+  {
     // updating only if the value is not 0 and not already in the array.
-    if (vertex && vertices_above[0] != vertex && vertices_above[1] != vertex){  
-      vertices_above[0] = vertex;
-    }
+    if (vertex && vertices_above[0] != vertex && vertices_above[1] != vertex)
+      {
+        vertices_above[0] = vertex;
+      }
   }
 
-  void  set_second_vertex_above(const void* const vertex) {
+  void  set_second_vertex_above(const void* const vertex) 
+  {
     // updating only if the value is not 0 and not already in the array.
-    if (vertex && vertices_above[0] != vertex && vertices_above[1] != vertex){
-      vertices_above[1] = vertex;
-    }
+    if (vertex && vertices_above[0] != vertex && vertices_above[1] != vertex)
+      {
+        vertices_above[1] = vertex;
+      }
   }
   
-  const void* const get_first_vertex_above() const {
+  const void* const get_first_vertex_above() const 
+  {
     return  vertices_above[0];
   }
 
-  const void* const get_second_vertex_above() const {
+  const void* const get_second_vertex_above() const 
+  {
     return  vertices_above[1];
   }
   
-  void  set_first_halfedge_above(const void* const halfedge) {
+  void  set_first_halfedge_above(const void* const halfedge) 
+  {
     
     if (halfedge && halfedges_above[0] != halfedge && 
         halfedges_above[1] != halfedge){
@@ -362,36 +386,42 @@ public:
     }
   }
   
-  void  set_second_halfedge_above(const void* const halfedge) {
+  void  set_second_halfedge_above(const void* const halfedge) 
+  {
     if (halfedge && halfedges_above[0] != halfedge && 
         halfedges_above[1] != halfedge){
       halfedges_above[1] = halfedge;
     }
   }
   
-  const void* const get_first_halfedge_above() const {
+  const void* const get_first_halfedge_above() const 
+  {
     return halfedges_above[0];
   }
 
-  const void* const get_second_halfedge_above() const {
+  const void* const get_second_halfedge_above() const 
+  {
     return halfedges_above[1];
   }
   
-  void  set_first_face_above(const void*  face) {
+  void  set_first_face_above(const void*  face) 
+  {
     // updating only if the value is not 0 and not already in the array.
     if (face && faces_above[0] != face && faces_above[1] != face){
       faces_above[0] = face;
     }
   }
   
-  void  set_second_face_above (const void*  face) {
+  void  set_second_face_above (const void*  face) 
+  {
     // updating only if the value is not 0 and not already in the array.
     if (face && faces_above[0] != face && faces_above[1] != face){   
       faces_above[1] = face;
     }
   }
 
-  const void* const get_first_face_above() const {
+  const void* const get_first_face_above() const 
+  {
     return faces_above[0];
   }
   
@@ -400,7 +430,8 @@ public:
     return faces_above[1];
   }
 
-  void reset() { 
+  void reset() 
+  {
     vertices_above[0] = vertices_above[1] = 0; 
     halfedges_above[0] = halfedges_above[1] = 0; 
     faces_above[0] = faces_above[1] = 0; 
@@ -422,8 +453,8 @@ template <class Traits,
   class Halfedge_base = Pm_halfedge_base<typename Traits::X_curve> , 
   class Face_base =  Pm_face_base> 
 class Map_overlay_default_dcel : public Pm_dcel<Vertex_overlay<Vertex_base> , 
-                                                Halfedge_overlay<Halfedge_base>, 
-                                                Face_overlay<Face_base> > 
+                                              Halfedge_overlay<Halfedge_base>, 
+                                              Face_overlay<Face_base> > 
 {
 public:  // CREATION
   Map_overlay_default_dcel() {} 
