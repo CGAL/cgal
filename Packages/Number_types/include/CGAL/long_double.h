@@ -120,7 +120,7 @@ bool is_valid(const long double & d)
 
 inline
 bool
-is_finite_by_mask_double(unsigned int h)
+is_finite_by_mask_long_double(unsigned int h)
 {
   unsigned int e = h & CGAL_EXPONENT_DOUBLE_MASK;
   return ( ( e ^ CGAL_EXPONENT_DOUBLE_MASK ) != 0 );
@@ -128,9 +128,9 @@ is_finite_by_mask_double(unsigned int h)
 
 inline
 bool
-is_nan_by_mask_double(unsigned int h, unsigned int l)
+is_nan_by_mask_long_double(unsigned int h, unsigned int l)
 {
-  if ( is_finite_by_mask_double(h) )
+  if ( is_finite_by_mask_long_double(h) )
       return false;
   return (( h & CGAL_MANTISSA_DOUBLE_MASK ) != 0) || (( l & 0xffffffff ) != 0);
 }
@@ -141,7 +141,7 @@ is_finite( const long double& dble)
 {
   double d = dble;
   IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
-  return is_finite_by_mask_double( p->c.H );
+  return is_finite_by_mask_long_double( p->c.H );
 }
 
 inline
@@ -150,7 +150,7 @@ is_valid( const long double& dble)
 {
   double d = dble;
   IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
-  return ! ( is_nan_by_mask_double( p->c.H, p->c.L ));
+  return ! ( is_nan_by_mask_long_double( p->c.H, p->c.L ));
 }
 
 #else
