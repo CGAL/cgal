@@ -1,7 +1,7 @@
 There following programs are availalbe here to illustrate some of the 2D
 convex hull functions available in CGAL:
 
-ch_demo 
+convex_hull_of_ipoints
     Generates 30 random segments with coordinates in the range
     (-256, 256) and computes the intersections of these segments
     The segments and their intersections are displayed in the window

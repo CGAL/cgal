@@ -24,10 +24,12 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/ch_melkman.C>
+
 #ifdef CGAL_USE_LEDA
 #include <CGAL/IO/leda_ps_file.h>
 #include <CGAL/IO/leda_window.h>
 #endif // CGAL_USE_LEDA
+
 #include <CGAL/IO/polygonal_2.h>
 #include <CGAL/IO/Ostream_iterator.h>
 
@@ -36,8 +38,7 @@ typedef  K::Point_2                   Point_2;
 
 CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(Point_2*)
 
-int
-main()
+int main()
 {
   CGAL::set_ascii_mode(std::cin);
   CGAL::set_ascii_mode(std::cout);

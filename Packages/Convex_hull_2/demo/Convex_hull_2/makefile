@@ -28,12 +28,9 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                ch_demo \
                 ch_of_polyline \
-                convex_hull_2_demo 
-
-ch_demo: ch_demo.o
-	$(CGAL_CXX) -o ch_demo ch_demo.o $(LDFLAGS)
+                convex_hull_2_demo \
+                convex_hull_of_ipoints 
 
 ch_of_polyline: ch_of_polyline.o
 	$(CGAL_CXX) -o ch_of_polyline ch_of_polyline.o $(LDFLAGS)
@@ -41,11 +38,14 @@ ch_of_polyline: ch_of_polyline.o
 convex_hull_2_demo: convex_hull_2_demo.o
 	$(CGAL_CXX) -o convex_hull_2_demo convex_hull_2_demo.o $(LDFLAGS)
 
+convex_hull_of_ipoints: convex_hull_of_ipoints.o
+	$(CGAL_CXX) -o convex_hull_of_ipoints convex_hull_of_ipoints.o $(LDFLAGS)
+
 clean:
 	/bin/rm -f *.o \
-                   ch_demo \
                    ch_of_polyline \
                    convex_hull_2_demo \
+                   convex_hull_of_ipoints \
                    core
 
 #---------------------------------------------------------------------#
