@@ -7,6 +7,14 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: joined CGAL_LIB_NAME and CGAL_LIBNAME.
+GLOB: Fixed leda/gmp libdir checks for M$VC/Borland.
+GLOB: Fixed CGAL_LIB_DESTINATION for M$VC/Borland (no backslash).
+GLOB: Fixed CGAL_LIB_CREATE.
+GLOB: Added ADDITIONAL_LDFLAGS variable.
+GLOB: Set -LANG:std as ADDITIONAL_*FLAGS for mips-7.3.
+GLOB: Do not build sharedlibs on cygwin.
+GLOB: Fixed M$VC version detection to work on german W95-edition.
 GLOB: commented lib_platform_dependent.
 GLOB: Some changes for MS-Borland support due to GJ.
 GLOB: Added CLN support due to Sylvain.
@@ -51,6 +59,8 @@ DOCS: removed support for "external" STL
 DOCS: removed obsolete paragraph about LEDA/STL problems
 DOCS: updated upgrade section.
 DOCS: updated list of supported compilers.
+DOCS: Added description of CLN support.
+DOCS: Some minor corrections.
 DOCS: added section "Compiler Optimisations"
 DOCS: added long-name-problem remarks to Troubleshooting
 DOCS: moved leda-stl-conflict subsection to Troubleshooting
@@ -70,5 +80,62 @@ GLOB: removed geomview support (now in geomview package).
 GLOB: added geomview support,
 GLOB: included fixes from CGAL-1-1-patch.
 DOCS: adopted to new html-converter.
+SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.
+SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
+
+//---------------------------------------------------------------------
+//	 CGAL-1.1
+//---------------------------------------------------------------------
+
+GLOB: changed EXTRA_OBJECTS for Intervall_arithmetic workaround on irix6.
+GLOB: define CGAL_CC in include makefiles.
+GLOB: write CGAL_EXTRA_OBJECTS without path-prefix.
+GLOB: generate cctype replacement header, if CCTYPE_MACRO_BUG is encountered.
+GLOB: add -DLEDA_NO_DEFAULT_COMPARE to cxxflags on gcc-2.8.
+GLOB: use "make -k" when building the libs.
+GLOB: added CGAL_EXTRA_OBJECTS to include makefile (Intervall_arithmetic fix
+ALL : for irix)
+GLOB: added -DLEDA_STD_HEADERS if compiling with LEDA support
+GLOB: undefine evt. existing cctype macros (see CGAL_CFG_CCTYPE_MACRO_BUG)
+GLOB: in cctype, use the functions instead
+GLOB: added strstream to the redirection headers
+GLOB: do not add the cctype symbols to namespace std (they are macros)
+GLOB: added using directives to replacement headers to put symbols into
+GLOB: namespace std that should be there.
+GLOB: changed order in compiler tests: first check standard headers
+GLOB: STL test is now just one among many other compiler tests
+GLOB: changed to support Cygwin
+GLOB: corrected OS description on Linux
+GLOB: removed explicit support for "external" STL.
+GLOB: internal tests now use standard headers and namespace.
+ALL : Update for CGAL-2.0.
+GLOB: Show whether compiler is supported.
+GLOB: Create redirection header files in correct dir.
+GLOB: New Upgrade option.
+GLOB: added -Wall flag for gcc2.8/egcs.
+GLOB: added standard header redirection by Geert-Jan.
+GLOB: added namespace disabling for SGI-7.2.1 in tests.
+GLOB: removed geomview support (now in geomview package).
+GLOB: added geomview support,
+GLOB: included fixes from CGAL-1-1-patch.
+GLOB: Added variable PRINT_STACKTRACE_PROGRAM to include makefiles. It can
+GLOB: be used to get a stacktrace, in case a program crashes during the
+GLOB: testsuite.
+DOCS: updated documentation acc.to Stefan's suggestions.
+DOCS: added documentation of scripts (use_cgal_namespace,
+DOCS: create_cgal_makefile and replace_headers).
+DOCS: some minor corrections/clarifications.
+DOCS: sample installation now with egcs
+DOCS: removed support for "external" STL
+DOCS: removed obsolete paragraph about LEDA/STL problems
+DOCS: updated upgrade section.
+DOCS: updated list of supported compilers.
+DOCS: updated titlepage to 1.1.
+DOCS: adopted to new html-converter.
+DOCS: Made conformant to the new html coverter.
+ALL : Initial revision
+SRC : added rule for compiling the intervall-arithmetic workaround_4_irix.
+SRC : added CGAL_EXTRA_OBJECTS to lib makefiles (Intervall_arithmetic fix
+SRC : added Fixed_precision_nt.o.
 SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.
 SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.

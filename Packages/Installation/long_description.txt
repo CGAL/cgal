@@ -4,6 +4,21 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.50
+//---------------------------------------------------------------------
+
+GLOB: joined CGAL_LIB_NAME and CGAL_LIBNAME.
+GLOB: Fixed leda/gmp libdir checks for M$VC/Borland.
+GLOB: Fixed CGAL_LIB_DESTINATION for M$VC/Borland (no backslash).
+GLOB: Fixed CGAL_LIB_CREATE.
+GLOB: Added ADDITIONAL_LDFLAGS variable.
+GLOB: Set -LANG:std as ADDITIONAL_*FLAGS for mips-7.3.
+GLOB: Do not build sharedlibs on cygwin.
+GLOB: Fixed M$VC version detection to work on german W95-edition.
+DOCS: Added description of CLN support.
+DOCS: Some minor corrections.
+
+//---------------------------------------------------------------------
 //	revision 1.49
 //---------------------------------------------------------------------
 
