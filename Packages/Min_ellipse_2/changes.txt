@@ -1,5 +1,9 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.2.7 on 22-Sep-1999
+- copy construction "syntactically" replaced by assignment operator.
+- 'CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(...)' added.
+
 Version 3.2.6 on 18-Aug-1999
 - some missing `std::' added.
 
