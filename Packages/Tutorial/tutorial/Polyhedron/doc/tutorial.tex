@@ -1,6 +1,9 @@
 \documentclass[letter,twoside,10pt]{article}
 \usepackage{tutorial}
 \input{tutorial.def}
+\usepackage{subfigure}
+\usepackage{epsfig}
+%\psdraft
 
 % hyperref stuff
 \usepackage{hyperref}
@@ -29,7 +32,7 @@
 \date{}
 \title{{\LARGE {\sffamily\bfseries Getting started with CGAL
 Polyhedron}}\\ the example of subdivision surfaces}
-\author{
+\author{\small
 \sffamily Pierre Alliez\footnote{GEOMETRICA, INRIA Sophia-Antipolis}
 \and 
 \sffamily Andreas Fabri\footnote{GeometryFactory, Sophia-Antipolis}
@@ -106,7 +109,7 @@ ways (raster and vectorial) to produce pictures and illustrations.\\
 % teaser
 
 \begin{figure}[htb]
-    \centering{\includegraphics[width=\linewidth]{figs/teaser}}
+    \centering{\includegraphics[width=12.0cm]{figs/teaser}}
     \caption{Snapshot taken from the tutorial application running
              on Windows. A polygon mesh is subdivided using the
              quad-triangle subdivision scheme~\cite{sl-qts-02}.}
@@ -144,6 +147,7 @@ discussion groups\footnote{see the cgal discuss list:
 
 \end{itemize}               
 
+
 % PREREQUISITES
 \section{Prerequisites}
 
@@ -156,12 +160,12 @@ stone of all features provided by CGAL.\\
 
 % STL
 
-An excellent example illustrating generic programming is the Standard
-Template Library (STL)~\cite{ms-stl-96}. Generality and flexibility is
-achieved with a set of \italic{concepts}, where a concept is a well
-defined set of requirements. One of them is the \italic{iterator}
-concept, which allows both referring to an item and traversing a
-sequence of items. Those items are stored in a data structure called
+An example illustrating generic programming is the Standard Template
+Library (STL)~\cite{ms-stl-96}. Generality and flexibility is achieved
+with a set of \italic{concepts}, where a concept is a well defined set
+of requirements. One of them is the \italic{iterator} concept, which
+allows both referring to an item and traversing a sequence of
+items. Those items are stored in a data structure called
 \italic{container} in STL. Another concept, so-called
 \italic{circulator}, allows traversing some circular sequences. They
 share most of the requirements with iterators, except the lack of
@@ -194,7 +198,7 @@ Fig.\ref{fig:halfedge}).
 % halfedge
 
 \begin{figure}[htb]
-    \centering{\includegraphics[width=\linewidth]{figs/halfedge}}
+    \centering{\includegraphics[width=7.0cm]{figs/halfedge}}
     \caption{One halfedge and its incident primitives.}
     \label{fig:halfedge}
 \end{figure}
@@ -240,7 +244,6 @@ Its underlying combinatorial component is based on the halfedge data
 structure. As all CGAL geometric entities, its geometric component is
 templated by the
 \italic{kernel}\footnote{\href{http://www.CGAL.org/Manual/doc_html/frameset/fsKernel.html}{CGAL kernel}}.
-
 
 \subsection{Declaration}
 
@@ -526,7 +529,7 @@ CGAL_For_all(circ,end)
 
 % circulation inside a facet and around a vertex
 \begin{figure}[htb]
-    \centering{\includegraphics[width=\linewidth]{figs/stl_concepts}}
+    \centering{\includegraphics[width=7.0cm]{figs/stl_concepts}}
     \caption{Left: circulation around a facet (ccw).
              Right: circulation around a vertex (cw).}  
     \label{fig:stl_concept}
@@ -553,13 +556,13 @@ operators}}.
 \subsection{Incremental Builder}
 \label{sec:builder}
 
-
-A utility class \verb+Polyhedron_incremental_builder_3+ helps in
+The utility class \verb+Polyhedron_incremental_builder_3+ helps in
 creating polyhedral surfaces from a list of points followed by a list
 of facets that are represented as indices into the point list. This is
 particularly useful for implementing file reader for common file
 formats. In Section~\ref{sec:subdivision_builder}, we use the
-incremental builder to implement the quad-triangle subdivision scheme.\\
+incremental builder to implement the quad-triangle subdivision
+scheme.\\
 
 In the following example, the incremental builder is used to create a
 simple triangle. \verb+Build_triangle+ is such a function object
@@ -623,24 +626,60 @@ CGAL_assertion(P.is_triangle(P.halfedges_begin()));
 
 A subdivision surface is the limit surface resulting from the
 application of a \italic{subdivision scheme} to a control polyhedron
-(see Fig.\ref{fig:subdivision}). During this process the polygon base
+(see Fig.\ref{fig:teaser}). During this process the polygon base
 mesh is recursively subdivided and the mesh geometry is progressively
 modified according to subdivision rules. A subdivision scheme is
 characterized by a refinement operator that acts on the connectivity
 by subdividing the mesh, and by a smoothing operator that modifies the
-geometry. We choose the example of subdivision to illustrate (i)
-iteration and circulation on a halfedge data structure, (ii)
-modification of the connectivity, and (iii) modification of the
-geometry.
+geometry. 
 
-% subdivision paradigm
+Figure. \ref{fig:RefSchemes} introduces several refinement schemes in
+practice. Some general properties of these refinement schemes are
+\italic{regular pattern}, \italic{rotationally symmetric} and well
+\italic{defined footprint} of each vertex in the
+range. Figure. \ref{fig:PQQMap} demonstrates the functional map from
+the footprint in the domain mesh to the vertex in the range mesh of
+the primal quadrilateral quadrisection scheme. The geometry rules of a
+specific refinement scheme is hence defined according to the
+corresponding functional maps.
 
-\begin{figure}[htb]
-    \centering{\includegraphics[width=\linewidth]{figs/subdivision}}
-    \caption{Catmull-Clark subdivision of a quadrilateral control mesh.}  
-    \label{fig:subdivision}
+\begin{figure}
+  \centering
+  \subfigure[Primal quadrilateral quadrisection.] {
+    \includegraphics[width=2.5in]{pfigs/PQQRef.eps}
+  }
+  \subfigure[Primal triangle quadrisection.] {
+    \includegraphics[width=2.5in]{pfigs/PTQRef.eps}
+  }
+  \subfigure[Dual quadrilateral quadrisection.] {
+    \includegraphics[width=2.5in]{pfigs/DQQRef.eps}
+  }
+  \caption{Refinement schemes. (Left) indicates the domain mesh.
+  (Right) indicates the range mesh. }
+  \label{fig:RefSchemes}
 \end{figure}
 
+\begin{figure}
+  \centering
+  \includegraphics[width=3.0in]{pfigs/PQQRefMap.eps}\\
+  \caption{The correspondence of the domain footprint and the 
+           range vertex of the PQQ schemes}
+  \label{fig:PQQMap}
+\end{figure}
+
+Any implementation of a subdivision scheme contains two major
+components: \italic{refinement scheme} and \italic{geometry rules}.
+Refinement schemes are defined by the 
+\italic{uniform connectivity reconfiguration} of the source 
+mesh (the domain) to the target mesh (the range). The geometry rules,
+providing certain surface properties, e.g the smoothness, are the
+mapping functions of the \italic{footprints} in the domain mesh to the
+\italic{vertices} in the range mesh. Any subdivision in practice can
+be defined as a legal combination of a refinement scheme and the
+geometry rules. Based on the paradigm of the
+\italic{policy-based design} \cite{a-rotm-02}, the combination can be
+designed as the \italic{host function} (the refinement function)
+templated with the \italic{policy class} (the geometry rules).
 
 \subsection{$\sqrt{3}$-Subdivision using Euler Operators}
 
@@ -659,248 +698,26 @@ Fig.\ref{fig:sqrt3}.
 % sqrt3 subdivision (basic)
 
 \begin{figure}[htb]
-    \centering{\includegraphics[width=\linewidth]{figs/sqrt3_basic}}
+    \centering{\includegraphics[width=10.0cm]{figs/sqrt3_basic}}
     \caption{The $\sqrt{3}$-Subdivision scheme is decomposed as
              a set of Euler operators: face splits and edge flips.}
     \label{fig:sqrt3_basic}
 \end{figure}
 
-{ \scriptsize
+{ 
+
+\scriptsize
 \begin{verbatim}
 
-template <class Polyhedron,class kernel>
-class CSubdivider_sqrt3
-{
-	typedef typename kernel::Point_3 Point;
-  typedef typename kernel::Vector_3 Vector;
-  typedef typename Polyhedron::Vertex                                   Vertex;
-  typedef typename Polyhedron::Vertex_iterator                          Vertex_iterator;
-  typedef typename Polyhedron::Halfedge_handle                          Halfedge_handle;
-  typedef typename Polyhedron::Edge_iterator                            Edge_iterator;
-  typedef typename Polyhedron::Facet_iterator                           Facet_iterator;
-  typedef typename Polyhedron::Halfedge_around_vertex_const_circulator  HV_circulator;
-  typedef typename Polyhedron::Halfedge_around_facet_circulator         HF_circulator;
-  typedef typename kernel::FT                                           FT;
-  #define PI 3.1415926535897932
-
-public:
-  CSubdivider_sqrt3() {}
-  ~CSubdivider_sqrt3() {}
-
-  //*********************************************
-  // Subdivision
-  //*********************************************
-  int subdivide(Polyhedron &P,
-                int iter)
-  {
-    // check for valid polygon mesh
-    if(P.size_of_facets() == 0)
-      return false;
-
-    // normalize border
-    P.normalize_border();
-
-    for(int i=0;i<iter;i++)
-    {
-      // subdivision
-      subdivide(P);
-
-       // boundary subdivision
-      if(i & 1)
-        subdivide_border(P);
-    }
-    return true;
-  }
-
-  ///////////////////////////////////////////////
-  // PRIVATE
-  ///////////////////////////////////////////////
 
 
-  //*********************************************
-  // Flip edge
-  //*********************************************
-  void flip_edge(Polyhedron& P,
-                 Halfedge_handle e)
-  {
-    if(e->is_border_edge())
-      return;
-    Halfedge_handle h = e->next();
-    P.join_facet( e);
-    P.split_facet( h, h->next()->next());
-  }
-
-  //*********************************************
-  // Subdivide
-  //*********************************************
-  void subdivide(Polyhedron& P)
-  {
-    // We use that new vertices/halfedges/facets are appended at the end.
-    std::size_t nv = P.size_of_vertices();
-    Vertex_iterator last_v = P.vertices_end();
-    -- last_v;  // the last of the old vertices
-    Edge_iterator last_e = P.edges_end();
-    -- last_e;  // the last of the old edges
-    Facet_iterator last_f = P.facets_end();
-    -- last_f;  // the last of the old facets
-
-    // create new center vertices
-    Facet_iterator f = P.facets_begin();    
-    do {
-        create_center_vertex( P, f);
-    } while ( f++ != last_f);
-
-    std::vector<Point> pts;
-    // smooth the old vertices
-    pts.reserve( nv);  // get intermediate space for the new points
-    ++ last_v; // make it the past-the-end position again
-    std::transform( P.vertices_begin(), last_v, std::back_inserter( pts),
-                    Smooth_old_vertex());
-    std::copy( pts.begin(), pts.end(), P.points_begin());
-
-    Edge_iterator e = P.edges_begin();
-    // flip the old edges
-    ++ last_e; // make it the past-the-end position again
-    while ( e != last_e) {
-        Halfedge_handle h = e;
-        ++e; // careful, incr. before flip since
-             // flip destroys current edge
-        flip_edge( P, h);
-    };
-    CGAL_postcondition( P.is_valid());
-  }
-
-  //*********************************************
-  // Trisect border halfedge
-  //*********************************************
-  void trisect_border_halfedge(Polyhedron& P,
-                               Halfedge_handle e)
-  {
-    CGAL_precondition( e->is_border());
-    // Create two new vertices on e.
-    e = e->prev();
-    P.split_vertex( e, e->next()->opposite());
-    P.split_vertex( e, e->next()->opposite());
-    e = e->next();
-    // We use later for the smoothing step that e->next()->next()
-    // is our original halfedge we started with, i.e., its vertex is
-    // from the unrefined mesh.  Split the face twice.
-    Halfedge_handle h = e->opposite()->next();
-    P.split_facet( e->next()->next()->opposite(), h);
-    P.split_facet( e->next()->opposite(), h);
-  }
-
-  //*********************************************
-  // Subdivide border
-  //*********************************************
-  void subdivide_border(Polyhedron& P)
-  {
-    if ( P.size_of_facets() == 0)
-        return;
-    // We use that new halfedges are appended at the end.
-    Edge_iterator last_e = P.edges_end();
-    -- last_e;  // the last of the old edges
-    Edge_iterator e = P.edges_begin(); // create trisected border edges
-    do {
-        if ( e->opposite()->is_border())
-            trisect_border_halfedge( P, e->opposite());
-        else if ( e->is_border())
-            trisect_border_halfedge( P, e);
-    } while ( e++ != last_e);
-    e = P.edges_begin();     // smooth points on border edges
-    std::vector<Point> pts;  // store new smoothed points temporarily
-    do {
-        if ( e->opposite()->is_border())
-            smooth_border_vertices( e->opposite(), std::back_inserter(pts));
-        else if ( e->is_border())
-            smooth_border_vertices( e, std::back_inserter(pts));
-    } while ( e++ != last_e);
-    e = P.edges_begin(); // copy smoothed points back
-    std::vector<Point>::iterator i = pts.begin();
-    do {
-        if ( e->opposite()->is_border()) {
-            e->vertex()->point() = *i++;
-            e->opposite()->vertex()->point() = *i++;
-            e->opposite()->next()->vertex()->point() = *i++;
-        } else if ( e->is_border()) {
-            e->opposite()->vertex()->point() = *i++;
-            e->vertex()->point() = *i++;
-            e->next()->vertex()->point() = *i++;
-        }
-    } while ( e++ != last_e);
-    CGAL_assertion( i == pts.end());
-    CGAL_postcondition( P.is_valid());
-  }
-
-  //*********************************************
-  // Create center vertex
-  //*********************************************
-  void create_center_vertex(Polyhedron& P,
-                            Facet_iterator f)
-  {
-    Vector vec( 0.0, 0.0, 0.0);
-    std::size_t order = 0;
-    HF_circulator h = f->facet_begin();
-    do {
-        vec = vec + ( h->vertex()->point() - CGAL::ORIGIN);
-        ++ order;
-    } while ( ++h != f->facet_begin());
-    CGAL_assertion( order >= 3); // guaranteed by definition of Polyhedron
-    Point center =  CGAL::ORIGIN + (vec / (FT)order);
-    Halfedge_handle new_center = P.create_center_vertex( f->halfedge());
-    new_center->vertex()->point() = center;
-  }
-
-  struct Smooth_old_vertex
-  {
-     Point operator()( const Vertex& v) const
-     {
-       std::size_t degree = CGAL::circulator_size( v.vertex_begin());
-       if ( degree & 1) // odd degree only at border vertices
-           return v.point();
-       degree = degree / 2;
-       FT alpha = (4.0f - 2.0f * (FT)cos( 2.0f * PI / (FT)degree)) / 9.0f;
-       Vector vec = (v.point() - CGAL::ORIGIN) * ( 1.0f - alpha);
-       HV_circulator h = v.vertex_begin();
-       do {
-         // Even degree and border edges indicated non-manifold
-         // vertex with two holes.
-         if( h->is_border())
-         {
-           std::cerr << "Error: non-manifold vertex. Erroneous smoothing."
-                     << std::endl;
-           return v.point();
-         }
-         vec = vec + ( h->opposite()->vertex()->point() - CGAL::ORIGIN)
-           * alpha / (FT)degree;
-         ++ h;
-         CGAL_assertion( h != v.vertex_begin()); // even degree guaranteed
-         ++ h;
-       } while ( h != v.vertex_begin());
-       return (CGAL::ORIGIN + vec);
-     }
-  };
-
-  template <class OutputIterator>
-  void smooth_border_vertices(Halfedge_handle e,OutputIterator out)
-  {
-    CGAL_precondition( e->is_border());
-    // We know that the vertex at this edge is from the unrefined mesh.
-    // Get the locus vectors of the unrefined vertices in the neighborhood.
-    Vector v0 = e->prev()->prev()->opposite()->vertex()->point() -CGAL::ORIGIN;
-    Vector v1 = e->vertex()->point() - CGAL::ORIGIN;
-    Vector v2 = e->next()->next()->next()->vertex()->point() - CGAL::ORIGIN;
-    *out++ = CGAL::ORIGIN + (10.0 * v0 + 16.0 * v1 +        v2) / 27.0;
-    *out++ = CGAL::ORIGIN + ( 4.0 * v0 + 19.0 * v1 +  4.0 * v2) / 27.0;
-    *out++ = CGAL::ORIGIN + (       v0 + 16.0 * v1 + 10.0 * v2) / 27.0;
-  }
-};
-\end{verbatim}}
+\end{verbatim}
+}
 
 % sqrt3 subdivision 
 
 \begin{figure}[htb]
-    \centering{\includegraphics[width=\linewidth]{figs/sqrt3}}
+    \centering{\includegraphics[width=10.0cm]{figs/sqrt3}}
     \caption{$\sqrt{3}$-Subdivision of the mannequin mesh.}
     \label{fig:sqrt3}
 \end{figure}
@@ -924,7 +741,7 @@ Polyhedron (see Section~\ref{sec:builder}).
 % quad-triangle subdivision scheme
 
 \begin{figure}[htb]
-    \centering{\includegraphics[width=\linewidth]{figs/quad-triangle}}
+    \centering{\includegraphics[width=10.0cm]{figs/quad-triangle}}
     \caption{Quad-triangle subdivision scheme.}
     \label{fig:quad-triangle}
 \end{figure}
@@ -941,15 +758,8 @@ template <class HDS,class Polyhedron,class kernel>
 class CModifierQuadTriangle : public CGAL::Modifier_base<HDS>
 {
 private:
-  typedef typename kernel::FT           FT;
-  typedef typename HDS::Vertex          Vertex;
-  typedef typename Vertex::Point        Point;
-  typedef typename HDS::Face_handle     Face_handle;
-  typedef typename HDS::Halfedge_handle Halfedge_handle;
-  typedef typename CGAL::Enriched_polyhedron_incremental_builder_3<HDS> builder;
-  typedef typename Polyhedron::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
-  typedef typename Polyhedron::Facet_handle Facet_handle;
-  typedef typename Polyhedron::Vertex_handle Vertex_handle;
+
+  typedef ...
 
   Polyhedron *m_pMesh;
 
@@ -974,352 +784,12 @@ public:
   }
 
 private:
+
+  // ... 
+  // for the complete implementation of the subdivision, 
+  // readers should refer to the accompanied source codes of 
+  // this tutorial.
   
-  //***************************************************
-  // add vertices
-  //***************************************************
-  void add_vertices(builder &B)
-  {
-    // put original vertices
-    int index = 0;
-    typename Polyhedron::Vertex_iterator pVertex;
-    for(pVertex = m_pMesh->vertices_begin();
-        pVertex != m_pMesh->vertices_end();
-        pVertex++)
-    {
-      pVertex->tag(index);
-      B.add_vertex(pVertex->point());
-      index++;
-    }
-
-    // as many as #edges
-    m_pMesh->tag_halfedges(-1);
-    typename Polyhedron::Halfedge_iterator pHalfedge;
-    for(pHalfedge = m_pMesh->halfedges_begin();
-        pHalfedge != m_pMesh->halfedges_end();
-        pHalfedge++)
-    {
-      if(pHalfedge->tag() != -1)
-        continue;
-
-      // simple edge bissection
-      const Point& p1 = pHalfedge->vertex()->point();
-      const Point& p2 = pHalfedge->opposite()->vertex()->point();
-      Point point = Point(0.5f*(p1.x()+p2.x()),
-                          0.5f*(p1.y()+p2.y()),
-                          0.5f*(p1.z()+p2.z()));
-      B.add_vertex(point);
-
-      // put vertex indices on both halfedges
-      pHalfedge->tag(index);
-      pHalfedge->opposite()->tag(index);
-      index++;
-    }
-
-    // and as many as #facets with degree > 3
-    m_pMesh->tag_facets(-1);
-    typename Polyhedron::Facet_iterator pFacet;
-    for(pFacet = m_pMesh->facets_begin();
-        pFacet != m_pMesh->facets_end();
-        pFacet++)
-    {
-      unsigned int degree = Polyhedron::degree(pFacet);
-      CGAL_assertion(degree >= 3);
-      // forget about triangles, they are
-      // simply 1-to-4 subdivided by edge bisection
-      if(degree == 3)
-        continue; 
-
-      // barycentric subdivision
-      Point barycenter;
-	    m_pMesh->compute_facet_center(pFacet,barycenter);
-      B.add_vertex(barycenter);
-      pFacet->tag(index);
-      index++;
-    }
-  }
-
-  //***************************************************
-  // add facets
-  //***************************************************
-  void add_facets(builder &B)
-  {
-    typename Polyhedron::Facet_iterator pFacet;
-    for(pFacet = m_pMesh->facets_begin();
-        pFacet != m_pMesh->facets_end();
-        pFacet++)
-    {
-      unsigned int degree = Polyhedron::degree(pFacet);
-      CGAL_assertion(degree >= 3);
-
-      if(degree == 3)
-      {
-        typename Polyhedron::Halfedge_handle pHalfedge = pFacet->halfedge();
-        int i0 = pHalfedge->tag();
-        int i1 = pHalfedge->vertex()->tag();
-        int i2 = pHalfedge->next()->tag();
-        int i3 = pHalfedge->next()->vertex()->tag();
-        int i4 = pHalfedge->next()->next()->tag();
-        int i5 = pHalfedge->next()->next()->vertex()->tag();
-        CGAL_assertion(i0 >= 0);
-        CGAL_assertion(i1 >= 0);
-        CGAL_assertion(i2 >= 0);
-        CGAL_assertion(i3 >= 0);
-        CGAL_assertion(i4 >= 0);
-        CGAL_assertion(i5 >= 0);
-
-        // create 4 triangles
-        B.begin_facet();
-          B.add_vertex_to_facet(i1);
-          B.add_vertex_to_facet(i2);
-          B.add_vertex_to_facet(i0);
-        const Halfedge_handle& h1 = B.end_facet();
-        B.begin_facet();
-          B.add_vertex_to_facet(i3);
-          B.add_vertex_to_facet(i4);
-          B.add_vertex_to_facet(i2);
-        const Halfedge_handle& h2 = B.end_facet();
-        B.begin_facet();
-          B.add_vertex_to_facet(i5);
-          B.add_vertex_to_facet(i0);
-          B.add_vertex_to_facet(i4);
-        const Halfedge_handle& h3 = B.end_facet();
-
-        // center face
-        B.begin_facet();
-          B.add_vertex_to_facet(i0);
-          B.add_vertex_to_facet(i2);
-          B.add_vertex_to_facet(i4);
-        Halfedge_handle h4 = B.end_facet();
-
-        h1->control_edge(false);
-        h1->next()->control_edge(false);
-        h1->next()->next()->control_edge(false);
-
-        h2->control_edge(false);
-        h2->next()->control_edge(false);
-        h2->next()->next()->control_edge(false);
-
-        h3->control_edge(false);
-        h3->next()->control_edge(false);
-        h3->next()->next()->control_edge(false);
-
-        h4->control_edge(false);
-        h4->next()->control_edge(false);
-        h4->next()->next()->control_edge(false);
-        
-        if(pHalfedge->control_edge())
-        {
-          h1->control_edge(true);
-          h3->next()->control_edge(true);
-        }
-        if(pHalfedge->next()->control_edge())
-        {
-          h1->next()->control_edge(true);
-          h2->control_edge(true);
-        }
-        if(pHalfedge->next()->next()->control_edge())
-        {
-          h2->next()->control_edge(true);
-          h3->control_edge(true);
-        }
-      }
-      else
-      {
-        // i1: index of barycenter vertex
-        int i1 = pFacet->tag();
-        CGAL_assertion(i1 >= 0);
-
-        // for each halfedge
-        typename Polyhedron::Halfedge_around_facet_circulator h;
-        h = pFacet->facet_begin();
-        do
-        {
-          // i2,3,4: indices of three consecutive
-          // vertices on halfedges
-          int i2 = h->tag();
-          int i3 = h->vertex()->tag();
-          int i4 = h->next()->tag();
-          CGAL_assertion(i2 >= 0);
-          CGAL_assertion(i3 >= 0);
-          CGAL_assertion(i4 >= 0);
-
-          // create a quad
-          B.begin_facet();
-            B.add_vertex_to_facet(i3);
-            B.add_vertex_to_facet(i4);
-            B.add_vertex_to_facet(i1);
-            B.add_vertex_to_facet(i2);
-          const Halfedge_handle& pNewHalfedge = B.end_facet();
-
-          pNewHalfedge->control_edge(false);
-          pNewHalfedge->next()->control_edge(false);
-          pNewHalfedge->next()->next()->control_edge(false);
-          pNewHalfedge->next()->next()->next()->control_edge(false);
-
-          if(h->control_edge())
-            pNewHalfedge->control_edge(true);
-          if(h->next()->control_edge())
-            pNewHalfedge->next()->control_edge(true);
-        }
-        while(++h != pFacet->facet_begin());
-      }
-    }
-  }
-
-  //***************************************************
-  // correcting factor
-  //***************************************************
-	static float correcting_factor(unsigned int ne,
-		                             unsigned int nq)
-  {
-    if(ne == 2 && nq == 1)
-      return -0.20505f;
-    if(ne == 3 && nq == 1)
-      return 0.80597f;
-    if(ne == 3 && nq == 2)
-      return 0.61539f;
-    if(ne == 4 && nq == 1)
-      return 0.34792f;
-    if(ne == 4 && nq == 2)
-      return 0.21380f;
-    if(ne == 4 && nq == 3)
-      return 0.10550f;
-    return 0.0f;
-  }
-public:  
-  //***************************************************
-  // smooth vertex positions
-  //***************************************************
-  static void smooth(Polyhedron *pMesh,
-                     bool smooth_boundary = true)
-  {
-    CGAL_assertion(pMesh != NULL);
-
-    // alloc position vectors
-    unsigned int nb_vertices = pMesh->size_of_vertices();
-    FT *pPos = new FT[3*nb_vertices];
-    CGAL_assertion(pPos != NULL);
-
-    // compute new positions
-    unsigned int index = 0;
-    typename Polyhedron::Vertex_iterator pVertex;
-    for(pVertex = pMesh->vertices_begin();
-        pVertex != pMesh->vertices_end();
-        pVertex++)
-    {
-      // border vertices will not move
-      if(Polyhedron::is_border(pVertex))
-      {
-        // do not smooth it
-        const Point& curr = pVertex->point();
-        if(!smooth_boundary)
-        {
-          pPos[3*index]   = curr.x();
-          pPos[3*index+1] = curr.y();
-          pPos[3*index+2] = curr.z();
-        }
-        // smooth using [1/4 1/2 1/4] cubic B-spline averaging mask
-        else 
-        {
-          const typename Polyhedron::Halfedge_handle& pHalfedge =
-            pMesh->get_border_halfedge(pVertex);
-          CGAL_assertion(pHalfedge != NULL);
-          const Point& next = pHalfedge->vertex()->point();
-          const Point& prev = pHalfedge->prev()->prev()->vertex()->point();
-          pPos[3*index]   = 0.25f*prev.x() + 0.5f*curr.x() + 0.25f*next.x();
-          pPos[3*index+1] = 0.25f*prev.y() + 0.5f*curr.y() + 0.25f*next.y();
-          pPos[3*index+2] = 0.25f*prev.z() + 0.5f*curr.z() + 0.25f*next.z();
-        }
-      } // end is border
-      else
-      {
-
-        unsigned int nb_quads = 0;
-        unsigned int nb_edges = 0;
-
-        // rotate around vertex to count #edges and #quads
-        Halfedge_around_vertex_circulator
-          pHalfEdge = pVertex->vertex_begin();
-        Halfedge_around_vertex_circulator end = pHalfEdge;
-        CGAL_For_all(pHalfEdge,end)
-        {
-          const Facet_handle& pFacet = pHalfEdge->facet();
-          CGAL_assertion(pFacet != NULL);
-          unsigned int degree = Polyhedron::degree(pFacet);
-          CGAL_assertion(degree == 4 || degree == 3);
-          if(degree == 4)
-            nb_quads++;
-          nb_edges++;
-        }
-
-        // compute coefficients
-        FT ne = (FT)nb_edges;
-        FT nq = (FT)nb_quads;
-        FT alpha = 1.0f / (1.0f + ne/2.0f + nq/4.0f);
-        FT beta = alpha / 2.0f;  // edges
-        FT gamma = alpha / 4.0f; // corners of incident quads
-        FT eta = correcting_factor(nb_edges,nb_quads);
-
-        // new position
-        pPos[3*index]   = alpha * pVertex->point().x();
-        pPos[3*index+1] = alpha * pVertex->point().y();
-        pPos[3*index+2] = alpha * pVertex->point().z();
-
-        // rotate around vertex to compute new position
-        pHalfEdge = pVertex->vertex_begin();
-        end = pHalfEdge;
-        CGAL_For_all(pHalfEdge,end)
-        {
-          const Facet_handle& pFacet = pHalfEdge->facet();
-          CGAL_assertion(pFacet != NULL);
-          unsigned int degree = Polyhedron::degree(pFacet);
-          CGAL_assertion(degree == 4 || degree == 3);
-
-          // add edge-vertex contribution
-          const Point& point = pHalfEdge->prev()->vertex()->point();
-          pPos[3*index]   += beta * point.x();
-          pPos[3*index+1] += beta * point.y();
-          pPos[3*index+2] += beta * point.z();
-
-          // add corner vertex contribution
-          if(degree == 4)
-          {
-            const Point& corner = pHalfEdge->next()->next()->vertex()->point();
-            pPos[3*index]   += gamma * corner.x();
-            pPos[3*index+1] += gamma * corner.y();
-            pPos[3*index+2] += gamma * corner.z();
-          }
-        }
-
-        // apply correction
-        pPos[3*index] = pPos[3*index] +
-          eta*(pPos[3*index]-pVertex->point().x());
-        pPos[3*index+1] = pPos[3*index+1] +
-          eta*(pPos[3*index+1]-pVertex->point().y());
-        pPos[3*index+2] = pPos[3*index+2] +
-          eta*(pPos[3*index+2]-pVertex->point().z());
-
-      } // end !is border
-      index++;
-    }
-
-    // set new positions
-    index = 0;
-    for(pVertex = pMesh->vertices_begin();
-        pVertex != pMesh->vertices_end();
-        pVertex++)
-    {
-      Point& point = pVertex->point();
-      point = Point(pPos[3*index],
-                    pPos[3*index+1],
-                    pPos[3*index+2]);
-      index++;
-    }
-
-    // cleanup
-    delete [] pPos;
-  }
 };
 \end{verbatim}}
 
@@ -1359,19 +829,173 @@ public:
 
 \label{sec:subdivision_rule}
 
-Doo-Sabin, Catmull-Clark, Loop.
+We use Catmull-Clark (CC) subdivision as our first example (see
+Figure~\ref{fig:cc}). CC subdivision can be defined as the combination
+of the primal quadrilateral quadrisection (PQQ) scheme and the
+Catmull-Clark geometry rules.
+
+{\scriptsize
+\begin{verbatim}
+template <class Polyhedron, template <class> Rule>
+void PrimalQuadQuadralize(Polyhedron& p, Rule<Polyhedron>& r) { ...}
+
+template <class Polyhedron>
+void CCSubdivision(Polyhedron& p) { 
+  PrimalQuadQuadralize(p, CatmullClarkRule<Polyhedron>());
+}
+\end{verbatim}
+}
+
+For meshes based on PQQ scheme, the footprints of the range vertices
+each corresponds to a topology primitive, i.e. vertex, edge or facet,
+in the domain (see Figure. \ref{fig:PQQMap}).  The policy class hence
+needs to provide the policy functions in each case.
+
+{ \scriptsize
+\begin{verbatim}
+template <class P> class CatmullClarkRule 
+{
+public:
+  typedef P                                    Polyhedron;
+  typedef typename Polyhedron::Vertex_handle   Vertex_handle;
+  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
+  typedef typename Polyhedron::Facet_handle    Facet_handle;
+
+  void face_vertex_rule(Facet_handle domain_f,    Vertex_handle range_v);
+  void edge_vertex_rule(Halfedge_handle domain_e, Vertex_handle range_v);
+  void vertex_vertex_rule(Vertex_handle domain_v, Vertex_handle range_v);
+};
+\end{verbatim}
+}
+
+Each policy function has two input parameters: the domain primitive
+and the range vertex. The footprint, defined as the vertices set of
+the 1-distance neighbors of the corresponding domain primitive, is
+passed as the handle of the primitive. Empolying the incidental
+function of the halfedge data structure, the policy designer works on
+the simple view of the \italic{local} mesh corresponding to the
+footprint. Following codes demonstrate the facet-vertex case.
+
+{\scriptsize
+\begin{verbatim}
+void facet_vertex_rule(Facet_handle domain_f, Vertex_handle& range_v) 
+{
+  typedef typename Polyhedron::Point_3 Point;
+
+  Halfedge_around_facet_circulator hcir = domain_f->facet_begin();
+  Halfedge_around_facet_circulator hcir_end = hcir;
+  range_v->point() = Point(0,0,0);
+  do 
+    range_v->point() += hcir->vertex()->point();
+  while (++hcir != hcir_end);
+
+  range_v->point() /= circulator_size(hcir);
+}
+\end{verbatim}
+}
+
+% Catmull-Clark subdivision
+
+\begin{figure}[htb]
+    \centering{\includegraphics[width=10.0cm]{figs/subdivision}}
+    \caption{Catmull-Clark subdivision of a quadrilateral control mesh.}  
+    \label{fig:cc}
+\end{figure}
+
+Loop subdivision uses similar refinement scheme to PQQ scheme except
+that it works on the triangle mesh. Hence the footprints of Loop
+scheme are same as the CC scheme but without the facet-vertex case.
+
+{\scriptsize
+\begin{verbatim}
+PrimalTriangleQuadralize(p, LoopRule<Polyhedron>());
+
+template <class Polyhedron>
+void LoopSubdivision(Polyhedron& p) 
+{ 
+  PrimalTriangleQuadralize(p, LoopRule<Polyhedron>());
+}
+
+template <class P> class LoopRule 
+{
+public:
+  typedef ...
+
+  void edge_vertex_rule(Halfedge_handle domain_e, Vertex_handle range_v);
+  void vertex_vertex_rule(Vertex_handle domain_v, Vertex_handle range_v);
+};
+\end{verbatim}
+}
+
+Doo-Sabin (DS) subdivision is fundamentally different from the primal
+subdivision schemes in the aspect of the footprints. As showed in
+Figure \ref{fig:PQQMap}, each range vertex corresponds to a
+\italic{corner} in the domain mesh. The footprint of the range vertex
+is the facet containing the corner.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=2.5in]{pfigs/DQQRefMap.eps}
+  \caption{The correspondence of the domain footprint and the 
+           range vertex of the DQQ schemes.}
+  \label{fig:DQQMap}
+\end{figure}
+
+
+{\scriptsize
+\begin{verbatim}
+DualQuadQuadralize(p, DooSabinRule<Polyhedron>());
+
+template <class Polyhedron>
+void DSSubdivision(Polyhedron& p) 
+{ 
+  DualQuadQuadralize(p, DooSabinRule<Polyhedron>());
+}
+
+template <class P> class DooSabinRule 
+{
+public:
+  typedef ...
+
+  void corner_vertex_rule(Halfedge_handle domain_e, Vertex_handle range_v);
+};
+\end{verbatim}
+}
+
+The only policy function for the DS subdivision has the halfedge
+pointing to the corner as the domain parameter. A demo of policy
+function for the regular facet, i.e. the quadrilateral facet, is
+listed in the following codes.
+
+{\scriptsize
+\begin{verbatim}
+void corner_vertex__rule(Halfedge_handle domain_e, Vertex_handle range_v) 
+{
+  range_v->point() = Point(0,0,0);
+
+  range_v->point() = domain_e->vertex()->point() * 9 + 
+                    (domain_e->next()->vertex()->point() +
+                     domain_e->pre()->vertex()->point()) * 3 +
+		     domain_e->next()->next()->vertex()->point();
+  
+  range_v->point() /= 16.0;
+}
+\end{verbatim}
+}
+
+For the complete implementation of the subdivision, readers should
+refer to the accompanied source codes of this tutorial.
 
 % APPLICATION DEMO
 \section{Application demo}
 
-List of features, snapshots.
+List of features, snapshots (todo).
 
 \subsection{Compiling on Windows}
 
-\subsection{Compiling on Linux}
 
-% CONCLUSION
-\section{Conclusion}
+
+(todo)
 
 % REFERENCES
 \bibliographystyle{alpha}
