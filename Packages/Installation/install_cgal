@@ -767,7 +767,6 @@ set_compiler_flags()
     SAVE_THE_BLANK="\$(SAVESTHEBLANK)"
     EXE_EXT=""
     CGAL_LIBNAME="libCGAL.a"
-    CGAL_WIN_LIBNAME="libCGALWin.a"
     CGAL_QT_LIBNAME="libCGALQt.a"
     CGAL_CORE_LIBNAME="libCore.a"
     CGAL_WIN_EXTRA_DIR=x11
@@ -801,7 +800,6 @@ set_compiler_flags()
 	    SAVE_THE_BLANK=""
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
-	    CGAL_WIN_LIBNAME="CGALWin.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
 	    CGAL_CORE_LIBNAME="libCore.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
@@ -836,7 +834,6 @@ set_compiler_flags()
 	    SAVE_THE_BLANK=""
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
-	    CGAL_WIN_LIBNAME="CGALWin.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
 	    CGAL_CORE_LIBNAME="Core.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
@@ -870,7 +867,6 @@ set_compiler_flags()
 	    SAVE_THE_BLANK=""
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
-	    CGAL_WIN_LIBNAME="CGALWin.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
 	    CGAL_CORE_LIBNAME="Core.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
@@ -5487,8 +5483,8 @@ write_linker_flags()
     GEOWLIBS="${WLIBS} `leda_lib_option GeoW``leda_lib_option D3``leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
     WLIBS="${WLIBS} `leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
   else
-    # no LEDA --> use libCGALWin
-    WLIBS="${WLIBS} `lib_option CGALWin` ${XLIBS}"
+    # no LEDA --> Xlibs only
+    WLIBS="${WLIBS} ${XLIBS}"
   fi
 
   if [ -n "${CLN_SUPPORT}" ]; then
@@ -5762,7 +5758,6 @@ create_include_makefile()
   # CGAL_(WIN)LIB
   # 
   ${_printf} "%s\n" "CGAL_LIB = ${CGAL_LIBNAME}" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_WIN_LIB = ${CGAL_WIN_LIBNAME}" >> ${FILE}
   ${_printf} "%s\n" "CGAL_WIN_EXTRA_DIR = ${CGAL_WIN_EXTRA_DIR}" >> ${FILE}
   ${_printf} "%s\n" "CGAL_QT_LIB = ${CGAL_QT_LIBNAME}" >> ${FILE}
 
@@ -5859,10 +5854,6 @@ prepare_lib_makefiles()
     done
     if [ -d ${CGAL_SRC_DIR}/Core ]; then
 	replace_line ${CGAL_SRC_DIR}/Core/makefile_Core \
-	    CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
-    fi
-    if [ -d ${CGAL_SRC_DIR}/CGALWin ]; then
-	replace_line ${CGAL_SRC_DIR}/CGALWin/makefile_Win \
 	    CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
     fi
     if [ -d ${CGAL_SRC_DIR}/CGALQt ]; then
@@ -5988,10 +5979,6 @@ build_cgal()
 		fi
 		;;
 	esac
-	if [ -z "${LEDA_SUPPORT}" -a -d ${CGAL_SRC_DIR}/CGALWin ]; then
-	    cd ${CGAL_SRC_DIR}/CGALWin
-	    _do_compile Win
-	fi
 	if [ -n "${QT_SUPPORT}" -a -d ${CGAL_SRC_DIR}/CGALQt ]; then
 	    cd ${CGAL_SRC_DIR}/CGALQt
 	    _do_compile Qt
