@@ -49,41 +49,28 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// CK = construction kernel.
+// CK = eventually rebound construction kernel (gets Point_2 from).
 // EK = exact kernel called when needed by the filter.
 // FK = filtering kernel
-template < typename CK, typename Kernel >
-class Filtered_kernel_base
-  : public CK::template Base<Kernel>::Type
+template < typename CK >
+struct Filtered_kernel_base
+  : public CK
 {
-    typedef typename CK::template Base<Kernel>::Type   Kernel_base;
-public:
-
     // Hardcoded for now.
     typedef Simple_cartesian<Quotient<MP_Float> >    EK;
     typedef Simple_cartesian<Interval_nt_advanced>   FK;
-    typedef Cartesian_converter<Kernel, EK,
-                                // we need to specify the default arg otherwise
-                                // Kernel would be instantiated.
-                                NT_converter<typename Kernel_base::RT,
-                                             typename EK::RT> >     C2E;
-    typedef Cartesian_converter<Kernel, FK,
-                                To_interval<typename Kernel_base::RT> > C2F;
+    typedef Cartesian_converter<CK, EK>              C2E;
+    typedef Cartesian_converter<CK, FK, To_interval<typename CK::RT> > C2F;
 
     template < typename Kernel2 >
-    struct Base { typedef Filtered_kernel_base<CK, Kernel2>  Type; };
-
-    // What to do with the tag ?
-    // Probably this should not exist, should it ?
-    // struct filter_tag{};
-    // typedef filter_tag                                     Kernel_tag;
-    // typedef typename CK::Kernel_tag                       Kernel_tag;
-    // typedef typename CK::Rep_tag                          Rep_tag;
+    struct Base {
+        typedef typename CK::template Base<Kernel2> CK2;
+        typedef Filtered_kernel_base<CK2>  Type;
+    };
 
     // We change the predicates.
 #define CGAL_Kernel_pred(P, Pf) \
-    typedef Filtered_predicate<typename EK::P, typename FK::P, \
-	                     C2E, C2F> P; \
+    typedef Filtered_predicate<typename EK::P, typename FK::P, C2E, C2F> P; \
     P Pf() const { return P(); }
 
     // We don't touch the constructions.
@@ -94,43 +81,42 @@ public:
 };
 
 #ifndef CGAL_NO_STATIC_FILTERS
-template < typename CK, typename Kernel >
+template < typename CK >
 class Static_filters_base
-  : public Static_filters<Filtered_kernel_base<CK, Kernel> >
+  : public Static_filters< Filtered_kernel_base<CK> >
 {
     template < typename Kernel2 >
-    struct Base { typedef Static_filters_base<CK, Kernel2>  Type; };
+    struct Base {
+        typedef typename CK::template Base<Kernel2>::Type  CK2;
+        typedef Static_filters_base<CK2>                   Type;
+    };
 };
 #endif
 
-template <class CK>
+template < typename CK >
 struct Filtered_kernel_adaptor
 #ifndef CGAL_NO_STATIC_FILTERS
-  : public Static_filters_base< CK, Filtered_kernel_adaptor<CK> >
+  : public Static_filters_base<CK>
 #else
-  : public Filtered_kernel_base< CK, Filtered_kernel_adaptor<CK> >
-#endif
-{};
-
-template <class CK>
-struct Filtered_kernel_without_type_equality
-#ifndef CGAL_NO_STATIC_FILTERS
-  : public Static_filters_base< CK, Filtered_kernel_without_type_equality<CK> >
-#else
-  : public Filtered_kernel_base< CK, Filtered_kernel_without_type_equality<CK> >
+  : public Filtered_kernel_base<CK>
 #endif
 {};
 
 template <class CK>
 struct Filtered_kernel
-  : public Type_equality_wrapper< 
-#ifndef CGAL_NO_STATIC_FILTERS
-             Static_filters_base< CK, Filtered_kernel<CK> >,
-#else
-             Filtered_kernel_base< CK, Filtered_kernel<CK> >,
-#endif
-             Filtered_kernel<CK> >
+  : public Filtered_kernel_adaptor<
+               Type_equality_wrapper<
+                   typename CK::template Base< Filtered_kernel<CK> >::Type,
+                   Filtered_kernel<CK> > >
 {};
+
+
+// The following is only kept for backward compatibility.
+#ifndef CGAL_NO_DEPRECATED_CODE
+template < typename CK >
+struct Filtered_kernel_without_type_equality
+  : public Filtered_kernel_adaptor <CK> {};
+#endif
 
 CGAL_END_NAMESPACE
 
