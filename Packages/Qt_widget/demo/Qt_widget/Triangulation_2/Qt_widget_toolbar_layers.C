@@ -30,6 +30,49 @@
 #include <CGAL/IO/pixmaps/triangulation.xpm>
 #include <CGAL/IO/pixmaps/mouse_coord.xpm>
 
+/* XPM */
+static char *circum_circle_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"32 32 5 1",
+"  c opaque",
+". c green",
+"X c red",
+"o c #c0c0c0",
+"O c None",
+/* pixels */
+"OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+"OOOOOOOOOOOOXXXXXOOOOOOOOOOOOOOO",
+"OOOOOOOOOXXXOOOOOXXXOOOOOOOOOOOO",
+"OOOOOOOXXOOOOOOOOOOOXXOOOOOOOOOO",
+"OOOOOOXOOOOOOOOOOOOOOOXOOOOOOOOO",
+"OOOOOXOOOOOOOOOOOOOOOOOXOOOOOOOO",
+"OOOOXOOOOOOOOOOOOOOOOOOOXOOOOOOO",
+"OOOXOOOOOOOOOOOOOOOOOOOOOXOOOOOO",
+"OOOXOOOOOOOOOOOOOOOOOOOOOXOOOOOO",
+"OOOXOOOOOOOOOOOOOOOOOOOOOXOOOOOO",
+"OOXOOOOOOOOOOOOOOOOOOOOOOOXOOOOO",
+"OOXOOOOOOOOOOOOOOOOOOOOOOOXOOOOO",
+"OOXOOOOOOOOOOOOOOOOOOOOOOOXOOOOO",
+"OO..                     ..OOOOO",
+"OO.. ooooooooooooooooooo ..OOOOO",
+"OO Xo ooooooooooooooooo oX OOOOO",
+"OO Xoo  ooooooooooooo  ooX OOOOO",
+"OO oXooo ooooooooooo oooXo OOOOO",
+"OO ooXooo  ooooooo  oooXoo OOOOO",
+"OO oooXoooo ooooo ooooXooo OOOOO",
+"OO ooooXXooo  o  oooXXoooo OOOOO",
+"OO ooooooXXXo..ooXXXoooooo OOOOO",
+"OO oooooooooX..XXooooooooo OOOOO",
+"OO ooooooo  ooooo oooooooo OOOOO",
+"OO oooooo oooooooo  oooooo OOOOO",
+"OO oooo  ooooooooooo ooooo OOOOO",
+"OO ooo oooooooooooooo  ooo OOOOO",
+"OO o  ooooooooooooooooo oo OOOOO",
+"OO  oooooooooooooooooooo   OOOOO",
+"OO                         OOOOO",
+"OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+"OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"
+};
 
 namespace CGAL {
   Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t) : 
@@ -40,6 +83,7 @@ namespace CGAL {
     showP   = new Qt_layer_show_points< Delaunay >(*t);
     showNV  = new Qt_layer_nearest_vertex< Delaunay >(*t);
     showMC  = new Qt_layer_mouse_coordinates(*mw);
+    showCC  = new Qt_layer_circum_circle< Delaunay >(*t);
 
     //set the widget
     widget = w;
@@ -51,23 +95,32 @@ namespace CGAL {
     widget->attach(showNV);
     widget->attach(showP);
     widget->attach(showMC);
+    widget->attach(showCC);
     showNV->deactivate();
-    
+    showCC->deactivate();
 
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 		
     but[0] = new QToolButton(maintoolbar, "triangulation");
     but[0]->setPixmap(QPixmap( (const char**)triangulation_xpm ));
+    but[0]->setTextLabel("Triangulation");
     but[1] = new QToolButton(maintoolbar, "voronoi");
     but[1]->setPixmap(QPixmap( (const char**)voronoi_xpm ));
+    but[1]->setTextLabel("Voronoi Diagram");
     but[2] = new QToolButton(maintoolbar, "nearest_vertex");
     but[2]->setPixmap(QPixmap( (const char**)nearest_vertex_xpm ));
+    but[2]->setTextLabel("Nearest Vertex");
     but[3] = new QToolButton(maintoolbar, "vertices");
     but[3]->setPixmap(QPixmap( (const char**)points_xpm ));
-    but[4] = new QToolButton(maintoolbar, "mouse_coord");
-    but[4]->setPixmap(QPixmap( (const char**)mouse_coord_xpm ));
+    but[3]->setTextLabel("Vertices");
+    but[4] = new QToolButton(maintoolbar, "circles");
+    but[4]->setPixmap(QPixmap( (const char**)circum_circle_xpm ));
+    but[4]->setTextLabel("Circuscribed Circle");
+    but[5] = new QToolButton(maintoolbar, "mouse_coord");
+    but[5]->setPixmap(QPixmap( (const char**)mouse_coord_xpm ));
+    but[5]->setTextLabel("Mouse Coordinates");
 		
-    nr_of_buttons = 5;
+    nr_of_buttons = 6;
 	  button_group = new QButtonGroup(0, "nonexclusive");
     for(int i =0; i<nr_of_buttons; i++)
     {
@@ -76,6 +129,7 @@ namespace CGAL {
       button_group->insert(but[i]);
     }
     but[2]->toggle();
+    but[4]->toggle();
     connect(button_group, SIGNAL(clicked(int)),
           widget, SLOT(redraw()));
     
@@ -88,8 +142,9 @@ namespace CGAL {
     connect(but[3], SIGNAL(stateChanged(int)),
         showP, SLOT(stateChanged(int)));
     connect(but[4], SIGNAL(stateChanged(int)),
+        showCC, SLOT(stateChanged(int)));
+    connect(but[5], SIGNAL(stateChanged(int)),
         showMC, SLOT(stateChanged(int)));
-
 
 
   }

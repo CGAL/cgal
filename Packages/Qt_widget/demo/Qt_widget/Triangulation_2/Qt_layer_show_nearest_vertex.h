@@ -50,7 +50,6 @@ public:
     RasterOp old = widget->rasterOp();	//save the initial raster mode
     widget->setRasterOp(XorROP);
     widget->lock();
-    *widget << Point(10, 10);
     Vertex_handle v = tr.nearest_vertex(p);
     *widget << CGAL::GREEN << CGAL::PointSize (10)
 		<< CGAL::PointStyle (CGAL::CIRCLE);
@@ -77,10 +76,9 @@ public:
   }
 
 private:
-	T       &tr;
-	Point		oldPoint,
-          newPoint;											;
-	bool		first_time;
+	T     &tr;
+	Point oldPoint, newPoint;
+	bool  first_time;
 	
 };//end class 
 

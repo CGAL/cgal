@@ -33,7 +33,7 @@
 #include "Qt_layer_show_voronoi.h"
 #include "Qt_layer_show_points.h"
 #include "Qt_layer_show_nearest_vertex.h"
-
+#include "Qt_layer_show_circum_circle.h"
 
 #include <qobject.h>
 #include <qtoolbutton.h>
@@ -80,6 +80,7 @@ private:
   CGAL::Qt_layer_show_points < Delaunay >	  *showP;
   CGAL::Qt_layer_nearest_vertex < Delaunay >	  *showNV;
   CGAL::Qt_layer_mouse_coordinates		  *showMC;
+  CGAL::Qt_layer_circum_circle < Delaunay>        *showCC;
 };//end class
 
 };//end namespace

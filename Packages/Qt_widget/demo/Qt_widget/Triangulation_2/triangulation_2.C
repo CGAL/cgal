@@ -186,7 +186,7 @@ private slots:
     Line l;
     if (CGAL::assign(l,obj))
     {
-      if (tr1.dimension()<1) return;
+      if (tr1.dimension()<2) return;
       widget->redraw();
       widget->lock();
       Line_face_circulator lfc = 
@@ -335,7 +335,7 @@ main(int argc, char **argv)
     app.setStyle( new QPlatinumStyle );
     QPalette p( QColor( 250, 215, 100 ) );
     app.setPalette( p, TRUE );
-  Window W(500,500); // physical widgetdow size
+  Window W(600,600); // physical widgetdow size
   app.setMainWidget(&W);
   W.setCaption(my_title_string);
   W.setMouseTracking(TRUE);
