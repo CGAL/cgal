@@ -256,8 +256,9 @@ inline
 Bbox_3
 TetrahedronC3<R>::bbox() const
 {
-  return vertex(0).bbox() + vertex(1).bbox()
-       + vertex(2).bbox() + vertex(3).bbox();
+  typename R::Construct_bbox_3 construct_bbox_3;
+  return construct_bbox_3(vertex(0)) + construct_bbox_3(vertex(1))
+       + construct_bbox_3(vertex(2)) + construct_bbox_3(vertex(3));
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TETRAHEDRONC3

@@ -322,7 +322,8 @@ inline
 Bbox_3
 Iso_cuboidC3<R>::bbox() const
 {
-  return min().bbox() + max().bbox();
+  typename R::Construct_bbox_3 construct_bbox_3;
+  return construct_bbox_3(min()) + construct_bbox_3(max());
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_ISO_CUBOIDC3

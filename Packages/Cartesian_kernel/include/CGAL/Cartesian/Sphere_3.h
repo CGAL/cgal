@@ -279,7 +279,8 @@ CGAL_KERNEL_INLINE
 Bbox_3
 SphereC3<R>::bbox() const
 { 
-  Bbox_3 b = center().bbox();
+  typename R::Construct_bbox_3 construct_bbox_3;
+  Bbox_3 b = construct_bbox_3(center());
 
   Interval_nt<> x (b.xmin(), b.xmax());
   Interval_nt<> y (b.ymin(), b.ymax());

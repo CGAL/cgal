@@ -292,9 +292,9 @@ template < class R >
 inline
 Bbox_2
 Iso_rectangleC2<R>::bbox() const
-{ // FIXME : to_interval
-  return Bbox_2(CGAL::to_double(xmin()), CGAL::to_double(ymin()),
-                CGAL::to_double(xmax()), CGAL::to_double(ymax()));
+{ 
+  typename R::Construct_bbox_2 construct_bbox_2;
+  return construct_bbox_2(min()) + construct_bbox_2(max());
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLEC2

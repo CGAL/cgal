@@ -238,7 +238,8 @@ CGAL_KERNEL_INLINE
 Bbox_2
 CircleC2<R>::bbox() const
 {
-  Bbox_2 b = center().bbox();
+  typename R::Construct_bbox_2 construct_bbox_2;
+  Bbox_2 b = construct_bbox_2(center());
 
   Interval_nt<> x (b.xmin(), b.xmax());
   Interval_nt<> y (b.ymin(), b.ymax());

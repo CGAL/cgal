@@ -215,7 +215,8 @@ inline
 Bbox_3
 SegmentC3<R>::bbox() const
 {
-  return source().bbox() + target().bbox();
+  typename R::Construct_bbox_3 construct_bbox_3;
+  return construct_bbox_3(source()) + construct_bbox_3(target());
 }
 
 template < class R >

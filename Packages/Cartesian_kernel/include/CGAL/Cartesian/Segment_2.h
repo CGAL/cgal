@@ -216,7 +216,8 @@ CGAL_KERNEL_INLINE
 Bbox_2
 SegmentC2<R>::bbox() const
 {
-  return source().bbox() + target().bbox();
+  typename R::Construct_bbox_2 construct_bbox_2;
+  return construct_bbox_2(source()) + construct_bbox_2(target());
 }
 
 template < class R >

@@ -136,7 +136,10 @@ template < class R >
 Bbox_3
 TriangleC3<R>::bbox() const
 {
-  return vertex(0).bbox() + vertex(1).bbox() + vertex(2).bbox();
+  typename R::Construct_bbox_3 construct_bbox_3;
+  return construct_bbox_3(vertex(0)) 
+    + construct_bbox_3(vertex(1)) 
+    + construct_bbox_3(vertex(2));
 }
 
 template < class R >
