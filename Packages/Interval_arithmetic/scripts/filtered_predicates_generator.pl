@@ -231,7 +231,7 @@ $ret_type
 $fct_name($args_call)
 {";
 
-  if ($adv eq "Advanced") {
+  if ($adv eq "false") {
     print FO "
   CGAL_assertion_code(
     const double SAF_bound = $predicate_class_name\::_bound; )
@@ -341,8 +341,8 @@ sub print_predicates {
     print_dynamic(@{$predicates[$i]});
     print FO "#ifdef CGAL_IA_NEW_FILTERS\n\n";
     print_predicate_struct(@{$predicates[$i]});
-    print_static("Protected", @{$predicates[$i]});
-    print_static("Advanced", @{$predicates[$i]});
+    print_static("true", @{$predicates[$i]});
+    print_static("false", @{$predicates[$i]});
     print FO "#endif // CGAL_IA_NEW_FILTERS\n\n";
     print_static_infos(@{$predicates[$i]});
     $was_in_CGAL = $CGAL eq "";

@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.53 on ?? ???? 2000
+- Make the adaptative static filters kind of work again.
+
 Version 4.52 on 26 July 2000
 - Removed Lazy_exact_nt.C from the test-suite for the release.
 - Fixed name space issues in _FPU.h.
