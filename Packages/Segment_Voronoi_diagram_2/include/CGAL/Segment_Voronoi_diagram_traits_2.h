@@ -16,16 +16,14 @@
 
 
 #include <CGAL/Segment_Voronoi_diagram_site_2.h>
-//#include <CGAL/svd_constructions_2.h>
-//#include <CGAL/predicates/svd_predicates_2.h>
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
 #endif  // CGAL_REP_CLASS_DEFINED
 
 #if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/predicates/Segment_Voronoi_diagram_predicates_2.h>
-#include <CGAL/predicates/svd_predicates_ftC2.h>
+#include <CGAL/predicates/Segment_Voronoi_diagram_predicates_C2.h>
+#include <CGAL/predicates/Segment_Voronoi_diagram_predicates_ftC2.h>
 //#include <CGAL/Segment_Voronoi_diagram_constructions_C2.h>
 #endif
 
