@@ -334,14 +334,14 @@ public:
   typedef std::set<void *> Conflict_set;
 
   // for Delaunay :
-  void star_region(const Conflict_set & region, Vertex* v, Cell* c, int li);
+  void star_region(Conflict_set & region, Vertex* v, Cell* c, int li);
     // region is a set of connected cells
     // c belongs to region and has facet li on the boundary of region 
     // replaces the cells in region  
     // by linking v to the boundary of region 
     
 private:
-  Cell* create_star(const Conflict_set & region, Vertex* v, Cell* c, int li);
+  Cell* create_star(Conflict_set & region, Vertex* v, Cell* c, int li);
     // creates the cells needed by star_region
 
 public:
@@ -2015,14 +2015,14 @@ insert_increase_dimension(const Vertex & w, // new vertex
 template <class Vb, class Cb >
 void
 Triangulation_data_structure_3<Vb,Cb>::
-star_region(const Conflict_set & region, Vertex* v, Cell* c, int li )
+star_region(Conflict_set & region, Vertex* v, Cell* c, int li )
   // region is a set of connected cells
   // c belongs to region and has facet li on the boundary of region 
   // replaces the cells in region  
   // by linking v to the boundary of region
 {
   CGAL_triangulation_precondition( dimension() >= 2 );
-  CGAL_triangulation_precondition( region.find( (Conflict_set::value_type) c )  
+  CGAL_triangulation_precondition( region.find( (Conflict_set::value_type) c )
 				   != region.end() );
 
   // does not check whether region is connected 
@@ -2036,7 +2036,7 @@ star_region(const Conflict_set & region, Vertex* v, Cell* c, int li )
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Cell*
 Triangulation_data_structure_3<Vb,Cb>::
-create_star(const Conflict_set & region, Vertex* v, Cell* c, int li )
+create_star(Conflict_set & region, Vertex* v, Cell* c, int li )
   // creates the cells needed by star_region
 {
   Cell* cnew;
