@@ -1,0 +1,34 @@
+\begin{ccRefClass}[Kdtree_d<Traits>::]{Box} 
+    \ccDefinition An object $B$ of the class
+    \ccStyle{Box} is a $d$-dimensional box (it may
+    be unbounded). A $d$-dimensional box is the set defined by the
+    Cartesian set $[l_1, r_1) \times [l_2, r_2) \times \cdots \times
+    [l_d,r_d)$.
+
+    \ccCreation
+    \ccCreationVariable{box}
+    
+    \ccConstructor{Box( int d );}{Construct a box corresponding to
+       the whole $d$-dimensional space}
+    
+    \ccConstructor{Box( Point left, Right right, int d );}{ Construct
+       the axis parallel box in the $d$-dimensional space defined by
+       the points \ccStyle{left}, \ccStyle{right}.}
+
+    \ccOperations
+    
+    \ccMethod{void set_coord_left( int k, Point & left );}{ set
+       the left endpoint of the $k$-th dimensional interval of \ccVar\ {}
+       to be the $k$-th coordinate of \ccStyle{left}}
+   
+    \ccMethod{void set_coord_right( int k, Point & right );}{ set
+       the right endpoint of the $k$-th dimensional interval of \ccVar\ {}
+       to be the $k$-th coordinate of \ccStyle{right}}
+    
+    \ccMethod{bool is_in( Point pnt );}{return \ccStyle{true}
+       if \ccStyle{pnt} lies inside \ccVar.}
+    
+    \ccMethod{bool is_coord_in_range( int k, Point pnt );}{ return
+       \ccStyle{true} if the $k$-th coordinate of \ccStyle{pnt} lies
+       inside the $k$-th dimensional interval of \ccVar.}
+\end{ccRefClass}
