@@ -63,11 +63,11 @@ struct Interval_nt_advanced
       throw (unsafe_comparison)
   { number_of_failures++;  throw unsafe_comparison(); }
 #else
-  {
 #if !defined(CGAL_IA_NO_WARNINGS) && !defined(CGAL_NO_WARNINGS)
-     CGAL_warning_msg(false, " Comparison between overlapping intervals");
+  { CGAL_warning_msg(false, " Comparison between overlapping intervals"); }
+#else
+  {}
 #endif
-  }
 #endif // CGAL_IA_NO_EXCEPTION
 
   // The constructors.
@@ -99,9 +99,7 @@ struct Interval_nt_advanced
   // The operators.
   IA  operator+(const IA & d) const
   {
-#ifdef CGAL_IA_DEBUG
-      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
-#endif
+      CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
       return IA (-CGAL_IA_FORCE_TO_DOUBLE(-_inf - d._inf),
 	          CGAL_IA_FORCE_TO_DOUBLE( _sup + d._sup));
   }
@@ -109,9 +107,7 @@ struct Interval_nt_advanced
 
   IA  operator-(const IA & d) const
   {
-#ifdef CGAL_IA_DEBUG
-      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
-#endif
+      CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
       return IA (-CGAL_IA_FORCE_TO_DOUBLE(d._sup - _inf),
 	          CGAL_IA_FORCE_TO_DOUBLE(_sup - d._inf));
   }
@@ -185,9 +181,7 @@ inline
 Interval_nt_advanced
 Interval_nt_advanced::operator* (const Interval_nt_advanced & d) const
 {
-#ifdef CGAL_IA_DEBUG
-      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
-#endif
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   if (_inf>=0)					// this>=0
   {
       // d>=0     [_inf*d._inf; _sup*d._sup]
@@ -240,9 +234,7 @@ inline
 Interval_nt_advanced
 Interval_nt_advanced::operator* (const double d) const
 {
-#ifdef CGAL_IA_DEBUG
-      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
-#endif
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   return (d>=0) ? IA (-CGAL_IA_FORCE_TO_DOUBLE(d*-_inf),
 	               CGAL_IA_FORCE_TO_DOUBLE(d*_sup))
      		: IA (-CGAL_IA_FORCE_TO_DOUBLE(d*-_sup),
@@ -253,9 +245,7 @@ inline
 Interval_nt_advanced
 Interval_nt_advanced::operator/ (const double d) const
 {
-#ifdef CGAL_IA_DEBUG
-      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
-#endif
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   if (d>0) return IA (-CGAL_IA_FORCE_TO_DOUBLE((-_inf)/d),
 	               CGAL_IA_FORCE_TO_DOUBLE(_sup/d));
   if (d<0) return IA (-CGAL_IA_FORCE_TO_DOUBLE((-_sup)/d),
@@ -312,9 +302,7 @@ inline
 Interval_nt_advanced
 operator/ (const double d, const Interval_nt_advanced & t)
 {
-#ifdef CGAL_IA_DEBUG
-      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
-#endif
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   if (t.inf() <= 0 && t.sup() >= 0) // t~0
       return CGAL_IA_LARGEST;
 
@@ -328,9 +316,7 @@ inline
 Interval_nt_advanced
 Interval_nt_advanced::operator/ (const Interval_nt_advanced & d) const
 {
-#ifdef CGAL_IA_DEBUG
-      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
-#endif
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   if (d._inf>0)				// d>0
   {
       // this>=0	[_inf/d._sup; _sup/d._inf]
@@ -404,9 +390,7 @@ inline
 Interval_nt_advanced
 square (const Interval_nt_advanced & d)
 {
-#ifdef CGAL_IA_DEBUG
-      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
-#endif
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   if (d.inf()>=0)
       return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d.inf()*-d.inf()),
 	     			   CGAL_IA_FORCE_TO_DOUBLE(d.sup()*d.sup()));
