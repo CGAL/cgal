@@ -37,6 +37,7 @@
 
 #include <iostream.h>
 #include <CGAL/assertions.h>
+#include <CGAL/IO/io_tags.h>	// For CGAL_io_Operator().
 #include <CGAL/double.h>	// For CGAL_is_valid() and CGAL_is_finite().
 #include <CGAL/enum.h>  // Because we overload CGAL_{sign,compare,abs,min,max}
 #include <CGAL/number_utils.h>  // For CGAL_max(double, double).
@@ -509,6 +510,13 @@ inline CGAL_Interval_nt sqrt(const CGAL_Interval_nt& d)
   CGAL_FPU_set_rounding_to_nearest();
   return tmp;
 }
+
+// The undocumented IO thing...
+
+inline
+CGAL_io_Operator
+CGAL_io_tag(const CGAL_Interval_nt_advanced &)
+{ return CGAL_io_Operator(); }
 
 // Finally we source the CGAL_to_Interval_nt_advanced() "cast" functions from
 // other NTs, when necessary.
