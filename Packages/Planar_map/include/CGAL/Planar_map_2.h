@@ -398,28 +398,58 @@ public:
     // The type cast to const is there to ensure that the planar map 
     // is not changed.
   }
+
+  //! determines whether a given point lies within the interior of a given face
+
+  /*! is_point_in_face() is a predicate that determines whether a given point 
+   * lies within the interior of a given face.
+   * A point lies within a face interior, iff the number of intersections 
+   * between the face boundary and a ray emenating from the point is even.
+   * If the face is the unbounded face and it has no 
+   * \param p the given point.
+   * \param f a handle to the given face.
+   * \return true if the given point lies within the interior of the given 
+   * face, and false otherwise.
+   */
+
+  //bool is_point_in_face(const Point_2 & p, Face_const_handle f)
+  //{
+  //if (!f->is_unbounded()) {
+  //  Halfedge_const_handle h = ;
+  //  return point_in_in(p, f->h, h->curve());
+  //}
+  // Find halfedge on boundary:
+  //   if unbounded face is empty return yes,
+  //   if unbouded face find halfedge on some hole,
+  //   all other faces have outer ccb, so just find a halfedge of it.
+  //}
   
 protected:
 
-  
-  // Determines if an input point is within the face incident
-  // to an input halfedge.
-  //
-  // p   - input point
-  // ne  - handle of input halfedge
-  // nvc - curve of input halfedge
-  //
-  // return value - true iff the above condition holds
-  //
-  // Implementation:
-  // Conceptually, we shoot a ray from p vertically upwards and count
-  // the number of pm-halfedges of the boundary of the face that intersect it.
-  // If this number is odd the point is inside the face. In practice, we 
-  // we use a check whether a curve is above or below a point.
-  //
-  bool point_is_in( const Point_2           & p, 
-                    Halfedge_const_handle   ne,
-                    const X_curve_2         & ncv) const;
+  //! determines whether a given point lies within the interior of a face
+  //! incident to a given halfedge.
+
+  /*! point_is_in() is a predicate that determines whether a given point lies
+   * within the interior of a face incident to a given halfedge. The halfedge
+   * curve is provided explicitly, in case the halfedge hasn't been fully
+   * constructed yet.
+   * A point lies within a face interior, iff the number of intersections 
+   * between the face boundary and a ray emenating from the point is even.
+   * This function counts the number of intersections with a vertical ray, by
+   * counting the number of boundary halfedges that are above the input point,
+   * and the input point is in their x-range. The functions carefuly handles
+   * degenerate cases. For example, the vertical ray coinsides with a boundary
+   * halfedge.
+   * \param p the given point.
+   * \param ne a handle to a halfedge incident to the face in question.
+   * \param ncv the curve of the given halfedge (for cases where the
+   * halfedge is premature curve-less)
+   * \return true if the given point lies within the interior of the face
+   * incident to the given halfedge, and false otherwise.
+   */
+  bool point_is_in(const Point_2       & p, 
+                   Halfedge_const_handle ne,
+                   const X_curve_2     & ncv) const;
   
   /////////////////////////////////////////////////////////
   // Assignment functions 
