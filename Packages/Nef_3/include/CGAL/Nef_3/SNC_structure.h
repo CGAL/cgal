@@ -71,7 +71,6 @@ struct move_shalfedge_around_facet {
 template <class Object, class Hash_map, class Union_find>
 void merge_sets( Object o1, Object o2, Hash_map& hash, Union_find& uf) {
   CGAL_assertion( hash[o1] != 0 && hash[o2] != 0);
-  CGAL_warning( !uf.same_set( hash[o1], hash[o2]));
   if( !uf.same_set( hash[o1], hash[o2]))
     uf.unify_sets( hash[o1], hash[o2]);
 }
@@ -1073,9 +1072,6 @@ public:
     TRACE("UNION of "<<IO->index(f1)<<" & "<<IO->index(f2));
     TRACEN(" ("<<IO->index(D.twin(f1))<<" & "<<IO->index(D.twin(f2))<<")");
 
-    TRACEN("BEFORE "<<PFC(cycle1));
-    TRACEN("BEFORE "<<PFC(cycle2));
-
     D.link_as_prev_next_pair( SD.previous(cycle1), D.next(cycle1));
     D.link_as_prev_next_pair( D.twin(D.next(cycle1)), 
 			      D.twin(SD.previous(cycle1)));
@@ -1235,12 +1231,15 @@ public:
 	      D.mark(e1)==D.mark(e) && D.mark(e)==D.mark(e2)) {
 	    Halffacet_handle f1(D.facet(e1)); 
 	    Halffacet_handle f2(D.facet(e2));
-	    TRACEN("UNION of "<<IO->index(f1)<<" & "<<IO->index(D.twin(f2)));
+	    TRACEN("UNION of "<<IO->index(f1)<<" & "<<IO->index(D.twin(f2))<<
+		   " ("<<IO->index(D.twin(f1))<<" & "<<IO->index(f2)<<")");
 	    merge_sets( f1, D.twin(f2), hash_facet, uf_facet);
-	    TRACEN("UNION of "<<IO->index(D.twin(f1))<<" & "<<IO->index(f2));
 	    merge_sets( D.twin(f1), f2, hash_facet, uf_facet);
+	    TRACEN("BEFORE "<<PFC(e1)<<endl<<PFC(D.twin(e2)));
 	    TRACEN("removing "<<IO->index(e));
 	    remove_edge_and_merge_facet_cycles(e);
+	    // TRACEN("AFTER "<<PFC(e1)); // e1 is not valid after a
+	                                  // sloop creation
 	  }
 	}
       }
@@ -1295,25 +1294,39 @@ public:
    void remove_edge_and_merge_facet_cycles( Halfedge_handle e) {
      SNC_decorator D(*this);
      CGAL_assertion( D.has_outdeg_two(e));
-     delete_svertex_and_update_incidences(e);
-     delete_svertex_and_update_incidences(D.twin(e));
+     Halfedge_handle et = D.twin(e);
+     CGAL_assertion( D.has_outdeg_two(et));
+     SM_decorator SD1(D.vertex(e));
+     SM_decorator SD2(D.vertex(et));
+     SHalfedge_handle e1 = SD1.first_out_edge(e);
+     SHalfedge_handle e2 = SD2.next(D.previous(e1));
+     merge_sedges_at_target_and_remove_svertex( D.twin(e1), e);
+     merge_sedges_at_target_and_remove_svertex( D.twin(e2), et);
    }
 
-   void delete_svertex_and_update_incidences( SVertex_handle v) {
+   void merge_sedges_at_target_and_remove_svertex( SHalfedge_handle s1,
+						   SVertex_handle v) {
      SNC_decorator D(*this);
      SM_decorator SD(D.vertex(v));
-     SHalfedge_handle e1(SD.first_out_edge(v)); 
-     SHalfedge_handle e2(SD.cyclic_adj_succ(e1));
-     if( e1 == SD.twin(e2)) {
-       SD.convert_edge_to_loop(e1);
+     CGAL_assertion( SD.target(s1) == v);
+     SHalfedge_handle s2(SD.next(s1));
+     CGAL_assertion( SD.source(s2) == v);
+     if( s1 == s2) { //s1 == SD.twin(s2)) {
+       TRACEN(IO->index(s1)<<'('<<IO->index(D.twin(s2))<<") to sloop");
+       SD.convert_edge_to_loop(s1);
        CGAL_assertion(SD.shalfloop() != SHalfloop_handle());
-       D.add_sloop_to_facet( SD.shalfloop(), D.facet(e1));
+       D.add_sloop_to_facet( SD.shalfloop(), D.facet(s1));
+       TRACEN(IO->index(s2)<<" removed");
      }
      else {
        CGAL_assertion( D.has_outdeg_two(v));
-       D.link_as_prev_next_pair( SD.twin(e2), e1);
-       D.link_as_prev_next_pair( SD.twin(e1), e2);
-       SD.merge_edge_pairs_at_target( SD.twin(e1));
+       D.link_as_prev_next_pair( s1, D.next(s2));
+       TRACEN(IO->index(s1)<<" "<<IO->index(D.next(s2))<<" linked.");
+       D.link_as_prev_next_pair( D.twin(D.next(s2)), D.twin(s1));
+       TRACEN(IO->index(D.twin(D.next(s2)))<<" "<<
+	      IO->index(D.twin(s1))<<" linked.");
+       SD.merge_edge_pairs_at_target( s1); // s2 is removed
+       TRACEN(IO->index(s2)<<" removed");
      }
    }
 
@@ -1381,8 +1394,8 @@ public:
       CGAL_assertion( sf != SFace_handle());
       SHalfedge_around_sface_circulator c(e), cend(c);
       CGAL_For_all( c, cend) {
-	SD.set_face(e, sf);
-	linked[e] = true;
+	SD.set_face(c, sf);
+	linked[c] = true;
       }
       /* TODO: set as first boundary entry the outermost cycle */
       SD.store_boundary_object( e, sf);
@@ -1412,8 +1425,8 @@ public:
       Halffacet_handle f = *(uf.find(hash[D.facet(u)]));
       SHalfedge_around_facet_circulator c(u), cend(c);
       CGAL_For_all( c, cend) {
-	u->incident_facet_ = f; /* TODO: implement method in decorator */
-	linked[u] = true;
+	c->incident_facet_ = f; /* TODO: implement method in decorator */
+	linked[c] = true;
       }
       /* TODO: set as first boundary entry the outermost cycle */
       D.store_boundary_object( u, f);
@@ -1438,8 +1451,11 @@ public:
       Volume_handle c = *(uf.find(hash[D.volume(sf)]));
       if( linked[c])
 	continue;
+      linked[c] = true;
       Volume_setter setter(D, c);
       D.visit_shell_objects( sf, setter );
+      /* TODO: the lexicographicaly smaller sface as boundary item */
+      D.store_boundary_object( sf, c);
     }
   }
   

@@ -622,9 +622,12 @@ void convert_edge_to_loop(SHalfedge_handle e) const
   SHalfloop_handle l = new_loop_pair();
   SVertex_handle v = target(e);
   SFace_handle f1 = face(e), f2 = face(twin(e));
-  CGAL_nef3_assertion( is_boundary_object(e) && 
-		      is_boundary_object(twin(e)) );
-  undo_boundary_object(e,f1); undo_boundary_object(twin(e),f2);
+  //CGAL_nef3_assertion( is_boundary_object(e) && 
+  //	      is_boundary_object(twin(e)) );
+  if( is_boundary_object(e)) {
+    CGAL_nef3_assertion( is_boundary_object(twin(e)));
+    undo_boundary_object(e,f1); undo_boundary_object(twin(e),f2);
+  }
   link_as_loop(l,f1), link_as_loop(twin(l),f2);
   circle(l) = circle(e); circle(twin(l)) = circle(twin(e));
   mark(l) = mark(e);
