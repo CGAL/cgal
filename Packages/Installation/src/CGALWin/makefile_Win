@@ -12,7 +12,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = $(CGAL_WINLIB_CXXFLAGS) -DCGAL_USE_CGAL_HEADERS
+CXXFLAGS = -I/usr/X11R6/include $(CGAL_WINLIB_CXXFLAGS) -DCGAL_USE_CGAL_HEADERS
 
 #---------------------------------------------------------------------#
 # Object files
