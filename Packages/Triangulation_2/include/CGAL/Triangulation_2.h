@@ -316,7 +316,7 @@ public:
     case COLLINEAR_OUTSIDE:
       {
 	v = new Vertex(p);
-	_tds.insert_colinear_outside( &(*v), &(*loc),li);
+	_tds.insert_collinear_outside( &(*v), &(*loc),li);
       	 break; 
       }
     case VERTEX:

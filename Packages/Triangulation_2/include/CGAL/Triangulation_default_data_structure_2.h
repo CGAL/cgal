@@ -289,7 +289,7 @@ public:
   // the following function insert in 1_dim triangulation
   // a vertex which is outside the convex hull of the vertices (a segment)
   // loc->vertex(li) is the verex of the triangulation closest to v
-  void insert_colinear_outside(Vertex * v, Face * loc, int li)
+  void insert_collinear_outside(Vertex * v, Face * loc, int li)
   {
     Vertex*  w = loc->vertex(li); // the extremal vertex
     Face* n = loc->neighbor(ccw(li));
