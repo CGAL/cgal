@@ -1,14 +1,14 @@
 TODO:
 ----
-- operator/(cl_I, cl_I) is not provided.
-- Factorize the common code of these files in a separate file ?
-  (is_valid, etc... ?)
+- Should I provide operator/(cl_I, cl_I) ?  Not sure.
+- Is it possible to factorize more code (to_double()...) ?
 - Things that are supported by Gmpz, and should (?) be ported to cl_I:
   - exact_division  (exquo())
   - approximate_decimal_length
   - convert_to<IA>
 - Make benchmarks.
-- Test-suite: un fichier générique, testé successivement pour tous les NTs ?
+- The test suite needs to be more exhaustive...
+  How about a generic NT test-suite ?
 - Aller voir les snapshots sur le site FTP...  Attendre la prochaine version
   et s'adapter (il y a min/max/abs, les include *io.h, etc...).
-- Il y a un portage sous CygWin.
+- There's a CygWin version.

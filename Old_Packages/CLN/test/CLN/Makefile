@@ -9,7 +9,7 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
         -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
-	$(CGAL_CXXFLAGS)
+	$(CGAL_CXXFLAGS) \
 	# -g -Wall -W
 	# /Op 
 	# -O2 -Wall -W

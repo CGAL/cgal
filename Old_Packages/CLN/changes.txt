@@ -1,5 +1,9 @@
 Changes done to the CLN package.
 
+Version 1.6 on 12 October 1999.
+- Added missing "#include <fstream>".
+- New file <include/CGAL/CLN/common.h> which factorizes the common code.
+
 Version 1.5 on 10 October 1999.
 - Removed "#include <fstream.h>" to please Visual C++.
 - Reference the 1.0.2 version of CLN in the biblio.
