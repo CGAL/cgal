@@ -33,7 +33,7 @@
 #include <CGAL/_test_cls_delaunay_triangulation_2.C>
 
 // Explicit instantiation of the whole class :
-//template class CGAL::Delaunay_triangulation_2<TestK>;
+template class CGAL::Delaunay_triangulation_2<TestK>;
 
 int main()
 {
