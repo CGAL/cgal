@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.101 on ?? June 2001
+- Remove warnings in the test-suite.
+
 Version 4.100 on 20 June 2001
 - Arithmetic_filter.h => Filtered_exact.h.
 
