@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 #include <CGAL/Cartesian.h>
 #include <CGAL/Snap_rounding_2.h>
 
-typedef leda_real Number_Type;
+typedef leda_rational Number_Type;
 typedef CGAL::Cartesian<Number_Type> Rep;
 typedef CGAL::Segment_2<Rep> Segment_2;
 typedef CGAL::Point_2<Rep> Point_2;
@@ -37,36 +37,37 @@ void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg
 {
   int number_of_segments,i;
   CGAL::Segment_data<Rep> seg;
-  double x1,y1,x2,y2;
+  Number_Type x1,y1,x2,y2;
 
-  if(argc > 5 || argc < 3) {
-    std::cerr << "syntex: demo <precision> <input file name> [do_isr = t][wait for a click = f]\n";
+  if(argc > 4 || argc < 2) {
+    std::cerr << "syntex: demo <input file name> [do_isr = t][wait for a click = f]\n";
     std::cerr << "wait for a click: 0 - not wait, 1 - wait\n";
     exit(1);
   }
 
-  prec = atof(argv[1]);
-  ifstream is(argv[2]);
+  ifstream is(argv[1]);
 
   
   if(argc > 3)
-    do_isr = !strcmp(argv[3],"t");
+    do_isr = !strcmp(argv[2],"t");
   else
     do_isr = true;
 
   if(argc > 4)
-    wait_for_click = !strcmp(argv[4],"t");
+    wait_for_click = !strcmp(argv[3],"t");
   else
     wait_for_click = false;
 
   number_of_kd_trees = 5;
 
   if(is.bad()) {
-    std::cerr << "Bad input file : " << argv[2] << endl;
+    std::cerr << "Bad input file : " << argv[1] << endl;
     exit(1);
   }
 
   is >> number_of_segments;
+
+  is >> prec;
 
   if(number_of_segments < 1) {
     std::cerr << "Bad input file(number of segments)" << argv[2] << endl;
@@ -78,7 +79,7 @@ void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg
       is >> y1;
       is >> x2;
       is >> y2;
-      seg.set_data(Number_Type(x1),Number_Type(y1),Number_Type(x2),Number_Type(y2));
+      seg.set_data(x1,y1,x2,y2);
       seg_list.push_back(Segment_2(Point_2(seg.get_x1(),seg.get_y1()),Point_2(seg.get_x2(),seg.get_y2())));
   }
 }

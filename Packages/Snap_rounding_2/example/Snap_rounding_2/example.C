@@ -4,7 +4,7 @@
 
 #include <CGAL/leda_real.h>
 
-typedef leda_real                        Number_type;
+typedef leda_rational                        Number_type;
 typedef CGAL::Cartesian<Number_type>     Rep;
 typedef CGAL::Snap_rounding_2<Rep>       Sr;
 

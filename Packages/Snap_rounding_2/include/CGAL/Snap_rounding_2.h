@@ -51,6 +51,18 @@
 #include <CGAL/intersection_2.h>
 #endif
 
+#ifndef SWEEP_TO_PRODUCE_PLANAR_MAP_SUBCURVES_H
+#include <CGAL/sweep_to_produce_planar_map_subcurves.h>
+#endif
+
+#ifndef CGAL_ARR_SEGMENT_EXACT_TRAITS_H
+#include <CGAL/Arr_segment_exact_traits.h>
+#endif
+
+#ifndef CGAL_ARR_POLYLINE_TRAITS_H
+#include <CGAL/Arr_polyline_traits.h>
+#endif
+
 #ifndef CGAL_TIMER_H
 #include <CGAL/Timer.h>
 #endif
@@ -73,7 +85,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef ISR_DEBUG
+#if defined(ISR_DEBUG)
 typedef CGAL::Window_stream Window_stream;
 #endif
 
@@ -155,14 +167,76 @@ struct hot_pixel_dir_cmp
 template<class Rep_>
 class Snap_rounding_2 {
 
+typedef CGAL::Arr_segment_exact_traits<Rep_ > Traits;
 typedef Rep_ Rep;
 typedef typename Rep::FT NT;
 typedef CGAL::Segment_2<Rep> Segment_2;
 typedef CGAL::Point_2<Rep> Point_2;
+typedef Traits::X_curve X_curve;
+typedef Traits::Curve Curve;
+
+public:
+  typedef typename std::list<std::list<CGAL::Point_2<Rep> > >
+             Polylines_container;
+  typedef typename Polylines_container::const_iterator Polyline_const_iterator;
+  typedef typename Polylines_container::iterator Polyline_iterator;
+  typedef typename std::list<CGAL::Point_2<Rep> > Points_container;
+  typedef typename Points_container::const_iterator Point_const_iterator;
+  typedef typename std::list<Segment_2> Segments_container;
+  typedef Segments_container::const_iterator Segment_const_iterator;
+  typedef Segments_container::iterator Segment_iterator;
+
+  enum Direction {UP_RIGHT,UP_LEFT,DOWN_RIGHT,DOWN_LEFT,UP,DOWN,LEFT,
+                  RIGHT,POINT_SEG};
+
+  static Direction seg_dir;
+  static bool erase_hp;
+  static inline Direction get_direction() {return(seg_dir);}
+  static inline void set_direction(Direction dir) {seg_dir = dir;}
+  static inline bool get_erase_hp() {return(erase_hp);}
+
+  Snap_rounding_2(Segment_const_iterator begin,
+                  Segment_const_iterator end,
+                  NT inp_prec,bool inp_do_isr = true,
+                  int inp_number_of_kd_trees = default_number_of_kd_trees);
+#ifdef ISR_DEBUG
+  template<class Out>
+  void output_distances(Out &o);
+#endif
+
+  inline Polyline_const_iterator polylines_begin() const {
+             return(segments_output_list.begin());}
+  inline Polyline_const_iterator polylines_end() const {
+             return(segments_output_list.end());}
+  inline Segment_const_iterator segments_begin() const {
+             return(seg_2_list.begin());}
+  inline Segment_const_iterator segments_end() const {
+    return(seg_2_list.end());}
+  inline Segment_iterator segments_begin() {return(seg_2_list.begin());}
+  inline Segment_iterator segments_end() {return(seg_2_list.end());}
+
+  // statistics functions
+  inline double average_number_of_vertices() const {
+    return(double(stat_sum_number_of_vertices) / number_of_segments);}
+  inline int max_number_of_vertices() const {
+    return(stat_max_number_of_vertices);}
+  inline NT max_distance() const {return(stat_max_distance);}
+  inline NT average_distance() const {return(stat_average_distance);}
+  inline double time() const {return(timer.time());}
+  inline int number_of_input_segments() const {return(number_of_segments);}
+
+#if defined(ISR_DEBUG) || defined(TEST)
+  template<class Out>
+  void output(Out &o);
+#endif
+
+#ifdef ISR_DEBUG
+  void window_output(Window_stream &w,bool wait_for_click);
+#endif
 
 private:
+  static const int default_number_of_kd_trees = 5;
   // statistics data
-  bool do_stat;
   int stat_current_number_of_vertices;
   int stat_max_number_of_vertices;
   int stat_sum_number_of_vertices;
@@ -173,14 +247,14 @@ private:
 
   std::set<Hot_Pixel<Rep> *,hot_pixel_auclidian_cmp<Rep> > hp_set;
   NT prec,min_x,max_x,min_y,max_y;
-  std::list<Segment_2> seg_2_list;
+  Segments_container seg_2_list;
   std::list<Segment_data<Rep> > seg_list;
   std::list<std::list<Point_2> > segments_output_list;
   int number_of_segments,number_of_kd_trees;
   Multiple_kd_tree<NT,Hot_Pixel<Rep> *> *mul_kd_tree;
   bool do_isr;
 
-  void find_hot_pixels();
+  void find_hot_pixels_and_create_kd_trees();
   void find_intersected_hot_pixels(Segment_data<Rep> &seg,
                          std::set<Hot_Pixel<Rep> *,
                          hot_pixel_dir_cmp<Rep> > &hot_pixels_intersected_set,
@@ -194,64 +268,13 @@ private:
                    &inp_hot_pixels_intersected_set,std::list<Point_2>
                    &seg_output,int number_of_intersections,bool first_time);
   void iterate();
-
-public:
-  enum Direction {UP_RIGHT,UP_LEFT,DOWN_RIGHT,DOWN_LEFT,UP,DOWN,LEFT,
-                  RIGHT,POINT_SEG};
-  static Direction seg_dir;
-  static bool erase_hp;
-  static inline Direction get_direction() {return(seg_dir);}
-  static inline void set_direction(Direction dir) {seg_dir = dir;}
-  static inline bool get_erase_hp() {return(erase_hp);}
-  Snap_rounding_2(typename std::list<Segment_2>::const_iterator begin,
-                  typename std::list<Segment_2>::const_iterator end,
-                  NT inp_prec,bool inp_do_isr = true,
-                  int inp_number_of_kd_trees = 5);
-#ifdef ISR_DEBUG
-  template<class Out>
-  void output_distances(Out &o);
-#endif
-
-  typedef typename std::list<std::list<CGAL::Point_2<Rep> > >
-             Polylines_container;
-  typedef typename Polylines_container::const_iterator Polyline_const_iterator;
-  typedef typename Polylines_container::iterator Polyline_iterator;
-  typedef typename std::list<CGAL::Point_2<Rep> > Points_container;
-  typedef typename Points_container::const_iterator Point_const_iterator;
-  inline Polyline_const_iterator polylines_begin() const {
-             return(segments_output_list.begin());}
-  inline Polyline_const_iterator polylines_end() const {
-             return(segments_output_list.end());}
-  typedef typename std::list<Segment_2> Segments_container;
-  typedef Segments_container::const_iterator Segment_const_iterator;
-  typedef Segments_container::iterator Segment_iterator;
-  inline Segment_const_iterator segments_begin() const {
-             return(seg_2_list.begin());}
-  inline Segment_const_iterator segments_end() const {return(seg_2_list.end());}
-  inline Segment_iterator segments_begin() {return(seg_2_list.begin());}
-  inline Segment_iterator segments_end() {return(seg_2_list.end());}
-
-  // statistics functions
-  inline double average_number_of_vertices() const {return(double(stat_sum_number_of_vertices) / number_of_segments);}
-  inline int max_number_of_vertices() const {return(stat_max_number_of_vertices);}
-  inline NT max_distance() const {return(stat_max_distance);}
-  inline NT average_distance() const {return(stat_average_distance);}
-  inline double time() const {return(timer.time());}
-  inline int number_of_input_segments() const {return(number_of_segments);}
-
-  template<class Out>
-  void output(Out &o);
-#ifdef ISR_DEBUG
-  void window_output(Window_stream &w,bool wait_for_click);
-#endif
 };
 
 #ifdef ISR_TIMER
 #include <CGAL/Timer.h>
-static double time_for_is = 0;
 #endif
 
-#ifdef ISR_DEBUG
+#if defined(ISR_DEBUG) || defined(TEST)
 #include <CGAL/squared_distance_2.h>
 
 #endif
@@ -506,7 +529,8 @@ bool hot_pixel_auclidian_cmp<Rep_>::operator()(const Hot_Pixel<Rep_> *h1,
 // a function for compare two hot pixels for the set of hot pixels a certain
 // segment intersect
 template<class Rep_>
-bool hot_pixel_dir_cmp<Rep_>::operator ()(const Hot_Pixel<Rep_> *h1,const Hot_Pixel<Rep_> *h2) 
+bool hot_pixel_dir_cmp<Rep_>::operator ()(const Hot_Pixel<Rep_> *h1,\
+     const Hot_Pixel<Rep_> *h2) 
   {
     return(
 	   // Point segment intersects only one pixel, thus ignored
@@ -540,41 +564,39 @@ bool hot_pixel_dir_cmp<Rep_>::operator ()(const Hot_Pixel<Rep_> *h1,const Hot_Pi
 
 
 template<class Rep_>
-void Snap_rounding_2<Rep_>::find_hot_pixels()
+void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
   {
     Hot_Pixel<Rep_> *hp;
-    typename std::list<Segment_data<Rep_> >::iterator iter1,iter2;
+    typename std::list<Segment_data<Rep_> >::iterator iter1;
     CGAL::Object result;
     Point_2 p;
     std::list<std::pair<std::pair<NT,NT>,Hot_Pixel<Rep_> *> > hot_pixels_list;
-    for(iter1 = seg_list.begin();iter1 != seg_list.end();++iter1) {
-      // add hot pixels for end-points
-      hp = new Hot_Pixel<Rep_>(iter1->get_x1(),iter1->get_y1(),prec);
-      if(hp_set.insert(hp).second) // check that the hot pixel does not exist
-        hot_pixels_list.push_back(
-        std::pair<std::pair<NT,NT>,Hot_Pixel<Rep_> *>(std::pair<NT,NT>(
-        hp->get_x(),hp->get_y()),hp));
 
-      hp = new Hot_Pixel<Rep_>(iter1->get_x2(),iter1->get_y2(),prec);
+    list<X_curve>  segments;
+    for(iter1 = seg_list.begin();iter1 != seg_list.end();++iter1)
+      segments.push_back(X_curve(Point_2(iter1->get_x1(),iter1->get_y1()),
+                                 Point_2(iter1->get_x2(),iter1->get_y2())));
+
+    //    PM pm(new CGAL::Pm_naive_point_location<PM>);
+    // sweep_to_construct_planar_map(segments.begin(), segments.end(), pm);
+    std::list<X_curve>  subcurves;
+    Traits traits;
+    sweep_to_produce_planar_map_subcurves(segments.begin(), 
+					  segments.end(),  
+					  traits, 
+					  subcurves);
+
+    for(list<X_curve>::iterator v_iter = subcurves.begin();
+        v_iter != subcurves.end();
+        ++v_iter) {
+      hp = new Hot_Pixel<Rep_>(v_iter->source().x(),v_iter->source().y(),prec);
       if(hp_set.insert(hp).second)
-        hot_pixels_list.push_back(std::pair<std::pair<NT,NT>,Hot_Pixel<Rep_> *>
-        (std::pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
-
-      // add hot pixels for intersections(overlappings do not count for
-      // intersections)
-      iter2 = iter1;
-      for(++iter2;iter2 != seg_list.end();++iter2) {
-        result = CGAL::intersection(Segment_2(Point_2(iter1->get_x1(),
-                 iter1->get_y1()),Point_2(iter1->get_x2(),iter1->get_y2())),
-                 Segment_2(Point_2(iter2->get_x1(),iter2->get_y1()),
-                 Point_2(iter2->get_x2(),iter2->get_y2())));
-        if(CGAL::assign(p,result)) {
-          hp = new Hot_Pixel<Rep_>(p.x(),p.y(),prec);
-          if(hp_set.insert(hp).second)
-            hot_pixels_list.push_back(std::pair<std::pair<NT,NT>,
-            Hot_Pixel<Rep_> *>(std::pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
-        }
-      }
+        hot_pixels_list.push_back(pair<pair<NT,NT>,Hot_Pixel<Rep_> *>(
+            pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
+      hp = new Hot_Pixel<Rep_>(v_iter->target().x(),v_iter->target().y(),prec);
+      if(hp_set.insert(hp).second)
+        hot_pixels_list.push_back(pair<pair<NT,NT>,Hot_Pixel<Rep_> *>(
+            pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
     }
 
     // create kd multiple tree
@@ -593,7 +615,8 @@ void Snap_rounding_2<Rep_>::find_hot_pixels()
   }
 
 template<class Rep_>
-void Snap_rounding_2<Rep_>::find_intersected_hot_pixels(Segment_data<Rep_> &seg,
+void Snap_rounding_2<Rep_>::find_intersected_hot_pixels(Segment_data<Rep_>
+                    &seg,
                     std::set<Hot_Pixel<Rep_> *,
                     hot_pixel_dir_cmp<Rep_> > &hot_pixels_intersected_set,
                     int &number_of_intersections)
@@ -746,11 +769,14 @@ void Snap_rounding_2<Rep_>::iterate()
   }
 
 template<class Rep_>
-Snap_rounding_2<Rep_>::Snap_rounding_2(typename std::list<Segment_2>::
-  const_iterator begin,typename std::list<Segment_2>::const_iterator end,
-  NT inp_prec,bool inp_do_isr = true,int inp_number_of_kd_trees = 5)
+Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
+  begin,Segment_const_iterator end,
+  NT inp_prec,bool inp_do_isr = true,int inp_number_of_kd_trees =
+  default_number_of_kd_trees)
   {
     timer.start();
+
+    // initialize approximation angles map
 
     stat_max_number_of_vertices = 0;
     stat_sum_number_of_vertices = 0;
@@ -773,11 +799,29 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(typename std::list<Segment_2>::
       ++begin;
     }
 
-    find_hot_pixels();
+    find_hot_pixels_and_create_kd_trees();
     iterate();
 
     timer.stop();
   }
+
+#if defined(ISR_DEBUG) || defined(TEST)
+template<class Rep_>
+template<class Out> void Snap_rounding_2<Rep_>::output(Out &o)
+  {
+    o << number_of_segments << endl;
+
+    for(typename std::list<std::list<Point_2> >::iterator iter1 =
+        segments_output_list.begin();iter1 != segments_output_list.end();
+        ++iter1) {
+      for(typename std::list<Point_2>::iterator iter2 = iter1->begin();
+          iter2 != iter1->end();++iter2)
+        o << iter2->x().to_double() << " " << iter2->y().to_double() << " ";
+
+      o << endl;
+    }
+  }
+#endif
 
 #ifdef ISR_DEBUG
 template<class Rep_>
@@ -812,25 +856,8 @@ template<class Out> void Snap_rounding_2<Rep_>::output_distances(Out &o)
     std::cerr << "evarage distance between output and original is " <<
                  evarage_dis << endl;
   }
-#endif
 
-template<class Rep_>
-template<class Out> void Snap_rounding_2<Rep_>::output(Out &o)
-  {
-    o << number_of_segments << endl;
 
-    for(typename std::list<std::list<Point_2> >::iterator iter1 =
-        segments_output_list.begin();iter1 != segments_output_list.end();
-        ++iter1) {
-      for(typename std::list<Point_2>::iterator iter2 = iter1->begin();
-          iter2 != iter1->end();++iter2)
-        o << iter2->x().to_double() << " " << iter2->y().to_double() << " ";
-
-      o << endl;
-    }
-  }
-
-#ifdef ISR_DEBUG
 template<class Rep_>
 void Snap_rounding_2<Rep_>::window_output(Window_stream &w,bool wait_for_click)
   {
