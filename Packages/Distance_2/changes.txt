@@ -1,3 +1,6 @@
+5 June 2004 Sylvain Pion
+- Remove obsolete test/install_ii and test/keep_ii.
+
 25 March 2004 Radu Ursu
 - removed all files in doc_tex because they are obsolete
 
