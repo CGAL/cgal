@@ -1,3 +1,11 @@
+1.2.25
+-------
+I have added the pixmaps in the doc.
+I have modified the documentation of Qt_widget a little bit (removed get_matrix)
+I removed the matrix from the doc.
+I have replaced zoom_in(double) and zoom_out(double) by zoom(double)
+
+
 1.2.22
 -------
 The doc after the 2nd revision
