@@ -1,12 +1,10 @@
 Changes done for the Interval Arithmetic package.
 
-Version 1.7 on ??? August 1998.
+Version 2.0 on 17 August 1998.
 - Added CGAL_to_interval_nt() cast functions for Gmpz and
   leda_{real,rational,integer,bigfloat}.
 - Added operators +=, -=, *=, /=, as required for all CGAL NTs.
 - Moved private files to the directory CGAL/Interval_arithmetic
-- Todo: *** Ecrire des test-suites pour les casts.
-- Todo: *** Headers modified according to the new rules.
 - Doc update: cgal.bib removed, geombib is updated.
 - Using CVS.
 
