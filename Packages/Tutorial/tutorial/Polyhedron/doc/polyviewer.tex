@@ -1,0 +1,28 @@
+The tutorial starts with an implementation of 
+a basic polyhedron viewer based on the \cgalpoly\ with the 
+default configuration.
+This basic viewer demonstrates basic functionalities of a 
+\cgalpoly . We describe how to import a polyhedron file in 
+the OFF format based on the \italic{modifier callback mechanism} and the 
+\italic{incremental builder}. We also show the mesh traversal based on
+the \italic{iterators} and the \italic{circulators} for rendering and 
+the OFF file exporting. 
+
+An extended polyhedron viewer is then introduced by customizing 
+the \poly\ with extra attributes and functionalities. This 
+enriched polyhedron supports facet and vertex normals for rendering, 
+supports the axis-aligned bounding box of the polyhedron, and 
+provides geometry items specialized with algorithmic flags. 
+%The extended primitives are employed to support efficient 
+%computation of the number of connected components, number 
+%of boundaries and combinatorial genus of the polyhedron. 
+The superimposition of the control mesh on the subdivision surfaces
+are implemented with the flags of the halfedge items 
+(\figurename\ \ref{fig:quad-triangle}). 
+%This enriched polyhedron is used as
+%the core data structure of our application. 
+
+The tutorial also features a trackball to interactively manipulate the
+polyhedron, a snapshot function of the camera viewpoint and 
+the transformation states, a raster output to the clipboard, and the
+vectorial output to a postscript file.% (\figure\ \ref{fig:gargoyle}).
