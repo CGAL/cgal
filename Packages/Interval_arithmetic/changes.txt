@@ -1,6 +1,6 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.45 on ? June 2000
+Version 4.45 on 11 June 2000
 - Use CGAL_NTS, and remove qualification of min and max.
 - Lazy_exact_nt<> complete rewrite.
 
