@@ -53,6 +53,12 @@ public:
 #if BENCH_TRAITS == CORE_CONIC_TRAITS
   typedef typename Traits::CfNT                 CfNT;
   typedef typename Traits::CfNT                 CfRT;
+  typedef typename Traits::CoNT                 CoNT;
+  typedef typename Traits::Int_point_2          Int_point_2;
+  typedef typename Traits::Int_segment_2        Int_segment_2;
+  typedef typename Traits::Int_circle_2         Int_circle_2;
+  typedef typename Traits::Int_line_2           Int_line_2;
+
 #elif BENCH_TRAITS != EXACUS_CONIC_TRAITS
   typedef typename Traits::Circle_2             Circle_2;
   typedef typename Traits::Segment_2            Segment_2;
@@ -125,341 +131,145 @@ public:
   {
     // Read a line from the input file.
     char one_line[128];
-    
-    skip_comments (is, one_line);
-    std::string stringvalues(one_line);
-    std::istringstream str_line (stringvalues, std::istringstream::in);
       
-    // Get the arc type.
-    char type;
-    bool is_circle = false;              // Is this a circle.
-    CfNT a, b, x0, y0;
-
-#if BENCH_TRAITS != CK_CIRCLE_TRAITS
-    CfNT r, s, t, u, v, w;               // The conic coefficients.
-#endif
-
-#if BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CK_CIRCLE_TRAITS || \
-    BENCH_TRAITS == CK_CONIC_TRAITS
-    Circle_2 circle;
-#endif
-
-#if BENCH_TRAITS == CK_CONIC_TRAITS
-    Conic_2 conic;
-#endif
-    
+    skip_comments (is, one_line);
+    std::istringstream str_line (one_line);
+      
+    // Read the arc type and act accordingly.
+    char     type;
+      
     str_line >> type;
       
-    // An ellipse (full ellipse or a partial ellipse):
-    if (type == 'f' || type == 'F' || type == 'e' || type == 'E')
+    if (type == 's' || type == 'S')
     {
-      // Read the ellipse (using the format "a b x0 y0"):
-      //
-      //     x - x0   2      y - y0   2
-      //  ( -------- )  + ( -------- )  = 1
-      //       a               b
-      //
-      CfRT a_in, b_in, x0_in, y0_in;
-      str_line >> a_in >> b_in >> x0_in >> y0_in;
-      a = a_in;
-      b = b_in;
-      x0 = x0_in;
-      y0 = y0_in;
-          
-      if (a == b)
-      {
-        is_circle = true;
-#if BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS || \
-    BENCH_TRAITS == CK_CIRCLE_TRAITS
-        circle = Circle_2 (Point_2 (x0, y0), a*b, CGAL::CLOCKWISE);
-#endif
-      }
+      // Construct a line segment. The line should have the format:
+      //   s <x1> <y1> <x2> <y2>
+      // where (x1, y1), (x2, y2) are the endpoints of a segment.
+      CfNT    x1, y1, x2, y2;
+    
+      str_line >> x1 >> y1 >> x2 >> y2;
+    
+      Int_point_2   p1(x1, y1), p2(x2, y2);
+      Int_segment_2 seg (p1, p2);
+    
+      cv = Curve_2 (seg);
+    }
+    else if (type == 'c' || type == 'C')
+    {
+      // Construct a full circle. The line should have the format:
+      //   c <x0> <y0> <R_sq>
+      // where (x0, y0) is the center of the circle and R_sq is its squared
+      // radius.
+      CfNT    x0, y0, R_sq;
+      
+      str_line >> x0 >> y0 >> R_sq;
+      
+      Int_point_2   p0(x0, y0);
+      Int_circle_2  circ(p0, R_sq);
+      
+      cv = Curve_2 (circ);
+    }
+    else if (type == 't' || type == 'T')
+    {
+      // Construct a circular arc. The line should have the format:
+      //   t <x1> <y1> <x2> <y2> <x3> <y3>
+      // where (x1, y1), (x2, y2) and (x3, y3) define the arc.
+      CfNT    x1, y1, x2, y2, x3, y3;
+      
+      str_line >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
+      
+      Int_point_2   p1(x1, y1), p2(x2, y2), p3(x3, y3);
+      
+      cv = Curve_2 (p1, p2, p3);
+    }
+    else if (type == 'f' || type == 'F')
+    {
+      // Construct a full conic curve. The line should have the format:
+      //   c <r> <s> <t> <u> <v> <w>
+      // where r, s, t, u, v, w define the conic equation.
+      CfNT    r, s, t, u, v, w;
+      
+      str_line >> r >> s >> t >> u >> v >> w;
+      
+      cv = Curve_2 (r, s, t, u, v, w);
+    }
+    else if (type == 'a' || type == 'A')
+    {
+      // Construct a conic arc. The line should have the format:
+      //   c <r> <s> <t> <u> <v> <w> <orient> <x1> <y1> <x2> <y2>
+      // where r, s, t, u, v, w define the conic equation, while (x1, y1)
+      // and (x2, y2) are the arc's endpoints.
+      CfNT    r, s, t, u, v, w;
+      
+      str_line >> r >> s >> t >> u >> v >> w;
+      
+      // Read the orientation.
+      int               i_orient;
+      CGAL::Orientation orient;
+      
+      str_line >> i_orient;
+      if (i_orient > 0)
+        orient = CGAL::COUNTERCLOCKWISE;
+      else if (i_orient < 0)
+        orient = CGAL::CLOCKWISE;
       else
-      {
-#if BENCH_TRAITS != CK_CIRCLE_TRAITS
-        CfNT a_sq = a*a;
-        CfNT b_sq = b*b;
-          
-        r = b_sq;
-        s = a_sq;
-        t = 0;
-        u = -2*x0*b_sq;
-        v = -2*y0*a_sq;
-        w = x0*x0*b_sq + y0*y0*a_sq - a_sq*b_sq;
-#if BENCH_TRAITS == CK_CONIC_TRAITS
-        conic = Conic_2(r, s, t, u, v, w);
-#endif
-#endif
-      }
-          
-      if (type == 'f' || type == 'F')
-      {
-        // Create a full ellipse (or circle).
-        if (is_circle) {
-#if BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CK_CIRCLE_TRAITS || \
-    BENCH_TRAITS == CK_CONIC_TRAITS
-          cv = Curve_2 (circle);
-#else
-          cv = Curve_2 (x0, y0, a);
-#endif              
-        } else {
-#if BENCH_TRAITS == CK_CIRCLE_TRAITS
-          std::cerr << "Skipping Ellipsoid Arc!" << std::endl;
-          return false;
-#else
-
-#if BENCH_TRAITS == CK_CONIC_TRAITS
-          cv = Curve_2 (conic);          
-#else
-          cv = Curve_2 (r, s, t, u, v, w);
-#endif
-#endif
-        }
-        return true;
-      }
+        orient = CGAL::COLLINEAR;
+      
+      // Read the end points of the arc and create it.
+      // Notice we read the coordinates as strings, then we convert them to 
+      // the CoNT type, as we do not want to initialize CoNT from a double.
+      char    num[50];
+      CoNT    x1, y1, x2, y2;
+      
+      str_line >> num;
+      x1 = CoNT(num);
+      str_line >> num;
+      y1 = CoNT(num);
+      
+      str_line >> num;
+      x2 = CoNT(num);
+      str_line >> num;
+      y2 = CoNT(num);
+      
+      Point_2 ps (x1, y1);
+      Point_2 pt (x2, y2);
+      
+      cv = Curve_2 (r, s, t, u, v, w, orient, ps ,pt);
     }
-
-    else if (type == 'h' || type == 'H')
+    else if (type == 'l' || type == 'L')
     {
-#if BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS
-      std::cerr << "Skipping Hyperbola!" << std::endl;
-      return false;
-#else
+      // Construct a conic arc. The line should have the format:
+      //   c <r> <s> <t> <u> <v> <w> <a> <b> <c>
+      // where r, s, t, u, v, w define the conic equation and a, b, c define
+      // a line that intersects it.
+      CfNT    r, s, t, u, v, w;
+      CfNT    a, b, c;
       
-      // Read the hyperbola (using the format "a b x0 y0"):
-      //
-      //     x - x0   2      y - y0   2
-      //  ( -------- )  - ( -------- )  = 1
-      //       a               b
-      //
-      CfNT a, b, x0, y0;
-      CfRT a_in, b_in, x0_in, y0_in;
-      str_line >> a_in >> b_in >> x0_in >> y0_in;
-      a = a_in;
-      b = b_in;
-      x0 = x0_in;
-      y0 = y0_in;
-          
-      CfNT a_sq = a*a;
-      CfNT b_sq = b*b;
-          
-      r = b_sq;
-      s= -a_sq;
-      t = 0;
-      u = -2*x0*b_sq;
-      v = 2*y0*a_sq;
-      w = x0*x0*b_sq - y0*y0*a_sq - a_sq*b_sq;
-#endif      
+      str_line >> r >> s >> t >> u >> v >> w >> a >> b >> c;
+      
+      Int_line_2    line (a, b, c);
+      
+      cv = Curve_2 (r, s, t, u, v, w, line);
     }
-    else if (type == 'p' || type == 'P')
+    else if (type == 'q' || type == 'Q')
     {
-#if BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS
-      std::cerr << "Skipping Parabola!" << std::endl;
-      return false;
-#else
+      // Construct a circular arc. The line should have the format:
+      //   t <x1> <y1> <x2> <y2> <x3> <y3> <x4> <y4> <x5> <y5>
+      // where (x1, y1), (x2, y2), (x3, y3), (x4, y4) and (x5, y5) define the 
+      // arc.
+      CfNT    x1, y1, x2, y2, x3, y3, x4, y4, x5, y5;
       
-      // Read the parabola (using the format "c x0 y0"):
-      //
-      //                        2
-      //  4c*(y - y0) = (x - x0)
-      //
-      CfNT c, x0, y0;
-      CfRT c_in, x0_in, y0_in;
-      str_line >> c_in >> x0_in >> y0_in;
-      c = c_in;
-      x0 = x0_in;
-      y0 = y0_in;
-          
-      r = 1;
-      s = 0;
-      t = 0;
-      u = -2*x0;
-      v = -4*c;
-      w = x0*x0 + 4*c*y0;
-#endif
-    }
-    else if (type == 'c' || type == 'C' || type == 'a' || type == 'A')
-    {
-#if BENCH_TRAITS == CK_CIRCLE_TRAITS
-      std::cerr << "Skipping Generl Conic!" << std::endl;
-      return false;
-#else
-
-      // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
-      CfRT r_in, s_in, t_in, u_in, v_in, w_in;
-      str_line >> r_in >> s_in >> t_in >> u_in >> v_in >> w_in;
-      r = r_in;
-      s = s_in;
-      t = t_in;
-      u = u_in;
-      v = v_in;
-      w = w_in;
-          
-      if (type == 'c' || type == 'C')
-      {
-        // Create a full conic (should work only for ellipses).
-#if BENCH_TRAITS == CK_CONIC_TRAITS
-        conic = Conic_2(r, s, t, u, v, w);
-        if (conic.is_ellipse())
-          cv = Curve_2 (conic);
-        else {
-          std::cerr << "Skipping Non Ellipse" << std::endl;
-          return false;
-        }
-#else
-        cv = Curve_2 (r, s, t, u, v, w);
-#endif
-        return true;
-      }
-#endif
-    }
-    else if (type == 's' || type == 'S')
-    {
-#if BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS
-      std::cerr << "Skipping Segment!" << std::endl;
-      return false;
-#else
+      str_line >> x1 >> y1 >> x2 >> y2 >> x3 >> y3 >> x4 >> y4 >> x5 >> y5;
       
-      // Read a segment, given by its endpoints (x1,y1) and (x2,y2);
-      CfNT x1, y1, x2, y2;
-      CfRT x1_in, y1_in, x2_in, y2_in;
-      str_line >> x1_in >> y1_in >> x2_in >> y2_in;
-      x1 = x1_in;
-      y1 = y1_in;
-      x2 = x2_in;
-      y2 = y2_in;
+      Int_point_2   p1(x1, y1), p2(x2, y2), p3(x3, y3), p4(x4, y4), p5(x5, y5);
       
-      // Create the segment.
-#if BENCH_TRAITS == CORE_CONIC_TRAITS
-      cv = Curve_2(x1, y1, x2, y2);
-#else
-      Point_2 source (x1, y1);
-      Point_2 target (x2, y2);
-      Segment_2 segment (source, target);
-      cv = Curve_2(segment);
-#endif
-      return true;
-#endif
-    }
-    else if (type == 'i' || type == 'I')
-    {
-#if BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS
-      std::cerr << "Skipping Approximate Arc!" << std::endl;
-      return false;
-#else
-      
-      // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
-      CfRT r_in, s_in, t_in, u_in, v_in, w_in;
-      str_line >> r_in >> s_in >> t_in >> u_in >> v_in >> w_in;
-      r = r_in;
-      s = s_in;
-      t = t_in;
-      u = u_in;
-      v = v_in;
-      w = w_in;
-          
-      // Read the approximated source, along with a general conic 
-      // <r_1,s_1,t_1,u_1,v_1,w_1> whose intersection with <r,s,t,u,v,w>
-      // defines the source.
-      CfNT r1, s1, t1, u1, v1, w1;
-      CfNT x1, y1;
-          
-      CfRT x1_in, y1_in;
-      str_line >> x1_in >> y1_in;
-      x1 = x1_in;
-      y1 = y1_in;
-      
-      CfRT r1_in, s1_in, t1_in, u1_in, v1_in, w1_in;
-      str_line >> r1_in >> s1_in >> t1_in >> u1_in >> v1_in >> w1_in;
-      r1 = r1_in;
-      s1 = s1_in;
-      t1 = t1_in;
-      u1 = u1_in;
-      v1 = v1_in;
-      w1 = w1_in;
-      
-      // Read the approximated target, along with a general conic 
-      // <r_2,s_2,t_2,u_2,v_2,w_2> whose intersection with <r,s,t,u,v,w>
-      // defines the target.
-      CfNT r2, s2, t2, u2, v2, w2;
-      CfNT x2, y2;
-      
-      CfRT x2_in, y2_in;
-      str_line >> x2_in >> y2_in;
-      x2 = x2_in;
-      y2 = y2_in;
-
-      CfRT r2_in, s2_in, t2_in, u2_in, v2_in, w2_in;
-      str_line >> r2_in >> s2_in >> t2_in >> u2_in >> v2_in >> w2_in;
-      r2 = r2_in;
-      s2 = s2_in;
-      t2 = t2_in;
-      u2 = u2_in;
-      v2 = v2_in;
-      w2 = w2_in;
-      
-      // Create the conic arc.
-#if BENCH_TRAITS == CORE_CONIC_TRAITS
-      std::cerr << "Not implemented!" << std::endl;
-      return false;
-#else
-      Point_2 app_source (x1, y1);
-      Point_2 app_target (x2, y2);
-      cv = Curve_2 (r, s, t, u, v ,w,
-                    app_source, r1, s1, t1, u1, v1, w1,
-                    app_target, r2, s2, t2, u2, v2, w2);
-#endif
-      return true;
-#endif
+      cv = Curve_2 (p1, p2, p3, p4, p5);
     }
     else
     {
       std::cerr << "Illegal conic type specification: " << type << "."
                 << std::endl;
       return false;
-    }
-
-    // Read the end points of the arc and create it.
-    CfNT x1, y1, x2, y2;
-    CfRT x1_in, y1_in, x2_in, y2_in;
-    str_line >> x1_in >> y1_in >> x2_in >> y2_in;
-    x1 = x1_in;
-    y1 = y1_in;
-    x2 = x2_in;
-    y2 = y2_in;
-      
-    Point_2 source (x1, y1);
-    Point_2 target (x2, y2);
-      
-    // Create the conic (or circular) arc.
-    if (is_circle)
-    {
-#if BENCH_TRAITS == CORE_CONIC_TRAITS
-      cv = Curve_2 (x0, y0, a, CGAL::CLOCKWISE, source, target);
-#elif BENCH_TRAITS == CK_CIRCLE_TRAITS || \
-      BENCH_TRAITS == CK_CONIC_TRAITS
-      cv = Curve_2 (circle, target, source);
-#else
-      cv = Curve_2 (circle, source, target);
-#endif
-    }
-    else
-    {
-#if BENCH_TRAITS == CK_CONIC_TRAITS
-      if (conic.is_ellipse()) {
-        cv = Curve_2 (conic, target, source);
-      } else {
-        std::cerr << "Skipping Non Ellipse" << std::endl;
-        return false;
-      }
-#elif BENCH_TRAITS == CORE_CONIC_TRAITS
-      cv = Curve_2 (r, s, t, u, v, w, CGAL::CLOCKWISE, source, target);
-#elif BENCH_TRAITS == CONIC_TRAITS
-      cv = Curve_2 (r, s, t, u, v, w, source, target);
-#elif BENCH_TRAITS == CK_CIRCLE_TRAITS
-      std::cerr << "Skipping Ellipse" << std::endl;
-      return false;
-#endif
     }
     
     return true;

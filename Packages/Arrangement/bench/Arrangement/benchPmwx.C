@@ -70,7 +70,7 @@ enum MaxFilesNumber {
 
 #elif BENCH_TRAITS == CORE_CONIC_TRAITS
 #include <CORE/BigInt.h>
-#include <CGAL/Arr_conic_traits_2_core.h>
+#include <CGAL/Arr_conic_traits_2.h>
 #if defined(USE_CGAL_WINDOW)
 
 //#include <CGAL/IO/Conic_arc_2_Window_stream_core.h>
@@ -261,7 +261,8 @@ typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
 
 #elif BENCH_TRAITS == CORE_CONIC_TRAITS
 typedef CORE::BigInt                                    CfNT;
-typedef CGAL::Arr_conic_traits_2<CfNT,Kernel>           Traits;
+typedef CGAL::Cartesian<CfNT>                           IKernel;
+typedef CGAL::Arr_conic_traits_2<IKernel,Kernel>        Traits;
 #define TRAITS_TYPE "Conics"
 
 // Exacus Conics:
