@@ -47,10 +47,9 @@
 #include <map>
 #include <list>
 #undef _DEBUG
-#define _DEBUG 37
+#define _DEBUG 0 
+//37
 #include <CGAL/Nef_3/debug.h>
-
-#define IMMN 12345
 
 CGAL_BEGIN_NAMESPACE
 

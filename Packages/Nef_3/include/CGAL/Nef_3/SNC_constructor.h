@@ -51,8 +51,6 @@
 #define _DEBUG 43
 #include <CGAL/Nef_3/debug.h>
 
-#define IMMN 12345
-
 CGAL_BEGIN_NAMESPACE
 
 template <typename Point, typename Edge, class Decorator>
@@ -342,7 +340,7 @@ public:
     Halffacet_handle f_below;
     Point_3 p = point(vi);
     // ######### Non-generic code ##########
-    Segment_3 ray( p, Point_3( p.hx(), p.hy(), -IMMN*p.hw(), p.hw()));
+    Segment_3 ray( p, Point_3( p.hx(), p.hy(), -INT_MAX*p.hw(), p.hw()));
     // ####################################
     SNC_ray_shoter rs(*sncp());
     Object_handle o = rs.shot(ray);

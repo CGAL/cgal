@@ -25,9 +25,6 @@
 // implementation: simple debugging macros
 // ============================================================================
 
-#ifndef CGAL_DEBUG_H
-#define CGAL_DEBUG_H
-
 #include <iostream>
 
 #undef TRACE
@@ -36,8 +33,7 @@
 #undef CTRACE
 #undef CTRACEN
 #undef ASSERT
-
-static int debugthread=3141592;
+#undef SETDTHREAD
 
 #if _DEBUG>0
 #define SETDTHREAD(l) debugthread=l
@@ -80,6 +76,11 @@ static int debugthread=3141592;
 #else
 #define CTRACEN(b,t) 
 #endif
+
+#ifndef CGAL_DEBUG_H
+#define CGAL_DEBUG_H
+
+static int debugthread=3141592;
 
 template <typename C>
 void debug_container(const C& container,

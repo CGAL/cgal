@@ -30,6 +30,9 @@
 // ============================================================================
 #ifndef CGAL_NEF_POLYHEDRON_3_H
 #define CGAL_NEF_POLYHEDRON_3_H
+
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/Nef_3/SNC_structure.h>
@@ -50,9 +53,12 @@
 #endif // CGAL_NEF3_SM_VISUALIZOR
 
 #include <CGAL/Nef_3/polyhedron_3_to_nef_3.h>
+#include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
 
-#include <list>
+#include <CGAL/assertions.h>
+
+#include <list> // || (circulator_size(c) != 2 && !result));
 
 #undef _DEBUG
 #define _DEBUG 11
@@ -171,14 +177,20 @@ protected:
   typedef typename SNC_decorator::Halffacet_handle
                                                    Halffacet_handle;
   typedef typename SNC_decorator::Volume_handle    Volume_handle;
-  typedef typename SNC_structure::Vertex_const_handle
-                                                   Vertex_const_handle;
-  typedef typename SNC_structure::Halfedge_const_handle
-                                                   Halfedge_const_handle;
-  typedef typename SNC_structure::Halffacet_const_handle
-                                                   Halffacet_const_handle;
-  typedef typename SNC_structure::Volume_const_handle
-                                                   Volume_const_handle;
+
+#define USING(t) typedef typename SNC_structure::t t
+  USING(Sphere_point);
+  USING(Sphere_segment);
+  USING(Sphere_circle);
+  USING(Vertex_const_handle);
+  USING(Halfedge_const_handle);
+  USING(Halffacet_const_handle);
+  USING(Volume_const_handle);
+  USING(SHalfedge_around_svertex_circulator);
+  USING(SHalfedge_around_facet_circulator);
+  USING(SHalfedge_around_facet_const_circulator);
+  USING(Halffacet_cycle_iterator);
+
   typedef typename SM_decorator::SVertex_handle    SVertex_handle;
   typedef typename SM_decorator::SHalfedge_handle  SHalfedge_handle;
   typedef typename SM_decorator::SFace_handle      SFace_handle;
@@ -217,25 +229,17 @@ protected:
   typedef typename SM_decorator::SFace_const_iterator     
                                                    SFace_const_iterator;
 
-  typedef typename SNC_structure::SHalfedge_around_svertex_circulator
-    SHalfedge_around_svertex_circulator;
-  typedef typename SNC_structure::Halffacet_cycle_iterator
-    Halffacet_cycle_iterator;
 
-  typedef typename SNC_structure::Sphere_point     Sphere_point;
-  typedef typename SNC_structure::Sphere_segment   Sphere_segment;
-  typedef typename SNC_structure::Sphere_circle    Sphere_circle;
-  
   void initialize_simple_cube_vertices(Content space) {
     SNC_constructor C(snc());
-    C.create_box_corner( IMMN, IMMN, IMMN, space );
-    C.create_box_corner(-IMMN, IMMN, IMMN, space );
-    C.create_box_corner( IMMN,-IMMN, IMMN, space );
-    C.create_box_corner(-IMMN,-IMMN, IMMN, space );
-    C.create_box_corner( IMMN, IMMN,-IMMN, space );
-    C.create_box_corner(-IMMN, IMMN,-IMMN, space );
-    C.create_box_corner( IMMN,-IMMN,-IMMN, space );
-    C.create_box_corner(-IMMN,-IMMN,-IMMN, space );
+    C.create_box_corner( INT_MAX, INT_MAX, INT_MAX, space );
+    C.create_box_corner(-INT_MAX, INT_MAX, INT_MAX, space );
+    C.create_box_corner( INT_MAX,-INT_MAX, INT_MAX, space );
+    C.create_box_corner(-INT_MAX,-INT_MAX, INT_MAX, space );
+    C.create_box_corner( INT_MAX, INT_MAX,-INT_MAX, space );
+    C.create_box_corner(-INT_MAX, INT_MAX,-INT_MAX, space );
+    C.create_box_corner( INT_MAX,-INT_MAX,-INT_MAX, space );
+    C.create_box_corner(-INT_MAX,-INT_MAX,-INT_MAX, space );
   }
 
   void check_h_for_intersection_of_12_cube_edges_and_add_vertices
@@ -288,10 +292,95 @@ public:
     simplify();
   }
   
+  template <class HDS>
+  class Build_polyhedron : public CGAL::Modifier_base<HDS> {
+    
+    class Visitor {
+
+      Object_index<Vertex_iterator> *VI;
+      Polyhedron_incremental_builder_3<HDS> *B;
+      SNC_decorator *D;
+      
+    public:
+      Visitor(Polyhedron_incremental_builder_3<HDS> *BB,
+	      SNC_decorator *sd,
+	      Object_index<Vertex_iterator> *vi) {B=BB; D=sd; VI=vi;}
+
+      void visit(Halffacet_handle f) {
+ 
+	SHalfedge_handle se;
+	Halffacet_cycle_iterator fc;
+     	
+	B->begin_facet();
+	fc = f->facet_cycles_begin();
+	assign(se,fc);
+	CGAL_assertion(se!=0);
+	SHalfedge_around_facet_circulator hc_start(se);
+	SHalfedge_around_facet_circulator hc_end(hc_start);
+	CGAL_For_all(hc_start,hc_end) {
+	  B->add_vertex_to_facet((*VI)[D->vertex(hc_start)]);
+	}
+	B->end_facet();
+      }
+
+      void visit(SFace_handle s) {}
+      void visit(Halfedge_handle e) {}
+      void visit(Vertex_handle v) {}
+    };
+
+  public:
+
+    SNC_structure& snc;
+    Object_index<Vertex_iterator> VI;
+
+    Build_polyhedron(SNC_structure& s) : 
+      snc(s), VI(s.vertices_begin(),s.vertices_end(),'V') {}
+    
+    void operator()( HDS& hds) {
+
+      SNC_decorator D(snc);
+
+      Polyhedron_incremental_builder_3<HDS> B(hds, true);
+      
+      B.begin_surface(D.number_of_vertices()-8, 
+		      D.number_of_facets()-6,
+		      D.number_of_edges()-12);
+      
+      int vertex_index = -8;
+      Vertex_iterator v;
+      CGAL_nef3_forall_vertices(v,snc) {
+	if(vertex_index >= 0) {
+	  VI[v]=vertex_index;
+	  B.add_vertex(v->point());
+	}
+	vertex_index++;
+      }     
+        
+      int outer_volume = 0;
+      Shell_entry_iterator it;
+      Visitor V(&B,&D,&VI);
+      Volume_handle c;
+      CGAL_nef3_forall_volumes(c,snc) {
+	if(outer_volume++ > 1)
+	  D.visit_shell_objects(SFace_handle(c->shells_begin()),V);
+      }
+   
+      B.end_surface();
+    }
+
+  };
+  
+  typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
+  void convert_to_Polyhedron(Polyhedron& P) {
+       
+    CGAL_precondition(is_simple());
+    Build_polyhedron<HalfedgeDS> bp(snc());    
+    P.delegate(bp);
+  }
+
   void dump() { SNC_io_parser::dump( snc()); }
 
-
-  bool is_convertable_to_Polyhedron() {
+  bool is_simple() {
 
     Halfedge_iterator e;
     CGAL_nef3_forall_edges(e,snc())
@@ -305,20 +394,34 @@ public:
 
     Halffacet_iterator f;
     CGAL_nef3_forall_halffacets(f,snc())
-      if(is_hole_in_facet(f))
+      if(!is_facet_simple(f))
 	return false;
 
     return true;
   }
-  
-  bool is_edge_2manifold(const Halfedge_handle& e) {
- 
-    SM_decorator SD;
-    SHalfedge_around_svertex_circulator c(SD.first_out_edge(e));
-    
-    if(circulator_size(c) != 2)
-      return false;
 
+ private:  
+  bool is_edge_2manifold(const Halfedge_handle& e) {
+
+    SM_decorator SD;
+    SHalfedge_around_svertex_circulator c(SD.first_out_edge(e)), c2(c);
+
+    if(c == 0) {
+      CGAL_assertion(circulator_size(c) !=2);
+      return false;
+    }
+
+    if(++c == c2){
+      CGAL_assertion(circulator_size(c) !=2);
+      return false;
+    }
+
+    if(++c != c2) { 
+      CGAL_assertion(circulator_size(c) !=2);
+      return false;
+    }
+    
+    CGAL_assertion(circulator_size(c) == 2);
     return true;
   }
  
@@ -330,19 +433,20 @@ public:
     return true;
   }
 
-  bool is_hole_in_facet(const Halffacet_handle& f) {
+  bool is_facet_simple(const Halffacet_handle& f) {
     
     bool found_first = false;
     Halffacet_cycle_iterator it; 
     CGAL_nef3_forall_facet_cycles_of(it,f)
-      if ( it.is_shalfedge() ) 
-	if (found_first)
-	  return true;
-	else
-	  found_first = true;
+      if (found_first || !it.is_shalfedge())
+	return false;
+      else
+	found_first = true;
    
-    return false;
+    return true;
   }
+
+ public:
 
   void visualize() { 
 #ifdef CGAL_NEF3_VISUALIZOR
