@@ -1,16 +1,14 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/IO/Qt_widget.h>
+//#include "Qt_widget.h"
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
-//#include "Qt_widget_toolbar1.h"
-//#include <CGAL/IO/Qt_widget_standard_toolbar.h>
-//#include "Qt_widget_standard_toolbar.h"
 #include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/Qt_widget_layer.h>
+#include <CGAL/IO/Qt_widget_handtool.h>
 #include <CGAL/IO/pixmaps/zoom_out.xpm>
 #include <CGAL/IO/pixmaps/zoom_in.xpm>
-//#include <CGAL/Bench_parse_args.h>
-
+#include <CGAL/IO/pixmaps/hand.xpm>
 
 #include <fstream>
 #include <iostream>
@@ -32,7 +30,6 @@
 #include <qmenubar.h>
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
-#include <qfiledialog.h>
 #include <qtimer.h>
 #include <qtabbar.h>
 #include <qtabwidget.h>
@@ -42,12 +39,15 @@
 #include <qlabel.h> 
 #include <qlayout.h> 
 #include <qpushbutton.h> 
+#include <qfile.h>
+#include <qpainter.h>
+#include <qprinter.h>
 
 #include "cgal_types1.h"
 
 enum TraitsType { SEGMENT_TRAITS, POLYLINE_TRAITS , CONIC_TRAITS};
 enum SnapMode   { NONE , GRID };
-enum Mode       { INSERT , DELETE , POINT_LOCATION };
+enum Mode       { INSERT , DELETE , POINT_LOCATION , DRAG };
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -129,21 +129,29 @@ private slots:
 	void zoomout();
 	void fileOpen();
 	void union_arr( int index1 , int index2 , TraitsType t );
+    void fileSave();
+    void fileSaveAs();
+	void print();
 
 private:
 	QTabWidget *myBar;
 	int old_state;
 	int tab_number;
 	int number_of_tabs;
+	bool overlay;
 	Qt_layer_show_ch *testlayer;
 	QAction *setSegmentTraits;
 	QAction *setPolylineTraits;
+	QAction *setConicTraits;
 	QAction *setNoneSnapMode;
 	QAction *setGridSnapMode;
 	QAction *insertMode;
 	QAction *deleteMode;
 	QAction *pointLocationMode;
+	QAction *dragMode;
 	OptionsForm optionsForm;
+	QString m_filename;
+	//CGAL::Qt_widget_handtool *handtoollayer;
 };
 /////////////////////////////////////////////////////////////////////////////
 class Qt_widget_demo_tab : public CGAL::Qt_widget
@@ -168,7 +176,6 @@ public:
     bool is_pure(Qt::ButtonState s);
 	Coord_segment convert(Pm_pol_point_2 & source , Pm_pol_point_2 & target);
 	Coord_segment convert(const Pm_pol_point_2 & source , const Pm_pol_point_2 & target);
-
 	
     int         current_state;
 	int         index;
@@ -189,13 +196,14 @@ public:
 		first_point_segment(false)
 	{}
 
-	~Qt_widget_segment_tab() {}
+	~Qt_widget_segment_tab();
 
-	void draw();
-	void mousePressEvent(QMouseEvent *e);
-	void mouseMoveEvent(QMouseEvent *e);
-	void leaveEvent(QEvent *e);
-	void remove_segment(QMouseEvent *e);
+	virtual void draw();
+	virtual void mousePressEvent(QMouseEvent *e);
+	virtual void mouseMoveEvent(QMouseEvent *e);
+	virtual void leaveEvent(QEvent *e);
+	virtual void remove_segment(QMouseEvent *e);
+    const Pm_base_seg_2* get_origin_curve(const Pm_xseg_2 & xseg );
 
 	Pm_seg_list list_of_curves;
 	Seg_arr segment_arr;
@@ -221,7 +229,7 @@ public:
 		first_time_polyline(true)
 	{}
 
-	~Qt_widget_polyline_tab() {}
+	~Qt_widget_polyline_tab();
 	
 	virtual void draw();
 	virtual void mousePressEvent(QMouseEvent *e);
@@ -229,6 +237,8 @@ public:
 	virtual void leaveEvent(QEvent *e);
 	virtual void remove_segment(QMouseEvent *e);
 	void get_polyline();
+    const Pm_base_pol_2* get_origin_curve(const Pm_xpol_2 & xseg );
+    bool compare(const Pm_base_pol_2 * org_seg , const Pm_pol_2 * closest);
 
  	Pm_pol_list list_of_curves;
 	Pol_arr polyline_arr;
@@ -252,14 +262,14 @@ public:
 	    Qt_widget_demo_tab( parent , name , CONIC_TRAITS )
 	{}
 
-	~Qt_widget_conic_tab() {}
+	~Qt_widget_conic_tab();
 	
 	virtual void draw();
 	virtual void mousePressEvent(QMouseEvent *e);
 	virtual void mouseMoveEvent(QMouseEvent *e) {};
 	virtual void leaveEvent(QEvent *e) {};
 	virtual void remove_segment(QMouseEvent *e) {};
-	
+	Pm_base_conic_2* get_origin_curve( Pm_xconic_2 & xseg );
 	void draw_curve(const Pm_xconic_2& c);
 
 	Pm_xconic_list list_of_xcurves;
@@ -348,6 +358,8 @@ int main(int, char*)
 #include "insert.xpm"
 #include "delete.xpm"
 #include "grid.xpm"
+#include "conic.xpm"
+#include "none.xpm"
 
 const QString my_title_string("Arrangement Demo with CGAL Qt_widget");
 
@@ -396,6 +408,13 @@ void Qt_layer_show_ch::draw()
 }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
+Qt_widget_segment_tab::~Qt_widget_segment_tab()
+{
+	Pm_seg_iter itp;
+	for (itp = list_of_curves.begin(); itp != list_of_curves.end(); ++itp)
+		delete (*itp);
+}
+
 void Qt_widget_segment_tab::draw()
 {
     (*this) << CGAL::GREEN;
@@ -548,14 +567,17 @@ void Qt_widget_segment_tab::remove_segment(QMouseEvent *e)
 	// Remove curve from pmwx
 	Seg_pm::Halfedge_iterator hei;
 
-	std::list<Seg_pm::Halfedge_iterator> halfedge_list;
-	std::list<Seg_pm::Halfedge_iterator>::iterator result;
+	typedef std::list<Seg_pm::Halfedge_iterator> Hafledge_list;
+	
+	Hafledge_list halfedge_list;
+	Hafledge_list::iterator result;
 
 	for (hei = segment_arr.halfedges_begin(); hei != segment_arr.halfedges_end(); ++hei) 
 	{
         const Pm_xseg_2 & xseg = hei->curve();
-		const Pm_seg_2 * org_seg = xseg.get_origin();
-		if (org_seg == (*it_seg))
+		const Pm_base_seg_2 * org_seg = get_origin_curve(xseg);
+
+		if ((*org_seg).source() == (**it_seg).source() && (*org_seg).target() == (**it_seg).target())
 		{
 		    result = std::find(halfedge_list.begin(), halfedge_list.end(), hei);
 			if (result == halfedge_list.end())
@@ -563,8 +585,7 @@ void Qt_widget_segment_tab::remove_segment(QMouseEvent *e)
 				halfedge_list.push_back(hei->twin());
 				segment_arr.remove_edge(hei);
 			}
-		}
-
+		}				
 	}
 
 	list_of_curves.erase(it_seg);
@@ -573,6 +594,18 @@ void Qt_widget_segment_tab::remove_segment(QMouseEvent *e)
 	redraw();
 	
   } // remove_segment
+
+const Pm_base_seg_2* Qt_widget_segment_tab::get_origin_curve(const Pm_xseg_2 & xseg )
+{
+	const Curve_data & curve_data = xseg.get_data();
+	if (curve_data.m_type == Curve_data::LEAF) 
+        return curve_data.m_ptr.m_curve;
+    else // curve_data.m_type == Curve_data::INTERNAL
+	{
+		const Pm_xseg_2* xseg_p = static_cast<const Pm_xseg_2*>(curve_data.m_ptr.m_x_motonote_curve);
+		return get_origin_curve( *xseg_p );
+	}
+}
 
   void Qt_widget_segment_tab::mouseMoveEvent(QMouseEvent *e)
   {
@@ -619,6 +652,12 @@ void Qt_widget_segment_tab::remove_segment(QMouseEvent *e)
 
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
+Qt_widget_polyline_tab::~Qt_widget_polyline_tab()
+{
+	Pm_pol_iter itp;
+	for (itp = list_of_curves.begin(); itp != list_of_curves.end(); ++itp)
+		delete (*itp);
+}
 
   void Qt_widget_polyline_tab::draw()
   {
@@ -777,10 +816,16 @@ void Qt_widget_segment_tab::remove_segment(QMouseEvent *e)
 
   void Qt_widget_polyline_tab::get_polyline()
   {
-	  Pm_pol_2 *poly = new Pm_pol_2( Pm_base_pol_2( points.begin(), points.end()) , index );
+      Pm_base_pol_2 * base_pol_p = new Pm_base_pol_2(points.begin(), points.end());
+	  Curve_pol_data cd;
+	  cd.m_type = Curve_pol_data::LEAF;
+	  cd.m_index = index;
+	  cd.m_ptr.m_curve = base_pol_p;
+	  Pm_pol_2 * pol = new Pm_pol_2( *base_pol_p, cd );
+	  //Pm_pol_2 *poly = new Pm_pol_2( Pm_base_pol_2( points.begin(), points.end()) , index );
 	  //Pm_pol_2 *poly = new Pm_pol_2( points.begin(), points.end() );
-	  list_of_curves.push_back(poly);
-	  polyline_arr.insert( *poly );
+	  list_of_curves.push_back(pol);
+	  polyline_arr.insert( *pol );
 	  redraw();
   }
 
@@ -829,11 +874,13 @@ void Qt_widget_polyline_tab::remove_segment(QMouseEvent *e)
 	std::list<Pol_pm::Halfedge_iterator> halfedge_list;
 	std::list<Pol_pm::Halfedge_iterator>::iterator result;
 
+	const Pm_pol_2 * closest = *it_closest;
+
 	for (hei = polyline_arr.halfedges_begin(); hei != polyline_arr.halfedges_end(); ++hei) 
 	{
         const Pm_xpol_2 & xpol = hei->curve();
-		const Pm_pol_2 * org_pol = xpol.get_origin();
-		if (org_pol == (*it_closest))
+		const Pm_base_pol_2 * org_seg = get_origin_curve(xpol);
+		if (compare( org_seg , closest ) )
 		{
 		    result = std::find(halfedge_list.begin(), halfedge_list.end(), hei);
 			if (result == halfedge_list.end())
@@ -842,7 +889,6 @@ void Qt_widget_polyline_tab::remove_segment(QMouseEvent *e)
 				polyline_arr.remove_edge(hei);
 			}
 		}
-
 	}
 
     list_of_curves.erase( it_closest );
@@ -850,8 +896,23 @@ void Qt_widget_polyline_tab::remove_segment(QMouseEvent *e)
 
     redraw();
 }
-  
-  void Qt_widget_polyline_tab::mouseMoveEvent(QMouseEvent *e)
+  bool Qt_widget_polyline_tab::compare(const Pm_base_pol_2 * org_seg , const Pm_pol_2 * closest)
+  {
+	  Pm_base_pol_2::const_iterator ito = (*org_seg).begin();
+	  Pm_pol_2::const_iterator itc = (*closest).begin();
+	  while (ito != (*org_seg).end() && itc != (*closest).end())
+	  {
+		  if (*ito != *itc)
+			  return false;
+		  ito++;
+		  itc++;
+	  }
+	  if (ito == (*org_seg).end() && itc == (*closest).end())
+          return true;
+	  else
+		  return false;
+  }
+void Qt_widget_polyline_tab::mouseMoveEvent(QMouseEvent *e)
   {
     if (active)
     {
@@ -897,7 +958,26 @@ void Qt_widget_polyline_tab::remove_segment(QMouseEvent *e)
       first_time_polyline = true;
     }
   }
+
+const Pm_base_pol_2* Qt_widget_polyline_tab::get_origin_curve(const Pm_xpol_2 & xseg )
+{
+	const Curve_pol_data & curve_data = xseg.get_data();
+	if (curve_data.m_type == Curve_pol_data::LEAF) 
+		return curve_data.m_ptr.m_curve;
+	else // curve_data.m_type == Curve_data::INTERNAL
+	{
+		const Pm_xpol_2* xseg_p = static_cast<const Pm_xpol_2*>(curve_data.m_ptr.m_x_motonote_curve);
+		return get_origin_curve( *xseg_p );
+	}
+}
 //////////////////////////////////////////////////////////////////////////////
+Qt_widget_conic_tab::~Qt_widget_conic_tab()
+{
+	Pm_xconic_iter itp;
+	for (itp = list_of_xcurves.begin(); itp != list_of_xcurves.end(); ++itp)
+		delete (*itp);
+}
+
 void Qt_widget_conic_tab::draw_curve(const Pm_xconic_2& c)
 {
 	// Get the co-ordinates of the curve's source and target.
@@ -926,24 +1006,20 @@ void Qt_widget_conic_tab::draw_curve(const Pm_xconic_2& c)
 											(*this).x_pixel(tx);
 			int      x_max = is_source_left ? (*this).x_pixel(tx) :
 												(*this).x_pixel(sx);
-			double   prev_x = is_source_left ? sx : tx;//ws.pix_to_real(x_min);
+			double   prev_x = is_source_left ? sx : tx;
 			double   prev_y = is_source_left ? sy : ty;
 			double   end_x = is_source_left ? tx : sx;
 			double   end_y = is_source_left ? ty : sy;
 			double   curr_x, curr_y;
 			int      x;
 
-			//typename Conic_arc_2<Kernel>::Point_2 ps[2];
 			Pm_conic_point_2 ps[2];
 			int nps;
 
 			for (x = x_min + 1; x < x_max; x++)
 			{
-				curr_x = (*this).x_pixel(x);
-				//nps = c.get_points_at_x
-				//	(Conic_arc_2<Kernel>::Point_2(typename Kernel::FT(curr_x), 0), ps);
+				curr_x = (*this).x_real(x);
 				nps = c.get_points_at_x(Pm_conic_point_2(curr_x, 0), ps);
-
 				if (nps == 1)
 				{
 					curr_y = CGAL::to_double(ps[0].y());
@@ -1018,6 +1094,18 @@ void Qt_widget_conic_tab::mousePressEvent(QMouseEvent *e)
 	{
 		mousePressEvent_point_location( e );
 		return;
+	}
+}
+
+Pm_base_conic_2* Qt_widget_conic_tab::get_origin_curve(Pm_xconic_2 & xseg )
+{
+	const Curve_conic_data & curve_data = xseg.get_data();
+	if (curve_data.m_type == Curve_conic_data::LEAF) 
+        return curve_data.m_ptr.m_curve;
+    else // curve_data.m_type == Curve_data::INTERNAL
+	{
+		Pm_xconic_2* xseg_p = static_cast<Pm_xconic_2*>(curve_data.m_ptr.m_x_motonote_curve);
+		return get_origin_curve( *xseg_p );
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1095,7 +1183,7 @@ MyWindow::MyWindow(int w, int h){
 
 	tab_number = 1;
 	number_of_tabs = 0;
-
+	overlay = false; // flag for add_conic_tab
 	testlayer = new Qt_layer_show_ch( myBar );
 
 	// Traits Group
@@ -1112,12 +1200,17 @@ MyWindow::MyWindow(int w, int h){
 	    "&Polyline Traits", 0 , traitsGroup, "Polyline Traits" );
     setPolylineTraits->setToggleAction( TRUE );
 
+	setConicTraits = new QAction(
+	    "Conic Traits", QPixmap( (const char**)conic_xpm ),
+	    "&Conic Traits", 0 , traitsGroup, "Conic Traits" );
+    setConicTraits->setToggleAction( TRUE );
+
 	// Snap Mode Group
 	QActionGroup *snapModeGroup = new QActionGroup( this ); // Connected later
     snapModeGroup->setExclusive( TRUE );
 
     setNoneSnapMode = new QAction(
-	    "None Snap Mode", QPixmap( (const char**)alpha_shape_xpm ),
+	    "None Snap Mode", QPixmap( (const char**)none_xpm ),
 	    "&None Snap Mode", 0 , snapModeGroup, "None Snap Mode" );
     setNoneSnapMode->setToggleAction( TRUE );
 
@@ -1145,6 +1238,22 @@ MyWindow::MyWindow(int w, int h){
 	    "&Point Location", 0 , modeGroup, "Point Location" );
     pointLocationMode->setToggleAction( TRUE );
 
+	/*dragMode = new QAction(
+    "Drag", QPixmap( (const char**)hand_xpm ),
+    "&Drag", 0 , modeGroup, "Drag" );
+    dragMode->setToggleAction( TRUE );*/
+
+	// hand tool
+    /*QToolButton* handtoolBt = new QToolButton(optionsTools, "handtool");
+    handtoolBt->setPixmap(QPixmap(hand_xpm ));
+    handtoolBt->setTextLabel("Pan tool");*/
+
+    //connect(dragMode, SIGNAL(stateChanged(int)),
+    //handtoollayer, SLOT(stateChanged(int)));
+
+
+	//handtoollayer = new CGAL::Qt_widget_handtool(this, "handtoollayer");
+ 
 	//create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()),
@@ -1154,36 +1263,50 @@ MyWindow::MyWindow(int w, int h){
     // file menu
     QPopupMenu * file = new QPopupMenu( this );
     menuBar()->insertItem( "&File", file );
-    //file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
-    file->insertItem("Add &Segment Tab", this, SLOT(add_segment_tab()));
-    file->insertItem("Add &Polyline Tab", this, SLOT(add_polyline_tab()));
-	file->insertItem("Remove &Tab", this, SLOT(remove_tab()));
-    file->insertSeparator();
-	file->insertItem("Union 2 Arr", this, SLOT(optionsSetOptions()));
-    //file->insertItem("Print", w_demo_p, SLOT(print_to_ps()), CTRL+Key_P);
-    file->insertSeparator();
-    file->insertItem( "&Open", this, SLOT( fileOpen() ) );
+   	file->insertItem("&Save", this, SLOT(fileSave()));
+	file->insertItem("&Save As", this, SLOT(fileSaveAs()));
+	file->insertSeparator();
+	file->insertItem("&Print", this , SLOT(print()));
+	file->insertSeparator();
     file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
     file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
+	menuBar()->insertSeparator();
 
-    // drawing menu
-    //QPopupMenu * draw = new QPopupMenu( this );
-    //menuBar()->insertItem( "&Draw", draw );
-    //draw->insertItem("&Generate segments", this,
-	//			SLOT(gen_segments()), CTRL+Key_G );
+	// tab menu
+	QPopupMenu * tab = new QPopupMenu( this );
+    menuBar()->insertItem( "&Tab", tab );
+    tab->insertItem("Add &Segment Tab", this, SLOT(add_segment_tab()));
+    tab->insertItem("Add &Polyline Tab", this, SLOT(add_polyline_tab()));
+	tab->insertItem("Add &Conic Tab", this, SLOT(add_conic_tab()));
+	tab->insertSeparator();
+	tab->insertItem("Remove &Tab", this, SLOT(remove_tab()));
+	menuBar()->insertSeparator();
+   
+	// mode menu
+	QPopupMenu * mode = new QPopupMenu( this );
+    menuBar()->insertItem( "&Mode", mode );
+	insertMode->addTo( mode );
+    deleteMode->addTo( mode );
+    pointLocationMode->addTo( mode );
+	//dragMode->addTo( mode );
+	menuBar()->insertSeparator();
+
+	// snap mode menu
+    QPopupMenu * snap_mode = new QPopupMenu( this );
+    menuBar()->insertItem( "&Snap mode", snap_mode );
+	setNoneSnapMode->addTo(snap_mode); 
+	setGridSnapMode->addTo(snap_mode);
+	menuBar()->insertSeparator();
 
 	 // options menu
     QPopupMenu * options = new QPopupMenu( this );
     menuBar()->insertItem( "&Options", options );
-	insertMode->addTo( options );
-    deleteMode->addTo( options );
-    pointLocationMode->addTo( options );
-	options->insertSeparator();
-	setNoneSnapMode->addTo(options); 
-	setGridSnapMode->addTo(options); 
-	options->insertSeparator();
     setSegmentTraits->addTo(options); 
 	setPolylineTraits->addTo(options); 
+	setConicTraits->addTo(options); 
+    options->insertSeparator();
+	options->insertItem("Overlay 2 Arr", this, SLOT(optionsSetOptions()));
+	menuBar()->insertSeparator();
 
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
@@ -1202,6 +1325,7 @@ MyWindow::MyWindow(int w, int h){
     optionsTools->setLabel( "Options Operations" );
     insertMode->addTo( optionsTools );
     deleteMode->addTo( optionsTools );
+	//dragMode->addTo( optionsTools );
     pointLocationMode->addTo( optionsTools );
     optionsTools->addSeparator();
     setNoneSnapMode->addTo( optionsTools );
@@ -1209,8 +1333,10 @@ MyWindow::MyWindow(int w, int h){
     optionsTools->addSeparator();
 	setSegmentTraits->addTo( optionsTools );
     setPolylineTraits->addTo( optionsTools );
+    setConicTraits->addTo( optionsTools );
+    optionsTools->addSeparator();
 	optionsTools->addSeparator();
-
+	
 	// zoom button
 	QToolButton* zoominBt =
       new QToolButton(QPixmap(zoomin_xpm ),
@@ -1233,6 +1359,13 @@ MyWindow::MyWindow(int w, int h){
     zoomoutBt->setTextLabel("Scaling factor 1/2");
 
 
+	//connect(dragMode, SIGNAL(stateChanged(int)),
+    //handtoollayer, SLOT(stateChanged(int)));
+
+    //connect(dragMode, SIGNAL(stateChanged(int) ), 
+    //handtoollayer, SLOT(stateChanged(int)));
+
+	// connect mode group
 
 	connect( modeGroup, SIGNAL( selected(QAction*) ), 
 		this, SLOT( updateMode(QAction*) ) );
@@ -1315,7 +1448,13 @@ void MyWindow::get_new_object(CGAL::Object obj)
 			const Coord_point & coord_target = coord_seg.target();
 		    Pm_seg_point_2 source(coord_source.x(), coord_source.y());
 			Pm_seg_point_2 target(coord_target.x(), coord_target.y());
-			Pm_seg_2 * seg = new Pm_seg_2( Pm_base_seg_2(source, target), w_segment_p->index);
+			//Pm_seg_2 * seg = new Pm_seg_2( Pm_base_seg_2(source, target), w_segment_p->index);
+			Pm_base_seg_2 * base_seg_p = new Pm_base_seg_2(source, target);
+			Curve_data cd;
+			cd.m_type = Curve_data::LEAF;
+			cd.m_index = w_segment_p->index;
+			cd.m_ptr.m_curve = base_seg_p;
+			Pm_seg_2 * seg = new Pm_seg_2( *base_seg_p, cd );
 			w_segment_p->list_of_curves.push_back(seg);
 			w_segment_p->segment_arr.insert(*seg);
 			something_changed();
@@ -1386,6 +1525,8 @@ void MyWindow::get_new_object(CGAL::Object obj)
 	// add the new widget to myBar
 	myBar->insertTab( widget, QString("Arr " + QString::number( widget->index ) ) , widget->index );
 	myBar->setCurrentPage(myBar->indexOf(widget));
+	if (!overlay)
+		fileOpen();
 	something_changed();
   }
 
@@ -1398,6 +1539,9 @@ void MyWindow::init_widget(Qt_widget_demo_tab *widget)
 	connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),this, SLOT(get_new_object(CGAL::Object)));
     widget->attach(testlayer);
 		
+	//widget->attach_standard(handtoollayer);
+    //handtoollayer->deactivate();
+
 	widget->index = tab_number;
 	tab_number++;
 	number_of_tabs++;
@@ -1429,80 +1573,61 @@ void MyWindow::init_widget(Qt_widget_demo_tab *widget)
 	Qt_widget_demo_tab	*w_demo_p = static_cast<Qt_widget_demo_tab *> (myBar->currentPage());
 
     if(old_state!=w_demo_p->current_state){
-		//std::cout << old_state << " " << w_demo_p->current_state << std::endl;
       w_demo_p->redraw();
       old_state = w_demo_p->current_state;
     }
   }	
 
- // void MyWindow::gen_segments()
- // {
-	//// We peform downcasting from QWigdet* to Qt_widget_demo_tab*, as we know that only
-	//// Qt_widget_demo_tab objects are stored in the tab pages.
-	//Qt_widget_demo_tab	*w_demo_p = static_cast<Qt_widget_demo_tab *> (myBar->currentPage());
-
- //   w_demo_p->set_window(-10, 10, -10, 10); 
-	//	// set the Visible Area to the Interval
-
- //   // send resizeEvent only on show.
- //   CGAL::Random_points_in_square_2<Point> g(0.5);
- //   for(int count=0; count<25; count++) 
- //   {
- //     Point p1(*g++), p2(*g++);
- //     Coord_type scale(2);
- //     Segment s( Point(p1.x()*scale,p1.y()*scale)  ,
- //                Point(p2.x()*scale,p2.y()*scale) );
- //     w_demo_p->list_of_curves.push_back(s);
- //     w_demo_p->segment_arr.insert(s);
- //   }
-
- //   //pl_valid = false;
-
- //   something_changed();
- // }
-	//
-  
 	void MyWindow::updateTraitsType( QAction *action )
 	{
+		if (tab_number == 0) return;
 		// We peform downcasting from QWigdet* to Qt_widget_demo_tab*, as we know that only
 		// Qt_widget_demo_tab objects are stored in the tab pages.
-		Qt_widget_demo_tab	*w_demo_p = static_cast<Qt_widget_demo_tab *> (myBar->currentPage());
+		Qt_widget_demo_tab *old_widget = static_cast<Qt_widget_demo_tab *> (myBar->currentPage());
+		Qt_widget_demo_tab *widget;
 
-		if (tab_number > 0 && 
-			(action == setSegmentTraits && w_demo_p->traits_type != SEGMENT_TRAITS ||
-			 action == setPolylineTraits && w_demo_p->traits_type != POLYLINE_TRAITS))
+		if (action == setSegmentTraits)
 		{
-			Qt_widget_demo_tab *widget;
-			Qt_widget_demo_tab *old_widget = static_cast<Qt_widget_demo_tab *> (myBar->currentPage());
-
-			if ( action == setSegmentTraits && w_demo_p->traits_type != SEGMENT_TRAITS ) 
-				widget = new Qt_widget_segment_tab(this);
-			else if ( action == setPolylineTraits && w_demo_p->traits_type != POLYLINE_TRAITS) 
-				widget = new Qt_widget_polyline_tab(this);
-
-			int old_index = old_widget->index;
-			int index = myBar->currentPageIndex();
-			QString label = myBar->label(index);
-			myBar->removePage(myBar->currentPage());
-
-			 //initialize the new tab widget
-			*widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
-			widget->set_window(-10, 10, -10, 10);
-			widget->setMouseTracking(TRUE);
-			connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),this, SLOT(get_new_object(CGAL::Object)));
-			widget->attach(testlayer);
-			
-			widget->index = old_index;
-
-			// add the new widget to myBar
-			myBar->insertTab( widget, label , index );
-
-			myBar->setCurrentPage(index);
-				
-			resize(700,700);
-			
-			something_changed();
+			if (old_widget->traits_type == SEGMENT_TRAITS) return;
+			widget = new Qt_widget_segment_tab(this);
 		}
+		else if (action == setPolylineTraits)
+		{
+			if (old_widget->traits_type == POLYLINE_TRAITS) return;
+			widget = new Qt_widget_polyline_tab(this);
+		}
+		else if (action == setConicTraits)
+		{
+			if (old_widget->traits_type == CONIC_TRAITS) return;
+			widget = new Qt_widget_conic_tab(this);
+		}
+
+		int old_index = old_widget->index;
+		int index = myBar->currentPageIndex();
+		QString label = myBar->label(index);
+		myBar->removePage(myBar->currentPage());
+
+			//initialize the new tab widget
+		*widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
+		widget->set_window(-10, 10, -10, 10);
+		widget->setMouseTracking(TRUE);
+		connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),this, SLOT(get_new_object(CGAL::Object)));
+		widget->attach(testlayer);
+		
+		widget->index = old_index;
+
+		// add the new widget to myBar
+		myBar->insertTab( widget, label , index );
+
+		myBar->setCurrentPage(index);
+			
+		resize(700,700);
+		
+		if (action == setConicTraits)
+			fileOpen();
+
+		something_changed();
+	
 	}
 
 	void MyWindow::setTraits( TraitsType t )
@@ -1511,9 +1636,18 @@ void MyWindow::init_widget(Qt_widget_demo_tab *widget)
 		switch ( t ) {
 		case SEGMENT_TRAITS:
 			setSegmentTraits->setOn( TRUE );
+			insertMode->setEnabled( TRUE );
+			deleteMode->setEnabled( TRUE );
 			break;
 		case POLYLINE_TRAITS:
 			setPolylineTraits->setOn( TRUE );
+			insertMode->setEnabled( TRUE );
+			deleteMode->setEnabled( TRUE );
+			break;
+		case CONIC_TRAITS:
+			setConicTraits->setOn( TRUE );
+			insertMode->setEnabled( FALSE );
+			deleteMode->setEnabled( FALSE );
 			break;
 		}
 	}
@@ -1558,17 +1692,31 @@ void MyWindow::init_widget(Qt_widget_demo_tab *widget)
 		// Qt_widget_demo_tab objects are stored in the tab pages.
 		Qt_widget_demo_tab	*w_demo_p = static_cast<Qt_widget_demo_tab *> (myBar->currentPage());
 
-		if ( action == insertMode ) {
-		w_demo_p->mode = INSERT;
-		something_changed();
+		if ( action == insertMode ) 
+		{
+            w_demo_p->mode = INSERT;
+			//handtoollayer->deactivate();
+			something_changed();
 		}
-		else if ( action == deleteMode ) {
-		w_demo_p->mode = DELETE;
-		something_changed();
+		else if ( action == deleteMode ) 
+		{
+			w_demo_p->mode = DELETE;
+			//handtoollayer->deactivate();
+			something_changed();
 		}
-		else if ( action == pointLocationMode ) {
-		w_demo_p->mode = POINT_LOCATION;
+		else if ( action == pointLocationMode ) 
+		{
+			w_demo_p->mode = POINT_LOCATION;
+			//handtoollayer->deactivate();
+			something_changed();
 		}
+		/*else if ( action == dragMode ) 
+		{
+			w_demo_p->mode = DRAG;
+			handtoollayer->activate();
+			handtoollayer->stateChanged(w_demo_p->current_state);
+			something_changed();
+		}*/
 	}
 
 	void MyWindow::setMode( Mode m )
@@ -1587,6 +1735,9 @@ void MyWindow::init_widget(Qt_widget_demo_tab *widget)
 			break;
 		case POINT_LOCATION:
 			pointLocationMode->setOn( TRUE );
+			break;
+		case DRAG:
+			dragMode->setOn( TRUE );
 			break;
 		}
 	}
@@ -1649,14 +1800,16 @@ void MyWindow::union_arr( int index1 , int index2 , TraitsType t)
 			Qt_widget_segment_tab *w_demo_p2 = static_cast<Qt_widget_segment_tab *> (myBar->page( index2 ));
 
 			Pm_seg_const_iter itp;
-			
+			std::list<Pm_seg_2> seg_list;
+
 			*w_demo_p_new << CGAL::RED;
 			*w_demo_p_new << CGAL::LineWidth(3);
 			for (itp = w_demo_p1->list_of_curves.begin(); itp != w_demo_p1->list_of_curves.end(); ++itp)
 			{
 				Pm_seg_2 * seg = new Pm_seg_2( **itp );
 				w_demo_p_new->list_of_curves.push_back(seg);
-				w_demo_p_new->segment_arr.insert(*seg);
+				seg_list.push_back(*seg);
+				//w_demo_p_new->segment_arr.insert(*seg);
 				*w_demo_p_new << *(*itp);
 			}
 			
@@ -1665,9 +1818,12 @@ void MyWindow::union_arr( int index1 , int index2 , TraitsType t)
 			{
 				Pm_seg_2 * seg = new Pm_seg_2( **itp );
 				w_demo_p_new->list_of_curves.push_back(seg);
-				w_demo_p_new->segment_arr.insert(*seg);
+				seg_list.push_back(*seg);
+				//w_demo_p_new->segment_arr.insert(*seg);
 				*w_demo_p_new << *(*itp);
 			}
+
+			w_demo_p_new->segment_arr.insert(seg_list.begin(),seg_list.end());
 
 			*w_demo_p_new << CGAL::GREEN;
 			*w_demo_p_new << CGAL::CROSS;
@@ -1682,11 +1838,11 @@ void MyWindow::union_arr( int index1 , int index2 , TraitsType t)
 				eit = first;
 
 				int ind1;
-				int ind2 = (*eit).curve().get_data();
+				int ind2 = (*eit).curve().get_data().m_index;
 
 				do 
 				{
-					ind1 = (*eit).curve().get_data();
+					ind1 = (*eit).curve().get_data().m_index;
 
 					// Keep track of IDs we haven't seen before.
 					if (ind1 != ind2)
@@ -1706,7 +1862,12 @@ void MyWindow::union_arr( int index1 , int index2 , TraitsType t)
 			// update new planner map index
 			Pm_seg_iter iter;
 			for (iter = w_demo_p_new->list_of_curves.begin(); iter != w_demo_p_new->list_of_curves.end(); ++iter)
-				(**iter).set_data( w_demo_p_new->index );
+			{
+				Curve_data cd = (**iter).get_data();
+				cd.m_type = Curve_data::INTERNAL;
+				cd.m_index = w_demo_p_new->index;
+				(**iter).set_data( cd );
+			}
 
 			break;
 		}
@@ -1717,6 +1878,7 @@ void MyWindow::union_arr( int index1 , int index2 , TraitsType t)
             Qt_widget_polyline_tab *w_demo_p1 = static_cast<Qt_widget_polyline_tab *> (myBar->page( index1 ));
 			Qt_widget_polyline_tab *w_demo_p2 = static_cast<Qt_widget_polyline_tab *> (myBar->page( index2 ));
 
+			std::list<Pm_pol_2> pol_list;
 			Pm_pol_const_iter itp;
 			
 			*w_demo_p_new << CGAL::RED;
@@ -1725,7 +1887,8 @@ void MyWindow::union_arr( int index1 , int index2 , TraitsType t)
 			{
 				Pm_pol_2 * seg = new Pm_pol_2( **itp );
 				w_demo_p_new->list_of_curves.push_back(seg);
-				w_demo_p_new->polyline_arr.insert(*seg);
+				pol_list.push_back(*seg);
+				//w_demo_p_new->polyline_arr.insert(*seg);
 				*w_demo_p_new << *(*itp);
 			}
 			
@@ -1734,9 +1897,12 @@ void MyWindow::union_arr( int index1 , int index2 , TraitsType t)
 			{
 				Pm_pol_2 * seg = new Pm_pol_2( **itp );
 				w_demo_p_new->list_of_curves.push_back(seg);
-				w_demo_p_new->polyline_arr.insert(*seg);
+				pol_list.push_back(*seg);
+				//w_demo_p_new->polyline_arr.insert(*seg);
 				*w_demo_p_new << *(*itp);
 			}
+
+			w_demo_p_new->polyline_arr.insert(pol_list.begin(),pol_list.end());
 
 			*w_demo_p_new << CGAL::GREEN;
 			*w_demo_p_new << CGAL::CROSS;
@@ -1751,11 +1917,10 @@ void MyWindow::union_arr( int index1 , int index2 , TraitsType t)
 				eit = first;
 
 				int ind1;
-				int ind2 = (*eit).curve().get_data();
-
+				int ind2 = (*eit).curve().get_data().m_index;
 				do 
 				{
-					ind1 = (*eit).curve().get_data();
+					ind1 = (*eit).curve().get_data().m_index;
 
 					// Keep track of IDs we haven't seen before.
 					if (ind1 != ind2)
@@ -1776,27 +1941,38 @@ void MyWindow::union_arr( int index1 , int index2 , TraitsType t)
 			// update new planner map index
 			Pm_pol_iter iter;
 			for (iter = w_demo_p_new->list_of_curves.begin(); iter != w_demo_p_new->list_of_curves.end(); ++iter)
-				(**iter).set_data( w_demo_p_new->index );
-
+			{
+				Curve_pol_data cd = (**iter).get_data();
+				cd.m_type = Curve_pol_data::INTERNAL;
+				cd.m_index = w_demo_p_new->index;
+				(**iter).set_data( cd );
+			}
 
 			break;
 		}
 		case CONIC_TRAITS:
+			overlay = true;
 			add_conic_tab();
-			
+			overlay = false;
+
             Qt_widget_conic_tab *w_demo_p_new = static_cast<Qt_widget_conic_tab *> (myBar->currentPage());
             Qt_widget_conic_tab *w_demo_p1 = static_cast<Qt_widget_conic_tab *> (myBar->page( index1 ));
 			Qt_widget_conic_tab *w_demo_p2 = static_cast<Qt_widget_conic_tab *> (myBar->page( index2 ));
 
 			Pm_xconic_const_iter itp;
-			
+			std::list<Pm_conic_2> curve_list;
+
 			*w_demo_p_new << CGAL::RED;
 			*w_demo_p_new << CGAL::LineWidth(3);
 			for (itp = w_demo_p1->list_of_xcurves.begin(); itp != w_demo_p1->list_of_xcurves.end(); ++itp)
 			{
 				Pm_xconic_2 * seg = new Pm_xconic_2( **itp );
 				w_demo_p_new->list_of_xcurves.push_back(seg);
-				//w_demo_p_new->conic_arr.insert(*seg);
+
+				Pm_base_conic_2* org_conic = w_demo_p_new->get_origin_curve(*seg);
+     			//curve_list.push_back(Pm_conic_2( *org_conic , seg->get_data() ));
+	
+				w_demo_p_new->conic_arr.insert(Pm_conic_2( *org_conic , seg->get_data() ));
 				w_demo_p_new->draw_curve(**itp);
 			}
 			
@@ -1805,9 +1981,15 @@ void MyWindow::union_arr( int index1 , int index2 , TraitsType t)
 			{
 				Pm_xconic_2 * seg = new Pm_xconic_2( **itp );
 				w_demo_p_new->list_of_xcurves.push_back(seg);
-				//w_demo_p_new->conic_arr.insert(*seg);
+
+				Pm_base_conic_2* org_conic = w_demo_p_new->get_origin_curve(*seg);
+				//curve_list.push_back(Pm_conic_2( *org_conic , seg->get_data() ));
+
+				w_demo_p_new->conic_arr.insert(Pm_conic_2( *org_conic , seg->get_data() ));
 				w_demo_p_new->draw_curve(**itp);
 			}
+
+			//w_demo_p_new->conic_arr.insert(curve_list.begin() , curve_list.end());
 
 			*w_demo_p_new << CGAL::GREEN;
 			*w_demo_p_new << CGAL::CROSS;
@@ -1822,11 +2004,11 @@ void MyWindow::union_arr( int index1 , int index2 , TraitsType t)
 				eit = first;
 
 				int ind1;
-				int ind2 = (*eit).curve().get_data();
+				int ind2 = (*eit).curve().get_data().m_index;
 
 				do 
 				{
-					ind1 = (*eit).curve().get_data();
+					ind1 = (*eit).curve().get_data().m_index;
 
 					// Keep track of IDs we haven't seen before.
 					if (ind1 != ind2)
@@ -1846,8 +2028,12 @@ void MyWindow::union_arr( int index1 , int index2 , TraitsType t)
 			// update new planner map index
 			Pm_xconic_iter iter;
 			for (iter = w_demo_p_new->list_of_xcurves.begin(); iter != w_demo_p_new->list_of_xcurves.end(); ++iter)
-				(**iter).set_data( w_demo_p_new->index );
-
+			{
+				Curve_conic_data cd = (**iter).get_data();
+				cd.m_type = Curve_conic_data::INTERNAL;
+				cd.m_index = w_demo_p_new->index;
+				(**iter).set_data( cd );
+			}
 			break;
 
 		}
@@ -1870,23 +2056,23 @@ void MyWindow::fileOpen()
 
 void MyWindow::load( const QString& filename )
 {
-      	Qt_widget_demo_tab *widget = new Qt_widget_conic_tab(this);
+  //    	Qt_widget_demo_tab *widget = new Qt_widget_conic_tab(this);
 	
-		// initialize the new tab widget
-		*widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
-		widget->set_window(-10, 10, -10, 10);
-		widget->setMouseTracking(TRUE);
-		connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),this, SLOT(get_new_object(CGAL::Object)));
-		widget->attach(testlayer);
-		// add the new widget to myBar
-		//myBar->addTab( widget, QString("Arr " + QString::number( tab_number ) ) );
-		myBar->insertTab( widget, QString("Arr " + QString::number( tab_number ) ) , tab_number );
-		myBar->setCurrentPage(myBar->indexOf(widget));
-		
-		widget->index = tab_number;
-		tab_number++;
-		number_of_tabs++;
-		resize(700,700);
+		//// initialize the new tab widget
+		//*widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
+		//widget->set_window(-10, 10, -10, 10);
+		//widget->setMouseTracking(TRUE);
+		//connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),this, SLOT(get_new_object(CGAL::Object)));
+		//widget->attach(testlayer);
+		//// add the new widget to myBar
+		////myBar->addTab( widget, QString("Arr " + QString::number( tab_number ) ) );
+		//myBar->insertTab( widget, QString("Arr " + QString::number( tab_number ) ) , tab_number );
+		//myBar->setCurrentPage(myBar->indexOf(widget));
+		//
+		//widget->index = tab_number;
+		//tab_number++;
+		//number_of_tabs++;
+		//resize(700,700);
 		
         Qt_widget_conic_tab	*w_demo_p = static_cast<Qt_widget_conic_tab *> (myBar->currentPage());
 
@@ -1899,17 +2085,28 @@ void MyWindow::load( const QString& filename )
 		}
 
 		char dummy[256];
-		Pm_base_conic_2 cv;
+		Pm_base_conic_2* cv;
 		int count;
-
+		//std::list<Pm_conic_2> curve_list;
+	
 		inputFile >> count;
 		inputFile.getline(dummy, sizeof(dummy));
 		for (int i = 0; i < count; i++) 
 		{
-			ReadCurve(inputFile, cv);
-			w_demo_p->conic_arr.insert(Pm_conic_2( cv , widget->index));
+			cv = new Pm_base_conic_2();
+			ReadCurve(inputFile, *cv);
+
+			Curve_conic_data cd;
+            cd.m_type = Curve_conic_data::LEAF;
+	        cd.m_index = w_demo_p->index;
+	        cd.m_ptr.m_curve = cv;
+
+			//curve_list.push_back(Pm_conic_2( *cv , cd));
+			w_demo_p->conic_arr.insert(Pm_conic_2( *cv , cd));
 		}
-	
+		
+		//w_demo_p->conic_arr.insert(curve_list.begin() , curve_list.end());
+
 		inputFile.close();
 
 		// insert xcurve into xcurve list
@@ -2127,8 +2324,81 @@ void MyWindow::skip_comments( std::ifstream& is, char* one_line )
     }
 }
 
+void MyWindow::fileSaveAs()
+{
+    QString filename = QFileDialog::getSaveFileName(
+			    QString::null, "Planar Map (*.pm)", this,
+			    "file save as", "Planar Map -- File Save As" );
+    if ( !filename.isEmpty() ) 
+	{
+		int answer = 0;
+		if ( QFile::exists( filename ) )
+			answer = QMessageBox::warning(
+					this, "Overwrite File",
+					QString( "Overwrite\n\'%1\'?" ).
+					arg( filename ),
+					"&Yes", "&No", QString::null, 1, 1 );
+		if ( answer == 0 ) 
+		{
+			m_filename = filename;
+			//updateRecentFiles( filename );
+			fileSave();
+			return;
+		}
+    }
+    statusBar()->message( "Saving abandoned", 2000 );
+}
 
+void MyWindow::fileSave()
+{
+    if ( m_filename.isEmpty() ) {
+	fileSaveAs();
+	return;
+    }
 
+	std::ofstream outFile(m_filename);
+    // Creates an ofstream object named outFile
+	if (! outFile.is_open()) // Always test file open
+	{
+		std::cout << "Error opening input file" << std::endl;
+		return;
+	}
+
+    Qt_widget_demo_tab	*w_demo_p1 = static_cast<Qt_widget_demo_tab *> (myBar->currentPage());
+
+	switch ( w_demo_p1->traits_type ) {
+		case SEGMENT_TRAITS:
+		{
+			Qt_widget_segment_tab *w_demo_p = static_cast<Qt_widget_segment_tab *> (myBar->currentPage());
+			outFile << w_demo_p->segment_arr;
+			break;
+		}
+		case POLYLINE_TRAITS:
+		{
+			Qt_widget_polyline_tab *w_demo_p = static_cast<Qt_widget_polyline_tab *> (myBar->currentPage());
+			outFile << w_demo_p->polyline_arr;
+			break;
+		}
+		case CONIC_TRAITS:
+		{
+			Qt_widget_conic_tab *w_demo_p = static_cast<Qt_widget_conic_tab *> (myBar->currentPage());
+			outFile << w_demo_p->conic_arr;
+			break;
+		}
+	}  
+
+	outFile.close();
+
+    setCaption( QString( "Planar Map -- %1" ).arg( m_filename ) );
+    statusBar()->message( QString( "Saved \'%1\'" ).arg( m_filename ), 2000 );
+    //m_changed = FALSE;
+}
+
+void MyWindow::print()
+{
+    Qt_widget_demo_tab	*w_demo_p1 = static_cast<Qt_widget_demo_tab *> (myBar->currentPage());
+	w_demo_p1->print_to_ps();
+}
 
 #include "demo1.moc"
 
