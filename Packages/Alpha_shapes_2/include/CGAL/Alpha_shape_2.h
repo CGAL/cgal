@@ -56,24 +56,10 @@
 //-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
-
+ 
 template < class Gt, class Tds >
 class Alpha_shape_2 : public Delaunay_triangulation_2<Gt, Tds> 
 {
-
-  template < class Gt, class Tds >
-  friend std::ostream& operator<<
-  (std::ostream& os, const Alpha_shape_2<Gt,Tds>& A);
-
-  template < class Gt, class Tds >
-  friend std::vector<typename Gt::Segment>& operator<<
-  (std::vector<typename Gt::Segment>& V, const Alpha_shape_2<Gt,Tds>& A);
-  
-#ifdef CGAL_ALPHA_WINDOW_STREAM
-  template < class Gt, class Tds > 
-  friend Window_stream& operator<<
-  (Window_stream& os, const Alpha_shape_2<Gt,Tds>& A);
-#endif  
   // DEFINITION The class Alpha_shape_2<Gt,Tds> represents the family
   // of alpha-shapes of points in a plane for all positive alpha. It
   // maintains the underlying Delaunay triangulation which represents
@@ -86,8 +72,6 @@ class Alpha_shape_2 : public Delaunay_triangulation_2<Gt, Tds>
   //
 
   //------------------------- TYPES ------------------------------------
-
-
 
 public:
 
@@ -291,8 +275,17 @@ public:
 
   //----------- OUTPUT A LIST OF POINTS CONNECTED BY PAIRS ------------ 
  
-  std::list<Point> Output ();
+  std::list<Point> Output();
+ 
+  std::ostream& op_ostream(std::ostream& os) const;
 
+  std::vector<typename Gt::Segment>& op_vect_seg(std::vector<typename
+						 Gt::Segment>& V) const;
+  
+#ifdef CGAL_ALPHA_WINDOW_STREAM
+  Window_stream& op_window(Window_stream& W) const;
+#endif 
+ 
   //----------------------- OPERATIONS ---------------------------------
 
 #ifdef CGAL_TEMPLATE_MEMBER_FUNCTIONS
@@ -1628,7 +1621,7 @@ Alpha_shape_2<Gt,Tds>::find_alpha_solid() const
 
 template < class Gt, class Tds >
 std::ostream& 
-operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A) 
+Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 {
   
   typedef typename Alpha_shape_2<Gt, Tds>::Interval_vertex_map Interval_vertex_map ;
@@ -1643,7 +1636,7 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
 #else
   typedef long Key;
   std::hash_map< Key, int > V;
-  V.resize(A.number_of_vertices());
+  V.resize(number_of_vertices());
 #endif
   int number_of_vertices = 0;
       
@@ -1652,13 +1645,13 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
 
   const typename Alpha_shape_2<Gt,Tds>::Interval3* pInterval;
 
-  if (A.get_mode() == Alpha_shape_2<Gt,Tds>::REGULARIZED) 
+  if (get_mode() == Alpha_shape_2<Gt,Tds>::REGULARIZED) 
     {
 
       typename Alpha_shape_2<Gt,Tds>::Vertex_handle v;
-      for (vertex_alpha_it = A._interval_vertex_map.begin(); 
-	   vertex_alpha_it != A._interval_vertex_map.end() &&
-	     (*vertex_alpha_it).first.first < A.get_alpha();
+      for (vertex_alpha_it = _interval_vertex_map.begin(); 
+	   vertex_alpha_it != _interval_vertex_map.end() &&
+	     (*vertex_alpha_it).first.first < get_alpha();
 	   ++vertex_alpha_it) 
 	{
 
@@ -1666,15 +1659,15 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
 
 #ifdef DEBUG
 	  typename Alpha_shape_2<Gt,Tds>::Coord_type alpha =
-	    A.get_alpha();
+	    get_alpha();
 	  typename Alpha_shape_2<Gt,Tds>::Coord_type alpha_mid = 
 	    pInterval2->first;
 	  typename Alpha_shape_2<Gt,Tds>::Coord_type alpha_max = 
 	    pInterval2->second;
 #endif // DEBUG
 
-	  if((pInterval2->second >= A.get_alpha()
-	      || pInterval2->second == A.INFINITY)) 
+	  if((pInterval2->second >= get_alpha()
+	      || pInterval2->second == INFINITY)) 
 	    {
 	      // alpha must be larger than the min boundary
 	      // and alpha is smaller than the upper boundary
@@ -1682,7 +1675,7 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
 	      // write the vertex
 
 	      v = (*vertex_alpha_it).second;
-	      CGAL_triangulation_assertion((A.classify(v) == Alpha_shape_2<Gt,Tds>::REGULAR));
+	      CGAL_triangulation_assertion((classify(v) == Alpha_shape_2<Gt,Tds>::REGULAR));
 	      // if we used Edelsbrunner and Muecke's definition
 	      // regular means incident to a higher-dimensional face
 	      // we would write too many vertices
@@ -1696,21 +1689,21 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
       typename Alpha_shape_2<Gt,Tds>::Face_handle f;
       int i;
 
-      for (edge_alpha_it = A._interval_edge_map.begin(); 
-	   edge_alpha_it != A._interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < A.get_alpha();
+      for (edge_alpha_it = _interval_edge_map.begin(); 
+	   edge_alpha_it != _interval_edge_map.end() &&
+	     (*edge_alpha_it).first.first < get_alpha();
 	   ++edge_alpha_it) 
 	{
 
 	  pInterval = &(*edge_alpha_it).first;
 
-	  CGAL_triangulation_assertion(pInterval->second != A.INFINITY);
+	  CGAL_triangulation_assertion(pInterval->second != INFINITY);
 	  // since this happens only for convex hull of dimension 1
 	  // thus singular
 
-	  if(pInterval->second < A.get_alpha() &&
-	     (pInterval->third >= A.get_alpha()
-	      || pInterval->third == A.INFINITY)) 
+	  if(pInterval->second < get_alpha() &&
+	     (pInterval->third >= get_alpha()
+	      || pInterval->third == INFINITY)) 
 	    {
 	      // alpha must be larger than the mid boundary
 	      // and alpha is smaller than the upper boundary
@@ -1722,7 +1715,7 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
 	      i = (*edge_alpha_it).second.second;
 
 	      // assure that all vertices are in ccw order
-	      if (A.classify(f) == Alpha_shape_2<Gt,Tds>::EXTERIOR) 
+	      if (classify(f) == Alpha_shape_2<Gt,Tds>::EXTERIOR) 
 		{
             
 		  // take the reverse face
@@ -1731,9 +1724,9 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
 		  f = pNeighbor;
 		}
 	  
-	      CGAL_triangulation_assertion((A.classify(f) == Alpha_shape_2<Gt,Tds>::INTERIOR));
+	      CGAL_triangulation_assertion((classify(f) == Alpha_shape_2<Gt,Tds>::INTERIOR));
 
-	      CGAL_triangulation_assertion((A.classify(f, i) == Alpha_shape_2<Gt,Tds>::REGULAR));
+	      CGAL_triangulation_assertion((classify(f, i) == Alpha_shape_2<Gt,Tds>::REGULAR));
 
 	      os << V[Key(&(f->vertex(f->ccw(i))))] << ' ' 
 		 << V[Key(&(f->vertex(f->cw(i))))] << endl;
@@ -1741,22 +1734,22 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
 	}
     }
   else 
-    { // A.get_mode() == GENERAL -----------------------------------------
+    { // get_mode() == GENERAL -----------------------------------------
 
       typename Alpha_shape_2<Gt,Tds>::Vertex_handle v;
      
       // write the regular vertices
 
-      for (vertex_alpha_it = A._interval_vertex_map.begin(); 
-	   vertex_alpha_it != A._interval_vertex_map.end() &&
-	     (*vertex_alpha_it).first.first < A.get_alpha();
+      for (vertex_alpha_it = _interval_vertex_map.begin(); 
+	   vertex_alpha_it != _interval_vertex_map.end() &&
+	     (*vertex_alpha_it).first.first < get_alpha();
 	   ++vertex_alpha_it) 
 	{
 
 	  pInterval2 = &(*vertex_alpha_it).first;
 
-	  if((pInterval2->second >= A.get_alpha()
-	      || pInterval2->second == A.INFINITY)) 
+	  if((pInterval2->second >= get_alpha()
+	      || pInterval2->second == INFINITY)) 
 	    {
 	      // alpha must be larger than the min boundary
 	      // and alpha is smaller than the upper boundary
@@ -1764,7 +1757,7 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
 	      // write the vertex
 
 	      v = (*vertex_alpha_it).second;
-	      CGAL_triangulation_assertion((A.classify(v) == Alpha_shape_2<Gt,Tds>::REGULAR));
+	      CGAL_triangulation_assertion((classify(v) == Alpha_shape_2<Gt,Tds>::REGULAR));
 	      V[Key(&v)] = number_of_vertices++;
 	      os << v->point() << endl;
 	    }
@@ -1772,12 +1765,12 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
  
       // write the singular vertices
       for (; 
-	   vertex_alpha_it != A._interval_vertex_map.end();
+	   vertex_alpha_it != _interval_vertex_map.end();
 	   ++vertex_alpha_it) 
 	{
 
 	  v = (*vertex_alpha_it).second;
-	  CGAL_triangulation_assertion((A.classify(v) == Alpha_shape_2<Gt,Tds>::SINGULAR));
+	  CGAL_triangulation_assertion((classify(v) == Alpha_shape_2<Gt,Tds>::SINGULAR));
 
 	  V[Key(&v)] = number_of_vertices++;
 	  os << v->point() << endl;
@@ -1788,9 +1781,9 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
       typename Alpha_shape_2<Gt,Tds>::Face_handle f;
       int i;
 
-      for (edge_alpha_it = A._interval_edge_map.begin(); 
-	   edge_alpha_it != A._interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < A.get_alpha();
+      for (edge_alpha_it = _interval_edge_map.begin(); 
+	   edge_alpha_it != _interval_edge_map.end() &&
+	     (*edge_alpha_it).first.first < get_alpha();
 	   ++edge_alpha_it) 
 	{
 
@@ -1798,7 +1791,7 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
 
 #ifdef DEBUG
 	  typename Alpha_shape_2<Gt,Tds>::Coord_type alpha =
-	    A.get_alpha();
+	    get_alpha();
 	  typename Alpha_shape_2<Gt,Tds>::Coord_type alpha_min = 
 	    pInterval->first;
 	  typename Alpha_shape_2<Gt,Tds>::Coord_type alpha_mid = 
@@ -1807,8 +1800,8 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
 	    pInterval->third;
 #endif // DEBUG
 	  
-	  if(pInterval->third >= A.get_alpha()
-	     || pInterval->third == A.INFINITY) 
+	  if(pInterval->third >= get_alpha()
+	     || pInterval->third == INFINITY) 
 	    {
 	      // if alpha is smaller than the upper boundary
 	      // which might be infinity 
@@ -1819,13 +1812,13 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
 
 
 	      // write the regular edges
-	      if (pInterval->second != A.INFINITY &&
-		  pInterval->second < A.get_alpha()) 
+	      if (pInterval->second != INFINITY &&
+		  pInterval->second < get_alpha()) 
 		{
 
-		  CGAL_triangulation_assertion((A.classify(f, i) == Alpha_shape_2<Gt,Tds>::REGULAR));
+		  CGAL_triangulation_assertion((classify(f, i) == Alpha_shape_2<Gt,Tds>::REGULAR));
 		  // assure that all vertices are in ccw order
-		  if (A.classify(f) == Alpha_shape_2<Gt,Tds>::EXTERIOR) 
+		  if (classify(f) == Alpha_shape_2<Gt,Tds>::EXTERIOR) 
 		    {
  
 		      // take the reverse face
@@ -1834,7 +1827,7 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
 		      f = pNeighbor;
 		    }
 	  
-		  CGAL_triangulation_assertion((A.classify(f) == Alpha_shape_2<Gt,Tds>::INTERIOR));
+		  CGAL_triangulation_assertion((classify(f) == Alpha_shape_2<Gt,Tds>::INTERIOR));
 
 		  
 
@@ -1843,14 +1836,14 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
 		  
 		}
 	      else 
-		{ // pInterval->second == A.INFINITY || pInterval->second >= A.get_alpha())      
-		  // pInterval->second == A.INFINITY happens only for convex hull 
+		{ // pInterval->second == INFINITY || pInterval->second >= get_alpha())      
+		  // pInterval->second == INFINITY happens only for convex hull 
 		  // of dimension 1 thus singular
 
 		  // write the singular edges
-		  if (pInterval->first != A.UNDEFINED) 
+		  if (pInterval->first != UNDEFINED) 
 		    {
-		      CGAL_triangulation_assertion((A.classify(f, i) == Alpha_shape_2<Gt,Tds>::SINGULAR));
+		      CGAL_triangulation_assertion((classify(f, i) == Alpha_shape_2<Gt,Tds>::SINGULAR));
 		      os << V[Key(&(f->vertex(f->ccw(i))))] << ' ' 
 			 << V[Key(&(f->vertex(f->cw(i))))] << endl;
 	
@@ -1867,8 +1860,7 @@ operator<<(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
 
 template < class Gt, class Tds >
 std::vector<typename Gt::Segment>& 
-operator<<(std::vector<typename Gt::Segment>& V, const
-	   Alpha_shape_2<Gt,Tds>& A) 
+Alpha_shape_2<Gt,Tds>::op_vect_seg(std::vector<typename Gt::Segment>& V) const
 {
 
   typedef typename Alpha_shape_2<Gt,Tds>::Interval_vertex_map Interval_vertex_map;
@@ -1879,76 +1871,76 @@ operator<<(std::vector<typename Gt::Segment>& V, const
 
   const typename Alpha_shape_2<Gt,Tds>::Interval3* pInterval;
 
-  if (A.get_mode() == Alpha_shape_2<Gt,Tds>::REGULARIZED) 
+  if (get_mode() == Alpha_shape_2<Gt,Tds>::REGULARIZED) 
     {
       // it is much faster looking at the sorted intervals 
       // than looking at all sorted faces
       // alpha must be larger than the mid boundary
       // and alpha is smaller than the upper boundary
-      for (edge_alpha_it = A._interval_edge_map.begin(); 
-	   edge_alpha_it != A._interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < A.get_alpha();
+      for (edge_alpha_it = _interval_edge_map.begin(); 
+	   edge_alpha_it != _interval_edge_map.end() &&
+	     (*edge_alpha_it).first.first < get_alpha();
 	   ++edge_alpha_it) 
 	{
 
 	  pInterval = &(*edge_alpha_it).first;
 
-	  CGAL_triangulation_assertion(pInterval->second != A.INFINITY);
+	  CGAL_triangulation_assertion(pInterval->second != INFINITY);
 	  // since this happens only for convex hull of dimension 1
 	  // thus singular
 
-	  if(pInterval->second < A.get_alpha() &&
-	     (pInterval->third >= A.get_alpha()
-	      || pInterval->third == A.INFINITY)) 
+	  if(pInterval->second < get_alpha() &&
+	     (pInterval->third >= get_alpha()
+	      || pInterval->third == INFINITY)) 
 	    {
 	      // alpha must be larger than the mid boundary
 	      // and alpha is smaller than the upper boundary
 	      // which might be infinity 
 	      // visualize the boundary
 	    
-	      CGAL_triangulation_assertion((A.classify((*edge_alpha_it).second.first,
+	      CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
 						       (*edge_alpha_it).second.second) ==
 					    Alpha_shape_2<Gt,Tds>::REGULAR));
 	      // if we used Edelsbrunner and Muecke's definition
 	      // regular means incident to a higher-dimensional face
 	      // thus we would write to many vertices
-	      V.push_back(A.segment((*edge_alpha_it).second.first,
+	      V.push_back(segment((*edge_alpha_it).second.first,
 				    (*edge_alpha_it).second.second));
 	    }
 	}
     }
   else 
-    { // A.get_mode() == GENERAL
+    { // get_mode() == GENERAL
     
       // draw the edges
-      for (edge_alpha_it = A._interval_edge_map.begin(); 
-	   edge_alpha_it != A._interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < A.get_alpha();
+      for (edge_alpha_it = _interval_edge_map.begin(); 
+	   edge_alpha_it != _interval_edge_map.end() &&
+	     (*edge_alpha_it).first.first < get_alpha();
 	   ++edge_alpha_it) 
 	{
 	
 	  pInterval = &(*edge_alpha_it).first;
 
-	  if (pInterval->first == A.UNDEFINED) 
+	  if (pInterval->first == UNDEFINED) 
 	    {
 	    
-	      CGAL_triangulation_assertion(pInterval->second != A.INFINITY);
+	      CGAL_triangulation_assertion(pInterval->second != INFINITY);
 	      // since this happens only for convex hull of dimension 1
 	      // thus singular
 
-	      if(pInterval->second < A.get_alpha() &&
-		 (pInterval->third >= A.get_alpha()
-		  || pInterval->third == A.INFINITY)) 
+	      if(pInterval->second < get_alpha() &&
+		 (pInterval->third >= get_alpha()
+		  || pInterval->third == INFINITY)) 
 		{
 		  // alpha must be larger than the mid boundary
 		  // and alpha is smaller than the upper boundary
 		  // which might be infinity 
 		  // visualize the boundary
 		
-		  CGAL_triangulation_assertion((A.classify((*edge_alpha_it).second.first,
+		  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
 							   (*edge_alpha_it).second.second) ==
 						Alpha_shape_2<Gt,Tds>::REGULAR));
-		  V.push_back(A.segment((*edge_alpha_it).second.first,
+		  V.push_back(segment((*edge_alpha_it).second.first,
 					(*edge_alpha_it).second.second));
 		}
 	    }
@@ -1956,20 +1948,20 @@ operator<<(std::vector<typename Gt::Segment>& V, const
 	    {
 	    
 
-	      if(pInterval->third >= A.get_alpha()
-		 || pInterval->third == A.INFINITY) 
+	      if(pInterval->third >= get_alpha()
+		 || pInterval->third == INFINITY) 
 		{
 		  // if alpha is smaller than the upper boundary
 		  // which might be infinity 
 		  // visualize the boundary
 	
-		  CGAL_triangulation_assertion(((A.classify((*edge_alpha_it).second.first,
+		  CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
 							    (*edge_alpha_it).second.second) ==
 						 Alpha_shape_2<Gt,Tds>::REGULAR) || 
-						(A.classify((*edge_alpha_it).second.first,
+						(classify((*edge_alpha_it).second.first,
 							    (*edge_alpha_it).second.second) ==
 						 Alpha_shape_2<Gt,Tds>::SINGULAR)));
-		  V.push_back(A.segment((*edge_alpha_it).second.first,
+		  V.push_back(segment((*edge_alpha_it).second.first,
 					(*edge_alpha_it).second.second));
 		}
 	    }
@@ -1977,6 +1969,24 @@ operator<<(std::vector<typename Gt::Segment>& V, const
 	}
     }
   return V;
+}
+
+//-------------------------------------------------------------------
+
+template < class Gt, class Tds >
+std::ostream& operator<<
+(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
+{
+  return A.op_ostream(os);
+}
+
+//-------------------------------------------------------------------
+
+template < class Gt, class Tds >
+std::vector<typename Gt::Segment>& operator<<
+(std::vector<typename Gt::Segment>& V, const Alpha_shape_2<Gt,Tds>& A)
+{
+  return A.op_vect_seg(V);
 }
 
 //-------------------------------------------------------------------

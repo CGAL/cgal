@@ -61,17 +61,6 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds >
 class Weighted_alpha_shape_2 : public Regular_triangulation_2<Gt, Tds>
 {
-
-  template < class Gt, class Tds >
-  friend std::ostream& operator<<(std::ostream& os, const
-				  Weighted_alpha_shape_2<Gt,Tds>& A);
-
-#ifdef CGAL_WEIGHTED_ALPHA_WINDOW_STREAM
-  template < class Gt, class Tds >
-  friend Window_stream& operator<<(Window_stream& os, const
-				   Weighted_alpha_shape_2<Gt,Tds>& A);
-#endif  
-
   // DEFINITION The class Weighted_alpha_shape_2<Gt,Tds> represents the family
   // of alpha-shapes of points in a plane for all positive alpha. It
   // maintains the underlying Regular triangulation which represents
@@ -282,7 +271,13 @@ public:
 
   //----------- OUTPUT A LIST OF POINTS CONNECTED BY PAIRS ------------ 
  
-  std::list<Point> Output ();
+  std::list<Point> Output();
+
+  std::ostream& op_ostream(std::ostream& os) const;
+
+#ifdef CGAL_WEIGHTED_ALPHA_WINDOW_STREAM
+  Window_stream& op_window(Window_stream& W) const;
+#endif  
 
   //----------------------- OPERATIONS ---------------------------------
 
@@ -944,7 +939,6 @@ std::vector<Weighted_alpha_shape_2<Gt,Tds>::Point>
 Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_voronoi_vertex
 (typename std::vector<Point>::const_iterator  first,
  typename std::vector<Point>::const_iterator  last)
-
 { 
   std::vector<Point> V;
 
@@ -952,25 +946,21 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_vorono
   typename std::vector<Point>::const_iterator point_it;
   
   
-  int n = D.insert(first, last);
+  D.insert(first, last);
 
   for( point_it = first; 
        point_it != last; 
-       ++point_it)
-    
+       ++point_it)    
     { 
       Face_circulator face_circ=D.incident_faces(D.nearest_vertex(*point_it)),
 	done = face_circ;
       double d=DBL_MAX;
-      if (Face_handle (face_circ) != NULL)
-	
+      if (!face_circ.is_empty())	
 	{
-	  do
-	    
+	  do	    
 	    {
 	      Face_handle f = face_circ;
-	      if (!D.is_infinite(f))
-		
+	      if (!D.is_infinite(f))		
 		{
 		  Point p=D.dual(f);
 		  // double dd=(p.point().x()-(*point_it).point().x())*(p.point().x()-(*point_it).point().x())+(p.point().y()-(*point_it).point().y())*(p.point().y()-(*point_it).point().y());
@@ -980,7 +970,7 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_vorono
 	    }
 	  while(++face_circ != done);
 	}
-      V.push_back(Point((*point_it).point(),d));
+      V.push_back(Point((*point_it).point(),0.7*d));
     }
   return V;
 }
@@ -992,7 +982,6 @@ std::vector<Weighted_alpha_shape_2<Gt,Tds>::Point>
 Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_voronoi_edge
 (typename std::vector<Point>::const_iterator  first,
  typename std::vector<Point>::const_iterator  last)
-
 { 
   
   std::vector<Point> V;
@@ -1006,30 +995,24 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_vorono
 
   for( point_it = first; 
        point_it != last; 
-       ++point_it)
-    
+       ++point_it)    
     { 
       typename Dt_int::Face_circulator face_circ=D.incident_faces(D.nearest_vertex(*point_it)),
 	done = face_circ;
       double d=DBL_MAX;
       double dd=DBL_MAX;
-      if (!face_circ.is_empty())
-	
+      if (!face_circ.is_empty())	
 	{
-	  do
-	    
+	  do	    
 	    {
 	      typename Dt_int::Face_handle f = face_circ;
-	      if (!D.is_infinite(f))
-		
+	      if (!D.is_infinite(f))		
 		{
-		  for ( int i=0; i!=3; ++i)
-		    
+		  for ( int i=0; i!=3; ++i)		    
 		    {
 		      typename Dt_int::Edge e(f,i);
 		      
-		      if ((!D.is_infinite(e.first))&&(!D.is_infinite(e.first->neighbor(e.second))))
-			
+		      if ((!D.is_infinite(e.first))&&(!D.is_infinite(e.first->neighbor(e.second))))			
 			{
 			  typename Gt::Segment seg(D.dual(e.first),D.dual(e.first->neighbor(e.second)));
 			  dd=squared_distance(seg,*point_it);
@@ -1040,11 +1023,9 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_vorono
 	    }
 	  while(++face_circ != done);
 	}
-      if (d != DBL_MAX)
-	
+      if (d != DBL_MAX)	
 	{ V.push_back(Point((*point_it).point(),.9*d)); }
-      else
-	
+      else	
 	{ V.push_back(Point((*point_it).point(),0.0)); }
     }
   return V;
@@ -1848,8 +1829,8 @@ Weighted_alpha_shape_2<Gt,Tds>::find_alpha_solid() const
 //-----------------------------------------------------------------------
 
 template < class Gt, class Tds >
-std::ostream& 
-operator<<(std::ostream& os, const Weighted_alpha_shape_2<Gt,Tds>& A) 
+std::ostream&
+Weighted_alpha_shape_2<Gt,Tds>::op_ostream (std::ostream& os) const
 {
   
   typedef typename Weighted_alpha_shape_2<Gt, Tds>::Interval_vertex_map Interval_vertex_map ;
@@ -2084,6 +2065,15 @@ operator<<(std::ostream& os, const Weighted_alpha_shape_2<Gt,Tds>& A)
     }
   
   return os;
+}
+
+//-------------------------------------------------------------------
+
+template < class Gt, class Tds >
+std::ostream& operator<<
+(std::ostream& os, const Weighted_alpha_shape_2<Gt,Tds>& A)
+{
+  return A.op_ostream();
 }
 
 //-------------------------------------------------------------------

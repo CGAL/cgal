@@ -5,10 +5,11 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = $(UTIL)/CGAL/CGAL-2.1-I-21/make/makefile_i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA
+CGAL_MAKEFILE = $(UTIL)/CGAL/CGAL-2.1-I-24/make/makefile_i686_Linux-2.2.10_g++-2.95.1_LEDA
 #makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
-#makefile_i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA
-#makefile_sparc_SunOS-5.6_g++-2.95._LEDA
+#makefile_i686_Linux-2.2.10_eg++-egcs-2.91.66_LEDA
+#makefile_sparc_SunOS-5.6_g++-2.95.1_LEDA
+#makefile_i686_Linux-2.2.10_g++-2.95.1_LEDA
 
 include $(CGAL_MAKEFILE)
 
@@ -18,8 +19,7 @@ include $(CGAL_MAKEFILE)
 # rajouter CGAL_LOCAL_CXXFLAGS si on veut les packages de Local
 
 CXXFLAGS = -I$(HOME)/Cgal-2.0/To_submit/Alpha_shapes_2/include \
-             $(CGAL_CXXFLAGS) \
-           -Wall -W -O2
+             $(CGAL_CXXFLAGS) -g \
 
 #-mcpu=ultrasparc -mtune=ultrasparc -Wall -W -O2 -DDEBUG
 #-B /u/alcor/0/prisme_util/Binutils/SunOS/bin/ -g

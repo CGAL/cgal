@@ -30,8 +30,8 @@ CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
 template < class Gt, class Tds >
-Window_stream& 
-operator<<(Window_stream& W, const Alpha_shape_2<Gt,Tds>& A) 
+Window_stream&
+Alpha_shape_2<Gt,Tds>::op_window(Window_stream& W) const
 {
 
   typedef typename Alpha_shape_2<Gt,Tds>::Interval_vertex_map Interval_vertex_map;
@@ -42,77 +42,77 @@ operator<<(Window_stream& W, const Alpha_shape_2<Gt,Tds>& A)
 
   const typename Alpha_shape_2<Gt,Tds>::Interval3* pInterval;
 
-  if (A.get_mode() == Alpha_shape_2<Gt,Tds>::REGULARIZED) 
+  if (get_mode() == Alpha_shape_2<Gt,Tds>::REGULARIZED) 
     {
 
       // it is much faster looking at the sorted intervals 
       // than looking at all sorted faces
       // alpha must be larger than the mid boundary
       // and alpha is smaller than the upper boundary
-      for (edge_alpha_it = A._interval_edge_map.begin(); 
-	   edge_alpha_it != A._interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < A.get_alpha();
+      for (edge_alpha_it = _interval_edge_map.begin(); 
+	   edge_alpha_it != _interval_edge_map.end() &&
+	     (*edge_alpha_it).first.first < get_alpha();
 	   ++edge_alpha_it) 
 	{
 
 	  pInterval = &(*edge_alpha_it).first;
 
-	  CGAL_triangulation_assertion(pInterval->second != A.INFINITY);
+	  CGAL_triangulation_assertion(pInterval->second != INFINITY);
 	  // since this happens only for convex hull of dimension 1
 	  // thus singular
 
-	  if(pInterval->second < A.get_alpha() &&
-	     (pInterval->third >= A.get_alpha()
-	      || pInterval->third == A.INFINITY)) 
+	  if(pInterval->second < get_alpha() &&
+	     (pInterval->third >= get_alpha()
+	      || pInterval->third == INFINITY)) 
 	    {
 	      // alpha must be larger than the mid boundary
 	      // and alpha is smaller than the upper boundary
 	      // which might be infinity 
 	      // visualize the boundary
 	    
-	      CGAL_triangulation_assertion((A.classify((*edge_alpha_it).second.first,
+	      CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
 						       (*edge_alpha_it).second.second) ==
 					    Alpha_shape_2<Gt,Tds>::REGULAR));
 	      // if we used Edelsbrunner and Muecke's definition
 	      // regular means incident to a higher-dimensional face
 	      // thus we would write to many vertices
-	      W << A.segment((*edge_alpha_it).second.first,
+	      W << segment((*edge_alpha_it).second.first,
 			     (*edge_alpha_it).second.second);
 	    }
 	}
     }
   else 
-    { // A.get_mode() == GENERAL
+    { // get_mode() == GENERAL
 
       // draw the edges
-      for (edge_alpha_it = A._interval_edge_map.begin(); 
-	   edge_alpha_it != A._interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < A.get_alpha();
+      for (edge_alpha_it = _interval_edge_map.begin(); 
+	   edge_alpha_it != _interval_edge_map.end() &&
+	     (*edge_alpha_it).first.first < get_alpha();
 	   ++edge_alpha_it) 
 	{
 	
 	  pInterval = &(*edge_alpha_it).first;
 
-	  if (pInterval->first == A.UNDEFINED) 
+	  if (pInterval->first == UNDEFINED) 
 	    {
 	    
-	      CGAL_triangulation_assertion(pInterval->second != A.INFINITY);
+	      CGAL_triangulation_assertion(pInterval->second != INFINITY);
 	      // since this happens only for convex hull of dimension 1
 	      // thus singular
 
-	      if(pInterval->second < A.get_alpha() &&
-		 (pInterval->third >= A.get_alpha()
-		  || pInterval->third == A.INFINITY)) 
+	      if(pInterval->second < get_alpha() &&
+		 (pInterval->third >= get_alpha()
+		  || pInterval->third == INFINITY)) 
 		{
 		  // alpha must be larger than the mid boundary
 		  // and alpha is smaller than the upper boundary
 		  // which might be infinity 
 		  // visualize the boundary
 		
-		  CGAL_triangulation_assertion((A.classify((*edge_alpha_it).second.first,
+		  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
 							   (*edge_alpha_it).second.second) ==
 						Alpha_shape_2<Gt,Tds>::REGULAR));
-		  W << A.segment((*edge_alpha_it).second.first,
+		  W << segment((*edge_alpha_it).second.first,
 				 (*edge_alpha_it).second.second);
 		}
 	    }
@@ -120,20 +120,20 @@ operator<<(Window_stream& W, const Alpha_shape_2<Gt,Tds>& A)
 	    {
 	   
 
-	      if(pInterval->third >= A.get_alpha()
-		 || pInterval->third == A.INFINITY) 
+	      if(pInterval->third >= get_alpha()
+		 || pInterval->third == INFINITY) 
 		{
 		  // if alpha is smaller than the upper boundary
 		  // which might be infinity 
 		  // visualize the boundary
 		
-		  CGAL_triangulation_assertion(((A.classify((*edge_alpha_it).second.first,
+		  CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
 							    (*edge_alpha_it).second.second) ==
 						 Alpha_shape_2<Gt,Tds>::REGULAR) || 
-						(A.classify((*edge_alpha_it).second.first,
+						(classify((*edge_alpha_it).second.first,
 							    (*edge_alpha_it).second.second) ==
 						 Alpha_shape_2<Gt,Tds>::SINGULAR)));
-		  W << A.segment((*edge_alpha_it).second.first,
+		  W << segment((*edge_alpha_it).second.first,
 				 (*edge_alpha_it).second.second);
 		}
 	    }
@@ -143,8 +143,8 @@ operator<<(Window_stream& W, const Alpha_shape_2<Gt,Tds>& A)
 
   // draw the vertices
   typename Alpha_shape_2<Gt,Tds>::Vertex_handle v;
-  for (vertex_alpha_it = A._interval_vertex_map.begin(); 
-       vertex_alpha_it != A._interval_vertex_map.end();
+  for (vertex_alpha_it = _interval_vertex_map.begin(); 
+       vertex_alpha_it != _interval_vertex_map.end();
        ++vertex_alpha_it) 
     {
 	
@@ -153,6 +153,16 @@ operator<<(Window_stream& W, const Alpha_shape_2<Gt,Tds>& A)
     }
   return W;
 }
+
+//-------------------------------------------------------------------
+
+template < class Gt, class Tds >
+Window_stream& 
+operator<<(Window_stream& W, const Alpha_shape_2<Gt,Tds>& As) 
+{
+  return As.op_window(W);
+}
+
 //-------------------------------------------------------------------
 CGAL_END_NAMESPACE
 //-------------------------------------------------------------------
@@ -168,8 +178,8 @@ CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
 template < class Gt, class Tds >
-Window_stream& 
-operator<<(Window_stream& W, const Weighted_alpha_shape_2<Gt,Tds>& A) 
+Window_stream&
+Weighted_alpha_shape_2<Gt,Tds>::op_window(Window_stream& W) const
 {
 
   typedef typename Weighted_alpha_shape_2<Gt,Tds>::Interval_vertex_map Interval_vertex_map;
@@ -180,96 +190,96 @@ operator<<(Window_stream& W, const Weighted_alpha_shape_2<Gt,Tds>& A)
 
   const typename Weighted_alpha_shape_2<Gt,Tds>::Interval3* pInterval;
 
-  if (A.get_mode() == Weighted_alpha_shape_2<Gt,Tds>::REGULARIZED) 
+  if (get_mode() == Weighted_alpha_shape_2<Gt,Tds>::REGULARIZED) 
     {
       // it is much faster looking at the sorted intervals 
       // than looking at all sorted faces
       // alpha must be larger than the mid boundary
       // and alpha is smaller than the upper boundary
-      for (edge_alpha_it = A._interval_edge_map.begin(); 
-	   edge_alpha_it != A._interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < A.get_alpha();
+      for (edge_alpha_it = _interval_edge_map.begin(); 
+	   edge_alpha_it != _interval_edge_map.end() &&
+	     (*edge_alpha_it).first.first < get_alpha();
 	   ++edge_alpha_it) 
 	{
       
 	  pInterval = &(*edge_alpha_it).first;
 
-	  CGAL_triangulation_assertion(pInterval->second != A.INFINITY);
+	  CGAL_triangulation_assertion(pInterval->second != INFINITY);
 	  // since this happens only for convex hull of dimension 1
 	  // thus singular
       
-	  if(pInterval->second < A.get_alpha() &&
-	     (pInterval->third >= A.get_alpha()
-	      || pInterval->third == A.INFINITY)) 
+	  if(pInterval->second < get_alpha() &&
+	     (pInterval->third >= get_alpha()
+	      || pInterval->third == INFINITY)) 
 	    {
 	      // alpha must be larger than the mid boundary
 	      // and alpha is smaller than the upper boundary
 	      // which might be infinity 
 	      // visualize the boundary
 	
-	      CGAL_triangulation_assertion((A.classify((*edge_alpha_it).second.first,
+	      CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
 						       (*edge_alpha_it).second.second) ==
 					    Weighted_alpha_shape_2<Gt,Tds>::REGULAR));
 	      // if we used Edelsbrunner and Muecke's definition
 	      // regular means incident to a higher-dimensional face
 	      // thus we would write to many vertices
-	      W << A.segment((*edge_alpha_it).second.first,
+	      W << segment((*edge_alpha_it).second.first,
 			     (*edge_alpha_it).second.second);
 	    }
 	}
     }
   else
-    {  // A.get_mode() == GENERAL
+    {  // get_mode() == GENERAL
     
       // draw the edges
-      for (edge_alpha_it = A._interval_edge_map.begin(); 
-	   edge_alpha_it != A._interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < A.get_alpha();
+      for (edge_alpha_it = _interval_edge_map.begin(); 
+	   edge_alpha_it != _interval_edge_map.end() &&
+	     (*edge_alpha_it).first.first < get_alpha();
 	   ++edge_alpha_it) 
 	{
 
 	  pInterval = &(*edge_alpha_it).first;
       
-	  if (pInterval->first == A.UNDEFINED) 
+	  if (pInterval->first == UNDEFINED) 
 	    {
 	
-	      CGAL_triangulation_assertion(pInterval->second != A.INFINITY);
+	      CGAL_triangulation_assertion(pInterval->second != INFINITY);
 	      // since this happens only for convex hull of dimension 1
 	      // thus singular
 	
-	      if(pInterval->second < A.get_alpha() &&
-		 (pInterval->third >= A.get_alpha()
-		  || pInterval->third == A.INFINITY)) 
+	      if(pInterval->second < get_alpha() &&
+		 (pInterval->third >= get_alpha()
+		  || pInterval->third == INFINITY)) 
 		{
 		  // alpha must be larger than the mid boundary
 		  // and alpha is smaller than the upper boundary
 		  // which might be infinity 
 		  // visualize the boundary
 	  
-		  CGAL_triangulation_assertion((A.classify((*edge_alpha_it).second.first,
+		  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
 							   (*edge_alpha_it).second.second) ==
 						Weighted_alpha_shape_2<Gt,Tds>::REGULAR));
-		  W << A.segment((*edge_alpha_it).second.first,
+		  W << segment((*edge_alpha_it).second.first,
 				 (*edge_alpha_it).second.second);
 		}
 	    }
 	  else
 	    {
 	
-	      if(pInterval->third >= A.get_alpha()
-		 || pInterval->third == A.INFINITY) 
+	      if(pInterval->third >= get_alpha()
+		 || pInterval->third == INFINITY) 
 		{
 		  // if alpha is smaller than the upper boundary
 		  // which might be infinity 
 		  // visualize the boundary
 	  
-		  CGAL_triangulation_assertion(((A.classify((*edge_alpha_it).second.first,
+		  CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
 							    (*edge_alpha_it).second.second) ==
 						 Weighted_alpha_shape_2<Gt,Tds>::REGULAR) || 
-						(A.classify((*edge_alpha_it).second.first,
+						(classify((*edge_alpha_it).second.first,
 							    (*edge_alpha_it).second.second) ==
 						 Weighted_alpha_shape_2<Gt,Tds>::SINGULAR)));
-		  W << A.segment((*edge_alpha_it).second.first,
+		  W << segment((*edge_alpha_it).second.first,
 				 (*edge_alpha_it).second.second);
 		}
 	    }
@@ -280,8 +290,8 @@ operator<<(Window_stream& W, const Weighted_alpha_shape_2<Gt,Tds>& A)
   // draw the vertices
   
   typename Weighted_alpha_shape_2<Gt,Tds>::Vertex_handle v;
-  for (vertex_alpha_it = A._interval_vertex_map.begin(); 
-       vertex_alpha_it != A._interval_vertex_map.end();
+  for (vertex_alpha_it = _interval_vertex_map.begin(); 
+       vertex_alpha_it != _interval_vertex_map.end();
        ++vertex_alpha_it) 
     {
     
@@ -290,6 +300,15 @@ operator<<(Window_stream& W, const Weighted_alpha_shape_2<Gt,Tds>& A)
     }
   
   return W;
+}
+
+//-------------------------------------------------------------------
+
+template < class Gt, class Tds >
+Window_stream& 
+operator<<(Window_stream& W, const Weighted_alpha_shape_2<Gt,Tds>& A) 
+{
+  return A.op_window(W);
 }
 
 //-------------------------------------------------------------------

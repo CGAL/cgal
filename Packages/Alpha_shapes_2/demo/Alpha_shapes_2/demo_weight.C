@@ -256,7 +256,7 @@ random_input(Alpha_shape_2 &A,
      }
   start_timing();
   if (opt.init)
-    { VV=A.initialize_weighted_points_to_the_nearest_voronoi_edge(V.begin(), V.end()); }
+    { VV=A.initialize_weighted_points_to_the_nearest_voronoi_vertex(V.begin(), V.end()); }
   else
     { VV=A.initialize_weighted_points_to_the_nearest_vertex(V.begin(), V.end()); }
   n = A.make_Alpha_shape(VV.begin(), VV.end());
@@ -303,7 +303,7 @@ window_input(Alpha_shape_2 &A,
   start_timing();
 
   if (opt.init)
-    { VV=A.initialize_weighted_points_to_the_nearest_voronoi_edge(V.begin(), V.end()); }
+    { VV=A.initialize_weighted_points_to_the_nearest_voronoi_vertex(V.begin(), V.end()); }
   else
     { VV=A.initialize_weighted_points_to_the_nearest_vertex(V.begin(), V.end()); }
   n = A.make_Alpha_shape(VV.begin(), VV.end());
@@ -344,7 +344,7 @@ file_input(Alpha_shape_2& A,
       V.push_back(Point(p));
     }
   if (opt.init)
-    { VV=A.initialize_weighted_points_to_the_nearest_voronoi_edge(V.begin(), V.end()); }
+    { VV=A.initialize_weighted_points_to_the_nearest_voronoi_vertex(V.begin(), V.end()); }
   else
     { VV=A.initialize_weighted_points_to_the_nearest_vertex(V.begin(), V.end()); }
   
