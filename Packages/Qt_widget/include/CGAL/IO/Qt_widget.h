@@ -76,7 +76,7 @@ public:
 
   void add_to_history(){history.add_to_history(xmin, xmax, ymin,
                           ymax, xcentre, ycentre, xscal, yscal);}
-  void clear_history(){history.clear();};
+  void clear_history(){history.clear(); configure_history_buttons();};
 
   inline void move_center(double distx, double disty) 
   {    
