@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.112 on 23 July 2001
+- Remove macro test that prevented libCGAL building on VC++.
+
 Version 4.111 on 19 July 2001
 - Rename Filter_predicate to Filtered_predicate.
 
