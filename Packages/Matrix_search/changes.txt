@@ -2,6 +2,9 @@
 //	Revision History for package Matrix_search
 //=====================================================================
 
+10 August 2004 Andreas Fabri
+- In rectangular_p_center_2_random2_test.C: Use Kernel_traits<Point>::Kernel::FT  instead of  Point::R::FT   
+
 22 June 2004  Sylvain Pion
 - Add some missing "using base::member;" to please g++ 3.4.
 
