@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "WIN32" /YX /FD /TP /c
-# ADD CPP /nologo /W3 /GX /O2 /I "$(CGAL)\stlport" /I "$(CGAL)\auxilary\wingmp\gmp-2.0.2" /I "$(CGAL)\include\cgal\config\msvc" /I "$(CGAL)\include" /D "NDEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "CGAL_USE_GMP" /YX /FD /TP /c
+# ADD CPP /nologo /W3 /GX /O2 /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\auxilary\wingmp\gmp-2.0.2" /I "$(CGALROOT)\include\cgal\config\msvc" /I "$(CGALROOT)\include" /D "NDEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "CGAL_USE_GMP" /YX /FD /TP /c
 # ADD BASE RSC /l 0x40c /d "NDEBUG"
 # ADD RSC /l 0x40c /d "NDEBUG"
 BSC32=bscmake.exe
@@ -64,10 +64,10 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /TP /D /GZ "WIN32" /c
-# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "$(CGAL)\stlport" /I "$(CGAL)\auxilary\wingmp\gmp-2.0.2" /I "$(CGAL)\include\cgal\config\msvc" /I "$(CGAL)\include" /D "_DEBUG" /D "CGAL_USE_GMP" /D "WIN32" /D "_MBCS" /D "_LIB" /FR /YX /FD /TP /GZ /c
+# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\auxilary\wingmp\gmp-2.0.2" /I "$(CGALROOT)\include\cgal\config\msvc" /I "$(CGALROOT)\include" /D "_DEBUG" /D "CGAL_USE_GMP" /D "WIN32" /D "_MBCS" /D "_LIB" /FR /YX /FD /TP /GZ /c
 # SUBTRACT CPP /X
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
-# ADD RSC /l 0x40c /i "$(CGAL)\include" /i "$(CGAL)\include\cgal" /i "$(CGAL)\stlport" /i "$(CGAL)\include\cgal\config\msvc" /i "$(CGAL)\auxilary\wingmp\gmp-2.0.2" /d "_DEBUG"
+# ADD RSC /l 0x40c /i "$(CGALROOT)\include" /i "$(CGALROOT)\include\cgal" /i "$(CGALROOT)\stlport" /i "$(CGALROOT)\include\cgal\config\msvc" /i "$(CGALROOT)\auxilary\wingmp\gmp-2.0.2" /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -86,122 +86,87 @@ LIB32=link.exe -lib
 # PROP Default_Filter "C;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE="$(CGAL)\src\aff_transformation_tags.C"
+SOURCE="$(CGALROOT)\src\aff_transformation_tags.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\assertions.C"
+SOURCE="$(CGALROOT)\src\assertions.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\Bbox_2.C"
+SOURCE="$(CGALROOT)\src\Bbox_2_intersections.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\Bbox_2_intersections.C"
+SOURCE="$(CGALROOT)\src\Bbox_3_intersections.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\Bbox_3_intersections.C"
+SOURCE="$(CGALROOT)\src\cgal_logo.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\Color.C"
+SOURCE="$(CGALROOT)\src\Color.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\File_header_extended_OFF.C"
+SOURCE="$(CGALROOT)\src\File_header_extended_OFF.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\File_header_OFF.C"
+SOURCE="$(CGALROOT)\src\File_header_OFF.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\File_scanner_OFF.C"
+SOURCE="$(CGALROOT)\src\File_scanner_OFF.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\File_writer_inventor.C"
+SOURCE="$(CGALROOT)\src\File_writer_inventor.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\File_writer_OFF.C"
+SOURCE="$(CGALROOT)\src\File_writer_OFF.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\File_writer_VRML_2.C"
+SOURCE="$(CGALROOT)\src\File_writer_VRML_2.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\File_writer_wavefront.C"
+SOURCE="$(CGALROOT)\src\File_writer_wavefront.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\Geomview_stream.C"
+SOURCE="$(CGALROOT)\src\Geomview_stream.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\Interval_arithmetic.C"
+SOURCE="$(CGALROOT)\src\Interval_arithmetic.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\io.C"
+SOURCE="$(CGALROOT)\src\io.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\MP_Float.C"
+SOURCE="$(CGALROOT)\src\MP_Float.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\optimisation_basic.C"
+SOURCE="$(CGALROOT)\src\optimisation_basic.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\Origin.C"
+SOURCE="$(CGALROOT)\src\Origin.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\Random.C"
+SOURCE="$(CGALROOT)\src\Random.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\Triangulation_3.C"
-# End Source File
-# Begin Source File
-
-SOURCE=.\src\Interval_arithmetic\workaround_4_ms.c
-
-!IF  "$(CFG)" == "cgallib - Win32 Release"
-
-# PROP Ignore_Default_Tool 1
-# Begin Custom Build
-InputDir=.\src\Interval_arithmetic
-OutDir=.\Release
-InputPath=.\src\Interval_arithmetic\workaround_4_ms.c
-InputName=workaround_4_ms
-
-"$(OutDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy $(InputDir)\$(InputName).obj $(OutDir)\$(InputName).obj
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "cgallib - Win32 Debug"
-
-# PROP Ignore_Default_Tool 1
-# Begin Custom Build
-InputDir=.\src\Interval_arithmetic
-OutDir=.\Debug
-InputPath=.\src\Interval_arithmetic\workaround_4_ms.c
-InputName=workaround_4_ms
-
-"$(OutDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy $(InputDir)\$(InputName).obj $(OutDir)\$(InputName).obj
-
-# End Custom Build
-
-!ENDIF 
-
+SOURCE="$(CGALROOT)\src\Triangulation_3.C"
 # End Source File
 # End Group
 # Begin Group "Header Files"
