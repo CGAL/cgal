@@ -65,8 +65,8 @@ sub parse_command_line {
 
 # Auxiliary routine to emit a warning and die if pedantic.
 sub warning {
-  local ($_) = @_;
-  print STDERR "// Warning [line $.]: $_\n";
+  my ($msg) = @_;
+  print STDERR "// Warning [line $.]: $msg\n";
   die if $pedantic;
 }
 
@@ -122,7 +122,7 @@ sub skip_no_filter_section {
 # Warns if the return type is not known
 # (to detect functions returning void or FT)
 sub check_known_type {
-  local ($type) = @_;
+  my ($type) = @_;
   if (not $known_ret_types{$type}) {
     warning ("\"$type\" is an unknown enumerative type");
   }
@@ -131,7 +131,7 @@ sub check_known_type {
 # Print the Filtered_exact<> version of a predicate.
 sub print_filtered_exact {
   # This version doesn't need the template type, nor the body.
-  local ($CGAL, $t, $inline, $ret_type, $fct_name, $b, @args) = @_;
+  my ($CGAL, $t, $inline, $ret_type, $fct_name, $b, @args) = @_;
   # Print the function declaration
   # The template line would be more pretty without the MipsPro hack...
   print FO
@@ -169,9 +169,8 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 
 # Parse from "template" to end of body "}"
 sub parse_whole_definition {
-  local ($def) = @_;
-  local $template_type, $inline, $ret_type, $fct_name, $arg_list;
-  local @args;
+  my ($def) = @_;
+  my ($template_type, $inline, $ret_type, $fct_name, $arg_list, $body, @args);
   while (<FI>) {
     $def .= $_;
     last if /^}\s*$/;
@@ -200,7 +199,7 @@ sub parse_whole_definition {
 }
 
 sub parse_input_code {
-  local $CGAL = "CGAL::";
+  my $CGAL = "CGAL::";
   while (<FI>)
   {
     # Treat the CGAL_NO_FILTER_BEGIN/CGAL_NO_FILTER_END section.
@@ -222,10 +221,10 @@ sub parse_input_code {
 
 # Prints the code of the overloaded predicates
 sub print_predicates {
-  local $was_in_CGAL = 0;
+  my $was_in_CGAL = 0;
   # We skip the 2 built-in predicates sign() and compare().
   for $i ( 2 .. $#predicates ) {
-    local ($CGAL) = @{$predicates[$i]};
+    my ($CGAL) = @{$predicates[$i]};
     print "CGAL_BEGIN_NAMESPACE\n\n" if $CGAL eq "" && not $was_in_CGAL;
     print "CGAL_END_NAMESPACE\n\n"   if $CGAL ne "" && $was_in_CGAL;
     print_filtered_exact(@{$predicates[$i]});
