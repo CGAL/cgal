@@ -197,7 +197,7 @@ public:
 
 inline
 void swap(MP_Float &m, MP_Float &n)
-{ return m.swap(n); }
+{ m.swap(n); }
 
 inline
 bool operator<(const MP_Float &a, const MP_Float &b)

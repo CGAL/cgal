@@ -1,3 +1,6 @@
+24 Feb 2004 Sylvain Pion
+- Fix return void expression detected by MipsPro.
+
 21 Feb 2004 Sylvain Pion
 - Add swap() to Quotient and MP_Float.
 
