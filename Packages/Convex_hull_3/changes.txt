@@ -1,3 +1,10 @@
+2.15    (27 June 2001)
+- removed use of hash_map and replaced with CGAL::Hash_map in quickhull
+- updated some typenames that were changed in Polyhedron
+- added concepts for polyhedron vertex, facet, halfedge
+- added examples of incremental and dynamic construction in test and in doc.
+- changed name of convex_hull_3_from_d to convex_hull_incremental_3
+
 2.14    (23 June 2001)
 - fixed doc. problem
 
