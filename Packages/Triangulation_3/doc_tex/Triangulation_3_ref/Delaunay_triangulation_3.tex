@@ -73,6 +73,12 @@ Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructur
 The following methods overload the corresponding methods of
 triangulations to ensure the empty sphere property of Delaunay 
 triangulations.
+
+In the degenerate case when there are cospherical points, the Delaunay
+triangulation is known not to be uniquely defined. In this case, the
+Delaunay triangulation computed by CGAL only depends on the order of
+insertion of the points.
+
 \ccThree{Vertex_handle}{dt.remove()}{}
 
 \ccMethod{Vertex_handle insert(const Point & p, Cell_handle start = NULL );}
