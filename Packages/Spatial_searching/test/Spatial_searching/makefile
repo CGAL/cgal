@@ -5,14 +5,16 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-CGAL_MAKEFILE = c:/cgal/CGAL-3.1-I-131/make/makefile_i686_CYGWINNT-5.1-1.5.6_g++-3.3.1
+
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -Wall -pedantic -I../../include \
+CXXFLAGS = \
+           -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
@@ -49,7 +51,6 @@ all:            \
 
 Building_kd_tree_with_ddim_points$(EXE_EXT): Building_kd_tree_with_ddim_points$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Building_kd_tree_with_ddim_points Building_kd_tree_with_ddim_points$(OBJ_EXT) $(LDFLAGS)
-
 
 Building_kd_tree_with_own_pointtype$(EXE_EXT): Building_kd_tree_with_own_pointtype$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Building_kd_tree_with_own_pointtype Building_kd_tree_with_own_pointtype$(OBJ_EXT) $(LDFLAGS)
@@ -90,17 +91,6 @@ clean: \
                    Range_searching.clean \
                    Splitters.clean 
 
-run: \
-               csh Building_kd_tree_with_ddim_points$(EXE_EXT) \
-               sh Building_kd_tree_with_own_pointtype$(EXE_EXT) \
-               sh  Circular_query$(EXE_EXT) \
-               sh  Iso_rectangle_2_query$(EXE_EXT) \
-               sh  K_neighbor_search_manhattan_distance_isobox_point$(EXE_EXT) \
-               sh  K_neighbor_search_with_circle$(EXE_EXT) \
-               sh  Orthogonal_incremental_neighbor_search$(EXE_EXT) \
-               sh  Orthogonal_k_neighbor_search$(EXE_EXT) \
-               sh  Range_searching$(EXE_EXT) \
-               sh  Splitters$(EXE_EXT) 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
