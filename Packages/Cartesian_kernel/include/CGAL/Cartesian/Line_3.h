@@ -75,17 +75,17 @@ public:
 
   const Point_3 &     point() const
   {
-      return Ptr()->first;
+      return this->Ptr()->first;
   }
 
   const Vector_3 & to_vector() const
   {
-      return Ptr()->second;
+      return this->Ptr()->second;
   }
 
   Direction_3 direction() const
   {
-      return Direction_3(Ptr()->second);
+      return Direction_3(this->Ptr()->second);
   }
 
   Point_3     point(int i) const;

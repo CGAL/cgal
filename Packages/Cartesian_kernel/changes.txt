@@ -1,3 +1,8 @@
+Version 102.4 (?? November 2003)
+- 2-stage name lookup fixes for g++ 3.4.
+
+========================== CGAL 3.0 ====================
+
 Version 102.3 (21 October 2003)
 - fix headers 
 

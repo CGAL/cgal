@@ -100,11 +100,11 @@ public:
 
   const Point_3 & min() const
   {
-      return Ptr()->e0;
+      return this->Ptr()->e0;
   }
   const Point_3 & max() const
   {
-      return Ptr()->e1;
+      return this->Ptr()->e1;
   }
   Point_3 vertex(int i) const;
   Point_3 operator[](int i) const;

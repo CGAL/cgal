@@ -82,19 +82,19 @@ public:
 
   const FT & a() const
   {
-      return Ptr()->e0;
+      return this->Ptr()->e0;
   }
   const FT & b() const
   {
-      return Ptr()->e1;
+      return this->Ptr()->e1;
   }
   const FT & c() const
   {
-      return Ptr()->e2;
+      return this->Ptr()->e2;
   }
   const FT & d() const
   {
-      return Ptr()->e3;
+      return this->Ptr()->e3;
   }
 
   Line_3       perpendicular_line(const Point_3 &p) const;
@@ -182,7 +182,7 @@ typename PlaneC3<R>::Point_3
 PlaneC3<R>::
 projection(const typename PlaneC3<R>::Point_3 &p) const
 {
-  return CGAL::projection_plane(p, *this); // FIXME : CGAL:: needed ?
+  return projection_plane(p, *this);
 }
 
 template < class R >

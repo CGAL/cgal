@@ -130,10 +130,10 @@ vertex(int i) const
   else if (i>3) i=i%4;
   switch (i)
     {
-    case 0: return Ptr()->e0;
-    case 1: return Ptr()->e1;
-    case 2: return Ptr()->e2;
-    default: return Ptr()->e3;
+    case 0: return this->Ptr()->e0;
+    case 1: return this->Ptr()->e1;
+    case 2: return this->Ptr()->e2;
+    default: return this->Ptr()->e3;
     }
 }
 

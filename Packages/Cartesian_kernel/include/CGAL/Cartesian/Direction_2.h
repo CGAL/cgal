@@ -88,11 +88,11 @@ public:
   const FT & delta(int i) const;
   const FT & dx() const
   {
-      return Ptr()->e0;
+      return this->Ptr()->e0;
   }
   const FT & dy() const
   {
-      return Ptr()->e1;
+      return this->Ptr()->e1;
   }
 };
 

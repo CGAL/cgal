@@ -106,17 +106,17 @@ public:
 
   const Point_3 & center() const
   {
-      return Ptr()->first;
+      return this->Ptr()->first;
   }
   const FT & squared_radius() const
   {
       // Returns the square of the radius (instead of the radius itself,
       // which would require square roots)
-      return Ptr()->second;
+      return this->Ptr()->second;
   }
   Orientation orientation() const
   {
-      return Ptr()->third;
+      return this->Ptr()->third;
   }
 
   Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const

@@ -67,12 +67,12 @@ public:
   const Point_2 &     start() const;
   const Point_2 &     source() const
   {
-      return Ptr()->e0;
+      return this->Ptr()->e0;
   }
   Point_2     point(int i) const;
   const Point_2 &     second_point() const
   {
-      return Ptr()->e1;
+      return this->Ptr()->e1;
   }
 
   Direction_2 direction() const;

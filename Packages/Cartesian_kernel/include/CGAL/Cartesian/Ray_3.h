@@ -67,11 +67,11 @@ public:
   const Point_3 &   start() const;
   const Point_3 &   source() const
   {
-      return Ptr()->e0;
+      return this->Ptr()->e0;
   }
   const Point_3 &   second_point() const
   {
-      return Ptr()->e1;
+      return this->Ptr()->e1;
   }
   Point_3     point(int i) const;
 
