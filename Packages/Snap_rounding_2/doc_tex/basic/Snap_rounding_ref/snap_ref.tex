@@ -9,7 +9,7 @@
 \RCSdefDate{\snapRoundingDate}{$Date$}
 % +------------------------------------------------------------------------+
 
-\chapter{Line Segments Snap Rounding - Reference Manual}
+\chapter{Snap Rounding - Reference Manual}
 \label{chapterSnapRoundibgRef}
 \ccChapterRelease\snapRoundingRev. \ \snapRoundingDate\\
 \ccChapterAuthor{Eli Packer}
@@ -73,90 +73,87 @@ or a Snap Rounding. The forth parameter denotes the number of KD trees to use (s
 this issue).
 }
 
-\ccOperations
-    \ccCreationVariable{Snap_rounding_2<Rep>::Segment_const_iterator segments_begin() const}
+\ccConstructor{snap_rounding(NT precision,bool inp_do_isr = true,int 
+inp_number_of_kd_trees = 5);}{
+The same as the constructor above but here the instance is initialized with no segments.
+}
 
-\ccConstructor{Snap_rounding_2<Rep>::Segment_const_iterator segments_begin() const}{
+\ccConstructor{snap_rounding(const snap_rounding &other);}{
+Copy constructor
+}
+
+\ccOperations
+\ccHeading{Assignment}
+
+\ccMethod{snap_rounding
+	operator=(const snap_rounding & s);}
+{}
+
+\ccAccessFunctions
+
+\ccMethod{Snap_rounding_2<Rep>::Segment_const_iterator segments_begin() const;}{
 Returns a constant iterator to the first input segment.
 }
 
-\ccOperations
-    \ccCreationVariable{Snap_rounding_2<Rep>::Segment_const_iterator segments_end() const}
- 
-\ccConstructor{Snap_rounding_2<Rep>::Segment_const_iterator segments_end() const}{
+\ccMethod{Snap_rounding_2<Rep>::Segment_const_iterator segments_end() const;}{
 Returns a constant iterator to the after-the-last of the input segments.
 }
 
-\ccOperations
-    \ccCreationVariable{Snap_rounding_2<Rep>::Segment_iterator segments_begin()}
-
-\ccConstructor{Snap_rounding_2<Rep>::Segment_iterator segments_begin() }{
+\ccMethod{Snap_rounding_2<Rep>::Segment_iterator segments_begin(); }{
 Returns an iterator to the first input segment.
 }
 
-\ccOperations
-    \ccCreationVariable{Snap_rounding_2<Rep>::Segment_iterator segments_end()}
- 
-\ccConstructor{Snap_rounding_2<Rep>::Segment_iterator segments_end()}{
+\ccMethod{Snap_rounding_2<Rep>::Segment_iterator segments_end(); }{
 Returns an iterator to the after-the-last of the input segments.
 }
 
-
-\ccOperations
-    \ccCreationVariable{Snap_rounding_2<Rep>::Polyline_const_iterator polylines_begin()}
-
-\ccConstructor{Snap_rounding_2<Rep>::Polyline_const_iterator polylines_begin() }{
+\ccMethod{Snap_rounding_2<Rep>::Polyline_const_iterator polylines_begin(); }{
 Returns a constant iterator to the output of the first input segment.
 }
 
-\ccOperations
-    \ccCreationVariable{Snap_rounding_2<Rep>::Polyline_const_iterator polylines_end()}
- 
-\ccConstructor{Snap_rounding_2<Rep>::Polyline_const_iterator polylines_end()}{
+\ccMethod{Snap_rounding_2<Rep>::Polyline_const_iterator polylines_end(); }{
 Returns a constant iterator to the after-the-last of the output of the input segments.
 }
 
-\ccOperations
-    \ccCreationVariable{Snap_rounding_2<Rep>::double average_number_of_vertices() const}
- 
-\ccConstructor{Snap_rounding_2<Rep>::double average_number_of_vertices() const}{
-Returns the average number of vertices in the output polylines.
-}
+\ccHeading{Insertion}
 
-\ccOperations
-    \ccCreationVariable{Snap_rounding_2<Rep>::int max_number_of_vertices() const}
- 
-\ccConstructor{Snap_rounding_2<Rep>::int max_number_of_vertices() const}{
-Returns the maximum number of vertices in the output polylines.
-}
+\ccMethod{void 
+  insert(const Segment_2& s);}
+{Inserts segment \ccc{s} in the segment set.}
 
-\ccOperations
-    \ccCreationVariable{Snap_rounding_2<Rep>::int number_of_input_segments() const}
- 
-\ccConstructor{Snap_rounding_2<Rep>::int number_of_input_segments() const}{
-Returns the number of input segments.
-}
+\ccMethod{void 
+  push_back(const Segment_2& s);}
+{The STL standard member function for insertion.}
 
-\ccOperations
-    \ccCreationVariable{Snap_rounding_2<Rep>::NT max_distance() const}
- 
-\ccConstructor{Snap_rounding_2<Rep>::NT max_distance() const}{
-Returns the maximum perturbation done on any input segment.
-}
+\ccMethod{template < class InputIterator >
+          int
+          insert(InputIterator first, InputIterator last);}
+{Inserts the segments in the range $\left[\right.$\ccc{first},
+\ccc{last}$\left.\right)$.  Returns the number of inserted segments. \\ \\
+\ccRequirements The \ccc{value_type} of \ccc{first} and \ccc{last} is \ccc{Segment}.}
 
-\ccOperations
-    \ccCreationVariable{Snap_rounding_2<Rep>::NT average_distance() const}
- 
-\ccConstructor{Snap_rounding_2<Rep>::NT average_distance() const}{
-Returns the average of the maximum perturbation done on each input segment.
-}
+\ccHeading{Removal}
 
-\ccOperations
-    \ccCreationVariable{Snap_rounding_2<Rep>::double time() const}
- 
-\ccConstructor{Snap_rounding_2<Rep>::double time() const}{
-Returns the time that the Snap Rounding took.
-}
+\ccMethod{bool remove(const Segment_2& p);}{Removes segment \ccc{s}.
+Returns false iff \ccc{s} is not in the segment set. }
+
+\ccMethod{void clear();}
+{Removes all segments of \ccVar.}
+
+\ccHeading{Parameter Updates}
+
+\ccMethod{bool change_number_of_kd_trees(int number_of_kd_trees);}
+{Change the number of kd-trees used for segment-hot pixel queries.
+Return false if the number is not valid (e.g. negative). }
+
+\ccMethod{bool change_pixel_size(NT pixel_size);}
+{Change the pixel size of the tiling.
+Return false if the size is not valid (e.g. negative). }
+
+\ccMethod{void do_isr(bool b);}
+{Determine whether to apply Iterated Snap Rounding (when \ccc{b} is true),
+or Snap Rounding (when \ccc{b} is false).}
+
 
 %\end{ccRefClass}
 
