@@ -41,9 +41,9 @@ CGAL::OGLUT_stream& operator<<(CGAL::OGLUT_stream& ogls,
   typedef Nef_polyhedron_S2<K,I> Polyhedron;
   typedef typename Polyhedron::Sphere_map Sphere_map;
   typedef typename Polyhedron::Sphere_kernel Sphere_kernel;
-  typedef CGAL::SM_visualizor<Sphere_map,Sphere_kernel> Visualizor;
+  typedef CGAL::SM_visualizor<Polyhedron> Visualizor;
   CGAL::OGL::add_sphere();
-  Visualizor V(P.sphere_map(),CGAL::OGL::spheres_.back()); V.draw_map();
+  Visualizor V(&P,CGAL::OGL::spheres_.back()); V.draw_map();
   // CGAL::OGL::spheres_.back().print();
   return ogls;
 }
