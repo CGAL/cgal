@@ -37,14 +37,10 @@ namespace CGAL {
       ymin = widget.y_min();
       xmax = widget.x_max();
       ymax = widget.y_max();
-      std::cerr << "save (" << xmin << ", " << xmax 
-		<< ", " << ymin << ", " << ymax << ")" << std::endl;
     }
     
     void restore(Qt_widget& widget) const {
       widget.set_window(xmin, xmax, ymin, ymax);
-      std::cerr << "restore (" << xmin << ", " << xmax 
-		<< ", " << ymin << ", " << ymax << ")" << std::endl;
     }
   private:
     double xmin, xmax, ymin, ymax;

@@ -46,7 +46,6 @@ Qt_widget_history::Qt_widget_history(Qt_widget* parent, const char* name):
 
 void Qt_widget_history::backward()
 {
-  std::cerr << "backward" << std::endl;
   if( (! history_list.empty()) && it!=history_list.begin() )
     {
       it--;
@@ -59,7 +58,6 @@ void Qt_widget_history::backward()
 
 void Qt_widget_history::forward()
 {
-  std::cerr << "forward" << std::endl;
   if( it != history_list.end() ) 
     {
       if( ++it != history_list.end() )
