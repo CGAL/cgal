@@ -1,8 +1,9 @@
-#include <CGAL/basic.h>
-#include <fstream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Iso_rectangle_2.h>
-#include "../../include/CGAL/Largest_empty_iso_rectangle_2.h"
+#include <CGAL/Largest_empty_iso_rectangle_2.h>
+
+#include <fstream>
 
 typedef double                                Number_Type;
 typedef CGAL::Cartesian<Number_Type>             K;
@@ -23,7 +24,7 @@ int main(int argc,char *argv[])
   Iso_rectangle_2 b = ler.get_largest_empty_iso_rectangle();
 
   std::cout << "The largest rectangle is (" << b.min().x() << "," << b.min().y() << "),(" << b.max().x() << "," << b.max().y() << ")\n";
-  std::cout << "Its size is " << abs((b.max().x() - b.min().x()) * (b.max().y() - b.min().y())) << endl;
+  std::cout << "Its size is " << abs((b.max().x() - b.min().x()) * (b.max().y() - b.min().y())) << std::endl;
 
   return(0);
 }
