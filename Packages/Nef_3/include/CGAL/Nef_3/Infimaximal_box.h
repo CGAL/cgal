@@ -229,7 +229,6 @@ class Infimaximal_box<Tag_true, Kernel> {
  public:
   typedef typename Kernel::RT                    RT;
   typedef typename Kernel::RT::NT                NT;
-  typedef typename Kernel::RT::FT                FT;
   typedef typename Kernel::Standard_kernel       Standard_kernel;
   typedef typename Standard_kernel::Point_3      Standard_point;
   typedef typename Standard_kernel::Plane_3      Standard_plane;
