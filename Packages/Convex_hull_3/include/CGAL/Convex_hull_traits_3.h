@@ -57,7 +57,7 @@ class Convex_hull_traits_3: public R_
   typedef   typename R::Point_3                             Point_3;
   typedef   typename R::Plane_3                             Plane_3;
   typedef   Less_signed_distance_to_plane_3<Plane_3, Point_3>
-                                                Less_signed_distance_to_plane_3;
+                                               Less_signed_distance_to_plane_3;
   typedef   Construct_centroid_3<Point_3> Construct_centroid_3;
 
   Construct_centroid_3  

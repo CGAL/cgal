@@ -118,7 +118,7 @@ int max_coordinate(const Vector_3& v)
    }
 }
 
-template <class InputIterator, class Plane_3, class Polyhedron_3, class Traits> 
+template <class InputIterator, class Plane_3, class Polyhedron_3, class Traits>
 void coplanar_3_hull(InputIterator first, InputIterator beyond,
                      Plane_3 plane, Polyhedron_3& P, const Traits& traits)
 {
