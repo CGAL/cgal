@@ -11,7 +11,7 @@ TODO:
   - convert_to<IA>
 - Make benchmarks.
 - The test suite needs to be more exhaustive...
-  How about a generic NT test-suite ?
+  How about a generic NT test-suite ?  How does GMP do ?
 - Aller voir les snapshots sur le site FTP...  Attendre la prochaine version
   et s'adapter (il y a min/max/abs, les include *io.h, etc...).
-- There's a CygWin version.
+- There's a CygWin port.
