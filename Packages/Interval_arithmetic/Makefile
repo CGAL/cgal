@@ -1,24 +1,35 @@
 #  Makefile for CGAL's Interval Arithmetic package. [Sylvain Pion]
 
-.PHONY: doc package filters test example submit
+CVS_MODULE_NAME=ia
+Package=Interval_arithmetic
+
+.PHONY: doc package filters test example submit version rtag
 
 WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
-Package=Interval_arithmetic
 WWW_dir=$(WWW_base)/$(Package)
 
 package: doc filters example clean $(Package).tar.gz
-	@echo "-----------------------------------------"
-	@echo "------- Penser à: -----------------------"
-	@echo "---- fichiers version et changes.txt ----"
-	@echo "---- make test --------------------------"
-	@echo "---- cvs commit/status    ---------------"
-	@echo "---- cvs rtag v?_? ia     ---------------"
-	@echo "---- mettre à jour le fichier html ------"
-	@echo "---- make submit                   ------"
-	@echo "-----------------------------------------"
+	@echo "----------------------------------"
+	@echo "------------ Penser à: -----------"
+	@echo "----------------------------------"
+	@echo "---- changes.txt              ----"
+	@echo "---- make test                ----"
+	@echo "---- make VERSION=3.1 version ----"
+	@echo "---- cvs commit               ----"
+	@echo "---- make VERSION=3.1 rtag    ----"
+	@echo "---- make package             ----"
+	@echo "---- make submit              ----"
+	@echo "----------------------------------"
+
+version:
+	echo "$(VERSION) (" `date +"%e %b %Y"` ")" > version
+
+rtag:
+	RTAG_VERSION=`echo $(VERSION) | sed -e "s/\./_/"`
+	cvs rtag v$(RTAG_VERSION) $(CVS_MODULE_NAME)
 
 submit: package
-	cp $(Package).tar.gz doc_ps/$(Package).ps $(WWW_dir)
+	cp $(Package).tar.gz doc_ps/$(Package).ps version description $(WWW_dir)
 	mail -s autohandle cgal-submit@cs.uu.nl spion < submit-mail
 
 test:
@@ -41,6 +52,8 @@ doc: doc_ps/$(Package).ps
 doc_ps/$(Package).ps: doc_tex/support/$(Package)/main.tex
 	$(MAKE) -C doc_tex/support/$(Package)
 	cp doc_tex/support/$(Package)/$(Package).ps doc_ps/
+
+# The following is specific to the IA package.
 
 example:
 	$(MAKE) -C examples/$(Package)/include/CGAL/Arithmetic_filter
