@@ -104,7 +104,6 @@
 % pierre: I suggest to keep the abstract without any formatting
 % nor macros (ascii only)
 
-
 The Computational Geometry Algorithms Library CGAL is an efficient
 modern C++ library following the generic programming paradigm. CGAL
 contains a flexible data structure for meshes in graphics, the
@@ -129,63 +128,32 @@ research, and therefore benefit the geometry processing community.
 
 \end{abstract}
 
-%% \noindent {\bf Keywords:}
-%%                  CGAL library,
-%%                  tutorial,
-%%                  halfedge data structure, 
-%%                  polygon surface mesh,
-%%                  subdivision surfaces,
-%%                  quad-triangle,
-%%                  $\sqrt{3}$,
-%%                  Loop,
-%%                  Doo-Sabin,
-%%                  Catmull-Clark,
-%%                  OpenGL.
 
-% INTRODUCTION                 
-% ------------------------------------------------------------------------
 \section{Introduction}
 \input intro
-% ------------------------------------------------------------------------
-\subsection{Background}
+
+\subsection{Related Work and Background}
 \input prereq 
 
-% ------------------------------------------------------------------------
 \section{CGAL Polyhedron Meshes}
 \input polyhedron 
 
-% ------------------------------------------------------------------------
-\section{Subdivisions on Generic Mesh Data Structures}
-% generic data struture + static algorithms
-\input subdivision
+\section{Algorithm Zoo}
 
-% connectivity ops: specific polyhedron algorithms (sqrt3 subdivisions) 
-\subsection{$\sqrt{3}$-Subdivision using Euler Operators}
-\input sqrt3
-% inc builder: specific polyhedron algorithms (qt subdivisions) 
-\subsection{Quad-triangle Subdivision using modifier}
-\input qt
+  \subsection{Subdivisions}
+  \input subdivision
 
-% ------------------------------------------------------------------------
-% templated rules: a generic framework for subdivisions 
-\subsection{Generic Subdivisions}
-%\label{sec:subtempl}
-\input subtempl
+  \subsection{Remeshing}
+  \input remeshing
 
-% Remeshing
-% ------------------------------------------------------------------------
-\section{Remeshing}
-\input remeshing
+  \subsection{Geometric Computing}
+  \input gc
 
-% Conclusions
-% ------------------------------------------------------------------------
 \section{Conclusions}
 \input conclusion
 
-% ------------------------------------------------------------------------
-% REFERENCES
+% references
 \bibliographystyle{eg-alpha}
 \bibliography{paper}
-
 
 \end{document}
