@@ -657,15 +657,15 @@ complete_support(SVertex_iterator v_start, SVertex_iterator v_end,
     SHalfedge_const_handle es;
     SHalfloop_const_handle ls;
     if ( o == NULL ) { mark(v) = m_buffer; }
-    else if ( assign(vs,o) ) { mark(v) = E_->mark(vs); }
-    else if ( assign(es,o) ) {
+    else if ( CGAL::assign(vs,o) ) { mark(v) = E_->mark(vs); }
+    else if ( CGAL::assign(es,o) ) {
       if ( E_->point(E_->source(es)) == point(v) ) 
       { mark(v) = E_->mark(E_->source(es)); }
       else if ( E_->point(E_->target(es)) == point(v) ) 
       { mark(v) = E_->mark(E_->target(es)); }
       else { mark(v) = E_->mark(es); }
     }
-    else if ( assign(ls,o) ) { mark(v) = E_->mark(ls); }
+    else if ( CGAL::assign(ls,o) ) { mark(v) = E_->mark(ls); }
     else CGAL_assertion_msg(0,"damn wrong support.");
     TRACEN(" face mark at "<<mark(v));
 
@@ -677,7 +677,7 @@ complete_support(SVertex_iterator v_start, SVertex_iterator v_end,
       if ( !is_forward(e) ) break;
       if ( support(e) != NULL ) {
         SHalfedge_const_handle ei;
-        if ( assign(ei,support(e)) ) { 
+        if ( CGAL::assign(ei,support(e)) ) { 
           if ( E_->circle(ei) != circle(e) ) { ei = E_->twin(ei); }
           CGAL_assertion( E_->circle(ei) == circle(e) ); 
           TRACEN("  supporting edge "<<PH(ei));
@@ -686,7 +686,7 @@ complete_support(SVertex_iterator v_start, SVertex_iterator v_end,
           incident_mark(e) = m_buffer = E_->mark(E_->face(ei)); 
         }
         SHalfloop_const_handle li;
-        if ( assign(li,support(e)) ) { 
+        if ( CGAL::assign(li,support(e)) ) { 
           if ( E_->circle(li) != circle(e) ) { li = E_->twin(li); }
           CGAL_assertion( E_->circle(li) == circle(e) ); 
           TRACEN("  supporting loop "<<PH(li));

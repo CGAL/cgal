@@ -1325,15 +1325,15 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
       SVertex_const_handle vs;
       SHalfedge_const_handle es;
       SHalfloop_const_handle ls;
-      if ( assign(vs,o) ) { mark(v,i) = PI[i].mark(vs); continue; }
-      if ( assign(es,supp_object(v,i)) ) {
+      if ( CGAL::assign(vs,o) ) { mark(v,i) = PI[i].mark(vs); continue; }
+      if ( CGAL::assign(es,supp_object(v,i)) ) {
         if ( point(source(es)) == point(v) ) 
         { mark(v,i) = PI[i].mark(source(es)); continue; }
         if ( point(target(es)) == point(v) ) 
         { mark(v,i) = PI[i].mark(target(es)); continue; }
         mark(v,i) = PI[i].mark(es); continue;
       }
-      if ( assign(ls,o) ) { 
+      if ( CGAL::assign(ls,o) ) { 
 	mark(v,i) = PI[i].mark(ls); 
 	TRACEN("loop " << PI[i].circle(ls)); continue; }
       CGAL_assertion_msg(0,"wrong handle");
@@ -1347,7 +1347,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
       for (int i=0; i<2; ++i) {
         if ( supp_object(e,i) != NULL ) {
           SHalfedge_const_handle ei; 
-          if ( assign(ei,supp_object(e,i)) ) { 
+          if ( CGAL::assign(ei,supp_object(e,i)) ) { 
             if ( PI[i].circle(ei) != circle(e) ) { ei = PI[i].twin(ei); }
             CGAL_assertion( PI[i].circle(ei) == circle(e) ); 
             TRACEN("  supporting edge "<<i<<" "<<PH(ei));
@@ -1358,7 +1358,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
               PI[i].mark(PI[i].face(ei)); 
           }
           SHalfloop_const_handle li;
-          if ( assign(li,supp_object(e,i)) ) { 
+          if ( CGAL::assign(li,supp_object(e,i)) ) { 
             if ( PI[i].circle(li) != circle(e) ) { li = PI[i].twin(li); }
             CGAL_assertion( PI[i].circle(li) == circle(e) ); 
             TRACEN("  supporting loop "<<i<<" "<<PH(li));

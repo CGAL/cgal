@@ -181,17 +181,17 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   { SVertex_handle sv;
     SHalfedge_handle se;
     SHalfloop_handle sl;
-    if ( assign(se,*it) ) { 
+    if ( CGAL::assign(se,*it) ) { 
       if( is_sm_boundary_object(se)) 
 	undef_sm_boundary_item(se); 
       return; 
     }
-    if ( assign(sl,*it) ) { 
+    if ( CGAL::assign(sl,*it) ) { 
       if( is_sm_boundary_object(sl)) 
 	undef_sm_boundary_item(sl);
       return; 
     }
-    if ( assign(sv,*it) ) { 
+    if ( CGAL::assign(sv,*it) ) { 
       if( is_sm_boundary_object(sv)) 
 	undef_sm_boundary_item(sv); 
       return; 

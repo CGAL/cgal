@@ -155,7 +155,7 @@ public:
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f, f_below;
-    if( assign(v, o)) {
+    if( CGAL::assign(v, o)) {
       TRACEN("facet below from from vertex...");
       f_below = get_visible_facet(v, ray);
       if(f_below != Halffacet_handle())
@@ -164,7 +164,7 @@ public:
       CGAL_assertion( SD.number_of_sfaces() == 1);
       return volume(SD.sfaces_begin());
     }
-    else if( assign(e, o)) {
+    else if( CGAL::assign(e, o)) {
       TRACEN("facet below from from edge...");
       f_below = get_visible_facet(e, ray);
       if(f_below != Halffacet_handle())
@@ -173,7 +173,7 @@ public:
       CGAL_assertion(SD.is_isolated(e));
       return volume(sface(e));
     }
-    else if( assign(f, o)) {
+    else if( CGAL::assign(f, o)) {
       TRACEN("facet below from from facet...");
       f_below = get_visible_facet(f, ray);
       CGAL_assertion( f_below != Halffacet_handle());

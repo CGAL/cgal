@@ -293,8 +293,8 @@ void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
                               Segment_3& s1, Segment_3& s2) {
   Object o = traits.intersect_object()( pl, s);
   Point_3 ip;
-  CGAL_assertion( assign( ip, o));
-  assign( ip, o);
+  CGAL_assertion( CGAL::assign( ip, o));
+  CGAL::assign( ip, o);
   ip = normalized(ip);
   s1 = Segment_3( s.source(), ip);
   s2 = Segment_3( ip, s.target());
@@ -326,7 +326,7 @@ void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
       // We compute the intersection between a plane with normal vector in the minus x direction and located at the minimum point of the bounding box, and the input ray.  When the ray does not intersect the bounding volume, there won't be any object hit, so it is safe to construct a segment that simply lay in the unbounded side of the bounding box.  This approach is taken instead of somehow (efficiently) report that there was no hit object, in order to mantain a clear interface with the Iterator class.
       Plane_3 pl_on_minus_x( pt_on_minus_x_plane, Vector_3( -1, 0, 0));
       Object o = traits.intersect_object()( pl_on_minus_x, r);
-      if( !assign( q, o) || pl_on_minus_x.has_on(p))
+      if( !CGAL::assign( q, o) || pl_on_minus_x.has_on(p))
 	q = r.source() + Vector_3( -1, 0, 0);
       else
 	q = normalized(q);
@@ -346,7 +346,7 @@ public:
 size_type n_vertices = 0;
 for( Object_const_iterator o = objects.begin(); o != objects.end(); ++o) {
   Vertex_handle v;
-  if( assign( v, *o))
+  if( CGAL::assign( v, *o))
     n_vertices++;
 }
 frexp( (double) n_vertices, &max_depth);
@@ -384,19 +384,19 @@ for( typename Objects_around_segment::Iterator oar = objects.begin();
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
-    if( assign( v, *o)) {
+    if( CGAL::assign( v, *o)) {
       if( !v_mark[v]) {
         O.push_back(*o);
         v_mark[v] = true;
       }
     }
-    else if( assign( e, *o)) {
+    else if( CGAL::assign( e, *o)) {
       if( !e_mark [e]) {
         O.push_back(*o);
         e_mark[e] = true;
       }
     }
-    else if( assign( f, *o)) {
+    else if( CGAL::assign( f, *o)) {
       if( !f_mark[f]) {
         O.push_back(*o);
         f_mark[f] = true;
@@ -404,7 +404,7 @@ for( typename Objects_around_segment::Iterator oar = objects.begin();
     }
     else {
       Halffacet_triangle_handle t;
-      if( assign( t, *o)) {
+      if( CGAL::assign( t, *o)) {
         Triangle_3 tr = t.get_triangle();
         if( !t_mark[tr]) {
 	  O.push_back(*o);
@@ -437,7 +437,7 @@ for( typename Objects_around_segment::Iterator oar = objects.begin();
       typename Object_list::const_iterator o;
       for( o = n->objects().begin(); o != n->objects().end(); ++o) {
         Vertex_handle v;
-        if( assign( v, *o)) {
+        if( CGAL::assign( v, *o)) {
 	  Point_3 p(D.point(v));
           b = b + Bounding_box_3(p,p);
         }
@@ -490,21 +490,21 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
-    if( assign( v, *o)) {
+    if( CGAL::assign( v, *o)) {
       if( level) os << D.point(v) << std::endl;
       v_count++;
     }
-    else if( assign( e, *o)) {
+    else if( CGAL::assign( e, *o)) {
       if( level) os << D.segment(e) << std::endl;
       e_count++;
     }
-    else if( assign( f, *o)) {
+    else if( CGAL::assign( f, *o)) {
       if( level) os << "facet" << std::endl;
       f_count++;
     }
     else {
       Halffacet_triangle_handle t;
-      if( assign( t, *o)) {
+      if( CGAL::assign( t, *o)) {
         if( level) os << "triangle" << std::endl;
         t_count++;
       }	
@@ -539,19 +539,19 @@ bool update( Node* node,
       Vertex_handle v;
       Halfedge_handle e;
       Halffacet_handle f;
-      if( assign( v, *o)) {
+      if( CGAL::assign( v, *o)) {
         if( !V[v]) {
           O->erase(o);
           updated = true;
         }
       }
-      else if( assign( e, *o)) {
+      else if( CGAL::assign( e, *o)) {
         if( !E[e]) {
           O->erase(o);
           updated = true;
         }         
       }
-      else if( assign( f, *o)) {
+      else if( CGAL::assign( f, *o)) {
         if( !F[f]) {
           O->erase(o);
           updated = true;
@@ -630,7 +630,7 @@ bool can_set_be_divided( const Object_list& O, Depth depth) {
   typename Object_list::const_iterator o;
   for( o = O.begin(); o != O.end(); o++) {
     Vertex_handle v;
-    if( assign( v, *o)) {
+    if( CGAL::assign( v, *o)) {
       number_of_vertices++;
       if( number_of_vertices > 1)
         break;
@@ -686,7 +686,7 @@ Plane_3 construct_splitting_plane( const Object_list& O, Depth depth) {
   Vertex_list vertices;
   for( typename Object_list::const_iterator o = O.begin(); o != O.end(); ++o) {
     Vertex_handle v;
-    if( assign( v, *o))
+    if( CGAL::assign( v, *o))
       vertices.push_back(v);
   }
   CGAL_assertion( vertices.size() > 1);

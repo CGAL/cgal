@@ -97,11 +97,12 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
   char PFB(Halffacet_handle f)
     /* prints facet boundary entry points */ {
     Halffacet_cycle_iterator fc;
-    SHalfedge_handle e; SHalfloop_handle l;
     CGAL_forall_facet_cycles_of(fc, f) {
-      if( assign(e, fc)) {
+      if(fc.is_shalfedge()) {
+	SHalfedge_handle(e);
 	TRACE(' '<<IO->index(e)); }
-      else if( assign(l, fc)) {
+      else if(fc.is_shalfloop()) {
+	SHalfloop_handle l(fc);
 	TRACE(' '<<IO->index(l)<<"(sl)");
       }
     }
@@ -135,9 +136,8 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     SNC_decorator D;
     Halffacet_cycle_iterator fc;
     CGAL_forall_facet_cycles_of(fc, f) {
-      SHalfedge_handle e;
-      SHalfloop_handle l;
-      if( assign(e, fc) ) {
+      if(fc.is_shalfedge() ) {
+	SHalfedge_handle e(fc);
 	SHalfedge_around_facet_circulator u(e), eend(e);
 	CGAL_For_all(u, eend) {
 	  SFace_handle fu = D.sface(u), ftu = D.sface(D.twin(u));
@@ -163,7 +163,8 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 	  /* TO VERIFY: can both svertices be isolated at the same time? */
       }
       }
-      else if( assign(l, fc)) {
+      else if(fc.is_shalfloop()) {
+	SHalfloop_handle l(fc);
 	// this code is currenlty not used, but it is potentially need 
 	// in the future, e.g for complex marks or a relative interior 
 	// function 
@@ -589,9 +590,9 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
       }
       else {
 	SHalfedge_handle f_sedge;
-	CGAL_assertion( assign( f_sedge, 
+	CGAL_assertion( CGAL::assign( f_sedge, 
 				     f->boundary_entry_objects().front()));
-	assign( f_sedge, f->boundary_entry_objects().front());
+	CGAL::assign( f_sedge, f->boundary_entry_objects().front());
 	if( lexicographically_xyz_smaller(D.point(D.vertex(u_min)), D.point(D.vertex(f_sedge))))
 	  D.store_as_first_boundary_object( u_min, f);
 	else

@@ -174,12 +174,12 @@ public:
     SHalfedge_handle e; 
     SHalfloop_handle l;
     SFace_handle f;
-    if ( assign(v,h) ) return Base::mark(v);
-    if ( assign(e,h) ) return Base::mark(e);
-    if ( assign(l,h) ) return Base::mark(l);
-    CGAL_assertion_msg(assign(f,h),
+    if ( CGAL::assign(v,h) ) return Base::mark(v);
+    if ( CGAL::assign(e,h) ) return Base::mark(e);
+    if ( CGAL::assign(l,h) ) return Base::mark(l);
+    CGAL_assertion_msg(CGAL::assign(f,h),
 	 "PM_point_locator::mark: Object_handle holds no object.");
-    assign(f,h);
+    CGAL::assign(f,h);
     return Base::mark(f);
   }
 
@@ -328,10 +328,10 @@ public:
     SHalfedge_handle e; 
     SHalfloop_handle l; 
     SFace_handle f;
-    if ( assign(v,h) && M(v) ||
-         assign(e,h) && M(e) ||
-	 assign(l,h) && M(l) ||
-         assign(f,h) && M(f) ) return h;
+    if ( CGAL::assign(v,h) && M(v) ||
+         CGAL::assign(e,h) && M(e) ||
+	 CGAL::assign(l,h) && M(l) ||
+         CGAL::assign(f,h) && M(f) ) return h;
     h = Object_handle(); 
     TRACEN("not contained");
 #if 0
@@ -481,14 +481,14 @@ marks_of_halfspheres(Mark& lower, Mark& upper, int axis) {
     y_minus = Sphere_point(0,0,1);
   Object_handle h = locate(y_minus);
   SFace_handle f;
-  if ( assign(f,h) ) { 
+  if ( CGAL::assign(f,h) ) { 
     TRACEN("on face " << mark(f));
     lower = upper = mark(f);
     return;
   }
 
   SHalfedge_handle e;
-  if ( assign(e,h) ) { 
+  if ( CGAL::assign(e,h) ) { 
     CGAL_assertion(circle(e).has_on(y_minus));
     Sphere_point op(CGAL::ORIGIN+circle(e).orthogonal_vector());
     TRACEN("on edge "<<op);
@@ -501,7 +501,7 @@ marks_of_halfspheres(Mark& lower, Mark& upper, int axis) {
   }
 
   SHalfloop_handle l;
-  if ( assign(l,h) ) {
+  if ( CGAL::assign(l,h) ) {
     CGAL_assertion(circle(l).has_on(y_minus));
     Sphere_point op(CGAL::ORIGIN+circle(l).orthogonal_vector());
     TRACEN("on loop "<<op);
@@ -522,7 +522,7 @@ marks_of_halfspheres(Mark& lower, Mark& upper, int axis) {
   Sphere_direction right(c),left(c.opposite());
   bool collinear(false);
   SVertex_handle v;
-  if ( assign(v,h) ) {
+  if ( CGAL::assign(v,h) ) {
     CGAL_assertion(point(v)==y_minus);
     if(is_isolated(v))
       upper = lower = mark(face(v));

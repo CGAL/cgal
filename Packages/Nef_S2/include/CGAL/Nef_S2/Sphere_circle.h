@@ -139,7 +139,7 @@ Sphere_point<R> intersection(const Sphere_circle<R>& c1,
   typename R::Line_3 lres;
   TRACEN("circle_intersection "<<c1<<" "<<c2);
   CGAL::Object o = CGAL::intersection(c1.plane(),c2.plane());
-  if ( !assign(lres,o) ) CGAL_assertion_msg(0,"damn id planes.");
+  if ( !CGAL::assign(lres,o) ) CGAL_assertion_msg(0,"damn id planes.");
   return CGAL::ORIGIN + lres.direction().vector();
 }
 

@@ -283,9 +283,9 @@ public:
   { SVertex_handle sv;
     SHalfedge_handle se;
     SHalfloop_handle sl;
-    if ( assign(se,*it) ) { undef_sm_boundary_item(se); return; }
-    if ( assign(sl,*it) ) { undef_sm_boundary_item(sl); return; }
-    if ( assign(sv,*it) ) { undef_sm_boundary_item(sv); return; }
+    if ( CGAL::assign(se,*it) ) { undef_sm_boundary_item(se); return; }
+    if ( CGAL::assign(sl,*it) ) { undef_sm_boundary_item(sl); return; }
+    if ( CGAL::assign(sv,*it) ) { undef_sm_boundary_item(sv); return; }
   }
 
   void reset_sm_object_list(Object_list& L)

@@ -1186,10 +1186,10 @@ public:
       SM_point_locator D((Sphere_map*) &*v);
       Object_handle o = D.locate(Sphere_point(-1,0,0));
       SFace_const_handle sfc;
-      if( !assign(sfc, o) || ShellSf[sfc] != i) {
+      if( !CGAL::assign(sfc, o) || ShellSf[sfc] != i) {
 	TRACEN("the shell encloses a volume");
-	TRACEN("sface hit? "<<assign(sfc,o));
-	if( assign(sfc, o)) TRACEN("sface on another shell? "<<ShellSf[sfc]);
+	TRACEN("sface hit? "<<CGAL::assign(sfc,o));
+	if( CGAL::assign(sfc, o)) TRACEN("sface on another shell? "<<ShellSf[sfc]);
 	SFace_handle f = MinimalSFace[i];
 	CGAL_assertion( ShellSf[f] == i );
 	if( Closed[i] ) {
@@ -1199,7 +1199,7 @@ public:
 	  mark(c) = SD.mark(f);
 	  link_as_inner_shell(f, c );
 	  TRACE( "Shell #" << i <<" linked as inner shell");
-	  TRACEN( "(sface" << (assign(sfc,o)?"":" not") << " hit case)");
+	  TRACEN( "(sface" << (CGAL::assign(sfc,o)?"":" not") << " hit case)");
 	}
       }
     }
@@ -1249,7 +1249,7 @@ public:
     Halfedge_handle e;
     Halffacet_handle f;
     TRACEN("get_facet_below");
-    if( assign(v, o)) {
+    if( CGAL::assign(v, o)) {
       TRACEN("facet below from from vertex...");
       f_below = get_visible_facet(v, ray);
       if( f_below == Halffacet_handle()) {
@@ -1258,7 +1258,7 @@ public:
 				  MinimalSFace,Shell);
       }
     }
-    else if( assign(e, o)) {
+    else if( CGAL::assign(e, o)) {
       TRACEN("facet below from from edge...");
       f_below = get_visible_facet(e, ray);
       if( f_below == Halffacet_handle()) {
@@ -1267,7 +1267,7 @@ public:
 				  MinimalSFace, Shell);
       }
     }
-    else if( assign(f, o)) {
+    else if( CGAL::assign(f, o)) {
       TRACEN("facet below from from facet...");
       f_below = get_visible_facet(f, ray);
       CGAL_assertion( f_below != Halffacet_handle());

@@ -70,13 +70,13 @@ public:
   }
 
   Standard_point_3 standard_point(const Point_3& p) const
-  { CGAL_assertion(is_standard(p));
+  { CGAL_assertion(!is_standard(p));
     CGAL_assertion(p.hw() > RT(0));
     return Standard_point_3(p.hx()[0],p.hy()[0],p.hz()[0],p.hw()[0]);
   }
 
   Standard_line_3 standard_line(const Point_3& p) const
-  { CGAL_assertion(type(p)!=STANDARD);
+  { CGAL_assertion(!is_standard(p));
     RT hx = p.hx(), hy = p.hy(), hz = p.hz(), hw = p.hw();
     Standard_RT dx,dy,dz;
     if (hx.degree()>0) dx=hx[1]; else dx=0;
@@ -88,7 +88,7 @@ public:
   }
 
   Standard_ray_3 standard_ray(const Point_3& p) const
-  { CGAL_assertion(type(p)!=STANDARD);
+  { CGAL_assertion(!is_standard(p));
     Standard_line_3 l = standard_line(p);
     Standard_point_3 q = l.point(0);
     return Standard_ray_3(q,l);

@@ -139,15 +139,15 @@ Side_of_plane<SNC_decorator>::operator()
   Vertex_handle v;
   Halfedge_handle e;
   Halffacet_handle f;
-  if( assign( v, o))
+  if( CGAL::assign( v, o))
     return (*this)( pl, v);
-  else if( assign( e, o))
+  else if( CGAL::assign( e, o))
     return (*this)( pl, e);
-  else if( assign( f, o))
+  else if( CGAL::assign( f, o))
     return (*this)( pl, f);
   else {
     Halffacet_triangle_handle t;
-    if( assign( t, o))
+    if( CGAL::assign( t, o))
       return (*this)( pl, t);
     else
       CGAL_assertion_msg( 0, "wrong handle");
@@ -270,7 +270,7 @@ Objects_bbox<SNC_decorator>::operator()
   typename Object_list::const_iterator o;
   for( o = O.begin(); o != O.end(); ++o) {
     Vertex_handle v;
-    if( assign( v, *o)) {
+    if( CGAL::assign( v, *o)) {
       b = b + (*this)(v);
     }	
   }
@@ -284,15 +284,15 @@ Objects_bbox<SNC_decorator>::operator()
   Vertex_handle v;
   Halfedge_handle e;
   Halffacet_handle f;
-  if( assign( v, o))
+  if( CGAL::assign( v, o))
     return operator()(v);
-  else if( assign( e, o))
+  else if( CGAL::assign( e, o))
     return operator()(e);
-  else if( assign( f, o))
+  else if( CGAL::assign( f, o))
     return operator()(f);
   else {
     Halffacet_triangle_handle t;
-    if( assign( t, o))
+    if( CGAL::assign( t, o))
       return operator()(t);
     else
       CGAL_assertion_msg( 0, "wrong handle");

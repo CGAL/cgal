@@ -191,8 +191,9 @@ public:
   SFace_const_handle adjacent_sface(Halffacet_const_handle f) const {
     Halffacet_cycle_const_iterator fc(f->facet_cycles_begin());
     CGAL_assertion( fc != f->facet_cycles_end());
-    SHalfedge_const_handle se;
-    if ( assign(se, fc) ) { 
+
+    if ( fc.is_shalfedge() ) { 
+      SHalfedge_const_handle se(fc);
       CGAL_assertion( facet(se) == f);
       CGAL_assertion( sface(se) != SFace_const_handle());
       CGAL_assertion( volume(sface(twin(se))) == volume(f));
@@ -330,9 +331,7 @@ public:
     Object_handle o = L.locate(sp);
 
     SFace_const_handle sf;
-    //    CGAL_assertion(assign(sf,o));
-    //    assign(sf,o);
-    if(!assign( sf, o)) {
+    if(!CGAL::assign( sf, o)) {
       CGAL_assertion_msg( 0, "it is not possible to decide which one is a visible facet (if any)");
       return Halffacet_const_handle();
     }
@@ -374,7 +373,7 @@ public:
 #ifdef _DEBUG
 	// TODO: is there any warranty that the outter facet cycle enty point is always at first
 	// in the cycles list?
-	++fc; while( fc != fce)  { CGAL_assertion( assign( sv, fc)); ++fc; }
+	++fc; while( fc != fce)  { CGAL_assertion( fc.is_svertex()); ++fc; }
 #endif
 	TRACEN( "no adjacent facets were found (but incident edge(s)).");
 	f_visible = Halffacet_const_handle();
@@ -501,8 +500,8 @@ public:
     Object_handle o = L.locate(sp);
 
     SFace_const_handle sf;
-    CGAL_assertion(assign(sf,o));
-    assign( sf, o);
+    CGAL_assertion(CGAL::assign(sf,o));
+    CGAL::assign( sf, o);
 
     SFace_cycle_const_iterator fc = sf->sface_cycles_begin(),
       fce = sf->sface_cycles_end();
@@ -511,20 +510,19 @@ public:
 	f_visible =  Halffacet_const_handle();
     }
     else {
-      SHalfedge_const_handle se; 
-      SHalfloop_const_handle sl;
-      SVertex_const_handle sv;
-      if ( assign( se, fc)) {
-	TRACEN( "adjacent facet found (SEdges cycle).");
+      if (fc.is_shalfedge()) {
+      SHalfedge_const_handle se(fc); 
+      TRACEN( "adjacent facet found (SEdges cycle).");
 	TRACEN("se"<<PH(se));
 	f_visible = facet(twin(se));
 	TRACEN("f_visible"<<&f_visible);
       }
-      else if ( assign( sl, fc)) {
-	TRACEN( "adjacent facet found (SHalfloop cycle).");
+      else if (fc.is_shalfloop()) {
+      SHalfloop_const_handle sl(fc);
+      TRACEN( "adjacent facet found (SHalfloop cycle).");
 	f_visible = facet(twin(sl));
       }
-      else if( assign( sv, fc)) {
+      else if(fc.is_svertex()) {
 	TRACEN( "no adjacent facets were found (but incident edge(s)).");
 	f_visible = Halffacet_const_handle();
       }
@@ -620,9 +618,8 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
       V.visit(f); // report facet
       Halffacet_cycle_const_iterator fc;
       CGAL_forall_facet_cycles_of(fc,f) {
-        SHalfedge_handle e;
-	SHalfloop_handle l;
-        if ( assign(e,fc) ) {
+        if (fc.is_shalfedge() ) {
+	  SHalfedge_const_handle e(fc);
 	  SHalfedge_const_handle she;
           SHalfedge_around_facet_const_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { she = ec->twin();
@@ -630,7 +627,8 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
             SFaceCandidates.push_back(she->incident_sface());
             DoneSF[she->incident_sface()] = true;
           }
-        } else if ( assign(l,fc) ) { 
+        } else if (fc.is_shalfloop() ) { 
+	  SHalfloop_const_handle l(fc);
 	  SHalfloop_const_handle ll = l->twin();
           if ( DoneSF[ll->incident_sface()] ) continue;
           SFaceCandidates.push_back(ll->incident_sface());
@@ -655,10 +653,8 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
       */
       SFace_cycle_const_iterator fc;
       CGAL_forall_sface_cycles_of(fc,sf) {
-        SVertex_handle v;
-	SHalfedge_handle e;
-	SHalfloop_handle l;
-        if ( assign(e,fc) ) {
+        if (fc.is_shalfedge() ) {
+	  SHalfedge_const_handle e(fc);
 	  SHalfedge_around_sface_const_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { 
 	    V.visit(SHalfedge_const_handle(ec));
@@ -671,7 +667,8 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
             if ( DoneF[f] ) continue;
             FacetCandidates.push_back(f); DoneF[f] = true;
           }
-        } else if ( assign(v,fc) ) {
+        } else if (fc.is_svertex() ) {
+	  SVertex_const_handle v(fc);
           if ( DoneSV[v] ) continue; 
           V.visit(v); // report edge
 	  V.visit(v->twin());
@@ -689,7 +686,8 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
 	  else
 	    fo = v->twin()->incident_sface();
 	  */
-        } else if ( assign(l,fc) ) {
+        } else if (fc.is_shalfloop() ) {
+	  SHalfloop_const_handle l(fc);
 	  V.visit(l);
           Halffacet_const_handle f = l->twin()->incident_facet();
           if ( DoneF[f] ) continue;

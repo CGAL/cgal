@@ -191,7 +191,7 @@ public:
            ti != triangles.end(); ++ti) {
         Halffacet_triangle_handle th( f, *ti);
         objects.push_back(Object_handle(th));
-	CGAL_assertion( assign( th, *(--objects.end())));
+	CGAL_assertion( CGAL::assign( th, *(--objects.end())));
 	CGAL_assertion( th.get_triangle() == *ti);
       }
 #else
@@ -243,7 +243,7 @@ public:
       Object_list candidates = *objects_iterator;
       Object_list_iterator o;
       CGAL_for_each( o, candidates) {
-        if( assign( v, *o)) {
+        if( CGAL::assign( v, *o)) {
           _TRACEN("trying vertex on "<<point(v));
           if( ray.source() != point(v) && ray.has_on(point(v))) {
             _TRACEN("the ray intersects the vertex");
@@ -257,7 +257,7 @@ public:
             _TRACEN("the vertex becomes the new hit object");
           }
         }
-        else if( assign( e, *o)) {
+        else if( CGAL::assign( e, *o)) {
           Point_3 q;
           _TRACEN("trying edge on "<< Segment_3(e->source()->point(),e->twin()->source()->point()));
           if( is.does_intersect_internally( ray, Segment_3(e->source()->point(),
@@ -277,7 +277,7 @@ public:
             _TRACEN("the edge becomes the new hit object");
           }
         }
-        else if( assign( f, *o)) {
+        else if( CGAL::assign( f, *o)) {
           Point_3 q;
           _TRACEN("trying facet with on plane "<<plane(f)<<
                   " with point on "<<plane(f).point());
@@ -297,7 +297,7 @@ public:
             _TRACEN("the facet becomes the new hit object");
           }
         }
-        else if( assign( t, *o)) {
+        else if( CGAL::assign( t, *o)) {
           Point_3 q;
           Triangle_3 tr = t.get_triangle();
           _TRACEN("trying triangle "<<tr);
@@ -344,28 +344,28 @@ public:
     Object_list_iterator o = candidates.begin();
     bool found = false;
     while( !found && o != candidates.end()) {
-      if( assign( v, *o)) {
+      if( CGAL::assign( v, *o)) {
         if ( p == point(v)) {
           _TRACEN("found on vertex "<<point(v));
           result = Object_handle(v);
           found = true;
         }
       }
-      else if( assign( e, *o)) {
+      else if( CGAL::assign( e, *o)) {
         if ( is.does_contain_internally(Segment_3(e->source()->point(),e->twin()->source()->point()), p) ) {
           _TRACEN("found on edge "<<Segment_3(e->source()->point(),e->twin()->source()->point()));
           result = Object_handle(e);
           found = true;
         }
       }
-      else if( assign( f, *o)) {
+      else if( CGAL::assign( f, *o)) {
         if ( is.does_contain_internally( f, p) ) {
           _TRACEN("found on facet...");
           result = Object_handle(f);
           found = true;
         }
       }
-      else if( assign( t, *o)) {
+      else if( CGAL::assign( t, *o)) {
         Triangle_3 tr = t.get_triangle();
         if( tr.has_on(p)) {
           _TRACEN("found on triangle "<<tr);
@@ -403,10 +403,10 @@ public:
     Object_list_iterator o;
     Object_list objects = candidate_provider->objects_around_segment(s);
     CGAL_for_each( o, objects) {
-      if( assign( v, *o)) {
+      if( CGAL::assign( v, *o)) {
         /* do nothing */
       }
-      else if( assign( e, *o)) {
+      else if( CGAL::assign( e, *o)) {
         Point_3 q;
         if( is.does_intersect_internally( s, Segment_3(e0->source()->point(),
 	                                               e0->twin()->source()->point()), q)) {
@@ -416,10 +416,10 @@ public:
                                                                 e->twin()->source()->point())<<" on "<<q);
         }
       }
-      else if( assign( f, *o)) {
+      else if( CGAL::assign( f, *o)) {
         /* do nothing */
       }
-      else if( assign( t, *o)) {
+      else if( CGAL::assign( t, *o)) {
         /* do nothing */
       }
       else
@@ -445,13 +445,13 @@ public:
     Object_list_iterator o;
     Object_list objects = candidate_provider->objects_around_segment(s);
     CGAL_for_each( o, objects) {
-      if( assign( v, *o)) {
+      if( CGAL::assign( v, *o)) {
         /* do nothing */
       }
-      else if( assign( e, *o)) {
+      else if( CGAL::assign( e, *o)) {
         /* do nothing */
       }
-      else if( assign( f, *o)) {
+      else if( CGAL::assign( f, *o)) {
         Point_3 q;
         if( is.does_intersect_internally( s, f, q) ) {
           q = normalized(q);
@@ -459,7 +459,7 @@ public:
           _TRACEN("edge intersects facet on plane "<<plane(f)<<" on "<<q);
         }
       }
-      else if( assign( t, *o)) {
+      else if( CGAL::assign( t, *o)) {
         Point_3 q;
         Triangle_3 tr = t.get_triangle();
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
@@ -490,7 +490,7 @@ private:
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
-    if( assign( v, o)) {
+    if( CGAL::assign( v, o)) {
       _TRACEN("vertex hit, obtaining volume...");
       f_below = get_visible_facet( v, ray);
       if( f_below != Halffacet_handle())
@@ -499,7 +499,7 @@ private:
       CGAL_assertion( SD.number_of_sfaces() == 1);
       return volume(SD.sfaces_begin());
     }
-    else if( assign( e, o)) {
+    else if( CGAL::assign( e, o)) {
       _TRACEN("edge hit, obtaining volume...");
       f_below = get_visible_facet( e, ray);
       if( f_below != Halffacet_handle())
@@ -508,7 +508,7 @@ private:
       CGAL_assertion(SD.is_isolated(e));
       return volume(sface(e));
     }
-    else if( assign( f, o)) {
+    else if( CGAL::assign( f, o)) {
       _TRACEN("facet hit, obtaining volume...");
       f_below = get_visible_facet(f, ray);
       CGAL_assertion( f_below != Halffacet_handle());

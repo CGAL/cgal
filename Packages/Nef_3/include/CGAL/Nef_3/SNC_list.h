@@ -442,17 +442,17 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
   { SVertex_handle sv;
     SHalfedge_handle se;
     SHalfloop_handle sl;
-    if ( assign(se,*it) ) { 
+    if ( CGAL::assign(se,*it) ) { 
       if( is_boundary_object(se)) 
 	undef_boundary_item(se); 
       return; 
     }
-    if ( assign(sl,*it) ) { 
+    if ( CGAL::assign(sl,*it) ) { 
       if( is_boundary_object(sl)) 
 	undef_boundary_item(sl);
       return; 
     }
-    if ( assign(sv,*it) ) { 
+    if ( CGAL::assign(sv,*it) ) { 
       if( is_boundary_object(sv)) 
 	undef_boundary_item(sv); 
       return; 

@@ -279,10 +279,10 @@ class sort_sface_cycle_entries : public SNC_decorator<T> {
     SHalfedge_handle se1, se2;
     SHalfloop_handle sl1, sl2;
 
-    if(!assign(se1,o1) && !assign(sl1,o1) && !assign(sv1,o1))
+    if(!CGAL::assign(se1,o1) && !CGAL::assign(sl1,o1) && !CGAL::assign(sv1,o1))
       CGAL_assertion_msg(0,"wrong handle");
     
-    if(!assign(se2,o2) && !assign(sl2,o2) && !assign(sv2,o2))
+    if(!CGAL::assign(se2,o2) && !CGAL::assign(sl2,o2) && !CGAL::assign(sv2,o2))
       CGAL_assertion_msg(0,"wrong handle");    
     
     if(se1 != SHalfedge_handle() && se2 == SHalfedge_handle())
@@ -366,7 +366,6 @@ class sort_sfaces : public SNC_decorator<T> {
     Vector_3 plus(1,0,0);
 
     CGAL_assertion_code(SVertex_handle sv);
-    SHalfedge_handle se;
     SFace_cycle_iterator fc;
   
     TRACEN("  sface 1");
@@ -374,7 +373,8 @@ class sort_sfaces : public SNC_decorator<T> {
     SHalfedge_handle se1;
     SHalfloop_handle sl1;
     CGAL_forall_sface_cycles_of(fc,sf1) {
-      if(assign(se,fc)) {
+      if(fc.is_shalfedge()) {
+	SHalfedge_handle se(fc);
 	SHalfedge_around_sface_circulator ec(se),ee(se);
 	CGAL_For_all(ec,ee) {
 	  TRACEN("     " << SD.point(ssource(ec)) << 
@@ -383,8 +383,10 @@ class sort_sfaces : public SNC_decorator<T> {
 	    se1 = ec;
 	}
       }
-      else if(!assign(sl1,fc))
-	CGAL_assertion(assign(sv,fc));
+      else if(fc.is_shalfloop())
+	sl1 = SHalfloop_handle(fc);
+      else
+	CGAL_assertion(fc.is_svertex());
     }
 
     TRACEN("  sface 2");
@@ -392,7 +394,8 @@ class sort_sfaces : public SNC_decorator<T> {
     SHalfedge_handle se2;
     SHalfloop_handle sl2;
     CGAL_forall_sface_cycles_of(fc,sf2) {
-      if(assign(se,fc)) {
+      if(fc.is_shalfedge()) {
+	SHalfedge_handle se(fc);
 	SHalfedge_around_sface_circulator ec(se),ee(se);
 	CGAL_For_all(ec,ee) { 
 	  TRACEN("     " << SD.point(ssource(ec)) << 
@@ -401,8 +404,10 @@ class sort_sfaces : public SNC_decorator<T> {
 	    se2 = ec;
 	}
       }
-      else if(!assign(sl2,fc))
-	CGAL_assertion(assign(sv,fc));
+      else if(fc.is_shalfloop())
+	sl2 = SHalfloop_handle(fc);
+      else
+	CGAL_assertion(fc.is_svertex());
     }
   
     TRACEN("  sedge cycles existing? " << (se1 != SHalfedge_handle()) 
@@ -481,11 +486,11 @@ class sort_facet_cycle_entries : public T {
     
     SHalfedge_handle se1, se2;
     SHalfloop_handle sl1, sl2;
-
-    if(!assign(se1,o1) && !assign(sl1,o1))
+    
+    if(!CGAL::assign(se1,o1) && !CGAL::assign(sl1,o1))
       CGAL_assertion_msg(0,"wrong handle");
     
-    if(!assign(se2,o2) && !assign(sl2,o2))
+    if(!CGAL::assign(se2,o2) && !CGAL::assign(sl2,o2))
       CGAL_assertion_msg(0,"wrong handle");    
     
     if(se1 != SHalfedge_handle() && se2 != SHalfedge_handle()) {
@@ -527,8 +532,8 @@ class sort_shell_entries : public T {
   
   bool operator() (Object_handle o1, Object_handle o2) const {
     SFace_handle sf1, sf2;
-    assign(sf1, o1);
-    assign(sf2, o2);
+    CGAL::assign(sf1, o1);
+    CGAL::assign(sf2, o2);
     Point_3 p1(point(vertex(sf1))), p2(point(vertex(sf2)));
     if(p1.x() != p2.x())
       return p1.x() < p2.x();
@@ -686,19 +691,19 @@ public:
     SHalfedge_iterator se;
     SHalfloop_iterator sl;
     SFace_iterator sf;
-    if( assign( v, *o))
+    if( CGAL::assign( v, *o))
       return index(v);
-    else if( assign( e, *o))
+    else if( CGAL::assign( e, *o))
       return index(e);
-    else if( assign( f, *o))
+    else if( CGAL::assign( f, *o))
       return index(f);
-    else if( assign( c, *o))
+    else if( CGAL::assign( c, *o))
       return index(c);
-    else if( assign( se, *o))
+    else if( CGAL::assign( se, *o))
       return index(se);
-    else if( assign( sl, *o))
+    else if( CGAL::assign( sl, *o))
       return index(sl);
-    else if( assign( sf, *o))
+    else if( CGAL::assign( sf, *o))
       return index(sf);
     return this->string("unknown object");
   }
@@ -891,8 +896,8 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
     if(sorted) {
       SFace_cycle_iterator fc;
       CGAL_forall_sface_cycles_of(fc, sfi) {
-	SHalfedge_handle se;
-	if(assign(se,fc)) {
+	if(fc.is_shalfedge()) {
+	  SHalfedge_handle se(fc);
 	  SHalfedge_around_sface_circulator cb(se), ce(cb);
 	  CGAL_For_all(cb,ce) {
 	    if(ssource(cb) != ssource(se)) {
