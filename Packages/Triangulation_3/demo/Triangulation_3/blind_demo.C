@@ -64,22 +64,26 @@ typedef typename Triangulation::Locate_type Locate_type;
 typedef Gt::Point Point;
 //typedef CGAL::Point_3<Rep>  Point;
 
-Delaunay T;
-
 int main(int argc, char* argv[])
 {
 
+  Delaunay T;
+
   ifstream iFile("data",ios::in);
-  if (iFile) cout <<"                              reading file "
-		  << "data" << endl ;
-  Point nouv;
-  if (iFile) {
-    while ( iFile >> nouv ) {
-      T.insert(nouv);
-    }
+
+  if (! iFile) {
+    cout <<"A file named data containing points should be provided," << endl
+	 <<"see README"<<endl;
+    return 1;
   }
 
-  cout << T.is_valid(true);
+  cout <<"                              reading file data" << endl ;
+  Point nouv;
+  while ( iFile >> nouv ) {
+    T.insert(nouv);
+  }
+
+  T.is_valid(true);
 
   ofstream oFileT("output",ios::out);
   cout <<"                              writing file "

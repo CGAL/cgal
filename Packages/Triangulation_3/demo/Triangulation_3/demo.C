@@ -133,12 +133,8 @@ void visu_vertices(CGAL::Geomview_stream & os, const TRIANGULATION & T)
   }
 }
 
-CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
-Delaunay T;
-
 int main(int argc, char* argv[])
 {
-
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
 
   gv.set_line_width(4);
@@ -148,21 +144,27 @@ int main(int argc, char* argv[])
   gv.set_edge_color(CGAL::GREEN);
   gv.set_vertex_color(CGAL::BLUE);
 
+  Delaunay T;
+
   ifstream iFile("data",ios::in);
-  if (iFile) cout <<"                              reading file "
-		  << "data" << endl ;
+
+  if (! iFile) {
+    cout <<"A file named data containing points should be provided," << endl
+	 <<"see README"<<endl;
+    return 1;
+  }
+
+  cout <<"                              reading file data" << endl ;
   Point nouv;
-  if (iFile) {
-    while ( iFile >> nouv ) {
-      T.insert(nouv);
-    }
+  while ( iFile >> nouv ) {
+    T.insert(nouv);
   }
 
   visu_cells(gv,T);
   visu_vertices(gv,T);
   visu_edges(gv,T);
 
-  cout << T.is_valid(true);
+  T.is_valid(true);
 
   ofstream oFileT("output",ios::out);
   cout <<"                              writing file "
