@@ -13,6 +13,7 @@
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_get_circle.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
+#include <CGAL/IO/Qt_widget_Apollonius_site_2.h>
 #include <CGAL/IO/pixmaps/demoicon.xpm>
 
 
