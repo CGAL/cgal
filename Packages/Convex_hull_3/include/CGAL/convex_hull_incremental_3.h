@@ -24,24 +24,26 @@
 #include <CGAL/Convex_hull_d.h>
 #include <CGAL/Convex_hull_d_traits_3.h>
 #include <CGAL/Convex_hull_d_to_polyhedron_3.h>
+#include <CGAL/ch_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
+
 template <class InputIterator, class Polyhedron>
 void
 convex_hull_incremental_3(InputIterator first, InputIterator beyond, 
-                                     Polyhedron& P, 
-                                     bool test_correctness = false)
+                          Polyhedron& P, bool test_correctness = false)
 {
   typedef typename Polyhedron::Traits       PolyTraits;
-  typedef typename PolyTraits::Kernel         K;
-  typedef Convex_hull_d_traits_3<K>           ChullTraits;
-  typedef Convex_hull_d< ChullTraits >        ChullType;
+  typedef typename PolyTraits::Kernel       K;
+  typedef Convex_hull_d_traits_3<K>         ChullTraits;
+  typedef Convex_hull_d< ChullTraits >      ChullType;
 
   ChullType CH(3);
   for ( ; first != beyond ; ++first)  CH.insert(*first);
   if ( test_correctness ) CGAL_ch_assertion(CH.is_valid());
   CGAL::convex_hull_d_to_polyhedron_3(CH,P);
 }
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CONVEX_HULL_INCREMENTAL_3_H
