@@ -1,4 +1,4 @@
-05/05/2003 (spion) 1.189
+05/05/2003 1.190
 - Update GMP to 4.1.2
 - Recognize GCC 3.3
 - Update documentation for -fsquangle.
