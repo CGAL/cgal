@@ -407,7 +407,7 @@ intersection(const Ray_2<R> &ray1, const Ray_2<R>&ray2)
         return make_object(iseg);
     }
     case is_t::RAY: {
-        Segment_2<R> iray;
+        Ray_2<R> iray;
         ispair.intersection(iray);
         return make_object(iray);
     }
