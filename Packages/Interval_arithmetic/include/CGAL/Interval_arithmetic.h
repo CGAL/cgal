@@ -57,13 +57,11 @@ struct Interval_nt_advanced
   typedef Interval_nt_advanced IA;
   struct unsafe_comparison {};		// Exception class.
   static unsigned number_of_failures;	// Counts the number of failures.
-  static bool want_exceptions;		// Decide if we throw an exception.
 
   static void overlap_action() throw (unsafe_comparison)
   {
       number_of_failures++;
-      if (want_exceptions)
-	  throw unsafe_comparison();
+      throw unsafe_comparison();
   }
 
   // The constructors.
@@ -73,7 +71,9 @@ struct Interval_nt_advanced
   // It's not activated by default though.
 
   Interval_nt_advanced(const double d)
-  { _inf = _sup = CGAL_IA_STOP_CPROP(d); }
+  {
+      _inf = _sup = CGAL_IA_STOP_CPROP(d);
+  }
 
   Interval_nt_advanced(const double i, const double s)
   {
