@@ -26,29 +26,13 @@
 // ======================================================================
 
 #ifndef CGAL_IO_PM_FILE_WRITER_H
-#define CGAL_IO_PM_FILE_WRITER_H 1
+#define CGAL_IO_PM_FILE_WRITER_H
 
-#ifndef CGAL_IO_BINARY_FILE_IO_H
 #include <CGAL/IO/binary_file_io.h>
-#endif // CGAL_IO_BINARY_FILE_IO_H
-
-#ifndef CGAL_INVERSE_INDEX_H
 #include <CGAL/Inverse_index.h>
-#endif
-
-#ifndef CGAL_IO_FILE_HEADER_H
 #include <CGAL/IO/File_header.h>
-#endif // CGAL_IO_FILE_HEADER_H
-
-#ifndef CGAL_PROTECT_IOSTREAM
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
-
-#ifndef CGAL_PROTECT_CSTDDEF
 #include <cstddef>
-#define CGAL_PROTECT_CSTDDEF
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -217,7 +201,7 @@ protected:
   virtual void write_face(Face_const_handle f)
   {
     int ck;
-	Holes_const_iterator iccbit;
+    Holes_const_iterator iccbit;
 
     write_comment("writing face");
     out() << "# ------------------------------------------"<< std::endl;
@@ -369,11 +353,6 @@ protected:
   //void write_string(const char *str) {
   //  out() << str << std::endl;
   // }
-
-  // Friends
-  // -------
-  template <class Arrangement, class Writer>
-  friend void write_arr(const Arrangement &, Writer & writer, std::ostream& o);
 
   // Data Members
   // ------------
