@@ -113,7 +113,7 @@ private:
 				// * (at least 2) border vertices must be parameterized
 				void initialize_system_from_mesh_border(LeastSquaresSolver* solver, const MeshAdaptor_3& mesh) ;
 
-				// Utility for parameterize_triangle():
+				// Utility for setup_triangle_relations():
 				// Computes the coordinates of the vertices of a triangle
 				// in a local 2D orthonormal basis of the triangle's plane.
 				void project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2, Point_2* z0, Point_2* z1, Point_2* z2) ;
@@ -122,7 +122,7 @@ private:
 				// 
 				// Preconditions:
 				// * vertices must be indexed
-				ErrorCode parameterize_triangle(LeastSquaresSolver* solver, const MeshAdaptor_3& mesh, const Face& face) ;
+				ErrorCode setup_triangle_relations(LeastSquaresSolver* solver, const MeshAdaptor_3& mesh, const Face& face) ;
 
 				// Copy X coordinates into the (u,v) pair of each vertex
 				void set_mesh_uv_from_system(MeshAdaptor_3* mesh, const LeastSquaresSolver& solver) ;
@@ -195,13 +195,13 @@ LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits
 	// Initialize the "A*X = B" linear system after (at least 2) border vertices parameterization
 	initialize_system_from_mesh_border (&solver, *mesh);
 
-	// Parameterize the other vertices
+	// Fill the matrix for the other vertices
 	fprintf(stderr,"  fill matrix (%d x %d)...", int(2*mesh->count_mesh_faces()), nbVertices);
 	solver.begin_system() ;
 	for (Face_iterator faceIt = mesh->mesh_faces_begin(); faceIt != mesh->mesh_faces_end(); faceIt++)
 	{
 		// Create 2 lines in the linear system per triangle (1 for u, 1 for v)
-		status = parameterize_triangle (&solver, *mesh, *faceIt);
+		status = setup_triangle_relations (&solver, *mesh, *faceIt);
 		if (status != OK)
 			return status;
 	}
@@ -274,18 +274,7 @@ inline
 void LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::initialize_system_from_mesh_border(LeastSquaresSolver* solver, 
 																															 const MeshAdaptor_3& mesh) 
 {
-    //for(unsigned int i=0; i<mesh_->vertex.size(); i++) {
-    //    Vertex& it = mesh_->vertex[i] ;
-    //    double u = it.tex_coord.x ;
-    //    double v = it.tex_coord.y ;
-    //    solver.variable(2 * it.id).set_value(u) ;
-    //    solver.variable(2 * it.id + 1).set_value(v) ;
-    //    if(it.locked) {
-    //        solver.variable(2 * it.id    ).lock() ;
-    //        solver.variable(2 * it.id + 1).lock() ;
-    //    } 
-    //}
-
+	CGAL_parameterization_assertion(solver != NULL);
 	CGAL_parameterization_assertion(solver != NULL);
 
 	for (Vertex_const_iterator it = mesh.mesh_vertices_begin(); it != mesh.mesh_vertices_end(); it++)
@@ -310,7 +299,7 @@ void LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraT
 	}
 }
 
-// Utility for parameterize_triangle():
+// Utility for setup_triangle_relations():
 // Computes the coordinates of the vertices of a triangle
 // in a local 2D orthonormal basis of the triangle's plane.
 //
@@ -365,8 +354,8 @@ LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits
 template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
 inline 
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode 
-LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::parameterize_triangle(LeastSquaresSolver* solver,
-																										   const MeshAdaptor_3& mesh, const Face& face) 
+LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::setup_triangle_relations(LeastSquaresSolver* solver,
+																										      const MeshAdaptor_3& mesh, const Face& face) 
 {
 	CGAL_parameterization_assertion(solver != NULL);
 
@@ -456,13 +445,6 @@ inline
 void LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::set_mesh_uv_from_system(MeshAdaptor_3* mesh, 
 																												  const LeastSquaresSolver& solver) 
 {
-    //for(unsigned int i=0; i<mesh_->vertex.size(); i++) {
-    //    Vertex& it = mesh_->vertex[i] ;
-    //    double u = solver.variable(2 * it.id    ).value() ;
-    //    double v = solver.variable(2 * it.id + 1).value() ;
-    //    it.tex_coord = Point_2(u,v) ;
-    //}
-
 	Vertex_iterator vertexIt;
 	for (vertexIt = mesh->mesh_vertices_begin(); vertexIt != mesh->mesh_vertices_end(); vertexIt++)
 	{
