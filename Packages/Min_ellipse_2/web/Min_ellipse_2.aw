@@ -9,9 +9,6 @@
 @! $Date$
 @! ============================================================================
  
-@p maximum_input_line_length = 180
-@p maximum_output_line_length = 180
-
 @documentclass[twoside]{article}
 @usepackage[latin1]{inputenc}
 @usepackage{a4wide2}
@@ -110,7 +107,7 @@ same manner. In general, for point sets $P$,$B$, define $me(P,B)$ as the
 smallest ellipse enclosing $P$ that has the points of $B$ on the boundary
 (if defined). Although the algorithm finally delivers a ellipse
 $me(P,\emptyset)$, it internally deals with ellipses that have a possibly
-nonempty set $B$. Here is the pseudocode of Welzl's method.  To compute
+nonempty set $B$. Here is the pseudo-code of Welzl's method.  To compute
 $me(P)$, it is called with the pair $(P,\emptyset)$, assuming that
 $P=\{p_1,\ldots,p_n\}$ is stored in a linked list.
 
@@ -193,7 +190,7 @@ First, we declare the class template \ccc{CGAL_Min_ellipse_2}.
 
 The actual work of the algorithm is done in the private member
 functions \ccc{me} and \ccc{compute_ellipse}. The former directly
-realizes the pseudocode of $\me(P,B)$, the latter solves the basic
+realizes the pseudo-code of $\me(P,B)$, the latter solves the basic
 case $\me(\emptyset,B)$, see Section~\ref{sec:algo}.
 
 \emph{Workaround:} The GNU compiler (g++ 2.7.2[.?]) does not accept types
@@ -235,7 +232,7 @@ The class interface looks as follows.
         @<Min_ellipse_2 predicates>
 
       private:
-        // Privat member functions
+        // Private member functions
         // -----------------------
         @<Min_ellipse_2 private member function `compute_ellipse'>
 
@@ -373,7 +370,7 @@ sequence container \ccc{list} from STL~\cite{sl-stl-95}.
 The support set $S$ of at most five support points is stored in an
 array \ccc{support_points}, the actual number of support points is
 given by \ccc{n_support_points}. During the computations, the set of
-support points coincides with the set $B$ appearing in the pseudocode
+support points coincides with the set $B$ appearing in the pseudo-code
 for $\me(P,B)$, see Section~\ref{sec:algo}.
 
 \emph{Workaround:} The array of support points is allocated dynamically,
@@ -388,7 +385,7 @@ array here.
 Finally, the actual ellipse is stored in a variable \ccc{ellipse}
 provided by the traits class object, by the end of computation equal to
 $me(P)$. During computation, \ccc{tco.ellipse} equals the ellipse $me$
-appearing in the pseudocode for $\me(P,B)$, see Section~\ref{sec:algo}.
+appearing in the pseudo-code for $\me(P,B)$, see Section~\ref{sec:algo}.
 
 @! ----------------------------------------------------------------------------
 \subsubsection{Constructors and Destructor}
@@ -439,7 +436,7 @@ $me(P)=me(P,\emptyset)$.
             else
                 copy( first, last, back_inserter( points)); }
 
-        // compute mc
+        // compute me
         me( points.end(), 0);
     }
     
@@ -776,7 +773,7 @@ define them \ccc{inline} and put them in a separate macro.
     bool
     is_degenerate( ) const
     {
-        return( number_of_support_points() <  2);
+        return( number_of_support_points() <  3);
     }
 @end
 
@@ -820,14 +817,14 @@ corresponding predicates of class \ccc{Ellipse}.
 There is another way to build up $me(P)$, other than by supplying
 the point set $P$ at once. Namely, $me(P)$ can be built up
 incrementally, adding one point after another. If you look at the
-pseudocode in the introduction, this comes quite naturally. The
+pseudo-code in the introduction, this comes quite naturally. The
 modifying method \ccc{insert}, applied with point $p$ to a
 \ccc{CGAL_Min_ellipse_2<Traits>} object representing $me(P)$,
 computes $me(P \cup \{p\})$, where work has to be done only if $p$
 lies outside $me(P)$. In this case, $me(P \cup \{p\}) = me(P,\{p\})$
 holds, so the private member function \ccc{me} is called with
 support set $\{p\}$. After the insertion has been performed, $p$ is
-moved to the front of the point list, just like in the pseudocode in
+moved to the front of the point list, just like in the pseudo-code in
 Section~\ref{sec:algo}.
 
 @macro <Min_ellipse_2 modifiers> += @begin
@@ -1146,8 +1143,8 @@ noting that $|B| \leq 5$.
 This function computes the general ellipse $me(P,B)$, where $P$ contains
 the points in the range $[$\ccc{points.begin()}$,$\ccc{last}$)$ and $B$
 is given by the first \ccc{n_sp} support points in the array
-\ccc{support_points}. The function is directly modelled after the
-pseudocode above.
+\ccc{support_points}. The function is directly modeled after the
+pseudo-code above.
 
 @macro <Min_ellipse_2 private member function `me'> = @begin
     void
@@ -1338,7 +1335,7 @@ boundary points. They all set the variable to the smallest ellipse
 through the given points. \emph{Note:} The set function taking five
 boundary points only uses the fifth point from its input together with
 the two internally represented conics to compute the ellipse. The
-algorithm in Section~\ref{sec:algo} garantees that this set function
+algorithm in Section~\ref{sec:algo} guarantees that this set function
 is only called an ellipse that already have the first four points as
 its boundary points.
 
@@ -1481,7 +1478,7 @@ its boundary points.
 \subsubsection{Predicates}
 
 The following predicates perform in-ellipse tests and check for
-emptyness and degeneracy, resp. The way to evaluate the in-ellipse
+emptiness and degeneracy, resp. The way to evaluate the in-ellipse
 test depends on the number of boundary points and is realised by a
 case analysis. Again, the case with four points is the most difficult
 one.
@@ -2584,9 +2581,10 @@ once to ensure code coverage.
         {
             Min_ellipse  me( random_points[ 1],
                              random_points[ 2]);
-            bool  is_valid = me.is_valid( verbose);
+            bool  is_valid      = me.is_valid( verbose);
+            bool  is_degenerate = me.is_degenerate();
             assert( is_valid);
-            assert( me.number_of_points() == 2);
+            assert( is_degenerate);
         }
 
         verr << endl << "three points constructor...";
@@ -2595,8 +2593,9 @@ once to ensure code coverage.
                              random_points[ 4],
                              random_points[ 5]);
             bool  is_valid = me.is_valid( verbose);
+            int   num_pts  = me.number_of_points();
             assert( is_valid);
-            assert( me.number_of_points() == 3);
+            assert( num_pts == 3);
         }
 
         verr << endl << "four points constructor...";
@@ -2606,8 +2605,9 @@ once to ensure code coverage.
                              random_points[ 8],
                              random_points[ 9]);
             bool  is_valid = me.is_valid( verbose);
+            int   num_pts  = me.number_of_points();
             assert( is_valid);
-            assert( me.number_of_points() == 4);
+            assert( num_pts == 4);
         }
 
         verr << endl << "five points constructor...";
@@ -2618,8 +2618,9 @@ once to ensure code coverage.
                              random_points[ 13],
                              random_points[ 14]);
             bool  is_valid = me.is_valid( verbose);
+            int   num_pts  = me.number_of_points();
             assert( is_valid);
-            assert( me.number_of_points() == 5);
+            assert( num_pts == 5);
         }
 
         verr << endl << "Point* constructor...";
@@ -2959,7 +2960,9 @@ end of each file.
 \subsection{Min\_ellipse\_2.h}
 
 @file <include/CGAL/Min_ellipse_2.h> = @begin
-    @<Min_ellipse_2 header>("include/CGAL/Min_ellipse_2.h")
+    @<file header>(
+        "include/CGAL/Min_ellipse_2.h",
+        "2D Smallest Enclosing Ellipse")
 
     #ifndef CGAL_MIN_ELLIPSE_2_H
     #define CGAL_MIN_ELLIPSE_2_H
@@ -3017,7 +3020,9 @@ end of each file.
 \subsection{Min\_ellipse\_2.C}
 
 @file <include/CGAL/Min_ellipse_2.C> = @begin
-    @<Min_ellipse_2 header>("include/CGAL/Min_ellipse_2.C")
+    @<file header>(
+        "include/CGAL/Min_ellipse_2.C",
+        "2D Smallest Enclosing Ellipse")
 
     // Class implementation (continued)
     // ================================
@@ -3035,7 +3040,9 @@ end of each file.
 \subsection{Optimisation\_ellipse\_2.h}
 
 @file <include/CGAL/Optimisation_ellipse_2.h> = @begin
-    @<Optimisation_ellipse_2 header>("include/CGAL/Optimisation_ellipse_2.h")
+    @<file header>(
+        "include/CGAL/Optimisation_ellipse_2.h",
+        "2D Optimisation Ellipse")
 
     #ifndef CGAL_OPTIMISATION_ELLIPSE_2_H
     #define CGAL_OPTIMISATION_ELLIPSE_2_H
@@ -3087,7 +3094,9 @@ end of each file.
 \subsection{Optimisation\_ellipse\_2.C}
 
 @file <include/CGAL/Optimisation_ellipse_2.C> = @begin
-    @<Optimisation_ellipse_2 header>("include/CGAL/Optimisation_ellipse_2.C")
+    @<file header>(
+        "include/CGAL/Optimisation_ellipse_2.C",
+        "2D Optimisation Ellipse")
 
     // Class implementation (continued)
     // ================================
@@ -3110,7 +3119,9 @@ end of each file.
 \subsection{Min\_ellipse\_2\_traits\_2.h}
 
 @file <include/CGAL/Min_ellipse_2_traits_2.h> = @begin
-    @<Min_ellipse_2 header>("include/CGAL/Min_ellipse_2_traits_2.h")
+    @<file header>(
+        "include/CGAL/Min_ellipse_2_traits_2.h",
+        "default traits class for 2D Smallest Enclosing Ellipse")
 
     #ifndef CGAL_MIN_ELLIPSE_2_TRAITS_2_H
     #define CGAL_MIN_ELLIPSE_2_TRAITS_2_H
@@ -3143,7 +3154,9 @@ end of each file.
 \subsection{Min\_ellipse\_2\_adapterC2.h}
 
 @file <include/CGAL/Min_ellipse_2_adapterC2.h> = @begin
-    @<Min_ellipse_2 header>("include/CGAL/Min_ellipse_2_adapterC2.h")
+    @<file header>(
+        "include/CGAL/Min_ellipse_2_adapterC2.h",
+        "traits class adapter for 2D Smallest Enclosing Ellipse")
 
     #ifndef CGAL_MIN_ELLIPSE_2_ADAPTERC2_H
     #define CGAL_MIN_ELLIPSE_2_ADAPTERC2_H
@@ -3210,7 +3223,9 @@ end of each file.
 \subsection{Min\_ellipse\_2\_adapterH2.h}
 
 @file <include/CGAL/Min_ellipse_2_adapterH2.h> = @begin
-    @<Min_ellipse_2 header>("include/CGAL/Min_ellipse_2_adapterH2.h")
+    @<file header>(
+        "include/CGAL/Min_ellipse_2_adapterH2.h",
+        "traits class adapter for 2D Smallest Enclosing Ellipse")
 
     #ifndef CGAL_MIN_ELLIPSE_2_ADAPTERH2_H
     #define CGAL_MIN_ELLIPSE_2_ADAPTERH2_H
@@ -3281,7 +3296,9 @@ end of each file.
 \subsection{test\_Min\_ellipse\_2.C}
 
 @file <test/Optimisation/test_Min_ellipse_2.C> = @begin
-    @<Min_ellipse_2 header>("test/Optimisation/test_Min_ellipse_2.C")
+    @<file header>(
+        "test/optimisation/test_Min_ellipse_2.C",
+        "test program for 2D Smallest Enclosing Ellipse")
 
     @<Min_ellipse_2 test (includes and typedefs)>
 
@@ -3329,23 +3346,22 @@ end of each file.
 
 @i ../file_header.awi
  
-@macro <Min_ellipse_2 header>(1) many = @begin
-    @<file header>("2D Smallest Enclosing Ellipse",@1,
-                   "Optimisation","Optimisation/Min_ellipse_2",
-                   "Sven Schönherr <sven@@inf.fu-berlin.de>",
-                   "Bernd Gärtner",
-                   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
-                   "$Revision$","$Date$")
+And here comes the specific file header for the product files of this
+web file.
+
+@macro <file header>(2) many = @begin
+    @<copyright notice>
+    @<file name>(@1)
+    @<file description>(
+        "Geometric Optimisation",
+        "Optimisation","Optimisation/Min_ellipse_2",
+        "$Revision$","$Date$",
+        "Sven Schönherr <sven@@inf.fu-berlin.de>",
+        "Bernd Gärtner",
+        "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
+        "@2")
 @end
 
-@macro <Optimisation_ellipse_2 header>(1) many = @begin
-    @<file header>("2D Optimisation Ellipse",@1,
-                   "Optimisation","Optimisation/Min_ellipse_2",
-                   "Sven Schönherr <sven@@inf.fu-berlin.de>",
-                   "Bernd Gärtner",
-                   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
-                   "$Revision$","$Date$")
-@end
 @! ============================================================================
 @! Bibliography
 @! ============================================================================
