@@ -59,6 +59,7 @@ public:
     const double& sine() const { return first; }
 
     // q1<q2 means q1 is prioritised over q2
+    // ( q1 == *this, q2 == q )
     bool operator<(const Quality& q) const
     {
       if( size() > 1 )
@@ -82,13 +83,13 @@ public:
   class Is_bad: public Base::Is_bad
   {
   protected:
-    const double SB; // squared size bound on edge length
+    const double squared_size_bound; // squared size bound on edge length
   public:
     typedef typename Base::Is_bad::Point_2 Point_2;
 
     Is_bad(const double aspect_bound,
 	   const double size_bound)
-      : Base::Is_bad(aspect_bound), SB(size_bound * size_bound) {};
+      : Base::Is_bad(aspect_bound), squared_size_bound(size_bound * size_bound) {};
 
     bool operator()(const typename CDT::Face_handle& fh,
 		    Quality& q) const
@@ -116,38 +117,38 @@ public:
 	c = CGAL::to_double(squared_distance(pa, pb));
       
       double max_length; // squared max edge length
-      double other_length_1, other_length_2;
+      double second_max_length;
       
       if(a<b)
 	{
-	  other_length_1 = a;
 	  if(b<c) {
 	    max_length = c;
-	    other_length_2 = b;
+	    second_max_length = b;
 	  }
 	  else { // c<=b
 	    max_length = b;
-	    other_length_2 = c;
+	    second_max_length = ( a < c ? c : a );
 	  }
 	}
       else // b<=a
 	{
-	  other_length_1 = b;
 	  if(a<c) {
 	    max_length = c;
-	    other_length_2 = a;
+	    second_max_length = a;
 	  }
 	  else { // c<=a
 	    max_length = a;
-	    other_length_2 = c;
+	    second_max_length = ( b < c ? c : b );
 	  }
 	}
 
       q.second = 0;
-      if( SB != 0 )
+      if( squared_size_bound != 0 )
 	{
-	  q.second = max_length / SB; // normalized by size bound to deal
-				      // with size field
+	  std::cerr << squared_size_bound << std::endl;
+	  q.second = max_length / squared_size_bound;
+	    // normalized by size bound to deal
+	    // with size field
 	  if( q.size() > 1 )
 	    {
 	      q.first = 1; // (do not compute sine)
@@ -159,7 +160,7 @@ public:
 
       double area = 2*CGAL::to_double(area_2(pa, pb, pc));
 
-      q.first = (area * area) / (other_length_1 * other_length_2); // (sine)
+      q.first = (area * area) / (max_length * second_max_length); // (sine)
       
       return ( q.sine() < this->B );
     }

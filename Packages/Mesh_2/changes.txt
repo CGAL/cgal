@@ -1,3 +1,8 @@
+21 October 2004 Laurent Rineau
+- Yet another killed bug!! :-) The minimum sine of triangle was badly
+  computed.
+- Refine_faces forgot to scan for bad faces the star of the new vertex.
+
 20 October 2004 Laurent Rineau
 - fixed details in Delaunay_mesh_size_criteria_2.h
   and marked todo and warning
