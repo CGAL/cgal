@@ -28,6 +28,9 @@
 #define CGAL_SWEEP_LINE_SUBCURVE_H
 
 #include <vector>
+#include <set>
+#include <CGAL/Sweep_line_2/Sweep_line_functors.h>
+#include <CGAL/Sweep_line_2/Sweep_line_event.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -63,11 +66,21 @@ public:
   typedef SweepLineTraits_2 Traits;
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::Curve_2 Curve_2;
+
+  //typedef typename Traits::X_curve_2 X_curve_2;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef Sweep_line_subcurve<Traits> Self;
+  typedef Status_line_curve_less_functor<Traits, Self> StatusLineCurveLess;
+
+  typedef std::set<Self*, StatusLineCurveLess> StatusLine;
+  typedef typename StatusLine::iterator StatusLineIter;
+
+  typedef Sweep_line_event<Traits, Self> Event;
 
   Sweep_line_subcurve(int id, X_monotone_curve_2 &curve, Point_2 *reference, 
 		      SweepLineTraits_2 *traits);
 
+  virtual ~Sweep_line_subcurve() {}
 
   int getId() const {
     return m_id;
@@ -113,6 +126,14 @@ public:
   void setLastCurve(const X_monotone_curve_2 &cv) { 
     m_lastCurve = cv; 
   }
+
+  const X_monotone_curve_2 &getLastSubCurve() const { 
+    return m_lastSubCurve; 
+  }
+  void setLastSubCurve(const X_monotone_curve_2 &cv) { 
+    m_lastSubCurve = cv; 
+  }
+
 
   bool isSourceLeftToTarget() const { 
     return m_isRightSide; 
@@ -210,6 +231,16 @@ public:
     return true;
   }
 
+  void set_hint(StatusLineIter hint) 
+  {
+    m_hint = hint;
+  }
+
+  StatusLineIter get_hint() const 
+  {
+    return m_hint;
+  }
+
 #ifndef NDEBUG
   void Print() const;
 #endif
@@ -238,6 +269,9 @@ private:
       on the curve */
   X_monotone_curve_2 m_lastCurve;
 
+  /*! the last subcurve that was reported */
+  X_monotone_curve_2 m_lastSubCurve;
+
   /*! true if the source of the curve is to the left of the target. */
   bool m_isRightSide;
 
@@ -246,6 +280,9 @@ private:
 
   /*! the target of the curve */
   Point_2 m_target;
+
+  /*! */
+  StatusLineIter m_hint;
 
 };
 
@@ -270,6 +307,7 @@ Sweep_line_subcurve(int id, X_monotone_curve_2 &curve, Point_2 *reference,
     m_isRightSide = true;
 
   }
+  m_lastCurve = curve;
 }
 
 #ifndef NDEBUG
