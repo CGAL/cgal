@@ -1,24 +1,6 @@
-// ============================================================================
-//
-// Copyright (c) 1998, 1999 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       :
-// release_date  :
-//
-// file          : include/CGAL/Cartesian.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann
-//
-// coordinator   : INRIA Sophia-Antipolis
-//
-// ============================================================================
 
 #ifndef CGAL_CARTESIAN_H
 #define CGAL_CARTESIAN_H
@@ -84,8 +66,8 @@ struct Cartesian_base :
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/Kernel/Construction_objects_2.h>
-#include <CGAL/Kernel/Predicate_objects_2.h>
+// #include <CGAL/Kernel/Construction_objects_2.h>
+// #include <CGAL/Kernel/Predicate_objects_2.h>
 #include <CGAL/Kernel/function_objects.h>
 
 CGAL_BEGIN_NAMESPACE
