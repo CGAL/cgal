@@ -26,7 +26,6 @@
 #define ALPHA_SHAPE_VERTEX_BASE_3_H
 
 #include <utility>
-#include <pair.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 
 //-------------------------------------------------------------------
@@ -78,4 +77,4 @@ public:
 CGAL_END_NAMESPACE
 //-------------------------------------------------------------------
 
-#endif ALPHA_SHAPE_VERTEX_BASE_3_H
+#endif //ALPHA_SHAPE_VERTEX_BASE_3_H

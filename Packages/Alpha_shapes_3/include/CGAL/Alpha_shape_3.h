@@ -41,7 +41,6 @@
 #include <map>
 #endif
 
-#include <pair.h>
 #include <CGAL/triple.h>
 #include <vector>
 
@@ -135,7 +134,7 @@ private:
 
 public:
 
-  typedef Alpha_spectrum::const_iterator Alpha_iterator;
+  typedef typename Alpha_spectrum::const_iterator Alpha_iterator;
   // An iterator that allow to traverse the sorted sequence of
   // different alpha-values. The iterator is bidirectional and
   // non-mutable. Its value-type is Coord_type

@@ -103,4 +103,4 @@ public:
 CGAL_END_NAMESPACE
 //-------------------------------------------------------------------
 
-#endif ALPHA_SHAPE_CELL_BASE_3_H
+#endif //ALPHA_SHAPE_CELL_BASE_3_H

@@ -41,7 +41,6 @@
 #include <map>
 #endif
 
-#include <pair.h>
 #include <CGAL/triple.h>
 #include <vector>
 
@@ -131,11 +130,11 @@ private:
   typedef std::hash_set< Key > Marked_face_set;
 #endif
 
+public:
+
   typedef typename std::list< Vertex_handle >::iterator 
   Alpha_shape_vertices_iterator;
   typedef typename std::list< Edge >::iterator Alpha_shape_edges_iterator;
-
-public:
 
   typedef typename Alpha_spectrum::const_iterator Alpha_iterator;
   // An iterator that allow to traverse the sorted sequence of
