@@ -33,7 +33,6 @@
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Point_3.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/Triangle_3.h>
 #include <CGAL/Tetrahedron_3.h>
 
@@ -143,7 +142,6 @@ public:
   // Before this type was Point
   typedef Point_3 Point; 
 
-  typedef Point_2< Cartesian< typename Repres::FT> >  Point2;
   typedef Segment_3<Repres> Segment_3;
   typedef Triangle_3<Repres> Triangle_3;
   typedef Tetrahedron_3<Repres> Tetrahedron_3;
