@@ -147,6 +147,9 @@ collinearH2(const RT& phx, const RT& phy, const RT& phw,
   
   return ( det == RT0 );
 }
+
+#if 0
+// This function is not used (and buggy)
 template <class RT>
 CGAL_KERNEL_INLINE
 Bounded_side
@@ -155,9 +158,9 @@ side_of_bounded_circleH2( const RT& qhx, const RT& qhy, const RT& qhw,
                           const RT& shx, const RT& shy, const RT& shw,
                           const RT& thx, const RT& thy, const RT& thw )
 {
-  CGAL_kernel_precondition( ! collinearH2(qhx, qhy, ghw,
-                                               rhx, rhy, rhw,
-                                               shx, shy, shw) );
+  CGAL_kernel_precondition( ! collinearH2(qhx, qhy, qhw,
+                                          rhx, rhy, rhw,
+                                          shx, shy, shw) );
   
   // compute sign of      |qx  qy  qx^2+qy^2  1 |   | a b c d |
   //                      |      --  r  --      | = | e f g h |
@@ -189,7 +192,7 @@ side_of_bounded_circleH2( const RT& qhx, const RT& qhy, const RT& qhw,
            + i * ( b*(g*p - h*o) + f*(d*o - c*p) + n*(c*h - d*g) )
            - m * ( b*(g*l - h*k) + f*(d*k - c*l) + j*(c*h - d*g) );
   
-  if ( det == RT0 )
+  if ( det == RT(0) )
   {
       return ON_BOUNDARY;
   }
@@ -202,6 +205,7 @@ side_of_bounded_circleH2( const RT& qhx, const RT& qhy, const RT& qhw,
       return (RT0 < det ) ? ON_BOUNDED_SIDE : ON_UNBOUNDED_SIDE;
   }
 }
+#endif
 
 template <class RT>
 CGAL_KERNEL_INLINE
@@ -211,9 +215,9 @@ side_of_oriented_circleH2(const RT& qhx, const RT& qhy, const RT& qhw,
                           const RT& shx, const RT& shy, const RT& shw,
                           const RT& thx, const RT& thy, const RT& thw )
 {
-  CGAL_kernel_precondition( ! collinearH2(qhx, qhy, ghw,
-                                               rhx, rhy, rhw,
-                                               shx, shy, shw) );
+  CGAL_kernel_precondition( ! collinearH2(qhx, qhy, qhw,
+                                          rhx, rhy, rhw,
+                                          shx, shy, shw) );
   
   // compute sign of      |qx  qy  qx^2+qy^2  1 |   | a b c d |
   //                      |      --  r  --      | = | e f g h |
@@ -245,10 +249,11 @@ side_of_oriented_circleH2(const RT& qhx, const RT& qhy, const RT& qhw,
            + i * ( b*(g*p - h*o) + f*(d*o - c*p) + n*(c*h - d*g) )
            - m * ( b*(g*l - h*k) + f*(d*k - c*l) + j*(c*h - d*g) );
   
-  if ( det < RT0 )  return ON_NEGATIVE_SIDE;
-  else return (RT0 < det ) ? ON_POSITIVE_SIDE :
-                             ON_ORIENTED_BOUNDARY;
+  if ( det < RT(0) )  return ON_NEGATIVE_SIDE;
+  else return (RT(0) < det ) ? ON_POSITIVE_SIDE :
+                               ON_ORIENTED_BOUNDARY;
 }
+
 template <class RT>
 CGAL_KERNEL_INLINE
 Comparison_result
@@ -279,11 +284,11 @@ compare_xH2( const RT& phx, const RT& phw,
              const RT& qhx, const RT& qhw )
 {
   RT com = phx * qhw - qhx * phw;
-  if ( com < RT0 )
+  if ( com < RT(0) )
   {
       return SMALLER;
   }
-  else if ( RT0 < com )
+  else if ( RT(0) < com )
   {
       return LARGER;
   }
