@@ -1,12 +1,32 @@
-#ifndef PS_EDGE_3_C
-#define PS_EDGE_3_C
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : 
+// release_date  : 
+//
+// file          : src/PS_edge_3.C
+// package       : PS_Stream
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : 
+// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+//
+// ======================================================================
 
 #include <CGAL/IO/PS_edge_3.h>
 
 CGAL_BEGIN_NAMESPACE
   
 //Constructor
-PS_edge_3::PS_edge_3(Point3 &PA,Point3 &PB,Color color,VISIBILITY v) : _first_point(PA),_second_point(PB),_edge_color(color),_visibility(v) {}
+PS_edge_3::PS_edge_3(Point3 &PA,Point3 &PB,Color color,VISIBILITY v)
+  : _first_point(PA),_second_point(PB),_edge_color(color),_visibility(v) {}
 
 // Copy constructor
 PS_edge_3::PS_edge_3(const PS_edge_3& ar) {
@@ -87,5 +107,3 @@ void PS_edge_3::transformation(Transformation &t) {
 }
 
 CGAL_END_NAMESPACE
-
-#endif

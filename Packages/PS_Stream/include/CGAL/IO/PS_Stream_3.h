@@ -1,8 +1,31 @@
-#ifndef PS_STREAM_3_H
-#define PS_STREAM_3_H
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : 
+// release_date  : 
+//
+// file          : include/CGAL/IO/PS_Stream_3.h
+// package       : PS_Stream
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : 
+// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+//
+// ======================================================================
+ 
+#ifndef CGAL_PS_STREAM_3_H
+#define CGAL_PS_STREAM_3_H
 
-#include <math.h>
+#include <cmath>
 #include <list>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Direction_3.h>
@@ -27,13 +50,11 @@
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 
-
 #include <CGAL/IO/Postscript_stream.h>
 
-#include "PS_edge_3.C"
-#include "PS_facet_3.C"
-#include "PS_Stream.C"
-
+#include <CGAL/IO/PS_edge_3.h>
+#include <CGAL/IO/PS_facet_3.h>
+#include <CGAL/IO/PS_Stream.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -100,11 +121,8 @@ typedef CGAL::Tetrahedron_3< D > Tetrahedron;
 //typedef Triangulation::Vertex_iterator  Vertex_iterator;
 
 
-
-
 class PS_Stream_3 : public PS_Stream
 {
-
 public :
 
   // Constructors
@@ -307,10 +325,6 @@ private :
 
 };
 
-
 CGAL_END_NAMESPACE
 
-#endif // Postscript_STREAM_3
-
-
-  
+#endif

@@ -1,13 +1,34 @@
-#ifndef PS_FACET_3_C
-#define PS_FACET_3_C
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : 
+// release_date  : 
+//
+// file          : src/PS_facet_3.C
+// package       : PS_Stream
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : 
+// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+//
+// ======================================================================
 
 #include <CGAL/IO/PS_facet_3.h>
-using namespace std;
+
 CGAL_BEGIN_NAMESPACE
 
 PS_facet_3::PS_facet_3(vector<Point3> &V,Color
-		       edge_color,Color face_color,FILLING f,int number,bool m) : _face_color(face_color), _number_of_edge(V.size()),_filling(f),_grey_level(0),_number_of_the_facet(number),_mark(m) {
-
+		       edge_color,Color face_color,FILLING f,int number,bool m)
+  : _face_color(face_color), _number_of_edge(V.size()), _filling(f),
+    _grey_level(0), _number_of_the_facet(number), _mark(m)
+{
   unsigned int i=0;
   for(i=0;i<V.size()-1;i++) { 
     PS_edge_3 arete(V[i],V[i+1],edge_color); 
@@ -534,5 +555,3 @@ void PS_facet_3::transformation(Transformation &t) {
 }
 
 CGAL_END_NAMESPACE
-
-#endif

@@ -1,8 +1,27 @@
-#ifndef PS_STREAM_3_C
-#define PS_STREAM_3_C
-
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : 
+// release_date  : 
+//
+// file          : src/PS_Stream_3.C
+// package       : PS_Stream
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : 
+// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+//
+// ======================================================================
+ 
+#include <CGAL/basic.h>
 #include <CGAL/IO/PS_Stream_3.h>
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -350,7 +369,7 @@ int PS_Stream_3::dessous(PS_facet_3& facei,PS_facet_3& facej ) {
   
   int indice=0;
   for(int i=0;i<(int)v.size();i++) {
-    if (abs(v[indice]) < abs(v[i])) {indice=i;}
+    if (CGAL_NTS abs(v[indice]) < CGAL_NTS abs(v[i])) {indice=i;}
   }
   if (v[indice]>=0) return 1;
   else return (-1);
@@ -931,4 +950,3 @@ PS_Stream_3& operator << (PS_Stream_3& ps, Constrained_Delaunay_triangulation_2<
 }
 
 CGAL_END_NAMESPACE
-#endif

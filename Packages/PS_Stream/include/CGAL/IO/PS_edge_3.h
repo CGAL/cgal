@@ -1,7 +1,30 @@
-#ifndef PS_EDGE_3_H
-#define PS_EDGE_3_H
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : 
+// release_date  : 
+//
+// file          : include/CGAL/IO/PS_edge_3.h
+// package       : PS_Stream
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : 
+// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+//
+// ======================================================================
 
-#include <iostream.h>
+#ifndef CGAL_PS_EDGE_3_H
+#define CGAL_PS_EDGE_3_H
+
+#include <CGAL/basic.h>
+#include <iostream>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/leda_real.h>
@@ -12,8 +35,6 @@
 #include <CGAL/Aff_transformation_3.h>
 
 CGAL_BEGIN_NAMESPACE
-
-using namespace std;
 
 enum VISIBILITY{INVISIBLE,VISIBLE};
 
@@ -88,4 +109,4 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif //PS_EDGE_3_H
+#endif // CGAL_PS_EDGE_3_H
