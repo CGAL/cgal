@@ -40,10 +40,17 @@ int main(int argc, char* argv[])
   
   Traits traits;
   list<Curve>  subcurves;
-  CGAL::sweep_to_produce_planar_map_subcurves(segments.begin(),segments.end(), traits, subcurves);
+  CGAL::sweep_to_produce_planar_map_subcurves(segments.begin(), 
+					      segments.end(), 
+					      traits, 
+					      subcurves);
   
-  cout<<"The number of disjoint interior sub segments is "<< subcurves.size() <<endl;
-  for (list<Curve>::iterator scv_iter = subcurves.begin(); scv_iter != subcurves.end(); scv_iter++)
+  cout<<"The number of disjoint interior sub segments is "<< subcurves.size();
+  cout<<endl;
+
+  for (list<Curve>::iterator scv_iter = subcurves.begin(); 
+       scv_iter != subcurves.end(); 
+       scv_iter++)
     cout<<*scv_iter<<endl;
 }
 
