@@ -1910,7 +1910,8 @@ protected:
         std::list<Curve_2> c_list;
         (*(*F_begin))(scit->curve(),c_list);  //split the curve
         Subcurve_iterator aux=levels[i].end();
-        --aux; //aux keeps the last place we inserted before the coming insertion
+        --aux;
+        //aux keeps the last place we inserted before the coming insertion
         
         typename std::list<Curve_2>::iterator
           lit=c_list.begin();
@@ -2051,7 +2052,7 @@ protected:
       //insert the new level[k] into its place 
       (root->levels[level_number+k]).splice(level_end[k],levels[k]); 
       
-      //define the past-end-child of the last node inserted in the previous level
+      //define the past-end-child of last node inserted in the previous level
       Subcurve_iterator prev_last=level_end[k-1];
       --prev_last;
       prev_last->past_end_child=&(*(level_end[k])); 
@@ -2062,7 +2063,7 @@ protected:
     //do the same for the edge_level
     root->edge_level.erase(begin_edge,past_end_edge);
     
-    //define the past-end-child of the node before the inserted in previous level
+    //define the past-end-child of node before the inserted in previous level
     (level_begin[k-1])->past_end_child=&(*(edge_list.begin()));
     
     //define the past-end-child of the last node inserted in the previous level
@@ -2105,8 +2106,8 @@ private:
     Pointer_halfedge_Map  current_halfedges_pointers;
     for (h_iter1 = halfedges_begin(); h_iter1 != halfedges_end(); ++h_iter1)
     {
-      current_halfedges_pointers.insert(
-                                        Pointer_halfedge_Map::value_type((void*) &(*h_iter1), h_iter1));
+      current_halfedges_pointers.insert
+        (Pointer_halfedge_Map::value_type((void*) &(*h_iter1), h_iter1));
     }
     
     // for each curve node
