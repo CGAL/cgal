@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.8.1 on 27-Jul-2000
+- demo program compiles if LEDA is not available (and does nothing)
+
 Version 3.8 on 20-Jul-2000
 - obsolete usage of `number utils' fixed (CGAL:: --> CGAL_NTS)
 
