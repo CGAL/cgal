@@ -1,4 +1,4 @@
-#  Makefile for CGAL's Interval Arithmetic package. [Sylvain Pion]
+#  Makefile for a CGAL package.
 
 CVS_MODULE_NAME=C3
 Package=C3
@@ -45,7 +45,7 @@ submit: package
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
 	echo "/$(Package)/$(Package).tar.gz" >> $(TMP_file)
-	mail  -s autohandle cgal-submit@cs.uu.nl yvinec <  $(TMP_file)
+	mail  -s autohandle cgal-submit@cs.uu.nl $(USER) <  $(TMP_file)
 	rm -f $(TMP_file)
 
 clean:
@@ -54,11 +54,9 @@ clean:
 	cd test/Kernel ; make distclean
 
 $(Package).tar.gz:
-	./check_headers.pl -u include/CGAL/*/*.[Ch]
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
-	--exclude=TODO \
+	--exclude=TODO --exclude="*~" --exclude="*.old" \
 	version maintainer \
 	long_description.txt description.txt changes.txt \
 	include
-	./check_headers.pl -u include/CGAL/*/*.[Ch]

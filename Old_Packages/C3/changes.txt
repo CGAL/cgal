@@ -1,3 +1,7 @@
+Version 4.9 (?? June 2000)
+- Header fixes [syl].  Got rid of Herve's check_header script.
+- Fixed a few buggy protect macro names [syl].
+
 Version 4.8 (22 June 2000)
 - Fixed namespace issues for number type utilities [syl].
 
