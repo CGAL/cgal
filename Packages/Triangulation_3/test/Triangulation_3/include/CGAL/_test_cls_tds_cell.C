@@ -26,26 +26,26 @@ template <class Tds>
 void
 _test_cell_tds_3(const Tds &)
 {
-  typedef typename Tds::Vertex            Vertex;
-  typedef typename Tds::Cell              Cell;
+  typedef typename Tds::Vertex_handle            Vertex_handle;
+  typedef typename Tds::Cell_handle              Cell_handle;
 
   std::cout << "   Cells Tds Constructors " << std::endl;
   int ind;
   Tds tds;
-  Vertex* v0= tds.create_vertex();
-  Vertex* v1= tds.create_vertex();
-  Vertex* v2= tds.create_vertex();
-  Vertex* v3= tds.create_vertex();
-  Cell* c1 = tds.create_cell(v0, v1, v2, v3);
+  Vertex_handle v0= tds.create_vertex();
+  Vertex_handle v1= tds.create_vertex();
+  Vertex_handle v2= tds.create_vertex();
+  Vertex_handle v3= tds.create_vertex();
+  Cell_handle c1 = tds.create_cell(v0, v1, v2, v3);
   assert(c1->has_vertex(v0));
   assert(c1->has_vertex(v1));
   assert(c1->has_vertex(v2));
   assert(c1->has_vertex(v3));
-  Cell* n0=tds.create_cell();
-  Cell* n1=tds.create_cell();
-  Cell* n2=tds.create_cell();
-  Cell* n3=tds.create_cell();
-  Cell* c2 = tds.create_cell(v0, v1, v2, v3, n0, n1, n2, n3);
+  Cell_handle n0=tds.create_cell();
+  Cell_handle n1=tds.create_cell();
+  Cell_handle n2=tds.create_cell();
+  Cell_handle n3=tds.create_cell();
+  Cell_handle c2 = tds.create_cell(v0, v1, v2, v3, n0, n1, n2, n3);
 
   std::cout << "   Access cell's functions " << std::endl;
      assert(c2->has_vertex(v0));

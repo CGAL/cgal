@@ -21,15 +21,13 @@
 // ============================================================================
 
 #include <CGAL/basic.h>
-#include <cassert>
 
+#include <cassert>
 #include <list>
 #include <vector>
+#include <CGAL/Delaunay_triangulation_3.h>
 
 #include <CGAL/_test_types.h>
-#include <CGAL/triple.h>
-
-#include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/_test_cls_delaunay_3.C>
 
 bool del=true;

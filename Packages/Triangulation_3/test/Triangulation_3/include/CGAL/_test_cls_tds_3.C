@@ -37,6 +37,7 @@ _test_cls_tds_3( const Tds &)
   typedef typename Tds::Edge              Edge;
   typedef typename Tds::Facet             Facet;
 
+  typedef typename Tds::Vertex_handle     Vertex_handle;
   typedef typename Tds::Vertex_iterator   Vertex_iterator;
   typedef typename Tds::Facet_iterator    Facet_iterator;
   typedef typename Tds::Edge_iterator     Edge_iterator;
@@ -76,26 +77,26 @@ _test_cls_tds_3( const Tds &)
 
   Vertex_iterator vit;
   vit=tds3.vertices_begin();
-  Vertex * v2 = tds3.create_vertex();
+  Vertex_handle v2 = tds3.create_vertex();
   tds3.insert_increase_dimension(v2,&*vit);
   std::cout << "ok" << std::endl;
   Tds tds4 = tds3;
   vit=tds4.vertices_begin();
-  Vertex * v3 = tds4.create_vertex();
+  Vertex_handle v3 = tds4.create_vertex();
   tds4.insert_increase_dimension(v3,&*vit);
   std::cout << "ok" << std::endl;
   Tds tds5;
   tds5.swap(tds4);
   tds4=tds5;
   vit=tds5.vertices_begin();
-  Vertex * v4 = tds5.create_vertex();
+  Vertex_handle v4 = tds5.create_vertex();
   tds5.insert_increase_dimension(v4,&*vit);
   std::cout << "ok" << std::endl;
   Tds tds6;
   tds6.swap(tds5);
   tds5=tds6;
   vit=tds6.vertices_begin();
-  Vertex * v5 = tds6.create_vertex();
+  Vertex_handle v5 = tds6.create_vertex();
   tds6.insert_increase_dimension(v5,&*vit);
   std::cout << "ok" << std::endl;
 
@@ -124,13 +125,13 @@ _test_cls_tds_3( const Tds &)
   Cell_iterator cit, cdone;
   int nbflips=0;
   int i;
-  Vertex * v6 = tds6.create_vertex();
+  Vertex_handle v6 = tds6.create_vertex();
   cit = tds6.cells_begin();
   tds6.insert_in_cell(v6, &(*cit));
-  Vertex * v7 = tds6.create_vertex();
+  Vertex_handle v7 = tds6.create_vertex();
   cit = tds6.cells_begin();
   tds6.insert_in_cell(v7, &(*cit));
-  Vertex * v8 = tds6.create_vertex();
+  Vertex_handle v8 = tds6.create_vertex();
   cit = tds6.cells_begin();
   tds6.insert_in_cell(v8, &(*cit));
   assert(tds6.number_of_vertices()==8);
@@ -138,13 +139,13 @@ _test_cls_tds_3( const Tds &)
 
   cdone = tds6.cells_end();
   
-  std::set< Vertex* > set_of_vertices;
+  std::set< Vertex_handle > set_of_vertices;
   
   for ( cit = tds6.cells_begin(); cit != cdone; cit++ ) {
     // NOTE : the triangulation is modified during loop
     // --> the cell_iterator does not mean a lot
     for ( i=0; i<4; i++ ) {
-      std::set< Vertex* > set_of_vertices;
+      std::set< Vertex_handle > set_of_vertices;
       tds6.incident_vertices( (&(*cit))->vertex(i), set_of_vertices );
       if ( set_of_vertices.find
 	   ( (&(*cit))->neighbor(i)->vertex

@@ -25,13 +25,11 @@
 #define CGAL_TEST_CLS_DELAUNAY_C
 
 #include <cassert>
-
 #include <iostream>
 #include <fstream>
-
-#include <CGAL/triple.h>
 #include <list>
 #include <vector>
+
 #include "_test_cls_iterator.C"
 #include "_test_cls_circulator.C"
 
@@ -429,7 +427,7 @@ _test_cls_delaunay_3(const Triangulation &)
     int i = 0;
     for(Vertex_iterator vi=Tdel.finite_vertices_begin();
 	vi!=Tdel.vertices_end();vi++) {
-      vertices[i++] = vi;
+      vertices[i++] = &*vi;
     }
     int n = Tdel.number_of_vertices();
     for(int j = 0; j < n; j++) {

@@ -83,10 +83,10 @@ _test_triangulation_iterator( const Triangulation &T )
   Cell_iterator Cit2;
   Cit = T.finite_cells_begin();
   Cit2=Cit;
-  assert(T.tetrahedron((Cell_handle) Cit)==T.tetrahedron((Cell_handle) Cit2));
+  assert(T.tetrahedron(&*Cit)==T.tetrahedron(&*Cit2));
   Cit++ ; Cit-- ; ++Cit ; --Cit ;
   assert(Cit==Cit2);
-  assert(T.tetrahedron((Cell_handle) Cit)==T.tetrahedron((Cell_handle) Cit2));
+  assert(T.tetrahedron(&*Cit)==T.tetrahedron(&*Cit2));
     }
   if (T.dimension() >=2)
     {

@@ -110,10 +110,10 @@ _test_circulator( const Triangulation &T )
   //  for (vit=T.all_vertices_begin(); vit!=T.vertices_end() ; vit++)
   {
     vit=T.all_vertices_begin();
-    T.incident_cells(vit,cells);
-    T.incident_cells(vit,cells,vit->cell());
-    T.incident_vertices(vit, vertices);
-    T.incident_vertices(vit, vertices,vit->cell());
+    T.incident_cells(&*vit,cells);
+    T.incident_cells(&*vit,cells,vit->cell());
+    T.incident_vertices(&*vit, vertices);
+    T.incident_vertices(&*vit, vertices,vit->cell());
   }
 
    Facet_circulator fc, fc0;

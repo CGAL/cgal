@@ -21,16 +21,15 @@
 // ============================================================================
 
 #include <CGAL/basic.h>
+
 #include <iostream>
 #include <cassert>
 #include <list>
 #include <vector>
-#include <CGAL/triple.h>
 
 #include <CGAL/_test_types.h>
 
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-
 #include <CGAL/Regular_triangulation_3.h>
 
 #include <CGAL/_test_cls_regular_3.C>
