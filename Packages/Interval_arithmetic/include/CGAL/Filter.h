@@ -27,6 +27,13 @@
 #ifndef CGAL_FILTER_H
 #define CGAL_FILTER_H
 
+#include <iostream.h>
+#include <CGAL/IO/io_tags.h>            // For CGAL_io_Operator().
+#include <CGAL/number_type_tags.h>      // For CGAL_number_type_tag()
+#include <CGAL/enum.h>  // Because we overload CGAL_{sign,compare,abs,min,max}
+#include <CGAL/number_utils.h>  // For CGAL_max(double, double).
+
+
 // CT = construction type (filtered)
 // ET = exact type, used for exact predicate evaluation
 // (Interval_nt_advanced) = used for filtering.
@@ -51,8 +58,18 @@ public:
   typedef CGAL_Filtering<CT,ET> Fil;
 
   Fil operator-()               const { return Fil(-value); }
+  bool operator< (const Fil& fil) const { return value <  fil.value; }
+  bool operator> (const Fil& fil) const { return value >  fil.value; }
+  bool operator<=(const Fil& fil) const { return value <= fil.value; }
+  bool operator>=(const Fil& fil) const { return value >= fil.value; }
+  bool operator==(const Fil& fil) const { return value == fil.value; }
+  bool operator!=(const Fil& fil) const { return value != fil.value; }
+};
 
-#ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
+template <class CT, class ET>
+class CGAL_Filtering_allow_inexact : public CGAL_Filtering<CT,ET>
+{
+  typedef CGAL_Filtering_allow_inexact<CT,ET> Fil;
   Fil operator+(const Fil& fil) const { return Fil(value + fil.value); }
   Fil operator-(const Fil& fil) const { return Fil(value - fil.value); }
   Fil operator*(const Fil& fil) const { return Fil(value * fil.value); }
@@ -62,15 +79,12 @@ public:
   Fil& operator-=(const Fil& fil) { value -= fil.value; return *this; }
   Fil& operator*=(const Fil& fil) { value *= fil.value; return *this; }
   Fil& operator/=(const Fil& fil) { value /= fil.value; return *this; }
-#endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
-
-  bool operator< (const Fil& fil) const { return value <  fil.value; }
-  bool operator> (const Fil& fil) const { return value >  fil.value; }
-  bool operator<=(const Fil& fil) const { return value <= fil.value; }
-  bool operator>=(const Fil& fil) const { return value >= fil.value; }
-  bool operator==(const Fil& fil) const { return value == fil.value; }
-  bool operator!=(const Fil& fil) const { return value != fil.value; }
 };
+
+// We forward all the following functions to the CT value:
+// CGAL_is_valid, CGAL_is_finite, CGAL_to_double, CGAL_sign, CGAL_compare,
+// CGAL_abs, CGAL_min, CGAL_max, sqrt, CGAL_io_tag, CGAL_number_type_tag,
+// operator>>, operator<<.
 
 template <class CT, class ET>
 inline bool CGAL_is_valid    (const CGAL_Filtering<CT,ET>& fil)
@@ -84,11 +98,51 @@ template <class CT, class ET>
 inline double CGAL_to_double (const CGAL_Filtering<CT,ET>& fil)
 { return CGAL_to_double(fil.value); }
 
-#ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 template <class CT, class ET>
-inline CGAL_Filtering<CT,ET> sqrt (const CGAL_Filtering<CT,ET>& fil)
+inline CGAL_Sign CGAL_sign (const CGAL_Filtering<CT,ET>& fil)
+{ return CGAL_Sign(fil.value); }
+
+template <class CT, class ET>
+inline CGAL_Comparison_result CGAL_compare (const CGAL_Filtering<CT,ET>& fil,
+					    const CGAL_Filtering<CT,ET>& fil2)
+{ return CGAL_compare(fil.value, fil2.value); }
+
+template <class CT, class ET>
+inline CGAL_Filtering<CT,ET> CGAL_abs (const CGAL_Filtering<CT,ET>& fil)
+{ return CGAL_abs(fil.value); }
+
+template <class CT, class ET>
+inline CGAL_Filtering<CT,ET> CGAL_min (const CGAL_Filtering<CT,ET>& fil,
+				       const CGAL_Filtering<CT,ET>& fil2)
+{ return CGAL_min(fil.value, fil2.value); }
+
+template <class CT, class ET>
+inline CGAL_Filtering<CT,ET> CGAL_max (const CGAL_Filtering<CT,ET>& fil,
+				       const CGAL_Filtering<CT,ET>& fil2)
+{ return CGAL_max(fil.value, fil2.value); }
+
+template <class CT, class ET>
+inline CGAL_io_Operator CGAL_io_tag(CGAL_Filtering<CT,ET> &fil)
+{ return CGAL_io_tag(fil.value); }
+
+template <class CT, class ET>
+inline CGAL_Number_tag CGAL_number_type_tag(CGAL_Filtering<CT,ET> &fil)
+{ return CGAL_number_type_tag(fil.value); }
+
+// Sqrt() is inexact => restricted.
+template <class CT, class ET>
+inline CGAL_Filtering_allow_inexact<CT,ET> sqrt
+	(const CGAL_Filtering_allow_inexact<CT,ET>& fil)
 { return sqrt(fil.value); }
-#endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
+
+template <class CT, class ET>
+inline ostream& operator<<(ostream& os, const CGAL_Filtering<CT,ET>& d)
+{ return os << d.value; }
+
+template <class CT, class ET>
+inline istream &operator>>(istream &is, const CGAL_Filtering<CT,ET>& d)
+{ return is >> d.value; }
+
 
 // template <class ET>
   // template <class CT>
@@ -102,11 +156,20 @@ inline CGAL_Filtering<CT,ET> sqrt (const CGAL_Filtering<CT,ET>& fil)
 
 template <class ET>
 inline ET CGAL_to_exact_type (const double & d)
-{ return d; }
+{ return ET(d); }
+
+// When CT == ET.
+template <class ET>
+inline ET CGAL_to_exact_type (const ET & e)
+{ return e; }
 
 
 #ifdef CGAL_PREDICATES_ON_FTC2_H
 #include <CGAL/Filter/predicates_on_ftC2.h>
+#endif
+
+#ifdef CGAL_PREDICATES_ON_RTH2_H
+#include <CGAL/Filter/predicates_on_rtH2.h>
 #endif
 
 #endif // CGAL_FILTER_H
