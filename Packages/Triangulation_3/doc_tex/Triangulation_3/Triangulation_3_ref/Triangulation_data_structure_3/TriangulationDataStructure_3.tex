@@ -43,7 +43,7 @@ whose endpoints are the vertices of indices \ccc{i} and \ccc{j} of
 As \cgal\ explicitly deals with all degenerate cases, a
 3D-triangulation data structure in \cgal\ can handle the cases when
 the dimension of the triangulation is lower than~3 
-(see Section~\ref{TDS3-sec-degen_dim}).
+(see Section~\ref{TDS3-sec-intro}).
 
 Thus, a 3D-triangulation data structure can store a triangulation of a
 topological sphere $S^d$ of $\R^{d+1}$, for any $d \in \{-1,0,1,2,3\}$. 
@@ -85,11 +85,11 @@ Requirements for \ccc{Vertex} and \ccc{Cell} are described in
 
 \ccTypedef{typedef triple<Cell*, int, int> Edge;}{\ccc{(c,i,j)} is the
 edge of cell \ccc{c} whose vertices indices are \ccc{i} and
-\ccc{j}. (See Section~\ref{TDS3-sec-def}.)}
+\ccc{j}. (See Section~\ref{TDS3-sec-intro}.)}
 \ccGlue
 \ccTypedef{typedef pair<Cell*, int>  Facet;}{\ccc{(c,i)} is the facet
 of \ccc{c} opposite to the vertex of index \ccc{i}. (See
-Section~\ref{TDS3-sec-def}.)} 
+Section~\ref{TDS3-sec-intro}.)} 
 
 
 The following iterators allow one to visit all the vertices, edges, facets
@@ -540,7 +540,7 @@ the optional argument \ccc{c} is a cell having \ccc{v} as a vertex.}}
 \ccMethod{bool is_valid(bool verbose = false) const;}
 {Checks the combinatorial validity of the triangulation by checking
 the validity of all its cells and vertices. 
-(See Section~\ref{TDS3-sec-Valid}.) Moreover, the Euler relation is
+(See Section~\ref{TDS3-sec-intro}.) Moreover, the Euler relation is
 tested.\\ 
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
 a precise indication on the kind of invalidity encountered.}

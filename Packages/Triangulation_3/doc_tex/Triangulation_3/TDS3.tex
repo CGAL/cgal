@@ -22,16 +22,13 @@
 \chapter{Triangulation Data Structure in 3D}
 \label{chapter-TDS3}
 
-\section{Introduction}
-\label{TDS3-sec-intro}
-
 A three-dimensional triangulation is a three-dimensional simplicial
 complex, pure connected and without singularities \cite{by-ag-98}. Its
 cells ($3$-faces, tetrahedra) are such that two cells either do not
 intersect or share a common facet ($2$-face), edge ($1$-face) or
 vertex ($0$-face).
 
-A geometric triangulation has two aspects: the combinatorial structure which
+A geometric triangulation has two aspects: the combinatorial structure, which
 gives the incidence and adjacency relations between faces, and the
 geometric information related to the position of vertices.
 
@@ -42,7 +39,7 @@ triangulation of a set of points in $\R^d$ is a partition of the
 whole space $\R^d$ into cells having $d+1$ vertices. Some of them
 are infinite, they are obtained by linking an additional vertex at
 infinity to each facet of the convex hull of the points (see
-Section~\ref{Triangulation3-sec-def}).  
+Section~\ref{Triangulation3-sec-intro}).  
 The underlying combinatorial graph of such a triangulation
 without boundary of $\R^d$ can be seen as a triangulation of the
 topological sphere $S^d$ in $\R^{d+1}$. 
@@ -53,7 +50,7 @@ triangulations. The reader interested in geometric triangulations of
 $\R^3$ is advised to read Chapter~\ref{chapter-Triangulation3}.
 
 \subsection{Representation}
-\label{TDS3-sec-def}
+\label{TDS3-sec-intro}
 
 In \cgal, a triangulation data structure is a
 container of cells ($3$-faces) and vertices ($0$-faces). Each cell gives
@@ -90,8 +87,7 @@ indices (the edge \ccc{(i,j)} of a cell \ccc{c} is the edge
 whose endpoints are the vertices of indices \ccc{i} and \ccc{j} of
 \ccc{c}). 
 
-\subsection{Degenerate Dimensions}
-\label{TDS3-sec-degen_dim}
+\paragraph{Degenerate Dimensions}
 As \cgal\ explicitly deals with all degenerate cases, a
 3D-triangulation data structure in \cgal\ can handle the cases when
 the dimension of the triangulation is lower than~3.
@@ -191,8 +187,7 @@ for degenerate ($< 3$) dimensions : in dimension~2, each cell has only one
 facet of index 3, and 3 edges $(0,1)$, $(1,2)$ and $(2,0)$; in
 dimension~1, each cell has one edge $(0,1)$. 
 
-\subsection{Validity}
-\label{TDS3-sec-Valid}
+\paragraph{Validity}
 A 3D combinatorial triangulation is said to be \ccc{locally valid} 
 iff the following is true:
 
@@ -234,8 +229,9 @@ orientation of a cell.
 \end{ccHtmlOnly}
 \end{figure} 
 
-The \ccc{is_valid()} method provided by \cgal\ checks the local
-validity of a given triangulation data structure.
+The \ccc{is_valid()} method provided by
+\ccc{Triangulation_data_structure_3} checks the local validity of a
+given triangulation data structure.
  
 \section{Software Design}
 \label{TDS3-sec-design}
@@ -297,7 +293,7 @@ geometric triangulation class. The user may choose to replace the
 data structure. In this case, his class has to be a model of the
 concept described in \ccRefPage{TriangulationDataStructure_3}.
 
-\section{Examples}
+\section{Example of incremental construction}
 \label{TDS3-sec-examples}
 The following example shows how to construct a 3D triangulation data
 structure by inserting vertices.

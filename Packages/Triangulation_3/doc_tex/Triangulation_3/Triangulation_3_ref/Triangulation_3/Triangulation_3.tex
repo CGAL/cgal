@@ -54,8 +54,7 @@ The class \ccClassTemplateName\ defines the following types:
 Only vertices ($0$-faces) and cells ($3$-faces) are stored. Edges
 ($1$-faces) and facets ($2$-faces) are not explicitly represented and
 thus there are no corresponding classes (see
-Sections~\ref{Triangulation3-sec-degen_dim} and
-~\ref{Triangulation3-sec-def}). 
+Section~\ref{Triangulation3-sec-intro}).
 
 \ccNestedType{Vertex}{Vertex type}
 \ccGlue
@@ -848,7 +847,7 @@ debugging.
           is_valid(bool verbose = false) const;}
 {Checks the combinatorial validity of the triangulation. Checks also the
 validity of its geometric embedding (see
-Section~\ref{Triangulation3-sec-Valid}).\\ When \ccc{verbose} is set to true, 
+Section~\ref{Triangulation3-sec-intro}).\\ When \ccc{verbose} is set to true, 
 messages describing the first invalidity encountered are printed.}
 
 \ccMethod{bool
@@ -856,7 +855,7 @@ messages describing the first invalidity encountered are printed.}
 {Checks the combinatorial validity of the cell by calling the
 \ccc{is_valid} method of the \ccc{TriangulationDataStructure_3} cell class. Also checks the
 geometric validity of \ccc{c}, if \ccc{c} is finite. (See
-Section~\pageref{Triangulation3-sec-Valid}.)\\ 
+Section~\pageref{Triangulation3-sec-intro}.)\\ 
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
 a precise indication of the kind of invalidity encountered.}
 

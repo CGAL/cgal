@@ -72,7 +72,6 @@ int main()
 
   std::ofstream oFileT("output",std::ios::out);
   // writing file output; 
-  // this file is meant to be read only by the operator >>
   oFileT << T; 
 
   Triangulation T1;
