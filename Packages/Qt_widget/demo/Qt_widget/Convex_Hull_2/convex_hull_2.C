@@ -114,8 +114,6 @@ public:
   MyWindow(int w, int h): win(this) {
   setCentralWidget(&win);
     
-  connect(&win, SIGNAL(redrawed()), this, SLOT(redrawWin()));
-	
 	//create a timer for checking if somthing changed
   QTimer *timer = new QTimer( this );
   connect( timer, SIGNAL(timeout()),
@@ -194,11 +192,6 @@ public slots:
     win.unlock();
     something_changed();
   }
-
-  void redrawWin()
-  {
-  }
-  	
 
 private slots:
   void get_new_object(CGAL::Object obj)
