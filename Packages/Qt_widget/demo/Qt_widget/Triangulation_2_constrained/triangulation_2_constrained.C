@@ -68,6 +68,7 @@ int main(int, char*)
 #include "Qt_widget_toolbar.h"
 #include "Qt_widget_toolbar_layers.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget_helpwindow.h>
 
 #include <qplatinumstyle.h>
 #include <qapplication.h>
@@ -76,6 +77,7 @@ int main(int, char*)
 #include <qmessagebox.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
+#include <qprogressbar.h>
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qfiledialog.h>
@@ -112,10 +114,8 @@ public:
     file->insertItem("&Load Triangulation", this, 
 		      SLOT(load_triangulation()), CTRL+Key_L);
     file->insertItem("&Save Triangulation", this,
-		      SLOT(save_triangulation()), CTRL+Key_T);
+		      SLOT(save_triangulation()), CTRL+Key_S);
     file->insertSeparator();
-    file->insertItem("&Load Polyline", this, 
-		      SLOT(load_polyline()), CTRL+Key_P);
     file->insertItem("&Load Constraints", this, 
 		      SLOT(load_constraints()), CTRL+Key_L);
     file->insertItem("&Save Constraints", this,
@@ -137,6 +137,8 @@ public:
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
     menuBar()->insertItem( "&Help", help );
+    help->insertItem("How To", this, SLOT(howto()), Key_F1);
+    help->insertSeparator();
     help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
@@ -226,6 +228,15 @@ private slots:
     }
   }
 
+  void howto(){
+    QString home;
+    home = "help/index.html";
+    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    help->resize(400, 400);
+    help->setCaption("Demo HowTo");
+    help->show();
+  }
+
   void about()
   {
     QMessageBox::about( this, my_title_string,
@@ -242,6 +253,7 @@ private slots:
     Window *ed = new Window(500, 500);
     ed->setCaption("Layer");
     ed->show();
+    if(ct.number_of_vertices() > 1){
     Vertex_iterator it = ct.vertices_begin();
     xmin = xmax = (*it).point().x();
     ymin = ymax = (*it).point().y();
@@ -257,6 +269,7 @@ private slots:
       it++;
     }
     ed->set_window(xmin, xmax, ymin, ymax);
+    }
     something_changed();
   }
 
@@ -338,84 +351,94 @@ private slots:
   void load_constraints()
   {
     QString s( QFileDialog::getOpenFileName( QString::null,
-					     "Constraint File (*.cst)", this ) );
-    if ( s.isEmpty() )
+					     "Constrained edges (*.edg);;Shewchuck Triangle .poly files (*.poly);;Constraints File (*.cst);;All files (*)", this ) );
+    if ( s.isEmpty() ){
       return;
-    //ct.clear();
-    std::ifstream in(s);
-    CGAL::set_ascii_mode(in);
-    std::istream_iterator<Point> it(in), done;
-    bool first(true);
-    CGAL::Bbox_2 b;
+    }
+    if(s.right(4) == ".edg"){
+      std::ifstream in(s);
+      CGAL::set_ascii_mode(in);
 
-    Vertex_handle p_vh;
-    Point p_q;
+      QProgressBar *progress = new QProgressBar(NULL, "MyProgress");
+      progress->setCaption("Loading constraints");
+      int nedges = 0;
+      ct.clear();
+      in>>nedges;
+      progress->setTotalSteps(nedges);
+      progress->show();
+      for(int n = 0; n<nedges; n++) {
+        Point p1, p2;
+        in >> p1 >> p2;
+	if(n==0){
+	  xmin = xmax = p1.x();
+	  ymin = ymax = p1.y();
+	}
+	if(xmin > p1.x())
+	  xmin = p1.x();
+	if(xmax < p1.x())
+	  xmax = p1.x();
+	if(ymin > p1.y())
+	  ymin = p1.y();
+	if(ymax < p1.y())
+	  ymax = p1.y();
+	if(xmin > p2.x())
+	  xmin = p2.x();
+	if(xmax < p2.x())
+	  xmax = p2.x();
+	if(ymin > p2.y())
+	  ymin = p2.y();
+	if(ymax < p2.y())
+	  ymax = p2.y();
+        Vertex_handle vs = ct.insert(p1);
+        Vertex_handle vt = ct.insert(p2);
+        ct.insert_constraint(vs, vt);
+        progress->setProgress(n);
+      }
+      progress->setProgress(nedges);
+      progress->hide();
+    } else if(s.right(5) == ".poly"){
 
-    while(it != done){
-      Point p(*it);
-      if(first){
-	b = p.bbox();
-      } else {
-	b = b + p.bbox();
+    } else if(s.right(4) == ".cst"){
+      std::ifstream in(s);
+      CGAL::set_ascii_mode(in);
+      std::istream_iterator<Point> it(in), done;
+      bool first(true);
+      CGAL::Bbox_2 b;
+ 
+      Vertex_handle p_vh;
+      Point p_q;
+
+      while(it != done){
+        Point p(*it);
+        if(first){
+          b = p.bbox();
+        } else {
+          b = b + p.bbox();
+        }
+        ++it;
+        Point q(*it);
+        b = b + q.bbox();
+        ++it;
+        if( (! first) && (p_q == p)){
+          Vertex_handle vh = ct.insert(q);
+          ct.insert_constraint(p_vh, vh);
+          p_vh = vh;
+        } else {
+	  Vertex_handle vhp = ct.insert(p);
+	  p_vh = ct.insert(q, vhp->face());
+        }
+        p_q = q;
+        first = false;
       }
-      ++it;
-      Point q(*it);
-      b = b + q.bbox();
-      ++it;
-      if( (! first) && (p_q == p)){
-	Vertex_handle vh = ct.insert(q);
-	ct.insert_constraint(p_vh, vh);
-        p_vh = vh;
-      } else {
-	Vertex_handle vhp = ct.insert(p);
-	p_vh = ct.insert(q, vhp->face());
-      }
-      p_q = q;
-      first = false;
     }
 	
-    set_window(b.xmin(), b.xmax(), b.ymin(), b.ymax());
+    set_window(xmin, xmax, ymin, ymax);
     widget->clear_history();
     something_changed();
   }
 
   void save_constraints()
   {
-  }
-
-  void load_polyline(){
-      QString s( QFileDialog::getOpenFileName( QString::null,
-					     "Polyline File (*.cst)", this ) );
-    if ( s.isEmpty() )
-      return;
-    //ct.clear();
-    std::ifstream in(s);
-    CGAL::set_ascii_mode(in);
-
-    std::istream_iterator<Point> it(in), done;
-    CGAL::Bbox_2 b;
-
-    
-    Point p(*it);
-	Vertex_handle p_vh = ct.insert(p);
-	b = p.bbox();
-    ++it;
-    while(it != done){
-      Point q(*it);      
-      b = b + q.bbox();           
-      Vertex_handle q_vh = ct.insert(q);
-      if(q_vh == p_vh){
-        assert(p == q);
-      }else{
-	ct.insert_constraint(p_vh, q_vh);
-      }
-      p = q;
-      p_vh = q_vh;
-      ++it;
-    }	
-    set_window(b.xmin(), b.xmax(), b.ymin(), b.ymax());
-    something_changed();
- 
   }
 
 private:

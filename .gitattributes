@@ -1458,6 +1458,9 @@ Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/input_point_layer.gif svn
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/movedelete_point_layer.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/triangulation_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/demo.dsp -text
+Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/help/input_point_layer.gif svneol=native#unset
+Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/help/input_polygon_layer.gif svneol=native#unset
+Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/help/input_segment_layer.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/triangulation_2_constrained.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/basic/tutorial1/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/basic/tutorial2/demo.dsp -text
