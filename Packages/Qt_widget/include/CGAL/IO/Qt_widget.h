@@ -651,4 +651,4 @@ Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r);
 
 } // namespace CGAL
 
-#endif // QT_WIDGET_H
+#endif // CGAL_QT_WIDGET_H

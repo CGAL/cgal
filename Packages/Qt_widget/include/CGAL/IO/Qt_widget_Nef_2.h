@@ -3,5 +3,8 @@
 
 #include <CGAL/IO/Qt_widget.h>
 
+namespace CGAL{
+
+}//end namespace CGAL
 
 #endif

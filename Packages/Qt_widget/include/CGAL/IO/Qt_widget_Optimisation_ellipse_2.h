@@ -4,6 +4,8 @@
 #include <CGAL/IO/Qt_widget>
 #include <CGAL/Optimisation_ellipse_2.h>
 
+namespace CGAL{
+
 template< class Traits_ >
 Qt_widget&
 operator << ( Qt_widget &ws,
@@ -38,6 +40,8 @@ operator << ( Qt_widget &ws,
                                      ( oe.n_boundary_points <= 5) ); }
     return( ws);
 }
+
+}//end namespace CGAL
 
 #endif
 

@@ -4,6 +4,8 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Min_ellipse_2.h>
 
+namespace CGAL{
+
 template< class Traits_ >
 Qt_widget&
 operator<<(Qt_widget &ws,
@@ -17,5 +19,7 @@ operator<<(Qt_widget &ws,
         ws << *first;
     return ws;
 }
+
+}//end namespace CGAL
 
 #endif

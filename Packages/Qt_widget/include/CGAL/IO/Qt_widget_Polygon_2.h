@@ -4,6 +4,8 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Polygon_2.h>
 
+namespace CGAL{
+
 template <class Tr,class Co>
 Qt_widget& operator<<(Qt_widget& w, const Polygon_2<Tr,Co>& pol)
 {
@@ -22,5 +24,7 @@ Qt_widget& operator<<(Qt_widget& w, const Polygon_2<Tr,Co>& pol)
   w.do_paint();
   return w;
 }
+
+}//end namespace CGAL
 
 #endif

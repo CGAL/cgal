@@ -4,6 +4,8 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Conic_2.h>
 
+namespace CGAL{
+
 template< class R >
 Qt_widget&
 operator << ( Qt_widget& ws, const CGAL::Conic_2<R>& c)
@@ -91,5 +93,7 @@ operator << ( Qt_widget& ws, const CGAL::Conic_2<R>& c)
 
     return( ws);
 }
+
+}//end namespace CGAL
 
 #endif

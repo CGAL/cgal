@@ -4,6 +4,8 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Constrained_triangulation_2.h>
 
+namespace CGAL{
+
 template < class Gt, class Tds>
 Qt_widget&
 operator<<(Qt_widget& w,  const Constrained_triangulation_2<Gt,Tds> &t)
@@ -13,5 +15,7 @@ operator<<(Qt_widget& w,  const Constrained_triangulation_2<Gt,Tds> &t)
   w.unlock();
   return w;
 }
+
+}//end namespace CGAL
 
 #endif
