@@ -45,7 +45,7 @@ comply with the following requirements:
       \item
         \ccc{ID_FROM_BOX_ADDRESS}: casts the address of the box into a
         \ccc{std::ptrdiff_t} to create the \ccc{id}-number. Works fine 
-        if the intersection algorithms work effectively with pointers
+        if the \ccHtmlNoLinksFrom{intersection} algorithms work effectively with pointers
         to boxes, but not in the case where the algorithms work with
         box values, because the algorithms modify the order of the
         boxes, and the \ccc{CGAL::box_self_intersection} algorithm
@@ -56,7 +56,7 @@ comply with the following requirements:
         handle into a \ccc{std::ptrdiff_t} to create the
         \ccc{id}-number. Works in many conceivable settings, e.g.,
         it works with boxes copied by value or by pointer, and
-        the self intersection test. It will not work if there
+        the self \ccHtmlNoLinksFrom{intersection} test. It will not work if there
         is no one-to-one mapping between boxes and the geometry that
         is referred to with the handles, i.e., this \ccc{id}-number
         scheme fails if a geometric object creates several boxes with

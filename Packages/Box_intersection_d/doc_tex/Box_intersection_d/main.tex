@@ -30,7 +30,7 @@
 % +------------------------------------------------------------------------+
 \section{Introduction}
 
-Simple questions on geometric primitives, such as intersection and
+Simple questions on geometric primitives, such as \ccHtmlNoLinksFrom{intersection} and
 distance computations, can themselves become quite expensive if the
 primitives are not so simple anymore, for example, three-dimensional
 triangles and facets of polyhedral surfaces. Thus algorithms operating
@@ -69,7 +69,7 @@ i < d\}$ are half-open intervals, and we call the box \emph{closed} if
 the $d$ intervals $\{ [lo_i,hi_i] \,|\, 0 \leq i < d\}$ are closed
 intervals. Note that closed boxes support zero-width boxes and they
 can intersect at their boundaries, while non-empty half-open boxes
-always have a positive volume and they only intersect iff their
+always have a positive \ccHtmlNoLinksFrom{volume} and they only intersect iff their
 interiors overlap.  The distinction between closed and half-open boxes
 does not require a different representation of boxes, just a different
 interpretation when comparing boxes, which is selected with the two
@@ -90,14 +90,14 @@ coordinates. In consequence, the algorithm guarantees that a pair of
 intersecting boxes is reported only once. Note that boxes with equal
 \ccc{id}-number are not reported since they obviously intersect trivially.
 
-The box intersection algorithm comes in two flavors: One algorithm
+The box \ccHtmlNoLinksFrom{intersection} algorithm comes in two flavors: One algorithm
 works on a single sequence of boxes and computes all pairwise
 intersections, which is called the \emph{complete\/} case, and used,
 for example, in the self-intersection test. The other algorithm works
 on two sequences of boxes and computes the pairwise intersections
 between boxes from the first sequence with boxes from the second
 sequence, which is called the \emph{bipartite\/} case. For each
-pairwise intersection found a callback function is called with two
+pairwise \ccHtmlNoLinksFrom{intersection} found a callback function is called with two
 arguments; the first argument is a box from the first sequence and the
 second argument a box from the second sequence. In the complete case,
 the second argument is a box from an internal copy of the first
@@ -107,7 +107,7 @@ sequence.
 % +------------------------------------------------------------------------+
 \section{Software Design}
 
-The box intersection algorithm is implemented as a family of generic
+The box \ccHtmlNoLinksFrom{intersection} algorithm is implemented as a family of generic
 functions; the functions for the complete case accept one iterator
 range, and the functions for the bipartite case accept two iterator
 ranges. The callback function for reporting the intersecting pairs is
@@ -202,7 +202,7 @@ void box_intersection_d(
 %\begin{ccAdvanced}
 %  A more detailed interface is provided with the box predicate traits
 %  class. It implements the various predicates used in the box
-%  intersection algorithm. It is exchangeable and can be used by
+%  \ccHtmlNoLinksFrom{intersection} algorithm. It is exchangeable and can be used by
 %  experts to fine tune the comparisons performed in this algorithm,
 %  e.g. utilizing machine instruction sets, see the
 %  \ccc{BoxIntersectionPredicateTraits_d} concept in the reference
@@ -228,7 +228,7 @@ The default policy of the box type implements the \ccc{id}-number with
 an explicit counter in the boxes, which is the default choice since it
 always works, but it costs space that could potentially be avoided,
 see the example in the next section. We use the \ccc{id}-number in our
-callback function to report the result of the intersection algorithm.
+callback function to report the result of the \ccHtmlNoLinksFrom{intersection} algorithm.
 The result will be that the first \ccc{query} box intersects all nine
 \ccc{boxes} and the second \ccc{query} box intersects the four boxes
 in the upper-right quadrant. See Section~\ref{sec:box-inters-params}
@@ -240,7 +240,7 @@ for the change of the \ccc{topology} parameter and its effect.
 % +------------------------------------------------------------------------+
 \section{Example for Finding Intersecting 3D Triangles}
 
-The conventional application of the axis-aligned box intersection
+The conventional application of the axis-aligned box \ccHtmlNoLinksFrom{intersection}
 algorithm will start from complex geometry, here 3D triangles,
 approximate them with their bounding box, compute the intersecting
 pairs of boxes, and check only for those if the original triangles
@@ -264,13 +264,13 @@ boxes and approximated geometry, which is the case here. It saves us
 the extra space that was needed for the explicit \ccc{id}-number in
 the previous example.
 
-We run the self intersection algorithm with the \ccc{report_inters}
+We run the self \ccHtmlNoLinksFrom{intersection} algorithm with the \ccc{report_inters}
 function as callback. This callback reports the intersecting boxes. It
 uses the \ccc{handle} and the global \ccc{triangles} vector to
 calculate the triangle numbers. Then it checks the triangles
-themselves for intersection and reports if not only the boxes but also
+themselves for \ccHtmlNoLinksFrom{intersection} and reports if not only the boxes but also
 the triangles intersect. We take some precautions before the
-intersection test in order to avoid problems, although unlikely, with
+\ccHtmlNoLinksFrom{intersection} test in order to avoid problems, although unlikely, with
 degenerate triangles that we might have created with the random
 process.
 
@@ -289,10 +289,10 @@ example program in the \cgal\ distribution.
 
 We modify the previous example, finding intersecting 3D triangles,
 and add an additional vector \ccc{ptr} that stores pointers to the bounding
-boxes, so that the intersection algorithm will work on a sequence of
+boxes, so that the \ccHtmlNoLinksFrom{intersection} algorithm will work on a sequence of
 pointers and not on a sequence of boxes. The change just affects the
-preparation of the additional vector and the call of the box intersection
-function. The box intersection function (actually its default traits
+preparation of the additional vector and the call of the box \ccHtmlNoLinksFrom{intersection}
+function. The box \ccHtmlNoLinksFrom{intersection} function (actually its default traits
 class) detects automatically that the value type of the iterators is a
 pointer type and not a class type.
 
@@ -302,7 +302,7 @@ pointer type and not a class type.
     for ( std::vector<Box>::iterator i = boxes.begin(); i != boxes.end(); ++i)
         ptr.push_back( &*i);
     
-    // Run the self intersection algorithm with all defaults on the 
+    // Run the self \ccHtmlNoLinksFrom{intersection} algorithm with all defaults on the 
     // indirect pointers to bounding boxes. Avoids copying the boxes.
     CGAL::box_self_intersection_d( ptr.begin(), ptr.end(), report_inters);
 \end{ccExampleCode}
@@ -333,7 +333,7 @@ for 10000 boxes, but the picture reversed for 100000 boxes, where the
 version above that copies the boxes becomes 300\% faster.
 
 Note that switching to the builtin type \ccc{float} is supported by
-the box intersection algorithm, but the interfacing with the \cgal\ 
+the box \ccHtmlNoLinksFrom{intersection} algorithm, but the interfacing with the \cgal\ 
 bounding box \ccc{CGAL::Bbox_3} would not be that easy. In particular,
 just converting from the \ccc{double} to the \ccc{float}
 representation incurs rounding that needs to be controlled properly,
@@ -344,10 +344,10 @@ otherwise the box might shrink and one might miss intersections.
 \section{Example Using the \textit{topology} and the \textit{cutoff} 
 Parameters}\label{sec:box-inters-params}
 
-Boxes can be interpreted by the box intersection algorithm as closed
+Boxes can be interpreted by the box \ccHtmlNoLinksFrom{intersection} algorithm as closed
 or as half-open boxes, see also Section~\ref{sec:box-inters-def}.  Closed
 boxes support zero-width boxes and they can intersect at their
-boundaries, while half-open boxes always have a positive volume and
+boundaries, while half-open boxes always have a positive \ccHtmlNoLinksFrom{volume} and
 they only intersect iff their interiors overlap.  The choice between
 closed or half-open boxes is selected with the \ccc{topology}
 parameter and its two values:
@@ -370,7 +370,7 @@ box in the first argument to the output iterator. We also provide a
 small helper function \ccc{report} that simplifies the use of the function
 object.
 
-We call the box intersection algorithm twice; once for the default
+We call the box \ccHtmlNoLinksFrom{intersection} algorithm twice; once for the default
 \ccc{topology}, which is the closed box topology, and once for the
 half-open box topology. We sort the resulting output for better
 readability and verify its correctness with the \ccc{check1} and
@@ -378,7 +378,7 @@ readability and verify its correctness with the \ccc{check1} and
 \ccc{query} intersects all \ccc{boxes}, and the upper-right box in
 \ccc{query} intersects the four boxes of the upper-right quadrant in
 \ccc{boxes}. Almost all intersections are with the box boundaries,
-thus, for the half-open topology only one intersection remains per
+thus, for the half-open topology only one \ccHtmlNoLinksFrom{intersection} remains per
 \ccc{query} box, namely its corresponding box in \ccc{boxes}. So, the
 output of the algorithm will be:
 
@@ -387,7 +387,7 @@ output of the algorithm will be:
     4 8 
 \end{verbatim}
 
-For the second box intersection function call we have to specify the
+For the second box \ccHtmlNoLinksFrom{intersection} function call we have to specify the
 \ccc{cutoff} parameter explicitly. See the
 Section~\ref{sec:box-inters-performance} below for a detailed
 discussion.
@@ -427,12 +427,12 @@ paper~\cite{cgal:ze-fsbi-02} gives optimal cutoffs in the thousands.
 Anyway, for optimal runtime some experiments to compare different
 cutoff parameters are recommended.
 
-To demonstrate that box intersection can be done quite fast, different
+To demonstrate that box \ccHtmlNoLinksFrom{intersection} can be done quite fast, different
 box sequences are intersected in the range between 4 and 800000 boxes
 total.  We use three-dimensional default boxes of closed topology with
 \ccc{float} coordinates and without additional data fields.  The
 algorithm works directly on the boxes, not on pointer to boxes. Each
-box intersection is reported to an empty dummy callback.
+box \ccHtmlNoLinksFrom{intersection} is reported to an empty dummy callback.
 
 For each box set, a near-optimal cutoff parameter is determined using
 an adaptive approximation. The runtime required for streaming is
@@ -471,7 +471,7 @@ the boxes. In the following example we write our own box class
 create the array of boxes directly. We also omit the explicitly stored
 \ccc{id}-number and use the address of the box itself as
 \ccc{id}-number. This works only if the boxes do not change their
-position, i.e., we work with pointers to the boxes in the intersection
+position, i.e., we work with pointers to the boxes in the \ccHtmlNoLinksFrom{intersection}
 algorithm.
 
 We follow with our own box class \ccc{Box} the
@@ -497,7 +497,7 @@ member function returns the dimension.
 \label{sec:box_inters_example_proximity}
 
 Given a set of 3D points, we want to find all pairs of points that are
-less than a certain distance apart. We use the box intersection
+less than a certain distance apart. We use the box \ccHtmlNoLinksFrom{intersection}
 algorithm to find good candidates, namely those that are less than
 this specified distance apart in the $L_\infty$ norm, which is a good
 approximation of the Euclidean norm.

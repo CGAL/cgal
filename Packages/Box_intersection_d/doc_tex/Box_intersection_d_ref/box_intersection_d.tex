@@ -45,7 +45,7 @@ i < d\}$ are half-open intervals, and we call the box \emph{closed} if
 the $d$ intervals $\{ [lo_i,hi_i] \,|\, 0 \leq i < d\}$ are closed
 intervals. Note that closed boxes support zero-width boxes and they
 can intersect at their boundaries, while non-empty half-open boxes
-always have a positive volume and they only intersect iff their
+always have a positive \ccHtmlNoLinksFrom{volume} and they only intersect iff their
 interiors overlap.  The distinction between closed or half-open boxes
 does not require a different representation of boxes, just a different
 interpretation when comparing boxes, which is selected with the
@@ -228,7 +228,7 @@ sequence \ccc{query}.
 The default policy of the box type implements the \ccc{id}-number with
 an explicit counter in the boxes, which is the default choice since it
 always works. We use the \ccc{id}-number in our callback function to
-report the result of the intersection algorithm call. The result will
+report the result of the \ccHtmlNoLinksFrom{intersection} algorithm call. The result will
 be that the first \ccc{query} box intersects all nine \ccc{boxes} and
 the second \ccc{query} box intersects the four boxes in the
 upper-right quadrant.
