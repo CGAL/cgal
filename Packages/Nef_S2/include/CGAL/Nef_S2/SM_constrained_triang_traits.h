@@ -190,7 +190,7 @@ public:
     Point p =  point(v);
     Point p1 = point(source(e));
     Point p2 = point(target(e));
-    return ( K.orientation(p1,p2,p) > 0 ); // leftturn
+    return ( K.orientation(p1,p2,p) > 0 ); // left_turn
   }
 
   void triangulate_up(Halfedge_handle& e_apex)

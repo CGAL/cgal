@@ -5,6 +5,7 @@ Nef_S2 Package: Release changes
      - Fixed handling of antipodal points in construction of Sphere_segment
        from two sphere-points.
      - Added std:: for 'endl' in include/CGAL/Nef_S2/SM_io_parser.h.
+     - replaced LEFTTURN and relatives with LEFT_TURN and relatives.
 
 1.2 (16 Apr 2002)
 

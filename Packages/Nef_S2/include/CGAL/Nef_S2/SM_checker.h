@@ -124,15 +124,15 @@ check_forward_prefix_condition(Vertex_const_handle v) const
 { Halfedge_const_handle ef = first_out_edge(v);
   if ( ef == Halfedge_const_handle() ) return;
   Halfedge_const_handle el = cyclic_adj_pred(ef);
-  bool is_leftturn = K.leftturn(point(v),
+  bool is_left_turn = K.left_turn(point(v),
                                 point(target(ef)),
                                 point(target(el)));
   bool el_forward = is_forward(el);
   bool ef_forward = is_forward(ef);
   CGAL_nef_assertion_msg( (ef == el ||
                        ef_forward && !el_forward ||
-                       ef_forward &&  el_forward && is_leftturn ||
-                       !ef_forward && !el_forward && is_leftturn) ,
+                       ef_forward &&  el_forward && is_left_turn ||
+                       !ef_forward && !el_forward && is_left_turn) ,
   "check_forward_prefix_condition: first backward, last forward\n");
 }
 
@@ -168,7 +168,7 @@ check_boundary_is_clockwise_weakly_polygon() const
     --hvit;
     Sphere_point p1 = point(target(e_boundary_at_v_min));
     Sphere_point p2 = point(target(hvit));
-    if ( K.orientation(p_min,p1,p2) > 0 ) { // leftturn
+    if ( K.orientation(p_min,p1,p2) > 0 ) { // left_turn
       e_boundary_at_v_min = hvit;
       break;
     }
