@@ -22,7 +22,6 @@
 #define SEGMENT_CIRCLE_WINDOW_STREAM_H
 
 #include <CGAL/IO/Window_stream.h>
-
 #include <CGAL/Segment_circle_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -51,7 +50,7 @@ Window_stream& operator<<(Window_stream& os,
     {
       // an x-monotone circular arc 
       // the middle point is the one with average x value of endpoints.
-      Segment_circle_2<NT>::Point ps[2];
+      typename Segment_circle_2<NT>::Point ps[2];
       NT middle_x = (sx+tx)/2;
       cv.get_points_at_x(middle_x, ps);
       px = CGAL::to_double(middle_x);
@@ -61,7 +60,7 @@ Window_stream& operator<<(Window_stream& os,
     {
       // a non x-monotone circular arc
       // we use the rightmost or leftmost point as a middle point
-      Segment_circle_2<NT>::Point ps[2];
+      typename Segment_circle_2<NT>::Point ps[2];
       // there might be two tangency points but we care for one only
       cv.horizontal_tangency_points (ps);
       px = CGAL::to_double(ps[0].x());
