@@ -28,7 +28,8 @@
 // ============================================================================
 
 #ifndef CGAL_COMPACT_CONTAINER_H
-#define CGAL_COMPACT_CONTAINER_H 1
+#define CGAL_COMPACT_CONTAINER_H
+
 #include <CGAL/basic.h>
 
 #include <iterator>
@@ -586,74 +587,29 @@ namespace CGALi {
     reference operator*() const { return *p; }
     pointer   operator->() const { return p; }
 
-    // Can itself be used to bit-squatting.
+    // Can itself be used for bit-squatting.
     void *   for_compact_container() const { return (void *) p; }
     void * & for_compact_container()       { return (void * &) p; }
   };
 
-  // Ptr/Ref/Val could be deduced from DSC...
-  template < class DSC, class Ptr, class Ref >
+  template < class DSC, class Ptr1, class Ref1, class Ptr2, class Ref2 >
   inline
-  bool operator==(const CC_iterator<DSC, Ptr, Ref> &rhs,
-                  const CC_iterator<DSC, Ptr, Ref> &lhs)
+  bool operator==(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
+                  const CC_iterator<DSC, Ptr2, Ref2> &lhs)
   {
     return &*rhs == &*lhs;
   }
 
-  template < class DSC, class Val >
+  template < class DSC, class Ptr1, class Ref1, class Ptr2, class Ref2 >
   inline
-  bool operator==(const CC_iterator<DSC, Val*, Val&> &rhs,
-                  const CC_iterator<DSC, const Val*, const Val&> &lhs)
-  {
-    return &*rhs == &*lhs;
-  }
-
-  template < class DSC, class Val >
-  inline
-  bool operator==(const CC_iterator<DSC, const Val*, const Val&> &rhs,
-                  const CC_iterator<DSC, Val*, Val&> &lhs)
-  {
-    return &*rhs == &*lhs;
-  }
-
-  template < class DSC, class Ptr, class Ref >
-  inline
-  bool operator!=(const CC_iterator<DSC, Ptr, Ref> &rhs,
-                  const CC_iterator<DSC, Ptr, Ref> &lhs)
+  bool operator!=(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
+                  const CC_iterator<DSC, Ptr2, Ref2> &lhs)
   {
     return &*rhs != &*lhs;
-  }
-
-  template < class DSC, class Val >
-  inline
-  bool operator!=(const CC_iterator<DSC, Val*, Val&> &rhs,
-                  const CC_iterator<DSC, const Val*, const Val&> &lhs)
-  {
-    return &*rhs != &*lhs;
-  }
-
-  template < class DSC, class Val >
-  inline
-  bool operator!=(const CC_iterator<DSC, const Val*, const Val&> &rhs,
-                  const CC_iterator<DSC, Val*, Val&> &lhs)
-  {
-    return &*rhs != &*lhs;
-  }
-
-  // The following comparison operator is here so that the iterators
-  // can be put directly in set/map (i.e. std::less<> just works).
-  // But maybe it's confusing ?
-
-  template < class DSC, class Ptr, class Ref >
-  inline
-  bool operator<(const CC_iterator<DSC, Ptr, Ref> &rhs,
-                 const CC_iterator<DSC, Ptr, Ref> &lhs)
-  {
-    return &*rhs < &*lhs;
   }
 
 } // namespace CGALi
 
 CGAL_END_NAMESPACE
-#endif // CGAL_COMPACT_CONTAINER_H //
-// EOF //
+
+#endif // CGAL_COMPACT_CONTAINER_H

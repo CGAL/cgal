@@ -2,6 +2,8 @@
 //	Revision History for package STL_Extension
 //=====================================================================
 
+- Compact_container : fixes for Intel C++, and remove iterator::operator<.
+
 - doc : fixes for Compact_container.
 
 //---------------------------------------------------------------------
