@@ -1,4 +1,4 @@
-In this directory there are 5 example program for the Sweep Line package.
+In this directory there are 5 example programs for the Sweep Line package.
 
 example1: Demonstate the use of the sweep line algorithm in order to
           construct a planar map of line segments.
