@@ -137,9 +137,11 @@ public:
     if (!curve_is_in_x_range(cv1,p) || !curve_is_in_x_range(cv2,p) )
       return EQUAL;
 
-    Point_2 leftmost1=(compare_x(curve_source(cv1),curve_target(cv1))==LARGER) ?
+    Point_2 leftmost1=(compare_x(curve_source(cv1),
+                                 curve_target(cv1))==LARGER) ?
       curve_target(cv1) : curve_source(cv1);
-    Point_2 leftmost2=(compare_x(curve_source(cv2),curve_target(cv2))==LARGER) ?
+    Point_2 leftmost2=(compare_x(curve_source(cv2),
+                                 curve_target(cv2))==LARGER) ?
       curve_target(cv2) : curve_source(cv2);
 
     //special cases wher returns EQUAL
@@ -187,9 +189,11 @@ public:
     if (!curve_is_in_x_range(cv1,p) || !curve_is_in_x_range(cv2,p))
       return EQUAL;
 
-    Point_2 rightmost1=(compare_x(curve_source(cv1),curve_target(cv1))==SMALLER)
+    Point_2 rightmost1=(compare_x(curve_source(cv1),
+                                  curve_target(cv1))==SMALLER)
       ? curve_target(cv1) : curve_source(cv1);
-    Point_2 rightmost2=(compare_x(curve_source(cv2),curve_target(cv2))==SMALLER)
+    Point_2 rightmost2=(compare_x(curve_source(cv2),
+                                  curve_target(cv2))==SMALLER)
       ? curve_target(cv2) : curve_source(cv2);
 
     //special cases wher returns EQUAL
@@ -421,7 +425,7 @@ public:
           //    o p0=lastcut (was p1 before)
           //    |
 
-          l.push_back(X_curve_2(last_cut,p1)); //constructor deque(first,beyond)
+          l.push_back(X_curve_2(last_cut,p1)); 
           //push_back the curve (last_cut...p0)
         }
         l.push_back(X_curve_2(p0,p2)); //push_back the segment (p0,p1)
