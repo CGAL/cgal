@@ -62,10 +62,11 @@ struct Static_filter_error
       return e;
   }
 
-  static double ulp (const double &d)
+  static double ulp (double d)
   {
       // You are supposed to call this function with rounding towards
       // +infinity, and on a positive number.
+      d = CGAL_IA_FORCE_TO_DOUBLE(d); // stop constant propagation.
       CGAL_assertion(d>=0);
       double u = (d + CGAL_IA_MIN_DOUBLE) - d;
       CGAL_assertion(u!=0);
