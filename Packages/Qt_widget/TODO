@@ -16,6 +16,7 @@ Rineau roadmap 2001/12/17:
  8) change filenames to follow the CGAL naming convention	[done]
 
 Allow to choose mouse buttons for tools.
+Rineau: Put Oldcursor of tools in a subclass.
 
 RADU URSU
 --------------
