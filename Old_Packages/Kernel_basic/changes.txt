@@ -1,3 +1,6 @@
+3.19   (?? Jan 2001)
+- Remove warnings in No_op_allocator.
+
 3.18   (12 Jan 2001)
 
 - Simple_Handle_for.h added
