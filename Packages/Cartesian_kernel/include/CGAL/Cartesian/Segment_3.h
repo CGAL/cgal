@@ -28,7 +28,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class SegmentC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : R_::Segment_handle_3
+  : public R_::Segment_handle_3
 {
 public:
   typedef R_                                    R;

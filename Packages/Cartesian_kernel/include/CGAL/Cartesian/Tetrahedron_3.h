@@ -171,9 +171,9 @@ TetrahedronC3<R CGAL_CTAG>::volume() const
   typename R::Vector_3 v1 = vertex(1)-vertex(0);
   typename R::Vector_3 v2 = vertex(2)-vertex(0);
   typename R::Vector_3 v3 = vertex(3)-vertex(0);
-  return CGAL_NTS abs(det3x3_by_formula(v1.x(), v1.y(), v1.z(),
-	                                v2.x(), v2.y(), v2.z(),
-	                                v3.x(), v3.y(), v3.z())/FT(6));
+  return det3x3_by_formula(v1.x(), v1.y(), v1.z(),
+	                   v2.x(), v2.y(), v2.z(),
+	                   v3.x(), v3.y(), v3.z())/FT(6);
 }
 
 template < class R >

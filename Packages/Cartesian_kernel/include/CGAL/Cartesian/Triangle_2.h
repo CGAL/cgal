@@ -157,7 +157,7 @@ TriangleC2<R CGAL_CTAG>::area() const
 {
   typename R::Vector_2 v1 = vertex(1)-vertex(0);
   typename R::Vector_2 v2 = vertex(2)-vertex(0);
-  return CGAL_NTS abs(det2x2_by_formula(v1.x(), v1.y(), v2.x(), v2.y())/FT(2));
+  return det2x2_by_formula(v1.x(), v1.y(), v2.x(), v2.y())/FT(2);
 }
 
 template < class R >

@@ -116,6 +116,7 @@ CGAL_Kernel_obj(Intersect_2, intersect_2_object)
 
 typedef CGALi::Call_y_at_x_to_get<FT>              Compute_y_at_x_2;
 typedef CGALi::Call_squared_length_to_get<FT>      Compute_squared_length_2;
+typedef CGALi::Call_area_to_get<FT>                Compute_area_2;
 typedef CGALi::Equal                               Equal_2;
 typedef CGALi::Equal_x                             Equal_x_2;
 typedef CGALi::Equal_y                             Equal_y_2;
@@ -130,7 +131,8 @@ typedef CGALi::Compare_xy                          Compare_xy_2;
 typedef CGALi::Compare_y_at_x                      Compare_y_at_x_2;
 
 CGAL_Kernel_obj(Compute_y_at_x_2, compute_y_at_x_2_object)
-CGAL_Kernel_obj(Compute_squared_length_2, Compute_squared_length_2_object)
+CGAL_Kernel_obj(Compute_squared_length_2, compute_squared_length_2_object)
+CGAL_Kernel_obj(Compute_area_2, compute_area_2_object)
 CGAL_Kernel_obj(Equal_2, equal_2_object)
 CGAL_Kernel_obj(Equal_x_2, equal_x_2_object)
 CGAL_Kernel_obj(Equal_y_2, equal_y_2_object)
@@ -307,25 +309,29 @@ CGAL_Kernel_obj(Assign_3, assign_3_object)
 CGAL_Kernel_obj(Intersect_3, intersect_3_object)
 
 
-typedef CGALi::Call_squared_length_to_get<FT>  Compute_squared_length_3;
-typedef CGALi::Equal                                   Equal_3;
-typedef CGALi::Equal_x                                 Equal_x_3;
-typedef CGALi::Equal_y                                 Equal_y_3;
-typedef CGALi::Equal_z                                 Equal_z_3;
-typedef CGALi::Equal_xy                                Equal_xy_3;
-typedef CGALi::Equal_xyz                               Equal_xyz_3;
-typedef CGALi::Less_x                                  Less_x_3;
-typedef CGALi::Less_y                                  Less_y_3;
-typedef CGALi::Less_z                                  Less_z_3;
-typedef CGAL::p_Less_xy<Point_3>                       Less_xy_3;
-typedef CGALi::Less_xyz                                Less_xyz_3;
-typedef CGALi::Compare_x                               Compare_x_3;
-typedef CGALi::Compare_y                               Compare_y_3;
-typedef CGALi::Compare_z                               Compare_z_3;
-typedef CGALi::Compare_xy                              Compare_xy_3;
-typedef CGALi::Compare_xyz                             Compare_xyz_3;
+typedef CGALi::Call_squared_length_to_get<FT>         Compute_squared_length_3;
+typedef CGALi::Call_squared_area_to_get<FT>           Compute_squared_area_3;
+typedef CGALi::Call_volume_to_get<FT>                 Compute_volume_3;
+typedef CGALi::Equal                                  Equal_3;
+typedef CGALi::Equal_x                                Equal_x_3;
+typedef CGALi::Equal_y                                Equal_y_3;
+typedef CGALi::Equal_z                                Equal_z_3;
+typedef CGALi::Equal_xy                               Equal_xy_3;
+typedef CGALi::Equal_xyz                              Equal_xyz_3;
+typedef CGALi::Less_x                                 Less_x_3;
+typedef CGALi::Less_y                                 Less_y_3;
+typedef CGALi::Less_z                                 Less_z_3;
+typedef CGAL::p_Less_xy<Point_3>                      Less_xy_3;
+typedef CGALi::Less_xyz                               Less_xyz_3;
+typedef CGALi::Compare_x                              Compare_x_3;
+typedef CGALi::Compare_y                              Compare_y_3;
+typedef CGALi::Compare_z                              Compare_z_3;
+typedef CGALi::Compare_xy                             Compare_xy_3;
+typedef CGALi::Compare_xyz                            Compare_xyz_3;
 
 CGAL_Kernel_obj(Compute_squared_length_3, compute_squared_length_3_object)
+CGAL_Kernel_obj(Compute_squared_area_3, compute_squared_area_3_object)
+CGAL_Kernel_obj(Compute_volume_3, compute_volume_3_object)
 CGAL_Kernel_obj(Equal_3, equal_3_object)
 CGAL_Kernel_obj(Equal_x_3, equal_x_3_object)
 CGAL_Kernel_obj(Equal_y_3, equal_y_3_object)
