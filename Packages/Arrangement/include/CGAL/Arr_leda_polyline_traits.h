@@ -75,23 +75,26 @@ public:
 
 #if (__LEDA__ >= 380)
                                // full specification is required for msvc:
-			       Arr_leda_polyline_traits::Point_2::cmp_x(p0,p1)
+                               Arr_leda_polyline_traits::Point_2::cmp_x(p0,p1)
 #else // backward compatability to LEDA   
-			       compare(p0.xcoord(),p1.xcoord()) 
+                               compare(p0.xcoord(),p1.xcoord()) 
 #endif
 
-			       );}
+                               );
+  }
+    
   Comparison_result compare_y(const Point_2& p0, const Point_2& p1) const {
     return (Comparison_result)(
 
 #if (__LEDA__ >= 380)
                                // full specification is required for msvc:
-			       Arr_leda_polyline_traits::Point_2::cmp_y(p0,p1)
+                               Arr_leda_polyline_traits::Point_2::cmp_y(p0,p1)
 #else // backward compatability to LEDA
-			       compare(p0.ycoord(),p1.ycoord())
+                               compare(p0.ycoord(),p1.ycoord())
 #endif
 
-			       );}
+                               );
+  }
 
   //on X_curve only - not Curve!
   bool curve_is_vertical(const X_curve_2& cv) const {
@@ -102,7 +105,7 @@ public:
   bool curve_is_in_x_range(const X_curve_2& cv, const Point_2& p) const {
     CGAL_assertion(is_x_monotone(cv));
     return (compare_x(p,curve_source(cv)) * 
-	    compare_x(p,curve_target(cv))) <=0 ;
+            compare_x(p,curve_target(cv))) <=0 ;
   }
 
   Comparison_result curve_compare_at_x(const X_curve_2& cv1, 
@@ -144,8 +147,8 @@ public:
   
   
   Comparison_result curve_compare_at_x_left(const X_curve_2& cv1, 
-					    const X_curve_2& cv2,
-					    const Point_2& p) const 
+                                            const X_curve_2& cv2,
+                                            const Point_2& p) const 
   {
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
@@ -253,9 +256,9 @@ public:
         //return (CGAL::compare_y_at_x(point_to_right(p),l1,l2)); 
         
         if (compare_x(l1.source(),l1.target())==LARGER)
-	  l1=l1.reversal();
+          l1=l1.reversal();
         if (compare_x(l2.source(),l2.target())==LARGER)
-	  l2=l2.reversal();
+          l2=l2.reversal();
         
         return (Comparison_result)CGAL_LEDA_SCOPE::cmp_slopes(l1,l2);
         
@@ -319,11 +322,11 @@ public:
     CGAL_assertion(is_x_monotone(second));
       
     CGAL_precondition(is_same(curve_source(cv),p) || 
-		      is_same(curve_target(cv),p));
+                      is_same(curve_target(cv),p));
     CGAL_precondition(is_same(curve_source(first),p) || 
-		      is_same(curve_target(first),p));
+                      is_same(curve_target(first),p));
     CGAL_precondition(is_same(curve_source(second),p) || 
-		      is_same(curve_target(second),p));
+                      is_same(curve_target(second),p));
       
       
 
@@ -370,7 +373,7 @@ public:
     typename X_curve_2::const_iterator it2=cv2.begin();
     while (it1!=cv1.end()) {
       if (!is_same(*it1++,*it2++))
-	return false;
+        return false;
     }
     return true;
   }
@@ -472,7 +475,7 @@ public:
   }
 
   void curve_split(const X_curve_2& cv, X_curve_2& c1, X_curve_2& c2, 
-		   const Point_2& split_pt) {
+                   const Point_2& split_pt) {
     
     //split curve at split point into c1 and c2
 
@@ -486,12 +489,12 @@ public:
 
     for (; p1 != cv.end(); ++p0,++p1) {
       if (is_same(*p1,split_pt)) {
-	split_at_vertex=true;
-	break;
+        split_at_vertex=true;
+        break;
       }
  
       if (compare_x(*p0,split_pt) * compare_x(split_pt,*p1) >= 0) {
-	//in x range 
+        //in x range 
         break;
       }
     } 
@@ -523,7 +526,7 @@ public:
 
 
   bool do_intersect_to_right(const X_curve_2 & ca, 
-			     const X_curve_2 & cb,
+                             const X_curve_2 & cb,
                              const Point_2   & pt) const 
   {
     bool res = do_intersect_to_right_1(ca, cb, pt);
@@ -539,7 +542,7 @@ public:
   //returns true iff the intersection is lexicographically strictly right of pt
 
   bool do_intersect_to_right_1(const X_curve_2 & ca, 
-			     const X_curve_2 & cb,
+                             const X_curve_2 & cb,
                              const Point_2   & pt) const 
   {
     CGAL_precondition(is_x_monotone(ca));
@@ -567,26 +570,30 @@ public:
     typename X_curve_2::const_iterator i2s = c2.begin();
     typename X_curve_2::const_iterator i2t = i2s; ++i2t;
 
+    // For some reason MSVC requires the following:
+    typename X_curve_2::const_iterator c1End = c1.end();
+    typename X_curve_2::const_iterator c2End = c2.end();
+
     //increment this variable if curve starts left of pt
     int number_to_left = 0; 
 
     if (CGAL_LEDA_SCOPE::compare(*i1s, pt) <= 0) {
       //increment to nearest from the left of pt
       ++number_to_left;
-      for (; i1t != c1.end(); ++i1s, ++i1t) 
+      for (; i1t != c1End; ++i1s, ++i1t) 
       {
-	if (CGAL_LEDA_SCOPE::compare(*i1t, pt) > 0) break;
+        if (CGAL_LEDA_SCOPE::compare(*i1t, pt) > 0) break;
       }
-      if (i1t == c1.end()) return false; //c1 ends to the left of pt
+      if (i1t == c1End) return false; //c1 ends to the left of pt
     }
     //now i1s holds the source vertex and i1t holds the target
 
     if (CGAL_LEDA_SCOPE::compare(*i2s, pt) <= 0) {
       ++number_to_left;
-      for (; i2t != c2.end(); ++i2s, ++i2t) {
-	if (CGAL_LEDA_SCOPE::compare(*i2t, pt) > 0) break;
+      for (; i2t != c2End; ++i2s, ++i2t) {
+        if (CGAL_LEDA_SCOPE::compare(*i2t, pt) > 0) break;
       }
-      if (i2t == c2.end()) return false; //c2 ends to the left of pt
+      if (i2t == c2End) return false; //c2 ends to the left of pt
     }
 
     if (number_to_left == 2) {
@@ -597,17 +604,17 @@ public:
       {
         if ( (CGAL_LEDA_SCOPE::compare(i_seg.source(), pt) > 0) ||
              (CGAL_LEDA_SCOPE::compare(i_seg.target(), pt) > 0) )
-	  return true;
+          return true;
       }
     
       // advance to the nearer point
       if (CGAL_LEDA_SCOPE::compare(*i2t, *i1t) > 0) {
-	++i1s; ++i1t;
-        if (i1t==c1.end()) return false;
+        ++i1s; ++i1t;
+        if (i1t == c1End) return false;
       }
       else {
-	++i2s; ++i2t;
-        if (i2t==c2.end()) return false;
+        ++i2s; ++i2t;
+        if (i2t == c2End) return false;
       }
 
     }
@@ -624,12 +631,12 @@ public:
 
       if (CGAL_LEDA_SCOPE::compare(*i2t, *i1t) > 0) 
       {
-	++i1s; ++i1t;
-        if (i1t == c1.end()) return false;
+        ++i1s; ++i1t;
+        if (i1t == c1End) return false;
       }
       else {
-	++i2s; ++i2t;
-        if (i2t == c2.end()) return false;
+        ++i2s; ++i2t;
+        if (i2t == c2End) return false;
       }
     }
   }
@@ -689,66 +696,70 @@ public:
     typename X_curve_2::const_iterator i2s=c2.begin(), i2e = c2.end();
     typename X_curve_2::const_iterator i2t=i2s; ++i2t;
 
+    // For some reason MSVC requires the following:
+    typename X_curve_2::const_iterator c1End = c1.end();
+    typename X_curve_2::const_iterator c2End = c2.end();
+
     int number_to_left=0; //increment this variable if curve starts left of pt
     
-    if (CGAL_LEDA_SCOPE::compare(*i1s,pt) <= 0) {
+    if (CGAL_LEDA_SCOPE::compare(*i1s, pt) <= 0) {
       //increment to nearest from the left of pt
       ++number_to_left;
-      for (; i1t!=i1e; ++i1s,++i1t) {
-	if (CGAL_LEDA_SCOPE::compare(*i1t,pt) > 0) break;
+      for (; i1t != i1e; ++i1s,++i1t) {
+        if (CGAL_LEDA_SCOPE::compare(*i1t, pt) > 0) break;
       }
-      CGAL_assertion (i1t!=c1.end());
+      CGAL_assertion (i1t != c1End);
     }
 
-    if (CGAL_LEDA_SCOPE::compare(*i2s,pt) <= 0) {
+    if (CGAL_LEDA_SCOPE::compare(*i2s, pt) <= 0) {
       ++number_to_left;
-      for (; i2t!=i2e; ++i2s,++i2t) {
-	if (CGAL_LEDA_SCOPE::compare(*i2t,pt) > 0) break;
+      for (; i2t != i2e; ++i2s, ++i2t) {
+        if (CGAL_LEDA_SCOPE::compare(*i2t, pt) > 0) break;
       }
-      CGAL_assertion(i2t!=c2.end())  ; //c2 ends to the left of pt
+      CGAL_assertion(i2t != c2End)  ; //c2 ends to the left of pt
     }
    
-    if (number_to_left==2) {
+    if (number_to_left == 2) {
       //check if intersection exists and is lexicographically larger
       Segment s1(*i1s,*i1t),s2(*i2s,*i2t);
       Segment i_seg;
-      if( s1.intersection( s2,i_seg ) ){
+      if( s1.intersection(s2, i_seg)) {
         if( CGAL_LEDA_SCOPE::compare( i_seg.target(),i_seg.source() ) == 0 )
-	{
+        {
           // Intersection is only one point
           if( CGAL_LEDA_SCOPE::compare( i_seg.target(), pt ) > 0 )
-	  {
+          {
             p1 = p2 = point_normalize(i_seg.target());
             found = true;
           }
         }
         if( CGAL_LEDA_SCOPE::compare( i_seg.target(),i_seg.source() ) != 0 &&
             ! found ) 
-	{
+        {
           // Intersection is a segment
           if( CGAL_LEDA_SCOPE::compare( i_seg.target(), i_seg.source()) < 0 )
             i_seg = i_seg.reverse();
           if( CGAL_LEDA_SCOPE::compare( i_seg.target(),pt ) > 0 ) {
-	    p2=i_seg.target();
-	    if( CGAL_LEDA_SCOPE::compare( i_seg.source(),pt ) > 0 ){
-	      p1=i_seg.source();                           
+            p2=i_seg.target();
+            if( CGAL_LEDA_SCOPE::compare( i_seg.source(),pt ) > 0 ){
+              p1=i_seg.source();                           
             }
-	    else {
-	      //p1=pt;
+            else {
+              //p1=pt;
               // Modified by Eug
-	      // Performing vertical ray shooting from pt.
-	      // Finding the intersection point. We know by now
-	      // that there is exactly ONE point. Assinging this 
-	      // point to p1.
+              // Performing vertical ray shooting from pt.
+              // Finding the intersection point. We know by now
+              // that there is exactly ONE point. Assinging this 
+              // point to p1.
               Point_2 ap1( pt.xcoord(), i_seg.source().ycoord() );
               Point_2 ap2( pt.xcoord(), i_seg.target().ycoord() );
               Segment vertical_pt_x_base( ap1, ap2 );
-	      Segment i_vertical;
+              Segment i_vertical;
               vertical_pt_x_base.intersection( i_seg, i_vertical );
               p1 = i_vertical.source();
             }
             found = true;
-	  }
+          }
         }
       }//endif intersection 
       if ( ! found) {
@@ -781,31 +792,31 @@ public:
         }
         if( CGAL_LEDA_SCOPE::compare( i_seg.target(),i_seg.source() ) != 0  &&
             !found ){
-	  //check if intersection seg to the right of pt
-	  if( CGAL_LEDA_SCOPE::compare( i_seg.source(), i_seg.target() ) > 0 )
+          //check if intersection seg to the right of pt
+          if( CGAL_LEDA_SCOPE::compare( i_seg.source(), i_seg.target() ) > 0 )
             i_seg=i_seg.reverse();
 
-	  if( CGAL_LEDA_SCOPE::compare( i_seg.target(), pt ) > 0 ){
-	    p2 = i_seg.target();
-	    if( CGAL_LEDA_SCOPE::compare( i_seg.source(), pt ) > 0 ){
-	      p1=i_seg.source();
+          if( CGAL_LEDA_SCOPE::compare( i_seg.target(), pt ) > 0 ){
+            p2 = i_seg.target();
+            if( CGAL_LEDA_SCOPE::compare( i_seg.source(), pt ) > 0 ){
+              p1=i_seg.source();
             }
-	    else {
-	      // p1=pt; 
+            else {
+              // p1=pt; 
               // Modified by Eug
-	      // Performing vertical ray shooting from pt.
-	      // Finding the intersection point. We know by now
-	      // that there is exactly ONE point. Assinging this 
-	      // point to p1. 
+              // Performing vertical ray shooting from pt.
+              // Finding the intersection point. We know by now
+              // that there is exactly ONE point. Assinging this 
+              // point to p1. 
               Point_2 ap1( pt.xcoord(), i_seg.source().ycoord() );
               Point_2 ap2( pt.xcoord(), i_seg.target().ycoord() );
               Segment vertical_pt_x_base( ap1, ap2 );
-	      Segment i_vertical;
+              Segment i_vertical;
               vertical_pt_x_base.intersection( i_seg, i_vertical );
               p1 = i_vertical.source();
             }           
-	    found = true;
-	  }
+            found = true;
+          }
         }
       } // endif s1.intersection  
       if( !found ){
@@ -830,34 +841,34 @@ public:
       s1++; t1++; s2++; t2++;
       if( t1 != i1e && t2 != i2e){
 
-	// check for overlap after x point
-	Segment i_seg;
+        // check for overlap after x point
+        Segment i_seg;
 
-	if ( CGAL_LEDA_SCOPE::compare( p1, *i1t ) == 0  && 
+        if ( CGAL_LEDA_SCOPE::compare( p1, *i1t ) == 0  && 
              CGAL_LEDA_SCOPE::compare( p1, *i2t ) == 0 ){
           Segment tmp_seg1( *s1, *t1 );
           Segment tmp_seg2( *s2, *t2 );
 	  if( !tmp_seg1.intersection( tmp_seg2, i_seg ) )
             return false;
-	}
-	else if ( CGAL_LEDA_SCOPE::compare( p1, *i1t ) == 0 ){
+        }
+        else if ( CGAL_LEDA_SCOPE::compare( p1, *i1t ) == 0 ){
           Segment tmp_seg1( *s1, *t1 );
           Segment tmp_seg2( *i2s, *i2t );
 	  if( !tmp_seg1.intersection( tmp_seg2, i_seg ) )
             return false;
-	}
-	else if ( is_same( p1, *i2t)) {
+        }
+        else if ( is_same( p1, *i2t)) {
           Segment tmp_seg1( *i1s, *i1t );
           Segment tmp_seg2( *s2, *t2 );
 	  if( !tmp_seg1.intersection( tmp_seg2, i_seg ) )
             return false;
-	}
-	// no need to check whether intersection seg to the right of pt, 
-	// because we have already found an x point to the right of pt.
-	if( CGAL_LEDA_SCOPE::compare( i_seg.source(), i_seg.target() ) > 0 )
-	  i_seg=i_seg.reverse();
-	p1 = i_seg.source();
-	p2 = i_seg.target();
+        }
+        // no need to check whether intersection seg to the right of pt, 
+        // because we have already found an x point to the right of pt.
+        if( CGAL_LEDA_SCOPE::compare( i_seg.source(), i_seg.target() ) > 0 )
+          i_seg=i_seg.reverse();
+        p1 = i_seg.source();
+        p2 = i_seg.target();
       }        
     }
     return found;
@@ -866,7 +877,7 @@ public:
   bool curves_overlap(const X_curve_2& ca, const X_curve_2& cb) const 
   {
     CGAL_assertion(curves_overlap_1(ca, cb) == 
-		   curves_overlap_1(curve_flip(ca), curve_flip(cb)));
+                   curves_overlap_1(curve_flip(ca), curve_flip(cb)));
     return curves_overlap_1(ca, cb);
   }
   bool curves_overlap_1(const X_curve_2& ca, const X_curve_2& cb) const 
@@ -895,6 +906,10 @@ public:
     typename X_curve_2::const_iterator i2s = c2.begin();
     typename X_curve_2::const_iterator i2t = i2s; ++i2t;
 
+    // For some reason MSVC requires the following:
+    typename X_curve_2::const_iterator c1End = c1.end();
+    typename X_curve_2::const_iterator c2End = c2.end();
+
     // Now i1s holds the source vertex and i1t holds the target
     Segment i_seg;
     Segment s1(*i1s, *i1t), s2(*i2s, *i2t);
@@ -903,17 +918,17 @@ public:
       // If the resulting intersection segment (can be 0 lengthed) is not
       // of zero length then there is an overlap.
       if (CGAL_LEDA_SCOPE::compare(i_seg.source(), i_seg.target()) != 0)
-	return true;
+        return true;
     }
     
     // Advance to the nearer point
     if (CGAL_LEDA_SCOPE::compare(*i2t,*i1t) > 0) {
       ++i1s; ++i1t;
-      if (i1t==c1.end()) return false;
+      if (i1t == c1End) return false;
     }
     else {
       ++i2s; ++i2t;
-      if (i2t==c2.end()) return false;
+      if (i2t == c2End) return false;
     }
 
     //NOW we can start sweeping the chains
@@ -924,17 +939,17 @@ public:
       Segment s1(*i1s, *i1t), s2(*i2s, *i2t);
       if (s1.intersection(s2,i_seg)) 
       {
-	if (CGAL_LEDA_SCOPE::compare(i_seg.source(),i_seg.target()) != 0)
-	  return true;
+        if (CGAL_LEDA_SCOPE::compare(i_seg.source(),i_seg.target()) != 0)
+          return true;
       }
 
       if (CGAL_LEDA_SCOPE::compare(*i2t,*i1t) > 0) {
-	++i1s; ++i1t;
-        if (i1t==c1.end()) return false;
+        ++i1s; ++i1t;
+        if (i1t == c1End) return false;
       }
       else {
-	++i2s; ++i2t;
-        if (i2t==c2.end()) return false;
+        ++i2s; ++i2t;
+        if (i2t == c2End) return false;
       }
     }
   }
@@ -967,7 +982,6 @@ private:
       (compare_y(p1, p2) == EQUAL);
   }
 
-
 protected:
   Point_2 point_normalize(const Point_2 &pt) const {
 
@@ -988,11 +1002,8 @@ protected:
     }
 
   }
- 
-
 };
 
 CGAL_END_NAMESPACE
 
 #endif // CGAL_ARR_LEDA_POLYLINE_TRAITS_H
-// EOF
