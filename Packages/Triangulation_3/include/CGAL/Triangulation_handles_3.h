@@ -85,7 +85,7 @@ public:
 
 template <class Gt, class Tds>
 CGAL_Triangulation_vertex<Gt,Tds> * 
-debug(const CGAL_Triangulation_vertex_handle<Gt,Tds> v)
+CGAL_debug(const CGAL_Triangulation_vertex_handle<Gt,Tds> v)
 {
   return v.ptr();
 }
@@ -138,7 +138,7 @@ public:
 
 template <class Gt, class Tds>
 CGAL_Triangulation_cell<Gt,Tds> * 
-debug(const CGAL_Triangulation_cell_handle<Gt,Tds> c)
+CGAL_debug(const CGAL_Triangulation_cell_handle<Gt,Tds> c)
 {
   return c.ptr();
 }
