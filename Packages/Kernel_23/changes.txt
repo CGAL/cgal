@@ -1,3 +1,6 @@
+1.18
+- Added coordinate iterator
+
 1.17 (20 January 2003)
 - Rename Leda_like_handle to Handle, similar for Leda_like_rep to Rep.
 
