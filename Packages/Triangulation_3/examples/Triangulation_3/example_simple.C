@@ -47,7 +47,7 @@ int main()
   assert( n == 6 );
 
   // checking validity of T :
-  assert( T.is_valid(false) );
+  assert( T.is_valid() );
 
   Locate_type lt;
   int li, lj;
