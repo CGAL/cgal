@@ -94,6 +94,12 @@ namespace CGALi {
     In_place_list_iterator() : node(0) {}
     In_place_list_iterator(T* x) : node(x) {}
 
+#if defined(__GNUC__) && (__GNUC__ < 3)
+    // added by request of Michael Seel:
+    In_place_list_iterator(const Self& i) { node=i.node; }
+    Self& operator=(const Self& i) { node = i.node; return *this; }
+#endif
+
     bool  operator==( const Self& x) const { return node == x.node; }
     bool  operator!=( const Self& x) const { return node != x.node; }
     T&    operator*()  const { return *node; }
@@ -144,6 +150,12 @@ namespace CGALi {
     In_place_list_const_iterator() : node(0) {}
     In_place_list_const_iterator( Iterator i) : node(&*i) {}
     In_place_list_const_iterator(const T* x) : node(x) {}
+
+#if defined(__GNUC__) && (__GNUC__ < 3)
+    // added by request of Michael Seel:
+    In_place_list_const_iterator(const Self& i) { node=i.node; }
+    Self& operator=(const Self& i) { node = i.node; return *this; }
+#endif
 
     bool     operator==( const Self& x) const { return node == x.node; }
     bool     operator!=( const Self& x) const { return node != x.node; }
