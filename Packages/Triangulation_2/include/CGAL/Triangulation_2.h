@@ -220,9 +220,9 @@ public:
                     int& li) const;
   Face_handle
   locate(const Point& p,
-           Locate_type& lt,
-           int& li,
-           Face_handle start = Face_handle()) const;
+	 Locate_type& lt,
+	 int& li,
+	 Face_handle start = Face_handle()) const;
 
   Face_handle
   locate(const Point &p,
@@ -1511,7 +1511,7 @@ march_locate_2D(const Face_handle& start,
 		int& li) const
 {
   //    CGAL_triangulation_precondition( ! is_infinite(start) );
-  Triangulation_2 *ncthis = (Triangulation_2 *)this;
+  Triangulation_2 *ncthis = static_cast<Triangulation_2 *>(this);
       
   Point p(start->vertex(0)->point());
   if(xy_equal(t,p)) {
