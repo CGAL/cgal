@@ -176,6 +176,17 @@ enum {
     FPU_cw_down = 0x400 | 0x127f
 };
 
+#elif defined __BORLANDC__
+#define CGAL_IA_SETFPCW(CW) _control87(CW,~0)
+#define CGAL_IA_GETFPCW(CW) CW = _control87(0,0)
+typedef unsigned short FPU_CW_t;
+enum {
+    FPU_cw_near = 0x0   | 0x127f,
+    FPU_cw_zero = 0xC00 | 0x127f,
+    FPU_cw_up   = 0x800 | 0x127f,
+    FPU_cw_down = 0x400 | 0x127f
+};
+
 #else
 #error Architecture not supported
 #endif
