@@ -33,6 +33,8 @@ struct quadruple
   T3 third;
   T4 fourth;
 
+  quadruple() {}
+
   quadruple(const T1& a, const T2& b, const T3& c, const T4& d)
     : first(a), second(b), third(c), fourth(d) 
     {}
