@@ -27,7 +27,8 @@
 #include <CGAL/Splitters.h>
 namespace CGAL {
 
-  template <class Separator_, class Item_, class Splitter=Sliding_midpoint>
+  template <class Separator_, class Item_, 
+  	    class Splitter=Sliding_midpoint<Item_> >
   class Kd_tree_traits_point {
 
   public:
@@ -42,7 +43,7 @@ namespace CGAL {
   private:
 
     unsigned int the_bucket_size;
-    split_rule the_selected_split_rule;
+    
     NT the_aspect_ratio;
     bool use_extended_nodes_option;
 
@@ -54,7 +55,7 @@ namespace CGAL {
 			     NT aspect_ratio=NT(3), 
 			     bool use_extended_nodes=true) {
 		the_bucket_size = bucket_size;
-		the_selected_split_rule = Selected_split_rule;
+		
 		the_aspect_ratio = aspect_ratio;
 		use_extended_nodes_option = use_extended_nodes;
 	}
@@ -69,8 +70,8 @@ namespace CGAL {
 	{
 		Separator* sep;
 
-		Splitter<Item> S;
-		sep=S.split_container(c0,c1,the_aspect_ratio)
+		Splitter S;
+		sep=S.split(c0,c1,the_aspect_ratio);
                 
 		return sep;
     }
