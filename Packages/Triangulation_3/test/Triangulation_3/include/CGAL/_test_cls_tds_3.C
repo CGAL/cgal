@@ -54,33 +54,48 @@ _test_cls_tds_3( const Tds &)
   std::cout << "    constructors" << std::endl;
   Tds tds1;
   Tds tds2;
+
+  // Test I/O for dimension -2
+  // the other dimensions are not tested here 
+  // (they are implicitely tested in triangulation)
+  Tds tdsfromfile;
+  std::cout << "    I/O" << std::endl;
+std::ofstream oFileT("Test_tds_IO_3",ios::out);
+std::ifstream iFileT("Test_tds_IO_3",ios::in);
+  oFileT << tds1;
+  iFileT >> tdsfromfile;
+  assert(tdsfromfile.is_valid());
+  assert(tdsfromfile.dimension() == -2);
+  assert(tdsfromfile.number_of_vertices() == 0);
+
+  
   Vertex_iterator vit;
   Vertex* v1 = new Vertex;
-  tds2.insert_outside_affine_hull(*v1, NULL);
+  tds2.insert_increase_dimension(*v1, NULL);
   Tds tds3(tds2);
   Vertex* v2 = new Vertex;
 
   vit=tds3.vertices_begin();
-  tds3.insert_outside_affine_hull(*v2,&*vit);
+  tds3.insert_increase_dimension(*v2,&*vit);
   std::cout << "ok" << std::endl;
   Tds tds4 = tds3;
   Vertex* v3 = new Vertex;
   vit=tds4.vertices_begin();
-  tds4.insert_outside_affine_hull(*v3,&*vit);
+  tds4.insert_increase_dimension(*v3,&*vit);
   std::cout << "ok" << std::endl;
   Tds tds5;
   tds5.swap(tds4);
   tds4=tds5;
   Vertex* v4 = new Vertex;
   vit=tds5.vertices_begin();
-  tds5.insert_outside_affine_hull(*v4,&*vit);
+  tds5.insert_increase_dimension(*v4,&*vit);
   std::cout << "ok" << std::endl;
   Tds tds6;
   tds6.swap(tds5);
   tds5=tds6;
   Vertex* v5 = new Vertex;
   vit=tds6.vertices_begin();
-  tds6.insert_outside_affine_hull(*v5,&*vit);
+  tds6.insert_increase_dimension(*v5,&*vit);
   std::cout << "ok" << std::endl;
 
   // Setting functions
