@@ -427,7 +427,7 @@ X_curve read_polyline_curve(std::ifstream& file, bool reverse_order)
   {
       NT    x,y; 
       X_curve curr_curve;
-      std::fstream  pm_file("pm.txt", _IO_OUTPUT + _IO_INPUT + _IO_ATEND);
+      std::fstream  pm_file("pm.txt", std::ios::in | std::ios::out);
     
       pm_file.clear();
       
@@ -460,7 +460,7 @@ X_curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       pm_file << pm;
       
       // debugging!
-      std::cout<<pm;
+      //std::cout<<pm;
       //input_file.close();
       //arr_file.close();
       //arr_file.open("temp", _IO_INPUT);
