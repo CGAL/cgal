@@ -137,7 +137,7 @@ OutputIterator get_subcurves(CurveInputIterator curves_begin,
   *                   as intersection points. Defaults to true.
   */
 template <class Traits, class CurveInputIterator, class OutputIterator>
-OutputIterator get_intersection_curves(CurveInputIterator curves_begin,
+OutputIterator get_intersecting_curves(CurveInputIterator curves_begin,
                                        CurveInputIterator curves_end,
                                        OutputIterator intersecting_curves,
                                        bool endpoints = true,

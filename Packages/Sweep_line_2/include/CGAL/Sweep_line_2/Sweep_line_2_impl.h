@@ -76,11 +76,6 @@ CGAL_BEGIN_NAMESPACE
   - curves beginning and ending on other curves.
   - overlapping curves
 
-  There are two main functionalities supported by this algorithm:
-  1. calculate the non intersecting curves that are a product of 
-     intersecting a set of input curves
-  2. calculate all the intersection points between the curves specified
-
   An extension of this algorithm is used to produce a planar map containing
   the input curves efficiently. \sa Pmwx_aggregate_insert.
 
@@ -93,8 +88,7 @@ CGAL_BEGIN_NAMESPACE
                  at the interior of another curve
     Handle left curves - iterate over the curves that intersect 
                  at the event point and defined to the left of the 
-                 event. This is mostly where the output (sub curves 
-                 or intersection points) is produced.
+                 event. 
     Handle right curves - iterate over the curves that intersect 
                  the event point and defined to the right of the 
                  event point. This is where new intersection points 
@@ -112,7 +106,7 @@ CGAL_BEGIN_NAMESPACE
 template < class SweepLineTraits_2,
            class SweepEvent,
            class CurveWrap,
-           class SweepVisitor  ,
+           class SweepVisitor,
            typename Allocator = CGAL_ALLOCATOR(int) >
 class Sweep_line_2_impl
 {
@@ -150,9 +144,8 @@ public:
  
 
 
-  Sweep_line_2_impl(SweepVisitor* visitor, bool deallocate_event = true) :
+  Sweep_line_2_impl(SweepVisitor* visitor) :
       m_traits(new Traits()),
-      m_deallocate_event(deallocate_event),
       m_sweep_line_traits(m_traits),
       m_traitsOwner(true),
       m_comp_param(new CompareParams(m_traits)),
@@ -170,9 +163,8 @@ public:
   }
 
 
-  Sweep_line_2_impl(Traits *t, SweepVisitor* visitor, bool deallocate_event = true) :
+  Sweep_line_2_impl(Traits *t, SweepVisitor* visitor) :
       m_traits(t),
-      m_deallocate_event(deallocate_event),
       m_sweep_line_traits(m_traits),
       m_traitsOwner(false),
       m_comp_param(new CompareParams(m_traits)),
@@ -267,9 +259,8 @@ public:
       m_queue->erase(eventIter);
 
       handle_right_curves();
-      m_visitor->after_handle_event(m_currentEvent);
-
-      deallocate_event(m_currentEvent, m_deallocate_event);
+      if(m_visitor->after_handle_event(m_currentEvent))
+        deallocate_event(m_currentEvent);
 
       eventIter = m_queue->begin();
     }
@@ -675,11 +666,6 @@ protected:
   /*! a pointer to a traits object */
   Traits *m_traits;
 
-  /*! indicates if events are deallocated at this scope 
-      (if false, the events are not deallocated here)
-   */
-  bool m_deallocate_event;
-
   /*! an object that holds a static trait object 
    *  to be used by events and subcurves
    */
@@ -756,13 +742,10 @@ protected:
 
   public:
   
-  void deallocate_event(Event* event, bool deallocate = true)
+  void deallocate_event(Event* event)
   {
-    if(deallocate)
-    {
-      m_eventAlloc.destroy(event);
-      m_eventAlloc.deallocate(event,1);
-    }
+    m_eventAlloc.destroy(event);
+    m_eventAlloc.deallocate(event,1);
   }
 
 };

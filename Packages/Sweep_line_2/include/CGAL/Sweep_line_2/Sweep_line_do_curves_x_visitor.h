@@ -31,11 +31,11 @@ class Sweep_line_do_curves_x_visitor
   }
 
     void before_handle_event(Event* event){}
-    void after_handle_event(Event* event)
+    bool after_handle_event(Event* event)
     {
       if(event->is_internal_intersection_point())
         m_found_x = true;
-
+      return true;
     }
 
     void add_subcurve(const X_monotone_curve_2& cv,Subcurve* sc){}

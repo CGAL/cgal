@@ -63,7 +63,7 @@ public:
       m_arr(arr),
       m_notif(ntf),
       m_visitor(arr, ntf, m_traits),
-      m_sweep_line(m_traits, &m_visitor, false)
+      m_sweep_line(m_traits, &m_visitor)
       {}
 
 
@@ -73,7 +73,7 @@ public:
       m_arr(arr),
       m_notif(ntf),
       m_visitor(arr, ntf, m_traits),
-      m_sweep_line(m_traits, &m_visitor, false)
+      m_sweep_line(m_traits, &m_visitor)
       {}
 
   template<class CurveInputIterator>

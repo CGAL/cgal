@@ -37,7 +37,10 @@ public:
        
   void before_handle_event(Event* event){}
 
-  void after_handle_event(Event* event){}
+  bool after_handle_event(Event* event)
+  {
+    return true;
+  }
 
   void add_subcurve(const X_monotone_curve_2& cv,Subcurve* sc)
   {

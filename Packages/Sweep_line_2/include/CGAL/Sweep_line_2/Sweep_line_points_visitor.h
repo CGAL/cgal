@@ -40,10 +40,11 @@ public:
        
   void before_handle_event(Event* event){}
 
-  void after_handle_event(Event* event)
+  bool after_handle_event(Event* event)
   {
     if(m_includeEndPoints || event->is_internal_intersection_point())
       *m_out++ = event->get_point();
+    return true;
   }
 
  void add_subcurve(X_monotone_curve_2 cv,Subcurve* sc){}

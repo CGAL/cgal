@@ -49,7 +49,7 @@ public:
     m_currentEvent = event;
   }
 
-  void after_handle_event(Event* event)
+  bool after_handle_event(Event* event)
   {
     for(SubCurveIter itr = event->left_curves_begin();
         itr != event->left_curves_end();
@@ -69,6 +69,7 @@ public:
         (*itr)->set_last_event(event);
       }
     }
+    return false;
   }
 
   void add_subcurve(const X_monotone_curve_2& cv,Subcurve* sc)
