@@ -4,6 +4,14 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.42
+//---------------------------------------------------------------------
+
+GLOB: define CGAL_CC in include makefiles.
+GLOB: write CGAL_EXTRA_OBJECTS without path-prefix.
+SRC : added rule for compiling the intervall-arithmetic workaround_4_irix.
+
+//---------------------------------------------------------------------
 //	revision 1.41
 //---------------------------------------------------------------------
 

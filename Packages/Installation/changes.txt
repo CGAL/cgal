@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: define CGAL_CC in include makefiles.
+GLOB: write CGAL_EXTRA_OBJECTS without path-prefix.
 GLOB: generate cctype replacement header, if CCTYPE_MACRO_BUG is encountered.
 GLOB: add -DLEDA_NO_DEFAULT_COMPARE to cxxflags on gcc-2.8.
 GLOB: use "make -k" when building the libs.
@@ -34,6 +36,7 @@ DOCS: removed support for "external" STL
 DOCS: removed obsolete paragraph about LEDA/STL problems
 DOCS: updated upgrade section.
 DOCS: updated list of supported compilers.
+SRC : added rule for compiling the intervall-arithmetic workaround_4_irix.
 SRC : added CGAL_EXTRA_OBJECTS to lib makefiles (Intervall_arithmetic fix
 SRC : added Fixed_precision_nt.o.
 
