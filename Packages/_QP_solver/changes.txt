@@ -1,5 +1,8 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.15 on 2-Sep-2003 [mh]
+- Fix CGAL_NTS.
+
 Version 0.9.14 on 13-Aug-2003 [af]
 - Added template argument to To_double
 
