@@ -54,8 +54,10 @@ public:
 				typedef MeshAdaptor_3													Mesh_adaptor_3;
 				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode				ErrorCode;
 				typedef typename MeshAdaptor_3::NT										NT;
-				typedef typename MeshAdaptor_3::Face									Face;
-				typedef typename MeshAdaptor_3::Vertex									Vertex;
+				typedef typename MeshAdaptor_3::Face_handle								Face_handle;
+				typedef typename MeshAdaptor_3::Face_const_handle						Face_const_handle;
+				typedef typename MeshAdaptor_3::Vertex_handle							Vertex_handle;
+				typedef typename MeshAdaptor_3::Vertex_const_handle						Vertex_const_handle;
 				typedef typename MeshAdaptor_3::Point_3									Point_3;
 				typedef typename MeshAdaptor_3::Point_2									Point_2;
 				typedef typename MeshAdaptor_3::Vector_3								Vector_3;
@@ -116,8 +118,8 @@ protected:
 				void initialize_system_from_mesh_border(Solver* solver_u, Solver* solver_v, const MeshAdaptor_3& mesh) ;
 
 				// compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
-				// Implementation note: usually, subclasses of Fixed_border_parametizer_3 need only to implement compute_wij()
-				virtual	NT  compute_wij(const MeshAdaptor_3& mesh, const Vertex& main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj) = 0;
+				// Implementation note: Subclasses must at least implement compute_wij()
+				virtual	NT  compute_wij(const MeshAdaptor_3& mesh, Vertex_const_handle main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj) = 0;
 
 				// Compute the line i of matrix A for i inner vertex
 				// * call compute_wij() to compute the A coefficient Wij for each neighbor Vj
@@ -127,7 +129,7 @@ protected:
 				// * vertices must be indexed
 				// * vertex i musn't be already parameterized
 				// * line i of A must contain only zeros
-				virtual ErrorCode  setup_inner_vertex_relations (Solver* solver_u, Solver* solver_v, const MeshAdaptor_3& mesh, const Vertex& vertex);
+				virtual ErrorCode  setup_inner_vertex_relations (Solver* solver_u, Solver* solver_v, const MeshAdaptor_3& mesh, Vertex_const_handle vertex);
 
 				// Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex
 				void set_mesh_uv_from_system(MeshAdaptor_3* mesh, const Solver& solver_u, const Solver& solver_v) ;
@@ -197,7 +199,7 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 	// Mark all vertices as NOT "parameterized"
 	Vertex_iterator vertexIt;
 	for (vertexIt = mesh->mesh_vertices_begin(); vertexIt != mesh->mesh_vertices_end(); vertexIt++)
-		mesh->set_vertex_parameterized(&*vertexIt, false);
+		mesh->set_vertex_parameterized(vertexIt, false);
 
 	// compute (u,v) for border vertices and mark them as "parameterized"
 	if ( ! get_border_parametizer().parameterize_border(mesh) )
@@ -215,13 +217,13 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 	solver_v.begin_system() ;
 	for (vertexIt = mesh->mesh_vertices_begin(); vertexIt != mesh->mesh_vertices_end(); vertexIt++)
 	{
-	 	CGAL_parameterization_assertion(mesh->is_vertex_on_border(*vertexIt) == mesh->is_vertex_parameterized(*vertexIt));
+	 	CGAL_parameterization_assertion(mesh->is_vertex_on_border(vertexIt) == mesh->is_vertex_parameterized(vertexIt));
 
 		// inner vertices only
-		if( ! mesh->is_vertex_on_border(*vertexIt) )
+		if( ! mesh->is_vertex_on_border(vertexIt) )
 		{
 			// Compute the line i of matrix A for i inner vertex
-			status = setup_inner_vertex_relations (&solver_u, &solver_v, *mesh, *vertexIt);
+			status = setup_inner_vertex_relations (&solver_u, &solver_v, *mesh, vertexIt);
 			if (status != OK)
 				return status;
 		}
@@ -309,13 +311,13 @@ void Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinear
 
 	for (Border_vertex_const_iterator it = mesh.mesh_border_vertices_begin(); it != mesh.mesh_border_vertices_end(); it++)
 	{
-		CGAL_parameterization_assertion(mesh.is_vertex_parameterized(*it));
+		CGAL_parameterization_assertion(mesh.is_vertex_parameterized(it));
 
 		// Get vertex index in sparse linear system
-		int index = mesh.get_vertex_index(*it);
+		int index = mesh.get_vertex_index(it);
 
 		// Get vertex (u,v)
-		Point_2 uv = mesh.get_vertex_uv(*it);
+		Point_2 uv = mesh.get_vertex_uv(it);
 
 		// Write (u,v) in Xu and Xv
 		solver_u->variable(index).set_value(uv.x()) ;
@@ -339,7 +341,7 @@ template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlge
 inline 
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode 
 Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::setup_inner_vertex_relations(Solver* solver_u, Solver* solver_v, 
-																														  const MeshAdaptor_3& mesh, const Vertex& vertex) 
+																														  const MeshAdaptor_3& mesh, Vertex_const_handle vertex) 
 {
 	CGAL_parameterization_assertion(solver_u != NULL);
 	CGAL_parameterization_assertion(solver_v != NULL);
@@ -365,7 +367,7 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 		Wii -= Wij;
 
 		// Get j index
-		int j = mesh.get_vertex_index(*neighborIt);
+		int j = mesh.get_vertex_index(neighborIt);
 
 		// Set Wij in matrix
 	    solver_u->add_coefficient(j, Wij);
@@ -392,14 +394,14 @@ void Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinear
 	Vertex_iterator vertexIt;
 	for (vertexIt = mesh->mesh_vertices_begin(); vertexIt != mesh->mesh_vertices_end(); vertexIt++)
 	{
-		int index = mesh->get_vertex_index(*vertexIt);
+		int index = mesh->get_vertex_index(vertexIt);
 
 		NT u = solver_u.variable(index).value() ;
 		NT v = solver_v.variable(index).value() ;
 
 		// Fill vertex (u,v) and mark it as "parameterized"
-		mesh->set_vertex_uv(&*vertexIt, Point_2(u,v));
-		mesh->set_vertex_parameterized(&*vertexIt, true);
+		mesh->set_vertex_uv(vertexIt, Point_2(u,v));
+		mesh->set_vertex_parameterized(vertexIt, true);
 	}
 }
 
@@ -443,18 +445,18 @@ bool Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinear
 	for (Face_const_iterator faceIt = mesh.mesh_faces_begin(); faceIt != mesh.mesh_faces_end(); faceIt++) 
 	{
 		// Get 3 vertices of the face
-		Vertex v0, v1, v2;
+		Vertex_const_handle v0, v1, v2;
 		int vertexIndex = 0;
-		Vertex_around_face_const_circulator vertexCir    = mesh.face_vertices_begin(*faceIt), 
+		Vertex_around_face_const_circulator vertexCir    = mesh.face_vertices_begin(faceIt), 
 											vertexCirEnd = vertexCir;
 		CGAL_For_all(vertexCir, vertexCirEnd) 
 		{
 			if (vertexIndex == 0)
-				v0 = *vertexCir;
+				v0 = vertexCir;
 			else if (vertexIndex == 1)
-				v1 = *vertexCir;
+				v1 = vertexCir;
 			else if (vertexIndex == 2)
-				v2 = *vertexCir;
+				v2 = vertexCir;
 
 			vertexIndex++;
 		}
@@ -474,7 +476,7 @@ bool Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinear
 		Vector_3 normal = CGAL::cross_product(v01_3D, v02_3D);
 
 		// Check that all normals are oriented the same way => no 2D triangle is flipped
-		if (vertexCir == mesh.face_vertices_begin(*faceIt))
+		if (vertexCir == mesh.face_vertices_begin(faceIt))
 		{
 			first_triangle_normal = normal;
 		}

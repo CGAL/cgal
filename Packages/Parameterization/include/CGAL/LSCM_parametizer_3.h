@@ -54,8 +54,10 @@ public:
 				typedef MeshAdaptor_3													Mesh_adaptor_3;
 				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode				ErrorCode;
 				typedef typename MeshAdaptor_3::NT										NT;
-				typedef typename MeshAdaptor_3::Face									Face;
-				typedef typename MeshAdaptor_3::Vertex									Vertex;
+				typedef typename MeshAdaptor_3::Face_handle								Face_handle;
+				typedef typename MeshAdaptor_3::Face_const_handle						Face_const_handle;
+				typedef typename MeshAdaptor_3::Vertex_handle							Vertex_handle;
+				typedef typename MeshAdaptor_3::Vertex_const_handle						Vertex_const_handle;
 				typedef typename MeshAdaptor_3::Point_3									Point_3;
 				typedef typename MeshAdaptor_3::Point_2									Point_2;
 				typedef typename MeshAdaptor_3::Vector_3								Vector_3;
@@ -122,7 +124,7 @@ private:
 				// 
 				// Preconditions:
 				// * vertices must be indexed
-				ErrorCode setup_triangle_relations(LeastSquaresSolver* solver, const MeshAdaptor_3& mesh, const Face& face) ;
+				ErrorCode setup_triangle_relations(LeastSquaresSolver* solver, const MeshAdaptor_3& mesh, Face_const_handle face) ;
 
 				// Copy X coordinates into the (u,v) pair of each vertex
 				void set_mesh_uv_from_system(MeshAdaptor_3* mesh, const LeastSquaresSolver& solver) ;
@@ -189,7 +191,7 @@ LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits
 	
 	// Mark all vertices as NOT "parameterized"
 	for (Vertex_iterator vertexIt = mesh->mesh_vertices_begin(); vertexIt != mesh->mesh_vertices_end(); vertexIt++)
-		mesh->set_vertex_parameterized(&*vertexIt, false);
+		mesh->set_vertex_parameterized(vertexIt, false);
 
 	// Compute (u,v) for (at least 2) border vertices and mark them as "parameterized"
 	if ( ! m_borderParametizer.parameterize_border(mesh) )
@@ -204,7 +206,7 @@ LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits
 	for (Face_iterator faceIt = mesh->mesh_faces_begin(); faceIt != mesh->mesh_faces_end(); faceIt++)
 	{
 		// Create 2 lines in the linear system per triangle (1 for u, 1 for v)
-		status = setup_triangle_relations (&solver, *mesh, *faceIt);
+		status = setup_triangle_relations (&solver, *mesh, faceIt);
 		if (status != OK)
 			return status;
 	}
@@ -283,10 +285,10 @@ void LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraT
 	for (Vertex_const_iterator it = mesh.mesh_vertices_begin(); it != mesh.mesh_vertices_end(); it++)
 	{
 		// Get vertex index in sparse linear system
-		int index = mesh.get_vertex_index(*it);
+		int index = mesh.get_vertex_index(it);
 
 		// Get vertex (u,v) (meaningless if vertex is not parameterized)
-		Point_2 uv = mesh.get_vertex_uv(*it);
+		Point_2 uv = mesh.get_vertex_uv(it);
 
 		// Write (u,v) in X (meaningless if vertex is not parameterized)
  		// Note  : 2*index     --> u
@@ -295,7 +297,7 @@ void LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraT
         solver->variable(2*index + 1).set_value(uv.y()) ;
 
 		// Copy (u,v) in B if vertex is parameterized
-        if (mesh.is_vertex_parameterized(*it)) {
+        if (mesh.is_vertex_parameterized(it)) {
             solver->variable(2*index    ).lock() ;
             solver->variable(2*index + 1).lock() ;
         } 
@@ -358,23 +360,23 @@ template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlge
 inline 
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode 
 LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::setup_triangle_relations(LeastSquaresSolver* solver,
-																										      const MeshAdaptor_3& mesh, const Face& face) 
+																										      const MeshAdaptor_3& mesh, Face_const_handle face) 
 {
 	CGAL_parameterization_assertion(solver != NULL);
 
 	// Get the 3 vertices of the triangle
-	Vertex v0, v1, v2;
+	Vertex_const_handle v0, v1, v2;
 	int vertexIndex = 0;
 	Vertex_around_face_const_circulator vertexCir    = mesh.face_vertices_begin(face), 
 										vertexCirEnd = vertexCir;
 	CGAL_For_all(vertexCir, vertexCirEnd) 
 	{
 		if (vertexIndex == 0)
-			v0 = *vertexCir;
+			v0 = vertexCir;
 		else if (vertexIndex == 1)
-			v1 = *vertexCir;
+			v1 = vertexCir;
 		else if (vertexIndex == 2)
-			v2 = *vertexCir;
+			v2 = vertexCir;
 
 		vertexIndex++;
 	}
@@ -451,7 +453,7 @@ void LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraT
 	Vertex_iterator vertexIt;
 	for (vertexIt = mesh->mesh_vertices_begin(); vertexIt != mesh->mesh_vertices_end(); vertexIt++)
 	{
-		int index = mesh->get_vertex_index(*vertexIt);
+		int index = mesh->get_vertex_index(vertexIt);
 
  		// Note  : 2*index     --> u
 		//         2*index + 1 --> v
@@ -459,8 +461,8 @@ void LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraT
 		NT v = solver.variable(2*index + 1).value() ;
 
 		// Fill vertex (u,v) and mark it as "parameterized"
-		mesh->set_vertex_uv(&*vertexIt, Point_2(u,v));
-		mesh->set_vertex_parameterized(&*vertexIt, true);
+		mesh->set_vertex_uv(vertexIt, Point_2(u,v));
+		mesh->set_vertex_parameterized(vertexIt, true);
 	}
 }
 
@@ -503,18 +505,18 @@ bool LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraT
 	for (Face_const_iterator faceIt = mesh.mesh_faces_begin(); faceIt != mesh.mesh_faces_end(); faceIt++) 
 	{
 		// Get 3 vertices of the face
-		Vertex v0, v1, v2;
+		Vertex_const_handle v0, v1, v2;
 		int vertexIndex = 0;
-		Vertex_around_face_const_circulator vertexCir    = mesh.face_vertices_begin(*faceIt), 
+		Vertex_around_face_const_circulator vertexCir    = mesh.face_vertices_begin(faceIt), 
 											vertexCirEnd = vertexCir;
 		CGAL_For_all(vertexCir, vertexCirEnd) 
 		{
 			if (vertexIndex == 0)
-				v0 = *vertexCir;
+				v0 = vertexCir;
 			else if (vertexIndex == 1)
-				v1 = *vertexCir;
+				v1 = vertexCir;
 			else if (vertexIndex == 2)
-				v2 = *vertexCir;
+				v2 = vertexCir;
 
 			vertexIndex++;
 		}
@@ -534,7 +536,7 @@ bool LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraT
 		Vector_3 normal = CGAL::cross_product(v01_3D, v02_3D);
 
 		// Check that all normals are oriented the same way => no 2D triangle is flipped
-		if (vertexCir == mesh.face_vertices_begin(*faceIt))
+		if (vertexCir == mesh.face_vertices_begin(faceIt))
 		{
 			first_triangle_normal = normal;
 		}

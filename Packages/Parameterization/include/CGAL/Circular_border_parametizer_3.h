@@ -33,7 +33,9 @@ CGAL_BEGIN_NAMESPACE
 // Class Circular_border_parametizer_3
 // Model of BorderParametizer_3
 // This class parameterizes the border of a 3D surface onto a circle.
-// 
+//
+// Design pattern: Circular_border_parametizer_3 is an Strategy (see [GOF95]): it implements a strategy of boundary parameterization for models of Parametizer_3
+//
 // Implementation note: to simplify the implementation, BorderParametizer_3 models know only the MeshAdaptor_3 class. They don't 
 //                      know the parameterization algorithm requirements nor the kind of sparse linear system used.
 template <class MeshAdaptor_3>			// 3D surface
@@ -45,8 +47,10 @@ public:
 				typedef MeshAdaptor_3													Mesh_adaptor_3;
 				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode				ErrorCode;
 				typedef typename MeshAdaptor_3::NT										NT;
-				typedef typename MeshAdaptor_3::Face									Face;
-				typedef typename MeshAdaptor_3::Vertex									Vertex;
+				typedef typename MeshAdaptor_3::Face_handle								Face_handle;
+				typedef typename MeshAdaptor_3::Face_const_handle						Face_const_handle;
+				typedef typename MeshAdaptor_3::Vertex_handle							Vertex_handle;
+				typedef typename MeshAdaptor_3::Vertex_const_handle						Vertex_const_handle;
 				typedef typename MeshAdaptor_3::Point_3									Point_3;
 				typedef typename MeshAdaptor_3::Point_2									Point_2;
 				typedef typename MeshAdaptor_3::Vector_3								Vector_3;
@@ -92,7 +96,7 @@ double Circular_border_parametizer_3<MeshAdaptor_3>::compute_boundary_length(con
 	double len = 0.0;
 	for(Border_vertex_const_iterator it = mesh.mesh_border_vertices_begin(); it != mesh.mesh_border_vertices_end(); it++)
 	{
-		CGAL_parameterization_assertion(mesh.is_vertex_on_border(*it));
+		CGAL_parameterization_assertion(mesh.is_vertex_on_border(it));
 
 		// Get next iterator (looping)
 		Border_vertex_const_iterator next = it; 
@@ -101,7 +105,7 @@ double Circular_border_parametizer_3<MeshAdaptor_3>::compute_boundary_length(con
 			next = mesh.mesh_border_vertices_begin();
 
 		// Add length of it -> next vector to 'len'
-		Vector_3 v = mesh.get_vertex_position(*next) - mesh.get_vertex_position(*it);
+		Vector_3 v = mesh.get_vertex_position(next) - mesh.get_vertex_position(it);
 		len += std::sqrt(v*v);
 	}
 	return len;
@@ -130,10 +134,10 @@ bool Circular_border_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdap
 	const double tmp = 2*PI/total_len;
 	double len = 0.0;						// current position on the circle in [0, total_len]
 //	Border_vertex_iterator first = mesh->mesh_border_vertices_begin();
-//	bool border = (*first)->is_border();
+//	bool border = first->is_border();
 	for(Border_vertex_iterator it = mesh->mesh_border_vertices_begin(); it != mesh->mesh_border_vertices_end(); it++)
 	{
-		CGAL_parameterization_assertion(mesh->is_vertex_on_border(*it));
+		CGAL_parameterization_assertion(mesh->is_vertex_on_border(it));
 
 		double angle = len*tmp;				// current position on the circle in radians
 
@@ -144,10 +148,10 @@ bool Circular_border_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdap
 		//else
 		//	uv = Point_2(0.5+0.5*cos(angle),0.5+0.5*sin(angle));
 //		std::cerr << "(" << uv.x() << "," << uv.y() << ") ";
-		mesh->set_vertex_uv(&*it, uv);
+		mesh->set_vertex_uv(it, uv);
 
 		// Mark vertex as "parameterized"
-		mesh->set_vertex_parameterized(&*it, true);
+		mesh->set_vertex_parameterized(it, true);
 
 		// Get next iterator (looping)
 		Border_vertex_iterator next = it; 
@@ -156,7 +160,7 @@ bool Circular_border_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdap
 			next = mesh->mesh_border_vertices_begin();
 
 		// Add length of it -> next vector to 'len'
-		Vector_3 v = mesh->get_vertex_position(*next) - mesh->get_vertex_position(*it);
+		Vector_3 v = mesh->get_vertex_position(next) - mesh->get_vertex_position(it);
 		len += std::sqrt(v*v);
 	}
 

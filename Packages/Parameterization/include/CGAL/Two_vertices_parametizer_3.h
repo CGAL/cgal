@@ -36,7 +36,9 @@ CGAL_BEGIN_NAMESPACE
 // Class Two_vertices_parametizer_3
 // Model of BorderParametizer_3
 // This class parameterizes 2 extreme vertices of a 3D surface. This kind of border parameterization is used by free border parameterization algorithms.
-// 
+//
+// Design pattern: Two_vertices_parametizer_3 is an Strategy (see [GOF95]): it implements a strategy of boundary parameterization for models of Parametizer_3
+//
 // Implementation note: to simplify the implementation, BorderParametizer_3 models know only the MeshAdaptor_3 class. They don't 
 //                      know the parameterization algorithm requirements nor the kind of sparse linear system used.
 template <class MeshAdaptor_3>			// 3D surface
@@ -48,8 +50,10 @@ public:
 				typedef MeshAdaptor_3													Mesh_adaptor_3;
 				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode				ErrorCode;
 				typedef typename MeshAdaptor_3::NT										NT;
-				typedef typename MeshAdaptor_3::Face									Face;
-				typedef typename MeshAdaptor_3::Vertex									Vertex;
+				typedef typename MeshAdaptor_3::Face_handle								Face_handle;
+				typedef typename MeshAdaptor_3::Face_const_handle						Face_const_handle;
+				typedef typename MeshAdaptor_3::Vertex_handle							Vertex_handle;
+				typedef typename MeshAdaptor_3::Vertex_const_handle						Vertex_const_handle;
 				typedef typename MeshAdaptor_3::Point_3									Point_3;
 				typedef typename MeshAdaptor_3::Point_2									Point_2;
 				typedef typename MeshAdaptor_3::Vector_3								Vector_3;
@@ -108,7 +112,7 @@ bool Two_vertices_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdaptor
 	double zmax = DBL_MIN ;
 	for (it = mesh->mesh_vertices_begin(); it != mesh->mesh_vertices_end(); it++)
 	{
-		Point_3 position = mesh->get_vertex_position(*it);
+		Point_3 position = mesh->get_vertex_position(it);
 
 		xmin = std::min(position.x(), xmin) ;
 		ymin = std::min(position.y(), xmin) ;
@@ -152,25 +156,25 @@ bool Two_vertices_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdaptor
 
 	// Project onto shortest bounding box axis,
 	// and mark extrema vertices as "parameterized"
-	Vertex* vxmin = NULL ;
+	Vertex_handle vxmin = NULL ;
 	double  umin  = DBL_MAX ;
-	Vertex* vxmax = NULL ;
+	Vertex_handle vxmax = NULL ;
 	double  umax  = DBL_MIN ;
 	for (it = mesh->mesh_vertices_begin(); it != mesh->mesh_vertices_end(); it++)
 	{
-		Point_3  position = mesh->get_vertex_position(*it);
+		Point_3  position = mesh->get_vertex_position(it);
 		Vector_3 position_as_vector = position - Point_3(0,0,0);
 
 		double u = position_as_vector * V1 ;	/* dot product */
 		double v = position_as_vector * V2 ;	/* dot product */
-		mesh->set_vertex_uv(&*it, Point_2(u,v)) ;	// LS 02/05: I guess that this is useful only for *vxmin and *vxmax
+		mesh->set_vertex_uv(it, Point_2(u,v)) ;	// LS 02/05: I guess that this is useful only for *vxmin and *vxmax
 
 		if(u < umin) {
-			vxmin = &*it ;
+			vxmin = it ;
 			umin = u ;
 		} 
 		if(u > umax) {
-			vxmax = &*it ;
+			vxmax = it ;
 			umax = u ;
 		} 
 	}

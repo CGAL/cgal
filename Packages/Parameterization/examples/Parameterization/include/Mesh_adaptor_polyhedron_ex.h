@@ -30,8 +30,6 @@
 #include "CGAL/parameterization_assertions.h"
 
 #include "cgal_types.h"		
-#include "Feature_skeleton.h"
-#include "Mesh_cutter.h"
 #include "Mesh_feature_extractor.h"
 
 #include <cassert>
@@ -78,23 +76,71 @@ namespace CGAL
 }; // mamespace CGAL
 
 
+// Utility class for Mesh_adaptor_polyhedron_ex
+// This class adds a conversion to handle/const handle to an iterator class
+template <class Iter,
+          class ConstHandle,
+          class Handle = void*>
+class Convertible_iterator : public Iter {
+	typedef Iter											Base; 
+	typedef Convertible_iterator<Iter, ConstHandle, Handle>	Self;
+public:
+	Convertible_iterator() {}
+	Convertible_iterator(Base b) : Base(b) {}
+	Self & operator++()		{ Base::operator++(); return *this; }
+	Self & operator--()		{ Base::operator--(); return *this; }
+	Self operator++(int)	{ Self tmp(*this); ++(*this); return tmp; }
+	Self operator--(int)	{ Self tmp(*this); --(*this); return tmp; }
+	operator Handle()				{ return Base::ptr(); }
+	operator ConstHandle() const	{ return Base::ptr(); }
+};
+
+
 // Class Mesh_adaptor_polyhedron_ex 
 // Model of MeshAdaptor_3 concept
+//
 // Adaptor class to access to a Polyhedron_ex 3D mesh on an uniform manner. 
+// The input mesh can be of any genus, but it has to come with a description of the boundary of a topological disc. If no boundary is given, 
+// we assume that it coincides with the unique boundary already in the input mesh. 
 class Mesh_adaptor_polyhedron_ex
 {
 // Private types
 private:
-				typedef Polyhedron_ex::Vertex_handle						Vertex_handle;
+				typedef Polyhedron_ex::Facet								Face;
+				typedef Polyhedron_ex::Vertex								Vertex;
 				typedef Polyhedron_ex::Halfedge								Halfedge;
 				typedef Polyhedron_ex::Halfedge_handle						Halfedge_handle;
-				typedef Feature_backbone<Vertex_handle, Halfedge_handle>	Backbone;
+				typedef Feature_backbone<Polyhedron_ex::Vertex_handle, Halfedge_handle>	
+																			Backbone;
+				// Iterator over mesh boundary vertices
+				typedef CGAL::Iterator_project<std::list<Halfedge_handle>::iterator, 
+											   CGAL::Project_vertex<Halfedge_handle> >	
+																			Border_vertex_iterator_base;
+				typedef CGAL::Iterator_project<std::list<Halfedge_handle>::const_iterator, 
+											   CGAL::Project_vertex<Halfedge_handle> >	
+																			Border_vertex_const_iterator_base;
+				// Circulator over a face's vertices
+				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_facet_circulator, 
+												 CGAL::Project_vertex<Halfedge>, Vertex&, Vertex*>					
+																			Vertex_around_face_circulator_base;
+				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_facet_const_circulator, 
+											     CGAL::Project_vertex<Halfedge>, const Vertex&, const Vertex*>					
+																			Vertex_around_face_const_circulator_base;
+				// Circulator over the vertices incident to a vertex
+				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_vertex_circulator, 
+												 CGAL::Project_opposite_vertex<Halfedge>, Vertex&, Vertex*>					
+																			Vertex_around_vertex_circulator_base;
+				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_vertex_const_circulator, 
+												 CGAL::Project_opposite_vertex<Halfedge>, const Vertex&, const Vertex*>					
+																			Vertex_around_vertex_const_circulator_base;
 	
 // Public types
 public:
 				typedef Polyhedron_ex::Traits::FT							NT;
-				typedef Polyhedron_ex::Facet								Face;
-				typedef Polyhedron_ex::Vertex								Vertex;
+				typedef Polyhedron_ex::Facet_handle							Face_handle;
+				typedef Polyhedron_ex::Facet_const_handle					Face_const_handle;
+				typedef Polyhedron_ex::Vertex_handle						Vertex_handle;
+				typedef Polyhedron_ex::Vertex_const_handle					Vertex_const_handle;
 				typedef Polyhedron_ex::Traits::Point_2						Point_2;
 				typedef Polyhedron_ex::Traits::Point_3						Point_3;
 				typedef Polyhedron_ex::Traits::Vector_2						Vector_2;
@@ -106,26 +152,20 @@ public:
 				typedef Polyhedron_ex::Vertex_iterator						Vertex_iterator;
 				typedef Polyhedron_ex::Vertex_const_iterator				Vertex_const_iterator;
 				// Iterator over mesh boundary vertices
-				typedef CGAL::Iterator_project<std::list<Halfedge_handle>::iterator, 
-											   CGAL::Project_vertex<Halfedge_handle> >	
-																			Border_vertex_iterator;
-				typedef CGAL::Iterator_project<std::list<Halfedge_handle>::const_iterator, 
-											   CGAL::Project_vertex<Halfedge_handle> >	
-																			Border_vertex_const_iterator;
+				typedef Convertible_iterator<Border_vertex_iterator_base, Vertex_const_handle, Vertex_handle>
+																			Border_vertex_iterator;		
+				typedef Convertible_iterator<Border_vertex_const_iterator_base, Vertex_const_handle>
+																			Border_vertex_const_iterator;	
 				// Circulator over a face's vertices
-				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_facet_circulator, 
-												 CGAL::Project_vertex<Halfedge>, Vertex&, Vertex*>					
-																			Vertex_around_face_circulator;
-				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_facet_const_circulator, 
-											     CGAL::Project_vertex<Halfedge>, const Vertex&, const Vertex*>					
-																			Vertex_around_face_const_circulator;
+				typedef Convertible_iterator<Vertex_around_face_circulator_base, Vertex_const_handle, Vertex_handle>
+																			Vertex_around_face_circulator;	
+				typedef Convertible_iterator<Vertex_around_face_const_circulator_base, Vertex_const_handle>
+																			Vertex_around_face_const_circulator; 
 				// Circulator over the vertices incident to a vertex
-				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_vertex_circulator, 
-												 CGAL::Project_opposite_vertex<Halfedge>, Vertex&, Vertex*>					
-																			Vertex_around_vertex_circulator;
-				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_vertex_const_circulator, 
-												 CGAL::Project_opposite_vertex<Halfedge>, const Vertex&, const Vertex*>					
-																			Vertex_around_vertex_const_circulator;
+				typedef Convertible_iterator<Vertex_around_vertex_circulator_base, Vertex_const_handle, Vertex_handle>
+																			Vertex_around_vertex_circulator;	
+				typedef Convertible_iterator<Vertex_around_vertex_const_circulator_base, Vertex_const_handle>
+																			Vertex_around_vertex_const_circulator; 
 
 // Public operations
 public:
@@ -134,11 +174,26 @@ public:
 				//
 
 				// Create an adaptator for an existing Polyhedron_ex mesh
-				Mesh_adaptor_polyhedron_ex(Polyhedron_ex* mesh) {
-					CGAL_parameterization_assertion(mesh != NULL);
+				// The input mesh must be a topological disc (thus have a unique boundary)
+				Mesh_adaptor_polyhedron_ex(Polyhedron_ex* mesh) 
+				{
+					assert(mesh != NULL);
 					m_mesh = mesh;
 
-					prepare();
+					// Extract mesh boundary
+					m_boundary = extract_unique_boundary();
+				}
+				// Create an adaptator for an existing Polyhedron_ex mesh
+				// The input mesh can be of any genus, but it has to come with a description of the boundary of a topological disc 
+				template <class InputIterator>
+				Mesh_adaptor_polyhedron_ex(Polyhedron_ex* mesh,
+										   InputIterator first_boundary_halfedge, InputIterator last_boundary_halfedge) 
+				{
+					assert(mesh != NULL);
+					m_mesh = mesh;
+
+					// Copy input boundary
+					std::copy(first_boundary_halfedge, last_boundary_halfedge, std::back_inserter(m_boundary));
 				}
 
 				// Default copy constructor and operator =() are fine
@@ -152,8 +207,8 @@ public:
 					for(pHalfedge = m_mesh->halfedges_begin(); pHalfedge != m_mesh->halfedges_end(); pHalfedge++)
 					{
   						Polyhedron_ex::Vertex_handle pVertex =  pHalfedge->vertex();
-						assert(is_vertex_parameterized(*pVertex));
-						pHalfedge->uv(pVertex->u(),pVertex->v());	
+						if (is_vertex_parameterized(pVertex))
+							pHalfedge->uv(pVertex->u(),pVertex->v());	
 					}
 					fprintf(stderr,"ok\n");
 				}
@@ -190,13 +245,13 @@ public:
 				void  index_mesh_vertices () {
 					int index = 0;
 					for (Vertex_iterator it = mesh_vertices_begin(); it != mesh_vertices_end(); it++)
-						set_vertex_index(&*it, index++);
+						set_vertex_index(it, index++);
 				}
 
 				// Return true of all mesh's faces are triangles
 				bool  is_mesh_triangular () const {
 					for (Face_const_iterator it = mesh_faces_begin(); it != mesh_faces_end(); it++) 
-						if (count_face_vertices(*it) != 3)
+						if (count_face_vertices(it) != 3)
 							return false;
 					return true;						// mesh is triangular if we reach this point
 				}
@@ -213,34 +268,18 @@ public:
 
 				// Get iterator over first vertex of mesh's border.
 				Border_vertex_iterator  mesh_border_vertices_begin () {
-					Backbone *pBackbone = m_mesh->get_seaming_backbone();
-					assert(pBackbone != NULL);
-					std::list<Halfedge_handle>* pHalfedges = pBackbone->halfedges();
-					std::list<Halfedge_handle>::iterator pHalfedge = pHalfedges->begin();
-					return pHalfedge;
+					return m_boundary.begin();
 				}
 				Border_vertex_const_iterator  mesh_border_vertices_begin () const {
-					const Backbone *pBackbone = m_mesh->get_seaming_backbone();
-					assert(pBackbone != NULL);
-					const std::list<Halfedge_handle>* pHalfedges = pBackbone->halfedges();
-					std::list<Halfedge_handle>::const_iterator pHalfedge = pHalfedges->begin();
-					return pHalfedge;
+					return m_boundary.begin();
 				}
 
 				// Get iterator over past-the-end vertex of mesh's border.
 				Border_vertex_iterator  mesh_border_vertices_end () {
-					Backbone *pBackbone = m_mesh->get_seaming_backbone();
-					assert(pBackbone != NULL);
-					std::list<Halfedge_handle> *pHalfedges = pBackbone->halfedges();
-					std::list<Halfedge_handle>::iterator pHalfedge = pHalfedges->end();
-					return pHalfedge;
+					return m_boundary.end();
 				}
 				Border_vertex_const_iterator  mesh_border_vertices_end () const {
-					const Backbone *pBackbone = m_mesh->get_seaming_backbone();
-					assert(pBackbone != NULL);
-					const std::list<Halfedge_handle>* pHalfedges = pBackbone->halfedges();
-					std::list<Halfedge_handle>::const_iterator pHalfedge = pHalfedges->end();
-					return pHalfedge;
+					return m_boundary.end();
 				}
 
 				// Get iterator over first face of mesh
@@ -272,15 +311,15 @@ public:
 				//
 
 				// Get circulator over face's vertices
-				Vertex_around_face_circulator  face_vertices_begin (Face* face) {
+				Vertex_around_face_circulator  face_vertices_begin (Face_handle face) {
 					return face->facet_begin();
 				}
-				Vertex_around_face_const_circulator  face_vertices_begin (const Face& face) const {
-					return face.facet_begin();
+				Vertex_around_face_const_circulator  face_vertices_begin (Face_const_handle face) const {
+					return face->facet_begin();
 				}
 
 				// Count the number of vertices of a face
-				int  count_face_vertices (const Face& face) const {
+				int  count_face_vertices (Face_const_handle face) const {
 					int index = 0;
 					Vertex_around_face_const_circulator cir_begin = face_vertices_begin(face), 
 														cir_end   = cir_begin;
@@ -295,79 +334,73 @@ public:
 				//
 
 				// Get the 3D position of a vertex
-				Point_3  get_vertex_position (const Vertex& vertex) const {
-					return vertex.point();	
+				Point_3  get_vertex_position (Vertex_const_handle vertex) const {
+					return vertex->point();	
 				}
 
 				// Get the 2D position of a vertex
-				Point_2  get_vertex_uv (const Vertex& vertex) const {
-					return Point_2(vertex.u(), vertex.v());		
+				Point_2  get_vertex_uv (Vertex_const_handle vertex) const {
+					return Point_2(vertex->u(), vertex->v());		
 				}
 				// Set the 2D position of a vertex
-				void  set_vertex_uv (Vertex* vertex, const Point_2& uv) {
+				void  set_vertex_uv (Vertex_handle vertex, const Point_2& uv) {
 					vertex->u(uv.x());
 					vertex->v(uv.y());
 				}
 
 				// Set "is parameterized" field of vertex
-				void  set_vertex_parameterized (Vertex* vertex, bool parameterized) {
+				void  set_vertex_parameterized (Vertex_handle vertex, bool parameterized) {
 					vertex->halfedge()->is_parameterized(parameterized);
 				}
 				// Indicate if a vertex is already parameterized
-				bool  is_vertex_parameterized (const Vertex& vertex) const {
-					return vertex.halfedge()->is_parameterized();
+				bool  is_vertex_parameterized (Vertex_const_handle vertex) const {
+					return vertex->halfedge()->is_parameterized();
 				}
 
 				// Set vertex index
-				void  set_vertex_index (Vertex* vertex, int new_index) {
+				void  set_vertex_index (Vertex_handle vertex, int new_index) {
 					vertex->index(new_index);
 				}
 				// Get the index of a vertex
-				int  get_vertex_index (const Vertex& vertex) const {
-					return vertex.index();		
+				int  get_vertex_index (Vertex_const_handle vertex) const {
+					return vertex->index();		
 				}
 
 				// Return true if a vertex belongs to the mesh's boundary
-				bool  is_vertex_on_border (const Vertex& vertex) const {
+				bool  is_vertex_on_border (Vertex_const_handle vertex) const {
 					return m_mesh->is_border(vertex);
 				}
 
 				// Get circulator over the vertices incident to 'vertex'
-				Vertex_around_vertex_circulator  vertices_around_vertex_begin (Vertex* vertex) {
+				Vertex_around_vertex_circulator  vertices_around_vertex_begin (Vertex_handle vertex) {
 					return vertex->vertex_begin();
 				}
-				Vertex_around_vertex_const_circulator  vertices_around_vertex_begin (const Vertex& vertex) const {
-					return vertex.vertex_begin();
+				Vertex_around_vertex_const_circulator  vertices_around_vertex_begin (Vertex_const_handle vertex) const {
+					return vertex->vertex_begin();
 				}
 
 private:
-				// Extract semaing backbone
-				bool prepare()
+				// Extract mesh UNIQUE boundary
+				std::list<Halfedge_handle> extract_unique_boundary()
 				{
-					// init
-					Backbone *pSeamingBackbone = m_mesh->get_seaming_backbone();
+					std::list<Halfedge_handle> boundary;
 					m_mesh->free_skeleton();
-					pSeamingBackbone->clear();
-					m_mesh->flag_halfedges_seaming(false);
-
 					Mesh_feature_extractor feature_extractor(m_mesh);
 					int nb_boundaries = feature_extractor.extract_boundaries(false,true);
-					if (nb_boundaries > 0)
-					{
-						// must have one boundary, pick the first
-						Backbone *pBackbone = (*m_mesh->get_skeleton()->backbones())[0];
-						pSeamingBackbone->copy_from(pBackbone);
-
-						// cleanup this one (has to be done later if has corners)
-						m_mesh->free_skeleton();
-					}
-					return true;
+					assert(nb_boundaries == 1);
+					Backbone* pBackbone = (*m_mesh->get_skeleton()->backbones())[0];
+					boundary = *(pBackbone->halfedges());
+					m_mesh->free_skeleton();
+					return boundary;
 				}
 
 // Fields
 private:
 				// The actual Polyhedron_ex mesh hidden inside *this
 				Polyhedron_ex*	m_mesh;
+
+				// Boundary of a topological disc inside the actual mesh
+				std::list<Halfedge_handle> m_boundary;
 };
 
 

@@ -37,7 +37,9 @@ CGAL_BEGIN_NAMESPACE
 // Class Square_border_parametizer_3
 // Model of BorderParametizer_3
 // This class parameterizes the border of a 3D surface onto a square.
-// 
+//
+// Design pattern: Square_border_parametizer_3 is an Strategy (see [GOF95]): it implements a strategy of boundary parameterization for models of Parametizer_3
+//
 // Implementation note: to simplify the implementation, BorderParametizer_3 models know only the MeshAdaptor_3 class. They don't 
 //                      know the parameterization algorithm requirements nor the kind of sparse linear system used.
 template <class MeshAdaptor_3>			// 3D surface
@@ -49,8 +51,10 @@ public:
 				typedef MeshAdaptor_3													Mesh_adaptor_3;
 				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode				ErrorCode;
 				typedef typename MeshAdaptor_3::NT										NT;
-				typedef typename MeshAdaptor_3::Face									Face;
-				typedef typename MeshAdaptor_3::Vertex									Vertex;
+				typedef typename MeshAdaptor_3::Face_handle								Face_handle;
+				typedef typename MeshAdaptor_3::Face_const_handle						Face_const_handle;
+				typedef typename MeshAdaptor_3::Vertex_handle							Vertex_handle;
+				typedef typename MeshAdaptor_3::Vertex_const_handle						Vertex_const_handle;
 				typedef typename MeshAdaptor_3::Point_3									Point_3;
 				typedef typename MeshAdaptor_3::Point_2									Point_2;
 				typedef typename MeshAdaptor_3::Vector_3								Vector_3;
@@ -103,7 +107,7 @@ double Square_border_parametizer_3<MeshAdaptor_3>::compute_boundary_length(const
 	double len = 0.0;
 	for(Border_vertex_const_iterator it = mesh.mesh_border_vertices_begin(); it != mesh.mesh_border_vertices_end(); it++)
 	{
-		CGAL_parameterization_assertion(mesh.is_vertex_on_border(*it));
+		CGAL_parameterization_assertion(mesh.is_vertex_on_border(it));
 
 		// Get next iterator (looping)
 		Border_vertex_const_iterator next = it; 
@@ -112,7 +116,7 @@ double Square_border_parametizer_3<MeshAdaptor_3>::compute_boundary_length(const
 			next = mesh.mesh_border_vertices_begin();
 
 		// Add length of it -> next vector to 'len'
-		Vector_3 v = mesh.get_vertex_position(*next) - mesh.get_vertex_position(*it);
+		Vector_3 v = mesh.get_vertex_position(next) - mesh.get_vertex_position(it);
 		len += std::sqrt(v*v);
 	}
 	return len;
@@ -144,9 +148,9 @@ bool Square_border_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdapto
 	Border_vertex_iterator it;
 	for(it = mesh->mesh_border_vertices_begin(); it != mesh->mesh_border_vertices_end(); it++)
 	{
-		CGAL_parameterization_assertion(mesh->is_vertex_on_border(*it));
+		CGAL_parameterization_assertion(mesh->is_vertex_on_border(it));
 
-		offsets[mesh->get_vertex_index(*it)] = 4.0f*len/total_len;// current position on square in [0,4[ 
+		offsets[mesh->get_vertex_index(it)] = 4.0f*len/total_len;// current position on square in [0,4[ 
 
 		// Get next iterator (looping)
 		Border_vertex_iterator next = it; 
@@ -155,7 +159,7 @@ bool Square_border_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdapto
 			next = mesh->mesh_border_vertices_begin();
 
 		// Add length of it -> next vector to 'len'
-		Vector_3 v = mesh->get_vertex_position(*next) - mesh->get_vertex_position(*it);
+		Vector_3 v = mesh->get_vertex_position(next) - mesh->get_vertex_position(it);
 		len += std::sqrt(v*v);
 	}
 
@@ -170,39 +174,39 @@ bool Square_border_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdapto
  	assert(it1 != it3);
 	//
 	// Snap these vertices to corners
-	offsets[mesh->get_vertex_index(*it0)] = 0.0;
-	offsets[mesh->get_vertex_index(*it1)] = 1.0;
-	offsets[mesh->get_vertex_index(*it2)] = 2.0;
-	offsets[mesh->get_vertex_index(*it3)] = 3.0;
+	offsets[mesh->get_vertex_index(it0)] = 0.0;
+	offsets[mesh->get_vertex_index(it1)] = 1.0;
+	offsets[mesh->get_vertex_index(it2)] = 2.0;
+	offsets[mesh->get_vertex_index(it3)] = 3.0;
 
  	// Set vertices along square's sides and mark them as "parameterized"
 	for(it = it0; it != it1; it++)	// 1st side
 	{
-		Point_2 uv(offsets[mesh->get_vertex_index(*it)], 0.0);
-		mesh->set_vertex_uv(&*it, uv); 
+		Point_2 uv(offsets[mesh->get_vertex_index(it)], 0.0);
+		mesh->set_vertex_uv(it, uv); 
 //		std::cerr << "(" << uv.x() << "," << uv.y() << ") ";
-		mesh->set_vertex_parameterized(&*it, true);
+		mesh->set_vertex_parameterized(it, true);
 	}
 	for(it = it1; it != it2; it++)								// 2nd side
 	{
-		Point_2 uv(1.0, offsets[mesh->get_vertex_index(*it)]-1);
-		mesh->set_vertex_uv(&*it, uv); 
+		Point_2 uv(1.0, offsets[mesh->get_vertex_index(it)]-1);
+		mesh->set_vertex_uv(it, uv); 
 //		std::cerr << "(" << uv.x() << "," << uv.y() << ") ";
-		mesh->set_vertex_parameterized(&*it, true);
+		mesh->set_vertex_parameterized(it, true);
 	}
 	for(it = it2; it != it3; it++)								// 3rd side
 	{
-		Point_2 uv(3-offsets[mesh->get_vertex_index(*it)], 1.0);
-		mesh->set_vertex_uv(&*it, uv); 
+		Point_2 uv(3-offsets[mesh->get_vertex_index(it)], 1.0);
+		mesh->set_vertex_uv(it, uv); 
 //		std::cerr << "(" << uv.x() << "," << uv.y() << ") ";
-		mesh->set_vertex_parameterized(&*it, true);
+		mesh->set_vertex_parameterized(it, true);
 	}
 	for(it = it3; it != mesh->mesh_border_vertices_end(); it++)	// 4th side
 	{
-		Point_2 uv(0.0, 4-offsets[mesh->get_vertex_index(*it)]);
-		mesh->set_vertex_uv(&*it, uv); 
+		Point_2 uv(0.0, 4-offsets[mesh->get_vertex_index(it)]);
+		mesh->set_vertex_uv(it, uv); 
 //		std::cerr << "(" << uv.x() << "," << uv.y() << ") ";
-		mesh->set_vertex_parameterized(&*it, true);
+		mesh->set_vertex_parameterized(it, true);
 	}
 
 	std::cerr << "done" << std::endl;
@@ -222,7 +226,7 @@ Square_border_parametizer_3<MeshAdaptor_3>::closest_iterator(MeshAdaptor_3* mesh
 
 	for (Border_vertex_iterator it = mesh->mesh_border_vertices_begin(); it != mesh->mesh_border_vertices_end(); it++)
 	{
-		double d = fabs(offsets[mesh->get_vertex_index(*it)] - value);
+		double d = fabs(offsets[mesh->get_vertex_index(it)] - value);
 		if (d < min)
 		{
 			best = it;

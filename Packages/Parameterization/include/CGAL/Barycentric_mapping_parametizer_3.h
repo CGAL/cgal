@@ -43,8 +43,10 @@ public:
 				typedef MeshAdaptor_3													Mesh_adaptor_3;
 				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode				ErrorCode;
 				typedef typename MeshAdaptor_3::NT										NT;
-				typedef typename MeshAdaptor_3::Face									Face;
-				typedef typename MeshAdaptor_3::Vertex									Vertex;
+				typedef typename MeshAdaptor_3::Face_handle								Face_handle;
+				typedef typename MeshAdaptor_3::Face_const_handle						Face_const_handle;
+				typedef typename MeshAdaptor_3::Vertex_handle							Vertex_handle;
+				typedef typename MeshAdaptor_3::Vertex_const_handle						Vertex_const_handle;
 				typedef typename MeshAdaptor_3::Point_3									Point_3;
 				typedef typename MeshAdaptor_3::Point_2									Point_2;
 				typedef typename MeshAdaptor_3::Vector_3								Vector_3;
@@ -82,7 +84,7 @@ protected:
 // Protected operations
 protected:
 				// compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i 
-				virtual	NT  compute_wij(const MeshAdaptor_3& mesh, const Vertex& main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj)
+				virtual	NT  compute_wij(const MeshAdaptor_3& mesh, Vertex_const_handle main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj)
 				{
 					// Tutte algorithm is the most simple one: Wij = 1 for j neighbor vertex of i
 					return 1;
