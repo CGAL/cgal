@@ -210,25 +210,25 @@ Pluecker_line_3(const Line_3& l)
 initializes it to |l|.}*/
 {
   Point_3 p(l.point(0)), q(l.point(1));
-  c_[0] = p.hx()*q.hy() - p.hy()*q.hx();
-  c_[1] = p.hx()*q.hz() - p.hz()*q.hx();
-  c_[2] = p.hy()*q.hz() - p.hz()*q.hy();
-  c_[3] = p.hx()*q.hw() - p.hw()*q.hx();
-  c_[4] = p.hy()*q.hw() - p.hw()*q.hy();
-  c_[5] = p.hz()*q.hw() - p.hw()*q.hz();
+  c_[0] = p.x()*q.y() - p.y()*q.x();
+  c_[1] = p.x()*q.z() - p.z()*q.x();
+  c_[2] = p.y()*q.z() - p.z()*q.y();
+  c_[3] = p.x() - q.x();
+  c_[4] = p.y() - q.y();
+  c_[5] = p.z() - q.z();
 }
 
-Pluecker_line_3(const Point_3& p, const Point_3& q)
-/*{\Mcreate creates an instance |\Mvar| of type |\Mname| and
-initializes it to the oriented line through |p| and |q|.}*/
-{
-  c_[0] = p.hx()*q.hy() - p.hy()*q.hx();
-  c_[1] = p.hx()*q.hz() - p.hz()*q.hx();
-  c_[2] = p.hy()*q.hz() - p.hz()*q.hy();
-  c_[3] = p.hx()*q.hw() - p.hw()*q.hx();
-  c_[4] = p.hy()*q.hw() - p.hw()*q.hy();
-  c_[5] = p.hz()*q.hw() - p.hw()*q.hz();
 
+Pluecker_line_3(const Point_3& p, const Point_3& q)
+//{\Mcreate creates an instance |\Mvar| of type |\Mname| and
+// initializes it to the oriented line through |p| and |q|.}
+{
+  c_[0] = p.x()*q.y() - p.y()*q.x();
+  c_[1] = p.x()*q.z() - p.z()*q.x();
+  c_[2] = p.y()*q.z() - p.z()*q.y();
+  c_[3] = p.x() - q.x();
+  c_[4] = p.y() - q.y();
+  c_[5] = p.z() - q.z();
 }
 
 template <typename Forward_iterator>
