@@ -77,7 +77,7 @@ int main()
 	    << identity(K2::Vector_3(1,0,0))
 	    << std::endl;
   std::cout << " with grid sample points";
-  _test_surface_neighbors_3_cube(Dt2(),identity);
+  _test_surface_neighbors_3_cube(Dt2(),identity, 75, K2::FT(1e-29));
   std::cout << " done." << std::endl;
 
   std::cout << " with random sample points";

@@ -1,3 +1,6 @@
+29 September Andreas Fabri
+- Don't use default values of parameters of _test_surface_neighbors_3_cube as VC7 has problems with it
+
 27 September 2004 Andreas Fabri
 - Bug fix in natural_neighbor_coordinates_2.h and sibson_gradient_fitting.h
 
