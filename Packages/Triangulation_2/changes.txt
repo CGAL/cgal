@@ -1,6 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.86 (2/5/01)
+- unify find_conflics()t member functions of Delaunay and constrained Delaunay
+triangulations
+- introdubce new member functions Boundary_of_conflict_zone()
+in Delaunay_triangulation_2 and Constrained_Delaunay_triangulation_2.h
+- fixed the test of constrained and Delaunay constrained triangulations
 
 Ver 4.85 (17/04/01)
 - cleaned up Constrained_triangulation_2 and

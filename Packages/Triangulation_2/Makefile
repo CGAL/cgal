@@ -16,7 +16,7 @@ package:
 	@echo "----------------------------------"
 	@echo "---- cvs update; -----------------"
 	@echo "---- make Test ; ------------ ----"
-	@echo "---- make VERSION=4.85 Doc -------"
+	@echo "---- make VERSION=4.86 Doc -------"
 	@echo "---- editer changes.txt       ----"
 #	@echo "---- make VERSION=4.85 Version ---"
 #	@echo "---- cvs commit ------------------"
