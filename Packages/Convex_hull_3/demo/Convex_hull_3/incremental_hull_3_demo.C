@@ -48,7 +48,7 @@ int main ()
   for (int i = 0; i < 250 ; i++, ++gen)
      CH.insert(*gen);
 
-  assert(CH.is_valid());
+  CGAL::assert(CH.is_valid());
 
   // define polyhedron to hold convex hull and create it
   Polyhedron_3 P; 
@@ -63,5 +63,7 @@ int main ()
   std::cout.flush();
   char ch;
   std::cin.get(ch);
+
+  return 0;
 }
 
