@@ -65,9 +65,9 @@ int square_root_test()
   };
   DEBUG( cout << i; )
   a -= 1;
-  return ( (i==54) &&
-           (a.upper_bound() == - a.lower_bound()) &&
-           (a.upper_bound() == 1/(1024.0*1024*1024*1024*1024*4)) );
+  return i==54
+      && a.sup() == - a.inf()
+      && a.sup() == 1/(1024.0*1024*1024*1024*1024*4);
 }
 
 
@@ -126,14 +126,9 @@ int underflow_test()
   int i;
   IA_nt a(0.5), b(-0.5,0.5), c(0.5);
 
-  DEBUG( cout << CGAL_IA_MIN_DOUBLE << endl;)
-  for (i=0; i<20; i++)
-  {
-    a *= a;
-    b = b * b;
-    c = square(c);
-    DEBUG( cout << a << b << endl; )
-  }
+  for (i=0; i<20; i++) a *= a;
+  for (i=0; i<20; i++) b = b * b;
+  for (i=0; i<20; i++) c = square(c);
 
   return a.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE))
       && b.is_same(CGAL_IA_SMALLEST)
@@ -181,6 +176,15 @@ int multiplication_test()
   h = d * f;
   i = a * e;
   j = j;
+
+  // When CGAL_IA_DEBUG is defined, it'll test the current rounding mode for
+  // these operations.
+  double k = 1;
+  i=2;
+  h = k+i; h = i+k; h += k; h += i;
+  h = k-i; h = i-k; h -= k; h -= i;
+  h = k*i; h = i*k; h *= k; h *= i;
+  h = k/i; h = i/k; h /= k; h /= i;
 
   return 1;
 }
