@@ -28,15 +28,15 @@ correspondant a l'Alpha Shape.
 
 typedef double coord_type;
 
-typedef CGAL::Cartesian<coord_type>  Rep;
+typedef CGAL::Cartesian<coord_type>  CRep;
 
-typedef CGAL::Point_2<Rep>  Point;
-typedef CGAL::Segment_2<Rep>  Segment;
-typedef CGAL::Ray_2<Rep>  Ray;
-typedef CGAL::Line_2<Rep>  Line;
-typedef CGAL::Triangle_2<Rep>  Triangle;
+typedef CGAL::Point_2<CRep>  Point;
+typedef CGAL::Segment_2<CRep>  Segment;
+typedef CGAL::Ray_2<CRep>  Ray;
+typedef CGAL::Line_2<CRep>  Line;
+typedef CGAL::Triangle_2<CRep>  Triangle;
 
-typedef CGAL::Alpha_shape_euclidean_traits_2<Rep> Gt;
+typedef CGAL::Alpha_shape_euclidean_traits_2<CRep> Gt;
 
 typedef CGAL::Alpha_shape_vertex_base_2<Gt> Vb;
 typedef CGAL::Alpha_shape_face_base_2<Gt>  Fb;

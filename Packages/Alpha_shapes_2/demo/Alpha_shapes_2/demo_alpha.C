@@ -73,16 +73,16 @@ typedef double coord_type;
 //typedef leda_real coord_type;
 //typedef CGAL::Fixed coord_type;
 
-typedef CGAL::Cartesian<coord_type>  Rep;
-//typedef CGAL::Homogeneous<coord_type>  Rep;
+typedef CGAL::Cartesian<coord_type>  CRep;
+//typedef CGAL::Homogeneous<coord_type>  CRep;
 
-typedef CGAL::Point_2<Rep>  Point;
-typedef CGAL::Segment_2<Rep>  Segment;
-typedef CGAL::Ray_2<Rep>  Ray;
-typedef CGAL::Line_2<Rep>  Line;
-typedef CGAL::Triangle_2<Rep>  Triangle;
+typedef CGAL::Point_2<CRep>  Point;
+typedef CGAL::Segment_2<CRep>  Segment;
+typedef CGAL::Ray_2<CRep>  Ray;
+typedef CGAL::Line_2<CRep>  Line;
+typedef CGAL::Triangle_2<CRep>  Triangle;
 
-typedef CGAL::Alpha_shape_euclidean_traits_2<Rep> Gt;
+typedef CGAL::Alpha_shape_euclidean_traits_2<CRep> Gt;
 
 #else
 
@@ -138,7 +138,7 @@ void
 any_button(Window_stream &W)
 {
     double x, y;
-    std::cerr << "Press any button to continue" << std::endl;
+    std::cout << "Press any button to continue" << std::endl;
     W.read_mouse(x,y);
 }
 
@@ -225,7 +225,7 @@ random_input(Alpha_shape &A,
   int n = opt.number_of_points;
   V.reserve(n);
 
-  std::cerr << "Generating " << n << " random points" << std::endl;
+  std::cout << "Generating " << n << " random points" << std::endl;
 
   double x0 = W.xmin();
   double y0 = W.ymin();
@@ -252,7 +252,7 @@ random_input(Alpha_shape &A,
   start_timing();
   n = A.make_Alpha_shape(V.begin(), V.end());
   end_timing(1);
-  std::cerr << "Inserted " << n  << " points" << std::endl;
+  std::cout << "Inserted " << n  << " points" << std::endl;
 }
 
 //---------------------------------------------------------------------
@@ -263,8 +263,8 @@ window_input(Alpha_shape &A,
              Window_stream &W,
              const Options& opt)
 {
-  std::cerr << "Enter points with the left button" << std::endl;
-  std::cerr << "Right button terminates input of points" << std::endl;
+  std::cout << "Enter points with the left button" << std::endl;
+  std::cout << "Right button terminates input of points" << std::endl;
 
   Point p;
   int n =0;
@@ -289,11 +289,11 @@ window_input(Alpha_shape &A,
 	  break;
 	  }
     }
-  std::cerr << "You have entered " << V.size() << " points." << std::endl;
+  std::cout << "You have entered " << V.size() << " points." << std::endl;
   start_timing();
   n = A.make_Alpha_shape(V.begin(), V.end());
   end_timing(1);
-  std::cerr << "Inserted " << n  << " points" << std::endl;
+  std::cout << "Inserted " << n  << " points" << std::endl;
 
 }
 
@@ -318,7 +318,7 @@ file_input(Alpha_shape& A,
 
   int n;
   is >> n;
-  std::cerr << "Reading " << n << " points" << std::endl;
+  std::cout << "Reading " << n << " points" << std::endl;
   V.reserve(n);
   Point p;
   for( ; n>0 ; n--)
@@ -326,7 +326,7 @@ file_input(Alpha_shape& A,
       is >> p;
       V.push_back(p);
     }
-  std::cerr << "Points read" << std::endl;
+  std::cout << "Points read" << std::endl;
   return true;
 }
     
@@ -354,7 +354,7 @@ file_output(std::vector<Point>& V,
     for (it = V.begin(); it != V.end(); ++it)
       os << *it << std::endl;
 
-    std::cerr << n << " points written" << std::endl;
+    std::cout << n << " points written" << std::endl;
 }
 
 //-------------------------------------------------------------------
@@ -486,7 +486,7 @@ int main(int argc,  char* argv[])
 			  if (Pfin.open(W) == 1)
 			    break;
 			  strcpy(opt.finname, finname);
-			  std::cerr << opt.finname << std::endl;
+			  std::cout << opt.finname << std::endl;
 	
 			  clear_all(A, V, W);
 			  if (!file_input(A, V, W, opt))
@@ -504,7 +504,7 @@ int main(int argc,  char* argv[])
 			  start_timing();
 			  nn = A.make_Alpha_shape(V.begin(), V.end());
 			  end_timing(1);
-			  std::cerr << "Inserted " << nn  << " points" << std::endl;
+			  std::cout << "Inserted " << nn  << " points" << std::endl;
 			  set_alpha(alpha_index);
 			  W.clear();
 			  W.init(xmin, xmax, ymin);
@@ -571,9 +571,9 @@ int main(int argc,  char* argv[])
 		  A.find_optimal_alpha(nb_comp);
 		opt_alpha_index = int(opt_alpha_it - A.alpha_begin());
 		alpha_index = (opt_alpha_index * ALPHA_MAX)/ A.number_of_alphas();
-#ifndef NDEBUG
-		std::cerr << "alpha_index :" << alpha_index << std::endl;
-#endif // NDEBUG
+#ifdef DEBUG
+		std::cout << "alpha_index :" << alpha_index << std::endl;
+#endif // DEBUG
 		A.set_alpha((*opt_alpha_it + *(opt_alpha_it+1))/2);
 	      }
 	    break;
@@ -590,24 +590,24 @@ int main(int argc,  char* argv[])
 	};
 
       /*      // draw
-#ifndef NDEBUG
+#ifdef DEBUG
       // write in Ascii file to test
   
       ofstream os(opt.foutname);
       CGAL::set_ascii_mode(os);
       os << A;
-      std::cerr << "file written" << std::endl;
+      std::cout << "file written" << std::endl;
 
       list< Vertex* > L_V;
       A.get_Alpha_shape_vertices(back_inserter(L_V));
       list<Vertex*>::iterator vertex_it = L_V.begin();
       for (; vertex_it != L_V.end(); ++vertex_it)
-	std::cerr << (*vertex_it)->point() << std::endl;
+	std::cout << (*vertex_it)->point() << std::endl;
  
       list< pair<Face*, int> > L_E;
       A.get_Alpha_shape_edges(back_inserter(L_E));
    
-#endif // NDEBUG   
+#endif // DEBUG   
      */
       W.start_buffering();
       W.clear();
@@ -637,14 +637,16 @@ int main(int argc,  char* argv[])
 	  A.set_mode(Alpha_shape::GENERAL);
 	  W << GENERAL_COLOR;
 	}
-      std::cerr << "display Alpha Shape for alpha_index = " << alpha_index << std::endl;
+
+      std::cout << "alpha_value :" << A.get_alpha() << std::endl;
+      std::cout << "display Alpha Shape for alpha_index = " << alpha_index << std::endl;
       W << A;
      
       W.flush_buffer();
       W.stop_buffering();
 
-#ifndef NDEBUG
-      std::cerr << "nb components :" << A.number_solid_components() << std::endl;
-#endif // NDEBUG
+#ifdef DEBUG
+      std::cout << "nb components :" << A.number_solid_components() << std::endl;
+#endif // DEBUG
     }
 }

@@ -26,7 +26,7 @@
 #define CGAL_IN_SMALLEST_ORTHOGONALCIRCLEC2_H
 
 #ifndef CGAL_POINTC2_H
-#include <CGAL/PointC2.h>
+#include <CGAL/Cartesian/Point_2.h>
 #endif // CGAL_POINTC2_H
 
 #ifndef CGAL_WEIGHTED_POINT_H

@@ -33,6 +33,7 @@
 //#include <CGAL/Rational.h>
 //#include <CGAL/Fixed.h>
 
+#include <CGAL/squared_distance_2.h>
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Segment_2.h>
 

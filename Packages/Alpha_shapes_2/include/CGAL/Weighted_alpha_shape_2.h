@@ -280,6 +280,10 @@ public:
  
 public:
 
+  //----------- OUTPUT A LIST OF POINTS CONNECTED BY PAIRS ------------ 
+ 
+  std::list<Point> Output ();
+
   //----------------------- OPERATIONS ---------------------------------
 
 #ifdef TEMPLATE_MEMBER_FUNCTIONS
@@ -426,7 +430,13 @@ public:
    typename std::vector<Point>::const_iterator  last);
   
   //---------------------------------------------------------------------
-
+  
+  std::list<Point> 
+  initialize_weighted_points_to_the_nearest_vertex
+  (typename std::list<Point>::const_iterator  first,
+   typename std::list<Point>::const_iterator  last);
+  
+  //---------------------------------------------------------------------
 private :
 
   void initialize_interval_face_map(void);
@@ -812,6 +822,123 @@ private:
 
 //---------------------- MEMBER FUNCTIONS -----------------------------
 
+template < class Gt, class Tds >
+std::list<Weighted_alpha_shape_2<Gt,Tds>::Point> 
+Weighted_alpha_shape_2<Gt,Tds>::Output () 
+{
+
+  typename Interval_vertex_map::const_iterator vertex_alpha_it;
+
+  typename Interval_edge_map::const_iterator edge_alpha_it;
+
+  const Interval3* pInterval;
+  std::list<Point> L;
+
+
+  if (get_mode() == REGULARIZED) 
+    {
+
+      // it is much faster looking at the sorted intervals 
+      // than looking at all sorted faces
+      // alpha must be larger than the mid boundary
+      // and alpha is smaller than the upper boundary
+      for (edge_alpha_it = _interval_edge_map.begin(); 
+	   edge_alpha_it != _interval_edge_map.end() &&
+	     (*edge_alpha_it).first.first < get_alpha();
+	   ++edge_alpha_it) 
+	{
+      
+	  pInterval = &(*edge_alpha_it).first;
+
+	  if (pInterval->second != INFINITY)
+	    {
+	      // since this happens only for convex hull of dimension 1
+	      // thus singular
+	
+	      if(pInterval->second < get_alpha() &&
+		 (pInterval->third >= get_alpha()
+		  || pInterval->third == INFINITY)) 
+		{
+		  // alpha must be larger than the mid boundary
+		  // and alpha is smaller than the upper boundary
+		  // which might be infinity 
+		  // visualize the boundary
+	  
+		  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
+							 (*edge_alpha_it).second.second) ==
+						REGULAR));
+	  
+		  // if we used Edelsbrunner and Muecke's definition
+		  // regular means incident to a higher-dimensional face
+		  // thus we would write to many vertices
+		  L.push_back(((*edge_alpha_it).second.first->vertex(cw((*edge_alpha_it).second.second)))->point());
+		  L.push_back(((*edge_alpha_it).second.first->vertex(ccw((*edge_alpha_it).second.second)))->point());
+		}
+	    }
+	}
+    }
+  else 
+    {  // get_mode() == GENERAL
+      // draw the edges
+      for (edge_alpha_it = _interval_edge_map.begin(); 
+	   edge_alpha_it != _interval_edge_map.end() &&
+	     (*edge_alpha_it).first.first < get_alpha();
+	   ++edge_alpha_it) 
+	{
+
+	  pInterval = &(*edge_alpha_it).first;
+	
+	  if (pInterval->first == UNDEFINED) 
+	    {
+
+	      CGAL_triangulation_assertion(pInterval->second != INFINITY);
+	      // since this happens only for convex hull of dimension 1
+	      // thus singular
+
+	      if(pInterval->second < get_alpha() &&
+		 (pInterval->third >= get_alpha()
+		  || pInterval->third == INFINITY)) 
+		{
+		  // alpha must be larger than the mid boundary
+		  // and alpha is smaller than the upper boundary
+		  // which might be infinity 
+		  // visualize the boundary
+		
+		  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
+							 (*edge_alpha_it).second.second) ==
+						REGULAR));
+		  L.push_back(((*edge_alpha_it).second.first->vertex(cw((*edge_alpha_it).second.second)))->point());
+		  L.push_back(((*edge_alpha_it).second.first->vertex(ccw((*edge_alpha_it).second.second)))->point());
+		}
+	    }
+	  else 
+	    {
+
+	      if(pInterval->third >= get_alpha()
+		 || pInterval->third == INFINITY) 
+		{
+		  // if alpha is smaller than the upper boundary
+		  // which might be infinity 
+		  // visualize the boundary
+		
+		  CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
+							  (*edge_alpha_it).second.second) ==
+						 REGULAR) || 
+						(classify((*edge_alpha_it).second.first,
+							  (*edge_alpha_it).second.second) ==
+						 SINGULAR)));
+		  L.push_back(((*edge_alpha_it).second.first->vertex(cw((*edge_alpha_it).second.second)))->point());
+		  L.push_back(((*edge_alpha_it).second.first->vertex(ccw((*edge_alpha_it).second.second)))->point());
+		}
+	    }
+
+	}
+    }
+  return L;
+}
+
+//-------------------------------------------------------------------------
+
 template<class Gt, class Tds> 
 std::vector<Weighted_alpha_shape_2<Gt,Tds>::Point>
 Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_voronoi_vertex
@@ -926,6 +1053,40 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_vorono
 
 //-----------------------------------------------------------------------
 
+template<class Gt, class Tds>
+std::list<Weighted_alpha_shape_2<Gt,Tds>::Point> 
+Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_vertex
+(typename std::list<Point>::const_iterator  first,
+ typename std::list<Point>::const_iterator  last) 
+{ 
+ 
+  std::list<Point> V;
+
+  Delaunay_triangulation_2<Gt,Tds> D;
+  typename std::list<Point>::const_iterator point_it;
+  
+  
+  D.insert(first, last);
+
+  for( point_it = first; 
+       point_it != last; 
+       ++point_it) 
+    { 
+
+      D.remove(D.nearest_vertex(*point_it));
+      
+      Point neighbor=D.nearest_vertex(*point_it)->point();
+
+      V.push_back(Point((*point_it).point(),
+			((neighbor.point().x()-(*point_it).point().x())*(neighbor.point().x()-(*point_it).point().x())
+			 +(neighbor.point().y()-(*point_it).point().y())*(neighbor.point().y()-(*point_it).point().y()))));
+
+      D.insert(*point_it);
+    }
+  return V;
+}
+
+//-----------------------------------------------------------------------
 template<class Gt, class Tds>
 std::vector<Weighted_alpha_shape_2<Gt,Tds>::Point> 
 Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_vertex
@@ -1259,15 +1420,18 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_alpha_spectrum(void)
 
       if ((*face_it).first < (*edge_it).first.first) 
 	{
-	  if (_alpha_spectrum.empty() || 
-	      _alpha_spectrum.back() < (*face_it).first)
+	  if (((_alpha_spectrum.empty() || 
+		_alpha_spectrum.back() <
+		(*face_it).first))&&((*face_it).first >= 0))
 	    _alpha_spectrum.push_back((*face_it).first);
 	  face_it++;
 	}
       else
 	{
-	  if (_alpha_spectrum.empty() || 
-	      _alpha_spectrum.back() < (*edge_it).first.first)
+	  if (((_alpha_spectrum.empty() || 
+		_alpha_spectrum.back() <
+		(*edge_it).first.first))&&
+	      (((*edge_it).first.first) >= 0))
 	    _alpha_spectrum.push_back((*edge_it).first.first);
 	  edge_it++;
 	}
@@ -1275,16 +1439,18 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_alpha_spectrum(void)
     
   while (edge_it != _interval_edge_map.end()) 
     {
-      if (_alpha_spectrum.empty() || 
-	  _alpha_spectrum.back() < (*edge_it).first.first)
+      if (((_alpha_spectrum.empty() || 
+	    _alpha_spectrum.back() < (*edge_it).first.first))&&
+	   (((*edge_it).first.first) >= 0))
 	_alpha_spectrum.push_back((*edge_it).first.first);
       edge_it++;
     }
 
   while (face_it != _interval_face_map.end()) 
     { 
-      if (_alpha_spectrum.empty() || 
-	  _alpha_spectrum.back() < (*face_it).first)
+      if (((_alpha_spectrum.empty() || 
+	    _alpha_spectrum.back() < (*face_it).first))&&
+	  ((*face_it).first >= 0))
 	_alpha_spectrum.push_back((*face_it).first);
       face_it++;
     }

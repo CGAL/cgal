@@ -27,39 +27,41 @@
 #define CGAL_SMALLEST_RADIUSC2_H
 
 #include <CGAL/cartesian_classes.h>
-#include <CGAL/PointC2.h>
-#include <CGAL/VectorC2.h>
+//#include <CGAL/Cartesian/Point_2.h>
+//#include <CGAL/Cartesian/Vector_2.h>
 
 //-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
-template < class FT >
+template < class R >
 inline
-FT
-squared_radius_smallest_circumcircle(const PointC2<FT> &p,
-				     const PointC2<FT> &q,
-				     const PointC2<FT> &r)
+typename R::FT
+squared_radius_smallest_circumcircle(const PointC2<R> &p,
+				     const PointC2<R> &q,
+				     const PointC2<R> &r)
 {
   
   // the computation of the squared radius takes 17 multiplications
   // and 12 additions
+  
+  typedef typename R::FT FTT;
 
-  VectorC2<FT> v(p-q);
-  FT numerator = v*v;
+  VectorC2<R> v(p-q);
+  FTT numerator = v*v;
   v=q-r;
   numerator *= (v*v);
   v=r-p;
   numerator *= (v*v);
  
-  FT denominator = (p.x()-q.x())*(q.y()-r.y())
+  FTT denominator = (p.x()-q.x())*(q.y()-r.y())
     - (p.y()-q.y())*(q.x()-r.x());
   
   // assert(demominator ==  (p.x()*q.y() + q.x()*r.y() + r.x()*p.y()
   //			  -r.x()*q.y() - q.x()*p.y() - p.x()*r.y()));
 
-  return ((denominator > FT(0) ? 
-	   numerator /(FT(4) * denominator * denominator) : FT(0)));
+  return ((denominator > FTT(0) ? 
+	   numerator /(FTT(4) * denominator * denominator) : FTT(0)));
 }
 
 //-------------------------------------------------------------------

@@ -77,17 +77,17 @@
 //typedef leda_real coord_type;
 //typedef CGAL::Fixed coord_type;
 
-typedef CGAL::Cartesian<double>  Rep;
-//typedef CGAL::Homogeneous<coord_type>  Rep;
+typedef CGAL::Cartesian<double>  CRep;
+//typedef CGAL::Homogeneous<coord_type>  CRep;
 
-typedef CGAL::Point_2<Rep> Point_base;
+typedef CGAL::Point_2<CRep> Point_base;
 typedef CGAL::Weighted_point<Point_base,double>  Point;
-typedef CGAL::Segment_2<Rep>  Segment;
-typedef CGAL::Ray_2<Rep>  Ray;
-typedef CGAL::Line_2<Rep>  Line;
-typedef CGAL::Triangle_2<Rep>  Triangle;
+typedef CGAL::Segment_2<CRep>  Segment;
+typedef CGAL::Ray_2<CRep>  Ray;
+typedef CGAL::Line_2<CRep>  Line;
+typedef CGAL::Triangle_2<CRep>  Triangle;
 
-typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<Rep> Gt;
+typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<CRep> Gt;
 
 
 
@@ -139,7 +139,7 @@ void
 any_button(Window_stream &W)
 {
     double x, y;
-    std::cerr << "Press any button to continue" << std::endl;
+    std::cout << "Press any button to continue" << std::endl;
     W.read_mouse(x,y);
 }
 
@@ -158,7 +158,7 @@ draw_vertices(const Alpha_shape_2& A,
     {
       Point p = vertex_it->point();
       if (option)
-	{ W << CGAL::Circle_2<Rep>(p.point(),max(p.weight(),DBL_MIN)); }
+	{ W << CGAL::Circle_2<CRep>(p.point(),max(p.weight(),DBL_MIN)); }
       else
 	{ W.draw_filled_node(p.x(), p.y()); }
     }
@@ -230,7 +230,7 @@ random_input(Alpha_shape_2 &A,
   int n = opt.number_of_points;
   V.reserve(n);
 
-  std::cerr << "Generating " << n << " random points" << std::endl;
+  std::cout << "Generating " << n << " random points" << std::endl;
 
   double x0 = W.xmin();
   double y0 = W.ymin();
@@ -261,7 +261,7 @@ random_input(Alpha_shape_2 &A,
     { VV=A.initialize_weighted_points_to_the_nearest_vertex(V.begin(), V.end()); }
   n = A.make_Alpha_shape(VV.begin(), VV.end());
   end_timing(1);
-  std::cerr << "Inserted " << n  << " points" << std::endl;
+  std::cout << "Inserted " << n  << " points" << std::endl;
 }
 
 //---------------------------------------------------------------------
@@ -272,8 +272,8 @@ window_input(Alpha_shape_2 &A,
              Window_stream &W,
              const Options& opt)
 {
-  std::cerr << "Enter points with the left button" << std::endl;
-  std::cerr << "Right button terminates input of points" << endl;
+  std::cout << "Enter points with the left button" << std::endl;
+  std::cout << "Right button terminates input of points" << endl;
 
   std::vector<Point> V;
   Point p;
@@ -299,7 +299,7 @@ window_input(Alpha_shape_2 &A,
 	  break;
 	  }
     }
-  std::cerr << "You have entered " << V.size() << " points." << endl;
+  std::cout << "You have entered " << V.size() << " points." << endl;
   start_timing();
 
   if (opt.init)
@@ -308,7 +308,7 @@ window_input(Alpha_shape_2 &A,
     { VV=A.initialize_weighted_points_to_the_nearest_vertex(V.begin(), V.end()); }
   n = A.make_Alpha_shape(VV.begin(), VV.end());
   end_timing(1);
-  std::cerr << "Inserted " << n  << " points" << endl;
+  std::cout << "Inserted " << n  << " points" << endl;
 
 }
 
@@ -335,7 +335,7 @@ file_input(Alpha_shape_2& A,
 
   int n;
   is >> n;
-  std::cerr << "Reading " << n << " points" << endl;
+  std::cout << "Reading " << n << " points" << endl;
   V.reserve(n);
   Point_base p;
   for( ; n>0 ; n--)
@@ -348,7 +348,7 @@ file_input(Alpha_shape_2& A,
   else
     { VV=A.initialize_weighted_points_to_the_nearest_vertex(V.begin(), V.end()); }
   
-  std::cerr << "Points read" << endl;
+  std::cout << "Points read" << endl;
   return true;
 }
     
@@ -377,7 +377,7 @@ file_output(std::vector<Point>& V,
     for (it = V.begin(); it != V.end(); ++it)
       os << Point_base (*it) << endl;
 
-    std::cerr << n << " points written" << endl;
+    std::cout << n << " points written" << endl;
 }
 
 //-------------------------------------------------------------------
@@ -512,7 +512,7 @@ int main(int argc,  char* argv[])
 			  if (Pfin.open(W) == 1)
 			    break;
 			  strcpy(opt.finname, finname);
-			  std::cerr << opt.finname << std::endl;
+			  std::cout << opt.finname << std::endl;
 	
 			  clear_all(A, V, W);
 			  if (!file_input(A, V, W, opt))
@@ -530,7 +530,7 @@ int main(int argc,  char* argv[])
 			  start_timing();
 			  nn = A.make_Alpha_shape(V.begin(), V.end());
 			  end_timing(1);
-			  std::cerr << "Inserted " << nn  << " points" << std::endl;
+			  std::cout << "Inserted " << nn  << " points" << std::endl;
 			  set_alpha(alpha_index);
 			  W.clear();
 			  W.init(xmin, xmax, ymin);
@@ -597,9 +597,9 @@ int main(int argc,  char* argv[])
 		  A.find_optimal_alpha(nb_comp);
 		opt_alpha_index = int(opt_alpha_it - A.alpha_begin());
 		alpha_index = (opt_alpha_index * ALPHA_MAX)/ A.number_of_alphas();
-#ifndef NDEBUG
-		std::cerr << "alpha_index :" << alpha_index << std::endl;
-#endif // NDEBUG
+#ifdef DEBUG
+		std::cout << "alpha_index :" << alpha_index << std::endl;
+#endif // DEBUG
 		A.set_alpha((*opt_alpha_it + *(opt_alpha_it+1))/2);
 	      }
 	    break;
@@ -616,24 +616,24 @@ int main(int argc,  char* argv[])
 	};
 
       /*      // draw
-#ifndef NDEBUG
+#ifdef DEBUG
       // write in Ascii file to test
   
       ofstream os(opt.foutname);
       CGAL::set_ascii_mode(os);
       os << A;
-      std::cerr << "file written" << std::endl;
+      std::cout << "file written" << std::endl;
 
       std::list< Vertex* > L_V;
       A.get_Alpha_shape_vertices(back_inserter(L_V));
       std::list<Vertex*>::iterator vertex_it = L_V.begin();
       for (; vertex_it != L_V.end(); ++vertex_it)
-	std::cerr << (*vertex_it)->point() << std::endl;
+	std::cout << (*vertex_it)->point() << std::endl;
  
       std::list< std::pair<Face*, int> > L_E;
       A.get_Alpha_shape_edges(back_inserter(L_E));
    
-#endif // NDEBUG   
+#endif // DEBUG   
      */
       
       
@@ -643,7 +643,7 @@ int main(int argc,  char* argv[])
       if (opt.weight) 
 	{ 
 	  W << REGULARIZED_COLOR;
-	  W << CGAL::Circle_2<Rep> (Point_base ((xmax-(xmax-xmin)/15), (ymin+(xmax-xmin)/15)),max(A.get_alpha(),DBL_MIN)); 
+	  W << CGAL::Circle_2<CRep> (Point_base ((xmax-(xmax-xmin)/15), (ymin+(xmax-xmin)/15)),max(A.get_alpha(),DBL_MIN)); 
 	}
       
       if(opt.Delaunay)
@@ -671,14 +671,16 @@ int main(int argc,  char* argv[])
 	  A.set_mode(Alpha_shape_2::GENERAL);
 	  W << GENERAL_COLOR;
 	}
-      std::cerr << "display Weighted Alpha Shape for alpha_index = " << alpha_index << std::endl;
+
+      std::cout << "alpha_value :" << A.get_alpha() << std::endl;
+      std::cout << "display Weighted Alpha Shape for alpha_index = " << alpha_index << std::endl;
       W << A;
 
       W.flush_buffer();
       W.stop_buffering();
 
-#ifndef NDEBUG
-      std::cerr << "nb components :" << A.number_solid_components() << std::endl;
-#endif // NDEBUG
+#ifdef DEBUG
+      std::cout << "nb components :" << A.number_solid_components() << std::endl;
+#endif // DEBUG
     }
 }
