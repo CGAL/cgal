@@ -319,12 +319,109 @@ protected:
     glPushMatrix();
 
     if(complexity == 0){//render the bounding box
-      glBegin(GL_LINES);
-        glVertex3f(0, 0, 0);
-        glVertex3f(5, 0, 0);
+      SbVec3f min = polyhedron_bounding_box.getMin();
+      SbVec3f max = polyhedron_bounding_box.getMax();      
 
-        glVertex3f(5, 0, 0);
-        glVertex3f(5, 5, 0);
+      glBegin(GL_QUADS);
+      {
+        Vector_3 normal = CGAL::cross_product(
+          Point(min[0], min[1], max[2]) - Point(min[0], min[1], min[2]),
+          Point(min[0], max[1], max[2]) - Point(min[0], min[1], max[2]));          
+        double sqnorm = normal * normal;
+        if(sqnorm != 0){
+          Vector_3 v_n = normal / std::sqrt(sqnorm);
+          Point pn = Point(0, 0, 0) + v_n;
+          glNormal3f(pn.x(), pn.y(), pn.z());
+        }
+      }
+        glVertex3f(min[0], min[1], min[2]);
+        glVertex3f(min[0], min[1], max[2]);
+        glVertex3f(min[0], max[1], max[2]);
+        glVertex3f(min[0], max[1], min[2]);
+      {
+        Vector_3 normal = CGAL::cross_product(
+          Point(max[0], max[1], min[2]) - Point(max[0], min[1], min[2]),
+          Point(max[0], min[1], min[2]) - Point(min[0], min[1], min[2]));          
+        double sqnorm = normal * normal;
+        if(sqnorm != 0){
+          Vector_3 v_n = normal / std::sqrt(sqnorm);
+          Point pn = Point(0, 0, 0) + v_n;
+          glNormal3f(pn.x(), pn.y(), pn.z());
+        }
+      }
+
+        glVertex3f(min[0], min[1], min[2]);
+        glVertex3f(max[0], min[1], min[2]);
+        glVertex3f(max[0], max[1], min[2]);
+        glVertex3f(min[0], max[1], min[2]);
+
+      {
+        Vector_3 normal = CGAL::cross_product(
+          Point(max[0], min[1], max[2]) - Point(min[0], min[1], max[2]),
+          Point(max[0], max[1], max[2]) - Point(max[0], min[1], max[2]));
+        double sqnorm = normal * normal;
+        if(sqnorm != 0){
+          Vector_3 v_n = normal / std::sqrt(sqnorm);
+          Point pn = Point(0, 0, 0) + v_n;
+          glNormal3f(pn.x(), pn.y(), pn.z());
+        }
+      }
+        glVertex3f(min[0], min[1], max[2]);
+        glVertex3f(max[0], min[1], max[2]);
+        glVertex3f(max[0], max[1], max[2]);
+        glVertex3f(min[0], max[1], max[2]);
+
+      {
+        Vector_3 normal = CGAL::cross_product(
+          Point(max[0], min[1], max[0]) - Point(min[0], min[1], max[0]),
+          Point(min[0], min[1], max[0]) - Point(min[0], min[1], min[2]));          
+        double sqnorm = normal * normal;
+        if(sqnorm != 0){
+          Vector_3 v_n = normal / std::sqrt(sqnorm);
+          Point pn = Point(0, 0, 0) + v_n;
+          glNormal3f(pn.x(), pn.y(), pn.z());
+        }
+      }
+
+        glVertex3f(min[0], min[1], min[2]);
+        glVertex3f(min[0], min[1], max[2]);
+        glVertex3f(max[0], min[1], max[2]);
+        glVertex3f(max[0], min[1], min[2]);
+
+      {
+        Vector_3 normal = CGAL::cross_product(
+          Point(max[0], max[1], max[2]) - Point(max[0], min[1], max[2]),
+          Point(max[0], min[1], max[2]) - Point(max[0], min[1], min[2]));          
+        double sqnorm = normal * normal;
+        if(sqnorm != 0){
+          Vector_3 v_n = normal / std::sqrt(sqnorm);
+          Point pn = Point(0, 0, 0) + v_n;
+          glNormal3f(pn.x(), pn.y(), pn.z());
+        }
+      }
+
+        glVertex3f(max[0], min[1], min[2]);
+        glVertex3f(max[0], min[1], max[2]);
+        glVertex3f(max[0], max[1], max[2]);
+        glVertex3f(max[0], max[1], min[2]);
+       
+      {
+        Vector_3 normal = CGAL::cross_product(
+          Point(min[0], max[1], min[2]) - Point(min[0], max[1], max[2]),
+          Point(min[0], max[1], max[2]) - Point(max[0], max[1], max[2]));
+        double sqnorm = normal * normal;
+        if(sqnorm != 0){
+          Vector_3 v_n = normal / std::sqrt(sqnorm);
+          Point pn = Point(0, 0, 0) + v_n;
+          glNormal3f(pn.x(), pn.y(), pn.z());
+        }
+      }
+
+        glVertex3f(max[0], max[1], max[2]);
+        glVertex3f(min[0], max[1], max[2]);
+        glVertex3f(min[0], max[1], min[2]);
+        glVertex3f(max[0], max[1], min[2]);
+
       glEnd();
     } else if(complexity==1){
       //render in smooth (specify the normals for the vertices)
@@ -333,24 +430,8 @@ protected:
         Halfedge_around_facet_circulator h = (*fit).facet_begin();
         glBegin(GL_POLYGON);
           do{
-            Halfedge_around_vertex_circulator vh = h->vertex()->vertex_begin();
-            unsigned int normals_count = 0;
-            Vector_3 normals_sum(0, 0, 0);
-            do{
-              Vector_3 normal = CGAL::cross_product(
-                      vh->next()->vertex()->point() - vh->vertex()->point(),
-                      vh->next()->next()->vertex()->point() - 
-                      vh->next()->vertex()->point());
-              normals_sum = normals_sum + normal;
-              normals_count++;
-            }while(++vh != h->vertex()->vertex_begin());
-            normals_sum = normals_sum/normals_count;
-            double sqnorm = normals_sum * normals_sum;
-            if(sqnorm != 0){
-              Vector_3 v_n = normals_sum / std::sqrt(sqnorm);
-              Point pn = Point(0, 0, 0) + vertices_normals[h->vertex()];
-              glNormal3f(pn.x(), pn.y(), pn.z());
-            }
+            Point pn = Point(0, 0, 0) + vertices_normals[h->vertex()];
+            glNormal3f(pn.x(), pn.y(), pn.z());
             Point point = h->vertex()->point();
             glVertex3f(point[0],point[1],point[2]);
           }while(++h != (*fit).facet_begin());
@@ -404,6 +485,7 @@ protected:
     max.setValue(xmax, ymax, zmax);
     // Set the box to bound the two extreme points
     box.setBounds(min, max);
+    polyhedron_bounding_box.setBounds(min, max);
   };
   
   
@@ -563,6 +645,8 @@ private:
   Polyhedron p_temp;
   int LOCK;   //used to secure rendering
               //the node is rendered only when the data is ready
+
+  SbBox3f    polyhedron_bounding_box;
 };
 
 template<class Polyhedron_3>
