@@ -5,16 +5,16 @@ if [ -d $h ]; then
   cd $h;
   echo "In " $h;
   ../C2dsw > /text/$h.dsw; mv /text/$h.dsw .
-  if [ -e visual ]; then
-    rm -r visual;
+  if [ -e VC6 ]; then
+    rm -r VC6;
   fi
-  mkdir visual;
+  mkdir VC6;
  
   for i in *.C ; do
     j=`echo $i|sed -e "s/\.C/\.dsp/"`; 
     k=`echo $i|sed -e "s/\.C//"`; 
     sed -e"s/master/$k/g" ../master.dsp > /text/$j; 
-    mv /text/$j visual/; 
+    mv /text/$j VC6/; 
   done
 
   cd ..;
