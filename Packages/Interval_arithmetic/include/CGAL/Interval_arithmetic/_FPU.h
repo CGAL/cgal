@@ -269,7 +269,7 @@ static inline void CGAL_FPU_set_rounding_to_minus_infinity (void)
 #endif
 }
 
-// Rouding mode empiric testing.
+// Rounding mode empiric testing.
 
 enum CGAL_FPU_rounding_mode
 {
