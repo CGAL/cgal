@@ -529,7 +529,6 @@ insert(const Point & p, Locate_type lt, Cell_handle c, int li, int)
     {
       switch (lt) {
       case Tr_Base::OUTSIDE_CONVEX_HULL:
-      case Tr_Base::CELL:
       case Tr_Base::FACET:
       case Tr_Base::EDGE:
 	{
@@ -544,6 +543,8 @@ insert(const Point & p, Locate_type lt, Cell_handle c, int li, int)
 	  // if the 2d triangulation is Delaunay, the 3d
 	  // triangulation will be Delaunay
 	return Tr_Base::insert_outside_affine_hull(p); 
+      default:
+	CGAL_triangulation_assertion(false); // CELL should not happen in 2D.
       }
     }//dim 2
   default :

@@ -670,7 +670,6 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
     {
       switch (lt) {
       case Tr_Base::OUTSIDE_CONVEX_HULL:
-      case Tr_Base::CELL:
       case Tr_Base::FACET:
       case Tr_Base::EDGE:
       case Tr_Base::VERTEX:
@@ -703,6 +702,8 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
 	  // triangulation will be Regular
 	  return Tr_Base::insert_outside_affine_hull(p);
 	}
+      default:
+	CGAL_triangulation_assertion(false); // CELL cannot happen in 2D.
       }
     }//dim 2
   case 1:

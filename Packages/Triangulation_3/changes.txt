@@ -1,3 +1,6 @@
+29 July 2004 Sylvain Pion
+- locate() cannot return CELL in 2D, so no need to test for it in insert.
+
 28 July 2004 Sylvain Pion
 - Fix test-suite for IA64.
 
