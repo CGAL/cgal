@@ -83,6 +83,9 @@ fi
 # ... End of Installation Section.
 # =====================================================================
 
+# keep track of a global exit code, reports first non-zero error code
+GlobalExitCode=0
+
 #---------------------------------------------------------------------#
 # version
 #---------------------------------------------------------------------#
@@ -216,6 +219,7 @@ error() {
     fi
     echo "ERROR: $@" >> $LogFile
     if [ "$ExitCode" != "noexit" ]; then exit $ExitCode; fi
+    if [ $GlobalExitCode -eq 0 ]; then GlobalExitCode=1 ; fi
 }
 
 #---------------------------------------------------------------------#
@@ -238,6 +242,7 @@ error_usage() {
     fi
     echo "ERROR: $@" >> $LogFile
     if [ "$ExitCode" != "noexit" ]; then exit $ExitCode; fi
+    if [ $GlobalExitCode -eq 0 ]; then GlobalExitCode=1 ; fi
 }
 
 #---------------------------------------------------------------------#
@@ -292,7 +297,7 @@ run_command() {
   else
     if ! eval "$@" > ${LogFile}.tmp  2>&1 ; then
       ExitCode=1
-      error noexit "Non-zero exit-code when running `$@`."
+      #error noexit "Non-zero exit-code when running '$@'."
     fi
   fi
   if [ -r $LogFile.tmp ]; then
@@ -300,6 +305,7 @@ run_command() {
     cat $LogFile.tmp | sed 's/[[][0-9]*m//g' >> $LogFile
     rm $LogFile.tmp
   fi
+  if [ $GlobalExitCode -eq 0 ]; then GlobalExitCode=$ExitCode ; fi
 }
 
 #---------------------------------------------------------------------#
@@ -803,6 +809,8 @@ done
 # Cleanup
 # -------
 \rm -r ${TmpDir}
+
+exit $GlobalExitCode
 
 # -------------
 # End of script
