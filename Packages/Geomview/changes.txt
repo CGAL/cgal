@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.18 (19 June 2001)
+- Add and document a new pickplane() member function.
+
 Ver 3.17 (19 June 2001)
 - Move set/get_wired() in non-advanced section.
 

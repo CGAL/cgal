@@ -184,6 +184,11 @@ public:
 	return bb;
     }
 
+    void pickplane()
+    {
+        pickplane(get_bbox());
+    }
+
 private:
     void setup_geomview(const char *machine, const char *login);
     void frame(const Bbox_3 &bbox);
