@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Set -vi- (inlining off) flag for Borland.
+GLOB: Set CGAL_WINDOW/GEOWIN_LDFLAGS also without LEDA (-> CGAL_LDFLAGS).
 GLOB: Changed .C/.o rule in include makefile for cygwin-g++.
 GLOB: Added advapi32.lib to XLIBS for MSVC.
 GLOB: EXTRA_OBJECTS with .o suffix for cygwin/gcc.
