@@ -83,7 +83,7 @@ class Point_2<use_rat_leda_kernel> : public leda_rat_point
 
 inline
 Comparison_result
-cmp_dist_to_point( const leda_rat_point& p,
+compare_distance_to_point( const leda_rat_point& p,
                    const leda_rat_point& q,
                    const leda_rat_point& r)
 {
@@ -93,19 +93,99 @@ cmp_dist_to_point( const leda_rat_point& p,
 
 inline
 bool
-has_larger_dist_to_point( const leda_rat_point& p,
+has_larger_distance_to_point( const leda_rat_point& p,
                           const leda_rat_point& q,
                           const leda_rat_point& r)
-{ return (cmp_dist_to_point(p,q,r) == LARGER); }
+{ return (compare_distance_to_point(p,q,r) == LARGER); }
 
 inline
 bool
-has_smaller_dist_to_point( const leda_rat_point& p,
+has_smaller_distance_to_point( const leda_rat_point& p,
                            const leda_rat_point& q,
                            const leda_rat_point& r)
-{ return (cmp_dist_to_point(p,q,r) == SMALLER); }
+{ return (compare_distance_to_point(p,q,r) == SMALLER); }
 
+inline
+bool
+has_smaller_signed_distance_to_line( const leda_rat_point& p,
+                                     const leda_rat_point& q,
+                                     const leda_rat_point& r,
+                                     const leda_rat_point& s)
+{ return (cmp_signed_dist(p,q,r,s) == SMALLER); }
 
+inline
+bool
+has_larger_signed_distance_to_line( const leda_rat_point& p,
+                                     const leda_rat_point& q,
+                                     const leda_rat_point& r,
+                                     const leda_rat_point& s)
+{ return (cmp_signed_dist(p,q,r,s) == LARGER); }
+
+inline
+Comparison_result
+compare_signed_distance_to_line( const leda_rat_point& p,
+                                     const leda_rat_point& q,
+                                     const leda_rat_point& r,
+                                     const leda_rat_point& s)
+{ return Comparison_result(cmp_signed_dist(p,q,r,s)); }
+
+inline
+bool 
+left_turn(const leda_rat_point& p, const leda_rat_point& q, 
+          const leda_rat_point& r)
+{
+   return ::left_turn(p,q,r);
+}
+
+inline
+bool 
+right_turn(const leda_rat_point& p, const leda_rat_point& q, 
+          const leda_rat_point& r)
+{
+   return ::right_turn(p,q,r);
+}
+
+inline
+bool
+lexicographically_yx_larger_or_equal(const leda_rat_point& p,
+                                     const leda_rat_point& q)
+{
+   if (p.ycoord() > q.ycoord()) return true;
+   if (p.ycoord() < q.ycoord()) return false;
+   return (p.xcoord() >= q.xcoord()); 
+}
+
+inline
+bool
+lexicographically_xy_larger_or_equal(const leda_rat_point& p,
+                                     const leda_rat_point& q)
+{
+   if (p.xcoord() > q.xcoord()) return true;
+   if (p.xcoord() < q.xcoord()) return false;
+   return (p.ycoord() >= q.ycoord()); 
+}
+
+inline
+Comparison_result
+compare_yx(const leda_rat_point& p, const leda_rat_point& q)
+{
+   if (p.ycoord() > q.ycoord()) return CGAL::LARGER;
+   if (p.ycoord() < q.ycoord()) return CGAL::SMALLER;
+   if (p.xcoord() > q.xcoord()) return CGAL::LARGER; 
+   if (p.xcoord() < q.xcoord()) return CGAL::SMALLER; 
+   return CGAL::EQUAL;
+}
+
+inline
+Comparison_result
+compare_xy(const leda_rat_point& p, const leda_rat_point& q)
+{
+   if (p.xcoord() > q.xcoord()) return CGAL::LARGER; 
+   if (p.xcoord() < q.xcoord()) return CGAL::SMALLER; 
+   if (p.ycoord() > q.ycoord()) return CGAL::LARGER;
+   if (p.ycoord() < q.ycoord()) return CGAL::SMALLER;
+   return CGAL::EQUAL;
+}
 CGAL_END_NAMESPACE
 
 
