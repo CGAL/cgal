@@ -47,26 +47,26 @@ template <class Iterator>
   };
 
 
-template < class Triangulation>
+template < class Triangulation_, class RegT>
 class Regular_triangulation_hidden_vertices_iterator_2
- : public Filter_iterator< typename Triangulation::Finite_vertices_iterator, 
-                           typename Unhidden_filter<typename Triangulation::Finite_vertices_iterator>  >
+ : public Filter_iterator< typename Triangulation_::Finite_vertices_iterator, 
+                           typename RegT::Unhidden_finite_vertices_filter  >
 {
 public:
-  typedef typename Triangulation::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename Triangulation_::Finite_vertices_iterator Finite_vertices_iterator;
   typedef Unhidden_filter<Finite_vertices_iterator> Unhidden_filter;
   typedef Filter_iterator<Finite_vertices_iterator,Unhidden_filter>  Base;
-  typedef Regular_triangulation_hidden_vertices_iterator_2<Triangulation> Self;
-  typedef typename Triangulation::Vertex_handle         Vertex_handle;
+  typedef Regular_triangulation_hidden_vertices_iterator_2<Triangulation_, RegT> Self;
+  typedef typename Triangulation_::Vertex_handle         Vertex_handle;
 
   Regular_triangulation_hidden_vertices_iterator_2()    :  Base() {}
            
-  Regular_triangulation_hidden_vertices_iterator_2(const Triangulation *tr)
+  Regular_triangulation_hidden_vertices_iterator_2(const Triangulation_ *tr)
     : Base( filter_iterator(tr->finite_vertices_begin(), 
 			    tr->finite_vertices_end(),
 			    Unhidden_filter())) {}
     
-  Regular_triangulation_hidden_vertices_iterator_2(const Triangulation *tr, int )
+  Regular_triangulation_hidden_vertices_iterator_2(const Triangulation_ *tr, int )
     : Base( filter_iterator(tr->finite_vertices_begin(), 
 			    tr->finite_vertices_end(),
 			    Unhidden_filter(),
@@ -80,26 +80,26 @@ public:
 
 };  
 
-template < class Triangulation>
+template < class Triangulation_, class RegT>
 class Regular_triangulation_finite_vertices_iterator_2
- : public Filter_iterator< typename Triangulation::Finite_vertices_iterator, 
-                           typename Hidden_filter<typename Triangulation::Finite_vertices_iterator>  >
+ : public Filter_iterator< typename Triangulation_::Finite_vertices_iterator, 
+                           typename RegT::Hidden_finite_vertices_filter>
 {
 public:
-  typedef typename Triangulation::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename Triangulation_::Finite_vertices_iterator Finite_vertices_iterator;
   typedef Hidden_filter<Finite_vertices_iterator> Hidden_filter;
   typedef Filter_iterator<Finite_vertices_iterator,Hidden_filter>  Base;
-  typedef Regular_triangulation_finite_vertices_iterator_2<Triangulation> Self;
-  typedef typename Triangulation::Vertex_handle         Vertex_handle;
+  typedef Regular_triangulation_finite_vertices_iterator_2<Triangulation_,RegT> Self;
+  typedef typename Triangulation_::Vertex_handle         Vertex_handle;
 
   Regular_triangulation_finite_vertices_iterator_2()    :  Base() {}
            
-  Regular_triangulation_finite_vertices_iterator_2(const Triangulation *tr)
+  Regular_triangulation_finite_vertices_iterator_2(const Triangulation_ *tr)
     : Base( filter_iterator(tr->finite_vertices_begin(), 
 			    tr->finite_vertices_end(),
 			    Hidden_filter())) {}
     
-  Regular_triangulation_finite_vertices_iterator_2(const Triangulation *tr, int )
+  Regular_triangulation_finite_vertices_iterator_2(const Triangulation_ *tr, int )
     : Base( filter_iterator(tr->finite_vertices_begin(), 
 			    tr->finite_vertices_end(),
 			    Hidden_filter(),
@@ -115,26 +115,26 @@ public:
 
 
 
-template < class Triangulation>
+template < class Triangulation_, class RegT>
 class Regular_triangulation_all_vertices_iterator_2
- : public Filter_iterator< typename Triangulation::All_vertices_iterator, 
-                           typename Hidden_filter<typename Triangulation::All_vertices_iterator>  >
+ : public Filter_iterator< typename Triangulation_::All_vertices_iterator, 
+                           typename RegT::Hidden_all_vertices_filter>
 {
 public:
-  typedef typename Triangulation::All_vertices_iterator All_vertices_iterator;
+  typedef typename Triangulation_::All_vertices_iterator All_vertices_iterator;
   typedef Hidden_filter<All_vertices_iterator> Hidden_filter;
   typedef Filter_iterator<All_vertices_iterator,Hidden_filter>  Base;
-  typedef Regular_triangulation_all_vertices_iterator_2<Triangulation> Self;
-  typedef typename Triangulation::Vertex_handle         Vertex_handle;
+  typedef Regular_triangulation_all_vertices_iterator_2<Triangulation_, RegT> Self;
+  typedef typename Triangulation_::Vertex_handle         Vertex_handle;
 
   Regular_triangulation_all_vertices_iterator_2()    :  Base() {}
            
-  Regular_triangulation_all_vertices_iterator_2(const Triangulation *tr)
+  Regular_triangulation_all_vertices_iterator_2(const Triangulation_ *tr)
     : Base( filter_iterator(tr->all_vertices_begin(), 
 			    tr->all_vertices_end(),
 			    Hidden_filter())) {}
     
-  Regular_triangulation_all_vertices_iterator_2(const Triangulation *tr, int )
+  Regular_triangulation_all_vertices_iterator_2(const Triangulation_ *tr, int )
     : Base( filter_iterator(tr->all_vertices_begin(), 
 			    tr->all_vertices_end(),
 			    Hidden_filter(),
@@ -158,6 +158,7 @@ class Regular_triangulation_2 : public Triangulation_2<Gt,Tds>
 {
 
 public:
+  typedef Regular_triangulation_2<Gt, Tds> Self;
   typedef Triangulation_2<Gt,Tds>     Triangulation;
   typedef Gt                          Geom_traits;
   typedef typename Gt::Bare_point     Point;
@@ -173,23 +174,35 @@ public:
   typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
   typedef typename Triangulation::Finite_faces_iterator Finite_faces_iterator;
 
+  // we introduce them here, because g++ does not compile them when
+  // they are template arguments
+  typedef Hidden_filter<typename Triangulation::All_vertices_iterator>
+  Hidden_all_vertices_filter;
+
+  typedef Unhidden_filter<typename Triangulation::Finite_vertices_iterator> 
+    Unhidden_finite_vertices_filter;
+
+  typedef Hidden_filter<typename Triangulation::Finite_vertices_iterator>
+    Hidden_finite_vertices_filter;
+
 private:
 
   int _hidden_vertices;
 
 public:
-  typedef Regular_triangulation_all_vertices_iterator_2<Triangulation>
+  typedef Regular_triangulation_all_vertices_iterator_2<Triangulation, Self>
   All_vertices_iterator;
-  typedef Regular_triangulation_finite_vertices_iterator_2<Triangulation>
+  typedef Regular_triangulation_finite_vertices_iterator_2<Triangulation,Self>
   Finite_vertices_iterator;
 
-  typedef Regular_triangulation_hidden_vertices_iterator_2<Triangulation>  Hidden_vertices_iterator;
+  typedef Regular_triangulation_hidden_vertices_iterator_2<Triangulation, Self>  Hidden_vertices_iterator;
   // af: why are the following typedefs public??
 
   // a list to memorise temporary the faces around a point
   typedef std::list<Face_handle>      Faces_around_stack; 
   // vertex list
   typedef typename Triangulation::Face::Vertex_list   Vertex_list;
+  typedef typename Vertex_list::iterator Vertex_list_iterator;
 
 public:
   Regular_triangulation_2(const Gt& gt=Gt()) : Triangulation(gt), _hidden_vertices(0) {}
@@ -1088,7 +1101,7 @@ template < class Gt, class Tds >
 void
 Regular_triangulation_2<Gt,Tds>::set_face(Vertex_list& vl, const Face_handle& fh)
 {
-  for(Vertex_list::iterator it = vl.begin(); it != vl.end(); it++)
+  for(typename Vertex_list::iterator it = vl.begin(); it != vl.end(); it++)
     {
       Vertex_handle v(static_cast<Vertex*>(*it));
       v->set_face(fh);
