@@ -29,8 +29,8 @@
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| This flag is set, if the compiler does not match member 
-//| definition to an existing declaration (eg. cl1310 Beta)
+//| This flag is set, if the compiler does not match a member 
+//| definition to an existing declaration (eg., cl1310 Beta).
 
 #include <iostream>
 #include <vector>

@@ -30,9 +30,10 @@
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| The flag CGAL_CFG_EARLY_INSTANTIATION_BUG is set, if a compiler does not 
-//| not how to compile the following code. See the solution bellow.
-//| Created to workaround a cl1300 bug
+//| This flag is set, if a compiler instantiates a class template A<>
+//| too early, where A<> is declared in the scope of another class
+//| template B<>, such that B<> is the template parameter of A<>.
+//| This bug shows up on VC7.0.
 
 template < class Container > class Iterator;
 
