@@ -1323,7 +1323,7 @@ locate(const Point& p,
        int& li,
        Face_handle start) const
 {
-  if( dimension() == 0) {
+  if( dimension() <= 0) {
     if(number_of_vertices() == 0) {
       lt = OUTSIDE_AFFINE_HULL;
     } else { // number_of_vertices() == 1

@@ -94,7 +94,10 @@ public:
     }
     
     
-    class Distance : public Distance_2<Traits> {
+    class Distance : public Distance_2<Traits> 
+    {
+      typedef typename Distance_2<Traits>::Point Point;
+
     public:
         Distance(const Point& p0,
                  const Traits* traits = NULL)

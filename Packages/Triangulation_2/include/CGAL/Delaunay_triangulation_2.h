@@ -301,7 +301,7 @@ nearest_vertex_1D(const Point& p) const
   nn = vit->handle();
   do {
     closer.set_point( 3-min, (++vit)->point());
-    if (  ( (min==1)? CGAL_LARGER : CGAL_SMALLER )
+    if (  ( (min==1)? LARGER : SMALLER )
 	  == closer.compare() ) {
       min = 3-min;
       nn=vit->handle();
