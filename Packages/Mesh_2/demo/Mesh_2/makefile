@@ -102,7 +102,7 @@ clean: \
 		mesh_demo.clean \
 		mesh.clean \
 		conform.clean
-	${RM} -f Show_clusters.moc
+	rm -f Show_clusters.moc
 
 #---------------------------------------------------------------------#
 #                    suffix rules
