@@ -6,6 +6,7 @@
 //---------------------------------------------------------------------
 //	actual revision
 //---------------------------------------------------------------------
+GLOB: Removed -Xlinker for mingw
 GLOB: Added mingw specific compiler flags
 GLOB: removed stlport from LICENSE
 GLOB: update installation.tex wrt outdated stuff
