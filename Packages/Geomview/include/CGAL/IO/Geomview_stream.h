@@ -509,8 +509,13 @@ operator<<(Geomview_stream& gv, const Delaunay_tetrahedralization_3<I> &DT)
 char*
 nth(char* s, int count);
 
+// Returns whether "p" is a prefix of "w".
+inline
 bool
-is_prefix(const char* p, const char* w);
+is_prefix(const char* p, const char* w)
+{
+    return w == ::strstr(w, p);
+}
 
 #ifdef CGAL_POINT_3_H
 template < class R >

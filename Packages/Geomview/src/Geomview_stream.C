@@ -480,7 +480,7 @@ Geomview_stream::frame(const Bbox_3 &bbox)
 {
     (*this) << bbox
             << ascii
-            << "(look-recenter g0 c0)(delete bbox0)";
+            << "(look-recenter g0 c0)";
 }
 
 Geomview_stream&
@@ -548,13 +548,6 @@ nth(char* s, int count)
  
     s[j] = '\0';
     return s;
-}
-
-// Returns whether "p" is a prefix of "w".
-bool
-is_prefix(const char* p, const char* w)
-{
-    return w == ::strstr(w, p);
 }
 
 CGAL_END_NAMESPACE
