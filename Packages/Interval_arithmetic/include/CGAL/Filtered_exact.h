@@ -73,6 +73,7 @@ typedef Interval_nt_advanced Filter_Cache;
 template < class CT, class ET, class Type = Dynamic,
            bool Protection = true, class Cache = No_Filter_Cache >
 class Filtered_exact
+  : private Cache // To benefit from the empty base class optimization.
 {
   typedef Filtered_exact<CT, ET, Type, Protection, Cache> Fil;
   typedef Interval_nt_advanced                            IA;
@@ -97,12 +98,13 @@ class Filtered_exact
     inter = give_interval (No_Filter_Cache());
   }
 
-  void update_cache() { compute_cache (_cache); }
+  void update_cache() { compute_cache (cache()); }
 
-  // Private data members.
+  const Cache & cache() const { return *this; }
+  Cache & cache() { return *this; }
 
+  // Private data member.
   CT    _value;
-  Cache _cache;
 
 public:
 
@@ -112,7 +114,7 @@ public:
 
   Filtered_exact () {}
   Filtered_exact (const Filtered_exact<CT, ET, Type, Protection, Cache> & fil)
-      : _value(fil._value), _cache(fil._cache)  {}
+      : Cache(fil.cache()), _value(fil._value) {}
   Filtered_exact (const CT & ct)
       : _value(ct)  { update_cache(); }
   template <class NT>
@@ -121,7 +123,7 @@ public:
 
   // The access functions.
   const CT & value() const { return _value; }
-  IA interval() const { return give_interval(_cache); }
+  IA interval() const { return give_interval(cache()); }
   ET exact()    const { return convert_to<ET>(_value); }
 
   double to_double() const { return CGAL::to_double(_value); }

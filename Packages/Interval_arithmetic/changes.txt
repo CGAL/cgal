@@ -1,3 +1,7 @@
+Version 4.187 on 18 December 2003
+- Filtered_exact stores its potential cache as private base, to benefit from
+  the empty base class optimization.
+
 Version 4.186 on 27 November 2003
 - FreeBSD fix.
 
