@@ -246,7 +246,7 @@ void Union_find<T,A>::unify_sets( handle p, handle q) {
         std::swap(pit,qit); // now sp <= sq
     pit->up = qit;  // linking roots
     qit->size += pit->size; // updating size
-    ++sets;
+    --sets;
 }
 
 CGAL_END_NAMESPACE

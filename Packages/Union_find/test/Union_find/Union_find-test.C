@@ -14,7 +14,11 @@ int main() {
   handle p1 = P.make_set(11);
   handle p2 = P.make_set(-23);
   handle p3 = P.push_back(17);
+  CGAL_TEST(P.size()==3);
+  CGAL_TEST(P.number_of_sets()==3);
   P.unify_sets(p1,p2);
+  CGAL_TEST(P.size()==3);
+  CGAL_TEST(P.number_of_sets()==2);
   CGAL_TEST(P.same_set(p1,p2));
   CGAL_TEST(!P.same_set(p1,p3));
   CGAL_TEST(P.size(p3)==1);
