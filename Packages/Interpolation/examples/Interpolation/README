@@ -1,0 +1,17 @@
+To compule and run all these examples type :
+./cgal_test
+To compute and run only some of them type
+./cgal_test name-of_wanted_example
+ 
+nn_coordinates_2: shows how to compute 2D natural coordinates 
+	given a 2D Delaunay triangulation  and a query point.
+
+rn_coordinates_2: shows how to compute 2D regular (natural) coordinates 
+	given a 2D Regular triangulation  and a (weighted) query point.
+
+linear_interpolation_2: interpolates a linear function using the 
+	linear_interpolation function and 2D natural neighbor coordinates.
+
+sibson_interpolation_2: interpolates a spherical function using the 
+	sibson_gradient_fitting and sibson_c1_interpolation function with 
+	2D natural neighbor coordinates.
