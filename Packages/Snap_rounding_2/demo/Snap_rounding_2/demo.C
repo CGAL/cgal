@@ -101,7 +101,11 @@ inline Number_Type min(Number_Type a,Number_Type b,Number_Type c)
        {Number_Type tmp = min(a,b);return(min(tmp,c));}
 
 
-void get_extreme_points(std::list<Segment_2> &seg_list,Number_Type &min_x,Number_Type &min_y,Number_Type &max_x,Number_Type &max_y)
+void get_extreme_points(std::list<Segment_2> &seg_list,
+                        Number_Type &min_x,
+                        Number_Type &min_y,
+                        Number_Type &max_x,
+                        Number_Type &max_y)
 {
   std::list<Segment_2>::iterator iter = seg_list.begin();
 
