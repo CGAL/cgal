@@ -108,7 +108,7 @@ public:
     typename K2::Point_3
     operator()(const typename K1::Point_3 &a) const
     {
-	return k.construct_point_3_object()(c(a.x()), c(a.y()), c(a.z()));
+	return typename K2::Point_3(c(a.x()), c(a.y()), c(a.z()));
     }
 
     typename K2::Vector_3
