@@ -1,3 +1,9 @@
+1.17 (15 November 2000)
++ Adapted collect_cgal_testresults to new naming of config/install files.
+  The _LEDA prefix of a platform is now retained.
++ Adapted sleep time between tests.
+
+----------------------
 1.16 (7 August 2000)
 + repaired redirection error in create_cgal_test script.
 + Augmented time bound for test scripts in run_testsuite
