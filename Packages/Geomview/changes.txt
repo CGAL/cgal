@@ -7,6 +7,10 @@ src/Geomview.C
 
 CHANGES
 
+Ver 2.1 16 April 99
+ Changed read and write in Geomview_stream.C
+ to ::read and ::write to avoid clashes with CGAL::read and CGAL::write
+
 Ver 2.0 13 April 99
 -Intoduced namespaces. Still certain std:: are missing in src files
  because I am not quite sure where to put them.
