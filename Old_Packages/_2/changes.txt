@@ -1,3 +1,7 @@
+3.15 (21 June 2001)
+- Merge point_vector_definitions_2.C into point_vector_declarations_2.h.
+- Remove number_type_tag(const Vector_2<R> &).
+
 3.14 (20 June 2001)
 - remove conditionnal #includes from cartesian/homogeneous.
 - remove member functions for predicates since they are inherited.

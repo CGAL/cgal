@@ -78,7 +78,6 @@ private:
 CGAL_END_NAMESPACE
 
 #include <CGAL/Vector_2.h>
-#include <CGAL/point_vector_definitions_2.C>
 #include <CGAL/Aff_transformation_2.h>
 
 #endif // CGAL_POINT_2_H

@@ -66,7 +66,6 @@ friend CGAL_FRIEND_INLINE
 
   Vector_2(const RT &x, const RT &y, const RT &w) : RVector_2(x,y,w) {}
 
-
   CGAL::Vector_2<R>
   operator+(const CGAL::Vector_2<R> &w) const
   {
@@ -131,11 +130,6 @@ private:
 
   Vector_2(const CGAL::Direction_2<R> &d) : RVector_2(d) {}
 };
-
-template < class R >
-No_number_tag
-number_type_tag(const Vector_2<R> &)
-{ return No_number_tag(); }
 
 CGAL_END_NAMESPACE
 
