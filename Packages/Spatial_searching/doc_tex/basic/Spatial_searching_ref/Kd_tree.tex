@@ -24,7 +24,7 @@ The class \ccRefName\ defines a $k$-$d$ tree.
 \ccParameters
 
 Expects for the first template argument a model of the concept
-\ccc{SearchTraits}, for example \ccc{CGAL::Kd_tree_traits_point_2<Kernel>}.
+\ccc{SearchTraits}, for example \ccc{CGAL::Search_traits_2<CGAL::Cartesian<double> >}.
 
 Excepts for the second template argument a model for the concept \ccc{Splitter}.
 It defaults  to \ccc{Sliding_midpoint<Traits>}
@@ -98,7 +98,8 @@ Inserts statistics of the tree into the output stream \ccc{s}.
 Tree.
 \ccc{CGAL::Kd_tree_node<Traits>},\\
 \ccc{CGAL::Search_traits_2<Kernel>},\\
-\ccc{CGAL::Search_traits_2<Kernel>}.
+\ccc{CGAL::Search_traits_3<Kernel>},\\
+\ccc{CGAL::Search_traits<FT_,Point,CartesianIterator,ConstructCartesianIterator>}.
 
 \end{ccRefClass}
 
