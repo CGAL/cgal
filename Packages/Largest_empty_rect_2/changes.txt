@@ -1,3 +1,6 @@
+version 1.11 [sp]
+- Avoid Windows end of lines in demo/makefile...
+
 version 1.10 [sp]
 - SunPro CC and GCC 3.x issues.
 

@@ -6,7 +6,6 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-#CGAL_MAKEFILE = d:/cgal/CGAL-2.4-I-49/make/makefile_i686_CYGWINNT-5.0-1.3.3_bcc32.exe-5.51
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
@@ -14,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../include\
+CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -36,7 +35,6 @@ LDFLAGS = \
 
 all:            \
                 demo$(EXE_EXT) 
-
 
 demo$(EXE_EXT): demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) $(LDFLAGS)
