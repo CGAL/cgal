@@ -25,7 +25,7 @@
 #define CGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL_H
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Lazy_nt_exact.h>
+#include <CGAL/Lazy_exact_nt.h>
 
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpq.h>

@@ -1,3 +1,6 @@
+1.50 (29 July 2003)
+- Fix typo in Exact_predicates_exact_constructions_kernel.h.
+
 1.49 (24 July 2003)
 - Remove the unused CGAL_FRIEND_INLINE.
 
