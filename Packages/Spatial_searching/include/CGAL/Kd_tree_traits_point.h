@@ -24,10 +24,10 @@
 
 #ifndef CGAL_KD_TREE_TRAITS_POINT_H
 #define CGAL_KD_TREE_TRAITS_POINT_H
-#include <CGAL/Splitting_rules.h>
+#include <CGAL/Splitters.h>
 namespace CGAL {
 
-  template <class Separator_, class Item_>
+  template <class Separator_, class Item_, class Splitter=Sliding_midpoint>
   class Kd_tree_traits_point {
 
   public:
@@ -38,8 +38,7 @@ namespace CGAL {
     // CGAL dependency typedef typename K::FT NT;
     typedef typename Item::R::FT NT;
     
-    typedef typename Split_rules::Split_rule split_rule;
-
+    
   private:
 
     unsigned int the_bucket_size;
@@ -52,8 +51,6 @@ namespace CGAL {
        
         
 	Kd_tree_traits_point(unsigned int bucket_size=1, 
-			     split_rule Selected_split_rule=
-			     Split_rules::SLIDING_MIDPOINT,
 			     NT aspect_ratio=NT(3), 
 			     bool use_extended_nodes=true) {
 		the_bucket_size = bucket_size;
@@ -63,9 +60,7 @@ namespace CGAL {
 	}
 
     	NT aspect_ratio() const {return the_aspect_ratio;}
-	split_rule  selected_split_rule() 
-	const {return the_selected_split_rule;}
-
+	
         unsigned int bucket_size() const {return the_bucket_size;}
 	bool use_extended_nodes() const {return use_extended_nodes_option;}
 
@@ -74,53 +69,8 @@ namespace CGAL {
 	{
 		Separator* sep;
 
-		switch (the_selected_split_rule) {
-
-			case Split_rules::SLIDING_MIDPOINT:
-				{Sliding_midpoint<Item> M;
-				 sep=M.rule(c0);
-				 c0.split_container(c1,sep,true);}
-				break;
-
-			case Split_rules::SLIDING_FAIR:
-				{Sliding_fair<Item> M;                                
-				 sep=M.rule(c0,aspect_ratio());
-				 c0.split_container(c1,sep,true);}
-				break;
-
-			case Split_rules::FAIR:
-				{Fair<Item> M;
-				 sep=M.rule(c0,aspect_ratio());
-				 c0.split_container(c1,sep);}
-				break;
-
-			case Split_rules::MEDIAN_OF_MAX_SPREAD:
-				{Median_of_max_spread<Item> M;
-				 sep=M.rule(c0);
-				 c0.split_container(c1,sep,true);}
-			    break;
-
-			case Split_rules::MEDIAN_OF_RECTANGLE:
-				{Median_of_rectangle<Item> M;
-				 sep=M.rule(c0);
-				 c0.split_container(c1,sep,true);}
-			    break;
-
-			case Split_rules::MIDPOINT_OF_MAX_SPREAD:
-				{Midpoint_of_max_spread<Item> M;
-				 sep=M.rule(c0);
-				 c0.split_container(c1,sep);}
-			    break;
-
-			case Split_rules::MIDPOINT_OF_RECTANGLE:
-				{Midpoint_of_rectangle<Item> M;
-				sep=M.rule(c0);
-				c0.split_container(c1,sep);}
-			    break;
-
-			default:
-				std::cerr << "Split rule corrupted\n";
-		}
+		Splitter<Item> S;
+		sep=S.split_container(c0,c1,the_aspect_ratio)
                 
 		return sep;
     }
