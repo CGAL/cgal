@@ -93,6 +93,16 @@ public:
 
   const Traits & traits() const {return _gt;};
 
+  // These friends are required by SUNPRO CC.
+  //! Internal data held under each point that the algorithm requires
+  friend class Point_data;
+  //! A functor used to sort points lexicographically by their x and y
+  //! coordinates
+  friend class Less_xy;
+  //! A functor used to sort points lexicographically by their y and x
+  //! coordinates
+  friend class Less_yx;
+
   //! A constructor given two points parameters. The parameters are two
   //! opposite corners of the bounding box.
   Largest_empty_iso_rectangle_2(const Point_2& bl, const Point_2& tr);
@@ -187,11 +197,6 @@ public:
   Largest_empty_iso_rectangle_2<T>(
 	       const Largest_empty_iso_rectangle_2<T>& ler);
 
-private:
-
-  /* this struct is the point representation. It is composed of two points
-   * such that one holds the x coordinate and the other holds the y coordinate
-   */
   struct Internal_point {
     Point_2 x_part;// the x coordinate of the point
     Point_2 y_part;// the y coordinate of the point
@@ -223,26 +228,6 @@ private:
       : x_part(p.x_part), y_part(q.y_part) {}*/
   };
 
-  /*! false if no points were inserted or removed, thus the previous
-     results hold. Otherwise there is a need to find the new largest
-     empty rectangle..
-  */
-  bool cache_valid;
-
-  Traits _gt;
-
-  // These friends are required by SUNPRO CC.
-  //! Internal data held under each point that the algorithm requires
-  friend class Point_data;
-  //! A functor used to sort points lexicographically by their x and y
-  //! coordinates
-  friend class Less_xy;
-  //! A functor used to sort points lexicographically by their y and x
-  //! coordinates
-  friend class Less_yx;
-
-  /*! this class holds points' data as needed in the LER process.
-   */
   class Point_data {
   public:
 
@@ -290,40 +275,6 @@ private:
       delete left_tent;
     }
   }; 
-
-  bool less_xy(const Point_data *a, const Point_data *b) const
-  {
-    return(!larger_xy(a,b));
-  }
-
-  bool less_yx(const Point_data *a, const Point_data *b) const
-  {
-    return(!larger_yx(a,b));
-  }
-
-  bool larger_xy(const Point_data *a, const Point_data *b) const
-  {
-    Comparison_result c = traits().compare_x_2_object()
-           (a->p.x_part, b->p.x_part);
-    if(c == LARGER) {
-      return true;
-    } else if (c == EQUAL) {
-      return traits().less_y_2_object()(b->p.y_part, a->p.y_part); 
-    } 
-    return false;
-  }
-
-  bool larger_yx(const Point_data *a, const Point_data *b) const
-  {
-    Comparison_result c = traits().compare_y_2_object()
-             (a->p.y_part, b->p.y_part);
-    if(c == LARGER) {
-      return true;
-    } else if (c == EQUAL) {
-      return traits().less_x_2_object()(b->p.x_part, a->p.x_part); 
-    } 
-    return false;
-  }
 
   class Less_yx
   {
@@ -378,6 +329,57 @@ private:
       return false;
     }
   };
+
+private:
+
+  /* this struct is the point representation. It is composed of two points
+   * such that one holds the x coordinate and the other holds the y coordinate
+   */
+
+  /*! false if no points were inserted or removed, thus the previous
+     results hold. Otherwise there is a need to find the new largest
+     empty rectangle..
+  */
+  bool cache_valid;
+
+  Traits _gt;
+
+  /*! this class holds points' data as needed in the LER process.
+   */
+
+  bool less_xy(const Point_data *a, const Point_data *b) const
+  {
+    return(!larger_xy(a,b));
+  }
+
+  bool less_yx(const Point_data *a, const Point_data *b) const
+  {
+    return(!larger_yx(a,b));
+  }
+
+  bool larger_xy(const Point_data *a, const Point_data *b) const
+  {
+    Comparison_result c = traits().compare_x_2_object()
+           (a->p.x_part, b->p.x_part);
+    if(c == LARGER) {
+      return true;
+    } else if (c == EQUAL) {
+      return traits().less_y_2_object()(b->p.y_part, a->p.y_part); 
+    } 
+    return false;
+  }
+
+  bool larger_yx(const Point_data *a, const Point_data *b) const
+  {
+    Comparison_result c = traits().compare_y_2_object()
+             (a->p.y_part, b->p.y_part);
+    if(c == LARGER) {
+      return true;
+    } else if (c == EQUAL) {
+      return traits().less_x_2_object()(b->p.x_part, a->p.x_part); 
+    } 
+    return false;
+  }
 
   // the next sets store the points sorted
   Point_data_set_of_x x_sorted;
