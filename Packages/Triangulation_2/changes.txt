@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 5.07 (6/7/01)
+- split the documentation in two chapters
+
 Ver 5.05 (3/7/01)
 - fixed in Triangulation_2_traits_3.h
 - fixes in demo and examples
