@@ -25,7 +25,6 @@
 //
 // ======================================================================
 
-
 #ifndef CGAL_PM_SEGMENT_EPSILON_TRAITS_H
 #define CGAL_PM_SEGMENT_EPSILON_TRAITS_H
 
@@ -35,8 +34,10 @@
 #ifndef CGAL_SEGMENT_2_H
 #include <CGAL/Segment_2.h>
 #endif
-
-#include <cmath> // for fabs()
+#ifndef CGAL_DOUBLE_H
+// for abs
+#include <double.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -513,7 +514,8 @@ private:
   {
 	CGAL_assertion(eps>0);
     epsilon_type d = to_double(v1 - v2);
-    if (fabs(d) < eps)
+    // using CGAL defined abs for doubles in double.h
+    if (CGAL_NTS abs(d) < eps)
       return EQUAL;
     if (d > 0)
       return LARGER;
