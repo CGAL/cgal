@@ -71,8 +71,7 @@ const char *kernelversion = "Simple homogeneous kernel (tm).";
 #endif
 
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
-typedef CGAL::SNC_items<Kernel, bool>      SNC_items;
-typedef CGAL::Nef_polyhedron_3<SNC_items>  Nef_polyhedron;
+typedef CGAL::Nef_polyhedron_3<Kernel>  Nef_polyhedron;
 // typedef CGAL::NPX<SNC_items>  Nef_polyhedron;
 // typedef Nef_polyhedron::Explorer           Explorer;
 typedef std::vector< Nef_polyhedron>       Nef_vector;
