@@ -12,9 +12,6 @@ use strict;
 # the message will be notified.
 #--------------------------------------------------------------#
 
-# the amount of time between subsequent scans of the mailbox
-#$::INCREMENT="30 minutes";
-
 # the mail boxes
 
 $::LOCKFILE='/projects/CGAL/submissions/autohandle/data/collect_submission.lock';
@@ -40,16 +37,28 @@ $::max_tries_between_warning= int 21600/$::seconds_between_invocations;
 $ENV{PATH}='/sbin:/usr/sbin:/usr/bsd:/bin:/usr/bin';
 
 $::please_die=0;
+$::hostname = $ENV{HOST};
+if ($::hostname =~ /^\s*([-\@\w]+)\s*$/) {
+    $::hostname = $1;
+} else {
+    open NOTICE, "|Mail -s \"Collect_submissions not started!\" $::MAINTAINER";
+    print NOTICE <<"TOTHIER";
+The script $::SCRIPT did not start because
+the HOST environment value has a strange value.
+TOTHIER
+    close NOTICE;
+    exit 1;
+}
 
 sub termination_signal_handler {
     $::please_die=1;
-    
 }
 
 $::tries = 1;
-while (1) {
-    $SIG{INT} = \&termination_signal_handler;
-    $SIG{TERM} = \&termination_signal_handler;
+$::first_time = 1;
+$SIG{INT} = \&termination_signal_handler;
+$SIG{TERM} = \&termination_signal_handler;
+while (! $::please_die) {
     if ( system("$::LOCKCMD", "-r", '10', "$::LOCKFILE") != 0) {
 	--$::tries;
 	if ($::tries < 0) {
@@ -63,9 +72,26 @@ TOTHIER
 	}
     } else {
 	$::tries = $::max_tries_between_warning;
-	open LOGFILE, ">>$::LOGFILE";
-	print LOGFILE "$$: Executing script on ", `date`, "\n";
-	close LOGFILE;
+	if ($::first_time) {
+	    my $logline = `tail -1 $::LOGFILE`;
+	    if ($logline =~ /started/) {
+		unlink $::LOCKFILE;
+		open NOTICE, "|Mail -s \"Collect_submissions busy!\" $::MAINTAINER";
+		print NOTICE <<"TOTHIER";
+The script $::SCRIPT did not proceed because
+there seems to be another process collecting the mail messages.
+The file $::LOGFILE says:
+
+$logline
+TOTHIER
+		close NOTICE;
+		exit 1;
+	    }
+	    open LOGFILE, ">>$::LOGFILE";
+	    print LOGFILE "$::hostname $$: started executing on ", `date`;
+	    close LOGFILE;
+	    $::first_time = 0;
+	}
     
 	if ( -f $::MAIL_TMP ) {
 	    open NOTICE, "|Mail -s \"Mail box $::MAIL_TMP was not emptied!\" $::MAINTAINER";
@@ -74,20 +100,23 @@ print NOTICE <<"TOTHIER";
 TOTHIER
 	    close NOTICE;
 	    unlink $::LOCKFILE;
-	    exit 1;
-	}
-	if ( -f $::MAIL_IN ) {
-	    rename($::MAIL_IN, $::MAIL_TMP);
-	    if (system("$::FORMAIL -ns $::treat_one_mail_program < $::MAIL_TMP")== 0 )
-	    {
-		unlink $::MAIL_TMP;
+	    $::please_die = 1;
+	} else {
+	    if ( -f $::MAIL_IN ) {
+		rename($::MAIL_IN, $::MAIL_TMP);
+		if (system("$::FORMAIL -ns $::treat_one_mail_program < $::MAIL_TMP")== 0 )
+		{
+		    unlink $::MAIL_TMP;
+		}
 	    }
 	}
 	unlink $::LOCKFILE;
     }
-    $SIG{INT} = 'DEFAULT';
-    $SIG{TERM} = 'DEFAULT';
-    exit 1 if $::please_die;
-    sleep $::seconds_between_invocations;
+    sleep $::seconds_between_invocations unless $::please_die;
 }
+
+open LOGFILE, ">>$::LOGFILE";
+print LOGFILE "$::hostname $$: stopped executing at ", `date`;
+close LOGFILE;
+exit 1;
 
