@@ -280,7 +280,7 @@ private slots:
     std::vector<Point> query_points;
     CGAL::copy_n( h, query_point_number, std::back_inserter(query_points));
     Distance tr_dist;
-    std::vector<Neighbour_search::Item_with_distance>
+    std::vector<Neighbour_search::Point_with_distance>
       nearest_neighbour;
     for (int i=0; i < query_point_number; i++) { 
      
