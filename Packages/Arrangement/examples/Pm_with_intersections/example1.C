@@ -41,10 +41,10 @@ int main() {
 
   Pmwx::Halfedge_iterator eit;
   for (eit = pm.halfedges_begin(); eit != pm.halfedges_end(); ++eit, ++eit) {
-	cout << eit->source()->point();
-	cout << " --- ";
-	cout << eit->target()->point();
-	cout << endl;
+    cout << eit->source()->point();
+    cout << " --- ";
+    cout << eit->target()->point();
+    cout << endl;
   }
 
   return 0;
