@@ -242,7 +242,7 @@ The class interface looks as follows.
 
       private:
         // Private member functions
-        // -----------------------
+        // ------------------------
         @<Min_ellipse_2 private member function `compute_ellipse'>
 
         @<Min_ellipse_2 private member function `me'>
@@ -250,7 +250,8 @@ The class interface looks as follows.
       public:
         // Constructors
         // ------------
-        @<Min_ellipse_2 constructors>
+        @<Min_ellipse_2 constructors (2)>
+        @<Min_ellipse_2 constructors (1)>
 
         // Destructor
         // ----------
@@ -428,7 +429,7 @@ to a vector and shuffled at random, before being copied to \ccc{points}.
 Finally the private member function $me$ is called to compute
 $me(P)=me(P,\emptyset)$.
 
-@macro <Min_ellipse_2 constructors> += @begin
+@macro <Min_ellipse_2 constructors (1)> = @begin
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
 
     // STL-like constructor (member template)
@@ -568,7 +569,7 @@ $S$ in constant time. To make this reconstruction more convenient, a
 constructor is available for each size of $|S|$, ranging from 0 to 5.
 For $|S|=0$, we get the default constructor, building $me(\emptyset)$.
 
-@macro <Min_ellipse_2 constructors> += @begin
+@macro <Min_ellipse_2 constructors (2)> = @begin
 
     // default constructor
     inline
@@ -2646,6 +2647,9 @@ number type \ccc{Gmpz} or \ccc{integer}.
     typedef  Homogeneous< Rt >               RepH;
     typedef  Min_ellipse_2_traits_2< RepC >  TraitsC;
     typedef  Min_ellipse_2_traits_2< RepH >  TraitsH;
+
+    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( RepC::Point_2);
+    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( RepH::Point_2);
 @end
 
 The command line option \ccc{-verbose} enables verbose output.
@@ -3028,6 +3032,9 @@ representation) and corresponding data accessors.
             p = MyPointH2( hx, hy, hw);
         }
     };
+
+    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( MyPointC2);
+    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( MyPointH2);
 @end
 
 To test the traits class adapters we use the code coverage test function.
