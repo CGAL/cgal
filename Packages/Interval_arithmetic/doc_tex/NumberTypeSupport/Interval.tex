@@ -136,6 +136,10 @@ Otherwise, the comparison is not safe.  Then the behaviour is the following:
     The return value is unspecified too.
 \end{itemize}
 
+In all cases, you have access to a global counter of failures
+\ccc{Interval_nt_advanced::number_of_failures}, which is incremented
+for each unsafe comparison.
+
 \ccImplementation
 
 \ccc{Interval_nt} derives from \ccc{Interval_nt_advanced}, 
@@ -239,7 +243,7 @@ support the construction \ccc{convert_to<>()}, but a workaround
 \end{ccAdvanced}
 
 
-\begin{ccClass} {Filtered_exact<CT,ET>}
+\begin{ccClass} {Filtered_exact<CT, ET, Cache_t = No_Filter_Cache>}
 \ccSubsection{Robust filtered predicates}
 \label{filter}
 
@@ -272,6 +276,21 @@ Section~\ref{interval-adv}).  Here are the necessary requirements:
       computation, when the filter fails.
       This conversion has to be done exactly to ensure robustness.
 \end{itemize}
+
+The following member functions are used to access the numerical value for the
+different number types:
+
+\ccMethod{CT value();} {returns the wrapped value.}
+\ccMethod{ET exact();} {returns the converted value to \ccc{ET}.}
+\ccMethod{Interval_nt_advanced interval();} {returns the converted value
+                                             to \ccc{Interval_nt_advanced}.}
+
+For efficiency reasons, the conversion of the \ccc{value} to an
+\ccc{Interval_nt_advanced} may be cached using \ccc{Filter_Cache} as optionnal
+third template parameter of the class.  This is only wishful if \ccc{CT} is a
+complicated type for which the conversion to an interval takes a somewhat long
+time, and is asked for the same variable several times.  You might want to
+experiment with this feature, depending on your needs.
 
 \ccExample
 
@@ -307,6 +326,16 @@ use:
 As a general rule, we advise the use of
 \ccc{Filtered_exact<double, leda_real>}.
 
+If you need exact computations also outside the predicates, you can use the
+following:
+
+\begin{verbatim}
+    #include<CGAL/Arithmetic_filter.h>
+    #include<CGAL/lera_real.h>
+    typedef Filtered_exact<leda_real, leda_real, Filter_Cache> NT;
+\end{verbatim}
+
+
 \ccImplementation
 
 The template definition of the low level predicates of {\cgal} are overloaded
@@ -332,13 +361,14 @@ This script parses the template declaration of the functions and generates the
 overloaded code the following way:
 \begin{itemize}
 \item convert the entries to intervals using
-    \ccc{convert_to<Interval_nt_advanced>(CT)} (via the .interval() member
-    function),
+    \ccc{convert_to<Interval_nt_advanced>(CT)},
+    using the \ccc{interval()} member function,
 \item call the original template function with the type
     \ccc{Interval_nt_advanced},
 \item if no exception is thrown, return the value,
 \item if an exception is thrown (the filter failed), convert the original
-    entries using \ccc{convert_to<ET>(CT)} (via the .exact() member function),
+    entries using \ccc{convert_to<ET>(CT)}, using the \ccc{exact()} member
+    function,
 \item and call the original template function with the type \ccc{ET}.
 \end{itemize}
 
