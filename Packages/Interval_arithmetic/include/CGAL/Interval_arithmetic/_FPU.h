@@ -82,8 +82,8 @@ CGAL_BEGIN_NAMESPACE
 #ifdef __i386__
 // The GNU libc version (cf powerpc) is nicer, but doesn't work on libc 5 :(
 // This one also works with CygWin.
-#define CGAL_IA_SETFPCW(CW) __asm__ volatile ("fldcw %0" : :"m" (CW))
-#define CGAL_IA_GETFPCW(CW) __asm__ volatile ("fstcw %0" : "=m" (CW))
+#define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : :"m" (CW))
+#define CGAL_IA_GETFPCW(CW) asm volatile ("fstcw %0" : "=m" (CW))
 typedef unsigned short FPU_CW_t;
 enum {
     FPU_cw_near = 0x000 | 0x127f,
@@ -106,8 +106,8 @@ enum {
 #endif // __powerpc__
 
 #ifdef __sparc__
-#define CGAL_IA_SETFPCW(CW) __asm__ volatile ("ld %0,%%fsr" : :"m" (CW))
-#define CGAL_IA_GETFPCW(CW) __asm__ volatile ("st %%fsr,%0" : "=m" (CW))
+#define CGAL_IA_SETFPCW(CW) asm volatile ("ld %0,%%fsr" : :"m" (CW))
+#define CGAL_IA_GETFPCW(CW) asm volatile ("st %%fsr,%0" : "=m" (CW))
 typedef unsigned int FPU_CW_t;
 enum {  //        rounding   | precision  | def.mask
     FPU_cw_near = 0x0        | 0x20000000 | 0x1f,
@@ -142,8 +142,8 @@ enum {
 #endif // __sgi
 
 #if defined(__mips__) && !defined(__sgi)
-#define CGAL_IA_SETFPCW(CW) __asm__ volatile ("ctc1 %0,$31" : :"r" (CW))
-#define CGAL_IA_GETFPCW(CW) __asm__ volatile ("cfc1 %0,$31" : "=r" (CW))
+#define CGAL_IA_SETFPCW(CW) asm volatile ("ctc1 %0,$31" : :"r" (CW))
+#define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 %0,$31" : "=r" (CW))
 typedef unsigned int FPU_CW_t;
 enum {
     FPU_cw_near = 0x0,
@@ -154,8 +154,8 @@ enum {
 #endif // __mips__ && !__sgi
 
 #ifdef __alpha__ // This one is not really supported [yet].
-#define CGAL_IA_SETFPCW(CW) __asm__ volatile ("mt_fpcr %0; excb" : :"f" (CW))
-#define CGAL_IA_GETFPCW(CW) __asm__ volatile ("excb; mf_fpcr %0" : "=f" (CW))
+#define CGAL_IA_SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : :"f" (CW))
+#define CGAL_IA_GETFPCW(CW) asm volatile ("excb; mf_fpcr %0" : "=f" (CW))
 typedef unsigned long FPU_CW_t;
 enum { //         rounding
     // I guess it won't work, because enum == int.
