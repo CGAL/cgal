@@ -36,14 +36,14 @@ int main(int, char*)
 #else
 
 #include <fstream>
-#include <stack>
+#include <list>
 #include <set>
 #include <string>
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Triangulation_2.h>
-#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+
 #include <CGAL/point_generators_2.h>
 
 #include <CGAL/IO/Qt_widget.h>
@@ -64,28 +64,22 @@ int main(int, char*)
 #include <qtimer.h>
 
 typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>	    Rep;
+typedef CGAL::Cartesian<Coord_type> Rep;
 
-typedef CGAL::Point_2<Rep>		    Point;
-typedef CGAL::Segment_2<Rep>		    Segment;
-typedef CGAL::Line_2<Rep>		    Line;
-typedef CGAL::Triangle_2<Rep>		    Triangle;
-typedef CGAL::Circle_2<Rep>		    Circle;
+typedef CGAL::Point_2<Rep>          Point;
+typedef CGAL::Segment_2<Rep>        Segment;
+typedef CGAL::Line_2<Rep>           Line;
+typedef CGAL::Triangle_2<Rep>       Triangle;
+typedef CGAL::Circle_2<Rep>         Circle;
 
-typedef CGAL::Triangulation_2<Rep>	    Triangulation;
-typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
+typedef CGAL::Constrained_Delaunay_triangulation_2<Rep>  CDT;
+typedef CDT::Constraint     Constraint;
 
+const QString my_title_string("Constrained Triangulation Demo with"
+			      " CGAL Qt_widget");
 
-
-typedef Delaunay::Face_handle               Face_handle;
-typedef Delaunay::Vertex_handle             Vertex_handle;
-typedef Delaunay::Edge                      Edge;
-typedef Triangulation::Line_face_circulator Line_face_circulator;
-
-const QString my_title_string("Triangulation Demo with"
-			      " CGAL Qt_scenes_widget");
-Delaunay	tr1;
-int		current_state;
+CDT   ct;
+int   current_state;
 
 class Window : public QMainWindow
 {
@@ -96,9 +90,6 @@ public:
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
     
-    connect(widget, SIGNAL(s_mouseReleaseEvent(QMouseEvent*)), this,
-          SLOT(insert_after_show_conflicts(QMouseEvent*)));    
-	
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()),
@@ -115,6 +106,11 @@ public:
 		      SLOT(load_triangulation()), CTRL+Key_L);
     file->insertItem("&Save Triangulation", this,
 		      SLOT(save_triangulation()), CTRL+Key_T);
+    file->insertSeparator();
+    file->insertItem("&Load Constrainets", this, 
+		      SLOT(load_constraineds()), CTRL+Key_L);
+    file->insertItem("&Save Constrainets", this,
+		      SLOT(save_constraineds()), CTRL+Key_T);
     file->insertSeparator();
     file->insertItem("Print", widget, SLOT(print_to_ps()));
     file->insertSeparator();
@@ -136,9 +132,9 @@ public:
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
     //the new tools toolbar
-    newtoolbar = new CGAL::Tools_toolbar(widget, this, &tr1);	
+    newtoolbar = new CGAL::Tools_toolbar(widget, this, &ct);	
     //the new scenes toolbar
-    vtoolbar = new CGAL::Layers_toolbar(widget, this, &tr1);
+    vtoolbar = new CGAL::Layers_toolbar(widget, this, &ct);
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
@@ -157,7 +153,6 @@ public:
       this, SLOT(get_new_object(CGAL::Object)));
 
     //application flag stuff
-    got_point = FALSE;
     old_state = 0;
   };
   void set_window(double xmin, double xmax,
@@ -173,7 +168,7 @@ private slots:
     widget->lock();
     widget->clear();
     widget->clear_history();
-    tr1.clear();
+    ct.clear();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
     widget->unlock();
     something_changed();
@@ -184,47 +179,21 @@ private slots:
     Point p;
     Segment s;
     Line l;
-    if (CGAL::assign(l,obj))
+    if (CGAL::assign(s,obj))
     {
-      if (tr1.dimension()<1) return;
-      widget->redraw();
-      widget->lock();
-      Line_face_circulator lfc = 
-	tr1.line_walk(l.point(1), l.point(2)), done(lfc);
-      if(lfc == (CGAL_NULL_TYPE) NULL){
-      } else {
-	*widget << CGAL::BLUE;
-	*widget << CGAL::FillColor(CGAL::WHITE);
-	do{
-	  if(! tr1.is_infinite( lfc  ))
-	    *widget << tr1.triangle( lfc );
-	}while(++lfc != done);
-      }
-      *widget << CGAL::GREEN << l ;
-      *widget << CGAL::noFill;
-      widget->unlock();
-    } else if(CGAL::assign(p,obj)) {
-      got_point = TRUE;
-      show_conflicts(p);
-      tr1.insert(p);
-    } 
-  }
-
-  void insert_after_show_conflicts(QMouseEvent*)
-  {
-    if(got_point)
-    {
-      got_point = FALSE;
-      widget->redraw();
+      ct.insert(s.source(), s.target());
       something_changed();
-    }
+    } else if(CGAL::assign(p,obj)) {
+      ct.insert(p);
+      something_changed();
+    } 
   }
 
   void about()
   {
     QMessageBox::about( this, my_title_string,
-		"This is a demo for Triangulation,\n"
-  		"Copyright CGAL @2001");
+		"This is a demo for Triangulation_2_constrained,\n"
+  		"Copyright CGAL @2002");
   }
 
   void aboutQt()
@@ -250,7 +219,7 @@ private slots:
 
   void generate_triangulation()
   {
-    tr1.clear();
+    ct.clear();
     widget->clear_history();
     widget->lock();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
@@ -259,7 +228,7 @@ private slots:
     widget->unlock();
     CGAL::Random_points_in_disc_2<Point> g(0.5);
     for(int count=0; count<200; count++)
-      tr1.insert(*g++);  
+      ct.insert(*g++);  
     widget->redraw();
     something_changed();
   }
@@ -273,7 +242,7 @@ private slots:
       // got a file name
       std::ofstream out(fileName);
       CGAL::set_ascii_mode(out);
-      out << tr1 << std::endl;    
+      out << ct << std::endl;    
     }
   }
 
@@ -285,35 +254,14 @@ private slots:
 			    "CGAL files (*.cgal)", this ) );
     if ( s.isEmpty() )
         return;
-    tr1.clear();
+    ct.clear();
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
-    in >> tr1;
+    in >> ct;
     something_changed();
   }
 
 private:
-  void show_conflicts(Point p)
-  {
-    if(tr1.dimension()<2) return;
-    std::list<Face_handle> conflict_faces;
-    std::list<Edge>  hole_bd;
-    tr1.get_conflicts_and_boundary(p, 
-    std::back_inserter(conflict_faces),
-    std::back_inserter(hole_bd));
-    std::list<Face_handle>::iterator fit = conflict_faces.begin();
-    std::list<Edge>::iterator eit = hole_bd.begin();
-    *widget << CGAL::WHITE ;
-    for( ; fit != conflict_faces.end(); fit++)  {
-      if(! tr1.is_infinite( *fit))
-	*widget << tr1.triangle( *fit );
-    }
-    *widget << CGAL::YELLOW;
-    for( ; eit != hole_bd.end(); eit++)  {
-      if(! tr1.is_infinite( *eit ))
-	*widget << tr1.segment( *eit );
-    }		
-  }
   inline  void something_changed(){current_state++;};
 
 
@@ -321,12 +269,10 @@ private:
   CGAL::Tools_toolbar	              *newtoolbar;
   CGAL::Layers_toolbar	            *vtoolbar;
   CGAL::Qt_widget_standard_toolbar  *stoolbar;
-  bool			  got_point;	
-	  //if a CGAL::Point is received should be true
   int			  old_state;
 };//endclass
 
-#include "triangulation_2.moc"
+#include "triangulation_2_constrained.moc"
 
 int
 main(int argc, char **argv)

@@ -24,13 +24,12 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
 
 // TODO: check if some of those includes shouldn't be in the .C file
 #include <CGAL/IO/Qt_widget.h>
-#include "Qt_widget_move_point.h"
-#include <CGAL/IO/Qt_widget_get_line.h>
+#include <CGAL/IO/Qt_widget_get_segment.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
 
 #include <qobject.h>
@@ -41,7 +40,9 @@
 
 typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>  Rp;
-typedef CGAL::Delaunay_triangulation_2<Rp>  Delaunay;
+typedef CGAL::Constrained_Delaunay_triangulation_2<Rp>  CDT;
+typedef CDT::Constraint     Constraint;
+
 
 
 namespace CGAL {
@@ -50,7 +51,7 @@ class Tools_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Tools_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t);
+  Tools_toolbar(Qt_widget *w, QMainWindow *mw, CDT *t);
 
   QToolBar*	toolbar(){return maintoolbar;}
 
@@ -72,9 +73,8 @@ private:
   void			    addToolButton(QToolButton *b);
   int			      nr_of_buttons;
 	
-  CGAL::Qt_widget_get_line<Rp>	    linebut;
+  CGAL::Qt_widget_get_segment<Rp>   segmentbut;
   CGAL::Qt_widget_get_point<Rp>	    pointbut;
-  CGAL::Qt_widget_movepoint<Delaunay> movepointbut;
 };//end class
 
 };//end namespace

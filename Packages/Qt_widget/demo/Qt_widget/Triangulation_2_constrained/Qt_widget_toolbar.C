@@ -25,25 +25,21 @@
 
 // icons
 #include <CGAL/IO/pixmaps/point.xpm>
-#include <CGAL/IO/pixmaps/movepoint.xpm>
 #include <CGAL/IO/pixmaps/arrow.xpm>
 #include <CGAL/IO/pixmaps/line.xpm>
 
 
 namespace CGAL {
-  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t)
+  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw, CDT *t)
   {
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
     //set the widget
     widget = w;
-    widget->attach(&linebut);
-    widget->attach(&pointbut);
-    widget->attach(&movepointbut);
-    movepointbut.set_Delaunay(t);
+    widget->attach(&segmentbut);
+    widget->attach(&pointbut);    
     pointbut.deactivate();
-    linebut.deactivate();
-    movepointbut.deactivate();
+    segmentbut.deactivate();
 
 #if QT_VERSION < 300
 		// for Qt 2.3 and before
@@ -60,10 +56,8 @@ namespace CGAL {
   but[1]->setPixmap(QPixmap( (const char**)point_xpm ));
   but[2] = new QToolButton(maintoolbar, "notool");
   but[2]->setPixmap(QPixmap( (const char**)line_xpm ));
-  but[3] = new QToolButton(maintoolbar, "notool");
-  but[3]->setPixmap(QPixmap( (const char**)movepoint_xpm ));
   		
-  nr_of_buttons = 4;
+  nr_of_buttons = 3;
 
   button_group = new QButtonGroup(0, "exclusive");
   for (int i=0; i<nr_of_buttons; i++) {
@@ -74,9 +68,7 @@ namespace CGAL {
   connect(but[1], SIGNAL(stateChanged(int)),
         &pointbut, SLOT(stateChanged(int)));
   connect(but[2], SIGNAL(stateChanged(int)),
-        &linebut, SLOT(stateChanged(int)));
-  connect(but[3], SIGNAL(stateChanged(int)),
-        &movepointbut, SLOT(stateChanged(int)));
+        &segmentbut, SLOT(stateChanged(int)));
   
 };
 

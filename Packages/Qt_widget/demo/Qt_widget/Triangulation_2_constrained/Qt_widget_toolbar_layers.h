@@ -23,16 +23,13 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
 #include <CGAL/IO/Qt_widget.h>
-
 #include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
-
 #include "Qt_layer_show_triangulation.h"
-#include "Qt_layer_show_voronoi.h"
+#include "Qt_layer_show_constraineds.h"
 #include "Qt_layer_show_points.h"
-#include "Qt_layer_show_nearest_vertex.h"
 
 
 #include <qobject.h>
@@ -43,7 +40,9 @@
 
 typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>  Rp;
-typedef CGAL::Delaunay_triangulation_2<Rp>  Delaunay;
+typedef CGAL::Constrained_Delaunay_triangulation_2<Rp>  CDT;
+typedef CDT::Constraint     Constraint;
+
 
 namespace CGAL {
 
@@ -51,13 +50,12 @@ class Layers_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Layers_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t);
+  Layers_toolbar(Qt_widget *w, QMainWindow *mw, CDT *t);
   ~Layers_toolbar()
   {
     delete showT;
-    delete showV;
     delete showP;
-    delete showNV;
+    delete showC;
     delete showMC;
   };
   QToolBar*	toolbar(){return maintoolbar;};
@@ -70,16 +68,15 @@ private:
   QToolButton	*but[10];
   Qt_widget	*widget;
   QMainWindow	*window;
-  Delaunay	*dt;
+  //Delaunay	*dt;
   QButtonGroup  *button_group;
 
   int	  nr_of_buttons;
 	
-  CGAL::Qt_layer_show_triangulation < Delaunay >  *showT;
-  CGAL::Qt_layer_show_voronoi < Delaunay >	  *showV;
-  CGAL::Qt_layer_show_points < Delaunay >	  *showP;
-  CGAL::Qt_layer_nearest_vertex < Delaunay >	  *showNV;
-  CGAL::Qt_layer_mouse_coordinates		  *showMC;
+  CGAL::Qt_layer_show_triangulation < CDT>  *showT;  
+  CGAL::Qt_layer_show_points < CDT >        *showP;  
+  CGAL::Qt_layer_show_constraineds < CDT >  *showC;  
+  CGAL::Qt_layer_mouse_coordinates          *showMC;
 };//end class
 
 };//end namespace
