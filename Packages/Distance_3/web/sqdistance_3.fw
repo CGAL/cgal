@@ -1469,7 +1469,7 @@ CGAL_squared_distance(
     typedef typename R::RT RT;
     typedef typename R::FT FT;
     const CGAL_Point_3<R> &start = ray.start();
-    const CGAL_Vector_3<R> &end = ray.direction().vector();
+//    const CGAL_Vector_3<R> &end = ray.direction().vector();
     const CGAL_Point_3<R> &planepoint = plane.point();
     CGAL_Vector_3<R> start_min_pp = start - planepoint;
     CGAL_Vector_3<R> end_min_pp = ray.direction().vector();
