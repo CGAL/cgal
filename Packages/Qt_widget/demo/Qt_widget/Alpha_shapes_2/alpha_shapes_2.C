@@ -103,7 +103,7 @@ double        alpha_index;
 class Qt_layer_show_alpha_shape : public CGAL::Qt_widget_layer
 {
 public:
-  show_alpha_shape(){};
+  Qt_layer_show_alpha_shape(){};
 private:
   void draw(){
     A.set_alpha(alpha_index);
