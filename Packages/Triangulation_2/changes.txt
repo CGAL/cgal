@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 6.09 (1/02/02)
+- still typenames in Constraint_hierarchy_2.h
+  and Constrained_triangulation_plus_2.h
+
 Ver 6.08 (31/1/02)
 - a few more typenames in Constraint_hierarchy_2.h
 - change include for pair to utility  and some std::
