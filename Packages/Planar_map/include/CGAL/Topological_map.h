@@ -354,9 +354,9 @@ public:
 
 #ifndef _MSC_VER
     // the following two typedefs are needed for compilation on irix64 (CC7.30)
-    typedef Topological_map<Dcel>::Holes_iterator 
+    typedef typename Topological_map<Dcel>::Holes_iterator 
     Holes_iterator; 
-    typedef Topological_map<Dcel>::Holes_const_iterator 
+    typedef typename Topological_map<Dcel>::Holes_const_iterator 
     Holes_const_iterator; 
 #endif
     

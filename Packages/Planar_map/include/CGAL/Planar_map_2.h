@@ -532,8 +532,9 @@ Planar_map_2< Dcel, Traits >::Planar_map_2()
 //-----------------------------------------------------------------------------
 template < class Dcel, class Traits >
 Planar_map_2< Dcel, Traits >::
-Planar_map_2(Planar_map_2< Dcel, Traits >::Point_location_base *pl_ptr )
-{
+Planar_map_2(
+  typename Planar_map_2< Dcel, Traits >::Point_location_base *pl_ptr)
+{ 
   traits = new Traits_wrap();
   use_delete_traits = true;
     
@@ -548,9 +549,10 @@ Planar_map_2(Planar_map_2< Dcel, Traits >::Point_location_base *pl_ptr )
 //-----------------------------------------------------------------------------
 template < class Dcel, class Traits >
 Planar_map_2< Dcel, Traits >::
-Planar_map_2(const Planar_map_2< Dcel, Traits >::Traits        & tr_, 
-	     Planar_map_2< Dcel, Traits >::Point_location_base * pl_ptr, 
-	     Planar_map_2< Dcel, Traits >::Bounding_box_base   * bb_ptr )
+Planar_map_2(
+  const typename Planar_map_2< Dcel, Traits >::Traits & tr_, 
+  typename Planar_map_2< Dcel, Traits >::Point_location_base   * pl_ptr, 
+  typename Planar_map_2< Dcel, Traits >::Bounding_box_base     * bb_ptr )
 {
   traits = new Traits_wrap(tr_);
   use_delete_traits = true;
@@ -589,9 +591,10 @@ Planar_map_2(const Planar_map_2< Dcel, Traits >::Traits        & tr_,
 //-----------------------------------------------------------------------------
 template < class Dcel, class Traits >
 Planar_map_2< Dcel, Traits >::
-Planar_map_2(Planar_map_2< Dcel, Traits >::Traits_wrap          *tr_ptr, 
-	     Planar_map_2< Dcel, Traits >::Point_location_base  *pl_ptr, 
-	     Planar_map_2< Dcel, Traits >::Bounding_box_base    *bb_ptr )
+Planar_map_2(
+  typename Planar_map_2< Dcel, Traits >::Traits_wrap          *tr_ptr, 
+  typename Planar_map_2< Dcel, Traits >::Point_location_base  *pl_ptr, 
+  typename Planar_map_2< Dcel, Traits >::Bounding_box_base    *bb_ptr )
 {
   if (tr_ptr == NULL)
   {
@@ -714,9 +717,10 @@ read (std::istream &in )
 template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
-insert_in_face_interior(const Planar_map_2< Dcel, Traits >::X_curve & cv, 
-			Planar_map_2< Dcel, Traits >::Face_handle     f, 
-			Change_notification *en)
+insert_in_face_interior(
+  const typename Planar_map_2< Dcel, Traits >::X_curve & cv, 
+  typename Planar_map_2< Dcel, Traits >::Face_handle     f, 
+  Change_notification                                  * en)
 {
   Halfedge_handle h = Topological_map<Dcel>::insert_in_face_interior(f);
   h->set_curve(cv);  //should set the curve of the twin as well but for now
@@ -743,10 +747,10 @@ template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
 insert_from_vertex(
-  const Planar_map_2< Dcel, Traits >::X_curve  & cv,
-  Planar_map_2< Dcel, Traits >::Vertex_handle    v1, 
-  bool                                           source,
-  Change_notification                          * en )
+  const typename Planar_map_2< Dcel, Traits >::X_curve  & cv,
+  typename Planar_map_2< Dcel, Traits >::Vertex_handle    v1, 
+  bool                                                    source,
+  Change_notification                                   * en )
 {
   //find the previous of cv.
   Halfedge_around_vertex_circulator
@@ -795,10 +799,10 @@ template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
 insert_at_vertices(
-  const Planar_map_2< Dcel, Traits >::X_curve & cv, 
-  Planar_map_2< Dcel, Traits >::Vertex_handle   v1, 
-  Planar_map_2< Dcel, Traits >::Vertex_handle   v2, 
-  Change_notification                         * en )
+  const typename Planar_map_2< Dcel, Traits >::X_curve & cv, 
+  typename Planar_map_2< Dcel, Traits >::Vertex_handle   v1, 
+  typename Planar_map_2< Dcel, Traits >::Vertex_handle   v2, 
+  Change_notification                                  * en )
 {
   Size num_before=number_of_faces();
 			
@@ -915,9 +919,9 @@ template < class Dcel, class Traits >
 bool 
 Planar_map_2< Dcel, Traits >::
 prev1_inside_hole(
-  Planar_map_2< Dcel, Traits >::Halfedge_const_handle previous1,
-  Planar_map_2< Dcel, Traits >::Halfedge_const_handle previous2,
-  const Planar_map_2< Dcel, Traits >::X_curve&        cv )
+  typename Planar_map_2< Dcel, Traits >::Halfedge_const_handle previous1,
+  typename Planar_map_2< Dcel, Traits >::Halfedge_const_handle previous2,
+  const typename Planar_map_2< Dcel, Traits >::X_curve&        cv )
 {
   
   // Defining geometrically whether there is a new face. If there is,
@@ -1033,8 +1037,8 @@ template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
 insert(
-       const Planar_map_2< Dcel, Traits >::X_curve & cv, 
-       Change_notification                         * en  )
+       const typename Planar_map_2< Dcel, Traits >::X_curve & cv, 
+       Change_notification                                  * en  )
 {
   CGAL_assertion(bb);
   bb->insert(cv);
@@ -1093,10 +1097,10 @@ template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
 split_edge( 
-	   Planar_map_2< Dcel, Traits >::Halfedge_handle   e, 
-	   const Planar_map_2< Dcel, Traits >::X_curve   & c1, 
-	   const Planar_map_2< Dcel, Traits >::X_curve   & c2,
-	   Change_notification                           * en )
+	   typename Planar_map_2< Dcel, Traits >::Halfedge_handle   e, 
+	   const typename Planar_map_2< Dcel, Traits >::X_curve   & c1, 
+	   const typename Planar_map_2< Dcel, Traits >::X_curve   & c2,
+	   Change_notification                                    * en )
 {
     
   CGAL_precondition(traits->point_is_same(traits->curve_source(c2),
@@ -1153,10 +1157,10 @@ template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
 merge_edge(
-	   Planar_map_2< Dcel, Traits >::Halfedge_handle   e1, 
-	   Planar_map_2< Dcel, Traits >::Halfedge_handle   e2, 
-	   const Planar_map_2< Dcel, Traits >::X_curve   & cv, 
-	   Change_notification                           * en)
+	   typename Planar_map_2< Dcel, Traits >::Halfedge_handle   e1, 
+	   typename Planar_map_2< Dcel, Traits >::Halfedge_handle   e2, 
+	   const typename Planar_map_2< Dcel, Traits >::X_curve   & cv, 
+	   Change_notification                                    * en)
 {
   CGAL_precondition( (traits->point_is_same(traits->curve_source(cv),
 					    e1->source()->point() )&&
@@ -1191,7 +1195,7 @@ merge_edge(
 template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Face_handle
 Planar_map_2< Dcel, Traits >::
-remove_edge(Planar_map_2< Dcel, Traits >::Halfedge_handle e )
+remove_edge(typename Planar_map_2< Dcel, Traits >::Halfedge_handle e )
 {
 
   // en->remove_edge(e);
