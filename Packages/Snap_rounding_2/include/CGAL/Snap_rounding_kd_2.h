@@ -399,7 +399,10 @@ public:
 
     // create result
     result_list.empty();
-    for(typename list<my_point<NT,SAVED_OBJECT> >::iterator my_point_iter = res.begin();my_point_iter != res.end();++my_point_iter)
+    for(typename list<my_point<NT,SAVED_OBJECT> >::iterator 
+        my_point_iter = res.begin();
+        my_point_iter != res.end();
+        ++my_point_iter)
       result_list.push_back(my_point_iter->object);
   }
 };
@@ -408,6 +411,7 @@ template<class NT,class SAVED_OBJECT>
 bool Multiple_kd_tree<NT,SAVED_OBJECT>::map_done(false);
 
 template<class NT,class SAVED_OBJECT>
-  std::map<const int,NT> Multiple_kd_tree<NT,SAVED_OBJECT>::angle_to_sines_appr;
+  std::map<const int,NT> 
+      Multiple_kd_tree<NT,SAVED_OBJECT>::angle_to_sines_appr;
 
 #endif // CGAL_SR_KD_2_H
