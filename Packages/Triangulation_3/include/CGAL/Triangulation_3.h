@@ -402,15 +402,6 @@ public:
       return locate( p, lt, li, lj, start);
   }
 
-  // This one is for backward compatibility with CGAL 2.2.
-  Cell_handle
-  locate(const Point & p, Cell_handle start,
-	 Locate_type & lt, int & li, int & lj) const
-  {
-      bool WARNING_YOU_ARE_USING_THE_DEPRECATED_VERSION_OF_LOCATE;
-      return locate(p, lt, li, lj, start);
-  }
-
   // PREDICATES ON POINTS ``TEMPLATED'' by the geom traits
 
   Bounded_side
@@ -807,31 +798,12 @@ public:
                     std::set<Vertex_handle> & vertices,
 		    Cell_handle c = Cell_handle() ) const;
 
-  // old methods, kept for compatibility with previous versions
-  void
-  incident_cells(Vertex_handle v, 
-		 std::set<Cell*> & cells,
-		 Cell_handle c = Cell_handle(),
-		 int dummy_for_windows = 0) const;
-
-  void
-  incident_vertices(Vertex_handle v, 
-		    std::set<Vertex*> & vertices,
-		    Cell_handle c = Cell_handle(),
-		    int dummy_for_windows = 0) const;
-
 private:
   void 
   util_incident_vertices(Vertex_handle v, 
 			 std::set<Vertex_handle> & vertices,
 			 std::set<Cell_handle> & cells,
 			 Cell_handle c ) const;
-  void 
-  util_incident_vertices(Vertex_handle v, 
-			 std::set<Vertex*> & vertices,
-			 std::set<Cell*> & cells,
-			 Cell_handle c,
-			 int dummy_for_windows = 0) const;
 
 public:
 
@@ -2456,36 +2428,6 @@ template < class GT, class Tds >
 void
 Triangulation_3<GT,Tds>::
 incident_cells(Vertex_handle v, 
-	       std::set<Cell*> & cells,
-	       Cell_handle c,
-	       int dummy_for_windows) const
-{
-  bool WARNING_THIS_FUNCTION_IS_DEPRECATED;
-  CGAL_triangulation_precondition( &(*v) != NULL );
-  CGAL_triangulation_expensive_precondition( _tds.is_vertex(&(*v)) );
-
-  if ( dimension() < 3 )
-      return;
-
-  if ( &(*c) == NULL )
-    c = v->cell();
-  else {
-    CGAL_triangulation_precondition( c->has_vertex(v) );
-  }
-  if ( cells.find( &(*c) ) != cells.end() )
-    return; // c was already found
-
-  cells.insert( &(*c) );
-      
-  for ( int j=0; j<4; j++ )
-    if ( j != c->index(v) )
-      incident_cells( v, cells, c->neighbor(j), dummy_for_windows);
-}
-
-template < class GT, class Tds >
-void
-Triangulation_3<GT,Tds>::
-incident_cells(Vertex_handle v, 
 	       std::set<Cell_handle> & cells,
 	       Cell_handle c ) const
 {
@@ -2513,30 +2455,6 @@ template < class GT, class Tds >
 void
 Triangulation_3<GT,Tds>::
 incident_vertices(Vertex_handle v, 
-		  std::set<Vertex*> & vertices,
-		  Cell_handle c,
-		  int dummy_for_windows) const
-{
-  bool WARNING_THIS_FUNCTION_IS_DEPRECATED;
-  CGAL_triangulation_precondition( &(*v) != NULL );
-  CGAL_triangulation_expensive_precondition( _tds.is_vertex(&(*v)) );
-      
-  if ( number_of_vertices() < 2 )
-      return;
-
-  if ( &(*c) == NULL )
-    c = v->cell();
-  else 
-    CGAL_triangulation_precondition( c->has_vertex(v) );
-
-  std::set<Cell*> cells;
-  util_incident_vertices(v, vertices, cells, c, dummy_for_windows);
-}
-
-template < class GT, class Tds >
-void
-Triangulation_3<GT,Tds>::
-incident_vertices(Vertex_handle v, 
 		  std::set<Vertex_handle> & vertices,
 		  Cell_handle c ) const
 {
@@ -2553,30 +2471,6 @@ incident_vertices(Vertex_handle v,
 
   std::set<Cell_handle> cells;
   util_incident_vertices(v, vertices, cells, c);
-}
-
-template < class GT, class Tds >
-void
-Triangulation_3<GT,Tds>::
-util_incident_vertices(Vertex_handle v, 
-		       std::set<Vertex*> & vertices,
-		       std::set<Cell*> & cells,
-		       Cell_handle c,
-		       int dummy_for_windows) const
-{
-  bool WARNING_THIS_FUNCTION_IS_DEPRECATED;
-  if ( cells.find( &(*c) ) != cells.end() )
-    return; // c was already visited
-  cells.insert( &(*c) );
-
-  int d = dimension();
-  for (int j=0; j <= d; j++ )
-    if ( j != c->index(v) ) {
-      if ( vertices.find( &(*(c->vertex(j))) ) == vertices.end() )
-	vertices.insert( &(*(c->vertex(j))) );
-      util_incident_vertices( v, vertices, cells, c->neighbor(j), 
-			      dummy_for_windows);
-    }
 }
 
 template < class GT, class Tds >

@@ -1,3 +1,6 @@
+Version 1.87 (?? September 01)
+- Remove deprecated code.
+
 Version 1.86 (31 August 01)
 - Remove non default constructors in [ds_]vertex and [ds_]cell.
 - Move find_conflict() and insert_conflict() from the TDS to Triangulation.
