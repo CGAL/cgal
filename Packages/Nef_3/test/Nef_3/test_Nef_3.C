@@ -25,6 +25,7 @@
 // Demo program maintaining a stack of Nef polyhedra in the space and
 // a manipulation language for stack ops, file loading and saving, etc.
 // ============================================================================
+#include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Nef_2/Nef_polynomial.h>
 #include <CGAL/basic.h>
 #include <CGAL/Simple_homogeneous.h>
@@ -1217,7 +1218,7 @@ const char* test<Kernel>::datadir="data/";
 
 int main() {
   typedef CGAL::Simple_homogeneous<NT>       SH_kernel;
-  typedef CGAL::Extended_homogeneous_3<NT>   EH_kernel;
+  typedef CGAL::Extended_homogeneous<NT>   EH_kernel;
   
   //std::cin>>debugthread;
 
