@@ -24,7 +24,30 @@
 
 #include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
 
-#include <CGAL/Segment_Voronoi_diagram_traits_base_2.h>
+//#define USE_UNFILTERED_TRAITS
+
+#ifdef USE_UNFILTERED_TRAITS
+#  include <CGAL/Segment_Voronoi_diagram_traits_base_2.h>
+
+#else
+
+#ifndef CGAL_REP_CLASS_DEFINED
+#error  no representation class defined
+#endif  // CGAL_REP_CLASS_DEFINED
+
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
+#include <CGAL/predicates/Segment_Voronoi_diagram_predicates_C2.h>
+#include <CGAL/predicates/Segment_Voronoi_diagram_predicates_ftC2.h>
+#include <CGAL/Segment_Voronoi_diagram_constructions_C2.h>
+#endif
+
+#endif
+
+
+#include <CGAL/Number_type_traits.h>
+#include <CGAL/Segment_Voronoi_diagram_kernel_wrapper_2.h>
+
+
 
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Filtered_construction.h>
@@ -51,9 +74,11 @@ template<class CK_t, class CK_MTag, class EK_t, class EK_MTag,
 class Segment_Voronoi_diagram_filtered_traits_base_2
 {
 private:
+#if defined (__GNUC__) && (__GNUC__ >= 3)
   typedef Segment_Voronoi_diagram_traits_base_2<CK_t,CK_MTag,ITag> CK_traits;
   typedef Segment_Voronoi_diagram_traits_base_2<FK_t,FK_MTag,ITag> FK_traits;
   typedef Segment_Voronoi_diagram_traits_base_2<EK_t,EK_MTag,ITag> EK_traits;
+#endif
 
   typedef Segment_Voronoi_diagram_kernel_wrapper_2<CK_t,ITag>  CK;
   typedef Segment_Voronoi_diagram_kernel_wrapper_2<FK_t,ITag>  FK;
@@ -118,9 +143,11 @@ public:
   typedef FK_t                          Filtering_kernel;
   typedef EK_t                          Exact_kernel;
 
+#if defined (__GNUC__) && (__GNUC__ >= 3)
   typedef CK_traits                     Construction_traits;
   typedef FK_traits                     Filtering_traits;
   typedef EK_traits                     Exact_traits;
+#endif
 
   typedef CK_MTag                       Construction_traits_method_tag;
   typedef FK_MTag                       Filtering_traits_method_tag;
@@ -142,6 +169,7 @@ public:
 
 
 private:
+#if defined (__GNUC__) && (__GNUC__ >= 3)
   typedef typename CK_traits::Construct_svd_vertex_2
   CK_Construct_svd_vertex_2;
 
@@ -150,12 +178,17 @@ private:
 
   typedef typename EK_traits::Construct_svd_vertex_2
   EK_Construct_svd_vertex_2;
+#else
+  typedef Construct_svd_vertex_2<CK,CK_MTag>  CK_Construct_svd_vertex_2;
+  typedef Construct_svd_vertex_2<FK,FK_MTag>  FK_Construct_svd_vertex_2;
+  typedef Construct_svd_vertex_2<EK,EK_MTag>  EK_Construct_svd_vertex_2;
+#endif
 
 public:
   // OBJECT CONSTRUCTION & ASSIGNMENT
   //---------------------------------
-  typedef typename CK_traits::Construct_object_2     Construct_object_2;
-  typedef typename CK_traits::Assign_2               Assign_2;
+  typedef typename CK::Construct_object_2     Construct_object_2;
+  typedef typename CK::Assign_2               Assign_2;
 
   // CONSTRUCTIONS
   //--------------
@@ -173,7 +206,7 @@ public:
 private:
   // PREDICATES FOR THE TWO KERNELS
   //-------------------------------
-
+#if 0
   // Predicates for the filtering kernel
   typedef typename FK_traits::Compare_x_2        FK_Compare_x_2;
   typedef typename FK_traits::Compare_y_2        FK_Compare_y_2;
@@ -222,12 +255,55 @@ private:
   typedef typename EK_traits::Arrangement_type_2 EK_Arrangement_type_2;
   typedef typename EK_traits::Oriented_side_2    EK_Oriented_side_2;
 
+#else
+  // Predicates for the filtering kernel
+  typedef Svd_compare_x_2<FK>                    FK_Compare_x_2;
+  typedef Svd_compare_y_2<FK>                    FK_Compare_y_2;
+  typedef Svd_orientation_C2<FK>                 FK_Orientation_2;
+  typedef Svd_are_same_points_C2<FK>             FK_Are_same_points_2;
+  typedef Svd_are_parallel_C2<FK>                FK_Are_parallel_2;
 
+  typedef Svd_oriented_side_of_bisector_C2<FK,FK_MTag>
+  FK_Oriented_side_of_bisector_2;
+
+  typedef Svd_incircle_2<FK,FK_MTag>             FK_Vertex_conflict_2;
+
+  typedef Svd_finite_edge_interior_2<FK,FK_MTag>
+  FK_Finite_edge_interior_conflict_2;
+
+  typedef Svd_infinite_edge_interior_2<FK,FK_MTag>
+  FK_Infinite_edge_interior_conflict_2;
+
+  typedef Svd_is_degenerate_edge_C2<FK,FK_MTag>  FK_Is_degenerate_edge_2;
+  typedef Svd_arrangement_type_C2<FK>            FK_Arrangement_type_2;
+  typedef Svd_oriented_side_C2<FK,FK_MTag>       FK_Oriented_side_2;
+
+  // Predicates for the exact kernel
+  typedef Svd_compare_x_2<EK>                    EK_Compare_x_2;
+  typedef Svd_compare_y_2<EK>                    EK_Compare_y_2;
+  typedef Svd_orientation_C2<EK>                 EK_Orientation_2;
+  typedef Svd_are_same_points_C2<EK>             EK_Are_same_points_2;
+  typedef Svd_are_parallel_C2<EK>                EK_Are_parallel_2;
+
+  typedef Svd_oriented_side_of_bisector_C2<EK,EK_MTag>
+  EK_Oriented_side_of_bisector_2;
+
+  typedef Svd_incircle_2<EK,EK_MTag>             EK_Vertex_conflict_2;
+
+  typedef Svd_finite_edge_interior_2<EK,EK_MTag>
+  EK_Finite_edge_interior_conflict_2;
+
+  typedef Svd_infinite_edge_interior_2<EK,EK_MTag>
+  EK_Infinite_edge_interior_conflict_2;
+
+  typedef Svd_is_degenerate_edge_C2<EK,EK_MTag>  EK_Is_degenerate_edge_2;
+  typedef Svd_arrangement_type_C2<EK>            EK_Arrangement_type_2;
+  typedef Svd_oriented_side_C2<EK,EK_MTag>       EK_Oriented_side_2;
+#endif
 
 public:
   // PREDICATES
   //-----------
-#if 0
   typedef
   Filtered_predicate<EK_Compare_x_2, FK_Compare_x_2, C2E, C2F>
   Compare_x_2;
@@ -281,73 +357,6 @@ public:
   typedef
   Filtered_predicate<EK_Oriented_side_2, FK_Oriented_side_2, C2E, C2F>
   Oriented_side_2;
-
-#else
-
-  typedef
-  Filtered_predicate<Svd_compare_x_2<EK>,
-		     Svd_compare_x_2<FK>, C2E, C2F>
-  Compare_x_2;
-
-  typedef
-  Filtered_predicate<Svd_compare_y_2<EK>,
-		     Svd_compare_y_2<FK>, C2E, C2F>
-  Compare_y_2;
-
-  typedef
-  Filtered_predicate<Svd_orientation_C2<EK>,
-		     Svd_orientation_C2<FK>, C2E, C2F>
-  Orientation_2;
-
-  typedef
-  Filtered_predicate<Svd_are_same_points_C2<EK>,
-		     Svd_are_same_points_C2<FK>, C2E, C2F>
-  Are_same_points_2;
-
-  typedef
-  Filtered_predicate<Are_parallel_2<EK>,
-		     Are_parallel_2<FK>, C2E, C2F>
-  Are_parallel_2;
-
-  typedef
-  Filtered_predicate<Svd_oriented_side_of_bisector_C2<EK,EK_MTag>,
-		     Svd_oriented_side_of_bisector_C2<FK,FK_MTag>,
-		     C2E, C2F>
-  Oriented_side_of_bisector_2;
-
-  typedef
-  Filtered_predicate<Svd_incircle_2<EK,EK_MTag>,
-		     Svd_incircle_2<FK,FK_MTag>, C2E, C2F>
-  Vertex_conflict_2;
-
-  typedef
-  Filtered_predicate<Svd_finite_edge_interior_conflict_2<EK,EK_MTag>,
-		     Svd_finite_edge_interior_conflict_2<FK,FK_MTag>,
-		     C2E, C2F>
-  Finite_edge_interior_conflict_2;
-
-  typedef
-  Filtered_predicate<Svd_infinite_edge_interior_conflict_2<EK,EK_MTag>,
-		     Svd_infinite_edge_interior_conflict_2<FK,FK_MTag>,
-		     C2E, C2F>
-  Infinite_edge_interior_conflict_2;
-
-  typedef
-  Filtered_predicate<Svd_is_degenerate_edge_C2<EK,EK_MTag>,
-		     Svd_is_degenerate_edge_C2<FK,FK_MTag>, C2E, C2F>
-  Is_degenerate_edge_2;
-
-  typedef
-  Filtered_predicate<Svd_arrangement_type_C2<EK>,
-		     Svd_arrangement_type_C2<FK>, C2E, C2F>
-  Arrangement_type_2;
-
-  typedef
-  Filtered_predicate<Svd_oriented_side_C2<EK,EK_MTag>,
-		     Svd_oriented_side_C2<FK,FK_MTag>, C2E, C2F>
-  Oriented_side_2;
-#endif
-
 
 public:
   //-----------------------------------------------------------------------
