@@ -34,6 +34,7 @@
 // order to instantiate Triangulation_vertex_base_3<>.
 
 class empty_traits {
+public:
   class Point_3 {};
 };
 typedef empty_traits Gt;
