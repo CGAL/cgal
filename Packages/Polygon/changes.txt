@@ -1,3 +1,7 @@
+3.0 (20 June 2001)
++ Completely rewrote the is_simple code.
++ Adapted the demo to work with the new cgal-window package.
+
 2.20 (13 February 2001)
 + New polygon_assertions.h file
 
