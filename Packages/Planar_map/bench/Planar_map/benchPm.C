@@ -21,15 +21,15 @@
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Pm_iostream.h>
 #include <CGAL/IO/Pm_Window_stream.h>
-#include "CGAL/Bench.h"
-#include "CGAL/Dir_search.h"
 
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <list>
 
-#include "getopt.h"
+#include "CGAL/Bench.h"
+#include "CGAL/Parse_args.h"
+#include "CGAL/Parse_args.C"
 
 typedef leda_rational                                   NT;
 
@@ -49,55 +49,6 @@ typedef CGAL::Planar_map_2<Dcel,Traits>                 Planar_map;
 typedef Traits::Point_2                                 Point;
 typedef Traits::X_curve_2                               Curve;
 typedef std::list<Curve>                                CurveList;
-
-// Global variable declarations:
-static
-#if (defined _MSC_VER)
-const
-#endif
-char * IOOpts[] = {
-  "format", "f", NULL
-};
-
-enum IOId  {
-  IO_FORMAT = 0,
-  IO_F
-};
-
-static
-#if (defined _MSC_VER)
-const
-#endif
-char * FormatOpts[] = {
-  "rat", "int", "float", "r", "i", "f", NULL
-};
-
-enum FormatId  {
-  FORMAT_RAT = 0,
-  FORMAT_INT,
-  FORMAT_FLT,
-  FORMAT_R,
-  FORMAT_I,
-  FORMAT_F
-};
-
-static
-#if (defined _MSC_VER)
-const
-#endif
-char * BenchOpts[] = {
-  "construct", "display", "co", "di", NULL
-};
-
-enum BenchId  {
-  BENCH_CONSTRUCT = 0,
-  BENCH_DISPLAY,
-  BENCH_CO,
-  BENCH_DI,
-  BENCH_ALL
-};
-
-static char OptionStr[] = "b:hi:s:t:v";
 
 /*
  */
@@ -148,13 +99,13 @@ public:
     int i;
     for (i = 0; i < count; i++) {
       leda_rational x0, y0, x1, y1;
-      if (m_format == FORMAT_RAT) {
+      if (m_format == Parse_args::FORMAT_RAT) {
         inp >> x0 >> y0 >> x1 >> y1;
-      } else if (m_format == FORMAT_INT) {
+      } else if (m_format == Parse_args::FORMAT_INT) {
         int ix0, iy0, ix1, iy1;
         inp >> ix0 >> iy0 >> ix1 >> iy1;
         x0 = ix0; y0 = iy0; x1 = ix1; y1 = iy1;
-      } else if (m_format == FORMAT_FLT) {
+      } else if (m_format == Parse_args::FORMAT_FLT) {
         float ix0, iy0, ix1, iy1;
         inp >> ix0 >> iy0 >> ix1 >> iy1;
         x0 = ix0; y0 = iy0; x1 = ix1; y1 = iy1;
@@ -183,7 +134,7 @@ public:
   void clean() { m_curveList.clear(); }
   void sync(){}
 
-  void setFormat(FormatId format) { m_format = format; }
+  void setFormat(Parse_args::FormatId format) { m_format = format; }
   void setFilename(const char * filename) { m_filename = filename; }
   void setVerbose(const bool verbose) { m_verbose = verbose; }
 
@@ -191,7 +142,7 @@ protected:
   const char * m_filename;
   CurveList m_curveList;
   bool m_verbose;
-  FormatId m_format;
+  Parse_args::FormatId m_format;
 
   double m_x0;
   double m_x1;
@@ -296,158 +247,40 @@ private:
 
 typedef CGAL::Bench<Display_Pm> DisplayPmBench;
 
-static char * progName = 0;
-
-/*!
- */
-static void printHelp(void)
-{
-  printf("Usage: %s [options]\n\
-  -b <name>\tset bench name to <name> (default all)\n\
-  \t\t\t<name> is one of {co[nstruct], di[splay]}\n\
-  -h\t\tprint this help message\n\
-  -s <samples>\tset number of samples to <samples> (default 10)\n\
-  -t <seconds>\tset number of seconds to <seconds> (default 1)\n\
-  -v\t\ttoggle verbosity (default no)\n", progName);
-}
-
-/*!
- */
-int getFormat(FormatId & format, char * value)
-{
-  char * subvalue;
-  switch (getsubopt(&value, FormatOpts, &subvalue)) {
-    case FORMAT_INT:
-    case FORMAT_I: format = FORMAT_INT; break;
-    case FORMAT_RAT:
-    case FORMAT_R: format = FORMAT_RAT; break;
-    case FORMAT_FLT:
-    case FORMAT_F: format = FORMAT_FLT; break;
-    default:
-      std::cerr << "Unrecognized Format option '" << optarg << "'!"
-                << std::endl;
-      std::cerr << "Try `" << progName << " -h' for more information."
-                << std::endl;
-      return -1;
-  }
-  return 0;
-}
-
-/*!
- */
-int getIOParm(FormatId & format, char * optarg)
-{
-  char * options = optarg;
-  char * value;
-  if (*options == '\0') return 0;
-  while (*options != '\0') {
-    switch (getsubopt(&options, IOOpts, &value)) {
-      case IO_FORMAT:
-      case IO_F: if (getFormat(format, value) < 0) return -1; break;
-      default:
-        std::cerr << "Unrecognized IO option '" << optarg << "'!" << std::endl;
-        std::cerr << "Try `" << progName << " -h' for more information."
-                  << std::endl;
-        return -1;
-    }
-  }
-  return 0;
-}
-
-/*!
- */
-int getBenchParam(BenchId & benchId, char * optarg)
-{
-  char * options = optarg;
-  char * value;
-  if (*options == '\0') return 0;
-  while (*options != '\0') {
-    switch(getsubopt(&options, BenchOpts, &value)) {
-      case BENCH_CONSTRUCT:
-      case BENCH_CO:
-        benchId = BENCH_CONSTRUCT; break;
-      case BENCH_DISPLAY:
-      case BENCH_DI:
-        benchId = BENCH_DISPLAY; break;
-      default:
-        std::cerr << "Unrecognized Bench option '" << optarg << "'!"
-                  << std::endl;
-        std::cerr << "Try `" << progName << " -h' for more information."
-                  << std::endl;
-        return -1;
-    }
-  }
-  return 0;
-}
-
 /*
  */
 int main(int argc, char * argv[])
 {
-  progName = strrchr(argv[0], '\\');
-  progName = (progName) ? progName+1 : argv[0];
-
-  bool verbose = false;
-  BenchId benchId = BENCH_ALL;
-  FormatId inputFormat = FORMAT_RAT;
-
-  Dir_search dirs(".");
-  const char * root = getenv("ROOT");
-  if (root) dirs.add(std::string(root) + "/data/Segments_2");
-      
-#if (defined _MSC_VER)
-  int samples = 10;
-#else
-  int samples = 0;
-#endif
+  Parse_args parseArgs(argc, argv);
+  int rc = parseArgs.parse();
+  if (rc < 0) return rc;
   
-  int seconds = 0;
-  int c;
-  while ((c = getopt(argc, argv, OptionStr)) != EOF) {
-    switch (c) {
-      case 'b': if (getBenchParam(benchId, optarg) < 0) return -1; break;
-      case 'h': printHelp(); return 0;
-      case 'i': if (getIOParm(inputFormat, optarg)) return -1; break;
-      case 's': samples = atoi(optarg); break;
-      case 't': seconds = atoi(optarg); break;
-      case 'v': verbose = !verbose; break;
-      default:
-        std::cerr << progName << ": invalid option -- "
-                  << static_cast<char>(c) << std::endl;
-        std::cerr << "Try `" << progName << " -h' for more information."
-                  << std::endl;
-        return -1;
-    }
-  }
-  
-  if (argc < 2) {
-    std::cerr << "Data file missing!" << std::endl;
-    return -1;
-  }
-
-  const char * filename = argv[optind];
-  std::string fullname;
-  if (!dirs.find(filename, fullname)) {
-    std::cerr << "Cannot find file " << filename << "!" << std::endl;
-    return -1;
-  }
+  bool verbose = parseArgs.getVerbose();
+  Parse_args::BenchId benchId = parseArgs.getBenchId();
+  Parse_args::FormatId inputFormat = parseArgs.getInputFormat();
+  int samples = parseArgs.getSamples();
+  int seconds = parseArgs.getSeconds();
+  const char * filename = parseArgs.getFilename();
+  const std::string * fullname = parseArgs.getFullname();
       
   // Construct
-  ConstructPmBench benchConstruct((std::string(BenchOpts[BENCH_CONSTRUCT]) +
+  const char * bname = parseArgs.getBenchName(Parse_args::BENCH_CONSTRUCT);
+  ConstructPmBench benchConstruct((std::string(bname) +
                                   " PM (" + std::string(filename) + ")"),
                                   seconds, true);
   Construct_Pm & construct_pm = benchConstruct.getBenchUser();
   construct_pm.setFormat(inputFormat);
-  construct_pm.setFilename(fullname.c_str());
+  construct_pm.setFilename(fullname->c_str());
   construct_pm.setVerbose(verbose);
 
   // Construct and Display
-  DisplayPmBench benchDisplay((std::string(BenchOpts[BENCH_DISPLAY]) +
+  bname = parseArgs.getBenchName(Parse_args::BENCH_DISPLAY);
+  DisplayPmBench benchDisplay((std::string(bname) +
                                " PM (" + std::string(filename) + ")"),
                               seconds, false);
   Display_Pm & display_pm = benchDisplay.getBenchUser();
   display_pm.setFormat(inputFormat);
-  display_pm.setFilename(fullname.c_str());
+  display_pm.setFilename(fullname->c_str());
   display_pm.setVerbose(verbose);
 
   if (samples > 0) {
@@ -455,12 +288,12 @@ int main(int argc, char * argv[])
     benchDisplay.setSamples(samples);
   }
 
-  if (benchId == BENCH_ALL) {
+  if (benchId == Parse_args::BENCH_ALL) {
     benchConstruct();
     benchDisplay();
   } else switch(benchId) {
-    case BENCH_CONSTRUCT: benchConstruct(); break;
-    case BENCH_DISPLAY: benchDisplay(); break;
+    case Parse_args::BENCH_CONSTRUCT: benchConstruct(); break;
+    case Parse_args::BENCH_DISPLAY: benchDisplay(); break;
   }
   
   // Ensure the compiler doesn't optimize the code away...
