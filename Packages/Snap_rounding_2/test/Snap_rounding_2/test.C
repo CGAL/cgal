@@ -20,13 +20,9 @@ typedef leda_rational Number_Type;
 
 typedef CGAL::Cartesian<Number_Type>             Rep;
 typedef CGAL::Snap_rounding_traits<Rep>          Sr_traits;
-typedef CGAL::Snap_rounding_2<Sr_traits>         Snap_rounding_2;
-typedef Snap_rounding_2::Segment_2               Segment_2;
-typedef Snap_rounding_2::Point_2                 Point_2;
-typedef Snap_rounding_2::Segment_iterator        Segment_iterator;
-typedef Snap_rounding_2::Segment_const_iterator  Segment_const_iterator;
-typedef Snap_rounding_2::Polyline_const_iterator Polyline_const_iterator;
-typedef Snap_rounding_2::Point_const_iterator    Point_const_iterator;
+//typedef CGAL::Snap_rounding_2<Sr_traits>         Snap_rounding_2;
+typedef Sr_traits::Segment_2               Segment_2;
+typedef Sr_traits::Point_2                 Point_2;
 
 void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg_list)
 {
@@ -91,7 +87,7 @@ int main(int argc,char *argv[])
 
   read_data(argc,argv,prec,seg_list);
 
-  Snap_rounding_2 s1(seg_list.begin(),seg_list.end(),output_list,
+  CGAL::snap_rounding_2<Sr_traits>(seg_list.begin(),seg_list.end(),output_list,
                      prec,true,false,3);
 
   std::cout << "input segments\n";
@@ -105,7 +101,7 @@ int main(int argc,char *argv[])
 
   std::cout << "\ntesting sr\n";
   output_list.clear();
-  Snap_rounding_2 s3(seg_list.begin(),seg_list.end(),output_list,
+  CGAL::snap_rounding_2<Sr_traits>(seg_list.begin(),seg_list.end(),output_list,
                      prec,false,false,3);
   print_out(output_list.begin(),output_list.end());
 
