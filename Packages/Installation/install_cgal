@@ -1447,10 +1447,10 @@ gmp_test_cxxflags()
 gmp_test_ldflags()
 {
     compiler_test_ldflags
-    gmp_ldflags
     if [ -n "${GMP_SUPPORT}" -a "${GMP_INSTALLATION}" = 'c' ]; then
 	cgal_ldflags
     fi
+    gmp_ldflags
 }
 
 #---------------------------------------------------------
