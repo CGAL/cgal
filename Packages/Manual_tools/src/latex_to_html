@@ -373,21 +373,6 @@ convert() {
     done
     vout ""
 
-    # Copy contents of htmlfiles
-    # ---------------------------------------------------------------------
-    lgout -n ", "
-    lgout -n "copying 'htmlfiles'"
-    for f in ${AllSubDirs} ; do
-        if [ -r ${CurrentDir}/${f}/htmlfiles ]; then
-            vout -n " "$f/htmlfiles
-            tmp_dir=$PWD
-            cd ${CurrentDir}/${f}
-            \cp `cat htmlfiles` ${AbsOutDir}/${f}/
-            cd $tmp_dir
-        fi
-    done
-    vout ""
-
     # Prepare stage 2 crosslink rules
     # -------------------------------------------------------------
     lgout -n ", "
@@ -481,7 +466,6 @@ convert() {
 
     run_command cc_index_link ${TmpDir}/HREF ${TmpDir}/manual.ind ${TmpDir}/cc_index
     \cat ${TmpDir}/cc_index_header ${TmpDir}/cc_index ${TmpDir}/cc_index_footer > ${OutDir}/manual_index.html
-    \cat ${ConfigGif}/index_arrow.gif > ${OutDir}/index_arrow.gif    
     CurrentLen=0
 
     # Copy cascaded style sheet (CSS) file
@@ -507,7 +491,26 @@ convert() {
     for dir in ${AllSubDirs} ; do
         vout -n " "$dir
         cd ${OutDir}/$dir
+        # copy user images first
         ImageFiles=`\cat *.html | cc_extract_images | \sort | \uniq`
+        for f in $ImageFiles ; do
+            if [ -r ${CurrentDir}/${dir}/${f} ]; then
+                ImageBase=${f##*/}
+                # relative path, can be empty. If not empty, trailing '/'.
+                ImagePath=${f%$ImageBase}
+                if [ "$ImagePath" != "" ]; then 
+                    if [ ! -d $ImagePath ]; then ${MakePath} ${ImagePath} ; fi
+                    if [ ! -d $ImagePath ]; then
+                      error noexit "failed to create directory for image '$f'."
+                    fi
+                fi
+                \cp ${CurrentDir}/${dir}/${f} ${f}
+            else
+                error noexit "image file '${CurrentDir}/${dir}/${f}' not found."
+            fi
+        done
+        # copy latex_to_html internal images with 'cc_' prefix now
+        ImageFiles=`\cat *.html | cc_extract_images -cc | \sort | \uniq`
         for f in $ImageFiles ; do
             if [ -r ${ConfigGif}/$f ]; then
                 \cp ${ConfigGif}/$f .

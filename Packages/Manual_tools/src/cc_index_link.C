@@ -125,7 +125,7 @@ main( int argc, char **argv) {
                                         list_of_lines.end(), 
                                         Lines_eq(number));
 			  out_file << "<A "<< lli->text <<">" << "<img SRC=\""
-                                   << "./index_arrow.gif\" ALT=\"reference\" "
+                              "cc_index_arrow.gif\" ALT=\"reference\" "
                               "WIDTH=\"14\" HEIGHT=\"12\" VALIGN=BOTTOM "
                               "BORDER=0></A> ";
 			}  
