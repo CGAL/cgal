@@ -13,6 +13,7 @@ package: doc filters clean Interval_arithmetic.tar.gz
 	@echo " *** faire un cvs commit/status    ------------------"
 	@echo " *** faire un cvs rtag v?_? ia     ------------------"
 	@echo " *** mettre à jour le fichier html ------------------"
+	@echo " *** mail à cgal-submit (www-sop !!!) ---------------"
 	@echo "-----------------------------------------------------"
 
 test:
