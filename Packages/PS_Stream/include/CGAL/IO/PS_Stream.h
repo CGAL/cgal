@@ -42,10 +42,10 @@
 #include <CGAL/Direction_2.h>
 #include <CGAL/Bbox_2.h>
 
+CGAL_BEGIN_NAMESPACE
+
 #ifndef PS_MANIP_H_
 #define PS_MANIP_H_
-
-CGAL_BEGIN_NAMESPACE
 
 class PS_Stream;
 
@@ -81,9 +81,7 @@ protected:
   PS_Stream& (PS_Stream::*_PS_func)(T);
 };
 
- #endif
-//PS_MANIP_H_
-
+#endif //PS_MANIP_H_
 
 typedef const char *DashStyle;
       
@@ -105,7 +103,6 @@ public:
   
   enum OutputMode {READABLE, QUIET, READABLE_EPS, QUIET_EPS, GS_VIEW};
   enum DotStyle {NONE, XCROSS, ICROSS, EDOT, FDOT, EBOX, FBOX};
-  
   
   class Axis {
     
@@ -182,8 +179,8 @@ protected:
     // These functions are private because the position of the string must never appears to the user
     // Only stream modifiers will access these data
     void setposition(float x, float y) { posx=x;posy=y;}
-    Latex_Label(const char* txt,float x, float y) {_text=strdup(txt);posx=x;posy=y;}
-    
+    Latex_Label(const char* txt,float x, float y)
+    {_text=strdup(txt);posx=x;posy=y;}
     
     // Slots
     const char* _text;
@@ -330,19 +327,23 @@ PS_Stream(float H, const char* fname, OutputMode = QUIET);
   int          height()        const {return _height;}
   OutputMode   mode()          const {return _mode;}
 
-  void set_scale(const PS_BBox& bb){_xratio=_width/(bb.xmax()-bb.xmin());
-                                    _yratio=_height/(bb.ymax()-bb.ymin());
-                                   }
-  void set_window(PS_BBox bb,int H)
-            {_width=(int)((bb.xmax()-bb.xmin())*H/(bb.ymax()-bb.ymin()));}
+  void set_scale(const PS_BBox& bb)
+  {
+      _xratio=_width/(bb.xmax()-bb.xmin());
+      _yratio=_height/(bb.ymax()-bb.ymin());
+  }
+  void set_window(PS_BBox bb,float H)
+  {
+      _width=(int)((bb.xmax()-bb.xmin())*H/(bb.ymax()-bb.ymin()));
+  }
       
   // Utils
   double xratio() { return _xratio;}
   double yratio() { return _yratio;}
   double x2ps(double x) { return (x-_bbox.xmin())*xratio();}
   double y2ps(double y) { return (y-_bbox.ymin())*yratio();}
-   bool is_eps();
-   bool is_readable();
+  bool is_eps();
+  bool is_readable();
 
 protected:
   //   PS_Stream(const PS_BBox& bb);
@@ -376,16 +377,13 @@ protected:
   // Graphical Context
   Context ctxt;
 
-  // The Output stream
-  //ifdef CGAL_WORKAROUND_016
-  _IO_ostream_withassign& _os;
-  //else
-  //ostream_withassign& _os;
-  //endif
+  // In case it's a file, we need to store the object to be able to reference
+  // it, hence the of.
+  std::ofstream of;
+  std::ostream& _os;
 
   //List of Latex Labels. They will be inserted at the end of the file.
   List_Label _ll;
-
 };
 
 extern const PS_Stream::Context CTXT_DEFAULT;
@@ -442,8 +440,8 @@ PS_Stream & operator <<(PS_Stream& ps, const Point_2<R>& p)
 
   if (ps.is_readable())
     {
-      ps.os() <<  "%CGAL% Point" << endl;
-      ps.os() << "%CGAL% "<<p.x()<<" "<<p.y()<<endl;
+      ps.os() <<  "%CGAL% Point" << std::endl;
+      ps.os() << "%CGAL% "<<p.x()<<" "<<p.y()<<std::endl;
     }
   if (ps.context().get_dot_style()!=PS_Stream::NONE)
     {
@@ -454,22 +452,22 @@ PS_Stream & operator <<(PS_Stream& ps, const Point_2<R>& p)
   switch (ps.context().get_dot_style())
     {
     case PS_Stream::EBOX:
-      ps.os() << "eb" << endl;
+      ps.os() << "eb" << std::endl;
       break;
     case PS_Stream::FBOX:
-      ps.os() << "fb" << endl;
+      ps.os() << "fb" << std::endl;
       break;
     case PS_Stream::EDOT:
-      ps.os() << "ec" << endl;
+      ps.os() << "ec" << std::endl;
       break;
     case PS_Stream::FDOT:
-      ps.os() << "fc" << endl;
+      ps.os() << "fc" << std::endl;
       break;
     case PS_Stream::ICROSS:
-      ps.os() << "ic" << endl;
+      ps.os() << "ic" << std::endl;
       break;
     default :
-      ps.os() << "xc" << endl;
+      ps.os() << "xc" << std::endl;
       break;
     }
     }  
@@ -489,15 +487,15 @@ PS_Stream & operator <<(PS_Stream& ps, const Segment_2<R>& s)
 {
   if (ps.is_readable())
     {
-      ps.os() << "%CGAL% Segment" << endl;
+      ps.os() << "%CGAL% Segment" << std::endl;
       ps.os() << "%CGAL% "<<s.source().x()<<" "<<s.source().y()<<" "
-              <<s.target().x()<<" "<<s.target().y()<<endl;
+              <<s.target().x()<<" "<<s.target().y()<<std::endl;
     }
   ps.os() << ps.x2ps(s.source().x()) << " "
           << ps.y2ps(s.source().y()) << " mt ";
   ps.os() << ps.x2ps(s.target().x()) << " "
           << ps.y2ps(s.target().y())
-          << " lt st" << endl;
+          << " lt st" << std::endl;
 
   return ps;
 }
@@ -510,25 +508,25 @@ PS_Stream & operator <<(PS_Stream& ps, const Line_2<R>& l)
 {
   if (ps.is_readable())
     {
-      ps.os() << "%CGAL% Line" << endl;
-      ps.os() << "%CGAL% "<<l.a()<<" "<<l.b()<<" "<<l.c()<<endl;
+      ps.os() << "%CGAL% Line" << std::endl;
+      ps.os() << "%CGAL% "<<l.a()<<" "<<l.b()<<" "<<l.c()<<std::endl;
     }
   if (!l.is_degenerate())
     if (l.is_vertical())
       {
         double t=ps.x2ps(l.x_at_y(0));
         ps.os()<< t;
-        ps.os()<< " 0 mt" << endl;
-        ps.os()<< t << " " << ps.height() << " lt st" <<endl;
+        ps.os()<< " 0 mt" << std::endl;
+        ps.os()<< t << " " << ps.height() << " lt st" <<std::endl;
       }
     else
       {
         ps.os() << "0 "
                 << ps.y2ps(l.y_at_x(ps.bbox().xmin()))
-                << " mt" << endl;
+                << " mt" << std::endl;
         ps.os() << ps.width() << " "
                 << ps.y2ps(l.y_at_x(ps.bbox().xmax()))
-                << " lt st"<< endl;
+                << " lt st"<< std::endl;
       }
   return ps;
 }
@@ -545,14 +543,14 @@ PS_Stream & operator <<(PS_Stream& ps, const Ray_2<R>& r)
   dir bas(0,-1);
   if (ps.is_readable())
     {
-      ps.os() << "%CGAL% Ray" << endl;
+      ps.os() << "%CGAL% Ray" << std::endl;
       ps.os() << "%CGAL% "<<r.source().x()<<" "<<r.source().y()<<" ";
-      ps.os() << r.second_point().x() << " " << r.second_point().y() <<endl;
+      ps.os() << r.second_point().x() << " " << r.second_point().y() <<std::endl;
     }
   if (!r.is_degenerate())
     {
       ps.os()<< ps.x2ps(r.source().x()) << " "
-             << ps.y2ps(r.source().y()) << " mt" << endl;
+             << ps.y2ps(r.source().y()) << " mt" << std::endl;
       if (r.is_vertical())
         {
           ps.os()<< ps.x2ps(r.source().x()) << " ";
@@ -560,18 +558,18 @@ PS_Stream & operator <<(PS_Stream& ps, const Ray_2<R>& r)
             ps.os() << ps.height();
           else
             ps.os() << "0 ";
-          ps.os() << " lt st" << endl;
+          ps.os() << " lt st" << std::endl;
         }
       else
         if (r.direction()>bas || r.direction()<haut)
           ps.os() << ps.width()
                   << " "
                   <<ps.y2ps(l.y_at_x(ps.bbox().xmax()))
-                  << " lt st" << endl;
+                  << " lt st" << std::endl;
         else
           ps.os() << "0 "
                   << ps.y2ps(l.y_at_x(ps.bbox().xmin()))
-                  << " lt st" << endl;
+                  << " lt st" << std::endl;
     }
   return ps;
 }
@@ -585,10 +583,10 @@ PS_Stream & operator <<(PS_Stream& ps,const Parabola<R>& p)
 
   if (ps.is_readable())
     {
-      ps.os() << "%CGAL% Parabola" << endl;
-      ps.os() << "%CGAL% Base "<<p.base().x()<<" "<<p.base().y()<<endl;
-      ps.os() << "%CGAL% Vector "<<p.vertor().x()<<" "p.vector().y()<<endl;
-      ps.os() << "%CGAL% Curvature "<<p.curvature()<<endl;
+      ps.os() << "%CGAL% Parabola" << std::endl;
+      ps.os() << "%CGAL% Base "<<p.base().x()<<" "<<p.base().y()<<std::endl;
+      ps.os() << "%CGAL% Vector "<<p.vertor().x()<<" "p.vector().y()<<std::endl;
+      ps.os() << "%CGAL% Curvature "<<p.curvature()<<std::endl;
     }
   return ps;
 }
@@ -601,9 +599,9 @@ PS_Stream & operator <<(PS_Stream& ps,const Triangle_2<R>& t)
 {
   if (ps.is_readable())
     {
-      ps.os() << "%CGAL% Triangle" << endl;
+      ps.os() << "%CGAL% Triangle" << std::endl;
       for (int i=0;i<3;i++)
-        ps.os() << "%CGAL " << t[i].x() << " " << t[i].y() << endl;
+        ps.os() << "%CGAL " << t[i].x() << " " << t[i].y() << std::endl;
     }
   for (int i=0;i<4;i++)
     ps.os() << ps.x2ps(t[i].x())<< " " << ps.y2ps(t[i].y()) << " ";
@@ -611,13 +609,13 @@ PS_Stream & operator <<(PS_Stream& ps,const Triangle_2<R>& t)
   ps.os() << "tr ";
   if (ps.context().get_fill())
     {
-      ps.os() << "gsave " << endl;
+      ps.os() << "gsave " << std::endl;
       ps.os() << ps.context().get_fill_color().r() << " "
               << ps.context().get_fill_color().g() << " "
               << ps.context().get_fill_color().b()
-              << " setcolor fill grestore " <<endl;
+              << " setcolor fill grestore " <<std::endl;
     }
-  ps.os() << "st" <<endl;
+  ps.os() << "st" <<std::endl;
   return ps;
 }
 
@@ -629,9 +627,9 @@ PS_Stream & operator <<(PS_Stream& ps,const Iso_rectangle_2<R>& r)
 {
     if (ps.is_readable())
       {
-        ps.os() << "%CGAL% Rectangle" << endl;
+        ps.os() << "%CGAL% Rectangle" << std::endl;
         for (int i=0;i<4;i++)
-          ps.os() << "%CGAL " << r[i].x() << " " << r[i].y() << endl;
+          ps.os() << "%CGAL " << r[i].x() << " " << r[i].y() << std::endl;
       }
     for (int i=0;i<5;i++)
       ps.os() << ps.x2ps(r[i].x()) << " " << ps.y2ps(r[i].y()) << " ";
@@ -639,13 +637,13 @@ PS_Stream & operator <<(PS_Stream& ps,const Iso_rectangle_2<R>& r)
     ps.os() << "re ";
     if (ps.context().get_fill())
       {
-        ps.os() << "gsave " << endl;
+        ps.os() << "gsave " << std::endl;
         ps.os() << ps.context().get_fill_color().r() << " "
                 << ps.context().get_fill_color().g() << " "
                 << ps.context().get_fill_color().b()
-                << " setcolor fill grestore " <<endl;
+                << " setcolor fill grestore " <<std::endl;
       }
-    ps.os() << "st" <<endl;
+    ps.os() << "st" <<std::endl;
     return ps;
   }
 
@@ -657,24 +655,24 @@ PS_Stream & operator <<(PS_Stream& ps, const Circle_2<R>& c)
 {
     if (ps.is_readable())
       {
-        ps.os() << "%CGAL% Circle" << endl;
-        ps.os() << "%CGAL " << c.center().x() << " " << c.center().y() << endl;
-        ps.os() << "%CGAL " << c.squared_radius() << endl;
+        ps.os() << "%CGAL% Circle" << std::endl;
+        ps.os() << "%CGAL " << c.center().x() << " " << c.center().y() << std::endl;
+        ps.os() << "%CGAL " << c.squared_radius() << std::endl;
       }
     double ratio=ps.yratio()/ps.xratio();
     double radius=sqrt(to_double(c.squared_radius()));
-    ps.os()<< "gsave 1 " << ratio << " scale" << endl;
+    ps.os()<< "gsave 1 " << ratio << " scale" << std::endl;
     ps.os()<< ps.x2ps(c.center().x()) << " " << ps.y2ps(c.center().y())/ratio
-           << " " << radius*ps.xratio()  << " 0 360 arc " << endl;
+           << " " << radius*ps.xratio()  << " 0 360 arc " << std::endl;
     if (ps.context().get_fill())
       {
-        ps.os() << "gsave " << endl;
+        ps.os() << "gsave " << std::endl;
         ps.os() << ps.context().get_fill_color().r() << " "
                 << ps.context().get_fill_color().g() << " "
                 << ps.context().get_fill_color().b()
-                << " setcolor fill grestore " <<endl;
+                << " setcolor fill grestore " <<std::endl;
       }
-    ps.os() << "st grestore" <<endl;
+    ps.os() << "st grestore" <<std::endl;
     return ps;
   }
 

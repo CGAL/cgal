@@ -1,6 +1,26 @@
-#ifndef PS_STREAM_C
-#define PS_STREAM_C
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : src/PS_Stream.C
+// package       : PS_Stream
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     :
+// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+//
+// ======================================================================
 
+#include <CGAL/basic.h>
 #include <CGAL/IO/PS_Stream.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -9,72 +29,58 @@ const float PS_Stream::CM=28.4;
 const float PS_Stream::INCH=72.0;
 const float PS_Stream::POINT=1.0;
 
- const DashStyle PS_Stream::SOLID="[] 0 ";
- const DashStyle PS_Stream::DASH2="[5 5] 0 ";
- const DashStyle PS_Stream::DASH3="[10 10] 0 ";
- const DashStyle PS_Stream::DASH6="[10 6 4 6] 0 ";
- const DashStyle PS_Stream::DASH4="[10 5] 0 ";
- const DashStyle PS_Stream::DASH5="[5 10] 0 ";
- const DashStyle PS_Stream::DASH1="[2 2] 0 ";
- extern const PS_Stream::Context CTXT_DEFAULT=PS_Stream::Context();
-
+const DashStyle PS_Stream::SOLID="[] 0 ";
+const DashStyle PS_Stream::DASH2="[5 5] 0 ";
+const DashStyle PS_Stream::DASH3="[10 10] 0 ";
+const DashStyle PS_Stream::DASH6="[10 6 4 6] 0 ";
+const DashStyle PS_Stream::DASH4="[10 5] 0 ";
+const DashStyle PS_Stream::DASH5="[5 10] 0 ";
+const DashStyle PS_Stream::DASH1="[2 2] 0 ";
+extern const PS_Stream::Context CTXT_DEFAULT=PS_Stream::Context();
 
 PS_Stream::PS_Stream(std::ostream& os, OutputMode mode)
    :_bbox(PS_BBox(-2,-2,2,2)),_mode(mode),_width((int)(21*CM)),
-    _height((int)(29.7*CM)),_os(std::cerr)
+    _height((int)(29.7*CM)),_os(os)
 {
-_os=os;
  insert_catalogue();
 }
 
 PS_Stream::PS_Stream(const char* fname, OutputMode mode)
-  :_bbox(PS_BBox(-2,-2,2,2)),_mode(mode),_width((int)(21*CM)),_height((int)(29.7*CM)),_os(std::clog)
-{ 
-  static std::ofstream os(fname,std::ios::out);
-  _os=os;
+  :_bbox(PS_BBox(-2,-2,2,2)), _mode(mode), _width((int)(21*CM)),
+   _height((int)(29.7*CM)), of(fname,std::ios::out), _os(of)
+{
   insert_catalogue();
 }
 
 PS_Stream::PS_Stream(float H, std::ostream& os, OutputMode mode)
-   :_bbox(PS_BBox(-2,-2,2,2)),_mode(mode),
-    _height((int)(H)),_os(std::cerr)
-{
- _os=os;
-
-}
+   :_bbox(PS_BBox(-2,-2,2,2)),_mode(mode), _height((int)(H)),_os(os)
+{}
 
 PS_Stream::PS_Stream(float H, const char* fname, OutputMode mode)
-  :_bbox(PS_BBox(-2,-2,2,2)),_mode(mode),_height((int)(H)),_os(std::clog)
-{ 
-  static std::ofstream os(fname,std::ios::out);
-  _os=os;
-  
-}
+  :_bbox(PS_BBox(-2,-2,2,2)),_mode(mode),_height((int)(H)),
+  of(fname,std::ios::out), _os(of)
+{}
 
 PS_Stream::PS_Stream(const PS_BBox& bb, std::ostream& os, OutputMode mode)
    :_bbox(bb), _mode(mode),
-   _width((int)(21*CM)), _height((int)(29.7*CM)), _os(std::cerr)
+   _width((int)(21*CM)), _height((int)(29.7*CM)), _os(os)
  {
-   _os=os;
    set_scale(bb);
    insert_catalogue();
  }
 
 PS_Stream::PS_Stream(const PS_BBox& bb, const char* fname, OutputMode mode)
   : _bbox(bb),_mode(mode),_width((int)(21*CM)),
-    _height((int)(29.7*CM)),_os(std::clog) 
+    _height((int)(29.7*CM)), of(fname,std::ios::out), _os(of)
 {
-  static std::ofstream os(fname,std::ios::out);
-  _os=os;
   set_scale(bb);
   insert_catalogue();
 }
 
 PS_Stream::PS_Stream(const PS_BBox& bb,float H, std::ostream& os,
                                OutputMode mode)
-  : _bbox(bb), _mode(mode), _height((int)H), _os(std::cerr)
+  : _bbox(bb), _mode(mode), _height((int)H), _os(os)
 {
-  _os=os;
   set_window(bb,H);
   set_scale(bb);
   insert_catalogue();
@@ -82,10 +88,8 @@ PS_Stream::PS_Stream(const PS_BBox& bb,float H, std::ostream& os,
 
 PS_Stream::PS_Stream(const PS_BBox& bb,float H, const char* fname,
                                OutputMode m)
-  : _bbox(bb), _mode(m), _height((int)H), _os(std::clog)
+  : _bbox(bb), _mode(m), _height((int)H), of(fname,std::ios::out), _os(of)
 {
-  static std::ofstream os(fname,std::ios::out);
-  _os=os;
   set_window(bb,H);
   set_scale(bb);
   insert_catalogue();
@@ -93,19 +97,17 @@ PS_Stream::PS_Stream(const PS_BBox& bb,float H, const char* fname,
 
 PS_Stream::PS_Stream(const PS_BBox& bb,float L, float H,
                                std::ostream& os, OutputMode mode)
-  : _bbox(bb), _mode(mode), _width((int)L), _height((int)H), _os(std::cerr)
+  : _bbox(bb), _mode(mode), _width((int)L), _height((int)H), _os(os)
 {
-  _os=os;
   set_scale(bb);
   insert_catalogue();
 }
 
 PS_Stream::PS_Stream(const PS_BBox& bb,float L, float H,
                                const char* fname, OutputMode mode)
-  : _bbox(bb), _mode(mode),_width((int)L),_height((int)H), _os(std::clog)
+  : _bbox(bb), _mode(mode), _width((int)L), _height((int)H),
+    of(fname,std::ios::out), _os(of)
 {
-  static std::ofstream os(fname,std::ios::out);
-  _os=os; 
   set_scale(bb);
   insert_catalogue();
 }
@@ -140,11 +142,9 @@ PS_Stream::~PS_Stream()
         }
       os() << "%%\\end{picture}\\endinput}" <<std::endl;
     }
-  os() << "showpage\nend" << std::endl ;
+  os() << "showpage\nend" << std::endl;
   std::cout << std::flush;
 }
-
-
 
 #ifndef PS_MANIP_DEF
 #define PS_MANIP_DEF
@@ -659,5 +659,3 @@ PS_Stream& operator << (PS_Stream& ps,const PS_Stream::Axis& g)
 #endif
 
 CGAL_END_NAMESPACE
-
-#endif

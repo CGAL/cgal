@@ -1,3 +1,6 @@
+1.1 (?? ??? 2001)
+- Lots of std:: related fixes.
+
 1.0 (30 May 2001)
 - Initial internal release.
 
