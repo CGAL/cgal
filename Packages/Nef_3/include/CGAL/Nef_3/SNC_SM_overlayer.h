@@ -788,6 +788,14 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
   SHalfedge_handle e;
   SNC_SM_output O(*this,PI,From); 
 
+  /* DEBUG CODE: to do: have all svertices a halfedge below associated? */
+  TRACEN("Vertex info before swep");
+  SVertex_iterator svi;
+  for( svi=svertices_begin(); svi!=svertices_end(); svi++) {
+    GenPtr i = info(svi);
+    TRACEN("vertex "<<point(svi)<<" info "<<i);
+  }
+
   typedef typename PHS_traits::INPUT Input_range;
   Positive_halfsphere_sweep SP(
     Input_range(L_pos.begin(),L_pos.end()),O,
@@ -804,6 +812,12 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
   // v = first vertex of CC in negative x-sphere
   // e = first edge of CC in negative x-sphere
    
+  /* DEBUG CODE: to do: have all svertices a halfedge below associated? */
+  TRACEN("Vertex info after swep");
+  for( svi=svertices_begin(); svi!=svertices_end(); svi++) {
+    GenPtr i = info(svi);
+    TRACEN("vertex "<<point(svi)<<" info "<<i);
+  }
   create_face_objects(shalfedges_begin(), e, svertices_begin(), v, O,
                       PH_geometry());
   create_face_objects(e, shalfedges_end(), v, svertices_end(), O,

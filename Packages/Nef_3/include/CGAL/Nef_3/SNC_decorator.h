@@ -204,16 +204,16 @@ public:
 
   SFace_handle adjacent_sface(Halffacet_handle f) const {
     Halffacet_cycle_iterator fc(f->facet_cycles_begin());
-    CGAL_assertion( fc != f->facet_cycles_end());
+    CGAL_nef3_assertion( fc != f->facet_cycles_end());
     SHalfedge_handle se;
     if ( assign(se, fc) ) { 
-      CGAL_assertion( facet(se) == f);
-      CGAL_assertion( sface(se) != SFace_handle());
-      CGAL_assertion( volume(sface(twin(se))) == volume(f));
+      CGAL_nef3_assertion( facet(se) == f);
+      CGAL_nef3_assertion( sface(se) != SFace_handle());
+      CGAL_nef3_assertion( volume(sface(twin(se))) == volume(f));
       return sface(twin(se));
     } 
     else 
-      CGAL_assertion_msg( 0, "Facet outer cycle entry point"
+      CGAL_nef3_assertion_msg( 0, "Facet outer cycle entry point"
 			     "is not an SHalfedge? ");
     return SFace_handle(); // never reached
   }
@@ -276,7 +276,7 @@ public:
 
   template <typename H>
   void undo_boundary_object(H h, Halffacet_handle f) const
-  { CGAL_assertion(sncp()->is_boundary_object(h));
+  { CGAL_nef3_assertion(sncp()->is_boundary_object(h));
     Halffacet_cycle_iterator it = sncp()->boundary_item(h);
     sncp()->undef_boundary_item(h);
     f->boundary_entry_objects_.erase(it);
@@ -302,7 +302,7 @@ public:
 
   template <typename H>
   void undo_boundary_object(H h, Volume_handle c) const
-  { CGAL_assertion(sncp()->is_boundary_object(h));
+  { CGAL_nef3_assertion(sncp()->is_boundary_object(h));
     Shell_entry_iterator it = sncp()->boundary_item(h);
     sncp()->undef_boundary_item(h);
     c->shell_entry_objects_.erase(it);
@@ -327,7 +327,7 @@ public:
   };
 
   void link_as_outer_shell( SFace_handle f, Volume_handle c ) const {
-    CGAL_assertion(c->shell_entry_objects_.size() == 0);
+    CGAL_nef3_assertion(c->shell_entry_objects_.size() == 0);
     Shell_volume_setter Setter(*this, c);
     visit_shell_objects( f, Setter );
     TRACEN("Volume "<<&*c<<", outer shell "<<&*f);
@@ -335,7 +335,7 @@ public:
   }
 
   void link_as_inner_shell( SFace_handle f, Volume_handle c ) const {
-    // CGAL_assertion(c->shell_entry_objects_.size() > 0);
+    // CGAL_nef3_assertion(c->shell_entry_objects_.size() > 0);
     Shell_volume_setter Setter(*this, c);
     visit_shell_objects( f, Setter );
     TRACEN("Volume "<<&*c<<", inner shell "<<&*f);
@@ -356,7 +356,7 @@ public:
 
   void clear_outer_box_marks() {
     SFace_handle sf;
-    CGAL_assertion( assign( sf, shells_begin(volumes_begin())));
+    CGAL_nef3_assertion( assign( sf, shells_begin(volumes_begin())));
     assign( sf, shells_begin(volumes_begin()));
     Shell_mark_setter Setter( *this, false);
     visit_shell_objects( sf, Setter );
@@ -376,7 +376,7 @@ public:
       l->incident_facet_ = f;
       SD.twin(l)->incident_facet_ = twin(f);
     } else {
-      CGAL_assertion( facet_plane.opposite() == SD.circle(l));
+      CGAL_nef3_assertion( facet_plane.opposite() == SD.circle(l));
       l->incident_facet_ = twin(f);
       SD.twin(l)->incident_facet_ = f;
     }
@@ -409,13 +409,13 @@ public:
       \precondition |ray| target is on |v| and the intersection between
       |ray| and the 2-skeleton incident to v is empty. }*/ {
     Halffacet_handle f_visible;
-    CGAL_assertion( ray.target() == point(v));
+    CGAL_nef3_assertion( ray.target() == point(v));
     Sphere_point sp(ray.source() - point(v));
     TRACEN( "Locating " << sp <<" in " << point(v));
     SM_point_locator L(v);
     SObject_handle o = L.locate(sp);
     SFace_const_handle sf;
-    CGAL_assertion( assign( sf, o));
+    CGAL_nef3_assertion( assign( sf, o));
     assign( sf, o);
     SFace_cycle_const_iterator fc = sf->sface_cycles_begin(),
       fce = sf->sface_cycles_end();
@@ -435,7 +435,7 @@ public:
 	f_visible = facet(twin(sl));
       }
       else 
-	CGAL_assertion_msg(0, "Damn, wrong handle.");
+	CGAL_nef3_assertion_msg(0, "Damn, wrong handle.");
     }
     return f_visible;
   }
@@ -447,7 +447,7 @@ public:
       facets in the adjacency list of |e| that could be 'seen'  from the
       piercing point of the |ray| on the local (virtual) view  of |e|
       \precondition |ray| target belongs to |e|. }*/ {
-    CGAL_assertion( segment(e).has_on( ray.target()));
+    CGAL_nef3_assertion( segment(e).has_on( ray.target()));
     SM_decorator SD;
     if( SD.is_isolated(e))
       return Halffacet_handle();
@@ -491,19 +491,23 @@ public:
   }
 
   template <typename Selection>
-    void binop_local_views( Vertex_handle v0, Vertex_handle v1,
-			    const Selection& BOP) 
+    Vertex_handle binop_local_views( Vertex_handle v0, Vertex_handle v1,
+				     const Selection& BOP) 
     /*{\op }*/ {
     typedef SNC_SM_io_parser<SNC_structure> SNC_SM_io_parser;
     SNC_SM_io_parser IO0( std::cerr, v0);
     SNC_SM_io_parser IO1( std::cerr, v1);
+    TRACEN(v0->debug());
+    TRACEN(v1->debug());
     IO0.print();
     IO1.print();
     
-    SM_overlayer O(v0);
+    Vertex_handle v01 = sncp()->new_vertex();
+    SM_overlayer O(v01);
     O.subdivide( v0, v1);
     O.select( BOP);
     O.simplify();
+    return v01;
   }
 
 #ifdef DEADCODE
@@ -526,6 +530,7 @@ public:
 
   Vertex_handle create_local_view_on( const Point_3& p, Halfedge_handle e) {
     SNC_constructor C(*sncp());
+    TRACEN("<-> edge local view on "<<p);
     return C.create_from_edge( e, p);
 
     /*
@@ -582,6 +587,7 @@ public:
 
   Vertex_handle create_local_view_on( const Point_3& p, Halffacet_handle f) {
     SNC_constructor C(*sncp());
+    TRACEN("<-> facet local view on "<<p);
     return C.create_from_facet( f, p);
 
     /* 
@@ -610,6 +616,7 @@ public:
     SM_decorator D(v);
     SFace_handle f = D.new_face();
     D.mark(f) = mark(c);
+    TRACEN("<-> volume local view on "<<p);
     return v;
   }
 
@@ -622,8 +629,10 @@ public:
     Halffacet_handle f;
     Volume_handle c;
     Object_handle o = rs.locate(p);
-    if( assign( v, o))
+    if( assign( v, o)) {
+      TRACEN("<-> vertex local view on "<<point(v));
       return v;
+    }
     else if( assign( e, o))
       return create_local_view_on( p, e);
     else if( assign( f, o))
@@ -637,29 +646,31 @@ public:
   template <typename Selection>
     void binary_operation( SNC_structure& snc1i, const Selection& BOP)
     /*{\op }*/ {
+    typedef Unique_hash_map<Vertex_handle, bool> Hash_map;
+    Hash_map Stay(false);
     SNC_ray_shoter rs(*sncp());
-    Vertex_handle v0, v1;
+    Vertex_iterator v0, v1;
     CGAL_nef3_forall_vertices( v0, *sncp()) {
+      if( Stay[v0]) continue;
       v1 = qualify_with_respect( point(v0), snc1i);
-      binop_local_views( v0, v1, BOP); /* result on v0 */
-      if( v1->sncp() == sncp())
-	sncp()->delete_vertex(v1); /* delete v1 only if that sphere map is
-				      a local copy */
+      TRACEN("bionop of vertices "<<&*v0<<" "<<&*v1);
+      Stay[binop_local_views( v0, v1, BOP)] = true;
     }
     CGAL_nef3_forall_vertices( v1, snc1i) {
+      if( Stay[v1]) continue;
       v0 = qualify_with_respect( point(v1), *sncp());
-      binop_local_views( v0, v1, BOP); /* result on v0 */
+      TRACEN("bionop of vertices "<<&*v0<<" "<<&*v1);
+      Stay[binop_local_views( v0, v1, BOP)] = true;
     }
-    Halfedge_handle e0, e1;
-    Halffacet_handle f0, f1;
+    Halfedge_iterator e0, e1;
+    Halffacet_iterator f0, f1;
     CGAL_nef3_forall_edges( e0, *sncp()) { 
       CGAL_nef3_forall_facets( f1, snc1i) { 
 	Point_3 ip;
 	if( rs.does_intersect_internally( segment(e0), f1, ip )) {
 	  v0 = qualify_with_respect( ip, *sncp());
 	  v1 = qualify_with_respect( ip, snc1i);
-	  binop_local_views( v0, v1, BOP); /* result on vi */
- 	  sncp()->delete_vertex(v1);
+	  Stay[binop_local_views( v0, v1, BOP)] = true;
 	}
       }
     }
@@ -669,8 +680,7 @@ public:
 	if( rs.does_intersect_internally( segment(e1), f0, ip )) {
 	  v1 = qualify_with_respect( ip, snc1i);
 	  v0 = qualify_with_respect( ip, *sncp());
-	  binop_local_views( v0, v1, BOP); // result on vi
-	  sncp()->delete_vertex(v1);
+	  Stay[binop_local_views( v0, v1, BOP)] = true;
 	}
       }
     }
@@ -681,15 +691,24 @@ public:
 	  Vertex_handle v0, v1;
 	  v0 = qualify_with_respect( ip, *sncp());
 	  v1 = qualify_with_respect( ip, snc1i);
-	  binop_local_views( v0, v1, BOP); // result on v0
-	  sncp()->delete_vertex(v1);	    
+	  Stay[binop_local_views( v0, v1, BOP)] = true;
 	}
       }
     }
+    CGAL_nef3_forall_vertices( v0, *sncp())
+      if( !Stay[v0]) sncp()->delete_vertex(v0);
 
     // remove vertices whose local view is not that of a vertex
     // TO VERIFY: clean adjacency information before next step?
     // synthesis of spatial structure
+
+    // this code corresponds to build_external_extructure on
+    // Nef_polyhedron_3.h
+    SNC_constructor C(*sncp());
+    C.pair_up_halfedges();
+    C.link_shalfedges_to_facet_cycles();
+    C.categorize_facet_cycles_and_create_facets();
+    C.create_volumes();
   }
 
   template <typename Visitor>
@@ -784,7 +803,7 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
           if ( Done[sface(l)] ) continue;
           SFaceCandidates.push_back(sface(l));
           Done[sface(l)] = true;
-        } else CGAL_assertion_msg(0,"Damn wrong handle.");
+        } else CGAL_nef3_assertion_msg(0,"Damn wrong handle.");
       }
     }
     if ( !SFaceCandidates.empty() ) {
@@ -820,7 +839,7 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
           Halffacet_handle f = facet(twin(l));
           if ( Done[f] ) continue;
           FacetCandidates.push_back(f);  Done[f] = true;
-        } else CGAL_assertion_msg(0,"Damn wrong handle.");
+        } else CGAL_nef3_assertion_msg(0,"Damn wrong handle.");
       }
     }
   }

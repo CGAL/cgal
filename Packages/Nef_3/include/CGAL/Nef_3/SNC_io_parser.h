@@ -165,7 +165,7 @@ public:
 template <typename EW>
 SNC_io_parser<EW>::SNC_io_parser(std::istream& is, SNC_structure& W) : 
   Base(W), in(is), out(std::cout) 
-{ CGAL_assertion(W.empty());
+{ CGAL_nef3_assertion(W.empty());
   verbose = false; }
 
 template <typename EW>
@@ -263,21 +263,21 @@ template <typename EW>
 void SNC_io_parser<EW>::read()
 { 
   if ( !check_sep("Selective Nef Complex") )  
-    CGAL_assertion_msg(0,"SNC_io_parser::read: no embedded_PM header.");
+    CGAL_nef3_assertion_msg(0,"SNC_io_parser::read: no embedded_PM header.");
   if ( !(check_sep("vertices") && (in >> vn)) ) 
-    CGAL_assertion_msg(0,"SNC_io_parser::read: wrong vertex line.");
+    CGAL_nef3_assertion_msg(0,"SNC_io_parser::read: wrong vertex line.");
   if ( !(check_sep("halfedges") && (in >> en) && (en%2==0)) )
-    CGAL_assertion_msg(0,"SNC_io_parser::read: wrong edge line.");
+    CGAL_nef3_assertion_msg(0,"SNC_io_parser::read: wrong edge line.");
   if ( !(check_sep("facets") && (in >> fn) && (fn%2==0)) )
-    CGAL_assertion_msg(0,"SNC_io_parser::read: wrong facet line.");
+    CGAL_nef3_assertion_msg(0,"SNC_io_parser::read: wrong facet line.");
   if ( !(check_sep("volumes") && (in >> cn)) )
-    CGAL_assertion_msg(0,"SNC_io_parser::read: wrong volume line.");
+    CGAL_nef3_assertion_msg(0,"SNC_io_parser::read: wrong volume line.");
   if ( !(check_sep("shalfedges") && (in >> sen)) )
-    CGAL_assertion_msg(0,"SNC_io_parser::read: wrong sedge line.");
+    CGAL_nef3_assertion_msg(0,"SNC_io_parser::read: wrong sedge line.");
   if ( !(check_sep("shalfloops") && (in >> sln)) )
-    CGAL_assertion_msg(0,"SNC_io_parser::read: wrong sloop line.");
+    CGAL_nef3_assertion_msg(0,"SNC_io_parser::read: wrong sloop line.");
   if ( !(check_sep("sfaces") && (in >> sfn)) )
-    CGAL_assertion_msg(0,"SNC_io_parser::read: wrong sface line.");
+    CGAL_nef3_assertion_msg(0,"SNC_io_parser::read: wrong sface line.");
 
   Vertex_of.reserve(vn);
   Edge_of.reserve(en);
@@ -297,31 +297,31 @@ void SNC_io_parser<EW>::read()
 
   for(i=0; i<vn; i++) {
     if (!read_vertex(Vertex_of[i]))
-      CGAL_assertion_msg(0,"SNC_io_parser::read: error in node line");
+      CGAL_nef3_assertion_msg(0,"SNC_io_parser::read: error in node line");
   }
   for(i=0; i<en; i++) {
     if (!read_edge(Edge_of[i]))
-      CGAL_assertion_msg(0,"SNC_io_parser::read: error in edge line");
+      CGAL_nef3_assertion_msg(0,"SNC_io_parser::read: error in edge line");
   }
   for(i=0; i<fn; i++) {
     if (!read_facet(Halffacet_of[i]))
-      CGAL_assertion_msg(0,"SNC_io_parser::read: error in facet line");
+      CGAL_nef3_assertion_msg(0,"SNC_io_parser::read: error in facet line");
   }
   for(i=0; i<cn; i++) {
     if (!read_volume(Volume_of[i]))
-      CGAL_assertion_msg(0,"SNC_io_parser::read: error in volume line");
+      CGAL_nef3_assertion_msg(0,"SNC_io_parser::read: error in volume line");
   }
   for(i=0; i<sen; i++) {
     if (!read_sedge(SEdge_of[i]))
-      CGAL_assertion_msg(0,"SNC_io_parser::read: error in sedge line");
+      CGAL_nef3_assertion_msg(0,"SNC_io_parser::read: error in sedge line");
   }
   for(i=0; i<sln; i++) {
     if (!read_sloop(SLoop_of[i]))
-      CGAL_assertion_msg(0,"SNC_io_parser::read: error in sloop line");
+      CGAL_nef3_assertion_msg(0,"SNC_io_parser::read: error in sloop line");
   }
   for(i=0; i<sfn; i++) {
     if (!read_sface(SFace_of[i]))
-      CGAL_assertion_msg(0,"SNC_io_parser::read: error in sface line");
+      CGAL_nef3_assertion_msg(0,"SNC_io_parser::read: error in sface line");
   }
 }
 
@@ -356,7 +356,7 @@ read_vertex(Vertex_handle v) const
        !check_sep(",") ||
        !(in >> p) || 
        !check_sep("}") ) return false;
-  CGAL_assertion_msg(
+  CGAL_nef3_assertion_msg(
       Vertex_of[n] == v &&
       svs >= 0 && svs < en && sve >= 0 && sve < en && 
       ses >= 0 && ses < sen && see >= 0 && see < sen && 
@@ -397,7 +397,7 @@ read_edge(Halfedge_handle e) const
     return false;
   
   if (iso) efm=sfn; else efm=sen;
-  CGAL_assertion_msg (
+  CGAL_nef3_assertion_msg (
       Edge_of[n] == e &&
       et >= 0 && et < en && vs >= 0 && vs < vn && 
       ef >= 0 && et < efm , "wrong index in read_edge");
@@ -430,13 +430,13 @@ read_facet(Halffacet_handle f) const
   int n, ei, li; Mark m;
   if ( !(in >> n) || !check_sep("{") ) return false;
   while (in >> ei) { 
-    CGAL_assertion_msg(ei >= 0 && ei < sen, 
+    CGAL_nef3_assertion_msg(ei >= 0 && ei < sen, 
       "wrong index in facet cycle list.");
     store_boundary_object(SEdge_of[ei],f);
   } in.clear();
   if (!check_sep(",")) { return false; }
   while (in >> li) { 
-    CGAL_assertion_msg(li >= 0 && li < sln, 
+    CGAL_nef3_assertion_msg(li >= 0 && li < sln, 
       "wrong index in facet cycle list.");
     store_boundary_object(SLoop_of[li],f);
   } in.clear();
@@ -463,7 +463,7 @@ read_volume(Volume_handle c) const
   int n, fi; Mark m;
   if ( !(in >> n) || !check_sep("{") ) return false;
   while (in >> fi) { 
-    CGAL_assertion_msg(fi >= 0 && fi < sfn, 
+    CGAL_nef3_assertion_msg(fi >= 0 && fi < sfn, 
       "wrong index in shell list.");
     store_boundary_object(SFace_of[fi],c);
   } in.clear();
@@ -503,7 +503,7 @@ read_sedge(SHalfedge_handle e) const
        !(in >> en) || !check_sep(",") ||
        !(in >> ft) || !check_sep("}") )
     return false;
-  CGAL_assertion_msg 
+  CGAL_nef3_assertion_msg 
      (et >= 0 && et < sen && sp >= 0 && sp < sen && 
       sn >= 0 && sn < sen && vs >= 0 && vs < en && 
       sf >= 0 && sf < sfn && ep >= 0 && ep < sen &&
@@ -511,7 +511,7 @@ read_sedge(SHalfedge_handle e) const
       "wrong index in read_sedge");
   
   // precond: features exist!
-  CGAL_assertion(SEdge_of[n]==e);
+  CGAL_nef3_assertion(SEdge_of[n]==e);
   e->sprev_ = SEdge_of[sp];
   e->snext_ = SEdge_of[sn];
   e->source_ = Edge_of[vs];
@@ -543,12 +543,12 @@ read_sloop(SHalfloop_handle l) const
        !(in >> sf) || !check_sep(",") ||
        !(in >> ft) || !check_sep("}") )
     return false;
-  CGAL_assertion_msg 
+  CGAL_nef3_assertion_msg 
      (lt >= 0 && lt < sen && sf >= 0 && sf < sfn && 
       ft >= 0 && ft < fn ,
       "wrong index in read_sedge");
   
-  CGAL_assertion(SLoop_of[n]==l);
+  CGAL_nef3_assertion(SLoop_of[n]==l);
   l->twin_ = SLoop_of[lt];
   l->incident_sface_ = SFace_of[sf];
   l->incident_facet_ = Halffacet_of[ft];
@@ -582,22 +582,22 @@ read_sface(SFace_handle f) const
   if ( !(in >> n) || !check_sep("{") ||
        !(in >> vc) || !check_sep(",") ) 
     return false;
-  CGAL_assertion(vc >= 0 && vc < vn);
+  CGAL_nef3_assertion(vc >= 0 && vc < vn);
   f->center_vertex_ = Vertex_of[vc];
   SM_decorator D(Vertex_of[vc]);
   while (in >> ei) { 
-    CGAL_assertion_msg(ei >= 0 && ei < sen, 
+    CGAL_nef3_assertion_msg(ei >= 0 && ei < sen, 
       "wrong index in sface cycle list.");
     D.store_boundary_object(SEdge_of[ei],f);
   } in.clear();
   while (in >> vi) { 
-    CGAL_assertion_msg(vi >= 0 && vi < en, 
+    CGAL_nef3_assertion_msg(vi >= 0 && vi < en, 
       "wrong index in sface cycle list.");
     D.store_boundary_object(Edge_of[vi],f);
   } in.clear();
   if (!check_sep(",")) { return false; }
   while (in >> li) { 
-    CGAL_assertion_msg(li >= 0 && li < sln, 
+    CGAL_nef3_assertion_msg(li >= 0 && li < sln, 
       "wrong index in sface cycle list.");
     D.store_boundary_object(SLoop_of[li],f);
   } in.clear();

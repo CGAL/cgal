@@ -355,7 +355,7 @@ public:
     else if( assign(f, o)) {
       TRACEN("facet below from from facet...");
       f_below = get_visible_facet(f, ray);
-      CGAL_assertion( f_below != Halffacet_handle());
+      CGAL_nef3_assertion( f_below != Halffacet_handle());
     }
     else { TRACEN("no facet below found..."); }
     return f_below;
@@ -678,7 +678,7 @@ create_volumes() const
     SFace_const_handle sfc;
     if( !assign(sfc, o) || Shell[sfc] != i) { /*UNTESTED CASE: !assign(sfc,o)*/
       SFace_handle f = EntrySFace[i];
-      CGAL_assertion( Shell[EntrySFace[i]] == i );
+      CGAL_nef3_assertion( Shell[EntrySFace[i]] == i );
       if( Closed[f] ) {
 	SM_decorator SD(v);
 	Volume_handle c = sncp()->new_volume();

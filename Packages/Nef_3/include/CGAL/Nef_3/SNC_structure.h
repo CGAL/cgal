@@ -70,7 +70,7 @@ struct move_shalfedge_around_facet {
 
 template <class Object, class Hash_map, class Union_find>
 void merge_sets( Object o1, Object o2, Hash_map& hash, Union_find& uf) {
-  CGAL_assertion( hash[o1] != 0 && hash[o2] != 0);
+  CGAL_nef3_assertion( hash[o1] != 0 && hash[o2] != 0);
   if( !uf.same_set( hash[o1], hash[o2]))
     uf.unify_sets( hash[o1], hash[o2]);
 }
@@ -849,7 +849,7 @@ public:
     /* determines if a vertex v is part of a volume, cheking if its local
        graph is trivial (only one sface with no boundary). */  {
     SM_decorator SD(v);
-    CGAL_assertion( !is_empty_range( SD.sfaces_begin(), SD.sfaces_end()));
+    CGAL_nef3_assertion( !is_empty_range( SD.sfaces_begin(), SD.sfaces_end()));
     if( is_empty_range( SD.svertices_begin(), SD.svertices_end()) &&
 	is_empty_range( SD.shalfedges_begin(), SD.shalfedges_end()) &&
 	!SD.has_loop())
@@ -862,10 +862,14 @@ public:
        facet, checking if its local graph consists just of a sloop and
        two incident sfaces. */ {
     SM_decorator SD(v);
-    CGAL_assertion(!is_empty_range(SD.svertices_begin(),SD.svertices_end()) ||
+    CGAL_nef3_assertion(!is_empty_range(SD.svertices_begin(),SD.svertices_end()) ||
  		    is_empty_range(SD.shalfedges_begin(),SD.shalfedges_end()));
     return( SD.has_loop() &&
 	    is_empty_range( SD.svertices_begin(), SD.svertices_end()));
+  }
+
+  bool is_vertex(Vertex_handle v) {
+    return !is_part_of_facet(v) && !is_part_edge(v);
   }
 
   bool is_part_of_edge(Vertex_handle v) {
@@ -937,12 +941,12 @@ public:
     while( f != D.halffacets_end() && f->is_twin())
       f++;
     while( f != D.halffacets_end()) {
-      CGAL_assertion( !f->is_twin());
+      CGAL_nef3_assertion( !f->is_twin());
       Halffacet_iterator f_next(f);
       do
 	f_next++;
       while( f_next != D.halffacets_end() && f_next->is_twin());
-      CGAL_assertion( f != D.twin(f));
+      CGAL_nef3_assertion( f != D.twin(f));
       Volume_handle c1 = D.volume(f), c2 = D.volume(D.twin(f));
       TRACEN(" mark("<<IO->index(c1)<<")="<<D.mark(c1)<<
 	     " mark("<<IO->index(f) <<")="<<D.mark(f) <<
@@ -971,7 +975,7 @@ public:
     while( e != D.halfedges_end() && e->is_twin())
       e++;
     while( e != (*this).halfedges_end()) {
-      CGAL_assertion( !e->is_twin());
+      CGAL_nef3_assertion( !e->is_twin());
       Halfedge_iterator e_next(e);
       do 
 	e_next++;
@@ -1013,7 +1017,7 @@ public:
       Vertex_iterator v_next(v);
       v_next++;
 
-      CGAL_assertion( SD.sfaces_begin() != SFace_handle());
+      CGAL_nef3_assertion( SD.sfaces_begin() != SFace_handle());
       if( is_part_of_volume(v)) {
 	TRACEN("mark("<<IO->index(v)<<")="<<D.mark(v)<<", "<<
 	       "mark("<<IO->index(D.volume(SD.sfaces_begin()))<<")="<<
@@ -1024,7 +1028,7 @@ public:
 	}
       }
       else if( is_part_of_facet(v)) {
-	CGAL_assertion( D.facet(SD.shalfloop()) != Halffacet_handle());
+	CGAL_nef3_assertion( D.facet(SD.shalfloop()) != Halffacet_handle());
 	if( D.mark(v) == D.mark(D.facet(SD.shalfloop()))) {
 	  TRACEN("removing "<<IO->index(v)<<
 		 " on facet "<<IO->index(D.facet(SD.shalfloop())));
@@ -1034,7 +1038,7 @@ public:
       else if( is_part_of_edge(v)) {
 	SVertex_iterator sv(SD.svertices_begin());
 	Halfedge_handle e1(sv++), e2(sv++);
-	CGAL_assertion( sv == SD.svertices_end());
+	CGAL_nef3_assertion( sv == SD.svertices_end());
 	if( D.mark(e1) == D.mark(v) && D.mark(v) == D.mark(e2)) {
 	  TRACEN("merging "<<IO->index(e1)<<" & "<<IO->index(e2)<<
 		 " in "<<IO->index(v));
@@ -1055,9 +1059,9 @@ public:
    
   void remove_edge_and_merge_facet_cycles( Halfedge_handle e) {
      SNC_decorator D(*this);
-     CGAL_assertion( D.has_outdeg_two(e));
+     CGAL_nef3_assertion( D.has_outdeg_two(e));
      Halfedge_handle et = D.twin(e);
-     CGAL_assertion( D.has_outdeg_two(et));
+     CGAL_nef3_assertion( D.has_outdeg_two(et));
      SM_decorator SD1(D.vertex(e));
      SM_decorator SD2(D.vertex(et));
      SHalfedge_handle e1 = SD1.first_out_edge(e);
@@ -1070,18 +1074,18 @@ public:
 						   SVertex_handle v) {
      SNC_decorator D(*this);
      SM_decorator SD(D.vertex(v));
-     CGAL_assertion( SD.target(s1) == v);
+     CGAL_nef3_assertion( SD.target(s1) == v);
      SHalfedge_handle s2(SD.next(s1));
-     CGAL_assertion( SD.source(s2) == v);
+     CGAL_nef3_assertion( SD.source(s2) == v);
      if( s1 == s2) {
        TRACEN(IO->index(s1)<<'('<<IO->index(D.twin(s2))<<") to sloop");
        SD.convert_edge_to_loop(s1);
-       CGAL_assertion(SD.shalfloop() != SHalfloop_handle());
+       CGAL_nef3_assertion(SD.shalfloop() != SHalfloop_handle());
        D.add_sloop_to_facet( SD.shalfloop(), D.facet(s1));
        TRACEN(IO->index(s2)<<" removed");
      }
      else {
-       CGAL_assertion( D.has_outdeg_two(v));
+       CGAL_nef3_assertion( D.has_outdeg_two(v));
        D.link_as_prev_next_pair( s1, D.next(s2));
        TRACEN(IO->index(s1)<<" "<<IO->index(D.next(s2))<<" linked.");
        D.link_as_prev_next_pair( D.twin(D.next(s2)), D.twin(s1));
@@ -1094,9 +1098,9 @@ public:
 
    void merge_halfedge_pairs( SVertex_handle p, SVertex_handle q) {
      SNC_decorator D(*this);
-     CGAL_assertion( D.vertex(p) == D.vertex(q));
+     CGAL_nef3_assertion( D.vertex(p) == D.vertex(q));
      Vertex_handle v(D.vertex(p)); 
-     CGAL_assertion( is_part_of_edge(v));
+     CGAL_nef3_assertion( is_part_of_edge(v));
      SM_decorator SD(v);
      SHalfedge_around_svertex_circulator s(SD.first_out_edge(p)), se(s);
      CGAL_For_all( s, se) {
@@ -1152,7 +1156,7 @@ public:
 	continue;
       SM_decorator SD(D.vertex(e));
       SFace_handle sf = *(uf.find(hash[D.sface(e)]));
-      CGAL_assertion( sf != SFace_handle());
+      CGAL_nef3_assertion( sf != SFace_handle());
       SHalfedge_around_sface_circulator c(e), cend(c);
       CGAL_For_all( c, cend) {
 	SD.set_face(c, sf);
@@ -1165,7 +1169,7 @@ public:
       SM_decorator SD(D.vertex(sv));
       if( SD.is_isolated(sv)) {
 	SFace_handle sf = *(uf.find(hash[D.sface(sv)])); 
-	CGAL_assertion( sf != SFace_handle());
+	CGAL_nef3_assertion( sf != SFace_handle());
 	SD.set_face( sv, sf);
 	SD.store_boundary_object( sv, sf);
       }
@@ -1200,7 +1204,7 @@ public:
 	D.store_boundary_object( u_min, f);
       else {
 	SHalfedge_handle f_sedge;
-	CGAL_assertion( assign( f_sedge, f->boundary_entry_objects_.front()));
+	CGAL_nef3_assertion( assign( f_sedge, f->boundary_entry_objects_.front()));
 	assign( f_sedge, f->boundary_entry_objects_.front());
 	Point_3 p(D.point(D.vertex(f_sedge)));
 	if( lexicographically_xyz_smaller( D.point(D.vertex(u_min)), p))
@@ -1330,8 +1334,8 @@ pointer_update(const SNC_structure<Items>& D)
     /* It is possible that the is_twin() property differs for equivalent 
        facets on both SNC structures.  So, we need to store the correct
        selection mark in the correct (non-twin) facet of a halffacet pair. */
-    CGAL_assertion_code( if( fc->is_twin() == f->is_twin())
-			 CGAL_assertion( fc->mark_ == f->mark_));
+    CGAL_nef3_assertion_code( if( fc->is_twin() == f->is_twin())
+			 CGAL_nef3_assertion( fc->mark_ == f->mark_));
     if( !f->is_twin() && fc->is_twin()) f->mark_ = f->twin_->mark_;
   }
   // Volume update

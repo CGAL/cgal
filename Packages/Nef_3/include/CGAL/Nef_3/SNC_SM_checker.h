@@ -115,7 +115,7 @@ check_order_preserving_embedding(SVertex_const_handle v) const
            !strictly_ordered_ccw_at(p,direction(e),direction(en),
 				    direction(ef)) ) {
         error_status << "ccw order violate!" << endl << '\0';
-        CGAL_assertion_msg(0,error_status.str());
+        CGAL_nef3_assertion_msg(0,error_status.str());
       }
       e = en;
     }
@@ -137,7 +137,7 @@ void SNC_SM_checker<Decorator_>::
 check_is_triangulation() const
 {
   check_integrity_and_topological_planarity(false);
-  CGAL_assertion(number_of_connected_components() == 1);
+  CGAL_nef3_assertion(number_of_connected_components() == 1);
   check_order_preserving_embedding();
 
   std::ostrstream error_status;
@@ -151,7 +151,7 @@ check_is_triangulation() const
       error_status << PH(hit);
       ++edges_in_face_cycle;
     }
-    CGAL_assertion_msg(edges_in_face_cycle==3,error_status.str());
+    CGAL_nef3_assertion_msg(edges_in_face_cycle==3,error_status.str());
   }
   error_status.freeze(0);
 }

@@ -93,7 +93,7 @@ public:
   { s = Segment_3(s.source(),p); }
 
   bool contains_internally(const Segment_3& s, const Point_3& p) const
-  { CGAL_assertion(s.has_on(p));
+  { CGAL_nef3_assertion(s.has_on(p));
     CGAL::Comparison_result r1 = compare_xyz(s.source(),p); 
     CGAL::Comparison_result r2 = compare_xyz(s.target(),p); 
     return (r1 == opposite(r2));

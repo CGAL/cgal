@@ -287,6 +287,22 @@ public:
     Mark& mark() { return mark_; }
     GenPtr& info() { return info_; }
 
+  public:
+    std::string debug() const
+    { std::stringstream os; 
+      set_pretty_mode(os); 
+      os<<"{ addr, point, mark, snc, svb, sve, seb, see, sfb, sfe, sl,"
+	<<" mneg, mpos, info }"<<std::endl;
+      os<<"{ "<<this<<", "<<point_at_center_<<", "<<mark_<<", "<<&*sncp_<<", "
+	<<&*svertices_begin_ <<", "<<&*svertices_last_ <<", "
+	<<&*shalfedges_begin_<<", "<<&*shalfedges_last_<<", "
+	<<&*sfaces_begin_    <<", "<<&*sfaces_last_    <<", "
+	<<&*shalfloop_       <<", "
+	<<m_neg_<<", "<<m_pos_<<", "<<info_<<" }";
+      std::string res(os.str());
+      return res;
+    }
+
   }; // Vertex
 
 
@@ -362,7 +378,7 @@ public:
     std::string debug() const
     { std::stringstream os; 
       set_pretty_mode(os);
-      os<<"v"<<tmp_point()<<info_<<'\0';
+      os<<"sv [ "<<tmp_point()<<info_<<" ] ";
       std::string res(os.str());
       return res;
     }
@@ -604,8 +620,8 @@ public:
     std::string debug() const
     { std::stringstream os; 
       set_pretty_mode(os); 
-      os <<"e["<<source_->debug()<<","
-         <<twin_->source_->debug()<<" "<<info_<<"]"<<'\0';
+      os <<"e[ "<<source_->debug()<<", "
+         <<twin_->source_->debug()<<" "<<info_<<" ] ";
       std::string res(os.str());
       return res;
     }
@@ -680,7 +696,7 @@ public:
     std::string debug() const
     { std::stringstream os; 
       set_pretty_mode(os); 
-      os<<"l"<<tmp_circle()<<'\0';
+      os<<"sl [ "<<tmp_circle()<<" ] ";
       std::string res(os.str());
       return res;
     }

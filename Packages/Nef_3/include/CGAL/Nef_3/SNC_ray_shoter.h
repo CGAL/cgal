@@ -334,7 +334,7 @@ public:
     if(os1 != opposite(os2))
       return false;
     Object o = intersection(hs1, ls2);
-    CGAL_assertion(assign( p, o));
+    CGAL_nef3_assertion(assign( p, o));
     /* since line(s1) and line(s2) are not parallel they intersects in only
        one point */
     assign( p ,o);
@@ -357,7 +357,7 @@ public:
     TRACEN("-> facet plane " << h);
     TRACEN("-> a point on " << h.point());
     TRACEN("-> seg segment " << seg);
-    CGAL_assertion( !h.is_degenerate());
+    CGAL_nef3_assertion( !h.is_degenerate());
     if( seg.is_degenerate())
       /* no possible internal intersection */
       return false;
@@ -369,15 +369,15 @@ public:
     Oriented_side os1 = h.oriented_side(seg.source());
     Oriented_side os2 = h.oriented_side(seg.target());
     TRACEN( "-> endpoint plane side " << os1 << " " << os2);
-    CGAL_assertion( h.has_on(p));
-    CGAL_assertion( seg.has_on(p));
+    CGAL_nef3_assertion( h.has_on(p));
+    CGAL_nef3_assertion( seg.has_on(p));
     if (os1 == os2)
       return false;
 #endif //REDUNDANT_CODE
     Object o = intersection( h, seg);
     Segment_3 s;
     if ( assign( s, o) ) {
-      CGAL_assertion( s == seg );
+      CGAL_nef3_assertion( s == seg );
       TRACEN( "-> seg belongs to facet's plane." << p );
       return false;
     }
@@ -398,7 +398,7 @@ public:
     typedef Container_from_circulator<Circulator> Container;
 
     Plane_3 h(plane(f));
-    CGAL_assertion(h.has_on(p));
+    CGAL_nef3_assertion(h.has_on(p));
     Halffacet_cycle_iterator fc = f->facet_cycles_begin();
     SHalfedge_handle se;
     Bounded_side outer_bound_pos;
@@ -406,11 +406,11 @@ public:
       SHalfedge_around_facet_circulator hfc(se);
       Circulator c(hfc);
       Container ct(c);
-      CGAL_assertion( !is_empty_range(ct.begin(), ct.end()));
+      CGAL_nef3_assertion( !is_empty_range(ct.begin(), ct.end()));
       outer_bound_pos = bounded_side_3(ct.begin(), ct.end(), p, h);
     } 
     else 
-      CGAL_assertion_msg(0, "is facet first cycle a SHalfloop?");
+      CGAL_nef3_assertion_msg(0, "is facet first cycle a SHalfloop?");
     if( outer_bound_pos != CGAL::ON_BOUNDED_SIDE )
       return outer_bound_pos;
     /* The point p is not in the relative interior of the outer face cycle
@@ -433,12 +433,12 @@ public:
 	SHalfedge_around_facet_circulator hfc(se);
 	Circulator c(hfc);
 	Container ct(c);
-	CGAL_assertion( !is_empty_range(ct.begin(), ct.end()));
+	CGAL_nef3_assertion( !is_empty_range(ct.begin(), ct.end()));
         inner_bound_pos = bounded_side_3( ct.begin(), ct.end(), 
 					  p, h.opposite());
       } 
       else 
-	CGAL_assertion_msg(0, "Damn wrong handle.");
+	CGAL_nef3_assertion_msg(0, "Damn wrong handle.");
       if( inner_bound_pos != CGAL::ON_UNBOUNDED_SIDE )
 	return opposite(inner_bound_pos);
       /* At this point the point p belongs to relative interior of the facet's

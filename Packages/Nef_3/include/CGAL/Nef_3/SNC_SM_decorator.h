@@ -142,6 +142,7 @@ the sphere map of |v|.}*/
 
 Vertex_handle center_vertex() const { return psm_; }
 
+/* This code chunk should be in SNC_SM_const_decorator */
 SVertex_const_handle source(SHalfedge_const_handle e) const
 { return e->source_; }
 SVertex_const_handle target(SHalfedge_const_handle e) const

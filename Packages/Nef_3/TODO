@@ -1,8 +1,11 @@
 Nef_3 Package: TODO
 ---------------------------------------------------------------------
 
+- Solve null pointer info on sphere vertices problem when the overlayer 
+  is called.
 - Qualify x with respect to P(1-i).
 - Binary operations
+- Replace new and delete instructions by the corresponding Allocator methods.
 - Change &D.mark() to D.set_mark(...) and D.get_mark(...)
 - Extended kernel with infimaximal box
 - Define endpoint of segments used for ray shoting to be in the 

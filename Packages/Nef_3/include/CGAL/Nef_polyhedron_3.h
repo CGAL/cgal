@@ -71,7 +71,7 @@ template <typename T>
 std::istream& operator>>(std::istream&, Nef_polyhedron_3<T>&); 
 
 template <typename T>
-class Nef_polyhedron_3_rep : public Rep
+class Nef_polyhedron_3_rep : public Ref_counted
 { 
   typedef Nef_polyhedron_3_rep<T>                     Self;
   friend class Nef_polyhedron_3<T>;
@@ -221,7 +221,7 @@ protected:
   typedef typename SNC_structure::Sphere_circle    Sphere_circle;
   
   Vertex_handle create_cube_corner(int x, int y, int z, bool space=false) {
-    CGAL_assertion(CGAL_NTS abs(x) == 
+    CGAL_nef3_assertion(CGAL_NTS abs(x) == 
 		   CGAL_NTS abs(y) == 
 		   CGAL_NTS abs(z) == 1);
     Vertex_handle v = snc().new_vertex();

@@ -115,7 +115,7 @@ namespace OGL {
     operator double_ptr() const 
     { return const_cast<Double_triple&>(*this).coords_; }
     double operator[](unsigned i) 
-    { CGAL_assertion(i<3); return coords_[i]; }
+    { CGAL_nef3_assertion(i<3); return coords_[i]; }
   }; // Double_triple
 
   static std::ostream& operator << (std::ostream& os,
@@ -183,22 +183,22 @@ namespace OGL {
     { return fc_ends_.size(); }
 
     Coord_iterator facet_cycle_begin(unsigned i) 
-    { CGAL_assertion(i<number_of_facet_cycles());
+    { CGAL_nef3_assertion(i<number_of_facet_cycles());
       if (i==0) return coords_.begin();
       else return coords_.begin()+fc_ends_[i-1]; }
 
     Coord_iterator facet_cycle_end(unsigned i) 
-    { CGAL_assertion(i<number_of_facet_cycles());
+    { CGAL_nef3_assertion(i<number_of_facet_cycles());
       if (i<fc_ends_.size()-1) return coords_.begin()+fc_ends_[i];
       else return coords_.end(); }
 
     Coord_const_iterator facet_cycle_begin(unsigned i) const
-    { CGAL_assertion(i<number_of_facet_cycles());
+    { CGAL_nef3_assertion(i<number_of_facet_cycles());
       if (i==0) return coords_.begin();
       else return coords_.begin()+fc_ends_[i-1]; }
 
     Coord_const_iterator facet_cycle_end(unsigned i) const
-    { CGAL_assertion(i<number_of_facet_cycles());
+    { CGAL_nef3_assertion(i<number_of_facet_cycles());
       if (i<fc_ends_.size()-1) return coords_.begin()+fc_ends_[i];
       else return coords_.end(); }
 
@@ -406,7 +406,7 @@ namespace OGL {
     { if (init_) return;
       init_ = true;
       axes_ = false; 
-      object_list_ = glGenLists(4); CGAL_assertion(object_list_); 
+      object_list_ = glGenLists(4); CGAL_nef3_assertion(object_list_); 
       fill_display_lists();
     }
 
