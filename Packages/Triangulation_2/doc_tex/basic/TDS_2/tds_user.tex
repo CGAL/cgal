@@ -1,7 +1,7 @@
 \chapter{2D Triangulation Data Structure} 
 \label{user_chapter_2D_Triangulation_Data_Structure}
 \label{Chapter_2D_Triangulation_Data_Structure}
-\label{{Chapter_2D_Triangulation_Data_structure}
+\label{Chapter_2D_Triangulation_Data_structure}
 \minitoc
 
 The second template parameter of a 2D triangulation class
@@ -9,8 +9,15 @@ has to be instanciated with a model
 of \ccc{TriangulationDataStructure_2}.
 Section~\ref{2D_TDS_Concept} describes the concept
 of \ccc{TriangulationDataStructure_2}.
-
-These models are described in section~\ref{2D_TDS_Models}.
+Section~\ref{2D_TDS_default} describes the 
+class \ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}
+which is the default model provided for this concept.
+To ensure to the triangulation classes all the flexibility
+described in Chapter~\ref{user_chapter_2D_Triangulations}
+the default model  derives its \ccc{Vertex} and \ccc{Face} types
+from the two template parameters \ccc{Vb} and \ccc{Fb}
+which have to be models for the base vertex and face 
+classes.
 Section~\ref{2D_TDS_Base_Classes} described the base
 vertex and face classes of a triangulation.
 At last, section~\ref{2D_TDS_Example} shows 
@@ -43,6 +50,11 @@ examples of combinatorial operation performed at the data structure level.
 The triangulation data structure 
 is required to provide :
 \begin{itemize}
+\item
+the types \ccc{Vertex} and \ccc{Face} for the the vertices
+and faces of the triangulations
+\item the type \ccc{Vertex_handle} and \ccc{Face_handle}
+through which the vertices and faces of the triangulation are accessed.
 \item
 iterators to visit all the vertices, edges and faces
 of the triangulation,
@@ -102,36 +114,25 @@ removal of a vertex lowering the dimension of the triangulation.\\
 \end{figure}
 
 
+\section{The Default Triangulation Data Structure}
+\label{2D_TDS_default}
 
+\cgal\ provides the class
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}
+as a default triangulation data structure.
+The two template parameters \ccc{Vb} and \ccc{Fb}
+have to be respectively models of the concept 
+\ccc{TriangulationVertexBase_2} and 
+\ccc{TriangulationFaceBase_2} which describe the requirements for the
+base vertex and face classes of a triangulation.
 
-\subsection{Software design}
-According to the software design described in 
-section~\ref{Section_2D_Triangulations_Software_Design},
-the models of triangulation data structure
-offered by \cgal\ 
- are themselves template classes,
-parametrized by the base classes for vertices and faces.
-The concepts of \ccc{TriangulationVertexBase_2} and 
-\ccc{TriangulationFaceBase_2} are described 
-in next section~\ref{2D_TDS_Base_Classes}.
 The triangulation data structure 
-derives from thoses base classes its own 
-vertex and face classes. 
+derives from thoses base classes the
+vertex and face classes of the triangulations. 
 This design  allows the user to plug in the
 triangulation data structure
 his own base classes tuned for  his application.
 
-
-
-
-
-
-
-\subsection{A triangulation data structure using list}
-The class \ccc{Triangulation_data_structure_using_list_2<Vb,Fb>}
-can be used as a triangulation data structure for any
-orientable triangulation. It uses a \stl\ list to store the
-full dimensional faces of the triangulation.
 
 
 

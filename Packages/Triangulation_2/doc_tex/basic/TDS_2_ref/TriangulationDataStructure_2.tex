@@ -53,10 +53,10 @@ Vertices and cells are acessed  via \ccc{handles}.
 the two dereference operators \ccc{operator*} and \ccc{operator->}.
 \ccNestedType{Vertex_handle}{Handle to a vertex}
 \ccGlue
-\ccNestedType{Facet_handle}{Handle to a facet}
+\ccNestedType{Face_handle}{Handle to a face.}
 
 
-\ccTypedef{typedef std::pair<Facet_handle,int> Edge;}{ Edge type.}
+\ccTypedef{typedef std::pair<Face_handle,int> Edge;}{ Edge type.}
 
 The following iterators allow one to visit all the vertices, edges
 and  faces
