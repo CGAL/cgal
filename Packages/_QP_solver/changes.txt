@@ -1,5 +1,9 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.7 on 19-Mar-2002
+- Introduced Number_type_traits.
+- VC7 fixes by Radu.
+
 Version 0.9.6 on 18-Mar-2002
 - Fixed long line.
 
