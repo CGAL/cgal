@@ -5,7 +5,8 @@ the Alpha Shape.
 
 ************************************************************************/
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Filtered_kernel.h>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -20,23 +21,10 @@ the Alpha Shape.
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Alpha_shape_3.h>
 
-//#include <CGAL/IO/Triangulation_geomview_ostream_3.h>
 
-//Choose the better number type as possible
-// #ifdef CGAL_USE_LEDA
-// #include <CGAL/leda_integer.h>
-// typedef leda_integer coord_type;
-// #else//CGAL_USE_LEDA
-// #ifdef CGAL_USE_GMP
-// #include <CGAL/Gmpz.h>
-// typedef CGAL::Gmpz coord_type;
-// #else//CGAL_USE_GMP
-// #include <CGAL/double.h>
 typedef double coord_type;
-// #endif//CGAL_USE_GMP
-// #endif//CGAL_USE_LEDA
-
-typedef CGAL::Cartesian<coord_type>  K;
+typedef CGAL::Simple_cartesian<coord_type>  SC;
+typedef CGAL::Filtered_kernel<SC> K;
 
 typedef K::Point_3    Point;
 typedef K::Segment_3  Segment;
