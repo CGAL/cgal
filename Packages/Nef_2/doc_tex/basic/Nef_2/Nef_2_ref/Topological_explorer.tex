@@ -68,8 +68,6 @@ kind: \ccc{Vertex_const_handle}, \ccc{Vertex_const_iterator},
 \ccc{Face_const_handle}, \ccc{Face_\-const_\-ite\-rator}.
 Additionally the following circulators are defined.
 
-
-
 \ccNestedType{Halfedge_around_vertex_const_circulator}{
 circulating the outgoing halfedges in $A(v)$. }
 
@@ -110,7 +108,7 @@ returns \ccc{true} iff $A(v) = \emptyset$. }
 }
 
 \ccMethod{Halfedge_const_handle last_out_edge(Vertex_const_handle v) ;}{
-  returns a the halfedge with source \ccc{v} that is the last
+  returns the halfedge with source \ccc{v} that is the last
   in the circular iteration before encountering \ccc{first_out_edge(v)} 
   again. \ccPrecond \ccc{!is_isolated(v)}. 
 }
