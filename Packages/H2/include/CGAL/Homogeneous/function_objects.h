@@ -1651,13 +1651,13 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Ray_2                     Ray_2;
     typedef typename K::Line_2                    Line_2;
     typedef typename K::Construct_point_on_2      Construct_point_on_2;
-    Construct_point_on_2 c;
+    Construct_point_on_2 cp;
   public:
     typedef Line_2            result_type;
     typedef Arity_tag< 2 >    Arity;
 
     Construct_line_2() {}
-    Construct_line_2(const Construct_point_on_2& c_) : c(c_) {}
+    Construct_line_2(const Construct_point_on_2& cp_) : cp(cp_) {}
 
     Line_2
     operator()() const
@@ -1703,11 +1703,11 @@ namespace HomogeneousKernelFunctors {
 
     Line_2
     operator()(const Segment_2& s) const
-    { return this->operator()(c(s, 0), c(s, 1)); }
+    { return this->operator()(cp(s, 0), cp(s, 1)); }
 
     Line_2
     operator()(const Ray_2& r) const
-    { return this->operator()(c(r, 0), c(r, 1)); }
+    { return this->operator()(cp(r, 0), cp(r, 1)); }
   };
 
   template <typename K>
