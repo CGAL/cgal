@@ -139,7 +139,7 @@ cw_permute()
 template <class Gt>
 inline bool
 Constrained_triangulation_face_base_2<Gt>::
-is_valid(bool verbose = false, int level = 0) const
+is_valid(bool verbose, int level) const
 {
   bool result = Fab::is_valid(verbose, level);
   CGAL_triangulation_assertion(result);

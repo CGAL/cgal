@@ -217,7 +217,7 @@ power_test(const Face_handle& f, int i,
 template < class Gt, class Tds >
 bool
 Regular_triangulation_2<Gt,Tds>::
-is_valid(bool verbose = false, int level = 0) const
+is_valid(bool verbose, int level) const
 {
   if (number_of_vertices() <= 1)    return true; 
   bool result = Triangulation_2<Gt,Tds>::is_valid(verbose, level);

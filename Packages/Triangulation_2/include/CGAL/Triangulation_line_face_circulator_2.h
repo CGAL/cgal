@@ -314,7 +314,7 @@ Triangulation_line_face_circulator_2(const Point& pp,
 				     const Point& qq,
 				     const Face_handle& ff,
 				     const Triangulation_2<Gt,Tds>* t)
-  : Face::Face_handle(ff), _tr(t), s(undefined), p(pp), q(qq)
+  : Face_handle(ff), _tr(t), s(undefined), p(pp), q(qq)
   //begin the walk at face ff which has to contain pp
 {
   CGAL_triangulation_precondition(_tr->is_infinite(ff) ||

@@ -134,7 +134,7 @@ public:
 template < class Gt, class Tds >
 bool
 Delaunay_triangulation_2<Gt,Tds>::
-is_valid(bool verbose = false, int level = 0) const
+is_valid(bool verbose, int level) const
 {
   bool result = Triangulation_2<Gt,Tds>::is_valid(verbose, level);
 
