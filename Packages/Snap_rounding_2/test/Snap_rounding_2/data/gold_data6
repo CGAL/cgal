@@ -18,54 +18,6 @@ Polyline number 2:
     (0.5:2.5)
 
 
-the output for integer grid
-Polyline number 1:
-    (0:0)
-    (1:1)
-    (2:2)
-
-Polyline number 2:
-    (2:0)
-    (1:1)
-    (0:2)
-
-
-output after removing first element
-Polyline number 1:
-    (2.5:0.5)
-    (0.5:2.5)
-
-
-output after inserting first element
-Polyline number 1:
-    (2.5:0.5)
-    (1.5:1.5)
-    (0.5:2.5)
-
-Polyline number 2:
-    (0.5:0.5)
-    (1.5:1.5)
-    (2.5:2.5)
-
-
-testing clear
-Polyline number 1:
-    (0.5:0.5)
-    (2.5:2.5)
-
-
-default ctor + multiple insertion
-Polyline number 1:
-    (0.5:0.5)
-    (1.5:1.5)
-    (2.5:2.5)
-
-Polyline number 2:
-    (2.5:0.5)
-    (1.5:1.5)
-    (0.5:2.5)
-
-
 testing sr
 Polyline number 1:
     (0.5:0.5)
@@ -76,64 +28,4 @@ Polyline number 2:
     (2.5:0.5)
     (1.5:1.5)
     (0.5:2.5)
-
-
-changing to isr
-Polyline number 1:
-    (0.5:0.5)
-    (1.5:1.5)
-    (2.5:2.5)
-
-Polyline number 2:
-    (2.5:0.5)
-    (1.5:1.5)
-    (0.5:2.5)
-
-
-changing number of kd-trees
-Polyline number 1:
-    (0.5:0.5)
-    (1.5:1.5)
-    (2.5:2.5)
-
-Polyline number 2:
-    (2.5:0.5)
-    (1.5:1.5)
-    (0.5:2.5)
-
-
-testing cctor
-Polyline number 1:
-    (0.5:0.5)
-    (1.5:1.5)
-    (2.5:2.5)
-
-Polyline number 2:
-    (2.5:0.5)
-    (1.5:1.5)
-    (0.5:2.5)
-
-
-testing operator=
-Polyline number 1:
-    (0.5:0.5)
-    (1.5:1.5)
-    (2.5:2.5)
-
-Polyline number 2:
-    (2.5:0.5)
-    (1.5:1.5)
-    (0.5:2.5)
-
-
-testing changing of pixel size
-Polyline number 1:
-    (0.25:0.25)
-    (1.25:1.25)
-    (2.25:2.25)
-
-Polyline number 2:
-    (2.25:0.25)
-    (1.25:1.25)
-    (0.25:2.25)
 

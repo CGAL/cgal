@@ -202,34 +202,9 @@ public:
   //! insert a segment
   bool insert(const Segment_2& seg);
 
-  //! The STL standard member function for insertion.
-  bool push_back(const Segment_2& seg);
-
   //! Insertion of an iterator range.
   template < class InputIterator >
     int insert(InputIterator first, InputIterator last);
-  
-  //! Remove a segment
-  bool remove(const Segment_2& seg);
-
-  //! Remove all segments  .           .
-  void clear();
-
-  //! set the number of kd-trees used for segment-hot pixel queries.
-  bool set_number_of_kd_trees(unsigned int inp_number_of_kd_trees);
-
-  //! set the pixel size
-  bool set_pixel_size(NT inp_pixel_size);
-
-  /*! Determine whether to apply Iterated Snap Rounding (ISR)
-      or Snap Rounding (SR).
-   */
-  void do_isr(bool inp_do_isr);
-
-  /*! Determine the output mode: integer grid or closest grid point
-      or Snap Rounding (SR).
-   */
-  void use_integer_mode(bool inp_int_output);
 
   template<class Out>
   void output(Out &o);
@@ -817,12 +792,6 @@ bool Snap_rounding_2<Rep_>::insert(const Segment_2& seg)
     return(true);
   }
 
-template<class Rep_>
-bool Snap_rounding_2<Rep_>::push_back(const Segment_2& seg)
-  {
-    return(insert(seg));
-  }
-
 template < class Rep_ >
 template < class InputIterator >
 int
@@ -865,82 +834,6 @@ const typename Snap_rounding_2<Rep_>::Polyline_const_iterator
 
   return(segments_output_list.end());
 }
-
-template<class Rep_>
-bool Snap_rounding_2<Rep_>::remove(const Segment_2& seg)
-  {
-    need_sr = true;
-    bool found = false;
-    Segment_data<Rep> s;
-
-    for(typename std::list<Segment_data<Rep> >::iterator i1 = seg_list.begin();
-      i1 != seg_list.end();++i1) {
-       s = *i1;  
-      if(s.equal(seg)) {
-        found = true;
-        seg_list.erase(i1);
-        --number_of_segments;
-        break;
-      }
-    }
-
-    if(found) {
-      for(Segment_iterator i2 = seg_2_list.begin();
-        i2 != seg_2_list.end();++i2) {
-        if(seg == *i2) {
-          seg_2_list.erase(i2);
-          break;
-        }
-      }
-    }
-
-    return(found);
-  }
-
-template<class Rep_>
-void Snap_rounding_2<Rep_>::clear()
-  { 
-    need_sr = true;
-    seg_list.clear();
-    seg_2_list.clear();
-  }
-
-template<class Rep_>
-bool Snap_rounding_2<Rep_>::set_number_of_kd_trees(
-          unsigned int inp_number_of_kd_trees)
-  {
-    if(inp_number_of_kd_trees > 0) {
-      number_of_kd_trees = inp_number_of_kd_trees;
-      need_sr = true;
-      return(true);
-    } else
-      return(false);
-  }
-
-template<class Rep_>
-bool Snap_rounding_2<Rep_>::set_pixel_size(NT inp_pixel_size)
-  {
-    if(inp_pixel_size > 0) {
-      pixel_size = inp_pixel_size;
-      need_sr = true;
-      return(true);
-    } else
-      return(false);
-  }
-
-template<class Rep_>
-void Snap_rounding_2<Rep_>::do_isr(bool inp_do_isr)
-  { 
-    wheteher_to_do_isr = inp_do_isr;
-    need_sr = true;
-  }
-
-template<class Rep_>
-void Snap_rounding_2<Rep_>::use_integer_mode(bool inp_int_output)
-  { 
-    int_output = inp_int_output;
-    need_sr = true;
-  }
 
 template<class Rep>
 typename Snap_rounding_2<Rep>::Direction Snap_rounding_2<Rep>::seg_dir;
