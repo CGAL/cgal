@@ -7,6 +7,9 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Now also binary distribution of libgmp for cygwin/g++.
+GLOB: Cleanup in gmp_menu and cln_menu.
+GLOB: Another try to fix libpath for test_gmp on Borland.
 GLOB: Changed order of ldflags for gmp test.
 GLOB: Changed test_gmp for Borland.
 GLOB: Changed link_gmp to copy (no ln -s) libgmp on cygwin.
