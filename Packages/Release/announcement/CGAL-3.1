@@ -12,7 +12,8 @@ the following new algorithms and data structures.
 
    An incremental algorithm for Voronoi diagrams of segments in the plane
    under the Euclidean metric. The Voronoi edges are arcs of straight lines
-   and parabolas.
+   and parabolas. In case the input segments intersect, the Voronoi diagram 
+   of their arrangement is computed.
 
 
  o 2D Conforming Triangulations and Meshes
@@ -35,7 +36,7 @@ the following new algorithms and data structures.
  o dD Box Intersection Testing and Reporting
 
    A new efficient algorithm for finding all intersecting pairs for large
-   numbers of iso-oriented boxes, i.e., typically these will be bounding
+   numbers of iso-oriented boxes. Typically these will be bounding
    boxes of more complicated geometries. Useful for (self-) intersection
    tests of surfaces etc.
 
@@ -43,8 +44,8 @@ the following new algorithms and data structures.
  o 2D Snap Rounding
 
    An algorithm for converting arbitrary-precision arrangements of segments
-   into a fixed-precision representation. Also available is an Iterated Snap
-   Rounding algorithm in which each vertex is at least half the width of a
+   into a fixed-precision representation. An Iterated Snap Rounding algorithm 
+   is also available in which each vertex is at least half the width of a
    pixel away from any non-incident edge.
 
 
@@ -80,8 +81,8 @@ The Kernel is distributed under the terms of the LGPL Open Source license
 (GNU Lesser General Public License v2.1).  
 The Basic Library is distributed under the terms of the QPL Open Source
 license (Q Public License v1.0).
-So CGAL remains free of use for you, if your usage meets the criteria of
-these licenses, otherwise, a commercial license must be purchased from
+If your intended usage does not meet the criteria of the
+aforementioned licenses, a commercial license must be purchased from
 GeometryFactory (www.geometryfactory.com).
 
 
