@@ -1,5 +1,8 @@
 Timer Package: Release changes:
 ---------------------------------------------------------------------
+2.0 (20 June 2001)
+    manual split
+
 1.9 (4  April 2001)
     changes in Real_timer.h to avoid warnings
 
