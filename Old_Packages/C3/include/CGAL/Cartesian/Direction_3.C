@@ -8,12 +8,10 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.1-I-28 $
-// release_date  : $CGAL_Date: 1999/10/12 $
+// release       :
+// release_date  :
 //
 // file          : include/CGAL/Cartesian/Direction_3.C
-// package       : C3 (3.6.2)
-// source        : include/CGAL/Cartesian/Direction_3.C
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
@@ -69,11 +67,9 @@ DirectionC3(const typename DirectionC3<R CGAL_CTAG>::FT &x,
   PTR = new _Threetuple<typename R::FT>(x, y, z);
 }
 
-
 template < class R >
 DirectionC3<R CGAL_CTAG>::~DirectionC3()
-{
-}
+{}
 
 template < class R >
 DirectionC3<R CGAL_CTAG> &
@@ -132,7 +128,6 @@ DirectionC3<R CGAL_CTAG>::operator-() const
   return DirectionC3<R>(-dx(), -dy(), -dz());
 }
 
-
 template < class R >
 typename DirectionC3<R CGAL_CTAG>::FT 
 DirectionC3<R CGAL_CTAG>::delta(int i) const
@@ -158,7 +153,6 @@ DirectionC3<R CGAL_CTAG>::dy() const
   return ptr()->e1;
 }
 
-
 template < class R >
 inline
 typename DirectionC3<R CGAL_CTAG>::FT
@@ -174,7 +168,6 @@ DirectionC3<R CGAL_CTAG>::hdx() const
 {
   return ptr()->e0;
 }
-
 
 template < class R >
 inline
@@ -202,7 +195,8 @@ DirectionC3<R CGAL_CTAG>::hw() const
 
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONC3
 template < class R >
-std::ostream &operator<<(std::ostream &os, const DirectionC3<R CGAL_CTAG> &d)
+std::ostream &
+operator<<(std::ostream &os, const DirectionC3<R CGAL_CTAG> &d)
 {
   typename DirectionC3<R CGAL_CTAG>::Vector_3 v = d.to_vector();
   switch(os.iword(IO::mode)) {
@@ -222,7 +216,8 @@ std::ostream &operator<<(std::ostream &os, const DirectionC3<R CGAL_CTAG> &d)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_DIRECTIONC3
 template < class R >
-std::istream &operator>>(std::istream &is, DirectionC3<R CGAL_CTAG> &p)
+std::istream &
+operator>>(std::istream &is, DirectionC3<R CGAL_CTAG> &p)
 {
   typename R::FT x, y, z;
   switch(is.iword(IO::mode)) {

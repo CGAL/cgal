@@ -12,7 +12,6 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Triangle_3.h
-// source        : include/CGAL/Cartesian/Triangle_3.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
@@ -21,17 +20,11 @@
 //
 // ==========================================================================
 
-
 #ifndef CGAL_CARTESIAN_TRIANGLE_3_H
 #define CGAL_CARTESIAN_TRIANGLE_3_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #include <CGAL/Cartesian/redefine_names_3.h>
-#endif
-
-#ifndef CGAL_CARTESIAN_THREETUPLE_H
 #include <CGAL/Threetuple.h>
-#endif // CGAL_CARTESIAN_THREETUPLE_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -91,9 +84,7 @@ private:
 CGAL_END_NAMESPACE
 
 #ifndef CGAL_CARTESIAN_CLASS_DEFINED
-#ifndef CGAL_CARTESIAN_TRIANGLE_3_C
 #include <CGAL/Cartesian/Triangle_3.C>
-#endif // CGAL_CARTESIAN_TRIANGLE_3_C
 #endif 
 
 #endif // CGAL_CARTESIAN_TRIANGLE_3_H

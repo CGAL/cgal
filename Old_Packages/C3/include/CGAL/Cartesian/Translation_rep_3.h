@@ -12,10 +12,9 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Translation_rep_3.h
-// source        : include/CGAL/Cartesian/Translation_rep_3.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
@@ -153,6 +152,7 @@ public:
 private:
   Vector_3   _translationvector;
 };
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_TRANSLATION_REP_3_H

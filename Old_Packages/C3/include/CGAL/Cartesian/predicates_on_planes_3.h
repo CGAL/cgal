@@ -12,31 +12,24 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/predicates_on_planes_3.h
-// source        : include/CGAL/Cartesian/predicates_on_planes_3.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
-//                 Andreas Fabri
+// author(s)     : Andreas Fabri, Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
 // ==========================================================================
 
-
 #ifndef CGAL_CARTESIAN_PREDICATES_ON_PLANES_3_H
 #define CGAL_CARTESIAN_PREDICATES_ON_PLANES_3_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #include <CGAL/Cartesian/redefine_names_3.h>
-#endif
-
-#ifndef CGAL_CARTESIAN_PREDICATES_KERNEL_FTC3_H
 #include <CGAL/predicates/kernel_ftC3.h>
-#endif // CGAL_CARTESIAN_PREDICATES_KERNEL_FTC3_H
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
+inline
 Oriented_side
 side_of_oriented_plane(const PlaneC3<R CGAL_CTAG> &h,
                        const PointC3<R CGAL_CTAG> &p)

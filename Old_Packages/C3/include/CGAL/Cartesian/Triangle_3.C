@@ -12,7 +12,6 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Triangle_3.C
-// source        : include/CGAL/Cartesian/Triangle_3.C
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
@@ -49,8 +48,8 @@ TriangleC3<R CGAL_CTAG>::TriangleC3()
 
 template < class R >
 TriangleC3<R CGAL_CTAG>::
-TriangleC3(const TriangleC3<R CGAL_CTAG> &t) :
-  Handle(t)
+TriangleC3(const TriangleC3<R CGAL_CTAG> &t)
+  : Handle(t)
 {}
 
 template < class R >
@@ -173,7 +172,8 @@ TriangleC3<R CGAL_CTAG>::is_degenerate() const
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLEC3
 template < class R >
-std::ostream &operator<<(std::ostream &os, const TriangleC3<R CGAL_CTAG> &t)
+std::ostream &
+operator<<(std::ostream &os, const TriangleC3<R CGAL_CTAG> &t)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -189,7 +189,8 @@ std::ostream &operator<<(std::ostream &os, const TriangleC3<R CGAL_CTAG> &t)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLEC3
 template < class R >
-std::istream &operator>>(std::istream &is, TriangleC3<R CGAL_CTAG> &t)
+std::istream &
+operator>>(std::istream &is, TriangleC3<R CGAL_CTAG> &t)
 {
     typename TriangleC3<R CGAL_CTAG>::Point_3 p, q, r;
 

@@ -12,7 +12,6 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Aff_transformation_3.h
-// source        : include/CGAL/Cartesian/Aff_transformation_3.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
@@ -21,14 +20,10 @@
 //
 // ==========================================================================
 
-
 #ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_3_H
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_3_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #include <CGAL/Cartesian/redefine_names_3.h>
-#endif
-
 #include <cmath>
 
 CGAL_BEGIN_NAMESPACE
@@ -41,17 +36,9 @@ template <class R> class Scaling_repC3;
 
 CGAL_END_NAMESPACE
 
-#ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_H
 #include <CGAL/Cartesian/Aff_transformation_rep_3.h>
-#endif // CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_H
-
-#ifndef CGAL_CARTESIAN_CARTESIAN_TRANSLATION_REP_3_H
 #include <CGAL/Cartesian/Translation_rep_3.h>
-#endif
-
-#ifndef CGAL_CARTESIAN_CARTESIAN_SCALING_REP_3_H
 #include <CGAL/Cartesian/Scaling_rep_3.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -152,9 +139,7 @@ private:
 CGAL_END_NAMESPACE
 
 #ifndef CGAL_CARTESIAN_CLASS_DEFINED
-#ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_3_C
 #include <CGAL/Cartesian/Aff_transformation_3.C>
-#endif // CGAL_CARTESIAN_AFF_TRANSFORMATION_3_C
 #endif 
 
 #endif // CGAL_CARTESIAN_AFF_TRANSFORMATION_3_H

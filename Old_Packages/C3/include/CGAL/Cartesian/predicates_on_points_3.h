@@ -12,27 +12,19 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/predicates_on_points_3.h
-// source        : include/CGAL/Cartesian/predicates_on_points_3.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
-//                 Andreas Fabri
+// author(s)     : Andreas Fabri, Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
 // ==========================================================================
 
-
 #ifndef CGAL_CARTESIAN_PREDICATES_ON_POINTS_3_H
 #define CGAL_CARTESIAN_PREDICATES_ON_POINTS_3_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #include <CGAL/Cartesian/redefine_names_3.h>
-#endif
-
-#ifndef CGAL_CARTESIAN_PREDICATES_KERNEL_FTC3_H
 #include <CGAL/predicates/kernel_ftC3.h>
-#endif // CGAL_CARTESIAN_PREDICATES_KERNEL_FTC3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -69,7 +61,6 @@ x_equal(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
   return p.x() == q.x();
 }
 
-
 template < class R >
 inline
 bool
@@ -86,7 +77,6 @@ z_equal(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
   return p.z() == q.z();
 }
 
-
 template < class R >
 inline
 Comparison_result
@@ -95,7 +85,6 @@ compare_x(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
   return CGAL::compare(p.x(), q.x());
 }
 
-
 template < class R >
 inline
 Comparison_result
@@ -103,7 +92,6 @@ compare_y(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
 {
  return CGAL::compare(p.y(), q.y());
 }
-
 
 template < class R >
 inline
@@ -172,7 +160,6 @@ coplanar_orientation(const PointC3<R CGAL_CTAG> &q,
                                 s.x(), s.y(), s.z(),
                                 p.x(), p.y(), p.z());
 }
-
 
 template < class R>
 inline

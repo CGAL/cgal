@@ -8,12 +8,10 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.1-I-28 $
-// release_date  : $CGAL_Date: 1999/10/12 $
+// release       :
+// release_date  :
 //
 // file          : include/CGAL/Cartesian/Vector_3.C
-// package       : C3 (3.6.2)
-// source        : include/CGAL/Cartesian/Vector_3.C
 // revision      : $Revision$
 // revision_date : $Date$
 // author        : Andreas Fabri
@@ -33,9 +31,7 @@
 #ifndef CGAL_CARTESIAN_VECTOR_3_C
 #define CGAL_CARTESIAN_VECTOR_3_C
 
-#ifndef CGAL_CARTESIAN_DIRECTION_3_H
 #include <CGAL/Cartesian/Direction_3.h>
-#endif // CGAL_CARTESIAN_DIRECTION_3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -104,15 +100,13 @@ inline
 VectorC3<R CGAL_CTAG>::
 VectorC3(const typename VectorC3<R CGAL_CTAG>::Point_3 &p)
   : Handle((Handle&)p)
-{
-}
+{}
 
 template < class R >
 inline VectorC3<R CGAL_CTAG>::
-VectorC3(const typename VectorC3<R CGAL_CTAG>::Direction_3 &d) :
-  Handle((Handle&)d)
-{
-}
+VectorC3(const typename VectorC3<R CGAL_CTAG>::Direction_3 &d)
+  : Handle((Handle&)d)
+{}
 
 template < class R >
 bool VectorC3<R CGAL_CTAG>::operator==(const VectorC3<R CGAL_CTAG> &v) const
@@ -128,15 +122,17 @@ VectorC3<R CGAL_CTAG>::operator!=(const VectorC3<R CGAL_CTAG> &v) const
   return !(*this == v);
 }
 
-
 template < class R >
-bool VectorC3<R CGAL_CTAG>::operator==(const Null_vector &) const
+bool
+VectorC3<R CGAL_CTAG>::operator==(const Null_vector &) const
 {
   return (x() == FT(0)) && (y() == FT(0)) && (z() == FT(0)) ;
 }
 
 template < class R >
-inline bool VectorC3<R CGAL_CTAG>::operator!=(const Null_vector &v) const
+inline
+bool
+VectorC3<R CGAL_CTAG>::operator!=(const Null_vector &v) const
 {
   return !(*this == v);
 }
@@ -144,10 +140,12 @@ inline bool VectorC3<R CGAL_CTAG>::operator!=(const Null_vector &v) const
 
 template < class R >
 inline
-long VectorC3<R CGAL_CTAG>::id() const
+long
+VectorC3<R CGAL_CTAG>::id() const
 {
   return (long) PTR;
 }
+
 template < class R >
 inline
 typename VectorC3<R CGAL_CTAG>::FT
@@ -296,10 +294,10 @@ transform(const typename VectorC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
   return t.transform(*this);
 }
 
-
 #ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_VECTORC3
 template < class R >
-std::ostream &operator<<(std::ostream &os, const VectorC3<R CGAL_CTAG> &v)
+std::ostream &
+operator<<(std::ostream &os, const VectorC3<R CGAL_CTAG> &v)
 {
   switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -318,7 +316,8 @@ std::ostream &operator<<(std::ostream &os, const VectorC3<R CGAL_CTAG> &v)
 
 #ifndef CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_VECTORC3
 template < class R >
-std::istream &operator>>(std::istream &is, VectorC3<R CGAL_CTAG> &p)
+std::istream &
+operator>>(std::istream &is, VectorC3<R CGAL_CTAG> &p)
 {
   typename R::FT x, y, z;
   switch(is.iword(IO::mode)) {

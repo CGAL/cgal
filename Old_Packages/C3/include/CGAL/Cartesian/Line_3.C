@@ -12,7 +12,6 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Line_3.C
-// source        : include/CGAL/Cartesian/Line_3.C
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
@@ -32,18 +31,10 @@
 #ifndef CGAL_CARTESIAN_LINE_3_C
 #define CGAL_CARTESIAN_LINE_3_C
 
-#ifndef CGAL_CARTESIAN_SEGMENT_3_H
 #include <CGAL/Cartesian/Segment_3.h>
-#endif // CGAL_CARTESIAN_SEGMENT_3_H
-#ifndef CGAL_CARTESIAN_RAY_3_H
 #include <CGAL/Cartesian/Ray_3.h>
-#endif // CGAL_CARTESIAN_RAY_3_H
-#ifndef CGAL_CARTESIAN_PLANE_3_H
 #include <CGAL/Cartesian/Plane_3.h>
-#endif // CGAL_CARTESIAN_PLANE_3_H
-#ifndef CGAL_CARTESIAN_CONSTRUCTIONS_ON_LINES_3_H
 #include <CGAL/Cartesian/constructions_on_lines_3.h>
-#endif // CGAL_CARTESIAN_CONSTRUCTIONS_ON_LINES_3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -109,9 +100,9 @@ LineC3(const typename LineC3<R CGAL_CTAG>::Point_3 &p,
 }
 
 template < class R >
+inline
 LineC3<R CGAL_CTAG>::~LineC3()
 {}
-
 
 template < class R >
 inline
@@ -163,7 +154,6 @@ direction() const
   return ((ptr()->e1) - ORIGIN).direction();
 }
 
-
 template < class R >
 inline
 typename LineC3<R CGAL_CTAG>::Point_3
@@ -209,7 +199,6 @@ has_on(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
   return collinear(point(), point()+direction().to_vector(), p);
 }
 
-
 template < class R >
 inline
 bool
@@ -227,10 +216,10 @@ transform(const typename LineC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
   return LineC3<R CGAL_CTAG>( t.transform(point()), t.transform(direction()));
 }
 
-
 #ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_LINEC3
 template < class R >
-std::ostream &operator<<(std::ostream &os, const LineC3<R CGAL_CTAG> &l)
+std::ostream &
+operator<<(std::ostream &os, const LineC3<R CGAL_CTAG> &l)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -245,7 +234,8 @@ std::ostream &operator<<(std::ostream &os, const LineC3<R CGAL_CTAG> &l)
 
 #ifndef CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_LINEC3
 template < class R >
-std::istream &operator>>(std::istream &is, LineC3<R CGAL_CTAG> &l)
+std::istream &
+operator>>(std::istream &is, LineC3<R CGAL_CTAG> &l)
 {
     typename LineC3<R CGAL_CTAG>::Point_3 p, q;
     is >> p >> q;

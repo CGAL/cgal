@@ -12,35 +12,22 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/distance_computations_3.h
-// source        : include/CGAL/Cartesian/distance_computations_3.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
 // ==========================================================================
 
-
 #ifndef CGAL_CARTESIAN_DISTANCE_COMPUTATIONS_3_H
 #define CGAL_CARTESIAN_DISTANCE_COMPUTATIONS_3_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #include <CGAL/Cartesian/redefine_names_3.h>
-#endif
-
-#ifndef CGAL_CARTESIAN_POINT_3_H
 #include <CGAL/Cartesian/Point_3.h>
-#endif // CGAL_CARTESIAN_POINT_3_H
-#ifndef CGAL_CARTESIAN_VECTOR_3_H
 #include <CGAL/Cartesian/Vector_3.h>
-#endif // CGAL_CARTESIAN_VECTOR_3_H
-#ifndef CGAL_CARTESIAN_PLANE_3_H
 #include <CGAL/Cartesian/Plane_3.h>
-#endif // CGAL_CARTESIAN_PLANE_3_H
-#ifndef CGAL_CONSTRUCTIONS_KERNEL_FTC3_H
 #include <CGAL/constructions/kernel_ftC3.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

@@ -12,15 +12,13 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/basic_constructions_3.h
-// source        : include/CGAL/Cartesian/basic_constructions_3.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
 // ==========================================================================
-
 
 #ifndef CGAL_CARTESIAN_BASIC_CONSTRUCTIONS_3_H
 #define CGAL_CARTESIAN_BASIC_CONSTRUCTIONS_3_H

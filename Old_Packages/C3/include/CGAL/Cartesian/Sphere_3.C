@@ -8,15 +8,13 @@
 //
 // --------------------------------------------------------------------------
 //
-
 // release       :
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Sphere_3.C
-// source        : include/CGAL/Cartesian/Sphere_3.C
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
@@ -317,11 +315,11 @@ transform(const Aff_transformationC3<SphereC3<R CGAL_CTAG>::FT> &t) const
 }
 */
 
-
 #ifndef CGAL_NO_OSTREAM_INSERT_SPHEREC3
 template < class R >
 CGAL_KERNEL_INLINE
-std::ostream &operator<<(std::ostream &os, const SphereC3<R CGAL_CTAG> &c)
+std::ostream &
+operator<<(std::ostream &os, const SphereC3<R CGAL_CTAG> &c)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -355,7 +353,8 @@ std::ostream &operator<<(std::ostream &os, const SphereC3<R CGAL_CTAG> &c)
 #ifndef CGAL_NO_ISTREAM_EXTRACT_SPHEREC3
 template < class R >
 CGAL_KERNEL_INLINE
-std::istream& operator>>(std::istream &is, SphereC3<R CGAL_CTAG> &c)
+std::istream &
+operator>>(std::istream &is, SphereC3<R CGAL_CTAG> &c)
 {
     typename SphereC3<R CGAL_CTAG>::Point_3 center;
     typename R::FT squared_radius;

@@ -8,12 +8,10 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.1-I-28 $
-// release_date  : $CGAL_Date: 1999/10/12 $
+// release       :
+// release_date  :
 //
 // file          : include/CGAL/Cartesian/Plane_3.C
-// package       : C3 (3.6.2)
-// source        : include/CGAL/Cartesian/Plane_3.C
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
@@ -427,10 +425,10 @@ is_degenerate() const
   return (a() == FT(0)) && (b() == FT(0)) && (c() == FT(0));
 }
 
-
 #ifndef CGAL_NO_OSTREAM_INSERT_PLANEC3
 template < class R >
-std::ostream &operator<<(std::ostream &os, const PlaneC3<R CGAL_CTAG> &p)
+std::ostream &
+operator<<(std::ostream &os, const PlaneC3<R CGAL_CTAG> &p)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -451,7 +449,8 @@ std::ostream &operator<<(std::ostream &os, const PlaneC3<R CGAL_CTAG> &p)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_PLANEC3
 template < class R >
-std::istream &operator>>(std::istream &is, PlaneC3<R CGAL_CTAG> &p)
+std::istream &
+operator>>(std::istream &is, PlaneC3<R CGAL_CTAG> &p)
 {
     typename R::FT a, b, c, d;
     switch(is.iword(IO::mode)) {
@@ -473,7 +472,6 @@ std::istream &operator>>(std::istream &is, PlaneC3<R CGAL_CTAG> &p)
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_PLANEC3
-
 
 CGAL_END_NAMESPACE
 

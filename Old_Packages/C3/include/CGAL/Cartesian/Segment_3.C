@@ -8,12 +8,10 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.1-I-28 $
-// release_date  : $CGAL_Date: 1999/10/12 $
+// release       :
+// release_date  :
 //
 // file          : include/CGAL/Cartesian/Segment_3.C
-// package       : C3 (3.6.2)
-// source        : include/CGAL/Cartesian/Segment_3.C
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
@@ -229,7 +227,8 @@ SegmentC3<R CGAL_CTAG>::bbox() const
 
 #ifndef CGAL_NO_OSTREAM_INSERT_SEGMENTC3
 template < class R >
-std::ostream &operator<<(std::ostream &os, const SegmentC3<R CGAL_CTAG> &s)
+std::ostream &
+operator<<(std::ostream &os, const SegmentC3<R CGAL_CTAG> &s)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -244,7 +243,8 @@ std::ostream &operator<<(std::ostream &os, const SegmentC3<R CGAL_CTAG> &s)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENTC3
 template < class R >
-std::istream &operator>>(std::istream &is, SegmentC3<R CGAL_CTAG> &s)
+std::istream &
+operator>>(std::istream &is, SegmentC3<R CGAL_CTAG> &s)
 {
     typename SegmentC3<R CGAL_CTAG>::Point_3 p, q;
 
@@ -270,7 +270,6 @@ collinear_has_on(const typename SegmentC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return collinear_are_ordered_along_line(source(), p, target());
 }
-
 
 CGAL_END_NAMESPACE
 

@@ -12,10 +12,9 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Aff_transformation_rep_3.C
-// source        : include/CGAL/Cartesian/Aff_transformation_rep_3.C
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //

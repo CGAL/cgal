@@ -12,7 +12,6 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Ray_3.C
-// source        : include/CGAL/Cartesian/Ray_3.C
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
@@ -71,7 +70,6 @@ RayC3(const typename RayC3<R CGAL_CTAG>::Point_3 &sp,
   PTR = new _Twotuple< Point_3 >(sp, sp + d.to_vector());
 }
 
-
 template < class R >
 inline RayC3<R CGAL_CTAG>::~RayC3()
 {}
@@ -126,7 +124,6 @@ RayC3<R CGAL_CTAG>::second_point() const
 {
   return ptr()->e1;
 }
-
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -218,10 +215,10 @@ collinear_has_on(const typename RayC3<R CGAL_CTAG>::Point_3 &p) const
   return true; // p == source()
 }
 
-
 #ifndef CGAL_NO_OSTREAM_INSERT_RAYC3
 template < class R >
-std::ostream &operator<<(std::ostream &os, const RayC3<R CGAL_CTAG> &r)
+std::ostream &
+operator<<(std::ostream &os, const RayC3<R CGAL_CTAG> &r)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -236,7 +233,8 @@ std::ostream &operator<<(std::ostream &os, const RayC3<R CGAL_CTAG> &r)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_RAYC3
 template < class R >
-std::istream &operator>>(std::istream &is, RayC3<R CGAL_CTAG> &r)
+std::istream &
+operator>>(std::istream &is, RayC3<R CGAL_CTAG> &r)
 {
     typename RayC3<R CGAL_CTAG>::Point_3 p;
     typename RayC3<R CGAL_CTAG>::Direction_3 d;

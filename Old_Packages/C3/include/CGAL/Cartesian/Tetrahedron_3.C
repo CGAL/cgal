@@ -8,12 +8,10 @@
 //
 // --------------------------------------------------------------------------
 //
-
 // release       :
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Tetrahedron_3.C
-// source        : include/CGAL/Cartesian/Tetrahedron_3.C
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
@@ -53,13 +51,11 @@ TetrahedronC3()
   PTR = new _Fourtuple< Point_3 >;
 }
 
-
 template < class R >
 TetrahedronC3<R CGAL_CTAG>::
 TetrahedronC3(const TetrahedronC3<R CGAL_CTAG> &t)
   : Handle(t)
 {}
-
 
 template < class R >
 TetrahedronC3<R CGAL_CTAG>::
@@ -132,7 +128,6 @@ operator!=(const TetrahedronC3<R CGAL_CTAG> &t) const
 {
   return !(*this == t);
 }
-
 
 template < class R >
 inline
@@ -243,7 +238,6 @@ TetrahedronC3<R CGAL_CTAG>::has_on_bounded_side
   return bounded_side(p) == ON_BOUNDED_SIDE;
 }
 
-
 template < class R >
 inline
 bool
@@ -285,7 +279,8 @@ TetrahedronC3<R CGAL_CTAG>::transform
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TETRAHEDRONC3
 template < class R >
-std::ostream &operator<<(std::ostream &os, const TetrahedronC3<R CGAL_CTAG> &t)
+std::ostream &
+operator<<(std::ostream &os, const TetrahedronC3<R CGAL_CTAG> &t)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -302,7 +297,8 @@ std::ostream &operator<<(std::ostream &os, const TetrahedronC3<R CGAL_CTAG> &t)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRONC3
 template < class R >
-std::istream &operator>>(std::istream &is, TetrahedronC3<R CGAL_CTAG> &t)
+std::istream &
+operator>>(std::istream &is, TetrahedronC3<R CGAL_CTAG> &t)
 {
     typename TetrahedronC3<R CGAL_CTAG>::Point_3 p, q, r, s;
 

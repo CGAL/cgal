@@ -12,11 +12,9 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/global_operators_3.h
-// source        : include/CGAL/Cartesian/global_operators_3.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
-//                 Andreas Fabri
+// author(s)     : Andreas Fabri, Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
@@ -25,9 +23,7 @@
 #ifndef CGAL_CARTESIAN_GLOBAL_OPERATORS_3_C
 #define CGAL_CARTESIAN_GLOBAL_OPERATORS_3_C
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #include <CGAL/Cartesian/redefine_names_3.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

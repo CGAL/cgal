@@ -8,12 +8,10 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.1-I-28 $
-// release_date  : $CGAL_Date: 1999/10/12 $
+// release       :
+// release_date  :
 //
 // file          : include/CGAL/Cartesian/Point_3.C
-// package       : C3 (3.6.2)
-// source        : include/CGAL/Cartesian/Point_3.C
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
@@ -33,15 +31,9 @@
 #ifndef CGAL_CARTESIAN_POINT_3_C
 #define CGAL_CARTESIAN_POINT_3_C
 
-#ifndef CGAL_CARTESIAN_ORIGIN_H
 #include <CGAL/Origin.h>
-#endif // CGAL_CARTESIAN_ORIGIN_H
-#ifndef CGAL_CARTESIAN_BBOX_3_H
 #include <CGAL/Bbox_3.h>
-#endif // CGAL_CARTESIAN_BBOX_3_H
-#ifndef CGAL_CARTESIAN_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
-#endif // CGAL_CARTESIAN_NUMBER_UTILS_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -66,10 +58,9 @@ PointC3<R CGAL_CTAG>::PointC3(const Origin &)
 }
 
 template < class R >
-PointC3<R CGAL_CTAG>::PointC3(const PointC3<R CGAL_CTAG> &p) :
-  Handle((Handle&)p)
-{
-}
+PointC3<R CGAL_CTAG>::PointC3(const PointC3<R CGAL_CTAG> &p)
+  : Handle((Handle&)p)
+{}
 
 template < class R >
 PointC3<R CGAL_CTAG>::PointC3(const typename PointC3<R CGAL_CTAG>::FT &x,
@@ -105,8 +96,8 @@ PointC3<R CGAL_CTAG>::operator=(const PointC3<R CGAL_CTAG> &p)
 
 template < class R >
 PointC3<R CGAL_CTAG>::
-PointC3(const typename PointC3<R CGAL_CTAG>::Vector_3 &v) :
-  Handle((Handle&)v)
+PointC3(const typename PointC3<R CGAL_CTAG>::Vector_3 &v)
+  : Handle((Handle&)v)
 {}
 
 template < class R >
@@ -141,7 +132,6 @@ PointC3<R CGAL_CTAG>::x()  const
   return ptr()->e0;
 }
 
-
 template < class R >
 inline
 typename PointC3<R CGAL_CTAG>::FT
@@ -149,7 +139,6 @@ PointC3<R CGAL_CTAG>::y()  const
 {
   return  ptr()->e1;
 }
-
 
 template < class R >
 inline
@@ -159,7 +148,6 @@ PointC3<R CGAL_CTAG>::z()  const
   return  ptr()->e2;
 }
 
-
 template < class R >
 inline
 int
@@ -167,7 +155,6 @@ PointC3<R CGAL_CTAG>::dimension() const
 {
   return 3;
 }
-
 
 template < class R >
 inline
@@ -179,7 +166,6 @@ PointC3<R CGAL_CTAG>::cartesian(int i) const
          (i==1) ? y() : z();
 }
 
-
 template < class R >
 inline
 typename PointC3<R CGAL_CTAG>::FT
@@ -187,7 +173,6 @@ PointC3<R CGAL_CTAG>::operator[](int i) const
 {
   return cartesian(i);
 }
-
 
 template < class R >
 inline
@@ -197,7 +182,6 @@ PointC3<R CGAL_CTAG>::hx()  const
   return ptr()->e0;
 }
 
-
 template < class R >
 inline
 typename PointC3<R CGAL_CTAG>::FT
@@ -206,7 +190,6 @@ PointC3<R CGAL_CTAG>::hy()  const
   return ptr()->e1;
 }
 
-
 template < class R >
 inline
 typename PointC3<R CGAL_CTAG>::FT
@@ -214,7 +197,6 @@ PointC3<R CGAL_CTAG>::hz()  const
 {
   return ptr()->e2;
 }
-
 
 template < class R >
 inline
@@ -252,10 +234,10 @@ PointC3<R CGAL_CTAG>::bbox() const
   return Bbox_3(bx, by, bz, bx, by, bz);
 }
 
-
 #ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_POINTC3
 template < class R >
-std::ostream &operator<<(std::ostream &os, const PointC3<R CGAL_CTAG> &p)
+std::ostream &
+operator<<(std::ostream &os, const PointC3<R CGAL_CTAG> &p)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -274,7 +256,8 @@ std::ostream &operator<<(std::ostream &os, const PointC3<R CGAL_CTAG> &p)
 
 #ifndef CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_POINTC3
 template < class R >
-std::istream &operator>>(std::istream &is, PointC3<R CGAL_CTAG> &p)
+std::istream &
+operator>>(std::istream &is, PointC3<R CGAL_CTAG> &p)
 {
     typename R::FT x, y, z;
     switch(is.iword(IO::mode)) {
@@ -295,7 +278,6 @@ std::istream &operator>>(std::istream &is, PointC3<R CGAL_CTAG> &p)
     return is;
 }
 #endif // CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_POINTC3
-
 
 CGAL_END_NAMESPACE
 

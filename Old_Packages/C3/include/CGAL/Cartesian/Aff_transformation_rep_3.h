@@ -12,10 +12,9 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Aff_transformation_rep_3.h
-// source        : include/CGAL/Cartesian/Aff_transformation_rep_3.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
@@ -24,9 +23,7 @@
 #ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_H
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #include <CGAL/Cartesian/redefine_names_3.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -73,7 +70,6 @@ public:
   virtual FT                   cartesian(int i, int j) const = 0;
   virtual std::ostream         &print(std::ostream &os) const = 0;
 };
-
 
 template < class R >
 class Aff_transformation_repC3

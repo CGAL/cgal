@@ -12,7 +12,6 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Line_3.h
-// source        : include/CGAL/Cartesian/Line_3.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
@@ -21,17 +20,11 @@
 //
 // ==========================================================================
 
-
 #ifndef CGAL_CARTESIAN_LINE_3_H
 #define CGAL_CARTESIAN_LINE_3_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #include <CGAL/Cartesian/redefine_names_3.h>
-#endif
-
-#ifndef CGAL_CARTESIAN_TWOTUPLE_H
 #include <CGAL/Twotuple.h>
-#endif // CGAL_CARTESIAN_TWOTUPLE_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -96,7 +89,6 @@ public:
 
   Self        transform(const Aff_transformation_3 &t) const;
 
-
 private:
   _Twotuple< Point_3 >* ptr() const;
   void            new_rep(const Point_3 &p,
@@ -106,9 +98,7 @@ private:
 CGAL_END_NAMESPACE
 
 #ifndef CGAL_CARTESIAN_CLASS_DEFINED
-#ifndef CGAL_CARTESIAN_LINE_3_C
 #include <CGAL/Cartesian/Line_3.C>
-#endif // CGAL_CARTESIAN_LINE_3_C
 #endif 
 
 #endif // CGAL_CARTESIAN_LINE_3_H
