@@ -34,10 +34,10 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-SOURCES = ../../../../src/Qt_widget/Qt_widget.o \
-	../../../../src/Qt_widget/Qt_widget_tool.o \
-	../../../../src/Qt_widget/Qt_widget_view.o \
-	../../../../src/Qt_widget/Qt_widget_standard_toolbar.o
+SOURCES = ../../../../src/CGALQt/Qt_widget.o \
+	../../../../src/CGALQt/Qt_widget_tool.o \
+	../../../../src/CGALQt/Qt_widget_view.o \
+	../../../../src/CGALQt/Qt_widget_standard_toolbar.o
 
 all: tut7$(EXE_EXT)
 
