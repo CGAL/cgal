@@ -222,16 +222,21 @@ void compute_epsilons()
 
 int main(int argc, char **argv)
 {
-  int seed = CGAL::default_random.get_int(0, 1<<30);
-  std::cout << "Initializing random generator with seed = " << seed << std::endl;
+  // CGAL::force_ieee_double_precision();
+
+  int loops = (argc < 2) ? 2000 : atoi(argv[1]);
+  int seed  = (argc < 3) ? CGAL::default_random.get_int(0, 1<<30)
+                         : atoi(argv[2]);
+
+  std::cout << "Initializing random generator with seed = " << seed
+            << std::endl
+            << "#loops = " << loops << " (can be changed on the command line)"
+            << std::endl;
+
   CGAL::Random rnd(seed);
   r = &rnd;
 
   compute_epsilons();
-
-  int loops = (argc < 2) ? 2000 : atoi(argv[1]);
-
-  std::cout << "#loops = " << loops << " (can be changed on the command line)" << std::endl;
 
   std::cout << "Testing Orientation_2" << std::endl;
   for(int i=0; i<loops; ++i)
