@@ -1,3 +1,7 @@
+1.20 (13 Sep 2001)
+  - added refresh button (necessary for Windows platforms?) to demo programs
+  - commented out random polygon generation in examples; seems to be buggy
+
 1.19 (28 Aug 2001)
   - added use of exact number type in examples
 
