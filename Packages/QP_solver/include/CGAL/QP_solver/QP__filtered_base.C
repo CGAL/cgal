@@ -36,8 +36,9 @@ void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
 set( )
 {
     // reserve memory for NT versions of current solution
-    int  l = std::min( this->solver().number_of_variables(),
-		       this->solver().number_of_constraints());
+    //int  l = std::min( this->solver().number_of_variables(),
+    //		       this->solver().number_of_constraints());
+    int l = this->solver().get_l();
     lambda_NT.resize( l, nt0);
     set( l, Is_linear());
 }
@@ -127,17 +128,20 @@ update_maxima( )
 	    }
 	    row_max_A[ row] = row_max;
 	    handled_A[ row] = true;
-
-	    // update bounds
-	    z = CGAL::abs( lambda_NT[ row]);
-	    if ( z > bound2_wq) bound2_wq = z;
-	    z *= row_max_A[ row];
-	    if ( z > bound1) bound1 = z;
 	}
+	// update bounds
+	z = CGAL::abs( lambda_NT[ row]);
+	if ( z > bound2_wq) bound2_wq = z;
+	z *= row_max_A[ row];
+	if ( z > bound1) bound1 = z;
     }
 
     // update row and column maxima of 'D', if necessary
-    update_maxima( Is_linear());
+    if (this->solver().phase() == 1) {
+    	update_maxima( Tag_true());
+    } else {
+        update_maxima( Is_linear());
+    }
 
     // finalize error bounds
     // ToDo: use std::numeric_limits for 'machine epsilon'
@@ -180,13 +184,32 @@ update_maxima( Tag_false)
 	    }
 	    row_max_D[ row] = row_max;
 	    handled_D[ row] = true;
-
-	    // update bounds
-	    z = CGAL::abs( x_B_O_NT[ row]);
-	    if ( z > bound2_wq) bound2_wq = z;
-	    z *= row_max_D[ row];
-	    if ( z > bound1) bound1 = z;
 	}
+	// update bounds
+	z = CGAL::abs( x_B_O_NT[ row]);
+	if ( z > bound2_wq) bound2_wq = z;
+	z *= row_max_D[ row];
+	if ( z > bound1) bound1 = z;
+    }
+}
+
+template < class Rep_, class NT_, class ET2NT_ >                // LP case
+void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+update_maxima( Tag_true)
+{
+
+    // update basic original variables maxima
+    NT              z;
+
+    Basic_variable_index_iterator  it;
+    Values_NT_iterator v_it = x_B_O_NT.begin();
+    for ( it =  this->solver().basic_original_variables_index_begin();
+	      it != this->solver().basic_original_variables_index_end(); ++it,
+	      ++v_it) {
+
+	// update bounds
+	z = CGAL::abs( (*v_it));
+	if ( z > bound2_wq) bound2_wq = z;
     }
 }
 
