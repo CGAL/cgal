@@ -40,12 +40,12 @@ public:
   typedef typename Fb::Vertex_handle                   Vertex_handle;
   typedef typename Fb::Face_handle                     Face_handle;
 
-  typedef GT                                           Geom_traits;
+  typedef Gt                                           Geom_traits;
 
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Fb::template Rebind_TDS<TDS2>::Other  Fb2;
-    typedef Triangulation_face_base_3<GT, Fb2>             Other;
+    typedef Triangulation_face_base_2<Gt, Fb2>             Other;
   };
 
 public:
