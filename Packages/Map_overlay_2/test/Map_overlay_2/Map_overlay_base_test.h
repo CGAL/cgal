@@ -47,21 +47,21 @@ protected:
   //typedef CGAL::Map_overlay_default_dcel<Traits>                Dcel;
   //typedef CGAL::Planar_map_2<Dcel, Traits>                      PM;
   
-  typedef typename Subdivision::Vertex                             Vertex;
-  typedef typename Subdivision::Face                               Face;
-  typedef typename Subdivision::Halfedge                           Halfedge;
-  typedef typename Subdivision::Vertex_handle                      Vertex_handle;
-  typedef typename Subdivision::Halfedge_handle                    Halfedge_handle;
-  typedef typename Subdivision::Face_handle                        Face_handle;
-  typedef typename Subdivision::Vertex_const_handle                Vertex_const_handle;
-  typedef typename Subdivision::Halfedge_const_handle              Halfedge_const_handle;
-  typedef typename Subdivision::Face_const_handle                  Face_const_handle;
-  typedef typename Subdivision::Vertex_iterator                    Vertex_iterator;
-  typedef typename Subdivision::Vertex_const_iterator              Vertex_const_iterator;
-  typedef typename Subdivision::Halfedge_iterator                  Halfedge_iterator;
+  typedef typename Subdivision::Vertex                           Vertex;
+  typedef typename Subdivision::Face                             Face;
+  typedef typename Subdivision::Halfedge                         Halfedge;
+  typedef typename Subdivision::Vertex_handle                    Vertex_handle;
+  typedef typename Subdivision::Halfedge_handle                  Halfedge_handle;
+  typedef typename Subdivision::Face_handle                      Face_handle;
+  typedef typename Subdivision::Vertex_const_handle              Vertex_const_handle;
+  typedef typename Subdivision::Halfedge_const_handle            Halfedge_const_handle;
+  typedef typename Subdivision::Face_const_handle                Face_const_handle;
+  typedef typename Subdivision::Vertex_iterator                  Vertex_iterator;
+  typedef typename Subdivision::Vertex_const_iterator            Vertex_const_iterator;
+  typedef typename Subdivision::Halfedge_iterator                Halfedge_iterator;
   typedef typename Subdivision::Halfedge_const_iterator          Halfedge_const_iterator;
-  typedef typename Subdivision::Face_iterator                      Face_iterator;
-  typedef typename Subdivision::Face_const_iterator                Face_const_iterator;
+  typedef typename Subdivision::Face_iterator                    Face_iterator;
+  typedef typename Subdivision::Face_const_iterator              Face_const_iterator;
   typedef typename Subdivision::Ccb_halfedge_circulator          Ccb_halfedge_circulator;
   typedef typename Subdivision::Ccb_halfedge_const_circulator  
                                                           Ccb_halfedge_const_circulator;

@@ -28,7 +28,7 @@ typedef Traits::X_curve                               X_curve;
 typedef Traits::Curve                                 Curve;
 
 typedef CGAL::Map_overlay_default_dcel<Traits>        Dcel;
-typedef CGAL::Planar_map_2<Dcel, Traits>               PM;
+typedef CGAL::Planar_map_2<Dcel, Traits>              PM;
 
 class Read_segment {
 public:
