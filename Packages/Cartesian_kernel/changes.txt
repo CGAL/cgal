@@ -1,3 +1,6 @@
+Version 6.87 (30 May 2003)
+- Workaround "using namespace" for VC++ 7.
+
 Version 6.86 (11 May 2003)
 - Add missing functor for Plane_3(Point_3, Vector_3).
 - In order to get rid of Direction_[23] at some point, I have added :
