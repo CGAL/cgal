@@ -25,7 +25,7 @@
 #include <set.h>
 #include <list.h>
 
-#include <CGAL/quadruple.h>
+#include <CGAL/utility.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
 
@@ -172,23 +172,23 @@ private:
 			const Point& py1);
   void tent(Point_data *first, Point_data *second);
   void tent(Point_data *first, Point_data *second, Point_data *third);
-  void get_next_for_top(list<Point_data *>::iterator &iter,list<Point_data *>::iterator &beyond);
-  void get_prev_for_top(list<Point_data *>::iterator &iter);
-  void get_next_for_bot(list<Point_data *>::iterator &iter,list<Point_data *>::iterator &beyond);
-  void get_prev_for_bot(list<Point_data *>::iterator &iter);
-  void get_next_for_bot(Point_data_set_of_y::iterator &iter);
-  void get_next_for_bot(Point_data_set_of_y::iterator &iter,Point_data_set_of_y::iterator &last);
-  void get_prev_for_bot(Point_data_set_of_y::iterator &iter);
-  void get_next_for_left(list<Point_data *>::iterator &iter,list<Point_data *>::iterator &beyond);
-  void get_prev_for_left(list<Point_data *>::iterator &iter);
-  void get_next_for_right(list<Point_data *>::iterator &iter,list<Point_data *>::iterator &beyond);
-  void get_prev_for_right(list<Point_data *>::iterator &iter);
-  void determine_first_two_iters(Point_data_set_of_y::iterator &iter1,Point_data_set_of_y::iterator &iter2,Point_data_set_of_y::iterator &iter3,bool &first_iter_is_right,bool &second_iter_is_right,bool &third_iter_is_right);
-  void determine_next_iter(Point_data_set_of_y::iterator &iter,Point_data_set_of_y::iterator &right_iter,Point_data_set_of_y::iterator &left_iter,Point_data_set_of_y::const_iterator right_iter_end,Point_data_set_of_y::const_iterator left_iter_end,bool &iter_is_right,bool &exist);
-  void calls_for_tents(Point_data_set_of_y::iterator iter1,Point_data_set_of_y::iterator iter2);
-  void calls_for_tents(Point_data_set_of_y::iterator iter1,Point_data_set_of_y::iterator iter2,Point_data_set_of_y::iterator iter3);
+  void get_next_for_top(typename std::list<Point_data *>::iterator &iter, typename std::list<Point_data *>::iterator &beyond);
+  void get_prev_for_top(typename std::list<Point_data *>::iterator &iter);
+  void get_next_for_bot(typename std::list<Point_data *>::iterator &iter, typename std::list<Point_data *>::iterator &beyond);
+  void get_prev_for_bot(typename std::list<Point_data *>::iterator &iter);
+  void get_next_for_bot(typename Point_data_set_of_y::iterator &iter);
+  void get_next_for_bot(typename Point_data_set_of_y::iterator &iter, typename Point_data_set_of_y::iterator &last);
+  void get_prev_for_bot(typename Point_data_set_of_y::iterator &iter);
+  void get_next_for_left(typename std::list<Point_data *>::iterator &iter, typename std::list<Point_data *>::iterator &beyond);
+  void get_prev_for_left(typename std::list<Point_data *>::iterator &iter);
+  void get_next_for_right(typename std::list<Point_data *>::iterator &iter, typename std::list<Point_data *>::iterator &beyond);
+  void get_prev_for_right(typename std::list<Point_data *>::iterator &iter);
+  void determine_first_two_iters(typename Point_data_set_of_y::iterator &iter1, typename Point_data_set_of_y::iterator &iter2, typename Point_data_set_of_y::iterator &iter3,bool &first_iter_is_right,bool &second_iter_is_right,bool &third_iter_is_right);
+  void determine_next_iter(typename Point_data_set_of_y::iterator &iter, typename Point_data_set_of_y::iterator &right_iter, typename Point_data_set_of_y::iterator &left_iter, typename Point_data_set_of_y::const_iterator right_iter_end, typename Point_data_set_of_y::const_iterator left_iter_end,bool &iter_is_right,bool &exist);
+  void calls_for_tents(typename Point_data_set_of_y::iterator iter1, typename Point_data_set_of_y::iterator iter2);
+  void calls_for_tents(typename Point_data_set_of_y::iterator iter1, typename Point_data_set_of_y::iterator iter2,Point_data_set_of_y::iterator iter3);
   void phase_2_update_y_sorted_list();
-  void phase_3_check_for_larger(Point_data_set_of_y::iterator iter,Point_data_set_of_y::iterator iter1,Point_data_set_of_y::iterator iter2,Point_data_set_of_y::iterator iter3,bool first_iter_is_right,bool second_iter_is_right,bool third_iter_is_right);
+  void phase_3_check_for_larger(typename Point_data_set_of_y::iterator iter,typename Point_data_set_of_y::iterator iter1,typename Point_data_set_of_y::iterator iter2,typename Point_data_set_of_y::iterator iter3,bool first_iter_is_right,bool second_iter_is_right,bool third_iter_is_right);
   void empty_tents();
   void update();
   void init(const Point& bl, const Point& tr);
@@ -260,7 +260,7 @@ public:
   get_largest_empty_iso_rectangle();
 
   // retrieve four points from the input that define the largest rectangle
-  quadruple<Point, Point, Point, Point>
+  Quadruple<Point, Point, Point, Point>
   get_left_bottom_right_top();
 
   // clear data(remove points)
@@ -484,8 +484,8 @@ Largest_empty_iso_rectangle_2<T>::tent(Point_data *first,
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::get_next_for_top(
-  list<Point_data *>::iterator &iter,
-  list<Point_data *>::iterator &beyond)
+  typename std::list<Point_data *>::iterator &iter,
+  typename std::list<Point_data *>::iterator &beyond)
 {
   while(iter != beyond && ((*iter)->type == BOT_RIGHT 
 			   || (*iter)->type == BOT_LEFT))
@@ -495,7 +495,7 @@ Largest_empty_iso_rectangle_2<T>::get_next_for_top(
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::get_prev_for_top(
-  list<Point_data *>::iterator &iter)
+  typename std::list<Point_data *>::iterator &iter)
 {
   while((*iter)->type == BOT_RIGHT || (*iter)->type == BOT_LEFT)
     --iter;
@@ -504,8 +504,8 @@ Largest_empty_iso_rectangle_2<T>::get_prev_for_top(
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::get_next_for_bot(
-  list<Point_data *>::iterator &iter,
-  list<Point_data *>::iterator &beyond)
+  typename std::list<Point_data *>::iterator &iter,
+  typename std::list<Point_data *>::iterator &beyond)
 {
   while(iter != beyond && ((*iter)->type == TOP_LEFT 
 			   || (*iter)->type == TOP_RIGHT))
@@ -515,7 +515,7 @@ Largest_empty_iso_rectangle_2<T>::get_next_for_bot(
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::get_prev_for_bot(
-  list<Point_data *>::iterator &iter)
+  typename std::list<Point_data *>::iterator &iter)
 {
   while((*iter)->type == TOP_LEFT || (*iter)->type == TOP_RIGHT)
     --iter;
@@ -524,7 +524,7 @@ Largest_empty_iso_rectangle_2<T>::get_prev_for_bot(
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::get_next_for_bot(
-  Point_data_set_of_y::iterator &iter)
+  typename Point_data_set_of_y::iterator &iter)
 {
   while((*iter)->type == TOP_LEFT || (*iter)->type == TOP_RIGHT)
     ++iter;
@@ -533,8 +533,8 @@ Largest_empty_iso_rectangle_2<T>::get_next_for_bot(
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::get_next_for_bot(
-  Point_data_set_of_y::iterator &iter,
-  Point_data_set_of_y::iterator &last)
+  typename Point_data_set_of_y::iterator &iter,
+  typename Point_data_set_of_y::iterator &last)
 {
   while(iter != last && ((*iter)->type == TOP_LEFT 
 			 || (*iter)->type == TOP_RIGHT))
@@ -543,7 +543,7 @@ Largest_empty_iso_rectangle_2<T>::get_next_for_bot(
 
 template<class T>
 void 
-Largest_empty_iso_rectangle_2<T>::get_prev_for_bot(Point_data_set_of_y::iterator &iter)
+Largest_empty_iso_rectangle_2<T>::get_prev_for_bot(typename Point_data_set_of_y::iterator &iter)
 {
   while((*iter)->type == TOP_LEFT || (*iter)->type == TOP_RIGHT)
     --iter;
@@ -552,8 +552,8 @@ Largest_empty_iso_rectangle_2<T>::get_prev_for_bot(Point_data_set_of_y::iterator
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::get_next_for_left(
-  list<Point_data *>::iterator &iter, 
-  list<Point_data *>::iterator &beyond)
+  typename std::list<Point_data *>::iterator &iter, 
+  typename std::list<Point_data *>::iterator &beyond)
 {
   while(iter != beyond && ((*iter)->type == BOT_RIGHT 
 			   || (*iter)->type == TOP_RIGHT))
@@ -563,7 +563,7 @@ Largest_empty_iso_rectangle_2<T>::get_next_for_left(
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::get_prev_for_left(
-  list<Point_data *>::iterator &iter)
+  typename std::list<Point_data *>::iterator &iter)
 {
   while((*iter)->type == BOT_RIGHT || (*iter)->type == TOP_RIGHT)
     --iter;
@@ -572,8 +572,8 @@ Largest_empty_iso_rectangle_2<T>::get_prev_for_left(
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::get_next_for_right(
-  list<Point_data *>::iterator &iter,
-  list<Point_data *>::iterator &beyond)
+  typename std::list<Point_data *>::iterator &iter,
+  typename std::list<Point_data *>::iterator &beyond)
 {
   while(iter != beyond && ((*iter)->type == BOT_LEFT 
 			   || (*iter)->type == TOP_LEFT))
@@ -582,7 +582,7 @@ Largest_empty_iso_rectangle_2<T>::get_next_for_right(
 
 template<class T>
 void 
-Largest_empty_iso_rectangle_2<T>::get_prev_for_right(list<Point_data *>::iterator &iter)
+Largest_empty_iso_rectangle_2<T>::get_prev_for_right(typename std::list<Point_data *>::iterator &iter)
 {
   while((*iter)->type == BOT_LEFT || (*iter)->type == TOP_LEFT)
     --iter;
@@ -592,9 +592,9 @@ template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::phase_2_on_bot()
 {
-  list<Point_data *> Point_data_list;
-  copy(x_sorted.begin(), x_sorted.end(), back_inserter(Point_data_list));
-  list<Point_data *>::iterator iter1 = Point_data_list.begin(),
+  std::list<Point_data *> Point_data_list;
+  std::copy(x_sorted.begin(), x_sorted.end(), back_inserter(Point_data_list));
+  std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
                                iter2,iter3,first_iter,
                                beyond = Point_data_list.end();
   int points_removed = 0, 
@@ -640,10 +640,10 @@ template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::phase_2_on_top()
 {
-  list<Point_data *> Point_data_list;
-   copy(x_sorted.begin(), x_sorted.end(), back_inserter(Point_data_list));
+  std::list<Point_data *> Point_data_list;
+   std::copy(x_sorted.begin(), x_sorted.end(), back_inserter(Point_data_list));
 
-  list<Point_data *>::iterator iter1 = Point_data_list.begin(),
+  std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2, iter3, first_iter,
     beyond = Point_data_list.end();
   int points_removed = 0,
@@ -685,9 +685,9 @@ template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::phase_2_on_left()
 {
-  list<Point_data *> Point_data_list;
-  copy(y_sorted.begin(), y_sorted.end(), back_inserter(Point_data_list));
-  list<Point_data *>::iterator iter1 = Point_data_list.begin(),
+  std::list<Point_data *> Point_data_list;
+  std::copy(y_sorted.begin(), y_sorted.end(), back_inserter(Point_data_list));
+  std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2, iter3, first_iter,
     beyond = Point_data_list.end();
   int points_removed = 0,size = Point_data_list.size();
@@ -728,9 +728,9 @@ template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::phase_2_on_right()
 {
-  list<Point_data *> Point_data_list;
-  copy(y_sorted.begin(), y_sorted.end(), back_inserter(Point_data_list));
-  list<Point_data *>::iterator iter1 = Point_data_list.begin(),
+  std::list<Point_data *> Point_data_list;
+  std::copy(y_sorted.begin(), y_sorted.end(), back_inserter(Point_data_list));
+  std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2, iter3, first_iter, 
     beyond = Point_data_list.end();
   int points_removed = 0,size = Point_data_list.size();
@@ -786,11 +786,11 @@ Largest_empty_iso_rectangle_2<T>::phase_2()
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::determine_next_iter(
-  Point_data_set_of_y::iterator &iter,
-  Point_data_set_of_y::iterator &right_iter,
-  Point_data_set_of_y::iterator &left_iter,
-  Point_data_set_of_y::const_iterator right_iter_end,
-  Point_data_set_of_y::const_iterator left_iter_end,
+  typename Point_data_set_of_y::iterator &iter,
+  typename Point_data_set_of_y::iterator &right_iter,
+  typename Point_data_set_of_y::iterator &left_iter,
+  typename Point_data_set_of_y::const_iterator right_iter_end,
+  typename Point_data_set_of_y::const_iterator left_iter_end,
   bool &iter_is_right,
   bool &exist)
 {
@@ -823,10 +823,10 @@ Largest_empty_iso_rectangle_2<T>::determine_next_iter(
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::phase_3_check_for_larger(
-  Point_data_set_of_y::iterator iter,
-  Point_data_set_of_y::iterator iter1,
-  Point_data_set_of_y::iterator iter2,
-  Point_data_set_of_y::iterator iter3,
+  typename Point_data_set_of_y::iterator iter,
+  typename Point_data_set_of_y::iterator iter1,
+  typename Point_data_set_of_y::iterator iter2,
+  typename Point_data_set_of_y::iterator iter3,
   bool first_iter_is_right,
   bool second_iter_is_right,
   bool third_iter_is_right)
@@ -842,9 +842,9 @@ Largest_empty_iso_rectangle_2<T>::phase_3_check_for_larger(
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::calls_for_tents(
-  Point_data_set_of_y::iterator iter1,
-  Point_data_set_of_y::iterator iter2,
-  Point_data_set_of_y::iterator iter3)
+  typename Point_data_set_of_y::iterator iter1,
+  typename Point_data_set_of_y::iterator iter2,
+  typename Point_data_set_of_y::iterator iter3)
 {
   bool first_is_right_to_second = less_x(*iter1, *iter2);
   bool second_is_right_to_third = less_x(*iter2, *iter3);
@@ -870,8 +870,8 @@ Largest_empty_iso_rectangle_2<T>::calls_for_tents(
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::calls_for_tents(
-  Point_data_set_of_y::iterator iter1,
-  Point_data_set_of_y::iterator iter2)
+  typename Point_data_set_of_y::iterator iter1,
+  typename Point_data_set_of_y::iterator iter2)
 {
   if(less_x(*iter1, *iter2))
     tent(*iter1,*iter2);
@@ -963,7 +963,7 @@ Largest_empty_iso_rectangle_2<T>::empty_tents()
   }
 }
 template<class T>
-Largest_empty_iso_rectangle_2<T>::Iso_rectangle_2
+typename Largest_empty_iso_rectangle_2<T>::Iso_rectangle_2
 Largest_empty_iso_rectangle_2<T>::get_bounding_box()
 {
   return(Iso_rectangle_2(bl_p, tr_p));
@@ -991,7 +991,7 @@ Largest_empty_iso_rectangle_2<T>::update()
 }
 
 template<class T>
-Largest_empty_iso_rectangle_2<T>::Iso_rectangle_2
+typename Largest_empty_iso_rectangle_2<T>::Iso_rectangle_2
 Largest_empty_iso_rectangle_2<T>::get_largest_empty_iso_rectangle()
 {
   if(x_sorted.size() == 4) {
@@ -1006,7 +1006,7 @@ Largest_empty_iso_rectangle_2<T>::get_largest_empty_iso_rectangle()
  * that are from the input and that define the empty rectangle
  */
 template<class T>
-quadruple<Largest_empty_iso_rectangle_2<T>::Point,
+Quadruple<Largest_empty_iso_rectangle_2<T>::Point,
           Largest_empty_iso_rectangle_2<T>::Point,
           Largest_empty_iso_rectangle_2<T>::Point,
           Largest_empty_iso_rectangle_2<T>::Point>
@@ -1099,7 +1099,7 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(const Iso_rectan
 
 
 template<class T>
-Largest_empty_iso_rectangle_2<T>::const_iterator 
+typename Largest_empty_iso_rectangle_2<T>::const_iterator 
 Largest_empty_iso_rectangle_2<T>::begin()
 {
   Point_data_set_of_x::const_iterator i = x_sorted.begin();
@@ -1111,7 +1111,7 @@ Largest_empty_iso_rectangle_2<T>::begin()
 }
 
 template<class T>
-Largest_empty_iso_rectangle_2<T>::const_iterator 
+typename Largest_empty_iso_rectangle_2<T>::const_iterator 
 Largest_empty_iso_rectangle_2<T>::end()
 {
     return const_iterator(x_sorted.end());
@@ -1140,9 +1140,9 @@ Largest_empty_iso_rectangle_2<T>::clear()
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::determine_first_two_iters(
-  Point_data_set_of_y::iterator &iter1,
-  Point_data_set_of_y::iterator &iter2,
-  Point_data_set_of_y::iterator &iter3,
+  typename Point_data_set_of_y::iterator &iter1,
+  typename Point_data_set_of_y::iterator &iter2,
+  typename Point_data_set_of_y::iterator &iter3,
   bool &first_iter_is_right,
   bool &second_iter_is_right,
   bool &third_iter_is_right)
