@@ -38,7 +38,7 @@ class Alpha_shape_vertex_base_3 : public Triangulation_vertex_base_3<Gt>
 private:
   typedef typename Gt::Coord_type Coord_type;
   typedef std::pair< Coord_type, Coord_type > Interval2;  
-  typedef typename Triangulation_vertex_base_3<Gt>::Point Point;
+  typedef typename Gt::Point Point;
 
   //-------------------------------------------------------------------
 

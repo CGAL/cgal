@@ -97,13 +97,18 @@ Regular_triangulation_euclidean_traits_3<R>
 public: 
   typedef R Rep;
   typedef typename R::FT Coord_type;
+
   typedef typename 
-    Regular_triangulation_euclidean_traits_3<R>::Weighted_point Point;
+    Regular_triangulation_euclidean_traits_3<R>::Bare_point Bare_Point;
+  typedef typename 
+    Regular_triangulation_euclidean_traits_3<R>::Weighted_point Weighted_point;
+  typedef Weighted_point Point_3;
+  typedef Weighted_point Point;
 
   typedef Compute_squared_radius_orthogonalsphere_3<Coord_type, Point> 
-  Compute_squared_radius_orthogonalsphere_3;
+    Compute_squared_radius_orthogonalsphere_3;
   typedef Side_of_bounded_orthogonalsphere_3<Point> 
-  Side_of_bounded_orthogonalsphere_3;
+    Side_of_bounded_orthogonalsphere_3;
 
   //---------------------------------------------------------------------
 
