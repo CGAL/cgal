@@ -9,7 +9,6 @@ TMP_file=/tmp/submit-mail
 CGAL_MAKEFILE=/u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.14_g++-2.95.2_LEDA
 TEXINPUTS=.:../../../examples:/0/prisme_util/latex:/u/procyon/0/prisme/yvinec/tex/inputs:
 LATEX_CONV_INPUTS=.:../../../examples:/u/procyon/0/prisme/yvinec/Cgal/Triangulation/examples:
-MAINTAINER=Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
 package: 
 	@echo "----------------------------------"
@@ -17,18 +16,17 @@ package:
 	@echo "----------------------------------"
 	@echo "---- cvs update; -----------------"
 	@echo "---- make Test ; ------------ ----"
-	@echo "---- make VERSION=4.80 Doc -------"
+	@echo "---- make VERSION=4.81 Doc -------"
 	@echo "---- editer changes.txt       ----"
-	@echo "---- make VERSION=4.80 Version ---"
+	@echo "---- make VERSION=4.81 Version ---"
 	@echo "---- cvs commit ------------------"
-	@echo "---- make VERSION=4.80 Tag -------"
+	@echo "---- make VERSION=4.81 Tag -------"
 	@echo "---- make Submit -----------------"
 	@echo "----------------------------------"
 
 
 Version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version 
-	echo  "maintainer : $(MAINTAINER)" >> version
 
 Tag:
 	cvs tag v`echo $(VERSION) | sed -e "s/\./_/g"` \
@@ -70,12 +68,14 @@ Submit: clean $(PACKAGE).tar.gz
 	cp -rf doc_ps/* $(WWW_dir)/doc_ps/
 	cp -rf doc_html/* $(WWW_dir)/doc_html/
 
-	echo > $(TMP_file)
-	echo "submission::" >> $(TMP_file)
-	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
-	echo "/Triangulation_2/Triangulation.tar.gz" >> $(TMP_file)
-	mail -s autohandle cgal-submit@cs.uu.nl yvinec < $(TMP_file)
-	rm -f $(TMP_file)
+	cgal_submit $(VERSION)
+
+#	echo > $(TMP_file)
+#	echo "submission::" >> $(TMP_file)
+#	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
+#	echo "/Triangulation_2/Triangulation.tar.gz" >> $(TMP_file)
+#	mail -s autohandle cgal-submit@cs.uu.nl yvinec < $(TMP_file)
+#	rm -f $(TMP_file)
 
 Doc : Doc_ps Doc_html
 
@@ -110,21 +110,5 @@ Doc_html :
 	-o ../../../doc_html/support/Handle main.tex
 	echo "done"
 
-#doc: 
-#	cd /u/alcor/0/prisme_util/CGAL/Local/Triangulation
-#	cvs commit doc
-#	rm -rf doc_tex/basic/Triangulation/*.*
-#	rm -rf doc_ps/triangulation.ps.gz
-#	cp doc/*.tex doc/*.ltex doc/*.ipe doc/*.gif doc_tex/basic/Triangulation
-#	cp doc/*.gif doc/*.png doc_html/basic/Triangulation
-#	rm -rf doc_tex/support/Handle/*.*
-#	cp doc/pointer.tex doc_tex/support/Handle/main.tex
-#	cd doc;\
-#	latex wrapper.tex ; bibtex wrapper.tex; latex wrapper.tex; \
-#	dvips wrapper -o; gzip wrapper.ps; rm wrapper.dvi
-#	mv doc/wrapper.ps.gz doc_ps/triangulation.ps.gz
-#	cd doc_tex; cc_manual_to_html -title Triangulations \
-#	-release $(VERSION) \
-#	-o ../doc_html/basic/Triangulation main.tex
-#	echo "done"
+
 
