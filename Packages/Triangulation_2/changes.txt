@@ -1,11 +1,17 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 4.45(22 June 00)
+Ver 4.46 (29 June 00)
+created separate files and classes for constrined triangulation
+with intersection :
+Constrained_triangulation_wi_2
+Constrained_Delaunay_triangulation_wi_2
+
+Ver 4.45 (22 June 00)
 fixed bug in dual() of Delaunay_triangulation
 
 Ver 4.44(21 June 00)
-Fixed bugs in Comstrained and Delaunay_constrained triangulations
+Fixed bugs in Constrained and Delaunay_constrained triangulations
 add test of Delaunay_constrained triangulations
 
 Ver 4.43 (15 June 00)
