@@ -43,7 +43,8 @@ Only a default constructor is required.
 
 \ccMethod{Facet_iterator facets_end();}{past-the-end iterator.}
 
-\ccMethod{Halfedge_iterator border_halfedges_begin();}{halfedge iterator starting with the border edges.}
+\ccMethod{Halfedge_iterator P.halfedges_begin();}{ iterator over all halfedges.}
+\ccMethod{Halfedge_iterator P.halfedges_end();}{past-the-end iterator.}
 
 \ccMethod{
 Halfedge_handle make_tetrahedron(Point_3 p1, Point_3 p2, Point_3 p3, Point_3 p4);
@@ -62,15 +63,6 @@ thereafter with \ccc{p3}. The remaining fourth vertex is initialized with
 and changes all halfedges incident to the facet into border edges or removes 
 them from the polyhedral surface if they were already border edges.}
 
-\ccMethod{void normalize_border();}{
-sorts halfedges such that the non-border edges precedes the
-border edges. For each border edge the halfedge iterator will
-reference the halfedge incident to the facet right before the
-halfedge incident to the hole. }
-
-\ccMethod{Size size_of_border_halfedges();}{ 
-number of border halfedges
-(used only for assertion checking). }
 
 \ccMethod{
 Halfedge_handle 
