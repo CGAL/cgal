@@ -1,6 +1,9 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
 
+0.9.56 (21 March 2002)
+   added CGAL_LEDA_SCOPEs where necessary
+
 0.9 (1 January 2001)
 
      initial release

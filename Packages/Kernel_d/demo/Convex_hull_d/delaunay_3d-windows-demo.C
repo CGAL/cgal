@@ -1,5 +1,6 @@
 #ifdef CGAL_USE_LEDA
 #include <CGAL/basic.h>
+#include <CGAL/LEDA_basic.h>
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/leda_integer.h>
 #include <CGAL/Delaunay_d.h>
@@ -66,7 +67,7 @@ int main()
   // see dd_delaunay_traits.h for the adaptations
   std::ofstream To("delddemo.log");
 
-  GRAPH< Point_d, int > G;
+  CGAL_LEDA_SCOPE::GRAPH< Point_d, int > G;
   leda_node_array<leda_rat_vector> pos(G);
   leda_d3_window W3(W2,G,pos);
   leda_node v;

@@ -1,5 +1,6 @@
 #ifdef CGAL_USE_LEDA
 #include <CGAL/basic.h>
+#include <CGAL/LEDA_basic.h>
 #include <CGAL/leda_integer.h>
 #include <CGAL/Convex_hull_d.h>
 #include <CGAL/IO/Convex_hull_d_window_stream.h>
@@ -57,10 +58,10 @@ int main(int argc, char* argv[]) {
   if (from) from >> L;
   else {
     int r = numpoints;
-    rand_int.set_range(-r,r);
+    CGAL_LEDA_SCOPE::rand_int.set_range(-r,r);
     int x,y,z;
     while (r--) { 
-      rand_int >> x >> y >> z; 
+      CGAL_LEDA_SCOPE::rand_int >> x >> y >> z; 
       L.append(Point(x,y,z,1));
     }
   }
@@ -71,7 +72,7 @@ int main(int argc, char* argv[]) {
   T.initialize(L.begin(),L.end());
   T.print_statistics();
   To.flush(); 
-  GRAPH<Point,int> G;
+  CGAL_LEDA_SCOPE::GRAPH<Point,int> G;
   leda_node_array<leda_vector> pos(G);
   leda_node v;
   leda_d3_window W3(W,G,pos);

@@ -1,5 +1,6 @@
 #ifdef CGAL_USE_LEDA
 #include <CGAL/basic.h>
+#include <CGAL/LEDA_basic.h>
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/Delaunay_d.h>
 #include <CGAL/random_selection.h>
@@ -57,7 +58,7 @@ int main(int argc, char* argv[])
   std::list<Point_d> L;
 
   random_points_in_range(n,dimension,-m,m,L);
-  float ti = used_time();
+  float ti = CGAL_LEDA_SCOPE::used_time();
   int i=0;
   std::list<Point_d>::iterator it;
   for(it = L.begin(); it!=L.end(); ++it) {
@@ -65,23 +66,23 @@ int main(int argc, char* argv[])
     if (i%10==0) 
       std::cout << i << " points inserted" << std::endl;
   }
-  std::cout << "used time for inserts  " << used_time(ti) << std::endl;
+  std::cout << "used time for inserts  " << CGAL_LEDA_SCOPE::used_time(ti) << std::endl;
   std::cout << "entering check" << std::endl;
   T.is_valid(); 
-  std::cout << "used time for sanity check  " << used_time(ti) << std::endl;
+  std::cout << "used time for sanity check  " << CGAL_LEDA_SCOPE::used_time(ti) << std::endl;
   std::cout << "entering nearest neighbor location" << std::endl;
   L.clear();
   random_points_in_range(n/10,dimension,-m,m,L);
-  ti = used_time();
+  ti = CGAL_LEDA_SCOPE::used_time();
   i = 0;
   for(it = L.begin(); it!=L.end(); ++it) {
     T.nearest_neighbor(*it); i++;
     if (i%10==0) std::cout << i << " points located" << std::endl;
   }
-  std::cout << "used time for location  " << used_time(ti) << std::endl;  
+  std::cout << "used time for location  " << CGAL_LEDA_SCOPE::used_time(ti) << std::endl;  
 
   T.print_statistics(); 
-  print_statistics(); 
+  CGAL_LEDA_SCOPE::print_statistics(); 
   return 0;
 }
 

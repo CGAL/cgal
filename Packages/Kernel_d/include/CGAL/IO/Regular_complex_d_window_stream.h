@@ -1,3 +1,23 @@
+// ======================================================================
+//
+// Copyright (c) 2002 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.4-I-65 $
+// release_date  : $CGAL_Date: 2002/03/19 $
+//
+// file          : include/CGAL/IO/Regular_complex_d_window_stream.h
+// package       : Kernel_d (0.9.55)
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
+// author(s)     : ?
+// coordinator   : ?
+//
+// ======================================================================
 #ifndef CGAL_REGULAR_COMPLEX_D_WINDOW_STREAM_H
 #define CGAL_REGULAR_COMPLEX_D_WINDOW_STREAM_H
 
@@ -8,6 +28,8 @@
 #else
 #include <CGAL/Regular_complex_d_MSC.h>
 #endif
+
+#include <CGAL/LEDA_basic.h>
 #include <CGAL/IO/Window_stream.h>
 #include <LEDA/graph.h>
 #include <LEDA/node_map.h>
@@ -26,12 +48,12 @@ void d2_show(const Regular_complex_d<R>& RC, Window_stream& W);
 \precond |dim == 2|.}*/
 
 template <class R>
-void d2_map(const Regular_complex_d<R>& RC, GRAPH<leda_point,int>& G);
+void d2_map(const Regular_complex_d<R>& RC, CGAL_LEDA_SCOPE::GRAPH<leda_point,int>& G);
 /*{\Mfunc constructs the representation of |R| as a bidirected graph |G|.
 \precond |dim == 2|.}*/
 
 template <class R>
-void d3_graph(const Regular_complex_d<R>& RC, GRAPH<leda_d3_point,int>& G);
+void d3_graph(const Regular_complex_d<R>& RC, CGAL_LEDA_SCOPE::GRAPH<leda_d3_point,int>& G);
 /*{\Mfunc constructs the representation of |R| as a bidirected graph |G|.
 \precond |dim == 3|.}*/
 
@@ -60,7 +82,7 @@ void d2_show(const Regular_complex_d<R>& RC, CGAL::Window_stream& W)
 
 
 template <class R>
-void d2_map(const Regular_complex_d<R>& RC, GRAPH<leda_point,int>& G)
+void d2_map(const Regular_complex_d<R>& RC, CGAL_LEDA_SCOPE::GRAPH<leda_point,int>& G)
 { 
   typedef Regular_complex_d<R>::Simplex_const_iterator Simplex_iterator;
   typedef Regular_complex_d<R>::Vertex_const_iterator Vertex_iterator;
@@ -163,7 +185,7 @@ void d2_map(const Regular_complex_d<R>& RC, GRAPH<leda_point,int>& G)
 
 template <class R>
 void d3_graph(const Regular_complex_d<R>& RC, 
-              GRAPH< typename Regular_complex_d<R>::Point_d ,int>& G)
+              CGAL_LEDA_SCOPE::GRAPH< typename Regular_complex_d<R>::Point_d ,int>& G)
 { 
   typedef Regular_complex_d<R>::Simplex_const_iterator Simplex_iterator;
   typedef Regular_complex_d<R>::Vertex_const_iterator Vertex_iterator;
@@ -174,7 +196,7 @@ void d3_graph(const Regular_complex_d<R>& RC,
 
   CGAL_assertion_msg(RC.dimension() == 3,"d3_graph: dim must be 3.");
   G.clear();
-  node_map2<bool> connected(G);
+  CGAL_LEDA_SCOPE::node_map2<bool> connected(G);
   Unique_hash_map<Vertex_handle,leda_node> node_for(nil);
 
   forall_rc_vertices(v,RC) {

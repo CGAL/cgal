@@ -206,7 +206,11 @@ if ( which & 16 )  {
 #endif
 
 #ifdef CGAL_USE_LEDA
+#if defined(LEDA_NAMESPACE)
+  leda::print_statistics();
+#else
   print_statistics();
+#endif  
 #endif
   destroy(V,n);
   return 0;

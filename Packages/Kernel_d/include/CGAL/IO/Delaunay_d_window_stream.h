@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997-2000 The CGAL Consortium
 //
@@ -6,13 +6,14 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
+// release       : $CGAL_Revision: CGAL-2.4-I-65 $
+// release_date  : $CGAL_Date: 2002/03/19 $
 //
-// file          : include/CGAL/Delaunay_d_window_stream.h
-// package       : Kernel_d
+// file          : include/CGAL/IO/Delaunay_d_window_stream.h
+// package       : Kernel_d (0.9.55)
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // chapter       : Basic
 //
 // source        : ddgeo/Delaunay_d.lw
@@ -20,14 +21,14 @@
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // coordinator   : Susan Hert <hert@mpi-sb.mpg.de>
 //
 // implementation: Higher dimensional geometry
-// ============================================================================
+// ======================================================================
 #ifndef CGAL_DELAUNAY_D_WINDOW_STREAM_H
 #define CGAL_DELAUNAY_D_WINDOW_STREAM_H
 
+#include <CGAL/LEDA_basic.h>
 #include <CGAL/Delaunay_d.h>
 #include <CGAL/IO/Convex_hull_d_window_stream.h>
 #include <CGAL/IO/Window_stream.h>
@@ -54,7 +55,7 @@ void d2_show(const Delaunay_d<R,Lifted_R>& D,
 
 template <typename R, typename Lifted_R>
 void d2_map(const Delaunay_d<R,Lifted_R>& D, 
-            GRAPH< typename Delaunay_d<R,Lifted_R>::Point_d, int >& DTG, 
+            CGAL_LEDA_SCOPE::GRAPH< typename Delaunay_d<R,Lifted_R>::Point_d, int >& DTG, 
             typename Delaunay_d<R,Lifted_R>::Delaunay_voronoi_kind k = 
             Delaunay_d<R,Lifted_R>::NEAREST)
 /*{\Mfunc constructs a LEDA graph representation of the nearest 
