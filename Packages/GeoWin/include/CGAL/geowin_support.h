@@ -12,10 +12,10 @@
 // release_date  : 
 //
 // file          : include/CGAL/geowin_support.h
-// package       : GeoWin (1.4)
+// package       : GeoWin (1.4.1)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 1.4
-// revision_date : 12 March 2002 
+// revision      : 1.4.1
+// revision_date : 15 March 2002 
 // author(s)     : Matthias Baesken, Ulrike Bartuschka, Stefan Naeher
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -128,17 +128,20 @@ typedef CGAL::Tetrahedron_3< DEFREP >      CGALTetrahedron_3;
 typedef std::list<CGALTetrahedron_3>    CGALTetrahedron_3_list;
 
 
-#if defined GEOWIN_USE_NAMESPACE
+#if defined GEOWIN_USE_NAMESPACE || defined LEDA_NAMESPACE
 
 #if !defined GEOWIN_NAMESPACE_NAME
-#define GEOWIN_NAMESPACE_NAME CGAL
+#define GEOWIN_NAMESPACE_NAME leda
 #endif
 
+#if !defined(GEOWIN_BEGIN_NAMESPACE)
 #define GEOWIN_BEGIN_NAMESPACE namespace GEOWIN_NAMESPACE_NAME {
 #define GEOWIN_END_NAMESPACE }
+#endif
+
 #else
-#  define GEOWIN_BEGIN_NAMESPACE
-#  define GEOWIN_END_NAMESPACE
+#define GEOWIN_BEGIN_NAMESPACE
+#define GEOWIN_END_NAMESPACE
 #endif
 
 
@@ -269,7 +272,11 @@ leda_rectangle convert_to_leda(const CGAL::Iso_rectangle_2<REP>& t)
  return leda_rectangle(lp1,lp2); 
 }
 
+
+LEDA_BEGIN_NAMESPACE 
 ps_file& operator<<(ps_file& F,const leda_d3_point& obj);
+LEDA_END_NAMESPACE 
+
 
 template<class REP>
 leda_d3_point convert_to_leda(const CGAL::Point_3<REP>& obj)
@@ -454,7 +461,11 @@ static void geowin_generate_circle_segments(leda_list<leda_segment>& LS, leda_ci
     }
     
   // now generate the segments desribing the circle ...
+#if defined(LEDA_NAMESPACE)  
+  leda::list_item lit = L.first();
+#else
   list_item lit = L.first();
+#endif
   
   while(lit && L.succ(lit))
   {
