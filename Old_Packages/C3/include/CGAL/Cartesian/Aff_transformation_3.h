@@ -119,7 +119,8 @@ public:
   Point_3     transform(const Point_3 &p) const { return ptr()->transform(p); }
   Point_3     operator()(const Point_3 &p) const { return transform(p); }
 
-  Vector_3    transform(const Vector_3 &v) const { return ptr()->transform(v); }
+  Vector_3    transform(const Vector_3 &v) const
+                                           { return ptr()->transform(v); }
   Vector_3    operator()(const Vector_3 &v) const { return transform(v); }
 
   Direction_3 transform(const Direction_3 &d) const

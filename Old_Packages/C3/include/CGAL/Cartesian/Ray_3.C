@@ -173,7 +173,8 @@ RayC3<R CGAL_CTAG>
 RayC3<R CGAL_CTAG>::
 transform(const typename RayC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
 {
-  return RayC3<R CGAL_CTAG>(t.transform(source()), t.transform(second_point()));
+  return RayC3<R CGAL_CTAG>(t.transform(source()),
+                            t.transform(second_point()));
 }
 
 template < class R >

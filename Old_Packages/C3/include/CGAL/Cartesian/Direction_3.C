@@ -206,16 +206,16 @@ std::ostream &operator<<(std::ostream &os, const DirectionC3<R CGAL_CTAG> &d)
   typename DirectionC3<R CGAL_CTAG>::Vector_3 v = d.to_vector();
   switch(os.iword(IO::mode)) {
     case IO::ASCII :
-        return os << v.x() << ' ' << v.y()  << ' ' << v.z();
+      return os << v.x() << ' ' << v.y()  << ' ' << v.z();
     case IO::BINARY :
-        write(os, v.x());
-        write(os, v.y());
-        write(os, v.z());
-        return os;
+      write(os, v.x());
+      write(os, v.y());
+      write(os, v.z());
+      return os;
     default:
-        os << "DirectionC3(" << v.x() << ", " << v.y() << ", " << v.z() << ")";
-        return os;
-    }
+      os << "DirectionC3(" << v.x() << ", " << v.y() << ", " << v.z() << ")";
+      return os;
+  }
 }
 #endif // CGAL_NO_OSTREAM_INSERT_DIRECTIONC3
 
@@ -223,23 +223,23 @@ std::ostream &operator<<(std::ostream &os, const DirectionC3<R CGAL_CTAG> &d)
 template < class R >
 std::istream &operator>>(std::istream &is, DirectionC3<R CGAL_CTAG> &p)
 {
-    typename R::FT x, y, z;
-    switch(is.iword(IO::mode)) {
+  typename R::FT x, y, z;
+  switch(is.iword(IO::mode)) {
     case IO::ASCII :
-        is >> x >> y >> z;
-        break;
+      is >> x >> y >> z;
+      break;
     case IO::BINARY :
-        read(is, x);
-        read(is, y);
-        read(is, z);
-        break;
+      read(is, x);
+      read(is, y);
+      read(is, z);
+      break;
     default:
-        std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-        break;
-    }
-    p = DirectionC3<R CGAL_CTAG>(x, y, z);
-    return is;
+      std::cerr << "" << std::endl;
+      std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+      break;
+  }
+  p = DirectionC3<R CGAL_CTAG>(x, y, z);
+  return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTIONC3
 

@@ -100,6 +100,7 @@ LineC3(const typename LineC3<R CGAL_CTAG>::Ray_3 &r)
 }
 
 template < class R >
+inline
 LineC3<R CGAL_CTAG>::
 LineC3(const typename LineC3<R CGAL_CTAG>::Point_3 &p,
        const typename LineC3<R CGAL_CTAG>::Direction_3 &d)
@@ -113,6 +114,7 @@ LineC3<R CGAL_CTAG>::~LineC3()
 
 
 template < class R >
+inline
 LineC3<R CGAL_CTAG> &
 LineC3<R CGAL_CTAG>::operator=(const LineC3<R CGAL_CTAG> &l)
 {
@@ -121,6 +123,7 @@ LineC3<R CGAL_CTAG>::operator=(const LineC3<R CGAL_CTAG> &l)
 }
 
 template < class R >
+inline
 bool
 LineC3<R CGAL_CTAG>::operator==(const LineC3<R CGAL_CTAG> &l) const
 {
@@ -136,6 +139,7 @@ LineC3<R CGAL_CTAG>::operator!=(const LineC3<R CGAL_CTAG> &l) const
 }
 
 template < class R >
+inline
 long
 LineC3<R CGAL_CTAG>::id() const
 {
@@ -143,6 +147,7 @@ LineC3<R CGAL_CTAG>::id() const
 }
 
 template < class R >
+inline
 typename LineC3<R CGAL_CTAG>::Point_3
 LineC3<R CGAL_CTAG>::point() const
 {
@@ -150,21 +155,26 @@ LineC3<R CGAL_CTAG>::point() const
 }
 
 template < class R >
+inline
 typename LineC3<R CGAL_CTAG>::Direction_3
-LineC3<R CGAL_CTAG>::direction() const
+LineC3<R CGAL_CTAG>::
+direction() const
 {
   return ((ptr()->e1) - ORIGIN).direction();
 }
 
 
 template < class R >
+inline
 typename LineC3<R CGAL_CTAG>::Point_3
-LineC3<R CGAL_CTAG>::point(int i) const
+LineC3<R CGAL_CTAG>::
+point(int i) const
 {
   return point_on_line(i,*this);
 }
 
 template < class R >
+inline
 typename LineC3<R CGAL_CTAG>::Plane_3
 LineC3<R CGAL_CTAG>::
 perpendicular_plane(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
@@ -173,20 +183,25 @@ perpendicular_plane(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
 }
 
 template < class R >
+inline
 LineC3<R CGAL_CTAG>
-LineC3<R CGAL_CTAG>::opposite() const
+LineC3<R CGAL_CTAG>::
+opposite() const
 {
   return LineC3<R CGAL_CTAG>(point(), -direction());
 }
 
 template < class R >
+inline
 typename LineC3<R CGAL_CTAG>::Point_3
-LineC3<R CGAL_CTAG>::projection(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
+LineC3<R CGAL_CTAG>::
+projection(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return projection_line(p,*this);
 }
 
 template < class R >
+inline
 bool
 LineC3<R CGAL_CTAG>::
 has_on(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
@@ -196,6 +211,7 @@ has_on(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
 
 
 template < class R >
+inline
 bool
 LineC3<R CGAL_CTAG>::is_degenerate() const
 {

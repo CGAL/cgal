@@ -292,7 +292,8 @@ template < class R >
 CGAL_KERNEL_INLINE
 SphereC3<R CGAL_CTAG>
 SphereC3<R CGAL_CTAG>::
-orthogonal_transform(const typename SphereC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
+orthogonal_transform
+  (const typename SphereC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
 {
   Vector_3 vec(FT(1), FT(0) );   // unit vector
   vec = vec.transform(t);             // transformed
@@ -307,8 +308,8 @@ orthogonal_transform(const typename SphereC3<R CGAL_CTAG>::Aff_transformation_3 
 /*
 template < class R >
 inline
-EllipseC3<SphereC3<R CGAL_CTAG>::FT> SphereC3<R CGAL_CTAG>::transform(
-                                 const Aff_transformationC3<SphereC3<R CGAL_CTAG>::FT> &t) const
+EllipseC3<SphereC3<R CGAL_CTAG>::FT> SphereC3<R CGAL_CTAG>::i
+transform(const Aff_transformationC3<SphereC3<R CGAL_CTAG>::FT> &t) const
 {
   return SphereC3<R CGAL_CTAG>(t.transform(center()),
                       squared_radius(),

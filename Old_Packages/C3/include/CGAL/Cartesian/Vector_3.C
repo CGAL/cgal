@@ -121,7 +121,9 @@ bool VectorC3<R CGAL_CTAG>::operator==(const VectorC3<R CGAL_CTAG> &v) const
 }
 
 template < class R >
-inline bool VectorC3<R CGAL_CTAG>::operator!=(const VectorC3<R CGAL_CTAG> &v) const
+inline
+bool
+VectorC3<R CGAL_CTAG>::operator!=(const VectorC3<R CGAL_CTAG> &v) const
 {
   return !(*this == v);
 }
@@ -237,7 +239,8 @@ VectorC3<R CGAL_CTAG>::homogeneous(int i) const
 template < class R >
 inline
 VectorC3<R CGAL_CTAG>
-VectorC3<R CGAL_CTAG>::operator+(const VectorC3<R CGAL_CTAG> &w) const
+VectorC3<R CGAL_CTAG>::
+operator+(const VectorC3<R CGAL_CTAG> &w) const
 {
   return VectorC3<R CGAL_CTAG>(x() + w.x(), y() + w.y(), z() + w.z()) ;
 }
@@ -245,23 +248,25 @@ VectorC3<R CGAL_CTAG>::operator+(const VectorC3<R CGAL_CTAG> &w) const
 template < class R >
 inline
 VectorC3<R CGAL_CTAG>
-VectorC3<R CGAL_CTAG>::operator-(const VectorC3<R CGAL_CTAG> &w) const
+VectorC3<R CGAL_CTAG>::
+operator-(const VectorC3<R CGAL_CTAG> &w) const
 {
   return VectorC3<R CGAL_CTAG>(x() - w.x(), y() - w.y(), z() - w.z()) ;
 }
 
 template < class R >
 inline
-VectorC3<R CGAL_CTAG> VectorC3<R CGAL_CTAG>::operator-() const
+VectorC3<R CGAL_CTAG> VectorC3<R CGAL_CTAG>::
+operator-() const
 {
-
   return VectorC3<R CGAL_CTAG>(-x(), -y(), -z()) ;
 }
 
 template < class R >
 inline
 typename VectorC3<R CGAL_CTAG>::FT
-VectorC3<R CGAL_CTAG>::operator*(const VectorC3<R CGAL_CTAG> &w) const
+VectorC3<R CGAL_CTAG>::
+operator*(const VectorC3<R CGAL_CTAG> &w) const
 {
   return x() * w.x() + y() * w.y() + z() * w.z() ;
 }
@@ -269,7 +274,8 @@ VectorC3<R CGAL_CTAG>::operator*(const VectorC3<R CGAL_CTAG> &w) const
 template < class R >
 inline
 VectorC3<R CGAL_CTAG>
-VectorC3<R CGAL_CTAG>::operator/(const typename VectorC3<R CGAL_CTAG>::FT &c) const
+VectorC3<R CGAL_CTAG>::
+operator/(const typename VectorC3<R CGAL_CTAG>::FT &c) const
 {
   return VectorC3<R CGAL_CTAG>( x()/c, y()/c, z()/c) ;
 }
@@ -295,18 +301,18 @@ transform(const typename VectorC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
 template < class R >
 std::ostream &operator<<(std::ostream &os, const VectorC3<R CGAL_CTAG> &v)
 {
-    switch(os.iword(IO::mode)) {
+  switch(os.iword(IO::mode)) {
     case IO::ASCII :
-        return os << v.x() << ' ' << v.y()  << ' ' << v.z();
+      return os << v.x() << ' ' << v.y()  << ' ' << v.z();
     case IO::BINARY :
-        write(os, v.x());
-        write(os, v.y());
-        write(os, v.z());
-        return os;
+      write(os, v.x());
+      write(os, v.y());
+      write(os, v.z());
+      return os;
     default:
-        os << "VectorC3(" << v.x() << ", " << v.y() <<  ", " << v.z() << ")";
-        return os;
-    }
+      os << "VectorC3(" << v.x() << ", " << v.y() <<  ", " << v.z() << ")";
+      return os;
+  }
 }
 #endif // CGAL_CARTESIAN_NO_OSTREAM_INSERT_VECTORC3
 
@@ -314,23 +320,23 @@ std::ostream &operator<<(std::ostream &os, const VectorC3<R CGAL_CTAG> &v)
 template < class R >
 std::istream &operator>>(std::istream &is, VectorC3<R CGAL_CTAG> &p)
 {
-    typename R::FT x, y, z;
-    switch(is.iword(IO::mode)) {
+  typename R::FT x, y, z;
+  switch(is.iword(IO::mode)) {
     case IO::ASCII :
-        is >> x >> y >> z;
-        break;
+      is >> x >> y >> z;
+      break;
     case IO::BINARY :
-        read(is, x);
-        read(is, y);
-        read(is, z);
-        break;
+      read(is, x);
+      read(is, y);
+      read(is, z);
+      break;
     default:
-        std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-        break;
-    }
-    p = VectorC3<R CGAL_CTAG>(x, y, z);
-    return is;
+      std::cerr << "" << std::endl;
+      std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+      break;
+  }
+  p = VectorC3<R CGAL_CTAG>(x, y, z);
+  return is;
 }
 #endif // CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_VECTORC3
 

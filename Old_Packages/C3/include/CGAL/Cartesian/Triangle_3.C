@@ -140,7 +140,8 @@ template < class R >
 inline
 TriangleC3<R CGAL_CTAG>
 TriangleC3<R CGAL_CTAG>::
-transform(const typename TriangleC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
+transform
+  (const typename TriangleC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
 {
   return TriangleC3<R CGAL_CTAG>(t.transform(vertex(0)),
                         t.transform(vertex(1)),
