@@ -1,5 +1,6 @@
-2.27   (??  Apr 2001)
+2.27   (1  May 2001)
 - angle()
+- fixed compare_x_at_y() 
 
 2.26   (12  Apr 2001)
 - Fix off by one error in Triangle::vertex().
