@@ -27,7 +27,6 @@
 
 #include <CGAL/Fourtuple.h>
 #include <CGAL/SegmentH3.h>
-#include <CGAL/predicate_classes_3.h>
 #include <CGAL/predicates_on_pointsH3.h>
 #include <vector>
 #include <functional>
@@ -130,8 +129,9 @@ TetrahedronH3<R>::operator==(const TetrahedronH3<R> &t) const
   int k;
   for ( k=0; k < 4; k++) V1.push_back( vertex(k));
   for ( k=0; k < 4; k++) V2.push_back( t.vertex(k));
-  std::sort(V1.begin(), V1.end(), Less_xyz< PointH3<R> >());
-  std::sort(V2.begin(), V2.end(), Less_xyz< PointH3<R> >());
+  typename R::Less_xyz_3 Less_object = R().less_xyz_3_object();
+  std::sort(V1.begin(), V1.end(), Less_object);
+  std::sort(V2.begin(), V2.end(), Less_object);
   uniq_end1 = std::unique( V1.begin(), V1.end());
   uniq_end2 = std::unique( V2.begin(), V2.end());
   V1.erase( uniq_end1, V1.end());
