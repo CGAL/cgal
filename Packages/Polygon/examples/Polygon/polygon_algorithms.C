@@ -9,7 +9,7 @@ using std::cout; using std::endl;
 void check_inside(Point const &pt, Point *pgn_begin, Point *pgn_end, K traits)
 {
   cout << "The point " << pt;
-  switch(bounded_side_2(pgn_begin, pgn_end,pt, traits)) {
+  switch(CGAL::bounded_side_2(pgn_begin, pgn_end,pt, traits)) {
     case CGAL::ON_BOUNDED_SIDE :
       cout << " is inside the polygon.\n";
       break;
