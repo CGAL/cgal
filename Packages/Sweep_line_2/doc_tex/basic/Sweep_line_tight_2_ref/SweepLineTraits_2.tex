@@ -123,10 +123,13 @@ primitive operations used by the sweep line functions.
   \ccMethod{Point curve_target(const X_curve& cv);}
   {returns the target of \ccc{cv}.}
 
-  \ccMethod{void curve_make_x_monotone(const Curve& cv, list<X_curve>& l);}
-  {cuts \ccc{cv} into $x$-monotone subcurves and stores them in $l$.
-  The order in which they are inserted into $l$ defines their order
-  in the hierarchy tree.}
+\ccMethod{template<class OutputIterator>
+          OutputIterator make_x_monotone(const Curve_2& cv,
+                                         OutputIterator res);}
+	 {cuts \ccc{cv} into $x$-monotone subcurves and stores them in a
+	 sequence starting at \ccc{res}. The order in which they are stored
+	 defines their order in the hierarchy tree. Returns past-the-end
+	 iterator of the sequence.}
 
   \ccMethod{void curve_split(const X_monotone_curve_2& cv, X_monotone_curve_2& c1, X_monotone_curve_2& c2,
                              const Point_2& split_pt);}

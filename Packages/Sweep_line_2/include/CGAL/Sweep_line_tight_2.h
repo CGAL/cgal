@@ -1010,7 +1010,8 @@ Init(CurveInputIterator begin, CurveInputIterator end)
     else
     {
       std::list<X_monotone_curve_2> xcurves;
-      m_traits->curve_make_x_monotone(*iter, xcurves);
+      m_traits->curve_make_x_monotone(*iter,
+                                      std::back_inserter(xcurves));
       SL_DEBUG(
       std::cout << "curve " << *iter << " was split into " 
                 << xcurves.size() << " curves." << std::endl;

@@ -580,7 +580,8 @@ init(CurveInputIterator curves_begin,
   for (cv_iter = curves_begin; cv_iter != curves_end; ++cv_iter){
     if (!traits->is_x_monotone(*cv_iter)) {
       X_curve_list x_monotone_subcurves;
-      traits->curve_make_x_monotone(*cv_iter, x_monotone_subcurves);
+      traits->curve_make_x_monotone(*cv_iter,
+                                    std::back_inserter(x_monotone_subcurves));
       
       for (X_curve_list_iterator iter = x_monotone_subcurves.begin(); 
 	   iter != x_monotone_subcurves.end(); ++iter) {
