@@ -56,36 +56,39 @@ Only vertices ($0$-faces) and cells ($3$-faces) are stored. Edges
 thus there are no corresponding classes (see
 Section~\ref{Triangulation3-sec-intro}).
 
-\ccNestedType{Vertex}{Vertex type}
+\ccTypedef{typedef TriangulationDataStructure_3::Vertex Vertex;}{}
 \ccGlue
-\ccNestedType{Cell}{Cell type}
-
-\ccTypedef{typedef pair<Cell_handle, int> Facet;}{Facet type.
-The pair \ccc{(c,i)} denotes facet on index \ccc{i} in cell \ccc{c}.}
+\ccTypedef{typedef TriangulationDataStructure_3::Cell Cell;}{}
 \ccGlue
-\ccTypedef{typedef triple<Cell_handle, int, int> Edge;}{Edge type.
-The triple \ccc{Edge(c,i,j)} denotes the edge with vertices of index
-\ccc{i} and \ccc{j} in cell \ccc{c}.}
+\ccTypedef{typedef TriangulationDataStructure_3::Facet Facet;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_3::Edge Edge;}{}
 
 The vertices and faces of the triangulations are accessed through
 \ccc{handles}, \ccc{iterators} and \ccc{circulators}. 
 A handle is a type which supports the two dereference operators
-\ccc{operator*} and \ccc{operator->}. Iterator and circulators are
+\ccc{operator*} and \ccc{operator->}. Iterators and circulators are
 bidirectional and non-mutable.
 The edges and facets of the triangulation can also be visited through
 iterators and circulators which are bidirectional and non-mutable.
 
-\ccNestedType{Vertex_handle}{handle to a vertex}
+\ccTypedef{typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle;}
+{handle to a vertex}
 \ccGlue
-\ccNestedType{Cell_handle}{handle to a cell}
+\ccTypedef{typedef TriangulationDataStructure_3::Cell_handle Cell_handle;}
+{handle to a cell}
 
-\ccNestedType{All_cells_iterator}{iterator over cells}
+\ccTypedef{typedef TriangulationDataStructure_3::Cell_iterator All_cells_iterator;}
+{iterator over cells}
 \ccGlue
-\ccNestedType{All_facets_iterator}{iterator over facets}
+\ccTypedef{typedef TriangulationDataStructure_3::Facet_iterator All_facets_iterator;}
+{iterator over facets}
 \ccGlue
-\ccNestedType{All_edges_iterator}{iterator over edges}
+\ccTypedef{typedef TriangulationDataStructure_3::Edge_iterator All_edges_iterator;}
+{iterator over edges}
 \ccGlue
-\ccNestedType{All_vertices_iterator}{iterator over vertices}
+\ccTypedef{typedef TriangulationDataStructure_3::Vertex_iterator All_vertices_iterator;}
+{iterator over vertices}
 
 \ccNestedType{Finite_cells_iterator}{iterator over finite cells}
 \ccGlue
@@ -98,11 +101,12 @@ iterators and circulators which are bidirectional and non-mutable.
 \ccNestedType{Point_iterator}{iterator over the points corresponding to the
 finite vertices of the triangulation.}
 
-\ccNestedType{Cell_circulator}{circulator over all cells incident to a
+\ccTypedef{typedef TriangulationDataStructure_3::Cell_circulator Cell_circulator;}
+{circulator over all cells incident to a
 given edge} 
 \ccGlue
-\ccNestedType{Facet_circulator}{circulator over all facets incident to a
-given edge}
+\ccTypedef{typedef TriangulationDataStructure_3::Facet_circulator Facet_circulator;}
+{circulator over all facets incident to a given edge}
 
 The triangulation class also defines the following enum type to specify
 which case occurs when locating a point in the triangulation. 
@@ -505,28 +509,28 @@ triangulation.
 
 \textit{Flips for a 2d triangulation are not implemented yet}
 
-\ccMethod{bool flip(Edge e);}
+\ccMethod{bool flip(Edge e);}{}
 \ccGlue
 \ccMethod{bool flip(Cell_handle c, int i, int j);}
 {Before flipping, these methods check that edge \ccc{e=(c,i,j)} is
 flippable (which is quite expensive). They return \ccc{false} or
 \ccc{true} according to this test.}
 
-\ccMethod{void flip_flippable(Edge e);}
+\ccMethod{void flip_flippable(Edge e);}{}
 \ccGlue
 \ccMethod{void flip_flippable(Cell_handle c, int i, int j);}
 {Should be preferred to the previous methods when the edge is
 known to be flippable.
 \ccPrecond{The edge is flippable.}}
 
-\ccMethod{bool flip(Facet f);}
+\ccMethod{bool flip(Facet f);}{}
 \ccGlue
 \ccMethod{bool flip(Cell_handle c, int i);}
 {Before flipping, these methods check that facet \ccc{f=(c,i)} is
 flippable (which is quite expensive). They return \ccc{false} or
 \ccc{true} according to this test.} 
 
-\ccMethod{void flip_flippable(Facet f);}
+\ccMethod{void flip_flippable(Facet f);}{}
 \ccGlue
 \ccMethod{void flip_flippable(Cell_handle c, int i);}
 {Should be preferred to the previous methods when the facet is
@@ -870,7 +874,7 @@ These methods are mainly a debugging help for the users of advanced features.
 \ccHeading{I/O}
 
 \cgal\ proposes an interface to Geomview for a 3D-triangulation. 
-See the chapter on Geomview in the Support Librar manual.
+See the chapter on Geomview in the Support Library manual.
 % Cross referencing to other manuals is not (yet) possible
 %See Chapter~\ref{ChapterGeomview}. 
 
