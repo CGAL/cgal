@@ -132,30 +132,30 @@ get_site(const typename K::FT v[], unsigned int& k,
   if ( site_types[j] == 'p' ) {
     if ( site_types[j+1] == 'e' ) {
       Point_2 p(v[k], v[k+1]);
-      t = Site_2(p);
+      t = Site_2::construct_site_2(p);
       step = 2;
     } else {
       Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
       Point_2 p3(v[k+4], v[k+5]), p4(v[k+6], v[k+7]);
-      t = Site_2(p1, p2, p3, p4);
+      t = Site_2::construct_site_2(p1, p2, p3, p4);
       step = 8;
     }
   } else {
     if ( site_types[j+1] == 'e' ) {
       Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
-      t = Site_2(p1, p2);
+      t = Site_2::construct_site_2(p1, p2);
       step = 4;
     } else {
       if ( site_types[j+1] != 'i' ) {
 	Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
 	Point_2 p3(v[k+4], v[k+5]), p4(v[k+6], v[k+7]);
-	t = Site_2(p1, p2, p3, p4, (site_types[j+1] == '0'));
+	t = Site_2::construct_site_2(p1, p2, p3, p4, (site_types[j+1] == '0'));
 	step = 8;
       } else {
 	Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
 	Point_2 p3(v[k+4], v[k+5]), p4(v[k+6], v[k+7]);
 	Point_2 p5(v[k+8], v[k+9]), p6(v[k+10], v[k+11]);
-	t = Site_2(p1, p2, p3, p4, p5, p6);
+	t = Site_2::construct_site_2(p1, p2, p3, p4, p5, p6);
 	step = 12;
       }
     }
