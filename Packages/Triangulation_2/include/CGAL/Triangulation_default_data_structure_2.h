@@ -351,8 +351,8 @@ public:
     Face* right = f->neighbor(ccw(i));
     Face *ll, *rr;
         
-    int li = left->index(this);
-    int ri = right->index(this);
+    int li = left->index(f);
+    int ri = right->index(f);
     Vertex* q = left->vertex(li);
     CGAL_triangulation_assertion( left->vertex(li) == right->vertex(ri));
     
@@ -395,6 +395,9 @@ public:
     // remove the before last vertex
   {
     CGAL_triangulation_precondition(number_of_vertices()== 2);
+    CGAL_triangulation_precondition( infinite_face()->has_vertex(v) &&
+				     v != infinite_vertex());
+
 
     // take care of finite_vertex data member
     if (finite_vertex() == v) {
@@ -571,7 +574,9 @@ public:
     {
         if( v == NULL ){
             _infinite_vertex = new Vertex();
+	    set_number_of_vertices(0);
         } else if( v->face() == NULL ){
+	    _infinite_vertex = new Vertex();
             set_finite_vertex(v);
             set_number_of_vertices(1);
         } else if( (v->face()->neighbor(0) == v->face()->neighbor(1))
@@ -643,7 +648,7 @@ public:
 			      (Vertex*) V[it->vertex(1)],
 			      (Vertex*) V[it->vertex(2)] );
 	++(it);
-      }
+        }
     }
 
     //create the infinite faces

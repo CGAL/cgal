@@ -100,7 +100,7 @@ public:
     return (Face *)(Fa::neighbor(i));
   }
 
-   inline int index(const Face_handle& f) const
+   inline int index(Face_handle f) const
   {
     return Fa::index( &(*f));
   }
@@ -110,7 +110,7 @@ public:
     return Fa::has_neighbor( &(*f));
   }
 
-  inline bool has_neighbor(Face_handle f, int& i)
+  inline bool has_neighbor(Face_handle f, int i)
   {
     return Fa::has_neighbor( &(*f), i);
   }

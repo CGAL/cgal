@@ -3,19 +3,21 @@
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
-
+#include <list.h>
 
 template <class Gt>
 class CGAL_Constrained_triangulation_face_base_2
   :  public CGAL_Triangulation_face_base_2<Gt>
 {
-protected:
-    bool C[3];
-
 public:
   typedef Gt Geom_traits;
   typedef CGAL_Triangulation_face_base_2<Gt> Fb;
-  typedef CGAL_Constrained_triangulation_face_base_2<Gt> Constrained_face_base;
+  typedef CGAL_Regular_triangulation_face_base_2<Gt> Regular_face_base;
+  typedef typename Gt::Point  Point;
+  typedef list<Point> Point_list;
+
+protected;
+ Point_list* point_list;
 
   CGAL_Constrained_triangulation_face_base_2()
     : Fb()
@@ -58,12 +60,12 @@ public:
     C[i] = b;
   }
     
-  bool is_constrained(int i)
+  bool is_constrained(int i) const
   {
     return(C[i]);
   }
   
-  bool is_valid(bool verbose = false, int level = 0)
+  bool is_valid(bool verbose = false, int level = 0) const
   {
     bool result = Fb::is_valid();
     CGAL_triangulation_assertion(result);

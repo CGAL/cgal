@@ -215,6 +215,10 @@ public:
         CGAL_Triangulation_ds_face_iterator_2(Tds * tds)
             : Iterator_base(tds)
         {
+	  if (tds->number_of_vertices()<2){
+	    pos = NULL;                   // there is no faces
+	    return;
+	  }
 	  Face* start = pos;
             while (_tds->is_infinite(pos)){
                 increment();

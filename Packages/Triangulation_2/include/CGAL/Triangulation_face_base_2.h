@@ -188,22 +188,22 @@ public:
     N[2] = n2;
   }
  
-//  //Miscelleanous HAS BEEMOVED TO Tds::Face
-//   inline int ccw(int i) const
-//   {
-//     return (i+1) % 3;
-//   }
-//     
-//   inline int cw(int i) const
-//   {
-//     return (i+2) % 3;
-//   }
+ 
+  inline int ccw(int i) const
+  {
+    return (i+1) % 3;
+  }
+    
+  inline int cw(int i) const
+  {
+    return (i+2) % 3;
+  }
    
  
   //the following trivial is_valid to allow
   // the user of derived face base classes 
   // to add their own purpose checking
-bool is_valid() const
+  bool is_valid() const
   {return true;}
 
   //is-valid has been moved to class Triangulation_ds_face_2
