@@ -1,3 +1,8 @@
+1.2.17
+-----------------------
+Added the largest_empty_rect_2 demo in the package and the testsuite
+
+
 1.2.16
 -----------------------
 The Triangulation_2_constrained has been added to the testsuite :)
