@@ -3662,8 +3662,8 @@ create_include_makefile()
       makefile_print_line "-L\$(LEDA_LIB_DIR) -lL" >> ${FILE}
     fi
   fi
-  makefile_print_line "${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
-  ${_printf} "\t\n" >> ${FILE}
+  ${_printf} "%s\n" "${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
+  ${_printf} "\n" >> ${FILE}
   
   # 
   # CGAL_SHARED_LIB_CREATE
