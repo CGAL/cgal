@@ -4771,12 +4771,11 @@ link_gmp()
 	    case ${CGAL_OS_COMPILER} in 
 		*CYGWIN*) 
 		    ${_cp} ${i}/${GMP_LIBNAME} \
-			${CGAL_LIB_DIR}/`full_ostype`/${GMP_LIBNAME}
+			${CGAL_LIB_DIR}/`full_ostype`
 		    log_print "remark: copied libgmp from ${i}" 
 		    ;;
 		*) 
-		    ${_ln} -s ${i}/${GMP_LIBNAME} \
-			${CGAL_LIB_DIR}/`full_ostype`/${GMP_LIBNAME}
+		    ${_ln} -s ${i}/libgmp.* ${CGAL_LIB_DIR}/`full_ostype`
 		    log_print "remark: linked libgmp from ${i}" 
 		    ;;
 	    esac
@@ -4815,7 +4814,7 @@ install_gmp_sub()
 	    ${_printf} "%s" "${_LEFTSPACE}Installing ..."
 	    _check_write ${CGAL_INCL_DIR}
 	    ${_cp} gmp.h ${CGAL_INCL_DIR}
-	    ${_mv} "`${_find} . -name libgmp.a`" "${CGAL_LIB_DIR}/`full_ostype`"
+	    ${_mv} "`${_find} . -name \"libgmp.*\"`" "${CGAL_LIB_DIR}/`full_ostype`"
 	    ${_printf} "%s\n" " done."
 	    _do_command "make clean" "Cleaning"
 	    GMP_INSTALLATION='c'
@@ -5835,11 +5834,11 @@ upgrade()
     print_filled_line
     flush_buffer
     log_print "copy gmp libs ... "
-    for i in `${_find} ${UPGRADE_FROM}/lib -follow -name "libgmp.a" -print` \
+    for i in `${_find} ${UPGRADE_FROM}/lib -follow -name "libgmp.*" -print` \
 	`${_find} ${UPGRADE_FROM}/lib -follow -name "gmp.lib" -print`
     do
 	go_up_lines 1
-	print_line "`${_printf} ${i} | ${_awk} 'BEGIN {FS=\"/\"} {i=NF-1;print $i}'`"
+	print_line "`${_printf} ${i} | ${_awk} 'BEGIN {FS=\"/\"} {printf "%s/%s\n",$(NF-1),$(NF)}'`"
 	print_filled_line
 	flush_buffer
 	newdir=`${_dirname} ${i} | ${_sed} "s${UPGRADE_FROM}/lib${CGAL_LIB_DIR}g"`
