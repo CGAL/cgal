@@ -39,6 +39,10 @@
 #define _DEBUG 93
 #include <CGAL/Kernel_d/debug.h>
 
+#ifdef CGAL_USE_LEDA
+#include <LEDA/memory.h>
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 template <class R> class RC_simplex_d;
