@@ -152,16 +152,15 @@ necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
 \ccRefIdfierPage{CGAL::Voronoi_intersection_2_traits_3<K>}\\
 \ccRefIdfierPage{CGAL::surface_neighbor_coordinates_2} \\
 
-\ccImplementation This function computes the regular triangulation of
+\ccImplementation These functions compute the regular triangulation of
 the sample points and the point \ccc{p} using a traits class
-equivalent to \ccc{Voronoi_intersection_2_traits_3<K>}. The functions
-which certify the result, need to compute the Voronoi vertices of the
-cell of \ccc{p} in this diagram.
+equivalent to \ccc{Voronoi_intersection_2_traits_3<K>}. They determine
+the neighbors of \ccc{p} in this triangulation. The functions which
+certify the result need to compute, in addition, the Voronoi vertices
+of the cell of \ccc{p} in this diagram.
 
 \ccIndexSubitemEnd{Interpolation}{surface_neighbors_3}
 \end{ccRefFunction}
-%\renewcommand{\ccRefPageBegin}{}
-%\renewcommand{\ccRefPageEnd}{}
 
 % +------------------------------------------------------------------------+
 % RefPage: end of main body, begin of footer
