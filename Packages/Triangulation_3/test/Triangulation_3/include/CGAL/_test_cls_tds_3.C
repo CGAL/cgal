@@ -23,6 +23,9 @@
 #include "_test_cls_tds_vertex.C"
 #include "_test_cls_tds_cell.C"
 
+#include <iostream>
+#include <fstream>
+
 template <class Tds>
 void
 _test_cls_tds_3( const Tds &)
