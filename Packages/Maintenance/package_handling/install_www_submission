@@ -31,7 +31,7 @@ $ENV{PATH}=
 
 
 # logfile
-$::ACTUAL_LOGFILE='install_www_submission.log';
+$::ACTUAL_LOGFILE="/tmp/install_www_submission.log.$$";
 
 # ----------------------------------------------------
 # program for getting files via http/ftp
@@ -142,7 +142,7 @@ sub unpack_package($)
 
 sub gzip_if_psfile
 {
-    if ($_ =~ /\.ps\s*/ and -f $_) {
+    if ($_ =~ /\.ps\s*$/ and -f $_) {
 	system('gzip',"$_");
     }
 }
@@ -246,10 +246,10 @@ sub remove_files()
 	if (-d $file) {
 	    next if $file eq '.';
 	    next if $file eq '..';
+	    next if $file eq 'doc_ps';
 	    system 'rm', '-rf', "$file";
 	} elsif (-f $file) {
 	    next if $file =~ /\.zip$/;
-	    next if $file eq 'doc_ps';
 	    next if $file eq 'version';
 	    next if $file eq 'description.txt';
 	    next if $file eq 'long_description.txt';
