@@ -1,3 +1,9 @@
+	Qt_widget now derives from QFrame.
+	Qt_widget_standard_tollbar now derives from QToolBar.
+	Qt_widget_standard_tollbar constructor has two extra optional
+arguments, to set the dock area (top, bottom, left, right), if a
+newline should be inserted, and the name of the toolbar as a QObject.
+
 1.3.0 - 12-11-2002
 ------------------
 	New icons were introduced in the old icon files.
