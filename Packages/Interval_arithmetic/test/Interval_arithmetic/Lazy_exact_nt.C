@@ -2,6 +2,7 @@
 
 #include <CGAL/Cartesian.h>
 #include <iostream>
+#include <cassert>
 #include <CGAL/Random.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/MP_Float.h>

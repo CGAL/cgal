@@ -1,3 +1,6 @@
+Version 4.151 on 13 November 2002
+- Fix Lazy_exact_nt test program.
+
 Version 4.150 on 8 November 2002
 - Forgot the doc part.
 
