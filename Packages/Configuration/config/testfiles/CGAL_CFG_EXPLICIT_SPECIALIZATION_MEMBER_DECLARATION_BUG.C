@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 //
-// file          : config/testfiles/CGAL_CFG_EXPLICIT_SPECIALIZATION_MEMBER_DECLARATION_BUG
+// file          : config/testfiles/CGAL_CFG_EXPLICIT_SPECIALIZATION_MEMBER_DECLARATION_BUG.C
 // package       : Configuration (1.28)
 // source        :
 // revision      : 1.11
