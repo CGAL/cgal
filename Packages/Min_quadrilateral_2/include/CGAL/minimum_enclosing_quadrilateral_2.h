@@ -30,9 +30,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
-#ifdef CGAL_REP_CLASS_DEFINED
-#include <CGAL/Minimum_enclosing_quadrilateral_traits_2.h>
-#endif // CGAL_REP_CLASS_DEFINED
 #include <iterator>
 
 CGAL_BEGIN_NAMESPACE
@@ -547,6 +544,13 @@ minimum_enclosing_strip_2(ForwardIterator f,
 
 } // minimum_enclosing_strip_2(f, l, o, t)
 
+
+#ifdef CGAL_REP_CLASS_DEFINED
+
+CGAL_END_NAMESPACE
+#include <CGAL/Minimum_enclosing_quadrilateral_traits_2.h>
+CGAL_BEGIN_NAMESPACE
+
 template < class ForwardIterator, class OutputIterator >
 inline
 OutputIterator
@@ -583,6 +587,8 @@ minimum_enclosing_strip_2( ForwardIterator f,
   Minimum_enclosing_quadrilateral_default_traits_2< R > t;
   return minimum_enclosing_strip_2(f, l, o, t);
 } // minimum_enclosing_strip_2(f, l, o)
+
+#endif // CGAL_REP_CLASS_DEFINED
 
 CGAL_END_NAMESPACE
 
