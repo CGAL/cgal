@@ -445,8 +445,8 @@ compare_xyz_3_object() const
 
 typedef CGAL ::p_Less_dist_to_point<Point_3>       Less_distance_to_point_3;
 Less_distance_to_point_3
-less_distance_to_point_3_object() const 
-{ return Less_distance_to_point_3(); }
+less_distance_to_point_3_object(const Point_3& p) const 
+{ return Less_distance_to_point_3(p); }
 
 typedef CGALi::Collinear                           Collinear_3;
 Collinear_3
