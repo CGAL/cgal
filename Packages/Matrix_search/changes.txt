@@ -8,6 +8,9 @@
 //---------------------------------------------------------------------
 
 DEMO: Added check for CGAL_USE_LEDA.
+DOCS: Added distance_object() to afn-spec.
+SRC : Fixed leading underscore names.
+SRC : Fixed bug in maximum_perimeter k-gon::min_k_gon.
 SRC : Use CGAL compose functions.
 SRC : Do not use non-std iterators (std::output_iterator etc.).
 ALL : Several fixes for Borland.
