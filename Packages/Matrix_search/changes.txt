@@ -2,6 +2,9 @@
 //	Revision History for package Matrix_search
 //=====================================================================
 
+1.64 10/09/2003 rursu:
+- Qt_help_window class is in the CGAL namespace
+
 1.63 07/09/2003 rursu:
         - demo use new help class Qt_help_window instead of HelpWindow
         - demo use new icon demoicon
