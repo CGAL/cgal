@@ -1,3 +1,9 @@
+3.4 (14 Jan 2003)
+- Equal_2 typedef added to the various traits classes
+  to do: document it and use it in the implementations 
+  (replace == and !=)
+- fix in convexity_check_2.C
+
 3.38 (30 Oct 2002)
 - add missing public in LEDA toy kernels for traits
 - add CGAL_NO_DEPRECATED_CODE macro around LEDA traits

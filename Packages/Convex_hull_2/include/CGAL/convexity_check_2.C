@@ -186,7 +186,7 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1,
                                   ForwardIterator2 last2,
                                   const Traits& ch_traits )
 {
-  typedef    typename Traits::Left_of_line_2    Left_of_line;
+  typedef    typename Traits::Left_turn_2    Left_of_line;
   ForwardIterator1 iter11;
   ForwardIterator2 iter21;
   ForwardIterator2 iter22;
