@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997, 1998, 1999 The CGAL Consortium
+// Copyright (c) 1997, 1998, 1999, 2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -18,9 +18,9 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
-//                 Lutz Kettner <kettner@inf.ethz.ch>
+//                 Lutz Kettner <kettner@cs.unc.edu>
 //
-// coordinator   : INRIA, Sophia Antipolis
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //
 // Stl_Extensions: In place list.
 // ============================================================================
@@ -56,11 +56,11 @@ struct Node {
     Node* prev;
     Node() : key(0), next(this), prev( this) {}
     Node( int n) : key(n), next(this), prev( this) {}
-    Node( Node* _nx, Node* _pv, int n)
-        : key(n), next(_nx), prev( _pv) {}
+    Node( Node* nx_, Node* pv_, int n)
+        : key(n), next(nx_), prev( pv_) {}
 };
-Node* new_node( Node* _nx, Node* _pv, int n) {
-    return new Node( _nx, _pv, n);
+Node* new_node( Node* nx_, Node* pv_, int n) {
+    return new Node( nx_, pv_, n);
 }
 void append_node( Node* p, int n) {
     Node* q = new_node( p, p->prev, n);
@@ -97,29 +97,29 @@ typedef CGAL::Bidirectional_const_circulator_over_struct< Node>
 
 // Build a simple 'n'-element circular structure using struct's.
 class CNode {
-    CNode* _next;
-    CNode* _prev;
+    CNode* next_;
+    CNode* prev_;
   public:
     int   key;
-    CNode*       next()       { return _next;}
-    const CNode* next() const { return _next;}
-    CNode*       prev()       { return _prev;}
-    const CNode* prev() const { return _prev;}
-    CNode() : _next(this), _prev( this), key(0) {}
-    CNode( int n) : _next(this), _prev( this), key(n) {}
-    CNode( CNode* _nx, CNode* _pv, int n)
-        : _next(_nx), _prev( _pv), key(n) {}
-    friend CNode* new_cnode( CNode* _nx, CNode* _pv, int n);
+    CNode*       next()       { return next_;}
+    const CNode* next() const { return next_;}
+    CNode*       prev()       { return prev_;}
+    const CNode* prev() const { return prev_;}
+    CNode() : next_(this), prev_( this), key(0) {}
+    CNode( int n) : next_(this), prev_( this), key(n) {}
+    CNode( CNode* nx_, CNode* pv_, int n)
+        : next_(nx_), prev_( pv_), key(n) {}
+    friend CNode* new_cnode( CNode* nx_, CNode* pv_, int n);
     friend void append_cnode( CNode* p, int n);
     friend void delete_cnodes( CNode* p);
 };
-CNode* new_cnode( CNode* _nx, CNode* _pv, int n) {
-    return new CNode( _nx, _pv, n);
+CNode* new_cnode( CNode* nx_, CNode* pv_, int n) {
+    return new CNode( nx_, pv_, n);
 }
 void append_cnode( CNode* p, int n) {
-    CNode* q = new_cnode( p, p->_prev, n);
-    p->_prev->_next = q;
-    p->_prev = q;
+    CNode* q = new_cnode( p, p->prev_, n);
+    p->prev_->next_ = q;
+    p->prev_ = q;
 }
 CNode* generate_cnodes( int n) {
     CGAL_assertion( n > 0);
@@ -131,11 +131,11 @@ CNode* generate_cnodes( int n) {
 void delete_cnodes( CNode* p) {
     CNode* end = p;
     CNode* q   = p;
-    p = p->_next;
+    p = p->next_;
     while ( p != end) {
         delete q;
         q = p;
-        p = p->_next;
+        p = p->next_;
     }
     delete q;
 }
@@ -226,10 +226,10 @@ void test_In_place_list() {
         CGAL::Assert_circulator_or_iterator(end);
         CGAL::Assert_is_at_least_forward_category(begin);
         CGAL::Assert_is_at_least_forward_category(end);
-        CGAL_assertion(1==test_value_type(std::value_type(begin)));
-        CGAL_assertion(1==test_value_type(std::value_type(end)));
-        CGAL_assertion(1==test_distance_type(std::distance_type(begin)));
-        CGAL_assertion(1==test_distance_type(std::distance_type(end)));
+        typedef std::iterator_traits< Iterator >::value_type      VT;
+        typedef std::iterator_traits< Iterator >::difference_type DT;
+        CGAL_assertion(1==test_value_type(static_cast< VT* >(0)));
+        CGAL_assertion(1==test_distance_type(static_cast< DT* >(0)));
     
         // Default constructor.
         Iterator z = Iterator();
@@ -319,10 +319,10 @@ void test_In_place_list() {
         CGAL::Assert_circulator_or_iterator(end);
         CGAL::Assert_is_at_least_forward_category(begin);
         CGAL::Assert_is_at_least_forward_category(end);
-        CGAL_assertion(1==test_value_type(std::value_type(begin)));
-        CGAL_assertion(1==test_value_type(std::value_type(end)));
-        CGAL_assertion(1==test_distance_type(std::distance_type(begin)));
-        CGAL_assertion(1==test_distance_type(std::distance_type(end)));
+        typedef std::iterator_traits< Iterator >::value_type      VT;
+        typedef std::iterator_traits< Iterator >::difference_type DT;
+        CGAL_assertion(1==test_value_type(static_cast< VT* >(0)));
+        CGAL_assertion(1==test_distance_type(static_cast< DT* >(0)));
     
         // Default constructor.
         Iterator z = Iterator();
@@ -424,10 +424,10 @@ void test_In_place_list() {
         CGAL::Assert_circulator_or_iterator(c_end);
         CGAL::Assert_is_at_least_forward_category(c_begin);
         CGAL::Assert_is_at_least_forward_category(c_end);
-        CGAL_assertion(1==test_value_type(std::value_type(c_begin)));
-        CGAL_assertion(1==test_value_type(std::value_type(c_end)));
-        CGAL_assertion(1==test_distance_type(std::distance_type(c_begin)));
-        CGAL_assertion(1==test_distance_type(std::distance_type(c_end)));
+        typedef std::iterator_traits< Const_iterator >::value_type      VT;
+        typedef std::iterator_traits< Const_iterator >::difference_type DT;
+        CGAL_assertion(1==test_value_type(static_cast< VT* >(0)));
+        CGAL_assertion(1==test_distance_type(static_cast< DT* >(0)));
     
         // Default constructor.
         Const_iterator z = Const_iterator();
@@ -556,10 +556,10 @@ void test_In_place_list() {
         CGAL::Assert_circulator_or_iterator(end);
         CGAL::Assert_is_at_least_forward_category(begin);
         CGAL::Assert_is_at_least_forward_category(end);
-        CGAL_assertion(1==test_value_type(std::value_type(begin)));
-        CGAL_assertion(1==test_value_type(std::value_type(end)));
-        CGAL_assertion(1==test_distance_type(std::distance_type(begin)));
-        CGAL_assertion(1==test_distance_type(std::distance_type(end)));
+        typedef std::iterator_traits< Iterator >::value_type      VT;
+        typedef std::iterator_traits< Iterator >::difference_type DT;
+        CGAL_assertion(1==test_value_type(static_cast< VT* >(0)));
+        CGAL_assertion(1==test_distance_type(static_cast< DT* >(0)));
     
         // Default constructor.
         Iterator z = Iterator();
@@ -649,10 +649,10 @@ void test_In_place_list() {
         CGAL::Assert_circulator_or_iterator(end);
         CGAL::Assert_is_at_least_forward_category(begin);
         CGAL::Assert_is_at_least_forward_category(end);
-        CGAL_assertion(1==test_value_type(std::value_type(begin)));
-        CGAL_assertion(1==test_value_type(std::value_type(end)));
-        CGAL_assertion(1==test_distance_type(std::distance_type(begin)));
-        CGAL_assertion(1==test_distance_type(std::distance_type(end)));
+        typedef std::iterator_traits< Iterator >::value_type      VT;
+        typedef std::iterator_traits< Iterator >::difference_type DT;
+        CGAL_assertion(1==test_value_type(static_cast< VT* >(0)));
+        CGAL_assertion(1==test_distance_type(static_cast< DT* >(0)));
     
         // Default constructor.
         Iterator z = Iterator();
@@ -753,10 +753,10 @@ void test_In_place_list() {
         CGAL::Assert_circulator_or_iterator(c_end);
         CGAL::Assert_is_at_least_forward_category(c_begin);
         CGAL::Assert_is_at_least_forward_category(c_end);
-        CGAL_assertion(1==test_value_type(std::value_type(c_begin)));
-        CGAL_assertion(1==test_value_type(std::value_type(c_end)));
-        CGAL_assertion(1==test_distance_type(std::distance_type(c_begin)));
-        CGAL_assertion(1==test_distance_type(std::distance_type(c_end)));
+        typedef std::iterator_traits< Const_iterator >::value_type      VT;
+        typedef std::iterator_traits< Const_iterator >::difference_type DT;
+        CGAL_assertion(1==test_value_type(static_cast< VT* >(0)));
+        CGAL_assertion(1==test_distance_type(static_cast< DT* >(0)));
     
         // Default constructor.
         Const_iterator z = Const_iterator();

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997, 1998, 1999 The CGAL Consortium
+// Copyright (c) 1997, 1998, 1999, 2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -18,9 +18,9 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
-//                 Lutz Kettner <kettner@inf.ethz.ch>
+//                 Lutz Kettner <kettner@cs.unc.edu>
 //
-// coordinator   : INRIA, Sophia Antipolis
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //
 // An iterator/circulator adaptor doing n-steps per increment.
 // ============================================================================

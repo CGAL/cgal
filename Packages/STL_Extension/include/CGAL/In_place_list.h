@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997, 1998, 1999 The CGAL Consortium
+// Copyright (c) 1997, 1998, 1999, 2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -18,9 +18,9 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
-//                 Lutz Kettner <kettner@inf.ethz.ch>
+//                 Lutz Kettner <kettner@cs.unc.edu>
 //
-// coordinator   : INRIA, Sophia Antipolis
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //
 // A doubly linked list managing items in place.
 // ============================================================================
@@ -38,12 +38,14 @@
 CGAL_BEGIN_NAMESPACE
 
 // Define shorter names to please linker (g++/egcs)
-//#define _In_place_list_iterator             _Ipli
-//#define _In_place_list_const_iterator       _Iplci
+//#define In_place_list_iterator             Ipli
+//#define In_place_list_const_iterator       Iplci
 
 // Forward declarations
-template <class T> class _In_place_list_iterator;
-template <class T> class _In_place_list_const_iterator;
+namespace CGALi {
+  template <class T> class In_place_list_iterator;
+  template <class T> class In_place_list_const_iterator;
+}
 template <class T, bool managed> class In_place_list;
 
 template < class T >
@@ -57,155 +59,158 @@ class In_place_list_base {
 public:
   T* next_link;        // forward pointer
   T* prev_link;        // backwards pointer
-  friend  class _In_place_list_iterator<T>;
-  friend  class _In_place_list_const_iterator<T>;
+  friend  class CGALi::In_place_list_iterator<T>;
+  friend  class CGALi::In_place_list_const_iterator<T>;
   friend  class In_place_list<T,false>;
   friend  class In_place_list<T,true>;
 };
-template <class T>
-class _In_place_list_iterator {
-  // protected:  // Made public for g++ 2.8 and egcs 2.90. They don't
-  // accept the friend declarations below.
-public:
-  T* node;
-public:
-  // friend  class In_place_list<T,false>;
-  // friend  class In_place_list<T,true>;
+namespace CGALi {
+  template <class T>
+  class In_place_list_iterator {
+    // protected:  // Made public for g++ 2.8 and egcs 2.90. They don't
+    // accept the friend declarations below.
+  public:
+    T* node;
+  public:
+    // friend  class In_place_list<T,false>;
+    // friend  class In_place_list<T,true>;
 
-  typedef _In_place_list_iterator<T> Self;
-  typedef In_place_list_base<T>      Base;
+    typedef In_place_list_iterator<T>  Self;
+    typedef In_place_list_base<T>      Base;
 
-  typedef T               value_type;
-  typedef T*              pointer;
-  typedef T&              reference;
-  typedef std::size_t     size_type;
-  typedef std::ptrdiff_t  difference_type;
-  typedef std::bidirectional_iterator_tag   iterator_category;
+    typedef T               value_type;
+    typedef T*              pointer;
+    typedef T&              reference;
+    typedef std::size_t     size_type;
+    typedef std::ptrdiff_t  difference_type;
+    typedef std::bidirectional_iterator_tag   iterator_category;
 
-  _In_place_list_iterator() : node(0) {}
-  _In_place_list_iterator(T* x) : node(x) {}
+    In_place_list_iterator() : node(0) {}
+    In_place_list_iterator(T* x) : node(x) {}
 
-  bool  operator==( const Self& x) const { return node == x.node; }
-  bool  operator!=( const Self& x) const { return node != x.node; }
-  T&    operator*()  const { return *node; }
-  T*    operator->() const { return  node; }
-  Self& operator++() {
-    node = ((Base*)(node))->next_link;
-    return *this;
-  }
-  Self  operator++(int) {
-    Self tmp = *this;
-    ++*this;
-    return tmp;
-  }
-  Self& operator--() {
-    node = ((Base*)(node))->prev_link;
-    return *this;
-  }
-  Self  operator--(int) {
-    Self tmp = *this;
-    --*this;
-    return tmp;
-  }
-};
+    bool  operator==( const Self& x) const { return node == x.node; }
+    bool  operator!=( const Self& x) const { return node != x.node; }
+    T&    operator*()  const { return *node; }
+    T*    operator->() const { return  node; }
+    Self& operator++() {
+      node = ((Base*)(node))->next_link;
+      return *this;
+    }
+    Self  operator++(int) {
+      Self tmp = *this;
+      ++*this;
+      return tmp;
+    }
+    Self& operator--() {
+      node = ((Base*)(node))->prev_link;
+      return *this;
+    }
+    Self  operator--(int) {
+      Self tmp = *this;
+      --*this;
+      return tmp;
+    }
+  };
+}
 
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
 #ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 template < class T>
 inline  std::bidirectional_iterator_tag
-iterator_category( const  _In_place_list_iterator<T>&) {
+iterator_category( const  CGALi::In_place_list_iterator<T>&) {
   return std::bidirectional_iterator_tag();
 }
 template < class T>
 inline  T*
-value_type( const  _In_place_list_iterator<T>&) {
+value_type( const  CGALi::In_place_list_iterator<T>&) {
   return (T*)(0);
 }
 template < class T>
 inline  std::ptrdiff_t*
-distance_type( const  _In_place_list_iterator<T>&) {
+distance_type( const  CGALi::In_place_list_iterator<T>&) {
   return (std::ptrdiff_t*)(0);
 }
 template < class T>
 inline  Iterator_tag
 query_circulator_or_iterator(
-  const _In_place_list_iterator<T>&) {
+  const CGALi::In_place_list_iterator<T>&) {
   return Iterator_tag();
 }
 #endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 
+namespace CGALi {
+  template <class T>
+  class In_place_list_const_iterator {
+    // protected:  // Made public for g++ 2.8 and egcs 2.90. They don't
+    // accept the friend declarations below.
+  public:
+    const T* node;  // It's not Ptr. Otherwise traversal won't work.
+  public:
+    // friend  class In_place_list<T,false>;
+    // friend  class In_place_list<T,true>;
 
-template <class T>
-class _In_place_list_const_iterator {
-  // protected:  // Made public for g++ 2.8 and egcs 2.90. They don't
-  // accept the friend declarations below.
-public:
-  const T* node;  // It's not Ptr. Otherwise traversal won't work.
-public:
-  // friend  class In_place_list<T,false>;
-  // friend  class In_place_list<T,true>;
+    typedef In_place_list_const_iterator<T> Self;
+    typedef In_place_list_iterator<T>       Iterator;
+    typedef In_place_list_base<T>           Base;
 
-  typedef _In_place_list_const_iterator<T> Self;
-  typedef _In_place_list_iterator<T>       Iterator;
-  typedef In_place_list_base<T>            Base;
+    typedef T               value_type;
+    typedef const T*        pointer;
+    typedef const T&        reference;
+    typedef std::size_t     size_type;
+    typedef std::ptrdiff_t  difference_type;
+    typedef std::bidirectional_iterator_tag   iterator_category;
 
-  typedef T               value_type;
-  typedef const T*        pointer;
-  typedef const T&        reference;
-  typedef std::size_t     size_type;
-  typedef std::ptrdiff_t  difference_type;
-  typedef std::bidirectional_iterator_tag   iterator_category;
+    In_place_list_const_iterator() : node(0) {}
+    In_place_list_const_iterator( Iterator i) : node(&*i) {}
+    In_place_list_const_iterator(const T* x) : node(x) {}
 
-  _In_place_list_const_iterator() : node(0) {}
-  _In_place_list_const_iterator( Iterator i) : node(&*i) {}
-  _In_place_list_const_iterator(const T* x) : node(x) {}
-
-  bool     operator==( const Self& x) const { return node == x.node; }
-  bool     operator!=( const Self& x) const { return node != x.node; }
-  const T& operator*()  const { return *node; }
-  const T* operator->() const { return  node; }
-  Self& operator++() {
-    node = ((const Base*)(node))->next_link;
-    return *this;
-  }
-  Self  operator++(int) {
-    Self tmp = *this;
-    ++*this;
-    return tmp;
-  }
-  Self& operator--() {
-    node = ((const Base*)(node))->prev_link;
-    return *this;
-  }
-  Self  operator--(int) {
-    Self tmp = *this;
-    --*this;
-    return tmp;
-  }
-};
+    bool     operator==( const Self& x) const { return node == x.node; }
+    bool     operator!=( const Self& x) const { return node != x.node; }
+    const T& operator*()  const { return *node; }
+    const T* operator->() const { return  node; }
+    Self& operator++() {
+      node = ((const Base*)(node))->next_link;
+      return *this;
+    }
+    Self  operator++(int) {
+      Self tmp = *this;
+      ++*this;
+      return tmp;
+    }
+    Self& operator--() {
+      node = ((const Base*)(node))->prev_link;
+      return *this;
+    }
+    Self  operator--(int) {
+      Self tmp = *this;
+      --*this;
+      return tmp;
+    }
+  };
+}
 
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
 #ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 template < class T>
 inline  std::bidirectional_iterator_tag
-iterator_category( const  _In_place_list_const_iterator<T>&) {
+iterator_category( const  CGALi::In_place_list_const_iterator<T>&) {
   return std::bidirectional_iterator_tag();
 }
 template < class T>
 inline  T*
-value_type( const  _In_place_list_const_iterator<T>&) {
+value_type( const  CGALi::In_place_list_const_iterator<T>&) {
   return (T*)(0);
 }
 template < class T>
 inline  std::ptrdiff_t*
-distance_type( const  _In_place_list_const_iterator<T>&) {
+distance_type( const  CGALi::In_place_list_const_iterator<T>&) {
   return (std::ptrdiff_t*)(0);
 }
 template < class T>
 inline  Iterator_tag
 query_circulator_or_iterator(
-  const  _In_place_list_const_iterator<T>&) {
+  const  CGALi::In_place_list_const_iterator<T>&) {
   return Iterator_tag();
 }
 #endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
@@ -268,8 +273,8 @@ public:
   typedef std::size_t     size_type;
   typedef std::ptrdiff_t  difference_type;
 
-  typedef _In_place_list_iterator<T>              iterator;
-  typedef _In_place_list_const_iterator<T>        const_iterator;
+  typedef CGALi::In_place_list_iterator<T>        iterator;
+  typedef CGALi::In_place_list_const_iterator<T>  const_iterator;
 
   typedef std::reverse_iterator< iterator >       reverse_iterator;
   typedef std::reverse_iterator< const_iterator > const_reverse_iterator;
@@ -577,22 +582,26 @@ public:
 
 template <class T, bool managed>
 void In_place_list<T,managed>::
-insert(_In_place_list_iterator<T> position, std::size_t n) {
+insert(CGALi::In_place_list_iterator<T> position, std::size_t n) {
   while (n--)
     insert(position, *get_node());
 }
 
 template <class T, bool managed>
 void In_place_list<T,managed>::
-insert(_In_place_list_iterator<T> position, std::size_t n, const T& x) {
+insert(CGALi::In_place_list_iterator<T> position,
+       std::size_t n,
+       const T& x)
+{
   while (n--)
     insert(position, *get_node(x));
 }
 
 template <class T, bool managed>
 void In_place_list<T,managed>::
-erase( _In_place_list_iterator<T> first,
-       _In_place_list_iterator<T> last) {
+erase(CGALi::In_place_list_iterator<T> first,
+      CGALi::In_place_list_iterator<T> last)
+{
   while (first != last)
     erase(first++);
 }
@@ -718,8 +727,8 @@ void In_place_list<T,managed>::sort() {
 
 
 // Undef shorter names (g++/egcs)
-//#undef _In_place_list_iterator
-//#undef _In_place_list_const_iterator
+//#undef In_place_list_iterator
+//#undef In_place_list_const_iterator
 
 CGAL_END_NAMESPACE
 #endif // CGAL_IN_PLACE_LIST_H //
