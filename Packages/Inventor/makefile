@@ -20,7 +20,7 @@ package:
 	@echo "---- make submit -----------------"
 	@echo "----------------------------------"
 
-version:
+Version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
 
 tag:
