@@ -24,9 +24,6 @@
 #ifndef CGAL__TEST_CLS_SPHERE_3_H
 #define CGAL__TEST_CLS_SPHERE_3_H
 
-#include <CGAL/Sphere_3.h>
-
-
 template <class R>
 bool
 _test_cls_sphere_3(const R& )

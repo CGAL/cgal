@@ -24,9 +24,6 @@
 #ifndef CGAL__TEST_CLS_TRIANGLE_2_H
 #define CGAL__TEST_CLS_TRIANGLE_2_H
 
-#include <CGAL/Triangle_2.h>
-
-
 template <class R>
 bool
 _test_cls_triangle_2(const R& )

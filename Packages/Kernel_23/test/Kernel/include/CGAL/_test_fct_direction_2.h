@@ -24,9 +24,6 @@
 #ifndef CGAL__TEST_FCT_DIRECTION_2_H
 #define CGAL__TEST_FCT_DIRECTION_2_H
 
-#include <CGAL/Direction_2.h>
-
-
 bool
 ccw(int i, int j, int k)
 // i between j and k

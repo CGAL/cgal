@@ -24,9 +24,6 @@
 #ifndef CGAL__TEST_CLS_LINE_3_H
 #define CGAL__TEST_CLS_LINE_3_H
 
-#include <CGAL/Line_3.h>
-
-
 template <class R>
 bool
 _test_cls_line_3(const R& )

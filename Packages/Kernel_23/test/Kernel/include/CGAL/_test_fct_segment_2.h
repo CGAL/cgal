@@ -24,7 +24,6 @@
 #ifndef CGAL__TEST_FCT_SEGMENT_2_H
 #define CGAL__TEST_FCT_SEGMENT_2_H
 
-
 template <class R>
 bool
 _test_fct_segment_2(const R& )

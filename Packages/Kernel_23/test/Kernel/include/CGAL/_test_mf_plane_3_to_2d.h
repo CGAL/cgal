@@ -24,12 +24,6 @@
 #ifndef CGAL__TEST_MF_PLANE_3_TO_2D_H
 #define CGAL__TEST_MF_PLANE_3_TO_2D_H
 
-#include <CGAL/Plane_3.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Segment_3.h>
-#include <CGAL/intersection_2.h>
-
-
 template <class R>
 bool
 _test_mf_plane_3_to_2d(const R& )

@@ -25,10 +25,6 @@
 #ifndef CGAL__TEST_FCT_COPLANAR_3_H
 #define CGAL__TEST_FCT_COPLANAR_3_H
 
-#include <CGAL/Point_3.h>
-#include <CGAL/predicates_on_points_3.h>
-
-
 template <class R>
 bool
 _test_fct_coplanar_3(const R& )

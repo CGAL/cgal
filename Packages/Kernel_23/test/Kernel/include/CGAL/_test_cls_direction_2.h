@@ -24,14 +24,6 @@
 #ifndef CGAL__TEST_CLS_DIRECTION_2_H
 #define CGAL__TEST_CLS_DIRECTION_2_H
 
-#include <CGAL/Point_2.h>
-#include <CGAL/Vector_2.h>
-#include <CGAL/Direction_2.h>
-#include <CGAL/Line_2.h>
-#include <CGAL/Ray_2.h>
-#include <CGAL/Segment_2.h>
-
-
 template <class R>
 bool
 _test_cls_direction_2(const R& )

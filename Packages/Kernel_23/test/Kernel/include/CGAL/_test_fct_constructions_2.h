@@ -25,10 +25,6 @@
 #ifndef CGAL__TEST_FCT_CONSTRUCTIONS_2_H
 #define CGAL__TEST_FCT_CONSTRUCTIONS_2_H
 
-#include <CGAL/Point_2.h>
-#include <CGAL/basic_constructions_2.h>
-
-
 template <class R>
 bool
 _test_fct_constructions_2(const R&)

@@ -25,10 +25,6 @@
 #ifndef CGAL__TEST_ORIENTATION_AND_BOUNDED_SIDE_H
 #define CGAL__TEST_ORIENTATION_AND_BOUNDED_SIDE_H
 
-#include <CGAL/Point_2.h>
-#include <CGAL/predicates_on_points_2.h>
-
-
 template <class R>
 bool
 _test_orientation_and_bounded_side(const R&)

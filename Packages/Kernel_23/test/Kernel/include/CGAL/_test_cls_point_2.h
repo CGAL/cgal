@@ -24,9 +24,6 @@
 #ifndef CGAL__TEST_CLS_POINT_2_H
 #define CGAL__TEST_CLS_POINT_2_H
 
-#include <CGAL/Point_2.h>
-
-
 template <class R>
 bool
 _test_cls_point_2(const R& )

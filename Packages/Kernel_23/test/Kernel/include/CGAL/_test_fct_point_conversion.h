@@ -24,13 +24,9 @@
 #ifndef CGAL__TEST_FCT_POINT_CONVERSION_H
 #define CGAL__TEST_FCT_POINT_CONVERSION_H
 
-#include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Point_3.h>
 #include <CGAL/cartesian_homogeneous_conversion.h>
-
 
 template <class NT>
 bool

@@ -24,10 +24,6 @@
 #ifndef CGAL__TEST_FCT_POINT_VECTOR_2_H
 #define CGAL__TEST_FCT_POINT_VECTOR_2_H
 
-#include <CGAL/Point_2.h>
-#include <CGAL/Vector_2.h>
-
-
 template <class R>
 bool
 _test_fct_point_vector_2(const R& )

@@ -24,8 +24,6 @@
 #ifndef CGAL__TEST_CLS_RAY_2_H
 #define CGAL__TEST_CLS_RAY_2_H
 
-#include <CGAL/Ray_2.h>
-
 template <class R>
 bool
 _test_cls_ray_2(const R& )

@@ -25,13 +25,6 @@
 #ifndef CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_H
 #define CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_H
 
-#include <CGAL/Point_3.h>
-#include <CGAL/Aff_transformation_3.h>
-#include <CGAL/rational_rotation.h>
-#include <CGAL/predicates_on_points_3.h>
-#include <CGAL/squared_distance_3.h>
-
-
 template <class R>
 bool
 _test_fct_points_implicit_sphere(const R&)

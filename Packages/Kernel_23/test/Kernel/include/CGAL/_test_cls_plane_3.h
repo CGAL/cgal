@@ -24,9 +24,6 @@
 #ifndef CGAL__TEST_CLS_PLANE_3_H
 #define CGAL__TEST_CLS_PLANE_3_H
 
-#include <CGAL/Plane_3.h>
-
-
 template <class R>
 bool
 _test_cls_plane_3(const R& )

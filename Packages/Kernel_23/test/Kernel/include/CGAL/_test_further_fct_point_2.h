@@ -24,12 +24,6 @@
 #ifndef CGAL__TEST_FURTHER_FCT_POINT_2_H
 #define CGAL__TEST_FURTHER_FCT_POINT_2_H
 
-#include <CGAL/Point_2.h>
-#include <CGAL/Vector_2.h>
-#include <CGAL/predicates_on_points_2.h>
-#include <CGAL/distance_predicates_2.h>
-
-
 template <class R>
 bool
 _test_further_fct_point_2(const R& )

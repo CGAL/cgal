@@ -23,11 +23,6 @@
 #ifndef CGAL__TEST_ANGLE_H
 #define CGAL__TEST_ANGLE_H
 
-#include <CGAL/Point_2.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/predicates_on_points_2.h>
-#include <CGAL/predicates_on_points_3.h>
-
 template <class R>
 bool
 _test_angle(const R&)

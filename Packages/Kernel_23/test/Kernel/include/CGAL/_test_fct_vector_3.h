@@ -24,9 +24,6 @@
 #ifndef CGAL__TEST_FCT_VECTOR_3_H
 #define CGAL__TEST_FCT_VECTOR_3_H
 
-#include <CGAL/Vector_3.h>
-
-
 template <class R>
 bool
 _test_fct_vector_3(const R& )

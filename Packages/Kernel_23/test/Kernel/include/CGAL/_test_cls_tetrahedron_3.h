@@ -24,9 +24,6 @@
 #ifndef CGAL__TEST_CLS_TETRAHEDRON_3_H
 #define CGAL__TEST_CLS_TETRAHEDRON_3_H
 
-#include <CGAL/Tetrahedron_3.h>
-
-
 template <class R>
 bool
 _test_cls_tetrahedron_3(const R& )

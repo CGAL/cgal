@@ -24,10 +24,6 @@
 #ifndef CGAL__TEST_CLS_VECTOR_2_H
 #define CGAL__TEST_CLS_VECTOR_2_H
 
-#include <CGAL/user_classes.h>
-#include <CGAL/Vector_2.h>
-
-
 template <class R>
 bool
 _test_cls_vector_2(const R& )
