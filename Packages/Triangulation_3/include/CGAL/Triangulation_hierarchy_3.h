@@ -53,7 +53,9 @@ public:
   typedef typename Tr_Base::Finite_facets_iterator    Finite_facets_iterator;
   typedef typename Tr_Base::Finite_edges_iterator     Finite_edges_iterator;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Tr_Base::number_of_vertices;
+#endif
 
 private:
   // here is the stack of triangulations which form the hierarchy

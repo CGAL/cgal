@@ -1,3 +1,7 @@
+24 June 2004 Sylvain Pion
+- Fix demo/makefile for IRIX's make.
+- Use CGAL_CFG_USING_BASE_MEMBER_BUG_3 for MipsPRO.
+
 20 June 2004 Sylvain Pion
 - Regular traits : unqualify some calls to e.g. power_test() to please
   g++ 3.4.
