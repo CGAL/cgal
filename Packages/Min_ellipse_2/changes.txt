@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.25 on 28-Jul-2003
+- fixed demo/Min_ellipse_2/makefile to work on FreeBSD[rursu]
+
 Version 3.24 on 17-Jun-2003
 - \ccFont -> \ccc
 

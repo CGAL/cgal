@@ -1,5 +1,8 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.20  on 28-Jul-2003
+- patched demo/Min_circle_2/makefile for FreeBSD [rursu]
+
 Version 3.19 on 17-Jun-2003
 - \ccFont -> \ccc.
 

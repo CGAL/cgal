@@ -1,3 +1,6 @@
+1.33 (28 Jully 2003)
+- patched create_makefile script for FreeBSD
+
 1.32 
 - Remove redundant $CGAL_LD_FLAGS in "create_makefile -q".
 
