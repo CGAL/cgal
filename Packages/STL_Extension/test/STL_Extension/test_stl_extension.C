@@ -847,7 +847,8 @@ void test_Iterator_identity() {
         CGAL_assertion( 4 == (*j));
         Iterator jj = j - 2;
         CGAL_assertion( 2 == (*jj));
-        jj = 4 + jj;
+        typedef std::ptrdiff_t PT;
+        jj = PT(4) + jj;
         CGAL_assertion( jj == end);
         Iterator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
@@ -1043,7 +1044,8 @@ void test_Iterator_identity() {
         CGAL_assertion( 4 == (*j));
         C_Iterator jj = j - 2;
         CGAL_assertion( 2 == (*jj));
-        jj = 4 + jj;
+        typedef std::ptrdiff_t PT;
+        jj = PT(4) + jj;
         CGAL_assertion( jj == c_end);
         C_Iterator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
@@ -1848,7 +1850,8 @@ l2.destroy();
         CGAL_assertion( 4 == (*j));
         Circulator jj = j - 2;
         CGAL_assertion( 2 == (*jj));
-        jj = 4 + jj;
+        typedef std::ptrdiff_t PT;
+        jj = PT(4) + jj;
         CGAL_assertion( jj == begin);
         Circulator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
@@ -2100,7 +2103,8 @@ Assert_random_access_category(c_begin);
     CGAL_assertion( 4 == (*j));
     C_Circulator jj = j - 2;
     CGAL_assertion( 2 == (*jj));
-    jj = 4 + jj;
+    typedef std::ptrdiff_t PT;
+    jj = PT(4) + jj;
     CGAL_assertion( jj == c_begin);
     C_Circulator ij = jj - 5;
     ij = jj - 5; // avoids warning with NDEBUG
@@ -3172,7 +3176,8 @@ void test_Iterator_project() {
         CGAL_assertion( 4 == (*j));
         Iterator jj = j - 2;
         CGAL_assertion( 2 == (*jj));
-        jj = 4 + jj;
+        typedef std::ptrdiff_t PT;
+        jj = PT(4) + jj;
         CGAL_assertion( jj == end);
         Iterator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
@@ -3368,7 +3373,8 @@ void test_Iterator_project() {
         CGAL_assertion( 4 == (*j));
         C_Iterator jj = j - 2;
         CGAL_assertion( 2 == (*jj));
-        jj = 4 + jj;
+        typedef std::ptrdiff_t PT;
+        jj = PT(4) + jj;
         CGAL_assertion( jj == c_end);
         C_Iterator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
@@ -4613,7 +4619,8 @@ l2.destroy();
         CGAL_assertion( 4 == (*j));
         Circulator jj = j - 2;
         CGAL_assertion( 2 == (*jj));
-        jj = 4 + jj;
+        typedef std::ptrdiff_t PT;
+        jj = PT(4) + jj;
         CGAL_assertion( jj == begin);
         Circulator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
@@ -4865,7 +4872,8 @@ Assert_random_access_category(c_begin);
     CGAL_assertion( 4 == (*j));
     C_Circulator jj = j - 2;
     CGAL_assertion( 2 == (*jj));
-    jj = 4 + jj;
+    typedef std::ptrdiff_t PT;
+    jj = PT(4) + jj;
     CGAL_assertion( jj == c_begin);
     C_Circulator ij = jj - 5;
     ij = jj - 5; // avoids warning with NDEBUG
@@ -5914,7 +5922,8 @@ l2.destroy();
         CGAL_assertion( 4 == (*j));
         Iterator jj = j - 2;
         CGAL_assertion( 2 == (*jj));
-        jj = 4 + jj;
+        typedef std::ptrdiff_t PT;
+        jj = PT(4) + jj;
         CGAL_assertion( jj == end);
         Iterator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
@@ -6110,7 +6119,8 @@ l2.destroy();
         CGAL_assertion( 4 == (*j));
         C_Iterator jj = j - 2;
         CGAL_assertion( 2 == (*jj));
-        jj = 4 + jj;
+        typedef std::ptrdiff_t PT;
+        jj = PT(4) + jj;
         CGAL_assertion( jj == c_end);
         C_Iterator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
@@ -6485,7 +6495,8 @@ l2.destroy();
         CGAL_assertion( 4 == (*j));
         Circulator jj = j - 2;
         CGAL_assertion( 2 == (*jj));
-        jj = 4 + jj;
+        typedef std::ptrdiff_t PT;
+        jj = PT(4) + jj;
         CGAL_assertion( jj == begin);
         Circulator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
@@ -6737,7 +6748,8 @@ Assert_random_access_category(c_begin);
     CGAL_assertion( 4 == (*j));
     C_Circulator jj = j - 2;
     CGAL_assertion( 2 == (*jj));
-    jj = 4 + jj;
+    typedef std::ptrdiff_t PT;
+    jj = PT(4) + jj;
     CGAL_assertion( jj == c_begin);
     C_Circulator ij = jj - 5;
     ij = jj - 5; // avoids warning with NDEBUG
@@ -7491,7 +7503,8 @@ void test_N_step_adaptor_derived() {
             CGAL_assertion( 4 == (*j));
             Circulator jj = j - 2;
             CGAL_assertion( 2 == (*jj));
-            jj = 4 + jj;
+            typedef std::ptrdiff_t PT;
+            jj = PT(4) + jj;
             CGAL_assertion( jj == begin);
             Circulator ij = jj - 5;
             ij = jj - 5; // avoids warning with NDEBUG
@@ -7742,7 +7755,8 @@ void test_N_step_adaptor_derived() {
             CGAL_assertion( 4 == (*j));
             C_Circulator jj = j - 2;
             CGAL_assertion( 2 == (*jj));
-            jj = 4 + jj;
+            typedef std::ptrdiff_t PT;
+            jj = PT(4) + jj;
             CGAL_assertion( jj == c_begin);
             C_Circulator ij = jj - 5;
             ij = jj - 5; // avoids warning with NDEBUG
