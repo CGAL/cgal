@@ -52,6 +52,7 @@ clean:
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile --exclude=TODO \
+	--exclude="*".swp \
 	version description.txt changes.txt \
 	src include doc_tex doc_ps test scripts
 
