@@ -553,7 +553,8 @@ protected:
 
   Nef_polyhedron_3( const SNC_structure& W, 
 		    SNC_point_locator* _pl = new SNC_point_locator_default,
-		    bool clone_pl = true, bool clone_snc = true);
+		    bool clone_pl = true,
+		    bool clone_snc = true);
   /*{\Xcreate makes |\Mvar| a new object.  If |cloneit==true| then the
   underlying structure of |W| is copied into |\Mvar|.}*/
   // TODO: granados: define behavior when clone=false
@@ -704,10 +705,9 @@ protected:
     AND _and;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, AND> tests_impl;
     SNC_structure rsnc;
-    SNC_point_locator *rpl = pl()->clone();
     SNC_decorator D( snc(), pl());
-    D.binary_operation( N1.snc(), N1.pl(), _and, rsnc, rpl);
-    Nef_polyhedron_3<T> res(rsnc, rpl, false);
+    Nef_polyhedron_3<T> res(rsnc, new SNC_point_locator_default, false);
+    D.binary_operation( N1.snc(), N1.pl(), _and, res.snc(), res.pl());
     return res;
   }
 
@@ -717,10 +717,9 @@ protected:
     OR _or;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, OR> tests_impl;
     SNC_structure rsnc;
-    SNC_point_locator *rpl = pl()->clone();
     SNC_decorator D( snc(), pl());
-    D.binary_operation( N1.snc(), N1.pl(), _or, rsnc, rpl);
-    Nef_polyhedron_3<T> res(rsnc, rpl, false);
+    Nef_polyhedron_3<T> res(rsnc, new SNC_point_locator_default, false);
+    D.binary_operation( N1.snc(), N1.pl(), _or, res.snc(), res.pl());
     //delete rpl; // TODO: analize how the improve the Nef_3 constructor so this instruction is not needed
     return res;
   }
@@ -731,10 +730,9 @@ protected:
     DIFF _diff;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, DIFF> tests_impl;
     SNC_structure rsnc;
-    SNC_point_locator *rpl = pl()->clone();
     SNC_decorator D( snc(), pl());
-    D.binary_operation( N1.snc(), N1.pl(), _diff, rsnc, rpl);
-    Nef_polyhedron_3<T> res(rsnc, rpl, false);
+    Nef_polyhedron_3<T> res(rsnc, new SNC_point_locator_default, false);
+    D.binary_operation( N1.snc(), N1.pl(), _diff, res.snc(), res.pl());
     return res;
   }    
 
@@ -745,10 +743,9 @@ protected:
     XOR _xor;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, XOR> tests_impl;
     SNC_structure rsnc;
-    SNC_point_locator *rpl = pl()->clone();
     SNC_decorator D( snc(), pl());
-    D.binary_operation( N1.snc(), N1.pl(), _xor, rsnc, rpl);
-    Nef_polyhedron_3<T> res(rsnc, rpl, false);
+    Nef_polyhedron_3<T> res(rsnc, new SNC_point_locator_default, false);
+    D.binary_operation( N1.snc(), N1.pl(), _xor, res.snc(), res.pl());
     return res;
   }
 
@@ -837,25 +834,30 @@ protected:
       }
     }
 
-    if(aff.homogeneous(0,1) != 0 ||
-       aff.homogeneous(0,2) != 0 ||
-       aff.homogeneous(1,0) != 0 ||
-       aff.homogeneous(1,2) != 0 ||
-       aff.homogeneous(2,0) != 0 ||
-       aff.homogeneous(2,1) != 0)
-      deco.compute_all_marks_of_halfspheres();
-    
     Halffacet_iterator fi;
     CGAL_nef3_forall_halffacets(fi,snc()) {
       if ( ! deco.is_infbox_facet( fi))
         fi->plane() = fi->plane().transform( aff);
     }
-    
-    //    pl()->transform(aff);
-        SNC_point_locator* old_pl = pl();
-        pl() = pl()->clone();
-        pl()->initialize(&snc());
-        delete old_pl;
+
+    if(aff.homogeneous(0,1) != 0 ||
+       aff.homogeneous(0,2) != 0 ||
+       aff.homogeneous(1,0) != 0 ||
+       aff.homogeneous(1,2) != 0 ||
+       aff.homogeneous(2,0) != 0 ||
+       aff.homogeneous(2,1) != 0 ||
+       aff.homogeneous(0,0) != aff.homogeneous(1,1) ||
+       aff.homogeneous(0,0) != aff.homogeneous(2,2)) {
+
+      deco.compute_all_marks_of_halfspheres();
+      SNC_point_locator* old_pl = pl();
+      pl() = pl()->clone();
+      pl()->initialize(&snc());
+      delete old_pl;   
+    }
+    else
+      pl()->transform(aff);
+
   }
   
   /*{\Mtext \headerline{Exploration}
@@ -1017,13 +1019,15 @@ Nef_polyhedron_3(const Plane_3& h, Boundary b, SNC_point_locator* _pl) {
  
 template <typename T>
 Nef_polyhedron_3<T>::
-Nef_polyhedron_3( const SNC_structure& W, SNC_point_locator* _pl, bool clone_pl, bool clone_snc) {
+Nef_polyhedron_3( const SNC_structure& W, SNC_point_locator* _pl, 
+		  bool clone_pl,
+		  bool clone_snc) {
   CGAL_nef3_assertion( clone_snc == true || clone_pl == false);
   // TODO: granados: define behavior when clone=false
   //  TRACEN("construction from an existing SNC structure (clone="<<clone<<")"); 
   if(clone_snc)
     snc() = W;
-  if(clone_pl || true) {
+  if(clone_pl) {
     pl() = _pl->clone();
     pl()->initialize(&snc());
   } 

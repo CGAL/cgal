@@ -181,17 +181,13 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     if ( s1.is_degenerate() || s2.is_degenerate())
       // the segment is degenerate so there is not internal intersection 
       return false;
-    if ( s1.has_on(s2.source()) || s1.has_on(s2.target()) ||
-	 s2.has_on(s1.source()))
-      // the segments does intersect at one endpoint 
-      return false;
     if ( orientation( s1.source(), s1.point(1), s2.source(), s2.target()) 
 	 != COPLANAR)
       // the segments doesn't define a plane
       return false;
-    if ( collinear( s1.source(), s1.point(1), s2.source()) &&
-	 collinear( s1.source(), s1.point(1), s2.target()) )
-      // the segments are collinear 
+    if ( s1.has_on(s2.source()) || s1.has_on(s2.target()) ||
+	 s2.has_on(s1.source()))
+      // the segments does intersect at one endpoint 
       return false;
     Line_3 ls1(s1), ls2(s2);
     if ( ls1.direction() ==  ls2.direction() ||
