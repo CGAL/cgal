@@ -1,9 +1,10 @@
+#include <CGAL/basic.h>
+
 #include <iostream>
 #include <list>
 #include <vector>
 #include <cassert>
 
-#include <CGAL/basic.h>
 #include <CGAL/Concatenate_iterator.h>
 
 
