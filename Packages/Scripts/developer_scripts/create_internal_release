@@ -197,8 +197,13 @@ sub set_version_in_config()
     chdir "$RELEASEDIR/$VERSION/include/CGAL" or die;
     open(SOURCE_FILE, '<config.h') or die "Error opening config.h: $!";
     open(TEMPFILE, ">tempfile") or die;
+    if ($result = $VERSION =~ /CGAL-(.*)/){
+	$newver = $1;
+    } else {
+	$newver = $VERSION;
+    }
     while ( <SOURCE_FILE> ) {
-	s|^\s*\#\s*define\s+CGAL_VERSION\b.*$|#define CGAL_VERSION $VERSION|;
+	s|^\s*\#\s*define\s+CGAL_VERSION\b.*$|#define CGAL_VERSION $newver|;
 	s|^\s*\#\s*define\s*CGAL_VERSION_NR\b.*$|#define CGAL_VERSION_NR $VERSION_NR|;
 	print TEMPFILE $_;
     }
