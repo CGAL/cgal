@@ -117,7 +117,7 @@ template <>
 struct Input_traits<CGAL::Gmpq> {
   typedef CGAL::Gmpz                            Input_int_type;
   typedef CGAL::Gmpz                            Input_float_type;
-  typedef CGAL::Gmpz                            Input_rat_type;
+  typedef CGAL::Gmpq                            Input_rat_type;
 };
 
 /*! leda_rational */
