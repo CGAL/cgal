@@ -1,3 +1,5 @@
+version 11.21 (25/09/02) MY
+- fixed is_null() tests no longer supported by handles of triangulations
 
 version 11.20 (22/08/02) MY
 - fixed a bug in function classify(Point p, ..) of Alpha_shapes_2.h
