@@ -21,11 +21,9 @@
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann, Sylvain Pion
 
-// Geomview doesn't work on M$ at the moment, so we don't compile this file.
-#if !defined(__BORLANDC__) && !defined(_MSC_VER) && \
-    !defined(__MWERKS__) && !defined(__MINGW32__)
-
 #include <CGAL/basic.h>
+
+#ifdef CGAL_USE_GEOMVIEW
 
 #include <sstream>
 #include <csignal>
@@ -554,4 +552,4 @@ Geomview_stream::get_new_id(const std::string & s)
 
 CGAL_END_NAMESPACE
 
-#endif // ! M$
+#endif // CGAL_USE_GEOMVIEW

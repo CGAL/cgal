@@ -1,7 +1,7 @@
 #include <CGAL/Cartesian.h>
 #include <iostream>
 
-#if defined(__BORLANDC__) || defined(_MSC_VER)
+#ifndef CGAL_USE_GEOMVIEW
 int main()
 {
   std::cout << "Geomview doesn't work on Windows, so..." << std::endl;

@@ -1,4 +1,5 @@
-CHANGES to the Geomview package.
+31 Jan 2004  Sylvain Pion
+- Use CGAL_USE_GEOMVIEW
 
 Ver 3.41 (21 October 2003)
 - fix headers

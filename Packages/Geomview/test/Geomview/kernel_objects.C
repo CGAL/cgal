@@ -3,8 +3,9 @@
 //
 // Sylvain Pion, 2000.
 
-// Geomview doesn't work on M$ at the moment, so we don't compile this file.
-#if defined(__BORLANDC__) || defined(_MSC_VER)
+#include <CGAL/basic.h>
+
+#ifndef CGAL_USE_GEOMVIEW
 #include <iostream>
 int main()
 {
