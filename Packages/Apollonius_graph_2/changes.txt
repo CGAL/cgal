@@ -1,3 +1,6 @@
+1.56 (24 October 2003) [af]
+- Vertex_handle and Vertex_iterator are equivalent (change in T2)
+
 1.55 (17 October 2003) [af]
 - Added another \protect
 

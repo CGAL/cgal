@@ -147,7 +147,7 @@ is_valid(bool verbose, int level) const
   for(int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
     for( Finite_vertices_iterator it = hierarchy[i]->finite_vertices_begin(); 
 	 it != hierarchy[i]->finite_vertices_end(); ++it) {
-      result = result && ( it->down()->up() ==  it );
+      result = result && ( &*it == &*(it->down()->up()) );
     }
   }
   return result;
