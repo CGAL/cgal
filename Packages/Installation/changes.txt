@@ -2,6 +2,10 @@
 //	Revision History for package Installation
 //=====================================================================
 
+3 May 2004 Sylvain Pion
+- Remove "-g" from DEBUG_OPTS on PGCC : it should kill all long name problems
+  at once.
+
 30 Apr 2004 Sylvain Pion
 - Add "-mp" to default CXX_FLAGS for ICC, otherwise it takes too much
   freedom for floating point operations.

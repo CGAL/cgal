@@ -1030,6 +1030,8 @@ set_compiler_flags()
 	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    PRINT_STACKTRACE_PROGRAM="gdb"
+	    # PGCC has long name problems with "-g".
+	    DEBUG_OPT=""
 	    ;;
 	*)
 	    #### settings for unknown compiler 
