@@ -2217,31 +2217,7 @@ incident_vertices(Vertex_handle v, std::set<Vertex_handle> & vertices,
   CGAL_triangulation_precondition( v != NULL );
   CGAL_triangulation_expensive_precondition( is_vertex(v) );
       
-  if ( number_of_vertices() < 2 )
-      return;
-
-  if ( c == NULL )
-    c = v->cell();
-  else
-    CGAL_triangulation_precondition( c->has_vertex(v) );
-
-  int d = dimension();
-  int j;
-  int found = 0;
-  for ( j=0; j <= d; j++ ) {
-    if ( j != c->index(v) ) {
-      if ( vertices.find( c->vertex(j) ) == vertices.end() )
-	vertices.insert( c->vertex(j) );
-      else
-	found++; // c->vertex(j) was already found 
-    }
-  }
-  if ( found == 3 )
-      return; // c was already visited
-      
-  for ( j=0; j <= d; j++ )
-    if ( j != c->index(v) )
-      incident_vertices( v, vertices, c->neighbor(j) );
+  incident_vertices(v, std::inserter(vertices, vertices.begin()));
 }
 
 template <class Vb, class Cb >

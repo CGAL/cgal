@@ -1,3 +1,6 @@
+Version 1.113 (7 May 02)
+- bug fix in deprecated version of incident_vertices()
+
 Version 1.112 (12 April 02)
 - Split insert_conflict() in insert_conflict_2() and insert_conflict_3().
 
