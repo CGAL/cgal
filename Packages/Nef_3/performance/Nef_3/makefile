@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+CGAL_MAKEFILE = /usr/local/CGAL/CGAL-3.1/make/makefile_i686_Linux-2.6.8.2.1.p3_g++-3.3.4_LEDA
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -28,9 +28,6 @@ CXXFLAGS = \
            -DCGAL_NEF3_TIMER_EXTERNAL_STRUCTURE \
            -DCGAL_NEF3_TIMER_OVERLAY \
 	   -DCGAL_NEF3_TIMER_BINARY_OPERATION \
-           -I/home/hachenb/CGAL/Nef_3/include \
-           -I/home/hachenb/CGAL/Nef_S2/include \
-           -I/home/hachenb/CGAL/Nef_2/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
 	   $(DEBUG_OPT)
