@@ -54,15 +54,14 @@ minimal distance between both sets is minimized.
     <IMG WIDTH=12 HEIGHT=12 ALIGN=BOTTOM ALT="tex2html_wrap_inline17"
     SRC="./MatrixSearch_pcenter1.gif" > with at most <I>p</I> points.}
 
-\ccInclude{CGAL/rectangular_p_center_2.h}
+  \ccInclude{CGAL/rectangular_p_center_2.h}
 
   \def\ccLongParamLayout{\ccTrue} 
 
   \ccGlobalFunction{template < class ForwardIterator, class
-    OutputIterator, class Traits > OutputIterator
+    OutputIterator, class FT > OutputIterator
     rectangular_p_center_2( ForwardIterator f, ForwardIterator l,
-    OutputIterator o, Traits::FT& r, int p, const Traits& t =
-    Default_traits);}
+    OutputIterator o, FT& r, int p);}
   
   computes rectilinear \ccc{p}-centers for the point set described by
   the range [\ccc{f}, \ccc{l}), sets \ccc{r} to the corresponding
@@ -71,49 +70,285 @@ minimal distance between both sets is minimized.
 
   \ccHeading{Precondition}
   \begin{enumerate}
-  \item If \ccc{t} is specified explicitly, \ccc{Traits} satisfies the
-    requirements stated in section
-    \ref{req_RectangularP-centerTraitsClasses},
-  \item Value type of \ccc{ForwardIterator} is \ccc{Traits::Point_2}
-    or -- if \ccc{t} is not specified explicitly --
-    \ccc{Point_2<R>} for some representation class \ccc{R},
+  \item Value type of \ccc{ForwardIterator} is \ccc{Point_2<R>} for some
+    representation class \ccc{R} and \ccc{FT} is equivalent to \ccc{R::FT},
   \item \ccc{OutputIterator} accepts the value type of
     \ccc{ForwardIterator} as value type,
   \item the range [\ccc{f}, \ccc{l}) is not empty \textit{and}
   \item 2 $\le$ \ccc{p} $\le$ 4.
   \end{enumerate}
-
-  \ccHeading{Note}
   
-  On compilers not supporting member function templates, the parameter
-  \ccc{ForwardIterator} is fixed to \ccc{vector<Point_2>::iterator}
-  and \ccc{OutputIterator} is fixed to
-  \ccc{back_insert_iterator<vector<Point_2>>} where \ccc{Point_2} is
-  \ccc{Traits::Point_2}.
-  
-  \ccImplementation The implementation uses sorted matrix search (see
-  section \ref{secSortedMatrixSearch}) and fast algorithms for
-  piercing rectangles\cite{sw-rpppp-96} which leads to a runtime
-  complexity of $\mathcal{O}(n \cdot \log n)$ where $n$ is the number
-  of input points.
+  \ccImplementation The runtime is linear for $p \in \{2,\,3\}$ and
+  $\mathcal{O}(n \cdot \log n)$ for $p = 4$ where $n$ is the number of input
+  points. These runtimes are worst case optimal. The $4$-center implementation
+  uses sorted matrix search (see section \ref{secSortedMatrixSearch}) and fast
+  algorithms for piercing rectangles\cite{sw-rpppp-96}. 
   
   \ccExample The following code generates a random set of ten points
   and computes its two-centers.
 
   \ccIncludeVerbatim{rectangular_p_center_2_example_noheader.C}
 
+  \begin{ccAdvanced}
+    \subsection{$2$--$4$ Center Functions}
+    
+    \ccHeading{$2$-Center}
+
+    \def\ccLongParamLayout{\ccTrue} 
+
+    \ccGlobalFunction{template < class ForwardIterator, class
+      OutputIterator, class Traits > OutputIterator
+      rectangular_2_center_2( ForwardIterator f, ForwardIterator l,
+      OutputIterator o, Traits::FT& r, const Traits& t);}
+    
+    computes rectilinear \ccc{2}-centers for the point set described by the
+    range [\ccc{f}, \ccc{l}), sets \ccc{r} to the corresponding $2$-radius,
+    writes the at most \ccc{2} center points to \ccc{o} and returns the
+    past-the-end iterator of this sequence.
+
+    \ccHeading{Precondition}
+    \begin{enumerate}
+    \item \ccc{Traits} satisfies the requirements stated in section
+      \ref{req_Rectangular23-centerTraitsClasses},
+    \item Value type of \ccc{ForwardIterator} is \ccc{Traits::Point_2},
+    \item \ccc{OutputIterator} accepts the value type of \ccc{ForwardIterator}
+      as value type \textit{and}
+    \item the range [\ccc{f}, \ccc{l}) is not empty.
+    \end{enumerate}
+    
+    \ccImplementation The runtime is linear in the number of input points.
+    
+    \ccHeading{$3$-Center}
+
+    \def\ccLongParamLayout{\ccTrue} 
+    
+    \ccGlobalFunction{template < class ForwardIterator, class OutputIterator,
+      class Traits > OutputIterator rectangular_3_center_2( ForwardIterator f,
+      ForwardIterator l, OutputIterator o, Traits::FT& r, const Traits& t);}
+    
+    computes rectilinear \ccc{3}-centers for the point set described by the
+    range [\ccc{f}, \ccc{l}), sets \ccc{r} to the corresponding $3$-radius,
+    writes the at most \ccc{3} center points to \ccc{o} and returns the
+    past-the-end iterator of this sequence.
+
+    \ccHeading{Precondition}
+    \begin{enumerate}
+    \item \ccc{Traits} satisfies the requirements stated in section
+      \ref{req_Rectangular23-centerTraitsClasses},
+    \item Value type of \ccc{ForwardIterator} is \ccc{Traits::Point_2},
+    \item \ccc{OutputIterator} accepts the value type of \ccc{ForwardIterator}
+      as value type \textit{and}
+    \item the range [\ccc{f}, \ccc{l}) is not empty.
+    \end{enumerate}
+    
+    \ccImplementation The runtime is linear in the number of input points.
+    
+    \ccHeading{$4$-Center}
+
+    \def\ccLongParamLayout{\ccTrue} 
+    
+    \ccGlobalFunction{template < class ForwardIterator, class OutputIterator,
+      class Traits > OutputIterator rectangular_4_center_2( ForwardIterator f,
+      ForwardIterator l, OutputIterator o, Traits::FT& r, const Traits& t);}
+    
+    computes rectilinear \ccc{4}-centers for the point set described by the
+    range [\ccc{f}, \ccc{l}), sets \ccc{r} to the corresponding $4$-radius,
+    writes the at most \ccc{4} center points to \ccc{o} and returns the
+    past-the-end iterator of this sequence.
+
+    \ccHeading{Precondition}
+    \begin{enumerate}
+    \item \ccc{Traits} satisfies the requirements stated in section
+      \ref{req_Rectangular4-centerTraitsClasses},
+    \item Value type of \ccc{ForwardIterator} is \ccc{Traits::Point_2},
+    \item \ccc{OutputIterator} accepts the value type of \ccc{ForwardIterator}
+      as value type \textit{and}
+    \item the range [\ccc{f}, \ccc{l}) is not empty.
+    \end{enumerate}
+    
+    \ccImplementation The runtime is $\mathcal{O}(n \cdot \log n)$ where $n$
+    is the number of input points which is worst case optimal. It uses sorted
+    matrix search (see section \ref{secSortedMatrixSearch}) and fast
+    algorithms for piercing rectangles\cite{sw-rpppp-96}.
+    
+  \end{ccAdvanced}
 \end{ccHtmlClassFile}
 
 \begin{ccAdvanced}
-  \ccHtmlNoClassToc\ccHtmlNoClassIndex\begin{ccClass}{Rpc_traits}
+  \ccHtmlNoClassToc\ccHtmlNoClassIndex\begin{ccClass}{Rpc3_traits}
     \ccCreationVariable{t}\ccTagFullDeclarations
     
-    \subsection{Requirements for Rectangular $p$-center Traits Classes}
-    \label{req_RectangularP-centerTraitsClasses}
+    \subsection{Requirements for Rectangular $\{2,3\}$-center Traits Classes}
+    \label{req_Rectangular23-centerTraitsClasses}
     
-    \ccDefinition A class \ccClassName\ has to provide the following
-    types in order to qualify as a traits class for
-    \ccc{rectangular_p_center_2}.
+    \ccDefinition A class \ccClassName\ has to provide the following types in
+    order to qualify as a traits class for \ccc{rectangular_2_center_2} or
+    \ccc{rectangular_3_center_2}.
+    
+    \ccTypes 
+    
+    \ccNestedType{FT}{class used for doing computations on point
+      coordinates (has to fulfill field-type requirements).}
+    
+    \ccNestedType{Point_2}{class used for representing the input
+      points.}
+    
+    \ccNestedType{Iso_rectangle_2}{class used for representing
+      axis-parallel rectangles.}
+    
+    \ccNestedType{Less_x_2}{adaptable binary function class:
+      \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}
+      returns true, iff the first point has smaller x-coordinate than
+      the second.}
+    
+    \ccNestedType{Less_y_2}{adaptable binary function class:
+      \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}
+      returns true, iff the first point has smaller y-coordinate than
+      the second.}
+    
+    \ccNestedType{Greater_x_2}{adaptable binary function class:
+      \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}
+      returns true, iff the first point has greater x-coordinate than
+      the second.}
+    
+    \ccNestedType{Greater_y_2}{adaptable binary function class:
+      \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}
+      returns true, iff the first point has greater y-coordinate than
+      the second.}
+    
+    \ccNestedType{Inf_distance_2}{adaptable binary function class:
+      \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{FT}
+      returns the $||\cdot||_{\infty}$ distance of two points.}
+    
+    \ccNestedType{Signed_inf_distance_2}{adaptable binary function
+      class: \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
+      \ccc{FT} returns the signed $||\cdot||_{\infty}$ distance of two
+      points.}
+    
+    \ccNestedType{Construct_min_2}{adaptable unary function class:
+      \ccc{Iso_rectangle_2} $\rightarrow$ \ccc{Point_2} returns the
+      lower-left corner of a rectangle.}
+    
+    \ccNestedType{Construct_max_2}{adaptable unary function class:
+      \ccc{Iso_rectangle_2} $\rightarrow$ \ccc{Point_2} returns the
+      upper-right corner of a rectangle.}
+    
+    \ccNestedType{Construct_corner_2}{adaptable binary function class:
+      \ccc{Iso_rectangle_2} $\times$ \ccc{unsigned int} $\rightarrow$
+      \ccc{Point_2} returns the i-th (starting from lower-left and then
+      counterclockwise) corner of a rectangle.}
+
+    \ccNestedType{Construct_projection_onto_horizontal_implicit_line_2}{adaptable
+      binary function class: \ccc{Point_2} $\times$ \ccc{Point_2}
+      $\rightarrow$ \ccc{Point_2} returns the (orthogonal) projection
+      of the first point onto the horizontal line through the second
+      point.}
+    
+    \ccNestedType{Construct_iso_rectangle_2}{4-argument function
+      class: \ccc{Point_2} $\times$ \ccc{Point_2} $\times$
+      \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
+      \ccc{Iso_rectangle_2} returns the rectangle with point $i$ on
+      the left, bottom, right, top resp. side.}
+    
+    \ccNestedType{Construct_iso_rectangle_2_below_left_point_2}{adaptable
+      binary function class: \ccc{Point_2} $\times$ \ccc{FT}
+      $\rightarrow$ \ccc{Iso_rectangle_2}. For argument $(p,\,r)$ it
+      returns the rectangle with $p$ as upper-right corner and
+      sidelength $r$.}
+    
+    \ccNestedType{Construct_iso_rectangle_2_below_right_point_2}{adaptable
+      binary function class: \ccc{Point_2} $\times$ \ccc{FT}
+      $\rightarrow$ \ccc{Iso_rectangle_2}. For argument $(p,\,r)$ it
+      returns the rectangle with $p$ as upper-left corner and
+      sidelength $r$.}
+    
+    \ccNestedType{Construct_iso_rectangle_2_above_right_point_2}{adaptable
+      binary function class: \ccc{Point_2} $\times$ \ccc{FT}
+      $\rightarrow$ \ccc{Iso_rectangle_2}. For argument $(p,\,r)$ it
+      returns the rectangle with $p$ as lower-left corner and
+      sidelength $r$.}
+    
+    \ccNestedType{Construct_iso_rectangle_2_above_left_point_2}{adaptable
+      binary function class: \ccc{Point_2} $\times$ \ccc{FT}
+      $\rightarrow$ \ccc{Iso_rectangle_2}. For argument $(p,\,r)$ it
+      returns the rectangle with $p$ as lower-right corner and
+      sidelength $r$.}
+
+    \ccHeading{These can be derived from \ccc{Less} and \ccc{Greater}:}
+    
+    \ccNestedType{Min_x_2}{adaptable binary function class:
+      \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Point_2}
+      returns the point with smaller x-coordinate.}
+    
+    \ccNestedType{Max_x_2}{adaptable binary function class:
+      \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Point_2}
+      returns the point with greater x-coordinate.}
+    
+    \ccNestedType{Min_y_2}{adaptable binary function class:
+      \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Point_2}
+      returns the point with smaller y-coordinate.}
+    
+    \ccNestedType{Max_y_2}{adaptable binary function class:
+      \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Point_2}
+      returns the point with greater y-coordinate.}
+
+    \ccOperations
+    
+    For every function class listed above there is a member function
+    to fetch the corresponding function object.
+    
+    \ccMemberFunction{Inf_distance_2 get_inf_distance_2() const;}{}
+    \ccGlue\ccMemberFunction{Signed_inf_distance_2
+      get_signed_inf_distance_2() const;}{}
+    
+    \ccGlue\ccMemberFunction{Construct_min_2 get_construct_min_2()
+      const;}{}
+    
+    \ccGlue\ccMemberFunction{Construct_max_2 get_construct_max_2()
+      const;}{}
+    
+    \ccGlue\ccMemberFunction{Construct_corner_2 get_construct_corner_2()
+      const;}{}
+    
+    \ccGlue\ccMemberFunction{Construct_iso_rectangle_2
+      get_construct_iso_rectangle_2() const;}{}
+    
+    \ccGlue\ccMemberFunction{Construct_projection_onto_horizontal_implicit_line_2
+      get_construct_projection_onto_horizontal_implicit_line_2()
+      const;}{}
+    
+    \ccGlue\ccMemberFunction{Construct_iso_rectangle_2_below_left_point_2
+      get_construct_iso_rectangle_2_below_left_point_2() const;}{}
+    
+    \ccGlue\ccMemberFunction{Construct_iso_rectangle_2_above_left_point_2
+      get_construct_iso_rectangle_2_above_left_point_2() const;}{}
+    
+    \ccGlue\ccMemberFunction{Construct_iso_rectangle_2_below_right_point_2
+      get_construct_iso_rectangle_2_below_right_point_2() const;}{}
+    
+    \ccGlue\ccMemberFunction{Construct_iso_rectangle_2_above_right_point_2
+      get_construct_iso_rectangle_2_above_right_point_2() const;}{}
+    
+    \ccGlue\ccMemberFunction{Min_x_2 get_min_x_2() const;}{}
+    
+    \ccGlue\ccMemberFunction{Max_x_2 get_max_x_2() const;}{}
+    
+    \ccGlue\ccMemberFunction{Min_y_2 get_min_y_2() const;}{}
+    
+    \ccGlue\ccMemberFunction{Max_y_2 get_max_y_2() const;}{}
+    
+  \end{ccClass}
+\end{ccAdvanced}
+
+\begin{ccAdvanced}
+  \ccHtmlNoClassToc\ccHtmlNoClassIndex\begin{ccClass}{Rpc4_traits}
+    \ccCreationVariable{t}\ccTagFullDeclarations
+    
+    \subsection{Requirements for Rectangular $4$-center Traits Classes}
+    \label{req_Rectangular4-centerTraitsClasses}
+    
+    \ccDefinition A class \ccClassName\ has to provide the following types in
+    order to qualify as a traits class for \ccc{rectangular_4_center_2}.
     
     \ccTypes 
     
