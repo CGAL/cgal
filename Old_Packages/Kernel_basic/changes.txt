@@ -1,3 +1,6 @@
+3.59   (? October 2001)
+- Delete No_op_allocator.h.
+
 3.58   (5 October 2001)
 - [Simple_]Handle_for<> protection cleanup, non-const Ptr() added.
 - Remove cartesian_classes.h.
