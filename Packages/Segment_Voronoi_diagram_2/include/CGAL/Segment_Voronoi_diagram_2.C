@@ -470,16 +470,16 @@ insert_third(const Site& t)
 template< class Gt, class Svdds >
 bool
 Segment_Voronoi_diagram_2<Gt,Svdds>::
-do_intersect(const Site& t, Face_handle f) const
+do_intersect(const Site& t, Vertex_handle v) const
 {
+  // add here the cases where t is a segment and intersects a point
+  // and t is a point and lies in a segment
+
   if ( t.is_segment() ) {
-    for (int i = 0; i < 3; i++) {
-      Vertex_handle v = f->vertex(i);
-      if ( !is_infinite(v) && v->is_segment() ) {
-	if ( do_intersect(t.segment(), v->segment()) ) {
-	  print_error_message();
-	  return true;
-	}
+    if ( !is_infinite(v) && v->is_segment() ) {
+      if ( do_intersect(t.segment(), v->segment()) ) {
+	print_error_message();
+	return true;
       }
     }
   }
@@ -550,8 +550,14 @@ insert(const Site& t, Vertex_handle vnear)
 
   do {
     Face_handle f(fc);
-    if ( do_intersect(t, f) ) {
-      return Vertex_handle(NULL);
+    for (int i = 0; i < 3; i++) {
+      Vertex_handle vf = f->vertex(i);
+      if ( do_intersect(t, vf) ) {
+	if ( t.is_segment() ) {
+	  return insert_intersecting_segment(t, vf);
+	  //	return Vertex_handle(NULL);
+	}
+      }
     }
 
     s = incircle(f, t);
@@ -600,17 +606,22 @@ insert(const Site& t, Vertex_handle vnear)
   List l;
   Face_map fm;
 
+  std::pair<bool, Vertex_handle> vcross(false, Vertex_handle(NULL));
+
   // MK:: NEED TO WRITE A FUNCTION CALLED find_conflict_region WHICH
   // IS GIVEN A STARTING FACE, A LIST, A FACE MAP, A VERTEX MAP AND A
   // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT 
   // REGION AND EXPANDS THE CONFLICT REGION.
   initialize_conflict_region(start_f, l);
-  expand_conflict_region(start_f, t, l, fm, sign_map, NULL);
+  expand_conflict_region(start_f, t, l, fm, sign_map, vcross, NULL);
 
   // the following condition becomes true only if intersecting
   // segments are found
-  if ( fm.size() == 0 ) {
-    return Vertex_handle(NULL);
+  if ( vcross.first ) {
+    if ( t.is_segment() ) {
+      return insert_intersecting_segment(t, vcross.second);
+      //      return vcross.second;
+    }
   }
 
   Vertex_handle v = retriangulate_conflict_region(t, l, fm);
@@ -620,6 +631,111 @@ insert(const Site& t, Vertex_handle vnear)
   return v;
 }
 
+
+//--------------------------------------------------------------------
+// insertion of intersecting site
+//--------------------------------------------------------------------
+template< class Gt, class Svdds >
+typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,Svdds>::
+insert_intersecting_segment(const Site_2& t, Vertex_handle v)
+{
+  CGAL_precondition( t.is_segment() && v->is_segment() );
+
+  Site_2 sx(t.supporting_segment(), v->site().supporting_segment());
+  Site_2 sitev(v->site());
+
+  Face_circulator fc1 = incident_faces(v);
+  Face_circulator fc2 = fc1; ++fc2;
+  Face_circulator fc_start = fc1;
+  Face_handle f1, f2;
+  bool found_f1 = false, found_f2 = false;
+  do {
+    Face_handle ff1(fc1), ff2(fc2);
+    Oriented_side os1 = oriented_side(fc1->vertex(0)->site(),
+				      fc1->vertex(1)->site(),
+				      fc1->vertex(2)->site(),
+				      sitev.supporting_segment(), sx);
+    Oriented_side os2 = oriented_side(fc2->vertex(0)->site(),
+				      fc2->vertex(1)->site(),
+				      fc2->vertex(2)->site(),
+				      sitev.supporting_segment(), sx);
+    if ( !found_f1 &&
+	 os1 != ON_POSITIVE_SIDE && os2 == ON_POSITIVE_SIDE ) {
+      f1 = ff2;
+      found_f1 = true;
+    }
+
+    if ( !found_f2 &&
+	 os1 == ON_POSITIVE_SIDE && os2 != ON_POSITIVE_SIDE ) {
+      f2 = ff2;
+      found_f2 = true;
+    }
+
+    if ( found_f1 && found_f2 ) { break; }
+
+    ++fc1, ++fc2;
+  } while ( fc_start != fc1 ); 
+
+  CGAL_assertion( f1 != f2 );
+
+  Quadruple<Vertex_handle, Vertex_handle, Face_handle, Face_handle>
+    qq = this->_tds.split_vertex(v, f1, f2);
+
+  // now I need to update the sites for vertices v1 and v2
+  Vertex_handle v1 = qq.first;
+  Site_2 sv1;
+  if ( sitev.is_exact(0) ) {
+    sv1 = Site_2(sitev.supporting_segment(),
+		 t.supporting_segment(), true);
+  } else {
+    sv1 = Site_2(sitev.supporting_segment(),
+		 sitev.crossing_segment(0),
+		 t.supporting_segment());
+  }
+  v1->set_site( sv1 );
+
+  Vertex_handle v2 = qq.second;
+  Site_2 sv2;
+  if ( sitev.is_exact(1) ) {
+    sv2 = Site_2(sitev.supporting_segment(),
+		 t.supporting_segment(), false);
+  } else {
+    sv2 = Site_2(sitev.supporting_segment(),
+		 t.supporting_segment(),
+		 sitev.crossing_segment(1));
+  }
+  v2->set_site( sv2 );
+
+  Vertex_handle vsx =
+    this->_tds.insert_in_edge(qq.third, cw(qq.third->index(v1)));
+
+  vsx->set_site(sx);
+
+  Site_2 s3, s4;
+  if ( t.is_exact(0) ) {
+    s3 = Site_2(t.supporting_segment(), sitev.supporting_segment(), true);
+  } else {
+    s3 = Site_2(t.supporting_segment(),
+		t.crossing_segment(0),
+		sitev.supporting_segment());
+  }
+
+  if ( t.is_exact(1) ) {
+    s4 = Site_2(t.supporting_segment(), sitev.supporting_segment(), false);
+  } else {
+    s4 = Site_2(t.supporting_segment(),
+		sitev.supporting_segment(),
+		t.crossing_segment(1));
+  }
+
+
+  insert(s3, vsx);
+  insert(s4, vsx);
+
+  return vsx;
+  //  return v1;
+}
 
 //--------------------------------------------------------------------
 // find conflict region
@@ -712,16 +828,23 @@ Segment_Voronoi_diagram_2<Gt,Svdds>::
 expand_conflict_region(const Face_handle& f, const Site& t,
 		       List& l, Face_map& fm,
 		       std::map<Face_handle,Sign>& sign_map,
+		       std::pair<bool,Vertex_handle>& vcross,
 		       std::vector<Vh_triple*>* fe)
 {
   // this is done to stop the recursion when intersecting segments
   // are found
-  if ( fm.size() == 0 && l.size() == 0 ) { return; }
+  if ( vcross.first ) { return; }
+  //  if ( fm.size() == 0 && l.size() == 0 ) { return; }
 
-  if ( do_intersect(t, f) ) {
-    l.clear();
-    fm.clear();
-    return;
+  for (int i = 0; i < 3; i++) {
+    Vertex_handle vf = f->vertex(i);
+    if ( do_intersect(t, vf) ) {
+      vcross.first = true;
+      vcross.second = vf;
+      l.clear();
+      fm.clear();
+      return ;
+    }
   }
 
   // setting fm[f] to true means that the face has been reached and
@@ -794,11 +917,12 @@ expand_conflict_region(const Face_handle& f, const Site& t,
     }
 
 
-    expand_conflict_region(n, t, l, fm, sign_map, fe);
+    expand_conflict_region(n, t, l, fm, sign_map, vcross, fe);
 
     // this is done to stop the recursion when intersecting segments
     // are found
-    if ( fm.size() == 0 && l.size() == 0 ) { return; }
+    //    if ( fm.size() == 0 && l.size() == 0 ) { return; }
+    if ( vcross.first ) { return; }
   } // for-loop
 }
 

@@ -333,15 +333,15 @@ public:
     }
   }
 
-  inline Vertex_handle  insert(const Point& p) {
+  Vertex_handle  insert(const Point& p) {
     return insert(Site(p), Vertex_handle(NULL));
   }
 
-  inline Vertex_handle  insert(const Segment& s) {
+  Vertex_handle  insert(const Segment& s) {
     return insert(Site(s), Vertex_handle(NULL));
   }
 
-  inline Vertex_handle  insert(const Site& t) {
+  Vertex_handle  insert(const Site& t) {
     return insert(t, Vertex_handle(NULL));
   }
 
@@ -646,7 +646,7 @@ protected:
     return is_degenerate_edge(e.first, e.second);
   }
 
-  bool do_intersect(const Site& t, Face_handle f) const;
+  bool do_intersect(const Site& t, Vertex_handle v) const;
   bool do_intersect(const Site& p, const Site& q) const
   {
     std::pair<int,int> res =
@@ -658,6 +658,14 @@ protected:
   bool are_parallel(const Site_2& p, const Site_2& q) const
   {
     return geom_traits().are_parallel_2_object()(p, q);
+  }
+
+  Oriented_side
+  oriented_side(const Site_2& s1, const Site_2& s2, const Site_2& s3,
+		const Site_2& supp, const Site_2& p) const
+  {
+    CGAL_precondition( supp.is_segment() && p.is_point() );
+    return geom_traits().oriented_side_2_object()(s1, s2, s3, supp, p);
   }
 
   void print_error_message() const
@@ -720,6 +728,8 @@ protected:
   Vertex_handle  insert_first(const Point& p);
   Vertex_handle  insert_second(const Point& p);
   Vertex_handle  insert_third(const Site& t);
+  Vertex_handle insert_intersecting_segment(const Site_2& t,
+					    Vertex_handle v);
 
   // methods for insertion
   void initialize_conflict_region(const Face_handle& f, List& l);
@@ -727,6 +737,7 @@ protected:
   void expand_conflict_region(const Face_handle& f, const Site& t,
 			      List& l, Face_map& fm,
 			      std::map<Face_handle,Sign>& sign_map,
+			      std::pair<bool, Vertex_handle>& vcross,
 			      std::vector<Vh_triple*>* fe);
 
   Vertex_handle add_bogus_vertex(Edge e, List& l);
