@@ -49,8 +49,6 @@ public:
   typedef typename Segment_traits_2::Point_2        Point_2;
   typedef typename Segment_traits_2::Curve_2        Segment_2;
 
-protected:
-
   /*!
    * Representation of a polyline curve.
    */
@@ -105,8 +103,6 @@ protected:
 
     friend class Arr_polyline_traits_2;
   };
-
-public:
 
   typedef Polyline_2<Segment_traits_2>            Curve_2;
   typedef Polyline_2<Segment_traits_2>            X_monotone_curve_2;
