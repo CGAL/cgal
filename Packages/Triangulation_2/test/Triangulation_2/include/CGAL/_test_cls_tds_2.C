@@ -46,7 +46,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   typedef typename Tds::Face_circulator   Face_circulator;
   typedef typename Tds::Edge_circulator   Edge_circulator;
 
-  typedef typename Gt::Point              Point;
+  typedef typename Gt::Point_2              Point;
 
   // Test subclasses
   CGAL::_test_cls_tds_vertex( Vertex(), Gt() );

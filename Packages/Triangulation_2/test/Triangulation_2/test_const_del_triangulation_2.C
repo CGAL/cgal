@@ -56,6 +56,14 @@ int main()
 
   _test_cls_constrained_triangulation(CDt1());
 
+  std::cout << "Testing constrained_triangulation "<< std::endl;
+  std::cout << " with Kernel traits cartesian<double> : " << std::endl;
+  typedef CGAL::Cartesian<double>                                    Gt2;
+  typedef CGAL::Triangulation_vertex_base_2<Gt2>                     Vb2;
+  typedef CGAL::Constrained_triangulation_face_base_2<Gt2>           CFb2;
+  typedef CGAL::Triangulation_default_data_structure_2<Gt2,Vb2,CFb2> Tds2;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<Gt2,Tds2>       CCls2;
 
+  _test_cls_constrained_triangulation(CCls2());
  return 0;
 }

@@ -1,3 +1,6 @@
+#include <CGAL/Cartesian.h>
+#include <CGAL/predicates/kernel_ftC2.h>
+
 
 class PVector;
 class segment;
@@ -261,87 +264,74 @@ std::istream& operator>>(std::istream& is, PVector &pv)
   return is;
 }
 
+class compare_x_2{
+public:
+  typedef point*  Point;
+  CGAL::Comparison_result operator()( const Point& p, const Point&  q) const 
+    {
+      if (p->x() < q->x()) return CGAL::SMALLER;
+      else if (p->x() > q->x()) return CGAL::LARGER;
+      else return CGAL::EQUAL;
+    }
+};
 
-#include <CGAL/Cartesian.h>
 
-#include <CGAL/predicates/kernel_ftC2.h>
+class compare_y_2{
+public:
+  typedef point*  Point;
+  CGAL::Comparison_result operator()( const Point& p, const Point&  q) const 
+    {
+      if (p->y() < q->y()) return CGAL::SMALLER;
+      else if (p->y() > q->y()) return CGAL::LARGER;
+      else return CGAL::EQUAL;
+    }
+};
+
+class orientation_2
+{
+public:
+  typedef point*  Point;
+  CGAL::Orientation
+  operator()( const Point& p, const Point&  q, const Point& r) const 
+    {
+      if(*p==*q || *p == *r || *q == *r){
+	std::cout << "coll" << std::endl;
+	return CGAL::COLLINEAR;
+      }
+      return CGAL::orientationC2(p->x(), p->y(), 
+				 q->x(), q->y(), 
+				 r->x(), r->y());
+    }
+};
+
+
+
+
+
 
 
 
 class Euclidean_2 {
 public:
-  typedef point*  Point;
-  typedef segment Segment;
-  typedef triangle Triangle;
-  typedef dir Direction;
-  typedef ray Ray;
+  typedef point*  Point_2;
+  typedef segment Segment_2;
+  typedef triangle Triangle_2;
 
- 
-  bool compare(const Point &p, const Point &q) const
-  {
-    return (p == q);
-  }
+  typedef compare_x_2    Compare_x_2;
+  typedef compare_y_2    Compare_y_2;
+  typedef orientation_2  Orientation_2; 
 
-  CGAL::Comparison_result compare_x(const Point &p, const Point &q) const
-  {
-    return CGAL::compare(p->x(), q->x());
-  }
+  Compare_x_2
+  compare_x_2_object() const
+    { return Compare_x_2();}
 
-  CGAL::Comparison_result compare_y(const Point &p, const Point &q) const
-  {
-    return CGAL::compare(p->y(), q->y());
-  }
+  Compare_y_2
+  compare_y_2_object() const
+    { return Compare_y_2();}
 
-  CGAL::Orientation orientation(const Point &p,
-                               const Point &q,
-                               const Point &r) const
-  {
-    if(*p==*q || *p == *r || *q == *r){
-      std::cout << "coll" << std::endl;
-      return CGAL::COLLINEAR;
-    }
-    return CGAL::orientationC2(p->x(), p->y(), q->x(), q->y(), r->x(), r->y());
-  }
+  Orientation_2
+  orientation_2_object() const
+    { return Orientation_2();}
 
-
-  CGAL::Orientation extremal(const Point &p,
-                            const Point &q,
-			    const Point &r) const
-  {
-    if(*p==*q || *p == *r || *q == *r){
-      std::cout << "coll" << std::endl;
-      return CGAL::COLLINEAR;
-    }
-    return CGAL::orientationC2(p->x(), p->y(), q->x(), q->y(), r->x(), r->y());
-  }
-
-  point circumcenter(const point& p, const point& q, const point& r)
-  {
-    double px( p.x());
-    double py( p.y());
-    double qx( q.x());
-    double qy( q.y());
-    double rx( r.x());
-    double ry( r.y());
-
-    double px_qx( px - qx);
-    double py_qy( py - qy);
-    double qx_rx( qx - rx);
-    double qy_ry( qy - ry);
-    double rx_px( rx - px);
-    double ry_py( ry - py);
-
-    double px2_py2( px*px + py*py);
-    double qx2_qy2( qx*qx + qy*qy);
-    double rx2_ry2( rx*rx + ry*ry);
-
-    double num_x( px2_py2*qy_ry + qx2_qy2*ry_py + rx2_ry2*py_qy);
-    double num_y( px2_py2*qx_rx + qx2_qy2*rx_px + rx2_ry2*px_qx);
-
-    double den_x( ( px*qy_ry + qx*ry_py + rx*py_qy) * 2.0);
-    double den_y( ( py*qx_rx + qy*rx_px + ry*px_qx) * 2.0);
-
-    return point(num_x/den_x, num_y/den_y);
-  }
 };
 

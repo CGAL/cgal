@@ -74,9 +74,12 @@ public:
   typedef Triangulation_2<Gt,Tds> Triangulation;
 
   typedef Gt  Geom_traits;
-  typedef typename Geom_traits::Point Point;
-  typedef typename Geom_traits::Segment Segment;
-  typedef typename Geom_traits::Triangle Triangle;
+  typedef typename Geom_traits::Point_2       Point;
+  typedef typename Geom_traits::Segment_2     Segment;
+  typedef typename Geom_traits::Triangle_2    Triangle;
+  typedef typename Geom_traits::Orientation_2 Orientation_2;
+  typedef typename Geom_traits::Compare_x_2   Compare_x;
+  typedef typename Geom_traits::Compare_y_2   Compare_y;
  
   typedef Triangulation_face_2<Gt,Tds> Face;
   typedef Triangulation_vertex_2<Gt,Tds> Vertex;
@@ -277,6 +280,14 @@ public:
  collinear_between(const Point& p, const Point& q, const Point& r)
    const;
 
+  Comparison_result compare_x(const Point& p, const Point& q) const;
+  Comparison_result compare_y(const Point& p, const Point& q) const;
+  bool               xy_equal(const Point& p, const Point& q) const;
+  Orientation orientation(const Point& p, 
+			  const Point& q, 
+			  const Point& r) const;
+
+
 protected:
   void remove_1D(Vertex_handle v);
   void remove_2D(Vertex_handle v);
@@ -451,15 +462,15 @@ is_valid(bool verbose, int level) const
   if (dimension() <= 0 ||
       (dimension()==1 && number_of_vertices() == 2 ) ) return result;
 
-  if (dimension() == 1) {
+    if (dimension() == 1) {
     Finite_vertices_iterator it1 = finite_vertices_begin(),
                              it2(it1), it3(it1);
     ++it2;
     ++it3; ++it3;
     while( it3 != finite_vertices_end()) {
-     Orientation s = geom_traits().orientation(it1->point(),
-					       it2->point(),
-					       it3->point()); 
+     Orientation s = orientation(it1->point(),
+				 it2->point(),
+				 it3->point()); 
      result = result && s == COLLINEAR ;
      CGAL_triangulation_assertion(result);
      ++it1 ; ++it2; ++it3;
@@ -470,9 +481,9 @@ is_valid(bool verbose, int level) const
     for(Finite_faces_iterator it=finite_faces_begin(); 
 	it!=finite_faces_end(); it++) {
       CGAL_triangulation_assertion( ! is_infinite(it));
-      Orientation s = geom_traits().orientation(it->vertex(0)->point(),
-						it->vertex(1)->point(),
-						it->vertex(2)->point());
+      Orientation s = orientation(it->vertex(0)->point(),
+				  it->vertex(1)->point(),
+				  it->vertex(2)->point());
       CGAL_triangulation_assertion( s == LEFTTURN );
       result = result && ( s == LEFTTURN );
     }
@@ -482,9 +493,9 @@ is_valid(bool verbose, int level) const
     Vertex_circulator qc(start); ++qc;
     Vertex_circulator rc(start); ++rc; ++rc;
     do{
-      Orientation s = geom_traits().orientation(pc->point(),
-						qc->point(),
-						rc->point());
+      Orientation s = orientation(pc->point(),
+				  qc->point(),
+				  rc->point());
       CGAL_triangulation_assertion( s != LEFTTURN );
       result = result && ( s != LEFTTURN );
       ++pc ; ++qc ; ++rc;
@@ -576,7 +587,7 @@ includes_edge(Vertex_handle va, Vertex_handle vb,
   // fr is on the right side of a->b
 {
   Vertex_handle v;
-  Orientation orient;
+  Orientation or;
   int indv;
   Edge_circulator ec = va->incident_edges(), done(ec);
   if (ec != 0) {
@@ -592,10 +603,10 @@ includes_edge(Vertex_handle va, Vertex_handle vb,
 	  return true;
 	}
 	else {
-	  orient = geom_traits().orientation(va->point(),
-					     vb->point(),
-					     v->point()); 
-	  if((orient==COLLINEAR) && 
+	  or = orientation(va->point(),
+			   vb->point(),
+			   v->point()); 
+	  if((or==COLLINEAR) && 
 	     (collinear_between (va->point(),
 				 v->point(),
 				 vb->point()))) {
@@ -680,10 +691,10 @@ flip(Face_handle& f, int i)
   CGAL_triangulation_precondition( !is_infinite(f) && 
 				   !is_infinite(f->neighbor(i)) );
   CGAL_triangulation_precondition( 
-    geom_traits().orientation(f->vertex(i)->point(),
+                  orientation(f->vertex(i)->point(),
 			      f->vertex(cw(i))->point(),
 			      f->mirror_vertex(i)->point()) == RIGHTTURN &&
-    geom_traits().orientation(f->vertex(i)->point(),
+                  orientation(f->vertex(i)->point(),
 			      f->vertex(ccw(i))->point(),
 			      f->mirror_vertex(i)->point()) == LEFTTURN); 
   _tds.flip( &(*f), i);
@@ -718,9 +729,10 @@ Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert_in_edge(const Point& p, Face_handle f,int i)
 {
-  CGAL_triangulation_precondition(
-      geom_traits().orientation(f->vertex(cw(i))->point(), p,
-				f->vertex(ccw(i))->point() ) == COLLINEAR &&
+  CGAL_triangulation_precondition( orientation(f->vertex(cw(i))->point(), 
+					    p,
+					    f->vertex(ccw(i))->point()) 
+                                   == COLLINEAR &&
       collinear_between(f->vertex(cw(i))->point(), p,
 			f->vertex(ccw(i))->point()) );
   Vertex_handle v = static_cast<Vertex*>
@@ -761,7 +773,7 @@ insert_outside_convex_hull_1(const Point& p, Face_handle f)
 {
   CGAL_triangulation_precondition( is_infinite(f) && dimension()==1);
   CGAL_triangulation_precondition(  
-    geom_traits().orientation(
+    orientation(
 	     f->mirror_vertex(f->index(infinite_vertex()))->point(),
 	     f->vertex(1- f->index(infinite_vertex()))->point(),
 	     p) == COLLINEAR &&
@@ -785,8 +797,7 @@ insert_outside_convex_hull_2(const Point& p, Face_handle f)
   Point q,r;
   q = f->vertex(ccw(li))->point();
   r = f->vertex(cw(li))->point();
-  CGAL_triangulation_precondition( 
-	    geom_traits().orientation(p,q,r) == LEFTTURN);
+  CGAL_triangulation_precondition( orientation(p,q,r) == LEFTTURN);
 
   std::list<Face_handle> ccwlist;
   std::list<Face_handle> cwlist;
@@ -798,9 +809,7 @@ insert_outside_convex_hull_2(const Point& p, Face_handle f)
     li = fc->index(infinite_vertex());
     q = fc->vertex(ccw(li))->point();
     r = fc->vertex(cw(li))->point();
-    if(geom_traits().orientation(p,q,r) == LEFTTURN ) {
-      ccwlist.push_back(&(*fc));
-    }
+    if(orientation(p,q,r) == LEFTTURN ) { ccwlist.push_back(&(*fc)); }
     else {done=true;}
   }
 
@@ -811,9 +820,7 @@ insert_outside_convex_hull_2(const Point& p, Face_handle f)
     li = fc->index(infinite_vertex());
     q = fc->vertex(ccw(li))->point();
     r = fc->vertex(cw(li))->point();
-    if(geom_traits().orientation(p,q,r) == LEFTTURN ) {
-      cwlist.push_back(&(*fc));
-    }
+    if(orientation(p,q,r) == LEFTTURN ) { cwlist.push_back(&(*fc));}
     else {done=true;}
   }
 
@@ -851,9 +858,9 @@ insert_outside_affine_hull(const Point& p)
 {
   CGAL_triangulation_precondition(dimension() == 1);
   Face_handle f = (*finite_edges_begin()).first;
-  Orientation or = geom_traits().orientation( f->vertex(0)->point(),
-					      f->vertex(1)->point(),
-					      p);
+  Orientation or = orientation( f->vertex(0)->point(),
+				f->vertex(1)->point(),
+				p);
   CGAL_triangulation_precondition(or != COLLINEAR);
   bool conform = ( or == COUNTERCLOCKWISE);
 
@@ -993,9 +1000,8 @@ test_dim_down(Vertex_handle v)
   while ( dim1 && ++fic != done) {
     iv = fic->index(v);
     if (fic->vertex(ccw(iv)) != infinite_vertex()) {
-      dim1 = dim1 &&
-	geom_traits().orientation(p, q, fic->vertex(ccw(iv))->point()) 
-	== COLLINEAR; 
+      dim1 = dim1 && 
+	orientation(p, q, fic->vertex(ccw(iv))->point()) == COLLINEAR; 
     }
   }
   return dim1;
@@ -1085,18 +1091,16 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
 	in = (*next).second;
 	v2 = fn->vertex(ccw(in));	
 	if ( !is_infinite(v2) &&
-	     geom_traits().orientation(v0->point(), v1->point(), v2->point()) 
-	     == LEFTTURN ) {
+	     orientation(v0->point(), v1->point(), v2->point()) == LEFTTURN ) {
 	  side =  bounded_side(v0->point(), 
 			       v1->point(), 
 			       v2->point(),
 			       v->point());
 
 	  if( side == ON_UNBOUNDED_SIDE || 
-	      (side == ON_BOUNDARY && 
-	       geom_traits().orientation(v0->point(),
-					 v->point(),
-					 v2->point()) == COLLINEAR &&
+	      (side == ON_BOUNDARY && orientation(v0->point(),
+					     v->point(),
+					     v2->point()) == COLLINEAR &&
 	       collinear_between(v0->point(),v->point(),v2->point()) )) 
 	    {
 	      //create face
@@ -1130,10 +1134,9 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
       if ( !is_infinite(ff->vertex(cw(ii))) &&
 	   !is_infinite(fn->vertex(cw(in))) &&
 	   !is_infinite(fn->vertex(ccw(in))) &&
-	   geom_traits().orientation(ff->vertex(cw(ii))->point(),
-				     fn->vertex(cw(in))->point(),
-				     fn->vertex(ccw(in))->point()) 
-	   == LEFTTURN) {
+	   orientation(ff->vertex(cw(ii))->point(),
+		       fn->vertex(cw(in))->point(),
+		       fn->vertex(ccw(in))->point()) == LEFTTURN) {
 	  create_face(ff,ii,fn,in);
 	  break;
 	}
@@ -1183,6 +1186,9 @@ void
 Triangulation_2<Gt, Tds>::
 fill_hole_delaunay(std::list<Edge> & first_hole)
 {
+  typename Gt::Side_of_oriented_circle_2
+    in_circle = geom_traits().side_of_oriented_circle_2_object();
+
   typedef std::list<Edge> Hole;
   typedef std::list<Hole> Hole_list;
   
@@ -1257,11 +1263,10 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
 	}
 	else {     // vv is a finite vertex
 	  p = vv->point();
-	  if (geom_traits().orientation(p0,p1,p) == COUNTERCLOCKWISE) {
+	  if (orientation(p0,p1,p) == COUNTERCLOCKWISE) {
 	    if(is_infinite(v2)) { v2=vv; p2=p; cut_after=hit;}
 	    else{
-	      if( geom_traits().side_of_oriented_circle (p0,p1,p2,p) ==
-		  ON_POSITIVE_SIDE){
+	      if( in_circle(p0,p1,p2,p) ==  ON_POSITIVE_SIDE){
 		v2=vv; p2=p; cut_after=hit;}
 	    }
 	  }
@@ -1406,9 +1411,9 @@ march_locate_1D(const Point& t,
   Face_handle ff = infinite_face();
   int iv = ff->index(infinite_vertex());
   Face_handle f = ff->neighbor(iv);
-  Orientation pqt = geom_traits().orientation(f->vertex(0)->point(), 
-					      f->vertex(1)->point(),
-					      t);
+  Orientation pqt = orientation(f->vertex(0)->point(), 
+				f->vertex(1)->point(),
+				t);
   if(pqt == RIGHTTURN || pqt == LEFTTURN) {
     lt = OUTSIDE_AFFINE_HULL;
     li = 4 ;// should not be used
@@ -1421,7 +1426,8 @@ march_locate_1D(const Point& t,
     li = iv;
     return ff;
   }
-  if(geom_traits().compare(t,f->vertex(1-i)->point())){
+
+  if( xy_equal(t,f->vertex(1-i)->point()) ){
     lt = VERTEX;
     li=1-i;
     return f;
@@ -1436,7 +1442,7 @@ march_locate_1D(const Point& t,
     li = iv;
     return ff;
   }
-  if(geom_traits().compare(t,f->vertex(1-i)->point())){
+  if( xy_equal(t,f->vertex(1-i)->point()) ){
       lt = VERTEX;
       li=1-i;
     return f;
@@ -1447,7 +1453,7 @@ march_locate_1D(const Point& t,
   for( ; eit != finite_edges_end() ; eit++) {
     u = (*eit).first->vertex(0);
     v = (*eit).first->vertex(1);
-    if(geom_traits().compare(t,v->point())){
+    if(xy_equal(t,v->point())){
       lt = VERTEX;
       li = 1;
       return (*eit).first;
@@ -1472,10 +1478,9 @@ march_locate_2D(const Face_handle& start,
 {
   //    CGAL_triangulation_precondition( ! is_infinite(start) );
   Triangulation_2 *ncthis = (Triangulation_2 *)this;
-    
+      
   Point p(start->vertex(0)->point());
-  if(geom_traits().compare_x(t,p) == EQUAL &&  
-     geom_traits().compare_y(t,p) == EQUAL) {
+  if(xy_equal(t,p)) {
     lt = VERTEX;
     li = 0;
     return start;
@@ -1490,8 +1495,7 @@ march_locate_2D(const Face_handle& start,
     // we walk clockwise on the hull to decide
     int i = lfc->index(infinite_vertex());
     p = lfc->vertex(ccw(i))->point();
-    if(geom_traits().compare_x(t,p) == EQUAL &&  
-       geom_traits().compare_y(t,p) == EQUAL){
+    if(xy_equal(t,p)){
       lt = VERTEX;
       li = ccw(i);
       return lfc;
@@ -1500,13 +1504,12 @@ march_locate_2D(const Face_handle& start,
     Orientation pqt;
     Face_handle f(lfc);
     while(1) {
-      if(geom_traits().compare_x(t,q) == EQUAL &&  
-	 geom_traits().compare_y(t,q) == EQUAL){
+      if(xy_equal(t,q)){
 	lt = VERTEX;
 	li = cw(i);
 	return f;
       }
-      pqt = geom_traits().orientation(p,q,t);
+      pqt = orientation(p,q,t);
       if (pqt == COLLINEAR && collinear_between(p, t, q)){
 	lt = EDGE;
 	li = i;
@@ -1546,8 +1549,12 @@ locate(const Point& p,
       lt = OUTSIDE_AFFINE_HULL;
       li = 4; // li should not be used in this case
     } else { // number_of_vertices() == 1
-      lt = geom_traits().compare(p,finite_vertex()->point()) ? 
-	VERTEX : OUTSIDE_AFFINE_HULL;
+      if (xy_equal(p,finite_vertex()->point())){
+	lt = VERTEX ;
+      }
+      else{
+	lt = OUTSIDE_AFFINE_HULL;
+      }
       li = 4; // li should not be used in this case
     }
     return NULL;
@@ -1732,8 +1739,7 @@ Triangulation_2<Gt, Tds>::
 line_walk(const Point& p, const Point& q,  Face_handle f) const
 {
   CGAL_triangulation_precondition( (dimension() == 2) && 
-				   (! geom_traits().compare(p,q)) );
-    
+				! xy_equal(p,q));
   Line_face_circulator lfc = (f.is_null())
     ? Line_face_circulator(p, q, this)
     : Line_face_circulator(p, q, f, this);
@@ -1748,13 +1754,14 @@ template <class Gt, class Tds >
 Oriented_side
 Triangulation_2<Gt, Tds>::
 oriented_side(const Point &p0, const Point &p1,
-                  const Point &p2, const Point &p) const
+	      const Point &p2, const Point &p) const
 {
-        // depends on the orientation of the vertices
-        Orientation o1 = geom_traits().orientation(p0, p1, p),
-                         o2 = geom_traits().orientation(p1, p2, p),
-                          o3 = geom_traits().orientation(p2, p0, p),
-                         ot = geom_traits().orientation(p0, p1, p2);
+  // return position of point p with respect to triangle p0p1p2
+  // depends on the orientation of the vertices
+  Orientation o1 = orientation(p0, p1, p),
+              o2 = orientation(p1, p2, p),
+              o3 = orientation(p2, p0, p),
+              ot = orientation(p0, p1, p2);
 
         if (o1 == COLLINEAR ||
             o2 == COLLINEAR ||
@@ -1798,10 +1805,11 @@ Triangulation_2<Gt, Tds>::
 bounded_side(const Point &p0, const Point &p1,
                  const Point &p2, const Point &p) const
 {
-      Orientation o1 = geom_traits().orientation(p0, p1, p),
-        o2 = geom_traits().orientation(p1, p2, p),
-        o3 = geom_traits().orientation(p2, p0, p),
-        ot = geom_traits().orientation(p0, p1, p2);
+  // return position of point p with respect to triangle p0p1p2
+  Orientation o1 = orientation(p0, p1, p),
+        o2 = orientation(p1, p2, p),
+        o3 = orientation(p2, p0, p),
+        ot = orientation(p0, p1, p2);
 
       if(o1 == COLLINEAR ||
          o2 == COLLINEAR ||
@@ -1857,17 +1865,17 @@ Triangulation_2<Gt,Tds>::
 side_of_oriented_circle(Face_handle f, const Point & p) const
 {
   if ( ! is_infinite(f) ) {
-    return geom_traits().side_of_oriented_circle(f->vertex(0)->point(),
-						 f->vertex(1)->point(),
-						 f->vertex(2)->point(),p);
+    typename Gt::Side_of_oriented_circle_2 
+      in_circle = geom_traits().side_of_oriented_circle_2_object();
+    return in_circle(f->vertex(0)->point(),
+		     f->vertex(1)->point(),
+		     f->vertex(2)->point(),p);
   }
 
   int i = f->index(infinite_vertex());
-  Orientation o =
-    geom_traits().orientation(f->vertex(ccw(i))->point(),
+  Orientation o = orientation(f->vertex(ccw(i))->point(),
 			      f->vertex(cw(i))->point(),
 			      p);
-						     
   return (o == NEGATIVE) ? ON_NEGATIVE_SIDE :
                 (o == POSITIVE) ? ON_POSITIVE_SIDE :
                       ON_ORIENTED_BOUNDARY;
@@ -1881,17 +1889,17 @@ Triangulation_2<Gt, Tds>::
 collinear_between(const Point& p, const Point& q, const Point& r) const
 {
   // return true if point q is between p and r
-  // p,q and r are supposed to be colinear points
-  Comparison_result c_pr = geom_traits().compare_x(p, r);
+  // p,q and r are supposed to be collinear points
+  Comparison_result c_pr = compare_x(p, r);
   Comparison_result c_pq;
   Comparison_result c_qr;
   if(c_pr == EQUAL) {
-    c_pr = geom_traits().compare_y(p, r);
-    c_pq = geom_traits().compare_y(p, q);
-    c_qr = geom_traits().compare_y(q, r);
+    c_pr = compare_y(p, r);
+    c_pq = compare_y(p, q);
+    c_qr = compare_y(q, r);
   } else {
-    c_pq = geom_traits().compare_x(p, q);
-    c_qr = geom_traits().compare_x(q, r);
+    c_pq = compare_x(p, q);
+    c_qr = compare_x(q, r);
   }
   return ( (c_pq == SMALLER) && (c_qr == SMALLER) ) ||
          ( (c_pq == LARGER)  && (c_qr == LARGER) );
@@ -1899,13 +1907,51 @@ collinear_between(const Point& p, const Point& q, const Point& r) const
 }
 
 template <class Gt, class Tds >
+inline
+Comparison_result
+Triangulation_2<Gt, Tds>::
+compare_x(const Point& p, const Point& q) const
+{
+  return geom_traits().compare_x_2_object()(p,q);
+}
+
+template <class Gt, class Tds >
+inline
+Comparison_result
+Triangulation_2<Gt, Tds>::
+compare_y(const Point& p, const Point& q) const
+{
+  return geom_traits().compare_y_2_object()(p,q);
+}
+
+template <class Gt, class Tds >
+inline
+bool
+Triangulation_2<Gt, Tds>::
+xy_equal(const Point& p, const Point& q) const
+{
+  return compare_x(p,q)== EQUAL && compare_y(p,q)== EQUAL ;
+}
+
+template <class Gt, class Tds >
+inline
+Orientation
+Triangulation_2<Gt, Tds>::
+orientation(const Point& p, const Point& q,const Point& r ) const
+{
+  return geom_traits().orientation_2_object()(p,q,r);
+}
+
+template <class Gt, class Tds >
 Triangulation_2<Gt, Tds>::Point
 Triangulation_2<Gt, Tds>::
 circumcenter(Face_handle  f) const
 {
-  return geom_traits().circumcenter((f->vertex(0))->point(), 
-				    (f->vertex(1))->point(), 
-				    (f->vertex(2))->point());
+  typename Gt::Construct_circumcenter_2
+    circumcenter = geom_traits().construct_circumcenter_2_object();
+  return circumcenter((f->vertex(0))->point(), 
+		      (f->vertex(1))->point(), 
+		      (f->vertex(2))->point());
 }
 
  

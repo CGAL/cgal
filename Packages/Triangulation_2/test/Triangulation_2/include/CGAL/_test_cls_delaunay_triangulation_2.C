@@ -99,9 +99,9 @@ _test_delaunay_duality( const Del &T )
   for (eit =  T.finite_edges_begin(); eit !=  T.finite_edges_end(); ++eit)
     {
       CGAL::Object o = T.dual(eit);
-      typename Gt::Ray r;
-      typename Gt::Segment s;
-      typename Gt::Line l;
+      typename Gt::Ray_2 r;
+      typename Gt::Segment_2 s;
+      typename Gt::Line_2 l;
       if ( CGAL::assign(s,o) ) {
         assert(  ! T.is_infinite((*eit).first) );
 	assert( ! T.is_infinite(((*eit).first)->neighbor((*eit).second )) );
@@ -121,9 +121,9 @@ _test_delaunay_duality( const Del &T )
     {
       if (! T.is_infinite(ec)){
 	CGAL::Object o = T.dual(ec);
-	typename Gt::Ray r;
-        typename Gt::Segment s;
-	typename Gt::Line l;
+	typename Gt::Ray_2 r;
+        typename Gt::Segment_2 s;
+	typename Gt::Line_2 l;
 	assert( CGAL::assign(s,o) || CGAL::assign(r,o) || CGAL::assign(l,o) );
       }
       ++ec;

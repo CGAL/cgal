@@ -59,12 +59,12 @@ public:
   
 
   typedef Gt Geom_traits;
-  typedef typename Geom_traits::Point          Point;
-  typedef typename Geom_traits::Segment    Segment;
-  typedef std::pair<Point,Point> Constraint;
-  typedef std::list<Edge> List_edges;
-  typedef std::list<Face_handle> List_faces;
-  typedef std::list<Vertex_handle> List_vertices;
+  typedef typename Geom_traits::Point_2      Point;
+  typedef typename Geom_traits::Segment_2    Segment;
+  typedef std::pair<Point,Point>             Constraint;
+  typedef std::list<Edge>                    List_edges;
+  typedef std::list<Face_handle>             List_faces;
+  typedef std::list<Vertex_handle>           List_vertices;
 
   //nouveau 
   class Less_edge;
@@ -336,8 +336,8 @@ update_new_edges(Point a, Point b,
   Face_handle fh;
   int ih;
   assert( is_edge(vi,vh,fh,ih));
-  if ( geom_traits().orientation(a,b,vh->point()) ==
-       geom_traits().orientation(a,b,fh->vertex(ih)->point())) {
+  if ( orientation(a,b,vh->point()) ==
+       orientation(a,b,fh->vertex(ih)->point())) {
     // face fh is not traversed by ab and will not be deleted
     new_edges.push_back(Edge(fh,ih));
   }
@@ -600,7 +600,7 @@ find_conflicts(Vertex_handle va, Vertex_handle  vb,
 
   // loop over triangles intersected by ab
   while (current_vertex != vbb)  { 
-    orient = geom_traits().orientation(a,b,current_vertex->point());
+    orient = orientation(a,b,current_vertex->point());
     int i1, i2;
     switch (orient) {
     case COLLINEAR :  
@@ -733,7 +733,7 @@ triangulate(List_edges & list_edges, List_faces &
       Vertex_handle v0=n1->vertex(ccw(ind1));
       Vertex_handle v1=n1->vertex(cw(ind1));
       Vertex_handle v2=n2->vertex(cw(ind2));
-      orient= geom_traits().orientation(v0->point(),v1->point(),v2->point());
+      orient= orientation(v0->point(),v1->point(),v2->point());
       switch (orient) {
       case RIGHTTURN : 	  		
 	// creates the new triangle v0v1v2

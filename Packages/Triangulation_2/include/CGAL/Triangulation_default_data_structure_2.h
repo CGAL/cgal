@@ -1240,7 +1240,7 @@ file_input( std::istream& is, bool skip_first)
     ++i;
   }
   for( ; i < n; ++i) {
-    typename Gt::Point p;
+    typename Vb::Point p;
     is >> p;
     V[i] = new Vertex(p);
   }

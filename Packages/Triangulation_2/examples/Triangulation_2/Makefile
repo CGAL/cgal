@@ -35,7 +35,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: points example voronoi
+all: points example voronoi colored_face triangulation_prog1 terrain regular
 
 points: points.o
 	$(CGAL_CXX) -o points points.o $(LDFLAGS)

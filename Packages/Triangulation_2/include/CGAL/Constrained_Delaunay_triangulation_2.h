@@ -66,7 +66,7 @@ public:
   typedef std::list<Vertex_handle> List_vertices;  
   typedef std::list<Face_handle> List_faces;
 
-  typedef typename Gt::Point Point;
+  typedef typename Gt::Point_2  Point;
 
   Constrained_Delaunay_triangulation_2(const Gt& gt=Gt() ) : 
     Constrained_triangulation(gt) { }
@@ -620,8 +620,8 @@ is_gabriel(Face_handle  f, int i)
   else {
     cc = circumcenter(f);
     a = (f->vertex(i))->point(); // the vertex of f1 not on e
-    orient = geom_traits().orientation(vb->point(),vc->point(),a);
-    orient2 = geom_traits().orientation(vb->point(),vc->point(),cc);
+    orient = orientation(vb->point(),vc->point(),a);
+    orient2 = orientation(vb->point(),vc->point(),cc);
     if (orient == orient2) {ok1 = true;}
     else {ok1 = false;}
   }  
@@ -633,8 +633,8 @@ is_gabriel(Face_handle  f, int i)
   else {
     cc = circumcenter(f2);
     a = (f2->vertex(f->mirror_index(i)))->point(); // the vertex of f2 not on e
-    orient = geom_traits().orientation(vb->point(),vc->point(),a);
-    orient2 = geom_traits().orientation(vb->point(),vc->point(),cc);
+    orient = orientation(vb->point(),vc->point(),a);
+    orient2 = orientation(vb->point(),vc->point(),cc);
     if (orient == orient2) {ok2 = true;}
     else {ok2 = false;}
   }

@@ -81,13 +81,14 @@ parse(int argc, char* argv[], Options &opt)
 
 typedef double coord_type;
 typedef CGAL::Cartesian<coord_type>  Rpst;
-typedef CGAL::Point_2<Rpst>  Point;
-typedef CGAL::Segment_2<Rpst>  Segment;
-typedef CGAL::Ray_2<Rpst>  Ray;
-typedef CGAL::Line_2<Rpst>  Line;
-typedef CGAL::Triangle_2<Rpst>  Triangle;
 
 typedef CGAL::Triangulation_euclidean_traits_2<Rpst> Gt;
+typedef Gt::Point_2       Point;
+typedef Gt::Segment_2     Segment;
+typedef Gt::Ray_2         Ray;
+typedef Gt::Line_2        Line;
+typedef Gt::Triangle_2    Triangle;
+
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
 typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
 typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
@@ -128,11 +129,6 @@ void input_from_file(Triangulation &T,
     std::istream_iterator<Point> begin(is);
     std::istream_iterator<Point> end;
     T.insert(begin, end);
- //    Point p;
-//     for(int i=0; i<n; i++) {
-//       is >> p; 
-//       T.insert(p);
-//     }
 }
 
 int
@@ -167,7 +163,7 @@ main(int argc, char* argv[])
 	for (eit=ebegin; eit != eend; ++eit)
 	  {
 	    CGAL::Object o = T.dual(eit);
-	    Triangulation::Ray r;
+	    Ray r;
 	    if (CGAL::assign(r,o)) std::cout << r << std::endl;
 	  }
       }

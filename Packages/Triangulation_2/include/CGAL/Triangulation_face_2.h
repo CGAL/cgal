@@ -45,9 +45,9 @@ class Triangulation_face_2  : public  Tds::Face
 {
 public:
   typedef Gt  Geom_traits;
-  typedef typename Geom_traits::Point Point;
-  typedef typename Geom_traits::Segment Segment;
-  typedef typename Geom_traits::Triangle Triangle;
+  typedef typename Geom_traits::Point_2 Point;
+  typedef typename Geom_traits::Segment_2 Segment;
+  typedef typename Geom_traits::Triangle_2 Triangle;
 
   typedef typename Tds::Vertex Ve;
   typedef typename Tds::Face Fa;

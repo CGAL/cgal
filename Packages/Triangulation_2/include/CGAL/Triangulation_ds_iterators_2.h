@@ -53,6 +53,7 @@ public:
   typedef std::bidirectional_iterator_tag   iterator_category;
 
   typedef typename Tds::Geom_traits Geom_traits;
+  typedef typename Geom_traits::Compare_y_2   Compare_y;
   typedef typename Tds::Vertex Vertex;
   typedef typename Tds::Face  Face;
   typedef typename Tds::Edge Edge;
@@ -354,14 +355,16 @@ int
 Triangulation_ds_iterator_base_2<Tds>::
 maximum(const Face* f) const
 {
+  Compare_y compare_y = _tds->geom_traits().compare_y_2_object();
+  
   if ( _tds->is_infinite(f) ){
     return f->index( _tds->infinite_vertex() );
   }
-  if(_tds->geom_traits().compare_y(f->vertex(0)->point(),
-				   f->vertex(1)->point()) == CGAL::SMALLER)
+  if(compare_y(f->vertex(0)->point(),
+	       f->vertex(1)->point()) == CGAL::SMALLER)
     //  v0 < v1
-    if(_tds->geom_traits().compare_y(f->vertex(2)->point(),
-				     f->vertex(1)->point())==CGAL::SMALLER)
+    if(compare_y(f->vertex(2)->point(),
+		 f->vertex(1)->point())==CGAL::SMALLER)
       //  v0,v2 < v1
       { return 1; }
     else
@@ -370,11 +373,11 @@ maximum(const Face* f) const
   else
     //  v1 <= v0
         
-    if(_tds->geom_traits().compare_y(f->vertex(1)->point(),
-				     f->vertex(2)->point())!=CGAL::SMALLER)
+    if(compare_y(f->vertex(1)->point(),
+		 f->vertex(2)->point())!=CGAL::SMALLER)
       //  v2 <= v1 <= v0
-      if(_tds->geom_traits().compare_y(f->vertex(0)->point(),
-				       f->vertex(1)->point()) == CGAL::EQUAL)
+      if(compare_y(f->vertex(0)->point(),
+		   f->vertex(1)->point()) == CGAL::EQUAL)
 	//  v2 <= v1 == v0
 	{ return 1; }
       else
@@ -382,8 +385,8 @@ maximum(const Face* f) const
 	{ return 0; }
     else
       //  v1<=v0, v1<v2
-      if(_tds->geom_traits().compare_y(f->vertex(0)->point(),
-				       f->vertex(2)->point())
+      if(compare_y(f->vertex(0)->point(),
+		   f->vertex(2)->point())
 	 ==CGAL::SMALLER)
 	//  v1 <= v0 < v2
 	{ return 2; }

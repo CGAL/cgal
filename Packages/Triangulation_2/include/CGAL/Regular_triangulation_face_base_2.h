@@ -39,11 +39,11 @@ public:
   typedef Gt Geom_traits;
   typedef Triangulation_face_base_2<Gt> Fbase;
   typedef Regular_triangulation_face_base_2<Gt> Regular_face_base;
-  typedef typename Gt::Point  Point;
-  typedef std::list<Point> Point_list;
+  typedef typename Gt::Weighted_point   Weighted_point;
+  typedef std::list<Weighted_point>     Weighted_point_list;
 
 protected:
- Point_list  plist;
+ Weighted_point_list  plist;
 
 public:
  Regular_triangulation_face_base_2()
@@ -64,7 +64,7 @@ public:
     plist.clear();
   }
 
-  Point_list& point_list()
+  Weighted_point_list& point_list()
   {
     return plist;
   }

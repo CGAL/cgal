@@ -14,7 +14,7 @@ typedef Triangulation_face_base_2<Gt>  Fb;
 typedef Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
 typedef Triangulation_2<Gt, Tds> Triangulation;
 typedef Triangulation::Vertex_circulator Vertex_circulator;
-typedef Gt::Point   Point;
+typedef Gt::Point_2   Point;
 
 int main() {
   Triangulation t;

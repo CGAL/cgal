@@ -51,8 +51,10 @@ _test_cls_tds_vertex( const Vertex &, const Gt & )
   Vertex v3(p3,&f3);
   
   // Test point()
-  assert( Gt().compare(v2.point(),p2) );
-  assert( Gt().compare(v3.point(),p3) );
+  assert( Gt().compare_x_2_object()(v2.point(),p2) == CGAL::EQUAL &&
+	  Gt().compare_y_2_object()(v2.point(),p2) == CGAL::EQUAL) ;
+  assert( Gt().compare_x_2_object()(v3.point(),p3) == CGAL::EQUAL &&
+	  Gt().compare_y_2_object()(v3.point(),p3) == CGAL::EQUAL) ;
   
   // Test face()
   assert( v3.face() == &f3 );
@@ -65,7 +67,8 @@ _test_cls_tds_vertex( const Vertex &, const Gt & )
   
   // Test set_point()
   v1.set_point(p3);
-  assert( Gt().compare(v1.point(),p3) );
+  assert( Gt().compare_x_2_object()(v1.point(),p3) == CGAL::EQUAL &&
+	  Gt().compare_y_2_object()(v1.point(),p3) == CGAL::EQUAL) ;
   
   // Test ccw() and cw()
   assert( v1.ccw(0) == 1 );

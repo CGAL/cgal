@@ -22,23 +22,6 @@
 
 
 #include <cassert>
-#include <CGAL/_test_cls_distance.C>
-
-// In order to test the class properly, we need some points whose
-// geometry is defined accordingly. The following must be true:
-//    compare_x  p[0] < p[1] == p[2]
-//    compare_y  p[3] < p[4] == p[5]
-//    compare    p[6] == p[7] != p[8]
-//    orientation:
-//               p[9],p[10],p[11] CCW
-//               p[12],p[13],p[14] CW
-//               p[15],p[16],p[17] COLLINEAR
-
-//typedef typename Traits::Point             Point;
-// Point has to be Traits::Point but CC-4.2 at Zurich does not understand
-// template <class Traits>
-// void
-// _test_cls_geom_traits(typename Traits::Point p[34], const Traits & )
 
 
 template <class Traits, class Point>
@@ -46,8 +29,8 @@ void
 _test_cls_geom_traits(Point p[34], const Traits & )
 {
   
-  typedef typename Traits::Segment           Segment;
-  typedef typename Traits::Triangle          Triangle;
+  typedef typename Traits::Segment_2           Segment;
+  typedef typename Traits::Triangle_2          Triangle;
 
   // Test Point
   Point p0(p[0]);
@@ -66,32 +49,32 @@ _test_cls_geom_traits(Point p[34], const Traits & )
   Traits gt;
 
   // Test compare_x()
-  assert( gt.compare_x(p[0],p[1]) == CGAL::SMALLER );
-  assert( gt.compare_x(p[1],p[0]) == CGAL::LARGER );
-  assert( gt.compare_x(p[1],p[2]) == CGAL::EQUAL );
+  typename Traits::Compare_x_2 compare_x_2 =  gt.compare_x_2_object();
+  assert( compare_x_2(p[0],p[1]) == CGAL::SMALLER );
+  assert( compare_x_2(p[1],p[0]) == CGAL::LARGER );
+  assert( compare_x_2(p[1],p[2]) == CGAL::EQUAL );
 
   // Test compare_y()
-  assert( gt.compare_y(p[3],p[4]) == CGAL::SMALLER );
-  assert( gt.compare_y(p[4],p[3]) == CGAL::LARGER );
-  assert( gt.compare_y(p[4],p[5]) == CGAL::EQUAL );
+  typename Traits::Compare_y_2 compare_y_2 =  gt.compare_y_2_object();
+  assert( compare_y_2(p[3],p[4]) == CGAL::SMALLER );
+  assert( compare_y_2(p[4],p[3]) == CGAL::LARGER );
+  assert( compare_y_2(p[4],p[5]) == CGAL::EQUAL );
   
-  // Test compare()
-  assert( gt.compare(p[6],p[7]) );
-  assert( !gt.compare(p[7],p[8]) );
-
   // Test orientation()
-  assert( gt.orientation(p[9], p[10],p[11]) == CGAL::COUNTERCLOCKWISE );
-  assert( gt.orientation(p[12],p[13],p[14]) == CGAL::CLOCKWISE );
-  assert( gt.orientation(p[15],p[16],p[17]) == CGAL::COLLINEAR );
+  typename Traits::Orientation_2 orientation = gt.orientation_2_object();
+  assert( orientation(p[9], p[10],p[11]) == CGAL::COUNTERCLOCKWISE );
+  assert( orientation(p[12],p[13],p[14]) == CGAL::CLOCKWISE );
+  assert( orientation(p[15],p[16],p[17]) == CGAL::COLLINEAR );
+
+  // Test side_of_oriented_circle()
+  typename Traits::Side_of_oriented_circle_2 
+    in_circle = gt.side_of_oriented_circle_2_object();
+  assert( in_circle(p[18],p[19],p[20],p[21]) == CGAL::ON_NEGATIVE_SIDE );
+  assert( in_circle(p[22],p[23],p[24],p[25]) == CGAL::ON_POSITIVE_SIDE );
+  assert( in_circle(p[26],p[27],p[28],p[29]) == CGAL::ON_ORIENTED_BOUNDARY );
+
 }
 
-// For Delaunay geometric traits:
-//    side_of_oriented_circle
-//               p[18], p[19], p[20],  p[21] POSITIVE
-//               p[22], p[23], p[24],  p[25] NEGATIVE
-//               p[26], p[27], p[28],  p[29] ON_BDRY
-//    circumcenter
-//               p[30], p[31], p[32] --> p[33]
 
 template <class Traits, class Point>
 void
@@ -104,14 +87,20 @@ _test_cls_delaunay_geom_traits(Point p[34], const Traits & )
   Traits gt;
 
   // Distance
-  _test_cls_distance(p, Traits());
-
-  // Test side_of_oriented_circle()
-  assert( gt.side_of_oriented_circle(p[18],p[19],p[20],p[21]) == CGAL::ON_NEGATIVE_SIDE );
-  assert( gt.side_of_oriented_circle(p[22],p[23],p[24],p[25]) == CGAL::ON_POSITIVE_SIDE );
-  assert( gt.side_of_oriented_circle(p[26],p[27],p[28],p[29]) == CGAL::ON_ORIENTED_BOUNDARY );
+  typedef typename Traits::Less_distance_to_point_2 Less_distance_to_point_2;
+  Less_distance_to_point_2 closer = gt.less_distance_to_point_2_object(p[0]);
+  assert( closer(p[1],p[2]));
+  assert( !closer(p[2],p[1]));
+  assert( !closer(p[1],p[1]));
+  assert( !closer(p[0],p[0]));
+  
 
   // Test circumcenter()
-  assert( gt.compare(p[33], gt.circumcenter(p[30],p[31],p[32])) );
-
+  typename Traits::Construct_circumcenter_2 
+    circumcenter = gt.construct_circumcenter_2_object();
+  Point c = circumcenter(p[30],p[31],p[32]);
+  assert( gt.compare_x_2_object()(p[33],c) ==	 CGAL::EQUAL &&
+	  gt.compare_y_2_object()(p[33],c) ==  CGAL::EQUAL );
+				    
+  //Test bisector()
 }

@@ -33,7 +33,7 @@ template < class GT >
 class Triangulation_vertex_base_2 {
 
 public:
-  typedef typename GT::Point Point;
+  typedef typename GT::Point_2 Point;
 
   Triangulation_vertex_base_2 ()
     : _f(NULL)

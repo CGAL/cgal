@@ -38,7 +38,7 @@ public:
   typedef Gt Geom_traits;
   typedef Triangulation_face_base_2<Gt> Fab;
   typedef Constrained_triangulation_face_base_2<Gt> Constrained_face_base;
-  typedef typename Gt::Point  Point;
+  typedef typename Gt::Point_2  Point;
 
 protected:
   bool C[3];

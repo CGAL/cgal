@@ -42,95 +42,6 @@
 
 CGAL_BEGIN_NAMESPACE 
 
-template < class R, class W = typename R::FT>
-class Regular_triangulation_euclidean_traits_2
-  : public Triangulation_euclidean_traits_2<R>
-{
-public:
-  typedef R                                     Rep;
-  typedef W                                     Weight;
-  typedef Triangulation_euclidean_traits_2 <R>  Traits;
-  typedef typename Traits::Point                Bare_point;
-  typedef Weighted_point <Bare_point, W>        Weighted_point;
-  typedef Weighted_point                        Point;
-
-  // power test for 2 dimension triangulation
-  Oriented_side power_test(const Weighted_point &p,
-			   const Weighted_point &q,
-			   const Weighted_point &r,
-			   const Weighted_point &t) const
-  {
-    CGAL_triangulation_precondition( ! collinear(p, q, r) );
-    return CGAL::power_test(p, q, r, t);
-  }
-
-  // power test for 1 dimension triangulation
-  Oriented_side power_test(const Weighted_point &p,
-			   const Weighted_point &q,
-			   const Weighted_point &t) const
-  {
-    CGAL_triangulation_precondition( collinear(p, q, t) );
-    CGAL_triangulation_precondition( p.point() != q.point() );
-    return CGAL::power_test(p, q, t);
-  }
-};
-
-// #ifdef CGAL_CARTESIAN_H
-// template < class FT, class Weight >
-// inline
-// Oriented_side
-// power_test(const Weighted_point<Point_2<Cartesian<FT> >, Weight> &p,
-//            const Weighted_point<Point_2<Cartesian<FT> >, Weight> &q,
-//            const Weighted_point<Point_2<Cartesian<FT> >, Weight> &r,
-//            const Weighted_point<Point_2<Cartesian<FT> >, Weight> &t)
-// {
-//     return power_testC2(p.x(), p.y(), FT(p.weight()),
-//                         q.x(), q.y(), FT(q.weight()),
-//                         r.x(), r.y(), FT(r.weight()),
-//                         t.x(), t.y(), FT(t.weight()));
-// }
-
-// template < class FT, class Weight >
-// inline
-// Oriented_side
-// power_test(const Weighted_point<Point_2<Cartesian<FT> >, Weight> &p,
-//            const Weighted_point<Point_2<Cartesian<FT> >, Weight> &q,
-//            const Weighted_point<Point_2<Cartesian<FT> >, Weight> &t)
-// {
-//     return power_testC2(p.x(), p.y(), FT(p.weight()),
-//                         q.x(), q.y(), FT(q.weight()),
-//                         t.x(), t.y(), FT(t.weight()));
-// }
-// #endif // CGAL_CARTESIAN_H
-
-// #ifdef CGAL_HOMOGENEOUS_H
-// template < class RT, class Weight >
-// inline
-// Oriented_side
-// power_test(const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &p,
-//            const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &q,
-//            const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &r,
-//            const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &t)
-// {
-//     return power_testH2(p.hx(), p.hy(), p.hw(), RT(p.weight()),
-//                         q.hx(), q.hy(), q.hw(), RT(q.weight()),
-//                         r.hx(), r.hy(), r.hw(), RT(r.weight()),
-//                         t.hx(), t.hy(), t.hw(), RT(t.weight()));
-// }
-
-// template < class RT, class Weight >
-// inline
-// Oriented_side
-// power_test(const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &p,
-//            const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &q,
-//            const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &t)
-// {
-//     return power_testH2(p.hx(), p.hy(), p.hw(), RT(p.weight()),
-//                         q.hx(), q.hy(), q.hw(), RT(q.weight()),
-//                         t.hx(), t.hy(), t.hw(), RT(t.weight()));
-// }
-// #endif // CGAL_HOMOGENEOUS_H
-
 template < class Point, class Weight >
 inline
 Oriented_side
@@ -214,6 +125,68 @@ power_test(const Weighted_point<Point, Weight> &p,
   typedef typename Point::R::Rep_tag Tag;
   return power_test(p, q, t, Tag());
 }
+
+template <class Point, class Weight>
+class Power_test_2
+{
+public:
+  typedef Weighted_point <Point, Weight>        Weighted_point;
+  Oriented_side operator() ( Weighted_point p,
+			     Weighted_point q,
+			     Weighted_point r,
+			     Weighted_point s) 
+    {
+      //CGAL_triangulation_precondition( ! collinear(p, q, r) );
+      return CGAL::power_test(p,q,r,s);
+    }
+};
+
+template <class Point, class Weight>
+class Power_test_degenerated_2
+{
+public:
+  typedef Weighted_point <Point, Weight>        Weighted_point;
+  Oriented_side operator() ( Weighted_point p,
+			     Weighted_point q,
+			     Weighted_point r)
+    {
+      //CGAL_triangulation_precondition( collinear(p, q, r) );
+      //CGAL_triangulation_precondition( p.point() != q.point() );
+      return CGAL::power_test(p,q,r);
+    }
+};
+
+template < class R, class W = typename R::FT>
+class Regular_triangulation_euclidean_traits_2
+  : public Triangulation_euclidean_traits_2<R>
+{
+public:
+  typedef R                                     Rep;
+  typedef W                                     Weight;
+  typedef Triangulation_euclidean_traits_2 <R>  Traits;
+  typedef typename Traits::Point_2              Bare_point;
+  typedef Weighted_point <Bare_point, W>        Weighted_point;
+
+  typedef CGAL::Power_test_2<Bare_point, W>     Power_test_2;
+  typedef CGAL::Power_test_degenerated_2<Bare_point, W>  
+                                                Power_test_degenerated_2;
+  
+  Regular_triangulation_euclidean_traits_2(){}
+  Regular_triangulation_euclidean_traits_2 ( 
+    const  Regular_triangulation_euclidean_traits_2& ) {}
+  Regular_triangulation_euclidean_traits_2& operator=
+  (const  Regular_triangulation_euclidean_traits_2& ) {return *this ;}
+  
+  Power_test_2 
+  power_test_2_object() const
+    {  return Power_test_2();}
+
+  Power_test_degenerated_2
+  power_test_degenerated_2_object() const
+    {return Power_test_degenerated_2();}
+
+};
+ 
 CGAL_END_NAMESPACE
 
 #endif // CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_2_H

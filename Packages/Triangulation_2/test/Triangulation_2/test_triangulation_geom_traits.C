@@ -30,13 +30,14 @@
 #include <CGAL/_test_types.C>
 #include <CGAL/_test_cls_geom_traits.C>
 
+
 int
 main()
 {
   std::cout << "Testing Triangulation_euclidean_traits_2" << std::endl;
   std::cout << "   with Cartesian" << std::endl;
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Cls1;
-  typedef Cls1::Point  Pt1;
+  typedef Cls1::Point_2  Pt1;
   Pt1 p1[34] = {
 	Pt1(1,3), Pt1(3,5), Pt1(3,8), 
 	Pt1(1,3), Pt1(3,5), Pt1(7,5), 
@@ -53,7 +54,7 @@ main()
 
   std::cout << "   with Homogeneous" << std::endl;
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_homogeneous> Cls2;
-  typedef Cls2::Point  Pt2;
+  typedef Cls2::Point_2  Pt2;
   Pt2 p2[34] = {
 	Pt2(1,3,1), Pt2(6,10,2), Pt2(3,8,1), 
 	Pt2(1,3,1), Pt2(3,5,1), Pt2(14,10,2), 
@@ -71,7 +72,7 @@ main()
   std::cout << "Testing Triangulation_euclidean_traits_xy_3" << std::endl;
   std::cout << "   with Cartesian" << std::endl;
   typedef CGAL::Triangulation_euclidean_traits_xy_3<Test_rep_cartesian> Cls3;
-  typedef Cls3::Point  Pt3;
+  typedef Cls3::Point_2  Pt3;
   Pt3 p3[34] = {
 	Pt3(1,3,5), Pt3(3,5,4), Pt3(3,8,1), 
 	Pt3(1,3,6), Pt3(3,5,3), Pt3(7,5,7), 
@@ -88,7 +89,7 @@ main()
 
   std::cout << "   with Homogeneous" << std::endl;
   typedef CGAL::Triangulation_euclidean_traits_xy_3<Test_rep_homogeneous> Cls4;
-  typedef Cls4::Point  Pt4;
+  typedef Cls4::Point_2  Pt4;
   Pt4 p4[34] = {
 	Pt4(1,3,6,1), Pt4(6,10,6,2), Pt4(3,8,6,1), 
 	Pt4(1,3,6,1), Pt4(3,5,6,1), Pt4(14,10,6,2), 
@@ -107,7 +108,7 @@ main()
 
   std::cout << "   with Cartesian" << std::endl;
   typedef CGAL::Triangulation_euclidean_traits_yz_3<Test_rep_cartesian> Cls5;
-  typedef Cls5::Point  Pt5;
+  typedef Cls5::Point_2  Pt5;
   Pt5 p5[34] = {
 	Pt5(1,1,3), Pt5(3,3,5), Pt5(6,3,8), 
 	Pt5(4,1,3), Pt5(8,3,5), Pt5(8,7,5), 
@@ -121,9 +122,10 @@ main()
 	Pt5(1,91,312), Pt5(1,125,300), Pt5(1,204,253), Pt5(1,0,0)
   };
   _test_cls_geom_traits( p5, Cls5() );
+
   std::cout << "   with Homogeneous" << std::endl;
   typedef CGAL::Triangulation_euclidean_traits_yz_3<Test_rep_homogeneous> Cls6;
-  typedef Cls6::Point  Pt6;
+  typedef Cls6::Point_2  Pt6;
   Pt6 p6[34] = {
 	Pt6(5,1,3,1), Pt6(5,6,10,2), Pt6(5,3,8,1), 
 	Pt6(5,1,3,1), Pt6(5,3,5,1), Pt6(5,14,10,2), 
@@ -142,7 +144,7 @@ main()
 
   std::cout << "   with Cartesian" << std::endl;
   typedef CGAL::Triangulation_euclidean_traits_xz_3<Test_rep_cartesian> Cls7;
-  typedef Cls7::Point  Pt7;
+  typedef Cls7::Point_2  Pt7;
   Pt7 p7[34] = {
 	Pt7(1,1,3), Pt7(3,3,5), Pt7(3,6,8), 
 	Pt7(1,4,3), Pt7(3,8,5), Pt7(7,8,5), 
@@ -155,10 +157,11 @@ main()
 	Pt7(91,3,312), Pt7(125,3,300), Pt7(204,3,253), Pt7(325,42,0),
 	Pt7(91,3,312), Pt7(125,3,300), Pt7(204,3,253), Pt7(0,23,0)
   };
+
   _test_cls_geom_traits( p7, Cls7() );
   std::cout << "   with Homogeneous" << std::endl;
   typedef CGAL::Triangulation_euclidean_traits_xz_3<Test_rep_homogeneous> Cls8;
-  typedef Cls8::Point  Pt8;
+  typedef Cls8::Point_2  Pt8;
   Pt8 p8[34] = {
 	Pt8(1,7,3,1), Pt8(6,7,10,2), Pt8(3,7,8,1), 
 	Pt8(1,7,3,1), Pt8(3,7,5,1), Pt8(14,7,10,2), 
@@ -176,7 +179,7 @@ main()
   std::cout << "Testing Triangulation_test_traits for the requirements" 
 	    << std::endl;
   typedef CGAL::_Triangulation_test_traits Cls9;
-  typedef Cls9::Point  Pt9;
+  typedef Cls9::Point_2  Pt9;
   Pt9 p9[34] = {
 	Pt9(1,3), Pt9(3,5), Pt9(3,8), 
 	Pt9(1,3), Pt9(3,5), Pt9(7,5), 
@@ -189,7 +192,7 @@ main()
 	Pt9(91,312), Pt9(125,300), Pt9(204,253), Pt9(325,0),
 	Pt9(91,312), Pt9(125,300), Pt9(204,253), Pt9(0,0)
   };
-  _test_cls_geom_traits( p9, Cls9() );
+  _test_cls_delaunay_geom_traits( p9, Cls9() );
     
   return 0;
 }

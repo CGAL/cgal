@@ -144,14 +144,14 @@ _test_cls_constrained_triangulation(const Triangulation &)
    int            li;
    Face_handle    f;
    f = T1_1.locate(Point(0,0),lt,li); assert( lt == Cls::VERTEX );
-   assert( T1_1.geom_traits().compare(f->vertex(li)->point(),   Point(0,0)) );
+   assert( T1_1.xy_equal(f->vertex(li)->point(),   Point(0,0)) );
       f = T1_1.locate(Point(9,6),lt,li); assert( lt == Cls::VERTEX );
-   assert( T1_1.geom_traits().compare(f->vertex(li)->point(), Point(9,6)) );
+   assert( T1_1.xy_equal(f->vertex(li)->point(), Point(9,6)) );
    f = T1_1.locate(Point(3,2,2),lt,li); assert( lt == Cls::EDGE );
-  assert( (T1_1.geom_traits().compare(f->vertex(f->ccw(li))->point(), Point(0,0))
-        && T1_1.geom_traits().compare(f->vertex(f->cw(li))->point(), Point(3,2)))
-       || (T1_1.geom_traits().compare(f->vertex(f->ccw(li))->point(), Point(3,2))
-        && T1_1.geom_traits().compare(f->vertex(f->cw(li))->point(), Point(0,0))));
+  assert( (T1_1.xy_equal(f->vertex(f->ccw(li))->point(), Point(0,0))
+        && T1_1.xy_equal(f->vertex(f->cw(li))->point(), Point(3,2)))
+       || (T1_1.xy_equal(f->vertex(f->ccw(li))->point(), Point(3,2))
+        && T1_1.xy_equal(f->vertex(f->cw(li))->point(), Point(0,0))));
   f = T1_1.locate(Point(-3,-2),lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
   assert( li == f->index(T1_1.infinite_vertex()));
   f = T1_1.locate(Point(0,100),lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
@@ -160,14 +160,14 @@ _test_cls_constrained_triangulation(const Triangulation &)
    // 2-dimensional
    std::cout << "    point locations 2-dim" << std::endl;
    f = T2_2.locate(Point(0,0),lt,li); assert( lt == Cls::VERTEX );
-   assert( T2_2.geom_traits().compare(f->vertex(li)->point(), Point(0,0)) );
+   assert( T2_2.xy_equal(f->vertex(li)->point(), Point(0,0)) );
    f = T2_2.locate(Point(3,2),lt,li); assert( lt == Cls::VERTEX );
-   assert( T2_2.geom_traits().compare(f->vertex(li)->point(), Point(3,2)) );
+   assert( T2_2.xy_equal(f->vertex(li)->point(), Point(3,2)) );
    f = T2_2.locate(Point(1,0,2),lt,li); assert( lt == Cls::EDGE );
-   assert( (T2_2.geom_traits().compare(f->vertex(f->ccw(li))->point(),lpt[1])
-        && T2_2.geom_traits().compare(f->vertex(f->cw(li))->point(),lpt[0]))
-       || (T2_2.geom_traits().compare(f->vertex(f->ccw(li))->point(), lpt[0])
-        && T2_2.geom_traits().compare(f->vertex(f->cw(li))->point(),lpt[1])));
+   assert( (T2_2.xy_equal(f->vertex(f->ccw(li))->point(),lpt[1])
+        && T2_2.xy_equal(f->vertex(f->cw(li))->point(),lpt[0]))
+       || (T2_2.xy_equal(f->vertex(f->ccw(li))->point(), lpt[0])
+        && T2_2.xy_equal(f->vertex(f->cw(li))->point(),lpt[1])));
    f = T2_2.locate(Point(10,10),lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
    li = f->index(T2_2.infinite_vertex());
    f = T2_2.locate(Point(-1,3),lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );

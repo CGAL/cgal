@@ -95,7 +95,6 @@ _test_cls_triangulation_2( const Triangulation & )
   Point p9(75625,155625,10000); // intersection of p2,p8 and p6,p7
   Point p10(10,50,2);
   Point p11(6,15,2); // midpoint p1,p0
-  assert( Gt().compare(p11,p11) );
   Point p12(6,16,2); // slightly above, in face
   Point p13(10,11,1);
   Point p14(10,40,1);
@@ -134,7 +133,7 @@ _test_cls_triangulation_2( const Triangulation & )
   Cls T3(T1);
   Cls T4 = T1;
   T3.swap(T1);
-  
+
 
   /**************************/
   /******* INSERTIONS *******/
@@ -390,16 +389,16 @@ _test_cls_triangulation_2( const Triangulation & )
   T1_3_2.insert(p2);
   T1_3_2.insert(p9); 
   f = T1_3_2.locate(p1,lt,li); assert( lt == Cls::VERTEX );
-  assert( T1_3_2.geom_traits().compare(f->vertex(li)->point(), p1) );
+  assert( T1_3_2.xy_equal(f->vertex(li)->point(), p1) );
   f = T1_3_2.locate(p2,lt,li); assert( lt == Cls::VERTEX );
-  assert( T1_3_2.geom_traits().compare(f->vertex(li)->point(), p2) );
+  assert( T1_3_2.xy_equal(f->vertex(li)->point(), p2) );
   f = T1_3_2.locate(p9,lt,li); assert( lt == Cls::VERTEX );
-  assert( T1_3_2.geom_traits().compare(f->vertex(li)->point(), p9) );
+  assert( T1_3_2.xy_equal(f->vertex(li)->point(), p9) );
   f = T1_3_2.locate(p3,lt,li); assert( lt == Cls::EDGE );
-  assert( (T1_3_2.geom_traits().compare(f->vertex(f->ccw(li))->point(), p1)
-        && T1_3_2.geom_traits().compare(f->vertex(f->cw(li))->point(), p2))
-       || (T1_3_2.geom_traits().compare(f->vertex(f->ccw(li))->point(), p2)
-        && T1_3_2.geom_traits().compare(f->vertex(f->cw(li))->point(), p1)));
+  assert( (T1_3_2.xy_equal(f->vertex(f->ccw(li))->point(), p1)
+        && T1_3_2.xy_equal(f->vertex(f->cw(li))->point(), p2))
+       || (T1_3_2.xy_equal(f->vertex(f->ccw(li))->point(), p2)
+        && T1_3_2.xy_equal(f->vertex(f->cw(li))->point(), p1)));
   f = T1_3_2.locate(p8,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
     assert(T1_3_2.is_infinite(f->vertex(li)));
   f = T1_3_2.locate(p0,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
@@ -412,48 +411,48 @@ _test_cls_triangulation_2( const Triangulation & )
   // Check point location in 2-dimensional triangulations
   std::cout << "    point locations 2-dim" << std::endl;
   f = T2_1.locate(p0,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p0) );
+  assert( T2_1.xy_equal(f->vertex(li)->point(), p0) );
   f = T2_1.locate(p1,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p1) );
+  assert( T2_1.xy_equal(f->vertex(li)->point(), p1) );
   f = T2_1.locate(p2,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p2) );
+  assert( T2_1.xy_equal(f->vertex(li)->point(), p2) );
   f = T2_1.locate(p3,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p3) );
+  assert( T2_1.xy_equal(f->vertex(li)->point(), p3) );
   f = T2_1.locate(p4,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p4) );
+  assert( T2_1.xy_equal(f->vertex(li)->point(), p4) );
   f = T2_1.locate(p5,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p5) );
+  assert( T2_1.xy_equal(f->vertex(li)->point(), p5) );
   f = T2_1.locate(p6,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p6) );
+  assert( T2_1.xy_equal(f->vertex(li)->point(), p6) );
   f = T2_1.locate(p7,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p7) );
+  assert( T2_1.xy_equal(f->vertex(li)->point(), p7) );
   f = T2_1.locate(p8,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p8) );
+  assert( T2_1.xy_equal(f->vertex(li)->point(), p8) );
   f = T2_1.locate(p9,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p9) );
+  assert( T2_1.xy_equal(f->vertex(li)->point(), p9) );
   f = T2_1.locate(p10,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p10) );
+  assert( T2_1.xy_equal(f->vertex(li)->point(), p10) );
   f = T2_1.locate(p11,lt,li); assert( lt == Cls::EDGE );
-  assert( (T2_1.geom_traits().compare(f->vertex(f->ccw(li))->point(), p1)
-        && T2_1.geom_traits().compare(f->vertex(f->cw(li))->point(), p0))
-       || (T2_1.geom_traits().compare(f->vertex(f->ccw(li))->point(), p0)
-        && T2_1.geom_traits().compare(f->vertex(f->cw(li))->point(), p1)));
+  assert( (T2_1.xy_equal(f->vertex(f->ccw(li))->point(), p1)
+        && T2_1.xy_equal(f->vertex(f->cw(li))->point(), p0))
+       || (T2_1.xy_equal(f->vertex(f->ccw(li))->point(), p0)
+        && T2_1.xy_equal(f->vertex(f->cw(li))->point(), p1)));
   f = T2_1.locate(p12,lt,li); assert( lt == Cls::FACE );
   assert( T2_1.oriented_side(f,p12) == CGAL::ON_POSITIVE_SIDE );
   f = T2_1.locate(p13,lt,li,f); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  assert( T2_1.geom_traits().orientation(p13,
-					 f->vertex(f->ccw(li))->point(),
-					 f->vertex(f->cw(li))->point())
+  assert( T2_1.orientation(p13,
+			   f->vertex(f->ccw(li))->point(),
+			   f->vertex(f->cw(li))->point())
 	    == CGAL::COUNTERCLOCKWISE);
   f = T2_1.locate(p14,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  assert( T2_1.geom_traits().orientation(p14,
-					 f->vertex(f->ccw(li))->point(),
-					 f->vertex(f->cw(li))->point())
+  assert( T2_1.orientation(p14,
+			  f->vertex(f->ccw(li))->point(),
+			  f->vertex(f->cw(li))->point())
 	    == CGAL::COUNTERCLOCKWISE);
   f = T2_1.locate(p15,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  assert( T2_1.geom_traits().orientation(p15,
-					 f->vertex(f->ccw(li))->point(),
-					 f->vertex(f->cw(li))->point())
+  assert( T2_1.orientation(p15,
+			   f->vertex(f->ccw(li))->point(),
+			   f->vertex(f->cw(li))->point())
 	    == CGAL::COUNTERCLOCKWISE);
 
   // test grid locate
@@ -462,7 +461,7 @@ _test_cls_triangulation_2( const Triangulation & )
       {
 	Point q= Point(m*px+p*qx, m*py+p*qy, 1);
        	f = T2_7.locate(q,lt,li); assert( lt == Cls::VERTEX );
-  	assert( T2_7.geom_traits().compare(f->vertex(li)->point(), q) );
+  	assert( T2_7.xy_equal(f->vertex(li)->point(), q) );
       }
   for (m=0; m<5; m+=4)
     for (p=0; p<4; p++)
@@ -471,10 +470,10 @@ _test_cls_triangulation_2( const Triangulation & )
 	Point r= Point(m*px+p*qx, m*py+p*qy, 1);
 	Point s= Point(m*px+(p+1)*qx, m*py+(p+1)*qy, 1);
        	f = T2_7.locate(q,lt,li); assert( lt == Cls::EDGE );
-        assert( (T2_7.geom_traits().compare(f->vertex(f->ccw(li))->point(), r)
-              && T2_7.geom_traits().compare(f->vertex(f->cw(li))->point(), s))
-             || (T2_7.geom_traits().compare(f->vertex(f->ccw(li))->point(), s)
-              && T2_7.geom_traits().compare(f->vertex(f->cw(li))->point(), r)));
+        assert( (T2_7.xy_equal(f->vertex(f->ccw(li))->point(), r)
+              && T2_7.xy_equal(f->vertex(f->cw(li))->point(), s))
+             || (T2_7.xy_equal(f->vertex(f->ccw(li))->point(), s)
+              && T2_7.xy_equal(f->vertex(f->cw(li))->point(), r)));
 
       }
   for (m=0; m<4; m++)
