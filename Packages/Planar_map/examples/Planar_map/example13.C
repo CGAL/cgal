@@ -16,9 +16,9 @@ template <typename Kernel, typename Kernel_base>
 class My_cartesian_base : public Kernel_base::template Base<Kernel>::Type {
 public:
   typedef typename Kernel_base::template Base<Kernel>::Type     Old_kernel;
-  typedef typename Kernel_base::Segment_2                       Old_segment_2;
-  typedef typename Kernel_base::Point_2                         Point_2;
-  typedef typename Kernel_base::FT                              FT;
+  typedef typename Old_kernel::Segment_2                        Old_segment_2;
+  typedef typename Old_kernel::Point_2                          Point_2;
+  typedef typename Old_kernel::FT                               FT;
 
 public:
   /*! The new segment type */
