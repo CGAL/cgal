@@ -743,6 +743,7 @@ set_compiler_flags()
     LIBPATH_OPT="-L"
     DEBUG_OPT="-g"
     EXE_OPT="-o "
+    SAVE_THE_BLANK=""
     EXE_EXT=""
     CGAL_LIBNAME="libCGAL.a"
     GMP_LIBNAME="libgmp.a"
@@ -845,7 +846,7 @@ set_compiler_flags()
             WINDOW_DIR="/usr/openwin/lib"
             RUNTIME_LINKER_FLAG="-R "
             PRINT_STACKTRACE_PROGRAM="dbx"
-	    EXE_OPT="-o \$(SAVESTHEBLANK)"
+	    SAVE_THE_BLANK="\$(SAVESTHEBLANK)"
             ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
@@ -4066,7 +4067,7 @@ write_linker_flags()
 {
   makefile_header "linker flags" >> ${FILE}
 
-  ${_printf} "%s%s\n" "EXE_OPT = " "${EXE_OPT}" >> ${FILE}
+  ${_printf} "%s%s\n" "EXE_OPT = " "${EXE_OPT}${SAVE_THE_BLANK}" >> ${FILE}
 
   #
   # LEDA_LIB_DIR
