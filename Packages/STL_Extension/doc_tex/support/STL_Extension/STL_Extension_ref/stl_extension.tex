@@ -353,7 +353,7 @@
     CompareMin comp_min, CompareMax comp_max);}{returns a pair of
     iterators where the first component refers to the minimal and the
     second component refers to the maximal element in the range
-    [\ccc{first}, \ccc{last}). \ccCommentHeading{Requirements}
+    [\ccc{first}, \ccc{last}). \ccRequire
     \ccc{CompareMin} and \ccc{CompareMax} are adaptable binary
     function objects:
     \ccc{VT}~$\times$~\ccc{VT}~$\rightarrow$~\ccc{bool} where \ccc{VT}
@@ -384,7 +384,7 @@
     predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The
     ordering is defined by the \ccc{operator<} on \ccc{VT} where
     \ccc{VT} is the value type of \ccc{ForwardIterator}.
-    \ccCommentHeading{Requirements} \ccc{pred} is an unary function
+    \ccRequire \ccc{pred} is an unary function
     object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
   
   \ccFunction{template < class ForwardIterator, class Compare, class
@@ -393,7 +393,7 @@
     iterator referring to the minimal element among those satifying
     the predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}).
     The ordering is defined by \ccc{comp}.
-    \ccCommentHeading{Requirements} \ccc{comp} is a binary function
+    \ccRequire \ccc{comp} is a binary function
     object: \ccc{VT}~$\times$~\ccc{VT}~$\rightarrow$~\ccc{bool} where
     \ccc{VT} is the value type of \ccc{ForwardIterator}. \ccc{pred} is
     an unary function object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
@@ -426,7 +426,7 @@
     predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The
     ordering is defined by the \ccc{operator<} on \ccc{VT} where
     \ccc{VT} is the value type of \ccc{ForwardIterator}.
-    \ccCommentHeading{Requirements} \ccc{pred} is an unary function
+    \ccRequire \ccc{pred} is an unary function
     object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
   
   \ccFunction{template < class ForwardIterator, class Compare, class
@@ -435,7 +435,7 @@
     iterator referring to the maximal element among those satifying
     the predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}).
     The ordering is defined by \ccc{comp}.
-    \ccCommentHeading{Requirements} \ccc{comp} is a binary function
+    \ccRequire \ccc{comp} is a binary function
     object: \ccc{VT}~$\times$~\ccc{VT}~$\rightarrow$~\ccc{bool} where
     \ccc{VT} is the value type of \ccc{ForwardIterator}. \ccc{pred} is
     an unary function object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
@@ -515,7 +515,7 @@
   \ccIsModel
   \ccc{InputIterator}
   
-  \ccHeading{Requirements} \ccc{Iterator} is a model for
+  \ccRequirements \ccc{Iterator} is a model for
   \ccc{InputIterator}.
 
   \ccCreation
@@ -534,35 +534,54 @@
 \end{ccRefClass}
 
 %% +--------------------------------------------------------+
-\begin{ccRefClass}{N_step_adaptor<I,int N,Ref,Ptr,Val,Dst,Ctg>}
+\begin{ccRefClass}{N_step_adaptor<I,int N>}
   \ccCreationVariable{i}
   
   \ccDefinition The adaptor \ccRefName\ changes the step width of the
   iterator or circulator class \ccStyle{I} to $N$. It is itself an
-  iterator or circulator respectively. The value type is \ccc{Val} and
-  the distance type is \ccStyle{Dst}. The iterator category is
-  \ccc{Ctg}. For a mutable iterator, the parameters \ccc{Ref} and
-  \ccc{Ptr} must be set to \ccc{Val&} and \ccc{Val*} respectively. For
-  a non-mutable iterator the types must be set to \ccc{const Val&} and
-  \ccc{const Val*} respectively. With iterator traits classes
-  \ccc{Val}, \ccc{Dst} and \ccStyle{Ctg} will be superfluous.
-  
-  The behavior is undefined if the adaptor is used on a range [$i,j$)
-  where $j-i$ is not a multiple of $n$.
+  iterator or circulator respectively. The behavior is undefined if
+  the adaptor is used on a range [$i,j$) where $j-i$ is not a multiple
+  of $n$.
   
   \ccInclude{CGAL/iterator.h}
   
   \ccCreation
-  \ccTwo{N_step_adaptor<I,int N,Ref,Ptr,Val,Dst,Ctg> i( I
-    j);;M}{}
+  \ccTwo{N_step_adaptor<I,int N> i( I j);;M}{}
   
   \ccConstructor{N_step_adaptor(const I& j);}{down cast.}
   
-  \ccOperations
+\end{ccRefClass}
+
+\begin{ccRefClass}{Filter_iterator<Iterator, Predicate>}
+  \label{sectionFilterIterator}
+
+  \ccCreationVariable{i}
   
-  The adaptor conforms to the iterator or circulator category stated
-  with the parameter \ccc{Ctg}. {\em Precondition:\/} The iterator or
-  circulator $I$ must be at least of this category.
+  \ccDefinition The iterator adaptor \ccClassTemplateName\ acts as a
+  filter on a given range. Whenever the iterator is in-- or
+  decremented, it ignores all iterators for which the given
+  \ccc{Predicate} is true. The iterator category is the same as for
+  \ccc{Iterator}.
+
+  \ccInclude{CGAL/iterator.h}
+  
+  \ccRequirements
+  \begin{itemize}
+  \item \ccc{Iterator} is a model for \ccc{ForwardIterator}.
+  \item \ccc{Predicate} is a functor: \ccc{Iterator} $\rightarrow$
+    \ccc{bool}.
+  \end{itemize}
+
+  \ccCreation
+
+  %%\ccTwo{Identity<Value>MMMMMM}{}
+  
+  \ccConstructor{Filter_iterator();}{}
+  
+  \ccConstructor{Filter_iterator(Iterator b, Iterator e, Predicate p,
+    Iterator c = b);}{creates an iterator for the range $[\ccc{b},e)$
+    that filters with respect to \ccc{p} and initialize it to \ccc{c}.
+    \ccPrecond \ccc{c} is from the range $[\ccc{b},e]$.}
 
 \end{ccRefClass}
 
@@ -736,7 +755,7 @@
   \ccFunction{template < class F > typename Swap<F,1>::Type
     swap_1(const F& f);}{returns a functor equivalent to \ccc{f}, but
     where the first two arguments are exchanged.
-    \ccCommentHeading{Requirements} F is a model for
+    \ccRequire F is a model for
     \ccc{AdaptableFunctor} with arity $2 \le ar \le 5$.}
   
   \ccSeeAlso
@@ -759,7 +778,7 @@
   \ccFunction{template < class F > typename Swap<F,2>::Type
     swap_2(const F& f);}{returns a functor equivalent to \ccc{f}, but
     where the second and third argument are exchanged.
-    \ccCommentHeading{Requirements} F is a model for
+    \ccRequire F is a model for
     \ccc{AdaptableFunctor} with arity $3 \le ar \le 5$.}
   
   \ccSeeAlso
@@ -782,7 +801,7 @@
   \ccFunction{template < class F > typename Swap<F,3>::Type
     swap_3(const F& f);}{returns a functor equivalent to \ccc{f}, but
     where the third and fourth argument are exchanged.
-    \ccCommentHeading{Requirements} F is a model for
+    \ccRequire F is a model for
     \ccc{AdaptableFunctor} with arity $4 \le ar \le 5$.}
   
   \ccSeeAlso
@@ -805,7 +824,7 @@
   \ccFunction{template < class F > typename Swap<F,4>::Type
     swap_4(const F& f);}{returns a functor equivalent to \ccc{f}, but
     where the fourth and fifth argument are exchanged.
-    \ccCommentHeading{Requirements} F is a model for
+    \ccRequire F is a model for
     \ccc{AdaptableFunctor} with arity $5$.}
   
   \ccSeeAlso
@@ -830,7 +849,7 @@
   \ccFunction{template < class F, class A > Bind< F, A, 1 >::Type
     bind_1(const F& f, const A& a);}{returns a functor equivalent to
     \ccc{f}, but where the first argument is bound (fixed) to \ccc{a}.
-    \ccCommentHeading{Requirements} F is a model for
+    \ccRequire F is a model for
     \ccc{AdaptableFunctor}.}
   
   \ccSeeAlso
@@ -856,7 +875,7 @@
   \ccFunction{template < class F, class A > Bind< F, A, 2 >::Type
     bind_2(const F& f, const A& a);}{returns a functor equivalent to
     \ccc{f}, but where the second argument is bound (fixed) to
-    \ccc{a}.  \ccCommentHeading{Requirements} F is a model for
+    \ccc{a}.  \ccRequire F is a model for
     \ccc{AdaptableFunctor}.}
   
   \ccSeeAlso
@@ -882,7 +901,7 @@
   \ccFunction{template < class F, class A > Bind< F, A, 3 >::Type
     bind_3(const F& f, const A& a);}{returns a functor equivalent to
     \ccc{f}, but where the third argument is bound (fixed) to \ccc{a}.
-    \ccCommentHeading{Requirements} F is a model for
+    \ccRequire F is a model for
     \ccc{AdaptableFunctor}.}
   
   \ccSeeAlso
@@ -908,7 +927,7 @@
   \ccFunction{template < class F, class A > Bind< F, A, 4 >::Type
     bind_4(const F& f, const A& a);}{returns a functor equivalent to
     \ccc{f}, but where the fourth argument is bound (fixed) to
-    \ccc{a}.  \ccCommentHeading{Requirements} F is a model for
+    \ccc{a}.  \ccRequire F is a model for
     \ccc{AdaptableFunctor}.}
   
   \ccSeeAlso
@@ -934,7 +953,7 @@
   \ccFunction{template < class F, class A > Bind< F, A, 5 >::Type
     bind_5(const F& f, const A& a);}{returns a functor equivalent to
     \ccc{f}, but where the fifth argument is bound (fixed) to \ccc{a}.
-    \ccCommentHeading{Requirements} F is a model for
+    \ccRequire F is a model for
     \ccc{AdaptableFunctor}.}
   
   \ccSeeAlso
@@ -972,7 +991,7 @@
   \ccFunction{template < class F0, class F1 > typename Compose< F0, F1
     >::Type compose(const F0& f0, const F1& f1);}{returns the functor
     \ccc{f0}(\ccc{f1}($\cdot$)) with the same arity as \ccc{f1}.
-    \ccCommentHeading{Requirements} \ccc{f0} is unary function
+    \ccRequire \ccc{f0} is unary function
     (arity~1). \ccc{f0} and \ccc{f1} are models for
     \ccc{AdaptableFunctor}.}
   
@@ -980,7 +999,7 @@
     Compose< F0, F1, F2 >::Type compose(const F0& f0, const F1& f1,
     const F2& f2);}{returns the functor
     \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$)) with arity equal
-    to $ar(\ccc{f1})+ar(\ccc{f2})$. \ccCommentHeading{Requirements}
+    to $ar(\ccc{f1})+ar(\ccc{f2})$. \ccRequire
     \ccc{f0} is binary function (arity~2). \ccc{f0}, \ccc{f1}, and
     \ccc{f2} are models for \ccc{AdaptableFunctor}.}
   
@@ -989,7 +1008,7 @@
     const F1& f1, const F2& f2, const F3& f3);}{returns the functor
     \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$),$\,$\ccc{f3}($\cdot$))
     with arity equal to $ar(\ccc{f1})+ar(\ccc{f2})+ar(\ccc{f3})$.
-    \ccCommentHeading{Requirements} \ccc{f0} is ternary function
+    \ccRequire \ccc{f0} is ternary function
     (arity~3). \ccc{f0}, \ccc{f1}, \ccc{f2}, and \ccc{f3} are models
     for \ccc{AdaptableFunctor}.}
   
@@ -1026,7 +1045,7 @@
     Compose_shared< F0, F1, F2 >::Type compose_shared(const F0& f0,
     const F1& f1, const F2& f2);}{returns the functor
     \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$)) with the same
-    arity as $f1$ (and $f2$). \ccCommentHeading{Requirements} \ccc{f0}
+    arity as $f1$ (and $f2$). \ccRequire \ccc{f0}
     is \ccc{AdaptableFunctor} of arity~2. \ccc{f1} and \ccc{f2} are
     \ccc{AdaptableFunctor}s having the same arity.}
   
@@ -1036,7 +1055,7 @@
     f3);}{returns the functor
     \ccc{f0}(\ccc{f1}($\cdot$),$\,$\ccc{f2}($\cdot$),$\,$\ccc{f3}($\cdot$))
     with the same arity as $f1$ (and $f2$, $f3$).
-    \ccCommentHeading{Requirements} \ccc{f0} is \ccc{AdaptableFunctor}
+    \ccRequire \ccc{f0} is \ccc{AdaptableFunctor}
     of arity~3. \ccc{f1}, \ccc{f2}, and \ccc{f3} are
     \ccc{AdaptableFunctor}s having the same arity.}
   
@@ -1652,7 +1671,7 @@
   
   \ccInclude{CGAL/function_objects.h}
   
-  \ccHeading{Requirements} \ccc{Result} defines a corresponding
+  \ccRequirements \ccc{Result} defines a corresponding
   constructor.
   
   \def\ccLongParamLayout{\ccTrue}
@@ -1674,7 +1693,7 @@
   
   \ccInclude{CGAL/function_objects.h}
   
-  \ccHeading{Requirements} \ccc{Result} defines a corresponding
+  \ccRequirements \ccc{Result} defines a corresponding
   constructor.
   
   \def\ccLongParamLayout{\ccTrue}
@@ -1698,7 +1717,7 @@
   
   \ccInclude{CGAL/function_objects.h}
   
-  \ccHeading{Requirements} \ccc{Result} defines a corresponding
+  \ccRequirements \ccc{Result} defines a corresponding
   constructor.
   
   \def\ccLongParamLayout{\ccTrue}
@@ -1723,7 +1742,7 @@
   
   \ccInclude{CGAL/function_objects.h}
   
-  \ccHeading{Requirements} \ccc{Result} defines a corresponding
+  \ccRequirements \ccc{Result} defines a corresponding
   constructor.
   
   \def\ccLongParamLayout{\ccTrue}
@@ -1749,7 +1768,7 @@
   
   \ccInclude{CGAL/function_objects.h}
   
-  \ccHeading{Requirements} \ccc{Result} defines a constructor from two
+  \ccRequirements \ccc{Result} defines a constructor from two
   \ccc{Arg} arguments.
   
   \def\ccLongParamLayout{\ccTrue}
@@ -1772,7 +1791,7 @@
   
   \ccInclude{CGAL/function_objects.h}
   
-  \ccHeading{Requirements} \ccc{Result} defines a constructor from
+  \ccRequirements \ccc{Result} defines a constructor from
   three \ccc{Arg} arguments.
   
   \def\ccLongParamLayout{\ccTrue}
@@ -1795,7 +1814,7 @@
   
   \ccInclude{CGAL/function_objects.h}
   
-  \ccHeading{Requirements} \ccc{Result} defines a constructor from
+  \ccRequirements \ccc{Result} defines a constructor from
   four \ccc{Arg} arguments.
   
   \def\ccLongParamLayout{\ccTrue}
@@ -1819,7 +1838,7 @@
   
   \ccInclude{CGAL/function_objects.h}
   
-  \ccHeading{Requirements} \ccc{Result} defines a constructor from
+  \ccRequirements \ccc{Result} defines a constructor from
   five \ccc{Arg} arguments.
   
   \def\ccLongParamLayout{\ccTrue}
@@ -1843,7 +1862,7 @@
   
   \ccInclude{CGAL/function_objects.h}
   
-  \ccHeading{Requirements} \ccc{Result} defines a constructor from six
+  \ccRequirements \ccc{Result} defines a constructor from six
   \ccc{Arg} arguments.
   
   \def\ccLongParamLayout{\ccTrue}
@@ -1868,7 +1887,7 @@
   
   \ccInclude{CGAL/function_objects.h}
   
-  \ccHeading{Requirements} \ccc{Result} defines a constructor from
+  \ccRequirements \ccc{Result} defines a constructor from
   seven \ccc{Arg} arguments.
   
   \def\ccLongParamLayout{\ccTrue}
@@ -1893,7 +1912,7 @@
   
   \ccInclude{CGAL/function_objects.h}
   
-  \ccHeading{Requirements} \ccc{Result} defines a constructor from
+  \ccRequirements \ccc{Result} defines a constructor from
   eight \ccc{Arg} arguments.
   
   \def\ccLongParamLayout{\ccTrue}
@@ -1919,7 +1938,7 @@
   
   \ccInclude{CGAL/function_objects.h}
   
-  \ccHeading{Requirements} \ccc{Result} defines a constructor from
+  \ccRequirements \ccc{Result} defines a constructor from
   nine \ccc{Arg} arguments.
   
   \def\ccLongParamLayout{\ccTrue}

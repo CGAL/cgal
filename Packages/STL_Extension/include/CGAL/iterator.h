@@ -428,6 +428,115 @@ operator+( typename N_step_adaptor_derived<I,N>::difference_type n,
            N_step_adaptor_derived<I,N> i)
 { return i += n; }
 #endif // CGAL_CFG_NO_CONSTANTS_IN_FUNCTION_TEMPLATES //
+#if defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
+!defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
+template < class I, class P, class Ref, class Ptr,
+           class Val, class Dist, class Ctg >
+#else
+#ifndef __SUNPRO_CC
+template < class I,
+           class P,
+           class Ref  = typename std::iterator_traits<I>::reference,
+           class Ptr  = typename std::iterator_traits<I>::pointer,
+           class Val  = typename std::iterator_traits<I>::value_type,
+           class Dist = typename std::iterator_traits<I>::difference_type,
+           class Ctg = typename std::iterator_traits<I>::iterator_category>
+#else
+template < class I,
+           class P,
+           class Ref  = typename CGALi::IT_rename<I>::REF,
+           class Ptr  = typename CGALi::IT_rename<I>::PTR,
+           class Val  = typename CGALi::IT_rename<I>::VAL,
+           class Dist = typename CGALi::IT_rename<I>::DIF,
+           class Ctg  = typename CGALi::IT_rename<I>::CAT >
+#endif // __SUNPRO_CC
+#endif
+struct Filter_iterator {
+  typedef I                                            Iterator;
+  typedef P                                            Predicate;
+  typedef Filter_iterator<I,P,Ref,Ptr,Val,Dist,Ctg>    Self;
+  typedef Ctg                                          iterator_category;
+  typedef Val                                          value_type;
+  typedef Dist                                         difference_type;
+#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+  typedef Ref                                          reference;
+  typedef Ptr                                          pointer;
+#else
+  typedef typename std::iterator_traits<I>::reference  reference;
+  typedef typename std::iterator_traits<I>::pointer    pointer;
+#endif
+  // Special for circulators.
+  typedef I_Circulator_size_traits<iterator_category,I> C_S_Traits;
+  typedef typename  C_S_Traits::size_type               size_type;
+
+protected:
+  Iterator b_, e_;   // The range.
+  Iterator c_;       // current position.
+  Predicate p_;      // Leave out x <==> p_(x).
+public:
+
+  Filter_iterator() {}
+
+  Filter_iterator(Iterator b, Iterator e, const Predicate& p)
+  : b_(b), e_(e), c_(b), p_(p)
+  {
+    while (c_ != e_ && p_(c_))
+      ++c_;
+  }
+
+  Filter_iterator(Iterator b, Iterator e, const Predicate& p, Iterator c)
+  : b_(b), e_(e), c_(c), p_(p)
+  {
+    while (c_ != e_ && p_(c_))
+      ++c_;
+  }
+
+  bool operator==(const Self& it) const {
+    CGAL_precondition(b_ == it.b_ && e_ == it.e_);
+    return c_ == it.c_;
+  }
+  bool operator!=(const Self& it) const { return !(*this == it); }
+
+  Self& operator++() {
+    do { ++c_; } while (c_ != e_ && p_(c_));
+    return *this;
+  }
+
+  Self& operator--() {
+    do {
+      --c_;
+    } while (p_(c_) && c_ != b_);
+    return *this;
+  }
+
+  Self operator++(int) {
+    Self tmp(*this);
+    ++(*this);
+    return tmp;
+  }
+
+  Self operator--(int) {
+    Self tmp(*this);
+    --(*this);
+    return tmp;
+  }
+
+  reference operator*() const { return *c_;  }
+  pointer operator->() const  { return &*c_; }
+
+};
+
+template < class I, class P >
+inline Filter_iterator< I, P >
+filter_iterator(I b, I e, const P& p)
+{ return Filter_iterator< I, P >(b, e, p); }
+
+template < class I, class P >
+inline Filter_iterator< I, P >
+filter_iterator(I b, I e, const P& p, I c)
+{ return Filter_iterator< I, P >(b, e, p, c); }
+
+
 template < class I1, class  Creator >
 class Join_input_iterator_1 {
   // the join of one iterator `i1'. Applies `Creator' with
