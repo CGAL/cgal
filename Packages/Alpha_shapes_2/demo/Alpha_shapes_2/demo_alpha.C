@@ -454,7 +454,7 @@ int main(int argc,  char* argv[])
       int but = W.read_mouse(x,y);
 
       if (but == 0)
-	exit(0);
+	CGAL_CLIB_STD::exit(0);
 
       switch (but) 
 	{
