@@ -1017,16 +1017,16 @@ stack_flip(Vertex_handle v, Faces_around_stack &faces_around)
     Orientation ocw  = orientation(f->vertex(i)->point(),
 				   f->vertex(cw(i))->point(),
 				   n->vertex(ni)->point());
-    if (occw == LEFTTURN && ocw == RIGHTTURN) {
+    if (occw == LEFT_TURN && ocw == RIGHT_TURN) {
       // quadrilater (f,n) is convex
       stack_flip_2_2(f,i, faces_around);
       return;
     }
-    if (occw == RIGHTTURN && f->vertex(ccw(i))->degree() == 3) {
+    if (occw == RIGHT_TURN && f->vertex(ccw(i))->degree() == 3) {
       stack_flip_3_1(f,i,ccw(i),faces_around);
       return;
     }
-    if (ocw == LEFTTURN && f->vertex(cw(i))->degree() == 3) {
+    if (ocw == LEFT_TURN && f->vertex(cw(i))->degree() == 3) {
       stack_flip_3_1(f,i,cw(i),faces_around);
       return;
     }

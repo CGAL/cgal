@@ -106,7 +106,7 @@ public:
           if  (t.compare_x(p2,q2) == EQUAL) {
             return (t.compare_y(p1,p2) == SMALLER);}
           // default case
-          return( t.orientation(p2,q2,p1) == RIGHTTURN);
+          return( t.orientation(p2,q2,p1) == RIGHT_TURN);
         }
     
         else if ( t.compare_x(p2,q2) == EQUAL &&
@@ -121,7 +121,7 @@ public:
           if (t.compare_x(p1,q1) == EQUAL) {
             return ( t.compare_y(p1,p2) == SMALLER);}
           // default case
-          return (t.orientation(p1,q1,q2) == LEFTTURN);
+          return (t.orientation(p1,q1,q2) == LEFT_TURN);
         }
     
         // comparison of two non degenerate constraints
@@ -131,15 +131,15 @@ public:
           case SMALLER:
             if ( t.compare_x(q1,p2)  == EQUAL &&
                  t.compare_y(q1,p2)  == EQUAL) {return true;}
-            else return ( t.orientation(p1,q1,p2) == LEFTTURN);
+            else return ( t.orientation(p1,q1,p2) == LEFT_TURN);
           case LARGER :
             if ( t.compare_x(p1,q2)  == EQUAL &&
                  t.compare_y(p1,q2)  == EQUAL) {return false;}
-            else return ( t.orientation(p2,q2,p1) == RIGHTTURN);
+            else return ( t.orientation(p2,q2,p1) == RIGHT_TURN);
           case EQUAL :
             return ( t.compare_y(p1,p2) == SMALLER ||
                      (t.compare_y(p1,p2) == EQUAL &&
-                      t.orientation(p1,q1,q2) == LEFTTURN));
+                      t.orientation(p1,q1,q2) == LEFT_TURN));
           }
         }
 	// shouldn't get there
@@ -210,7 +210,7 @@ public:
           cwin = fn->vertex(fn->cw(in));
           ccwin = fn->vertex(fn->ccw(in));
           if ( t.orientation(ccwin->point(),cwin->point(),v->point()) ==
-               RIGHTTURN) {
+               RIGHT_TURN) {
             pop_front();
             newf = _tr->create_face(v,cwin,ccwin);
             last->set_neighbor(2,newf); newf->set_neighbor(1,last);
@@ -238,7 +238,7 @@ public:
           cwin = fn->vertex(fn->cw(in));
           ccwin = fn->vertex(fn->ccw(in));
           if ( t.orientation(ccwin->point(),cwin->point(),v->point()) ==
-	       RIGHTTURN) {
+	       RIGHT_TURN) {
             pop_back();
             newf = _tr->create_face(v,cwin,ccwin);
             first->set_neighbor(1,newf); newf->set_neighbor(2,first);

@@ -501,9 +501,9 @@ find_intersected_faces(Vertex_handle vaa,
     case COLLINEAR :  
       done = true; // current_vertex is the new endpoint
       break;
-    case LEFTTURN :
-    case RIGHTTURN :
-      if (orient == LEFTTURN) {
+    case LEFT_TURN :
+    case RIGHT_TURN :
+      if (orient == LEFT_TURN) {
 	i1 = ccw(ind) ; //index of second intersected edge of current_face
 	i2 = cw(ind); //index of non intersected edge of current_face
       }
@@ -518,9 +518,9 @@ find_intersected_faces(Vertex_handle vaa,
       else {
 	lf= current_face->neighbor(i2);
 	intersected_faces.push_front(current_face);
-	if (orient == LEFTTURN) 
+	if (orient == LEFT_TURN) 
 	  list_ab.push_back(Edge(lf, lf->index(current_face)));
-	else // orient == RIGHTTURN
+	else // orient == RIGHT_TURN
 	  list_ba.push_front(Edge(lf, lf->index(current_face)));
 	previous_face=current_face;
 	++current_face;
@@ -982,7 +982,7 @@ triangulate_half_hole(List_edges & list_edges,  List_edges & new_edges)
       Vertex_handle v2=n2->vertex(cw(ind2));
       orient= orientation(v0->point(),v1->point(),v2->point());
       switch (orient) {
-      case RIGHTTURN : 	  		
+      case RIGHT_TURN : 	  		
 	// creates the new triangle v0v1v2
 	// updates the neighbors, the constraints 
 	//and the list of new edges
@@ -1011,7 +1011,7 @@ triangulate_half_hole(List_edges & list_edges,  List_edges & new_edges)
 	if (v0 != va) {--current;} 
 	else {++next;} 
 	break;
-      case LEFTTURN : 	  
+      case LEFT_TURN : 	  
 	++current; ++next;
 	break;
       case COLLINEAR : 

@@ -42,7 +42,7 @@ _test_is_to_the_left( const Triangulation &T,
 {
   return( T.orientation(f->vertex(f->ccw(li))->point(),
 			f->vertex(f->cw(li))->point(),
-			p)  == CGAL::LEFTTURN );
+			p)  == CGAL::LEFT_TURN );
 }
 
 template <class Triangulation>

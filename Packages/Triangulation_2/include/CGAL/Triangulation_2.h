@@ -583,8 +583,8 @@ is_valid(bool verbose, int level) const
       Orientation s = orientation(it->vertex(0)->point(),
 				  it->vertex(1)->point(),
 				  it->vertex(2)->point());
-      CGAL_triangulation_assertion( s == LEFTTURN );
-      result = result && ( s == LEFTTURN );
+      CGAL_triangulation_assertion( s == LEFT_TURN );
+      result = result && ( s == LEFT_TURN );
     }
 
     Vertex_circulator start = infinite_vertex()->incident_vertices();
@@ -595,8 +595,8 @@ is_valid(bool verbose, int level) const
       Orientation s = orientation(pc->point(),
 				  qc->point(),
 				  rc->point());
-      CGAL_triangulation_assertion( s != LEFTTURN );
-      result = result && ( s != LEFTTURN );
+      CGAL_triangulation_assertion( s != LEFT_TURN );
+      result = result && ( s != LEFT_TURN );
       ++pc ; ++qc ; ++rc;
     }while(pc != start);
 
@@ -820,10 +820,10 @@ flip(Face_handle f, int i)
   CGAL_triangulation_precondition( 
                   orientation(f->vertex(i)->point(),
 			      f->vertex(cw(i))->point(),
-			      f->mirror_vertex(i)->point()) == RIGHTTURN &&
+			      f->mirror_vertex(i)->point()) == RIGHT_TURN &&
                   orientation(f->vertex(i)->point(),
 			      f->vertex(ccw(i))->point(),
-			      f->mirror_vertex(i)->point()) ==  LEFTTURN); 
+			      f->mirror_vertex(i)->point()) ==  LEFT_TURN); 
   _tds.flip(f, i);
   return;
 }
@@ -923,7 +923,7 @@ insert_outside_convex_hull_2(const Point& p, Face_handle f)
   CGAL_triangulation_precondition( 
 		orientation(p,
 			    f->vertex(ccw(li))->point(),
-			    f->vertex(cw(li))->point()) == LEFTTURN);
+			    f->vertex(cw(li))->point()) == LEFT_TURN);
 
   std::list<Face_handle> ccwlist;
   std::list<Face_handle> cwlist;
@@ -935,7 +935,7 @@ insert_outside_convex_hull_2(const Point& p, Face_handle f)
     li = fc->index(infinite_vertex());
     const Point& q = fc->vertex(ccw(li))->point();
     const Point& r = fc->vertex(cw(li))->point();
-    if(orientation(p,q,r) == LEFTTURN ) { ccwlist.push_back(&(*fc)); }
+    if(orientation(p,q,r) == LEFT_TURN ) { ccwlist.push_back(&(*fc)); }
     else {done=true;}
   }
 
@@ -946,7 +946,7 @@ insert_outside_convex_hull_2(const Point& p, Face_handle f)
     li = fc->index(infinite_vertex());
      const Point& q = fc->vertex(ccw(li))->point();
      const Point& r = fc->vertex(cw(li))->point();
-    if(orientation(p,q,r) == LEFTTURN ) { cwlist.push_back(&(*fc));}
+    if(orientation(p,q,r) == LEFT_TURN ) { cwlist.push_back(&(*fc));}
     else {done=true;}
   }
 
@@ -1199,7 +1199,7 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
   //stack algorithm to create faces
   // create face v0,v1,v2
   //if v0,v1,v2 are finite vertices
-  // and form a leftturn
+  // and form a left_turn
   // and triangle v0v1v2 does not contain v->point()
   if( hole.size() != 3) {
     typename Hole::iterator hit = hole.begin();
@@ -1216,7 +1216,7 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
 	in = (*next).second;
 	v2 = fn->vertex(ccw(in));	
 	if ( !is_infinite(v2) &&
-	     orientation(v0->point(), v1->point(), v2->point()) == LEFTTURN ) {
+	     orientation(v0->point(), v1->point(), v2->point()) == LEFT_TURN ) {
 	  side =  bounded_side(v0->point(), 
 			       v1->point(), 
 			       v2->point(),
@@ -1248,7 +1248,7 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
   // except may be one vertex whose corresponding ear 
   // includes the vertex being removed
 
-  // deal with the last leftturn if any
+  // deal with the last left_turn if any
   if(hole.size() != 3) {
     typename Hole::iterator hit=hole.begin();
     while(hit != hole.end()) {
@@ -1261,7 +1261,7 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
 	   !is_infinite(fn->vertex(ccw(in))) &&
 	   orientation(ff->vertex(cw(ii))->point(),
 		       fn->vertex(cw(in))->point(),
-		       fn->vertex(ccw(in))->point()) == LEFTTURN) {
+		       fn->vertex(ccw(in))->point()) == LEFT_TURN) {
 	  create_face(ff,ii,fn,in);
 	  break;
 	}
@@ -1548,7 +1548,7 @@ march_locate_1D(const Point& t,
   Orientation pqt = orientation(f->vertex(0)->point(), 
 				f->vertex(1)->point(),
 				t);
-  if(pqt == RIGHTTURN || pqt == LEFTTURN) {
+  if(pqt == RIGHT_TURN || pqt == LEFT_TURN) {
     lt = OUTSIDE_AFFINE_HULL;
     li = 4 ;// should not be used
     return Face_handle();
@@ -1641,7 +1641,7 @@ march_locate_2D(Face_handle start,
       }
       ori = orientation( fc->vertex(cw(ic))->point(),
 			 fc->vertex(ccw(ic))->point(), t);
-      if (ori == RIGHTTURN) {
+      if (ori == RIGHT_TURN) {
 	lt = OUTSIDE_CONVEX_HULL;
 	li = ic;
 	return fc;
@@ -1900,9 +1900,9 @@ oriented_side(const Point &p0, const Point &p1,
   if (bs == ON_BOUNDARY) return ON_ORIENTED_BOUNDARY;
   Orientation      ot = orientation(p0, p1, p2);
   if (bs == ON_BOUNDED_SIDE)
-    return (ot == LEFTTURN) ? ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE;
+    return (ot == LEFT_TURN) ? ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE;
   // bs == ON_UNBOUNDED_SIDE
-  return (ot == LEFTTURN) ? ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE;
+  return (ot == LEFT_TURN) ? ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE;
 }
 
 
