@@ -1,7 +1,3 @@
-#define TESTR 2
-#define BBOX 2
-#define STRATEGY 2
-
 #ifndef VOID_TEST
 #include "numrep1.h"
 #include <cassert>
