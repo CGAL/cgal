@@ -43,8 +43,8 @@ typedef typename Rep::FT                    NT;
 public:
   Point_2 orig;
   SAVED_OBJECT object;
-  my_point(Point_2 p,Point_2 inp_orig,SAVED_OBJECT obj) : Point_2(p),orig(inp_orig),
-           object(obj) {}
+  my_point(Point_2 p,Point_2 inp_orig,SAVED_OBJECT obj) :
+           Point_2(p),orig(inp_orig),object(obj) {}
   my_point(Point_2 p) : Point_2(p),orig(Point_2(0,0)) {}
   my_point() : Point_2(),orig() {}
   my_point(NT x,NT y) : Point_2(x,y),orig(Point_2(0,0)) {}
@@ -53,23 +53,24 @@ public:
 template<class Rep_,class SAVED_OBJECT>
 class Multiple_kd_tree {
 
-typedef Rep_                                                    Rep;
-typedef typename Rep::FT                                        NT;
-typedef typename Rep::Segment_2                                 Segment_2;
-typedef typename Rep::Point_2                                   Point_2;
-typedef typename Rep::Vector_2                                  Vector_2;
-typedef typename Rep::Iso_rectangle_2                           Iso_rectangle_2;
-typedef typename Rep::Direction_2                               Direction_2;
-typedef typename Rep::Line_2                                    Line_2;
-typedef typename Rep::Aff_transformation_2                      Transformation_2;
-typedef CGAL::Kdtree_interface_2d<my_point<Rep,SAVED_OBJECT> >  kd_interface;
-typedef CGAL::Kdtree_d<kd_interface>                            kd_tree;
-typedef typename kd_tree::Box                                   Box;
-typedef std::list<my_point<Rep,SAVED_OBJECT> >                  Points_List; 
-typedef std::pair<kd_tree *,std::pair<Direction_2,NT> >         kd_triple;
+typedef Rep_                                          Rep;
+typedef typename Rep::FT                              NT;
+typedef typename Rep::Segment_2                       Segment_2;
+typedef typename Rep::Point_2                         Point_2;
+typedef typename Rep::Vector_2                        Vector_2;
+typedef typename Rep::Iso_rectangle_2                 Iso_rectangle_2;
+typedef typename Rep::Direction_2                     Direction_2;
+typedef typename Rep::Line_2                          Line_2;
+typedef typename Rep::Aff_transformation_2            Transformation_2;
+typedef CGAL::Kdtree_interface_2d<my_point<Rep,SAVED_OBJECT> >
+                                                      kd_interface;
+typedef CGAL::Kdtree_d<kd_interface>                  kd_tree;
+typedef typename kd_tree::Box                         Box;
+typedef std::list<my_point<Rep,SAVED_OBJECT> >        Points_List; 
+typedef std::pair<kd_tree *,std::pair<Direction_2,NT> >
+                                                      kd_triple;
 typedef std::list<std::pair<kd_tree *,std::pair<Direction_2,NT> > >
-                                                                kd_triple_list;
-
+                                                      kd_triple_list;
 
 private:
   Rep_   _gt;
