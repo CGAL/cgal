@@ -1,3 +1,6 @@
+version 7.0:
+-> New doc style.
+
 version 6.0:
 And now CGAL-2.2-I...
 
