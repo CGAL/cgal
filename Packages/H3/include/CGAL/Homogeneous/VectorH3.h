@@ -65,13 +65,13 @@ public:
   VectorH3(const Direction_3 & d)   /* XXX */
     : Vector_handle_3_(d) {}
 
-  FT    x()  const { return FT(Ptr()->hx() )/FT(Ptr()->hw() ) ; }
-  FT    y()  const { return FT(Ptr()->hy() )/FT(Ptr()->hw() ) ; }
-  FT    z()  const { return FT(Ptr()->hz() )/FT(Ptr()->hw() ) ; }
-  const RT & hx() const { return  Ptr()->hx() ; }
-  const RT & hy() const { return  Ptr()->hy() ; }
-  const RT & hz() const { return  Ptr()->hz() ; }
-  const RT & hw() const { return  Ptr()->hw() ; }
+  const RT & hx() const { return  Ptr()->e0 ; }
+  const RT & hy() const { return  Ptr()->e1 ; }
+  const RT & hz() const { return  Ptr()->e2 ; }
+  const RT & hw() const { return  Ptr()->e3 ; }
+  FT    x()  const { return FT(hx())/FT(hw()) ; }
+  FT    y()  const { return FT(hy())/FT(hw()) ; }
+  FT    z()  const { return FT(hz())/FT(hw()) ; }
   const RT & homogeneous(int i) const;
   FT    cartesian(int i) const;
   FT    operator[](int i) const;

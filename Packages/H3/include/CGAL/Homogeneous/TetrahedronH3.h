@@ -24,35 +24,10 @@
 #ifndef CGAL_TETRAHEDRONH3_H
 #define CGAL_TETRAHEDRONH3_H
 
-#include <CGAL/Fourtuple.h>
 #include <vector>
 #include <functional>
 
 CGAL_BEGIN_NAMESPACE
-
-template < class R_ > class TetrahedronH3;
-
-template < class R >
-class Tetrahedron_repH3
-{
- public:
-  typedef typename R::Kernel_base::Point_3 Point_3;
-
-  Tetrahedron_repH3()
-      : ordertype(DEGENERATE) {}
-  Tetrahedron_repH3(const Point_3 &p,
-                    const Point_3 &q,
-                    const Point_3 &r,
-                    const Point_3 &s )
-    : container(p,q,r,s), ordertype(orientation(p,q,r,s)) {}
-
-  friend class TetrahedronH3<R>;
-
- private:
-    Fourtuple< Point_3 > container;
-    Orientation             ordertype;
-};
-
 
 template < class R_ >
 class TetrahedronH3
@@ -140,10 +115,10 @@ TetrahedronH3<R>::vertex(int i) const
 {
   switch (i%4)
   {
-     case 0:  return Ptr()->container.e0;
-     case 1:  return Ptr()->container.e1;
-     case 2:  return Ptr()->container.e2;
-     default: /*case 3:*/  return Ptr()->container.e3;
+     case 0:  return Ptr()->e0;
+     case 1:  return Ptr()->e1;
+     case 2:  return Ptr()->e2;
+     default: /*case 3:*/  return Ptr()->e3;
   }
 }
 
@@ -192,7 +167,7 @@ template < class R >
 inline
 Orientation
 TetrahedronH3<R>::orientation() const
-{ return Ptr()->ordertype; }
+{ return CGAL::orientation(vertex(0), vertex(1), vertex(2), vertex(3)); }
 
 template < class R >
 CGAL_KERNEL_INLINE

@@ -120,12 +120,12 @@ CGAL_KERNEL_INLINE
 bool
 DirectionH3<R>::operator==( const DirectionH3<R>& d) const
 {
-  return ( ( Ptr()->hx()*d.Ptr()->hy() == Ptr()->hy()*d.Ptr()->hx() )
-        &&( Ptr()->hx()*d.Ptr()->hz() == Ptr()->hz()*d.Ptr()->hx() )
-        &&( Ptr()->hy()*d.Ptr()->hz() == Ptr()->hz()*d.Ptr()->hy() )
-        &&( CGAL_NTS sign( Ptr()->hx() ) == CGAL_NTS sign( d.Ptr()->hx() ) )
-        &&( CGAL_NTS sign( Ptr()->hy() ) == CGAL_NTS sign( d.Ptr()->hy() ) )
-        &&( CGAL_NTS sign( Ptr()->hz() ) == CGAL_NTS sign( d.Ptr()->hz() ) ) );
+  return ( ( hx()*d.hy() == hy()*d.hx() )
+        &&( hx()*d.hz() == hz()*d.hx() )
+        &&( hy()*d.hz() == hz()*d.hy() )
+        &&( CGAL_NTS sign( hx() ) == CGAL_NTS sign( d.hx() ) )
+        &&( CGAL_NTS sign( hy() ) == CGAL_NTS sign( d.hy() ) )
+        &&( CGAL_NTS sign( hz() ) == CGAL_NTS sign( d.hz() ) ) );
 }
 
 template <class R >
@@ -144,7 +144,7 @@ template <class R >
 inline
 DirectionH3<R>
 DirectionH3<R>::operator-() const
-{ return DirectionH3<R>(- Ptr()->hx(),- Ptr()->hy(),- Ptr()->hz() ); }
+{ return DirectionH3<R>(- hx(),- hy(),- hz() ); }
 
 template <class R >
 inline

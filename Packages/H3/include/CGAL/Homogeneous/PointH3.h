@@ -95,46 +95,46 @@ public:
 #endif
 
 template < class R >
-CGAL_KERNEL_INLINE
-typename PointH3<R>::FT
-PointH3<R>::x()  const
-{ return ( FT(Ptr()->hx() ) / FT(Ptr()->hw() )); }
-
-template < class R >
-CGAL_KERNEL_INLINE
-typename PointH3<R>::FT
-PointH3<R>::y()  const
-{ return ( FT(Ptr()->hy() ) / FT(Ptr()->hw() )); }
-
-template < class R >
-CGAL_KERNEL_INLINE
-typename PointH3<R>::FT
-PointH3<R>::z()  const
-{ return ( FT(Ptr()->hz() ) / FT(Ptr()->hw() )); }
-
-template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hx() const
-{ return  Ptr()->hx() ; }
+{ return  Ptr()->e0 ; }
 
 template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hy() const
-{ return  Ptr()->hy() ; }
+{ return  Ptr()->e1 ; }
 
 template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hz() const
-{ return  Ptr()->hz() ; }
+{ return  Ptr()->e2 ; }
 
 template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hw() const
-{ return  Ptr()->hw(); }
+{ return  Ptr()->e3; }
+
+template < class R >
+CGAL_KERNEL_INLINE
+typename PointH3<R>::FT
+PointH3<R>::x()  const
+{ return ( FT(hx()) / FT(hw())); }
+
+template < class R >
+CGAL_KERNEL_INLINE
+typename PointH3<R>::FT
+PointH3<R>::y()  const
+{ return ( FT(hy()) / FT(hw())); }
+
+template < class R >
+CGAL_KERNEL_INLINE
+typename PointH3<R>::FT
+PointH3<R>::z()  const
+{ return ( FT(hz()) / FT(hw())); }
 
 template < class R >
 inline

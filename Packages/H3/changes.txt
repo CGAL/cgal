@@ -1,3 +1,7 @@
+2.43   (4 January 2002)
+- Replace the small helper *rep classes by std::pair and triple.
+- Tetrahedron_3.orientation() is not cached anymore.
+
 2.42   (12 December 2001)
 - Add IO operators for SphereH3.
 

@@ -26,29 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R_> class SphereH3;
-
-template <class R>
-class Sphere_repH3
-{
-  public:
-    typedef typename R::FT   FT;
-    typedef typename R::Kernel_base::Point_3  Point_3;
-
-    friend class SphereH3<R>;
-
-    Sphere_repH3() {}
-
-    Sphere_repH3(const Point_3 p, const FT sq_rad, const Orientation& o)
-      : center(p), squared_radius(sq_rad), orientation_(o) {}
-
-  protected:
-    Point_3   center;
-    FT           squared_radius;
-    Orientation  orientation_;
-};
-
-
 template <class R_>
 class SphereH3
   : public R_::Sphere_handle_3
@@ -204,25 +181,25 @@ template <class R>
 inline
 const typename SphereH3<R>::Point_3 &
 SphereH3<R>::center() const
-{ return Ptr()->center; }
+{ return Ptr()->first; }
 
 template <class R>
 inline
 const typename SphereH3<R>::FT &
 SphereH3<R>::squared_radius() const
-{ return Ptr()->squared_radius; }
+{ return Ptr()->second; }
 
 template <class R>
 inline
 Orientation
 SphereH3<R>::orientation() const
-{ return Ptr()->orientation_; }
+{ return Ptr()->third; }
 
 template <class R>
 inline
 bool
 SphereH3<R>::is_degenerate() const
-{ return Ptr()->squared_radius <= FT(0) ; }
+{ return squared_radius() <= FT(0) ; }
 
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE

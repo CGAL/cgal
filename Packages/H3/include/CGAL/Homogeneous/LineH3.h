@@ -26,27 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R_ > class LineH3;
-
-template < class R >
-class Line_repH3
-{
-  public:
-  typedef typename R::Kernel_base::Point_3              Point_3;
-  typedef typename R::Kernel_base::Direction_3          Direction_3;
-
-     Line_repH3() {}
-     Line_repH3( const Point_3& p, const Direction_3 d)
-      : basepoint(p), direction(d) {}
-
-  friend class LineH3<R>;
-
-  private:
-    Point_3       basepoint;
-    Direction_3   direction;
-};
-
-
 template < class R_ >
 class LineH3
   : public R_::Line_handle_3
@@ -113,7 +92,7 @@ template < class R >
 inline
 const typename LineH3<R>::Point_3 &
 LineH3<R>::point() const
-{ return Ptr()->basepoint; }
+{ return Ptr()->first; }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -125,7 +104,7 @@ template < class R >
 inline
 const typename LineH3<R>::Direction_3 &
 LineH3<R>::direction() const
-{ return Ptr()->direction; }
+{ return Ptr()->second; }
 
 template < class R >
 CGAL_KERNEL_INLINE

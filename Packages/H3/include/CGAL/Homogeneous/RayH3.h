@@ -26,27 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R_ > class RayH3;
-
-template < class R >
-class Ray_repH3
-{
- public:
-  typedef typename R::Kernel_base::Point_3             Point_3;
-  typedef typename R::Kernel_base::Direction_3         Direction_3;
-
-  Ray_repH3() {}
-  Ray_repH3(const Point_3& p, const Direction_3& d)
-   : startpoint(p), direction(d) {}
-
- friend class RayH3<R>;
-
- private:
-  Point_3      startpoint;
-  Direction_3  direction;
-};
-
-
 template < class R_ >
 class RayH3
   : public R_::Ray_handle_3
@@ -93,13 +72,13 @@ template < class R >
 inline
 const typename RayH3<R>::Point_3 &
 RayH3<R>::source() const
-{ return Ptr()->startpoint; }
+{ return Ptr()->first; }
 
 template < class R >
 inline
 const typename RayH3<R>::Point_3 &
 RayH3<R>::start() const
-{ return Ptr()->startpoint; }
+{ return Ptr()->first; }
 
 template < class R >
 inline
@@ -107,7 +86,7 @@ const typename RayH3<R>::Direction_3 &
 RayH3<R>::direction() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return Ptr()->direction;
+  return Ptr()->second;
 }
 
 template < class R >
@@ -194,7 +173,7 @@ template < class R >
 inline
 bool
 RayH3<R>::is_degenerate() const
-{ return (Ptr()->direction).is_degenerate() ; }
+{ return (Ptr()->second).is_degenerate() ; }
 
 template < class R >
 CGAL_KERNEL_INLINE
