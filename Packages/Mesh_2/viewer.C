@@ -1,5 +1,6 @@
 #include "Mesh.h"
 #include <qapplication.h>
+#include <qpainter.h>
 #include <qfiledialog.h>
 #include <stdlib.h>
 #include <fstream>
