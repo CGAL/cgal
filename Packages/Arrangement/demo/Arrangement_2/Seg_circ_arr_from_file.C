@@ -8,19 +8,7 @@
 //    or:
 // S x_source y_source x_target y_target
 
-#include <CGAL/Cartesian.h>
-#include <fstream>
-#include <CGAL/Timer.h>
-
-#include <CGAL/Arr_segment_circle_traits.h>
-#include <CGAL/IO/Segment_circle_Window_stream.h>
-
-#include <CGAL/Arr_2_bases.h>
-#include <CGAL/Arr_2_default_dcel.h>
-#include <CGAL/Arrangement_2.h>
-
-#include <CGAL/leda_real.h>
-#include <CGAL/Draw_preferences.h>
+#include <CGAL/basic.h>
 
 #ifndef CGAL_USE_LEDA
 int main(int argc, char* argv[])
@@ -34,7 +22,19 @@ int main(int argc, char* argv[])
 
 #else
 
+#include <CGAL/Cartesian.h>
+#include <fstream>
+#include <CGAL/Timer.h>
+
+#include <CGAL/Arr_segment_circle_traits.h>
+#include <CGAL/IO/Segment_circle_Window_stream.h>
+
+#include <CGAL/Arr_2_bases.h>
+#include <CGAL/Arr_2_default_dcel.h>
+#include <CGAL/Arrangement_2.h>
+
 #include <CGAL/leda_real.h>
+#include <CGAL/Draw_preferences.h>
 
 typedef CGAL::Arr_segment_circle_traits<leda_real> Traits; 
 
@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
 
       if (type == 'c' || type == 'C')
       {
-	std::cout << " (full circle)." << endl;
+	std::cout << " (full circle)." << std::endl;
 
 	insrt_t.start();
 	arr.insert (Curve(circle));
@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
       }
       else
       {
-	std::cout << " (circular arc)." << endl;
+	std::cout << " (circular arc)." << std::endl;
 
 	// Read the end points.
 	leda_real  x1, y1, x2, y2;
@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
     // A segment (s):
     else if (type == 's' || type == 'S')
     {
-      std::cout << " (segment)." << endl;
+      std::cout << " (segment)." << std::endl;
       // Read the end points.
       leda_real  x1, y1, x2, y2;
 
@@ -189,7 +189,7 @@ int main(int argc, char* argv[])
     else
     {
       std::cout << "Unknown arc type '" << type 
-		<< "' - Stopping here." << endl;
+		<< "' - Stopping here." << std::endl;
       exit(1);
     }
   }
