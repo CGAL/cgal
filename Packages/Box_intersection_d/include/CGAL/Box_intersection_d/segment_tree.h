@@ -31,7 +31,6 @@
 #include <cstdlib>
 #include <cmath>
 #include <climits>
-#include <cassert>
 #include <cstddef>
 
 CGAL_BEGIN_NAMESPACE
@@ -322,12 +321,12 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     {
         // first: each point is inside segment [lo,hi)
         for( RandomAccessIter1 it = p_begin; it != p_end; ++it ) {
-            assert( Lo_less( hi, dim )(*it) );
-            assert( Lo_less( lo, dim )(*it) == false );
+            CGAL_assertion( Lo_less( hi, dim )(*it) );
+            CGAL_assertion( Lo_less( lo, dim )(*it) == false );
         }
         // second: each interval intersects segment [lo,hi)
         for( RandomAccessIter2 it = i_begin; it != i_end; ++it )
-            assert( Hi_greater( lo, dim )(*it) && Lo_less( hi, dim )(*it) );
+            CGAL_assertion( Hi_greater(lo,dim)(*it) && Lo_less(hi,dim)(*it));
     }
 #endif
 
