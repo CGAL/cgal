@@ -1,3 +1,6 @@
+Version 1.83 (3 August 01)
+- Susan added missing .gif and .eps files in the doc_tex/*_ref directories
+
 Version 1.82 (1 August 01)
 - Susan moved the doc_tex/*_ref directories up one level and changed htmlfiles
   accordingly
