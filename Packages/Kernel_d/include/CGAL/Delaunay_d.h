@@ -953,7 +953,7 @@ all_vertices_below(const Lifted_hyperplane_d& h,
 }
 
 template <typename R, typename Lifted_R>
-std::list< typename Delaunay_d<R,Lifted_R>::Vertex_handle > 
+std::list< CGAL_TYPENAME_MSVC_NULL Delaunay_d<R,Lifted_R>::Vertex_handle > 
 Delaunay_d<R,Lifted_R>::
 range_search(const Sphere_d& C) const
 { 
@@ -993,7 +993,7 @@ range_search(const Sphere_d& C) const
   
 
 template <typename R, typename Lifted_R>
-std::list< typename Delaunay_d<R,Lifted_R>::Vertex_handle > 
+std::list< CGAL_TYPENAME_MSVC_NULL Delaunay_d<R,Lifted_R>::Vertex_handle > 
 Delaunay_d<R,Lifted_R>::
 range_search(const std::vector<Point_d>& A) const
 { 
@@ -1019,7 +1019,7 @@ range_search(const std::vector<Point_d>& A) const
 
 
 template <typename R, typename Lifted_R>
-std::list< typename Delaunay_d<R,Lifted_R>::Simplex_handle > 
+std::list< CGAL_TYPENAME_MSVC_NULL Delaunay_d<R,Lifted_R>::Simplex_handle > 
 Delaunay_d<R,Lifted_R>::
 all_simplices(Delaunay_voronoi_kind k) const
 { 
@@ -1034,7 +1034,7 @@ all_simplices(Delaunay_voronoi_kind k) const
 }
 
 template <typename R, typename Lifted_R>
-std::list< typename Delaunay_d<R,Lifted_R>::Vertex_handle > 
+std::list< CGAL_TYPENAME_MSVC_NULL Delaunay_d<R,Lifted_R>::Vertex_handle > 
 Delaunay_d<R,Lifted_R>::
 all_vertices(Delaunay_voronoi_kind k) const
 { 
@@ -1056,7 +1056,7 @@ all_vertices(Delaunay_voronoi_kind k) const
 
 
 template <typename R, typename Lifted_R>
-std::list< typename Delaunay_d<R,Lifted_R>::Point_d > 
+std::list< CGAL_TYPENAME_MSVC_NULL Delaunay_d<R,Lifted_R>::Point_d > 
 Delaunay_d<R,Lifted_R>::
 all_points() const
 { 

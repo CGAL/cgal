@@ -79,7 +79,12 @@ Let |j = C.index_of_vertex_in_opposite_facet(f,i)|. Then
 
 #include <CGAL/basic.h>
 #include <CGAL/Hash_map.h>
+#ifndef _MSC_VER
 #include <CGAL/Regular_complex_d.h>
+#else
+#include <CGAL/Regular_complex_d_MSC.h>
+#endif
+
 #include <list>
 #include <vector>
 
@@ -1082,7 +1087,7 @@ void Convex_hull_d<R>::clear_visited_marks(Simplex_handle S) const
 }
 
 template <class R>
-std::list< typename Convex_hull_d<R>::Simplex_handle > 
+std::list< CGAL_TYPENAME_MSVC_NULL Convex_hull_d<R>::Simplex_handle > 
 Convex_hull_d<R>::facets_visible_from(const Point_d& x)
 { 
   std::list<Simplex_handle> visible_simplices;
