@@ -233,7 +233,7 @@ public:
   //! is represented by a given curve, for which one endpoint, held by the
   //! target vertex of a given halfedge, is already in the map.
 
-  /*! insert_from_halfedge() inserts a new edge into the map. The new edge
+  /*! insert_from_vertex() inserts a new edge into the map. The new edge
    * is represented by a given curve, for which one endpoint, held by the
    * target vertex v of a given halfedge, is already in the map.
    * The returened twin halfedge is inserted immediately after the given
@@ -251,10 +251,13 @@ public:
    * implies no notification on insertion.
    * \return a handle to a new halfedge that has the vertex v as its source.
    */
-  Halfedge_handle insert_from_halfedge(const X_curve_2 & cv,
-                                       Halfedge_handle previous,
-                                       bool source,
-                                       Change_notification * en = NULL);
+  Halfedge_handle insert_from_vertex(const X_curve_2 & cv,
+                                     Halfedge_handle previous, bool source,
+                                     Change_notification * en = NULL
+#ifdef _MSC_VER
+                                     ,int dummy = 0
+#endif
+                                     );
 
   //! inserts a new edge into the map. The new edge
   //! is represented by a given curve, for which one endpoint, a given vertex,
@@ -279,7 +282,7 @@ public:
   //! is represented by a given curve, for which its two endpoints, held by
   //! the target vertices of two given halfedges, are already in the map.
 
-  /*! insert_at_halfedges() inserts a new edge into the map. The new edge
+  /*! insert_at_vertices() inserts a new edge into the map. The new edge
    * is represented by a given curve, for which its two endpoints, held by
    * the target vertices of two given halfedges, are already in the map.
    * Call the two target vertices of the two given halfedges v1 and v2
@@ -305,10 +308,14 @@ public:
    * \return a handle to a new halfedge that has the target vertices of the
    * previous1 and previous2 as its source and target vertices respectively.
    */
-  Halfedge_handle insert_at_halfedges(const X_curve_2 & cv,
-                                      Halfedge_handle previous1, 
-                                      Halfedge_handle previous2,
-                                      Change_notification * en = NULL);
+  Halfedge_handle insert_at_vertices(const X_curve_2 & cv,
+                                     Halfedge_handle previous1, 
+                                     Halfedge_handle previous2,
+                                     Change_notification * en = NULL
+#ifdef _MSC_VER
+                                     ,int dummy = 0
+#endif
+                                     );
 
   //! inserts a new edge into the map. The new edge
   //! is represented by a given curve, for which its two endpoints, held by two
@@ -885,12 +892,19 @@ insert_in_face_interior(
 template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
-insert_from_halfedge(
+insert_from_vertex(
   const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,
   typename Planar_map_2<Dcel,Traits>::Halfedge_handle    previous,
   bool                                                   source,
-  Change_notification                                  * en)
+  Change_notification                                  * en
+#ifdef _MSC_VER
+  ,int dummy
+#endif
+  )
 {
+#ifdef _MSC_VER
+  (void) dummy;
+#endif
   Halfedge_handle h = Topological_map<Dcel>::insert_from_vertex(previous);  
   h->set_curve(cv);  
   h->twin()->set_curve(cv);
@@ -938,7 +952,7 @@ insert_from_vertex(const typename Planar_map_2< Dcel, Traits >::X_curve_2 & cv,
     }
   }
 
-  return insert_from_halfedge(cv, previous, source, en);
+  return insert_from_vertex(cv, previous, source, en);
 }
 
 /*!
@@ -946,12 +960,19 @@ insert_from_vertex(const typename Planar_map_2< Dcel, Traits >::X_curve_2 & cv,
 template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
-insert_at_halfedges(
+insert_at_vertices(
   const typename Planar_map_2< Dcel, Traits >::X_curve_2 & cv,
   typename Planar_map_2< Dcel, Traits >::Halfedge_handle   previous1, 
   typename Planar_map_2< Dcel, Traits >::Halfedge_handle   previous2,
-  Change_notification                                    * en)
+  Change_notification                                    * en
+#ifdef _MSC_VER
+  ,int dummy
+#endif
+  )
 {
+#ifdef _MSC_VER
+  (void) dummy;
+#endif
   CGAL_precondition_msg(traits->point_is_same(previous1->target()->point(), 
 					traits->curve_source(cv)) &&
 			traits->point_is_same(previous2->target()->point(), 
@@ -1084,7 +1105,7 @@ insert_at_vertices(const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,
     }
   }    
 
-  return insert_at_halfedges(cv, previous1, previous2, en);
+  return insert_at_vertices(cv, previous1, previous2, en);
 }
 
 //-----------------------------------------------------------------------------
