@@ -1,7 +1,8 @@
 Versions
 
-2.17 (?? October 2000)
+2.17 (25 January 2001)
   Added to_interval().
+  Move the doc to the appropriate directory.
 
 2.16 (1 Aug 2000)
   qualifying with CGAL_NTS
