@@ -1,3 +1,6 @@
+4.112 (25 August 2003)
+- Try to workaround a VC++ feature in Gmpz.
+
 4.111 (25 August 2003)
 - Better testing of to_rational() and simplest_rational_in_interval().
 

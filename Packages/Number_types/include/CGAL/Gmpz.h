@@ -574,7 +574,7 @@ operator>>(std::istream& is, Gmpz &z)
   if (std::isdigit(c))
 #endif // CGAL_CFG_NO_LOCALE
   {
-        z = c - '0';
+        z = c - null;
 #ifndef CGAL_CFG_NO_LOCALE
         while (is.get(c) && std::isdigit(c, std::locale::classic() ))
 #else
