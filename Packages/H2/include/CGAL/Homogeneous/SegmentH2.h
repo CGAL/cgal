@@ -39,10 +39,14 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Line_2               Line_2;
   typedef typename R_::Direction_2          Direction_2;
   typedef typename R_::Vector_2             Vector_2;
+  typedef typename R_::Segment_2            Segment_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef Twotuple<Point_2>                        rep;
   typedef typename R_::template Handle<rep>::type  base;
+
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
 
 public:
   typedef R_                                    R;
@@ -50,13 +54,13 @@ public:
     SegmentH2() {}
 
     SegmentH2( const Point_2& sp, const Point_2& ep)
-      : base(rep(sp, ep)) {}
+      : base(sp, ep) {}
 
 #if 1 // FIXME : should this exist at all ?
     SegmentH2( const RT& sx, const RT& sy, const RT& sw,
                const RT& ex, const RT& ey, const RT& ew)
-      : base( rep( Point_2(sx,sy,sw),
-                   Point_2(ex,ey,ew) ) ) {}
+      : base(Point_2(sx,sy,sw),
+             Point_2(ex,ey,ew)) {}
 #endif
 
     bool    operator==(const SegmentH2<R>& s) const;
@@ -84,17 +88,17 @@ public:
     Direction_2    direction() const;
     Vector_2       to_vector() const;
     Line_2         supporting_line() const;
-    SegmentH2<R>   opposite() const;
+    Segment_2      opposite() const;
     Bbox_2         bbox() const;
 
-    SegmentH2<R> transform( const Aff_transformation_2 & t) const;
+    Segment_2      transform( const Aff_transformation_2 & t) const;
 };
 
 template < class R >
 inline
 const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::source() const
-{ return Ptr()->e0; }
+{ return get(Base()).e0; }
 
 template < class R >
 inline
@@ -106,7 +110,7 @@ template < class R >
 inline
 const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::target() const
-{ return Ptr()->e1; }
+{ return get(Base()).e1; }
 
 template < class R >
 inline
@@ -196,17 +200,17 @@ SegmentH2<R>::supporting_line() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-SegmentH2<R>
+typename R::Segment_2
 SegmentH2<R>::opposite() const
-{ return SegmentH2<R>(end(), start()); }
+{ return typename R::Segment_2(end(), start()); }
 
 template < class R >
 CGAL_KERNEL_INLINE
-SegmentH2<R>
+typename R::Segment_2
 SegmentH2<R>::
 transform(const typename SegmentH2<R>::Aff_transformation_2& t) const
 {
-  return SegmentH2<R>(t.transform(start()), t.transform(end()) );
+  return typename R::Segment_2(t.transform(start()), t.transform(end()) );
 }
 
 template < class R >

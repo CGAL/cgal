@@ -46,6 +46,9 @@ CGAL_VC7_BUG_PROTECTED
   typedef Threetuple<RT>                           rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef Cartesian_coordinate_iterator_2<R_> Cartesian_const_iterator;
   typedef R_                                    R;
@@ -53,31 +56,31 @@ public:
     PointH2() {}
 
     PointH2(const Origin &)  
-       : base ( rep( RT(0), RT(0), RT(1))) { }
+       : base (RT(0), RT(0), RT(1)) {}
 
     PointH2(const PointH2<R> & p) 
-       : base (p) { }
+       : base (p) {}
 
     PointH2(const Vector_2& v) 
-       : base (v) { }
+       : base (v) {}
 
     PointH2(const RT& hx, const RT& hy )
-      : base ( rep( hx, hy, RT(1) )) { }
+      : base (hx, hy, RT(1)) {}
 
     PointH2(const RT& hx, const RT& hy, const RT& hw)
     {
       if ( hw >= RT(0)   )
-        initialize_with( rep( hx, hy, hw)); 
+        Base() = rep( hx, hy, hw);
       else
-        initialize_with( rep(-hx,-hy,-hw)); 
+        Base() = rep(-hx,-hy,-hw);
     }
 
     bool    operator==( const PointH2<R>& p) const;
     bool    operator!=( const PointH2<R>& p) const;
 
-    const RT & hx() const { return Ptr()->e0; };
-    const RT & hy() const { return Ptr()->e1; };
-    const RT & hw() const { return Ptr()->e2; };
+    const RT & hx() const { return get(Base()).e0; };
+    const RT & hy() const { return get(Base()).e1; };
+    const RT & hw() const { return get(Base()).e2; };
 
     FT      x()  const { return FT(hx()) / FT(hw()); };
     FT      y()  const { return FT(hy()) / FT(hw()); };
@@ -86,19 +89,20 @@ public:
     FT      operator[](int i)  const;
     const RT & homogeneous(int i) const;
 
-  Cartesian_const_iterator cartesian_begin() const 
-  {
-    return Cartesian_const_iterator(static_cast<const Point_2*>(this), 0);
-  }
+    Cartesian_const_iterator cartesian_begin() const 
+    {
+      return Cartesian_const_iterator(static_cast<const Point_2*>(this), 0);
+    }
 
-  Cartesian_const_iterator cartesian_end() const 
-  {
-    return Cartesian_const_iterator(static_cast<const Point_2*>(this), 2);
-  }
+    Cartesian_const_iterator cartesian_end() const 
+    {
+      return Cartesian_const_iterator(static_cast<const Point_2*>(this), 2);
+    }
+
     int     dimension() const;
     Bbox_2  bbox() const;
 
-    PointH2<R> transform( const Aff_transformation_2 & t) const;
+    Point_2 transform( const Aff_transformation_2 & t) const;
     Direction_2 direction() const;
 };
 
@@ -106,8 +110,8 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 PointH2<R>::operator==( const PointH2<R>& p) const
-{
-  return (  (hx() * p.hw() == p.hx() * hw() )
+{ // FIXME : Predicate
+  return (  (hx() * p.hw() == p.hx() * hw() ) 
           &&(hy() * p.hw() == p.hy() * hw() ) );
 }
 
@@ -115,7 +119,7 @@ template < class R >
 inline
 bool
 PointH2<R>::operator!=( const PointH2<R>& p) const
-{ return !(*this == p); }   /* XXX */
+{ return !(*this == p); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -179,9 +183,9 @@ PointH2<R>::bbox() const
 
 template < class R >
 inline
-PointH2<R>
+typename R::Point_2
 PointH2<R>::transform(const typename PointH2<R>::Aff_transformation_2& t) const
-{ return t.transform(*this); }
+{ return t.transform(static_cast<const typename R::Point_2 &>(*this)); }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_POINTH2
 template < class R >

@@ -32,7 +32,7 @@ typename K::Point_2
 operator+(const PointC2<K> &p, const VectorC2<K> &v)
 {
   //return K().construct_translated_point_2_object()(p, v);
-  return PointC2<K>(p.x() + v.x(), p.y() + v.y());
+  return typename K::Point_2(p.x() + v.x(), p.y() + v.y());
 }
 
 template < class K >
@@ -40,7 +40,7 @@ inline
 typename K::Point_2
 operator-(const PointC2<K> &p, const VectorC2<K> &v)
 {
-  return PointC2<K>(p.x() - v.x(), p.y() - v.y());
+  return typename K::Point_2(p.x() - v.x(), p.y() - v.y());
 }
 
 template < class K >
@@ -48,7 +48,7 @@ inline
 typename K::Point_2
 operator+(const Origin &, const VectorC2<K> &v)
 {
-  return PointC2<K>(v);
+  return typename K::Point_2(v.x(), v.y());
 }
 
 template < class K >
@@ -56,7 +56,7 @@ inline
 typename K::Point_2
 operator-(const Origin &, const VectorC2<K> &v)
 {
-  return PointC2<K>(-v);
+  return typename K::Point_2(-v.x(), -v.y());
 }
 
 template < class K >
@@ -65,7 +65,7 @@ typename K::Vector_2
 operator-(const PointC2<K> &p, const PointC2<K> &q)
 {
   //return K().construct_vector_2_object()(p, q);
-  return VectorC2<K>(p.x() - q.x(), p.y() - q.y());
+  return typename K::Vector_2(p.x() - q.x(), p.y() - q.y());
 }
 
 template < class K >
@@ -73,7 +73,7 @@ inline
 typename K::Vector_2
 operator-(const PointC2<K> &p, const Origin &)
 {
-  return VectorC2<K>(p);
+  return typename K::Vector_2(p.x(), p.y());
 }
 
 template < class K >
@@ -81,7 +81,7 @@ inline
 typename K::Vector_2
 operator-(const Origin &, const PointC2<K> &p)
 {
-  return VectorC2<K>(-p.x(), -p.y());
+  return typename K::Vector_2(-p.x(), -p.y());
 }
 
 template < class K >
@@ -90,7 +90,7 @@ typename K::Vector_2
 operator*(const typename K::FT &c, const VectorC2<K> &w)
 {
   //return K().construct_scaled_vector_2_object()(w, c);
-  return VectorC2<K>(w.x() * c, w.y() * c);
+  return typename K::Vector_2(w.x() * c, w.y() * c);
 }
 
 template < class K >
@@ -99,7 +99,7 @@ typename K::Vector_2
 operator*(const VectorC2<K> &w, const typename K::FT &c)
 {
   //  return K().construct_scaled_vector_2_object()(w, c);
-  return VectorC2<K>(w.x() * c, w.y() * c);
+  return typename K::Vector_2(w.x() * c, w.y() * c);
 }
 
 CGAL_END_NAMESPACE

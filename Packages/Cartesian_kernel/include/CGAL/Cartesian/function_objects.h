@@ -617,8 +617,8 @@ namespace CartesianKernelFunctors {
     operator()( const Line_2& l1, const Line_2& l2,
 	        const Line_2& h1, const Line_2& h2) const
     { 
-      return compare_xC2(l1.a(), l1.b(), l1.c(), h1.a(), h1.b(), h1.c(),
-			 l2.a(), l2.b(), l2.c(), h2.a(), h2.b(), h2.c());
+      return compare_xC2(l1.a(), l1.b(), l1.c(), l2.a(), l2.b(), l2.c(),
+			 h1.a(), h1.b(), h1.c(), h2.a(), h2.b(), h2.c());
     }
   };
 

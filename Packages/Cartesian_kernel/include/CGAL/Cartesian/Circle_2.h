@@ -45,6 +45,9 @@ CGAL_VC7_BUG_PROTECTED
   typedef Triple<Point_2, FT, Orientation>         rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                                     R;
 
@@ -56,14 +59,14 @@ public:
     CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &&
                               ( orient    != COLLINEAR) );
 
-    initialize_with(rep(center, squared_radius, orient));
+    Base() = rep(center, squared_radius, orient);
   }
 
   CircleC2(const Point_2 &center, const Orientation &orient) // Is this new?
   {
     CGAL_kernel_precondition( orient != COLLINEAR );
 
-    initialize_with(rep(center, FT(0), orient));
+    Base() = rep(center, FT(0), orient);
   }
 
   CircleC2(const Point_2 &p, const Point_2 &q,
@@ -75,9 +78,9 @@ public:
     typename R::Construct_midpoint_2 midpoint;
     if (p != q) {
       Point_2 center = midpoint(p, q);
-      initialize_with(rep(center, squared_distance(p, center), orient));
+      Base() = rep(center, squared_distance(p, center), orient);
     } else
-      initialize_with(rep(p, FT(0), orient));
+      Base() = rep(p, FT(0), orient);
   }
 
   CircleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
@@ -89,7 +92,7 @@ public:
     CGAL_kernel_precondition( orient != COLLINEAR);
 
     Point_2 center = circumcenter(p, q, r);
-    initialize_with(rep(center, squared_distance(p, center), orient));
+    Base() = rep(center, squared_distance(p, center), orient);
   }
 
   bool           operator==(const CircleC2 &s) const;
@@ -97,17 +100,17 @@ public:
 
   const Point_2 & center() const
   {
-   return this->Ptr()->first;
+    return get(Base()).first;
   }
 
   const FT & squared_radius() const
   {
-   return this->Ptr()->second;
+    return get(Base()).second;
   }
 
   Orientation orientation() const
   {
-   return this->Ptr()->third;
+    return get(Base()).third;
   }
 
   Circle_2           opposite() const;
@@ -134,7 +137,7 @@ CGAL_KERNEL_INLINE
 bool
 CircleC2<R>::operator==(const CircleC2<R> &c) const
 { // FIXME : predicate
-  if (identical(c))
+  if (CGAL::identical(Base(), c.Base()))
       return true;
   return center() == c.center() &&
          squared_radius() == c.squared_radius() &&

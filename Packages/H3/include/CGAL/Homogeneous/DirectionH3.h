@@ -44,6 +44,9 @@ CGAL_VC7_BUG_PROTECTED
 
     typedef Fourtuple<RT>                            rep;
     typedef typename R_::template Handle<rep>::type  base;
+ 
+    const base& Base() const { return *this; }
+    base& Base() { return *this; }
 
 public:
     typedef R_                 R;
@@ -70,9 +73,9 @@ public:
               const RT& z, const RT& w = RT(1) )
   {
     if ( w >= RT(0) )
-    { initialize_with( rep(x,y,z,w)); }
+      Base() = rep(x,y,z,w);
     else
-    { initialize_with( rep(-x,-y,-z,-w)); }
+      Base() = rep(-x,-y,-z,-w);
   }
 
   DirectionH3<R>
@@ -88,15 +91,15 @@ public:
   Vector_3    to_vector() const;
   Vector_3    vector() const { return to_vector(); }
 
-  const RT & dx() const { return Ptr()->e0; }
-  const RT & dy() const { return Ptr()->e1; }
-  const RT & dz() const { return Ptr()->e2; }
-  const RT & x()  const { return Ptr()->e0; }
-  const RT & y()  const { return Ptr()->e1; }
-  const RT & z()  const { return Ptr()->e2; }
-  const RT & hx() const { return Ptr()->e0; }
-  const RT & hy() const { return Ptr()->e1; }
-  const RT & hz() const { return Ptr()->e2; }
+  const RT & dx() const { return get(Base()).e0; }
+  const RT & dy() const { return get(Base()).e1; }
+  const RT & dz() const { return get(Base()).e2; }
+  const RT & x()  const { return get(Base()).e0; }
+  const RT & y()  const { return get(Base()).e1; }
+  const RT & z()  const { return get(Base()).e2; }
+  const RT & hx() const { return get(Base()).e0; }
+  const RT & hy() const { return get(Base()).e1; }
+  const RT & hz() const { return get(Base()).e2; }
 
   const RT & delta(int i) const;
 };

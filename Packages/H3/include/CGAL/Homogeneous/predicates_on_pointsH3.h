@@ -506,18 +506,6 @@ Bounded_side
 side_of_bounded_sphere(const PointH3<R> &p,
                        const PointH3<R> &q,
                        const PointH3<R> &r,
-                       const PointH3<R> &t)
-{
-    PointH3<R> center = circumcenter(p, q, r);
-    return Bounded_side( compare_distance_to_point(center, p, t) );
-}
-
-template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
-Bounded_side
-side_of_bounded_sphere(const PointH3<R> &p,
-                       const PointH3<R> &q,
-                       const PointH3<R> &r,
                        const PointH3<R> &s,
                        const PointH3<R> &test)
 {

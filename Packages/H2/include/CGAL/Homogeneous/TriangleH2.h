@@ -42,13 +42,16 @@ CGAL_VC7_BUG_PROTECTED
     typedef Threetuple<Point_2>                      rep;
     typedef typename R_::template Handle<rep>::type  base;
 
+    const base& Base() const { return *this; }
+    base& Base() { return *this; }
+
 public:
     typedef R_                                    R;
 
     TriangleH2() {}
 
     TriangleH2(const Point_2& p, const Point_2& q, const Point_2& r)
-      : base(rep(p, q, r)) {}
+      : base(p, q, r) {}
 
     Bbox_2             bbox() const;
 
@@ -85,9 +88,9 @@ TriangleH2<R>::vertex(int i) const
 {
   switch (i%3)
   {
-     case 0:  return Ptr()->e0;
-     case 1:  return Ptr()->e1;
-     default: /*case 2:*/  return Ptr()->e2;
+     case 0:  return get(Base()).e0;
+     case 1:  return get(Base()).e1;
+     default: /*case 2:*/  return get(Base()).e2;
   }
 }
 

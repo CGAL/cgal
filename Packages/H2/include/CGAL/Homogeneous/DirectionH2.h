@@ -45,6 +45,9 @@ CGAL_VC7_BUG_PROTECTED
   typedef Threetuple<RT>                           rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                                    R;
 
@@ -69,24 +72,20 @@ public:
       : base ( s.direction()) {}
 
    DirectionH2(const RT& x, const RT& y)
-      : base ( rep( x, y, RT(1) )) {}
+      : base (x, y, RT(1)) {}
 
    // TODO Not documented : should not exist , not used.
    // we should also change Threetuple<RT> -> Twotuple<RT>
    DirectionH2(const RT& x, const RT& y, const RT& w )
    {
      if (w > RT(0)   )
-       initialize_with( rep( x, y, w));
+       Base() = rep(x, y, w);
      else
-       initialize_with( rep(-x,-y,-w));
+       Base() = rep(-x, -y, -w);
    }
 
     bool    operator==( const DirectionH2<R>& d) const;
     bool    operator!=( const DirectionH2<R>& d) const;
-    bool    operator< ( const DirectionH2<R>& d) const;
-    bool    operator<=( const DirectionH2<R>& d) const;
-    bool    operator> ( const DirectionH2<R>& d) const;
-    bool    operator>=( const DirectionH2<R>& d) const;
     bool    counterclockwise_in_between( const DirectionH2<R>& d1,
                                          const DirectionH2<R>& d2 ) const;
 
@@ -95,12 +94,12 @@ public:
     Vector_2       to_vector() const;
     Vector_2       vector() const { return to_vector(); }
 
-    const RT & x() const { return Ptr()->e0; };
-    const RT & y() const { return Ptr()->e1; };
+    const RT & x() const { return get(Base()).e0; };
+    const RT & y() const { return get(Base()).e1; };
 
     const RT & delta(int i) const;
-    const RT & dx() const { return Ptr()->e0; };
-    const RT & dy() const { return Ptr()->e1; };
+    const RT & dx() const { return get(Base()).e0; };
+    const RT & dy() const { return get(Base()).e1; };
 
     DirectionH2<R> perpendicular(const Orientation &o) const;
     DirectionH2<R> transform(const Aff_transformation_2 &) const;
@@ -146,44 +145,13 @@ CGAL_END_NAMESPACE
 CGAL_BEGIN_NAMESPACE
 
 template <class R >
-inline
-bool
-DirectionH2<R>::operator< (const DirectionH2<R>& d) const
-{ return (compare_angle_with_x_axis(*this,d) == SMALLER); }
-
-template <class R >
-inline
-bool
-DirectionH2<R>::operator> (const DirectionH2<R>& d) const
-{ return (compare_angle_with_x_axis(*this,d) == LARGER); }
-
-template <class R >
-inline
-bool
-DirectionH2<R>::operator>= (const DirectionH2<R>& d) const
-{ return !(compare_angle_with_x_axis(*this,d) == SMALLER); }
-
-template <class R >
-inline
-bool
-DirectionH2<R>::operator<= (const DirectionH2<R>& d) const
-{ return !(compare_angle_with_x_axis(*this,d) == LARGER); }
-
-template <class R >
 CGAL_KERNEL_INLINE
 bool
 DirectionH2<R>::
 counterclockwise_in_between( const DirectionH2<R>& d1,
                              const DirectionH2<R>& d2) const
 {
-  if ( d1 < *this)
-  {
-      return ( *this < d2 )||( d2 <= d1 );
-  }
-  else
-  {
-      return ( *this < d2 )&&( d2 <= d1 );
-  }
+  return R().counterclockwise_in_between_2_object()(*this, d1, d2);
 }
 
 template <class R >

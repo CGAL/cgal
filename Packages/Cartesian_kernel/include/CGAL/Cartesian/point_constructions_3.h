@@ -31,15 +31,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class K >
 inline
-typename K::Point_3
-midpoint(const PointC3<K> &p,
-         const PointC3<K> &q)
-{
-  return K().construct_midpoint_3_object()(p, q);
-}
-
-template < class K >
-inline
 PointC3<K>
 centroid(const PointC3<K> &p,
          const PointC3<K> &q,
@@ -57,27 +48,6 @@ centroid(const PointC3<K> &p,
          const PointC3<K> &r)
 {
   return K().construct_centroid_3_object()(p, q, r);
-}
-
-template < class K >
-inline
-PointC3<K>
-circumcenter(const PointC3<K> &p,
-             const PointC3<K> &q,
-             const PointC3<K> &r,
-             const PointC3<K> &s)
-{
-  return K().construct_circumcenter_3_object()(p, q, r, s);
-}
-
-template < class K >
-inline
-PointC3<K>
-circumcenter(const PointC3<K> &p,
-             const PointC3<K> &q,
-             const PointC3<K> &r)
-{
-  return K().construct_circumcenter_3_object()(p, q, r);
 }
 
 template <class K>

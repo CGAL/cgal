@@ -235,41 +235,14 @@ side_of_oriented_circleH2(const RT& qhx, const RT& qhy, const RT& qhw,
 template <class RT>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_lexicographically_xyH2(const RT& phx, const RT& phy, const RT& phw,
-                               const RT& qhx, const RT& qhy, const RT& qhw)
-{
-  RT pV = phx*qhw;
-  RT qV = qhx*phw;
-  if ( pV == qV )
-  {
-      pV = phy*qhw;
-      qV = qhy*phw;
-  }
-  if ( pV < qV )
-  {
-      return SMALLER;
-  }
-  else
-  {
-      return (qV < pV) ? LARGER : EQUAL;
-  }
-}
-
-template <class RT>
-CGAL_KERNEL_INLINE
-Comparison_result
 compare_xH2( const RT& phx, const RT& phw,
              const RT& qhx, const RT& qhw )
 {
   RT com = phx * qhw - qhx * phw;
   if ( com < RT(0) )
-  {
       return SMALLER;
-  }
   else if ( RT(0) < com )
-  {
       return LARGER;
-  }
   return EQUAL;
 }
 

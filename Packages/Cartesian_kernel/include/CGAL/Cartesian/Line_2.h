@@ -45,6 +45,9 @@ CGAL_VC7_BUG_PROTECTED
   typedef Threetuple<FT>	                   rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                                     R;
 
@@ -54,7 +57,7 @@ public:
     : base(R().construct_line_2_object()(p, q)) {}
 
   LineC2(const FT &a, const FT &b, const FT &c)
-    : base(rep(a, b, c)) {}
+    : base(a, b, c) {}
 
   LineC2(const Segment_2 &s)
     : base(R().construct_line_2_object()(s)) {}
@@ -73,15 +76,15 @@ public:
 
   const FT & a() const
   {
-      return this->Ptr()->e0;
+      return get(Base()).e0;
   }
   const FT & b() const
   {
-      return this->Ptr()->e1;
+      return get(Base()).e1;
   }
   const FT & c() const
   {
-      return this->Ptr()->e2;
+      return get(Base()).e2;
   }
 
   FT              x_at_y(const FT &y) const;
@@ -119,7 +122,7 @@ CGAL_KERNEL_INLINE
 bool
 LineC2<R>::operator==(const LineC2<R> &l) const
 {
-  if (identical(l))
+  if (CGAL::identical(Base(), l.Base()))
       return true;
   return equal_line(*this, l);
 }

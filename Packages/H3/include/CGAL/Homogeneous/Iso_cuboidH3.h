@@ -41,6 +41,9 @@ CGAL_VC7_BUG_PROTECTED
   typedef Twotuple<Point_3>                        rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                 R;
 
@@ -138,8 +141,8 @@ Iso_cuboidH3(const typename Iso_cuboidH3<R>::Point_3& p,
       minz = q.hz()*p.hw();
       maxz = p.hz()*q.hw();
   }
-  initialize_with( rep ( Point_3(minx, miny, minz, minw),
-                         Point_3(maxx, maxy, maxz, maxw) ));
+  Base() = rep(Point_3(minx, miny, minz, minw),
+               Point_3(maxx, maxy, maxz, maxw));
 }
 
 template < class R >
@@ -151,14 +154,14 @@ Iso_cuboidH3(const typename Iso_cuboidH3<R>::Point_3& left,
              const typename Iso_cuboidH3<R>::Point_3& top,
              const typename Iso_cuboidH3<R>::Point_3& far_,
              const typename Iso_cuboidH3<R>::Point_3& close)
-  : base(rep(Point_3(left.hx()   * bottom.hw() * far_.hw(),
-                     bottom.hy() * left.hw()   * far_.hw(),
-                     far_.hz()   * left.hw()   * bottom.hw(),
-                     left.hw()   * bottom.hw() * far_.hw()),
-             Point_3(right.hx()  * top.hw()    * close.hw(),
-                     top.hy()    * right.hw()  * close.hw(),
-                     close.hz()  * right.hw()  * top.hw(),
-                     right.hw()  * top.hw()    * close.hw())))
+  : base(Point_3(left.hx()   * bottom.hw() * far_.hw(),
+                 bottom.hy() * left.hw()   * far_.hw(),
+                 far_.hz()   * left.hw()   * bottom.hw(),
+                 left.hw()   * bottom.hw() * far_.hw()),
+         Point_3(right.hx()  * top.hw()    * close.hw(),
+                 top.hy()    * right.hw()  * close.hw(),
+                 close.hz()  * right.hw()  * top.hw(),
+                 right.hw()  * top.hw()    * close.hw()))
 {
   CGAL_kernel_precondition(!less_x(right, left));
   CGAL_kernel_precondition(!less_y(top, bottom));
@@ -170,10 +173,9 @@ CGAL_KERNEL_LARGE_INLINE
 Iso_cuboidH3<R>::
 Iso_cuboidH3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
              const RT& max_hx, const RT& max_hy, const RT& max_hz)
-{
-  initialize_with( rep( Point_3(min_hx, min_hy, min_hz, RT(1)),
-                        Point_3(max_hx, max_hy, max_hz, RT(1)) ));
-}
+  : base(Point_3(min_hx, min_hy, min_hz, RT(1)),
+         Point_3(max_hx, max_hy, max_hz, RT(1)))
+{}
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
@@ -181,10 +183,9 @@ Iso_cuboidH3<R>::
 Iso_cuboidH3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
              const RT& max_hx, const RT& max_hy, const RT& max_hz, 
              const RT& hw)
-{
-  initialize_with( rep( Point_3(min_hx, min_hy, min_hz, hw),
-                        Point_3(max_hx, max_hy, max_hz, hw) ));
-}
+  : base(Point_3(min_hx, min_hy, min_hz, hw),
+         Point_3(max_hx, max_hy, max_hz, hw))
+{}
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -204,13 +205,13 @@ template < class R >
 inline
 const typename Iso_cuboidH3<R>::Point_3 &
 Iso_cuboidH3<R>::min() const
-{ return  Ptr()->e0; }
+{ return get(Base()).e0; }
 
 template < class R >
 inline
 const typename Iso_cuboidH3<R>::Point_3 &
 Iso_cuboidH3<R>::max() const
-{ return  Ptr()->e1; }
+{ return get(Base()).e1; }
 
 template < class R >
 inline

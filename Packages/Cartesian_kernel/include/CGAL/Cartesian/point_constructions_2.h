@@ -30,47 +30,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class K >
 inline
-PointC2<K>
-midpoint(const PointC2<K> &p,
-         const PointC2<K> &q )
-{
-  return K().construct_midpoint_2_object()(p, q);
-}
-
-template < class K >
-inline
-PointC2<K>
-circumcenter(const PointC2<K> &p,
-             const PointC2<K> &q,
-             const PointC2<K> &r)
-{
-  return K().construct_circumcenter_2_object()(p, q, r);
-}
-
-template < class K >
-inline
-PointC2<K>
-centroid(const PointC2<K> &p,
-         const PointC2<K> &q,
-         const PointC2<K> &r)
-{
-  return K().construct_centroid_2_object()(p, q, r);
-}
-
-template < class K >
-inline
-PointC2<K>
-centroid(const PointC2<K> &p,
-         const PointC2<K> &q,
-         const PointC2<K> &r,
-         const PointC2<K> &s)
-{
-  return K().construct_centroid_2_object()(p, q, r, s);
-}
-
-template < class K >
-inline
-PointC2<K>
+typename K::Point_2
 line_get_point(const LineC2<K> &l, int i)
 {
   typename K::FT x, y;
@@ -80,7 +40,7 @@ line_get_point(const LineC2<K> &l, int i)
 
 template < class K >
 inline
-PointC2<K>
+typename K::Point_2
 line_project_point(const LineC2<K> &l,
                    const PointC2<K> &p)
 {

@@ -44,22 +44,25 @@ CGAL_VC7_BUG_PROTECTED
   typedef Twotuple<Point_3>                        rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                                     R;
 
   RayC3() {}
 
   RayC3(const Point_3 &sp, const Point_3 &secondp)
-    : base(rep(sp, secondp)) {}
+    : base(sp, secondp) {}
 
   RayC3(const Point_3 &sp, const Vector_3 &v)
-    : base(rep(sp, sp + v)) {}
+    : base(sp, sp + v) {}
 
   RayC3(const Point_3 &sp, const Direction_3 &d)
-    : base(rep(sp, sp + d.to_vector())) {}
+    : base(sp, sp + d.to_vector()) {}
 
   RayC3(const Point_3 &sp, const Line_3 &l)
-    : base(rep(sp, sp + l.to_vector())) {}
+    : base(sp, sp + l.to_vector()) {}
 
   bool        operator==(const RayC3 &r) const;
   bool        operator!=(const RayC3 &r) const;
@@ -67,11 +70,11 @@ public:
   const Point_3 &   start() const;
   const Point_3 &   source() const
   {
-      return this->Ptr()->e0;
+      return get(Base()).e0;
   }
   const Point_3 &   second_point() const
   {
-      return this->Ptr()->e1;
+      return get(Base()).e1;
   }
   Point_3     point(int i) const;
 
@@ -95,7 +98,7 @@ inline
 bool
 RayC3<R>::operator==(const RayC3<R> &r) const
 {
-    if (identical(r))
+    if (CGAL::identical(Base(), r.Base()))
 	return true;
     return source() == r.source() && direction() == r.direction();
 }

@@ -45,22 +45,25 @@ CGAL_VC7_BUG_PROTECTED
    typedef std::pair<Point_3, Vector_3>             rep;
    typedef typename R_::template Handle<rep>::type  base;
 
+   const base& Base() const { return *this; }
+   base& Base() { return *this; }
+
 public:
    typedef R_                R;
 
     RayH3() {}
 
     RayH3( const Point_3& sp, const Point_3& secondp)
-      : base(rep(sp, secondp-sp)) {}
+      : base(sp, secondp-sp) {}
 
     RayH3( const Point_3& sp, const Vector_3& v)
-      : base(rep(sp, v)) {}
+      : base(sp, v) {}
 
     RayH3( const Point_3& sp, const Direction_3& d)
-      : base(rep(sp, d.to_vector())) {}
+      : base(sp, d.to_vector()) {}
 
     RayH3( const Point_3& sp, const Line_3& l)
-      : base(rep(sp, l.to_vector())) {}
+      : base(sp, l.to_vector()) {}
 
     const Point_3 & start() const;
     const Point_3 & source() const;
@@ -83,20 +86,20 @@ template < class R >
 inline
 const typename RayH3<R>::Point_3 &
 RayH3<R>::source() const
-{ return Ptr()->first; }
+{ return get(Base()).first; }
 
 template < class R >
 inline
 const typename RayH3<R>::Point_3 &
 RayH3<R>::start() const
-{ return Ptr()->first; }
+{ return get(Base()).first; }
 
 template < class R >
 inline
 const typename RayH3<R>::Vector_3 &
 RayH3<R>::to_vector() const
 {
-  return Ptr()->second;
+  return get(Base()).second;
 }
 
 template < class R >

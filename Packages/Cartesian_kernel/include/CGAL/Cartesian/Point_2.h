@@ -44,6 +44,9 @@ CGAL_VC7_BUG_PROTECTED
   typedef Twotuple<FT>	                           rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef Cartesian_coordinate_iterator_2<R_> Cartesian_const_iterator;
 
@@ -52,17 +55,17 @@ public:
   PointC2() {}
 
   PointC2(const Origin &)
-    : base(rep(FT(0), FT(0))) {}
+    : base(FT(0), FT(0)) {}
 
   PointC2(const FT &x, const FT &y)
-    : base(rep(x, y)) {}
+    : base(x, y) {}
 
   PointC2(const FT &hx, const FT &hy, const FT &hw)
   {
     if (hw != FT(1))
-      initialize_with( rep(hx/hw, hy/hw) );
+      Base() = rep(hx/hw, hy/hw);
     else
-      initialize_with( rep(hx, hy) );
+      Base() = rep(hx, hy);
   }
 
   PointC2(const Vector_2 &v)
@@ -70,11 +73,11 @@ public:
 
   const FT& x() const
   {
-      return this->Ptr()->e0;
+      return get(Base()).e0;
   }
   const FT& y() const
   {
-      return this->Ptr()->e1;
+      return get(Base()).e1;
   }
 
   const FT& hx() const
@@ -115,7 +118,7 @@ public:
 
   bool operator==(const PointC2 &p) const
   {
-      if (identical(p))
+      if (CGAL::identical(Base(), p.Base()))
 	  return true;
       return equal_xy(*this, p);
   }
@@ -128,7 +131,7 @@ public:
 
   Point_2 transform(const Aff_transformation_2 &t) const
   {
-    return t.transform(*this);
+    return t.transform(static_cast<const Point_2&>(*this));
   }
 };
 
@@ -138,7 +141,7 @@ const typename PointC2<R>::FT &
 PointC2<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i == 0) || (i == 1) );
-  return *(&(this->Ptr()->e0)+i);
+  return *(&(get(Base()).e0)+i);
 }
 
 template < class R >

@@ -44,13 +44,16 @@ CGAL_VC7_BUG_PROTECTED
   typedef Twotuple<Point_3>                        rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                                     R;
 
   SegmentC3() {}
 
   SegmentC3(const Point_3 &sp, const Point_3 &ep)
-    : base(rep(sp, ep)) {}
+    : base(sp, ep) {}
 
   bool        has_on(const Point_3 &p) const;
   bool        collinear_has_on(const Point_3 &p) const;
@@ -60,11 +63,11 @@ public:
 
   const Point_3 &   source() const
   {
-      return this->Ptr()->e0;
+      return get(Base()).e0;
   }
   const Point_3 &   target() const
   {
-      return this->Ptr()->e1;
+      return get(Base()).e1;
   }
 
   const Point_3 &   start() const;
@@ -96,7 +99,7 @@ inline
 bool
 SegmentC3<R>::operator==(const SegmentC3<R> &s) const
 {
-  if (identical(s))
+  if (CGAL::identical(Base(), s.Base()))
       return true;
   return source() == s.source() && target() == s.target();
 }

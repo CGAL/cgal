@@ -41,6 +41,9 @@ CGAL_VC7_BUG_PROTECTED
   typedef Twotuple<Point_2>                        rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                                     R;
 
@@ -54,14 +57,14 @@ public:
     if (p.y() < q.y()) { miny = p.y(); maxy = q.y(); }
     else               { miny = q.y(); maxy = p.y(); }
     Construct_point_2 construct_point_2;
-    initialize_with(rep(construct_point_2(minx, miny),
-	                construct_point_2(maxx, maxy)));
+    Base() = rep(construct_point_2(minx, miny),
+	         construct_point_2(maxx, maxy));
   }
 
   Iso_rectangleC2(const Point_2 &left, const Point_2 &right,
                   const Point_2 &bottom, const Point_2 &top)
-    : base(rep(Construct_point_2()(left.x(), bottom.y()),
-               Construct_point_2()(right.x(), top.y())))
+    : base(Construct_point_2()(left.x(), bottom.y()),
+           Construct_point_2()(right.x(), top.y()))
   {
     typename R::Less_x_2 less_x;
     typename R::Less_y_2 less_y;
@@ -71,8 +74,8 @@ public:
 
   Iso_rectangleC2(const FT& min_x, const FT& min_y, 
                   const FT& max_x, const FT& max_y)
-    : base(rep(Construct_point_2()(min_x, min_y),
-               Construct_point_2()(max_x, max_y)))
+    : base(Construct_point_2()(min_x, min_y),
+           Construct_point_2()(max_x, max_y))
   {
     CGAL_kernel_precondition(min_x <= max_x);
     CGAL_kernel_precondition(min_y <= max_y);
@@ -83,11 +86,11 @@ public:
   {
     Construct_point_2 construct_point_2;
     if (hw == FT(1))
-       initialize_with(rep(construct_point_2(min_hx, min_hy),
-	                   construct_point_2(max_hx, max_hy)));
+       Base() = rep(construct_point_2(min_hx, min_hy),
+	            construct_point_2(max_hx, max_hy));
     else
-       initialize_with(rep(construct_point_2(min_hx/hw, min_hy/hw),
-	                   construct_point_2(max_hx/hw, max_hy/hw)));
+       Base() = rep(construct_point_2(min_hx/hw, min_hy/hw),
+	            construct_point_2(max_hx/hw, max_hy/hw));
   }
 
   bool            operator==(const Iso_rectangleC2 &s) const;
@@ -95,11 +98,11 @@ public:
 
   const Point_2 & min() const
   {
-      return this->Ptr()->e0;
+      return get(Base()).e0;
   }
   const Point_2 & max() const
   {
-      return this->Ptr()->e1;
+      return get(Base()).e1;
   }
   Point_2 vertex(int i) const;
   Point_2 operator[](int i) const;
@@ -136,7 +139,7 @@ bool
 Iso_rectangleC2<R>::
 operator==(const Iso_rectangleC2<R> &r) const
 {
-  if (identical(r))
+  if (CGAL::identical(Base(), r.Base()))
       return true;
   return vertex(0) == r.vertex(0) && vertex(2) == r.vertex(2);
 }

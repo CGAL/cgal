@@ -1,3 +1,7 @@
+Version 102.13 (1 January 2004)
+- New faster Handle_for interface
+- More work towards extensible kernel.
+
 Version 102.12 (1 January 2004)
 - Speed up PointC[23].cartesian().
 

@@ -39,7 +39,8 @@ struct Cartesian_base_no_ref_count
 
     // The mecanism that allows to specify reference-counting or not.
     template < typename T >
-    struct Handle { typedef Simple_Handle_for<T>   type; };
+    // struct Handle { typedef Simple_Handle_for<T>   type; };
+    struct Handle { typedef T   type; };
 
     template < typename Kernel2 >
     struct Base { typedef Cartesian_base_no_ref_count<FT_, Kernel2>  Type; };

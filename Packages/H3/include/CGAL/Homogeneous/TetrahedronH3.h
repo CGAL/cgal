@@ -45,6 +45,9 @@ CGAL_VC7_BUG_PROTECTED
   typedef Fourtuple<Point_3>                       rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                R;
 
@@ -54,7 +57,7 @@ public:
                 const Point_3 &q,
                 const Point_3 &r,
                 const Point_3 &s)
-    : base(rep(p,q,r,s)) {}
+    : base(p, q, r, s) {}
 
   const Point_3 & vertex(int i) const;
   const Point_3 & operator[](int i) const;
@@ -82,7 +85,7 @@ CGAL_KERNEL_INLINE
 bool
 TetrahedronH3<R>::operator==(const TetrahedronH3<R> &t) const
 {
-  if ( identical(t) )
+  if ( CGAL::identical(Base(), t.Base()) )
       return true;
   if ( orientation() != t.orientation() )
       return false;
@@ -117,10 +120,10 @@ TetrahedronH3<R>::vertex(int i) const
 {
   switch (i%4)
   {
-     case 0:  return Ptr()->e0;
-     case 1:  return Ptr()->e1;
-     case 2:  return Ptr()->e2;
-     default: /*case 3:*/  return Ptr()->e3;
+     case 0:  return get(Base()).e0;
+     case 1:  return get(Base()).e1;
+     case 2:  return get(Base()).e2;
+     default: /*case 3:*/  return get(Base()).e3;
   }
 }
 

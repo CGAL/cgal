@@ -43,8 +43,14 @@ CGAL_VC7_BUG_PROTECTED
   typedef Threetuple<FT>                           rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                                     R;
+
+  // Temporarily needed (?)
+  const rep & Rep() const { return get(Base()); }
 
   VectorC3() {}
 
@@ -61,27 +67,27 @@ public:
     : base(d) {}
 
   VectorC3(const FT &x, const FT &y, const FT &z)
-    : base(rep(x, y, z)) {}
+    : base(x, y, z) {}
 
   VectorC3(const FT &x, const FT &y, const FT &z, const FT &w)
   {
     if (w != FT(1))
-      initialize_with(rep(x/w, y/w, z/w));
+      Base() = rep(x/w, y/w, z/w);
     else
-      initialize_with(rep(x, y, z));
+      Base() = rep(x, y, z);
   }
 
   const FT & x() const
   {
-      return this->Ptr()->e0;
+      return get(Base()).e0;
   }
   const FT & y() const
   {
-      return this->Ptr()->e1;
+      return get(Base()).e1;
   }
   const FT & z() const
   {
-      return this->Ptr()->e2;
+      return get(Base()).e2;
   }
 
   const FT & hx() const

@@ -44,13 +44,16 @@ CGAL_VC7_BUG_PROTECTED
   typedef Twotuple<Point_3>                        rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_               R;
  
   SegmentH3() {}
 
   SegmentH3( const Point_3& sp, const Point_3& ep)
-    : base(rep(sp, ep)) {}
+    : base(sp, ep) {}
 
   const Point_3 &  source() const;
   const Point_3 &  target() const;
@@ -83,13 +86,13 @@ template < class R >
 inline
 const typename SegmentH3<R>::Point_3 &
 SegmentH3<R>::source() const
-{ return Ptr()->e0; }
+{ return get(Base()).e0; }
 
 template < class R >
 inline
 const typename SegmentH3<R>::Point_3 &
 SegmentH3<R>::target() const
-{ return Ptr()->e1; }
+{ return get(Base()).e1; }
 
 template < class R >
 inline

@@ -45,22 +45,25 @@ CGAL_VC7_BUG_PROTECTED
     typedef Twotuple<Point_2>                        rep;
     typedef typename R_::template Handle<rep>::type  base;
 
+    const base& Base() const { return *this; }
+    base& Base() { return *this; }
+
 public:
     typedef R_                                             R;
 
     RayH2() {}
 
     RayH2( const Point_2& sp, const Point_2& secondp)
-      : base(rep(sp, secondp)) {}
+      : base(sp, secondp) {}
 
     RayH2( const Point_2& sp, const Direction_2& d)
-      : base(rep(sp, sp + d.to_vector())) {}
+      : base(sp, sp + d.to_vector()) {}
 
     RayH2( const Point_2& sp, const Vector_2& v)
-      : base(rep(sp, sp + v)) {}
+      : base(sp, sp + v) {}
 
     RayH2( const Point_2& sp, const Line_2& l)
-      : base(rep(sp, sp + l.to_vector())) {}
+      : base(sp, sp + l.to_vector()) {}
 
     bool    operator==(const RayH2<R>& r) const;
     bool    operator!=(const RayH2<R>& r) const;
@@ -88,7 +91,7 @@ template < class R >
 inline
 const typename RayH2<R>::Point_2 &
 RayH2<R>::source() const
-{ return Ptr()->e0; }
+{ return get(Base()).e0; }
 
 template < class R >
 inline
@@ -120,7 +123,7 @@ const typename RayH2<R>::Point_2 &
 RayH2<R>::second_point() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return Ptr()->e1;
+  return get(Base()).e1;
 }
 
 template < class R >
@@ -215,7 +218,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 RayH2<R>::is_degenerate() const
-{ return start() == Ptr()->e1; }
+{ return start() == get(Base()).e1; }
 
 template < class R >
 inline

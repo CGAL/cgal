@@ -352,39 +352,6 @@ side_of_oriented_sphere(const PointC3<K> &p,
   return K().side_of_oriented_sphere_3_object()(p, q, r, s, test);
 }
 
-template <class K >
-inline
-Bounded_side
-side_of_bounded_sphere(const PointC3<K> &p,
-                       const PointC3<K> &q,
-                       const PointC3<K> &test)
-{
-  return K().side_of_bounded_sphere_3_object()(p, q, test);
-}
-
-template <class K >
-inline
-Bounded_side
-side_of_bounded_sphere(const PointC3<K> &p,
-                       const PointC3<K> &q,
-                       const PointC3<K> &r,
-                       const PointC3<K> &test)
-{
-  return K().side_of_bounded_sphere_3_object()(p, q, r, test);
-}
-
-template <class K >
-inline
-Bounded_side
-side_of_bounded_sphere(const PointC3<K> &p,
-                       const PointC3<K> &q,
-                       const PointC3<K> &r,
-                       const PointC3<K> &s,
-                       const PointC3<K> &test)
-{
-  return K().side_of_bounded_sphere_3_object()(p, q, r, s, test);
-}
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_PREDICATES_ON_POINTS_3_H

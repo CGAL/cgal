@@ -70,22 +70,6 @@ line_x_at_y(const LineC2<K> &l, const typename K::FT &y)
   return line_y_at_xC2(l.b(), l.a(), l.c(), y);
 }
 
-template < class K >
-inline
-typename K::FT
-squared_radius(const PointC2<K> &p, const PointC2<K> &q, const PointC2<K> &r)
-{
-  return K().compute_squared_radius_2_object()(p, q, r);
-}
-
-template < class K >
-inline
-typename K::FT
-squared_radius(const PointC2<K> &p, const PointC2<K> &q)
-{
-  return K().compute_squared_radius_2_object()(p, q);
-}
-
 template <class R>
 CGAL_KERNEL_LARGE_INLINE
 typename R::FT

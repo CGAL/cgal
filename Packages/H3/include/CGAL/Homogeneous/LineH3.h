@@ -47,25 +47,28 @@ CGAL_VC7_BUG_PROTECTED
   typedef std::pair<Point_3, Vector_3>          rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                R;
 
   LineH3() {}
 
   LineH3(const Point_3& p, const Point_3& q)
-    : base(rep(p, q - p)) {}
+    : base(p, q - p) {}
 
   LineH3(const Segment_3& s)
-    : base(rep(s.start(), s.to_vector())) {}
+    : base(s.start(), s.to_vector()) {}
 
   LineH3(const Ray_3& r)
-    : base(rep(r.start(), r.to_vector())) {}
+    : base(r.start(), r.to_vector()) {}
 
   LineH3(const Point_3& p, const Direction_3& d)
-    : base(rep(p, d.to_vector())) {}
+    : base(p, d.to_vector()) {}
 
   LineH3(const Point_3& p, const Vector_3& v)
-    : base(rep(p, v)) {}
+    : base(p, v) {}
 
   Plane_3  perpendicular_plane(const Point_3& p) const;
   LineH3<R>   opposite() const;
@@ -95,7 +98,7 @@ template < class R >
 inline
 const typename LineH3<R>::Point_3 &
 LineH3<R>::point() const
-{ return Ptr()->first; }
+{ return get(Base()).first; }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -107,13 +110,13 @@ template < class R >
 inline
 const typename LineH3<R>::Vector_3 &
 LineH3<R>::to_vector() const
-{ return Ptr()->second; }
+{ return get(Base()).second; }
 
 template < class R >
 inline
 typename LineH3<R>::Direction_3
 LineH3<R>::direction() const
-{ return Ptr()->second; }
+{ return get(Base()).second; }
 
 template < class R >
 CGAL_KERNEL_INLINE

@@ -64,31 +64,6 @@ scaled_distance_to_plane(const PointC3<K> &hp,
                                     p.x(), p.y(), p.z());
 }
 
-template < class K >
-inline
-typename K::FT
-squared_radius(const PointC3<K> &p, const PointC3<K> &q,
-	       const PointC3<K> &r, const PointC3<K> &s)
-{
-  return K().compute_squared_radius_3_object()(p, q, r, s);
-}
-
-template < class K >
-inline
-typename K::FT
-squared_radius(const PointC3<K> &p, const PointC3<K> &q, const PointC3<K> &r)
-{
-  return K().compute_squared_radius_3_object()(p, q, r);
-}
-
-template < class K >
-inline
-typename K::FT
-squared_radius(const PointC3<K> &p, const PointC3<K> &q)
-{
-  return K().compute_squared_radius_3_object()(p, q);
-}
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_FT_CONSTRUCTIONS_3_H

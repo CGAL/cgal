@@ -45,13 +45,16 @@ CGAL_VC7_BUG_PROTECTED
   typedef Twotuple<Point_2>                        rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                                     R;
 
   SegmentC2() {}
 
   SegmentC2(const Point_2 &sp, const Point_2 &ep)
-    : base(rep(sp, ep)) {}
+    : base(sp, ep) {}
 
   bool        is_horizontal() const;
   bool        is_vertical() const;
@@ -63,11 +66,11 @@ public:
 
   const Point_2 &   source() const
   {
-      return this->Ptr()->e0;
+      return get(Base()).e0;
   }
   const Point_2 &   target() const
   {
-      return this->Ptr()->e1;
+      return get(Base()).e1;
   }
   
   const Point_2 &    start() const;
@@ -99,7 +102,7 @@ inline
 bool
 SegmentC2<R>::operator==(const SegmentC2<R> &s) const
 {
-  if (identical(s))
+  if (CGAL::identical(Base(), s.Base()))
       return true;
   return source() == s.source() && target() == s.target();
 }

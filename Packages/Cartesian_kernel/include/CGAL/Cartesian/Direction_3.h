@@ -44,13 +44,16 @@ CGAL_VC7_BUG_PROTECTED
   typedef Threetuple<FT>                           rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                                R;
 
   DirectionC3() {}
 
   DirectionC3(const Vector_3 &v)
-    : base(v) {}
+    : base(v.Rep()) {}
 
   DirectionC3(const Line_3 &l)
     : base(l.direction()) {}
@@ -62,7 +65,7 @@ public:
     : base(s.direction()) {}
 
   DirectionC3(const FT &x, const FT &y, const FT &z)
-    : base(rep(x, y, z)) {}
+    : base(x, y, z) {}
 
   bool           operator==(const DirectionC3 &d) const;
   bool           operator!=(const DirectionC3 &d) const;
@@ -80,15 +83,15 @@ public:
   const FT & delta(int i) const;
   const FT & dx() const
   {
-      return this->Ptr()->e0;
+      return get(Base()).e0;
   }
   const FT & dy() const
   {
-      return this->Ptr()->e1;
+      return get(Base()).e1;
   }
   const FT & dz() const
   {
-      return this->Ptr()->e2;
+      return get(Base()).e2;
   }
 
   const FT & hdx() const
@@ -114,7 +117,7 @@ inline
 bool
 DirectionC3<R>::operator==(const DirectionC3<R> &d) const
 {
-  if (identical(d))
+  if (CGAL::identical(Base(), d.Base()))
       return true;
   return equal_directionC3(dx(), dy(), dz(), d.dx(), d.dy(), d.dz());
 }

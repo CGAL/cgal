@@ -41,6 +41,9 @@ CGAL_VC7_BUG_PROTECTED
   typedef Twotuple<Point_2>                        rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                                    R;
 
@@ -100,27 +103,27 @@ Iso_rectangleH2(const typename Iso_rectangleH2<R>::Point_2& p,
   {
       if ( px_g_qx && py_g_qy )
       {
-          initialize_with( rep(q,p) );
+          Base() = rep(q, p);
       }
       else
       {
          if ( px_g_qx )
          {
-             initialize_with( rep(
+             Base() = rep(
              Point_2(q.hx()*p.hw(), p.hy()*q.hw(), q.hw()*p.hw() ),
-             Point_2(p.hx()*q.hw(), q.hy()*p.hw(), q.hw()*p.hw() )) );
+             Point_2(p.hx()*q.hw(), q.hy()*p.hw(), q.hw()*p.hw() ));
          }
          if ( py_g_qy )
          {
-             initialize_with( rep(
+             Base() = rep(
              Point_2(p.hx()*q.hw(), q.hy()*p.hw(), q.hw()*p.hw() ),
-             Point_2(q.hx()*p.hw(), p.hy()*q.hw(), q.hw()*p.hw() )) );
+             Point_2(q.hx()*p.hw(), p.hy()*q.hw(), q.hw()*p.hw() ));
          }
       }
   }
   else
   {
-      initialize_with( rep(p,q) );
+      Base() = rep(p, q);
   }
 }
 
@@ -131,12 +134,12 @@ Iso_rectangleH2(const typename Iso_rectangleH2<R>::Point_2& left,
                 const typename Iso_rectangleH2<R>::Point_2& right,
                 const typename Iso_rectangleH2<R>::Point_2& bottom,
                 const typename Iso_rectangleH2<R>::Point_2& top)
-  : base(rep(Point_2(left.hx()   * bottom.hw(),
-                     bottom.hy() * left.hw(),
-                     left.hw()   * bottom.hw()),
-             Point_2(right.hx()  * top.hw(),
-                     top.hy()    * right.hw(),
-                     right.hw()  * top.hw())))
+  : base(Point_2(left.hx()   * bottom.hw(),
+                 bottom.hy() * left.hw(),
+                 left.hw()   * bottom.hw()),
+         Point_2(right.hx()  * top.hw(),
+                 top.hy()    * right.hw(),
+                 right.hw()  * top.hw()))
 {
   CGAL_kernel_precondition(!less_x(right, left));
   CGAL_kernel_precondition(!less_y(top, bottom));
@@ -146,8 +149,7 @@ template < class R >
 inline
 Iso_rectangleH2<R>::Iso_rectangleH2(const RT& min_hx, const RT& min_hy, 
                                     const RT& max_hx, const RT& max_hy)
-  : base( rep( Point_2(min_hx, min_hy), 
-               Point_2(max_hx, max_hy)))
+  : base(Point_2(min_hx, min_hy), Point_2(max_hx, max_hy))
 {}
 
 template < class R >
@@ -155,10 +157,8 @@ inline
 Iso_rectangleH2<R>::Iso_rectangleH2(const RT& min_hx, const RT& min_hy, 
                                     const RT& max_hx, const RT& max_hy,
                                     const RT& hw)
-{
-  initialize_with( rep( Point_2(min_hx, min_hy, hw), 
-                        Point_2(max_hx, max_hy, hw)) );
-}
+  : base(Point_2(min_hx, min_hy, hw), Point_2(max_hx, max_hy, hw))
+{}
 
 template < class R >
 inline
@@ -176,13 +176,13 @@ template < class R >
 inline
 const typename Iso_rectangleH2<R>::Point_2 &
 Iso_rectangleH2<R>::min() const
-{ return  Ptr()->e0; }
+{ return get(Base()).e0; }
 
 template < class R >
 inline
 const typename Iso_rectangleH2<R>::Point_2 &
 Iso_rectangleH2<R>::max() const
-{ return  Ptr()->e1; }
+{ return get(Base()).e1; }
 
 template < class R >
 inline

@@ -31,63 +31,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
-Comparison_result
-compare_distance_to_point(const PointH2<R>& p,
-                          const PointH2<R>& q,
-                          const PointH2<R>& r)
-{
-  typedef typename R::RT RT;
-
-  const RT phx = p.hx();
-  const RT phy = p.hy();
-  const RT phw = p.hw();
-  const RT qhx = q.hx();
-  const RT qhy = q.hy();
-  const RT qhw = q.hw();
-  const RT rhx = r.hx();
-  const RT rhy = r.hy();
-  const RT rhw = r.hw();
-  const RT RT0 = RT(0);
-  const RT RT2 = RT(2);
-
-  RT dosd =   // difference of squared distances
-
-  //            phx * phx   *   qhw * qhw * rhw * rhw
-  //   -RT(2) * phx * qhx   *   phw * qhw * rhw * rhw
-  //   +        qhx * qhx   *   phw * phw * rhw * rhw
-  //
-  //   +        phy * phy   *   qhw * qhw * rhw * rhw
-  //   -RT(2) * phy * qhy   *   phw * qhw * rhw * rhw
-  //   +        qhy * qhy   *   phw * phw * rhw * rhw
-  //
-  // - (        phx * phx   *   qhw * qhw * rhw * rhw
-  //   -RT(2) * phx * rhx   *   phw * qhw * qhw * rhw
-  //   +        rhx * rhx   *   phw * phw * qhw * qhw
-  //
-  //   +        phy * phy   *   qhw * qhw * rhw * rhw
-  //   -RT(2) * phy * rhy   *   phw * qhw * qhw * rhw
-  //   +        rhy * rhy   *   phw * phw * qhw * qhw
-
-    rhw*rhw * (         phw * ( qhx*qhx + qhy*qhy )
-                - RT2 * qhw * ( phx*qhx + phy*qhy )
-              )
-  - qhw*qhw * (         phw * ( rhx*rhx + rhy*rhy )
-                - RT2 * rhw * ( phx*rhx + phy*rhy )
-              );
-
-
-  if ( RT0 < dosd )
-  {
-      return LARGER;
-  }
-  else
-  {
-      return (dosd < RT0) ? SMALLER : EQUAL;
-  }
-}
-
-template < class R>
-CGAL_KERNEL_MEDIUM_INLINE
 bool
 has_larger_distance_to_point(const PointH2<R>& p,
                               const PointH2<R>& q,
@@ -135,57 +78,6 @@ has_larger_distance_to_point(const PointH2<R>& p,
 
   return ( dosd > RT0 );
 }
-
-template < class R>
-CGAL_KERNEL_MEDIUM_INLINE
-bool
-has_smaller_distance_to_point(const PointH2<R>& p,
-                              const PointH2<R>& q,
-                              const PointH2<R>& r)
-{
-  typedef typename R::RT RT;
-
-  const RT phx = p.hx();
-  const RT phy = p.hy();
-  const RT phw = p.hw();
-  const RT qhx = q.hx();
-  const RT qhy = q.hy();
-  const RT qhw = q.hw();
-  const RT rhx = r.hx();
-  const RT rhy = r.hy();
-  const RT rhw = r.hw();
-  const RT RT0 = RT(0);
-  const RT RT2 = RT(2);
-
-  RT dosd =   // difference of squared distances
-
-  //            phx * phx   *   qhw * qhw * rhw * rhw
-  //   -RT(2) * phx * qhx   *   phw * qhw * rhw * rhw
-  //   +        qhx * qhx   *   phw * phw * rhw * rhw
-  //
-  //   +        phy * phy   *   qhw * qhw * rhw * rhw
-  //   -RT(2) * phy * qhy   *   phw * qhw * rhw * rhw
-  //   +        qhy * qhy   *   phw * phw * rhw * rhw
-  //
-  // - (        phx * phx   *   qhw * qhw * rhw * rhw
-  //   -RT(2) * phx * rhx   *   phw * qhw * qhw * rhw
-  //   +        rhx * rhx   *   phw * phw * qhw * qhw
-  //
-  //   +        phy * phy   *   qhw * qhw * rhw * rhw
-  //   -RT(2) * phy * rhy   *   phw * qhw * qhw * rhw
-  //   +        rhy * rhy   *   phw * phw * qhw * qhw
-
-    rhw*rhw * (         phw * ( qhx*qhx + qhy*qhy )
-                - RT2 * qhw * ( phx*qhx + phy*qhy )
-              )
-  - qhw*qhw * (         phw * ( rhx*rhx + rhy*rhy )
-                - RT2 * rhw * ( phx*rhx + phy*rhy )
-              );
-
-
-  return ( dosd < RT0 );
-}
-
 
 template < class R>
 CGAL_KERNEL_INLINE

@@ -45,6 +45,9 @@ CGAL_VC7_BUG_PROTECTED
     typedef Triple<Point_2, FT, Orientation>         rep;
     typedef typename R_::template Handle<rep>::type  base;
 
+    const base& Base() const { return *this; }
+    base& Base() { return *this; }
+
 public:
     typedef R_                                    R;
 
@@ -58,7 +61,7 @@ public:
       Point_2    cp   = circumcenter( p, q, r);
       FT         sq_r = squared_distance( p, cp);
 
-      initialize_with( rep( cp, sq_r, o));
+      Base() = rep(cp, sq_r, o);
     }
 
     CircleH2(const Point_2& p, const Point_2& q, const Orientation& o)
@@ -69,10 +72,10 @@ public:
       {
          Point_2    cp   = midpoint( p, q);
          FT         sq_r = squared_distance( cp, p);
-         initialize_with( rep( cp, sq_r, o));
+         Base() = rep(cp, sq_r, o);
       }
       else
-         initialize_with( rep( p, FT( 0), o));
+         Base() = rep(p, FT( 0), o);
     }
 
     CircleH2(const Point_2& cp, const FT& squared_radius,
@@ -80,7 +83,7 @@ public:
     {
       CGAL_precondition( ( ! CGAL_NTS is_negative( squared_radius)) &&
                          ( o != COLLINEAR ) );
-      initialize_with( rep( cp, squared_radius, o ));
+      Base() = rep(cp, squared_radius, o);
     }
 
     Bbox_2
@@ -124,13 +127,13 @@ template <class R>
 inline
 const typename CircleH2<R>::Point_2 &
 CircleH2<R>::center() const
-{ return Ptr()->first; }
+{ return get(Base()).first; }
 
 template <class R>
 inline
 const typename CircleH2<R>::FT &
 CircleH2<R>::squared_radius() const
-{ return Ptr()->second; }
+{ return get(Base()).second; }
 
 template <class R>
 CGAL_KERNEL_INLINE
@@ -146,7 +149,7 @@ template <class R>
 inline
 Orientation
 CircleH2<R>::orientation() const
-{ return Ptr()->third; }
+{ return get(Base()).third; }
 
 template <class R>
 CGAL_KERNEL_INLINE

@@ -41,10 +41,14 @@ CGAL_VC7_BUG_PROTECTED
     typedef typename R_::Direction_2          Direction_2;
     typedef typename R_::Segment_2            Segment_2;
     typedef typename R_::Ray_2                Ray_2;
+    typedef typename R_::Line_2               Line_2;
     typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
     typedef Threetuple<RT>                           rep;
     typedef typename R_::template Handle<rep>::type  base;
+
+    const base& Base() const { return *this; }
+    base& Base() { return *this; }
 
 public:
     typedef R_                                    R;
@@ -60,15 +64,15 @@ public:
     bool           operator==(const LineH2<R>& l) const ;
     bool           operator!=(const LineH2<R>& l) const ;
 
-    const RT &     a() const { return Ptr()->e0; }
-    const RT &     b() const { return Ptr()->e1; }
-    const RT &     c() const { return Ptr()->e2; }
+    const RT &     a() const { return get(Base()).e0; }
+    const RT &     b() const { return get(Base()).e1; }
+    const RT &     c() const { return get(Base()).e2; }
 
     FT             x_at_y(FT y) const;
     FT             y_at_x(FT x) const;
 
-    LineH2<R>  perpendicular(const Point_2& p ) const;
-    LineH2<R>  opposite() const;
+    Line_2     perpendicular(const Point_2& p ) const;
+    Line_2     opposite() const;
     Point_2    point() const;
     Point_2    point(int i) const;
     Point_2    projection(const Point_2& p) const;
@@ -83,14 +87,14 @@ public:
     bool           is_vertical()   const;
     bool           is_degenerate() const;
 
-    LineH2<R>  transform(const Aff_transformation_2&) const;
+    Line_2     transform(const Aff_transformation_2&) const;
 };
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
 	          const typename LineH2<R>::Point_2& q)
- : base ( rep(
+ : base(
   //  a() * X + b() * Y + c() * W() == 0
   //      |    X        Y       W     |
   //      |  p.hx()   p.hy()  p.hw()  |
@@ -98,13 +102,13 @@ LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
 
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
-            p.hx()*q.hy() - p.hy()*q.hx() ))
+            p.hx()*q.hy() - p.hy()*q.hx())
 {}
 
 template < class R >
 CGAL_KERNEL_INLINE
 LineH2<R>::LineH2(const RT& a, const RT& b, const RT& c)
- : base ( rep(a,b,c) )
+ : base(a, b, c)
 {}
 
 template < class R >
@@ -113,10 +117,10 @@ LineH2<R>::LineH2(const typename LineH2<R>::Segment_2& s)
 {
   Point_2 p = s.start();
   Point_2 q = s.end();
-  initialize_with( rep (
+  Base() = rep (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
-            p.hx()*q.hy() - p.hy()*q.hx() ) );
+            p.hx()*q.hy() - p.hy()*q.hx());
 }
 
 template < class R >
@@ -125,10 +129,10 @@ LineH2<R>::LineH2(const typename LineH2<R>::Ray_2& r)
 {
   Point_2 p = r.start();
   Point_2 q = r.second_point();
-  initialize_with( rep (
+  Base() = rep (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
-            p.hx()*q.hy() - p.hy()*q.hx() ) );
+            p.hx()*q.hy() - p.hy()*q.hx() );
 }
 
 template < class R >
@@ -137,10 +141,10 @@ LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
 		  const typename LineH2<R>::Vector_2& v)
 {
   Point_2 q = p + v;
-  initialize_with( rep (
+  Base() = rep (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
-            p.hx()*q.hy() - p.hy()*q.hx() ) );
+            p.hx()*q.hy() - p.hy()*q.hx() );
 }
 
 template < class R >
@@ -149,10 +153,10 @@ LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
 		  const typename LineH2<R>::Direction_2& d)
 {
   Point_2 q = p + d.to_vector();
-  initialize_with( rep (
+  Base() = rep (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
-            p.hx()*q.hy() - p.hy()*q.hx() ) );
+            p.hx()*q.hy() - p.hy()*q.hx() );
 }
 
 template < class R >
@@ -175,18 +179,18 @@ LineH2<R>::y_at_x(FT x) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-LineH2<R>
+typename R::Line_2
 LineH2<R>::perpendicular(const typename LineH2<R>::Point_2& p ) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return LineH2<R>( -b()*p.hw(), a()*p.hw(), b()*p.hx() - a()*p.hy() );
+  return typename R::Line_2( -b()*p.hw(), a()*p.hw(), b()*p.hx() - a()*p.hy());
 }
 
 template < class R >
 inline
-LineH2<R>
+typename R::Line_2
 LineH2<R>::opposite() const
-{ return LineH2<R>( -a(), -b(), -c() ); }
+{ return typename R::Line_2( -a(), -b(), -c() ); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -242,12 +246,12 @@ LineH2<R>::direction() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-LineH2<R>
+typename R::Line_2
 LineH2<R>::transform(const typename LineH2<R>::Aff_transformation_2& t) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   Point_2 p = point() + to_vector();
-  return LineH2<R>( t.transform(point() ), t.transform(p) );
+  return typename R::Line_2( t.transform(point() ), t.transform(p) );
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_LINEH2

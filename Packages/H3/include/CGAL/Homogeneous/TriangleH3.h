@@ -43,6 +43,9 @@ CGAL_VC7_BUG_PROTECTED
   typedef Threetuple<Point_3>                      rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                R;
 
@@ -51,7 +54,7 @@ public:
   TriangleH3(const Point_3 &p,
              const Point_3 &q,
              const Point_3 &r)
-    : base(rep(p,q,r)) {}
+    : base(p, q, r) {}
 
   bool          operator==(const TriangleH3<R> &t) const;
   bool          operator!=(const TriangleH3<R> &t) const;
@@ -98,9 +101,9 @@ TriangleH3<R>::vertex(int i) const
 {
   if (i<0) i=(i%3)+3;
   else if (i>2) i=i%3;
-  return (i==0) ? Ptr()->e0 :
-         (i==1) ? Ptr()->e1 :
-                  Ptr()->e2;
+  return (i==0) ? get(Base()).e0 :
+         (i==1) ? get(Base()).e1 :
+                  get(Base()).e2;
 }
 
 template < class R >

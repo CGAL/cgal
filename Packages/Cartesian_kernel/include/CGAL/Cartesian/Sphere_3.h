@@ -44,6 +44,9 @@ CGAL_VC7_BUG_PROTECTED
   typedef Triple<Point_3, FT, Orientation>         rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                                     R;
 
@@ -55,7 +58,7 @@ public:
     CGAL_kernel_precondition( (squared_radius >= FT(0)) &&
                               (o != COLLINEAR) );
 
-    initialize_with(rep(center, squared_radius, o));
+    Base() = rep(center, squared_radius, o);
   }
 
   // Sphere passing through and oriented by p,q,r,s
@@ -66,7 +69,7 @@ public:
     Point_3 center = circumcenter(p, q, r, s);
     FT      squared_radius = squared_distance(p, center);
 
-    initialize_with(rep(center, squared_radius, orient));
+    Base() = rep(center, squared_radius, orient);
   }
 
   // Sphere with great circle passing through p,q,r, oriented by o
@@ -78,7 +81,7 @@ public:
     Point_3 center = circumcenter(p, q, r);
     FT      squared_radius = squared_distance(p, center);
 
-    initialize_with(rep(center, squared_radius, o));
+    Base() = rep(center, squared_radius, o);
   }
 
   // Sphere with diameter pq and orientation o
@@ -90,7 +93,7 @@ public:
     Point_3 center = midpoint(p, q);
     FT      squared_radius = squared_distance(p, center);
 
-    initialize_with(rep(center, squared_radius, o));
+    Base() = rep(center, squared_radius, o);
   }
 
   SphereC3(const Point_3 &center,
@@ -98,7 +101,7 @@ public:
   {
     CGAL_kernel_precondition(o != COLLINEAR);
 
-    initialize_with(rep(center, FT(0), o));
+    Base() = rep(center, FT(0), o);
   }
 
   bool operator==(const SphereC3 &) const;
@@ -106,17 +109,17 @@ public:
 
   const Point_3 & center() const
   {
-      return this->Ptr()->first;
+      return get(Base()).first;
   }
   const FT & squared_radius() const
   {
       // Returns the square of the radius (instead of the radius itself,
       // which would require square roots)
-      return this->Ptr()->second;
+      return get(Base()).second;
   }
   Orientation orientation() const
   {
-      return this->Ptr()->third;
+      return get(Base()).third;
   }
 
   Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const
@@ -160,7 +163,7 @@ CGAL_KERNEL_INLINE
 bool
 SphereC3<R>::operator==(const SphereC3<R> &t) const
 {
-  if (identical(t))
+  if (CGAL::identical(Base(), t.Base()))
       return true;
   return center() == t.center() &&
          squared_radius() == t.squared_radius() &&

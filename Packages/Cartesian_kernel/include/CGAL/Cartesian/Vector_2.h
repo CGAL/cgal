@@ -43,6 +43,9 @@ CGAL_VC7_BUG_PROTECTED
   typedef Twotuple<FT>	                           rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                                     R;
 
@@ -61,23 +64,23 @@ public:
     : base(d) {}
 
   VectorC2(const FT &x, const FT &y)
-    : base(rep(x, y)) {}
+    : base(x, y) {}
 
   VectorC2(const FT &hx, const FT &hy, const FT &hw)
   {
     if (hw != FT(1))
-      initialize_with(rep(hx/hw, hy/hw));
+      Base() = rep(hx/hw, hy/hw);
     else
-      initialize_with(rep(hx, hy));
+      Base() = rep(hx, hy);
   }
 
   const FT & x() const
   {
-      return this->Ptr()->e0;
+      return get(Base()).e0;
   }
   const FT & y() const
   {
-      return this->Ptr()->e1;
+      return get(Base()).e1;
   }
 
   const FT & hx() const

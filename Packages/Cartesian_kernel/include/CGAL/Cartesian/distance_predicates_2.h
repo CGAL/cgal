@@ -28,16 +28,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class K >
-inline
-Comparison_result
-compare_distance_to_point(const PointC2<K>& p,
-                          const PointC2<K>& q,
-                          const PointC2<K>& r)
-{
-  return K().compare_distance_2_object()(p, q, r);
-}
-
 template <class K>
 inline
 bool
@@ -46,16 +36,6 @@ has_larger_distance_to_point(const PointC2<K>& p,
                              const PointC2<K>& r)
 {
   return has_larger_dist_to_pointC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
-}
-
-template <class K>
-inline
-bool
-has_smaller_distance_to_point(const PointC2<K>& p,
-                              const PointC2<K>& q,
-                              const PointC2<K>& r)
-{
-  return K().less_distance_to_point_2_object()(p, q, r);
 }
 
 template <class K>

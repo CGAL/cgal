@@ -49,6 +49,9 @@ CGAL_VC7_BUG_PROTECTED
   typedef Fourtuple<FT>	                           rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                                     R;
 
@@ -64,12 +67,12 @@ public:
     : base(plane_from_point_direction(p, v.direction())) {}
 
   PlaneC3(const FT &a, const FT &b, const FT &c, const FT &d)
-    : base(rep(a, b, c, d)) {}
+    : base(a, b, c, d) {}
 
   PlaneC3(const Line_3 &l, const Point_3 &p)
     : base(plane_from_points(l.point(),
-	                               l.point()+l.direction().to_vector(),
-				       p)) {}
+	                     l.point()+l.direction().to_vector(),
+			     p)) {}
 
   PlaneC3(const Segment_3 &s, const Point_3 &p)
     : base(plane_from_points(s.start(), s.end(), p)) {}
@@ -82,19 +85,19 @@ public:
 
   const FT & a() const
   {
-      return this->Ptr()->e0;
+      return get(Base()).e0;
   }
   const FT & b() const
   {
-      return this->Ptr()->e1;
+      return get(Base()).e1;
   }
   const FT & c() const
   {
-      return this->Ptr()->e2;
+      return get(Base()).e2;
   }
   const FT & d() const
   {
-      return this->Ptr()->e3;
+      return get(Base()).e3;
   }
 
   Line_3       perpendicular_line(const Point_3 &p) const;
@@ -143,7 +146,7 @@ CGAL_KERNEL_INLINE
 bool
 PlaneC3<R>::operator==(const PlaneC3<R> &p) const
 {
-  if (identical(p))
+  if (CGAL::identical(Base(), p.Base()))
       return true;
   return equal_plane(*this, p);
 }

@@ -47,13 +47,16 @@ CGAL_VC7_BUG_PROTECTED
   typedef std::pair<Point_3, Vector_3>             rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                                     R;
 
   LineC3() {}
 
   LineC3(const Point_3 &p, const Point_3 &q)
-    : base(rep(p, q-p)) {}
+    : base(p, q-p) {}
 
   LineC3(const Segment_3 &s)
     : base(R().construct_line_3_object()(s)) {}
@@ -62,10 +65,10 @@ public:
     : base(R().construct_line_3_object()(r)) {}
 
   LineC3(const Point_3 &p, const Vector_3 &v)
-    : base(rep(p, v)) {}
+    : base(p, v) {}
 
   LineC3(const Point_3 &p, const Direction_3 &d)
-    : base(rep(p, Vector_3(d.dx(), d.dy(), d.dz()))) {}
+    : base(p, Vector_3(d.dx(), d.dy(), d.dz())) {}
 
   bool        operator==(const LineC3 &l) const;
   bool        operator!=(const LineC3 &l) const;
@@ -75,17 +78,17 @@ public:
 
   const Point_3 &     point() const
   {
-      return this->Ptr()->first;
+      return get(Base()).first;
   }
 
   const Vector_3 & to_vector() const
   {
-      return this->Ptr()->second;
+      return get(Base()).second;
   }
 
   Direction_3 direction() const
   {
-      return Direction_3(this->Ptr()->second);
+      return Direction_3(to_vector());
   }
 
   Point_3     point(int i) const;
@@ -106,7 +109,7 @@ inline
 bool
 LineC3<R>::operator==(const LineC3<R> &l) const
 {
-  if (identical(l))
+  if (CGAL::identical(Base(), l.Base()))
       return true;
   return has_on(l.point()) && (direction() == l.direction());
 }

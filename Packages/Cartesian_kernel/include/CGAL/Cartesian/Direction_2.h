@@ -45,6 +45,9 @@ CGAL_VC7_BUG_PROTECTED
   typedef Twotuple<FT>	                           rep;
   typedef typename R_::template Handle<rep>::type  base;
 
+  const base& Base() const { return *this; }
+  base& Base() { return *this; }
+
 public:
   typedef R_                                     R;
 
@@ -63,7 +66,7 @@ public:
     : base(s.direction()) {}
 
   DirectionC2(const FT &x, const FT &y)
-    : base(rep(x, y)) {}
+    : base(x, y) {}
 
   bool operator==(const DirectionC2 &d) const;
   bool operator!=(const DirectionC2 &d) const;
@@ -88,11 +91,11 @@ public:
   const FT & delta(int i) const;
   const FT & dx() const
   {
-      return this->Ptr()->e0;
+      return get(Base()).e0;
   }
   const FT & dy() const
   {
-      return this->Ptr()->e1;
+      return get(Base()).e1;
   }
 };
 
@@ -101,7 +104,7 @@ inline
 bool
 DirectionC2<R>::operator==(const DirectionC2<R> &d) const
 {
-  if (identical(d))
+  if (CGAL::identical(Base(), d.Base()))
       return true;
   return equal_direction(*this, d);
 }
@@ -158,10 +161,7 @@ counterclockwise_in_between(const DirectionC2<R> &d1,
 // Note that true is returned if \ccc{d1} == \ccc{d2}, unless
 //  also \ccVar\ == \ccc{d1}.
 {
-  if ( d1 < *this)
-    return ( *this < d2 )||( d2 <= d1 );
-  else
-    return ( *this < d2 )&&( d2 <= d1 );
+  return R().counterclockwise_in_between_2_object()(*this, d1, d2);
 }
 
 template < class R >
