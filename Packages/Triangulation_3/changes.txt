@@ -1,5 +1,6 @@
 Version 1.189 (?? January 04)
 - Replace obsolete CGAL_TYPENAME_MSVC_NULL by typename.
+- Remove CGAL_CFG_EARLY_INSTANTIATION_BUG.
 
 Version 1.188 (18 January 04)
 - Remove useless friend declarations.

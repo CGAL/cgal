@@ -154,13 +154,8 @@ public:
 
     Cell_handle() : _c() {}
     Cell_handle(Cell_iterator c) : _c(c) {}
-#ifdef CGAL_CFG_EARLY_INSTANTIATION_BUG
     Cell_handle(const Cell_circulator &c) : _c(c.base()._c) {}
     Cell_handle(const Face_circulator &c) : _c(c.base()._c) {}
-#else
-    Cell_handle(Cell_circulator c) : _c(c.base()._c) {}
-    Cell_handle(Face_circulator c) : _c(c.base()._c) {}
-#endif
 #ifndef CGAL_NO_DEPRECATED_CODE // must be kept
     Cell_handle(void * CGAL_triangulation_precondition_code(n)) : _c()
     { CGAL_triangulation_precondition(n == NULL); }
