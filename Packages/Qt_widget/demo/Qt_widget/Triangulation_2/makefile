@@ -7,6 +7,8 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+#CGAL_MAKEFILE = ~/CGAL-2.4-I-47/make/makefile_sparc_SunOS-5.6_g++-2.95
+
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -27,13 +29,17 @@ LIBPATH = \
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS)
+          $(CGAL_LDFLAGS) \
+	-lCGALQt
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-SOURCES = Qt_widget_toolbar.o Qt_widget_toolbar_views.o
+#SOURCES = ../../../src/CGALQt/Qt_widget$(OBJ_EXT) \
+	../../../src/CGALQt/Qt_widget_tool$(OBJ_EXT) \
+	../../../src/CGALQt/Qt_widget_view.o$(OBJ_EXT) \
+	../../../src/CGALQt/Qt_widget_standard_toolbar$(OBJ_EXT)
 
 all: triangulationdemo
 
@@ -50,14 +56,23 @@ Qt_widget_toolbar_views$(OBJ_EXT): Qt_widget_toolbar_views.C \
 Qt_widget_toolbar_views.moc: Qt_widget_toolbar_views.h
 	$(QT_MOC) -o Qt_widget_toolbar_views.moc $<
 
-triangulationdemo.moc: triangulationdemo.C
+Qt_widget_move_point$(OBJ_EXT): Qt_widget_move_point.C Qt_widget_move_point.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_move_point.C
+
+Qt_widget_move_point.moc: Qt_widget_move_point.h
+	$(QT_MOC) -o Qt_widget_move_point.moc $<
+
+
+triangulationdemo.moc: triangulationdemo.C Qt_widget_move_point$(OBJ_EXT) \
+			Qt_widget_toolbar$(OBJ_EXT) \
+			Qt_widget_toolbar_views$(OBJ_EXT)
 	${QT_MOC} -o triangulationdemo.moc triangulationdemo.C
 
 triangulationdemo$(OBJ_EXT): triangulationdemo.C triangulationdemo.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) triangulationdemo.C
 
 triangulationdemo$(EXE_EXT): triangulationdemo$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)triangulationdemo triangulationdemo$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(EXE_OPT)triangulationdemo triangulationdemo$(OBJ_EXT)  Qt_widget_move_point$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT) Qt_widget_toolbar_views$(OBJ_EXT) $(LDFLAGS)
 
 clean: triangulation.clean
 
