@@ -1,3 +1,6 @@
+Version 6.64 (9 January 2003)
+- Experiment with new ref-counting specification mecanism.
+
 Version 6.63 (25 October 2002)
 - Rewrite iterator traits pointer specs.
 

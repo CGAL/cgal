@@ -91,6 +91,12 @@ struct Simple_cartesian_base
     typedef Cartesian_tag                               Rep_tag;
     typedef Cartesian_tag                               Kernel_tag;
 
+    // The mecanism that allows to specify reference-counting or not.
+    template < typename T >
+    struct Handle {
+        typedef Simple_Handle_for<T>   type;
+    };
+
     typedef CGAL::Object                                Object_2;
     typedef CGAL::Object                                Object_3;
 
@@ -119,7 +125,6 @@ struct Simple_cartesian_base
     typedef Iso_cuboidC3<R>                             Iso_cuboid_3;
     typedef SphereC3<R>                                 Sphere_3;
     typedef Aff_transformationC3<R>                     Aff_transformation_3;
-  
 };
 
 
@@ -177,7 +182,7 @@ struct Simple_cartesian
 
     // The typedefs that allow to specify the handle of each type.
 
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<FT> > Point_handle_2;
+    // typedef CGAL::Simple_Handle_for<CGAL::Twotuple<FT> > Point_handle_2;
     typedef CGAL::Simple_Handle_for<CGAL::Twotuple<FT> > Vector_handle_2;
     typedef CGAL::Simple_Handle_for<CGAL::Twotuple<FT> > Direction_handle_2;
     typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> > Line_handle_2;
