@@ -88,4 +88,6 @@ int main()
   W << Pol;
   std::cout << "Click in the window to exit." << std::endl; 
   W.read_mouse();
+
+  return 0;
 }
