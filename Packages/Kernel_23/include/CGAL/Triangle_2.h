@@ -123,6 +123,10 @@ public:
   Bbox_2
   bbox() const
   { return vertex(0).bbox() + vertex(1).bbox() + vertex(2).bbox(); }
+
+  FT
+  area() const
+  { return RTriangle_2::area(); }
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLE_2

@@ -132,6 +132,10 @@ public:
   transform(const CGAL::Aff_transformation_2<R> &t) const
   { return  RIso_rectangle_2::transform(t); }
 
+  FT
+  area() const
+  { return RIso_rectangle_2::area(); }
+
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLE_2
