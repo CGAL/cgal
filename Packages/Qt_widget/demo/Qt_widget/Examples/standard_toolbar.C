@@ -35,7 +35,7 @@ public:
     
     //How to attach the standard toolbar
     std_toolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
-    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
+    this->addToolBar(std_toolbar->toolbar(), Top, FALSE);
 
     connect(widget, SIGNAL(custom_redraw()),
 	    this, SLOT(redraw_win()) );

@@ -41,7 +41,7 @@ private:
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    My_window *W = new My_Window(600,600);
+    My_window *W = new My_window(600,600);
     app.setMainWidget(W);
     W->show();
     W->set_window(0, 600, 0, 600);
