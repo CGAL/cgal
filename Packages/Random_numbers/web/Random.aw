@@ -164,7 +164,6 @@ In the default constructor the seed is initialized using the system
 time.
 
 @macro <Random constructors> = @begin
-    #include <stdlib.h>
     #include <sys/time.h>
 
     CGAL_Random::
@@ -351,6 +350,7 @@ numbers.
     #ifndef CGAL_BASIC_H
     #  include <CGAL/basic.h>
     #endif
+    #include <stdlib.h>
 
     @<Random interface>
 
