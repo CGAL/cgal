@@ -112,6 +112,8 @@ several algorithms available for the user to choose from.
 \paragraph{I/O functions:}
 I/O functions for reading a saved planar map from the standard input, 
 writing it to the standard output or drawing it to a graphic stream are also provided.
+Users of I/O functions for the planar map package are required to define I/O 
+operators for the curves defined in their \ccc{Traits} classes.
 
 
 \paragraph{Sweep Line}
@@ -237,7 +239,7 @@ In addition, the program presents the operators writing the resulting
 \ccc{Planar map} to a postscript file when LEDA is installed. 
 The demo for the planar map package makes use of the output operator 
 of \ccc{Planar_map_2<Dcel,Traits>} to a window stream  
-(see at \ccc{<CGAL_ROOT>/demo/Planar_map/demo.C).   
+(see at \ccStyle{<CGAL_ROOT>/demo/Planar_map/demo.C} ).   
 
 %graphic streams in commented lines
 %(The comments can be removed if the user has LEDA installed).

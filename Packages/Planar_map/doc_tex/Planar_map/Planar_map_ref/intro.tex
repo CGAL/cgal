@@ -99,6 +99,13 @@ into a graphic stream as \ccStyle{leda_window}, Postscript file or
 Geomview is also provided, users simply have to apply the Insertor
 operator on the graphic stream and their planar map instance.
 
+Users of I/O functions for the planar map package are required to define I/O 
+operators for the curves defined in their \ccc{Traits} classes. 
+When using \ccc{Traits} classes in which this operators are already defined 
+(as \ccc{Segment Traits} or \ccc{Circle Traits} ) the operator definition is not obligated, 
+however using \ccc{Traits} classes as the \ccc{Polyline Traits} will force the user to define 
+I/O operators on his polyline curve.
+
 \begin{ccAdvanced}
 \subsection*{I/O for User Defined Planar Maps and the I/O Format}
 
@@ -155,7 +162,7 @@ components between two consecutive commented lines in one single line.
 
 The current format may not be comfortable for a user to read because
 of the extensive use of indices. The user can print a planar map in a
-verbose format (shorthand for verbose mode format).  The skeleton fo
+verbose format (shorthand for verbose mode format).  The skeleton of 
 the verbose format is the same. However, in order for the output to be
 clearer for a human reader points and halfedges are explicitly written
 rather than being represented by indices. Also the direction of the
