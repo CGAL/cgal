@@ -1,3 +1,7 @@
+Version 1.38 (31 jul 00)
+has_vertex and are_equal for Facet documented
+fixes in scopes of classes in the doc
+
 Version 1.37 (28 jul 00)
 new fixes in typenames
 remove in Delaunay documented
