@@ -19,8 +19,8 @@
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
-// coordinator   : Susan Hert <hert@mpi-sb.mpg.de>
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
+// coordinator   : ETH Zurich
 //
 // implementation: D3 kernel traits for Convex_hull_d
 // ============================================================================

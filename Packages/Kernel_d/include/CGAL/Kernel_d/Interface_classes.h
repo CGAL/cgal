@@ -13,14 +13,14 @@
 //
 // file          : include/CGAL/Kernel_d/Interface_classes.h
 // package       : Kernel_d (0.9.54)
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // chapter       : Basic
 //
 // revision      : $Revision$
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-// coordinator   : Susan Hert <hert@mpi-sb.mpg.de>
+// coordinator   : ETH Zurich
 // ======================================================================
 
 #ifndef CGAL_INTERFACE_CLASSES_H
@@ -33,6 +33,7 @@ template <class R> class Vector_d;
 template <class R> class Direction_d;
 template <class R> class Hyperplane_d;
 template <class R> class Sphere_d;
+template <class R> class Iso_box_d;
 template <class R> class Segment_d;
 template <class R> class Ray_d;
 template <class R> class Line_d;

@@ -13,11 +13,11 @@
 //
 // file          : include/CGAL/Kernel_d/Convex_hull_d_to_polyhedron_3.h
 // package       : Kernel_d
-// maintainer    : Michael Seel <Michael.Seel@mpi-sb.mpg.de>
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Seel
-// coordinator   : MPI Saarbruecken (Susan.Hert@mpi-sb.mpg.de)
+// coordinator   : ETH Zurich
 // ======================================================================
 
 #ifndef CGAL_CONVEX_HULL_D_TO_POLYHEDRON_3_H

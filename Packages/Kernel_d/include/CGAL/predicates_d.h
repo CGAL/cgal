@@ -13,11 +13,11 @@
 //
 // file          : include/CGAL/predicates_d.h
 // package       : Kernel_d
-// maintainer    : Michael Seel <Michael.Seel@mpi-sb.mpg.de>
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Seel
-// coordinator   : MPI Saarbruecken (Susan.Hert@mpi-sb.mpg.de)
+// coordinator   : ETH Zurich
 //
 // ======================================================================
 

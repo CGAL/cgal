@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Delaunay_d.h
 // package       : Kernel_d (0.9.54)
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // chapter       : Basic
 //
 // source        : ddgeo/Delaunay_d.lw
@@ -21,7 +21,7 @@
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-// coordinator   : Susan Hert <hert@mpi-sb.mpg.de>
+// coordinator   : ETH Zurich
 //
 // implementation: Higher dimensional geometry
 // ======================================================================

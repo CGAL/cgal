@@ -14,7 +14,7 @@
 //
 // file          : include/CGAL/IO/Regular_complex_d_window_stream.h
 // package       : Kernel_d (0.9.55)
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // author(s)     : ?
 // coordinator   : ?
 //

@@ -13,14 +13,14 @@
 //
 // file          : include/CGAL/Kernel_d/Aff_transformation_d.h
 // package       : Kernel_d (0.9.54)
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // chapter       : Basic
 //
 // revision      : $Revision$
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-// coordinator   : Susan Hert <hert@mpi-sb.mpg.de>
+// coordinator   : ETH Zurich
 //
 // implementation: affine transformation interface type
 // ======================================================================

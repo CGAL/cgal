@@ -13,11 +13,11 @@
 //
 // file          : include/CGAL/Homogeneous_d.h
 // package       : Kernel_d (0.9.54)
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Seel
-// coordinator   : MPI Saarbruecken (Susan.Hert@mpi-sb.mpg.de)
+// coordinator   : ETH Zurich
 //
 // ======================================================================
 
@@ -74,6 +74,7 @@ public:
 
   // meta types (fit both kernels):
   typedef CGAL::Sphere_d<Self>   Sphere_d;
+  typedef CGAL::Iso_box_d<Self>  Iso_box_d;
   typedef CGAL::Segment_d<Self>  Segment_d;
   typedef CGAL::Ray_d<Self>      Ray_d;
   typedef CGAL::Line_d<Self>     Line_d;
@@ -286,6 +287,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/Kernel_d/Hyperplane_d.h>
 #include <CGAL/Kernel_d/Aff_transformation_d.h>
 #include <CGAL/Kernel_d/Sphere_d.h>
+#include <CGAL/Kernel_d/Iso_box_d.h>
 #include <CGAL/Kernel_d/Segment_d.h>
 #include <CGAL/Kernel_d/Ray_d.h>
 #include <CGAL/Kernel_d/Line_d.h>

@@ -13,9 +13,9 @@
 //
 // file          : include/CGAL/Kernel_d/HyperplaneCd.C
 // package       : Kernel_d (0.9.54)
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-// coordinator   : Susan Hert <hert@mpi-sb.mpg.de>
+// coordinator   : ETH Zurich
 //
 // ======================================================================
 
