@@ -285,6 +285,34 @@ Old_Packages/Stl_port/stlport/sc5/wctype.h svneol=native#unset
 Old_Packages/Stl_port/stlport/sc5/wctype.h.SUNWCCh svneol=native#unset
 Old_Packages/Stl_port/stlport/sc5/xmemory svneol=native#unset
 Old_Packages/Stl_port/stlport/sc5/xutility svneol=native#unset
+Packages/Developers_manual/pictures/Object.eps -text
+Packages/Developers_manual/pictures/Object.gif -text svneol=unset#unset
+Packages/Developers_manual/pictures/a-full.ipe -text
+Packages/Developers_manual/pictures/a-simp.ipe -text
+Packages/Developers_manual/pictures/c-full.ipe -text
+Packages/Developers_manual/pictures/c-simp.ipe -text
+Packages/Developers_manual/pictures/cgal.ipe -text
+Packages/Developers_manual/pictures/g-full.ipe -text
+Packages/Developers_manual/pictures/g-simp.ipe -text
+Packages/Developers_manual/pictures/generic_cgal.eps -text
+Packages/Developers_manual/pictures/generic_cgal.gif -text svneol=unset#unset
+Packages/Developers_manual/pictures/handle_allocate.eps -text
+Packages/Developers_manual/pictures/handle_allocate.gif -text svneol=unset#unset
+Packages/Developers_manual/pictures/handle_rep.eps -text
+Packages/Developers_manual/pictures/handle_rep.gif -text svneol=unset#unset
+Packages/Developers_manual/pictures/jnis.eps -text
+Packages/Developers_manual/pictures/jnis.gif -text svneol=unset#unset
+Packages/Developers_manual/pictures/l-full.ipe -text
+Packages/Developers_manual/pictures/l-simp.ipe -text
+Packages/Developers_manual/pictures/reference_counting.eps -text
+Packages/Developers_manual/pictures/rmi.eps -text
+Packages/Developers_manual/pictures/rmi.gif -text svneol=unset#unset
+Packages/Developers_manual/pictures/rmifile.eps -text
+Packages/Developers_manual/pictures/rmifile.gif -text svneol=unset#unset
+Packages/Developers_manual/pictures/title.eps -text
+Packages/Developers_manual/pictures/title.gif -text svneol=unset#unset
+Packages/Developers_manual/pictures/use_real.eps -text
+Packages/Developers_manual/pictures/use_real.gif -text svneol=unset#unset
 Packages/Installation/doc_tex/installation/Fig/a-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/c-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/g-simp.ipe -text
