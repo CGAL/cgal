@@ -1050,7 +1050,7 @@ set_compiler_flags()
     case `compiler_description` in
 	*GNU*) 
 	    case `compiler_version` in
-		2.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ftemplate-depth-25";;
+		2.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ftemplate-depth-50";;
 	    esac
 	    ;;
     esac

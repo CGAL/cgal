@@ -2,6 +2,9 @@
 //	Revision History for package Installation
 //=====================================================================
 
+04 June 2004 Sylvain Pion
+- install_cgal : update 25 to 50 in -ftemplate-depth=25 for g++ 2.*.
+
 02 June 2004 Radu Ursu
 - added Modules directory in Installation used to build the CGAL modules
 
