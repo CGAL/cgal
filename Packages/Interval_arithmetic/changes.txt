@@ -3,6 +3,7 @@ Changes done to the Interval Arithmetic package.
 Version 4.73 on 1 March 2001
 - Alternative to ::rint() as it doesn't exist on...  yes yes, Windblows.
 - std::ldexp() -> ::ldexp().
+- Cleanup static const data members, and make it work on VC++ 6.
 
 Version 4.72 on 25 February 2001
 - Declare force_ieee_double_precision in FPU.h.

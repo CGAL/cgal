@@ -25,6 +25,17 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#if defined _MSC_VER && _MSC_VER <= 1200
+const unsigned        log_limb         = 8 * sizeof(MP_Float::limb);
+const MP_Float::limb2 base             = 1 << MP_Float::log_limb;
+const unsigned        limbs_per_double = 2 + 53/MP_Float::log_limb;
+#endif
+
+const double MP_Float::trunc_max =
+         double(MP_Float::base)*(MP_Float::base/2-1)/double(MP_Float::base-1);
+const double MP_Float::trunc_min =
+         double(-MP_Float::base)*(MP_Float::base/2)/double(MP_Float::base-1);
+
 inline
 int
 my_rint(double d)
@@ -36,12 +47,9 @@ my_rint(double d)
 #endif
 }
 
-// I use macros because otherwise it's not STD compliant...
-#define CGAL_MP_FLOAT_TRUNC_MAX (double(base)*(base/2-1)/double(base-1))
-#define CGAL_MP_FLOAT_TRUNC_MIN (double(-base)*(base/2)/double(base-1))
-
 MP_Float::MP_Float(double d)
 {
+    // FIXME : Protection against rounding mode != nearest ?
     if (d == 0)
       return;
 
@@ -52,13 +60,12 @@ MP_Float::MP_Float(double d)
 
     // First, find the exponent.
     exp = 1 - limbs_per_double;
-    while (d < CGAL_MP_FLOAT_TRUNC_MIN || d > CGAL_MP_FLOAT_TRUNC_MAX) {
+    while (d < trunc_min || d > trunc_max) {
       exp++;
       d *= 1.0/base;
     }
 
-    while (d >= CGAL_MP_FLOAT_TRUNC_MIN/base
-  	&& d <= CGAL_MP_FLOAT_TRUNC_MAX/base) {
+    while (d >= trunc_min/base && d <= trunc_max/base) {
       exp--;
       d *= base;
     }

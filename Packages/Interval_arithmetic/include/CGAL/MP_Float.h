@@ -72,12 +72,17 @@ public:
   typedef short limb;
   typedef int   limb2;
 
-  static const unsigned log_limb = 8*sizeof(limb);
-  static const limb2    base     = 1<<log_limb;
+#if defined _MSC_VER && _MSC_VER <= 1200
+  static const unsigned log_limb;
+  static const limb2    base;
+  static const unsigned limbs_per_double;
+#else
+  static const unsigned log_limb         = 8 * sizeof(limb);
+  static const limb2    base             = 1 << log_limb;
   static const unsigned limbs_per_double = 2 + 53/log_limb;
-  // The following is not STD compliant :(
-  // static const double trunc_max = double(base)*(base/2-1)/double(base-1);
-  // static const double trunc_min = double(-base)*(base/2)/double(base-1);
+#endif
+
+  static const double trunc_max, trunc_min;
 
   typedef std::vector<limb>  V;
   typedef V::const_iterator  const_iterator;
