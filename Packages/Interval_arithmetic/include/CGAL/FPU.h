@@ -53,11 +53,21 @@ extern "C" {
 #  include <sys/fpu.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+
 
 // Some useful constants
-#define CGAL_IA_MIN_DOUBLE (5e-324) // subnormal
-#define CGAL_IA_MAX_DOUBLE (1.7976931348623157081e+308)
+
+#if defined CGAL_CFG_NO_LIMITS
+#  define CGAL_IA_MIN_DOUBLE (5e-324)
+#  define CGAL_IA_MAX_DOUBLE (1.7976931348623157081e+308)
+#else
+#  include <limits>
+#  define CGAL_IA_MIN_DOUBLE std::numeric_limits<double>::denorm_min()
+#  define CGAL_IA_MAX_DOUBLE std::numeric_limits<double>::max()
+#endif
+
+CGAL_BEGIN_NAMESPACE
+
 
 // Inline function to stop compiler optimization.
 inline double IA_force_to_double(double x)
