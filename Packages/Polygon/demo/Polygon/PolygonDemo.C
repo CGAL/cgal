@@ -6,7 +6,6 @@
 #include <CGAL/basic.h>
 #include <iostream>
 
-#ifdef CGAL_USE_LEDA
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
@@ -184,16 +183,4 @@ int main()
 
   return 0;
 }
-
-#else
-// LEDA is not available.
-// We just print a notification.
-
-int main()
-{
-  std::cout<<"Sorry, this demo runs only if the LEDA library is installed.\n";
-  return 1;
-}
-
-#endif
 
