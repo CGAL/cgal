@@ -66,6 +66,7 @@
 #endif // CGAL_IO_WRITE_PM_H
 
 #include <iostream>
+#include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
