@@ -75,12 +75,6 @@ public:
       set_in_conflict_flag(0);
   }
 
-  Triangulation_ds_cell_3(Cell* c)
-    : Cb(*c)
-  {
-      set_in_conflict_flag(0);
-  }
-    
   Triangulation_ds_cell_3(Vertex* v0, Vertex* v1, 
 			  Vertex* v2, Vertex* v3)
     : Cb(v0,v1,v2,v3)

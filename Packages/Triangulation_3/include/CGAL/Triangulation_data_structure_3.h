@@ -151,7 +151,7 @@ public:
   Cell* create_cell(Cell* c)
     {
       Cell* cnew = get_new_cell();
-      *cnew = c;
+      *cnew = *c;
       cnew->init();
       return cnew; 
     }
@@ -497,8 +497,6 @@ public:
 
 
   // Helping functions
-  void init(Vertex* v) {} // What's the purpose ???
-
   Vertex* copy_tds(const Tds & tds, Vertex* vert = NULL);
     // returns the new vertex corresponding to vert in the new tds 
 

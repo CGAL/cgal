@@ -449,10 +449,7 @@ into the triangulation data structure.}
 
 \ccMethod{void delete_vertex( Vertex* v );}
 {Removes the vertex from the triangulation data structure.
-%\ccPrecond{The vertex is a vertex of \ccVar.}
-% We can't provide this precondition, since vertices are not linked in a list
-% inside the TDS at the moment, unlike cells.
-}
+\ccPrecond{The vertex is a vertex of \ccVar.}}
 
 \ccMethod{void delete_cell( Cell* c );}
 {Removes the cell from the triangulation data structure.
