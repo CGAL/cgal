@@ -770,14 +770,14 @@ set_compiler_flags()
 	    ;;
 	*CL.EXE*|*cl.exe*)
 	    #### settings Microsoft Visual C++ compiler 
-	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -nologo"
+	    WINDOWS_COMPILER="y"
+	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -nologo -DCGAL_LIMITED_ITERATOR_TRAITS_SUPPORT -D__STL_DEBUG `include_dir_option ${CGAL_DIR}/stlport`"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
 	    CGAL_LIB_CREATE="LIB /OUT:"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE=
 	    WINDOW_DIR=
-	    WINDOWS_COMPILER="y"
 	    SUFFIX_LIST=".obj .exe"
 	    OBJ_EXT=".obj"
 	    LIB_SFX=".lib"
@@ -929,11 +929,25 @@ create_replacement_header()
     if [ -z "${uncond}" ]; then
 	${_printf} "%s\n" "#include <$header_name>" > ${tmp_code_file}
 	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
-	if `compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1; then return; fi
+
+#  	echo
+#  	echo '---------------------------------------'
+#  	echo "`compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file}"  
+#  	echo
+#  	echo '---------------------------------------'
+#  	eval "eval \"`compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} 2>&1\""
+#  	echo
+#  	echo '---------------------------------------'
+
+	if eval "`compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then 
+	    ${_printf} "%s\n" " ok."
+	    return;
+	fi
+	${_printf} "%s\n" " no."
     fi
 #
 # The standard header does not exist.
-# If some of the replacement headers do exist, they included in a
+# If some of the replacement headers exist, they are included in a
 # newly created replacement header.
 #
     rm -f ${replacement_header}
@@ -941,7 +955,7 @@ create_replacement_header()
     for arg in $* ; do
         ${_printf} "%s\n" "#include <$arg>" > ${tmp_code_file}
 	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
-	if `compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1; then
+	if eval "`compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then
 	    ${_sed} "s/@CGAL@/${CGAL_VERSION}/;s@FILE@${_final_file};s/@VERSION@/${CGAL_INSTALL_VERSION}/" <<EOF3 >>${replacement_header}
 // Copyright (c) 1999 The CGAL Consortium
 //
@@ -1024,8 +1038,7 @@ create_standard_header_replacements()
     ${_printf} "%s\n" "#include <${tmp_header_file}>" > ${tmp_code_file}
     ${_printf} "%s\n" \
 	"int main() { CGAL_nt result = 0; return result;}" >> ${tmp_code_file}
-    if `compiler_bin` ${ADDITIONAL_CXXFLAGS} -I. ${tmp_code_file} >/dev/null 2>&1
-    then
+    if eval "`compiler_bin` ${ADDITIONAL_CXXFLAGS} -I. ${tmp_code_file} >/dev/null 2>&1"; then
 	header_suffix=""
     else
 	header_suffix=".h"
@@ -1036,7 +1049,6 @@ create_standard_header_replacements()
     while read a b; do
 	${_printf} "%s" "${_LEFTSPACE}$a ..."
 	create_replacement_header $a "$header_suffix" $b
-	${_printf} "%s\n" " done."
     done <<EOF2
 algorithm algobase.h algo.h
 ostream ostream.h
@@ -1256,7 +1268,7 @@ filename_for_compiler()
 include_dir_option()
 {
     if [ -z "${WINDOWS_COMPILER}" ]; then
-	${_printf} "'-I%s' " "$1"
+	${_printf} "-I%s " "$1"
     else
 	${_printf} "'-I%s' " "`${_cygpath} -w $1`"
     fi
@@ -1265,7 +1277,7 @@ include_dir_option()
 libpath_option()
 {
     if [ -z "${WINDOWS_COMPILER}" ]; then
-	${_printf} "'${LIBPATH_OPT}%s' " "$*"
+	${_printf} "${LIBPATH_OPT}%s " "$*"
     else
 	${_printf} "'${LIBPATH_OPT}%s' " "`${_cygpath} -w $*`"
     fi
@@ -1273,11 +1285,11 @@ libpath_option()
 
 lib_option()
 {
-    if [ -z "${WINDOWS_COMPILER}" ]; then
-	${_printf} "'${LIB_OPT}%s${LIB_SFX}' " "$*"
-    else
-	${_printf} "'${LIB_OPT}%s${LIB_SFX}' " "`${_cygpath} -w $*`"
-    fi
+#    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "${LIB_OPT}%s${LIB_SFX} " "$*"
+#    else
+#	${_printf} "'${LIB_OPT}%s${LIB_SFX}' " "`${_cygpath} -w $*`"
+#    fi
 }
 
 object_file_name()
@@ -2362,8 +2374,8 @@ _compile_test()
     else
 	_flags="$2"
     fi
-    _flags="${_flags} -c '`filename_for_compiler ${TMP_CXX_FILE}.C`' \
-	`to_object_file_option ${TMP_CXX_FILE}`"
+#    _flags="${_flags} -c '`filename_for_compiler ${TMP_CXX_FILE}.C`' `to_object_file_option ${TMP_CXX_FILE}`"
+    _flags="${_flags} -c '`filename_for_compiler ${TMP_CXX_FILE}.C`'"
 
     # compile
     ${_printf} "%s\n%s\n" \
@@ -4456,6 +4468,9 @@ lib_menu()
 build_all()
 {
     guess_os log_print
+    case ${SYST} in
+	*CYGWIN*) _check_for_sysutil cygpath y;;
+    esac
     ${_printf} "\n\n"
     for i in `${_ls} ${CGAL_INSTALL_CONF_DIR}/${SYST}* 2>/dev/null`
     do
@@ -4969,6 +4984,9 @@ case ${_WHAT_TO_DO} in
 	check_for_utils
 	check_conf_dir
 	guess_os 'print_with_indent'
+	case ${SYST} in
+	    *CYGWIN*) _check_for_sysutil cygpath y;;
+	esac
 	${_printf} "\n%s\n" \
 	    "--------------------------------------------------------"
 	${_printf} "%s\n" "Determining CGAL Version:"
