@@ -1018,7 +1018,7 @@ is_small_angle(const Point& pleft,
   
   if( angle(pleft, pmiddle, pright)==OBTUSE )
     return false;
-  if( orient(pmiddle,pleft,pright)==RIGHTTURN)
+  if( orient(pmiddle,pleft,pright)==RIGHT_TURN)
     return false;
 
   FT cos_alpha = squared_cosine_of_angle_times_4(pleft, pmiddle,
