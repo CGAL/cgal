@@ -35,66 +35,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_NEW_NT_TRAITS
-
-template<>
-struct Number_type_traits<leda_integer>
-  : public CGALi::Default_euclidean_ring_number_type_traits<leda_integer>
-{
-  typedef Tag_true   Has_exact_ring_operations;
-  typedef Tag_false  Has_exact_division;
-  typedef Tag_false  Has_exact_sqrt;
-
-#ifndef CGAL_CFG_NO_NAMESPACE
-  static inline double to_double(const leda_integer & i)
-  { return i.to_double(); }
-#endif
-
-  static inline bool is_finite(const leda_integer &) { return true; }
-  static inline bool is_valid(const leda_integer &)  { return true; }
-
-#ifndef CGAL_CFG_NO_NAMESPACE
-  static inline Sign sign(const leda_integer& n)
-  { return (Sign) CGAL_LEDA_SCOPE::sign(n); }
-#endif
-
-  static inline
-  std::pair<double,double> to_interval (const leda_integer & n)
-  {
-    Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
-    double cn = CGAL::to_double(n);
-    leda_integer pn = ( n>0 ? n : -n);
-    if ( pn.iszero() || log(pn) < 53 )
-      return CGAL::to_interval(cn);
-    else {
-      FPU_set_cw(CGAL_FE_UPWARD);
-      Interval_nt_advanced ina(cn);
-      ina += Interval_nt_advanced::smallest();
-      return ina.pair();
-    }
-  }
-
-  static inline
-  leda_integer gcd( const leda_integer& n1, const leda_integer& n2)
-  { 
-    return CGAL_LEDA_SCOPE::gcd(n1, n2);
-  }
-};
-
-// missing mixed operators
-inline
-bool
-operator==(int a, const leda_integer& b)
-{ return b == a; }
-
-inline
-bool
-operator!=(int a, const leda_integer& b)
-{ return b != a; }
-
-
-#else // CGAL_NEW_NT_TRAITS
-
 template <> struct Number_type_traits<leda_integer> {
   typedef Tag_true  Has_gcd;
   typedef Tag_false Has_division;
@@ -174,8 +114,6 @@ gcd( const leda_integer& n1, const leda_integer& n2)
 { 
   return CGAL_LEDA_SCOPE::gcd(n1, n2);
 }
-
-#endif // CGAL_NEW_NT_TRAITS
 
 CGAL_END_NAMESPACE
 

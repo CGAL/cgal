@@ -1,3 +1,6 @@
+21 August 2004 Sylvain Pion
+- Undo last change
+
 20 August 2004 Menelaos Karavelas
 - first attempt towards the new number type traits
 

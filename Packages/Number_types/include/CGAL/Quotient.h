@@ -31,7 +31,6 @@
 #define CGAL_QUOTIENT_H
 
 #include <CGAL/basic.h>
-#include <CGAL/MP_Float.h>
 #include <utility>
 
 #ifndef CGAL_CFG_NO_LOCALE
@@ -119,7 +118,6 @@ void swap(Quotient<NT> &p, Quotient<NT> &q)
   p.swap(q);
 }
 
-#ifndef CGAL_NEW_NT_TRAITS
 template <class NT>
 Quotient<NT>
 sqrt(const Quotient<NT> &q)
@@ -128,7 +126,6 @@ sqrt(const Quotient<NT> &q)
     return Quotient<NT>(CGAL_NTS sqrt(q.numerator()*q.denominator()),
 	                q.denominator());
 }
-#endif
 
 template <class NT>
 CGAL_KERNEL_MEDIUM_INLINE
@@ -274,7 +271,6 @@ Quotient<NT>::operator/= (const CGAL_int(NT)& r)
     return *this;
 }
 
-#ifndef CGAL_NEW_NT_TRAITS
 template <class NT>
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
@@ -309,7 +305,6 @@ inline
 Comparison_result
 compare(const Quotient<NT>& x, const Quotient<NT>& y)
 { return quotient_cmp(x, y); }
-#endif
 
 template <class NT>
 std::ostream&
@@ -363,13 +358,11 @@ operator>>(std::istream& in, Quotient<NT>& r)
   return in;
 }
 
-#ifndef CGAL_NEW_NT_TRAITS
 template <class NT>
 inline
 io_Operator
 io_tag(const Quotient<NT>&)
 { return io_Operator(); }
-#endif
 
 template <class NT>
 CGAL_KERNEL_INLINE
@@ -754,145 +747,6 @@ operator>=(const CGAL_int(NT)& x, const Quotient<NT>& y)
 { return ! (x < y); }
 
 
-#ifdef CGAL_NEW_NT_TRAITS
-
-template<class NT> struct Number_type_traits_base;
-
-template<class NT>
-class Number_type_traits_base< Quotient<NT> >
-  : public CGALi::Default_field_number_type_traits< Quotient<NT> >
-{
-private:
-  typedef Quotient<NT>  QNT;
-
-public:
-  typedef typename Number_type_traits<NT>::Has_exact_ring_operations
-  Has_exact_ring_operations;
-
-  typedef Has_exact_ring_operations   Has_exact_division;
-
-  typedef Tag_true Has_sqrt;
-  typedef typename Number_type_traits<NT>::Has_exact_sqrt
-  Has_exact_sqrt;
-
-  typedef Tag_true Has_rational_traits;
-
-  static inline double to_double(const QNT& q) {
-    if (q.num == 0 )
-      return 0;
-
-    double nd = CGAL::to_double( q.num );
-
-    if (q.den == 1 )
-      return nd;
-
-    double dd = CGAL::to_double( q.den );
-
-    if ( is_finite( q.den ) && is_finite( q.num ) )
-      return nd/dd;
-
-    if ( CGAL::abs(q.num) > CGAL::abs(q.den) )
-      {
-	NT  nt_div = q.num / q.den;
-	double divd = CGAL::to_double(nt_div);
-	if ( divd >= CGAL_CLIB_STD::ldexp(1.0,53) )
-	  { return divd; }
-      }
-    if ( CGAL::abs(q.num) < CGAL::abs(q.den) )
-      { return 1.0 / CGAL::to_double( NT(1) / q ); }
-
-    return nd/dd;
-  }
-
-  static inline std::pair<double,double>
-  to_interval (const QNT& z) {
-    Interval_nt<> quot = Interval_nt<>(CGAL::to_interval(z.numerator())) /
-		         Interval_nt<>(CGAL::to_interval(z.denominator()));
-    return std::make_pair(quot.inf(), quot.sup());
-  }
-
-  static inline bool is_valid(const QNT& q) {
-    return is_valid(q.num) && is_valid(q.den);
-  }
-
-  static inline bool is_finite(const QNT& q) {
-    return is_finite(q.num) && is_finite(q.den);
-  }
-
-  static inline QNT sqrt(const QNT &q) {
-    CGAL_precondition(q > 0);
-    return QNT(CGAL::sqrt(q.numerator()*q.denominator()),
-	       q.denominator());
-  }
-
-private:
-  static inline Comparison_result
-  quotient_cmp(const QNT& x, const QNT& y)
-  {
-    // No assumptions on the sign of  den  are made
-
-    // code assumes that SMALLER == - 1;
-    CGAL_precondition( SMALLER == static_cast<Comparison_result>(-1) );
-
-    int xsign = CGAL::sign(x.num) * CGAL::sign(x.den) ;
-    int ysign = CGAL::sign(y.num) * CGAL::sign(y.den) ;
-    if (xsign == 0) return static_cast<Comparison_result>(-ysign);
-    if (ysign == 0) return static_cast<Comparison_result>(xsign);
-    // now (x != 0) && (y != 0)
-    int diff = xsign - ysign;
-    if (diff == 0)
-      {
-	int msign = CGAL::sign(x.den) * CGAL::sign(y.den);
-        NT leftop  = x.num * y.den * msign;
-        NT rightop = y.num * x.den * msign;
-        return CGAL::compare(leftop, rightop);
-      }
-    else
-      {
-        return (xsign < ysign) ? SMALLER : LARGER;
-      }
-  }
-
-public:
-  static inline Comparison_result
-  compare(const QNT& x, const QNT& y) {
-    return quotient_cmp(x, y);
-  }
-
-};
-
-template<class NT>
-struct Number_type_traits< Quotient<NT> >
-  : public Number_type_traits_base< Quotient<NT> > {};
-
-
-template<>
-struct Number_type_traits< Quotient<MP_Float> >
-  : public Number_type_traits_base< Quotient<MP_Float> >
-{
-  using std::pair;
-
-  static double to_double(const Quotient<MP_Float> &q)
-  {
-    pair<double, int> n = to_double_exp(q.numerator());
-    pair<double, int> d = to_double_exp(q.denominator());
-    double scale = CGAL_CLIB_STD::ldexp(1.0, n.second - d.second);
-    return (n.first / d.first) * scale;
-  }
-
-  // FIXME : This function deserves proper testing...
-  static pair<double,double>
-  to_interval(const Quotient<MP_Float> &q)
-  {
-    pair<pair<double, double>, int> n = to_interval_exp(q.numerator());
-    pair<pair<double, double>, int> d = to_interval_exp(q.denominator());
-    double scale = CGAL_CLIB_STD::ldexp(1.0, n.second - d.second);
-    return ((Interval_nt<>(n.first) / Interval_nt<>(d.first)) * scale).pair();
-  }
-};
-
-#else // CGAL_NEW_NT_TRAITS
-
 template <class NT>
 double
 to_double(const Quotient<NT>& q)   /* TODO */
@@ -941,8 +795,6 @@ template <class NT>
 bool
 is_finite(const Quotient<NT>& q)
 { return is_finite(q.num) && is_finite(q.den); }
-
-#endif // CGAL_NEW_NT_TRAITS
 
 template <class NT>
 inline

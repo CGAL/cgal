@@ -27,110 +27,9 @@
 #include <CGAL/config.h>
 #include <CGAL/enum.h>
 #include <CGAL/kernel_basic.h>
-#include <CGAL/Number_type_traits.h>
 #include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
-
-#ifdef CGAL_NEW_NT_TRAITS
-
-
-template <class NT>
-inline
-bool
-is_zero(const NT& x)
-{ return Number_type_traits<NT>::is_zero(x); }
-
-template <class NT>
-inline
-bool
-is_one(const NT& x)
-{ return Number_type_traits<NT>::is_one(x); }
-
-template <class NT>
-inline
-bool
-is_negative(const NT& x)
-{ return Number_type_traits<NT>::is_negative(x); }
-
-template <class NT>
-inline
-bool
-is_positive(const NT& x)
-{ return Number_type_traits<NT>::is_positive(x); }
-
-template <class NT>
-CGAL_KERNEL_INLINE
-Sign
-sign(const NT& x)
-{ return Number_type_traits<NT>::sign(x); }
-
-template <class NT>
-inline
-NT
-abs(const NT& x)
-{ return Number_type_traits<NT>::abs(x); }
-
-template <class NT1, class NT2>
-inline
-Comparison_result
-compare(const NT1& n1, const NT2& n2)
-{ return Number_type_traits<NT1>::compare(n1, n2); }
-
-template <class NT>
-inline
-NT
-square( const NT& n)
-{ return Number_type_traits<NT>::square(n); }
-
-template < class NT >
-inline
-NT sqrt(const NT& n)
-{ return Number_type_traits<NT>::sqrt(n); }
-
-template <class NT>
-inline
-NT
-gcd( const NT& n1, const NT& n2)
-{ return Number_type_traits<NT>::gcd(n1, n2); }
-
-template <class NT>
-inline
-NT
-div( const NT& n1, const NT& n2)
-{ return Number_type_traits<NT>::div(n1, n2); }
-
-
-template <class NT>
-inline
-double
-to_double(const NT& x)
-{ return Number_type_traits<NT>::to_double(x); }
-
-template <class NT>
-inline
-bool
-is_valid(const NT& x)
-{ return Number_type_traits<NT>::is_valid(x); }
-
-template <class NT>
-inline
-bool
-is_finite(const NT& x)
-{ return Number_type_traits<NT>::is_finite(x); }
-
-template < class NT >
-inline
-std::pair<double, double>
-to_interval (const NT& x)
-{ return Number_type_traits<NT>::to_interval(x); }
-
-template < class NT >
-inline
-io_Operator io_tag(const NT& x)
-{ return Number_type_traits<NT>::io_tag(x); }
-
-#else // CGAL_NEW_NT_TRAITS
 
 template <class NT>
 inline
@@ -199,8 +98,6 @@ gcd( const NT& n1, const NT& n2)
   } while (CGAL_NTS is_positive(y));
   return x;
 }
-
-#endif // CGAL_NEW_NT_TRAITS
 
 // for min and max see <CGAL/number_type_basic.h>
 

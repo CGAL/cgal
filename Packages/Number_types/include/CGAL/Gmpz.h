@@ -93,11 +93,9 @@ class Gmpz
 {
   typedef Handle_for<Gmpz_rep> Base;
 public:
-#ifndef CGAL_NEW_NT_TRAITS
   typedef Tag_true  Has_gcd;
   typedef Tag_false Has_division;
   typedef Tag_true  Has_sqrt;
-#endif
 
   Gmpz() // {} we can't do that since the non-const mpz() is called.
     : Base(Gmpz_rep()) {}
@@ -148,26 +146,6 @@ public:
 
   const mpz_t & mpz() const { return Ptr()->mpZ; }
   mpz_t & mpz() { return ptr()->mpZ; }
-
-  inline std::pair<double,double> to_interval() const {
-    // GMP returns the closest double (seen in the code).
-    Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-    double app = to_double();
-    // If it's lower than 2^53, then it's exact.
-    if (CGAL_CLIB_STD::fabs(app) < double(1<<26)*double(1<<27))
-      return CGAL::to_interval(app);
-    // If the double approximation is infinite, then adding
-    // a small +/- epsilon is not correct enough.
-    if (! CGAL::is_finite(app)) {
-      if (app > 0)
-	return std::pair<double, double>(CGAL_IA_MAX_DOUBLE,CGALi::infinity);
-      return std::pair<double, double>(-CGALi::infinity, -CGAL_IA_MAX_DOUBLE);
-    }
-    FPU_set_cw(CGAL_FE_UPWARD);
-    Interval_nt<false> approx(app);
-    approx += Interval_nt<false>::smallest();
-    return approx.pair();
-  }
 };
 
 
@@ -469,85 +447,14 @@ Gmpz::to_double() const
 { return mpz_get_d(mpz()); }
 
 inline
-Sign
-Gmpz::sign() const
-{ return static_cast<Sign>(mpz_sgn(mpz())); }
-
-inline
-size_t
-Gmpz::approximate_decimal_length() const
-{ return mpz_sizeinbase(mpz(),10); }
-
-#ifdef CGAL_NEW_NT_TRAITS
-
-template<>
-struct Number_type_traits<Gmpz>
-  : public CGALi::Default_euclidean_ring_number_type_traits<Gmpz>
-{
-  typedef Tag_true   Has_sqrt;
-
-  typedef Tag_true   Has_exact_ring_operations;
-  typedef Tag_false  Has_exact_division;
-  typedef Tag_false  Has_exact_sqrt;
-
-  static inline double to_double(const Gmpz& z) {
-    return z.to_double();
-  }
-
-  static inline Sign sign(const Gmpz& z) {
-    return z.sign();
-  }
-
-  static inline bool is_valid(const Gmpz&)  { return true; }
-  static inline bool is_finite(const Gmpz&) { return true; }
-
-  static inline Gmpz sqrt(const Gmpz& z) {
-    Gmpz Res;
-    mpz_sqrt(Res.mpz(), z.mpz());
-    return Res;
-  }
-
-  static inline Gmpz gcd(const Gmpz &z1, const Gmpz &z2) {
-    Gmpz Res;
-    mpz_gcd(Res.mpz(), z1.mpz(), z2.mpz());
-    return Res;
-  }
-
-  static inline Gmpz gcd(const Gmpz &z, int i) {
-    if (i > 0) {
-      Gmpz Res;
-      mpz_gcd_ui(Res.mpz(), z.mpz(), i);
-      return Res;
-    }
-    return gcd(z, Gmpz(i));
-  }
-
-  static inline Gmpz exact_division(const Gmpz &z1, const Gmpz &z2) {
-    Gmpz Res;
-    mpz_divexact(Res.mpz(), z1.mpz(), z2.mpz());
-#ifdef CGAL_CHECK_POSTCONDITIONS
-    mpz_t prod;
-    mpz_init(prod);
-    mpz_mul(prod, Res.mpz(), z2.mpz());
-    CGAL_kernel_postcondition_msg(mpz_cmp(prod, z1.mpz()) == 0,
-                                "exact_division failed\n");
-    mpz_clear( prod);
-#endif // CGAL_CHECK_POSTCONDITIONS
-    return Res;
-  }
-
-  static inline std::pair<double,double>
-  to_interval (const Gmpz & z) {
-    return z.to_interval();
-  }
-};
-
-#else // CGAL_NEW_NT_TRAITS
-
-inline
 io_Operator
 io_tag(const Gmpz&)
 { return io_Operator(); }
+
+inline
+Sign
+Gmpz::sign() const
+{ return static_cast<Sign>(mpz_sgn(mpz())); }
 
 inline
 double
@@ -728,8 +635,6 @@ double to_double(const Quotient<Gmpz>& quot)
   mpq_clear(mpQ);
   return ret;
 }
-
-#endif // CGAL_NEW_NT_TRAITS
 
 CGAL_END_NAMESPACE
 

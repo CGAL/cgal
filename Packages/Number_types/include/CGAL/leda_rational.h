@@ -36,57 +36,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_NEW_NT_TRAITS
-
-template <> 
-struct Number_type_traits<leda_rational>
-  : public CGALi::Default_field_number_type_traits<leda_rational>
-{
-  typedef Tag_true  Has_exact_ring_operations;
-  typedef Tag_true  Has_exact_division;
-  typedef Tag_false Has_exact_sqrt;
-
-  typedef Tag_true  Has_rational_traits;
-
-#ifndef CGAL_NO_NAMESPACE
-  static inline double to_double(const leda_rational &r)
-  { return r.to_double(); }
-#endif // CGAL_NO_NAMESPACE
-
-  static inline bool is_finite(const leda_rational &) { return true; }
-  static inline bool is_valid(const leda_rational &)  { return true; }
-
-#ifndef CGAL_CFG_NO_NAMESPACE
-  static inline Sign sign(const leda_rational& r)
-  { return (Sign) CGAL_LEDA_SCOPE::sign(r); }
-#endif // CGAL_CFG_NO_NAMESPACE
-
-  static inline
-  std::pair<double,double> to_interval (const leda_rational & z)
-  {
-    // There's no guarantee about the error of to_double(), so I add 3 ulps...
-    Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
-    Interval_nt_advanced approx (z.to_double());
-    FPU_set_cw(CGAL_FE_UPWARD);
-
-    approx += Interval_nt<false>::smallest();
-    approx += Interval_nt<false>::smallest();
-    approx += Interval_nt<false>::smallest();
-    return approx.pair();
-  }
-};
-
-template <> 
-struct Rational_traits<leda_rational> {
-  typedef leda_integer RT;
-  RT numerator   (const leda_rational & r) const { return r.numerator(); }
-  RT denominator (const leda_rational & r) const { return r.denominator(); }
-  leda_rational make_rational(const RT & n, const RT & d) const
-  { return leda_rational(n, d); } 
-};
-
-#else // CGAL_NEW_NT_TRAITS
-
 template <> 
 struct Number_type_traits<leda_rational> {
   typedef Tag_false Has_gcd;
@@ -148,8 +97,6 @@ to_interval (const leda_rational & z)
   approx += Interval_nt<false>::smallest();
   return approx.pair();
 }
-
-#endif // CGAL_NEW_NT_TRAITS
 
 CGAL_END_NAMESPACE
 

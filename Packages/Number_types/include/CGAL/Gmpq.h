@@ -159,11 +159,10 @@ class Gmpq
 {
   typedef Handle_for<Gmpq_rep> Base;
 public:
-#ifndef CGAL_NEW_NT_TRAITS
   typedef Tag_false  Has_gcd;
   typedef Tag_true Has_division;
   typedef Tag_false  Has_sqrt;
-#endif
+
 
   Gmpq() // {} we can't do that since the non-const mpq() is called.
     : Base(Gmpq_rep()) {}
@@ -229,13 +228,6 @@ public:
 
   double to_double() const;
   Sign sign() const;
-
-  std::pair<double, double> to_interval() const
-  {
-    Interval_nt<> quot = Interval_nt<>(CGAL::to_interval(numerator())) /
-      Interval_nt<>(CGAL::to_interval(denominator()));
-    return  quot.pair();
-  }
 
   const mpq_t & mpq() const { return Ptr()->mpQ; }
   mpq_t & mpq() { return ptr()->mpQ; }
@@ -425,11 +417,38 @@ Gmpq::to_double() const
 { return mpq_get_d(mpq()); }
 
 inline
+io_Operator
+io_tag(const Gmpq&)
+{ return io_Operator(); }
+
+inline
 Sign
 Gmpq::sign() const
 { return static_cast<Sign>(mpq_sgn(mpq())); }
 
-// input & output operators
+
+inline
+double
+to_double(const Gmpq &z)
+{ return z.to_double(); }
+
+inline
+Sign
+sign(const Gmpq &z)
+{ return z.sign(); }
+
+inline
+bool
+is_valid(const Gmpq &)
+{ return true; }
+
+inline
+bool
+is_finite(const Gmpq &)
+{ return true; }
+
+
+
 inline
 std::ostream&
 operator<<(std::ostream& os, const Gmpq &z)
@@ -454,33 +473,6 @@ operator>>(std::istream& is, Gmpq &z)
   return is;
 }
 
-#ifndef CGAL_NEW_NT_TRAITS
-
-inline
-io_Operator
-io_tag(const Gmpq&)
-{ return io_Operator(); }
-
-inline
-double
-to_double(const Gmpq &z)
-{ return z.to_double(); }
-
-inline
-Sign
-sign(const Gmpq &z)
-{ return z.sign(); }
-
-inline
-bool
-is_valid(const Gmpq &)
-{ return true; }
-
-inline
-bool
-is_finite(const Gmpq &)
-{ return true; }
-
 inline
 std::pair<double, double>
 to_interval (const Gmpq& z)
@@ -494,44 +486,6 @@ to_interval (const Gmpq& z)
     mpfr_clear (x);
     return std::pair<double, double>(i, s);
 }
-
-#else // CGAL_NEW_NT_TRAITS
-
-template<>
-struct Number_type_traits<Gmpq>
-  : public CGALi::Default_field_number_type_traits<Gmpq>
-{
-  typedef Tag_true     Has_exact_ring_operations;
-  typedef Tag_true     Has_exact_divisions;
-  typedef Tag_false    Has_exact_sqrt;
-
-  typedef Tag_true     Has_rational_traits;
-  typedef Tag_false    Has_simplify;
-
-  static inline double to_double(const Gmpq& x) {
-    return x.to_double();
-  }
-
-  static inline
-  std::pair<double,double> to_interval(const Gmpq& x) {
-    return x.to_interval();
-  }
-
-  static inline Sign sign(const Gmpq& x) {
-    return x.sign();
-  }
-
-  static inline bool is_valid(const Gmpq& x) {
-    return true;
-  }
-
-  static inline bool is_finite(const Gmpq& x) {
-    return true;
-  }
-};
-
-#endif // CGAL_NEW_NT_TRAITS
-
 
 template <>
 struct Rational_traits<Gmpq> {

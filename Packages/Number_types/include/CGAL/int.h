@@ -26,39 +26,10 @@
 #define CGAL_INT_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Interval_arithmetic.h>
 
 CGAL_BEGIN_NAMESPACE
 
 // int
-
-#ifdef CGAL_NEW_NT_TRAITS
-
-template <>
-struct Number_type_traits<int>
-  : public CGALi::Default_euclidean_ring_number_type_traits<int>
-{
-  typedef Tag_false  Has_exact_ring_operations;
-  typedef Tag_false  Has_exact_division;
-  typedef Tag_false  Has_exact_sqrt;
-
-  typedef Tag_false  Has_simplify;
-
-  static inline double to_double(int i) {
-    return static_cast<double>(i);
-  }
-
-  static inline std::pair<double,double> to_interval(int i) {
-    // this may not be correct since an integer may not be
-    // representable by a double
-    return std::pair<double,double>(i, i);
-  }
-
-  static inline bool is_finite(int) { return true; }
-  static inline bool is_valid(int)  { return true; }
-};
-
-#else
 
 template <> struct Number_type_traits<int> {
   typedef Tag_true   Has_gcd;
@@ -151,46 +122,7 @@ unsigned int
 abs(unsigned int i)
 { return i; }
 
-#endif
-
 // long
-
-#ifdef CGAL_NEW_NT_TRAITS
-
-template <>
-struct Number_type_traits<long int>
-  : public CGALi::Default_euclidean_ring_number_type_traits<long int>
-{
-  typedef Tag_true   Has_exact_ring_operations;
-  typedef Tag_false  Has_exact_division;
-  typedef Tag_false  Has_exact_sqrt;
-
-  static inline double to_double(long int i) {
-    return static_cast<double>(i);
-  }
-
-  static inline bool is_finite(long int i) { return true; }
-  static inline bool is_valid(long int i)  { return true; }
-
-  static inline std::pair<double,double>
-  to_interval(const long int& l) {
-#ifndef __BORLANDC__ // The stupid Borland compiler generates warnings...
-    if (sizeof(double) > sizeof(long)) {
-      // On 64bit platforms, a long doesn't fit exactly in a double.
-      // Well, a perfect fix would be to use std::numeric_limits<>, but...
-      Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-      Interval_nt<false> approx ((double) l);
-      FPU_set_cw(CGAL_FE_UPWARD);
-      approx += Interval_nt<false>::smallest();
-      return approx.pair();
-    }
-    else
-#endif
-      return std::pair<double,double>(l,l);
-  }
-};
-
-#else // CGAL_NEW_NT_TRAITS
 
 template <> struct Number_type_traits<long int> {
   typedef Tag_true   Has_gcd;
@@ -276,35 +208,7 @@ unsigned long int
 abs(unsigned long int i)
 { return i; }
 
-#endif // CGAL_NEW_NT_TRAITS
-
 // short
-
-#ifdef CGAL_NEW_NT_TRAITS
-
-template<>
-struct Number_type_traits<short int>
-  : public CGALi::Default_euclidean_ring_number_type_traits<short int>
-{
-  typedef Tag_false Has_exact_ring_operations;
-  typedef Tag_false Has_exact_division;
-  typedef Tag_false Has_exact_sqrt;
-
-  typedef Tag_false Has_simplify;
-
-  static inline double to_double(short int i) {
-    return static_cast<double>(i);
-  }
-
-  static inline std::pair<double,double> to_interval(short int i) {
-    return std::pair<double,double>(i, i);
-  }
-
-  static inline bool is_finite(short int) { return true; }
-  static inline bool is_valid(short int)  { return true; }
-};
-
-#else // CGAL_NEW_NT_TRAITS
 
 template <> struct Number_type_traits<short int> {
   typedef Tag_true   Has_gcd;
@@ -395,8 +299,6 @@ is_positive(unsigned short int i)
 inline
 unsigned short int abs(unsigned short int i)
 { return i; }
-
-#endif // CGAL_NEW_NT_TRAITS
 
 // Note : "long long" support is in <CGAL/long_long.h>
 

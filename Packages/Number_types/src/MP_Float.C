@@ -26,7 +26,7 @@
 #include <cmath>
 
 CGAL_BEGIN_NAMESPACE
-#ifndef CGAL_NEW_NT_TRAITS
+
 using std::pair;
 
 typedef MP_Float::exponent_type       exponent_type;
@@ -37,7 +37,7 @@ const MP_Float::V::size_type limbs_per_double = 2 + 53/log_limb;
 
 const double trunc_max = double(base)*(base/2-1)/double(base-1);
 const double trunc_min = double(-base)*(base/2)/double(base-1);
-#endif
+
 inline
 int
 my_rint(double d)
@@ -65,12 +65,12 @@ MP_Float::MP_Float(double d)
 
     // First, find the exponent.
     exp = 1 - (int) limbs_per_double;
-    while (d < trunc_min() || d > trunc_max()) {
+    while (d < trunc_min || d > trunc_max) {
       exp++;
       d *= 1.0/base;
     }
 
-    while (d >= trunc_min()/base && d <= trunc_max()/base) {
+    while (d >= trunc_min/base && d <= trunc_max/base) {
       exp--;
       d *= base;
     }
@@ -95,6 +95,25 @@ MP_Float::MP_Float(double d)
     CGAL_expensive_assertion(CGAL::to_double(*this) == bak);
 }
 
+Comparison_result
+compare (const MP_Float & a, const MP_Float & b)
+{
+  if (a.is_zero())
+    return (Comparison_result) - b.sign();
+  if (b.is_zero())
+    return (Comparison_result) a.sign();
+
+  for (exponent_type i = std::max(a.max_exp(), b.max_exp()) - 1;
+                    i >= std::min(a.min_exp(), b.min_exp()); i--)
+  {
+    if (a.of_exp(i) > b.of_exp(i))
+      return LARGER;
+    if (a.of_exp(i) < b.of_exp(i))
+      return SMALLER;
+  }
+  return EQUAL;
+}
+
 // Common code for operator+ and operator-.
 template <class BinOp>
 inline
@@ -103,7 +122,7 @@ Add_Sub(const MP_Float &a, const MP_Float &b, const BinOp &op)
 {
   CGAL_assertion(!b.is_zero());
 
-  MP_Float::exponent_type min_exp, max_exp;
+  exponent_type min_exp, max_exp;
 
   if (a.is_zero()) {
     min_exp = b.min_exp();
@@ -178,198 +197,56 @@ operator*(const MP_Float &a, const MP_Float &b)
   return r;
 }
 
-#if 0
-namespace CGALi {
+// Squaring simplifies things and is faster, so we specialize it.
+MP_Float
+square(const MP_Float &a)
+{
+  typedef MP_Float::limb limb;
+  typedef MP_Float::limb2 limb2;
 
-  Comparison_result
-  compare (const MP_Float & a, const MP_Float & b)
+  if (a.is_zero())
+    return MP_Float();
+
+  MP_Float r;
+  r.exp = 2*a.exp;
+  r.v.assign(2*a.v.size(), 0);
+  for(unsigned i=0; i<a.v.size(); i++)
   {
-    if (a.is_zero())
-      return (Comparison_result) - b.sign();
-    if (b.is_zero())
-      return (Comparison_result) a.sign();
-
-    for (exponent_type i = std::max(a.max_exp(), b.max_exp()) - 1;
-	 i >= std::min(a.min_exp(), b.min_exp()); i--)
-      {
-	if (a.of_exp(i) > b.of_exp(i))
-	  return LARGER;
-	if (a.of_exp(i) < b.of_exp(i))
-	  return SMALLER;
-      }
-    return EQUAL;
-  }
-
-
-  // Squaring simplifies things and is faster, so we specialize it.
-  MP_Float
-  square(const MP_Float &a)
-  {
-    typedef MP_Float::limb limb;
-    typedef MP_Float::limb2 limb2;
-
-    if (a.is_zero())
-      return MP_Float();
-
-    MP_Float r;
-    r.exp = 2*a.exp;
-    r.v.assign(2*a.v.size(), 0);
-    for(unsigned i=0; i<a.v.size(); i++)
-      {
-	unsigned j;
-	limb2 carry = 0;
-	limb carry2 = 0;
-	for(j=0; j<i; j++)
-	  {
-	    // There is a risk of overflow here :(
-	    // It can only happen when a.v[i] == a.v[j] == -2^15 (log_limb...)
-	    limb2 tmp0 = std::multiplies<limb2>()(a.v[i], a.v[j]);
-	    limb2 tmp1 = carry + (limb2) r.v[i+j] + tmp0;
-	    limb2 tmp = tmp0 + tmp1;
-
-	    limb tmpcarry;
-	    MP_Float::split(tmp, tmpcarry, r.v[i+j]);
-	    carry = tmpcarry + (limb2) carry2;
-
-	    // Is there a more efficient way to handle this carry ?
-	    if (tmp > 0 && tmp0 < 0 && tmp1 < 0)
-	      {
-		// If my calculations are correct, this case should never happen.
-		CGAL_assertion(false);
-	      }
-	    else if (tmp < 0 && tmp0 > 0 && tmp1 > 0)
-	      carry2 = 1;
-	    else
-	      carry2 = 0;
-	  }
-	// last round for j=i :
-	limb2 tmp0 = carry + (limb2) r.v[i+i]
-	  + std::multiplies<limb2>()(a.v[i], a.v[i]);
-	MP_Float::split(tmp0, r.v[i+i+1], r.v[i+i]);
-	r.v[i+i+1] += carry2;
-      }
-    r.canonicalize();
-    return r;
-  }
-
-  MP_Float
-  sqrt(const MP_Float &d)
-  {
-    return MP_Float(CGAL_NTS sqrt(CGAL::to_double(d)));
-  }
-
-  namespace {
-    // Returns (first * 2^second), an approximation of b.
-    inline
-    pair<double, int>
-    to_double_exp(const MP_Float &b)
+    unsigned j;
+    limb2 carry = 0;
+    limb carry2 = 0;
+    for(j=0; j<i; j++)
     {
-      if (b.is_zero())
-	return std::make_pair(0.0, 0);
+      // There is a risk of overflow here :(
+      // It can only happen when a.v[i] == a.v[j] == -2^15 (log_limb...)
+      limb2 tmp0 = std::multiplies<limb2>()(a.v[i], a.v[j]);
+      limb2 tmp1 = carry + (limb2) r.v[i+j] + tmp0;
+      limb2 tmp = tmp0 + tmp1;
 
-      exponent_type exp = b.max_exp();
-      int steps = std::min(limbs_per_double, b.v.size());
-      double d_exp_1 =
-	CGAL_CLIB_STD::ldexp(1.0, - static_cast<int>(log_limb));
-      double d_exp   = 1.0;
-      double d = 0;
+      limb tmpcarry;
+      MP_Float::split(tmp, tmpcarry, r.v[i+j]);
+      carry = tmpcarry + (limb2) carry2;
 
-      for (exponent_type i = exp - 1; i > exp - 1 - steps; i--) {
-	d_exp *= d_exp_1;
-	d += d_exp * b.of_exp(i);
+      // Is there a more efficient way to handle this carry ?
+      if (tmp > 0 && tmp0 < 0 && tmp1 < 0)
+      {
+        // If my calculations are correct, this case should never happen.
+	CGAL_assertion(false);
       }
-
-      // The cast is necessary for SunPro.
-      return std::make_pair(d, static_cast<int>(exp * log_limb));
-    }
-
-    // Returns (first * 2^second), an interval surrounding b.
-    inline
-    pair<pair<double, double>, int>
-    to_interval_exp(const MP_Float &b)
-    {
-      if (b.is_zero())
-	return std::make_pair(pair<double, double>(0, 0), 0);
-
-      exponent_type exp = b.max_exp();
-      int steps = std::min(limbs_per_double, b.v.size());
-      double d_exp_1 = CGAL_CLIB_STD::ldexp(1.0, - (int) log_limb);
-      double d_exp   = 1.0;
-
-      Protect_FPU_rounding<true> P;
-      Interval_nt_advanced d = 0;
-
-      exponent_type i;
-      for (i = exp - 1; i > exp - 1 - steps; i--) {
-	d_exp *= d_exp_1;
-	if (d_exp == 0) // Take care of underflow.
-	  d_exp = CGAL_IA_MIN_DOUBLE;
-	d += d_exp * b.of_exp(i);
-      }
-
-      if (i >= b.min_exp() && d.is_point()) {
-	if (b.of_exp(i) > 0)
-	  d += Interval_nt_advanced(0, d_exp);
-	else if (b.of_exp(i) < 0)
-	  d += Interval_nt_advanced(-d_exp, 0);
-	else
-	  d += Interval_nt_advanced(-d_exp, d_exp);
-      }
-  
-#ifdef CGAL_EXPENSIVE_ASSERTION // force it always in early debugging
-      if (d.is_point())
-	CGAL_assertion(MP_Float(d.inf()) == b);
+      else if (tmp < 0 && tmp0 > 0 && tmp1 > 0)
+        carry2 = 1;
       else
-	CGAL_assertion(MP_Float(d.inf()) <= b && MP_Float(d.sup()) >= b);
-#endif
-
-      return std::make_pair(d.pair(), static_cast<int>(exp * log_limb));
+        carry2 = 0;
     }
+    // last round for j=i :
+    limb2 tmp0 = carry + (limb2) r.v[i+i]
+                       + std::multiplies<limb2>()(a.v[i], a.v[i]);
+    MP_Float::split(tmp0, r.v[i+i+1], r.v[i+i]);
+    r.v[i+i+1] += carry2;
   }
-
-
-
-
-  // to_double() returns, not the closest double, but a one bit error
-  // is allowed.
-  // We guarantee : to_double(MP_Float(double d)) == d.
-  double
-  to_double(const MP_Float &b)
-  {
-    pair<double, int> ap = to_double_exp(b);
-    return ap.first * CGAL_CLIB_STD::ldexp(1.0, ap.second);
-  }
-
-  // FIXME : This function deserves proper testing...
-  pair<double,double>
-  to_interval(const MP_Float &b)
-  {
-    pair<pair<double, double>, int> ap = to_interval_exp(b);
-    double scale = CGAL_CLIB_STD::ldexp(1.0, ap.second);
-    return (Interval_nt<>(ap.first) * scale).pair();
-  }
-
-  double
-  to_double(const Quotient<MP_Float> &q)
-  {
-    pair<double, int> n = to_double_exp(q.numerator());
-    pair<double, int> d = to_double_exp(q.denominator());
-    double scale = CGAL_CLIB_STD::ldexp(1.0, n.second - d.second);
-    return (n.first / d.first) * scale;
-  }
-
-  // FIXME : This function deserves proper testing...
-  pair<double,double>
-  to_interval(const Quotient<MP_Float> &q)
-  {
-    pair<pair<double, double>, int> n = to_interval_exp(q.numerator());
-    pair<pair<double, double>, int> d = to_interval_exp(q.denominator());
-    double scale = CGAL_CLIB_STD::ldexp(1.0, n.second - d.second);
-    return ((Interval_nt<>(n.first) / Interval_nt<>(d.first)) * scale).pair();
-  }
-
-} // namespace CGALi
-#endif
+  r.canonicalize();
+  return r;
+}
 
 // Division by Newton (code by Valentina Marotta & Chee Yap) :
 /*
@@ -400,6 +277,118 @@ operator/(const MP_Float &a, const MP_Float &b)
   return MP_Float(CGAL::to_double(a)/CGAL::to_double(b));
 }
 
+MP_Float
+sqrt(const MP_Float &d)
+{
+  return MP_Float(CGAL_NTS sqrt(CGAL::to_double(d)));
+}
+
+namespace {
+// Returns (first * 2^second), an approximation of b.
+inline
+pair<double, int>
+to_double_exp(const MP_Float &b)
+{
+  if (b.is_zero())
+    return std::make_pair(0.0, 0);
+
+  exponent_type exp = b.max_exp();
+  int steps = std::min(limbs_per_double, b.v.size());
+  double d_exp_1 = CGAL_CLIB_STD::ldexp(1.0, - static_cast<int>(log_limb));
+  double d_exp   = 1.0;
+  double d = 0;
+
+  for (exponent_type i = exp - 1; i > exp - 1 - steps; i--) {
+    d_exp *= d_exp_1;
+    d += d_exp * b.of_exp(i);
+  }
+
+  // The cast is necessary for SunPro.
+  return std::make_pair(d, static_cast<int>(exp * log_limb));
+}
+
+// Returns (first * 2^second), an interval surrounding b.
+inline
+pair<pair<double, double>, int>
+to_interval_exp(const MP_Float &b)
+{
+  if (b.is_zero())
+    return std::make_pair(pair<double, double>(0, 0), 0);
+
+  exponent_type exp = b.max_exp();
+  int steps = std::min(limbs_per_double, b.v.size());
+  double d_exp_1 = CGAL_CLIB_STD::ldexp(1.0, - (int) log_limb);
+  double d_exp   = 1.0;
+
+  Protect_FPU_rounding<true> P;
+  Interval_nt_advanced d = 0;
+
+  exponent_type i;
+  for (i = exp - 1; i > exp - 1 - steps; i--) {
+    d_exp *= d_exp_1;
+    if (d_exp == 0) // Take care of underflow.
+      d_exp = CGAL_IA_MIN_DOUBLE;
+    d += d_exp * b.of_exp(i);
+  }
+
+  if (i >= b.min_exp() && d.is_point()) {
+    if (b.of_exp(i) > 0)
+      d += Interval_nt_advanced(0, d_exp);
+    else if (b.of_exp(i) < 0)
+      d += Interval_nt_advanced(-d_exp, 0);
+    else
+      d += Interval_nt_advanced(-d_exp, d_exp);
+  }
+  
+#ifdef CGAL_EXPENSIVE_ASSERTION // force it always in early debugging
+  if (d.is_point())
+    CGAL_assertion(MP_Float(d.inf()) == b);
+  else
+    CGAL_assertion(MP_Float(d.inf()) <= b && MP_Float(d.sup()) >= b);
+#endif
+
+  return std::make_pair(d.pair(), static_cast<int>(exp * log_limb));
+}
+
+}
+
+// to_double() returns, not the closest double, but a one bit error is allowed.
+// We guarantee : to_double(MP_Float(double d)) == d.
+double
+to_double(const MP_Float &b)
+{
+  pair<double, int> ap = to_double_exp(b);
+  return ap.first * CGAL_CLIB_STD::ldexp(1.0, ap.second);
+}
+
+double
+to_double(const Quotient<MP_Float> &q)
+{
+    pair<double, int> n = to_double_exp(q.numerator());
+    pair<double, int> d = to_double_exp(q.denominator());
+    double scale = CGAL_CLIB_STD::ldexp(1.0, n.second - d.second);
+    return (n.first / d.first) * scale;
+}
+
+// FIXME : This function deserves proper testing...
+pair<double,double>
+to_interval(const MP_Float &b)
+{
+  pair<pair<double, double>, int> ap = to_interval_exp(b);
+  double scale = CGAL_CLIB_STD::ldexp(1.0, ap.second);
+  return (Interval_nt<>(ap.first) * scale).pair();
+}
+
+// FIXME : This function deserves proper testing...
+pair<double,double>
+to_interval(const Quotient<MP_Float> &q)
+{
+  pair<pair<double, double>, int> n = to_interval_exp(q.numerator());
+  pair<pair<double, double>, int> d = to_interval_exp(q.denominator());
+  double scale = CGAL_CLIB_STD::ldexp(1.0, n.second - d.second);
+  return ((Interval_nt<>(n.first) / Interval_nt<>(d.first)) * scale).pair();
+}
+
 std::ostream &
 operator<< (std::ostream & os, const MP_Float &b)
 {
@@ -415,7 +404,7 @@ print (std::ostream & os, const MP_Float &b)
     return os << 0 << " [ double approx == " << 0.0 << " ]";
 
   MP_Float::const_iterator i;
-  MP_Float::exponent_type exp = b.min_exp() * MP_Float::log_limb;
+  exponent_type exp = b.min_exp() * log_limb;
   double approx = 0; // only for giving an idea.
 
   for (i = b.v.begin(); i != b.v.end(); i++)
@@ -428,7 +417,7 @@ print (std::ostream & os, const MP_Float &b)
     approx += CGAL_CLIB_STD::ldexp(static_cast<double>(*i),
                                    static_cast<int>(exp));
 
-    exp += MP_Float::log_limb;
+    exp += log_limb;
   }
 
   os << "  [ double approx == " << approx << " ]";

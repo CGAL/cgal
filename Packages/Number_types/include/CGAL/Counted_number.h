@@ -140,7 +140,6 @@ operator/(Counted_number<NT> const &n1, Counted_number<NT> const &n2)
     return Counted_number<NT>(n1.rep() / n2.rep());
 }
 
-#ifndef CGAL_NEW_NT_TRAITS
 template <class NT>
 Counted_number<NT>
 sqrt(Counted_number<NT> const &n1)
@@ -148,7 +147,6 @@ sqrt(Counted_number<NT> const &n1)
     Counted_number<NT>::inc_sqrt_count();
     return Counted_number<NT>(sqrt(n1.rep()));
 }
-#endif
 
 template <class NT>
 bool
@@ -198,7 +196,6 @@ operator>=(Counted_number<NT> const &n1, Counted_number<NT> const &n2)
     return (n1.rep() >= n2.rep());
 }
 
-#ifndef CGAL_NEW_NT_TRAITS
 template <class NT>
 inline double to_double(Counted_number<NT> n)
 {
@@ -216,7 +213,6 @@ inline bool is_valid(Counted_number<NT> n)
 {
     return is_valid(n.rep());
 }
-#endif
 
 template <class NT>
 void Counted_number<NT>::report(std::ostream &os)
@@ -240,12 +236,10 @@ void Counted_number<NT>::report(std::ostream &os)
         os << "  " << comp_count() << " comparisons\n";
 }
 
-#ifndef CGAL_NEW_NT_TRAITS
 template <class NT>
 inline io_Operator
 io_tag(Counted_number<NT> const &n)
 { return io_tag(n.rep());}
-#endif
 
 template <class NT>
 std::ostream& operator<<(std::ostream &os, Counted_number<NT> const &n)
@@ -261,54 +255,6 @@ std::istream& operator>>(std::istream &is, Counted_number<NT> &n)
     if (is) n = Counted_number<NT>(num);
     return is;
 }
-
-#ifdef CGAL_NEW_NT_TRAITS
-
-template<class NT>
-class Number_type_traits< Counted_number<NT> >
-  : public
-CGALi::Default_euclidean_ring_number_type_traits< Counted_number<NT> >
-{
-private:
-  typedef Counted_number<NT>          CNT;
-
-public:
-  typedef typename NT::Has_gcd        Has_gcd;
-  typedef typename NT::Has_division   Has_division;
-  typedef typename NT::Has_sqrt       Has_sqrt;
-
-  typedef typename NT::Has_exact_ring_operations  Has_exact_ring_operations;
-  typedef typename NT::Has_exact_division         Has_exact_division;
-  typedef typename NT::Has_exact_sqrt             Has_exact_sqrt;
-
-  typedef typename NT::Has_rational_traits        Has_rational_traits;
-
-  static inline CNT sqrt(const CNT& n) {
-    CNT::inc_sqrt_count();
-    return CNT( CGAL::sqrt(n.rep()) );
-  }
-
-  static inline double to_double(const CNT& n) {
-    return CGAL::to_double(n.rep());
-  }
-
-  static inline bool is_finite(const CNT& n) {
-    return CGAL::is_finite(n.rep());
-  }
-
-  static inline bool is_valid(const CNT& n) {
-    return is_valid(n.rep());
-  }
-
-  static inline
-  std::pair<double,double> to_interval(const CNT& n)
-  {
-    return CGAL::to_interval(n.rep());
-  }
-};
-
-
-#endif // CGAL_NEW_NT_TRAITS
 
 CGAL_END_NAMESPACE
 

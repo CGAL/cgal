@@ -35,58 +35,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_NEW_NT_TRAITS
-
-template <>
-struct Number_type_traits<leda_real>
-  : public CGALi::Default_field_number_type_traits<leda_real>
-{
-  typedef Tag_true  Has_sqrt;
-
-  typedef Tag_true  Has_exact_ring_operations;
-  typedef Tag_true  Has_exact_division;
-  typedef Tag_true  Has_exact_sqrt;
-
-#ifndef CGAL_NO_NAMESPACE
-  static inline double to_double(const leda_real & r)
-  { return r.to_double(); }
-#endif // CGAL_NO_NAMESPACE
-
-  static inline leda_real sqrt(const leda_real & r)
-  { return CGAL_LEDA_SCOPE::sqrt(r); }
-
-  static inline bool is_finite(const leda_real &) { return true; }
-  static inline bool is_valid(const leda_real &)  { return true; }
-
-#ifndef CGAL_CFG_NO_NAMESPACE
-  static inline Sign sign(const leda_real& r)
-  { return (Sign)CGAL_LEDA_SCOPE::sign(r); }
-
-  static inline Comparison_result
-  compare(const leda_real& r1, const leda_real& r2)
-  {
-    int c = CGAL_LEDA_SCOPE::compare(r1,r2);
-    return (c < 0) ? SMALLER : ((0 < c) ?  LARGER : EQUAL);
-  }
-#endif // CGAL_CFG_NO_NAMESPACE
-
-  static inline
-  std::pair<double,double> to_interval (const leda_real & z)
-  {
-    Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
-    double approx = z.to_double();
-    double rel_error = z.get_double_error();
-    FPU_set_cw(CGAL_FE_UPWARD);
-    Interval_nt_advanced ina(-rel_error,rel_error);
-    ina += 1;
-    ina *= approx;
-    return ina.pair();
-  }
-};
-
-
-#else // CGAL_NEW_NT_TRAITS
-
 template <> struct Number_type_traits<leda_real> {
   typedef Tag_false Has_gcd;
   typedef Tag_true  Has_division;
@@ -150,9 +98,6 @@ to_interval (const leda_real & z)
   ina *= approx;
   return ina.pair();
 }
-
-#endif // CGAL_NEW_NT_TRAITS
-
 
 CGAL_END_NAMESPACE
 

@@ -696,7 +696,6 @@ compare (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
   return EQUAL;
 }
 
-#ifndef CGAL_NEW_NT_TRAITS
 inline
 std::pair<double, double>
 to_interval (const long & l)
@@ -715,7 +714,6 @@ to_interval (const long & l)
 #endif
     return std::pair<double,double>(l,l);
 }
-#endif // CGAL_NEW_NT_TRAITS
 
 CGAL_END_NAMESPACE
 
