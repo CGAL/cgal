@@ -80,7 +80,7 @@ public:
 		 const bool do_it_now = false)
   {
     seeds.clear();
-    copy(b, e, std::back_inserter(seeds));
+    std::copy(b, e, std::back_inserter(seeds));
     seeds_mark=mark;
     if(do_it_now) mark_facets();
   }
@@ -617,7 +617,11 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
 
   //  CGAL_assertion(is_bad_faces_valid());
 
-  is_edge(va, vp, fh, edge_index); 
+  Vertex_handle vaa = va;
+  int dummy; 
+  // if we put edge_index instead of dummy, Intel C++ does not find
+  // a matching function for is_edge
+  is_edge(va, vp, fh, dummy); 
   // set fh to the face at the right of [va,vp]
 
   Face_circulator fc = incident_faces(vp, fh), fcbegin(fc);
