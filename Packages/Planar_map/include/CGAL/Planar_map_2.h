@@ -1111,7 +1111,19 @@ insert_in_face_interior(
 
 }
 
-/*!
+/*! Inserts the given curve cv into the map. One
+ * endpoint of cv is the point of the target vertex, v, of the given halfedge
+ * h. The returened twin halfedge is inserted immediately after h in the
+ * circular list of halfedges that share the same target vertex v. This
+ * method is the quick version of insert_from_vertex(), as the search for the
+ * previous halfedge in the circular list of halfedges that share the same
+ * target vertex is unnecessary, saving computation time.
+ * \param cv the given curve.
+ * \param prev the reference halfedge. Its target vertex v, is already
+ * in the map.
+ * \param en the notification class. It's default value is NULL, which
+ * implies no notification on insertion.
+ * \return a handle to a new halfedge that has v as its source vertex.
  */
 template < class Dcel, class Traits >
 inline
@@ -1127,28 +1139,27 @@ insert_from_vertex
   )
 {
   CGAL_precondition_msg(traits->point_equal(prev->target()->point(), 
-                                              traits->curve_source(cv)) ||
+                                            traits->curve_source(cv)) ||
                         traits->point_equal(prev->target()->point(), 
-                                              traits->curve_target(cv)),
+                                            traits->curve_target(cv)),
   "Point of target vertex of input halfedge should be a curve endpoint.");
 
   Halfedge_handle h = Topological_map<Dcel>::insert_from_vertex(prev);  
   h->set_curve(cv);  
   h->twin()->set_curve(cv);
 
-  //pl->insert(h, cv);            // for arrangement
-
   bool source = traits->point_equal(prev->target()->point(), 
-                                      traits->curve_source(cv));
+                                    traits->curve_source(cv));
   (source) ?
     h->target()->set_point(traits->curve_target(cv)) :
     h->target()->set_point(traits->curve_source(cv));
 
-  //idit - moved for point location with triangulation
-  pl->insert(h,cv);
+  // Insert the curve into the auxiliary point-location data structure:
+  pl->insert(h, cv);
 
-  if (en != NULL) en->add_edge(cv, h, true, false);
-
+  if (en != NULL) {
+    en->add_edge(cv, h, source, false);
+  }
   return h;
 }
 
