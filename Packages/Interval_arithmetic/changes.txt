@@ -1,5 +1,10 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.41 on 4 May 2000
+- Added the assembly files for the IRIX workaround, and removed them from the
+  clean target in src/Interval_arithmetic/makefile.
+- Updated predicates for release 2.2-I-15.
+
 Version 4.40 on 13 March 2000
 - Added KCC/Sun support.
 - Updated predicates for release 2.2-I-8.
