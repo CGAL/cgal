@@ -1,4 +1,10 @@
 //-----------------------------------------------------------------------//
+// 1.43
++Removed setting of STL_DEBUG flag in config.h
++Added macro CGAL_TYPENAME_MSVC_NULL
++Removed setting 'typename' and 'explicit' macros.
+
+//-----------------------------------------------------------------------//
 // 1.42
 +Added CGAL_CFG_TYPENAME_BUG.C
 
