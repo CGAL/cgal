@@ -287,6 +287,16 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
+template < class R>
+CGAL_KERNEL_MEDIUM_INLINE
+Angle
+angle( const PointH3<R>& p,
+       const PointH3<R>& q,
+       const PointH3<R>& r)
+{
+  return (Angle) CGAL_NTS sign((p-q)*(r-q));
+}
+
 template < class R >
 CGAL_KERNEL_INLINE
 bool

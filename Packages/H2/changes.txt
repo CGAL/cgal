@@ -1,3 +1,6 @@
+2.27   (??  Apr 2001)
+- angle()
+
 2.26   (12  Apr 2001)
 - Fix off by one error in Triangle::vertex().
 

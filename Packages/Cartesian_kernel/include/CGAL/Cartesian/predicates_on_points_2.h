@@ -205,6 +205,16 @@ orientation(const PointC2<R CGAL_CTAG> &p,
 
 template < class R >
 inline
+Angle
+angle(const PointC2<R CGAL_CTAG> &p,
+      const PointC2<R CGAL_CTAG> &q,
+      const PointC2<R CGAL_CTAG> &r)
+{
+    return angleC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
+}
+
+template < class R >
+inline
 bool
 collinear(const PointC2<R CGAL_CTAG> &p,
           const PointC2<R CGAL_CTAG> &q,

@@ -97,6 +97,18 @@ orientationC3(const FT &px, const FT &py, const FT &pz,
 }
 
 template < class FT >
+inline
+Angle
+angleC3(const FT &px, const FT &py, const FT &pz,
+        const FT &qx, const FT &qy, const FT &qz,
+        const FT &rx, const FT &ry, const FT &rz)
+{
+  return (Angle) CGAL_NTS sign ((px-qx)*(rx-qx)+
+	                        (py-qy)*(ry-qy)+
+				(pz-qz)*(rz-qz));
+}
+
+template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 Orientation

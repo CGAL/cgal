@@ -495,6 +495,11 @@ test_new_3(const R& rep)
                tmp45 = side_of_bounded_sphere(p2,p3,p4,p6);
                tmp45 = side_of_bounded_sphere(p2,p3,p6);
 
+  typename R::Angle_3 angle
+        = rep.angle_3_object();
+  Angle tmp46 = angle(p2,p3,p4);
+
+  use(tmp46);
   use(tmp45); use(tmp44); use(tmp43); use(tmp42); use(tmp41); use(tmp40);
   use(tmp39); use(tmp38); use(tmp37); use(tmp36b); use(tmp36a); use(tmp35);
   use(tmp34); use(tmp33b); use(tmp33a); use(tmp32); use(tmp31); use(tmp30);

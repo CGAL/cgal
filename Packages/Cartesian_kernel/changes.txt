@@ -1,3 +1,6 @@
+Version 6.16 (?? April 2001)
+- angle()
+
 Version 6.15 (26 April 2001)
 - Change coplanar_side_of_oriented_circle
   to     coplanar_side_of_bounded_circle.

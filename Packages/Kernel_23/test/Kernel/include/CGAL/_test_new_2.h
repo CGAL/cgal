@@ -497,6 +497,11 @@ test_new_2(const R& rep)
         = rep.collinear_are_strictly_ordered_along_line_2_object();
   bool tmp57 = collinear_are_strictly_ordered_along_line(p2,p2,p3);
 
+  typename R::Angle_2 angle
+        = rep.angle_2_object();
+  Angle tmp58 = angle(p2,p3,p4);
+
+  use(tmp58);
   use(tmp57); use(tmp56); use(tmp55); use(tmp54); use(tmp53b); use(tmp53a);
   use(tmp52b); use(tmp52a); use(tmp51b); use(tmp51a); use(tmp50b); use(tmp50a);
   use(tmp49b); use(tmp49a); use(tmp48b); use(tmp48a); use(tmp47); use(tmp46);
@@ -509,7 +514,6 @@ test_new_2(const R& rep)
 // use(tmp34dd); use(tmp34cc); use(tmp34bb); use(tmp34aa); 
   use(tmp39a); use(tmp36a);
   use(tmp_bool);
-  
 
   return true;
 }

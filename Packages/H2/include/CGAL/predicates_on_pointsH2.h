@@ -369,8 +369,8 @@ template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Orientation
 orientation( const PointH2<R>& p,
-                  const PointH2<R>& q,
-                  const PointH2<R>& r)
+             const PointH2<R>& q,
+             const PointH2<R>& r)
 {
   typedef typename R::RT RT;
 
@@ -406,8 +406,6 @@ orientation( const PointH2<R>& p,
   }
 */
 
-
-
   if (det < RT0  )
   {
       return CLOCKWISE;
@@ -420,10 +418,20 @@ orientation( const PointH2<R>& p,
 
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
+Angle
+angle( const PointH2<R>& p,
+       const PointH2<R>& q,
+       const PointH2<R>& r)
+{
+  return (Angle) CGAL_NTS sign((p-q)*(r-q));
+}
+
+template < class R>
+CGAL_KERNEL_MEDIUM_INLINE
 bool
 leftturn( const PointH2<R>& p,
-               const PointH2<R>& q,
-               const PointH2<R>& r)
+          const PointH2<R>& q,
+          const PointH2<R>& r)
 {
   typedef typename R::RT RT;
 

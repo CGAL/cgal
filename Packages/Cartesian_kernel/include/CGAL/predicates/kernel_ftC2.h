@@ -225,6 +225,16 @@ orientationC2(const FT &px, const FT &py,
 }
 
 template < class FT >
+inline
+Angle
+angleC2(const FT &px, const FT &py,
+        const FT &qx, const FT &qy,
+        const FT &rx, const FT &ry)
+{
+  return (Angle) CGAL_NTS sign ((px-qx)*(rx-qx)+(py-qy)*(ry-qy));
+}
+
+template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 bool

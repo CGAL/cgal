@@ -224,6 +224,18 @@ orientation(const PointC3<R CGAL_CTAG> &p,
 
 template < class R >
 inline
+Angle
+angle(const PointC3<R CGAL_CTAG> &p,
+      const PointC3<R CGAL_CTAG> &q,
+      const PointC3<R CGAL_CTAG> &r)
+{
+    return angleC3(p.x(), p.y(), p.z(),
+	           q.x(), q.y(), q.z(),
+		   r.x(), r.y(), r.z());
+}
+
+template < class R >
+inline
 bool
 coplanar(const PointC3<R CGAL_CTAG> &p,
          const PointC3<R CGAL_CTAG> &q,
