@@ -25,7 +25,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-unsigned Interval_nt_advanced::number_of_failures=0;
+unsigned Interval_nt_advanced::number_of_failures = 0;
+bool     Interval_nt_advanced::want_exceptions    = true;
 
 std::ostream &
 operator<< (std::ostream & os, const Interval_nt_advanced & I)

@@ -57,18 +57,14 @@ struct Interval_nt_advanced
   typedef Interval_nt_advanced IA;
   struct unsafe_comparison {};		// Exception class.
   static unsigned number_of_failures;	// Counts the number of failures.
+  static bool want_exceptions;		// Decide if we throw an exception.
 
-  static void overlap_action() // This should be runtime customisable. FIXME
-#ifndef CGAL_IA_NO_EXCEPTION
-      throw (unsafe_comparison)
-  { number_of_failures++;  throw unsafe_comparison(); }
-#else
-#if !defined(CGAL_IA_NO_WARNINGS) && !defined(CGAL_NO_WARNINGS)
-  { CGAL_warning_msg(false, " Comparison between overlapping intervals"); }
-#else
-  {}
-#endif
-#endif // CGAL_IA_NO_EXCEPTION
+  static void overlap_action() throw (unsafe_comparison)
+  {
+      number_of_failures++;
+      if (want_exceptions)
+	  throw unsafe_comparison();
+  }
 
   // The constructors.
   Interval_nt_advanced() {}
