@@ -307,23 +307,47 @@ public:
     p = Point(x,y);
   }
 
-  void get_intersecting_points(std::list<SAVED_OBJECT> &result_list,
-                               Segment inp_s,NT unit_squere)
+  void get_intersecting_points(list<SAVED_OBJECT> &result_list,Segment inp_s,NT unit_squere)
   {
-    Segment s((inp_s.source().y() < inp_s.target().y()) ? inp_s.source() :
-            inp_s.target(),(inp_s.source().y() < inp_s.target().y()) ?
-            inp_s.target() : inp_s.source());
-    NT x1 = s.source().x(),y1 = s.source().y(),
-            x2 = s.target().x(),y2 = s.target().y();
-    Point ms1,ms2,ms3,ms4,ms5,ms6,
-        tmp_ms1,tmp_ms2,tmp_ms3,tmp_ms4,tmp_ms5,tmp_ms6;// minkowski sum points
-    Point op_ms1,op_ms2,op_ms3,op_ms4,op_ms5,op_ms6;// optimal min sums points
+    Segment s((inp_s.source().y() < inp_s.target().y()) ? inp_s.source() : inp_s.target(),
+              (inp_s.source().y() < inp_s.target().y()) ? inp_s.target() : inp_s.source());
+    NT x1 = s.source().x(),y1 = s.source().y(),x2 = s.target().x(),y2 = s.target().y();
 
+    // determine right kd-tree to work on, depending on the segment's slope
+    double alpha_double = atan((y2.to_double() -y1.to_double())/(x2.to_double() - x1.to_double()));
 
-    // determine minkowski sum points
+    if(alpha_double < 0)
+      alpha_double += PI / 2.0;
+
+    NT alpha = alpha_double;
+
+    bool found = false;
+    NT last_dif;
+    list<pair<kd_tree *,NT> >::iterator iter,right_iter;
+
+    for(iter = kd_trees_list.begin();iter != kd_trees_list.end() && !found;++iter) {
+      if(iter->second > alpha) {
+        right_iter = iter;
+        if(iter != kd_trees_list.begin()) {
+	  if(iter->second - alpha > last_dif)
+            --right_iter;
+	}
+ 
+        found = true;
+      } else
+        last_dif = iter->second - alpha;
+    }
+    if(!found) {
+      right_iter = kd_trees_list.end();
+      --right_iter;
+    }
+
+    // query
+    Point p1,p2,ms1,ms2,ms3,ms4,ms5,ms6;// minkowski sum points
+    list<my_point<NT,SAVED_OBJECT> > res;
+
     if(x1 < x2) {
-      // we use unit_squere instead of unit_squere / 2 in order
-      //to find tangency points which are not supported by kd-tree
+      // we use unit_squere instead of unit_squere / 2 in order to find tangency points which are not supported by kd-tree
       ms1 = Point(x1 - 0.6 * unit_squere,y1 - 0.6 * unit_squere);
       ms2 = Point(x1 - 0.6 * unit_squere,y1 + 0.6 * unit_squere);
       ms3 = Point(x1 + 0.6 * unit_squere,y1 - 0.6 * unit_squere);
@@ -331,8 +355,7 @@ public:
       ms5 = Point(x2 + 0.6 * unit_squere,y2 + 0.6 * unit_squere);
       ms6 = Point(x2 - 0.6 * unit_squere,y2 + 0.6 * unit_squere);
     } else {
-      // we use unit_squere instead of unit_squere / 2 in order
-      //to find tangency points which are not supported by kd-tree
+      // we use unit_squere instead of unit_squere / 2 in order to find tangency points which are not supported by kd-tree
       ms1 = Point(x1 + 0.6 * unit_squere,y1 - 0.6 * unit_squere);
       ms2 = Point(x1 - 0.6 * unit_squere,y1 - 0.6 * unit_squere);
       ms3 = Point(x1 + 0.6 * unit_squere,y1 + 0.6 * unit_squere);
@@ -341,71 +364,28 @@ public:
       ms6 = Point(x2 - 0.6 * unit_squere,y2 - 0.6 * unit_squere);
     }
 
-    Point p1,p2;
-    std::list<my_point<NT,SAVED_OBJECT> > res;
-
-
-
-    // find appropriate kd-tree
-    NT size = -1,tmp_size,min_x,min_y,max_x,max_y;
-
-    list<pair<kd_tree *,NT> >::iterator iter,right_iter;
-
-    for(iter = kd_trees_list.begin();iter != kd_trees_list.end();++iter) {
-      tmp_ms1 = ms1;
-      tmp_ms2 = ms2;
-      tmp_ms3 = ms3;
-      tmp_ms4 = ms4;
-      tmp_ms5 = ms5;
-      tmp_ms6 = ms6;
-      rotate(tmp_ms1,iter->second);
-      rotate(tmp_ms2,iter->second);
-      rotate(tmp_ms3,iter->second);
-      rotate(tmp_ms4,iter->second);
-      rotate(tmp_ms5,iter->second);
-      rotate(tmp_ms6,iter->second);
-
-      min_x = min(tmp_ms1.x(),tmp_ms2.x(),tmp_ms3.x(),tmp_ms4.x(),
-                  tmp_ms5.x(),tmp_ms6.x());
-      min_y = min(tmp_ms1.y(),tmp_ms2.y(),tmp_ms3.y(),tmp_ms4.y(),
-                  tmp_ms5.y(),tmp_ms6.y());
-      max_x = max(tmp_ms1.x(),tmp_ms2.x(),tmp_ms3.x(),tmp_ms4.x(),
-                  tmp_ms5.x(),tmp_ms6.x());
-      max_y = max(tmp_ms1.y(),tmp_ms2.y(),tmp_ms3.y(),tmp_ms4.y(),
-                  tmp_ms5.y(),tmp_ms6.y());
-      tmp_size = abs((max_x - min_x)*(max_y - min_y));
-
-      if(size == -1 || tmp_size < size) {
-        size = tmp_size;
-        right_iter = iter;
-        op_ms1 = tmp_ms1;
-        op_ms2 = tmp_ms2;
-        op_ms3 = tmp_ms3;
-        op_ms4 = tmp_ms4;
-        op_ms5 = tmp_ms5;
-        op_ms6 = tmp_ms6;
-      }
-    }
+    rotate(ms1,right_iter->second);
+    rotate(ms2,right_iter->second);
+    rotate(ms3,right_iter->second);
+    rotate(ms4,right_iter->second);
+    rotate(ms5,right_iter->second);
+    rotate(ms6,right_iter->second);
 
     // query
-    p1 = Point(min(op_ms1.x(),op_ms2.x(),op_ms3.x(),op_ms4.x(),op_ms5.x(),
-               op_ms6.x()),min(op_ms1.y(),op_ms2.y(),op_ms3.y(),op_ms4.y(),
-               op_ms5.y(),op_ms6.y()));
-    p2 = Point(max(op_ms1.x(),op_ms2.x(),op_ms3.x(),op_ms4.x(),op_ms5.x(),
-               op_ms6.x()),max(op_ms1.y(),op_ms2.y(),op_ms3.y(),op_ms4.y(),
-               op_ms5.y(),op_ms6.y()));
+    p1 = Point(min(ms1.x(),ms2.x(),ms3.x(),ms4.x(),ms5.x(),ms6.x()),min(ms1.y(),ms2.y(),ms3.y(),ms4.y(),ms5.y(),ms6.y()));
+    p2 = Point(max(ms1.x(),ms2.x(),ms3.x(),ms4.x(),ms5.x(),ms6.x()),max(ms1.y(),ms2.y(),ms3.y(),ms4.y(),ms5.y(),ms6.y()));
     my_point<NT,SAVED_OBJECT> point1(p1); 
     my_point<NT,SAVED_OBJECT> point2(p2);
 
     Box b(point1,point2,2);
-
+ 
+    // the kd-tree query
     right_iter->first->search(std::back_inserter(res),b);
+
     // create result
     result_list.empty();
-    for(typename std::list<my_point<NT,SAVED_OBJECT> >::iterator my_point_iter
-	  = res.begin();my_point_iter != res.end();++my_point_iter) {
+    for(list<my_point<NT,SAVED_OBJECT> >::iterator my_point_iter = res.begin();my_point_iter != res.end();++my_point_iter)
       result_list.push_back(my_point_iter->object);
-    }
   }
 };
 
