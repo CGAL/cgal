@@ -13,14 +13,9 @@
 #include <CGAL/IO/Arr_iostream.h>
 #include <iostream.h>
 
-//uncomment if you have LEDA installed.
-//#include <CGAL/IO/Arr_Window_stream.h>
-//#include <CGAL/IO/leda_window.h>
-
-//uncomment if you have LEDA installed.
-//#include <CGAL/IO/Arr_Postscript_file_stream.h>
-
-using CGAL::write_arr;
+#ifdef CGAL_USE_LEDA
+#include <CGAL/IO/Arr_Postscript_file_stream.h>
+#endif
 
 typedef CGAL::Quotient<int>                            NT;
 typedef CGAL::Cartesian<NT>                            R;
@@ -48,23 +43,20 @@ int main()
   std::cout << "* * * Presenting the use of verbose format";
   std::cout << std::endl << std::endl;;
   CGAL::Arr_file_writer<Arrangement> verbose_writer(std::cout, arr, true);
-  write_arr(arr, verbose_writer, std::cout);
-   
-  //uncomment if you have LEDA installed. 
-  //printing to leda window.
-  //CGAL::Window_stream W(800, 800);
-  //W.init(-5, +5, -5);
-  //W.set_mode(leda_src_mode);
-  //W.set_node_width(3);
-  //W.display();
-  //W << arr;
+  CGAL::write_arr(arr, verbose_writer, std::cout);
+
   
-  //uncomment if you have LEDA installed.
   // printing to Postscript file.
-  //CGAL::Postscript_file_stream  LPF(500, 500 ,"pm.ps");
-  //LPF.init(-3,3,-3);
-  //LPF.set_line_width( 1);
-  //LPF << arr;
-  
+#ifdef CGAL_USE_LEDA
+  CGAL::Postscript_file_stream  LPF(500, 500 ,"arr.ps");
+  LPF.init(-3,3,-3);
+  LPF.set_line_width( 1);
+  LPF << arr;
+#endif
+
   return 0;
 }
+
+
+
+
