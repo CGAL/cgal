@@ -1,15 +1,18 @@
 \BOOKMARK [1][-]{section.1}{Introduction}{}
-\BOOKMARK [1][-]{section.2}{Prerequisites}{}
-\BOOKMARK [1][-]{section.3}{Halfedge data structure}{}
-\BOOKMARK [1][-]{section.4}{Polyhedron Data Structure}{}
-\BOOKMARK [2][-]{subsection.4.1}{Declaration}{section.4}
-\BOOKMARK [2][-]{subsection.4.2}{Extending primitives}{section.4}
-\BOOKMARK [2][-]{subsection.4.3}{Iteration and Circulation}{section.4}
-\BOOKMARK [2][-]{subsection.4.4}{Mesh Editing}{section.4}
-\BOOKMARK [2][-]{subsection.4.5}{Incremental Builder}{section.4}
-\BOOKMARK [1][-]{section.5}{Subdivision Surfaces}{}
-\BOOKMARK [2][-]{subsection.5.1}{3-Subdivision using Euler Operators}{section.5}
-\BOOKMARK [2][-]{subsection.5.2}{Quad-triangle Subdivision using Incremental Builder}{section.5}
-\BOOKMARK [2][-]{subsection.5.3}{Subdivision using a rule template}{section.5}
-\BOOKMARK [1][-]{section.6}{Application demo}{}
-\BOOKMARK [2][-]{subsection.6.1}{Compiling on Windows}{section.6}
+\BOOKMARK [1][-]{section.4}{Prerequisites}{}
+\BOOKMARK [2][-]{subsection.5}{Subdivision Surfaces}{section.4}
+\BOOKMARK [1][-]{section.8}{Polyhedron Data Structure: Fundamentals}{}
+\BOOKMARK [2][-]{subsection.9}{Halfedge data structure}{section.8}
+\BOOKMARK [2][-]{subsection.11}{Polyhedron Data Structure}{section.8}
+\BOOKMARK [3][-]{subsubsection.14}{Declaration}{subsection.11}
+\BOOKMARK [3][-]{subsubsection.15}{Extending primitives}{subsection.11}
+\BOOKMARK [3][-]{subsubsection.16}{Iteration and Circulation}{subsection.11}
+\BOOKMARK [2][-]{subsection.20}{Connectivity Editing}{section.8}
+\BOOKMARK [3][-]{subsubsection.21}{Connectivity Operators}{subsection.20}
+\BOOKMARK [3][-]{subsubsection.23}{Incremental Builder}{subsection.20}
+\BOOKMARK [1][-]{section.24}{Design and Implemenation of Subdivisions}{}
+\BOOKMARK [2][-]{subsection.25}{3-Subdivision using Euler Operators}{section.24}
+\BOOKMARK [2][-]{subsection.28}{Quad-triangle Subdivision using Incremental Builder}{section.24}
+\BOOKMARK [2][-]{subsection.30}{Subdivision using a rule template}{section.24}
+\BOOKMARK [1][-]{section.32}{Application demo}{}
+\BOOKMARK [2][-]{subsection.33}{Compiling on Windows}{section.32}
