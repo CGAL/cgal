@@ -1,3 +1,6 @@
+30 March 2005 Sylvain Pion
+- Add Parameterization to the internal releases.
+
 27 March 2005 Sylvain Pion
 - Show GMPXX support in the test-suite.
 
