@@ -2,7 +2,7 @@
 #include <fstream>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Iso_rectangle_2.h>
-#include <CGAL/Largest_empty_iso_rectangle_2.h>
+#include "../../include/CGAL/Largest_empty_iso_rectangle_2.h"
 
 typedef double                                Number_Type;
 typedef CGAL::Cartesian<Number_Type>             K;
@@ -15,28 +15,10 @@ int main(int argc,char *argv[])
   Iso_rectangle_2 bounding_box(Point(0, 0), Point(10, 10));
 
   Largest_empty_rect ler(bounding_box);
-  ler.insert(Point(3.5,8));
-  ler.insert(Point(6.5,8));
-  ler.insert(Point(0,5));
-  ler.insert(Point(5,0));
-  ler.insert(Point(6,7));
-  ler.insert(Point(8,3));
-  ler.insert(Point(9,3));
-  ler.insert(Point(1,1));
-  ler.insert(Point(4,1));
-  ler.insert(Point(9,1));
-  ler.insert(Point(2,2));
-  ler.insert(Point(2,4));
-  ler.insert(Point(5,7));
-  ler.insert(Point(5,7));
-  ler.insert(Point(6,9));
-  ler.insert(Point(8,6));
-  ler.insert(Point(4,9));
-  ler.insert(Point(5,9));
   ler.insert(Point(6,1));
-  ler.insert(Point(5,1));
-  ler.insert(Point(5.5,0.5));
-  ler.insert(Point(6.5,0.5));
+  ler.insert(Point(1,8));
+  ler.insert(Point(9,5));
+  ler.insert(Point(5,9));
 
   Iso_rectangle_2 b = ler.get_largest_empty_iso_rectangle();
 
