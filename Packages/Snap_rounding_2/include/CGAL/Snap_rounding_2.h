@@ -172,19 +172,11 @@ public:
   //! A constructor
   Snap_rounding_2(Segment_const_iterator begin,
                   Segment_const_iterator end,
+                  Polylines_container& output_container,
                   NT inp_pixel_size,
-                  bool inp_do_isr = true,
-                  bool inp_int_output = true,
-                  int inp_number_of_kd_trees = default_number_of_kd_trees);
-
-  //! Returns a constant iterator to the output of the first input segment.
-  const Polyline_const_iterator polylines_begin();
-
-  //! Returns a constant iterator to the after-the end
-  const Polyline_const_iterator polylines_end  ();
-
-  template<class Out>
-  void output(Out &o);
+                  bool inp_do_isr,
+                  bool inp_int_output,
+                  int inp_number_of_kd_trees);
 
 private:
   Rep _gt;
@@ -219,7 +211,8 @@ private:
   void reroute_isr(std::set<Hot_Pixel<Rep> *,hot_pixel_dir_cmp<Rep> >
                    &inp_hot_pixels_intersected_set,std::list<Point_2>
                    &seg_output,int number_of_intersections,bool first_time);
-  void iterate();
+  void iterate(Polylines_container& output_container);
+  //  void list_copy(std::list<Point_2>& target,std::list<Point_2>& source);
   static inline Direction get_direction() {return(seg_dir);}
   static inline void set_direction(Direction dir) {seg_dir = dir;}
 };
@@ -683,9 +676,20 @@ void Snap_rounding_2<Rep_>::reroute_isr(std::set<Hot_Pixel<Rep_> *,
     }
   }
 
+/*template<class Rep_>
+void Snap_rounding_2<Rep_>::list_copy(
+        std::list<Point_2>& target,std::list<Point_2>& source)
+  {
+    target = std::list<Point_2>();
+
+    for(typename std::list<Point_2>::iterator i = source.begin();
+        i != source.end();++i)
+      target.push_back(*i);
+      }*/
 
 template<class Rep_>
-void Snap_rounding_2<Rep_>::iterate()
+void Snap_rounding_2<Rep_>::iterate(
+        Polylines_container& output_container)
   {
     std::list<Point_2> seg_output;
     std::set<Hot_Pixel<Rep_> *,hot_pixel_dir_cmp<Rep_> >
@@ -694,7 +698,7 @@ void Snap_rounding_2<Rep_>::iterate()
       iterator hot_pixel_iter;
     int number_of_intersections;
     Hot_Pixel<Rep_> *hp;
-    segments_output_list.clear();
+
     for(typename std::list<Segment_data<Rep_> >::iterator iter =
         seg_list.begin();iter != seg_list.end();++iter) {
       seg_output.clear();
@@ -724,7 +728,7 @@ void Snap_rounding_2<Rep_>::iterate()
 	}
       }
 
-      segments_output_list.push_back(seg_output);
+      output_container.push_back(seg_output);
     }
   }
 
@@ -732,6 +736,7 @@ template<class Rep_>
 Snap_rounding_2<Rep_>::Snap_rounding_2(
   Segment_const_iterator begin,
   Segment_const_iterator end,
+  Polylines_container& output_container,
   NT inp_pixel_size,
   bool inp_do_isr,
   bool inp_int_output,
@@ -753,33 +758,10 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
       ++number_of_segments;
       ++begin;
     }
+
+    find_hot_pixels_and_create_kd_trees();
+    iterate(output_container);
   }
-
-template<class Rep_>
-const typename Snap_rounding_2<Rep_>::Polyline_const_iterator
-      Snap_rounding_2<Rep_>::polylines_begin()
-{
-  if(need_sr) {
-    need_sr = false;
-    find_hot_pixels_and_create_kd_trees();
-    iterate();
-  }    
-
-  return(segments_output_list.begin());
-}
-
-template<class Rep_>
-const typename Snap_rounding_2<Rep_>::Polyline_const_iterator
-      Snap_rounding_2<Rep_>::polylines_end()
-{
-  if(need_sr) {
-    need_sr = false;
-    find_hot_pixels_and_create_kd_trees();
-    iterate();
-  }    
-
-  return(segments_output_list.end());
-}
 
 template<class Rep>
 typename Snap_rounding_2<Rep>::Direction Snap_rounding_2<Rep>::seg_dir;

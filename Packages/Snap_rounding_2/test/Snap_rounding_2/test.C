@@ -64,14 +64,15 @@ void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg
   }
 }
 
-void print_out(Snap_rounding_2 &s)
+void print_out(std::list<std::list<Point_2> >::iterator begin_iter,
+               std::list<std::list<Point_2> >::iterator end_iter)
 {
   int counter = 0;
-  for(Polyline_const_iterator i = s.polylines_begin();
-      i != s.polylines_end();
+  for(std::list<std::list<Point_2> >::iterator i = begin_iter;
+      i != end_iter;
       ++i) {
     std::cout << "Polyline number " << ++counter << ":\n";
-    for(Point_const_iterator i2 = i->begin();
+    for(std::list<Point_2>::iterator i2 = i->begin();
         i2 != i->end();
         ++i2)
       std::cout << "    (" << i2->x().to_double() << ":"
@@ -84,11 +85,14 @@ void print_out(Snap_rounding_2 &s)
 int main(int argc,char *argv[])
 {
   std::list<Segment_2> seg_list;
+  std::list<std::list<Point_2> > output_list;
+
   Number_Type prec;
 
   read_data(argc,argv,prec,seg_list);
 
-  Snap_rounding_2 s1(seg_list.begin(),seg_list.end(),prec,true,false,3);
+  Snap_rounding_2 s1(seg_list.begin(),seg_list.end(),output_list,
+                     prec,true,false,3);
 
   std::cout << "input segments\n";
   for(std::list<Segment_2>::iterator i1 = seg_list.begin();
@@ -97,11 +101,13 @@ int main(int argc,char *argv[])
     std::cout << *i1 << std::endl;
 
   std::cout << "\nthe output\n";
-  print_out(s1);
+  print_out(output_list.begin(),output_list.end());
 
   std::cout << "\ntesting sr\n";
-  Snap_rounding_2 s3(seg_list.begin(),seg_list.end(),prec,false,false);
-  print_out(s3);
+  output_list.clear();
+  Snap_rounding_2 s3(seg_list.begin(),seg_list.end(),output_list,
+                     prec,false,false,3);
+  print_out(output_list.begin(),output_list.end());
 
   return(0);
 }
