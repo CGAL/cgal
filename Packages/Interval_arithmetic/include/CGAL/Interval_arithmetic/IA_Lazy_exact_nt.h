@@ -32,7 +32,7 @@ Interval_nt_advanced
 convert_from_to (const Interval_nt_advanced&, const Lazy_exact_nt<RT> & z)
 {
 	CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
-	return  z.interval();
+	return  z.interval_advanced();
 }
 
 #if !defined(CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION) \
