@@ -34,6 +34,23 @@ struct Number_type_traits {
   typedef typename NT::Has_sqrt      Has_sqrt;
 };
 
+template < class Rational >
+struct Rational_traits {
+  typedef typename Rational::NT RT;
+
+  RT numerator   (const Rational & r) const { return r.numerator(); }
+  RT denominator (const Rational & r) const { return r.denominator(); }
+  
+  Rational make_rational(const RT & n, const RT & d) const
+  { return Rational(n, d); } 
+};
+
+// number type tags
+struct Ring_tag {};
+struct Euclidean_ring_tag {};
+struct Field_tag {};
+struct Sqrt_field_tag {};
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_NUMBER_TYPE_TRAITS_H
