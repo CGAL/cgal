@@ -83,25 +83,36 @@ typedef Traits::Point_container Point_container;
 typedef X_curve_container::iterator X_curve_iterator;
 typedef Point_container::iterator Point_iterator;
 
-Window& read_line_ray_segment_plus(Window& w, const Point& s, Point& t, int& type,int& key);
-
-/* Window& read_line(const Point& p , Line& l , Planar_map &m, Window& w);
-Window& read_ray(const Point& p , Ray& s, Planar_map &pm, Window& w);
-Window& read_segment(const Point& p , Segment& s, Planar_map &pm, Window& w); */
-void find_face (Planar_map &pm,const Point& p , X_curve_container& l);
-bool cooriented(const Traits_wrap * ,const Halfedge_handle& h,const X_curve& cv);
-void split_edge(Planar_map &m, const Halfedge_handle& h,
-				X_curve& cv1,X_curve& cv2,
-				const Point& p);
-Locate_type vertical_ray_shoot (Planar_map &m,const Point& p,Point & q, 
-								bool up,Halfedge_handle& e);
-void draw_arrow (CGAL::Window_stream & W ,const Point& p1, const Point& p2, bool black);
+Window & read_line_ray_segment_plus(Window      & w, 
+                                    const Point & s,
+                                    Point       & t, 
+                                    int         & type,
+                                    int& key);
+void find_face (Planar_map        & pm,
+                const Point       & p,
+                X_curve_container & l);
+bool cooriented(const Traits_wrap     *,
+                const Halfedge_handle & h,
+                const X_curve         & cv);
+void split_edge(Planar_map            & m, 
+                const Halfedge_handle & h,
+                X_curve               & cv1,
+                X_curve               & cv2,
+                const Point           & p);
+Locate_type vertical_ray_shoot(Planar_map & m,
+                               const Point& p,
+                               Point & q, 
+                                bool up,
+                               Halfedge_handle& e);
+void draw_arrow (CGAL::Window_stream & W ,
+                 const Point         & p1, 
+                 const Point         & p2, 
+                 bool                  black);
 Vertex_handle find_closest_vertex(Planar_map &m, const Point& p);
 void redraw(leda_window* wp, double x0, double y0, double x1, double y1); 
 
 extern bool Init (char *filename , Planar_map & pm) ;
-extern void win_border( double &x0 , double &x1 , double &y0 ,
-						   Planar_map &pm);
+extern void win_border(double &x0 ,double &x1 ,double &y0 ,Planar_map &pm);
 //extern void window_input(Planar_map & M, CGAL::Window_stream &W );
 extern int curve_type,action_type,display_mode,mbutton;
 extern Planar_map* mp;
@@ -110,24 +121,12 @@ extern	Point lastp,lastq;
 
 #ifdef CGAL_PM_TIMER
 
-extern CGAL::Timer t_total,t_construction,t_insert,t_remove,t_locate,t_vertical;
+extern CGAL::Timer t_total,t_construction,t_insert,t_remove,t_locate,
+                   t_vertical;
 extern int n_total,n_insert,n_remove,n_locate,n_vertical;
 
 #endif //CGAL_PM_TIMER
 
-/* move to Eyal's leda_rat ?
-#ifdef USE_LEDA_RAT_KERNEL
-
- inline CGAL::Window_stream& operator<<(CGAL::Window_stream& os, const Point& p){
- return os << leda_point(p.xcoordD(),p.ycoordD()); 
- } 
- inline CGAL::Window_stream& operator<<(CGAL::Window_stream& os, const X_curve& c){
- leda_segment s(c.xcoord1D(),c.ycoord1D(),c.xcoord2D(),c.ycoord2D()); 
- return os << s; 
- }
- 
-  #endif
-*/
 /*
 #define UNBOUNDED_CURVE			100
 #define TARGET_UNBOUNDED_CURVE	101
