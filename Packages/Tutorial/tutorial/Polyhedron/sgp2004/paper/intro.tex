@@ -13,16 +13,16 @@ the possibility and powers of the generic geometry data structures
 and algorithms. CGAL is standardized following the \CC\ STL 
 and has emerged as the standard geometric computing library.
 
-There are several reasons of using the CGAL polyhedron
-data structure as the platform for researching and developing
-mesh algorithms:
-\indent --- It is robust for computational diffculties.
-\indent --- It is optimized for efficiency on both aspects of
-speed and space.\\
-\indent --- It is highly flexible for a specific mesh algorithm.\\
+Being the platform for researching and developing
+geometry algorithms, the CGAL polyhedron
+data structure is 
+\indent --- \emph{robust} for computational diffculties.
+\indent --- \emph{efficient} on both aspects of speed and space.\\
+\indent --- \emph{highly flexible} for specific mesh algorithms.\\
 \noindent A complete set of the geometry entities and 
-predications is also provided within CGAL. These reusable components 
-allows the design of complex algorithms within the same framework.
+predications is also provided within CGAL. These reusable 
+geometry components allows the design of complex algorithms 
+within the same framework.
 %No reinventing the wheel. The generic programming
 %(and the object-oriented design) focuses on providing the
 %reusable components, so we start with reusing the data structure.\\
@@ -34,19 +34,20 @@ geometry processing community.
 
 The intended audience of this paper are researchers, developers or
 students in the graphics community developing algorithms around
-meshes. Experiences on the advance C++ design (i.e.\ generic
-programming using templates) and knowledge of the halfedge data
-structure and related algorithms (in specific subdivisions) are
+polyhedron meshes. Experiences on the advanced \CC\ design, 
+i.e.\ generic programming using templates, and knowledge 
+of the halfedge data structure and related algorithms are 
 prerequisites. The software design of the CGAL 
 polyhedron is presented in section \ref{sect:}.
 Implementations of different groups of geometry algorithms 
 are then presented to furthermore evaluate the CGAL polyhedron.  
-We first implement a subdivision solution based on the generality of the
-Polyhedron. The solution, decoupling the geometry rules from the
-refinement, grants users flexible control of the geometry rules.
-A specific $\sqrt{3}$ subdivision is presented to evaluate the
-performance of CGAL polyhedron. Remeshing techniques based 
-on a combination of the 
+We first present a subdivision solution based on the 
+generality of the CGAL polyhedron. The solution, decoupling 
+the geometry rules from the refinement, grants users flexible 
+controls of the geometry rules. Following the general
+subdivision solution, a specific $\sqrt{3}$ subdivision 
+is implemented to evaluate the performance of CGAL polyhedron. 
+Remeshing techniques based on a combination of the 
 CGAL polyhedron and Delaunay triangulation then demonstrate 
 the versatility of the unified framework provided by CGAL.  
 Last, several additional functionalities
@@ -56,7 +57,7 @@ boolean operations are demonstrated on large meshes.
 %A mesh algorithm is usually implemented on a specific 
 %designed data structure such as the quad-tree structure\cite{} 
 %or patched mesh structure\cite{} for
-%primal quadrisection subdivisions\cite{}. 
+%primal quadrisection subdivisions\cite{}.
 
 %A graphics pipeline usually holds a geomotry 
 %data structure for storage and rendering and other data structures for
