@@ -368,7 +368,7 @@ if ( ! $quiet_switch) echo -n ", applying anchor filter"
 if ( $?DEBUG) echo "# Filtering all HTML files."
 foreach f (${new_tmp_path}/*.html)
   if ( $?DEBUG) echo $f
-  ${new_tmp_path}/cc_anchor_filter < $f > ${out_path}/$f:t
+  ${new_tmp_path}/cc_anchor_filter < $f | cc_remove_unwanted_links > ${out_path}/$f:t
 end
 
 # Converting the index.
@@ -379,7 +379,7 @@ cc_index_sort -ger ${new_tmp_path}/cc_index_body | sed 's/[<][\!]sort[^\!]*[\!][
 
 \cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/cc_index_sorted ${new_tmp_path}/cc_index_footer > ${new_tmp_path}/cc_index
 
-${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/cc_index > ${out_path}/manual_index.html
+${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/cc_index | cc_remove_unwanted_links > ${out_path}/manual_index.html
 
 
 # Copy the necessary images to the manual.
@@ -470,7 +470,7 @@ foreach f ($in_files)
     \rm ${new_tmp_path}/$f:h/cc_index_body.bak    
     foreach ff (${new_tmp_path}/$f:h/*.html)
         \mv $ff $ff.bak
-        ${new_tmp_path}/cc_anchor_filter < $ff.bak > $ff
+        ${new_tmp_path}/cc_anchor_filter < $ff.bak | cc_remove_unwanted_links > $ff
 	\rm $ff.bak
     end
     setenv CC__LOC_F "$f:h/"
@@ -517,7 +517,7 @@ foreach f ($in_files)
     # ----------------------------------
     if ( $?DEBUG) echo "# Filtering all HTML files globally."
     foreach ff (${new_tmp_path}/$f:h/*.html)
-        ${new_tmp_path}/cc_anchor_filter < $ff > ${out_path}/$f:h/$ff:t
+        ${new_tmp_path}/cc_anchor_filter < $ff | cc_remove_unwanted_links > ${out_path}/$f:h/$ff:t
 	cc_patch_anchor_pages ${out_path}/$f:h/$ff:t
     end
     \rm ${out_path}/$f:h/contents.html
@@ -547,8 +547,8 @@ cc_index_sort -ger ${new_tmp_path}/cc_index_body | sed 's/[<][\!]sort[^\!]*[\!][
 
 \cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/cc_index_sorted ${new_tmp_path}/cc_index_footer > ${new_tmp_path}/cc_index
 
-${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/cc_index > ${out_path}/manual_index.html
-${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/contents.html > ${out_path}/contents.html
+${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/cc_index | cc_remove_unwanted_links > ${out_path}/manual_index.html
+${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/contents.html | cc_remove_unwanted_links > ${out_path}/contents.html
 
 
 # Copy the necessary images to the manual.

@@ -1,4 +1,5 @@
 % ----------------------------------------------------------------------
+\clearpage
 \appendix
 \section{Quick Reference Guide}
 \newcommand{\Indent}{\hspace*{15pt}}
@@ -13,10 +14,15 @@ of an environment, it is the page number on which the environment begins.
 The page number on which an environment ends is denoted $q$.
 
 \small
-\begin{tabular}{|p{7.4cm}|p{7.4cm}|} \hline
+\tablehead{
+\hline
 &  \\
 {\large \bf Command} & {\large \bf Example and/or Result} \\
 & \\ \hline \hline
+}
+\tabletail{\hline}
+
+\begin{supertabular}{|p{7.4cm}|p{7.4cm}|} 
 \verb|\ccAutoIndexingOff| 
 & Turns off the automatic indexing done with the \verb|\cc*| formatting commands
 \ccIndexEntry{AutoIndexingOff}  \\ \hline
@@ -87,14 +93,6 @@ The page number on which an environment ends is denoted $q$.
 & \\
 & \ccc{CGAL_CH_CHECK_EXPENSIVE}, $p$ 
 \ccIndexEntry{IndexAssertionFlagName}  \\ \hline
-
-\end{tabular}
-
-\pagebreak
-\begin{tabular}{|p{7.4cm}|p{7.4cm}|} \hline
-&  \\
-{\large \bf Command} & {\large \bf Example and/or Result} \\
-& \\ \hline \hline
 
 \verb|\ccIndexAssertionFlagsUse| 
 & assertion flags, $p$
@@ -182,13 +180,6 @@ The page number on which an environment ends is denoted $q$.
 & \ccc{Polygon_2}\\ 
 & \Indent global functions, $p$--$q$ 
 \Eindex{ccIndexGlobalFunctions} \\ \hline
-\end{tabular}
-
-\pagebreak
-\begin{tabular}{|p{7.4cm}|p{7.4cm}|} \hline
-&  \\
-{\large \bf Command} & {\large \bf Example and/or Result} \\
-& \\ \hline \hline
 
 
 \verb|\ccIndexGlobalOperator{|\VarText{operator}\verb|}%| & \\
@@ -274,13 +265,6 @@ The page number on which an environment ends is denoted $q$.
 & \\
 & defined item, {\bf p}
 \ccIndexEntry{IndexMainItemDef} \\ \hline
-\end{tabular}
-
-\pagebreak
-\begin{tabular}{|p{7.4cm}|p{7.4cm}|} \hline
-&  \\
-{\large \bf Command} & {\large \bf Example and/or Result} \\
-& \\ \hline \hline
 
 %\verb|\ccIndexMainItemEnd[|\VarText{category}\verb|]%| & \\
 %\Indent\verb|{|\VarText{item}\verb|}|
@@ -367,13 +351,6 @@ The page number on which an environment ends is denoted $q$.
 \Indent\verb|{|\VarText{item}\verb|}{|\VarText{subitem}\verb|}|
 & see \verb|\ccIndexSubitemBegin|
 \ccIndexEntry{IndexSubitemEnd}  \\ \hline
-\end{tabular}
-
-\pagebreak
-\begin{tabular}{|p{7.4cm}|p{7.4cm}|} \hline
-&  \\
-{\large \bf Command} & {\large \bf Example and/or Result} \\
-& \\ \hline \hline
 
 \verb|\ccIndexSubitemSeeAlso[|\VarText{category}\verb|]%| & \\
 \Indent\verb|{|\VarText{item}\verb|}{|\VarText{subitem}\verb|}|
@@ -449,13 +426,6 @@ The page number on which an environment ends is denoted $q$.
 & ... \\
 & \ccc{K_Traits}, $p$ -- $q$
 \ccIndexEntry{IndexTraitsClassBegin} \\ \hline
-\end{tabular}
-
-\pagebreak
-\begin{tabular}{|p{7.4cm}|p{7.4cm}|} \hline
-&  \\
-{\large \bf Command} & {\large \bf Example and/or Result} \\
-& \\ \hline \hline
 
 
 \verb|\ccIndexTraitsClassDefault[|\VarText{p\_or\_C}\verb|]%| & \\
@@ -545,13 +515,6 @@ a comma in the main text of an indexing command
 & \\
 & Circulator, $p$ -- $q$
 \Eindex{ccRefConcept}\\ \hline
-\end{tabular}
-
-\pagebreak
-\begin{tabular}{|p{7.4cm}|p{7.4cm}|} \hline
-&  \\
-{\large \bf Command} & {\large \bf Example and/or Result} \\
-& \\ \hline \hline
 
 \verb|\begin{ccRefEnum}[|\VarText{scope}\verb|]|\verb|{|\VarText{enum\_name}\verb|}|
                             & \verb+\begin{ccRefEnum}{Orientation}+  \\
@@ -612,15 +575,8 @@ a comma in the main text of an indexing command
 & \Indent traits class \\
 & \Indent\Indent {\em see also} \ccc{good_traits} \\
 & ... \\
-& \ccc{good_traits}, $p$ -- $q$ \\
+& \ccc{good_traits}, $p$ -- $q$ 
 \Eindex{ccTraitsClass} \\ \hline
-\end{tabular}
-
-\pagebreak
-\begin{tabular}{|p{7.4cm}|p{7.4cm}|} \hline
-&  \\
-{\large \bf Command} & {\large \bf Example and/or Result} \\
-& \\ \hline \hline
 
 \verb|\begin{ccTraitsClassTemplate}{|\VarText{t\_class}\verb|}%| & \\
 \Indent\verb|{|\VarText{class list}\verb|}{|\VarText{package list}\verb|}|
@@ -650,4 +606,4 @@ a comma in the main text of an indexing command
 &\verb+\ccVariable{ const int i = 42;}{comment}+ \\
 &\ccc{i}, $p$ 
 \ccIndexEntry{Variable}\\ \hline
-\end{tabular}
+\end{supertabular}

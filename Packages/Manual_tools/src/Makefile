@@ -68,7 +68,8 @@ SCRIPT_FILES  = 	cc_check			\
 			cc_extract_include		\
 			cc_patch_anchor_pages		\
 			cc_patch_anchor_toc_index	\
-			cc_patch_anchor_filter
+			cc_patch_anchor_filter          \
+                        cc_remove_unwanted_links
 
 # Files that will be copied into LATEX_CONV_CONFIG upon installation:
 HTML_CONFIG_FILES =	latex_converter_config/html/*.sty	\

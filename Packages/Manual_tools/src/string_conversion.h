@@ -35,9 +35,12 @@ string convert_to_small_caps( string s);
 void append_file_to_string( const string& name, string& s);
 
 // Replaces the < > around template parameters (as in Kdtree_d<Traits>::Box) 
-// with ()'s since < and > are  not valid characters for file names under 
-// M$Windows.  Removes all colons since these are also disallowed.
+// with -'s since < and > are  not valid characters for file names under 
+// M$Windows.  Also replaces all colons by -'s since these are also disallowed.
 string replace_template_braces_and_colons( string name);
+
+// Replaces all *'s in name with the string "_star"
+string replace_asterisks( string name);
 
 // Removes the quoted font changing commands used in CCMode: \I\, \B\ ...
 string remove_font_commands( string name);

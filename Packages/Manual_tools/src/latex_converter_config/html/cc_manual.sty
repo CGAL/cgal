@@ -727,6 +727,13 @@
 % old names for compatibility
 \newcommand{\ccAnchor}{\lcAnchor}
 
+\newcommand{\ccHtmlLinksOff}{\lcRawHtml{
+<!-- REMOVE_LINKS_BEGIN -->
+}}
+\newcommand{\ccHtmlLinksOn}{\lcRawHtml{
+<!-- REMOVE_LINKS_END -->
+}}
+\newcommand{\ccHtmlNoLinksFrom}[1]{\ccHtmlLinksOff#1\ccHtmlLinksOn}
 
 \newcommand{\ccHtmlIndex}[1]{\lciHtmlIndex{class}{#C1}}
 \newcommand{\ccHtmlIndex@om}{\lciHtmlIndex{#C1}{#C2}}

@@ -75,9 +75,9 @@ void remove_separator( string& s) {
     }
 }
 
-// Replaces the <> around any template parameters with () since < and > cannot
-// be used in file names under M$Windows.  Also removes any colons (:) 
-// is also disallowed.
+// Replaces the <> around any template parameters with -- since - and - cannot
+// be used in file names under M$Windows.  Also replaces colons (:)  by -'s
+// since this character is also not allowed by M$.
 string replace_template_braces_and_colons( string name) {
     for ( size_t i = 0; i < name.size(); ++i) {
 	if ( name[i]=='<' ) {
@@ -88,10 +88,23 @@ string replace_template_braces_and_colons( string name) {
 	}
 	else if ( name[i]==':' ) {
 	    name.replace(i,1,"-");
-//            i--;
 	}
     }
     return name;
+}
+
+// Replaces all *'s in name by the string "_star" since the * causes problems
+// when creating a file (i.e., a message "$f: Ambiguous" is generated and no
+// file is created when applying the anchor filter)
+string replace_asterisks( string name) {
+   for ( size_t i = 0; i < name.size(); ++i) {
+      if ( name[i] == '*')
+      {
+         name.replace(i,1,"_star");
+         i +=4;
+      }
+   }
+   return name;
 }
 
 // Removes the quoted font changing commands used in CCMode: |I|, |B| ...

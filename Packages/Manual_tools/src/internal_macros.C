@@ -302,6 +302,7 @@ void handleClassEnvironment() {
 	string filename = replace_template_braces_and_colons(
                             remove_font_commands( class_name))
 	                + macroX( "\\lciHtmlSuffix");
+        filename = replace_asterisks(filename);
 	string contents( " Class declaration of ");
 	contents += string("<A HREF=\"") + filename + "\">"
 	            + formatted_template_class_name + "</A>";
@@ -338,6 +339,7 @@ void handleClassEnd( void) {
 void handleHtmlClassFile( const string& filename, const Buffer_list& T) {
     char*  s = text_block_to_string( T);
     string fixed_filename = replace_template_braces_and_colons(filename);
+    fixed_filename = replace_asterisks(fixed_filename);
     string p = string("<A HREF=\"") + fixed_filename + "\">" + s + "</A>";
     handleClassFile( fixed_filename, p);
     delete[] s;    
