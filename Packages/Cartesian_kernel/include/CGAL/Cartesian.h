@@ -36,6 +36,7 @@
 
 #include <CGAL/Twotuple.h>
 #include <CGAL/Threetuple.h>
+#include <CGAL/triple.h>
 
 #include <CGAL/Cartesian/Point_2.h>
 #include <CGAL/Cartesian/Vector_2.h>
@@ -234,7 +235,8 @@ struct Cartesian
 	                     Kernel_base::Point_2> >    Ray_handle_2;
     typedef CGAL::Handle_for<CGAL::Twotuple<CGAL_TYPENAME_MSVC_NULL
 	                     Kernel_base::Point_2> >    Segment_handle_2;
-    typedef CGAL::Handle_for<CGAL::Circle_repC2<Self> >	Circle_handle_2;
+    typedef CGAL::Handle_for<triple<Point_2_base, FT, Orientation> >
+	                                                Circle_handle_2;
     typedef CGAL::Handle_for<CGAL::Threetuple<CGAL_TYPENAME_MSVC_NULL
 	                     Kernel_base::Point_2> >    Triangle_handle_2;
     typedef CGAL::Handle_for<CGAL::Twotuple<CGAL_TYPENAME_MSVC_NULL
@@ -245,13 +247,15 @@ struct Cartesian
     typedef CGAL::Handle_for<CGAL::Threetuple<FT> >	Point_handle_3;
     typedef CGAL::Handle_for<CGAL::Threetuple<FT> >	Vector_handle_3;
     typedef CGAL::Handle_for<CGAL::Threetuple<FT> >	Direction_handle_3;
-    typedef CGAL::Handle_for<CGAL::Line_repC3<Self> >	Line_handle_3;
+    typedef CGAL::Handle_for<std::pair<Point_3_base, Direction_3_base> >
+	                                                Line_handle_3;
     typedef CGAL::Handle_for<CGAL::Fourtuple<FT> >	Plane_handle_3;
     typedef CGAL::Handle_for<CGAL::Twotuple<CGAL_TYPENAME_MSVC_NULL
 	                     Kernel_base::Point_3> >    Ray_handle_3;
     typedef CGAL::Handle_for<CGAL::Twotuple<CGAL_TYPENAME_MSVC_NULL
 	                     Kernel_base::Point_3> >    Segment_handle_3;
-    typedef CGAL::Handle_for<CGAL::Sphere_repC3<Self> >	Sphere_handle_3;
+    typedef CGAL::Handle_for<triple<Point_3_base, FT, Orientation> >
+	                                                Sphere_handle_3;
     typedef CGAL::Handle_for<CGAL::Threetuple<CGAL_TYPENAME_MSVC_NULL
 	                     Kernel_base::Point_3> >    Triangle_handle_3;
     typedef CGAL::Handle_for<CGAL::Fourtuple<CGAL_TYPENAME_MSVC_NULL

@@ -22,8 +22,6 @@
 #ifndef CGAL_CARTESIAN_SPHERE_3_H
 #define CGAL_CARTESIAN_SPHERE_3_H
 
-#include <CGAL/Cartesian/Sphere_rep_3.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
@@ -102,17 +100,17 @@ public:
 
   const Point_3 & center() const
   {
-      return Ptr()->center;
+      return Ptr()->first;
   }
   const FT & squared_radius() const
   {
       // Returns the square of the radius (instead of the radius itself,
       // which would require square roots)
-      return Ptr()->squared_radius;
+      return Ptr()->second;
   }
   Orientation orientation() const
   {
-      return Ptr()->orient;
+      return Ptr()->third;
   }
 
   SphereC3 orthogonal_transform(const Aff_transformation_3 &t) const

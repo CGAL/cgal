@@ -22,8 +22,6 @@
 #ifndef CGAL_CARTESIAN_LINE_3_H
 #define CGAL_CARTESIAN_LINE_3_H
 
-#include <CGAL/Cartesian/Line_rep_3.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
@@ -69,11 +67,11 @@ public:
 
   const Point_3 &     point() const
   {
-      return Ptr()->basepoint;
+      return Ptr()->first;
   }
   const Direction_3 & direction() const
   {
-      return Ptr()->direction;
+      return Ptr()->second;
   }
 
   Point_3     point(int i) const;

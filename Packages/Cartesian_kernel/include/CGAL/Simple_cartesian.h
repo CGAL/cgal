@@ -35,6 +35,7 @@
 #include <CGAL/Threetuple.h>
 #include <CGAL/Simple_Handle_for.h>
 #include <CGAL/Handle_for_virtual.h>
+#include <CGAL/triple.h>
 
 #ifdef CGAL_CFG_NO_ADVANCED_KERNEL
   // Because we cannot use Michael's scheme, we need the wrapper classes
@@ -246,7 +247,7 @@ struct Simple_cartesian
     typedef CGAL::Simple_Handle_for<CGAL::Twotuple<
 	                    CGAL_TYPENAME_MSVC_NULL Kernel_base::Point_2> >
                                                       	Segment_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Circle_repC2<Self> >
+    typedef CGAL::Simple_Handle_for<triple<Point_2_base, FT, Orientation> >
                                                       	Circle_handle_2;
     typedef CGAL::Simple_Handle_for<CGAL::Threetuple<
 	                     CGAL_TYPENAME_MSVC_NULL Kernel_base::Point_2> >
@@ -263,7 +264,7 @@ struct Simple_cartesian
                                                    	Vector_handle_3;
     typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> >
                                                   	Direction_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Line_repC3<Self> >
+    typedef CGAL::Simple_Handle_for<std::pair<Point_3_base, Direction_3_base> >
                                                      	Line_handle_3;
     typedef CGAL::Simple_Handle_for<CGAL::Fourtuple<FT> >
                                                    	Plane_handle_3;
@@ -273,7 +274,7 @@ struct Simple_cartesian
     typedef CGAL::Simple_Handle_for<CGAL::Twotuple<
 	                    CGAL_TYPENAME_MSVC_NULL Kernel_base::Point_3> >
                                                    	Segment_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Sphere_repC3<Self> >
+    typedef CGAL::Simple_Handle_for<triple<Point_3_base, FT, Orientation> >
                                                     	Sphere_handle_3;
     typedef CGAL::Simple_Handle_for<CGAL::Threetuple<
 	                     CGAL_TYPENAME_MSVC_NULL Kernel_base::Point_3> >

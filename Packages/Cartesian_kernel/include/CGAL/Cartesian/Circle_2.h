@@ -22,7 +22,6 @@
 #ifndef CGAL_CARTESIAN_CIRCLE_2_H
 #define CGAL_CARTESIAN_CIRCLE_2_H
 
-#include <CGAL/Cartesian/Circle_rep_2.h>
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -92,17 +91,17 @@ public:
 
   const Point_2 & center() const
   {
-   return Ptr()->center;
+   return Ptr()->first;
   }
 
   const FT & squared_radius() const
   {
-   return Ptr()->squared_radius;
+   return Ptr()->second;
   }
 
   Orientation orientation() const
   {
-   return Ptr()->orient;
+   return Ptr()->third;
   }
 
   CircleC2           opposite() const;
