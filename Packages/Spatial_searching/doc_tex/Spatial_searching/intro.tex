@@ -127,7 +127,7 @@ distance to the query point. We use square distances, or {\em
 transformed distances} for other distance classes, as they are 
 computationally cheaper.
 
-\ccIncludeExampleCode{../../../examples/Spatial_searching/Nearest_neighbor_searching.C}
+\ccIncludeExampleCode{Spatial_searching/Nearest_neighbor_searching.C}
 
 \newpage
 \subsection{Example of Incremental Searching}
@@ -145,7 +145,7 @@ with the \ccc{begin()} method. Note that the iterator is of the input
 iterator category, that is one can make only one pass over the data. 
 
  
-\ccIncludeExampleCode{../../../examples/Spatial_searching/Distance_browsing.C}
+\ccIncludeExampleCode{Spatial_searching/Distance_browsing.C}
 
 
 \newpage
@@ -159,7 +159,7 @@ we cannot use the Orthogonal neighbor search. As in the previous
 examples we first initialize a search tree, create the search object
 with the query, and obtain the result of the search as iterator range.
  
-\ccIncludeExampleCode{../../../examples/Spatial_searching/General_neighbor_searching.C}
+\ccIncludeExampleCode{Spatial_searching/General_neighbor_searching.C}
 
 \newpage
 \subsection{Example of a Range Query}
@@ -169,7 +169,7 @@ This example program illustrates approximate range querying for
 coordinates. The range queries are member functions of the $k$-$d$ 
 tree class.
 
-\ccIncludeExampleCode{../../../examples/Spatial_searching/Fuzzy_range_query.C}
+\ccIncludeExampleCode{Spatial_searching/Fuzzy_range_query.C}
 
 
 
@@ -181,13 +181,13 @@ user defined points and distance classes.
 In this example we assume that the user provides the following 3-dimensional 
 points class.
 
-\ccIncludeExampleCode{../../../examples/Spatial_searching/Point.h}
+\ccIncludeExampleCode{Spatial_searching/Point.h}
 
 We have put the glue layer in this file as well, that is a class that allows to 
 iterate over the Cartesian coordinates of the point, and a class to construct
 such an iterator for a point. We next need a distance class
 \newpage
-\ccIncludeExampleCode{../../../examples/Spatial_searching/Distance.h}
+\ccIncludeExampleCode{Spatial_searching/Distance.h}
 
 \newpage
 
@@ -195,7 +195,7 @@ We are ready to put the pices together.
 The class \ccc{Search_traits<..>} which you see in the next file is then a mere 
 wrapper for all these types.  The searching itself works exactly as for \cgal\ kernels.
 
-\ccIncludeExampleCode{../../../examples/Spatial_searching/User_defined_point_and_distance.C}
+\ccIncludeExampleCode{Spatial_searching/User_defined_point_and_distance.C}
 
 \newpage
 \subsection{Example of Selecting a Splitting Rule and Setting the Bucket Size}
@@ -205,7 +205,7 @@ setting the maximal allowed bucket size.  The only differences with
 the first example are the declaration of the {\em Fair} 
 splitting rule, needed to set the maximal allowed bucket size.
 
-\ccIncludeExampleCode{../../../examples/Spatial_searching/Using_fair_splitting_rule.C}
+\ccIncludeExampleCode{Spatial_searching/Using_fair_splitting_rule.C}
 
 \newpage
 
@@ -284,7 +284,7 @@ distances are used instead of the Euclidean distance itself.
 \leavevmode
 \vspace*{-6.5cm}
 \hspace*{-2cm}
-\scalebox{.3}{\includegraphics{Fig1.ps}}
+\scalebox{.3}{\includegraphics{Spatial_searching/Fig1.ps}}
 \end{center}
 \vspace*{6cm}
 \caption{Scheme of concepts and classes implementing neighbor searching algorithms.
