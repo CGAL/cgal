@@ -17,16 +17,14 @@ typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
 typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
 typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
 
-typedef CGAL::point_set_traits_2<REP>     TRAITS;
-typedef CGAL::Point_set_2<TRAITS,Gt,Tds>::Edge    Edge;
-typedef CGAL::Point_set_2<TRAITS,Gt,Tds>::Edge_iterator  Edge_iterator;
-typedef CGAL::Point_set_2<TRAITS,Gt,Tds>::Vertex_handle  Vertex_handle;
-typedef CGAL::Point_set_2<TRAITS,Gt,Tds>::Vertex  Vertex;
+typedef CGAL::Point_set_2<Gt,Tds>::Edge    Edge;
+typedef CGAL::Point_set_2<Gt,Tds>::Edge_iterator  Edge_iterator;
+typedef CGAL::Point_set_2<Gt,Tds>::Vertex_handle  Vertex_handle;
+typedef CGAL::Point_set_2<Gt,Tds>::Vertex  Vertex;
 
 
 
-
-void output(CGAL::Window_stream& W, const CGAL::Point_set_2<TRAITS,Gt,Tds>& PSet)
+void output(CGAL::Window_stream& W, const CGAL::Point_set_2<Gt,Tds>& PSet)
 {
   W.clear();
   Edge e;
@@ -41,7 +39,7 @@ void output(CGAL::Window_stream& W, const CGAL::Point_set_2<TRAITS,Gt,Tds>& PSet
 
 int main()
 {
-  CGAL::Point_set_2<TRAITS,Gt,Tds> PSet;
+  CGAL::Point_set_2<Gt,Tds> PSet;
 
   CGAL::Window_stream W(600,500, "Finding nearest neighbor / k nearest neighbors");  
   //CGAL::cgalize(W);
