@@ -70,8 +70,9 @@ public:
   Constrained_triangulation_wi_2(const Gt& gt=Gt()) 
     : Constrained_triangulation() { }
 
-  Constrained_triangulation_wi_2(const Constrained_triangulation_wi_2& ct)
-    : Constrained_triangulation(ct) {}
+  // copy constructrue et effectation operateur a revoir
+//   Constrained_triangulation_wi_2(const Constrained_triangulation_wi_2& ct)
+//     : Constrained_triangulation(ct) {}
 
   Constrained_triangulation_wi_2(std::list<Constraint>& lc, const Gt& gt=Gt())
       : Constrained_triangulation_2<Gt,Tds>(gt)
@@ -117,6 +118,10 @@ public:
 				       List_edges & list_ba,
 				       List_edges & new_edges,
 				       List_vertices & new_vertices);
+
+  //SUPPRESSION
+  // to be done
+
 protected:
   void update_new_edges(Point a, Point b, 
 			Vertex_handle vi,
@@ -247,15 +252,17 @@ insert(const Vertex_handle & va,
   // Precondition : the algorithm assumes that a and b are vertices of t,
   // walks in t along ab, removes the triangles intersected by ab and
   // creates new ones
-  // fr is the face incident to edge ab and to the right  of ab
-  // edge ab=(fr,i).
-  // new_edges will contain in the end 
-  // all the new unconstrained edges and some of the new constrained edges
-  // to be used e.g. by propagating flip 
-  // for Delaunay constrained triangulation
-  // new_vertices will contain the new vertices resulting from
-  // intersections  of constraints
-  // to be also used in  Delaunay constrained triangulation
+  // At the end :
+  // - fr is the face incident to edge ab (or the last part of it,
+  //   if it has been cut) and to the right  of ab
+  //   edge ab=(fr,i).
+  // - new_edges will contain in the end 
+  //   all the new unconstrained edges and some of the new constrained edges
+  //   to be used e.g. by propagating flip 
+  //   for Delaunay constrained triangulation
+  // - new_vertices will contain the new vertices resulting from
+  //   intersections  of constraints
+  //   to be also used in  Delaunay constrained triangulation
   // The algorithm runs in time proportionnal to the number 
   // of removed triangles
   // algorithm augmented to update the constraints hierarchy
@@ -350,15 +357,8 @@ find_intersected_faces(Vertex_handle va,
   int ih;
     
   if(current_face->is_constrained(ind)) {
-//     // to deal with the case where the first crossed edge
-//     // is constrained
-//     vh = current_face->mirror_vertex(ind);
-//     Point pi  ;
-//     Object result;
-//     result = intersection(segment(current_face,ind),
-// 			  Segment(a,b));
-//     assert(assign(pi, result));
-//     Vertex_handle vi = special_insert_in_edge(pi,current_face,ind);
+    // to deal with the case where the first crossed edge
+    // is constrained
     vh = current_face->mirror_vertex(ind);
     Vertex_handle vi=intersect(current_face, ind, vaa, vb);
 
@@ -367,7 +367,7 @@ find_intersected_faces(Vertex_handle va,
     fh->set_constraint(ih,true);
     (fh->neighbor(ih))->set_constraint(fh->mirror_index(ih),true);
     new_vertices.push_back(vi);
-    //no need to inset (vi,vaa) in new_edges because it is constrained....
+    //no need to insert (vi,vaa) in new_edges because it is constrained....
     update_new_edges(a,b,vi,vh,new_edges);
     return vi;
   }
@@ -410,12 +410,6 @@ find_intersected_faces(Vertex_handle va,
       if(current_face->is_constrained(i1)) {
 	vhh = current_face->vertex(i1);
 	vh = current_face->mirror_vertex(i1);
-	// Point pi  ;
-// 	Object result;
-//         result = intersection(segment(current_face,i1),
-// 			      Segment(a,b));
-// 	assert(assign(pi, result));
-// 	Vertex_handle vi=special_insert_in_edge(pi,current_face,i1);
 	Vertex_handle vi=intersect(current_face, i1, vaa,vb);
 	new_vertices.push_back(vi);
 	update_new_edges(a,b,vi,vh,new_edges);
