@@ -25,7 +25,7 @@
 #define CGAL_TRIANGULATION_3_H
 
 #include <iostream.h>
-
+#include <CGAL/Triangulation_utils_3.h>
 #include <list.h>
 #include <map.h> 
 //#include <algo.h>

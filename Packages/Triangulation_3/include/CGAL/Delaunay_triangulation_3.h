@@ -25,7 +25,7 @@
 #define CGAL_DELAUNAY_TRIANGULATION_3_H
 
 #include <set.h>
-
+#include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/Triangulation_3.h>
 
 template < class Gt, class Tds>
