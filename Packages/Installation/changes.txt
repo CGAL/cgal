@@ -7,6 +7,9 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Some changes for MS-Borland support due to GJ.
+GLOB: Added CLN support due to Sylvain.
+GLOB: Fixed verbose mode.
 GLOB: changed to support M$ compilers acc. to GJ's suggestions.
 ALL : updated CGAL-version to 2.1.
 GLOB: removed CGAL_directories (contained only two variables).
