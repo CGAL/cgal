@@ -455,7 +455,7 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
 //     y0 = get_next_num(file);
 //     r2 = get_next_num(file);
     
-    Circle circle (Point (x0, y0), r2);
+    Circle circle (Point (x0, y0), r2, CGAL::CLOCKWISE);
 
     if (type == 'c' || type == 'C')
     {
