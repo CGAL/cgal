@@ -67,7 +67,7 @@ public:
   }
 
   template <class TreeTraits>
-  double min_distance_to_queryitem(const Point& p,
+  double min_distance_to_rectangle(const Point& p,
 				   const CGAL::Kd_tree_rectangle<TreeTraits>& b) const 
   {   
     double distance(0.0);
@@ -85,7 +85,7 @@ public:
   }
   
   template <class TreeTraits>
-  double max_distance_to_queryitem(const Point& p,
+  double max_distance_to_rectangle(const Point& p,
 				   const CGAL::Kd_tree_rectangle<TreeTraits>& b) const
   {   
     double distance(0.0);

@@ -59,11 +59,11 @@ The values in the iterator range \ccc{[wb,we)} are the weight. }
 \ccMethod{NT distance(Point q, Point r);}{Returns $d^{power}$, 
 where $d$ denotes the distance between \ccc{q} and \ccc{r}.}
 
-\ccMethod{NT min_distance_to_queryitem(Point q, Kd_tree_rectangle<PointTraits> r;);}
+\ccMethod{NT min_distance_to_rectangle(Point q, Kd_tree_rectangle<PointTraits> r;);}
 {Returns $d^{power}$, where $d$ denotes the distance between the query item \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{NT max_distance_to_queryitem(Point q, Kd_tree_rectangle<PointTraits> r;);}
+\ccMethod{NT max_distance_to_rectangle(Point q, Kd_tree_rectangle<PointTraits> r;);}
 {Returns $d^{power}$, where $d$ denotes the distance between the query item \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 

@@ -29,24 +29,21 @@
 
 namespace CGAL {
 
-  template <class GeomTraits, class QueryItem>
+  template <class GeomTraits, class Sphere>
   class Euclidean_distance_sphere_point {
 
     public:
 
     typedef typename GeomTraits::Point Point;
     typedef typename GeomTraits::NT    NT;
-    typedef QueryItem Query_item;    
+    typedef Sphere Query_item;    
     public:
 
     	// default constructor
     	Euclidean_distance_sphere_point() {}
 
-        // obsolete as we no longer store dimension Euclidean_distance_sphere_point(const int d) {}
 
-	~Euclidean_distance_sphere_point() {}
-
-	inline NT distance(const Query_item& q, const Point& p) const {
+	inline NT distance(const Sphere& q, const Point& p) const {
                 Point c=q.center();
 		NT distance = NT(0);
 		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
@@ -61,8 +58,8 @@ namespace CGAL {
 	}
 
 
-	inline NT min_distance_to_queryitem(const Query_item& q,
-					    const Kd_tree_rectangle<GeomTraits>& r) const {
+	inline NT min_distance_to_rectangle(const Sphere& q,
+					     const Kd_tree_rectangle<GeomTraits>& r) const {
                 Point c=q.center();
 		NT distance = NT(0);
 		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
@@ -82,7 +79,7 @@ namespace CGAL {
 		return distance;
 	}
 
-	inline NT max_distance_to_queryitem(const Query_item& q,
+	inline NT max_distance_to_rectangle(const Sphere& q,
 					      const Kd_tree_rectangle<GeomTraits>& r) const {
                 Point c=q.center();
 		NT distance=NT(0);

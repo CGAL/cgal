@@ -190,12 +190,12 @@ public:
 
                         	distance_to_lower_half = 
                         	distance_instance -> 
-				min_distance_to_queryitem(query_object, 
+				min_distance_to_rectangle(query_object, 
 							  r_lower);
 				
                         	distance_to_upper_half = 
                         	distance_instance -> 
-				min_distance_to_queryitem(query_object, 
+				min_distance_to_rectangle(query_object, 
 							  r_upper);
 			
 
@@ -205,12 +205,12 @@ public:
 
                         	distance_to_lower_half = 
                         	distance_instance -> 
-				max_distance_to_queryitem(query_object, 
+				max_distance_to_rectangle(query_object, 
 							  r_lower);
 
                         	distance_to_upper_half = 
                         	distance_instance -> 
-				max_distance_to_queryitem(query_object, 
+				max_distance_to_rectangle(query_object, 
 							  r_upper);
 
 			}

@@ -43,9 +43,6 @@ namespace CGAL {
     	// default constructor
     	Euclidean_distance() {}
 
-    // obsolete as we no longer store dimension    Euclidean_distance(const int d) {}
-
-	~Euclidean_distance() {}
 
 	inline NT distance(const Point& q, const Point& p) const {
 	        NT distance = NT(0);
@@ -59,7 +56,7 @@ namespace CGAL {
 	}
 
 
-	inline NT min_distance_to_queryitem(const Point& q,
+	inline NT min_distance_to_rectangle(const Point& q,
 					    const Kd_tree_rectangle<GeomTraits>& r) const {
 		NT distance = NT(0);
 		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
@@ -77,8 +74,8 @@ namespace CGAL {
 		return distance;
 	}
 
-	inline NT max_distance_to_queryitem(const Point& q,
-					      const Kd_tree_rectangle<GeomTraits>& r) const {
+	inline NT max_distance_to_rectangle(const Point& q,
+					     const Kd_tree_rectangle<GeomTraits>& r) const {
 		NT distance=NT(0);
 		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
                 typename GeomTraits::Cartesian_const_iterator qit = construct_it(q),

@@ -160,10 +160,10 @@ class Iterator_implementation {
 
         // if (search_nearest) 
 	distance_to_root=
-	Orthogonal_distance_instance->min_distance_to_queryitem(q,
+	Orthogonal_distance_instance->min_distance_to_rectangle(q,
 						tree.bounding_box());
         // else distance_to_root=
-   	// Orthogonal_Distance_instance->max_distance_to_queryitem(q,
+   	// Orthogonal_Distance_instance->max_distance_to_rectangle(q,
 	//					tree.bounding_box());
 
         

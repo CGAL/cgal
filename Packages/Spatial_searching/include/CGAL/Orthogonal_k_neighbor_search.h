@@ -136,10 +136,10 @@ Distance* distance_instance;
 		
         // if (search_nearest) 
 		distance_to_root=
-        	d.min_distance_to_queryitem(q, tree.bounding_box());
+        	d.min_distance_to_rectangle(q, tree.bounding_box());
         // else 
 	//	distance_to_root=
-        //	distance_instance->max_distance_to_queryitem(q,
+        //	distance_instance->max_distance_to_rectangle(q,
 	//					tree.bounding_box());
 
         query_object = q;

@@ -65,7 +65,7 @@ namespace CGAL {
     }
 
 
-    inline NT min_distance_to_queryitem(const QueryItem& q,
+    inline NT min_distance_to_rectangle(const QueryItem& q,
 					      const Kd_tree_rectangle<GeomTraits>& r) {
 		NT distance = NT(0);
 		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
@@ -82,7 +82,7 @@ namespace CGAL {
 
     inline 
     NT 
-    max_distance_to_queryitem(const QueryItem& q,
+    max_distance_to_rectangle(const QueryItem& q,
 			      const Kd_tree_rectangle<GeomTraits>& r) {
       NT distance=NT(0);
       typename GeomTraits::Construct_cartesian_const_iterator construct_it;

@@ -49,11 +49,11 @@ OrthogonalDistance
  
 \ccMethod{NT distance(Point q, Point p);}{Returns the squared Euclidean distance between \ccc{q} and \ccc{p}.}
 
-\ccMethod{NT min_distance_to_query_item(Point q, Kd_tree_rectangle<NT> r);}
+\ccMethod{NT min_distance_to_rectangle(Point q, Kd_tree_rectangle<NT> r);}
 {Returns the squared Euclidean distance between \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{NT max_distance_to_queryitem(Point q, Kd_tree_rectangle<NT> r;);}
+\ccMethod{NT max_distance_to_rectangle(Point q, Kd_tree_rectangle<NT> r;);}
 {Returns the squared Euclidean distance, where $d$ denotes the distance between \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 
