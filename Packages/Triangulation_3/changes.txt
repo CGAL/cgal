@@ -1,4 +1,4 @@
-Version 1.53 (10 June 03)
+Version 1.153 (10 June 03)
 - Passing to the new design of Triangulation_2 in remove vertex
 
 Version 1.152 (6 June 03)
