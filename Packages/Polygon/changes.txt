@@ -1,3 +1,7 @@
+2.16 (24 August 2000)
++ Rewrote input operator>> for polygons.
+
+//-----------------------------------------------------------------------//
 2.15 (30 June 2000)
 + Placed abs, is_negative and sign in namespace CGAL_NTS.
 
