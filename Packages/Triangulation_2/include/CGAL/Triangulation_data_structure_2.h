@@ -1476,14 +1476,11 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
     remove_degree_3(v2, f);
     return v1;
   }
-  /* the following piece of code used to exist when the method was in
-     the Apollonius_graph_data_structure_2 class, where degree 2
-     vertices are allowed.
-  */     
-  //  if ( deg2 == 2 ) {
-  //    remove_degree_2(v2);
-  //    return v1;
-  //  }
+  
+  if ( deg2 == 2 ) {
+    remove_degree_2(v2);
+    return v1;
+  }
 
   /*
   // The following drawing corrsponds to the variables
