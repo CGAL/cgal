@@ -511,11 +511,8 @@ private:
 
     // first orient lp according to its Voronoi vertices
     if ( vpqr.is_degenerate_Voronoi_circle() ) {
-#ifdef USE_SC
-      Site_2 tpqr = vpqr.degenerate_point();
-#else
       Site_2 tpqr = Site_2::construct_site_2(vpqr.degenerate_point());
-#endif
+
       if ( same_points(tpqr, p.source_site()) ||
 	   same_points(tpqr, p.target_site()) ) {
 	if ( vqps.oriented_side(lp) != ON_POSITIVE_SIDE ) {
@@ -544,11 +541,8 @@ private:
 
     // then orient lq according to its Voronoi vertices
     if ( vpqr.is_degenerate_Voronoi_circle() ) {
-#ifdef USE_SC
-      Site_2 tpqr = vpqr.degenerate_point();
-#else
       Site_2 tpqr = Site_2::construct_site_2(vpqr.degenerate_point());
-#endif
+
       if ( same_points(tpqr, q.source_site()) ||
 	   same_points(tpqr, q.target_site()) ) {
 	if ( vqps.oriented_side(lq) != ON_POSITIVE_SIDE ) {

@@ -51,42 +51,6 @@ protected:
 public:
   Segment_Voronoi_diagram_site_2() : type_(0) {}
 
-#ifdef USE_SC
-  // constructs point site using input point
-  Segment_Voronoi_diagram_site_2(const Point_2& p) {
-    initialize_site(p);
-  }
-
-  // constructs segment site using the segment (p1,p2)
-  Segment_Voronoi_diagram_site_2(const Point_2& p1, const Point_2& p2) {
-    initialize_site(p1, p2);
-  }
-
-  // constructs point site using the point of intersection of the
-  // segments (p1,p2) and (q1,q2)
-  Segment_Voronoi_diagram_site_2(const Point_2& p1, const Point_2& p2,
-				 const Point_2& q1, const Point_2& q2) {
-    initialize_site(p1, p2, q1, q2);
-  }
-
-  // constructs segment site using the points of intersection of the
-  // segment-pairs (p1,p2)-(q1,q2) and (p1,p2)-(q3,q4) as endpoints;
-  // the segment (p1,p2) is a segment that supports the actual segment
-  Segment_Voronoi_diagram_site_2(const Point_2& p1, const Point_2& p2,
-				 const Point_2& q1, const Point_2& q2,
-				 const Point_2& r1, const Point_2& r2) {
-    initialize_site(p1, p2, q1, q2, r1, r2);
-  }
-
-  // constructs segment site using either the source or the target of
-  // (p1,p2) (that depends on the boolean is_first_exact) and the
-  // intersection of (p1,p2) with (q1,q2) as the other endpoint
-  Segment_Voronoi_diagram_site_2(const Point_2& p1, const Point_2& p2,
-				 const Point_2& q1, const Point_2& q2,
-				 bool is_first_exact) {
-    initialize_site(p1, p2, q1, q2, is_first_exact);
-  }
-#else
   static Self construct_site_2(const Point_2& p) {
     Self t;
     t.initialize_site(p);
@@ -130,7 +94,6 @@ public:
     t.initialize_site(p1, p2, q1, q2, is_first_exact); 
     return t;
  }
-#endif
 
 public:
   bool is_defined() const { return type_; }
@@ -196,98 +159,52 @@ public:
 
   Self supporting_site() const {
     CGAL_precondition( is_segment() );
-#ifdef USE_SC
-    return Self(p_[0], p_[1]);
-#else
     return construct_site_2(p_[0], p_[1]);
-#endif
   }
 
   Self supporting_site(unsigned int i) const {
     CGAL_precondition( is_point() && i < 2);
     CGAL_precondition( !is_exact() );
-#ifdef USE_SC
-    if ( i == 0 ) { return Self(p_[2], p_[3]); }
-    return Self(p_[4], p_[5]);
-#else
     if ( i == 0 ) { return construct_site_2(p_[2], p_[3]); }
     return construct_site_2(p_[4], p_[5]);
-#endif
   }
 
   Self crossing_site(unsigned int i) const {
     CGAL_precondition( is_segment() && !is_exact() );
     CGAL_precondition( i < 2 && !is_exact(i) );
-#ifdef USE_SC
-    if ( i == 0 ) {
-      return Self(p_[2], p_[3]);
-    } else {
-      return Self(p_[4], p_[5]);
-    }
-#else
     if ( i == 0 ) {
       return construct_site_2(p_[2], p_[3]);
     } else {
       return construct_site_2(p_[4], p_[5]);
     }
-#endif
   }
 
   Self source_site() const {
     CGAL_precondition( is_segment() );
-#ifdef USE_SC
-    if ( is_exact() || is_exact(0) ) {
-      return Self(p_[0]);
-    } else {
-      return Self(p_[0], p_[1], p_[2], p_[3]);
-    }
-#else
     if ( is_exact() || is_exact(0) ) {
       return construct_site_2(p_[0]);
     } else {
       return construct_site_2(p_[0], p_[1], p_[2], p_[3]);
     }
-#endif
   }
 
   Self target_site() const {
     CGAL_precondition( is_segment() );
-#ifdef USE_SC
-    if ( is_exact() || is_exact(1) ) {
-      return Self(p_[1]);
-    } else {
-      return Self(p_[0], p_[1], p_[4], p_[5]);
-    }
-#else
     if ( is_exact() || is_exact(1) ) {
       return construct_site_2(p_[1]);
     } else {
       return construct_site_2(p_[0], p_[1], p_[4], p_[5]);
     }
-#endif
   }
 
   Self opposite_site() const {
     CGAL_precondition( is_segment() );
     if ( is_exact() ) {
-#ifdef USE_SC
-      return Self(p_[1], p_[0]);
-#else
       return construct_site_2(p_[1], p_[0]);
-#endif
     }
 
     CGAL_assertion( !is_exact(0) || !is_exact(1) );
 
-#ifdef USE_SC
-    if ( is_exact(0) && !is_exact(1) ) {
-      return Self(p_[1], p_[0], p_[4], p_[5], false);
-    } else if ( !is_exact(0) && is_exact(1) ) {
-      return Self(p_[1], p_[0], p_[2], p_[3], true);
-    } else {
-      return Self(p_[1], p_[0], p_[4], p_[5], p_[2], p_[3]);
-    }
-#else
     if ( is_exact(0) && !is_exact(1) ) {
       return construct_site_2(p_[1], p_[0], p_[4], p_[5], false);
     } else if ( !is_exact(0) && is_exact(1) ) {
@@ -295,7 +212,6 @@ public:
     } else {
       return construct_site_2(p_[1], p_[0], p_[4], p_[5], p_[2], p_[3]);
     }
-#endif
   }
 
 #if 1
@@ -449,19 +365,11 @@ operator>>(std::istream &is,
     if (type == 'p') {
       Point_2 p;
       is >> p;
-#ifdef USE_SC
-      t = Site_2(p);
-#else
       t = Site_2::construct_site_2(p);
-#endif
     } else if (type == 's') {
       Point_2 p1, p2;
       is >> p1 >> p2;
-#ifdef USE_SC
-      t = Site_2(p1, p2);
-#else
       t = Site_2::construct_site_2(p1, p2);
-#endif
     }
   }
   return is;

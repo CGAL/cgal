@@ -54,7 +54,6 @@ protected:
   //  friend std::ostream& operator<<(std::ostream&, const Self&);
   //  friend std::istream& operator>>(std::istream&, Self&);
 
-#ifndef USE_SC
 public:
   static Self construct_site_2(const Point_2& p) {
     Self t;
@@ -69,23 +68,9 @@ public:
     return t;
     //    return Self(p0, p1);
   }
-#endif
 
 public:
   Segment_Voronoi_diagram_simple_site_2() : type_(0) {}
-
-#ifdef USE_SC
-  // constructs point site using input point
-  Segment_Voronoi_diagram_simple_site_2(const Point_2 &p) {
-    initialize_site(p);
-  }
-
-  // constructs segment site using input segment
-  Segment_Voronoi_diagram_simple_site_2(const Point_2& p1,
-					const Point_2& p2) {
-    initialize_site(p1, p2);
-  }
-#endif
 
 public:
   bool is_defined() const { return type_; }
@@ -122,29 +107,17 @@ public:
 
   Self source_site() const {
     CGAL_precondition( is_segment() );
-#ifdef USE_SC
-    return Self(p_[0]);
-#else
     return Self::construct_site_2(p_[0]);
-#endif
   }
 
   Self target_site() const {
     CGAL_precondition( is_segment() );
-#ifdef USE_SC
-    return Self(p_[1]);
-#else
     return Self::construct_site_2(p_[1]);
-#endif
   }
 
   Self opposite_site() const {
     CGAL_precondition( is_segment() );
-#ifdef USE_SC
-    return Self(p_[1],p_[0]);
-#else
     return Self::construct_site_2(p_[1],p_[0]);
-#endif
   }
 
   Self supporting_site() const {
@@ -155,11 +128,7 @@ public:
   Self supporting_site(unsigned int i) const {
     CGAL_assertion( false );
     CGAL_precondition( is_point() && i < 2 );
-#ifdef USE_SC
-    return Self(p_[0], p_[0]);
-#else
     return Self::construct_site_2(p_[0], p_[0]);
-#endif
   }
 
   Self crossing_site(unsigned int i) const {
@@ -234,19 +203,11 @@ operator>>(std::istream &is,
     if (type == 'p') {
       Point_2 p;
       is >> p;
-#ifdef USE_SC
-      t = Site_2(p);
-#else
       t = Site_2::construct_site_2(p);
-#endif
     } else if (type == 's') {
       Point_2 p1, p2;
       is >> p1 >> p2;
-#ifdef USE_SC
-      t = Site_2(p1, p2);
-#else
       t = Site_2::construct_site_2(p1, p2);
-#endif
     }
   }
   return is;

@@ -62,16 +62,10 @@ insert_second(const Point_2& p)
   Site_2 p0 = finite_vertices_begin()->site();
   // MK: change the equality test between points by the functor in
   // geometric traits
-#ifdef USE_SC
-  if ( same_points(Site_2(p),p0) ) {
-    return Vertex_handle(finite_vertices_begin());
-  }
-#else
   Site_2 tp = Site_2::construct_site_2(p);
   if ( same_points(tp,p0) ) {
     return Vertex_handle(finite_vertices_begin());
   }
-#endif
 
   Storage_site_2 ss = create_storage_site(p);
   return create_vertex_dim_up(ss);
@@ -83,11 +77,7 @@ typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
 insert_third(const Point_2& p)
 {
-#ifdef USE_SC
-  Site_2 t(p);
-#else
   Site_2 t = Site_2::construct_site_2(p);
-#endif
   Storage_site_2 ss = create_storage_site(p);
   return insert_third(t, ss);
 }
@@ -238,11 +228,7 @@ insert_point(const Point_2& p, Vertex_handle vnear)
     return insert_third(p);
   }
 
-#ifdef USE_SC
-  Site_2 t(p);
-#else
   Site_2 t = Site_2::construct_site_2(p);
-#endif
   Storage_site_2 ss = create_storage_site(p);
   return insert_point(ss, t, vnear);
 }

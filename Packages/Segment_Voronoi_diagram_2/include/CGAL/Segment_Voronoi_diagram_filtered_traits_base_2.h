@@ -63,12 +63,9 @@ private:
 						 C2E_t, C2F_t,
 						 ITag>  Self;
 
-#if defined (__GNUC__) && (__GNUC__ < 3)
-#else
   typedef Segment_Voronoi_diagram_traits_base_2<CK_t,CK_MTag,ITag> CK_traits;
   typedef Segment_Voronoi_diagram_traits_base_2<FK_t,FK_MTag,ITag> FK_traits;
   typedef Segment_Voronoi_diagram_traits_base_2<EK_t,EK_MTag,ITag> EK_traits;
-#endif
 
   typedef Segment_Voronoi_diagram_kernel_wrapper_2<CK_t,ITag>  CK;
   typedef Segment_Voronoi_diagram_kernel_wrapper_2<FK_t,ITag>  FK;
@@ -133,12 +130,9 @@ public:
   typedef FK_t                          Filtering_kernel;
   typedef EK_t                          Exact_kernel;
 
-#if defined (__GNUC__) && (__GNUC__ < 3)
-#else
   typedef CK_traits                     Construction_traits;
   typedef FK_traits                     Filtering_traits;
   typedef EK_traits                     Exact_traits;
-#endif
 
   typedef CK_MTag                       Construction_traits_method_tag;
   typedef FK_MTag                       Filtering_traits_method_tag;
@@ -160,11 +154,6 @@ public:
 
 
 private:
-#if defined (__GNUC__) && (__GNUC__ < 3)
-  typedef Construct_svd_vertex_2<CK,CK_MTag>  CK_Construct_svd_vertex_2;
-  typedef Construct_svd_vertex_2<FK,FK_MTag>  FK_Construct_svd_vertex_2;
-  typedef Construct_svd_vertex_2<EK,EK_MTag>  EK_Construct_svd_vertex_2;
-#else
   typedef typename CK_traits::Construct_svd_vertex_2
   CK_Construct_svd_vertex_2;
 
@@ -173,7 +162,6 @@ private:
 
   typedef typename EK_traits::Construct_svd_vertex_2
   EK_Construct_svd_vertex_2;
-#endif
 
 public:
   // OBJECT CONSTRUCTION & ASSIGNMENT

@@ -112,49 +112,6 @@ private:
   // with intersections
   K2_Site_2 convert_site(const K1_Site_2& t, const Tag_true&) const
   {
-#ifdef USE_SC
-    if ( t.is_point() ) {
-      if ( t.is_exact() ) {
-	return K2_Site_2( Base::operator()(t.point()) );
-      } else {
-	K1_Site_2 s1 = t.supporting_site(0);
-	K1_Site_2 s2 = t.supporting_site(1);
-	return K2_Site_2( Base::operator()(s1.point(0)),
-			  Base::operator()(s1.point(1)),
-			  Base::operator()(s2.point(0)),
-			  Base::operator()(s2.point(1)) );
-      }
-    }
-
-    if ( t.is_exact() ) {
-      return K2_Site_2( Base::operator()(t.point(0)),
-			Base::operator()(t.point(1)) );
-    } else {
-      K1_Site_2 supp = t.supporting_site();
-      if ( t.is_exact(0) ) {
-	K1_Site_2 cs = t.crossing_site(1);
-	return K2_Site_2(Base::operator()(supp.point(0)),
-			 Base::operator()(supp.point(1)),
-			 Base::operator()(cs.point(0)),
-			 Base::operator()(cs.point(1)), true);
-      } else if ( t.is_exact(1) ) {
-	K1_Site_2 cs = t.crossing_site(0);
-	return K2_Site_2(Base::operator()(supp.point(0)),
-			 Base::operator()(supp.point(1)),
-			 Base::operator()(cs.point(0)),
-			 Base::operator()(cs.point(1)), false);
-      } else {
-	K1_Site_2 cs1 = t.crossing_site(0);
-	K1_Site_2 cs2 = t.crossing_site(1);
-	return K2_Site_2(Base::operator()(supp.point(0)),
-			 Base::operator()(supp.point(1)),
-			 Base::operator()(cs1.point(0)),
-			 Base::operator()(cs1.point(1)),
-			 Base::operator()(cs2.point(0)),
-			 Base::operator()(cs2.point(1)));
-      }
-    }
-#else
     if ( t.is_point() ) {
       if ( t.is_exact() ) {
 	return K2_Site_2::construct_site_2( Base::operator()(t.point()) );
@@ -198,28 +155,18 @@ private:
 					   Base::operator()(cs2.point(1)));
       }
     }
-#endif
   }
 
   // without intersections
   K2_Site_2 convert_site(const K1_Site_2& t, const Tag_false&) const
   {
     if ( t.is_point() ) {
-#ifdef USE_SC
-      return K2_Site_2( Base::operator()(t.point()) );
-#else
       return K2_Site_2::construct_site_2( Base::operator()(t.point()) );
-#endif
     }
 
     // t is a segment
-#ifdef USE_SC
-    return K2_Site_2( Base::operator()(t.point(0)),
-		      Base::operator()(t.point(1)) );    
-#else
     return K2_Site_2::construct_site_2( Base::operator()(t.point(0)),
 					Base::operator()(t.point(1)) );    
-#endif
   }
 
 public:

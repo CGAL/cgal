@@ -61,11 +61,8 @@ private:
 	  same_segments(s1.supporting_site(0),
 			s2.supporting_site(1))  ) {
       Site_2 support = s1.supporting_site(0);
-#ifdef USE_SC
-      Site_2 tp(p);
-#else
       Site_2 tp = Site_2::construct_site_2(p);
-#endif
+
       return (  same_points(support.source_site(), tp) ||
 		same_points(support.target_site(), tp)  );
     } else if (  same_segments(s1.supporting_site(1),
@@ -73,11 +70,8 @@ private:
 		 same_segments(s1.supporting_site(1),
 			       s2.supporting_site(0))  ) {
       Site_2 support = s1.supporting_site(1);
-#ifdef USE_SC
-      Site_2 tp(p);
-#else
       Site_2 tp = Site_2::construct_site_2(p);
-#endif
+
       return (  same_points(support.source_site(), tp) ||
 		same_points(support.target_site(), tp)  );      
     }
@@ -100,11 +94,8 @@ private:
   {
     CGAL_precondition( !s.is_exact() );
 
-#ifdef USE_SC
-    Site_2 t(p1, p2);
-#else
     Site_2 t = Site_2::construct_site_2(p1, p2);
-#endif
+
     return ( same_segments(s.supporting_site(0), t) ||
 	     same_segments(s.supporting_site(1), t) );
   }

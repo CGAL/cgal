@@ -80,17 +80,9 @@ public:
 
   Site_2 site() const {
     if ( is_point() ) {
-#ifdef USE_SC
-      return Site_2(*h_[0]);
-#else
       return Site_2::construct_site_2(*h_[0]);
-#endif
     } else {
-#ifdef USE_SC
-      return Site_2(*h_[0], *h_[1]);
-#else
       return Site_2::construct_site_2(*h_[0],*h_[1]);
-#endif
     }
   }
 
