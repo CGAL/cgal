@@ -1,5 +1,9 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+1.33 (28. Jul 2003) [af]
+- Added operator< for SPolynomial with int in Filtered_extended_homogeneous.h
+- Added workaround in Polynomial.h for VC7
+
 1.32 (16 Jul 2003) [af]
      - Removed specializations of Polynomial<T>::operator-() for T = int and double
 
