@@ -166,13 +166,13 @@ struct Bitangent_2 < Polygon_2<R_,C_> >
 		 p_target_succ = *(it_target_succ);
 	    else p_target_succ = p_target;
 	    
-	    t1 = ( (t == RR || t == RL) && !leftturn (p_source,p_target,p_source_succ))
-	      || ( (t == LL || t == LR) && !rightturn(p_source,p_target,p_source_succ));
+	    t1 = ( (t == RR || t == RL) && !left_turn (p_source,p_target,p_source_succ))
+	      || ( (t == LL || t == LR) && !right_turn(p_source,p_target,p_source_succ));
 	    if ( collinear(p_source,p_target,p_source_succ) && p_source != p_source_succ)
 	      t1 = are_ordered_along_line(p_source_succ,p_source,p_target);
 	    
-	    t2 = ( (t == LL || t == RL) && !rightturn(p_source,p_target,p_target_succ))
-	      || ( (t == RR || t == LR) && !leftturn (p_source,p_target,p_target_succ));
+	    t2 = ( (t == LL || t == RL) && !right_turn(p_source,p_target,p_target_succ))
+	      || ( (t == RR || t == LR) && !left_turn (p_source,p_target,p_target_succ));
 	    if ( collinear(p_source,p_target,p_target_succ) && p_target != p_target_succ)
 	      t2 = are_ordered_along_line(p_source,p_target,p_target_succ);
 
@@ -186,9 +186,9 @@ struct Bitangent_2 < Polygon_2<R_,C_> >
 		// signe ou non 
 		Point_2 tmp(p_target_succ + (p_source_succ - p_target));
 		if ( (    (t == LR || t == RL)    
-		       && rightturn(p_source_succ, p_source, tmp))
+		       && right_turn(p_source_succ, p_source, tmp))
 		     || ( (t == LL || t == RR)
-		       && leftturn (p_source_succ, p_source, tmp)))
+		       && left_turn (p_source_succ, p_source, tmp)))
 		     ++it_target;
 		else ++it_source;
 	    }
@@ -217,13 +217,13 @@ struct Bitangent_2 < Polygon_2<R_,C_> >
 	if (t == LL || t == LR) { 
 	    // --------------------------------------------------------------------
 	    found_start_succ = 
-	    (leftturn(*start,*finish,*start_succ)                      || 
+	    (left_turn(*start,*finish,*start_succ)                      || 
 	     *start == *start_succ                                     ||
 	     (collinear(*start,*finish,*start_succ) &&
 	      are_ordered_along_line(*start_succ,*start,*finish)));
 	    // --------------------------------------------------------------------
 	    found_start_pred = 
-	    (leftturn(*start,*finish,*start_pred)                      || 
+	    (left_turn(*start,*finish,*start_pred)                      || 
 	     *start == *start_pred                                     || 
 	     (collinear(*start,*finish,*start_pred) &&
 	      are_ordered_along_line(*start_pred,*start,*finish)));
@@ -232,13 +232,13 @@ struct Bitangent_2 < Polygon_2<R_,C_> >
 	else   {
 	    // --------------------------------------------------------------------
 	    found_start_succ = 
-	    (rightturn(*start,*finish,*start_succ)                     || 
+	    (right_turn(*start,*finish,*start_succ)                     || 
 	     *start == *start_succ                                     ||
 	     (collinear(*start,*finish,*start_succ) &&
 	      are_ordered_along_line(*start_succ,*start,*finish)));
 	    // --------------------------------------------------------------------
 	    found_start_pred = 
-	    (rightturn(*start,*finish,*start_pred)                     || 
+	    (right_turn(*start,*finish,*start_pred)                     || 
 	     *start == *start_pred                                     || 
 	     (collinear(*start,*finish,*start_pred) &&
 	      are_ordered_along_line(*start_pred,*start,*finish)));
@@ -249,13 +249,13 @@ struct Bitangent_2 < Polygon_2<R_,C_> >
 	if (t == LL || t == RL) {
 	    // --------------------------------------------------------------------
 	    found_finish_succ = 
-	    (rightturn(*finish,*start,*finish_succ)                    || 
+	    (right_turn(*finish,*start,*finish_succ)                    || 
 	     *finish == *finish_succ                                   ||
 	     (collinear(*finish,*start,*finish_succ) &&
 	      are_ordered_along_line(*start,*finish,*finish_succ)));
 	    // --------------------------------------------------------------------
 	    found_finish_pred = 
-	    (rightturn(*finish,*start,*finish_pred)                    || 
+	    (right_turn(*finish,*start,*finish_pred)                    || 
 	     *finish == *finish_pred                                   ||
 	     (collinear(*finish,*start,*finish_pred) && 
 	      are_ordered_along_line(*start,*finish,*finish_pred)));
@@ -264,13 +264,13 @@ struct Bitangent_2 < Polygon_2<R_,C_> >
 	else  {
 	    // --------------------------------------------------------------------
 	    found_finish_succ = 
-	    (leftturn(*finish,*start,*finish_succ)                     || 
+	    (left_turn(*finish,*start,*finish_succ)                     || 
 	     *finish == *finish_succ                                   ||
 	     (collinear(*finish,*start,*finish_succ) &&
 	      are_ordered_along_line(*start,*finish,*finish_succ)));
 	    // --------------------------------------------------------------------
 	    found_finish_pred = 
-	    (leftturn(*finish,*start,*finish_pred)                     || 
+	    (left_turn(*finish,*start,*finish_pred)                     || 
 	     *finish == *finish_pred                                   ||
 	     (collinear(*finish,*start,*finish_pred) && 
 	      are_ordered_along_line(*start,*finish,*finish_pred)));
@@ -287,16 +287,16 @@ struct Bitangent_2 < Polygon_2<R_,C_> >
 	if (found == false) 
 	  {
 	    if (( (t == LR || t == RL) 
-		      && rightturn(*start_succ,*start,*finish_succ + (*start_succ - *finish)))||
+		      && right_turn(*start_succ,*start,*finish_succ + (*start_succ - *finish)))||
 		 ((t == LL || t == RR) 
-		      && leftturn (*start_succ,*start,*finish_succ + (*start_succ - *finish))))
+		      && left_turn (*start_succ,*start,*finish_succ + (*start_succ - *finish))))
 	      {
 		++finish;
 	      }
 	    else if (((t == LR || t == RL) 
-		      && leftturn (*start_succ,*start,*finish_succ + (*start_succ - *finish)))||
+		      && left_turn (*start_succ,*start,*finish_succ + (*start_succ - *finish)))||
 		     ((t == LL || t == RR) 
-		      && rightturn(*start_succ,*start,*finish_succ + (*start_succ - *finish))))
+		      && right_turn(*start_succ,*start,*finish_succ + (*start_succ - *finish))))
 	      {
 		++start;
 	      }
@@ -490,24 +490,24 @@ private:
 			       const Point_2& q1, const Point_2& q2)
     {
 	return ((t == LL 
-		 && (leftturn (p1,p2,q1) ||
+		 && (left_turn (p1,p2,q1) ||
 		     (collinear(p1,p2,q1) && are_ordered_along_line(q1,p1,p2)))
-		 && (leftturn (p1,p2,q2) ||
+		 && (left_turn (p1,p2,q2) ||
 		     (collinear(p1,p2,q2) && are_ordered_along_line(p1,p2,q2))))
 	     ||	(t == LR 
-		 && (leftturn (p1,p2,q1) ||
+		 && (left_turn (p1,p2,q1) ||
 		     (collinear(p1,p2,q1) && are_ordered_along_line(q1,p1,p2)))
-		 && (rightturn(p1,p2,q2) ||
+		 && (right_turn(p1,p2,q2) ||
 		     (collinear(p1,p2,q2) && are_ordered_along_line(p1,p2,q2))))
              ||	(t == RR 
-		 && (rightturn(p1,p2,q1) ||
+		 && (right_turn(p1,p2,q1) ||
 		     (collinear(p1,p2,q1) && are_ordered_along_line(q1,p1,p2)))
-		 && (rightturn(p1,p2,q2) ||
+		 && (right_turn(p1,p2,q2) ||
 		     (collinear(p1,p2,q2) && are_ordered_along_line(p1,p2,q2))))
              ||	(t == RL 
-		 && (rightturn(p1,p2,q1) ||
+		 && (right_turn(p1,p2,q1) ||
 		     (collinear(p1,p2,q1) && are_ordered_along_line(q1,p1,p2)))
-		 && (leftturn (p1,p2,q2) ||
+		 && (left_turn (p1,p2,q2) ||
 		     (collinear(p1,p2,q2) && are_ordered_along_line(p1,p2,q2)))));
     }
     //--------------------------------------------------------------------------
