@@ -1,3 +1,7 @@
+3 June 2004 Sylvain Pion
+- Test-suite fixes for Darwin, which does not work fine on files open
+  both read and write at the same time through 2 streams.
+
 23 May 2004 Sylvain Pion
 - Fix move_point() for degenerate dimensions.
 

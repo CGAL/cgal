@@ -60,9 +60,11 @@ _test_cls_tds_3( const Tds &)
   // (they are implicitely tested in triangulation)
   Tds tdsfromfile;
   std::cout << "    I/O" << std::endl;
-  std::ofstream oFileT("Test_tds_IO_3", std::ios::out);
+  {
+    std::ofstream oFileT("Test_tds_IO_3", std::ios::out);
+    oFileT << tds1;
+  }
   std::ifstream iFileT("Test_tds_IO_3", std::ios::in);
-  oFileT << tds1;
   iFileT >> tdsfromfile;
   assert(tdsfromfile.is_valid());
   assert(tdsfromfile.dimension() == -2);
