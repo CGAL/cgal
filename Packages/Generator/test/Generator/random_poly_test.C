@@ -21,6 +21,7 @@
 //
 // Random Simple Polygons: Test Program
 // ============================================================================
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/point_generators_2.h>
