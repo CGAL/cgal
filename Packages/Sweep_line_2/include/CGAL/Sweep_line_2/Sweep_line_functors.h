@@ -138,20 +138,22 @@ public:
     const X_curve_2 &cv2 = c2->getCurve();
     if ( m_traits->curve_is_vertical(cv1) )
     {
-      if ( m_traits->curve_get_point_status(cv2, c1->getSource()) == 
-	   Traits::UNDER_CURVE &&
-	   m_traits->curve_get_point_status(cv2, c1->getTarget()) == 
-	   Traits::UNDER_CURVE) {
+      if (m_traits->curve_is_in_x_range(cv2, c1->getSource()) &&
+	  m_traits->curve_get_point_status(cv2, c1->getSource()) == LARGER &&
+	  m_traits->curve_is_in_x_range(cv2, c1->getTarget()) &&
+	  m_traits->curve_get_point_status(cv2, c1->getTarget()) == LARGER)
+      {
 	return true;
       }
       return false;
     }
     if ( m_traits->curve_is_vertical(cv2))
     {
-      if ( m_traits->curve_get_point_status(cv1, c2->getSource()) == 
-	   Traits::ABOVE_CURVE &&
-	   m_traits->curve_get_point_status(cv1, c2->getTarget()) == 
-	   Traits::ABOVE_CURVE) {
+      if (m_traits->curve_is_in_x_range(cv1, c2->getSource()) &&
+	  m_traits->curve_get_point_status(cv1, c2->getSource()) == SMALLER &&
+	  m_traits->curve_is_in_x_range(cv1, c2->getTarget()) &&
+	  m_traits->curve_get_point_status(cv1, c2->getTarget()) == SMALLER)
+      {
 	return true;
       }
       return false;

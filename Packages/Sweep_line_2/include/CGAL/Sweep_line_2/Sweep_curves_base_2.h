@@ -689,7 +689,6 @@ protected:
     typedef SweepLineTraits_2                       Traits;
     typedef typename Traits::X_curve                X_curve; 
     typedef typename Traits::Point                  Point;
-    typedef typename Traits::Curve_point_status     Curve_point_status;
     
     less_curve_xy(Traits *traits_) : traits(traits_) {}
     
@@ -762,19 +761,23 @@ protected:
         // if the curve is vertical and the point is its target we
         // refer that curve as a point.
         if (traits->curve_target(cv1.get_curve()) == 
-          cv1.get_rightmost_point().point()) {
-          Curve_point_status p_status =
-            traits->
-              curve_get_point_status(cv2.get_curve(), 
-                                     traits->curve_target(cv1.get_curve()));
-          if (p_status == Traits::UNDER_CURVE || p_status == Traits::ON_CURVE) 
+	    cv1.get_rightmost_point().point()) 
+	{
+	  if (! traits->curve_is_in_x_range
+	      (cv2.get_curve(), 
+	       traits->curve_target(cv1.get_curve())))
+	    return (EQUAL);
+	  
+	  Comparison_result cres = traits->curve_get_point_status
+	    (cv2.get_curve(), 
+	     traits->curve_target(cv1.get_curve()));
+
+          if (cres == LARGER || cres == EQUAL)
             // if the target is on cv2 its means that it tangent to
             // cv2 from below.
             return  SMALLER;
-          else if (p_status == Traits::ABOVE_CURVE)
+          else
             return  LARGER;
-          else 
-            return  EQUAL;
         }
           
         X_curve tmp_cv;
@@ -790,19 +793,23 @@ protected:
         // if the curve is vertical and the point is its target we
         // refer that curve as a point.
         if (traits->curve_target(cv2.get_curve()) == 
-          cv2.get_rightmost_point().point()){
-          Curve_point_status p_status = 
-            traits->
-              curve_get_point_status(cv1.get_curve(), 
-                                     traits->curve_target(cv2.get_curve()));
+	    cv2.get_rightmost_point().point())
+	{
+	  if (! traits->curve_is_in_x_range
+	      (cv1.get_curve(), 
+	       traits->curve_target(cv2.get_curve())))
+	    return (EQUAL);
+
+          Comparison_result cres = traits->curve_get_point_status
+	    (cv1.get_curve(), 
+	     traits->curve_target(cv2.get_curve()));
+
           // if the target is on cv1 its means that it tangent to cv1 
           // from below.
-          if (p_status == Traits::UNDER_CURVE || p_status == Traits::ON_CURVE)
+	  if (cres == LARGER || cres == EQUAL)
             return  LARGER;
-          else if (p_status == Traits::ABOVE_CURVE)
+          else
             return  SMALLER;
-          else  
-            return EQUAL;
         }
         
         X_curve tmp_cv;
@@ -875,35 +882,40 @@ protected:
       // for our definition - it means that the verical curve comes first.
       if ( result == EQUAL && 
          traits->curve_is_vertical(update_first_cv ? first_cv: 
-                                   cv1.get_curve()) ){
+                                   cv1.get_curve()) )
+      {
+	if (! traits->curve_is_in_x_range
+	    (update_second_cv ? second_cv : cv2.get_curve(),
+	     traits->curve_source(update_first_cv ? 
+				  first_cv : cv1.get_curve())))
+	  result = SMALLER;
+
         // if first_cv is vertical and its source tangent to second_cv - 
         // it means that first_cv is above second_cv.
-        Curve_point_status p_status =
-          traits->
-            curve_get_point_status(update_second_cv?
-                                   second_cv : cv2.get_curve(),
-                                   traits->
-                                   curve_source(update_first_cv? 
-                                                first_cv: cv1.get_curve()));
-        if (p_status == Traits::ON_CURVE)
+	else if (traits->curve_get_point_status
+		 (update_second_cv ? second_cv : cv2.get_curve(),
+		  traits->curve_source(update_first_cv ? 
+				       first_cv : cv1.get_curve())) == EQUAL)
           result = LARGER;
         else
           result = SMALLER;
       }
       else if (result == EQUAL && 
                traits->curve_is_vertical(update_second_cv? second_cv: 
-                                         cv2.get_curve())){
+                                         cv2.get_curve()))
+      {
+	if (! traits->curve_is_in_x_range
+	    (update_first_cv ? first_cv : cv1.get_curve(), 
+	     traits->curve_source(update_second_cv ? 
+				  second_cv : cv2.get_curve())))
+	  result = LARGER;
 
         // if second_cv is vertical and its source tangent to first_cv - 
         // it means that second_cv is above first_cv.
-        Curve_point_status p_status =
-          traits->
-            curve_get_point_status(update_first_cv?
-                                   first_cv: cv1.get_curve(), 
-                                   traits->
-                                   curve_source(update_second_cv? 
-                                                second_cv: cv2.get_curve()));
-        if (p_status == Traits::ON_CURVE)
+	else if (traits->curve_get_point_status
+		 (update_first_cv ? first_cv: cv1.get_curve(), 
+		  traits->curve_source(update_second_cv ? 
+				       second_cv : cv2.get_curve())) == EQUAL)
           result = SMALLER;
         else
           result = LARGER;
@@ -982,14 +994,13 @@ protected:
   typedef less_curve_xy<Curve_node>                 Less_yx;
   
 public:
-  typedef typename std::map<Point, Point_plus, less_point_xy<Point> >
+  typedef std::map<Point, Point_plus, less_point_xy<Point> >
                                                   Vertices_points_plus;
 
-  typedef typename 
-	   std::map<Point,Intersection_point_node,less_point_xy<Point> >
+  typedef std::map<Point,Intersection_point_node,less_point_xy<Point> >
                                                            Event_queue;
 
-  typedef typename std::set<Curve_node, less_curve_xy<Curve_node> > 
+  typedef std::set<Curve_node, less_curve_xy<Curve_node> > 
 	                                                   Status_line; 
   
   typedef std::list<X_curve>                    X_curve_list;
@@ -1001,8 +1012,7 @@ public:
   typedef typename Event_queue::iterator        Event_queue_iterator;
   typedef typename Status_line::iterator        Status_line_iterator;
   
-  typedef typename std::list<Curve_node>::iterator  
-	                                       list_Curve_node_iterator;
+  typedef std::list<Curve_node>::iterator       list_Curve_node_iterator;
   
   Sweep_curves_base_2() : 
     traits(new Traits), use_delete_traits(true), intersection_exist_(false) {}
@@ -1031,7 +1041,7 @@ protected:
     
     // a container to hold the point_node curve nodes ordered as they
     // should on status.
-    typedef typename std::set<Curve_node, less_curve_xy<Curve_node> > 
+    typedef std::set<Curve_node, less_curve_xy<Curve_node> > 
                                                   Local_status_line; 
     typedef typename Local_status_line::iterator   Local_status_line_iterator; 
     Less_yx            pred(traits);
@@ -1386,8 +1396,10 @@ protected:
                                 const X_curve& cv2, 
                                 const Point& point)
   { 
-    return (traits->curve_get_point_status(cv1, point) == Traits::ON_CURVE && 
-            traits->curve_get_point_status(cv2, point) == Traits::ON_CURVE && 
+    return (traits->curve_is_in_x_range(cv1, point) &&
+	    traits->curve_get_point_status(cv1, point) == EQUAL && 
+	    traits->curve_is_in_x_range(cv2, point) &&
+            traits->curve_get_point_status(cv2, point) == EQUAL && 
             (point_is_on_curve_interior(point, cv1) || 
              point_is_on_curve_interior(point, cv2) ) );
     
@@ -1592,8 +1604,8 @@ protected:
   void  get_subcurves(const std::list<Curve_node >& curves,  
                       std::list<X_curve>& subcurves)
   {
-    for (typename std::list<Curve_node>::const_iterator cv_iter = 
-           curves.begin(); cv_iter != curves.end(); cv_iter++){
+    for (std::list<Curve_node>::const_iterator cv_iter = curves.begin();
+	 cv_iter != curves.end(); cv_iter++){
       X_curve cv = cv_iter->get_curve(), left_cv, 
         right_cv = cv_iter->get_curve();
       for (typename Curve_node::Points_const_iterator points_iter = 
@@ -1619,9 +1631,9 @@ protected:
   
   bool  do_intersect_subcurves(const std::list<X_curve>& subcurves)
   {
-    for (typename std::list<X_curve>::const_iterator scv_iter1 = 
-           subcurves.begin(); scv_iter1 != subcurves.end(); ++scv_iter1){
-      for (typename std::list<X_curve>::const_iterator  scv_iter2 = scv_iter1; 
+    for (std::list<X_curve>::const_iterator scv_iter1 = subcurves.begin(); 
+	 scv_iter1 != subcurves.end(); ++scv_iter1){
+      for (std::list<X_curve>::const_iterator  scv_iter2 = scv_iter1; 
            scv_iter2 != subcurves.end(); ++scv_iter2){
         if (scv_iter2 ==  scv_iter1)
           continue;

@@ -141,11 +141,11 @@ public:
   typedef typename Event::SubCurveIter EventCurveIter;
 
   typedef CurveWrap Subcurve;
-  typedef typename std::list<Subcurve*> SubCurveList;
+  typedef std::list<Subcurve*> SubCurveList;
   typedef typename SubCurveList::iterator SubCurveListIter;
 
   typedef Status_line_curve_less_functor<Traits, Subcurve> StatusLineCurveLess;
-  typedef typename std::set<Subcurve*, StatusLineCurveLess> StatusLine;
+  typedef std::set<Subcurve*, StatusLineCurveLess> StatusLine;
   typedef typename StatusLine::iterator StatusLineIter;
 
   typedef typename Event::VerticalCurveList VerticalCurveList;
@@ -443,13 +443,16 @@ protected:
 	SL_DEBUG(std::cout<<"starting at curve \n";)
 	SL_DEBUG((*slIter)->Print();)
 
-	while ( slIter != m_statusLine->end() &&
-		m_traits->curve_get_point_status((*slIter)->getCurve(), 
-						 topPoint) 
-		== Traits::ABOVE_CURVE &&
-		m_traits->curve_get_point_status((*slIter)->getCurve(), 
-						 vcurve->getBottomEnd()) 
-		== Traits::UNDER_CURVE )
+	while (slIter != m_statusLine->end() &&
+	       m_traits->curve_is_in_x_range((*slIter)->getCurve(), 
+					     topPoint) &&
+	       m_traits->curve_get_point_status((*slIter)->getCurve(), 
+						 topPoint) == SMALLER &&
+	       m_traits->curve_is_in_x_range((*slIter)->getCurve(), 
+						vcurve->getBottomEnd()) &&
+	       m_traits->curve_get_point_status((*slIter)->getCurve(), 
+						vcurve->getBottomEnd()) 
+	       == LARGER)
 	{
 	  SL_DEBUG(std::cout<<"checking \n";)
 	  SL_DEBUG((*slIter)->Print();) 
@@ -584,7 +587,8 @@ protected:
    */
   bool isPointInCurveInterior(const X_curve_2 &c, const Point_2 &p)
   {
-    if ( m_traits->curve_get_point_status(c, p) != Traits::ON_CURVE )
+    if (! m_traits->curve_is_in_x_range(c,p) || 
+	m_traits->curve_get_point_status(c, p) != EQUAL)
       return false;
     if ( isEndPoint(p) )
       return false;
@@ -640,13 +644,15 @@ protected:
 	  
         const Point_2 &bottomPoint = vcurve->getBottomEnd();
 
-	while ( slIter != m_statusLine->end() &&
-		m_traits->curve_get_point_status((*slIter)->getCurve(),
-                                                 topPoint)
-		== Traits::ABOVE_CURVE &&
-		m_traits->curve_get_point_status((*slIter)->getCurve(), 
-						 bottomPoint) 
-		== Traits::UNDER_CURVE )
+	while (slIter != m_statusLine->end() &&
+	       m_traits->curve_is_in_x_range((*slIter)->getCurve(),
+					     topPoint) &&
+	       m_traits->curve_get_point_status((*slIter)->getCurve(),
+						topPoint) == SMALLER &&
+	       m_traits->curve_is_in_x_range((*slIter)->getCurve(), 
+					     bottomPoint) && 
+	       m_traits->curve_get_point_status((*slIter)->getCurve(), 
+						bottomPoint) == LARGER)
 	{
 	  SL_DEBUG(std::cout<<"checking \n";)
 	  SL_DEBUG((*slIter)->Print();) 
@@ -833,8 +839,8 @@ Init(CurveInputIterator begin, CurveInputIterator end)
                 << xcurves.size() << " curves." << std::endl;
       )
 
-      for ( typename std::list<X_curve_2>::iterator i = xcurves.begin();
-	    i != xcurves.end() ; ++i )
+      for (std::list<X_curve_2>::iterator i = xcurves.begin();
+	   i != xcurves.end() ; ++i )
       {
 	m_xcurves.push_back(*i);
 	InitCurve(m_xcurves[count]);
@@ -935,8 +941,9 @@ FirstPass()
     StatusLineIter slIter = m_statusLine->begin();
     while ( slIter != m_statusLine->end() ) 
     {
-      if ( m_traits->curve_get_point_status((*slIter)->getCurve(), p) ==
-	      Traits::ON_CURVE && !(*slIter)->isEndPoint(p))
+      if (m_traits->curve_is_in_x_range((*slIter)->getCurve(), p) &&
+	  m_traits->curve_get_point_status((*slIter)->getCurve(), p)==EQUAL &&
+	  !(*slIter)->isEndPoint(p))
       {
 	m_currentEvent->addCurveToRight(*slIter);
 	m_currentEvent->addCurveToLeft(*slIter, m_prevPos);
@@ -953,8 +960,9 @@ FirstPass()
     if ( slIter != m_statusLine->begin() )
     { 
       --prev;
-      while ( m_traits->curve_get_point_status((*prev)->getCurve(), p) ==
-	      Traits::ON_CURVE && !(*prev)->isEndPoint(p))
+      while (m_traits->curve_is_in_x_range((*prev)->getCurve(), p) &&
+	     m_traits->curve_get_point_status((*prev)->getCurve(), p)==EQUAL &&
+	     !(*prev)->isEndPoint(p))
       {
 	m_currentEvent->addCurveToRight(*prev);
 	m_currentEvent->addCurveToLeft(*prev, m_prevPos);
@@ -968,8 +976,9 @@ FirstPass()
     // check also all of the overlaps...
     if ( slIter != m_statusLine->end() )
     {
-      while ( m_traits->curve_get_point_status((*next)->getCurve(), p) ==
-	      Traits::ON_CURVE && !(*next)->isEndPoint(p))
+      while (m_traits->curve_is_in_x_range((*next)->getCurve(), p) &&
+	     m_traits->curve_get_point_status((*next)->getCurve(), p)==EQUAL &&
+	     !(*next)->isEndPoint(p))
       {
 	m_currentEvent->addCurveToRight(*next);
 	m_currentEvent->addCurveToLeft(*next, m_prevPos);
@@ -1050,12 +1059,15 @@ HandleVerticalCurveBottom(SweepLineGetSubCurves &tag)
     bool lastEventCreatedHere = false;
     Event *prevEvent = 0;
 
-    while ( slIter != m_statusLine->end() &&
-	    m_traits->curve_get_point_status((*slIter)->getCurve(), topEnd) 
-	    != Traits::UNDER_CURVE &&
+    while (slIter != m_statusLine->end() &&
+	   (! m_traits->curve_is_in_x_range((*slIter)->getCurve(), 
+					    topEnd) ||
 	    m_traits->curve_get_point_status((*slIter)->getCurve(), 
-					     currentPoint) 
-	    != Traits::ABOVE_CURVE )
+					     topEnd) != LARGER) &&
+	   (! m_traits->curve_is_in_x_range((*slIter)->getCurve(), 
+					    currentPoint) ||
+	    m_traits->curve_get_point_status((*slIter)->getCurve(), 
+					     currentPoint) != SMALLER))
     {
       SL_DEBUG(std::cout<<"intersecting with \n";)
       SL_DEBUG((*slIter)->Print();) 
@@ -1162,10 +1174,10 @@ HandleVerticalOverlapCurves()
   while ( iter != m_verticals.end() )
   {
     Subcurve *curve = *iter;
-    typename Traits::Curve_point_status pstatus = 
-      m_traits->curve_get_point_status(curve->getCurve(), point);
-
-    if ( pstatus == Traits::ABOVE_CURVE ) {
+   
+    if (m_traits->curve_is_in_x_range(curve->getCurve(), point) &&
+	m_traits->curve_get_point_status(curve->getCurve(), point) == SMALLER)
+    {
       iter = m_verticals.erase(iter);
 
     } else if (!curve->isEndPoint(point)) {
@@ -1585,8 +1597,8 @@ HandleVerticalCurveXAtEnd(Subcurve *vcurve, Subcurve *curve,
 {
   const Point_2 &topEnd = vcurve->getTopEnd();
   // handle a curve that goes through the top point of the vertical curve
-  if (m_traits->curve_get_point_status(curve->getCurve(), topEnd) 
-      == Traits::ON_CURVE )
+  if (m_traits->curve_is_in_x_range(curve->getCurve(), topEnd) &&
+      m_traits->curve_get_point_status(curve->getCurve(), topEnd) == EQUAL)
   {
     if ( !curve->isLeftEnd(topEnd)) {
       topEndEvent->addCurveToLeft(curve, m_prevPos);
@@ -1599,8 +1611,9 @@ HandleVerticalCurveXAtEnd(Subcurve *vcurve, Subcurve *curve,
   
   // handle a curve that goes through the bottom point of the vertical curve
   const Point_2 &currentPoint = m_currentEvent->getPoint();
-  if (m_traits->curve_get_point_status((curve)->getCurve(), currentPoint) 
-      == Traits::ON_CURVE)
+  if (m_traits->curve_is_in_x_range((curve)->getCurve(), currentPoint) &&
+      m_traits->curve_get_point_status((curve)->getCurve(), 
+				       currentPoint) == EQUAL)
   {
     if ( !(curve)->isLeftEnd(currentPoint)) {
       m_currentEvent->addCurveToLeft(curve, m_prevPos);
@@ -1654,9 +1667,8 @@ inline bool
 Sweep_line_tight_2<CurveInputIterator,SweepLineTraits_2,SweepEvent,CurveWrap>::
 VerticalSubCurveExists(const X_curve_2 &a)
 {
-  for ( typename std::list<X_curve_2>::iterator iter =
-            m_verticalSubCurves.begin() ;
-	iter != m_verticalSubCurves.end() ; ++iter)
+  for (std::list<X_curve_2>::iterator iter = m_verticalSubCurves.begin() ;
+       iter != m_verticalSubCurves.end() ; ++iter)
   {
     if (SimilarCurves(*iter, a)) 
       return true;
@@ -1730,12 +1742,15 @@ HandleVerticalCurveBottom(SweepLineGetPoints &tag)
     assert(topEndEventIter!=m_queue->end());
     Event *topEndEvent = topEndEventIter->second;
 
-    while ( slIter != m_statusLine->end() &&
-	    m_traits->curve_get_point_status((*slIter)->getCurve(), topEnd) 
-	    != Traits::UNDER_CURVE &&
+    while (slIter != m_statusLine->end() &&
+	   (! m_traits->curve_is_in_x_range((*slIter)->getCurve(), 
+					    topEnd) ||
 	    m_traits->curve_get_point_status((*slIter)->getCurve(), 
-					     currentPoint) 
-	    != Traits::ABOVE_CURVE )
+					     topEnd) != LARGER) &&
+	   (! m_traits->curve_is_in_x_range((*slIter)->getCurve(), 
+					    currentPoint) ||
+	    m_traits->curve_get_point_status((*slIter)->getCurve(), 
+					     currentPoint) != SMALLER))
     {
       SL_DEBUG(std::cout<<"intersecting with \n";)
       SL_DEBUG((*slIter)->Print();) 
@@ -1808,8 +1823,8 @@ HandleVerticalCurveXAtEnd(Subcurve *vcurve, Subcurve *curve,
 {
   const Point_2 &topEnd = vcurve->getTopEnd();
   // handle a curve that goes through the top point of the vertical curve
-  if (m_traits->curve_get_point_status((curve)->getCurve(), topEnd) 
-      == Traits::ON_CURVE )
+  if (m_traits->curve_is_in_x_range((curve)->getCurve(), topEnd) &&
+      m_traits->curve_get_point_status((curve)->getCurve(), topEnd) == EQUAL)
   {
     if ( !curve->isEndPoint(topEnd))
       topEndEvent->markInternalIntersectionPoint();
@@ -1817,9 +1832,10 @@ HandleVerticalCurveXAtEnd(Subcurve *vcurve, Subcurve *curve,
   } 
 
   // handle a curve that goes through the bottom point of the vertical curve
-  if (m_traits->curve_get_point_status((curve)->getCurve(),
-				       m_currentEvent->getPoint()) 
-      == Traits::ON_CURVE)
+  if (m_traits->curve_is_in_x_range((curve)->getCurve(),
+				    m_currentEvent->getPoint()) &&
+      m_traits->curve_get_point_status((curve)->getCurve(),
+				       m_currentEvent->getPoint()) == EQUAL)
   {
     if ( !curve->isEndPoint(m_currentEvent->getPoint()))
       m_currentEvent->markInternalIntersectionPoint();

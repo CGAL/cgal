@@ -65,7 +65,7 @@ public:
 
   //typedef Sweep_line_subcurve<Traits> SubCurve;
   typedef CurveWrap SubCurve;
-  typedef typename std::list<SubCurve *> SubcurveContainer;
+  typedef std::list<SubCurve *> SubcurveContainer;
   typedef typename SubcurveContainer::iterator SubCurveIter;
 
   typedef Status_line_curve_less_functor<Traits, SubCurve> StatusLineCurveLess;
@@ -524,7 +524,7 @@ Sweep_line_event<SweepLineTraits_2, CurveWrap>::
 PrintVerticalXPoints()
 {
   std::cout << "Vertical intersection points for " << m_point << ":\n";
-  typename std::list<Point_2>::iterator iter = m_verticalCurveXPoints.begin();
+  std::list<Point_2>::iterator iter = m_verticalCurveXPoints.begin();
   while ( iter != m_verticalCurveXPoints.end() )
   {
     std::cout << "\t" << *iter << "\n";

@@ -202,7 +202,8 @@ public:
   // one of its ends
   bool isPointInRange(const Point_2 &p)
   {
-    if ( m_traits->curve_get_point_status(m_curve, p) != Traits::ON_CURVE )
+    if (! m_traits->curve_is_in_x_range(m_curve, p) ||
+	m_traits->curve_get_point_status(m_curve, p) != EQUAL)
       return false;
     if ( isEndPoint(p) )
       return false;
