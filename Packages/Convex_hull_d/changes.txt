@@ -1,0 +1,4 @@
+0.1 (25/11/2003) (rursu)
+------------------------
+Moved Convex_hull_d and Delaunay_d in the Convex_hull_d package.
+Files have a QPL license header.
