@@ -88,16 +88,6 @@ area(const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
     return FT(num)/FT(den);
 }
 
-/*  I believe it's undocumented, so I comment it.
-template <class R>
-inline
-typename R::FT
-area(const TriangleH2<R>& t)
-{
-    return area(t.vertex(0), t.vertex(1), t.vertex(2));
-}
-*/
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_BASIC_CONSTRUCTIONSH2_H
