@@ -660,13 +660,13 @@ inline Hot_Pixel<Rep_>::Point_2 Hot_Pixel<Rep_>::get_center() const
 template<class Rep_>
 bool Hot_Pixel<Rep_>::intersect_left(Segment_2 &seg) const
   {
-    CGAL::Object result;    
+    Object result;    
     Point_2 p;
     Segment_2 s;
 
-    result = CGAL::intersection(seg,*left_seg);//!!!! change: create instance and call its intersection
+    result = intersection(seg,*left_seg);//!!!! change: create instance and call its intersection
 
-    if(CGAL::assign(p,result)) {
+    if(assign(p,result)) {
       Comparison_result c_p = _gt.compare_y_2_object()(p,p_up);
       Comparison_result c_target = _gt.compare_y_2_object()(seg.target(),p_up);
       Comparison_result c_source = _gt.compare_y_2_object()(seg.source(),p_up);
@@ -675,7 +675,7 @@ bool Hot_Pixel<Rep_>::intersect_left(Segment_2 &seg) const
              Snap_rounding_2<Rep_>::UP_LEFT && c_source != EQUAL ||
              Snap_rounding_2<Rep_>::get_direction() ==
              Snap_rounding_2<Rep_>::DOWN_RIGHT && c_target != EQUAL);
-    } else if(CGAL::assign(s,result))
+    } else if(assign(s,result))
       return(true);
     else
       return(false);
@@ -685,13 +685,13 @@ bool Hot_Pixel<Rep_>::intersect_left(Segment_2 &seg) const
 template<class Rep_>
 bool Hot_Pixel<Rep_>::intersect_right(Segment_2 &seg) const
   {
-    CGAL::Object result;    
+    Object result;    
     Point_2 p;
     Segment_2 s;
     
-    result = CGAL::intersection(seg,*right_seg);
+    result = intersection(seg,*right_seg);
 
-    if(CGAL::assign(p,result)) {
+    if(assign(p,result)) {
       // bottom right point was checked in intersect_bot
       Comparison_result c1 = _gt.compare_y_2_object()(p,p_up);
       Comparison_result c2 = _gt.compare_y_2_object()(p,p_down);
@@ -733,13 +733,13 @@ bool Hot_Pixel<Rep_>::intersect_right(Segment_2 &seg) const
 template<class Rep_>
 bool Hot_Pixel<Rep_>::intersect_bot(Segment_2 &seg) const
   {
-    CGAL::Object result;
+    Object result;
     Point_2 p;
     Segment_2 s;
 
-    result = CGAL::intersection(seg,*bot_seg);
+    result = intersection(seg,*bot_seg);
 
-    if(CGAL::assign(p,result)) {
+    if(assign(p,result)) {
       Comparison_result c_p = _gt.compare_x_2_object()(p,p_right);
       Comparison_result c_target = _gt.compare_x_2_object()
             (seg.target(),p_right);
@@ -750,7 +750,7 @@ bool Hot_Pixel<Rep_>::intersect_bot(Segment_2 &seg) const
              Snap_rounding_2<Rep_>::UP_LEFT && c_target != EQUAL ||
              Snap_rounding_2<Rep_>::get_direction() ==
              Snap_rounding_2<Rep_>::DOWN_RIGHT && c_source != EQUAL);
-    } else if(CGAL::assign(s,result))
+    } else if(assign(s,result))
       return(true);
     else
       return(false);
@@ -759,13 +759,13 @@ bool Hot_Pixel<Rep_>::intersect_bot(Segment_2 &seg) const
 template<class Rep_>
 bool Hot_Pixel<Rep_>::intersect_top(Segment_2 &seg) const
   {
-    CGAL::Object result;
+    Object result;
     Point_2 p;
     Segment_2 s;
     
-    result = CGAL::intersection(seg,*top_seg);
+    result = intersection(seg,*top_seg);
 
-    if(CGAL::assign(p,result)) {
+    if(assign(p,result)) {
       // corner points was checked in intersect_bot
       Comparison_result c1 = _gt.compare_x_2_object()(p,p_left);
       Comparison_result c2 = _gt.compare_x_2_object()(p,p_right);
@@ -859,7 +859,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
   {
     Hot_Pixel<Rep_> *hp;
     typename std::list<Segment_data<Rep_> >::iterator iter1;
-    CGAL::Object result;
+    Object result;
     Point_2 p;
     std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> > hot_pixels_list;
 
@@ -867,7 +867,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
     for(iter1 = seg_list.begin();iter1 != seg_list.end();++iter1)
       segments.push_back(X_curve(iter1->source(),iter1->target()));
 
-    //    PM pm(new CGAL::Pm_naive_point_location<PM>);
+    //    PM pm(new Pm_naive_point_location<PM>);
     // sweep_to_construct_planar_map(segments.begin(), segments.end(), pm);
     std::list<X_curve>  subcurves;
 
@@ -878,7 +878,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
 
     /*// get subcurves with overlapping ********** 
 //    CGAL::Sweep_line_tight_2<CurveContainerIter, Traits, Event, SubCurve> sl;
-    CGAL::Sweep_line_2<CurveContainerIter, Traits> sl;
+    Sweep_line_2<CurveContainerIter, Traits> sl;
     sl.get_subcurves(segments.begin(), segments.end(),
     std::back_inserter(subcurves));*/
 
@@ -886,7 +886,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
     PointList mypointlist;
     //    CGAL::Sweep_line_tight_2<CurveContainerIter, Traits,
     //                             Event, SubCurve> sl;
-    CGAL::Sweep_line_2<CurveContainerIter, Traits> sl;
+    Sweep_line_2<CurveContainerIter, Traits> sl;
     sl.get_intersection_points(segments.begin(), segments.end(),
                              std::back_inserter(mypointlist));
 
