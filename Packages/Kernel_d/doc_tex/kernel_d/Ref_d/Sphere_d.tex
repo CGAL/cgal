@@ -33,9 +33,8 @@ the sphere.  }
 
 \ccCreation
 
-\ccConstructor{Sphere_d<R>(int d = 0)}{introduces a variable \ccc{S}
-of type \ccc{Sphere_d<R>}. \ccc{S} is initialized to the empty sphere
-centered at the origin of $d$-dimensional space.  }
+\ccConstructor{Sphere_d<R>()}{introduces a variable \ccc{S}
+of type \ccc{Sphere_d<R>}.}
 
 \ccConstructor{template <class ForwardIterator> Sphere_d<R>(int d,
 ForwardIterator first, ForwardIterator last)}{introduces a variable
@@ -48,7 +47,7 @@ $A$ consists of $d+1$ $d$-dimensional points.
 
 \ccOperations
 
-\ccMethod{int dimension() ;}{returns the dimension of the ambient space.}
+\ccMethod{int dimension();}{returns the dimension of the ambient space.}
 
 \ccMethod{Point_d<R> point(int i) ;}{returns the $i$th defining
 point. \ccPrecond $0 \le i \le \ccc{dim}$.  }
@@ -57,20 +56,20 @@ point. \ccPrecond $0 \le i \le \ccc{dim}$.  }
   pointing to the first defining point.  }
 
 \ccMethod{point_iterator points_end() ;}{returns an iterator pointing
-  beyond the last defining point.  }
+  beyond the last defining point. }
 
 \ccMethod{bool is_degenerate();}{returns true iff the defining points
   are not full dimensional. }
 
 \ccMethod{bool is_legal() ;}{returns true iff the set of defining
   points is legal.  A set of defining points is legal iff their
-  orientation is non-zero or if they are all equal. }
+  orientation is non-zero or if they are all equal.}
 
 \ccMethod{Point_d<R> center() ;}{returns the center of \ccc{S}.
   \ccPrecond \ccc{S} is legal.  }
 
 \ccMethod{FT squared_radius() ;}{returns the squared radius of the
-  sphere.  }
+  sphere. \ccPrecond \ccc{S} is legal.}
 
 \ccMethod{Orientation orientation() ;}{returns the orientation of
   \ccc{S}.}
@@ -127,13 +126,14 @@ point. \ccPrecond $0 \le i \le \ccc{dim}$.  }
 
 \ccImplementation
 
-Spheres are implemented by a vector of points as an item type.  All
+Spheres are implemented by a vector of points as a handle type.  All
 operations like creation, initialization, tests, input and output of a
 sphere $s$ take time $O(\ccc{s.dimension()})$. \ccc{dimension()},
-point access take constant time.  The space requirement for spheres is
-$O(\ccc{s.dimension()})$ neglecting the storage room of the points.
-
-
+point access take constant time.  The \ccc{center()}-operation takes
+time $O(d^3)$ on its first call and constant time thereafter. The
+sideness and orientation tests take time $O(d^3)$.  The space
+requirement for spheres is $O(\ccc{s.dimension()})$ neglecting the
+storage room of the points.
 
 \end{ccRefClass}
 
