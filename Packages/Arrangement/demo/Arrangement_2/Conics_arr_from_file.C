@@ -1,4 +1,15 @@
 #include <CGAL/basic.h>
+
+#ifndef CGAL_USE_LEDA
+#include <iostream>
+int main()
+{
+  std::cout << "Sorry, this demo needs LEDA." << std::endl;
+  return 0;
+}
+
+#else
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/leda_real.h>
 #include <CGAL/Arr_conic_traits_2.h>
@@ -418,3 +429,5 @@ int main(int argc, char * argv[])
   delete myWindow;
   return 0;
 }
+
+#endif
