@@ -1,3 +1,7 @@
+30/04/2003 (rursu) 1.187
+-----------------
+	modified install_cgal: added some libs to QT_LDFLAGS
+
 02/04/2003 (rursu) 1.186
 ----------
 	modified CGAL_CXXFLAGS. GMP and CLN include dirs should have come after CGAL config and include dirs.

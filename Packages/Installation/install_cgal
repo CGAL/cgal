@@ -1696,6 +1696,7 @@ qt_ldflags()
 	    lib_option "qt"
 	else
 	    lib_option "qtmain"
+	    lib_option "${QT_SECOND_LIB}"
 	    lib_option "imm32"
 	    lib_option "wsock32"
 	    lib_option "gdi32"
@@ -1703,7 +1704,9 @@ qt_ldflags()
 	    lib_option "ole32"
 	    lib_option "winspool"
 	    lib_option "comdlg32"
-	    lib_option "${QT_SECOND_LIB}"
+	    lib_option "advapi32.lib"
+	    lib_option "shell32.lib"
+	    lib_option "ws2_32.lib"
 	fi
     fi
 }
@@ -5688,7 +5691,7 @@ write_linker_flags()
     # QLIBS = LIBS + special qt libs
     if [ -n "${WINDOWS_COMPILER}" ]; then
 	SECOND_LIB=`lib_option "${QT_SECOND_LIB}"`
-	QLIBS="${LIBS} `lib_option CGALQt` `lib_option qtmain` `lib_option imm32` `lib_option wsock32` `lib_option gdi32` `lib_option user32` `lib_option ole32` `lib_option winspool` `lib_option comdlg32` ${SECOND_LIB}"
+	QLIBS="${LIBS} `lib_option CGALQt` `lib_option qtmain` `lib_option imm32` `lib_option wsock32` `lib_option gdi32` `lib_option user32` `lib_option ole32` `lib_option winspool` `lib_option comdlg32` `lib_option ws2_32` `lib_option shell32` `lib_option advapi32` ${SECOND_LIB}"
     else
 	QLIBS="${LIBS} `lib_option qt` `lib_option CGALQt`"
     fi
