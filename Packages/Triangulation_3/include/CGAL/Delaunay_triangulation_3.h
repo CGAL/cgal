@@ -159,6 +159,20 @@ protected:
       return geom_traits().construct_object_3_object()(r);
   }
 
+private:
+  Vertex_handle
+  nearest_vertex(const Point &p, Vertex_handle v, Vertex_handle w) const
+  {
+      CGAL_triangulation_precondition(v != w);
+
+      if (is_infinite(v))
+	  return w;
+      if (is_infinite(w))
+	  return v;
+      return geom_traits().compare_distance_3_object()(p,v->point(),w->point())
+	     == SMALLER ? v : w;
+  }
+
 public:
 
   Delaunay_triangulation_3()
@@ -210,6 +224,9 @@ public:
 
   Bounded_side
   side_of_circle( Cell_handle c, int i, const Point & p) const;
+
+  Vertex_handle
+  nearest_vertex_in_cell(const Point& p, Cell_handle c) const;
 
   Point dual(Cell_handle c) const;
 
@@ -695,6 +712,23 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
   return side_of_segment( p,
 			  v1->point(), v2->point(),
 			  lt, i_e );
+}
+
+template < class Gt, class Tds >
+Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
+Delaunay_triangulation_3<Gt,Tds>::
+nearest_vertex_in_cell(const Point& p, Cell_handle c) const
+// Returns the finite vertex of the cell c which is the closest to p.
+{
+    CGAL_triangulation_precondition(dimension() >= 1);
+
+    Vertex_handle nearest = nearest_vertex(p, c->vertex(0), c->vertex(1));
+    if (dimension() >= 2) {
+	nearest = nearest_vertex(p, nearest, c->vertex(2));
+        if (dimension() == 3)
+	    nearest = nearest_vertex(p, nearest, c->vertex(3));
+    }
+    return nearest;
 }
 
 template < class Gt, class Tds >

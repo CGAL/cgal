@@ -1,5 +1,6 @@
 Version 1.88 (?? September 01)
 - Use Pointer<> directly, no need for Triangulation_*_handle_3<>.
+- New internal function in Delaunay : nearest_vertex_in_cell().
 
 Version 1.87 (11 September 01)
 - Remove deprecated code.
