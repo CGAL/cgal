@@ -71,8 +71,8 @@ public:
       for (ForwardIterator it = first; it != beyond; it++)
          push_back(*it);
    
-      std::sort(begin(), end(), swap_1(Traits().less_xy_2_object()));
-      std::unique(begin(), end());
+      std::sort(this->begin(), this->end(), swap_1(Traits().less_xy_2_object()));
+      std::unique(this->begin(), this->end());
    
       // front() is the point with the largest x coordinate
    
@@ -82,7 +82,7 @@ public:
       // push the point p_infinity; the coordinates should never be used
       push_back(Point_2(1, 1));
    
-      _p_inf = end();  // record the iterators to these extreme points
+      _p_inf = this->end();  // record the iterators to these extreme points
       _p_inf--;
       _p_minus_inf = _p_inf;
       _p_minus_inf--;
@@ -90,7 +90,7 @@ public:
       Self_iterator child;
       // make p_minus_inf a child of p_inf
       set_rightmost_child(_p_minus_inf, _p_inf); 
-      child = begin();               // now points to p_0
+      child = this->begin();               // now points to p_0
       while (child != _p_minus_inf)  // make all points children of p_minus_inf
       {
          set_rightmost_child(child, _p_minus_inf);
@@ -103,30 +103,30 @@ public:
    // in the ordering, after the auxilliary points p_minus_inf and p_inf
    Self_iterator rightmost_point_ref() 
    {
-      return begin();
+      return this->begin();
    }
 
    Self_iterator right_sibling(Self_iterator p) 
    {
-      if (!(*p).has_right_sibling()) return end();
+      if (!(*p).has_right_sibling()) return this->end();
       return (*p).right_sibling();
    }
 
    Self_iterator left_sibling(Self_iterator p) 
    {
-      if (!(*p).has_left_sibling()) return end();
+      if (!(*p).has_left_sibling()) return this->end();
       return (*p).left_sibling();
    }
 
    Self_iterator rightmost_child(Self_iterator p) 
    {
-      if (!(*p).has_children()) return end();
+      if (!(*p).has_children()) return this->end();
       return (*p).rightmost_child();
    }
 
    Self_iterator parent(Self_iterator p) 
    {
-      if (!(*p).has_parent()) return end();
+      if (!(*p).has_parent()) return this->end();
       return (*p).parent();
    }
 
@@ -143,8 +143,8 @@ public:
    // makes *p the parent of *q
    void set_parent (Self_iterator p, Self_iterator q)
    {
-      CGAL_assertion(q != end());
-      if (p == end())
+      CGAL_assertion(q != this->end());
+      if (p == this->end())
          (*q).clear_parent();
       else
          (*q).set_parent(p);

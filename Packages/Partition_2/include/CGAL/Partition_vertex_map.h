@@ -152,12 +152,12 @@ public:
    {
        Self_iterator e_it;
 
-       for (e_it = begin(); 
-            e_it != end() && (*e_it).endpoint() != endpoint_ref;
+       for (e_it = this->begin(); 
+            e_it != this->end() && (*e_it).endpoint() != endpoint_ref;
             e_it++) 
        {}
 
-       if (e_it != end())
+       if (e_it != this->end())
             (*e_it).set_poly_num2(num);
        else
           push_back(Edge(endpoint_ref, num));
@@ -167,12 +167,12 @@ public:
    {
        Self_iterator e_it;
 
-       for (e_it = begin(); 
-            e_it != end() && (*e_it).endpoint() != endpoint_ref;
+       for (e_it = this->begin(); 
+            e_it != this->end() && (*e_it).endpoint() != endpoint_ref;
             e_it++) 
        {}
 
-       if (e_it != end())
+       if (e_it != this->end())
             (*e_it).set_poly_num2(num);
        else
           push_front(Edge(endpoint_ref, num));
@@ -193,7 +193,7 @@ public:
        // are already in CCW order (since the partition polygons were in CCW
        // order), and this is what you need when you construct the union 
        // polygon.
-       if (size() > 2){
+       if (this->size() > 2){
 #ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
     cw_indirect_edge_info_compare = 
       CW_indirect_edge_info_compare<Vertex_iterator,Traits>(vertex_it);
@@ -208,10 +208,10 @@ public:
        std::cout << *this << std::endl;
 #endif
 
-       Self_const_iterator prev_e_it = begin();
+       Self_const_iterator prev_e_it = this->begin();
        Self_const_iterator e_it;
 
-       for (e_it = begin(); e_it != end(); e_it++)
+       for (e_it = this->begin(); e_it != this->end(); e_it++)
        {
           if ((*e_it).poly_num1() == PARTITION_VMAP_UNSHARED_EDGE) 
              num_unshared++;
@@ -227,10 +227,10 @@ public:
           }
           prev_e_it = e_it;
        }
-       if ((*prev_e_it).poly_num1() != (*begin()).poly_num1() &&
-           (*prev_e_it).poly_num1() != (*begin()).poly_num2() &&
-           (*prev_e_it).poly_num2() != (*begin()).poly_num1() &&
-           (*prev_e_it).poly_num2() != (*begin()).poly_num2())
+       if ((*prev_e_it).poly_num1() != (*this->begin()).poly_num1() &&
+           (*prev_e_it).poly_num1() != (*this->begin()).poly_num2() &&
+           (*prev_e_it).poly_num2() != (*this->begin()).poly_num1() &&
+           (*prev_e_it).poly_num2() != (*this->begin()).poly_num2())
        {
           return true;
        }
@@ -243,7 +243,7 @@ public:
    //        comes BEFORE the edge with endpoint v_it in the sorted list
    Edge next_ccw_edge_info(Vertex_iterator v_it) const
    {
-      Self_const_circulator first_e(begin(), end(), begin());
+      Self_const_circulator first_e(this->begin(), this->end(), this->begin());
       Self_const_circulator e_circ = first_e;
 
       do
@@ -376,7 +376,7 @@ public:
    bool polygons_overlap()
    {
       Self_iterator v_it;
-      for (v_it = begin(); v_it != end(); v_it++)
+      for (v_it = this->begin(); v_it != this->end(); v_it++)
       {
          if ((*v_it).second.edges_overlap((*v_it).first)) return true;
       }
@@ -386,18 +386,18 @@ public:
    template <class OutputIterator>
    OutputIterator union_vertices(OutputIterator result)
    {
-       if (empty()) return result;
+       if (this->empty()) return result;
    
-       Self_iterator m_it = begin();
+       Self_iterator m_it = this->begin();
        Vertex_iterator v_it;
        Vertex_iterator first_v_it;
        Vertex_iterator prev_v_it;
        Vertex_iterator next_v_it;
    
        // find a vertex with degree 2 (there must be at least one)
-       while (m_it != end() && (*m_it).second.size() != 2)
+       while (m_it != this->end() && (*m_it).second.size() != 2)
           m_it++;
-       CGAL_assertion (m_it != end());
+       CGAL_assertion (m_it != this->end());
 
        // insert this vertex and the two around it
        first_v_it = prev_v_it = (*(*m_it).second.begin()).endpoint();
@@ -423,7 +423,7 @@ public:
        v_it = next_v_it;
        m_it = find(v_it);
        
-       while (v_it != first_v_it && m_it != end())
+       while (v_it != first_v_it && m_it != this->end())
        {
 #ifdef CGAL_PARTITION_CHECK_DEBUG
           std::cout << "union_vertices: prev_v_it " << (*prev_v_it)
@@ -460,7 +460,7 @@ public:
           prev_v_it  = v_it;
           v_it = next_v_it;
           m_it = find(v_it);
-          CGAL_assertion (m_it == end() || (*m_it).first == v_it);
+          CGAL_assertion (m_it == this->end() || (*m_it).first == v_it);
        }
 #ifdef CGAL_PARTITION_CHECK_DEBUG
        if (v_it == first_v_it)

@@ -129,7 +129,7 @@ public:
 
    void prune_diagonals()
    {
-      Circulator first(begin(), end(), begin());
+      Circulator first(this->begin(), this->end(), this->begin());
       Circulator c = first;
 
       Diagonal_iterator d;
@@ -166,7 +166,7 @@ public:
    OutputIterator partition(OutputIterator result, bool prune)
    {
       // walk through each vertex and sort the diagonals
-      Circulator first(begin(), end());
+      Circulator first(this->begin(), this->end());
       Circulator c = first;
       Circulator next;
       Circulator prev = c;

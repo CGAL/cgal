@@ -1,3 +1,6 @@
+21 September 2004 Andreas Fabri
+- Made it work with g++-3.4
+
 4 September 2004 Menelaos Karavelas
 - re-wrote author names in copyright notices using 7-bit characters
 

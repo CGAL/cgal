@@ -27,12 +27,12 @@ template<class Traits>
 void Rotation_tree_2<Traits>::set_rightmost_child(Self_iterator p, 
                                                   Self_iterator q)
 {
-   CGAL_assertion(q != end());
+   CGAL_assertion(q != this->end());
 
-   if (p != end())
+   if (p != this->end())
    {
       (*p).clear_right_sibling();
-      if (rightmost_child(q) != end())
+      if (rightmost_child(q) != this->end())
       {
          (*p).set_left_sibling(rightmost_child(q));
          (*rightmost_child(q)).set_right_sibling(p);
@@ -53,11 +53,11 @@ template <class Traits>
 void Rotation_tree_2<Traits>::set_left_sibling(Self_iterator p, 
                                                Self_iterator q)
 {
-   if (q == end()) return;
+   if (q == this->end()) return;
        
-   if (p != end())
+   if (p != this->end())
    {
-      if (left_sibling(q) != end())
+      if (left_sibling(q) != this->end())
       {
          (*left_sibling(q)).set_right_sibling(p);
          (*p).set_left_sibling(left_sibling(q));
@@ -71,7 +71,7 @@ void Rotation_tree_2<Traits>::set_left_sibling(Self_iterator p,
    }
    else
    {
-      if (left_sibling(q) != end())
+      if (left_sibling(q) != this->end())
          (*(*q).left_sibling()).clear_right_sibling();
       (*q).clear_left_sibling();
    }
@@ -82,11 +82,11 @@ template <class Traits>
 void Rotation_tree_2<Traits>::set_right_sibling(Self_iterator p, 
                                                 Self_iterator q)
 {
-   if (q == end()) return;
+   if (q == this->end()) return;
        
-   if (p != end())
+   if (p != this->end())
    {
-      if (right_sibling(q) != end())
+      if (right_sibling(q) != this->end())
       {
          (*right_sibling(q)).set_left_sibling(p);
          (*p).set_right_sibling(right_sibling(q));
@@ -99,7 +99,7 @@ void Rotation_tree_2<Traits>::set_right_sibling(Self_iterator p,
    }
    else
    {
-      if (right_sibling(q) != end())
+      if (right_sibling(q) != this->end())
          (*right_sibling(q)).clear_left_sibling();
       (*q).clear_right_sibling();
    }
@@ -115,10 +115,10 @@ void Rotation_tree_2<Traits>::erase(Self_iterator p)
 
    Self_iterator s;
    s = right_sibling(p);
-   if (s != end())
+   if (s != this->end())
       set_left_sibling(left_sibling(p),s);
    s = left_sibling(p);
-   if (s != end())
+   if (s != this->end())
       set_right_sibling(right_sibling(p),s);
    s = parent(p);
    // if p was the rightmost child of its parent, then set its left
