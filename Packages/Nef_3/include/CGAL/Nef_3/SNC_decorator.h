@@ -322,16 +322,20 @@ public:
   void set_volume(SFace_handle h, Volume_handle c) const 
   { h->incident_volume_ = c; CGAL_assertion(h->incident_volume_ == c); }
 
-  void set_facet(SHalfloop_handle l, Halffacet_handle f) const {
+  void add_sloop_to_facet(SHalfloop_handle l, Halffacet_handle f) const {
     SM_decorator SD(vertex(l));
     Sphere_circle facet_plane(plane(f));
     if( facet_plane == SD.circle(l)) {
       l->incident_facet_ = f;
       SD.twin(l)->incident_facet_ = twin(f);
+      store_boundary_object(l, f);
+      store_boundary_object(SD.twin(l), twin(f));
     } else {
       CGAL_assertion( facet_plane.opposite() == SD.circle(l));
       l->incident_facet_ = twin(f);
       SD.twin(l)->incident_facet_ = f;
+      store_boundary_object(l, twin(f));
+      store_boundary_object(SD.twin(l), f);
     }
   }
 

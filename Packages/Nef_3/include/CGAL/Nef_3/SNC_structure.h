@@ -807,7 +807,7 @@ public:
     SHalfedge_around_facet_circulator c(e), cend(c);
     int i = 0;
     CGAL_For_all(c, cend)
-      if( i++ == 8 ) break;
+      if( i++ == 32 ) break;
       else TRACEN(PSE(c));
     TRACE("--> Facet cycle end"); 
     return ' ';
@@ -821,7 +821,7 @@ public:
 	TRACE(' '<<IO->index(e));
       }
       else if( assign(l, fc)) {
-	TRACE(' '<<IO->index(l));
+	TRACE(' '<<IO->index(l)<<"(sl)");
       }
     }
     return '.';
@@ -949,7 +949,36 @@ public:
     CGAL_assertion( is_sm_boundary_object(new_cycle));
   }
 
-
+  void update_cycle_entry_point( SHalfedge_handle cycle1,
+	 SHalfedge_handle cycle2,
+	 SHalfedge_handle new_cycle,
+	 Unique_hash_map< Halffacet_handle, UFH_facet>& hash,
+	 Union_find< Halffacet_handle>& uf ) {
+    SNC_decorator D(*this);
+    Halffacet_handle f1(D.facet(cycle1)), f2(D.facet(cycle2));
+    Halffacet_handle uf1(*(uf.find(hash[f1]))), uf2(*(uf.find(hash[f2])));
+    CGAL_assertion( uf1 == uf2);
+    CGAL_assertion( !(is_boundary_object(cycle1) && 
+		      is_boundary_object(cycle2)));
+    if( is_boundary_object(cycle1)) {
+      TRACEN("replacing boundary entry point(1)...");
+      TRACEN(IO->index(uf1)<<" before: "<<PFB(uf1));
+      replace_boundary_object( cycle1, new_cycle);
+      CGAL_assertion( is_boundary_object(D.twin(cycle1)));
+      replace_boundary_object( D.twin(cycle1), D.twin(new_cycle));
+      TRACEN(IO->index(uf1)<<" updated: "<<PFB(uf1));
+    }
+    else if( is_boundary_object(cycle2)) {
+      TRACEN("replacing boundary entry point(2)...");
+      TRACEN(IO->index(uf2)<<" before(twin): "<<PFB(uf2));
+      replace_boundary_object( cycle2, new_cycle);
+      CGAL_assertion( is_boundary_object(D.twin(cycle2)));
+      replace_boundary_object( D.twin(cycle2), D.twin(new_cycle));
+      TRACEN(IO->index(uf2)<<" updated(twin): "<<PFB(uf2)); 
+    }
+    else TRACEN("boundary not updated.");
+  }
+				 
   void merge_facets( SHalfedge_handle cycle1,
 	    SHalfedge_handle cycle2,
 	    SHalfedge_handle new_cycle,
@@ -959,19 +988,19 @@ public:
     SNC_decorator D(*this);
     Halffacet_handle f1(D.facet(cycle1)), f2(D.facet(cycle2));
     Halffacet_handle uf1(*(uf.find(hash[f1]))), uf2(*(uf.find(hash[f2])));
-    CGAL_assertion( uf1 != uf2 );
+
+    // merge sets in the same union find set
+    merge_sets( f1, f2, hash, uf);
+    merge_sets( D.twin(f1), D.twin(f2), hash, uf);
 
     // find the cycle entry point on each facet
+    CGAL_assertion( uf1 != uf2 );
     SHalfedge_handle fc1, fc2;
     fc1 = get_cycle_entry_point(cycle1);
     TRACEN(IO->index(f1)<<" cycle1 entry point "<<IO->index(fc1));
     fc2 = get_cycle_entry_point(cycle2);
     TRACEN(IO->index(f2)<<" cycle2 entry point "<<IO->index(fc2));
     CGAL_assertion( fc1 != fc2 );
-
-    // merge sets in the same union find set
-    merge_sets( f1, f2, hash, uf);
-    merge_sets( D.twin(f1), D.twin(f2), hash, uf);
 
     // now we choose the representant facet of the new set in order to set
     // properly its boundary entry point
@@ -1043,7 +1072,11 @@ public:
     SHalfedge_handle new_cycle(SD.previous(cycle1));
 
     Halffacet_handle f1(D.facet(cycle1)), f2(D.facet(cycle2));
-    merge_facets( cycle1, cycle2, new_cycle, hash, uf);
+    Halffacet_handle uf1(*(uf.find(hash[f1]))), uf2(*(uf.find(hash[f2])));
+    if( uf1 == uf2 )
+      update_cycle_entry_point( cycle1, cycle2, new_cycle, hash, uf);
+    else
+      merge_facets( cycle1, cycle2, new_cycle, hash, uf);
     TRACE("UNION of "<<IO->index(f1)<<" & "<<IO->index(f2));
     TRACEN(" ("<<IO->index(D.twin(f1))<<" & "<<IO->index(D.twin(f2))<<")");
 
@@ -1059,9 +1092,9 @@ public:
 			      D.twin(SDt.previous(cycle2)));
 
     if( SD.source(cycle1) == SD.target(cycle1)) {
-      TRACEN("Cycle1 will be converted into a sloop.");
+      TRACEN("Cycle1 "<<IO->index(cycle1)<<" will be converted into a sloop.");
       SD.convert_edge_to_loop(cycle1);
-      D.set_facet( SD.shalfloop(), f1);
+      D.add_sloop_to_facet( SD.shalfloop(), f1);
       CGAL_assertion(has_halfloop_only(v1));
     } 
     else {
@@ -1072,10 +1105,10 @@ public:
     }
 
     if( SDt.source(cycle2) == SDt.target(cycle2)) {
-      TRACEN("Cycle2 will be converted into a sloop.");
+      TRACEN("Cycle2 "<<IO->index(cycle2)<<" will be converted into a sloop.");
       TRACEN(" mark(cycle2) "<<SDt.mark(cycle2)<<" mark(f2) "<<D.mark(f2));
       SDt.convert_edge_to_loop(cycle2);
-      D.set_facet( SDt.shalfloop(), f2);
+      D.add_sloop_to_facet( SDt.shalfloop(), f2);
       CGAL_assertion(has_halfloop_only(v2));
     } 
     else {
@@ -1188,10 +1221,10 @@ public:
 	       " mark(e2) "<<D.mark(e2));
 	if( (e1 != e2 && e1 == SD.cyclic_adj_succ(e2)) &&
 	    (SD.circle(e1) == SD.circle(SD.twin(e2))) &&
-	    (D.mark(e1) == D.mark(e) && D.mark(e) == D.mark(e2)) )
-	  if( !uf_facet.same_set( hash_facet[D.facet(e1)],
-				  hash_facet[D.facet(SD.twin(e2))]))
-	    merge_facet_cycles(e, hash_sface, uf_sface, hash_facet, uf_facet);
+	    (D.mark(e1) == D.mark(e) && D.mark(e) == D.mark(e2)))
+	  //if( !uf_facet.same_set( hash_facet[D.facet(e1)],
+	  //		  hash_facet[D.facet(SD.twin(e2))]))
+	  merge_facet_cycles(e, hash_sface, uf_sface, hash_facet, uf_facet);
       }
       e = e_next;
     }
@@ -1204,7 +1237,7 @@ public:
       CGAL_assertion( SD.sfaces_begin() != SFace_handle());
       if( is_isolated(v) && D.mark(v) == D.mark(D.volume(SD.sfaces_begin()))) {
 	TRACEN("removing isolated vertex "<<IO->index(v));
-	CGAL_assertion( is_boundary_object(v));
+	CGAL_assertion( is_boundary_object( D.volume( SD.sfaces_begin())));
 	D.undo_boundary_object(v, D.volume(SD.sfaces_begin()));
 	delete_vertex(v);
       }
@@ -1216,9 +1249,11 @@ public:
 	if( D.mark(v) == D.mark(D.facet(SD.shalfloop()))) {
 	  TRACEN("removing vertex "<<IO->index(v)<<
 		 " from facet "<<IO->index(D.facet(SD.shalfloop())));
-	  CGAL_assertion( is_boundary_object(v));
-	  D.undo_boundary_object(v, D.facet(SD.shalfloop()));
-	  D.undo_boundary_object(v, D.twin(D.facet(SD.shalfloop())));
+	  CGAL_assertion( is_boundary_object( SD.shalfloop()));
+	  D.undo_boundary_object(SD.shalfloop(), D.facet(SD.shalfloop()));
+	  CGAL_assertion( is_boundary_object( D.twin( SD.shalfloop())));
+	  D.undo_boundary_object(D.twin(SD.shalfloop()), 
+				 D.twin(D.facet(SD.shalfloop())));
 	  delete_vertex(v);
 	}
       }
