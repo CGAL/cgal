@@ -85,6 +85,8 @@ void Qt_widget::set_scales()
       xscal=geometry().width()/(xmax-xmin);
       yscal=geometry().height()/(ymax-ymin);
     }
+  add_to_history();
+  configure_history_buttons();
 }
 
 void Qt_widget::set_scale_center(const double xc, const double yc)
@@ -126,6 +128,8 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
   painter->setPen(p);
   painter->setBackgroundColor(bc);
 
+  clear_history();
+
   if (constranges)
     set_scales();
   else
@@ -136,9 +140,8 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
 
 void Qt_widget::showEvent(QShowEvent* e)
 {
-  if( set_scales_to_be_done ){
+  if( set_scales_to_be_done )
     set_scales();
-  }
 
   return QWidget::showEvent(e);
 }
@@ -347,19 +350,8 @@ void Qt_widget::set_window(const double x_min, const double x_max,
   ymax = y_max;
   constranges = const_ranges;
   xcentre = xmin + (xmax - xmin)/2;
-  ycentre = ymin + (ymax - ymin)/2;
-  
-  if( ! isVisible() )
-  {
-    set_scales_to_be_done = true;
-    return;
-  };
-  set_scales_to_be_done = false;
-
-  
+  ycentre = ymin + (ymax - ymin)/2;  
   set_scales(); 
-  add_to_history(); // add the current viewport
-  configure_history_buttons();
 }
 
 
