@@ -1,3 +1,6 @@
+11 Mars 2004 Radu Ursu
+- using explicit binary with FTP 
+
 10 Mars 2004 Radu Ursu
 - fixed bug in autotest_cgal concerning the location of .autocgalrc 
 

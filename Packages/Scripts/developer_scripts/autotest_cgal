@@ -122,6 +122,7 @@ put_on_web()
 $FTP -n $FTP_SERVER <<EOF
 quote USER anonymous
 quote PASS ${MAIL_ADDRESS}
+binary
 put ${1} ${FTP_STORE_DIR}/${2}
 quit
 EOF
