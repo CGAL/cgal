@@ -5,6 +5,8 @@
 - introduced traits classes with capitalized names and made the uncapitalized
   ones simply typedefs for the new ones
 - added example to doc
+- changed wording for default traits class in doc
+- added implementation sections in function ref. pages
 
 3.8    (21 Jun 2001)
 - some cleanups of header files in examples and demos
