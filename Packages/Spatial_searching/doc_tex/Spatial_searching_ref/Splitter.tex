@@ -23,7 +23,7 @@ The concept \ccRefName\ defines the requirements for a function object class imp
 
 \ccHasModels
 
-\ccc{CGAL::Fair<Traits, PointContainer, SpatialSeparator>}, \\
+\ccc{CGAL::Fair<Traits, SpatialSeparator>}, \\
 \ccc{CGAL::Median_of_rectangle<Traits, SpatialSeparator>}, \\
 \ccc{CGAL::Median_of_max_spread<Traits, SpatialSeparator>}, \\
 \ccc{CGAL::Midpoint_of_rectangle<Traits, SpatialSeparator>}, \\
@@ -43,12 +43,6 @@ define the way in which $k$-$d$ tree is constructed.
 
 \ccOperations
 
-\ccMethod{
-void operator()(Separator& s, Container& c0, Container& c1);} 
-{Modifies the separator $s$, 
-and splits \ccc{c0} into \ccc{c0} and \ccc{c1},
-using the splitting dimension and the splitting value of the modified separator.
-}
 
 \ccMethod{FT aspect_ratio();}{Returns the maximal ratio between the largest and smallest side
 of a cell allowed for fair splitting.}
