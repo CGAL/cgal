@@ -1,6 +1,5 @@
-$(CGAL_HOME)/INSTALL.win32
--------------------------------------------------------------------------------
-This file describes how to install CGAL on MS Windows
+$(CGALROOT)/INSTALLwin32.hlp
+This file describes how to install CGAL on MS Windows for VC++ 6 and 7
 For installation on Unix and on Cygwin, please see INSTALL.
 
 The documentation of CGAL is available in various formats (HTML, PostScript,
@@ -9,11 +8,8 @@ PDF). It is not bundled with the software but can be downloaded separately.
 For more information about CGAL, see the URL http://www.cgal.org/.
 
 To install CGAL, you should:
-
   - download the compressed archive file from the CGAL web site www.cgal.org
-
   - Unpack and run setup.exe
-
   - The setup will go through some steps, at the end you will have CGAL-2.4 
     installed:
 	1) The License Agreement
@@ -24,44 +20,39 @@ To install CGAL, you should:
 
 To uninstall CGAL you should go to Start->Control Panel->Add/Remove Programms, 
 Uninstall CGAL-2.4 or you go to Start->Programms->CGAL-2.4->Uninstall.
+
+GMP
+Some examples and demos need gmp. In order to use it you have to copy gmp.dll from
+CGALROOT/auxiliary/wingmp/gmp-4.0.1/gmp.dll to your path.
      
-
-    We recommend that you first have a look at the Installation notes. 
-    These are available in several formats. A PostScript file named
-    installation.ps.gz can be found in the directory doc_ps.
-    The HTML version is in doc_html/installation/main.html and 
-    the PDF documentation is in the directory doc_pdf.
-
--------------------------------------------------------------------------
 Building the library
--------------------------------------------------------------------------
 The CGAL.lib is located in CGALROOT/lib/msvc6/CGAL.lib. It is buit using
 the MLd compiler option. If you want to rebuild the CGAL.lib you should go
 into the CGALROOT/src directory and open cgallib.dsp/cgallib.vcproj for 
 Msvc6/Msvc7. Then you build the opened project. The CGAL.lib from the lib 
 directory will be overwritten.
 
--------------------------------------------------------------------------
 Building the examples
--------------------------------------------------------------------------
 In CGALROOT/examples there are directories for every example. In each 
 directory you will find two more directories called Vc6 and Vc7. In this
 directories are the projects for the example files. To build an example 
 you should open one of those projects and build it.
+You have to specify the right working directory if you want to run the examples 
+within the IDE. For the porjects that are shiped with CGAL, the Working Directory
+should be « ../ ».
 
--------------------------------------------------------------------------
 Building the demos
--------------------------------------------------------------------------
 In CGALROOT/demo there are directories for every CGAL demo. Each demo 
 directory contain two other directories called Vc6 and Vc7 containing the
 projects for the demo files. To build a demo you should open one of those
 projects and build it.
+The demos from Qt_widget directory need Qt installed. The projects contain the 
+libraries from the non-commercial version of Qt-2.3. You should modify that 
+depending on your version of Qt. You can modify that in Project/Settings/Link.
 
--------------------------------------------------------------------------
+
 Running the examples and demos.
--------------------------------------------------------------------------
 The corresponding executable(s) then can be run as usual, from the
 command prompt, or via Explorer.
 
--------------------------------------------------------------------------
-EOF
+
