@@ -180,7 +180,8 @@ int main(int argc,char *argv[])
 
       if(remove_points) {
         double min_dist = -1,dist;
-        Largest_empty_rect::const_iterator closest_iter = empty_rectangle.end();
+        Largest_empty_rect::const_iterator closest_iter =
+                empty_rectangle.end();
         for(Largest_empty_rect::const_iterator iter = empty_rectangle.begin();
         iter != empty_rectangle.end();
 	    ++iter) {
