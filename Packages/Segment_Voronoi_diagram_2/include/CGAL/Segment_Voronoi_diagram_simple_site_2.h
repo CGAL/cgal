@@ -61,36 +61,6 @@ public:
     initialize_site(p1, p2);
   }
 
-#if 1
-  // MK::ERROR:
-  // the compiler complains that it cannot find this constructor;
-  // solution: make the kernel converter use the intersections tag
-  // in order to provide converters that do not need these
-  // constructors
-  template<class A1, class A2, class A3, class A4>
-  Segment_Voronoi_diagram_simple_site_2(const A1&, const A2&,
-					const A3&, const A4&) {
-    //    THIS_CONSTRUCTOR_SHOULD_HAVE_NEVER_BEEN_CALLED;
-    CGAL_assertion( false );
-  }
-
-  template<class A1, class A2, class A3, class A4, class A5>
-  Segment_Voronoi_diagram_simple_site_2(const A1&, const A2&,
-					const A3&, const A4&,
-					const A5&) {
-    //    THIS_CONSTRUCTOR_SHOULD_HAVE_NEVER_BEEN_CALLED;
-    CGAL_assertion( false );
-  }
-
-  template<class A1, class A2, class A3, class A4, class A5, class A6>
-  Segment_Voronoi_diagram_simple_site_2(const A1&, const A2&,
-					const A3&, const A4&,
-					const A5&, const A6&) {
-    //    THIS_CONSTRUCTOR_SHOULD_HAVE_NEVER_BEEN_CALLED;
-    CGAL_assertion( false );
-  }
-#endif
-
   bool is_defined() const { return type_; }
   bool is_point() const { return type_ == 1; }
   bool is_segment() const { return type_ == 2; }
@@ -175,41 +145,6 @@ public:
   }
 #endif
 
-#ifdef USE_SET_METHODS
-  void set_point(const Point_2& p) {
-    initialize_site(p);
-  }
-
-  void set_segment(const Point_2& p1, const Point_2& p2) {
-    initialize_site(p1, p2);
-  }
-#if 1
-  // MK::ERROR:
-  // the compiler complains that it cannot find this constructor;
-  // solution: make the functions in predicates_ftC2 use the
-  // intersections tag so that no calls to these methods are needed
-  template<class A1, class A2, class A3, class A4>
-  void set_point(const A1&, const A2&, const A3&, const A4&)
-  {
-    CGAL_assertion(false);
-  }
-
-  template<class A1, class A2, class A3, class A4, class A5>
-  void set_segment(const A1&, const A2&, const A3&, const A4&,
-		   const A5&)
-  {
-    CGAL_assertion(false);
-  }
-
-  template<class A1, class A2, class A3, class A4, class A5, class A6>
-  void set_segment(const A1&, const A2&, const A3&, const A4&,
-		   const A5&, const A6&)
-  {
-    CGAL_assertion(false);
-  }
-#endif
-#endif
-
 protected:
   void initialize_site(const Point_2& p)
   {
@@ -256,19 +191,11 @@ operator>>(std::istream &is,
     if (type == 'p') {
       Point_2 p;
       is >> p;
-#ifdef USE_SET_METHODS
-      t.set_point(p);
-#else
       t = Site_2(p);
-#endif
     } else if (type == 's') {
       Point_2 p1, p2;
       is >> p1 >> p2;
-#ifdef USE_SET_METHODS
-      t.set_segment(p1, p2);
-#else
       t = Site_2(p1, p2);
-#endif
     }
   }
   return is;

@@ -157,36 +157,6 @@ public:
     }
   }
 
-#ifdef USE_SET_METHODS
-public:
-  // SET METHODS
-  //------------
-  void set_point(const Handle& hp) {
-    initialize_site(hp);
-  }
-
-  void set_segment(const Handle& hp1, const Handle& hp2) {
-    initialize_site(hp1, hp2);
-  }
-
-  void set_point(const Handle& hp1, const Handle& hp2,
-		 const Handle& hq1, const Handle& hq2) {
-    initialize_site(hp1, hp2, hq1, hq2);
-  }
-
-  void set_segment(const Handle& hp1, const Handle& hp2,
-		   const Handle& hq1, const Handle& hq2,
-		   const Handle& hr1, const Handle& hr2) {
-    initialize_site(hp1, hp2, hq1, hq2, hr1, hr2);
-  }
-
-  void set_segment(const Handle& hp1, const Handle& hp2,
-		   const Handle& hq1, const Handle& hq2,
-		   bool is_first_exact) {
-    initialize_site(hp1, hp2, hq1, hq2, is_first_exact);
-  }
-#endif
-
 protected:
   // INITIALIZATION
   //---------------
