@@ -69,35 +69,27 @@ public:
 
 	typedef Event_less_functor<Self ,SweepLineTraits_2>  EventLess;
 	typedef std::set<Self * , EventLess > VerticalXEventSet;
-  typedef typename VerticalXEventSet::iterator VerticalXEventSetIter; 
-
-	// repeated typedefs of Base to avoid warnings
-	typedef typename Base::VerticalCurveList   VerticalCurveList;
-	typedef typename Base::VerticalCurveListIter VerticalCurveListIter;
-
+  
   typedef typename PmwxInsertInfo::Halfedge_handle Halfedge_handle;
 
   Pmwx_sweep_line_event():m_isCurveInPm(1)
   {}
+
   /*! Constructor */
   Pmwx_sweep_line_event(const Point_2 &point, Traits *traits) :
     Base(point, traits)
+  {}
+
+
+  /*! destructor */
+  ~Pmwx_sweep_line_event()
+  {}
+
+
+  void init(const Point_2 &point, Traits *traits)
   {
-    //m_verticalCurveXEvents = new VerticalXEventSet(EventLess(this->m_traits));
+    Base::init(point,traits);
   }
-
-
-    /*! destructor */
-    ~Pmwx_sweep_line_event()
-    {
-      //delete m_verticalCurveXEvents;
-    }
-
-
-    void init(const Point_2 &point, Traits *traits)
-    {
-      Base::init(point,traits);
-    }
 
   PmwxInsertInfo *get_insert_info()
   {
@@ -110,25 +102,6 @@ public:
       m_insertInfo.inc_right_curves_counter();
   }
 
-
-
-  /*! Insert a new intersection point (event) on any of the vertical curves.
-   *  The set of points is sorted by their y values.
-   * 
-   *  @param e a pointer to the event 
-   */
- /* void add_vertical_curve_x_event(Self *e) 
-  {
-		m_verticalCurveXEvents->insert(e);
-	}*/
-		
-	
-
-  /*VerticalXEventSet &get_vertical_x_event_set() 
-  {
-    return *m_verticalCurveXEvents;
-  }*/
-	
 
   /*! Initialize the array that indicates wheter a curve to the right of the
    * event was already inserted into the planar map.
@@ -177,16 +150,14 @@ public:
     unsigned int num_left_curves = get_num_left_curves();
     for ( ; iter != m_rightCurves.begin() ; --iter )
     {
-      //if ( curve->getId() == (*iter)->getId() ) 
       if(curve == (*iter))
       {
         m_isCurveInPm[counter] = true;
-        //m_insertInfo.set_right_curves_counter(m_insertInfo.get_right_curves_counter() - 1); //Baruch
-        if (( i == 0 ) && ( num_left_curves == 0 ) /*&& !exist_vertical*/) 
+        if (( i == 0 ) && ( num_left_curves == 0 )) 
         {
           return skip;
         }
-        if ( num_left_curves == 0 /*&& !exist_vertical */) 
+        if ( num_left_curves == 0 ) 
 	      {   
           return i-1;
         }
@@ -197,12 +168,10 @@ public:
       counter++;
     }
 
-    //CGAL_assertion(curve->getId() == (*iter)->getId());
     CGAL_assertion(curve == (*iter));
     m_isCurveInPm[counter] = true;
-   //  m_insertInfo.set_right_curves_counter(m_insertInfo.get_right_curves_counter() - 1);Baruch
     
-    if ( num_left_curves == 0 /*&& !exist_vertical */)
+    if ( num_left_curves == 0 )
       i--;
     return i;
   }
@@ -215,7 +184,7 @@ public:
     int counter = 0;
     SubCurveIter iter = this->m_rightCurves.end();
     --iter;
-    //while ( curve->getId() != (*iter)->getId() )
+   
     while(curve != (*iter))
     {
       if ( m_isCurveInPm[counter] == true )
@@ -229,7 +198,6 @@ public:
 private:
   PmwxInsertInfo m_insertInfo;
   std::vector<bool> m_isCurveInPm;
- // VerticalXEventSet* m_verticalCurveXEvents;
 };
 
 CGAL_END_NAMESPACE

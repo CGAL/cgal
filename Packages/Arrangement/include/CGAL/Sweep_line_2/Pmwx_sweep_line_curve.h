@@ -64,7 +64,6 @@ public:
   Pmwx_sweep_line_curve( X_monotone_curve_2 &curve,
 			SweepLineTraits_2 *traits) : 
     Base( curve,traits),
-   // m_insertInfo(0),
     m_lastEvent(0)
   {
   }
@@ -74,9 +73,7 @@ public:
 			SweepLineTraits_2 *traits)
   {
     Base::init(curve,traits);
-   // m_insertInfo = 0;
     m_lastEvent  = 0;
-
   }
 
 
@@ -90,14 +87,6 @@ public:
     return m_hint1;
   }
 
- /* void set_insert_info(PmwxInsertInfo *insertInfo) {
-    m_insertInfo = insertInfo;
-  }*/
-
- /* PmwxInsertInfo *get_insert_info() const {
-    return m_insertInfo;
-  }*/
-
   void set_last_event(Event *e) {
     m_lastEvent = e;
   }
@@ -108,9 +97,6 @@ public:
 
 
 private:
-
-  /* the insert information  of this curve */
-  //PmwxInsertInfo *m_insertInfo;
 
   /*! the last event that was handled on the curve */
   Event *m_lastEvent;
