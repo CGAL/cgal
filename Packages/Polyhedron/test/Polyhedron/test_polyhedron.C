@@ -480,7 +480,9 @@ void test_Polyhedron() {
     {
         // Check the predefined point iterator
         Polyhedron P;
-        CGAL_assertion_code( Halfedge_handle h = P.make_tetrahedron();)
+        CGAL_assertion_code( Halfedge_handle h = P.make_tetrahedron(
+                               Point( 1.0, 0.0, 0.0), Point( 0.0, 1.0, 0.0),
+                               Point( 0.0, 0.0, 1.0), Point( 0.0, 0.0, 0.0));)
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_tetrahedron( h));
         CGAL_assertion( P.is_pure_trivalent());
@@ -490,6 +492,7 @@ void test_Polyhedron() {
         Vertex_iterator i = P.vertices_begin();
         while( begin != end) {
             CGAL_assertion( i->point() == *begin);
+            CGAL_assertion( &(i->point()) == &*begin);
             ++begin;
             ++i;
         }
@@ -498,7 +501,9 @@ void test_Polyhedron() {
     {
         // Check the predefined point const_iterator
         Polyhedron P;
-        CGAL_assertion_code( Halfedge_handle h = P.make_tetrahedron();)
+        CGAL_assertion_code( Halfedge_handle h = P.make_tetrahedron(
+                               Point( 1.0, 0.0, 0.0), Point( 0.0, 1.0, 0.0),
+                               Point( 0.0, 0.0, 1.0), Point( 0.0, 0.0, 0.0));)
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_tetrahedron( h));
         typedef Polyhedron::Point_const_iterator Point_const_iterator;
@@ -518,11 +523,17 @@ void test_Polyhedron() {
         Polyhedron P;
         P.make_tetrahedron();
         typedef Polyhedron::Plane_iterator Plane_iterator;
+        Plane_iterator planes( P.planes_begin());
+        *planes++ = Plane( 1.0, 0.0, 0.0, 1.0);
+        *planes++ = Plane( 0.0, 1.0, 0.0, 1.0);
+        *planes++ = Plane( 0.0, 0.0, 1.0, 1.0);
+        *planes   = Plane( 1.0, 1.0, 1.0, 1.0);
         Plane_iterator begin( P.planes_begin());
         Plane_iterator end( P.planes_end());
         Facet_iterator i = P.facets_begin();
         while( begin != end) {
             CGAL_assertion( i->plane() == *begin);
+            CGAL_assertion( &(i->plane()) == &*begin);
             ++begin;
             ++i;
         }
@@ -534,6 +545,12 @@ void test_Polyhedron() {
         CGAL_assertion_code( Halfedge_handle h = P.make_tetrahedron();)
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_tetrahedron( h));
+        typedef Polyhedron::Plane_iterator Plane_iterator;
+        Plane_iterator planes( P.planes_begin());
+        *planes++ = Plane( 1.0, 0.0, 0.0, 1.0);
+        *planes++ = Plane( 0.0, 1.0, 0.0, 1.0);
+        *planes++ = Plane( 0.0, 0.0, 1.0, 1.0);
+        *planes   = Plane( 1.0, 1.0, 1.0, 1.0);
         typedef Polyhedron::Plane_const_iterator Plane_const_iterator;
         const Polyhedron& P2(P);
         Plane_const_iterator begin( P2.planes_begin());
@@ -549,7 +566,9 @@ void test_Polyhedron() {
     {
         // Check the easy creation of a point iterator.
         Polyhedron P;
-        CGAL_assertion_code( Halfedge_handle h = P.make_tetrahedron();)
+        CGAL_assertion_code( Halfedge_handle h = P.make_tetrahedron(
+                               Point( 1.0, 0.0, 0.0), Point( 0.0, 1.0, 0.0),
+                               Point( 0.0, 0.0, 1.0), Point( 0.0, 0.0, 0.0));)
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_tetrahedron( h));
 
@@ -562,6 +581,7 @@ void test_Polyhedron() {
         Vertex_iterator i = P.vertices_begin();
         while( begin != end) {
             CGAL_assertion( i->point() == *begin);
+            CGAL_assertion( &(i->point()) == &*begin);
             ++begin;
             ++i;
         }
