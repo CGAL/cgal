@@ -67,7 +67,9 @@ create_makefile()
     echo    "          \$(TESTSUITE_LDFLAGS) \\"
   fi
   echo    "          \$(LONG_NAME_PROBLEM_LDFLAGS) \\"
-  if [ -z "$LEDAWINDOWS" ] ; then
+  if [ -n "$GEOWIN" ] ; then
+    echo    "          \$(CGAL_GEOWIN_LDFLAGS)"
+  elif [ -z "$LEDAWINDOWS" ] ; then
     echo    "          \$(CGAL_LDFLAGS)"
   else
     echo    "          \$(CGAL_WINDOW_LDFLAGS)"
@@ -77,7 +79,7 @@ create_makefile()
   echo
   printf "all:            "
   for file in `ls *.C` ; do
-      printf "\\\\\n                `basename $file .C` "
+      printf "\\\\\n                `basename $file .C`\$(EXE_EXT) "
   done
   echo
   echo
@@ -85,6 +87,12 @@ create_makefile()
     base=`basename $file .C`
     create_makefile_entry $base
   done
+#  echo clean:
+#  printf    "	rm -f *\$(OBJ_EXT) "
+#  for file in `ls *.C` ; do
+#      printf "\\\\\n                   `basename $file .C`\$(EXE_EXT) "
+#  done
+#  printf    "\\\\\n                   core\n\n"
   printf "clean: "
   for file in `ls *.C` ; do
       printf "\\\\\n                   `basename $file .C`.clean "
@@ -95,11 +103,6 @@ create_makefile()
   echo    ".C\$(OBJ_EXT):"
   echo    "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<"
   echo
-  echo
-  echo    ".C\$(EXE_EXT):"
-  echo    "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<"
-  echo "	\$(CGAL_CXX) \$(LIBPATH) \$(EXE_OPT)\$* \$*\$(OBJ_EXT) \$(LDFLAGS)"
-  echo
 }
 
 case $# in
@@ -108,13 +111,15 @@ case $# in
      echo "-d   create a default CGAL makefile"
      echo "-t   create a makefile for the test suite"
      echo "-w   create a makefile with flags for LEDA windows"
+     echo "-g   create a makefile with flags for GEOWIN"
      exit
 esac
 
 for i do
   case $i in
     -t) TESTSUITE='y';;
-    -w) LEDAWINDOWS='y'
+    -w) LEDAWINDOWS='y';;
+    -g) GEOWIN='y';;
   esac
 done
 
