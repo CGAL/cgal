@@ -109,8 +109,8 @@ public:
   typedef Planar_map_2<Dcel,Traits> Self;
   typedef Planar_map_traits_wrap<Traits> Traits_wrap;
   typedef typename Traits::X_curve X_curve;
-  typedef typename Traits::Point_2 Point_2;
-  typedef typename Traits::Point_2 Point; // For backward compatability
+  typedef typename Traits::Point Point;
+  typedef typename Point         Point_2;
   typedef std::list<X_curve> X_curve_container;
   
   typedef Topological_map<Dcel> TPM;
