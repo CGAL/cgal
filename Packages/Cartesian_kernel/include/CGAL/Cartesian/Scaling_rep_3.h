@@ -24,10 +24,6 @@
 
 #include <CGAL/Cartesian/redefine_names_3.h>
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
@@ -152,9 +148,5 @@ private:
 };
 
 CGAL_END_NAMESPACE
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 #endif // CGAL_CARTESIAN_SCALING_REP_3_H
