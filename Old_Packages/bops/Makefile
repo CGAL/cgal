@@ -15,9 +15,9 @@ package: doc clean $(Package).tar.gz
 	@echo "-----------------------------------"
 	@echo "---- changes.txt               ----"
 	@echo "---- make test                 ----"
-	@echo "---- make VERSION=4.11 version ----"
+	@echo "---- make VERSION=X.XX version ----"
 	@echo "---- cvs commit                ----"
-	@echo "---- make VERSION=4.11 tag     ----"
+	@echo "---- make VERSION=X.XX tag     ----"
 	@echo "---- make package              ----"
 	@echo "---- make submit               ----"
 	@echo "-----------------------------------"
@@ -45,15 +45,16 @@ test:
 
 clean:
 	$(MAKE) -C doc_tex/basic/BooleanOperations clean
-	$(MAKE) -C test/$(Package) clean
+	$(MAKE) -C test/BooleanOperations clean
+	$(MAKE) -C test/Bopstest clean
 	rm -f $(Package).tar.gz src/.pure src/*.o
 
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile --exclude=TODO \
 	--exclude="*".swp \
-	version description.txt changes.txt \
-	src include doc_tex doc_ps test scripts
+	version description.txt long_description.txt changes.txt \
+	include examples demo doc_tex doc_ps test
 
 doc: doc_ps/$(Package).ps
 
