@@ -1,4 +1,6 @@
-
+#define DEBUG
+#define VERBOSE
+#define FACET_NUMBER
 //=====================================================================
 // selection de facettes dans Delaunay....
 //=====================================================================
@@ -60,7 +62,10 @@ typedef CGAL::Triangulation_hierarchy_vertex_base_3<LVb> HVb;
 typedef CGAL::Triangulation_cell_base_3<Kernel> Cb;
 typedef Local_selection_cell_base_3<Cb> LCb;
 
+
 typedef CGAL::Triangulation_data_structure_3<HVb,LCb> Tds;
+
+
 typedef CGAL::Delaunay_triangulation_3<Kernel,Tds> Delaunay_Triangulation_3;
 typedef CGAL::Triangulation_hierarchy_3<Delaunay_Triangulation_3> Triangulation_3;
 
@@ -230,15 +235,13 @@ construct_delaunay(const std::vector<Point> &V_p,
     for(std::vector<Point>::const_iterator v_it = V_p.begin();
 	v_it != V_p.end(); ++v_it)
       {
-	T.insert(*v_it);
+		  Triangulation_3::Vertex_handle vh = T.insert(*v_it);
       }
   }
   t1.stop();
   std::cout << "   Inserted " << T.number_of_vertices() << " points, "
 	    <<  T.number_of_cells() << " cells computed in "
 	    << t1.time() << " secondes." << std::endl;
-  std::cout << "   Number of filter failures : " << 
-    CGAL::Interval_base::number_of_failures << std::endl;
   if (T.dimension() < 3)
     {
       std::cout << "-- 2D sample of points ???"  << std::endl;
@@ -282,6 +285,7 @@ int main(int argc,  char* argv[])
   coord_type total_time(0);
 
   Surface S(T,opt.DELTA);
+  std::cout << "A" << std::endl;
   do
     {
       number_of_connected_comp++;
@@ -297,6 +301,9 @@ int main(int argc,  char* argv[])
 	{
 	  S.extend(opt.K_init, opt.K_step, opt.K);
 
+	  std::cout << "S.number_of_facets() == " << S.number_of_facets() << std::endl;
+	  std::cout <<" size_before_postprocessing ==  " << size_before_postprocessing << std::endl;
+	  
 	  // debut du processus extend + postprocessing
 	  if ((S.number_of_facets() > size_before_postprocessing)&&
 	      (opt.NB_BORDER_MAX > 0))
@@ -320,8 +327,13 @@ int main(int argc,  char* argv[])
 	    total_time += sum_time;
 
 	    std::cout << std::endl;
-
-	    re_init = (T.number_of_vertices()- S.number_of_vertices()) > 4;
+	    std::cout << "T.number_of_vertices() == " << T.number_of_vertices() << std::endl;
+	    std::cout << "S.number_of_vertices() == " << S.number_of_vertices() << std::endl;
+	    char c;
+	    std::cout << "continue?" << std::endl;
+	    std::cin >> c;
+	    re_init = (c == 'y');
+	    //re_init = (T.number_of_vertices()- S.number_of_vertices()) > 4;
       
 	} else {
 	  std::cout << "-- no grains...."
@@ -349,4 +361,5 @@ int main(int argc,  char* argv[])
 
   return 0;
 }
+
 
