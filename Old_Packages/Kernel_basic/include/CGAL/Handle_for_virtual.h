@@ -25,6 +25,8 @@
 #ifndef CGAL_HANDLE_FOR_VIRTUAL_H
 #define CGAL_HANDLE_FOR_VIRTUAL_H
 
+#include <CGAL/basic.h>
+
 CGAL_BEGIN_NAMESPACE
 
 class Ref_counted_virtual

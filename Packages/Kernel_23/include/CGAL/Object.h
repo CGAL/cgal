@@ -28,6 +28,7 @@
 #ifndef CGAL_OBJECT_H
 #define CGAL_OBJECT_H
 
+#include <CGAL/basic.h>
 #include <CGAL/Handle_for_virtual.h>
 
 CGAL_BEGIN_NAMESPACE
