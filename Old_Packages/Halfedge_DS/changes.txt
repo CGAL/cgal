@@ -1,6 +1,10 @@
 Halfedge_DS Package: Release changes:
 ---------------------------------------------------------------------
 
+2.18 (19 Apr 2002)
+
+     - Added missing std:: before size_t in hds_prog_compact[2].C.
+
 2.17 (10 Jul 2001)
 
      - Changed Halfedge_data_structure_using_list to use allocators
