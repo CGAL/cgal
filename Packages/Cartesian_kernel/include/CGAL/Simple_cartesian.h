@@ -1,4 +1,4 @@
-// Copyright (c) 2000,2001,2002,2003  Utrecht University (The Netherlands),
+// Copyright (c) 2000-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -25,7 +25,7 @@
 #define CGAL_SIMPLE_CARTESIAN_H
 
 #include <CGAL/Cartesian/Cartesian_base.h>
-#include <CGAL/Simple_Handle_for.h>
+#include <CGAL/Handle_for.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -39,7 +39,6 @@ struct Cartesian_base_no_ref_count
 
     // The mecanism that allows to specify reference-counting or not.
     template < typename T >
-    // struct Handle { typedef Simple_Handle_for<T>   type; };
     struct Handle { typedef T   type; };
 
     template < typename Kernel2 >

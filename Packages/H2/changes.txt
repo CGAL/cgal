@@ -1,3 +1,6 @@
+2.112 (13 January 2004)
+- Remove Simple_Handle_for.
+
 2.111 (1 January 2004)
 - New faster Handle_for interface
 - More work towards extensible kernel.

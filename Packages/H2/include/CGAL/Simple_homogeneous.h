@@ -25,7 +25,7 @@
 #define CGAL_SIMPLE_HOMOGENEOUS_H
 
 #include <CGAL/Homogeneous/Homogeneous_base.h>
-#include <CGAL/Simple_Handle_for.h>
+#include <CGAL/Handle_for.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 #include <CGAL/Quotient.h>
 
@@ -40,7 +40,6 @@ struct Homogeneous_base_no_ref_count
 
     // The mecanism that allows to specify reference-counting or not.
     template < typename T >
-    // struct Handle { typedef Simple_Handle_for<T>    type; };
     struct Handle { typedef T    type; };
 
     template < typename Kernel2 >
