@@ -103,7 +103,7 @@ public:
     {
       Finite_edges_iterator eit= finite_edges_begin();
       for (; eit != finite_edges_end(); ++eit) {
-	Object o = t.dual(eit);
+	Object o = dual(eit);
 	Ray r;
 	Segment s;
 	Line l;
