@@ -73,9 +73,11 @@ template < class CT, class ET, class Type = Dynamic,
 class Filtered_exact
 {
 public:
-  typedef Tag_false  Has_gcd;
-  typedef Tag_true   Has_division;
-  typedef Tag_true   Has_sqrt;
+  typedef typename Number_type_traits<CT>::Has_gcd      Has_gcd;
+  typedef typename Number_type_traits<CT>::Has_division Has_division;
+#ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
+  typedef typename Number_type_traits<CT>::Has_sqrt     Has_sqrt;
+#endif
 
 private:
   typedef Filtered_exact<CT, ET, Type, Protection, Cache> Fil;
@@ -157,9 +159,17 @@ public:
 
 // We forward the following functions to the CT value:
 // sqrt, square, is_valid, is_finite, to_double, sign, compare, abs, min, max,
-// io_tag, operator>>, operator<<.
+// div, gcd, io_tag, operator>>, operator<<.
 
 #ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
+
+template <class CT, class ET, class Type, bool Protection, class Cache>
+inline
+Filtered_exact<CT,ET,Type,Protection,Cache>
+div (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil1,
+     const Filtered_exact<CT,ET,Type,Protection,Cache>& fil2)
+{ return CGAL::div(fil1.value(), fil2.value()); }
+
 template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
 Filtered_exact<CT,ET,Type,Protection,Cache>
@@ -167,6 +177,13 @@ sqrt (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
 { return CGAL::sqrt(fil.value()); }
 
 namespace NTS {
+
+template <class CT, class ET, class Type, bool Protection, class Cache>
+inline
+Filtered_exact<CT,ET,Type,Protection,Cache>
+gcd (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil1,
+     const Filtered_exact<CT,ET,Type,Protection,Cache>& fil2)
+{ return CGAL_NTS gcd(fil1.value(), fil2.value()); }
 
 template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
