@@ -16,7 +16,7 @@ An object of the class \ccClassTemplateName\ is the unique circle of
 smallest area enclosing a finite set of points in two-dimensional
 euclidean space $\E_2$. For a point set $P$ we denote by $mc(P)$ the
 smallest circle that contains all points of $P$. Note that $mc(P)$ can
-be degenerate, i.e.\ $P=$\ccTexHtml{$\emptyset$}{&Oslash;} if
+be degenerate, i.e.\ $mc(P)=$\ccTexHtml{$\emptyset$}{&Oslash;} if
 $P=$\ccTexHtml{$\emptyset$}{&Oslash;} and $mc(P)=\{p\}$ if $P=\{p\}$.
 
 An inclusion-minimal subset $S$ of $P$ with $mc(S)=mc(P)$ is called
@@ -31,6 +31,9 @@ The underlying algorithm can cope with all kinds of input, e.g.\
 $P$ may be empty or points may occur more than once. The algorithm
 computes a support set $S$ which remains fixed until the next insert
 operation.
+
+Correct results are in this release only guaranteed if the template
+parameter of the representation class $R$ is an exact number type. 
 
 \ccCreation
 \ccCreationVariable{min_circle}
@@ -136,10 +139,9 @@ the construction method is incremental itself.
         enclosing circle.}
 
 \ccMemberFunction{ void reserve( int n);}{
-        reserves storage for at least \ccStyle{n} points in \ccVar.
-        It can be used, if the number of insert operations is known in
-        advance.}
-
+        reserves storage for at least \ccStyle{n} points in \ccVar. Although
+	this is in no case necessary, it may speed up memory allocation if 
+	the number of points to be inserted is known in advance.}
 
 \ccHeading{Check operation}
 
@@ -184,7 +186,9 @@ unbounded side equals the whole plane $\E_2$.
         degeneracy).}
 
 \ccMemberFunction{ bool is_degenerate( ) const;}{
-        returns \ccStyle{true}, iff \ccVar\ is degenerate.}
+        returns \ccStyle{true}, iff \ccVar\ is degenerate, i.e. if
+	\ccVar is empty or equal to a single point, equivalently if
+	the number of support points is less than 2.}
 
 
 \ccImplementation
