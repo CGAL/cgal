@@ -1,3 +1,6 @@
+3.52  (? Nov 2002)
+- Merge test programs to speed up and uniformize the test-suite.
+
 3.51  (9 Oct 2002)
 - Remove useless file _test_misc, _test_pvd_[23].
 

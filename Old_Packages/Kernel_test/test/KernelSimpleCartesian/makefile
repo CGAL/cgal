@@ -45,43 +45,13 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                test_io$(EXE_EXT) \
-                test_kernelS2$(EXE_EXT) \
-                test_kernelS3$(EXE_EXT) \
-                test_new_kernelS2$(EXE_EXT) \
-                test_new_kernelS3$(EXE_EXT) \
-                test_new_partsS_$(EXE_EXT) \
-                test_planeS3_to_2d$(EXE_EXT) 
+                test_all$(EXE_EXT) 
 
-test_io$(EXE_EXT): test_io$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_io test_io$(OBJ_EXT) $(LDFLAGS)
-
-test_kernelS2$(EXE_EXT): test_kernelS2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernelS2 test_kernelS2$(OBJ_EXT) $(LDFLAGS)
-
-test_kernelS3$(EXE_EXT): test_kernelS3$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernelS3 test_kernelS3$(OBJ_EXT) $(LDFLAGS)
-
-test_new_kernelS2$(EXE_EXT): test_new_kernelS2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_new_kernelS2 test_new_kernelS2$(OBJ_EXT) $(LDFLAGS)
-
-test_new_kernelS3$(EXE_EXT): test_new_kernelS3$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_new_kernelS3 test_new_kernelS3$(OBJ_EXT) $(LDFLAGS)
-
-test_new_partsS_$(EXE_EXT): test_new_partsS_$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_new_partsS_ test_new_partsS_$(OBJ_EXT) $(LDFLAGS)
-
-test_planeS3_to_2d$(EXE_EXT): test_planeS3_to_2d$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_planeS3_to_2d test_planeS3_to_2d$(OBJ_EXT) $(LDFLAGS)
+test_all$(EXE_EXT): test_all$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_all test_all$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   test_io.clean \
-                   test_kernelS2.clean \
-                   test_kernelS3.clean \
-                   test_new_kernelS2.clean \
-                   test_new_kernelS3.clean \
-                   test_new_partsS_.clean \
-                   test_planeS3_to_2d.clean 
+                   test_all.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -27,12 +27,6 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
 
-void use(bool) {}
-void use(CGAL::Sign) {}
-void use(CGAL::Bounded_side) {}
-void use(CGAL::Oriented_side) {}
-void use(CGAL::Comparison_result) {}
-
 
 template <class R>
 bool
@@ -362,16 +356,20 @@ test_new_3(const R& rep)
         = rep.assign_3_object();
        tmp12a = assign(p1,tmp10a);
        tmp12b = assign(p1,tmp10b);
+  (void) tmp12a;
+  (void) tmp12b;
 
   typename R::Compute_squared_distance_3 Compute_squared_distance
         = rep.compute_squared_distance_3_object();
   FT tmp12c = Compute_squared_distance(p1, p2);
      tmp12c = Compute_squared_distance(p1, r2);
      tmp12c = Compute_squared_distance(p1, h2);
+  (void) tmp12c;
 
   typename R::Compute_squared_length_3 compute_squared_length
         = rep.compute_squared_length_3_object();
   FT tmp11 = compute_squared_length(s2);
+  (void) tmp11;
 
   
   typename R::Compute_squared_radius_3 Compute_squared_radius
@@ -379,15 +377,19 @@ test_new_3(const R& rep)
   FT tmp11aa = Compute_squared_radius(sp1);
      tmp11aa = Compute_squared_radius(p3, p4, p5);
      tmp11aa = Compute_squared_radius(p3, p4, p5, p6);
+  (void) tmp11aa;
 
   typename R::Compute_squared_area_3 compute_squared_area
         = rep.compute_squared_area_3_object();
   FT tmp11a = compute_squared_area(t2);
+  (void) tmp11a;
 
   typename R::Compute_volume_3 compute_volume
         = rep.compute_volume_3_object();
   FT tmp11b = compute_volume(th2);
   FT tmp11c = compute_volume(iso1);
+  (void) tmp11b;
+  (void) tmp11c;
 
   typename R::Equal_3 equal
         = rep.equal_3_object();
@@ -402,89 +404,119 @@ test_new_3(const R& rep)
        bool tmp12j = equal(th2,th2);
        bool tmp12k = equal(iso1,iso1);
        bool tmp12l = equal(v2,v3);
+  (void) tmp12a;
+  (void) tmp12b;
+  (void) tmp12d;
+  (void) tmp12e;
+  (void) tmp12f;
+  (void) tmp12g;
+  (void) tmp12h;
+  (void) tmp12i;
+  (void) tmp12j;
+  (void) tmp12k;
+  (void) tmp12l;
 
   typename R::Equal_x_3 equal_x
         = rep.equal_x_3_object();
   bool tmp13 = equal_x(p2,p3);
+  (void) tmp13;
 
 
   typename R::Equal_y_3 equal_y
         = rep.equal_y_3_object();
   bool tmp14 = equal_y(p2,p3);
+  (void) tmp14;
 
 
   typename R::Equal_z_3 equal_z
         = rep.equal_z_3_object();
   bool tmp15 = equal_z(p2,p3);
+  (void) tmp15;
 
 
   typename R::Equal_xy_3 equal_xy
         = rep.equal_xy_3_object();
   bool tmp16 = equal_xy(p2,p3);
+  (void) tmp16;
 
   typename R::Less_x_3 less_x
         = rep.less_x_3_object();
   bool tmp18 = less_x(p2,p3);
+  (void) tmp18;
 
   typename R::Less_y_3 less_y
         = rep.less_y_3_object();
   bool tmp19 = less_y(p2,p3);
+  (void) tmp19;
 
   typename R::Less_z_3 less_z
         = rep.less_z_3_object();
   bool tmp20 = less_z(p2,p3);
+  (void) tmp20;
 
   typename R::Less_xy_3 less_xy
         = rep.less_xy_3_object();
   bool tmp21 = less_xy(p2,p3);
+  (void) tmp21;
 
   typename R::Less_xyz_3 less_xyz
         = rep.less_xyz_3_object();
   bool tmp22 = less_xyz(p2,p3);
+  (void) tmp22;
 
   typename R::Compare_x_3 compare_x
         = rep.compare_x_3_object();
   Comparison_result tmp23 = compare_x(p2,p3);
+  (void) tmp23;
 
 
   typename R::Compare_y_3 compare_y
         = rep.compare_y_3_object();
   Comparison_result tmp24 = compare_y(p2,p3);
+  (void) tmp24;
 
 
   typename R::Compare_z_3 compare_z
         = rep.compare_z_3_object();
   Comparison_result tmp25 = compare_z(p2,p3);
+  (void) tmp25;
 
 
   typename R::Compare_xy_3 compare_xy
         = rep.compare_xy_3_object();
   Comparison_result tmp26 = compare_xy(p2,p3);
+  (void) tmp26;
 
 
   typename R::Compare_xyz_3 compare_xyz
         = rep.compare_xyz_3_object();
   Comparison_result tmp27 = compare_xyz(p2,p3);
+  (void) tmp27;
 
   typename R::Less_distance_to_point_3 less_distance_to_point
         = rep.less_distance_to_point_3_object();
   bool tmp28 = less_distance_to_point(p4,p2,p3);
+  (void) tmp28;
 
   typename R::Less_signed_distance_to_plane_3 less_signed_distance_to_plane
         = rep.less_signed_distance_to_plane_3_object();
   bool tmp28a = less_signed_distance_to_plane(tmp8,p2,p3);
+  (void) tmp28a;
 
   typename R::Compare_distance_3 compare_dist
         = rep.compare_distance_3_object();
   Comparison_result tmp34ab = compare_dist(p2,p3,p4);
+  (void) tmp34ab;
 
   typename R::Collinear_3 collinear
         = rep.collinear_3_object();
   bool tmp29 = collinear(p2,p3,p4);
+  (void) tmp29;
 
   typename R::Coplanar_3 coplanar
         = rep.coplanar_3_object();
   bool tmp30 = coplanar(p2,p3,p4,p5);
+  (void) tmp30;
 
   Point_3 p7(0,0,0);
   Point_3 p8(1,0,0);
@@ -494,20 +526,24 @@ test_new_3(const R& rep)
         = rep.coplanar_orientation_3_object();
   Orientation tmp30a = coplanar_orientation(p7,p8,p9,p10);
               tmp30a = coplanar_orientation(p7,p8,p9);
+  (void) tmp30a;
 
   typename R::Coplanar_side_of_bounded_circle_3
            coplanar_side_of_bounded_circle
         = rep.coplanar_side_of_bounded_circle_3_object();
   Bounded_side tmp30b = coplanar_side_of_bounded_circle(p7,p8,p9,p10);
+  (void) tmp30b;
 
   typename R::Orientation_3 orientation
         = rep.orientation_3_object();
   Orientation tmp31 = orientation(p2,p3,p4,p5);
+  (void) tmp31;
 
 
   typename R::Is_degenerate_3 is_degenerate
         = rep.is_degenerate_3_object();
   bool tmp32 = is_degenerate(l2);
+  (void) tmp32;
 
 
   typename R::Has_on_3 has_on
@@ -515,6 +551,9 @@ test_new_3(const R& rep)
   bool tmp33a = has_on(l2,p2);
   bool tmp33b = has_on(t2,p2);
   bool tmp33c = has_on(tmp8,p2);
+  (void) tmp33a;
+  (void) tmp33b;
+  (void) tmp33c;
 
 
   typename R::Has_on_bounded_side_3 has_on_bounded_side
@@ -522,6 +561,9 @@ test_new_3(const R& rep)
   bool tmp34 = has_on_bounded_side(th2,p2);
   bool tmp34a = has_on_bounded_side(sp2,p2);
   bool tmp34b = has_on_bounded_side(iso1,p2);
+  (void) tmp34;
+  (void) tmp34a;
+  (void) tmp34b;
 
 
   typename R::Has_on_unbounded_side_3 has_on_unbounded_side
@@ -529,6 +571,9 @@ test_new_3(const R& rep)
   bool tmp35 = has_on_unbounded_side(th2,p2);
   bool tmp35a = has_on_unbounded_side(sp2,p2);
   bool tmp35b = has_on_unbounded_side(iso1,p2);
+  (void) tmp35;
+  (void) tmp35a;
+  (void) tmp35b;
 
 
   typename R::Has_on_boundary_3 has_on_boundary
@@ -540,52 +585,64 @@ test_new_3(const R& rep)
   bool tmp36b = has_on_boundary(th2,p2);
   bool tmp36c = has_on_boundary(sp2,p2);
   bool tmp36d = has_on_boundary(iso1,p2);
+  (void) tmp36b;
+  (void) tmp36c;
+  (void) tmp36d;
 
 
   typename R::Has_on_positive_side_3 has_on_positive_side
         = rep.has_on_positive_side_3_object();
   bool tmp37 = has_on_positive_side(h2,p2);
+  (void) tmp37;
 
 
   typename R::Has_on_negative_side_3 has_on_negative_side
         = rep.has_on_negative_side_3_object();
   bool tmp38 = has_on_negative_side(h2,p2);
+  (void) tmp38;
 
 
   typename R::Oriented_side_3 oriented_side
         = rep.oriented_side_3_object();
   Oriented_side tmp39 = oriented_side(h2,p2);
                 tmp39 = oriented_side(sp9,p2);
+  (void) tmp39;
 
   typename R::Bounded_side_3 bounded_side
         = rep.bounded_side_3_object();
   Bounded_side tmp39a = bounded_side(sp1,p2);
                tmp39a = bounded_side(th2,p2);
                tmp39a = bounded_side(iso1,p2);
+  (void) tmp39a;
 
   typename R::Are_ordered_along_line_3 are_ordered_along_line
         = rep.are_ordered_along_line_3_object();
   bool tmp40 = are_ordered_along_line(p2,p3,p4);
+  (void) tmp40;
 
 
   typename R::Are_strictly_ordered_along_line_3 are_strictly_ordered_along_line
         = rep.are_strictly_ordered_along_line_3_object();
   bool tmp41 = are_strictly_ordered_along_line(p2,p3,p4);
+  (void) tmp41;
 
 
   typename R::Collinear_are_ordered_along_line_3 collinear_are_ordered_along_line
         = rep.collinear_are_ordered_along_line_3_object();
   bool tmp42 = collinear_are_ordered_along_line(p2,p2,p3);
+  (void) tmp42;
 
 
   typename R::Collinear_are_strictly_ordered_along_line_3 collinear_are_strictly_ordered_along_line
         = rep.collinear_are_strictly_ordered_along_line_3_object();
   bool tmp43 = collinear_are_strictly_ordered_along_line(p2,p2,p3);
+  (void) tmp43;
 
 
   typename R::Side_of_oriented_sphere_3 side_of_oriented_sphere
         = rep.side_of_oriented_sphere_3_object();
   Oriented_side tmp44 = side_of_oriented_sphere(p2,p3,p4,p5,p6);
+  (void) tmp44;
 
 
   typename R::Side_of_bounded_sphere_3 side_of_bounded_sphere
@@ -593,23 +650,12 @@ test_new_3(const R& rep)
   Bounded_side tmp45 = side_of_bounded_sphere(p2,p3,p4,p5,p6);
                tmp45 = side_of_bounded_sphere(p2,p3,p4,p6);
                tmp45 = side_of_bounded_sphere(p2,p3,p6);
+  (void) tmp45;
 
   typename R::Angle_3 angle
         = rep.angle_3_object();
   Angle tmp46 = angle(p2,p3,p4);
-
-  use(tmp46);
-  use(tmp45); use(tmp44); use(tmp43); use(tmp42); use(tmp41); use(tmp40);
-  use(tmp39); use(tmp38); use(tmp37); use(tmp36b); use(tmp35);
-  use(tmp34); use(tmp33b); use(tmp33a); use(tmp32); use(tmp31); use(tmp30);
-  use(tmp28a); use(tmp33c); use(tmp35a); use(tmp35b); use(tmp34a); use(tmp34b); 
-  use(tmp29); use(tmp27); use(tmp25); use(tmp24); use(tmp23); use(tmp22);
-  use(tmp15); use(tmp14); use(tmp13); use(tmp12b); use(tmp12a);
-  use(tmp12d); use(tmp12e); use(tmp12f); use(tmp12g); use(tmp12l); 
-  use(tmp12h); use(tmp12i); use(tmp12j); use(tmp12k); use(tmp36c); use(tmp36d); 
-  use(tmp16); use(tmp18); use(tmp19); use(tmp20); use(tmp21);
-  use(tmp26); use(tmp28); use(tmp30a); use(tmp30b); use(tmp34ab); 
-  use(tmp39a);
+  (void) tmp46;
 
   return true;
 }
