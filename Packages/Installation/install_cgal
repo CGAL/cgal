@@ -3976,8 +3976,7 @@ _set_support()
 	    ;;
 	*VC++*)
 	    case `compiler_version` in
-		12.00.8168*) CGAL_SUPPORT_COMPILER='y';;
-		12.00.8804*) CGAL_SUPPORT_COMPILER='y';;
+		1200*) CGAL_SUPPORT_COMPILER='y';;
 		*) CGAL_SUPPORT_COMPILER='';;
 	    esac
 	    ;;
@@ -6010,7 +6009,7 @@ _check_comp_executable()
 	    exit_on_error "Cannot find \"${_tmp}\""
 	fi
 	_check_execute "${_tmp1}"
-	log_print "${_tmp} is \"${_tmp1}\"."
+	log_print "${_tmp} is ${_tmp1}."
     fi
 }
 
