@@ -1201,6 +1201,7 @@ template <class Interval>
   template <class Interval>
   void IntervalSLnode<Interval>::print(std::ostream& os) const
   {
+    int i;
     os << "IntervalSLnode key:  ";
     if (! is_header) {
      os << key;
@@ -1213,7 +1214,7 @@ template <class Interval>
     os << "ownerCount = " << ownerCount << std::endl;
     os <<  std::endl;
     os << "forward pointers:\n";
-    for(int i=0; i<=topLevel; i++)
+    for(i=0; i<=topLevel; i++)
       {
 	os << "forward[" << i << "] = ";
 	if(forward[i] != NULL) {
@@ -1224,7 +1225,7 @@ template <class Interval>
 	os << std::endl;
       }
     os << "markers:\n";
-    for(int i=0; i<=topLevel; i++)
+    for(i=0; i<=topLevel; i++)
       {
 	os << "markers[" << i << "] = ";
 	if(markers[i] != NULL) {
