@@ -59,13 +59,16 @@ $logFile = $logDir . '/' . $logFile;
   
 $h = HTML::Element->new('html');
 
+$inc = HTML::Element->new("~pi",
+			  text => 'php require \'include.php\';?');
+
 $dec = HTML::Element->new("~declaration", text=>'DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"');
 
 $head = HTML::Element->new('head');
 
 # coomon base:
 $php1 = HTML::Element->new("~pi",
-			   text => 'php require \'../../common/base.php\';?');
+			   text => 'php require $commonDir . \'/base.php\';?');
 $head->push_content($php1);
 
 # meta
@@ -89,13 +92,15 @@ $head->push_content($title);
 
 $h->push_content($head);
 
-$body = HTML::Element->new('body', background => '../../images/cgal-bg2.gif');
+$body = HTML::Element->new("~pi",
+			   text => 'php echo \'<body background=\\\'\' . $imagesDir . \'/cgal-bg2.gif\\\'>\'; ?');
+# $body = HTML::Element->new('body', background => '../../images/cgal-bg2.gif');
 
 $a = HTML::Element->new('a', name => 'top');
 $body->push_content($a);
 
 $php2 = HTML::Element->new("~pi",
-			   text => 'php require \'../../common/header.php\';?');
+			   text => 'php require $commonDir . \'/header.php\';?');
 $body->push_content($php2);
 
 $center = HTML::Element->new('center');
@@ -326,19 +331,25 @@ for $i (0 .. $#cpus) {
 }
 
 $a2 = HTML::Element->new('a', href => '#top');
-$img = HTML::Element->new('img',
-			  src => '../../images/icons/top.gif',
-			  alt => '[Top]', align => 'middle',  border => '0');
+
+$img = HTML::Element->new("~pi",
+			  text => 'php echo \'<img alt=\\\'[Top]\\\', align=\\\'middle\\\',  border=0 src=\\\'\' . $iconsDir . \'/top.gif\\\'>\'; ?');
+
+#$img = HTML::Element->new('img',
+#			  src => '../../images/icons/top.gif',
+#			  alt => '[Top]', align => 'middle',  border => '0');
+
 $a2->push_content($img);
 $body->push_content($a2);
 
 $php3 = HTML::Element->new("~pi",
-			   text => 'php require \'../../common/footer.php\';?');
+			   text => 'php require $commonDir . \'/footer.php\';?');
 $body->push_content($php3);
     
 $h->push_content($body);
 
 open (PHPFILE, ">$phpFile") or die "cannot open $phpFile: $! for writing\n";
+print PHPFILE $inc->as_HTML('<>&','  ');
 print PHPFILE $dec->as_HTML('<>&','  ');
 print PHPFILE $h->as_HTML('<>&','  ');
 close PHPFILE;
