@@ -716,7 +716,7 @@ convert_from_to (const Interval_nt&, const FT & z)
     return tmp;
 }
 
-#ifndef CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template <class FT>
 inline
 Interval_nt
@@ -727,7 +727,7 @@ convert_to (const FT & z)
     FPU_set_cw(backup);
     return tmp;
 }
-#endif // CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 
 CGAL_END_NAMESPACE
 
