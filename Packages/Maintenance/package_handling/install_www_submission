@@ -9,7 +9,7 @@ use Cwd;
 my $testing=0;
 
 my ($packagedir, $oldpackagedir, $download_dir,
-    $maintainer, $console_output, $tempdir);
+    $maintainer, $console_output, $tempdir, $check_source_file_prog);
 my $WGET;
 
 
@@ -23,12 +23,16 @@ sub init_variables()
 	$download_dir='/users/geert/tmp/inst_www/download';
 	$maintainer='geert@cs.uu.nl';
 	$console_output=1;
+	$check_source_file_prog=
+	'/users/geert/CGAL/Geert/maintenance/check_headers';
     } else {
 	$packagedir='/users/www/CGAL/Members/Develop/updates/packages';
 	$oldpackagedir='/users/www/CGAL/Members/Develop/updates/old_packages';
 	$download_dir='/projects/CGAL/submissions/download';
 	$maintainer='geert@cs.uu.nl';
 	$console_output=0;
+	$check_source_file_prog=
+	'/projects/CGAL/submissions/autohandle/scripts/check_headers';
     }
     $WGET="/users/wieger/local/bin/wget -Y off -nd -P $download_dir";
 }
@@ -40,8 +44,6 @@ $ENV{PATH}=
 
 my $ACTUAL_LOGFILE="/tmp/install_www_submission.log.$$";
 
-my $check_source_file_prog=
-	'/projects/CGAL/submissions/autohandle/scripts/check_headers';
 
 
 # write to logfile
@@ -176,13 +178,12 @@ sub check_version($)
     ($new_version_string, $new_date) = get_version('version');
     if (!defined($new_version_string)) {
 	log_msg "Failed to parse version file";
-	return 0;
+	return ();
     }
     ($old_version_string, $old_date) =
 	get_version("$packagedir/$package_name/version");
     if (!defined($old_version_string)) {
-	log_msg "No previous version";
-	return 1;
+	return ($new_version_string, $old_version_string);
     }
     my ($new_nr,$old_nr);
     @nversion = split /\./, $new_version_string;
@@ -194,17 +195,15 @@ sub check_version($)
 	if ($new_nr < $old_nr) {
 	    log_msg
 	"Version $new_version_string is not bigger than $old_version_string";
-	    return 0;
+	    return ();
 	}
 	if ($new_nr > $old_nr) {
-	    log_msg
-		"Version $new_version_string will replace $old_version_string";
-	    return 1;
+	    return ($new_version_string,$old_version_string);
 	}
     }
     log_msg
 	"Version $new_version_string is not bigger than $old_version_string";
-    return 0;
+    return ();
 }
 
 my @source_files_to_check;
@@ -216,8 +215,9 @@ sub add_codefiles
     }
 }
 
-sub check_codefiles()
+sub check_codefiles($)
 {
+    my $package_name = $_[0];
     @source_files_to_check = ();
     if (-d 'include') {
 	find(\&add_codefiles, "include");
@@ -230,7 +230,7 @@ sub check_codefiles()
     }
     my $source_file;
     foreach $source_file (@source_files_to_check) {
-	system("$check_source_file_prog -v V $source_file >tmpmsg.$$");
+	system("$check_source_file_prog -u -d \"\" -p \"$package_name\" $source_file >tmpmsg.$$");
 	open CHECK_MSGS, "<tmpmsg.$$";
 	while (<CHECK_MSGS>) {
 	    chomp;
@@ -243,23 +243,28 @@ sub check_codefiles()
 
 sub check_package($)
 {
+    my ($version, $prev_version);
     if ( ! -f 'version' ) {
 	log_msg "ERROR: File version is missing!";
 	return 0;
     }
-    if (!check_version($_[0]) ) {
+    if ( ! (($version, $prev_version) = check_version($_[0])) ) {
 	log_msg "ERROR: version file does not pass the checks!";
 	return 0;
     }
     if ( ! -f 'description.txt' ) {
 	log_msg "WARNING: File description.txt is missing!";
     }
-    
     if ( ! -f 'changes.txt' ) {
 	log_msg "WARNING: File changes.txt is missing!";
     }
 
-    check_codefiles();
+    check_codefiles("$_[0] ($version)");
+    if (defined($prev_version)) {
+	log_msg "Version $version will replace $prev_version";
+    } else {
+	log_msg "Version $version will be installed";
+    }
     return 1;
 }
 
@@ -363,9 +368,9 @@ sub do_submission($)
     $url_with_password =~ s|http://|http://member1:cg4any1@|;
     unlink glob("$download_dir/*") if (! $testing);
     log_header "downloading $url";
-    my $logfileno = fileno(LOGFILE);
-    die "Log file not open" if ! defined($logfileno);
-    system("$WGET $url_with_password >>$logfileno 2>&$logfileno");
+#    my $logfileno = fileno(LOGFILE);
+#    die "Log file not open" if ! defined($logfileno);
+    system("$WGET $url_with_password");
 #    system("$WGET $url_with_password >> $ACTUAL_LOGFILE 2>&1") if (! $testing);
     if ( ! -f "$download_dir/$file_name" ) {
 	log_msg "ERROR: download failed!";
