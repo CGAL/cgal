@@ -1,4 +1,8 @@
 13 Mar 2004 Sylvain Pion
+- Use TriangleC3 instead of TriangleH3.
+  Duplicated Has_on_3 instead.
+
+13 Mar 2004 Sylvain Pion
 - Move the following to the new scheme :
   area(3 Point_2), operator-(2 Point_[23]), collinear(3 Point_3),
   angle(3 Point_3), coplanar_orientation([34] Point_3),

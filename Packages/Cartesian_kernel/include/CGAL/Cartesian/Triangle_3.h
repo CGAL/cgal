@@ -143,19 +143,12 @@ TriangleC3<R>::bbox() const
 }
 
 template < class R >
+inline
 bool
 TriangleC3<R>::
 has_on(const typename TriangleC3<R>::Point_3 &p) const
 {
-  Point_3  o  = vertex(0) + supporting_plane().orthogonal_vector();
-  Vector_3 v0 = vertex(0)-o,
-           v1 = vertex(1)-o,
-           v2 = vertex(2)-o;
-
-  FT alpha, beta, gamma;
-  solve(v0, v1, v2, p-o, alpha, beta, gamma);
-  return (alpha >= FT(0)) && (beta >= FT(0)) && (gamma >= FT(0))
-      && ((alpha+beta+gamma == FT(1)));
+  return R().has_on_3_object()(*this, p);
 }
 
 template < class R >

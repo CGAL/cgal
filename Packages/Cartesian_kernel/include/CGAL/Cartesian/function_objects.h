@@ -1685,6 +1685,52 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
+  class Has_on_3
+  {
+    typedef typename K::FT               FT;
+    typedef typename K::Point_3          Point_3;
+    typedef typename K::Vector_3         Vector_3;
+    typedef typename K::Line_3           Line_3;
+    typedef typename K::Ray_3            Ray_3;
+    typedef typename K::Segment_3        Segment_3;
+    typedef typename K::Plane_3          Plane_3;
+    typedef typename K::Triangle_3       Triangle_3;
+  public:
+    typedef bool             result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    bool
+    operator()( const Line_3& l, const Point_3& p) const
+    { return l.has_on(p); }
+
+    bool
+    operator()( const Ray_3& r, const Point_3& p) const
+    { return r.has_on(p); }
+
+    bool
+    operator()( const Segment_3& s, const Point_3& p) const
+    { return s.has_on(p); }
+
+    bool
+    operator()( const Plane_3& pl, const Point_3& p) const
+    { return pl.has_on(p); }
+
+    bool
+    operator()( const Triangle_3& t, const Point_3& p) const
+    {
+      Point_3  o  = t.vertex(0) + t.supporting_plane().orthogonal_vector();
+      Vector_3 v0 = t.vertex(0)-o,
+               v1 = t.vertex(1)-o,
+               v2 = t.vertex(2)-o;
+
+      FT alpha, beta, gamma;
+      solve(v0, v1, v2, p-o, alpha, beta, gamma);
+      return (alpha >= FT(0)) && (beta >= FT(0)) && (gamma >= FT(0))
+          && ((alpha+beta+gamma == FT(1)));
+    }
+  };
+
+  template <typename K>
   class Less_distance_to_point_2
   {
     typedef typename K::Point_2   Point_2;
