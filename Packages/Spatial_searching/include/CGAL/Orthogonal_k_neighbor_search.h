@@ -99,18 +99,21 @@ namespace CGAL {
       else 
 	if (search_nearest) insert=
 			      ( dist < l.rbegin()->second ); 
-	else insert=(dist > l.begin()->second);
+	else insert=(dist > l.rbegin()->second);
       if (insert) {
 	actual_k++;	 	
 	typename NN_list::iterator it=l.begin();
+        if (search_nearest)
 	for (; (it != l.end()); ++it) 
 	  { if (dist < it->second) break;}
+        else 
+        for (; (it != l.end()); ++it) 
+	  { if (dist > it->second) break;}
 	Point_with_transformed_distance NN_Candidate(*I,dist);
 	l.insert(it,NN_Candidate);
 	if (actual_k > max_k) {
 	  actual_k--;
-	  if (search_nearest) l.pop_back();
-	  else l.pop_front();
+	  l.pop_back();
 	}
       }
 
