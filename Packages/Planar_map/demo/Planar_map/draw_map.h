@@ -21,7 +21,7 @@
 #if defined (USE_LEDA_RAT_KERNEL)
 #include <CGAL/Pm_leda_segment_exact_traits.h>
 #else
-#include <CGAL/Pm_segment_epsilon_traits.h>
+#include <CGAL/Pm_segment_exact_traits.h>
 #endif
 #endif
 
@@ -61,7 +61,7 @@ typedef CGAL::Pm_segment_exact_traits<Rep>     Traits;
 #if defined(USE_LEDA_RAT_KERNEL)
 typedef CGAL::Pm_leda_segment_exact_traits     Traits;
 #else
-typedef CGAL::Pm_segment_epsilon_traits<Rep>   Traits;
+typedef CGAL::Pm_segment_exact_traits<Rep>   Traits;
 #endif
 #endif
 
