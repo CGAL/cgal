@@ -408,9 +408,6 @@ int
 main(int argc, char **argv)
 {
   QApplication app( argc, argv );
-    app.setStyle( new QPlatinumStyle );
-    QPalette p( QColor( 250, 215, 100 ) );
-    app.setPalette( p, TRUE );
   Window W(500,500); // physical widgetdow size
   app.setMainWidget(&W);
   W.setCaption(my_title_string);

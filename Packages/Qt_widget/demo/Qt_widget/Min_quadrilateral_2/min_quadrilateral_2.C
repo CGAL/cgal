@@ -214,9 +214,6 @@ int
 main(int argc, char **argv)
 {
   QApplication app( argc, argv );
-    app.setStyle( new QPlatinumStyle );
-    QPalette p( QColor( 250, 215, 100 ) );
-    app.setPalette( p, TRUE );
   MyWindow widget(500, 500); // physical window size
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
