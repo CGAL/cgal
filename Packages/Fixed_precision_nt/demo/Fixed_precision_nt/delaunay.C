@@ -1,3 +1,12 @@
+#ifndef CGAL_USE_LEDA
+#include <iostream>
+int main()
+{
+  std::cout << "This demo requires the LEDA window." << std::endl;
+  return 0;
+}
+#else
+
 #include <CGAL/basic.h>
 #include <cstdio>
 #include <cstring>
@@ -10,27 +19,17 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 
-#include <CGAL/Triangulation_euclidean_traits_2.h>
-
-#include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <CGAL/IO/Window_stream.h>
-
 
 typedef CGAL::Fixed_precision_nt coord_type;
 static bool Fixed_precision_nt_init_result 
                 =  CGAL::Fixed_precision_nt::init(2000.0);
 
-typedef CGAL::Cartesian<coord_type>  Repclass;
-
-typedef Repclass::Point_2  Point_;
-
-typedef CGAL::Triangulation_euclidean_traits_2<Repclass> Traits_;
-typedef CGAL::Triangulation_vertex_base_2<Traits_> Vb;
-typedef CGAL::Triangulation_face_base_2<Traits_>  Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Traits_,Vb,Fb> Tds;
-typedef CGAL::Delaunay_triangulation_2<Traits_,Tds>  Delaunay_;
+typedef CGAL::Cartesian<coord_type>               Repclass;
+typedef Repclass::Point_2                         Point_;
+typedef CGAL::Delaunay_triangulation_2<Repclass>  Delaunay_;
 
 int main()
 {
@@ -51,12 +50,14 @@ int main()
       int b = W.get_mouse(x,y);
       if ( ! ( (b == MOUSE_BUTTON(1)) ||
 	       (b == MOUSE_BUTTON(2)) ||
-	       (b == MOUSE_BUTTON(3)))) continue;
-      if (b!=MOUSE_BUTTON(1)) break;
+	       (b == MOUSE_BUTTON(3))))
+        continue;
+      if (b != MOUSE_BUTTON(1))
+        break;
       D.insert( Point_(coord_type(x), coord_type(y)));
       W.clear();
       W << D;
     }
     return 0;
 }
-
+#endif
