@@ -70,6 +70,12 @@ and the geometry smoothing policies.
 %-----------------------------------------------------------------------
 \subsubsection{Primal Quad Quadralization}
 
+\begin{figure}[htb]
+    \centering{\includegraphics[width=12.0cm]{figs/TriCube_CC.eps}}
+    \caption{Catmull-Clark subdivision of the box polyhedron.}
+    \label{fig:cc}
+\end{figure}
+
 A subdivision algorithm in CSL is constructed as a
 \emph{refinement function} parameterized with a set of the  
 \emph{geometry smoothing rules}. The rule set is specified as
@@ -405,6 +411,13 @@ accompanying source code.
 
 %-----------------------------------------------------------------------
 \subsubsection{Dual Quad Quadralization}
+
+\begin{figure}[htb]
+    \centering{\includegraphics[width=12.0cm]{figs/TriCube_DS.eps}}
+    \caption{Doo-Sabin subdivision of the box polyhedron.}
+    \label{fig:ds}
+\end{figure}
+
 Primal schemes, such as PQQ, PTQ and $\sqrt{3}$ refinement,
 reserve the control polyhedron or control vertices.
 These schemes can devise a sequence of Euler operations
