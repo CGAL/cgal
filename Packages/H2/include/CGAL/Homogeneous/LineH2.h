@@ -383,20 +383,14 @@ LineH2<R>::operator==(const LineH2<R>& l) const
   if ( sc == slc )
   {
       if (sc == 0)
-      {
           return (  (a()*l.b() == b()*l.a() )
                   &&(CGAL_NTS sign(a() )== CGAL_NTS sign( l.a() ))
                   &&(CGAL_NTS sign(b() )== CGAL_NTS sign( l.b() )) );
-      }
       else
-      {
           return true;
-      }
   }
   else
-  {
       return false;
-  }
 }
 
 template < class R >
