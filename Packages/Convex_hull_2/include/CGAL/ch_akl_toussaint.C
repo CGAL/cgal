@@ -34,6 +34,7 @@
 #include <CGAL/ch_graham_andrew.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/functional.h>
+#include <CGAL/IO/Tee_for_output_iterator.h>
 
 CGAL_BEGIN_NAMESPACE
 template <class ForwardIterator, class OutputIterator, class Traits>
