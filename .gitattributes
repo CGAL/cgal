@@ -163,8 +163,6 @@ Packages/Kernel_23/doc_tex/kernel/compare_x_at_y.fig -text
 Packages/Kernel_23/doc_tex/kernel/compare_x_at_y.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/kernel/transvecthree.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/kernel/transvectwo.gif -text svneol=unset#unset
-Packages/Kernel_d/doc_ps/basic/Convex_hull_d/Appman.ps.gz svneol=native#unset
-Packages/Kernel_d/doc_ps/kernel/Kernel_d.ps.gz svneol=native#unset
 Packages/Manual_tools/src/mstring.doc -text
 Packages/Matrix_search/doc_tex/Optimisation/Optimisation_ref/MatrixSearch_pcenter1.gif svneol=native#unset
 Packages/Matrix_search/doc_tex/Optimisation/Optimisation_ref/MatrixSearch_pcenter2.gif svneol=native#unset
