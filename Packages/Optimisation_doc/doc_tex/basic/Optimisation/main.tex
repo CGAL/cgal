@@ -9,6 +9,9 @@
 % $Date$
 % =============================================================================
 
+\newcommand{\SaveSpaceByHand}[1]{}
+\newcommand{\ccSetThreeColumnsByHand}{\ccSetThreeColumns}
+
 \chapter{Optimisation} \label{Optimisation}
 \RCSdef{\OptRCSRev}{$Revision$}
 \RCSdefDate{\OptRCSDate}{$Date$}
@@ -19,23 +22,23 @@
 
 \section{Introduction}
 
-This chapter describes a routine for computing and updating the
-smallest enclosing circle of a finite point set. Formally, the
-`smallest enclosing circle' is the boundary of the closed disk of
-minimum area covering the point set. It is known that this disk
-is unique. We usually identify the disk with its bounding circle,
-allowing us to talk about points being on the boundary of the
-circle, etc.
+This chapter describes routines for computing and updating the
+smallest enclosing circle resp.\ ellipse of a finite point set.
+Formally, the `smallest enclosing circle' is the boundary of the
+closed disk of minimum area covering the point set. It is known that
+this disk is unique. We usually identify the disk with its bounding
+circle, allowing us to talk about points being on the boundary of the
+circle, etc. The same holds for the smallest enclosing ellipse.
 
-The algorithm works in an incremental manner. It is implemented
-as a semi-dynamic data structure, thus allowing to insert points
-while maintaining the smallest enclosing circle.
+The algorithms work in an incremental manner. They are implemented
+as semi-dynamic data structures, thus allowing to insert points
+while maintaining the smallest enclosing circle resp.\ ellipse.
 
 \subsubsection*{Traits Class}
-The class template is parameterized with a traits class which defines
-the abstract interface between the optimisation algorithm and the
-primitives it uses. We provide a traits class implementation that
-interfaces the optimisation algorithm with the \cgal\ kernel. It is
+The class templates are parameterized with a traits class which
+defines the abstract interface between the optimisation algorithma and
+the primitives it uses. We provide a traits class implementation that
+interfaces the optimisation algorithms with the \cgal\ kernel. It is
 presented in Section~\ref{sec:opt_traits_impl}. In addition, we
 provide traits class adapters to user supplied point classes, see
 Section~\ref{sec:opt_traits_adapt}. Section~\ref{sec:opt_traits_req}
@@ -50,10 +53,11 @@ e.g.\ defining the compiler flag
 \ccc{CGAL_OPTIMISATION_NO_PRECONDITIONS} switches precondition
 checking off, cf.~Section~\ref{assertions}.
 
-\include{Min_circle_2}
-%\include{Min_ellipse_2}
-\include{traits_implementations}
-\include{traits_adapters}
-\include{traits_requirements}
+\input{Min_circle_2}
+\input{Min_ellipse_2}
+
+\input{traits_implementations}
+\input{traits_adapters}
+\input{traits_requirements}
 
 % ===== EOF ===================================================================

@@ -1,16 +1,20 @@
 % =============================================================================
 % The CGAL Reference Manual
+% Chapter: Optimisation
 % Section: 2D Smallest Enclosing Ellipse
 % -----------------------------------------------------------------------------
-% source: Library/spec/Min_ellipse_2.tex
+% file:   spec/Optimisation/Min_ellipse_2.tex
 % author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
 % -----------------------------------------------------------------------------
 % $Revision$
 % $Date$
 % =============================================================================
- 
-\begin{ccClassTemplate}{CGAL_Min_ellipse_2<I>}
+
+\clearpage
+
+\begin{ccClassTemplate}{CGAL_Min_ellipse_2<Traits>}
 \ccSection{2D Smallest Enclosing Ellipse}
+\label{sec:min_ellipse_2_spec}
 
 % -----------------------------------------------------------------------------
 \ccDefinition
@@ -18,64 +22,57 @@
 An object of the class \ccClassTemplateName\ is the unique ellipse of
 smallest area enclosing a finite set of points in two-dimensional
 euclidean space $\E_2$. For a point set $P$ we denote by $me(P)$ the
-smallest ellipse that contains all points of $P$. Note that $me(P)$ can
-be degenerate, i.e.\ $me(P)=$\ccTexHtml{$\;\emptyset$}{&Oslash;} if
-$P=$\ccTexHtml{$\;\emptyset$}{&Oslash;}, $me(P)=\{p\}$ if $P=\{p\}$,
-and $me(P) = \{ (1-\lambda)p + \lambda q \mid 0 \leq \lambda \leq 1 \}$
-if $P=\{p,q\}$.
+smallest ellipse that contains all points of $P$. Note that $me(P)$ can be
+degenerate, i.e.\ $me(P)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ if
+$P=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$, $me(P)=\{p\}$ if $P=\{p\}$,
+and $me(P) = \{ (1-\lambda)p + \lambda q \mid 0 \leq \lambda \leq 1 \}$ if
+$P=\{p,q\}$.
 
 An inclusion-minimal subset $S$ of $P$ with $me(S)=me(P)$ is called a
-{\em support set}, the points in $S$ are the {\em support points}. A
-support set has size at most five, and all its points lie on the
+\emph{support set}, the points in $S$ are the \emph{support points}.
+A support set has size at most five, and all its points lie on the
 boundary of $me(P)$. If $me(P)$ has more than five points on the
 boundary, neither the support set nor its size are necessarily unique.
 
-The underlying algorithm can cope with all kinds of input, e.g.\ $P$
-may be empty or points may occur more than once. The algorithm
+The underlying algorithm can cope with all kinds of input, e.g.\
+$P$ may be empty or points may occur more than once. The algorithm
 computes a support set $S$ which remains fixed until the next insert
-operation.
+or clear operation.
 
 \emph{Note:} In this release correct results are only guaranteed if
-exact arithmetic is used, see Section~\ref{sec:opt_I_Impl}.
+exact arithmetic is used, see Section~\ref{sec:opt_traits_impl}.
 
 \ccInclude{CGAL/Min_ellipse_2.h}
 
 % -----------------------------------------------------------------------------
-\ccHeading{Interface}
+\ccHeading{Traits Class}
 
-The template parameter \ccc{I} is the interface class for optimisation
-algorithms. It is a traits class that defines the interface between
-optimisation algorithms and the primitives they use. For example
-\ccc{I::Point} is a mapping on a point class. Think of it as 2D points
-in the Euclidean plane.
-
-\cgal\ provides a ready-made implementation for the interface class as
-described in Section~\ref{sec:opt_I_Impl}. Customizing own interface
-classes for optimisation algorithms can be done according to the
-requirements for interface classes listed in
-Section~\ref{sec:opt_I_Req}.
+\input{topic_Traits_Class.tex}
 
 % -----------------------------------------------------------------------------
 \ccTypes
 
-\ccSetThreeColumns{typedef I::Ellipse}{Ellipse;M}{}
-\ccPropagateThreeToTwoColumns
+\ccNestedType{Traits}{}
 
-\ccNestedType{I}{Interface type.}
-
-\ccTypedef{typedef I::Point  Point; }{Point  type.}
-%\ccTypedef{typedef I::Ellipse Ellipse;}{Ellipse type.}
+\ccGlueBegin
+\ccUnchecked
+\ccTypedef{typedef Traits::Point    Point;  }{Point   type.}
+\ccUnchecked
+\ccTypedef{typedef Traits::Ellipse  Ellipse;}{Ellipse type.}
+\ccGlueEnd
 
 The following types denote iterators that allow to traverse all points
 and support points of the smallest enclosing ellipse, resp. The
 iterators are non-mutable and their value type is \ccc{Point}. The
 iterator category is given in parentheses.
 
-\ccSetTwoColumns{CGAL_Min_ellipse_2<I>:: Support_point_const_iterator}{}
+\ccSetTwoColumns{CGAL_Min_ellipse_2<Traits>:: Support_point_iterator}{}
 
-\ccNestedType{Point_const_iterator}{(bidirectional).}
+\ccNestedType{Point_iterator}{(bidirectional).}
 
-\ccNestedType{Support_point_const_iterator}{(random access).}
+\ccNestedType{Support_point_iterator}{(random access).}
+
+\ccPropagateThreeToTwoColumns
 
 % -----------------------------------------------------------------------------
 \ccCreation
@@ -86,62 +83,17 @@ set $P$ and by specialized construction methods expecting no, one, two,
 three, four or five points as arguments. The latter methods can be
 useful for reconstructing $me(P)$ from a given support set $S$ of $P$.
 
-\ccSetThreeColumns{CGAL_Bounded_side}{}{
-  returns \ccc{CGAL_ON_BOUNDED_SIDE}, \ccc{CGAL_ON_BOUNDARY},}
-\ccPropagateThreeToTwoColumns
-
-\ccConstructor{ CGAL_Min_ellipse_2( );}{
-        introduces a variable \ccVar\ of type \ccClassTemplateName.
-        It is initialized to
-        $me($\ccTexHtml{$\emptyset$}{&Oslash;}$)$, the empty set.
-        \ccPostcond \ccc{\ccVar.is_empty()} = \ccc{true}.}
-
-\ccHidden
-\ccConstructor{ CGAL_Min_ellipse_2(
-                const CGAL_Min_ellipse_2<I>& min_ellipse2);}{
-        copy constructor.}
-
-\ccConstructor{ CGAL_Min_ellipse_2( Point const& p);}{
-        introduces a variable \ccVar\ of type \ccClassTemplateName.
-        It is initialized to $me(\{p\})$, the set $\{p\}$.
-        \ccPostcond \ccc{\ccVar.is_degenerate()} = \ccc{true}.}
-
-\ccConstructor{ CGAL_Min_ellipse_2( Point const& p,
-                                    Point const& q);}{
-        introduces a variable \ccVar\ of type \ccClassTemplateName.
-        It is initialized to $me(\{p,q\})$, the set
-        $\{ (1-\lambda)p + \lambda q \mid 0 \leq \lambda \leq 1 \}$.
-        \ccPostcond \ccc{\ccVar.is_degenerate()} = \ccc{true}.}
-
-\ccConstructor{ CGAL_Min_ellipse_2( Point const& p1,
-                                    Point const& p2,
-                                    Point const& p3);}{
-        introduces a variable \ccVar\ of type \ccClassTemplateName.
-        It is initialized to $me(\{p1,p2,p3\})$.}
-
-\ccConstructor{ CGAL_Min_ellipse_2( Point const& p1,
-                                    Point const& p2,
-                                    Point const& p3,
-                                    Point const& p4);}{
-        introduces a variable \ccVar\ of type \ccClassTemplateName.
-        It is initialized to $me(\{p1,p2,p3,p4\})$.}
-
-\ccConstructor{ CGAL_Min_ellipse_2( Point const& p1,
-                                    Point const& p2,
-                                    Point const& p3,
-                                    Point const& p4,
-                                    Point const& p5);}{
-        introduces a variable \ccVar\ of type \ccClassTemplateName.
-        It is initialized to $me(\{p1,p2,p3,p4,p5\})$.}
-
 \ccUnchecked
 \ccConstructor{ template < class InputIterator >
-                CGAL_Min_ellipse_2( InputIterator first,
-                                    InputIterator last,
-                                    bool randomize = false,
-                                    CGAL_Random& random = CGAL_Random());}{
-        introduces a variable \ccVar\ of type \ccClassTemplateName. It
-        is initialized to $me(P)$ with $P$ being the set of points in
+                CGAL_Min_circle_2( InputIterator  first,
+                                   InputIterator  last,
+                                   bool           randomize = false,
+                                   CGAL_Random&   random    = CGAL_random,
+                                   Traits const&  traits    = Traits()   );}{
+        creates
+\SaveSpaceByHand{a}
+                  variable \ccVar\ of type \ccClassTemplateName. It
+        is initialized to $mc(P)$ with $P$ being the set of points in
         the range [\ccc{first},\ccc{last}). If \ccc{randomize} is
         \ccc{true}, a random permutation of $P$ is computed in
         advance, using the random numbers generator \ccc{random}.
@@ -149,140 +101,303 @@ useful for reconstructing $me(P)$ from a given support set $S$ of $P$.
         efficiency depends on the order in which the points are
         processed, and a bad order might lead to extremely poor
         performance (see example below).
-        \ccPrecond The value type of \ccc{first} and \ccc{last} is
+        \ccPrecond  The value type of \ccc{first} and \ccc{last} is
         \ccc{Point}.}
 
-\emph{Note:} Since most compilers do not support member templates yet,
-we provide specialized constructors instead. In the current release
-there are constructors for C arrays (using pointers as iterators) and
-for STL sequence containers \ccc{vector<Point>} and \ccc{list<Point>}.
+\emph{Note:} Since most compilers do not support template member functions
+yet, we provide specialized constructors instead. In the current release
+there are constructors for C arrays (using pointers as iterators), for the
+\stl\ sequence containers \ccc{vector<Point>} and \ccc{list<Point>} and for
+the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
 
 \ccHidden
-\ccConstructor{ CGAL_Min_ellipse_2( const Point* first,
-                                    const Point* last,
-                                    bool randomize = false,
-                                    CGAL_Random& random = CGAL_Random());}{
+\ccConstructor{ CGAL_Min_ellipse_2( const Point*   first,
+                                    const Point*   last,
+                                    bool           randomize = false,
+                                    CGAL_Random&   random    = CGAL_random,
+                                    Traits const&  traits    = Traits()   );}{
         STL-like constructor for random access iterators.}
 
 \ccHidden
-\ccConstructor{ CGAL_Min_ellipse_2( list<Point>::const_iterator first,
-                                    list<Point>::const_iterator last,
-                                    bool randomize = false,
-                                    CGAL_Random& random = CGAL_Random());}{
+\ccConstructor{ CGAL_Min_ellipse_2( list<Point>::const_iterator  first,
+                                    list<Point>::const_iterator  last,
+                                    bool           randomize = false,
+                                    CGAL_Random&   random    = CGAL_random,
+                                    Traits const&  traits    = Traits()    );}{
         STL-like constructor for sequence container list<Point>.}
 
 \ccHidden
-\ccMemberFunction{ CGAL_Min_ellipse_2<I>&
-                   operator = ( const CGAL_Min_ellipse_2<I>&);}{
+\ccConstructor{ CGAL_Min_ellipse_2( istream_iterator<Point,ptrdiff_t>  first,
+                                    istream_iterator<Point,ptrdiff_t>  last,
+                                    bool           randomize = false,
+                                    CGAL_Random&   random    = CGAL_random,
+                                    Traits const&  traits    = Traits()    );}{
+        STL-like constructor for input stream iterator
+        istream_iterator<Point,ptrdiff_t>.}
+
+
+\ccConstructor{ CGAL_Min_ellipse_2( Traits const& traits = Traits());}{
+        creates
+\SaveSpaceByHand{a}
+                  variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to
+        $me(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$, the empty set.
+        \ccPostcond \ccVar\ccc{.is_empty()} = \ccc{true}.}
+
+\ccConstructor{ CGAL_Min_ellipse_2( Point  const&  p,
+                                    Traits const&  traits = Traits());}{
+        creates
+\SaveSpaceByHand{a}
+                  variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to $me(\{p\})$, the set $\{p\}$.
+        \ccPostcond \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
+
+\ccConstructor{ CGAL_Min_ellipse_2( Point  const&  p,
+                                    Point  const&  q,
+                                    Traits const&  traits = Traits());}{
+        creates
+\SaveSpaceByHand{a}
+                  variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to $me(\{p,q\})$, the set
+        $\{ (1-\lambda)p + \lambda q \mid 0 \leq \lambda \leq 1 \}$.
+        \ccPostcond \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
+
+\ccConstructor{ CGAL_Min_ellipse_2( Point  const&  p1,
+                                    Point  const&  p2,
+                                    Point  const&  p3,
+                                    Traits const&  traits = Traits());}{
+        creates
+\SaveSpaceByHand{a}
+                  variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to $me(\{p1,p2,p3\})$.}
+
+\ccConstructor{ CGAL_Min_ellipse_2( Point  const&  p1,
+                                    Point  const&  p2,
+                                    Point  const&  p3,
+                                    Point  const&  p4,
+                                    Traits const&  traits = Traits());}{
+        creates
+\SaveSpaceByHand{a}
+                  variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to $me(\{p1,p2,p3,p4\})$.}
+
+\ccConstructor{ CGAL_Min_ellipse_2( Point  const&  p1,
+                                    Point  const&  p2,
+                                    Point  const&  p3,
+                                    Point  const&  p4,
+                                    Point  const&  p5,
+                                    Traits const&  traits = Traits());}{
+        creates
+\SaveSpaceByHand{a}
+                  variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to $me(\{p1,p2,p3,p4,p5\})$.}
+
+\ccUnchecked
+\ccHidden
+\ccConstructor{ CGAL_Min_ellipse_2( CGAL_Min_ellipse_2<Traits> const&);}{
+        copy constructor.}
+
+\ccHidden
+\ccConstructor{ ~CGAL_Min_ellipse_2( );}{
+        destructor.}
+
+\ccHidden
+\ccMemberFunction{ CGAL_Min_ellipse_2<Traits>&
+                   operator = ( CGAL_Min_ellipse_2<Traits> const&);}{
         assignment operator.}
 
 % -----------------------------------------------------------------------------
 \ccAccessFunctions
 
-\ccMemberFunction{ int number_of_points( ) const;}{
+\ccMemberFunction{ int  number_of_points( ) const;}{
         returns the number of points of \ccVar, i.e.\ $|P|$.}
 
 \ccMemberFunction{ int number_of_support_points( ) const;}{
         returns the number of support points of \ccVar, i.e.\ $|S|$.}
 
-\ccMemberFunction{ Point_const_iterator  points_begin() const;}{
+\ccGlueBegin
+\ccMemberFunction{ Point_iterator  points_begin() const;}{
         returns an iterator referring to the first point of \ccVar.}
-
-\ccMemberFunction{ Point_const_iterator  points_end() const;}{
+%
+\ccMemberFunction{ Point_iterator  points_end() const;}{
         returns the corresponding past-the-end iterator.}
+\ccGlueEnd
 
-\ccMemberFunction{ Support_point_const_iterator support_points_begin() const;}{
+\ccGlueBegin
+\ccMemberFunction{ Support_point_iterator  support_points_begin() const;}{
         returns an iterator referring to the first support point of \ccVar.}
-
-\ccMemberFunction{ Support_point_const_iterator support_points_end() const;}{
+%
+\ccMemberFunction{ Support_point_iterator  support_points_end() const;}{
         returns the corresponding past-the-end iterator.}
+\ccGlueEnd
 
 \ccMemberFunction{ Point const& support_point( int i) const;}{
         returns the \ccc{i}-th support point of \ccVar. Between two
-        insert operations any call to \ccc{\ccVar.support_point(i)}
-        with the same \ccc{i} returns the same point.
-        \ccPrecond $0 \leq i <$ \ccc{\ccVar.number_of_support_points()}.}
+        modifying operations (see below) any call to
+        \ccVar\ccc{.support_point(i)} with the same \ccc{i} returns
+        the same point.
+        \ccPrecond $0 \leq i< \mbox{\ccVar\ccc{.number_of_support_points()}}$.}
 
-\ccMemberFunction{ CGAL_Bbox_2 bbox( ) const;}{
-        returns a bounding box containing \ccVar.
-        \ccPrecond \ccc{\ccVar.is_empty()} = \ccc{false}.
-        \\ \textbf{Not supported in this release!}}
+\ccMemberFunction{ Ellipse const&  ellipse( ) const;}{
+        returns the current ellipse of \ccVar.}
 
 % -----------------------------------------------------------------------------
-\ccHeading{Predicates}
-
-%The following predicates imitate the corresponding ones of the class
-%\ccc{Ellipse}, with the exception of \ccc{is_empty()}
-%which is not present in \ccc{Ellipse}, because objects of
-%this class cannot be empty.
+\ccPredicates
 
 By definition, an empty \ccClassTemplateName\ has no boundary and no
 bounded side, i.e.\ its unbounded side equals the whole plane $\E_2$.
 
 \ccMemberFunction{ CGAL_Bounded_side
                    bounded_side( Point const& p) const;}{
-        returns \ccc{CGAL_ON_BOUNDED_SIDE},
-        \ccc{CGAL_ON_BOUNDARY}, or
-        \ccc{CGAL_ON_UNBOUNDED_SIDE} iff \ccc{p} lies inside,
-        on the boundary, or outside of \ccVar, resp.}
+        returns \ccc{CGAL_ON_BOUNDED_SIDE},\ccTexHtml{$\:$}{ }%
+        \ccc{CGAL_ON_BOUNDARY}, or \ccc{CGAL_ON_UNBOUNDED_SIDE}
+        iff \ccc{p} lies properly inside, on the boundary, or properly
+        outside of \ccVar, resp.}
 
-\ccMemberFunction{ bool has_on_bounded_side( Point const& p) const;}{
-        returns \ccc{true}, iff \ccc{p} lies inside \ccVar.}
+\ccMemberFunction{ bool  has_on_bounded_side( Point const& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies properly inside \ccVar.}
 
-\ccMemberFunction{ bool has_on_boundary( Point const& p) const;}{
+\ccMemberFunction{ bool  has_on_boundary( Point const& p) const;}{
         returns \ccc{true}, iff \ccc{p} lies on the boundary
         of \ccVar.}
 
-\ccMemberFunction{ bool
-                   has_on_unbounded_side( Point const& p) const;}{
+\ccMemberFunction{ bool  has_on_unbounded_side( Point const& p) const;}{
         returns \ccc{true}, iff \ccc{p} lies outside of \ccVar.}
 
-\ccMemberFunction{ bool is_empty( ) const;}{
+\ccMemberFunction{ bool  is_empty( ) const;}{
         returns \ccc{true}, iff \ccVar\ is empty (this implies
         degeneracy).}
 
-\ccMemberFunction{ bool is_degenerate( ) const;}{
-        returns \ccc{true}, iff \ccVar\ is degenerate, i.e. if
-        \ccVar\ is empty or equal to a single point, equivalently if
-        the number of support points is less than 2.}
+\ccMemberFunction{ bool  is_degenerate( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is degenerate, i.e.\ if
+        \ccVar\ is empty, equal to a single point or equal to a segment,
+        equivalently if the number of support points is less than 3.}
 
 % -----------------------------------------------------------------------------
-\ccHeading{Modifiers}
+\ccModifiers
 
 New points can be added to an existing $\ccVar$, allowing to build
 $me(P)$ incrementally, e.g.\ if $P$ is not known in advance. Compared
 to the direct creation of $me(P)$, this is not much slower, because
 the construction method is incremental itself.
 
-\ccMemberFunction{ void insert( Point const& p);}{
-        inserts \ccc{p} in \ccVar\ and recomputes the smallest
+\ccMemberFunction{ void  insert( Point const& p);}{
+        inserts \ccc{p} into \ccVar\ and recomputes the smallest
         enclosing ellipse.}
+
+\ccUnchecked
+\ccMemberFunction{ template < class InputIterator >
+                   void  insert( InputIterator  first,
+                                 InputIterator  last );}{
+        inserts the points in the range [\ccc{first},\ccc{last})
+        into \ccVar\ and recomputes the smallest enclosing ellipse by
+        calling \ccc{insert(p)} for each point \ccc{p} in
+        [\ccc{first},\ccc{last}).
+        \ccPrecond  The value type of \ccc{first} and \ccc{last} is
+        \ccc{Point}.}
+
+\emph{Note:} Since most compilers do not support template member functions
+yet, we provide specialized \ccc{insert} functions instead. In the current
+release there are \ccc{insert} functions for C arrays (using pointers as
+iterators), for the \stl\ sequence containers \ccc{vector<Point>} and
+\ccc{list<Point>} and for the \stl\ input stream iterator
+\ccc{istream_iterator<Point>}.
+
+\ccHidden
+\ccMemberFunction{ void  insert( const Point*  first,
+                                 const Point*  last );}{
+        STL-like `insert' function for random access iterators.}
+
+\ccHidden
+\ccMemberFunction{ void  insert( list<Point>::const_iterator  first,
+                                 list<Point>::const_iterator  last );}{
+        STL-like `insert' function for sequence container list<Point>.}
+
+\ccHidden
+\ccMemberFunction{ void  insert( istream_iterator<Point,ptrdiff_t>  first,
+                                 istream_iterator<Point,ptrdiff_t>  last );}{
+        STL-like `insert' function for input stream iterator
+        istream_iterator<Point,ptrdiff_t>.}
+
+\ccMemberFunction{ void clear( );}{
+        deletes all points in \ccVar\ and sets \ccVar\ to the empty set.
+        \ccPostcond  \ccVar\ccc{.is_empty()} = \ccc{true}.}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Validity Check}
 
+An object \ccVar\ is valid, iff
+\begin{itemize}
+  \item \ccVar\ contains all points of its defining set $P$,
+  \item \ccVar\ is the smallest ellipse spanned by its support set $S$, and
+  \item $S$ is minimal, i.e.\ no support point is redundant.
+\end{itemize}
+Using the traits class implementation for the \cgal\ kernel with exact
+arithmetic as described in Section~\ref{sec:opt_traits_impl}
+guarantees validity of \ccVar. The following function is mainly
+intended for debugging user supplied traits classes but also for
+convincing the anxious user that the traits class implementation is
+correct.
+\begin{ccAdvanced}
 \ccMemberFunction{ bool is_valid( bool verbose = false,
                                   int  level   = 0    ) const;}{
-        checks \ccVar\ for validity. It returns \ccc{true}, iff
-        (a) \ccVar\ contains all points of its defining set $P$, (b)
-        \ccVar\ is the smallest ellipse spanned by its support set $S$,
-        and (c) $S$ is minimal, i.e.\ no support point is redundant.
-        If \ccc{verbose} is \ccc{true}, error messages are written to
-        standard error stream. The second parameter \ccc{level} is not
-        used, we provide it only for consistency with interfaces of
-        other classes.
-        \\ \textbf{Not supported in this release!}}
+        returns \ccc{true}, iff \ccVar\ is valid. If \ccc{verbose}
+        is \ccc{true}, some messages concerning the performed checks
+        are written to standard error stream. The second parameter
+        \ccc{level} is not used, we provide it only for consistency
+        with interfaces of other classes.}
+\end{ccAdvanced}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Miscellaneous}
+
+\ccMemberFunction{ Traits const&  traits( ) const;}{
+        returns a const reference to the traits class object.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{I/O}
+
+\ccFunction{ ostream& operator << ( ostream& os,
+                                    CGAL_Min_ellipse_2<Traits> const&
+                                        min_ellipse);}{
+        writes \ccVar\ to output stream \ccc{os}.
+        \ccPrecond  The output operator is defined for \ccc{Point}
+        (and for \ccc{Ellipse}, if pretty printing is used).}
+
+\ccFunction{ istream& operator >> ( istream& is,
+                                    CGAL_Min_ellipse_2<Traits> &min_ellipse);}{
+        reads \ccVar\ from input stream \ccc{is}.
+        \ccPrecond  The input operator is defined for \ccc{Point}.}
+
+\ccInclude{CGAL/IO/Window_stream.h}
+
+\ccUnchecked
+\ccFunction{ CGAL_Window_stream&
+             operator << ( CGAL_Window_stream& ws,
+                           CGAL_Min_ellipse_2<Traits> const& min_ellipse);}{
+        writes \ccVar\ to window stream \ccc{ws}.
+        \ccPrecond  The window stream output operator is defined for
+        \ccc{Point} and \ccc{Ellipse}.}
 
 % -----------------------------------------------------------------------------
 \ccImplementation
 
 We implement the algorithm of Welzl, with move-to-front
-heuristic~\cite{Welzl}, using the primitives as described
-in~\cite{BerndSven}. If randomization is chosen, the creation time is
-almost always linear in the number of points. Access functions and
-predicates take constant time, inserting a point might take up to
-linear time, but substantially less than computing the new smallest
-enclosing ellipse from scratch.
+heuristic~\cite{w-sedbe-91a}, using the primitives as described
+in~\cite{gs-epsee-97,gs-seefe-97}. If randomization is chosen, the
+creation time is almost always linear in the number of points. Access
+functions and predicates take constant time, inserting a point might
+take up to linear time, but substantially less than computing the new
+smallest enclosing ellipse from scratch. The clear operation and the
+check for validity each takes linear time.
+
+% -----------------------------------------------------------------------------
+\ccExample
+
+To illustrate the creation of \ccClassTemplateName\ and to show that
+randomization can be useful in certain cases, we give an example.
+
+\ldots
 
 \end{ccClassTemplate}
 
