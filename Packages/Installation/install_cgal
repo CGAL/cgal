@@ -654,7 +654,7 @@ set_compiler_flags()
 	    ADDITIONAL_CXXFLAGS="-pto"
 	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
-	    CGAL_LIB_CREATE="\${CGAL_CXX} -xar -o"
+	    CGAL_LIB_CREATE="\$(CGAL_CXX) -xar -o"
 	    CGAL_SHARED_LIB_CXXFLAGS="-pic"
 	    CGAL_SHARED_LIB_LDFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
@@ -1687,7 +1687,7 @@ _link_run_test()
 	    "----------------------\n" >>${TMP_LOGFILE}
 	${_printf} "\n\nGot the following output:\n" >>${TMP_LOGFILE}
 	${_printf} "---------------------------------\n" >>${TMP_LOGFILE}
-	${TMP_CXX_FILE} >>${TMP_LOGFILE} 2>&1
+	eval "${TMP_CXX_FILE} >>${TMP_LOGFILE} 2>&1"
 	j=$?
 	if [ $j = 0 ]; then
 	    log_print "$1 test execution succeeded."
@@ -3179,6 +3179,7 @@ write_compiler_flags()
   makefile_print_line "${ADDITIONAL_CXXFLAGS}" >> ${FILE}
   makefile_print_line "\$(CGAL_STL_INCLUDE_DIRECTIVE)" >> ${FILE}
   if [ -n "${GMP_SUPPORT}" ]; then
+    makefile_print_line "-DCGAL_USE_GMP" >> ${FILE}
     if [ "${GMP_INSTALLATION}" = 'x' -o \
 	 "${GMP_INSTALLATION}" = 'z' -o \
 	 "${GMP_INSTALLATION}" = 'e' ]; then
@@ -3186,15 +3187,16 @@ write_compiler_flags()
     fi
   fi
   makefile_print_line "-I\$(CGAL_INCL_CONF_DIR)" >> ${FILE}
-  if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_IDIR}" ] ; then
-    makefile_print_line "-I\$(CGAL_INCL_DIR)" >> ${FILE}
-    ${_printf} \
-      "\t-I\$(LEDA_INCL_DIR)\n\n" \
-      >> ${FILE}
+  if [ -n "${LEDA_SUPPORT}" ]; then
+    makefile_print_line "-DCGAL_USE_LEDA" >> ${FILE}
+    if [ -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
+	makefile_print_line "-I\$(CGAL_INCL_DIR)" >> ${FILE}
+	${_printf} "\t-I\$(LEDA_INCL_DIR)\n\n" >> ${FILE}
+    else
+	${_printf} "\t-I\$(CGAL_INCL_DIR)\n\n" >> ${FILE}
+    fi
   else
-    ${_printf} \
-      "\t-I\$(CGAL_INCL_DIR)\n\n" \
-      >> ${FILE}
+    ${_printf} "\t-I\$(CGAL_INCL_DIR)\n\n" >> ${FILE}
   fi
 }
 
@@ -3770,11 +3772,13 @@ while [ $# -gt 0 ]; do
 	    if set_variable_from_command_line 'GMP_INCL_DIR' "$1" "$2"; then
 		shift
 	    fi
+	    GMP_INSTALLATION='e'
 	    ;;
 	--gmp_lib_dir*|--GMP_LIB_DIR*|-GMP_LIB_DIR*|-gmp_lib_dir*)
 	    if set_variable_from_command_line 'GMP_LIB_DIR' "$1" "$2"; then
 		shift
 	    fi
+	    GMP_INSTALLATION='e'
 	    ;;
 	-LEDA*|-leda*|--leda*|--LEDA*)
 	    LEDA_SUPPORT='_LEDA'
