@@ -30,9 +30,7 @@
 
 // includes
 // --------
-#ifndef CGAL_BASIC_H
 #  include <CGAL/basic.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -70,10 +68,7 @@ CGAL_END_NAMESPACE
 // Class implementation (inline functions)
 // =======================================
 // includes
-#ifndef CGAL_PROTECT_CSTDLIB
 #  include <cstdlib>
-#  define CGAL_PROTECT_CSTDLIB
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -83,7 +78,7 @@ bool
 Random::
 get_bool( )
 {
-    return( static_cast< bool>( rand() & 1));
+    return( static_cast< bool>( CGAL_CLIB_STD::rand() & 1));
 }
 
 inline
@@ -92,7 +87,8 @@ Random::
 get_int( int lower, int upper)
 {
     return( lower + static_cast< int>(
-      ( static_cast< double>( upper) - lower) * rand() / rand_max_plus_1));
+      ( static_cast< double>( upper) - lower) * 
+      CGAL_CLIB_STD::rand() / rand_max_plus_1));
 }
 
 inline
@@ -100,7 +96,8 @@ double
 Random::
 get_double( double lower, double upper)
 {
-    return( lower + ( ( upper-lower) * rand() / rand_max_plus_1));
+    return( lower + ( ( upper-lower) * 
+		      CGAL_CLIB_STD::rand() / rand_max_plus_1));
 }
 
 inline

@@ -44,12 +44,12 @@ Random( )
     : rand_max_plus_1( RAND_MAX+1.0)
 {
     // get system's time
-    time_t s;
-    time( &s);
+    std::time_t s;
+    CGAL_CLIB_STD::time( &s);
     unsigned int  seed = s;
 
     // initialize random numbers generator
-    srand( seed);
+    CGAL_CLIB_STD::srand( seed);
 }
 
 Random::
@@ -57,7 +57,7 @@ Random( unsigned int  seed)
     : rand_max_plus_1( RAND_MAX+1.0)
 {
     // initialize random numbers generator
-    srand( seed);
+    CGAL_CLIB_STD::srand( seed);
 }
 
 // Global variables
