@@ -160,7 +160,8 @@ public:
   // Si c'est lazy:
   Interval_nt interval() { return in; }
   // Si c'est pas lazy:
-  // Interval_nt interval() { if (!is_valid(in)) update_interval(); return in; }
+  // Interval_nt interval()
+  // { if (!is_valid(in)) update_interval(); return in; }
   virtual void update_interval() = 0;
   virtual ET exact() const {}; // = 0;
 

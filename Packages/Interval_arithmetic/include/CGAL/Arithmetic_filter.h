@@ -235,8 +235,11 @@ number_type_tag (const Filtered_exact<CT,ET,Type,Protection,Cache> &fil)
 template <class CT, class ET, class Type, class Protection, class Cache>
 inline
 std::ostream &
-operator<< (std::ostream& os, const Filtered_exact<CT,ET,Type,Protection,Cache>& d)
-{ return os << d.value(); }
+operator<< (std::ostream& os,
+	    const Filtered_exact<CT,ET,Type,Protection,Cache>& d)
+{
+    return os << d.value();
+}
 
 template <class CT, class ET, class Type, class Protection, class Cache>
 inline
