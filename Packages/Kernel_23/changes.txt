@@ -1,3 +1,7 @@
+1.65 (2 September 2003) [af]
+- Functors Do_intersect_2 and Intersect_2 now call 
+  CGALi::do_intersect, CGALi::intersection
+
 1.64 (27 August 2003)
 - Change Exact_predicates_inexact_constructions_kernel from Filtered_kernel
   to Filtered_exact.
