@@ -157,8 +157,8 @@ public:
   void compute_normals_for_faces(){
     lock();
     faces_normals.erase(faces_normals.begin(), faces_normals.end());
-    QProgressDialog progress( "Computing normals for faces...", "Cancel computing", 
-                                t.number_of_faces(), NULL, "progress", true );
+    QProgressDialog progress( "Computing normals for faces...", 
+      "Cancel computing", t.number_of_faces(), NULL, "progress", true );
     progress.setMinimumDuration(0);
     int faces_count = 0;
     Finite_faces_iterator fit;
@@ -188,12 +188,13 @@ public:
   void compute_normals_for_vertices(){
     lock();
     vertices_normals.erase(vertices_normals.begin(), vertices_normals.end());
-    QProgressDialog progress( "Computing normals for vertices...", "Cancel computing", 
-      t.number_of_vertices(), NULL, "progress", true );
+    QProgressDialog progress( "Computing normals for vertices...", 
+      "Cancel computing", t.number_of_vertices(), NULL, "progress", true );
     progress.setMinimumDuration(0);
     int vertices_count = 0;
     Finite_vertices_iterator vit;      
-    for (vit = t.finite_vertices_begin(); vit != t.finite_vertices_end(); ++vit){
+    for ( vit = t.finite_vertices_begin(); 
+          vit != t.finite_vertices_end(); ++vit){
       progress.setProgress(vertices_count);
       Face_circulator cit = (&(*vit))->incident_faces();
       unsigned int normals_count = 0;
@@ -314,7 +315,8 @@ protected:
       glBegin(GL_POINTS);
       for (vit = t.finite_vertices_begin(); vit != t.finite_vertices_end(); ++vit)
         glVertex3f(CGAL::to_double((*vit).point().x()), 
-            CGAL::to_double((*vit).point().y()), CGAL::to_double((*vit).point().z()));
+            CGAL::to_double((*vit).point().y()), 
+            CGAL::to_double((*vit).point().z()));
       glEnd();
     } else if(complexity==1){ //render smooth      
       Finite_faces_iterator fit;
@@ -323,15 +325,18 @@ protected:
         CPoint3 pn = CPoint3(0, 0, 0) + vertices_normals[(*fit).vertex(0)];
         glNormal3f(pn.x(), pn.y(), pn.z());
         glVertex3f(CGAL::to_double((*(*fit).vertex(0)).point().x()), 
-          CGAL::to_double((*(*fit).vertex(0)).point().y()), CGAL::to_double((*(*fit).vertex(0)).point().z()));
+          CGAL::to_double((*(*fit).vertex(0)).point().y()), 
+          CGAL::to_double((*(*fit).vertex(0)).point().z()));
         pn = CPoint3(0, 0, 0) + vertices_normals[(*fit).vertex(1)];
         glNormal3f(pn.x(), pn.y(), pn.z());
         glVertex3f(CGAL::to_double((*(*fit).vertex(1)).point().x()), 
-          CGAL::to_double((*(*fit).vertex(1)).point().y()), CGAL::to_double((*(*fit).vertex(1)).point().z()));
+          CGAL::to_double((*(*fit).vertex(1)).point().y()), 
+          CGAL::to_double((*(*fit).vertex(1)).point().z()));
         pn = CPoint3(0, 0, 0) + vertices_normals[(*fit).vertex(2)];
         glNormal3f(pn.x(), pn.y(), pn.z());
         glVertex3f(CGAL::to_double((*(*fit).vertex(2)).point().x()), 
-          CGAL::to_double((*(*fit).vertex(2)).point().y()), CGAL::to_double((*(*fit).vertex(2)).point().z()));
+          CGAL::to_double((*(*fit).vertex(2)).point().y()), 
+          CGAL::to_double((*(*fit).vertex(2)).point().z()));
       }
       glEnd();
     } else {
@@ -342,11 +347,14 @@ protected:
         glNormal3f(pn.x(), pn.y(), pn.z());
 
         glVertex3f(CGAL::to_double((*(*fit).vertex(0)).point().x()), 
-          CGAL::to_double((*(*fit).vertex(0)).point().y()), CGAL::to_double((*(*fit).vertex(0)).point().z()));
+          CGAL::to_double((*(*fit).vertex(0)).point().y()), 
+          CGAL::to_double((*(*fit).vertex(0)).point().z()));
         glVertex3f(CGAL::to_double((*(*fit).vertex(1)).point().x()), 
-          CGAL::to_double((*(*fit).vertex(1)).point().y()), CGAL::to_double((*(*fit).vertex(1)).point().z()));
+          CGAL::to_double((*(*fit).vertex(1)).point().y()), 
+          CGAL::to_double((*(*fit).vertex(1)).point().z()));
         glVertex3f(CGAL::to_double((*(*fit).vertex(2)).point().x()), 
-          CGAL::to_double((*(*fit).vertex(2)).point().y()), CGAL::to_double((*(*fit).vertex(2)).point().z()));      
+          CGAL::to_double((*(*fit).vertex(2)).point().y()), 
+          CGAL::to_double((*(*fit).vertex(2)).point().z()));
       }
       glEnd();
     }
@@ -357,7 +365,8 @@ protected:
     SbBox3f &box, SbVec3f &center){
     Finite_vertices_iterator vit;
     double xmin = 0, ymin = 0, zmin = 0, xmax = 0, ymax = 0, zmax = 0;    
-    for (vit = t.finite_vertices_begin(); vit != t.finite_vertices_end(); ++vit) {
+    for ( vit = t.finite_vertices_begin(); 
+          vit != t.finite_vertices_end(); ++vit) {
       if(CGAL::to_double((*vit).point().x()) < xmin)
         xmin = CGAL::to_double((*vit).point().x());
       if(CGAL::to_double((*vit).point().y()) < ymin)
