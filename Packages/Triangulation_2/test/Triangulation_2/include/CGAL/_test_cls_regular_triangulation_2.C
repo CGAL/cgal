@@ -264,23 +264,22 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   // more vicious, we insert all the points on a single line first
   Cls T2_3;
   Locate_type lt;
+  Face_handle loc;
+  int li;
   Vertex_handle v2_3_1 = T2_3.insert(wp1);
   Vertex_handle v2_3_2 = T2_3.insert(wp2);
-  Vertex_handle v2_3_3 = T2_3.insert(wp3, lt);
-  assert( lt == Cls::EDGE );
-  Vertex_handle v2_3_8 = T2_3.insert(wp8, lt);
-  assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  Vertex_handle v2_3_3 = T2_3.insert(wp3);
+  Vertex_handle v2_3_8 = T2_3.insert(wp8);
   Vertex_handle v2_3_9 = T2_3.insert(wp9);
   assert( T2_3.dimension() == 1 );
   Vertex_handle v2_3_4 = T2_3.insert(wp4);
   assert( T2_3.dimension() == 2 );
   Vertex_handle v2_3_6 = T2_3.insert(wp6, T2_3.finite_faces_begin());
-  Vertex_handle v2_3_0 = T2_3.insert(wp0, lt, ++T2_3.finite_faces_begin());
-  assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  Vertex_handle v2_3_0 = T2_3.insert(wp0, ++T2_3.finite_faces_begin());
   Vertex_handle v2_3_5 = T2_3.insert(wp5);
   Vertex_handle v2_3_7 = T2_3.insert(wp7);
-  Vertex_handle v2_3_10 = T2_3.insert(wp10, lt, ++(++(T2_3.finite_faces_begin())));
-  assert( lt == Cls::FACE );
+  loc = T2_3.locate(wp10,lt,li);
+  Vertex_handle v2_3_10 = T2_3.insert(wp10, lt, loc,li);
   assert( T2_3.dimension() == 2 );
   assert( T2_3.number_of_vertices() == 11 );
   assert( T2_3.is_valid() );
@@ -367,10 +366,6 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   /*************************************/
   /******** POINT LOCATIONS ************/
 
-  // Locate_type lt; // see above
-  int            li;
-  Face_handle    f;
-
   // Check point location in 0-dimensional triangulations
   // No need because of precondition (at least two vertices)
   
@@ -380,65 +375,65 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   T1_3_2.insert(p1);
   T1_3_2.insert(p2);
   T1_3_2.insert(p9); 
-  f = T1_3_2.locate(p1,lt,li); assert( lt == Cls::VERTEX );
-  assert( T1_3_2.geom_traits().compare(f->vertex(li)->point(), p1) );
-  f = T1_3_2.locate(p2,lt,li); assert( lt == Cls::VERTEX );
-  assert( T1_3_2.geom_traits().compare(f->vertex(li)->point(), p2) );
-  f = T1_3_2.locate(p9,lt,li); assert( lt == Cls::VERTEX );
-  assert( T1_3_2.geom_traits().compare(f->vertex(li)->point(), p9) );
-  f = T1_3_2.locate(p3,lt,li); assert( lt == Cls::EDGE );
-  assert( (T1_3_2.geom_traits().compare(f->vertex(f->ccw(li))->point(), p1)
-        && T1_3_2.geom_traits().compare(f->vertex(f->cw(li))->point(), p2))
-       || (T1_3_2.geom_traits().compare(f->vertex(f->ccw(li))->point(), p2)
-        && T1_3_2.geom_traits().compare(f->vertex(f->cw(li))->point(), p1)));
-  f = T1_3_2.locate(p8,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  f = T1_3_2.locate(p7,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  f = T1_3_2.locate(p5,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  f = T1_3_2.locate(p4,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  f = T1_3_2.locate(p6,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL);
+  loc = T1_3_2.locate(p1,lt,li); assert( lt == Cls::VERTEX );
+  assert( T1_3_2.geom_traits().compare(loc->vertex(li)->point(), p1) );
+  loc = T1_3_2.locate(p2,lt,li); assert( lt == Cls::VERTEX );
+  assert( T1_3_2.geom_traits().compare(loc->vertex(li)->point(), p2) );
+  loc = T1_3_2.locate(p9,lt,li); assert( lt == Cls::VERTEX );
+  assert( T1_3_2.geom_traits().compare(loc->vertex(li)->point(), p9) );
+  loc = T1_3_2.locate(p3,lt,li); assert( lt == Cls::EDGE );
+  assert( (T1_3_2.geom_traits().compare(loc->vertex(loc->ccw(li))->point(), p1)
+        && T1_3_2.geom_traits().compare(loc->vertex(loc->cw(li))->point(), p2))
+       || (T1_3_2.geom_traits().compare(loc->vertex(loc->ccw(li))->point(), p2)
+        && T1_3_2.geom_traits().compare(loc->vertex(loc->cw(li))->point(), p1)));
+  loc = T1_3_2.locate(p8,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  loc = T1_3_2.locate(p7,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
+  loc = T1_3_2.locate(p5,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
+  loc = T1_3_2.locate(p4,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
+  loc = T1_3_2.locate(p6,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL);
  
 
   // Check point location in 2-dimensional triangulations
   std::cout << "    point locations 2-dim" << std::endl;
-  f = T2_1.locate(p0,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p0) );
-  f = T2_1.locate(p1,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p1) );
-  f = T2_1.locate(p2,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p2) );
-  f = T2_1.locate(p3,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p3) );
-  f = T2_1.locate(p4,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p4) );
-  f = T2_1.locate(p5,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p5) );
-  f = T2_1.locate(p6,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p6) );
-  f = T2_1.locate(p7,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p7) );
-  f = T2_1.locate(p8,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p8) );
-  f = T2_1.locate(p9,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p9) );
-  f = T2_1.locate(p10,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p10) );
+  loc = T2_1.locate(p0,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_1.geom_traits().compare(loc->vertex(li)->point(), p0) );
+  loc = T2_1.locate(p1,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_1.geom_traits().compare(loc->vertex(li)->point(), p1) );
+  loc = T2_1.locate(p2,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_1.geom_traits().compare(loc->vertex(li)->point(), p2) );
+  loc = T2_1.locate(p3,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_1.geom_traits().compare(loc->vertex(li)->point(), p3) );
+  loc = T2_1.locate(p4,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_1.geom_traits().compare(loc->vertex(li)->point(), p4) );
+  loc = T2_1.locate(p5,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_1.geom_traits().compare(loc->vertex(li)->point(), p5) );
+  loc = T2_1.locate(p6,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_1.geom_traits().compare(loc->vertex(li)->point(), p6) );
+  loc = T2_1.locate(p7,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_1.geom_traits().compare(loc->vertex(li)->point(), p7) );
+  loc = T2_1.locate(p8,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_1.geom_traits().compare(loc->vertex(li)->point(), p8) );
+  loc = T2_1.locate(p9,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_1.geom_traits().compare(loc->vertex(li)->point(), p9) );
+  loc = T2_1.locate(p10,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_1.geom_traits().compare(loc->vertex(li)->point(), p10) );
 
-  f = T2_1.locate(p11,lt,li); assert( lt == Cls::EDGE);
-  assert( (T2_1.geom_traits().compare(f->vertex(f->ccw(li))->point(), p1)
-        && T2_1.geom_traits().compare(f->vertex(f->cw(li))->point(), p0))
-       || (T2_1.geom_traits().compare(f->vertex(f->ccw(li))->point(), p0)
-        && T2_1.geom_traits().compare(f->vertex(f->cw(li))->point(), p1)));
-  f = T2_1.locate(p12,lt,li); assert( lt == Cls::FACE );
-  assert( T2_1.oriented_side(f,p12) == CGAL::ON_POSITIVE_SIDE );
-  f = T2_1.locate(p13,lt,li,f); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  li = f->index(T2_1.infinite_vertex());
-  assert( _test_is_to_the_left(T2_1,p13,f,li) );
-  f = T2_1.locate(p14,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  li = f->index(T2_1.infinite_vertex());
-  assert( _test_is_to_the_left(T2_1,p14,f,li) );
-  f = T2_1.locate(p15,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  li = f->index(T2_1.infinite_vertex());
-  assert( _test_is_to_the_left(T2_1,p15,f,li) );
+  loc = T2_1.locate(p11,lt,li); assert( lt == Cls::EDGE);
+  assert( (T2_1.geom_traits().compare(loc->vertex(loc->ccw(li))->point(), p1)
+        && T2_1.geom_traits().compare(loc->vertex(loc->cw(li))->point(), p0))
+       || (T2_1.geom_traits().compare(loc->vertex(loc->ccw(li))->point(), p0)
+        && T2_1.geom_traits().compare(loc->vertex(loc->cw(li))->point(), p1)));
+  loc = T2_1.locate(p12,lt,li); assert( lt == Cls::FACE );
+  assert( T2_1.oriented_side(loc,p12) == CGAL::ON_POSITIVE_SIDE );
+  loc = T2_1.locate(p13,lt,li,loc); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  li = loc->index(T2_1.infinite_vertex());
+  assert( _test_is_to_the_left(T2_1,p13,loc,li) );
+  loc = T2_1.locate(p14,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  li = loc->index(T2_1.infinite_vertex());
+  assert( _test_is_to_the_left(T2_1,p14,loc,li) );
+  loc = T2_1.locate(p15,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  li = loc->index(T2_1.infinite_vertex());
+  assert( _test_is_to_the_left(T2_1,p15,loc,li) );
 
 
   /*************************/
@@ -489,9 +484,9 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   ++fc;
   --fc;
   Point pp(0,0.5,1);
-  f = T2_7.locate(pp,lt,li);
+  loc = T2_7.locate(pp,lt,li);
   assert(lt==Cls::VERTEX);
-  fc= T2_7.line_walk(pp,p10,f);
+  fc= T2_7.line_walk(pp,p10,loc);
   fc2=fc;
   assert(fc==fc2);
   fc++;
@@ -521,9 +516,9 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   assert(TT.dimension()==2);
   assert(TT.is_valid());
   assert(TT.number_of_vertices()==4);
-  f = TT.locate(Point(0,0));
+  loc = TT.locate(Point(0,0));
   fc = TT.line_walk(Point(0,0),Point(1,1));
-  fc2 = TT.line_walk(Point(0,0),Point(1,1),f);
+  fc2 = TT.line_walk(Point(0,0),Point(1,1),loc);
   assert(fc==fc2);
   n=0;
   do {fc2++ ; n = n+1;} while (fc2 != fc);
@@ -540,10 +535,10 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   assert( T0_0.cw(2) == 1 );
 
   // the assert() are to avoid compiler warnings about unused variables
-  f = T2_1.locate(p12,lt,li); // from section locate above
-  Triangle t = T2_1.triangle(f); assert( &t == &t );
-  Segment  s = T2_1.segment(f,li); assert( &s == &s );
-  s = T2_1.segment(Edge(f,li)); assert( &s == &s );
+  loc = T2_1.locate(p12,lt,li); // from section locate above
+  Triangle t = T2_1.triangle(loc); assert( &t == &t );
+  Segment  s = T2_1.segment(loc,li); assert( &s == &s );
+  s = T2_1.segment(Edge(loc,li)); assert( &s == &s );
   s = T2_1.segment(v2_1_6->incident_edges()); assert( &s == &s );
   s = T2_1.segment(T2_1.finite_edges_begin()); assert( &s == &s );
 

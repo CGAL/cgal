@@ -69,11 +69,11 @@ public:
 
   // Insertion, Deletion and Flip
   Vertex_handle push_back(const Weighted_point &p);
-  Vertex_handle insert(const Weighted_point &p,
-	 	       Locate_type &lt,
-		       Face_handle f = Face_handle() );
   Vertex_handle insert(const Weighted_point &p, 
 		       Face_handle f = Face_handle() );
+  Vertex_handle insert(const Weighted_point &p,
+	 	       Locate_type  lt,
+		       Face_handle loc, int li );
   Vertex_handle insert_in_face(const Weighted_point &p, Face_handle f);
   Vertex_handle insert_in_edge(const Weighted_point &p, Face_handle f, int i);
   void flip(Face_handle f, int i);
@@ -350,34 +350,33 @@ Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
 push_back(const Weighted_point &p)
 {	
-  Locate_type lt;
-  return insert(p, lt, NULL);
+    return insert(p);
 }
 
 template < class Gt, class Tds >
 Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
-insert(const Weighted_point &p, Face_handle f)
+insert(const Weighted_point &p, Face_handle start)
 {
   Locate_type lt;
-  return insert(p, lt, f);
-}
-
-template < class Gt, class Tds >
-Regular_triangulation_2<Gt,Tds>::Vertex_handle
-Regular_triangulation_2<Gt,Tds>::
-insert(const Weighted_point &p, Locate_type& lt, Face_handle f) 
-{
-  if (number_of_vertices() <= 1) return Triangulation::insert(p,lt,f);
-    
   int li;
+  Face_handle loc = locate(p, lt, li, start);
+  return insert(p, lt, loc, li);
+}
+
+template < class Gt, class Tds >
+Regular_triangulation_2<Gt,Tds>::Vertex_handle
+Regular_triangulation_2<Gt,Tds>::
+insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li) 
+{
+  if (number_of_vertices() <= 1) return Triangulation::insert(p);
+ 
   Vertex_handle v;
-  Face_handle loc = locate(p, lt, li, f);
   Oriented_side os;
   switch (lt) {
   case VERTEX:
     remove(loc->vertex(li));
-    return insert(p,lt,f);
+    return insert(p);
   case FACE:
     if (power_test(loc,p) == ON_NEGATIVE_SIDE) {
       hide_vertex(loc,p);

@@ -142,7 +142,7 @@ _test_cls_constrained_triangulation(const Triangulation &)
    // Points locations
     //to check  if functionnality is accessible
     // 1-dimensional
-   // std::cout << "    point locations 1-dim" << std::endl;
+   std::cout << "    point locations 1-dim" << std::endl;
    Locate_type lt; 
    int            li;
    Face_handle    f;

@@ -548,40 +548,40 @@ operator<<(ostream& os, const Constrained_triangulation_2<Gt,Tds> &Ct)
 {
   os << (Triangulation_2<Gt, Tds>) Ct;
 
-  typename Constrained_triangulation_2<Gt, Tds>::Face_iterator
-    it = Ct.faces_begin();
-  while(it != Ct.faces_end()){
-    for(int j = 0; j < 3; j++){
-      if (it->is_constrained(j)) {os << "C " ;}
-      else { os << "N ";}
-      if(is_ascii(os)){
-	if(j==2) {
-	  os << "\n";
-	} else {
-	  os <<  ' ';
-	}
-      }
-    }
-    ++it;
-  }
+ //  typename Constrained_triangulation_2<Gt, Tds>::Face_iterator
+//     it = Ct.faces_begin();
+//   while(it != Ct.faces_end()){
+//     for(int j = 0; j < 3; j++){
+//       if (it->is_constrained(j)) {os << "C " ;}
+//       else { os << "N ";}
+//       if(is_ascii(os)){
+// 	if(j==2) {
+// 	  os << "\n";
+// 	} else {
+// 	  os <<  ' ';
+// 	}
+//       }
+//     }
+//     ++it;
+//   }
 
-typename Constrained_triangulation_2<Gt, Tds>::Face_circulator
-fc = Ct.infinite_vertex()->incident_faces(),
-  done(fc);
+// typename Constrained_triangulation_2<Gt, Tds>::Face_circulator
+// fc = Ct.infinite_vertex()->incident_faces(),
+//   done(fc);
 
-do{
-  for(int j = 0; j < 3; j++){
-    if (fc->is_constrained(j)) { os << "C ";}
-    else { os << "N ";}
-    if(is_ascii(os)){
-      if(j==2) {
-	os << "\n";
-      } else {
-	os <<  ' ';
-      }
-    }
-  }
-}while(++fc != done);
+// do{
+//   for(int j = 0; j < 3; j++){
+//     if (fc->is_constrained(j)) { os << "C ";}
+//     else { os << "N ";}
+//     if(is_ascii(os)){
+//       if(j==2) {
+// 	os << "\n";
+//       } else {
+// 	os <<  ' ';
+//       }
+//     }
+//   }
+// }while(++fc != done);
 
 return os ;
 }
