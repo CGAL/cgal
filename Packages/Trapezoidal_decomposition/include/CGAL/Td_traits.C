@@ -71,12 +71,12 @@ Td_traits<Traits,X_curve_plus>::get_curve_at_infinity(){
 template <class Traits,class X_curve_plus>
 typename Td_traits<Traits,X_curve_plus>::Point
 Td_traits<Traits,X_curve_plus>::POINT_AT_LEFT_TOP_INFINITY = 
-Point(0,0);
+Point();
 
 template <class Traits,class X_curve_plus>
 typename Td_traits<Traits,X_curve_plus>::Point
 Td_traits<Traits,X_curve_plus>::POINT_AT_RIGHT_BOTTOM_INFINITY = 
-Point(0,0);
+Point();
 
 
 template <class Traits,class X_curve_plus>
