@@ -1,3 +1,7 @@
+2/05/2003 (spion)
+
+- Add the CUSTOM*FLAGS to get_compiler_description().
+
 30/04/2003 (rursu) 1.187
 -----------------
 	modified install_cgal: added some libs to QT_LDFLAGS

@@ -1890,7 +1890,7 @@ EOF4
 	*CL.*|*cl.*)              EXE_OPT="-TP -GR -GX -nologo -Fp";;
         *mwcc.exe*|*MWCC*) EXE_OPT="-gccincludes -lang c++ -msgstyle gcc -o ";
     esac
-    _flags="${EXE_OPT}${TMP_CXX_FILE} ${TMP_CXX_FILE}.C"
+    _flags="${CUSTOM_CXXFLAGS} ${CUSTOM_LDFLAGS} ${EXE_OPT}${TMP_CXX_FILE} ${TMP_CXX_FILE}.C"
 
     # compile
     ${_printf} "%s\n%s\n" \
