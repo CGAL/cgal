@@ -23,6 +23,12 @@ package:
 	@echo "---- make Submit -----------------"
 	@echo "----------------------------------"
 
+symlink:
+	cd doc_tex/basic/Triangulation; rm -rf examples; \
+	mkdir examples; cd examples; \
+	mkdir Triangulation; cd Triangulation; \
+	ln -s ../../../../../examples/Triangulation/*.C .
+
 Version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version 
 	echo  "maintainer : $(MAINTAINER)" >> version
