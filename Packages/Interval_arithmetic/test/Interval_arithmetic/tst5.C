@@ -2,6 +2,7 @@
  * This test file is not extensive enough.
  */
 
+#include <CGAL/basic.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Quotient.h>
