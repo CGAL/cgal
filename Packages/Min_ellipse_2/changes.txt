@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.3.1 on 28-Oct-1999
+- declarations of IO operators for 'MyPoint[CH]2' added.
+
 Version 3.3 on 12-Oct-1999
 - default argument for 'randomize' removed on M$-VC++.
 - removed 'CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(...)' from examples.
