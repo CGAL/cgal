@@ -51,9 +51,6 @@ private:
 	emit new_object(make_object(Point(x,y)));
       }
   };
-
-  void attaching() {};
-  void detaching() {};
 };
 
 } // namespace CGAL
