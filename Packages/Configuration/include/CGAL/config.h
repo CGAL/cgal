@@ -87,9 +87,11 @@
 //             include separate workaround files
 //----------------------------------------------------------------------//
 
+#ifdef _MSC_VER
+#  include <CGAL/MSVC_standard_header_fixes.h>
+#endif
 #include <CGAL/workaround_return_type.h>
 #include <CGAL/workaround_casts.h>
-//#include <CGAL/workaround_stl.h>
 
 //----------------------------------------------------------------------//
 //             definition of type bool
