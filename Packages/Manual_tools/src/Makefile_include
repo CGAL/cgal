@@ -20,26 +20,35 @@
 # The same variable has to be configured in the cc_manual_to_html script.
 # The path must terminate with a slash.
 #HTML_DEFAULT_PATH = 
-HTML_DEFAULT_PATH = /pub/local/CGAL/Tools/html_config_files/
-#HTML_DEFAULT_PATH = /home/kettner/topics/cgal/Tools/src/html_config_files/
-
-# Default targets to make:
-ALL = cc_extract  cc_build_checker  cc_extract_html  cc_index_sort
+HTML_DEFAULT_PATH = /net/blabla/export/raid/project/local/CGAL/Tools/html_config_files
+#HTML_DEFAULT_PATH = /home/kettner/topics/cgal/Tools/src/html_config_files
 
 # =======================================================
 # Installation: Nothing else below this line.
 # =======================================================
 
-# all the files that have to be copied into a directory in the $PATH
-PROGRAM_FILES = cc_extract  cc_build_checker  cc_extract_html  cc_index_sort
+# files that will be moved into a directory in the $PATH upon installation
+PROGRAM_FILES =	cc_extract			\
+		cc_build_checker		\
+		cc_extract_html			\
+	        cc_extract_images		\
+		cc_index_sort			\
+		cc_unique
 
-# all the files that have to be moved into a directory in the $PATH
-SCRIPT_FILES  = cc_check  cc_manual_to_html  cc_extract_include \
-                cc_patch_anchor_pages  cc_patch_anchor_toc_index \
-                cc_patch_anchor_filter
+# files that will be copied into a directory in the $PATH upon installation
+SCRIPT_FILES  = cc_check			\
+		cc_manual_to_html		\
+		cc_extract_include		\
+		cc_patch_anchor_pages		\
+		cc_patch_anchor_toc_index	\
+		cc_patch_anchor_filter
 
 # all the files for the HTML config directory
-HTML_CONFIG_FILES = html_config_files/cc_*
+HTML_CONFIG_FILES = html_config_files/cc_* html_config_files/*.sty
+
+
+# Default targets to make:
+ALL =   ${PROGRAM_FILES}
 
 # default rule
 all: $(ALL)
@@ -99,23 +108,56 @@ html_syntax.tab.c html_syntax.tab.h : html_syntax.y
 
 # modules
 # --------------------
-html_lex.o : html_lex.c html_syntax.tab.h database.h html_config.h
+html_lex.o : html_lex.c html_syntax.tab.h database.h html_config.h \
+             lex_include.h lex_include_impl.h macro_dictionary.h html_error.h
 	$(XCOMPILE) -o html_lex.o html_lex.c
 
-html_syntax.o : html_syntax.tab.c html_syntax.tab.h database.h html_config.h
+html_syntax.o : html_syntax.tab.c html_syntax.tab.h database.h html_config.h\
+	         macro_dictionary.h html_error.h
 	$(XCOMPILE) -o html_syntax.o html_syntax.tab.c
 
-cc_extract_html.o : cc_extract_html.C database.h html_config.h
+macro_dictionary.o : macro_dictionary.C macro_dictionary.h html_error.h \
+                     html_config.h
+	$(COMPILE) -o macro_dictionary.o macro_dictionary.C
+
+internal_macros.o : internal_macros.C internal_macros.h macro_dictionary.h \
+                    html_error.h html_config.h
+	$(COMPILE) -o internal_macros.o internal_macros.C
+
+html_error.o : html_error.C html_error.h lex_include.h html_config.h
+	$(COMPILE) -o html_error.o html_error.C
+
+string_conversion.o : string_conversion.C string_conversion.h html_config.h
+	$(COMPILE) -o string_conversion.o string_conversion.C
+
+cpp_formatting.o : cpp_formatting.C cpp_formatting.h html_error.h \
+                   string_conversion.h html_config.h
+	$(COMPILE) -o cpp_formatting.o cpp_formatting.C
+
+output.o : output.C output.h html_error.h html_config.h
+	$(COMPILE) -o output.o output.C
+
+cc_extract_html.o : cc_extract_html.C database.h html_config.h lex_include.h \
+                    macro_dictionary.h internal_macros.h html_error.h \
+	            string_conversion.h output.h
 	$(COMPILE) -DHTML_DEFAULT_PATH=\"$(HTML_DEFAULT_PATH)\" -o cc_extract_html.o cc_extract_html.C
 
 
 # program
 # --------------------
-OBJHTML    = html_lex.o html_syntax.o database.o
-HEADERHTML = html_syntax.tab.h database.h html_config.h
+OBJHTML    = html_lex.o          \
+             html_syntax.o       \
+             database.o          \
+             macro_dictionary.o  \
+             internal_macros.o   \
+             html_error.o        \
+             string_conversion.o \
+             cpp_formatting.o    \
+             output.o            \
+             cc_extract_html.o
 
-cc_extract_html : $(OBJHTML) $(HEADERHTML) cc_extract_html.o
-	$(LINK) -o cc_extract_html cc_extract_html.o $(OBJHTML)
+cc_extract_html : $(OBJHTML)
+	$(LINK) -o cc_extract_html $(OBJHTML)
 
 
 # Sort Program to Sort the Index
@@ -123,16 +165,25 @@ cc_extract_html : $(OBJHTML) $(HEADERHTML) cc_extract_html.o
 cc_index_sort : cc_index_sort.c
 	$(CC) $(CCOPT) -o cc_index_sort cc_index_sort.c
 
+# Extraction of HTML inline images
+# ================================
+cc_extract_images : cc_extract_images.C
+	$(LINK) -o cc_extract_images cc_extract_images.C
+
+%: %.c
+	$(CC) $(CCOPT) -o $* $*.c
+
 # Installation Targets
 # ====================
-install:
-	mv -f $(PROGRAM_FILES) $(INSTALL_DIR)
-	cp $(SCRIPT_FILES)  $(INSTALL_DIR)
-	-cp $(HTML_CONFIG_FILES) $(HTML_DEFAULT_PATH) 2>/dev/null
-
 cpinstall:
 	cp $(SCRIPT_FILES)  $(INSTALL_DIR)
+	-mkdir $(HTML_DEFAULT_PATH)/gif
+	-cp html_config_files/gif/* $(HTML_DEFAULT_PATH)/gif
 	-cp $(HTML_CONFIG_FILES) $(HTML_DEFAULT_PATH) 2>/dev/null
+
+install: cpinstall
+	mv -f $(PROGRAM_FILES) $(INSTALL_DIR)
+
 
 # Auxiliary Targets
 # =================
@@ -142,6 +193,6 @@ clean :
 	       html_syntax.tab.h html_syntax.tab.c
 
 cleanall : clean
-	rm cc_build_checker cc_extract  cc_extract_html
+	rm -f  $(PROGRAM_FILES)
 	if (-d Templates.DB) rm -r Templates.DB
 	if (-d ii_files) rm -r ii_files
