@@ -1024,7 +1024,6 @@ set_compiler_flags()
 	    ;;
 	*Linux*pgCC*)
 	    #### settings for Portland Group Compiler on linux
-	    ADDITIONAL_CXXFLAGS="-w"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
