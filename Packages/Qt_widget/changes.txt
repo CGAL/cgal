@@ -1,3 +1,8 @@
+18 December 2004 Sylvain Pion
+- Rename src/CGALQt/makefile_Qt to makefile.
+
+==================================== CGAL 3.1 =================================
+
 2 December 2004 Sylvain Pion
 - doc : remove () in "noFill()" argument.
 

@@ -25,7 +25,7 @@ show-doc: doc
 
 # clean all object files
 clean: 
-	make -C src/CGALQt -f makefile_Qt clean
+	make -C src/CGALQt clean
 	make -C demo/Qt_widget clean
 	make -C test/Qt_widget clean
 
