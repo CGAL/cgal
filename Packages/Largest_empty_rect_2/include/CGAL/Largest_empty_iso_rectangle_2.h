@@ -36,10 +36,11 @@ template<class T>
 class Largest_empty_iso_rectangle_2 {
 public: 
   enum Point_type{REG, BOT_RIGHT, BOT_LEFT, TOP_LEFT, TOP_RIGHT};
-  typedef typename T::FT NT;
-  typedef typename T::Point_2               Point;
-  typedef typename T::Iso_rectangle_2       Iso_rectangle_2;
-  typedef T                        Traits;
+
+  typedef typename T::FT                NT;
+  typedef typename T::Point_2           Point;
+  typedef typename T::Iso_rectangle_2   Iso_rectangle_2;
+  typedef T                             Traits;
 
 private:
 
