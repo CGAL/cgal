@@ -88,7 +88,7 @@ int main(int argc,char *argv[])
 
   read_data(argc,argv,prec,seg_list);
 
-  Snap_rounding_2 s1(seg_list.begin(),seg_list.end(),prec,true,3);
+  Snap_rounding_2 s1(seg_list.begin(),seg_list.end(),prec,true,false,3);
 
   std::cout << "input segments (not const iterator)\n";
   for(Segment_iterator i1 = s1.segments_begin();
@@ -105,6 +105,13 @@ int main(int argc,char *argv[])
   std::cout << "\nthe output\n";
   print_out(s1);
 
+  // output for integer mode
+  s1.use_integer_output(true);
+  std::cout << "\nthe output for integer grid\n";
+  print_out(s1);
+  s1.use_integer_output(false);
+
+
   std::cout << "\noutput after removing first element\n";
   s1.remove(*(seg_list.begin()));
   print_out(s1);
@@ -118,14 +125,14 @@ int main(int argc,char *argv[])
   s1.insert(*(seg_list.begin()));
   print_out(s1);
 
-  Snap_rounding_2 s2(prec,true,4);
+  Snap_rounding_2 s2(prec,true,false,4);
 
   std::cout << "\ndefault ctor + multiple insertion\n";
   s2.insert(seg_list.begin(),seg_list.end());
   print_out(s2);
 
   std::cout << "\ntesting sr\n";
-  Snap_rounding_2 s3(seg_list.begin(),seg_list.end(),prec,false);
+  Snap_rounding_2 s3(seg_list.begin(),seg_list.end(),prec,false,false);
   print_out(s3);
 
   std::cout << "\nchanging to isr\n";
@@ -141,13 +148,13 @@ int main(int argc,char *argv[])
   print_out(s3);
 
   std::cout << "\ntesting operator=\n";
-  Snap_rounding_2 s5(prec,true,4);
+  Snap_rounding_2 s5(prec,true,false,4);
   s5 = s3;
   print_out(s5);
 
   // testing changing of pixel size
   std::cout << "\ntesting changing of pixel size\n";
-  Snap_rounding_2 s6(seg_list.begin(),seg_list.end(),prec,true,3);
+  Snap_rounding_2 s6(seg_list.begin(),seg_list.end(),prec,true,false,3);
   s6.change_pixel_size(0.5);
   print_out(s6);
 

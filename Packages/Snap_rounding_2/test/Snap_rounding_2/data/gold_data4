@@ -25,6 +25,23 @@ Polyline number 3:
     (5.5:10.5)
 
 
+the output for integer grid
+Polyline number 1:
+    (0:0)
+    (5:5)
+    (10:10)
+
+Polyline number 2:
+    (0:10)
+    (5:5)
+    (10:0)
+
+Polyline number 3:
+    (5:0)
+    (5:5)
+    (5:10)
+
+
 output after removing first element
 Polyline number 1:
     (0.5:10.5)

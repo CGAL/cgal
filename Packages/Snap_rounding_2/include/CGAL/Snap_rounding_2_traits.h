@@ -46,11 +46,17 @@ Snap_rounding_traits()
 
 void snap(Point_2 p,NT pixel_size,NT &x,NT &y)
   {
-    x = floor(p.x() / pixel_size) * pixel_size +
-        pixel_size / 2.0;
+    x = floor(p.x() / pixel_size) * pixel_size + pixel_size / 2.0;
+    y = floor(p.y() / pixel_size) * pixel_size + pixel_size / 2.0;
+  }
 
-    y = floor(p.y() / pixel_size) * pixel_size +
-        pixel_size / 2.0;
+Point_2 get_integer_grid_point(Point_2 p,NT pixel_size) const
+  {
+    NT x = p.x() - pixel_size / 2.0 / pixel_size;
+    NT y = p.y() - pixel_size / 2.0 / pixel_size;
+    Point_2 out_p(x,y);
+
+    return(out_p);
   }
 
 double segment_direction(Segment_2 s)

@@ -18,6 +18,18 @@ Polyline number 2:
     (7.5:3.5)
 
 
+the output for integer grid
+Polyline number 1:
+    (4:1)
+    (4:3)
+    (4:5)
+
+Polyline number 2:
+    (1:3)
+    (4:3)
+    (7:3)
+
+
 output after removing first element
 Polyline number 1:
     (1.5:3.5)

@@ -115,6 +115,7 @@ public:
   Hot_Pixel(Point_2 inp_point,NT inp_pixel_size);
   ~Hot_Pixel();
   inline Point_2 get_center() const;
+  inline Point_2 get_center(bool int_output) const;
   bool intersect_left(Segment_2 &seg) const;
   bool intersect_right(Segment_2 &seg) const;
   bool intersect_bot(Segment_2 &seg) const;
@@ -186,11 +187,15 @@ public:
   //! A constructor
   Snap_rounding_2(Segment_const_iterator begin,
                   Segment_const_iterator end,
-                  NT inp_pixel_size,bool inp_do_isr = true,
+                  NT inp_pixel_size,
+                  bool inp_do_isr = true,
+                  bool inp_int_output = true,
                   int inp_number_of_kd_trees = default_number_of_kd_trees);
 
   //! A constructor
-  Snap_rounding_2(NT inp_pixel_size,bool inp_do_isr = true,
+  Snap_rounding_2(NT inp_pixel_size,
+                  bool inp_do_isr = true,
+                  bool inp_int_output = true,
                   int inp_number_of_kd_trees = default_number_of_kd_trees);
 
   //! A copy constructor
@@ -248,6 +253,11 @@ public:
    */
   void do_isr(bool inp_do_isr);
 
+  /*! Determine the output mode: integer grid or closest grid point
+      or Snap Rounding (SR).
+   */
+  void use_integer_output(bool inp_int_output);
+
   template<class Out>
   void output(Out &o);
 
@@ -259,7 +269,7 @@ private:
   static Direction seg_dir;
   // the next variable is for lazy evaluation:
   // it determines whether an isr/sr work has
-  // to be done (at the beginning, after insertion, etc) 
+  // to be done (at the beginning, after insertion, etc.)
   bool need_sr;
   static const int default_number_of_kd_trees = 1;
 
@@ -271,6 +281,7 @@ private:
   int number_of_segments,number_of_kd_trees;
   Multiple_kd_tree<Rep,Hot_Pixel<Rep> *> *mul_kd_tree;
   bool wheteher_to_do_isr;
+  bool int_output;
   Pmwx pm;// @@@@
 
   void find_hot_pixels_and_create_kd_trees();
@@ -409,6 +420,17 @@ Hot_Pixel<Rep_>::~Hot_Pixel()
 template<class Rep_>
 inline Hot_Pixel<Rep_>::Point_2 Hot_Pixel<Rep_>::get_center() const
     {return(p);}
+
+template<class Rep_>
+inline Hot_Pixel<Rep_>::Point_2 Hot_Pixel<Rep_>::get_center(
+            bool int_output) const
+  {
+    if(int_output) {
+      Point_2 out_p = _gt.get_integer_grid_point(p,pixel_size);
+      return(out_p);
+    } else
+      return(p);
+  }
 
 template<class Rep_>
 bool Hot_Pixel<Rep_>::intersect_left(Segment_2 &seg) const
@@ -750,7 +772,7 @@ void Snap_rounding_2<Rep_>::reroute_sr(std::set<Hot_Pixel<Rep_> *,
     ++hot_pixel_iter;
 
     while(hot_pixel_iter != inp_hot_pixels_intersected_set.end()) {
-      seg_output.push_back((*hot_pixel_iter)->get_center());
+      seg_output.push_back((*hot_pixel_iter)->get_center(int_output));
       ++hot_pixel_iter;
     }
 
@@ -787,7 +809,7 @@ void Snap_rounding_2<Rep_>::reroute_isr(std::set<Hot_Pixel<Rep_> *,
       // insert second hot pixel
       hot_pixel_iter = inp_hot_pixels_intersected_set.begin();
       ++hot_pixel_iter;
-      seg_output.push_back((*hot_pixel_iter)->get_center());
+      seg_output.push_back((*hot_pixel_iter)->get_center(int_output));
     }
   }
 
@@ -815,12 +837,12 @@ void Snap_rounding_2<Rep_>::iterate()
       if(hot_pixel_iter == hot_pixels_intersected_set.end()) {
         // segment entirely inside a pixel
         hp = new Hot_Pixel<Rep_>(iter->source(),pixel_size);
-        seg_output.push_back(hp->get_center());
+        seg_output.push_back(hp->get_center(int_output));
         erase_hp = true;
         delete(hp);
         erase_hp = false;
       } else {
-        seg_output.push_back((*hot_pixel_iter)->get_center());
+        seg_output.push_back((*hot_pixel_iter)->get_center(int_output));
         if(number_of_intersections > 1) {
           // segments that have at most one intersecting hot pixel are
           // done(it was inserted)
@@ -837,13 +859,18 @@ void Snap_rounding_2<Rep_>::iterate()
   }
 
 template<class Rep_>
-Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
-  begin,Segment_const_iterator end,
-  NT inp_pixel_size,bool inp_do_isr,int inp_number_of_kd_trees)
+Snap_rounding_2<Rep_>::Snap_rounding_2(
+  Segment_const_iterator begin,
+  Segment_const_iterator end,
+  NT inp_pixel_size,
+  bool inp_do_isr,
+  bool inp_int_output,
+  int inp_number_of_kd_trees)
   {
     // initialize approximation angles map    
     erase_hp = false;
     wheteher_to_do_isr = inp_do_isr;
+    int_output = inp_int_output;
     pixel_size = inp_pixel_size;
     number_of_segments = 0;
     number_of_kd_trees = inp_number_of_kd_trees;
@@ -872,6 +899,7 @@ void Snap_rounding_2<Rep_>::copy(const Snap_rounding_2<Rep_>& other)
 {
     erase_hp = false;
     wheteher_to_do_isr = other.wheteher_to_do_isr;
+    int_output = other.int_output;
     pixel_size = other.pixel_size;
     number_of_segments = other.number_of_segments;
     number_of_kd_trees = other.number_of_kd_trees;
@@ -900,12 +928,16 @@ Snap_rounding_2<Rep_>::operator =(const Snap_rounding_2<Rep_>& other)
 
 template<class Rep_>
 Snap_rounding_2<Rep_>::Snap_rounding_2(
-    NT inp_pixel_size,bool inp_do_isr,int inp_number_of_kd_trees)
+  NT inp_pixel_size,
+  bool inp_do_isr,
+  bool inp_int_output,
+  int inp_number_of_kd_trees)
   {
     // initialize approximation angles map
     need_sr = true;
     erase_hp = false;
     wheteher_to_do_isr = inp_do_isr;
+    int_output = inp_int_output;
     pixel_size = inp_pixel_size;
     number_of_segments = 0;
     number_of_kd_trees = inp_number_of_kd_trees;
@@ -1040,6 +1072,13 @@ template<class Rep_>
 void Snap_rounding_2<Rep_>::do_isr(bool inp_do_isr)
   { 
     wheteher_to_do_isr = inp_do_isr;
+    need_sr = true;
+  }
+
+template<class Rep_>
+void Snap_rounding_2<Rep_>::use_integer_output(bool inp_int_output)
+  { 
+    int_output = inp_int_output;
     need_sr = true;
   }
 
