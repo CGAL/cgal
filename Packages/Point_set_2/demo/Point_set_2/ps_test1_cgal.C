@@ -1,9 +1,6 @@
-#include <CGAL/basic.h>
-#include <list>
 //#include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Triangle_2.h>
-#include <CGAL/Iso_rectangle_2.h>
+#include <list>
 #include <CGAL/Point_set_2.h>
 #include <CGAL/IO/Window_stream.h>
 
@@ -14,10 +11,8 @@ typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Triangulation_face_base_2<K>   Fb;
 typedef CGAL::Triangulation_default_data_structure_2<K,Vb,Fb> Tds;
 
-typedef CGAL::Point_set_2<K,Tds>::Edge           Edge;
 typedef CGAL::Point_set_2<K,Tds>::Edge_iterator  Edge_iterator;
 typedef CGAL::Point_set_2<K,Tds>::Vertex_handle  Vertex_handle;
-typedef CGAL::Point_set_2<K,Tds>::Vertex         Vertex;
 
 typedef CGAL::Iso_rectangle_2<K>     Rectangle;
 typedef CGAL::Triangle_2<K>          Triangle;
@@ -26,12 +21,10 @@ typedef CGAL::Triangle_2<K>          Triangle;
 void output(CGAL::Window_stream& W, const CGAL::Point_set_2<K,Tds>& PSet)
 {
   W.clear();
-  Edge e;
   Edge_iterator eit = PSet.finite_edges_begin();
   
   for(;eit != PSet.finite_edges_end(); eit++) {
-    e = *eit;
-    CGAL::Segment_2<K> s= PSet.seg(e);
+    CGAL::Segment_2<K> s= PSet.segment(*eit);
     W << s;
   }
 }
@@ -82,7 +75,7 @@ int main()
    W << CGAL::RED;
   
    for(vit=LV.begin(); vit!=LV.end(); vit++){
-     W << PS.pos(*vit);
+     W << (*vit)->point();
    }
    LV.clear();
   }
@@ -106,7 +99,7 @@ int main()
    PS.range_search(pt1,pt2,pt3,std::back_inserter(LV));
    W << CGAL::GREEN;
    for(vit=LV.begin(); vit!=LV.end(); vit++){
-     W << PS.pos(*vit);
+     W << (*vit)->point();
    }  
    LV.clear();
   }
@@ -130,7 +123,7 @@ int main()
    PS.range_search(pt1,pt2,pt3,pt4,std::back_inserter(LV));
    W << CGAL::YELLOW;
    for(vit=LV.begin(); vit!=LV.end(); vit++){
-     W << PS.pos(*vit);
+     W << (*vit)->point();
    }
    LV.clear();  
   }

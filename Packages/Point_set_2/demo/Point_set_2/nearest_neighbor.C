@@ -1,32 +1,26 @@
-#include <CGAL/basic.h>
-#include <list>
 #include <CGAL/Cartesian.h>
 //#include <CGAL/Simple_cartesian.h>
+#include <list>
 #include <CGAL/Point_set_2.h>
 #include <CGAL/IO/Window_stream.h>
 
 typedef CGAL::Cartesian<double>    K;
 //typedef CGAL::Simple_cartesian<double>    K;
-
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Triangulation_face_base_2<K>  Fb;
 typedef CGAL::Triangulation_default_data_structure_2<K,Vb,Fb> Tds;
 
-typedef CGAL::Point_set_2<K,Tds>::Edge           Edge;
 typedef CGAL::Point_set_2<K,Tds>::Edge_iterator  Edge_iterator;
 typedef CGAL::Point_set_2<K,Tds>::Vertex_handle  Vertex_handle;
-typedef CGAL::Point_set_2<K,Tds>::Vertex         Vertex;
 
 
 void output(CGAL::Window_stream& W, const CGAL::Point_set_2<K,Tds>& PSet)
 {
   W.clear();
-  Edge e;
   Edge_iterator eit = PSet.finite_edges_begin();
   
   for(;eit != PSet.finite_edges_end(); eit++) {
-    e = *eit;
-    CGAL::Segment_2<K> s= PSet.seg(e);
+    CGAL::Segment_2<K> s= PSet.segment(*eit);
     W << s;
   }
 }
@@ -36,7 +30,6 @@ int main()
   CGAL::Point_set_2<K,Tds> PSet;
 
   CGAL::Window_stream W(600,500, "Finding nearest neighbor / k nearest neighbors");  
-  //CGAL::cgalize(W);
 
   W.init(-500,500,-400);
   W.display(100,100);
@@ -69,9 +62,9 @@ int main()
     
     if (v != NULL) {
     
-     CGAL::Segment_2<K> my_seg(actual,PSet.pos(v));
+     CGAL::Segment_2<K> my_seg(actual,v->point());
     
-     W << CGAL::RED << PSet.pos(v) << CGAL::BLACK;
+     W << CGAL::RED << v->point() << CGAL::BLACK;
      W << CGAL::BLUE << my_seg << CGAL::BLACK;
     }
   }
@@ -95,8 +88,8 @@ int main()
     W << CGAL::RED << actual << CGAL::BLACK;
     
     for (it=L.begin();it != L.end(); it++){
-      W << CGAL::GREEN << PSet.pos(*it) << CGAL::BLACK;      
-      std::cout << PSet.pos(*it) << "\n";
+      W << CGAL::GREEN << (*it)->point() << CGAL::BLACK;      
+      std::cout << (*it)->point() << "\n";
     }
     std::cout << "\n";
   }  

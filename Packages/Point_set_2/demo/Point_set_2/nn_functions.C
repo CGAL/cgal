@@ -1,34 +1,25 @@
-#include <CGAL/basic.h>
-#include <list>
 #include <CGAL/Cartesian.h>
 //#include <CGAL/Simple_cartesian.h>
+#include <list>
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/nearest_neighbor_delaunay_2.h>
-
 
 typedef double                                             coord_type;
 typedef CGAL::Cartesian<coord_type>                        Gt;
 typedef CGAL::Delaunay_triangulation_2<Gt>                 Delaunay;
-typedef CGAL::Delaunay_triangulation_2<Gt>::Edge           Edge;
 typedef CGAL::Delaunay_triangulation_2<Gt>::Edge_iterator  Edge_iterator;
 typedef CGAL::Delaunay_triangulation_2<Gt>::Vertex_handle  Vertex_handle;
-typedef CGAL::Delaunay_triangulation_2<Gt>::Vertex         Vertex;
-
-
 
 void output(CGAL::Window_stream& W, const Delaunay& PSet)
 {
   W.clear();
-  Edge e;
   Edge_iterator eit = PSet.finite_edges_begin();
   
   for(;eit != PSet.finite_edges_end(); eit++) {
-    e = *eit;
-    CGAL::Segment_2<Gt> s= PSet.segment(e);
+    CGAL::Segment_2<Gt> s= PSet.segment(*eit);
     W << s;
   }
 }
-
 
 int main()
 {
@@ -82,8 +73,7 @@ int main()
       std::cout << (*it)->point() << "\n";
     }
     std::cout << "\n";
-  }
-  
+  }  
 
   output(W,PSet);
   W.draw_text(-450,-350, "Input a point; we perform the lookup operation ... ");  

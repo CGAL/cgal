@@ -1,29 +1,23 @@
-#include <CGAL/basic.h>
-#include <list>
 //#include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/range_search_delaunay_2.h>
+#include <list>
 
 typedef double                                             coord_type;
 typedef CGAL::Simple_cartesian<coord_type>                 Gt;
 typedef CGAL::Delaunay_triangulation_2<Gt>                 Delaunay;
-typedef CGAL::Delaunay_triangulation_2<Gt>::Edge           Edge;
 typedef CGAL::Delaunay_triangulation_2<Gt>::Edge_iterator  Edge_iterator;
 typedef CGAL::Delaunay_triangulation_2<Gt>::Vertex_handle  Vertex_handle;
-typedef CGAL::Delaunay_triangulation_2<Gt>::Vertex         Vertex;
-
 
 
 void output(CGAL::Window_stream& W, const Delaunay& PSet)
 {
   W.clear();
-  Edge e;
   Edge_iterator eit = PSet.finite_edges_begin();
   
   for(;eit != PSet.finite_edges_end(); eit++) {
-    e = *eit;
-    CGAL::Segment_2<Gt> s= PSet.segment(e);
+    CGAL::Segment_2<Gt> s= PSet.segment(*eit);
     W << s;
   }
 }
