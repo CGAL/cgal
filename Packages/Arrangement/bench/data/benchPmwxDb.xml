@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<bench name_length="64" header="false">
+<bench name_length="64" header="false" type_mask="0x3">
   <file name="eurcut.dat" format="rat" curves="3099"
     vertices="3078" halfedges="6198" faces="39"></file>
   <file name="fork0505_mc.seg.rand.dat" format="rat" curves="12834"
@@ -20,48 +20,48 @@
   <bench samples="10" enable="true">
     <benchPmwx file="eurcut.dat" header="true"></benchPmwx>
     <benchPmwxMyKernel file="eurcut.dat"></benchPmwxMyKernel>
-    <benchPmwxLedaKernel file="eurcut.dat" enable="false"></benchPmwxLedaKernel>
+    <benchPmwxLedaKernel file="eurcut.dat"></benchPmwxLedaKernel>
   </bench>
   
   <bench samples="5" enable="true">
     <benchPmwx file="fork0505_mc.seg.rand.dat"></benchPmwx>
     <benchPmwxMyKernel file="fork0505_mc.seg.rand.dat"></benchPmwxMyKernel>
-    <benchPmwxLedaKernel file="fork0505_mc.seg.rand.dat" enable="false"></benchPmwxLedaKernel>
+    <benchPmwxLedaKernel file="fork0505_mc.seg.rand.dat"></benchPmwxLedaKernel>
   </bench>
   
   <bench samples="10" enable="true">
     <benchPmwx file="polygon_100.dat"></benchPmwx>
     <benchPmwxMyKernel file="polygon_100.dat"></benchPmwxMyKernel>
-    <benchPmwxLedaKernel file="polygon_100.dat" enable="false"></benchPmwxLedaKernel>
+    <benchPmwxLedaKernel file="polygon_100.dat"></benchPmwxLedaKernel>
   </bench>
   
   <bench samples="1" enable="true">
     <benchPmwx file="world.seg.cut.rand.dat"></benchPmwx>
     <benchPmwxMyKernel file="world.seg.cut.rand.dat"></benchPmwxMyKernel>
-    <benchPmwxLedaKernel file="world.seg.cut.rand.dat" enable="false"></benchPmwxLedaKernel>
+    <benchPmwxLedaKernel file="world.seg.cut.rand.dat"></benchPmwxLedaKernel>
   </bench>
   
   <bench samples="10" enable="true">
     <benchPmwx file="onebig_100.dat"></benchPmwx>
     <benchPmwxMyKernel file="onebig_100.dat"></benchPmwxMyKernel>
-    <benchPmwxLedaKernel file="onebig_100.dat" enable="false"></benchPmwxLedaKernel>
+    <benchPmwxLedaKernel file="onebig_100.dat"></benchPmwxLedaKernel>
   </bench>
     
   <bench samples="10" enable="true">
     <benchPmwx file="random_segments_100.dat"></benchPmwx>
     <benchPmwxMyKernel file="random_segments_100.dat"></benchPmwxMyKernel>
-    <benchPmwxLedaKernel file="random_segments_100.dat" enable="false"></benchPmwxLedaKernel>
+    <benchPmwxLedaKernel file="random_segments_100.dat"></benchPmwxLedaKernel>
   </bench>
     
-  <bench samples="10" enable="true">
-    <benchPmwx file="onebig_100_x.dat" enable="false"></benchPmwx>
+  <bench samples="10" enable="true" strategy_mask="0x6">
+    <benchPmwx file="onebig_100_x.dat" type_mask="0x2"></benchPmwx>
     <benchPmwxMyKernel file="onebig_100_x.dat"></benchPmwxMyKernel>
-    <benchPmwxLedaKernel file="onebig_100_x.dat" enable="false"></benchPmwxLedaKernel>
+    <benchPmwxLedaKernel file="onebig_100_x.dat"></benchPmwxLedaKernel>
   </bench>
   
-  <bench samples="10" enable="true">
-    <benchPmwx file="random_segments_100_x.dat" enable="false"></benchPmwx>
+  <bench samples="10" enable="true" strategy_mask="0x6">
+    <benchPmwx file="random_segments_100_x.dat" type_mask="0x2"></benchPmwx>
     <benchPmwxMyKernel file="random_segments_100_x.dat"></benchPmwxMyKernel>
-    <benchPmwxLedaKernel file="random_segments_100_x.dat" enable="false"></benchPmwxLedaKernel>
+    <benchPmwxLedaKernel file="random_segments_100_x.dat"></benchPmwxLedaKernel>
   </bench>
 </bench>
