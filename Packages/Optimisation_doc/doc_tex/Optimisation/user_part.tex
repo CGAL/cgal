@@ -44,7 +44,7 @@ then we obtain the smallest enclosing sphere problem already mentioned
 above.
 
 In the following example a smallest enclosing circle
-(\ccc{Min_circle_2<Traits>}) is constructed from points 
+(\ccc{CGAL::Min_circle_2<Traits>}) is constructed from points 
 on a line and written to standard output. The example
 shows that it is advisable to switch on random shuffling 
 in order to deal with a `bad' order of the input points. 
@@ -53,14 +53,14 @@ in order to deal with a `bad' order of the input points.
 \ccIncludeVerbatim{Optimisation/Min_circle_2_simple_demo.C}
 
 Other classes for which we provide solutions are ellipses
-(\ccc{Min_ellipse_2<Traits>}), rectangles (\ccc{min_rectangle_2}),
-parallelograms (\ccc{min_parallelogram_2}) and strips
-(\ccc{min_strip_2}) in the plane, with appropriate optimality
+(\ccc{CGAL::Min_ellipse_2<Traits>}), rectangles (\ccc{CGAL::min_rectangle_2}),
+parallelograms (\ccc{CGAL::min_parallelogram_2}) and strips
+(\ccc{CGAL::min_strip_2}) in the plane, with appropriate optimality
 criteria. In addition to spheres for points 
-(\ccc{Min_sphere_d<Traits>}) and spheres for spheres 
-(\ccc{Min_sphere_of_spheres_d<Traits>}), there
+(\ccc{CGAL::Min_sphere_d<Traits>}) and spheres for spheres 
+(\ccc{CGAL::Min_sphere_of_spheres_d<Traits>}), there
 is another class of objects which allows for solutions in arbitrary
-dimension, namely annuli (\ccc{Min_annulus_d<Traits>}).
+dimension, namely annuli (\ccc{CGAL::Min_annulus_d<Traits>}).
 
 \begin{ccHtmlOnly}
 <center>
@@ -74,10 +74,6 @@ dimension, namely annuli (\ccc{Min_annulus_d<Traits>}).
 %%\leavevmode\epsfxsize8cm\epsffile{annulus.eps}
 \end{center}
 \end{ccTexOnly}
-
-In addition to computing the smallest sphere enclosing a set
-of points, \cgal\ offers a class \ccc{Min_sphere_of_spheres_d<Traits>}
-which computes the smallest sphere enclosing a set of spheres.
 
 Bounding volumes can be used to obtain simple approximations of
 complicated objects. For example, consider the problem of deciding
@@ -98,8 +94,8 @@ computing maximal inscribed $k$-gons (triangles, quadrilaterals,
 \dots) of a planar point set $P$. Maximal $k$-gons are convex, and it
 is known that their vertices can be chosen to be vertices of the
 convex hull of $P$. Hence, the functions
-\ccc{maximum_area_inscribed_k_gon_2} and
-\ccc{maximum_perimeter_inscribed_k_gon_2} operate on convex polygons
+\ccc{CGAL::maximum_area_inscribed_k_gon_2} and
+\ccc{CGAL::maximum_perimeter_inscribed_k_gon_2} operate on convex polygons
 only. The example below shows that the largest area triangle (green)
 and the largest perimeter triangle (orange, containing the top point)
 of a point set are different in general.
@@ -120,7 +116,7 @@ of a point set are different in general.
 We further provide an algorithm for computing the maximal area
 inscribed axis parallel rectangle 
 
-Given a set of points in the plane, the class \ccc{Largest_empty_iso_rectangle_2<T>}
+Given a set of points in the plane, the class \ccc{CGAL::Largest_empty_iso_rectangle_2<T>}
 is a data structure that maintains an iso-rectangle with the largest area among
 all iso-rectangles that are inside a given iso-rectangles, and
 that do not contain any point of the point set.
@@ -159,7 +155,7 @@ more advanced bounding volumes might give better results in some
 cases. It can also make sense to consider several center points
 instead of just one. For example, we provide algorithms to cover a
 planar point set with between two and four minimal boxes
-(\ccc{rectangular_p_center_2}). Below is an example covering with
+(\ccc{CGAL::rectangular_p_center_2}). Below is an example covering with
 three boxes; the center points are shown in red.
 
 \begin{ccHtmlOnly}
@@ -187,9 +183,9 @@ are working on a solution for 3-space, though.
 This section currently consists of two algorithms only. On one hand,
 one can compute the computation of the distance between the convex
 hulls of two given point sets in $d$-dimensional Euclidean space
-(\ccc{Polytope_distance_d<Traits>}). Moreover, it is possible to
+(\ccc{CGAL::Polytope_distance_d<Traits>}). Moreover, it is possible to
 compute the width of a point set in three dimensions
-(\ccc{Width_3<Traits>}).
+(\ccc{CGAL::Width_3<Traits>}).
 
 \begin{ccHtmlOnly}
 <center>
@@ -249,7 +245,7 @@ releases.
 %% future, the interface and the functionality will stabilize.
 
 Two techniques that we make available in this section are
-\ccc{monotone_matrix_search} and \ccc{sorted_matrix_search}. They deal
+\ccc{CGAL::monotone_matrix_search} and \ccc{CGAL::sorted_matrix_search}. They deal
 with the problem of efficiently finding largest entries in matrices
 with certain structural properties. Many concrete problems can be
 modelled as matrix search problems, and for some of them we provide
