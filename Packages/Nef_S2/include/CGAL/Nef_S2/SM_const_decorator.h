@@ -127,65 +127,65 @@ Constructor_parameter center_vertex() const { return psm_; }
 
 SVertex_const_handle source(SHalfedge_const_handle e) const
 /*{\Mop returns the source of |e|.}*/
-{ return e->source_; }
+{ return e->source(); }
 
 SVertex_const_handle target(SHalfedge_const_handle e) const
 /*{\Mop returns the target of |e|.}*/
-{ return e->twin_->source_; }
+{ return e->twin()->source(); }
 
 SHalfedge_const_handle twin(SHalfedge_const_handle e) const
 /*{\Mop returns the twin of |e|.}*/
-{ return e->twin_; }
+{ return e->twin(); }
 
 SHalfloop_const_handle twin(SHalfloop_const_handle l) const 
 /*{\Mop returns the twin of |l|.}*/
-{ return l->twin_; }
+{ return l->twin(); }
 
 bool is_isolated(SVertex_const_handle v) const
 /*{\Mop returns |true| when |v| is linked to the interior of a face.}*/
-{ return (SHalfedge_const_handle(v->out_sedge_) == SHalfedge_const_handle()); }
+{ return (SHalfedge_const_handle(v->out_sedge()) == SHalfedge_const_handle()); }
 
 SHalfedge_const_handle first_out_edge(SVertex_const_handle v) const
 /*{\Mop returns one edge with source |v|. It's the starting point for
   the circular iteration over the edges with source |v|.
   \precond |!is_isolated(v)|.}*/
-{ return v->out_sedge_; }
+{ return v->out_sedge(); }
 
 SHalfedge_const_handle last_out_edge(SVertex_const_handle v) const
 /*{\Mop returns one edge with source |v|. \precond |!is_isolated(v)|.}*/
-{ return cap(v->out_sedge_); }
+{ return cap(v->out_sedge()); }
 
 SHalfedge_const_handle cyclic_adj_succ(SHalfedge_const_handle e) const
 /*{\Mop returns the edge after |e| in the cyclic ordered adjacency list of
   |source(e)|.}*/
-{ return e->sprev_->twin_; }
+{ return e->sprev()->twin(); }
 
 SHalfedge_const_handle cyclic_adj_pred(SHalfedge_const_handle e) const
 /*{\Mop returns the edge before |e| in the cyclic ordered adjacency list of
   |source(e)|.}*/
-{ return e->twin_->snext_; }
+{ return e->twin()->snext(); }
 
 
 SHalfedge_const_handle next(SHalfedge_const_handle e) const
 /*{\Mop returns the next edge in the face cycle containing |e|.}*/
-{ return e->snext_; }
+{ return e->snext(); }
 
 SHalfedge_const_handle previous(SHalfedge_const_handle e) const
 /*{\Mop returns the previous edge in the face cycle containing |e|.}*/
-{ return e->sprev_; }
+{ return e->sprev(); }
 
 SFace_const_handle face(SHalfedge_const_handle e) const
 /*{\Mop returns the face incident to |e|.}*/
-{ return e->incident_sface_; }
+{ return e->incident_sface(); }
 
 SFace_const_handle face(SHalfloop_const_handle l) const
 /*{\Mop returns the face incident to |l|.}*/
-{ return l->incident_sface_; }
+{ return l->incident_sface(); }
 
 SFace_const_handle face(SVertex_const_handle v) const
 /*{\Mop returns the face incident to |v|.
    \precond |is_isolated(v)|.}*/
-{ return v->incident_sface_; }
+{ return v->incident_sface(); }
 
 /*{\Mtext \headerline{Iteration} \setopdims{3.3cm}{0cm}}*/
   
@@ -208,11 +208,11 @@ SHalfloop_const_iterator shalfloops_end() const
 
 SHalfloop_const_handle shalfloop() const
 /*{\Mop returns access to the loop.}*/
-{ return psm_->shalfloop_; }
+{ return psm_->shalfloop(); }
 
-bool has_sloop() const
+bool has_shalfloop() const
 /*{\Mop returns true iff there is a loop.}*/
-{ return psm_->has_sloop(); }
+{ return psm_->has_shalfloop(); }
 
 SHalfedge_around_svertex_const_circulator 
   out_edges(SVertex_const_handle v) const
@@ -291,31 +291,31 @@ bool is_boundary_object(H h) const
 
 const Sphere_point& point(SVertex_const_handle v) const
 /*{\Mop returns the embedding of |v|.}*/
-{ return v->point_; }
+{ return v->point(); }
 
 const Sphere_circle& circle(SHalfedge_const_handle e) const
 /*{\Mop returns the circle supporting |e|.}*/
-{ return e->circle_; }
+{ return e->circle(); }
 
 const Sphere_circle& circle(SHalfloop_const_handle l) const
 /*{\Mop returns the circle supporting |l|.}*/
-{ return l->circle_; }
+{ return l->circle(); }
 
 const Mark& mark(SVertex_const_handle v) const
 /*{\Mop returns the mark of |v|.}*/
-{ return v->mark_; }
+{ return v->mark(); }
 
 const Mark& mark(SHalfedge_const_handle e) const
 /*{\Mop returns the mark of |e|.}*/
-{ return ( &*e < &*twin(e) ) ? e->mark_ : twin(e)->mark_; }
+{ return e->mark(); }
 
 const Mark& mark(SHalfloop_const_handle l) const
 /*{\Mop returns the mark of |l|.}*/
-{ return ( &*l < &*twin(l) ) ? l->mark_ : twin(l)->mark_; }
+{ return ( &*l < &*twin(l) ) ? l->mark() : twin(l)->mark(); }
 
 const Mark& mark(SFace_const_handle f) const
 /*{\Mop returns the mark of |f|.}*/
-{ return f->mark_; }
+{ return f->mark(); }
 
 /*{\Mtext \headerline{Iteration}}*/
 /*{\Mtext The list of all objects can be accessed via iterator ranges.
@@ -430,7 +430,7 @@ number_of_sface_cycles() const
     CGAL_For_all(hfc,hend) visited[hfc]=true;
     ++fc_num;
   }
-  if ( has_sloop() ) fc_num += 2;
+  if ( has_shalfloop() ) fc_num += 2;
   return fc_num;
 }
 

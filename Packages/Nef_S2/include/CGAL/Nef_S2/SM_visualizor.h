@@ -106,7 +106,7 @@ void draw_map() const
   }
   // draw sphere circles underlying loops of E_:
 
-  if ( E_.has_sloop() )
+  if ( E_.has_shalfloop() )
     S_.push_back(
       Sphere_circle(E_.circle(E_.shalfloop())),
       CO_.color(E_.shalfloop(),E_.mark(E_.shalfloop())));

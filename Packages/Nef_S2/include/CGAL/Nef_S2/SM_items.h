@@ -1,3 +1,26 @@
+// Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Michael Seel        <seel@mpi-sb.mpg.de>
+//                 Miguel Granados     <granados@mpi-sb.mpg.de>
+//                 Susan Hert          <hert@mpi-sb.mpg.de>
+//                 Lutz Kettner        <kettner@mpi-sb.mpg.de>
+//                 Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
+
 #ifndef CGAL_SM_ITEMS_H
 #define CGAL_SM_ITEMS_H
 
@@ -72,6 +95,21 @@ public:
       info_ = 0;
       return *this;
     }
+
+    Mark& mark() { return mark_; }
+    const Mark& mark() const { return mark_; }
+
+    Sphere_point& point(){ return point_; }
+    const Sphere_point& point() const { return point_; }
+
+    SHalfedge_handle& out_sedge() { return out_sedge_; }
+    SHalfedge_handle out_sedge() const { return out_sedge_; }
+
+    SFace_handle& incident_sface() { return incident_sface_; } 
+    SFace_handle incident_sface() const { return incident_sface_; } 
+
+    GenPtr& info() { return info_; }
+    const GenPtr& info() const { return info_; }
                           
     public:
     std::string debug() const
@@ -140,6 +178,36 @@ public:
 
     bool is_twin() const { return (&*twin_ < this); }
 
+    Mark& mark() { 
+      if ( this < &*twin_ ) return mark_;
+      else return twin_->mark_; 
+    }
+    const Mark& mark() const {
+      if ( this < &*twin_ ) return mark_;
+      else return twin_->mark_; 
+    }
+
+    SHalfedge_handle& twin() { return twin_; }
+    SHalfedge_handle twin() const { return twin_; }
+
+    SVertex_handle& source() { return source_; }
+    SVertex_handle source() const { return source_; }
+
+    SHalfedge_handle& sprev() { return sprev_; }
+    SHalfedge_handle sprev() const { return sprev_; }
+
+    SHalfedge_handle& snext() { return snext_; }
+    SHalfedge_handle snext() const { return snext_; }
+
+    Sphere_circle& circle() { return circle_; }
+    const Sphere_circle& circle() const { return circle_; }
+    
+    SFace_handle& incident_sface() { return incident_sface_; }
+    SFace_handle incident_sface() const { return incident_sface_; }
+
+    GenPtr& info() { return info_; }
+    const GenPtr& info() const { return info_; }
+
     std::string debug() const
     { std::ostrstream os; set_pretty_mode(os); 
       os <<"e["<<source_->debug()<<", "
@@ -189,6 +257,27 @@ public:
     }
 
     bool is_twin() const { return (&*twin_ < this); }
+
+    Mark& mark() { 
+      if ( this < &*twin_ ) return mark_;
+      else return twin_->mark_; 
+    }
+    const Mark& mark() const { 
+      if ( this < &*twin_ ) return mark_;
+      else return twin_->mark_; 
+    }
+
+    SHalfloop_handle& twin() { return twin_; }
+    SHalfloop_handle twin() const { return twin_; }
+
+    Sphere_circle& circle() { return circle_; }
+    const Sphere_circle& circle() const { return circle_; }
+
+    SFace_handle& incident_sface() { return incident_sface_; }
+    SFace_handle incident_sface() const { return incident_sface_; }
+
+    GenPtr& info() { return info_; }
+    const GenPtr& info() const { return info_; }
 
     std::string debug() const
     { std::ostrstream os; set_pretty_mode(os); 
@@ -244,6 +333,15 @@ public:
     { return boundary_entry_objects_.begin(); }
     SFace_cycle_const_iterator sface_cycles_end() const
     { return boundary_entry_objects_.end(); }
+
+    Mark& mark() { return mark_; }
+    const Mark& mark() const { return mark_; }
+
+    Object_list& boundary_entry_objects() { return boundary_entry_objects_; }
+    const Object_list& boundary_entry_objects() const { return boundary_entry_objects_; }
+
+    GenPtr& info() { return info_; }
+    const GenPtr& info() const { return info_; }
 
   }; // SFace
 

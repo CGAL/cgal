@@ -359,7 +359,7 @@ void SM_triangulator<Decorator_>::triangulate()
       From[--L.end()] = Object_handle(e);
     }
   }
-  if ( E_.has_sloop() ) {
+  if ( E_.has_shalfloop() ) {
     Seg_pair p = two_segments(E_,E_.shalfloop());
     L.push_back(p.first); L.push_back(p.second);
     From[--L.end()] = From[--(--L.end())] = Object_handle(E_.shalfloop());

@@ -208,7 +208,7 @@ public:
       }
     }
 
-    if ( has_sloop() && circle(shalfloop()).has_on(p) ) {
+    if ( has_shalfloop() && circle(shalfloop()).has_on(p) ) {
       TRACEN( "  on loop");
       return Object_handle(SHalfloop_handle(shalfloop()));
     }
@@ -228,7 +228,7 @@ public:
 
     TRACEN("  on face...");
     Sphere_segment s; // we shorten the segment iteratively
-    if ( has_sloop() ) {
+    if ( has_shalfloop() ) {
       Sphere_circle c(circle(shalfloop()),p); // orthogonal through p
       s = Sphere_segment(p,intersection(c,circle(shalfloop())));
       l_res = circle(shalfloop()).has_on_positive_side(p) ? 

@@ -255,8 +255,8 @@ public:
     svertices_.destroy(); 
     sfaces_.destroy();
     while ( shalfedges_begin() != shalfedges_end() )
-      delete_halfedge_pair( shalfedges_begin() );
-    if ( shalfloop_ != 0 ) { delete_halfloop_pair(shalfloop_); shalfloop_=0; }
+      delete_shalfedge_pair( shalfedges_begin() );
+    if ( shalfloop_ != 0 ) { delete_shalfloop_pair(); shalfloop_=0; }
   }
 
   template <typename H>
@@ -264,15 +264,15 @@ public:
   { return boundary_item_[h]!=undef_; }
 
   template <typename H>
-  Object_iterator& boundary_item(H h)
+  Object_iterator& sm_boundary_item(H h)
   { return boundary_item_[h]; }
 
   template <typename H>
-  void store_boundary_item(H h, Object_iterator o)
+  void store_sm_boundary_item(H h, Object_iterator o)
   { boundary_item_[h] = o; }
 
   template <typename H>
-  void undef_boundary_item(H h)
+  void undef_sm_boundary_item(H h)
   { CGAL_assertion(boundary_item_[h]!=undef_);
     boundary_item_[h] = undef_; }
 
@@ -280,12 +280,12 @@ public:
   { SVertex_handle sv;
     SHalfedge_handle se;
     SHalfloop_handle sl;
-    if ( assign(se,*it) ) { undef_boundary_item(se); return; }
-    if ( assign(sl,*it) ) { undef_boundary_item(sl); return; }
-    if ( assign(sv,*it) ) { undef_boundary_item(sv); return; }
+    if ( assign(se,*it) ) { undef_sm_boundary_item(se); return; }
+    if ( assign(sl,*it) ) { undef_sm_boundary_item(sl); return; }
+    if ( assign(sv,*it) ) { undef_sm_boundary_item(sv); return; }
   }
 
-  void reset_object_list(Object_list& L)
+  void reset_sm_object_list(Object_list& L)
   { Object_iterator oit;
     CGAL_forall_iterators(oit,L) reset_iterator_hash(oit);
     L.clear();
@@ -348,7 +348,7 @@ public:
       number_of_sfaces() == 0;
   }
 
-  bool has_sloop() const {
+  bool has_shalfloop() const {
     return shalfloop_ != 0;
   }
 
@@ -443,26 +443,27 @@ public:
     *ph=l1; *pt=l2; make_twins(ph,pt);
     shalfloop_=ph; return ph; }
 
-  void delete_vertex(SVertex_handle h) { 
+  void delete_svertex(SVertex_handle h) { 
     svertices_.erase(h); 
     put_vertex_node(&*h); 
   }
 
-  void delete_face(SFace_handle h) { 
+  void delete_sface(SFace_handle h) { 
     sfaces_.erase(h); 
     put_face_node(&*h);
   }
 
-  void delete_halfedge_pair(SHalfedge_handle h) { 
+  void delete_shalfedge_pair(SHalfedge_handle h) { 
     SHalfedge_handle t = h->twin_;
     sedges_.erase(h); sedges_.erase(t);
     put_halfedge_node(&*h);
     put_halfedge_node(&*t);
   }
 
-  void delete_halfloop_pair(SHalfloop_handle h)
-  { SHalfloop* ph = &*h;
-    SHalfloop* pt = &*(h->twin_);
+  void delete_shalfloop_pair() { 
+    CGAL_assertion(has_shalfloop());
+    SHalfloop* ph = &*shalfloop_;
+    SHalfloop* pt = &*shalfloop_->twin();
     if ( ph > pt ) std::swap(ph,pt);
     shalfloop_ = SHalfloop_handle();
     delete [] ph; }
@@ -548,13 +549,13 @@ pointer_update(const Sphere_map<K, I>& D)
 	fci != f->boundary_entry_objects_.end(); ++fci) {
       if ( fci.is_svertex() ) 
       { v = SVertex_handle(fci);
-	*fci = Object_handle(VM[v]); store_boundary_item(v,fci); }
+	*fci = Object_handle(VM[v]); store_sm_boundary_item(v,fci); }
       else if ( fci.is_shalfedge() ) 
       { e = SHalfedge_handle(fci);
-	*fci = Object_handle(EM[e]); store_boundary_item(e,fci); }
+	*fci = Object_handle(EM[e]); store_sm_boundary_item(e,fci); }
       else if ( fci.is_shalfloop() ) 
       { l = SHalfloop_handle(fci);
-	*fci = Object_handle(LM[l]); store_boundary_item(l,fci); }
+	*fci = Object_handle(LM[l]); store_sm_boundary_item(l,fci); }
       else CGAL_assertion_msg(0,"damn wrong boundary item in face.");
     }
   }

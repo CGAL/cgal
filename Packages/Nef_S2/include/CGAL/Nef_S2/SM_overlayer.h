@@ -426,9 +426,7 @@ public:
   { return geninfo<edge_info>::access(info(e)); }
 
   Mark& mark(SHalfedge_handle e, int i)  const
-  // uedge information we store in the smaller one 
-  { if (&*e < &*(twin(e))) return ginfo(e).m[i]; 
-    else                   return ginfo(twin(e)).m[i]; }
+    { return ginfo(e).m[i]; }
 
   Object_handle& supp_object(SHalfedge_handle e, int i) const
   // uedge information we store in the smaller one 
@@ -917,7 +915,7 @@ subdivide(Constructor_const_parameter M0, Constructor_const_parameter M1)
         From[--L.end()] = Seg_info(e,i);
       }
     }
-    if ( PI[i].has_sloop() ) {
+    if ( PI[i].has_shalfloop() ) {
       SHalfloop_const_handle shl = PI[i].shalfloop();
       Seg_pair p = two_segments(PI[i],shl);
       L.push_back(p.first); 
@@ -1325,7 +1323,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
             TRACEN("  supporting edge "<<i<<" "<<PH(ei));
             incident_mark(twin(e),i) =
               PI[i].mark(PI[i].face(PI[i].twin(ei)));
-            mark(e,i) = PI[i].mark(ei);
+            mark(e,i) = mark(twin(e),i) = PI[i].mark(ei);
             incident_mark(e,i) = m_buffer[i] =
               PI[i].mark(PI[i].face(ei)); 
           }
@@ -1336,12 +1334,12 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
             TRACEN("  supporting loop "<<i<<" "<<PH(li));
             incident_mark(twin(e),i) =
               PI[i].mark(PI[i].face(PI[i].twin(li)));
-            mark(e,i) = PI[i].mark(li);
+            mark(e,i) = mark(twin(e),i) = PI[i].mark(li);
             incident_mark(e,i) = m_buffer[i] =
               PI[i].mark(PI[i].face(li)); 
           }
         } else { TRACEN("  support from face below "<<i);
-          incident_mark(twin(e),i) = mark(e,i) = 
+	  incident_mark(twin(e),i) = mark(e,i) = mark(twin(e),i) =
           incident_mark(e,i) = m_buffer[i];
         }
       } TRACEN("  face marks "<<m_buffer[0]<<" "<<m_buffer[1]);
@@ -1349,7 +1347,6 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
 
     TRACEN(" mark of "<<PH(v)<<" "<<mark(v,0)<<" "<<mark(v,1));
   }
-
  
   SFace_iterator f;
   for (f = sfaces_begin(); f != sfaces_end(); ++f) {
@@ -1412,8 +1409,6 @@ merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2,
     set_face(e1,f);
     if ( e2 == first_out_edge(source(e2)) )
       set_first_out_edge(source(e2),e1t);
-    //    mark(e1,0) = mark(e1,0) || mark(e2,0);
-    //    mark(e1,1) = mark(e1,1) || mark(e2,1);
     D.discard_info(e2);
     delete_edge_pair_only(e2);
   }
@@ -1432,6 +1427,8 @@ select(const Selection& SP) const
   SHalfedge_iterator e;
   CGAL_forall_sedges(e,*this) {
     mark(e) = SP(mark(e,0),mark(e,1));
+    mark(twin(e)) = SP(mark(twin(e),0),mark(twin(e),1));
+    CGAL_assertion(mark(e) == mark(twin(e)));
     discard_info(e);
   }
   SFace_iterator f;
@@ -1457,7 +1454,7 @@ void SM_overlayer<Map>::simplify() const
      clear_face_cycle_entries(f);
   }
 
-  if ( has_sloop() ) {
+  if ( has_shalfloop() ) {
     SHalfloop_handle l = shalfloop();
     SFace_handle f = *(UF.find(Pitem[face(l)]));
     link_as_loop(l,f);
