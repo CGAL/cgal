@@ -1,5 +1,4 @@
 /***************************************************************************
-
     begin                : jan 02
     copyright            : (C) 2002 by Pierre Alliez
     email                : pierre.alliez@sophia.inria.fr
@@ -35,10 +34,10 @@ void Mesh_cutter::cut(backbone *pBackbone)
 
   // cutting
   std::cerr << "    cutting...";
-  while(extend());
+  while(extend()) {}
   std::cerr << "done" << std::endl;
-  flag_seaming();
-  update_multiplicity();
+  //flag_seaming();
+  //update_multiplicity();
 }
 
 /////////////////////////////////////////////////////
@@ -60,58 +59,58 @@ void Mesh_cutter::cut_genus(backbone *pBackbone)
 
   // cutting
   std::cerr << "    cutting...";
-  while(extend());
+  while(extend()) {}
   std::cerr << "done" << std::endl;
-  flag_seaming();
-  update_multiplicity();
+  //flag_seaming();
+  //update_multiplicity();
 }
 
-//***************************************************
-// convert_to_seaming
-//***************************************************
-void Mesh_cutter::convert_to_seaming(backbone *pBackbone)
-{
-  std::cerr << "  convert to seaming backbone";
-  m_pBackbone = pBackbone;
-  CGAL_assertion(pBackbone != NULL);
-  pBackbone->type(backbone::SEAMING);
-  flag_seaming();
-  std::cerr << std::endl;
-}
+////***************************************************
+//// convert_to_seaming
+////***************************************************
+//void Mesh_cutter::convert_to_seaming(backbone *pBackbone)
+//{
+//  std::cerr << "  convert to seaming backbone";
+//  m_pBackbone = pBackbone;
+//  CGAL_assertion(pBackbone != NULL);
+//  pBackbone->type(backbone::SEAMING);
+//  flag_seaming();
+//  std::cerr << std::endl;
+//}
 
-//***************************************************
-// flag_seaming
-//***************************************************
-void Mesh_cutter::flag_seaming()
-{
-  list<Polyhedron_ex::Halfedge_handle>::iterator ppHalfedge;
-  for(ppHalfedge  = m_pBackbone->halfedges()->begin();
-      ppHalfedge != m_pBackbone->halfedges()->end();
-      ppHalfedge++)
-  {
-    Polyhedron_ex::Halfedge_handle pHalfedge = (*ppHalfedge);
-    pHalfedge->is_seaming(true);
-    pHalfedge->opposite()->is_seaming(true);
-  }
-}
+////***************************************************
+//// flag_seaming
+////***************************************************
+//void Mesh_cutter::flag_seaming()
+//{
+//  list<Polyhedron_ex::Halfedge_handle>::iterator ppHalfedge;
+//  for(ppHalfedge  = m_pBackbone->halfedges()->begin();
+//      ppHalfedge != m_pBackbone->halfedges()->end();
+//      ppHalfedge++)
+//  {
+//    Polyhedron_ex::Halfedge_handle pHalfedge = (*ppHalfedge);
+//    pHalfedge->is_seaming(true);
+//    pHalfedge->opposite()->is_seaming(true);
+//  }
+//}
 
-//***************************************************
-// update multiplicity
-//***************************************************
-void Mesh_cutter::update_multiplicity()
-{
-	m_pPolyhedron->init_vertex_multiplicity(0);
-	
-  list<Polyhedron_ex::Halfedge_handle>::iterator ppHalfedge;
-  for(ppHalfedge  = m_pBackbone->halfedges()->begin();
-      ppHalfedge != m_pBackbone->halfedges()->end();
-      ppHalfedge++)
-  {
-    Polyhedron_ex::Halfedge_handle pHalfedge = (*ppHalfedge);
-    pHalfedge->vertex()->increase_multiplicity();
-  }
-  m_pPolyhedron->trace_vertex_multiplicity();
-}
+////***************************************************
+//// update multiplicity
+////***************************************************
+//void Mesh_cutter::update_multiplicity()
+//{
+//	m_pPolyhedron->init_vertex_multiplicity(0);
+//	
+//  list<Polyhedron_ex::Halfedge_handle>::iterator ppHalfedge;
+//  for(ppHalfedge  = m_pBackbone->halfedges()->begin();
+//      ppHalfedge != m_pBackbone->halfedges()->end();
+//      ppHalfedge++)
+//  {
+//    Polyhedron_ex::Halfedge_handle pHalfedge = (*ppHalfedge);
+//    pHalfedge->vertex()->increase_multiplicity();
+//  }
+//  m_pPolyhedron->trace_vertex_multiplicity();
+//}
 
 //***************************************************
 // init
@@ -277,19 +276,19 @@ void Mesh_cutter::keep_one_connected_component()
 {
 	std::cerr << "keep one component..." << std::endl;
 	return; // ** TODO **
-	
+
 	// check if valid
 	//bool valid = m_pPolyhedron->is_valid(false,1);	
-	
+
 	m_pPolyhedron->tag_facets(0);
 	Polyhedron_ex::Facet_handle pFacet = NULL;
 	int index = 1;
 	while((pFacet = m_pPolyhedron->get_any_facet_tag(0)) != NULL)
 	{
-	  CGAL_assertion(pFacet != NULL);
-  	std::cerr << "seed recursive tag " << index << std::endl;
-	  recursive_tag(pFacet,index);
-	  index++;
+		CGAL_assertion(pFacet != NULL);
+  		std::cerr << "seed recursive tag " << index << std::endl;
+		recursive_tag(pFacet,index);
+		index++;
 	}
 	std::cerr << index-1 << " connected components" << std::endl;
 }

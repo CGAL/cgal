@@ -103,7 +103,7 @@ static const Backbone* cut_mesh(Polyhedron_ex* mesh)
   Backbone *pSeamingBackbone = mesh->get_seaming_backbone();
   mesh->free_skeleton();
   pSeamingBackbone->clear();
-  mesh->flag_halfedges_seaming(false);
+  //mesh->flag_halfedges_seaming(false);
 
   Mesh_cutter cutter(mesh);
   // cutter.keep_one_connected_component();
@@ -115,7 +115,7 @@ static const Backbone* cut_mesh(Polyhedron_ex* mesh)
   {
     int nb_boundaries = feature_extractor.extract_boundaries(false,true);
 
-    // no boundary, we need a first_file_arg cut
+    // no boundary, we need to cut the mesh
     if(nb_boundaries == 0)
       cutter.cut(pSeamingBackbone); // simple cut
     else
@@ -280,6 +280,11 @@ int main(int argc,char * argv[])
 	// print mesh info
 	fprintf(stderr,"(%d faces, ",mesh.size_of_facets());
 	fprintf(stderr,"%d vertices)\n",mesh.size_of_vertices());
+
+	// compute misc.
+	//mesh.compute_normals();
+	mesh.compute_facet_centers();
+	//mesh.compute_mean_curvature_normal();
 
 	//***************************************     		
 	// switch parameterization
