@@ -1,5 +1,11 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.83 on 10 April 2001
+- FPU.h is changed to reflect the realtity on Alpha/Linux 2.2.18 with
+  libc 2.1 to support FPE handling by the Linux kernel.
+  Functions declared in /usr/include/bits/fenv.h are used (via <fenv.h>,
+  that is not yet ready to be used with C++ in normal way)
+
 Version 4.82 on  6 April 2001
 - limbs_per_double is now vector<limb>::size_type instead of unsigned to
   please Alpha.
