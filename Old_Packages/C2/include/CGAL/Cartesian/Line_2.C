@@ -8,7 +8,7 @@
 #include <CGAL/Cartesian/constructions_on_lines_2.h>
 #include <CGAL/Cartesian/predicates_on_lines_2.h>
 
-#ifndef CGAL_CARTESIANR_EDEFINE_NAMES_2_H
+#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 #define CGAL_CTAG
 #endif
 

@@ -2,8 +2,8 @@
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann
 
-#ifndef CGAL_CARTESIANR_EDEFINE_NAMES_2_H
-#define CGAL_CARTESIANR_EDEFINE_NAMES_2_H
+#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
+#define CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
 
@@ -49,4 +49,4 @@
 
 #endif
 
-#endif // CGAL_CARTESIANR_EDEFINE_NAMES_2_H
+#endif // CGAL_CARTESIAN_REDEFINE_NAMES_2_H

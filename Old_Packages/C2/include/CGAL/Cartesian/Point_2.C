@@ -9,7 +9,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/number_utils.h>
 
-#ifndef CGAL_CARTESIANR_EDEFINE_NAMES_2_H
+#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 #define CGAL_CTAG
 #endif
 

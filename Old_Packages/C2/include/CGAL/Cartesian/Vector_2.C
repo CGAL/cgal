@@ -7,7 +7,7 @@
 
 #include <CGAL/Cartesian/Direction_2.h>
 
-#ifndef CGAL_CARTESIANR_EDEFINE_NAMES_2_H
+#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 #define CGAL_CTAG
 #endif
 
