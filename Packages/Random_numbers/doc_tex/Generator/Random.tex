@@ -83,6 +83,13 @@ described below.
 \ccMemberFunction{ void restore_seed( Seed const& seed);}{
         restores the internal seed from \ccc{seed}.}
 
+% -----------------------------------------------------------------------------
+\ccImplementation
+
+We use the C library function \ccc{erand48} to generate the random
+numbers, i.e.\ the sequence of numbers depends on the implementation
+of \ccc{erand48} on your specific platform.
+
 \end{ccClass}
 
 % ===== EOF ===================================================================
