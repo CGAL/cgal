@@ -1,6 +1,9 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
 
+15 Mar 2004 Andreas Fabri
+- Added missing #include <CGAL/iterator.h>  and CGAL_BEGIN_NAMESPACE to point_generators_d.h
+
 Version 2.82 (09 February 2004) [rursu]
 - Updated headers in examples
 
