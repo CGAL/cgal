@@ -1866,9 +1866,9 @@ public:
       typename Kernel::Orientation_2 orient_f = ker.orientation_2_object();
       
       if (_conic.orientation() == 1)
-	return (orient_f(_source, p, _target) == LEFTTURN);
+	return (orient_f(_source, p, _target) == LEFT_TURN);
       else
-	return (orient_f(_source, p, _target) == RIGHTTURN);
+	return (orient_f(_source, p, _target) == RIGHT_TURN);
     }
   }
 
