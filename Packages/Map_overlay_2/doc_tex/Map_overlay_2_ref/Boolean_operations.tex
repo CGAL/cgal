@@ -33,13 +33,13 @@ operations, on the two input subdivisions, available for users.
   \ccNestedType{Map_overlay}{map overlay class.}
   \ccGlue
   \ccNestedType{Vertex_container}
-  {a container of all vertices corresponing to the boolean operation performed on the two input subdivisions.}
+  {a container of all vertices corresponding to the boolean operation performed on the two input subdivisions.}
   \ccGlue
   \ccNestedType{Halfedges_container}
-  {a container of all halfedges corresponing to the boolean operation performed on the two input subdivisions.}
+  {a container of all halfedges corresponding to the boolean operation performed on the two input subdivisions.}
   \ccGlue
   \ccNestedType{Faces_container}
-  {a container of all faces corresponing to the boolean operation performed on the two input subdivisions.}
+  {a container of all faces corresponding to the boolean operation performed on the two input subdivisions.}
 
   \ccTypedef{typedef typename Map_overlay::Subdivision  Subdivision;}
   {the subdivision presenting the overlay and the two input subdivisions.}
@@ -53,18 +53,21 @@ operations, on the two input subdivisions, available for users.
 \ccCreation
   \ccCreationVariable{bops}
     
-  \ccConstructor{Boolean_operations<Map_overlay>();} {constructs an
+  \ccConstructor{Boolean_operations_2<Map_overlay>();} {constructs an
      ``empty boolean operations'' object of two ``empty input subdivisions'', 
      each of which contains one unbounded face, which corresponds to the entire plane.}
   
-  \ccConstructor{Boolean_operations(<Map_overlay>(const Subdivision & s1,const Subdivision & s2);}
-  {constructs a boolean operations object out of two planar subdivisions;}
+  \ccConstructor{Boolean_operations_2<Map_overlay>(const Subdivision & s1,const Subdivision & s2);}{constructs a boolean operations object out of two planar subdivisions;}
   
-  \ccConstructor{Boolean_operations(<Map_overlay>(const Self & bops);}{copy constructor;}
+  \ccConstructor{Boolean_operations_2<Map_overlay>(const Self & bops);}{copy constructor;}
+
+The \ccClassTemplateName\ defines an assignment operator.
+
+%\ccMethod{const Self& operator=(const Self& bops);}{}
 
 \begin{ccAdvanced}
 
-\ccHeading{Empolying Map-Overlay}
+\ccHeading{Employing Map-Overlay}
 
 A Boolean Operation object can be constructed out of a Map Overlay object.
 In this case, users may construct a Map Overlay object out of two input subdivision, 
@@ -72,26 +75,23 @@ where the a choice of the notifier class, the overlay construction algorithm, or
 can be taken, as described in \ccRefPage{CGAL::MapOverlay<Subdivision,Notifier>}. 
 When constructing a Boolean Operation object out of two input subdivision, as described above,
 the Map Overlay object maintained in the \ccClassTemplateName\ class,
-is contructed, when taking the default notifier class, overlay construction algorithm and point location.
+is constructed, when taking the default notifier class, overlay construction algorithm and point location.
 As described in~\ref{Ovl_Ref_intro}, the default choices are not always 
 the most efficient. Hence, users may provide their own Map Overlay object, defined under the optimal choices, 
 and then, they may construct the Boolean Operations object defined over their Map Overlay object. 
 
-\ccConstructor{Boolean_operations(<Map_overlay>(const Map_overlay& ovl>);}
+\ccConstructor{Boolean_operations_2<Map_overlay>(const Map_overlay& ovl>);}
 {constructs a boolean operations object from $ovl$;}
 
 \end{ccAdvanced}
 %\ccThree{Halfedge_handle}{}{\hspace*{11cm}}
 
-The boolean operations class defines an assignment operator:
-
-\ccMethod{const Self& operator=(const Self& bops);}{}
 
 The \ccClassTemplateName\ class contains methods performing 
 boolean operations of the input subdivisions.
 In each such method, we return, as output, all vertices, halfedge, and faces 
-contained in the subdivision, insuced by the boolean operation performed 
-on the two input subdivisions. All these three output paramerters are optional 
+contained in the subdivision, induced by the boolean operation performed 
+on the two input subdivisions. All these three output parameters are optional 
 in our methods.
 
 \ccMethod{void intersection (Faces_container& list_of_faces,

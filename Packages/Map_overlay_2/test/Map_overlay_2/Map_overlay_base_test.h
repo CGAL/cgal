@@ -522,7 +522,7 @@ public:
     Subdivision  subdivision1(pm1), subdivision2(pm2);
     MapOverlay   first_creator(subdivision1, ovl_alg);
     MapOverlay   second_creator(subdivision2, ovl_alg);
-    
+
     PmWalkPL pl_walk_ovl;
     //MapOverlay map_overlay(&pl_walk_ovl);
     //Subdivision pmwx1(pm1), pmwx2(pm2);
