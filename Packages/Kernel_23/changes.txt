@@ -1,3 +1,7 @@
+22 Feb 2004 Sylvain Pion
+- Further organization : 2D functions taking user classes as argument
+  now call the global functions in CGALi.  3D still to be done.
+
 21 Feb 2004 Sylvain Pion
 - Move internal predicates(p,q,K) to CGALi.
 
