@@ -18,9 +18,11 @@
 
 #include <CGAL/circulator.h>
 
-#include "Polyhedron_decorator.h"
-#include "Polyhedron_subdivision_rules.h"
-#include "Polyhedron_memory_builder.h"
+#include <SurfLab/Polyhedron_decorator.h>
+#include <SurfLab/Polyhedron_subdivision_rules.h>
+#include <SurfLab/Polyhedron_memory_builder.h>
+
+SURFLAB_BEGIN_NAMESPACE
 
 // ======================================================================
 ///
@@ -65,32 +67,33 @@ public:
       Catmull-Clark subdivision.
   */
   static void CatmullClark_subdivision(Polyhedron& p, int step = 1) {
-    quadralize_polyhedron<CatmullClark_rule<Polyhedron>, 4>(p, step);
+    quad_quadralize_polyhedron(p, CatmullClark_rule<Polyhedron>(), step);
   }
 
   /** Subdivide the input polyhedron p with Loop subdivision 
       rules.
   */
   static void Loop_subdivision(Polyhedron& p, int step = 1) {
-    quadralize_polyhedron<Loop_rule<Polyhedron>, 3>(p, step);
+    tri_quadralize_polyhedron(p, Loop_rule<Polyhedron>() , step);
   }
   /** Subdivide the input polyhedron p with Loop subdivision 
       rules.
   */
   static void QT43_subdivision(Polyhedron& p, int step = 1) {
-    quadralize_polyhedron<QT43_rule<Polyhedron>, 43>(p, step);
+    qt_quadralize_polyhedron(p, QT43_rule<Polyhedron>(), step);
   }
+
   ///
   static void PTQ(Polyhedron& p, int step = 1) {
-    quadralize_polyhedron<average_rule<Polyhedron>, 3>(p, step);
+    tri_quadralize_polyhedron(p, average_rule<Polyhedron>(), step);
   }
   ///
   static void PQQ(Polyhedron& p, int step = 1) {
-    quadralize_polyhedron<average_rule<Polyhedron>, 4>(p, step);
+    quad_quadralize_polyhedron(p, average_rule<Polyhedron>(), step);
   }
   ///
   static void PQTQ(Polyhedron& p, int step = 1) {
-    quadralize_polyhedron<average_rule<Polyhedron>, 43>(p, step);
+    qt_quadralize_polyhedron(p, average_rule<Polyhedron>(), step);
   }
 
   /** Make all faces in the input polyhedron p valance 4 with user's
@@ -104,16 +107,33 @@ public:
       All new face-vertices are the average of their face-neighbor-
       vertices.
   */
-  template <class RULE, int MT>
-  static void quadralize_polyhedron(Polyhedron& p, int step = 1) {
-    // Check the template classes are matching to each other
-    typedef typename RULE::Polyhedron RPolyhedron;
-    assert_equal_types(RPolyhedron(), Polyhedron());
+//   template <class RULE, int MT>
+//   static void quadralize_polyhedron(Polyhedron& p, int step = 1) {
+//     // Check the template classes are matching to each other
+//     typedef typename RULE::Polyhedron RPolyhedron;
+//     assert_equal_types(RPolyhedron(), Polyhedron());
 
-    if (MT == 4) for (int i = 0; i < step; i++) quad_quadralize_1step<RULE>(p);
-    if (MT == 3) for (int i = 0; i < step; i++) tri_quadralize_1step<RULE>(p);
-    if (MT == 43) for (int i = 0; i < step; i++) qt_quadralize_1step<RULE>(p);
+//     if (MT == 4) for (int i = 0; i < step; i++) quad_quadralize_1step<RULE>(p);
+//     if (MT == 3) for (int i = 0; i < step; i++) tri_quadralize_1step<RULE>(p);
+//     if (MT == 43) for (int i = 0; i < step; i++) qt_quadralize_1step<RULE>(p);
+//   }
+  ///
+  template <template <typename> class RULE>
+  static void quad_quadralize_polyhedron(Polyhedron& p, RULE<Polyhedron> rule, int step = 1) {
+    for (int i = 0; i < step; i++) quad_quadralize_1step(p, rule);
   }
+  ///
+  template <template <typename> class RULE>
+  static void tri_quadralize_polyhedron(Polyhedron& p, RULE<Polyhedron> rule, int step = 1) {
+    for (int i = 0; i < step; i++) tri_quadralize_1step(p, rule);
+  }
+
+  ///
+  template <template <typename> class RULE>
+  static void qt_quadralize_polyhedron(Polyhedron& p, RULE<Polyhedron> rule, int step = 1) {
+    for (int i = 0; i < step; i++) qt_quadralize_1step(p, rule);
+  }
+
 
   /** Subdivide the input polyhedron p with Doo-Sabin subdivision 
       rules.
@@ -124,7 +144,7 @@ public:
       Doo-Sabin subdivision.
   */
   static void DooSabin_subdivision(Polyhedron& p, int step = 1) {
-    dualize_polyhedron<DooSabin_rule<Polyhedron> >(p, step);
+    dualize_polyhedron(p, DooSabin_rule<Polyhedron>(), step);
   }
 
   /** Dualize the input polyhedron p. Make all vertex in the input 
@@ -133,13 +153,9 @@ public:
       Precondition: 
       Postcondition:
   */
-  template <class RULE>
-  static void dualize_polyhedron(Polyhedron& p, int step = 1) {
-    // Check the template classes are matching to each other
-    typedef typename RULE::Polyhedron RPolyhedron;
-    assert_equal_types(RPolyhedron(), Polyhedron());
-
-    for (int i = 0; i < step; ++i) dualize_1step<RULE>(p);
+  template <template <typename> class RULE>
+  static void dualize_polyhedron(Polyhedron& p, RULE<Polyhedron> rule, int step = 1) {
+    for (int i = 0; i < step; ++i) dualize_1step(p, rule);
   }
 
 
@@ -152,7 +168,7 @@ public:
       Sqrt(3) subdivision.
   */
   static void Sqrt3_subdivision(Polyhedron& p, int step = 1) {
-    sqrt3refine_polyhedron<Sqrt3_rule<Polyhedron> >(p, step);
+    sqrt3refine_polyhedron(p, Sqrt3_rule<Polyhedron>(), step);
   }
 
   /** Make all faces in the input polyhedron p valance 4 with user's
@@ -166,35 +182,31 @@ public:
       All new face-vertices are the average of their face-neighbor-
       vertices.
   */
-  template <class RULE>
-  static void sqrt3refine_polyhedron(Polyhedron& p, int step = 1) {
-    // Check the template classes are matching to each other
-    typedef typename RULE::Polyhedron RPolyhedron;
-    assert_equal_types(RPolyhedron(), Polyhedron());
-
-    for (int i = 0; i < step; i++) sqrt3refine_1step<RULE>(p);
+  template <template <typename> class RULE>
+  static void sqrt3refine_polyhedron(Polyhedron& p, RULE<Polyhedron> rule, int step = 1) {
+    for (int i = 0; i < step; i++) sqrt3refine_1step(p, rule);
   }
 
 
 
 protected:
   /// It actually can take care non-quad facets
-  template <class RULE>
-  static void quad_quadralize_1step(Polyhedron& p, RULE rule = RULE());
+  template <template <typename> class RULE>
+  static void quad_quadralize_1step(Polyhedron& p, RULE<Polyhedron> rule);
   ///
-  template <class RULE>
-  static void tri_quadralize_1step(Polyhedron& p, RULE rule = RULE());
+  template <template <typename> class RULE>
+  static void tri_quadralize_1step(Polyhedron& p, RULE<Polyhedron> rule);
   ///
-  template <class RULE>
-  static void qt_quadralize_1step(Polyhedron& p, RULE rule = RULE());
+  template <template <typename> class RULE>
+  static void qt_quadralize_1step(Polyhedron& p, RULE<Polyhedron> rule);
 
   ///
-  template <class RULE>
-  static void dualize_1step(Polyhedron& p, RULE rule = RULE());
+  template <template <typename> class RULE>
+  static void dualize_1step(Polyhedron& p, RULE<Polyhedron> rule);
 
   ///
-  template <class RULE>
-  static void sqrt3refine_1step(Polyhedron& p, RULE rule = RULE());
+  template <template <typename> class RULE>
+  static void sqrt3refine_1step(Polyhedron& p, RULE<Polyhedron> rule);
 
 //@}
 };
@@ -202,9 +214,8 @@ protected:
 
 // ======================================================================
 ///
-template <class _Poly> template <class RULE>
-void Polyhedron_subdivision<_Poly>::quad_quadralize_1step(Polyhedron& p,
-							  RULE rule) {
+template <class _P> template <template <typename> class RULE>
+void Polyhedron_subdivision<_P>::quad_quadralize_1step(_P& p, RULE<_P> rule) {
   p.normalize_border();
 
   // Build a new vertices buffer has the following structure
@@ -304,9 +315,8 @@ void Polyhedron_subdivision<_Poly>::quad_quadralize_1step(Polyhedron& p,
 
 // ======================================================================
 ///
-template <class _Poly> template <class RULE>
-void Polyhedron_subdivision<_Poly>::tri_quadralize_1step(Polyhedron& p,
-							 RULE rule) {
+template <class _P> template <template <typename> class RULE>
+void Polyhedron_subdivision<_P>::tri_quadralize_1step(_P& p, RULE<_P> rule) {
   p.normalize_border();
 
   // Build a new vertices buffer has the following structure
@@ -364,7 +374,7 @@ void Polyhedron_subdivision<_Poly>::tri_quadralize_1step(Polyhedron& p,
     Halfedge_around_facet_circulator hcir = hcir_begin;
     
     // After linsub, the facet valence = 6
-    //ASSERTION_MSG(circulator_size(hcir)==6, "(ERROR) Non-triangle facet!");
+    ASSERTION_MSG(circulator_size(hcir)==6, "(ERROR) Non-triangle facet!");
     
     Halfedge_handle e1 = ++hcir;
     ++hcir;
@@ -388,9 +398,8 @@ void Polyhedron_subdivision<_Poly>::tri_quadralize_1step(Polyhedron& p,
 
 // ======================================================================
 ///
-template <class _Poly> template <class RULE>
-void Polyhedron_subdivision<_Poly>::qt_quadralize_1step(Polyhedron& p,
-							RULE rule) {
+template <class _P> template <template <typename> class RULE>
+void Polyhedron_subdivision<_P>::qt_quadralize_1step(_P& p, RULE<_P> rule) {
   p.normalize_border();
 
   // Build a new vertices buffer has the following structure
@@ -511,15 +520,15 @@ void Polyhedron_subdivision<_Poly>::qt_quadralize_1step(Polyhedron& p,
 
 // ======================================================================
 ///
-template <class _Poly> template <class RULE>
-void Polyhedron_subdivision<_Poly>::dualize_1step(Polyhedron& p, RULE rule) {
+template <class _P> template <template <typename> class RULE>
+void Polyhedron_subdivision<_P>::dualize_1step(_P& p, RULE<_P> rule) {
   int num_v = p.size_of_vertices();
   int num_e = p.size_of_halfedges()/2;
   int num_f = p.size_of_facets();
   int num_facet = num_v + num_e + num_f;
   
   // init the buffer for the next level
-  FT* point_buffer = new FT[num_e*2*3];
+  Point* point_buffer = new Point[num_e*2];
   int** facet_buffer = new int*[num_facet];
   for (int i = 0; i < num_facet; ++i) facet_buffer[i] = NULL;
 
@@ -527,7 +536,7 @@ void Polyhedron_subdivision<_Poly>::dualize_1step(Polyhedron& p, RULE rule) {
   Halfedge_iterator he_itr = p.halfedges_begin(); 
   for (int i = 0; i < num_e*2; ++i, ++he_itr) {
     Halfedge_around_facet_circulator cir = he_itr->facet_begin();
-    rule.point_rule(cir, &point_buffer[i*3]);
+    rule.point_rule(cir, point_buffer[i]);
   }
 
   // build the facet_buffer
@@ -579,8 +588,8 @@ void Polyhedron_subdivision<_Poly>::dualize_1step(Polyhedron& p, RULE rule) {
 
 // ======================================================================
 ///
-template <class _Poly> template <class RULE>
-void Polyhedron_subdivision<_Poly>::sqrt3refine_1step(Polyhedron& p, RULE rule) {
+template <class _P> template <template <typename> class RULE>
+void Polyhedron_subdivision<_P>::sqrt3refine_1step(_P& p, RULE<_P> rule) {
   //
   p.normalize_border();
 
@@ -630,5 +639,6 @@ void Polyhedron_subdivision<_Poly>::sqrt3refine_1step(Polyhedron& p, RULE rule) 
   CGAL_postcondition(p.is_valid());
 }
 
+SURFLAB_END_NAMESPACE
 
 #endif //_POLYHEDRON_SUBDIVISION_H_01292002

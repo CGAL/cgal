@@ -18,6 +18,8 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Vector_3.h>
 
+SURFLAB_BEGIN_NAMESPACE
+
 // ======================================================================
 /**
  * All rule (for Polyhedron_subdivision::quadralize_polyhedron<RULE>(...))
@@ -29,21 +31,19 @@ class quadralize_rule {
 public:
   typedef _Poly                                        Polyhedron;
 
-  typedef typename Polyhedron::Vertex_iterator         Vertex_iterator;
-  typedef typename Polyhedron::Halfedge_iterator       Halfedge_iterator;
-  typedef typename Polyhedron::Facet_iterator          Facet_iterator;
-
+  typedef typename Polyhedron::Vertex_handle           Vertex_handle;
+  typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
+  typedef typename Polyhedron::Facet_handle            Facet_handle;
   typedef typename Polyhedron::Point_3                 Point;
 
 /**@name Class Methods */
 //@{
 public:
-  virtual void face_point_rule(Facet_iterator fitr, Point& pt) = 0;
-  virtual void edge_point_rule(Halfedge_iterator eitr, Point& pt) = 0;
-  virtual void vertex_point_rule(Vertex_iterator vitr, Point& pt) = 0;
+  void face_point_rule(Facet_handle, Point&) {};
+  void edge_point_rule(Halfedge_handle, Point&) {};
+  void vertex_point_rule(Vertex_handle, Point&) {};
 
-  virtual void border_point_rule(Halfedge_iterator eitr, 
-				 Point& ept, Point& vpt) {};
+  void border_point_rule(Halfedge_handle, Point&, Point&) {};
 //@}
 };
 
@@ -58,9 +58,9 @@ public:
   typedef typename Polyhedron::Traits                  Traits;
   typedef typename Traits::Kernel                      Kernel;
 
-  typedef typename Polyhedron::Vertex_iterator         Vertex_iterator;
-  typedef typename Polyhedron::Halfedge_iterator       Halfedge_iterator;
-  typedef typename Polyhedron::Facet_iterator          Facet_iterator;
+  typedef typename Polyhedron::Vertex_handle           Vertex_handle;
+  typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
+  typedef typename Polyhedron::Facet_handle            Facet_handle;
 
   typedef typename Polyhedron::Halfedge_around_facet_circulator  
                                             Halfedge_around_facet_circulator;
@@ -73,30 +73,38 @@ public:
 /**@name Class Methods */
 //@{
 public:
-  virtual void face_point_rule(Facet_iterator fitr, Point& pt) {
-    Halfedge_around_facet_circulator hcir = fitr->facet_begin();
-    int n = circulator_size(hcir); 
-    FT xyz[3] = {0, 0, 0};
-    for (int v = 0; v < n; v++, ++hcir) {
-      Point& p = hcir->vertex()->point();
-      xyz[0] += p[0];    xyz[1] += p[1];     xyz[2] += p[2];
-    }
-    pt = Point(xyz[0]/n, xyz[1]/n, xyz[2]/n);
+  void face_point_rule(Facet_handle facet, Point& pt) {
+//     Halfedge_around_facet_circulator hcir = facet->facet_begin();
+//     Vector vec = hcir->vertex()->point() - CGAL::ORIGIN;
+//     ++hcir;
+//     do {
+//       vec = vec + hcir->vertex()->point();
+//     } while (++hcir != facet->facet_begin());
+//     pt = CGAL::ORIGIN + vec/circulator_size(hcir);
+
+    Halfedge_around_facet_circulator hcir = facet->facet_begin();
+    int n = 0;
+    FT p[] = {0,0,0};
+    do {
+      Point t = hcir->vertex()->point();
+      p[0] += t[0], p[1] += t[1], p[2] += t[2]; 
+      ++n;
+    } while (++hcir != facet->facet_begin());
+    pt = Point(p[0]/n, p[1]/n, p[2]/n);
   }
 
-  virtual void edge_point_rule(Halfedge_iterator eitr, Point& pt) {
-    Point& p1 = eitr->vertex()->point();
-    Point& p2 = eitr->opposite()->vertex()->point();
+  void edge_point_rule(Halfedge_handle edge, Point& pt) {
+    Point p1 = edge->vertex()->point();
+    Point p2 = edge->opposite()->vertex()->point();
     pt = Point((p1[0]+p2[0])/2, (p1[1]+p2[1])/2, (p1[2]+p2[2])/2);
   }
 
-  virtual void vertex_point_rule(Vertex_iterator vitr, Point& pt) {
-    pt = vitr->point();
+  void vertex_point_rule(Vertex_handle vertex, Point& pt) {
+    pt = vertex->point();
   }
 
-  virtual void border_point_rule(Halfedge_iterator eitr, 
-				 Point& ept, Point& vpt){
-    edge_point_rule(eitr, ept);
+  void border_point_rule(Halfedge_handle edge, Point& ept, Point& vpt){
+    edge_point_rule(edge, ept);
   }
 //@}
 };
@@ -108,41 +116,40 @@ class CatmullClark_rule : public average_rule<_Poly> {
 public:
   typedef _Poly                                        Polyhedron;
 
-  typedef typename Polyhedron::Traits                  Traits;
-  typedef typename Traits::Kernel                      Kernel;
-
-  typedef typename Polyhedron::Vertex_iterator         Vertex_iterator;
-  typedef typename Polyhedron::Halfedge_iterator       Halfedge_iterator;
-  typedef typename Polyhedron::Facet_iterator          Facet_iterator;
+  typedef typename Polyhedron::Vertex_handle           Vertex_handle;
+  typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
+  typedef typename Polyhedron::Facet_handle            Facet_handle;
 
   typedef typename Polyhedron::Halfedge_around_facet_circulator  
                                             Halfedge_around_facet_circulator;
   typedef typename Polyhedron::Halfedge_around_vertex_circulator 
                                             Halfedge_around_vertex_circulator;
 
+  typedef typename Polyhedron::Traits                  Traits;
+  typedef typename Traits::Kernel                      Kernel;
+
   typedef typename Polyhedron::Point_3                 Point;
-  typedef typename Kernel::FT                           FT;
 
 /**@name Class Methods */
 //@{
 public:
-  void edge_point_rule(Halfedge_iterator eitr, Point& pt) {
-    Point& p1 = eitr->vertex()->point();
-    Point& p2 = eitr->opposite()->vertex()->point();
+  void edge_point_rule(Halfedge_handle edge, Point& pt) {
+    Point p1 = edge->vertex()->point();
+    Point p2 = edge->opposite()->vertex()->point();
     Point f1, f2;
-    face_point_rule(Facet_iterator(eitr->facet()), f1);
-    face_point_rule(Facet_iterator(eitr->opposite()->facet()), f2);
+    face_point_rule(edge->facet(), f1);
+    face_point_rule(edge->opposite()->facet(), f2);
     pt = Point((p1[0]+p2[0]+f1[0]+f2[0])/4,
 	       (p1[1]+p2[1]+f1[1]+f2[1])/4,
 	       (p1[2]+p2[2]+f1[2]+f2[2])/4 );
   }
 
-  void vertex_point_rule(Vertex_iterator vitr, Point& pt) {
-    Halfedge_around_vertex_circulator vcir = vitr->vertex_begin();
+  void vertex_point_rule(Vertex_handle vertex, Point& pt) {
+    Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
     int n = circulator_size(vcir);    
 
     float Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
-    Point& S = vitr->point();
+    Point& S = vertex->point();
     
     Point q;
     for (int i = 0; i < n; i++, ++vcir) {
@@ -163,12 +170,12 @@ public:
 	       (Q[2] + 2*R[2] + S[2]*(n-3))/n );
   }
 
-  void border_point_rule(Halfedge_iterator eitr, Point& ept, Point& vpt) {
-    Point& ep1 = eitr->vertex()->point();
-    Point& ep2 = eitr->opposite()->vertex()->point();
+  void border_point_rule(Halfedge_handle edge, Point& ept, Point& vpt) {
+    Point& ep1 = edge->vertex()->point();
+    Point& ep2 = edge->opposite()->vertex()->point();
     ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
-    Halfedge_around_vertex_circulator vcir = eitr->vertex_begin();
+    Halfedge_around_vertex_circulator vcir = edge->vertex_begin();
     Point& vp1  = vcir->opposite()->vertex()->point();
     Point& vp0  = vcir->vertex()->point();
     Point& vp_1 = (--vcir)->opposite()->vertex()->point();
@@ -187,41 +194,41 @@ class Loop_rule : public quadralize_rule<_Poly> {
 public:
   typedef _Poly                                        Polyhedron;
 
-  typedef typename Polyhedron::Traits                  Traits;
-  typedef typename Traits::Kernel                      Kernel;
-
-  typedef typename Polyhedron::Vertex_iterator         Vertex_iterator;
-  typedef typename Polyhedron::Halfedge_iterator       Halfedge_iterator;
-  typedef typename Polyhedron::Facet_iterator          Facet_iterator;
+  typedef typename Polyhedron::Vertex_handle           Vertex_handle;
+  typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
+  typedef typename Polyhedron::Facet_handle            Facet_handle;
 
   typedef typename Polyhedron::Halfedge_around_facet_circulator  
                                             Halfedge_around_facet_circulator;
   typedef typename Polyhedron::Halfedge_around_vertex_circulator 
                                             Halfedge_around_vertex_circulator;
 
+  typedef typename Polyhedron::Traits                  Traits;
+  typedef typename Traits::Kernel                      Kernel;
+
   typedef typename Polyhedron::Point_3                 Point;
-  typedef typename Kernel::FT                           FT;
+  //typedef typename Kernel::FT                          FT;
 
 /**@name Class Methods */
 //@{
 public:
-  void edge_point_rule(Halfedge_iterator eitr, Point& pt) {
-    Point& p1 = eitr->vertex()->point();
-    Point& p2 = eitr->opposite()->vertex()->point();
-    Point& f1 = eitr->next()->vertex()->point();
-    Point& f2 = eitr->opposite()->next()->vertex()->point();
+  void edge_point_rule(Halfedge_handle edge, Point& pt) {
+    Point& p1 = edge->vertex()->point();
+    Point& p2 = edge->opposite()->vertex()->point();
+    Point& f1 = edge->next()->vertex()->point();
+    Point& f2 = edge->opposite()->next()->vertex()->point();
       
     pt = Point((3*(p1[0]+p2[0])+f1[0]+f2[0])/8,
 	       (3*(p1[1]+p2[1])+f1[1]+f2[1])/8,
 	       (3*(p1[2]+p2[2])+f1[2]+f2[2])/8 );
   }
 
-  void vertex_point_rule(Vertex_iterator vitr, Point& pt) {
-    Halfedge_around_vertex_circulator vcir = vitr->vertex_begin();
+  void vertex_point_rule(Vertex_handle vertex, Point& pt) {
+    Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
     int n = circulator_size(vcir);    
 
     float Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
-    Point& S = vitr->point();
+    Point& S = vertex->point();
     
     for (int i = 0; i < n; i++, ++vcir) {
       Point& p = vcir->opposite()->vertex()->point();
@@ -233,18 +240,18 @@ public:
       double Cn = 5.0/8.0 - std::sqrt(3+2*std::cos(6.283/n))/64.0;
       double Sw = n*(1-Cn)/Cn;
       double W = n/Cn;
-      pt = Point((FT)((Sw*S[0]+R[0])/W), (FT)((Sw*S[1]+R[1])/W), (FT)((Sw*S[2]+R[2])/W));
+      pt = Point((Sw*S[0]+R[0])/W, (Sw*S[1]+R[1])/W, (Sw*S[2]+R[2])/W);
     }
   }
 
-  void face_point_rule(Facet_iterator fitr, Point& pt) {};
+  //void face_point_rule(Facet_handle facet, Point& pt) {};
 
-  void border_point_rule(Halfedge_iterator eitr, Point& ept, Point& vpt) {
-    Point& ep1 = eitr->vertex()->point();
-    Point& ep2 = eitr->opposite()->vertex()->point();
+  void border_point_rule(Halfedge_handle edge, Point& ept, Point& vpt) {
+    Point& ep1 = edge->vertex()->point();
+    Point& ep2 = edge->opposite()->vertex()->point();
     ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
-    Halfedge_around_vertex_circulator vcir = eitr->vertex_begin();
+    Halfedge_around_vertex_circulator vcir = edge->vertex_begin();
     Point& vp1  = vcir->opposite()->vertex()->point();
     Point& vp0  = vcir->vertex()->point();
     Point& vp_1 = (--vcir)->opposite()->vertex()->point();
@@ -263,18 +270,17 @@ class QT43_rule : public average_rule<_Poly> {
 public:
   typedef _Poly                                        Polyhedron;
 
-  typedef typename Polyhedron::Traits                  Traits;
-  typedef typename Traits::Kernel                      Kernel;
-
-  typedef typename Polyhedron::Vertex_iterator         Vertex_iterator;
-  typedef typename Polyhedron::Halfedge_iterator       Halfedge_iterator;
-  typedef typename Polyhedron::Facet_iterator          Facet_iterator;
+  typedef typename Polyhedron::Vertex_handle           Vertex_handle;
+  typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
+  typedef typename Polyhedron::Facet_handle            Facet_handle;
 
   typedef typename Polyhedron::Halfedge_around_facet_circulator  
                                             Halfedge_around_facet_circulator;
   typedef typename Polyhedron::Halfedge_around_vertex_circulator 
                                             Halfedge_around_vertex_circulator;
 
+  typedef typename Polyhedron::Traits                  Traits;
+  typedef typename Traits::Kernel                      Kernel;
   typedef typename Polyhedron::Point_3                 Point;
   typedef CGAL::Vector_3<Kernel>                       Vector;
   typedef typename Kernel::FT                          FT;
@@ -282,18 +288,18 @@ public:
 /**@name Class Methods */
 //@{
 public:
-  void edge_point_rule(Halfedge_iterator eitr, Point& pt) {
-    int f1deg = CGAL::circulator_size(eitr->facet()->facet_begin());
-    int f2deg = CGAL::circulator_size(eitr->opposite()->facet()->facet_begin());
+  void edge_point_rule(Halfedge_handle edge, Point& pt) {
+    int f1deg = CGAL::circulator_size(edge->facet()->facet_begin());
+    int f2deg = CGAL::circulator_size(edge->opposite()->facet()->facet_begin());
     
-    if (f1deg > 3 && f2deg > 3) qe_rule(eitr, pt);
-    else if (f1deg == 3 && f2deg == 3) te_rule(eitr, pt);
-    else if (f1deg == 4 && f2deg == 3) qte_rule(eitr, pt);
-    else if (f1deg == 3 && f2deg == 4) qte_rule(eitr->opposite(), pt);
+    if (f1deg > 3 && f2deg > 3) qe_rule(edge, pt);
+    else if (f1deg == 3 && f2deg == 3) te_rule(edge, pt);
+    else if (f1deg == 4 && f2deg == 3) qte_rule(edge, pt);
+    else if (f1deg == 3 && f2deg == 4) qte_rule(edge->opposite(), pt);
   }
 
-  void vertex_point_rule(Vertex_iterator vitr, Point& pt) {
-    Halfedge_around_vertex_circulator vcir = vitr->vertex_begin();
+  void vertex_point_rule(Vertex_handle vertex, Point& pt) {
+    Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
     int n = circulator_size(vcir);    
     
     int nt = 0, nq = 0;
@@ -307,10 +313,10 @@ public:
     bool reg = false;;
 
     if (n <= 6 && n > 3) { // possible regular node
-      if (n == 6 && nt == n) { tv_rule(vitr, pt); reg = true; }
-      else if (n == 4 && nq == n) { qv_rule(vitr, pt); reg = true; }
+      if (n == 6 && nt == n) { tv_rule(vertex, pt); reg = true; }
+      else if (n == 4 && nq == n) { qv_rule(vertex, pt); reg = true; }
       else if (n == 5 && nq == 2 && nt == 3) {
-	Halfedge_around_vertex_circulator c = vitr->vertex_begin();
+	Halfedge_around_vertex_circulator c = vertex->vertex_begin();
 	for (int i = 0; i < 5; ++i, --c) 
 	  if (fdeg[i] == 4 && fdeg[(i+1) % 5] == 4) {
 	    qtv_rule(c, pt);
@@ -324,12 +330,12 @@ public:
     delete[] fdeg;
   } 
 
-  void border_point_rule(Halfedge_iterator eitr, Point& ept, Point& vpt) {
-    Point& ep1 = eitr->vertex()->point();
-    Point& ep2 = eitr->opposite()->vertex()->point();
+  void border_point_rule(Halfedge_handle edge, Point& ept, Point& vpt) {
+    Point& ep1 = edge->vertex()->point();
+    Point& ep2 = edge->opposite()->vertex()->point();
     ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
-    Halfedge_around_vertex_circulator vcir = eitr->vertex_begin();
+    Halfedge_around_vertex_circulator vcir = edge->vertex_begin();
     Point& vp1  = vcir->opposite()->vertex()->point();
     Point& vp0  = vcir->vertex()->point();
     Point& vp_1 = (--vcir)->opposite()->vertex()->point();
@@ -341,60 +347,60 @@ public:
 
 private:
   ///
-  void qe_rule(Halfedge_iterator eitr, Point& pt) {
+  void qe_rule(Halfedge_handle edge, Point& pt) {
     // p3 --- p1 --- p6 
     //        |
     //        |
     // p4 --- p2 --- p5
-    Point& p1 = eitr->vertex()->point();
-    Point& p2 = eitr->opposite()->vertex()->point();
-    Point& p3 = eitr->next()->vertex()->point();
-    Point& p4 = eitr->prev()->prev()->vertex()->point();
-    Point& p5 = eitr->opposite()->next()->vertex()->point();
-    Point& p6 = eitr->opposite()->prev()->prev()->vertex()->point();
+    Point& p1 = edge->vertex()->point();
+    Point& p2 = edge->opposite()->vertex()->point();
+    Point& p3 = edge->next()->vertex()->point();
+    Point& p4 = edge->prev()->prev()->vertex()->point();
+    Point& p5 = edge->opposite()->next()->vertex()->point();
+    Point& p6 = edge->opposite()->prev()->prev()->vertex()->point();
     
     pt = CGAL::ORIGIN + ((p1-CGAL::ORIGIN + p2)*6.0 + p3+p4+p5+p6)/16.0;
   }
 
   ///
-  void te_rule(Halfedge_iterator eitr, Point& pt) {
+  void te_rule(Halfedge_handle edge, Point& pt) {
     //    p3
     //  /    \
     // p1 -- p2
     //  \    /
     //    p4
-    Point& p1 = eitr->vertex()->point();
-    Point& p2 = eitr->opposite()->vertex()->point();
-    Point& p3 = eitr->opposite()->next()->vertex()->point();
-    Point& p4 = eitr->next()->vertex()->point();
+    Point& p1 = edge->vertex()->point();
+    Point& p2 = edge->opposite()->vertex()->point();
+    Point& p3 = edge->opposite()->next()->vertex()->point();
+    Point& p4 = edge->next()->vertex()->point();
     
     pt = CGAL::ORIGIN + ((p1-CGAL::ORIGIN + p2)*3.0 + p3+p4)/8.0;
   }
-  void qte_rule(Halfedge_iterator eitr, Point& pt) {
+  void qte_rule(Halfedge_handle edge, Point& pt) {
     //      p5
     //    /    \
     //   p1 -- p2
     //   |      |
     //   p3     p4
-    Point& p1 = eitr->vertex()->point();
-    Point& p2 = eitr->opposite()->vertex()->point();
-    Point& p3 = eitr->next()->vertex()->point();
-    Point& p4 = eitr->prev()->opposite()->vertex()->point();
-    Point& p5 = eitr->opposite()->next()->vertex()->point();
+    Point& p1 = edge->vertex()->point();
+    Point& p2 = edge->opposite()->vertex()->point();
+    Point& p3 = edge->next()->vertex()->point();
+    Point& p4 = edge->prev()->opposite()->vertex()->point();
+    Point& p5 = edge->opposite()->next()->vertex()->point();
     
     pt = CGAL::ORIGIN + ((p1-CGAL::ORIGIN + p2)*6.0 + p3+p4+(p5-CGAL::ORIGIN)*2)/16.0;
   }
 
   ///
-  void qv_rule(Vertex_iterator vitr, Point& pt) {
+  void qv_rule(Vertex_handle vertex, Point& pt) {
     //        p2
     //        |
     // p3 --- p1 --- p5
     //        |
     //        p4
-    Point& p1 = vitr->point();
+    Point& p1 = vertex->point();
 
-    Halfedge_around_vertex_circulator vcir = vitr->vertex_begin();
+    Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
     Point& p2 = vcir->opposite()->vertex()->point(); --vcir;
     Point& p3 = vcir->opposite()->vertex()->point(); --vcir;
     Point& p4 = vcir->opposite()->vertex()->point(); --vcir;
@@ -404,10 +410,10 @@ private:
   }
 
   ///
-  void tv_rule(Vertex_iterator vitr, Point& pt) {
-    Point& p1 = vitr->point();
+  void tv_rule(Vertex_handle vertex, Point& pt) {
+    Point& p1 = vertex->point();
     
-    Halfedge_around_vertex_circulator vcir = vitr->vertex_begin();
+    Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
     Point& p2 = vcir->opposite()->vertex()->point(); --vcir;
     Point& p3 = vcir->opposite()->vertex()->point(); --vcir;
     Point& p4 = vcir->opposite()->vertex()->point(); --vcir;
@@ -474,10 +480,9 @@ public:
   typedef typename Polyhedron::Halfedge_around_facet_circulator  
                                             Halfedge_around_facet_circulator;
   typedef typename Polyhedron::Point_3                 Point;
-  typedef typename Kernel::FT                          FT;
 
 public:
-  virtual void point_rule(Halfedge_around_facet_circulator cir, FT* xyz) = 0;
+  void point_rule(Halfedge_around_facet_circulator cir, Point& pt) {};
 };
 
 
@@ -486,7 +491,7 @@ public:
 template <class _Poly>
 class DooSabin_rule : public dualize_rule<_Poly> {
 public:
-  typedef _Poly                                           Polyhedron;
+  typedef _Poly                                        Polyhedron;
   
   typedef typename Polyhedron::Traits                  Traits;
   typedef typename Traits::Kernel                      Kernel;
@@ -494,34 +499,29 @@ public:
   typedef typename Polyhedron::Halfedge_around_facet_circulator  
                                             Halfedge_around_facet_circulator;
   typedef typename Polyhedron::Point_3                 Point;
-  typedef typename Kernel::FT                          FT;
+  //typedef typename Kernel::FT                          FT;
 
 public:
-  void point_rule(Halfedge_around_facet_circulator cir, FT* xyz) {
+  void point_rule(Halfedge_around_facet_circulator cir, Point& pt) {
     int n =  CGAL::circulator_size(cir); 
 
-    double x = 0, y = 0, z = 0;
+    Vector cv(0,0,0), t;
     if (n == 4) {
-      Point fp = cir->vertex()->point(); ++cir;
-      x = 9*fp.x(); y = 9*fp.y(); z = 9*fp.z();
-      fp = cir->vertex()->point(); ++cir;
-      x += 3*fp.x(); y += 3*fp.y(); z += 3*fp.z();
-      fp = cir->vertex()->point(); ++cir;
-      x += fp.x(); y += fp.y(); z += fp.z();
-      fp = cir->vertex()->point();
-      x += 3*fp.x(); y += 3*fp.y(); z += 3*fp.z();
-      x /= 16; y /= 16; z /= 16;
+      cv = cv + (cir->vertex()->point()-CGAL::ORIGIN)*9;
+      cv = cv + ((++cir)->vertex()->point()-CGAL::ORIGIN)*3;
+      cv = cv + ((++cir)->vertex()->point()-CGAL::ORIGIN);
+      cv = cv + ((++cir)->vertex()->point()-CGAL::ORIGIN)*3;
+      cv = cv/16;
     } else {
       double a;
-      for (int k = 0; k < n; ++k) {
-		if (k == 0) a = ((double)5/n) + 1;
-		else a = (3+2*std::cos(2*k*3.141593/n))/n;
-		Point& fp = cir->vertex()->point(); ++cir;
-		x += a*fp.x(); y += a*fp.y(); z += a*fp.z();
+      for (int k = 0; k < n; ++k, ++cir) {
+	if (k == 0) a = ((double)5/n) + 1;
+	else a = (3+2*std::cos(2*k*3.141593/n))/n;
+	cv = cv + (cir->vertex()->point()-CGAL::ORIGIN)*a;
       }
-      x /= 4; y /= 4; z /= 4;
+      cv = cv/4;
     }
-    xyz[0] = (FT) x;    xyz[1] = (FT) y;    xyz[2] = (FT) z;
+    pt = CGAL::ORIGIN + cv;
   }
 };
 
@@ -536,9 +536,9 @@ public:
   typedef typename Traits::Kernel                      Kernel;
  
 
-  typedef typename Polyhedron::Vertex_iterator         Vertex_iterator;
-  typedef typename Polyhedron::Halfedge_iterator       Halfedge_iterator;
-  typedef typename Polyhedron::Facet_iterator          Facet_iterator;
+  typedef typename Polyhedron::Vertex_handle           Vertex_handle;
+  typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
+  typedef typename Polyhedron::Facet_handle            Facet_handle;
 
   typedef typename Polyhedron::Halfedge_around_facet_circulator  
                                             Halfedge_around_facet_circulator;
@@ -552,17 +552,17 @@ public:
 /**@name Class Methods */
 //@{
 public:
-  //void edge_point_rule(Halfedge_iterator eitr, Point& pt) {
+  //void edge_point_rule(Halfedge_handle edge, Point& pt) {
   //}
 
-  void vertex_point_rule(Vertex_iterator vitr, Point& pt) {
-    Halfedge_around_vertex_circulator vcir = vitr->vertex_begin();
+  void vertex_point_rule(Vertex_handle vertex, Point& pt) {
+    Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
     int n = circulator_size(vcir);
     const double pi = 3.1415926;
 
     FT a = (4.0-2.0*cos(2.0*pi/n))/9.0;
 
-    Vector cv = (1.0-a) * (vitr->point() - CGAL::ORIGIN);
+    Vector cv = (1.0-a) * (vertex->point() - CGAL::ORIGIN);
     for (int i = 1; i <= n; ++i, --vcir) {
       cv = cv + (a/n)*(vcir->opposite()->vertex()->point()-CGAL::ORIGIN);
     }
@@ -570,10 +570,12 @@ public:
     pt = CGAL::ORIGIN + cv;    
   }
 
-  //void border_point_rule(Halfedge_iterator eitr, Point& ept, Point& vpt) {
+  //void border_point_rule(Halfedge_handle edge, Point& ept, Point& vpt) {
   //}
 //@}
 };
 
+
+SURFLAB_END_NAMESPACE
 
 #endif //_POLYHEDRON_SUBDIVISION_RULES_H_01292002
