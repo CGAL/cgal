@@ -1,3 +1,6 @@
+4 August 2004  Sylvain Pion
+- Fix warning in release mode.
+
 24 July 2004  Sylvain Pion
 - Fix for when LEDA is there.
 

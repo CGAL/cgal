@@ -157,7 +157,7 @@ template <class R_> struct Convex_hull_d_traits_3
     template <class I>
     bool operator()(I s, I e, const Point_d& p)
     { 
-      Affinely_independent_d affinely_independent;
+      CGAL_assertion_code( Affinely_independent_d affinely_independent; )
       CGAL_assertion( affinely_independent(s,e) );
       Point_d A[3];
       A[0] = *s;
