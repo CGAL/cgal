@@ -14,7 +14,7 @@ typedef CGAL::Gmpq                     exact_field_t;
 CGAL_BEGIN_NAMESPACE
 // needed for the drawing methods
 Gmpq sqrt(const Gmpq& x) {
-  return Gmpq(  sqrt( to_double(x) )  );
+  return Gmpq(  CGAL::sqrt( CGAL::to_double(x) )  );
 }
 
 CGAL_END_NAMESPACE
