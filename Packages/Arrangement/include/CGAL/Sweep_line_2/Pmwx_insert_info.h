@@ -29,10 +29,13 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Vertex_handle, class Halfedge_handle>
+template<class _Vertex_handle, class _Halfedge_handle>
 class Pmwx_insert_info
 {
 public:
+
+  typedef _Vertex_handle Vertex_handle;
+  typedef _Halfedge_handle Halfedge_handle;
 
   /*! Constructor */
   Pmwx_insert_info() : 

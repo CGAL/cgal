@@ -126,6 +126,11 @@ public:
 
       }
     }
+    SL_DEBUG(
+      PrintSubCurves();
+      PrintEventQueue();
+    )
+
     Sweep(planarMap, SweepLinePlanarmap());
   }
   
@@ -222,10 +227,8 @@ protected:
         {
           X_curve_2 a,b;
           m_traits->curve_split(cv, a, b, lastPoint);
-          //*out = a; ++out;
 	  h = insertToPm(a, leftCurve, h, pm);
         } else {
-          //*out = cv; ++out;
 	  h = insertToPm(cv, leftCurve, h, pm);
         }
       } else if ( leftCurve->isTarget(eventPoint))
@@ -234,10 +237,8 @@ protected:
         {
           X_curve_2 a,b;
           m_traits->curve_split(cv, a, b, lastPoint);
-          //*out = b; ++out;
 	  h = insertToPm(b, leftCurve, h, pm);
         } else {
-          //*out = cv; ++out;
 	  h = insertToPm(cv, leftCurve, h, pm);
         }
 
@@ -245,27 +246,22 @@ protected:
         X_curve_2 a,b;
         if ( leftCurve->isSource(lastPoint)) {
           m_traits->curve_split(cv, a, b, eventPoint);
-          //*out = a; ++out;
 	  h = insertToPm(a, leftCurve, h, pm);
         } else if ( leftCurve->isTarget(lastPoint)) {
           m_traits->curve_split(cv, b, a, eventPoint);
-          //*out = a; ++out;
 	  h = insertToPm(a, leftCurve, h, pm);
         } else {
           const X_curve_2 &lastCurve = leftCurve->getLastCurve();
           if ( leftCurve->isSourceLeftToTarget() ) {
             m_traits->curve_split(lastCurve, a, b, eventPoint);
-            //*out = a; ++out;
 	    h = insertToPm(a, leftCurve, h, pm);
           } else {
             m_traits->curve_split(lastCurve, b, a, eventPoint);
-            //*out = a; ++out;
 	    h = insertToPm(a, leftCurve, h, pm);
           }
         }
         leftCurve->setLastPoint(eventPoint);
         leftCurve->setLastCurve(b); 
-	//leftCurve->setInsertInfo(m_currentEvent->getInsertInfo());
 	leftCurve->setLastEvent(m_currentEvent);
       }
 
@@ -277,6 +273,7 @@ protected:
       m_statusLine->erase(sliter);
       ++leftCurveIter;
     }
+    m_currentEvent->MarkRightCurves();
   }
 
   /*!
@@ -333,6 +330,9 @@ protected:
       assert(topEndEventIter!=m_queue->end());
       Event *topEndEvent = topEndEventIter->second;
       
+      bool lastEventCreatedHere = false;
+      Event *prevEvent = 0;
+
       while ( slIter != m_statusLine->end() &&
 	      m_traits->curve_get_point_status((*slIter)->getCurve(), topEnd) 
 	      != Traits::UNDER_CURVE &&
@@ -371,19 +371,32 @@ protected:
 	  PRINT_NEW_EVENT(p, e);
 	  m_queue->insert(EventQueueValueType(p, e));
 	  
+	  lastEventCreatedHere = true;
+
 	} else {
 	  e = eqi->second;
-	  if ( !(*slIter)->isLeftEnd(p) ) 
-	    e->addCurveToLeft(*slIter, m_sweepLinePos);
-	  if ( !(*slIter)->isRightEnd(p) ) 
-	    e->addCurveToRight(*slIter);
+	  if ( e == prevEvent ) {
+	    if ( lastEventCreatedHere )
+	    {
+	      std::cout << "$$$$$ here\n";
+	      if ( !(*slIter)->isLeftEnd(p) ) 
+		e->addCurveToLeft(*slIter, m_sweepLinePos);
+	      if ( !(*slIter)->isRightEnd(p) ) 
+		e->addCurveToRight(*slIter);
+	    }
+	  }
+	  else {
+	    std::cout << "   lastEventCreatedHere = false \n";
+	    lastEventCreatedHere = false;
+	  }
+	
 	  SL_DEBUG(std::cout << "Updating event \n";)
 	  SL_DEBUG(e->Print();)
 	}
 	
-	topEndEvent->addVerticalCurveXPoint(p);
 	topEndEvent->addVerticalCurveXEvent(e);
 	++slIter;
+	prevEvent = e;
       }    
       vciter++;
     }
@@ -463,12 +476,11 @@ protected:
       // now we go over the list of intersection points on the vertical
       // curve in at the event and process them...
       SL_DEBUG(std::cout<<"handling the splitting now\n";)
-      Halfedge_handle h(NULL);
       VerticalXEventList &pointList = m_currentEvent->getVerticalXEventList();
       if ( pointList.empty() )
       {
-	h = insertToPmV(vcurve->getCurve(), vcurve, 
-			m_currentEvent, vcurve->getLastEvent(), h, pm);
+	insertToPmV(vcurve->getCurve(), vcurve, 
+			m_currentEvent, vcurve->getLastEvent(), pm);
 	++vciter;
 	continue;
       }
@@ -476,8 +488,7 @@ protected:
       X_curve_2 a, b, c;
       a = vcurve->getCurve();
       SL_DEBUG(std::cout << "there are " << pointList.size() << " points\n";)
-      SL_DEBUG(m_currentEvent->PrintVerticalXPoints();)
-	Event *prevEvent = vcurve->getLastEvent();
+      Event *prevEvent = vcurve->getLastEvent();
       for ( VerticalXEventListIter i = pointList.begin() ;
 	    i != pointList.end(); ++i )
       {
@@ -490,20 +501,20 @@ protected:
 	SL_DEBUG(std::cout << " yes! \n";)
 	m_traits->curve_split(a, b, c, (*i)->getPoint());
 	if ( vcurve->isSourceLeftToTarget()) {
-	  h = insertToPmV(b, vcurve, *i, prevEvent, h, pm);
+	  insertToPmV(b, vcurve, *i, prevEvent, pm);
 	  a = c;
 	} else {
-	  h = insertToPmV(c, vcurve, *i, prevEvent, h, pm);
+	  insertToPmV(c, vcurve, *i, prevEvent, pm);
 	  a = b;
 	}
 	vcurve->setLastEvent(*i);
 	prevEvent = *i;
       }
       if ( vcurve->isSourceLeftToTarget() ) {
-	h = insertToPmV(c, vcurve, m_currentEvent, prevEvent, h, pm);
+	insertToPmV(c, vcurve, m_currentEvent, prevEvent, pm);
       }
       else {
-	h = insertToPmV(b, vcurve, m_currentEvent, prevEvent, h, pm);
+	insertToPmV(b, vcurve, m_currentEvent, prevEvent, pm);
       }
       ++vciter;
     }
@@ -579,7 +590,6 @@ protected:
       } else if (!curve->isEndPoint(point)) {
 	EventQueueIter eventIter = m_queue->find(curve->getTopEnd());
 	assert(eventIter!=m_queue->end());
-	(eventIter->second)->addVerticalCurveXPoint(point, true);
 	(eventIter->second)->addVerticalCurveXEvent(m_currentEvent, true);
 	++iter;
       } else {
@@ -601,138 +611,206 @@ protected:
 
 private:
 
+
   Halfedge_handle insertToPm(const X_curve_2 &a, SubCurve *leftCurve, 
-			     Halfedge_handle hhandle, PM &pm)
-  {
-    SL_DEBUG(std::cout << "*X inserting " << a << ")\n";)
+			     Halfedge_handle hhandle, PM &pm);
+  void insertToPmV(const X_curve_2 &a, SubCurve *origCurve, 
+		   Event *topEvent, Event *bottomEvent, PM &pm);
 
-    static SubCurve *prevCurve = 0;
-    static X_curve_2 prevXCv;
-    Event *lastEvent = leftCurve->getLastEvent();
-    SL_DEBUG(std::cout << "lastEvent = " << lastEvent << "\n";)
-    assert(lastEvent!=0);
-    PmwxInsertInfo *insertInfo = leftCurve->getLastEvent()->getInsertInfo();
-    SL_DEBUG(insertInfo->Print();)
-
-    if ( prevCurve && SimilarCurves(a, prevXCv)) {
-      leftCurve->setLastEvent(m_currentEvent);
-      return hhandle;
-    }
-    prevCurve = leftCurve;
-    prevXCv = a;
-
-    Halfedge_handle res; 
-
-    if ( insertInfo->getVertexHandle() == Vertex_handle(NULL) ) {
-      if ( hhandle != Halfedge_handle(NULL) ) {
-	SL_DEBUG(std::cout << "  from vertex ";
-		 std::cout << hhandle->target()->point() << "\n";)
-	res = pm.non_intersecting_insert_from_vertex(a, hhandle, 0);
-	res = res->twin();
-      } else {
-	SL_DEBUG(std::cout << "  in face interior\n";)
-	res = pm.insert_in_face_interior(a, pm.unbounded_face(), 0);
-	if ( !leftCurve->isSourceLeftToTarget() ){
-	  res = res->twin();
-	}
-      }
-    } else 
-    {
-      Vertex_handle v1 = insertInfo->getVertexHandle();
-      if ( hhandle != Halfedge_handle(NULL) ) {
-	SL_DEBUG(std::cout << "  at vertices ";
-		 std::cout << v1->point();
-		 std::cout << hhandle->target()->point() << "\n";)
-	res = pm.non_intersecting_insert_at_vertices(a,v1,hhandle->target(),0);
-      } else {
-	SL_DEBUG(std::cout << "  from vertex ";
-		 std::cout << v1->point() << "\n";)
-	res = pm.non_intersecting_insert_from_vertex(a, v1, 0);
-      }
-      
-    }
-
-    SL_DEBUG(std::cout << "*** returning: (" << res->source()->point() << " " 
-	     << res->target()->point()  << ")\n\n";)
-
-    insertInfo->setVertexHandle(res->source());
-    insertInfo->setHalfedgeHandle(res->twin());
-
-    insertInfo = m_currentEvent->getInsertInfo();
-    insertInfo->setVertexHandle(res->target());
-    insertInfo->setHalfedgeHandle(res);
-
-    return res;
-  }
-  Halfedge_handle insertToPmV(const X_curve_2 &a, SubCurve *origCurve, 
-			      Event *topEvent, Event *bottomEvent,
-			      Halfedge_handle hhandle, PM &pm)
-  {
-    SL_DEBUG(std::cout << "insertToPmV \n";)
-    SL_DEBUG(std::cout << "*V inserting " << a << ")\n";)
-
-    PmwxInsertInfo *topII = topEvent->getInsertInfo();
-    PmwxInsertInfo *bottomII = bottomEvent->getInsertInfo();
-    Halfedge_handle res; 
-
-    if (VerticalSubCurveExists(a)) {
-      origCurve->setLastEvent(m_currentEvent);
-      SL_DEBUG(std::cout << "*** returning (curve already exists\n\n";)
-      return hhandle;
-    }
-    m_verticalSubCurves.push_back(a);
-
-    if ( topII->getVertexHandle() == Vertex_handle(NULL))
-    {
-      if ( bottomII->getVertexHandle() == Vertex_handle(NULL))
-      {
-	SL_DEBUG(std::cout << "  in face interior\n";)
-	res = pm.insert_in_face_interior(a, pm.unbounded_face(), 0);
-	if ( !origCurve->isSourceLeftToTarget() ){
-	  res = res->twin();
-	}	
-      } else 
-      {
-	SL_DEBUG(std::cout << "  from vertex (2)";
-		 std::cout << bottomII->getVertexHandle()->point() << "\n";)
-	res = pm.non_intersecting_insert_from_vertex(a, 
-					     bottomII->getVertexHandle(), 0);
-      }
-    } else 
-    {
-      if ( bottomII->getVertexHandle() == Vertex_handle(NULL))
-      {
-	SL_DEBUG(std::cout << "  from vertex (2)";
-		 std::cout << topII->getVertexHandle()->point() << "\n";)
-	res = pm.non_intersecting_insert_from_vertex(a, 
-					     topII->getVertexHandle(), 0);
-	res = res->twin();
-      } else 
-      {
-	SL_DEBUG(std::cout << "  at vertices ";
-		 std::cout << bottomII->getVertexHandle()->point();
-		 std::cout << topII->getVertexHandle()->point() << "\n";)
-	res = pm.non_intersecting_insert_at_vertices(a,
-					     bottomII->getVertexHandle(), 
-					     topII->getVertexHandle(),0);
-      }
-    }
-
-    topII->setVertexHandle(res->target());
-    topII->setHalfedgeHandle(res);
-
-    bottomII->setVertexHandle(res->source());
-    bottomII->setHalfedgeHandle(res->twin());
-
-    SL_DEBUG(std::cout << "*** returning: (" << res->source()->point() << " " 
-	     << res->target()->point()  << ")\n\n";)
-
-    return res;
-  }
-  
 };
 
 
+/*! Insert a vertical curve to the planar map.
+ *  If an identical curve was already inserted into the planarmap, it is 
+ *  not inserted again. 
+ *
+ *  @param a the curve
+ *  @param origCurve the original curve
+ *  @param topEvent a pointer to the event at the top end of the curve
+ *  @param bottomEvent a pointer to the event at the bottom end of the curve
+ *  @param pm a reference to the planar map
+ */
+template <class CurveInputIterator, class SweepLineTraits_2, 
+          class PM_, class Change_notification_>
+typename PM_::Halfedge_handle
+Pmwx_aggregate_insert_tight<CurveInputIterator, SweepLineTraits_2,
+                            PM_, Change_notification_>::
+insertToPm(const X_curve_2 &a, SubCurve *leftCurve, 
+	   Halfedge_handle hhandle, PM &pm)
+{
+  SL_DEBUG(std::cout << "*X inserting " << a << ")\n";)
+
+  static SubCurve *prevCurve = 0;
+  static X_curve_2 prevXCv;
+  Event *lastEvent = leftCurve->getLastEvent();
+  SL_DEBUG(std::cout << "lastEvent = " << lastEvent << "\n";)
+  assert(lastEvent!=0);
+  PmwxInsertInfo *insertInfo = leftCurve->getLastEvent()->getInsertInfo();
+  SL_DEBUG(insertInfo->Print();)
+    
+  if ( prevCurve && SimilarCurves(a, prevXCv)) {
+    leftCurve->setLastEvent(m_currentEvent);
+    return hhandle;
+  }
+  prevCurve = leftCurve;
+  prevXCv = a;
+  
+  Halfedge_handle res; 
+  
+
+  if ( insertInfo->getVertexHandle() == Vertex_handle(NULL) ) {
+    if ( hhandle != Halfedge_handle(NULL) ) {
+      SL_DEBUG(std::cout << "  from vertex (1)";
+	       std::cout << hhandle->target()->point() << "\n";)
+      res = pm.non_intersecting_insert_from_vertex(a, hhandle, 0);
+      res = res->twin();
+    } else {
+      SL_DEBUG(std::cout << "  in face interior\n";)
+      res = pm.insert_in_face_interior(a, pm.unbounded_face(), 0);
+      if ( !leftCurve->isSourceLeftToTarget() ){
+	res = res->twin();
+      }
+    }
+  } else 
+  {
+    //Vertex_handle v1 = insertInfo->getVertexHandle();
+    int jump = lastEvent->getHalfedgeJumpCount(leftCurve);
+    SL_DEBUG(std::cout << "Skipping " << jump << " steps\n";)
+    Halfedge_handle h1 = insertInfo->getHalfedgeHandle();
+    for ( int i = 0 ; i < jump ; i++ )
+      h1 = (h1->next_halfedge())->twin();
+
+    if ( hhandle != Halfedge_handle(NULL) ) {
+      SL_DEBUG(std::cout << "  at vertices ";
+	       std::cout << h1->source()->point() << " " 
+	                 << h1->target()->point();
+	       std::cout << hhandle->source()->point() << " " 
+                         << hhandle->target()->point() << "\n";)
+	//res=pm.non_intersecting_insert_at_vertices(a,v1,hhandle->target(),0);
+      res = pm.non_intersecting_insert_at_vertices(a,h1,hhandle,0);
+    } else {
+      SL_DEBUG(std::cout << "  from vertex (2)";
+	       std::cout << h1->target()->point() << "\n";)
+	//res = pm.non_intersecting_insert_from_vertex(a, v1, 0);
+      res = pm.non_intersecting_insert_from_vertex(a, h1, 0);
+    }
+    
+  }
+  
+  SL_DEBUG(std::cout << "*** returning: (" << res->source()->point() << " " 
+	   << res->target()->point()  << ")\n\n";)
+   
+  if ( lastEvent->getNumLeftCurves() == 0 &&
+       lastEvent->isCurveLargest(leftCurve)) 
+  {
+    //std::cout << "Updating insert info of event with no left curves\n";
+    insertInfo->setVertexHandle(res->source());
+    insertInfo->setHalfedgeHandle(res->twin());
+  }
+  
+  insertInfo = m_currentEvent->getInsertInfo();
+  insertInfo->setVertexHandle(res->target());
+  insertInfo->setHalfedgeHandle(res);
+  
+  return res;
+}
+
+
+/*! Insert a vertical curve to the planar map.
+ *  If an identical curve was already inserted into the planarmap, it is 
+ *  not inserted again. 
+ *
+ *  @param a the curve
+ *  @param origCurve the original curve
+ *  @param topEvent a pointer to the event at the top end of the curve
+ *  @param bottomEvent a pointer to the event at the bottom end of the curve
+ *  @param pm a reference to the planar map
+ */
+template <class CurveInputIterator, class SweepLineTraits_2, 
+          class PM_, class Change_notification_>
+void 
+Pmwx_aggregate_insert_tight<CurveInputIterator, SweepLineTraits_2,
+                            PM_, Change_notification_>::
+insertToPmV(const X_curve_2 &a, SubCurve *origCurve, 
+	    Event *topEvent, Event *bottomEvent, PM &pm)
+{
+  SL_DEBUG(std::cout << "insertToPmV \n";
+	   std::cout << "*V inserting " << a << ")\n";)
+
+  PmwxInsertInfo *topII = topEvent->getInsertInfo();
+  PmwxInsertInfo *bottomII = bottomEvent->getInsertInfo();
+  Halfedge_handle res; 
+
+  // if the curve is already in the planar map, update the data and return
+  if (VerticalSubCurveExists(a)) {
+    origCurve->setLastEvent(m_currentEvent);
+    SL_DEBUG(std::cout << "*** returning (curve already exists\n\n";)
+    return;
+  }
+
+  m_verticalSubCurves.push_back(a);
+
+  if ( topII->getVertexHandle() == Vertex_handle(NULL))
+  {
+    if ( bottomII->getVertexHandle() == Vertex_handle(NULL))
+    {
+      SL_DEBUG(std::cout << "  in face interior\n";)
+      res = pm.insert_in_face_interior(a, pm.unbounded_face(), 0);
+      if ( !origCurve->isSourceLeftToTarget() ){
+	res = res->twin();
+      }	
+    } else 
+    {
+      SL_DEBUG(std::cout << "  from vertex (2)";
+	       std::cout << bottomII->getVertexHandle()->point() << "\n";)
+	//res = pm.non_intersecting_insert_from_vertex(a, 
+	//		     bottomII->getVertexHandle(), 0);
+	res = pm.non_intersecting_insert_from_vertex(a, 
+				     bottomII->getHalfedgeHandle(), 0);
+    }
+  } else 
+  {
+    if ( bottomII->getVertexHandle() == Vertex_handle(NULL))
+    {
+      SL_DEBUG(std::cout << "  from vertex (2)";
+	       std::cout << topII->getVertexHandle()->point() << "\n";)
+	//res = pm.non_intersecting_insert_from_vertex(a, 
+	//				     topII->getVertexHandle(), 0);
+      res = pm.non_intersecting_insert_from_vertex(a, 
+					     topII->getHalfedgeHandle(), 0);
+      res = res->twin();
+    } else 
+    {
+      SL_DEBUG(std::cout << "  at vertices ";
+	       std::cout << bottomII->getHalfedgeHandle()->source()->point();
+	       std::cout << bottomII->getHalfedgeHandle()->target()->point();
+	       std::cout << topII->getHalfedgeHandle()->source()->point();
+	       std::cout << topII->getHalfedgeHandle()->target()->point() << "\n";)
+	//res = pm.non_intersecting_insert_at_vertices(a,
+	//			     bottomII->getVertexHandle(), 
+	//			     topII->getVertexHandle(),0);
+      res = pm.non_intersecting_insert_at_vertices(a,
+					     bottomII->getHalfedgeHandle(), 
+					     topII->getHalfedgeHandle(),0);
+    }
+  }
+
+  if ( topEvent->getNumLeftCurves() == 0 ) {
+    topII->setVertexHandle(res->target());
+    topII->setHalfedgeHandle(res);
+  }
+
+  //if ( bottomEvent->getNumLeftCurves() == 0 ) {
+  //std::cout << "((((( numLeftcurves is 0\n";
+    bottomII->setVertexHandle(res->source());
+    bottomII->setHalfedgeHandle(res->twin());
+    //}
+
+  SL_DEBUG(std::cout << "*** returning: (" << res->source()->point() << " " 
+	   << res->target()->point()  << ")\n\n";)
+
+}
+  
 
 
 

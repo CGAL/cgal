@@ -28,7 +28,6 @@
 #define CGAL_PMWX_SWEEP_LINE_EVENT_H
 
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
-//#include <CGAL/Sweep_line_2/Pmwx_sweep_line_curve.h>
 #include <CGAL/Sweep_line_2/Pmwx_insert_info.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -45,10 +44,16 @@ public:
   typedef Sweep_line_event<SweepLineTraits_2, CurveWrap> Base;
   typedef Pmwx_sweep_line_event<Traits, CurveWrap> Self;
 
+  typedef CurveWrap SubCurve;
+  typedef typename std::list<SubCurve *> SubcurveContainer;
+  typedef typename SubcurveContainer::iterator SubCurveIter;
+
   typedef typename CurveWrap::PmwxInsertInfo PmwxInsertInfo;
 
   typedef std::list<Self *> VerticalXEventList;
   typedef VerticalXEventList::iterator VerticalXEventListIter; 
+
+  typedef typename PmwxInsertInfo::Halfedge_handle Halfedge_handle;
 
   /*! Constructor */
   Pmwx_sweep_line_event(const Point_2 &point, Traits *traits) :
@@ -105,10 +110,58 @@ public:
   VerticalXEventList &getVerticalXEventList() {
     return m_verticalCurveXEvents;
   }
+
+  void MarkRightCurves()
+  {
+    m_isCurveInPm.reserve(getNumRightCurves());
+    for ( int i = 0 ; i < getNumRightCurves() ; i++ )
+      m_isCurveInPm[i] = false;
+  }
   
+  int getHalfedgeJumpCount(CurveWrap *curve)
+  {
+    int i = 0;
+    int counter = 0;
+    SubCurveIter iter = m_rightCurves->end();
+    --iter;
+    for ( ; iter != m_rightCurves->begin() ; --iter ) {
+      
+      if ( curve->getId() == (*iter)->getId() ) {
+	m_isCurveInPm[counter] = true;
+	return i;
+      }
+      if ( m_isCurveInPm[counter] == true )
+	i++;
+      counter++;
+    }
+    
+    assert(curve->getId() == (*iter)->getId());
+    m_isCurveInPm[counter];
+
+    return i;
+  }
+
+  // returns true if the curve is the highest among the right curves 
+  //that were already inserted into the planar map.
+  bool isCurveLargest(CurveWrap *curve)
+  {
+    int counter = 0;
+    SubCurveIter iter = m_rightCurves->end();
+    --iter;
+    while ( curve->getId() != (*iter)->getId() )
+    {
+      if ( m_isCurveInPm[counter] == true )
+	return false;
+      counter++;
+      --iter;
+    }
+    m_isCurveInPm[counter];
+    return true;
+  }
+
 private:
   PmwxInsertInfo m_insertInfo;
-
+  std::vector<bool> m_isCurveInPm;
   VerticalXEventList m_verticalCurveXEvents;
 };
 
