@@ -1,3 +1,6 @@
+31 May 2004 Sylvain Pion
+- Document the limitation of the exponent of MP_Float.
+
 30 Apr 2004 Sylvain Pion
 - Fix to_interval() for all GMP types when there is overflow.
   A really proper fix probably requires some work within GMP.
