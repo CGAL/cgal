@@ -25,25 +25,46 @@ include the endpoints of the input curves within the output.
 \ccInclude{sweep_to_produce_points_2.h}
 
 \ccFunction{
-   template<class Curve_iterator, class Traits, class Container>
+   template<class Curve_iterator, class Traits, class PointOutputIterator>
    void 
-   sweep_to_produce_planar_map_points_2(
-   Curve_iterator curves_begin, 
-   Curve_iterator curves_end, 
-   Traits& traits, 
-   Container &subcurves);}
-   {Explanation will come here.}
+   sweep_to_produce_points_2(Curve_iterator curves_begin, 
+   Curve_iterator curves_end,  
+   SweepLineTraits_2& traits, 
+   OutpoutIterator points,
+   bool edge_points = true);}
+   {reports all intersections induced by the arrangement of the curves
+   given in the range \ccStyle{[curves_begin, curves_end)}. The
+   parameter \ccStyle{points} is an inserter iterator which 
+   will eventually point to all the reported intersection points. 
+   \ccc{sweep_to_produce_points} supports
+   curves which are interior intersect, overlap or non x-monotone, and
+   hence the user may provide his curves as input without any
+   restriction of the kind mentioned above. 
+   The user may obtain the input points in addition to the intersection 
+   by setting the flag \ccStyle{edge_points} to true. 
+   The default choice provides this first possibility.}
 
 \ccRequirements
 
 \ccSeeAlso
+\ccc{CGAL::sweep_to_construct_planar_map_2} \\
+\ccc{CGAL::sweep_to_produce_subcurves_2}
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
+% \ccImplementation
+% The implementation uses the container $map$ defined in STL for
+% implementing the event queue and the status line.  The implementation
+% also keeps per each input curve an associated container of all its
+% intersection points ordered from left to right, and also keeps per
+% each event point all its outcoming curves.  The complexity of this
+% algorithm is $O(n\log{n} + k\log{n})$ where $n$ is the number of the 
+% input curves and $k$ is the number of intersection points 
+% induced by these curves.
 
-\ccImplementation
-  % Say how it was implemented
-  % See documentation of convex_hull_2
+\ccIncludeExampleCode{Sweep_line_2/example5.C}
+
+And the output of the program looks like this:
+
+\ccIncludeExampleCode{Sweep_line_2/example5.cout}
 
 \end{ccRefFunction}
 
@@ -51,4 +72,6 @@ include the endpoints of the input curves within the output.
 %%RefPage: end of main body, begin of footer
 % EOF
 % +------------------------------------------------------------------------+
+
+
 

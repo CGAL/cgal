@@ -18,7 +18,7 @@
 
 \ccDefinition
   
-A model of the cocept \ccRefName\ aggregates the geometric types and
+A model of the concept \ccRefName\ aggregates the geometric types and
 primitive operations used by the sweep line functions.
 
 %\ccGeneralizes
@@ -90,13 +90,6 @@ primitive operations used by the sweep line functions.
        \item[]\ccStyle{ABOVE_CURVE} - $pnt$ is above $cv$, and
        \item[]\ccStyle{ON_CURVE} - $pnt$ is on $cv$.
        \end{itemize}}
-       
-       \ccMethod{bool curve_is_between_cw(const X_curve& cv,
-          const X_curve& first, const X_curve& second, const Point&
-          pnt);} {given three curves that share an endpoint $pnt$,
-          returns $true$ if $cv$ is between $first$ and $second$, when
-          going in the clockwise direction around $pnt$ from $first$
-          to $second$. }
 
 
        \ccMethod{bool curve_is_same(const X_curve &cv1, const X_cur

@@ -1,8 +1,58 @@
 \section{Sweep Line}
 
 % Describe the functionality of the package
-  (see the convec hull user's manual)
+A \ccc{Planar Map with Intersections} can be built incrementally by
+inserting one curve after the other into the map. 
+Given a collection $C$ of possibly intersecting and not necessarily 
+$x$-monotone curves in the plane, the sweep line algorithm can construct 
+the planar map induced by $C$, or rather produce the collections of their 
+intersections and the disjoint-interior subcurves induced by $C$.
+ 
+In general, it is much faster to perform the sweep line algorithm on
+the collection of input curves in order to produce their planar map 
+rather using the \ccc{Planar_map_with_intersections_2<Planar_map>} 
+or \ccc{Arrangement_2<Dcel,Traits,Base_node>} packages, due to an 
+efficient calculation of intersections and avoiding the usage of 
+point location when inserting a curve to the planar map. 
+The utility can either build the induced planar
+map, collect the pairwise interior disjoint subcurves
+computed in a container, or rather collect the intersections of all 
+curves to a container of points. 
+
+%If no additional insertions of intersecting curves are planned following the building of the map it is possible to perform a sweep
+%line operation that will build the simpler class \ccc{Planar_map_2}.
+%This is possible since the output of the sweep line operation is a
+%collection of $x$-monotone pairwise interior disjoint, which are
+%supported by the \ccc{Planar Map} package. 
+When constructing a planar map by the sweep line process the user 
+provides (possibly an empty) planar map as the resulting parameter. 
+The result of applying the sweep line algorithm to a 
+collection of curves and a non-empty map is equal to that 
+of applying the algorithm to the union of the
+planar map curves and the collection of input curves. Simply put,
+the intersections of input curves and planar map curves are also
+calculated.
 
 % Put examples here
+\section{Example using Sweep Line to construct a Planar map}
+\label{ssec:example1_sweep}
+The following example demonstrates the usage of the 
+\ccc {Sweep line} algorithm. 
+It constructs a planar map out of four segments
+--- $(0,0)-(1,1)$ , $(0,1)-(1,0)$ , $(0,0)-(1,0)$ and $(0,1)-(1,1)$
+(an hourglass shape), two of them are intersecting in their
+interior. The resulting planar map will contain all the disjoint
+interior sub-segments obtained by the calculation of the sweep
+line algorithm. For clarity, we printed all the halfedges of the
+resulting planar map to the standard output using the I/O functions
+for the \ccc{Planar map} package.
 
-\section{Example using Bykat's algorithm}
+\ccIncludeExampleCode{Sweep_line/example1.C}
+
+The output of the program looks like this:
+
+\ccIncludeExampleCode{Sweep_line/example1.cout}
+
+% EOF ------------------------------------------------------------------------80
+
+

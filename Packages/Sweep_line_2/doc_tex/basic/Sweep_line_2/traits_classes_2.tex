@@ -1,1 +1,25 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: traits_classes_2.tex (Sweep_line_2)
+% +------------------------------------------------------------------------+
+% |
+% | Package: sweep line (Sweep_line_2)
+% |
+% +------------------------------------------------------------------------+
+
 \section{Traits Classes}
+Each of the functions used to sweep planar curves in order to construct 
+their planar map or in order to produce their intersections and 
+disjoint-interior subcurves 
+is parameterized by a traits class, which specifies the types and geometric
+primitives to be used in the computation. 
+There are several implementations of Sweep line traits classes 
+provided in the library. The traits provided are in a matter of fact the 
+traits classes provided for the \ccc{Planar_map_with_intersections_2<Planar_map>} package, since the requirements of the \ccc{SweepLineTraits_2} 
+concept are almost identical to those of the 
+\ccc{PlanarMapWithIntersectionsTraits_2} concept. 
+The latter contains an additional function which is not required 
+in the former.
+
+%
+% EOF
+% +------------------------------------------------------------------------+

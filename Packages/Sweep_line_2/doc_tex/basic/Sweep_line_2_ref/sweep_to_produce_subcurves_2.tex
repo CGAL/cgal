@@ -36,12 +36,12 @@ as many times as it is covered by input curves.
    bool overlapping = false);}
    {reports all the disjoint interior subcurves induced by the curves
    given in the range \ccStyle{[curves_begin, curves_end)}. The
-   parameter \ccStyle{subcurves} is a container which will evantually
+   parameter \ccStyle{subcurves} is a container which will eventually
    hold all the reported
    subcurves. \ccc{sweep_to_produce_planar_map_subcurve} supports
    curves which are interior intersect, overlap or non x-monotone, and
    hence the user may provide his curves as input without any
-   resriction of the kind mentioned above. When providing overlapping
+   restriction of the kind mentioned above. When providing overlapping
    curves as input users can make a choice by the boolean parameter
    \ccStyle{overlapping} whether the output they will get will contain
    each overlapping subcurve only once or that the reported subcurves
@@ -53,16 +53,16 @@ as many times as it is covered by input curves.
 \ccc{CGAL::sweep_to_construct_planar_map_2} \\
 \ccc{CGAL::sweep_to_produce_points_2}
 
-\ccImplementation 
+% \ccImplementation 
 
-The implementation uses the container $map$ defined in STL for
-implementing the event queue and the status line.  The implementation
-also keeps per each input curve an associated container of all its
-intersection points ordered from left to right, and also keeps per
-each event point all its outcoming curves.  The complexity of this
-algorithm is $O(nlogn + k)$ where $n$ is the number of the input
-curves and $k$ is the number of intersection points induced by these
-curves.
+% The implementation uses the container $map$ defined in STL for
+% implementing the event queue and the status line. The implementation
+% also keeps per each input curve an associated container of all its
+% intersection points ordered from left to right, and also keeps per
+% each event point all its outcoming curves. The complexity of this
+% algorithm is $O(n\log{n} + k\log{n})$ where $n$ is the number of the input
+% curves and $k$ is the number of intersection points induced by these
+% curves.
 
 \ccExample
 \label{ssec:example3_sweep}
@@ -74,11 +74,11 @@ in ~\ref{ssec:example1_sweep} , and the result we are interested with
 is only reporting the sub segments obtained by the \ccc{Sweep line}
 algorithm.
 
-\ccIncludeExampleCode{Sweep_line/example3.C}
+\ccIncludeExampleCode{Sweep_line_2/example3.C}
 
 And the output of the program looks like this:
 
-\ccIncludeExampleCode{Sweep_line/example3.cout}
+\ccIncludeExampleCode{Sweep_line_2/example3.cout}
 
 \end{ccRefFunction}
 
@@ -86,4 +86,15 @@ And the output of the program looks like this:
 %%RefPage: end of main body, begin of footer
 % EOF
 % +------------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
 

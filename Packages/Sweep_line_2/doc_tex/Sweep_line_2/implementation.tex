@@ -1,1 +1,10 @@
 \section{Implementation}
+
+The implementation uses the container $map$ defined in STL for
+implementing the event queue and the status line. The implementation
+also keeps per each input curve an associated container of all its
+intersection points ordered from left to right, and also keeps per
+each event point all its outcoming curves. The complexity of this
+algorithm is $O(n\log{n} + k\log{n})$ where $n$ is the number of the input
+curves and $k$ is the number of intersection points induced by these
+curves.
