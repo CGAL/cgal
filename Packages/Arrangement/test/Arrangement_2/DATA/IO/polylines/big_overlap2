@@ -1,0 +1,20 @@
+# Arr_polyline_traits Test Data File
+# Big Overlap
+#
+
+# No. of test points:
+1
+# Test points
+# -------------
+# (coordinates followed by expected type:
+# 1 VERTEX, 2 EDGE, 3 FACE, 4 UNBOUNDED_FACE)
+ 1  1  6
+#
+# No. of expected vertices :
+8
+# No. of expected halfedges:
+8
+# No. of expected faces    :
+2
+# No. of expected overlaps :
+3
