@@ -1,3 +1,7 @@
+26 March 2005 Sylvain Pion
+- Handle_for : remove "optimization" of default ctor.
+  It's painful to use, and is there really a need to optimize default ctors ?
+
 8 March 2005 Sylvain Pion
 - Add do_intersect(Triangle_3, Tetrahedron_3) by Nico Kruithof.
 

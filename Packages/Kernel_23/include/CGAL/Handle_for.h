@@ -49,13 +49,10 @@ public:
     typedef T element_type;
 
     Handle_for()
+      : ptr_(allocator.allocate(1))
     {
-        // Use a unique static instance to speed up default construction.
-        // It's a static variable of a function instead of the class to
-        // avoid the requirement of a default constructor for T().
-        static const Handle_for def = Handle_for(T());
-        ptr_ = def.ptr_;
-        ++(ptr_->count);
+        new (&(ptr_->t)) T();
+        ptr_->count = 1;
     }
 
     Handle_for(const Handle_for& h)
