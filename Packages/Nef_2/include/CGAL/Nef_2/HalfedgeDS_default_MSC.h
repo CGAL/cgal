@@ -11,25 +11,26 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : HalfedgeDS_using_in_place_list.h
+// file          : HalfedgeDS_default.h
 // chapter       : $CGAL_Chapter: Halfedge Data Structures $
 // package       : $CGAL_Package: HalfedgeDS_2 3.1 (26 Mar 1999) $
-// source        : hds_in_place_list.fw
+// source        : hds.fw
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //
 // coordinator   : MPI Saarbruecken (Stefan Schirra <stschirr@mpi-sb.mpg.de>)
 //
-// Halfedge Data Structure Using an in-place List Implementation.
+// Halfedge Data Structure Default Implementation for CGAL.
 // ============================================================================
 
-#ifndef CGAL_HALFEDGEDS_USING_IN_PLACE_LIST_H
-#define CGAL_HALFEDGEDS_USING_IN_PLACE_LIST_H 1
+#ifndef CGAL_HALFEDGEDS_DEFAULT_MSC_H
+#define CGAL_HALFEDGEDS_DEFAULT_MSC_H 1
 
 #include <CGAL/basic.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Nef_2/HalfedgeDS_items_decorator.h>
+#include <CGAL/Nef_2/HDS_items_MSC.h>
 #include <CGAL/Hash_map.h>
 #include <iterator>
 
@@ -93,62 +94,93 @@ public:
     }
 };
 
-
-template < class p_Traits, class p_Items>
-class HalfedgeDS_using_in_place_list {
+template <class Traits_>
+class HalfedgeDS_ipl_MSC_base {
 public:
-    typedef HalfedgeDS_using_in_place_list<p_Traits,p_Items> Self;
-    typedef p_Traits                                   Traits;
-    typedef p_Items                                    Items;
+  typedef HalfedgeDS_ipl_MSC_base<Traits_> Self;
+  typedef Traits_  Traits;
 
-    typedef typename Items::template Vertex_wrapper<Self,Traits>
-	    Vertex_wrapper;
-    typedef typename Items::template Halfedge_wrapper<Self,Traits>  
-	    Halfedge_wrapper;
-    typedef typename Items::template Face_wrapper<Self,Traits>  
-	    Face_wrapper;
+  typedef CGALMSC::Vertex<Self,Traits>   Vertex_base;
+  typedef CGALMSC::Halfedge<Self,Traits> Halfedge_base;
+  typedef CGALMSC::Face<Self,Traits>     Face_base;
 
-    typedef typename Vertex_wrapper::Vertex            Vertex_base;
-    typedef HalfedgeDS_in_place_list_vertex< Vertex_base> Vertex;
-    typedef CGAL::In_place_list<Vertex,false>          Vertex_list;
-    typedef typename Vertex_list::iterator             Vertex_handle;
-    typedef typename Vertex_list::const_iterator       Vertex_const_handle;
-    typedef typename Vertex_list::iterator             Vertex_iterator;
-    typedef typename Vertex_list::const_iterator       Vertex_const_iterator;
+  typedef HalfedgeDS_in_place_list_vertex<Vertex_base> Vertex;
+  typedef CGAL::In_place_list<Vertex,false>            Vertex_list;
+  typedef CGAL::CGALi::In_place_list_iterator<Vertex>  Vertex_handle;
+  typedef CGAL::CGALi::In_place_list_iterator<Vertex>  Vertex_iterator;
+  typedef CGAL::CGALi::In_place_list_const_iterator<Vertex> 
+      Vertex_const_handle;
+  typedef CGAL::CGALi::In_place_list_const_iterator<Vertex> 
+      Vertex_const_iterator;
 
-    typedef typename Halfedge_wrapper::Halfedge        Halfedge_base;
-    typedef HalfedgeDS_in_place_list_halfedge< Halfedge_base> Halfedge;
-    typedef CGAL::In_place_list<Halfedge,false>        Halfedge_list;
-    typedef typename Halfedge_list::iterator           Halfedge_handle;
-    typedef typename Halfedge_list::const_iterator     Halfedge_const_handle;
-    typedef typename Halfedge_list::iterator           Halfedge_iterator;
-    typedef typename Halfedge_list::const_iterator     Halfedge_const_iterator;
+  typedef HalfedgeDS_in_place_list_vertex<Halfedge_base> Halfedge;
+  typedef CGAL::In_place_list<Halfedge,false>            Halfedge_list;
+  typedef CGAL::CGALi::In_place_list_iterator<Halfedge>  Halfedge_handle;
+  typedef CGAL::CGALi::In_place_list_iterator<Halfedge>  Halfedge_iterator;
+  typedef CGAL::CGALi::In_place_list_const_iterator<Halfedge> 
+      Halfedge_const_handle;
+  typedef CGAL::CGALi::In_place_list_const_iterator<Halfedge> 
+      Halfedge_const_iterator;
 
-    typedef typename Face_wrapper::Face                Face_base;
-    typedef HalfedgeDS_in_place_list_face< Face_base>     Face;
-    typedef CGAL::In_place_list<Face,false>              Face_list;
-    typedef typename Face_list::iterator               Face_handle;
-    typedef typename Face_list::const_iterator         Face_const_handle;
-    typedef typename Face_list::iterator               Face_iterator;
-    typedef typename Face_list::const_iterator         Face_const_iterator;
+  typedef HalfedgeDS_in_place_list_vertex<Face_base> Face;
+  typedef CGAL::In_place_list<Face,false>            Face_list;
+  typedef CGAL::CGALi::In_place_list_iterator<Face>  Face_handle;
+  typedef CGAL::CGALi::In_place_list_iterator<Face>  Face_iterator;
+  typedef CGAL::CGALi::In_place_list_const_iterator<Face> 
+      Face_const_handle;
+  typedef CGAL::CGALi::In_place_list_const_iterator<Face> 
+      Face_const_iterator;
 
-    typedef typename Halfedge_list::size_type          size_type;
-    typedef typename Halfedge_list::difference_type    difference_type;
-    typedef std::bidirectional_iterator_tag            iterator_category;
-    typedef CGAL::Tag_true                             Supports_removal;
+};
 
-    typedef typename Vertex::Supports_vertex_halfedge Supports_vertex_halfedge;
-    typedef typename Halfedge::Supports_halfedge_prev Supports_halfedge_prev;
-    typedef typename Halfedge::Supports_halfedge_vertex
-                                                      Supports_halfedge_vertex;
-    typedef typename Halfedge::Supports_halfedge_face
-                                                      Supports_halfedge_face;
-    typedef typename Face::Supports_face_halfedge     Supports_face_halfedge;
+
+
+template < class Traits_>
+class HalfedgeDS_ipl_MSC : 
+  public HalfedgeDS_ipl_MSC_base<Traits_> {
+public:
+  typedef Traits_  Traits;
+  typedef HalfedgeDS_ipl_MSC_base<Traits_> Base;
+  typedef HalfedgeDS_ipl_MSC<Traits_> Self;
+
+  typedef typename Base::Vertex_base Vertex_base;
+  typedef typename Base::Vertex Vertex;
+  typedef typename Base::Vertex_list Vertex_list;
+  typedef typename Base::Vertex_handle Vertex_handle;
+  typedef typename Base::Vertex_const_handle Vertex_const_handle;
+  typedef typename Base::Vertex_iterator Vertex_iterator;
+  typedef typename Base::Vertex_const_iterator Vertex_const_iterator;
+
+  typedef typename Base::Halfedge_base Halfedge_base;
+  typedef typename Base::Halfedge Halfedge;
+  typedef typename Base::Halfedge_list Halfedge_list;
+  typedef typename Base::Halfedge_handle Halfedge_handle;
+  typedef typename Base::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Base::Halfedge_iterator Halfedge_iterator;
+  typedef typename Base::Halfedge_const_iterator Halfedge_const_iterator;
+
+  typedef typename Base::Face_base Face_base;
+  typedef typename Base::Face Face;
+  typedef typename Base::Face_list Face_list;
+  typedef typename Base::Face_handle Face_handle;
+  typedef typename Base::Face_const_handle Face_const_handle;
+  typedef typename Base::Face_iterator Face_iterator;
+  typedef typename Base::Face_const_iterator Face_const_iterator;
+
+  typedef typename Halfedge_list::size_type          size_type;
+  typedef typename Halfedge_list::difference_type    difference_type;
+  typedef std::bidirectional_iterator_tag            iterator_category;
+  typedef CGAL::Tag_true                             Supports_removal;
+
+  typedef typename Vertex::Supports_vertex_halfedge   Supports_vertex_halfedge;
+  typedef typename Halfedge::Supports_halfedge_prev   Supports_halfedge_prev;
+  typedef typename Halfedge::Supports_halfedge_vertex Supports_halfedge_vertex;
+  typedef typename Halfedge::Supports_halfedge_face   Supports_halfedge_face;
+  typedef typename Face::Supports_face_halfedge       Supports_face_halfedge;
 
     // Halfedges are allocated in pairs. Here is the type for that.
     struct Halfedge_pair {
-        Halfedge first;
-        Halfedge second;
+        Halfedge first, second;
         Halfedge_pair() {}
         Halfedge_pair( const Halfedge& h, const Halfedge& g)
             : first(h), second(g) {}
@@ -214,29 +246,23 @@ private:
         // in a halfedge data structure `hds' with lists.
 
 public:
-    HalfedgeDS_using_in_place_list()
-        : nb_border_halfedges(0), nb_border_edges(0) {}
-        // the empty polyhedron `P'.
+    HalfedgeDS_ipl_MSC() 
+      : Base(), nb_border_halfedges(0), nb_border_edges(0) {}
 
-    HalfedgeDS_using_in_place_list( size_type, size_type, size_type)
-        : nb_border_halfedges(0), nb_border_edges(0) {}
-        // Parameter order is v,h,f.
-        // a polyhedron `P' with storage reserved for v vertices, h
-        // halfedges, and f faces. The reservation sizes are a hint for
-        // optimizing storage allocation. They are not used here.
+    HalfedgeDS_ipl_MSC(size_type, size_type, size_type)
+        : Base(), nb_border_halfedges(0), nb_border_edges(0) {}
+      // not used here.
 
-    ~HalfedgeDS_using_in_place_list() { erase_all(); }
+    ~HalfedgeDS_ipl_MSC() { erase_all(); }
 
-    HalfedgeDS_using_in_place_list( const Self& hds)
+    HalfedgeDS_ipl_MSC(const Self& hds)
     :  vertices( hds.vertices),
        halfedges( hds.halfedges),
        faces( hds.faces),
        nb_border_halfedges( hds.nb_border_halfedges),
        nb_border_edges( hds.nb_border_edges),
        border_halfedges( hds.border_halfedges)
-    {
-        pointer_update( hds);
-    }
+    { pointer_update( hds); }
 
     Self& operator=( const Self& hds)  {
         if ( this != &hds) {
@@ -253,12 +279,7 @@ public:
     }
 
     void reserve( size_type, size_type, size_type) {}
-        // Parameter order is v,h,f.
-        // reserve storage for v vertices, h halfedges, and f faces. The
-        // reservation sizes are a hint for optimizing storage allocation.
-        // If the `capacity' is already greater than the requested size
-        // nothing happens. If the `capacity' changes all iterators and
-        // circulators invalidates. The function is void here.
+        // function is void here.
 
 // Access Member Functions
 
@@ -455,18 +476,16 @@ public:
         // the face right before the halfedge incident to the hole.
 };
 
-#define _HDS_IP_List HalfedgeDS_using_in_place_list
-
 // A class for comparing handles, used in the maps below.
 template < class Handle>
 struct _HDS_Cmp_handle {
     bool operator()( Handle a, Handle b) const { return &*a < &*b; }
 };
 
-template < class p_Traits, class p_Items>
+template < class p_Traits>
 void
-_HDS_IP_List<p_Traits,p_Items>::
-pointer_update( const _HDS_IP_List<p_Traits,p_Items>& hds) {
+HalfedgeDS_ipl_MSC<p_Traits>::
+pointer_update( const HalfedgeDS_ipl_MSC<p_Traits>& hds) {
     // Update own pointers assuming that they lived previously
     // in a halfedge data structure `hds' with lists.
     typedef CGAL::Hash_map<Vertex_const_handle,Vertex_handle>     V_map;
@@ -522,9 +541,9 @@ pointer_update( const _HDS_IP_List<p_Traits,p_Items>& hds) {
     border_halfedges = h_map[ border_halfedges];
 }
 
-template < class p_Traits, class p_Items>
+template < class p_Traits>
 void
-_HDS_IP_List<p_Traits,p_Items>::
+HalfedgeDS_ipl_MSC<p_Traits>::
 normalize_border() {
     CGAL_assertion_code( size_t count = halfedges.size();)
     nb_border_halfedges = 0;
@@ -570,8 +589,17 @@ normalize_border() {
     border_halfedges = i;
 }
 
-#undef CGAL__HDS_IP_List
+template <class p_Traits> 
+class HalfedgeDS_default_MSC
+  : public HalfedgeDS_ipl_MSC< p_Traits> {
+public:
+  typedef p_Traits Traits;
+  typedef size_t size_type;
+  HalfedgeDS_default_MSC() {}
+  HalfedgeDS_default_MSC( size_type v, size_type h, size_type f)
+    : HalfedgeDS_ipl_MSC< p_Traits>(v,h,f) {}
+};
 
 CGAL_END_NAMESPACE
-#endif // CGAL_HALFEDGEDS_USING_IN_PLACE_LIST_H //
 
+#endif // CGAL_HALFEDGEDS_DEFAULT_MSC_H 

@@ -50,15 +50,15 @@ int main()
   typedef  Nef_polyhedron::Line      Line;
 
   typedef  Nef_polyhedron::Object_handle Object_handle;
-  typedef  Nef_polyhedron::PM_explorer   PM_explorer;
-  typedef  PM_explorer::Vertex_const_handle Vertex_const_handle;
-  typedef  PM_explorer::Halfedge_const_handle Halfedge_const_handle;
-  typedef  PM_explorer::Face_const_handle Face_const_handle;
-  typedef  PM_explorer::Vertex_const_iterator Vertex_const_iterator;
-  typedef  PM_explorer::Halfedge_const_iterator Halfedge_const_iterator;
-  typedef  PM_explorer::Face_const_iterator Face_const_iterator;
+  typedef  Nef_polyhedron::Explorer Explorer;
+  typedef  Explorer::Vertex_const_handle Vertex_const_handle;
+  typedef  Explorer::Halfedge_const_handle Halfedge_const_handle;
+  typedef  Explorer::Face_const_handle Face_const_handle;
+  typedef  Explorer::Vertex_const_iterator Vertex_const_iterator;
+  typedef  Explorer::Halfedge_const_iterator Halfedge_const_iterator;
+  typedef  Explorer::Face_const_iterator Face_const_iterator;
 
-  typedef  PM_explorer::Ray Ray;
+  typedef  Explorer::Ray Ray;
 
   Point p1(0,0), p2(0,1), p3(1,0), p4(-1,-1), p5(0,-1), p6(-1,0), p7(1,1);
   Line l1(p2,p1); // neg y-axis
@@ -80,7 +80,7 @@ int main()
   CGAL_TEST(N1 > N3 && N2 > N3);
   CGAL_TEST(N1 >= N3 && N2 >= N3);
 
-  PM_explorer E = N3.explorer();
+  Explorer E = N3.explorer();
   Vertex_const_iterator v = E.vertices_begin(); 
   CGAL_TEST( !E.is_standard(v) && E.ray(v) == Ray(p1,p4) );
   Halfedge_const_handle e = E.first_out_edge(v);
@@ -173,15 +173,15 @@ int main()
   typedef  Nef_polyhedron::Line      Line;
 
   typedef  Nef_polyhedron::Object_handle Object_handle;
-  typedef  Nef_polyhedron::PM_explorer   PM_explorer;
-  typedef  PM_explorer::Vertex_const_handle Vertex_const_handle;
-  typedef  PM_explorer::Halfedge_const_handle Halfedge_const_handle;
-  typedef  PM_explorer::Face_const_handle Face_const_handle;
-  typedef  PM_explorer::Vertex_const_iterator Vertex_const_iterator;
-  typedef  PM_explorer::Halfedge_const_iterator Halfedge_const_iterator;
-  typedef  PM_explorer::Face_const_iterator Face_const_iterator;
+  typedef  Nef_polyhedron::Explorer Explorer;
+  typedef  Explorer::Vertex_const_handle Vertex_const_handle;
+  typedef  Explorer::Halfedge_const_handle Halfedge_const_handle;
+  typedef  Explorer::Face_const_handle Face_const_handle;
+  typedef  Explorer::Vertex_const_iterator Vertex_const_iterator;
+  typedef  Explorer::Halfedge_const_iterator Halfedge_const_iterator;
+  typedef  Explorer::Face_const_iterator Face_const_iterator;
 
-  typedef  PM_explorer::Ray Ray;
+  typedef  Explorer::Ray Ray;
 
   Point p1(0,0), p2(0,1), p3(1,0), p4(-1,-1), p5(0,-1), p6(-1,0), p7(1,1);
   Line l1(p2,p1); // neg y-axis
@@ -203,7 +203,7 @@ int main()
   CGAL_TEST(N1 > N3 && N2 > N3);
   CGAL_TEST(N1 >= N3 && N2 >= N3);
 
-  PM_explorer E = N3.explorer();
+  Explorer E = N3.explorer();
   Vertex_const_iterator v = E.vertices_begin(); 
   CGAL_TEST( !E.is_standard(v) && E.ray(v) == Ray(p1,p4) );
   Halfedge_const_handle e = E.first_out_edge(v);

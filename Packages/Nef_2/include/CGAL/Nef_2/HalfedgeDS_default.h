@@ -27,8 +27,25 @@
 #ifndef CGAL_HALFEDGEDS_DEFAULT_H
 #define CGAL_HALFEDGEDS_DEFAULT_H 1
 
-// #include <CGAL/Nef_2/HalfedgeDS_items.h>
 #include <CGAL/Nef_2/HalfedgeDS_using_in_place_list.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class p_Traits, class p_Items> // = HalfedgeDS_items>
+class HalfedgeDS_default
+  : public HalfedgeDS_using_in_place_list< p_Traits, p_Items> {
+public:
+  typedef p_Traits Traits;
+  typedef size_t size_type;
+  HalfedgeDS_default() {}
+  HalfedgeDS_default( size_type v, size_type h, size_type f)
+    : HalfedgeDS_using_in_place_list< p_Traits, p_Items>(v,h,f) {}
+};
+
+CGAL_END_NAMESPACE
+
+
+#if 0
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
   template <class p_Traits, class p_Items> // = HalfedgeDS_items>
@@ -57,6 +74,8 @@
     };
 #define CGAL_HALFEDGEDS_DEFAULT  HalfedgeDS_default::HDS
 #endif // CGAL_CFG_NO_TMPL_IN_TMPL_PARAM //
+
+#endif
 
 #endif // CGAL_HALFEDGEDS_DEFAULT_H //
 // EOF //

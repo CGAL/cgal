@@ -23,7 +23,7 @@
 // maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // coordinator   : Michael Seel <seel@mpi-sb.mpg.de>
 //
-// implementation: Plane map decorator classes
+// implementation: LEDA drawer
 // ============================================================================
 
 #ifndef PM_VISUALIZOR_H

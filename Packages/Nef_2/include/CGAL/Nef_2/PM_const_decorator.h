@@ -15,7 +15,6 @@
 // package       : Nef_2 
 // chapter       : Nef Polyhedra
 //
-// source        : nef_2d/PM_decorator.lw
 // revision      : $Revision$
 // revision_date : $Date$
 //
@@ -23,7 +22,7 @@
 // maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // coordinator   : Michael Seel <seel@mpi-sb.mpg.de>
 //
-// implementation: Plane map decorator classes
+// implementation: Plane map const decorator
 // ============================================================================
 
 #ifndef CGAL_PM_CONST_DECORATOR_H

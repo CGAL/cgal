@@ -27,9 +27,9 @@
 #ifndef CGAL_HALFEDGEDS_ITEMS_DECORATOR_H
 #define CGAL_HALFEDGEDS_ITEMS_DECORATOR_H 1
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif
+
+CGAL_BEGIN_NAMESPACE
 
 template < class p_HDS >
 class HalfedgeDS_items_decorator {
@@ -536,5 +536,6 @@ public:
     }
 };
 
+CGAL_END_NAMESPACE
 #endif // CGAL_HALFEDGEDS_ITEMS_DECORATOR_H //
-// EOF //
+

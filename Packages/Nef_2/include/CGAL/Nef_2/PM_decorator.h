@@ -15,7 +15,6 @@
 // package       : Nef_2 
 // chapter       : Nef Polyhedra
 //
-// source        : nef_2d/PM_decorator.lw
 // revision      : $Revision$
 // revision_date : $Date$
 //
@@ -23,7 +22,7 @@
 // maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // coordinator   : Michael Seel <seel@mpi-sb.mpg.de>
 //
-// implementation: Plane map decorator classes
+// implementation: Plane map decorator (mutable)
 // ============================================================================
 
 #ifndef CGAL_PM_DECORATOR_H
@@ -53,18 +52,20 @@ public:
   typedef PM_const_decorator<HDS>  Base;
   typedef HDS                      Plane_map;
   HDSUSING(Vertex_base); HDSUSING(Halfedge_base); HDSUSING(Face_base);
-  HDSUSING(Face);
+  HDSUSING(Vertex); HDSUSING(Halfedge); HDSUSING(Face); 
   HDSUSING(Vertex_handle);    HDSUSING(Vertex_iterator);
   HDSUSING(Halfedge_handle);  HDSUSING(Halfedge_iterator);
   HDSUSING(Face_handle);      HDSUSING(Face_iterator);
   HDSUSING(Vertex_const_handle); 
   HDSUSING(Halfedge_const_handle); 
   HDSUSING(Face_const_handle); 
+  HDSUSING(Vertex_const_iterator); 
+  HDSUSING(Halfedge_const_iterator); 
+  HDSUSING(Face_const_iterator); 
   USING(Hole_const_iterator); 
   USING(Isolated_vertex_const_iterator); 
   USING(Point_const_iterator);
-  USING(Mark);
-  USING(Point);
+  USING(Mark); USING(Point); USING(GenPtr);
 
 /*{\Mtext Local types are handles, iterators and circulators of the following
 kind: |Vertex_handle|, |Vertex_iterator|, |Halfedge_handle|,
@@ -698,10 +699,14 @@ objects.\\
 |P| is empty.}*/
 
 void reflecting_inversion();
-/*{\Mop inverts the side of the embedding of faces with respect to
-  halfedges and the order of halfedges around vertices.}*/
-
-
+/*{\Xop inverts the topological links corresponding to a reflecting
+inversion. Assume that the plane map is embedded into the x-y plane
+and one looks at it from the tip of the positive z-axis in space. Now
+change your view point to a point on the negative z-axis. As a
+consequence faces are right of edges and adjacency list are clockwise
+order-preserving. This operation recreates our embedding invariant
+(faces are left of edges and adjacency lists are counterclockwise 
+order-preserving).}*/
 
 /*{\Mtext \headerline{Associated Information}\restoreopdims}*/
 

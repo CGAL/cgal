@@ -15,7 +15,6 @@
 // package       : Nef_2 
 // chapter       : Nef Polyhedra
 //
-// source        : nef_2d/PM_decorator.lw
 // revision      : $Revision$
 // revision_date : $Date$
 //
@@ -23,7 +22,7 @@
 // maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // coordinator   : Michael Seel <seel@mpi-sb.mpg.de>
 //
-// implementation: Plane map decorator classes
+// implementation: Geometric properties checker 
 // ============================================================================
 
 #ifndef CGAL_PM_CHECKER_H
@@ -173,6 +172,13 @@ check_forward_prefix_condition(Vertex_const_handle v) const
                        error_status.str());
   error_status.freeze(0);  
 }
+
+/* We check the geometric integrity of the structure. We check
+   + that all adjacent nodes are differently embedded
+   + that all node lists are correctly embedded counterclockwise
+     with winding number one.
+   + that the convex hull of the structure has winding number one.
+*/
 
 template <typename PMCDEC, typename GEOM>
 void PM_checker<PMCDEC,GEOM>::

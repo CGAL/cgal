@@ -187,9 +187,8 @@ protected:
   RPolynomial_MSC(init_by_degree, Size_type s) : Base(Rep(s)) {}
   // creates a polynomial of degree s-1
 
-  static NT _R; // for visualization only
-
 public:
+  static NT RR;
 
   RPolynomial_MSC() : Base(Rep()) {}
   RPolynomial_MSC(const NT& a0) : Base(Rep(a0)) { reduce(); }
@@ -226,12 +225,12 @@ public:
   const_iterator begin() const { return ptr->coeff.begin(); }
   const_iterator end() const { return ptr->coeff.end(); }
 
-  NT eval_at(const NT& R) const
+  NT eval_at(const NT& r) const
   { CGAL_assertion( degree()>=0 );
     NT res = ptr->coeff[0];
-    NT x = _R;
+    NT x = r;
     for(int i=1; i<=degree(); ++i) 
-    { res += ptr->coeff[i]*x; x*=_R; }
+    { res += ptr->coeff[i]*x; x*=r; }
     return res; 
   }
 
@@ -258,7 +257,7 @@ public:
     return res;
   }
 
-  static void set_R(const NT& R) { _R = R; }
+  static void set_R(const NT& R) { RR = R; }
 
   friend  /*CGAL_KERNEL_MEDIUM_INLINE*/ RPolynomial_MSC<NT>
     operator - CGAL_NULL_TMPL_ARGS  (const RPolynomial_MSC<NT>&);   
@@ -320,7 +319,7 @@ static void pseudo_div
   }
   // now we know fd >= gd and f>=g
   int qd=fd-gd, delta=qd+1, rd=fd;
-  q = RPolynomial_MSC<NT>(IBD,Size_type(delta));
+  q = RPolynomial_MSC<NT>( IBD, Size_type(delta) );
   NT G = g[gd]; // highest order coeff of g
   D = G; while (--delta) D*=G; // D = G^delta
   RPolynomial_MSC<NT> res = RPolynomial_MSC<NT>(D)*f;
@@ -413,11 +412,11 @@ static void euclidean_div
 };
 
 
-template <class NT> NT RPolynomial_MSC<NT>::_R;
+template <class NT> NT RPolynomial_MSC<NT>::RR;
 
 template <class NT> /*CGAL_KERNEL_INLINE*/ double to_double 
   (const RPolynomial_MSC<NT>& p) 
-  { return (CGAL::to_double(p.eval_at(RPolynomial_MSC<NT>::_R))); }
+  { return (CGAL::to_double(p.eval_at(RPolynomial_MSC<NT>::RR))); }
 
 template <class NT>  /*CGAL_KERNEL_INLINE*/ bool is_valid 
   (const RPolynomial_MSC<NT>& p) 
@@ -426,11 +425,11 @@ template <class NT>  /*CGAL_KERNEL_INLINE*/ bool is_valid
 
 template <class NT> /*CGAL_KERNEL_INLINE*/ bool is_finite 
   (const RPolynomial_MSC<NT>& p) 
-  { return (CGAL::is_finite(p[0])); }
+  { return CGAL::is_finite(p[0]); }
 
 template <class NT> /*CGAL_KERNEL_INLINE*/ CGAL::io_Operator 
   io_tag(const RPolynomial_MSC<NT>&) 
-  { return CGAL::io_Operator(); }
+  { CGAL::io_Operator OP; return OP; }
 
 
 template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 

@@ -61,7 +61,7 @@ public:
 
   void operator()(TR t) const
   { if ( clients.empty() ) return; 
-    for ( clientlist::const_iterator it=clients.begin();
+    for ( typename clientlist::const_iterator it=clients.begin();
           it != clients.end(); ++it )
       (*it)->call(t);
   }

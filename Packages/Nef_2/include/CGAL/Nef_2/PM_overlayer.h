@@ -80,7 +80,7 @@ definition of plane maps and their concepts see the manual page of
 the method |create| creates the objects, the topology of the result
 and allows to link the plane map objects to input segments by means of
 a data accessor. The method starts from zero- and one-dimensional
-geometric objects in $S$ and produces a planar structure where each
+geometric objects in $S$ and produces a plane map |P| where each
 point of the plane can be assigned to an object (vertex, edge, or
 face) of |P|.
 
@@ -91,26 +91,25 @@ variables refer to the resulting plane map $P$.  The $1$-skeleta of
 the two maps subdivide the edges and faces of the complementary
 structure into smaller units. This means vertices and edges of $P_i$
 can split edges of $P_{1-i}$ and face cycles of $P_i$ subdivide faces
-of $P_{1-i}$. The 1-skeleton $G$ of $P$ is defined by the overlay of
+of $P_{1-i}$. The 1-skeleton $P'$ of $P$ is defined by the overlay of
 the embedding of the 1-skeleta of $P_0$ and $P_1$ (Take a trivial
 segment for each vertex and a segment for each edge and use the
 overlay definition of a set of segments above). The faces of $P$ refer
 to the maximal connected open point sets of the planar subdivision
-implied by the embedding of $G$. Each object from the output tuple
+implied by the embedding of $P'$. Each object from the output tuple
 $(V,E,F)$ has a \emph{supporting} object $u_i$ in each of the two
 input structures.  Imagine the two maps to be transparencies, which we
 stack. Then each point of the plane is covered by an object from each
-of the input structures.  This support relationship from the input
+of the input structures.  This support relation from the input
 structures to the output structure defines an information flow. Each
-supporting object $u_i$ of $u$ $(i=0,1)$ carries an associated
-information $|mark|(u_i)$. After the subdivision operation this
-information is attributed to the output object $u$ by
-$|mark|(u,i)$.}*/
+supporting object $u_i$ of $u$ $(i=0,1)$ carries an attribute
+$|mark|(u_i)$. After the subdivision operation this attribute
+is associated to the output object $u$ by $|mark|(u,i)$.}*/
 
-/*{\Mgeneralization PM_decorator}*/
+/*{\Mgeneralization PMDEC}*/
 
 public:
-/*{\Mtypes 3}*/
+/*{\Mtypes 8}*/
   typedef PMDEC                     PM_decorator;
   /*{\Mtypemember the plane map decorator |PMDEC|.}*/
   typedef typename PMDEC::Plane_map Plane_map;
@@ -123,7 +122,7 @@ public:
   typedef typename GEOM::Segment_2  Segment;
   /*{\Mtypemember the segment type of the geometric kernel.}*/
   typedef typename PMDEC::Mark      Mark;
-  /*{\Mtypemember the mark of plane map objects.}*/
+  /*{\Mtypemember the attribute type of plane map objects.}*/
 
   #define USING(t) typedef typename PMDEC::t t
   typedef typename Base::Base PM_const_decorator;
@@ -198,7 +197,7 @@ segments in the iterator range. |A| requires the following methods:\\
 [[void starting_segment(Vertex_handle v, Forward_iterator it)]]\\
 [[void passing_segment(Vertex_handle v, Forward_iterator it)]]\\
 [[void ending_segment(Vertex_handle v, Forward_iterator it)]]\\
-Where |supporting_segment| is called for each segment |*it|
+where |supporting_segment| is called for each non-trivial segment |*it|
 supporting a newly created edge |e|, |trivial_segment| is called for
 each trivial segment |*it| supporting a newly created vertex |v|, and
 the three last operations are called for each non-trivial segment
@@ -216,15 +215,14 @@ type |PM_decorator| on |P0|,|P1|. Then |\Mvar.mark(v,0) = D0.mark(v0)|
 and |\Mvar.mark(v,1) = D1.mark(f1)|.}*/
 
 template <typename SELECTION> 
-void select(SELECTION& SP) const;
+void select(SELECTION& predicate) const;
 /*{\Mop sets the marks of all objects according to the selection
-predicate |SP|. |SELECTION| has to be a function object type with a
-function operator\\
-[[Mark operator()(Mark m0, Mark m1)]]\\
-For each object |u| of |P| enriched by the marks of the supporting
-objects according to the previous procedure |subdivide|, after this
-operation |\Mvar.mark(u) = SP ( \Mvar.mark(u,0),\Mvar.mark(u,1)
-)|. The additional marks are invalidated afterwards. }*/
+predicate |predicate|. |SELECTION| has to be a function object type
+with a function operator\\ [[Mark operator()(Mark m0, Mark m1)]]\\ For
+each object |u| of |P| enriched by the marks of the supporting objects
+according to the previous procedure |subdivide|, after this operation
+|\Mvar.mark(u) = predicate ( \Mvar.mark(u,0),\Mvar.mark(u,1) )|. The
+additional marks are invalidated afterwards. }*/
 
 void simplify() const;
 /*{\Mop simplifies the structure of |P| according to the marks of
@@ -354,7 +352,7 @@ void create_face_objects(const Below_info& D) const
   std::vector<Halfedge_handle>  MinimalHalfedge;
   int i=0;
   Halfedge_iterator e, eend = halfedges_end();
-  for (e=halfedges_begin(); e != eend; ++e) {
+  for (e=halfedges_begin(); e != eend; ++i, ++e) {
     if ( FaceCycle[e] >= 0 ) continue; // already assigned
     Halfedge_around_face_circulator hfc(e),hend(hfc);
     Halfedge_handle e_min = e;
@@ -367,7 +365,6 @@ void create_face_objects(const Below_info& D) const
     } 
     TRACEN("");
     MinimalHalfedge.push_back(e_min);
-    ++i;
   }
 
   Face_handle f_outer = new_face(); assoc_info(f_outer);
@@ -408,12 +405,10 @@ Face_handle determine_face(Halfedge_handle e,
   const CGAL::Hash_map<Halfedge_handle,int>& FaceCycle,
   const Below_info& D) const
 { TRACEN("determine_face "<<PE(e));
-  int fc = FaceCycle[e];
-  Halfedge_handle e_min = MinimalHalfedge[fc];
+  Halfedge_handle e_min = MinimalHalfedge[FaceCycle[e]];
   Halfedge_handle e_below = D.halfedge_below(target(e_min));
-  if ( e_below == Halfedge_handle() ) { // below is nirwana
+  if ( e_below == Halfedge_handle() ) // below is nirwana
     return faces_begin();
-  }
   Face_handle f = face(e_below);
   if (f != Face_handle()) return f; // has face already
   f = determine_face(e_below, MinimalHalfedge, FaceCycle,D);
@@ -588,8 +583,9 @@ create(Forward_iterator start, Forward_iterator end,
   typedef PMO_from_segs<Self,Forward_iterator,Object_data_accessor> PMO;
   typedef Segment_overlay_traits<Forward_iterator,PMO,GEOM> seg_overlay;
   typedef gen_plane_sweep< seg_overlay > seg_overlay_sweep;
+  typedef typename seg_overlay::INPUT iterator_range;
   PMO Out(*this, Obj);
-  seg_overlay_sweep SOS( seg_overlay::INPUT(start, end), Out, K);
+  seg_overlay_sweep SOS( iterator_range(start, end), Out, K);
   SOS.sweep();
   create_face_objects(Out);
   Out.clear_temporary_vertex_info();
@@ -720,45 +716,42 @@ template <typename PMDEC, typename GEOM>
 void PM_overlayer<PMDEC,GEOM>::simplify() const
 {
   TRACEN("simplifying"); 
-  typedef CGAL::Partition<Face_handle>::item partition_item;
+  typedef typename CGAL::Partition<Face_handle>::item partition_item;
   CGAL::Hash_map<Face_iterator,partition_item> Pitem;
   CGAL::Partition<Face_handle> FP;
 
-  Face_iterator fit, fend = faces_end();
-  for (fit = faces_begin(); fit!= fend; ++fit) {
-     Pitem[fit] = FP.make_block(fit);
-     clear_face_cycle_entries(fit);
+  Face_iterator f, fend = faces_end();
+  for (f = faces_begin(); f!= fend; ++f) {
+     Pitem[f] = FP.make_block(f);
+     clear_face_cycle_entries(f);
   }
 
 
-  Halfedge_iterator hit = halfedges_begin(), hitn,
-                    hend = halfedges_end();
-  for(; hitn=hit, ++(++hitn), hit != hend; hit=hitn) { 
-    if ( is_outer_face_cycle_edge(hit) ) continue;
-    if ( mark(hit) == mark(face(hit)) &&
-         mark(hit) == mark(face(twin(hit))) ) {
-        TRACEN("deleting "<<PE(hit));
-      if ( !FP.same_block(Pitem[face(hit)],
-                          Pitem[face(twin(hit))]) ) {
-        FP.union_blocks( Pitem[face(hit)],
-                         Pitem[face(twin(hit))] );
+  Halfedge_iterator e = halfedges_begin(), en,
+                    eend = halfedges_end();
+  for(; en=e, ++(++en), e != eend; e=en) { 
+    if ( is_outer_face_cycle_edge(e) ) continue;
+    if ( mark(e) == mark(face(e)) &&
+         mark(e) == mark(face(twin(e))) ) {
+        TRACEN("deleting "<<PE(e));
+      if ( !FP.same_block(Pitem[face(e)],
+                          Pitem[face(twin(e))]) ) {
+        FP.union_blocks( Pitem[face(e)],
+                         Pitem[face(twin(e))] );
         TRACEN("unioning disjoint faces");
       }
-      if ( is_closed_at_source(hit) ) 
-        set_face(source(hit),face(hit));
-      if ( is_closed_at_source(twin(hit)) ) 
-        set_face(target(hit),face(hit));
-      delete_halfedge_pair(hit);
+      if ( is_closed_at_source(e) )       set_face(source(e),face(e));
+      if ( is_closed_at_source(twin(e)) ) set_face(target(e),face(e));
+      delete_halfedge_pair(e);
     }
   }
 
   CGAL::Hash_map<Halfedge_handle,bool> linked(false);
-  Halfedge_iterator eit, eend = halfedges_end();
-  for (eit = halfedges_begin(); eit != eend; ++eit) {
-    if ( linked[eit] ) continue;
-    Halfedge_around_face_circulator hfc(eit),hend(hfc);
-    Halfedge_handle e_min = eit;
-    Face_handle f = FP.inf(FP.find(Pitem[face(eit)]));
+  for (e = halfedges_begin(); e != eend; ++e) {
+    if ( linked[e] ) continue;
+    Halfedge_around_face_circulator hfc(e),hend(hfc);
+    Halfedge_handle e_min = e;
+    Face_handle f = FP.inf(FP.find(Pitem[face(e)]));
     CGAL_For_all(hfc,hend) {
       set_face(hfc,f);
       if ( K.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
@@ -768,39 +761,33 @@ void PM_overlayer<PMDEC,GEOM>::simplify() const
     Point p1 = point(source(e_min)),
           p2 = point(target(e_min)),
           p3 = point(target(next(e_min)));
-    if ( K.orientation(p1,p2,p3) > 0 ) 
-      // leftturn => outer face cycle 
-      set_halfedge(f,e_min); // store as outer
-    else // inner hole cycle
-      set_hole(f,e_min); // store as inner
+    if ( K.orientation(p1,p2,p3) > 0 ) set_halfedge(f,e_min); // outer
+    else set_hole(f,e_min); // store as inner
   }
 
 
-  Vertex_iterator vit,vitn, vend = vertices_end();
-  for(vit = vertices_begin(); vit != vend; vit=vitn) {
-    vitn=vit; ++vitn;
-    if ( is_isolated(vit) ) {
-      if ( mark(vit) == mark(face(vit)) )
-        delete_vertex_only(vit);  // isolated, to be removed
-      else
-        set_isolated_vertex(face(vit),vit); // isolated, but should stay
-    } else { // vit not isolated
-      Halfedge_handle e2 = first_out_edge(vit), e1 = previous(e2);
-      Point p1 = point(source(e1)),
-            p2 = point(vit),
+  Vertex_iterator v, vn, vend = vertices_end();
+  for(v = vertices_begin(); v != vend; v=vn) {
+    vn=v; ++vn;
+    if ( is_isolated(v) ) {
+      if ( mark(v) == mark(face(v)) ) delete_vertex_only(v);
+      else set_isolated_vertex(face(v),v); 
+    } else { // v not isolated
+      Halfedge_handle e2 = first_out_edge(v), e1 = previous(e2);
+      Point p1 = point(source(e1)), p2 = point(v), 
             p3 = point(target(e2));
-      if ( has_outdeg_two(vit) &&
-           mark(vit) == mark(e1) && mark(vit) == mark(e2) &&
+      if ( has_outdeg_two(v) &&
+           mark(v) == mark(e1) && mark(v) == mark(e2) &&
            (K.orientation(p1,p2,p3) == 0) ) 
         merge_halfedge_pairs_at_target(e1); 
     }
   }
 
-  Face_iterator fitn;
-  for (fit = faces_begin(); fit != fend; fit=fitn) {
-    fitn=fit; ++fitn;
-    partition_item pit = Pitem[fit];
-    if ( FP.find(pit) != pit ) delete_face(fit);
+  Face_iterator fn;
+  for (f = faces_begin(); f != fend; f=fn) {
+    fn=f; ++fn;
+    partition_item pit = Pitem[f];
+    if ( FP.find(pit) != pit ) delete_face(f);
   }
 
 

@@ -15,7 +15,6 @@
 // package       : Nef_2 
 // chapter       : Nef Polyhedra
 //
-// source        : nef_2d/PM_decorator.lw
 // revision      : $Revision$
 // revision_date : $Date$
 //
@@ -23,7 +22,7 @@
 // maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // coordinator   : Michael Seel <seel@mpi-sb.mpg.de>
 //
-// implementation: Plane map decorator classes
+// implementation: Input and Output of extended plane map
 // ============================================================================
 
 #ifndef CGAL_PM_IO_PARSER_H
@@ -243,11 +242,13 @@ template <typename PMDEC>
 void PM_io_parser<PMDEC>::print_face(Face_handle f) const
 { // syntax: index { halfedge, fclist, ivlist, mark }
   out << index(f) << " { " << index(halfedge(f)) << ", ";
-  std::list<Halfedge_handle>::iterator hit, hend = f->fc_end();
+  typedef typename std::list<Halfedge_handle>::iterator lhiterator;
+  lhiterator hit, hend = f->fc_end();
   for(hit = f->fc_begin(); hit!=hend; ++hit) 
     out << index(*hit) << ' ';
   out << ", ";
-  std::list<Vertex_handle>::iterator vit, vend = f->iv_end();
+  typedef typename std::list<Vertex_handle>::iterator lviterator;
+  lviterator vit, vend = f->iv_end();
   for(vit = f->iv_begin(); vit!=vend; ++vit) 
     out << index(*vit) << ' ';
   out << ", " << mark(f) << " }\n";

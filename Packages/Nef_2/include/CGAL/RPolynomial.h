@@ -410,13 +410,13 @@ determines the sign for the limit process $x \rightarrow \infty$.
   const_iterator end() const { return ptr->coeff.end(); }
   /*{\Mop a random access iterator pointing beyond $a_d$.}*/
 
-  NT eval_at(const NT& R) const
-  /*{\Mop evaluates the polynomial at |R|.}*/
+  NT eval_at(const NT& r) const
+  /*{\Mop evaluates the polynomial at |r|.}*/
   { CGAL_assertion( degree()>=0 );
     NT res = ptr->coeff[0];
-    NT x = _R;
+    NT x = r;
     for(int i=1; i<=degree(); ++i) 
-    { res += ptr->coeff[i]*x; x*=_R; }
+    { res += ptr->coeff[i]*x; x*=r; }
     return res; 
   }
 
@@ -753,13 +753,13 @@ determines the sign for the limit process $x \rightarrow \infty$.
   const_iterator end() const { return ptr->coeff.end(); }
   /*{\Xop a random access iterator pointing beyond $a_d$.}*/
 
-  int eval_at(const int& R) const
-  /*{\Xop evaluates the polynomial at |R|.}*/
+  int eval_at(const int& r) const
+  /*{\Xop evaluates the polynomial at |r|.}*/
   { CGAL_assertion( degree()>=0 );
     int res = ptr->coeff[0];
-    int x = _R;
+    int x = r;
     for(int i=1; i<=degree(); ++i) 
-    { res += ptr->coeff[i]*x; x*=_R; }
+    { res += ptr->coeff[i]*x; x*=r; }
     return res; 
   }
 
@@ -1077,13 +1077,13 @@ determines the sign for the limit process $x \rightarrow \infty$.
   const_iterator end() const { return ptr->coeff.end(); }
   /*{\Xop a random access iterator pointing beyond $a_d$.}*/
 
-  double eval_at(const double& R) const
-  /*{\Xop evaluates the polynomial at |R|.}*/
+  double eval_at(const double& r) const
+  /*{\Xop evaluates the polynomial at |r|.}*/
   { CGAL_assertion( degree()>=0 );
     double res = ptr->coeff[0];
-    double x = _R;
+    double x = r;
     for(int i=1; i<=degree(); ++i) 
-    { res += ptr->coeff[i]*x; x*=_R; }
+    { res += ptr->coeff[i]*x; x*=r; }
     return res; 
   }
 
@@ -1291,10 +1291,9 @@ template <class NT>  /*CGAL_KERNEL_INLINE*/ bool is_valid
   (const RPolynomial<NT>& p) 
   { return (CGAL::is_valid(p[0])); }
 
-
 template <class NT> /*CGAL_KERNEL_INLINE*/ bool is_finite 
   (const RPolynomial<NT>& p) 
-  { return (CGAL::is_finite(p[0])); }
+  { return CGAL::is_finite(p[0]); }
 
 template <class NT> /*CGAL_KERNEL_INLINE*/ CGAL::io_Operator 
   io_tag(const RPolynomial<NT>&) 
