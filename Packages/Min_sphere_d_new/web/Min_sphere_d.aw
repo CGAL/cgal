@@ -94,7 +94,7 @@
 @! --------
 
 \begin{abstract}
-  We provide an implementation for computing the smallest (w.r.t.~area)
+  We provide an implementation for computing the smallest (w.r.t.~volume)
   enclosing sphere of a finite point set in arbitrary dimension. The
   problem is formulated as a quadratic program and a dedicated
   solver~\cite{gs-eegqp-00} is used to obtain the solution.
@@ -1083,18 +1083,22 @@ radius of the smallest enclosing sphere.
 
 @macro <Min_sphere_d compute_min_sphere: set up and solve QP> = @begin
     c_vector.resize( points.size());
-    for ( unsigned int i = 0; i < points.size(); ++i) {
+    int i;
+    for ( i = 0; i < number_of_points(); ++i) {
         c_vector[ i] = -std::inner_product(
             tco.access_coordinates_begin_d_object()( points[ i]),
             tco.access_coordinates_begin_d_object()( points[ i])+d,
             tco.access_coordinates_begin_d_object()( points[ i]), NT( 0),
             std::plus<NT>(), std::multiplies<NT>());
     }
-    typename QP_rep::B_iterator  const_one( 1);
+    typedef  typename QP_rep::A_iterator A_it;
+    typedef  typename QP_rep::B_iterator B_it;
+    typedef  typename QP_rep::D_iterator D_it;
+    B_it  const_one( 1);
     solver.set( points.size(), 1,
-                typename QP_rep::A_iterator( const_one),
+                A_it( const_one),
                 const_one, c_vector.begin(),
-                typename QP_rep::D_iterator( points.begin(),
+                D_it( points.begin(),
                                              CGAL::QP_rep_row_of_d< NT,
                                              Point,
                                              Point_iterator,
@@ -1177,8 +1181,8 @@ are expected to be number types fulfilling the requirements of a \cgal\
 number type. They have default type \ccc{R::RT}.
 
 @macro <Min_sphere_d_traits_2 declaration> = @begin
-    template < class _R, class _ET = typename _R::RT,
-                         class _NT = typename _R::RT >
+    template < class _R, class _ET = CGAL_TYPENAME_MSVC_NULL _R::RT,
+                         class _NT = CGAL_TYPENAME_MSVC_NULL _R::RT >
     class Min_sphere_d_traits_2;
 @end
 
@@ -1245,8 +1249,8 @@ are expected to be number types fulfilling the requirements of a \cgal\
 number type. They have default type \ccc{R::RT}.
 
 @macro <Min_sphere_d_traits_3 declaration> = @begin
-    template < class _R, class _ET = typename _R::RT,
-                         class _NT = typename _R::RT >
+    template < class _R, class _ET = CGAL_TYPENAME_MSVC_NULL _R::RT,
+                         class _NT = CGAL_TYPENAME_MSVC_NULL _R::RT >
     class Min_sphere_d_traits_3;
 @end
 
@@ -1313,8 +1317,8 @@ are expected to be number types fulfilling the requirements of a \cgal\
 number type. They have default type \ccc{R::RT}.
 
 @macro <Min_sphere_d_traits_d declaration> = @begin
-    template < class _R, class _ET = typename _R::RT,
-                         class _NT = typename _R::RT >
+    template < class _R, class _ET = CGAL_TYPENAME_MSVC_NULL _R::RT,
+                         class _NT = CGAL_TYPENAME_MSVC_NULL _R::RT >
     class Min_sphere_d_traits_d;
 @end
 
@@ -2231,7 +2235,7 @@ can be enabled by giving a number between 0 and 3 at the command line.
     // includes and typedefs
     // ---------------------
     @<Min_sphere_d test: includes and typedefs>(2)
-    @<Min_sphere_d test: includes and typedefs (2/3D)>(3)
+    @<Min_sphere_d test: includes and typedefs (2/3D)>(2)
 
     // main
     // ----
