@@ -20,7 +20,8 @@ ${z}^{(w)}=(z,w_z), z\in\R^3, w_z\in\R$ be two weighted points.
 A weighted point
 ${p}^{(w)}=(p,w_p)$ can also be seen as a sphere of center $p$ and
 radius $w_p$. 
-The \textit{power product} between ${p}^{(w)}$ and ${z}^{(w)}$ is
+The \textit{power product} (or  \textit{power distance} ) 
+between ${p}^{(w)}$ and ${z}^{(w)}$ is
 defined as 
 \[\Pi({p}^{(w)},{z}^{(w)}) = {\|{p-z}\|^2-w_p-w_z}\]
 where $\|{p-z}\|$ is the Euclidean distance between $p$ and $z$. 
@@ -215,6 +216,32 @@ ${z(c)}^{(w)}$ is the power segment of the edge represented by
 \ccc{ON_BOUNDARY} if $\Pi({p}^{(w)}-{z(c)}^{(w)})=0$,\\
 \ccc{ON_UNBOUNDED_SIDE} if $\Pi({p}^{(w)}-{z(c)}^{(w)})>0$ .
 \ccPrecond{\ccVar.\ccc{dimension()} $= 1$.}}
+
+\ccMethod{Vertex_handle nearest_power_vertex(Point p,
+                                       Cell_handle c = Cell_handle());}
+{Returns the vertex of the triangulation which is nearest to $p$
+with respect to the power distance. This  means that the power
+of the  query point \ccc{p} with respect to the weighted point in
+the returned vertex is smaller that the power of \ccc{p}
+ with respect to the weighted point
+in any other vertex. Ties are broken arbitrarily.
+The default constructed
+handle if the triangulation is empty. The optional argument \ccc{c} is a hint
+specifying where to start the search.
+\ccPrecond{\ccc{c} is a cell of \ccVar.}
+} 
+
+
+\ccMethod{Vertex_handle nearest_power_vertex_in_cell(Point p,
+                                       Cell_handle c = Cell_handle());}
+{Returns vertex of the cell including $p$ 
+that is nearest to $p$
+with respect to the power distance.
+The default constructed handle is returned
+if the triangulation is empty.  The optional argument \ccc{c} is a hint
+specifying where to start the search.
+\ccPrecond{\ccc{c} is a cell of \ccVar.}
+}
 
 \begin{ccAdvanced}
 \ccHeading{Checking}
