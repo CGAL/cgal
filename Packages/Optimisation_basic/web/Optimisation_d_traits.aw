@@ -143,11 +143,11 @@ in the \cgal\ Reference Manual.
 @p maximum_input_line_length = 82
 
 @! ----------------------------------------------------------------------------
-@! Concept: Optimisation_d_traits
+@! Concept: OptimisationDTraits
 @! ----------------------------------------------------------------------------
 
-\subsectionRef{Concept}{Optimisation\_d\_traits}
-\input{../doc_tex/basic/Optimisation/Optimisation_ref/Optimisation_d_traits.tex}
+\subsectionRef{Concept}{OptimisationDTraits}
+\input{../doc_tex/basic/Optimisation/Optimisation_ref/OptimisationDTraits.tex}
 
 @! ----------------------------------------------------------------------------
 @! Class: Optimisation_d_traits_2
