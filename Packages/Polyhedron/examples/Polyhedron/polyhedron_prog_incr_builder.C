@@ -1,6 +1,6 @@
 // file: examples/Polyhedron/polyhedron_prog_incr_builder.C
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
 
@@ -27,7 +27,7 @@ public:
     }
 };
 
-typedef CGAL::Cartesian<double>            Kernel;
+typedef CGAL::Simple_cartesian<double>     Kernel;
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 typedef Polyhedron::HalfedgeDS             HalfedgeDS;
 

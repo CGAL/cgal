@@ -1,6 +1,6 @@
 // file: examples/Polyhedron/polyhedron_prog_color.C
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/Polyhedron_3.h>
 
@@ -18,7 +18,7 @@ struct My_items : public CGAL::Polyhedron_items_3 {
     };
 };
 
-typedef CGAL::Cartesian<double>               Kernel;
+typedef CGAL::Simple_cartesian<double>        Kernel;
 typedef CGAL::Polyhedron_3<Kernel, My_items>  Polyhedron;
 typedef Polyhedron::Halfedge_handle           Halfedge_handle;
 

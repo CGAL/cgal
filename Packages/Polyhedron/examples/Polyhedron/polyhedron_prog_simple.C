@@ -1,9 +1,9 @@
 // file: examples/Polyhedron/polyhedron_prog_simple.C
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 
-typedef CGAL::Cartesian<double>            Kernel;
+typedef CGAL::Simple_cartesian<double>     Kernel;
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 typedef Polyhedron::Halfedge_handle        Halfedge_handle;
 
