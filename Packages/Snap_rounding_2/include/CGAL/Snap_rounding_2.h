@@ -280,30 +280,30 @@ inline void Segment_data<Rep_>::set_data(NT inp_x1,NT inp_y1,NT inp_x2,
 
 template<class Rep_>
 void Segment_data<Rep_>::determine_direction()
-  {
-    if(x1 < x2) {
-      if(y1 < y2)
-        Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::UP_RIGHT);
-      else if(y1 == y2)
-        Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::RIGHT);
-      else
-        Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::DOWN_RIGHT);
-    } else if(x1 == x2) {
-      if(y1 < y2)
-        Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::UP);
-      else if(y1 == y2)
-        Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::POINT_SEG);
-      else
-        Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::DOWN);
-    } else {
-      if(y1 < y2)
-        Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::UP_LEFT);
-      else if(y1 == y2)
-        Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::LEFT);
-      else
-        Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::DOWN_LEFT);
-    }
+{
+  if(x1 < x2) {
+    if(y1 < y2)
+      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::UP_RIGHT);
+    else if(y1 == y2)
+      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::RIGHT);
+    else
+      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::DOWN_RIGHT);
+  } else if(x1 == x2) {
+    if(y1 < y2)
+      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::UP);
+    else if(y1 == y2)
+      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::POINT_SEG);
+    else
+      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::DOWN);
+  } else {
+    if(y1 < y2)
+      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::UP_LEFT);
+    else if(y1 == y2)
+      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::LEFT);
+    else
+      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::DOWN_LEFT);
   }
+}
 
 
 template<class Rep_>
@@ -492,35 +492,35 @@ bool hot_pixel_auclidian_cmp<Rep_>::operator()(const Hot_Pixel<Rep_> *h1,
 template<class Rep_>
 bool hot_pixel_dir_cmp<Rep_>::operator ()(const Hot_Pixel<Rep_> *h1,\
      const Hot_Pixel<Rep_> *h2) 
-  {
-    return(
-	   // Point segment intersects only one pixel, thus ignored
-        Snap_rounding_2<Rep_>::get_direction() ==
-           Snap_rounding_2<Rep_>::UP_RIGHT &&
-           (h1->get_x() < h2->get_x() || 
-           h1->get_x() == h2->get_x() && h1->get_y() < h2->get_y()) ||
-        Snap_rounding_2<Rep_>::get_direction() ==
-           Snap_rounding_2<Rep_>::UP_LEFT &&
-           (h1->get_x() > h2->get_x() || 
-           h1->get_x() == h2->get_x() && h1->get_y() < h2->get_y()) ||
-        Snap_rounding_2<Rep_>::get_direction() ==
-           Snap_rounding_2<Rep_>::DOWN_RIGHT &&
-           (h1->get_x() < h2->get_x() || 
-           h1->get_x() == h2->get_x() && h1->get_y() > h2->get_y()) ||
-        Snap_rounding_2<Rep_>::get_direction() ==
-           Snap_rounding_2<Rep_>::DOWN_LEFT &&
-           (h1->get_x() > h2->get_x() || 
-           h1->get_x() == h2->get_x() && h1->get_y() > h2->get_y()) ||
-        Snap_rounding_2<Rep_>::get_direction() == Snap_rounding_2<Rep_>::UP &&
-           h1->get_y() < h2->get_y() ||
-        Snap_rounding_2<Rep_>::get_direction() == Snap_rounding_2<Rep_>::DOWN &&
-           h1->get_y() > h2->get_y() ||
-        Snap_rounding_2<Rep_>::get_direction() == Snap_rounding_2<Rep_>::LEFT &&
-           h1->get_x() > h2->get_x() ||
-        Snap_rounding_2<Rep_>::get_direction() ==
-           Snap_rounding_2<Rep_>::RIGHT &&
-	   h1->get_x() < h2->get_x());
-  }
+{
+  return(
+     // Point segment intersects only one pixel, thus ignored
+    Snap_rounding_2<Rep_>::get_direction() ==
+    Snap_rounding_2<Rep_>::UP_RIGHT &&
+    (h1->get_x() < h2->get_x() || 
+     h1->get_x() == h2->get_x() && h1->get_y() < h2->get_y()) ||
+    Snap_rounding_2<Rep_>::get_direction() ==
+    Snap_rounding_2<Rep_>::UP_LEFT &&
+    (h1->get_x() > h2->get_x() || 
+     h1->get_x() == h2->get_x() && h1->get_y() < h2->get_y()) ||
+    Snap_rounding_2<Rep_>::get_direction() ==
+    Snap_rounding_2<Rep_>::DOWN_RIGHT &&
+    (h1->get_x() < h2->get_x() || 
+     h1->get_x() == h2->get_x() && h1->get_y() > h2->get_y()) ||
+    Snap_rounding_2<Rep_>::get_direction() ==
+    Snap_rounding_2<Rep_>::DOWN_LEFT &&
+    (h1->get_x() > h2->get_x() || 
+     h1->get_x() == h2->get_x() && h1->get_y() > h2->get_y()) ||
+    Snap_rounding_2<Rep_>::get_direction() == Snap_rounding_2<Rep_>::UP &&
+    h1->get_y() < h2->get_y() ||
+    Snap_rounding_2<Rep_>::get_direction() == Snap_rounding_2<Rep_>::DOWN &&
+    h1->get_y() > h2->get_y() ||
+    Snap_rounding_2<Rep_>::get_direction() == Snap_rounding_2<Rep_>::LEFT &&
+    h1->get_x() > h2->get_x() ||
+    Snap_rounding_2<Rep_>::get_direction() ==
+    Snap_rounding_2<Rep_>::RIGHT &&
+    h1->get_x() < h2->get_x());
+}
 
 
 
@@ -643,8 +643,8 @@ void Snap_rounding_2<Rep_>::reroute_sr(std::set<Hot_Pixel<Rep_> *,
 
 template<class Rep_>
 void Snap_rounding_2<Rep_>::reroute_isr(std::set<Hot_Pixel<Rep_> *,
-     hot_pixel_dir_cmp<Rep_> > &inp_hot_pixels_intersected_set,
-     std::list<Point_2> &seg_output,int number_of_intersections,bool first_time)
+   hot_pixel_dir_cmp<Rep_> > &inp_hot_pixels_intersected_set,
+   std::list<Point_2> &seg_output,int number_of_intersections,bool first_time)
   {
     typename std::set<Hot_Pixel<Rep_> *,hot_pixel_dir_cmp<Rep_> >::
       iterator hot_pixel_iter,next_hot_pixel_iter,before_last_hot_pixel_iter;
