@@ -3,14 +3,14 @@
 
 #include <CGAL/_test_short_names_2.h>
 
-#include <iostream>
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
 #endif // CGAL_BASIC_H
+#include <iostream>
 #include <cassert>
 #ifndef CGAL_GMPZ_H
 #include <CGAL/Gmpz.h>
-#endif // CGAL::GMPZ
+#endif // CGAL_GMPZ_H
 #include <CGAL/Quotient.h>
 //#include<CGAL/Arithmetic_filter.h>
 
