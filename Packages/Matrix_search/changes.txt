@@ -15,6 +15,7 @@ ALL : Worked over traits classes -> Kernel Traits.
 ALL : Fixed warning on gcc3.
 DOCS: -> nohead, due to long filename problems on the stupid platform.
 DOCS: noheader -> nohead.
+SRC : Added typedefs for Construct_iso_rectangle and Construct_vertex.
 
 //---------------------------------------------------------------------
 //	 CGAL 2.2
