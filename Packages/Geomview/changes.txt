@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.9 (?? January 2001)
+- Add documentation for the previous change.
+
 Ver 3.8 (23 January 2001)
 - Added (simple) operator<<() for Ray_[23] and Line_[23].
 
