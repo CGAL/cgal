@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{General_priority_search<TreeTraits,Distance,QueryItem,Tree>}  %% add template arg's if necessary
+\begin{ccRefClass}{General_priority_search<TreeTraits,Distance,QueryItem,SpatialTree>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -32,12 +32,12 @@ Expects for the parameter \ccc{Distance} an implementation of the
 concept GeneralDistance. \ccc{Distance} has default argument 
 \ccc{CGAL::Euclidean_distance<TreeTraits::Point>}.
 Expects for the parameter \ccc{QueryItem}  an implementation of
-of a $d$-dimensional point, for example \ccc{CGAL::Point_d<R>}
+of a $d$-dimensional point, for example \ccc{CGAL::Point_d<Kernel>}
 or an implementation of a spatial object, for
-example \ccc{CGAL::Iso_box_d<R>} implementing iso-rectangles.
+example \ccc{CGAL::Iso_box_d<Kernel>} implementing iso-rectangles.
 \ccc{QueryItem} has default argement \ccc{TreeTraits::Point}.
-Expects for the parameter \ccc{Tree} an implementation of the concept Tree.
-\ccc{Tree} has default argument \ccc{CGAL::Kd_tree<TreeTraits>}.
+Expects for the parameter \ccc{SpatialTree} an implementation of the concept SpatialTree.
+\ccc{SpatialTree} has default argument \ccc{CGAL::Kd_tree<TreeTraits>}.
 
 \ccTypes
 
@@ -73,7 +73,7 @@ Inserts statistics of the search process into the output stream \ccc{s}.
 
 \ccSeeAlso
 
-\ccc{CGAL::Orthogonal_priority_search<TreeTraits,Distance,Tree>}.
+\ccc{CGAL::Orthogonal_priority_search<TreeTraits,Distance,SpatialTree>}.
 
 
 \end{ccRefClass}

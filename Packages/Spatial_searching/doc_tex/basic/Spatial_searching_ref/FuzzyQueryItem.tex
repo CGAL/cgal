@@ -22,11 +22,11 @@ The concept \ccRefName\ provides a model for fuzzy $d$-dimensional spatial objec
 
 \ccParameters
 
-\ccc{Point} represents a $d$-dimensional point.
+\ccc{SpatialPoint} represents a $d$-dimensional point.
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.} 
+\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.} 
 
 \ccCreationVariable{q}  %% choose variable name
 
@@ -34,7 +34,7 @@ The concept \ccRefName\ provides a model for fuzzy $d$-dimensional spatial objec
 
 \ccOperations
 
-\ccMethod{bool contains(const Point p); const}{test whether $q$ contains $p$.}
+\ccMethod{bool contains(const SpatialPoint p); const}{test whether $q$ contains $p$.}
 
 \ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<NT>* rectangle); const}
 {test whether the inner approximation of the spatial object intersects a rectangle
@@ -47,13 +47,13 @@ associated with a node of a tree.}
 
 \ccHasModels
 
-\ccc{CGAL::Fuzzy_sphere_d<Point>},
-\ccc{CGAL::Fuzzy_iso_box_d<Point,Iso_box_d>}.
+\ccc{CGAL::Fuzzy_sphere_d<SpatialPoint>},
+\ccc{CGAL::Fuzzy_iso_box_d<SpatialPoint,Iso_box_d>}.
 
 \ccSeeAlso
 
-\ccc{CGAL::Fuzzy_sphere_d<Point>},
-\ccc{CGAL::Fuzzy_iso_box_d<Point,Iso_box_d>}.
+\ccc{CGAL::Fuzzy_sphere_d<SpatialPoint>},
+\ccc{CGAL::Fuzzy_iso_box_d<SpatialPoint,Iso_box_d>}.
 
 
 \end{ccRefConcept}

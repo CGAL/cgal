@@ -29,17 +29,17 @@ E.g., for an Euclidian distance the transformed distance is the squared Euclidea
 \ccc{QueryItem} represents a
 $d$-dimensional
 spatial object.
-\ccc{Point} represents a $d$-dimensional point.
+\ccc{SpatialPoint} represents a $d$-dimensional point.
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
+\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.}
 
 \ccCreationVariable{d}  %% choose variable name
 
 \ccOperations
 
-\ccMethod{NT distance(QueryItem q, Point r);}{Returns the transformed distance between \ccc{q} and \ccc{r}.}
+\ccMethod{NT distance(QueryItem q, SpatialPoint r);}{Returns the transformed distance between \ccc{q} and \ccc{r}.}
 
 \ccMethod{NT min_distance_to_rectangle(QueryItem q, Kd_tree_rectangle<NT> r;);}
 {Returns the transformed distance between \ccc{q} and
@@ -55,14 +55,14 @@ the point on the boundary of \ccc{r} furthest to \ccc{q}.}
 
 \ccHasModels
 
-\ccc{CGAL::Manhattan_distance_rectangle_point<Query_item,Point>}\\
-\ccc{CGAL::Euclidean_distance_sphere_point<QueryItem,Point>}.
+\ccc{CGAL::Manhattan_distance_rectangle_point<Query_item,SpatialPoint>}\\
+\ccc{CGAL::Euclidean_distance_sphere_point<QueryItem,SpatialPoint>}.
 
 \ccSeeAlso
 
 OrthogonalDistance,
-\ccc{CGAL::Manhattan_distance_rectangle_point<Query_item,Point>}\\
-\ccc{CGAL::Euclidean_distance_sphere_point<QueryItem,Point>}.
+\ccc{CGAL::Manhattan_distance_rectangle_point<Query_item,SpatialPoint>}\\
+\ccc{CGAL::Euclidean_distance_sphere_point<QueryItem,SpatialPoint>}.
 
 \end{ccRefConcept}
 

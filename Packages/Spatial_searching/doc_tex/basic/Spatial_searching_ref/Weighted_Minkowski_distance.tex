@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Weighted_Minkowski_distance<Point>}  %% add template arg's if necessary
+\begin{ccRefClass}{Weighted_Minkowski_distance<SpatialPoint>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -30,7 +30,7 @@ the transformed distance ${\sigma_{i=1}^{i=d} \, w_i(r_i-q_i)^p}$ instead of the
 \ccParameters
 
 Expects for the parameter
-\ccc{Point} an implementation
+\ccc{SpatialPoint} an implementation
 of a $d$-dimensional point
 for example \ccc{CGAL::Point_d<R>}.
 
@@ -40,7 +40,7 @@ OrthogonalDistance
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
+\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.}
 \ccTypedef{std::vector<NT> Weight_vector;}{Vector type used to represent weights.}
  
 
@@ -55,14 +55,14 @@ OrthogonalDistance
 \ccOperations
 
 
-\ccMethod{NT distance(Point q, Point r);}{Returns $d^{power}$, 
+\ccMethod{NT distance(SpatialPoint q, SpatialPoint r);}{Returns $d^{power}$, 
 where $d$ denotes the distance between \ccc{q} and \ccc{r}.}
 
-\ccMethod{NT min_distance_to_queryitem(Point q, Kd_tree_rectangle<NT> r;);}
+\ccMethod{NT min_distance_to_queryitem(SpatialPoint q, Kd_tree_rectangle<NT> r;);}
 {Returns $d^{power}$, where $d$ denotes the distance between the query item \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{NT max_distance_to_queryitem(Point q, Kd_tree_rectangle<NT> r;);}
+\ccMethod{NT max_distance_to_queryitem(SpatialPoint q, Kd_tree_rectangle<NT> r;);}
 {Returns $d^{power}$, where $d$ denotes the distance between the query item \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 
@@ -72,13 +72,13 @@ and returns the updated distance.}
 \ccMethod{NT transformed_distance(NT d);} {Returns for $0 < p <\infty$ $d^p$. Returns for $p=\infty$ $d$.}
 
 \ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns for $0 < p <\infty$ $d^{1/p}$}.
-Returns for $p=\infty$ $d$.}
+{Returns for $p=\infty$ $d$.}
  
 
 \ccSeeAlso
 
 OrthogonalDistance,
-\ccc{CGAL::Euclidean_distance<Point>}.
+\ccc{CGAL::Euclidean_distance<SpatialPoint>}.
 
 \end{ccRefClass}
 

@@ -22,16 +22,16 @@ The concept \ccRefName\ provides a model for $d$-dimensional iso-boxes.
 
 \ccParameters
 
-\ccc{Point} represents a $d$-dimensional point.
+\ccc{SpatialPoint} represents a $d$-dimensional point.
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.} 
+\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.} 
 
 \ccCreation
 \ccCreationVariable{b}  %% choose variable name
 
-\ccConstructor{IsoBox_d(Point p, Point q);}{introduces an iso-oriented box with diagonal opposite points 
+\ccConstructor{IsoBox_d(SpatialPoint p, SpatialPoint q);}{introduces an iso-oriented box with diagonal opposite points 
 \ccc{p} and \ccc{}q.}
 
 \ccOperations

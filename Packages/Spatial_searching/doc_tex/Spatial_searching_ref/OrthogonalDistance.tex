@@ -22,22 +22,20 @@ Requirements of an orthogonal distance class supporting incremental distance upd
 To optimize distance computations transformed distances are used. 
 E.g., for an Euclidean distance the transformed distance is the squared Euclidean distance.
 
-
 \ccRefines
 
 GeneralDistance
 
-
-
 \ccParameters
 
-$d$-dimensional query items as well as $d$-dimensional points should be represented 
-by a type $Point$. 
+
+\ccc{SpatialPoint} represents both $d$-dimensional points and
+$d$-dimensional query items.
 
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
+\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.}
 
 \ccCreation
 \ccCreationVariable{d}  %% choose variable name
@@ -46,13 +44,13 @@ by a type $Point$.
 
 \ccOperations
 
-\ccMethod{NT distance(Point q, Point r);}{Returns the transformed distance between \ccc{q} and \ccc{r}.}
+\ccMethod{NT distance(SpatialPoint q, SpatialPoint r);}{Returns the transformed distance between \ccc{q} and \ccc{r}.}
 
-\ccMethod{NT min_distance_to_rectangle(Point q, Kd_tree_rectangle<NT> r;);}
+\ccMethod{NT min_distance_to_rectangle(SpatialPoint q, Kd_tree_rectangle<NT> r;);}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{NT max_distance_to_rectangle(Point q, Kd_tree_rectangle<NT> r;);}
+\ccMethod{NT max_distance_to_rectangle(SpatialPoint q, Kd_tree_rectangle<NT> r;);}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 
@@ -65,14 +63,14 @@ the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 
 \ccHasModels
 
-\ccc{CGAL::Euclidean_distance<Point>},
-\ccc{CGAL::Weighted_Minkowski_distance<Point>}.
+\ccc{CGAL::Euclidean_distance<SpatialPoint>},
+\ccc{CGAL::Weighted_Minkowski_distance<SpatialPoint>}.
 
 \ccSeeAlso
 
 GeneralDistance,
-\ccc{CGAL::Euclidean_distance<Point>},
-\ccc{CGAL::Weighted_Minkowski_distance<Point>}.
+\ccc{CGAL::Euclidean_distance<SpatialPoint>},
+\ccc{CGAL::Weighted_Minkowski_distance<SpatialPoint>}.
 
 \end{ccRefConcept}
 

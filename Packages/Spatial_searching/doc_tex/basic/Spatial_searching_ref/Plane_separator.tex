@@ -18,7 +18,6 @@
 
 \ccDefinition
 
-
   
 The class \ccRefName\ implements a plane separator, i.e. a hyperplane that is used to separate two half spaces.
 This hyperplane is defined by a cutting dimension $d$ and a cutting value $v$
@@ -56,8 +55,8 @@ void set_cutting_value(NT v);}
 
 \ccMethod{NT cutting_value();}{Returns the cutting value.}
 
-\ccMethod{template <class Point>
-bool has_on_negative_side(Point p);}
+\ccMethod{template <class SpatialPoint>
+bool has_on_negative_side(SpatialPoint p);}
 {Returns true if and only if the coordinate of \ccc{p} in the cutting dimension is smaller than the cutting value.}
 
 \ccMethod{ 

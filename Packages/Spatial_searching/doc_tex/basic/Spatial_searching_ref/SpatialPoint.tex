@@ -1,17 +1,17 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Point.tex
+% | Reference manual page: SpatialPoint.tex
 % +------------------------------------------------------------------------+
 % | 1.07.2001   Johan W.H. Tangelder
 % | Package: ASPAS
 % | 
-\RCSdef{\RCSPointRev}{$Revision$}
-\RCSdefDate{\RCSPointDate}{$Date$}
+\RCSdef{\RCSSpatialPointRev}{$Revision$}
+\RCSdefDate{\RCSSpatialPointDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\ccHtmlNoClassLinks
-\begin{ccRefConcept}{Point}
+
+\begin{ccRefConcept}{SpatialPoint}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -21,7 +21,7 @@
 The concept \ccClassTemplateName\ defines the requirements for a 
 $d$-dimensional point type.
 For a user defined $d$-dimensional point type a nested representation class
-Point::R has to be provided or \ccc{CGAL::Kernel_traits} has to be
+\ccc{SpatialPoint::R} has to be provided or \ccc{CGAL::Kernel_traits} has to be
 specialized for the point type. 
 
 \ccCreationVariable{p}  %% choose variable name
@@ -38,6 +38,7 @@ FT operator[](int i);}
 \ccHasModels
 
 \ccc{CGAL::Point_2<R>, CGAL::Point_3<R>, CGAL::Point_d<R>}.
+
 
 \end{ccRefConcept}
 

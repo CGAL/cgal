@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Orthogonal_priority_search<TreeTraits,Distance,Tree>}  %% add template arg's if necessary
+\begin{ccRefClass}{Orthogonal_priority_search<TreeTraits,OrthogonalDistance,SpatialTree>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -32,8 +32,8 @@ Expects for the parameter \ccc{Distance} an implementation of the
 concept OrthogonalDistance. \ccc{Distance} has default argument 
 \ccc{CGAL::Euclidean_distance<TreeTraits::Point>}.
 
-Expects for the parameter \ccc{Tree} an implementation of the concept Tree.
-\ccc{Tree} has default argument \ccc{CGAL::Kd_tree<TreeTraits>}.
+Expects for the parameter \ccc{SpatialTree} an implementation of the concept SpatialTree.
+\ccc{SpatialTree} has default argument \ccc{CGAL::Kd_tree<TreeTraits>}.
 
 \ccTypes
 
@@ -45,7 +45,7 @@ Expects for the parameter \ccc{Tree} an implementation of the concept Tree.
 \ccCreation
 \ccCreationVariable{s}  %% choose variable name
 
-\ccConstructor{Orthogonal_priority_search(Tree tree, QueryItem q, Distance d=Distance(), NT Eps=NT(0.0),
+\ccConstructor{Orthogonal_priority_search(Tree tree, QueryItem q, OrthogonalDistance d=OrthogonalDistance(), NT Eps=NT(0.0),
 bool Search_nearest=true);}
 {Constructor for incremental neighbor searching of the query item \ccc{q}
 in the points stored \ccc{tree} using a distance
@@ -68,7 +68,7 @@ Inserts statistics of the search process into the output stream \ccc{s}.
 
 \ccSeeAlso
 
-\ccc{CGAL::General_priority_search<TreeTraits,Distance,QueryItem,Tree>}.
+\ccc{CGAL::General_priority_search<TreeTraits,GeneralDistance,QueryItem,SpatialTree>}.
 
 \end{ccRefClass}
 

@@ -23,7 +23,7 @@ a point container.
 
 \ccParameters
 
-\ccc{Point} represents a $d$-dimensional point.
+\ccc{SpatialPoint} represents a $d$-dimensional point.
 
 
 \ccCreation
@@ -38,7 +38,7 @@ Construct an empty container for storing \ccc{d}-dimensional points.
 template <class InputIterator>
 Point_container(int d, InputIterator begin, InputIterator end);}
 {
-Construct the container of $d$-dimensional points of type \ccc{Point}
+Construct the container of $d$-dimensional points of type \ccc{SpatialPoint}
 given by the iterator sequence \ccc{begin}, \ccc{end}.
 }
 
@@ -52,12 +52,12 @@ each container contains at least one point. \ccc{c} should contain at least two 
 
 \ccHasModels
 
-\ccc{CGAL::Point_container<Point>}.
+\ccc{CGAL::Point_container<SpatialPoint>}.
 
 \ccSeeAlso
 
-Point, Separator.
-\ccc{CGAL::Point_container<Point>}.
+SpatialPoint, Separator.
+\ccc{CGAL::Point_container<SpatialPoint>}.
 
 \end{ccRefConcept}
 

@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Point_container<Point>}  %% add template arg's if necessary
+\begin{ccRefClass}{Point_container<SpatialPoint>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -32,13 +32,13 @@ to support the implementation of splitting rules.
 
 \ccParameters
 
-Expects for the parameter \ccc{Point} an implementation of 
+Expects for the parameter \ccc{SpatialPoint} an implementation of 
 a $d$-dimensional point, for example \ccc{CGAL::Point_d<R>}.
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
-\ccTypedef{std::list<Point*> Point_list;}{(Sorted) list of pointers to points.}
+\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.}
+\ccTypedef{std::list<SpatialPoint*> Point_list;}{(Sorted) list of pointers to points.}
 
 %----------------------------------------
 \ccCreation
@@ -53,7 +53,7 @@ Construct an empty container for storing \ccc{d}-dimensional points.
 template <class InputIterator>
 Point_container(int d, InputIterator begin, InputIterator end);}
 {
-Construct the container of $d$-dimensional points of type \ccc{Point}
+Construct the container of $d$-dimensional points of type \ccc{SpatialPoint}
 given by the iterator sequence \ccc{begin}, \ccc{end}.
 }
 
@@ -68,7 +68,7 @@ void split_container(Point_container<Point> &C, Separator sep, bool sliding=fals
 each container contains at least one point. \ccc{c} should contain at least two points.}
 
 
-\ccMethod{void swap(Point_container<Point> &C);}
+\ccMethod{void swap(Point_container<SpatialPoint> &C);}
 {Swap the contents of \ccc{c} and \ccc{C}}
 
 
@@ -188,11 +188,11 @@ Return true is no points are present, false otherwise.
 
 \begin{ccAdvanced}
 
-{\bf Non-Member functions related to \ccc{Point_container<Point>}}
+{\bf Non-Member functions related to \ccc{Point_container<SpatialPoint>}}
 
 \ccGlueBegin
-\ccGlobalFunction{ template<class Point>
-std::ostream& operator<<(std::ostream& s, Point_container<Point> c);}
+\ccGlobalFunction{ template<class SpatialPoint>
+std::ostream& operator<<(std::ostream& s, Point_container<SpatialPoint> c);}
 {Prints the point container \ccc{c} to the output stream \ccc{s} and returns \ccc{s}.}
 \ccGlueEnd
 
@@ -200,7 +200,7 @@ std::ostream& operator<<(std::ostream& s, Point_container<Point> c);}
 
 \ccSeeAlso
 
-Point, Separator, Container.
+SpatialPoint, Separator, Container.
 
 \end{ccRefClass}
 

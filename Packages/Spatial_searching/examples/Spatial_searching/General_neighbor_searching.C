@@ -11,8 +11,7 @@ typedef CGAL::Cartesian_d<double> R;
 typedef R::Point_d Point;
 typedef Point::R::FT NT;
 
-typedef CGAL::Iso_box_d<R> Box;
-typedef CGAL::Plane_separator<NT> Separator;
+typedef CGAL::Iso_box_d<R> Box; 
 
 typedef CGAL::Kd_tree_traits_point<Point> TreeTraits;
 typedef CGAL::Manhattan_distance_rectangle_point<Box, Point> Distance;

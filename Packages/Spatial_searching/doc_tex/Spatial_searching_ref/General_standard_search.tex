@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{General_standard_search<TreeTraits,Distance,QueryItem,Tree>}  %% add template arg's if necessary
+\begin{ccRefClass}{General_standard_search<TreeTraits,Distance,QueryItem,SpatialTree>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -36,8 +36,8 @@ of a $d$-dimensional point, for example \ccc{CGAL::Point_d<R>}
 or an implementation of a spatial object, for
 example \ccc{CGAL::Iso_box_d<R>} implementing iso-rectangles.
 \ccc{QueryItem} has default argement \ccc{TreeTraits::Point}.
-Expects for the parameter \ccc{Tree} an implementation of the concept Tree.
-\ccc{Tree} has default argument \ccc{CGAL::Kd_tree<TreeTraits>}.
+Expects for the parameter \ccc{SpatialTree} an implementation of the concept SpatialTree.
+\ccc{SpatialTree} has default argument \ccc{CGAL::Kd_tree<TreeTraits>}.
 
 \ccTypes
 
@@ -70,7 +70,7 @@ Inserts statistics of the search process into the output stream \ccc{s}.
 
 \ccSeeAlso
 
-\ccc{CGAL::Orthogonal_standard_search<TreeTraits,Distance,Tree>}.
+\ccc{CGAL::Orthogonal_standard_search<TreeTraits,Distance,SpatialTree>}.
 
 \end{ccRefClass}
 

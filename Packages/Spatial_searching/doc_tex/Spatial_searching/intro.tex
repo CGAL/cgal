@@ -238,6 +238,8 @@ implementation of the Euclidean distance.
 \end{center}
 \vspace*{6cm}
 \caption{Scheme of concepts and classes implementing neighbor searching algorithms.
+Point is used as shorthand for SpatialPoint, Tree is used as shorthand for SpatialTree,
+and Distance as shorthand for both GeneralDistance and OrthogonalDistance.
 \label{ASPAS:Fig1}}
 \end{figure}
 \end{ccTexOnly}
@@ -247,7 +249,10 @@ implementation of the Euclidean distance.
 <P>
 <center>
 <img border=0 src="./Fig1.gif" alt=" "><br> 
-Scheme of concepts and classes implementing neighbor searching algorithms.</center>
+Scheme of concepts and classes implementing neighbor searching algorithms.
+Point is used as shorthand for SpatialPoint, Tree is used as shorthand for SpatialTree,
+and Distance as shorthand for both GeneralDistance and OrthogonalDistance.
+</center>
 
 \end{ccHtmlOnly}
 
@@ -267,14 +272,14 @@ The concepts related to the spatial searching package are
 \begin{itemize}
 
 \item 
-\ccc{Point} 
+\ccc{SpatialPoint} 
 denoting a $d$-dimensional point, as implemented by 
 \ccc{CGAL::Point_2<R>}, \ccc{CGAL::Point_3<R>}, and \ccc{CGAL::Point_d<R>}.
 
 \item
 \ccc{Container} denoting a container, that stores points and
 provides method to support the implementation of splitting rules. 
-\ccc{CGAL::Point_container<Point>} provides an implementation.
+\ccc{CGAL::Point_container<SpatialPoint>} provides an implementation.
 
 
 \ccc{Separator} denoting a $d-1$-dimensional
@@ -283,13 +288,13 @@ as implemented by \ccc{CGAL::Plane_separator<NT>}.
 
 \item 
 \ccc{Splitter} denoting a splitting rule as implemented by the function object classes 
-\ccc{CGAL::Midpoint_of_rectangle< Point, Container, Separator>},
-\ccc{CGAL::Midpoint_of_max_spread< Point, Container, Separator>},
-\ccc{CGAL::Sliding_midpoint< Point, Container, Separator>},
-\ccc{CGAL::Median_of_rectangle< Point, Container, Separator>},
-\ccc{CGAL::Median_of_max_spread< Point, Container, Separator>},
-\ccc{CGAL::Fair< Point, Container, Separator>}, and
-\ccc{CGAL::Sliding_Fair< Point, Container, Separator>}.
+\ccc{CGAL::Midpoint_of_rectangle<SpatialPoint, Container, Separator>},
+\ccc{CGAL::Midpoint_of_max_spread<SpatialPoint, Container, Separator>},
+\ccc{CGAL::Sliding_midpoint<SpatialPoint, Container, Separator>},
+\ccc{CGAL::Median_of_rectangle<SpatialPoint, Container, Separator>},
+\ccc{CGAL::Median_of_max_spread<SpatialPoint, Container, Separator>},
+\ccc{CGAL::Fair<SpatialPoint, Container, Separator>}, and
+\ccc{CGAL::Sliding_Fair<SpatialPoint, Container, Separator>}.
 
 \item
 \ccc{TreeTraits} denoting a traits class for the construction of a tree.
@@ -307,20 +312,30 @@ for rectangular queries are provided by
 \ccc{CGAL::Iso_rectangle_2<R>}, \ccc{CGAL::Iso_cuboid_3<R>}, and \ccc{CGAL::Iso_box_d<R>}.
 
 \item
-\ccc{Distance} denoting a distance object. A distance object should define distances between a query object
+\ccc{GeneralDistance} denoting a general distance object. A general distance object should define distances between a query object
 and the points stored in a tree and between the query object and the rectangles associated with the nodes from the tree.
 Implementations for queries defined by points are provided
-by \ccc{CGAL::Euclidean_distance<Point>}, and
-\ccc{CGAL::Weighted_Minkowski_distance<Point>} implementing 
+by \ccc{CGAL::Euclidean_distance<SpatialPoint>}, and
+\ccc{CGAL::Weighted_Minkowski_distance<SpatialPoint>} implementing 
 a weighted Minkowski metric.
 
 An implementation for queries defined by rectangles is provided by
-\ccc{CGAL::Manhattan_distance_rectangle_point<Query_item,Point>}.
+\ccc{CGAL::Manhattan_distance_rectangle_point<QueryItem,SpatialPoint>}.
 An implementation for queries defined by spheres is provided by
-\ccc{CGAL::Euclidean_distance_sphere_point<Query_item,Point>}.
+\ccc{CGAL::Euclidean_distance_sphere_point<QueryItem,SpatialPoint>}.
 
 \item
-\ccc{Tree} denoting a search tree.  
+\ccc{OrthogonalDistance} denoting a distance object. An orthogonal distance object should define distances 
+between a query object
+and the points stored in a tree and between the query object and the rectangles associated with the nodes from the tree.
+Also, incremental distance computation is supported by an orthogonal distance object.
+Implementations for queries defined by points are provided
+by \ccc{CGAL::Euclidean_distance<SpatialPoint>}, and
+\ccc{CGAL::Weighted_Minkowski_distance<SpatialPoint>} implementing 
+a weighted Minkowski metric.
+
+\item
+\ccc{SpatialTree} denoting a tree supporting spatial searching/  
 \ccc{CGAL::Kd_tree<TreeTraits>} provides an implementation of $k$-$d$ trees.
 
 \end{itemize}
@@ -332,7 +347,7 @@ The four classes implementing neighbor searching algorithms are
 \begin{itemize}
 
 \item
-The class \ccc{CGAL::General_standard_search<TreeTraits, Distance, QueryItem, Tree>} 
+The class \ccc{CGAL::General_standard_search<TreeTraits, Distance, QueryItem, SpatialTree>} 
 implementing the standard search strategy for general distances
 like the Manhattan distance for iso-rectangles.
 Requires no use of extended nodes in the $k$-$d$ tree and supports only $k$
@@ -340,20 +355,20 @@ neighbor searching for queries defined by points or spatial objects.
 
 
 \item
-The class \ccc{CGAL::General_priority_search<TreeTraits, Distance, QueryItem, Tree>} implementing the priority search 
+The class \ccc{CGAL::General_priority_search<TreeTraits, GeneralDistance, QueryItem, SpatialTree>} implementing the priority search 
 strategy for general distances
 like the Manhattan distance for iso-rectangles.
 Requires no use of extended nodes in the $k$-$d$ tree and supports incremental
 neighbor searching and distance browsing for queries defined by points or spatial objects.
 
 \item
-The class \ccc{CGAL::Orthogonal_standard_search<TreeTraits, Distance, Tree>} implementing the standard search strategy for 
+The class \ccc{CGAL::Orthogonal_standard_search<TreeTraits, OrthogonalDistance, SpatialTree>} implementing the standard search strategy for 
 orthogonal distances
 like a weighted Minkowski distance. Requires the use of extended nodes in the $k$-$d$ tree and supports 
 only $k$ neighbor searching for point queries.
 
 \item
-The class \ccc{Orthogonal_priority_search<TreeTraits, Distance, Query_Item, Tree>} implementing the priority search strategy for general 
+The class \ccc{Orthogonal_priority_search<TreeTraits, GeneralDistance, QueryItem, SpatialTree>} implementing the priority search strategy for general 
 distances
 like a weighted Minkowski distance. Requires the use of extended nodes in the $k$-$d$ tree and supports incremental
 neighbor searching and distance browsing for point queries.
@@ -383,7 +398,7 @@ supports also range searching using the method \\
 \ccc{OutputIterator CGAL::Kd_tree<Treetraits>::search(OutputIterator it, const FuzzyQueryItem& q)}.\\
 Implementations for the concept \ccc{FuzzyQueryItem} are provided by
 the class \ccc{CGAL::Fuzzy_iso_box_d<Point, IsoBox_d>}  
-and the class \ccc{CGAL::Fuzzy_sphere_d<Point>}. 
+and the class \ccc{CGAL::Fuzzy_sphere_d<SpatialPoint>}. 
 For range searching of large data sets the user may set the parameter \ccc{bucket_size} 
 used in building the $k$-$d$ tree to a large value (e.g. 100), 
 because in general the query time will be less then using the default value 5 for the parameter \ccc{bucket_size}.
@@ -499,10 +514,12 @@ In contrast with the old $k$-$d$ tree implementation, the spatial searching pack
 requires that the \ccc{Kdtree_d<Traits>::Box} is bounded.
 
 The user can move from the old $k$-$d$ tree implementation to the spatial searching package by
-replacing in his code \\
+replacing in the code \\
+\begin{verbatim}
 #include <CGAL/Kd_tree_d.h>
 by
-#include <CGAL/Kd_tree_d_new.h>.
+#include <CGAL/Kd_tree_d_new.h>
+\end{verbatim}
  
 Further, the spatial searching package requires that the user provides for a user defined point class \ccc{My_Point} 
 a nested representation

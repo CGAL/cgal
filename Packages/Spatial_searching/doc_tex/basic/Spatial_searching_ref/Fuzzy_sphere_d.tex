@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Fuzzy_sphere_d<Point>}  %% add template arg's if necessary
+\begin{ccRefClass}{Fuzzy_sphere_d<SpatialPoint>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -27,7 +27,7 @@ as inner approximation a sphere with radius $r-\epsilon$.
 
 \ccParameters
 
-Expects for the parameter \ccc{Point} an implementation of a $d$-dimensional point,\\
+Expects for the parameter \ccc{SpatialPoint} an implementation of a $d$-dimensional point,\\
 for example \ccc{CGAL::Point_d<R>}. 
 
 \ccIsModel
@@ -36,19 +36,19 @@ FuzzyQueryItem
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
+\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.}
 
 \ccCreation
 \ccCreationVariable{s}  %% choose variable name
 
 
 
-\ccConstructor{Fuzzy_sphere_d(Point center, NT radius, NT epsilon=NT(0));}{Constructs a fuzzy sphere
+\ccConstructor{Fuzzy_sphere_d(SpatialPoint center, NT radius, NT epsilon=NT(0));}{Constructs a fuzzy sphere
 centered at \ccc{center} with radius \ccc{radius} and fuzziness value \ccc{epsilon}.}
 
 \ccOperations
 
-\ccMethod{bool contains(const Point& p); const}{test whether $s$ contains $p$.}
+\ccMethod{bool contains(const SpatialPoint& p); const}{test whether $s$ contains $p$.}
 
 \ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<NT>* rectangle); const}
 {test whether the inner sphere intersects a rectangle

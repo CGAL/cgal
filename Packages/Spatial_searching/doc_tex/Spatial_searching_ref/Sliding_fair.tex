@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunctionObjectClass}{Sliding_fair<Point,Container,Separator>}  %% add template arg's if necessary
+\begin{ccRefFunctionObjectClass}{Sliding_fair<SpatialPoint,Container,Separator>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -24,14 +24,14 @@ Implements the {\bf sliding fair} splitting rule.
 
 \ccParameters
 
-Expects for the parameter \ccc{Point} an implementation of a $d$-dimensional point,
+Expects for the parameter \ccc{SpatialPoint} an implementation of a $d$-dimensional point,
 for example \ccc{CGAL::Point_d<R>}. Expects for the parameter \ccc{Container} an implementation
-of a point container for example \ccc{CGAL::Point_container<Point>}.
+of a point container for example \ccc{CGAL::Point_container<SpatialPoint>}.
 Expects for the parameter \ccc{Separator} an implementation of a $d$-1 dimensional 
 separating plane for example \ccc{CGAL::Plane_separator<NT>}.
 
-\ccc{Container} has default argument \ccc{CGAL::Point_container<Point>}.
-\ccc{Separator} has default argument \ccc{CGAL::Plane_separator<Kernel_traits<Point>::Kernel::FT>}. 
+\ccc{Container} has default argument \ccc{CGAL::Point_container<SpatialPoint>}.
+\ccc{Separator} has default argument \ccc{CGAL::Plane_separator<Kernel_traits<SpatialPoint>::Kernel::FT>}. 
 
 \ccInclude{CGAL/Splitters.h}
 
@@ -41,7 +41,7 @@ Splitter
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
+\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.}
 \ccTypedef{Container Container;}{Point container.}
 \ccTypedef{Separator Separator;}{Separator.} 
 

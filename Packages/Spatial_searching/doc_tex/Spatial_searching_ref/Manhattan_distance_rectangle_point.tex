@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Manhattan_distance_rectangle_point<QueryItem,Point>}  %% add template arg's if necessary
+\begin{ccRefClass}{Manhattan_distance_rectangle_point<QueryItem,SpatialPoint>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -32,7 +32,7 @@ and a $d$-dimensional iso-rectangle defined as a $k$-$d$ tree rectangle.
 Expects for the parameter \ccc{QueryItem}
 \ccc{item} an implementation of iso-rectangles
 for example \ccc{CGAL::Iso_box_d<R>}.
-Expects for the parameter \ccc{Item} an implementation
+Expects for the parameter \ccc{SpatialPoint} an implementation
 of a $d$-dimensional point, for example \ccc{CGAL::Point_d<R>}.
 
 \ccIsModel
@@ -41,7 +41,7 @@ GeneralDistance
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
+\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.}
 
 \ccCreation
 \ccCreationVariable{d}  %% choose variable name
@@ -59,7 +59,7 @@ $d$-dimensional iso-rectangles.}
 
 \ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns $d$.}
 
-\ccMethod{NT distance(QueryItem q, Point p);}{Returns the distance between \ccc{q} and \ccc{p}.}
+\ccMethod{NT distance(QueryItem q, SpatialPoint p);}{Returns the distance between \ccc{q} and \ccc{p}.}
 
 \ccMethod{NT min_distance_to_queryitem(QueryItem q, Kd_tree_rectangle<NT> r;);}
 {Returns the minimal distance between a point from \ccc{q} and a point from
