@@ -31,6 +31,8 @@
 
 #include <CGAL/Triangulation_utils_3.h>
 
+#include <CGAL/Triangulation_short_names_3.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class Vb, class Cb >
@@ -218,6 +220,7 @@ public:
   inline 
   int mirror_index(int i) const
     {
+      CGAL_triangulation_precondition ( (i>=0) && (i<4) );
       CGAL_triangulation_precondition ( is_valid() && 
 					neighbor(i).is_valid() );
       return neighbor(i)->index(this);

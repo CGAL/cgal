@@ -29,6 +29,8 @@
 
 #include <CGAL/triangulation_assertions.h>
 
+#include <CGAL/Triangulation_short_names_3.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class Gt >

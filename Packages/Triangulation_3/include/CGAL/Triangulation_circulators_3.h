@@ -31,6 +31,8 @@
 #include <CGAL/Triangulation_vertex_3.h>
 #include <CGAL/Triangulation_cell_3.h>
 
+#include <CGAL/Triangulation_short_names_3.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class Gt, class Tds >

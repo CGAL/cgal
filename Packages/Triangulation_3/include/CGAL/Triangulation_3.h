@@ -52,7 +52,7 @@
 #include <CGAL/Triangulation_iterators_3.h>
 #include <CGAL/Triangulation_circulators_3.h>
 
-//#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Triangulation_short_names_3.h>
 
 CGAL_BEGIN_NAMESPACE
 

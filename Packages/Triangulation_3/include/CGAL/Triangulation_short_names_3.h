@@ -24,7 +24,7 @@
 #ifndef CGAL_TRIANGULATION_SHORT_NAMES_3_H
 #define CGAL_TRIANGULATION_SHORT_NAMES_3_H
 
-// for MSVC
+// needed for MSVC
 
 // ======
 #define Triangulation_vertex_base_3                 T_vb
@@ -33,21 +33,21 @@
 #define Triangulation_geom_traits_3                 T_gt
 
 // ======
-#define Triangulation_data_structure_3              Tds
+#define Triangulation_data_structure_3              TDS
 
-#define Triangulation_ds_vertex_3                   Tds_v
-#define Triangulation_ds_cell_3                     Tds_c
+#define Triangulation_ds_vertex_3                   TDS_v
+#define Triangulation_ds_cell_3                     TDS_c
 
-#define Triangulation_ds_vertex_iterator_3          Tds_vit
-#define Triangulation_ds_edge_iterator_3            Tds_eit
-#define Triangulation_ds_facet_iterator_3           Tds_fit
-#define Triangulation_ds_cell_iterator_3            Tds_cit
+#define Triangulation_ds_vertex_iterator_3          TDS_vit
+#define Triangulation_ds_edge_iterator_3            TDS_eit
+#define Triangulation_ds_facet_iterator_3           TDS_fit
+#define Triangulation_ds_cell_iterator_3            TDS_cit
 
-#define Triangulation_ds_cell_circulator_3          Tds_ccir
-#define Triangulation_ds_facet_circulator_3         Tds_fcir
+#define Triangulation_ds_cell_circulator_3          TDS_ccir
+#define Triangulation_ds_facet_circulator_3         TDS_fcir
 
 // ======
-#define Triangulation_3                             Tr
+#define Triangulation_3                             TR
 
 #define Triangulation_vertex_3                      T_v
 #define Triangulation_cell_3                        T_c
@@ -64,10 +64,10 @@
 #define Triangulation_facet_circulator_3            T_fcir
 
 // ======
-#define Delaunay_triangulation_3                    Dt
+#define Delaunay_triangulation_3                    DT
 
 #define Regular_triangulation_euclidean_traits_3    R_gt
-#define Regular_triangulation_3                     Rt
+#define Regular_triangulation_3                     RT
 
 
 #endif //CGAL_TRIANGULATION_SHORT_NAMES_3_H

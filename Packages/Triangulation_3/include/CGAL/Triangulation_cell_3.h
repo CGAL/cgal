@@ -26,6 +26,8 @@
 #include <CGAL/Pointer.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 
+#include <CGAL/Triangulation_short_names_3.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class Gt, class Tds >

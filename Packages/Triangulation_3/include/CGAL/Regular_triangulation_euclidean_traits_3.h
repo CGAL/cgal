@@ -41,6 +41,8 @@
 #include <CGAL/predicates/Regular_triangulation_rtH3.h>
 #endif
 
+#include <CGAL/Triangulation_short_names_3.h>
+
 CGAL_BEGIN_NAMESPACE 
 
 template < class Repres, class Weight = CGAL_TYPENAME_MSVC_NULL Repres::RT >

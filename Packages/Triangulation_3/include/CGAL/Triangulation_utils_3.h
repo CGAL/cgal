@@ -25,6 +25,8 @@
 
 #include <CGAL/triangulation_assertions.h>
 
+#include <CGAL/Triangulation_short_names_3.h>
+
 CGAL_BEGIN_NAMESPACE
 
 class Triangulation_utils_3
