@@ -1,3 +1,7 @@
+1.6 (22/8/2002) Sylvain
+- Upgrade to GMP 4.1.
+- Remove traces of GMP 2.0.2.
+
 1.5 (27/4/2002) AF
 Added gmp-4.0.1 precompiled libraries
 
