@@ -1,3 +1,6 @@
+Ver 1.6 (?? ?????? 2000)
+- Removed long_description.txt. [syl]
+
 Ver 1.5 (27 July 2000)
 - one more CGAL_NTS fix in PointCd.h [MY]
 - Minor cleanups. [syl]
