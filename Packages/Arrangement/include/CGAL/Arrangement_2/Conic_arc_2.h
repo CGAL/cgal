@@ -2886,7 +2886,7 @@ public:
   // Get a circle if the arc is indeed a circular arc.
   Circle_2 circle() const
   {
-    CGAL_precondition(is_circle());
+    CGAL_precondition(is_circular());
 
     // Create the appropriate circle.
     static const NT _zero = 0;
