@@ -95,10 +95,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/predicates_on_lines_2.h>
 #include <CGAL/Cartesian/distance_predicates_2.h>
 
-#include <CGAL/Cartesian/constructions_on_points_2.h>
-#include <CGAL/Cartesian/constructions_on_lines_2.h>
-#include <CGAL/Cartesian/constructions_on_circles_2.h>
-#include <CGAL/Cartesian/distance_computations_2.h>
+#include <CGAL/Cartesian/basic_constructions_2.h>
 
 #include <CGAL/Cartesian/Aff_transformation_2.C>
 

@@ -5,16 +5,15 @@ Stuff to look at, as time permits:
   CGAL_TYPENAME_BUG stuff...
 
 - Finish merging .C files in corresponding .h files.
-- include/CGAL/smallest_radiusC2.h should use the kernel code.
-  Check if it's ok (correct and as efficient), and tell Frank to do so.
-  The name of this file doesn't have anything to do with what is inside anyway.
+- Finish putting FT constructions (such as distance_computations.h) in
+  FT_constructions.h.  Grep for FIXME.
 - Write a Checker for full kernels, like Pm_traits_checker.h ?
 - SphereC3 should be tested...  Sphere_3<R> is missing right now, so...
+- Aff_tranformations can't use Handle_for<> yet.
 - Use CGAL_TYPENAME_MSVC_NULL instead of "#define typename".
   Only in the template parameters, right ?
 - Rename CGAL_CFG_NO_ADVANCED_KERNEL to CGAL_USE_ADVANCED_KERNEL, definable on
   the command line, and not in config.h...
-- Aff_tranformations can't use Handle_for<> yet.
 - Merging Cartesian and SimpleCartesian : mail to Stefan [+ the list ?]
   Currently, there are 10000 lines of code in SimpleCartesian kernel, mostly
   copy-pasted and adapted from the Cartesian kernel.  This is evil in itself
@@ -131,6 +130,18 @@ Stuff to look at, as time permits:
   Why do Point.x(), y(), hx(), hy(), hw() return FT instead of a "const FT &" ?
 - Status of the scripts create_symlinks and remove_symlinks ?
 - Status of the test/ directories in the old C2, C3, Cartesian_basic ?
+- include/CGAL/smallest_radiusC2.h should use the kernel code.
+  Check if it's ok (correct and as efficient), and tell Frank to do so.
+  The name of this file doesn't have anything to do with what is inside anyway.
+- Bonne remarque de Mariette :
+    question subsidiaire sur le noyau :
+    sais tu pourquoi Point_2<R> (dans sa version actuelle)
+    redefinis les functions qu'elle pouurait silpement heriter de
+    R::Point_2_base.
+    Y a t il une ruse, un workaround, une subtilite,
+    un truc d'efficacite la dedans?
+    ou alors c'est juste pour avoir l'interface des classes utilisateurs plus
+    lisible ?
 
 Notes:
 ------
