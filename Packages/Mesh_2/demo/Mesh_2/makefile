@@ -46,7 +46,8 @@ mesh_old_demo$(EXE_EXT): mesh_old_demo$(OBJ_EXT) viewer$(OBJ_EXT)
 mesh_demo.moc:  mesh_demo.C
 	$(QT_MOC) -o mesh_demo.moc $<
 
-mesh_demo$(OBJ_EXT): mesh_demo.moc ../../include/CGAL/Mesh_2.h
+mesh_demo$(OBJ_EXT): mesh_demo.moc ../../include/CGAL/Mesh_2.h \
+	../../include/CGAL/Mesh_default_traits_2.h
 
 mesh_demo$(EXE_EXT): mesh_demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_demo mesh_demo$(OBJ_EXT) $(LDFLAGS)

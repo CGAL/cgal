@@ -8,6 +8,7 @@
 #include <fstream>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Threetuple.h>
+#include <CGAL/Filtred_container.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -94,6 +95,7 @@ public:
 
   bool operator==(const Self& c) const 
     {
+      std::cerr << "FC::operator==" << std::endl;
       return is_null==c.is_null && this->Circ::operator==(c);
     }
 
@@ -114,65 +116,13 @@ public:
   }
 };
 
-template <class Cont, class Pred>
-class Filtred_container : public Cont
-{
-  Pred test;
-public:
-  Filtred_container(Pred p) : Cont(), test(p) {};
-  Filtred_container(Cont& c, Pred p=Pred()) : Cont(c), test(p) {};
-
-  typedef typename Cont::reference reference;
-  typedef typename Cont::iterator iterator;
-
-  inline
-  reference front()
-    {
-      iterator r=begin();
-      while(!test(*r))
-	{
-	  erase(r);
-	  r=begin();
-	}
-      return *r;
-    }
-
-  inline
-  bool empty()
-    {
-      if(Cont::empty())
-	return true;
-      else
-	{
-	  while(!Cont::empty())
-	    {
-	      iterator r=begin();
-	    if(!test(*r))
-	      pop_front();
-	    else
-	      return false;
-	    }
-	  return true;
-	}
-    }
-
-  inline
-  void pop_front()
-    {
-      erase(begin());
-    }
-};
-
-// Tr is a Delaunay constrained triangulation
-// Mtraits is a mesh trait
-template <class Tr, class Mtraits = void>
+// Tr is a Delaunay constrained triangulation (with intersections or not)
+template <class Tr>
 class Mesh_2: public Tr
 {
 public:
   typedef Tr Triangulation;
-  typedef Mtraits  Mesh_2_traits;
-  typedef Mesh_2<Triangulation, Mesh_2_traits> Self;
-  
+  typedef Mesh_2<Triangulation> Self;
   
   typedef typename Tr::Geom_traits Geom_traits;
   typedef typename Tr::Triangulation_data_structure Tds;
@@ -208,14 +158,31 @@ public:
   void read(istream &f);
   void reset() {
     cluster_map.clear();
+    c_edge_queue.clear();
+    Bad_faces.clear();
     clear();
   }
 
 private:
+
+  // traits type
+  typedef typename Geom_traits::Vector_2 Vector_2;
+  typedef typename Geom_traits::Construct_translated_point_2
+      Construct_translated_point_2;
   typedef typename Geom_traits::Compute_squared_distance_2
       Compute_squared_distance_2;
   typedef typename Geom_traits::Angle_2 Angle_2;
-    
+  typedef typename Geom_traits::Construct_vector_2
+      Construct_vector_2;
+  typedef typename Geom_traits::Construct_scaled_vector_2
+      Construct_scaled_vector_2;
+  typedef typename Geom_traits::Construct_midpoint_2
+      Construct_midpoint_2;
+  typedef typename Geom_traits::Orientation_2 Orientation_2;
+  typedef typename Geom_traits::Compute_squared_minimum_sine_2 
+      Compute_squared_minimum_sine_2;
+  typedef typename Geom_traits::Is_bad Is_bad;
+
   struct Cluster {
     bool is_reduced ;
 
@@ -230,6 +197,14 @@ private:
     // they already have been splitted once
     typedef std::map<Vertex_handle, bool> Vertices_map;
     Vertices_map vertices;
+
+    inline bool reduced() const {
+      return is_reduced;
+    }
+
+    inline bool reduced(const Vertex_handle v) {
+      return vertices[v];
+    }
   };
 
   class Is_this_edge_constrained {
@@ -312,13 +287,17 @@ private:
   CGAL::Filtred_container<List_of_constraints,
     Is_really_an_encroached_edge>       c_edge_queue;
 
-  std::multimap<Vertex_handle, Cluster>  cluster_map;
+  typedef std::multimap<Vertex_handle, Cluster> Cluster_map_type;
+  Cluster_map_type cluster_map;
   // each vertex can have several clusters
 
 public:
-  //INSERTION-REMOVAL
-  void refine_mesh();
-  // TODO: refine_mesh_step(), that do a step of refinment
+  void refine();
+  void conform();
+  void init();
+  void process_one_edge();
+  void process_one_face();
+  void refine_step();
 
   //CHECK
   bool is_encroached(const Vertex_handle va, 
@@ -327,8 +306,11 @@ public:
   bool is_encroached(const Vertex_handle va, 
 		     const Vertex_handle vb) const;
 
-  bool is_bad(const Face_handle f);
-  FT aspect_ratio(Face_handle f); // r^2/l^2
+  inline 
+  bool is_bad(const Face_handle f) const;
+  
+  inline
+  double aspect_ratio(const Face_handle f) const;
 
   Mesh_2() : Tr(), test_is_bad(*this), Bad_faces(test_is_bad),
     test_is_encroached(*this), c_edge_queue(test_is_encroached) {};
@@ -364,6 +346,10 @@ private:
   void split_face(const Face_handle& f, const Point& circum_center);
   void create_clusters();
   void create_clusters_of_vertex(Vertex_handle v);
+  void construct_cluster(Vertex_handle v,
+			 Constrained_vertex_circulator begin,
+			 const Constrained_vertex_circulator& end,
+			 Cluster c=Cluster());
   Vertex_handle insert_middle(Face_handle f, int i);
   void cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster&
 			c);
@@ -375,48 +361,61 @@ private:
 			   Vertex_handle vb,
 			   Vertex_handle vm);
   void update_facette_map(Vertex_handle v);
+
+  // update_cluster update the cluster of [va,vb], putting vm instead
+  // of vb. If reduction=false, the edge [va,vm] is not set reduced.
   void update_cluster(Cluster& c, Vertex_handle va, Vertex_handle vb,
-		      Vertex_handle vm);
+		      Vertex_handle vm, bool reduction=true);
+
+
   inline Edge edge_between(Vertex_handle va, Vertex_handle vb);
 
-  bool is_small_angle(Vertex_handle vleft, 
-		      Vertex_handle vmiddle, 
-		      Vertex_handle vright);
+  bool is_small_angle(const Point& pleft,
+		      const Point& pmiddle, 
+		      const Point& pright) const;
 
   // HELPING functions
   Squared_length shortest_edge_squared_length(Face_handle f);
-  FT squared_cosine_of_angle_times_4(Vertex_handle va,
-					Vertex_handle vb,
-					Vertex_handle vc);
-  Vertex_handle nearest_incident_vertex(Vertex_handle v);
-  bool get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c);
+  FT squared_cosine_of_angle_times_4(const Point& pleft,
+				     const Point& pmiddle,
+				     const Point& pright) const;
+
+  // get_cluster returns the cluster of [va,vb] in c and return true
+  // if it is in a cluster. If erase=true, the cluster is remove from
+  // the cluster map.
+  bool get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c,
+		   bool erase=false);
 
 }; // end of Mesh_2
 
 // # used by refine_face and cut_cluster_edge
-template <class Tr, class Mtraits>
-bool Mesh_2<Tr, Mtraits>::
-get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c)
+template <class Tr>
+bool Mesh_2<Tr>::
+get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c, bool erase=false)
 {
-    // check if vb is in any cluster of va 
-  pair<multimap<Vertex_handle, Cluster>::iterator,
-    multimap<Vertex_handle, Cluster>::iterator> range = 
-    cluster_map.equal_range(va);
-  for(multimap<Vertex_handle, Cluster>::iterator it = range.first;
-      it != range.second; it++)
+  std::cerr << "----->get_cluster(...) {count=" << cluster_map.size()
+	    << "} = ";
+  typedef Cluster_map_type::iterator Iterator;
+  typedef std::pair<Iterator, Iterator> Range;
+  Range range = cluster_map.equal_range(va);
+  for(Iterator it = range.first; it != range.second; it++)
     {
       Cluster &cl = it->second;
       if(cl.vertices.find(vb)!=cl.vertices.end()) {
 	c = it->second;
+	if(erase)
+	  cluster_map.erase(it);
+	std::cerr << "true" << std::endl;
 	return true;
       }
     }
+  std::cerr << "false" << std::endl;
   return false;
 }
 
 //the function that writes a file
-template <class Tr, class Mtraits>
-void Mesh_2<Tr, Mtraits>::
+template <class Tr>
+void Mesh_2<Tr>::
 write(ostream &f)
 {
   int nedges = 0;
@@ -440,8 +439,8 @@ write(ostream &f)
 }
 
 //the function that reads a file
-template <class Tr, class Mtraits>
-void Mesh_2<Tr, Mtraits>::
+template <class Tr>
+void Mesh_2<Tr>::
 read(istream &f)
 {
   int nedges = 0;
@@ -454,8 +453,8 @@ read(istream &f)
   }
 }
 
-template <class Tr, class Mtraits>
-void Mesh_2<Tr, Mtraits>::
+template <class Tr>
+void Mesh_2<Tr>::
 fill_edge_queue()
 {
   for(Finite_edges_iterator ei = finite_edges_begin();
@@ -472,9 +471,23 @@ fill_edge_queue()
     }
 }
 
+template <class Tr>
+inline
+double Mesh_2<Tr>::
+aspect_ratio(const Face_handle fh) const
+{
+  Compute_squared_minimum_sine_2 squared_sine = 
+    geom_traits().compute_squared_minimum_sine_2_object();
+  const Vertex_handle&
+    va=fh->vertex(0),
+    vb=fh->vertex(1),
+    vc=fh->vertex(2);
+  return squared_sine(va->point(), vb->point(), vc->point());
+}
+  
 //it is necessarry for process_facette_map
-template <class Tr, class Mtraits>
-void Mesh_2<Tr, Mtraits>::
+template <class Tr>
+void Mesh_2<Tr>::
 fill_facette_map()
 {
   for(Finite_faces_iterator fit = finite_faces_begin();
@@ -494,10 +507,15 @@ fill_facette_map()
 }
 
 //this function split all the segments that are encroached
-template <class Tr, class Mtraits>
-void Mesh_2<Tr, Mtraits>::
+template <class Tr>
+void Mesh_2<Tr>::
 refine_edge(Vertex_handle va, Vertex_handle vb)
 {
+
+  std::cerr << "->refine_edge( ["
+	    << va->point() << "], ["
+	    << vb->point() << "] )" << std::endl;
+
   Face_handle f;
   int i;
   is_edge(va, vb, f, i); // get the edge (f,i)
@@ -505,18 +523,19 @@ refine_edge(Vertex_handle va, Vertex_handle vb)
   
   Cluster c,c2;
 
-  if( get_cluster(va,vb,c) )
-    if( get_cluster(vb,va,c2) )
+  if( get_cluster(va,vb,c,true) )
+    if( get_cluster(vb,va,c2,true) )
       { // both ends are clusters
+	std::cerr << "#Two clusters" << std::endl;
 	Vertex_handle vm = insert_middle(f,i);
-	update_cluster(c,va,vb,vm);
-	update_cluster(c2,vb,va,vm);
+	update_cluster(c,va,vb,vm,false);
+	update_cluster(c2,vb,va,vm,false);
       }
     else
       // va only is a cluster
       cut_cluster_edge(va,vb,c);
   else
-    if( get_cluster(vb,va,c) )
+    if( get_cluster(vb,va,c,true) )
       // vb only is a cluster
       cut_cluster_edge(vb,va,c);
     else
@@ -525,8 +544,8 @@ refine_edge(Vertex_handle va, Vertex_handle vb)
 };
 
  //split all the bad faces
-template <class Tr, class Mtraits>
-void Mesh_2<Tr, Mtraits>::
+template <class Tr>
+void Mesh_2<Tr>::
 refine_face(Face_handle f)
 {
   Point pc = circumcenter(f);
@@ -544,28 +563,58 @@ refine_face(Face_handle f)
   // For the moment, we don't use the zone_of_pc.
   // It will be used when we will destroyed old bad faces in Bad_faces
 
+  bool split_the_face=true;
+
   for(List_of_edges::iterator it=zone_of_pc_boundary.begin();
       it!=zone_of_pc_boundary.end();
       it++)
     {
+      const Face_handle& fh=it->first;
+      const int& i=it->second;
       const Vertex_handle&
-	va=it->first->vertex(cw(it->second)),
-	vb=it->first->vertex(ccw(it->second));
-      if(is_encroached(va,vb,pc))
+	va=fh->vertex(cw(i)),
+	vb=fh->vertex(ccw(i));
+      if(fh->is_constrained(i) && is_encroached(va,vb,pc))
 	{
-	  Cluster c;
-	  if(get_cluster(va,vb,c))
+	  std::cerr << "The circumcenter encroaches [ ("
+		    << va->point() << "), (" << vb->point() 
+		    << ") ]" << std::endl;
+
+	  split_the_face=false;
+	  Cluster c,c2;
+	  bool 
+	    is_cluster_at_va=get_cluster(va,vb,c),
+	    is_cluster_at_vb=get_cluster(vb,va,c2);
+	  if( ( is_cluster_at_va &&  is_cluster_at_vb) || 
+	      (!is_cluster_at_va && !is_cluster_at_vb) )
+	      // two clusters or no cluster
+	      c_edge_queue.push_back(Constrained_edge(va,vb));
+	  else
 	    {
-	      if( !c.is_reduced || 
+	      // only one cluster: c or c2
+	      if(is_cluster_at_vb)
+		c=c2;
+// What Shewchuck says:
+// - If the cluster is not reduced (all segments don't have the same
+// length as [va,vb]), then split the edge
+// - Else, let rmin be the minimum insertion radius introduced by the
+// potential split, let T be the triangle whose circumcenter
+// encroaches [va,vb] and let rg be the length of the shortest edge
+// of T. If rmin >= rg, then split the edge.
+
+	      std::cerr << "  cluster edge (reduced=" << c.reduced() 
+			<< ", rmin=" << c.rmin << ", rg="
+			<< shortest_edge_squared_length(f) 
+			<< ")" << std::endl;
+
+	      if( !c.reduced() || 
 		  c.rmin >= shortest_edge_squared_length(f) )
 		c_edge_queue.push_back(Constrained_edge(va,vb));
 	    }
-	  else
-	    c_edge_queue.push_back(Constrained_edge(va,vb));
 	}
     }; // after here c_edge_queue contains edges encroached by pc
 
-  if(c_edge_queue.empty())
+  if(split_the_face)
     {
       int li;
       Locate_type lt;
@@ -576,17 +625,19 @@ refine_face(Face_handle f)
 }
 
 // # used by refine_face
-template <class Tr, class Mtraits>
+template <class Tr>
 inline
-void Mesh_2<Tr, Mtraits>::
+void Mesh_2<Tr>::
 split_face(const Face_handle& f, const Point& circum_center)
 {
+  std::cerr << "(inserted circum: " << circum_center
+	    << ")" << std::endl;
   Vertex_handle v = insert(circum_center,f);
   update_facette_map(v);
 }
 
-template <class Tr, class Mtraits>
-void Mesh_2<Tr, Mtraits>::
+template <class Tr>
+void Mesh_2<Tr>::
 create_clusters()
 {
   for(Finite_vertices_iterator vit = finite_vertices_begin();
@@ -595,10 +646,14 @@ create_clusters()
     create_clusters_of_vertex(vit);
 }
 
-template <class Tr, class Mtraits>
-void Mesh_2<Tr, Mtraits>::
+template <class Tr>
+void Mesh_2<Tr>::
 create_clusters_of_vertex(Vertex_handle v)
 {
+  using std::endl;
+  std::cerr << endl << "->create_clusters_of_vertex( [" << v->point()
+	    << "] )" << endl;
+
   Is_this_edge_constrained test(this, v);
   Constrained_vertex_circulator begin(incident_vertices(v),test);
   // This circulator represents all constrained edges around the
@@ -607,124 +662,199 @@ create_clusters_of_vertex(Vertex_handle v)
   if(begin == 0) return; // if there is only one vertex
 
   Constrained_vertex_circulator
-    current(begin), next(begin), cluster_edge(begin);
+    current(begin), next(begin), cluster_begin(begin);
   ++next; // next is always just after current.
+  if(current == next) return;
 
   bool in_a_cluster=false;
-  while(next!=begin)
+  do
     {
-      if(is_small_angle(current, v, next))
+      std::cerr << "Angle: [ (" <<
+	current->point() << "), (" << next->point() << ") ]" <<
+	std::endl;
+      std::cerr << "Vh: [ (" << (int)&(*current)
+		<< "), (" << (int)&(*next) << ") ]"
+		<< std::endl;
+      if(is_small_angle(current->point(), v->point(), next->point()))
 	{
+	  std::cerr << "is small." << std::endl;
 	  if(!in_a_cluster)
-	    { 
+	    {
 	      // at this point, current is the beginning of a cluster
 	      in_a_cluster=true;
-	      cluster_edge=current;
+	      cluster_begin=current;
 	    }
 	}
       else
 	if(in_a_cluster)
 	  {
 	    // at this point, current is the end of a cluster and
-	    // cluster_edge is its beginning
+	    // cluster_begin is its beginning
+ 	    construct_cluster(v, cluster_begin, current);
 	    in_a_cluster=false;
-	    Cluster new_cluster;
-	    Point& vp = v->point();
-
-	    Compute_squared_distance_2 squared_length = 
-	      geom_traits().compute_squared_distance_2_object();
-
-	    new_cluster.is_reduced=false;
-	    // new_cluster.rmin is not initialized because is_reduced=false!
-	    new_cluster.minimum_squared_length = 
-	      squared_length(vp, cluster_edge->point());
-
-	    Constrained_vertex_circulator
-	      next_cluster_edge(cluster_edge);
-	    ++next_cluster_edge;
-	    FT greatest_cosine = 
-	      squared_cosine_of_angle_times_4(v,
-					      cluster_edge,
-					      next_cluster_edge);
-	    new_cluster.smallest_angle.first=cluster_edge;
-	    new_cluster.smallest_angle.second=next_cluster_edge;
-	    do
-	      {
-		new_cluster.vertices[cluster_edge]=false;
-		Squared_length l=squared_length(vp,
-					       cluster_edge->point());
-		new_cluster.minimum_squared_length=
-		  std::min(l,new_cluster.minimum_squared_length);
-		new_cluster.is_reduced=false;
-
-		if(cluster_edge!=next)
-		  {
-		    FT
-		      cosine=squared_cosine_of_angle_times_4(v, cluster_edge, next_cluster_edge);
-		    if(l>greatest_cosine)
-		      {
-			greatest_cosine=cosine;
-			new_cluster.smallest_angle.first=cluster_edge;
-			new_cluster.smallest_angle.second=next_cluster_edge;
-		      }
-		  }
-		++next_cluster_edge;
-		++cluster_edge;
-	      }
-	    while(cluster_edge!=next);
 	  }
       ++next;
       ++current;
+    } while( current!=begin );
+  if(in_a_cluster)
+    {
+      Cluster c;
+      if(get_cluster(v, begin, c, true)) 
+	// get the cluster and erase it from the clusters map
+	construct_cluster(v, cluster_begin, begin, c);
+      else
+	construct_cluster(v, cluster_begin, current);
     }
 }
 
-//refine the cluster edges
-// # used by: refine_edge
-template <class Tr, class Mtraits>
-void Mesh_2<Tr, Mtraits>::
+template <class Tr>
+void Mesh_2<Tr>::
+construct_cluster(Vertex_handle v,
+		  Constrained_vertex_circulator begin,
+		  const Constrained_vertex_circulator& end,
+		  Cluster c)
+{
+  if(c.vertices.empty())
+    {
+      c.is_reduced=false;
+      // c.rmin is not initialized because
+      // is_reduced=false!
+      c.minimum_squared_length = 
+	squared_distance(v->point(), begin->point());
+      Constrained_vertex_circulator second(begin);
+      ++second;
+      c.smallest_angle.first=begin;
+      c.smallest_angle.second=second;
+      std::cerr << "New cluster!" << std::endl;
+    }
+  else
+    std::cerr << "Clusters merge!" << std::endl;
+
+  Point& vp = v->point();
+  
+  Compute_squared_distance_2 squared_distance = 
+    geom_traits().compute_squared_distance_2_object();
+  
+  FT greatest_cosine = 
+    squared_cosine_of_angle_times_4(c.smallest_angle.first->point(),
+				    v->point(),
+				    c.smallest_angle.second->point());
+  Constrained_vertex_circulator next(begin);
+  ++next;
+  do
+    {
+      c.vertices[begin]=false;
+      std::cerr << "Cluster edge: [ (" << v->point() << "), ("
+		<< begin->point() << ") ]" <<
+	std::endl;
+      Squared_length l=squared_distance(vp,
+					begin->point());
+      c.minimum_squared_length=
+	std::min(l,c.minimum_squared_length);
+      
+      if(begin!=end)
+	{
+	  FT cosine = 
+	    squared_cosine_of_angle_times_4(begin->point(),
+					    v->point(),
+					    next->point());
+	  if(l>greatest_cosine)
+	    {
+	      greatest_cosine=cosine;
+	      c.smallest_angle.first=begin;
+	      c.smallest_angle.second=next;
+	    }
+	}
+    }
+  while(++next,begin++!=end);
+  cluster_map.insert(make_pair(v,c));
+
+  std::cerr << "Number of edges in this cluster: " <<
+    c.vertices.size() << std::endl;
+
+  std::cerr << "Number of clusters at (: " << v->point() << "): " <<
+    cluster_map.count(v) << std::endl;
+}
+
+template <class Tr>
+void Mesh_2<Tr>::
 cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
 {
-  // What Shewchuck says:
-  // - If the cluster is not reduced (all segments don't have the same
-  // length as [va,vb]), then split the edge (at midpoint)
-  // - Else, let rmin be the minimum insertion radius introduced by the
-  // potential split, let T be the triangle whose circumcenter
-  // encroaches [va,vb] and let rg be the length of the shortest edge
-  // of T. If rmin >= rg, then split the edge.
+  Construct_vector_2 vector =
+    geom_traits().construct_vector_2_object();
+  Construct_scaled_vector_2 scaled_vector =
+    geom_traits().construct_scaled_vector_2_object();
+  Compute_squared_distance_2 squared_distance =
+    geom_traits().compute_squared_distance_2_object();
+  Construct_midpoint_2 midpoint = 
+    geom_traits().construct_midpoint_2_object();
+  Construct_translated_point_2 translate =
+    geom_traits().construct_translated_point_2_object();
 
-  Squared_length l2 = 2.0; //shortest_edge_of_cluster(va, c)/1.001;
-  Squared_length L2 = squared_distance(va->point(), vb->point());
+  //  std::cerr << boolalpha;
+  std::cerr << "--->cut_cluster_edge( [" << va->point() << "], [" 
+	    << vb->point() << "], " << c.reduced(vb) <<" )" << std::endl;
 
-  // # WARNING, TODO: what will append if a edge already has a power
-  // of two length??
+  Vertex_handle vc;
 
-  if(L2 > l2)
+  if(c.reduced(vb))
     {
-      FT rapport = pow(2.0, rint(0.5*log(L2/l2)/log(2.0)))*::sqrt(l2/(L2*4));
-      Point pc=va->point()+(vb->point()-va->point())*rapport;
-
       Face_handle fh;
       int i;
       is_edge(va,vb,fh,i);
-
-      Vertex_handle vc = special_insert_in_edge(pc, fh, i);
-      update_c_edge_queue(va, vb, vc);
-      update_facette_map(vc);
-      update_cluster(c, va, vb, vc);
+      vc = insert_middle(fh,i);
     }
+  else
+    {
+      const Point&
+	a = va->point(),
+	b = vb->point(),
+	m = midpoint(a, b);
+
+      Vector_2 v=vector(a,m);
+      v=scaled_vector(v,CGAL_NTS sqrt(c.minimum_squared_length /
+				      squared_distance(a,b)));
+      Point 
+	i = translate(a,v),
+	i2(i);
+	
+      do {
+	i=translate(a,v);
+	v=scaled_vector(v,FT(2));
+	i2=translate(a,v);
+      }	while(squared_distance(a,i2) <= squared_distance(a,m));
+      if( squared_distance(i,m) > squared_distance(m,i2) )
+	i=i2;
+      //here i is the best point for splitting
+      Face_handle fh;
+      int index;
+      is_edge(va,vb,fh,index);
+      
+      std::cerr << "(inserted clusterpoint: " << i << ")" << std::endl;
+
+      vc = special_insert_in_edge(i, fh, index);
+    }
+  update_c_edge_queue(va, vb, vc);
+  update_facette_map(vc);
+  update_cluster(c, va, vb, vc);
 }
 
 
-template <class Tr, class Mtraits>
-Mesh_2<Tr, Mtraits>::Vertex_handle
-Mesh_2<Tr, Mtraits>::
+template <class Tr>
+Mesh_2<Tr>::Vertex_handle
+Mesh_2<Tr>::
 insert_middle(Face_handle f, int i)
 {
+  Construct_midpoint_2
+    midpoint = geom_traits().construct_midpoint_2_object();
+
   Vertex_handle
     va=f->vertex(cw(i)),
     vb=f->vertex(ccw(i));
 
   Point mp = midpoint(va->point(), vb->point());
+
+  std::cerr << "(inserted midpoint: " << mp << ")" << std::endl;
 
   Vertex_handle vm = special_insert_in_edge(mp, f, i);
   // WARNING: special_insert_in_edge is not robust!
@@ -736,8 +866,8 @@ insert_middle(Face_handle f, int i)
 
 //update the encroached segments list
 // # TODO: rewrite this!!
-template <class Tr, class Mtraits>
-void Mesh_2<Tr, Mtraits>::
+template <class Tr>
+void Mesh_2<Tr>::
 update_c_edge_queue(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
 {
   Face_circulator fc = incident_faces(vm), fcbegin(fc);
@@ -764,8 +894,8 @@ update_c_edge_queue(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
 
 }
 
-template <class Tr, class Mtraits>
-void Mesh_2<Tr, Mtraits>::
+template <class Tr>
+void Mesh_2<Tr>::
 update_facette_map(Vertex_handle v)
 {
   Face_circulator fc = v->incident_faces(), fcbegin(fc);
@@ -785,47 +915,42 @@ update_facette_map(Vertex_handle v)
   } while(fc!=fcbegin);
 }
 
-template <class Tr, class Mtraits>
-void Mesh_2<Tr, Mtraits>::
+template <class Tr>
+void Mesh_2<Tr>::
 update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
-	       Vertex_handle vm)
+	       Vertex_handle vm, bool reduction)
 {
-  Compute_squared_distance_2 squared_length = 
+  Compute_squared_distance_2 squared_distance = 
     geom_traits().compute_squared_distance_2_object();
   c.vertices.erase(vb);
-  c.vertices[vm]=true;
+  c.vertices[vm]=reduction;
   
   if(vb==c.smallest_angle.first)
     c.smallest_angle.first=vm;
   if(vb==c.smallest_angle.second)
     c.smallest_angle.second=vm;
 
-  FT l=squared_length(va->point(),vm->point());
+  FT l=squared_distance(va->point(),vm->point());
   if(l<c.minimum_squared_length)
     c.minimum_squared_length=l;
 
-  if(c.is_reduced)
-    c.is_reduced=false; // c *was* reduced!
-  else
+  if(!c.reduced())
     {
       typename Cluster::Vertices_map::iterator it=c.vertices.begin();
-      while(it!=c.vertices.end() &&
-	    squared_length(va->point(),it->first->point()) ==
-	    c.minimum_squared_length)
+      while(it!=c.vertices.end() && c.reduced(it->first))
 	++it; // TODO: use std::find and an object class
       if(it==c.vertices.end())
 	c.is_reduced=true;
-      else
-	c.is_reduced=false;
     }
 
-  if(c.is_reduced)
-    c.rmin=squared_length(c.smallest_angle.first->point(),
+  if(c.reduced())
+    c.rmin=squared_distance(c.smallest_angle.first->point(),
 			c.smallest_angle.second->point())/FT(2);
+  cluster_map.insert(make_pair(va,c));
 }
 
-template <class Tr, class Mtraits>
-bool Mesh_2<Tr, Mtraits>::
+template <class Tr>
+bool Mesh_2<Tr>::
 is_encroached(const Vertex_handle va, const Vertex_handle vb,
 	      const Point p) const
 {
@@ -835,8 +960,8 @@ is_encroached(const Vertex_handle va, const Vertex_handle vb,
 }
 
 // NOT ALL VERTICES, ONLY THE TWO NEIGHBORS
-template <class Tr, class Mtraits>
-bool Mesh_2<Tr, Mtraits>::
+template <class Tr>
+bool Mesh_2<Tr>::
 is_encroached(const Vertex_handle va, const Vertex_handle vb) const
 {
   Finite_vertices_iterator vi=finite_vertices_begin();
@@ -858,40 +983,38 @@ is_encroached(const Vertex_handle va, const Vertex_handle vb) const
 // ->traits
 // the measure of faces quality
 // # We can add here other contraints, such as a bound on the size
-template <class Tr, class Mtraits>
-bool Mesh_2<Tr, Mtraits>::
-is_bad(Face_handle f)
+template <class Tr>
+inline
+bool Mesh_2<Tr>::
+is_bad(const Face_handle f) const
 {
-  FT quality = aspect_ratio(f); // recall: r^2/l^2
-  //    if((quality >1) || (quality < 0.5))
-  if (quality > 3) // $ B=\sqrt{3} $
-      //set_a:(>1.0 || <0.4)
-      //set_b:(>1.0 || <0.5)
-      //set_c:(>1.1 || <0.5)
-      //set_d:(>1.1 || <0.4)
-      //set_e:(>0.9 || <0.5)
-      //set_f:(>0.9 || <0.4)//~NOK
-      //set_g:(>0.8 || <0.4)//NOK
-      //set_h:(>0.8 || <0.5)
-      {
-	return true;
-      }
-    else
-      {
-	return false;
-      }
-    // }
+  const Point&
+    a=f->vertex(0)->point(),
+    b=f->vertex(1)->point(),
+    c=f->vertex(2)->point();
+
+  return geom_traits().is_bad_object()(a,b,c);
 }
 
 
 // -> traits?
-template <class Tr, class Mtraits>
-bool Mesh_2<Tr, Mtraits>::
-is_small_angle(Vertex_handle vleft,
-	       Vertex_handle vmiddle,
-	       Vertex_handle vright)
+template <class Tr>
+bool Mesh_2<Tr>::
+is_small_angle(const Point& pleft,
+	       const Point& pmiddle,
+	       const Point& pright) const
 {
-  FT cos_alpha = squared_cosine_of_angle_times_4(vmiddle, vleft, vright);
+  Angle_2 angle=geom_traits().angle_2_object();
+  Orientation_2 orient=geom_traits().orientation_2_object();
+  
+  if( angle(pleft, pmiddle, pright)==OBTUSE )
+    return false;
+  if( orient(pmiddle,pleft,pright)==RIGHTTURN)
+    return false;
+
+  FT cos_alpha = squared_cosine_of_angle_times_4(pleft, pmiddle,
+						 pright);
+
   if(cos_alpha > 1)
     {
       return true; //the same cluster
@@ -902,75 +1025,31 @@ is_small_angle(Vertex_handle vleft,
     }
 }
 
-// template <class Tr, class Mtraits>
-// typename Mesh_2<Tr, Mtraits>::FT Mesh_2<Tr, Mtraits>::
-// shortest_edge_of_cluster(Vertex_handle v, Cluster &cluster)
-// { 
-//   map<Vertex_handle, Length>::iterator vit = cluster.vertices.begin();
-//   FT min_edge = squared_distance(((*vit).first)->point(), (*v).point());
-//   vit++;
-//   while(vit != cluster.vertices.end())
-//     {
-//       FT temp = squared_distance(((*vit).first)->point(), (*v).point());
-//       if(temp < min_edge)
-// 	{
-// 	  min_edge = temp;
-// 	}
-//      vit++;
-//     }
-//   return min_edge;
-// }
-
-// look if all edges have the same length
-// # A reduced cluster is a cluster wherein all edges have the same
-// length
-// template <class Tr, class Mtraits>
-// void Mesh_2<Tr, Mtraits>:: 
-// check_cluster_status( Cluster& cluster)
-// {
-//   Length initl;
-//   map<Vertex_handle, Length>::iterator vi = cluster.vertices.begin();
-//   initl = (*(cluster.vertices.find((*vi).first))).second;
-//   vi++;
-//   for(;vi != cluster.vertices.end(); vi++)
-//     {
-//       if(( (*(cluster.vertices.find((*vi).first))).second)  != initl)
-// 	{
-// 	  cluster.status = NON_REDUCED;
-
-// 	  return;
-// 	}
-//       vi++;  
-//     }
-//   cluster.status = REDUCED;
-// }
-
-// # used by: is_small_angle
+// # used by: is_small_angle, create_clusters_of_vertex
 // compute 4 times the square of the cosine of the angle (ab,ac)
-template <class Tr, class Mtraits>
-typename Mesh_2<Tr, Mtraits>::FT Mesh_2<Tr, Mtraits>::
-squared_cosine_of_angle_times_4(Vertex_handle va, Vertex_handle vb,
-				   Vertex_handle vc)
+template <class Tr>
+typename Mesh_2<Tr>::FT Mesh_2<Tr>::
+squared_cosine_of_angle_times_4(const Point& pb, const Point& pa,
+				const Point& pc) const
 {
-  Compute_squared_distance_2 squared_length = 
-    geom_traits().compute_squared_distance_2_object();  
+  Compute_squared_distance_2 squared_distance = 
+    geom_traits().compute_squared_distance_2_object();
 
-  Point 
-    pa = va->point(),
-    pb = vb->point(),
-    pc = vc->point();
-  FT
+  const FT
     a = squared_distance(pb, pc),
-    b = squared_distance(pc, pa),
-    c = squared_distance(pa, pb);
-  return (a-(b+c))/(b*c);
+    b = squared_distance(pa, pb),
+    c = squared_distance(pa, pc);
+
+  const FT num=a-(b+c);
+
+  return (num*num)/(b*c);
 }
 
 // ->traits?
 //the shortest edge that are in a triangle
 // # used by: refine_face, aspect_ratio
-template <class Tr, class Mtraits>
-typename Mesh_2<Tr, Mtraits>::FT Mesh_2<Tr, Mtraits>::
+template <class Tr>
+typename Mesh_2<Tr>::FT Mesh_2<Tr>::
 shortest_edge_squared_length(Face_handle f)
 {
   Compute_squared_distance_2 squared_distance = 
@@ -986,86 +1065,88 @@ shortest_edge_squared_length(Face_handle f)
   return (min(a, min(b, c)));
 }
 
-// ->traits
-//the triangle quality is represented by the
-//aspect_ratio value
-// # used by: fill_facette_map, update_facette_map, is_bad
-template <class Tr, class Mtraits>
-typename Mesh_2<Tr, Mtraits>::FT Mesh_2<Tr, Mtraits>::
-aspect_ratio(Face_handle f)
-{
-  Point p;
-  p = circumcenter(f);
-  Point A = (f->vertex(0))->point();
-  FT radius = squared_distance(p, A);
-  FT sh_edge = shortest_edge_squared_length(f);
-  return (radius/sh_edge);
-}
-
-//this function must compute the vertex that are so close to our vertex.
-template <class Tr, class Mtraits>
-Mesh_2<Tr, Mtraits>::Vertex_handle Mesh_2<Tr, Mtraits>::
-nearest_incident_vertex(Vertex_handle v)
-{
-  Vertex_handle vbegin, vcurrent, vnearest;
-  Vertex_circulator circ = v->incident_vertices();
-  vbegin = circ;
-  vnearest = vbegin;
-  circ++;
-  FT dist = (squared_distance(v->point(), vbegin->point()));
-  while((vcurrent = circ) != vbegin) {
-    FT d1 = (squared_distance(v->point(), vcurrent->point()));
-    if(d1 < dist) {
-      vnearest = vcurrent;
-    }
-    circ++;
-  }
-  return vnearest;
-}
-
 //the mesh refine function 
-template <class Tr, class Mtraits>
-void Mesh_2<Tr, Mtraits>::
-refine_mesh()
+template <class Tr>
+void Mesh_2<Tr>::
+refine()
 {
-  create_clusters();
-
-  fill_edge_queue();
-  fill_facette_map();
+  init();
   while(! (c_edge_queue.empty() && Bad_faces.empty()) )
     {
-      while( !c_edge_queue.empty() )
-	{
-	  Constrained_edge ce=c_edge_queue.front();
-	  c_edge_queue.pop_front();
-
-	  std::cerr << "Encroached edge: "
-		    << ce.first->point() << " , "
-		    << ce.second->point() << std::endl;
-
-	  refine_edge(ce.first, ce.second);
-	};
-      while( !Bad_faces.empty() )
-	{
-	  const Threevertices& t = Bad_faces.front().second;
-	  const Vertex_handle&
-	    va = t.e0,
-	    vb = t.e1,
-	    vc = t.e2;
-
-	  std::cerr << "Bad face: "
-		    << va->point() << " , "
-		    << vb->point() << " , "
-		    << vc->point() << std::endl;
-
-	  Face_handle f;
-	  is_face(va,vb,vc,f);
-	  Bad_faces.pop_front();
-	  refine_face(f);
-	}
+      conform();
+      process_one_face();
     }
 }
 
+template <class Tr>
+inline
+void Mesh_2<Tr>::
+conform()
+{
+  while( !c_edge_queue.empty() )
+    {
+      process_one_edge();	
+    };
+}
+
+template <class Tr>
+inline
+void Mesh_2<Tr>::
+init()
+{
+  cluster_map.clear();
+  c_edge_queue.clear();
+  Bad_faces.clear();
+  
+  create_clusters();
+  fill_edge_queue();
+  fill_facette_map();
+}
+
+template <class Tr>
+inline
+void Mesh_2<Tr>::
+process_one_edge()
+{
+  Constrained_edge ce=c_edge_queue.front();
+  c_edge_queue.pop_front();
+
+  refine_edge(ce.first, ce.second);
+}
+
+template <class Tr>
+inline
+void Mesh_2<Tr>::
+process_one_face()
+{
+  const Threevertices& t = Bad_faces.front().second;
+  const Vertex_handle&
+    va = t.e0,
+    vb = t.e1,
+    vc = t.e2;
+  
+  std::cerr << "->refine_face( [ "
+	    << va->point() << "], ["
+	    << vb->point() << "], ["
+	    << vc->point() << "] )" << std::endl;
+  
+  Face_handle f;
+  is_face(va,vb,vc,f);
+  Bad_faces.pop_front();
+  refine_face(f);
+}
+
+template <class Tr>
+inline
+void Mesh_2<Tr>::
+refine_step()
+{
+  if( !c_edge_queue.empty() )
+    process_one_edge();
+  else
+    if ( !Bad_faces.empty() )
+      process_one_face();
+}
 CGAL_END_NAMESPACE
 
 

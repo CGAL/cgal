@@ -14,6 +14,7 @@ int main(int, char*)
 #else
 
 #include <CGAL/basic.h>
+#include <iomanip> // TODO: remove this!
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
@@ -22,6 +23,7 @@ int main(int, char*)
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Mesh_2.h>
 #include <CGAL/Mesh_default_traits_2.h>
+#include <CGAL/point_generators_2.h>
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
@@ -72,6 +74,7 @@ typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
   CGAL::Exact_predicates_tag> Tr;
 
 typedef K::Point_2 Point;
+typedef K::Circle_2 Circle;
 typedef CGAL::Polygon_2<K> Polygon;
 
 typedef CGAL::Mesh_2<Tr> Mesh1;
@@ -89,7 +92,7 @@ class MyWindow : public QMainWindow
 {
   Q_OBJECT
 public:
-  MyWindow()
+  MyWindow() : is_mesh_initialized(false)
     {
       widget = new CGAL::Qt_widget(this,"Main widget");
       setCentralWidget(widget);
@@ -143,6 +146,14 @@ public:
       QPushButton *pbMesh = 
 	new QPushButton("Mesh", toolBarActions);
       connect(pbMesh, SIGNAL(clicked()), this, SLOT(refineMesh()));
+
+      QPushButton *pbConform = 
+	new QPushButton("Conform", toolBarActions);
+      connect(pbConform, SIGNAL(clicked()), this, SLOT(conformMesh()));
+
+      QPushButton *pbMeshStep = 
+	new QPushButton("Mesh step", toolBarActions);
+      connect(pbMeshStep, SIGNAL(clicked()), this, SLOT(refineMeshStep()));
 
       // Inputs: polygons or points
       QToolBar *toolbarInputs = new QToolBar("Inputs",this);
@@ -214,10 +225,10 @@ public:
 			  toolbarLayers,
 			  "show circles");
       pbShowCircles->setToggleButton(true);
-      pbShowCircles->setOn(true);
       connect(pbShowCircles, SIGNAL(stateChanged(int)),
 	      show_circles, SLOT(stateChanged(int)));
-      pbShowCircles->toggle(); // show_circles is desactivated by default
+
+      bgChooseInputs->insert(pbShowCircles);
 
       // button group trick to connect to widget->redraw() slot
       QButtonGroup *bgLayers = 
@@ -225,7 +236,7 @@ public:
       bgLayers->insert(pbShowPoints);
       bgLayers->insert(pbShowTriangulation);
       bgLayers->insert(pbShowConstraints);
-      bgLayers->insert(pbShowCircles);
+      //      bgLayers->insert(pbShowCircles);
       connect(bgLayers, SIGNAL(clicked(int)),
 	      widget, SLOT(redraw()));
 
@@ -254,7 +265,7 @@ public:
       pmMesh->insertItem("&Quit", qApp, SLOT(closeAllWindows()),
 			 CTRL+Key_Q );
 
-      widget->set_window(0.,1000.,0.,1000.);
+      widget->set_window(-500.,500.,-500.,500.);
       widget->setMouseTracking(TRUE);
     };
 
@@ -342,16 +353,40 @@ public slots:
   void refineMesh()
     {
       saveTriangulationUrgently("last_input.edg");
-      mesh.refine_mesh();
+      mesh.refine();
+      is_mesh_initialized=true;
       widget->redraw();
     }
-  
+
+  void conformMesh()
+    {
+      if(!is_mesh_initialized)
+	{
+	  mesh.init();
+	  is_mesh_initialized=true;
+	}
+      mesh.conform();
+      widget->redraw();
+    }
+
+  void refineMeshStep()
+    {
+      if(!is_mesh_initialized)
+	{
+	  mesh.init();
+	  is_mesh_initialized=true;
+	}
+      mesh.refine_step();
+      widget->redraw();
+    }
+
   void clearMesh()
     {
       mesh.reset();
+      is_mesh_initialized=false;
       widget->redraw();
     }
-  
+
   void openTriangulation()
     {    
       QString s( QFileDialog::getOpenFileName( QString::null,
@@ -360,6 +395,7 @@ public slots:
         return;
       ifstream f(s);
       mesh.read(f);
+      is_mesh_initialized=false;
       widget->redraw();
     }
 
@@ -386,6 +422,7 @@ public slots:
 
 private:
   Mesh mesh;
+  bool is_mesh_initialized;
 
   CGAL::Qt_widget* widget;
   CGAL::Qt_widget_get_point<K>* get_point;

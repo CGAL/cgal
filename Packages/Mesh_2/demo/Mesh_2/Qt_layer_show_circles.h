@@ -31,6 +31,7 @@
 
 namespace CGAL {
 
+// T::Geom_traits has to be a CGAL kernel!
 template <class T>
 class Qt_layer_show_circles : public Qt_widget_layer {
 public:
@@ -39,8 +40,7 @@ public:
   typedef typename T::Finite_faces_iterator Finite_faces_iterator;
   typedef typename T::Locate_type     Locate_type;
   typedef typename T::Face_handle     Face_handle;
-  typedef Cartesian<double>::Circle_2 Circle_double;
-  typedef Cartesian<double>::Point_2 Point_double;
+  typedef typename T::Geom_traits::Circle_2 Circle;
   typedef typename T::Geom_traits::FT		FT;
 
   Qt_layer_show_circles(T &t, QLabel& l) : tr(t), label(l),
@@ -50,6 +50,22 @@ public:
   {
     do_erase = false;
   };
+  
+  void mousePressEvent(QMouseEvent* e)
+    {
+      if (tr.dimension()<1) return;
+      FT
+	x=static_cast<FT>(widget->x_real(e->x())),
+	y=static_cast<FT>(widget->y_real(e->y()));
+
+      Point p(x,y);
+
+      int li;
+      Locate_type lt;
+      Face_handle fh = tr.locate(p,lt,li);
+      if(lt == T::FACE)
+	draw_circle(fh);	  
+    };
 
   void mouseMoveEvent(QMouseEvent *e)
     {
@@ -107,16 +123,9 @@ private:
       widget->get_painter().setRasterOp(NotROP);
       
       Point v=((*fh).vertex(0))->point();
-      double x=to_double(v.x());
-      double y=to_double(v.y());
-      Point_double vd(x,y);
-      
       Point c=tr.circumcenter(fh);
-      x=to_double(c.x());
-      y=to_double(c.y());
-      Point_double cd(x,y);
       
-      *widget << Circle_double(cd,squared_distance(vd,cd));
+      *widget << Circle(c,squared_distance(v,c));
       widget->setColor(oldcolor);
       widget->setLineWidth(oldwidth);
       widget->setRasterOp(oldRaster);
