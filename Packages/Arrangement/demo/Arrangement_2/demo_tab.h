@@ -71,7 +71,7 @@ public:
 	draw_vertex(true),
 	fill_face_color(def_bg_color)
   {
-    //*this << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
+    static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
     set_window(0, 700, 0, 700);
    
     setMouseTracking(TRUE);
@@ -380,7 +380,7 @@ public:
     // it and paint the point if they are different (beacuse ew want to color red
     // the intersection opints between two different planar maps which are overlayed
     *this << CGAL::DISC;
-    // AF: does not compile: (*this) << CGAL::LineWidth(m_vertex_width);
+    static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_vertex_width);
 
     Vertex_iterator   vit;
     for (vit = m_curves_arr.vertices_begin(); 
@@ -414,7 +414,7 @@ public:
                         m_tab_traits.COORD_SCALE, 
                         CGAL::to_double((*vit).point().y()) /
                         m_tab_traits.COORD_SCALE); 
-          *this << p;
+          static_cast<CGAL::Qt_widget&>(*this) << p;
           break;
         }
         
@@ -433,7 +433,7 @@ public:
                         m_tab_traits.COORD_SCALE, 
                         CGAL::to_double((*vit).point().y()) /
                         m_tab_traits.COORD_SCALE); 
-          *this << p;
+          static_cast<CGAL::Qt_widget&>(*this) << p;
 		}
       } while (eit != first);
     }
@@ -441,7 +441,7 @@ public:
     if (mode == POINT_LOCATION && 
         ! (m_curves_arr.halfedges_begin() == m_curves_arr.halfedges_end() ) ) 
     {
-      (*this) << CGAL::LineWidth(3);
+      static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(3);
       setColor(Qt::yellow);
       
       Locate_type lt;
@@ -470,7 +470,7 @@ public:
           cc++;
         } while (cc != *hit);
       }
-      (*this) << CGAL::LineWidth(m_line_width);
+      static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
     }
     
     if (mode == RAY_SHOOTING && 
@@ -483,7 +483,7 @@ public:
         m_curves_arr.vertical_ray_shoot(temp_p, lt ,ray_shooting_direction);
       
       setColor(Qt::black);
-      (*this) << CGAL::LineWidth(1);
+      static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(1);
 
       Coord_point pl_draw(pl_point.x() / m_tab_traits.COORD_SCALE , 
                           pl_point.y() / m_tab_traits.COORD_SCALE);
@@ -493,7 +493,7 @@ public:
         if (lt == Curves_arr::UNBOUNDED_FACE)
         {
            up = Coord_point(pl_draw.x() , y_max());
-          (*this) << Coord_segment(pl_draw , up );
+          static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw , up );
         }
         else // we shoot something
         {
@@ -509,7 +509,7 @@ public:
           if (CGAL::assign(p1, res)) {
             Coord_type y1 = CGAL::to_double(p1.y()) / m_tab_traits.COORD_SCALE;
             up = Coord_point(pl_draw.x(), y1);
-            (*this) << Coord_segment(pl_draw , up );
+            static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw , up );
           }
           //! \todo what if the intersection is empty, or a subcurve?
         }
@@ -531,7 +531,7 @@ public:
         if (lt == Curves_arr::UNBOUNDED_FACE)
         {
            down = Coord_point(pl_draw.x() , y_min());
-          (*this) << Coord_segment(pl_draw , down );
+          static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw , down );
         }
         else // we shoot something
         {
@@ -548,7 +548,7 @@ public:
           if (CGAL::assign(p1, res)) {
             Coord_type y1 = CGAL::to_double(p1.y()) / m_tab_traits.COORD_SCALE;
              down = Coord_point(pl_draw.x(),y1);
-            (*this) << Coord_segment(pl_draw , down );
+            static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw , down );
           }
           //! \todo what if the intersection is empty, or a subcurve?
         }
@@ -563,7 +563,7 @@ public:
          
       }	    
       
-      (*this) << CGAL::LineWidth(3);
+      static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(3);
       setColor(Qt::red);
       
       switch (lt) {
@@ -571,14 +571,14 @@ public:
         {
          Coord_point p(CGAL::to_double(e->target()->point().x())/ m_tab_traits.COORD_SCALE, 
                        CGAL::to_double(e->target()->point().y())/ m_tab_traits.COORD_SCALE); 
-         *this << p;
+         static_cast<CGAL::Qt_widget&>(*this) << p;
          break;
 		}
        case (Curves_arr::UNBOUNDED_VERTEX) :
         {
           Coord_point p(CGAL::to_double(e->target()->point().x())/ m_tab_traits.COORD_SCALE, 
                         CGAL::to_double(e->target()->point().y())/ m_tab_traits.COORD_SCALE); 
-          *this << p;
+          static_cast<CGAL::Qt_widget&>(*this) << p;
         break;
 		}
        case (Curves_arr::EDGE):
@@ -593,7 +593,7 @@ public:
         break;
         
       }                 
-      (*this) << CGAL::LineWidth(m_line_width);
+      static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
     }
     setCursor(old);
   }
@@ -730,7 +730,7 @@ void visit_ccb_faces(Face_handle & fh , Function func)
   void draw_grid()
   {
 	setColor(Qt::white);
-    (*this) << CGAL::LineWidth(1);
+    static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(1);
     // get the edge coordinate
     int min_x = static_cast<int> (x_min());
     int max_x = static_cast<int> (x_max());
@@ -749,10 +749,10 @@ void visit_ccb_faces(Face_handle & fh , Function func)
     int cube_size_y = cube_size;
     // draw the grid lines
     for (int i = min_x; i <= max_x; i += cube_size_x)
-      (*this) << Coord_segment(Coord_point( i , max_y + cube_size_y),
+      static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(Coord_point( i , max_y + cube_size_y),
                                Coord_point( i , min_y - cube_size_y));
     for (int i = min_y; i <= max_y; i += cube_size_y)
-      (*this) << Coord_segment(Coord_point( max_x + cube_size_x , i ),
+      static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(Coord_point( max_x + cube_size_x , i ),
                                Coord_point( min_x - cube_size_x , i ));
   }
   
@@ -1072,7 +1072,7 @@ void visit_ccb_faces(Face_handle & fh , Function func)
      */
   void mouseMoveEvent(QMouseEvent *e)
   {
-    // AF: get error mesage    (*this) << CGAL::LineWidth(m_line_width);
+    static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
     if(mode == DELETE)
       find_removable_halfedges(e);  // find removable edges , store them in the list 
                                     //'removable_halfedges' and highlight them
