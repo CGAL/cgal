@@ -386,17 +386,14 @@ public:
     // -- if (reorient) the orientation of the cells is modified
 
   // for Delaunay :
-  void star_region( std::set<void*, std::less<void*> > & region, Vertex* v,
-		     Cell* c, int li );
+  void star_region( std::set<void*> & region, Vertex* v, Cell* c, int li);
     // region is a set of connected cells
     // c belongs to region and has facet i on the boundary of region 
     // replaces the cells in region  
     // by linking v to the boundary of region 
     
 private:
-  Cell* create_star( std::set<void*, std::less<void*> > & region, 
-		     Vertex* v,
-		     Cell* c, int li );
+  Cell* create_star( std::set<void*> & region, Vertex* v, Cell* c, int li);
     // creates the cells needed by star_region
 
 public:
@@ -535,12 +532,10 @@ public:
 
   // around a vertex
   void
-  incident_cells(Vertex* v, std::set<Cell*, std::less<Cell*> > & cells,
-		 Cell* c = NULL ) const;
+  incident_cells(Vertex* v, std::set<Cell*> & cells, Cell* c = NULL ) const;
 
   void
-  incident_vertices(Vertex* v, 
-		    std::set<Vertex*, std::less<Vertex*> > & vertices,
+  incident_vertices(Vertex* v, std::set<Vertex*> & vertices,
 		    Cell* c = NULL ) const;
 
   // CHECKING
@@ -998,7 +993,7 @@ flip( Cell* c, int i )
 
   // checks that the facet is flippable,
   // ie the future edge does not already exist
-  std::set< Vertex*,std::less<Vertex*> > setc;
+  std::set<Vertex*> setc;
   incident_vertices( c->vertex(i), setc );
   if ( setc.find( n->vertex(in) ) != setc.end() ) return false;
 
@@ -1030,7 +1025,7 @@ flip_flippable( Cell* c, int i )
 
   // checks that the facet is flippable,
   // ie the future edge does not already exist
-  typedef std::set< Vertex*,std::less<Vertex*> > set_of_vertices;
+  typedef std::set<Vertex*> set_of_vertices;
   CGAL_triangulation_expensive_precondition_code
     ( set_of_vertices setc; );
   CGAL_triangulation_expensive_precondition_code
@@ -2092,8 +2087,7 @@ insert_increase_dimension(const Vertex & w, // new vertex
 template <class Vb, class Cb >
 void
 Triangulation_data_structure_3<Vb,Cb>::
-star_region( std::set<void*, std::less<void*> > & region, 
-	     Vertex* v, Cell* c, int li )
+star_region( std::set<void*> & region, Vertex* v, Cell* c, int li )
   // region is a set of connected cells
   // c belongs to region and has facet i on the boundary of region 
   // replaces the cells in region  
@@ -2106,7 +2100,7 @@ star_region( std::set<void*, std::less<void*> > & region,
   Cell* nouv = create_star( region, v, c, li );
   v->set_cell( nouv );
   // v->set_cell( create_star( region, v, c, li ) );
-  std::set<void*, std::less<void*> >::const_iterator it;
+  std::set<void*>::const_iterator it;
   for( it = region.begin(); it != region.end(); ++it) {
     delete( (Cell *) *it);
   }
@@ -2115,8 +2109,7 @@ star_region( std::set<void*, std::less<void*> > & region,
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Cell*
 Triangulation_data_structure_3<Vb,Cb>::
-create_star( std::set<void*, std::less<void*> > & region, 
-	     Vertex* v, Cell* c, int li )
+create_star( std::set<void*> & region, Vertex* v, Cell* c, int li )
   // creates the cells needed by star_region
 {
   Cell* cnew;
@@ -2219,8 +2212,7 @@ create_star( std::set<void*, std::less<void*> > & region,
 template <class Vb, class Cb >
 void
 Triangulation_data_structure_3<Vb,Cb>::
-incident_cells(Vertex* v, std::set<Cell*, std::less<Cell*> > & cells,
-	       Cell* c ) const
+incident_cells(Vertex* v, std::set<Cell*> & cells, Cell* c) const
 {
   CGAL_triangulation_precondition( v != NULL );
   CGAL_triangulation_precondition( is_vertex(v) );
@@ -2248,8 +2240,7 @@ incident_cells(Vertex* v, std::set<Cell*, std::less<Cell*> > & cells,
 template <class Vb, class Cb >
 void
 Triangulation_data_structure_3<Vb,Cb>::
-incident_vertices(Vertex* v, std::set<Vertex*, std::less<Vertex*> > & vertices,
-		  Cell* c ) const
+incident_vertices(Vertex* v, std::set<Vertex*> & vertices, Cell* c) const
 {
   CGAL_triangulation_precondition( v != NULL );
   CGAL_triangulation_precondition( is_vertex(v) );

@@ -810,46 +810,39 @@ public:
 
   // around a vertex
   void
-  incident_cells(Vertex_handle v, 
-		 std::set<Cell_handle, std::less<Cell_handle> > & cells,
+  incident_cells(Vertex_handle v,
+                 std::set<Cell_handle> & cells,
 		 Cell_handle c = (Cell*) NULL ) const;
 
-
   void
-  incident_vertices(Vertex_handle v, 
-		    std::set<Vertex_handle, std::less<Vertex_handle> > 
-		    & vertices,
+  incident_vertices(Vertex_handle v,
+                    std::set<Vertex_handle> & vertices,
 		    Cell_handle c = (Cell*) NULL ) const;
 
   // old methods, kept for compatibility with previous versions
   void
   incident_cells(Vertex_handle v, 
-		 std::set<Cell*, std::less<Cell*> > & cells,
+		 std::set<Cell*> & cells,
 		 Cell_handle c = (Cell*) NULL,
 		 int dummy_for_windows = 0) const;
 
 
   void
   incident_vertices(Vertex_handle v, 
-		    std::set<Vertex*, std::less<Vertex*> > 
-		    & vertices,
+		    std::set<Vertex*> & vertices,
 		    Cell_handle c = (Cell*) NULL,
 		    int dummy_for_windows = 0) const;
 
 private:
   void 
   util_incident_vertices(Vertex_handle v, 
-			 std::set<Vertex_handle, std::less<Vertex_handle> > 
-			 & vertices,
-			 std::set<Cell_handle, std::less<Cell_handle> > 
-			 & cells,
+			 std::set<Vertex_handle> & vertices,
+			 std::set<Cell_handle> & cells,
 			 Cell_handle c ) const;
   void 
   util_incident_vertices(Vertex_handle v, 
-			 std::set<Vertex*, std::less<Vertex*> > 
-  			 & vertices,
-			 std::set<Cell*, std::less<Cell*> > 
-			 & cells,
+			 std::set<Vertex*> & vertices,
+			 std::set<Cell*> & cells,
 			 Cell_handle c,
 			 int dummy_for_windows = 0) const;
 protected:
@@ -3336,7 +3329,7 @@ template < class GT, class Tds >
 void
 Triangulation_3<GT,Tds>::
 incident_cells(Vertex_handle v, 
-	       std::set<Cell*, std::less<Cell*> > & cells,
+	       std::set<Cell*> & cells,
 	       Cell_handle c,
 	       int dummy_for_windows) const
 {
@@ -3367,7 +3360,7 @@ template < class GT, class Tds >
 void
 Triangulation_3<GT,Tds>::
 incident_cells(Vertex_handle v, 
-	       std::set<Cell_handle, std::less<Cell_handle> > & cells,
+	       std::set<Cell_handle> & cells,
 	       Cell_handle c ) const
 {
   CGAL_triangulation_precondition( &(*v) != NULL );
@@ -3397,7 +3390,7 @@ template < class GT, class Tds >
 void
 Triangulation_3<GT,Tds>::
 incident_vertices(Vertex_handle v, 
-		  std::set<Vertex*, std::less<Vertex*> > & vertices,
+		  std::set<Vertex*> & vertices,
 		  Cell_handle c,
 		  int dummy_for_windows) const
 {
@@ -3413,7 +3406,7 @@ incident_vertices(Vertex_handle v,
     CGAL_triangulation_precondition( c->has_vertex(v) );
   }
 
-  std::set<Cell*, std::less<Cell*> > cells;
+  std::set<Cell*> cells;
   util_incident_vertices(v, vertices, cells, c, dummy_for_windows);
   return;
   // previous buggy version !
@@ -3441,8 +3434,7 @@ template < class GT, class Tds >
 void
 Triangulation_3<GT,Tds>::
 incident_vertices(Vertex_handle v, 
-		  std::set<Vertex_handle, std::less<Vertex_handle> > 
-		  & vertices,
+		  std::set<Vertex_handle> & vertices,
 		  Cell_handle c ) const
 {
   CGAL_triangulation_precondition( &(*v) != NULL );
@@ -3457,7 +3449,7 @@ incident_vertices(Vertex_handle v,
     CGAL_triangulation_precondition( c->has_vertex(v) );
   }
 
-  std::set<Cell_handle, std::less<Cell_handle> > cells;
+  std::set<Cell_handle> cells;
   util_incident_vertices(v, vertices, cells, c);
   return;
 }
@@ -3466,8 +3458,8 @@ template < class GT, class Tds >
 void
 Triangulation_3<GT,Tds>::
 util_incident_vertices(Vertex_handle v, 
-		       std::set<Vertex*, std::less<Vertex*> > & vertices,
-		       std::set<Cell*, std::less<Cell*> > & cells,
+		       std::set<Vertex*> & vertices,
+		       std::set<Cell*> & cells,
 		       Cell_handle c,
 		       int dummy_for_windows) const
 {
@@ -3494,9 +3486,8 @@ template < class GT, class Tds >
 void
 Triangulation_3<GT,Tds>::
 util_incident_vertices(Vertex_handle v, 
-		       std::set<Vertex_handle, std::less<Vertex_handle> > 
-		       & vertices,
-		       std::set<Cell_handle, std::less<Cell_handle> > & cells,
+		       std::set<Vertex_handle> & vertices,
+		       std::set<Cell_handle> & cells,
 		       Cell_handle c ) const
 {
   if ( cells.find( c ) != cells.end() ) {

@@ -151,8 +151,7 @@ public:
 
 private:
   void
-  find_conflicts_3(std::set<void*, std::less<void*> > & conflicts, 
-		   const Point & p,
+  find_conflicts_3(std::set<void*> & conflicts, const Point & p,
 		   Cell_handle c, Cell_handle & ac, int & i);
     // 3d case
     // p is in conflict with c
@@ -160,8 +159,7 @@ private:
     // gives a cell ac having a facet on the boundary of conflicts
     // and the index i of its facet on the boundary
   void
-  find_conflicts_2(std::set<void*, std::less<void*> > & conflicts, 
-		   const Point & p,
+  find_conflicts_2(std::set<void*> & conflicts, const Point & p,
 		   Cell_handle c, Cell_handle & ac, int & i);
     // 2d case
     // p is in conflict with c
@@ -261,7 +259,7 @@ insert(const Point & p, Cell_handle start)
 //       case EDGE:
 	  Vertex_handle v = new Vertex(p);
 	  set_number_of_vertices(number_of_vertices()+1);
-	  std::set<void*, std::less<void*> > conflicts;
+	  std::set<void*> conflicts;
 	  Cell_handle aconflict;
 	  int ineighbor;
 	  find_conflicts_3(conflicts,p,c,aconflict,ineighbor);
@@ -283,7 +281,7 @@ insert(const Point & p, Cell_handle start)
 	{
 	  Vertex_handle v = new Vertex(p);
 	  set_number_of_vertices(number_of_vertices()+1);
-	  std::set<void*, std::less<void*> > conflicts;
+	  std::set<void*> conflicts;
 	  Cell_handle aconflict;
 	  int ineighbor;
 	  find_conflicts_2(conflicts,p,c,aconflict,ineighbor);
@@ -401,7 +399,7 @@ make_hole_3D( Vertex_handle v,
 {
   CGAL_triangulation_precondition( ! test_dim_down(v) );
 
-  typedef std::set<Cell_handle, std::less<Cell_handle> > Hole_cells;
+  typedef std::set<Cell_handle> Hole_cells;
   Hole_cells cells;
   incident_cells( v, cells );
   int i, indv;
@@ -987,8 +985,7 @@ fill_hole_3D( std::set<Facet> & boundhole,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
-find_conflicts_3(std::set<void*, std::less<void*> > & conflicts, 
-		 const Point & p,
+find_conflicts_3(std::set<void*> & conflicts, const Point & p,
 		 Cell_handle c, Cell_handle & ac, int & i)
   // 3d case
   // p is in conflict with c
@@ -1086,8 +1083,7 @@ violates( Vertex_handle u,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
-find_conflicts_2(std::set<void*, std::less<void*> > & conflicts, 
-		 const Point & p,
+find_conflicts_2(std::set<void*> & conflicts, const Point & p,
 		 Cell_handle c, Cell_handle & ac, int & i)
   // 2d case
   // p is in conflict with c

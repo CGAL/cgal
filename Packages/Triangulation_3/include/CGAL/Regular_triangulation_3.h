@@ -139,18 +139,18 @@ private:
       return side_of_power_segment(c, p) == ON_BOUNDED_SIDE;
     }
 
-  void find_conflicts_3(std::set<void*, std::less<void*> > &conflicts, 
+  void find_conflicts_3(std::set<void*> &conflicts, 
 			const Weighted_point & p,
 			Cell_handle c, Cell_handle & ac, int & i);
 
-  void find_conflicts_2(std::set<void*, std::less<void*> > & conflicts, 
+  void find_conflicts_2(std::set<void*> & conflicts, 
 			const Weighted_point & p,
 			Cell_handle c, Cell_handle & ac, int & i);
 
 
-  //  std::set<void*, std::less<void*> > 
+  //  std::set<void*> 
   void
-  star_region_delete_points( std::set<void*, std::less<void*> > & region, 
+  star_region_delete_points( std::set<void*> & region, 
 			     Vertex* v, 
 			     Cell* c, int li);
     // region is a set of connected cells
@@ -166,7 +166,7 @@ private:
 template < class Gt, class Tds >
 void 
 Regular_triangulation_3<Gt,Tds>::
-find_conflicts_3(std::set<void*, std::less<void*> > &conflicts, 
+find_conflicts_3(std::set<void*> &conflicts, 
 		 const Weighted_point & p, 
 		 Cell_handle c, Cell_handle & ac, int & i)
   // DUPLICATED CODE !!! see Delaunay
@@ -190,7 +190,7 @@ find_conflicts_3(std::set<void*, std::less<void*> > &conflicts,
 template < class Gt, class Tds >
 void 
 Regular_triangulation_3<Gt,Tds>::
-find_conflicts_2(std::set<void*, std::less<void*> > & conflicts, 
+find_conflicts_2(std::set<void*> & conflicts, 
 		 const Weighted_point & p,
 		 Cell_handle c, Cell_handle & ac, int & i)
 {
@@ -373,8 +373,8 @@ insert(const Weighted_point & p, Cell_handle start )
       
       // else
       Vertex_handle v = NULL;
-      std::set<void*, std::less<void*> > conflicts;
-//      std::set<void*, std::less<void*> > deleted_points;
+      std::set<void*> conflicts;
+//      std::set<void*> deleted_points;
       Cell_handle aconflict;
       int ineighbor;
       if (in_conflict_3(p, c)) {
@@ -406,10 +406,10 @@ insert(const Weighted_point & p, Cell_handle start )
       case EDGE:
 	{
 	  Vertex_handle v=NULL;
-//	  std::set<void*, std::less<void*> > deleted_points;
+//	  std::set<void*> deleted_points;
 	  if (in_conflict_2(p, c, 3)) {
 	    v = new Vertex(p);
-	    std::set<void*, std::less<void*> > conflicts;
+	    std::set<void*> conflicts;
 	    Cell_handle aconflict;
 	    int ineighbor;
 	    find_conflicts_2(conflicts,p,c,aconflict,ineighbor);
@@ -441,14 +441,14 @@ insert(const Weighted_point & p, Cell_handle start )
       case EDGE:
 	{
 	  Vertex_handle v=NULL;
-//	  std::set<void*, std::less<void*> > deleted_points;
+//	  std::set<void*> deleted_points;
 //	  Weighted_point * P;
 	  if ( in_conflict_1(p, c) ) {
 	    v = new Vertex(p);
 	    set_number_of_vertices(number_of_vertices()+1);
 	    Cell_handle bound[2];
 	    Cell_handle n;
-	    std::set<void*, std::less<void*> > conflicts;
+	    std::set<void*> conflicts;
 
 	    for (int j =0; j<2; j++ ) {
 	      n = c;
@@ -485,7 +485,7 @@ insert(const Weighted_point & p, Cell_handle start )
 	      v->set_cell(bound[0]);
 	    }
 
-	    std::set<void*, std::less<void*> >::const_iterator it;
+	    std::set<void*>::const_iterator it;
 	    for ( it = conflicts.begin(); it != conflicts.end(); ++it) {
 	      delete((Cell*)*it);
 	    }
@@ -519,11 +519,10 @@ insert(const Weighted_point & p, Cell_handle start )
 }
 
 template < class Gt, class Tds >
-//std::set<void*, std::less<void*> > 
+//std::set<void*> 
 void
 Regular_triangulation_3<Gt,Tds>::
-star_region_delete_points(std::set<void*, std::less<void*> > & region, 
-			  Vertex* v, Cell* c, int li) 
+star_region_delete_points(std::set<void*> & region, Vertex* v, Cell* c, int li) 
   // region is a set of connected cells
   // c belongs to region and has facet i on the boundary of region 
   // replaces the cells in region  
@@ -531,15 +530,15 @@ star_region_delete_points(std::set<void*, std::less<void*> > & region,
   // deleted weighted points that are not in the triangulation
   // anymore, pts will be the list of deleted points
 {
-  std::set<void*, std::less<void*> > vert;
+  std::set<void*> vert;
   Cell *c_tmp;
   Vertex *v_tmp;
   Vertex_handle vh;
-  std::set<void*, std::less<void*> > pts;
+  std::set<void*> pts;
 //  Weighted_point *p;
     
   // for each cell to be deleted, keep vertices
-  std::set<void*, std::less<void*> >::const_iterator it;
+  std::set<void*>::const_iterator it;
   for( it = region.begin(); it != region.end(); ++it) {
     c_tmp = (Cell *) *it;
     // store vertices
@@ -556,7 +555,7 @@ star_region_delete_points(std::set<void*, std::less<void*> > & region,
   _tds.star_region( region, v, c, li );
     
   // get the vertices incident to v
-  std::set<Vertex_handle, std::less<Vertex_handle> > inc_vert;
+  std::set<Vertex_handle> inc_vert;
   incident_vertices(v, inc_vert);
     
   // for each vertex, check if it is a vertex incident to v
