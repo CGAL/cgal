@@ -1388,7 +1388,7 @@ of triangulations. The triangulation at the lowest level is
  the original triangulation where operations and point location are to 
 be performed.
 Then at each succedding level, the data structure
-store a triangulation of a small random sample of the vertices
+stores a triangulation of a small random sample of the vertices
 of the triangulation at the preceeding level. Point location
 is done through a top down nearest neighbor query.
 The nearest neighbor query is first
@@ -1433,11 +1433,16 @@ for two pointers  to the corresponding vertex in the
 triangulations of the next and preceeding levels.
 
 \subsubsection{A predefined Vertex Base type}
-\cgal provides the class \ccc{Triangulation_hierarchy_vertex_base_2<Traits>}
+\cgal provides the class \ccc{Triangulation_hierarchy_vertex_base_2<Vb>}
 which is a model for the concept 
 \ccc{Triangulation_hierarchy_vertex_base_2_concept}
-This class inherits from the default vertex base class
-\ccc{Triangulation_vertex_base_2<Traits>}. It is templated,
-as its base class, by a geometric traits class \ccc{Traits}
-which is required to provide  the point type
-used in the triangulation.
+This class is templated by a parameter \ccc{Vb}
+which is to be templated by a model of  the concept
+\ccc{Triangulation_vertex_base_2_concept}
+The class \ccc{Triangulation_hierarchy_vertex_base_2<Vb>} inherits
+from its template parameter \ccc{Vb}.
+This design allows to use either the default
+vertex base class or a user customized
+vertex base with additionnal functionalities.
+
+
