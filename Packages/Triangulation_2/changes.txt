@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+25 March 2004 Radu Ursu
+- made doc work with the new implementation of Manual tools.
+
 25 February 2004 Sylvain Pion
 - Make cw and ccw public in Delaunay_2.
 
