@@ -2963,8 +2963,8 @@ end of each file.
     while ( argc > 1) {
 
         typedef  CGAL::Min_ellipse_2< TraitsH >  Min_ellipse;
-        typedef  typename Min_ellipse::Point     Point;
-        typedef  typename Min_ellipse::Ellipse   Ellipse;
+        typedef  Min_ellipse::Point              Point;
+        typedef  Min_ellipse::Ellipse            Ellipse;
 
         CGAL::Verbose_ostream verr( verbose);
 

@@ -2751,8 +2751,8 @@ end of each file.
     while ( argc > 1) {
 
         typedef  CGAL::Min_circle_2< TraitsH >  Min_circle;
-        typedef  typename Min_circle::Point     Point;
-        typedef  typename Min_circle::Circle    Circle;
+        typedef  Min_circle::Point              Point;
+        typedef  Min_circle::Circle             Circle;
 
         CGAL::Verbose_ostream verr( verbose);
 
