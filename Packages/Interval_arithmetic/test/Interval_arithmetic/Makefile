@@ -1,11 +1,5 @@
 # This is the makefile for compiling a CGAL application.
 
-#---------------------------------------------------------------------#
-#                    include platform specific settings
-#---------------------------------------------------------------------#
-# Choose the right include file from the <cgalroot>/make directory.
-
-# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -18,10 +12,11 @@ include $(CGAL_MAKEFILE)
 # CGAL_LDFLAGS= $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)/libCGAL.a \
               # -L$(GMP_LIB_DIR) -lgmp -lm \
 
-CXXFLAGS = -I../../include \
+CXXFLAGS = -I../../include -I$(HOME)/CGAL-2.1-I-9.modified/include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-g -W -Winline
+	-g -Wall
+	# -O2 -Wall -W
 	# -fpermissive
 	# -DCGAL_IA_STOP_CONSTANT_PROPAGATION \
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
@@ -41,7 +36,7 @@ CXXFLAGS = -I../../include \
 #                    linker flags
 #---------------------------------------------------------------------#
 
-LDFLAGS = \
+LDFLAGS = Interval_arithmetic.o \
           $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
@@ -49,89 +44,34 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-.PHONY: test bench bench4 bench_isolate
+.PRECIOUS: %.o
 
-all: test bench
+% : %.C
 
-test:  tst0 tst1 tst2 tst5 tst7 tst_static_adaptatif # tst6
+%.o : %.C
+	$(CGAL_CXX) $(CXXFLAGS) -c $<
+
+%.s : %.C
+	$(CGAL_CXX) $(CXXFLAGS) -S $<
+
+% : %.o
+	$(CGAL_CXX) $+ $(LDFLAGS) -o $@
+
+EXE_EXT  =
+OBJ_EXT  = .o
+SOURCES  := $(wildcard  *.C)
+OBJECTS  := $(SOURCES:.C=$(OBJ_EXT))
+PROGRAMS := $(SOURCES:.C=$(EXE_EXT))
+
+all: ../../src/Interval_arithmetic.o $(PROGRAMS)
 	./tst0
 	./tst1
 	./tst2
-	./tst5
-	./tst7
-	./tst_static_adaptatif
-	# ./tst6
-
-bench_isolate: ./a.out
-	./a.out
-
-bench4: tst4
-	./tst4
-
-bench: tst3 tst4
 	./tst3
 	./tst4
-
-# Extrait de la doc de GNU Make:
-# 
-# Here is an example, which compiles each of `foo.o' and `bar.o' from the
-# corresponding `.c' file: 
-# 
-# objects = foo.o bar.o
-# 
-# all: $(objects)
-# 
-# $(objects): %.o: %.c
-#	$(CC) -c $(CFLAGS) $< -o $@
-# 
-
-tst0.o: tst0.C
-
-tst1.o: tst1.C include/tst_generic.C
-
-tst2.o: tst2.C include/tst_generic.C
-
-tst3.o: tst3.C include/bench_generic.C
-
-tst4.o: tst4.C include/bench_generic.C
-
-
-tst0: tst0.o
-	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
-
-tst1: tst1.o
-	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
-
-tst2: tst2.o
-	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
-
-tst3: tst3.o
-	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
-
-tst4: tst4.o
-	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
-
-tst5: tst5.o
-	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
-
-tst6: tst6.o
-	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
-
-tst7: tst7.o
-	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
-
-tst_static_adaptatif: tst_static_adaptatif.o
-	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
+	./tst5 # ./tst6
+	./tst7
+	./tst_static_adaptatif
 
 clean:
-	rm -f *.o *.bb *.bbg *.da *.gcov core tst? tst_static_adaptatif *.rpo .pure
-
-#---------------------------------------------------------------------#
-#                    suffix rules
-#---------------------------------------------------------------------#
-
-.C.o:
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
-
-.C.s:
-	$(CGAL_CXX) $(CXXFLAGS) -S $<
+	rm -f *$(OBJ_EXT) $(PROGRAMS) *.bb *.bbg *.da *.gcov core *.rpo .pure
