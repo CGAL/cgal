@@ -387,6 +387,11 @@ Less_xy_2
 less_xy_2_object() const 
 { return Less_xy_2(); }
 
+typedef CGAL::p_Less_yx<Point_2>                   Less_yx_2;
+Less_yx_2
+less_yx_2_object() const 
+{ return Less_yx_2(); }
+
 typedef CGALi::Compare_x                           Compare_x_2;
 Compare_x_2
 compare_x_2_object() const 
@@ -419,7 +424,7 @@ less_signed_distance_to_line_2_object(const Point_2& p, const Point_2& q) const
 
 typedef CGAL ::p_Less_rotate_ccw<Point_2>          Less_rotate_ccw_2;
 Less_rotate_ccw_2
-less_rotate_ccw_2(const Point_2& p) const 
+less_rotate_ccw_2_object(const Point_2& p) const 
 { return Less_rotate_ccw_2(p); }
 
 typedef CGAL ::p_Leftturn<Point_2>                 Leftturn_2;

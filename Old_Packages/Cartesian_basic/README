@@ -1,7 +1,7 @@
 RULES FOR CORRECT USE OF THIS PACKAGE
 
-CVS Maintainer: Herve Bronnimann (hbronni@sophia.inria.fr)
-CVS Write-access: herve, geert-jan, sylvain, stefan
+CVS Maintainer: Mariette Yvinec (yvinec@sophia.inria.fr)
+CVS Write-access: herve, geert-jan, sylvain, stefan, mariette
 
 IMPORTANT FILES:
 * changes.txt: records a succinct description of the changes between
