@@ -92,6 +92,7 @@ DOCS: Updated.
 DOCS: Some additions/corrections due to Dima.
 DOCS: Added description of CLN support.
 DOCS: Some minor corrections.
+DOCS: Removed overfull boxes.
 DOCS: Updated CGAL version in --upgrade.
 DOCS: Some minor changes due to Dima.
 DOCS: Two changes due to Dima/Stefan.
