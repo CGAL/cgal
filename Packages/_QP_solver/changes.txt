@@ -1,5 +1,8 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.6 on 18-Mar-2002
+- Fixed long line.
+
 Version 0.9.5 on 18-Mar-2002
 - Fixed a number of warnings (i hides variable class::i, inline <-> extern).
 
