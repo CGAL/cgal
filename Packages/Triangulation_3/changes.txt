@@ -1,5 +1,8 @@
 Version 1.94 (?? September 01)
-- New function degree(v).
+- New functions : degree(v), _reorient(), remove_decrease_dimension(),
+  remove_from_simplex().
+- Some functions work better in more dimensions : test_dim_down(),
+  incident_vertices().
 
 Version 1.93 (27 September 01)
 - Use CGAL/iterator.h.

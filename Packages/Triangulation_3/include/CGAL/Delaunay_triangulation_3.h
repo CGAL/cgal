@@ -416,7 +416,13 @@ remove(Vertex_handle v)
   CGAL_triangulation_precondition( !is_infinite(v));
   CGAL_triangulation_expensive_precondition( _tds.is_vertex(v) );
 
-  if ( dimension() <3 || test_dim_down(v) ) {
+  if (dimension() >= 1 && test_dim_down(v)) {
+      _tds.remove_decrease_dimension(v);
+      // FIXME: There might be a need for _tds.reorient() ?
+      return true;
+  }
+
+  if ( dimension() < 3 ) {
     // the triangulation is rebuilt...
 
     Vertex_handle inf = infinite_vertex();

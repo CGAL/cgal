@@ -529,7 +529,7 @@ iterator \ccc{cells}.  If \ccVar.\ccc{dimension()} $<3$, then do nothing.
 output iterator \ccc{vertices}.  If \ccVar.\ccc{dimension()} $<2$, then do
 nothing.  \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}
 
-\ccMethod{unsigned int degree(Vertex_handle v) const;}
+\ccMethod{int degree(Vertex_handle v) const;}
 {Returns the degree of a vertex, that is, the number of incident vertices.
 \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}
 

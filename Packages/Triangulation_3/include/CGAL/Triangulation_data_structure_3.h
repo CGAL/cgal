@@ -355,8 +355,40 @@ public:
 				     Vertex_handle star = NULL,
 				     bool reorient = false);
 
+  // REMOVAL
+
+private:
+  Cell_handle remove_degree_4(Vertex_handle v);
+  Cell_handle remove_degree_3(Vertex_handle v);
+  Cell_handle remove_degree_2(Vertex_handle v);
+public:
+  Cell_handle remove_from_simplex(Vertex_handle v);
+  void remove_decrease_dimension(Vertex_handle v, bool reorient = false);
+
   // ITERATOR METHODS
 
+private:
+  // This private iterator gives the possibility to iterate over all cells
+  // independently of the dimension.
+  typedef Cell_iterator Iterator_base;
+
+  Iterator_base iterator_base_begin() const {
+    return cell_container().begin();
+  }
+  Iterator_base iterator_base_end() const {
+    return cell_container().end();
+  }
+
+  // Change orientation of the whole TDS.
+  void _reorient()
+  {
+      CGAL_triangulation_precondition(dimension() >= 1);
+      for (Iterator_base i = iterator_base_begin();
+	      i != iterator_base_end(); ++i)
+	  change_orientation(i->handle());
+  }
+
+public:
   Cell_iterator cells_begin() const
   {
     if ( dimension() < 3 )
@@ -494,6 +526,9 @@ private:
   {
       CGAL_triangulation_precondition(dimension() == 2);
 
+      // TODO : in 2D, there's no real need for conflict_flag, we could use
+      // a smarter algorithm.
+
       // Flag values :
       // 1 : incident cell already visited
       // 0 : unknown
@@ -540,11 +575,16 @@ public:
       CGAL_triangulation_precondition( v != NULL );
       CGAL_triangulation_expensive_precondition( is_vertex(v) );
 
-      if ( number_of_vertices() < 2 )
+      if ( number_of_vertices() < 2 || dimension() < 1)
           return;
 
-      if ( dimension() < 2 )
-          return;
+      if ( dimension() == 1) {
+	  Cell_handle n0 = v->cell();
+	  Cell_handle n1 = n0->neighbor(1-n0->index(v));
+	  *vertices++ = n0->vertex(1-n0->index(v));
+	  *vertices++ = n1->vertex(1-n1->index(v));
+	  return;
+      }
 
       // Get the incident cells.
 
@@ -578,7 +618,7 @@ public:
   incident_vertices(Vertex_handle v, std::set<Vertex_handle> & vertices,
 		    Cell_handle c = NULL ) const;
 
-  unsigned int degree(Vertex_handle v) const;
+  int degree(Vertex_handle v) const;
 
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const;
@@ -1724,7 +1764,7 @@ insert_increase_dimension(Vertex_handle v, // new vertex
   // star = vertex from which we triangulate the facet of the
   // incremented dimension  
   // ( geometrically : star = infinite vertex )
-  // = Null only used to insert the 1st vertex (dimension -2 to dimension -1)
+  // = NULL only used to insert the 1st vertex (dimension -2 to dimension -1)
   // changes the dimension
   // if (reorient) the orientation of the cells is modified
 {
@@ -1772,25 +1812,13 @@ insert_increase_dimension(Vertex_handle v, // new vertex
       Cell_handle c = star->cell();
       Cell_handle d = c->neighbor(0);
 
-      if (reorient) {
-	c->set_vertex(0,d->vertex(0));
-	c->set_vertex(1,star);
-	d->set_vertex(1,d->vertex(0));
-	d->set_vertex(0,v);
-	set_adjacency(c, 1, d, 0);
-	Cell_handle e = create_face( star, v, NULL);
-	set_adjacency(e, 0, d, 1);
-	set_adjacency(e, 1, c, 0);
-      }
-      else {
-	c->set_vertex(1,d->vertex(0));
-	d->set_vertex(1,v);
-	d->set_neighbor(1,c);
-	Cell_handle e = create_face( v, star, NULL);
-	set_adjacency(e, 0, c, 1);
-	set_adjacency(e, 1, d, 0);
-      }
-	
+      c->set_vertex(1,d->vertex(0));
+      d->set_vertex(1,v);
+      d->set_neighbor(1,c);
+      Cell_handle e = create_face( v, star, NULL);
+      set_adjacency(e, 0, c, 1);
+      set_adjacency(e, 1, d, 0);
+
       v->set_cell(d);
       break;
     }
@@ -1839,11 +1867,6 @@ insert_increase_dimension(Vertex_handle v, // new vertex
 
       v->set_cell(d);
 
-      if (reorient) {
-	// reorientation of all the cells
-	for (Facet_iterator fit = facets_begin(); fit != facets_end(); ++fit)
-	  change_orientation((*fit).first);
-      }
       break;
     }
 
@@ -1900,15 +1923,210 @@ insert_increase_dimension(Vertex_handle v, // new vertex
 	  }
 	}
       }
-	
-      // reorientation of all the cells
-      if (reorient)
-	  for(it = cells_begin(); it != cells_end(); ++it)
-	      change_orientation(it->handle());
     }
   }// end switch
+
+  if (dim >= 0 && reorient)
+    _reorient();
     
   return v;
+}
+
+template <class Vb, class Cb >
+void
+Triangulation_data_structure_3<Vb,Cb>::
+remove_decrease_dimension(Vertex_handle v, bool reorient)
+{
+    CGAL_triangulation_precondition( dimension() >= 1);
+    CGAL_triangulation_precondition(
+			    (dimension() == 1 && number_of_vertices() == 3) ||
+			    (number_of_vertices() > dimension() + 1) );
+    CGAL_triangulation_precondition( degree(v) == number_of_vertices()-1 );
+
+    // the cells incident to v are down graded one dimension
+    // the other cells are deleted
+    std::vector<Cell_handle> to_delete, to_downgrade;
+
+    for (Iterator_base ib = iterator_base_begin();
+         ib != iterator_base_end(); ++ib) {
+        if ( ib->has_vertex(v) )
+	    to_downgrade.push_back(ib->handle());
+        else
+	    to_delete.push_back(ib->handle());
+    }
+
+    typename std::vector<Cell_handle>::iterator lfit = to_downgrade.begin();
+    for( ; lfit != to_downgrade.end(); ++lfit) {
+	Cell_handle f = *lfit;
+	int j = f->index(v);
+        if (j != dimension()) {
+	    f->set_vertex(j, f->vertex(dimension()));
+	    f->set_neighbor(j, f->neighbor(dimension()));
+	    f->set_vertex(dimension(), NULL);
+	    f->set_neighbor(dimension(), NULL);
+	    if (dimension() != 1)
+		change_orientation(f);
+	}
+
+	// Update vertex->cell() pointers.
+	for (int i = 0; i < dimension(); ++i)
+	    f->vertex(i)->set_cell(f);
+    }
+
+    delete_cells(to_delete.begin(), to_delete.end());
+    delete_vertex(v);
+    set_dimension(dimension()-1);
+
+    if (reorient)
+	_reorient();
+}
+
+template <class Vb, class Cb >
+typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb>::
+remove_from_simplex(Vertex_handle v)
+{
+    CGAL_triangulation_precondition(dimension() >= 1);
+    CGAL_triangulation_precondition(degree(v) == dimension() + 1);
+    CGAL_triangulation_precondition(number_of_vertices() >= dimension() + 1);
+
+    if (number_of_vertices() == dimension() + 1)
+	return remove_decrease_dimension(v);
+
+    if (dimension() == 3)
+	return remove_degree_4();
+    if (dimension() == 2)
+	return remove_degree_3();
+    if (dimension() == 1)
+	return remove_degree_2();
+
+}
+
+template <class Vb, class Cb >
+typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb>::
+remove_degree_2(Vertex_handle v)
+{
+    CGAL_triangulation_precondition(dimension() == 1);
+    CGAL_triangulation_precondition(degree(v) == 2);
+    CGAL_triangulation_precondition(number_of_vertices() >= 4);
+
+    // Cells to be killed.
+    Cell_handle c0, c1;
+    // Indices of v in these cells.
+    int i0, i1;
+
+    c0 = v->cell();
+    i0 = c0->index(v);
+    c1 = c0->neighbor(1-i0);
+    i1 = c1->index(v);
+
+    // New cell : we copy the content of c0, so we keep the orientation.
+    Cell_handle newc = create_face(c0->vertex(0),
+                                   c0->vertex(1),
+				   NULL);
+
+    set_adjacency(newc,    i0, c0->neighbor(i0), c0->mirror_index(i0));
+    set_adjacency(newc,  1-i0, c1->neighbor(i1), c1->mirror_index(i1));
+
+    newc->vertex(0)->set_cell(newc);
+    newc->vertex(1)->set_cell(newc);
+
+    delete_cell(c0);
+    delete_cell(c1);
+    delete_vertex(v);
+
+    return newc;
+}
+
+template <class Vb, class Cb >
+typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb>::
+remove_degree_3(Vertex_handle v)
+{
+    CGAL_triangulation_precondition(dimension() == 2);
+    CGAL_triangulation_precondition(degree(v) == 3);
+    CGAL_triangulation_precondition(number_of_vertices() >= 5);
+
+    // Cells to be killed.
+    Cell_handle c0, c1, c2;
+    // Indices of v in these cells.
+    int i0, i1, i2;
+
+    c0 = v->cell();
+    i0 = c0->index(v);
+    c1 = c0->neighbor(cw(i0));
+    i1 = c1->index(v);
+    c2 = c0->neighbor(ccw(i0));
+    i2 = c2->index(v);
+
+    // New cell : we copy the content of c0, so we keep the orientation.
+    Cell_handle newc = create_face(c0->vertex(0),
+                                   c0->vertex(1),
+                                   c0->vertex(2));
+
+    set_adjacency(newc,      i0, c0->neighbor(i0), c0->mirror_index(i0));
+    set_adjacency(newc,  cw(i0), c1->neighbor(i1), c1->mirror_index(i1));
+    set_adjacency(newc, ccw(i0), c2->neighbor(i2), c2->mirror_index(i2));
+
+    newc->vertex(0)->set_cell(newc);
+    newc->vertex(1)->set_cell(newc);
+    newc->vertex(2)->set_cell(newc);
+
+    delete_cell(c0);
+    delete_cell(c1);
+    delete_cell(c2);
+    delete_vertex(v);
+
+    return newc;
+}
+
+template <class Vb, class Cb >
+typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb>::
+remove_degree_4(Vertex_handle v)
+{
+    CGAL_triangulation_precondition(dimension() == 3);
+    CGAL_triangulation_precondition(degree(v) == 4);
+    CGAL_triangulation_precondition(number_of_vertices() >= 6);
+
+    // Cells to be killed.
+    Cell_handle c0, c1, c2, c3;
+    // Indices of v in these cells.
+    int i0, i1, i2, i3;
+
+    c0 = v->cell();
+    i0 = c0->index(v);
+    c1 = c0->neighbor(i0^1);
+    i1 = c1->index(v);
+    c2 = c0->neighbor(i0^2);
+    i2 = c2->index(v);
+    c3 = c0->neighbor(i0^3);
+    i3 = c3->index(v);
+
+    // New cell : we copy the content of c0, so we keep the orientation.
+    Cell_handle newc = create_cell(c0->vertex(0),
+                                   c0->vertex(1),
+                                   c0->vertex(2),
+                                   c0->vertex(3));
+
+    set_adjacency(newc,   i0, c0->neighbor(i0), c0->mirror_index(i0));
+    set_adjacency(newc, i0^1, c1->neighbor(i1), c1->mirror_index(i1));
+    set_adjacency(newc, i0^2, c2->neighbor(i2), c2->mirror_index(i2));
+    set_adjacency(newc, i0^3, c3->neighbor(i3), c3->mirror_index(i3));
+
+    newc->vertex(0)->set_cell(newc);
+    newc->vertex(1)->set_cell(newc);
+    newc->vertex(2)->set_cell(newc);
+    newc->vertex(3)->set_cell(newc);
+
+    delete_cell(c0);
+    delete_cell(c1);
+    delete_cell(c2);
+    delete_cell(c3);
+    delete_vertex(v);
+
+    return newc;
 }
 
 template <class Vb, class Cb >
@@ -1977,7 +2195,7 @@ incident_vertices(Vertex_handle v, std::set<Vertex_handle> & vertices,
 }
 
 template <class Vb, class Cb >
-unsigned int
+int
 Triangulation_data_structure_3<Vb,Cb>::
 degree(Vertex_handle v) const
 {

@@ -963,30 +963,52 @@ Triangulation_3<GT,Tds>::
 test_dim_down(Vertex_handle v) const
   // tests whether removing v decreases the dimension of the triangulation 
   // true iff
-  // v is incident to all finite cells
-  // and all the other vertices are coplanar
+  // v is incident to all finite cells/facets
+  // and all the other vertices are coplanar/collinear in dim3/2.
 {
-  CGAL_triangulation_precondition(dimension() == 3);
+  CGAL_triangulation_precondition(dimension() >= 1);
   CGAL_triangulation_precondition(! is_infinite(v) );
 
-  Finite_cells_iterator cit = finite_cells_begin();
+  if (dimension() == 3) {
+      Finite_cells_iterator cit = finite_cells_begin();
 
-  int iv;
-  if ( ! cit->has_vertex(v,iv) )
-      return false;
-  const Point &p1=cit->vertex((iv+1)&3)->point();  
-  const Point &p2=cit->vertex((iv+2)&3)->point();  
-  const Point &p3=cit->vertex((iv+3)&3)->point();
-  ++cit;
+      int iv;
+      if ( ! cit->has_vertex(v,iv) )
+          return false;
+      const Point &p1=cit->vertex((iv+1)&3)->point();  
+      const Point &p2=cit->vertex((iv+2)&3)->point();  
+      const Point &p3=cit->vertex((iv+3)&3)->point();
+      ++cit;
 
-  for (; cit != finite_cells_end(); ++cit ) {
-    if ( ! cit->has_vertex(v,iv) )
-      return false;
-    for (int i=1; i<4; i++ ) {
-	if ( !coplanar(p1,p2,p3,cit->vertex((iv+i)&3)->point()) )
-	  return false;
-    }
+      for (; cit != finite_cells_end(); ++cit ) {
+          if ( ! cit->has_vertex(v,iv) )
+              return false;
+          for (int i=1; i<4; i++ )
+	      if ( !coplanar(p1,p2,p3,cit->vertex((iv+i)&3)->point()) )
+	          return false;
+      }
   }
+  else if (dimension() == 2)
+  {
+      Finite_facets_iterator cit = finite_facets_begin();
+
+      int iv;
+      if ( ! (*cit).first->has_vertex(v,iv) )
+          return false;
+      const Point &p1=(*cit).first->vertex(cw(iv))->point();  
+      const Point &p2=(*cit).first->vertex(ccw(iv))->point();  
+      ++cit;
+
+      for (; cit != finite_facets_end(); ++cit ) {
+          if ( ! (*cit).first->has_vertex(v,iv) )
+              return false;
+          if ( !collinear(p1, p2, (*cit).first->vertex(cw(iv))->point()) ||
+	       !collinear(p1, p2, (*cit).first->vertex(ccw(iv))->point()) )
+	      return false;
+      }
+  }
+  else // dimension() == 1
+      return number_of_vertices() == 2;
 
   return true;
 }
