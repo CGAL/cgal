@@ -1813,7 +1813,7 @@ void window::adjust_zoom_rect(double& x0, double& y0, double& x1, double& y1)
 
   window_point lp1(x0,y0), lp2(x0+wdx,y0+wdy);
 
-  if (compute_orientation(lp1,lp2,window_point(x1,y1)) == -1)  // was CGAL::RIGHTTURN
+  if (compute_orientation(lp1,lp2,window_point(x1,y1)) == -1)  // was CGAL::RIGHT_TURN
     y1 = y_proj(lp1,lp2,x1);
   else
     x1 = x_proj(lp1,lp2,y1);
