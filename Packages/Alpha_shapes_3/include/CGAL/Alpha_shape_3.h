@@ -37,7 +37,9 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 #include <CGAL/Alpha_shape_cell_base_3.h>
+#ifdef CGAL_USE_GEOMVIEW
 #include <CGAL/IO/Geomview_stream.h>  // TBC
+#endif
 
 //-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
@@ -730,7 +732,9 @@ private:
 
   //---------------------------------------------------------------------
 public:  
+#ifdef CGAL_USE_GEOMVIEW
   void show_alpha_shape_faces(Geomview_stream &gv) const;
+#endif
 
 
   // to Debug
@@ -1505,10 +1509,10 @@ Alpha_shape_3<Dt>::print_alpha_status_vertex(const Alpha_status* as) const
   std::cerr << std::endl;
 }
 
-//-------------------------------------------------------------------
 CGAL_END_NAMESPACE
-//-------------------------------------------------------------------
 
+#ifdef CGAL_USE_GEOMVIEW
 #include <CGAL/IO/alpha_shape_geomview_ostream_3.h>
+#endif
 
 #endif //CGAL_ALPHA_SHAPE_3_H

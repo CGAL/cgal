@@ -21,11 +21,7 @@ to the Alpha Shape.
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Alpha_shape_3.h>
 
-#if ! defined(__BORLANDC__) && ! defined(_MSC_VER) && ! defined(__MWERKS__)
-#define GEOMVIEW_SUPPORT
-#endif
-
-#if defined(GEOMVIEW_SUPPORT)
+#ifdef CGAL_USE_GEOMVIEW
 #include <CGAL/IO/Geomview_stream.h>
 #endif
 
@@ -138,7 +134,7 @@ void set_alpha(Alpha_shape_3& A, int alpha_index)
 
 int main()
 {
-#if defined(GEOMVIEW_SUPPORT)
+#ifdef CGAL_USE_GEOMVIEW
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
   gv.set_line_width(4);
   gv.set_trace(false);
@@ -164,7 +160,7 @@ int main()
 	       << "(negative index -> quit, if 0 -> optimal alpha_shape): ";
       std::cin >> n;
  
-#if defined(GEOMVIEW_SUPPORT)
+#ifdef CGAL_USE_GEOMVIEW
       gv.clear();
 #endif
       //gv << (Triangulation_3) A;
@@ -172,7 +168,7 @@ int main()
       if (n == 0)   A.set_alpha(*A.find_optimal_alpha(1));
       if (n > 0)    A.set_alpha(A.get_nth_alpha(n));
 
-#if defined(GEOMVIEW_SUPPORT)     
+#ifdef CGAL_USE_GEOMVIEW
       gv << A;
 #else
       std::cout << A << std::endl;
