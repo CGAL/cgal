@@ -1,24 +1,3 @@
-// ============================================================================
-//
-// Copyright (c) 1998-1999 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       :
-// release_date  :
-//
-// file          : example/Triangulation3/example_tds.C
-// revision      : $Revision$
-// author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//
-// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
-//
-// ============================================================================
-
 #include <CGAL/basic.h>
 
 #include <iostream>
