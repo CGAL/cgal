@@ -142,14 +142,13 @@
 
 % LaTeX settings
 % --------------
-% create always the index
-\makeindex
+% \makeindex  --> placed in wrapper
+
+% make LaTeX process the whole manual without stopping for errors
+% \batchmode  --> placed in wrapper
 
 % relax formatting strictness to avoid many overfull \hbox's etc.
 \sloppy
-
-% make LaTeX process the whole manual without stopping for errors
-% \batchmode
 
 
 % Implement the two columns layout for the HTML converted part

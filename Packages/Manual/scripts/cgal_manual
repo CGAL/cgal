@@ -93,6 +93,25 @@
 #     example through the search paths defined in the environment variables 
 #     TEXINPUTS, BIBINPUTS, and LATEX_CONV_INPUTS.
 # 
+# This script properly adds entries in TEXINPUTS, BIBINPUTS, and 
+# LATEX_CONV_INPUTS so that bib and style files are found. It also 
+# adds ../examples:../demo to access the example source codes.
+#
+#
+# When the -testsuite option is used the script will copy all the manuals
+# and logfiles to $TestSuiteResultPath/CGAL-$CgalVersion/ and creates an
+# HTML summary page index.html in that subdirectory. The latest results
+# is also always accessible at $TestSuiteResultPath/last/index.html .
+#    Futhermore, the script will cleanup old results. For the most recent
+# number $TestSuiteFullHistory of test suites the full results including
+# the manuals are kept. Older test suites will have their manuals deleted
+# to save space. Int total only $TestSuiteHistory many test suites are kept.
+#    The history of test suites is managed in a shift register like fashion
+# using files in $TestSuiteResultPath of defined names History.<i> that 
+# contain the name of the i-th test suite subdirectory. The 1st is the 
+# most recent test suite and corresponds to the 'last' directory.
+#    If the test suite is repeated for the same internal release number,
+# the new results will overwrite the old results.
 # ============================================================================
 
 shopt -s nullglob
@@ -140,7 +159,11 @@ TestSuiteResultPath=/www/pub/www.cgal.org/Members/Manual_test
 
 # Number of older test-suite results kept. Test-suite results beyond this 
 # number are deleted.
-TestSuiteHistory=6
+TestSuiteHistory=4
+
+# Number of older test-suites for which the full results will be kept. Older
+# test suites will have their manuals removed to save space.
+TestSuiteFullHistory=2
 
 # Determines if we currently make a Module or Package manual.
 # Only one is set to 1.
@@ -157,10 +180,10 @@ Time="`date '+%T %Z'`"
 
 # Try to determine the CGAL version (works only for internal/external releases)
 # Otherwise use date.
-if [ -r M/version.tex ]; then
+if [ -r version.tex ]; then
     CgalVersion="`cat version.tex | grep cgalversion | sed 's/[}]$//' | sed 's/.*[{]//'`"
 else
-    CgalVersion=${Date}
+    CgalVersion=`echo ${Date} | sed 's/ /_/g'`
 fi
 
 # Selects no console output except error messages
@@ -226,7 +249,7 @@ version_date() {
 }
 
 version() {
-    echo "${BlueColor}${ProgName}: Revision `version_no` [`version_date`]"\
+    echo "${BoldColor}${ProgName}:${ResetColor} ${BlueColor}Revision `version_no` [`version_date`]"\
         "   (c) Lutz Kettner${ResetColor}"  1>&2
 }
 
@@ -392,6 +415,8 @@ create_wrapper() {
 
 \documentclass{book}
 \usepackage{cgal_manual}
+
+\makeindex
 EOF
     if [ $# -ne 1 ]; then
         echo ""
@@ -588,7 +613,7 @@ run_latex() {
         while grep "Rerun to get cross-references right" $1.log > /dev/null; do
             # Run makeindex as well if requested
             if [ -r $1.idx ]; then
-                if ${MakeIndex} $1 ; then IndexExit=0 ; else IndexExit=1 ; fi
+              if ${MakeIndex} $1.idx; then IndexExit=0 ; else IndexExit=1 ; fi
             fi
             $Latex --interaction batchmode $1
             if [ $? -ne 0 ]; then LatexExit=1 ; fi
@@ -983,8 +1008,28 @@ EOF
 
 <h1>CGAL-${CgalVersion} Manual Test-Suite Results</h1>
 
+<p><b>Program Test-Suite:</b> [<a href="https://www-sop.inria.fr/geometrica/CGAL/Members/testsuite/">All Releases</a>]<br>
+<b>Older Manual Tests: </b>
+EOF
+    declare -i count=1
+    declare -i lastcount=${TestSuiteHistory}
+    if [ -d ${TestSuiteResultPath}/CGAL-${CgalVersion} ]; then
+        count=2
+        lastcount=${lastcount}+1
+    fi
+    while [ $count -lt ${lastcount} ] ; do
+        if [ -r ${TestSuiteResultPath}/History.${count} ]; then
+          subdir=`cat ${TestSuiteResultPath}/History.${count}`
+          echo "    [<a href=\"../${subdir}/index.html\">${subdir#CGAL-}</a>]"\
+                >> testsuite/index.html 
+        fi
+        count=$count+1
+    done
+    cat  >> testsuite/index.html <<EOF
+</p>
+
 <p>This page shows the results of creating the manuals for
-CGAL-${CgalVersion}.  Each Module and each CGAl Package is tested for
+CGAL-${CgalVersion}.  Each Module and each CGAL Package is tested for
 problems with LaTeX, BibTeX, makeindex, and latex_to_html
 conversions. The success of the conversions and the logfiles are
 accessible in the tables below. A 'y' means no blatant errors
@@ -997,21 +1042,19 @@ logfile for a quick overview. </p>
 <p><b>The tools are currently under development, please report all
 problems to Lutz Kettner and Peter Hachenberger.</b></p>
 
-<p>
-Please note:
-
-</p><ul>
+<ul>
    <li> Due to the separate testing of each package, some references in the 
         LaTeX manual may remain unresolved by the individual package 
         tests. Thus undefined references are not reported as 'w' for packages. 
         Please check the log files, for example, the summary log file, for
         undefined references in packages yourself. For Modules, undefined 
-        references are reported as 'w'.</b>
+        references are reported as 'w'.</b><p>
    </li><li> <b>The detection of errors is not (yet) exact.  Please check the
-        log files even when a 'y' appears suggesting that everything is OK.</b>
+        log files even when a 'y' appears suggesting that everything is 
+        OK.</b><p>
+   </li><li> Suggestions for improving the summary are also welcome.<p>
 </li></ul>
 <p></p>
-
 
 <h2>Module Manual Test-Suite for CGAL-${CgalVersion}</h2>
 
@@ -1088,7 +1131,60 @@ EOF
         echo "${ErrorColor}ERROR${ResetColor}: The directory '${TestSuiteResultPath}' for the testsuite results does not exist." 1>&2
         GlobalReturnStatus=1
     else
-        cp -r testsuite/* ${TestSuiteResultPath}
+
+        # When the -testsuite option is used the script will copy all
+        # the manuals and logfiles to
+        # $TestSuiteResultPath/CGAL-$CgalVersion/ and creates an HTML
+        # summary page index.html in that subdirectory. The latest
+        # results is also always accessible at
+        # $TestSuiteResultPath/last/index.html .  
+        #    Futhermore, the script will cleanup old results. For the
+        # most recent number $TestSuiteFullHistory of test suites the
+        # full results including the manuals are kept. Older test
+        # suites will have their manuals deleted to save space. Int
+        # total only $TestSuiteHistory many test suites are kept.  
+        #    The history of test suites is managed in a shift register
+        # like fashion using files in $TestSuiteResultPath of defined
+        # names History.<i> that contain the name of the i-th test
+        # suite subdirectory. The 1st is the most recent test suite
+        # and corresponds to the 'last' directory.
+        #    If the test suite is repeated for the same internal 
+        # release number, the new results will overwrite the old results.
+        pushd ${TestSuiteResultPath} > /dev/null
+        Target=CGAL-${CgalVersion}
+        if [ ! -d ${Target} ]; then
+            # do all the shifting only if test suite is new
+            declare -i count=${TestSuiteHistory}
+            if [ -r History.${count} ]; then
+                subdir=`cat History.${count}`
+                if [ -d $subdir ]; then \rm -fr $subdir ; fi
+                \rm -f History.${count}
+            fi
+            while [ $count -gt 1 ] ; do
+                oldcount=$count
+                count=$count-1
+                if [ -r History.${count} ]; then
+                    subdir=`cat History.${count}`
+                    if [[ ${oldcount} -gt ${TestSuiteFullHistory} && \
+                            -d $subdir ]]; then 
+                        \rm -f $subdir/*.ps.gz ; 
+                        for f in ${subdir}/* ; do
+                            if [ -d $f ]; then \rm -fr $f ; fi 
+                        done
+                        # also eliminate dead links in index.html to doc.
+                        \mv ${subdir}/index.html ${subdir}/bak
+                        \cat ${subdir}/bak | sed 's/\(class=\"manual\">\).*\(<\/td>\)/\1 -- \2/g' > ${subdir}/index.html
+                    fi
+                    \mv History.${count} History.${oldcount}
+                fi
+            done
+            echo -n "${Target}" > History.1
+            \mkdir ${Target}
+            if [ -h LAST ]; then \rm -f LAST ; fi
+            \ln -s ${Target} LAST
+        fi
+        popd  > /dev/null
+        cp -r testsuite/* ${TestSuiteResultPath}/${Target}
         rm -r testsuite
     fi
 }
@@ -1172,12 +1268,14 @@ fi
 
 # Prepare TEXINPUTS and LATEX_CONV_INPUTS
 if [ -r Manual/cgal_manual.sty ]; then # case 1: internal release
-  export TEXINPUTS="Manual:${TEXINPUTS}"
-  export LATEX_CONV_INPUTS=".:Manual:${LATEX_CONV_INPUTS}"
+  export TEXINPUTS=".:Manual:../examples:../demo:${TEXINPUTS}"
+  export LATEX_CONV_INPUTS=".:Manual:../examples:../demo:${LATEX_CONV_INPUTS}"
 elif [ -r ../../Manual/doc_tex/Manual/cgal_manual.sty ]; then # case 2: package
-  export TEXINPUTS="../../Manual/doc_tex/Manual:${TEXINPUTS}"
-  export LATEX_CONV_INPUTS=".:../../Manual/doc_tex/Manual:${LATEX_CONV_INPUTS}"
+  export TEXINPUTS=".:../../Manual/doc_tex/Manual:../examples:../demo:${TEXINPUTS}"
+  export LATEX_CONV_INPUTS=".:../../Manual/doc_tex/Manual:../examples:../demo:${LATEX_CONV_INPUTS}"
 else
+  export TEXINPUTS=".:../examples:../demo:${TEXINPUTS}"
+  export LATEX_CONV_INPUTS=".:../examples:../demo:${LATEX_CONV_INPUTS}"
   # case 3: all others, need to be checked if it is already in searchpath
   echo "${WarnColor}WARNING${ResetColor}: Could not find cgal_manual.sty. I continue assuming it's in TEXINPUTS," 1>&2
   echo "${WarnColor}WARNING${ResetColor}: and in LATEX_CONV_INPUTS." 1>&2
