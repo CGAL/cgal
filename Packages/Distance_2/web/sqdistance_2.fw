@@ -143,7 +143,7 @@ inline RT wmult(Cartesian<RT> *, const RT &a,
 }
 #endif // CGAL_CARTESIAN_H
 
-CGAL_NAMESPACE_END
+CGAL_END_NAMESPACE
 
 #endif // CGAL_WMULT_H
 @}
@@ -2090,7 +2090,7 @@ Saarbruecken@)
 CGAL_BEGIN_NAMESPACE
 
 @<2D squared distance general utilities@>
-CGAL_NAMESPACE_END
+CGAL_END_NAMESPACE
 
 #endif // CGAL_SQUARED_DISTANCE_UTILS_H
 @}
@@ -2111,7 +2111,7 @@ Saarbruecken@)
 
 CGAL_BEGIN_NAMESPACE
 @<2D squared distance header declarations 1@>
-CGAL_NAMESPACE_END
+CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/squared_distance_2_1.C>
@@ -2156,7 +2156,7 @@ Saarbruecken@)
 
 CGAL_BEGIN_NAMESPACE
 @<2D squared distance outline definitions 1@>
-CGAL_NAMESPACE_END
+CGAL_END_NAMESPACE
 @}
 
 @O@<../include/CGAL/squared_distance_2_2.h@>==@{@-
@@ -2176,7 +2176,7 @@ Saarbruecken@)
 CGAL_BEGIN_NAMESPACE
 
 @<2D squared distance header declarations 2@>
-CGAL_NAMESPACE_END
+CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/squared_distance_2_2.C>
@@ -2226,7 +2226,7 @@ Saarbruecken@)
 CGAL_BEGIN_NAMESPACE
 
 @<2D squared distance outline definitions 2@>
-CGAL_NAMESPACE_END
+CGAL_END_NAMESPACE
 @}
 
 

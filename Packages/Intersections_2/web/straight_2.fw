@@ -2,7 +2,7 @@
 
 @$@<2D Straight declaration@>==@{
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 class _Straight_2_base {
 public:
@@ -39,7 +39,7 @@ protected:
     Point_2<R>         _max;
 };
 
-} // close namespace CGAL
+CGAL_END_NAMESPACE
 
 @<2D Straight implementation@>
 
@@ -49,7 +49,7 @@ protected:
 @$@<2D Straight implementation@>==@{
 #include <CGAL/Line_2_Line_2_intersection.h>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 inline
 _Straight_2_base::
@@ -205,11 +205,11 @@ sign_of_cross(Direction_2<R> const &dir1,
 }
 #endif
 
-} // close namespace CGAL
+CGAL_END_NAMESPACE
 
 #include <CGAL/squared_distance_utils.h>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 int
@@ -309,7 +309,7 @@ collinear_order(Point_2<R> const &pt1, Point_2<R> const & pt2) const
     return (diffsign == _dir_sign) ? 1 : -1;
 }
 
-} // close namespace CGAL
+CGAL_END_NAMESPACE
 
 @}
 

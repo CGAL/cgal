@@ -42,7 +42,7 @@ MPI, Saarbruecken@)
 #include <CGAL/number_utils.h>
 #endif // CGAL_NUMBER_UTILS_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 class Bbox_2_Line_2_pair {
@@ -83,11 +83,11 @@ inline bool do_intersect(
     return pair.intersection_type() != pair_t::NO;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @<Bbox_2_Line_2_pair implementation@>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 class Line_2_Bbox_2_pair: public Bbox_2_Line_2_pair<R> {
@@ -108,14 +108,14 @@ inline bool do_intersect(
     return pair.intersection_type() != pair_t::NO;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif
 @}
 
 @$@<Bbox_2_Line_2_pair implementation@>==@{
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Bbox_2_Line_2_pair<R>::Bbox_2_Line_2_pair()
@@ -171,7 +171,7 @@ Bbox_2_Line_2_pair<R>::intersection(
     return true;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @}
 
@@ -270,7 +270,7 @@ Once inline (which the g++ compiler wants because of a bug) and once outline.
 
 @$@<Bbox2_2 cartesian double Line_2 intersection@>==@{
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 Bbox_2_Line_2_pair< Cartesian<double> >::Bbox_2_Line_2_pair(
     Bbox_2 const *bbox, Line_2< Cartesian<double> > const *line)
@@ -280,7 +280,7 @@ Bbox_2_Line_2_pair< Cartesian<double> >::Bbox_2_Line_2_pair(
     _known = false;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @}
 
@@ -329,7 +329,7 @@ Saarbruecken@)
 #include <CGAL/number_utils.h>
 #endif // CGAL_NUMBER_UTILS_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 class Ray_2_Bbox_2_pair {
@@ -372,11 +372,11 @@ inline bool do_intersect(
     return pair.intersection_type() != pair_t::NO;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @<Ray_2_Bbox_2_pair implementation@>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 class Bbox_2_Ray_2_pair: public Ray_2_Bbox_2_pair<R> {
@@ -396,7 +396,7 @@ inline bool do_intersect(
     return pair.intersection_type() != pair_t::NO;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif
 @}
@@ -404,7 +404,7 @@ inline bool do_intersect(
 
 @$@<Ray_2_Bbox_2_pair implementation@>==@{
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Ray_2_Bbox_2_pair<R>::Ray_2_Bbox_2_pair()
@@ -463,7 +463,7 @@ intersection(Point_2< Cartesian<double> > &pt) const
     return true;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @}
 
@@ -552,7 +552,7 @@ intersection(Point_2< Cartesian<double> > &pt) const
 
 @$@<Bbox2_2 cartesian double Ray_2 intersection@>==@{
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 Ray_2_Bbox_2_pair< Cartesian<double> >::
 Ray_2_Bbox_2_pair(
@@ -566,7 +566,7 @@ Ray_2_Bbox_2_pair(
     _min = 0;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @}
 
@@ -594,7 +594,7 @@ Saarbruecken@)
 #include <CGAL/number_utils.h>
 #endif // CGAL_NUMBER_UTILS_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 class Line_2_Line_2_pair {
@@ -625,13 +625,13 @@ protected:
 
 @<do_intersect macro@>@(Line_2@,Line_2@)
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
 #endif // CGAL_OBJECT_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
@@ -653,7 +653,7 @@ intersection(const Line_2<R> &line1, const Line_2<R> &line2)
     }
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @<Line_2_Line_2_pair implementation@>
 
@@ -672,7 +672,7 @@ Note that @{R::FT@} should actually be @{typename R::FT@}.
 
 @$@<Line_2_Line_2_pair implementation@>+=@{
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R, class POINT, class RT>
 bool construct_if_finite(POINT &pt, RT x, RT y, RT w, R &)
@@ -688,7 +688,7 @@ bool construct_if_finite(POINT &pt, RT x, RT y, RT w, R &)
     return true;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @}
 
@@ -698,7 +698,7 @@ specified: @{construct_if_finite<R>(pt, x, y, w);@}.
 
 @$@<temporarily not used@>@Z+=@{
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 bool construct_if_finite(Point_2<R> &pt,
@@ -714,13 +714,13 @@ bool construct_if_finite(Point_2<R> &pt,
     return true;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @}
 
 @$@<Line_2_Line_2_pair implementation@>+=@{@-
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Line_2_Line_2_pair<R>::Line_2_Line_2_pair()
@@ -770,7 +770,7 @@ Line_2_Line_2_pair<R>::intersection(Line_2<R> &l) const
     return true;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @}
 
@@ -852,7 +852,7 @@ Saarbruecken@)
 #include <CGAL/number_utils.h>
 #endif // CGAL_NUMBER_UTILS_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 class Segment_2_Line_2_pair {
@@ -882,13 +882,13 @@ protected:
 
 @<do_intersect macro@>@(Segment_2@,Line_2@)
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
 #endif // CGAL_OBJECT_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
@@ -928,7 +928,7 @@ intersection(const Line_2<R> &line, const Segment_2<R> &seg)
     return intersection(seg, line);
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @<Segment_2_Line_2_pair implementation@>
 
@@ -940,7 +940,7 @@ intersection(const Line_2<R> &line, const Segment_2<R> &seg)
 #include <CGAL/Line_2_Line_2_intersection.h>
 #endif // CGAL_LINE_2_LINE_2_INTERSECTION_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Segment_2_Line_2_pair<R>::Segment_2_Line_2_pair()
@@ -990,7 +990,7 @@ Segment_2_Line_2_pair<R>::intersection(Segment_2<R> &result) const
     return true;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @}
 
@@ -1046,7 +1046,7 @@ Saarbruecken@)
 #include <CGAL/number_utils.h>
 #endif // CGAL_NUMBER_UTILS_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 class Segment_2_Segment_2_pair {
@@ -1075,7 +1075,7 @@ protected:
 
 @<do_intersect macro@>@(Segment_2@,Segment_2@)
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @<Segment_2_Segment_2_pair implementation@>
 
@@ -1083,7 +1083,7 @@ protected:
 #include <CGAL/Object.h>
 #endif // CGAL_OBJECT_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
@@ -1108,7 +1108,7 @@ intersection(const Segment_2<R> &seg1, const Segment_2<R>&seg2)
     }
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif
 @}
@@ -1121,7 +1121,7 @@ intersection(const Segment_2<R> &seg1, const Segment_2<R>&seg2)
 #include <CGAL/Line_2_Line_2_intersection.h>
 #endif // CGAL_LINE_2_LINE_2_INTERSECTION_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Segment_2_Segment_2_pair<R>::Segment_2_Segment_2_pair()
@@ -1171,7 +1171,7 @@ Segment_2_Segment_2_pair<R>::intersection(Segment_2<R> &result) const
     return true;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @}
 
@@ -1310,7 +1310,7 @@ Saarbruecken@)
 #include <CGAL/number_utils.h>
 #endif // CGAL_NUMBER_UTILS_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 class Ray_2_Line_2_pair {
@@ -1340,13 +1340,13 @@ protected:
 
 @<do_intersect macro@>@(Ray_2@,Line_2@)
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
 #endif // CGAL_OBJECT_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
@@ -1387,7 +1387,7 @@ intersection(const Line_2<R> &line, const Ray_2<R> &ray)
     return intersection(ray, line);
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @<Ray_2_Line_2_pair implementation@>
 
@@ -1399,7 +1399,7 @@ intersection(const Line_2<R> &line, const Ray_2<R> &ray)
 #include <CGAL/Line_2_Line_2_intersection.h>
 #endif // CGAL_LINE_2_LINE_2_INTERSECTION_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Ray_2_Line_2_pair<R>::Ray_2_Line_2_pair()
@@ -1449,7 +1449,7 @@ Ray_2_Line_2_pair<R>::intersection(Ray_2<R> &result) const
     return true;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @}
 
@@ -1519,7 +1519,7 @@ Saarbruecken@)
 #include <CGAL/number_utils.h>
 #endif // CGAL_NUMBER_UTILS_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 class Ray_2_Segment_2_pair {
@@ -1549,7 +1549,7 @@ protected:
 
 @<do_intersect macro@>@(Ray_2@,Segment_2@)
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @<Ray_2_Segment_2_pair implementation@>
 
@@ -1557,7 +1557,7 @@ protected:
 #include <CGAL/Object.h>
 #endif // CGAL_OBJECT_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
@@ -1600,7 +1600,7 @@ intersection(const Segment_2<R> &seg, const Ray_2<R> &ray)
     return intersection(ray, seg);
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif
 @}
@@ -1613,7 +1613,7 @@ intersection(const Segment_2<R> &seg, const Ray_2<R> &ray)
 #include <CGAL/Line_2_Line_2_intersection.h>
 #endif // CGAL_LINE_2_LINE_2_INTERSECTION_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Ray_2_Segment_2_pair<R>::Ray_2_Segment_2_pair()
@@ -1663,7 +1663,7 @@ Ray_2_Segment_2_pair<R>::intersection(Segment_2<R> &result) const
     return true;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @}
 
@@ -1785,8 +1785,8 @@ intersection_2_1.fw@,@-
 Geert-Jan Giezeman@,@-
 Saarbruecken@)
 
-#ifndef CGAL_Ray_2_Ray_2_pair_H
-#define CGAL_Ray_2_Ray_2_pair_H
+#ifndef CGAL_RAY_2_RAY_2_INTERSECTION_H
+#define CGAL_RAY_2_RAY_2_INTERSECTION_H
 
 #ifndef CGAL_RAY_2_H
 #include <CGAL/Ray_2.h>
@@ -1804,7 +1804,7 @@ Saarbruecken@)
 #include <CGAL/number_utils.h>
 #endif // CGAL_NUMBER_UTILS_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 class Ray_2_Ray_2_pair {
@@ -1835,7 +1835,7 @@ protected:
 
 @<do_intersect macro@>@(Ray_2@,Ray_2@)
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @<Ray_2_Ray_2_pair implementation@>
 
@@ -1843,7 +1843,7 @@ protected:
 #include <CGAL/Object.h>
 #endif // CGAL_OBJECT_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
@@ -1873,7 +1873,7 @@ intersection(const Ray_2<R> &ray1, const Ray_2<R>&ray2)
     }
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif
 @}
@@ -1887,7 +1887,7 @@ intersection(const Ray_2<R> &ray1, const Ray_2<R>&ray2)
 #include <CGAL/Line_2_Line_2_intersection.h>
 #endif // CGAL_LINE_2_LINE_2_INTERSECTION_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Ray_2_Ray_2_pair<R>::Ray_2_Ray_2_pair()
@@ -1949,7 +1949,7 @@ Ray_2_Ray_2_pair<R>::intersection(Ray_2<R> &result) const
     return true;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 @}
 
@@ -2082,7 +2082,7 @@ Saarbruecken@)
 #include <CGAL/Point_2.h>
 #endif // CGAL_POINT_2_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 inline bool
@@ -2091,13 +2091,13 @@ do_intersect(const Point_2<R> &pt, const Line_2<R> &line)
     return line.has_on(pt);
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
 #endif // CGAL_OBJECT_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
@@ -2128,7 +2128,7 @@ intersection(const Line_2<R> &line, const Point_2<R> &pt)
     return Object();
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif
 @}
@@ -2163,7 +2163,7 @@ Saarbruecken@)
 #include <CGAL/Point_2.h>
 #endif // CGAL_POINT_2_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 
 template <class R>
@@ -2173,13 +2173,13 @@ do_intersect(const Point_2<R> &pt, const Ray_2<R> &ray)
     return ray.has_on(pt);
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
 #endif // CGAL_OBJECT_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
@@ -2210,7 +2210,7 @@ intersection(const Ray_2<R> &ray, const Point_2<R> &pt)
     return Object();
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif
 @}
@@ -2245,7 +2245,7 @@ Saarbruecken@)
 #include <CGAL/Point_2.h>
 #endif // CGAL_POINT_2_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 inline bool
@@ -2254,13 +2254,13 @@ do_intersect(const Point_2<R> &pt, const Segment_2<R> &seg)
     return seg.has_on(pt);
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
 #endif // CGAL_OBJECT_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
@@ -2291,7 +2291,7 @@ intersection(const Segment_2<R> &seg, const Point_2<R> &pt)
     return Object();
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif
 @}
@@ -2313,7 +2313,7 @@ Saarbruecken@)
 #include <CGAL/Point_2.h>
 #endif // CGAL_POINT_2_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 inline bool
@@ -2322,13 +2322,13 @@ do_intersect(const Point_2<R> &pt1, const Point_2<R> &pt2)
     return pt1 == pt2;
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
 #endif // CGAL_OBJECT_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
@@ -2340,7 +2340,7 @@ intersection(const Point_2<R> &pt1, const Point_2<R> &pt2)
     return Object();
 }
 
-} //close namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif
 @}

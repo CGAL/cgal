@@ -1601,11 +1601,11 @@ Saarbruecken@)
 #include <CGAL/Point_3.h>
 #endif // CGAL_POINT_3_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 @<3D squared distance 0 header declarations@>
 
-} // close namespace CGAL
+CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/squared_distance_3_0.C>
@@ -1632,12 +1632,12 @@ Saarbruecken@)
 #include <CGAL/wmult.h>
 #endif // CGAL_WMULT_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 @<3D squared distance general utilities@>
 @<3D squared distance 0 outline definitions@>
 
-} // close namespace CGAL
+CGAL_END_NAMESPACE
 @}
 
 
@@ -1661,11 +1661,11 @@ Saarbruecken@)
 #include <CGAL/Ray_3.h>
 #endif // CGAL_RAY_3_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 @<3D squared distance header declarations@>
 
-} // close namespace CGAL
+CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/squared_distance_3_1.C>
@@ -1698,11 +1698,11 @@ Saarbruecken@)
 #include <CGAL/squared_distance_3_0.h>
 #endif // SQUARED_DISTANCE_3_0_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 @<3D squared distance outline definitions@>
 
-} // close namespace CGAL
+CGAL_END_NAMESPACE
 
 @}
 
@@ -1730,11 +1730,11 @@ Saarbruecken@)
 #include <CGAL/Plane_3.h>
 #endif // CGAL_PLANE_3_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 @<3D squared distance 2 header declarations@>
 
-} // close namespace CGAL
+CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/squared_distance_3_2.C>
@@ -1770,12 +1770,12 @@ Saarbruecken@)
 #include <CGAL/squared_distance_3_0.h>
 #endif // SQUARED_DISTANCE_3_0_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 @<3D squared distance general utilities 2@>
 @<3D squared distance 2 outline definitions@>
 
-} // close namespace CGAL
+CGAL_END_NAMESPACE
 
 @}
 
