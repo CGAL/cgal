@@ -41,10 +41,15 @@ class Triangulation_geom_traits_3 : public Repres
 public:
   typedef Repres Rep;
 
+  typedef typename Rep::Object_3       Object_3;
   typedef typename Rep::Point_3        Point_3;
   typedef typename Rep::Segment_3      Segment_3;
   typedef typename Rep::Triangle_3     Triangle_3;
   typedef typename Rep::Tetrahedron_3  Tetrahedron_3;
+  typedef typename Rep::Ray_3          Ray_3;
+  typedef typename Rep::Line_3         Line_3;
+  typedef typename Rep::Direction_3    Direction_3;
+  typedef typename Rep::Plane_3        Plane_3;
 
   // The next typedef is there for backward compatibility
   // Some users take their point type from the traits class.
