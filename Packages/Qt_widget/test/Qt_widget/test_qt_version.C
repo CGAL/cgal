@@ -3,7 +3,7 @@
 int main(int, char*)
 {
 
-  std::cout << "This platform don't have QT installed.";
+  std::cout << "This platform does not have QT installed.";
   std::cout << std::endl;
   return 0;
 }
