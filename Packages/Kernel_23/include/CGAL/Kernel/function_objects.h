@@ -908,7 +908,9 @@ namespace CommonKernelFunctors {
     operator()(Origin o) const
     { return Point_2(o); }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
+    // Reactivated, as some functors in Cartesian/function_objects.h
+    // need it for constructions
+    //#ifndef CGAL_NO_DEPRECATED_CODE
     Point_2
     operator()(const RT& x, const RT& y) const
     { return Point_2(x, y); }
@@ -916,7 +918,7 @@ namespace CommonKernelFunctors {
     Point_2
     operator()(const RT& x, const RT& y, const RT& w) const
     { return Point_2(x, y, w); }
-#endif // CGAL_NO_DEPRECATED_CODE
+    //#endif // CGAL_NO_DEPRECATED_CODE
   };
 
   template <typename K>
@@ -936,7 +938,10 @@ namespace CommonKernelFunctors {
     operator()(Origin o) const
     { return Point_3(o); }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
+
+    // Reactivated, as some functors in Cartesian/function_objects.h
+    // need it for constructions
+    //#ifndef CGAL_NO_DEPRECATED_CODE
     Point_3
     operator()(const RT& x, const RT& y, const RT& z) const
     { return Point_3(x, y, z); }
@@ -944,7 +949,7 @@ namespace CommonKernelFunctors {
     Point_3
     operator()(const RT& x, const RT& y, const RT& z, const RT& w) const
     { return Point_3(x, y, z, w); }
-#endif // CGAL_NO_DEPRECATED_CODE
+    //#endif // CGAL_NO_DEPRECATED_CODE
   };
 
   template <typename K>
