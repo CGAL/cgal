@@ -79,7 +79,7 @@ public:
     : Triangulation(gt) { }
 
   Constrained_triangulation_plus_2(const Self& ctp)
-    { copy(ctp);}
+    : Triangulation()    { copy(ctp);}
 
   virtual ~Constrained_triangulation_plus_2() {}
 

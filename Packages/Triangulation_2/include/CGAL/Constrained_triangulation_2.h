@@ -518,9 +518,9 @@ intersect(Face_handle f, int i,
 template <class Gt, class Tds, class Itag >
 typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle 
 Constrained_triangulation_2<Gt,Tds,Itag>::
-intersect(Face_handle f, int i, 
-	  Vertex_handle vaa,
-	  Vertex_handle vbb,
+intersect(Face_handle , int , 
+	  Vertex_handle ,
+	  Vertex_handle ,
 	  No_intersection_tag)
 {
   std::cerr << " sorry, this triangulation does not deal with" 
@@ -1020,12 +1020,12 @@ operator<<(std::ostream& os,
 //Helping functions to compute intersections of constrained edges
 template<class Gt>
 bool
-intersection(Gt gt,
-	     const typename Gt::Point_2& pa, 
-	     const typename Gt::Point_2& pb, 
-	     const typename Gt::Point_2& pc, 
-	     const typename Gt::Point_2& pd,
-	     typename Gt::Point_2& pi,
+intersection(Gt ,
+	     const typename Gt::Point_2& , 
+	     const typename Gt::Point_2& , 
+	     const typename Gt::Point_2& , 
+	     const typename Gt::Point_2& ,
+	     typename Gt::Point_2& ,
 	     No_intersection_tag)
 {
   return false;
@@ -1078,11 +1078,11 @@ compute_intersection(Gt gt,
 
 template<class Gt>
 int
-limit_intersection(Gt gt,
-		   const typename Gt::Point_2& pa, 
-		   const typename Gt::Point_2& pb, 
-		   const typename Gt::Point_2& pc, 
-		   const typename Gt::Point_2& pd,
+limit_intersection(Gt ,
+		   const typename Gt::Point_2& , 
+		   const typename Gt::Point_2& , 
+		   const typename Gt::Point_2& , 
+		   const typename Gt::Point_2& ,
 		   No_intersection_tag)
 {
   return 0;
@@ -1090,11 +1090,11 @@ limit_intersection(Gt gt,
 
 template<class Gt>
 int
-limit_intersection(Gt gt,
-		   const typename Gt::Point_2& pa, 
-		   const typename Gt::Point_2& pb, 
-		   const typename Gt::Point_2& pc, 
-		   const typename Gt::Point_2& pd,
+limit_intersection(Gt ,
+		   const typename Gt::Point_2& , 
+		   const typename Gt::Point_2& , 
+		   const typename Gt::Point_2& , 
+		   const typename Gt::Point_2& ,
 		   Exact_intersections_tag)
 {
   return 0;
