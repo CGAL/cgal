@@ -193,7 +193,7 @@ public:
   // -- conform criteria --
 public:
   struct Is_locally_conforming_Gabriel
-  {
+  {   
     bool operator()(const Conform& ct,
 		    const Face_handle& fh,
 		    const int i) const
@@ -204,16 +204,16 @@ public:
 	
 	const Point& a = fh->vertex(ct.cw(i))->point();
 	const Point& b = fh->vertex(ct.ccw(i))->point();
-	const Point& c = fh->vertex(i)->point();
-	const Point& d = fh->mirror_vertex(i)->point();
-	
-	return( angle(a, c, b) != OBTUSE &&
-		angle(a, d, b) != OBTUSE );
+	Vertex_handle vi = fh->vertex(i);
+	Vertex_handle mvi = fh->mirror_vertex(i);
+
+	return( ( ct.is_infinite(vi) || angle(a, vi->point(), b) != OBTUSE) &&
+		( ct.is_infinite(mvi) || angle(a, mvi->point(), b) != OBTUSE ));
       }
     bool operator()(const Conform& ct,
 		    const Face_handle& fh,
 		    const int i,
-		    const Point& p) const
+		    const Point& p) const	
       {
 	typedef typename Geom_traits::Angle_2 Angle_2;
 	
@@ -844,7 +844,7 @@ update_edges_to_be_conformed(Vertex_handle va,
 
   do {
     for(int i = 0; i<3; i++) {
-      if( fc->is_constrained(i) && !is_infinite(fc,cw(i)) &&
+       if( fc->is_constrained(i) && !is_infinite(fc,cw(i)) &&
 	  !is_infinite(fc,ccw(i)) &&
 	  !is_locally_conform(*this, fc, i) )
 	{
@@ -855,7 +855,6 @@ update_edges_to_be_conformed(Vertex_handle va,
     }
     ++fc;
   } while(fc != fcbegin);
-
   Face_handle fh;
   int index;
   is_edge(va, vm, fh, index);
@@ -897,21 +896,19 @@ refine_edge(Vertex_handle va, Vertex_handle vb,
 
   if( get_cluster(va,vb,c,true) )
     if( get_cluster(vb,va,c2,true) )
-      { // both ends are clusters
+      { 
 	vm = insert_middle(f,i);
 	update_cluster(c,va,vb,vm,false);
 	update_cluster(c2,vb,va,vm,false);
       }
-    else
-      // va only is a cluster
+    else {
       vm = cut_cluster_edge(va,vb,c);
-  else
-    if( get_cluster(vb,va,c,true) )
-      // vb only is a cluster
+  }else
+    if( get_cluster(vb,va,c,true) ){
       vm = cut_cluster_edge(vb,va,c);
-    else
-      // no cluster
+    }else{
       vm = insert_middle(f,i);
+    }
   update_edges_to_be_conformed(va, vb, vm, is_loc_conf);
 }
 

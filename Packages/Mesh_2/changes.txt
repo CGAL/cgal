@@ -1,3 +1,8 @@
+
+version 0.9.4 (2003/10/9) [af]
+--------------------------
+o Bug fix in Is_locally_conforming_Gabriel
+
 version 0.9.4
 --------------------------
 o All names have changed.
