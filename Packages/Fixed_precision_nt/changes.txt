@@ -1,8 +1,10 @@
 Versions
 
-2.19 (18 June 2001)
+2.20 (18 June 2001)
 - Simplify the example and demo program.
 - Test for LEDA in the demo program.
+
+2.19 ???
 
 2.18 (25 February 2001)
 - Fix for Intel platforms.
