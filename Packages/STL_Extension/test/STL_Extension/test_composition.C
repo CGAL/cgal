@@ -13,8 +13,15 @@ using std::bind1st;
 using std::accumulate;
 using std::plus;
 using std::multiplies;
+using std::divides;
 using std::transform;
 using std::equal;
+
+struct Myf {
+  typedef double result_type;
+  result_type operator()(int a, int b, int c, int d, int e) const
+  { return a + (b * c - d) * e; }
+};
 
 int main()
 {
