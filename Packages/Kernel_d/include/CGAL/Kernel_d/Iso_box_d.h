@@ -273,7 +273,7 @@ namespace CGAL {
     typedef typename Kernel::Point_d  Point_d;
     typedef typename Kernel::Rep_tag  Rep_tag;
    
-    typedef typename Kernel_d::Coordinate_iterator<Rep_tag>           CIRT;
+    typedef CGAL::Kernel_d::Coordinate_iterator<Rep_tag>           CIRT;
 #ifndef CGAL_CFG_NESTED_CLASS_TEMPLATE_BUG
     typedef typename CIRT::template Iterator<Point_d,Min<RT> >::type  MinIter;
     typedef typename CIRT::template Iterator<Point_d,Max<RT> >::type  MaxIter;
