@@ -47,7 +47,7 @@ public :
     typedef Delaunay_remove_tds_vertex_3_2<I, Vb2>          Other;
   };
 
-  void set_info(const I &i) { _info = i; }
+  void set_info(const I &info) { _info = info; }
 
   const I & info() const { return _info; }
 };

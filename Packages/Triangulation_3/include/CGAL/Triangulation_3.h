@@ -763,6 +763,8 @@ private:
   friend class Conflict_tester_outside_convex_hull_3;
   friend class Conflict_tester_outside_convex_hull_2;
   friend class Infinite_tester;
+  friend class Finite_vertices_iterator;
+  friend class Finite_cells_iterator;
 
 public:
 
