@@ -6,9 +6,9 @@
 { Refines the constrained Delaunay triangulation \ccc{t} into a
   conforming Gabriel triangulation. After a call to this function, all
   constrained edges of \ccc{t} have the \emph{Gabriel property}: the
-  circle that have $e$ as diameter does not contain any points from
+  circle that has $e$ as diameter does not contain any points from
   the triangulation.  
-  \ccPrecond The template parameter \ccc{CDT} should be a model of the
+  \ccRequire The template parameter \ccc{CDT} should be a model of the
   concept \ccc{ConstrainedDelaunayTriangulation_2}. The geometric
   traits class plugged into the constrained Delaunay triangulation must be a
   model of \ccc{ConformingDelaunayTriangulationTraits_2}.} 

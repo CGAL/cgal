@@ -1,6 +1,8 @@
 18 October 2004 Laurent Rineau
 - Conforming_Delaunay_triangulation_maker_2 renamed to 
   Triangulation_conformer_2.
+- Update of the documentation. Thanks to Michel Hoffman for his review of 
+  the specifications
 
 17 October 2004 Laurent Rineau
 - Attempt to fix remaining bug: the list of faces modified by the insertion

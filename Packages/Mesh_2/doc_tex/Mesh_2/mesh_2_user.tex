@@ -5,10 +5,10 @@
 
 \minitoc
 
-This package implements Shewchuk's algorithm to construct conforming
-triangulations and 2D meshes.  Conforming triangulations will be
-described in the Section~\ref{sec:Mesh_2_conforming_triangulation} and
-meshes in the Section~\ref{sec:Mesh_2_meshes}.
+This package implements Shewchuk's algorithm \cite{s-mgdsa-00} to construct
+conforming triangulations and 2D meshes. Conforming triangulations will be
+described in Section~\ref{sec:Mesh_2_conforming_triangulation} and
+meshes in Section~\ref{sec:Mesh_2_meshes}.
 
 \section{Conforming Triangulations}
 \label{sec:Mesh_2_conforming_triangulation}
@@ -16,13 +16,19 @@ meshes in the Section~\ref{sec:Mesh_2_meshes}.
 \subsection{Definitions}
 \label{sec:Mesh_2_conforming_definitions}
 
-A triangulation is a \emph{Delaunay triangulation} is the circumscribing
+\textbf{Ins\'erer ici une d\'efinition des triangulation d'un ensemble de
+  \textit{data points}~? Et \textit{constrained}~?}
+
+A triangulation is a \emph{Delaunay triangulation} if the circumscribing
 circle of any facet of the triangulation contains no data point in its
-interior.
+interior. A \emph{constrained} Delaunay triangulation is a constrained
+triangulation which is a much Delaunay as possible. The circumscribing
+circle of any facet of a constrained Delaunay triangulation contains in its
+interior no data point \emph{visible} from the facet.
 
 An edge is said to be a \emph{Delaunay edge} if it is inscribed in an empty
 circle (containing no data point in its interior). It is said to be a
-\emph{Gabriel edge} if its diametral circle is empty.
+\emph{Gabriel edge} if its diametrical circle is empty.
 
 A constrained Delaunay triangulation is said to be a \emph{conforming
   Delaunay triangulation} if every constrained edge is a Delaunay edge.
@@ -34,7 +40,7 @@ edges are marked as constrained edges.
 A constrained Delaunay triangulation is said to be a \emph{conforming
   Gabriel triangulation} if every constrained edge is a Gabriel edge. The
 Gabriel property is stronger than the Delaunay property and each Gabriel
-edge is a Delaunay edge. Thus conforming Gabriel triangulations are
+edge is a Delaunay edge. Thus conforming Gabriel triangulations are also
 conforming Delaunay triangulations.
 
 Any constrained Delaunay triangulation can be refined into a
@@ -67,10 +73,15 @@ conforming Gabriel triangulation by adding vertices, that is, the
 triangulation is modified. In order to keep the original
 triangulation, the user has to make a copy of it.
 
-The advanced user can also use the class
-\ccc{Triangulation_conformer_2<CDT>} to refine a
-constrained Delaunay triangulation into a conforming Delaunay or a
-conforming Gabriel triangulation.
+The algorithm used by \ccc{make_conforming_Delaunay_2} and
+\ccc{make_conforming_Gabriel_2} build internal data that would be
+computed twice if the two functions are called consecutively on the same
+triangulation. In order to avoid these data to be constructed twice, the
+advanced user can use the class \ccc{Triangulation_conformer_2<CDT>} to
+refine a constrained Delaunay triangulation into a conforming Delaunay
+triangulation and then into a conforming Gabriel triangulation. That class
+provides also step by step functions. Those functions insert one point at a
+time.
 
 \subsection{Example: Making a Triangulation Conforming Delaunay and Then
   Conforming Gabriel}
@@ -99,12 +110,12 @@ The domain is the region that the user wants to mesh. It has to be
   a bounded region of the plane. The domain is defined by a \emph{planar
   straight line graph}, {\sc Pslg} for short, which is a set of segments
   such that two segments in the set are either disjoint or share an
-  endpoint. The segments of the \sc{Pslg} are constraints that will be
-  represented by a union of edges in the mesh. The \sc{Pslg} can also
+  endpoint. The segments of the {\sc Pslg} are constraints that will be
+  represented by a union of edges in the mesh. The {\sc Pslg} can also
   contain isolated points that will appear as vertices of the mesh.
 
-The segments of the \sc{Pslg} are either segments of the
-boundary or internals constraints. The segments of the \sc{Pslg} have to
+The segments of the {\sc Pslg} are either segments of the
+boundary or internals constraints. The segments of the {\sc Pslg} have to
 cover the boundary of the domain.
 
 The {\sc Pslg} divides the plane into several connected components. By
@@ -139,47 +150,48 @@ parameter of the meshing functions.
 
 \subsection{The Meshing Algorithm}
 
-The input to a meshing problem is a {\sc Pslg}, a set of seeds
-describing the domain to be meshed and a set of size and shape
+The input to a meshing problem is a {\sc Pslg} and a set of seeds
+describing the domain to be meshed, and a set of size and shape
 criteria.  The algorithm implemented in this package starts with a
 constrained Delaunay triangulation of the input {\sc Pslg} and produces a
-mesh using the Delaunay refinement method.
+mesh using the Delaunay refinement method. That method inserts points into
+the triangulation, as far as possible from other points, and stops when the
+criteria are satisfied.
 
 If all angles between incident segments of the input {\sc Pslg}
-are greater than $60$~degrees, and if the bound on the
-circumradius/edge ratio is greater than $\sqrt{2}$
+are greater than $60$~degrees and if the bound on the
+circumradius/edge ratio is greater than $\sqrt{2}$,
 the algorithm is guaranteed to end up with a mesh
 satisfying the size and shape criteria.
 
 If some input angles are smaller than $60$~degrees, the algorithm will
 end up with a mesh in which some triangles near small input angles
-violate the criteria.  This is unavoidable sinc small angles formed
+violate the criteria.  This is unavoidable since small angles formed
 by input segments cannot be suppressed. Furthermore, it has been
 proven (\cite{s-mgdsa-00}), that some domains with small input angles
 cannot be meshed with angles even smaller than the small input angles.
 Note that if the domain is a polygonal region, the resulting mesh will
 satisfy size and shape criteria except for the small input angles.
-Note also that, though it is not guaranteed, the algorithm may succeed
-in producing meshes with a lower angle bound greater than
-$20.7$~degrees.
+In addition, the algorithm may succeed in producing meshes with a lower
+angle bound greater than $20.7$~degrees, but there is no such guarantee.
 
 \subsection{Building Meshes}
 \label{sec:Mesh_2_building_meshes}
 
-In this package, meshes are obtained from
+Meshes are obtained from
 constrained Delaunay triangulations by calling the global function \\
 \ccc{template<class CDT> void refine_Delaunay_mesh_2 (CDT &t, typename
   CDT::Geom_traits gt)}. \\
 They can also be obtained by using the class \ccc{Delaunay_mesher_2<CDT>}.
 In both cases, the template parameter \ccc{CDT} must be instantiated by a
-constrained Delaunay triangulation class, model of the concept
+constrained Delaunay triangulation class that is a model of the concept
 \ccc{ConstrainedDelaunayTriangulation_2}.
 
-The geometric traits class of the instance of \ccc{CDT} has to be a
+The geometric traits class of \ccc{CDT} has to be a
 model of the concept \ccc{DelaunayMeshTraits_2}.  This concept
 refines the concept \ccc{ConformingDelaunayTriangulationTraits_2}
 adding the geometric criteria that the triangles have to satisfy.
-\cgal\ provides models for this concept such as:
+\cgal\ provides several models for this concept such as:
 \begin{itemize}
 \item \ccc{Delaunay_mesh_traits_2<K>}, that defines a shape criterion
   that bounds the minimum angle of triangles, 
@@ -188,16 +200,16 @@ adding the geometric criteria that the triangles have to satisfy.
 \end{itemize}
 
 Any object of type \ccc{Delaunay_mesher_2<CDT>} is constructed from a
-reference to a \ccc{CDT} and and has several member functions to define the
-domain that have to be meshed and mesh the \ccc{CDT}. See examples and the
-reference manual for details. Note that the \ccc{CDT} should not be
+reference to a \ccc{CDT} and it has several member functions to define the
+domain to be meshed and to mesh the \ccc{CDT}. See the example given below
+and the reference manual for details. Note that the \ccc{CDT} should not be
 externally modified during the life the the \ccc{Delaunay_mesher_2<CDT>}
 object.
 
 \subsection{Example Using the Global Function}
 
-The following example inserts several segments in a constrained
-triangulation, then mesh it using the global function
+The following example inserts several segments into a constrained
+triangulation and then meshes it using the global function
 \ccc{refine_Delaunay_mesh_2}. The size and shape criteria are the defaults
 provided by the traits class \ccc{Delaunay_mesh_traits_2<K>}. No seeds are
 given, meaning that the mesh domain covers the whole plane except for the
@@ -209,10 +221,10 @@ unbounded component.
 
 This example uses the class \ccc{Delaunay_mesher_2<CDT>} and calls
   the \ccc{refine_mesh()} member function twice changing the size and
-  shape criteria inbetween. In such a case, using twice the global
+  shape criteria in between. In such a case, using twice the global
   function \ccc{refine_Delaunay_mesh_2} would be less efficient,
   because some internal structures needed by the algorithm would be
-  calculated twice.
+  built twice.
 
 \ccIncludeExampleCode{Mesh_2/mesh_class.C}
 

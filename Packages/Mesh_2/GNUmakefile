@@ -21,6 +21,9 @@ run: all
 doc: 
 	${MAKE} -C doc_tex
 
+ps:
+	${MAKE} -C doc_tex ps
+
 doxygen:
 	doxygen
 
@@ -45,4 +48,4 @@ update:
 
 # make diff: diff between the cvs repository and the working copy
 diff:
-	@cvs -q diff | less
+	@cvs -q -u diff | less

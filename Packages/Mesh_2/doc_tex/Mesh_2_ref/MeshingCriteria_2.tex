@@ -2,9 +2,10 @@
 
 \ccDefinition
 
-The concept \ccRefName\ defines the meshing criteria. It provides a type
-\ccc{Quality} that represents a measure of quality of a triangle, and a
-predicate \ccc{Is_bad}.  \ccc{Is_bad} defines mesh criteria on triangles
+The concept \ccRefName\ defines the meshing criteria to be used in the
+algorithm. It provides a type
+\ccc{Quality} that represents quality measure for triangles, and a
+predicate \ccc{Is_bad}.  This predicate defines mesh criteria on triangles
 and computes the quality of the triangle passed as an argument. The type
 \ccc{Quality} must be \emph{less-than comparable} as the meshing algorithm
 will order bad triangles by quality, to split those with smallest quality

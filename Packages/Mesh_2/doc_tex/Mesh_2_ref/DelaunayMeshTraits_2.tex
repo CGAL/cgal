@@ -13,9 +13,9 @@ object \ccc{Construct_circumcenter_2}.
 \ccTypes
 
 \ccNestedType{Construct_circumcenter_2} {Constructor object. Must provide
-  the operator \ccc{Point_2 operator()(Point_2p, 
-                                       Point_2q, 
-                                       Point_2);}
+  an operator \ccc{Point_2 operator()(Point_2 p, 
+                                      Point_2 q, 
+                                      Point_2 r);}
   that computes the center of the circle passing through the points $p$,
   $q$ and $r$.
   \ccPrecond $p$, $q$ and $r$ are not collinear.}
@@ -24,6 +24,7 @@ object \ccc{Construct_circumcenter_2}.
 
 \ccHeading{Access to predicate and constructor objects}
 
+\ccThree{Construct_circumcenter_2xx}{construct_circumcenter_2_object();}{}
 \ccMethod{Construct_circumcenter_2 construct_circumcenter_2_object();}{}
 
 \ccHasModels

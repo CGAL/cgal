@@ -3,9 +3,9 @@
 \ccDefinition
 
 The concept \ccRefName\ refines the concept
-\ccc{ConstrainedDelaunayTriangulationTraits_2}, providing a numeric
+\ccc{ConstrainedDelaunayTriangulationTraits_2} by providing a numeric
 field type \ccc{FT}, a type \ccc{Vector_2} and several constructors on
-\ccc{Vector_2} and \ccc{Point_2}, and a predicate on angles.
+\ccc{Vector_2}, \ccc{Point_2}, and a predicate on angles.
 The field type has to be a model of
 the concept \ccc{SqrtFieldNumberType}. This field type and the
 constructors are used by the conforming algorithm to compute Steiner
@@ -17,8 +17,8 @@ points on constrained edges.
 
 \ccTypes
 
-\ccNestedType{FT}{The field type. It must be a model of the
-  \ccc{SqrtFieldNumberType}, meaning it must be a number type
+\ccNestedType{FT}{The field type. It must be a model of
+  \ccc{SqrtFieldNumberType}, that is must be a number type
   supporting the operations $+$, $-$, $*$, $/$, and $\sqrt{\cdot}$.}
 \ccNestedType{Vector_2}{The vector type.}
 \ccNestedType{Construct_vector_2}{Constructor object. Must
@@ -61,7 +61,7 @@ points on constrained edges.
 \ccMethod{Angle_2 angle_2_object();}{}
 
 \ccHasModels
-Any model of the \ccc{Kernel} concept. In particular, all CGAL kernels.
+Any model of \ccc{Kernel} concept. In particular, all CGAL kernels.
 
 \end{ccRefConcept}
 
