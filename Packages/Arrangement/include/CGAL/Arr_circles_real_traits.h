@@ -525,8 +525,9 @@ public:
 
       // bug fix, Shai, 12 Feb. 2001
       // x-monotone curves did not respect the original orintation
-      Curve::Circle circ(cv.circle().center(), cv.circle().squared_radius(),
-			 cv.circle().orientation());
+      typename Curve::Circle circ(cv.circle().center(), 
+				  cv.circle().squared_radius(),
+				  cv.circle().orientation());
 
       Curve top_arc(circ, src, trg);
       l.push_back(top_arc);
@@ -615,7 +616,9 @@ public:
 
       // If we switched the orientation, we have to switch back
       if ( switch_orientation ) {
-	for (list<Curve>::iterator lit = l.begin(); lit != l.end(); lit++) {
+	for (typename list<Curve>::iterator lit = l.begin(); 
+	     lit != l.end(); 
+	     lit++) {
  	  *lit = curve_flip(*lit);
 	}
       } 
@@ -628,8 +631,8 @@ public:
     CGAL_postcondition_code(
 			    if ( switch_orientation ) l.reverse();
 			    Orientation cv_or = cv.circle().orientation();
-			    list<Curve>::iterator lit;
-			    list<Curve>::iterator next_it; );
+			    typename list<Curve>::iterator lit;
+			    typename list<Curve>::iterator next_it; );
     // Check consistency of end points
     CGAL_postcondition( l.begin()->source() == cv.source() );
     CGAL_postcondition_code( lit = l.end(); lit--; );
