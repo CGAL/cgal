@@ -177,6 +177,20 @@ void SNC_SM_overlayer<Map>::simplify()
       delete_face_only(f);
     }
   }
+
+  TRACEN(" ");
+  TRACEN("resulting vertex ");
+    
+  CGAL_forall_svertices(vn, *this)
+    TRACEN("|" << vn->point() << "|" << vn->mark());
+  TRACEN(" ");
+  
+  CGAL_forall_shalfedges(en,*this)
+    TRACEN("|" << en->circle() <<
+	   "|" << en->mark() << 
+	   " " << en->incident_sface()->mark());
+  TRACEN("---------------------");
+
 }
 
 CGAL_END_NAMESPACE
