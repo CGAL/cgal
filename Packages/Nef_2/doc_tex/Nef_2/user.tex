@@ -107,7 +107,7 @@ object (vertex, edge, face) has a Boolean value associated with it to
 indicate set inclusion or exclusion.
 
 The plane map is defined by the interface data type
-\ccc{Nef_polyhedron_2<T>::Const_decorator}. Embedding the vertices by
+\ccc{Nef_polyhedron_2<T>::Topological_explorer}. Embedding the vertices by
 standard affine points does not suffice to model the unboundedness of
 halfspaces and ray-like structures. Therefore the planar subdivision
 is bounded symbolically by an axis-parallel square box of infimaximal
@@ -133,7 +133,7 @@ depending on the character of their source and target vertices.
 
 During exploration, box objects can be tracked down by the interface
 of \ccc{Nef_polyhedron_2<T>::Explorer} that is derived from
-\ccc{Nef_polyhedron_2<T>::Const_decorator} and adds just the box
+\ccc{Nef_polyhedron_2<T>::Topological_explorer} and adds just the box
 exploration functionality to the interface of the latter. In the
 following code fragment we iterate over all vertices of a Nef
 polhedron and check whether their embedding is an affine point or a
