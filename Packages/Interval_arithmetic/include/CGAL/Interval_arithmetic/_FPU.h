@@ -30,6 +30,24 @@
 // a helper class which is a nice way to protect blocks of code needing a
 // particular rounding mode.
 
+#ifdef __linux__
+#include <fpu_control.h>
+#elif defined __SUNPRO_CC || (defined __KCC && defined __sun)
+#include <ieeefp.h>
+#elif defined __osf || defined __osf__ || defined __BORLANDC__
+#include <float.h>
+#elif defined __sgi
+    // The 3 C functions do not work on IRIX 6.5 !!!!!
+    // So we use precompiled (by gcc) binaries linked into libCGAL.
+    // See revision 2.23 for the old code.
+extern "C" {
+  void CGAL_workaround_IRIX_set_FPU_cw (int);
+  int  CGAL_workaround_IRIX_get_FPU_cw (void);
+}
+#endif
+
+CGAL_BEGIN_NAMESPACE
+
 // Some useful constants
 #define CGAL_IA_MIN_DOUBLE (5e-324) // subnormal
 #define CGAL_IA_MAX_DOUBLE (1.7976931348623157081e+308)
@@ -41,7 +59,7 @@
 #else
 inline double IA_force_to_double(const double x)
 { volatile double e = x; return e; }
-#define CGAL_IA_STOP_COMPILER_OPT(x) IA_force_to_double(x)
+#define CGAL_IA_STOP_COMPILER_OPT(x) CGAL::IA_force_to_double(x)
 #endif
 
 // The x86 processor keeps too wide exponents (15bits) in registers, even in
@@ -71,24 +89,6 @@ inline double IA_force_to_double(const double x)
 #else
 #define CGAL_IA_STOP_CPROP(x) (x)
 #endif
-
-#ifdef __linux__
-#include <fpu_control.h>
-#elif defined __SUNPRO_CC || (defined __KCC && defined __sun)
-#include <ieeefp.h>
-#elif defined __osf || defined __osf__ || defined __BORLANDC__
-#include <float.h>
-#elif defined __sgi
-    // The 3 C functions do not work on IRIX 6.5 !!!!!
-    // So we use precompiled (by gcc) binaries linked into libCGAL.
-    // See revision 2.23 for the old code.
-extern "C" {
-  void CGAL_workaround_IRIX_set_FPU_cw (int);
-  int  CGAL_workaround_IRIX_get_FPU_cw (void);
-}
-#endif
-
-CGAL_BEGIN_NAMESPACE
 
 #ifdef __STD_IEC_559__
 // This is a version for the ISO C9X standard, which aims at portability.
