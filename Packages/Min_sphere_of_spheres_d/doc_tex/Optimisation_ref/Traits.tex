@@ -17,10 +17,15 @@
 \ccDefinition
 
 A model of concept \ccc{MinSphereOfSpheresTraits} must provide the
-following predicates and operations.
+following constants, types, predicates and operations.
 
 \ccHasModels
-\ccc{CGAL::Min_sphere_of_spheres_d_traits_d<K,FT,UseSqrt,Algorithm>}
+%\ccc{CGAL::Min_sphere_of_spheres_d_traits_d<K,FT,UseSqrt,Algorithm>}
+
+\ccConstants 
+
+\ccNestedType{D}{specifies the dimension of the spheres you want to
+  compute the minsphere of.}
 
 \ccTypes
 
@@ -28,9 +33,9 @@ following predicates and operations.
 (The package will compute the minsphere of spheres of type
 \ccc{Sphere}.)}
 
-\ccNestedType{FT}{is a (exact or inexact) field number type.  \ccRequire
-Currently, \ccc{FT} must either be \ccc{double} or an exact field number
-type.}
+\ccNestedType{FT}{is a (exact or inexact) field number type.
+  \ccRequire Currently, \ccc{FT} must either be \ccc{double} or
+  \ccc{float}, or an exact field number type.}
 
 \ccNestedType{Coordinate_iterator}{non-mutable model of the STL
 concept \ccc{BidirectionalIterator} with value type \ccc{FT}. Used
@@ -78,14 +83,9 @@ Sphere& s);}{ returns the radius of sphere \ccc{s}.
 \ccPostcond The returned number is
  greater or equal to~$0$.}
 
-\ccMemberFunction{ Coordinate_iterator center_coordinates_begin(const
-  Sphere& s);}{ returns an iterator referring to the first Cartesian
-  coordinate of the center of \ccc{s}.}
-
-\ccMemberFunction{ Coordinate_iterator center_coordinates_end(const
-Sphere& s);}{ returns the corresponding past-the-end iterator.}
-
-\ccMemberFunction{ int dimension(const Sphere& s);}{ returns the dimension of \ccc{s}.}
+\ccMemberFunction{ Coordinate_iterator begin(const Sphere& s);}{
+  returns an iterator referring to the first of the \ccc{D} Cartesian
+  coordinates of the center of \ccc{s}.}
 
 \end{ccRefConcept}
 

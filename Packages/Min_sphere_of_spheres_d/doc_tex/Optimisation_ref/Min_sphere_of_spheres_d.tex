@@ -2,13 +2,6 @@
 % The CGAL Reference Manual
 % Chapter: Geometric Optimisation
 % Section: Smallest Enclosing Sphere
-% -----------------------------------------------------------------------------
-% file  : doc_tex/basic/Optimisation/Optimisation_ref/Min_sphere_d.tex
-% author: Bernd Gärtner (gaertner@inf.ethz.ch)
-% -----------------------------------------------------------------------------
-% $Revision$
-% $Date$
-% $CGAL_Package: Min_sphere_d WIP $
 % =============================================================================
 
 \begin{ccRefClass}{Min_sphere_of_spheres_d<Traits>}
@@ -42,27 +35,31 @@ not unique.
 The algorithm computes the center and the radius of $ms(S)$, and finds
 a support set $R$ (which remains fixed until the next insert or clear
 operation).  We also provide a specialization of the algorithm for the
-case when the center coordinates and radii of the input balls are
+case when the center coordinates and radii of the input spheres are
 floating-point numbers.  This specialized algorithm uses
 floating-point arithmetic only, is very fast and especially tuned for
 stability and robustness.  Still, it's output may be incorrect in some
 (rare) cases; termination is guaranteed.
-%
-% We provide two versions of the algorithm, one computing
-% the exact minsphere (using exact arithmetic) and one which finds the
-% minsphere using floating-point arithmetic.  While the output of the
-% former algorithm is always correct, the latter algorithm may produce
-% incorrect results due to rounding errors.
+
+When default constructed, an instance of type
+\ccc{Min_sphere_of_spheres_d<Traits>} represents the set
+$S=\emptyset$, together with its minsphere $ms(S)=\emptyset$.  You can
+add spheres to the set $S$ by calling \ccc{insert()}.  Once you have
+``checked in'' all your spheres, you call \ccc{update()} to actually
+compute the minsphere.  The instance is called \emph{up-to-date} iff
+the minsphere of the inserted spheres $S$ has been computed (e.g.\ if
+\ccc{update()} has been called after an \ccc{insert()}).
 
 In general, the radius and the Euclidean center coordinates of $ms(S)$
 need not be rational.  Consequently, the algorithm computing the exact
 minsphere will have to deal with algebraic numbers.  Fortunately, both
-the radius and the coordinates of the minsphere are (in the worst case)
-numbers of the form $a_i+b_i\sqrt{t}$, where $a_i,b_i,t\in \Q$ and
-where $t\ge 0$ is the same for all coordinates and the radius.  Thus,
-the exact minsphere can be described by the number~$t$, which is called
-the ball's \emph{discriminant}, and by $d+1$ pairs $(a_i,b_i)\in\Q^2$
-(one for the radius and $d$ for the center coordinates).
+the radius and the coordinates of the minsphere are (in the worst
+case) numbers of the form $a_i+b_i\sqrt{t}$, where $a_i,b_i,t\in \Q$
+and where $t\ge 0$ is the same for all coordinates and the radius.
+Thus, the exact minsphere can be described by the number~$t$, which is
+called the sphere's \emph{discriminant}, and by $d+1$ pairs
+$(a_i,b_i)\in\Q^2$ (one for the radius and $d$ for the center
+coordinates).
 
 \ccInclude{CGAL/Min_sphere_of_spheres_d.h}
 
@@ -70,28 +67,25 @@ the ball's \emph{discriminant}, and by $d+1$ pairs $(a_i,b_i)\in\Q^2$
 \ccIndexRequirements
 
 The class \ccRefName\ expects a model of the concept
-\ccc{MinSphereOfSpheresTraits} as its template argument.  We provide
-the model \ccc{Min_sphere_of_spheres_d_traits_d} in order to make it
-easy to work with $d$-dimensional spheres of type
-\ccc{CGAL::Weighted_point<Pt,Wt>}.
+\ccc{MinSphereOfSpheresTraits} as its template argument.
+
+% We provide the model \ccc{Min_sphere_of_spheres_d_traits_d} in
+% order to facilitate working with $d$-dimensional spheres of type
+% \ccc{CGAL::Weighted_point<Pt,Wt>}, where \ccc{Pt} is \ccc{Point_d}.
 % the models \ccc{MinSphereOfSpheres_d_traits_2},
 % \ccc{MinSphereOfSpheres_d_traits_3} and
 % \ccc{MinSphereOfSpheres_d_traits_d} for two-, three-, and
 % $d$-dimensional spheres respectively.
 
-\ccTypes
-\ccIndexClassTypes
+\ccTypes \ccIndexClassTypes
 
-% kf.
-%\ccSetTwoColumns{Min_sphere_d<Traits>:: Support_point_iterator}{}
+\ccNestedType{Sphere}{is a typedef to \ccc{Traits::Sphere}.}
 
-\ccNestedType{Sphere}{is a typedef to to \ccc{Traits::Sphere}.}
-
-\ccNestedType{FT}{is a typedef to to \ccc{Traits::FT}.}
+\ccNestedType{FT}{is a typedef to \ccc{Traits::FT}.}
 
 \ccNestedType{Result}{is the type of the radius and of the center
   coordinates of the computed minsphere: When \ccc{FT} is an inexact
-  number type (like \ccc{double}, for instance), then \ccc{Result} is
+  number type (\ccc{double}, for instance), then \ccc{Result} is
   simply \ccc{FT}.  However, when \ccc{FT} is an exact number type,
   then \ccc{Result} is a typedef to to a derived class of class
   \ccc{std::pair<FT,FT>}.}
@@ -105,11 +99,11 @@ minsphere.  (Normally, \ccc{Algorithm} coincides with
 \ccc{Traits::Algorithm} should not be supported anymore in a future
 release, then \ccc{Algorithm} will have another type.)}
 
-\ccNestedType{Support_sphere_iterator}{non-mutable model of the STL
+\ccNestedType{Support_iterator}{non-mutable model of the STL
 concept \ccc{BidirectionalIterator} with value type \ccc{Sphere}. Used
 to access the support spheres defining the smallest enclosing sphere.}
 
-\ccNestedType{Center_coordinate_iterator}{non-mutable model of the STL
+\ccNestedType{Coordinate_iterator}{non-mutable model of the STL
 concept \ccc{BidirectionalIterator} with value type \ccc{Result}. Used
 to access the center coordinates of the minsphere.}
 
@@ -118,11 +112,11 @@ to access the center coordinates of the minsphere.}
 \ccCreationVariable{minsphere}
 
 \ccConstructor{ Min_sphere_of_spheres_d(const Traits& traits = Traits());}%
-%
 {creates a variable of type \ccRefName\ and initializes it to
-$ms(\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}})$.  If the traits
-parameter is not supplied, the class \ccc{Traits} must provide a
-default constructor.}
+  $ms(\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}})$.  If the traits
+  parameter is not supplied, the class \ccc{Traits} must provide a
+  default constructor.
+  \ccPostcond \ccVar\ is up-to-date.}
 
 \ccUnchecked
 \ccConstructor{ template < typename InputIterator >
@@ -130,103 +124,63 @@ default constructor.}
                                    InputIterator  last,
                                    const Traits&  traits = Traits());}
 %
-{creates a variable \ccVar\ of type \ccRefName.  It is initialized to
-$ms(S)$ with $S$ being the set of spheres in the range
-[\ccc{first},\ccc{last}).
+{creates a variable \ccVar\ of type \ccRefName\ and inserts (cf.\
+\ccc{insert()}) the spheres from the range [\ccc{first},\ccc{last}).
+Notice that you have to call
+\ccc{update()} in order to compute $ms(S)$; \ccVar\ is not up-to-date
+after this call.
 %
 \ccRequire The value type of \ccc{first} and \ccc{last} is
 \ccc{Sphere}. If the traits parameter is not supplied, the class
-\ccc{Traits} must provide a default constructor.
-%
-\ccPrecond All spheres have the same dimension.}
+\ccc{Traits} must provide a default constructor.  Futhermore, the
+spheres in the given range must not change during the lifetime of
+variable \ccVar.  (The algorithm uses pointers to the inserted spheres
+internally in order to save space and time, and consequently, the
+referenced spheres must not change.)}
 
 \ccAccessFunctions
 \begin{ccIndexMemberFunctions}
 \ccIndexMemberFunctionGroup{access}
 
-%\ccIndexSubitem[t]{support set}{\ccFont Min_sphere_of_spheres_d}
-%\ccMemberFunction{ int  number_of_spheres( ) const;}{
-%returns the number of spheres of \ccVar, i.e.\ $|S|$.}
+\ccMemberFunction{ Support_iterator  support_begin() const;}{
+returns an iterator referring to the first support sphere of \ccVar.
+\ccPrecond \ccVar\ is up-to-date.}
 %
-%\ccMemberFunction{ int  number_of_support_spheres( ) const;}{
-%returns the number of support spheres of \ccVar, i.e.\ $|R|$.}
-%
-%\ccMemberFunction{ Point_iterator  points_begin() const;}{
-%returns an iterator referring to the first point of \ccVar.}
-%%
-%\ccMemberFunction{ Point_iterator  points_end() const;}{
-%returns the corresponding past-the-end iterator.}
-%
+\ccMemberFunction{ Support_iterator  support_end() const;}{
+returns the corresponding past-the-end iterator.
+\ccPrecond \ccVar\ is up-to-date.}
 
-\ccMemberFunction{ Support_sphere_iterator  support_spheres_begin() const;}{
-returns an iterator referring to the first support sphere of \ccVar.}
-%
-\ccMemberFunction{ Support_sphere_iterator  support_spheres_end() const;}{
-returns the corresponding past-the-end iterator.}
-
-\ccMemberFunction{ int ambient_dimension() const;}{ returns the
-ambient dimension of the spheres in $S$, i.e.\ the number $d$. If
-\ccVar\ is empty, the ambient dimension is $-1$.}
-
-\ccMemberFunction{ int dimension() const;}{ returns the dimension of
-the minsphere, i.e.\ the number $d-1$. If \ccVar\ is empty,  $-1$ is returned.}
 
 \ccMemberFunction{ const FT& discriminant( ) const;}{ returns the
 discriminant of \ccVar.  This number is only useful if \ccc{FT} is an
 exact number type.  In this case, the center coordinates and the
 radius of the minsphere are numbers of the form $a+b\sqrt{t}$, where
-$t$ is the discriminant of the minsphere.  \ccPrecond \ccVar\ is not
-empty.}
+$t$ is the discriminant of the minsphere.  \ccPrecond \ccVar\ is 
+ up-to-date and not empty.}
+
 
 \ccMemberFunction{Result radius( ) const;}{ returns the radius of
-\ccVar.  If \ccc{FT} is an exact number type then the radius of the
-minsphere is the real number $a+b\sqrt{t}$ where $t$ is the minsphere's
-discriminant, $a$ is the first and $b$ the second component of the
-pair returned by \ccc{radius()}.  \ccPrecond \ccVar\ is not empty.}
+  \ccVar.  If \ccc{FT} is an exact number type then the radius of the
+  minsphere is the real number $a+b\sqrt{t}$ where $t$ is the
+  minsphere's discriminant, $a$ is the first and $b$ the second
+  component of the pair returned by \ccc{radius()}.  \ccPrecond
+  \ccVar\ is up-to-date and not empty.}
 
-\ccMemberFunction{Center_coordinate_iterator center_begin( ) const;}{
-returns a const-iterator to the first center coordinate of \ccVar.
-The iterator returns objects of type \ccc{Result}.  If \ccc{FT} is
-an exact number type, then a center coordinate consists of a pair
-$(a,b)$ describing the real number $a+b\sqrt{t}$, where $t$ is the
-minsphere's discriminant.  \ccPrecond \ccVar\ is not empty.}
-
-\ccMemberFunction{Center_coordinate_iterator center_end( ) const;}{
-returns the corresponding past-the-end iterator.}
+\ccMemberFunction{Coordinate_iterator center_begin( ) const;}{ returns
+  a const-iterator to the first center coordinate of \ccVar.  The
+  iterator returns objects of type \ccc{Result}.  If \ccc{FT} is an
+  exact number type, then a center coordinate consists of a pair
+  $(a,b)$ describing the real number $a+b\sqrt{t}$, where $t$ is the
+  minsphere's discriminant.  \ccPrecond \ccVar\ is up-to-date and not
+  empty.}
 
 % -----------------------------------------------------------------------------
 \ccPredicates
 \ccIndexMemberFunctionGroup{predicates}
 
-%By definition, an empty \ccRefName\ has no boundary and no
-%bounded side, i.e.\ its unbounded side equals the whole space $\E_d$.
-
-%\ccMemberFunction{ Bounded_side
-%                   bounded_side( const Sphere& p) const;}{
-%        returns \ccc{CGAL::ON_BOUNDED_SIDE}, \ccc{CGAL::ON_BOUNDARY}, or
-%        \ccc{CGAL::ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly inside,
-%        on the boundary, or properly outside of \ccVar, resp.
-%        \ccPrecond if \ccVar\ is not empty, the dimension of $p$
-%        equals \ccc{ambient_dimension()}.}
-%
-%\ccMemberFunction{ bool  has_on_bounded_side( const Sphere& p) const;}{
-%        returns \ccc{true}, iff \ccc{p} lies properly inside \ccVar.
-%        \ccPrecond if \ccVar\ is not empty, the dimension of $p$
-%        equals \ccc{ambient_dimension()}.}
-%
-%\ccMemberFunction{ bool  has_on_boundary( const Sphere& p) const;}{
-%        returns \ccc{true}, iff \ccc{p} lies on the boundary
-%        of \ccVar.
-%        \ccPrecond if \ccVar\ is not empty, the dimension of $p$
-%        equals \ccc{ambient_dimension()}.}
-%
-%\ccMemberFunction{ bool  has_on_unbounded_side( const Sphere& p) const;}{
-%        returns \ccc{true}, iff \ccc{p} lies properly outside of \ccVar.
-%        \ccPrecond if \ccVar\ is not empty, the dimension of $p$
-%        equals \ccc{ambient_dimension()}.}
-
-\ccMemberFunction{ bool  is_empty( ) const;}{
-        returns \ccc{true}, iff \ccVar\ is empty.}
+\ccMemberFunction{ bool is_empty( ) const;}{ returns \ccc{true}, iff
+  \ccVar\ is empty, i.e.\ iff $ms(S)=\emptyset$.  \ccPrecond \ccVar\ 
+  is up-to-date.}
 
 %\ccIndexSubitem[t]{degeneracies}{\ccFont Min_sphere_d}
 %\ccMemberFunction{ bool  is_degenerate( ) const;}{
@@ -239,35 +193,40 @@ returns the corresponding past-the-end iterator.}
 \ccIndexMemberFunctionGroup{modifiers}
 
 \ccMemberFunction{ void clear ();}{
-        resets \ccVar\ to $ms(\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}})$.}
+        resets \ccVar\ to $ms(\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}})$, with $S:= \emptyset$.
+\ccPostcond \ccVar\ is up-to-date.}
 
-\ccUnchecked
-\ccMemberFunction{ template < class InputIterator >
-                   void set( InputIterator first,
-                             InputIterator last );}{
-        sets \ccVar\ to the $ms(S)$, where $S$ is the set of spheres
-        in the range [\ccc{first},\ccc{last}).
-        \ccRequire The value type of \ccc{first} and \ccc{last} is
-        \ccc{Sphere}.
-        \ccPrecond All spheres have the same dimension.}
+\ccUnchecked \ccMemberFunction{ template < class InputIterator > void
+  set( InputIterator first, InputIterator last );}{ sets \ccVar\ to
+  the $ms(S)$, where $S$ is the set of spheres in the range
+  [\ccc{first},\ccc{last}) and calls \ccc{update()} internally.
+  \ccRequire The value type of \ccc{first} and \ccc{last} is
+  \ccc{Sphere}.  Futhermore, the spheres in the given range must not
+  change during the lifetime of variable \ccVar.  (The algorithm uses
+  pointers to the inserted spheres internally in order to save space and
+  time, and consequently, the referenced spheres must not change.)
+\ccPostcond \ccVar\ is up-to-date.  }
 
-\ccMemberFunction{ void  insert( const Sphere& s );}{
-        inserts the sphere \ccc{s}
-        into \ccVar\ and recomputes the smallest enclosing sphere.
-        \ccPrecond If
-        \ccVar\ is not empty, the dimension of \ccc{s} must be equal to
-        \ccc{ambient_dimension()}.}
+\ccMemberFunction{ void insert( const Sphere& s );}{ inserts the
+  sphere \ccc{s} into the set $S$ of instance \ccVar.  Notice that
+  \ccVar\ is not up-to-date after this call, so you will have to call
+  \ccc{update()} to actually compute $ms(S)$.  \ccPrecond The sphere
+  $s$ must not change during the lifetime of variable \ccVar.  (The
+  algorithm uses pointers to the inserted spheres internally in order to
+  save space and time, and consequently, the referenced spheres must
+  not change.)}
 
-\ccMemberFunction{ template < class InputIterator >
-                   void  insert( InputIterator  first,
-                                 InputIterator  last );}{
-        inserts the spheres in the range [\ccc{first},\ccc{last})
-        into \ccVar\ and recomputes the smallest enclosing sphere.
-        \ccRequire  The value type of \ccc{first} and \ccc{last} is
-      \ccc{Sphere}.
-        \ccPrecond All spheres have the same dimension. If
-        \ccVar\ is not empty, this dimension must be equal to
-        \ccc{ambient_dimension()}.}
+
+\ccMemberFunction{ template < class InputIterator > void insert(
+  InputIterator first, InputIterator last );}{ inserts the spheres in
+  the range [\ccc{first},\ccc{last}) into the set $S$ of instance
+  \ccVar.  Notice that \ccVar\ is not up-to-date after this call, so
+  you will have to call \ccc{update()} to actually compute $ms(S)$.
+  \ccRequire The value type of \ccc{first} and \ccc{last} is
+  \ccc{Sphere}.  Futhermore, the spheres in the given range must not
+  change during the lifetime of variable \ccVar.  (The algorithm uses
+  pointers to the inserted spheres internally in order to save space and
+  time, and consequently, the referenced spheres must not change.)}
 
 
 % -----------------------------------------------------------------------------
@@ -281,16 +240,10 @@ An object \ccVar\ is valid, iff
 \item $R$ is minimal, i.e., no support sphere is redundant.
 \end{itemize}
 
-\emph{Note:} The validation check must only be performed under exact
-arithmetic (i.e., when \ccc{FT} is an exact number type).
-
-\ccMemberFunction{ bool is_valid( bool verbose = false,
-                                  int  level   = 0    ) const;}{
-returns \ccc{true}, iff \ccVar\ is valid. If \ccc{verbose}
-is \ccc{true}, some messages concerning the performed checks
-are written to the standard error stream. The second parameter
-\ccc{level} is not used, we provide it only for consistency
-with interfaces of other classes.}
+%\ccMemberFunction{ bool is_valid( bool verbose = false,
+%                                  int  level   = 0    ) const;}{
+\ccMemberFunction{ bool is_valid() const;}{
+returns \ccc{true}, iff \ccVar\ is valid.}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Miscellaneous}
@@ -339,28 +292,30 @@ with interfaces of other classes.}
 \ccIndexSubitem[t]{incremental algorithm}{\ccFont Min_sphere_of_spheres_d}
 %\ccIndexSubitem[t]{farthest-first heuristic}{\ccFont Min_sphere_of_spheres_d}
 
-We implement two algorithms, the LP-algorithm~\cite{msw-sblp-92} and a
-heuristic.  As described in the documentation of concept
-\ccc{MinSphereOfSpheresTraits}, each has its advantages and
+We implement two algorithms, the LP-algorithm and a
+heuristic~\cite{msw-sblp-92}.  As described in the documentation of
+concept \ccc{MinSphereOfSpheresTraits}, each has its advantages and
 disadvantages: Our implementation of the LP-algorithm has maximal
 expected running time $O(2^d n)$, while the heuristic comes without
 any complexity guarantee.  In particular, the LP-algorithm runs in
 linear time for fixed dimension~$d$. (These running times hold for the
-arithmetic model, so they count the overall number of operations on
+arithmetic model, so they count the number of operations on
 the number type \ccc{FT}.)
 
 On the other hand, the LP-algorithm is, for inexact number types
 \ccc{FT}, much worse at handling degeneracies and should therefore not
-be used for approximate computation.  (For exact number types
+be used in such a case.  (For exact number types
 \ccc{FT}, both methods handle all kinds of degeneracies.)
 
 Currently, we require \ccc{Traits::FT} to be either an exact number
-type or \ccc{double}; other inexact number types are not supported at
-this time.  Also, the current implementation only handles spheres with
-Cartesian coordinates; homogenous representation is not supported yet.
+type or \ccc{double} or \ccc{float}; other inexact number types are
+not supported at this time.  Also, the current implementation only
+handles spheres with Cartesian coordinates; homogenous representation
+is not supported yet.
 
 \ccExample
-\ccIncludeVerbatim{Optimisation_ref/min_sphere_of_spheres_d_example.C}
+\ccIncludeVerbatim{../../examples/Min_sphere_of_spheres_d/%
+min_sphere_of_spheres_d_example_d.C}
 
 \end{ccRefClass}
 
