@@ -959,6 +959,7 @@ private:
     }
 
 public:
+    // returns true if all facets are quadrilaterals
     bool is_pure_quad() const { 
         return is_pure_quad( Supports_facet_halfedge());
     }
