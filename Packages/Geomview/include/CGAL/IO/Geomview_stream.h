@@ -184,9 +184,9 @@ private:
     void setup_geomview(const char *machine, const char *login);
     void frame(const Bbox_3 &bbox);
     void pickplane(const Bbox_3 &bbox);
-    char* nth(char* s, int count) const;
-    void parse_point(const char* pickpoint,
-		     double &x, double &y, double &z, double &w) const;
+    static char* nth(char* s, int count);
+    static void parse_point(const char* pickpoint,
+		     double &x, double &y, double &z, double &w);
 
     Bbox_3 bb;
     Color vertex_color, edge_color, face_color;
@@ -499,10 +499,10 @@ operator>>(Geomview_stream &gv, Point_3<R> &point)
     char sexpr[1024];
     gv >> sexpr;  // this reads a gcl expression
 
-    const char* pickpoint = gv.nth(sexpr, 3);
+    const char* pickpoint = Geomview_stream::nth(sexpr, 3);
     // this gives something as: (0.0607123 0.0607125 4.76837e-07 0.529628)
     double x, y, z, w;
-    gv.parse_point(pickpoint, x, y, z, w);
+    Geomview_stream::parse_point(pickpoint, x, y, z, w);
     point = Point_3<R>(x, y, z, w);
 
     // we echo the input

@@ -463,7 +463,7 @@ Geomview_stream::operator>>(char *expr)
 // It's either a word terminated by ' ' or ')', or a well parenthesed
 // expression, or a quoted "string".
 char*
-Geomview_stream::nth(char* s, int count) const
+Geomview_stream::nth(char* s, int count)
 {
     s++; // skip first character (always a parenthesis)
  
@@ -501,7 +501,7 @@ Geomview_stream::nth(char* s, int count) const
 
 void
 Geomview_stream::parse_point(const char* pickpoint,
-		     double &x, double &y, double &z, double &w) const
+		     double &x, double &y, double &z, double &w)
 {
     // std::stringstream ss;
     std::strstream ss;
