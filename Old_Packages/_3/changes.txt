@@ -1,3 +1,6 @@
+3.25 (24 September 2001)
+- Bboxes don't use ref counting anymore.
+
 3.24 (12 September 2001)
 - Fixes for SunPro.
 

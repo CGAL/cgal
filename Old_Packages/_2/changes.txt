@@ -1,3 +1,6 @@
+3.21 (24 September 2001)
+- Bboxes don't use ref counting anymore.
+
 3.20 (15 August 2001)
 - Remove CGAL_SCOPE to please SunPro.  Hopefully we don't break anything else.
 
