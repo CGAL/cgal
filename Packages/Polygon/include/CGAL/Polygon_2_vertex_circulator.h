@@ -112,7 +112,7 @@ public:
         --*this;
         return tmp;
     }
-#ifndef _MSC_VER
+#ifndef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
     Self& operator+=( difference_type n);
 #else
     Self& operator+=( difference_type n) {
@@ -164,7 +164,7 @@ operator+( typename Polygon_circulator<Ctnr>::
     return tmp += n;
 }
 
-#ifndef _MSC_VER
+#ifndef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
 template <class Ctnr>
 Polygon_circulator<Ctnr>&
 Polygon_circulator<Ctnr>::
@@ -181,7 +181,7 @@ operator+=( typename Ctnr::difference_type n) {
     i = const_cast<Container*>(ctnr)->begin() + j;
     return *this;
 }
-#endif // _MSC_VER
+#endif // CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
 
 
 }  // end of namespace CGAL
