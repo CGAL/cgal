@@ -271,7 +271,7 @@ _test_interpolation_functions_2_delaunay( const Triangul &,
   }
 
   //INTERPOLATION OF RANDOM POINTS:
-  Coord_type exact_value, res, norm;
+  Coord_type norm;
   Point_coordinate_vector coords;
   for(int j=n;j<n+m;j++){
     CGAL::Triple<
