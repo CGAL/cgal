@@ -49,43 +49,19 @@ sub write_select()
 EOF
   print OUTPUTV '<form><table><tr><td><h2>Test-suite results for CGAL version</h2></td><td><select name="sel" onchange="top.results.location.href=this.form.sel.options[this.form.sel.selectedIndex].value">';
 
-  my (@version_nr_vector, @version_name_vector);
-  my ($i, $j);
-  my $temp;
-  $i = 0;
-  $j = 0;
-  foreach $_ (glob("results-*.*-I-*\.html")) {
-    $temp = $_;
-    $temp =~ /results-(.)\.(.)-I-(.+)\.html/;
-    $version_nr_vector[$i] = ${3};
-    $version_name_vector[$i] = $temp;
-    $i++;
-  }
-
-  #@sorted = sort {$a <= $b} (@version_nr_vector);
-  #here we sort the array version_nr_vector, making the 
-  #corresponding array version_name_vector look the same
-
-  my $l_index;
-  $l_index = $#version_nr_vector; 
-  for ( my $i = 0; $i<($l_index + 1); $i++){
-    for ( my $j = 0; $j<$l_index; $j++){
-	if ( $version_nr_vector[$j] <= $version_nr_vector[$j+1]){
-	    $temp = $version_nr_vector[$j+1];
-	    $version_nr_vector[$j+1] = $version_nr_vector[$j];
-	    $version_nr_vector[$j] = $temp;
-	    $temp = $version_name_vector[$j+1];
-	    $version_name_vector[$j+1] = $version_name_vector[$j];
-	    $version_name_vector[$j] = $temp;
-	}
-    }
-  }
-
-  for ($i = 0; $i<($#version_nr_vector + 1); $i++){
-    print OUTPUTV '<option value="', $version_name_vector[$i], '">';
-    $temp = $version_name_vector[$i];
-    $temp =~ /results-(.*?)\.html\s*/;
-    print OUTPUTV ${1}, "</option>";
+  foreach $_ (sort { $a =~ /results-([^I]*)(|-I-(.*))\.html/;
+                     my ($maj_a, $min_a) = ($1, $2 ? $3 : "9999");
+		     # public releases are given minor 9999.
+		     $b =~ /results-([^I]*)(|-I-(.*))\.html/;
+                     my ($maj_b, $min_b) = ($1, $2 ? $3 : "9999");
+		     # We sort major numbers alphabetically,
+		     # and minors numerically.
+		     return ($maj_a eq $maj_b) ? ($min_b <=> $min_a)
+		                               : ($maj_b cmp $maj_a);
+                   } (glob("results-*.html"))) {
+     print OUTPUTV '<option value="', $_, '">';
+     ($filename) = m/results-(.*?)\.html\s*/;
+     print OUTPUTV $filename, "</option>";
   }
   print OUTPUTV "</select></td></tr></table></form>";
   print OUTPUTV "</body></html>";
