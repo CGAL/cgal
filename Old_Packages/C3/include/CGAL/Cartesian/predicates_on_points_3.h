@@ -60,24 +60,6 @@ z_equal(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
 }
 
 template < class R >
-Comparison_result
-compare_dominance(const PointC3<R CGAL_CTAG> &p,
-                  const PointC3<R CGAL_CTAG> &q)
-{
-  return compare_dominanceC3(p.x(),p.y(),p.z(),
-                             q.x(),q.y(),q.z());
-}
-
-template < class R >
-Comparison_result
-compare_submittance(const PointC3<R CGAL_CTAG> &p,
-                    const PointC3<R CGAL_CTAG> &q)
-{
-  return compare_submittanceC3(p.x(),p.y(),p.z(),
-                               q.x(),q.y(),q.z());
-}
-
-template < class R >
 inline
 Comparison_result
 compare_x(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
@@ -99,6 +81,24 @@ Comparison_result
 compare_z(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
 {
  return CGAL::compare(p.z(), q.z());
+}
+
+template < class R >
+Comparison_result
+compare_dominance(const PointC3<R CGAL_CTAG> &p,
+                  const PointC3<R CGAL_CTAG> &q)
+{
+  return compare_dominanceC3(p.x(),p.y(),p.z(),
+                             q.x(),q.y(),q.z());
+}
+
+template < class R >
+Comparison_result
+compare_submittance(const PointC3<R CGAL_CTAG> &p,
+                    const PointC3<R CGAL_CTAG> &q)
+{
+  return compare_submittanceC3(p.x(),p.y(),p.z(),
+                               q.x(),q.y(),q.z());
 }
 
 template < class R >

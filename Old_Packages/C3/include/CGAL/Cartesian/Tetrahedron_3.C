@@ -88,8 +88,8 @@ operator==(const TetrahedronC3<R CGAL_CTAG> &t) const
 
   std::vector< Point_3 > V1;
   std::vector< Point_3 > V2;
-  std::vector< Point_3 >::iterator uniq_end1;
-  std::vector< Point_3 >::iterator uniq_end2;
+  typename std::vector< Point_3 >::iterator uniq_end1;
+  typename std::vector< Point_3 >::iterator uniq_end2;
   int k;
   for ( k=0; k < 4; k++) V1.push_back( vertex(k));
   for ( k=0; k < 4; k++) V2.push_back( t.vertex(k));
