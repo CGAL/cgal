@@ -98,7 +98,7 @@ int main(int argc, char** argv)
       else
 	{
 	  std::ofstream output(argv[arg_count+1]);
-	  write_poly(t, output);
+	  CGAL::write_poly(t, output);
 	}
 
       if(terminal_output)
