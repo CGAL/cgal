@@ -49,8 +49,8 @@
 #ifndef CGAL_ARR_TEST_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
-//#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
-#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
+#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
+//#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
 #endif
 
 // Making sure test doesn't fail if LEDA is not installed
@@ -78,12 +78,12 @@ int main(int argc, char* argv[])
 #include <CGAL/Arr_leda_segment_exact_traits.h>
 #elif CGAL_ARR_TEST_TRAITS==CGAL_POLYLINE_TRAITS
 #include <CGAL/Arr_polyline_traits.h>
-#include <CGAL/IO/Arr_polyline_traits_iostream.h>
+//#include <CGAL/IO/Arr_polyline_traits_iostream.h>
 #elif CGAL_ARR_TEST_TRAITS==CGAL_POLYLINE_LEDA_TRAITS
 #error Currently not supported (July 2000)
 #include <CGAL/leda_rational.h>
 #include <CGAL/Arr_leda_polyline_traits.h>
-#include <CGAL/IO/Arr_leda_polyline_traits_iostream.h>
+//#include <CGAL/IO/Arr_leda_polyline_traits_iostream.h>
 #else
   #error No traits defined for test
 #endif
@@ -151,6 +151,49 @@ typedef CGAL::Arr_2_default_dcel<Traits>     Dcel;
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node > Arr_2;
 typedef Arr_2::Planar_map                           Planar_map;
  
+// Defining IO operators for polyline curves.
+#if (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS)
+
+
+CGAL_BEGIN_NAMESPACE
+
+std::ostream&  operator<<(std::ostream& os,  
+			  const Curve& cv)
+{
+  typedef Curve::const_iterator       Points_iterator;
+  
+  os<<cv.size()<<std::endl;
+  for (Points_iterator points_iter = cv.begin(); 
+       points_iter != cv.end(); points_iter++)
+    os<<" "<<*points_iter;
+
+  return os;
+}
+
+
+std::istream&  operator>>(std::istream& in,  
+			  Curve& cv)
+{
+  typedef Curve::value_type           Point;
+
+  std::size_t  size;
+
+  in >> size;
+
+  for (unsigned int i = 0; i < size; i++){
+    Point  p;
+    
+    in >> p;
+    
+    cv.push_back(p);  
+  }
+  
+  return in;
+}
+
+CGAL_END_NAMESPACE
+#endif
+
 // we use the namespace std for compatability with MSVC
 typedef std::list<Point>                     Point_list;
 
@@ -436,7 +479,7 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
   #error No curve read function defined
 #endif
 
-  void compare_files(std::ifstream& file1, std::fstream& file2)
+  void compare_files(std::ifstream& file1, std::ifstream& file2)
   {
     const int STR_LEN = 80;
     
@@ -464,25 +507,22 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
   {
       NT    x,y; 
       Curve curr_curve;
-      std::fstream  arr_file("arr.txt" , std::ios::in | std::ios::out);
- 
-      //                             _IO_OUTPUT + 
-      //                     _IO_INPUT + 
-      //                     _IO_ATEND);
+      std::ofstream  arr_file("arr.txt" , /*std::ios::in |*/ std::ios::out);
       
       arr_file.clear();
-      // 1. read polylines and build arrangement
-      
+
+      //read arrangement
       input_file >> arr;
       arr_file << arr;
       
-      std::cout<<arr;
+      //std::cout<<arr;
       //input_file.close();
       //arr_file.close();
       //arr_file.open("temp", _IO_INPUT);
       //arr_file.flush();
       
-      compare_files(input_file, arr_file);
+      std::ifstream  arr_input_file("arr.txt", std::ios::in);
+      compare_files(input_file, arr_input_file);
       
       // 2. read test vertices
       int num_test_points, exp_type;
