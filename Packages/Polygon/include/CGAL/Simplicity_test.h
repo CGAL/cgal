@@ -11,7 +11,7 @@
 // release       : 
 // release_date  :
 //
-// file          : include/CGAL/Polygon_2_algorithms.C
+// file          : include/CGAL/Simplicity_test.h
 // source        :
 // author(s)     : Wieger Wesselink <wieger@cs.uu.nl>
 //
