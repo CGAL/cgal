@@ -1,3 +1,8 @@
+
+5 Mars 2004 Mariette Yvinec
+- added predicates and constructions for weighted points in
+   Regular_triangulation_euclidean_traits_3.h + testsuite
+
 29 Feb 2004 Sylvain Pion
 - locate() cleanups, performance impact unnoticeable.
 
