@@ -13,15 +13,23 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           $(TESTSUITE_CXXFLAGS) \
+           $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
-           -g
+           $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
+LIBPATH = \
+          $(TESTSUITE_LIBPATH) \
+          $(CGAL_WINDOW_LIBPATH)
+
 LDFLAGS = \
+          $(TESTSUITE_LDFLAGS) \
           $(CGAL_WINDOW_LDFLAGS)
+
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -31,22 +39,20 @@ all:            \
                 demo_Min_circle_2 \
                 demo_Min_ellipse_2 
 
-demo_Min_circle_2: demo_Min_circle_2.o
-	$(CGAL_CXX) -o demo_Min_circle_2 demo_Min_circle_2.o $(LDFLAGS)
+demo_Min_circle_2$(EXE_EXT): demo_Min_circle_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_Min_circle_2 demo_Min_circle_2$(OBJ_EXT) $(LDFLAGS)
 
-demo_Min_ellipse_2: demo_Min_ellipse_2.o
-	$(CGAL_CXX) -o demo_Min_ellipse_2 demo_Min_ellipse_2.o $(LDFLAGS)
+demo_Min_ellipse_2$(EXE_EXT): demo_Min_ellipse_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_Min_ellipse_2 demo_Min_ellipse_2$(OBJ_EXT) $(LDFLAGS)
 
 clean:
-	/bin/rm -f *.o \
-                   demo_Min_circle_2 \
-                   demo_Min_ellipse_2 \
-                   core
+                   demo_Min_circle_2.clean \
+                   demo_Min_ellipse_2.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
