@@ -50,15 +50,6 @@ test_triangulation_tds: test_triangulation_tds.o
 test_triangulation_2: test_triangulation_2.o
 	$(CGAL_CXX) -o test_triangulation_2 test_triangulation_2.o $(LDFLAGS)
 
-test_terrain : test_terrain.o
-	$(CGAL_CXX) -o test_terrain  test_terrain.o $(LDFLAGS)
-
-terr_trian : terr_trian.o
-	$(CGAL_CXX) -o terr_trian  terr_trian.o $(LDFLAGS)
-
-essai : essai.o
-	$(CGAL_CXX) -o essai  essai.o $(LDFLAGS)
-
 test_delaunay_triangulation_2: test_delaunay_triangulation_2.o
 	$(CGAL_CXX) -o test_delaunay_triangulation_2 test_delaunay_triangulation_2.o $(LDFLAGS)
 
@@ -66,10 +57,11 @@ test_constrained_triangulation_2: test_constrained_triangulation_2.o
 	$(CGAL_CXX) -o test_constrained_triangulation_2 test_constrained_triangulation_2.o $(LDFLAGS)
 
 clean:
-	- rm -f *.o test_triangulation_geom_traits test_triangulation_2 \
-	            test_triangulation_tds test_delaunay_triangulation_2 core \
-	            T??.triangulation  file_tds? \
-		    test_constrained_triangulation_2 test_regular_triangulation_2
+	- rm -f *.o  *.obj *.exe \
+	test_triangulation_geom_traits test_triangulation_2 \
+	test_triangulation_tds test_delaunay_triangulation_2 core \
+	T??.triangulation  file_tds? \
+	test_constrained_triangulation_2 test_regular_triangulation_2
 
 realclean: clean
 	- rm -f Program* Error* Compiler* error*
