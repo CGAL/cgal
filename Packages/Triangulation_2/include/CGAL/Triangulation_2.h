@@ -118,9 +118,14 @@ public:
   typedef Triangulation_line_face_circulator_2<Gt,Tds>  Line_face_circulator;
 
   // Auxiliary iterators for convenience
+  // do not use default template argument to please VC++
   typedef Project_point<Vertex>                           Proj_point;
-  typedef Iterator_project<Vertex_iterator, Proj_point,
-	                    const Point&, const Point*>     Point_iterator;
+  typedef Iterator_project<Vertex_iterator, 
+                           Proj_point,
+	                   const Point&, 
+                           const Point*,
+                           std::ptrdiff_t,
+                           std::bidirectional_iterator_tag>  Point_iterator;
 
   typedef Point value_type; // to have a back_inserter
   typedef const value_type&    const_reference; 

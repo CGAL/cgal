@@ -29,6 +29,9 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_utils_2.h>
+#include <CGAL/Triangulation_face_2.h>
+#include <CGAL/Triangulation_vertex_2.h>
+#include <CGAL/Triangulation_handles_2.h>
 #include <CGAL/Triangulation_ds_iterators_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -146,9 +149,9 @@ class Triangulation_finite_vertices_iterator_2
 {
 public:
   typedef Triangulation_all_vertices_iterator_2<Gt,Tds>    All_vertices;
-  // typedef Triangulation_2<Gt,Tds>                          Triangulation;
   typedef Triangulation_finite_vertices_iterator_2<Gt,Tds> Finite_vertices;
-  typedef typename All_vertices::Triangulation             Triangulation;
+  // typedef Triangulation_2<Gt,Tds>                          Triangulation;
+  // typedef typename All_vertices::Triangulation             Triangulation;
 private:
   const Triangulation* _tr; 
 
