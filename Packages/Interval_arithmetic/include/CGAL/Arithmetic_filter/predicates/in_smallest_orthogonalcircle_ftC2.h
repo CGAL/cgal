@@ -162,7 +162,8 @@ in_smallest_orthogonalcircleC2(
   const double SAF_bound = Static_Filtered_in_smallest_orthogonalcircleC2_9::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(pw.value()) > SAF_bound ||
 	fabs(qx.value()) > SAF_bound ||

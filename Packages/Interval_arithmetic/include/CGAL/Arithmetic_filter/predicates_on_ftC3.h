@@ -172,7 +172,8 @@ collinearC3(
   const double SAF_bound = Static_Filtered_collinearC3_9::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(pz.value()) > SAF_bound ||
 	fabs(qx.value()) > SAF_bound ||
@@ -379,7 +380,8 @@ orientationC3(
   const double SAF_bound = Static_Filtered_orientationC3_12::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(pz.value()) > SAF_bound ||
 	fabs(qx.value()) > SAF_bound ||
@@ -648,7 +650,8 @@ side_of_oriented_sphereC3(
   const double SAF_bound = Static_Filtered_side_of_oriented_sphereC3_15::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(pz.value()) > SAF_bound ||
 	fabs(qx.value()) > SAF_bound ||
@@ -913,7 +916,8 @@ side_of_bounded_sphereC3(
   const double SAF_bound = Static_Filtered_side_of_bounded_sphereC3_15::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(pz.value()) > SAF_bound ||
 	fabs(qx.value()) > SAF_bound ||
@@ -1123,7 +1127,8 @@ cmp_dist_to_pointC3(
   const double SAF_bound = Static_Filtered_cmp_dist_to_pointC3_9::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(pz.value()) > SAF_bound ||
 	fabs(qx.value()) > SAF_bound ||
@@ -1314,7 +1319,8 @@ cmp_signed_dist_to_planeC3(
   const double SAF_bound = Static_Filtered_cmp_signed_dist_to_planeC3_10::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(pa.value()) > SAF_bound ||
+  if (
+	fabs(pa.value()) > SAF_bound ||
 	fabs(pb.value()) > SAF_bound ||
 	fabs(pc.value()) > SAF_bound ||
 	fabs(pd.value()) > SAF_bound ||
@@ -1549,7 +1555,8 @@ cmp_signed_dist_to_planeC3(
   const double SAF_bound = Static_Filtered_cmp_signed_dist_to_planeC3_15::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(ppx.value()) > SAF_bound ||
+  if (
+	fabs(ppx.value()) > SAF_bound ||
 	fabs(ppy.value()) > SAF_bound ||
 	fabs(ppz.value()) > SAF_bound ||
 	fabs(pqx.value()) > SAF_bound ||

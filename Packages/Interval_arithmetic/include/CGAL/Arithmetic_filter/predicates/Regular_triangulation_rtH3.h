@@ -312,7 +312,8 @@ power_testH3(
   const double SAF_bound = Static_Filtered_power_testH3_25::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(phx.value()) > SAF_bound ||
+  if (
+	fabs(phx.value()) > SAF_bound ||
 	fabs(phy.value()) > SAF_bound ||
 	fabs(phz.value()) > SAF_bound ||
 	fabs(phw.value()) > SAF_bound ||

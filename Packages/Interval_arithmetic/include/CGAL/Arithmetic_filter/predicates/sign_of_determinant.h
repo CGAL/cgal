@@ -114,7 +114,8 @@ sign_of_determinant2x2(
   const double SAF_bound = Static_Filtered_sign_of_determinant2x2_4::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(a00.value()) > SAF_bound ||
+  if (
+	fabs(a00.value()) > SAF_bound ||
 	fabs(a01.value()) > SAF_bound ||
 	fabs(a10.value()) > SAF_bound ||
 	fabs(a11.value()) > SAF_bound)
@@ -281,7 +282,8 @@ sign_of_determinant3x3(
   const double SAF_bound = Static_Filtered_sign_of_determinant3x3_9::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(a00.value()) > SAF_bound ||
+  if (
+	fabs(a00.value()) > SAF_bound ||
 	fabs(a01.value()) > SAF_bound ||
 	fabs(a02.value()) > SAF_bound ||
 	fabs(a10.value()) > SAF_bound ||
@@ -512,7 +514,8 @@ sign_of_determinant4x4(
   const double SAF_bound = Static_Filtered_sign_of_determinant4x4_16::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(a00.value()) > SAF_bound ||
+  if (
+	fabs(a00.value()) > SAF_bound ||
 	fabs(a01.value()) > SAF_bound ||
 	fabs(a02.value()) > SAF_bound ||
 	fabs(a03.value()) > SAF_bound ||
@@ -827,7 +830,8 @@ sign_of_determinant5x5(
   const double SAF_bound = Static_Filtered_sign_of_determinant5x5_25::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(a00.value()) > SAF_bound ||
+  if (
+	fabs(a00.value()) > SAF_bound ||
 	fabs(a01.value()) > SAF_bound ||
 	fabs(a02.value()) > SAF_bound ||
 	fabs(a03.value()) > SAF_bound ||
@@ -1246,7 +1250,8 @@ sign_of_determinant6x6(
   const double SAF_bound = Static_Filtered_sign_of_determinant6x6_36::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(a00.value()) > SAF_bound ||
+  if (
+	fabs(a00.value()) > SAF_bound ||
 	fabs(a01.value()) > SAF_bound ||
 	fabs(a02.value()) > SAF_bound ||
 	fabs(a03.value()) > SAF_bound ||

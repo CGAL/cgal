@@ -150,7 +150,8 @@ compare_xC2(
   const double SAF_bound = Static_Filtered_compare_xC2_7::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(l1a.value()) > SAF_bound ||
 	fabs(l1b.value()) > SAF_bound ||
 	fabs(l1c.value()) > SAF_bound ||
@@ -372,7 +373,8 @@ compare_xC2(
   const double SAF_bound = Static_Filtered_compare_xC2_12::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(l1a.value()) > SAF_bound ||
+  if (
+	fabs(l1a.value()) > SAF_bound ||
 	fabs(l1b.value()) > SAF_bound ||
 	fabs(l1c.value()) > SAF_bound ||
 	fabs(l2a.value()) > SAF_bound ||
@@ -555,7 +557,8 @@ compare_y_at_xC2(
   const double SAF_bound = Static_Filtered_compare_y_at_xC2_5::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(la.value()) > SAF_bound ||
 	fabs(lb.value()) > SAF_bound ||
@@ -727,7 +730,8 @@ compare_y_at_xC2(
   const double SAF_bound = Static_Filtered_compare_y_at_xC2_7::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(l1a.value()) > SAF_bound ||
 	fabs(l1b.value()) > SAF_bound ||
 	fabs(l1c.value()) > SAF_bound ||
@@ -922,7 +926,8 @@ compare_y_at_xC2(
   const double SAF_bound = Static_Filtered_compare_y_at_xC2_9::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(l1a.value()) > SAF_bound ||
+  if (
+	fabs(l1a.value()) > SAF_bound ||
 	fabs(l1b.value()) > SAF_bound ||
 	fabs(l1c.value()) > SAF_bound ||
 	fabs(l2a.value()) > SAF_bound ||
@@ -1154,7 +1159,8 @@ compare_y_at_xC2(
   const double SAF_bound = Static_Filtered_compare_y_at_xC2_12::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(l1a.value()) > SAF_bound ||
+  if (
+	fabs(l1a.value()) > SAF_bound ||
 	fabs(l1b.value()) > SAF_bound ||
 	fabs(l1c.value()) > SAF_bound ||
 	fabs(l2a.value()) > SAF_bound ||
@@ -1322,7 +1328,8 @@ compare_deltax_deltayC2(
   const double SAF_bound = Static_Filtered_compare_deltax_deltayC2_4::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(qx.value()) > SAF_bound ||
 	fabs(ry.value()) > SAF_bound ||
 	fabs(sy.value()) > SAF_bound)
@@ -1467,7 +1474,8 @@ orientationC2(
   const double SAF_bound = Static_Filtered_orientationC2_6::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(qx.value()) > SAF_bound ||
 	fabs(qy.value()) > SAF_bound ||
@@ -1662,7 +1670,8 @@ side_of_oriented_circleC2(
   const double SAF_bound = Static_Filtered_side_of_oriented_circleC2_8::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(qx.value()) > SAF_bound ||
 	fabs(qy.value()) > SAF_bound ||
@@ -1845,7 +1854,8 @@ side_of_bounded_circleC2(
   const double SAF_bound = Static_Filtered_side_of_bounded_circleC2_8::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(qx.value()) > SAF_bound ||
 	fabs(qy.value()) > SAF_bound ||
@@ -2009,7 +2019,8 @@ cmp_dist_to_pointC2(
   const double SAF_bound = Static_Filtered_cmp_dist_to_pointC2_6::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(qx.value()) > SAF_bound ||
 	fabs(qy.value()) > SAF_bound ||
@@ -2170,7 +2181,8 @@ cmp_signed_dist_to_lineC2(
   const double SAF_bound = Static_Filtered_cmp_signed_dist_to_lineC2_7::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(la.value()) > SAF_bound ||
+  if (
+	fabs(la.value()) > SAF_bound ||
 	fabs(lb.value()) > SAF_bound ||
 	fabs(lc.value()) > SAF_bound ||
 	fabs(px.value()) > SAF_bound ||
@@ -2341,7 +2353,8 @@ cmp_signed_dist_to_lineC2(
   const double SAF_bound = Static_Filtered_cmp_signed_dist_to_lineC2_8::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(qx.value()) > SAF_bound ||
 	fabs(qy.value()) > SAF_bound ||

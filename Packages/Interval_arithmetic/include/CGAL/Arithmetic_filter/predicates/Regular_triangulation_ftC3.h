@@ -256,7 +256,8 @@ power_testC3(
   const double SAF_bound = Static_Filtered_power_testC3_20::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(pz.value()) > SAF_bound ||
 	fabs(pwt.value()) > SAF_bound ||
@@ -617,7 +618,8 @@ power_testC3(
   const double SAF_bound = Static_Filtered_power_testC3_16::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(pz.value()) > SAF_bound ||
 	fabs(pwt.value()) > SAF_bound ||
@@ -917,7 +919,8 @@ power_testC3(
   const double SAF_bound = Static_Filtered_power_testC3_12::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
-  if (	fabs(px.value()) > SAF_bound ||
+  if (
+	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(pz.value()) > SAF_bound ||
 	fabs(pwt.value()) > SAF_bound ||
