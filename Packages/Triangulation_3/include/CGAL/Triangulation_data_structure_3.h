@@ -191,16 +191,6 @@ public:
     }
 
 private:
-  // not documented
-  // only used by copy_tds in the TDS class
-  Cell* create_cell(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
-		    const Cell & old_cell)
-    {
-      Cell* cnew = new Cell( v0,v1,v2,v3,old_cell );
-      cnew->init();
-      add_cell(cnew);
-      return cnew; 
-    }
 
   // Used to initialize the lists to empty lists.
   void init_cell_list(Cell* c)
@@ -2365,11 +2355,6 @@ copy_tds(const Tds & tds, Vertex* vert )
   CGAL_triangulation_expensive_precondition( vert == NULL
 	                                  || tds.is_vertex(vert) );
 
-  std::map< void*, void* > V;
-  std::map< void*, void* > F;
-  Vertex*  v;
-  Cell* f;
-
   clear();
 
   int n = tds.number_of_vertices();
@@ -2394,39 +2379,39 @@ copy_tds(const Tds & tds, Vertex* vert )
   std::sort(TV.begin(), TV.end(), 
 	    Vertex_tds_compare_order_of_creation<Vertex*>()); 
 
-  for (i=0; i <= n-1; i++) 
-    V[ TV[i] ] = new Vertex( *TV[i] );
+  std::map< Vertex*, Vertex* > V;
+  std::map< Cell*, Cell* > F;
+
+  for (i=0; i <= n-1; i++) {
+    V[ TV[i] ] = create_vertex();
+    *V[ TV[i] ] = *TV[i];
+  }
 
   // Create the cells.
   for (Cell* cit = tds._list_of_cells._next_cell;
        cit != tds.past_end_cell(); cit = cit->_next_cell) {
-      F[&(*cit)] = create_cell((Vertex*) V[cit->vertex(0)],
-			       (Vertex*) V[cit->vertex(1)],
-			       (Vertex*) V[cit->vertex(2)],
-			       (Vertex*) V[cit->vertex(3)],
-			       *cit);
+      F[&(*cit)] = create_cell(&*cit);
+      F[&(*cit)]->set_vertices(V[cit->vertex(0)],
+			       V[cit->vertex(1)],
+			       V[cit->vertex(2)],
+			       V[cit->vertex(3)]);
   }
 
   // Link the vertices to a cell.
   for (Vertex_iterator vit2 = tds.vertices_begin();
-       vit2 != tds.vertices_end(); ++vit2) {
-    v = (Vertex*) V[&(*vit2)];
-    v->set_cell( (Cell*) F[vit2->cell()] );
-  }
+       vit2 != tds.vertices_end(); ++vit2)
+    V[&(*vit2)]->set_cell( F[vit2->cell()] );
 
   // Hook neighbor pointers of the cells.
   for (Cell* cit2 = tds._list_of_cells._next_cell;
        cit2 != tds.past_end_cell(); cit2 = cit2->_next_cell) {
-    for (int j = 0; j < 4; j++) {
-      f = ((Cell*) F[&(*cit2)]);
-      f->set_neighbor(j, (Cell*) F[cit2->neighbor(j)] );
-    }
+    for (int j = 0; j < 4; j++)
+      F[&(*cit2)]->set_neighbor(j, F[cit2->neighbor(j)] );
   }
 
   CGAL_triangulation_postcondition( is_valid() );
-  if ( vert != NULL ) 
-    return (Vertex*) V[vert];
-  return NULL;
+
+  return (vert != NULL) ? V[vert] : NULL;
 }
 
 template <class Vb, class Cb >

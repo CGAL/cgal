@@ -79,16 +79,6 @@ public:
     : Cb(v0,v1,v2,v3,n0,n1,n2,n3), in_conflict_flag(0)
   {}
 
-  // not documented
-  // only used by copy_tds in the TDS class
-  Triangulation_ds_cell_3(Vertex* v0, Vertex* v1, 
-			  Vertex* v2, Vertex* v3,
-			  const Cell& old_cell)
-    : Cb(old_cell), in_conflict_flag(0)
-  {
-    set_vertices(v0,v1,v2,v3);
-  }
-
   // SETTING
 
   void set_vertex(int i, Vertex* v)
@@ -198,14 +188,15 @@ private:
   {
     std::cerr << "neighbor of c has not c as neighbor" << std::endl;
   }
-}; // __attribute__((__aligned__(16))); // Memory alignment.  For GCC only
+};
 
 template <class Vb, class Cb >
 bool
 Triangulation_ds_cell_3<Vb,Cb>::is_valid
 (int dim, bool verbose, int level) const
 {
-    if ( ! Cb::is_valid(verbose,level) ) return false;
+    if ( ! Cb::is_valid(verbose,level) )
+	return false;
 
     switch (dim) {
     case -2:
@@ -218,8 +209,7 @@ Triangulation_ds_cell_3<Vb,Cb>::is_valid
 	return false;
       }
       vertex(0)->is_valid(verbose,level);
-      if ( vertex(1) != NULL || 
-	   vertex(2) != NULL || vertex(3) != NULL ) {
+      if ( vertex(1) != NULL || vertex(2) != NULL || vertex(3) != NULL ) {
 	if (verbose)
 	    std::cerr << "vertex 1,2 or 3 != NULL" << std::endl;
 	CGAL_triangulation_assertion(false);
