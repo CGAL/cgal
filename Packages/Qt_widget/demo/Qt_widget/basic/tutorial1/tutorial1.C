@@ -4,6 +4,7 @@
 #include <CGAL/Bbox_2.h>
 #include <list>
 #include <CGAL/Polygon_2.h>
+#include <CGAL/IO/Qt_widget_Polygon_2.h>
 #include <qapplication.h>
 #include <CGAL/IO/Qt_widget.h>
 
