@@ -8,15 +8,14 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.0-I-20 $
-// release_date  : $CGAL_Date: 1999/06/02 $
+// release       : 
+// release_date  : 
 //
 // file          : include/CGAL/Alpha_shape_2.h
 // package       : Alpha_shapes_2(1.0)
-// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
+// author(s)     : Tran Kai Frank DA
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
@@ -41,9 +40,7 @@
 #include <CGAL/IO/Window_stream.h>
 #endif
 
-//-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
-//-------------------------------------------------------------------
 
 template < class Dt >
 class Alpha_shape_2 : public Dt 
@@ -1909,9 +1906,7 @@ Alpha_shape_2<Dt>::Output ()
   return L;
 }
 
-//-------------------------------------------------------------------
 CGAL_END_NAMESPACE
-//-------------------------------------------------------------------
 
 #ifdef CGAL_ALPHA_WINDOW_STREAM
 #include <CGAL/IO/alpha_shapes_2_window_stream.h>
