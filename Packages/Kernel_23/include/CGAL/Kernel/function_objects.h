@@ -241,9 +241,10 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
-  class Compute_squared_area_3
+  class Compute_area_3
   {
     typedef typename K::FT                FT;
+    typedef typename K::Point_3           Point_3;
     typedef typename K::Triangle_3        Triangle_3;
   public:
     typedef FT               result_type;
@@ -251,7 +252,15 @@ namespace CommonKernelFunctors {
 
     FT
     operator()( const Triangle_3& t ) const
-    { return t.squared_area(); }
+    {
+	return CGAL_NTS sqrt(K().compute_squared_area_3_object()(t));
+    }
+
+    FT
+    operator()( const Point_3& p, const Point_3& q, const Point_3& r ) const
+    {
+	return CGAL_NTS sqrt(K().compute_squared_area_3_object()(p, q, r));
+    }
   };
 
   template <typename K>

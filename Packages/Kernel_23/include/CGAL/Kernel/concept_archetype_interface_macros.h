@@ -217,6 +217,11 @@ CGAL_Kernel_cons(Compute_area_2,
 		 compute_area_2_object)
 #endif
 
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || defined(CGAL_CA_COMPUTE_AREA_2)
+CGAL_Kernel_cons(Compute_area_3,
+		 compute_area_3_object)
+#endif
+
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || defined(CGAL_CA_COMPUTE_AREA_3)
 CGAL_Kernel_cons(Compute_squared_area_3,
 		 compute_squared_area_3_object)

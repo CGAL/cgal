@@ -109,6 +109,7 @@ _test_cls_triangle_3(const R& )
  assert ( t3.squared_area() == t4.squared_area() );
  CGAL::Triangle_3<R> t6(ps3,p5,p6);
  assert ( t6.squared_area() == FT(25) );
+ assert ( t6.squared_area() == CGAL::squared_area(ps3,p5,p6) );
 
  std::cout << "done" << std::endl;
  return true;

@@ -97,6 +97,8 @@ CGAL_Kernel_pred(Compare_z_3,
 		 compare_z_3_object)
 CGAL_Kernel_cons(Compute_area_2,
 		 compute_area_2_object)
+CGAL_Kernel_cons(Compute_area_3,
+		 compute_area_3_object)
 CGAL_Kernel_cons(Compute_squared_area_3,
 		 compute_squared_area_3_object)
 CGAL_Kernel_cons(Compute_squared_distance_2,

@@ -356,7 +356,13 @@ test_new_3(const R& rep)
   typename R::Compute_squared_area_3 compute_squared_area
         = rep.compute_squared_area_3_object();
   FT tmp11a = compute_squared_area(t2);
+     tmp11a = compute_squared_area(p3, p4, p5);
   (void) tmp11a;
+
+  typename R::Compute_area_3 compute_area
+        = rep.compute_area_3_object();
+  tmp11a = compute_area(t2);
+  tmp11a = compute_area(p3, p4, p5);
 
   typename R::Compute_volume_3 compute_volume
         = rep.compute_volume_3_object();

@@ -617,16 +617,40 @@ public:
 };
 
 template <typename K>
-class Compute_squared_area_3
+class Compute_area_3
 {
     typedef typename K::FT                FT;
     typedef typename K::Triangle_3        Triangle_3;
+    typedef typename K::Point_3           Point_3;
 public:
     typedef FT               result_type;
     typedef Arity_tag< 1 >   Arity;
 
     FT
     operator()( const Triangle_3&) const
+    { FT val = 0; return val; }
+
+    FT
+    operator()( const Point_3&, const Point_3&, const Point_3&) const
+    { FT val = 0; return val; }
+};
+
+template <typename K>
+class Compute_squared_area_3
+{
+    typedef typename K::FT                FT;
+    typedef typename K::Triangle_3        Triangle_3;
+    typedef typename K::Point_3           Point_3;
+public:
+    typedef FT               result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    FT
+    operator()( const Triangle_3&) const
+    { FT val = 0; return val; }
+
+    FT
+    operator()( const Point_3&, const Point_3&, const Point_3&) const
     { FT val = 0; return val; }
 };
 

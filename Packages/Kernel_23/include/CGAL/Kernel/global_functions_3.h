@@ -98,6 +98,24 @@ parallel(const typename CGAL_WRAP(K)::Segment_3 &s1,
   return k.are_parallel_3_object()(s1, s2);
 }
 
+template <typename K>
+inline
+typename K::FT
+squared_area(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
+{
+  return squared_area(p, q, r, K());
+}
+
+template <typename K>
+inline
+typename K::FT
+squared_area(const typename K::Point_3 &p,
+	     const typename K::Point_3 &q,
+	     const typename K::Point_3 &r, const K &k)
+{
+  return k.compute_squared_area_3_object()(p, q, r);
+}
+
 CGAL_END_NAMESPACE
 
 #endif  // CGAL_KERNEL_GLOBAL_FUNCTIONS_3_H
