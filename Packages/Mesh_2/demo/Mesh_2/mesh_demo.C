@@ -499,7 +499,7 @@ public slots:
 
 	    Face_handle fh = mesh->locate(p);
 	    traits.set_point(p);
-	    if( (fh!=NULL) && (!mesh->is_infinite(fh)) )
+	    if( (fh!=NULL) && (!mesh->is_infinite(fh)) && fh->is_marked() )
 	      {
 		const Point&
 		  a = fh->vertex(0)->point(),
