@@ -54,7 +54,6 @@ public:
     PmWalkPL pm_walk1, pm_walk2;
     Planar_map pm1(&pm_walk1), pm2(&pm_walk2);
     
-    Traits traits;
     std::list<Curve_2> edges1, edges2;
     
     typename Polygon::Edge_const_iterator e_iter;
