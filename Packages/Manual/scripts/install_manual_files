@@ -120,6 +120,8 @@ echo "***copying Circulator to Handles_and_Circs***"
 echo "***recopying Handles_and_Circs/main.tex***"
 \cp doc_tex_skel/support/Handles_and_Circs/main.tex $TARGET_DIR/support/Handles_and_Circs
 
+echo "***creating Handles_and_Circs_ref***"
+mkdir $TARGET_DIR/support/Handles_and_Circs_ref
 echo "***copying Handle_ref to Handles_and_Circs_ref***"
 \cp $TARGET_DIR/support/Handle_ref/*.tex $TARGET_DIR/support/Handles_and_Circs_ref
 echo "***copying Circulator_ref to Handles_and_Circs_ref***"
