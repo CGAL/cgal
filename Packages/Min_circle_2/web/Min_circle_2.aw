@@ -41,6 +41,8 @@
 
 \newcommand{\mc}{\texttt{mc}}
 
+\newcommand{\ccSeeAlso}{\ccHeading{See Also}}
+
 \newcommand{\linebreakByHand}{\ccTexHtml{\\}{}}
 \newcommand{\SaveSpaceByHand}[2]{\ccTexHtml{#1}{#2}}
 
@@ -897,7 +899,8 @@ respect to the number of support points, which may range from 0 to 3.
 
       default:
         return( CGAL__optimisation_is_valid_fail( verr,
-                    "illegal number of support points, not between 0 and 3."));
+                    "illegal number of support points, \
+                     not between 0 and 3."));
     };
     verr << "passed." << endl;
 @end
@@ -908,7 +911,8 @@ point set $P$ is empty.
 @macro <Min_circle_2 check no support point> = @begin
     if ( ! is_empty())
         return( CGAL__optimisation_is_valid_fail( verr,
-                    "P is nonempty, but there are no support points."));
+                    "P is nonempty, \
+                     but there are no support points."));
 @end
 
 If the smallest enclosing circle has one support point $p$, it must
@@ -919,7 +923,8 @@ $0$.
     if ( ( circle().center() != support_point( 0)    ) ||
          ( ! CGAL_is_zero( circle().squared_radius())) )
         return( CGAL__optimisation_is_valid_fail( verr,
-       "circle differs from the circle spanned by its single support point."));
+                    "circle differs from the circle \
+                     spanned by its single support point."));
 @end
 
 In case of two support points $p,q$, these points must form a diameter
@@ -941,11 +946,13 @@ diameter of the circle.
                     "the two support points are equal."));
 
     // segment(p,q) is not diameter?
-    if ( ( ! has_on_boundary( p)                                      ) ||
-         ( ! has_on_boundary( q)                                      ) ||
-         ( tco.orientation( p, q, circle().center()) != CGAL_COLLINEAR) )
+    if ( ( ! has_on_boundary( p)                                ) ||
+         ( ! has_on_boundary( q)                                ) ||
+         ( tco.orientation( p, q,
+			    circle().center()) != CGAL_COLLINEAR) )
         return( CGAL__optimisation_is_valid_fail( verr,
-                  "circle does not have its two support points as diameter."));
+                    "circle does not have its \
+                     two support points as diameter."));
 @end
 
 If the number of support points is three (and they are distinct and
@@ -971,7 +978,8 @@ contained in the triangle.
     // p, q, r not pairwise distinct?
     if ( ( p == q) || ( q == r) || ( r == p))
         return( CGAL__optimisation_is_valid_fail( verr,
-                    "at least two of the three support points are equal."));
+                    "at least two of the three \
+                     support points are equal."));
 
     // p, q, r collinear?
     if ( tco.orientation( p, q, r) == CGAL_COLLINEAR)
@@ -983,7 +991,8 @@ contained in the triangle.
     c.set( p, q, r);
     if ( circle() != c)
         return( CGAL__optimisation_is_valid_fail( verr,
-         "circle is not the unique circle through its three support points."));
+                    "circle is not the unique circle \
+                     through its three support points."));
 
     // circle's center on boundary of triangle(p,q,r)?
     Point const& center( circle().center());
@@ -999,7 +1008,8 @@ contained in the triangle.
     // circle's center not inside triangle(p,q,r)?
     if ( ( o_pqz != o_qrz) || ( o_qrz != o_rpz) || ( o_rpz != o_pqz))
         return( CGAL__optimisation_is_valid_fail( verr,
-    "circle's center is not in the convex hull of its three support points."));
+                    "circle's center is not in the \
+                     convex hull of its three support points."));
 @end
 
 @! ----------------------------------------------------------------------------
@@ -2912,6 +2922,12 @@ end of each file.
 
     @<end of file line>
 @end
+
+@! ----------------------------------------------------------------------------
+@! File Header
+@! ----------------------------------------------------------------------------
+
+\subsection*{File Header}
 
 @i ../file_header.awi
  

@@ -41,6 +41,8 @@
 
 \newcommand{\me}{\texttt{me}}
 
+\newcommand{\ccSeeAlso}{\ccHeading{See Also}}
+
 \newcommand{\linebreakByHand}{\ccTexHtml{\\}{}}
 \newcommand{\SaveSpaceByHand}[2]{\ccTexHtml{#1}{#2}}
 
@@ -932,7 +934,8 @@ support points in \ccc{support_points}.
 	  ++support_point_iter)
 	if ( ! has_on_boundary( *support_point_iter)) 
 	    return( CGAL__optimisation_is_valid_fail( verr,
-		"ellipse does not have all support points on the boundary"));
+		        "ellipse does not have all \
+                         support points on the boundary"));
     verr << "passed." << endl;
 @end
 
@@ -3152,6 +3155,12 @@ end of each file.
 
     @<end of file line>
 @end
+
+@! ----------------------------------------------------------------------------
+@! File Header
+@! ----------------------------------------------------------------------------
+
+\subsection*{File Header}
 
 @i ../file_header.awi
  

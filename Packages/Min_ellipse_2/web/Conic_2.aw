@@ -315,30 +315,31 @@ the conic class @prg{R::Conic_2} of the representation type @prg{R}.
 	CGAL_Window_stream& operator<< ( CGAL_Window_stream&,
 				       CGAL_Optimisation_ellipse_2<_R> const&);
 
+      public:
+
 	// types
-	public:
-	    typedef 		_R	R;
+	typedef 		_R	R;
 
-	    // construction
-	    @<CGAL_Conic_2 constructors> 
+	// construction
+	@<CGAL_Conic_2 constructors> 
 
-	    // general access
-	    @<CGAL_Conic_2 general access methods>
-	
-	    // type related access
-	    @<CGAL_Conic_2 type access methods>
+	// general access
+	@<CGAL_Conic_2 general access methods>
 
-	    // orientation related access 
-	    @<CGAL_Conic_2 orientation access methods>
+	// type related access
+	@<CGAL_Conic_2 type access methods>
 
-	    // comparisons
-	    @<CGAL_Conic_2 comparison methods>
+	// orientation related access 
+	@<CGAL_Conic_2 orientation access methods>
 
-	    // set methods
-	    @<CGAL_Conic_2 set methods>
+	// comparisons
+	@<CGAL_Conic_2 comparison methods>
 
-	private:
-	    @<CGAL_Conic_2 private methods>
+	// set methods
+	@<CGAL_Conic_2 set methods>
+
+      private:
+	@<CGAL_Conic_2 private methods>
     };
 
 @end
@@ -820,8 +821,8 @@ i.e. decides how the volume develops when going from $\E(0)$ `in direction'
 $\d\r$. If $\E$ is not an ellipse, the result is meaningless. 
 
 @macro <CGAL_Conic_2 private methods> += @begin
-    CGAL_Sign vol_derivative (R::RT dr, R::RT ds, R::RT dt, R::RT du, R::RT dv,
- 			      R::RT dw) const
+    CGAL_Sign vol_derivative (R::RT dr, R::RT ds, R::RT dt,
+			      R::RT du, R::RT dv, R::RT dw) const
     {
 	return R::Conic_2::vol_derivative (dr, ds, dt, du, dv, dw);
     }
@@ -1078,26 +1079,25 @@ use them.
     template < class _PT, class _DA>
     class CGAL_ConicHPA2
     {
+      public:   
         // types
-	public:   
-	    typedef _PT PT;
-	    typedef _DA DA;
-	    typedef typename _DA::RT RT;
+	typedef           _PT      PT;
+	typedef           _DA      DA;
+	typedef  typename _DA::RT  RT;
 
-	private:
-	    friend class CGAL_Conic_2< CGAL_Homogeneous<RT> >;
-	    friend class CGAL__Min_ellipse_2_adapterH2__Ellipse<PT,DA>;
+      private:
+	friend class CGAL_Conic_2< CGAL_Homogeneous<RT> >;
+	friend class CGAL__Min_ellipse_2_adapterH2__Ellipse<PT,DA>;
 
-	    @<CGAL_ConicHPA2 private data members>
-	    @<CGAL_ConicHPA2 private member functions>
+	@<CGAL_ConicHPA2 private data members>
+	@<CGAL_ConicHPA2 private member functions>
 
-	protected:
-	    @<CGAL_ConicHPA2 protected member functions>
+      protected:
+	@<CGAL_ConicHPA2 protected member functions>
 
-	public:
-	    @<CGAL_ConicHPA2 public member functions>
-     };
-
+      public:
+	@<CGAL_ConicHPA2 public member functions>
+    };
 @end
 
 
@@ -1109,27 +1109,26 @@ use them.
     template < class _PT, class _DA>
     class CGAL_ConicCPA2
     {
+      public:   
         // types
-	public:   
-	    typedef _PT PT;
-	    typedef _DA DA;
-	    typedef typename _DA::FT FT;
+	typedef _PT PT;
+	typedef _DA DA;
+	typedef typename _DA::FT FT;
 
-	private:
-	    friend class CGAL_Conic_2< CGAL_Cartesian<FT> >;
-	    friend class CGAL__Min_ellipse_2_adapterC2__Ellipse<PT,DA>;
+      private:
+	friend class CGAL_Conic_2< CGAL_Cartesian<FT> >;
+	friend class CGAL__Min_ellipse_2_adapterC2__Ellipse<PT,DA>;
 
-	    @<CGAL_ConicCPA2 private data members>
-	    @<CGAL_ConicCPA2 private member functions>
+	@<CGAL_ConicCPA2 private data members>
+	@<CGAL_ConicCPA2 private member functions>
 
-        protected:
-	    @<CGAL_ConicCPA2 protected member functions>
+      protected:
+	@<CGAL_ConicCPA2 protected member functions>
 
-	public:
-	    @<CGAL_ConicCPA2 public member functions>
+      public:
+	@<CGAL_ConicCPA2 public member functions>
 
      };
-
 @end
 
 @! ---------------------------------------------------------------------------
@@ -1431,7 +1430,8 @@ that the positive side is a convex set, thus equal to the convex side.
 	trivial 	= false;
 	degenerate 	= (t()*u() == RT(2)*r()*v());
 	if (degenerate) {
-	    CGAL_Sign discr = (CGAL_Sign)(CGAL_sign (u()*u() - RT(4)*r()*w()));
+	    CGAL_Sign discr = (CGAL_Sign)
+	                        CGAL_sign(u()*u()-RT(4)*r()*w());
 	    switch (discr) {
 		case CGAL_NEGATIVE:
 		    empty = true;
@@ -1454,7 +1454,8 @@ that the positive side is a convex set, thus equal to the convex side.
 	trivial 	= false;
 	degenerate 	= (t()*v() == RT(2)*s()*u());
 	if (degenerate) {
-	    CGAL_Sign discr = (CGAL_Sign)(CGAL_sign (v()*v() - RT(4)*s()*w()));
+	    CGAL_Sign discr = (CGAL_Sign)
+	                        CGAL_sign(v()*v()-RT(4)*s()*w());
 	    switch (discr) {
 		case CGAL_NEGATIVE:
 		    empty = true;
@@ -1493,7 +1494,8 @@ that the positive side is a convex set, thus equal to the convex side.
 	trivial 	= false;
 	degenerate 	= (t()*u() == FT(2)*r()*v());
 	if (degenerate) {
-	    CGAL_Sign discr = (CGAL_Sign)(CGAL_sign (u()*u() - FT(4)*r()*w()));
+	    CGAL_Sign discr = (CGAL_Sign)
+	                        CGAL_sign(u()*u()-FT(4)*r()*w());
 	    switch (discr) {
 		case CGAL_NEGATIVE:
 		    empty = true;
@@ -1516,7 +1518,8 @@ that the positive side is a convex set, thus equal to the convex side.
 	trivial 	= false;
 	degenerate 	= (t()*v() == FT(2)*s()*u());
 	if (degenerate) {
-	    CGAL_Sign discr = (CGAL_Sign)(CGAL_sign (v()*v() - FT(4)*s()*w()));
+	    CGAL_Sign discr = (CGAL_Sign)
+	                        CGAL_sign(v()*v()-FT(4)*s()*w());
 	    switch (discr) {
 		case CGAL_NEGATIVE:
 		    empty = true;
@@ -2075,12 +2078,16 @@ obtained by setting $h_i=1,i=1\ldots 3$).
 
 @macro <h_orientation>(3) many = @begin
     (CGAL_Orientation)(CGAL_sign
-      (-h@1*x@3*y@2+h@3*x@1*y@2+h@1*x@2*y@3-h@2*x@1*y@3+h@2*x@3*y@1-h@3*x@2*y@1))
+      (-h@1*x@3*y@2+h@3*x@1*y@2
+       +h@1*x@2*y@3-h@2*x@1*y@3
+       +h@2*x@3*y@1-h@3*x@2*y@1))
 @end
 
 @macro <c_orientation>(3) many = @begin
     (CGAL_Orientation)(CGAL_sign
-      (-x@3*y@2+x@1*y@2+x@2*y@3-x@1*y@3+x@3*y@1-x@2*y@1))
+      (-x@3*y@2+x@1*y@2
+       +x@2*y@3-x@1*y@3
+       +x@3*y@1-x@2*y@1))
 @end
 
 @macro<CGAL_ConicHPA2 private member functions> += @begin   
@@ -2206,7 +2213,8 @@ a conic containing the set $(\C_{\r_1} \cap \C_{\r_2}) \cup \{p\}.$ Exactly
 this conic is contructed here. 
 
 @macro<CGAL_ConicHPA2 private member functions> += @begin
-    void set (const CGAL_ConicHPA2<PT,DA> &c1, const CGAL_ConicHPA2<PT,DA> &c2,
+    void set (const CGAL_ConicHPA2<PT,DA> &c1,
+	      const CGAL_ConicHPA2<PT,DA> &c2,
 	      const PT &p)
     {
 	set_linear_combination (c2.evaluate(p), c1, -c1.evaluate(p), c2);
@@ -2215,7 +2223,8 @@ this conic is contructed here.
 @end
 
 @macro<CGAL_ConicCPA2 private member functions> += @begin
-    void set (const CGAL_ConicCPA2<PT,DA> &c1, const CGAL_ConicCPA2<PT,DA> &c2,
+    void set (const CGAL_ConicCPA2<PT,DA> &c1,
+	      const CGAL_ConicCPA2<PT,DA> &c2,
 	      const PT &p)
     {
 	set_linear_combination (c2.evaluate(p), c1, -c1.evaluate(p), c2);
@@ -2303,7 +2312,8 @@ we return the sign of $c_0$. To compute $c_0$, we only need the values
 $a_1,a_0,b_1,b_0$ from above.
 
 @macro<CGAL_ConicHPA2 private member functions> += @begin
-    CGAL_Sign vol_derivative (RT dr, RT ds, RT dt, RT du, RT dv, RT dw) const
+    CGAL_Sign vol_derivative (RT dr, RT ds, RT dt,
+			      RT du, RT dv, RT dw) const
     {
 	RT a1 = RT(4)*r()*ds+RT(4)*dr*s()-RT(2)*t()*dt,
 	   a0 = RT(4)*r()*s()-t()*t(),
@@ -2311,15 +2321,18 @@ $a_1,a_0,b_1,b_0$ from above.
      		RT(2)*t()*dt)*w()-u()*u()*ds -
      		RT(2)*u()*du*s()-v()*v()*dr-RT(2)*v()*dv*r()+u()*v()*dt+
      		(u()*dv+du*v())*t(),
-	   b0 = (RT(4)*r()*s()-t()*t())*w()-u()*u()*s()-v()*v()*r()+u()*v()*t(),
+	   b0 = (RT(4)*r()*s()-t()*t())*w()
+	        -u()*u()*s()-v()*v()*r()+u()*v()*t(),
 	   c0 = -RT(2)*a0*b1 + RT(3)*a1*b0;
 
 	return CGAL_Sign (-CGAL_sign (c0)*o);
     }
+
 @end
 
 @macro<CGAL_ConicCPA2 private member functions> += @begin
-    CGAL_Sign vol_derivative (FT dr, FT ds, FT dt, FT du, FT dv, FT dw) const
+    CGAL_Sign vol_derivative (FT dr, FT ds, FT dt,
+			      FT du, FT dv, FT dw) const
     {
 	FT a1 = FT(4)*r()*ds+FT(4)*dr*s()-FT(2)*t()*dt,
 	   a0 = FT(4)*r()*s()-t()*t(),
@@ -2327,11 +2340,11 @@ $a_1,a_0,b_1,b_0$ from above.
      		FT(2)*t()*dt)*w()-u()*u()*ds -
      		FT(2)*u()*du*s()-v()*v()*dr-FT(2)*v()*dv*r()+u()*v()*dt+
      		(u()*dv+du*v())*t(),
-	   b0 = (FT(4)*r()*s()-t()*t())*w()-u()*u()*s()-v()*v()*r()+u()*v()*t(),
+	   b0 = (FT(4)*r()*s()-t()*t())*w()
+	  -u()*u()*s()-v()*v()*r()+u()*v()*t(),
 	   c0 = -FT(2)*a0*b1 + FT(3)*a1*b0;
 
 	return CGAL_Sign (-CGAL_sign (c0)*o);
-
     }
 
 @end
@@ -2513,7 +2526,8 @@ to find the roots, so we can directly evaluate the determinant, using
      		RT(2)*t()*dt)*w()-u()*u()*ds -
      		RT(2)*u()*du*s()-v()*v()*dr-RT(2)*v()*dv*r()+u()*v()*dt+
      		(u()*dv+du*v())*t(),
-	   b0 = (RT(4)*r()*s()-t()*t())*w()-u()*u()*s()-v()*v()*r()+u()*v()*t(),
+	   b0 = (RT(4)*r()*s()-t()*t())*w()
+	        -u()*u()*s()-v()*v()*r()+u()*v()*t(),
 	   c3 = -RT(3)*a1*b3 + RT(2)*a2*b2,
 	   c2 = -RT(6)*a0*b3 - a1*b2 + RT(4)*a2*b1,
 	   c1 = -RT(4)*a0*b2 + a1*b1 + RT(6)*a2*b0,
@@ -2551,7 +2565,8 @@ to find the roots, so we can directly evaluate the determinant, using
      		FT(2)*t()*dt)*w()-u()*u()*ds -
      		FT(2)*u()*du*s()-v()*v()*dr-FT(2)*v()*dv*r()+u()*v()*dt+
      		(u()*dv+du*v())*t(),
-	   b0 = (FT(4)*r()*s()-t()*t())*w()-u()*u()*s()-v()*v()*r()+u()*v()*t(),
+	   b0 = (FT(4)*r()*s()-t()*t())*w()
+                -u()*u()*s()-v()*v()*r()+u()*v()*t(),
 	   c3 = -FT(3)*a1*b3 + FT(2)*a2*b2,
 	   c2 = -FT(6)*a0*b3 - a1*b2 + FT(4)*a2*b1,
 	   c1 = -FT(4)*a0*b2 + a1*b1 + FT(6)*a2*b0,
@@ -3252,6 +3267,12 @@ Here is the class @prg{CGAL_ConicHPA2<PT,DA>}\ldots
 
 @<end of file line>
 @end
+
+@! ----------------------------------------------------------------------------
+@! File Header
+@! ----------------------------------------------------------------------------
+
+\subsection*{File Header}
 
 @i ../file_header.awi
  
