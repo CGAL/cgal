@@ -1,6 +1,6 @@
 // file: examples/Spatial_searching/Iso_rectangle_2_query.C
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>
@@ -8,7 +8,7 @@
 
 #include <CGAL/Search_traits_2.h>
 
-typedef CGAL::Cartesian<double> K;
+typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_2 Point_d;
 typedef CGAL::Random_points_in_square_2<Point_d> Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;

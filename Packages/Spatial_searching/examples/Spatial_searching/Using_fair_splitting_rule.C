@@ -1,11 +1,11 @@
 // file: examples/Spatial_searching/Using_fair_splitting_rule.C
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 
-typedef CGAL::Cartesian<double> R;
+typedef CGAL::Simple_cartesian<double> R;
 typedef R::Point_2 Point_d;
 typedef CGAL::Random_points_in_square_2<Point_d> Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;

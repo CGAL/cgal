@@ -1,13 +1,11 @@
 // file: examples/Spatial_searching/Searching_with_box_query.C
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/MP_Float.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/K_neighbor_search.h>
 #include <CGAL/Manhattan_distance_iso_box_point.h>
 #include <CGAL/Search_traits_2.h>
 
-typedef CGAL::Cartesian<double> Kernel;
-
+typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_2 Point_d;
 typedef CGAL::Search_traits_2<Kernel> Traits;
 typedef Traits::Iso_box_d Iso_box;

@@ -1,13 +1,13 @@
 // file: examples/Spatial_searching/Nearest_neighbor_searching.C
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_2.h>
 #include <list>
 
 
-typedef CGAL::Cartesian<double> K;
+typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_2 Point_d;
 typedef CGAL::Search_traits_2<K> TreeTraits;
 typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;

@@ -1,14 +1,12 @@
 // file: examples/Spatial_searching/Fuzzy_range_query.C
-#include <CGAL/MP_Float.h>
-#include <CGAL/Homogeneous_d.h>
+#include <CGAL/Cartesian_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Fuzzy_iso_box.h>
 #include <CGAL/Search_traits_d.h>
 
-typedef CGAL::MP_Float NT;
-typedef CGAL::Homogeneous_d<NT> K;
+typedef CGAL::Cartesian_d<double> K;
 typedef K::Point_d Point_d;
 typedef CGAL::Search_traits_d<K> Traits;
 typedef CGAL::Random_points_in_iso_box_d<Point_d>       Random_points_iterator;
@@ -28,8 +26,8 @@ int main() {
 	    N_Random_points_iterator(N));
 
   // define range query objects
-  NT  pcoord[D] = { 300, 300, 300, 300 };
-  NT  qcoord[D] = { 900.0, 900.0, 900.0, 900.0 };
+  double  pcoord[D] = { 300, 300, 300, 300 };
+  double  qcoord[D] = { 900.0, 900.0, 900.0, 900.0 };
   Point_d p(D, pcoord, pcoord+D);
   Point_d q(D, qcoord, qcoord+D);
   Fuzzy_sphere fs(p, 700.0, 100.0);

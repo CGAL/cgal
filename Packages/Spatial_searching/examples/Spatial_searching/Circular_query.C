@@ -1,19 +1,15 @@
 // file: examples/Spatial_searching/Circular_query.C
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Fuzzy_sphere.h>
-
 #include <CGAL/Search_traits_2.h>
 
-typedef CGAL::Cartesian<double> K;
-
+typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Search_traits_2<K> Traits;
-
 typedef Traits::Point_d Point_d;
-
 typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_circle;
 typedef CGAL::Kd_tree<Traits> Tree;
   

@@ -1,14 +1,14 @@
 // file: examples/Spatial_searching/General_neighbor_searching.C
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Cartesian_d.h>
 #include <CGAL/Manhattan_distance_iso_box_point.h>
 #include <CGAL/K_neighbor_search.h>
 #include <CGAL/Search_traits_2.h>
 
-typedef CGAL::Cartesian<double> K;
-typedef K::Point_2 Point_d;
-typedef CGAL::Search_traits_2<K> TreeTraits;
-typedef TreeTraits::Iso_box_d Iso_box_d;
+typedef CGAL::Cartesian_d<double> K;
+typedef K::Point_d Point_d;
+typedef K::Iso_box_d Iso_box_d;
+typedef K TreeTraits;
 typedef CGAL::Manhattan_distance_iso_box_point<TreeTraits> Distance;
 typedef CGAL::K_neighbor_search<TreeTraits, Distance> Neighbor_search;
 typedef Neighbor_search::Tree Tree;

@@ -1,10 +1,10 @@
 // file: examples/Spatial_searching/Distance_browsing.C
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
 #include <CGAL/Search_traits_2.h>
 
-typedef CGAL::Cartesian<double> K;
+typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_2 Point_d;
 typedef CGAL::Search_traits_2<K> TreeTraits;
 typedef CGAL::Orthogonal_incremental_neighbor_search<TreeTraits> NN_incremental_search;
