@@ -510,6 +510,11 @@ layout such that the descriptions align properly
 & the category of the current reference page
 \ccIndexEntry{RefCategory} \\ \hline
 
+
+\verb|\ccRefChapter{|\VarText{chapter title}\verb|}{|\VarText{label}\verb|}| 
+& makes a crosslink to the corresponding page of user manual with \VarText{label} and writes \VarText{chapter title}\\ \hline
+\ccIndexEntry{RefChapter}
+
 & \verb+\ccDefGlobalScope{CGAL::}+ \\
 \verb|\begin{ccRefClass}[|\VarText{scope}\verb|]{|\VarText{class\_name}\verb|}| 
 &\verb+\begin{ccRefClass}[Poly]{A_class<C>}+  \\
@@ -893,6 +898,11 @@ function header
 \verb|\ccUnderscore| 
 & \ccUnderscore
 \ccIndexEntry{Underscore} \\ \hline
+
+\verb|\ccUserChapter{|\VarText{chapter title}\verb|}{|\VarText{label}\verb|}| 
+& makes a crosslink to the corresponding page of reference manual with \VarText{label} and writes \VarText{chapter title}\\ \hline
+\ccIndexEntry{UserChapter}
+
 
 \verb|\ccVar| 
 & contains the text supplied as the argument to \verb|\ccCreationVariable|,

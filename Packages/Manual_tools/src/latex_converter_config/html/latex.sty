@@ -958,6 +958,7 @@
 
 \gdef\lciSectionAnchorCounter{0}
 
+
 \newcommand{\section}[1]{\section[#1]{#1}}
 \newcommand{\section@om}{%
     \lciGlobalAddTo{\lciSectionAnchorCounter}{1}%
@@ -966,10 +967,11 @@
 }%
     \edef\lciOut{\lciOutputFilename}%
     \lciPushOutput{toc}%
+    \lciIfEqualExpanded{\lciIfMultipleParts}{\lcTrue}{\lcRawHtml{<TR><TD>}}{} 
     \lcRawHtml{        <UL><LI><A HREF="}\lcRawHtmlExpanded{\lciOut}%
     \lcRawHtml{##Section_}%
-    \lciSectionAnchorCounter\lcRawHtml{">}#C1\lcRawHtml{</A></UL>
-}%
+    \lciSectionAnchorCounter\lcRawHtml{">}#C1\lcRawHtml{</A></UL> }%       
+    \lciIfEqualExpanded{\lciIfMultipleParts}{\lcTrue}{\lcRawHtml{</TD></TR>}}{ }%
     \lciPopOutput}
 \newcommand{\section*}[1]{\lcRawHtml{<H2>}#C1\lcRawHtml{</H2>
 }}

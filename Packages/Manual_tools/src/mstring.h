@@ -19,6 +19,8 @@ using namespace std;
 
 // needed for g++ 3.0.4
 namespace std {
+// needed fro g++ 3.1
+//namespace __gnu_cxx {
 
 struct hash<string>
 {

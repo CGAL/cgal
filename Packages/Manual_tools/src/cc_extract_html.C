@@ -575,9 +575,15 @@ main( int argc, char **argv) {
     assert_file_write( *index_stream, macroX( "\\lciIndexFilename"));
     delete index_stream;
 
+    if (macroIsTrue("\\lciIfMultipleParts")) {
+      *contents_stream << "<!-- End last part's contents table -->" << endl;
+      *contents_stream << "</TABLE></TD></TABLE>" << endl; 
+    }
+
     if ( ! noheader_switch)
 	copy_and_filter_config_file( macroX( "\\lciTocFooter"),
 				     *contents_stream);
+
     assert_file_write( *contents_stream, 
 		       macroX( "\\lciContentsFilename"));
     delete contents_stream;

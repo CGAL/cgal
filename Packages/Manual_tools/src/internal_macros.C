@@ -220,34 +220,57 @@ void handleChapter(  const Buffer_list& T) {
     insertInternalGlobalMacro( "\\lciOutputFilename", current_filename);
     insertInternalGlobalMacro( "\\lciMainFilename",   main_filename);
     open_html( *main_stream);
+        
 
-    *main_stream << "<H1>" << chapter_title << "</H1>" << endl;
+
+
+    if (macroIsTrue("\\lciIfRefCrossLink"))
+      *main_stream << "<TABLE WIDTH=100%> <TR> <TD ALIGN=LEFT VALIGN=TOP> <H1>" 
+             << chapter_title << "</H1> </TD>" << endl;
+    else
+      *main_stream << "<H1>" << chapter_title  << "</H1>" << endl;
+
 
     // table of contents
-    *contents_stream << "    <LI> <A HREF=\"" << main_filename 
-		     << "\">" << chapter_title << "</A>" << endl;
+   
+    if (macroIsTrue("\\lciIfMultipleParts"))
+       *contents_stream << " <TR> <TD>"<< chapter_num <<"    <A HREF=\"" 
+                     << main_filename 
+		     << "\">" << chapter_title << "</A> </TD> </TR>" << endl;
+     else
+       *contents_stream << "    <LI> <A HREF=\"" << main_filename
+		     << "\">" << chapter_title << "</A>" << endl;     
 }
 
+
+
 void handlePart(  const Buffer_list& T) {
+  
 
     if (!part_title.empty()) // end previous part 
     {
-       *contents_stream << "</OL>"  << endl;
+       *contents_stream << " </TABLE></TD><TD VALIGN=TOP> <TABLE>"  << endl;
        *contents_stream << "<!-- End of manual part -->"  << endl;
     }
+    else
+    {
+       *contents_stream << "<TABLE WIDTH=100%><TD VALIGN=TOP><TABLE>" << endl;
+    } 
     
     part_title = string( text_block_to_string( T));
 
     // add new part title to table of contents
     *contents_stream << "<!-- Start of new manual part -->"  << endl;
-    *contents_stream << "<H3>" << part_title << "</H3>" << endl; 
+    *contents_stream << "<TR> <TH ALIGN=LEFT VALIGN=TOP><H3>" << part_title 
+                     << "</H3></TH> </TR>" << endl; 
     if ( macroIsTrue( "\\lciIfNumberChaptersByPart") )
-       *contents_stream << "<OL>" << endl; 
-    else 
-       *contents_stream << "<OL START=" << chapter_num+1 << ">" << endl;
+        chapter_num=0;
 }
 
+
+
 void handleBiblio(  const Buffer_list& T) {
+    
     ostream* out = open_file_for_write( tmp_path + macroX("\\lciBibFilename"));
     istream* in  = open_config_file( macroX( "\\lciBiblioHeader"));
     filter_config_file( *in, *out);
@@ -279,15 +302,22 @@ void handleClassFile( const string& filename,
     open_html( *class_stream);
     // Make a hyperlink in the chapter to the class file.
     if ( main_stream != &cout) {
-        *main_stream  << "<UL><LI>\n" << formatted_reference
+         if (macroIsTrue("\\lciIfMultipleParts"))
+           *main_stream  << "<TR> <TD> <UL><LI>" << formatted_reference
+		      << ".</UL> </TD> </TR>\n" << endl;
+         else
+           *main_stream  << "<UL><LI>\n" << formatted_reference
 		      << ".</UL>\n" << endl;
     }
 
     // table of contents
     if ( macroIsTrue( "\\lciIfHtmlClassToc"))
-	*contents_stream << "        <UL><LI> " << formatted_reference
-			 << "</UL>" << endl;
-
+        if (macroIsTrue("\\lciIfMultipleParts"))
+            *contents_stream << "<TR> <TD> <UL><LI> " << formatted_reference
+			 << "</UL> </TD> </TR>" << endl;
+        else
+            *contents_stream << "          <UL><LI> " << formatted_reference
+			 << "</UL> " << endl;
     current_ostream  = class_stream;
     current_filename = class_filename;
     insertInternalGlobalMacro( "\\lciOutputFilename", current_filename);
@@ -328,7 +358,7 @@ void handleClassEnvironment() {
         filename = replace_asterisks(filename);
 	string contents( " Class declaration of ");
 	contents += string("<A HREF=\"") + filename + "\">"
-	            + formatted_template_class_name + "</A>";
+	            + formatted_template_class_name + "</A> ";
 	handleClassFile( filename, contents);
     }
 
@@ -343,7 +373,7 @@ void handleClassEnvironment() {
 	// Generate a substitution rule for hyperlinking,
         // but only if classname is longer than 1 character.
 	if ( class_name.size() > 1) 
-	    *current_ostream << handleHtmlCrossLink( class_name, true);
+	   *current_ostream << handleHtmlCrossLink( class_name, true);
     }
 }
 

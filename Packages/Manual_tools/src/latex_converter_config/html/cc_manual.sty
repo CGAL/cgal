@@ -31,6 +31,31 @@
 \newcommand{\ccTrue}{\lcTrue}
 \newcommand{\ccAuto}{\lcAuto}
 
+% ###########################################################################
+% |
+% |   o   Link User <--> Reference
+% |
+% ###########################################################################
+
+
+\newcommand{\lciIfRefCrossLink}{\ccFalse}
+
+
+\newcommand{\ccUserChapter}[2]{
+ \gdef{\lciIfRefCrossLink}{\ccTrue}
+ \chapter{#1} \lcRawHtml{ <TD ALIGN=RIGHT VALIGN=TOP>}
+ \lcHtml{\ref{#2}} \lcRawHtml{ Reference Manual</TD> </TR> </TABLE> }
+ \gdef{\lciIfRefCrossLink}{\ccFalse}
+}
+
+\newcommand{\ccRefChapter}[2]{
+ \gdef{\lciIfRefCrossLink}{\ccTrue}
+ \chapter{#1} \lcRawHtml{ <TD ALIGN=RIGHT VALIGN=TOP > }
+ \lcHtml{\ref{#2}} \lcRawHtml{  User Manual</TD> </TR> </TABLE> }
+ \gdef{\lciIfRefCrossLink}{\ccFalse}
+}
+
+
 % ___________________________________________________________________________
 % ###########################################################################
 % |
