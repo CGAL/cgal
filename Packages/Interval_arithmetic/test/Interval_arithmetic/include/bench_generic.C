@@ -66,6 +66,11 @@ void bench()
   cout << c << "\tsqrt\t" << t.time()-dt << endl;
 
   dt = t.time(); t.start();
+  for (i=0; i<loops; i++) { c = CGAL_square(b); }
+  t.stop();
+  cout << c << "\tsquare\t" << t.time()-dt << endl;
+
+  dt = t.time(); t.start();
   for (i=0; i<loops; i++) { c = b; }
   t.stop();
   cout << c << "\t=\t" << t.time()-dt << endl;
