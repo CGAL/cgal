@@ -1,6 +1,6 @@
-2.61 (rursu) 06/06/2003
+2.62 = 2.61 (rursu) 06/06/2003
 -----------------------
-  -added config/testfiles/CGAL_CFG_NET2003_MATCHING_BUG_3.C
+  -added config/testfiles/CGAL_CFG_NET2003_MATCHING_BUG.C
 
 
 2.60
