@@ -89,8 +89,6 @@ int main(int argc,char *argv[])
 
   Snap_rounding_2 s1(seg_list.begin(),seg_list.end(),prec,true,3);
 
-  //s1.output(std::cout);
-
   std::cout << "input segments (not const iterator)\n";
   for(Segment_iterator i1 = s1.segments_begin();
       i1 != s1.segments_end();
@@ -134,7 +132,7 @@ int main(int argc,char *argv[])
   print_out(s3);
 
   std::cout << "\nchanging number of kd-trees\n";
-  s3.update_number_of_kd_trees(2);
+  s3.change_number_of_kd_trees(2);
   print_out(s3);
 
   /*  std::cout << "\ntesting cctor\n";
@@ -146,6 +144,13 @@ int main(int argc,char *argv[])
   s5 = s4;
   print_out(s5);
   */
+
+  // testing changing of pixel size
+  std::cout << "\ntesting changing of pixel size\n";
+  Snap_rounding_2 s6(seg_list.begin(),seg_list.end(),prec,true,3);
+  s6.change_pixel_size(0.5);
+  print_out(s6);
+
   return(0);
 }
 

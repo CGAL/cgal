@@ -103,10 +103,10 @@ typedef CGAL::Segment_2<Rep> Segment_2;
 typedef CGAL::Point_2<Rep> Point_2;
 
 private:
-  // (x,y) is the center of the hot pixel, prec is its edge length
+  // (x,y) is the center of the hot pixel
   NT x;
   NT y;
-  NT prec;
+  NT pixel_size;
   Segment_2 *right_seg;
   Segment_2 *left_seg;
   Segment_2 *top_seg;
@@ -116,7 +116,7 @@ public:
   void debug() const;
   template<class Out>
   void draw(Out &o) const;
-  Hot_Pixel(NT inp_x,NT inp_y,NT inp_prec);
+  Hot_Pixel(NT inp_x,NT inp_y,NT inp_pixel_size);
   ~Hot_Pixel();
   inline NT get_x() const;
   inline NT get_y() const;
@@ -151,8 +151,6 @@ typedef Rep_ Rep;
 typedef typename Rep::FT NT;
 typedef typename Traits::X_curve X_curve;
 typedef typename Traits::Curve Curve;
-//typedef CGAL::Sweep_line_subcurve<Traits> SubCurve;
-//typedef CGAL::Sweep_line_event<Traits, SubCurve> Event;
 typedef std::list<X_curve>              CurveContainer;
 typedef typename CurveContainer::iterator            CurveContainerIter;
 
@@ -181,9 +179,9 @@ public:
 
   Snap_rounding_2(Segment_const_iterator begin,
                   Segment_const_iterator end,
-                  NT inp_prec,bool inp_do_isr = true,
+                  NT inp_pixel_size,bool inp_do_isr = true,
                   int inp_number_of_kd_trees = default_number_of_kd_trees);
-  Snap_rounding_2(NT inp_prec,bool inp_do_isr = true,
+  Snap_rounding_2(NT inp_pixel_size,bool inp_do_isr = true,
                   int inp_number_of_kd_trees = default_number_of_kd_trees);
 
 #ifdef ISR_DEBUG
@@ -207,7 +205,8 @@ public:
     int insert(InputIterator first, InputIterator last);
   bool remove(Segment_2 seg);
   void clear();
-  void update_number_of_kd_trees(int inp_number_of_kd_trees);
+  bool change_number_of_kd_trees(int inp_number_of_kd_trees);
+  bool change_pixel_size(NT inp_pixel_size);
   void do_isr(bool inp_do_isr);
 
   template<class Out>
@@ -226,7 +225,7 @@ private:
   static const int default_number_of_kd_trees = 5;
 
   std::set<Hot_Pixel<Rep> *,hot_pixel_auclidian_cmp<Rep> > hp_set;
-  NT prec,min_x,max_x,min_y,max_y;
+  NT pixel_size,min_x,max_x,min_y,max_y;
   Segments_container seg_2_list;
   std::list<Segment_data<Rep> > seg_list;
   std::list<std::list<Point_2> > segments_output_list;
@@ -346,20 +345,21 @@ template<class Out> void Hot_Pixel<Rep_>::draw(Out &o) const
 
   // intersection pixel
 template<class Rep_>
-Hot_Pixel<Rep_>::Hot_Pixel(NT inp_x,NT inp_y,NT inp_prec) : prec(inp_prec)
+Hot_Pixel<Rep_>::Hot_Pixel(NT inp_x,NT inp_y,NT inp_pixel_size) :
+                           pixel_size(inp_pixel_size)
   {
-    x = NT(floor((inp_x / prec).to_double())) * prec + prec / 2.0;
+    x = NT(floor((inp_x / pixel_size).to_double())) * pixel_size + pixel_size / 2.0;
 
-    y = NT(floor((inp_y / prec).to_double())) * prec + prec / 2.0;
+    y = NT(floor((inp_y / pixel_size).to_double())) * pixel_size + pixel_size / 2.0;
 
-    right_seg = new Segment_2(Point_2(x + prec / 2.0,y - prec / 2.0),
-                              Point_2(x + prec / 2.0,y + prec / 2.0));
-    left_seg = new Segment_2(Point_2(x - prec / 2.0,y - prec / 2.0),
-                             Point_2(x - prec / 2.0,y + prec / 2.0));
-    top_seg = new Segment_2(Point_2(x - prec / 2.0,y + prec / 2.0),
-                            Point_2(x + prec / 2.0,y + prec / 2.0));
-    bot_seg = new Segment_2(Point_2(x - prec / 2.0,y - prec / 2.0),
-                            Point_2(x + prec / 2.0,y - prec / 2.0));
+    right_seg = new Segment_2(Point_2(x + pixel_size / 2.0,y - pixel_size / 2.0),
+                              Point_2(x + pixel_size / 2.0,y + pixel_size / 2.0));
+    left_seg = new Segment_2(Point_2(x - pixel_size / 2.0,y - pixel_size / 2.0),
+                             Point_2(x - pixel_size / 2.0,y + pixel_size / 2.0));
+    top_seg = new Segment_2(Point_2(x - pixel_size / 2.0,y + pixel_size / 2.0),
+                            Point_2(x + pixel_size / 2.0,y + pixel_size / 2.0));
+    bot_seg = new Segment_2(Point_2(x - pixel_size / 2.0,y - pixel_size / 2.0),
+                            Point_2(x + pixel_size / 2.0,y - pixel_size / 2.0));
   }
 
 template<class Rep_>
@@ -389,7 +389,7 @@ bool Hot_Pixel<Rep_>::intersect_left(Segment_2 &seg) const
     result = CGAL::intersection(seg,*left_seg);
 
     if(CGAL::assign(p,result)) {
-      NT tmp = y + prec / 2.0;
+      NT tmp = y + pixel_size / 2.0;
       return(p.y() != tmp || Snap_rounding_2<Rep_>::get_direction() ==
              Snap_rounding_2<Rep_>::UP_LEFT && seg.source().y() != tmp ||
              Snap_rounding_2<Rep_>::get_direction() ==
@@ -413,13 +413,13 @@ bool Hot_Pixel<Rep_>::intersect_right(Segment_2 &seg) const
     if(CGAL::assign(p,result)) {
       // bottom right point was checked in intersect_bot
 
-      NT tmp = y + prec / 2.0;
+      NT tmp = y + pixel_size / 2.0;
       if(p.y() == tmp)
         return(Snap_rounding_2<Rep_>::get_direction() ==
                Snap_rounding_2<Rep_>::UP_RIGHT && seg.source().y() != tmp ||
                Snap_rounding_2<Rep_>::get_direction() ==
                Snap_rounding_2<Rep_>::DOWN_LEFT && seg.target().y() != tmp);
-      else if(p.y() == y - prec / 2.0)
+      else if(p.y() == y - pixel_size / 2.0)
         return(false);// was checked
       else
         return((Snap_rounding_2<Rep_>::get_direction() ==
@@ -428,14 +428,14 @@ bool Hot_Pixel<Rep_>::intersect_right(Segment_2 &seg) const
                 Snap_rounding_2<Rep_>::DOWN_LEFT ||
                 Snap_rounding_2<Rep_>::get_direction() ==
                 Snap_rounding_2<Rep_>::UP_LEFT) && seg.target().x() !=
-                x + prec / 2.0 ||
+                x + pixel_size / 2.0 ||
                 (Snap_rounding_2<Rep_>::get_direction() ==
                 Snap_rounding_2<Rep_>::RIGHT ||
                 Snap_rounding_2<Rep_>::get_direction() ==
                 Snap_rounding_2<Rep_>::DOWN_RIGHT ||
                 Snap_rounding_2<Rep_>::get_direction() ==
                 Snap_rounding_2<Rep_>::UP_RIGHT) && seg.source().x() !=
-                x + prec / 2.0);
+                x + pixel_size / 2.0);
     } else
       return(false);
   }
@@ -450,7 +450,7 @@ bool Hot_Pixel<Rep_>::intersect_bot(Segment_2 &seg) const
     result = CGAL::intersection(seg,*bot_seg);
 
     if(CGAL::assign(p,result)) {
-      NT tmp = x + prec / 2.0;
+      NT tmp = x + pixel_size / 2.0;
       return(p.x() != tmp || Snap_rounding_2<Rep_>::get_direction() ==
              Snap_rounding_2<Rep_>::UP_LEFT && seg.target().x() != tmp ||
              Snap_rounding_2<Rep_>::get_direction() ==
@@ -474,7 +474,7 @@ bool Hot_Pixel<Rep_>::intersect_top(Segment_2 &seg) const
       // corner points was checked in intersect_bot
       NT tar_y = seg.target().y(),sou_y = seg.source().y();
 
-      if(p.x() == x - prec / 2.0 || p.x() == x + prec / 2.0)
+      if(p.x() == x - pixel_size / 2.0 || p.x() == x + pixel_size / 2.0)
         return(false);// were checked
       else
         return((Snap_rounding_2<Rep_>::get_direction() ==
@@ -482,13 +482,13 @@ bool Hot_Pixel<Rep_>::intersect_top(Segment_2 &seg) const
                Snap_rounding_2<Rep_>::get_direction() ==
                Snap_rounding_2<Rep_>::DOWN_LEFT ||
                Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::DOWN_RIGHT) && tar_y != y + prec / 2.0 ||
+               Snap_rounding_2<Rep_>::DOWN_RIGHT) && tar_y != y + pixel_size / 2.0 ||
                (Snap_rounding_2<Rep_>::get_direction() ==
                Snap_rounding_2<Rep_>::UP ||
                Snap_rounding_2<Rep_>::get_direction() ==
                Snap_rounding_2<Rep_>::UP_LEFT ||
                Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::UP_RIGHT) && sou_y != y + prec / 2.0);
+               Snap_rounding_2<Rep_>::UP_RIGHT) && sou_y != y + pixel_size / 2.0);
     } else
     return(false);
   }
@@ -589,7 +589,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
     for(typename std::list<Point_2>::const_iterator
             v_iter = mypointlist.begin();
 	v_iter != mypointlist.end();++v_iter) {
-      hp = new Hot_Pixel<Rep_>(v_iter->x(),v_iter->y(),prec);
+      hp = new Hot_Pixel<Rep_>(v_iter->x(),v_iter->y(),pixel_size);
       hot_pixels_list.push_back(std::pair<std::pair<NT,NT>,Hot_Pixel<Rep_> *>(
             std::pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
     }
@@ -597,11 +597,11 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
     /*    for(list<X_curve>::iterator v_iter = subcurves.begin();
         v_iter != subcurves.end();
         ++v_iter) {
-      hp = new Hot_Pixel<Rep_>(v_iter->source().x(),v_iter->source().y(),prec);
+      hp = new Hot_Pixel<Rep_>(v_iter->source().x(),v_iter->source().y(),pixel_size);
       if(hp_set.insert(hp).second)
         hot_pixels_list.push_back(pair<pair<NT,NT>,Hot_Pixel<Rep_> *>(
             pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
-      hp = new Hot_Pixel<Rep_>(v_iter->target().x(),v_iter->target().y(),prec);
+      hp = new Hot_Pixel<Rep_>(v_iter->target().x(),v_iter->target().y(),pixel_size);
       if(hp_set.insert(hp).second)
         hot_pixels_list.push_back(pair<pair<NT,NT>,Hot_Pixel<Rep_> *>(
             pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
@@ -638,7 +638,7 @@ void Snap_rounding_2<Rep_>::find_intersected_hot_pixels(Segment_data<Rep_>
     std::list<Hot_Pixel<Rep_> *> hot_pixels_list;
     mul_kd_tree->get_intersecting_points(hot_pixels_list,
 	   Segment_2(Point_2(seg.get_x1(),seg.get_y1()),
-           Point_2(seg.get_x2(),seg.get_y2())),prec);
+           Point_2(seg.get_x2(),seg.get_y2())),pixel_size);
 
     for(iter = hot_pixels_list.begin();iter != hot_pixels_list.end();++iter) {
       if((*iter)->intersect(seg)) {
@@ -748,7 +748,7 @@ void Snap_rounding_2<Rep_>::iterate()
       hot_pixel_iter = hot_pixels_intersected_set.begin();
       if(hot_pixel_iter == hot_pixels_intersected_set.end()) {
         // segment entirely inside a pixel
-        hp = new Hot_Pixel<Rep_>(iter->get_x1(),iter->get_y1(),prec);
+        hp = new Hot_Pixel<Rep_>(iter->get_x1(),iter->get_y1(),pixel_size);
         seg_output.push_back(Point_2(hp->get_x(),hp->get_y()));
         erase_hp = true;
         delete(hp);
@@ -774,16 +774,16 @@ void Snap_rounding_2<Rep_>::iterate()
 template<class Rep_>
 /*Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
   begin,Segment_const_iterator end,
-  NT inp_prec,bool inp_do_isr = true,int inp_number_of_kd_trees =
+  NT inp_pixel_size,bool inp_do_isr = true,int inp_number_of_kd_trees =
   default_number_of_kd_trees)*/
 Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
   begin,Segment_const_iterator end,
-  NT inp_prec,bool inp_do_isr,int inp_number_of_kd_trees)
+  NT inp_pixel_size,bool inp_do_isr,int inp_number_of_kd_trees)
   {
     // initialize approximation angles map    
     erase_hp = false;
     wheteher_to_do_isr = inp_do_isr;
-    prec = inp_prec;
+    pixel_size = inp_pixel_size;
     number_of_segments = 0;
     number_of_kd_trees = inp_number_of_kd_trees;
     need_sr = true;
@@ -800,13 +800,13 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
 
 template<class Rep_>
 Snap_rounding_2<Rep_>::Snap_rounding_2(
-    NT inp_prec,bool inp_do_isr,int inp_number_of_kd_trees)
+    NT inp_pixel_size,bool inp_do_isr,int inp_number_of_kd_trees)
   {
     // initialize approximation angles map
     need_sr = true;
     erase_hp = false;
     wheteher_to_do_isr = inp_do_isr;
-    prec = inp_prec;
+    pixel_size = inp_pixel_size;
     number_of_segments = 0;
     number_of_kd_trees = inp_number_of_kd_trees;
   }
@@ -916,9 +916,23 @@ void Snap_rounding_2<Rep_>::clear()
   }
 
 template<class Rep_>
-void Snap_rounding_2<Rep_>::update_number_of_kd_trees(int inp_number_of_kd_trees)
-  { 
-    number_of_kd_trees = inp_number_of_kd_trees;
+bool Snap_rounding_2<Rep_>::change_number_of_kd_trees(int inp_number_of_kd_trees)
+  {
+    if(inp_number_of_kd_trees > 0) {
+      number_of_kd_trees = inp_number_of_kd_trees;
+      return(true);
+    } else
+      return(false);
+  }
+
+template<class Rep_>
+bool Snap_rounding_2<Rep_>::change_pixel_size(NT inp_pixel_size)
+  {
+    if(inp_pixel_size > 0) {
+      pixel_size = inp_pixel_size;
+      return(true);
+    } else
+      return(false);
   }
 
 template<class Rep_>
