@@ -1,3 +1,8 @@
+Version 1.115 (?? ??? 02)
+- Replace max2 by maxless.
+
+-----------------------  CGAL 2.4 ------------------------
+
 Version 1.114 (15 May 02)
 - bug fix in the doc of the Delaunay traits concept
 - use of Lazy_exact_nt in demo_voronoi

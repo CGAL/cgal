@@ -328,7 +328,6 @@ private:
 				Vertex_handle v3, 
 				Vertex_handle v) const;
 
-  int max2(int i0, int i1, int i2, int i3, int i4, int m) const;
   int maxless(int i0, int i1, int i2, int i3, int i4, int m) const;
 
   void make_hole_3D_ear( Vertex_handle v, 
@@ -729,20 +728,6 @@ side_of_sphere_inf_perturb(Vertex_handle v0,
 template < class Gt, class Tds >
 int
 Delaunay_triangulation_3<Gt,Tds>::
-max2(int i0, int i1, int i2, int i3, int i4, int m) const
-  // m supposed to be the maximum of the i's
-  // could be replaced by maxless
-{
-  if (m == i0) return std::max(i1,std::max(i2,std::max(i3,i4)));
-  if (m == i1) return std::max(i0,std::max(i2,std::max(i3,i4)));
-  if (m == i2) return std::max(i0,std::max(i1,std::max(i3,i4)));
-  if (m == i3) return std::max(i0,std::max(i1,std::max(i2,i4)));
-  return std::max(i0,std::max(i1,std::max(i2,i3)));
-}
-
-template < class Gt, class Tds >
-int
-Delaunay_triangulation_3<Gt,Tds>::
 maxless(int i0, int i1, int i2, int i3, int i4, int m) const
   // returns the largest i which is less than m
 {
@@ -821,7 +806,7 @@ side_of_sphere_finite_perturb(Vertex_handle v0,
   // if not yet returned, then the leading monomial of the determinant
   // has null coefficient 
   // we look whether the 2nd monomial has non null coefficient 
-  m = max2(i0,i1,i2,i3,i,m);
+  m = maxless(i0,i1,i2,i3,i,m);
   if (m == i) 
     return ON_UNBOUNDED_SIDE;
   if (m == i3 && (o = orientation(p0,p1,p2,p)) != ZERO )
