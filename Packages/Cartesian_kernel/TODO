@@ -35,6 +35,8 @@ diff -ru CGAL-2.3-I-6/include/CGAL/SimpleCartesian/CircleS2.h CGAL-2.3-I-6-new/i
  }
  #endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLES2
 
+- Fix problems with VC++ like Dima suggested : put ctors definitions in the
+  class body.
 - Use CGAL_TYPENAME_MSVC_NULL instead of "#define typename".
   Only in the template parameters, right ?
 - Iso_rectangleC2 should store a twotuple of _non_ ref-counted points ?
@@ -103,7 +105,6 @@ diff -ru CGAL-2.3-I-6/include/CGAL/SimpleCartesian/CircleS2.h CGAL-2.3-I-6-new/i
     const RT&     hw_ref() const;
   Probably a good idea ?  Or is it worse with doubles ?  Let's try.
   Why do Point.x(), y(), hx(), hy(), hw() return FT instead of a "const FT &" ?
-- Status of the scripts create_symlinks and remove_symlinks ?
 - Status of the test/ directories in the old C2, C3, Cartesian_basic ?
   What's in it ?  Should it be kept or thrown ?
 - include/CGAL/smallest_radiusC2.h should use the kernel code.
