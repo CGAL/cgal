@@ -26,10 +26,11 @@ typedef CGAL::Pm_default_dcel<Traits>        Dcel;
 typedef CGAL::Planar_map_2<Dcel, Traits>     PM;
 typedef CGAL::Pm_file_writer<PM>             Pm_writer;
 
+CGAL_BEGIN_NAMESPACE
 
-std::ostream & operator<<(std::ostream & os, const Curve_2 & cv)
+std::ostream & operator<<(std::ostream & os, const ::Curve_2 & cv)
 {
-  typedef Curve_2::const_iterator  Points_iterator;
+  typedef ::Curve_2::const_iterator Points_iterator;
   
   os << cv.size() << std::endl;
   for (Points_iterator points_iter = cv.begin(); 
@@ -39,19 +40,21 @@ std::ostream & operator<<(std::ostream & os, const Curve_2 & cv)
   return os;
 }
 
-std::istream & operator>>(std::istream & in, Curve_2 & cv)
+std::istream & operator>>(std::istream & in, ::Curve_2 & cv)
 {
   std::size_t size;
   in >> size;
 
   for (unsigned int i = 0; i < size; i++){
-    Point_2 p;
+    ::Point_2 p;
     in >> p;
     cv.push_back(p);  
   }
   
   return in;
 }
+
+CGAL_END_NAMESPACE
 
 // Read polylines from the input
 
@@ -81,7 +84,7 @@ int main()
 
   // Construct the planar map  
   Traits traits;
-  CGAL::sweep_to_construct_planar_map_2(polylines.begin(),polylines.end(), 
+  CGAL::sweep_to_construct_planar_map_2(polylines.begin(), polylines.end(), 
                                         traits, pm);
 
   // Write output 
