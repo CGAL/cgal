@@ -174,14 +174,14 @@ void test(const int n,const FT& tol) {
 
   cout << " default constructor and multiple insert()'s:" << endl;
   Min_sphere  ms4;
-  for (int i=0; i<S.size(); ++i)
+  for (unsigned int i=0; i<S.size(); ++i)
     ms4.insert(S[i]);
   checkCondition(ms4.is_valid(),"Minsphere not valid.");
   compare<D,Min_sphere,FT>(tol,ms1,ms4,is_exact(tol));
 
   cout << " clearing and multiple insert()'s:" << endl;
   ms2.clear();
-  for (int i=0; i<S.size(); ++i)
+  for (unsigned int i=0; i<S.size(); ++i)
     ms2.insert(S[i]);
   checkCondition(ms2.is_valid(),"Minsphere not valid.");
   compare<D,Min_sphere,FT>(tol,ms1,ms2,is_exact(tol));
