@@ -194,7 +194,6 @@ sub check_version($)
     if (!defined($package_maintainer)) {
 	log_msg "Version file does not contain a maintainer line!";
 	return ();
-#$package_maintainer = '?';
     }
     ($old_version_string, $old_date, $old_package_maintainer) =
 	get_version("$packagedir/$package_name/version");
@@ -315,6 +314,28 @@ sub filenames_of_package_ok($)
     return ($rc == 0);
 }
 
+sub check_for_ignored_files()
+{
+    my %expected_names;
+    my @expected_names = ("include", "test", "examples", "demo", "src",
+		"version","doc_tex","stlport","winutils","auxiliary",
+		"developer_scripts","scripts","cgal_config.bat",
+		"install.txt","INSTALL.win32",
+		"submission_info","maintainer");
+    my @files_in_directory;
+    opendir THISDIR, "." or die "Cannot open current directory: $!";
+    @files_in_directory = grep !/^\.\.?$/, readdir THISDIR;
+    closedir THISDIR;
+    for (@expected_names) {
+        $expected_names{$_}++;
+    }
+    for (@files_in_directory) {
+        if (!$expected_names{$_}) {
+	    log_msg "Warning: toplevel file $_ will not go into releases!";
+	}
+    }
+}
+
 sub check_package($)
 {
     my ($version, $prev_version, $package_maintainer);
@@ -349,7 +370,7 @@ sub check_package($)
 #    if ( ! -f 'changes.txt' ) {
 #	log_msg "WARNING: File changes.txt is missing!";
 #    }
-
+    check_for_ignored_files();
     if ( ! filenames_of_package_ok($_[0])) {
         return 0;
     }
