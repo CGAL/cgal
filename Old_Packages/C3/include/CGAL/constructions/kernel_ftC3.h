@@ -76,7 +76,7 @@ circumcenterC3( const FT &px, const FT &py, const FT &pz,
   CGAL_kernel_assertion( den != FT(0) );
   FT inv = FT(1)/(FT(2) * den);
 
-   x = sx + num_x*inv;
+  x = sx + num_x*inv;
   y = sy - num_y*inv;
   z = sz + num_z*inv;
 }
