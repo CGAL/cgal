@@ -480,7 +480,6 @@ protected:
 	       !isInternalXPoint((*slIter)->getLeftEnd()))
 	  {
 	    *out = (*slIter)->getLeftEnd(); ++out;
-	    std::cout << "1 - reporting " << (*slIter)->getLeftEnd() << "\n";
 	  }
 	}
 	++slIter;
@@ -576,7 +575,6 @@ protected:
     if ( !m_currentEvent->hasLeftCurves() )
     {
       if ( includeEndPoints || m_currentEvent->isInternalIntersectionPoint()) {
-	std::cout << "2 - reporting " << eventPoint << "\n";
         *out = eventPoint; ++out;    
       }
       return;
@@ -597,7 +595,6 @@ protected:
 
     if ( includeEndPoints || m_currentEvent->isInternalIntersectionPoint() )
     {
-      std::cout << "3 - reporting " << eventPoint<< "\n";
       *out = eventPoint; ++out;
     }
   }
