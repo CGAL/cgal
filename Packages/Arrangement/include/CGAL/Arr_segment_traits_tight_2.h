@@ -28,7 +28,6 @@
 
 #include <CGAL/Pm_segment_traits_tight_2.h>
 #include <CGAL/intersections.h>
-#include <CGAL/Arr_intersection_tags.h>
 
 #include <list>
 
@@ -38,15 +37,15 @@ template <class Kernel_>
 class Arr_segment_traits_tight_2 : public Pm_segment_traits_tight_2<Kernel_>
 {
 public:
-  typedef Efficient_intersection_tag            Intersection_category;
-
   typedef Kernel_                               Kernel;
   typedef int                                   Info_face;
   typedef int                                   Info_edge;
   typedef int                                   Info_vertex;
   
-  typedef Pm_segment_traits_tight_2<Kernel>      Base;
+  typedef Pm_segment_traits_tight_2<Kernel>     Base;
   
+  typedef typename Base::Has_left_category      Has_left_category;
+
   typedef typename Base::Point_2                Point_2;
   typedef typename Base::X_curve_2              X_curve_2;
   typedef X_curve_2                             Curve_2;
