@@ -207,7 +207,7 @@ public:
     pointer ret = free_list;
     free_list = clean_pointee(ret);
     alloc.construct(ret, t);
-    CGAL_assertion(Traits::pointer(*ret) == NULL);
+    CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
   }
