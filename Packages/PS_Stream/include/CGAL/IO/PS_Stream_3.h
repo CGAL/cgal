@@ -23,6 +23,7 @@
 #ifndef CGAL_PS_STREAM_3_H
 #define CGAL_PS_STREAM_3_H
 
+#include <CGAL/basic.h>
 #include <cmath>
 #include <list>
 #include <CGAL/Cartesian.h>
@@ -126,10 +127,14 @@ class PS_Stream_3 : public PS_Stream
 public :
 
   // Constructors
-  PS_Stream_3(const PS_BBox3& bb3,const Direction& d, const Direction &l,ostream& os,OutputMode = QUIET );
-  PS_Stream_3(const PS_BBox3& bb3, const Direction& d, const Direction &l,const char* fname,OutputMode = QUIET);
-  PS_Stream_3(const PS_BBox3& bb3,const Direction& d, const Direction &l,float H, ostream& os,OutputMode = QUIET );
-  PS_Stream_3(const PS_BBox3& bb3,const Direction& d,const Direction &l, float H, const char* fname, OutputMode = QUIET);
+  PS_Stream_3(const PS_BBox3& bb3,const Direction& d, const Direction &l,
+              ostream& os,OutputMode = QUIET );
+  PS_Stream_3(const PS_BBox3& bb3, const Direction& d, const Direction &l,
+              const char* fname,OutputMode = QUIET);
+  PS_Stream_3(const PS_BBox3& bb3,const Direction& d, const Direction &l,
+              float H, ostream& os,OutputMode = QUIET );
+  PS_Stream_3(const PS_BBox3& bb3,const Direction& d,const Direction &l,
+              float H, const char* fname, OutputMode = QUIET);
   
   //Accessors 
   PS_BBox3    PS_Stream_3::bbox3() const {return _bbox3;}
@@ -167,10 +172,12 @@ public :
 
   //Operators
   //Return the norm
-  inline coord_type norme(coord_type x,coord_type y,coord_type z){
-    return (sqrt(CGAL::to_double(x)*CGAL::to_double(x)+CGAL::to_double(y)*CGAL::to_double(y)+CGAL::to_double(z)*CGAL::to_double(z)));}
+  coord_type norme(coord_type x,coord_type y,coord_type z){
+    return sqrt(CGAL_NTS square(to_double(x))+
+                CGAL_NTS square(to_double(y))+
+                CGAL_NTS square(to_double(z)));}
   //Return the result of sqrt(1-x^2) used for the trtansformation matrix
-  inline double den(double x){return (sqrt(1-x*x));}
+  double den(double x){return (sqrt(1-x*x));}
   //Project a point3 and return the point2
   Point2 transform( const Point3& p);
   //Transform a point3 according the transformation and return the point2
@@ -184,7 +191,8 @@ public :
   vector<PS_facet_3> PS_Stream_3::normal_sort();
   //Display the scene
   void display();
-  //Transform all the facets before the display of the scene. These transformation allows to
+  //Transform all the facets before the display of the scene.
+  // These transformation allows to
   //transform the point of view to become along the z-axis.
   void PS_Stream_3::transformation();
   //Allows to split the face number i according the intersection between the
@@ -219,15 +227,16 @@ public :
   void PS_Stream_3::add_polyhedron(Polyhedron_3<Traits,HDS>& p);
 
   //This method transform a point 3D in a vector of PS_facet_3..}
-  //It is necessary to apply the algorithm to a point. So the point is assimilated
-  //to a little cube
+  //It is necessary to apply the algorithm to a point.
+  //So the point is assimilated to a little cube
   vector<PS_facet_3> point_to_facet(Point3& point);
    //This method transform a segment 3D in a vector of PS_facet_3.
-  //It is necessary to apply the algorithm to a point. So the segment is assimilated
-  //to a parrallepipede
+  //It is necessary to apply the algorithm to a point.
+  //So the segment is assimilated to a parrallepipede
   vector<PS_facet_3> segment_to_facet(Segment3& segment);
   //This method transform a line 3D in a vector of PS_facet_3.
-  //It is necessary to apply the algorithm to a point. So the segment is assimilated
+  //It is necessary to apply the algorithm to a point.
+  //So the segment is assimilated
   //to a parrallepipede which is bigger than the BBox
   vector<PS_facet_3> line_to_facet(Line3& line);
   //This method transform a tetrahedron into a vector of PS_facet_3.
@@ -266,25 +275,32 @@ public :
   friend PS_Stream_3& operator << (PS_Stream_3& ps, Triangulation_2<Gt,Tds> &t);
   //Allows to add a Delaunay_triangulation_2 in the PS_Stream_3
   template < class Gt, class Tds >
-  friend PS_Stream_3& operator << (PS_Stream_3& ps, Delaunay_triangulation_2<Gt,Tds> &t);
+  friend PS_Stream_3& operator << (PS_Stream_3& ps,
+                                   Delaunay_triangulation_2<Gt,Tds> &t);
   //Allows to add a Constrained_triangulation_2 in the PS_Stream_3
   template < class Gt, class Tds>
-  friend PS_Stream_3& operator<<(PS_Stream_3& ps, Constrained_triangulation_2<Gt,Tds> &t);
+  friend PS_Stream_3& operator<<(PS_Stream_3& ps,
+                                 Constrained_triangulation_2<Gt,Tds> &t);
   //Allows to add a Regular_triangulation_2 in the PS_Stream_3
   template < class Gt, class Tds >
-  friend PS_Stream_3& operator << (PS_Stream_3& ps, Regular_triangulation_2<Gt,Tds> &t); 
+  friend PS_Stream_3& operator << (PS_Stream_3& ps,
+                                   Regular_triangulation_2<Gt,Tds> &t); 
   //Allows to add a Constrained_Delaunay_triangulation_2 in the PS_Stream_3
   template < class Gt, class Tds >
-  friend PS_Stream_3& operator << (PS_Stream_3& ps, Constrained_Delaunay_triangulation_2<Gt,Tds> &t); 
+  friend PS_Stream_3& operator << (PS_Stream_3& ps,
+                              Constrained_Delaunay_triangulation_2<Gt,Tds> &t);
   //AJOUT MANIPULATOR
   //Modify the type of filling of the facet
-  //friend PS_Stream_3& set_point_of_view(Direction& pov); //{_point_of_view=pov;}
+  //friend PS_Stream_3& set_point_of_view(Direction& pov);
+    //{_point_of_view=pov;}
   //Modify the color of the facet
   //friend PS_Stream_3& set_light(Direction& light);// {_light=light;}
 
   //  PS_Manipulator_creator<const
-  //extern PS_Manipulator_creator<const Direction&> p_o_v(&PS_Stream_3::set_point_of_view);
-  //extern PS_Manipulator_creator<const Direction&> _light_(&PS_Stream_3::set_light);
+  //extern PS_Manipulator_creator<const Direction&>
+  //p_o_v(&PS_Stream_3::set_point_of_view);
+  //extern PS_Manipulator_creator<const Direction&>
+  //_light_(&PS_Stream_3::set_light);
   //The BBox3
   // Define the bounding box
   PS_BBox3 _bbox3;

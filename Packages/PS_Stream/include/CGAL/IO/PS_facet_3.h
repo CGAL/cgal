@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 //
-// file          : include/CGAL/IO/PS_Stream_3.h
+// file          : include/CGAL/IO/PS_facet_3.h
 // package       : PS_Stream
 // revision      : $Revision$
 // revision_date : $Date$
@@ -22,6 +22,8 @@
 
 #ifndef CGAL_PS_FACET_3_H
 #define CGAL_PS_FACET_3_H
+
+#include <CGAL/basic.h>
 
 #include <algorithm>
 #include <map>
@@ -39,7 +41,6 @@
 #include <CGAL/Aff_transformation_3.h>
 
 //Include for the polygon
-#include <CGAL/basic.h>
 #include <CGAL/Polygon_2.h>
 
 //Include for the Arrangement

@@ -172,7 +172,8 @@ protected:
     const char* text() const { return _text;}
     
   protected:
-    // These functions are private because the position of the string must never appears to the user
+    // These functions are private because the position of the string
+    // must never appears to the user
     // Only stream modifiers will access these data
     void setposition(float x, float y) { posx=x;posy=y;}
     Latex_Label(const char* txt,float x, float y)
@@ -209,14 +210,17 @@ protected:
     Context() : _border_color(Color(0,0,0)),
       _fill_color(Color(0,0,0)),_dot_style(XCROSS),_dot_size(5),
       _thickness(0),_line_style(SOLID),_fill(false),
-      _font("Helvetica"),_font_size(12), _anchor_point(Point_2<Cartesian <double> > (0,0))
+      _font("Helvetica"),_font_size(12),
+      _anchor_point(Point_2<Cartesian <double> > (0,0))
       {}
     
     Context(const Context& c)
       :  _border_color(c.get_border_color()),_fill_color(c.get_fill_color()),
 	 _dot_style(c.get_dot_style()), _dot_size(c.get_dot_size()),
-	 _thickness(c.get_thickness()), _line_style(strdup(c.get_line_style())),
-	 _fill(c.get_fill()), _font(strdup(c.get_font())), _font_size(c.get_font_size()),
+	 _thickness(c.get_thickness()),
+         _line_style(strdup(c.get_line_style())),
+	 _fill(c.get_fill()), _font(strdup(c.get_font())),
+         _font_size(c.get_font_size()),
 	 _anchor_point(c.get_pos())
       {};
 
@@ -262,9 +266,11 @@ DashStyle _line_style;
 bool _fill;
 // Define if direction must be shown.
 bool _dir;
-// Store the name of the font to use. It is only used  for standart Label, not for Latex Label.
+// Store the name of the font to use. It is only used  for standart Label,
+// not for Latex Label.
 const char* _font;
-// Store the size of the font. It is only used  for standart Label, not for Latex Label.
+// Store the size of the font. It is only used  for standart Label,
+// not for Latex Label.
 unsigned int _font_size;
 //Anchor point:
 Point_2<Cartesian <double> > _anchor_point;
@@ -541,7 +547,8 @@ PS_Stream & operator <<(PS_Stream& ps, const Ray_2<R>& r)
     {
       ps.os() << "%CGAL% Ray" << std::endl;
       ps.os() << "%CGAL% "<<r.source().x()<<" "<<r.source().y()<<" ";
-      ps.os() << r.second_point().x() << " " << r.second_point().y() <<std::endl;
+      ps.os() << r.second_point().x() << " " << r.second_point().y();
+      ps.os() << std::endl;
     }
   if (!r.is_degenerate())
     {
@@ -652,7 +659,7 @@ PS_Stream & operator <<(PS_Stream& ps, const Circle_2<R>& c)
     if (ps.is_readable())
       {
         ps.os() << "%CGAL% Circle" << std::endl;
-        ps.os() << "%CGAL " << c.center().x() << " " << c.center().y() << std::endl;
+        ps.os() << "%CGAL " << c.center().x()<<" "<<c.center().y()<< std::endl;
         ps.os() << "%CGAL " << c.squared_radius() << std::endl;
       }
     double ratio=ps.yratio()/ps.xratio();
