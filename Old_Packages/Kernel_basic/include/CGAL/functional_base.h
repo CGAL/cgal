@@ -16,10 +16,12 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
-//                 Lutz Kettner <kettner@cs.unc.edu>
+//                 Lutz Kettner
 //
-// Basics for CGAL Functors.
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
+
+// Basics for CGAL Functors.
 
 #ifndef CGAL_FUNCTIONAL_BASE_H
 #define CGAL_FUNCTIONAL_BASE_H
