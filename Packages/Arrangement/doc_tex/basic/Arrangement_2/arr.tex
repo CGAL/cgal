@@ -229,25 +229,29 @@ Edge 2 2 3 3 is covered by a single edge.
 
 \section{Polyline Arrangements}
 
-The \ccc{Arr_polyline_traits_2<Kernel, Container>} class can be used to 
-handle arrangements of polylines (a.k.a. poly-segment). It is templated with
-a geometric kernel that supports the basic operations on segments and a 
-container of point objects, where the $i$th and $(i+1)$st points in the 
-container represent the endpoints of the $i$th segment of the polyline.
+The \ccc{Arr_polyline_traits_2<Segment_traits>} class can be used to 
+handle arrangements of polylines (a.k.a. poly-segment). A polyline can be
+created from any container of points, where the $i$th and $(i+1)$st points 
+in the container represent the endpoints of the $i$th segment of the polyline.
+The polyline traits class is templated with another traits class that supports
+the basic operations on segments. 
 
 \subsection{Example of a Polyline Arrangement}
 \label{ssec:example10}
 The following example demonstrates the use of the polyline traits.
-Observe that a polyline curve is a container (the default STL in this case).
+Observe that a polyline curve is constructed from a standard STL vector
+of points.
+
 Note that a polyline point is not necessarily a vertex of the arrangement 
 (that is, of the underlying Planar Map) and an edge of the Planar Map need 
-not be a segment (recall the above example with circles). The edges are only 
-required to be x-monotone and pairwise disjoint. However, one might expect 
-the planar map (or rather the edge level of the arrangement) to be made of 
-segments alone.  In the example below point (150, 50) is not a vertex of 
-the planar map.  The polyline to which it belongs is an edge of the planar 
-map. In such cases the user can define additional level of hierarchies, 
-as will be shown in the next example.
+not be a segment. The edges are only required to be x-monotone and pairwise 
+disjoint. In the example below point (150, 50) is not a vertex of the planar 
+map. The polyline to which it belongs is an edge of the planar map.
+
+ However, one might expect the planar map (or rather the edge level of the 
+arrangement) to be made of segments alone. In such cases the user can define 
+additional level of hierarchies, as will be shown in the example in 
+Section~\ref{ssec:example4}.
 
 \ccIncludeExampleCode{Arrangement_2/example10.C}
 

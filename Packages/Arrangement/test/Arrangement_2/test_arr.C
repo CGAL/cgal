@@ -47,7 +47,8 @@ int main()
   #include <CGAL/Arr_leda_segment_traits_2.h>
   #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
-  #include <CGAL/Arr_polyline_traits.h>
+  #include <CGAL/Arr_polyline_traits_2.h>
+  #include <CGAL/Arr_segment_cached_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
   #include <CGAL/leda_rational.h>
   #include <CGAL/Arr_leda_polyline_traits.h>
@@ -87,14 +88,15 @@ int main()
 // data files. Quotient can read both integers and fractions.
 // leda rational will only read fractions.
 #include <CGAL/Quotient.h> 
+#include <CGAL/MP_Float.h>
 
 #include <list>
 #include <string>
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
   typedef CGAL::Quotient<int>                           NT;
-  typedef CGAL::Cartesian<NT>                           R;
-  typedef CGAL::Arr_segment_traits_2<R>                 Traits;
+  typedef CGAL::Cartesian<NT>                           Kernel;
+  typedef CGAL::Arr_segment_traits_2<Kernel>            Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
   typedef leda_rational                                 NT;
@@ -102,19 +104,22 @@ int main()
   typedef CGAL::Arr_leda_segment_traits_2<Kernel>       Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
-  typedef CGAL::Quotient<int>                           NT;
-  typedef CGAL::Cartesian<NT>                           R;
-  typedef CGAL::Arr_polyline_traits<R>                  Traits;
+  typedef CGAL::Quotient<CGAL::MP_Float>                NT;
+  typedef CGAL::Cartesian<NT>                           Kernel;
+  typedef CGAL::Arr_segment_cached_traits_2<Kernel>     SegmentTraits;
+  typedef CGAL::Arr_polyline_traits_2<SegmentTraits>    Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
   typedef leda_rational                                 NT;
   typedef CGAL::Pm_segment_traits_leda_kernel_2         Kernel;
-  typedef CGAL::Arr_leda_polyline_traits<Kernel>        Traits;
+  typedef CGAL::Arr_leda_polyline_traits<Kernel,
+					 std::list<Kernel::Point_2> >        
+                                                        Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
   typedef leda_real                                     NT;
-  typedef CGAL::Cartesian<NT>                           K;
-  typedef CGAL::Arr_conic_traits_2<K>                   Traits;
+  typedef CGAL::Cartesian<NT>                           Kernel;
+  typedef CGAL::Arr_conic_traits_2<Kernel>              Traits;
   typedef Traits::Segment_2                             Segment;
   typedef Traits::Circle                                Circle;
 
@@ -345,8 +350,9 @@ private:
     // The to_long precondition is that number is indeed long
     // is supplied here since input numbers are small.
     return get_next_num(file).numerator().to_long();
-#elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
-    return (int) CGAL::to_double(get_next_num(file));
+#elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS || \
+      CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
+    return (static_cast<int>(CGAL::to_double(get_next_num(file))));
 #else
     return get_next_num(file).numerator();
 #endif
@@ -386,7 +392,6 @@ private:
     NT                    x,y; 
     int                   num_x_curves ;
     Point_list            point_list;
-    Point_list::iterator  plit;
 
     num_x_curves = get_next_int(file);
     
@@ -398,16 +403,8 @@ private:
       else
         point_list.push_back(s);
     }
-    for (plit = point_list.begin(); //, cit = polyline.begin();
-         plit != point_list.end();
-         plit++) 
-      {
-        //std::cout << *plit << std::endl;
-        polyline.push_back(*plit);
-      }
-    
-    m_all_points_list.splice(m_all_points_list.end(), point_list); 
-    return polyline;
+
+    return (Curve(point_list));
   }
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS

@@ -10,46 +10,52 @@
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
+#include <CGAL/Arr_segment_cached_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
 #include <iostream>
-#include <CGAL/Arr_polyline_traits.h>
 #include <CGAL/IO/Arr_iostream.h>
 
-typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
-typedef CGAL::Cartesian<NT>                             Kernel;
-typedef CGAL::Arr_polyline_traits<Kernel>               Traits;
-typedef Traits::Point_2                                 Point;
-typedef Traits::Curve_2                                 Curve;
-typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
-typedef CGAL::Arr_base_node<Curve>                      Base_node;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>      Arr;
-typedef CGAL::Arr_file_writer<Arr>                      Arr_writer;
+typedef CGAL::Quotient<CGAL::MP_Float>                NT;
+typedef CGAL::Cartesian<NT>                           Kernel;
+typedef CGAL::Arr_segment_cached_traits_2<Kernel>     Seg_traits;
+typedef CGAL::Arr_polyline_traits_2<Seg_traits>       Traits;
+
+typedef Traits::Point_2                               Point_2;
+typedef Traits::Curve_2                               Curve_2;
+
+typedef CGAL::Arr_2_default_dcel<Traits>              Dcel;
+typedef CGAL::Arr_base_node<Curve_2>                  Base_node;
+typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>    Arr_2;
+typedef CGAL::Arr_file_writer<Arr_2>                  Arr_writer;
 
 CGAL_BEGIN_NAMESPACE
 
-std::ostream & operator<<(std::ostream & os, const Curve & cv)
+std::ostream& operator<<(std::ostream& os, const Curve_2& cv)
 {
-  typedef Curve::const_iterator Points_iterator;
+  Curve_2::const_iterator iter;
   
-  os << cv.size() << std::endl;
-  for (Points_iterator points_iter = cv.begin(); 
-       points_iter != cv.end(); points_iter++)
-    os << " " << *points_iter;
+  os << cv.points() << std::endl;
+  for (iter = cv.begin(); iter != cv.end(); iter++)
+    os << " " << *iter;
 
   return os;
 }
 
-std::istream & operator>>(std::istream & in, Curve & cv)
+std::istream& operator>>(std::istream& in, Curve_2& cv)
 {
-  std::size_t  size;
-  unsigned int i;
+  Kernel::Point_2            p;
+  std::size_t                size;
+  std::list<Kernel::Point_2> pts;
+  unsigned int               i;
 
   in >> size;
 
-  for (i = 0; i < size; i++){
-    Point p;
+  for (i = 0; i < size; i++)
+  {
     in >> p;
-    cv.push_back(p);  
+    pts.push_back(p);  
   }
+  cv = Curve_2(pts);
   
   return in;
 }
@@ -58,7 +64,7 @@ CGAL_END_NAMESPACE
 
 int main()
 {
-  Arr arr;
+  Arr_2 arr;
   std::cin >> arr;
   std::cout << " * * * Printing list of all halfedges " 
             << "of the resulting Arrangement" 

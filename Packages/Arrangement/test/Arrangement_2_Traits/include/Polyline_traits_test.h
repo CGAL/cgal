@@ -6,16 +6,44 @@ class Polyline_traits_test :
   public Base_traits_test< Traits_class, Number_type >
 {
 public:
-  typedef Number_type  NT;
-  typedef typename Traits_class::Point     Point;
-  typedef typename Traits_class::X_curve   X_curve;
-  typedef typename Traits_class::Curve     Curve;
+  typedef Number_type                               NT;
+  typedef typename Traits_class::Point_2            Point_2;
+  typedef typename Traits_class::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename Traits_class::Curve_2            Curve_2;
 public:
   Polyline_traits_test( int argc, char** argv );
-  virtual void read_curve( std::ifstream& is, Curve& cv );
+  virtual void read_curve( std::ifstream& is, Curve_2& cv );
   virtual bool curve_make_x_monotone_wrapper( std::istringstream& strLine );
   virtual bool curve_split_wrapper( std::istringstream& strLine );
   ~Polyline_traits_test();
+
+private:
+
+  int _points (const Curve_2& cv) const
+  {
+    typename Curve_2::const_iterator it = cv.begin();
+    int      n = 0;
+
+    while (it != cv.end())
+    {
+      n++;
+      it++;
+    }
+    return (n);
+  }
+
+  Point_2 _point (const Curve_2& cv, int j) const
+  {
+    typename Curve_2::const_iterator it = cv.begin();
+
+    while (j > 0)
+    {
+      it++;
+      j--;
+    }
+
+    return (*it);
+  }
 };
 
 //---------------------------------------------------------------------------
@@ -26,7 +54,8 @@ public:
 template< class Traits_class, class Number_type >
 Polyline_traits_test< Traits_class, Number_type >::
 Polyline_traits_test( int argc, char** argv ) :
- Base_traits_test< Traits_class, Number_type >(argc, argv) {}; 
+ Base_traits_test< Traits_class, Number_type >(argc, argv) 
+{} 
 //---------------------------------------------------------------------------
 /*
   Destructor. Nothing to do. Implements super class virtual dtor.
@@ -34,7 +63,8 @@ Polyline_traits_test( int argc, char** argv ) :
 //---------------------------------------------------------------------------
 template< class Traits_class, class Number_type >
 Polyline_traits_test< Traits_class, Number_type >::
-~Polyline_traits_test( ){}
+~Polyline_traits_test()
+{}
 //---------------------------------------------------------------------------
 /*
   Reads on curve. This method is called by collect_data.
@@ -42,22 +72,28 @@ Polyline_traits_test< Traits_class, Number_type >::
 //---------------------------------------------------------------------------
 template< class Traits_class, class Number_type >
 void Polyline_traits_test< Traits_class, Number_type >::
-read_curve( std::ifstream& is, Curve& cv ){
-  char one_line[128];
-  int n_verteces;
-  NT x,y;
+read_curve( std::ifstream& is, Curve_2& cv )
+{
+  char                 one_line[128];
+  int                  n_points;
+  std::vector<Point_2> pts;
+  NT                   x, y;
+  int                  j;
 
   skip_comments( is, one_line );
   std::string stringvalues(one_line);
   std::istringstream strLine(stringvalues, std::istringstream::in);
-  strLine >> n_verteces;
-  for( int j = 0; j < n_verteces; j++ ){
+  strLine >> n_points;
+  for (j = 0; j < n_points; j++ )
+  {
     skip_comments( is, one_line );
     std::string stringvalues(one_line);
     std::istringstream strLine(stringvalues, std::istringstream::in);
     strLine >> x >> y;
-    cv.push_back( Point( x,y ) );
+    pts.push_back( Point_2( x,y ) );
   }
+  cv = Curve_2(pts);
+  return;
 }
 //---------------------------------------------------------------------------
 /*
@@ -72,15 +108,15 @@ bool Polyline_traits_test< Traits_class, Number_type >::
 curve_make_x_monotone_wrapper( std::istringstream & strLine )
 {
   int index, exp_number, real_number;
-  std::list<X_curve> l;
-  typename std::list<X_curve>::iterator it;
+  std::list<X_monotone_curve_2> l;
+  typename std::list<X_monotone_curve_2>::iterator it;
   strLine >> index >> exp_number;
   
   tr.curve_make_x_monotone( all_curves_vec[index], std::back_inserter(l) );
   real_number = l.size();
   it = l.begin();
-  Point prev_target_point = *( it->begin() );                   
-  Point curr_source_point;
+  Point_2 prev_target_point = *( it->begin() );                   
+  Point_2 curr_source_point;
   std::cout << "Test: makes_x_monotone( Curve" << index << " ) ? " 
        << exp_number << std::endl;
   int nSubcurveIndex = 0;
@@ -141,7 +177,7 @@ bool Polyline_traits_test< Traits_class, Number_type >::
 curve_split_wrapper( std::istringstream & strLine )
 {
   int index1, index2;
-  X_curve cv1, cv2;
+  X_monotone_curve_2 cv1, cv2;
 
   strLine >> index1 >> index2;
   std::cout << "Test: curve_split( Curve" << index1 << ", " 
@@ -172,26 +208,32 @@ curve_split_wrapper( std::istringstream & strLine )
   }
   tr.curve_split( all_curves_vec[index1], cv1, cv2, all_points_vec[index2] );
   unsigned int i = 0,j = 0;
-  for( ; i < cv1.size() - 1; i++ ){ //without the end point of cv1
-    if( (all_curves_vec[index1])[ i ] != cv1[i] ){
+  for( ; i < _points(cv1) - 1; i++ ){ //without the end point of cv1
+    if( _point(all_curves_vec[index1], i) != _point(cv1, i) )
+    {
       std::cout << "Was not successful " << std::endl;
       std::cout << "Some point is absent in the 1st part" << std::endl;
       std::cout << "Original curve[" << i << "]: " 
-                << (all_curves_vec[index1])[ i ] << std::endl;
-      std::cout << "obtained curve[ "<< i << "] " << cv1[i] << std::endl; 
+                << _point(all_curves_vec[index1], i) << std::endl;
+      std::cout << "obtained curve[ "<< i << "] " << _point(cv1, i) 
+		<< std::endl; 
       return false;
     }
   }
-  if( ( all_curves_vec[index1])[i] != cv1[i] ){
+  if( _point(all_curves_vec[index1], i) != _point(cv1, i) )
+  {
     j = 1;
   }
-  for( ; j < cv2.size(); j++ ){
-    if( ( all_curves_vec[index1])[i] != cv2[j] ){
+
+  for( ; j < _points(cv2); j++ ){
+    if( _point(all_curves_vec[index1], i) != _point(cv2, j) )
+    {
       std::cout << "Was not successful " << std::endl;
       std::cout << "Some point is absent in the 2nd part" << std::endl;
       std::cout << "Original curve[" << i << "]: " 
-                << (all_curves_vec[index1])[ i ] << std::endl;
-      std::cout << "obtained curve[ "<< j << "] " << cv2[j] << std::endl; 
+                << _point(all_curves_vec[index1], i) << std::endl;
+      std::cout << "obtained curve[ "<< j << "] " << _point(cv2, j) 
+		<< std::endl; 
       return false;
     }
     ++i;

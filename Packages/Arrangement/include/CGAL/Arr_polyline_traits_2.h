@@ -55,7 +55,7 @@ protected:
    * Representation of a polyline curve.
    */
   class My_polyline_2 : 
-    public ::std::vector<typename Segment_traits_::Curve_2>
+    protected ::std::vector<typename Segment_traits_::Curve_2>
   {
     typedef Segment_traits_                           Segment_traits_2;
     typedef typename Segment_traits_2::Point_2        Point_2;
@@ -84,23 +84,22 @@ protected:
      * polyline segments.
      * \param points A container of points.
      * \pre The are at least 2 points in the container.
+     *      In other cases, an empty polyline will be created.
      */
     template <class Container>
-    My_polyline_2 (const Container& points) :
-      Base((points.size() >= 2) ? (points.size() - 1) : 0)
+    My_polyline_2 (const Container& points)
     {
-      if (points.size() < 2)
-        return;
-      
       typename Container::const_iterator ps = points.begin();
+
+      if (ps == points.end())
+	return;
+
       typename Container::const_iterator pt = ps; pt++;
-      int                                i = 0;
 
       while (pt != points.end())
       {
-	(*this)[i] = Segment_2 (*ps, *pt);
+	push_back (Segment_2 (*ps, *pt));
 	ps++; pt++;
-	i++;
       }
     }
 
@@ -1050,7 +1049,7 @@ class Polyline_2 :
   Polyline_2 () :
     Base()
   {}
-    
+
   /*!
    * Constructor from a container of points, defining the endpoints of the
    * polyline segments.
@@ -1101,12 +1100,16 @@ class Polyline_2 :
      * \param cv The scanned curve.
      * \param index The index of the segment.
      */
-    const_iterator (const Polyline_2<Segment_traits_>& cv,
+    const_iterator (const Polyline_2<Segment_traits_>* _cvP,
 		    const int& index) :
-      cvP(&cv),
-      n_pts(cv.size() == 0 ? 0 : cv.size() + 1),
+      cvP(_cvP),
       i(index)
-    {}
+    {
+      if (cvP == NULL)
+	n_pts = 0;
+      else
+	n_pts = (cvP->size() == 0) ? 0 : (cvP->size() + 1);
+    }
 
   public:
     
@@ -1186,16 +1189,58 @@ class Polyline_2 :
    */
   const_iterator begin () const
   {
-    return (const_iterator (*this, 0));
+    if (size() == 0)
+      return (const_iterator (NULL, -1));
+    else
+      return (const_iterator (this, 0));
   }
 
   /*!
    * Get a past-the-end iterator for the polyline points.
-   * \return A past-the-end iterator that points on the first point.
+   * \return A past-the-end iterator.
    */
   const_iterator end () const
   {
-    return (const_iterator (*this, size() + 1));
+    if (size() == 0)
+      return (const_iterator (NULL, -1));
+    else
+      return (const_iterator (this, size() + 1));
+  }
+
+  /*!
+   * Get an reverse iterator for the polyline points.
+   * \return An iterator that points on the last point.
+   */
+  const_iterator rbegin () const
+  {
+    if (size() == 0)
+      return (const_iterator (NULL, -1));
+    else
+      return (const_iterator (this, size()));
+  }
+
+  /*!
+   * Get a reverse past-the-end iterator for the polyline points.
+   * \return A reverse past-the-end iterator.
+   */
+  const_iterator rend () const
+  {
+    if (size() == 0)
+      return (const_iterator (NULL, -1));
+    else
+      return (const_iterator (this, -1));
+  }
+
+  /*!
+   * Get the number of points contained in the polyline.
+   * \return The number of points.
+   */
+  unsigned int points () const
+  {
+    if (size() == 0)
+      return (0);
+    else
+      return (size() + 1);
   }
 };
 

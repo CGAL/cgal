@@ -18,59 +18,53 @@ int main()
 #else
 
 #include <CGAL/Cartesian.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
-#include <CGAL/Arr_polyline_traits.h>
-#include <CGAL/leda_real.h>
+#include <CGAL/Arr_segment_cached_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
 #include <LEDA/string.h>
 #include <CGAL/Draw_preferences.h>
+#include <vector>
 
-typedef leda_real                                       NT;
+typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
 typedef CGAL::Cartesian<NT>                             Kernel;
-typedef CGAL::Arr_polyline_traits<Kernel>               Traits;
+typedef CGAL::Arr_segment_cached_traits_2<Kernel>       Seg_traits;
+typedef CGAL::Arr_polyline_traits_2<Seg_traits>         Traits;
 
-typedef Traits::Point_2                                 Point;
-typedef Traits::X_monotone_curve_2                      X_curve;
-typedef Traits::Curve_2                                 Curve;
+typedef Traits::Point_2                                 Point_2;
+typedef Traits::X_monotone_curve_2                      X_monotone_curve_2;
+typedef Traits::Curve_2                                 Curve_2;
 
-typedef CGAL::Arr_base_node<X_curve>                    Base_node;
+typedef CGAL::Arr_base_node<X_monotone_curve_2>         Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
 
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >     Arr_2;
 
 // global variables are used so that the redraw function for the LEDA window
 // can be defined to draw information found in these variables.
-static Arr_2 Arr; 
-static leda_string         text("");
-static Curve               cv1;
-
-leda_point to_leda_pnt(Point p)
-{
-  return leda_point(p.x().to_double(), p.y().to_double());
-}
+static Arr_2                 Arr; 
+static leda_string           text("");
+static std::vector<Point_2>  pts;
 
 CGAL_BEGIN_NAMESPACE
-// drawing functions
-Window_stream & operator<<(Window_stream & os, const  Point & p)
-{
-  // conversion to leda_point in order to show it on screen
-  return os << to_leda_pnt(p);
-}
 
-// draw a polyline, with points as 'x's
-Window_stream & operator<<(Window_stream & os, const X_curve & c)
+// Draw a polyline.
+Window_stream& operator<< (Window_stream& os, 
+			   const X_monotone_curve_2& cv)
 {
-  X_curve::const_iterator sit, tit;
-  sit = c.begin();
-  tit = sit; tit++;
-  os.draw_point(to_leda_pnt(*sit), leda_green); // draw first point
-  for (; tit != c.end(); tit++, sit++) {
-    // conversion to screen drawble segment
-    os << leda_segment(to_leda_pnt(*sit), to_leda_pnt(*tit));
-    os.draw_point(to_leda_pnt(*tit), leda_green);
+  X_monotone_curve_2::const_iterator ps = cv.begin();
+  X_monotone_curve_2::const_iterator pt = ps; pt++;
+
+  while (pt != cv.end())
+  {
+    os << Kernel::Segment_2(*ps, *pt);
+    ps++; pt++;
   }
-  return os;
+
+  return (os);
 }
 
 Window_stream & operator<<(Window_stream & os, Arr_2 & arr)
@@ -90,7 +84,7 @@ void show_welcome_message(CGAL::Window_stream & os)
   text += " \\n ";
   text +=
     "Clicking close to a point, assumes the location is at the point.\\n ";
-  text += "Lonely points will be discarded.\\n ";
+  text += "Isolated points will be discarded.\\n ";
  
   os.set_status_string("Press Begin to enter polylines.");
   os.redraw();
@@ -106,8 +100,10 @@ void redraw(CGAL::Window_stream * wp)
   if (text) wp->text_box(text);
   // draw currently inserted polyline
     *wp << CGAL::BLACK;
-  if (cv1.size() > 1) *wp << cv1;
-  if (cv1.size() == 1) *wp << cv1[0];
+  if (pts.size() > 1) 
+    *wp << Curve_2(pts);
+  else if (pts.size() == 1) 
+    *wp << pts[0];
   // draw arragnement
   *wp << Arr;
   wp->flush_buffer();
@@ -137,7 +133,7 @@ int main()
                       "Right - last point. Continue - point location");
 
   // (2) polylines insertion part
-  Point  pnt, last_pnt;
+  Point_2  pnt, last_pnt;
   bool   should_exit = false,
          first_point = true;
   double x, y; // doubles are used to read off screen, but not in computations
@@ -148,7 +144,7 @@ int main()
   while (! should_exit) {
     b = W.read_mouse(x,y);
     last_pnt = pnt;
-    pnt = Point(x,y);
+    pnt = Point_2(x,y);
   
     if (b == THE_BUTTON)
       should_exit = true;
@@ -158,9 +154,11 @@ int main()
         last_in_polyline = false;      
 
       // first, looking in the points of this polyline
-      Arr_2::Curve::iterator cit = cv1.begin();
-      for(; ! vicinity_point && cit != cv1.end(); cit++) {
-	if ( CGAL::squared_distance(pnt, *cit) < ((x1-x0)/50)*((x1-x0)/50) ) {
+      std::vector<Point_2>::const_iterator cit = pts.begin();
+      for(; ! vicinity_point && cit != pts.end(); cit++) {
+	if (CGAL::squared_distance(pnt, *cit) < 
+	    NT(((x1-x0)/50)*((x1-x0)/50))) 
+	{
           pnt =* cit;
           vicinity_point = true;
         }
@@ -172,8 +170,8 @@ int main()
       // second, looking in other points of the arrangement
       for(Arr_2::Vertex_iterator vi = Arr.vertices_begin();
 	  ! vicinity_point && vi != Arr.vertices_end(); ++vi) {
-	if (CGAL::squared_distance(pnt, vi->point()) <
-            ((x1-x0)/50)*((x1-x0)/50) )
+	if (CGAL::squared_distance(pnt, vi->point()) < 
+	    NT(((x1-x0)/50)*((x1-x0)/50)))
         {
           pnt = vi->point(); 
           vicinity_point = true;
@@ -181,21 +179,24 @@ int main()
       }
       // if last point was re-clicked ignore to avoid invalidity of polyline.
       if ( ! last_in_polyline )
-	cv1.push_back(pnt);
+	pts.push_back(pnt);
       W << CGAL::BLACK;
       W << pnt;
-      if (!first_point) {
-        W <<leda_segment(last_pnt.x().to_double(), last_pnt.y().to_double(),
-                         pnt.x().to_double(), pnt.y().to_double());
+      if (!first_point) 
+      {
+	W << Kernel::Segment_2(last_pnt, pnt);
+	//        W <<leda_segment(last_pnt.x().to_double(), last_pnt.y().to_double(),
+        //                 pnt.x().to_double(), pnt.y().to_double());
       }
       first_point = false;
     }
     // end of polyline 
     // on right click, or on "Continue"
-    if (b == MOUSE_BUTTON(3) || (should_exit && cv1.size() > 1)) {
-      if ( cv1.size() > 1) Arr.insert(cv1);
-      //(at least 2 points, otherwise ignore)
-      cv1.clear();
+    if (b == MOUSE_BUTTON(3) || (should_exit && pts.size() > 1)) {
+      if ( pts.size() > 1)  //(at least 2 points, otherwise ignore)
+	Arr.insert(Curve_2(pts));
+      
+      pts.clear();
       W << Arr;
       first_point = true;
     }
@@ -219,7 +220,7 @@ int main()
   W.set_button_label(THE_BUTTON, "  Quit  ");
   //enable_button(THE_BUTTON);
   while (W.read_mouse(x,y) != THE_BUTTON) {
-    pnt = Point(x, y);
+    pnt = Point_2(x, y);
     W << Arr;
     
     if ( ! map_is_empty ) {

@@ -61,7 +61,8 @@ int main(int argc, char* argv[])
   #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
   #include <CGAL/Arr_leda_segment_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS==CGAL_POLYLINE_TRAITS
-  #include <CGAL/Arr_polyline_traits.h>
+  #include <CGAL/Arr_polyline_traits_2.h>
+  #include <CGAL/Arr_segment_cached_traits_2.h>
 //#include <CGAL/IO/Arr_polyline_traits_iostream.h>
 #elif CGAL_ARR_TEST_TRAITS==CGAL_POLYLINE_LEDA_TRAITS
 //#error Currently not supported (July 2000)
@@ -102,15 +103,16 @@ int main(int argc, char* argv[])
 // Quotient is included anyway, because it is used to read
 // data files. Quotient can read both integers and fractions.
 // leda rational will only read fractions.
-#include <CGAL/Quotient.h> 
+#include <CGAL/Quotient.h>
+#include <CGAL/MP_Float.h>
 
 #include <list>
 #include <string>
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
   typedef CGAL::Quotient<int>                           NT;
-  typedef CGAL::Cartesian<NT>                           R;
-  typedef CGAL::Arr_segment_traits_2<R>                 Traits;
+  typedef CGAL::Cartesian<NT>                           Kernel;
+  typedef CGAL::Arr_segment_traits_2<Kernel>            Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
   typedef leda_rational                                 NT;
@@ -118,19 +120,22 @@ int main(int argc, char* argv[])
   typedef CGAL::Arr_leda_segment_traits_2<Kernel>       Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
-  typedef CGAL::Quotient<int>                           NT;
-  typedef CGAL::Cartesian<NT>                           R;
-  typedef CGAL::Arr_polyline_traits<R>                  Traits;
+  typedef CGAL::Quotient<CGAL::MP_Float>                NT;
+  typedef CGAL::Cartesian<NT>                           Kernel;
+  typedef CGAL::Arr_segment_cached_traits_2<Kernel>     SegmentTraits;
+  typedef CGAL::Arr_polyline_traits_2<SegmentTraits>    Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
   typedef leda_rational                                 NT;
   typedef CGAL::Pm_segment_traits_leda_kernel_2         Kernel;
-  typedef CGAL::Arr_leda_polyline_traits<Kernel>        Traits;
+  typedef CGAL::Arr_leda_polyline_traits<Kernel,
+					 std::list<Kernel::Point_2> >        
+                                                        Traits;
 
 #endif
 
 typedef Traits::Point_2                                 Point;
-typedef Traits::X_monotone_curve_2                               X_curve;
+typedef Traits::X_monotone_curve_2                      X_curve;
 typedef Traits::Curve_2                                 Curve;
 typedef CGAL::Arr_base_node<X_curve>                    Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
@@ -148,7 +153,12 @@ std::ostream & operator<<(std::ostream & os, const Curve & cv)
 {
   typedef Curve::const_iterator       Points_iterator;
   
-  os<<cv.size()<<std::endl;
+#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
+    os << (cv.size() + 1) << std::endl;
+#else
+    os << cv.size() << std::endl;
+#endif
+
   for (Points_iterator points_iter = cv.begin(); 
        points_iter != cv.end(); points_iter++)
     os<<" "<<*points_iter;
@@ -158,13 +168,15 @@ std::ostream & operator<<(std::ostream & os, const Curve & cv)
 
 std::istream&  operator>>(std::istream & in, Curve & cv)
 {
+  std::list<Point> pl;
   std::size_t  size;
   in >> size;
   for (unsigned int i = 0; i < size; i++){
     Point  p;
     in >> p;
-    cv.push_back(p);  
+    pl.push_back(p);  
   }
+  cv = Curve(pl);
   
   return in;
 }
@@ -173,7 +185,7 @@ CGAL_END_NAMESPACE
 #endif
 
 // we use the namespace std for compatability with MSVC
-typedef std::list<Point>                     Point_list;
+typedef std::list<Point>                      Point_list;
 
 class Arr_polyline_traits_test
 {
@@ -397,6 +409,8 @@ private:
       // The to_long precondition is that number is indeed long
       // is supplied here since input numbers are small.
       return get_next_num(file).numerator().to_long();
+#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
+      return (static_cast<int>(CGAL::to_double(get_next_num(file))));
 #else
       return get_next_num(file).numerator();
 #endif
@@ -430,13 +444,12 @@ private:
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
       CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
 
-Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
+  Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
   {
     Curve                 polyline;
     NT                    x,y; 
     int                   num_x_curves ;
     Point_list            point_list;
-    Point_list::iterator  plit;
 
     num_x_curves = get_next_int(file);
     
@@ -448,17 +461,8 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       else
 	point_list.push_back(s);
     }
-    for (plit = point_list.begin(); //, cit = polyline.begin();
-	 plit != point_list.end();
-	 plit++) 
-      {
-	//std::cout << *plit << std::endl;
-	polyline.push_back(*plit);
-      }
-    
-    all_points_list.splice(all_points_list.end(), point_list); 
-    return polyline;
-}
+    return (Curve(point_list));
+  }
 
 #else
   #error No curve read function defined

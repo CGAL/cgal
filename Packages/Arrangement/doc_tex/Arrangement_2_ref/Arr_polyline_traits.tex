@@ -11,27 +11,21 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 % +========================================================================+
-%  Arr_polyline_traits<NT>
+%  Arr_polyline_traits_2<Segment_traits>
 % +========================================================================+
-\begin{ccRefClass}{Arr_polyline_traits_2<Kernel, Container>}
+\begin{ccRefClass}{Arr_polyline_traits_2<Segment_traits>}
 
 \ccDefinition
     The class \ccRefName\ is a traits class for polyline curves, which are
     piecewise linear curves --- chains of segments, where each two neighboring
     segments in the chain share a common endpoint. The traits class uses
-    functionality of the \ccc{Kernel} to handle the segments that comprise the
-    polyline curve.
+    functionality of the \ccc{Segment_traits} to handle the segments that 
+    comprise the polyline curve.
 
-    The template parameter \ccc{Container} corresponds to the container type 
-    for holding the polyline curve points. It must be a model of the 
-    \ccc{Reversible Container} concept and it must be templated with
-    \ccc{Kernel::Point_2}. \ccc{Container} has a default value which is
-    \ccc{std::vector<Kernel::Point_2>}. A container that stores $n$ points 
-    labeled $p_{0},p_{1},\ldots,p_{n-1}$ represents a curve with $n-1$ 
-    segments, where the $k$th segment is defined by the endpoints
-    $[p_{k-1},p_{k}]$. The first point in the container is considered as the 
-    source point of the polyline while the last point is considered as its 
-    target.
+    The template parameter \ccc{Segment_traits} corresponds to a traits class
+    for line segment that is a model of the \ccc{ArrangementTraits_2} concept 
+    (such as \ccc{Arr_segment_traits_2<Kernel>} or 
+    \ccc{Arr_segment_cached_traits_2<Kernel>}).
 
     The \ccc{Kernel} must use a number type that supports exact computations
     with rational numbers, such as \ccc{Quotient<Gmpz>} or 
@@ -43,8 +37,65 @@
 \ccIsModel
     \ccc{ArrangementTraits_2} \lcTex{(\ccRefPage{ArrangementTraits_2}).}
 
-\end{ccRefClass}
+% The Conic_arc_2 class:
+%
+\subsection*{Class \ccc{Arr_polyline_traits_2<Segment_traits>::Curve_2}}
 
+The \ccc{Curve_2} class nested within the polylines' traits is used to
+represent piecewise linear curves and support their construction from
+arbitrary containers of points. The copy and default constructor as well as 
+the assignment operator are provided for polyline curves. In addition, 
+an \ccc{operator<<} for the curves is defined for standard output streams.
+
+\begin{ccClass}{Arr_polyline_traits_2<Segment_traits>::Curve_2}
+
+\ccTypes
+
+    \ccNestedType{const_iterator}{A reversible iterator for traversing the
+     points that comprise the polyline curves. Supports the increment 
+     (\ccc{operator++}), decrement (\ccc{operator--}), dereference 
+     (\ccc{operator*}) and equality (\ccc{operator==} and \ccc{operator!=}) 
+     operators.}
+
+    \ccCreation
+    \ccCreationVariable{cv}
+
+    \ccStyle{template <class Container>} \\
+    \ccConstructor{Curve_2 (const Container& points);}
+  {constructs a polyline defined by the sequence of points in the container.
+   The \ccc{Container} class must provide a \ccc{const_iterator} whose type
+   is \ccc{Segment_traits::Point_2}.
+   If the container contains $n$ points labeled $p_{0},p_{1},\ldots,p_{n-1}$,
+   the generate polyline consists of $n-1$ segments, where the $k$th segment 
+   is defined by the endpoints $[p_{k-1},p_{k}]$. The first point in the 
+   container is considered as the source point of the polyline while the last 
+   point is considered as its target.
+   \ccPrecond{There are at least two points in the container}.}
+
+\ccOperations
+
+\ccMethod{const_iterator begin() const;}
+  {returns a \ccc{const_iterator} pointing at the source point of the 
+   polyline.}
+
+\ccMethod{const_iterator end() const;}
+  {returns a \ccc{const_iterator} pointing after the end of the polyline.}
+
+\ccMethod{const_iterator rbegin() const;}
+  {returns a \ccc{const_iterator} pointing at the target point of the 
+   polyline.}
+
+\ccMethod{const_iterator rend() const;}
+  {returns a \ccc{const_iterator} pointing before the beginning of the 
+   polyline.}
+
+\ccMethod{int points() const;}
+  {returns the number of points that comprise the polyline. Note that if there
+   are $n$ points in the polyline, it is comprised of $n-1$ segments.}
+
+\end{ccClass}
+
+\end{ccRefClass}
 
 % EOF -----------------------------------------------------------------------80
 

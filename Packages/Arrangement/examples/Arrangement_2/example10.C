@@ -9,40 +9,42 @@
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_polyline_traits.h>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>                NT;
 typedef CGAL::Cartesian<NT>                           Kernel;
-typedef CGAL::Arr_polyline_traits<Kernel>             Traits;
+typedef CGAL::Arr_segment_traits_2<Kernel>            Seg_traits;
+typedef CGAL::Arr_polyline_traits_2<Seg_traits>       Traits;
 
-typedef Traits::Point                                 Point;
-typedef Traits::Curve                                 Curve;
+typedef Traits::Point_2                               Point_2;
+typedef Traits::Curve_2                               Curve_2;
 
-typedef CGAL::Arr_base_node<Curve>                    Base_node;
+typedef CGAL::Arr_base_node<Curve_2>                  Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>              Dcel;
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >   Arr_2;
 
 int main()
 {
-   Arr_2 arr;
-   Curve in_curve;
+  Arr_2                arr;
+  std::vector<Point_2> pts;
 
-   // Curve #1, not x monotone
-   in_curve.push_back(Point(  0,  0));
-   in_curve.push_back(Point( 10, 10));
-   in_curve.push_back(Point(  0, 20));
-   arr.insert(in_curve); 
+   // Curve #1, not x monotone.
+   pts.push_back(Point_2(  0,  0));
+   pts.push_back(Point_2( 10, 10));
+   pts.push_back(Point_2(  0, 20));
+   arr.insert (Curve_2(pts));
 
-   // Curve #2, x monotone
-   in_curve.clear();
-   in_curve.push_back(Point(100,  0));
-   in_curve.push_back(Point(150, 50));
-   in_curve.push_back(Point(200,  0));
-   arr.insert(in_curve);
+   // Curve #2, x monotone.
+   pts.clear();
+   pts.push_back(Point_2(100,  0));
+   pts.push_back(Point_2(150, 50));
+   pts.push_back(Point_2(200,  0));
+   arr.insert (Curve_2(pts));
 
-   // Curve #1 is broken into two edges. Point (10,10) turns into a vertex.
+   // Curve #1 is broken into two edges. Point_2 (10,10) turns into a vertex.
    Arr_2::Locate_type lt;
-   arr.locate(Point(10, 10), lt);
+   arr.locate(Point_2(10, 10), lt);
    CGAL_assertion(lt == Arr_2::VERTEX);
 
    return 0;
