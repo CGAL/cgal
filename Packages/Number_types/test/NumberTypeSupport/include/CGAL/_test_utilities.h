@@ -249,6 +249,16 @@ test_utilities(const NT& x)
   std::cout << "  to_double()" << std::endl;
   if (CGAL::to_double(zero) != 0.0) return false;
   if (CGAL::to_double(one)  != 1.0) return false;
+  CGAL::To_double<NT> tdb;
+  if (tdb(one) != 1.0) return false;
+
+  // to_interval
+  std::pair<double, double> I = CGAL::to_interval( NT(2) );
+  if ( I.first  > 2.0) return false;
+  if ( I.second < 2.0) return false;
+  CGAL::To_interval<NT> tint;
+  if (tint(one).first  > 1.0) return false;
+  if (tint(one).second < 1.0) return false;
 
   // basic operators +,-,...
   if (!test_basic_operators(zero)) return false;
