@@ -5,8 +5,6 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-2.1/make/makefile_i686_Linux-2.2.13_g++-2.95.2_LEDA
 CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-2.2-I-23/make/makefile_i686_Linux-2.2.14_g++-2.95.2_LEDA
 
 include $(CGAL_MAKEFILE)
@@ -45,8 +43,6 @@ LDFLAGS = $(TESTSUITE_LDFLAGS) \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: test_triangulation_geom_traits test_triangulation_tds \
-	test_triangulation_2 test_delaunay_triangulation_2 test_constrained_triangulation_2
 
 test_triangulation_geom_traits: test_triangulation_geom_traits.o
 	$(CGAL_CXX) -o test_triangulation_geom_traits test_triangulation_geom_traits.o $(LDFLAGS)
@@ -63,26 +59,14 @@ test_triangulation_2: test_triangulation_2.o
 test_triangulation_2_bis: test_triangulation_2_bis.o
 	$(CGAL_CXX) -o test_triangulation_2_bis test_triangulation_2_bis.o $(LDFLAGS)
 
-test_delaunay_triangulation_2: test_delaunay_triangulation_2.o
-	$(CGAL_CXX) -o test_delaunay_triangulation_2 test_delaunay_triangulation_2.o $(LDFLAGS)
-
-test_regular_triangulation_2: test_regular_triangulation_2.o
-	$(CGAL_CXX) -o test_regular_triangulation_2 test_regular_triangulation_2.o $(LDFLAGS)
-
-test_constrained_triangulation_2: test_constrained_triangulation_2.o	
-	$(CGAL_CXX) -o test_constrained_triangulation_2 test_constrained_triangulation_2.o $(LDFLAGS)
-
-test_const_del_triangulation_2: test_const_del_triangulation_2.o
-	$(CGAL_CXX) -o test_const_del_triangulation_2 test_const_del_triangulation_2.o $(LDFLAGS)
 
 clean:
 	- rm -f *.o  *.obj *.exe \
 	test_triangulation_geom_traits \
 	test_triangulation_2 test_triangulation_2_bis\
 	test_triangulation_tds test_triangulation_tdsul \
-	test_delaunay_triangulation_2 core \
-	test_constrained_triangulation_2 test_regular_triangulation_2 \
-	test_const_del_triangulation_2 \
+	test_triangulation_2_bis
+	 core \
 	T??.triangulation  file_tds? 
 
 realclean: clean
