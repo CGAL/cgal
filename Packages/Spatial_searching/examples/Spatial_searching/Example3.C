@@ -1,5 +1,6 @@
 // example using nearest_neighbour_iterator for Minkowski_norm
-// benchmark example using 10000 data points and 2000 query points, bucketsize=10
+// benchmark example using 10000 data points and 2000 query points, 
+// bucketsize=10
 // both generated with Random_points_in_cube_3<Point_3>
 
 #include <CGAL/basic.h>
@@ -48,9 +49,10 @@ NNN_Iterator;
   std::vector<double> my_weights(dim);
   my_weights[0]=0.0; my_weights[1]=2.0; my_weights[2]=5;
   
-  std::cout << "test parameters: d=" << dim << " point_number=" << point_number << std::endl;
-  std::cout << "query_point_number=" << query_point_number << " bucket_size="
-  << bucket_size << " eps=" << eps << std::endl;
+  std::cout << "test parameters: d=" << dim << " point_number=" 
+  << point_number << std::endl;
+  std::cout << "query_point_number=" << query_point_number 
+  << " bucket_size=" << bucket_size << " eps=" << eps << std::endl;
 
   // generate 10000 data points
   // Prepare a vector for 10000 points.
@@ -73,7 +75,8 @@ NNN_Iterator;
   query_points.reserve(2000);
 
   // Create 2000 query points within the same cube.
-  CGAL::copy_n( g, query_point_number, std::back_inserter(query_points));
+  CGAL::copy_n( g, query_point_number, 
+               std::back_inserter(query_points));
 
   t.reset(); t.start();
   
@@ -85,13 +88,14 @@ NNN_Iterator;
   t.stop();
 
   std::cout << "created binary search tree containing" << std::endl
-  << point_number << " random points in the 3-dim unit cube in time " << t.time() <<
-  " seconds " << std::endl;
+  << point_number << " random points in the 3-dim unit cube in time " 
+  << t.time() << " seconds " << std::endl;
   d.statistics();
 
   // end of building binary search tree
   
-  std::vector<Traits::Item_with_distance> nearest_neighbours(query_point_number);
+  std::vector<Traits::Item_with_distance> 
+  nearest_neighbours(query_point_number);
   Distance_traits tr_dist(the_power,dim,my_weights);
 
   t.reset(); t.start();
@@ -110,7 +114,8 @@ NNN_Iterator;
   // copy data points from vector to list
   Vector the_data_points;
   the_data_points.reserve(point_number);
-  std::copy(data_points.begin(),data_points.end(),std::back_inserter(the_data_points));
+  std::copy(data_points.begin(),data_points.end(),
+            std::back_inserter(the_data_points));
 
   std::vector<int> 
 	  nearest_neighbours_brute_force_index(query_point_number);
@@ -142,7 +147,8 @@ NNN_Iterator;
 	if (!(*(nearest_neighbours[i].first)==the_data_points[
 		nearest_neighbours_brute_force_index[i]])) {
 		assert(
-		tr_dist.distance(query_points[i],*(nearest_neighbours[i]).first)==
+		tr_dist.distance(query_points[i],
+		*(nearest_neighbours[i]).first)==
 		tr_dist.distance(query_points[i],
 		the_data_points[nearest_neighbours_brute_force_index[i]]));
 	};

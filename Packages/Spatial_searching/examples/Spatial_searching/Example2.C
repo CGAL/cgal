@@ -1,5 +1,6 @@
 // example using nearest_neighbour_iterator for Linf
-// benchmark example using 10000 data points and 2000 query points
+// benchmark example using 10000 data points and 2000 query points,
+// bucketsize=1
 // both generated with Random_points_in_cube_3<Point_3>
 // comparing to brute force method
 
@@ -34,7 +35,8 @@ typedef K::FT NT;
 
 typedef CGAL::Plane_separator<NT> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
-typedef CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour>::iterator NNN_Iterator;
+typedef CGAL::Nearest_neighbour_Linf<Traits,
+	CGAL::Search_nearest_neighbour>::iterator NNN_Iterator;
 
 NT The_Linf_distance(Point P, Point Q) {
 	NT dist=fabs(P.x()-Q.x());
@@ -54,8 +56,10 @@ NT The_Linf_distance(Point P, Point Q) {
   int bucket_size=1;
   NT eps=0.0;
 
-  std::cout << "test parameters: d=" << dim << " point_number=" << point_number << std::endl;
-  std::cout << "query_point_number=" << query_point_number << " bucket_size="
+  std::cout << "test parameters: d=" << dim << " point_number=" 
+		<< point_number << std::endl;
+  std::cout << "query_point_number=" << query_point_number 
+	<< " bucket_size="
   << bucket_size << " eps=" << eps << std::endl;
 
   // generate 10000 data points
@@ -89,13 +93,14 @@ NT The_Linf_distance(Point P, Point Q) {
   t.stop();
 
   std::cout << "created binary search tree containing" << std::endl
-  << point_number << " random points in the 3-dim unit cube in time " << t.time() <<
-  " seconds " << std::endl;
+  << point_number << " random points in the 3-dim unit cube in time " 
+  << t.time() << " seconds " << std::endl;
   d.statistics();
 
   // end of building binary search tree
   
-  std::vector<Traits::Item_with_distance> nearest_neighbours(query_point_number);
+  std::vector<Traits::Item_with_distance> 
+  nearest_neighbours(query_point_number);
 
   t.reset(); t.start();
   for (int i=0; i < query_point_number; i++) {
@@ -113,7 +118,8 @@ NT The_Linf_distance(Point P, Point Q) {
   // copy data points from vector to list
   Vector the_data_points;
   the_data_points.reserve(point_number);
-  std::copy(data_points.begin(),data_points.end(),std::back_inserter(the_data_points));
+  std::copy(data_points.begin(),data_points.end(),
+  	std::back_inserter(the_data_points));
 
   std::vector<int> 
 	  nearest_neighbours_brute_force_index(query_point_number);
@@ -145,7 +151,8 @@ NT The_Linf_distance(Point P, Point Q) {
 	if (!(*(nearest_neighbours[i].first)==the_data_points[
 		nearest_neighbours_brute_force_index[i]])) {
 		assert(
-		The_Linf_distance(query_points[i],*(nearest_neighbours[i]).first)==
+		The_Linf_distance(query_points[i],
+		*(nearest_neighbours[i]).first)==
 		The_Linf_distance(query_points[i],
 		the_data_points[nearest_neighbours_brute_force_index[i]]));
 	};
