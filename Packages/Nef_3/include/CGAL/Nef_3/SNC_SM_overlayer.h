@@ -31,7 +31,7 @@
 #include <CGAL/Nef_3/SNC_structure.h>
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 131
-#include <CGAL/Nef_S2/debug.h>
+#include <CGAL/Nef_2/debug.h>
 
 #ifndef CGAL_USE_LEDA
 #define LEDA_MEMORY(t) 
