@@ -22,7 +22,6 @@
 #ifndef CGAL_SR_2_UTILITY_H
 #define CGAL_SR_2_UTILITY_H
 
-
 CGAL_BEGIN_NAMESPACE
 
 template<class Rep_>

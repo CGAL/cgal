@@ -19,6 +19,7 @@
 //                 (Dan Halperin <danha@post.tau.ac.il>)
 //
 // ======================================================================
+
 #ifndef CGAL_SR_KD_2_H
 #define CGAL_SR_KD_2_H
 
@@ -86,8 +87,6 @@ private:
 
       Snap_rounding_rotation<Rep> r;
       r(p,angle);
-
-      // _gt.rotate_point_2_object()(p,angle);
 
       my_point<NT,SAVED_OBJECT> rotated_point(p,iter->first,iter->second);
 
