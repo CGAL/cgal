@@ -256,11 +256,11 @@ improved when shuffling the data points.
 The main classes \ccc{Triangulation_3}, \ccc{Delaunay_triangulation_3} and
 \ccc{Regular_triangulation_3} are connected to each other by the
 derivation diagram shown in Figure~\ref{t3_derivation}.  This diagram
-also shows two other classes: \ccc{Triangulation_utils_3}, which provides
-a set of tools operating on the indices of vertices in cells\lcTex{
-(\ccRefPage{CGAL::Triangulation_utils_3})}, and \ccc{Triangulation_hierarchy_3},
-which implements a hierarchy of triangulations suitable for speeding up point
-location.
+also shows two other classes: \ccc{Triangulation_utils_3}\lcTex{
+(\ccRefPage{CGAL::Triangulation_utils_3})}, which provides
+a set of tools operating on the indices of vertices in cells,
+and \ccc{Triangulation_hierarchy_3}, which implements a hierarchy of
+triangulations suitable for speeding up point location.
 
 \begin{figure}[htbp]
 \begin{ccTexOnly}
@@ -354,8 +354,8 @@ the cells and vertices maintaining incidence and adjacency relations (see
 Chapter~\ref{chapter-TDS3}).  A model of this triangulation data structure is
 \ccc{Triangulation_data_structure_3}\lcTex{
 (\ccRefPage{CGAL::Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3>})},
-and it is described by the \ccc{TriangulationDataStructure_3} concept in
-\ccRefPage{TriangulationDataStructure_3}.
+and it is described by the \ccc{TriangulationDataStructure_3} concept
+\lcTex{(\ccRefPage{TriangulationDataStructure_3})}.
 
 A default value for this template parameter is provided in all the
 triangulation classes, so it need not be specified by the user unless he wants
