@@ -133,11 +133,7 @@ namespace CGAL {
 
 };
 
-/*
-template <class Point,
-	    class Splitter=Sliding_midpoint<Point> > 
-  class Kdtree_interface_3d : 
-	public Kd_tree_traits_point<Point,Splitter> { */
+
 
 template <class Point,
 	    class Splitter=Sliding_midpoint<Point> > 

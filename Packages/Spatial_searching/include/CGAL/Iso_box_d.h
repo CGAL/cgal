@@ -31,11 +31,11 @@
 
 namespace CGAL {
   
-  template <class R> class Iso_box_d {
+  template <class Kernel> class Iso_box_d {
   public:
-    typedef typename R::FT FT;
-    typedef typename R::Point_d Point_d;
-
+    typedef typename Kernel::FT FT;
+    typedef typename Kernel::Point_d Point_d;
+   
   private:
 
     int dim;
@@ -45,7 +45,7 @@ namespace CGAL {
   public:
 
     Iso_box_d(const Point_d& p, const Point_d& q)
-    { assert(p.dimension() == q.dimension());
+    { CGAL_precondition(p.dimension() == q.dimension());
       dim = p.dimension();
       lower = new FT[dim];
       upper = new FT[dim];
@@ -63,7 +63,6 @@ namespace CGAL {
   
     // copy constructor
     Iso_box_d(const Iso_box_d& b) : dim(b.dim) {
-      std::cout << "dim=" << dim << std::endl;
       lower = new FT[dim];
       upper = new FT[dim];
       for (int i = 0; i < dim; ++i) {
@@ -72,8 +71,16 @@ namespace CGAL {
       }
     }
 
+
+    // destructor
+    ~Iso_box_d() {
+	delete [] lower;
+	delete [] upper;
+    }
+
     bool has_on_bounded_side(const Point_d& p) const
-    {
+    { 
+      CGAL_precondition(p.dimension() == dim);
       FT h;
       for (int i = 0; i < dim; ++i) {
         h=p[i];
@@ -84,6 +91,7 @@ namespace CGAL {
 
     bool has_on_unbounded_side(const Point_d& p) const
     {
+      CGAL_precondition(p.dimension() == dim);
       FT h;
       for (int i = 0; i < dim; ++i) {
         h=p[i];
@@ -94,14 +102,26 @@ namespace CGAL {
 
     bool has_on_boundary(const Point_d& p) const
     {
-      return ( !(has_on_unbounded_side(p)) && !(has_on_bounded_side(p)) );
+      CGAL_precondition(p.dimension() == dim);
+      if (has_on_unbounded_side(p)) return false; 
+      FT h;
+      for (int i = 0; i < dim; ++i) {
+        h=p[i];
+        if ( (h == lower[i]) || (h == upper[i]) ) return true;
+      }
+      return false;
     } 
 
     Bounded_side bounded_side(const Point_d& p) const
     { 
-      if (has_on_bounded_side(p)) return ON_BOUNDED_SIDE;
-      if (has_on_unbounded_side(p)) return ON_UNBOUNDED_SIDE;
-      return ON_BOUNDARY;
+      CGAL_precondition(p.dimension() == dim);
+      if (has_on_unbounded_side(p)) return ON_UNBOUNDED_SIDE; 
+      FT h;
+      for (int i = 0; i < dim; ++i) {
+        h=p[i];
+        if ( (h == lower[i]) || (h == upper[i]) ) return ON_BOUNDARY;
+      }
+      return ON_BOUNDED_SIDE;
     }
       
     int dimension() const { return dim;}
@@ -114,43 +134,48 @@ namespace CGAL {
       return upper[i];
     }
 
-    Point_d  operator[](int i) const
-    {
-    	return  vertex(i);
-    }
-
-    Point_d vertex(int i) const
-    {
-	p = new Point_d(dim,ORIGIN);
-	i == i % (2**dim);
-        for (int d = dim; d > 0; --d) {
-		if (i >= 2**(d-1)) 
-			p[d]=upper[i];
-		else
-			p[d]=lower[i];	
-		i = i - 2**(d-1);
-        }
-	return p;
-   }
-
+/* does not work, because assignment to p[i] is not allowed
    Point_d min() const
    {
-     p = new Point_d(dim,ORIGIN);
+     Point_d p(dim,ORIGIN);
      for (int i = 0; i < dim; ++i) {
         p[i]=lower[i];
      }
-     return p;
+     return Point_d(p);
   }
 
   Point_d max() const
   {
-     p = new Point_d(dim,ORIGIN);
+     Point_d p(dim,ORIGIN);
      for (int i = 0; i < dim; ++i) {
         p[i]=upper[i];
      }
-     return p;
+     return Point_d(p);
   }
-     
+ */
+  /* use of Base_vector() after Kernel_d\interface-test.C 
+  Point_d min() const
+   {
+     Point_d p(dim,ORIGIN);
+     for (int i = 0; i < dim; ++i) {
+        // v is ith base vector
+        Vector_d v = Vector_d(dim,Vector_d::Base_vector(),i);
+        p=p+lower[i]*v;
+     }
+     return Point_d(p);
+  }
+
+  Point_d max() const
+  {
+     Point_d p(dim,ORIGIN);
+     for (int i = 0; i < dim; ++i) {
+        // v is ith base vector
+        Vector_d v = Vector_d(dim,Vector_d::Base_vector(),i);
+        p=p+upper[i]*v;
+     }
+     return Point_d(p);
+  }*/
+
   FT volume() const
   {
      FT  vol = upper[0]-lower[0];
@@ -160,29 +185,41 @@ namespace CGAL {
      return vol;
   }
 
+bool is_degenerate() const
+  {
+     for (int i = 0; i < dim; ++i) {
+        if (lower[i]==upper[i]) return true;
+     }
+     return false;
+  }
 
+}; // end of class
 
-inline
-bool
-operator!=(const Iso_box_d<R>& b)
+template <class Kernel>
+inline bool
+operator!=(const Iso_box_d<Kernel>& b1, Iso_box_d<Kernel>& b2)
 {
+  CGAL_precondition(b1.dimension() == b2.dimension());
+  unsigned int dim = b1.dimension();
   for (unsigned int i = 0; i < dim; ++i) {
-			if ( (lower[i] != b.lower[i]) || (upper[i] != b.upper[i]) ) return true;
+			if ( (b1.min_coord(i) != b2.min_coord(i)) || (b1.max_coord(i) != b2.max_coord(i)) ) return true;
 		}
   return false; 
 }
 
-inline
-bool
-operator==(const Iso_box_d<R>& b)
+template <class Kernel>
+inline bool
+operator==(const Iso_box_d<Kernel>& b1, Iso_box_d<Kernel>& b2)
 {
+  CGAL_precondition(b1.dimension() == b2.dimension());
+  unsigned int dim = b1.dimension();
   for (unsigned int i = 0; i < dim; ++i) {
-			if ( (lower[i] != b.lower[i]) || (upper[i] != b.upper[i]) ) return false;
+			if ( (b1.min_coord(i) != b2.min_coord(i)) || (b1.max_coord(i) != b2.max_coord(i)) ) return false;
 		}
   return true; 
 }
   
-}; // end of class
+
 
 } // namespace CGAL
 #endif // CGAL_ISO_BOX_D_H

@@ -78,15 +78,15 @@ namespace CGAL {
   public:
 
     inline void set_upper_bound(const int i, const NT x) {
-      // assert(i >= 0 && i < dim);
-      // assert(x >= lower_[i]);
+      assert(i >= 0 && i < dim);
+      assert(x >= lower_[i]);
       upper_[i] = x;
       set_max_span();
     }
 
     inline void set_lower_bound(const int i, const NT x) {
-      // assert(i >= 0 && i < dim);
-      // assert(x <= upper_[i]);
+      assert(i >= 0 && i < dim);
+      assert(x <= upper_[i]);
       lower_[i] = x;
       set_max_span();
     }
