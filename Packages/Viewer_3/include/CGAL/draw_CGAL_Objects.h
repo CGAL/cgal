@@ -226,7 +226,7 @@ public:
 	glCallList(lind);
       else 
 	{
-  	  std::list<Point>::iterator it;
+  	  typename std::list<Point>::iterator it;
 	  lind = glGenLists(1);
 	  glNewList(lind,GL_COMPILE_AND_EXECUTE);
 	  set_color(color);
@@ -252,7 +252,7 @@ public:
 
   void set_center()
     {
-      std::list<Point>::iterator it;
+      typename std::list<Point>::iterator it;
       int s=LP.size();
       double o1=0; double o2=0; double o3=0;
       for (it=LP.begin();it!=LP.end();it++) {
