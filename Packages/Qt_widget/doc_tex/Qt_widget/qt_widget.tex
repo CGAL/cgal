@@ -642,22 +642,25 @@ This class has a member function mousePressEvent(QMouseEvent *e) that
 is called by \ccStyle{Qt\_widget} if the tool is attached.
 
 In My\_Window class an instance of My\_Tool is created :\\
-My_Tool	t;\\
+My\_Tool	t;\\
 In the constructor of My\_Window we attach the tool:\\
 widget$->$attach(t);
 
 To receive the object that the tool creates, in the constructor of My\_Window, 
-we connect:\\
-connect(widget, SIGNAL(new\_cgal\_object(CGAL::Object)), 
-	    this, SLOT(get\_object(CGAL::Object)));
-
+we connect:
+\begin{ccExampleCode}
+connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+            this, SLOT(get_object(CGAL::Object)));
+\end{ccExampleCode}
 In My\_Window class it is declared the private slot get\_object(CGAL::Object obj). 
 This is what you have to do to receive CGAL objects from a tool. The
 tool calls the new\_object() member function from \ccStyle{Qt\_widget}, that emits
 a signal new\_cgal\_object(CGAL::Object). To receive this signal, in the
-constructor of My\_Window a connect is declared:\\
+constructor of My\_Window a connect is declared:
+\begin{ccExampleCode}
 connect(widget, SIGNAL(new\_cgal\_object(CGAL::Object)), 
-		this, SLOT(get\_object(CGAL::Object)));
+             this, SLOT(get\_object(CGAL::Object)));
+\end{ccExampleCode}
 
 This connect tells the application that every time \ccStyle{Qt\_widget} emits the
 signal new\_cgal\_object, the function get\_object is called, having as
