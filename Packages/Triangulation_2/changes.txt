@@ -1,8 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 4.79
+Ver 4.79 (28/12/00)
 - fixed a typename in Regular_triangulation
+- add a test for new design
+
+Ver 4.78 (26/12/00)
+- add a few missing typedef for dual functions of  Regular_triangulation
 
 Ver 4.77 (21/12/00)
 - fixed the signature of flip in Triangulation_2.h
