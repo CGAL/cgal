@@ -77,15 +77,13 @@ public:
     typedef VECTOR							Vector ;
 	typedef COEFFTYPE						CoeffType ;		
 	typedef COEFFTYPE						NT;					// added for SparseLinearAlgebraTraits_d::Vector concept
-	typedef SOLVER							Solver ;		
 
-    //typedef Solver_CG<MATRIX, VECTOR>		SymmetricSolver ;	// obsolete
-    //typedef Solver_BICGSTAB<MATRIX, VECTOR> NonSymmetricSolver;	// obsolete
+// Private types
+public:
+	typedef SOLVER							Solver ;		
 
 // Public operations
 public:
-	// Default constructor, copy constructor and operator =() are fine
-
 	// Solve the sparse linear system "A*X = B"
 	// Return true on success. The solution is then (1/D) * X.
 	// (modified for SparseLinearAlgebraTraits_d concept)
@@ -114,16 +112,6 @@ public:
 
 		return true;
 	}
-
-	//// obsolete
- //   static void add(Matrix& A, unsigned int i, unsigned int j, CoeffType x) {
- //       A.add(i,j,x) ;
- //   }
-
-	//// obsolete
- //   static CoeffType& component(Vector& V, unsigned int i) {
- //       return V[i] ;
- //   }
 } ;
 
 
@@ -158,8 +146,6 @@ public:
     typedef typename Traits::Matrix Matrix ;
     typedef typename Traits::Vector Vector ;
     typedef typename Traits::CoeffType CoeffType ;
-    //typedef typename Traits::SymmetricSolver SymmetricSolver ;
-    //typedef typename Traits::NonSymmetricSolver NonSymmetricSolver ;
 
     class Variable {
     public:
@@ -303,7 +289,7 @@ public:
             unsigned int nl = al_.size() ;
             for(unsigned int i=0; i<nf; i++) {
                 for(unsigned int j=0; j<nf; j++) {
-					A_->add_coef(if_[i], if_[j], af_[i] * af_[j]) ;		// was: Traits::add(*A_,if_[i], if_[j], af_[i] * af_[j]) ;
+					A_->add_coef(if_[i], if_[j], af_[i] * af_[j]) ;	
                 }
             }
             CoeffType S = - bk_ ;
@@ -311,17 +297,17 @@ public:
                 S += al_[j] * xl_[j] ;
             }
             for(unsigned int i=0; i<nf; i++) {
-				(*b_)[if_[i]] -= af_[i] * S ;							// was: Traits::component(*b_, if_[i]) -= af_[i] * S ;
+				(*b_)[if_[i]] -= af_[i] * S ;	
             }
         } else {
             unsigned int nf = af_.size() ;
             unsigned int nl = al_.size() ;
             for(unsigned int i=0; i<nf; i++) {
-				A_->add_coef(current_row_, if_[i], af_[i]) ;			// was: Traits::add(*A_, current_row_, if_[i], af_[i]) ;
+				A_->add_coef(current_row_, if_[i], af_[i]) ;	
             }
-            (*b_)[current_row_] = bk_ ;									// was: Traits::component(*b_,current_row_) = bk_ ;
+            (*b_)[current_row_] = bk_ ;						
             for(unsigned int i=0; i<nl; i++) {
-                (*b_)[current_row_] -= al_[i] * xl_[i] ;				// was: Traits::component(*b_,current_row_) -= al_[i] * xl_[i] ;
+                (*b_)[current_row_] -= al_[i] * xl_[i] ;	
             }
         }
         current_row_++ ;
@@ -340,14 +326,6 @@ public:
     bool solve() 
 	{
         check_state(CONSTRUCTED) ;
-
-        //if(least_squares_) {
-        //    SymmetricSolver solver ;
-        //    solver.solve(*A_, *b_, *x_) ;
-        //} else {
-        //    NonSymmetricSolver solver ;
-        //    solver.solve(*A_, *b_, *x_) ;
-        //}
 
 		// Solve the sparse linear system "A*X = B". On success, the solution is (1/D) * X.
  		CoeffType D;
@@ -373,7 +351,7 @@ protected:
         for(unsigned int ii=0; ii < nb_variables(); ii++) {
             Variable& v = variable(ii) ;
             if(!v.is_locked()) {
-                v.set_value( (*x_)[v.index()] ) ;						// was: v.set_value(Traits::component(*x_,v.index())) ;
+                v.set_value( (*x_)[v.index()] ) ;	
             }
         }
     }
@@ -382,7 +360,7 @@ protected:
         for(unsigned int ii=0; ii < nb_variables(); ii++) {
             Variable& v = variable(ii) ;
             if(!v.is_locked()) {
-                (*x_)[v.index()] = v.value() ;							// was: Traits::component(*x_,v.index()) = v.value() ;
+                (*x_)[v.index()] = v.value() ;	
             }
         }
     }
