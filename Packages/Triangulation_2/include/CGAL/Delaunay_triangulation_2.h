@@ -398,7 +398,8 @@ dual(const Finite_edges_iterator& ei) const
   
 template < class Gt, class Tds >
 inline
-Triangulation_2<Gt,Tds>::Vertex_handle
+//Triangulation_2<Gt,Tds>::Vertex_handle
+Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
 insert(const Point  &p,  Face_handle f)
 {
@@ -408,7 +409,8 @@ insert(const Point  &p,  Face_handle f)
   
 template < class Gt, class Tds >
 inline
-Triangulation_2<Gt,Tds>::Vertex_handle
+//Triangulation_2<Gt,Tds>::Vertex_handle
+Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
 push_back(const Point &p)
 {
@@ -417,10 +419,11 @@ push_back(const Point &p)
   
 template < class Gt, class Tds >
 inline
-Triangulation_2<Gt,Tds>::Vertex_handle
+//Triangulation_2<Gt,Tds>::Vertex_handle
+Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
 insert(const Point  &p,
-       Triangulation_2<Gt,Tds>::Locate_type& lt,
+       Locate_type& lt,
        Face_handle f)
 {
   Vertex_handle v = Triangulation_2<Gt,Tds>::insert(p,lt,f);
