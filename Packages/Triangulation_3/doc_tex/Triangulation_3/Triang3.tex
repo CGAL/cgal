@@ -224,7 +224,7 @@ Delaunay triangulation.
 The class \ccc{Triangulation_hierarchy_3} implements a
 triangulation augmented with a data structure that allows fast point
 location queries. Thus, it allows fast construction of the
-triangulation. As proved in~\cite{d-dh-02}, this structure has an
+triangulation. As proved in~\cite{cgal:d-dh-02}, this structure has an
 optimal behavior when it is built for Delaunay triangulations.
 
 Note that, since the algorithms that are provided are randomized, the
@@ -261,8 +261,8 @@ triangulations suitable for speeding up point location.
 
 The three main classes (\ccc{Triangulation_3}, \ccc{Delaunay_triangulation_3}
 and \ccc{Regular_triangulation_3}) provide high-level geometric functionality
-such as location of a point in the triangulation~\cite{dpt-wt-02}, insertion
-and possibly removal of a point~\cite{dt-pvr3d-03}, and are responsible for the
+such as location of a point in the triangulation~\cite{cgal:dpt-wt-02}, insertion
+and possibly removal of a point~\cite{cgal:dt-pvr3d-03}, and are responsible for the
 geometric validity.  They are built as layers on top of a triangulation data
 structure, which stores their combinatorial structure.  This separation between
 the geometry and the combinatorics is reflected in the software design by the
@@ -553,15 +553,15 @@ regular triangulations.
 A first version of removal of a vertex from a Delaunay triangulation
 was released in CGAL 2.2. However, this removal became really robust
 only in CGAL 2.3, after some research that allowed to deal with
-degenerate cases quite easily \cite{dt-pvr3d-03}. Andreas Fabri
+degenerate cases quite easily \cite{cgal:dt-pvr3d-03}. Andreas Fabri
 implemented this revised version of the removal, and a faster removal
 algorithm for CGAL 3.0.
 
 In 2000, Sylvain Pion started working on these packages.  He improved
 the efficiency of triangulations in CGAL 2.3 and 2.4 in several ways
-\cite{bdpty-tc-02}: he implemented the Delaunay hierarchy
-\cite{d-dh-02} in 2.3, he improved the memory footprint in 2.4 and
-3.0, he also performed work on arithmetic filters \cite{dp-eegpd-03}
+\cite{cgal:bdpty-tc-02}: he implemented the Delaunay hierarchy
+\cite{cgal:d-dh-02} in 2.3, he improved the memory footprint in 2.4 and
+3.0, he also performed work on arithmetic filters \cite{cgal:dp-eegpd-03}
 (see Support Library and Kernel) to improve the speed of
 triangulations.
 
