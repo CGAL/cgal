@@ -134,8 +134,10 @@ _test_cls_plane_3(const gnuR& )
 
  cout << '.';
 
+#ifdef CGAL_CARTESIAN_BOTH_23_KERNEL
  assert( pl1.has_on_boundary( pl1.to_3d( pl1.to_2d( pl1.point() ))) );
  assert( pl1.has_on_boundary( pl1.to_3d( pl1.to_2d( pz ))) );
+#endif
 
  assert( neg_xy_pl_eq.oriented_side( p1 ) == CGAL::ON_POSITIVE_SIDE );
  assert( xy_pl.oriented_side( p1 ) == CGAL::ON_NEGATIVE_SIDE );

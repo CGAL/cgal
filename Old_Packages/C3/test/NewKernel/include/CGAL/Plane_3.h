@@ -151,12 +151,13 @@ public:
       return R::RPlane_3::to_plane_basis(p);
     }
     */
-
+#ifdef CGAL_CARTESIAN_BOTH_23_KERNEL
   Point_2<R>      to_2d(const Point_3<R>& p) const
   { return RPlane_3::to_2d(p); }
 
   Point_3<R>      to_3d(const Point_2<R>& p) const
   { return RPlane_3::to_3d(p); }
+#endif
 
   Plane_3<R>      transform( Aff_transformation_3<R>& t) const
   { return Plane_3<R>( RPlane_3::transform(t) ); }
