@@ -4,6 +4,13 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.93
+//---------------------------------------------------------------------
+
+GLOB: Initial revision
+GLOB: Updated sample include makefiles + README.
+
+//---------------------------------------------------------------------
 //	revision 1.91
 //---------------------------------------------------------------------
 
@@ -475,6 +482,7 @@ SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
 GLOB: added geomview support,
 GLOB: included fixes from CGAL-1-1-patch.
 DOCS: adopted to new html-converter.
+GLOB: Updated sample include makefiles + README.
 
 //---------------------------------------------------------------------
 //	revision 1.28
