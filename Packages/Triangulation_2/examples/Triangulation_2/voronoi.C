@@ -37,14 +37,14 @@ public:
 
 void usage(char* program)
 {
-  cerr << "\nNAME\n     "
+  std::cerr << "\nNAME\n     "
        << program << " - Triangulation of a point set\n\n";
-  cerr << "SYNOPSIS\n     "
+  std::cerr << "SYNOPSIS\n     "
        << program << " [-file fname]\n";
 
-  cerr << "\nDESCRIPTION\n"
+  std::cerr << "\nDESCRIPTION\n"
        << "     Triangulates a point set that comes from a file or stdin.\n";
-  cerr << "\nOPTIONS\n"
+  std::cerr << "\nOPTIONS\n"
        << "     All options can be abbreviated by their first character\n\n";
 }
 
@@ -70,13 +70,13 @@ parse(int argc, char* argv[], Options &opt)
           return false;
       }
       else {
-          cerr << "Unrecognized option " << argv[0] << endl;
+          std::cerr << "Unrecognized option " << argv[0] << std::endl;
           usage(opt.program);
           return false;
       }
     }
   if(argc > 0){
-      cerr << "Unrecognized option " << argv[0] << endl;
+      std::cerr << "Unrecognized option " << argv[0] << std::endl;
       usage(opt.program);
       return false;
   }
@@ -84,16 +84,8 @@ parse(int argc, char* argv[], Options &opt)
 }
 
 
-
-
-
-//typedef leda_integer  coord_type;
 typedef double coord_type;
-//typedef CGAL::Fixed coord_type;
-
 typedef CGAL::Cartesian<coord_type>  Rpst;
-//typedef CGAL::Homogeneous<coord_type>  Rpst;
-
 typedef CGAL::Point_2<Rpst>  Point;
 typedef CGAL::Segment_2<Rpst>  Segment;
 typedef CGAL::Ray_2<Rpst>  Ray;
@@ -131,15 +123,15 @@ void input_from_file(Triangulation &T,
         return;
     }
 
-    ifstream is(opt.fname);
+    std::ifstream is(opt.fname);
     CGAL::set_ascii_mode(is);
 
     int n;
     is >> n;
-    cout << "Reading " << n << " points" << endl;
+    std::cout << "Reading " << n << " points" << std::endl;
 
-    istream_iterator<Point, ptrdiff_t> begin(is);
-    istream_iterator<Point, ptrdiff_t> end;
+    std::istream_iterator<Point, ptrdiff_t> begin(is);
+    std::istream_iterator<Point, ptrdiff_t> end;
     T.insert(begin, end);
 }
 
@@ -153,30 +145,30 @@ main(int argc, char* argv[])
 
     input_from_file(T, opt);
     
-    cout << "Vertices :" << endl << "=============" << endl;
+    std::cout << "Vertices :" << std::endl << "=============" << std::endl;
     Face_iterator fit, fbegin=T.faces_begin(), fend=T.faces_end(); 
     for (fit=fbegin; fit != fend; ++fit)
-	cout << T.dual(fit) << endl;
+	std::cout << T.dual(fit) << std::endl;
 
-    cout << "Segment :" << endl << "=============" << endl;
+    std::cout << "Segment :" << std::endl << "=============" << std::endl;
       {
 	Edge_iterator eit, ebegin=T.edges_begin(), eend=T.edges_end(); 
 	for (eit=ebegin; eit != eend; ++eit)
 	  {
 	    CGAL::Object o = T.dual(eit);
 	    Triangulation::Segment s;
-	    if (CGAL::assign(s,o)) cout << s << endl;
+	    if (CGAL::assign(s,o)) std::cout << s << std::endl;
 	  }
       }
 
-    cout << "Rays :" << endl << "=============" << endl;
+    std::cout << "Rays :" << std::endl << "=============" << std::endl;
       {
 	Edge_iterator eit, ebegin=T.edges_begin(), eend=T.edges_end(); 
 	for (eit=ebegin; eit != eend; ++eit)
 	  {
 	    CGAL::Object o = T.dual(eit);
 	    Triangulation::Ray r;
-	    if (CGAL::assign(r,o)) cout << r << endl;
+	    if (CGAL::assign(r,o)) std::cout << r << std::endl;
 	  }
       }
 

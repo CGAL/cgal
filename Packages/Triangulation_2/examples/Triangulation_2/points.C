@@ -24,17 +24,17 @@ int main(int argc, char* argv[])
 
   PVector V;
 
-  ifstream data(argv[1]);
+  std::ifstream data(argv[1]);
   
   if(data.bad()){
-    cout << "Problem with file " << argv[1] << endl;
+    std::cout << "Problem with file " << argv[1] << std::endl;
   }
   data >> V;
 
-  cout << V.size() << endl;
+  std::cout << V.size() << std::endl;
 
   int count = 0;
-  cout << "Start insertion" << endl;
+  std::cout << "Start insertion" << std::endl;
   for(int i = 0; i<V.size();i++){
     
     T.insert(V[i]);
@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
       count = 0;
     }
   }
-  cout << endl << "done" << endl;
+  std::cout << std::endl << "done" << std::endl;
   T.is_valid();
 
   return 0;
