@@ -83,26 +83,26 @@ namespace CGAL {
 
         virtual ~Base_node() {};
 
-		int num_items() {
-			if is_leaf() return size();
-			else return num_items(lower()) + num_items(upper());
+		unsigned int num_items() {
+			if (is_leaf()) return size();
+			else return lower()->num_items() + upper()->num_items();
 		}
 
 		int depth(const int current_max_depth) {
 			if (is_leaf()) return current_max_depth;
-			else return std::max(depth(lower(), current_max_depth + 1),
-		       depth(upper(), current_max_depth + 1));
+			else return std::max( lower()->depth(current_max_depth + 1),
+		       upper()->depth(current_max_depth + 1));
 		}
 
-		int depth() { return depth(root, 1); }
+		int depth() { return depth(1); }
 
 		template <class OutputIterator>
 		void tree_items(OutputIterator& it) {
-			if is_leaf() std::transform(begin()end(), it,
+			if (is_leaf()) std::transform(begin(), end(), it,
   			      get_val<Item*>());
 			else {
-				tree_items(lower(), it);
-				tree_items(root->upper(), it);
+				lower()->tree_items(it);
+				upper()->tree_items(it);
 			}
 		}
 

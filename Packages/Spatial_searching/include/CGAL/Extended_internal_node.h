@@ -50,29 +50,28 @@ public:
   // Extended_internal_node(const  Node* lower, const  Node* upper) :
   //			  lower_ch(lower), upper_ch(upper) {}
 
-  Extended_internal_node(Points_container<Item>& c, int bucket_size) {
+  Extended_internal_node(Points_container<Item>& c, Traits& t) {
 
-    Traits tr;
     Points_container<Item> c_low = Points_container<Item>(c.dimension());
 
     Box<NT> bbox(c.bounding_box());
 
-    sep = tr.split(c, c_low, tr.selected_split_rule());
+    sep = t.split(c, c_low);
 
     int cd  = sep->cutting_dimension();
     low_val = bbox.lower(cd);
     high_val = bbox.upper(cd);
 
-    if (c_low.size() > bucket_size)
-      lower_ch = new Extended_internal_node<Traits>(c_low,bucket_size);
+    if (c_low.size() > t.bucket_size())
+      lower_ch = new Extended_internal_node<Traits>(c_low,t);
     else
       lower_ch = new Leaf_node<Traits>(c_low);
 
     // delete *c_low;
     // delete []c_low;
 
-    if (c.size() > bucket_size)
-      upper_ch = new Extended_internal_node<Traits>(c,bucket_size);
+    if (c.size() > t.bucket_size())
+      upper_ch = new Extended_internal_node<Traits>(c,t);
     else
       upper_ch = new Leaf_node<Traits>(c);
   }

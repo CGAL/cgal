@@ -52,7 +52,7 @@ class Nearest_neighbour_L2 {
 
     public:
 
-    class Iterator;
+    class iterator;
 
     private:
     
@@ -81,15 +81,15 @@ class Nearest_neighbour_L2 {
 
     typedef std::vector<NT> Distance_vector;
 
-    Iterator *start;
-    Iterator *past_the_end;
+    iterator *start;
+    iterator *past_the_end;
 
     public:
 
     // constructor
     Nearest_neighbour_L2(Tree& tree, Item& q, NT Eps=0.0) {
-		start = new Iterator(tree,q,Eps);
-                past_the_end = new Iterator();
+		start = new iterator(tree,q,Eps);
+                past_the_end = new iterator();
 	};
 
     // destructor
@@ -98,15 +98,15 @@ class Nearest_neighbour_L2 {
                 delete past_the_end;
     };
 
-    Iterator begin() {
+    iterator begin() {
 		return *start;
     }
 
-    Iterator end() {
+    iterator end() {
 		return *past_the_end;
     }
 
-    class Iterator {
+    class iterator {
 
     public:
 
@@ -120,21 +120,21 @@ class Nearest_neighbour_L2 {
     public:
 
     // default constructor
-    class Iterator() {Ptr_implementation=0;}
+    class iterator() {Ptr_implementation=0;}
 
-    int The_number_of_items_visited() {
+    int the_number_of_items_visited() {
         return Ptr_implementation->number_of_items_visited;
     }
 
     // constructor
-    class Iterator(Tree& tree, Item& q, NT eps=0.0) {
+    class iterator(Tree& tree, Item& q, NT eps=0.0) {
         Ptr_implementation = new Iterator_implementation(tree, q, eps);
         // std::cout << "called standard constructor" << std::endl;
         // std::cout << "reference_count is" << Ptr_implementation->reference_count << std::endl;
     }
 
     // copy constructor
-    class Iterator(Iterator& Iter) {
+    class iterator(iterator& Iter) {
         // std::cout << "called copy constructor"  << std::endl;
         // if (Iter.Ptr_implementation != 0) std::cout << "reference_count is" << Iter.Ptr_implementation->reference_count << std::endl;
         Ptr_implementation = Iter.Ptr_implementation;
@@ -147,7 +147,7 @@ class Nearest_neighbour_L2 {
     }
 
     // prefix operator
-    Iterator& operator++() {
+    iterator& operator++() {
         ++(*Ptr_implementation);
         return *this;
     }
@@ -158,7 +158,7 @@ class Nearest_neighbour_L2 {
         return result;
     }
 
-    bool operator==(const Iterator& It) const {
+    bool operator==(const iterator& It) const {
 
         if (
                 ((Ptr_implementation == 0) || Ptr_implementation->Item_PriorityQueue.empty()) &&
@@ -169,11 +169,11 @@ class Nearest_neighbour_L2 {
         return (Ptr_implementation == It.Ptr_implementation);
     }
 
-    bool operator!=(const Iterator& It) const {
+    bool operator!=(const iterator& It) const {
         return !(*this == It);
     }
 
-    ~Iterator() {
+    ~iterator() {
         // std::cout << "called ~iterator"  << std::endl;
         if (Ptr_implementation != 0) {
                //  std::cout << "reference_count is" << Ptr_implementation->reference_count << std::endl;
@@ -186,15 +186,6 @@ class Nearest_neighbour_L2 {
         }
         // else std::cout << "Ptr_implementation is null" << std::endl;
     }
-
-    /*
-    Iterator begin() {
-        return Iterator(Ptr_tree,Ptr_q,epsilon);
-    }
-
-    Iterator end() {
-        return Iterator();
-    }*/
 
     class Iterator_implementation {
 
@@ -386,13 +377,13 @@ class Nearest_neighbour_L2 {
         // in the latter case also the item priority quee is empty
     }
 }; // class Iterator_implementaion
-}; // class Iterator
+}; // class iterator
 }; // class Nearest neighbour_L2
 
 template <class Traits>
-void swap (Nearest_neighbour_L2<Traits>::Iterator& x,
-        Nearest_neighbour_L2<Traits>::Iterator& y) {
-        Nearest_neighbour_L2<Traits>::Iterator::Iterator_implementation
+void swap (Nearest_neighbour_L2<Traits>::iterator& x,
+        Nearest_neighbour_L2<Traits>::iterator& y) {
+        Nearest_neighbour_L2<Traits>::iterator::Iterator_implementation
         *tmp = x.Ptr_implementation;
         x.Ptr_implementation  = y.Ptr_implementation;
         y.Ptr_implementation = tmp;

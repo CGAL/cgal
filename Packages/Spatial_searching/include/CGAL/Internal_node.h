@@ -54,23 +54,22 @@ public:
 
   Internal_node() {}
   
-  Internal_node(Points_container<Item>& c, int bucket_size) {
+  Internal_node(Points_container<Item>& c, Traits& t) {
 
-    Traits tr;
 	Points_container<Item> c_low(c.dimension());
 
-    sep = tr.split(c, c_low, tr.selected_split_rule());
+    sep = t.split(c, c_low);
 
-    if (c_low.size() > bucket_size)
-      lower_ch = new Internal_node<Traits>(c_low,bucket_size);
+    if (c_low.size() > t.bucket_size())
+      lower_ch = new Internal_node<Traits>(c_low,t);
     else
       lower_ch = new Leaf_node<Traits>(c_low);
 
     // delete *c_low;
     // delete []c_low;
 
-    if (c.size() > bucket_size)
-      upper_ch = new Internal_node<Traits>(c,bucket_size);
+    if (c.size() > t.bucket_size())
+      upper_ch = new Internal_node<Traits>(c,t);
     else
       upper_ch = new Leaf_node<Traits>(c);
   }

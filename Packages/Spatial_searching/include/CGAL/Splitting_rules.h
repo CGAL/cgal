@@ -39,14 +39,14 @@ template <class P>
 class Splitter {
 public:
   typedef typename P::FT NT;
-  virtual void Rule(Points_container<P>& c, Plane_separator<NT>* sep) {}
+  // virtual void rule(Points_container<P>& c, Plane_separator<NT>* sep) {}
 };
 
 template <class P>
 class Median_Of_Max_Spread : public Splitter<P> {
 public:
   typedef typename P::FT NT;
-  Plane_separator<NT>* Rule(Points_container<P>& c) {
+  Plane_separator<NT>* rule(Points_container<P>& c) {
         Plane_separator<NT>* sep =
         new Plane_separator<NT>(c.max_tight_span_coord(),0.0);
         sep->set_cutting_val(c.median(sep->cutting_dimension()));
@@ -58,7 +58,7 @@ template <class P>
 class Fair : public Splitter<P> {
 public:
   typedef typename P::FT NT;
-  Plane_separator<NT>* Rule(Points_container<P>& c, NT Aspect_ratio) {
+  Plane_separator<NT>* rule(Points_container<P>& c, NT Aspect_ratio) {
 		// find legal cut with max spread
 	    Plane_separator<NT>* sep = 
         new Plane_separator<NT>(c.max_tight_span_coord_balanced(Aspect_ratio),0.0);
@@ -71,7 +71,7 @@ template <class P>
 class Sliding_Fair : public Splitter<P> {
 public:
   typedef typename P::FT NT;
-  Plane_separator<NT>* Rule(Points_container<P>& c, NT Aspect_ratio) {
+  Plane_separator<NT>* rule(Points_container<P>& c, NT Aspect_ratio) {
 		// find legal cut with max spread
 	    Plane_separator<NT>* sep = 
         new Plane_separator<NT>(c.max_tight_span_coord_balanced(Aspect_ratio),0.0);
@@ -84,7 +84,7 @@ template <class P>
 class Sliding_MidPoint: public Splitter<P> {
 public:
   typedef typename P::FT NT;
-  Plane_separator<NT>* Rule(Points_container<P>& c)
+  Plane_separator<NT>* rule(Points_container<P>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),
               (c.max_span_upper() + c.max_span_lower())/2.0);
@@ -104,7 +104,7 @@ template <class P>
 class Median_Of_Box : public Splitter<P> {
 public:
   typedef typename P::FT NT;
-  Plane_separator<NT>* Rule(Points_container<P>& c)
+  Plane_separator<NT>* rule(Points_container<P>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),0.0);
     sep->set_cutting_val(c.median(sep->cutting_dimension()));
@@ -116,7 +116,7 @@ template <class P>
 class MidPoint_Of_Max_Spread : public Splitter<P> {
 public:
   typedef typename P::FT NT;
-  Plane_separator<NT>* Rule(Points_container<P>& c)
+  Plane_separator<NT>* rule(Points_container<P>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_tight_span_coord(),
     (c.max_tight_span_upper() + c.max_tight_span_lower())/2.0);
@@ -128,7 +128,7 @@ template <class P>
 class MidPoint_Of_Box: public Splitter<P> {
 public:
   typedef typename P::FT NT;
-  Plane_separator<NT>* Rule(Points_container<P>& c)
+  Plane_separator<NT>* rule(Points_container<P>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),
               (c.max_span_upper() + c.max_span_lower())/2.0);

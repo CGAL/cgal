@@ -200,7 +200,7 @@ namespace CGAL {
 	Points_container(int d) :
 	p_list(new Points_list[d]), bbox(d), tbox(d) {}
 
-	void Swap(Points_container<Item>& c) {
+	void swap(Points_container<Item>& c) {
 
 		swap(p_list,c.p_list);
 
@@ -226,7 +226,7 @@ namespace CGAL {
                 c.tbox = h_tbox;
 	}
 
-	void Add_points_from_container(Points_container<Item>& c) {
+	void add_points_from_container(Points_container<Item>& c) {
 	  assert(built_coord=c.built_coord);
 	  merge(p_list[built_coord], c.p_list[built_coord], Less_lexicographically_d());
 	  /* alternative implemenetation
@@ -242,78 +242,18 @@ namespace CGAL {
 
 	}
 
-    void Recompute_tight_bounding_box() {
+    void recompute_tight_bounding_box() {
 		tbox.update_from_point_pointers(p_list[built_coord].begin(),
 		     p_list[built_coord].end(),p_list[built_coord].empty());
 	}
 
 
-    // "in-place" building of the container; curr is "cloned" to make
-    // two containers; the points that have coordinate split_coord >= val
-    // are left in curr;
-    // the rest of these points are put into the new container being created
-
-	/*
-    template <class Separator>
-    Points_container(
-			 // const int split_coord, const NT val,
-		     //		     Points_container<Item>& curr ) :
-		     Self& curr, Separator *sep) :
-          p_list(new Points_list[curr.dimension()]),
-	  built_coord(curr.built_coord),
-	  bbox(curr.bbox), tbox(curr.dimension()) {
-      std::cout << "separator=" << sep << std::endl;
-      const int split_coord = sep->cutting_dimension();
-      const NT cutting_value = sep->cutting_value();
-      std::cout << "split_coord =" << split_coord << std::endl;
-      std::cout << "cutting_value=" << cutting_value << std::endl;
-      // prepare the coordinate, if necessary
-      if (curr.p_list[split_coord].empty()) {
-         // copy curr.p_list[built_coord] to curr.p_list[split_coord]
-         curr.p_list[split_coord]=curr.p_list[built_coord];
-         // sort curr.p_list[split_coord]
-         curr.p_list[split_coord].sort(comp_coord_val<Item>(split_coord));
-      }
-
-      // splitting the lists in two; can be done better for
-      // i == split_coord...
-      Points_list tmp_list(0);
-      for (int i = 0; i < dimension(); ++i) {
-	if (! curr.p_list[i].empty()) {
-	tmp_list.clear();
-	p_list[i].clear();
-	for (typename Points_list::iterator pt = curr.p_list[i].begin();
-	     pt != curr.p_list[i].end(); pt = curr.p_list[i].begin()) {
-	  // if ((*(*pt))[split_coord] < val) {
-             if (sep->Side(*(*pt)) == ON_NEGATIVE_SIDE) {
-                p_list[i].splice(p_list[i].end(), curr.p_list[i], pt);
-	     }
-	  else
-		 { tmp_list.splice(tmp_list.end(), curr.p_list[i], pt);}
-	}
-	// in-place copy tmp_list to curr.p_list[i]
-	curr.p_list[i].splice(curr.p_list[i].end(), tmp_list);
-	}
-      }
-
-      // adjusting boxes
-      curr.bbox.set_lower(split_coord, cutting_value);
-      curr.tbox.update_from_point_pointers(curr.p_list[built_coord].begin(),
-		     curr.p_list[built_coord].end(),curr.p_list[built_coord].empty());
-      bbox.set_upper(split_coord, cutting_value);
-      tbox.update_from_point_pointers(p_list[built_coord].begin(),
-		     p_list[built_coord].end(),p_list[built_coord].empty());
-    }*/
-
-    // the points that have coordinate split_coord >= val
-    // remain in the current container
-    // the rest of these points are moved to c
-
+    
       template <class Separator>
       void split_container(Points_container<Item>& c, Separator* sep, bool sliding=false) {
 
 		assert(dimension()==c.dimension());
-		assert(c.empty());
+
 		c.built_coord=built_coord;
         c.bbox=bbox;
         // bool test_validity=false;
@@ -344,7 +284,7 @@ namespace CGAL {
 				for (typename Points_list::iterator pt = p_list[i].begin();
 				pt != p_list[i].end(); pt = p_list[i].begin()) {
 					// if ((*(*pt))[split_coord] < val) {
-					if (sep->Side(*(*pt)) == ON_NEGATIVE_SIDE) {
+					if (sep->side(*(*pt)) == ON_NEGATIVE_SIDE) {
 						c.p_list[i].splice(c.p_list[i].end(), p_list[i], pt);
 					}
 					else {
@@ -400,7 +340,7 @@ namespace CGAL {
          p_list[split_coord].sort(comp_coord_val<Item>(split_coord));
       }
       Points_list::iterator median_point_ptr=p_list[split_coord].begin();
-      for (int i = 0; i < p_list[split_coord].size()/2-1; i++, median_point_ptr++) {}
+      for (unsigned int i = 0; i < p_list[split_coord].size()/2-1; i++, median_point_ptr++) {}
       NT val1=(*(*median_point_ptr))[split_coord];
       median_point_ptr++;
       NT val2=(*(*median_point_ptr))[split_coord];

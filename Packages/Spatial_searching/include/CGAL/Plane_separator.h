@@ -43,7 +43,7 @@ template < class NT> class Plane_separator {
   }
 
   template <class Item> 
-  inline const Oriented_side Side(Item it) const {
+  inline const Oriented_side side(Item it) const {
 	if (it[cutting_dim] < cutting_val)
 		{return ON_NEGATIVE_SIDE;}
 	/* else if (i[cutting_dim] == cutting_val)
