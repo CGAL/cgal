@@ -27,8 +27,7 @@
 \ccDefinition
 
 The concept \ccc{SegmentVoronoiDiagramDataStructure_2} refines the
-concept \ccc{ApolloniusGraphDataStructure_2}
-described in \ccRefPage{ApolloniusGraphDataStructure_2}. In addition
+concept \ccc{ApolloniusGraphDataStructure_2}. In addition
 it provides two methods for the merging of two vertices joined by an
 edge of the data structure, and the splitting of a vertex into two.
 The method that merges two vertices, called \ccc{join_vertices}
@@ -39,7 +38,7 @@ figure below). Notice that the \ccc{join_vertices} and
 \ccc{split_vertex} operations are complementary, in the sense that one
 reverses the action of the other.
 
-\begin{figure}[htb]%\label{fig-agds-d2}
+\begin{figure}[htb]\label{fig-svdds-split-join}
 \begin{ccTexOnly}
 \begin{center}
 \includegraphics[width=0.95\textwidth]
@@ -84,13 +83,14 @@ We only describe the additional requirements with respect to the
   the vertices that are endpoints of the edge \ccc{(f,i)}. It returns
   a vertex handle to common vertex.}
 \ccGlue
-\ccMethod{Quadruple<Vertex_handle, Vertex_handle, Face_handle, Face_handle>
+\ccMethod{CGAL::Quadruple<Vertex_handle, Vertex_handle, Face_handle,
+Face_handle>
   split_vertex(Vertex_handle v, Face_handle f1, Face_handle
   f2);}{Splits the vertex \ccc{v} into two vertices \ccc{v1} and
   \ccc{v2}. The common faces \ccc{f} and \ccc{g} of \ccc{v1} and
   \ccc{v2} are created after (in the counter-clockwise sense) the
   faces \ccc{f1} and \ccc{f2}. The quaruple \ccc{(v1,v2,f,g)} is
-  returned.}
+  returned (see Fig. \ref{fig-svdds-split-join}).}
 
 \ccHasModels
 \ccc{CGAL::Segment_Voronoi_diagram_data_structure_2<Vb,Fb>}
@@ -99,7 +99,7 @@ We only describe the additional requirements with respect to the
 \ccc{TriangulationDataStructure_2}\\
 \ccc{ApolloniusGraphDataStructure_2}\\
 \ccc{SegmentVoronoiDiagramVertexBase_2}\\
-\ccc{SegmentVoronoiDiagramFaceBase_2}\\
+\ccc{TriangulationFaceBase_2}\\
 \ccc{CGAL::Segment_Voronoi_diagram_data_structure_2<Vb,Fb>}
 
 \end{ccRefConcept}

@@ -38,7 +38,7 @@ contain only points that are either point sites or endpoints of
 segment sites in the bottom-most Voronoi diagram. 
 A point that is in level $i$ (either as an individdual point or as the
 endpoint of a segment), is inserted in level $i+1$ with probability
-$1/alpha$ where $\alpha>1$ is some constant.
+$1/\alpha$ where $\alpha>1$ is some constant.
 In the second case the upper levels of the hierarchy contains not only
 points but also segments. A site that is in level $i$, is in level
 $i+1$ with probability $1/\beta$ where $\beta > 1$ is some constant.
@@ -59,18 +59,18 @@ have essentially the same semantics as in the
 first template parameter must be a model of the
 \ccc{SegmentVoronoiDiagramTraits_2} concept.
 The third template parameter must be a model of the
-\ccc{SimpleContainer} concept. The third template parameter must be a
+\ccc{SimpleContainer} concept. The fourth template parameter must be a
 model of the \ccc{SegmentVoronoiDiagramDataStructure_2}
 concept. However, the vertex base class that is to be used in the
 segment Voronoi diagram data structure must
 be a model of the \ccc{SegmentVoronoiDiagramHierarchyVertexBase_2}
 concept. The third template parameter defaults to
-\ccc{CGAL::Simple_container<typename Gt::Point_2>}, whereas the fourth
-template parameter defaults to
+\ccc{CGAL::Simple_container_wrapper< std::list<typename Gt::Point_2>
+>}, whereas the fourth template parameter defaults to
 \ccc{Segment_Voronoi_diagram_data_structure_2<
 Segment_Voronoi_diagram_hierarchy_vertex_base_2< 
 Segment_Voronoi_diagram_vertex_base_2<Gt> >,
-Segment_Voronoi_diagram_face_base_2<Gt> >}. The second template
+Triangulation_face_base_2<Gt> >}. The second template
 parameter controls whether or not segments are added in the upper
 levels of the hierarchy. It's possible values are \ccc{CGAL::Tag_true}
 and \ccc{CGAL::Tag_false}. If it is set to \ccc{CGAL::Tag_true},
@@ -292,8 +292,8 @@ other} or to \ccVar\ccc{(other)} if \ccc{other} is deleted afterwards.}
 \ccc{CGAL::Segment_Voronoi_diagram_data_structure_2<Vb,Fb>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<ITag,CK,CM,EK,EM,FK,FM>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_hierarchy_vertex_base_2<Vbb>}
-
+\ccc{CGAL::Segment_Voronoi_diagram_hierarchy_vertex_base_2<Vbb>}\\
+\ccc{CGAL::Simple_container_wrapper<C>}
 
 \end{ccRefClass}
 

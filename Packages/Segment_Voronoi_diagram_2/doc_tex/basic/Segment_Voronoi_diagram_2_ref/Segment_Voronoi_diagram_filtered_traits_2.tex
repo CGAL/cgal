@@ -44,15 +44,16 @@ This class has seven template parameters. The first template parameter
 indicates whether intersections are to be supported and has two
 possible values, namely \ccc{CGAL::Tag_true} and
 \ccc{CGAL::Tag_false}. The value \ccc{CGAL::Tag_true} indicates that
-intersecting segment are supported. the second, fouth and sixth
+intersecting segment are supported. The second, fouth and sixth
 template parameters must be a models of the \ccc{Kernel} concept. The
 third, fifth and seventh template parameters correspond to how
 predicates are evaluated. There are three predefined possible values for
-\ccc{Method_tag}, namely \ccc{CGAL::Sqrt_field_tag},
+these parameters, namely \ccc{CGAL::Sqrt_field_tag},
 \ccc{CGAL::Field_tag} and \ccc{CGAL::Ring_tag}. The first one must be
 used when the number type used in the representation supports the
 exact evaluation of signs of expressions involving all four basic
-operations and square roots, whereas the second one requires the exact
+operations and square roots, the second one requires that only field
+operations are exact, whereas the third requires the exact
 evaluation of signs of ring-type expressions, i.e., expressions
 involving only additions, subtractions and multiplications. If
 intersecting segments are supported the value for \ccc{CM}, \ccc{FM}
@@ -88,6 +89,8 @@ In addition to the types required by the
 \ccc{SegmentVoronoiDiagramTraits_2} concept the class \ccRefName\
 defines the following types:
 
+\ccTypedef{typedef CK  Kernel;}{}
+\ccGlue
 \ccTypedef{typedef CK  Construction_kernel;}{}
 \ccGlue
 \ccTypedef{typedef FK  Filtering_kernel;}{}
@@ -142,6 +145,7 @@ Segment_Voronoi_diagram_filtered_traits_2
 \ccc{CGAL::Field_tag}\\
 \ccc{CGAL::Sqrt_field_tag}\\
 \ccc{CGAL::Segment_Voronoi_diagram_2<Gt,PC,DS>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}
 
 

@@ -37,11 +37,11 @@ must be a model of \ccc{SegmentVoronoiDiagramTraits_2},
 and \ccc{DS},
 which must be a model of \ccc{SegmentVoronoiDiagramDataStructure_2}.
 The second template argument defaults to
-\ccc{CGAL::Simple_container<typename Gt::Point_2>}, whereas
-the third template argument defaults to
+\ccc{CGAL::Simple_container_wrapper<std::list<typename Gt::Point_2> >},
+whereas the third template argument defaults to 
 \ccc{CGAL::Segment_Voronoi_diagram_data_structure_2< 
 CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt>,
-CGAL::Segment_Voronoi_diagram_face_base_2<Gt> >}.
+CGAL::Triangulation_face_base_2<Gt> >}.
 
 \ccInclude{CGAL/Segment_Voronoi_diagram_2.h}
 
@@ -66,7 +66,7 @@ point defined in the geometric traits.}
 \ccGlue
 \ccTypedef{typedef PC Point_container;}{A type for the container of points.}
 \ccGlue
-\ccNestedType{Point_handle;}{A handle for
+\ccTypedef{typedef typename PC::iterator Point_handle;}{A handle for
   points in the point container.}
 %
 
@@ -145,7 +145,8 @@ iterators sites are provided. In particular there are iterators
 for the set of input sites and the set of output sites. The set of
 input sites is the set of sites inserted by the user using the
 \ccc{insert} method of this class. If a site is inserted multiple
-times, every instance of this site will be reported. The set of output
+times, every {\bf should this be this way, or just one instance?}
+instance of this site will be reported. The set of output
 sites is the set of sites in the segment Voronoi diagram. The value
 type of these iterators is \ccc{Site_2}.
 
@@ -197,7 +198,7 @@ operator=(const Segment_Voronoi_diagram_2<Gt,PC,DS>& other);}
 
 \ccAccessFunctions
 % MK:: in the following copy text from TDS
-\ccThree{Point_container}{svd.number_of_vertices()+}{}
+\ccThree{Point_container}{svd.number_of_output_sites()+}{}
 %
 \ccMethod{Geom_traits geom_traits();}
 {Returns a reference to the segment Voronoi diagram traits object.}
@@ -216,6 +217,13 @@ operator=(const Segment_Voronoi_diagram_2<Gt,PC,DS>& other);}
 {Returns the number of faces (both finite and infinite) of the
   dual of the segment Voronoi diagram.}
 \ccGlue
+\ccMethod{size_type number_of_input_sites();}
+{Return the number of input sites.}
+\ccGlue
+\ccMethod{size_type number_of_output_sites();}
+{Return the number of output sites. This is equal to the number of
+vertices in the dual of the segment Voronoi diagram.}
+\ccGlue
 \ccMethod{Face_handle infinite_face();}
 {Returns a face incident to the \ccc{infinite_vertex}.}
 \ccGlue
@@ -225,7 +233,7 @@ operator=(const Segment_Voronoi_diagram_2<Gt,PC,DS>& other);}
 \ccGlue
 \ccMethod{Vertex_handle finite_vertex();}
 {Returns a vertex distinct from  the \ccc{infinite_vertex}.
-\ccPrecond{The number of (visible) vertices in the Apollonius graph must
+\ccPrecond{The number of sites in the segment Voronoi diagram must
   be at least one.}}
 \ccGlue
 \ccMethod{Data_structure data_structure();}{Returns a reference to the
@@ -557,7 +565,7 @@ returned. If there are no sites in the segment Voronoi diagram
 
 \begin{ccTexOnly}
 % to make the last I/O method appear in the next page
-\vspace*{20mm}
+%\vspace*{20mm}
 \end{ccTexOnly}
 
 \ccHeading{I/O}
@@ -629,11 +637,12 @@ be preferred to \ccVar\ccc{ = other} or to \ccVar\ccc{(other)} if
 \ccc{SegmentVoronoiDiagramVertexBase_2}\\
 \ccc{SegmentVoronoiDiagramFaceBase_2}\\
 \ccc{SimpleContainer}\\
-\ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,Method_tag>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<ITag,CK,CM,EK,EM,FK,FM>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_data_structure_2<Vb,Fb>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,StoreHidden>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_face_base_2<Gt>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,PC,SSTag>}\\
+\ccc{CGAL::Triangulation_face_base_2<Gt>}\\
 \ccc{CGAL::Simple_container<T>}
 
 \end{ccRefClass}

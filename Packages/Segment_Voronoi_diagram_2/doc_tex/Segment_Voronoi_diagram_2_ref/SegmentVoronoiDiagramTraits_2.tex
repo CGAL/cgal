@@ -27,9 +27,10 @@
 \ccDefinition
 
 The concept \ccc{SegmentVoronoiDiagramTraits_2} provides the traits
-requirements for the \ccc{Segment_Voronoi_diagram_2} class. In particular,
-it provides a type \ccc{Site_2}, which must be a model of the concept
-\ccc{SegmentVoronoiDiagramSite_2}. It also provides
+requirements for the \ccc{Segment_Voronoi_diagram_2<Gt,PC,DS>} and
+\ccc{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>} classes. In
+particular, it provides a type \ccc{Site_2}, which must be a model of
+the concept \ccc{SegmentVoronoiDiagramSite_2}. It also provides
 constructions for sites and several function object
 types for the predicates.
 
@@ -66,8 +67,13 @@ types for the predicates.
   \ccc{TOUCHING_12}, \ccc{TOUCHING_21}, \ccc{TOUCHING_22},
   \ccc{OVERLAPPING_11}, \ccc{OVERLAPPING_12}, \ccc{OVERLAPPING_21},
   \ccc{OVERLAPPING_22}, \ccc{INTERIOR}, \ccc{INTERIOR_1},
-  \ccc{INTERIOR_2}. A detailed description of the meaning of these
-  values is shown the end of the reference manual for this concept.}
+  \ccc{INTERIOR_2}, \ccc{TOUCHING_11_INTERIOR_1},
+  \ccc{TOUCHING_11_INTERIOR_2}, \ccc{TOUCHING_12_INTERIOR_1},
+  \ccc{TOUCHING_12_INTERIOR_2}, \ccc{TOUCHING_21_INTERIOR_1},
+  \ccc{TOUCHING_21_INTERIOR_2}, \ccc{TOUCHING_22_INTERIOR_1}, 
+  \ccc{TOUCHING_22_INTERIOR_2}. A detailed description of the meaning
+  of these values is shown the end of the reference manual for this
+  concept. (\bf to be done)}
 \ccGlue
 \ccNestedType{Object_2}{A type representing different types of objects
   in two dimensions, namely: \ccc{Point_2}, \ccc{Site_2},
@@ -116,14 +122,14 @@ types for the predicates.
 provide \ccc{Comparison_result operator()(Site_2 s1,
 Site_2 s2)}, which compares the $x$-coordinates of the points
 represented by the sites \ccc{s1} and \ccc{s2}.
-\ccPrecond{\ccc{s1} and \ccc{s2} muts be points.}}
+\ccPrecond{\ccc{s1} and \ccc{s2} must be points.}}
 %
 \ccGlue
 \ccNestedType{Compare_y_2}{A predicate object type. Must
 provide \ccc{Comparison_result operator()(Site_2 s1,
 Site_2 s2)}, which compares the $y$-coordinates of the points
 represented by the sites \ccc{s1} and \ccc{s2}.
-\ccPrecond{\ccc{s1} and \ccc{s2} muts be points.}}
+\ccPrecond{\ccc{s1} and \ccc{s2} must be points.}}
 %
 \ccGlue
 \ccNestedType{Orientation_2}{A predicate object type. Must
@@ -342,16 +348,16 @@ construct_svd_vertex_2_object();}{}
 
 \ccHasModels
 
-\ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,Method_tag>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+\ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<ITag,CK,CM,EK,EM,FK,FM>}
 
 
 \ccSeeAlso
 \ccc{SegmentVoronoiDiagramSite_2}\\
 \ccc{CGAL::Segment_Voronoi_diagram_2<Gt,PC,DS>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,Method_tag>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+\ccc{CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<ITag,CK,CM,EK,EM,FK,FM>}
 \end{ccRefConcept}
 
 % +------------------------------------------------------------------------+

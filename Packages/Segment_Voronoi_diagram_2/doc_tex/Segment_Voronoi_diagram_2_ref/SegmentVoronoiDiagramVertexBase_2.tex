@@ -33,7 +33,9 @@ site of the segment Voronoi diagram and provides access to one of its
 incident faces through a \ccc{Face_handle}.
 
 \ccTypes
-\ccTwo{SegmentVoronoiDiagramVertexBase_2::Point_container+}{}
+%\ccTwo{SegmentVoronoiDiagramVertexBase_2::Point_container+}{}
+\ccThree{typedef typename Point_container::iterator+}{Point_handle+}{}
+\ccThreeToTwo
 \ccNestedType{Geom_traits}{A type for the geometric traits that defines
 the site. \ccPrecond{The type \ccc{Geom_traits} must
 define the type \ccc{Site_2}.}}
@@ -44,10 +46,8 @@ define the type \ccc{Site_2}.}}
 %   \ccc{SimpleContainer}.}}
 %
 \ccGlue
-\ccNestedType{Point_handle}{A handle type for the points in the point
-  container.
-  \ccPrecond{This type must be identical to the type
-    \ccc{Point_container::iterator}.}}
+\ccTypedef{typedef typename Point_container::iterator Point_handle;}
+{A handle type for the points in the point container.}
 %
 \ccGlue
 \ccNestedType{Site_2}{A type for the site.
@@ -127,14 +127,19 @@ define the type \ccc{Site_2}.}}
 
 \ccHasModels
 
-\ccc{CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,PointHandle>}.
+\ccc{CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,PC>}.
 
 
 \ccSeeAlso
 
 \ccc{SegmentVoronoiDiagramDataStructure_2}\\
 \ccc{SegmentVoronoiDiagramTraits_2}\\
-\ccc{CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,PointHandle>}
+\ccc{SegmentVoronoiDiagramSite_2}\\
+\ccc{SegmentVoronoiDiagramStorageSite_2}\\
+\ccc{CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,PC>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_site_2<K>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_storage_site_2<Gt,PC,SSTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_data_structure_2<Vb,Fb>}
 
 \end{ccRefConcept}
 

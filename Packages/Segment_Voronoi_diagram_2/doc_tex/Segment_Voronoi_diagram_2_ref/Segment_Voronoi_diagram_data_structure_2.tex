@@ -32,13 +32,11 @@
 An implementation for the concept \ccc{SegmentVoronoiDiagramDataStructure_2}
 is provided. The class is templated by a face 
 base and vertex base class just like the
-\ccc{Triangulation_data_structure_2} (see
-\ccRefPage{Triangulation_data_structure_2}) and
-\ccc{Apollonius_graph_data_strcuture_2} class (see
-\ccRefPage{Apollonius_graph_data_structure_2}). This class
+\ccc{Triangulation_data_structure_2} and
+\ccc{Apollonius_graph_data_strcuture_2} class. This class
 inherits from \ccc{Apollonius_graph_data_structure_2<Vb,Fb>}. \ccc{Vb}
 must be a model of \ccc{SegmentVoronoiDiagramVertexBase_2}. \ccc{Fb}
-must be a model of \ccc{SegmentVoronoiDiagramFaceBase_2}.
+must be a model of \ccc{TriangulationFaceBase_2}.
 
 \ccInclude{CGAL/Segment_Voronoi_diagram_data_structure_2.h}
 
@@ -74,8 +72,8 @@ operator=(Segment_Voronoi_diagram_data_structure_2<Vb,Fb> other);}
 \ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}\\
 \ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_2<Gt,PC,DS>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,PointHandle>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_face_base_2<Gt>}
+\ccc{CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,PC>}\\
+\ccc{CGAL::Triangulation_face_base_2<Gt>}
 
 \end{ccRefClass}
 % +------------------------------------------------------------------------+

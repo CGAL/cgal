@@ -35,8 +35,8 @@ segment Voronoi diagrams, whereas the third concept refers to the data
 structure used to represent the dual of the segment Voronoi
 diagram. The second concept refers to the container that stores the
 points or segments inserted in the segment Voronoi diagram. The
-classes \ccc{Segment_Voronoi_diagram_traits_2<K,Method_tag>},
-\ccc{Simple_container<T>} and
+classes \ccc{Segment_Voronoi_diagram_traits_2<ITag,K,MTag>},
+\ccc{Simple_container_wrapper< std::list<typename Gt::Point_2> >} and
 \ccc{Segment_Voronoi_diagram_data_structure_2<Vb,Fb>} are models of the
 afore-mentioned concepts.
 
@@ -54,7 +54,7 @@ afore-mentioned concepts.
 \ccHeading{Classes}
 \ccRefIdfierPage{CGAL::Segment_Voronoi_diagram_2<Gt,PC,DS>}\\
 \ccRefIdfierPage{CGAL::Segment_Voronoi_diagram_site_2<K>}\\
-\ccRefIdfierPage{CGAL::Segment_Voronoi_diagram_storage_site_2<Gt,PH>}\\
+\ccRefIdfierPage{CGAL::Segment_Voronoi_diagram_storage_site_2<Gt,PC>}\\
 \ccRefIdfierPage{CGAL::Segment_Voronoi_diagram_data_structure_2<Vb,Fb>}\\
 \ccRefIdfierPage{CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,PC,SSTag>}\\
 %\ccRefIdfierPage{CGAL::Segment_Voronoi_diagram_face_base_2<Gt>}\\

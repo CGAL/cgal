@@ -20,7 +20,7 @@
 
 
 
-\begin{ccRefClass}{Segment_Voronoi_diagram_storage_site_2<Gt,PH>}
+\begin{ccRefClass}{Segment_Voronoi_diagram_storage_site_2<Gt,PC>}
 %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -31,8 +31,8 @@
 The class \ccRefName\ is a model for the concept
 \ccc{SegmentVoronoiDiagramStorageSite_2}. It is parametrized by two
 template parameters: \ccc{Gt}, which must be a model of the
-\ccc{SegmentVoronoiDiagramTraits_2} concept, and \ccc{PH}, which must
-be identical to the type \ccc{PC::iterator}, where \ccc{PC} is the
+\ccc{SegmentVoronoiDiagramTraits_2} concept, and \ccc{PC}, which must
+a model for the concept \ccc{SimpleContainer}. \ccc{PC} must be the
 same as the template parameter in the
 \ccc{Segment_Voronoi_diagram_2<Gt,PC,DS>} and
 \ccc{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>} classes.
@@ -47,8 +47,17 @@ same as the template parameter in the
 The class \ccRefName\ introduces the following type in addition to the
 types in the concept \ccc{SegmentVoronoiDiagramStorageSite_2}.
 
+\ccThree{typedef typename PC::iterator}{Point_container+}{}
 \ccTypedef
 {typedef Gt Geom_traits;}{A type for the template parameter \ccc{Gt}.}
+\ccGlue
+\ccTypedef
+{typedef PC Point_container;}
+{A type for the template parameter \ccc{PC}.}
+\ccGlue
+\ccTypedef
+{typedef typename PC::iterator Point_handle;}
+{A type for a point handle.}
 
 
 \ccCreation
@@ -79,6 +88,7 @@ types in the concept \ccc{SegmentVoronoiDiagramStorageSite_2}.
 \ccSeeAlso
 \ccc{SegmentVoronoiDiagramSite_2}\\
 \ccc{SegmentVoronoiDiagramTraits_2}\\
+\ccc{CGAL::Segment_Voronoi_diagram_site_2<K>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<ITag,CK,CM,EK,EM,FK,FM>}
 
