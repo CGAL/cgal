@@ -36,6 +36,7 @@ typedef typename base_rep::FT                    NT;
 typedef typename base_rep::Point_2               Point_2;
 typedef typename base_rep::Segment_2             Segment_2;
 typedef typename base_rep::Iso_rectangle_2       Iso_rectangle_2;
+typedef typename base_rep::Aff_transformation_2  Transformation_2;
 
 public:
 
@@ -103,10 +104,14 @@ class Rotate_point_2 {
     NT cosine_val = angle_to_sines_appr[90 - tranc_angle],
        sine_val = angle_to_sines_appr[tranc_angle];
 
-    NT x = p.x() * cosine_val - p.y() * sine_val,
+    Transformation_2 rotate(ROTATION, sine_val, cosine_val);
+
+    return(rotate(p));
+
+    /*NT x = p.x() * cosine_val - p.y() * sine_val,
        y = p.x() * sine_val + p.y() * cosine_val;
 
-    return(Point_2(x,y));
+       return(Point_2(x,y));*/
   }
 };
 
