@@ -203,8 +203,8 @@ to_double(const MP_Float &b)
 
   int exp = b.max_exp();
   int steps = std::min(MP_Float::limbs_per_double, b.v.size());
-  double d_exp_1 = std::ldexp(1.0, (int) - MP_Float::log_limb);
-  double d_exp   = std::ldexp(1.0, exp * MP_Float::log_limb);
+  double d_exp_1 = ::ldexp(1.0, (int) - MP_Float::log_limb);
+  double d_exp   = ::ldexp(1.0, exp * MP_Float::log_limb);
   double d = 0;
 
   for (int i = exp - 1; i > exp - 1 - steps; i--) {
@@ -224,8 +224,8 @@ to_interval(const MP_Float &b)
 
   int exp = b.max_exp();
   int steps = std::min(MP_Float::limbs_per_double, b.v.size());
-  double d_exp_1 = std::ldexp(1.0, (int) - MP_Float::log_limb);
-  double d_exp   = std::ldexp(1.0, exp * MP_Float::log_limb);
+  double d_exp_1 = ::ldexp(1.0, (int) - MP_Float::log_limb);
+  double d_exp   = ::ldexp(1.0, exp * MP_Float::log_limb);
 
   // We take care of overflow.  The following should be enough.
   if (!CGAL_NTS is_finite(d_exp))
@@ -279,7 +279,7 @@ operator<< (std::ostream & os, const MP_Float &b)
     if (exp != 0)
       os << " * 2^" << exp;
 
-    approx += std::ldexp(double(*i), exp);
+    approx += ::ldexp(double(*i), exp);
 
     exp += MP_Float::log_limb;
   }
