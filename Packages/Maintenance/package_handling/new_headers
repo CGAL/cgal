@@ -7,7 +7,8 @@ use File::Copy;
 #use File::Find;
 use Getopt::Std;
 
-# This script updated a file to the new style header.
+# This script updated (a) file(s) to the new style header.
+# The precondition is that is has a valid (old) header.
 
 sub usage()
 {
@@ -18,7 +19,7 @@ usage:
     -h show this message and quit
     -q owner (default: LGPL,
               otherwise it's QPL, with choices among :
-              UU, INRIA, ETHZ, FUB, MPI, RISC, TAU, HW,
+              UU, INRIA, ETHZ, FUB, MPI, RISC, TAU, TRIER, HW,
               which will be expanded)
 EOF
 }
@@ -36,7 +37,9 @@ my %qpl_owners=("UU"    => "Utrecht University (The Netherlands)",
                 "MPI"   => "Max-Planck-Institute Saarbrucken (Germany)",
                 "RISC"  => "RISC Linz (Austria)",
                 "TAU"   => "Tel-Aviv University (Israel)",
-                "HW"    => "Martin-Luther-University Halle-Wittenberg (Germany)");
+                "TRIER" => "University of Trier (Germany)",
+                "HW"    => "Martin-Luther-University Halle-Wittenberg (Germany)"
+);
 
 sub gjmove($$)
 {
@@ -138,11 +141,14 @@ END_OF_DISCLAIMER
     while ( <SOURCE_FILE> ) {
 	next if ($_ !~ m|^\s*//| );
 	++$authors_seen if m<^\s*//\s*author(s|\(s\))?\s*:>;
-	--$authors_seen if m<^\s*//\s*coordinator(s|\(s\))?\s*:>;
 	if ($authors_seen > 0) {
-          if (! m|//\s*$|) {
-            s/author/Author/;
-            print TEMPFILE $_; # we keep the authors
+	  if (m<^\s*//\s*(coordinator|package|release)(s|\(s\))?\s*:>) {
+          --$authors_seen;
+          } else {
+            if (! m|//\s*$|) {
+              s/author/Author/;
+              print TEMPFILE $_; # we keep the authors
+            }
           }
         }
         last if /======/;
@@ -191,6 +197,7 @@ sub main()
     open FILE_CHECKS, ">-";
     my $filename;
     foreach $filename (@ARGV) {
+        print "new_headers acting on $filename.\n";
 	check_and_update_file($filename, $::opt_q);
     }
     close  FILE_CHECKS;
