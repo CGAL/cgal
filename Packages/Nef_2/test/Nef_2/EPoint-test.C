@@ -8,36 +8,14 @@
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
 typedef leda_integer Integer;
-template <>
-struct ring_or_field<leda_integer> {
-  typedef ring_with_gcd kind;
-  typedef leda_integer RT;
-  static RT gcd(const RT& r1, const RT& r2) 
-  { return ::gcd(r1,r2); }
-};
 #include <CGAL/leda_real.h>
 typedef leda_real Real;
-template <>
-struct ring_or_field<leda_real> {
-  typedef field_with_div kind;
-};
 #else
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 #include <CGAL/Quotient.h>
 typedef CGAL::Gmpz Integer;
-template <>
-struct ring_or_field<CGAL::Gmpz> {
-  typedef ring_with_gcd kind;
-  typedef CGAL::Gmpz RT;
-  static RT gcd(const RT& r1, const RT& r2) 
-  { return CGAL::gcd(r1,r2); }
-};
 typedef CGAL::Quotient<Integer> Real;
-template <>
-struct ring_or_field<Real> {
-  typedef field_with_div kind;
-};
 #else
 typedef long   Integer;
 typedef double Real;

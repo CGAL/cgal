@@ -40,12 +40,11 @@
 #include <CGAL/Nef_2/debug.h>
 
 CGAL_BEGIN_NAMESPACE
-//#ifndef LEDA_ERROR_H
-inline void error_handler(int n, const char* s)
+
+inline void CGAL_error_handler(int n, const char* s)
 { std::cerr << s << std::endl;
   exit(n);
 }
-//#endif
 
 struct Do_nothing {
 Do_nothing() {}
@@ -109,11 +108,11 @@ public:
     int s = 0;
     if ( p == point(source(e1)) )      s =   orientation(e2,p);
     else if ( p == point(source(e2)) ) s = - orientation(e1,p);
-    else CGAL::error_handler(1,"compare error in sweep.");
+    else CGAL_error_handler(1,"compare error in sweep.");
     if ( s || source(e1) == target(e1) || source(e2) == target(e2) ) 
       return ( s < 0 );
     s = orientation(e2,point(target(e1)));
-    if (s==0) CGAL::error_handler(1,"parallel edges not allowed.");
+    if (s==0) CGAL_error_handler(1,"parallel edges not allowed.");
     return ( s < 0 );
   }
 

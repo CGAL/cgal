@@ -1,6 +1,10 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.5 (24 Mar 2002)
+     - added iterator access function documentation
+     - converted to use of CGAL_NTS gcd function 
+
 1.4 (22 Mar 2002)
 
      - Changed conditional compilation for _MSC_VER to 

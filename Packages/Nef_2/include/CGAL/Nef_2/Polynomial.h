@@ -33,6 +33,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Number_type_traits.h>
 #include <CGAL/IO/io.h>
 #undef _DEBUG
 #define _DEBUG 3
@@ -49,57 +50,6 @@
 #define SNIHACK
 #define SNIINST
 #endif
-
-#define GCD_FOR_BUILTIN(RT) \
-static RT gcd(const RT& a, const RT& b) \
-{ if (a == 0) \
-    if (b == 0)  return 1; \
-    else         return CGAL_NTS abs(b); \
-  if (b == 0)    return CGAL_NTS abs(a); \
-  int u = CGAL_NTS abs(a); \
-  int v = CGAL_NTS abs(b); \
-  if (u < v) v = v%u; \
-  while (v != 0) \
-  { int tmp = u % v; \
-    u = v; \
-    v = tmp; \
-  } \
-  return u; \
-}           
-
-class ring_or_field_dont_know {};
-class ring_with_gcd {};
-class field_with_div {};
-
-template <typename NT>
-struct ring_or_field {
-  typedef ring_or_field_dont_know kind;
-};
-
-
-
-template <>
-struct ring_or_field<int> {
-  typedef ring_with_gcd kind;
-  typedef int NT;
-  GCD_FOR_BUILTIN(int)
-};
-
-template <>
-struct ring_or_field<long> {
-  typedef ring_with_gcd kind;
-  typedef long NT;
-  GCD_FOR_BUILTIN(long)
-};
-
-
-template <>
-struct ring_or_field<double> {
-  typedef field_with_div kind;
-  typedef double NT;
-  static double gcd(const double&, const double&) 
-  { return 1.0; }
-};
 
 CGAL_BEGIN_NAMESPACE
 
@@ -120,6 +70,14 @@ CGAL_TEMPLATE_NULL class Polynomial<double> ;
 template <class Forward_iterator>
 typename std::iterator_traits<Forward_iterator>::value_type 
 gcd_of_range(Forward_iterator its, Forward_iterator ite)
+{
+  typedef typename std::iterator_traits<Forward_iterator>::value_type NT;
+  return gcd_of_range(its,ite,Number_type_traits<NT>::Has_gcd()); 
+}
+
+template <class Forward_iterator>
+typename std::iterator_traits<Forward_iterator>::value_type 
+gcd_of_range(Forward_iterator its, Forward_iterator ite, Tag_true)
 /*{\Mfunc calculates the greates common divisor of the
 set of numbers $\{ |*its|, |*++its|, \ldots, |*it| \}$ of type |NT|,
 where |++it == ite| and |NT| is the value type of |Forward_iterator|. 
@@ -129,7 +87,23 @@ where |++it == ite| and |NT| is the value type of |Forward_iterator|.
   typedef typename std::iterator_traits<Forward_iterator>::value_type NT;
   NT res = *its++;
   for(; its!=ite; ++its) res = 
-    (*its==0 ? res : ring_or_field<NT>::gcd(res, *its));
+    (*its==0 ? res : CGAL_NTS gcd(res, *its));
+  if (res==0) res = 1;
+  return res;
+}
+
+template <class Forward_iterator>
+typename std::iterator_traits<Forward_iterator>::value_type 
+gcd_of_range(Forward_iterator its, Forward_iterator ite, Tag_false)
+/*{\Mfunc calculates the greates common divisor of the
+set of numbers $\{ |*its|, |*++its|, \ldots, |*it| \}$ of type |NT|,
+where |++it == ite| and |NT| is the value type of |Forward_iterator|. 
+\precond |its!=ite|.}*/
+{ CGAL_assertion(its!=ite);
+  typedef typename std::iterator_traits<Forward_iterator>::value_type NT;
+  NT res = *its++;
+  for(; its!=ite; ++its) res = 
+    (*its==0 ? res : 1);
   if (res==0) res = 1;
   return res;
 }
@@ -424,8 +398,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   #ifndef CGAL_SIMPLE_NEF_INTERFACE
 
   NT content() const
-  /*{\Mop returns the content of |\Mvar| (the gcd of its coefficients).
-  \precond Requires |NT| to provide a |gdc| operation.}*/
+  /*{\Mop returns the content of |\Mvar| (the gcd of its coefficients).}*/
   { CGAL_assertion( degree()>=0 );
     return gcd_of_range(ptr()->coeff.begin(),ptr()->coeff.end());
   }
@@ -437,7 +410,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
     const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
     NT res = *its++;
     for(; its!=ite; ++its) res = 
-      (*its==0 ? res : ring_or_field<NT>::gcd(res, *its));
+      (*its==0 ? res : CGAL_NTS gcd(res, *its));
     if (res==0) res = 1;
     return res;
   }
@@ -475,9 +448,9 @@ determines the sign for the limit process $x \rightarrow \infty$.
   |p1 = p2 * p3| then |p2| is returned. The result is undefined if |p3|
   does not exist in |NT[x]|.  The correct division algorithm is chosen
   according to a traits class |ring_or_field<NT>| provided by the user.
-  If |ring_or_field<NT>::kind == ring_with_gcd| then the division is
+  If |Number_type_traits<NT>::Has_gcd == Tag_true| then the division is
   done by \emph{pseudo division} based on a |gcd| operation of |NT|.  If
-  |ring_or_field<NT>::kind == field_with_div| then the division is done
+  |Number_type_traits<NT>::Has_gcd == Tag_false| then the division is done
   by \emph{euclidean division} based on the division operation of the
   field |NT|.
 
@@ -491,7 +464,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   /*{\Mstatic returns the greatest common divisor of |p1| and |p2|.
   \textbf{Note} that |NT=int| quickly leads to overflow errors when
   using this operation.  \precond Requires |NT| to be a unique
-  factorization domain, i.e. to provide a |gdc| operation.}*/
+  factorization domain, i.e. to provide a |gcd| operation.}*/
 
   static void pseudo_div
     (const Polynomial<NT>& f, const Polynomial<NT>& g, 
@@ -765,7 +738,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   int content() const
   /*{\Xop returns the content of |\Mvar| (the gcd of its coefficients).
-  \precond Requires |int| to provide a |gdc| operation.}*/
+  \precond Requires |int| to provide a |gcd| operation.}*/
   { CGAL_assertion( degree()>=0 );
     return gcd_of_range(ptr()->coeff.begin(),ptr()->coeff.end());
   }
@@ -777,7 +750,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
     const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
     int res = *its++;
     for(; its!=ite; ++its) res = 
-      (*its==0 ? res : ring_or_field<int>::gcd(res, *its));
+      (*its==0 ? res : CGAL_NTS gcd(res, *its));
     if (res==0) res = 1;
     return res;
   }
@@ -815,9 +788,9 @@ determines the sign for the limit process $x \rightarrow \infty$.
   |p1 = p2 * p3| then |p2| is returned. The result is undefined if |p3|
   does not exist in |int[x]|.  The correct division algorithm is chosen
   according to a traits class |ring_or_field<int>| provided by the user.
-  If |ring_or_field<int>::kind == ring_with_gcd| then the division is
+  If |Number_type_traits<int>::Has_gcd == Tag_true| then the division is
   done by \emph{pseudo division} based on a |gcd| operation of |int|.  If
-  |ring_or_field<int>::kind == field_with_div| then the division is done
+  |Number_type_traits<int>::Has_gcd == Tag_false| then the division is done
   by \emph{euclidean division} based on the division operation of the
   field |int|.
 
@@ -831,7 +804,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   /*{\Xstatic returns the greatest common divisor of |p1| and |p2|.
   \textbf{Note} that |int=int| quickly leads to overflow errors when
   using this operation.  \precond Requires |int| to be a unique
-  factorization domain, i.e. to provide a |gdc| operation.}*/
+  factorization domain, i.e. to provide a |gcd| operation.}*/
 
   static void pseudo_div
     (const Polynomial<int>& f, const Polynomial<int>& g, 
@@ -1098,7 +1071,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
     const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
     double res = *its++;
     for(; its!=ite; ++its) res = 
-      (*its==0 ? res : ring_or_field<double>::gcd(res, *its));
+      (*its==0 ? res : CGAL_NTS gcd(res, *its));
     if (res==0) res = 1;
     return res;
   }
@@ -1136,9 +1109,9 @@ determines the sign for the limit process $x \rightarrow \infty$.
   |p1 = p2 * p3| then |p2| is returned. The result is undefined if |p3|
   does not exist in |double[x]|.  The correct division algorithm is chosen
   according to a traits class |ring_or_field<double>| provided by the user.
-  If |ring_or_field<double>::kind == ring_with_gcd| then the division is
+  If |Number_type_traits<double>::Has_gcd == Tag_true| then the division is
   done by \emph{pseudo division} based on a |gcd| operation of |double|.  If
-  |ring_or_field<double>::kind == field_with_div| then the division is done
+  |Number_type_traits<double>::Has_gcd == Tag_false| then the division is done
   by \emph{euclidean division} based on the division operation of the
   field |double|.
 
@@ -1338,33 +1311,16 @@ Polynomial<NT> operator * (const Polynomial<NT>& p1,
   return p;
 }
 
-template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-Polynomial<NT> divop (const Polynomial<NT>& p1, 
-                       const Polynomial<NT>& p2,
-                       ring_or_field_dont_know)
-{
-  CGAL_assertion_msg(0,"\n\
-  The division operation on polynomials requires that you\n\
-  specify if your number type provides a binary gcd() operation\n\
-  or is a field type including an operator/().\n\
-  You do this by creating a specialized class:\n\
-  template <> class ring_or_field<yourNT> with a member type:\n\
-  typedef ring_with_gcd kind; OR\n\
-  typedef field_with_div kind;\n");
-  return Polynomial<NT>(); // never reached
-}
-
-
 template <class NT> inline
 Polynomial<NT> operator / (const Polynomial<NT>& p1, 
                             const Polynomial<NT>& p2)
-{ return divop(p1,p2,ring_or_field<NT>::kind()); }
+{ return divop(p1,p2,Number_type_traits<NT>::Has_gcd()); }
 
 
 template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
 Polynomial<NT> divop (const Polynomial<NT>& p1, 
                        const Polynomial<NT>& p2,
-                       field_with_div)
+                       Tag_false)
 { CGAL_assertion(!p2.is_zero());
   if (p1.is_zero()) return 0;
   Polynomial<NT> q,r;
@@ -1376,7 +1332,7 @@ Polynomial<NT> divop (const Polynomial<NT>& p1,
 
 template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
 Polynomial<NT> divop (const Polynomial<NT>& p1, const Polynomial<NT>& p2,
-                       ring_with_gcd)
+                       Tag_true)
 { CGAL_assertion(!p2.is_zero());
   if (p1.is_zero()) return 0;
   Polynomial<NT> q,r; NT D; 
@@ -1933,7 +1889,7 @@ Polynomial<int> Polynomial<int>::gcd(
   Polynomial<int> f2 = p2.abs();
   int f1c = f1.content(), f2c = f2.content();
   f1 /= f1c; f2 /= f2c;
-  int F = ring_or_field<int>::gcd(f1c,f2c);
+  int F = CGAL_NTS gcd(f1c,f2c);
   Polynomial<int> q,r; int M=1,D;
   bool first = true;
   while ( ! f2.is_zero() ) { 
@@ -2002,8 +1958,6 @@ void Polynomial<double>::pseudo_div(
   TRACEN("  returning "<<q<<", "<<r<<", "<< D);
 }
 
-
- /*CGAL_KERNEL_MEDIUM_INLINE*/ 
 Polynomial<double> Polynomial<double>::gcd(
   const Polynomial<double>& p1, const Polynomial<double>& p2)
 { TRACEN("gcd("<<p1<<" , "<<p2<<")");
@@ -2017,7 +1971,6 @@ Polynomial<double> Polynomial<double>::gcd(
   Polynomial<double> f2 = p2.abs();
   double f1c = f1.content(), f2c = f2.content();
   f1 /= f1c; f2 /= f2c;
-  double F = ring_or_field<double>::gcd(f1c,f2c);
   Polynomial<double> q,r; double M=1,D;
   bool first = true;
   while ( ! f2.is_zero() ) { 
@@ -2029,7 +1982,7 @@ Polynomial<double> Polynomial<double>::gcd(
     first=false;
   }
   TRACEV(f1.content());
-  return Polynomial<double>(F)*f1.abs();
+  return Polynomial<double>(1)*f1.abs();
 }
 
 
@@ -2101,7 +2054,7 @@ Polynomial<NT> Polynomial<NT>::gcd(
   Polynomial<NT> f2 = p2.abs();
   NT f1c = f1.content(), f2c = f2.content();
   f1 /= f1c; f2 /= f2c;
-  NT F = ring_or_field<NT>::gcd(f1c,f2c);
+  NT F = CGAL_NTS gcd(f1c,f2c);
   Polynomial<NT> q,r; NT M=1,D;
   bool first = true;
   while ( ! f2.is_zero() ) { 

@@ -32,17 +32,13 @@ representation based on a Euclidean ring number type \ccc{RT}.
 \ccHeading{Requirements} 
 
 To make an Euclidean ring number type
-\ccc{RT_model} work with this class you have to provide the following
-number type traits class in global namespace.
+\ccc{RT_model} work with this class the number type must support
+a gcd computation in namespace \ccc{CGAL::NTS}.  \cgal\ provides
+a function template for this, which will be used by default when
+your number type is  not one of the built-in number types, one of
+the number types distrubuted with \cgal\ or one of the \leda\ 
+number types.  
 
-\begin{ccExampleCode}
-template <>
-struct ring_or_field<RT_model> {
-  typedef ring_with_gcd kind;
-  static RT_model gcd(const RT_model& a, const RT_model& b) 
-  { /* provide gcd operation on RT_model here */ }
-};    
-\end{ccExampleCode}
 
 \ccOperations
 

@@ -357,8 +357,8 @@ on the extended geometric objects.}*/
   /*{\Xop only used internally.}*/
   { TRACEN("simplify("<<p<<")");
     RT x=p.hx(), y=p.hy(), w=p.hw();
-    RT common = x.is_zero() ? y : RT::gcd(x,y);
-    common = RT::gcd(common,w);
+    RT common = x.is_zero() ? y : gcd(x,y);
+    common = gcd(common,w);
     p = Point_2(x/common,y/common,w/common);
     TRACEN("canceled="<<p);
   }
@@ -372,8 +372,8 @@ on the extended geometric objects.}*/
   { Line_2 l(p1,p2);
       TRACEN("eline("<<p1<<p2<<")="<<l);
     RT a=l.a(), b=l.b(), c=l.c();
-    RT common = a.is_zero() ? b : RT::gcd(a,b);
-    common = RT::gcd(common,c);
+    RT common = a.is_zero() ? b : gcd(a,b);
+    common = gcd(common,c);
     l =  Line_2(a/common,b/common,c/common);
       TRACEN("canceled="<<l);
     return l; 

@@ -33,6 +33,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Number_type_traits.h>
 #include <CGAL/IO/io.h>
 #undef _DEBUG
 #define _DEBUG 3
@@ -42,69 +43,6 @@
 #define CGAL_SIMPLE_NEF_INTERFACE
 #define SNIHACK ,char,char
 #define SNIINST ,'c','c'
-
-class ring_or_field_dont_know {};
-class ring_with_gcd {};
-class field_with_div {};
-
-template <typename NT>
-struct ring_or_field {
-  typedef ring_or_field_dont_know kind;
-};
-
-template <>
-struct ring_or_field<int> {
-  typedef ring_with_gcd kind;
-  typedef int RT;
-  static RT gcd(const RT& a, const RT& b) 
-  { if (a == 0)
-      if (b == 0)  return 1;
-      else         return CGAL_NTS abs(b);
-    if (b == 0)    return CGAL_NTS abs(a);
-    // here both a and b are non-zero
-    int u = CGAL_NTS abs(a);
-    int v = CGAL_NTS abs(b);
-    if (u < v) v = v%u;
-    while (v != 0)
-    { int tmp = u % v; 
-      u = v;
-      v = tmp;
-    }
-    return u;
-  }
-};
-
-template <>
-struct ring_or_field<long> {
-  typedef ring_with_gcd kind;
-  typedef long RT;
-  static RT gcd(const RT& a, const RT& b) 
-  { if (a == 0)
-      if (b == 0)  return 1;
-      else         return CGAL_NTS abs(b);
-    if (b == 0)    return CGAL_NTS abs(a);
-    // here both a and b are non-zero
-    int u = CGAL_NTS abs(a);
-    int v = CGAL_NTS abs(b);
-    if (u < v) v = v%u;
-    while (v != 0)
-    { int tmp = u % v; 
-      u = v;
-      v = tmp;
-    }
-    return u;
-  }
-};
-
-
-template <>
-struct ring_or_field<double> {
-  typedef field_with_div kind;
-  typedef double RT;
-  static RT gcd(const RT& a, const RT& b) 
-  { return 1.0; }
-};
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -252,7 +190,7 @@ public:
     const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
     NT res = *its++;
     for(; its!=ite; ++its) res = 
-      (*its==0 ? res : ring_or_field<NT>::gcd(res, *its));
+      (*its==0 ? res : CGAL_NTS gcd(res, *its));
     if (res==0) res = 1;
     return res;
   }
@@ -291,7 +229,7 @@ static Polynomial_MSC<NT> gcd
   Polynomial_MSC<NT> f2 = p2.abs();
   NT f1c = f1.content(), f2c = f2.content();
   f1 /= f1c; f2 /= f2c;
-  NT F = ring_or_field<NT>::gcd(f1c,f2c);
+  NT F = CGAL_NTS gcd(f1c,f2c);
   Polynomial_MSC<NT> q,r; NT M=1,D;
   bool first = true;
   while ( ! f2.is_zero() ) { 
@@ -498,34 +436,18 @@ Polynomial_MSC<NT> operator * (const Polynomial_MSC<NT>& p1,
   return p;
 }
 
-template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-Polynomial_MSC<NT> divop (const Polynomial_MSC<NT>& p1, 
-                           const Polynomial_MSC<NT>& p2,
-                           ring_or_field_dont_know)
-{
-  CGAL_assertion_msg(0,"\n\
-  The division operation on polynomials requires that you\n\
-  specify if your number type provides a binary gcd() operation\n\
-  or is a field type including an operator/().\n\
-  You do this by creating a specialized class:\n\
-  template <> class ring_or_field<yourNT> with a member type:\n\
-  typedef ring_with_gcd kind; OR\n\
-  typedef field_with_div kind;\n");
-  return Polynomial_MSC<NT>(); // never reached
-}
-
 
 template <class NT> inline
 Polynomial_MSC<NT> operator / (const Polynomial_MSC<NT>& p1, 
                                 const Polynomial_MSC<NT>& p2)
-{ typedef typename ring_or_field<NT>::kind KIND;
-  return divop(p1,p2,KIND()); }
+{ typedef typename Number_type_traits<NT>::Has_gcd HAS_GCD;
+  return divop(p1,p2,HAS_GCD()); }
 
 
 template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
 Polynomial_MSC<NT> divop (const Polynomial_MSC<NT>& p1, 
 			   const Polynomial_MSC<NT>& p2,
-			   field_with_div)
+			   Tag_false)
 { CGAL_assertion(!p2.is_zero());
   if (p1.is_zero()) return 0;
   Polynomial_MSC<NT> q,r;
@@ -538,7 +460,7 @@ Polynomial_MSC<NT> divop (const Polynomial_MSC<NT>& p1,
 template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
 Polynomial_MSC<NT> divop (const Polynomial_MSC<NT>& p1, 
 			   const Polynomial_MSC<NT>& p2,
-			   ring_with_gcd)
+			   Tag_true)
 { CGAL_assertion(!p2.is_zero());
   if (p1.is_zero()) return Polynomial_MSC<NT>(NT(0));
   Polynomial_MSC<NT> q,r; NT D; 
