@@ -41,6 +41,7 @@ DEMO_SUBDIRS= \
 ./Partition_2 \
 ./Alpha_shapes_2 \
 ./Triangulation_2 \
+./Triangulation_2_constrained \
 ./Constrained_triangulation_2 \
 ./basic/tutorial1 \
 ./basic/tutorial2 \
