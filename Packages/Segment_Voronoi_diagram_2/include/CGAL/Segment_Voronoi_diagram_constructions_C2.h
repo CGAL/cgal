@@ -140,10 +140,14 @@ public:
   typedef typename Gt::Ray_2                    Ray_2;
   typedef typename Gt::Construct_svd_vertex_2   Construct_svd_vertex_2;
 
+  typedef typename Gt::Are_same_points_2        Are_same_points_2;
+
   Ray_2 operator()(const Site_2& p, const Site_2& q,
 		   const Site_2& r) const
   {
     CGAL_assertion( !(p.is_segment() && q.is_segment()) );
+
+    Are_same_points_2 are_same_points;
 
     Point_2 v = Construct_svd_vertex_2()(p, q, r);
     Point_2 p1, p2;
@@ -151,14 +155,14 @@ public:
       p1 = q.point();
       p2 = p.point();
     } else if ( p.is_point() && q.is_segment() ) {
-      CGAL_assertion( p.point() == q.source() ||
-		      p.point() == q.target() );
-      p1 = (p.point() == q.source()) ? q.target() : q.source();
+      CGAL_assertion( are_same_points(p, q.source_site()) ||
+		      are_same_points(p, q.target_site()) );
+      p1 = are_same_points(p, q.source_site()) ? q.target() : q.source();
       p2 = p.point();
     } else {
       // p is a segment and q a point
       p1 = q.point();
-      p2 = (q.point() == p.source()) ? p.target() : p.source();
+      p2 = are_same_points(q, p.source_site()) ? p.target() : p.source();
     }
     Line_2 l(p1, p2);
     //    Point base = p.is_point() ? p.point() : q.point();
@@ -194,7 +198,6 @@ public:
     Point_2 vpqr = circumcenter(p, q, r);
     Point_2 vqps = circumcenter(q, p, s);
 
-
     Are_same_points_2 are_same_points;
 
     if ( (p.is_point() && q.is_point()) ||
@@ -204,8 +207,8 @@ public:
     }
     if ( p.is_point() ) {
       // check is p is an endpoint of q
-      if (  are_same_points( p.point(), q.segment().source() ) ||
-	    are_same_points( p.point(), q.segment().target() )  ) {
+      if (  are_same_points( p, q.source_site() ) ||
+	    are_same_points( p, q.target_site() )  ) {
 	Segment_2 vorseg(vpqr, vqps);
 	return CGAL::make_object(vorseg);
       }
@@ -214,8 +217,8 @@ public:
       return CGAL::make_object(vorseg);
     }
     // check is q is an endpoint of p
-    if ( q.point() == p.segment().source() ||
-	 q.point() == p.segment().target() ) {
+    if ( are_same_points(q, p.source_site()) ||
+	 are_same_points(q, p.target_site()) ) {
       Segment_2 vorseg(vpqr, vqps);
       return CGAL::make_object(vorseg);
     }
