@@ -1,3 +1,6 @@
+Version 3.3 (September 3 1999)
+- Added Point_d to Cartesian
+
 Version 3.2.4 (September 2 1999)
 - Removed references to <CGAL/Kernel/function_objects_?.h>
   and copy pasted directly into Cartesian_? classes,

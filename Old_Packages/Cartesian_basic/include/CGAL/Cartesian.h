@@ -40,7 +40,7 @@
 #include <CGAL/Cartesian_3.h>
 #endif // CGAL_CARTESIAN_3_H
 #ifndef CGAL_CARTESIAN_DYNAMIC_D_H
-// #include <CGAL/Cartesian_dynamic_d.h>
+#include <CGAL/Cartesian_dynamic_d.h>
 #endif // CGAL_CARTESIAN_DYNAMIC_D_H
 
 #define CGAL_REP_CLASS_DEFINED
@@ -52,7 +52,7 @@ template< class R, class _FT >
 struct Cartesian_base :
     public Cartesian_base_2<R,_FT>
     , public Cartesian_base_3<R,_FT>
-    // , public Cartesian_base_dynamic_d<R,_FT>
+    , public Cartesian_base_dynamic_d<R,_FT>
 {
     // Number types and representation tag (to avoid ambiguity in
     // inheritance tree)
@@ -66,8 +66,7 @@ struct Cartesian_base :
 
     typedef Cartesian_base_2<R,_FT>                       Kernel_base_2;
     typedef Cartesian_base_3<R,_FT>                       Kernel_base_3;
-
-    // typedef Cartesian_base_dynamic_d<R,_FT>               Kernel_base_d;
+    typedef Cartesian_base_dynamic_d<R,_FT>               Kernel_base_d;
 
     typedef typename Kernel_base_2::Point_2               Point_2;
     typedef typename Kernel_base_2::Vector_2              Vector_2;
@@ -94,14 +93,14 @@ struct Cartesian_base :
     typedef typename Kernel_base_3::Tetrahedron_3         Tetrahedron_3;
     typedef typename Kernel_base_3::Aff_transformation_3  Aff_transformation_3;
 
-    // typedef typename Kernel_base_d::Point_d                     Point_d;
+    typedef typename Kernel_base_d::Point_d                     Point_d;
 };
 
 CGAL_END_NAMESPACE
 
 // #include <CGAL/Kernel/Construction_objects_2.h>
 // #include <CGAL/Kernel/Predicate_objects_2.h>
-#include <CGAL/Kernel/function_objects.h>
+// #include <CGAL/Kernel/function_objects.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -146,7 +145,7 @@ struct Cartesian : public Cartesian_base< Cartesian<_FT>, _FT >
     typedef typename Kernel_base::Tetrahedron_3           Tetrahedron_3;
     typedef typename Kernel_base::Aff_transformation_3    Aff_transformation_3;
 
-    // typedef typename Kernel_base::Point_d                       Point_d;
+    typedef typename Kernel_base::Point_d                 Point_d;
 
 #else
     // Now CGAL::Point_2<R> is only a wrapper around CGAL::PointC2<R>
@@ -207,7 +206,7 @@ struct Cartesian : public Cartesian_base< Cartesian<_FT>, _FT >
     typedef CGAL::Tetrahedron_3<Self>                     Tetrahedron_3;
     typedef CGAL::Aff_transformation_3<Self>              Aff_transformation_3;
 
-    // typedef CGAL::Point_d<Self>                          Point_d;
+    typedef CGAL::Point_d<Self>                           Point_d;
 
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 
