@@ -1,3 +1,7 @@
+Version 1.16 (14 oct 99)
+flips added
+short_names (needed by MSVC)
+
 Version 1.15 (5 oct 99)
 removing "unsigned int"
 
