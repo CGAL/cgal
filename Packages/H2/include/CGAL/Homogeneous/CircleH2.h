@@ -27,28 +27,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R_> class CircleH2;
-
-template <class R>
-class Circle_repH2
-{
-public:
-  typedef typename R::FT     FT;
-  typedef typename R::Kernel_base::Point_2      Point_2;
-
-friend class CircleH2<R>;
-
-  Circle_repH2() {}
-  Circle_repH2(const Point_2& p, const FT sq_rad, const Orientation& o)
-    : center(p), squared_radius(sq_rad), orientation_(o) {}
-
-protected:
-  Point_2      center;
-  FT           squared_radius;
-  Orientation  orientation_;
-};
-
-
 template <class R_>
 class CircleH2
   : public R_::Circle_handle_2
@@ -147,13 +125,13 @@ template <class R>
 inline
 const typename CircleH2<R>::Point_2 &
 CircleH2<R>::center() const
-{ return Ptr()->center; }
+{ return Ptr()->first; }
 
 template <class R>
 inline
 const typename CircleH2<R>::FT &
 CircleH2<R>::squared_radius() const
-{ return Ptr()->squared_radius; }
+{ return Ptr()->second; }
 
 template <class R>
 CGAL_KERNEL_INLINE
@@ -169,7 +147,7 @@ template <class R>
 inline
 Orientation
 CircleH2<R>::orientation() const
-{ return Ptr()->orientation_; }
+{ return Ptr()->third; }
 
 template <class R>
 CGAL_KERNEL_INLINE
@@ -184,7 +162,7 @@ CircleH2<R>::oriented_side( const typename CircleH2<R>::Point_2& p) const
                                    ( (vgl == SMALLER ) ?
                                           ON_POSITIVE_SIDE :
                                           ON_ORIENTED_BOUNDARY);
-  if (Ptr()->orientation_ == POSITIVE)
+  if (orientation() == POSITIVE)
   { return rel_pos; }
   else       // NEGATIVE
   { return CGAL::opposite( rel_pos ); }

@@ -26,35 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R_> class TriangleH2;
-
-template <class R>
-class Triangle_repH2
-{
-  public:
-
-    typedef typename R::Kernel_base::Point_2   Point_2;
-
-    Triangle_repH2() {}
-
-    Triangle_repH2(const Point_2& v1,
-                   const Point_2& v2,
-                   const Point_2& v3)
-    {
-        A[0] = v1;
-        A[1] = v2;
-        A[2] = v3;
-        _orientation = CGAL::orientation(v1,v2,v3); // FIXME : use the traits.
-    }
-
- friend class TriangleH2<R>;
-
- private:
-    Point_2      A[3];
-    Orientation  _orientation;
-};
-
-
 template <class R_>
 class TriangleH2
   : public R_::Triangle_handle_2
@@ -115,9 +86,12 @@ CGAL_KERNEL_INLINE
 const typename TriangleH2<R>::Point_2 &
 TriangleH2<R>::vertex(int i) const
 {
-  if (i>2) i = i%3;
-  else if (i<0) i = (i%3) + 3;
-  return Ptr()->A[i];
+  switch (i%3)
+  {
+     case 0:  return Ptr()->e0;
+     case 1:  return Ptr()->e1;
+     default: /*case 2:*/  return Ptr()->e2;
+  }
 }
 
 template <class R>
@@ -141,7 +115,7 @@ template <class R>
 inline
 Orientation
 TriangleH2<R>::orientation() const
-{ return Ptr()->_orientation; }
+{ return CGAL::orientation(vertex(0), vertex(1), vertex(2)); }
 
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
@@ -152,7 +126,7 @@ TriangleH2<R>::oriented_side( const typename TriangleH2<R>::Point_2& p) const
   Orientation o23 = CGAL::orientation( vertex(2), vertex(3), p);
   Orientation o31 = CGAL::orientation( vertex(3), vertex(1), p);
 
-  if (Ptr()->_orientation == CLOCKWISE)
+  if (orientation() == CLOCKWISE)
   {
       if (  (o12 == COUNTERCLOCKWISE)
           ||(o23 == COUNTERCLOCKWISE)
@@ -247,7 +221,7 @@ has_on_bounded_side(const typename TriangleH2<R>::Point_2& p) const
   Orientation o12 = CGAL::orientation( vertex(1), vertex(2), p);
   Orientation o23 = CGAL::orientation( vertex(2), vertex(3), p);
   Orientation o31 = CGAL::orientation( vertex(3), vertex(1), p);
-  Orientation ori = Ptr()->_orientation;
+  Orientation ori = orientation();
 
   return  ( (o12 == ori) && (o23 == ori) && (o31 == ori) );
 }
@@ -263,7 +237,7 @@ has_on_unbounded_side(const typename TriangleH2<R>::Point_2& p) const
   Orientation o12 = CGAL::orientation( vertex(1), vertex(2), p);
   Orientation o23 = CGAL::orientation( vertex(2), vertex(3), p);
   Orientation o31 = CGAL::orientation( vertex(3), vertex(1), p);
-  Orientation opp = CGAL::opposite( Ptr()->_orientation );
+  Orientation opp = CGAL::opposite( orientation() );
 
   return  ( (o12 == opp) || (o23 == opp) || (o31 == opp) );
 }
@@ -272,7 +246,7 @@ template <class R>
 inline
 bool
 TriangleH2<R>::is_degenerate() const
-{ return (Ptr()->_orientation == COLLINEAR); }
+{ return orientation() == COLLINEAR; }
 
 template <class R>
 inline
@@ -286,16 +260,17 @@ TriangleH2<R>
 TriangleH2<R>::
 transform( const typename TriangleH2<R>::Aff_transformation_2& t) const
 {
-  return TriangleH2<R>(t.transform(Ptr()->A[0]),
-                           t.transform(Ptr()->A[1]),
-                           t.transform(Ptr()->A[2]) );
+  return TriangleH2<R>(t.transform(vertex(0)),
+                       t.transform(vertex(1)),
+                       t.transform(vertex(2)) );
 }
 
 template <class R>
 CGAL_KERNEL_INLINE
 TriangleH2<R>
 TriangleH2<R>::opposite() const
-{ return TriangleH2<R>(Ptr()->A[0], Ptr()->A[2], Ptr()->A[1]); }
+{ return TriangleH2<R>(vertex(0), vertex(2), vertex(1)); }
+
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
