@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.91 on 23 May 2001
+- Add a simple test for Quotient<MP_Float>.
+
 Version 4.90 on 23 May 2001
 - Rename Filtered_predicate to Filter_predicate.
 - Put Filter_predicate'operators() non-inline, except for VC++.

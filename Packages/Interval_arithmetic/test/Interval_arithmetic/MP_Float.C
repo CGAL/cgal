@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cassert>
 #include <CGAL/Random.h>
+#include <CGAL/Quotient.h>
 
 typedef CGAL::MP_Float MPF;
 
@@ -53,6 +54,9 @@ void print_test()
 
 int main(int argc, char **argv)
 {
+  CGAL::Quotient<CGAL::MP_Float> q1(1), q2(2);
+  assert(q1+q1 == q2);
+
 #if 0
   std::vector<int> iii;
   iii.push_back(1);
