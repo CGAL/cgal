@@ -40,13 +40,13 @@ submit: package
 	mail -s autohandle cgal-submit@cs.uu.nl spion < $(TMP_file)
 	rm -f $(TMP_file)
 
-test:
+#test:
 	#$(MAKE) -C test/$(Package)
 
 clean:
 	$(MAKE) -C doc_tex/support/$(Package) clean
-	$(MAKE) -C test/$(Package) clean
 	rm -f $(Package).tar.gz
+	# $(MAKE) -C test/$(Package) clean
 
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
