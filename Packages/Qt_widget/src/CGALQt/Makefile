@@ -29,7 +29,7 @@ Qt_widget_standard_toolbar$(OBJ_EXT) \
 #---------------------------------------------------------------------#
 
 lib: lib_no_install
-	mv $(CGAL_QT_LIB) $(CGAL_LIB_DESTINATION)
+#	mv $(CGAL_QT_LIB) $(CGAL_LIB_DESTINATION)
 
 lib_no_install: $(CGAL_OBJECTS) 
 	$(CGAL_LIB_CREATE)$(CGAL_QT_LIB) \
