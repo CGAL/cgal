@@ -32,6 +32,8 @@
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #endif // CGAL_PM_WALK_ALONG_LINE_POINT_LOCATION_H
 
+#include <CGAL/Planar_map_2/Pm_change_notification.h>
+
 #ifndef CGAL_PM_COUNT_OPERATIONS_TIMES
 #define CGAL_PM_START_OP(x) 
 #define CGAL_PM_END_OP(x)  
