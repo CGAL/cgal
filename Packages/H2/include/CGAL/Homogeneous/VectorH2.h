@@ -172,7 +172,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 typename VectorH2<R>::Direction_2
 VectorH2<R>::direction() const
-{ return typename VectorH2<R>::Direction_2(*this); }
+{ return Direction_2(*this); }
 
 template < class R >
 inline
