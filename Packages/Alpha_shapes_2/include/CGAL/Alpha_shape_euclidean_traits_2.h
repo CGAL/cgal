@@ -26,17 +26,6 @@
 #define CGAL_ALPHA_SHAPE_EUCLIDEAN_TRAITS_H
 
 #include <CGAL/basic.h>
-//#include <CGAL/Cartesian.h>
-//#include <CGAL/Homogeneous.h>
-//#include <CGAL/Integer.h>
-//#include <CGAL/Rational.h>
-//#include <CGAL/Fixed.h>
-
-#include <CGAL/squared_distance_2.h>   // to avoid a g++ problem
-#include <CGAL/Point_2.h>
-#include <CGAL/predicates_on_points_2.h>
-#include <CGAL/Triangle_2.h>
-#include <CGAL/Segment_2.h>
 
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 
@@ -54,12 +43,12 @@ class Compute_squared_radius_2
 public:
   typedef return_type result_type;
 
-  result_type operator()(const T& p, const T& q, const T& r)
+  result_type operator()(const T& p, const T& q, const T& r) const
     {
       return CGAL::squared_radius(p, q, r);
     }
 
-  result_type operator()(const T& p, const T& q)
+  result_type operator()(const T& p, const T& q) const
     {
       return CGAL::squared_radius_smallest_circumcircle(p, q);
     }
