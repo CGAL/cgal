@@ -165,9 +165,9 @@ namespace CGAL {
     connect(but[2], SIGNAL(clicked()),
 	    this, SLOT(forward()));
     connect(but[5], SIGNAL(stateChanged(int)),
-        focusbut, SLOT(stateChanged(int)));
+        zoomrectbut, SLOT(stateChanged(int)));
     connect(but[6], SIGNAL(stateChanged(int)),
-        zoomrectbut, SLOT(stateChanged(int)));	
+        focusbut, SLOT(stateChanged(int)));	
     connect(but[7], SIGNAL(stateChanged(int)),
         handtoolbut, SLOT(stateChanged(int)));
     connect(but[8], SIGNAL(stateChanged(int)),
