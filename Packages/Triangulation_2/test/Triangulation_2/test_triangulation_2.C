@@ -11,15 +11,16 @@
 // release       :
 // release_date  :
 // 
-// source        :
-// file          : test_triangulation_2.C
-// revision      : 
-// revision_date : 
-// author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
+// file          : /test/Triangulation/test_triangulation_2.C
+// package       : Triangulation
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Herve Bronnimann, Mariette Yvinec
 //
-// coordinator   : INRIA Sophia-Antipolis
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 // ============================================================================
-
+#include <CGAL/basic.h>
 #include <utility>
 #include <list>
 #include <vector>
@@ -37,15 +38,25 @@
 
 int main()
 {
-  // cout << "Testing Triangulation_2 with Gmpz filtered coordinates" <<endl; 
-//   cout << " with Euclidean_traits_2<Cartesian> : " << endl <<endl;
-//   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Gt1;
-//   typedef CGAL::Triangulation_vertex_base_2<Gt1>                     Vb1;
-//   typedef CGAL::Triangulation_face_base_2<Gt1>                       Fb1;
-//   typedef CGAL::Triangulation_default_data_structure_2<Gt1,Vb1,Fb1>  Tds1;
-//   typedef CGAL::Triangulation_2<Gt1,Tds1>                            Cls1;
+  cout << "Testing Triangulation_2 " <<endl; 
+  cout << " with Euclidean_traits_2<Cartesian> : " << endl <<endl;
+  typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Gt1;
+  typedef CGAL::Triangulation_vertex_base_2<Gt1>                     Vb1;
+  typedef CGAL::Triangulation_face_base_2<Gt1>                       Fb1;
+  typedef CGAL::Triangulation_default_data_structure_2<Gt1,Vb1,Fb1>  Tds1;
+  typedef CGAL::Triangulation_2<Gt1,Tds1>                            Cls1;
 
-  // _test_cls_triangulation_2( Cls1() );
+  _test_cls_triangulation_2( Cls1() );
+
+  cout << "Testing Triangulation_2 " <<endl; 
+  cout << " with Euclidean_traits_2<Homogeneous> : " << endl <<endl;
+  typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_homogeneous> Gt3;
+  typedef CGAL::Triangulation_vertex_base_2<Gt3>                     Vb3;
+  typedef CGAL::Triangulation_face_base_2<Gt3>                       Fb3;
+  typedef CGAL::Triangulation_default_data_structure_2<Gt3,Vb3,Fb3>  Tds3;
+  typedef CGAL::Triangulation_2<Gt3,Tds3>                            Cls3;
+
+  _test_cls_triangulation_2( Cls3() );
 
   cout << "Testing Triangulation_2" <<endl;
   cout << " with Triangulation_test_traits : " << endl;
@@ -56,10 +67,7 @@ int main()
   typedef CGAL::Triangulation_default_data_structure_2<Gt2,Vb2,Fb2>  Tds2;
   typedef CGAL::Triangulation_2<Gt2,Tds2>    Cls2;
 
-  
-
   _test_cls_triangulation_2( Cls2() );
  
-
   return 0;
 }
