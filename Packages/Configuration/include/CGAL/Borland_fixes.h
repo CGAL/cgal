@@ -50,7 +50,6 @@
  */
 
 #if defined(__BORLANDC__) && __BORLANDC__ > 0x520
-#define CGAL_MASK_FINITE_VALID 1
 
 #include <cstddef>
 using std::size_t;

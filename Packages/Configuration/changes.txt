@@ -1,3 +1,6 @@
+27 Apr 2004 Sylvain Pion
+- Remove trace of CGAL_MASK_FINITE_VALID in Borland_fixes.h.
+
 18 Apr 2004 Sylvain Pion
 - Added CGAL_CFG_IEEE_754_BUG.C for PGCC/VC++/Borland.
 
