@@ -49,7 +49,6 @@ SR (hot pixels are shaded)}
 \end{ccHtmlOnly}
 \end{figure}
 
-
 \section{What is Snap Rounding/Iterated Snap Rounding}
 Given a finite collection $\S$ of segments in the plane, the
 arrangement of $\S$ denoted $\A(\S)$ is the subdivision of the plane
@@ -79,7 +78,7 @@ the results of SR and ISR on the same input.
 
 \section{Terms and Software Design}
 
-Our package supports both schemes,implementing the algorithm described in \cite{isr-2002}.
+Our package supports both schemes, implementing the algorithm described in \cite{isr-2002}.
 Although the paper only describes an algorithm for ISR,
 it is easy to derive an algorithm for SR, by performing only
 the first rounding level for each segment.
@@ -103,14 +102,23 @@ traits class must be provided. The precise description of the requirements is gi
 concept SnapRoundingTraits\_2. The class Snap\_rounding\_traits\_2 is a model of this concept.
 
 \begin{figure}
-\begin{center}
-\ \psfig{figure=isr_vs_sr.ps,width=15cm} \
-\end{center}
-\vspace{-2ex}
+\begin{ccTexOnly}
+\centerline{\includegraphics{isr_vs_sr.ps}}
+\end{ccTexOnly}
+
 \caption{An arrangement of segments before (a), after SR (b)
 and ISR (c) (hot pixels are shaded).}
 \label{fig:isr_vs_sr}
+
+\begin{ccHtmlOnly}
+<P>
+<center>
+  <img src="isr_vs_sr.gif"  border=0 alt="arrangement">
+</center>
+\end{ccHtmlOnly}
 \end{figure}
+
+%\psfig{figure=isr_vs_sr.ps,width=15cm} \
 
 \section{Four Line Segment Example}
 
