@@ -1,0 +1,65 @@
+STL_Extension Package
+---------------------------------------------------------------------
+
+-  CGAL/In_place_list.h
+
+     A doubly linked list managing items in place. Used in polyhedron.
+
+-  CGAL/function_objects.h
+
+     Projection function objects like identity, projection, typecast, 
+     access to point, plane, normal of vertex or facet respectively.
+     Creator function objects. Classes for composing function objects
+
+-  CGAL/copy_n.h
+
+     A function copying n items from an input iterator. It is the same
+     function as in the SGI STL, though since it is not in the C++ Standard
+     we provide our own.
+
+-  CGAL/Join_input_iterator.h
+
+     Joins multiple iterators to constuct a new iterator.
+
+-  CGAL/Iterator_identity.h
+-  CGAL/Circulator_identity.h
+-  CGAL/Iterator_project.h
+-  CGAL/Circulator_project.h
+
+     Iterator and circulator adaptor. Identity mapping or parameterized
+     with a function object that performs a projection (like data accessors.)
+
+-  CGAL/Circulator_on_node.h
+
+     An adaptor which implements a circulator for a linked data structure.
+     It is parameterized with function objects that accesses the next
+     and previous information for the nodes.
+
+-  CGAL/Counting_iterator.h
+
+     An iterator adaptor that implements ranges based on an internal count.
+     Useful do derive ranges from input iterators.
+
+-  CGAL/N_step_adaptor.h
+
+     An iterator and circulator adaptor that makes bigger jumps (N)
+     for each single step.
+
+-  CGAL/Inverse_index.h
+
+     Inverse_Index adaptor enumerates sequences.
+
+-  CGAL/Random_access_adaptor.h
+-  CGAL/Random_access_value_adaptor.h
+
+     Random Access Adaptor provides random access for sequences.
+
+
+Note that these classes and their documentation started to be ment
+for internal use. Note therefore that the documentation might lack
+completeness and details.
+
+Michael Hoffmann (ETH) takes over the maintenance of this package 
+with release 2.7 (28 Jul 1999).
+
+Lutz Kettner

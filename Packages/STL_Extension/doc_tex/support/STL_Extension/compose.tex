@@ -1,0 +1,182 @@
+%% ==============================================================
+%% Specification: Some Kernel Function Classes
+%% --------------------------------------------------------------
+%% file  : compose.tex
+%% author: Michael Hoffmann
+%% $Id$
+%% ==============================================================
+
+% \documentclass[10pt]{book}
+% \usepackage{exscale,cc_manual,cgal_manual}
+% \begin{document}
+% 
+% \RCSdef{\composefunctionclassesRev}{$Revision$}
+% \RCSdefDate{\composefunctionclassesDate}{$Date$}
+% 
+% \ccParDims
+% 
+% \chapter{Classes for Composing Function Objects}
+% \label{chaptercomposefunctionclasses}
+% \ccChapterSubTitle{\composefunctionclassesRev.
+%                    \ \composefunctionclassesDate}\\
+% \ccChapterAuthor{Michael Hoffmann}
+% 
+% \ccHeading{Composing Function Objects}
+
+
+
+Although not mentioned in the ANSI draft(CD2), most STL
+implementations provide two global functions for composing function
+objects, \ccStyle{compose1} and \ccStyle{compose2}, defined in
+function.h. Since for both the resulting function is unary, one can
+only construct unary function objects in this way. This seems to be
+quite a limitation, since many (also STL) algorithms can be
+parameterized with binary (e.g. comparison) functions.
+
+In analogy to STL \ccStyle{compose1/2} we define two functions,
+\ccStyle{compose1_2} and \ccStyle{compose2_2}, that can be
+used to construct a binary function object via composition.
+
+% +-----------------------------------------------------------------+
+\begin{ccClass}{AdaptableUnaryFunction}
+\subsection{Adaptable Unary Function}
+
+\ccThree{AdaptableBinaryFunction&}{f( argument_type a)MMM}{}
+\ccThreeToTwo
+% \ccTwo{AdaptableUnaryFunction(const AdaptableUnaryFunction& f1);}{}
+%   \ccThree{AdaptableBinaryFunction& }{operator=( const
+%     AdaptableBinaryFunction& f1);}{} 
+  \ccCreationVariable{f} 
+  %% does not work with operator()! \ccTagFullDeclarations
+  
+  \ccDefinition A class \ccClassName\ is an adaptable unary function,
+  if it defines the following types and operations.
+
+  \ccTypes 
+  
+  \ccNestedType{argument_type}{the type of \ccVar 's argument.}
+  \ccGlue
+  \ccNestedType{result_type}{the type returned when \ccVar\ is
+    called.}
+
+  \ccCreation
+
+  \ccConstructor{AdaptableUnaryFunction();}{default constructor.}
+  \ccGlue
+  \ccConstructor{AdaptableUnaryFunction(const AdaptableUnaryFunction&
+    f1);}{copy constructor.}
+  
+  \ccOperations
+  
+  \ccMemberFunction{AdaptableUnaryFunction& operator=( const
+    AdaptableUnaryFunction& f1);}{assignment.}
+  \ccGlue
+  \ccMemberFunction{result_type operator()( const argument_type&
+    a);}{function call.}
+  
+\ccSeeAlso
+
+\ccAnchor{http://www.sgi.com/Technology/STL/AdaptableUnaryFunction.html}{STL
+  Programmer's Guide}.
+
+\end{ccClass}
+
+
+% +-----------------------------------------------------------------+
+\begin{ccClass}{AdaptableBinaryFunction}
+\subsection{Adaptable Binary Function}
+
+  \ccCreationVariable{f} 
+  
+  \ccDefinition A class \ccClassName\ is an adaptable binary function,
+  if it defines the following types and operations.
+
+  \ccTypes 
+  
+  \ccNestedType{first_argument_type}{the type of \ccVar 's first
+    argument.}
+  \ccGlue
+  \ccNestedType{second_argument_type}{the type of \ccVar 's second
+    argument.}
+  \ccGlue
+  \ccNestedType{result_type}{the type returned when \ccVar\ is
+    called.}
+
+  \ccCreation
+  
+  \ccConstructor{AdaptableBinaryFunction();}{default constructor.}
+  \ccGlue
+  \ccConstructor{AdaptableBinaryFunction(const
+    AdaptableBinaryFunction& f1);}{copy constructor.}
+
+  \ccOperations
+  
+  \ccMemberFunction{AdaptableBinaryFunction& operator=( const
+    AdaptableBinaryFunction& f1);}{assignment.}
+
+  \ccMemberFunction{result_type operator()( const first_argument_type&
+    a, const second_argument_type& b);}{function call.}
+  
+\ccSeeAlso
+
+\ccAnchor{http://www.sgi.com/Technology/STL/AdaptableBinaryFunction.html}{STL
+  Programmer's Guide}.
+
+\end{ccClass}
+
+% +-----------------------------------------------------------------+
+\subsection{Composing Binary into Unary Functions}
+
+\ccInclude{CGAL/function_objects.h}
+
+\ccSetTwoColumns{Composition}{}
+\ccGlobalFunction{template < class Operation1, class Operation2 >
+  Composition compose1_2( const Operation1& op1, const
+  Operation2& op2);}{}
+\ccTagDefaults
+\ccStyle{Operation1} must be an adaptable unary function,
+\ccStyle{Operation2} an adaptable binary function and
+\ccStyle{Operation2::result_type} convertible to
+\ccStyle{Operation1::argument_type}. Then \ccStyle{compose1_2}
+returns an adaptable binary function object \ccStyle{c} (of some
+complicated type \ccStyle{Composition}) such that
+
+\ccHtmlNoIndex
+\ccGlobalFunction{Operation1::result_type c( const
+  Operation2::first_argument_type& x, const
+  Operation2::second_argument_type& y);}{is equal to
+  \ccStyle{Operation1()( Operation2()( x, y)).}}
+\ccTagDefaults
+
+
+
+% +-----------------------------------------------------------------+
+\subsection{Composing Unary into Binary Functions}
+
+\ccInclude{CGAL/function_objects.h}
+
+\ccSetTwoColumns{Composition}{}
+\ccGlobalFunction{template < class Operation1, class Operation2, class
+  Operation3 > Composition compose2_2( const Operation1& op1,
+  const Operation2& op2, const Operation3& op3);}{}
+\ccTagDefaults
+
+\ccStyle{Operation1} must be an adaptable binary function,
+\ccStyle{Operation2} and \ccStyle{Operation3} must be adaptable unary
+functions, \ccStyle{Operation2::result_type} must be convertible to
+\ccStyle{Operation1::first_argument_type} and
+\ccc{Operation3::}\ccc{result_type} must be convertible to
+\ccStyle{Operation1::second_argument_type}. Then
+\ccStyle{compose2_2} returns an adaptable binary function object
+\ccStyle{c} (of some complicated type \ccStyle{Composition}) such that
+
+\ccHtmlNoIndex
+\ccGlobalFunction{Operation1::result_type c( const
+  Operation2::first_argument_type& x, const
+  Operation2::second_argument_type& y);}{is equal to 
+  \ccStyle{Operation1()( Operation2()( x), Operation3()( y)).}}
+\ccTagDefaults
+
+% \end{document}
+
+%% EOF %%
