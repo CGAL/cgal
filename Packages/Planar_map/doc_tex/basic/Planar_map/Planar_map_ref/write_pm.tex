@@ -1,0 +1,49 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_bounding_box_traits.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%write_pm
+\begin{ccRefFunction}{write_pm<Planar_map,Writer>(Planar_map pm, Writer& writer, ostream& o);}
+
+\ccCreationVariable{write_pm}
+
+\ccDefinition
+\ccc{write_pm} is a global function defined for writing \ccc{Planar map}. 
+The function is templated with the \ccc{Planar map}, and the \ccStyle{writer}.  
+This function uses the functions defined in \ccStyle{writer}, and prints the \ccc{planar map} 
+in the format discussed in \ccRefPage{Pm_IO_format}. 
+The operator defined for writing \ccc{Planar map} to an output stream uses this function when parameterize the 
+\ccStyle{writer} with an object derived from \ccc{Pm_file_writer}.
+
+
+\end{ccRefFunction} % writer_pm
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "Pm_file_scanner"
+%%% End: 
