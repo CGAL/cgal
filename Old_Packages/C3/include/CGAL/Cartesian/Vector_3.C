@@ -20,6 +20,11 @@
 //
 // ======================================================================
 
+#ifndef CGAL_CARTESIAN_VECTOR_3_C
+#define CGAL_CARTESIAN_VECTOR_3_C
+
+#include <CGAL/Cartesian/Direction_3.h>
+
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #define CGAL_CTAG
 #endif
@@ -27,11 +32,6 @@
 #ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
-
-#ifndef CGAL_CARTESIAN_VECTOR_3_C
-#define CGAL_CARTESIAN_VECTOR_3_C
-
-#include <CGAL/Cartesian/Direction_3.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -20,6 +20,11 @@
 //
 // ============================================================================
 
+#ifndef CGAL_CARTESIAN_TRIANGLE_2_C
+#define CGAL_CARTESIAN_TRIANGLE_2_C
+
+#include <CGAL/Cartesian/predicates_on_points_2.h>
+
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 #define CGAL_CTAG
 #endif
@@ -27,11 +32,6 @@
 #ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
-
-#include <CGAL/Cartesian/predicates_on_points_2.h>
-
-#ifndef CGAL_CARTESIAN_TRIANGLE_2_C
-#define CGAL_CARTESIAN_TRIANGLE_2_C
 
 CGAL_BEGIN_NAMESPACE
 

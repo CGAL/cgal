@@ -20,6 +20,9 @@
 //
 // ======================================================================
 
+#ifndef CGAL_CARTESIAN_DIRECTION_3_C
+#define CGAL_CARTESIAN_DIRECTION_3_C
+
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #define CGAL_CTAG
 #endif
@@ -27,9 +30,6 @@
 #ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
-
-#ifndef CGAL_CARTESIAN_DIRECTION_3_C
-#define CGAL_CARTESIAN_DIRECTION_3_C
 
 CGAL_BEGIN_NAMESPACE
 
@@ -51,12 +51,14 @@ DirectionC3()
 template < class R >
 DirectionC3<R CGAL_CTAG>::
 DirectionC3(const DirectionC3<R CGAL_CTAG> &d)
-  : Handle(d) {}
+  : Handle(d)
+{}
 
 template < class R >
 DirectionC3<R CGAL_CTAG>::
 DirectionC3(const typename DirectionC3<R CGAL_CTAG>::Vector_3 &v)
-  : Handle(v) {}
+  : Handle(v)
+{}
 
 template < class R >
 DirectionC3<R CGAL_CTAG>::

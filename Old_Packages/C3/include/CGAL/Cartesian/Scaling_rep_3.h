@@ -20,6 +20,11 @@
 //
 // ==========================================================================
 
+#ifndef CGAL_CARTESIAN_SCALING_REP_3_H
+#define CGAL_CARTESIAN_SCALING_REP_3_H
+
+#include <CGAL/Cartesian/redefine_names_3.h>
+
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #define CGAL_CTAG
 #endif
@@ -27,11 +32,6 @@
 #ifdef _MSC_VER
 #define typename
 #endif
-
-#ifndef CGAL_CARTESIAN_SCALING_REP_3_H
-#define CGAL_CARTESIAN_SCALING_REP_3_H
-
-#include <CGAL/Cartesian/redefine_names_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -157,5 +157,9 @@ private:
 };
 
 CGAL_END_NAMESPACE
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 #endif // CGAL_CARTESIAN_SCALING_REP_3_H

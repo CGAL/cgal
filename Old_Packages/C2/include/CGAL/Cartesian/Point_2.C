@@ -23,6 +23,10 @@
 #ifndef CGAL_CARTESIAN_POINT_2_C
 #define CGAL_CARTESIAN_POINT_2_C
 
+#include <CGAL/Origin.h>
+#include <CGAL/Bbox_2.h>
+#include <CGAL/number_utils.h>
+
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 #define CGAL_CTAG
 #endif
@@ -30,10 +34,6 @@
 #ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
-
-#include <CGAL/Origin.h>
-#include <CGAL/Bbox_2.h>
-#include <CGAL/number_utils.h>
 
 CGAL_BEGIN_NAMESPACE
 

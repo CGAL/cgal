@@ -71,7 +71,6 @@ public:
   virtual std::ostream         &print(std::ostream &os) const = 0;
 };
 
-
 template < class R >
 class Aff_transformation_repC2
   : public Aff_transformation_rep_baseC2<R>

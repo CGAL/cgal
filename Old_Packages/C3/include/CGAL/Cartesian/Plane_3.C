@@ -20,6 +20,13 @@
 //
 // ======================================================================
 
+#ifndef CGAL_CARTESIAN_PLANE_3_C
+#define CGAL_CARTESIAN_PLANE_3_C
+
+#include <CGAL/Cartesian/constructions_on_planes_3.h>
+#include <CGAL/Cartesian/distance_computations_3.h>
+#include <CGAL/Cartesian/predicates_on_planes_3.h>
+
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #define CGAL_CTAG
 #endif
@@ -27,13 +34,6 @@
 #ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
-
-#include <CGAL/Cartesian/constructions_on_planes_3.h>
-#include <CGAL/Cartesian/distance_computations_3.h>
-#include <CGAL/Cartesian/predicates_on_planes_3.h>
-
-#ifndef CGAL_CARTESIAN_PLANE_3_C
-#define CGAL_CARTESIAN_PLANE_3_C
 
 CGAL_BEGIN_NAMESPACE
 

@@ -20,6 +20,13 @@
 //
 // ==========================================================================
 
+#ifndef CGAL_CARTESIAN_TETRAHEDRON_3_C
+#define CGAL_CARTESIAN_TETRAHEDRON_3_C
+
+#include <CGAL/Cartesian/solve_3.h>
+#include <vector>
+#include <functional>
+
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #define CGAL_CTAG
 #endif
@@ -27,13 +34,6 @@
 #ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
-
-#ifndef CGAL_CARTESIAN_TETRAHEDRON_3_C
-#define CGAL_CARTESIAN_TETRAHEDRON_3_C
-
-#include <CGAL/Cartesian/solve_3.h>
-#include <vector>
-#include <functional>
 
 CGAL_BEGIN_NAMESPACE
 

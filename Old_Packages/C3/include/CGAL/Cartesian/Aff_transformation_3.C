@@ -20,6 +20,12 @@
 //
 // ==========================================================================
 
+#ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_3_C
+#define CGAL_CARTESIAN_AFF_TRANSFORMATION_3_C
+
+#include <CGAL/Cartesian/Aff_transformation_rep_3.C>
+#include <CGAL/determinant.h>
+
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #define CGAL_CTAG
 #endif
@@ -27,12 +33,6 @@
 #ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
-
-#ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_3_C
-#define CGAL_CARTESIAN_AFF_TRANSFORMATION_3_C
-
-#include <CGAL/Cartesian/Aff_transformation_rep_3.C>
-#include <CGAL/determinant.h>
 
 CGAL_BEGIN_NAMESPACE
 

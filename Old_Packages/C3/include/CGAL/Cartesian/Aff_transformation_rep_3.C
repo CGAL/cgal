@@ -20,6 +20,9 @@
 //
 // ==========================================================================
 
+#ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_C
+#define CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_C
+
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #define CGAL_CTAG
 #endif
@@ -27,9 +30,6 @@
 #ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
-
-#ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_C
-#define CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_C
 
 CGAL_BEGIN_NAMESPACE
 
