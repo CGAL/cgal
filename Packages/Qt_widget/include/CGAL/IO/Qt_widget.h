@@ -51,12 +51,15 @@ public:
   ~Qt_widget() {};
 
   // initialization of coordinates system
-  void set_window(double x_min, double x_max, double y_min, double y_max,
+  void set_window(const double x_min,
+		  const double x_max, 
+		  const double y_min, 
+		  const double y_max,
 		  bool const_ranges = false);
   void zoom(double ratio);
   void zoom(double ratio, double xc, double yc);
-  void set_x_scale(double xscale){ xscal = xscale; }
-  void set_y_scale(double yscale){ yscal = yscale; }
+  void set_x_scale(const double xscale){ xscal = xscale; }
+  void set_y_scale(const double yscale){ yscal = yscale; }
 
   void add_to_history(){history.add_to_history(xmin, xmax, ymin,
                           ymax, xcentre, ycentre, xscal, yscal);}
@@ -70,7 +73,7 @@ public:
     add_to_history(); //add the current viewport to history
     configure_history_buttons();
   }
-  inline void set_center(double x, double y) 
+  inline void set_center(const double x, const double y) 
   {
     xcentre = x; ycentre = y;
     set_scale_center(xcentre, ycentre);
@@ -89,29 +92,29 @@ public:
   // ~~~~~~~~~~
   // color
   QColor color() const;
-  void setColor(QColor c);
+  void setColor(const QColor c);
   // backGroundColor
   QColor backgroundColor() const;
-  void setBackgroundColor(QColor c);
+  void setBackgroundColor(const QColor c);
   // fillColor
   QColor fillColor() const;
-  void setFillColor(QColor c);
+  void setFillColor(const QColor c);
   // isFilled
   bool isFilled() const;
-  void setFilled(bool f);
+  void setFilled(const bool f);
   // lineWidth
   uint lineWidth() const;
-  void setLineWidth(uint i);
+  void setLineWidth(const uint i);
   // pointSize
   uint pointSize() const;
-  void setPointSize(uint i);
+  void setPointSize(const uint i);
   // pointStyle
   typedef CGAL::PointStyle PointStyle;
   PointStyle pointStyle() const;
-  void setPointStyle(PointStyle s);
+  void setPointStyle(const PointStyle s);
   // rasterOp
   RasterOp rasterOp() {return painter->rasterOp();}
-  void setRasterOp(RasterOp r) {painter->setRasterOp(r);}
+  void setRasterOp(const RasterOp r) {painter->setRasterOp(r);}
 
   // CGAL version of setFooColor
   // used by the manipulators system
@@ -206,7 +209,7 @@ protected:
 
 private:
   void	  set_scales(); // set xscal and yscal
-  void	  set_scale_center(double xc, double yc);
+  void	  set_scale_center(const double xc, const double yc);
   double  xcentre, ycentre; //the center of the axex
   
   Qt_widget_history history;
