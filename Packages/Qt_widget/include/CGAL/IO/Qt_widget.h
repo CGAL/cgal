@@ -945,7 +945,7 @@ operator << ( Qt_widget& ws, const CGAL::Alpha_shape_2<Dt>& As)
   }//endif
   return ws;
 }
-#endif CGAL_ALPHA_SHAPE_2_H
+#endif // CGAL_ALPHA_SHAPE_2_H
 
 
 } // namespace CGAL
