@@ -6,6 +6,8 @@
 #include <fstream>
 #include <list>
 
+#include "numberType.h"
+
 template <class Traits>
 class Segment_reader
 {
@@ -30,7 +32,7 @@ public:
     
     int i;
     for (i = 0; i < count; i++) {
-      leda_rational x0, y0, x1, y1;
+      NT x0, y0, x1, y1;
       if (format == CGAL::Bench_parse_args::FORMAT_RAT) {
         inp >> x0 >> y0 >> x1 >> y1;
       } else if (format == CGAL::Bench_parse_args::FORMAT_INT) {
@@ -46,8 +48,17 @@ public:
         return -1;
       }
 
+#if defined(USE_LAZY_RAT) || defined(USE_LAZY_QUOTIENT)
+      WNT lazy_exact_x0(x0);
+      WNT lazy_exact_x1(x1);
+      WNT lazy_exact_y0(y0);
+      WNT lazy_exact_y1(y1);
+      Point_2 p1(lazy_exact_x0, lazy_exact_y0);
+      Point_2 p2(lazy_exact_x1, lazy_exact_y1);
+#else
       Point_2 p1(x0, y0);
       Point_2 p2(x1, y1);
+#endif
       // if (p1 == p2) continue;
       Curve_2 curve(p1, p2);
       curveList.push_back(curve);
