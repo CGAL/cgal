@@ -30,10 +30,10 @@ struct Triangulation_cw_ccw_static_2 {
 static const int ccw_map[3];
 static const int cw_map[3];
 };
-template < class T = void >
+template < class T >
 const int Triangulation_cw_ccw_static_2<T>::ccw_map[3] = {1, 2, 0};
 
-template < class T = void >
+template < class T >
 const int Triangulation_cw_ccw_static_2<T>::cw_map[3] = {2, 0, 1};
 
 class Triangulation_cw_ccw_2 
