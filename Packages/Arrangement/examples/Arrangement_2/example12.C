@@ -11,11 +11,6 @@
 #include <CGAL/IO/Arr_iostream.h>
 
 #include <iostream.h>
-#include <vector>
-
-
-using namespace CGAL;
-
 
 typedef CGAL::Quotient<int>                  NT;
 typedef CGAL::Cartesian<NT>                  R;
@@ -37,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 std::ostream&  operator<<(std::ostream& os,  
 			  const Curve& cv)
 {
-  typedef Curve::const_iterator       Points_iterator;
+  typedef Curve::const_iterator Points_iterator;
   
   os<<cv.size()<<std::endl;
   for (Points_iterator points_iter = cv.begin(); 
@@ -52,10 +47,11 @@ std::istream&  operator>>(std::istream& in,
 			  Curve& cv)
 {
   std::size_t  size;
+  unsigned int i;
 
   in >> size;
 
-  for (unsigned int i = 0; i < size; i++){
+  for (i = 0; i < size; i++){
     Point  p;
     
     in >> p;
@@ -70,11 +66,13 @@ CGAL_END_NAMESPACE
 
 int main()
 {
-  Arrangement             arr;
+  Arrangement arr;
   
-  cin>>arr;
+  std::cin>>arr;
  
-  std::cout << " * * * Printing list of all halfedges of the resulting Arrangement" << std::endl;
+  std::cout << " * * * Printing list of all halfedges " 
+	    << "of the resulting Arrangement" 
+	    << std::endl;
   
   Arr_writer verbose_writer(std::cout, arr, true);
   
