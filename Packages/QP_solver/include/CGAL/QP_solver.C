@@ -500,7 +500,7 @@ QPE_solver<Rep_>::
 pivot_step( )
 {
     ++m_pivots;
-std::cout << "pivots: " <<  m_pivots << std::endl;
+
     // diagnostic output
     CGAL_qpe_debug {
         vout2 << std::endl
@@ -520,21 +520,25 @@ std::cout << "pivots: " <<  m_pivots << std::endl;
     if ( j < 0) {
 
         if ( is_phaseI) {                               // phase I
-
-            // problem is infeasible
-	    m_phase  = 3;
-	    m_status = INFEASIBLE;
-	    CGAL_qpe_debug {
-		vout1 << "  ";
-		vout << "problem is INFEASIBLE" << std::endl;
+	    // since we no longer assume full row rank and subsys assumption
+	    // we have to strengthen the precondition for infeasibility
+            if (this->solution() > et0) {    // problem is infeasible
+	        m_phase  = 3;
+	        m_status = INFEASIBLE;
+	        CGAL_qpe_debug {
+		    vout1 << "  ";
+		    vout << "problem is INFEASIBLE" << std::endl;
+	        }
+	    } else {  // Drive/remove artificials out of basis
+	        expel_artificial_variables_from_basis();
+	        transition();
 	    }
-
         } else {                                        // phase II
 
 	    // optimal solution found
 	    m_phase  = 3;
             m_status = OPTIMAL;
-print_solution();  
+  
             CGAL_qpe_debug {
                 vout1 << "  ";
 		vout2 << std::endl;
@@ -1003,6 +1007,71 @@ update_2( Tag_false)
     compute_solution();
 }
 
+template < class Rep_ >
+void
+QPE_solver<Rep_>::
+expel_artificial_variables_from_basis( )
+{
+    int row_ind;
+    ET r_A_Cj;
+    
+    CGAL_qpe_debug {
+        vout2 << std::endl
+	      << "---------------------------------------------" << std::endl
+	      << "Expelling artificial variables from the basis" << std::endl
+	      << "---------------------------------------------" << std::endl;
+    }
+    
+    //try to pivot the artificials out of the basis 
+    for (unsigned int i_ = qp_n + slack_A.size(); i_ < in_B.size(); ++i_) {
+        if (is_basic(i_)) { 					// is basic
+	    if (has_ineq) {
+	        row_ind = in_C[ art_A[i_ - qp_n - slack_A.size()].first];
+	    } else {
+	        row_ind = art_A[i_ - qp_n].first;
+	    }
+	    
+	    // determine first possible entering variable,
+	    //if there is any
+	    for (unsigned int j_ = 0; j_ < qp_n + slack_A.size(); ++j_) {
+	        if (!is_basic(i_)) {  				// is nonbasic 
+		    ratio_test_init__A_Cj( A_Cj.begin(), j_, 
+		        Has_no_inequalities());
+		    r_A_Cj = inv_M_B.inv_M_B_row_dot_col(row_ind, A_Cj.begin());
+		    if (r_A_Cj != 0) {
+		        ratio_test_1__q_x_O(Is_linear());
+			i = i_;
+			j = j_;
+			update_1(Is_linear());
+			break;
+		    } 
+		}
+	    }
+	}
+    }
+    if ((art_basic != 0) && no_ineq) {
+        std::cerr << "Constraint matrix has not full row rank" << std::endl;
+        exit(1);
+    }
+    
+    // remove the remaining ones with their corresponding equality constraints
+    // Note: the special artificial variable can always be driven out of the
+    // basis
+    for (unsigned int i_ = qp_n + slack_A.size(); i_ < in_B.size(); ++i_) {
+        if (in_B[i_] >= 0) {
+	    i = i_;
+	    CGAL_qpe_debug {
+	        vout2 << std::endl
+		      << "~~> removing artificial variable " << i
+		      << " and its equality constraint" << std::endl
+		      << std::endl;
+	    }
+	    remove_artificial_variable_and_constraint();
+	}
+    }
+}
+
+
 // replace variable in basis
 template < class Rep_ >
 void
@@ -1095,9 +1164,9 @@ replace_variable_slack_original( )
     int  k = in_B[ i];
 
     // leave original variable [ out: i ]
-    in_B  [ i         ] = -1; 
     in_B  [ B_O.back()] = k;
        B_O[ k] = B_O.back();
+       in_B  [ i         ] = -1;
        B_O.pop_back();
 
     minus_c_B[ k] = minus_c_B[ B_O.size()];
@@ -1175,6 +1244,43 @@ replace_variable_original_slack( )
     inv_M_B.enter_original_leave_slack( q_x_O.begin(), tmp_x.begin());
     
 }
+
+template < class Rep_ >
+void  QPE_solver<Rep_>::
+remove_artificial_variable_and_constraint( )
+{
+    int  k = in_B[ i];
+
+    // leave artificial (original) variable [ out: i ]
+    in_B  [ B_O.back()] = k;
+       B_O[ k] = B_O.back();
+       in_B  [ i         ] = -1;
+       B_O.pop_back();
+
+    minus_c_B[ k] = minus_c_B[ B_O.size()];
+
+    if ( is_phaseI && ( i >= qp_n)) --art_basic;
+
+    int old_row = art_A[i - qp_n - slack_A.size()].first;
+
+    // leave its equality constraint 
+    int  l = in_C[ old_row];
+     b_C[ l       ] = b_C[ C.size()-1];
+       C[ l       ] = C.back();
+    in_C[ C.back()] = l;
+    in_C[ old_row ] = -1;
+       C.pop_back();
+    // diagnostic output
+    CGAL_qpe_debug {
+	if ( vout2.verbose()) print_basis();
+    }
+
+    // update basis inverse
+    inv_M_B.swap_variable( k);
+    inv_M_B.swap_constraint( l);
+    inv_M_B.enter_slack_leave_original();
+}
+
 
 // enter variable into basis
 template < class Rep_ >
@@ -1601,6 +1707,7 @@ set_verbosity( int verbose, std::ostream& stream)
     vout2 = Verbose_ostream( verbose >= 2, stream);
     vout3 = Verbose_ostream( verbose >= 3, stream);
     vout4 = Verbose_ostream( verbose == 4, stream);
+    vout5 = Verbose_ostream( verbose == 5, stream);
 }
 
 template < class Rep_ >
@@ -1658,6 +1765,7 @@ template < class Rep_ >
 void  QPE_solver<Rep_>::
 print_basis( )
 {
+    char label;
     vout1 << "  basis: ";
     vout2 << "basic variables" << ( has_ineq ? "  " : "") << ":  ";
     std::copy( B_O.begin(), B_O.end  (),
@@ -1674,24 +1782,30 @@ print_basis( )
 	if ( has_ineq) {
 	    vout2.out() << std::endl
 			<< "basic constraints:  ";
-	    std::copy( C.begin(), C.begin()+(qp_m-slack_A.size()),
+	    for (Index_iterator i_it = C.begin(); i_it != C.end(); ++i_it) {
+	        label = (qp_r[*i_it] == Rep::EQUAL) ? 'e' : 'i';
+		    vout2.out() << *i_it << ":" << label << " ";
+	    }
+	/*
+	    std::copy( C.begin(), C.begin()+(C.size()-slack_A.size()),
 		       std::ostream_iterator<int>( vout2.out(), " "));
 	    if ( ! slack_A.empty()) {
 		vout2.out() << " |  ";
-		std::copy( C.begin()+(qp_m-slack_A.size()), C.end(),
+		std::copy( C.end() - slack_A.size(), C.end(),
 			   std::ostream_iterator<int>( vout2.out(), " "));
 	    }
+	*/
 	}
 	if ( vout3.verbose()) {
 	    vout3.out() << std::endl
 			<< std::endl
 			<< "    in_B: ";
-	    std::copy( in_B.begin(), in_B.end  (),
+	    std::copy( in_B.begin(), in_B.end(),
 		       std::ostream_iterator<int>( vout3.out(), " "));
 	    if ( has_ineq) {
 		vout3.out() << std::endl
 			    << "    in_C: ";
-		std::copy( in_C.begin(), in_C.end  (),
+		std::copy( in_C.begin(), in_C.end(),
 			   std::ostream_iterator<int>( vout3.out(), " "));
 	    }
 	}
@@ -1903,7 +2017,7 @@ is_solution_optimal(Tag_false)		//QP case
     //debug
     CGAL_qpe_debug {
         for (int col = 0; col < qp_m; ++col) {
-	    vout4 << "lambda'[" << col << "]= " << lambda_prime[col] 
+	    vout5 << "lambda'[" << col << "]= " << lambda_prime[col] 
 	        << std::endl;
 	}        
     }
@@ -1915,22 +2029,23 @@ is_solution_optimal(Tag_false)		//QP case
     for (int i = 0; i < qp_n; ++i) {
         N.push_back(i);
     }
+    // Note D_pairwise_accessor needed such that Q^T+Q (symm) is accessed
+    // factor 2 is already accounted for 
     Values tau(qp_n, et0);
     for (unsigned int col = 0; col < tau.size(); ++col) {
-        D_by_index_accessor d_accessor(qp_D[col]);
+        D_pairwise_accessor d_accessor(qp_D, col);
 	A_by_index_accessor a_accessor(qp_A[col]);
 	for (N_i_it = N.begin(); N_i_it != N.end(); ++N_i_it) {
 	        tau[col] += x_prime[*N_i_it]
-		    * (*D_by_index_iterator( N_i_it, d_accessor));
+		    * (*D_pairwise_iterator( N_i_it, d_accessor));
 	}
-	tau[col] *= et2;
         tau[col] += ET(qp_c[col]) * d;
 	for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
 		tau[col] += lambda_prime[*M_i_it]
 		    * (*A_by_index_iterator( M_i_it, a_accessor));
 	}
 	CGAL_qpe_debug {
-	    vout4 << "tau[" << col << "]= " << tau[col] << std::endl;
+	    vout5 << "tau[" << col << "]= " << tau[col] << std::endl;
 	}
     }
 
@@ -2012,7 +2127,7 @@ is_solution_optimal(Tag_true)		//LP case
     //debug
     CGAL_qpe_debug {
         for (int col = 0; col < qp_m; ++col) {
-	    vout4 << "lambda'[" << col << "]= " << lambda_prime[col] 
+	    vout5 << "lambda'[" << col << "]= " << lambda_prime[col] 
 	        << std::endl;
 	}        
     }
@@ -2033,7 +2148,7 @@ is_solution_optimal(Tag_true)		//LP case
 		    * (*A_by_index_iterator( M_i_it, a_accessor));
 	}
 	CGAL_qpe_debug {
-	    vout4 << "tau[" << col << "]= " << tau[col] << std::endl;
+	    vout5 << "tau[" << col << "]= " << tau[col] << std::endl;
 	}
     }
 
@@ -2132,7 +2247,7 @@ is_solution_optimal_aux()
     //debug
     CGAL_qpe_debug {
         for (int col = 0; col < qp_m; ++col) {
-	    vout4 << "lambda_aux[" << col << "]= " << lambda_aux[col] 
+	    vout5 << "lambda_aux[" << col << "]= " << lambda_aux[col] 
 	        << std::endl;
         }        
     }
@@ -2158,7 +2273,8 @@ is_solution_optimal_aux()
 		    * lambda_aux[slack_A[k].first];
 	    } else {                          //artificial variable
 	        k -= slack_A.size();
-	        if (col != art_s_i) {         // normal artificial variable
+	        if ((art_s_i == -1) || (col < no_of_wo_vars - 1)) {
+		    				// normal artificial variable
 		    tau_aux[ col] += (art_A[ k].second ? -et1 : et1)
 		        * lambda_aux[ art_A[k].first];
 	        } else {                      // special artificial variable
@@ -2171,7 +2287,7 @@ is_solution_optimal_aux()
 	    }
 	}
 	CGAL_qpe_debug {
-	    vout4 << "tau_aux[" << col << "]= " << tau_aux[col] << std::endl;
+	    vout5 << "tau_aux[" << col << "]= " << tau_aux[col] << std::endl;
 	}
     }
     // since there are only equality constraints in auxiliary problem
@@ -2357,7 +2473,7 @@ is_solution_unbounded(Tag_true)		//LP case
     for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
         sum += (*v_it) * qp_c[*i_it];
     }
-    if (j < qp_n) sum -= qp_c[j] * d;
+    if (j < qp_n) sum -= d * qp_c[j];
     unbounded = unbounded && (sum > et0);
     return unbounded;
 }
