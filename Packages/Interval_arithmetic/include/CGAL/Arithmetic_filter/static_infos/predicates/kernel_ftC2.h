@@ -161,4 +161,11 @@ unsigned Static_Filtered_cmp_signed_dist_to_lineC2_8::number_of_updates = 0;
 
 unsigned Static_Filtered_cmp_signed_dist_to_lineC2_8::number_of_failures = 0;
 
+double Static_Filtered_side_of_oriented_lineC2_5::_epsilon_0;
+double Static_Filtered_side_of_oriented_lineC2_5::_bound = -1.0;
+
+unsigned Static_Filtered_side_of_oriented_lineC2_5::number_of_updates = 0;
+
+unsigned Static_Filtered_side_of_oriented_lineC2_5::number_of_failures = 0;
+
 #endif // CGAL_ARITHMETIC_FILTER_PREDICATES_KERNEL_FTC2_H_STATIC_INFO_H

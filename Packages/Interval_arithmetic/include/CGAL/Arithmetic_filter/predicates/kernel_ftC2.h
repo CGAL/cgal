@@ -3970,6 +3970,202 @@ cmp_signed_dist_to_lineC2(
 
 #endif // CGAL_IA_NEW_FILTERS
 
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
+           class CGAL_IA_CACHE >
+#else
+static
+#endif
+/* inline */
+Oriented_side
+side_of_oriented_lineC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &x,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &y)
+{
+  try
+  {
+    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    return side_of_oriented_lineC2(
+		a.interval(),
+		b.interval(),
+		c.interval(),
+		x.interval(),
+		y.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    return side_of_oriented_lineC2(
+		a.exact(),
+		b.exact(),
+		c.exact(),
+		x.exact(),
+		y.exact());
+  }
+}
+
+#ifdef CGAL_IA_NEW_FILTERS
+
+struct Static_Filtered_side_of_oriented_lineC2_5
+{
+  static double _bound;
+  static double _epsilon_0;
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
+
+  static Oriented_side update_epsilon(
+	const Static_filter_error &a,
+	const Static_filter_error &b,
+	const Static_filter_error &c,
+	const Static_filter_error &x,
+	const Static_filter_error &y,
+	double & epsilon_0)
+  {
+    typedef Static_filter_error FT;
+  
+    return Oriented_side(CGAL_NTS Static_Filtered_sign_1::update_epsilon(a*x+b*y+c,
+  		epsilon_0));
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    number_of_updates++;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  static Oriented_side epsilon_variant(
+	const Restricted_double &a,
+	const Restricted_double &b,
+	const Restricted_double &c,
+	const Restricted_double &x,
+	const Restricted_double &y,
+	const double & epsilon_0)
+  {
+    typedef Restricted_double FT;
+  
+    return Oriented_side(CGAL_NTS Static_Filtered_sign_1::epsilon_variant(a*x+b*y+c,
+  		epsilon_0));
+  }
+};
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
+#endif
+/* inline */
+Oriented_side
+side_of_oriented_lineC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &x,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &y)
+{
+//   bool re_adjusted = false;
+  const double SAF_bound = Static_Filtered_side_of_oriented_lineC2_5::_bound;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (
+	fabs(a.to_double()) > SAF_bound ||
+	fabs(b.to_double()) > SAF_bound ||
+	fabs(c.to_double()) > SAF_bound ||
+	fabs(x.to_double()) > SAF_bound ||
+	fabs(y.to_double()) > SAF_bound)
+  {
+// re_adjust:
+    // Compute the new bound.
+    double NEW_bound = 0.0;
+    NEW_bound = max(NEW_bound, fabs(a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(x.to_double()));
+    NEW_bound = max(NEW_bound, fabs(y.to_double()));
+    // Re-adjust the context.
+    Static_Filtered_side_of_oriented_lineC2_5::new_bound(NEW_bound);
+  }
+
+  try
+  {
+    return Static_Filtered_side_of_oriented_lineC2_5::epsilon_variant(
+		a.dbl(),
+		b.dbl(),
+		c.dbl(),
+		x.dbl(),
+		y.dbl(),
+		Static_Filtered_side_of_oriented_lineC2_5::_epsilon_0);
+  }
+  catch (...)
+  {
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_side_of_oriented_lineC2_5::number_of_failures++;
+    return side_of_oriented_lineC2(
+		a.exact(),
+		b.exact(),
+		c.exact(),
+		x.exact(),
+		y.exact());
+  }
+}
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
+#endif
+/* inline */
+Oriented_side
+side_of_oriented_lineC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &x,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &y)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_side_of_oriented_lineC2_5::_bound; )
+  CGAL_assertion(!(
+	fabs(a.to_double()) > SAF_bound ||
+	fabs(b.to_double()) > SAF_bound ||
+	fabs(c.to_double()) > SAF_bound ||
+	fabs(x.to_double()) > SAF_bound ||
+	fabs(y.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_side_of_oriented_lineC2_5::epsilon_variant(
+		a.dbl(),
+		b.dbl(),
+		c.dbl(),
+		x.dbl(),
+		y.dbl(),
+		Static_Filtered_side_of_oriented_lineC2_5::_epsilon_0);
+  }
+  catch (...)
+  {
+    Static_Filtered_side_of_oriented_lineC2_5::number_of_failures++;
+    return side_of_oriented_lineC2(
+		a.exact(),
+		b.exact(),
+		c.exact(),
+		x.exact(),
+		y.exact());
+  }
+}
+
+#endif // CGAL_IA_NEW_FILTERS
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_ARITHMETIC_FILTER_PREDICATES_KERNEL_FTC2_H
