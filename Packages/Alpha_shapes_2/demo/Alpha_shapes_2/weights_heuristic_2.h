@@ -102,7 +102,7 @@ public:
   // Introduces an empty alpha-shape `A' for a positive
   // alpha-value `alpha'. Precondition: `alpha' >= 0.
   Weighted_alpha_shape_2(Coord_type alpha = 0, 
-			 Mode m = GENERAL)
+			 Mode m = Alpha_shape_2<Rt>::GENERAL)
     : Alpha_shape_2<Rt>(alpha, m)
     {}
  
@@ -114,7 +114,7 @@ public:
   Weighted_alpha_shape_2( InputIterator first,  
 			  InputIterator last,  
 			  const Coord_type& alpha = 0,
-			  Mode = GENERAL)
+			  Mode = Alpha_shape_2<Rt>::GENERAL)
     : Alpha_shape_2<Rt>(first, last, alpha, m) 
     {}
 
