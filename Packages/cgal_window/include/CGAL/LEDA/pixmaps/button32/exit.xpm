@@ -1,0 +1,43 @@
+/* XPM */
+static const char *exit_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 32 4 1",
+/* colors */
+"` c #FFFFFF",
+"a c #999999",
+"b c None",
+"c c #FF0000",
+/* pixels */
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbaaaaaabbaabbbaabbaabbaaaaaabb",
+"bbacccccc`acc`bacc`acc`acccccc`b",
+"bbacc````bacc`bacc`acc`b`acc``bb",
+"bbacc`bbbbbaccacc`bacc`bbacc`bbb",
+"bbaccaaaabbaccccc`bacc`bbacc`bbb",
+"bbacccccc`bbaccc`bbacc`bbacc`bbb",
+"bbacc````bbbccccc`bacc`bbacc`bbb",
+"bbacc`bbbbbacc`cc`bacc`bbacc`bbb",
+"bbaccaaaabacc`b`cc`acc`bbacc`bbb",
+"bbacccccc`acc`b`cc`acc`bbacc`bbb",
+"bbb``````bb``bbb``bb``bbbb``bbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+};

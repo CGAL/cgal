@@ -1,0 +1,43 @@
+/* XPM */
+static const char *stop_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 32 4 1",
+/* colors */
+"` c #999999",
+"a c #CC0000",
+"b c None",
+"c c #FFFFFF",
+/* pixels */
+"bbbbbbbbccccccccccccccbbbbbbbbbb",
+"bbbbbbbcaaaaaaaaaaaaaacbbbbbbbbb",
+"bbbbbbcaaaaaaaaaaaaaaaacbbbbbbbb",
+"bbbbbcaaaaaaaaaaaaaaaaaacbbbbbbb",
+"bbbbcaaaaaaaaaaaaaaaaaaaacbbbbbb",
+"bbbcaaaaaaaaaaaaaaaaaaaaaacbbbbb",
+"bbcaaaaaaaaaaaaaaaaaaaaaaaacbbbb",
+"bcaaaaaaaaaaaaaaaaaaaaaaaaaacbbb",
+"caaaaaaaaaaaaaaaaaaaaaaaaaaaacbb",
+"caaaaaccaacccccaaccaaacccaaaacbb",
+"caaaacaacaaacaaacaacaacaacaaac`b",
+"caaaacaacaaacaaacaacaacaacaaac``",
+"caaaacaaaaaacaaacaacaacaacaaac``",
+"caaaacaaaaaacaaacaacaacaacaaac``",
+"caaaaaccaaaacaaacaacaacccaaaac``",
+"caaaaaaacaaacaaacaacaacaaaaaac``",
+"caaaaaaacaaacaaacaacaacaaaaaac``",
+"caaaacaacaaacaaacaacaacaaaaaac``",
+"caaaacaacaaacaaacaacaacaaaaaac``",
+"caaaacaacaaacaaacaacaacaaaaaac``",
+"caaaaaccaaaacaaaaccaaacaaaaaac``",
+"caaaaaaaaaaaaaaaaaaaaaaaaaaaac``",
+"bcaaaaaaaaaaaaaaaaaaaaaaaaaac```",
+"bbcaaaaaaaaaaaaaaaaaaaaaaaac```b",
+"bbbcaaaaaaaaaaaaaaaaaaaaaac```bb",
+"bbbbcaaaaaaaaaaaaaaaaaaaac```bbb",
+"bbbbbcaaaaaaaaaaaaaaaaaac```bbbb",
+"bbbbbbcaaaaaaaaaaaaaaaac```bbbbb",
+"bbbbbbbcaaaaaaaaaaaaaac```bbbbbb",
+"bbbbbbbbcccccccccccccc```bbbbbbb",
+"bbbbbbbbb```````````````bbbbbbbb",
+"bbbbbbbbbb`````````````bbbbbbbbb"
+};

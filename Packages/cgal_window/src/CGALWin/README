@@ -1,0 +1,13 @@
+
+The lib CGALWin can be build without CGAL (default) and with CGAL.
+In the second case you have to add 
+
+-DCGAL_USE_CGAL_HEADERS
+
+
+-----------------------
+Attention:
+-----------------------
+
+The sources of the CGAL::window are only for internal usage in the CGAL project.
+You must NOT make them public.

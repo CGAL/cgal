@@ -1,0 +1,10 @@
+
+OBJECTS = \
+_basic$(o) \
+_base_window$(o) \
+_base_panel$(o) \
+_color$(o) \
+_file$(o) \
+_file_panel$(o) \
+_string_manip$(o) \
+_window$(o)

@@ -1,0 +1,42 @@
+/* XPM */
+static const char *maze_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 32 3 1",
+/* colors */
+"` c None",
+"a c #FF0000",
+"b c #0000FF",
+/* pixels */
+"````````````````````````````````",
+"````````````````````````````````",
+"``````aaa`````aaa`````aaa```````",
+"``````aaaaaaaaaaaaaaaaaaa```````",
+"``````aaa`````aaa`````aaa```````",
+"```````a```````````````a````````",
+"``bbb``a``bbb`````bbb``a``bbb```",
+"``bbb``a``bbbbbbbbbbb``a``bbb```",
+"``bbb``a``bbb`````bbb``a``bbb```",
+"```b```a```````````b```a```b````",
+"```b``aaa`````aaa``b``aaa``b````",
+"```b``aaaaaaaaaaa``b``aaa``b````",
+"```b``aaa`````aaa``b``aaa``b````",
+"```b```````````a```b```a```b````",
+"``bbb`````bbb``a``bbb``a``bbb```",
+"``bbbbbbbbbbb``a``bbb``a``bbb```",
+"``bbb`````bbb``a``bbb``a``bbb```",
+"```b```````````a```b```a```b````",
+"```b``aaa`````aaa``b``aaa``b````",
+"```b``aaaaaaaaaaa``b``aaa``b````",
+"```b``aaa`````aaa``b``aaa``b````",
+"```b```a```````````b```````b````",
+"``bbb``a``bbb`````bbb`````bbb```",
+"``bbb``a``bbbbbbbbbbbbbbbbbbb```",
+"``bbb``a``bbb`````bbb`````bbb```",
+"```````a````````````````````````",
+"``````aaa`````aaa`````aaa```````",
+"``````aaaaaaaaaaaaaaaaaaa```````",
+"``````aaa`````aaa`````aaa```````",
+"````````````````````````````````",
+"````````````````````````````````",
+"````````````````````````````````"
+};

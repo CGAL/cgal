@@ -1,0 +1,43 @@
+/* XPM */
+static const char *hammer_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 32 4 1",
+/* colors */
+"` c #000000",
+"a c None",
+"b c #718292",
+"c c #BEBEBE",
+/* pixels */
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaa`````aaaaaaaaaaaaaa",
+"aaaaaaaaaaaa`ccccc``aaaaaaaaaaaa",
+"aaaaaaaaaaa`````bccc`aaaaaaaaaaa",
+"aaaaaaaaaaaaaaaa`bbcc`aaaaaaaaaa",
+"aaaaaaaaaaaaaaaa`bbbcc`aaaaaaaaa",
+"aaaaaaaaaaaaaaaa`bbbbcc`aaaaaaaa",
+"aaaaaaaaaaaaaaa`a`bbbbc`aaaaaaaa",
+"aaaaaaaaaaaaaa`a`c`bbbbc``aaaaaa",
+"aaaaaaaaaaaaa`a`c````bcbcc`aaaaa",
+"aaaaaaaaaaaa`a`c``ccc`bbbc`aaaaa",
+"aaaaaaaaaaa`a`c``ccccc`bbb`caaaa",
+"aaaaaaaaaa`a`c``cccacc`bb`ccaaaa",
+"aaaaaaaaa`a`c``cccaaacc``ccaaaaa",
+"aaaaaaaa`a`c``cccaaaaaccccaaaaaa",
+"aaaaaaa`a`c``cccaaaaaaaccaaaaaaa",
+"aaaaaa`a`c``cccaaaaaaaaaaaaaaaaa",
+"aaaaa`a`c``cccaaaaaaaaaaaaaaaaaa",
+"aaaa`a`c``cccaaaaaaaaaaaaaaaaaaa",
+"aaa`a`c``cccaaaaaaaaaaaaaaaaaaaa",
+"aa`a`c``cccaaaaaaaaaaaaaaaaaaaaa",
+"a`a`c``cccaaaaaaaaaaaaaaaaaaaaaa",
+"a``c``cccaaaaaaaaaaaaaaaaaaaaaaa",
+"ac```cccaaaaaaaaaaaaaaaaaaaaaaaa",
+"aacccccaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+};

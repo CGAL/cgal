@@ -1,0 +1,43 @@
+/* XPM */
+static const char *light_off_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 32 4 1",
+/* colors */
+"` c #000000",
+"a c #FFFFFF",
+"b c #999999",
+"c c None",
+/* pixels */
+"cccccc`bbbbbbbbbbbbbbbbbbbb`cccc",
+"cccccc````bbbbbbbbbbbbbb````cccc",
+"cccccccccc``bbbbbbbbbb``cccccccc",
+"cccccccccccc`bbbbbbbb`cccccccccc",
+"ccccccccccccc`bbbbbb`cc`cccccccc",
+"ccccccccccccc`bbbbbb`c`ccccccccc",
+"ccccccccccccc`bbbbbb````cccccccc",
+"ccccccccccccc`bbbbbb```c`ccccccc",
+"ccccccccccccc`bbbbbb`c`c`ccccccc",
+"ccccccccccccc````````cc`c`cccccc",
+"cccccccccccccc`aaaa`cccccc`ccccc",
+"cccccccccccccc`aaaa`ccccc`cccccc",
+"cccccccccccccc`aaaa`cccccc`ccccc",
+"cccccccccccccc`aaaa`ccccc`cccccc",
+"ccccccccccccc`aaaaaa`ccccc`ccccc",
+"cccccccccccc`aaaaaaaa`ccc`cccccc",
+"ccccccccccc`aaaaaaaaaa`ccc`ccccc",
+"cccccccccc`aaaaaaaaaaaa`c`cccccc",
+"cccccccccc`aaaaaaaaaaaa`cc`ccccc",
+"ccccccccc`aaaaaaaaaaaaaa``cccccc",
+"ccccccccc`aaaaaaaaaaaaaa`c`ccccc",
+"ccccccccc`aaaaaaaaaaaaaa``cccccc",
+"ccccccccc`aaaaaaaaaaaaaa`c`ccccc",
+"ccccccccc`aaaaaaaaaaaaaa``cccccc",
+"cccccccccc`aaaaaaaaaaaa`cc`ccccc",
+"cccccccccc`aaaaaaaaaaaa`c`cccccc",
+"ccccccccccc`aaaaaaaaaa`ccc`ccccc",
+"cccccccccccc``aaaaaa``ccc`cccccc",
+"cccccccccccccc``````cccccc`ccccc",
+"ccccccccccccccccccccccccc`cccccc",
+"cccccccccccccccccccccccccc`ccccc",
+"ccccccccccccccccccccccccc```cccc"
+};
