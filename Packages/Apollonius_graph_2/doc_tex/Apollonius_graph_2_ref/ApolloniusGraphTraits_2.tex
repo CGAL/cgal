@@ -17,8 +17,8 @@
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 \ccDefinition
   
-The concept \ccc{\ccRefName} provides the traits requirements for the
-\ccc{Apollonius_graph_2} class. In particular,
+The concept \ccc{ApolloniusGraphTraits_2} provides the traits
+requirements for the \ccc{Apollonius_graph_2} class. In particular,
 it provides a type \ccc{Site_2}, which must be a model of the concept
 \ccc{ApolloniusSite_2}. It also provides
 constructions for sites and several function object
@@ -235,9 +235,9 @@ called degenerate if its two endpoints coincide.
 \ccThree{ApolloniusGraphTraits_2}{ traits = other}{}
 \ccThreeToTwo
 %
-\ccConstructor{ \ccRefName(); }{Default constructor.}
+\ccConstructor{ ApolloniusGraphTraits_2(); }{Default constructor.}
 \ccGlue
-\ccConstructor{ \ccRefName(ApolloniusGraphTraits_2 other);}
+\ccConstructor{ ApolloniusGraphTraits_2(ApolloniusGraphTraits_2 other);}
 {Copy constructor.}
 \ccGlue
 \ccMethod{ApolloniusGraphTraits_2 operator=(ApolloniusGraphTraits_2 other);}
