@@ -125,9 +125,15 @@ void input_from_file(Triangulation &T,
     is >> n;
     std::cout << "Reading " << n << " points" << std::endl;
 
-    std::istream_iterator<Point, std::ptrdiff_t> begin(is);
-    std::istream_iterator<Point, std::ptrdiff_t> end;
-    T.insert(begin, end);
+    // // the following is beautiful but does not work with MSVC
+//     std::istream_iterator<Point, std::ptrdiff_t> begin(is);
+//     std::istream_iterator<Point, std::ptrdiff_t> end;
+//     T.insert(begin, end);
+    Point p;
+    for(int i=0; i<n; i++) {
+      is >> p; 
+      T.insert(p);
+    }
 }
 
 int

@@ -51,6 +51,8 @@ colored_face : colored_face.o
 triangulation_prog1 : triangulation_prog1.o
 	$(CGAL_CXX) -o triangulation_prog1 triangulation_prog1.o $(LDFLAGS)
 
+terrain : terrain.o
+	$(CGAL_CXX) -o terrain terrain.o $(LDFLAGS)
 clean:
 	rm -rf *~ *.o core tr
 

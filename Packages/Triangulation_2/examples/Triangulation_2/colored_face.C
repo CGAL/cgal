@@ -44,4 +44,5 @@ int main() {
 	fc->color = BLUE;
 	++fc;
     }
+    return 1;
 }
