@@ -9,8 +9,8 @@
 #CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-last/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.60_LEDA
 #CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-1.2-I-13/make/makefile_mips_IRIX-6.2_CC-n32-7.20_LEDA
 #CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-1.2-I-13/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.57_LEDA
-CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-2.0-I-5/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.60_LEDA
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-2.0-I-7/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
+#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-2.0-I-5/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.60_LEDA
+CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
 include $(CGAL_MAKEFILE)
 
 
@@ -30,8 +30,8 @@ CXXFLAGS = \
 	-I./include \
 	$(CGAL_CXXFLAGS)\
 	$(TESTSUITE_CXXFLAGS) \
-	-g -Wall 
-#   -B$(UTIL)/Binutils/SunOS/bin/ 
+	-g  
+#       -B$(UTIL)/Binutils/SunOS/bin/ 
 #	-DCGAL_NO_PRECONDITIONS -DCGAL_NO_ASSERTIONS -DCGAL_NO_POSTCONDITIONS
 
 

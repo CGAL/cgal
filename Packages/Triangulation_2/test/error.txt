@@ -18,6 +18,6 @@ DIRECTORY Triangulation:
    execution of test_delaunay_triangulation_2 succeeded
    compilation of test_constrained_triangulation_2 succeeded
    execution of test_constrained_triangulation_2 succeeded
-   ERROR: compilation of test_regular_triangulation_2 failed
-   ERROR: could not execute test_regular_triangulation_2
+   compilation of test_regular_triangulation_2 succeeded
+   execution of test_regular_triangulation_2 succeeded
 
