@@ -47,10 +47,10 @@
 // Picking a default Traits class (this, with the 
 // PL flag enables the running of the test independently of cgal_make.)
 #ifndef CGAL_ARR_TEST_TRAITS
-#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
+//#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
-//#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
+#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
 #endif
 
 // Making sure test doesn't fail if LEDA is not installed
@@ -464,7 +464,7 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
   {
       NT    x,y; 
       Curve curr_curve;
-      std::fstream  arr_file("arr.txt" , ios::in | ios::out);
+      std::fstream  arr_file("arr.txt" , std::ios::in | std::ios::out);
  
       //                             _IO_OUTPUT + 
       //                     _IO_INPUT + 
@@ -476,6 +476,7 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       input_file >> arr;
       arr_file << arr;
       
+      cout<<arr;
       //input_file.close();
       //arr_file.close();
       //arr_file.open("temp", _IO_INPUT);
