@@ -44,7 +44,7 @@ int main()
   typedef CGAL::Triangulation_default_data_structure_2<RGt2,RVb2,RFb2>  RTds2;
   typedef CGAL::Regular_triangulation_2<RGt2,RTds2>                    RCls2;
 
-    CGAL::_test_cls_reg_triangulation_2( RCls2() );
+    _test_cls_reg_triangulation_2( RCls2() );
 
   return 0;
 }

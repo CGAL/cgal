@@ -506,7 +506,7 @@ Cls T0_2;
        || (T2_1.geom_traits().compare(f->vertex(f->ccw(li))->point(), p0)
         && T2_1.geom_traits().compare(f->vertex(f->cw(li))->point(), p1)));
   f = T2_1.locate(p12,lt,li); assert( lt == Cls::FACE );
-  assert( T2_1.oriented_side(f,p12) == ON_POSITIVE_SIDE );
+  assert( T2_1.oriented_side(f,p12) == CGAL::ON_POSITIVE_SIDE );
   f = T2_1.locate(p13,lt,li,f); assert( lt == Cls::OUTSIDE );
   li = f->index(T2_1.infinite_vertex());
   assert( _test_is_to_the_left(T2_1,p13,f,li) );
