@@ -20,9 +20,10 @@
 \ccChapterAuthor{Sven Sch\"onherr}
 
 
-A variety of geomeric object generators are provided in \cgal. They
-are useful as synthetic test data sets, e.g.~for testing algorithms on
-degenerate object sets and for performance analysis.
+A variety of generators for random numbers and geometric objects is
+provided in \cgal.  They are useful as synthetic test data sets,
+e.g.~for testing algorithms on degenerate object sets and for
+performance analysis.
 
 The first section describes the random number source used for random
 generators. The second section documents generators for point sets,
@@ -81,7 +82,7 @@ sets with multiple entries of identical items.
 
 
 % +------------------------------------------------------------------------+
-\newpage
+%\newpage
 \section{2D Point Generators}
 
 \ccDefinition
@@ -133,7 +134,8 @@ Section~\ref{sectionCopyN}.
   distributed in the open disc with radius $r$,
   i.e.~$|\ccc{*g}| < r$~. Two random numbers are needed from
   \ccc{rnd} for each point.
-  \ccPrecond a function \ccc{CGAL_build_point()} for the point type \ccc{P}.} 
+  \ccPrecond a function \ccc{CGAL_build_point()} for the point type
+  \ccc{P} exists.} 
 \end{ccClassTemplate}
 
 \ccHtmlNoClassFile
@@ -145,7 +147,8 @@ Section~\ref{sectionCopyN}.
   distributed on the circle with radius $r$,
   i.e.~$|\ccc{*g}| == r$~. A single random number is needed from
   \ccc{rnd} for each point.
-  \ccPrecond a function \ccc{CGAL_build_point()} for the point type \ccc{P}.} 
+  \ccPrecond a function \ccc{CGAL_build_point()} for the point type
+  \ccc{P} exists.} 
 \end{ccClassTemplate}
 
 \ccHtmlNoClassFile
@@ -155,10 +158,11 @@ Section~\ref{sectionCopyN}.
   CGAL_random);}{%
   $g$ is an input iterator creating points of type \ccc{P} uniformly
   distributed in the half-open square with side length $a$, centered
-  around the origin, i.e.~$\forall p = \ccc{*g}:  -\frac{a}{2} \le
+  at the origin, i.e.~$\forall p = \ccc{*g}:  -\frac{a}{2} \le
   p.x() < \frac{a}{2}$ and $-\frac{a}{2} \le p.y() < \frac{a}{2}$~. 
   Two random numbers are needed from \ccc{rnd} for each point.
-  \ccPrecond a function \ccc{CGAL_build_point()} for the point type \ccc{P}.} 
+  \ccPrecond a function \ccc{CGAL_build_point()} for the point type
+  \ccc{P} exists.} 
 \end{ccClassTemplate}
 
 \ccHtmlNoClassFile
@@ -168,11 +172,12 @@ Section~\ref{sectionCopyN}.
   CGAL_random);}{%
   $g$ is an input iterator creating points of type \ccc{P} uniformly
   distributed on the boundary of the square with side length $a$,
-  centered around the origin, i.e.~$\forall p = \ccc{*g}:$ one
+  centered at the origin, i.e.~$\forall p = \ccc{*g}:$ one
   coordinate is either $\frac{a}{2}$ or $-\frac{a}{2}$ and for the 
   other coordinate $c$ holds $-\frac{a}{2} \le c < \frac{a}{2}$~.
   A single random number is needed from \ccc{rnd} for each point.
-  \ccPrecond a function \ccc{CGAL_build_point()} for the point type \ccc{P}.} 
+  \ccPrecond a function \ccc{CGAL_build_point()} for the point type
+  \ccc{P} exists.} 
 \end{ccClassTemplate}
 
 \ccHtmlNoClassFile
@@ -184,9 +189,10 @@ Section~\ref{sectionCopyN}.
   distributed on the segment from $p$ to $q$ except $q$,
   i.e.~$\ccc{*g} == (1-\lambda)\, p + \lambda q$ where $0 \le \lambda < 1$~.
   A single random number is needed from \ccc{rnd} for each point.
-  \ccPrecond a function \ccc{CGAL_build_point()} for the point type \ccc{P}.
-    The expressions \ccc{CGAL_to_double(p.x())} and
-  \ccc{CGAL_to_double(p.y())} must be legal and similar for $q$.}
+  \ccPrecond a function \ccc{CGAL_build_point()} for the point type \ccc{P}
+    exists. The expressions \ccc{CGAL_to_double(p.x())} and
+    \ccc{CGAL_to_double(p.y())} must  result in the respective
+    \ccc{double} representation of the coordinates and similar for $q$.}
 \end{ccClassTemplate}
 
 \ccHeading{Grid Points}
@@ -219,21 +225,21 @@ iterator.
 
 Degenerate input sets like grid points can be randomly perturbed by a
 small amount to produce {\em quasi}-degenerate test sets. This
-challenges either numerical stability of algorithms using inexact
-arithmetic or exact predicates to compute the sign of expressions
-slightly off from zero. 
+challenges numerical stability of algorithms using inexact arithmetic and
+exact predicates to compute the sign of expressions slightly off from zero.
 
 \ccFunction{template <class ForwardIterator>
-    void CGAL_perturbe_points_2( ForwardIterator first, ForwardIterator last, 
+    void CGAL_perturb_points_2( ForwardIterator first, ForwardIterator last, 
         double xeps, double yeps = xeps, CGAL_Random& rnd = CGAL_random);}
-{ perturbes the points in the range $[\ccc{first},\ccc{last})$ by
+{ perturbs the points in the range $[\ccc{first},\ccc{last})$ by
   replacing each point with a random point from the rectangle
-  \ccc{xeps} $\times$ \ccc{yeps} centered around the original point.
+  \ccc{xeps} $\times$ \ccc{yeps} centered at the original point.
   Two random numbers are needed from \ccc{rnd} for each point.
   \ccPrecond a function \ccc{CGAL_build_point()} for the value type of
-    the \ccc{ForwardIterator}. 
-    The expression \ccc{CGAL_to_double((*first).x())} and
-    \ccc{CGAL_to_double((*first).y())} must be legal. 
+    the \ccc{ForwardIterator} exists. 
+    The expressions \ccc{CGAL_to_double((*first).x())} and
+    \ccc{CGAL_to_double((*first).y())} must result in the respective
+    coordinate values.
 }
 
 \ccHeading{Adding Degeneracies}
@@ -250,17 +256,18 @@ a point set.
     OutputIterator CGAL_random_collinear_points_2( RandomAccessIterator first,
         RandomAccessIterator last, 
         size_t n, OutputIterator first2, CGAL_Random& rnd = CGAL_random);}
-{ choose two random points from the range $[\ccc{first},\ccc{last})$,
-    create a random third point on the segment connecting this two
-    points, and write it to \ccc{first2}. Repeat this $n$ times, thus
+{ randomly chooses two points from the range $[\ccc{first},\ccc{last})$,
+    creates a random third point on the segment connecting this two
+    points, and writes it to \ccc{first2}. Repeats this $n$ times, thus
     writing $n$ points to \ccc{first2} that are collinear with points
     in the range $[\ccc{first},\ccc{last})$.
     Three random numbers are needed from \ccc{rnd} for each point.
     Returns the value of \ccc{first2} after inserting the $n$ points.
   \ccPrecond a function \ccc{CGAL_build_point()} for the value type of
-    the \ccc{ForwardIterator}. 
-    The expression \ccc{CGAL_to_double((*first).x())} and
-    \ccc{CGAL_to_double((*first).y())} must be legal. 
+    the \ccc{ForwardIterator} exists. 
+    The expressions \ccc{CGAL_to_double((*first).x())} and
+    \ccc{CGAL_to_double((*first).y())} must result in the respective
+    coordinate values.
 }
 
 \ccExample
@@ -308,7 +315,7 @@ Figure~\ref{figurePointGenerator}}{Figure <A HREF="#PointGenerators">
 \end{ccHtmlOnly}
 
 
-The second example demostrates the point generators with integer
+The second example demonstrates the point generators with integer
 points. Arithmetic with \ccc{double}'s is sufficient to produce
 regular integer grids. See \ccTexHtml{%
 Figure~\ref{figureIntegerPointGenerator}}{Figure 
@@ -380,7 +387,7 @@ $g$ satisfies the requirements of an input iterator. Each call to the
 
 We want to generate a test set of 200 segments, where one endpoint is
 chosen randomly from a horizontal segment of length 200, and the other
-endpoint is chosen ramdomly from a circle of radius 250. See
+endpoint is chosen randomly from a circle of radius 250. See
 \ccTexHtml{Figure~\ref{figureSegmentGenerator}}{Figure <A
   HREF="#SegmentGenerator"> <IMG SRC="cc_ref_up_arrow.gif"
   ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>} for the example
