@@ -74,6 +74,5 @@ else
   compile_and_run test_triangulation_2_bis
   compile_and_run test_triangulation_geom_traits
   compile_and_run test_triangulation_tds
-  compile_and_run test_triangulation_tdsul
 fi
 

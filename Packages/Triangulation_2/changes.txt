@@ -1,6 +1,13 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 6.03 ()
+- fixed window-input in demos demo.C and Delaunay.C
+- readded files :
+  Triangulation_data_structure_using_list_2.h 
+  Triangulation_default_data_structure_2.h 
+  for backwards compatibility
+
 Ver 6.02 ()
 - changed mirror_index() amd mirror_vertex() in Triangulation_ds_face_2
   and all the calls to f->index(Face_handle) in  Triangulation_data_structure_2
