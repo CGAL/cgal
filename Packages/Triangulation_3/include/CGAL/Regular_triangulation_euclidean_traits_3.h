@@ -42,14 +42,14 @@
 
 CGAL_BEGIN_NAMESPACE 
 
-template < class R, class W = typename R::FT>
+template < class R, class W = typename R::RT>
 class Regular_triangulation_euclidean_traits_3
-  : public Triangulation_euclidean_traits_3<R>
+  : public Triangulation_geom_traits_3<R>
 {
 public:
   typedef R                                     Rep;
   typedef W                                     Weight;
-  typedef Triangulation_euclidean_traits_3 <R>  Traits;
+  typedef Triangulation_geom_traits_3 <R>       Traits;
   typedef Traits::Point                         Bare_point;
   typedef Weighted_point <Bare_point, W>        Weighted_point;
   typedef Weighted_point                        Point;
@@ -72,6 +72,7 @@ public:
 			   const Weighted_point &t) const
   {
     CGAL_triangulation_precondition( ! collinear(p, q, r) );
+    CGAL_triangulation_precondition( coplanar(p,q,r,t) );
     return CGAL::power_test(p, q, r, t);
   }
 
