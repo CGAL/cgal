@@ -28,8 +28,8 @@
 
 #include <CGAL/basic.h>
 
-#include <set>
 #include <utility>
+#include <vector>
 
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Triangulation_utils_3.h>
@@ -965,25 +965,17 @@ make_hole_3D_ear( Vertex_handle v,
 {
   CGAL_triangulation_expensive_precondition( ! test_dim_down(v) );
 
-  typedef std::set<Cell_handle> Hole_cells;
-  Hole_cells cells;
-  incident_cells( v, cells );
+  incident_cells(v, std::back_inserter(hole));
 
-  Cell_handle opp_cit;
-  Vertex_handle vi;
-
-  for (typename Hole_cells::iterator cit = cells.begin();
-       cit != cells.end(); ++cit) {
+  for (typename std::vector<Cell_handle>::iterator cit = hole.begin();
+       cit != hole.end(); ++cit) {
     int indv = (*cit)->index(v);
-    opp_cit = (*cit)->neighbor( indv );
-    hole.push_back(*cit);    
+    Cell_handle opp_cit = (*cit)->neighbor( indv );
     boundhole.push_back(Facet( opp_cit, opp_cit->index(*cit)) );
 
     for (int i=0; i<4; i++)
-      if ( i != indv ) {
-	vi = (*cit)->vertex(i);
-	vi->set_cell( opp_cit );
-      }
+      if ( i != indv )
+	(*cit)->vertex(i)->set_cell(opp_cit);
   }
 }
 

@@ -784,17 +784,17 @@ public:
   void
   incident_cells(Vertex_handle v,
                  std::set<Cell_handle> & cells,
-		 Cell_handle c = NULL ) const
+                 Cell_handle c = NULL ) const
   {
-      // Obsolete ?
+      bool THIS_FUNCTION_IS_DEPRECATED;
       _tds.incident_cells(v, cells, c);
   }
 
-  template <class OutIt>
+  template <class OutputIterator>
   void
-  incident_cells(Vertex_handle v, OutIt outcells) const
+  incident_cells(Vertex_handle v, OutputIterator cells) const
   {
-      _tds.incident_cells(v, outcells);
+      _tds.incident_cells(v, cells);
   }
 
   void
@@ -802,7 +802,15 @@ public:
                     std::set<Vertex_handle> & vertices,
 		    Cell_handle c = NULL ) const
   {
+      bool THIS_FUNCTION_IS_DEPRECATED;
       _tds.incident_vertices(v, vertices, c);
+  }
+
+  template <class OutputIterator>
+  void
+  incident_vertices(Vertex_handle v, OutputIterator vertices) const
+  {
+      _tds.incident_vertices(v, vertices);
   }
 
   // CHECKING
@@ -1117,13 +1125,7 @@ Triangulation_3<GT,Tds>::
 is_edge(Vertex_handle u, Vertex_handle v,
 	Cell_handle & c, int & i, int & j) const
 {
-  CGAL_triangulation_expensive_precondition( _tds.is_vertex(u) &&
-					     _tds.is_vertex(v) );
-  Cell_handle cstar;
-  bool b = _tds.is_edge(u, v, cstar, i, j);
-  if (b)
-      c = cstar;
-  return b;
+  return _tds.is_edge(u, v, c, i, j);
 }
 
 template < class GT, class Tds >
@@ -1132,14 +1134,7 @@ Triangulation_3<GT,Tds>::
 is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w,
 	 Cell_handle & c, int & i, int & j, int & k) const
 {
-  CGAL_triangulation_expensive_precondition( _tds.is_vertex(u) &&
-					     _tds.is_vertex(v) &&
-					     _tds.is_vertex(w) );
-  Cell_handle cstar;
-  bool b = _tds.is_facet(u, v, w, cstar, i, j, k);
-  if (b)
-      c = cstar;
-  return b;
+  return _tds.is_facet(u, v, w, c, i, j, k);
 }
 
 template < class GT, class Tds >
@@ -1158,15 +1153,7 @@ is_cell(Vertex_handle u, Vertex_handle v,
 	Vertex_handle w, Vertex_handle t,
 	Cell_handle & c, int & i, int & j, int & k, int & l) const
 {
-  CGAL_triangulation_expensive_precondition( _tds.is_vertex(u) &&
-					     _tds.is_vertex(v) &&
-					     _tds.is_vertex(w) &&
-					     _tds.is_vertex(t) );
-  Cell_handle cstar;
-  bool b = _tds.is_cell(u, v, w, t, cstar, i, j, k, l);
-  if (b)
-      c = cstar;
-  return b;
+  return _tds.is_cell(u, v, w, t, c, i, j, k, l);
 }
 
 template < class GT, class Tds >
@@ -1176,16 +1163,8 @@ is_cell(Vertex_handle u, Vertex_handle v,
 	Vertex_handle w, Vertex_handle t,
 	Cell_handle & c) const
 {
-  CGAL_triangulation_expensive_precondition( _tds.is_vertex(u) &&
-					     _tds.is_vertex(v) &&
-					     _tds.is_vertex(w) &&
-					     _tds.is_vertex(t) );
   int i,j,k,l;
-  Cell_handle cstar;
-  bool b = _tds.is_cell(u, v, w, t, cstar, i, j, k, l);
-  if (b)
-      c = cstar;
-  return b;
+  return _tds.is_cell(u, v, w, t, c, i, j, k, l);
 }
 
 template < class GT, class Tds >

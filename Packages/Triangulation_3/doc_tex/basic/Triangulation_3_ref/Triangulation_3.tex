@@ -816,47 +816,20 @@ Cell_handle start, int f) const;}
 
 \ccHeading{Traversal of the incident cells and the adjacent vertices
 of a given vertex} 
-\ccThree{bool}{t.incident_cells()}{}
+\ccThree{bool}{t.inciden__cells()}{}
 
-\ccMethod{void incident_cells(Vertex_handle v, 
-		set<Cell_handle> & cells, Cell_handle c = NULL ) const;}
-{Computes the set \ccc{cells} of all cells incident to \ccc{v}. If
-\ccVar.\ccc{dimension()} $<3$ then the returned set is empty. The optional
-argument \ccc{c} will be used for initializing the set.
-\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccc{v} is a vertex of \ccVar\ 
-and the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
+\ccMethod{template <class OutputIterator>
+          void incident_cells (Vertex_handle v, OutputIterator cells) const;}
+{Copies the \ccc{Cell_handle}s of all cells incident to \ccc{v} to the output
+iterator \ccc{cells}.  If \ccVar.\ccc{dimension()} $<3$, then do nothing.
+\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}
 
-%\ccMethod{void incident_cells(Vertex_handle v, 
-%		set<Cell*> & cells, Cell_handle c = NULL ) const;}
-%{Computes the set \ccc{cells} of all cells incident to \ccc{v}. If
-%\ccVar.\ccc{dimension()} $<3$ then the returned set is empty. The optional
-%argument \ccc{c} will be used for initializing the set.\\
-%\textit{This method computes a set of \ccc{Cell*}, whereas it should
-%logically compute a set of \ccc{Cell_handle}. This is due to
-%compilation problems with sets of \ccc{Cell_handle}. However, the user
-%can recover a \ccc{Cell_handle} for each element of the set by using
-%the method \ccc{handle()} defined for the \ccc{Cell} type.}
-%\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccc{v} is a vertex of \ccVar\ 
-%and the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
+\ccMethod{template <class OutputIterator>
+          void incident_vertices (Vertex_handle v, OutputIterator vertices) const;}
+{Copies the \ccc{Vertex_handle}s of all vertices incident to \ccc{v} to the
+output iterator \ccc{vertices}.  If \ccVar.\ccc{dimension()} $<2$, then do
+nothing.  \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}
 
-\ccMethod{void incident_vertices(Vertex_handle v, 
-		set<Vertex_handle> & vertices, Cell_handle c = NULL ) const;}
-{Computes the set \ccc{vertices} of all vertices adjacent to \ccc{v}. If
-\ccVar.\ccc{number_of_vertices()} $<1$ then the set is empty. The optional
-argument \ccc{c} will be used for finding a first vertex of the set.
-\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccc{v} is a vertex of \ccVar\ and
-the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
-
-%\ccMethod{void incident_vertices(Vertex_handle v, 
-%		set<Vertex*> & vertices,
-%		Cell_handle c = NULL ) const;}
-%{Computes the set \ccc{vertices} of all vertices adjacent to \ccc{v}. If
-%\ccVar.\ccc{number_of_vertices()} $<1$ then the set is empty. The optional
-%argument \ccc{c} will be used for finding a first vertex of the set.\\
-%\textit{An analogous remark as for the previous method holds on the
-%types within the set.}
-%\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccc{v} is a vertex of \ccVar\ and
-%the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
 
 \begin{ccAdvanced}
 \ccHeading{Checking}

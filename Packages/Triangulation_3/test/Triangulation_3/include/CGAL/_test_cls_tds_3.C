@@ -139,21 +139,18 @@ _test_cls_tds_3( const Tds &)
 
   cdone = tds6.cells_end();
   
-  std::set< Vertex_handle > set_of_vertices;
-  
   for ( cit = tds6.cells_begin(); cit != cdone; cit++ ) {
     // NOTE : the triangulation is modified during loop
     // --> the cell_iterator does not mean a lot
     for ( i=0; i<4; i++ ) {
       std::set< Vertex_handle > set_of_vertices;
-      tds6.incident_vertices( (&(*cit))->vertex(i), set_of_vertices );
-      if ( set_of_vertices.find
-	   ( (&(*cit))->neighbor(i)->vertex
-	     ( (&(*cit))->neighbor(i)->index( &(*cit) ) ) 
-	     ) 
+      tds6.incident_vertices( cit->vertex(i), std::inserter(set_of_vertices,
+			                      set_of_vertices.begin() ) );
+      if ( set_of_vertices.find ( cit->neighbor(i)->vertex
+	     ( cit->neighbor(i)->index( cit->handle() ) ) ) 
 	   == set_of_vertices.end() ) {
 	nbflips++;
-	tds6.flip_flippable( &(*cit), i );
+	tds6.flip_flippable( cit->handle(), i );
 	assert(tds6.is_valid());
 // 	if ( tds6.flip( &(*cit), i ) ) {
 // 	  tds6.is_valid(true);

@@ -219,8 +219,8 @@ public:
       cell_container().release_element(&*c);
   }
 
-  template <class It>
-  void delete_cells(It begin, It end)
+  template <class InputIterator>
+  void delete_cells(InputIterator begin, InputIterator end)
   {
       for(; begin != end; ++begin)
 	  delete_cell((*begin)->handle());
@@ -232,6 +232,7 @@ public:
   bool is_edge(Cell_handle c, int i, int j) const;
   bool is_edge(Vertex_handle u, Vertex_handle v, Cell_handle & c,
 	       int & i, int & j) const;
+  bool is_edge(Vertex_handle u, Vertex_handle v) const;
   bool is_facet(Cell_handle c, int i) const;
   bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w, 
 		Cell_handle & c, int & i, int & j, int & k) const;
@@ -450,39 +451,113 @@ public:
 
   // around a vertex
 private:
-  class Incident_tester {
-      Vertex_handle _v;
-  public :
-      Incident_tester(Vertex_handle v) : _v(v) {}
-      bool operator()(Cell_handle c) const
-      { return c->has_vertex(v); }
-  };
-
-private:
-  // TODO : This should be reimplemented.  Using find_conflict is overkill...
-  template <class OutIt>
+  template <class OutputIterator>
   void
-  incident_cells(Vertex_handle v, OutIt outcells) const
+  incident_cells_3(Vertex_handle v, Cell_handle c, OutputIterator cells) const
   {
+      CGAL_triangulation_precondition(dimension() == 3);
+
+      // Flag values :
+      // 1 : incident cell already visited
+      // 0 : unknown
+      c->set_in_conflict_flag(1);
+      *cells++ = c;
+
+      for (int i=0; i<4; ++i) {
+	  if (c->vertex(i) == v)
+	      continue;
+	  Cell_handle next = c->neighbor(i);
+	  if (next->get_in_conflict_flag() != 0)
+	      continue;
+	  incident_cells_3(v, next, cells);
+      }
+  }
+
+  template <class OutputIterator>
+  void
+  incident_cells_2(Vertex_handle v, Cell_handle c, OutputIterator cells) const
+  {
+      CGAL_triangulation_precondition(dimension() == 2);
+
+      // Flag values :
+      // 1 : incident cell already visited
+      // 0 : unknown
+      c->set_in_conflict_flag(1);
+      *cells++ = c;
+
+      for (int i=0; i<3; ++i) {
+	  if (c->vertex(i) == v)
+	      continue;
+	  Cell_handle next = c->neighbor(i);
+	  if (next->get_in_conflict_flag() != 0)
+	      continue;
+	  incident_cells_2(v, next, cells);
+      }
+  }
+
+public:
+  // TODO : The 2 following functions need to be documented...
+  template <class OutputIterator>
+  void
+  incident_cells(Vertex_handle v, OutputIterator cells) const
+  {
+      CGAL_triangulation_precondition( v != NULL );
+      CGAL_triangulation_expensive_precondition( is_vertex(v) );
+
       if ( dimension() < 3 )
           return;
 
-      std::vector<Facet> facets;
-      std::vector<Cell_handle > cells;
-      facets.reserve(64);
-      cells.reserve(64);
-      find_conflicts_3(v->cell(), Incident_tester(v), facets, cells);
-      for(typename std::vector<Facet>::iterator fit = facets.begin();
-	      fit != facets.end(); ++fit)
-	  fit->first->set_in_conflict_flag(0);
-      for(typename std::vector<Cell_handle >::iterator cit = cells.begin();
-	      cit != cells.end(); ++cit) {
-	  *cit->set_in_conflict_flag(0);
-	  *outcells++ = *cit;
+      std::vector<Cell_handle> tmp_cells;
+      tmp_cells.reserve(64);
+      incident_cells_3(v, v->cell(), std::back_inserter(tmp_cells));
+
+      for(typename std::vector<Cell_handle>::iterator cit = tmp_cells.begin();
+	      cit != tmp_cells.end(); ++cit) {
+	  (*cit)->set_in_conflict_flag(0);
+	  *cells++ = *cit;
       }
   }
-  
-public:
+
+  template <class OutputIterator>
+  void
+  incident_vertices(Vertex_handle v, OutputIterator vertices) const
+  {
+      CGAL_triangulation_precondition( v != NULL );
+      CGAL_triangulation_expensive_precondition( is_vertex(v) );
+
+      if ( number_of_vertices() < 2 )
+          return;
+
+      if ( dimension() < 2 )
+          return;
+
+      // Get the incident cells.
+
+      std::vector<Cell_handle> tmp_cells;
+      tmp_cells.reserve(64);
+      if (dimension() == 3)
+	  incident_cells_3(v, v->cell(), std::back_inserter(tmp_cells));
+      else
+	  incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
+
+      std::vector<Vertex_handle> tmp_vertices;
+      tmp_vertices.reserve(dimension()*tmp_cells.size());
+
+      for(typename std::vector<Cell_handle>::iterator cit = tmp_cells.begin();
+	      cit != tmp_cells.end(); ++cit) {
+	  (*cit)->set_in_conflict_flag(0);
+	  // Put all incident vertices in tmp_vertices.
+	  // They are counted several times.
+	  for (int j=0; j<=dimension(); ++j)
+	      if ((*cit)->vertex(j) != v)
+	          tmp_vertices.push_back((*cit)->vertex(j));
+      }
+
+      // Now sort and output the vertices.
+      std::sort(tmp_vertices.begin(), tmp_vertices.end());
+      std::unique_copy(tmp_vertices.begin(), tmp_vertices.end(), vertices);
+  }
+
   void
   incident_cells(Vertex_handle v, std::set<Cell_handle> & cells,
 	         Cell_handle c = NULL ) const;
@@ -757,15 +832,33 @@ Triangulation_data_structure_3<Vb,Cb>::
 is_edge(Vertex_handle u, Vertex_handle v, Cell_handle &c, int &i, int &j) const
   // returns false when dimension <1 or when indices wrong
 {
-  if (u==v)
-      return false;
+    CGAL_triangulation_expensive_precondition( is_vertex(u) && is_vertex(v) );
 
-  for(Cell_iterator cit = cell_container().begin(); cit != cells_end(); ++cit)
-    if (cit->has_vertex(u,i) && cit->has_vertex(v,j)) {
-      c = cit->handle();
-      return true; 
-    }
-  return false;
+    if (u==v)
+        return false;
+
+    std::vector<Cell_handle> cells;
+    cells.reserve(64);
+    incident_cells(u, std::back_inserter(cells));
+
+    for (typename std::vector<Cell_handle>::iterator cit = cells.begin();
+	      cit != cells.end(); ++cit)
+        if ((*cit)->has_vertex(v, j)) {
+	    c = *cit;
+	    i = c->index(u);
+	    return true;
+	}
+    return false;
+}
+
+template < class Vb, class Cb>
+bool
+Triangulation_data_structure_3<Vb,Cb>::
+is_edge(Vertex_handle u, Vertex_handle v) const
+{
+    Cell_handle c;
+    int i, j;
+    return is_edge(u, v, c, i, j);
 }
 
 template < class Vb, class Cb>
@@ -793,18 +886,27 @@ is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w,
 	 Cell_handle & c, int & i, int & j, int & k) const
   // returns false when dimension <2 or when indices wrong
 {
-      if ( (u==v) || (u==w) || (v==w) ) return false;
-      Facet_iterator it = facets_begin();
-      while ( it != facets_end() ) {
-	if ( ( ((*it).first)->has_vertex(u,i) )
-	     && ( ((*it).first)->has_vertex(v,j) )
-	     && ( ((*it).first)->has_vertex(w,k) ) ) {
-	  c = (*it).first;
-	  return true;
+    CGAL_triangulation_expensive_precondition( is_vertex(u) &&
+					       is_vertex(v) &&
+					       is_vertex(w) );
+
+    if ( u==v || u==w || v==w )
+	return false;
+    if (dimension() < 2)
+	return false;
+
+    std::vector<Cell_handle> cells;
+    cells.reserve(64);
+    incident_cells(u, std::back_inserter(cells));
+
+    for (typename std::vector<Cell_handle>::iterator cit = cells.begin();
+	      cit != cells.end(); ++cit)
+        if ((*cit)->has_vertex(v, j) && (*cit)->has_vertex(w, k)) {
+	    c = *cit;
+	    i = c->index(u);
+	    return true;
 	}
-	++it;
-      }
-      return false;
+    return false;
 }
 
 template < class Vb, class Cb>
@@ -837,18 +939,27 @@ is_cell(Vertex_handle u, Vertex_handle v, Vertex_handle w, Vertex_handle t,
 	Cell_handle & c, int & i, int & j, int & k, int & l) const
   // returns false when dimension <3
 {
-  if ( (u==v) || (u==w) || (u==t) || (v==w) || (v==t) || (w==t) )
+    CGAL_triangulation_expensive_precondition( is_vertex(u) &&
+					       is_vertex(v) &&
+					       is_vertex(w) &&
+					       is_vertex(t) );
+
+    if ( u==v || u==w || u==t || v==w || v==t || w==t )
+        return false;
+
+    std::vector<Cell_handle> cells;
+    cells.reserve(64);
+    incident_cells(u, std::back_inserter(cells));
+
+    for (typename std::vector<Cell_handle>::iterator cit = cells.begin();
+	      cit != cells.end(); ++cit)
+        if ((*cit)->has_vertex(v, j) && (*cit)->has_vertex(w, k) &&
+	    (*cit)->has_vertex(t, l)) {
+	    c = *cit;
+	    i = c->index(u);
+	    return true;
+	}
     return false;
-  for(Cell_iterator it = cells_begin(); it != cells_end(); ++it) {
-    if ( ( it->has_vertex(u,i) )
-	 && ( it->has_vertex(v,j) )
-	 && ( it->has_vertex(w,k) ) 
-	 && ( it->has_vertex(t,l) ) ) {
-      c = it->handle();
-      return true;
-    }
-  }
-  return false;
 }
 
 template < class Vb, class Cb>
@@ -858,17 +969,9 @@ is_cell(Vertex_handle u, Vertex_handle v, Vertex_handle w, Vertex_handle t)
     const
   // returns false when dimension <3
 {
-  if ( (u==v) || (u==w) || (u==t) || (v==w) || (v==t) || (w==t) )
-    return false;
-  for(Cell_iterator it = cells_begin(); it != cells_end(); ++it) {
-    if ( it->has_vertex(u) &&
-	 it->has_vertex(v) &&
-	 it->has_vertex(w) &&
-	 it->has_vertex(t) ) {
-      return true;
-    }
-  }
-  return false;
+    Cell_handle c;
+    int i, j, k, l;
+    return is_cell(u, v, w, t, c, i, j, k, l);
 }
 
 template < class Vb, class Cb>
@@ -968,9 +1071,8 @@ flip( Cell_handle c, int i )
 
   // checks that the facet is flippable,
   // ie the future edge does not already exist
-  std::set<Vertex_handle> setc;
-  incident_vertices( c->vertex(i), setc );
-  if ( setc.find( n->vertex(in) ) != setc.end() ) return false;
+  if (is_edge(c->vertex(i), n->vertex(in)))
+      return false;
 
   flip_really(c,i,n,in);
   return true;
@@ -992,13 +1094,8 @@ flip_flippable( Cell_handle c, int i )
 
   // checks that the facet is flippable,
   // ie the future edge does not already exist
-  typedef std::set<Vertex_handle> set_of_vertices;
-  CGAL_triangulation_expensive_precondition_code( set_of_vertices setc; );
-  CGAL_triangulation_expensive_precondition_code
-    ( incident_vertices( c->vertex(i), setc ); );
-  CGAL_triangulation_expensive_precondition
-    ( ( setc.find( n->vertex(in) ) == setc.end() ) );
-
+  CGAL_triangulation_expensive_precondition( !is_edge(c->vertex(i),
+	                                              n->vertex(in)));
   flip_really(c,i,n,in);
 }
 
@@ -1808,6 +1905,7 @@ Triangulation_data_structure_3<Vb,Cb>::
 incident_cells(Vertex_handle v, std::set<Cell_handle> & cells,
 	       Cell_handle c) const
 {
+  bool THIS_FUNCTION_IS_DEPRECATED;
   CGAL_triangulation_precondition( v != NULL );
   CGAL_triangulation_expensive_precondition( is_vertex(v) );
 
@@ -1823,18 +1921,19 @@ incident_cells(Vertex_handle v, std::set<Cell_handle> & cells,
     return; // c was already found
 
   cells.insert( c );
-      
+
   for ( int j=0; j<4; j++ )
     if ( j != c->index(v) )
       incident_cells( v, cells, c->neighbor(j) );
 }
-  
+
 template <class Vb, class Cb >
 void
 Triangulation_data_structure_3<Vb,Cb>::
 incident_vertices(Vertex_handle v, std::set<Vertex_handle> & vertices,
 	          Cell_handle c) const
 {
+  bool THIS_FUNCTION_IS_DEPRECATED;
   CGAL_triangulation_precondition( v != NULL );
   CGAL_triangulation_expensive_precondition( is_vertex(v) );
       

@@ -190,6 +190,9 @@ counted.}
 {Tests whether \ccc{(u,v)} is an edge of \ccVar. If the edge is found,
 it computes a cell \ccc{c} having this edge and the indices \ccc{i}
 and \ccc{j} of the vertices \ccc{u} and \ccc{v}, in this order.}
+\ccGlue
+\ccMethod{bool is_edge(Vertex_handle u, Vertex_handle v) const;}
+{Tests whether \ccc{(u,v)} is an edge of \ccVar.}
 
 \ccMethod{ bool is_facet(Cell* c, int i) const;}
 {Tests whether \ccc{(c,i)} is a facet of \ccVar. Answers \ccc{false} when
@@ -465,7 +468,7 @@ into the triangulation data structure.}
 \ccGlue
 \ccMethod{Vertex_iterator vertices_end() const;}{}
 
-\ccThree{Facet_circulator}{tds.incident_cells}{}
+\ccThree{Facet_circulator}{tds.inciden__cells}{}
 
 \ccMethod{Cell_circulator incident_cells(const Edge & e) const;}
 {Starts at an arbitrary cell incident to \ccc{e}.
@@ -513,21 +516,17 @@ adjacent vertices of a given vertex}
 
 \ccThree{void_circulator}{tds.facets_begin()toto}{}
 
-\ccMethod{void incident_cells(Vertex* v, set<Cell*> & cells,
-		   Cell* c = NULL ) const;}
-{Computes the set \ccc{cells} of all cells incident to \ccc{v}. If
-\ccVar.\ccc{dimension()} $<3$ then the set is empty. The optional
-argument \ccc{c} will be used for initializing the set.
-\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)} and
-the optional argument \ccc{c} is a cell having \ccc{v} as a vertex.}}
+\ccMethod{template <class OutputIterator>
+          void incident_cells (Vertex_handle v, OutputIterator cells) const;}
+{Copies the \ccc{Cell_handle}s of all cells incident to \ccc{v} to the output
+iterator \ccc{cells}.  If \ccVar.\ccc{dimension()} $<3$, then do nothing.
+\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}
 
-\ccMethod{void incident_vertices(Vertex* v, 
-		set<Vertex*> & vertices, Cell* c = NULL ) const;}
-{Computes the set \ccc{vertices} of all vertices incident to \ccc{v}. If
-\ccVar.\ccc{number_of_vertices()} $<2$ then the set is empty. The optional
-argument \ccc{c} will be used for finding a first vertex of the set.
-\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)} and
-the optional argument \ccc{c} is a cell having \ccc{v} as a vertex.}}
+\ccMethod{template <class OutputIterator>
+          void incident_vertices (Vertex_handle v, OutputIterator vertices) const;}
+{Copies the \ccc{Vertex_handle}s of all vertices incident to \ccc{v} to the
+output iterator \ccc{vertices}.  If \ccVar.\ccc{dimension()} $<2$, then do
+nothing.  \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}
 
 \begin{ccAdvanced}
 \ccHeading{Checking}

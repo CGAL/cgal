@@ -105,18 +105,13 @@ _test_circulator( const Triangulation &T )
 //       } while (cc != cc0);
 //     }
 
-  std::set<Cell_handle > cells ;
-  std::set<Vertex_handle > vertices ;
+  std::vector<Cell_handle> cells;
+  std::vector<Vertex_handle > vertices;
 
-  Vertex_iterator vit;
-  //  for (vit=T.vertices_begin(); vit!=T.vertices_end() ; vit++)
-  {
-    vit=T.vertices_begin();
-    T.incident_cells(&*vit,cells);
-    T.incident_cells(&*vit,cells,vit->cell());
-    T.incident_vertices(&*vit, vertices);
-    T.incident_vertices(&*vit, vertices,vit->cell());
-  }
+  Vertex_handle vh = T.vertices_begin()->handle();
+
+  T.incident_cells(vh,std::back_inserter(cells));
+  T.incident_vertices(vh, std::back_inserter(vertices));
 
    Facet_circulator fc, fc0;
    int i,j;
