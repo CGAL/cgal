@@ -1,4 +1,4 @@
-Version 3.8 (?? ??? 00)
+Version 3.8 (15 Juin 00)
 - Fixed typo in Cartesian.h : Transform_2 -> Transform_3 [syl].
 
 Version 3.7 (19 May 00)
