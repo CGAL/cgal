@@ -25,12 +25,15 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-
+#include <CGAL/Constrained_triangulation_plus_2.h>
+#include <CGAL/Partition_traits_2.h>
 
 // TODO: check if some of those includes shouldn't be in the .C file
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_get_segment.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
+#include <CGAL/IO/Qt_widget_get_polygon.h>
+
 
 #include <qobject.h>
 #include <qtoolbutton.h>
@@ -38,15 +41,25 @@
 #include <qmainwindow.h>
 #include <qbuttongroup.h>
 
-typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>  Rp;
-typedef CGAL::Constrained_Delaunay_triangulation_2<Rp>  CDT;
-typedef CDT::Constraint     Constraint;
+typedef double                              Coord_type;
+typedef CGAL::Cartesian<Coord_type>         Rp;
+typedef CGAL::Exact_predicates_tag          Itag;
+typedef CGAL::Triangulation_vertex_base_2<Rp>  Vb;
+typedef CGAL::Constrained_triangulation_face_base_2<Rp>
+                                                Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb, Fb>
+                                                TDS;
+typedef CGAL::Exact_predicates_tag               Itag;
 
+typedef CGAL::Constrained_Delaunay_triangulation_2<Rp, TDS, Itag>
+                                                CT;
+typedef CGAL::Constrained_triangulation_plus_2<CT>      CDT;
+typedef CDT::Constraint     Constraint;
+typedef CGAL::Partition_traits_2<Rp>        Traits;
+typedef Traits::Polygon_2                   Polygon;
 
 
 namespace CGAL {
-
 class Tools_toolbar : public QObject
 {
 	Q_OBJECT
@@ -75,6 +88,7 @@ private:
 	
   CGAL::Qt_widget_get_segment<Rp>   segmentbut;
   CGAL::Qt_widget_get_point<Rp>	    pointbut;
+  CGAL::Qt_widget_get_polygon<Polygon>   polygonbut;
 };//end class
 
 };//end namespace

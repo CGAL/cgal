@@ -45,20 +45,25 @@ namespace CGAL {
     window->statusBar();
 
     widget->attach(showT);    
+    widget->attach(showC);
     widget->attach(showP);
     widget->attach(showMC);
-    widget->attach(showC);
+    
 
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 		
     but[0] = new QToolButton(maintoolbar, "triangulation");
     but[0]->setPixmap(QPixmap( (const char**)triangulation_xpm ));
+    but[0]->setTextLabel("Show Triangulation");
     but[1] = new QToolButton(maintoolbar, "constraineds");
     but[1]->setPixmap(QPixmap( (const char**)constrained_xpm ));
+    but[1]->setTextLabel("Show Constraineds");
     but[2] = new QToolButton(maintoolbar, "vertices");
     but[2]->setPixmap(QPixmap( (const char**)points_xpm ));
+    but[2]->setTextLabel("Show Vertices");
     but[3] = new QToolButton(maintoolbar, "mouse_coord");
     but[3]->setPixmap(QPixmap( (const char**)mouse_coord_xpm ));
+    but[3]->setTextLabel("Mouse Coordinates");
 		
 
     nr_of_buttons = 4;
@@ -75,11 +80,11 @@ namespace CGAL {
     connect(but[0], SIGNAL(stateChanged(int)),
         showT, SLOT(stateChanged(int)));
     connect(but[1], SIGNAL(stateChanged(int)),
-        showP, SLOT(stateChanged(int)));
-    connect(but[2], SIGNAL(stateChanged(int)),
-        showMC, SLOT(stateChanged(int)));
-    connect(but[3], SIGNAL(stateChanged(int)),
         showC, SLOT(stateChanged(int)));
+    connect(but[2], SIGNAL(stateChanged(int)),
+        showP, SLOT(stateChanged(int)));
+    connect(but[3], SIGNAL(stateChanged(int)),
+        showMC, SLOT(stateChanged(int)));
   }
   
 }//end namespace

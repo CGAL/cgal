@@ -24,6 +24,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
@@ -40,7 +41,16 @@
 
 typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>  Rp;
-typedef CGAL::Constrained_Delaunay_triangulation_2<Rp>  CDT;
+typedef CGAL::Triangulation_vertex_base_2<Rp>  Vb;
+typedef CGAL::Constrained_triangulation_face_base_2<Rp>
+                                                Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb, Fb>
+                                                TDS;
+typedef CGAL::Exact_predicates_tag               Itag;
+
+typedef CGAL::Constrained_Delaunay_triangulation_2<Rp, TDS, Itag>
+                                                CT;
+typedef CGAL::Constrained_triangulation_plus_2<CT>      CDT;
 typedef CDT::Constraint     Constraint;
 
 

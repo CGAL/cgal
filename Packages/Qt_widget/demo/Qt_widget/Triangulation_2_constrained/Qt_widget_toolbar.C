@@ -27,6 +27,7 @@
 #include <CGAL/IO/pixmaps/point.xpm>
 #include <CGAL/IO/pixmaps/arrow.xpm>
 #include <CGAL/IO/pixmaps/line.xpm>
+#include <CGAL/IO/pixmaps/polygon.xpm>
 
 
 namespace CGAL {
@@ -37,9 +38,11 @@ namespace CGAL {
     //set the widget
     widget = w;
     widget->attach(&segmentbut);
-    widget->attach(&pointbut);    
+    widget->attach(&pointbut);
+    widget->attach(&polygonbut);
     pointbut.deactivate();
     segmentbut.deactivate();
+    polygonbut.deactivate();
 
 #if QT_VERSION < 300
 		// for Qt 2.3 and before
@@ -54,10 +57,15 @@ namespace CGAL {
   but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
   but[1] = new QToolButton(maintoolbar, "notool");
   but[1]->setPixmap(QPixmap( (const char**)point_xpm ));
+  but[1]->setTextLabel("Get Point");
   but[2] = new QToolButton(maintoolbar, "notool");
   but[2]->setPixmap(QPixmap( (const char**)line_xpm ));
+  but[2]->setTextLabel("Get Segment");
+  but[3] = new QToolButton(maintoolbar, "notool");
+  but[3]->setPixmap(QPixmap( (const char**)polygon_xpm ));
+  but[3]->setTextLabel("Get Polygon");
   		
-  nr_of_buttons = 3;
+  nr_of_buttons = 4;
 
   button_group = new QButtonGroup(0, "exclusive");
   for (int i=0; i<nr_of_buttons; i++) {
@@ -69,6 +77,8 @@ namespace CGAL {
         &pointbut, SLOT(stateChanged(int)));
   connect(but[2], SIGNAL(stateChanged(int)),
         &segmentbut, SLOT(stateChanged(int)));
+  connect(but[3], SIGNAL(stateChanged(int)),
+        &polygonbut, SLOT(stateChanged(int)));
   
 };
 

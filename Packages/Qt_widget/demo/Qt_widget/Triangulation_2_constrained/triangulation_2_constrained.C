@@ -43,6 +43,8 @@ int main(int, char*)
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h> 
+#include <CGAL/Partition_traits_2.h>
 
 #include <CGAL/point_generators_2.h>
 
@@ -64,16 +66,30 @@ int main(int, char*)
 #include <qtimer.h>
 
 typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type> Rep;
+typedef CGAL::Cartesian<Coord_type>             Rep;
 
-typedef CGAL::Point_2<Rep>          Point;
-typedef CGAL::Segment_2<Rep>        Segment;
-typedef CGAL::Line_2<Rep>           Line;
-typedef CGAL::Triangle_2<Rep>       Triangle;
-typedef CGAL::Circle_2<Rep>         Circle;
+typedef CGAL::Point_2<Rep>                      Point;
+typedef CGAL::Segment_2<Rep>                    Segment;
+typedef CGAL::Line_2<Rep>                       Line;
+typedef CGAL::Triangle_2<Rep>                   Triangle;
+typedef CGAL::Circle_2<Rep>                     Circle;
 
-typedef CGAL::Constrained_Delaunay_triangulation_2<Rep>  CDT;
-typedef CDT::Constraint     Constraint;
+typedef CGAL::Triangulation_vertex_base_2<Rep>  Vb;
+typedef CGAL::Constrained_triangulation_face_base_2<Rep>
+                                                Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb, Fb>
+                                                TDS;
+typedef CGAL::Exact_predicates_tag              Itag;
+
+typedef CGAL::Constrained_Delaunay_triangulation_2<Rep, TDS, Itag>
+                                                CT;
+typedef CGAL::Constrained_triangulation_plus_2<CT>
+                                                CDT;
+typedef CDT::Constraint                         Constraint;
+
+typedef CGAL::Partition_traits_2<Rep>           Traits;
+typedef Traits::Polygon_2                       Polygon_2;
+
 
 const QString my_title_string("Constrained Triangulation Demo with"
 			      " CGAL Qt_widget");
@@ -179,7 +195,7 @@ private slots:
   {
     Point p;
     Segment s;
-    Line l;
+    Polygon_2 poly;
     if (CGAL::assign(s,obj))
     {
       ct.insert(s.source(), s.target());
@@ -187,7 +203,23 @@ private slots:
     } else if(CGAL::assign(p,obj)) {
       ct.insert(p);
       something_changed();
-    } 
+    } else if (CGAL::assign(poly, obj)) {
+      typedef Polygon_2::Vertex_const_iterator        VI;
+      VI i=poly.vertices_begin();
+      Point lp(i->x(), i->y()), lp1(lp);
+      if(i!=poly.vertices_end()) {
+        i++;
+        for(;i!=poly.vertices_end();i++){
+          Point p(i->x(), i->y());
+          Segment s(p, lp);
+          ct.insert(s.source(), s.target());
+          lp = p;
+        }
+      }
+      Segment s(lp, lp1);
+      ct.insert(s.source(), s.target());
+      something_changed();
+    }
   }
 
   void about()
