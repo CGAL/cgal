@@ -1,3 +1,11 @@
+// Copyright (c) 2002  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of an example program for CGAL.  This example
+// program may be used, distributed and modified without limitation.
+//
+//
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Conforming_Delaunay_triangulation_2.h>
