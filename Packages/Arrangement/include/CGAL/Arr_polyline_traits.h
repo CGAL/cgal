@@ -59,6 +59,11 @@ public:
   typedef X_curve_2                     X_curve;
   typedef Curve_2                       Curve;
 
+protected:
+  typedef typename Kernel::Segment_2    Segment_2;
+
+public:
+
   typedef enum
   {
     UNDER_CURVE = -1,
@@ -559,10 +564,9 @@ public:
       //check if intersection exists and is lex larger
       Object result;
       Point_2 i_pt;
-      Segment_2<Kernel> i_seg;
+      Segment_2 i_seg;
       
-      result = intersection(Segment_2<Kernel>(*i1s,*i1t),
-			    Segment_2<Kernel>(*i2s,*i2t));
+      result = intersection(Segment_2(*i1s, *i1t), Segment_2(*i2s, *i2t));
       if (assign(i_pt,result)) {
         //check if intersection point to the right of pt
         if (lexicographically_xy_larger (i_pt,pt)) 
@@ -599,8 +603,7 @@ public:
 
     while (1) {
       //check for intersection of the segments
-      if (do_intersect(Segment_2<Kernel>(*i1s,*i1t),
-		       Segment_2<Kernel>(*i2s,*i2t)))
+      if (do_intersect(Segment_2(*i1s, *i1t), Segment_2(*i2s, *i2t)))
 	{
 	  return true;
 	}
@@ -679,10 +682,10 @@ public:
       
     if (number_to_left==2) {
       //check if intersection exists and is lex larger
-      Object result=intersection(Segment_2<Kernel>(*i1s,*i1t),
-				 Segment_2<Kernel>(*i2s,*i2t));
+      Object result =
+        intersection(Segment_2(*i1s, *i1t), Segment_2(*i2s, *i2t));
       Point_2 i_pt;
-      Segment_2<Kernel> i_seg;
+      Segment_2 i_seg;
       if (assign(i_pt,result)) {
 	//check if intersection point to the right of pt
 	if (lexicographically_xy_larger (i_pt,pt)) {
@@ -718,13 +721,13 @@ public:
             // shoot will return a segment instead of point.
             Point_2 ap1( pt.x(), i_seg.source().y() );
             Point_2 ap2( pt.x(), i_seg.target().y() );
-            Segment_2<Kernel> vertical_pt_x_base( ap1, ap2 );
+            Segment_2 vertical_pt_x_base( ap1, ap2 );
             Object i_obj = intersection( vertical_pt_x_base, i_seg );
             //assign( p1, i_obj ); // Causes a bug if the result is a segment.
             
             // Bug fix: Eti.
             Point_2 tmp_p1;
-            Segment_2<Kernel> i_vertical;
+            Segment_2 i_vertical;
             if ( assign( tmp_p1, i_obj ))
               p1=tmp_p1;
             else if ( assign(i_vertical, i_obj))
@@ -756,11 +759,10 @@ public:
         
       Object result;
         
-      result = intersection(Segment_2<Kernel>(*i1s,*i1t),
-			    Segment_2<Kernel>(*i2s,*i2t));
+      result = intersection(Segment_2(*i1s, *i1t), Segment_2(*i2s, *i2t));
         
       Point_2 i_pt;
-      Segment_2<Kernel> i_seg;
+      Segment_2 i_seg;
       if (assign(i_pt,result)) {
           
 #ifndef ARR_USES_LEDA_RATIONAL  //normalize if we are with rational numbers
@@ -790,13 +792,13 @@ public:
 	    // point to p1.
             Point_2 ap1( pt.x(), i_seg.source().y() );
             Point_2 ap2( pt.x(), i_seg.target().y() );
-            Segment_2<Kernel> vertical_pt_x_base( ap1, ap2 );
+            Segment_2 vertical_pt_x_base( ap1, ap2 );
             Object i_obj = intersection( vertical_pt_x_base, i_seg );
             //assign( p1, i_obj ); // Causes a bug if the result is a segment.
 
             // Bug fix: Eti.
             Point_2 tmp_p1;
-            Segment_2<Kernel> i_vertical;
+            Segment_2 i_vertical;
             if ( assign( tmp_p1, i_obj ))
               p1=tmp_p1;
             else if ( assign(i_vertical, i_obj))
@@ -832,19 +834,17 @@ public:
 
 	// check for overlap after x point
 	Object result;
-	Segment_2<Kernel> i_seg;
+	Segment_2 i_seg;
 
 	if ( is_same( p1, *i1t) && is_same( p1, *i2t)) {
-	  result = intersection(Segment_2<Kernel>(*s1, *t1), 
-				Segment_2<Kernel>(*s2, *t2));
+	  result = intersection(Segment_2(*s1, *t1), Segment_2(*s2, *t2));
 	}
 	else if ( is_same( p1, *i1t)) {
-	  result = intersection(Segment_2<Kernel>(*s1, *t1),
-				Segment_2<Kernel>(*i2s, *i2t));
+	  result = intersection(Segment_2(*s1, *t1), Segment_2(*i2s, *i2t));
 	}
 	else if ( is_same( p1, *i2t)) {
-	  result = intersection(Segment_2<Kernel>(*i1s, *i1t),
-				Segment_2<Kernel>(*s2, *t2));
+	  result = intersection(Segment_2(*i1s, *i1t),
+                                Segment_2(*s2, *t2));
 	}
 	if (assign(i_seg,result)) {
 	  // no need to check whether intersection seg to the right of pt, 
@@ -880,8 +880,8 @@ public:
 
     //now i1s holds the source vertex and i1t holds the target
     Point_2 i_pt;
-    Segment_2<Kernel> i_seg;
-    Segment_2<Kernel> s1(*i1s,*i1t),s2(*i2s,*i2t);
+    Segment_2 i_seg;
+    Segment_2 s1(*i1s,*i1t),s2(*i2s,*i2t);
     Object res=intersection(s1,s2);
     
     if (assign(i_seg,res)) {
@@ -901,8 +901,8 @@ public:
     //NOW we can start sweeping the chains
 
     while (1) {
-      Segment_2<Kernel> i_seg;
-      Segment_2<Kernel> s1(*i1s,*i1t),s2(*i2s,*i2t);
+      Segment_2 i_seg;
+      Segment_2 s1(*i1s,*i1t),s2(*i2s,*i2t);
       res=intersection(s1,s2);
       if (assign(i_seg,res)) {
 	if (!is_same(i_seg.source(),i_seg.target()))
