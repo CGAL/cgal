@@ -1,3 +1,6 @@
+24 September 2004 Andreas Fabri
+- fixed the testsuite
+
 26 March 2004 Radu Ursu
 -made doc work with the current implementation of the Manual tools
 
