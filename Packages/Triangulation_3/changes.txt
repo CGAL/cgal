@@ -1,3 +1,11 @@
+7 September 2004 Sylvain Pion
+- Regular_triangulation_3 now fetches "Weighted_point_3" instead of
+  "Weighted_point" from the traits (which still exports both for backward
+  compat reasons).
+- Traits functors fixes :
+  - added Arity typedef and result_type
+  - make functors const, and pass references instead of values.
+
 31 August 2004 Monique Teillaud
 - minor doc fixes (display authors)
 

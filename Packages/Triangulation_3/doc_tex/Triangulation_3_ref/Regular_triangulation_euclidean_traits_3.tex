@@ -20,7 +20,7 @@
   
 The class \ccRefName\ is designed as a default traits class for the
 class \ccc{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>}. 
-It provides \ccc{Weighted_point}, a class for weighted points, which derives
+It provides \ccc{Weighted_point_3}, a class for weighted points, which derives
 from the three dimensional point class \ccc{R::Point_3}.
 
 The first argument \ccc{R} must be a model of the \ccc{Kernel} concept. 
@@ -37,12 +37,12 @@ optional: if is it not provided, \ccc{R::RT} will be used.
 \ccInheritsFrom{\ccc{R}}
 
 \ccTypes
-\ccThree{typedef R::Point}{Weighted_point;}{}
+\ccThree{typedef R::Point}{Weighted_point_3;}{}
 
 \ccTypedef{typedef R::Point_3 Bare_point;}
 {The type for point $p$ of a weighted point ${p}^{(w)}=(p,w_p)$.}
 \ccGlue
-\ccTypedef{typedef Weighted_point <Bare_point, Weight> Weighted_point;}{}
+\ccTypedef{typedef Weighted_point <Bare_point, Weight> Weighted_point_3;}{}
 
 %% \ccExample
 

@@ -66,7 +66,7 @@ public:
   typedef typename Tr_Base::Finite_edges_iterator    Finite_edges_iterator;
   typedef typename Tr_Base::All_cells_iterator       All_cells_iterator;
 
-  typedef typename Gt::Weighted_point              Weighted_point;
+  typedef typename Gt::Weighted_point_3            Weighted_point;
   typedef typename Gt::Bare_point                  Bare_point;
   typedef typename Gt::Segment_3                   Segment;
   typedef typename Gt::Triangle_3                  Triangle;
