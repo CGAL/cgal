@@ -1,3 +1,6 @@
+27 August 2004 Sylvain Pion
+- Put myself as maintainer instead of Julia.
+
 24 August 2004 Andreas Fabri
 - changes in doc_tex for pdflatex
 
