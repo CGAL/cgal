@@ -191,7 +191,7 @@ template<class T>
   void calls_for_tents(typename Point_data_set_of_y::iterator iter1, typename Point_data_set_of_y::iterator iter2);
   void calls_for_tents(typename Point_data_set_of_y::iterator iter1, typename Point_data_set_of_y::iterator iter2,Point_data_set_of_y::iterator iter3);
   void phase_2_update_y_sorted_list();
-  void phase_3_check_for_larger(typename Point_data_set_of_y::iterator iter,typename Point_data_set_of_y::iterator iter1,typename Point_data_set_of_y::iterator iter2,typename Point_data_set_of_y::iterator iter3,bool first_iter_is_right,bool second_iter_is_right,bool third_iter_is_right);
+  void phase_3_check_for_larger(typename Point_data_set_of_y::iterator iter,typename Point_data_set_of_y::iterator iter1,typename Point_data_set_of_y::iterator iter2,typename Point_data_set_of_y::iterator iter3,bool first_iter_is_right,bool second_iter_is_right);
   void empty_tents();
   void update();
   void init(const Point& bl, const Point& tr);
@@ -850,8 +850,7 @@ Largest_empty_iso_rectangle_2<T>::phase_3_check_for_larger(
   typename Point_data_set_of_y::iterator iter2,
   typename Point_data_set_of_y::iterator iter3,
   bool first_iter_is_right,
-  bool second_iter_is_right,
-  bool third_iter_is_right)
+  bool second_iter_is_right)
 {
   if(first_iter_is_right) {
     if(!second_iter_is_right)
@@ -951,8 +950,7 @@ Largest_empty_iso_rectangle_2<T>::phase_3()
 			       iter2,
 			       iter3,
 			       first_iter_is_right,
-			       second_iter_is_right,
-			       third_iter_is_right);
+			       second_iter_is_right);
       calls_for_tents(iter1, iter2, iter3);
       determine_first_two_iters(iter1,
 				iter2,
