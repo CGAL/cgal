@@ -1146,6 +1146,12 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 		    yylval.string.len  = 3;
 		    return STRING;
                  }
+<INITIAL,MMODE,NestingMode,ccStyleMode>[\\]cdot/{noletter}     {
+		    skipspaces();
+	            yylval.string.text = "* ";
+		    yylval.string.len  = 2;
+		    return STRING;
+                 }
 <MMODE>[\\]le[q]?/{noletter}          {
 		    skipspaces();
 	            yylval.string.text = "&lt;=";  // &le;  not yet supported
