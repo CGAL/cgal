@@ -1,3 +1,6 @@
+9 November 2004 Sylvain Pion
+- Disable test_regular_as_delaunay_3 since remove is not ready yet.
+
 7 November 2004 Sylvain Pion
 - Regular::insert() : discard point when same xyz coordinates and
   same weight as an existing vertex.
