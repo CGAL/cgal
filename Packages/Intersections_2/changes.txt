@@ -1,4 +1,7 @@
-17 April Andreas Fabri
+14 May 2004 Sylvain Pion
+- sign_of_cross() : simplify code and remove warning.
+
+17 April 2004 Andreas Fabri
 - Global functions call functor
 
 29 March 2004 Radu Ursu

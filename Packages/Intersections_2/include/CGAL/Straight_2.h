@@ -260,27 +260,14 @@ bool Straight_2_<K>::operator==(const Straight_2_<K>& s) const
 
 
 
-
-
 template <class K>
 int
 sign_of_cross(typename K::Direction_2 const &dir1,
 	      typename K::Direction_2 const &dir2,
 	      const K&)
 {
-    int result;
-    switch(CGALi::orientation(dir1.to_vector(), dir2.to_vector(), K()))  {
-    case COUNTERCLOCKWISE:
-        result = 1;
-        break;
-    case CLOCKWISE:
-        result = -1;
-        break;
-    case COLLINEAR:
-        result = 0;
-        break;
-    }
-    return result;
+    return static_cast<int>(CGALi::orientation(dir1.to_vector(),
+                                               dir2.to_vector(), K()));
 }
 
 template <class K>
