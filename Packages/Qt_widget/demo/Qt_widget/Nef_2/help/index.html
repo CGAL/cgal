@@ -15,18 +15,42 @@
       <LI><A href="#close_window">Close the current window</A></LI>
       <LI><A href="#quit">Quit the application</A></LI>      
     </UL><br>
-    Editing
+    Nef_2 visualisation using lists
+    <UL>
+      <LI><A href="#sel">Select nef for visualisation</A></LI>
+      <LI><A href="#unsel">Toggle ON/OFF nef visualisation</A></LI>
+    </UL><br>
+
+    Building and erasing nefs
     <UL>      
-      <LI><A href="#gen_tr">Generate Delaunay triangulation</A></LI>
-      <LI><A href="#insert_vertex">Insert a new vertex</A></LI>
-      <LI><A href="#delete_vertex">Delete existing vertex</A></LI>
-      <LI><A href="#move_vertex">Move existing vertex</A></LI>
-      <LI><A href="#line_walk">Input a line to display line_walk</A></LI>
-    </UL>
+      <LI><A href="#build_nef_p">Create a Nef polyhedron consisting of one 
+	  point</A></LI>
+      <LI><A href="#build_nef_l">Create a Nef polyhedron consisting of 
+	  a halfplane</A></LI>
+      <LI><A href="#build_nef_poly">Create a Nef polyhedron from a simple 
+	  polygon</A></LI>
+      <LI><A href="#erase_nef">Erase an existing Nef polyhedron</A></LI>
+    </UL><br>
+
+    Constructive Operations
+    <UL>
+      <LI><A href="#op_intersection">Intersection</A></LI>
+      <LI><A href="#op_uninon">Union</A></LI>
+      <LI><A href="#op_difference">Difference</A></LI>
+      <LI><A href="#op_symmetric_difference">Symmetric Difference</A></LI>
+      <LI><A href="#op_complement">Complement</A></LI>
+      <LI><A href="#op_interior">Interior</A></LI>
+      <LI><A href="#op_closure">Closure</A></LI>
+      <LI><A href="#op_boundary">Boundary</A></LI>
+      <LI><A href="#op_regularization">Regularization</A></LI>
+    </UL><br>
+
     Persistance
     <UL>
-      <LI><A href="#save_triangulation">Save the current triangulation</A></LI>
-      <LI><A href="#load_triangulation">Load an existing triangulation</A></LI>
+      <LI><A href="#save_nef">Save the current Nef polyhedron</A></LI>
+      <LI><A href="#load_nef">Load an existing Nef polyhedron</A></LI>
+      <LI><A href="#load_poly">Load an existing simple polygon and construct 
+	  the Nef polyhedron from this polygon</A></LI>
     </UL>
 
     <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
@@ -41,7 +65,7 @@
     <P align="left"><STRONG>
 	<FONT color="#3300cc" size="3">Reset application</FONT></STRONG></P>
     Press Ctrl+N combination keys or go to File menu and choose "New". 
-    The triangulation will be erased, the window's viewport will be set 
+    All nefs constructed will be erased, the window's visible area will be set 
     to default. (-1, 1, -1, 1)
 
     <P align="left"><STRONG><FONT color="#3300cc" size="4">
@@ -51,8 +75,8 @@
     <P align="left"><STRONG>
 	<FONT color="#3300cc" size="3">Create a new window</FONT></STRONG></P>
     Press Ctrl+W combination keys or go to File menu and choose "New Window". 
-    A new window will appear, modifying the viewport to make the 
-    triangulation fit in the new window.
+    A new window will appear, the window's visible area will be set 
+    to default. (-1, 1, -1, 1)
 
     <P align="left"><STRONG><FONT color="#3300cc" size="4">
 	  <A name="print"></A></FONT></STRONG>&nbsp;</P>
@@ -62,7 +86,8 @@
 	<FONT color="#3300cc" size="3">Print</FONT></STRONG></P>
     Press Ctrl+P combination keys or go to File menu and choose "Print". 
     The visible area on the screen will be outputed to the print device 
-    of your choice.
+    of your choice. There are printers that does not support the raster 
+    opertions. I have used XOR to achieve the transparency effect.
 
 
     <P align="left"><STRONG><FONT color="#3300cc" size="4">
@@ -87,121 +112,272 @@
     When you quit the application, all the windows you have created will 
     be destroyed.
 
-
     <P align="left"><STRONG><FONT color="#3300cc" size="4">
-	  <A name="gen_tr"></A></FONT></STRONG>&nbsp;</P>
+	  <A name="sel"></A></FONT></STRONG>&nbsp;</P>
     <P align="left"><STRONG><FONT color="#3300cc" size="4">
 	</FONT></STRONG>&nbsp;</P>
     <P align="left"><STRONG>
-	<FONT color="#3300cc" size="3">Generate Delaunay triangulation</FONT>
+	<FONT color="#3300cc" size="3">Select Nef for visualisation</FONT>
       </STRONG></P>
-    To generate a Delaunay triangulation, go to Edit menu and choose 
-    "Generate Triangulation" button, or press Ctrl+G combination keys. 
-    Each time you generate the triangulation, the old one will be erased.
+    You can visualise at most two nef polyhedrons at one time. There are two 
+    lists that correspond to each nef you can display. The left one 
+    corresponds to the blue nef, the right one correspons to the gray one. To 
+    select a nef polyhedron from the list just press the left mouse button 
+    over the item's text. You should see the result on the widget, if the 
+    polyhedron corresponds to the current visible area. The default one 
+    is (-1, 1, -1, 1).
+    You should notice that you can see both nef polyhedrons even if there are 
+    overlapping parts. The gray one is always on top.
 
     <P align="left"><STRONG><FONT color="#3300cc" size="4">
-	  <A name="insert_vertex"></A></FONT></STRONG>&nbsp;</P>
+	  <A name="unsel"></A></FONT></STRONG>&nbsp;</P>
     <P align="left"><STRONG><FONT color="#3300cc" size="4">
 	</FONT></STRONG>&nbsp;</P>
     <P align="left"><STRONG>
-	<FONT color="#3300cc" size="3">Insert a new vertex</FONT></STRONG></P>
-    <IMG SRC="help/input_point_layer.gif"></IMG>
+	<FONT color="#3300cc" size="3">Toggle ON/OFF nef visualisation</FONT>
+      </STRONG></P>
+    Selecting and unselecting nef items from the nef_2 lists, you can toggle 
+    ON or OFF the visualisation of nefs already created. To unselect an item 
+    just press once again on it using the left mouse button.
+
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="build_nef_p"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	</FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Create a Nef polyhedron consisting of 
+	  one point</FONT>
+      </STRONG></P>
     Left click on the "Input point" layer. Be sure there is no layer 
     activated in standard toolbar that eat events. To be sure, press the 
     arrow button situated on the standard toolbar. Left Click anywhere on the 
-    application's drawing area (the black rectangle) to insert the vertex. 
-    The vertex is inserted in the triangulation. To see the conflict zone 
-    keep the left mouse button pressed. The vertex is inserted when you 
-    release the button.<br>
-    <table border=0><tr><td><IMG SRC="help/conflict_zone.gif" HEIGHT=70></IMG>
-	</td><td><IMG SRC="help/conflict_zone_after.gif" HEIGHT=70></IMG></td>
-      </tr></table>
-    To insert more than one vertex, keep clicking on the rectangle without 
-    deactivating the "Input point" layer. To deactivate this layer, just 
-    press the arrow button situated on the same toolbar.
+    application's drawing area (the black rectangle) to create the new nef_2.
+    This one will be also added at the end of both nef_2 lists. You will see 
+    only the new created nef on the screen, and the lists will reflect the 
+    changes.
 
     <P align="left"><STRONG><FONT color="#3300cc" size="4">
-	  <A name="delete_vertex"></A></FONT></STRONG>&nbsp;</P>
-    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
-      </STRONG>&nbsp;</P>
-    <P align="left"><STRONG>
-	<FONT color="#3300cc" size="3">Delete an existing vertex</FONT>
-      </STRONG></P>
-    <IMG SRC="help/movedelete_point_layer.gif"></IMG>
-    (1)Left click on the "Move/Delete vertex" layer. If the "Input point" 
-    layer was active, it will deactivate itself. (2)Right click on the 
-    drawing area (the black rectangle) near an existing vertex. A popup menu 
-    will apear and the selected vertex will be highlighted. If the popup 
-    doesn't appear, press the arrow button on the "standard toolbar" to 
-    deactivate all layers that could eat the events. (3)Choose "Delete". 
-    The vertex will be removed from the triangulation. To delete more than 
-    one vertex, repeat the process from (2) to (3). To deactivate this layer, 
-    just press the arrow button situated on the same toolbar.
-
+	  <A name="build_nef_l"></A></FONT></STRONG>&nbsp;</P>
     <P align="left"><STRONG><FONT color="#3300cc" size="4">
-	  <A name="move_vertex"></A></FONT></STRONG>&nbsp;</P>
-    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
-      </STRONG>&nbsp;</P>
+	</FONT></STRONG>&nbsp;</P>
     <P align="left"><STRONG>
-	<FONT color="#3300cc" size="3">Move existing vertex</FONT></STRONG></P>
-    <IMG SRC="help/movedelete_point_layer.gif"></IMG>
-    (1)Left click on the "Move/Delete vertex" layer. If the "Input point" 
-    or "Input line" layer was active, it will deactivate itself. (2)Right 
-    click on the drawing area (the black rectangle) near an existing vertex. 
-    A popup menu will apear and the selected vertex will be highlighted. 
-    (3)Choose "Move". From this moment, the vertex will move as you move the 
-    mouse. The triangulation will reflect the changes. (4)Left click on the 
-    drawing area will position the vertex at the mouse coordinates. You may 
-    repeat the process from the step (2) to (4). To deactivate this layer, 
-    just press the arrow button situated on the same toolbar.
-
-    <P align="left"><STRONG><FONT color="#3300cc" size="4">
-	  <A name="line_walk"></A></FONT></STRONG>&nbsp;</P>
-    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
-      </STRONG>&nbsp;</P>
-    <P align="left"><STRONG>
-	<FONT color="#3300cc" size="3">Input line to display the line_walk
-	</FONT></STRONG></P>
-    <IMG SRC="help/input_line_layer.gif"></IMG>
-    Left Click on the "Input Line" layer. If the "Input point" or 
-    "Move/Delete vertex" layer was active, it will deactivate itself. Lef 
-    click on the drawing area to define the first point of the line. Move the 
-    mouse where you want the second point be situated. As you move the mouse 
-    you will see a line defined by the first point and the point situated at 
-    mouse coordinates. Click the left mouse button. The final line will be 
-    displayed and you can see the result of the line walk alghoritm, the 
-    triangles intersected by this line will be highlighted on the screen.
+	<FONT color="#3300cc" size="3">Create a Nef polyhedron consisting of 
+	  a halfplane</FONT></STRONG></P>
+    Left click on the "Input line" layer. Be sure there is no layer 
+    activated in standard toolbar that eat events. To be sure, press the 
+    arrow button situated on the standard toolbar. Left Click anywhere on the 
+    application's drawing area (the black rectangle) to fix the first point 
+    that generates the line. Use the mouse to position the second point. Once 
+    you have determined the second point, press the left mouse button once 
+    again. This will create a Nef consisting of a halfplane determined by the 
+    oriented line, the line being also included.
     
 
+
     <P align="left"><STRONG><FONT color="#3300cc" size="4">
-	  <A name="save_triangulation"></A></FONT></STRONG>&nbsp;</P>
+	  <A name="build_nef_poly"></A></FONT></STRONG>&nbsp;</P>
     <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
       </STRONG>&nbsp;</P>
     <P align="left"><STRONG>
-	<FONT color="#3300cc" size="3">Save the current triangulation</FONT>
+	<FONT color="#3300cc" size="3">Create a Nef polyhedron from a simple 
+	  polygon</FONT>
+      </STRONG></P>
+    Left Click on the "Input Simple Polygon" layer. Be sure there is no layer 
+    activated in the standard toolbar that eat events. To be sure, press the 
+    arrow button situated on the standard toolbar.  Left Click anywhere on the 
+    application's drawing area (the black rectangle) to insert points in the 
+    polygon. You may press "Esc" key if you want to erase the last point. 
+    Once you have completed the polygon press the right click to close the 
+    polygon. This will create a Nef polyhedron from the simple polygon, the 
+    boundary line being included.    
+
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="erase_nef"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Erase an existing Nef polyhedron</FONT>
+      </STRONG></P>
+    To erase an existing Nef polyhedron, you have to select one from the list, 
+    it does not matter which one, the left or the right, and to press delete 
+    key. This action will remove the nef selected from the lists of the 
+    current window and from all the other lists opened in different windows. 
+    This happens in case you are working with multiple windows.
+    There is one problem that I could not get rid of. If you are working with 
+    multiple windows and remove one nef that is currently displayed in some 
+    other window, that window will continue to display the removed nef. I 
+    will try to remove this drawback in the near future. The workaround could 
+    be to reselect the desired nefs in that window before doing more 
+    operations.
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="op_intersection"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Intersection</FONT>
+      </STRONG></P>
+    After selecting the blue Nef from the left list and the gray Nef from the 
+    right list, press the "INTERSECTION" button on the operations toolbar. 
+    This will compute the INTERSECTION between those two nefs. The exact 
+    operation is AND(BLUE, GRAY). You will see the new Nef added in both top 
+    lists.
+
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="op_union"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Union</FONT>
+      </STRONG></P>
+    After selecting the blue Nef from the left list and the gray Nef from the 
+    right list, press the "UNION" button on the operations toolbar. 
+    This will compute the UNION between those two nefs. The exact operation is 
+    OR(BLUE ,GRAY). You will see the new Nef added in both top lists.
+
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="op_difference"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Difference</FONT>
+      </STRONG></P>
+    After selecting the blue Nef from the left list and the gray Nef from the 
+    right list, press the "DIFFERENCE" button on the operations toolbar. 
+    This will compute the DIFFERENCE between those two nefs. The exact 
+    operation is DIF(BLUE, GRAY). You will see the new Nef added in both top 
+    lists.
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="op_symmetric_difference"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Symmetric Difference</FONT>
+      </STRONG></P>
+    After selecting the blue Nef from the left list and the gray Nef from the 
+    right list, press the "SYMMETRIC DIFFERENCE" button on the operations 
+    toolbar. 
+    This will compute the SYMMETRIC DIFFERENCE between those two nefs. The 
+    exact operation is SYM_DIF(BLUE, GRAY) = OR(DIF(BLUE, GRAY), 
+    DIF(GRAY, BLUE)). You will see the new Nef added in both top 
+    lists.
+
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="op_complement"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Complement</FONT>
+      </STRONG></P>
+    This unary operation returns the complement of the BLUE Nef polyhedron in 
+    the plane. Select the Nef polyhedron of your choice and press the 
+    COMPLEMENT toolbar button.
+    You will see the new Nef added in both top lists.
+
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="op_interior"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Interior</FONT>
+      </STRONG></P>
+    This unary operation returns the interior of the BLUE Nef polyhedron 
+    selected. Select the Nef polyhedron of your choice and press the 
+    INTERIOR toolbar button.
+    You will see the new Nef added in both top lists.
+
+
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="op_closure"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Closure</FONT>
+      </STRONG></P>
+    This unary operation returns the closure of the BLUE Nef polyhedron 
+    selected. Select the Nef polyhedron of your choice and press the 
+    CLOSURE toolbar button.
+    You will see the new Nef added in both top lists.
+
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="op_boundary"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Boundary</FONT>
+      </STRONG></P>
+    This unary operation returns the boundary of the BLUE Nef polyhedron 
+    selected. Select the Nef polyhedron of your choice and press the 
+    BOUNDARY toolbar button.
+    You will see the new Nef added in both top lists.
+
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="op_regularization"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Regularization</FONT>
+      </STRONG></P>
+    This unary operation returns the regularized polyhedron of the BLUE Nef 
+    polyhedron selected. It is in fact the closure of the interior. Select the 
+    Nef polyhedron of your choice and press the REGULARIZATION toolbar button.
+    You will see the new Nef added in both top lists.
+
+
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="save_nef"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Save the current Nef polyhedron</FONT>
       </STRONG></P>
     Press Ctrl+S combination keys or go to File menu, then choose 
-    "Save Triangulation". A save file dialog will appear, the default name 
-    given is "triangulation.cgal". You may change the name then press "Save" 
+    "Save Nef_2". A save file dialog will appear, the default name 
+    given is "nef_2.cgal". You may change the name then press "Save" 
     or hit "Enter" key. To cancel the save process just press Esc key.<br>
-    <FONT SIZE=3 COLOR="#0000FF"> The triangulation saved does not contain 
+    <FONT SIZE=3 COLOR="#0000FF"> The Nef polyhedron saved does not contain 
       the visible area.</FONT>
 
 
     <P align="left"><STRONG><FONT color="#3300cc" size="4">
-	  <A name="load_triangulation"></A></FONT></STRONG>&nbsp;</P>
+	  <A name="load_nef"></A></FONT></STRONG>&nbsp;</P>
     <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
       </STRONG>&nbsp;</P>
     <P align="left"><STRONG>
-	<FONT color="#3300cc" size="3">Load an existing triangulation</FONT>
+	<FONT color="#3300cc" size="3">Load an existing Nef polyhedron</FONT>
       </STRONG></P>
     Press Ctrl+L combination keys or go to File menu and choose "Load 
-    Triangulation". A load file dialog will appear, having a filter that 
+    Nef_2". A load file dialog will appear, having a filter that 
     displays only the files with "cgal" extension. Choose a file then press 
     "Open" button or hit "Enter" key.<br>
-    <FONT SIZE=3 COLOR="#0000FF"> The triangulation saved does not contain 
-      the visible area. The application will change the current visible area 
-      to fit the bounding box of the triangualtion.</FONT>
+    <FONT SIZE=3 COLOR="#0000FF"> The Nef polyhedron saved does not contain 
+      the visible area.</FONT>
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="load_poly"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Load an existing simple polygon and 
+	  construct the Nef polyhedron from this polygon</FONT>
+      </STRONG></P>
+    Press Ctrl+O combination keys or go to File menu and choose "Load 
+    Polygon_2". A load file dialog will appear, having a filter that 
+    displays only the files with "cgal" extension. Choose a file then press 
+    "Open" button or hit "Enter" key.<br>
+    <FONT SIZE=3 COLOR="#0000FF"> The CGAL polygon saved does not contain 
+      the visible area.</FONT>
   <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
   <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
 
@@ -210,7 +386,7 @@
 <hr>
 <!-- Created: Mon Jan 13 15:27:00 MET 2003 -->
 <!-- hhmts start -->
-Last modified: Wed May 28 10:50:23 MEST 2003
+Last modified: Tue Jun  3 10:59:20 MEST 2003
 <!-- hhmts end -->
   </body>
 </html>
