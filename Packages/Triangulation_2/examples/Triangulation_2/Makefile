@@ -58,12 +58,15 @@ terrain : terrain.o
 regular : regular.o
 	$(CGAL_CXX) -o regular regular.o $(LDFLAGS)
 
+constrained : constrained.o
+	$(CGAL_CXX) -o constrained constrained.o $(LDFLAGS)
+
 clean:
 	rm -rf *~ *.o *.obj core tr
 
 realclean: clean
 	rm -rf points example voronoi colored_face triangulation_prog1 \
-	terrain  regular *.exe \
+	terrain  regular constrained *.exe \
 	Program* Compiler* Error* error.txt
 
 
