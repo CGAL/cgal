@@ -1,4 +1,4 @@
-Version 4.3 (?? ???? 2000)
+Version 4.3 (24 August 2000)
 - Change to line_from_pointsC2() for better numeric stability. [syl]
 - Moved side_of_oriented_line and side_of_oriented_lineC2 from the
   constructions to the predicates. [syl]
