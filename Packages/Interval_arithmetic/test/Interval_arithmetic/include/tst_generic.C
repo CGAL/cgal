@@ -12,9 +12,35 @@
 
 typedef TESTED_TYPE IA_nt;
 
+// The following wrappers are needed, since we can't call the right min/max
+// from outside namespace CGAL directly.
+namespace CGAL {
+template <class FT>
+inline FT my_max (const FT &a, const FT &b)
+{
+  return max(a,b);
+}
+
+template <class FT>
+inline FT my_min (const FT &a, const FT &b)
+{
+  return min(a,b);
+}
+}                                                                               
+
+double my_sqrt(double d)
+{
+  return CGAL_BUG_SQRT(d);
+}
+
 void empty_handler(const char*, const char*, const char*, int, const char *)
 {
   // Do nothing.
+}
+
+double test_force_to_double(double d, double e)
+{
+  return CGAL_IA_FORCE_TO_DOUBLE(d+e);
 }
 
 IA_nt test_add(const IA_nt &a, const IA_nt &b)
@@ -79,7 +105,7 @@ bool spiral_test()
     y_i = y_ip1;
     DEBUG( IA_nt length = CGAL_NTS square(x_i) + CGAL_NTS square(y_i); )
     DEBUG(std::cout<<i<<": (" << x_i << " , " << y_i << ") : " << length << "\n";)
-    if ( x_i.overlap(0) || y_i.overlap(0) )
+    if ( x_i.do_overlap(0) || y_i.do_overlap(0) )
       break;
   };
 
@@ -265,11 +291,11 @@ bool utility_test()
   DEBUG( std::cout << "is_finite test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = CGAL::max(a,d).is_same(IA_nt(0,1));
+  tmpflag = CGAL::my_max(a,d).is_same(IA_nt(0,1));
   DEBUG( std::cout << "max test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = CGAL::min(a,b).is_same(IA_nt(-1,0));
+  tmpflag = CGAL::my_min(a,b).is_same(IA_nt(-1,0));
   DEBUG( std::cout << "min test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
