@@ -33,9 +33,9 @@
 #define CGAL_IA_MAX_DOUBLE (1.7976931348623157081e+308)
 
 // Macro to stop compiler optimization.
-#if defined(__GNUG__)
+#ifdef __GNUG__
 #define CGAL_IA_STOP_COMPILER_OPT(x) ({ volatile double y=(x);double z=y;z; })
-#elif defined(_MSC_VER)
+#else
 inline double cgal_ia_force_to_double(const double x)
 { volatile double e = x; return e; }
 #define CGAL_IA_STOP_COMPILER_OPT(x) cgal_ia_force_to_double(x)
