@@ -51,29 +51,29 @@ bool do_intersect(const Triangle_3<K> &t,
   const Point_3 & a = vertex_on(t,0);
   const Point_3 & b = vertex_on(t,1);
   const Point_3 & c = vertex_on(t,2);
-
+  const Point_3 & p = point_on(r,0);
+  const Point_3 & q = point_on(r,1);
   
-  typename K::Construct_direction_3 direction =
-    k.construct_direction_3_object();
+  typename K::Construct_vector_3  construct_vector =
+    k.construct_vector_3_object();
 
   typename K::Construct_ray_3 construct_ray = 
     k.construct_ray_3_object();
 
   typename K::Construct_point_on_3 point_on = 
     k.construct_point_on_3_object();
-  
+ 
 
   const Orientation ray_direction =
-    orientation(a,b,c,point_on(construct_ray(a,direction(r)),1));
+    orientation(a,b,c,point_on(construct_ray(a, construct_vector(r)),1));
 
-  if (ray_direction == COPLANAR ) return do_intersect_coplanar(t,r,k);
-
-
-  const Point_3 & p = point_on(r,0);
-  const Point_3 & q = point_on(r,1);
+    if (ray_direction == COPLANAR ) {
+      if (orientation(a,b,c,p) == COPLANAR) 
+	return do_intersect_coplanar(t,r,k);
+      else return false;
+    }
   
   const Orientation abcp = orientation(a,b,c,p);
-
 
   switch ( abcp ) {
   case POSITIVE: 
