@@ -65,6 +65,7 @@ private:
       FT
 	x=static_cast<FT>(widget->x_real(e->x())),
 	y=static_cast<FT>(widget->y_real(e->y()));
+	  QColor oldcolor = widget->color();
       RasterOp old = widget->rasterOp();	//save the initial raster mode		
       widget->setRasterOp(XorROP);
       widget->lock();
@@ -73,6 +74,7 @@ private:
       *widget << Circle(Point(x1,y1),squared_distance(Point(x1, y1), Point(x,y)));
       widget->unlock();
       widget->setRasterOp(old);
+	  widget->setColor(oldcolor);
 
       //save the last coordinates to redraw the screen
       x2 = x;
@@ -86,8 +88,9 @@ private:
       FT
 	x=static_cast<FT>(widget->x_real(e->x())),
 	y=static_cast<FT>(widget->y_real(e->y()));
-      if(x1!=x || y1!=y)
-	widget->new_object(make_object(Circle(Point(x1,y1),squared_distance(Point(x1, y1), Point(x,y)))));
+    //  if(x1!=x || y1!=y)
+	widget->new_object(make_object(Circle(Point(x1,y1),
+				squared_distance(Point(x1, y1), Point(x,y)))));
 	firstpoint = FALSE;
     }
   }
