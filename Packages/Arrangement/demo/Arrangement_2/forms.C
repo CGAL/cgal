@@ -490,5 +490,56 @@ RayShootingOptionsForm::RayShootingOptionsForm( QWidget* parent ,
   
 }
 
+
+
+/*! PointLocationStrategyForm constructor */
+PointLocationStrategyForm::PointLocationStrategyForm(QWidget* parent ,
+			int number_of_tabs ,const char* name, bool modal, WFlags f): 
+QDialog( parent, name, modal, f )
+{
+  setCaption( "Point Location - Strategy" );
+  optionsFormLayout = new QVBoxLayout( this, 11, 6 );
+  arrLayout1 = new QHBoxLayout( 0, 0, 6 );
+
+  textLabel1 = new QLabel( "Strategy", this );
+  arrLayout1->addWidget( textLabel1 );
+
+  arrComboBox1 = new QComboBox( FALSE, this );
+
+  arrComboBox1->insertItem( "Naive" );
+  arrComboBox1->insertItem( "Simple" );
+  arrComboBox1->insertItem( "Trapezoiedal" );
+  arrComboBox1->insertItem( "Walk" );
+  
+  arrLayout1->addWidget( arrComboBox1 );
+  optionsFormLayout->addLayout( arrLayout1 );
+
+  buttonsLayout = new QHBoxLayout( 0, 0, 6 );
+  okPushButton = new QPushButton( "OK", this );
+  okPushButton->setDefault( TRUE );
+  buttonsLayout->addWidget( okPushButton );
+  cancelPushButton = new QPushButton( "Cancel", this );
+  buttonsLayout->addWidget( cancelPushButton );
+  optionsFormLayout->addLayout( buttonsLayout );
+
+  connect( okPushButton, SIGNAL( clicked() ), this, SLOT( accept() ) );
+  connect( cancelPushButton, SIGNAL( clicked() ), this, SLOT( reject() ) );
+
+  textLabel1->setBuddy( arrComboBox1 );
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
 #include "forms.moc"
+
 #endif
