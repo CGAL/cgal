@@ -157,6 +157,8 @@ sub start_handler
     $attrTable->{$id} = $val;
   }
 
+  return if ($currentElement eq 'class');
+  
   if ($currentElement eq 'clo') {
     processStartClo($attrTable);
     return;
@@ -197,6 +199,7 @@ sub end_handler
   my $parentAttrTable = 0;
   $parentAttrTable = $Attrs[$#Attrs] if (defined($xp->current_element));
 
+  return if ($currentElement eq 'class');
   return if ($currentElement eq 'file');
   return if ($currentElement eq 'clo');
   return if ($attrTable->{'enable'} ne 'true');
