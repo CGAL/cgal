@@ -38,8 +38,8 @@ CGAL_BEGIN_NAMESPACE
 // Model of BorderParametizer_3
 // This class parameterizes the border of a 3D surface onto a square.
 // 
-// Implementation note: to simplify the implementation, BorderParametizer_3 knows only the MeshAdaptor_3 class. It doesn't 
-// know the parameterization algorithm requirements nor the kind of sparse linear system used.
+// Implementation note: to simplify the implementation, BorderParametizer_3 models know only the MeshAdaptor_3 class. They don't 
+//                      know the parameterization algorithm requirements nor the kind of sparse linear system used.
 template <class MeshAdaptor_3>			// 3D surface
 class Square_border_parametizer_3 
 {

@@ -59,7 +59,7 @@ parameterize(MeshAdaptor_3* mesh)						// 3D mesh, model of MeshAdaptor_3 concep
 // Preconditions:
 // * 'mesh' must be a surface with 1 connected component and no hole
 // * 'mesh' must be a triangular mesh
-// * the mesh border must be mapped onto a convex polygon
+// * the mesh border must be mapped onto a convex polygon (for fixed border parameterizations)
 //
 template <class MeshAdaptor_3, class Parametizer_3_>			
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode 

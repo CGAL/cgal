@@ -37,7 +37,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="CGAL.lib gmp.lib"
+				AdditionalOptions="CGAL_debug.lib gmp.lib"
 				OutputFile="$(OutDir)/polyhedron_ex_parameterization.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;"
@@ -234,6 +234,9 @@
 				RelativePath="..\..\include\Cgal\Fixed_border_parametizer_3.h">
 			</File>
 			<File
+				RelativePath="..\..\include\Cgal\LSCM_parametizer_3.h">
+			</File>
+			<File
 				RelativePath="..\..\include\Cgal\Mean_value_coordinates_parametizer_3.h">
 			</File>
 			<File
@@ -247,6 +250,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\Square_border_parametizer_3.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\Two_vertices_parametizer_3.h">
 			</File>
 		</Filter>
 		<Filter

@@ -37,10 +37,12 @@ CGAL_BEGIN_NAMESPACE
 
 // Class Fixed_border_parametizer_3 
 // Model of the Parametizer_3 concept.
+//
 // Base class of fixed border parameterization methods (Tutte, Floater, ...) 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
 //
 // Implementation notes: - Usually, subclasses need only to implement compute_wij().
 //                       - The current implementation does not remove border vertices from the linear systems => A cannot be symmetric.
+
 template <class MeshAdaptor_3,														// 3D surface
 		  class BorderParametizer_3 = Circular_border_parametizer_3<MeshAdaptor_3>,	// Class to map the surface's border onto a 2D space
 		  class SparseLinearAlgebraTraits_d = OpenNL::DefaultLinearSolverTraits<typename MeshAdaptor_3::NT> >	
@@ -77,7 +79,7 @@ public:
 public:
 				// Constructor
 				// @param borderParametizer	Object that maps the surface's border onto a 2D space
-				// @param linearAlgebra		Traits object to access the "A*X = B" sparse linear system used by parameterization algorithms
+				// @param linearAlgebra		Traits object to solve the "A*X = B" sparse linear system used by parameterization algorithms
 				Fixed_border_parametizer_3 (BorderParametizer_3 borderParametizer = BorderParametizer_3(), 
 											SparseLinearAlgebraTraits_d linearAlgebra = SparseLinearAlgebraTraits_d()) 
 				  : m_borderParametizer(borderParametizer), m_linearAlgebra(linearAlgebra)
@@ -114,7 +116,7 @@ protected:
 				// Preconditions:
 				// * vertices must be indexed
 				// * vertex i musn't be already parameterized
-				// * line i of A must contains only zeros
+				// * line i of A must contain only zeros
 				virtual ErrorCode  parameterize_inner_vertex (const MeshAdaptor_3& mesh, const Vertex& vertex, 
 															  Matrix* A, Vector* Bu, Vector* Bv);
 
@@ -155,7 +157,7 @@ private:
 private:
 				// Object that maps the surface's border onto a 2D space
 				 BorderParametizer_3			m_borderParametizer;
-				// Traits object to access the "A*X = B" sparse linear system used by parameterization algorithms
+				// Traits object to solve the "A*X = B" sparse linear system used by parameterization algorithms
 				 SparseLinearAlgebraTraits_d	m_linearAlgebra;
 };
 
@@ -335,7 +337,7 @@ void Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinear
 // Preconditions:
 // * vertices must be indexed
 // * vertex i musn't be already parameterized
-// * line i of A must contains only zeros
+// * line i of A must contain only zeros
 template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
 inline 
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode 

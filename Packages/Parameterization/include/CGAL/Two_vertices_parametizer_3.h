@@ -18,10 +18,13 @@
 // Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
 
 
-#ifndef CIRCULARBORDERPARAMETIZER_3_H
-#define CIRCULARBORDERPARAMETIZER_3_H
+#ifndef Two_vertices_parametizer_3_H_INCLUDED
+#define Two_vertices_parametizer_3_H_INCLUDED
 
 #include "CGAL/parameterization_assertions.h"
+
+#include <cfloat>
+#include <climits>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -30,14 +33,14 @@ CGAL_BEGIN_NAMESPACE
 // Declaration 
 //
 
-// Class Circular_border_parametizer_3
+// Class Two_vertices_parametizer_3
 // Model of BorderParametizer_3
-// This class parameterizes the border of a 3D surface onto a circle.
+// This class parameterizes 2 extreme vertices of a 3D surface. This kind of border parameterization is used by free border parameterization algorithms.
 // 
 // Implementation note: to simplify the implementation, BorderParametizer_3 models know only the MeshAdaptor_3 class. They don't 
 //                      know the parameterization algorithm requirements nor the kind of sparse linear system used.
 template <class MeshAdaptor_3>			// 3D surface
-class Circular_border_parametizer_3 
+class Two_vertices_parametizer_3 
 {
 // Public types
 public:
@@ -65,18 +68,12 @@ public:
 public:
 				// Default constructor, copy constructor and operator =() are fine
 
-				// Assign to mesh's border vertices a 2D position (ie a (u,v) pair) on border's shape
-				// Mark them as "parameterized"
+				// Map 2 extreme vertices of the 3D mesh and mark them as "parameterized"
 				// Return false on error
 				bool  parameterize_border (MeshAdaptor_3* mesh);
 
-				// Indicate if border's shape is convex
-				bool  is_border_convex () { return true; }
-
-// Private operations
-private:
-				// compute  total length of boundary
-				double compute_boundary_length(const MeshAdaptor_3& mesh);
+				// Indicate if border's shape is convex. Meaningless for free border parameterization algorithms.
+				bool  is_border_convex () { return false; }
 };
 
 
@@ -84,81 +81,101 @@ private:
 // Implementation 
 //
 
-// compute  total length of boundary
-template <class MeshAdaptor_3>
-inline 
-double Circular_border_parametizer_3<MeshAdaptor_3>::compute_boundary_length(const MeshAdaptor_3& mesh)
-{
-	double len = 0.0;
-	for(Border_vertex_const_iterator it = mesh.mesh_border_vertices_begin(); it != mesh.mesh_border_vertices_end(); it++)
-	{
-		CGAL_parameterization_assertion(mesh.is_vertex_on_border(*it));
-
-		// Get next iterator (looping)
-		Border_vertex_const_iterator next = it; 
-		next++;
-		if(next == mesh.mesh_border_vertices_end())
-			next = mesh.mesh_border_vertices_begin();
-
-		// Add length of it -> next vector to 'len'
-		Vector_3 v = mesh.get_vertex_position(*next) - mesh.get_vertex_position(*it);
-		len += std::sqrt(v*v);
-	}
-	return len;
-}
-
-// Assign to mesh's border vertices a 2D position (ie a (u,v) pair) on border's shape
-// Mark them as "parameterized"
+// Map 2 extreme vertices of the 3D mesh and mark them as "parameterized"
 // Return false on error
+//
+// Note: this method is a copy of Bruno Levy's LSCM::project() method in lscm_with_generic_api.cpp
 template <class MeshAdaptor_3>
 inline 
-bool Circular_border_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdaptor_3* mesh)
+bool Two_vertices_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdaptor_3* mesh)
 {
+	Vertex_iterator it;
+
 	CGAL_parameterization_assertion(mesh != NULL);
 
 	// Nothing to do if no boundary
 	if (mesh->mesh_border_vertices_begin() == mesh->mesh_border_vertices_end())
 		return false;
 
-	// compute the total boundary length	
-	double total_len = compute_boundary_length(*mesh);
-	std::cerr << "  total boundary len: " << total_len << std::endl;
-	CGAL_parameterization_assertion(total_len != 0);
+	std::cerr << "  map 2 vertices...";
 
-	std::cerr << "  map on a circle...";
-	const double PI = 3.14159265359;
-	const double tmp = 2*PI/total_len;
-	double len = 0.0;						// current position on the circle in [0, total_len]
-//	Border_vertex_iterator first = mesh->mesh_border_vertices_begin();
-//	bool border = (*first)->is_border();
-	for(Border_vertex_iterator it = mesh->mesh_border_vertices_begin(); it != mesh->mesh_border_vertices_end(); it++)
+	// Get surface's bounding box
+	double xmin = DBL_MAX ;
+	double ymin = DBL_MAX ;
+	double zmin = DBL_MAX ;
+	double xmax = DBL_MIN ;
+	double ymax = DBL_MIN ;
+	double zmax = DBL_MIN ;
+	for (it = mesh->mesh_vertices_begin(); it != mesh->mesh_vertices_end(); it++)
 	{
-		CGAL_parameterization_assertion(mesh->is_vertex_on_border(*it));
+		Point_3 position = mesh->get_vertex_position(*it);
 
-		double angle = len*tmp;				// current position on the circle in radians
+		xmin = std::min(position.x(), xmin) ;
+		ymin = std::min(position.y(), xmin) ;
+		zmin = std::min(position.z(), xmin) ;
 
-		// map vertex on unit circle
-		Point_2 uv;
-		//if(border)
-			uv = Point_2(0.5+0.5*cos(-angle),0.5+0.5*sin(-angle));
-		//else
-		//	uv = Point_2(0.5+0.5*cos(angle),0.5+0.5*sin(angle));
-//		std::cerr << "(" << uv.x() << "," << uv.y() << ") ";
-		mesh->set_vertex_uv(&*it, uv);
-
-		// Mark vertex as "parameterized"
-		mesh->set_vertex_parameterized(&*it, true);
-
-		// Get next iterator (looping)
-		Border_vertex_iterator next = it; 
-		next++;
-		if(next == mesh->mesh_border_vertices_end())
-			next = mesh->mesh_border_vertices_begin();
-
-		// Add length of it -> next vector to 'len'
-		Vector_3 v = mesh->get_vertex_position(*next) - mesh->get_vertex_position(*it);
-		len += std::sqrt(v*v);
+		xmax = std::max(position.x(), xmin) ;
+		ymax = std::max(position.y(), xmin) ;
+		zmax = std::max(position.z(), xmin) ;
 	}
+
+	// Find shortest bounding box axis
+	Vector_3 V1,V2 ;
+	double dx = xmax - xmin ;
+	double dy = ymax - ymin ;
+	double dz = zmax - zmin ;
+	if(dx < dy && dx < dz) {
+		if(dy > dz) {
+			V1 = Vector_3(0,1,0) ;
+			V2 = Vector_3(0,0,1) ;
+		} else {
+			V2 = Vector_3(0,1,0) ;
+			V1 = Vector_3(0,0,1) ;
+		}
+	} else if(dy < dx && dy < dz) {
+		if(dx > dz) {
+			V1 = Vector_3(1,0,0) ;
+			V2 = Vector_3(0,0,1) ;
+		} else {
+			V2 = Vector_3(1,0,0) ;
+			V1 = Vector_3(0,0,1) ;
+		}
+	} else if(dz < dx && dz < dy) {
+		if(dx > dy) {
+			V1 = Vector_3(1,0,0) ;
+			V2 = Vector_3(0,1,0) ;
+		} else {
+			V2 = Vector_3(1,0,0) ;
+			V1 = Vector_3(0,1,0) ;
+		}
+	}
+
+	// Project onto shortest bounding box axis,
+	// and mark extrema vertices as "parameterized"
+	Vertex* vxmin = NULL ;
+	double  umin  = DBL_MAX ;
+	Vertex* vxmax = NULL ;
+	double  umax  = DBL_MIN ;
+	for (it = mesh->mesh_vertices_begin(); it != mesh->mesh_vertices_end(); it++)
+	{
+		Point_3  position = mesh->get_vertex_position(*it);
+		Vector_3 position_as_vector = position - Point_3(0,0,0);
+
+		double u = position_as_vector * V1 ;	/* dot product */
+		double v = position_as_vector * V2 ;	/* dot product */
+		mesh->set_vertex_uv(&*it, Point_2(u,v)) ;	// LS 02/05: I guess that this is useful only for *vxmin and *vxmax
+
+		if(u < umin) {
+			vxmin = &*it ;
+			umin = u ;
+		} 
+		if(u > umax) {
+			vxmax = &*it ;
+			umax = u ;
+		} 
+	}
+	mesh->set_vertex_parameterized(vxmin, true) ;
+	mesh->set_vertex_parameterized(vxmax, true) ;
 
   std::cerr << "done" << std::endl;
 
@@ -168,5 +185,5 @@ bool Circular_border_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdap
 
 CGAL_END_NAMESPACE
 
-#endif //CIRCULARBORDERPARAMETIZER_3_H
+#endif //Two_vertices_parametizer_3_H_INCLUDED
 

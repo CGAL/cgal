@@ -97,6 +97,7 @@ public:
 				typedef Polyhedron_ex::Vertex								Vertex;
 				typedef Polyhedron_ex::Traits::Point_2						Point_2;
 				typedef Polyhedron_ex::Traits::Point_3						Point_3;
+				typedef Polyhedron_ex::Traits::Vector_2						Vector_2;
 				typedef Polyhedron_ex::Traits::Vector_3						Vector_3;
 				// Iterator over all mesh faces
 				typedef Polyhedron_ex::Facet_iterator						Face_iterator;
