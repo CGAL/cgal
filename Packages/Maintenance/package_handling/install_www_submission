@@ -63,7 +63,7 @@ sub log_header($)
 sub log_msg($)
 {
     if ( $console_output ) {
-        print  "$_[0]\n";
+        print  "$0: $_[0]\n";
     }
     print LOGFILE "  $_[0]\n";
 }
@@ -448,7 +448,7 @@ open LOGFILE, ">$ACTUAL_LOGFILE";
 
 foreach $submission ( @ARGV) {
     if (!create_package_dir) {
-	log_msg "Failed to create temporary directory";
+	log_msg "Failed to create temporary directory $tempdir";
 	exit 1;
     }
     do_submission($submission);
