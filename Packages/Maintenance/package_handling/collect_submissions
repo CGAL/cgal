@@ -3,7 +3,7 @@
 use strict;
 
 #--------------------------------------------------------------#
-# This script scans through the mail box $::MAIL_IN, using formail.
+# This script scans through the mail box $MAIL_IN, using formail.
 # It handles requests automatically.
 # This script deals with reading the mail box and dispatching the separate
 # mails to the program that treats one mail.
@@ -11,49 +11,50 @@ use strict;
 #--------------------------------------------------------------#
 
 # the mail boxes
-
-$::LOCKFILE='/projects/CGAL/submissions/autohandle/data/collect_submission.lock';
-$::MAIL_IN='/users/geert/PUBLIC/CGAL-submit/incoming-mail';
-#$::MAIL_OUT='/users/geert/PUBLIC/CGAL-submit/handled-mail';
-$::MAIL_TMP='/users/geert/PUBLIC/CGAL-submit/temp-mail';
-$::SCRIPT='/projects/CGAL/submissions/autohandle/scripts/collect_submissions';
+my $Scripts_directory='/projects/CGAL/submissions/autohandle/scripts';
+my $Data_directory='/projects/CGAL/submissions/autohandle/data';
+my $LOCKFILE="$Data_directory/collect_submission.lock";
+my $Mail_directory='/users/geert/PUBLIC/CGAL-submit';
+my $MAIL_IN="$Mail_directory/incoming-mail";
+#my $MAIL_OUT="$Mail_directory/handled-mail";
+my $MAIL_TMP="$Mail_directory/temp-mail";
+my $SCRIPT="$Scripts_directory/collect_submissions";
 my $MAIL_PROG='/local/bin/smtp-relay';
 
 # program locations
-$::FORMAIL='/projects/CGAL/submissions/autohandle/scripts/formail';
-$::treat_one_mail_program =
-'/projects/CGAL/submissions/autohandle/scripts/treat_submit_mail';
-$::LOCKCMD='/projects/CGAL/submissions/autohandle/scripts/lockfile';
+my $FORMAIL="$Scripts_directory/formail";
+my $treat_one_mail_program ="$Scripts_directory/treat_submit_mail";
+my $LOCKCMD="$Scripts_directory/lockfile";
 
 # the log file
-$::LOGFILE='/projects/CGAL/submissions/autohandle/data/collect_submissions.log';
+my $LOGFILE="$Data_directory/collect_submissions.log";
 
 # 
-$::seconds_between_invocations=600;
-$::max_tries_between_warning= int 21600/$::seconds_between_invocations;
+my $seconds_between_invocations=600;
+my $max_tries_between_warning= int 21600/$seconds_between_invocations;
 
 $ENV{PATH}='/sbin:/usr/sbin:/usr/bsd:/bin:/usr/bin';
 
 # variable that is set when there is an attempt to kill this process.
-$::please_die=0;
+my $please_die=0;
 
-$::invoker = $ENV{USER};
-if ($::invoker =~ /^\s*([-\@\w]+)\s*$/) {
-    $::invoker = "$1\@cs.uu.nl";
+my $invoker = $ENV{USER};
+if ($invoker =~ /^\s*([-\@\w]+)\s*$/) {
+    $invoker = "$1\@cs.uu.nl";
 } else {
     print STDERR <<"TOTHIER";
-The script $::SCRIPT did not start because
+The script $SCRIPT did not start because
 the USER environment value has a strange value.
 TOTHIER
     exit 1;
 }
 
-$::hostname = $ENV{HOST};
-if ($::hostname =~ /^\s*([-\@\w]+)\s*$/) {
-    $::hostname = $1;
+my $hostname = $ENV{HOST};
+if ($hostname =~ /^\s*([-\@\w]+)\s*$/) {
+    $hostname = $1;
 } else {
     print STDERR <<"TOTHIER";
-The script $::SCRIPT did not start because
+The script $SCRIPT did not start because
 the HOST environment value has a strange value.
 TOTHIER
     exit 1;
@@ -61,7 +62,7 @@ TOTHIER
 
 
 sub termination_signal_handler {
-    $::please_die=1;
+    $please_die=1;
 }
 
 sub initialisation()
@@ -78,11 +79,11 @@ sub initialisation()
 # Quit with a message if it fails.
 #
 
-    if ( system("$::LOCKCMD", "-r", '10', "$::LOCKFILE") != 0) {
-	open NOTICE, "|$MAIL_PROG -s \"collect_submissions notice\" $::invoker";
+    if ( system("$LOCKCMD", "-r", '10', "$LOCKFILE") != 0) {
+	open NOTICE, "|$MAIL_PROG -s \"collect_submissions notice\" $invoker";
 	print NOTICE <<"TOTHIER";
-The script $::SCRIPT could not proceed because
-it could not acquire the needed lock on file $::LOCKFILE.
+The script $SCRIPT could not proceed because
+it could not acquire the needed lock on file $LOCKFILE.
 TOTHIER
 	close NOTICE;
 	exit 1;
@@ -91,14 +92,14 @@ TOTHIER
 # Now that you have the lock, check to see if there is another process
 # executing this program. If so, quit.
 #
-    my $logline = `tail -1 $::LOGFILE`;
+    my $logline = `tail -1 $LOGFILE`;
     if ($logline !~ /stopped/) {
-	unlink $::LOCKFILE;
-	open NOTICE, "|$MAIL_PROG -s \"collect_submissions notice\" $::invoker";
+	unlink $LOCKFILE;
+	open NOTICE, "|$MAIL_PROG -s \"collect_submissions notice\" $invoker";
 	print NOTICE <<"TOTHIER";
-The script $::SCRIPT did not proceed because
+The script $SCRIPT did not proceed because
 there seems to be another process collecting the mail messages.
-The file $::LOGFILE says:
+The file $LOGFILE says:
 
 $logline
 TOTHIER
@@ -109,22 +110,43 @@ TOTHIER
 # We can proceed. Record a message to the log file that this process
 # takes control of dealing with the mail box.
 #
-    open LOGFILE, ">>$::LOGFILE";
-    print LOGFILE "$::hostname $$: started executing on ", `date`;
+    open LOGFILE, ">>$LOGFILE";
+    print LOGFILE "$hostname $$: started executing on ", `date`;
     close LOGFILE;
 
-    unlink $::LOCKFILE;
+    unlink $LOCKFILE;
+}
+
+sub new_untreated_mail_file()
+{
+    my $filename;
+    my $n=1;
+    for ($n=1; $n<1000; ++$n) {
+    $filename="$Mail_directory/untreated_mail_$n";
+	last if (! -f $filename);
+    }
+    return $filename;
 }
 
 sub treat_current_mail()
 {
-    if ( -f $::MAIL_IN ) {
-	if ( system("$::LOCKCMD", "-r", '10', "$::MAIL_IN.lock") == 0) {
-	    rename($::MAIL_IN, $::MAIL_TMP);
-	    unlink "$::MAIL_IN.lock";
-	    if (system("$::FORMAIL -ns $::treat_one_mail_program < $::MAIL_TMP")== 0 )
+    if ( -f $MAIL_IN ) {
+	if ( system("$LOCKCMD", "-r", '10', "$MAIL_IN.lock") == 0) {
+	    rename($MAIL_IN, $MAIL_TMP);
+	    unlink "$MAIL_IN.lock";
+	    if (system("$FORMAIL -ns $treat_one_mail_program < $MAIL_TMP")== 0 )
 	    {
-		unlink $::MAIL_TMP;
+		unlink $MAIL_TMP;
+	    } else {
+		my $Save_file = new_untreated_mail_file();
+		rename($MAIL_TMP, $Save_file) or die;
+		open NOTICE,
+		    "|$MAIL_PROG -s \"collect_submissions notice\" $invoker";
+		print NOTICE <<"TOTHIER";
+The script $SCRIPT could not treat incoming mail.
+This mail was saved in $Save_file.
+TOTHIER
+		
 	    }
 	}
     }
@@ -132,45 +154,45 @@ sub treat_current_mail()
 
 sub main_loop()
 {
-    my $tries_to_go = $::max_tries_between_warning;
-    while (! $::please_die) {
-	if ( system("$::LOCKCMD", "-r", '10', "$::LOCKFILE") != 0) {
+    my $tries_to_go = $max_tries_between_warning;
+    while (! $please_die) {
+	if ( system("$LOCKCMD", "-r", '10', "$LOCKFILE") != 0) {
 	    --$tries_to_go;
 	    if ($tries_to_go < 0) {
 		open NOTICE,
-		    "|$MAIL_PROG -s \"collect_submissions notice\" $::invoker";
+		    "|$MAIL_PROG -s \"collect_submissions notice\" $invoker";
 		print NOTICE <<"TOTHIER";
-The script $::SCRIPT could not proceed because
-it could not acquire the needed lock on file $::LOCKFILE.
+The script $SCRIPT could not proceed because
+it could not acquire the needed lock on file $LOCKFILE.
 TOTHIER
 		close NOTICE;
-		$tries_to_go = $::max_tries_between_warning;
+		$tries_to_go = $max_tries_between_warning;
 	    }
 	} else {
-	    $tries_to_go = $::max_tries_between_warning;
-	    if ( -f $::MAIL_TMP ) {
+	    $tries_to_go = $max_tries_between_warning;
+	    if ( -f $MAIL_TMP ) {
 		open NOTICE,
-		    "|$MAIL_PROG -s \"collect_submissions notice\" $::invoker";
+		    "|$MAIL_PROG -s \"collect_submissions notice\" $invoker";
 print NOTICE <<"TOTHIER";
-The script $::SCRIPT has been stopped,
-because the temporary mail box $::MAIL_TMP was not emptied.
+The script $SCRIPT has been stopped,
+because the temporary mail box $MAIL_TMP was not emptied.
 TOTHIER
 		close NOTICE;
-		unlink $::LOCKFILE;
-		$::please_die = 1;
+		unlink $LOCKFILE;
+		$please_die = 1;
 	    } else {
 		treat_current_mail;
 	    }
-	    unlink $::LOCKFILE;
+	    unlink $LOCKFILE;
 	}
-	sleep $::seconds_between_invocations unless $::please_die;
+	sleep $seconds_between_invocations unless $please_die;
     }
 }
 
 sub finalisation()
 {
-    open LOGFILE, ">>$::LOGFILE";
-    print LOGFILE "$::hostname $$: stopped executing at ", `date`;
+    open LOGFILE, ">>$LOGFILE";
+    print LOGFILE "$hostname $$: stopped executing at ", `date`;
     close LOGFILE;
 }
 
