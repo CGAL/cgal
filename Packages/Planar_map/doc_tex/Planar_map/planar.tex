@@ -38,8 +38,6 @@
 \def\bd{{\partial}}
 \def\dm{{\cal D}}
 
-
-
 \section{Introduction}
 \label{PM_sec:intro}
 
@@ -52,6 +50,23 @@ is embedded as a bounded $x$-monotone curve, and does not contain
 vertices in its interior, and (3) each face is a maximal connected
 region of the plane that does not contain edges and vertices in its
 interior.
+
+\begin{figure}[h]
+\begin{ccTexOnly}
+\centerline{\includegraphics[width=7cm,keepaspectratio]{Planar_map/rose_14.eps}}
+\end{ccTexOnly}
+
+\caption{A planar map induced by 14 circles of 53 faces
+  (one of which is unbounded), 106 edges, and 59 vertices.}
+\label{PM_sec:rose_14}
+
+\begin{ccHtmlOnly}
+<P>
+<center>
+  <img src="rose_14.gif"  border=0 alt="rose shaped planar-map">
+</center>
+\end{ccHtmlOnly}
+\end{figure}
 
 The \ccc{Planar_map_2<Dcel,Traits>} class is derived from the
 \ccc{Topological_map<Dcel>} class. While the
@@ -67,6 +82,22 @@ to the \ccc{Planar_map_2<Dcel,Traits>} class over that of the
 \ccc{Topological_map<Dcel>} class. The combinatorial capabilities of
 the base class are covered in chapter ~\ref{I1_ChapterTopologicalMap},
 {\em Topological Maps}.
+
+\begin{figure}[h]
+\begin{ccTexOnly}
+\centerline{\input{Planar_map/circ_dcel.pstex_t}}
+\end{ccTexOnly}
+
+\caption{A portion of the planar map depicted in Figure~\ref{fig:arrg-circ} with some of the {\sc Dcel} records that represent it. $\tilde{f}$ is the unbounded face. The half-edge $e$ (and its twin $e'$) correspond to a circular arc that connects the vertices $v_1$ and $v_2$ and separates the face $f_1$ from $f_2$. The predecessors and successors of $e$ and $e'$ are also shown --- note that $e$, together with its predecessor and successor half-edges form a closed chain representing the boundary of $f_1$ (lightly shaded). Also note that the face $f_3$ (darkly shaded) has a more complicated structure as it contains a hole in its interior.}
+\label{PM_sec:circ_dcel}
+
+\begin{ccHtmlOnly}
+<P>
+<center>
+  <img src="circ_dcel.gif"  border=0 alt="rose shaped planar-map">
+</center>
+\end{ccHtmlOnly}
+\end{figure}
 
 \subsection{Terms and Definitions}
 Before we expose a code fragment that manipulates a {\em planar
