@@ -26,21 +26,19 @@ typedef CGAL::Kdtree_d<kd_interface>      kd_tree;
 typedef kd_tree::Box                      box;
 typedef std::list<Point>                  points_list;
   
-
 int main()
 {
   CGAL::Kdtree_d<kd_interface>  tree(3);
   CGAL::Timer t;
-  int dim=3;
+  const int dim=3;
   
-  ifstream in;
   const int data_point_number=1000000;
 
   
   
   
   
-   typedef std::list<Point> point_list;
+  typedef std::list<Point> point_list;
   point_list data_points,res;
   
   // get data points
