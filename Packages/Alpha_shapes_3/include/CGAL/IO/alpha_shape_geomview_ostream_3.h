@@ -69,7 +69,7 @@ CGAL_BEGIN_NAMESPACE
 // This one outputs the facets.
 template < class Dt >
 void
-Alpha_shape_3<Dt>::show_alpha_shape_faces(Geomview_stream &gv)
+Alpha_shape_3<Dt>::show_alpha_shape_faces(Geomview_stream &gv) const
 {
   // Finite vertices coordinates.
   typename Alpha_shape_3<Dt>::Alpha_shape_vertices_iterator Vlist_it,

@@ -1,4 +1,8 @@
 
+25 fevrier 2004 MY
+- added a testsuite
+- changed traverse() with Andreas fix 
+
 Version 3.34 (12 February 2004) MY
 - changed Alpha_shape_cells_iterator into a Filter_iterator
 - merged fixes in classify made for  bugfixrelease
