@@ -1,0 +1,268 @@
+#!/usr/local/bin/perl -w
+
+use Cwd;
+use Getopt::Long;
+use HTML::Element;
+use HTML::Tree;
+use English;
+
+my $help = 0;
+my $nameLength = 32;
+# my $root = $ENV{ROOT};
+my $home = $ENV{HOME};
+$home =~ s/\\/\//g;			# replace '\' with '/';
+my $logDir = $home . '/logs';
+
+$Getopt::Long::ignorecase = 0;
+GetOptions("help" => \$help,
+	   "logFile=s" => \$logFile,
+	   "logDir=s" => \$logDir,
+	   "nameLength=i" => \$nameLength,
+	   ) or die "Bad command line option!";
+
+usage() if $help;
+
+$logFile = findLogFile($logDir) if (!defined($logFile));
+$phpFile = $logFile;
+$phpFile =~ s/(.*)\.log/$1\.php/;
+$logFile = $logDir . '/' . $logFile;
+  
+$h = HTML::Element->new('html');
+
+$dec = HTML::Element->new("~declaration", text=>'DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"');
+
+$head = HTML::Element->new('head');
+
+# coomon base:
+$php1 = HTML::Element->new("~pi",
+			   text => 'php require \'../../common/base.php\';?');
+$head->push_content($php1);
+
+# meta
+$meta = HTML::Element->new('meta',
+			   'http-equiv' => 'Content-Type',
+			   content => 'text/html; charset=iso-8859-1');
+$head->push_content($meta);
+
+# link:
+$link = HTML::Element->new('link',
+			   title => 'CGAL style',
+			   rel => 'stylesheet',
+			   type => 'text/css',
+			   href => 'benchmark.css');
+$head->push_content($link);
+
+# title:
+$title = HTML::Element->new('title');
+$title->push_content('CGAL at Tel-Aviv University - Members Page - Evaluation - benchmark');
+$head->push_content($title);
+
+$h->push_content($head);
+
+$body = HTML::Element->new('body', background => '../../images/cgal-bg2.gif');
+
+$a = HTML::Element->new('a', name => 'top');
+$body->push_content($a);
+
+$php2 = HTML::Element->new("~pi",
+			   text => 'php require \'../../common/header.php\';?');
+$body->push_content($php2);
+
+$center = HTML::Element->new('center');
+
+$h1 = HTML::Element->new('h1');
+$font = HTML::Element->new('font', color => '#0f0f80');
+$font->push_content('Benchmarks');
+$h1->push_content($font);
+$center->push_content($h1);
+
+$body->push_content($center);
+$table = HTML::Element->new('table', border => '1');
+
+$tr = HTML::Element->new('tr');
+
+$th_name = HTML::Element->new('th', align => 'middle', 'nowrap');
+$th_name->push_content('Benchmark Name');
+
+$th_time = HTML::Element->new('th', align => 'middle');
+$th_time->push_content('Allocated Time in seconds');
+
+$th_ops = HTML::Element->new('th', align => 'middle');
+$th_ops->push_content('Number of Operations');
+
+$th_total = HTML::Element->new('th', align => 'middle');
+$th_total->push_content('Total Operation time in seconds');
+
+$th_single = HTML::Element->new('th', align => 'middle');
+$th_single->push_content('Single Operation time in seconds');
+
+$th_num = HTML::Element->new('th', align => 'middle');
+$th_num->push_content('Operations per second');
+
+$tr->push_content($th_name);
+$tr->push_content($th_time);
+$tr->push_content($th_ops);
+$tr->push_content($th_total);
+$tr->push_content($th_single);
+$tr->push_content($th_num);
+
+$table->push_content($tr);
+
+# loop
+open(LOGFILE, "$logFile") or die "Can't open file: $logFile\n";
+$line = <LOGFILE>;
+while ($line = <LOGFILE>) {
+    $offset = 0;
+    $name = substr($line, $offset, $nameLength); $offset += $nameLength + 1;
+    $name =~ s/\s*$//;
+    if ($name =~ m/CGAL Kernel/) {
+	$kernel = 'cgal_kernel';
+    } elsif ($name =~ m/My Leda Kernel/) {
+	$kernel = 'my_kernel';
+    } elsif ($name =~ m/Leda Kernel/) {
+	$kernel = 'leda_kernel';
+    } else {
+	next;
+    }
+    $time = substr($line, $offset, 8);		 $offset += 9;
+    $ops = substr($line, $offset, 8);		 $offset += 9;
+    $total = substr($line, $offset, 8);		 $offset += 9;
+    $single = substr($line, $offset, 8);	 $offset += 9;
+    $num = substr($line, $offset, 8);		 $offset += 9;
+
+    $tr = HTML::Element->new('tr');
+
+    $td_name = HTML::Element->new('td', align => 'left', 'nowrap');
+    $td_name->attr('class', $kernel) if defined($kernel);
+    $td_name->push_content($name);
+
+    $td_time = HTML::Element->new('td', align => 'right');
+    $td_time->attr('class', $kernel) if defined($kernel);
+    $td_time->push_content($time);
+
+    $td_ops = HTML::Element->new('td', align => 'right');
+    $td_ops->attr('class', $kernel) if defined($kernel);
+    $td_ops->push_content($ops);
+
+    $td_total = HTML::Element->new('td', align => 'right');
+    $td_total->attr('class', $kernel) if defined($kernel);
+    $td_total->push_content($total);
+
+    $td_single = HTML::Element->new('td', align => 'right');
+    $td_single->attr('class', $kernel) if defined($kernel);
+    $td_single->push_content($single);
+
+    $td_num = HTML::Element->new('td', align => 'right');
+    $td_num->attr('class', $kernel) if defined($kernel);
+    $td_num->push_content($num);
+
+    $tr->push_content($td_name);
+    $tr->push_content($td_time);
+    $tr->push_content($td_ops);
+    $tr->push_content($td_total);
+    $tr->push_content($td_single);
+    $tr->push_content($td_num);
+
+    $table->push_content($tr);
+}
+close LOGFILE;
+# end loop
+
+$center->push_content($table);
+$body->push_content($center);
+
+$p = HTML::Element->new('p');
+$body->push_content($p);
+
+$table = HTML::Element->new('table');
+$body->push_content($table);
+
+# Operating System
+$tr = HTML::Element->new('tr');
+$td1 = HTML::Element->new('td');
+$td2 = HTML::Element->new('td');
+$td1->push_content('Operating System');
+$td2->push_content($OSNAME);
+$tr->push_content($td1);
+$tr->push_content($td2);
+$table->push_content($tr);
+
+
+# System Information
+$tr = HTML::Element->new('tr');
+$td1 = HTML::Element->new('td');
+$td2 = HTML::Element->new('td');
+$td1->push_content('System Information');
+$td2->push_content($sysInfo);
+$tr->push_content($td1);
+$tr->push_content($td2);
+$table->push_content($tr);
+
+# compiler
+$tr = HTML::Element->new('tr');
+$td1 = HTML::Element->new('td');
+$td2 = HTML::Element->new('td');
+$td1->push_content('Compiler');
+$td2->push_content('Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 12.00.8804 for 80x86');
+$tr->push_content($td1);
+$tr->push_content($td2);
+$table->push_content($tr);
+
+$a2 = HTML::Element->new('a', href => '#top');
+$img = HTML::Element->new('img',
+			  src => '../../images/icons/top.gif',
+			  alt => '[Top]', align => 'middle',  border => '0');
+$a2->push_content($img);
+$body->push_content($a2);
+
+$php3 = HTML::Element->new("~pi",
+			   text => 'php require \'../../common/footer.php\';?');
+$body->push_content($php3);
+    
+$h->push_content($body);
+
+open (PHPFILE, ">$phpFile") or die "cannot open $phpFile: $! for writing\n";
+print PHPFILE $dec->as_HTML('<>&','  ');
+print PHPFILE $h->as_HTML('<>&','  ');
+close PHPFILE;
+
+####
+sub usage {
+  printf "Usage: cgalBenchAnalyze [options]\n";
+printf "  -help\t\t\tprint this help message
+  -root <root>\t\tset ROOT. Default \$ROOT (env. var.)
+  -logDir <dir>\t\tset log directory. Default is $logDir
+  -logFile <file>\tset log file.
+  \t\t\tDefault is most recent match cgalBench_*.log
+  -nameLength <length>\tset the length of the name field\n";
+    
+  exit(0);
+}
+
+####
+sub findLogFile {
+  my ($logDir) = @_;
+  opendir LOGDIR, $logDir or die "serious braindamage: $logDir $!";
+  @logFiles = grep /cgalBench/, readdir LOGDIR;
+  closedir LOGDIR;
+  $day = 0;
+  $month = 0;
+  $year = 0;  
+  foreach $newLogFile (@logFiles) {
+      $date = $newLogFile;
+      $date =~ s/cgalBench_(.*)%.*/$1/;
+      $newDay = substr($date, 0, 2);
+      $newMonth = substr($date, 2, 2);
+      $newYear = substr($date, 4, 2);
+      if (($newYear > $year) ||
+	  (($newYear == $year) && ($newMonth > $month)) ||
+	  (($newYear == $year) && ($newMonth == $month) && ($newDay > $day)))
+      {
+	$day = $newDay;
+	$month = $newMonth;
+	$year = $newYear;
+	$logFile = $newLogFile;
+      }
+  }
+  return $logFile;
+}
