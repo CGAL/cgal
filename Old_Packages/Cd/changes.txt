@@ -1,3 +1,6 @@
+Ver 1.11 (17 May 2001)
+- Fix BCC warning.
+
 Ver 1.10 (20 April 2001)
 - Remove references to CGAL_STRICT_09.
 

@@ -236,7 +236,7 @@ std::istream&
 operator>>(std::istream& is, PointCd<FT> &p)
 {
     int d=0, i;
-    FT* e=0;
+    FT* e;
     switch(is.iword(IO::mode)) 
     {
       case IO::ASCII :
