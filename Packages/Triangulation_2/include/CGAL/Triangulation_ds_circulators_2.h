@@ -16,6 +16,7 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Mariette Yvinec
+//                 Menelaos Karavelas <mkaravel@cse.nd.edu>
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 //
@@ -41,6 +42,12 @@ class Triangulation_ds_face_circulator_2
     public Triangulation_cw_ccw_2
       
 {
+private:
+  typedef
+  Bidirectional_circulator_base< typename Tds::Face,
+                                 CGAL_CLIB_STD::ptrdiff_t,
+				 CGAL_CLIB_STD::size_t>  Base_circulator;
+
 public:
   typedef Triangulation_ds_face_circulator_2<Tds> Face_circulator;
   typedef typename Tds::Face                      Face;
@@ -61,6 +68,13 @@ public:
   Triangulation_ds_face_circulator_2(Vertex_handle v, 
 				     Face_handle f = NULL);
         
+
+  // MK: added to satisfy the mips CC 7.40 compiler
+  Face_circulator& operator=(const Face_circulator& other) {
+    Base_circulator::operator=((Base_circulator)other);
+    return *this;
+  }
+
   Face_circulator& operator++();
   Face_circulator operator++(int);
   Face_circulator& operator--();
