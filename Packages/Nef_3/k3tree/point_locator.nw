@@ -182,8 +182,9 @@ public:
     Vertex_iterator v;
     Halfedge_iterator e;
     Halffacet_iterator f;
-    CGAL_forall_vertices( v, *this->sncp()) 
+    CGAL_forall_vertices( v, *this->sncp())
       objects.push_back(Object_handle(Vertex_handle(v)));
+    typename Object_list::difference_type v_end = objects.size();
     CGAL_forall_edges( e, *this->sncp())
       objects.push_back(Object_handle(Halfedge_handle(e)));
     CGAL_forall_facets( f, *this->sncp()) {
@@ -205,7 +206,8 @@ public:
       objects.push_back(Object_handle(Halffacet_handle(f)));
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
     }
-    candidate_provider = new SNC_candidate_provider(objects);
+    Object_list_iterator oli=objects.begin()+v_end;
+    candidate_provider = new SNC_candidate_provider(objects,oli);
 //    TRACEN(*candidate_provider);
     TIMER(ct_t.stop());
   }

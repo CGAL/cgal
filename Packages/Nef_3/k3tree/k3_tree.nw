@@ -180,10 +180,10 @@ private:
   int max_depth;
   Bounding_box_3 bounding_box;
 public:
-  K3_tree( const Object_list& objects) {
+  K3_tree(Object_list& objects, Object_iterator& v_end) {
     <<compute the maximum depth of the subdivision>>
     <<compute the bounding box of the input objects>>
-    root = build_kdtree( objects, 0);
+    root = build_kdtree( objects, v_end, 0);
   }
   const Object_list& objects_around_point( const Point_3& p) const {
     return locate( p, root);
@@ -263,12 +263,8 @@ CGAL_END_NAMESPACE
 Since all objects on the model are incident to vertices, are they who determine the complexity of the model.  The maximum depth of the spatial subdivision tree is then set as a function of the number of vertices in the model.
 
 <<compute the maximum depth of the subdivision>>=
-size_type n_vertices = 0;
-for( Object_const_iterator o = objects.begin(); o != objects.end(); ++o) {
-  Vertex_handle v;
-  if( CGAL::assign( v, *o))
-    n_vertices++;
-}
+typename Object_list::difference_type n_vertices = std::distance(objects.begin(),v_end);
+TRACEN("K3_tree(): n_vertices = " << std::distance(objects.begin(),v_end));
 frexp( (double) n_vertices, &max_depth);
 
 @ 
@@ -292,7 +288,7 @@ typedef typename Traits::Halffacet_handle Halffacet_handle;
 typedef typename Traits::Halffacet_triangle_handle Halffacet_triangle_handle;
 
 typedef typename Traits::Object_handle Object_handle;
-typedef typename Traits::Object_list Object_list;
+typedef std::vector<Object_handle> Object_list;
 typedef typename Object_list::const_iterator Object_const_iterator;
 typedef typename Object_list::iterator Object_iterator;
 typedef typename Object_list::size_type size_type;
@@ -321,25 +317,45 @@ During the construction of a Kd-tree, the space is consecutively divided into tw
 
 <<definition of the k3 tree construction methods>>=
 template <typename Depth>
-Node* build_kdtree( const Object_list& O, Depth depth, Node* parent=0, int non_efective_splits=0) {
+Node* build_kdtree(Object_list& O, Object_iterator v_end, 
+	           Depth depth, Node* parent=0, int non_efective_splits=0) {
   CGAL_precondition( depth >= 0);
-//  CGAL_precondition( O.size() > 0);
   TRACEN( "build_kdtree: "<<O.size()<<" objects, "<<"depth "<<depth);
   TRACEN( "build_kdtree: "<<dump_object_list(O));
-  if( !can_set_be_divided( O, depth)) {
+  if( !can_set_be_divided(O.begin(), v_end, depth)) {
     TRACEN("build_kdtree: set cannot be divided");
     return new Node( parent, 0, 0, Plane_3(), O);
   }
-  Plane_3 partition_plane = construct_splitting_plane( O, depth);
-  TRACEN("build_kdtree: plane: "<<partition_plane<<partition_plane.point());
+  Object_iterator median; 
+  Plane_3 partition_plane = construct_splitting_plane(O.begin(), v_end, median, depth);
+  TRACEN("build_kdtree: plane: "<<partition_plane<< " " << partition_plane.point());
   Object_list O1, O2;
-  bool splitted = classify_objects( O, partition_plane, depth,
+  Vertex_handle vm,vx;
+  CGAL::assign(vm,*median);
+  for(Object_iterator oi=O.begin();oi!=median;++oi) {
+    O1.push_back(*oi);
+    CGAL::assign(vx,*oi);
+    if(vm->point()[depth%3] == vx->point()[depth%3])
+      O2.push_back(*oi);
+  }
+  O1.push_back(*median);
+  O2.push_back(*median);
+  for(Object_iterator oi=median+1;oi!=v_end;++oi) {
+    O2.push_back(*oi);
+    CGAL::assign(vx,*oi);
+    if(vm->point()[depth%3] == vx->point()[depth%3])
+      O1.push_back(*oi);
+  }
+  typename Object_list::size_type v_end1 = O1.size();
+  typename Object_list::size_type v_end2 = O2.size();
+  bool splitted = classify_objects( v_end, O.end(), partition_plane, depth,
                                     std::back_inserter(O1), 
                                     std::back_inserter(O2));
   if( !splitted) {
     TRACEN("build_kdtree: splitting plane not found");
     return new Node( parent, 0, 0, Plane_3(), O);
   }
+
   CGAL_assertion( O1.size() <= O.size() && O2.size() <= O.size());
   CGAL_assertion( O1.size() + O2.size() >= O.size());
   bool non_efective_split = ((O1.size() == O.size()) || (O2.size() == O.size()));
@@ -352,8 +368,8 @@ Node* build_kdtree( const Object_list& O, Depth depth, Node* parent=0, int non_e
     return new Node( parent, 0, 0, Plane_3(), O);
   }
   Node *node = new Node( parent, 0, 0, partition_plane, Object_list());
-  node->left_node = build_kdtree( O1, depth + 1, node, non_efective_splits);
-  node->right_node = build_kdtree( O2, depth + 1, node, non_efective_splits);
+  node->left_node = build_kdtree( O1, O1.begin()+v_end1, depth + 1, node, non_efective_splits);
+  node->right_node = build_kdtree( O2, O2.begin()+v_end2, depth + 1, node, non_efective_splits);
   return node;
 }
 
@@ -362,22 +378,12 @@ When there is only one object in a cell, the node corresponds to a leaf since no
 
 <<definition of the k3 tree construction methods>>=
 template <typename Depth>
-bool can_set_be_divided( const Object_list& O, Depth depth) {
-  if( O.size() < 2)
-    return false;
+bool can_set_be_divided(Object_iterator start, Object_iterator end, Depth depth) {
   if( depth >= max_depth)
     return false;
-  size_t number_of_vertices = 0;
-  typename Object_list::const_iterator o;
-  for( o = O.begin(); o != O.end(); o++) {
-    Vertex_handle v;
-    if( CGAL::assign( v, *o)) {
-      number_of_vertices++;
-      if( number_of_vertices > 1)
-        break;
-    }
-  }
-  return (number_of_vertices > 1);
+  if(std::distance(start,end)<2)
+    return false;
+  return true;
 }
 
 @
@@ -387,13 +393,14 @@ Having the partition plane, it is neccesary first to decide if the plane actuall
 
 <<definition of the k3 tree construction methods>>=
 template <typename OutputIterator>
-bool classify_objects( const Object_list& O, Plane_3 partition_plane, int depth,
-                        OutputIterator o1, OutputIterator o2) {
-  size_t on_oriented_boundary = 0;
+bool classify_objects(Object_iterator start, Object_iterator end, 
+                      Plane_3 partition_plane, int depth,
+                      OutputIterator o1, OutputIterator o2) {
+  typename Object_list::difference_type on_oriented_boundary = 0;
   typename Object_list::const_iterator o;
   
   Side_of_plane sop;
-  for( o = O.begin(); o != O.end(); ++o) {
+  for( o = start; o != end; ++o) {
     Oriented_side side = sop( partition_plane, *o);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY) {
       *o1 = *o;
@@ -406,22 +413,25 @@ bool classify_objects( const Object_list& O, Plane_3 partition_plane, int depth,
     if( side == ON_ORIENTED_BOUNDARY)
       on_oriented_boundary++;
   }
-  return (on_oriented_boundary != O.size());
+  return (on_oriented_boundary != std::distance(start,end));
 }
 
 @
 Now, it remains to define the process that computes the partition plane.  There are many strategies proposed for obtaining such plane.  But, since the construction time of the kdtree must stay as low as is possible, the most inexpensive strategy has to be choosen.  So, the middle point of the bounding box enclosing the set of objects is taken for placing the plane.
 
 <<definition of the k3 tree construction methods>>=
-template < typename Vertex, typename Explorer, typename Coordinate>
+template <typename Object, typename Vertex, typename Explorer, typename Coordinate>
 class Vertex_smaller_than
 {
 public:
   Vertex_smaller_than(Coordinate c) : coord(c) {
     CGAL_assertion( c >= 0 && c <=2);
   }
-  bool operator()( const Vertex& v1, const Vertex& v2) { 
-    return( D.point(v1)[coord] < D.point(v2)[coord]); 
+  bool operator()( const Object& o1, const Object& o2) {
+    Vertex v1,v2;
+    CGAL::assign(v1,o1);
+    CGAL::assign(v2,o2);
+    return(v1->point()[coord] < v2->point()[coord]); 
   }
 private:
   Coordinate coord;
@@ -429,28 +439,22 @@ private:
 };
 
 template <typename Depth>
-Plane_3 construct_splitting_plane( const Object_list& O, Depth depth) {
-  typedef typename std::vector<Vertex_handle> Vertex_list;
+Plane_3 construct_splitting_plane(Object_iterator start, Object_iterator end,
+                                  Object_iterator& median, Depth depth) {
   CGAL_precondition( depth >= 0);
-  Vertex_list vertices;
-  for( typename Object_list::const_iterator o = O.begin(); o != O.end(); ++o) {
-    Vertex_handle v;
-    if( CGAL::assign( v, *o))
-      vertices.push_back(v);
-  }
-  CGAL_assertion( vertices.size() > 1);
-  std::sort( vertices.begin(), vertices.end(), 
-             Vertex_smaller_than<Vertex_handle, SNC_decorator, int>(depth%3));
-  typename Vertex_list::size_type i, n = vertices.size();
-  typename Vertex_list::const_iterator median;
-  for( i = 0, median = vertices.begin(); i < ((n+1)/2)-1; ++i, ++median)
-    CGAL_assertion( median != vertices.end());
-  SNC_decorator D;
-  Point_3 p(D.point(*median));
+  typename Object_list::difference_type n=std::distance(start,end);
+  CGAL_assertion(n>1);
+
+  std::nth_element(start, start+n/2, end,
+  	           Vertex_smaller_than<Object_handle,Vertex_handle, SNC_decorator, int>(depth%3));
+
+  median = start+n/2;
+  Vertex_handle v;
+  CGAL::assign(v,*median);
   switch( depth % 3) {
-  case 0: return Plane_3( p, Vector_3( 1, 0, 0)); break;
-  case 1: return Plane_3( p, Vector_3( 0, 1, 0)); break;
-  case 2: return Plane_3( p, Vector_3( 0, 0, 1)); break;
+  case 0: return Plane_3( v->point(), Vector_3( 1, 0, 0)); break;
+  case 1: return Plane_3( v->point(), Vector_3( 0, 1, 0)); break;
+  case 2: return Plane_3( v->point(), Vector_3( 0, 0, 1)); break;
   }
   CGAL_assertion_msg( 0, "never reached");
   return Plane_3();
@@ -967,7 +971,7 @@ public:
 
   typedef typename SNC_structure::Halffacet_triangle_handle Halffacet_triangle_handle;
   typedef typename SNC_structure::Object_handle Object_handle;
-  typedef typename SNC_structure::Object_list Object_list;
+  typedef std::vector<Object_handle> Object_list;
 
   typedef typename Decorator_traits::Halffacet_cycle_iterator
     Halffacet_cycle_iterator;
@@ -1012,7 +1016,7 @@ public:
                                   Halffacet_triangle_handle;
 
   typedef typename SNC_structure::Object_handle Object_handle;
-  typedef typename SNC_structure::Object_list Object_list;
+  typedef std::vector<Object_handle> Object_list;
 
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Segment_3 Segment_3;
