@@ -142,15 +142,18 @@ std::ostream& operator<<( std::ostream& out, const Color& col)
 {
     switch(out.iword(IO::mode)) {
     case IO::ASCII :
-        return out << col.red() << ' ' << col.green() << ' ' << col.blue();
+        return out << static_cast<int>(col.red())   << ' ' 
+		   << static_cast<int>(col.green()) << ' ' 
+		   << static_cast<int>(col.blue());
     case IO::BINARY :
-        write(out, col.red());
-        write(out, col.green());
-        write(out, col.blue());
+        write(out, static_cast<int>(col.red()));
+        write(out, static_cast<int>(col.green()));
+        write(out, static_cast<int>(col.blue()));
         return out;
     default:
-        return out << "Color(" << col.red() << ", " << col.green() << ", "
-                   << col.blue() << ')';
+        return out << "Color(" << static_cast<int>(col.red()) << ", " 
+		   << static_cast<int>(col.green()) << ", "
+                   << static_cast<int>(col.blue()) << ')';
     }
 }
 
