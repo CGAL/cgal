@@ -74,9 +74,9 @@ want to reinitialize the history list.}
 
 \ccHeading{public slots:}
 \ccGlue
-\ccMethod{void back();}{}
+\ccMethod{bool back();}{}
 \ccGlue
-\ccMethod{void forth();}{This slots permits to walk into history.}
+\ccMethod{bool forth();}{This slots permits to walk into history. Return \ccc{true} if succeded.}
 
 \begin{ccAdvanced}
 You should have the same scaling factor for X and Y if you want to

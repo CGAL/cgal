@@ -437,7 +437,7 @@ Qt_widget& Qt_widget::operator<<(const PointStyle& ps)
 void Qt_widget::clear() {
   painter->eraseRect(rect());
 }
-  void Qt_widget::back(){
+  bool Qt_widget::back(){
     if(history.back()){
       xmin = history.get_atom()->x1();
       xmax = history.get_atom()->x2();
@@ -449,9 +449,11 @@ void Qt_widget::clear() {
       yscal = history.get_atom()->yscal();
       configure_history_buttons();
       redraw();
+      return true;
     }
+    return false;
   }
-  void Qt_widget::forth(){
+  bool Qt_widget::forth(){
     if(history.forward()) {
       xmin = history.get_atom()->x1();
       xmax = history.get_atom()->x2();
@@ -463,7 +465,9 @@ void Qt_widget::clear() {
       yscal = history.get_atom()->yscal();
       configure_history_buttons();
       redraw();
+      return true;
     }
+    return false;
   }
 
   Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r)

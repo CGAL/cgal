@@ -189,8 +189,8 @@ signals:
 public slots:
   void print_to_ps();
   virtual void redraw();
-  void back();
-  void forth();
+  bool back();
+  bool forth();
   
 protected:
   void paintEvent(QPaintEvent *e);
