@@ -20,13 +20,8 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
-
 #ifndef CGAL_PREDICATES_CLASSES_2_H
 #define CGAL_PREDICATES_CLASSES_2_H
-
-#include <CGAL/predicates_on_points_2.h>
-#include <CGAL/distance_predicates_2.h>
-#include <CGAL/predicates_on_lines_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -21,17 +21,8 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
-
 #ifndef CGAL_BASIC_CONSTRUCTIONS_3_H
 #define CGAL_BASIC_CONSTRUCTIONS_3_H
-
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
-#include <CGAL/basic_constructionsH3.h>
-#endif
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/Cartesian/basic_constructions_3.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

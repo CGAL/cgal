@@ -23,7 +23,6 @@
 #ifndef CGAL_LINE_2_H
 #define CGAL_LINE_2_H
 
-#include <CGAL/predicates_on_points_2.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/Ray_2.h>
 

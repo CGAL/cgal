@@ -1,6 +1,7 @@
 3.14 (20 June 2001)
 - remove conditionnal #includes from cartesian/homogeneous.
 - remove member functions for predicates since they are inherited.
+- remove global function predicates.
 
 3.13 (19 June 2001)
 - added centroid

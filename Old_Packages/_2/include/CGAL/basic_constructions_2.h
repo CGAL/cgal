@@ -19,18 +19,9 @@
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
- 
 
 #ifndef CGAL_BASIC_CONSTRUCTIONS_2_H
 #define CGAL_BASIC_CONSTRUCTIONS_2_H
-
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
-#include <CGAL/basic_constructionsH2.h>
-#endif
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/Cartesian/basic_constructions_2.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -85,6 +76,7 @@ centroid( const Point_2<R>& p,
                       static_cast<const RPoint_2&>(r),
                       static_cast<const RPoint_2&>(s)));
 }
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_BASIC_CONSTRUCTIONS_2_H

@@ -20,24 +20,10 @@
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
- 
 
 #ifndef CGAL_DISTANCE_PREDICATES_3_H
 #define CGAL_DISTANCE_PREDICATES_3_H
 
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+// Kept for backward compatibility only.
 
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
-#include <CGAL/distance_predicatesH3.h>
-#endif
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/Cartesian/distance_predicates_3.h>
-#endif
-
-#include <CGAL/Point_3.h>
-#include <CGAL/Plane_3.h>
-
-#endif //CGAL_DISTANCE_PREDICATES_3_H
+#endif // CGAL_DISTANCE_PREDICATES_3_H
