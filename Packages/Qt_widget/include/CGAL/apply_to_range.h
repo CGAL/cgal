@@ -58,7 +58,7 @@ void apply_to_range(const Tr &t,
       FFI it = t.finite_faces_begin();
       while(it != t.finite_faces_end())
       {
-        fct((*it).handle());
+        fct(it);
         it++;
       }
     }
@@ -75,7 +75,8 @@ void apply_to_range(const Tr &t,
       face_stack.push(l1);
       visited[l1] = true;
       l1++;
-    }while(!t.is_infinite(l1) && t.triangle((*l1).handle()).has_on_unbounded_side(POINT(xr_right, yr_top)));
+    }while(!t.is_infinite(l1) && 
+	   t.triangle(l1).has_on_unbounded_side(POINT(xr_right, yr_top)));
   }
   if(l2 != (CGAL_NULL_TYPE) NULL) //found at least one face that intersect the RIGHT segment
   {
@@ -86,7 +87,8 @@ void apply_to_range(const Tr &t,
         visited[l2] = true;       
       }
       l2++;
-    }while(!t.is_infinite(l2) && t.triangle((*l2).handle()).has_on_unbounded_side(POINT(xr_right, yr_top)));
+    }while(!t.is_infinite(l2) && 
+	   t.triangle(l2).has_on_unbounded_side(POINT(xr_right, yr_top)));
   }
   if(l3 != (CGAL_NULL_TYPE) NULL) //found at least one face that intersect the BOTTOM segment
   {
@@ -97,7 +99,8 @@ void apply_to_range(const Tr &t,
         visited[l3] = true;        
       }
       l3++;
-    }while(!t.is_infinite(l3) && t.triangle((*l3).handle()).has_on_unbounded_side(POINT(xr_right, yr_top)));
+    }while(!t.is_infinite(l3) && 
+	   t.triangle(*l3).has_on_unbounded_side(POINT(xr_right, yr_top)));
   }
   if(l4 != (CGAL_NULL_TYPE) NULL) //found at least one face that intersect the LEFT segment
   {
@@ -108,10 +111,11 @@ void apply_to_range(const Tr &t,
         visited[l4] = true;
       }
       l4++;
-    }while(!t.is_infinite(l4) && t.triangle((*l4).handle()).has_on_unbounded_side(POINT(xr_right, yr_top)));
+    }while(!t.is_infinite(l4) && 
+	   t.triangle(l4).has_on_unbounded_side(POINT(xr_right, yr_top)));
   }
   
-  //HERE we begin to walkt hrough the faces DFS
+  //HERE we begin to walk through the faces DFS
   hFACE hf;
   typename CGAL::Unique_hash_map<hFACE,bool>::Data& 
      data_ref_start(visited[hf]);
