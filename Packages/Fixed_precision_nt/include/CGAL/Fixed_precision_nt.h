@@ -24,8 +24,8 @@
 #ifndef CGAL_FIXED_PRECISION_NT_H
 #define CGAL_FIXED_PRECISION_NT_H
 
-#include <iostream>
 #include <CGAL/config.h>
+#include <iostream>
 #ifndef CGAL_TAGS_H
 #include <CGAL/tags.h>
 #endif // CGAL_TAGS_H
