@@ -66,6 +66,8 @@ io_Operator
 io_tag(const CORE::Expr &)
 { return io_Operator(); }
 
+namespace NTS {
+
 inline
 Sign
 sign(const CORE::Expr& e)
@@ -78,6 +80,15 @@ compare(const CORE::Expr& e1, const CORE::Expr& e2)
   return Comparison_result(e1.cmp(e2));
 }
 
+inline
+CORE::Expr
+sqrt(const CORE::Expr& e)
+{ 
+  return CORE::sqrt(e);
+}
+
+} // namespace NTS
+
 // Should not be inline, but, well...
 inline
 std::pair<double,double>
@@ -86,15 +97,6 @@ to_interval (const CORE::Expr & e)
   std::pair<double,double> result;
   e.doubleInterval(result.first, result.second);
   return result;
-}
-
-namespace NTS {
-  inline
-  CORE::Expr
-  sqrt( const CORE::Expr& e)
-  { 
-    return CORE::sqrt(e);
-  }
 }
 
 CGAL_END_NAMESPACE

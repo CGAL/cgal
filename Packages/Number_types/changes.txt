@@ -1,3 +1,6 @@
+4.107 (30 July 2003)
+- Move sign(CORE::EXpr) and compare(CORE::Expr) in CGAL::NTS.
+
 4.106 (29 July 2003)
 - Overload NTS::compare<Quotient> when partial spec is available.
 
