@@ -1,5 +1,7 @@
 Version 4.0.2 (?? ?? 1999)
 - Various cleanups [syl & herve].
+- Shorter headers in CVS repository, but complete thanks to scripti
+  for submission
 
 Version 4.0.1 (October 28 1999)
 - Filter related typo in kernel_ftC3.h [Sylvain]
