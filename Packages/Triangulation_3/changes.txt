@@ -1,4 +1,4 @@
-Version 1.54 (?? May 01)
+Version 1.54 (28 May 01)
 - VC++ fix.
 - Add public: in example_tds.C.
 
