@@ -307,7 +307,7 @@ Geomview_stream::operator<<(double d)
     } else {
         // 'copy' the float in a string and append a blank
         std::ostrstream str;
-        str << f << " " << std::ends;
+        str << f << ' ' << std::ends;
         char *bptr = str.str();
 
         ::write(out, bptr, int(::strlen(bptr)));
