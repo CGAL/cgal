@@ -578,12 +578,14 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
 
     // get intersection points (with endpoints)
     PointList mypointlist;
-    //    CGAL::Sweep_line_tight_2<CurveContainerIter, Traits, Event, SubCurve> sl;
+    //    CGAL::Sweep_line_tight_2<CurveContainerIter, Traits,
+    //                             Event, SubCurve> sl;
     CGAL::Sweep_line_2<CurveContainerIter, Traits> sl;
     sl.get_intersection_points(segments.begin(), segments.end(),
                              std::back_inserter(mypointlist));
 
-    for(typename std::list<Point_2>::const_iterator v_iter = mypointlist.begin();
+    for(typename std::list<Point_2>::const_iterator
+            v_iter = mypointlist.begin();
 	v_iter != mypointlist.end();++v_iter) {
       hp = new Hot_Pixel<Rep_>(v_iter->x(),v_iter->y(),prec);
       hot_pixels_list.push_back(std::pair<std::pair<NT,NT>,Hot_Pixel<Rep_> *>(
@@ -836,13 +838,15 @@ template<class Rep_>
 template<class Out> void Snap_rounding_2<Rep_>::output_distances(Out &o)
   {
     double max = 0,max_seg_dis,evarage_dis,cur_dis;
-    typename std::list<Segment_data<Rep_> >::iterator orig_iter = seg_list.begin();
+    typename std::list<Segment_data<Rep_> >::iterator
+            orig_iter = seg_list.begin();
 
     for(typename std::list<std::list<std::pair<NT,NT> > >::iterator iter1 =
         segments_output_list.begin();iter1 != segments_output_list.end();
         ++iter1) {
       max_seg_dis = 0;
-      for(typename std::list<std::pair<NT,NT> >::iterator iter2 = iter1->begin();
+      for(typename std::list<std::pair<NT,NT> >::iterator
+            iter2 = iter1->begin();
           iter2 != iter1->end();++iter2) {
         cur_dis = sqrt(CGAL::squared_distance(Point_2(iter2->first,
           iter2->second),Segment_2(Point_2(orig_iter->get_x1(),
