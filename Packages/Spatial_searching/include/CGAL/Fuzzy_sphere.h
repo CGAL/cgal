@@ -40,6 +40,7 @@ namespace CGAL {
 
     public:
 
+
     	// default constructor
     	Fuzzy_sphere() {}
 		
@@ -57,7 +58,6 @@ namespace CGAL {
 		// is at most the squared_radius
 		FT squared_radius = r*r;
 		FT distance=FT(0);
-
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
                 typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
 		                                                  pit = construct_it(p);
@@ -65,8 +65,9 @@ namespace CGAL {
 		for (unsigned int i = 0; 
 		     (i < dim) && (distance <= squared_radius); ++i, ++cit, ++pit) {
 		  distance += 
-			((*cit)-(*pit)*(*cit)-(*pit));
+			((*cit)-(*pit))*((*cit)-(*pit));
 		}
+		
 		return (distance < squared_radius); 
         }
 
@@ -88,6 +89,7 @@ namespace CGAL {
 				distance += 
 				((*cit)-rectangle.max_coord(i))*((*cit)-rectangle.max_coord(i));
 		}
+		
 		return (distance < squared_radius);
 	}
 
@@ -101,7 +103,7 @@ namespace CGAL {
 	FT squared_radius = (r+eps)*(r+eps);	
 	typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
 	typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c);
-
+	
 	for (unsigned int i = 0; (i < dim) && (distance < squared_radius) ; ++i, ++cit) {
 		if ((*cit) <= (rectangle.min_coord(i)+rectangle.max_coord(i))/FT(2))
 			distance += 
@@ -109,8 +111,11 @@ namespace CGAL {
 		else
 			distance += ((*cit)-rectangle.min_coord(i))*((*cit)-rectangle.min_coord(i));
 		}
+		
 		return (distance < squared_radius);
 	}
+	
+  
 
 	~Fuzzy_sphere() {}
 
