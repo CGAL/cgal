@@ -1,3 +1,23 @@
+// ======================================================================
+//
+// Copyright (c) 1999 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $$
+// release_date  : $$
+//
+// file          : include/CGAL/Arrangement_2/Conic_arc_2_eq.h
+// package       : Arrangement (2.62)
+// author(s)     : Ron Wein <wein@post.tau.ac.il>
+// 
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+//
+// ======================================================================
 #ifndef CGAL_CONIC_ARC_2_EQ_H
 #define CGAL_CONIC_ARC_2_EQ_H
 

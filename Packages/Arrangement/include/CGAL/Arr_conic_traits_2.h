@@ -1,5 +1,25 @@
-#ifndef CGAL_ARR_CONIC_TRAITS_H
-#define CGAL_ARR_CONIC_TRAITS_H
+// ======================================================================
+//
+// Copyright (c) 1999 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $$
+// release_date  : $$
+//
+// file          : include/CGAL/Arr_conic_traits_2.h
+// package       : Arrangement (2.62)
+// author(s)     : Ron Wein <wein@post.tau.ac.il>
+// 
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+//
+// ======================================================================
+#ifndef CGAL_ARR_CONIC_TRAITS_2_H
+#define CGAL_ARR_CONIC_TRAITS_2_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_intersection_tags.h>
@@ -559,14 +579,16 @@ class Arr_conic_traits
 	// c1 is a vertical segment going up:
 	if (c2_is_left)
 	{
-	  return ((!curve_is_left) ||
-		  (curve_is_left &&
-		   _curve_compare_at_intersection_left (c2, curve, p) == LARGER));
+	  return
+            ((!curve_is_left) ||
+             (curve_is_left &&
+              _curve_compare_at_intersection_left (c2, curve, p) == LARGER));
 	}
 	else
 	{
-	  return (!curve_is_left &&
-		  _curve_compare_at_intersection_right (c2, curve, p) == SMALLER);
+	  return
+            (!curve_is_left &&
+             _curve_compare_at_intersection_right (c2, curve, p) == SMALLER);
 	}
       }
       else
@@ -574,15 +596,17 @@ class Arr_conic_traits
 	// c1 is a vertical segment going down:
 	if (c2_is_left)
 	{
-	  return (curve_is_left &&
-		  _curve_compare_at_intersection_left (c2, curve, p) == LARGER);
+	  return
+            (curve_is_left &&
+             _curve_compare_at_intersection_left (c2, curve, p) == LARGER);
 	}
 	else
 	{
-	  return ((curve_is_left) ||
-		  (curve_vertical == 1) ||
-		  (!curve_is_left &&
-		   _curve_compare_at_intersection_right (c2, curve, p) == SMALLER));
+	  return
+            ((curve_is_left) ||
+             (curve_vertical == 1) ||
+             (!curve_is_left &&
+              _curve_compare_at_intersection_right (c2, curve, p) == SMALLER));
 	}
       }
     }
@@ -606,15 +630,17 @@ class Arr_conic_traits
 	// c2 is a vertical segment going up:
 	if (c1_is_left)
 	{
-	  return (curve_is_left &&
-		  _curve_compare_at_intersection_left (c1, curve, p) == SMALLER);
+	  return
+            (curve_is_left &&
+             _curve_compare_at_intersection_left (c1, curve, p) == SMALLER);
 	}
 	else
 	{
-	  return ((curve_is_left) ||
-		  (curve_vertical == -1) ||
-		  (!curve_is_left &&
-		   _curve_compare_at_intersection_right (c1, curve, p) == LARGER));
+	  return
+            ((curve_is_left) ||
+             (curve_vertical == -1) ||
+             (!curve_is_left &&
+              _curve_compare_at_intersection_right (c1, curve, p) == LARGER));
 	}
       }
       else
@@ -622,15 +648,17 @@ class Arr_conic_traits
 	// c2 is a vertical segment going down:
 	if (c1_is_left)
 	{
-	  return ((!curve_is_left) ||
-		  (curve_vertical == 1) ||
-		  (curve_is_left &&
-		   _curve_compare_at_intersection_left (c1, curve, p) == SMALLER));
+	  return
+            ((!curve_is_left) ||
+             (curve_vertical == 1) ||
+             (curve_is_left &&
+              _curve_compare_at_intersection_left (c1, curve, p) == SMALLER));
 	}
 	else
 	{
-	  return ((!curve_is_left) &&
-		  _curve_compare_at_intersection_right (c1, curve, p) == LARGER);
+	  return
+            ((!curve_is_left) &&
+             _curve_compare_at_intersection_right (c1, curve, p) == LARGER);
 	}
       }
     }
@@ -673,16 +701,18 @@ class Arr_conic_traits
       if (_curve_compare_at_intersection_left (c1, c2, p) == LARGER)
       { 
 	// c1 is above c2:
-        return (!curve_is_left ||
-		!(_curve_compare_at_intersection_left (c2, curve, p) == SMALLER &&
-                  _curve_compare_at_intersection_left (c1, curve, p) == LARGER));
+        return
+          (!curve_is_left ||
+           !(_curve_compare_at_intersection_left (c2, curve, p) == SMALLER &&
+             _curve_compare_at_intersection_left (c1, curve, p) == LARGER));
       }
       else
       { 
 	// c2 is above c1:
-        return (curve_is_left &&
-		_curve_compare_at_intersection_left (c1, curve, p) == SMALLER &&
-                _curve_compare_at_intersection_left (c2, curve, p) == LARGER);
+        return
+          (curve_is_left &&
+           _curve_compare_at_intersection_left (c1, curve, p) == SMALLER &&
+           _curve_compare_at_intersection_left (c2, curve, p) == LARGER);
       }
     }
     else if (!c1_is_left && !c2_is_left) 
@@ -694,16 +724,18 @@ class Arr_conic_traits
       if (_curve_compare_at_intersection_right (c1, c2, p) == LARGER)
       {
 	// c1 is above c2:
-        return (!curve_is_left &&
-		_curve_compare_at_intersection_right (c2, curve, p) == SMALLER &&
-                _curve_compare_at_intersection_right (c1, curve, p) == LARGER);
+        return
+          (!curve_is_left &&
+           _curve_compare_at_intersection_right (c2, curve, p) == SMALLER &&
+           _curve_compare_at_intersection_right (c1, curve, p) == LARGER);
       }
       else
       { 
 	// c2 is above c1:
-        return (curve_is_left ||
-		!(_curve_compare_at_intersection_right (c1, curve, p) == SMALLER &&
-                  _curve_compare_at_intersection_right (c2, curve, p) == LARGER));
+        return
+          (curve_is_left ||
+           !(_curve_compare_at_intersection_right (c1, curve, p) == SMALLER &&
+             _curve_compare_at_intersection_right (c2, curve, p) == LARGER));
       }
     }
     else if (c1_is_left && !c2_is_left)

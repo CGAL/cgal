@@ -8,11 +8,11 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 1999, October 13
+// release       : $$
+// release_date  : $$
 //
 // file          : include/CGAL/Arr_segment_exact_traits.h
-// package       : arr (1.03)
+// package       : Arrangement (1.03)
 // source        :
 // revision      :
 // revision_date :

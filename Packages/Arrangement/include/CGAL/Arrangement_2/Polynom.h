@@ -1,5 +1,25 @@
-#ifndef __Polynom__
-#define __Polynom__
+// ======================================================================
+//
+// Copyright (c) 1999 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $$
+// release_date  : $$
+//
+// file          : include/CGAL/Arrangement_2/Polynom.h
+// package       : Arrangement (2.62)
+// author(s)     : Ron Wein <wein@post.tau.ac.il>
+// 
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+//
+// ======================================================================
+#ifndef CGAL_POLYNOM_H
+#define CGAL_POLYNOM_H
 
 #include <vector>
 #include <iostream>
