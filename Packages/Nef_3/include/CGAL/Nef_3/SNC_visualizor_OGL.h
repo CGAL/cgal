@@ -854,27 +854,16 @@ public:
 
   void draw(Vertex_handle v) const
   { 
-    Point_3 p = point(v);
-    Point_3 sp(p.hx().eval_at(10000),
-               p.hy().eval_at(10000),
-               p.hz().eval_at(10000),
-               p.hw().eval_at(10000));
-    TRACEN("vertex " << sp);
-    ppoly_->push_back(double_point(sp), mark(v)); 
+    Point_3 bp = Infi_box::box_point(point(v));
+    TRACEN("vertex " << bp);
+    ppoly_->push_back(double_point(bp), mark(v)); 
   }
 
   void draw(Halfedge_handle e) const
   { 
     Point_3 s = point(source(e));
     Point_3 t = point(target(e));
-    Segment_3 seg(Point_3(s.hx().eval_at(10000),
-                          s.hy().eval_at(10000),
-                          s.hz().eval_at(10000),
-                          s.hw().eval_at(10000)),
-		  Point_3(t.hx().eval_at(10000),
-                          t.hy().eval_at(10000),
-                          t.hz().eval_at(10000),
-                          t.hw().eval_at(10000)));
+    Segment_3 seg(Infi_box::box_point(s),Infi_box::box_point(t));
     TRACEN("edge " << seg);
     ppoly_->push_back(double_segment(seg), mark(e)); 
   }
@@ -889,11 +878,7 @@ public:
 	SHalfedge_handle h = fc;
 	SHalfedge_around_facet_circulator hc(h), he(hc);
 	CGAL_For_all(hc,he){ // all vertex coordinates in facet cycle
-	  Point_3 p = point(source(hc));
-	  Point_3 sp(p.hx().eval_at(10000),
-                     p.hy().eval_at(10000),
-                     p.hz().eval_at(10000),
-                     p.hw().eval_at(1));
+	  Point_3 sp = Infi_box::box_point(point(source(hc)));
 	      TRACEN(" ");TRACEN("facet" << sp);
 	  g.push_back_vertex(double_point(sp));
 	}

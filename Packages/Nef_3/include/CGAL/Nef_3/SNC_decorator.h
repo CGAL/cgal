@@ -40,7 +40,6 @@
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
 #include <CGAL/Nef_3/SNC_ray_shooter.h>
-#include <CGAL/Nef_3/Infimaximal_box.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #ifdef  CGAL_NEF3_SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
@@ -114,14 +113,13 @@ public:
   USING(Sphere_circle);
   USING(Mark);
   USING(Size_type);
+  USING(Infi_box);
 #undef USING
 
 #define DECUSING(t) typedef typename SM_decorator::t t
   DECUSING(SHalfedge_around_svertex_const_circulator);
   DECUSING(SHalfedge_around_svertex_circulator);
 #undef DECUSING
-
-  typedef Infimaximal_box<typename Is_extended_kernel<Kernel>::value_type, Kernel> Infi_box;
 
   typedef void* GenPtr;
 
@@ -383,12 +381,12 @@ public:
   bool is_sedge_on_infibox(SHalfedge_handle sh) {
     Point_3 p = point(vertex(sh));
     TRACEN("Point " << p);
-    if(p.hx().degree()==0 && p.hy().degree()==0 && p.hz().degree()==0)
+    if(Infi_box::degree(p.hx())==0 && Infi_box::degree(p.hy())==0 && Infi_box::degree(p.hz())==0)
       return false;
     Sphere_circle c(sh->tmp_circle());
     TRACEN("Circle " << c << " has signum " << sign_of(c));
     RT R(0,CGAL_NTS abs(p.hw()[0]));
-    CGAL_assertion(p.hw().degree() == 0);
+    CGAL_assertion(Infi_box::degree(p.hw()) == 0);
 
     SM_decorator SD(vertex(sh));
     if((c.a() == 0 && c.b() == 0 && CGAL_NTS abs(p.hz())== R) || 
@@ -405,12 +403,12 @@ public:
 
     Point_3 p  = point(vertex(e));
 
-    if(p.hx().degree()==0 && p.hy().degree()==0 && p.hz().degree()==0)
+    if(Infi_box::degree(p.hx())==0 && Infi_box::degree(p.hy())==0 && Infi_box::degree(p.hz())==0)
       return false;
 
     Vector_3 v(tmp_point(e));
     RT Outer(0,CGAL_NTS abs(p.hw()[0]));
-    CGAL_assertion(p.hw().degree() ==0);
+    CGAL_assertion(Infi_box::degree(p.hw()) ==0);
 
     if(CGAL_NTS abs(p.hx()) == Outer && 
        ((p.hx() > 0 && v.hx() > 0)||(p.hx() < 0 && v.hx() < 0))) return false;
@@ -483,10 +481,10 @@ public:
     CGAL_nef3_assertion( ray.target() == point(v));
     Sphere_point sp(ray.source() - point(v));
     TRACEN( "Locating " << sp <<" in " << point(v));
-    CGAL_assertion(sp.hx().degree() < 2 && 
-		   sp.hy().degree() < 2 && 
-		   sp.hz().degree() < 2 && 
-		   sp.hw().degree() == 0);
+    CGAL_assertion(Infi_box::degree(sp.hx()) < 2 && 
+		   Infi_box::degree(sp.hy()) < 2 && 
+		   Infi_box::degree(sp.hz()) < 2 && 
+		   Infi_box::degree(sp.hw()) == 0);
     sp = Infi_box::simplify(sp);
     TRACEN( "Locating " << sp <<" in " << point(v));
     SM_point_locator L(v);

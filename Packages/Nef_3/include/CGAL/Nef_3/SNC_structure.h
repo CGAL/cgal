@@ -38,6 +38,7 @@
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_3/SNC_items.h>
 #include <CGAL/Nef_3/nef3_assertions.h>
+#include <CGAL/Nef_3/Infimaximal_box.h>
 #include <CGAL/Nef_2/iterator_tools.h>
 #include <CGAL/Union_find.h>
 #include <list>
@@ -115,6 +116,7 @@ public:
   typedef typename Kernel::RT           RT;
   typedef typename Items::Sphere_kernel Sphere_kernel;
   
+  typedef Infimaximal_box<typename Is_extended_kernel<Kernel>::value_type, Kernel> Infi_box;
 
   typedef typename Kernel::Point_3      Point_3;
   /*{\Mtypemember embedding vertices.}*/
