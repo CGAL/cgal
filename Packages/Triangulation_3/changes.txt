@@ -1,3 +1,6 @@
+Version 1.54 (?? May 01)
+- VC++ fix.
+
 Version 1.53 (23 May 01)
 - Put Triangulation_hierarchy_vertex_base_3 in its own file.
 - VC++ for()-scope workaround.

@@ -300,7 +300,7 @@ remove(Vertex_handle v)
 
     Vertex_handle inf = infinite_vertex();
 
-    std::vector< typename Tds::Vertex * > Vertices =
+    std::vector< CGAL_TYPENAME_MSVC_NULL Tds::Vertex * > Vertices =
       _tds.clear_cells_only(); 
 
     _tds.set_number_of_vertices(0);
@@ -308,7 +308,7 @@ remove(Vertex_handle v)
     _tds.insert_increase_dimension( &(*inf) );
     CGAL_triangulation_assertion( inf == infinite_vertex() );
 
-    typename std::vector< typename Tds::Vertex * >::iterator vit;
+    typename std::vector<CGAL_TYPENAME_MSVC_NULL Tds::Vertex * >::iterator vit;
 
     for ( vit = Vertices.begin(); vit != Vertices.end(); ++vit ) 
       if ( *vit != &(*inf) && *vit != &(*v) ) 
