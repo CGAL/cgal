@@ -1,3 +1,7 @@
+- in Regular triangulation : fix the cae when the user insert 
+  several  weighted points with the same coordinates and different
+  weights,
+
 - suppress function set_number_of_vertices(int )
 - Regular_triangulation_2 : remplacer degenerate_power_test_2(p,q,r)
   par power_test_2(p,q,r)
