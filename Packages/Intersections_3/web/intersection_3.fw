@@ -761,12 +761,8 @@ CGAL_END_NAMESPACE
 @}
 
 @$@<declarations 1@>==@{
-#ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
-#endif // CGAL_OBJECT_H
-#ifndef CGAL_BBOX_INTERSECTION_3_H
 #include <CGAL/bbox_intersection_3.h>
-#endif // CGAL_BBOX_INTERSECTION_3_H
 @<3D Plane Plane intersection declarations@>
 @<3D Line Plane intersection declarations@>
 @<3D Ray Plane intersection declarations@>
@@ -798,12 +794,8 @@ Saarbruecken@)
 #ifndef CGAL_BBOX_INTERSECTION_3_H
 #define CGAL_BBOX_INTERSECTION_3_H
 
-#ifndef CGAL_BBOX_3_H
 #include <CGAL/Bbox_3.h>
-#endif // CGAL_BBOX_3_H
-#ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
-#endif // CGAL_OBJECT_H
 @<3D CD Line Box intersection declarations@>
 #endif // CGAL_BBOX_INTERSECTION_3_H
 @}
@@ -857,9 +849,7 @@ Saarbruecken@)
 #ifndef CGAL_INTERSECTION_3_H
 #define CGAL_INTERSECTION_3_H
 
-#ifndef CGAL_INTERSECTION_3_1_H
 #include <CGAL/intersection_3_1.h>
-#endif // CGAL_INTERSECTION_3_1_H
 
 
 #endif // CGAL_INTERSECTION_3_H
@@ -871,14 +861,8 @@ web/intersection_3.fw@,@-
 Geert-Jan Giezeman <geert@@cs.ruu.nl>@,@-
 Saarbruecken@)
 
-#ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
-#endif // CGAL_CARTESIAN_H
-#ifndef CGAL_POINT_3_H
 #include <CGAL/Point_3.h>
-#endif // CGAL_POINT_3_H
-#ifndef CGAL_BBOX_INTERSECTION_3_H
 #include <CGAL/bbox_intersection_3.h>
-#endif // CGAL_BBOX_INTERSECTION_3_H
 @<3D CD Line Box intersection implementation@>
 @}
