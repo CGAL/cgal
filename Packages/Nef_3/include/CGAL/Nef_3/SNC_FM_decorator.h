@@ -430,12 +430,23 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     }
   }
   
-  if(!do_sweep) return;
+#ifndef CGAL_NEF3_PLANE_SWEEP_OPTIMIZATION_OFF
+  if(!do_sweep) return; 
+#endif
+
+#ifdef CGAL_NEF3_TIMER_PLANE_SWEEP
+  number_of_plane_sweeps++;
+  timer_plane_sweep.start();
+#endif
 
   std::vector<SHalfedge_handle> Edge_of(Segments.size()+1);
   Halffacet_output O(From,Edge_of);
   Halffacet_sweep FS(typename Halffacet_sweep::INPUT(
     Segments.begin(),Segments.end()), O, G); FS.sweep();
+
+#ifdef CGAL_NEF3_TIMER_PLANE_SWEEP
+  timer_plane_sweep.stop();
+#endif
 
   CGAL_forall_iterators(eit,SHalfedges) { e=*eit;
   if ( facet(e) != Halffacet_handle() ) continue;

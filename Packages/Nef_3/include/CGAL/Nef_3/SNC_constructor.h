@@ -153,9 +153,9 @@ std::ostream& operator<<(std::ostream& os,
 
 template <typename R>
 int sign_of(const CGAL::Plane_3<R>& h)
-{ if ( h.a() != 0 ) return CGAL_NTS sign(h.a());
-  if ( h.b() != 0 ) return CGAL_NTS sign(h.b());
-  return CGAL_NTS sign(h.c());
+{ if ( h.c() != 0 ) return CGAL_NTS sign(h.c());
+  if ( h.b() != 0 ) return CGAL_NTS sign(-h.b());
+  return CGAL_NTS sign(h.a());
 }
 
 struct Plane_lt {
@@ -1067,7 +1067,7 @@ public:
   the facets. \precond |link_shalfedges_to_facet_cycles()| was called
   before.}*/
 
-  //  SETDTHREAD(43*31*23);
+    //    SETDTHREAD(43*31);
     TRACEN(">>>>>categorize_facet_cycles_and_create_facets");
     
     typedef std::list<Object_handle> Object_list;
@@ -1080,19 +1080,20 @@ public:
     
     Map_planes M;
     SHalfedge_iterator e;
-    CGAL_forall_shalfedges(e,*this->sncp()) {
+    CGAL_forall_sedges(e,*this->sncp()) {
       //    progress++;
       Sphere_circle c(circle(e));
-      //    Plane_3 h = Infi_box::plane_through(point(vertex(e)),c);
       Plane_3 h = c.plane_through(point(vertex(e)));
       SM_decorator SD(&*vertex(e));
-      TRACEN(point(target(SD.source(e))) <<" - "<< point(vertex(e)) <<" - "<< 
+      TRACEN("\n" << point(target(SD.source(e))) <<" - "<< point(vertex(e)) <<" - "<< 
 	     point(target(SD.target(e))) << 
 	     " has plane " << h << " has circle " << circle(e) << 
 	     " has signum " << sign_of(h));
-      if ( sign_of(h)<0 ) continue;
+      if ( sign_of(h)<0 ) 
+	h = h.opposite();
       //   CGAL_assertion( h == normalized(h));
       M[normalized(h)].push_back(Object_handle(twin(e)));
+      M[normalized(h)].push_back(Object_handle(e));
       TRACEN(" normalized as " << normalized(h)); 
     }
     SHalfloop_iterator l;
@@ -1114,6 +1115,7 @@ public:
       FM_decorator D(*this->sncp());
       D.create_facet_objects(it->first,it->second.begin(),it->second.end());
     }
+    SETDTHREAD(1);
   }
 
   void create_volumes() {
@@ -1164,8 +1166,19 @@ public:
       }
     
     CGAL_assertion( pl != NULL);
+
+#ifdef CGAL_NEF3_TIMER_INITIALIZE_KDTREE
+    CGAL::Timer timer_initialize_kdtree;
+    timer_initialize_kdtree.start();
+#endif
     pl->initialize(this->sncp()); // construct the point locator 
-    
+#ifdef CGAL_NEF3_TIMER_INITIALIZE_KDTREE
+    timer_initialize_kdtree.stop();
+    if(sncp()->number_of_vertices() > 0)
+      std::cout << "Runtime_initialize_kdtree: " 
+		<< timer_initialize_kdtree.time() << std::endl;
+#endif
+
     //  Progress_indicator_clog progress2
     //    ( MinimalSFace.size(), "SNC_constructor: creating outer volumes...");
     
@@ -1235,7 +1248,13 @@ public:
       return Halffacet_handle();
     
     Ray_3 ray = Ray_3(p, Direction_3(-1,0,0));
+#ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+    timer_point_location.start();
+#endif 
     Object_handle o = pl->shoot(ray);
+#ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+    timer_point_location.stop();
+#endif 
     // The ray here has an special property since it is shooted from the lowest
     // vertex in a shell, so it would be expected that the ray goes along the
     // interior of a volume before it hits a 2-skeleton element.
@@ -1985,15 +2004,27 @@ public:
     return v;
   }
 
-
   void build_external_structure() {
     //    SNC_io_parser<SNC_structure> O0(std::cout,*this->sncp());
     //    O0.print();
     //    SETDTHREAD(19*43*131);
+
+#ifdef CGAL_NEF3_TIMER_EXTERNAL_STRUCTURE
+    CGAL::Timer timer_external_structure;
+    timer_external_structure.start();
+#endif
+
     pair_up_halfedges();
     link_shalfedges_to_facet_cycles();
     categorize_facet_cycles_and_create_facets();
     create_volumes();
+
+#ifdef CGAL_NEF3_TIMER_EXTERNAL_STRUCTURE
+    timer_external_structure.stop();
+    if(this->sncp()->number_of_vertices() > 0)
+      std::cout << "Runtime_external_structure: " 
+		<< timer_external_structure.time() << std::endl;
+#endif
   }
 
   void clear_external_structure() {

@@ -52,6 +52,28 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#if defined (CGAL_NEF3_TIMER_OVERLAY) || defined(CGAL_NEF3_TIMER_INTERSECTION)
+CGAL::Timer timer_overlay;
+#endif
+
+#ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+CGAL::Timer timer_point_location;
+#endif 
+
+#ifdef CGAL_NEF3_TIMER_SPHERE_SWEEPS
+int number_of_sphere_sweeps=0;
+CGAL::Timer timer_sphere_sweeps;
+#endif
+
+#ifdef CGAL_NEF3_TIMER_PLANE_SWEEPS
+int number_of_plane_sweeps=0;
+CGAL::Timer timer_plane_sweeps;
+#endif
+
+#ifdef CGAL_NEF3_DUMP_STATISTICS
+int number_of_intersections;
+#endif
+
 template <typename Map>
 class SNC_decorator : public SNC_const_decorator<Map> { 
  public:
@@ -784,7 +806,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     IO0.debug();    IO1.debug();
     IO0.print();    IO1.print();
 #endif // CGAL_NEF3_DUMP_SPHERE_MAPS
-    CGAL_assertion( v0->point() == v1->point());
+ 
+   CGAL_assertion( v0->point() == v1->point());
     Vertex_handle v01 = rsnc.new_vertex( v0->point(), BOP( v0->mark(),v1->mark()));
     //    cerr<<"BOP Vertex "<<v0->mark()<<" "<<v1->mark()<<std::endl;
     TRACEN("  binop result on vertex "<<&*v01<<" on "<<&*(v01->sncp()));
@@ -831,11 +854,11 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   }
 
   Vertex_handle create_local_view_on( const Point_3& p, Volume_const_handle c) {
-    Vertex_handle v = sncp()->new_vertex( p, mark(c));
-    SM_decorator SD(v);
-    SFace_handle f = SD.new_face();
-    SD.mark(f) = mark(c);
-    TRACEN("volume "<<&*c<<" marked as "<<mark(c)); 
+    Vertex_handle v = sncp()->new_vertex( p, c->mark());
+    SM_decorator SD(&*v);
+    SFace_handle f = SD.new_sface();
+    f->mark() = c->mark();
+    TRACEN("volume "<<&*c<<" marked as "<<c->mark()); 
     //    SM_point_locator PL(v);
     //    PL.init_marks_of_halfspheres(); // necessary to init default marks
     return v;
@@ -850,7 +873,14 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     Halffacet_handle f;
     Volume_handle c;
     Self D(result);
+
+#ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+    timer_point_location.start();
+#endif
     Object_handle o = pl1->locate(p);
+#ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+    timer_point_location.stop();
+#endif
     if( CGAL::assign( v, o)) {
       TRACEN("<-> vertex local view on "<<point(v));
       return v;
@@ -902,6 +932,10 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     void operator()( Halfedge_const_handle e0, Object_handle o1, const Point_3& ip)
       const {
 
+#ifdef CGAL_NEF3_DUMP_STATISTICS
+      number_of_intersections++;
+#endif
+
       Halfedge_const_handle e;
       Halffacet_const_handle f;
       
@@ -920,6 +954,10 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       	CGAL_assertion_msg( 0, "wrong handle");
 #endif      
 
+#if defined (CGAL_NEF3_TIMER_OVERLAY) || (CGAL_NEF3_TIMER_INTERSECTION)
+      timer_overlay.start();
+#endif
+
       if( CGAL::assign( e, o1)) {
 	Self D(result);
 	Vertex_handle v0, v1;
@@ -932,14 +970,29 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	result.delete_vertex(v1);
       }
       else if( CGAL::assign( f, o1)) {
+#ifdef CGAL_NEF3_OVERLAY_BY_HAND_OFF
+	Self D(result);
+	Vertex_handle v0, v1;
+	v0 = D.create_local_view_on( p, e0);
+	v1 = D.create_local_view_on( p, f);
+	if( inverse_order)
+	  std::swap( v0, v1);
+	D.binop_local_views( v0, v1, bop, result);
+	result.delete_vertex(v0);
+	result.delete_vertex(v1);	
+#else
 	SNC_constructor C(result);
 	Sphere_map* M0 = C.create_edge_facet_overlay(e0, f, p, bop, inverse_order);
 	SM_overlayer O(M0);
 	O.simplify();
+#endif
       }
       else 
 	CGAL_assertion_msg( 0, "wrong handle");
 
+#if defined (CGAL_NEF3_TIMER_OVERLAY) || (CGAL_NEF3_TIMER_INTERSECTION)
+      timer_overlay.stop();
+#endif
 
     }
   private:
@@ -968,6 +1021,11 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     //      (sncp()->number_of_vertices()+snc1i.number_of_vertices(),
     //       "binary_operator: qualifying vertices...");
 
+#ifdef CGAL_NEF3_TIMER_BINARY_OPERATION
+    CGAL::Timer timer_binary_operation;
+    timer_binary_operation.start();
+#endif 
+
     Unique_hash_map<Vertex_const_handle, bool> ignore(false);
     Vertex_const_iterator v0;
 
@@ -994,7 +1052,18 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       Halffacet_handle f;
       Volume_handle c;
       TRACEN("Locating point " << p0);
+
+#ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+      timer_point_location.start();
+#endif 
       Object_handle o = pl2->locate(p0);
+#ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+      timer_point_location.stop();
+#endif 
+
+#if defined(CGAL_NEF3_TIMER_OVERLAY)
+      timer_overlay.start();
+#endif
       if( CGAL::assign( v, o)) {
 	TRACEN("p0 found on vertex");
 	binop_local_views( v0, v, BOP, *sncp());
@@ -1014,13 +1083,23 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       }
       else if( CGAL::assign( c, o)) {
 	TRACEN("p0 found on volume with mark " << mark(c));
+#ifdef CGAL_NEF3_OVERLAY_IF_NEEDED_OFF
+        if(true) {
+#else
 	if( BOP( true, mark(c)) != BOP( false, mark(c))) {
+#endif
+#ifdef CGAL_NEF3_OVERLAY_BY_HAND_OFF
+	  Vertex_handle v1 = create_local_view_on( p0, c);
+	  binop_local_views( v0, v1, BOP, *sncp());
+	  sncp()->delete_vertex(v1);
+#else
 	  SNC_constructor C(*sncp());
 	  Vertex_handle v1 = C.clone_SM(v0);
 	  SM_decorator SM(&*v1);
 	  SM.change_marks(BOP, mark(c));
 	  SM_overlayer O(&*v1);
 	  O.simplify();
+#endif
 	} else {
 	  TRACEN("vertex in volume deleted " << std::endl << 
 		 "  vertex: " <<  v0->point() << std::endl << 
@@ -1028,6 +1107,10 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	}
       }
       else CGAL_assertion_msg( 0, "wrong handle");
+
+#if defined(CGAL_NEF3_TIMER_OVERLAY)
+      timer_overlay.stop();
+#endif
     }
     TRACEN("\nnumber of vertices (so far...) = "<< sncp()->number_of_vertices());
 
@@ -1040,9 +1123,21 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       Halffacet_handle f;
       Volume_handle c;
       TRACEN("Locating point " << p1);
+
+#ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+      timer_point_location.start();
+#endif 
       Object_handle o = pl1->locate(p1);
+#ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+      timer_point_location.stop();
+#endif 
+      
       CGAL_assertion_code(Vertex_handle v);
       CGAL_assertion( !CGAL::assign( v, o));
+
+#if defined(CGAL_NEF3_TIMER_OVERLAY)
+      timer_overlay.start();
+#endif
       if( CGAL::assign( e, o)) {
 	TRACEN("p1 found on edge");
 	Vertex_handle v1 = create_local_view_on( p1, e);
@@ -1057,13 +1152,23 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       } 
       else if( CGAL::assign( c, o)) {
 	TRACEN("p1 found on volume with mark " << mark(c));
+#ifdef CGAL_NEF3_OVERLAY_IF_NEEDED_OFF
+        if(true) {
+#else
 	if( BOP( mark(c), true) != BOP( mark(c), false)) {
+#endif
+#ifdef CGAL_NEF3_OVERLAY_BY_HAND_OFF
+	Vertex_handle v1 = create_local_view_on( p1, c);
+	binop_local_views( v1, v0, BOP, *sncp());
+	sncp()->delete_vertex(v1);	  
+#else
 	  SNC_constructor C(*sncp());
 	  Vertex_handle v1 = C.clone_SM(v0);
 	  SM_decorator SM(&*v1);
 	  SM.change_marks(mark(c), BOP);
 	  SM_overlayer O(&*v1);
 	  O.simplify();
+#endif
 	} else {
 	  TRACEN("vertex in volume deleted " << std::endl << 
 		 "  vertex: " <<  v0->point() << std::endl << 
@@ -1071,7 +1176,12 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	}
       }
       else CGAL_assertion_msg( 0, "wrong handle");
+
+#if defined(CGAL_NEF3_TIMER_OVERLAY)
+      timer_overlay.stop();
+#endif
     }
+
     TRACEN("\nnumber of vertices (so far...) = "<< sncp()->number_of_vertices());
 
     // Each time the intersect method of the point locator for the 
@@ -1092,8 +1202,15 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       ( snc1, snc2, BOP, *sncp());
     Intersection_call_back<Selection> call_back1 
       ( snc2, snc2, BOP, *sncp(), true);
+
+#ifdef CGAL_NEF3_TIMER_INTERSECTION
+    double split_intersection = timer_overlay.time();
+    CGAL::Timer timer_intersection;
+    timer_intersection.start();
+#endif
+
     // choose between intersection algorithms
-#if 0
+#ifdef CGAL_NEF3_INTERSECTION_BY_KDTREE
     Halfedge_const_iterator e0, e1;
     TRACEN("=> finding edge-edge intersections...");
     CGAL_forall_edges( e0, snc1) {
@@ -1126,12 +1243,32 @@ class SNC_decorator : public SNC_const_decorator<Map> {
         binop_box_intersection(call_back0, call_back1, snc1, snc2);
     }
 #endif
+
+#ifdef CGAL_NEF3_TIMER_INTERSECTION
+    timer_intersection.stop();
+    std::cout << "Runtime_intersection: "
+	      << timer_intersection.time()-timer_overlay.time()+split_intersection 
+	      << std::endl;
+#endif
+
     TRACEN("=> resultant vertices (before simplification): ");
     CGAL_assertion_code(CGAL_forall_vertices( v0, *sncp()) 
 			  TRACEN(&*v0<<" "<<v0->point()));
 
+#ifdef CGAL_NEF3_TIMER_SIMPLIFICATION
+    CGAL::Timer timer_simplification;
+    timer_simplification.start();
+#endif
+
     SNC_simplify simp(*sncp());
     simp.vertex_simplification(NO_SNC);
+
+#ifdef CGAL_NEF3_TIMER_SIMPLIFICATION
+    timer_simplification.stop();
+    std::cout << "Runtime_simplification: " 
+	      << timer_simplification.time() << std::endl;
+#endif
+
     TRACEN("\nnumber of vertices (so far...) = "<< sncp()->number_of_vertices());
 
     TRACEN("=> resultant vertices (after simplification): ");
@@ -1153,8 +1290,54 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     Op.print();
 #endif
 
+#ifdef CGAL_NEF3_TIMER_PLANE_SWEEPS
+    std::cout << "Number_of_plane_sweeps: " 
+	      << number_of_plane_sweeps << std::endl;
+    std::cout << "Runtime_plane_sweeps: "
+	      << timer_plane_sweeps.time() << std::endl;
+#endif
+
     CGAL_assertion(!simp.simplify());
     TRACEN("=> end binary operation. ");
+
+#ifdef CGAL_NEF3_DUMP_STATISTICS
+    std::cout << "Vertices_in_object_A: "
+	      << snc1.number_of_vertices() << std::endl;
+    std::cout << "Vertices_in_object_B: "
+	      << snc2.number_of_vertices() << std::endl;
+    std::cout << "Number_of_intersections: "
+	      << number_of_intersections << std::endl;    
+    std::cout << "Vertices_in_Result: "
+	      << sncp()->number_of_vertices() << std::endl;
+#endif
+
+#ifdef CGAL_NEF3_TIMER_SPHERE_SWEEPS
+    std::cout << "Number_of_sphere_sweeps: " 
+	      << number_of_sphere_sweeps << std::endl;
+    std::cout << "Runtime_sphere_sweeps: "
+	      << timer_sphere_sweeps.time() << std::endl;
+#endif
+
+#if defined (CGAL_NEF3_TIMER_SPHERE_SWEEPS) && defined (CGAL_NEF3_TIMER_PLANE_SWEEPS)
+    std::cout << "Runtime_all_sweeps: "
+	      << timer_sphere_sweeps.time()+timer_plane_sweeps.time() << std::endl;
+#endif
+
+#ifdef CGAL_NEF3_TIMER_OVERLAY
+    std::cout << "Runtime_overlay: " 
+	      << timer_overlay.time() << std::endl;
+#endif
+
+#ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+    std::cout << "Runtime_point_location: "
+	      << timer_point_location.time() << std::endl;;
+#endif 
+
+#ifdef CGAL_NEF3_TIMER_BINARY_OPERATION
+    timer_binary_operation.stop();
+    std::cout << "Runtime_binary_operation: " 
+	      << timer_binary_operation.time() << std::endl;
+#endif 
   }
   
 
@@ -1277,6 +1460,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	    Plane_3 p_ref(point(vertex(shec1)),SD.circle(shec1).opposite().orthogonal_vector());
 	    valid = valid && Infi_box::check_point_on_plane(point(vertex(shec1)), plane(hfi));
 	    valid = valid && (normalized(plane(hfi)) == normalized(p_ref));
+	    valid = valid && (sheh->incident_sface()->volume() == 
+			      hfi->twin()->incident_volume());
 	  }
 	}
 	else if(hfci.is_shalfloop())

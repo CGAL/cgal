@@ -200,8 +200,14 @@ struct binop_intersection_test_segment_tree {
     Bop_edge0_edge1_callback<Callback> callback_edge0_edge1( is, cb0 );
     CGAL_forall_edges( e0, sncp)  a.push_back( Nef_box( e0 ) );
     CGAL_forall_edges( e1, snc1i) b.push_back( Nef_box( e1 ) );
+#ifdef CGAL_NEF3_BOX_INTERSECTION_CUTOFF
+    box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
+                        callback_edge0_edge1,
+			CGAL_NEF3_BOX_INTERSECTION_CUTOFF);
+#else
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge0_edge1);
+#endif
     a.clear();
     b.clear();
 
@@ -209,8 +215,14 @@ struct binop_intersection_test_segment_tree {
     Bop_edge0_face1_callback<Callback> callback_edge0_face1( is, cb0 );
     CGAL_forall_edges( e0, sncp ) a.push_back( Nef_box( e0 ) );
     CGAL_forall_facets( f1, snc1i)    b.push_back( Nef_box( f1 ) );
+#ifdef CGAL_NEF3_BOX_INTERSECTION_CUTOFF
+    box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
+                        callback_edge0_face1,
+			CGAL_NEF3_BOX_INTERSECTION_CUTOFF);
+#else
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge0_face1);
+#endif
     a.clear();
     b.clear();
 
@@ -218,8 +230,14 @@ struct binop_intersection_test_segment_tree {
     Bop_edge1_face0_callback<Callback> callback_edge1_face0( is, cb1 );
     CGAL_forall_edges( e1, snc1i)  a.push_back( Nef_box( e1 ) );
     CGAL_forall_facets( f0, sncp ) b.push_back( Nef_box( f0 ) );
+#ifdef CGAL_NEF3_BOX_INTERSECTION_CUTOFF
+    box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
+                        callback_edge1_face0,
+			CGAL_NEF3_BOX_INTERSECTION_CUTOFF);
+#else
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge1_face0);
+#endif
   }
 };
 
