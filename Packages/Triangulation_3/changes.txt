@@ -1,4 +1,4 @@
-Version 1.90 (?? September 01)
+Version 1.90 (20 September 01)
 - New function find_conflicts(Point, Cell_handle, bfit, cit, ifit) in
   Delaunay.
 - New star_hole(Vertex_handle, cell_begin, cell_end, Cell_handle, int) in TDS.
