@@ -3,8 +3,10 @@
 //
 // We should be able to more deeply test it using an NT checker.
 
+#include <CGAL/basic.h>
 #include <CGAL/MP_Float.h>
 #include <iostream>
+#include <cassert>
 #include <CGAL/Random.h>
 
 typedef CGAL::MP_Float MPF;
@@ -44,8 +46,8 @@ void print_test()
   for (int i=-2; i<3; i++)
     std::cout << MPF(i) << "   ";
   std::cout << std::endl;
-  for (int i=-2; i<3; i++)
-    std::cout << MPF(i+65536) << "      ";
+  for (int j=-2; i<3; i++)
+    std::cout << MPF(j+65536) << "      ";
   std::cout << std::endl;
 }
 
