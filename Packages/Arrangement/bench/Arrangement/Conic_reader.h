@@ -10,6 +10,10 @@
 
 #include "numberType.h"
 
+#if BENCH_TRAITS == EXACUS_CONIC_TRAITS
+#include <LiS/file_io.h>
+#endif
+
 template <class Traits>
 class Conic_reader
 {
@@ -33,7 +37,7 @@ public:
 
 #if BENCH_TRAITS == CORE_CONIC_TRAITS
   typedef typename Traits::CfNT                 CfNT;
-#else
+#elif BENCH_TRAITS != EXACUS_CONIC_TRAITS
   typedef typename Traits::Circle_2             Circle_2;
   typedef typename Traits::Segment_2            Segment_2;
   typedef typename Traits::NT                   CfNT;
@@ -44,6 +48,32 @@ public:
   int read_data(const char * filename, OutputIterator curves_out,
                 CGAL::Bench_parse_args::FormatId format, CGAL::Bbox_2 & bbox)
   {
+#if BENCH_TRAITS == EXACUS_CONIC_TRAITS
+    Curve_2 cv;
+      
+    std::list< Curve_2 > curves;
+    bool success = LiS::read_file(filename, curves);
+    if (!success) {
+      return 0;
+    }
+    std::copy(curves.begin(), curves.end(), curves_out);
+#if 0
+    // TODO set these boxes
+    for (typename std::list< Curve_2 >::iterator it = curves.begin();
+         it != curves.end();
+         it++)
+    {
+      CGAL::Bbox_2 curve_bbox = cv.bbox();
+      if (i == 0) bbox = curve_bbox;
+      else bbox = bbox + curve_bbox;
+    }
+#else
+    bbox = CGAL::Bbox_2(-1000, -1000, 1000, 1000);
+#endif
+    return 0;
+      
+#else
+      
     Curve_2 cv;
     char dummy[256];
 
@@ -58,9 +88,7 @@ public:
     for (int i = 0; i < count; i++) {
       if (read_curve(inp, cv)) {
         ++curves_out = cv;
-#if BENCH_TRAITS == CK_CIRCLE_TRAITS
-        bbox = CGAL::Bbox_2(-5, -5, 5, 5);
-#else
+#if BENCH_TRAITS != CK_CIRCLE_TRAITS
         CGAL::Bbox_2 curve_bbox = cv.bbox();
         if (i == 0) bbox = curve_bbox;
         else bbox = bbox + curve_bbox;
@@ -68,9 +96,14 @@ public:
       }
     }
     inp.close();
+#if BENCH_TRAITS == CK_CIRCLE_TRAITS
+    bbox = CGAL::Bbox_2(-10, -10, 10, 10);
+#endif
     return 0;
+#endif
   }
 
+#if BENCH_TRAITS != EXACUS_CONIC_TRAITS
   /*! */
   bool read_curve(std::ifstream & is, Curve_2 & cv)
   {
@@ -360,6 +393,7 @@ public:
       if (one_line[0] != '#') break;
     }
   }
+#endif
 };
 
 #endif

@@ -5,6 +5,13 @@
 #include "bench_config.h"
 #include "numberType.h"
 
+// PostScript support:
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
+    BENCH_TRAITS != EXACUS_CONIC_TRAITS && BENCH_TRAITS != CK_CIRCLE_TRAITS && \
+    BENCH_TRAITS != CK_CONIC_TRAITS
+#define POSTSCRIPT_SUPPORTED 1
+#endif
+
 // Kernel:
 #if BENCH_KERNEL == LEDA_KERNEL
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
@@ -109,7 +116,9 @@
 #include <CGAL/Pm_with_intersections.h>
 #include <CGAL/IO/Pm_iostream.h>
 #include <CGAL/IO/Pm_Window_stream.h>
+#if defined(POSTSCRIPT_SUPPORTED)
 #include <CGAL/IO/Pm_Postscript_file_stream.h>
+#endif
 
 #include <CGAL/Pm_default_point_location.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
@@ -138,22 +147,13 @@
 #include "Segment_reader.h"
 
 #elif BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS || \
-      BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS
+      BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS || \
+      BENCH_TRAITS == EXACUS_CONIC_TRAITS
 #include "Conic_reader.h"
 
 // Polyline reader:
 #elif BENCH_TRAITS == POLYLINE_TRAITS || BENCH_TRAITS == POLYLINE_CACHED_TRAITS
 #include "Polyline_reader.h"
-
-// Exacus conic reader:
-#elif BENCH_TRAITS == EXACUS_CONIC_TRAITS
-#include "Exacus_conic_reader.h"
-
-#if 0
-// Curved-kernel conic reader:
-#elif BENCH_TRAITS == CK_CONIC_TRAITS
-#include "Ck_conic_reader.h"
-#endif
 
 #else
 #error No traits (TRAITS) specified
@@ -268,13 +268,6 @@ typedef CGAL::Qt_widget Window_stream;
 QApplication * App;
 #endif
 
-// PostScript support:
-#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
-    BENCH_TRAITS != EXACUS_CONIC_TRAITS && BENCH_TRAITS != CK_CIRCLE_TRAITS && \
-    BENCH_TRAITS != CK_CONIC_TRAITS
-#define POSTSCRIPT_SUPPORTED 1
-#endif
-
 /*! */
 inline Window_stream & operator<<(Window_stream & os, Pmwx & pm)
 {
@@ -314,17 +307,10 @@ public:
     Polyline_reader<Traits> reader;
 
 #elif BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS || \
-      BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS
+      BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS || \
+      BENCH_TRAITS == EXACUS_CONIC_TRAITS
     Conic_reader<Traits> reader;
 
-#elif BENCH_TRAITS == EXACUS_CONIC_TRAITS
-    Exacus_conix_reader<Traits> reader;
-
-#if 0
-#elif BENCH_TRAITS == CK_CONIC_TRAITS
-    Ck_conic_reader<Traits> reader;
-#endif
-    
 #else
 #error "Run out of options!"
 #endif

@@ -115,12 +115,18 @@ LCPPDEFS+= -DCGAL_NO_PM_DEFAULT_POINT_LOCATION
 
 LOBJDIR =
 
+GCPPOPTS = -O3
+# GCPPOPTS = -g
+
 ifeq ($(BENCH_TRAITS), $(CORE_CONIC_TRAITS))
 GCPPOPTS = -O
-else
-GCPPOPTS = -O3
 endif
-# GCPPOPTS = -g
+
+ifeq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
+ifeq ($(BENCH_NT), $(NIX_CORE_FIELD_WITH_SQRT_NT))
+GCPPOPTS = -O
+endif
+endif
 
 ifeq ($(USE_CGAL_WINDOW), 1)
 LCPPDEFS+= -DUSE_CGAL_WINDOW
@@ -290,7 +296,9 @@ LCPPINCS+= -I$(BASEDIR)/../../../Arrangement/include
 LCPPINCS+= -I$(BASEDIR)/../../../Trapezoidal_decomposition/include
 LCPPINCS+= -I$(BASEDIR)/../../../Sweep_line_2/include
 
+ifneq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
 LCPPINCS+= -I$(COREROOT)/inc
+endif
 
 ifeq ($(BENCH_KERNEL), $(LEDA_KERNEL))
 LCPPINCS+= -I$(BASEDIR)/../../../Leda_rat_kernel/include
@@ -314,9 +322,20 @@ LCPPINCS+= -I$(CURVED_KERNEL_ROOT)/include
 endif
 LCPPINCS+= $(CGALINCS)
 
+ifneq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
 LLDOPTS = -L$(CORE_LIB_DIR)
 LLDLIBS = -lcore
-LLDLIBS+= $(CGALLIB) $(LEDALIBS) $(CGALQTLIB) $(QTLIB) $(GMPLIBS)
+else
+LLDLIBS = $(EXACUS_ROOT)/ConiX/src/.libs/libCnX.so
+LLDLIBS+= $(EXACUS_ROOT)/SweepX/src/.libs/libSoX.so
+LLDLIBS+= $(EXACUS_ROOT)/NumeriX/src/.libs/libNiX.so
+LLDLIBS+= $(EXACUS_ROOT)/Support/src/.libs/libLiS.so
+endif
+LLDLIBS+= $(CGALLIB) $(LEDALIBS) $(CGALQTLIB) $(QTLIB)
+ifeq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
+LLDLIBS+= $(CGALCORELIB)
+endif
+LLDLIBS+= $(GMPLIBS)
 LLDLIBS+= -lX11 -lm
 LLDOPTS+= $(CGALLIBDIRS)
 
@@ -609,20 +628,38 @@ lazy_mpq_cartesian_ck_circle_inst:
 lazy_mpq_simple_cartesian_ck_circle_inst:
 	$(MAKEF) "BENCH_NT=$(LAZY_GMPQ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
 
+mpq_cartesian_ck_circle_inst:
+	$(MAKEF) "BENCH_NT=$(GMPQ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
+
+mpq_simple_cartesian_ck_circle_inst:
+	$(MAKEF) "BENCH_NT=$(GMPQ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
+
 mpz_cartesian_ck_conic_inst:
 	$(MAKEF) "BENCH_NT=$(GMPZ_NT)" "BENCH_TRAITS=$(CK_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
 
 mpz_simple_cartesian_ck_conic_inst:
 	$(MAKEF) "BENCH_NT=$(GMPZ_NT)" "BENCH_TRAITS=$(CK_CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
 
-conics_inst: cartesian_leda_conic_inst \
+cgal_conics_int: cartesian_leda_conic_inst \
         simple_cartesian_leda_conic_inst \
 	cartesian_core_conic_inst \
 	simple_cartesian_core_conic_inst \
+
+exacus_conics_inst: leda_exacus_conic_inst \
+	core_exacus_conic_inst
+
+ck_circles_inst: mpq_cartesian_ck_circle_inst \
+	mpq_simple_cartesian_ck_circle_inst \
 	lazy_mpq_cartesian_ck_circle_inst \
-	lazy_mpq_simple_cartesian_ck_circle_inst \
-	mpz_cartesian_ck_conic_inst \
+	lazy_mpq_simple_cartesian_ck_circle_inst
+
+ck_conics_inst:	mpz_cartesian_ck_conic_inst \
 	mpz_simple_cartesian_ck_conic_inst
+
+conic_inst: cgal_conics_int \
+	exacus_conics_inst \
+	ck_circles_inst \
+	ck_conics_inst
 
 # Miscellaneous
 insert_old:
@@ -633,4 +670,3 @@ insert_old_inst:
 
 # Dependencies:
 $(BASENAME).o: $(BASENAME).moc
-
