@@ -79,7 +79,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /incremental:no /nodefaultlib
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy       Debug\demo_alpha.exe       ..\ 
+PostBuild_Cmds=copy        Debug\demo_alpha.exe        ..\ 
 # End Special Build Tool
 
 !ENDIF 
@@ -94,10 +94,6 @@ PostBuild_Cmds=copy       Debug\demo_alpha.exe       ..\
 # Begin Source File
 
 SOURCE=..\demo_alpha.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\Parse.C
 # End Source File
 # End Group
 # Begin Group "Header Files"

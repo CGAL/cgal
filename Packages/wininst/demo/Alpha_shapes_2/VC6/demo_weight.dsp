@@ -79,7 +79,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /incremental:no /nodefaultlib
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy       Debug\demo_weight.exe       ..\ 
+PostBuild_Cmds=copy        Debug\demo_weight.exe        ..\ 
 # End Special Build Tool
 
 !ENDIF 
@@ -94,10 +94,6 @@ PostBuild_Cmds=copy       Debug\demo_weight.exe       ..\
 # Begin Source File
 
 SOURCE=..\demo_weight.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\Parse_weight.C
 # End Source File
 # End Group
 # Begin Group "Header Files"
