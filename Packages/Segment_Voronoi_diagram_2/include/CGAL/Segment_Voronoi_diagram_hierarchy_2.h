@@ -181,6 +181,17 @@ public:
     }
   }
 
+  Vertex_handle insert(const Point& p, Vertex_handle)
+  {
+    return insert(p);
+  }
+
+  Vertex_handle insert(const Point& p1, const Point& p2,
+		       Vertex_handle)
+  {
+    return insert(p1, p2);
+  }
+
 private:
   Vertex_handle insert_point(const Point& p, int level);
   void          insert_point(const Point& p, int level,
@@ -201,6 +212,11 @@ public:
   // nearest neighbor
   Vertex_handle  nearest_neighbor(const Point& p,
 				  bool force_point = false) const;
+
+  Vertex_handle  nearest_neighbor(const Point& p, Vertex_handle)
+  {
+    return nearest_neighbor(p);
+  }
 
 private:
   void nearest_neighbor(const Site& p,
@@ -309,7 +325,6 @@ clear()
     hierarchy[i]->clear();
   }
 }
-
 
 template<class Gt, class P, class Tds>
 inline
