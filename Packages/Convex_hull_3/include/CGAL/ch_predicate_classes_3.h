@@ -34,6 +34,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
+/*
 template <class R_>
 class Construct_centroid_3
 {
@@ -62,6 +63,7 @@ class Construct_centroid_3
                    (p.hz() + q.hz() + r.hz())/FT(3));
   }
 };
+*/
 
 template <class Plane_3, class Vector_3>
 class Construct_orthogonal_vector_3
