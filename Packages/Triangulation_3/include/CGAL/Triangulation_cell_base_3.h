@@ -83,9 +83,8 @@ public:
     if (v == V[0]) { return 0; }
     if (v == V[1]) { return 1; }
     if (v == V[2]) { return 2; }
-    if (v == V[3]) { return 3; }
-    CGAL_triangulation_assertion(false); // we should not get here
-    return -1;
+    CGAL_triangulation_assertion( v == V[3] );
+    return 3;
   }
 
   void* neighbor(int i) const
