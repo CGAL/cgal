@@ -1063,8 +1063,8 @@ button and choose \textit{Properties}. Go to \textit{Memory}, select
 \textit{Initial Environment}, set it to at least 2048 and
 \textit{apply} the changes.
 
-Second, edit the file \texttt{cygnus.bat}, located in the cygwin main
-directory and add the line
+Second, edit the file \texttt{cygwin.bat} (or \texttt{cygnus.bat} in
+Cygwin~0.9), located in the cygwin main directory and add the line
 \begin{verbatim}
 call C:\PROGRA~1\MICROS~2\VC98\Bin\MSCVARS32.BAT
 \end{verbatim}
@@ -1072,7 +1072,8 @@ where
 \nonlinkedpath'C:\PROGRA~1\MICROS~2\'
 %\texttt{C:$\backslash$PROGRA$\sim$1$\backslash$MICROS$\sim$2$\backslash$}
 has to be customized according to where \msvc{} is installed on your
-system.
+system. Depending on the version of \msvc{} you might have to replace
+\texttt{MSCVARS32.BAT} by \texttt{VCVARS32.BAT}.
 
 \section{Installation on \mswin\ with native tools} \label{sec:wininst}
 \index{mswin@\mswin, installation on}\index{installation!on \mswin}
@@ -1566,39 +1567,39 @@ LDFLAGS = $(LONG_NAME_PROBLEM_LDFLAGS) $(CGAL_LDFLAGS)
 
 If you are using an old version of \leda, the combination of \leda\ 
 and \stl\ may give some problems. In order to avoid them, it is highly
-recommended to use the latest \leda\ release, since this is what we test
-\cgal\ with.
+recommended to use the latest \leda\ release, since this is what we
+test \cgal\ with.
 
-\paragraph{\msvc-specific problems.}
-Using \msvc\ with \leda\ requires\footnote{Also applies to \bcc .} the
-latter to be compiled and used with \texttt{LEDA\_STD\_HEADERS} flag
-on. \cgal\ uses new-style C++ standard conformant headers\footnote{the
-  ones that do not have \texttt{.h} suffix}, while \leda\ can work
-with both styles. Mixing these styles is a strictly forbidden on
-\msvc.  Before compiling \leda\, edit the file
-\texttt{\$(LEDAROOT)/incl/LEDA/system.h} and uncomment the
-\texttt{\#define} in the following fragment there.
+\index{LEDA@\leda!on \bcc}\index{LEDA@\leda!on \msvc}
+With \msvc\ or \bcc, \leda\ has to be compiled and used with the
+\texttt{LEDA\_STD\_HEADERS} flag set. \cgal\ uses \CC\ standard
+conformant headers\footnote{the ones that do not have \texttt{.h}
+  suffix}, while \leda\ can also work with the old-style header files;
+but mixing the styles is strictly forbidden. Before compiling \leda\,
+edit the file \texttt{\$(LEDAROOT)/incl/LEDA/system.h} and uncomment
+the \texttt{\#define} in the following fragment there.
 \begin{alltt}
 // use c++ std headers
 //#define LEDA_STD_HEADERS
 \end{alltt}
 
-Also, \leda\ and \cgal\ libraries must be compiled with the same
-options controlling the use of debugging and multithreading.
-\footnote{\msvc\ compilation/linking options 
-\texttt{-ML, -MT, -MD, -MLD, -MTD, -MDD}}
+\paragraph{\msvc-specific problems.}
 
-If a binary release of \leda{4.1} is used, make sure that it is one of
+Also, the \leda\ and \cgal\ libraries have to be compiled with the
+same options controlling the use of debugging and multithreading.
+\footnote{\msvc\ compilation/linking options \texttt{-ML, -MT, -MD,
+    -MLD, -MTD, -MDD}}
+
+If a binary release of \leda{} is used, make sure that it is one of
 them that uses new-style headers. Namely, among the self-extracting
-executables,
-choose one of these that have the name ending with \texttt{-std.exe}.
-
+executables, choose one of these that have the name ending with
+\texttt{-std.exe}.
 
 \subsection{\msvc{6.0}-specific \CC\ problems}
 \index{msvc@\msvc{}!specific \CC\ problems}
 
-\cgal\ uses a modified drop-in replacement for STL, STLPort, 
-version 3.2.1. Our modifications included 
+\cgal\ uses a modified drop-in replacement for STL, STLPort, version
+3.2.1. Our modifications included
 \begin{itemize}
 \item modifying the code to enable
 the use of \texttt{std::iterator\_traits} template, where possible;
