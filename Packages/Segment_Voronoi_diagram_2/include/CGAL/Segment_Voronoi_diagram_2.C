@@ -239,10 +239,7 @@ Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
 insert_point(const Storage_site_2& ss, const Site_2& t,
 	     Vertex_handle vnear)
 {
-  //  CGAL_assertion( false );
-
   CGAL_precondition( t.is_point() );
-  //  CGAL_precondition( !t.is_exact() );
   CGAL_assertion( number_of_vertices() > 2 );
 
   // first find the nearest neighbor
@@ -615,7 +612,7 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 {
   CGAL_precondition( t.is_segment() && v->is_segment() );
 
-  Storage_site_2 ssitev = v->storage_site();
+  const Storage_site_2& ssitev = v->storage_site();
   Site_2 sitev = ssitev.site();
 
   if ( same_segments(t, sitev) ) {

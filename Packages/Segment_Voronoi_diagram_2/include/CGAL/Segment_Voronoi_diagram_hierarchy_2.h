@@ -95,6 +95,7 @@ public:
   typedef typename Base::Intersections_tag         Intersections_tag;
 
   typedef STag                            Insert_segments_in_hierarchy_tag;
+  typedef STag                            Segments_in_hierarchy_tag;
 
 protected:
   // LOCAL TYPES
@@ -102,6 +103,7 @@ protected:
   typedef typename Base::Storage_site_2            Storage_site_2;
   typedef typename Base::List                      List;
   typedef typename Base::Face_map                  Face_map;
+  typedef typename Base::Vertex_triple             Vertex_triple;
 
 protected:
   // LOCAL VARIABLES
@@ -173,8 +175,7 @@ public:
   }
 
   Vertex_handle  insert(const Point_2& p0, const Point_2& p1) {
-    return insert_segment_with_tag(p0, p1, UNDEFINED_LEVEL,
-				   Insert_segments_in_hierarchy_tag());
+    return insert_segment(p0, p1, UNDEFINED_LEVEL);
   }
 
   Vertex_handle insert(const Point_2& p, Vertex_handle) {
@@ -186,26 +187,15 @@ public:
     return insert(p1, p2);
   }
 
-  Vertex_handle  insert(const Site_2& t) {
-    // the intended use is to unify the calls to insert(...);
-    // thus the site must be an exact one; 
-    CGAL_precondition( t.is_exact() );
-    if ( t.is_segment() ) {
-      Insert_segments_in_hierarchy_tag stag;
-      return insert_segment_with_tag(t.source(), t.target(),
-				     UNDEFINED_LEVEL, stag);
-    } else if ( t.is_point() ) {
-      return insert_point(t.point(), UNDEFINED_LEVEL);
-    } else {
-      CGAL_precondition ( t.is_defined() );
-      return Vertex_handle(); // to avoid compiler error
-    }
-  }
-
+  Vertex_handle  insert(const Site_2& t);
 
 protected:
   Vertex_handle insert_point(const Point_2& p, int level);
   void          insert_point(const Point_2& p, int level,
+			     Vertex_handle* vertices);
+
+  void          insert_point(const Site_2& t, const Storage_site_2& ss,
+			     int low, int high, Vertex_handle vbelow,
 			     Vertex_handle* vertices);
 #if 0
   // not implemented yet
@@ -213,25 +203,25 @@ protected:
 			     Vertex_handle* vertices);
 #endif
 
-  Vertex_handle insert_segment_with_tag(const Point_2& p0,
-					const Point_2& p1,
-					int level, Tag_true stag); 
-
-  Vertex_handle insert_segment_with_tag(const Point_2& p0,
-					const Point_2& p1,
-					int level, Tag_false stag); 
-
+  Vertex_handle insert_segment(const Point_2& p0, const Point_2& p1,
+			       int level); 
 
   Vertex_handle insert_segment_interior(const Site_2& t,
 					const Storage_site_2& ss,
-					Vertex_handle* vertices0,
-					Vertex_handle* vertices1,
-					int level, Tag_true stag);
+					const Vertex_handle* vertices0,
+					int level);
 
-  Vertex_handle insert_segment_interior(const Site_2& t,
-					const Storage_site_2& ss,
-					Vertex_handle vnear,
-					int level, Tag_false stag);
+  void insert_segment_in_upper_levels(const Site_2& t,
+				      const Storage_site_2& ss,
+				      Vertex_handle vbelow,
+				      const Vertex_handle* vertices0,
+				      int level, Tag_true);
+
+  void insert_segment_in_upper_levels(const Site_2& t,
+				      const Storage_site_2& ss,
+				      Vertex_handle vbelow,
+				      const Vertex_handle* vertices,
+				      int level, Tag_false) {}
 
   template<class Tag>
   Vertex_handle
