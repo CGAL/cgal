@@ -135,7 +135,9 @@ test_n( unsigned int n, std::ostream& outfile )
         for( unsigned int i = repetitions; i; --i ) {
             CGAL::box_intersection_d( boxes1.begin(), boxes1.end(),
                                       boxes2.begin(), boxes2.end(),
-                                      callback2, cutoff );
+                                      callback2, cutoff,
+                                      CGAL::Box_intersection_d::BIPARTITE,
+                                      CGAL::Box_intersection_d::CLOSED);
         }
         timer.stop();
         time = timer.time() / repetitions;
