@@ -1,3 +1,6 @@
+Version 1.165 ( ? )
+- use of predefined kernels in examples and demos
+
 Version 1.164 (28 July 03)
 - More doc improvements.
 - Add missing ctors in the example program showing the user's own vertex.
