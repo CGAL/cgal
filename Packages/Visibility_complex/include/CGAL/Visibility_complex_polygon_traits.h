@@ -52,8 +52,9 @@ public:
     // The chi2 predicate
     struct Orientation_object {
 	Orientation operator()(const Bitangent_2& a,const Bitangent_2& b) const{ 
-	    return orientation(a.source() , a.target() ,
-			       a.source() + (b.target() - b.source()));
+	    return R().orientation_2_object()(a.source() , a.target() ,
+					      a.source() + (b.target() 
+							    - b.source()));
 	}	
     };
     // -------------------------------------------------------------------------
@@ -73,8 +74,8 @@ public:
 	    const Point_2& ap = extreme_point(sa,a);
 	    const Point_2& bp = extreme_point(sb,b);
 
-	    Comparison_result cr = compare_y(ap,bp);
-	    cr = (cr != EQUAL) ? cr : compare_x(ap,bp);
+	    Comparison_result cr = R().compare_y_2_object()(ap,bp);
+	    cr = (cr != EQUAL) ? cr : R().compare_x_2_object()(ap,bp);
 	    return cr;
 	    
 	}
@@ -82,8 +83,10 @@ public:
     // -------------------------------------------------------------------------
     struct Is_upward_directed {
 	bool operator()(const Bitangent_2& b) const {
-	  Comparison_result comp = compare_y(b.source(), b.target());
-	  comp = (comp != EQUAL) ? comp : compare_x(b.source(), b.target());
+	  Comparison_result comp = R().compare_y_2_object()(b.source(), 
+							    b.target());
+	  comp = (comp != EQUAL) ? comp : R().compare_x_2_object()(b.source(), 
+								   b.target());
 	  return (comp != LARGER);
 	}
     };
@@ -92,13 +95,13 @@ public:
     struct Orientation_infinite {
 	Orientation operator() (const Bitangent_2& a, 
 				const Disk& o) const{
-	    return orientation(a.source(),a.target(),
+	    return R().orientation_2_object()(a.source(),a.target(),
 			       *top_vertex_2(o.vertices_begin(),
 					     o.vertices_end()));
 	} 
 	Orientation operator() (const Disk& o, 
 				const Bitangent_2& b) const{
-	    return orientation(*bottom_vertex_2(o.vertices_begin(),
+	    return R().orientation_2_object()(*bottom_vertex_2(o.vertices_begin(),
 					        o.vertices_end()),
 			       *top_vertex_2   (o.vertices_begin(),
 						o.vertices_end()),
@@ -106,7 +109,7 @@ public:
 	} 
 	Orientation operator() (const Bitangent_2& a, 
 				const Bitangent_2& b) const
-	{ return orientation(a.source(),a.target(),b.target()); } 
+	{ return R().orientation_2_object()(a.source(),a.target(),b.target()); } 
     };
     // -------------------------------------------------------------------------
     // Detection of degenerate cases

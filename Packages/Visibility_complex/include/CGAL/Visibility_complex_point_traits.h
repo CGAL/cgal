@@ -45,8 +45,8 @@ public:
     // The chi2 predicate
     struct Orientation_object {
 	Orientation operator()(const Bitangent_2& a,const Bitangent_2& b) const{ 
-	    return orientation(a.source() , a.target() ,
-			       a.source() + (b.target() - b.source()));
+	    return R().orientation_2_object()(a.source() , a.target() ,
+					      a.source() + (b.target() - b.source()));
 	}	
     };
     // -------------------------------------------------------------------------
@@ -60,16 +60,18 @@ public:
 				      bool sb , const D& b) const { 
 	    Point_2 ap = extreme_point(sa,a);
 	    Point_2 bp = extreme_point(sb,b);
-	    return compare_lexicographically_xyC2(ap.y(),ap.x(),bp.y(),bp.x());
+	    Comparison_result res = R().compare_y_2_object()(ap,bp);
+	    return (res == EQUAL) ? R().compare_x_2_object()(ap,bp) : res;
 	}
     };
     // -------------------------------------------------------------------------
     struct Is_upward_directed {
 	bool operator()(const Bitangent_2& b) const {
-	    Comparison_result comp = 
-		compare_lexicographically_xyC2(b.source().y(),b.source().x(),
-					       b.target().y(),b.target().x());
-	    return (comp != LARGER);
+	  Comparison_result comp = R().compare_y_2_object()(b.source(), 
+							    b.target());
+	  comp = (comp == EQUAL) ? R().compare_x_2_object()(b.source(), 
+							    b.target()) : comp;
+	  return (comp != LARGER);
 	}
     };
     // -------------------------------------------------------------------------
@@ -82,7 +84,7 @@ public:
 			      const Bitangent_2& /*b*/) const{ return COLLINEAR; }
 	Orientation operator() (const Bitangent_2& a, 
 				const Bitangent_2& b) const
-	{ return orientation(a.source(),a.target(),b.target()); } 
+	{ return R().orientation_2_object()(a.source(),a.target(),b.target()); } 
     };
     // -------------------------------------------------------------------------
     // Detection of degenerate cases

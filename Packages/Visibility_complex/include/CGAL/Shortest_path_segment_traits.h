@@ -34,6 +34,7 @@ public:
     // -------------------------------------------------------------------------
     typedef Visibility_complex_segment_traits<_R> Base;
     typedef typename Base::Disk                   Disk;
+    typedef typename Base::R                      R;
     typedef typename Base::Bitangent_2            Bitangent_2;
     typedef typename Base::Arc_2                  Arc_2;
     typedef typename Base::Point_2                Point_2;
@@ -41,7 +42,8 @@ public:
     // -------------------------------------------------------------------------
 private:
     // -------------------------------------------------------------------------
-    typedef typename Simple_cartesian<Exact_NT>::Point_2   Exact_point_2;
+    typedef Simple_cartesian<Exact_NT>            EK;
+    typedef typename EK::Point_2                  Exact_point_2;
     // -------------------------------------------------------------------------
 public:
     // -------------------------------------------------------------------------
@@ -72,7 +74,7 @@ private:
     }
     Exact_NT distance(const Point_2& p, const Point_2& q) const 
     {
-	return CGAL_NTS sqrt(squared_distance(make_exact(p),make_exact(q)));
+	return CGAL_NTS sqrt(EK().compute_squared_distance_2_object()(make_exact(p),make_exact(q)));
     }
     // -------------------------------------------------------------------------
 };

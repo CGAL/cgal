@@ -105,7 +105,7 @@ struct Visibility_complex_circle_traits
 				const Bitangent_2& b) const{ return COLLINEAR; } 
 	Orientation operator() (const Bitangent_2& a, 
 				const Bitangent_2& b) const
-	{ return orientation(a.source(),a.target(),b.target()); } 
+	{ return R().orientation_2_object()(a.source(),a.target(),b.target()); } 
     };
     // -------------------------------------------------------------------------
     // Detection of degenerate cases

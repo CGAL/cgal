@@ -45,17 +45,17 @@ public:
     // The chi2 predicate
     struct Orientation_object {
 	Orientation operator()(const Bitangent_2& a,const Bitangent_2& b) const{ 
-	    return orientation(a.source() , a.target() ,
-			       a.source() + (b.target() - b.source()));
+	  return R().orientation_2_object()(a.source() , a.target() ,
+			     a.source() + (b.target() - b.source()));
 	}	
     };
     // -------------------------------------------------------------------------
     // The two follwing give the chi2 predicate with a point at infinity
     struct Compare_extreme_yx {
 	const Point_2& extreme_point(bool b, const Disk& c) const { 
-	    
-	    Comparison_result comp = compare_y(c.source(), c.target());
-	    comp = (comp != EQUAL) ? comp : compare_x(c.source(), c.target());
+
+	    Comparison_result comp = R().compare_y_2_object()(c.source(), c.target());
+	    comp = (comp != EQUAL) ? comp : R().compare_x_2_object()(c.source(), c.target());
 
 	    return ((b == true  && comp == SMALLER) || 
 		    (b == false && comp == LARGER)) ?  c.source() : c.target() ;
@@ -68,8 +68,8 @@ public:
 	    const Point_2& ap = extreme_point(sa,a);
 	    const Point_2& bp = extreme_point(sb,b);
 
-	    Comparison_result cr = compare_y(ap,bp);
-	    cr = (cr != EQUAL) ? cr : compare_x(ap,bp);
+	    Comparison_result cr = R().compare_y_2_object()(ap,bp);
+	    cr = (cr != EQUAL) ? cr : R().compare_x_2_object()(ap,bp);
 	    return cr;
 	    
 	}
@@ -77,8 +77,8 @@ public:
     // -------------------------------------------------------------------------
     struct Is_upward_directed {
 	bool operator()(const Bitangent_2& b) const {
-	    Comparison_result comp = compare_y(b.source(), b.target());
-	  comp = (comp != EQUAL) ? comp : compare_x(b.source(), b.target());
+	    Comparison_result comp = R().compare_y_2_object()(b.source(), b.target());
+	  comp = (comp != EQUAL) ? comp : R().compare_x_2_object()(b.source(), b.target());
 	    return (comp != LARGER);
 	}
     };
@@ -87,8 +87,8 @@ public:
     struct Orientation_infinite {
 	const Point_2& top(const Disk& c) const {
 
-	  Comparison_result comp = compare_y(c.source(), c.target());
-	  comp = (comp != EQUAL) ? comp : compare_x(c.source(), c.target());
+	  Comparison_result comp = R().compare_y_2_object()(c.source(), c.target());
+	  comp = (comp != EQUAL) ? comp : R().compare_x_2_object()(c.source(), c.target());
 
 	    return (comp == SMALLER) ? c.target() : c.source();
 	}
@@ -96,13 +96,13 @@ public:
 	{ return (top(o) == o.source()) ? o.target() : o.source(); }
 	Orientation operator() (const Bitangent_2& a, 
 				const Disk& o) const
-	{ return orientation(a.source(),a.target(),top(o)); } 
+	{ return R().orientation_2_object()(a.source(),a.target(),top(o)); } 
 	Orientation operator() (const Disk& o, 
 				const Bitangent_2& b) const
-	{ return orientation(bot(o),top(o),b.target()); }
+	{ return R().orientation_2_object()(bot(o),top(o),b.target()); }
 	Orientation operator() (const Bitangent_2& a, 
 				const Bitangent_2& b) const
-	{ return orientation(a.source(),a.target(),b.target()); } 
+	{ return R().orientation_2_object()(a.source(),a.target(),b.target()); } 
     };
     // -------------------------------------------------------------------------
     // Detection of degenerate cases
