@@ -1,3 +1,6 @@
+2.24    (25 July 2001)
+- added dummy main program to demos requiring geomview
+
 2.23    (23 July 2001)
 - fixed problem with Convex_hull_3_ref directory not in the right place on CVS
 
