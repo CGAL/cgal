@@ -185,7 +185,8 @@ inline double IA_bug_sqrt(double d)
 // The GNU libc version (cf powerpc) is nicer, but doesn't work on libc 5 :(
 // This one also works with CygWin.
 // Note that the ISO C99 version is not enough because of the extended
-// mantissa issue on x86.
+// mantissa issue on x86 (required by Fixed_precision_nt, modular computations
+// in the future, but not IA right now).
 #define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : :"m" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("fnstcw %0" : "=m" (CW))
 typedef unsigned short FPU_CW_t;
@@ -295,6 +296,9 @@ typedef unsigned short FPU_CW_t;
 
 #else
 // This is a version following the ISO C99 standard, which aims at portability.
+// The drawbacks are speed on one hand, and also, on x86, it doesn't fix the
+// extended mantissa issue (this is not a problem for IA, but it is one for
+// Fixed_precision_nt, and some future modular computations as well).
 #define CGAL_IA_SETFPCW(CW)  fesetround(CW)
 #define CGAL_IA_GETFPCW(CW)  CW = fegetround()
 typedef int FPU_CW_t;
