@@ -39,14 +39,13 @@
 
 #include <CGAL/basic.h>
 
-#if (!defined(CGAL_USE_LEDA) || (__LEDA__ < 400)) || defined(__KCC)
+#if (!defined(CGAL_USE_LEDA) || (__LEDA__ < 400)) 
 #include <iostream>
 
 int main(int argc, char *argv[])
 {
  std::cout << "No LEDA 4.0 or higher installed!\n";
  std::cout << "A LEDA version >= 4.0 is required to run GeoWin!\n";
- std::cout << "This demo doensn't work on KCC.\n";
  return 0;
 }
 #else 
