@@ -16,7 +16,7 @@
 # - While parsing, remove CGAL_assertion() and co from the original code.
 # - Add assertions about the epsilons being updated.
 
-use vars qw($opt_p $opt_h $opt_d $opt_v $opt_l); # Suppress warnings
+use vars qw($opt_p $opt_h $opt_d $opt_v $opt_l $opt_s); # Suppress warnings
 require 'getopt.pl';
 
 # Global variables
@@ -47,6 +47,7 @@ sub parse_command_line {
     warn "Usage: filtered_predicate_converter [options]
     -i file   : specify the main input source file [default is stdin]
     -o file   : specify the main output file       [default is stdout]
+    -s        : also want the static adaptative filters [default is off]
     -l file   : indicate the output file that will receive the static part.
     -d files  : list of dependant predicates file (concatenated with \":\")
                 by default, only the built-in predicates are known.
@@ -63,6 +64,7 @@ sub parse_command_line {
     warning("The -l option is compulsory for the static filters.");
   }
   $pedantic = $opt_p;
+  $want_statics = $opt_s;
 }
 
 # Auxiliary routine to emit a warning and die if pedantic.
@@ -367,12 +369,14 @@ sub print_predicates {
     print FO "CGAL_BEGIN_NAMESPACE\n\n" if $CGAL eq "" && not $was_in_CGAL;
     print FO "CGAL_END_NAMESPACE\n\n"   if $CGAL ne "" && $was_in_CGAL;
     print_dynamic(@{$predicates[$i]});
-    print FO "#ifdef CGAL_IA_NEW_FILTERS\n\n";
-    print_predicate_struct(@{$predicates[$i]});
-    print_static("true", @{$predicates[$i]});
-    print_static("false", @{$predicates[$i]});
-    print FO "#endif // CGAL_IA_NEW_FILTERS\n\n";
-    print_static_infos(@{$predicates[$i]});
+    if ($want_statics) {
+      print FO "#ifdef CGAL_IA_NEW_FILTERS\n\n";
+      print_predicate_struct(@{$predicates[$i]});
+      print_static("true", @{$predicates[$i]});
+      print_static("false", @{$predicates[$i]});
+      print FO "#endif // CGAL_IA_NEW_FILTERS\n\n";
+      print_static_infos(@{$predicates[$i]});
+    }
     $was_in_CGAL = $CGAL eq "";
   }
   print FO "CGAL_END_NAMESPACE\n\n" if $was_in_CGAL;
@@ -471,15 +475,23 @@ sub main {
   close(FI);
   parse_input_code($rest);
   open(FO, ">$opt_o") || die "Couldn't open output file \"$opt_o\"\n";
-  open(FL, ">$opt_l") || die "Couldn't open lib file \"$opt_l\"\n";
+  if ($want_statics) {
+    open(FL, ">$opt_l") || die "Couldn't open lib file \"$opt_l\"\n";
+  }
   print_CGAL_header(FO, $new_protect_name, $file_name);
-  print_CGAL_header(FL, $new_protect_name."_STATIC_INFO_H",
+  if ($want_statics) {
+    print_CGAL_header(FL, $new_protect_name."_STATIC_INFO_H",
                     "static_infos/".$file_name);
+  }
   print_predicates();
   print FO "#endif // $new_protect_name\n";
-  print FL "#endif // $new_protect_name"."_STATIC_INFO_H\n";
+  if ($want_statics) {
+    print FL "#endif // $new_protect_name"."_STATIC_INFO_H\n";
+  }
   close(FO);
-  close(FL);
+  if ($want_statics) {
+    close(FL);
+  }
 }
 
 main();
