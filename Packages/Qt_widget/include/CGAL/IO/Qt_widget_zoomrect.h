@@ -46,12 +46,22 @@ public:
 private:
   QCursor oldcursor;
 
+  bool is_pure(Qt::ButtonState s){
+    if((s & Qt::ControlButton) ||
+       (s & Qt::ShiftButton) ||
+       (s & Qt::AltButton))
+      return 0;
+    else
+      return 1;
+  }
+
   void draw(){
     widgetrepainted = TRUE;
   };
   void mousePressEvent(QMouseEvent *e)
   {
-    if(e->button() == CGAL_QT_WIDGET_ZOOMRECT_BUTTON)
+    if(e->button() == CGAL_QT_WIDGET_ZOOMRECT_BUTTON
+       && is_pure(e->state()))
     {
       if (!on_first)
       {
@@ -64,7 +74,8 @@ private:
 
   void mouseReleaseEvent(QMouseEvent *e)
   {
-    if(e->button() == CGAL_QT_WIDGET_ZOOMRECT_BUTTON)		
+    if(e->button() == CGAL_QT_WIDGET_ZOOMRECT_BUTTON
+       && is_pure(e->state()))
     {
       if((e->x() != first_x) && (e->y() != first_y)) {
         double x=widget->x_real(e->x());

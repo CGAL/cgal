@@ -49,9 +49,25 @@ private:
     wasrepainted = TRUE;
   };
 
+  void timerEvent( QTimerEvent *e )
+  {
+    widget->setCursor(QCursor( 
+              QPixmap( (const char**)hand_xpm)));
+  }
+
+  bool is_pure(Qt::ButtonState s){
+    if((s & Qt::ControlButton) ||
+       (s & Qt::ShiftButton) ||
+       (s & Qt::AltButton))
+      return 0;
+    else
+      return 1;
+  }
+
   void mousePressEvent(QMouseEvent *e)
   {
-    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON)
+    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON 
+       && is_pure(e->state()))
     {
       widget->setCursor(QCursor( QPixmap( (const char**)holddown_xpm)));
       if (!on_first){
@@ -64,7 +80,8 @@ private:
 
   void mouseReleaseEvent(QMouseEvent *e)
   {
-    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON)		
+    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON
+       && is_pure(e->state()))
     {
       widget->setCursor(QCursor( QPixmap( (const char**)hand_xpm)));
       double
@@ -73,16 +90,16 @@ private:
 	      xfirst2 = widget->x_real(first_x),
 	      yfirst2 = widget->y_real(first_y);
 			
-	double	xmin, xmax, ymin, ymax, distx, disty;
-	if(x < xfirst2) {xmin = x; xmax = xfirst2;}
-	else {xmin = xfirst2; xmax = x;};
-	if(y < yfirst2) {ymin = y; ymax = yfirst2;}
-	else {ymin = yfirst2; ymax = y;};
-	distx = xfirst2 - x;
-	disty = yfirst2 - y;
-	widget->move_center(distx, disty);
-	widget->redraw();
-	on_first = FALSE;
+      double	xmin, xmax, ymin, ymax, distx, disty;
+      if(x < xfirst2) {xmin = x; xmax = xfirst2;}
+      else {xmin = xfirst2; xmax = x;};
+      if(y < yfirst2) {ymin = y; ymax = yfirst2;}
+      else {ymin = yfirst2; ymax = y;};
+      distx = xfirst2 - x;
+      disty = yfirst2 - y;
+      widget->move_center(distx, disty);
+      widget->redraw();
+      on_first = FALSE;
     }
   }
   void mouseMoveEvent(QMouseEvent *e)
@@ -90,37 +107,36 @@ private:
     char tempc1[130], tempc2[40];
     if(on_first)
     {
-      int
-	x = e->x(),
-	y = e->y();
-	RasterOp old = widget->rasterOp();	//save the initial raster mode
-	widget->setRasterOp(XorROP);
-	widget->lock();
-	*widget << CGAL::GRAY;
-	if(!wasrepainted) {
-	  CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f", widget->x_real(x2 - first_x));
-	  CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f", widget->x_real(y2 - first_y));
-	  strcat(tempc1, tempc2);
-	  widget->get_painter().drawLine(first_x, first_y, x2, y2);
-	  *widget << CGAL::GREEN;
-	  widget->get_painter().drawText(x2, y2, tempc1, 49);
-	  *widget << CGAL::GRAY;
-	}
-	CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f", widget->x_real(x - first_x));
-	CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f", widget->x_real(y - first_y));
-	strcat(tempc1, tempc2);
-	widget->get_painter().drawLine(first_x, first_y, x, y);
-	*widget << CGAL::GREEN;
-	widget->get_painter().drawText(x, y, tempc1, 49);
-	widget->unlock();
-	widget->setRasterOp(old);
+      int x = e->x();
+      int y = e->y();
+      //save the initial raster mode
+      RasterOp old = widget->rasterOp();	
+      widget->setRasterOp(XorROP);
+      widget->lock();
+        *widget << CGAL::GRAY;
+      if(!wasrepainted) {
+        CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f", widget->x_real(x2 - first_x));
+        CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f", widget->x_real(y2 - first_y));
+        strcat(tempc1, tempc2);
+        widget->get_painter().drawLine(first_x, first_y, x2, y2);
+        *widget << CGAL::GREEN;
+        widget->get_painter().drawText(x2, y2, tempc1, 49);
+        *widget << CGAL::GRAY;
+      }
+      CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f", widget->x_real(x - first_x));
+      CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f", widget->x_real(y - first_y));
+      strcat(tempc1, tempc2);
+      widget->get_painter().drawLine(first_x, first_y, x, y);
+      *widget << CGAL::GREEN;
+      widget->get_painter().drawText(x, y, tempc1, 49);
+      widget->unlock();
+      widget->setRasterOp(old);
 
-	//save the last coordinates to redraw the screen
-	x2 = x;
-	y2 = y;
-	wasrepainted = FALSE;
+      //save the last coordinates to redraw the screen
+      x2 = x;
+      y2 = y;
+      wasrepainted = FALSE;
     }
-   
   };
 
   void activating()
@@ -128,11 +144,13 @@ private:
     oldcursor = widget->cursor();
     widget->setCursor(QCursor( QPixmap( (const char**)hand_xpm)));
     wasrepainted = TRUE;
+	  startTimer( 100 );
   };
 
   void deactivating()
   {
     widget->setCursor(oldcursor);
+    killTimers();
   };
 
   int   first_x, first_y;
