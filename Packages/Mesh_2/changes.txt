@@ -1,8 +1,12 @@
+version 1.0.0 (2003/12/07) [Laurent]
+--------------------------
+o Bix Conforming_Delaunay_triangulation_2 where a typename was missing.
+o bench/bench.C now compile again.
+o I think this version can be named 1.0.0 now.
+
 version 0.9.5 (2003/11/28) [Laurent]
 --------------------------
 o Fix the deprecated use of RIGHTTURN in conforming.
-o Bix Conforming_Delaunay_triangulation_2 where a typename was missing.
-o bench/bench.C now compile again.
 
 version 0.9.4 (2003/11/5) [Laurent]
 --------------------------
