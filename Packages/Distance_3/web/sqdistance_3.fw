@@ -158,7 +158,9 @@ Vector_3<R> wcross(const Vector_3<R> &u,
         u.hz()*v.hx() - u.hx()*v.hz(),
         u.hx()*v.hy() - u.hy()*v.hx());
 }
+@}
 
+@$@<utilities that went to Kernel/Wutils.h@>@Z==@{
 #if defined CGAL_HOMOGENEOUS_H
 template <class RT>
 Vector_3< Homogeneous<RT> >
@@ -1549,7 +1551,7 @@ Saarbruecken@)
 
 #include <CGAL/utils.h>
 #include <CGAL/enum.h>
-#include <CGAL/wmult.h>
+#include <CGAL/Kernel/Wutils.h>
 
 CGAL_BEGIN_NAMESPACE
 
