@@ -40,7 +40,6 @@ diff -ru CGAL-2.3-I-6/include/CGAL/SimpleCartesian/CircleS2.h CGAL-2.3-I-6-new/i
 
  See his e-mails.
 
-- Finish Simple_Cartesian_v2 (Simple_Sphere_repC3...)
 - Remove include/CGAL/Kernel/* ?  It's used nowhere...
   Try to guess what it was supposed to be used for.
 - Move include/CGAL/Kernel_common_traits.h to
