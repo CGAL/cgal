@@ -339,6 +339,9 @@ void Largest_empty_iso_rectangle_2<T>::free_memory()
   std::for_each(x_sorted.begin(), 
 	   x_sorted.end(), 
 	   Delete<Point_data*>());
+
+  x_sorted.clear();
+  y_sorted.clear();
 }
 
 template<class T>
