@@ -4,7 +4,8 @@
 % | The Cgal Kernel Reference Manual Style   cc_manual.sty                  |
 % | --------------------------------------------------------                |
 % |                                                                         |
-% | 03.08.1995   Berlin   Lutz Kettner,  started                            |
+% | 03.06.1995   Lutz Kettner   kettner@acm.org                             |
+% | Zurich, Switzerland                                                     |
 % | $Revision$                                                       |
 % | $Date$                                            |
 % |_________________________________________________________________________|
@@ -17,6 +18,7 @@
 % |   o   Common Abbreviations                                              |
 % |   o   Structuring Macros                                                |
 % |   o   C++ Declarations                                                  |
+% |   o   Reference Page Declarations                                       |
 % |   o   Class and Class Member Declarations                               |
 % |   o   Global C++ Declarations                                           |
 % |   o   HTML Language Support in the Style File                           |
@@ -764,6 +766,84 @@
 % ___________________________________________________________________________
 % ###########################################################################
 % |
+% |   o   Reference Page Declarations
+% |
+% ###########################################################################
+% +--------------------------------------------------------------------------
+% | \begin{ccRefDeclaration} ...ccRefConcept, ...ccRefClass, ...ccRefEnum
+% | ...ccRefFunction, ...ccRefVariable, ...ccRefMacro, 
+% | \ccRefName
+% +--------------------------------------------------------------------------
+% predeclare variable names
+\newcommand{\ccRefCategory}{}
+\newcommand{\ccRefName}{}
+\newcommand{\ccPureRefName}{}
+% needed for compliance with ccClass, e.g. used for removal of eigen-name.
+\newcommand{\ccClassTemplateName}{}
+\newcommand{\ccPureClassTemplateName}{}
+
+% #1 == token describing the category (Concept, Class ...)
+\newenvironment{ccRefDeclaration}[1]{%
+                   \def\ccRefCategory{#1}%
+                   \begingroup\ccCatcode
+                   \ccRefDeclarationX%
+               }{
+                   \def\ccRefCategory{}%
+                   \def\ccPureRefName{}%
+                   \renewcommand{\ccRefName}{}%
+                   % needed for compliance with ccClass
+                   \def\ccPureClassTemplateName{}%
+                   \renewcommand{\ccClassTemplateName}{}%
+                   \def\ccPureVar{}%
+                   \renewcommand{\ccVar}{}%
+               }
+
+\def\ccRefDeclarationX #1{%
+                   \endgroup
+                   \def\ccPureRefName{#1}%
+                   \renewcommand{\ccRefName}{{{\ccFont 
+                           \ccPrintTokens #1\ccEnd\ccEndFont}}}%
+                   \ccRefSection{\ccRefCategory}{#1}%
+                   % needed for compliance with ccClass
+                   \def\ccPureClassTemplateName{#1}%
+                   \renewcommand{\ccClassTemplateName}{{{\ccFont
+                           \ccPrintTokens #1\ccEnd\ccEndFont}}}%
+               }
+
+%% #1 == ccCategory
+%% #2 == ccRefName
+\newcommand{\ccRefSection}{}
+\def\ccRefSection #1{\begingroup\ccCatcode\ccRefSectionX{#1}}
+\def\ccRefSectionX #1#2{\endgroup\section*{%
+    \marginpar{~\\\mbox{\includegraphics{cc_#1.ips}}}%
+    %\mbox{\includegraphics{cc_Class.ips}}\hspace*{-2pt}%
+    \\{\ccPrintTokens #2\ccEnd}}%
+    %%\markright{\protect\ccRefName}%
+}
+
+\newenvironment{ccRefConcept}{%
+                   \begin{ccRefDeclaration}{Concept}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefClass}{%
+                   \begin{ccRefDeclaration}{Class}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefEnum}{%
+                   \begin{ccRefDeclaration}{Enum}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefFunction}{%
+                   \begin{ccRefDeclaration}{Function}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefVariable}{%
+                   \begin{ccRefDeclaration}{Variable}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefMacro}{%
+                   \begin{ccRefDeclaration}{Macro}}{\end{ccRefDeclaration}}
+
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
 % |   o   Class and Class Member Declarations
 % |
 % ###########################################################################
@@ -773,11 +853,9 @@
 % +--------------------------------------------------------------------------
 % predeclare variable names
 \newcommand{\ccClassName}{}
-\newcommand{\ccClassTemplateName}{}
 \newcommand{\ccTemplateParameters}{}
 \newcommand{\ccVar}{}
 \newcommand{\ccPureClassName}{}
-\newcommand{\ccPureClassTemplateName}{}
 \newcommand{\ccPureTemplateParameters}{}
 \newcommand{\ccPureVar}{}
 
@@ -988,6 +1066,25 @@
                    \catcode`\}=12
                    \ccEnumX}
 
+\newcommand{\ccClassDeclaration}{%
+                       \begingroup\ccCatcode
+                       \ccClassDeclarationX
+}
+\def\ccClassDeclarationX #1{%
+                       \endgroup
+                       \ccGlobalContinuation{\ccClassDeclarationXX{#1}}%
+}
+\long\def\ccClassDeclarationXX #1#2{%
+                   \isTemplate{#1}\ifnum\ccBool=\ccTrue
+                       \ccTemplateLineHandling #1\ccEnd
+                       \ccClassDeclarationXXX{#2}#1\ccEnd
+                   \else
+                       \ccClassDeclarationFormat{#2}#1\ccEnd
+                   \fi}
+\def\ccClassDeclarationXXX #1template#2<#3>#4#5\ccEnd{%
+    \ccClassDeclarationFormat{#1}#4#5\ccEnd
+}
+
 % ___________________________________________________________________________
 % ###########################################################################
 % |
@@ -1046,6 +1143,12 @@
                   }
 
 \newcommand{\ccTexHtml}[2]{#1}
+\newcommand{\ccTex}[1]{#1}
+\newcommand{\ccHtml}[1]{}
+\newcommand{\ccAscii}[1]{}
+\newcommand{\ccRawHtml}[1]{}
+\newcommand{\ccRawAscii}[1]{}
+\newcommand{\ccAsciiToHtml}[1]{}
 \newcommand{\ccAnchor}[2]{#2}
 \newenvironment{ccTexOnly}{}{}
 \newenvironment{ccHtmlOnly}{\begingroup\ccHtmlCatcode \ccParseHtmlOnlyBody}{
@@ -1056,6 +1159,19 @@
 \ccHtmlDefCatcode
 |long|gdef|ccParseHtmlOnlyBody #1\end{ccHtmlOnly}[%
   |csname endccHtmlOnly|endcsname|@checkend[ccHtmlOnly]%
+  |expandafter|endgroup|if@endpe|@doendpe|fi
+  |if@ignore|global|@ignorefalse|ignorespaces|fi
+]
+|endgroup
+
+\newenvironment{ccHtmlBlock}{\begingroup\ccHtmlCatcode \ccParseHtmlBlockBody}{
+                            \endgroup}
+
+%  Take care: catcodes changes a lot here!!
+\begingroup
+\ccHtmlDefCatcode
+|long|gdef|ccParseHtmlBlockBody #1\end{ccHtmlBlock}[%
+  |csname endccHtmlOnly|endcsname|@checkend[ccHtmlBlock]%
   |expandafter|endgroup|if@endpe|@doendpe|fi
   |if@ignore|global|@ignorefalse|ignorespaces|fi
 ]
@@ -1074,11 +1190,13 @@
 }
 
 \def\ccHtmlIndexX #1{%
-    \endgroup
-    \isOptionalArg{#1}\ifnum\ccBool=\ccTrue \ccHtmlIndexXX
+    \isOptionalArg{#1}\ifnum\ccBool=\ccTrue \let\xqqcont=\ccHtmlIndexXX
+    \else\let\xqqcont=\ccHtmlIndexXXX
     \fi
+    \xqqcont
 }
-\def\ccHtmlIndexXX #1]#2{}
+\def\ccHtmlIndexXX #1]#2{\endgroup}
+\def\ccHtmlIndexXXX     {\endgroup}
 
 \newcommand{\ccHtmlCrossLink}{%
     \begingroup\ccCatcode
@@ -1520,6 +1638,22 @@
                                  \ccEndFont\};}%
                        \ccLayoutThreeColumns{\ \{}{#3)}{%
                                  \ccEndFont\}}{#1}%
+                     }
+
+% Formats a class declaration.
+%   o  The 1st parameter contains the comment text (maybe empty).
+%   o  The 2st parameter contains the `class' or `struct' keyword + idfier.
+% The declaration has to be terminated with "\ccEnd".
+\def\ccClassDeclarationFormat #1#2\ccEnd {%
+                       \ccInitConstructorWidths
+                       \setbox\returntypebox=\hbox{}%
+                       \setbox\callnamebox=\hbox{\ccFont
+                           \unhcopy\templatedeclbox
+                           \ccPrintTokens #2\ccEnd}%
+                       \setbox\functioncallbox=\hbox{\ccFont
+                                 \unhbox\templatedeclbox
+                                 \ccPrintTokens #2\ccEnd}%
+                       \ccLayoutThreeColumns{}{}{}{#1}%
                      }
 
 % Manual layout: generalized three column format
