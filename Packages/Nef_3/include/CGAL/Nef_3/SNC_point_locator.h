@@ -29,8 +29,8 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Timer.h>
 
-// #include <CGAL/Polygon_triangulation_traits_2.h>
-// #include <CGAL/Nef_3/triangulate_nef3_facet.h>
+#include <CGAL/Polygon_triangulation_traits_2.h>
+#include <CGAL/Nef_3/triangulate_nef3_facet.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 509
@@ -221,8 +221,7 @@ public:
       typedef typename Triangles::const_iterator Triangles_iterator;
       typedef Polygon_triangulation_traits_2<Kernel> Triangulation_traits;
       Triangles triangles;
-      triangulate_facet<SNC_structure>
-	( f, std::back_inserter(triangles), Triangulation_traits());
+      triangulate_nef3_facet<SNC_structure>( f, std::back_inserter(triangles), Triangulation_traits());
       for( Triangles_iterator ti = triangles.begin(); 
            ti != triangles.end(); ++ti) {
         Halffacet_triangle_handle th( f, *ti);
@@ -489,6 +488,19 @@ public:
           s = Segment_3(p, normalized(ip));
 	  result = Object_handle(f);
         }
+      } else if( CGAL::assign(t, *o)) {
+        CGAL_NEF_TRACEN("test triangle ");
+        Triangle_3 tr = t.get_triangle();
+        CGAL_NEF_TRACEN("trying triangle "<<tr);	
+	if(tr.has_on(p)) {
+	  f = t;
+	  return Object_handle(f);
+        }
+        if( is.does_intersect( s, tr, ip)) {
+	  CGAL_assertion(!is.does_contain_on_boundary( t, ip));
+          s = Segment_3(p, normalized(ip));
+	  result = Object_handle(t);
+        }
       } else CGAL_assertion_msg(false, "wrong handle type");
     }
 
@@ -523,6 +535,12 @@ public:
       return SD.sfaces_begin()->volume();      
 */
     } else if( CGAL::assign( f, result)) {
+      _CGAL_NEF_TRACEN("facet hit, obtaining volume...");
+      if(f->plane().oriented_side(p) == ON_NEGATIVE_SIDE)
+	f = f->twin();
+      return Object_handle(f->incident_volume());
+    } else if( CGAL::assign(t, result)) {
+      f = t;
       _CGAL_NEF_TRACEN("facet hit, obtaining volume...");
       if(f->plane().oriented_side(p) == ON_NEGATIVE_SIDE)
 	f = f->twin();

@@ -316,8 +316,11 @@ class Infimaximal_box<Tag_true, Kernel> {
     NT y(p.hy().eval_at(100));
     NT z(p.hz().eval_at(100));
     NT w(p.hw().eval_at(100));
+    NT a(h.a().eval_at(100));
+    NT b(h.b().eval_at(100));
+    NT c(h.c().eval_at(100));
     NT d(h.d().eval_at(100));
-    return (x*h.a()+y*h.b()+z*h.c()+w*d == 0);
+    return (x*a+y*b+z*c+w*d == 0);
   }
 
   static Standard_point standard_point(Point_3 p, NT d=1) {
