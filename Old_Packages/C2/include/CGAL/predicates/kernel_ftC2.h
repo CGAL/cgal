@@ -399,6 +399,15 @@ has_smaller_signed_dist_to_lineC2(const FT &px, const FT &py,
   return cmp_signed_dist_to_lineC2(px,py,qx,qy,rx,ry,sx,sy) == SMALLER;
 }
 
+template <class FT>
+inline
+Oriented_side
+side_of_oriented_lineC2(const FT &a, const FT &b, const FT &c,
+                        const FT &x, const FT &y)
+{
+  return Oriented_side(CGAL_NTS sign(a*x+b*y+c));
+}
+
 CGAL_END_NAMESPACE
 
 #ifdef CGAL_ARITHMETIC_FILTER_H
