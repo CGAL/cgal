@@ -44,7 +44,9 @@ CGAL_BEGIN_NAMESPACE
 	*/
 template <class Planar_map>
 Pm_default_point_location<Planar_map>::Halfedge_handle
-Pm_default_point_location<Planar_map>::locate(const Point& p, Locate_type& lt) const{
+Pm_default_point_location<Planar_map>::locate(const Point& p, Locate_type& lt)
+  const
+{
 		//there are different internal compiler errors if we
 		// typedef the Locate_type
 		typename TD::Locate_type td_lt; 
@@ -112,7 +114,8 @@ Pm_default_point_location<Planar_map>::vertical_ray_shoot(
 	((Bounding_box*)get_bounding_box())->insert(p);
 	Halfedge_handle h=((cPLp)this)->vertical_ray_shoot(p,lt,up);
 /* Apply the bounding box on the output */
-	if (!((Bounding_box*)get_bounding_box())->vertical_ray_shoot(p,lt,up,h))
+	if (!((Bounding_box*)get_bounding_box())->vertical_ray_shoot(p,lt,
+								     up,h))
 	{
 		h=((cPLp)this)->vertical_ray_shoot(p,lt,up);
 		CGAL_assertion(lt!=Planar_map::UNBOUNDED_FACE);

@@ -238,8 +238,10 @@ public:
 
     Halfedge_around_vertex_const_circulator incident_halfedges() const 
     {
-      //return Halfedge_around_vertex_const_circulator(TR_C_HI(dvertex::halfedge())); 
-      return Halfedge_around_vertex_const_circulator(TR_C_HI(Base::halfedge())); 
+      //return 
+      //Halfedge_around_vertex_const_circulator(TR_C_HI(dvertex::halfedge())); 
+      return 
+	Halfedge_around_vertex_const_circulator(TR_C_HI(Base::halfedge())); 
     }
 
   private:
@@ -411,7 +413,10 @@ public:
 
     {
       dedge* dummy;
-      return (/*Topological_map<Dcel>::*/is_halfedge_on_inner_ccb(&(*e),(typename Dcel::Face*)this,dummy)); 
+      return (/*Topological_map<Dcel>::*/
+	      is_halfedge_on_inner_ccb(&(*e),
+				       (typename Dcel::Face*)this,
+				       dummy)); 
 // oren corrections (dummy parameter - for bug in MSC)
     }
     
@@ -421,7 +426,8 @@ public:
 #endif
     {
       dedge* dummy;
-      return /*Topological_map<Dcel>::*/is_halfedge_on_outer_ccb(&(*e),this,dummy);
+      return /*Topological_map<Dcel>::*/
+	is_halfedge_on_outer_ccb(&(*e),this,dummy);
 // oren corrections (dummy parameter - bug in MSC)
     }
 	
@@ -490,11 +496,11 @@ public:
 //this sets a requirement on the user!!! (since a topological pm can't 
 //know if v1->v2 is on the new face or v2->v1)
 
-//since there can be a number of edges from the vertices, and we can't know topologically
-//which will be in the new face and which will be outside, this should be provided by the
-//user - defining prev1 and prev2 (previous to v1,v2 resp.)
-//the planar map will define this geometrically using the one previous to 
-//the curve clock wise.
+//since there can be a number of edges from the vertices, and we can't
+//know topologically which will be in the new face and which will be
+//outside, this should be provided by the user - defining prev1 and
+//prev2 (previous to v1,v2 resp.)  the planar map will define this
+//geometrically using the one previous to the curve clock wise.
   
   Halfedge_handle insert_at_vertices( Halfedge_handle previous1, 
                                       Halfedge_handle previous2) ;
@@ -795,7 +801,9 @@ bool is_halfedge_on_inner_ccb(const typename Dcel::Halfedge* e,
   typedef typename Dcel::Halfedge        dedge;
   typedef typename Dcel::Face	         dface;
   //move over all holes in face and check 
-  for (typename dface::Holes_iterator dhi=f->holes_begin();dhi!=f->holes_end();++dhi)
+  for (typename dface::Holes_iterator dhi=f->holes_begin();
+       dhi!=f->holes_end();
+       ++dhi)
     {
       iccb=(*dhi);
       const typename Dcel::Halfedge* aux=iccb;
@@ -843,22 +851,25 @@ bool is_halfedge_on_outer_ccb(const typename Dcel::Halfedge* e,
 //to validate the containers the function move_hole should be called.
 
 
-//if a new face is created, returns the halfedge on the new face.
-//the new face will ALWAYS (by definition) be the one from v1->v2 (==previous1->e1->..) 
-//this sets a requirement on the user!!! (since a topological pm can't 
-//know if v1->v2 is on the new face or v2->v1)
+//if a new face is created, returns the halfedge on the new face.  the
+//new face will ALWAYS (by definition) be the one from v1->v2
+//(==previous1->e1->..)  this sets a requirement on the user!!! (since
+//a topological pm can't know if v1->v2 is on the new face or v2->v1)
 
-//since there can be a number of edges from the vertices, and we can't know topologically
-//which will be in the new face and which will be outside, this should be provided by the
-//user - defining prev1 and prev2 (previous to v1,v2 resp.)
-//the planar map will define this geometrically using the one previous to the curve clock wise.
+//since there can be a number of edges from the vertices, and we can't
+//know topologically which will be in the new face and which will be
+//outside, this should be provided by the user - defining prev1 and
+//prev2 (previous to v1,v2 resp.)  the planar map will define this
+//geometrically using the one previous to the curve clock wise.
 //prev1->target() is v1
+
 template<class Dcel>
 Topological_map<Dcel>::Halfedge_handle
 Topological_map<Dcel>::
 insert_at_vertices(Halfedge_handle previous1, Halfedge_handle previous2)  
 {
-  CGAL_precondition(previous1->target()!=previous2->target()); // vertices should be distinct
+  // vertices should be distinct
+  CGAL_precondition(previous1->target()!=previous2->target()); 
 
   typename Dcel::Halfedge *prev1=&(*previous1), *prev2=&(*previous2);
 
@@ -869,7 +880,8 @@ insert_at_vertices(Halfedge_handle previous1, Halfedge_handle previous2)
 
   typename Dcel::Face* df=prev1->face();
 
-  typename Dcel::Halfedge *ccb1,*ccb2; //will hold represantative halfedge of prev1/2
+  //will hold represantative halfedge of prev1/2
+  typename Dcel::Halfedge *ccb1,*ccb2; 
   if (!(is_halfedge_on_outer_ccb<Dcel>(prev1,df,ccb1)) ) 
     is_halfedge_on_inner_ccb<Dcel>(prev1,df,ccb1);
   if (!(is_halfedge_on_outer_ccb<Dcel>(prev2,df,ccb2)) )
@@ -1129,7 +1141,8 @@ merge_edge (Halfedge_handle e1, Halfedge_handle e2)
         f->add_hole(de1t);
     }
     
-    de2->vertex()->set_halfedge(de1); //in case de2 is representative halfedge of the target vertex  
+    //in case de2 is representative halfedge of the target vertex  
+    de2->vertex()->set_halfedge(de1); 
 
     if (de2->next() != de2t) {  //de2 is not a tip of antenna
       //find previous halfedge of de2t
@@ -1299,7 +1312,8 @@ remove_edge(Halfedge_handle e)
           aux=aux->next();
         }
       
-      //move holes from df2 to df1 and set face pointer of each edge on hole to df1  
+      //move holes from df2 to df1 and set face pointer of each edge on 
+      //hole to df1  
       typename Dcel::Face::Holes_iterator hi = df2->holes_begin();
       for ( ; hi!=df2->holes_end(); ++hi) {
         //set face pointers to df1
@@ -1349,7 +1363,8 @@ remove_edge(Halfedge_handle e)
           aux=aux->next();
         }
         
-        //move holes from df2 to df1 and set face pointer of each edge on hole to df1
+        //move holes from df2 to df1 and set face pointer of each edge on 
+	//hole to df1
 
       typename Dcel::Face::Holes_iterator hi = df2->holes_begin();
       for ( ; hi!=df2->holes_end(); ++hi) {
@@ -1398,7 +1413,8 @@ remove_edge(Halfedge_handle e)
           aux=aux->next();
         }
         
-        //move holes from df1 to df2 and set face pointer of each edge on hole to df1  
+        //move holes from df1 to df2 and set face pointer of each edge on 
+	//hole to df1  
 
       typename Dcel::Face::Holes_iterator hi = df1->holes_begin();
       for ( ; hi!=df1->holes_end(); ++hi) {
