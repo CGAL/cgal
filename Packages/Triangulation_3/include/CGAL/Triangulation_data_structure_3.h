@@ -261,7 +261,24 @@ public:
   inline 
   void delete_cell( Cell* c ) 
     { 
-      //      CGAL_triangulation_expensive_precondition( is_cell(c) );
+      CGAL_triangulation_expensive_precondition_code
+	( if ( dimension() == 3 ) {
+	  CGAL_triangulation_expensive_precondition( is_cell(c) ); }
+	  else {
+	    if ( dimension() == 2 ) {
+	      CGAL_triangulation_expensive_precondition( is_facet(c,3) ); }
+	    else {
+	      if ( dimension() == 1 ) {
+		CGAL_triangulation_expensive_precondition( is_edge(c,0,1) ); }
+	      else {
+		if ( dimension() == 0 ) {
+		  CGAL_triangulation_expensive_precondition
+		    ( is_vertex(c->vertex(0)) ); }
+	      }
+	    }
+	  }
+	  );
+	  
       c->_previous_cell->_next_cell = c->_next_cell;
       c->_next_cell->_previous_cell = c->_previous_cell;
       delete( c ); 
@@ -761,7 +778,7 @@ is_edge(Cell* c, int i, int j) const
 
   Edge_iterator it = edges_begin();
   while ( it != edges_end() ) {
-    if ( &((*it).first) == c ) return true;
+    if ( (*it).first == c ) return true;
     ++it;
   }
   return false;
@@ -798,7 +815,7 @@ is_facet(Cell* c, int i) const
   if (i>3) return false;
   Facet_iterator it = facets_begin();
   while ( it != facets_end() ) {
-    if ( &((*it).first) == c ) return true;
+    if ( (*it).first == c ) return true;
     ++it;
   }
   return false;
@@ -879,7 +896,8 @@ flip( Cell* c, int i )
   // c will be replaced by one of the new cells
 {
   CGAL_triangulation_precondition( (dimension() == 3) && (0<=i) && (i<4) 
-				   && (number_of_vertices() > 5) );
+				   && (number_of_vertices() > 6) );
+  CGAL_triangulation_expensive_precondition( is_cell(c) );
 
   Cell * n = c->neighbor(i);
   int in = n->index(c);
@@ -910,7 +928,8 @@ flip_flippable( Cell* c, int i )
   // c will be replaced by one of the new cells
 {
   CGAL_triangulation_precondition( (dimension() == 3) && (0<=i) && (i<4) 
-				   && (number_of_vertices() > 5) );
+				   && (number_of_vertices() > 6) );
+  CGAL_triangulation_expensive_precondition( is_cell(c) );
 
   Cell * n = c->neighbor(i);
   int in = n->index(c);
@@ -995,7 +1014,8 @@ flip( Cell* c, int i, int j )
 				   && (0<=i) && (i<4) 
 				   && (0<=j) && (j<4)
 				   && ( i != j )
-				   && (number_of_vertices() > 5) );
+				   && (number_of_vertices() > 6) );
+  CGAL_triangulation_expensive_precondition( is_cell(c) );
 
   // checks that the edge is flippable ie degree 3
   int degree = 0;
@@ -1050,7 +1070,8 @@ flip_flippable( Cell* c, int i, int j )
 				   && (0<=i) && (i<4) 
 				   && (0<=j) && (j<4)
 				   && ( i != j )
-				   && (number_of_vertices() > 5) );
+				   && (number_of_vertices() > 6) );
+  CGAL_triangulation_expensive_precondition( is_cell(c) );
 
   // checks that the edge is flippable ie degree 3
   CGAL_triangulation_precondition_code
@@ -1065,7 +1086,7 @@ flip_flippable( Cell* c, int i, int j )
       ++ccir;
     } while ( ccir != cdone ); );
 
-  CGAL_triangulation_precondition( degree != 3 );
+  CGAL_triangulation_precondition( degree == 3 );
   
   int next = nextposaround(i,j);
   Cell* c1 = c->neighbor( next );
