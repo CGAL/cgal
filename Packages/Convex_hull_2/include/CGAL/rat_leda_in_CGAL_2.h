@@ -23,6 +23,7 @@
 #ifndef RAT_LEDA_IN_CGAL_H
 #define RAT_LEDA_IN_CGAL_H
 
+#include <CGAL/basic.h>
 #include <CGAL/enum.h>
 #include <LEDA/rat_point.h>
 #include <LEDA/rat_segment.h>

@@ -22,8 +22,8 @@
 #ifndef CGAL_STL_EXTENSIONS_H
 #define CGAL_STL_EXTENSIONS_H
 
+#include <CGAL/basic.h>
 #include <iterator>
-#include <vector>
 #include <utility>
 
 CGAL_BEGIN_NAMESPACE

@@ -23,6 +23,7 @@
 #ifndef CGAL_IO_TEE_FOR_OUTPUT_ITERATOR_H
 #define CGAL_IO_TEE_FOR_OUTPUT_ITERATOR_H
 
+#include <CGAL/basic.h>
 #include <iterator>
 #include <vector>
 #include <CGAL/Handle.h>
@@ -33,19 +34,14 @@ template <class T> class _Tee_for_output_iterator_rep;
 template <class OutputIterator, class T>
 class Tee_for_output_iterator 
   : public Handle
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-  , public std::output_iterator
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS
 {
   typedef std::vector<T>                             container;
   typedef typename container::iterator               iterator;
   typedef T                                          value_type;
   typedef std::output_iterator_tag                   iterator_category;
-#ifndef CGAL_CFG_NO_ITERATOR_TRAITS
   typedef std::iterator_traits<iterator>             iter_traits;
   typedef typename iter_traits::pointer              pointer;
   typedef typename iter_traits::reference            reference;
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS
 
 public:
   Tee_for_output_iterator(const OutputIterator& o) : o_it(o) 
@@ -105,18 +101,6 @@ public:
   std::vector<T> output_so_far;
 };
 
-template <class OutputIterator, class T>
-inline 
-T*
-value_type(const Tee_for_output_iterator<OutputIterator,T>&)
-{ return (T*)0; }
 CGAL_END_NAMESPACE
-
-template <class OutputIterator, class T>
-inline 
-std::output_iterator_tag
-iterator_category(const CGAL::Tee_for_output_iterator<OutputIterator,T>&)
-{ return std::output_iterator_tag(); }
-
 
 #endif // CGAL_IO_TEE_FOR_OUTPUT_ITERATOR_H

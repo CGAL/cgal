@@ -8,52 +8,48 @@
 //
 // ----------------------------------------------------------------------
 // release       : 
-// release_date  : 
+// release_date  : 2000, August 03
 //
-// file          : include/CGAL/ch_eddy.h
-// package       : Convex_hull_2
+// file          : include/CGAL/ch_melkman.h
+// package       : Convex_hull_2 
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Stefan Schirra
+// author(s)     : Lutz Kettner
 //
 // coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 
-#ifndef CGAL_CH_EDDY_H
-#define CGAL_CH_EDDY_H
+#ifndef CGAL_CH_MELKMAN_H
+#define CGAL_CH_MELKMAN_H
 
 #include <CGAL/basic.h>
 #include <iterator>
 
 CGAL_BEGIN_NAMESPACE
 
-// same as |convex_hull_2(first,last,result)|. {\sc traits}: uses 
-// |Traits::Point_2|, |Traits::Less_signed_distance_to_line_2|,
-// |Traits::Leftturn_2|, and |Traits::Less_xy_2|.
 template <class InputIterator, class OutputIterator, class Traits>
 OutputIterator
-ch_eddy(InputIterator first, InputIterator last, 
-        OutputIterator  result,
-        const Traits& ch_traits);
+ch_melkman( InputIterator first, InputIterator last,
+            OutputIterator result, const Traits& ch_traits);
+
 
 template <class InputIterator, class OutputIterator>
-inline
 OutputIterator
-ch_eddy(InputIterator first, InputIterator last, OutputIterator  result)
-{
+ch_melkman( InputIterator first, InputIterator last,  OutputIterator result)
+{ 
     typedef std::iterator_traits<InputIterator>   ITraits;
     typedef typename ITraits::value_type          value_type;
     typedef CGAL::Kernel_traits<value_type>       KTraits;
     typedef typename KTraits::Kernel              Kernel;
-    return ch_eddy( first, last, result, Kernel());
+    return ch_melkman( first, last, result, Kernel()); 
 }
 
 CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/ch_eddy.C>
+#include <CGAL/ch_melkman.C>
 #endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 
-#endif // CGAL_CH_EDDY_H
+#endif // CGAL_CH_MELKMAN_H
 

@@ -27,7 +27,7 @@
 #ifndef CGAL_CONVEX_HULL_LEDA_TRAITS_2_H
 #define CGAL_CONVEX_HULL_LEDA_TRAITS_2_H
 
-#include <CGAL/ch_utils.h>
+#include <CGAL/basic.h>
 #include <CGAL/leda_in_CGAL_2.h>
 #include <CGAL/predicate_objects_on_points_2.h>
 

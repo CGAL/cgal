@@ -26,9 +26,20 @@
 #define CGAL_CH_BYKAT_C
 
 #ifndef CGAL_CH_BYKAT_H
-#include <CGAL/ch_eddy.h>
+#include <CGAL/ch_bykat.h>
 #endif // CGAL_CH_BYKAT_H
+
+#ifndef CH_NO_POSTCONDITIONS
+#include <CGAL/convexity_check_2.h>
+#endif // CH_NO_POSTCONDITIONS
+
+#include <CGAL/ch_assertions.h>
+#include <CGAL/ch_selected_extreme_points_2.h>
+#include <CGAL/ch_graham_andrew.h>
+#include <CGAL/stl_extensions.h>
 #include <CGAL/functional.h>
+#include <list>
+#include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
 template <class InputIterator, class OutputIterator, class Traits>
@@ -130,9 +141,6 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
   typedef typename Traits::Leftturn_2            Leftturn_2;
   typedef typename Traits::Less_signed_distance_to_line_2     
                                                  Less_dist;
-  typedef typename Traits::Less_xy_2             Less_xy;
-  typedef ch_Binary_predicate_reversor< Point_2, Less_xy >
-                                                 Greater_xy;
   typedef typename std::vector< Point_2 >::iterator   
                                                  PointIterator;
 
@@ -204,7 +212,7 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
               else
               {
                   std::sort(successor(l), r, 
-                            Greater_xy(ch_traits.less_xy_2_object()) );
+                            swap_1(ch_traits.less_xy_2_object()) );
               }
               ch__ref_graham_andrew_scan(l, successor(r), res, ch_traits);
               std::swap( a, *l);

@@ -23,73 +23,33 @@
 #ifndef CGAL_CH_AKL_TOUSSAINT_H
 #define CGAL_CH_AKL_TOUSSAINT_H
 
-#include <CGAL/ch_utils.h>
-#include <CGAL/ch_value_type.h>
-
-#ifdef CGAL_REP_CLASS_DEFINED
-#ifdef STL_GCC
-#ifndef GNU_ISTREAM_ITERATOR_VALUE_TYPE_FIX_H
-#include <CGAL/gnu_istream_iterator_value_type_fix.h>
-#endif // GNU_ISTREAM_ITERATOR_VALUE_TYPE_FIX_H
-#endif // STL_GCC
-#endif // CGAL_REP_CLASS_DEFINED
-
-#ifndef CH_NO_POSTCONDITIONS
-#include <CGAL/convexity_check_2.h>
-#endif // CH_NO_POSTCONDITIONS
-
-
-#include <CGAL/ch_selected_extreme_points_2.h>
-#include <CGAL/ch_graham_andrew.h>
-#include <CGAL/stl_extensions.h>
+#include <CGAL/basic.h>
+#include <iterator>
 
 CGAL_BEGIN_NAMESPACE
-/*{\Moptions
-outfile=cgal_ch_I_at.man
-}*/
 
-/*{\Mtext [[\#include <CGAL/ch_akl_toussaint.h>]]
-}*/
-
+// same as |convex_hull_2(first,last,result)|.
+// {\sc traits}: operates on |Traits::Point_2| using |Traits::Less_xy_2|, 
+// |Traits::Less_yx_2|, and |Traits::Leftturn_2|.
 template <class ForwardIterator, class OutputIterator, class Traits>
 OutputIterator
 ch_akl_toussaint(ForwardIterator first, ForwardIterator last, 
-                      OutputIterator  result,
-                      const Traits&   ch_traits);
-/*{\Mfuncl
-same as |convex_hull_2(first,last,result)|.\\
-{\sc traits}: operates on |Traits::Point_2| using |Traits::Less_xy_2|, 
-|Traits::Less_yx_2|, and |Traits::Leftturn_2|.
-}*/
-
-#ifdef CGAL_POINT_2_H
-/*{\Moptions
-outfile=cgal_ch_at.man
-}*/
-
-template <class ForwardIterator, class OutputIterator, class R>
-inline
-OutputIterator
-ch__akl_toussaint(ForwardIterator first, ForwardIterator last, 
-                       OutputIterator  result,
-                       Point_2<R>* )
-{
-  return ch_akl_toussaint(first, last, result, 
-                               R() );
-}
+                 OutputIterator  result,
+                 const Traits&   ch_traits);
 
 template <class ForwardIterator, class OutputIterator>
 inline
 OutputIterator
 ch_akl_toussaint(ForwardIterator first, ForwardIterator last, 
-                      OutputIterator  result)
-{ return ch__akl_toussaint( first, last, result, ch_value_type(first) ); }
-/*{\Mfuncl
-same as |convex_hull_2(first,last,result)|.
-}*/
+                 OutputIterator  result)
+{
+    typedef std::iterator_traits<ForwardIterator> ITraits;
+    typedef typename ITraits::value_type          value_type;
+    typedef CGAL::Kernel_traits<value_type>       KTraits;
+    typedef typename KTraits::Kernel              Kernel;
+    return ch_akl_toussaint( first, last, result, Kernel()); 
+}
 
-
-#endif // CGAL_POINT_2_H
 CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION

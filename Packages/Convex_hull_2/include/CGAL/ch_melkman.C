@@ -28,35 +28,19 @@
 #ifndef CGAL_CH_MELKMAN_C
 #define CGAL_CH_MELKMAN_C
 
+#ifndef CGAL_CH_MELKMAN_H
+#include <CGAL/ch_melkman.h>
+#endif
 
-#include <queue>
-#include <CGAL/ch_utils.h>
 #ifndef CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_2.h>
 #endif // CH_NO_POSTCONDITIONS
 
+#include <CGAL/ch_assertions.h>
+#include <queue>
+#include <iterator>
 
 CGAL_BEGIN_NAMESPACE
-
-template <class InputIterator, class OutputIterator, class Traits>
-OutputIterator
-ch_melkman( InputIterator first, InputIterator last,
-            OutputIterator result, const Traits& ch_traits);
-
-
-template <class ForwardIterator, class OutputIterator, class R>
-inline
-OutputIterator
-_ch_melkman(ForwardIterator first, ForwardIterator last,
-            OutputIterator  result, Point_2<R>* )
-{ return ch_melkman(first, last, result, R() ); }
-
-
-template <class InputIterator, class OutputIterator>
-OutputIterator
-ch_melkman( InputIterator first, InputIterator last,  OutputIterator result)
-{ return _ch_melkman( first, last, result, ch_value_type(first) ); }
-
 
 template <class InputIterator, class OutputIterator, class Traits>
 OutputIterator

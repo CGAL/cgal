@@ -15,7 +15,6 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
@@ -26,7 +25,6 @@ LIBPATH = \
           $(CGAL_WINDOW_LIBPATH)
 
 LDFLAGS = \
-          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_WINDOW_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -34,9 +32,9 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                ch_of_polyline$(EXE_EXT) \
-                convex_hull_2_demo$(EXE_EXT) \
-                convex_hull_of_ipoints$(EXE_EXT) 
+                ch_of_polyline \
+                convex_hull_2_demo \
+                convex_hull_of_ipoints 
 
 ch_of_polyline$(EXE_EXT): ch_of_polyline$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)ch_of_polyline ch_of_polyline$(OBJ_EXT) $(LDFLAGS)
@@ -57,5 +55,8 @@ clean: \
 #---------------------------------------------------------------------#
 
 .C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 

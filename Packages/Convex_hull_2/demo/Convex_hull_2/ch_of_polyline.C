@@ -23,7 +23,7 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/convex_hull_2.h>
-#include <CGAL/ch_melkman.C>
+#include <CGAL/ch_melkman.h>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/IO/leda_ps_file.h>

@@ -158,7 +158,7 @@
 #  define CGAL_ch_postcondition(EX) \
    ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, 0))
 #  define CGAL_ch_postcondition_msg(EX,MSG) \
-   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__,MSG))
 #  define CGAL_ch_postcondition_code(CODE) CODE
 #endif // CH_NO_POSTCONDITIONS
 
@@ -172,7 +172,7 @@
 #  define CGAL_ch_exactness_postcondition(EX) \
    ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, 0))
 #  define CGAL_ch_exactness_postcondition_msg(EX,MSG) \
-   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__,MSG))
 #  define CGAL_ch_exactness_postcondition_code(CODE) CODE
 #endif // CH_NO_POSTCONDITIONS
 
@@ -186,7 +186,7 @@
 #  define CGAL_ch_expensive_postcondition(EX) \
    ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, 0))
 #  define CGAL_ch_expensive_postcondition_msg(EX,MSG) \
-   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__,MSG))
 #  define CGAL_ch_expensive_postcondition_code(CODE) CODE
 #endif // CH_NO_POSTCONDITIONS
 
@@ -201,7 +201,7 @@
 #  define CGAL_ch_expensive_exactness_postcondition(EX) \
    ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, 0))
 #  define CGAL_ch_expensive_exactness_postcondition_msg(EX,MSG) \
-   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__,MSG))
 #  define CGAL_ch_expensive_exactness_postcondition_code(CODE) CODE
 #endif // CH_NO_POSTCONDITIONS
 

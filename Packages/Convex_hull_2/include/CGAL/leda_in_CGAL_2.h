@@ -23,6 +23,7 @@
 #ifndef LEDA_IN_CGAL_H
 #define LEDA_IN_CGAL_H
 
+#include <CGAL/basic.h>
 #include <CGAL/enum.h>
 #include <LEDA/point.h>
 #include <LEDA/segment.h>

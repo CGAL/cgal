@@ -25,9 +25,10 @@
 #ifndef CGAL_CONVEXITY_CHECK_2_C
 #define CGAL_CONVEXITY_CHECK_2_C
 
-#include <CGAL/Kernel/traits_aids.h>
 #include <CGAL/convexity_check_2.h>
+#include <CGAL/stl_extensions.h>
 #include <CGAL/functional.h>
+#include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
 template <class ForwardIterator, class Traits>
@@ -91,10 +92,8 @@ is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
 {
   typedef  typename Traits::Less_xy_2       Less_xy;
   typedef  typename Traits::Leftturn_2      Leftturn;
-  typedef  Rightturn_by_leftturn< Leftturn> Rightturn;
 
   Less_xy  smaller_xy = ch_traits.less_xy_2_object();
-  Rightturn rightturn = ch_traits.leftturn_2_object();
 
   ForwardIterator iter1;
   ForwardIterator iter2;
@@ -116,7 +115,7 @@ is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
 
   while (iter3 != last) 
   {
-      if ( !rightturn( *iter1, *iter2, *iter3 ) ) return false;
+      if ( !leftturn( *iter2, *iter1, *iter3 ) ) return false;
       if ( smaller_xy( *iter2, *iter1 ) && smaller_xy( *iter2, *iter3 )) ++f;
 
       ++iter1;
@@ -125,14 +124,14 @@ is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
   }
 
   iter3 = first;
-  if ( !rightturn( *iter1, *iter2, *iter3 ) ) return false;
+  if ( !leftturn( *iter2, *iter1, *iter3 ) ) return false;
   if ( smaller_xy( *iter2, *iter1 ) && smaller_xy( *iter2, *iter3 )) ++f;
 
 
   iter1 = iter2;
   iter2 = first;
   ++iter3;
-  if ( !rightturn( *iter1, *iter2, *iter3 ) ) return false;
+  if ( !leftturn( *iter2, *iter1, *iter3 ) ) return false;
   if ( smaller_xy( *iter2, *iter1 ) && smaller_xy( *iter2, *iter3 )) ++f;
 
 

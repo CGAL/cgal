@@ -29,6 +29,10 @@
 #include <CGAL/ch_selected_extreme_points_2.h>
 #endif // CGAL_CH_SELECTED_EXTREME_POINTS_2_H
 
+#ifndef CH_NO_POSTCONDITIONS
+#include <CGAL/convexity_check_2.h>
+#endif // CH_NO_POSTCONDITIONS
+
 CGAL_BEGIN_NAMESPACE
 template <class ForwardIterator, class Traits>
 void

@@ -29,7 +29,14 @@
 #include <CGAL/ch_jarvis.h>
 #endif // CGAL_CH_JARVIS_H
 
+#ifndef CH_NO_POSTCONDITIONS
+#include <CGAL/convexity_check_2.h>
+#endif // CH_NO_POSTCONDITIONS
+
+#include <CGAL/ch_assertions.h>
 #include <CGAL/functional.h>
+#include <algorithm>
+
 
 CGAL_BEGIN_NAMESPACE
 template <class ForwardIterator, class OutputIterator, 

@@ -25,10 +25,18 @@
 #ifndef CGAL_CH_GRAHAM_ANDREW_C
 #define CGAL_CH_GRAHAM_ANDREW_C
 
-#include <CGAL/stl_extensions.h>
 #ifndef CGAL_CH_GRAHAM_ANDREW_H
 #include <CGAL/ch_graham_andrew.h>
 #endif // CGAL_CH_GRAHAM_ANDREW_H
+
+#ifndef CH_NO_POSTCONDITIONS
+#include <CGAL/convexity_check_2.h>
+#endif // CH_NO_POSTCONDITIONS
+
+#include <CGAL/ch_assertions.h>
+#include <CGAL/stl_extensions.h>
+#include <vector>
+#include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
 

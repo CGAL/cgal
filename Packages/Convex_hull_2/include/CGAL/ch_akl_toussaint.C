@@ -12,8 +12,7 @@
 //
 // file          : ch_akl_toussaint.C
 // package       : Convex_hull (3.3)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : convex_hull_2.lw
+// maintainer    : Susan Hert
 // revision      : 3.3
 // revision_date : 03 Aug 2000
 // author(s)     : Stefan Schirra
@@ -29,21 +28,25 @@
 #include <CGAL/ch_akl_toussaint.h>
 #endif // CGAL_CH_AKL_TOUSSAINT_H
 
+#ifndef CH_NO_POSTCONDITIONS
+#include <CGAL/convexity_check_2.h>
+#endif // CH_NO_POSTCONDITIONS
+
+#include <CGAL/ch_assertions.h>
+#include <CGAL/ch_selected_extreme_points_2.h>
+#include <CGAL/ch_graham_andrew.h>
+#include <CGAL/stl_extensions.h>
+#include <CGAL/functional.h>
+
 CGAL_BEGIN_NAMESPACE
 template <class ForwardIterator, class OutputIterator, class Traits>
 OutputIterator
 ch_akl_toussaint(ForwardIterator first, ForwardIterator last, 
-                      OutputIterator  result,
-                      const Traits&   ch_traits)
+                 OutputIterator  result,
+                 const Traits&   ch_traits)
 {
   typedef  typename Traits::Point_2                    Point_2;    
   typedef  typename Traits::Leftturn_2                 Left_of_line;
-  typedef  typename Traits::Less_xy_2                  Less_xy;
-  typedef  ch_Binary_predicate_reversor< Point_2, Less_xy>
-                                                       Greater_xy;
-  typedef  typename Traits::Less_yx_2                  Less_yx;
-  typedef  ch_Binary_predicate_reversor< Point_2, Less_yx>
-                                                       Greater_yx;
 
   if (first == last) return result;
   ForwardIterator n, s, e, w;
@@ -96,10 +99,10 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
              ch_traits.less_xy_2_object() );
   std::sort( successor(region2.begin() ), region2.end(), 
              ch_traits.less_xy_2_object() );
-  std::sort( successor(region3.begin() ), region3.end(), 
-             Greater_xy(ch_traits.less_xy_2_object()) );
+  std::sort( successor(region3.begin() ), region3.end(),
+             swap_1(ch_traits.less_xy_2_object()) );
   std::sort( successor(region4.begin() ), region4.end(), 
-             Greater_xy(ch_traits.less_xy_2_object()) );
+             swap_1(ch_traits.less_xy_2_object()) );
 
   if ( *w != *s )
   {

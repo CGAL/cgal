@@ -28,7 +28,17 @@
 #ifndef CGAL_CH_EDDY_H
 #include <CGAL/ch_eddy.h>
 #endif // CGAL_CH_EDDY_H
+
+#ifndef CH_NO_POSTCONDITIONS
+#include <CGAL/convexity_check_2.h>
+#endif // CH_NO_POSTCONDITIONS
+
+#include <CGAL/ch_assertions.h>
+#include <CGAL/ch_selected_extreme_points_2.h>
+#include <CGAL/stl_extensions.h>
 #include <CGAL/functional.h>
+#include <list>
+#include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
 template <class List, class ListIterator, class Traits>

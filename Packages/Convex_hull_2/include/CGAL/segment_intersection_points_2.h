@@ -21,9 +21,11 @@
 #ifndef SEGMENT_INTERSECTION_POINTS_2_H
 #define SEGMENT_INTERSECTION_POINTS_2_H
 
-#include <CGAL/stl_extensions.h>
+#include <CGAL/basic.h>
+#include <iterator>
 
 namespace CGAL {
+
 /*
 #include <CGAL/Segment_2_Segment_2_intersection.h>
 template <class ForwardIterator, class OutputIterator, class R>
@@ -47,27 +49,19 @@ si_brute_force(ForwardIterator first, ForwardIterator last,
 }
 */
 
-template <class R>
-Point_2<R>
-gp_linear_intersection(const Line_2<R>& l1,
-                            const Line_2<R>& l2)
-{
-  return Point_2<R>( l1.b()*l2.c() - l2.b()*l1.c(),
-                     l2.a()*l1.c() - l1.a()*l2.c(),
-                     l1.a()*l2.b() - l2.a()*l1.b() );
-}
-
-template <class ForwardIterator, class OutputIterator, class R>
+template <class ForwardIterator, class OutputIterator, class Traits>
 OutputIterator
 si_brute_force_II(ForwardIterator first, ForwardIterator last,
                   OutputIterator result,
-                  const R& )
+                  const Traits& traits)
 {
-  typedef Point_2<R>         Point;
-  ForwardIterator inner, outer;
-  Point p;
-  for ( outer = first; outer != last; ++outer)
-      for ( inner = successor(outer); inner != last; ++inner)
+  typedef typename Traits::Point_2         Point;
+  typedef typename Traits::Line_2          Line;
+  typedef typename Traits::Orientation_2   Orientation;
+  Orientation orientation = traits.orientation_2_object();
+
+  for ( ForwardIterator outer = first; outer != last; ++outer)
+      for ( ForwardIterator inner = successor(outer); inner != last; ++inner)
       {
           Point s1 = (*outer).source();
           Point e1 = (*outer).target();
@@ -76,19 +70,34 @@ si_brute_force_II(ForwardIterator first, ForwardIterator last,
           if ( (orientation( s1, e1, s2) != orientation( s1, e1, e2))
              &&(orientation( s2, e2, s1) != orientation( s2, e2, e1)))
           {
-              result++ = gp_linear_intersection( Line_2<R>(s1,e1),
-                                                      Line_2<R>(s2,e2));
+              Line l1( s1, e1);
+              Line l2( s2, e2);
+              result++ =  Point( l1.b()*l2.c() - l2.b()*l1.c(),
+                                 l2.a()*l1.c() - l1.a()*l2.c(),
+                                 l1.a()*l2.b() - l2.a()*l1.b());
           }
       }
   return result;
 }
 
-template <class ForwardIterator, class OutputIterator, class R>
+template <class ForwardIterator, class OutputIterator, class Traits>
 OutputIterator
 segment_intersection_points_2(ForwardIterator first, ForwardIterator last,
-                                   OutputIterator result,
-                                   const R& r)
-{ return si_brute_force_II( first, last, result, r); }
+                              OutputIterator result,
+                              const Traits& traits)
+{ return si_brute_force_II( first, last, result, traits); }
+
+template <class ForwardIterator, class OutputIterator, class Traits>
+OutputIterator
+segment_intersection_points_2(ForwardIterator first, ForwardIterator last,
+                              OutputIterator result)
+{
+    typedef std::iterator_traits<ForwardIterator> ITraits;
+    typedef typename ITraits::value_type          value_type;
+    typedef CGAL::Kernel_traits<value_type>       KTraits;
+    typedef typename KTraits::Kernel              Kernel;
+    return segment_intersection_points_2( first, last, result, Kernel()); 
+}
 
 } // namespace CGAL
 
