@@ -438,8 +438,8 @@ private slots:
     }
 };
 
-#include "arrangments.moc"
-//moc_source_file: arrangments.C
+#include "arrangements.moc"
+//moc_source_file: arrangements.C
 
 int main(int argc, char** argv)
 {
