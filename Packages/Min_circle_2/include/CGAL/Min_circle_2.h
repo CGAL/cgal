@@ -323,7 +323,7 @@ class Min_circle_2 {
     Min_circle_2( InputIterator first,
                   InputIterator last,
                   bool          randomize
-    #if !defined(__BORLANDC__) && (!defined(_MSC_VER) || _MSC_VER > 1200)
+    #if !defined(__BORLANDC__) && (!defined(_MSC_VER) || _MSC_VER > 1300)
                                               = false
     #endif
                                                      ,
@@ -447,7 +447,6 @@ class Min_circle_2 {
             // append p to the end of the list
             points.push_back( p);
     }
-    #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
     
         template < class InputIterator >
         void
@@ -457,35 +456,6 @@ class Min_circle_2 {
                 insert( *first);
         }
     
-    #else
-    
-        inline
-        void
-        insert( const Point* first, const Point* last)
-        {
-            for ( ; first != last; ++first)
-                insert( *first);
-        }
-    
-        inline
-        void
-        insert( std::list<Point>::const_iterator first,
-                std::list<Point>::const_iterator last )
-        {
-            for ( ; first != last; ++first)
-                insert( *first);
-        }
-    
-        inline
-        void
-        insert( std::istream_iterator<Point,std::ptrdiff_t>  first,
-                std::istream_iterator<Point,std::ptrdiff_t>  last )
-        {
-            for ( ; first != last; ++first)
-                insert( *first);
-        }
-    
-    #endif // CGAL_CFG_NO_MEMBER_TEMPLATES
     void
     clear( )
     {
