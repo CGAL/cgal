@@ -46,19 +46,21 @@ private:
 
 
 template<class C, class I>
-void print_container(C c)
+void print_container(C c, bool is_concatenated = true)
 {
   typedef    I       Iterator;
 
-  std::cout << "Contents of concatenated container in forward order:"
-	    << std::endl;
+  std::cout << "Contents of ";
+  std::cout << (is_concatenated ? "concatenated " : "input ");
+  std::cout << "container in forward order:" << std::endl;
   for (Iterator it = c.begin(); it != c.end(); it++) {
     std::cout << " " << (*it);
   }
   std::cout << std::endl << std::endl;
 
-  std::cout << "Contents of concatenated container in reverse order:"
-	    << std::endl;
+  std::cout << "Contents of ";
+  std::cout << (is_concatenated ? "concatenated " : "input ");
+  std::cout << "container in reverse order:" << std::endl;
   if ( c.begin() != c.end() ) {
     Iterator it = c.end();
     --it;
@@ -66,8 +68,8 @@ void print_container(C c)
       std::cout << " " << (*it);
     }
     std::cout << " " << *it;
-    std::cout << std::endl << std::endl;
   }
+  std::cout << std::endl << std::endl;
 }
 
 
@@ -160,10 +162,13 @@ int test(A a, B b)
 
   std::cout << "==========================================="
 	    << std::endl << std::endl;
-  print_container<A,typename A::iterator>(a);
-  print_container<B,typename B::iterator>(b);
+  print_container<A,typename A::iterator>(a, false);
+  print_container<B,typename B::iterator>(b, false);
+  std::cout << "AB container:" << std::endl;
   print_container<AB_container,AB_iterator>(ab);
+  std::cout << "AA container:" << std::endl;
   print_container<AA_container,AA_iterator>(aa);
+  std::cout << "BA container:" << std::endl;
   print_container<BA_container,BA_iterator>(ba);
   std::cout << "==========================================="
 	    << std::endl << std::endl << std::endl;
@@ -212,11 +217,28 @@ int main()
       l1.push_back(i+2*n);
     }
 
+    std::cout << "testing generic cases..." << std::endl;
+
     assert( test(v1, l1) );
     assert( test(l1, v1) );
     assert( test(v1, v2) );
     assert( test(v1, v1) );
   }
+
+  // one is empty
+  {
+    l1.clear();
+    v2.clear();
+
+    std::cout << "testing cases where at least one container "
+	      << "is empty..." << std::endl;
+
+    assert( test(v1, l1) );
+    assert( test(l1, v1) );
+    assert( test(v1, v2) );
+    assert( test(v2, v2) );
+  }
+
   //------------------------------------------------------------------
 #if 0
   {
