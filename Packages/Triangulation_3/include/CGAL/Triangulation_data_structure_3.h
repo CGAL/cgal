@@ -814,8 +814,8 @@ is_edge(Vertex* u, Vertex* v,
   Cell* tmp = _list_of_cells._next_cell;
   while ( tmp != past_end_cell() ) {
     if ( (tmp->has_vertex(u,i)) && (tmp->has_vertex(v,j)) ) {
-      return true; 
       c = tmp;
+      return true; 
     }
     tmp = tmp->_next_cell;
   }
