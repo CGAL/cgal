@@ -10,7 +10,7 @@ public:
   typedef arr_traits              Traits;
   typedef typename Traits::Curve  Curve;
 
-private:
+protected:
   Traits tr;
 
   // a data structure to store test info connected with each curve
