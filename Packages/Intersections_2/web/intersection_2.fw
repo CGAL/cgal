@@ -14,6 +14,7 @@ MPI, Saarbruecken@)
 
 #include <CGAL/intersection_2_1.h>
 #include <CGAL/intersection_2_2.h>
+#include <CGAL/intersection_2_3.h>
 
 #endif // CGAL_INTERSECTION_2_H
 @}

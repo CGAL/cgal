@@ -1,3 +1,4 @@
+
 // ============================================================================
 //
 // Copyright (c) 2000 The CGAL Consortium
@@ -11,8 +12,8 @@
 // release       : $CGAL_Revision:  $
 // release_date  : $CGAL_Date:  $
 //
-// file          : include/CGAL/intersection_2.h
-// source        : intersection_2.fw
+// file          : include/CGAL/Circle_2_Circle_2_intersection.h
+// source        : intersection_2_3.fw
 // author(s)     : Geert-Jan Giezeman
 //
 // coordinator   : MPI, Saarbruecken
@@ -20,12 +21,20 @@
 // ============================================================================
 
 
+#ifndef CGAL_CIRCLE_2_CIRCLE_2_INTERSECTION_H
+#define CGAL_CIRCLE_2_CIRCLE_2_INTERSECTION_H
 
-#ifndef CGAL_INTERSECTION_2_H
-#define CGAL_INTERSECTION_2_H
+#include <CGAL/Object.h>
 
-#include <CGAL/intersection_2_1.h>
-#include <CGAL/intersection_2_2.h>
-#include <CGAL/intersection_2_3.h>
+CGAL_BEGIN_NAMESPACE
 
-#endif // CGAL_INTERSECTION_2_H
+template <class R>
+bool
+do_intersect(const Circle_2<R> &tr1, const Circle_2<R>&tr2);
+
+CGAL_END_NAMESPACE
+
+#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#include <CGAL/Circle_2_Circle_2_intersection.C>
+#endif
+#endif

@@ -1,0 +1,77 @@
+@i cgal_util.fwi
+@B@<Intersection of two circles@>
+
+@O@<../include/CGAL/Circle_2_Circle_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Circle_2_Circle_2_intersection.h@,@-
+intersection_2_3.fw@,@-
+Geert-Jan Giezeman@,@-
+MPI, Saarbruecken@)
+
+#ifndef CGAL_CIRCLE_2_CIRCLE_2_INTERSECTION_H
+#define CGAL_CIRCLE_2_CIRCLE_2_INTERSECTION_H
+
+#include <CGAL/Object.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+bool
+do_intersect(const Circle_2<R> &tr1, const Circle_2<R>&tr2);
+
+CGAL_END_NAMESPACE
+
+#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#include <CGAL/Circle_2_Circle_2_intersection.C>
+#endif
+#endif
+@}
+
+@O@<../include/CGAL/Circle_2_Circle_2_intersection.C@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Circle_2_Circle_2_intersection.C@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+Saarbruecken@)
+
+
+#include <CGAL/Circle_2.h>
+#include <CGAL/squared_distance_2_1.h>
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+bool
+do_intersect(const Circle_2<R> & circ1, const Circle_2<R>& circ2)
+{
+    typedef typename R::FT FT;
+    FT sr1 = circ1.squared_radius();
+    FT sr2 = circ2.squared_radius();
+    FT squared_dist = squared_distance(circ1.center(), circ2.center());
+    FT temp = sr1+sr2-squared_dist;
+    return !(FT(4)*sr1*sr2 < temp*temp);
+}
+
+CGAL_END_NAMESPACE
+
+@}
+
+
+@B@<Packing intersections together@>
+
+@O@<../include/CGAL/intersection_2_3.h@>==@{@-
+@<cgal_heading@>@(@-
+include/CGAL/intersection_2_3.h@,@-
+intersection_2_3.fw@,@-
+Geert-Jan Giezeman@,@-
+Saarbruecken@)
+
+
+#ifndef CGAL_INTERSECTION_2_3_H
+#define CGAL_INTERSECTION_2_3_H
+
+#include <CGAL/Circle_2_Circle_2_intersection.h>
+
+#endif
+@}
+
+
