@@ -1085,6 +1085,15 @@ public:
   }
 
   /*!
+   * Get the arc's orientation.
+   * \return The orientation.
+   */
+  Orientation orientation () const
+  {
+    return (_orient);
+  }
+
+  /*!
    * Check whether the two arcs are the same (have the same graph).
    * \param arc The compared arc.
    * \return (true) if the two arcs are equal.

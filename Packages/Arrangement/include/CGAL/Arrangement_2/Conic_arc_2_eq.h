@@ -211,9 +211,26 @@ int solve_quartic_eq (const CfNT& a, const CfNT& b, const CfNT& c,
 		      const CfNT& d, const CfNT& e,
 		      SolNT* roots)
 {
-  // First check whether we have 0 as a multiple root.
+  // In case we have an equation of a lower degree:
   static const CfNT _zero = 0;
 
+  if (a == _zero)
+  {
+    if (b == _zero)
+    {
+      // We have to solve c*x^2 + d*x + e = 0.
+      return (solve_quadratic_eq<CfNT, SolNT> (c, d, e,
+					       roots));
+    }
+    else
+    {
+      // We have to solve b*x^3 + c*x^2 + d*x + e = 0.
+      return (_solve_cubic_eq<CfNT, SolNT> (b, c, d, e,
+					    roots));
+    }
+  }
+
+  // First check whether we have 0 as a multiple root.
   if (e == _zero)
   {
     if (d == _zero)
@@ -262,23 +279,6 @@ int solve_quartic_eq (const CfNT& a, const CfNT& b, const CfNT& c,
     }
   }
 
-  // In case we have an equation of a lower degree:
-  if (a == _zero)
-  {
-    if (b == _zero)
-    {
-      // We have to solve c*x^2 + d*x + e = 0.
-      return (solve_quadratic_eq<CfNT, SolNT> (c, d, e,
-					       roots));
-    }
-    else
-    {
-      // We have to solve b*x^3 + c*x^2 + d*x + e = 0.
-      return (_solve_cubic_eq<CfNT, SolNT> (b, c, d, e,
-					    roots));
-    }
-  }
-
   // In case we have an equation of the form:
   //  a*x^4 + c*x^2 + e = 0
   //
@@ -322,6 +322,7 @@ int solve_quartic_eq (const CfNT& a, const CfNT& b, const CfNT& c,
   coeffs[0] = e;
 
   CORE::Polynomial<CfNT> p (coeffs);
+
   _make_square_free (p);
 
   CORE::Sturm<CfNT>      sturm (p);
