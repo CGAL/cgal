@@ -145,7 +145,7 @@ floatNumber     ({signNumber}\.|{signNumber}\.{number})
 expNumber       ({floatNumber}|{signNumber}){exp}{signNumber}
 No              ({signNumber}|{floatNumber}|{expNumber})
 operator        [^a-zA-Z_0-9\n\r\t \\]
-measure         {signNumber}{letter}{letter}
+measure         (({signNumber})|({floatNumber})){letter}{letter}
 rmblockintro    ([\{][\\](rm))|([\\]((text)|(math))rm[\{])
 ttblockintro    ([\{][\\](tt))|([\\]((text)|(math))tt[\{])
 emblockintro    ([\{][\\](em))|([\\]emph[\{])
@@ -296,8 +296,8 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 [\\]verb{noletter}   {   /* match LaTeX \verb"..." constructs */
 		    BEGIN( VerbMode);
 		    stop_character = yytext[ yyleng-1];
-		    yylval.string.text = "<PRE>";
-		    yylval.string.len  = 5;
+		    yylval.string.text = "<TT>";
+		    yylval.string.len  = 4;
 	  	    return STRING;
                 }
 <VerbMode>{ws}	{
@@ -308,8 +308,8 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 <VerbMode>.	{
 		    if ( yytext[0] == stop_character) {
 		        BEGIN( INITIAL);
-	                yylval.string.text = "</PRE>";
-		        yylval.string.len  = 6;
+	                yylval.string.text = "</TT>";
+		        yylval.string.len  = 5;
 	  	        return STRING;
                     }
 		    if ( yytext[0] == '\n') {
@@ -1413,15 +1413,16 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 		}
 
 <INITIAL,MMODE,NestingMode>{ttblockintro}  {  /* TeX styles like {\tt ... */
+		    skipspaces();
 		    return TTBLOCKINTRO;
 		}
-<INITIAL,MMODE,NestingMode>{emblockintro}  {   return EMBLOCKINTRO; }
-<INITIAL,MMODE,NestingMode>{itblockintro}  {   return ITBLOCKINTRO; }
-<INITIAL,MMODE,NestingMode>{scblockintro}  {   return SCBLOCKINTRO; }
-<INITIAL,MMODE,NestingMode>{bfblockintro}  {   return BFBLOCKINTRO; }
-<INITIAL,MMODE,NestingMode>{rmblockintro}  {   return RMBLOCKINTRO; }
-<INITIAL,MMODE,NestingMode>{sfblockintro}  {   return SFBLOCKINTRO; }
-<INITIAL,MMODE,NestingMode>{calblockintro} {   return CALBLOCKINTRO; }
+<INITIAL,MMODE,NestingMode>{emblockintro}  { skipspaces();return EMBLOCKINTRO;}
+<INITIAL,MMODE,NestingMode>{itblockintro}  { skipspaces();return ITBLOCKINTRO;}
+<INITIAL,MMODE,NestingMode>{scblockintro}  { skipspaces();return SCBLOCKINTRO;}
+<INITIAL,MMODE,NestingMode>{bfblockintro}  { skipspaces();return BFBLOCKINTRO;}
+<INITIAL,MMODE,NestingMode>{rmblockintro}  { skipspaces();return RMBLOCKINTRO;}
+<INITIAL,MMODE,NestingMode>{sfblockintro}  { skipspaces();return SFBLOCKINTRO;}
+<INITIAL,MMODE,NestingMode>{calblockintro} {skipspaces();return CALBLOCKINTRO;}
 
 <CCMode,ccStyleMode>[\\]tt/{noletter}      {
 		        skipspaces();

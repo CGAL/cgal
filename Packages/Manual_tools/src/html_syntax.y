@@ -327,9 +327,9 @@ stmt:             string              {   handleBuffer( * $1);
 group:            '{'
                   input
 		  '}'
-                | blockintro
+                  | blockintro { handleString( $1.text);}
                   input
-                  '}'         {}
+                  '}'          { handleString( $1.text + strlen( $1.text)+1);}
 ;
 
 /* Auxiliary Rules                 */

@@ -64,18 +64,19 @@ typedef char Switch;
 #define MINUS_SWITCH 1
 #define PLUS_SWITCH  2
  
-Switch  trace_switch  = NO_SWITCH;
-Switch  line_switch   = NO_SWITCH;
+Switch  trace_switch      = NO_SWITCH;
+Switch  line_switch       = NO_SWITCH;
 
-Switch  config_switch = NO_SWITCH;
-Switch  warn_switch   = NO_SWITCH;
-Switch  macro_switch  = NO_SWITCH;
+Switch  config_switch     = NO_SWITCH;
+Switch  warn_switch       = NO_SWITCH;
+Switch  macro_switch      = NO_SWITCH;
 
-Switch  noheader_switch = NO_SWITCH;
+Switch  noheader_switch   = NO_SWITCH;
 Switch  onlyheader_switch = NO_SWITCH;
 
-char*   cgal_lib_dir = NULL;
-
+char*   cgal_lib_dir      = NULL;
+char*   pre_main_filename = NULL;
+ostream* pre_stream       = NULL;
 
 /* An object storing the current font */
 /* ================================== */
@@ -823,7 +824,10 @@ void filter_config_file( istream& in, ostream& out) {
 		    break;
 		case 'u':
 		    if ( main_stream != &cout)
-		        out <<  main_filename;
+			if ( main_stream != pre_stream)
+			    out <<  main_filename;
+			else
+			    out <<  pre_main_filename;
 		    break;
 		case 'd':
 		    if ( manual_date ) 
@@ -992,6 +996,8 @@ const char* html_multi_character( char c) {
 }
 
 void print_ascii_to_html( ostream& out, const char* txt) {
+    if (txt == NULL)
+	return;
     while( *txt) {
 	if ( *txt == '\\' && isupper(txt[1]) && txt[2] == '\\') {
 	    out << new_remember_font( txt[1]);
@@ -1005,6 +1011,8 @@ void print_ascii_to_html( ostream& out, const char* txt) {
 }
 
 void print_ascii_len_to_html( ostream& out, const char* txt, int n) {
+    if (txt == NULL)
+	return;
     while( n) {
 	if ( *txt == '\\' && isupper(txt[1]) && txt[2] == '\\') {
 	    out << new_remember_font( txt[1]);
@@ -1020,6 +1028,8 @@ void print_ascii_len_to_html( ostream& out, const char* txt, int n) {
 
 // This version eliminates multiple spaces.
 void print_ascii_to_html_spc( ostream& out, const char* txt) {
+    if (txt == NULL)
+	return;
     while( *txt) {
 	if ( *txt == '\\' && isupper(txt[1]) && txt[2] == '\\') {
 	    out << new_remember_font( txt[1]);
@@ -1034,6 +1044,8 @@ void print_ascii_to_html_spc( ostream& out, const char* txt) {
 }
 
 int strlen_ascii_to_html( const char* txt) {
+    if (txt == NULL)
+	return 0;
     int len = 0;
     while( *txt) {
 	if ( *txt == '\\' && isupper(txt[1]) && txt[2] == '\\') {
@@ -1087,9 +1099,9 @@ char* convert_C_to_html( const char* txt) {
     return formatted;
 }
 
-// A scope operator is also appended
+// No longer is a scope operator appended.
 char* convert_ascii_to_scrambled_html( const char* txt) {
-    char* s = new char[  strlen_ascii_to_html( txt) + 3 
+    char* s = new char[  strlen_ascii_to_html( txt) + 1
                        + strlen( index_scramble)];
     char* p = s;
     bool tag = true;
@@ -1113,19 +1125,19 @@ char* convert_ascii_to_scrambled_html( const char* txt) {
 	    tag = false;
 	}
     }
-    *p++ = ':';
-    *p++ = ':';
     *p = '\0';
     return s;
 }
 
-char* convert_C_to_scrambled_html( const char* txt) {
+// A scope operator is also appended.
+char* convert_C_to_scrambled_scope_html( const char* txt) {
     current_font = it_font;
     char* tmp = convert_ascii_to_scrambled_html( txt);
     const char* end_font = new_font_tags( it_font);
-    char* formatted = new char[ strlen( tmp) + strlen( end_font) + 8];
+    char* formatted = new char[ strlen( tmp) + strlen( end_font) + 10];
     strcpy( formatted, "<I>");
     strcat( formatted, tmp);
+    strcat( formatted, "::");
     strcat( formatted, end_font);
     strcat( formatted, "</I>");
     delete[] tmp;
@@ -2126,7 +2138,11 @@ void format_function( bool method, const char* signature, const Text& T) {
 	if ( conversion_operator) {
 	    print_ascii_to_html_spc( *current_stream, op_symbols);
 	    *current_stream << " ( ";
-	    print_ascii_to_html_spc( *current_stream, creationvariable);
+	    if ( creationvariable == NULL) {
+		printErrorMessage( VariableUsedError);
+		*current_stream << "*this";
+	    } else
+		print_ascii_to_html_spc( *current_stream, creationvariable);
 	    *current_stream << ")";
 	} else {
 	    double dd_width = table_width * ( 1.0 - table_first_col / 100.0);
@@ -2138,7 +2154,11 @@ void format_function( bool method, const char* signature, const Text& T) {
 		*current_stream << get_remember_font() << indNewline;
 	    }
 	    if ( method) {
-		print_ascii_to_html_spc( *current_stream, creationvariable);
+		if ( creationvariable == NULL) {
+		    printErrorMessage( VariableUsedError);
+		    *current_stream << "*this";
+		} else
+		    print_ascii_to_html_spc(*current_stream, creationvariable);
 		*current_stream << '.';
 	    }
 	    if ( scope)
@@ -2217,14 +2237,12 @@ void format_variable( const char* signature,
 	// generate a substitution rule for hyperlinking
 	*anchor_stream << "[a-zA-Z0-9_]\"" << formatted_var
 		       << "\"    { ECHO; }" << endl;
-	*anchor_stream << "\"" << formatted_var
-		       << "\"[a-zA-Z0-9_]    { ECHO; }" << endl;
 	*anchor_stream << '"' << formatted_var
-		       << "\"    { fputs( \"<A HREF=\\\""
-		       << current_filename 
-		       << (is_typedef ? "#Typedef_" :  "#Var_" )
-		       << variable_name 
-		       << "\\\">" << formatted_var << "</A>\", stdout); }" 
+		       << "\"/{noCCchar}    { fputs( \"<A HREF=\\\""
+	               << current_filename
+		       << (is_typedef ? "#Typedef_" :  "#Var_" );
+	filter_for_index_anchor( *anchor_stream, variable_name);
+	*anchor_stream << "\\\">" << formatted_var << "</A>\", stdout); }" 
 		       << endl;
 
 	// index
@@ -2243,15 +2261,16 @@ void format_variable( const char* signature,
 	filter_for_index_comment( *index_stream, variable_name);
 	*index_stream << "!><UL><LI><A HREF=\""
 		      << current_filename 
-		      << (is_typedef ? "#Typedef_" :  "#Var_" )
-		      << variable_name
-		      << "\"><I>" << scrambled_template_class_name
+		      << (is_typedef ? "#Typedef_" :  "#Var_" );
+	filter_for_index_anchor( *index_stream, variable_name);
+	*index_stream << "\"><I>" << scrambled_template_class_name
 		      << scrambled_var << "</I></A></UL>" << endl;
 	delete[] scrambled_var;
     }
     *current_stream << "<A NAME=\""
-		    << (is_typedef ? "Typedef_" :  "Var_" )
-		    << variable_name << "\"></A>" << endl;
+		    << (is_typedef ? "Typedef_" :  "Var_" );
+    filter_for_index_anchor( *current_stream, variable_name);
+    *current_stream << "\"></A>" << endl;
     // end index
 
     if ( return_value)
@@ -2442,12 +2461,11 @@ void format_enum( const char* signature, const Text& T) {
 	// generate a substitution rule for hyperlinking
 	*anchor_stream << "[a-zA-Z0-9_]\"" << formatted_enum
 		       << "\"    { ECHO; }" << endl;
-	*anchor_stream << "\"" << formatted_enum
-		       << "\"[a-zA-Z0-9_]    { ECHO; }" << endl;
 	*anchor_stream << '"' << formatted_enum
-		       << "\"    { fputs( \"<A HREF=\\\""
-		       << current_filename << "#Enum_" << enum_name << "\\\">"
-		       << formatted_enum << "</A>\", stdout); }" 
+		       << "\"/{noCCchar}    { fputs( \"<A HREF=\\\""
+		       << current_filename << "#Enum_";
+	filter_for_index_anchor( *anchor_stream, enum_name);
+	*anchor_stream << "\\\">" << formatted_enum << "</A>\", stdout); }" 
 		       << endl;
 
 	// index
@@ -2463,12 +2481,15 @@ void format_enum( const char* signature, const Text& T) {
 	*index_stream << "::";
 	filter_for_index_comment( *index_stream, enum_name);
 	*index_stream << "!><UL><LI><A HREF=\""
-		      << current_filename << "#Enum_" << enum_name
-		      << "\"><I>" << scrambled_template_class_name
+		      << current_filename << "#Enum_";
+	filter_for_index_anchor( *index_stream, enum_name);
+	*index_stream << "\"><I>" << scrambled_template_class_name
 		      << scrambled_enum << "</I></A></UL>" << endl;
 	delete[] scrambled_enum;
     }
-    *current_stream << "<A NAME=\"Enum_" << enum_name << "\"></A>" << endl;
+    *current_stream << "<A NAME=\"Enum_";
+    filter_for_index_anchor( *current_stream, enum_name);
+    *current_stream << "\"></A>" << endl;
     // end index
 
     // first, estimate size
@@ -2538,12 +2559,11 @@ void format_enum( const char* signature, const Text& T) {
 		char *tmp_param = convert_ascii_to_html( p);
 		*anchor_stream << "[a-zA-Z0-9_]\"" << tmp_param
 			       << "\"    { ECHO; }" << endl;
-		*anchor_stream << "\"" << tmp_param
-			       << "\"[a-zA-Z0-9_]    { ECHO; }" << endl;
 		*anchor_stream << '"' << tmp_param
-			       << "\"    { fputs( \"<A HREF=\\\""
-			       << current_filename << "#Enum_" 
-			       << enum_name << "\\\">"
+			       << "\"/{noCCchar}    { fputs( \"<A HREF=\\\""
+			       << current_filename << "#Enum_";
+		filter_for_index_anchor( *anchor_stream, enum_name);
+		*anchor_stream << "\\\">"
 			       << tmp_param << "</A>\", stdout); }" 
 			       << endl;
 		delete[] tmp_param;
@@ -2561,8 +2581,9 @@ void format_enum( const char* signature, const Text& T) {
 		*index_stream << "::";
 		filter_for_index_comment( *index_stream, p);
 		*index_stream << "!><UL><LI><A HREF=\""
-			      << current_filename << "#Enum_" << enum_name
-			      << "\"><I>" << scrambled_template_class_name
+			      << current_filename << "#Enum_";
+		filter_for_index_anchor( *index_stream, enum_name);
+		*index_stream << "\"><I>" << scrambled_template_class_name
 			      << scrambled_tag << "</I></A></UL>" << endl;
 		delete[] scrambled_tag;
 	    }
@@ -2618,12 +2639,11 @@ void format_struct( const char* signature, const Text& T) {
 	// generate a substitution rule for hyperlinking
 	*anchor_stream << "[a-zA-Z0-9_]\"" << formatted_struct
 		       << "\"    { ECHO; }" << endl;
-	*anchor_stream << "\"" << formatted_struct
-		       << "\"[a-zA-Z0-9_]    { ECHO; }" << endl;
 	*anchor_stream << '"' << formatted_struct
-		       << "\"    { fputs( \"<A HREF=\\\""
-		       << current_filename << "#Struct_" << struct_name 
-		       << "\\\">" << formatted_struct << "</A>\", stdout); }" 
+		       << "\"/{noCCchar}    { fputs( \"<A HREF=\\\""
+		       << current_filename << "#Struct_";
+	filter_for_index_anchor( *anchor_stream, struct_name);
+	*anchor_stream << "\\\">" << formatted_struct << "</A>\", stdout); }" 
 		       << endl;
 	// index
 	*index_stream << sort_key_struct << '1';
@@ -2638,12 +2658,15 @@ void format_struct( const char* signature, const Text& T) {
 	*index_stream << "::";
 	filter_for_index_comment( *index_stream, struct_name);
 	*index_stream << "!><UL><LI><A HREF=\""
-		      << current_filename << "#Struct_" << struct_name
-		      << "\"><I>" << scrambled_template_class_name
+		      << current_filename << "#Struct_";
+	filter_for_index_anchor( *index_stream, struct_name);
+	*index_stream << "\"><I>" << scrambled_template_class_name
 		      << scrambled_struct << "</I></A></UL>" << endl;
 	delete[] scrambled_struct;
     }
-    *current_stream << "<A NAME=\"Struct_" << struct_name << "\"></A>" << endl;
+    *current_stream << "<A NAME=\"Struct_";
+    filter_for_index_anchor( *current_stream, struct_name);
+    *current_stream << "\"></A>" << endl;
     // end index
 
     // first, estimate size
@@ -2769,7 +2792,7 @@ void handleChapter(  const Text& T) {
     chapter_title = text_block_to_string( T);
     footnotes        = &main_footnotes;
     footnote_counter = &main_footnote_counter;
-    if ( main_stream != &cout) {
+    if ( main_stream != &cout && main_stream != pre_stream) {
         printFootnotes( *main_stream);
         // navigation footer
         *main_stream << "<HR> Next chapter: <A HREF=\"" 
@@ -3032,24 +3055,30 @@ const char* handleHtmlCrossLink( const char* key, bool tmpl_class) {
     char *tmp_name = convert_ascii_to_html( key);
     *anchor_stream << "[a-zA-Z0-9_]\"" << tmp_name
 		   << "\"    { ECHO; }" << endl;
-    *anchor_stream << "\"" << tmp_name
-		   << "\"[a-zA-Z0-9_]    { ECHO; }" << endl;
     *anchor_stream << '"' << tmp_name
-		   << "\"    { fputs( \"<A HREF=\\\""
+		   << "\"/{noCCchar}    { fputs( \"<A HREF=\\\""
 		   << current_filename << "#Cross_link_anchor_" 
 		   << cross_link_anchor_counter << "\\\">"
 		   << tmp_name << "</A>\", stdout); }" 
 		   << endl;
     if ( tmpl_class) {
         *anchor_stream << '"' << tmp_name
-		       << "\"[ ]*\"&lt;\"    {\n"
+		       << "\"{ws}\"&lt;\"{ws}{CCidfier}{ws}\"&gt;\"    {\n"
 		       << "        fputs( \"<A HREF=\\\""
 		       << current_filename << "#Cross_link_anchor_" 
 		       << cross_link_anchor_counter << "\\\">\", stdout);\n" 
-		       << "        nesting = 1;\n"
-		       << "        yymore();\n"
-		       << "        BEGIN( PARAMMODE); }\n"
+		       << "        ECHO;\n"
+		       << "        fputs( \"</A>\", stdout); }\n"
 		       << endl;
+//         *anchor_stream << '"' << tmp_name
+// 		       << "\"[ ]*\"&lt;\"    {\n"
+// 		       << "        fputs( \"<A HREF=\\\""
+// 		       << current_filename << "#Cross_link_anchor_" 
+// 		       << cross_link_anchor_counter << "\\\">\", stdout);\n" 
+// 		       << "        nesting = 1;\n"
+// 		       << "        yymore();\n"
+// 		       << "        BEGIN( PARAMMODE); }\n"
+// 		       << endl;
     }
     delete[] tmp_name;
 
@@ -3069,7 +3098,7 @@ void handleClasses( const char* classname, const char* template_cls) {
     formatted_template_class_name = 
                 convert_C_to_html( template_class_name);
     scrambled_template_class_name = 
-                convert_C_to_scrambled_html( template_class_name);
+                convert_C_to_scrambled_scope_html( template_class_name);
     class_name                 = newstr( classname);
     creationvariable           = newstr( "*this");
     formatted_creationvariable = newstr( "<I>*this</I>");
@@ -3352,6 +3381,16 @@ main( int argc, char **argv) {
 	        nParameters = ErrParameters;
 	    }
         endDetect();
+        detectSwitch( dummy_switch, "main");
+            i++;
+            if ( i < argc) {
+	        pre_main_filename = argv[i];
+	    } else {
+	        cerr << "error: option -main needs an additional parameter"
+		     << endl;
+	        nParameters = ErrParameters;
+	    }
+        endDetect();
         detectSwitch( warn_switch, "warn");
         endDetect();
         detectSwitch( macro_switch, "macro");
@@ -3399,6 +3438,8 @@ main( int argc, char **argv) {
                                            "output files." << endl;
         cerr << "       -cgal_dir <dir/>    set the path to the CGAL "
                                            "header files." << endl;
+        cerr << "       -main     <file>    main filename for the part before"
+                                           " any chapter" << endl;
         cerr << "       -warn               warn about unknown macros" << endl;
         cerr << "       -macro              trace macro definitions" << endl;
         cerr << "       -noheader           no header for contents.html and "
@@ -3445,6 +3486,13 @@ main( int argc, char **argv) {
     index_stream    = open_file_with_path_for_write( tmp_path, index_filename);
     if ( ! noheader_switch)
 	write_headers_to_index( *index_stream);
+
+    if ( pre_main_filename) {
+	pre_stream = open_file_with_path_for_write(tmp_path,pre_main_filename);
+	current_stream   = pre_stream;
+	current_filename = pre_main_filename;
+	open_html( *pre_stream);
+    }
     
     for ( i = 0; i < nParameters; i++) {
 	FILE* in;
@@ -3456,9 +3504,16 @@ main( int argc, char **argv) {
 	}
 	in_filename = parameters[i];
 
-	main_stream   = &cout;
-	current_stream   = main_stream;
-	current_filename = main_filename;
+	if ( pre_main_filename) {
+	    main_stream   = pre_stream;
+	    main_filename = pre_main_filename;
+	    current_stream   = main_stream;
+	    current_filename = pre_main_filename;
+	} else {
+	    main_stream   = &cout;
+	    current_stream   = main_stream;
+	    current_filename = main_filename;
+	}
 
 	init_scanner( in);
 	yyparse();
@@ -3474,7 +3529,7 @@ main( int argc, char **argv) {
 	    class_filename = 0;
 	}
 	assert_file_write( *main_stream, main_filename);
-	if ( main_stream != &cout) {
+	if ( main_stream != &cout && main_stream != pre_stream) {
             footnotes        = &main_footnotes;
             footnote_counter = &main_footnote_counter;
             printFootnotes( *main_stream);
@@ -3485,6 +3540,13 @@ main( int argc, char **argv) {
 	    main_stream = &cout;
 	    main_filename = "<cout>";
 	}
+    }
+
+    if ( pre_main_filename) {
+        printFootnotes( *pre_stream);
+        close_html( *pre_stream);
+	assert_file_write( *pre_stream, pre_main_filename);
+	delete   pre_stream;
     }
 
     assert_file_write( *index_stream, index_filename);

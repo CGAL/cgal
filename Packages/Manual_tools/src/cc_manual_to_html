@@ -274,8 +274,8 @@ set options = "${cgal_dir} -config ${config_path}/ -tmp ${new_tmp_path}/ ${aux_f
 
 if ( $?DEBUG) echo "# Step 1: convert each LaTeX file into an HTML file."
 if ($show_main_switch) then
-    if ( $?DEBUG) echo "cc_extract_html -date "${DEFAULT_DATE}" -release "${DEFAULT_RELEASE}" -title "${DEFAULT_TITLE}" -author "${DEFAULT_AUTHOR}" ${options} ${in_files}"
-    cc_extract_html -date "${DEFAULT_DATE}" -release "${DEFAULT_RELEASE}" -title "${DEFAULT_TITLE}" -author "${DEFAULT_AUTHOR}" ${options} ${in_files}
+    if ( $?DEBUG) echo "cc_extract_html -date "${DEFAULT_DATE}" -release "${DEFAULT_RELEASE}" -title "${DEFAULT_TITLE}" -author "${DEFAULT_AUTHOR}" ${options} -main main.html ${in_files}"
+    cc_extract_html -date "${DEFAULT_DATE}" -release "${DEFAULT_RELEASE}" -title "${DEFAULT_TITLE}" -author "${DEFAULT_AUTHOR}" ${options} -main main.html ${in_files}
 else
     if ( $?DEBUG) echo "cc_extract_html -date "${DEFAULT_DATE}" -release "${DEFAULT_RELEASE}" -title "${DEFAULT_TITLE}" -author "${DEFAULT_AUTHOR}" ${options} ${in_files} >/dev/null"
     cc_extract_html -date "${DEFAULT_DATE}" -release "${DEFAULT_RELEASE}" -title "${DEFAULT_TITLE}" -author "${DEFAULT_AUTHOR}" ${options} ${in_files} >/dev/null
@@ -491,7 +491,7 @@ echo "$0 "'$Revision$'" (c) Lutz Kettner"
 echo "Usage: $0 [<options>] <tex-files...>"
 echo "           -defaults           show the settings of the internal variables."
 echo "           -extended           extended organization among multiple dir's."
-echo "           -show_main          show the translation result for the main file."
+echo "           -show_main          put the result for the main file in main.html."
 echo "           -date     <text>    set a date for the manual."
 echo "           -release  <text>    set a release number for the manual."
 echo "           -title    <text>    set a title text for the manual."
