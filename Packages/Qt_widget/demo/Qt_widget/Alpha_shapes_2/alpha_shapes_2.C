@@ -54,6 +54,10 @@ int main(int, char*)
 #include <qtoolbar.h>
 #include <qfiledialog.h>
 #include <qtimer.h>
+#include <qslider.h>
+#include <qlayout.h>
+#include <qinputdialog.h>
+
 
 
 
@@ -102,10 +106,9 @@ public:
   show_alpha_shape(){};
 private:
   void draw(){
-    alpha_index = 1000;
     A.set_alpha(alpha_index);
     A.set_mode(Alpha_shape::GENERAL);
-    *widget << CGAL::RED;
+    *widget << CGAL::LineWidth(2) << CGAL::GREEN;
     *widget << A;
   }
 };
@@ -116,7 +119,7 @@ class MyWindow : public QMainWindow
 public:
   MyWindow(int w, int h): win(this) {
   setCentralWidget(&win);
-    
+
   //create a timer for checking if somthing changed
   QTimer *timer = new QTimer( this );
   connect( timer, SIGNAL(timeout()),
@@ -138,9 +141,10 @@ public:
 
 
   // drawing menu
-  QPopupMenu * draw = new QPopupMenu( this );
-  menuBar()->insertItem( "&Draw", draw );
-  draw->insertItem("&Generate Triangulation", this, SLOT(gen_tr()), CTRL+Key_G );
+  QPopupMenu * edit = new QPopupMenu( this );
+  menuBar()->insertItem( "&Edit", edit );
+  edit->insertItem("&Generate Triangulation", this, SLOT(gen_tr()), CTRL+Key_G );
+  edit->insertItem("&Change Alpha", this, SLOT(change_alpha()), CTRL+Key_C );
 
   // help menu
   QPopupMenu * help = new QPopupMenu( this );
@@ -174,6 +178,7 @@ public:
   old_state = 0;
   //layers
   win.attach(&alpha_shape_layer);
+  alpha_index = 0.001;
   };
 
   ~MyWindow()
@@ -232,6 +237,15 @@ private slots:
     ed->show();
     ed->set_window(-1.1, 1.1, -1.1, 1.1);
     something_changed();
+  }
+
+  void change_alpha() {
+    bool ok = FALSE;
+    double res = QInputDialog::getDouble( tr( "Please enter a decimal number" ),"Between 0 and 1", 0.001, 0, 1, 3, &ok, this );
+    if ( ok ){
+      alpha_index = res;
+      win.redraw();
+    }
   }
 
   void timerDone()
