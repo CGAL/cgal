@@ -72,12 +72,12 @@ namespace CGALi {
 
     Iterator begin(Base_iterator it)
     {
-      return predicate().begin(it);
+      return this->predicate().begin(it);
     }
 
     Iterator end(Base_iterator it)
     {
-      return predicate().end(it);
+      return this->predicate().end(it);
     }
 
   };
