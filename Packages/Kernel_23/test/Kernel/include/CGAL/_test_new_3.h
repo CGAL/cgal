@@ -122,6 +122,7 @@ test_new_3(const R& rep)
   Line_3 l5 = construct_line(s2);
   Line_3 l6 = construct_line(r2);
   Line_3 l7 = construct_line(p2, construct_direction(v4));
+  Line_3 l8 = construct_line(p2,v4);
 
   // remaining construct_direction tests
   Direction_3 d5 = construct_direction(l3);
@@ -651,7 +652,7 @@ test_new_3(const R& rep)
   use(tmp7); use(tmp71); use(sp1a); use(tmp72);
   use(tmp12a); use(tmp12b);
   use(bb1); use(bb2); use(bb3); use(bb4); use(bb5); use(bb6); 
-  use(r4); use(r5); use(l7); use(v7); use(v8); use(v9); use(h8);
+  use(r4); use(r5); use(l7); use(l8); use(v7); use(v8); use(v9); use(h8);
 
   return true;
 }

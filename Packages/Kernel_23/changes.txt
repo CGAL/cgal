@@ -1,3 +1,6 @@
+19 Feb 2004 Sylvain Pion
+- Add missing test-suite for Construct_line_3(Point_3, Vector_3).
+
 17 Feb 2004 Sylvain Pion
 - Remove CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
   and VC++ < 7.1 workarounds.
