@@ -19,7 +19,7 @@
 typedef CGAL::Homogeneous<long>           Kernel;
 typedef CGAL::Pm_segment_traits_2<Kernel> Traits;
 typedef Traits::Point_2                   Point_2;
-typedef Traits::X_monotone_curve_2                 X_monotone_curve_2;
+typedef Traits::X_monotone_curve_2        X_monotone_curve_2;
 typedef CGAL::Pm_default_dcel<Traits>     Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>   Planar_map;
 
