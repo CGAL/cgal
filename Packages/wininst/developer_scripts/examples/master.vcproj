@@ -26,7 +26,7 @@
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="5"
-				WarningLevel="3"
+				WarningLevel="2"
 				DebugInformationFormat="3"
 				CompileAsManaged="0"/>
 			<Tool
@@ -62,17 +62,21 @@
 			ManagedExtensions="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/GR /Zm900"
 				Optimization="2"
 				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG"
 				MinimalRebuild="FALSE"
-				WarningLevel="3"/>
+				WarningLevel="2"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="CGAL.lib gmp.lib"
 				OutputFile="$(OutDir)/test_msvc7.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;"
 				GenerateDebugInformation="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -102,6 +106,12 @@
 						Name="VCCLCompilerTool"
 						CompileAs="2"/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -116,7 +126,3 @@
 	<Globals>
 	</Globals>
 </VisualStudioProject>
-
-
-
-
