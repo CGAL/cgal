@@ -1,3 +1,6 @@
+27 September 2004 Andreas Fabri
+- Bug fix in natural_neighbor_coordinates_2.h and sibson_gradient_fitting.h
+
 23 September 2004 Sylvain Pion
 - Merge Power_test_degenerated_2 in Power_test_2 following the change in
   Regular_triangulation_2.
