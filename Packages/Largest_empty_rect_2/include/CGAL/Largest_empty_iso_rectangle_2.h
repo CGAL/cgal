@@ -82,9 +82,9 @@ private:
   }; 
 
   // was x_smaller
-  bool less_x(const Point_data *a, const Point_data *b) const
+  bool less_xy(const Point_data *a, const Point_data *b) const
   {
-    return geom_traits().less_x_2_object()(a->p, b->p);
+    return geom_traits().less_xy_2_object()(a->p, b->p);
   }
 
   // was y_smaller
@@ -93,17 +93,17 @@ private:
     }
 
   // was x_larger
-  bool larger_x(const Point_data *a, const Point_data *b) {
-    return geom_traits().compare_x_2_object()(a->p, b->p) == LARGER;
+  bool larger_xy(const Point_data *a, const Point_data *b) {
+    return geom_traits().compare_xy_2_object()(a->p, b->p) == LARGER;
   }
 
   // was y_larger
-  bool larger_y(const Point_data *a, const Point_data *b) {
-    Comparison_result c = geom_traits().compare_y_2_object()(a->p, b->p);
+  bool larger_yx(const Point_data *a, const Point_data *b) {
+    Comparison_result c = geom_traits().compare_yx_2_object()(a->p, b->p);
     if(c == LARGER) {
       return true;
     } else if (c == EQUAL) {
-      return geom_traits().less_x_2_object()(b->p, a->p);
+      return geom_traits().less_xy_2_object()(b->p, a->p);
     } 
     return false;
   }
@@ -690,7 +690,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_bot()
   get_next_for_bot(iter3,beyond);
 
   while(size - 4 > points_removed && iter3 != Point_data_list.end()) {
-    if(less_yx(*iter1, *iter2) && larger_y(*iter2, *iter3)) {
+    if(less_yx(*iter1, *iter2) && larger_yx(*iter2, *iter3)) {
       // Rectangles in phase 2 should be ignored for polygon
       //if(!polygon)
         check_for_larger((*iter1)->p, bl_p, (*iter3)->p, (*iter2)->p);
@@ -739,7 +739,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_top()
   get_next_for_top(iter3,beyond);
 
   while(size - 4 > points_removed && iter3 != Point_data_list.end()) {
-    if(larger_y(*iter1, *iter2) && less_yx(*iter2, *iter3)) {
+    if(larger_yx(*iter1, *iter2) && less_yx(*iter2, *iter3)) {
       check_for_larger((*iter1)->p,tr_p, (*iter3)->p,(*iter2)->p);
       ++points_removed;
       Point_data_list.erase(iter2);
@@ -782,7 +782,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_left()
   get_next_for_left(iter3,beyond);
 
   while(size - 4 > points_removed && iter3 != Point_data_list.end()) {
-    if(less_x(*iter1, *iter2) && larger_x(*iter2, *iter3)) {
+    if(less_xy(*iter1, *iter2) && larger_xy(*iter2, *iter3)) {
       check_for_larger(bl_p, (*iter1)->p, (*iter2)->p, (*iter3)->p);
       ++points_removed;
       Point_data_list.erase(iter2);
@@ -825,7 +825,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_right()
   get_next_for_right(iter3,beyond);
 
   while(size - 4 > points_removed && iter3 != Point_data_list.end()) {
-    if(larger_x(*iter1, *iter2) && less_x(*iter2, *iter3)) {
+    if(larger_xy(*iter1, *iter2) && less_xy(*iter2, *iter3)) {
       check_for_larger((*iter2)->p, (*iter1)->p, tr_p, (*iter3)->p);
       ++points_removed;
       Point_data_list.erase(iter2);
@@ -925,8 +925,8 @@ Largest_empty_iso_rectangle_2<T>::calls_for_tents(
   typename Point_data_set_of_y::iterator iter2,
   typename Point_data_set_of_y::iterator iter3)
 {
-  bool first_is_right_to_second = less_x(*iter1, *iter2);
-  bool second_is_right_to_third = less_x(*iter2, *iter3);
+  bool first_is_right_to_second = less_xy(*iter1, *iter2);
+  bool second_is_right_to_third = less_xy(*iter2, *iter3);
 
   if(first_is_right_to_second) {
     if(second_is_right_to_third) {
@@ -952,7 +952,7 @@ Largest_empty_iso_rectangle_2<T>::calls_for_tents(
   typename Point_data_set_of_y::iterator iter1,
   typename Point_data_set_of_y::iterator iter2)
 {
-  if(less_x(*iter1, *iter2))
+  if(less_xy(*iter1, *iter2))
     tent(*iter1,*iter2);
   else
     tent(*iter2,*iter1);
