@@ -7,12 +7,12 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------
-// release       : 
-// release_date  : 
+// release       : $CGAL_Revision: CGAL-2.5-I-63 $
+// release_date  : $CGAL_Date: 2003/01/24 $
 //
-// file          : concept_archetype_functors.h
-// package       : Kernel_23
-// maintainer    : 
+// file          : include/CGAL/Kernel/concept_archetype_functors.h
+// package       : Kernel_23 (1.19)
+// maintainer    : Sylvain Pion <Sylvain.Pion@mpi-sb.mpg.de>
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Matthias Baesken
@@ -44,8 +44,8 @@ public:
     typedef Angle            result_type;
     typedef Arity_tag< 3 >   Arity;
 
-    Angle operator()(const Point_2& p, const Point_2& q, 
-                     const Point_2& r) const
+    Angle operator()(const Point_2&, const Point_2&, 
+                     const Point_2&) const
     { CGAL::Angle a = CGAL::RIGHT;
       return a; 
     }
@@ -59,8 +59,8 @@ public:
     typedef Angle            result_type;
     typedef Arity_tag< 3 >   Arity;
 
-    Angle operator()(const Point_3& p, const Point_3& q, 
-                     const Point_3& r) const
+    Angle operator()(const Point_3&, const Point_3&, 
+                     const Point_3&) const
     { CGAL::Angle a = CGAL::RIGHT;
       return a; 
     }
@@ -74,7 +74,7 @@ public:
     typedef bool             result_type;
     typedef Arity_tag< 3 >   Arity;
 
-    bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    bool operator()(const Point_2&, const Point_2&, const Point_2&) const
     { return true; }
 };
 
@@ -86,7 +86,7 @@ public:
     typedef bool             result_type;
     typedef Arity_tag< 3 >   Arity;
 
-    bool operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    bool operator()(const Point_3&, const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -98,7 +98,7 @@ public:
     typedef bool             result_type;
     typedef Arity_tag< 3 >   Arity;
 
-    bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    bool operator()(const Point_2&, const Point_2&, const Point_2&) const
     { return true; }
 };
 
@@ -110,7 +110,7 @@ public:
     typedef bool             result_type;
     typedef Arity_tag< 3 >   Arity;
 
-    bool operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    bool operator()(const Point_3&, const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -123,7 +123,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     template <class T>
-    bool operator()(T& t, const Object_2& o) const
+    bool operator()(T&, const Object_2&) const
     { return true; }
 };
 
@@ -136,7 +136,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     template <class T>
-    bool operator()(T& t, const Object_3& o) const
+    bool operator()(T&, const Object_3&) const
     { return true; }
 };
 
@@ -151,13 +151,13 @@ public:
     typedef Bounded_side     result_type;
     typedef Arity_tag< 2 >   Arity;
 
-    Bounded_side operator()( const Circle_2& c, const Point_2& p) const
+    Bounded_side operator()( const Circle_2&, const Point_2&) const
     { return CGAL::ON_BOUNDARY; }
 
-    Bounded_side operator()( const Triangle_2& t, const Point_2& p) const
+    Bounded_side operator()( const Triangle_2&, const Point_2&) const
     { return CGAL::ON_BOUNDARY; }
 
-    Bounded_side operator()( const Iso_rectangle_2& r, const Point_2& p) const
+    Bounded_side operator()( const Iso_rectangle_2&, const Point_2&) const
     { return CGAL::ON_BOUNDARY; }
 };
 
@@ -173,15 +173,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Bounded_side
-    operator()( const Sphere_3& s, const Point_3& p) const
+    operator()( const Sphere_3&, const Point_3&) const
     { return CGAL::ON_BOUNDARY; }
 
     Bounded_side
-    operator()( const Tetrahedron_3& t, const Point_3& p) const
+    operator()( const Tetrahedron_3&, const Point_3&) const
     { return CGAL::ON_BOUNDARY; }
 
     Bounded_side
-    operator()( const Iso_cuboid_3& c, const Point_3& p) const
+    operator()( const Iso_cuboid_3&, const Point_3&) const
     { return CGAL::ON_BOUNDARY; }
 };
 
@@ -194,7 +194,7 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     bool
-    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    operator()(const Point_2&, const Point_2&, const Point_2&) const
     { return true; }
 };
 
@@ -207,7 +207,7 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     bool
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()(const Point_3&, const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -220,7 +220,7 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     bool
-    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    operator()(const Point_2&, const Point_2&, const Point_2&) const
     { return true; }
 };
 
@@ -233,7 +233,7 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     bool
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()(const Point_3&, const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -248,11 +248,11 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Ray_2& r, const Point_2& p) const
+    operator()( const Ray_2&, const Point_2&) const
     { return true; }
 
     bool
-    operator()( const Segment_2& s, const Point_2& p) const
+    operator()( const Segment_2&, const Point_2&) const
     { return true; }
 };
 
@@ -265,7 +265,7 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     bool
-    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    operator()(const Point_2&, const Point_2&, const Point_2&) const
     { return true; }
 };
 
@@ -278,7 +278,7 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     bool
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()(const Point_3&, const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -291,7 +291,7 @@ public:
     typedef Arity_tag< 2 >           Arity;
 
     Comparison_result
-    operator()(const Direction_2& p, const Direction_2& q) const
+    operator()(const Direction_2&, const Direction_2&) const
     { return CGAL::LARGER; }
 };
 
@@ -304,7 +304,7 @@ public:
     typedef Arity_tag< 3 >        Arity;
 
     Comparison_result
-    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    operator()(const Point_2&, const Point_2&, const Point_2&) const
     { return CGAL::LARGER; }
 };
 
@@ -317,7 +317,7 @@ public:
     typedef Arity_tag< 3 >        Arity;
 
     Comparison_result
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()(const Point_3&, const Point_3&, const Point_3&) const
     { return CGAL::LARGER; }
 };
 
@@ -331,11 +331,11 @@ public:
     typedef Arity_tag< 2 >         Arity;
 
     Comparison_result
-    operator()(const Line_2& l1, const Line_2& l2) const
+    operator()(const Line_2&, const Line_2&) const
     { return CGAL::LARGER; }
 
     Comparison_result
-    operator()(const Segment_2& s1, const Segment_2& s2) const
+    operator()(const Segment_2&, const Segment_2&) const
     { return CGAL::LARGER; }
 };
 
@@ -349,20 +349,20 @@ public:
     typedef Arity_tag< 3 >         Arity;
 
     Comparison_result
-    operator()( const Point_2& p, const Line_2& h) const
+    operator()( const Point_2&, const Line_2&) const
     { return CGAL::LARGER; }
 
     Comparison_result
-    operator()( const Point_2& p, const Line_2& h1, const Line_2& h2) const
+    operator()( const Point_2&, const Line_2&, const Line_2&) const
     { return CGAL::LARGER; }
 
     Comparison_result
-    operator()( const Line_2& l1, const Line_2& l2, const Line_2& h) const
+    operator()( const Line_2&, const Line_2&, const Line_2&) const
     { return CGAL::LARGER; }
 
     Comparison_result
-    operator()( const Line_2& l1, const Line_2& l2,
-	        const Line_2& h1, const Line_2& h2) const
+    operator()( const Line_2&, const Line_2&,
+	        const Line_2&, const Line_2&) const
     { return CGAL::LARGER; }
 };
 
@@ -375,7 +375,7 @@ public:
     typedef Arity_tag< 2 >     Arity;
 
     Comparison_result
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     { return CGAL::LARGER; }
 };
 
@@ -388,7 +388,7 @@ public:
     typedef Arity_tag< 2 >     Arity;
 
     Comparison_result
-    operator()( const Point_2& p, const Point_2& q) const
+    operator()( const Point_2&, const Point_2&) const
     { return CGAL::LARGER; }
 };
 
@@ -401,7 +401,7 @@ public:
     typedef Arity_tag< 2 >     Arity;
 
     Comparison_result
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     { return CGAL::LARGER; }
 };
 
@@ -415,20 +415,20 @@ public:
     typedef Arity_tag< 2 >     Arity;
 
     Comparison_result
-    operator()( const Point_2& p, const Point_2& q) const
+    operator()( const Point_2&, const Point_2&) const
     { return CGAL::LARGER; }
 
     Comparison_result
-    operator()( const Point_2& p, const Line_2& l1, const Line_2& l2) const
+    operator()( const Point_2&, const Line_2&, const Line_2&) const
     { return CGAL::LARGER; }
 
     Comparison_result
-    operator()( const Line_2& l, const Line_2& h1, const Line_2& h2) const
+    operator()( const Line_2&, const Line_2&, const Line_2&) const
     { return CGAL::LARGER; }
 
     Comparison_result
-    operator()( const Line_2& l1, const Line_2& l2,
-	        const Line_2& h1, const Line_2& h2) const
+    operator()( const Line_2&, const Line_2&,
+	        const Line_2&, const Line_2&) const
     { return CGAL::LARGER; }
 };
 
@@ -441,7 +441,7 @@ public:
     typedef Arity_tag< 2 >         Arity;
 
     Comparison_result
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     { return CGAL::LARGER; }
 };
 
@@ -456,29 +456,29 @@ public:
     typedef Arity_tag< 3 >         Arity;
 
     Comparison_result
-    operator()( const Point_2& p, const Line_2& h) const
+    operator()( const Point_2&, const Line_2&) const
     { return CGAL::LARGER; }
 
     Comparison_result
-    operator()( const Point_2& p, const Line_2& h1, const Line_2& h2) const
+    operator()( const Point_2&, const Line_2&, const Line_2&) const
     { return CGAL::LARGER; }
 
     Comparison_result
-    operator()( const Line_2& l1, const Line_2& l2, const Line_2& h) const
+    operator()( const Line_2&, const Line_2&, const Line_2&) const
     { return CGAL::LARGER; }
 
     Comparison_result
-    operator()( const Line_2& l1, const Line_2& l2,
-	        const Line_2& h1, const Line_2& h2) const
+    operator()( const Line_2&, const Line_2&,
+	        const Line_2&, const Line_2&) const
     { return CGAL::LARGER; }
 
     Comparison_result
-    operator()( const Point_2& p, const Segment_2& s) const
+    operator()( const Point_2&, const Segment_2&) const
     { return CGAL::LARGER; }
 
     Comparison_result
-    operator()( const Point_2& p,
-	        const Segment_2& s1, const Segment_2& s2) const
+    operator()( const Point_2&,
+	        const Segment_2&, const Segment_2&) const
     { return CGAL::LARGER; }
 };
 
@@ -492,20 +492,20 @@ public:
     typedef Arity_tag< 2 >         Arity;
 
     Comparison_result
-    operator()( const Point_2& p, const Point_2& q) const
+    operator()( const Point_2&, const Point_2&) const
     { return CGAL::LARGER; }
 
     Comparison_result
-    operator()( const Point_2& p, const Line_2& l1, const Line_2& l2) const
+    operator()( const Point_2&, const Line_2&, const Line_2&) const
     { return CGAL::LARGER; }
 
     Comparison_result
-    operator()( const Line_2& l, const Line_2& h1, const Line_2& h2) const
+    operator()( const Line_2&, const Line_2&, const Line_2&) const
     { return CGAL::LARGER; }
 
     Comparison_result
-    operator()( const Line_2& l1, const Line_2& l2,
-	        const Line_2& h1, const Line_2& h2) const
+    operator()( const Line_2&, const Line_2&,
+	        const Line_2&, const Line_2&) const
     { return CGAL::LARGER; }
 };
 
@@ -518,7 +518,7 @@ public:
     typedef Arity_tag< 2 >        Arity;
 
     Comparison_result
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     { return CGAL::LARGER; }
 };
 
@@ -531,7 +531,7 @@ public:
     typedef Arity_tag< 2 >        Arity;
 
     Comparison_result
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     { return CGAL::LARGER; }
 };
 
@@ -546,11 +546,11 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     FT
-    operator()( const Iso_rectangle_2& r ) const
+    operator()( const Iso_rectangle_2&) const
     { FT val = 0; return val; }
 
     FT
-    operator()( const Triangle_2& t ) const
+    operator()( const Triangle_2&) const
     { FT val = 0; return val; }
 };
 
@@ -564,7 +564,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     FT
-    operator()( const Triangle_3& t ) const
+    operator()( const Triangle_3&) const
     { FT val = 0; return val; }
 };
 
@@ -579,7 +579,7 @@ public:
     // There are 25 combinaisons, we use a template.
     template <class T1, class T2>
     FT
-    operator()( const T1& t1, const T2& t2) const
+    operator()( const T1&, const T2&) const
     { FT val = 0; return val; }
 };
 
@@ -594,7 +594,7 @@ public:
     // There are 25 combinaisons, we use a template.
     template <class T1, class T2>
     FT
-    operator()( const T1& t1, const T2& t2) const
+    operator()( const T1&, const T2&) const
     { FT val = 0; return val; }
 };
 
@@ -608,7 +608,7 @@ class Compute_squared_length_2
     typedef Arity_tag< 1 >   Arity;
 
     FT
-    operator()( const Segment_2& s) const
+    operator()( const Segment_2&) const
     { FT val = 0; return val; }
 };
 
@@ -622,7 +622,7 @@ class Compute_squared_length_3
     typedef Arity_tag< 1 >   Arity;
 
     FT
-    operator()( const Segment_3& s) const
+    operator()( const Segment_3&) const
     { FT val = 0; return val; }
 };
 
@@ -637,11 +637,11 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     FT
-    operator()( const Circle_2& c) const
+    operator()( const Circle_2&) const
     { FT val = 0; return val; }
 
     FT
-    operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
+    operator()( const Point_2&, const Point_2&, const Point_2&) const
     { FT val = 0; return val; }
 };
 
@@ -656,16 +656,16 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     FT
-    operator()( const Sphere_3& s) const
+    operator()( const Sphere_3&) const
     { FT val = 0; return val; }
 
     FT
-    operator()( const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()( const Point_3&, const Point_3&, const Point_3&) const
     { FT val = 0; return val; }
 
     FT
-    operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& s) const
+    operator()( const Point_3&, const Point_3&,
+	        const Point_3&, const Point_3&) const
     { FT val = 0; return val; }
 };
 
@@ -680,11 +680,11 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     FT
-    operator()( const Tetrahedron_3& t ) const
+    operator()( const Tetrahedron_3&) const
     { FT val = 0; return val; }
 
     FT
-    operator()( const Iso_cuboid_3& c ) const
+    operator()( const Iso_cuboid_3&) const
     { FT val = 0; return val; }
 };
 
@@ -698,7 +698,7 @@ public:
      typedef Arity_tag< 2 >   Arity;
 
      Vector_3
-     operator()( const Plane_3& h, int index ) const
+     operator()( const Plane_3&, int) const
      {
         Vector_3 v;
 	return v;
@@ -715,7 +715,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Line_2
-    operator()(const Point_2& p, const Point_2& q) const
+    operator()(const Point_2&, const Point_2&) const
     { Line_2 obj; return obj; }
 };
 
@@ -729,7 +729,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Point_2
-    operator()(const Circle_2& c) const
+    operator()(const Circle_2&) const
     { Point_2 obj; return obj; }
 };
 
@@ -743,7 +743,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Point_3
-    operator()(const Sphere_3& s) const
+    operator()(const Sphere_3&) const
     { Point_3 obj; return obj; }
 };
 
@@ -756,12 +756,12 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     Point_2
-    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    operator()(const Point_2&, const Point_2&, const Point_2&) const
     { Point_2 obj; return obj; }
 
     Point_2
-    operator()(const Point_2& p, const Point_2& q, 
-               const Point_2& r, const Point_2& s) const
+    operator()(const Point_2&, const Point_2&, 
+               const Point_2&, const Point_2&) const
     { Point_2 obj; return obj; }
 };
 
@@ -774,12 +774,12 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     Point_3
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()(const Point_3&, const Point_3&, const Point_3&) const
     { Point_3 obj; return obj; }
 
     Point_3
-    operator()(const Point_3& p, const Point_3& q, 
-               const Point_3& r, const Point_3& s) const
+    operator()(const Point_3&, const Point_3&, 
+               const Point_3&, const Point_3&) const
     { Point_3 obj; return obj; }
 };
 
@@ -798,22 +798,22 @@ public:
     { return Circle_2(); }
 
     Circle_2
-    operator()( const Point_2& center, const FT& squared_radius,
-	        Orientation orientation = COUNTERCLOCKWISE) const
+    operator()( const Point_2&, const FT&,
+	        Orientation = COUNTERCLOCKWISE) const
     { return Circle_2(); }
 
     Circle_2
-    operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
+    operator()( const Point_2&, const Point_2&, const Point_2&) const
     { return Circle_2(); }
 
     Circle_2
-    operator()( const Point_2& p, const Point_2& q,
-	        Orientation orientation = COUNTERCLOCKWISE) const
+    operator()( const Point_2&, const Point_2&,
+	        Orientation = COUNTERCLOCKWISE) const
     { return Circle_2(); }
 
     Circle_2
-    operator()( const Point_2& center,
-	        Orientation orientation = COUNTERCLOCKWISE) const
+    operator()( const Point_2&,
+	        Orientation = COUNTERCLOCKWISE) const
     { return Circle_2(); }
 };
 
@@ -826,7 +826,7 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     Point_2
-    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    operator()(const Point_2&, const Point_2&, const Point_2&) const
     { return Point_2(); }
 };
 
@@ -839,12 +839,12 @@ public:
     typedef Arity_tag< 4 >   Arity;
 
     Point_3
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()(const Point_3&, const Point_3&, const Point_3&) const
     { return Point_3(); }
 
     Point_3
-    operator()(const Point_3& p, const Point_3& q,
-	       const Point_3& r, const Point_3& s) const
+    operator()(const Point_3&, const Point_3&,
+	       const Point_3&, const Point_3&) const
     { return Point_3(); }
 };
 
@@ -857,7 +857,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Vector_3
-    operator()(const Vector_3& v, const Vector_3& w) const
+    operator()(const Vector_3&, const Vector_3&) const
     { return Vector_3(); }
 };
 
@@ -879,19 +879,19 @@ public:
     { return Direction_2(); }
 
     Direction_2
-    operator()(const Vector_2& v) const
+    operator()(const Vector_2&) const
     { return Direction_2(); }
 
     Direction_2
-    operator()(const Line_2& l) const
+    operator()(const Line_2&) const
     { return Direction_2(); }
 
     Direction_2
-    operator()(const Ray_2& r) const
+    operator()(const Ray_2&) const
     { return Direction_2(); }
 
     Direction_2
-    operator()(const Segment_2& s) const
+    operator()(const Segment_2&) const
     { return Direction_2(); }
 };
 
@@ -913,19 +913,19 @@ public:
     { return Direction_3(); }
 
     Direction_3
-    operator()(const Vector_3& v) const
+    operator()(const Vector_3&) const
     { return Direction_3(); }
 
     Direction_3
-    operator()(const Line_3& l) const
+    operator()(const Line_3&) const
     { return Direction_3(); }
 
     Direction_3
-    operator()(const Ray_3& r) const
+    operator()(const Ray_3&) const
     { return Direction_3(); }
 
     Direction_3
-    operator()(const Segment_3& s) const
+    operator()(const Segment_3&) const
     { return Direction_3(); }
 };
 
@@ -943,7 +943,7 @@ public:
     { return Iso_cuboid_3(); }
 
     Iso_cuboid_3
-    operator()(const Point_3& p, const Point_3& q) const
+    operator()(const Point_3&, const Point_3&) const
     { return Iso_cuboid_3(); }
 
     Iso_cuboid_3
@@ -967,7 +967,7 @@ public:
     { return Iso_rectangle_2(); }
 
     Iso_rectangle_2
-    operator()(const Point_2& p, const Point_2& q) const
+    operator()(const Point_2&, const Point_2&) const
     { return Iso_rectangle_2(); }
 
     Iso_rectangle_2
@@ -987,7 +987,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Point_3
-    operator()(const Plane_3& h, const Point_2& p) const
+    operator()(const Plane_3&, const Point_2&) const
     {  return Point_3(); }
 };
 
@@ -1009,19 +1009,19 @@ public:
     { return Line_2(); }
 
     Line_2
-    operator()(const Point_2& p, const Point_2& q) const
+    operator()(const Point_2&, const Point_2&) const
     { return Line_2(); }
 
     Line_2
-    operator()(const Point_2& p, const Direction_2& d) const
+    operator()(const Point_2&, const Direction_2&) const
     { return Line_2(); }
 
     Line_2
-    operator()(const Segment_2& s) const
+    operator()(const Segment_2&) const
     { return Line_2(); }
 
     Line_2
-    operator()(const Ray_2& r) const
+    operator()(const Ray_2&) const
     { return Line_2(); }
 };
 
@@ -1042,19 +1042,19 @@ public:
     { return Line_3(); }
 
     Line_3
-    operator()(const Point_3& p, const Point_3& q) const
+    operator()(const Point_3&, const Point_3&) const
     { return Line_3(); }
 
     Line_3
-    operator()(const Point_3& p, const Direction_3& d) const
+    operator()(const Point_3&, const Direction_3&) const
     { return Line_3(); }
 
     Line_3
-    operator()(const Segment_3& s) const
+    operator()(const Segment_3&) const
     { return Line_3(); }
 
     Line_3
-    operator()(const Ray_3& r) const
+    operator()(const Ray_3&) const
     { return Line_3(); }
 };
 
@@ -1067,7 +1067,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Point_2
-    operator()(const Point_2& p, const Point_2& q) const
+    operator()(const Point_2&, const Point_2&) const
     { return Point_2(); }
 };
 
@@ -1080,7 +1080,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Point_3
-    operator()(const Point_3& p, const Point_3& q) const
+    operator()(const Point_3&, const Point_3&) const
     { return Point_3(); }
 };
 
@@ -1094,7 +1094,7 @@ public:
 
     template <class Cls>
     Object_2
-    operator()( const Cls& c) const
+    operator()( const Cls&) const
     { Object_2 obj; return obj; }
 };
 
@@ -1108,7 +1108,7 @@ public:
 
     template <class Cls>
     Object_3
-    operator()( const Cls& c) const
+    operator()( const Cls&) const
     { Object_3 obj; return obj; }
 };
 
@@ -1121,7 +1121,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Circle_2
-    operator()( const Circle_2& c) const
+    operator()( const Circle_2&) const
     { return Circle_2(); }
 };
 
@@ -1134,7 +1134,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Direction_2
-    operator()( const Direction_2& d) const
+    operator()( const Direction_2&) const
     { return Direction_2(); }
 };
 
@@ -1147,7 +1147,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Direction_3
-    operator()( const Direction_3& d) const
+    operator()( const Direction_3&) const
     { return Direction_3(); }
 };
 
@@ -1160,7 +1160,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Line_2
-    operator()( const Line_2& l) const
+    operator()( const Line_2&) const
     { return Line_2(); }
 };
 
@@ -1173,7 +1173,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Line_3
-    operator()( const Line_3& l) const
+    operator()( const Line_3&) const
     { return Line_3(); }
 };
 
@@ -1186,7 +1186,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Plane_3
-    operator()( const Plane_3& p) const
+    operator()( const Plane_3&) const
     { return Plane_3(); }
 };
 
@@ -1199,7 +1199,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Ray_2
-    operator()( const Ray_2& r) const
+    operator()( const Ray_2&) const
     { return Ray_2(); }
 };
 
@@ -1212,7 +1212,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Ray_3
-    operator()( const Ray_3& r) const
+    operator()( const Ray_3&) const
     { return Ray_3(); }
 };
 
@@ -1225,7 +1225,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Segment_2
-    operator()( const Segment_2& s) const
+    operator()( const Segment_2&) const
     { return Segment_2(); }
 };
 
@@ -1238,7 +1238,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Segment_3
-    operator()( const Segment_3& s) const
+    operator()( const Segment_3&) const
     { return Segment_3(); }
 };
 
@@ -1251,7 +1251,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Sphere_3
-    operator()( const Sphere_3& s) const
+    operator()( const Sphere_3&) const
     { return Sphere_3(); }
 };
 
@@ -1264,7 +1264,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Triangle_2
-    operator()( const Triangle_2& t) const
+    operator()( const Triangle_2&) const
     { return Triangle_2(); }
 };
 
@@ -1277,7 +1277,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Vector_2
-    operator()( const Vector_2& v) const
+    operator()( const Vector_2&) const
     { return Vector_2(); }
 };
 
@@ -1290,7 +1290,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Vector_3
-    operator()( const Vector_3& v) const
+    operator()( const Vector_3&) const
     { return Vector_3(); }
 };
 
@@ -1304,7 +1304,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Vector_3
-    operator()( const Plane_3& p ) const
+    operator()( const Plane_3&) const
     { return Vector_3(); }
 };
 
@@ -1317,7 +1317,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Direction_2
-    operator()( const Direction_2& d, Orientation o) const
+    operator()( const Direction_2&, Orientation) const
     { return Direction_2(); }
 };
 
@@ -1331,7 +1331,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Line_2
-    operator()( const Line_2& l, const Point_2& p) const
+    operator()( const Line_2&, const Point_2&) const
     { return Line_2(); }
 };
 
@@ -1346,7 +1346,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Line_3
-    operator()( const Plane_3& pl, const Point_3& p) const
+    operator()( const Plane_3&, const Point_3&) const
     { return Line_3(); }
 };
 
@@ -1361,7 +1361,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Plane_3
-    operator()( const Line_3& l, const Point_3& p) const
+    operator()( const Line_3&, const Point_3&) const
     { return Plane_3(); }
 };
 
@@ -1374,7 +1374,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Vector_2
-    operator()( const Vector_2& v, Orientation o) const
+    operator()( const Vector_2&, Orientation) const
     { return Vector_2(); }
 };
 
@@ -1397,27 +1397,27 @@ public:
     { return Plane_3(); }
 
     Plane_3
-    operator()(const RT& a, const RT& b, const RT& c, const RT& d) const
+    operator()(const RT&, const RT&, const RT&, const RT&) const
     { return Plane_3(); }
 
     Plane_3
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()(const Point_3&, const Point_3&, const Point_3&) const
     { return Plane_3(); }
 
     Plane_3
-    operator()(const Point_3& p, const Direction_3& d) const
+    operator()(const Point_3&, const Direction_3&) const
     { return Plane_3(); }
 
     Plane_3
-    operator()(const Line_3& l, const Point_3& p) const
+    operator()(const Line_3&, const Point_3&) const
     { return Plane_3(); }
 
     Plane_3
-    operator()(const Ray_3& r, const Point_3& p) const
+    operator()(const Ray_3&, const Point_3&) const
     { return Plane_3(); }
 
     Plane_3
-    operator()(const Segment_3& s, const Point_3& p) const
+    operator()(const Segment_3&, const Point_3&) const
     { return Plane_3(); }
 };
 
@@ -1433,15 +1433,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Point_2
-    operator()( const Line_2& l, int i) const
+    operator()( const Line_2&, int) const
     { return Point_2(); }
 
     Point_2
-    operator()( const Segment_2& s, int i) const
+    operator()( const Segment_2&, int) const
     { return Point_2(); }
 
     Point_2
-    operator()( const Ray_2& r, int i) const
+    operator()( const Ray_2&, int) const
     { return Point_2(); }
 };
 
@@ -1458,19 +1458,19 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Point_3
-    operator()( const Line_3& l, int i) const
+    operator()( const Line_3&, int) const
     { return Point_3(); }
 
     Point_3
-    operator()( const Segment_3& s, int i) const
+    operator()( const Segment_3&, int) const
     { return Point_3(); }
 
     Point_3
-    operator()( const Ray_3& r, int i) const
+    operator()( const Ray_3&, int) const
     { return Point_3(); }
 
     Point_3
-    operator()( const Plane_3& p) const
+    operator()( const Plane_3&) const
     { return Point_3(); }
 };
 
@@ -1488,7 +1488,7 @@ public:
     { return Point_2(); }
 
     Point_2
-    operator()(Origin o) const
+    operator()(Origin) const
     { return Point_2(); }
 };
 
@@ -1506,7 +1506,7 @@ public:
     { return Point_3(); }
 
     Point_3
-    operator()(Origin o) const
+    operator()(Origin) const
     { return Point_3(); }
 };
 
@@ -1520,7 +1520,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Point_2
-    operator()( const Line_2& l, const Point_2& p ) const
+    operator()( const Line_2&, const Point_2&) const
     { return Point_2(); }
 };
 
@@ -1535,11 +1535,11 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Point_3
-    operator()( const Line_3& l, const Point_3& p ) const
+    operator()( const Line_3&, const Point_3&) const
     { return Point_3(); }
 
     Point_3
-    operator()( const Plane_3& h, const Point_3& p ) const
+    operator()( const Plane_3&, const Point_3&) const
     { return Point_3(); }
 };
 
@@ -1554,7 +1554,7 @@ public:
      typedef Arity_tag< 2 >   Arity;
 
      Point_2
-     operator()( const Plane_3& h, const Point_3& p) const
+     operator()( const Plane_3&, const Point_3&) const
      {  return Point_2(); }
 };
 
@@ -1573,11 +1573,11 @@ public:
      {  return Ray_2(); }
 
      Ray_2
-     operator()(const Point_2& p, const Point_2& q) const
+     operator()(const Point_2&, const Point_2&) const
      {  return Ray_2(); }
 
      Ray_2
-     operator()(const Point_2& p, const Direction_2& d) const
+     operator()(const Point_2&, const Direction_2&) const
      {  return Ray_2(); }
 };
 
@@ -1596,11 +1596,11 @@ public:
      {  return Ray_3(); }
 
      Ray_3
-     operator()(const Point_3& p, const Point_3& q) const
+     operator()(const Point_3&, const Point_3&) const
      {  return Ray_3(); }
 
      Ray_3
-     operator()(const Point_3& p, const Direction_3& d) const
+     operator()(const Point_3&, const Direction_3&) const
      {  return Ray_3(); }
 };
 
@@ -1614,11 +1614,11 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Vector_2
-    operator()( const Vector_2& v, const RT& scale) const
+    operator()( const Vector_2&, const RT&) const
     {  return Vector_2(); }
 
     Vector_2
-    operator()( const Vector_2& v, const Quotient<RT>& scale) const
+    operator()( const Vector_2&, const Quotient<RT>&) const
     {  return Vector_2(); }
 };
 
@@ -1632,11 +1632,11 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Vector_3
-    operator()( const Vector_3& v, const RT& scale) const
+    operator()( const Vector_3&, const RT&) const
     {  return Vector_3(); }
 
     Vector_3
-    operator()( const Vector_3& v, const Quotient<RT>& scale) const
+    operator()( const Vector_3&, const Quotient<RT>&) const
     {  return Vector_3(); }
 };
 
@@ -1654,7 +1654,7 @@ public:
     {  return Segment_2(); }
 
     Segment_2
-    operator()( const Point_2& p, const Point_2& q) const
+    operator()( const Point_2&, const Point_2&) const
     {  return Segment_2(); }
 };
 
@@ -1672,7 +1672,7 @@ public:
     {  return Segment_3(); }
 
     Segment_3
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     {  return Segment_3(); }
 };
 
@@ -1691,28 +1691,28 @@ public:
     {  return Sphere_3(); }
 
     Sphere_3
-    operator()( const Point_3& center, const FT& squared_radius,
-	        Orientation orientation = COUNTERCLOCKWISE) const
+    operator()( const Point_3&, const FT&,
+	        Orientation = COUNTERCLOCKWISE) const
     {  return Sphere_3(); }
 
     Sphere_3
-    operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& s) const
+    operator()( const Point_3&, const Point_3&,
+	        const Point_3&, const Point_3&) const
     {  return Sphere_3(); }
 
     Sphere_3
-    operator()( const Point_3& p, const Point_3& q, const Point_3& r,
-	        Orientation orientation = COUNTERCLOCKWISE) const
+    operator()( const Point_3&, const Point_3&, const Point_3&,
+	        Orientation = COUNTERCLOCKWISE) const
     {  return Sphere_3(); }
 
     Sphere_3
-    operator()( const Point_3& p, const Point_3& q,
-	        Orientation orientation = COUNTERCLOCKWISE) const
+    operator()( const Point_3&, const Point_3&,
+	        Orientation = COUNTERCLOCKWISE) const
     {  return Sphere_3(); }
 
     Sphere_3
-    operator()( const Point_3& center,
-	        Orientation orientation = COUNTERCLOCKWISE) const
+    operator()( const Point_3&,
+	        Orientation = COUNTERCLOCKWISE) const
     {  return Sphere_3(); }
 };
 
@@ -1727,11 +1727,11 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Line_2
-    operator()( const Ray_2& r) const
+    operator()( const Ray_2&) const
     { return Line_2(); }
 
     Line_2
-    operator()( const Segment_2& s) const
+    operator()( const Segment_2&) const
     { return Line_2(); }
 };
 
@@ -1746,11 +1746,11 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Line_3
-    operator()( const Ray_3& r) const
+    operator()( const Ray_3&) const
     { return Line_3(); }
 
     Line_3
-    operator()( const Segment_3& s) const
+    operator()( const Segment_3&) const
     { return Line_3(); }
 };
 
@@ -1764,7 +1764,7 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Plane_3
-    operator()( const Triangle_3& t) const
+    operator()( const Triangle_3&) const
     { return Plane_3(); }
 };
 
@@ -1782,8 +1782,8 @@ public:
     { return Tetrahedron_3(); }
 
     Tetrahedron_3
-    operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& s) const
+    operator()( const Point_3&, const Point_3&,
+	        const Point_3&, const Point_3&) const
     { return Tetrahedron_3(); }
 };
 
@@ -1797,7 +1797,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Point_2
-    operator()( const Point_2& p, const Vector_2& v) const
+    operator()( const Point_2&, const Vector_2&) const
     {  return Point_2(); }
 };
 
@@ -1811,7 +1811,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Point_3
-    operator()( const Point_3& p, const Vector_3& v) const
+    operator()( const Point_3&, const Vector_3&) const
     {  return Point_3(); }
 };
 
@@ -1829,7 +1829,7 @@ public:
     { return Triangle_2(); }
 
     Triangle_2
-    operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
+    operator()( const Point_2&, const Point_2&, const Point_2&) const
     { return Triangle_2(); }
 };
 
@@ -1847,7 +1847,7 @@ public:
     { return Triangle_3(); }
 
     Triangle_3
-    operator()( const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()( const Point_3&, const Point_3&, const Point_3&) const
     { return Triangle_3(); }
 };
 
@@ -1866,11 +1866,11 @@ public:
     { return Vector_2(); }
 
     Vector_2
-    operator()( const Point_2& p, const Point_2& q) const
+    operator()( const Point_2&, const Point_2&) const
     { return Vector_2(); }
 
     Vector_2
-    operator()( Null_vector n) const
+    operator()( Null_vector) const
     { return Vector_2(); }
 };
 
@@ -1889,11 +1889,11 @@ public:
     { return Vector_3(); }
 
     Vector_3
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     { return Vector_3(); }
 
     Vector_3
-    operator()( Null_vector n) const
+    operator()( Null_vector) const
     { return Vector_3(); }
 };
 
@@ -1909,15 +1909,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Point_2
-    operator()( const Segment_2& s, int i) const
+    operator()( const Segment_2&, int) const
     { return Point_2(); }
 
     Point_2
-    operator()( const Triangle_2& t, int i) const
+    operator()( const Triangle_2&, int) const
     { return Point_2(); }
 
     Point_2
-    operator()( const Iso_rectangle_2& r, int i) const
+    operator()( const Iso_rectangle_2&, int) const
     { return Point_2(); }
 };
 
@@ -1934,19 +1934,19 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Point_3
-    operator()( const Segment_3& s, int i) const
+    operator()( const Segment_3&, int) const
     { return Point_3(); }
 
     Point_3
-    operator()( const Triangle_3& t, int i) const
+    operator()( const Triangle_3&, int) const
     { return Point_3(); }
 
     Point_3
-    operator()( const Iso_cuboid_3& r, int i) const
+    operator()( const Iso_cuboid_3&, int) const
     { return Point_3(); }
 
     Point_3
-    operator()( const Tetrahedron_3& t, int i) const
+    operator()( const Tetrahedron_3&, int) const
     { return Point_3(); }
 };
 
@@ -1959,12 +1959,12 @@ public:
     typedef Arity_tag< 4 >   Arity;
 
     Orientation
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()(const Point_3&, const Point_3&, const Point_3&) const
     { return CGAL::COLLINEAR; }
 
     Orientation
-    operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& t) const
+    operator()( const Point_3&, const Point_3&,
+	        const Point_3&, const Point_3&) const
     { return CGAL::COLLINEAR; }
 };
 
@@ -1977,8 +1977,8 @@ public:
     typedef Arity_tag< 4 >   Arity;
 
     Bounded_side
-    operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& t) const
+    operator()( const Point_3&, const Point_3&,
+	        const Point_3&, const Point_3&) const
     { return CGAL::ON_BOUNDARY; }
 };
 
@@ -1991,8 +1991,8 @@ public:
     typedef Arity_tag< 4 >   Arity;
 
     bool
-    operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& s) const
+    operator()( const Point_3&, const Point_3&,
+	        const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2005,8 +2005,8 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     bool
-    operator()( const Direction_2& p, const Direction_2& q,
-	        const Direction_2& r) const
+    operator()( const Direction_2&, const Direction_2&,
+	        const Direction_2&) const
     { return true; }
 };
 
@@ -2020,7 +2020,7 @@ public:
     // There are 36 combinaisons, so I use a template.
     template <class T1, class T2>
     bool
-    operator()(const T1& t1, const T2& t2) const
+    operator()(const T1&, const T2&) const
     { return true; }
 };
 
@@ -2034,7 +2034,7 @@ public:
     // There are x combinaisons, so I use a template.
     template <class T1, class T2>
     bool
-    operator()(const T1& t1, const T2& t2) const
+    operator()(const T1&, const T2&) const
     { return true; }
 };
 
@@ -2047,7 +2047,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2060,7 +2060,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Point_2& p, const Point_2& q) const
+    operator()( const Point_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2073,7 +2073,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2086,7 +2086,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Point_2& p, const Point_2& q) const
+    operator()( const Point_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2099,7 +2099,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2112,7 +2112,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2126,7 +2126,7 @@ public:
     // template to replace n different versions
     template <typename T>
     bool
-    operator()(const T& p, const T& q) const
+    operator()(const T&, const T&) const
     { return true; }
 };
 
@@ -2140,7 +2140,7 @@ public:
     // template to replace n different versions
     template <typename T>
     bool
-    operator()(const T& p, const T& q) const
+    operator()(const T&, const T&) const
     { return true; }
 };
 
@@ -2156,15 +2156,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Circle_2& c, const Point_2& p) const
+    operator()( const Circle_2&, const Point_2&) const
     { return true; }
 
     bool
-    operator()( const Triangle_2& t, const Point_2& p) const
+    operator()( const Triangle_2&, const Point_2&) const
     { return true; }
 
     bool
-    operator()( const Iso_rectangle_2& r, const Point_2& p) const
+    operator()( const Iso_rectangle_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2181,15 +2181,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Sphere_3& s, const Point_3& p) const
+    operator()( const Sphere_3&, const Point_3&) const
     { return true; }
 
     bool
-    operator()( const Tetrahedron_3& t, const Point_3& p) const
+    operator()( const Tetrahedron_3&, const Point_3&) const
     { return true; }
 
     bool
-    operator()( const Iso_cuboid_3& c, const Point_3& p) const
+    operator()( const Iso_cuboid_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2205,15 +2205,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Circle_2& c, const Point_2& p) const
+    operator()( const Circle_2&, const Point_2&) const
     { return true; }
 
     bool
-    operator()( const Triangle_2& t, const Point_2& p) const
+    operator()( const Triangle_2&, const Point_2&) const
     { return true; }
 
     bool
-    operator()( const Iso_rectangle_2& r, const Point_2& p) const
+    operator()( const Iso_rectangle_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2229,15 +2229,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Sphere_3& s, const Point_3& p) const
+    operator()( const Sphere_3&, const Point_3&) const
     { return true; }
 
     bool
-    operator()( const Tetrahedron_3& t, const Point_3& p) const
+    operator()( const Tetrahedron_3&, const Point_3&) const
     { return true; }
 
     bool
-    operator()( const Iso_cuboid_3& c, const Point_3& p) const
+    operator()( const Iso_cuboid_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2253,15 +2253,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Circle_2& c, const Point_2& p) const
+    operator()( const Circle_2&, const Point_2&) const
     { return true; }
 
     bool
-    operator()( const Triangle_2& t, const Point_2& p) const
+    operator()( const Triangle_2&, const Point_2&) const
     { return true; }
 
     bool
-    operator()( const Line_2& l, const Point_2& p) const
+    operator()( const Line_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2277,15 +2277,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Sphere_3& s, const Point_3& p) const
+    operator()( const Sphere_3&, const Point_3&) const
     { return true; }
 
     bool
-    operator()( const Tetrahedron_3& t, const Point_3& p) const
+    operator()( const Tetrahedron_3&, const Point_3&) const
     { return true; }
 
     bool
-    operator()( const Plane_3& pl, const Point_3& p) const
+    operator()( const Plane_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2301,15 +2301,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Circle_2& c, const Point_2& p) const
+    operator()( const Circle_2&, const Point_2&) const
     { return true; }
 
     bool
-    operator()( const Triangle_2& t, const Point_2& p) const
+    operator()( const Triangle_2&, const Point_2&) const
     { return true; }
 
     bool
-    operator()( const Line_2& l, const Point_2& p) const
+    operator()( const Line_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2325,15 +2325,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Sphere_3& s, const Point_3& p) const
+    operator()( const Sphere_3&, const Point_3&) const
     { return true; }
 
     bool
-    operator()( const Tetrahedron_3& t, const Point_3& p) const
+    operator()( const Tetrahedron_3&, const Point_3&) const
     { return true; }
 
     bool
-    operator()( const Plane_3& pl, const Point_3& p) const
+    operator()( const Plane_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2349,15 +2349,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Circle_2& c, const Point_2& p) const
+    operator()( const Circle_2&, const Point_2&) const
     { return true; }
 
     bool
-    operator()( const Triangle_2& t, const Point_2& p) const
+    operator()( const Triangle_2&, const Point_2&) const
     { return true; }
 
     bool
-    operator()( const Iso_rectangle_2& r, const Point_2& p) const
+    operator()( const Iso_rectangle_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2373,15 +2373,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Sphere_3& s, const Point_3& p) const
+    operator()( const Sphere_3&, const Point_3&) const
     { return true; }
 
     bool
-    operator()( const Tetrahedron_3& t, const Point_3& p) const
+    operator()( const Tetrahedron_3&, const Point_3&) const
     { return true; }
 
     bool
-    operator()( const Iso_cuboid_3& c, const Point_3& p) const
+    operator()( const Iso_cuboid_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2397,15 +2397,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Line_2& l, const Point_2& p) const
+    operator()( const Line_2&, const Point_2&) const
     { return true; }
 
     bool
-    operator()( const Ray_2& r, const Point_2& p) const
+    operator()( const Ray_2&, const Point_2&) const
     { return true; }
 
     bool
-    operator()( const Segment_2& s, const Point_2& p) const
+    operator()( const Segment_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2423,23 +2423,23 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Line_3& l, const Point_3& p) const
+    operator()( const Line_3&, const Point_3&) const
     { return true; }
 
     bool
-    operator()( const Ray_3& r, const Point_3& p) const
+    operator()( const Ray_3&, const Point_3&) const
     { return true; }
 
     bool
-    operator()( const Segment_3& s, const Point_3& p) const
+    operator()( const Segment_3&, const Point_3&) const
     { return true; }
 
     bool
-    operator()( const Plane_3& pl, const Point_3& p) const
+    operator()( const Plane_3&, const Point_3&) const
     { return true; }
 
     bool
-    operator()( const Triangle_3& t, const Point_3& p) const
+    operator()( const Triangle_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2454,7 +2454,7 @@ public:
     // 25 possibilities, so I keep the template.
     template <class T1, class T2>
     Object_2
-    operator()(const T1& t1, const T2& t2) const
+    operator()(const T1&, const T2&) const
     { return Object_2(); }
 };
 
@@ -2469,7 +2469,7 @@ public:
     // n possibilities, so I keep the template.
     template <class T1, class T2>
     Object_3
-    operator()(const T1& t1, const T2& t2) const
+    operator()(const T1&, const T2&) const
     { return Object_3(); }
 };
 
@@ -2487,27 +2487,27 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     bool
-    operator()( const Circle_2& c) const
+    operator()( const Circle_2&) const
     { return true; }
 
     bool
-    operator()( const Iso_rectangle_2& r) const
+    operator()( const Iso_rectangle_2&) const
     { return true; }
 
     bool
-    operator()( const Line_2& l) const
+    operator()( const Line_2&) const
     { return true; }
 
     bool
-    operator()( const Ray_2& r) const
+    operator()( const Ray_2&) const
     { return true; }
 
     bool
-    operator()( const Segment_2& s) const
+    operator()( const Segment_2&) const
     { return true; }
 
     bool
-    operator()( const Triangle_2& t) const
+    operator()( const Triangle_2&) const
     { return true; }
 };
 
@@ -2527,35 +2527,35 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     bool
-    operator()( const Iso_cuboid_3& c) const
+    operator()( const Iso_cuboid_3&) const
     { return true; }
 
     bool
-    operator()( const Line_3& l) const
+    operator()( const Line_3&) const
     { return true; }
 
     bool
-    operator()( const Plane_3& pl) const
+    operator()( const Plane_3&) const
     { return true; }
 
     bool
-    operator()( const Ray_3& r) const
+    operator()( const Ray_3&) const
     { return true; }
 
     bool
-    operator()( const Segment_3& s) const
+    operator()( const Segment_3&) const
     { return true; }
 
     bool
-    operator()( const Sphere_3& s) const
+    operator()( const Sphere_3&) const
     { return true; }
 
     bool
-    operator()( const Triangle_3& t) const
+    operator()( const Triangle_3&) const
     { return true; }
 
     bool
-    operator()( const Tetrahedron_3& t) const
+    operator()( const Tetrahedron_3&) const
     { return true; }
 };
 
@@ -2570,15 +2570,15 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     bool
-    operator()( const Line_2& l) const
+    operator()( const Line_2&) const
     { return true; }
 
     bool
-    operator()( const Segment_2& s) const
+    operator()( const Segment_2&) const
     { return true; }
 
     bool
-    operator()( const Ray_2& r) const
+    operator()( const Ray_2&) const
     { return true; }
 };
 
@@ -2593,15 +2593,15 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     bool
-    operator()( const Line_2& l) const
+    operator()( const Line_2&) const
     { return true; }
 
     bool
-    operator()( const Segment_2& s) const
+    operator()( const Segment_2&) const
     { return true; }
 
     bool
-    operator()( const Ray_2& r) const
+    operator()( const Ray_2&) const
     { return true; }
 };
 
@@ -2615,7 +2615,7 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     bool
-    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    operator()(const Point_2&, const Point_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2628,7 +2628,7 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     bool
-    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    operator()(const Point_2&, const Point_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2641,7 +2641,7 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     bool
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()(const Point_3&, const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2654,7 +2654,7 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     bool
-    operator()(const Point_2& r, const Point_2& p, const Point_2& q) const
+    operator()(const Point_2&, const Point_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2667,8 +2667,8 @@ public:
     typedef Arity_tag< 4 >   Arity;
 
     bool
-    operator()(const Point_2& a, const Point_2& b,
-               const Point_2& c, const Point_2& d) const
+    operator()(const Point_2&, const Point_2&,
+               const Point_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2682,7 +2682,7 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     bool
-    operator()( const Plane_3& p, const Point_3& q, const Point_3& r) const
+    operator()( const Plane_3&, const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2695,7 +2695,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2708,7 +2708,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Point_2& p, const Point_2& q) const
+    operator()( const Point_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2721,7 +2721,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2734,7 +2734,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Point_2& p, const Point_2& q) const
+    operator()( const Point_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2747,7 +2747,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2760,7 +2760,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Point_2& p, const Point_2& q) const
+    operator()( const Point_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2773,7 +2773,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Point_2& p, const Point_2& q) const
+    operator()( const Point_2&, const Point_2&) const
     { return true; }
 };
 
@@ -2786,7 +2786,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2799,7 +2799,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     bool
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()( const Point_3&, const Point_3&) const
     { return true; }
 };
 
@@ -2812,7 +2812,7 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     Orientation
-    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    operator()(const Point_2&, const Point_2&, const Point_2&) const
     { return CGAL::COLLINEAR; }
 };
 
@@ -2825,8 +2825,8 @@ public:
     typedef Arity_tag< 4 >   Arity;
 
     Orientation
-    operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& s) const
+    operator()( const Point_3&, const Point_3&,
+	        const Point_3&, const Point_3&) const
     { return CGAL::COLLINEAR; }
 };
 
@@ -2842,15 +2842,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Oriented_side
-    operator()( const Circle_2& c, const Point_2& p) const
+    operator()( const Circle_2&, const Point_2&) const
     { return CGAL::ON_POSITIVE_SIDE; }
 
     Oriented_side
-    operator()( const Line_2& l, const Point_2& p) const
+    operator()( const Line_2&, const Point_2&) const
     { return CGAL::ON_POSITIVE_SIDE; }
 
     Oriented_side
-    operator()( const Triangle_2& t, const Point_2& p) const
+    operator()( const Triangle_2&, const Point_2&) const
     { return CGAL::ON_POSITIVE_SIDE; }
 };
 
@@ -2866,15 +2866,15 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     Oriented_side
-    operator()( const Sphere_3& s, const Point_3& p) const
+    operator()( const Sphere_3&, const Point_3&) const
     { return CGAL::ON_POSITIVE_SIDE; }
 
     Oriented_side
-    operator()( const Plane_3& pl, const Point_3& p) const
+    operator()( const Plane_3&, const Point_3&) const
     { return CGAL::ON_POSITIVE_SIDE; }
 
     Oriented_side
-    operator()( const Tetrahedron_3& t, const Point_3& p) const
+    operator()( const Tetrahedron_3&, const Point_3&) const
     { return CGAL::ON_POSITIVE_SIDE; }
 };
 
@@ -2887,12 +2887,12 @@ public:
     typedef Arity_tag< 4 >   Arity;
 
     Bounded_side
-    operator()( const Point_2& p, const Point_2& q, const Point_2& t) const
+    operator()( const Point_2&, const Point_2&, const Point_2&) const
     { return CGAL::ON_BOUNDARY; }
 
     Bounded_side
-    operator()( const Point_2& p, const Point_2& q,
-	        const Point_2& r, const Point_2& t) const
+    operator()( const Point_2&, const Point_2&,
+	        const Point_2&, const Point_2&) const
     { return CGAL::ON_BOUNDARY; }
 };
 
@@ -2905,17 +2905,17 @@ public:
     typedef Arity_tag< 5 >   Arity;
 
     Bounded_side
-    operator()( const Point_3& p, const Point_3& q, const Point_3& t) const
+    operator()( const Point_3&, const Point_3&, const Point_3&) const
     { return CGAL::ON_BOUNDARY; }
 
     Bounded_side
-    operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& t) const
+    operator()( const Point_3&, const Point_3&,
+	        const Point_3&, const Point_3&) const
     { return CGAL::ON_BOUNDARY; }
 
     Bounded_side
-    operator()( const Point_3& p, const Point_3& q, const Point_3& r,
-	        const Point_3& s, const Point_3& t) const
+    operator()( const Point_3&, const Point_3&, const Point_3&,
+	        const Point_3&, const Point_3&) const
     { return CGAL::ON_BOUNDARY; }
 };
 
@@ -2928,8 +2928,8 @@ public:
     typedef Arity_tag< 4 >   Arity;
 
     Oriented_side
-    operator()( const Point_2& p, const Point_2& q,
-	        const Point_2& r, const Point_2& t) const
+    operator()( const Point_2&, const Point_2&,
+	        const Point_2&, const Point_2&) const
     { return CGAL::ON_POSITIVE_SIDE; }
 };
 
@@ -2942,8 +2942,8 @@ public:
     typedef Arity_tag< 5 >   Arity;
 
     Oriented_side
-    operator()( const Point_3& p, const Point_3& q, const Point_3& r,
-	        const Point_3& s, const Point_3& t) const
+    operator()( const Point_3&, const Point_3&, const Point_3&,
+	        const Point_3&, const Point_3&) const
     { return CGAL::ON_POSITIVE_SIDE; }
 };
 

@@ -1,3 +1,7 @@
+1.21 (28 January 2003)
+- lots of warnings removed
+- LEDA_NO_MIN_MAX_TEMPL macro removed from CGAL/basic.h
+
 1.20 (27 January 2003)
 - Add CGAL/Kernel/Type_equality_wrapper.h.
 
