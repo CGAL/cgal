@@ -48,6 +48,10 @@ int main()
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Arr_segment_traits_2.h>
+#elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
+#include <CGAL/Cartesian.h>
+#include <CGAL/leda_real.h>
+#include <CGAL/Arr_conic_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 #include <CGAL/leda_rational.h>
 #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
@@ -74,15 +78,18 @@ int main()
 
 #include <list>
 #include <string>
-#include <CGAL/Sweep_line_tight_2.h>
-#include <CGAL/Sweep_line_2/Sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
+#include <CGAL/Sweep_line_2.h>
 #include "CompareCurveList.h"
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
   typedef CGAL::Quotient<int>                           NT;
   typedef CGAL::Cartesian<NT>                           Kernel;
   typedef CGAL::Arr_segment_traits_2<Kernel>            Traits;
+
+#elif CGAL_ARR_TEST_TRAITS == CGAL_CONICS_TRAITS
+  typedef leda_real                                     NT;
+  typedef CGAL::Cartesian<NT>                           Kernel;
+  typedef CGAL::Arr_conic_traits_2<Kernel>              Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
   typedef leda_rational                                 NT;
@@ -116,9 +123,6 @@ typedef Traits::X_monotone_curve_2                   X_monotone_curve_2;
 typedef std::list<Point_2> PointList;
 typedef PointList::iterator PointListIter;
 
-typedef CGAL::Sweep_line_subcurve<Traits> SubCurve;
-typedef CGAL::Sweep_line_event<Traits, SubCurve> Event;
-
 typedef std::list<X_monotone_curve_2> CurveList;
 typedef CurveList::iterator CurveListIter;
 
@@ -148,7 +152,7 @@ int main(int argc, char * argv[])
   
   // get subcurves w/o overlapping
   CurveList curves_no_overlap_list_out;
-  CGAL::Sweep_line_tight_2<CurveListIter, Traits, Event, SubCurve> sl;
+  CGAL::Sweep_line_2<CurveListIter, Traits> sl;
   sl.get_subcurves(curves.begin(), curves.end(), 
 		   std::back_inserter(curves_no_overlap_list_out));
   //std::cout << mylist.size() << " curves\n";
@@ -156,7 +160,7 @@ int main(int argc, char * argv[])
 
   // get subcurves w/ overlapping
   CurveList curves_with_overlap_list_out;
-  CGAL::Sweep_line_tight_2<CurveListIter, Traits, Event, SubCurve> sl1;
+  CGAL::Sweep_line_2<CurveListIter, Traits> sl1;
   sl1.get_subcurves(curves.begin(), curves.end(), 
 		   std::back_inserter(curves_with_overlap_list_out), true);
   //std::cout << mylist1.size() << " curves\n";
@@ -164,7 +168,7 @@ int main(int argc, char * argv[])
 
   // get intersection points (with endpoints)
   PointList points_with_ends_list_out;
-  CGAL::Sweep_line_tight_2<CurveListIter, Traits, Event, SubCurve> sl2;
+  CGAL::Sweep_line_2<CurveListIter, Traits> sl2;
   sl2.get_intersection_points(curves.begin(), curves.end(), 
 			     std::back_inserter(points_with_ends_list_out));
   //std::cout << mypointlist.size() << " points \n";
@@ -172,13 +176,13 @@ int main(int argc, char * argv[])
 
   // get intersection points w/o end points
   PointList points_without_ends_list_out;
-  CGAL::Sweep_line_tight_2<CurveListIter, Traits, Event, SubCurve> sl3;
+  CGAL::Sweep_line_2<CurveListIter, Traits> sl3;
   sl3.get_intersection_points(curves.begin(), curves.end(), 
 			     std::back_inserter(points_without_ends_list_out), false);
   //std::cout << mypointlist2.size() << " points (internal)\n";
 
   // check the do_curves_intersecting method
-  CGAL::Sweep_line_tight_2<CurveListIter, Traits, Event, SubCurve> sl4;
+  CGAL::Sweep_line_2<CurveListIter, Traits> sl4;
   bool do_intersect = sl4.do_curves_intersect(curves.begin(), curves.end());
 
 
@@ -198,16 +202,20 @@ int main(int argc, char * argv[])
   CurveList curves_with_overlap_list;
   ReadCurveListRational(inp, curves_with_overlap_list);
 
-  if ( !IsCurveListIdentical(curves_no_overlap_list_out, curves_no_overlap_list) )
+  if ( !IsCurveListIdentical(curves_no_overlap_list_out, 
+			     curves_no_overlap_list) )
     return -1;
 
-  if ( !IsCurveListIdentical(curves_with_overlap_list_out, curves_with_overlap_list) )
+  if ( !IsCurveListIdentical(curves_with_overlap_list_out, 
+			     curves_with_overlap_list) )
     return -1;
 
-  if ( !IsPointListIdentical(points_with_ends_list_out, points_with_ends_list))
+  if ( !IsPointListIdentical(points_with_ends_list_out, 
+			     points_with_ends_list))
     return -1;
 
-  if ( !IsPointListIdentical(points_without_ends_list_out, points_without_ends_list))
+  if ( !IsPointListIdentical(points_without_ends_list_out, 
+			     points_without_ends_list))
     return -1;
 
   if ( (points_without_ends_list.size()!=0) != do_intersect )
