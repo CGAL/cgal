@@ -38,13 +38,13 @@ public:
 
 typedef typename Traits::Item Item;
 typedef typename Traits::NT NT;
-typedef Item** Item_iterator;
-typedef Kd_tree_node<Traits> Node;
+typedef Kd_tree<Traits>::Item_iterator Item_iterator;
+typedef Kd_tree<Traits>::Node_handle Node_handle;
 typedef Kd_tree<Traits> Tree;
 
 
 typedef std::pair<Item*,NT> Item_with_distance;
-typedef std::pair<Node*,NT> Node_with_distance;
+typedef std::pair<Node_handle,NT> Node_with_distance;
 
 
 
@@ -378,7 +378,7 @@ class iterator;
         // otherwise browse the tree further
         while ((!next_neighbour_found) && (!PriorityQueue->empty())) {
                 Node_with_distance* The_node_top=PriorityQueue->top();
-                Node* N= The_node_top->first;
+                Node_handle N= The_node_top->first;
                 PriorityQueue->pop();
                 delete The_node_top;
 

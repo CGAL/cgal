@@ -70,7 +70,7 @@ int main() {
 
   std::cout << "all points are:" << std::endl;
   
-  for (int j1=0; j1 < points_in_tree.size(); ++j1) { 
+  for (unsigned int j1=0; j1 < points_in_tree.size(); ++j1) { 
      std::cout << points_in_tree[j1] << "d(C,p)=" << sqrt(CGAL::squared_distance(points_in_tree[j1],C)) << std::endl; 
   }
   
@@ -79,7 +79,7 @@ int main() {
 
   std::cout << "points approximately in spherical range query are:" << std::endl;
   
-  for (int j2=0; j2 < points_in_spherical_range_query.size(); ++j2) { 
+  for (unsigned int j2=0; j2 < points_in_spherical_range_query.size(); ++j2) { 
      std::cout << points_in_spherical_range_query[j2] << std::endl; 
   }
  
@@ -102,7 +102,7 @@ int main() {
   std::cout << "points approximately in rectangular range query [-100,900]^4 are:" << std::endl;
 
   
-  for (int j3=0; j3 < points_in_rectangular_range_query.size(); ++j3) { 
+  for (unsigned int j3=0; j3 < points_in_rectangular_range_query.size(); ++j3) { 
      std::cout << points_in_rectangular_range_query[j3] << std::endl; 
   }
   

@@ -39,8 +39,8 @@ public:
 
 typedef typename Tree_traits::Item Item;
 typedef typename Tree_traits::NT NT;
-typedef Item** Item_iterator;
-typedef Kd_tree_node<Tree_traits> Node;
+typedef Kd_tree<Tree_traits>::Item_iterator Item_iterator;
+typedef Kd_tree<Tree_traits>::Node_handle Node_handle;
 typedef Kd_tree<Tree_traits> Tree;
 typedef Kd_tree_rectangle<NT> Node_box;   
 
@@ -49,19 +49,19 @@ class Cell
     private:
 
     	Node_box* the_box;
-    	Node*     the_node;
+    	Node_handle     the_node;
 
     public:
 
         // constructor
-        Cell (Node_box* Nb, Node* N)
+        Cell (Node_box* Nb, Node_handle N)
 	{
 		the_box = Nb;
 		the_node = N;
 	}
 
         Node_box* box() {return the_box;};
-        Node*    node() {return the_node;};
+        Node_handle    node() {return the_node;};
         
 
 	~Cell() {}
@@ -406,7 +406,7 @@ class Distance_smaller
         while ((!next_neighbour_found) && (!PriorityQueue->empty())) {
                 
                 Cell_with_distance* The_node_top=PriorityQueue->top();
-                Node* N= The_node_top->first->node();
+                Node_handle N= The_node_top->first->node();
                 Node_box* B= The_node_top->first->box();
                 PriorityQueue->pop();
                 delete The_node_top->first;

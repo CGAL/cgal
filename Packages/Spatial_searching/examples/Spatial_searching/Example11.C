@@ -1,5 +1,5 @@
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Iso_cuboid_3.h>  
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
@@ -13,7 +13,7 @@
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Cartesian<double> R;
+typedef CGAL::Simple_cartesian<double> R;
 typedef R::Point_3 Point;
 
 typedef CGAL::Plane_separator<double> Separator;
@@ -69,7 +69,7 @@ int main() {
   
   Traits tr(bucket_size, 3.0, true);
   typedef CGAL::Kd_tree<Traits> tree;
-  
+
    
   t.reset(); t.start(); 
   tree d(data_points.begin(), data_points.end(), tr);

@@ -36,15 +36,13 @@ namespace CGAL {
 
 	  friend class Kd_tree<Traits>;
 
-	  typedef Kd_tree_node<Traits> Node;
-
-	  typedef typename Compact_container<Node>::iterator Node_handle;
-
+	  typedef typename Kd_tree<Traits>::Node_handle Node_handle;
 	enum Node_type {LEAF, INTERNAL, EXTENDED_INTERNAL};
 	typedef typename Traits::Item Item;
-	typedef   std::vector<Item*>::iterator Item_iterator;
+
 	typedef typename Traits::NT NT;
 	typedef typename Traits::Separator Separator;
+	typedef   typename Kd_tree<Traits>::Item_iterator Item_iterator;
 
         private:
 
@@ -71,7 +69,7 @@ namespace CGAL {
 	  void * & for_compact_container()       { return lower_ch.for_compact_container(); }
 
 	// default constructor
-	Kd_tree_node(): the_node_type() {};
+	Kd_tree_node() {};
 
         // members for all nodes
 	inline bool is_leaf() const { return (the_node_type==LEAF);}

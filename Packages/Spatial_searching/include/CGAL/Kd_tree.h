@@ -40,10 +40,11 @@ public:
   typedef Kd_tree_node<Traits> Node;
   typedef Kd_tree<Traits> Tree;
 
+  typedef typename Compact_container<Node>::iterator Node_handle;
+  typedef std::vector<Item*>::iterator Item_iterator;
 private:
 
   Compact_container<Node> nodes;
-  typedef typename Compact_container<Node>::iterator Node_handle;
 
   Node_handle tree_root;
 
@@ -55,7 +56,7 @@ private:
   // and we only store an iterator range in the Kd_tree_node.
   // 
   std::vector<Item*> data;
-  std::vector<Item*>::iterator data_iterator;
+  Item_iterator data_iterator;
   Traits tr;
   int the_item_number;
 

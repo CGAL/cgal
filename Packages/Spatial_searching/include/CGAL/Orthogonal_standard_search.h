@@ -42,12 +42,12 @@ typedef typename Traits::Item Item;
 typedef typename Traits::NT NT;
 typedef std::pair<Item*,NT> Item_with_distance;
 
-typedef Kd_tree_node<Traits> Node;
 typedef Kd_tree<Traits> Tree;
+typedef Tree::Node_handle Node_handle;
 
 //private:
 
-typedef Item** Item_iterator;
+typedef Kd_tree<Traits>::Item_iterator Item_iterator;
 typedef Kd_tree_rectangle<NT> Rectangle; 
 
 private:
@@ -170,7 +170,7 @@ Distance* distance_instance;
 
     private:
    
-    void compute_neighbours_orthogonally(Node* N, NT rd) {
+    void compute_neighbours_orthogonally(Node_handle N, NT rd) {
 		
                 if (!(N->is_leaf())) {
                         number_of_internal_nodes_visited++;
