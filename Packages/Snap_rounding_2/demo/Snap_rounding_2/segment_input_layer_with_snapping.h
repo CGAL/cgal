@@ -11,7 +11,11 @@ private:
   typedef CGAL::Qt_widget_get_segment<R>        Base;
   typedef typename Base::Point                  Point;
   typedef typename Base::RasterOp               RasterOp;
-  
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Base::widget;
+#endif
+
   std::list<Segment_2>          *seg_list;
   //true if the user selected the first vertex
   Point                         old_point;
