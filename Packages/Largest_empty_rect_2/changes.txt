@@ -1,5 +1,6 @@
 version 1.4 [af]
 - put bodies of member functions in class scope to please Sun CC
+- made makefile usable in test and demo
 
 version 1.3 [af]
 - added typenames, std::, and a missing #include
