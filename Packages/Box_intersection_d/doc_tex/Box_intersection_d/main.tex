@@ -1,9 +1,9 @@
 %\begin{twocolumn}
 \chapter*{Bounding Box Intersection}
 
-\section*{Introduction} 
+\section*{Introduction}
 This chapter describes the functions provided in \cgal{} 
-to check large numbers of bounding boxes for intersection.
+to test large numbers of bounding boxes for intersection.
 
 Computing information about complex geometric primitives is often expensive. While researchers in computational geometry have discovered many asymptotically efficient algorithms for such problems, the algorithms are often of theoretical interest only, as they are hard to implement or slow if implemented. One general approach is to reduce the problem size enough so that a brute force method is feasible and fast. By putting axis-aligned bounding boxes around complicated primitives, we can compute, in a short amount of time, an approximate answer in the form of a small set of pairs with potential interaction.  We then refine our answer by looking inside the boxes, computing the exact answer for the original data.
 
@@ -47,26 +47,8 @@ static unsigned int get_num( const Box& b )
 \begin{itemize}
 \item defines predicates on boxes
 \item box access relies on BoxAdapter
-\item default traits class provided (part of it):
-\begin{ccExampleCode}
-template< class BoxAdapter >
-struct Default_Box_Traits : public BoxAdapter {
-    class Compare : public std::binary_function< Box, Box, bool > {
-        unsigned int dim;
-    public:
-        Compare( unsigned int dim ) : dim( dim ) {}
-        bool operator()( const Box& a, const Box& b ) const
-        { 
-             return Traits::is_lo_less_lo( a, b, dim );  
-        }
-    };
+\item default traits class provided. normally, no need for own traits class
 
-    static bool does_intersect ( const Box& a, const Box& b, unsigned int dim )
-    { 
-         return get_hi(a,dim) > get_lo(b,dim) && get_hi(b,dim) > get_lo(a,dim); 
-    }
-};
-\end{ccExampleCode}
 \end{itemize}
  
 \section*{Examples}

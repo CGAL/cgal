@@ -138,7 +138,7 @@ test( const char* filename1, const char* filename2 )
     unsigned int n = boxes1.size();
     Traits::cutoff = n < 2000 ? 6 : n / 100;
     CGAL::segment_tree( boxes1.begin(), boxes1.end(),
-                        boxes2.begin(), boxes2.end(), callback2, Traits(), 2 );
+                        boxes2.begin(), boxes2.end(), callback2, Traits() );
     timer.stop();
     cout << "got " << callback2.counter << " intersections in "
          << timer.t << " seconds." <<endl;

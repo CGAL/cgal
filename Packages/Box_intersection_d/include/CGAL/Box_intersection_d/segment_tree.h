@@ -11,7 +11,9 @@
 #include <cmath>
 #include <functional>
 #include <cassert>
-#include <limits>
+
+// original limits in g++3.2 is totally wrong. on some systems it is even missing
+#include <my_limits>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -131,6 +133,9 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
     typedef typename Traits::Lo_Less Lo_Less;
     typedef typename Traits::Hi_Greater Hi_Greater;
 
+    const T inf = workaround::numeric_limits< T >::inf();
+    const T sup = workaround::numeric_limits< T >::sup();
+
 #if BOX_INTERSECTION_DEBUG
     Counter<int> bla( level );
     //DUMP("----------------===========[ new node ]============-------------")
@@ -152,7 +157,8 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
     // second: each interval intersects segment [lo,hi)
     for( RandomAccessIter it = i_begin; it != i_end; ++it ) {
         assert( Traits::get_lo( *it, dim ) < hi );
-        assert( Traits::get_hi( *it, dim ) > lo );
+        assert( Traits::get_hi( *it, dim ) > lo);
+
     }
 #endif
 
@@ -175,21 +181,15 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
         return;
     }
 
-    RandomAccessIter i_span_end =
-        lo == std::numeric_limits< T >::min() ||
-        hi == std::numeric_limits< T >::max() ? i_begin :
+    RandomAccessIter i_span_end = lo == inf || hi == sup ? i_begin :
         std::partition( i_begin, i_end, Spanning( lo, hi, dim ) );
 
     if( i_begin != i_span_end ) {
         DUMP( "checking spanning intervals ... " << std::endl )
         // make two calls for roots of segment tree at next level.
-        segment_tree( p_begin, p_end, i_begin, i_span_end,
-                      std::numeric_limits< T >::min(),
-                      std::numeric_limits< T >::max(),
+        segment_tree( p_begin, p_end, i_begin, i_span_end, inf, sup,
                       callback, traits, dim - 1,  in_order );
-        segment_tree( i_begin, i_span_end, p_begin, p_end,
-                      std::numeric_limits< T >::min(),
-                      std::numeric_limits< T >::max(),
+        segment_tree( i_begin, i_span_end, p_begin, p_end, inf, sup,
                       callback, traits, dim - 1, !in_order );
     }
 
@@ -223,22 +223,18 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
 template< class RandomAccessIter, class Callback, class Traits >
 void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
                    RandomAccessIter i_begin, RandomAccessIter i_end,
-                   Callback& callback, Traits traits, unsigned int dim )
+                   Callback& callback, Traits traits, bool bipartite = true )
 {
     typedef typename Traits::NumberType T;
-    T inf, sup;
-    if ( std::numeric_limits< T >::has_infinity ) {
-        sup = std::numeric_limits< T >::infinity();
-        inf = -sup;
-    } else {
-        inf = std::numeric_limits< T >::min();
-        sup = std::numeric_limits< T >::max();
-    }
+    const unsigned int dim = Traits::get_dim() - 1;
+    const T inf = workaround::numeric_limits< T >::inf();
+    const T sup = workaround::numeric_limits< T >::sup();
 
     segment_tree( p_begin, p_end, i_begin, i_end,
                   inf, sup, callback, traits, dim, true );
-    segment_tree( i_begin, i_end, p_begin, p_end,
-                  inf, sup, callback, traits, dim, false );
+    if( bipartite )
+        segment_tree( i_begin, i_end, p_begin, p_end,
+                      inf, sup, callback, traits, dim, false );
 }
 
 CGAL_END_NAMESPACE

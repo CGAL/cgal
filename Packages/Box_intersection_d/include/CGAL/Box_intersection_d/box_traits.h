@@ -5,7 +5,7 @@
 
 #include <algorithm>
 #include <functional>
-#include <limits>
+#include <my_limits>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -29,18 +29,12 @@ struct Default_Bbox_d : public UniqueNumbers {
     }
 
     void init ( bool complete = false ) {
-        NumberType l, h;
-        if ( std::numeric_limits< T >::has_infinity ) {
-            h = std::numeric_limits< T >::infinity();
-            l = -h;
-        } else {
-            l = std::numeric_limits< T >::min();
-            h = std::numeric_limits< T >::max();
-        }
+        T inf = workaround::numeric_limits< T >::inf();
+        T sup = workaround::numeric_limits< T >::sup();
         if( !complete )
-            std::swap( l, h );
-        std::fill( _lo, _lo + DIM, l );
-        std::fill( _hi, _lo + DIM, h );
+                std::swap( inf, sup );
+        std::fill( _lo, _lo + DIM, inf );
+        std::fill( _hi, _lo + DIM, sup );
     }
 
     void extend( T p[ DIM ] ) {
@@ -52,6 +46,7 @@ struct Default_Bbox_d : public UniqueNumbers {
 
     T lo( unsigned int dim ) const { return _lo[dim]; }
     T hi( unsigned int dim ) const { return _hi[dim]; }
+    static unsigned int get_dim() { return DIM; }
 protected:
     T _lo[ DIM ], _hi[ DIM ];
 };
@@ -69,6 +64,8 @@ struct Default_Bbox_d_Adapter {
 
     static unsigned int get_num( const Box& b )
     { return b.num();     }
+
+    static unsigned int get_dim() { return Box::get_dim(); }
 };
 
 

@@ -1,0 +1,38 @@
+#ifndef LIMITS_WORKAROUND
+#define LIMITS_WORKAROUND
+
+namespace workaround {
+
+template<class T>
+struct numeric_limits {
+    static T inf() { return static_cast<T>(0);}
+    static T sup() { return static_cast<T>(0);}
+};
+
+template<>
+struct numeric_limits<int> {
+    static int inf() { return -2147483647; }
+    static int sup() { return 2147483647; }
+};
+
+template<>
+struct numeric_limits<unsigned int> {
+    static unsigned int inf() { return 0ul; }
+    static unsigned int sup() { return 4294967294ul; }
+};
+
+template<>
+struct numeric_limits<float> {
+    static float inf() { return -sup(); }
+    static float sup() { float z=0.0f; return 1.0f/z; }
+};
+
+template<>
+struct numeric_limits<double> {
+    static double inf() { return -sup(); }
+    static double sup() { float z=0.0; return 1.0/z; }
+};
+
+}
+
+#endif

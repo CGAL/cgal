@@ -1,5 +1,6 @@
 #include <CGAL/Box_intersection_d/box_traits.h>
 #include <CGAL/Box_intersection_d/one_way_scan.h>
+#include <CGAL/Box_intersection_d/all_pairs.h>
 // enable invariant checking
 #define SEGMENT_TREE_CHECK_INVARIANTS 1
 #include <CGAL/Box_intersection_d/segment_tree.h>
@@ -16,7 +17,7 @@
 
 //using namespace std;
 
-typedef float NumberType;
+typedef double NumberType;
 typedef CGAL::Default_Bbox_d< NumberType, 3 >  Box;
 typedef CGAL::Default_Bbox_d_Adapter< Box >    BoxAdapter;
 typedef CGAL::Default_Box_Traits< BoxAdapter > Traits;
@@ -32,7 +33,7 @@ static void fill_boxes( unsigned int n, BoxContainer& boxes ) {
         NumberType lo[3], hi[3];
         for( unsigned int d = 0; d < 3; ++d ) {
             lo[d] = (NumberType)(drand48() * (n - maxEdgeLength));
-            hi[d] = lo[d] + 1 + (NumberType)(drand48() * maxEdgeLength);
+            hi[d] = lo[d] + 1.0 + (NumberType)(drand48() * maxEdgeLength);
         }
         boxes.push_back( Box( &lo[0], &hi[0]) );
     }
@@ -58,6 +59,7 @@ struct StorageCallback {
         assertIntersection( a, b );
         ++counter;
         storage.push_back( std::make_pair( a, b ) );
+        //std::cout << Traits::get_num( a ) << " " << Traits::get_num( b ) << std::endl;
     }
 };
 
@@ -83,10 +85,16 @@ template< class Storage >
 unsigned int countMissingItems( Storage& a, Storage& b ) {
     unsigned int missing = 0;
     typedef typename Storage::iterator IT;
-    for( IT it = a.begin(); it != a.end(); ++it )
-        for( IT it2 = b.begin(); it2 != b.end(); ++it2 )
-            if( *it == *it2 )
-                ++missing;
+    for( IT it = a.begin(); it != a.end(); ++it ) {
+        bool found = false;
+        for( IT it2 = b.begin(); it2 != b.end(); ++it2 ) {
+            if( *it == *it2 ) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) ++missing;
+    }
     return missing;
 }
 
@@ -103,13 +111,16 @@ unsigned int countDuplicates( Storage& storage ) {
 }
 
 static void
-test_n( unsigned int n )
+test_n( unsigned int n, bool bipartite = true )
 {
     BoxContainer boxes1, boxes2;
     ResultContainer result_scanner, result_tree;
     std::cout << "generating random box sets with size " << n << " ... " << std::flush;
     fill_boxes( n, boxes1 );
-    fill_boxes( n, boxes2 );
+    if( bipartite )
+        fill_boxes( n, boxes2 );
+    else
+        boxes2 = boxes1;
     std::cout << std::endl;
     StorageCallback< ResultContainer >
         callback1( result_scanner ),
@@ -120,8 +131,9 @@ test_n( unsigned int n )
     timer.start();
     CGAL::one_way_scan( boxes1.begin(), boxes1.end(),
                         boxes2.begin(), boxes2.end(), callback1, Traits(), 2 );
-    CGAL::one_way_scan( boxes2.begin(), boxes2.end(),
-                        boxes1.begin(), boxes1.end(), callback1, Traits(), 2 );
+    if( bipartite )
+        CGAL::one_way_scan( boxes2.begin(), boxes2.end(),
+                            boxes1.begin(), boxes1.end(), callback1, Traits(), 2 );
     timer.stop();
     std::cout << "got " << callback1.counter << " intersections in "
          << timer.t << " seconds."
@@ -133,7 +145,7 @@ test_n( unsigned int n )
     Traits::cutoff = n < 200 ? 6 : n < 2000 ? 20 : n / 50;
     //Traits::cutoff = 5;
     CGAL::segment_tree( boxes1.begin(), boxes1.end(),
-                        boxes2.begin(), boxes2.end(), callback2, Traits(), 2 );
+                        boxes2.begin(), boxes2.end(), callback2, Traits(), bipartite );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
               << timer.t << " seconds." << std::endl;
@@ -143,7 +155,7 @@ test_n( unsigned int n )
                                                      result_tree );
         unsigned int duplicates = countDuplicates( result_tree );
         std::cout << "!! failed !! " << missing  << " missing and "
-             << duplicates << " duplicate intersections in tree result."
+             << duplicates << " duplicate intersections in tree result. "
              << std::endl;
     }
     else
@@ -152,7 +164,11 @@ test_n( unsigned int n )
 
 
 int main( int argc, char ** argv ) {
-    for( unsigned int n = 8; n < 500000; n = (int)(n * 2))
-        test_n( n );
+    for( unsigned int n = 8; n < 500000; n = (int)(n * 2)) {
+        std::cout << "bipartite case: " << std::endl;
+        test_n( n, true );
+        std::cout << "complete case: " << std::endl;
+        test_n( n, false );
+    }
 }
 

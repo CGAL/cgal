@@ -19,13 +19,16 @@ void modified_two_way_scan( RandomAccessIter p_begin, RandomAccessIter p_end,
     std::sort( p_begin, p_end, Compare( 0 ) );
     std::sort( i_begin, i_end, Compare( 0 ) );
 
-    // for each box viewed as interval i
+    // for each box viewed as interval
     while( i_begin != i_end && p_begin != p_end ) {
         if( Traits::is_lo_less_lo( *i_begin, *p_begin, 0 ) ) {
             for( RandomAccessIter p = p_begin;
                  p != p_end && Traits::is_lo_less_hi( *p, *i_begin, 0 );
                  ++p )
             {
+                if( Traits::get_num( *p ) == Traits::get_num( *i_begin ) )
+                    continue;
+
                 for( unsigned int dim = 1; dim <= last_dim; ++dim )
                     if( !Traits::does_intersect( *p, *i_begin, dim ) )
                         goto no_intersection1;
@@ -44,6 +47,8 @@ void modified_two_way_scan( RandomAccessIter p_begin, RandomAccessIter p_end,
                  i != i_end && Traits::is_lo_less_hi( *i, *p_begin, 0 );
                  ++i )
             {
+                if( Traits::get_num( *p_begin ) == Traits::get_num( *i ) )
+                    continue;
                 for( unsigned int dim = 1; dim <= last_dim; ++dim )
                     if( !Traits::does_intersect( *p_begin, *i, dim ) )
                         goto no_intersection2;

@@ -27,6 +27,8 @@ void one_way_scan( RandomAccessIter p_begin, RandomAccessIter p_end,
              p != p_end && Traits::is_lo_less_hi( *p, *i, 0 );
              ++p )
         {
+            if( Traits::get_num( *p ) == Traits::get_num( *i ) )
+                continue;
             for( unsigned int dim = 1; dim <= last_dim; ++dim )
                 if( !Traits::does_intersect( *p, *i, dim ) )
                     goto no_intersection;
