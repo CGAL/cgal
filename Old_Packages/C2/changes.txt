@@ -1,3 +1,7 @@
+Version 3.2.4 (September 2 1999)
+- corrected buggy typename R::LineC2<R..>::Point_2 in Line_2.C
+  (should have been typename LineC2<R..>::Point_2)
+
 Version 3.2.3 (September 2 1999)
 - added needed typename in all <CGAL/Cartesian/*.C>
   indeed, Class_2<R>::Subclass needs a typename qualifier for MIPSPRO 7.3

@@ -232,7 +232,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 Oriented_side
 LineC2<R CGAL_CTAG>::
-oriented_side(const typename R::LineC2<R CGAL_CTAG>::Point_2 &p) const
+oriented_side(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return side_of_oriented_line(*this,p);
 }
@@ -241,7 +241,7 @@ template < class R >
 inline
 bool
 LineC2<R CGAL_CTAG>::
-has_on_boundary(const typename R::LineC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_boundary(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return oriented_side(p) == ON_ORIENTED_BOUNDARY;
 }
@@ -250,7 +250,7 @@ template < class R >
 inline
 bool
 LineC2<R CGAL_CTAG>::
-has_on_positive_side(const typename R::LineC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_positive_side(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return oriented_side(p) == ON_POSITIVE_SIDE;
 }
@@ -259,7 +259,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 LineC2<R CGAL_CTAG>::
-has_on_negative_side(const typename R::LineC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_negative_side(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return oriented_side(p) == ON_NEGATIVE_SIDE;
 }
@@ -289,7 +289,7 @@ template < class R >
 inline
 LineC2<R CGAL_CTAG>
 LineC2<R CGAL_CTAG>::
-transform(const typename R::LineC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+transform(const typename LineC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
 {
   return LineC2<R CGAL_CTAG>( t.transform(point(0) ), t.transform(direction() ));
 }
