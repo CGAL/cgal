@@ -117,6 +117,15 @@ imm32.lib wsock32.lib"
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
+				RelativePath="Qt_widget_move_point.C">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="regular_triangulation_2.C">
 				<FileConfiguration
 					Name="Debug|Win32">

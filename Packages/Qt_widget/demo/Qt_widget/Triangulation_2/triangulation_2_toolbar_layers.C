@@ -21,7 +21,7 @@
 
 #ifdef CGAL_USE_QT
 
-#include "Qt_widget_toolbar_layers.h"
+#include "triangulation_2_toolbar_layers.h"
 
 // icons
 #include <CGAL/IO/pixmaps/points.xpm>

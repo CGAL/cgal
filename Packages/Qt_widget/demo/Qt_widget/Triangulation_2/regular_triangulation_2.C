@@ -123,7 +123,7 @@ public:
     help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
-    *widget << CGAL::BackgroundColor(CGAL::DEEPBLUE);
+    *widget << CGAL::BackgroundColor(CGAL::BLACK);
     resize(w, h);
     widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(TRUE);

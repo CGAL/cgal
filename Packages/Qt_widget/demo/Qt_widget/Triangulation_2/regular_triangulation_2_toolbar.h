@@ -23,7 +23,7 @@
 
 #include "regular_cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
-//#include "Qt_widget_move_point.h"
+#include "Qt_widget_move_point.h"
 #include <CGAL/IO/Qt_widget_get_circle.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
 
@@ -55,8 +55,8 @@ private:
 	
   CGAL::Qt_widget_get_circle<Rp>       circlebut;
   CGAL::Qt_widget_get_point<Rp>        pointbut;
-//  Qt_widget_movepoint<Regular_triangulation>
-//                                       movepointbut;
+  Qt_widget_move_weightedpoint<Regular_triangulation>
+                                       movepointbut;
 };//end class
 
 

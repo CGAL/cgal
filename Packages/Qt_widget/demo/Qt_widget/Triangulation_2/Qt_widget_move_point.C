@@ -22,8 +22,9 @@
 
 #include "Qt_widget_move_point.h"
 
-void Qt_widget_movepoint_helper::delete_point() { delete_pointi(); };
-void Qt_widget_movepoint_helper::move_point() { move_pointi(); };
+void Qt_widget_movepoint_helper::delete_vertex() { delete_vertexi(); };
+void Qt_widget_movepoint_helper::move_vertex() { move_vertexi(); };
+void Qt_widget_movepoint_helper::change_weight() { change_weighti(); };
 void Qt_widget_movepoint_helper::stateChanged(int i){
   if(i==2)
     activate();
