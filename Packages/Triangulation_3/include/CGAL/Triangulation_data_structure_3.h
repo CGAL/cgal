@@ -569,7 +569,7 @@ public:
 	// c will be modified to have v replacing vertex(i+3)
 	int i1,i2,i3;
 
-	if ( i&1 == 0 ) {
+	if ( (i&1) == 0 ) {
 	  i1=(i+1)&3; i2=(i+2)&3; i3=6-i-i1-i2;
 	}
 	else {
