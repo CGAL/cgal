@@ -53,6 +53,13 @@
 namespace OpenNL {
 
 
+// Utility macro to display a variable's value
+// Usage: x=3.7; cerr << STREAM_TRACE(x) << endl;
+//        prints
+//        x=3.7
+#define STREAM_TRACE(var) #var << "=" << var << " "
+
+
 /**
  *  The BICGSTAB algorithm without preconditioner:
  *  Ashby, Manteuffel, Saylor
@@ -93,9 +100,6 @@ public:
 	// * A.dimension() == x.dimension()
 	bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x)
 	{
-	   // Debug trace
-	   //std::cerr << std::endl << "Solver_BICGSTAB<>::solve: start" << std::endl;
-
         if (A.dimension() != b.dimension())
 			return false;
         if (A.dimension() != x.dimension())
@@ -132,11 +136,18 @@ public:
 		rTh=BLAS<Vector>::dot(rT,h);							// (rT|h)
         rr=BLAS<Vector>::dot(r,r);								// Current error (r|r)
 
-        while ( rr>err && its < max_iter) 
+#ifndef NDEBUG 
+		// Debug trace
+		std::cerr << std::endl << "solve: start: " << STREAM_TRACE(n) << STREAM_TRACE(max_iter) << STREAM_TRACE(err) << std::endl;
+#endif
+
+		while ( rr>err && its < max_iter) 
 		{
+#ifndef NDEBUG 
 			// Debug trace
-			//if (its % 25 == 0)
-			//	std::cerr << "Solver_BICGSTAB<>::solve: rr(=" << rr << ") > err(=" << err << ")" << std::endl;
+			if (its % 10 == 0)
+				std::cerr << "solve: " << STREAM_TRACE(its) << STREAM_TRACE(rr) << STREAM_TRACE(alpha) << STREAM_TRACE(beta) << STREAM_TRACE(omega) << STREAM_TRACE(rTh) << std::endl;
+#endif
 
             mult(A,d,Ad);
             rTAd=BLAS<Vector>::dot(rT,Ad);
@@ -162,10 +173,15 @@ public:
 			if( fabs(rTh)<=1e-40 )								// LS 03/2005: avoid division by zero 
 			{
 				// Stop solver (TO BE CHECKED BY Bruno Levy)
-				std::cerr << "Solver_BICGSTAB<>::solve: unexpected error: rTh=" << rTh << std::endl;
-				return false;
+				std::cerr << "solve: unexpected error: " << STREAM_TRACE(rTh) << std::endl;
+				break;
 			}
-			assert( fabs(omega)>1e-40 );
+			if( fabs(omega)<=1e-40 )							// LS 03/2005: avoid division by zero 
+			{
+				// Stop solver (TO BE CHECKED BY Bruno Levy)
+				std::cerr << "solve: unexpected error: " << STREAM_TRACE(omega) << std::endl;
+				break;
+			}
             beta=(alpha/omega)/rTh; rTh=BLAS<Vector>::dot(rT,h); beta*=rTh;
             BLAS<Vector>::scal(beta,d);
             BLAS<Vector>::axpy(1,h,d);
@@ -174,9 +190,12 @@ public:
             its++ ;
         }
 
-		bool success = (its < max_iter);
+		bool success = (rr <= err);
+#ifndef NDEBUG 
+		// Debug trace
 		if ( ! success )
-			std::cerr << "Solver_BICGSTAB<>::solve: failure: rr(=" << rr << ") > err(=" << err << ")" << std::endl;
+			std::cerr << "solve: failure: " << STREAM_TRACE(its) << STREAM_TRACE(max_iter) << STREAM_TRACE(rr) << STREAM_TRACE(err) << std::endl;
+#endif
 		return success;
     }
 
