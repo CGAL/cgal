@@ -92,7 +92,8 @@ z_plane_circumcircle_2(const FT &x1, const FT &y1, const We &w1,
   // we assume that the weight w1 is the smallest among w1, w2, w3.
 
   FT a, b, c;
-  w_plane_tangent_line_2(x1, y1, FT(w1), x2, y2, FT(w2), x3, y3, FT(w3), a, b, c);
+  w_plane_tangent_line_2(x1, y1, FT(w1), x2, y2, FT(w2),
+			 x3, y3, FT(w3), a, b, c);
 
   cx = -a / (FT(2) * c) + x1;
   cy =  b / (FT(2) * c) + y1;
