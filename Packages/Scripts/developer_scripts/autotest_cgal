@@ -194,33 +194,6 @@ run_testsuite()
     done
 }
 
-#----------------------------------------------
-# create the global makefile to make it run 
-# on multiple processors
-#---------------------------------------------
-make_global_makefile()
-{
-    log ${ACTUAL_LOGFILE} "create the global makefile"
-    MAKEFILE_NAME="Makefile"
-    MAKE_TEST_DIRECTORIES=`ls`
-    #clear the error file
-    rm -f $MAKEFILE_NAME
-    touch $MAKEFILE_NAME
-    printf "testsuite: " >> ${MAKEFILE_NAME}
-    for DIR in $MAKE_TEST_DIRECTORIES ; do
-	if [ -d $DIR ] ; then
-	    printf "test_$DIR " >> ${MAKEFILE_NAME}
-	fi
-    done
-    printf "\n" >> ${MAKEFILE_NAME}
-    for DIR in $MAKE_TEST_DIRECTORIES ; do
-	if [ -d $DIR ] ; then
-	    echo "test_$DIR:" >> ${MAKEFILE_NAME}
-	    printf "\t+ ./run_testsuite $DIR\n" >> ${MAKEFILE_NAME}
-	fi    
-    done
-    log_done ${ACTUAL_LOGFILE}
-}
 
 # ---------------------------------------------------
 # test script NEW
@@ -236,7 +209,6 @@ test_script()
 {
 	NUMBER_OF_PROCESSORS="`value_of PROCESSORS_${1}`"
 	cd ${CGAL_TEST_DIR}
-	make_global_makefile # TODO: Should be moved to release building script
 	TEST_DIR_ROOT=${TEST_DIR_ROOT:-${CGAL_DIR}}
 	LOCAL_TEST_DIR=${TEST_DIR_ROOT}/test_${2}
 	log ${ACTUAL_LOGFILE}.${1} "Testing on ${1} with ${2}"

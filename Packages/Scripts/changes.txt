@@ -1,3 +1,12 @@
+02 August 2004 Radu Ursu
+- create_internal_release:
+  - added create_global_makefile procedure which creates the global makefile 
+    used by autotest_cgal
+- autotest_cgal:
+  - removed the make_global_makefile procedure
+  - removed the call from test_script procedure 
+
+
 29 July 2004 Sylvain Pion
 - autotest_cgal :
   - Add CGAL_TESTER_NAME and CGAL_TESTER_ADDRESS.
