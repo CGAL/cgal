@@ -1,3 +1,6 @@
+4.4 (21 September 2001)
++ Fixed a bug in the simplicity test.
+
 4.3 (10 September 2001)
 + Fixed bug in polygon area computation.
 
