@@ -7,6 +7,9 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Changed -Zm400 to -Zm900 for msvc. // DVP
+GLOB: Remove __STL_DEBUG from the list of options for msvc // DVP
+GLOB: Corrected CGAL_WINDOW_LDFLAGS for MSVC.
 GLOB: Changed EXE_OPT back to '-Fp" for MSVC.
 GLOB: Fixed leda_lib_options for UNIX-compilers.
 GLOB: Added leda_lib_option flag.
