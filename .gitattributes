@@ -1566,6 +1566,7 @@ Packages/Qt_widget/include/CGAL/IO/pixmaps/greene_approx.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/hand.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/handtool.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/holddown.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/iso_rectangle.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/line.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/min_parallelogram.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/min_rectangle.xpm -text

@@ -36,9 +36,9 @@ template <class R>
 class Qt_widget_get_circle : public Qt_widget_layer
 {
 public:
-  typedef typename R::Point_2		Point;
-  typedef typename R::Circle_2		Circle;
-  typedef typename R::FT	FT;
+  typedef typename R::Point_2   Point;
+  typedef typename R::Circle_2  Circle;
+  typedef typename R::FT        FT;
 
   Qt_widget_get_circle(const QCursor c=QCursor(Qt::crossCursor),
 		       QObject* parent = 0, const char* name = 0)
@@ -172,10 +172,10 @@ private:
   QCursor oldcursor;
   
 
-  FT	x1, //the X of the first point
-		  y1; //the Y of the first point
+  FT    x1, //the X of the first point
+        y1; //the Y of the first point
   FT	x2, //the old second point's X
-		  y2; //the old second point's Y
+        y2; //the old second point's Y
   bool	firstpoint, //true if the user left clicked once
 	firsttime;  //true if the line is not drawn
   QWidget::FocusPolicy	oldpolicy;

@@ -50,19 +50,19 @@ public:
   bool    is_active(){return active;};	//return true if this layer is active
   bool    does_eat_events;
 public slots:
-	virtual void draw(){};
+  virtual void draw(){};
   void    stateChanged(int);
   bool    activate(); //activate and return true if it was not active
   bool    deactivate();//deactivate and return true if it was active
 signals:
-  void		activated(Qt_widget_layer*);
-  void		deactivated(Qt_widget_layer*);
+  void    activated(Qt_widget_layer*);
+  void    deactivated(Qt_widget_layer*);
 private:
-  void		attach(Qt_widget *w);//attach Qt_widget to the tool
-  bool		active;	//true if this layers is active
-  friend class		Qt_widget;
+  void    attach(Qt_widget *w);//attach Qt_widget to the tool
+  bool    active;	//true if this layers is active
+  friend class Qt_widget;
 protected:
-	Qt_widget	*widget;//the pointer to the widget
+  Qt_widget  *widget;//the pointer to the widget
   virtual void activating(){};
   virtual void deactivating(){};
 };

@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : min_circle_2_toolbar.h
+// file          : spatial_searching_toolbar.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -19,26 +19,22 @@
 // ============================================================================
 
 
-#ifndef MIN_CIRCLE_2_TOOLBAR_H
-#define MIN_CIRCLE_2_TOOLBAR_H
+#ifndef MIN_SPATIAL_SEARCHING_TOOLBAR_H
+#define MIN_SPATIAL_SEARCHING_TOOLBAR_H
 
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-
-
-// TODO: check if some of those includes shouldn't be in the .C file
+#include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
+#include <CGAL/IO/Qt_widget_get_iso_rectangle.h>
+#include <CGAL/IO/Qt_widget_get_circle.h>
 #include "Qt_widget_move_list_point.h"
+
 
 #include <qobject.h>
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qbuttongroup.h>
 #include <qmainwindow.h>
-
-typedef CGAL::Cartesian<double>	  Rp;
-typedef Rp::Point_2		  Point;
 
 class Tools_toolbar : public QToolBar
 {
@@ -52,8 +48,10 @@ private:
   CGAL::Qt_widget *widget;
   int             nr_of_buttons;
 
-  CGAL::Qt_widget_get_point<Rp>  pointbut;
-  Qt_widget_move_list_point<Rp>  move_deletebut;
+  CGAL::Qt_widget_get_point<R>         point_layer;
+  CGAL::Qt_widget_get_iso_rectangle<R> iso_r_layer;
+  CGAL::Qt_widget_get_circle<R>        circle_layer;
+  Qt_widget_move_list_point<R>         edit_layer;  
 };//end class
 
 #endif

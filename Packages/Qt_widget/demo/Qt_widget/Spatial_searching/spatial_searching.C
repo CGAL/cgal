@@ -164,10 +164,14 @@ private slots:
   void get_new_object(CGAL::Object obj)
   {
     Point p;
+    Iso_rectangle_2 ir;
+    Circle_2 c;
     if(CGAL::assign(p,obj)) {
       vector_of_points.push_back(p);
       something_changed();
     }
+
+
   };
 
   void about()
