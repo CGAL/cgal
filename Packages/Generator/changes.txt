@@ -1,6 +1,9 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
 
+Version 2.82 (09 February 2004) [rursu]
+- Updated headers in examples
+
 2.81 (18/01/04)
 - Rename CGAL_TYPENAME_MSVC_NULL to typename.
 
