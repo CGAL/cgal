@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+
+- In VectorCd.h:  0 -> FT(0)
+
 0.9.84 (10 June 2003) [af]
 - Added workaround for missing member templates in Sun STL
 
