@@ -36,6 +36,7 @@ class SNC_point_locator
   typedef typename SNC_structure::Segment_3 Segment_3;
   typedef typename SNC_structure::Ray_3 Ray_3;
 public:
+  char plversion[64];
   virtual Object_handle locate(const Point_3& p) const = 0;
   virtual Object_handle shoot(const Ray_3& s) const = 0;
   virtual void intersect_with_edges( Halfedge_handle edge,
@@ -100,6 +101,8 @@ class SNC_point_locator_by_spatial_subdivision :
 public:
   SNC_point_locator_by_spatial_subdivision() : initialized(false), candidate_provider(0) {}
   virtual void initialize(SNC_structure* W) {
+    strcpy( plversion, "Point Locator by Spatial Subdivision (tm)");
+    std::clog<<plversion<<std::endl;
     CGAL_assertion( W != NULL);
     Base::initialize(W);
     initialized = true;
@@ -379,6 +382,8 @@ class SNC_point_locator_naive :
 public:
   SNC_point_locator_naive() : initialized(false) {}
   virtual void initialize(SNC_structure* W) { 
+    strcpy( plversion, "Naive Point Locator (tm)");
+    std::clog<<plversion<<std::endl;
     CGAL_assertion( W != NULL);
     Base::initialize(W); 
     initialized = true;
