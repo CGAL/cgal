@@ -44,6 +44,7 @@ int main(int argc, char* argv[])
   #include <CGAL/Arr_segment_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
   #include <CGAL/leda_rational.h>
+  #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
   #include <CGAL/Arr_leda_segment_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
   #include <CGAL/Arr_polyline_traits.h>
@@ -91,28 +92,29 @@ int main(int argc, char* argv[])
 #include <string>
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
-  typedef CGAL::Quotient<int>                  NT;
-  typedef CGAL::Cartesian<NT>                  R;
-  typedef CGAL::Arr_segment_traits_2<R>        Traits;
+  typedef CGAL::Quotient<int>                           NT;
+  typedef CGAL::Cartesian<NT>                           R;
+  typedef CGAL::Arr_segment_traits_2<R>                 Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-  typedef leda_rational                        NT;
-  typedef CGAL::Arr_leda_segment_traits_2      Traits;
+  typedef leda_rational                                 NT;
+  typedef CGAL::Pm_segment_traits_leda_kernel_2         Kernel;
+  typedef CGAL::Arr_leda_segment_traits_2<Kernel>       Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
-  typedef CGAL::Quotient<int>                  NT;
-  typedef CGAL::Cartesian<NT>                  R;
-  typedef CGAL::Arr_polyline_traits<R>         Traits;
+  typedef CGAL::Quotient<int>                           NT;
+  typedef CGAL::Cartesian<NT>                           R;
+  typedef CGAL::Arr_polyline_traits<R>                  Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
-  typedef leda_rational                        NT;
-  typedef CGAL::Arr_leda_polyline_traits<>     Traits;
+  typedef leda_rational                                 NT;
+  typedef CGAL::Arr_leda_polyline_traits<>              Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
-  typedef leda_real                            NT;
-  typedef CGAL::Arr_segment_circle_traits<NT>  Traits;
-  typedef Traits::Segment                      Segment;
-  typedef Traits::Circle                       Circle;
+  typedef leda_real                                     NT;
+  typedef CGAL::Arr_segment_circle_traits<NT>           Traits;
+  typedef Traits::Segment                               Segment;
+  typedef Traits::Circle                                Circle;
 
 #endif
 

@@ -55,12 +55,13 @@ int main(int argc, char* argv[])
 // Choose traits
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
-#include <CGAL/Arr_segment_traits_2.h>
+  #include <CGAL/Arr_segment_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_LEDA_TRAITS
-#include <CGAL/leda_rational.h>
-#include <CGAL/Arr_leda_segment_traits_2.h>
+  #include <CGAL/leda_rational.h>
+  #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
+  #include <CGAL/Arr_leda_segment_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS==CGAL_POLYLINE_TRAITS
-#include <CGAL/Arr_polyline_traits.h>
+  #include <CGAL/Arr_polyline_traits.h>
 //#include <CGAL/IO/Arr_polyline_traits_iostream.h>
 #elif CGAL_ARR_TEST_TRAITS==CGAL_POLYLINE_LEDA_TRAITS
 //#error Currently not supported (July 2000)
@@ -112,7 +113,8 @@ int main(int argc, char* argv[])
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
   typedef leda_rational                                 NT;
-  typedef CGAL::Arr_leda_segment_traits_2               Traits;
+  typedef CGAL::Pm_segment_traits_leda_kernel_2         Kernel;
+  typedef CGAL::Arr_leda_segment_traits_2<Kernel>       Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
   typedef CGAL::Quotient<int>                           NT;
