@@ -1,3 +1,7 @@
+7 February 2005 Sylvain Pion
+- Redirect stderr of "uname -p" to /dev/null as it's not supported on some
+  Linux systems.
+
 27 January 2005 Efi Fogel
 - changed the core library from libCore to libcore++ to match the name used by
   the source.
