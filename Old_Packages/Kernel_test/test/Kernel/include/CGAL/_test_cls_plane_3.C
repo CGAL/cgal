@@ -49,11 +49,7 @@ _test_cls_plane_3(const R& )
 
  CGAL::Point_3<R> p3(p1);
  CGAL::Direction_3<R> d1( RT(5), RT(-5), RT(10) );
-#if (__GNUG__ == 2) && (__GNUC_MINOR__==91)
- CGAL::Vector_3<R>    v1 = d1.to_vector();
-#else
  CGAL::Vector_3<R>    v1 = d1.vector();
-#endif // egcs 2.91.66
 
  CGAL::Plane_3<R> pld( p1, d1);
  CGAL::Plane_3<R> plv( p1, v1);
@@ -65,7 +61,9 @@ _test_cls_plane_3(const R& )
  CGAL::Segment_3<R>  s12(p1,p2);
  CGAL::Ray_3<R>      r12(p1,p2);
 
- CGAL::Plane_3<R> xy_pl(CGAL::ORIGIN,px,py);
+ CGAL::Point_3<R> origo( CGAL::ORIGIN );
+
+ CGAL::Plane_3<R> xy_pl(origo,px,py);
  CGAL::Plane_3<R> plc(xy_pl);
  CGAL::Plane_3<R> pl1(p1,pz,p2);
  CGAL::Plane_3<R> pls(s12,pz);
@@ -88,7 +86,6 @@ _test_cls_plane_3(const R& )
  assert( pld == plv );
  assert( pls == plr );
 
- CGAL::Point_3<R> origo( CGAL::ORIGIN );
  CGAL::Vector_3<R> v_zdir( RT(0), RT(0), RT(12) );
  CGAL::Plane_3<R> xy_pl_v( origo, v_zdir);
 

@@ -70,11 +70,7 @@ _test_cls_direction_3(const R& )
  assert( d7 != d8 );
 
  std::cout << '.';
-#if (__GNUG__ == 2) && (__GNUC_MINOR__==91)
- CGAL::Vector_3<R> vv = d2.to_vector();
-#else
  CGAL::Vector_3<R> vv = d2.vector();
-#endif // egcs 2.91.66
  assert( v == vv );
 
  d0 = -d3;
