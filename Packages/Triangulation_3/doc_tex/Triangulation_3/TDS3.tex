@@ -19,17 +19,17 @@
 %// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
 %//
 %//============================================================================
-\chapter{3D- Triangulation Data Structure}
+\chapter{Triangulation Data Structure in 3D}
 \label{chapter-TDS3}
 
 \section{Introduction}
 \label{TDS3-sec-intro}
 
 A three-dimensional triangulation is a three-dimensional simplicial
-complex, pure connected and without singularities \cite{by-ag-98}. It
-is a set of cells ($3$-faces, tetrahedra) such that two cells
-either do not intersect or share a common facet ($2$-face), edge 
-($1$-face) or vertex ($0$-face). 
+complex, pure connected and without singularities \cite{by-ag-98}. Its
+cells ($3$-faces, tetrahedra) are such that two cells either do not
+intersect or share a common facet ($2$-face), edge ($1$-face) or
+vertex ($0$-face).
 
 A geometric triangulation has two aspects: the combinatorial structure which
 gives the incidence and adjacency relations between faces, and the
@@ -37,8 +37,16 @@ geometric information related to the position of vertices.
 
 \cgal\ proposes 3D geometric triangulations in which these
 two aspects are clearly separated.
+As described in Chapter~\ref{chapter-Triangulation3}, a geometric
+triangulation of a set of points in $\R^d$ is a partition of the
+whole space $\R^d$ into cells having $d+1$ vertices: some of them
+are infinite, they are obtained by linking an additional vertex at
+infinity to each facet of the convex hull of the points.
+The underlying combinatorial triangulation of such a triangulation
+without boundary of $\R^d$ can be seen as a triangulation of the
+topological sphere $S^d$ in $\R^{d+1}$. 
 
-This chapter deals with 3D- triangulation data structures, meant to
+This chapter deals with 3D-triangulation data structures, meant to
 maintain the combinatorial information for 3D-geometric
 triangulations. The reader interested in geometric triangulations of
 $\R^3$ is advised to read Chapter~\ref{chapter-Triangulation3}.
@@ -80,18 +88,9 @@ whose endpoints are the vertices of indices \ccc{i} and \ccc{j} of
 
 \subsection{Degenerate Dimensions}
 \label{TDS3-sec-degen_dim}
-As \cgal\ explicitely deals all degenerate cases, a 3D-triangulation
-data structure in \cgal\ can handle the cases when the triangulation
-is not of full dimension.
-
-As described in Chapter~\ref{chapter-Triangulation3}, a geometric
-triangulation of a set of points in $\R^d$ is a partition of the
-whole space $\R^d$ into cells having $d+1$ vertices: some of them
-are infinite, they are obtained by linking an additional vertex at
-infinity to each facet of the convex hull of the points.
-The underlying combinatorial triangulation of such a triangulation
-without boundary of $\R^d$ can be seen as a triangulation of the
-topological sphere $S^d$ in $\R^{d+1}$. 
+As \cgal\ explicitely deals with all degenerate cases, a
+3D-triangulation data structure in \cgal\ can handle the cases when
+the dimension of the triangulation is lower than~3.
 
 Thus, a 3D-triangulation data structure can store a triangulation of a
 topological sphere $S^d$ of $\R^{d+1}$, for any $d \in \{-1,0,1,2,3\}$. 
@@ -104,9 +103,9 @@ geometric embedding.
 \item \emph{dimension 3.} The triangulation data structure consists of
 the boundary of a 4-dimensional simplex, which has 5 vertices. A
 geometric embedding consists in choosing one of these vertices to be
-infinite, thus four of the five 3-cells becomes infinite: the geometric
+infinite, thus four of the five 3-cells become infinite: the geometric
 triangulation has one finite tetrahedron remaining, each of its facets
-being incident to the infinite cell. See Figure~\ref{TDS3-fig-topo-simplex4}.
+being incident to an infinite cell. See Figure~\ref{TDS3-fig-topo-simplex4}.
 \begin{ccTexOnly}
 \begin{figure}
 \begin{center} 
@@ -155,17 +154,18 @@ alt="2D simplex and a 1D geometric embedding">
 
 The last three cases are defined uniquely:
 \begin{itemize}
-\item \emph{dimension 0.} A 0-dimensional triangulation is the
-boundary of a 1-dimensional simplex (an edge), which consists of 2
-vertices. One of them becomes infinite in the 
-geometric embedding, and there is only one finite vertex remaining. The
-two vertices are disconnected.
+\item \emph{dimension 0.} A 0-dimensional triangulation is
+combinatorially equivalent to the boundary of a 1-dimensional simplex
+(an edge), which consists of 2 vertices. One of them becomes infinite
+in the geometric embedding, and there is only one finite vertex
+remaining. The two vertices are disconnected.
 \item \emph{dimension -1.} This dimension is a convention to represent a 
 0-dimensional simplex, that is a sole vertex, which will be
 geometrically embedded as an ``empty'' triangulation, only having one
 infinite vertex.
-\item \emph{dimension -2.} The triangulation data structure has no
-vertex. There is no associated geometric triangulation. 
+\item \emph{dimension -2.} This is also a convention. The
+triangulation data structure has no vertex. There is no associated
+geometric triangulation.
 \end{itemize} 
 
 Note that the notion of infinite vertex has no meaning for the
