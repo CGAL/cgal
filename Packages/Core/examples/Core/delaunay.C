@@ -1,4 +1,5 @@
 
+#ifdef CGAL_USE_CORE
 
 #include <CGAL/CORE_Expr.h>
 
@@ -24,3 +25,17 @@ int main() {
 
   return 0;
 }
+
+
+#else // CGAL_USE_CORE
+
+#include <iostream>
+
+int main()
+{
+  std::cout << "Core is not installed" << std::endl;
+  return 0;
+}
+
+
+#endif // CGAL_USE_CORE
