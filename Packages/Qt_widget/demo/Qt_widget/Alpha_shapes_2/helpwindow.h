@@ -49,19 +49,16 @@ private slots:
 
     void pathSelected( const QString & );
     void histChosen( int );
-    void bookmChosen( int );
-    void addBookmark();
 
 private:
     void readHistory();
-    void readBookmarks();
 
     QTextBrowser* browser;
     QComboBox *pathCombo;
     int backwardId, forwardId;
-    QStringList history, bookmarks;
-    QPopupMenu *hist, *bookm;
-    QMap<int, QString> mHistory, mBookmarks;
+    QStringList history;
+    QPopupMenu *hist;
+    QMap<int, QString> mHistory;
 };
 
 #endif

@@ -7,7 +7,6 @@ HelpWindow::HelpWindow( const QString& home_, const QString& _path,
             pathCombo( 0 )
 {
   readHistory();
-  readBookmarks();
   browser = new QTextBrowser( this );
   browser->mimeSourceFactory()->setFilePath( _path );
   //  browser->setFrameStyle( QFrame::Panel | QFrame::Sunken );
@@ -38,7 +37,8 @@ HelpWindow::HelpWindow( const QString& home_, const QString& _path,
 				CTRL+Key_Right );
   go->insertItem( icon_home, "&Home", browser, SLOT( home() ) );
 
-
+  menuBar()->insertItem("&File", file);
+  menuBar()->insertItem("&Go", go); 
 
   QToolBar* toolbar = new QToolBar( this );
   addToolBar( toolbar, "Toolbar");
@@ -64,7 +64,7 @@ HelpWindow::HelpWindow( const QString& home_, const QString& _path,
 	     this, SLOT( pathSelected( const QString & ) ) );
   toolbar->setStretchableWidget( pathCombo );
   setRightJustification( TRUE );
-
+  pathCombo->insertItem( home_ );
 }
 
 HelpWindow::~HelpWindow(){}
@@ -127,17 +127,6 @@ void HelpWindow::histChosen( int i )
     browser->setSource( mHistory[ i ] );
 }
 
-void HelpWindow::bookmChosen( int i )
-{
-  if ( mBookmarks.contains( i ) )
-    browser->setSource( mBookmarks[ i ] );
-}
-
-void HelpWindow::addBookmark()
-{
-  mBookmarks[ bookm->insertItem( caption() ) ] = browser->context();
-}
-
 void HelpWindow::readHistory()
 {
     if ( QFile::exists( QDir::currentDirPath() + "/.history" ) ) {
@@ -150,18 +139,5 @@ void HelpWindow::readHistory()
 	    history.remove( history.begin() );
     }
 }
-
-void HelpWindow::readBookmarks()
-{
-    if ( QFile::exists( QDir::currentDirPath() + "/.bookmarks" ) ) {
-	QFile f( QDir::currentDirPath() + "/.bookmarks" );
-	f.open( IO_ReadOnly );
-	QDataStream s( &f );
-	s >> bookmarks;
-	f.close();
-    }
-}
-
-
 
 #include "helpwindow.moc"
