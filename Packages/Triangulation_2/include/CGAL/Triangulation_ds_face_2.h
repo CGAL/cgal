@@ -350,32 +350,8 @@ public:
     }
   }
 
-  bool is_valid(bool verbose = false, int level = 0) const
-  {
-    bool result = true;
-    for(int i = 0; i < 3; i++) {
-      Face* n = neighbor(i);
-            
-      // The following seems natural, but it may fail if the faces
-      // this and n are neighbors on two edges (1-dim triangulation,
-      // with infinite faces
-      // int ni = n->index(this);
-
-      //  int ni = cw(n->index(vertex(cw(i))));
-      // CGAL_triangulation_assertion( this == n->neighbor(ni) );
-      // result = result && (vertex(cw(i)) == n->vertex(ccw(ni)));
-      // result = result && (vertex(ccw(i)) == n->vertex(cw(ni)));
-
-      int in;
-      if (! n->has_vertex(vertex(cw(i)),in )) return false;
-      in = cw(in); 
-      result = result && ( this == n->neighbor(in) );
-      result = result && (vertex(ccw(i)) == n->vertex(cw(in)));
-
-    }
-    return result;
-  }
-   
+  // bool is_valid(bool verbose = false, int level = 0) const
+  // inherited from Fb
 };
 
 #endif CGAL_TRIANGULATION_DS_FACE_2_H
