@@ -17,6 +17,7 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
+//                 Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
@@ -29,8 +30,8 @@
 
 #include <CGAL/squared_distance_2.h>
 
-#include <CGAL/in_smallest_orthogonalcircleC2.h>
-#include <CGAL/squared_radius_smallest_orthogonalcircleC2.h>
+#include <CGAL/predicates/in_smallest_orthogonalcircle_ftC2.h>
+#include <CGAL/constructions/squared_radius_smallest_orthogonalcircle_ftC2.h>
 
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 
@@ -40,37 +41,76 @@ CGAL_BEGIN_NAMESPACE
 
 //------------------ Function Objects----------------------------------
 
-template < class return_type, class T >
-class Compute_squared_radius_orthogonalcircle_2
+template < class return_type, class K >
+class Compute_squared_radius_orthogonalcircleC2
 {
 public:
   typedef return_type result_type;
-  
+  typedef Arity_tag< 3 >   Arity;
+  typedef typename K::Point T;
+
   result_type operator()(const T& p, const T& q, const T& r)
-    {
-      return max
-	(return_type(0), CGAL::squared_radius_orthogonalcircle(p, q, r));
-    }
+  {
+    typedef typename  K::Coord_type FT;
+    FT px(p.point().x());
+    FT py(p.point().y());
+    FT pw(p.weight());
+    FT qx(q.point().x());
+    FT qy(q.point().y());
+    FT qw(q.weight());
+    FT rx(r.point().x());
+    FT ry(r.point().y());
+    FT rw(r.weight()); 
+    
+    result_type res = squared_radius_orthogonalcircleC2(px, py, pw,
+							qx, qy, qw,
+							rx, ry, rw);
+      
+    return max(return_type(0), res);
+  }
 
   result_type operator()(const T& p, const T& q)
     {
-      return max
-	(return_type(0), CGAL::squared_radius_smallest_orthogonalcircle(p, q));
+      typedef typename  K::Coord_type FT;
+      FT px(p.point().x());
+      FT py(p.point().y());
+      FT pw(p.weight());
+      FT qx(q.point().x());
+      FT qy(q.point().y());
+      FT qw(q.weight());
+  
+      result_type res =  squared_radius_smallest_orthogonalcircleC2(px, py, pw,
+								    qx, qy, qw);
+      return max(return_type(0), res);
     }
 };
 
 //-------------------------------------------------------------------
 
-template < class T >
-class Side_of_bounded_orthogonalcircle_2
+template < class K >
+class Side_of_bounded_orthogonalcircleC2
 {
 public:
   typedef Bounded_side result_type;
-  
-   result_type operator()(const T& p, const T& q, const T& t)
-    {  
-      return CGAL::in_smallest_orthogonalcircle(p, q, t);
-    }
+  typedef Arity_tag< 3 >   Arity;
+  typedef typename K::Point T;
+  result_type operator()(const T& p, const T& q, const T& t)
+  {  
+    typedef typename K::Coord_type FT;
+    FT px(p.point().x());
+    FT py(p.point().y());
+    FT pw(p.weight());
+    FT qx(q.point().x());
+    FT qy(q.point().y());
+    FT qw(q.weight());
+    FT tx(t.point().x());
+    FT ty(t.point().y());
+    FT tw(t.weight());
+    
+    return in_smallest_orthogonalcircleC2(px, py, pw,
+					  qx, qy, qw,
+					  tx, ty, tw);
+  }
 };
 
 //------------------ Traits class -------------------------------------
@@ -82,14 +122,15 @@ Regular_triangulation_euclidean_traits_2<R, typename R::FT>
 
 public: 
   
+  typedef Weighted_alpha_shape_euclidean_traits_2<R> Self;
   typedef typename R::FT Coord_type;
   typedef typename 
    Regular_triangulation_euclidean_traits_2<R, typename R::FT>::Weighted_point 
      Point;
 
-  typedef CGAL::Compute_squared_radius_orthogonalcircle_2<Coord_type, Point>
+  typedef CGAL::Compute_squared_radius_orthogonalcircleC2<Coord_type, Self>
   Compute_squared_radius_orthogonalcircle_2;
-  typedef CGAL::Side_of_bounded_orthogonalcircle_2<Point>
+  typedef CGAL::Side_of_bounded_orthogonalcircleC2<Self>
   Side_of_bounded_orthogonalcircle_2;
   
   //------------------------------------------------------------------
