@@ -158,7 +158,7 @@ private:
 			const Weighted_point & p,
 			Cell_handle c, Cell_handle & ac, int & i);
 
-  void find_conflicts_2(std::set<void*, less<void*> > & conflicts, 
+  void find_conflicts_2(std::set<void*, std::less<void*> > & conflicts, 
 			const Point & p,
 			Cell_handle c, Cell_handle & ac, int & i);
 
@@ -201,7 +201,7 @@ find_conflicts_3(std::set<void*, std::less<void*> > &conflicts,
 template < class Gt, class Tds >
 void 
 Regular_triangulation_3<Gt,Tds>::
-find_conflicts_2(std::set<void*, less<void*> > & conflicts, 
+find_conflicts_2(std::set<void*, std::less<void*> > & conflicts, 
 		 const Point & p,
 		 Cell_handle c, Cell_handle & ac, int & i)
 {

@@ -706,20 +706,20 @@ public:
 
   void
   incident_cells(Vertex_handle v, 
-		 std::set<Cell*, less<Cell*> > & cells,
+		 std::set<Cell*, std::less<Cell*> > & cells,
 		 Cell_handle c = NULL ) const;
 
 
   void
   incident_vertices(Vertex_handle v, 
-		    std::set<Vertex*, less<Vertex*> > & vertices,
+		    std::set<Vertex*, std::less<Vertex*> > & vertices,
 		    Cell_handle c = NULL ) const;
 
 private:
   void 
   util_incident_vertices(Vertex_handle v, 
-			 std::set<Vertex*, less<Vertex*> > & vertices,
-			 std::set<Cell*, less<Cell*> > & cells,
+			 std::set<Vertex*, std::less<Vertex*> > & vertices,
+			 std::set<Cell*, std::less<Cell*> > & cells,
 			 Cell_handle c ) const;
   inline
   Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
@@ -781,7 +781,7 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
 
   Point p;
   //  std::vector<Vertex_handle> V(n+1);
-  std::map< int, TdsVertex*, less<int> > V;
+  std::map< int, TdsVertex*, std::less<int> > V;
   V[0] = &*(tr.infinite_vertex());
   // the infinite vertex is numbered 0
 
@@ -790,7 +790,7 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
     V[i] = new Vertex(p);
   }
 
-  std::map< int, TdsCell*, less<int> > C;
+  std::map< int, TdsCell*, std::less<int> > C;
 
   read_cells(is, tr._tds, n+1, V, m, C);
   for ( i=0 ; i<m; i++ ) {
@@ -824,7 +824,7 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   typedef  Triangulation::Edge_iterator  Edge_iterator;
   typedef  Triangulation::Facet_iterator  Facet_iterator;
  
-  std::map< void*, int, less<void*> > V;
+  std::map< void*, int, std::less<void*> > V;
   //  std::map< void*, int, less<void*> > C;
 
   // outputs dimension and number of vertices
@@ -2790,7 +2790,7 @@ template < class GT, class Tds >
 void
 Triangulation_3<GT,Tds>::
 incident_cells(Vertex_handle v, 
-	       std::set<Cell*, less<Cell*> > & cells,
+	       std::set<Cell*, std::less<Cell*> > & cells,
 	       Cell_handle c = NULL ) const
 {
   CGAL_triangulation_precondition( &(*v) != NULL );
@@ -2820,7 +2820,7 @@ template < class GT, class Tds >
 void
 Triangulation_3<GT,Tds>::
 incident_vertices(Vertex_handle v, 
-		  std::set<Vertex*, less<Vertex*> > & vertices,
+		  std::set<Vertex*, std::less<Vertex*> > & vertices,
 		  Cell_handle c = NULL ) const
 {
   CGAL_triangulation_precondition( &(*v) != NULL );
@@ -2835,7 +2835,7 @@ incident_vertices(Vertex_handle v,
     CGAL_triangulation_precondition( c->has_vertex(v) );
   }
 
-  std::set<Cell*, less<Cell*> > cells;
+  std::set<Cell*, std::less<Cell*> > cells;
   util_incident_vertices(v, vertices, cells, c);
   return;
   // previous buggy version !
@@ -2863,8 +2863,8 @@ template < class GT, class Tds >
 void
 Triangulation_3<GT,Tds>::
 util_incident_vertices(Vertex_handle v, 
-		       std::set<Vertex*, less<Vertex*> > & vertices,
-		       std::set<Cell*, less<Cell*> > & cells,
+		       std::set<Vertex*, std::less<Vertex*> > & vertices,
+		       std::set<Cell*, std::less<Cell*> > & cells,
 		       Cell_handle c ) const
 {
   if ( cells.find( &(*c) ) != cells.end() ) {

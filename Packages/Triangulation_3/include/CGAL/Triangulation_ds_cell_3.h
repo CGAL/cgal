@@ -241,7 +241,7 @@ private:
 template <class Vb, class Cb >
 bool
 Triangulation_ds_cell_3<Vb,Cb>::is_valid
-(int dim = 3, bool verbose = false, int level = 0) const
+(int dim, bool verbose, int level) const
   {
     if ( ! Cb::is_valid(verbose, true) ) return false;
 

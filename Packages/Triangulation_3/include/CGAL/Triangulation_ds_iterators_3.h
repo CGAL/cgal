@@ -42,11 +42,16 @@ class Triangulation_ds_cell_circulator_3;
 
 template<class Tds>
 class Triangulation_ds_cell_iterator_3
-  : public bidirectional_iterator<typename Tds::Cell, ptrdiff_t>
 {
 public:
-  typedef typename Tds::Cell  Cell;
+  typedef typename Tds::Cell       value_type;
+  typedef typename Tds::Cell *     pointer;
+  typedef typename Tds::Cell &     reference;
+  typedef std::size_t     size_type;
+  typedef std::ptrdiff_t  difference_type;
+  typedef std::bidirectional_iterator_tag   iterator_category;
 
+  typedef typename Tds::Cell Cell;
   typedef Triangulation_ds_cell_iterator_3<Tds> Cell_iterator;
 
   // CONSTRUCTORS
@@ -168,12 +173,17 @@ private:
 
 template < class Tds>
 class Triangulation_ds_vertex_iterator_3
-  : public bidirectional_iterator<typename Tds::Vertex, ptrdiff_t>
 {
 // traverses the list of cells and report for each cell 
 // the vertices whose cell() is the current cell
 
 public:
+  typedef typename Tds::Vertex       value_type;
+  typedef typename Tds::Vertex *     pointer;
+  typedef typename Tds::Vertex &     reference;
+  typedef std::size_t     size_type;
+  typedef std::ptrdiff_t  difference_type;
+  typedef std::bidirectional_iterator_tag   iterator_category;
 
   typedef typename Tds::Vertex Vertex;
   typedef typename Tds::Cell  Cell;
@@ -297,12 +307,17 @@ private:
 
 template < class Tds>
 class Triangulation_ds_facet_iterator_3
-  : public bidirectional_iterator<typename Tds::Facet, ptrdiff_t>
 {
 // traverses the list of cells and report for each cell 
 // the vertices whose cell() is the current cell
 
 public:
+  typedef typename Tds::Facet       value_type;
+  typedef typename Tds::Facet *     pointer;
+  typedef typename Tds::Facet &     reference;
+  typedef std::size_t     size_type;
+  typedef std::ptrdiff_t  difference_type;
+  typedef std::bidirectional_iterator_tag   iterator_category;
 
   typedef typename Tds::Cell Cell;
   typedef typename Tds::Facet Facet;
@@ -449,12 +464,17 @@ private:
 
 template < class Tds>
 class Triangulation_ds_edge_iterator_3
-  : public bidirectional_iterator<typename Tds::Edge, ptrdiff_t>
 {
 // traverses the list of cells and report for each cell 
 // the vertices whose cell() is the current cell
 
 public:
+  typedef typename Tds::Edge       value_type;
+  typedef typename Tds::Edge *     pointer;
+  typedef typename Tds::Edge &     reference;
+  typedef std::size_t     size_type;
+  typedef std::ptrdiff_t  difference_type;
+  typedef std::bidirectional_iterator_tag   iterator_category;
 
   typedef typename Tds::Cell Cell;
   typedef typename Tds::Edge Edge;

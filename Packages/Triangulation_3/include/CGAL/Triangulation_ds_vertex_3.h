@@ -131,7 +131,7 @@ public:
 template <class Vb, class Cb >
 bool
 Triangulation_ds_vertex_3<Vb,Cb>::is_valid
-(bool verbose = false, int level = 0) const
+(bool verbose, int level) const
 {
   bool result = Vb::is_valid(verbose,level);
   result = result && cell()->has_vertex(this);

@@ -91,7 +91,7 @@ public:
   
   typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
   typedef Triangulation_ds_cell_3<Vb,Cb> Cell;
-  typedef pair<Cell*, int>  Facet;
+  typedef std::pair<Cell*, int>  Facet;
   typedef triple<Cell*, int, int> Edge;
 
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
@@ -309,7 +309,7 @@ public:
     // -- if (reorient) the orientation of the cells is modified
 
   // for Delaunay :
-  void star_region( std::set<void*, less<void*> > & region, Vertex* v,
+  void star_region( std::set<void*, std::less<void*> > & region, Vertex* v,
 		     Cell* c, int li );
     // region is a set of connected cells
     // c belongs to region and has facet i on the boundary of region 
@@ -317,7 +317,7 @@ public:
     // by linking v to the boundary of region 
     
 private:
-  Cell* create_star( std::set<void*, less<void*> > & region, 
+  Cell* create_star( std::set<void*, std::less<void*> > & region, 
 		     Vertex* v,
 		     Cell* c, int li );
     // creates the cells needed by star_region
@@ -411,11 +411,11 @@ public:
   }
 
   void
-  incident_cells(Vertex* v, std::set<Cell*, less<Cell*> > & cells,
+  incident_cells(Vertex* v, std::set<Cell*, std::less<Cell*> > & cells,
 		 Cell* c = NULL ) const;
 
   void
-  incident_vertices(Vertex* v, std::set<Vertex*, less<Vertex*> > & vertices,
+  incident_vertices(Vertex* v, std::set<Vertex*, std::less<Vertex*> > & vertices,
 		    Cell* c = NULL ) const;
 
   // CHECKING
@@ -503,7 +503,7 @@ std::istream& operator>>
   }
 
   //  Point p;
-  std::map< int, Vertex*, less<int> > V;
+  std::map< int, Vertex*, std::less<int> > V;
   //  std::vector<Vertex*> V(n);
   
   // creation of the vertices    
@@ -514,7 +514,7 @@ std::istream& operator>>
     V[i] = new Vertex();
   }
 
-  std::map< int, Cell*, less<int> > C;
+  std::map< int, Cell*, std::less<int> > C;
   int m;
  
   read_cells(is, tds, n, V, m, C);
@@ -544,7 +544,7 @@ std::ostream& operator<<
   typedef  Tds::Edge_iterator  Edge_iterator;
   typedef  Tds::Facet_iterator  Facet_iterator;
 
-  std::map< void*, int, less<void*> > V;
+  std::map< void*, int, std::less<void*> > V;
   //  std::map< void*, int, less<void*> > C;
 
   // outputs dimension and number of vertices
@@ -695,11 +695,11 @@ read_cells(std::istream& is,
 	   int n,
 	   // std::vector<void*> &V(n),
 	   std::map< int, Triangulation_data_structure_3<Vb,Cb>::Vertex*, 
-	                  less<int> > &V,
+	                  std::less<int> > &V,
 	   // std::vector<void*> &C(m)
 	   int & m,
 	   std::map< int, Triangulation_data_structure_3<Vb,Cb>::Cell*, 
-	             less<int> > &C )
+	             std::less<int> > &C )
 {
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef  Tds::Vertex  Vertex;
@@ -815,7 +815,7 @@ std::ostream&
 print_cells(std::ostream& os, 
 	    const Triangulation_data_structure_3<Vb,Cb>  &tds,
 	    int n,
-	    std::map< void*, int, less<void*> > &V )
+	    std::map< void*, int, std::less<void*> > &V )
 {
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef  Tds::Vertex  Vertex;
@@ -827,7 +827,7 @@ print_cells(std::ostream& os,
   typedef  Tds::Edge_iterator  Edge_iterator;
   typedef  Tds::Facet_iterator  Facet_iterator;
 
-  std::map< void*, int, less<void*> > C;
+  std::map< void*, int, std::less<void*> > C;
 
   int i = 0;
   int j;
@@ -1532,7 +1532,7 @@ insert_increase_dimension(const Vertex & w, // new vertex
 template <class Vb, class Cb >
 void
 Triangulation_data_structure_3<Vb,Cb>::
-star_region( std::set<void*, less<void*> > & region, 
+star_region( std::set<void*, std::less<void*> > & region, 
 	     Vertex* v, Cell* c, int li )
   // region is a set of connected cells
   // c belongs to region and has facet i on the boundary of region 
@@ -1546,7 +1546,7 @@ star_region( std::set<void*, less<void*> > & region,
   Cell* nouv = create_star( region, v, c, li );
   v->set_cell( nouv );
   // v->set_cell( create_star( region, v, c, li ) );
-  std::set<void*, less<void*> >::const_iterator it;
+  std::set<void*, std::less<void*> >::const_iterator it;
   for( it = region.begin(); it != region.end(); ++it) {
     delete( (Cell *) *it);
   }
@@ -1555,7 +1555,7 @@ star_region( std::set<void*, less<void*> > & region,
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Cell*
 Triangulation_data_structure_3<Vb,Cb>::
-create_star( std::set<void*, less<void*> > & region, 
+create_star( std::set<void*, std::less<void*> > & region, 
 	     Vertex* v, Cell* c, int li )
   // creates the cells needed by star_region
 {
@@ -1659,7 +1659,7 @@ create_star( std::set<void*, less<void*> > & region,
 template <class Vb, class Cb >
 void
 Triangulation_data_structure_3<Vb,Cb>::
-incident_cells(Vertex* v, std::set<Cell*, less<Cell*> > & cells,
+incident_cells(Vertex* v, std::set<Cell*, std::less<Cell*> > & cells,
 	       Cell* c = NULL ) const
 {
   CGAL_triangulation_precondition( v != NULL );
@@ -1688,7 +1688,7 @@ incident_cells(Vertex* v, std::set<Cell*, less<Cell*> > & cells,
 template <class Vb, class Cb >
 void
 Triangulation_data_structure_3<Vb,Cb>::
-incident_vertices(Vertex* v, std::set<Vertex*, less<Vertex*> > & vertices,
+incident_vertices(Vertex* v, std::set<Vertex*, std::less<Vertex*> > & vertices,
 		  Cell* c = NULL ) const
 {
   CGAL_triangulation_precondition( v != NULL );
@@ -1847,8 +1847,8 @@ copy_tds(const Tds & tds, Vertex* vert = NULL)
     CGAL_triangulation_precondition( tds.is_vertex(vert) );
   }
 
-  std::map< void*, void*, less<void*> > V;
-  std::map< void*, void*, less<void*> > F;
+  std::map< void*, void*, std::less<void*> > V;
+  std::map< void*, void*, std::less<void*> > F;
   Vertex*  v;
   Cell* f;
 

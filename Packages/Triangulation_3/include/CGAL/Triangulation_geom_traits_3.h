@@ -40,16 +40,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Rep >
+template < class Repres >
 class Triangulation_geom_traits_3 
 {
 public:
 
-  typedef Point_3<Rep>  Point;
-  typedef Point_2< Cartesian< Quotient<typename Rep::RT> > >  Point2;
-  typedef Segment_3<Rep> Segment;
-  typedef Triangle_3<Rep> Triangle;
-  typedef Tetrahedron_3<Rep> Tetrahedron;
+  typedef Point_3<Repres>  Point;
+  typedef Point_2< Cartesian< Quotient<typename Repres::RT> > >  Point2;
+  typedef Segment_3<Repres> Segment;
+  typedef Triangle_3<Repres> Triangle;
+  typedef Tetrahedron_3<Repres> Tetrahedron;
 
   Triangulation_geom_traits_3()
     {}
