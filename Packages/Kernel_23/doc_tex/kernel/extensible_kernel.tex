@@ -175,10 +175,9 @@ and your class.
 \ccHtmlLinksOn
 
 
-Now we are ready to put the puzzle together. To do so we
-scavenge code. We won't explain it in detail, but you see
-that there are \ccc{typedefs} to the new point class and
-the functors. All the other types are inherited.
+Now we are ready to put the puzzle together. We won't explain it in
+detail, but you see that there are \ccc{typedefs} to the new point
+class and the functors. All the other types are inherited.
 
 
 
@@ -194,8 +193,15 @@ Finally, we give an example how this new kernel can be used.
 Predicates and constructions work with the new point, they
 can be a used to construct segments and triangles with, and
 data structures from the Basic Library, as the Delaunay
-triangulation work with them.  The kernel itself can be
-made robust by plugging it in the \ccc{Filtered_kernel}.
+triangulation work with them.  
+
+The kernel itself can be
+made robust by plugging it in the \ccc{Filtered_kernel_adaptor}.
+This class has the same functionality as the class \ccc{Filtered_kernel}
+with the only difference that it does not enforce type equality
+between \ccc{Kernel::Point_2} and \ccc{Point_2<Kernel>}, which
+does not make sense in our case as our point does not offer
+the functionality of the latter.
 
 
 \ccHtmlLinksOff
@@ -211,13 +217,29 @@ introduce function objects that take care of coordinate
 access.
 
 Global functions operating on, for example
-\ccc{CGAL::Orientation(CGAL::Point_2<K>, CGAL::Point_2<K>,
-CGAL::Point_2<K>)} will not work. Instead you have to
-use the functor \ccc{MyKernel<double>::Orientation_2}.
+\ccc{CGAL::orientation(CGAL::MyKernel<double>::Point_2,CGAL::MyKernel<double>::Point_2,CGAL::MyKernel<double>::Point_2} will not work. 
+Instead you have to use the functor \ccc{MyKernel<double>::Orientation_2}.
 
-Rewriting the code is however pretty easy, as you can give
-the functor object the same name as the global function.
+Rewriting the code is however straightforward: you can give
+the function object the same name as the global function.
+
+\ccHtmlLinksOff
+\begin{ccExampleCode}
+
+K::Orientation_2 orientation_2;
+K::Point_2 p(0,0,RED), q(1,1,BLACK), r(2,1, RED);
+
+orientation(p, q, r);
+
+\end{ccExampleCode}
+\ccHtmlLinksOn
 
 We did not go through the entire kernel, to also make
 it possible to plug in user defined lines, rays or triangles.
+
+
+
+
+
+
 
