@@ -1091,12 +1091,12 @@ template<class T>
 Largest_empty_iso_rectangle_2<T>::const_iterator 
 Largest_empty_iso_rectangle_2<T>::begin()
 {
-  Largest_empty_iso_rectangle_2<T>::const_iterator i = x_sorted.begin();
+  Point_data_set_of_x::const_iterator i = x_sorted.begin();
 
-  while(i->type != REG)
+  while((*i)->type != REG)
     ++i;
 
-  return const_iterator(x_sorted.begin());
+  return const_iterator(i);
 }
 
 template<class T>
