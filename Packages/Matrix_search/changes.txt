@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+DEMO: Fixed sprintf problem on msvc.
+DEMO: Fixed kcc warning.
 ALL : Use CGAL_NTS for number type utilities.
 ALL : Fixed _Random_generator stuff (now without leading underscore).
 DEMO: Added check for CGAL_USE_LEDA.

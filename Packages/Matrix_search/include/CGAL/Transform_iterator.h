@@ -20,6 +20,7 @@
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
+// coordinator   : ETH
 // An OutputIterator Adaptor applying an unary function
 // ============================================================================
 

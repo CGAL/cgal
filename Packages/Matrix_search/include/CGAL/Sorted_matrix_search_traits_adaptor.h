@@ -20,6 +20,7 @@
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
+// coordinator   : ETH
 // Frederickson-Johnson matrix search: traits class adaptor
 // ============================================================================
 
