@@ -817,7 +817,6 @@ The macros are then |CGAL_forall_svertices_of(v,V)|,
 
 void transform( const Aff_transformation_3& linear) {
   //  TRACEN("transform sphere map of vertex" << center_vertex()->point());
-  TRACEN("transform sphere map of vertex" << center_vertex()->point());
     // The affine transformation is linear, i.e., no translation part.
     CGAL_precondition( linear.hm(0,3) == 0 && 
                        linear.hm(1,3) == 0 && 
