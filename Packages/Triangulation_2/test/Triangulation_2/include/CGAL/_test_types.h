@@ -12,6 +12,7 @@
 // #ifdef CGAL_USE_CLN
 // #include <CGAL/CLN/cl_integer.h>
 // #include <cl_io.h>
+// #include <cl_integer_io.h>
 // typedef cl_I Rtype;
 // #else
 #ifdef CGAL_USE_GMP

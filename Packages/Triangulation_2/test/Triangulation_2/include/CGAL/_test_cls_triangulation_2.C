@@ -673,9 +673,9 @@ _test_cls_triangulation_2( const Triangulation & )
   /***** REMOVALS *******/ 
   std::cout << "    removals" << std::endl;
 
-//   // test remove_first()
-//   T0_1.remove_first(T0_1.finite_vertex());
-//   assert( T0_1.number_of_vertices() == 0 );
+  // test remove_first()
+  T0_1.remove_first(T0_1.finite_vertex());
+  assert( T0_1.number_of_vertices() == 0 );
 
   // test remove_second()
   T1_6.remove_second(T1_6.finite_vertex());
