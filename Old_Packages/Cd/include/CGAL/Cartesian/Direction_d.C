@@ -1,0 +1,166 @@
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Herve Brönnimann
+
+#ifndef CGAL_CARTESIAN_DIRECTION_D_C
+#define CGAL_CARTESIAN_DIRECTION_D_C
+
+#include <CGAL/Cartesian/Direction_d.h>
+#include <CGAL/Cartesian/predicates_on_directions_d.h>
+#include <CGAL/Cartesian/d_utils.h>
+
+#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_D_H
+#define CGAL_CTAG
+#endif
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
+
+CGAL_BEGIN_NAMESPACE
+
+template < class R >
+DirectionCd<R CGAL_CTAG>::
+DirectionCd()
+{
+  PTR = new _d_tuple<FT>();
+}
+
+template < class R >
+DirectionCd<R CGAL_CTAG>::
+DirectionCd(const DirectionCd<R CGAL_CTAG> &d)
+  : Handle(d)
+{}
+
+template < class R >
+DirectionCd<R CGAL_CTAG>::
+DirectionCd(const typename DirectionCd<R CGAL_CTAG>::Vector_d &v)
+  : Handle(v)
+{}
+
+template < class R >
+DirectionCd<R CGAL_CTAG>::~DirectionCd()
+{
+}
+
+template < class R >
+DirectionCd<R CGAL_CTAG> &
+DirectionCd<R CGAL_CTAG>::operator=(const DirectionCd<R CGAL_CTAG> &d)
+{
+  Handle::operator=(d);
+  return *this;
+}
+
+template < class R >
+bool
+DirectionCd<R CGAL_CTAG>::operator==(const DirectionCd<R CGAL_CTAG> &d) const
+{
+  if (dimension() != d.dimension()) return false;
+  return equal_direction(*this,d);
+}
+
+template < class R >
+inline
+bool
+DirectionCd<R CGAL_CTAG>::operator!=(const DirectionCd<R CGAL_CTAG> &d) const
+{
+  return !(*this == d);
+}
+
+template < class R >
+inline
+long
+DirectionCd<R CGAL_CTAG>::id() const
+{
+  return (long) PTR;
+}
+
+template < class R >
+inline
+typename DirectionCd<R CGAL_CTAG>::Vector_d
+DirectionCd<R CGAL_CTAG>::to_vector() const
+{
+  return Vector_d(*this);
+}
+
+/*
+template < class R >
+inline
+DirectionCd<R CGAL_CTAG>
+DirectionCd<R CGAL_CTAG>::
+transform
+  (const typename DirectionCd<R CGAL_CTAG>::Aff_transformation_d &t) const
+{
+  return t.transform(*this);
+}
+*/
+
+template < class R >
+inline
+DirectionCd<R CGAL_CTAG> 
+DirectionCd<R CGAL_CTAG>::operator-() const
+{
+  Self v;
+  std::transform(begin(),end(),v.begin(),std::negate<FT>());
+  return v;
+}
+
+template < class R >
+typename DirectionCd<R CGAL_CTAG>::FT 
+DirectionCd<R CGAL_CTAG>::delta(int i) const
+{
+  CGAL_kernel_precondition( i >= 0 && i < dimension() );
+  return *(begin()+i);
+}
+
+#ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONCd
+template < class R >
+std::ostream &operator<<(std::ostream &os, const DirectionCd<R CGAL_CTAG> &d)
+{
+  typedef typename DirectionCd<R CGAL_CTAG>::FT FT;
+  typename DirectionCd<R CGAL_CTAG>::Vector_d v = d.to_vector();
+  switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+    case IO::BINARY :
+      std::for_each(d.begin(),d.end(),print_d<FT>(os));
+      break;
+    default:
+      os << "DirectionCd(" << d.dimension() << ", ";
+      std::for_each(v.begin(),d.end(),print_d<FT>(os));
+      os << ")";
+  }
+  return os;
+}
+#endif // CGAL_NO_OSTREAM_INSERT_DIRECTIONCd
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_DIRECTIONCd
+template < class R >
+std::istream &operator>>(std::istream &is, DirectionCd<R CGAL_CTAG> &d)
+{
+  typedef typename DirectionCd<R CGAL_CTAG>::FT FT;
+  int dim;
+  FT *v;
+  switch(is.iword(IO::mode)) {
+    case IO::ASCII :
+    case IO::BINARY :
+      is >> dim;
+      v = new FT[dim];
+      std::copy_n(istream_iterator<FT>(is),dim, v);
+      break;
+    default:
+      std::cerr << "" << std::endl;
+      std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+      break;
+  }
+  d = DirectionCd<R CGAL_CTAG>(dim,v,v+dim);
+  return is;
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTIONCd
+
+CGAL_END_NAMESPACE
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
+
+#endif // CGAL_CARTESIAN_DIRECTION_D_C
