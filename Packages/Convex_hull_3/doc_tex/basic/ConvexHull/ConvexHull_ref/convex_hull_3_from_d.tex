@@ -15,8 +15,9 @@
   
 The function \ccRefName\ computes the convex hull polyhedron from a set
 of given three-dimensional points.  This function uses the $d$-dimensional
-convex hull randomized incremental construction algorithm with $d$ fixed to 3.  
-The algorithm requires $O(n^2)$ time.
+convex hull randomized incremental construction algorithm 
+\cite{cms:fourresults-93}
+with $d$ fixed to 3.  The algorithm requires $O(n^2)$ time.
 
 \ccInclude{CGAL/convex_hull_3_from_d.h}
 
@@ -56,7 +57,7 @@ The algorithm requires $O(n^2)$ time.
 The following example computes the convex hull of a set of 250 random 
 points chosen uniformly in a sphere of radius 100.
 
-\ccIncludeExampleCode{../../../examples/Convex_hull_3/convex_hull_3_from_d_ex.C}
+\ccIncludeExampleCode{Convex_hull_3/convex_hull_3_from_d_ex.C}
 
 \ccIndexSubitemEnd{convex hull, 3D}{randomized incremental}
 \ccIndexMainItemEnd{convex hull, 3D}
