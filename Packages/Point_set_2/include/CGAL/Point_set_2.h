@@ -262,7 +262,7 @@ public:
        comp(& priority_number);      // comparison object ...
      std::priority_queue<Vertex_handle, std::vector<Vertex_handle>, CGAL::compare_vertices<Vertex_handle,Numb_type,MAP_TYPE> > PQ(comp);
 
-     priority_number[& (*v)] = 0;
+     priority_number[v] = 0;
      PQ.push(v);
      
      mark_vertex(v);

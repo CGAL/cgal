@@ -234,8 +234,8 @@ void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, int k
   compare_vertices<Vertex_handle,Numb_type,MAP_TYPE> comp(& priority_number);      // comparison object ...
   std::priority_queue<Vertex_handle, std::vector<Vertex_handle>, CGAL::compare_vertices<Vertex_handle,Numb_type,MAP_TYPE> > PQ(comp);
 
-  priority_number[& (*v)] = 0;
-  PQ.push(& (*v));
+  priority_number[v] = 0;
+  PQ.push(v);
      
   // mark vertex v
   mark[v] = cur_mark;
@@ -255,7 +255,7 @@ void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, int k
     Vertex_handle act;
      
     do {
-         act = vc->handle();
+         act = vc;
 	 
 	 // test, if act is marked ...
 	 bool is_marked = mark.is_defined(act);  
