@@ -22,6 +22,10 @@
 #include <CGAL/IO/Pm_iostream.h>
 #include <CGAL/IO/Pm_Window_stream.h>
 
+#include <CGAL/Pm_default_point_location.h>
+#include <CGAL/Pm_walk_along_line_point_location.h>
+#include <CGAL/Pm_naive_point_location.h>
+
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
@@ -54,15 +58,20 @@ typedef Traits::Point_2                                 Point;
 typedef Traits::X_curve_2                               Curve;
 typedef std::list<Curve>                                CurveList;
 
+typedef CGAL::Pm_default_point_location<Planar_map>     Def_point_location;
+typedef CGAL::Pm_naive_point_location<Planar_map>       Naive_point_location;
+typedef CGAL::Pm_walk_along_line_point_location<Planar_map>
+                                                        Walk_point_location;
+
 /*
  */
-class Basic_Pm {
+class Basic_pm {
 public:
   /*
    */
-  Basic_Pm() : m_filename(0), m_verbose(false),
+  Basic_pm() : m_filename(0), m_verbose(false),
     m_x0(0), m_x1(0), m_y0(0), m_y1(0) {}
-  virtual ~Basic_Pm() {}
+  virtual ~Basic_pm() {}
   
   /*
    */
@@ -156,11 +165,13 @@ protected:
 
 /*! Construct Incrementaly
  */
-class Increment_pm : public Basic_Pm {
+template <class Strategy>
+class Increment_pm : public Basic_pm {
 public:
   virtual void op()
   {
-    Planar_map pm;
+    Strategy strategy;
+    Planar_map pm(&strategy);
     CurveList::const_iterator i;
     for (i = m_curveList.begin(); i != m_curveList.end(); i++) pm.insert(*i);
     // if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
@@ -170,20 +181,36 @@ public:
   }
 };
 
-typedef CGAL::Bench<Increment_pm> Increment_pm_bench;
+typedef Increment_pm<Def_point_location>        Def_inc_pm;
+typedef CGAL::Bench<Def_inc_pm>                 Def_inc_pm_bench;
+
+typedef Increment_pm<Naive_point_location>      Naive_inc_pm;
+typedef CGAL::Bench<Naive_inc_pm>               Naive_inc_pm_bench;
+
+typedef Increment_pm<Walk_point_location>       Walk_inc_pm;
+typedef CGAL::Bench<Walk_inc_pm>                Walk_inc_pm_bench;
 
 /*! Construct Aggregately
  */
-class Aggregate_pm : public Basic_Pm {
+template <class Strategy>
+class Aggregate_pm : public Basic_pm {
 public:
   virtual void op()
   {
-    Planar_map pm;
+    Strategy strategy;
+    Planar_map pm(&strategy);
     pm.insert(m_curveList.begin(), m_curveList.end());
   }
 };
 
-typedef CGAL::Bench<Aggregate_pm> Aggregate_pm_bench;
+typedef Aggregate_pm<Def_point_location>        Def_agg_pm;
+typedef CGAL::Bench<Def_agg_pm>                 Def_agg_pm_bench;
+
+typedef Aggregate_pm<Naive_point_location>      Naive_agg_pm;
+typedef CGAL::Bench<Naive_agg_pm>               Naive_agg_pm_bench;
+
+typedef Aggregate_pm<Walk_point_location>       Walk_agg_pm;
+typedef CGAL::Bench<Walk_agg_pm>                Walk_agg_pm_bench;
 
 #if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
 CGAL::Window_stream & operator<<(CGAL::Window_stream & os, const Point & p)
@@ -194,7 +221,8 @@ CGAL::Window_stream & operator<<(CGAL::Window_stream & os, const Curve & c)
 
 /*!
  */
-class Display_Pm : public Basic_Pm {
+template <class Strategy>
+class Display_pm : public Basic_pm {
 private:
   typedef CGAL::Window_stream Window_stream;
 
@@ -203,7 +231,8 @@ public:
    */
   virtual void op()
   {
-    Planar_map pm;
+    Strategy strategy;
+    Planar_map pm(&strategy);
     pm.insert(m_curveList.begin(), m_curveList.end());
     m_window->set_flush(0);
     (*m_window) << pm;
@@ -215,7 +244,7 @@ public:
    */
   int init()
   {
-    int rc = Basic_Pm::init();
+    int rc = Basic_pm::init();
     if (rc < 0) return rc;
 
     float x_range = m_x1 - m_x0;
@@ -236,7 +265,7 @@ public:
     float y0 = m_y0 - y_margin;
     m_window->init(x0, x1, y0);   // logical window size 
 
-    m_window->set_redraw(&Display_Pm::redraw);
+    m_window->set_redraw(&Display_pm::redraw);
     m_window->set_mode(leda_src_mode);
     m_window->set_node_width(3);
     m_window->set_point_style(leda_cross_point);
@@ -249,7 +278,7 @@ public:
    */
   void clean()
   {
-    Basic_Pm::init();
+    Basic_pm::init();
     delete m_window;
   }
   
@@ -263,7 +292,14 @@ private:
   Window_stream * m_window;
 };
 
-typedef CGAL::Bench<Display_Pm> DisplayPmBench;
+typedef Display_pm<Def_point_location>          Def_dis_pm;
+typedef CGAL::Bench<Def_dis_pm>                 Def_dis_pm_bench;
+
+typedef Display_pm<Naive_point_location>        Naive_dis_pm;
+typedef CGAL::Bench<Naive_dis_pm>               Naive_dis_pm_bench;
+
+typedef Display_pm<Walk_point_location>         Walk_dis_pm;
+typedef CGAL::Bench<Walk_dis_pm>                Walk_dis_pm_bench;
 
 /*
  */
@@ -288,61 +324,61 @@ int main(int argc, char * argv[])
   // Construct Incrementaly
   const char * bname =
     parseArgs.getBenchName(CGAL::Bench_parse_args::BENCH_INCREMENT);
-  Increment_pm_bench benchIncerement((std::string(bname) + " PM " + PM_TYPE +
-                                      " (" + std::string(filename) + ")"),
-                                     seconds, false);
-  Increment_pm & incrementPm = benchIncerement.getBenchUser();
-  incrementPm.setFormat(inputFormat);
-  incrementPm.setFilename(fullname->c_str());
-  incrementPm.setVerbose(verbose);
+  Def_inc_pm_bench benchDefInc((std::string(bname) + " PM " + PM_TYPE +
+                                    " (" + std::string(filename) + ")"),
+                                   seconds, false);
+  Def_inc_pm & defIncPm = benchDefInc.getBenchUser();
+  defIncPm.setFormat(inputFormat);
+  defIncPm.setFilename(fullname->c_str());
+  defIncPm.setVerbose(verbose);
 
   // Construct Aggregately
   bname =
     parseArgs.getBenchName(CGAL::Bench_parse_args::BENCH_AGGREGATE);
-  Aggregate_pm_bench benchAggregate((std::string(bname) + " PM " + PM_TYPE +
-                                     " (" + std::string(filename) + ")"),
-                                    seconds, false);
-  Aggregate_pm & aggregatePm = benchAggregate.getBenchUser();
-  aggregatePm.setFormat(inputFormat);
-  aggregatePm.setFilename(fullname->c_str());
-  aggregatePm.setVerbose(verbose);
+  Def_agg_pm_bench benchDefAgg((std::string(bname) + " PM " + PM_TYPE +
+                                " (" + std::string(filename) + ")"),
+                               seconds, false);
+  Def_agg_pm & defAggPm = benchDefAgg.getBenchUser();
+  defAggPm.setFormat(inputFormat);
+  defAggPm.setFilename(fullname->c_str());
+  defAggPm.setVerbose(verbose);
 
   // Construct and Display
   bname = parseArgs.getBenchName(CGAL::Bench_parse_args::BENCH_DISPLAY);
-  DisplayPmBench benchDisplay((std::string(bname) + " PM " + PM_TYPE +
-                               " (" + std::string(filename) + ")"),
-                              seconds, false);
-  Display_Pm & displayPm = benchDisplay.getBenchUser();
-  displayPm.setFormat(inputFormat);
-  displayPm.setFilename(fullname->c_str());
-  displayPm.setVerbose(verbose);
+  Def_dis_pm_bench benchDefDis((std::string(bname) + " PM " + PM_TYPE +
+                                " (" + std::string(filename) + ")"),
+                               seconds, false);
+  Def_dis_pm & defDisPm = benchDefDis.getBenchUser();
+  defDisPm.setFormat(inputFormat);
+  defDisPm.setFilename(fullname->c_str());
+  defDisPm.setVerbose(verbose);
 
   if (samples > 0) {
-    benchIncerement.setSamples(samples);
-    benchAggregate.setSamples(samples);
-    benchDisplay.setSamples(samples);
+    benchDefInc.setSamples(samples);
+    benchDefAgg.setSamples(samples);
+    benchDefDis.setSamples(samples);
   } else {
     if (iterations > 0) {
-      benchIncerement.setIterations(iterations);
-      benchAggregate.setIterations(iterations);
-      benchDisplay.setIterations(iterations);
+      benchDefInc.setIterations(iterations);
+      benchDefAgg.setIterations(iterations);
+      benchDefDis.setIterations(iterations);
     }
   }
 
   CGAL::Bench_base::setNameLength(nameLength);
   if (printHeader) CGAL::Bench_base::printHeader();
   if (benchMask & (0x1 << CGAL::Bench_parse_args::BENCH_INCREMENT))
-    benchIncerement();
+    benchDefInc();
   if (benchMask & (0x1 << CGAL::Bench_parse_args::BENCH_AGGREGATE))
-    benchAggregate();
+    benchDefAgg();
   if (benchMask & (0x1 << CGAL::Bench_parse_args::BENCH_DISPLAY))
-    benchDisplay();
+    benchDefDis();
   
   // Ensure the compiler doesn't optimize the code away...
   if (verbose) {
-    std::cout << "(" << benchIncerement.getSamples() << ") " << std::endl;
-    std::cout << "(" << benchAggregate.getSamples() << ") " << std::endl;
-    std::cout << "(" << benchDisplay.getSamples() << ") " << std::endl;
+    std::cout << "(" << benchDefInc.getSamples() << ") " << std::endl;
+    std::cout << "(" << benchDefAgg.getSamples() << ") " << std::endl;
+    std::cout << "(" << benchDefDis.getSamples() << ") " << std::endl;
   }
   
   return 0;
