@@ -1,9 +1,9 @@
 Subdivision algorithms contain two major
 components: \emph{\tr} and \emph{\gm}.
-The \tr\ reparameterizes the source mesh into the target 
+The \tr\ reparameterizes the source mesh into a refined 
 mesh. The \gm\ transforms a submesh on the source mesh
 to a vertex on the refined mesh. The source submesh (with
-the normalized weighting) is called the
+the normalized weights) is called the
 \emph{stencil}. A proper combination of a \tr\ and a set of 
 rules of \gm\ define a valid subdivision scheme.
 
@@ -12,9 +12,9 @@ of the major refinements
 employed in subdivision algorithms, which include Catmull-Clark
 subdivision (PQQ) \cite{cc}, Loop subdivision (PTQ) \cite{loop},
 Doo-Sabin subdivision (DQQ) \cite{ds} and $\sqrt{3}$ subdivision
-\cite{sqrt3}. Subdivisions, such as Quad-Triangle subdivision (PQQ and
-PTQ) \cite{qts,l-pg-03}, may employ a hybrid refinement consisting
-of two different refinements.
+\cite{sqrt3}. Subdivisions, such as Quad-Triangle subdivision 
+\cite{qts,l-pg-03}, may employ a hybrid refinement consisting
+of two different refinements (PQQ and PTQ).
 \begin{figure}
   \centering
   \psfrag{PQQ}[]{\scriptsize PQQ} 
@@ -22,7 +22,7 @@ of two different refinements.
   \psfrag{DQQ}[]{\scriptsize DQQ} 
   \psfrag{Sqrt3}[]{\scriptsize $\sqrt{3}$} 
   \epsfig{file=figs/RefSchemes.eps, width=7cm}
-  \caption{Refinement schemes in practice: 
+  \caption{Examples of refinement schemes: 
     primal quadrilateral quadrisection (PQQ),
     primal triangle quadrisection (PTQ),
     dual quadrilateral quadrisection (DQQ) and
@@ -45,7 +45,7 @@ may have several distinct stencils
   \psfrag{C}[]{(c)}
   \psfrag{D}[]{(d)}
   \epsfig{file=figs/RefMap.eps, width=7cm}
-  \caption{The stencil (vertex weights are not shown) and its 
+  \caption{The stencil (weights are not shown) and its 
            vertex in the Catmull-Clark subdivision (a-c)
            and Doo-Sabin subdivision (d). Catmull-Clark
            subdivision has three stencils: facet-stencil (a), 
