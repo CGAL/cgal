@@ -1,7 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 7.30
+Ver 7.31 (9/05/02)
+- fixed previous hack
+- update the doc 
+
+Ver 7.30 (7/05/02)
 - added  a hack to compile on Sun_CC
 
 Ver 7.29 (7/05/02)
