@@ -167,6 +167,9 @@ public:
   bool is_valid(bool, int ) const
     {return true;}
 
+  void init() const
+  {}
+
 private:
   void* N[4];
   void* V[4];

@@ -161,6 +161,7 @@ public:
   Cell* create_cell(Cell* c)
     {
       Cell* cnew = new Cell(c);
+      cnew->init();
       add_cell(cnew);
       return cnew; 
     }
@@ -190,6 +191,7 @@ private:
 		    const Cell & old_cell)
     {
       Cell* cnew = new Cell( v0,v1,v2,v3,old_cell );
+      cnew->init();
       add_cell(cnew);
       return cnew; 
     }
@@ -215,12 +217,16 @@ private:
   // TODO : put add_cell() in it ?
   Cell* get_new_cell()
   {
+      Cell *r;
       if (_list_of_free_cells._next_cell == &_list_of_free_cells)
-	  return new Cell();
-
-      Cell *r = _list_of_free_cells._next_cell;
-      r->set_in_conflict_flag(0);
-      remove_cell_from_list(r);
+	  r = new Cell();
+      else
+      {
+          r = _list_of_free_cells._next_cell;
+          r->set_in_conflict_flag(0);
+          remove_cell_from_list(r);
+      }
+      r->init();
       return r;
   }
 
@@ -1950,8 +1956,8 @@ insert_increase_dimension(Vertex * v, // new vertex
       // used to store the beginning of the list of cells,
       // which will be past end for the list of new cell
       // in order to be able to traverse only the new cells 
-      // to find the missing neighbors (we know that new Cell() puts
-      // each new cell at the beginning of the list).
+      // to find the missing neighbors (we know that new cells are put
+      // at the beginning of the list).
 	
       Cell* cnew;
       Cell_iterator it = cells_begin(); 
