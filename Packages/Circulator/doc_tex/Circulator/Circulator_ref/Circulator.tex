@@ -53,12 +53,12 @@ present the changes, please refer to \cite[chapter 18]{ms-strg-96} or
 
 {\bf Past-the-end value:} There is no past-the-end value for circulators.
 
-{\bf Singular values:} %There are no singular values for
-%circulators\footnote{Since circulators must be implemented as classes
-%  anyway, there is no need to allow singular values for them. An
-%  un-initalized circulator does not have a singular value, but is
-%  supposed to refer to an empty sequence.}
-A circulator with a singular value is supposed to refer to an empty sequence.
+{\bf Singular values:} There are no singular values for
+ circulators\footnote{Since circulators must be implemented as classes
+  anyway, there is no need to allow singular values for them. An
+  un-initalized circulator does not have a singular value, but is
+  supposed to refer to an empty sequence.}
+
 
 {\bf Empty sequence:} The comparison $c ==$ {\tt NULL} (or $c == 0$)
 for a circulator $c$ is {\tt true} if $c$ denotes an empty sequence,

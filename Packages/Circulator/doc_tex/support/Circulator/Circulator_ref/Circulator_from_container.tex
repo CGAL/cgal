@@ -44,12 +44,12 @@ All types required for circulators are provided.
 \ccCreationVariable{c}
 
 \ccConstructor{Circulator_from_container();}{%
-  a circulator \ccVar\ with a singular value.}
+  a circulator \ccVar\ on an empty sequence.}
 
 \ccConstructor{Circulator_from_container(C* container);}{%
   a circulator \ccVar\ initialized to refer to the first element in
   \ccStyle{container}, i.e.~\ccStyle{container.begin()}.
-  The circulator \ccVar\ contains a singular value if the
+  The circulator \ccVar\ refers to an empty sequence if the
   \ccStyle{container} is empty.
 }
 

@@ -38,21 +38,23 @@ In addition all types required for circulators are provided.
 \ccCreationVariable{c}
 
 \ccConstructor{Circulator_from_iterator();}{%
-  a circulator \ccVar\ with a singular value.}
+  a circulator \ccVar\ on an empty sequence.}
 
 \ccConstructor{Circulator_from_iterator(const I& begin,
   const I& end, const I& cur = begin);}{%
   a circulator \ccVar\ initialized to refer to the element
   \ccStyle{*cur} in  a range {\tt [}\ccStyle{begin}{\tt
     ,}\ccStyle{end}{\tt )}.
-  The circulator \ccVar\ contains a singular value if \ccStyle{begin==end}.
+  The circulator \ccVar\ refers to a empty sequence
+  if \ccStyle{begin==end}.
 }
 
 \ccConstructor{Circulator_from_iterator(
   const Circulator_from_iterator<I,T,Size,Dist>& d,
   const I& cur);}{%
   a copy of circulator $d$ referring to the element \ccc{*cur}.
-  The circulator \ccVar\ contains a singular value if $d$ does so.
+  The circulator \ccVar\ refers to a empty sequence
+  if $d$ does so.
 }
 
 \ccOperations

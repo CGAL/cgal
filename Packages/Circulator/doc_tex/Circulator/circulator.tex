@@ -91,8 +91,7 @@ an iterator {\tt i} the range {\tt [i,i)} denotes the empty range.  As
 long as {\tt c != d} the range {\tt[c,d)} behaves like an iterator
 range and could be used in \stl\ algorithms. For circulators however,
 an additional test {\tt c == NULL} is required that returns true if
-and only if the circular sequence is empty. In this case the
-circulator {\tt c} is said to have a {\em singular value}.  As for
+and only if the circular sequence is empty.  As for
 \CC, we recommend the use of 0 instead of {\tt NULL}.
 
 Besides the conceptual cleanness, the main reason for inventing a new

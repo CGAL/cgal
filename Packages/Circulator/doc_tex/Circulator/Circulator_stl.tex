@@ -246,8 +246,7 @@ in addition to the operations supported by a bidirectional Circulator.
 
 \ccMethod{Circulator min_circulator() const;}
 {Returns the minimal circulator $c_{\mbox{\footnotesize min}}$ in
-  constant time. If $c$ has a singular value, a singular value is
-  returned.} 
+  constant time.} 
 
 There are no comparison operators required.
 \end{ccClass} 
@@ -293,11 +292,12 @@ in the case that the container itself is constant and a mutable
 %\ccSetTwoColumns{Circulator}{}
 
 \ccConstructor{Container_from_circulator();}{%
-    the resulting iterators will have a singular value.}
+    the resulting iterators will have a singular value. }
 
 \ccConstructor{Container_from_circulator(const C& c);}{%
     the resulting iterators will have a singular value if the circulator
-    \ccStyle{c} is singular.}
+    \ccStyle{c} correspond to an empty sequence.
+   }
 
 \ccOperations
 %\ccSetThreeColumns{const_iterator}{container.begin() const;}{}
@@ -390,13 +390,14 @@ In addition all types required for circulators are provided.
 \ccCreationVariable{c}
 
 \ccConstructor{Circulator_from_iterator();}{%
-  a circulator \ccVar\ with a singular value.}
+  a circulator \ccVar\ on an empty sequence.}
 
 \ccConstructor{Circulator_from_iterator(const I& begin, const I& end);}{%
   a circulator \ccVar\ initialized to refer to the element
   \ccStyle{*begin} in  a range {\tt [}\ccStyle{begin}{\tt
     ,}\ccStyle{end}{\tt )}.
-  The circulator \ccVar\ contains a singular value if \ccStyle{begin==end}.
+  %The circulator \ccVar\ contains a singular value if \ccStyle{begin==end}.
+   Returns a circulator on an empty sequence if \ccStyle{begin==end}.
 }
 
 \ccOperations
@@ -467,12 +468,12 @@ All types required for circulators are provided.
 \ccCreationVariable{c}
 
 \ccConstructor{Circulator_from_container();}{%
-  a circulator \ccVar\ with a singular value.}
+  a circulator \ccVar\ on an empty sequence.}
 
 \ccConstructor{Circulator_from_container(C* container);}{%
   a circulator \ccVar\ initialized to refer to the first element in
   \ccStyle{container}, i.e. \ccStyle{container.begin()}.
-  The circulator \ccVar\ contains a singular value if the
+  The circulator \ccVar\ corresponds to an empty sequence if
   \ccStyle{container} is empty.
 }
 
