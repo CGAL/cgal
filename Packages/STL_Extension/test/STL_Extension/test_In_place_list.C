@@ -26,34 +26,14 @@
 // ============================================================================
 
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_PROTECT_CSTDDEF
 #include <cstddef>
-#define CGAL_PROTECT_CSTDDEF
-#endif
-#ifndef CGAL_PROTECT_ITERATOR
 #include <iterator>
-#define CGAL_PROTECT_ITERATOR
-#endif
-#ifndef CGAL_PROTECT_LIST
 #include <list>
-#define CGAL_PROTECT_LIST
-#endif
-#ifndef CGAL_PROTECT_VECTOR
 #include <vector>
-#define CGAL_PROTECT_VECTOR
-#endif
-#ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>  // Needed for iterator category assertions.
-#endif // CGAL_CIRCULATOR_H
-#ifndef CGAL_CIRCULATOR_IMPL_H
 #include <CGAL/circulator_impl.h>  // Needed for test data structures.
-#endif // CGAL_CIRCULATOR_IMPL_H
-#ifndef CGAL_IN_PLACE_LIST_H
 #include <CGAL/In_place_list.h>
-#endif // CGAL_IN_PLACE_LIST_H
 
 // Global data structures.
 std::list<int>   L;

@@ -26,60 +26,23 @@
 // ============================================================================
 
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_PROTECT_CSTDDEF
 #include <cstddef>
-#define CGAL_PROTECT_CSTDDEF
-#endif
-#ifndef CGAL_PROTECT_LIST
 #include <list>
-#define CGAL_PROTECT_LIST
-#endif
-#ifndef CGAL_PROTECT_VECTOR
 #include <vector>
-#define CGAL_PROTECT_VECTOR
-#endif
-#ifndef CGAL_IN_PLACE_LIST_H
 #include <CGAL/In_place_list.h>
-#endif // CGAL_IN_PLACE_LIST_H
-#ifndef CGAL_ITERATOR_IDENTITY_H
 #include <CGAL/Iterator_identity.h>
-#endif // CGAL_ITERATOR_IDENTITY_H
-#ifndef CGAL_CIRCULATOR_IDENTITY_H
 #include <CGAL/Circulator_identity.h>
-#endif // CGAL_CIRCULATOR_IDENTITY_H
-#ifndef CGAL_ITERATOR_PROJECT_H
 #include <CGAL/Iterator_project.h>
-#endif // CGAL_ITERATOR_PROJECT_H
-#ifndef CGAL_FUNCTION_OBJECTS_H
 #include <CGAL/function_objects.h>
-#endif // CGAL_FUNCTION_OBJECTS_H
-#ifndef CGAL_CIRCULATOR_PROJECT_H
 #include <CGAL/Circulator_project.h>
-#endif // CGAL_CIRCULATOR_PROJECT_H
-#ifndef CGAL_CIRCULATOR_ON_NODE_H
 #include <CGAL/Circulator_on_node.h>
-#endif // CGAL_CIRCULATOR_ON_NODE_H
-#ifndef CGAL_N_STEP_ADAPTOR_H
 #include <CGAL/N_step_adaptor.h>
-#endif // CGAL_N_STEP_ADAPTOR_H
-#ifndef CGAL_N_STEP_ADAPTOR_DERIVED_H
 #include <CGAL/N_step_adaptor_derived.h>
-#endif // CGAL_N_STEP_ADAPTOR_DERIVED_H
-#ifndef CGAL_FUNCTION_OBJECTS_H
 #include <CGAL/function_objects.h>
-#endif // CGAL_FUNCTION_OBJECTS_H
-#ifndef CGAL_INVERSE_INDEX_H
 #include <CGAL/Inverse_index.h>
-#endif // CGAL_INVERSE_INDEX_H
-#ifndef CGAL_RANDOM_ACCESS_ADAPTOR_H
 #include <CGAL/Random_access_adaptor.h>
-#endif // CGAL_RANDOM_ACCESS_ADAPTOR_H
-#ifndef CGAL_RANDOM_ACCESS_VALUE_ADAPTOR_H
 #include <CGAL/Random_access_value_adaptor.h>
-#endif // CGAL_RANDOM_ACCESS_VALUE_ADAPTOR_H
 
 using namespace CGAL;
 
