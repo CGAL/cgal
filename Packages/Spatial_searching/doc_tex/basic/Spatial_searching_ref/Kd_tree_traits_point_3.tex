@@ -37,6 +37,7 @@ for example \ccc{CGAL::Cartesian<double>} or \ccc{CGAL::Simple_cartesian<CGAL::G
 \ccTypedef{Kernel::FT FT;}{Number type.}
 
 \ccTypedef {Kernel::Point_3 Point_d;}{Point type.}
+\ccTypedef {Kernel::Iso_rectangle_2 Iso_box_d;}{Iso box type.}
 
 \ccTypedef {Kernel::Cartesian_const_iterator_3 Cartesian_const_iterator_d;}{An iterator over the Cartesian
 	coordinates.}
@@ -47,6 +48,8 @@ The functor for begin has as argument a \ccc{Point_d}. The functor for the past 
 has as argument a \ccc{Point_d} and an \ccc{int}.}
 
 
+\ccTypedef {Kernel::Construct_iso_cuboid_3 Construct_iso_box_d;}{Functor with operator to construct 
+the iso box from two points.}
 
 \ccSeeAlso
 

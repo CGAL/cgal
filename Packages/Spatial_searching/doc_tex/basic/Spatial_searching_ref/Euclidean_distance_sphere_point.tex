@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Euclidean_distance_sphere_point<Traits,Sphere>}  %% add template arg's if necessary
+\begin{ccRefClass}{Euclidean_distance_sphere_point<Traits>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -45,7 +45,8 @@ for example \ccc{CGAL::Cartesian_d<double>::Sphere_d}.
 
 \ccTypedef{Traits::FT FT;}{Number type.}
 \ccTypedef{Traits::Point_d Point_d;}{Point type.}
-\ccTypedef{Sphere Query_item;}{Query item type.}
+\ccTypedef{Traits::Sphere_d Sphere_d;}{Sphere type.}
+\ccTypedef{Sphere_d Query_item;}{Query item type.}
 
 
 \ccCreation

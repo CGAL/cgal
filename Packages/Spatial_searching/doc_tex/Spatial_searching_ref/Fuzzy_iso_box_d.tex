@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Fuzzy_iso_box<Traits, IsoBox>}  %% add template arg's if necessary
+\begin{ccRefClass}{Fuzzy_iso_box<Traits>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -29,8 +29,7 @@ by a $d$-dim square with side length $\epsilon$.
 Expects for the template argument a model of the concept
 \ccc{SearchTraits}, for example \ccc{CGAL::Search_traits_2<CGAL::Simple_cartesian<double> >}.
 
-Expects for the second template argument  a model 
-of the concept \ccc{IsoBox}, for example \ccc{CGAL::Iso_rectangle_2<Kernel>}.
+
  
 \ccIsModel
 
@@ -39,6 +38,10 @@ of the concept \ccc{IsoBox}, for example \ccc{CGAL::Iso_rectangle_2<Kernel>}.
 \ccTypes
 
 \ccTypedef{Traits::Point_d Point_d;}{Point type.}
+\ccTypedef{Traits::Iso_box_d Iso_box_d;}{Iso box type.}
+\ccTypedef{Traits::Construct_iso_box_d Construct_iso_box_d;}{Function object with an operator 
+that takes two \ccc{Point_d} and returns the smallest \ccc{Iso_box_d} vontaing the points.}
+
 \ccTypedef{Traits::FT FT;}{Number type.}
 
 \ccCreation

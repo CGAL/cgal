@@ -1,30 +1,31 @@
 \chapter{Spatial Searching}
 \label{ChapterReferenceSpatialSearching}
 
-This package implements exact and approximate distance browsing by
-providing implementations of algorithms supporting
+This package provides data structures and algorithms for exact and approximate distance browsing,
+supporting
 
 \begin{itemize} 
 
 \item
-both nearest and furthest neighbor searching
+both nearest and furthest neighbor searching,
 
 \item
-both exact and approximate searching
+both exact and approximate searching,
 
 \item
-(approximate) range searching
+(approximate) range searching,
 
 \item 
-(approximate) $k$-nearest and $k$-furthest neighbor searching
+(approximate) $k$-nearest and $k$-furthest neighbor searching,
 
 \item 
-(approximate) incremental nearest and incremental furthest neighbor searching
+(approximate) incremental nearest and incremental furthest neighbor searching,
 
 \item
 query items representing points and spatial objects.
 
 \end{itemize}
+
 
 In these searching problems a set $P$ of data points in $d$-dimensional
 space is given.
@@ -43,9 +44,9 @@ classes that are described in the reference pages.
 \ccRefIdfierPage{CGAL::Orthogonal_k_neighbor_search<Traits, OrthogonalDistance, Splitter, SpatialTree>} \\
 \ccRefIdfierPage{CGAL::Kd_tree<Traits, Splitter, UseExtendedNode>} 
 
-\ccHeading{Range Query Classes}
+\ccHeading{Range Query Item Classes}
 
-\ccRefIdfierPage{CGAL::Fuzzy_iso_box<Traits, IsoBox>} \\
+\ccRefIdfierPage{CGAL::Fuzzy_iso_box<Traits>} \\
 \ccRefIdfierPage{CGAL::Fuzzy_sphere<Traits>} 
 
 
@@ -58,8 +59,8 @@ classes that are described in the reference pages.
 \ccHeading{Distance Classes}
 
 \ccRefIdfierPage{CGAL::Euclidean_distance<Traits>} \\
-\ccRefIdfierPage{CGAL::Euclidean_distance_sphere_point<Traits,Sphere>} \\
-\ccRefIdfierPage{CGAL::Manhattan_distance_iso_box_point<Traits, IsoBox>} \\
+\ccRefIdfierPage{CGAL::Euclidean_distance_sphere_point<Traits>} \\
+\ccRefIdfierPage{CGAL::Manhattan_distance_iso_box_point<Traits>} \\
 \ccRefIdfierPage{CGAL::Weighted_Minkowski_distance<Traits>} 
 
 \ccHeading{Splitter Classes}
@@ -86,14 +87,12 @@ classes that are described in the reference pages.
 
 \ccRefConceptPage{FuzzyQueryItem} \\
 \ccRefConceptPage{GeneralDistance} \\ 
-\ccRefConceptPage{IsoBox} \\
 \ccRefConceptPage{OrthogonalDistance} \\
 \ccRefConceptPage{PointContainer} \\
 \ccRefConceptPage{SearchTraits} \\
 \ccRefConceptPage{SpatialPoint} \\
 \ccRefConceptPage{SpatialSeparator} \\
 \ccRefConceptPage{SpatialTree} \\
-\ccRefConceptPage{Sphere} \\
 \ccRefConceptPage{Splitter}
 
 \lcHtml{\ccHeading{Alphabetical Listing of Reference Pages}}

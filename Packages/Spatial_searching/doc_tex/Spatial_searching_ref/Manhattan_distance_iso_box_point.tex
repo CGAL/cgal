@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Manhattan_distance_iso_box_point<Traits, IsoBox>}  %% add template arg's if necessary
+\begin{ccRefClass}{Manhattan_distance_iso_box_point<Traits>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -44,6 +44,7 @@ for example \ccc{CGAL::Cartesian<double>::Iso_cuboid_3}.
 
 \ccTypedef{Traits::FT FT;}{Number type.}
 \ccTypedef{Traits::Point_d Point_d;}{Point type.}
+\ccTypedef{Traits::Iso_box_d Iso_box_d;}{Iso box type.}
 \ccTypedef{IsoBox Query_item;}{Query item type.}
 
 \ccCreation
@@ -53,18 +54,18 @@ for example \ccc{CGAL::Cartesian<double>::Iso_cuboid_3}.
 
 \ccOperations
 
-\ccMethod{FT transformed distance(IsoBox b, Point_d p);}{Returns the transformed 
+\ccMethod{FT transformed distance(Iso_box_d b, Point_d p);}{Returns the transformed 
 distance between \ccc{b} and \ccc{p}.}
 
 \ccMethod{FT transformed_distance(FT d);} {Returns $d$.}
 
 \ccMethod{FT inverse_of_transformed_distance(FT d);} {Returns $d$.}
 
-\ccMethod{FT min_distance_to_rectangle(IsoBox b, Kd_tree_rectangle<Traits> r);}
+\ccMethod{FT min_distance_to_rectangle(Iso_box_d b, Kd_tree_rectangle<Traits> r);}
 {Returns the minimal distance between a point from \ccc{b} and a point from
 \ccc{r}.}
 
-\ccMethod{FT max_distance_to_rectangle(IsoBox b, Kd_tree_rectangle<Traits> r);}
+\ccMethod{FT max_distance_to_rectangle(Iso_box_d b, Kd_tree_rectangle<Traits> r);}
 {Returns the maximal distance between the iso-box \ccc{b} and
 a point from \ccc{r} furthest to \ccc{b}.}
 

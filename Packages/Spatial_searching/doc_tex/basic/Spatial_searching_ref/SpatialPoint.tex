@@ -26,6 +26,7 @@ specialized for the point type.
 
 \ccTypes
 \ccNestedType{Point_d}{Point type.}
+\ccNestedType{Iso_box_d}{Iso box type.}
 
 \ccNestedType{FT}{The number type of the \ccHtmlNoLinksFrom{Cartesian} coordinates of type \ccc{Point_d}.}
 
@@ -36,12 +37,15 @@ specialized for the point type.
 \ccNestedType{Construct_cartesian_const_iterator}{Functor with operators to construct iterators on the
 first and the past-the-end iterator for the \ccHtmlNoLinksFrom{Cartesian} coordinates of a point.}
 
+\ccNestedType{Construct_iso_box_d}{Functor with operator to construct the iso box from two points.}
+
 \ccCreationVariable{p}  %% choose variable name
 
 
 
 \ccHasModels
-
+\ccc{CGAL::Cartesian_d<FT>}\\
+\ccc{CGAL::Homogeneous_d<RT>}\\
 \ccc{CGAL::Search_traits_2<Kernel>}\\
 \ccc{CGAL::Search_traits_3<Kernel>}, \\
 \ccc{CGAL::Search_traits<NT,Point,CartesianCoordinateIterator,ConstructCartesianCoordinateIterator>}.
