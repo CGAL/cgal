@@ -192,9 +192,10 @@ face |f = face(v)|.
 
 We call the embedded map |(V,E)| also the $1$-skeleton of |P|.
 
-Plane maps are attributed, for each object $u \in V \cup E \cup F$
-we attribute an information |mark(u)| of type |Mark|. |Mark| fits the
+Plane maps are attributed. To each object $u \in V \cup E \cup F$
+we attribute a value |mark(u)| of type |Mark|. |Mark| fits the
 concepts assignable, default-constructible, and equal-comparable.}*/
+
 protected: 
 HDS* phds; 
 friend class PM_decorator<HDS>;
@@ -302,7 +303,7 @@ Halfedge_const_handle first_out_edge(Vertex_const_handle v) const
 { return v->halfedge()->opposite(); }
 
 Halfedge_const_handle last_out_edge(Vertex_const_handle v) const
-/*{\Mop returns a the halfedge with source |v| that is the last
+/*{\Mop returns the halfedge with source |v| that is the last
   in the circular iteration before encountering |first_out_edge(v)| 
   again. \precond |!is_isolated(v)|.}*/
 { return v->halfedge()->next(); }
