@@ -23,7 +23,8 @@
 // (Terrain triangulation)
 // ============================================================================
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Filtered_kernel.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/IO/File_writer_OFF.h>
@@ -36,9 +37,6 @@
 #include <iostream>
 #include <fstream>
 
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_rational.h>
-#endif
 #include "triangulation_print_OFF.h"
 
 using namespace std;
@@ -54,13 +52,11 @@ public:
         : Point_3(x,y,z), index(i)               {}
 };
 
-#ifdef CGAL_USE_LEDA
-typedef  CGAL::Cartesian<leda_rational>                     Kernel;
-#else
-typedef  CGAL::Cartesian<double>                            Kernel;
-#endif
-typedef  Indexed_point<Kernel>                              IPoint;
-typedef  CGAL::Triangulation_euclidean_traits_xy_3<Kernel>  Gtraits;
+typedef CGAL::Simple_cartesian<double> SC;
+typedef CGAL::Filtered_kernel<SC> Kernel; 
+
+typedef Indexed_point<Kernel>                              IPoint;
+typedef CGAL::Triangulation_euclidean_traits_xy_3<Kernel>  Gtraits;
 
 struct Gt : public Gtraits {
     typedef IPoint Point;
