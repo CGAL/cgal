@@ -13,16 +13,15 @@ int main(int argc, char* argv[])
 }
 #else
 #include <CGAL/Cartesian.h>
-#include "../../include/CGAL/Snap_rounding_2_traits.h"
+#include "../../include/CGAL/Snap_rounding_traits_2.h"
 #include "../../include/CGAL/Snap_rounding_2.h"
 
 typedef leda_rational Number_Type;
 
 typedef CGAL::Cartesian<Number_Type>             Rep;
-typedef CGAL::Snap_rounding_traits<Rep>          Sr_traits;
-//typedef CGAL::Snap_rounding_2<Sr_traits>         Snap_rounding_2;
-typedef Rep::Segment_2               Segment_2;
-typedef Rep::Point_2                 Point_2;
+typedef CGAL::Snap_rounding_traits_2<Rep>        Sr_traits;
+typedef Rep::Segment_2                           Segment_2;
+typedef Rep::Point_2                             Point_2;
 
 void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg_list)
 {
