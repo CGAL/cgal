@@ -9,130 +9,147 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// trivial default implementations
-class UniqueNumbers {
-    static unsigned int n;
-    unsigned int i;
-public:
-    UniqueNumbers() : i( n++ ) {}
-    unsigned int num() const { return i; }
-};
-unsigned int UniqueNumbers::n = 0;
+struct Box_intersection_d {
+    enum Setting { COMPLETE, BIPARTITE };
+    enum Topology { HALF_OPEN, CLOSED };
 
-template< class T, unsigned int DIM >
-struct Default_Bbox_d : public UniqueNumbers {
-    typedef T NumberType;
-    Default_Bbox_d() { init(); }
-    Default_Bbox_d( T l[DIM], T h[dim] ) {
-        std::copy( l, l + DIM, _lo );
-        std::copy( h, h + DIM, _hi );
+
+    struct Unique_numbers {
+        Unique_numbers() : i(n++) {}
+        unsigned int get_num() const { return i; }
+    private:
+        static unsigned int n;
+        unsigned int i;
+    };
+    /*
+    template< class Box >
+    struct Select_box_traits {
+        typedef char True;
+        typedef struct { char a[2]; } False;
+
+        template< class T >
+        True is_derived_from_base( typename
+          T::Unique_default_box_d_type_tag_which_does_not_appear_elsewhere=0);
+        template< class T >
+        False is_derived_from_base(...);
+
+        template< bool, typename A, typename B >
+        struct IF                { typedef A R; };
+        template<typename A, typename B>
+        struct IF< false, A, B > { typedef B R; };
+
+        typedef typename IF
+           < sizeof(is_derived_from_base<Box>()) == sizeof(True),
+             Default_box_d_traits< Box >,
+             void
+           >::R Box_traits;
+    };*/
+
+};
+
+unsigned int Box_intersection_d::Unique_numbers::n = 0;
+
+template< class NT, unsigned int N >
+struct Default_box_d : public Box_intersection_d::Unique_numbers {
+    typedef int Unique_default_box_d_type_tag_which_does_not_appear_elsewhere;
+    typedef NT Number_type;
+    Default_box_d() { init(); }
+    Default_box_d( NT l[N], NT h[N] ) {
+        std::copy( l, l + N, lo );
+        std::copy( h, h + N, hi );
     }
 
     void init ( bool complete = false ) {
-        T inf = workaround::numeric_limits< T >::inf();
-        T sup = workaround::numeric_limits< T >::sup();
+        NT inf = workaround::numeric_limits< NT >::inf();
+        NT sup = workaround::numeric_limits< NT >::sup();
         if( !complete )
             std::swap( inf, sup );
-        std::fill( _lo, _lo + DIM, inf );
-        std::fill( _hi, _lo + DIM, sup );
+        std::fill( lo, lo + N, inf );
+        std::fill( hi, hi + N, sup );
     }
 
-    void extend( T p[ DIM ] ) {
-        for( unsigned int dim = 0; dim < DIM; ++dim ) {
-            _lo [ DIM ] = std::min( _lo[ DIM ], p[ DIM ] );
-            _hi [ DIM ] = std::max( _hi[ DIM ], p[ DIM ] );
+    void extend( NT p[ N ] ) {
+        for( unsigned int dim = 0; dim < N; ++dim ) {
+            lo[dim] = std::min( lo[dim], p[dim] );
+            hi[dim] = std::max( hi[dim], p[dim] );
         }
     }
 
-    T lo( unsigned int dim ) const { return _lo[dim]; }
-    T hi( unsigned int dim ) const { return _hi[dim]; }
-    static unsigned int get_dim() { return DIM; }
+    NT get_lo( unsigned int dim ) const { return lo[dim]; }
+    NT get_hi( unsigned int dim ) const { return hi[dim]; }
+    static unsigned int get_dim() { return N; }
 protected:
-    T _lo[ DIM ], _hi[ DIM ];
+    NT lo[N], hi[N];
 };
 
-template< class BOX >
-struct Default_Bbox_d_Adapter {
-    typedef BOX Box;
-    typedef typename BOX::NumberType NumberType;
 
-    static NumberType get_lo( const Box& b, unsigned int dim )
-    { return b.lo( dim ); }
+template< class Box_ >
+struct Default_box_d_traits {
+    typedef Box_ Box;
+    typedef typename Box::Number_type Number_type;
 
-    static NumberType get_hi( const Box& b, unsigned int dim )
-    { return b.hi( dim ); }
+    static Number_type get_lo( const Box& b, unsigned int dim )
+    { return b.get_lo( dim ); }
+
+    static Number_type get_hi( const Box& b, unsigned int dim )
+    { return b.get_hi( dim ); }
 
     static unsigned int get_num( const Box& b )
-    { return b.num();     }
+    { return b.get_num();     }
 
     static unsigned int get_dim() { return Box::get_dim(); }
 };
 
+template< class BoxTraits, bool closed >
+struct Default_box_predicate_traits : public BoxTraits {
+    typedef typename BoxTraits::Box             Box;
+    typedef typename BoxTraits::Number_type     Number_type;
 
-// BoxAdapter has to provide following static members:
-// NumberType get_lo( Box, int dim )
-// NumberType get_hi( Box, int dim )
-// unsigned int get_num( Box )
-// Box may be of type immediate, reference, or pointer
+    template<bool b> struct type_from_bool {};
 
-template <bool b>
-struct Type_from_bool {};
-
-template< class BoxAdapter, bool closed >
-struct Default_Box_Traits : public BoxAdapter {
-    typedef typename BoxAdapter::Box         Box;
-    typedef typename BoxAdapter::NumberType  NumberType;
-    typedef Default_Box_Traits< BoxAdapter, closed > Traits;
-
-    static unsigned int cutoff;
-
-    static bool hi_greater ( NumberType hi, NumberType val, 
-                             Type_from_bool<true> )
+    static bool hi_greater ( Number_type hi, Number_type val, type_from_bool<true> b )
     { return hi >= val; }
+    static bool hi_greater ( Number_type hi, Number_type val, type_from_bool<false> b )
+    { return hi >  val; }
+    static bool hi_greater ( Number_type hi, Number_type val )
+    { return hi_greater(hi, val, type_from_bool<closed>()); }
 
-    static bool hi_greater ( NumberType hi, NumberType val, 
-                             Type_from_bool<false> )
-    { return hi > val; }
-
-    static bool hi_greater ( NumberType hi, NumberType val )
-    { return hi_greater( hi, val, Type_from_bool<closed>()); }
-
-    // cmp dim = \a b -> islolesslo a b dim
+    // cmp dim a b = islolesslo a b dim
     class Compare : public std::binary_function< Box, Box, bool > {
         unsigned int dim;
     public:
         Compare( unsigned int dim ) : dim( dim ) {}
         bool operator()( const Box& a, const Box& b ) const
-        { return Traits::is_lo_less_lo( a, b, dim );  }
+        { return is_lo_less_lo( a, b, dim );  }
     };
 
-    // loless val dim = \box -> getlo box dim < val
+    // loless val dim box = getlo box dim < val
     class Lo_Less : public std::unary_function< Box, bool > {
-        NumberType value;
+        Number_type value;
         unsigned int dim;
     public:
-        Lo_Less( NumberType value, unsigned int dim )
+        Lo_Less( Number_type value, unsigned int dim )
             : value( value ), dim( dim ) {}
         bool operator() ( const Box& box ) const
         { return get_lo( box, dim ) < value; }
     };
 
     class Hi_Greater : public std::unary_function< Box, bool > {
-        NumberType value;
+        Number_type value;
         unsigned int dim;
     public:
-        Hi_Greater( NumberType value, unsigned int dim )
+        Hi_Greater( Number_type value, unsigned int dim )
             : value( value ), dim( dim ) {}
         bool operator() ( const Box& box ) const
         { return hi_greater( get_hi( box, dim ), value); }
     };
 
-    // p lo hi dim = \box -> getlo box dim < lo && gethi box dim > hi
+    // p lo hi dim box = getlo box dim < lo && gethi box dim > hi
     class Interval_Spanning_Predicate : public std::unary_function<Box,bool> {
-        NumberType lo, hi;
+        Number_type lo, hi;
         unsigned int dim;
     public:
-        Interval_Spanning_Predicate( NumberType lo, NumberType hi,
+        Interval_Spanning_Predicate( Number_type lo, Number_type hi,
                                      unsigned int dim )
             : lo( lo ), hi( hi ), dim( dim ) {}
         // returns true <=> box spans [lo,hi) in dimension dim
@@ -152,15 +169,8 @@ struct Default_Box_Traits : public BoxAdapter {
     { return is_lo_less_hi( a, b, dim ) && is_lo_less_hi( b, a, dim ); }
 
     static bool contains_lo_point(const Box& a, const Box& b, unsigned int dim)
-    { return !is_lo_less_lo( b, a, dim ) && is_lo_less_hi( b, a, dim );  }
-
-    static unsigned int get_cutoff()
-    { return cutoff; }
+    { return is_lo_less_lo( a, b, dim ) && is_lo_less_hi( b, a, dim );  }
 };
-
-template< class BoxAdapter, bool closed >
-unsigned int
-Default_Box_Traits<BoxAdapter,closed>::cutoff = 3000;
 
 CGAL_END_NAMESPACE
 

@@ -1,4 +1,3 @@
-%\begin{twocolumn}
 \chapter*{Bounding Box Intersection}
 
 \section*{Introduction}
@@ -44,78 +43,78 @@ class.
 
 There has to be an arbitrary fixed order between boxes, for example by
 assigning unique numbers to each box. If boxes are allocated on the
-heap, also the memory location could define such an order. (explain
-why?)
+heap, also the memory location could define such an order. 
 
-The default bounding box
+The default bounding box 
 \begin{itemize} 
-  \item  provides a standard bounding box implementation with number type and
-  dimension template parameter
-
-  \texttt{template< class T, unsigned int DIM > struct Default\_Bbox\_d;}
-  \item provides a unique numbering
+  \item implements a standard bounding box 
+  \item is generic in terms of number type and dimension: \\
+  \texttt{template< class T, unsigned int DIM > struct Default\_box\_d} 
+  \item provides unique numbering
   \item can be used as a base class to derive a user defined box with
   additional information, for example, an exact geometric primitive
   that was approximated with the bounding box.
 \end{itemize}
 
-
 \subsection*{Box Adapter}
-Bounding box access is exclusively done using a box adapter. This adapter hides the specific interface a box may have. A model of a box adapter has to provide
+Bounding box access is exclusively done using a box adapter. This adapter hides the specific interface a box may have. A model of a box adapter may look as follows:
 \begin{ccExampleCode}
-  typedef ... Box
-  typedef ... NumberType
-  static NumberType get_lo( const Box& b, unsigned int dim )
-  static NumberType get_hi( const Box& b, unsigned int dim )
-  static unsigned int get_num( const Box& b )
-  static unsigned int get_dim()
+template< class Box_ >
+struct Default_box_d_adapter {
+    typedef Box_ Box;
+    typedef typename Box::Number_type Number_type;
+
+    static Number_type get_lo( const Box& b, unsigned int dim )
+    { return b.get_lo( dim ); }
+
+    static Number_type get_hi( const Box& b, unsigned int dim )
+    { return b.get_hi( dim ); }
+
+    static unsigned int get_num( const Box& b )
+    { return b.get_num();     }
+
+    static unsigned int get_dim() 
+    { return Box::get_dim(); }
+};
 \end{ccExampleCode}
 
+This specific example of a box adapter is tailored for box classes that implement the default bounding box given above. If another implementation of box classes is used that (for example) does not allow access via dimension indices directly, a custom box adapter has to be written that translates dimension indices to whatever method invocations needed.
+
+Box adapter requirements:
 \begin{itemize}
- \item the type of \texttt{Box} can be either a pointer or a plain structure
- \item \texttt{NumberType} must be the same type as for the
- \texttt{BoundingBox} 
- \item \texttt{get\_lo} and \texttt{get\_hi} return the vector
- components of dimension \texttt{dim}, where the first  dimension has
- the index zero 
- \item \texttt{get\_num} returns the unique number of that box
-%\item NumberType specifies the underlying number type. \texttt{std::numeric_limits< NumberType >} must be defined (for basic types like int, double there exist defaults)
+ \item The type of \texttt{Box} can be either a pointer or a plain structure.
+ \item \texttt{Number\_type} must be the same type as for the \texttt{BoundingBox}. In the example above, \texttt{Number\_type} is just propagated.
+ \item \texttt{get\_lo} and \texttt{get\_hi} return the vector components of dimension \texttt{dim}, where the first  dimension has the index zero.
+ \item \texttt{get\_num} returns the unique number of that box. Note that the return type is not constrained to \texttt{unsigned int}. Instead, it can be anything for which both \texttt{==} and \texttt{<} operators are defined.
 \end{itemize}
-
-A default box adapter is given that builds up on the default bounding box:
-
-\texttt{template< class BOX > struct Default\_Bbox\_d\_Adapter}
 
 \subsection*{Box Traits}
-
-A traits class is required to specify predicates between boxes. It
-also propagates number type, box type, dimension and some other
-parameters from the box adapter. (eigentlich muss der user nur box
-adapter anpassen. traits -> verstecken als predicates, adapter ->
-aufteilen in adapter und traits?)
+The box traits class specifies predicates between boxes. It propagates number type, box type, dimension and all other fields from the box adapter to the actual implementation of bounding box intersection. Some of the predicates it defines are:
 
 \begin{itemize}
- \item defines predicates on boxes, eg.
- \begin{itemize}
-  \item one interval contains the starting point of another
-  \item interval starting point less than another intervals starting point    
-  \item open/closed box behavior decided here
- \end{itemize}
- \item box access relies on \ccc{BoxAdapter}
- \item default traits class provided. Most users probably dont want to override the default traits class. 
- \item \texttt{template< class BoxAdapter, bool closed > struct Default\_Box\_Traits}
+ \item \texttt{bool contains\_lo\_point(Box interval, Box point, int dim)}: regard the first box in dimension \texttt{dim} as an interval, and the second as a point being the low point of an interval. Returns true iff \texttt{interval} contains \texttt{point}.
+ \item \texttt{bool is\_lo\_less\_lo(Box a, Box b, int dim)}: interval starting point less than another intervals starting point (wrt. dimension \texttt{dim})
+ \item a binary predicate object \texttt{class Compare} that compares two boxes using the predicate \texttt{is\_lo\_less\_lo}.
 \end{itemize}
 
+Usually, the default predicates need not be changed. Detailed requirements for box traits can be found in the reference. The default implementation of box predicates is a template with two parameters:
+
+\texttt{template< class BoxAdapter, bool closed > struct Default\_Box\_Traits}
+
+Box access is required inside the predefined predicates, therefore a box adapter has to be given to the traits class. The boolean constant \texttt{closed} chooses between closed and half open box interpretation. 
+
+
 \subsection*{Usage}
-First, for each geometric primitive, a bounding box has to be computed. Any bounding box class can be used, as long as a box adapter exists for it. The bounding box sets have to be supplied to the algorithm by pairs of \ccc{Random Access Iterators}. While checking, each bounding box intersection is reported to a callback as two box references.
+First, for each geometric primitive, a bounding box has to be computed. Any bounding box class can be used, as long as a box adapter exists for it. The bounding box sets have to be supplied to the algorithm by pairs of \ccc{Random Access Iterators}. While checking, each bounding box intersection is written to an output iterator as two box references.
+
+If the used box class is derived from the default bounding box (or at least has the same fields), there is no need to specify a box adapter. When no box adapter is given, it is assumed that the default box adapter can be used to access the supplied boxes.
 
 
 \begin{itemize}
-  \item intersection algo expects input iterators, an output iterator and a traits class
-  \item runtime $O(n\log^{d}n+k)$ where n is the number of boxes, d is dimension and k is number of intersections
+  \item runtime $O(n\log^{d-1}n+k)$ where n is the number of boxes, d is dimension (starting with one) and k is number of intersections
   \item space requirement $O(n)$ where n is number of boxes. no new space is allocated. instead, user provided box iterators are reused.
   \item some fine-tuning required for last percent of performance (cutoff parameter) 
-  \item segment tree has some overhead. if callback runtime is low, better use scanning for lower numbers of boxes. \cgal uses exact arithmetic -> may slow down the computation inside the callbacks -> segment tree faster even for low numbers of boxes.  
+  \item segment tree has some overhead. if callback runtime is low, better use scanning for lower numbers of boxes. \cgal uses exact arithmetic. may slow down the computation inside the callbacks. segment tree faster even for low numbers of boxes.  
 \end{itemize}
 
  
@@ -133,8 +132,6 @@ box containing some nondeterministic primitive.
 Here, a bounding box is a cube. This saves some space, at the expense of precision. The custom box only contains a vector to the minimal point plus a size for all three dimensions.
 
 \ccIncludeExampleCode{../../examples/Box_intersection_d/customadapter.cc}
-
-%\end{twocolumn}
 
 
 %% EOF %%

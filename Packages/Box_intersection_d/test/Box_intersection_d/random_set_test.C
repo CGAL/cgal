@@ -1,9 +1,9 @@
-#include <CGAL/Box_intersection_d/box_traits.h>
-#include <CGAL/Box_intersection_d/one_way_scan.h>
-#include <CGAL/Box_intersection_d/all_pairs.h>
 // enable invariant checking
 #define SEGMENT_TREE_CHECK_INVARIANTS 1
-#include <CGAL/Box_intersection_d/segment_tree.h>
+#include <CGAL/Box_intersection_d.h>
+// compare segment tree against brute force and simple implementations
+#include <CGAL/Box_intersection_d/one_way_scan.h>
+#include <CGAL/Box_intersection_d/all_pairs.h>
 
 #include "Timer.h"
 
@@ -18,29 +18,29 @@ static unsigned int failed = 0;
 
 template< class NT, unsigned int DIM, bool CLOSED >
 struct _test {
-typedef NT NumberType;
-typedef CGAL::Default_Bbox_d< NumberType, DIM >  Box;
-typedef CGAL::Default_Bbox_d_Adapter< Box >    BoxAdapter;
-typedef CGAL::Default_Box_Traits< BoxAdapter, CLOSED > Traits;
-typedef std::vector< Box >     BoxContainer;
-typedef std::pair< Box, Box >  BoxPair;
-typedef std::vector< BoxPair > ResultContainer;
+typedef NT Number_type;
+typedef CGAL::Default_box_d< Number_type, DIM >  Box;
+typedef CGAL::Default_box_d_traits< Box > Box_adapter;
+typedef CGAL::Default_box_predicate_traits< Box_adapter, CLOSED > Traits;
+typedef std::vector< Box >     Box_container;
+typedef std::pair< Box, Box >  Box_pair;
+typedef std::vector< Box_pair > Result_container;
 
 
-static void fill_boxes( unsigned int n, BoxContainer& boxes ) {
+static void fill_boxes( unsigned int n, Box_container& boxes ) {
     NT maxEdgeLength = (NT) pow(n, (DIM-1.0)/DIM);
 
     for( unsigned int i = 0; i < n; ++i ) {
-        NumberType lo[DIM], hi[DIM];
+        NT lo[DIM], hi[DIM];
         for( unsigned int d = 0; d < DIM; ++d ) {
-            lo[d] = (NumberType)(drand48() * (n - maxEdgeLength));
-            hi[d] = (NumberType)(lo[d] + 1 + (drand48() * maxEdgeLength));
+            lo[d] = (NT)(drand48() * (n - maxEdgeLength));
+            hi[d] = (NT)(lo[d] + 1 + (drand48() * maxEdgeLength));
         }
         boxes.push_back( Box( &lo[0], &hi[0]) );
     }
 }
 
-static void assertIntersection( const Box& a, const Box& b ) {
+static void assert_intersection( const Box& a, const Box& b ) {
     for( unsigned int dim = 0; dim < DIM; ++dim ) {
         if( Traits::does_intersect( a, b, dim ) == false ) {
             std::cout << "does not intersect!" << std::endl;
@@ -52,14 +52,24 @@ static void assertIntersection( const Box& a, const Box& b ) {
 
 
 template< class Storage >
-struct StorageCallback {
+struct Storage_callback {
     unsigned int counter;
     Storage& storage;
-    StorageCallback( Storage& storage ) : counter( 0 ), storage( storage ) {}
+    Storage_callback( Storage& storage ) : counter( 0 ), storage( storage ) {}
     void operator()( const Box& a, const Box& b ) {
-        assertIntersection( a, b );
+        assert_intersection( a, b );
         ++counter;
         //storage.push_back( std::make_pair( a, b ) );
+        //std::cout << Traits::get_num( a ) << " " << Traits::get_num( b ) << std::endl;
+    }
+};
+
+struct Counter_callback {
+    unsigned int counter;
+    Counter_callback() : counter( 0 ) {}
+    void operator()( const Box& a, const Box& b ) {
+        assert_intersection( a, b );
+        ++counter;
         //std::cout << Traits::get_num( a ) << " " << Traits::get_num( b ) << std::endl;
     }
 };
@@ -109,23 +119,34 @@ unsigned int countDuplicates( Storage& storage ) {
 } */
 
 static void
-test_n( unsigned int n, bool bipartite = true )
+test_n( unsigned int n, CGAL::Box_intersection_d::Setting setting = CGAL::Box_intersection_d::BIPARTITE )
 {
-    BoxContainer boxes1, boxes2;
-    ResultContainer result_scanner, result_tree;
+    Box_container boxes1, boxes2;
+    //Result_container result_allpairs, result_scanner, result_tree;
     std::cout << "generating random box sets with size " << n << " ... " << std::flush;
     fill_boxes( n, boxes1 );
+    bool bipartite = setting == CGAL::Box_intersection_d::BIPARTITE;
+
     if( bipartite )
         fill_boxes( n, boxes2 );
     else
         boxes2 = boxes1;
     std::cout << std::endl;
-    StorageCallback< ResultContainer >
-        callback1( result_scanner ),
-        callback2( result_tree );
-
-    std::cout << "one way scan ... " << std::flush;
+    Counter_callback callback0, callback1, callback2;
     Timer timer;
+
+    if( n < 20000 ) {
+        std::cout << "all pairs ... " << std::flush;
+        timer.start();
+        CGAL::all_pairs( boxes1.begin(), boxes1.end(),
+                         boxes2.begin(), boxes2.end(), callback0, Traits(), DIM - 1 );
+        timer.stop();
+        std::cout << "got " << callback0.counter << " intersections in "
+                  << timer.t << " seconds."
+            << std::endl;
+        timer.reset();
+    }
+    std::cout << "one way scan ... " << std::flush;
     timer.start();
     CGAL::one_way_scan( boxes1.begin(), boxes1.end(),
                         boxes2.begin(), boxes2.end(), callback1, Traits(), DIM - 1 );
@@ -134,21 +155,20 @@ test_n( unsigned int n, bool bipartite = true )
                             boxes1.begin(), boxes1.end(), callback1, Traits(), DIM - 1 );
     timer.stop();
     std::cout << "got " << callback1.counter << " intersections in "
-         << timer.t << " seconds."
-         << std::endl;
+              << timer.t << " seconds."
+              << std::endl;
 
     std::cout << "segment tree ... " << std::flush;
     timer.reset();
     timer.start();
-    Traits::cutoff = n < 200 ? 6 : n < 2000 ? 20 : n / 50;
-    //Traits::cutoff = 5;
-    CGAL::segment_tree( boxes1.begin(), boxes1.end(),
-                        boxes2.begin(), boxes2.end(), callback2, Traits(), bipartite );
+    unsigned int cutoff = n < 200 ? 6 : n < 2000 ? 20 : n / 50;
+    CGAL::box_intersection_d_custom( boxes1.begin(), boxes1.end(),
+                                     boxes2.begin(), boxes2.end(), callback2, Traits(), cutoff, setting );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
               << timer.t << " seconds." << std::endl;
 
-    if( callback1.counter != callback2.counter ) {
+    if( callback1.counter != callback2.counter || n < 20000 && callback0.counter != callback1.counter ) {
         ++failed;
         /*unsigned int missing    = countMissingItems( result_scanner,
                                                      result_tree );
@@ -168,9 +188,9 @@ void operator()() {
     std::cout << "-------------------------" << std::endl;
     for( unsigned int n = 8; n < 200000; n = (int)(n * 1.3)) {
         std::cout << "bipartite case: " << std::endl;
-        test_n( n, true );
+        test_n( n, CGAL::Box_intersection_d::BIPARTITE );
         std::cout << "complete case: " << std::endl;
-        test_n( n, false );
+        test_n( n, CGAL::Box_intersection_d::COMPLETE );
     }
 }
 

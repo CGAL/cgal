@@ -4,15 +4,9 @@
 #include <cstdlib>
 #include <vector>
 
-using namespace std;
-using namespace CGAL;
+typedef CGAL::Default_box_d< double, 3 > Box;
 
-typedef Default_Bbox_d< double, 3 >   Box;
-typedef Default_Bbox_d_Adapter< Box > BoxAdapter;
-typedef vector< Box >                 BoxContainer;
-typedef Default_Box_Traits< BoxAdapter, true > Traits;
-
-void fill_boxes( unsigned int n, BoxContainer& boxes ) {
+void fill_boxes( unsigned int n, std::vector<Box>& boxes ) {
     double lo[3], hi[3];
     for( unsigned int i = 0; i < n; ++i ) {
         for( unsigned int d = 0; d < 3; ++d ) {
@@ -24,15 +18,14 @@ void fill_boxes( unsigned int n, BoxContainer& boxes ) {
 }
 
 void callback( const Box& a, const Box& b ) {
-    cout << "intersection between box "
-         << a.num() << " and " << b.num() << endl;
+    std::cout << "intersection between box "
+              << a.get_num() << " and " << b.get_num() << std::endl;
 };
 
 int main() {
-    BoxContainer boxes1, boxes2;
-    fill_boxes( 100, boxes1 );
-    fill_boxes( 100, boxes2 );
-    segment_tree( boxes1.begin(), boxes1.end(),
-                  boxes2.begin(), boxes2.end(), callback, Traits() );
+    std::vector<Box> a, b;
+    fill_boxes( 100, a );
+    fill_boxes( 100, b );
+    box_intersection_d( a.begin(), a.end(), b.begin(), b.end(), callback );
 }
 

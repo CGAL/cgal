@@ -4,9 +4,6 @@
 #include <cstdlib>
 #include <vector>
 
-using namespace std;
-using namespace CGAL;
-
 struct Primitive {
     float f;
     Primitive() : f( drand48() ) {}
@@ -14,7 +11,7 @@ struct Primitive {
     { return f * other->f > 0.6f; }
 };
 
-struct Box : public UniqueNumbers
+struct Box : public CGAL::Box_intersection_d::Unique_numbers
 {
     Primitive *primitive;
     float lo[3], size;
@@ -25,41 +22,38 @@ struct Box : public UniqueNumbers
     }
 };
 
-struct BoxAdapter {
+struct Box_traits {
     typedef ::Box Box;
-    typedef float NumberType;
+    typedef float Number_type;
 
-    static NumberType get_lo( const Box& b, unsigned int dim )
+    static Number_type get_lo( const Box& b, unsigned int dim )
     { return b.lo[ dim ]; }
 
-    static NumberType get_hi( const Box& b, unsigned int dim )
+    static Number_type get_hi( const Box& b, unsigned int dim )
     { return b.lo[ dim ] + b.size; }
 
     static unsigned int get_num( const Box& b )
-    { return b.num();     }
+    { return b.get_num();     }
 
     static unsigned int get_dim() { return 3; }
 };
 
-typedef vector< Box > BoxContainer;
-typedef Default_Box_Traits< BoxAdapter, true > Traits;
-
-void fill_boxes( unsigned int n, BoxContainer &boxes ) {
+void fill_boxes( unsigned int n, std::vector<Box> &boxes ) {
     for( unsigned int i = 0; i < n; ++i )
         boxes.push_back( Box( new Primitive() ) );
 }
 
 void callback( const Box &a, const Box &b ) {
     if( a.primitive->intersect( b.primitive ) )
-        cout << "intersection between box "
-            << a.num() << " and " << b.num() << endl;
+        std::cout << "intersection between box "
+                  << a.get_num() << " and " << b.get_num() << std::endl;
 };
 
 int main() {
-    BoxContainer boxes1, boxes2;
+    std::vector<Box> boxes1, boxes2;
     fill_boxes( 100, boxes1 );
     fill_boxes( 100, boxes2 );
-    segment_tree( boxes1.begin(), boxes1.end(),
-                  boxes2.begin(), boxes2.end(), callback, Traits() );
+    box_intersection_d( boxes1.begin(), boxes1.end(),
+                        boxes2.begin(), boxes2.end(), callback, Box_traits() );
 }
 

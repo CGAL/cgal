@@ -20,30 +20,31 @@ CGAL_BEGIN_NAMESPACE
 
 #define BOX_INTERSECTION_DEBUG 0
 
-template< class RandomAccessIter, class Traits >
+template< class RandomAccessIter, class Predicate_traits >
 RandomAccessIter
 median_of_three( RandomAccessIter a, RandomAccessIter b, RandomAccessIter c,
-                 Traits traits, unsigned int dim )
+                 Predicate_traits traits, unsigned int dim )
 {
-    if( Traits::is_lo_less_lo( *a, *b, dim ) )
-        if( Traits::is_lo_less_lo( *b, *c, dim ) )
+
+    if( Predicate_traits::is_lo_less_lo( *a, *b, dim ) )
+        if( Predicate_traits::is_lo_less_lo( *b, *c, dim ) )
             return b;
-        else if( Traits::is_lo_less_lo( *a, *c, dim ) )
+        else if( Predicate_traits::is_lo_less_lo( *a, *c, dim ) )
             return c;
         else
             return a;
-    else if( Traits::is_lo_less_lo( *a, *c, dim ) )
+    else if( Predicate_traits::is_lo_less_lo( *a, *c, dim ) )
         return a;
-    else if( Traits::is_lo_less_lo( *b, *c, dim ) )
+    else if( Predicate_traits::is_lo_less_lo( *b, *c, dim ) )
         return c;
     else
         return b;
 }
 
-template< class RandomAccessIter, class Traits >
+template< class RandomAccessIter, class Predicate_traits >
 RandomAccessIter
 iterative_radon( RandomAccessIter begin, RandomAccessIter end,
-                 Traits traits, unsigned int dim, int num_levels )
+                 Predicate_traits traits, unsigned int dim, int num_levels )
 {
     if( num_levels < 0 )
         return begin + lrand48() % std::distance( begin, end );
@@ -58,17 +59,17 @@ iterative_radon( RandomAccessIter begin, RandomAccessIter end,
 // returns iterator for first element in [begin,end) which does not satisfy
 // the Split_Points_Predicate: [begin,mid) contains only points strictly less
 // than mi. so, elements from [mid,end) are equal or higher than mi.
-template< class RandomAccessIter, class Traits, class T >
+template< class RandomAccessIter, class Predicate_traits, class T >
 RandomAccessIter
-split_points( RandomAccessIter begin, RandomAccessIter end, Traits traits,
+split_points( RandomAccessIter begin, RandomAccessIter end, Predicate_traits traits,
               int dim, T& mi )
 {
     // magic formula
     int levels = (int)(.91*log(((double)std::distance(begin,end))/137.0)+1);
     levels = (levels <= 0) ? 1 : levels;
     RandomAccessIter it = iterative_radon( begin, end, traits, dim, levels );
-    mi = Traits::get_lo( *it, dim );
-    return std::partition( begin, end, typename Traits::Lo_Less( mi, dim ) );
+    mi = Predicate_traits::get_lo( *it, dim );
+    return std::partition( begin, end, typename Predicate_traits::Lo_Less( mi, dim ) );
 }
 
 
@@ -121,17 +122,17 @@ struct Counter {
    ~Counter() { --value; }
 };
 
-template< class RandomAccessIter, class Callback, class T, class Traits >
+template< class RandomAccessIter, class Callback, class T, class Predicate_traits >
 void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
                    RandomAccessIter i_begin, RandomAccessIter i_end,
                    T lo, T hi,
-                   Callback& callback, Traits traits, unsigned int dim,
-                   bool in_order )
+                   Callback& callback, Predicate_traits traits, unsigned int cutoff,
+                   unsigned int dim, bool in_order )
 {
-    typedef typename Traits::Box Box;
-    typedef typename Traits::Interval_Spanning_Predicate Spanning;
-    typedef typename Traits::Lo_Less Lo_Less;
-    typedef typename Traits::Hi_Greater Hi_Greater;
+    typedef typename Predicate_traits::Box Box;
+    typedef typename Predicate_traits::Interval_Spanning_Predicate Spanning;
+    typedef typename Predicate_traits::Lo_Less Lo_Less;
+    typedef typename Predicate_traits::Hi_Greater Hi_Greater;
 
     const T inf = workaround::numeric_limits< T >::inf();
     const T sup = workaround::numeric_limits< T >::sup();
@@ -171,8 +172,8 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
         return;
     }
 
-    if( (unsigned int)std::distance( p_begin, p_end ) < Traits::get_cutoff() ||
-        (unsigned int)std::distance( i_begin, i_end ) < Traits::get_cutoff()  )
+    if( (unsigned int)std::distance( p_begin, p_end ) < cutoff ||
+        (unsigned int)std::distance( i_begin, i_end ) < cutoff  )
     {
         DUMP( "scanning ... " << std::endl )
         modified_two_way_scan( p_begin, p_end, i_begin, i_end,
@@ -187,9 +188,9 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
         DUMP( "checking spanning intervals ... " << std::endl )
         // make two calls for roots of segment tree at next level.
         segment_tree( p_begin, p_end, i_begin, i_span_end, inf, sup,
-                      callback, traits, dim - 1,  in_order );
+                      callback, traits, cutoff, dim - 1,  in_order );
         segment_tree( i_begin, i_span_end, p_begin, p_end, inf, sup,
-                      callback, traits, dim - 1, !in_order );
+                      callback, traits, cutoff, dim - 1, !in_order );
     }
 
     T mi;
@@ -210,30 +211,13 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
     i_mid = std::partition( i_span_end, i_end, Lo_Less( mi, dim ) );
     DUMP("->left" << std::endl )
     segment_tree( p_begin, p_mid, i_span_end, i_mid, lo, mi,
-                  callback, traits, dim, in_order );
+                  callback, traits, cutoff, dim, in_order );
     // separate right intervals.
     // right intervals have a high point strictly higher than mi
     i_mid = std::partition( i_span_end, i_end, Hi_Greater( mi, dim ) );
     DUMP("->right"<< std::endl )
     segment_tree( p_mid, p_end, i_span_end, i_mid, mi, hi,
-                  callback, traits, dim, in_order );
-}
-
-template< class RandomAccessIter, class Callback, class Traits >
-void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
-                   RandomAccessIter i_begin, RandomAccessIter i_end,
-                   Callback& callback, Traits traits, bool bipartite = true )
-{
-    typedef typename Traits::NumberType T;
-    const unsigned int dim = Traits::get_dim() - 1;
-    const T inf = workaround::numeric_limits< T >::inf();
-    const T sup = workaround::numeric_limits< T >::sup();
-
-    segment_tree( p_begin, p_end, i_begin, i_end,
-                  inf, sup, callback, traits, dim, true );
-    if( bipartite )
-        segment_tree( i_begin, i_end, p_begin, p_end,
-                      inf, sup, callback, traits, dim, false );
+                  callback, traits, cutoff, dim, in_order );
 }
 
 CGAL_END_NAMESPACE
