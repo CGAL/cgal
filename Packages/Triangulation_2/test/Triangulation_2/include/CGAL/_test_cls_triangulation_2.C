@@ -178,7 +178,11 @@ CGAL__test_cls_triangulation_2( const Triangulation & )
 
   // test insert_first()
   Cls T0_2; 
-  T0_2.insert_first(Vertex(p0).handle());
+  // T0_2.insert_first(Vertex(p0).handle());
+  // this  statement cause a segmentation fault on Linux
+  // when the whole procedure is leaved
+  Vertex_handle v0_2_0(new Vertex(p0));
+  T0_2.insert_first(v0_2_0);
   assert( T0_2.dimension() == 0 );
   assert( T0_2.number_of_vertices() == 1 );
   assert( T0_2.is_valid() );
@@ -230,7 +234,10 @@ CGAL__test_cls_triangulation_2( const Triangulation & )
 
   // test insert_second()
   Cls T1_6 = T0_2; 
-  T1_6.insert_second(Vertex(p3).handle());
+  //T1_6.insert_second(Vertex(p3).handle());
+  // the following statement cause a segmentation fault on Linux
+  // when the whole procedure is leaved
+  T1_6.insert_second( Vertex_handle(new Vertex(p3)));
   assert( T1_6.dimension() == 1 );
   assert( T1_6.number_of_vertices() == 2 );
   assert( T1_6.is_valid() ); 
