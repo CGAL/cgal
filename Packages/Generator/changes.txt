@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.51 (15 Mar 2002)
+   - added static_cast<double> to remove ambiguity for sqrt function
+
 2.50 (15 Mar 2002)
    - added missing demo program for point_on_square_grid_3 generator function
 
