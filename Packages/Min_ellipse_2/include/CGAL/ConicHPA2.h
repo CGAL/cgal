@@ -54,8 +54,8 @@ class ConicHPA2
     typedef           _DA      DA;
     typedef  typename _DA::RT  RT;
 
-  private:
-    friend class Conic_2< CGAL::Homogeneous<RT> >;
+  //private:
+    //friend class Conic_2< CGAL::Homogeneous<RT> >;
     friend class _Min_ellipse_2_adapterH2__Ellipse<PT,DA>;
 
     DA                  dao;

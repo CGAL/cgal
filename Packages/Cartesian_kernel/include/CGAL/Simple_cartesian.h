@@ -42,8 +42,6 @@
 #include <CGAL/user_classes.h>
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 
-template < class PT, class DA > class ConicCPA2;
-
 #include <CGAL/Cartesian/Point_2.h>
 #include <CGAL/Cartesian/Vector_2.h>
 #include <CGAL/Cartesian/Direction_2.h>
@@ -55,6 +53,7 @@ template < class PT, class DA > class ConicCPA2;
 #include <CGAL/Cartesian/Iso_rectangle_2.h>
 #include <CGAL/Cartesian/Aff_transformation_2.h>
 #include <CGAL/Cartesian/Data_accessor_2.h>
+#include <CGAL/ConicCPA2.h>
 
 #include <CGAL/Cartesian/global_operators_2.h>
 #include <CGAL/Cartesian/predicates_on_points_2.h>
@@ -171,6 +170,7 @@ struct Simple_cartesian
     typedef typename Kernel_base::Ray_2                   Ray_2_base;
     typedef typename Kernel_base::Triangle_2              Triangle_2_base;
     typedef typename Kernel_base::Circle_2                Circle_2_base;
+    typedef typename Kernel_base::Conic_2                 Conic_2_base;
     typedef typename Kernel_base::Iso_rectangle_2         Iso_rectangle_2_base;
     typedef typename Kernel_base::Aff_transformation_2  
                                                      Aff_transformation_2_base;
@@ -212,7 +212,7 @@ struct Simple_cartesian
     typedef CGAL::Aff_transformation_2<Self>              Aff_transformation_2;
 
     typedef Data_accessorC2<Self>                         Data_accessor_2;
-    typedef ConicCPA2<Point_2,Data_accessor_2>            Conic_2;
+    typedef CGAL::Conic_2<Self>                           Conic_2;
 
     typedef CGAL::Point_3<Self>                           Point_3;
     typedef CGAL::Vector_3<Self>                          Vector_3;

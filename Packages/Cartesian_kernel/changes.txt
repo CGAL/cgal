@@ -1,3 +1,6 @@
+Version 6.35 (21 November 2001)
+- Fix Conic_2.
+
 Version 6.34 (31 October 2001)
 - Use R::FT instead of Point_2::FT and co.
 

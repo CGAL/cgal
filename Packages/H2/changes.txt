@@ -1,3 +1,6 @@
+2.47   (21 November 2001)
+- Fix Conic_2.
+
 2.46   (19 November 2001)
 - Fixes BCC bug in Distance_2 test-suite.
 

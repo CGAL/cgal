@@ -55,6 +55,9 @@ template < class R >
 class Circle_2;
 
 template < class R >
+class Conic_2;
+
+template < class R >
 class Aff_transformation_base_2;
 
 template < class R >
@@ -107,6 +110,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Circle_2.h>
+#include <CGAL/Conic_2.h>
 #include <CGAL/Aff_transformation_2.h>
 
 #include <CGAL/Point_3.h>

@@ -1,5 +1,6 @@
-3.65   (?? November 2001)
+3.65   (21 November 2001)
 - Darwin support.
+- Fix Conic_2
 
 3.64   (19 November 2001)
 - Move assign() to a template member function of Object.

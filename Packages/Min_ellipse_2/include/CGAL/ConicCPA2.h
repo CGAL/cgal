@@ -54,8 +54,8 @@ class ConicCPA2
     typedef           _DA      DA;
     typedef  typename _DA::FT  FT;
 
-  private:
-    friend class Conic_2< CGAL::Cartesian<FT> >;
+  //private:
+    //friend class Conic_2< CGAL::Cartesian<FT> >;
     friend class _Min_ellipse_2_adapterC2__Ellipse<PT,DA>;
 
     DA                  dao;

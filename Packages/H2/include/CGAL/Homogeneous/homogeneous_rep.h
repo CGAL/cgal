@@ -35,11 +35,9 @@
 #include <CGAL/representation_tags.h>
 #include <CGAL/predicate_objects_on_points_2.h>
 #include <CGAL/Kernel/function_objects.h>
-#include <CGAL/New_delete_allocator.h>
 #include <CGAL/PointHd.h>
 
-template < class PT, class DA >
-class ConicHPA2;
+#include <CGAL/ConicHPA2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -60,6 +58,8 @@ class Homogeneous_base
     typedef LineH2< R_ >                            Line_2;
     typedef RayH2< R_ >                             Ray_2;
     typedef CircleH2< R_ >                          Circle_2;
+    typedef Data_accessorH2<R_>                     Data_accessor_2;
+    typedef ConicHPA2<Point_2,Data_accessor_2>      Conic_2;
     typedef TriangleH2< R_ >                        Triangle_2;
     typedef Iso_rectangleH2< R_ >                   Iso_rectangle_2;
     typedef Aff_transformationH2< R_ >              Aff_transformation_2;
@@ -126,6 +126,7 @@ class Homogeneous
     typedef typename Kernel_base::Segment_2             Segment_2_base;
     typedef typename Kernel_base::Ray_2                 Ray_2_base;
     typedef typename Kernel_base::Circle_2              Circle_2_base;
+    typedef typename Kernel_base::Conic_2               Conic_2_base;
     typedef typename Kernel_base::Triangle_2            Triangle_2_base;
     typedef typename Kernel_base::Iso_rectangle_2       Iso_rectangle_2_base;
     typedef typename Kernel_base::Aff_transformation_2
@@ -158,6 +159,7 @@ class Homogeneous
     typedef CGAL::Line_2< R >                      Line_2;
     typedef CGAL::Ray_2< R >                       Ray_2;
     typedef CGAL::Circle_2< R >                    Circle_2;
+    typedef CGAL::Conic_2< R >                     Conic_2;
     typedef CGAL::Triangle_2< R >                  Triangle_2;
     typedef CGAL::Iso_rectangle_2< R >             Iso_rectangle_2;
     typedef CGAL::Aff_transformation_2< R >        Aff_transformation_2;
@@ -178,7 +180,6 @@ class Homogeneous
     typedef CGAL::Point_d< R >                     Point_d;
 
     typedef Data_accessorH2<R>                     Data_accessor_2;
-    typedef ConicHPA2<Point_2,Data_accessor_2>     Conic_2;
 
     static
     FT

@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.15 on 21-Nov-2001
+- Fix Conic_2.
+
 Version 3.14 on 9-Aug-2001
 - Just resubmit.
 

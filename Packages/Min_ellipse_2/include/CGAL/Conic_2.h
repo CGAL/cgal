@@ -28,25 +28,11 @@
 #ifndef CGAL_CONIC_2_H
 #define CGAL_CONIC_2_H
 
-#ifndef CGAL_REP_CLASS_DEFINED
-#  error  no representation class defined
-#endif // CGAL_REP_CLASS_DEFINED
-
-#ifdef CGAL_HOMOGENEOUS_H
-#  include <CGAL/ConicHPA2.h>
-#endif
-
-#ifdef CGAL_CARTESIAN_H
-#  include <CGAL/ConicCPA2.h>
-#endif
-
-#ifndef CGAL_POINT_2_H
-#  include <CGAL/Point_2.h>
-#endif
-
 #ifndef CGAL_IO_FORWARD_DECL_WINDOW_STREAM_H
 #include <CGAL/IO/forward_decl_window_stream.h>
 #endif
+
+#include <CGAL/Conic_misc.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -54,6 +40,8 @@ template < class _R >
 class Optimisation_ellipse_2;
 
 CGAL_END_NAMESPACE
+
+// Why is this outside namespace CGAL ???
 
 template < class _R >
 CGAL::Window_stream&
@@ -63,7 +51,7 @@ operator << ( CGAL::Window_stream&,
 CGAL_BEGIN_NAMESPACE
 
 template < class _R>
-class Conic_2 : public _R::Conic_2 {
+class Conic_2 : public _R::Conic_2_base {
 
     friend  class Optimisation_ellipse_2<_R>;
 
@@ -73,7 +61,7 @@ class Conic_2 : public _R::Conic_2 {
     typedef  _R                    R;
     typedef  typename _R::RT       RT;
     typedef  typename _R::FT       FT;
-    typedef  typename _R::Conic_2  _Conic_2;
+    typedef  typename _R::Conic_2_base  _Conic_2;
 
     // construction
     Conic_2 ()
