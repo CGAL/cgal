@@ -1,1 +1,12 @@
-These are short source examples to compute Alpha Shapes and Weighthed Alpha Shapes.
+
+example_alpha : read input points, compute the alpha shape in 
+regularized mode and find the optimal value of $\alpha$, i. e. the smallest
+$\alpha$ such that all input point are interior or on the boundary of the
+alpha shape and the alpha shape has a single connected component.
+
+example_big_alpha : buid the alpha shape for a huge set of points using
+a Delaunay hirarchy as underlying triangulation for efficiency.
+
+example_weight : build the weighted alpha shape of a small
+set of spheres  and explore the  boundary of the alpha complex for $\alpha =0$.
+This complex is the nerve of the union of the spheres.

@@ -218,8 +218,8 @@ private:
 
   //------------------------- CONSTRUCTORS ------------------------------
 public:
-  // Introduces an empty alpha-shape `A' for a positive
-  // alpha-value `alpha'. Precondition: `alpha' >= 0.
+  // Introduces an empty alpha-shape `A' for a 
+  // alpha-value `alpha'. 
   Alpha_shape_3(NT alpha = 0, 
 		Mode m = REGULARIZED)
     : _alpha(alpha), _mode(m), 

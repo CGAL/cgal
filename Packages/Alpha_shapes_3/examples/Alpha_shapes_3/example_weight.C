@@ -33,14 +33,14 @@ int main()
 {
   std::list<Weighted_point> lwp;
 
-  //read input : build a small protein
+  //input : a small molecule
   lwp.push_back(Weighted_point(Bare_point( 1, -1, -1), 4));
   lwp.push_back(Weighted_point(Bare_point(-1,  1, -1), 4));
   lwp.push_back(Weighted_point(Bare_point(-1, -1,  1), 4));
   lwp.push_back(Weighted_point(Bare_point( 1,  1,  1), 4));
   lwp.push_back(Weighted_point(Bare_point( 2,  2,  2), 1));
 
-  //buil alpha_shape  in GENERAL mode and set alpha=0
+  //build alpha_shape  in GENERAL mode and set alpha=0
   Alpha_shape_3  as(lwp.begin(), lwp.end(), 0, Alpha_shape_3::GENERAL);
 
   //explore the 0-shape - It is dual to the boundary of the union.

@@ -35,7 +35,7 @@
 %
 % package       : Alpha_shapes_3
 % author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
-%
+%                 Mariette Yvinec (<Mariette.Yvinec@sophia.inria.fr>)
 % coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 %
 % ======================================================================
@@ -50,63 +50,77 @@
 
 \chapter{3D Alpha Shapes}
 
-This chapter presents a framework for alpha shapes. The description is based on
-the articles \cite{em-tdas-94,e-was-92}. Alpha shapes are
-the generalization of the convex hull of a point set. Let $S$ be a finite set of
-points in $\R^d$, $d = 2,3$ and $\alpha$ a parameter with $0 \leq \alpha \leq
-\infty$. For $\alpha = \infty$, the $\alpha$-shape is the convex hull of $S$. As 
-$\alpha$ decreases, the $\alpha$-shape shrinks and develops cavities, as soon as 
-a sphere of radius $\sqrt{\alpha}$ can be put inside.
-Finally, for $\alpha = 0$, the $\alpha$-shape is the set $S$ itself.
+Alpha shapes definition is based on an underlying
+triangulation that may be a Delaunay triangulation 
+in case of basic alpha shapes or a regular triangulation 
+(cf. \ref{Triangulation3-sec-class-Regulartriangulation})
+in case of weighted alpha shapes.
 
-We distinguish two versions of alpha shapes, one is based on the Delaunay
-triangulation and the other on its generalization, the regular triangulation,
-replacing the natural distance by the power to weighted points. The metric used
-determines an underlying triangulation of the alpha shape and thus, the version
-computed. 
-In one hand, there is the {\em classic alpha shapes}
-(cf. \ref{I1_SectClassicAS3D}) associated with the Delaunay triangulations
-(cf. \ref{chapter-Triangulation3}), in the other hand, the {\em weighted alpha shapes}
-(cf. \ref{I1_SectWeightedAS3D}) associated with the regular triangulations
-(cf. \ref{Triangulation3-sec-class-Regulartriangulation}). 
+Let us consider the basic case with a Delaunay triangulation.
+We first define the alpha complex  of the set of points $S$. 
+The  alpha complex is a subcomplex 
+of the Delaunay triangulation.
+For a given value of $\alpha$, the alpha complex includes
+all the simplices in the Delaunay triangulation which have
+an empty  circumsphere with squared radius equal or smaller than $\alpha$.
+Here ``empty'' means  that the open sphere 
+do not include  any points of $S$.
+The alpha shape is then simply the domain covered by the simplices
+of the alpha complex (see \cite{em-tdas-94}).
 
-There is a close connection between alpha shapes and the underlying
-triangulations. More precisely, the $\alpha$-complex of $S$ is a
-subcomplex of this triangulation of $S$, containing the $\alpha$-exposed
-$k$-simplices, $0 \leq k \leq d$. A simplex is $\alpha$-exposed, if there is an
-open disk (resp.\ ball) of radius $\sqrt{\alpha}$ through the vertices of the
-simplex that does not contain any other point of $S$, for the metric used in
-the computation of the underlying triangulation.  The corresponding
-$\alpha$-shape is defined as the underlying interior space of the
-$\alpha$-complex. 
+In general, an alpha complex is a non-connected and non-pure complex.
+This means in particular that the alpha complex may have
+singular faces.  For $0 \leq k \leq d-1$,
+a $k$-simplex of the alpha complex  is said to be
+singular if it is not a facet of a $(k+1)$-simplex of the complex
+CGAL provides two versions of the alpha shapes. In the general mode,
+the alpha shapes correspond strictly to the above definition.
+The regularized mode provides a regularized version of the alpha shapes
+corresponding to the domain covered by a regularized version
+of the alpha complex where singular faces are removed.
 
-In general, an $\alpha$-complex is a non-connected and non-pure polytope, it
-means, that one $k$-simplice, $0 \leq k \leq d-1$ is not necessary adjacent to
-a $(k+1)$-simplice.
-
-The $\alpha$-shapes of $S$ form a discrete family, even though they
-are defined for all real numbers $\alpha$ with $0 \leq \alpha
-\leq \infty$. Thus, we can represent the entire family of $\alpha$-shapes
-of $S$ by the underlying triangulation of $S$. In this representation
+The alpha shapes of a  set of points 
+$S$ form a discrete family, even though they
+are defined for all real numbers $\alpha$.
+The entire family of alpha shapes can be represented 
+through  the underlying triangulation of $S$. In this representation
 each $k$-simplex of the underlying triangulation is associated with an
 interval that specifies for which values of $\alpha$ the $k$-simplex
-belongs to the $\alpha$-shape. Relying on this result, the family of
-$\alpha$-shapes can be computed efficiently and relatively
-easily. Furthermore, we can select an appropriate $\alpha$-shape from a
-finite number of different $\alpha$-shapes and corresponding
-$\alpha$-values.
+belongs to the alpha complex. Relying on this fact, the family of
+ alpha shapes can be computed efficiently and relatively
+easily. Furthermore, we can select the optimal value
+of  $\alpha$ to get an alpha shape including all data points
+and having   less than a given number of connected components.
+
+
+The definition is analog in the case of weigthed alpha shapes.
+The input set is now a set of weighted points (which can be regarded
+as spheres) and the underlying triangulation 
+is the regular triangulation of this set.
+Two spheres, or two weighted points , with centers $C_1, C_2$
+and  radii $r_1, r_2 $ are said to be orthogonal iff 
+$ C_1C_2 ^2 = r_1^2 + r_2^2$ and suborthogonal
+iff  $ C_1C_2 ^2 < r_1^2 + r_2^2$.
+For a given value of $\alpha$
+the weighted alpha complex is formed with the simplices of the 
+regular triangulation triangulation
+such that there is a sphere orthogonal to the weighted points associated
+with the vertices of the simplex  and suborthogonal to all the other
+input weighted points. Once again the alpha shape is then defined as
+the domain covered by a the alpha complex and arise in two versions
+general or regularized.
 
 \subsection*{Concepts}
 
 \ccRefConceptPage{AlphaShapeTraits_3}\\
+\ccRefConceptPage{WeightedAlphaShapeTraits_3} \\
 \ccRefConceptPage{AlphaShapeCell_3}\\
 \ccRefConceptPage{AlphaShapeVertex_3}\\
 
 
 \subsection*{Classes}
-
+\ccRefIdfierPage{CGAL::Alpha_status<NT>} \\
 \ccRefIdfierPage{CGAL::Alpha_shape_3<Dt>}\\
 \ccRefIdfierPage{CGAL::Weighted_alpha_shape_euclidean_traits_3<K>}\\
-\ccRefIdfierPage{CGAL::Alpha_shape_vertex_base_3<AlphaShapeTraits_3>}\\
-\ccRefIdfierPage{CGAL::Alpha_shape_cell_base_3<AlphaShapeTraits_3, 
-                                               TriangulationCellBase_3>}\\
+\ccRefIdfierPage{CGAL::Alpha_shape_vertex_base_3<Traits,Vb>}\\
+\ccRefIdfierPage{CGAL::Alpha_shape_cell_base_3<Traits,Fb>}

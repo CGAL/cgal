@@ -48,6 +48,7 @@
 \begin{ccRefConcept}{AlphaShapeCell_3}
 
 \ccDefinition
+This concept describes the requirements for the base cell of an alpha shape.
 
 
 \ccRefines
@@ -55,25 +56,15 @@
 
 
 \ccCreationVariable{f}
-\ccTypes
 
+\ccNestedType{NT}{A number type. Must be the same as the number type used
+in the traits class of the triangulation underlying the alpha shape.}
 
-\ccNestedType{Interval_3}{A container type to get (and put) the three special values 
-($\alpha_1, \alpha_2, \alpha_3$) associated with an alpha shape facet.}
+\ccNestedType {Alpha_status_iterator}{ An iterator with value type \ccc{CGAL::Alpha_status<NT>}.}
 
-\ccNestedType{Coord_type}{A type to hold a coordinate type class. 
-The type must provide a copy constructor, assignment, comparison
-operators, negation, multiplication, division and allow the
-declaration and initialization with a small integer constant
-(cf. requirements for number types). An obvious choice would be
-coordinate type of the point class.
-\ccPrecond Let's us precise that \ccc{Coord_type} has to be the same as the one used by
-\ccc{Gt}, already used by the underlying triangulation \ccc{Dt}, and by
-her cell base \ccc{Df}.} 
 
 \ccCreation
 
-\begin{ccAdvanced}
 
 \ccConstructor{Alpha_shape_cell_base_3();}{default constructor.}
 \ccGlue
@@ -83,37 +74,23 @@ her cell base \ccc{Df}.}
 void* n0, void* n1, void* n2, void* n3);} 
 {constructor setting the incident vertices and the neighboring cells.}
 
-\end{ccAdvanced}
 
-\ccHeading{Access Functions}
-\ccMethod{Interval_3 get_ranges(const int& i);}
-{returns the interval associated with the facet indexed with $i$, which contains
-three alpha values
- $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
-$\alpha$  between $\alpha_1$ and $\alpha_2$, the facet indexed with $i$ is
-attached but singular, 
-for $\alpha$ between $\alpha_2$ and $\alpha_3$, the facet is regular, and for $\alpha$
-greater than $\alpha_3$, the facet is interior.}
-\ccMethod{Coord_type get_alpha();}
-{return the alpha value, under which the alpha shape contains the
-cell.}
+
+\ccAccessFunctions
+\ccMethod{NT get_alpha();}{Returns the alpha value of the cell.}
+\ccMethod{ Alpha_status_iterator get_facet_status(int i);}
+{Returns an iterator on the \ccc{CGAL::Alpha_status<NT>} of the facet
+\ccc{i} of the cell.}
+
 
 \ccModifiers
+\ccMethod{void set_alpha(const NT &  alpha);}
+ { Sets the critical value of the cell.}
+\ccMethod{void set_facet_status(int i, Alpha_status_iterator as);}
+{Sets the iterator pointing to the \ccc{CGAL::Alpha_status<NT>}
+of the facet \ccc{i} of the cell.}
 
-\begin{ccAdvanced}
-
-\ccMethod{void set_ranges(const int& i, const Interval_3& V);}
-{sets the interval associated with the facet indexed with $i$, which contains three
-alpha values
- $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
-$\alpha$  between $\alpha_1$ and $\alpha_2$, the facet indexed with $i$ is
-attached but singular, 
-for $\alpha$ between $\alpha_2$ and $\alpha_3$, the facet is regular, and for $\alpha$
-greater than $\alpha_3$, the facet is interior.}
-\ccMethod{void set_alpha(Coord_type A);}
-{sets the alpha value, under which the alpha shape contains the
-cell.}
-
-\end{ccAdvanced}
+\ccSeeAlso
+\ccc{CGAL::Alpha_status} 
 
 \end{ccRefConcept}

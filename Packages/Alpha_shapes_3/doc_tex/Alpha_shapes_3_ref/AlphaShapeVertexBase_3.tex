@@ -48,6 +48,8 @@
 \begin{ccRefConcept}{AlphaShapeVertex_3}
 
 \ccDefinition
+This concept describe the requirements for the base vertex of an alpha shape.
+
 
 \ccRefines
 \ccc{TriangulationVertexBase_3}.
@@ -55,18 +57,15 @@
 \ccCreationVariable{v}
 
 \ccTypes
+\ccNestedType{Point}
+{Must be the same as the point type provided by  
+the geometric traits class of the triangulation.} 
+\ccNestedType{Alpha_status;} {Must be \ccc{CGAL::Alpha_status<NT>}
+where \ccc{NT} is the number type used in the geometric traits class
+of the triangulation.}
 
-\ccNestedType{FT}{A type to hold a coordinate type class. 
-The type must provide a copy constructor, assignment, comparison
-operators, negation, multiplication, division and allow the
-declaration and initialization with a small integer constant
-(cf. requirements for number types). An obvious choice would be
-coordinate type of the point class.}
 
 \ccCreation
-
-\begin{ccAdvanced}
-
 \ccConstructor{Alpha_shape_vertex_base_3();}{default constructor.}
 \ccGlue
 \ccConstructor{Alpha_shape_vertex_base_3(Point p);}{constructor setting
@@ -75,25 +74,14 @@ the point associated to.}
 \ccConstructor{Alpha_shape_vertex_base_3(Point p, void* c);} 
 {constructor setting the point  associated to and an incident cell.}
 
-\end{ccAdvanced}
 
-\ccHeading{Access Functions}
-
-\ccMethod{std::pair< FT, FT > get_range();}
-{returns two alpha values $\alpha_1 \leq \alpha_2$, such as for
-$\alpha$ between $\alpha_1$ and $\alpha_2$, the vertex is attached but singular, and
-for $\alpha$ upper $\alpha_2$, the vertex is regular.}
 
 
 \ccModifiers
+\ccMethod{Alpha_status*  get_alpha_status();}
+{Returns a pointer the alpha status of the vertex.}
 
-\begin{ccAdvanced}
-
-\ccMethod{void set_range(std::pair< FT, FT > I);}
-{sets the alpha values $\alpha_1 \leq \alpha_2$, such as for
-$\alpha$ between $\alpha_1$ and $\alpha_2$, the vertex is attached but singular, and
-for $\alpha$ upper $\alpha_2$, the vertex is regular.}
-
-\end{ccAdvanced}
+\ccSeeAlso
+\ccc{CGAL::Alpha_status} 
 
 \end{ccRefConcept}

@@ -1,4 +1,7 @@
 
+13 August 2004 Mariette
+- fixes in the doc
+
 11 August 2004 Mariette
 - fixed multiple declaration of Alpha_status_const_iterator
   in Alpha_shape_cell_base_3.h and Alpha_shape_vertex_base_3.h
