@@ -175,7 +175,9 @@ _test_cls_tds_3( const Tds &)
     next_cell = ++cit; --cit;
     while ( (! flipped) && (i<4) ) {
       if ( (i!=j) ) {
-	flipped = tds6.flip( cit, i, j ) ;
+	// The Intel compiler has a bug and needs the explicit handle.
+	Cell_handle ch = cit;
+	flipped = tds6.flip( ch, i, j ) ;
 	if (flipped) {
 	  nbflips++;
 	  assert(tds6.is_valid());

@@ -1992,7 +1992,10 @@ insert_increase_dimension(Vertex_handle star)
 	if ( ! it->has_vertex(star) ) {
 	  Cell_handle cnew = create_cell( it->vertex(0), it->vertex(2),
 			                  it->vertex(1), star);
-	  set_adjacency(cnew, 3, it, 3);
+	  // The Intel compiler has a problem with passing "it" directly to 
+	  // function "set_adjacency": the adjacency is not changed.
+	  Cell_handle ch_it = it;
+	  set_adjacency(cnew, 3, ch_it, 3);
 	  cnew->set_neighbor(0, NULL);
 	  new_cells.push_back(cnew);
 	}

@@ -1,3 +1,6 @@
+Version 1.147 (3 June 03)
+- workaround for Intel in test_cls_tds_3.C and Triangulation_data_structure_3
+
 Version 1.146 (2 June 03)
 - Doc : typography rules in English : "~:" replaced by ":".
 - Test-suite : Use Filtered_kernel<>.
