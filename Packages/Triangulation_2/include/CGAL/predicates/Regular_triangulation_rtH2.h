@@ -12,6 +12,7 @@
 // release_date  :
 //
 // file          : include/CGAL/predicates/Regular_triangulation_ftC2.h
+// package       : Triangulation
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
