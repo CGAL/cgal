@@ -38,13 +38,13 @@ enum Topology { HALF_OPEN, CLOSED };
 
 struct Unique_numbers {
     Unique_numbers() : i(n++) {}
-    unsigned int get_id() const { return i; }
+    std::size_t get_id() const { return i; }
 private:
     static std::size_t n;
     std::size_t i;
 };
 
-unsigned int Unique_numbers::n = 0;
+std::size_t Unique_numbers::n = 0;
 
 template<class NT_, std::size_t N>
 struct Box_d : public Unique_numbers {
