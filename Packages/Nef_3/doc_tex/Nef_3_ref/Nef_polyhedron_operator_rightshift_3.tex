@@ -1,0 +1,44 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polyhedron_operator_rightshift.tex
+% +------------------------------------------------------------------------+
+% | 05.04.2004   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSNefpolyhedron3operatorostreamRev}{$Revision$}
+\RCSdefDate{\RCSNefpolyhedron3operatorostreamDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{operator>>}
+\label{refNef_polyhedron_operator_rightshift_3}
+
+\ccDefinition
+
+This operator reads a Nef polyhedron, which is given in the proprietary file
+format written by the output operator. Finite Nef polyhedra can be loaded
+with both, the standard and the extended kernel. Infinite Nef polyhedra can
+only be loaded with the extended kernel.
+
+\ccInclude{CGAL/IO/Nef_polyhedron_iostream.h}
+
+\ccGlobalFunction{template <class Nef_polyhedronTraits_3>
+    istream& operator>>( istream& in,
+                         CGAL::Nef_polyhedron_3<Nef_polyhedronTraits_3>& N);}
+  
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>}\\ 
+\lcTex{\ccc{operator<<} \dotfill\ 
+    page~\pageref{refNef_polyhedron_operator_leftshift}}%
+\lcRawHtml{
+    <I><A HREF="Function_operator.html">operator&lt;&lt;</A></I>.
+}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

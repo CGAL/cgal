@@ -1,0 +1,309 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Nef_polyhedron_3.tex
+% +------------------------------------------------------------------------+
+% | 26.02.2004   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSNef_3Rev}{$Revision$}
+\RCSdefDate{\RCSNef_3Date}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+% RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Nef_polyhedron_3<Traits>}
+
+\ccDefinition
+
+An instance of data type \ccc{Nef_polyhedron_3<Traits>} is a subset of the
+3-dimensional space that is the result of forming complements and intersections
+starting from a finite set \ccc{H} of
+3-dimensional halfspaces. \ccc{Nef_polyhedron_3} is closed under all binary set
+operations \ccc{intersection}, \ccc{union}, \ccc{difference},
+\ccc{complement} and under the topological operations \ccc{boundary},
+\ccc{closure}, and \ccc{interior}.
+
+Nef_S2
+Extended_kernel
+
+\ccInclude{CGAL/Nef_polyhedron_3.h}
+
+\ccParameters
+
+\begin{tabbing}
+\ccc{template <} \=\ccc{class Nef_polyhedronTraits_3,}\\
+                 \>\ccc{class Nef_polyhedronItems_3 = CGAL::SNC_items_3,}\\
+    \ccc{class Nef_polyhedron_3;}
+\end{tabbing}
+
+The first parameter requires an exact CGAL kernel, i.e. 
+The second parameter expects a model of the concept \ccc{Nef_polyhedronItems_3}.
+By default, the class \ccc{CGAL::SNC_items} is preseleted.
+
+\ccTypes
+
+\ccTwo{Nef_polyhedron_3<Traits>::SHalfedge_around_svertex_const_circulator}{}
+
+\ccNestedType{Traits}{traits class selected for \ccc{Nef_polyhedronTraits_3}.}
+\ccGlue
+\ccNestedType{Items}{items class selected for \ccc{Nef_polyhedronItems_3}.}
+
+\ccNestedType{Size_type}{size type of \ccc{Nef_polyhedron_3}.}
+
+\ccNestedType{Mark} {}
+
+\ccNestedType{Vertex}{vertex type.}
+\ccGlue
+\ccNestedType{Halfedge}{halfedge type.}
+\ccGlue
+\ccNestedType{Halffacet}{halffacet type.}
+\ccGlue
+\ccNestedType{Volume}{volume type.}
+\ccGlue
+\ccNestedType{SVertex}{svertex type.}
+\ccGlue
+\ccNestedType{SHalfedge}{shalfedge type.}
+\ccGlue
+\ccNestedType{SHalfloop}{shalfloop type.}
+\ccGlue
+\ccNestedType{SFace}{sface type.}
+
+\ccNestedType{Vertex_const_handle}{non-mutable handle to vertex.}
+\ccGlue
+\ccNestedType{Halfedge_const_handle}{non-mutable handle to halfedge.}
+\ccGlue
+\ccNestedType{Halffacet_const_handle}{non-mutable handle to halffacet.}
+\ccGlue
+\ccNestedType{Volume_const_handle}{non-mutable handle to volume.}
+\ccGlue
+\ccNestedType{SVertex_const_handle}{non-mutable handle to svertex.}
+\ccGlue
+\ccNestedType{SHalfedge_const_handle}{non-mutable handle to shalfedge.}
+\ccGlue
+\ccNestedType{SHalfloop_const_handle}{non-mutable handle to shalfloop.}
+\ccGlue
+\ccNestedType{SFace_const_handle}{non-mutable handle to sface.}
+
+\ccNestedType{Vertex_const_iterator}{non-mutable iterator over all vertices.}
+\ccGlue
+\ccNestedType{Halfedge_const_iterator}{non-mutable iterator over all halfeges.}
+\ccGlue
+\ccNestedType{Halffacet_const_iterator}{non-mutable iterator over all halffacets.}
+\ccGlue
+\ccNestedType{Volume_const_iterator}{non-mutable iterator over all volumes.}
+\ccGlue
+\ccNestedType{SVertex_const_iterator}{non-mutable iterator over all svertices.}
+\ccGlue
+\ccNestedType{SHalfedge_const_iterator}{non-mutable iterator over all shalfedges.}
+\ccGlue
+\ccNestedType{SHalfloop_const_iterator}{non-mutable iterator over all shalfloops.}
+\ccGlue
+\ccNestedType{SFace_const_iterator}{non-mutable iterator over all sfaces.}
+
+\ccNestedType{SHalfedge_around_svertex_const_circulator}{non-mutable circulator of shalfedges around a svertex (cw).}
+\ccGlue
+\ccNestedType{SHalfedge_around_sface_const_circulator}{non-mutable circulator of shalfedges around a sface (ccw).}
+\ccGlue
+\ccNestedType{SHalfedge_aroud_facet_const_circulator}{non-mutable circulator of shalfedges around a halffacet (ccw).}
+\ccGlue
+\ccNestedType{SFace_cycle_const_iterator}{non-mutable iterator over the cylces of a sface.}
+\ccGlue
+\ccNestedType{Halffacet_cycle_const_iterator}{non-mutable iterator over the cylces of a halffacet.}
+\ccGlue
+\ccNestedType{Shell_entry_const_iterator}{non-mutable iterator providing an entry to each shell. }
+
+\ccNestedType{Object_handle}{a generic handle to an object. 
+  The kind of object \ccc{(vertex, halfedge, halffacet, volume, 
+    svertex, shalfedge, shalfloop, sface)} can 
+  be determined and the object can be assigned to a corresponding
+  handle by one of the following functions:\\
+  \ccc{bool assign(Vertex_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(Halfedge_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(Halffacet_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(Volume_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(SVertex_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(SHalfedge_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(SHalfloop_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(SFace_const_handle& h, Object_handle)}\\
+  where each function returns \ccc{true} iff the assignment to
+  \ccc{h} could be accomplished. }
+
+\ccNestedType{Point_3}{location of vertices.}
+\ccGlue
+\ccNestedType{Segment_3}{segment represented by a halfedge.}
+\ccGlue
+\ccNestedType{Vector_3}{direction of a halfedge.}
+\ccGlue
+\ccNestedType{Plane_3}{plane a halffacet lies in.}
+\ccGlue
+\ccNestedType{Aff_transformation_3}{affine transformation.}
+
+\ccEnum{enum Boundary { EXCLUDED,  INCLUDED }}{construction selection.}
+\ccGlue
+\ccEnum{enum Content { EMPTY,  COMPLETE }}{construction selection.}
+
+\ccNestedType{Nef_polyhedron_S2}{a sphere map.}
+
+\ccNestedType{Polyhedron}{a polyhedral surface.}
+
+
+
+\ccCreation
+\ccCreationVariable{N}
+
+\ccThree{}{}{}
+\ccThreeToTwo
+
+\ccConstructor{Nef_polyhedron_3(Content space = EMPTY);} {
+  creates a Nef polyhedron and initializes it to the empty 
+  set if \ccc{plane == EMPTY}
+  and to the whole space if \ccc{space == COMPLETE}.}
+
+\ccConstrcutor{Nef_polyhedron_3(const Plane_3& p, 
+                                Boundary b = INCLUDED);}{
+  creates a Nef polyhedron containing the halfspace left of
+  \ccc{p} including \ccc{p} if \ccc{b==INCLUDED}, excluding \ccc{p}
+  if \ccc{b==EXCLUDED}.}
+
+\ccConstrcutor{Nef_polyhedron_3(Polyhedron& P);}{
+  creates a Nef polyhedron, which represents the same point set as 
+  the polyhedral surface \ccc{P} does.}
+
+\ccConstrcutor{Nef_polyhedron_3(const char* filename);}{
+  loads a Nef polyhedron from the \ccc}filename}.}
+
+operator<< 
+operator>>
+
+\ccConstrcutor{Nef_polyhedron_3(const Nef_polyhedron_3<Traits>& N1);}
+{}
+\ccMethod{Nef_polyhedron_3<Traits> operator=(const Nef_polyhedron_3<Tratis>& N1);}{}
+
+\ccOperations
+
+\ccMethod{bool is_empty() const;}{returns true if \ccVar\ is empty.}
+\ccMethod{bool is_space() const;}{}
+\ccMethod{bool is_valid() const;}{}
+\ccMethod{bool is_simple() const;}{}
+
+\ccMethod{bool operator==(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccMethod{bool operator!=(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccMethod{bool operator<(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccMethod{bool operator>(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccMethod{bool operator<=(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccMethod{bool operator>=(const Nef_polyhedron_3<Traits>& N1) const;}{}
+
+\ccMethod{Size_type number_of_vertices() const;}{}  
+\ccMethod{Size_type number_of_halfedges() const;}{} 
+\ccMethod{Size_type number_of_edges() const;}{}     
+\ccMethod{Size_type number_of_halffacets() const;}{}   
+\ccMethod{Size_type number_of_facets() const;}{}    
+\ccMethod{Size_type number_of_volumes() const;}{}   
+
+\ccMethod{Nef_polyhedron_3<Traits> complement() const;}{}
+\ccMethod{Nef_polyhedron_3<Traits> interior() const;}{}
+\ccMethod{Nef_polyhedron_3<Traits> boundary() const;}{}
+\ccMethod{Nef_polyhedron_3<Traits> closure() const;}{}
+\ccMethod{Nef_polyhedron_3<Traits> regularization() const;}{}
+
+\ccMethod{Nef_polyhedron_3<Traits> intersection(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccMethod{Nef_polyhedron_3<Traits> join(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccMethod{Nef_polyhedron_3<Traits> difference(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccMethod{Nef_polyhedron_3<Traits> symmetric_difference(const Nef_polyhedron_3<Traits>& N1) const;}{}
+
+\ccMethod{Nef_polyhedron_3<Traits> operator*(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccMethod{Nef_polyhedron_3<Traits> operator+(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccMethod{Nef_polyhedron_3<Traits> operator-(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccMethod{Nef_polyhedron_3<Traits> operator^(const Nef_polyhedron_3<Traits>& N1) const;}{}
+
+\ccMethod{Object_handle locate(const Point_3& p) const;}{}
+%\ccMethod{bool contains(Object_handle h) const;}{}
+%\ccMethod{bool contained_in_boundary(Object_handle h) const;}{}
+
+\ccMethod{void clear(Content space = EMPTY);}{}
+
+\ccMethod{void extract_complement();}{}
+\ccMethod{void extract_interior();}{}
+\ccMethod{void extract_boundary();}{}
+\ccMethod{void extract_closure();}{}
+\ccMethod{void extract_regularization();}{}
+
+\ccMethod{void operator!();}{}
+
+\ccMethod{void operator*=(const Nef_polyhedron_3<Traits>& N1);}{}
+\ccMethod{void operator+=(const Nef_polyhedron_3<Traits>& N1);}{}
+\ccMethod{void operator-=(const Nef_polyhedron_3<Traits>& N1);}{}
+\ccMethod{void operator^=(const Nef_polyhedron_3<Traits>& N1);}{}
+
+\ccMethod{void transform(const Aff_transformation_3& aff);}{}
+
+\ccMethod{void dump() const;}{}
+\ccMethod{void convert_to_Polyhedron(Polyhedron& P) const;}{}
+\ccMethod{Nef_polyhedron_S2 get_sphere_map(Vertex_const_iterator v) const;}{}
+
+\ccMethod{Mark mark(Vertex_const_handle v) const;}{}
+\ccMethod{Mark mark(Halfedge_const_handle e) const;}{}
+\ccMethod{Mark mark(Halffacet_const_handle f) const;}{}
+\ccMethod{Mark mark(Volume_const_handle c) const;}{}
+
+\ccMethod{Vertex_const_iterator   vertices_begin() const;}{} 
+\ccMethod{Vertex_const_iterator   vertices_end()   const;}{}
+\ccMethod{Halfedge_const_iterator halfedges_begin()const;}{}
+\ccMethod{Halfedge_const_iterator halfedges_end()  const;}{}
+\ccMethod{Halffacet_const_iterator halffacets_begin() const;}{}
+\ccMethod{Halffacet_const_iterator halffacets_end() const;}{}
+\ccMethod{Volume_const_iterator   volumes_begin() const;}{}
+\ccMethod{Volume_const_iterator   volumes_end()   const;}{}
+\ccMethod{Shell_entry_const_iterator shells_begin(Volume_const_handle c) const;}{}
+\ccMethod{Shell_entry_const_iterator shells_end(Volume_const_handle c) const;}{}
+
+\ccMethod{Vertex_const_handle vertex(Halfedge_const_handle e) const;}{}
+\ccMethod{Halfedge_const_handle twin(Halfedge_const_handle e) const;}{}
+\ccMethod{Vertex_const_handle source(Halfedge_const_hnalde e) const;}{}
+\ccMethod{Vertex_const_handle target(Halfedge_const_handle e) const;}{}
+\ccMethod{SFace_const_handle sface(Halfedge_const_handle e) const;}{}
+
+\ccMethod{Vertex_const_handle vertex(SHalfedge_const_handle e) const;}{}
+\ccMethod{SHalfedge_const_handle twin(SHalfedge_const_handle e) const;}{}
+\ccMethod{Vertex_const_handle source(SHalfedge_const_handle e) const;}{}
+\ccMethod{Vertex_const_handle target(SHalfedge_const_handle e) const;}{}
+\ccMethod{SHalfedge_const_handle previous(SHalfedge_const_handle e) const;}{}
+\ccMethod{SHalfedge_const_handle next(SHalfedge_const_handle e) const;}{}
+\ccMethod{Halffacet_const_handle facet(SHalfedge_const_handle e) const;}{}
+\ccMethod{SFace_const_handle sface(SHalfedge_const_handle e) const;}{}
+\ccMethod{Halfedge_const_handle ssource(SHalfedge_const_handle e) const;}{}
+\ccMethod{Halfedge_const_handle starget(SHalfedge_const_handle e) const;}{}
+
+\ccMethod{SHalfloop_const_handle twin( SHalfloop_const_handle l) const;}{}
+\ccMethod{Halffacet_const_handle facet( SHalfloop_const_handle l) const;}{}
+\ccMethod{Vertex_const_handle vertex( SHalfloop_const_handle l) const;}{}
+\ccMethod{SFace_const_handle sface( SHalfloop_const_handle l) const;}{}
+
+\ccMethod{Vertex_const_handle vertex(SFace_const_handle f) const;}{}
+\ccMethod{Volume_const_handle volume(SFace_const_handle f) const;}{}
+
+\ccMethod{Halffacet_const_handle twin(Halffacet_const_handle f) const;}{}
+\ccMethod{Volume_const_handle volume(Halffacet_const_handle f) const;}{}
+\ccMethod{SFace_const_handle adjacent_sface(Halffacet_const_handle f) const;}{}
+
+\ccMethod{void visit_shell_objects(SFace_const_handle f, Visitor& V) const;}{}
+
+\ccMethod{const Point_3& point(Vertex_const_handle v) const;}{}
+\ccMethod{const Plane_3& plane(Halffacet_const_handle f) const;}{}
+\ccMethod{Segment_3 segment(Halfedge_const_handle e) const;}{}
+\ccMethod{Vector_3 vector(Halfedge_const_handle e) const;}{}
+
+\ccMethod{static bool is_standard(const Vertex_const_handle v);}{}
+\ccMethod{static bool is_standard(const Halffacet_const_handle v);}{}
+\ccMethod{static bool is_standard_kernel() { return Infi_box::standard_kernel();}{}
+\ccMethod{static bool is_extended_kernel() { return Infi_box::extended_kernel();}{}
+\ccMethod{static void set_size_of_infimaximal_box(const typename Infi_box::NT& size);}{}
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+% RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
