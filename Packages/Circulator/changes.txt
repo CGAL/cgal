@@ -1,5 +1,8 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+3.10 (4 november 99)
+     suppresses the references to singular valeus of circulators in the docXS
+
 3.9 (18 october 99)
      one more small correction to the doc
 
