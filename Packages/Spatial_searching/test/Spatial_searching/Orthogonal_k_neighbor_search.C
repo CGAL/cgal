@@ -84,7 +84,7 @@ search(bool nearest)
 int main()
 {
   search(true);
-  search(false);
+  //  search(false);
   std::cout << "done" << std::endl;
   return 0;
 }
