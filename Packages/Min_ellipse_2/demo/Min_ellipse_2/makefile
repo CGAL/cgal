@@ -45,9 +45,9 @@ demo_Min_circle_2$(EXE_EXT): demo_Min_circle_2$(OBJ_EXT)
 demo_Min_ellipse_2$(EXE_EXT): demo_Min_ellipse_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_Min_ellipse_2 demo_Min_ellipse_2$(OBJ_EXT) $(LDFLAGS)
 
-clean:
-                   demo_Min_circle_2.clean \
-                   demo_Min_ellipse_2.clean
+clean:		\
+		demo_Min_circle_2.clean
+		demo_Min_ellipse_2.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
