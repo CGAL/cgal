@@ -32,7 +32,8 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Curve>
-Postscript_file_stream& operator<<(Postscript_file_stream& ps, const Curve& cv)        
+Postscript_file_stream& 
+operator<<(Postscript_file_stream& ps, const Curve& cv)        
 {
   typedef typename Curve::value_type           Point;
   typedef typename Curve::iterator             Curve_iter;

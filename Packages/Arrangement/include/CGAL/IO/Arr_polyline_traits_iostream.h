@@ -32,7 +32,9 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R, class Container>
-std::ostream&  operator<<(std::ostream& os,  const typename Arr_polyline_traits<R,Container>::Curve & cv)
+std::ostream& 
+operator<<(std::ostream& os, 
+	   const typename Arr_polyline_traits<R,Container>::Curve & cv)
 {
   typedef typename Arr_polyline_traits<R>::Curve   Curve;
   typedef Curve::const_iterator       Points_iterator;
@@ -46,7 +48,9 @@ std::ostream&  operator<<(std::ostream& os,  const typename Arr_polyline_traits<
 }
 
 template <class R, class Container>
-std::ostream&  operator<<(std::ostream& os,  const typename Arr_polyline_traits<R,Container>::X_curve & cv)
+std::ostream& 
+operator<<(std::ostream& os,  
+	   const typename Arr_polyline_traits<R,Container>::X_curve & cv)
 {
   typedef typename Arr_polyline_traits<R>::Curve   Curve;
   typedef Curve::const_iterator       Points_iterator;
@@ -61,7 +65,9 @@ std::ostream&  operator<<(std::ostream& os,  const typename Arr_polyline_traits<
 
 
 template <class R, class Container>
-std::istream&  operator>>(std::istream& in,  typename Arr_polyline_traits<R,Container>::Curve & cv)
+std::istream& 
+operator>>(std::istream& in,  
+	   typename Arr_polyline_traits<R,Container>::Curve & cv)
 {
   typedef typename Arr_polyline_traits<R>::Curve   Curve;
   typedef typename Curve::value_type           Point;
@@ -83,7 +89,9 @@ std::istream&  operator>>(std::istream& in,  typename Arr_polyline_traits<R,Cont
 
 
 template <class R, class Container>
-std::istream&  operator>>(std::istream& in,  typename Arr_polyline_traits<R,Container>::X_curve & cv)
+std::istream& 
+operator>>(std::istream& in, 
+	   typename Arr_polyline_traits<R,Container>::X_curve & cv)
 {
   typedef typename Arr_polyline_traits<R>::Curve   Curve;
   typedef typename Curve::value_type           Point;

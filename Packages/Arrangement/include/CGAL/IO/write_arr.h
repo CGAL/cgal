@@ -187,25 +187,30 @@ void write_arr(const Arrangement& arr,
         
         if (i+1 < cv_iter->number_of_sc_levels()){
           if (!writer.verbose()){
-            writer.write_comment("begin and past end indices of children subcurve nodes");
+            writer.write_comment(
+            "begin and past end indices of children subcurve nodes");
             
             Subcurve_const_iterator last_child = sc_iter->children_end();
             
-            writer.write_value((scv_index[i+1])[sc_iter->children_begin()], ' ');
+            writer.write_value((scv_index[i+1])[sc_iter->children_begin()],
+			       ' ');
             writer.write_value((scv_index[i+1])[--last_child] + 1);
           }
           else {
             writer.write_comment("All children subcurve nodes");
-            
-            for (Subcurve_const_iterator child_iter = sc_iter->children_begin();
-                 child_iter != sc_iter->children_end(); child_iter++)
+
+            Subcurve_const_iterator child_iter;
+            for (child_iter = sc_iter->children_begin();
+                 child_iter != sc_iter->children_end(); 
+		 child_iter++)
               writer.write_subcurve (child_iter);
           }
         }
           
         else{  // getting to the edge nodes.
           if (!writer.verbose()){
-            writer.write_comment("begin and past end indices of children edge nodes");
+            writer.write_comment(
+	    "begin and past end indices of children edge nodes");
             
             Edge_const_iterator last_child = sc_iter->edges_end();
             
@@ -239,7 +244,8 @@ void write_arr(const Arrangement& arr,
          edge_iter != cv_iter->edges_end(); edge_iter++){
       if (!writer.verbose()){
         // printing next overlapping edge node.
-        writer.write_comment("pair indices (curve node and its edge node) for next overlapping edge node :");
+        writer.write_comment("pair indices (curve node and its edge node) "
+			     "for next overlapping edge node :");
         Edge_const_iterator edge_past_end_child = 
           Edge_const_iterator(edge_iter->children_end());
         
@@ -255,7 +261,8 @@ void write_arr(const Arrangement& arr,
         //writer.write_index(en_index[edge_iter->children_end()]);
         
         writer.write_comment("Halfedge indices associated with edge nodes");
-        writer.write_value(h_index[Halfedge_const_iterator(edge_iter->halfedge())]);
+        writer.write_value(
+	           h_index[Halfedge_const_iterator(edge_iter->halfedge())]);
       }
       else{
         writer.write_comment("Halfedge associated with edge nodes");
