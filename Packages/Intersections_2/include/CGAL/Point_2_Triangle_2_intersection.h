@@ -28,20 +28,27 @@
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Point_2.h>
 
+#include <CGAL/Line_2.h>
+#include <CGAL/utils.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/Straight_2.h>
+#include <CGAL/Object.h>
 CGAL_BEGIN_NAMESPACE
 
-template <class R>
+namespace CGALi {
+
+template <class K>
 class Point_2_Triangle_2_pair {
 public:
     enum Intersection_results {NO, POINT};
     Point_2_Triangle_2_pair() ;
-    Point_2_Triangle_2_pair(Point_2<R> const *pt,
-                            Triangle_2<R> const *trian);
+    Point_2_Triangle_2_pair(typename K::Point_2 const *pt,
+                            typename K::Triangle_2 const *trian);
     ~Point_2_Triangle_2_pair() {}
 #ifdef CGAL_CFG_RETURN_TYPE_BUG_2
     Intersection_results intersection_type() const
     {
-        typedef Line_2<R> line_t;
+        typedef Line_2<K> line_t;
         if (_known)
             return _result;
     // The non const this pointer is used to cast away const.
@@ -76,39 +83,30 @@ public:
 #else
     Intersection_results intersection_type() const;
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
-    bool                intersection(Point_2<R> &result) const;
+    bool                intersection(typename K::Point_2 &result) const;
 protected:
-    Point_2<R> const *    _pt;
-    Triangle_2<R> const * _trian;
+    typename K::Point_2 const *    _pt;
+    typename K::Triangle_2 const * _trian;
     mutable bool                       _known;
     mutable Intersection_results       _result;
-    mutable Point_2<R>            _intersection_point;
-    mutable Point_2<R>            _other_point;
+    mutable typename K::Point_2           _intersection_point;
+    mutable typename K::Point_2            _other_point;
 };
 
-template <class R>
-inline bool do_intersect(
-    const Point_2<R> &p1,
-    const Triangle_2<R> &p2)
+template <class K>
+inline bool do_intersect(const typename CGAL_WRAP(K)::Point_2 &p1,
+			 const typename CGAL_WRAP(K)::Triangle_2 &p2,
+			 const K&)
 {
-    typedef Point_2_Triangle_2_pair<R> pair_t;
-    pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO;
+  typedef Point_2_Triangle_2_pair<K> pair_t;
+  pair_t pair(&p1, &p2);
+  return pair.intersection_type() != pair_t::NO;
 }
 
-CGAL_END_NAMESPACE
 
 
-
-#include <CGAL/Line_2.h>
-#include <CGAL/utils.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/Straight_2.h>
-
-CGAL_BEGIN_NAMESPACE
-
-template <class R>
-Point_2_Triangle_2_pair<R>::
+template <class K>
+Point_2_Triangle_2_pair<K>::
 Point_2_Triangle_2_pair()
 {
     _known = false;
@@ -116,10 +114,10 @@ Point_2_Triangle_2_pair()
     _trian = 0;
 }
 
-template <class R>
-Point_2_Triangle_2_pair<R>::
-Point_2_Triangle_2_pair(Point_2<R> const *pt,
-                            Triangle_2<R> const *trian)
+template <class K>
+Point_2_Triangle_2_pair<K>::
+Point_2_Triangle_2_pair(typename K::Point_2 const *pt,
+			typename K::Triangle_2 const *trian)
 {
     _known = false;
     _pt = pt;
@@ -127,11 +125,11 @@ Point_2_Triangle_2_pair(Point_2<R> const *pt,
 }
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
-template <class R>
-typename Point_2_Triangle_2_pair<R>::Intersection_results
-Point_2_Triangle_2_pair<R>::intersection_type() const
+template <class K>
+typename Point_2_Triangle_2_pair<K>::Intersection_results
+Point_2_Triangle_2_pair<K>::intersection_type() const
 {
-    typedef Line_2<R> line_t;
+    typedef typename K::Line_2 line_t;
     if (_known)
         return _result;
 // The non const this pointer is used to cast away const.
@@ -167,10 +165,10 @@ Point_2_Triangle_2_pair<R>::intersection_type() const
 
 
 
-template <class R>
+template <class K>
 bool
-Point_2_Triangle_2_pair<R>::
-intersection(Point_2<R> &result) const
+Point_2_Triangle_2_pair<K>::
+intersection(typename K::Point_2 &result) const
 {
     if (!_known)
         intersection_type();
@@ -180,19 +178,15 @@ intersection(Point_2<R> &result) const
     return true;
 }
 
-CGAL_END_NAMESPACE
 
 
-
-#include <CGAL/Object.h>
-
-CGAL_BEGIN_NAMESPACE
-
-template <class R>
+template <class K>
 Object
-intersection(const Point_2<R> &pt, const Triangle_2<R>&tr)
+intersection(const typename CGAL_WRAP(K)::Point_2 &pt, 
+	     const typename CGAL_WRAP(K)::Triangle_2 &tr,
+	     const K&)
 {
-    typedef Point_2_Triangle_2_pair<R> is_t;
+    typedef Point_2_Triangle_2_pair<K> is_t;
     is_t ispair(&pt, &tr);
     switch (ispair.intersection_type()) {
     case is_t::NO:
@@ -204,33 +198,46 @@ intersection(const Point_2<R> &pt, const Triangle_2<R>&tr)
     }
 }
 
-template <class R>
+template <class K>
 class Triangle_2_Point_2_pair
-: public Point_2_Triangle_2_pair<R> {
+: public Point_2_Triangle_2_pair<K> {
 public:
     Triangle_2_Point_2_pair(
-            Triangle_2<R> const *trian,
-            Point_2<R> const *pt) :
-                        Point_2_Triangle_2_pair<R>(pt, trian) {}
+            typename K::Triangle_2 const *trian,
+            typename K::Point_2 const *pt) :
+                        Point_2_Triangle_2_pair<K>(pt, trian) {}
 };
 
-template <class R>
+} // namespace CGALi
+
+
+template <class K>
 inline bool do_intersect(
-    const Triangle_2<R> &p1,
-    const Point_2<R> &p2)
+    const Triangle_2<K> &tr,
+    const Point_2<K> &pt)
 {
-    typedef Triangle_2_Point_2_pair<R> pair_t;
-    pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO;
+  return CGALi::do_intersect(pt, tr, K());
 }
 
-template <class R>
+template <class K>
+inline bool do_intersect(const Point_2<K> &pt, const Triangle_2<K> &tr)
+{
+  return CGALi::do_intersect(pt, tr, K());
+}
+
+template <class K>
 inline Object
-intersection(const Triangle_2<R> &tr, const Point_2<R> &pt)
+intersection(const Triangle_2<K> &tr, const Point_2<K> &pt)
 {
-    return intersection(pt, tr);
+    return CGALi::intersection(pt, tr, K());
 }
 
+template <class K>
+inline Object
+intersection(const Point_2<K> &pt, const Triangle_2<K> &tr)
+{
+    return CGALi::intersection(pt, tr, K());
+}
 CGAL_END_NAMESPACE
 
 #endif

@@ -26,29 +26,48 @@
 
 #include <CGAL/Point_2.h>
 
-CGAL_BEGIN_NAMESPACE
-
-template <class R>
-inline bool
-do_intersect(const Point_2<R> &pt1, const Point_2<R> &pt2)
-{
-    return pt1 == pt2;
-}
-
-CGAL_END_NAMESPACE
-
 #include <CGAL/Object.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R>
+namespace CGALi {
+
+template <class K>
+inline bool
+do_intersect(const typename CGAL_WRAP(K)::Point_2 &pt1, 
+	     const typename CGAL_WRAP(K)::Point_2 &pt2)
+{
+    return pt1 == pt2;
+}
+template <class K>
 Object
-intersection(const Point_2<R> &pt1, const Point_2<R> &pt2)
+intersection(const typename CGAL_WRAP(K)::Point_2 &pt1, 
+	     const typename CGAL_WRAP(K)::Point_2 &pt2)
 {
     if (pt1 == pt2) {
         return make_object(pt1);
     }
     return Object();
+}
+
+}// namespace CGALi
+
+
+template <class K>
+inline 
+bool
+do_intersect(const Point_2<K> &pt1, const Point_2<K> &pt2)
+{
+  return CGALi::do_intersect(pt1, pt2, K());
+}
+
+
+template <class K>
+inline
+Object
+intersection(const Point_2<K> &pt1, const Point_2<K> &pt2)
+{
+  return CGALi::intersection(pt1, pt2, K());
 }
 
 CGAL_END_NAMESPACE

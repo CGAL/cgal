@@ -27,57 +27,72 @@
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Point_2.h>
 
-CGAL_BEGIN_NAMESPACE
-
-template <class R>
-inline bool
-do_intersect(
-    const Point_2<R> &pt,
-    const Iso_rectangle_2<R> &iso)
-{
-    return !iso.has_on_unbounded_side(pt);
-}
-
-CGAL_END_NAMESPACE
-
 #include <CGAL/Object.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R>
-Object
-intersection(
-    const Point_2<R> &pt,
-    const Iso_rectangle_2<R> &iso)
-{
-    if (do_intersect(pt,iso)) {
-        return make_object(pt);
-    }
-    return Object();
-}
+namespace CGALi {
 
-template <class R>
-inline bool
-do_intersect(
-    const Iso_rectangle_2<R> &iso,
-    const Point_2<R> &pt)
+template <class K>
+inline 
+bool
+do_intersect(const typename CGAL_WRAP(K)::Point_2 &pt,
+	     const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
+	     const K&)
 {
     return !iso.has_on_unbounded_side(pt);
 }
 
-
-template <class R>
-inline Object
-intersection(
-    const Iso_rectangle_2<R> &iso,
-    const Point_2<R> &pt)
+template <class K>
+Object
+intersection(const typename CGAL_WRAP(K)::Point_2 &pt,
+	     const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
+	     const K& k)
 {
-    if (do_intersect(pt, iso)) {
-        return make_object(pt);
+  if (CGALi::do_intersect(pt,iso,k)) {
+    return make_object(pt);
     }
     return Object();
 }
 
+
+} // namespace CGALi
+
+
+template <class K>
+inline 
+bool
+do_intersect(const Iso_rectangle_2<K> &iso,
+	     const Point_2<K> &pt)
+{
+  return CGALi::do_intersect(pt, iso, K());
+}
+
+template <class K>
+inline 
+bool
+do_intersect(const Point_2<K> &pt,
+	     const Iso_rectangle_2<K> &iso)
+{
+  return CGALi::do_intersect(pt, iso, K());
+}
+
+template <class K>
+inline 
+Object
+intersection(const Iso_rectangle_2<K> &iso,
+	     const Point_2<K> &pt)
+{
+  return CGALi::intersection(pt, iso, K());;
+}
+template <class K>
+inline 
+Object
+intersection(const Point_2<K> &pt,
+	     const Iso_rectangle_2<K> &iso)
+{
+  return CGALi::intersection(pt, iso, K());;
+}
 CGAL_END_NAMESPACE
 
 #endif

@@ -29,16 +29,20 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Object.h>
+#include <CGAL/Line_2_Line_2_intersection.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R>
+namespace CGALi {
+
+template <class K>
 class Ray_2_Line_2_pair {
 public:
     enum Intersection_results {NO, POINT, RAY};
     Ray_2_Line_2_pair() ;
-    Ray_2_Line_2_pair(Ray_2<R> const *ray,
-                            Line_2<R> const *line);
+    Ray_2_Line_2_pair(typename K::Ray_2 const *ray,
+		      typename K::Line_2 const *line);
     ~Ray_2_Line_2_pair() {}
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
@@ -50,18 +54,18 @@ public:
         return _result;
     // The non const this pointer is used to cast away const.
     _known = true;
-    const Line_2<R> &l1 = _ray->supporting_line();
-    Line_2_Line_2_pair<R> linepair(&l1, _line);
+    const typename K::Line_2 &l1 = _ray->supporting_line();
+    Line_2_Line_2_pair<K> linepair(&l1, _line);
     switch ( linepair.intersection_type()) {
-    case Line_2_Line_2_pair<R>::NO:
+    case Line_2_Line_2_pair<K>::NO:
         _result = NO;
         break;
-    case Line_2_Line_2_pair<R>::POINT:
+    case Line_2_Line_2_pair<K>::POINT:
         linepair.intersection(_intersection_point);
         _result = (_ray->collinear_has_on(_intersection_point) ) ?
                 POINT : NO;
         break;
-    case Line_2_Line_2_pair<R>::LINE:
+    case Line_2_Line_2_pair<K>::LINE:
         _result = RAY;
         break;
     }
@@ -70,44 +74,42 @@ public:
 
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
-    bool                intersection(Point_2<R> &result) const;
-    bool                intersection(Ray_2<R> &result) const;
+    bool                intersection(typename K::Point_2 &result) const;
+    bool                intersection(typename K::Ray_2 &result) const;
 protected:
-    Ray_2<R> const *   _ray;
-    Line_2<R> const *  _line;
+    typename K::Ray_2 const *   _ray;
+    typename K::Line_2 const *  _line;
     mutable bool                    _known;
     mutable Intersection_results    _result;
-    mutable Point_2<R>         _intersection_point;
+    mutable typename K::Point_2         _intersection_point;
 };
 
-template <class R>
+template <class K>
 inline bool do_intersect(
-    const Ray_2<R> &p1,
-    const Line_2<R> &p2)
+    const typename CGAL_WRAP(K)::Ray_2 &p1,
+    const typename CGAL_WRAP(K)::Line_2 &p2)
 {
-    typedef Ray_2_Line_2_pair<R> pair_t;
+    typedef Ray_2_Line_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
     return pair.intersection_type() != pair_t::NO;
 }
 
-CGAL_END_NAMESPACE
 
-#include <CGAL/Object.h>
 
-CGAL_BEGIN_NAMESPACE
-
-template <class R>
+template <class K>
 Object
-intersection(const Ray_2<R> &ray, const Line_2<R>&line)
+intersection(const typename CGAL_WRAP(K)::Ray_2 &ray,
+	     const typename CGAL_WRAP(K)::Line_2 &line,
+	     const K& k)
 {
-    typedef Ray_2_Line_2_pair<R> is_t;
+    typedef Ray_2_Line_2_pair<K> is_t;
     is_t ispair(&ray, &line);
     switch (ispair.intersection_type()) {
     case is_t::NO:
     default:
         return Object();
     case is_t::POINT: {
-        Point_2<R> pt;
+        typename K::Point_2 pt;
         ispair.intersection(pt);
         return make_object(pt);
     }
@@ -117,50 +119,38 @@ intersection(const Ray_2<R> &ray, const Line_2<R>&line)
     }
 }
 
-template <class R>
-class Line_2_Ray_2_pair: public Ray_2_Line_2_pair<R> {
+template <class K>
+class Line_2_Ray_2_pair: public Ray_2_Line_2_pair<K> {
 public:
-    Line_2_Ray_2_pair(
-            Line_2<R> const *line,
-            Ray_2<R> const *ray) :
-                                Ray_2_Line_2_pair<R>(ray, line) {}
+    Line_2_Ray_2_pair(typename K::Line_2 const *line,
+		      typename K::Ray_2 const *ray) :
+      Ray_2_Line_2_pair<K>(ray, line) {}
 };
 
-template <class R>
+template <class K>
 inline bool do_intersect(
-    const Line_2<R> &p1,
-    const Ray_2<R> &p2)
+    const typename CGAL_WRAP(K)::Line_2 &p1,
+    const typename CGAL_WRAP(K)::Ray_2 &p2,
+    const K& k)
 {
-    typedef Line_2_Ray_2_pair<R> pair_t;
+    typedef Line_2_Ray_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
     return pair.intersection_type() != pair_t::NO;
 }
 
-template <class R>
-inline Object
-intersection(const Line_2<R> &line, const Ray_2<R> &ray)
-{
-    return intersection(ray, line);
-}
-
-CGAL_END_NAMESPACE
 
 
-#include <CGAL/Line_2_Line_2_intersection.h>
-
-CGAL_BEGIN_NAMESPACE
-
-template <class R>
-Ray_2_Line_2_pair<R>::Ray_2_Line_2_pair()
+template <class K>
+Ray_2_Line_2_pair<K>::Ray_2_Line_2_pair()
 {
     _ray = 0;
     _line = 0;
     _known = false;
 }
 
-template <class R>
-Ray_2_Line_2_pair<R>::Ray_2_Line_2_pair(
-    Ray_2<R> const *ray, Line_2<R> const *line)
+template <class K>
+Ray_2_Line_2_pair<K>::Ray_2_Line_2_pair(
+    typename K::Ray_2 const *ray, typename K::Line_2 const *line)
 {
     _ray = ray;
     _line = line;
@@ -168,26 +158,26 @@ Ray_2_Line_2_pair<R>::Ray_2_Line_2_pair(
 }
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
-template <class R>
-typename Ray_2_Line_2_pair<R>::Intersection_results
-Ray_2_Line_2_pair<R>::intersection_type() const
+template <class K>
+typename Ray_2_Line_2_pair<K>::Intersection_results
+Ray_2_Line_2_pair<K>::intersection_type() const
 {
     if (_known)
         return _result;
     // The non const this pointer is used to cast away const.
     _known = true;
-    const Line_2<R> &l1 = _ray->supporting_line();
-    Line_2_Line_2_pair<R> linepair(&l1, _line);
+    const typename K::Line_2 &l1 = _ray->supporting_line();
+    Line_2_Line_2_pair<K> linepair(&l1, _line);
     switch ( linepair.intersection_type()) {
-    case Line_2_Line_2_pair<R>::NO:
+    case Line_2_Line_2_pair<K>::NO:
         _result = NO;
         break;
-    case Line_2_Line_2_pair<R>::POINT:
+    case Line_2_Line_2_pair<K>::POINT:
         linepair.intersection(_intersection_point);
         _result = (_ray->collinear_has_on(_intersection_point) ) ?
                 POINT : NO;
         break;
-    case Line_2_Line_2_pair<R>::LINE:
+    case Line_2_Line_2_pair<K>::LINE:
         _result = RAY;
         break;
     }
@@ -196,9 +186,9 @@ Ray_2_Line_2_pair<R>::intersection_type() const
 
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
-template <class R>
+template <class K>
 bool
-Ray_2_Line_2_pair<R>::intersection(Point_2<R> &result) const
+Ray_2_Line_2_pair<K>::intersection(typename K::Point_2 &result) const
 {
     if (!_known)
         intersection_type();
@@ -208,9 +198,9 @@ Ray_2_Line_2_pair<R>::intersection(Point_2<R> &result) const
     return true;
 }
 
-template <class R>
+template <class K>
 bool
-Ray_2_Line_2_pair<R>::intersection(Ray_2<R> &result) const
+Ray_2_Line_2_pair<K>::intersection(typename K::Ray_2 &result) const
 {
     if (!_known)
         intersection_type();
@@ -219,7 +209,33 @@ Ray_2_Line_2_pair<R>::intersection(Ray_2<R> &result) const
     result = *_ray;
     return true;
 }
+} // namespace CGALi
 
+template <class K>
+inline bool do_intersect(const Line_2<K> &p1, const Ray_2<K> &p2)
+{
+  return CGALi::do_intersect(p1, p2, K());
+}
+
+template <class K>
+inline bool do_intersect(const Ray_2<K> &p2, const Line_2<K> &p1)
+{
+  return CGALi::do_intersect(p1, p2, K());
+}
+
+template <class K>
+inline Object
+intersection(const Line_2<K> &line, const Ray_2<K> &ray)
+{
+    return CGALi::intersection(ray, line, K());
+}
+
+template <class K>
+inline Object
+intersection(const Ray_2<K> &ray, const Line_2<K> &line)
+{
+    return CGALi::intersection(ray, line, K());
+}
 CGAL_END_NAMESPACE
 
 

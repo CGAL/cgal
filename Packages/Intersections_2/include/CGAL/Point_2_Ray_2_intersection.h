@@ -26,50 +26,67 @@
 
 #include <CGAL/Ray_2.h>
 #include <CGAL/Point_2.h>
-
-CGAL_BEGIN_NAMESPACE
-
-
-template <class R>
-inline bool
-do_intersect(const Point_2<R> &pt, const Ray_2<R> &ray)
-{
-    return ray.has_on(pt);
-}
-
-CGAL_END_NAMESPACE
-
 #include <CGAL/Object.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R>
+namespace CGALi {
+
+template <class K>
+inline 
+bool
+do_intersect(const typename CGAL_WRAP(K)::Point_2 &pt, 
+	     const typename CGAL_WRAP(K)::Ray_2 &ray,
+	     const K&)
+{
+  return ray.has_on(pt);
+}
+
+
+template <class K>
 Object
-intersection(const Point_2<R> &pt, const Ray_2<R> &ray)
+intersection(const typename CGAL_WRAP(K)::Point_2 &pt, 
+	     const typename CGAL_WRAP(K)::Ray_2 &ray,
+	     const K& k)
 {
-    if (do_intersect(pt,ray)) {
-        return make_object(pt);
-    }
-    return Object();
+  if (do_intersect(pt,ray, k)) {
+    return make_object(pt);
+  }
+  return Object();
+}
+
+} // namespace CGALi
+
+
+template <class K>
+inline
+bool
+do_intersect(const Ray_2<K> &ray, const Point_2<K> &pt)
+{
+  return CGALi::do_intersect(pt, ray, K());
+}
+
+template <class K>
+inline
+bool
+do_intersect(const Point_2<K> &pt, const Ray_2<K> &ray)
+{
+  return CGALi::do_intersect(pt, ray, K());
 }
 
 
-template <class R>
-inline bool
-do_intersect(const Ray_2<R> &ray, const Point_2<R> &pt)
-{
-    return ray.has_on(pt);
-}
-
-
-template <class R>
+template <class K>
 inline Object
-intersection(const Ray_2<R> &ray, const Point_2<R> &pt)
+intersection(const Ray_2<K> &ray, const Point_2<K> &pt)
 {
-    if (do_intersect(pt,ray)) {
-        return make_object(pt);
-    }
-    return Object();
+  return CGALi::intersection(pt, ray, K());
+}
+
+template <class K>
+inline Object
+intersection(const Point_2<K> &pt, const Ray_2<K> &ray)
+{
+  return CGALi::intersection(pt, ray, K());
 }
 
 CGAL_END_NAMESPACE

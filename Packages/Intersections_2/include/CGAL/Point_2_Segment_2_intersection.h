@@ -26,49 +26,60 @@
 
 #include <CGAL/Segment_2.h>
 #include <CGAL/Point_2.h>
-
-CGAL_BEGIN_NAMESPACE
-
-template <class R>
-inline bool
-do_intersect(const Point_2<R> &pt, const Segment_2<R> &seg)
-{
-    return seg.has_on(pt);
-}
-
-CGAL_END_NAMESPACE
-
 #include <CGAL/Object.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R>
-Object
-intersection(const Point_2<R> &pt, const Segment_2<R> &seg)
-{
-    if (do_intersect(pt,seg)) {
-        return make_object(pt);
-    }
-    return Object();
-}
-
-
-template <class R>
+namespace CGALi {
+template <class K>
 inline bool
-do_intersect(const Segment_2<R> &seg, const Point_2<R> &pt)
+do_intersect(const typename CGAL_WRAP(K)::Point_2 &pt, 
+	     const typename CGAL_WRAP(K)::Segment_2 &seg)
 {
     return seg.has_on(pt);
 }
 
-
-template <class R>
-inline Object
-intersection(const Segment_2<R> &seg, const Point_2<R> &pt)
+template <class K>
+Object
+intersection(const typename CGAL_WRAP(K)::Point_2 &pt, 
+	     const typename CGAL_WRAP(K)::Segment_2 &seg)
 {
     if (do_intersect(pt,seg)) {
         return make_object(pt);
     }
     return Object();
+}
+
+} // namespace CGALi
+
+
+template <class K>
+inline bool
+do_intersect(const Segment_2<K> &seg, const Point_2<K> &pt)
+{
+    return CGALi::do_intersect(pt, seg, K());
+}
+
+template <class K>
+inline bool
+do_intersect(const Point_2<K> &pt, const Segment_2<K> &seg)
+{
+    return CGALi::do_intersect(pt, seg, K());
+}
+
+
+template <class K>
+inline Object
+intersection(const Segment_2<K> &seg, const Point_2<K> &pt)
+{
+    return CGALi::intersection(pt, seg, K());
+}
+
+template <class K>
+inline Object
+intersection(const Point_2<K> &pt, const Segment_2<K> &seg)
+{
+    return CGALi::intersection(pt, seg, K());
 }
 
 CGAL_END_NAMESPACE

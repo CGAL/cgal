@@ -105,7 +105,7 @@ bool intersection_test_edge(const typename K::Point_2 *  P1,
   
 }
 
-} 
+} // namespace CGALi
 
 
 template <class K>

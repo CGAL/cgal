@@ -30,16 +30,20 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Object.h>
+
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R>
+namespace CGALi {
+
+template <class K>
 class Ray_2_Iso_rectangle_2_pair {
 public:
     enum Intersection_results {NO, POINT, SEGMENT};
     Ray_2_Iso_rectangle_2_pair() ;
-    Ray_2_Iso_rectangle_2_pair(Ray_2<R> const *ray,
-                          Iso_rectangle_2<R> const *rect) ;
+    Ray_2_Iso_rectangle_2_pair(typename K::Ray_2 const *ray,
+                          typename K::Iso_rectangle_2 const *rect) ;
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
   Intersection_results intersection_type() const;
@@ -47,8 +51,8 @@ public:
 #else
   Intersection_results intersection_type() const
 {
-    typedef typename R::RT RT;
-    typedef typename R::FT FT;
+    typedef typename K::RT RT;
+    typedef typename K::FT FT;
     if (_known)
         return _result;
     _known = true;
@@ -103,95 +107,103 @@ public:
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
     bool                       intersection(
-                                    Point_2<R> &result) const;
+                                    typename K::Point_2 &result) const;
     bool                       intersection(
-                                    Segment_2<R> &result) const;
+                                    typename K::Segment_2 &result) const;
 protected:
     mutable bool                       _known;
     mutable Intersection_results       _result;
-    mutable Point_2<R>            _ref_point;
-    mutable Vector_2<R>           _dir;
-    mutable Point_2<R>            _isomin;
-    mutable Point_2<R>            _isomax;
-    mutable typename R::FT                     _min,
+    mutable typename K::Point_2            _ref_point;
+    mutable typename K::Vector_2           _dir;
+    mutable typename K::Point_2            _isomin;
+    mutable typename K::Point_2            _isomax;
+    mutable typename K::FT                     _min,
                                _max;
 };
 
-template <class R>
+template <class K>
 inline bool do_intersect(
-    const Ray_2<R> &p1,
-    const Iso_rectangle_2<R> &p2)
+    const typename CGAL_WRAP(K)::Ray_2 &p1,
+    const typename CGAL_WRAP(K)::Iso_rectangle_2 &p2,
+			 const K& k)
 {
-    typedef Ray_2_Iso_rectangle_2_pair<R> pair_t;
+    typedef Ray_2_Iso_rectangle_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
     return pair.intersection_type() != pair_t::NO;
 }
 
-CGAL_END_NAMESPACE
+template <class K>
+inline bool do_intersect(const typename CGAL_WRAP(K)::Iso_rectangle_2 &p2,
+			 const typename CGAL_WRAP(K)::Ray_2 &p1,
+			 const K& k)
+{
+  return do_intersect(p1, p2, k);
+}
 
-#include <CGAL/Object.h>
-
-CGAL_BEGIN_NAMESPACE
-
-template <class R>
+template <class K>
 Object
 intersection(
-    const Ray_2<R> &ray,
-    const Iso_rectangle_2<R> &iso)
+    const typename CGAL_WRAP(K)::Ray_2 &ray,
+    const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
+			 const K& k)
 {
-    typedef Ray_2_Iso_rectangle_2_pair<R> is_t;
+    typedef Ray_2_Iso_rectangle_2_pair<K> is_t;
     is_t ispair(&ray, &iso);
     switch (ispair.intersection_type()) {
     case is_t::NO:
     default:
         return Object();
     case is_t::POINT: {
-        Point_2<R> ipt;
+        typename K::Point_2 ipt;
         ispair.intersection(ipt);
         return make_object(ipt);
     }
     case is_t::SEGMENT: {
-        Segment_2<R> iseg;
+        typename K::Segment_2 iseg;
         ispair.intersection(iseg);
         return make_object(iseg);
     }
     }
 }
 
+template <class K>
+Object
+intersection(
+    const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
+    const typename CGAL_WRAP(K)::Ray_2 &ray,
+			 const K& k)
+{
+  return intersection(ray, iso, k);
+}
 
-CGAL_END_NAMESPACE
 
-
-
-CGAL_BEGIN_NAMESPACE
-
-template <class R>
-Ray_2_Iso_rectangle_2_pair<R>::Ray_2_Iso_rectangle_2_pair()
+template <class K>
+Ray_2_Iso_rectangle_2_pair<K>::Ray_2_Iso_rectangle_2_pair()
 {
     _known = false;
 }
 
-template <class R>
-Ray_2_Iso_rectangle_2_pair<R>::
+template <class K>
+Ray_2_Iso_rectangle_2_pair<K>::
 Ray_2_Iso_rectangle_2_pair(
-        Ray_2<R> const *ray,
-        Iso_rectangle_2<R> const *iso)
+        typename K::Ray_2 const *ray,
+        typename K::Iso_rectangle_2 const *iso)
 {
     _known = false;
     _isomin = iso->min();
     _isomax = iso->max();
     _ref_point = ray->start();
     _dir = ray->direction().to_vector();
-    _min = (typename R::FT)(0);
+    _min = (typename K::FT)(0);
 }
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
-template <class R>
-typename Ray_2_Iso_rectangle_2_pair<R>::Intersection_results
-Ray_2_Iso_rectangle_2_pair<R>::intersection_type() const
+template <class K>
+typename Ray_2_Iso_rectangle_2_pair<K>::Intersection_results
+Ray_2_Iso_rectangle_2_pair<K>::intersection_type() const
 {
-    typedef typename R::RT RT;
-    typedef typename R::FT FT;
+    typedef typename K::RT RT;
+    typedef typename K::FT FT;
     if (_known)
         return _result;
     _known = true;
@@ -245,62 +257,74 @@ Ray_2_Iso_rectangle_2_pair<R>::intersection_type() const
 
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
-template <class R>
-bool Ray_2_Iso_rectangle_2_pair<R>::
-intersection(Segment_2<R> &seg) const
+template <class K>
+bool Ray_2_Iso_rectangle_2_pair<K>::
+intersection(typename K::Segment_2 &seg) const
 {
+  typedef typename K::Segment_2 Segment_2; 
     if (!_known)
         intersection_type();
     if (_result != SEGMENT)
         return false;
-    Point_2<R> p1(_ref_point + _dir*_min);
-    Point_2<R> p2(_ref_point + _dir*_max);
-    seg = Segment_2<R>(p1, p2);
+    typename K::Point_2 p1(_ref_point + _dir*_min);
+    typename K::Point_2 p2(_ref_point + _dir*_max);
+    seg = Segment_2(p1, p2);
     return true;
 }
 
-template <class R> bool Ray_2_Iso_rectangle_2_pair<R>::
-intersection(Point_2<R> &pt) const
+template <class K> bool Ray_2_Iso_rectangle_2_pair<K>::
+intersection(typename K::Point_2 &pt) const
 {
+  typedef typename K::Point_2 Point_2;
     if (!_known)
         intersection_type();
     if (_result != POINT)
         return false;
-    pt = Point_2<R>(_ref_point + _dir*_min);
+    pt = Point_2(_ref_point + _dir*_min);
     return true;
 }
 
-CGAL_END_NAMESPACE
 
 
-
-CGAL_BEGIN_NAMESPACE
-
-template <class R>
+template <class K>
 class Iso_rectangle_2_Ray_2_pair:
-          public Ray_2_Iso_rectangle_2_pair<R> {
+          public Ray_2_Iso_rectangle_2_pair<K> {
 public:
     Iso_rectangle_2_Ray_2_pair() {}
-    Iso_rectangle_2_Ray_2_pair(Iso_rectangle_2<R> const *rect,
-                               Ray_2<R> const *ray)
-                :Ray_2_Iso_rectangle_2_pair<R> (ray, rect){}
+    Iso_rectangle_2_Ray_2_pair(typename K::Iso_rectangle_2 const *rect,
+                               typename K::Ray_2 const *ray)
+                :Ray_2_Iso_rectangle_2_pair<K> (ray, rect){}
 };
 
-template <class R>
+} // namespace CGALi
+
+
+template <class K>
 inline bool do_intersect(
-    const Iso_rectangle_2<R> &p1,
-    const Ray_2<R> &p2)
+    const Iso_rectangle_2<K> &p1,
+    const Ray_2<K> &p2)
 {
-    typedef Iso_rectangle_2_Ray_2_pair<R> pair_t;
-    pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO;
+  return CGALi::do_intersect(p1, p2, K());
+}
+template <class K>
+inline bool do_intersect(const Ray_2<K> &p2,
+			 const Iso_rectangle_2<K> &p1)
+{
+  return CGALi::do_intersect(p1, p2, K());
 }
 
-template <class R>
+
+template <class K>
 inline Object
-intersection(const Iso_rectangle_2<R>&iso, const Ray_2<R>&ray)
+intersection(const Iso_rectangle_2<K>&iso, const Ray_2<K>&ray)
 {
-    return intersection(ray, iso);
+  return CGALi::intersection(ray, iso, K());
+}
+template <class K>
+inline Object
+intersection(const Ray_2<K>&ray, const Iso_rectangle_2<K>&iso)
+{
+  return CGALi::intersection(ray, iso, K());
 }
 
 CGAL_END_NAMESPACE
