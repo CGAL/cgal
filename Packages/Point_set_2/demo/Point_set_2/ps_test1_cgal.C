@@ -62,15 +62,6 @@ int main()
     output(W,PS);    
   }
   
-/*  
-  for (i=0; i<2; i++) {
-    CGAL::Point_2<K> pnew;
-    W >> pnew;
-    Vertex_handle v = PS.nearest_neighbor(pnew);
-    PS.del(v);
-    output(W,PS);    
-  }
-*/  
   std::list<Vertex_handle>::const_iterator vit;
   std::list<Vertex_handle> LV;  
   

@@ -6,6 +6,8 @@ CGALCFLAGS =  $(CGAL_CXXFLAGS)
 
 CGDL =  $(CGAL_WINDOW_LDFLAGS)
 
+hierarchie$(EXE_EXT) :  hierarchie$(OBJ_EXT)
+	$(CC)  $(EXE_OPT)hierarchie hierarchie$(OBJ_EXT) $(CGDL)
 
 ps_test1_cgal$(EXE_EXT) : ps_test1_cgal$(OBJ_EXT)
 	$(CC)  $(EXE_OPT)ps_test1_cgal ps_test1_cgal$(OBJ_EXT) $(CGDL)
