@@ -1,3 +1,6 @@
+17 May 2004 Radu Ursu
+- removed gmp-4.1.2 from the repository
+
 12 May 2004 Sylvain Pion
 - Added boost-1.31.0.tar.gz.
 
