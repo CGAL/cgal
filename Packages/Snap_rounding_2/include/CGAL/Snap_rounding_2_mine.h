@@ -21,6 +21,8 @@
 #ifndef CGAL_SR_2_H
 #define CGAL_SR_2_H
 
+#define DEBUG
+
 #include <CGAL/leda_rational.h> 
 
 #include <iostream>
@@ -267,6 +269,9 @@ public:
    */
   void do_isr(bool inp_do_isr);
 
+  // @@@@ next function
+  void do_isrs(bool inp_do_isrs);
+
   /*! Determine the output mode: integer grid or closest grid point
       or Snap Rounding (SR).
    */
@@ -295,6 +300,10 @@ private:
   int number_of_segments,number_of_kd_trees;
   Multiple_kd_tree<Rep,Hot_Pixel<Rep> *> *mul_kd_tree;
   bool wheteher_to_do_isr;
+
+  // @@@@ next one
+  bool wheteher_to_do_isrs;
+
   bool int_output;
   // @@@@ next two for ISRS
   Pmwx pm;
@@ -309,9 +318,10 @@ private:
   bool to_the_right(const Point_2& query_point,const Segment_2& s);
   Segment_2 find_segment_to_right(const Point_2& p_center,const Point_2& query_point,std::list<Segment_2>& segment_list,NT& dis,bool& found);
   bool inside_bounding_box(const Point_2& query_point,const Segment_2& s);
-  Point_2 find_point_on_segment_right(Segment_2 s,Point_2 p);
-  Point_2 find_point_on_segment_up(Segment_2 s,Point_2 p);
-  bool triangle_empty(Segment_2 s,Point_2 p,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list);
+  Point_2 find_point_on_segment_right(const Segment_2& s,const Point_2& p);
+  Point_2 find_point_on_segment_up(const Segment_2& s,const Point_2& p);
+  bool triangle_empty(const Segment_2& s,const Point_2& p,
+        std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list);
   bool negative_slope(const Segment_2& s);
   void heat_pixel(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list);
   //@@@@ end functions for isrs
@@ -667,9 +677,11 @@ bool Snap_rounding_2<Rep_>::to_the_right(const Point_2& query_point,const Segmen
     ta = tmp;
   }
 
-  std::cout << "so = " << so << std::endl;
-  std::cout << "query_point = " << query_point << std::endl;
-  std::cout << "ta = " << ta << std::endl;
+  #ifdef DEBUG
+    std::cout << "so = " << so << std::endl;
+    std::cout << "query_point = " << query_point << std::endl;
+    std::cout << "ta = " << ta << std::endl;
+  #endif
 
   return(right_turn(so,query_point,ta));
 }
@@ -686,11 +698,15 @@ typename Snap_rounding_2<Rep_>::Segment_2 Snap_rounding_2<Rep_>::find_segment_to
   bool first_time = true;
   Segment_2 result_segment;
 
-  std::cout << "query_point = " << query_point << std::endl;
+  #ifdef DEBUG
+    std::cout << "query_point = " << query_point << std::endl;
+  #endif
   found = false;
   for(iter = segment_list.begin();iter != segment_list.end();++iter) {
     Segment_2 s = *iter;
-    std::cout << "s = " << s << std::endl;
+    #ifdef DEBUG
+      std::cout << "s = " << s << std::endl;
+    #endif
     if(to_the_right(query_point,s)) { // both to the right and a x-ray shooting intersects it
       curr_dis = CGAL::squared_distance(p_center,s);
       if(first_time || curr_dis < dis) {
@@ -722,7 +738,7 @@ bool Snap_rounding_2<Rep_>::inside_bounding_box(const Point_2& query_point,
 
 // @@@@ a function for ISRS
 template<class Rep_>
-typename Snap_rounding_2<Rep_>::Point_2 Snap_rounding_2<Rep_>::find_point_on_segment_right(Segment_2 s,Point_2 p)
+typename Snap_rounding_2<Rep_>::Point_2 Snap_rounding_2<Rep_>::find_point_on_segment_right(const Segment_2& s,const Point_2& p)
 {
   Point_2 inter_p;
   Object result;
@@ -738,7 +754,7 @@ typename Snap_rounding_2<Rep_>::Point_2 Snap_rounding_2<Rep_>::find_point_on_seg
 
 // @@@@ a function for ISRS
 template<class Rep_>
-typename Snap_rounding_2<Rep_>::Point_2 Snap_rounding_2<Rep_>::find_point_on_segment_up(Segment_2 s,Point_2 p)
+typename Snap_rounding_2<Rep_>::Point_2 Snap_rounding_2<Rep_>::find_point_on_segment_up(const Segment_2& s,const Point_2& p)
 {
   Point_2 inter_p;
   Object result;
@@ -766,23 +782,42 @@ bool Snap_rounding_2<Rep_>::negative_slope(const Segment_2& s)
 
 // @@@@ a function for ISRS
 template<class Rep_>
-bool Snap_rounding_2<Rep_>::triangle_empty(Segment_2 s,Point_2 p,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
+bool Snap_rounding_2<Rep_>::triangle_empty(const Segment_2& s,const Point_2& p_inp,
+      std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
 {
   // !!!! need fine tuning
+  Point_2 p(p_inp.x() + pixel_size / 2,p_inp.y() + pixel_size / 2);
   Point_2 s1 = find_point_on_segment_right(s,p);
   Point_2 s2 = find_point_on_segment_up(s,p);
   Point_2 h1,h2,h3,h4;
+
+  #ifdef DEBUG
+    std::cout << "s2 = " << s << std::endl;
+    std::cout << "p = " << p << std::endl;
+    std::cout << "s1 = " << s1 << std::endl;
+    std::cout << "s2 = " << s2 << std::endl;
+  #endif
 
   for(typename std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >::const_iterator i = hot_pixels_list.begin();i != hot_pixels_list.end();++i) {
     h1 = i->second->get_ll();
     h2 = i->second->get_lr();
     h3 = i->second->get_ul();
     h4 = i->second->get_ur();
+    #ifdef DEBUG
+      std::cout << "h1 = " << h1 << std::endl;
+      std::cout << "h2 = " << h2 << std::endl;
+      std::cout << "h3 = " << h3 << std::endl;
+      std::cout << "h4 = " << h4 << std::endl;
+    #endif
     if(left_turn(s1,h1,p) && left_turn(s2,h1,s1) && left_turn(p,h1,s2) ||
        left_turn(s1,h2,p) && left_turn(s2,h2,s1) && left_turn(p,h2,s2) ||
        left_turn(s1,h3,p) && left_turn(s2,h3,s1) && left_turn(p,h3,s2) ||
-       left_turn(s1,h4,p) && left_turn(s2,h4,s1) && left_turn(p,h4,s2))
+       left_turn(s1,h4,p) && left_turn(s2,h4,s1) && left_turn(p,h4,s2)) {
+      #ifdef DEBUG
+        std::cout << "inside TRIANGLE" << std::endl;
+      #endif
       return(false);
+    }
   }
 
   return(true);
@@ -799,14 +834,18 @@ void Snap_rounding_2<Rep_>::heat_pixel(const Point_2& p,const Segment_2& s,std::
   Segment_2 t(p,Point_2(s.max().x(),p.y()));
   result = intersection(t,s);
   if(assign(inter_p,result)) {
-    std::cout << "1) inter_p = " << inter_p << std::endl;
+    #ifdef DEBUG
+      std::cout << "1) inter_p = " << inter_p << std::endl;
+    #endif
     // reach a point which is in the left pixel columns to the intersection
     Segment_2 r(Point_2(inter_p.x() - pixel_size,inter_p.y()),
                 Point_2(inter_p.x() - pixel_size,s.target().y() > s.source().y() ?
                                                  s.target().y() : s.source().y()));
     result = intersection(r,s);
     if(assign(inter_p,result)) {
-      std::cout << "2) inter_p = " << inter_p << std::endl;
+      #ifdef DEBUG
+        std::cout << "2) inter_p = " << inter_p << std::endl;
+      #endif
       // heat the resective pixel and insert it to hot_pixels_list
       Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size);
       hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
@@ -828,8 +867,10 @@ typename Snap_rounding_2<Rep_>::Point_2 Snap_rounding_2<Rep_>::next_center(const
   Point_2 ass_p;
   Object result;
   Segment_2 inter_s(p,Point_2(s.max().x(),p.y()));
-  std::cout << "s = " << s << std::endl;
-  std::cout << "inter_s = " << inter_s << std::endl;
+  #ifdef DEBUG
+    std::cout << "s = " << s << std::endl;
+    std::cout << "inter_s = " << inter_s << std::endl;
+  #endif
   result = intersection(s,inter_s);
   if(assign(ass_p,result))
     return(ass_p);
@@ -845,27 +886,41 @@ void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2
 {
   typename std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >::const_iterator iter;
   NT R = 0.70710678 * pixel_size;
+  NT dis1 = delta * delta;
+  NT dis2 = delta * delta + R * R + 2 * delta * R;
+
+  #ifdef DEBUG
+    std::cout << "delta = " << delta << std::endl;
+  #endif
 
   for(iter = hot_pixels_list.begin();iter != hot_pixels_list.end();++iter) {
     Point_2 p_center = iter->first;
-    std::cout << "p_center = " << p_center << std::endl;
+    #ifdef DEBUG
+      std::cout << "p_center = " << p_center << std::endl;
+    #endif
     Point_2 query_point = Point_2(p_center.x(),p_center.y() + pixel_size);
     bool done = false;
     while(!done) {
-      std::cout << "query_point = " << query_point << std::endl;
+      #ifdef DEBUG
+        std::cout << "query_point = " << query_point << std::endl;
+      #endif
       bool found;
       NT sq_dis;
       Segment_2 first_s = find_segment_to_right(p_center,query_point,segment_list,sq_dis,found);
       if(found && //negative_slope(first_s) &&
          inside_bounding_box(query_point,first_s)) {
-        std::cout << "first_s = " << first_s << std::endl;
-        if(sq_dis < delta * delta)
+        #ifdef DEBUG
+          std::cout << "first_s = " << first_s << std::endl;
+	  std::cout << "sq_dis = " << sq_dis << std::endl;
+        #endif
+        if(sq_dis < dis1)
           query_point = next_center(query_point,first_s);
-        else if(sq_dis < delta * delta + R * R + 2 * delta * R &&
-                triangle_empty(first_s,query_point,hot_pixels_list)) {
+        else if(sq_dis < dis2 &&
+                triangle_empty(first_s,query_point,hot_pixels_list) && negative_slope(first_s)) {
           heat_pixel(query_point,first_s,hot_pixels_list);// insert to the end of the list
           done = true;
-	}
+	} else
+          done = true;
       } else
 	 done = true;
     }
@@ -946,7 +1001,8 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
 
 
     // @@@@ for ISRS : create new hot pixels
-    produce_extra_hot_pixels(hot_pixels_list,simple_seg_list);
+    if(wheteher_to_do_isrs)
+      produce_extra_hot_pixels(hot_pixels_list,simple_seg_list);
 
 
     mul_kd_tree = new Multiple_kd_tree<Rep,Hot_Pixel<Rep> *>(hot_pixels_list,
@@ -1064,7 +1120,7 @@ void Snap_rounding_2<Rep_>::iterate()
         if(number_of_intersections > 1) {
           // segments that have at most one intersecting hot pixel are
           // done(it was inserted)
-          if(wheteher_to_do_isr)
+          if(wheteher_to_do_isr || wheteher_to_do_isrs) // @@@@ the second part of the condition
             reroute_isr(hot_pixels_intersected_set,seg_output,
                         number_of_intersections,true);
           else
@@ -1092,6 +1148,8 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
     // initialize approximation angles map    
     erase_hp = false;
     wheteher_to_do_isr = inp_do_isr;
+    // @@@@ next
+    wheteher_to_do_isrs = true;
     int_output = inp_int_output;
     pixel_size = inp_pixel_size;
     number_of_segments = 0;
@@ -1124,6 +1182,8 @@ void Snap_rounding_2<Rep_>::copy(const Snap_rounding_2<Rep_>& other)
 
     erase_hp = false;
     wheteher_to_do_isr = other.wheteher_to_do_isr;
+    // @@@@ next
+    wheteher_to_do_isrs = other.wheteher_to_do_isrs;
     int_output = other.int_output;
     pixel_size = other.pixel_size;
     number_of_segments = other.number_of_segments;
@@ -1167,6 +1227,9 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
     need_sr = true;
     erase_hp = false;
     wheteher_to_do_isr = inp_do_isr;
+    // @@@@@ next
+    wheteher_to_do_isrs = true;
+
     int_output = inp_int_output;
     pixel_size = inp_pixel_size;
     number_of_segments = 0;
@@ -1302,6 +1365,14 @@ template<class Rep_>
 void Snap_rounding_2<Rep_>::do_isr(bool inp_do_isr)
   { 
     wheteher_to_do_isr = inp_do_isr;
+    need_sr = true;
+  }
+
+// @@@@ next fiunction
+template<class Rep_>
+void Snap_rounding_2<Rep_>::do_isrs(bool inp_do_isrs)
+  { 
+    wheteher_to_do_isrs = inp_do_isrs;
     need_sr = true;
   }
 

@@ -39,8 +39,8 @@ typedef CGAL::Window_stream                            Window_stream;
 
 #define MIN_X 0
 #define MIN_Y 0
-#define MAX_X 10
-#define MAX_Y 10
+#define MAX_X 50
+#define MAX_Y 50
 #define PRECISION 0.5
 
 Number_Type min(const Number_Type &p,const Number_Type &q,Number_Type &r)
@@ -270,7 +270,7 @@ int main(int argc,char *argv[])
     W.button("Remove Segments",6);
     W.button("Isr",7);
     W.button("Sr",8);
-    W.button("Isrs",9
+    W.button("Isrs",9);
     W.button("Show hot pixels",10);
     W.button("Hide hot pixels",11);
     W.button("Show input",12);
@@ -284,10 +284,9 @@ int main(int argc,char *argv[])
     W.display();
     W.disable_button(4);
     W.disable_button(5);
-    W.disable_button(7);
     W.disable_button(9);
-    W.disable_button(11);
-    W.disable_button(13);
+    W.disable_button(12);
+    W.disable_button(14);
   } else {
     std::cerr << "Syntax : demo [input file name,delta]\n";
     return(1);
@@ -316,19 +315,15 @@ int main(int argc,char *argv[])
     // @@@@ next (delta)
     read_data(argc,argv,prec,seg_list,delta);
     get_extreme_points(seg_list,x1,y1,x2,y2);
-    W.init((x1 - 3 - prec * 3).to_double(),x2 - x1 > y2 - y1 ? 
+    /*    W.init((x1 - 3 - prec * 3).to_double(),x2 - x1 > y2 - y1 ? 
            (x2 + 3 + prec * 3).to_double() : 
            (y2 - y1 + x1 + 3 + prec * 3).to_double(),
-           (y1 - 3 - prec * 3).to_double());
+           (y1 - 3 - prec * 3).to_double());*/
     W.set_mode(leda_src_mode);
     W.set_node_width(3);
   }
 
   CGAL::cgalize(W);
-
-  W.text_box(-1.5,-1,10,"manual");
-  W.text_box(-1.5,-1,9.5,"add");
-  W.text_box(-1.5,-1,9,"isr");
 
   // @@@@ next (delta)
   Snap_rounding_2 s(prec,true,false,5,delta);
@@ -499,21 +494,6 @@ int main(int argc,char *argv[])
       if(automatic_show)
         show_results(s,prec,W,show_hp,show_output);
     }
-
-    if(automatic_show)
-      W.text_box(-1.5,-1,10,"auto");
-    else
-      W.text_box(-1.5,-1,10,"manual");
-
-    if(remove_segments)
-      W.text_box(-1.5,-1,9.5,"remove");
-    else
-      W.text_box(-1.5,-1,9.5,"add");
-
-    if(do_isr)
-      W.text_box(-1.5,-1,9,"isr");
-    else
-      W.text_box(-1.5,-1,9,"sr");
   }
 
   if(argc == 3)
