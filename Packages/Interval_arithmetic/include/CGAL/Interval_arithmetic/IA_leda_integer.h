@@ -30,16 +30,11 @@
 // LEDA integer's internal representation, which is not possible without
 // modifying LEDA.
 
-inline CGAL_Interval_nt_advanced CGAL_to_interval_nt(const leda_integer &z)
+inline CGAL_Interval_nt_advanced CGAL_to_Interval_nt_advanced
+	(const leda_integer &z)
 {
-    const double two_52 = 1.0/(1024.0*1024.0*1024.0*1024.0*1024.0*4.0); //2^-52
-    const double approx = CGAL_to_double(z);
-    CGAL_FPU_set_rounding_to_infinity();
-    CGAL_Interval_nt_advanced res_ia =
-	CGAL_Interval_nt_advanced (1-two_52,1+two_52) *
-	CGAL_Interval_nt_advanced(approx);
-    CGAL_FPU_set_rounding_to_nearest();
-    return res_ia;
+    return CGAL_Interval_nt_advanced (CGAL_to_double(z)) +
+	   CGAL_Interval_nt_advanced::min_double;
 }
 
 #endif	 // CGAL_IA_LEDA_INTEGER_H

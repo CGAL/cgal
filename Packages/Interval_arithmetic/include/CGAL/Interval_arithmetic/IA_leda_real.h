@@ -24,16 +24,12 @@
 #ifndef CGAL_IA_LEDA_REAL_H
 #define CGAL_IA_LEDA_REAL_H
 
-inline CGAL_Interval_nt_advanced CGAL_to_interval_nt(const leda_real &z)
+inline CGAL_Interval_nt_advanced CGAL_to_Interval_nt_advanced
+	(const leda_real &z)
 {
-    const double approx = CGAL_to_double(z);
     const double rel_error = z.get_double_error();
-    CGAL_FPU_set_rounding_to_infinity();
-    CGAL_Interval_nt_advanced res_ia = ( CGAL_Interval_nt_advanced (1)
-	 + CGAL_Interval_nt_advanced(-rel_error,rel_error) )
-	* CGAL_Interval_nt_advanced(approx);
-    CGAL_FPU_set_rounding_to_nearest();
-    return res_ia;
+    return ( CGAL_Interval_nt_advanced(-rel_error,rel_error) + 1 )
+	 * CGAL_Interval_nt_advanced(CGAL_to_double(z));
 }
 
 #endif	 // CGAL_IA_LEDA_REAL_H

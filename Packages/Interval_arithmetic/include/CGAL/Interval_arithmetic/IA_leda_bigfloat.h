@@ -28,27 +28,11 @@
 // approximation, which is guaranted 1 bit error max, and return an interval
 // around this value.  A check for underflow is added.
 
-inline CGAL_Interval_nt_advanced CGAL_to_interval_nt(const leda_bigfloat &z)
+inline CGAL_Interval_nt_advanced CGAL_to_Interval_nt_advanced
+	(const leda_bigfloat &z)
 {
-    const double two_52 = 1.0/(1024.0*1024.0*1024.0*1024.0*1024.0*4.0); //2^-52
-    const double approx = CGAL_to_double(z);
-    CGAL_Interval_nt_advanced res_ia;
-
-    CGAL_FPU_set_rounding_to_infinity();
-    if ((z != 0) && (approx == 0))
-    { // We compute the smallest interval, strictly containing zero.
-	res_ia = CGAL_Interval_nt_advanced(-two_52,two_52);
-	res_ia *= res_ia; // ~ 2^-104
-	res_ia *= res_ia; // ~ 2^-208
-	res_ia *= res_ia; // ~ 2^-416
-	res_ia *= res_ia; // ~ 2^-832
-	res_ia *= res_ia; // < 2^-1024
-    } else {
-	res_ia = CGAL_Interval_nt_advanced (1-two_52,1+two_52)
-		 * CGAL_Interval_nt_advanced (approx);
-    };
-    CGAL_FPU_set_rounding_to_nearest();
-    return res_ia;
+    return CGAL_Interval_nt_advanced (CGAL_to_double(z)) +
+	   CGAL_Interval_nt_advanced::min_double;
 }
 
 #endif	 // CGAL_IA_LEDA_BIGFLOAT_H
