@@ -1,10 +1,19 @@
 - Remove the requirement to have a ./.geomview file with (echo "started")
   inside.  Synchronization can probably be done with select() ?
   There are other problems (sleep(1) is needed), so maybe don't touch...
-- Write operator<<(Triangulation), 2D and 3D.  Partly done.
 - Why not use the OOGL library coming with Geomview to parse stuff ?
 - The remote geomview (with rsh) facility probably doesn't work.
   But is it useful ?
+- Write operator<<(Triangulation), 2D and 3D.  Partly done.
+- Add a note in the doc when triangulation outputs are ready.
+- Add flags to the stream that say :
+  - draw vertices or not
+  - draw edges or not
+  - draw surfaces or not (fill or wired).
+- le gv << Triangulation_2 utilise gv << Point_[23] et z=0 le cas echeant.
+  Maybe by putting the stream is a state "raw".
+- What to do for Circle_2 ?  Maybe there's some code somewhere, or ask the
+  geomview list.
 
 - Make a testsuite (words from Herve):
 <<<<<<<<<<<<<<<<
