@@ -642,7 +642,7 @@ public:
     void erase_face( Halfedge_handle,   Tag_false) {}
     void erase_face( Halfedge_handle h, Tag_true)  {
         Assert_compile_time_tag( Tag_true(), Supports_removal());
-        CGAL_precondition( h != 0);
+        CGAL_precondition( h != Halfedge_handle());
         CGAL_precondition( ! h->is_border());
         hds->faces_erase( h->face());
         CGAL_assertion_code( std::size_t termination_count = 0;)

@@ -125,7 +125,7 @@ incidence relations except if mentioned otherwise.
    halfedge data structure if they were already border edges. If this
    creates isolated vertices they get removed as well. See
    \ccc{make_hole(h)} for a more specialized variant.  
-   \ccPrecond \ccc{h != Halfedge_handle()}. If faces are supported,
+   \ccPrecond \ccc{h->is_border() == false}. If faces are supported,
    \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{void erase_connected_component( Halfedge_handle h);}

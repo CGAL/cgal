@@ -1,6 +1,10 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.14 (05 Jul 2001)
+
+     - Fixed bug with 'typename A::template B<..>' syntax.
+
 3.13 (02 Jul 2001)
 
      - Added release note about old/new design to documentation.
