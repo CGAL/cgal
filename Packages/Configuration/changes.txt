@@ -1,3 +1,7 @@
+2.75 5/8/2003
+- Introduce CGAL_CFG_MATCHING_BUG_4 (SunPro 5.3 and 5.4).
+- Minor cleanup.
+
 2.74 30/07/2003 [af]
 - Made CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG harder
 
