@@ -1,3 +1,7 @@
+1.70 (14 September 2003) [af]
+- Added examples for extensible kernel
+- Added include statements in include/CGAL/Kernel/function_objects.h
+
 1.69 (10 September 2003)
 - Fix last change for Iso_rectangle_2 and Iso_cuboid_3.
 
