@@ -2,6 +2,8 @@
 
 @$@<2D Straight declaration@>==@{
 
+namespace CGAL {
+
 class _Straight_2_base {
 public:
     enum states {EMPTY, POINT, SEGMENT, RAY, LINE};
@@ -37,6 +39,7 @@ protected:
     Point_2<R>         _max;
 };
 
+} // close namespace CGAL
 
 @<2D Straight implementation@>
 
@@ -45,6 +48,8 @@ protected:
 
 @$@<2D Straight implementation@>==@{
 #include <CGAL/Line_2_Line_2_intersection.h>
+
+namespace CGAL {
 
 inline
 _Straight_2_base::
@@ -200,7 +205,11 @@ sign_of_cross(Direction_2<R> const &dir1,
 }
 #endif
 
+} // close namespace CGAL
+
 #include <CGAL/squared_distance_utils.h>
+
+namespace CGAL {
 
 template <class R>
 int
@@ -299,6 +308,9 @@ collinear_order(Point_2<R> const &pt1, Point_2<R> const & pt2) const
         return 0;
     return (diffsign == _dir_sign) ? 1 : -1;
 }
+
+} // close namespace CGAL
+
 @}
 
 
@@ -313,5 +325,8 @@ MPI, Saarbruecken@)
 #define CGAL_STRAIGHT_2_H
 
 @<2D Straight declaration@>
+
+} // close namespace CGAL
+
 #endif
 @}
