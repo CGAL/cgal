@@ -1,0 +1,4 @@
+Version 2.1.2
+
+Adapted cgal_test and makefile in test directory to windows compatible
+install_cgal script.
