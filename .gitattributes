@@ -1976,7 +1976,13 @@ Packages/wininst/demo/Convex_hull_2/VC6/convex_hull_2_demo.dsp -text
 Packages/wininst/demo/Convex_hull_2/VC6/convex_hull_of_ipoints.dsp -text
 Packages/wininst/demo/Convex_hull_3/VC6/incremental_hull_3_demo.dsp -text
 Packages/wininst/demo/Convex_hull_3/VC6/quickhull_3_demo.dsp -text
-Packages/wininst/demo/Fixed_precision_nt/VC6/delaunay.dsp -text
+Packages/wininst/demo/Convex_hull_d/VC6/chull_2d-windows-demo.dsp -text
+Packages/wininst/demo/Convex_hull_d/VC6/chull_3d-geomview-demo.dsp -text
+Packages/wininst/demo/Convex_hull_d/VC6/chull_3d-windows-demo.dsp -text
+Packages/wininst/demo/Convex_hull_d/VC6/chull_dd-geomview-demo.dsp -text
+Packages/wininst/demo/Convex_hull_d/VC6/chull_dd-runtime.dsp -text
+Packages/wininst/demo/Convex_hull_d/VC6/delaunay_3d-windows-demo.dsp -text
+Packages/wininst/demo/Convex_hull_d/VC6/delaunay_dd-runtime.dsp -text
 Packages/wininst/demo/Generator/VC6/Segment_generator_prog1.dsp -text
 Packages/wininst/demo/Generator/VC6/Segment_generator_prog2.dsp -text
 Packages/wininst/demo/Generator/VC6/Triangle_generator_prog1.dsp -text
