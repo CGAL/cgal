@@ -113,31 +113,22 @@ wdot(const Vector_3<R> &u,
     return  (u.hx()*v.hx() + u.hy()*v.hy() + u.hz()*v.hz());
 }
 
-#ifdef CGAL_HOMOGENEOUS_H
-template <class RT>
-RT wdot(const Point_3< Homogeneous<RT> > &p,
-    const Point_3<Homogeneous<RT> > &q,
-    const Point_3<Homogeneous<RT> > &r)
-{
-    return  (q.hw()*p.hx() - p.hw()*q.hx())*(q.hw()*r.hx() - r.hw()*q.hx()) +
-            (q.hw()*p.hy() - p.hw()*q.hy())*(q.hw()*r.hy() - r.hw()*q.hy()) +
-            (q.hw()*p.hz() - p.hw()*q.hz())*(q.hw()*r.hz() - r.hw()*q.hz());
-}
-#endif // CGAL_HOMOGENEOUS_H
 
-#ifdef CGAL_CARTESIAN_H
-template <class FT>
-FT wdot(const Point_3< Cartesian<FT> > &p,
-    const Point_3< Cartesian<FT> > &q,
-    const Point_3< Cartesian<FT> > &r)
+template <class R>
+typename R::RT
+wdot(const Point_3<R> &p,
+     const Point_3<R> &q,
+     const Point_3<R> &r)
 {
-    return  (p.hx() - q.hx())*(r.hx() - q.hx()) +
-            (p.hy() - q.hy())*(r.hy() - q.hy()) +
-            (p.hz() - q.hz())*(r.hz() - q.hz());
+    return  (wmult(p.hx(),q.hw()) - wmult(q.hx(),p.hw()))
+          * (wmult(r.hx(),q.hw()) - wmult(q.hx(),r.hw()))
+        +   (wmult(p.hy(),q.hw()) - wmult(q.hy(),p.hw()))
+          * (wmult(r.hy(),q.hw()) - wmult(q.hy(),r.hw()))
+        +   (wmult(p.hz(),q.hw()) - wmult(q.hz(),p.hw()))
+          * (wmult(r.hz(),q.hw()) - wmult(q.hz(),r.hw()));
 }
-#endif // CGAL_CARTESIAN_H
+
 @}
-
 
 @D@<The cross product@>
 
@@ -167,7 +158,7 @@ Vector_3<R> wcross(const Vector_3<R> &u,
         u.hx()*v.hy() - u.hy()*v.hx());
 }
 
-#ifdef CGAL_HOMOGENEOUS_H
+#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
 template <class RT>
 Vector_3< Homogeneous<RT> >
 wcross(const Point_3< Homogeneous<RT> > &p,
@@ -188,7 +179,7 @@ wcross(const Point_3< Homogeneous<RT> > &p,
 }
 #endif // CGAL_HOMOGENEOUS_H
 
-#ifdef CGAL_CARTESIAN_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 template <class FT>
 Vector_3< Cartesian<FT> >
 wcross(const Point_3< Cartesian<FT> > &p,
