@@ -1,6 +1,6 @@
 #include <CGAL/config.h> // needed for the LONGNAME flag
 
-#if defined(CGAL_CFG_NO_LONGNAME_PROBLEM) || defined(_MSC_VER)
+#if defined(CGAL_CFG_LONGNAME_BUG)
 #define Quotient                        Qt
 #define Homogeneous                     Hs
 #define Cartesian                       Cn

@@ -1,21 +1,4 @@
-#include <CGAL/config.h> // needed for the LONGNAME flag
-
-#ifdef CGAL_CFG_NO_LONGNAME_PROBLEM
-// Define shorter names to please linker (g++/egcs)
-#define Arrangement_2 Ar
-#define Cartesian Cr
-#define Arr_polyline_traits APT
-#define Quotient Qt
-#define Planar_ma2p_traits_wrap PMTW
-#define _List_iterator Lit
-#define bidirectional_iterator_tag Bitt
-#define Planar_map_2 Pm2
-#define Arr_2_default_dcel A2dd
-#define Point_2 Pt2
-#define allocator Altr
-#define Td_X_trapezoid TdXt
-#define Td_traits Tdt
-#endif
+#include "short_names.h"
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_2_bases.h>
