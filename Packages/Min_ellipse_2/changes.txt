@@ -1,5 +1,9 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.18 on 23-Jan-2002
+- Conic_2_base -> Kernel_base::Conic_2.
+- GCC 3.1 fixes.
+
 Version 3.17 on 27-Nov-2001
 - Small Conic_2 fix.
 

@@ -51,7 +51,7 @@ operator << ( CGAL::Window_stream&,
 CGAL_BEGIN_NAMESPACE
 
 template < class _R>
-class Conic_2 : public _R::Conic_2_base {
+class Conic_2 : public _R::Kernel_base::Conic_2 {
 
     friend  class Optimisation_ellipse_2<_R>;
 
@@ -61,7 +61,7 @@ class Conic_2 : public _R::Conic_2_base {
     typedef  _R                    R;
     typedef  typename _R::RT       RT;
     typedef  typename _R::FT       FT;
-    typedef  typename _R::Conic_2_base  _Conic_2;
+    typedef  typename _R::Kernel_base::Conic_2  _Conic_2;
 
     // construction
     Conic_2 ()
