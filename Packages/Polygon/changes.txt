@@ -1,3 +1,6 @@
+4.10  (12 September 2002) [af]
++ Added "const" to  Polygon_2_const_edge_circulator::operator*() 
+
 4.9 (2 July 2002)
 + Added fill color support for window
 
