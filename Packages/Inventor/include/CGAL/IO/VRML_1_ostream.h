@@ -33,7 +33,7 @@
 #include <CGAL/basic.h>
 #endif // CGAL_BASIC_H
 #ifndef CGAL_PROTECT_IOSTREAM_H
-#include <iostream.h>
+#include <iostream>
 #define CGAL_PROTECT_IOSTREAM_H
 #endif // CGAL_PROTECT_IOSTREAM_H
 
