@@ -1,5 +1,6 @@
 4 April 2005 Sylvain Pion
 - Rename R in K in the documentation.
+- doc : fix Cell::vertex_index() and Cell::cell_index() to index().
 
 30 March 2005 Sylvain Pion
 - Switch IPE pictures to IPE 6, and regenerate PDF and EPS versions.
