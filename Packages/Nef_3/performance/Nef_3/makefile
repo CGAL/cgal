@@ -62,7 +62,8 @@ all:            \
                 grid_as_sat$(EXE_EXT) \
                 abdruck$(EXE_EXT) \
                 complex_sphere_map$(EXE_EXT) \
-                complex_facet$(EXE_EXT)
+                complex_facet$(EXE_EXT) \
+                point_location$(EXE_EXT)
 
 union_of_rotated_cylinders$(EXE_EXT): union_of_rotated_cylinders$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)union_of_rotated_cylinders union_of_rotated_cylinders$(OBJ_EXT) $(LDFLAGS)
@@ -90,6 +91,8 @@ complex_sphere_map$(EXE_EXT): complex_sphere_map$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)complex_sphere_map complex_sphere_map$(OBJ_EXT) $(LDFLAGS)
 complex_facet$(EXE_EXT): complex_facet$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)complex_facet complex_facet$(OBJ_EXT) $(LDFLAGS)
+point_location$(EXE_EXT): point_location$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)point_location point_location$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    union_of_rotated_cylinders.clean \
@@ -104,7 +107,8 @@ clean: \
 	           grid_as_sat.clean \
 	           abdruck.clean \
 	           complex_sphere_map.clean \
-	           complex_facet.clean
+	           complex_facet.clean \
+	           point_location.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
