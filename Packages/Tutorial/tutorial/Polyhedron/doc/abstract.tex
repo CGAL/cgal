@@ -164,7 +164,7 @@ documents good implementation choices, e.g., the example programs can
 be used as starting points for evolutionary software development.
 Thirdly, it offers easy access to additional functionality, such as
 the efficient self intersection test, that otherwise could be
-expandable in a research prototype.
+expandable in a research prototype.\\
 
 \noindent
 What are potential obstacles in using a library?
@@ -260,14 +260,52 @@ should refer to \cite{Warren:subdivision} and \cite{Sub:course:2000}.
 \subsection*{(Our) FAQs}
 
 \begin{itemize}
+
 \item Why should I read this tutorial? I am not interested in subdivisions. 
+% This tutorial is mainly about the polyhedron. Subdivision has
+% been chosen to illustrate how easily we can build
+% algorithms on meshes (subdivision alters both connectivity
+% and geometry). The reader can learn using the polyhedron
+% only by taking a look at the viewer.
+
 \item Why do you use \cgal\  polyhedron? How about OpenMesh and its 
 subdivision library?
+% CGAL is more generic and robust. The OpenMesh subdivision
+% library is not as generic.
+
 \item Is is difficult or what's the difficulties to use \cgal\  Polyhedron?
+% It is not, once you buy the concepts taken or inspired from
+% the STL (iterators, circulars). You also have to be familiar 
+% with the concept of handles and halfedges.
+
 \item How about the performance?
+% as fast as other libraries (and sometimes faster). It also
+% scales well. 
+
 \item I don't like the subdivisions you have, how can I build my own 
-subdivision on your solution?
+      subdivision on your solution?
+% depending on the level of genericity you are targeting, the
+% type of scheme and whether you want to store all levels of subdivision
+% in memory, choose either Euler operators, incremental builder
+% or one new template rule to be plugged into the CSL.
+
 \item What's the future plan for CSL? 
+% CGAL Package?
+% referenced from Warren's web site about subdivision?
+
+\item The viewer is based on OpenGL. Can I learn from it
+      to write my own viewer based on another graphics library?
+      
+\item What could be improved in the Polyhedron?
+% built-in functions for # of boundaries, # of connected 
+% components and genus.
+% edge collapses without the currently too restrictive precondition
+% (along with a function bool is_collapsible(Halfedge_handle h)
+% based on e.g. Edelsbrunner criteria.
+% built-in function bool is_border(Vertex_handle v)
+% built-in function to know the type of mesh (e.g. pure tri,
+% pure quad, tri-quad or polygonal).
+
 \end{itemize}
 
 % ------------------------------------------------------------------------
@@ -284,7 +322,6 @@ of the halfedge data structure and subdivisions are prerequisites.
 
 % ------------------------------------------------------------------------
 \subsubsection*{Polyhedron Viewer}
-[to be revised by pierre]
 
 %% We have designed and implemented an application based on the
 %% \cgalpoly. This program provides a polyhedron viewer of
@@ -309,22 +346,30 @@ of the halfedge data structure and subdivisions are prerequisites.
     \label{fig:sqrt3}
 \end{figure}
 
-
 The tutorial starts with demonstrating how to implement a simple
 viewer based on the default configuration of the \cgalpoly . This
 simple viewer demonstrates some basic functionalities of the
 \cgalpoly\ such as \italic{modifier} and \italic{incremental builder} 
-for initialization and the mesh traversal, i.e. the \italic{iterators}
-and the \italic{circulators}, for rendering or mesh exporting. Based
-on this simple viewer, we then show the readers how to
-\italic{customize the \poly} to support certain functionalities. 
-An enriched polyhedron is proposed with the primitives specialized
-with algorithmic flags. This enriched polyhedron is used as the core
+for mesh importing and the mesh traversal, i.e. the \italic{iterators}
+and the \italic{circulators}, for rendering or mesh exporting. 
+Based on this simple viewer, we then show the readers how to
+\italic{customize the \poly} to support certain rendering attributes and 
+functionalities. 
+
+An enriched polyhedron is proposed with per-facet and per-vertex normals 
+used for rendering, with an axis-aligned bounding box and the primitives specialized
+with algorithmic flags. The extended primitives are employed to support 
+efficient computation of the number of connected components, number of boundaries 
+and combinatorial genus of the polyhedron. The extended halfedges are employed to support
+the superimposition of the control mesh on the subdivided surfaces (see Figure 
+\ref{fig:quad-triangle}). This enriched polyhedron is used as the core
 data structure of our application.  We then show how to interact with
-a customized \poly.  The extended primitives are employed to support
-the superimposition of the input mesh on the subdivided surfaces. A
-trackball function of the enriched polyhedron is also demonstrated in
-the tutorial.
+a customized \poly.  
+
+The tutorial also features a trackball to interactively manipulate the 
+polyhedron, the possibility to backup and restore a camera viewpoint, 
+a raster output of the active client window to the clipboard and a vectorial 
+output of the active mesh to a postscript file.
 
 
 % ------------------------------------------------------------------------
