@@ -45,6 +45,7 @@ int main()
 {
   A<float> a;
   float f = a.square(1.2);
+  (void) f;
 
   return 0;
 }

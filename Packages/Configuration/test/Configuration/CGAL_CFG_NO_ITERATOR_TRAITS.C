@@ -72,13 +72,13 @@ public:
 
 template < class I> inline
 typename iterator_traits<I>::iterator_category
-query( I i) {
+query( I) {
     return iterator_traits<I>::iterator_category();
 }
 
 // A function to match bidirectional iterators.
 inline
-int discr( std::bidirectional_iterator_tag tag) { return 42; }
+int discr( std::bidirectional_iterator_tag ) { return 42; }
 
 bool all_assertions_correct = true;
 

@@ -46,5 +46,7 @@ struct D {
 int main() {
     C<A> c(1);
     D< double, A> d( 3.8);
+    (void) c;
+    (void) d;
     return 0;
 }

@@ -60,6 +60,7 @@ main()
 {
   W< P<int> > wp;
   W< L<int> >* wl_ptr = dynamic_cast<W< L<int> >* >( &wp );
+  (void) wl_ptr;
 
   return 0;
 }

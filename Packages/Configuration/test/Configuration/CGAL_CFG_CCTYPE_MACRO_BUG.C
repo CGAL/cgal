@@ -46,11 +46,9 @@ using std::isspace;
 using std::isupper;
 using std::isxdigit;
 
-bool all_assertions_correct = true;
-
 int main()
 {
-  all_assertions_correct &= (std::isdigit('0'));
+  bool all_assertions_correct = std::isdigit('0');
   return !all_assertions_correct;
 }
 

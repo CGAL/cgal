@@ -1,3 +1,7 @@
+2.8
++ CGAL_CFG_CCTYPE_MACRO_BUG.C run time test was buggy.
++ remove some "unused variable" warnings.
+
 2.7
 + Small fix to CGAL_CFG_NO_ITERATOR_TRAITS.C for MSVX 7
 
