@@ -1,3 +1,6 @@
+version 1.46 (16 October 2003) [af]
+- Removed \bibliography and \bibliographystyle
+
 version 1.44 [af]
 - Removed Polygon_traits_2
 
