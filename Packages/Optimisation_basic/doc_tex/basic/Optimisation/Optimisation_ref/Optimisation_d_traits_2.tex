@@ -2,7 +2,7 @@
 % =============================================================================
 % The CGAL Reference Manual
 % Chapter: Geometric Optimisation
-% Class  : CGAL::Optimisation_d_traits_2<R,ET,NT>
+% Class  : CGAL::Optimisation_d_traits_2<K,ET,NT>
 % -----------------------------------------------------------------------------
 % file   : doc_tex/basic/Optimisation/..._ref/Optimisation_d_traits_2.tex
 % package: Optimisation_basic
@@ -14,7 +14,7 @@
 
 \ccAutoIndexingOff
 
-\begin{ccRefClass}{Optimisation_d_traits_2<R,ET,NT>}
+\begin{ccRefClass}{Optimisation_d_traits_2<K,ET,NT>}
 \ccIndexTraitsClassBegin{Optimisation_d_traits_2}{%
   Min_sphere_d;Min_annulus_d;Polytope_distance_d}{}
 
@@ -31,10 +31,10 @@ optimisation algorithms using the two-dimensional \cgal\ kernel.
 % -----------------------------------------------------------------------------
 \ccRequirements
 
-The template parameter \ccc{R} is a model for \ccc{Kernel}. Template
+The template parameter \ccc{K} is a model for \ccc{Kernel}. Template
 parameters \ccc{ET} and \ccc{NT} are models for \ccc{RingNumberType}.
 
-The second and third template parameter have default type \ccc{R::RT}.
+The second and third template parameter have default type \ccc{K::RT}.
 
 % -----------------------------------------------------------------------------
 \ccIsModel
@@ -45,25 +45,25 @@ The second and third template parameter have default type \ccc{R::RT}.
 \ccTypes
 
 \ccSaveThreeColumns
-\ccSetTwoColumns{Optimisation_d_traits_2<R,ET,NT>:: Rep_tag}{}
+\ccSetTwoColumns{Optimisation_d_traits_2<K,ET,NT>:: Rep_tag}{}
 
-\ccNestedType{Point_d}{typedef to \ccc{R::Point_2}.}
+\ccNestedType{Point_d}{typedef to \ccc{K::Point_2}.}
 
-\ccNestedType{Rep_tag}{typedef to \ccc{R::Rep_tag}.}
+\ccNestedType{Rep_tag}{typedef to \ccc{K::Rep_tag}.}
 
-\ccNestedType{RT}{typedef to \ccc{R::RT}.}
-\ccNestedType{FT}{typedef to \ccc{R::FT}.}
+\ccNestedType{RT}{typedef to \ccc{K::RT}.}
+\ccNestedType{FT}{typedef to \ccc{K::FT}.}
 
 \ccNestedType{Access_dimension_d}{%
-  typedef to \ccc{R::Access_dimension_2}.}
+  typedef to \ccc{K::Access_dimension_2}.}
 \ccNestedType{Access_coordinates_begin_d}{%
-  typedef to \ccc{R::Access_coordinates_begin_2}.}
+  typedef to \ccc{K::Access_coordinates_begin_2}.}
 
 \ccNestedType{Construct_point_d}{%
-  typedef to \ccc{R::Construct_point_2}.}
+  typedef to \ccc{K::Construct_point_2}.}
 
-\ccNestedType{ET}{second template parameter (default is \ccc{R::RT}).}
-\ccNestedType{NT}{third  template parameter (default is \ccc{R::RT}).}
+\ccNestedType{ET}{second template parameter (default is \ccc{K::RT}).}
+\ccNestedType{NT}{third  template parameter (default is \ccc{K::RT}).}
 
 % -----------------------------------------------------------------------------
 \ccCreation
@@ -71,7 +71,7 @@ The second and third template parameter have default type \ccc{R::RT}.
 
 \ccConstructor{ Optimisation_d_traits_2( );}{default constructor.}
 \ccConstructor{ Optimisation_d_traits_2(
-                  const Optimisation_d_traits_2<R,ET,NT>&);}{copy constructor.}
+                  const Optimisation_d_traits_2<K,ET,NT>&);}{copy constructor.}
 
 % -----------------------------------------------------------------------------
 \ccOperations
@@ -98,8 +98,8 @@ object.
 \ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\
 \ccRefIdfierPage{CGAL::Min_annulus_d<Traits>}\\
 \ccRefIdfierPage{CGAL::Polytope_distance_d<Traits>}\\[1ex]
-\ccRefIdfierPage{CGAL::Optimisation_d_traits_3<R,ET,NT>}\\
-\ccRefIdfierPage{CGAL::Optimisation_d_traits_d<R,ET,NT>}\\[1ex]
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_3<K,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_d<K,ET,NT>}\\[1ex]
 \ccRefConceptPage{Optimisation_d_traits}
 
 % -----------------------------------------------------------------------------
