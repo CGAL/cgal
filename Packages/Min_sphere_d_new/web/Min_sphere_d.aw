@@ -120,7 +120,7 @@
 
 \newlength{\defaultparskip}
 \setlength{\defaultparskip}{\parskip}
-\setlength{\parskip}{.6ex}
+\setlength{\parskip}{.7ex}
 
 \tableofcontents
 
@@ -435,14 +435,14 @@ contained in the smallest enclosing sphere.
 To access the support points, we exploit the following fact. A point~$p_i$
 is a support point, iff its corresponding variable $x_i$ (of the QP solver)
 is basic. Thus the number of support points is equal to the number of basic
-variables.
+variables, if the smallest enclosing sphere is not empty.
 
 @macro <Min_sphere_d member functions> += @begin
 
     // access to support points
     int
     number_of_support_points( ) const
-        { return solver.number_of_basic_variables(); }
+        { return is_empty() ? 0 : solver.number_of_basic_variables(); }
 @end
 
 If $i$ is the index of the $k$-th basic variable, then $p_i$ is the $k$-th
@@ -492,14 +492,14 @@ point iterator.
     support_points_begin() const
         { return Support_point_iterator(
                      solver.basic_variables_index_begin(),
-                     Point_by_index( points.begin(), 0, 0, Point())); }
+                     Point_by_index( points.begin())); }
 
     Support_point_iterator
     support_points_end() const
         { return Support_point_iterator(
                      is_empty() ? solver.basic_variables_index_begin()
                                 : solver.basic_variables_index_end(),
-                     Point_by_index( points.begin(), 0, 0, Point())); }
+                     Point_by_index( points.begin())); }
 @end
 
 The following types and member functions give access to the center and the
@@ -560,6 +560,9 @@ enclosing sphere.
     #ifndef CGAL_FUNCTION_OBJECTS_H
     #  include <CGAL/function_objects.h>
     #endif
+    #ifndef CGAL_IDENTITY_H
+    #  include <CGAL/_QP_solver/identity.h>
+    #endif
 @end
 
 @macro <Min_sphere_d private member functions> += @begin
@@ -573,9 +576,9 @@ enclosing sphere.
               std::plus<ET>(),
               CGAL::compose1_2( 
                   CGAL::compose2_1( std::multiplies<ET>(),
-                      std::identity<ET>(), std::identity<ET>()),
+                      CGAL::identity<ET>(), CGAL::identity<ET>()),
                   CGAL::compose2_2( std::minus<ET>(),
-                      std::identity<ET>(),
+                      CGAL::identity<ET>(),
                       std::bind2nd( std::multiplies<ET>(),
                                     center_coords.back())))); }
 @end
@@ -590,7 +593,7 @@ Now the implementation of the sidedness predicates is straight forward.
         { CGAL_optimisation_precondition(
               is_empty() || tco.access_dimension_d_object()( p) == d);
           return CGAL::Bounded_side( CGAL::NTS::sign(
-              sqr_dist( p) - sqr_rad_numer)); }
+              sqr_rad_numer - sqr_dist( p))); }
 
     bool
     has_on_bounded_side( const Point& p) const
@@ -623,18 +626,22 @@ and it is \emph{degenerate}, if it has less than two support points.
 @! ----------------------------------------------------------------------------
 \subsubsection{Modifiers} \label{sec:modifiers}
 
-This private member function is used by the following \ccc{set} and
+These private member functions are used by the following \ccc{set} and
 \ccc{insert} member functions to set and check the dimension of the input
-points.
+points, respectively.
 
 @macro <Min_sphere_d private member functions> += @begin
 
-    // set and check dimension of input points
-    bool
-    set_and_check_dimension( unsigned int  offset = 0)
+    // set dimension of input points
+    void
+    set_dimension( )
         { d = ( points.size() == 0 ? -1 :
-                    tco.access_dimension_d_object()( points[ 0]));
-          return ( std::find_if( points.begin()+offset, points.end(),
+                    tco.access_dimension_d_object()( points[ 0])); }
+
+    // check dimension of input points
+    bool
+    check_dimension( unsigned int  offset = 0)
+        { return ( std::find_if( points.begin()+offset, points.end(),
                                  CGAL::compose1_1( std::bind2nd(
                                      std::not_equal_to<int>(), d),
                                      tco.access_dimension_d_object()))
@@ -654,7 +661,8 @@ to compute the smallest enclosing sphere.
     set( InputIterator first, InputIterator last)
         { if ( points.size() > 0) points.erase( points.begin(), points.end());
           std::copy( first, last, std::back_inserter( points));
-          CGAL_optimisation_precondition_msg( set_and_check_dimension(),
+          set_dimension();
+          CGAL_optimisation_precondition_msg( check_dimension(),
               "Not all points have the same dimension.");
           compute_min_sphere(); }
 @end
@@ -675,9 +683,10 @@ set and recompute the smallest enclosing sphere.
     template < class InputIterator >
     void
     insert( InputIterator first, InputIterator last)
-        { unsigned int  old_n = points.size();
+        { CGAL_optimisation_precondition_code( int old_n = points.size());
           points.insert( points.end(), first, last);
-          CGAL_optimisation_precondition_msg( set_and_check_dimension( old_n),
+          set_dimension();
+          CGAL_optimisation_precondition_msg( check_dimension( old_n),
               "Not all points have the same dimension.");
           compute_min_sphere(); }
 @end
@@ -728,7 +737,7 @@ for consistency with interfaces of other classes.
         verr << "is_valid( true, " << level << "):" << endl;
         verr << "  |P| = " << number_of_points()
              << ", |S| = " << number_of_support_points() << endl;
-
+        
         // containment check (a)
         // ---------------------
         @<Min_sphere_d validity check: containment>
@@ -831,7 +840,6 @@ traits class object.
         switch ( CGAL::get_mode( os)) {
 
           case CGAL::IO::PRETTY:
-            os << endl;
             os << "CGAL::Min_sphere_d( |P| = " << min_sphere.number_of_points()
                << ", |S| = " << min_sphere.number_of_support_points() << endl;
             os << "  P = {" << endl;
@@ -851,9 +859,8 @@ traits class object.
                   Et_it( os, " "));
             os << ")" << endl;
             os << "  squared radius = "
-               << CGAL::Quotient<ET>( min_sphere.squared_radius_numerator(),
-                                      min_sphere.squared_radius_denominator())
-               << endl;
+               << min_sphere.squared_radius_numerator() << " / "
+               << min_sphere.squared_radius_denominator() << endl;
             break;
 
           case CGAL::IO::ASCII:
@@ -1000,7 +1007,9 @@ $p_j$.
         NT  operator( ) ( const Point& p_j) const
             { return std::inner_product( da_coord( p_i),
                                          da_coord( p_i)+da_dim( p_i),
-                                         da_coord( p_j), NT( 0)); }
+                                         da_coord( p_j), NT( 0),
+                                         std::plus<NT>(),
+                                         std::multiplies<NT>()); }
     };
 @end
 
@@ -1093,7 +1102,8 @@ radius of the smallest enclosing sphere.
         c_vector[ i] = -std::inner_product(
             tco.access_coordinates_begin_d_object()( points[ i]),
             tco.access_coordinates_begin_d_object()( points[ i])+d,
-            tco.access_coordinates_begin_d_object()( points[ i]), NT( 0));
+            tco.access_coordinates_begin_d_object()( points[ i]), NT( 0),
+            std::plus<NT>(), std::multiplies<NT>());
     }
     typename QP_rep::B_iterator  const_one( 1);
     solver.set( points.size(), 1,
@@ -1270,36 +1280,36 @@ Section~\ref{ccRef_CGAL::Min_sphere_d_traits_3<R,ET,NT>}.4.
                                             Self;
 
         // types
-        typedef  typename R::Point_3        Point_3;
+        typedef  typename R::Point_3        Point_d;
 
         typedef  typename R::Rep_tag        Rep_tag;
 
         typedef  typename R::RT             RT;
         typedef  typename R::FT             FT;
 
-        typedef  Access_dimension_3<R>      Access_dimension_3;
+        typedef  Access_dimension_3<R>      Access_dimension_d;
         typedef  Access_coordinates_begin_3<R>
-                                            Access_coordinates_begin_3;
+                                            Access_coordinates_begin_d;
 
         typedef  typename R::Construct_point_3
-                                            Construct_point_3;
+                                            Construct_point_d;
 
         // creation
         Min_sphere_d_traits_3( ) { }
         Min_sphere_d_traits_3( const Min_sphere_d_traits_3<_R,_ET,_NT>&) { }
 
         // operations
-        Access_dimension_3
-        access_dimension_3_object( ) const
-            { return Access_dimension_3(); }
+        Access_dimension_d
+        access_dimension_d_object( ) const
+            { return Access_dimension_d(); }
 
-        Access_coordinates_begin_3
-        access_coordinates_begin_3_object( ) const
-            { return Access_coordinates_begin_3(); }
+        Access_coordinates_begin_d
+        access_coordinates_begin_d_object( ) const
+            { return Access_coordinates_begin_d(); }
 
-        Construct_point_3
-        construct_point_3_object( ) const
-            { return Construct_point_3(); }
+        Construct_point_d
+        construct_point_d_object( ) const
+            { return Construct_point_d(); }
     };
 @end
 
@@ -1386,13 +1396,16 @@ Section~\ref{ccRef_CGAL::Min_sphere_d_traits_d<R,ET,NT>}.5.
 
 The function \ccc{test_Min_sphere_d}, invoked with a set of points and a
 traits class model, calls each function of \ccc{Min_sphere_d} at least once
-to ensure code coverage.
+to ensure code coverage. If \ccc{verbose} is set to $-1$, the function is
+``silent'', otherwise some diagnosing output is written to the standard
+error stream.
 
 @macro <Min_sphere_d test function> = @begin
     #define COVER(text,code) \
-                verrX << "==> "; verr << text; verr0 << "..."; verrX << endl \
-                      << "----------------------------------------" << endl; \
-                verr.out() << flush; { code } verr0 << "ok."; verr << endl;
+                verr0.out().width( 26); verr0 << text << "..." << flush; \
+                verrX.out().width(  0); verrX << "==> " << text << endl \
+                  << "----------------------------------------" << endl; \
+                { code } verr0 << "ok."; verr << endl;
     
     template < class ForwardIterator, class Traits >
     void
@@ -1481,7 +1494,7 @@ to ensure code coverage.
                 has_on_boundary       = min_sphere.has_on_boundary( p);
                 has_on_unbounded_side = min_sphere.has_on_unbounded_side( p);
                 verrX.out().width( 2);
-                verrX << bounded_side          << " "
+                verrX << bounded_side          << "  "
                       << has_on_bounded_side   << ' '
                       << has_on_boundary       << ' '
                       << has_on_unbounded_side << endl;
@@ -1494,12 +1507,12 @@ to ensure code coverage.
         COVER( "clear",
             min_sphere.clear();
             verrX << "min_sphere is" << ( min_sphere.is_empty() ? "" : " not")
-                  << "empty." << endl;
+                  << " empty." << endl;
             assert( min_sphere.is_empty());
         )
 
         COVER( "insert (single point)",
-            //min_sphere.insert( *first);
+            min_sphere.insert( *first);
             assert( min_sphere.is_valid( is_valid_verbose));
             assert( min_sphere.is_degenerate());
         )
@@ -1526,10 +1539,188 @@ to ensure code coverage.
 
 \subsection{Traits Class Models}
 
+All three traits class models are tested twice, firstly with one exact
+number type (the ``default'' use) and secondly with three different number
+types (the ``advanced'' use). Since the current implementation of the
+underlying quadratic programming solver can only handle input points with
+Cartesian representation, we use \cgal's Cartesian kernel for testing.
 
-@! ==========================================================================
+Some of the following macros are parameterized with the dimension,
+e.g.~with $2$, $3$, or $d$.
+
+@macro <Min_sphere_d test: includes and typedefs>(1) many += @begin
+    #include <CGAL/Cartesian.h>
+    #include <CGAL/Point_@1.h>
+    #include <CGAL/Min_sphere_d_new.h>
+    #include <CGAL/Min_sphere_d_traits_@1_new.h>
+@end
+
+We use the number type \ccc{leda_integer} from \leda{} for the first
+variant.
+
+@macro <Min_sphere_d test: includes and typedefs> += @begin
+
+    // test variant 1 (needs LEDA)
+    #ifdef CGAL_USE_LEDA
+    # include <CGAL/leda_integer.h>
+      typedef  CGAL::Cartesian<leda_integer>      R_1;
+      typedef  CGAL::Min_sphere_d_traits_@1<R_1>   Traits_1;
+    # define TEST_VARIANT_1 \
+        "Min_sphere_d_traits_@1< Cartesian<leda_integer> >"
+    #endif
+@end
+
+The second variant uses points with \ccc{int} coordinates. The exact number
+type used by the underlying quadratic programming solver is
+\ccc{GMP::Double}, i.e.~an arbitrary precise floating-point type based on
+\textsc{Gmp}'s integers. To speed up the pricing, we use \ccc{double}
+arithmetic.
+
+@macro <Min_sphere_d test: includes and typedefs> += @begin
+
+    // test variant 2 (needs GMP)
+    #ifdef CGAL_USE_GMP
+    # include <_QP_solver/Double.h>
+      typedef  CGAL::Cartesian< int >                                R_2;
+      typedef  CGAL::Min_sphere_d_traits_@1<R_2,GMP::Double,double>   Traits_2;
+    # define TEST_VARIANT_2 \
+        "Min_sphere_d_traits_@1< Cartesian<int>, GMP::Double, double >"
+    #endif
+@end
+
+The test sets consist of $100$ points with $24$-bit random integer
+coordinates. In $2$- and $3$-space we use \cgal's point generators to build
+the test sets with points lying almost (due to rounding errors) on a circle
+or sphere, respectively.
+
+@macro <Min_sphere_d test: includes and typedefs> += @begin
+
+    #include <CGAL/Random.h>
+    #include <vector>
+@end
+
+@macro <Min_sphere_d test: includes and typedefs (2/3D)>(1) many = @begin
+    #include <CGAL/point_generators_@1.h>
+    #include <CGAL/copy_n.h>
+    #include <iterator>
+@end
+
+@macro <Min_sphere_d test: generate point set>(3) = @begin
+    std::vector<R_@1::Point_@2>  points_@1;
+    points_@1.reserve( 100);
+    CGAL::copy_n( CGAL::Random_points_on_@3_@2<R_@1::Point_@2>( 0x1000000),
+                  100, std::back_inserter( points_@1));
+@end
+
+The traits class model with $d$-dimensional points is tested with $d = 5$
+(variant 1) and $d = 10$ (variant 2). The points are distributed uniformly
+in a $d$-cube.
+
+@macro <Min_sphere_d test: generate point set (dD)>(1) = @begin
+    std::vector<R_@1::Point_d>  points_@1;
+    points_@1.reserve( 100);
+    {
+        int d = 5*@1;
+        std::vector<int>  coords( d);
+        int  i, j;
+        for ( i = 0; i < 100; ++i) {
+            for ( j = 0; j < d; ++j)
+                coords[ j] = CGAL::default_random( 0x1000000);
+            points_@1.push_back( R_@1::Point_d( d, coords.begin(),
+                                                   coords.end()));
+        }
+    }
+@end
+
+Finally we call the test function (described in the last section).
+
+@macro <Min_sphere_d test: includes and typedefs> += @begin
+
+    #include "test_Min_sphere_d.h"
+@end
+
+@macro <Min_sphere_d test: call test function>(1) many = @begin
+    // call test function
+    CGAL::test_Min_sphere_d( points_@1.begin(), points_@1.end(),
+                             Traits_@1(), verbose);
+@end
+
+Each of the two test variants is compiled and executed only if the
+respective number type is available.
+
+@macro <Min_sphere_d test: test variant output>(1) many = @begin
+    verr << endl
+         << "Testing `Min_sphere_d' with traits class model" << endl
+         << "==> " << TEST_VARIANT_@1 << endl
+         << "==================================="
+         << "===================================" << endl
+         << endl;
+@end
+
+@macro <Min_sphere_d test: test variant>(3) many = @begin
+    // test variant @1
+    // --------------
+    #ifdef TEST_VARIANT_@1
+
+        @<Min_sphere_d test: test variant output>(@1)
+
+        // generate point set
+        @<Min_sphere_d test: generate point set>(@1,@2,@3)
+
+        // call test function
+        @<Min_sphere_d test: call test function>(@1)
+
+    #endif
+@end
+
+@macro <Min_sphere_d test: test variant (dD)>(1) many = @begin
+    // test variant @1
+    // --------------
+    #ifdef TEST_VARIANT_@1
+
+        @<Min_sphere_d test: test variant output>(@1)
+
+        // generate point set
+        @<Min_sphere_d test: generate point set (dD)>(@1)
+
+        // call test function
+        @<Min_sphere_d test: call test function>(@1)
+
+    #endif
+@end
+
+The complete bodies of the test programs look as follows. Verbose output
+can be enabled by giving a number between 0 and 3 at the command line.
+
+@macro <Min_sphere_d test: command line argument> many = @begin
+    int verbose = -1;
+    if ( argc > 1) verbose = atoi( argv[ 1]);
+    CGAL::Verbose_ostream  verr( verbose >= 0);
+@end
+
+@macro <Min_sphere_d test: main>(2) many = @begin
+    @<Min_sphere_d test: command line argument>
+    
+    @<Min_sphere_d test: test variant>(1,@1,@2)
+
+    @<Min_sphere_d test: test variant>(2,@1,@2)
+
+    return 0;
+@end
+
+@macro <Min_sphere_d test: main (dD)> = @begin
+    @<Min_sphere_d test: command line argument>
+    
+    @<Min_sphere_d test: test variant (dD)>(1)
+
+    @<Min_sphere_d test: test variant (dD)>(2)
+
+    return 0;
+@end
+
+@! ============================================================================
 @! Files
-@! ==========================================================================
+@! ============================================================================
 
 \clearpage
 \section{Files}
@@ -1579,33 +1770,11 @@ to ensure code coverage.
     // Function declarations
     // =====================
     @<Min_sphere_d I/O operators declaration>
+
+    @<dividing line>
     
-    @<namespace end>("CGAL")
-    
-    //#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-    #  include <CGAL/Min_sphere_d_new.C>
-    //#endif
-
-    #endif // CGAL_MIN_SPHERE_D_H
-
-    @<end of file line>
-@end
-
-@! ----------------------------------------------------------------------------
-@! Min_sphere_d_new.C
-@! ----------------------------------------------------------------------------
-
-\subsection{include/CGAL/Min\_sphere\_d.C}
-
-@file <include/CGAL/Min_sphere_d_new.C> = @begin
-    @<file header>(
-        "include/CGAL/Min_sphere_d_new.C",
-        "Smallest enclosing sphere in arbitrary dimension")
-
-    @<namespace begin>("CGAL")
-    
-    // Class implementation (continued)
-    // ================================
+    // Class implementation
+    // ====================
 
     @<Min_sphere_d validity check>
     
@@ -1613,6 +1782,8 @@ to ensure code coverage.
 
     @<namespace end>("CGAL")
     
+    #endif // CGAL_MIN_SPHERE_D_H
+
     @<end of file line>
 @end
 
@@ -1639,6 +1810,69 @@ to ensure code coverage.
 
     @<dividing line>
 
+    // Coordinate iterator (should make it into the kernel in the future)
+    // ------------------------------------------------------------------
+
+    template < class _R >
+    class Point_2_coordinate_iterator {
+      public:
+        // self
+        typedef  _R                         R;
+        typedef  Point_2_coordinate_iterator<R>
+                                            Self;
+        
+        // types
+        typedef  typename R::Point_2        Point;
+        
+        // iterator types
+        typedef  typename R::RT             value_type;
+        typedef  ptrdiff_t                  difference_type;
+        typedef  value_type*                pointer;
+        typedef  value_type&                reference;
+        typedef  std::random_access_iterator_tag
+                                            iterator_category;
+        
+        // forward operations
+        Point_2_coordinate_iterator( const Point&  point = Point(),
+                                     int           index = 0)
+            : p( point), i( index) { }
+        
+        bool        operator == ( const Self& it) const { return ( i == it.i);}
+        bool        operator != ( const Self& it) const { return ( i != it.i);}
+
+        value_type  operator *  ( ) const { return p.homogeneous( i); }
+
+        Self&       operator ++ (    ) {                   ++i; return *this; }
+        Self        operator ++ ( int) { Self tmp = *this; ++i; return tmp;   }
+
+        // bidirectional operations
+        Self&       operator -- (    ) {                   --i; return *this; }
+        Self        operator -- ( int) { Self tmp = *this; --i; return tmp;   }
+
+        // random access operations
+        Self&       operator += ( int n) { i += n; return *this; }
+        Self&       operator -= ( int n) { i -= n; return *this; }
+
+        Self        operator +  ( int n) const
+                                         { Self tmp = *this; return tmp += n; }
+        Self        operator -  ( int n) const
+                                         { Self tmp = *this; return tmp -= n; }
+
+        difference_type
+                    operator -  ( const Self& it) const { return i - it.i; }
+
+        value_type  operator [] ( int n) const { return p.homogeneous( i+n); }
+
+        bool   operator <  ( const Self&) const { return ( i <  it.i); }
+        bool   operator >  ( const Self&) const { return ( i >  it.i); }
+        bool   operator <= ( const Self&) const { return ( i <= it.i); }
+        bool   operator >= ( const Self&) const { return ( i >= it.i); }
+
+    private:
+        const Point&  p;
+        int           i;
+    };
+    
     // Data accessors (should make it into the kernel in the future)
     // -------------------------------------------------------------
 
@@ -1651,6 +1885,10 @@ to ensure code coverage.
 
         // types
         typedef  typename R::Point_2        Point;
+        
+        // unary function class types
+        typedef  int                        result_type;
+        typedef  Point                      argument_type;
         
         // creation
         Access_dimension_2( ) { }
@@ -1670,14 +1908,15 @@ to ensure code coverage.
 
         // types
         typedef  typename R::Point_2        Point;
-        typedef  const typename R::RT *     Coordinate_iterator;
+        typedef  Point_2_coordinate_iterator<R>
+                                            Coordinate_iterator;
         
         // creation
         Access_coordinates_begin_2( ) { }
 
         // operations
         Coordinate_iterator
-        operator() ( const Point& p) const { return p.begin(); }
+        operator() ( const Point& p) const { return Coordinate_iterator( p); }
     };
     
     @<dividing line>
@@ -1720,6 +1959,69 @@ to ensure code coverage.
 
     @<dividing line>
 
+    // Coordinate iterator (should make it into the kernel in the future)
+    // ------------------------------------------------------------------
+
+    template < class _R >
+    class Point_3_coordinate_iterator {
+      public:
+        // self
+        typedef  _R                         R;
+        typedef  Point_3_coordinate_iterator<R>
+                                            Self;
+        
+        // types
+        typedef  typename R::Point_3        Point;
+        
+        // iterator types
+        typedef  typename R::RT             value_type;
+        typedef  ptrdiff_t                  difference_type;
+        typedef  value_type*                pointer;
+        typedef  value_type&                reference;
+        typedef  std::random_access_iterator_tag
+                                            iterator_category;
+        
+        // forward operations
+        Point_3_coordinate_iterator( const Point&  point = Point(),
+                                     int           index = 0)
+            : p( point), i( index) { }
+        
+        bool        operator == ( const Self& it) const { return ( i == it.i);}
+        bool        operator != ( const Self& it) const { return ( i != it.i);}
+
+        value_type  operator *  ( ) const { return p.homogeneous( i); }
+
+        Self&       operator ++ (    ) {                   ++i; return *this; }
+        Self        operator ++ ( int) { Self tmp = *this; ++i; return tmp;   }
+
+        // bidirectional operations
+        Self&       operator -- (    ) {                   --i; return *this; }
+        Self        operator -- ( int) { Self tmp = *this; --i; return tmp;   }
+
+        // random access operations
+        Self&       operator += ( int n) { i += n; return *this; }
+        Self&       operator -= ( int n) { i -= n; return *this; }
+
+        Self        operator +  ( int n) const
+                                         { Self tmp = *this; return tmp += n; }
+        Self        operator -  ( int n) const
+                                         { Self tmp = *this; return tmp -= n; }
+
+        difference_type
+                    operator -  ( const Self& it) const { return i - it.i; }
+
+        value_type  operator [] ( int n) const { return p.homogeneous( i+n); }
+
+        bool   operator <  ( const Self&) const { return ( i <  it.i); }
+        bool   operator >  ( const Self&) const { return ( i >  it.i); }
+        bool   operator <= ( const Self&) const { return ( i <= it.i); }
+        bool   operator >= ( const Self&) const { return ( i >= it.i); }
+
+    private:
+        const Point&  p;
+        int           i;
+    };
+    
     // Data accessors (should make it into the kernel in the future)
     // -------------------------------------------------------------
 
@@ -1731,14 +2033,18 @@ to ensure code coverage.
         typedef  Access_dimension_3<R>      Self;
 
         // types
-        typedef  typename R::Point_3        Point_3;
+        typedef  typename R::Point_3        Point;
+        
+        // unary function class types
+        typedef  int                        result_type;
+        typedef  Point                      argument_type;
         
         // creation
         Access_dimension_3( ) { }
 
         // operations
         int
-        operator() ( const Point_3& p) const { return p.dimension(); }
+        operator() ( const Point& p) const { return p.dimension(); }
     };
     
     template < class _R >
@@ -1750,15 +2056,16 @@ to ensure code coverage.
                                             Self;
 
         // types
-        typedef  typename R::Point_3        Point_3;
-        typedef  const typename R::RT *     Coordinate_iterator;
+        typedef  typename R::Point_3        Point;
+        typedef  Point_3_coordinate_iterator<R>
+                                            Coordinate_iterator;
         
         // creation
         Access_coordinates_begin_3( ) { }
 
         // operations
         Coordinate_iterator
-        operator() ( const Point_3& p) const { return p.begin(); }
+        operator() ( const Point& p) const { return Coordinate_iterator( p); }
     };
     
     @<dividing line>
@@ -1812,17 +2119,17 @@ to ensure code coverage.
         typedef  Construct_point_d<R>       Self;
 
         // types
-        typedef  typename R::Point_d        Point_d;
+        typedef  typename R::Point_d        Point;
         
         // creation
         Construct_point_d( ) { }
 
         // operations
         template < class InputIterator >
-        Point_d
+        Point
         operator() ( int d, InputIterator first, InputIterator last) const
         {
-            return Point_d( d, first, last);
+            return Point( d, first, last);
         }
     };
 
@@ -1837,17 +2144,18 @@ to ensure code coverage.
         typedef  Access_dimension_d<R>      Self;
 
         // types
-        typedef  typename R::Point_d        Point_d;
+        typedef  typename R::Point_d        Point;
 
+        // unary function class types
         typedef  int                        result_type;
-        typedef  Point_d                    argument_type;
+        typedef  Point                      argument_type;
         
         // creation
         Access_dimension_d( ) { }
 
         // operations
         int
-        operator() ( const Point_d& p) const { return p.dimension(); }
+        operator() ( const Point& p) const { return p.dimension(); }
     };
     
     template < class _R >
@@ -1859,18 +2167,18 @@ to ensure code coverage.
                                             Self;
 
         // types
-        typedef  typename R::Point_d        Point_d;
+        typedef  typename R::Point_d        Point;
         typedef  const typename R::RT *     Coordinate_iterator;
         
         typedef  Coordinate_iterator        result_type;
-        typedef  Point_d                    argument_type;
+        typedef  Point                      argument_type;
         
         // creation
         Access_coordinates_begin_d( ) { }
 
         // operations
         Coordinate_iterator
-        operator() ( const Point_d& p) const { return p.begin(); }
+        operator() ( const Point& p) const { return p.begin(); }
     };
     
     @<dividing line>
@@ -1904,6 +2212,11 @@ to ensure code coverage.
     #ifndef CGAL_TEST_MIN_SPHERE_D_H
     #define CGAL_TEST_MIN_SPHERE_D_H
 
+    // includes
+    #ifndef CGAL_IO_VERBOSE_OSTREAM_H
+    #  include <CGAL/IO/Verbose_ostream.h>
+    #endif
+    
     @<namespace begin>("CGAL")
 
     @<Min_sphere_d test function>
@@ -1926,32 +2239,17 @@ to ensure code coverage.
         "test/Min_sphere_d_new/test_Min_sphere_d_2.C",
         "test program for smallest enclosing sphere (2D traits class)")
 
-    #include <CGAL/Cartesian.h>
-    #include <CGAL/Point_d.h>
-    #include <CGAL/Min_sphere_d_new.h>
-    #include <CGAL/Min_sphere_d_traits_d_new.h>
+    // includes and typedefs
+    // ---------------------
+    @<Min_sphere_d test: includes and typedefs>(2)
+    @<Min_sphere_d test: includes and typedefs (2/3D)>(3)
 
-    #include "test_Min_sphere_d.h"
-
-    #include <CGAL/_QP_solver/Double.h>
-
-    #include <CGAL/Random.h>
-
-    typedef  CGAL::Cartesian<double>  R;
-    typedef  CGAL::Min_sphere_d_traits_d<R>  Traits;
-    typedef  Traits::Point_d                 Point;
-    
     // main
     // ----
     int
     main( int argc, char* argv[])
     {
-        int verbose = -1;
-        if ( argc > 1) verbose = atoi( argv[ 1]);
-        
-        CGAL::test_Min_sphere_d( (Point*)0, (Point*)0, Traits(), verbose);
-        
-        return( 0);
+        @<Min_sphere_d test: main>(2,circle)
     }
 
     @<end of file line>
@@ -1966,27 +2264,19 @@ to ensure code coverage.
 @file <test/Min_sphere_d_new/test_Min_sphere_d_3.C> = @begin
     @<file header>(
         "test/Min_sphere_d_new/test_Min_sphere_d_3.C",
-        "test program for smallest enclosing sphere (2D traits class)")
+        "test program for smallest enclosing sphere (3D traits class)")
 
-    #include <CGAL/Cartesian.h>
-    #include <CGAL/Point_3.h>
-    #include <CGAL/Min_sphere_d_new.h>
-    #include <CGAL/Min_sphere_d_traits_3_new.h>
+    // includes and typedefs
+    // ---------------------
+    @<Min_sphere_d test: includes and typedefs>(3)
+    @<Min_sphere_d test: includes and typedefs (2/3D)>(3)
 
-    #include "test_Min_sphere_d.h"
-
-    #include <CGAL/_QP_solver/Double.h>
-
-    #include <CGAL/Random.h>
-    
-   
     // main
     // ----
     int
     main( int argc, char* argv[])
     {
-        
-        return( 0);
+        @<Min_sphere_d test: main>(3,sphere)
     }
 
     @<end of file line>
@@ -2003,6 +2293,19 @@ to ensure code coverage.
         "test/Min_sphere_d_new/test_Min_sphere_d_d.C",
         "test program for smallest enclosing sphere (dD traits class")
 
+    // includes and typedefs
+    // ---------------------
+    @<Min_sphere_d test: includes and typedefs>(d)
+
+    // main
+    // ----
+    int
+    main( int argc, char* argv[])
+    {
+        @<Min_sphere_d test: main (dD)>
+    }
+
+    /*    
     #include <CGAL/Cartesian.h>
     #include <CGAL/Point_d.h>
     #include <CGAL/Min_sphere_d_new.h>
@@ -2026,10 +2329,12 @@ to ensure code coverage.
         int n = 10;
         int d = 5;
         unsigned int  mask = 0xFFFFFF;    // 24-bit
+        int verbose = 1;
 
         if ( argc > 1) n = atoi( argv[ 1]);
         if ( argc > 2) d = atoi( argv[ 2]);
         if ( argc > 3) mask = atoi( argv[ 3]);
+        if ( argc > 4) verbose = atoi( argv[ 4]);
         
         // generate random points
         std::vector<Point>  pts;
@@ -2041,14 +2346,14 @@ to ensure code coverage.
         }
 
         // compute min-sphere
-        Min_sphere_d  ms( pts.begin(), pts.end(), Traits(), 1);
+        Min_sphere_d  ms( pts.begin(), pts.end(), Traits(), verbose);
         CGAL::set_pretty_mode( std::cout);
         std::cout << ms;
         ms.is_valid( true);
         
         return( 0);
     }
-
+    */
     @<end of file line>
 @end
 
