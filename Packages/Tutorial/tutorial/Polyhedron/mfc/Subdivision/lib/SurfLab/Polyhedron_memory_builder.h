@@ -18,29 +18,30 @@
 #ifndef _POLYHEDRON_MEMORY_BUILDER_H_01312002
 #define _POLYHEDRON_MEMORY_BUILDER_H_01312002
 
-#include "config.h"
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Polyhedron_old/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
-#include <strstream>
+#include <sstream>
 
-SURFLAB_BEGIN_NAMESPACE
 
 /**
  * Polyhedron_memory_builder is a modifier (check CGAL ref.) creating 
  * a polyhedron from a input stream that has .10/.mesh format.
 */
-template <class _P> // P should be a class type of polyhedron  
+template <class _Poly> // P should be a class type of polyhedron  
 class Polyhedron_memory_builder : 
-  public CGAL::Modifier_base<typename _P::HalfedgeDS> {
+  public CGAL::Modifier_base<typename _Poly::HalfedgeDS> {
 protected:
-  typedef _P                                           Polyhedron;
+  typedef _Poly                                        Polyhedron;
+
+  typedef typename Polyhedron::Traits                  Traits;
+  typedef typename Traits::Kernel                      Kernel;
+
   typedef typename Polyhedron::HalfedgeDS              HDS;
   typedef typename Polyhedron::Point_3                 Point;
-  typedef typename Polyhedron::FT                           FT;
+  typedef typename Kernel::FT                          FT;
 
   typedef CGAL::Polyhedron_incremental_builder_3<HDS>  PIB;
 
@@ -94,6 +95,5 @@ void Polyhedron_memory_builder<HDS>::buildPolyhedron(PIB& pb) {
   pb.end_surface();
 }
 
-SURFLAB_END_NAMESPACE
 
 #endif //_POLYHEDRON_MEMORY_BUILDER_H_01312002
