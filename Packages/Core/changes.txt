@@ -1,4 +1,4 @@
-Version 0.10 [af]
+Version 0.10 (6 August 03) [af]
 Added assignment operator and bug in destructor of Sturm.h
 
 Version 0.9 (30 July 03) [af]
