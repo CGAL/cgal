@@ -161,12 +161,10 @@ public:
     bool is_twin() const { return (&*twin_ < this); }
 
     Mark& mark() { 
-      if ( this < &*twin_ ) return mark_;
-      else return twin_->mark_; 
+      return mark_;
     }
     const Mark& mark() const {
-      if ( this < &*twin_ ) return mark_;
-      else return twin_->mark_; 
+      return mark_;
     }
 
     SHalfedge_handle& twin() { return twin_; }
@@ -239,12 +237,11 @@ public:
     bool is_twin() const { return (&*twin_ < this); }
 
     Mark& mark() { 
-      if ( this < &*twin_ ) return mark_;
-      else return twin_->mark_; 
+      return mark_;
     }
+
     const Mark& mark() const { 
-      if ( this < &*twin_ ) return mark_;
-      else return twin_->mark_; 
+      return mark_;
     }
 
     SHalfloop_handle& twin() { return twin_; }

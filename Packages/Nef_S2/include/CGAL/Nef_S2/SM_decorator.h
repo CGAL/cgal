@@ -28,7 +28,7 @@
 
 #undef _DEBUG
 #define _DEBUG  23
-#include <CGAL/Nef_3/debug.h>
+#include <CGAL/Nef_S2/debug.h>
 #include <CGAL/Nef_S2/SM_decorator_traits.h>
 #include <CGAL/Nef_S2/Sphere_map.h>
 #include <CGAL/Unique_hash_map.h>
@@ -589,7 +589,7 @@ void convert_edge_to_loop(SHalfedge_handle e)
   }
   link_as_loop(l,f1), link_as_loop(twin(l),f2);
   circle(l) = circle(e); circle(twin(l)) = circle(twin(e));
-  mark(l) = mark(e);
+  mark(l) = mark(twin(l)) = mark(e);
   delete_vertex_only(v);
   delete_edge_pair_only(e);
 }
@@ -756,7 +756,7 @@ Mark& mark(SHalfedge_handle e) const
 
 Mark& mark(SHalfloop_handle l) const
 /*{\Mop returns the mark of |l|.}*/
-{ return ( &*l < &*twin(l) ) ? l->mark() : twin(l)->mark(); }
+{ return l->mark(); }
 
 Mark& mark(SFace_handle f) const
 /*{\Mop returns the mark of |f|.}*/
@@ -774,7 +774,7 @@ const Mark& mark(SVertex_const_handle v) const
 const Mark& mark(SHalfedge_const_handle e) const
 { return e->mark(); }
 const Mark& mark(SHalfloop_const_handle l) const
-{ return ( &*l < &*twin(l) ) ? l->mark() : twin(l)->mark(); }
+{ return l->mark(); }
 const Mark& mark(SFace_const_handle f) const
 { return f->mark(); }
 
@@ -842,9 +842,9 @@ void extract_complement() {
   SHalfedge_handle she;
   CGAL_forall_shalfedges(she,*this) mark(she) = !mark(she);
   SHalfloop_handle shl;
-  if(has_shalfloop()) { 
+  if(has_shalfloop()) {
     shl = shalfloop(); 
-    mark(shl) = !mark(shl);
+    mark(shl) = mark(twin(shl)) = !mark(shl);
   }
   SFace_handle sf;
   CGAL_forall_sfaces(sf,*this) 
@@ -860,7 +860,7 @@ void extract_interior() {
   SHalfloop_handle shl;
   if(has_shalfloop()) { 
     shl = shalfloop(); 
-    mark(shl) = false;
+    mark(shl) = mark(twin(shl)) = false;
   }
 }
 
@@ -873,7 +873,7 @@ void extract_boundary() {
   SHalfloop_handle shl;
   if(has_shalfloop()) { 
     shl = shalfloop(); 
-    mark(shl) = true;
+    mark(shl) = mark(twin(shl)) = true;
   }
   SFace_handle sf;
   CGAL_forall_sfaces(sf,*this) mark(sf) = false;

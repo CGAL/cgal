@@ -354,7 +354,11 @@ public:
     return shalfloop_ != 0;
   }
 
-  SHalfloop_handle shalfloop() const { 
+  SHalfloop_handle& shalfloop() { 
+    return shalfloop_; 
+  }
+
+  SHalfloop_const_handle shalfloop() const { 
     return shalfloop_; 
   }
 
@@ -510,12 +514,11 @@ pointer_update(const Sphere_map<K, I>& D)
   for ( ; fc != D.sfaces_end(); ++fc,++f) FM[fc] = f;
   FM[D.sfaces_end()] = sfaces_end();
 
-  SHalfloop_iterator l, lc;
+  SHalfloop_iterator l;
   if ( D.shalfloop_ != 0 ) {
     LM[D.shalfloop_] = shalfloop_;
     LM[D.shalfloop_->twin()] = shalfloop_->twin();
     l = shalfloop();
-    lc = D.shalfloop();
     shalfloop_->mark() = D.shalfloop()->mark();
     shalfloop_->twin()->mark() = D.shalfloop()->twin()->mark();    
     if( !l->is_twin() && D.shalfloop()->is_twin()) l->mark() = l->twin()->mark();
