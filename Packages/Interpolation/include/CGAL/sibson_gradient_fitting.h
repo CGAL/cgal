@@ -88,13 +88,16 @@ sibson_gradient_fitting(const Triangul& tr,
   std::vector< std::pair< Point, Coord_type > > coords;
   Coord_type norm;
 
+  std::cout << "tr.number_of_vertices() = " << tr.number_of_vertices() << std::endl;
   typename Triangul::Finite_vertices_iterator
     vit = tr.finite_vertices_begin();
-  for(; vit != tr.vertices_end(); ++vit)
+  for(; vit != tr.finite_vertices_end(); ++vit){
     //test if vit is a convex hull vertex:
     //otherwise do nothing
     if (!tr.is_edge(vit, tr.infinite_vertex()))
     {
+		std::cout << "vit->point() == " << vit->point() << std::endl;
+		
       norm = compute_coordinates(tr, vit, std::back_inserter(coords)).second;
       *out++ = std::make_pair(vit->point(),
 		              sibson_gradient_fitting(coords.begin(),
@@ -103,7 +106,9 @@ sibson_gradient_fitting(const Triangul& tr,
 					              function_value,
 					              traits));
       coords.clear();
+	  
     }
+  }
   return out;
 }
 
