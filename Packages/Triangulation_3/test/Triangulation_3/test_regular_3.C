@@ -44,6 +44,8 @@ int main()
   typedef traits::Bare_point Point;
   typedef traits::Weighted_point Weighted_point;
 
+  typedef Cls::Vertex_handle                             Vertex_handle;
+
   typedef std::list<Weighted_point>                        list_point;
 
   // temporary version
@@ -311,7 +313,45 @@ int main()
   assert(T.is_valid());
   assert(T.dimension()==3);
 
-  std::cout << " quit " << std::endl;
+    //test nearest_power_vertex
+  std::cout << " test nearest_power_vertex " << std::endl;
+  Point pp1(0.0, 0.0, 0.0);
+  Point pp2(1.0, 0.0, 0.0);
+  Point pp3(0.0, 1.0, 0.0);
+  Point pp4(0.0, 0.0, 1.0);
+  Point pp5(1.0, 1.0, 0.0);
+  Point pp6(0.0, 1.0, 1.0);
+  Point pp7(1.0, 0.0, 1.0);
+  Point pp8(1.0, 1.0, 1.0);
 
+  Weighted_point wpp1(pp1, 1.0);
+  Weighted_point wpp2(pp2, 2.0);
+  Weighted_point wpp3(pp3, 1.0);
+  Weighted_point wpp4(pp4, 4.0);
+  Weighted_point wpp5(pp5, 1.0);
+  Weighted_point wpp6(pp6, 1.0);
+  Weighted_point wpp7(pp7, 1.0);
+  Weighted_point wpp8(pp8, 8.0);
+
+  Cls T3;
+
+  T3.insert(wpp1);
+  Vertex_handle v2 = T3.insert(wpp2);
+  assert( T3.nearest_power_vertex(Point(0.5,0.5,0.5)) == v2);
+  
+  T3.insert(wpp3);
+  Vertex_handle v4 = T3.insert(wpp4);
+  assert( T3.nearest_power_vertex(Point(0.5,0.5,0.5)) == v4);
+
+  T3.insert(wpp5);
+  T3.insert(wpp6);
+  T3.insert(wpp7);
+  T3.insert(wpp8);
+  Vertex_handle v8 = T3.insert(wpp8);
+  assert( T3.nearest_power_vertex(Point(0.5,0.5,0.5)) == v8);
+  assert(T3.nearest_power_vertex(Weighted_point(Point(0.5,0.5,0.5),1.0)) 
+	 == v8 );
+ 
+  std::cout << " quit " << std::endl;
   return 0;
 }

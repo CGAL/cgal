@@ -69,6 +69,20 @@ public:
 };
 
 
+template <class Point, class Weight>
+class Compare_power_distance_3
+{
+public:
+  typedef Comparison_result                           result_type;
+  typedef CGAL::Weighted_point <Point, Weight>        Weighted_point;
+
+  Comparison_result operator() ( const Point & p,
+				 const Weighted_point & q,
+				 const Weighted_point & r)
+    {
+      return CGAL::compare_power_distance_3(p,q,r);
+    }
+};
 
 template < class K, class Weight = typename K::RT >
 class Regular_triangulation_euclidean_traits_3
@@ -85,10 +99,14 @@ public:
   typedef Point_3 Point;
 
   typedef CGAL::Power_test_3<Bare_point, Weight> Power_test_3;
+  typedef CGAL::Compare_power_distance_3<Bare_point, Weight>  
+                                                 Compare_power_distance_3;
   
-  Power_test_3 
-  power_test_3_object() const
-    {  return Power_test_3();}
+  Power_test_3   power_test_3_object() const {
+    return Power_test_3();}
+
+  Compare_power_distance_3 compare_power_distance_3_object() const {
+    return Compare_power_distance_3();}
 
 };
 
@@ -155,6 +173,38 @@ power_test(const Weighted_point<pt, Weight> &p,
 }
 
 
+template < class pt, class Weight >
+inline
+Comparison_result
+compare_power_distance_3 (const pt &p,
+			  const Weighted_point<pt, Weight> &q,
+			  const Weighted_point<pt, Weight> &r,
+			  Cartesian_tag)
+{
+  typedef typename pt::R::FT FT;
+   return compare_power_distanceC3(p.x(), p.y(), p.z(),
+				   q.x(), q.y(), q.z(), FT(q.weight()),
+				   r.x(), r.y(), r.z(), FT(r.weight()));
+}     
+
+template < class FT >
+Comparison_result
+compare_power_distanceC3(
+		  const FT &px, const FT &py, const FT &pz, 
+		  const FT &qx, const FT &qy, const FT &qz, const FT &qw,
+		  const FT &rx, const FT &ry, const FT &rz, const FT &rw)
+{
+ FT dqx = qx - px;
+ FT dqy = qy - py;
+ FT dqz = qz - pz;
+ FT drx = rx - px;
+ FT dry = ry - py;
+ FT drz = rz - pz;
+   return Comparison_result(CGAL_NTS sign (
+      (dqx*dqx + dqy*dqy + dqz*dqz - qw )
+    - (drx*drx + dry*dry + drz*drz - rw ) ));
+}
+
 // Homogeneous versions.
 template < class pt, class Weight >
 inline
@@ -174,7 +224,7 @@ power_test(const Weighted_point<pt, Weight> &p,
                         t.hx(), t.hy(), t.hz(), t.hw(), RT(t.weight()));
 }
 
-// The 2 following call the cartesian version over FT, because an homogeneous
+// The followings call the cartesian version over FT, because an homogeneous
 // special version would be boring to write.
 
 template < class pt, class Weight >
@@ -219,6 +269,19 @@ power_test(const Weighted_point<pt, Weight> &p,
                         FT(q.weight()));
 }
 
+template < class Point, class Weight >
+inline
+Comparison_result
+compare_power_distance_3 (const Point &p,
+			  const Weighted_point<Point, Weight> &q,
+			  const Weighted_point<Point, Weight> &r,
+			  Homogeneous_tag)
+{
+  typedef typename Point::R::FT FT;
+  return compare_power_distanceC3(p.x(), p.y(), p.z(), FT(p.weight()),
+				    q.x(), q.y(), q.z(), FT(q.weight()),
+				    t.x(), t.y(), t.z(), FT(t.weight()));
+}     
 
 // Kludges for M$.
 
@@ -266,6 +329,17 @@ power_test(const Weighted_point<pt,Weight> &p,
 {
   typedef typename pt::R::Rep_tag Tag;
   return( power_test(p,q, Tag()) );
+}
+
+template < class Point, class Weight >
+inline
+Comparison_result
+compare_power_distance_3 (const Point &p,
+			  const Weighted_point<Point, Weight> &q,
+			  const Weighted_point<Point, Weight> &r)
+{
+  typedef typename Point::R::Rep_tag Tag;
+  return( compare_power_distance_3(p,q,r, Tag()) );
 }
 
 CGAL_END_NAMESPACE

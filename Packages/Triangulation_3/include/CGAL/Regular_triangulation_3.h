@@ -61,6 +61,7 @@ public:
   typedef typename Tr_Base::Finite_edges_iterator   Finite_edges_iterator;
 
   typedef typename Gt::Weighted_point              Weighted_point;
+  typedef typename Gt::Bare_point                  Bare_point;
 
   Regular_triangulation_3(const Gt & gt = Gt())
     : Tr_Base(gt)
@@ -112,11 +113,39 @@ public:
   side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const;
 
   Bounded_side
-  side_of_power_segment( Cell_handle c, const Weighted_point &p) const;
+  side_of_power_segment( Cell_handle c, const Weighted_point &p)
+    const;
 
+  Vertex_handle
+  nearest_power_vertex_in_cell(const Bare_point& p, const Cell_handle& c)  const;
+
+  Vertex_handle
+  nearest_power_vertex(const Bare_point& p, Cell_handle c =
+		       Cell_handle()) const;
+  
   bool is_valid(bool verbose = false, int level = 0) const;
 
 private:
+  bool
+  less_power_distance(const Bare_point &p, 
+		      const Weighted_point &q, 
+		      const Weighted_point &r)  const 
+  {
+    return 
+      geom_traits().compare_power_distance_3_object()(p, q, r) == SMALLER;
+  }
+
+  Vertex_handle
+  nearest_power_vertex(const Bare_point &p, 
+		       Vertex_handle v,
+		       Vertex_handle w) const
+  {
+      // In case of equality, v is returned.
+      CGAL_triangulation_precondition(v != w);
+      if (is_infinite(v))	  return w;
+      if (is_infinite(w))	  return v;
+      return less_power_distance(p, w->point(), v->point()) ? w : v;
+  }
 
   Oriented_side
   power_test(const Weighted_point &p, const Weighted_point &q) const
@@ -243,6 +272,70 @@ private:
   friend class Conflict_tester_3;
   friend class Conflict_tester_2;
 };
+
+
+template < class Gt, class Tds >
+typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
+Regular_triangulation_3<Gt,Tds>::
+nearest_power_vertex_in_cell(const Bare_point& p, 
+			     const Cell_handle& c) const
+// Returns the finite vertex of the cell c with smaller
+// power distance  to p.
+{
+    CGAL_triangulation_precondition(dimension() >= 1);
+    Vertex_handle nearest = nearest_power_vertex(p, 
+						 c->vertex(0), 
+						 c->vertex(1));
+    if (dimension() >= 2) {
+	nearest = nearest_power_vertex(p, nearest, c->vertex(2));
+        if (dimension() == 3)
+	    nearest = nearest_power_vertex(p, nearest, c->vertex(3));
+    }
+    return nearest;
+}
+
+
+template < class Gt, class Tds >
+typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
+Regular_triangulation_3<Gt,Tds>::
+nearest_power_vertex(const Bare_point& p, Cell_handle start) const
+{
+    if (number_of_vertices() == 0)  
+      return Vertex_handle();
+
+    // Use a brute-force algorithm if dimension < 3.
+    if (dimension() < 3) {
+	Finite_vertices_iterator vit = finite_vertices_begin();
+	Vertex_handle res = vit;
+	for (++vit; vit != finite_vertices_end(); ++vit)
+	    res = nearest_power_vertex(p, res, vit);
+	return res;
+    }
+
+    Locate_type lt;
+    int li, lj;
+    Cell_handle c = locate(p, lt, li, lj, start);
+  
+    // - start with the closest vertex from the located cell.
+    // - repeatedly take the nearest of its incident vertices if any
+    // - if not, we're done.
+    Vertex_handle nearest = nearest_power_vertex_in_cell(p, c);
+    std::vector<Vertex_handle> vs;
+    vs.reserve(32);
+    while (true) {
+	Vertex_handle tmp = nearest;
+        incident_vertices(nearest, std::back_inserter(vs));
+        for (typename std::vector<Vertex_handle>::const_iterator
+		vsit = vs.begin(); vsit != vs.end(); ++vsit)
+	    tmp = nearest_power_vertex(p, tmp, *vsit);
+	if (tmp == nearest)
+	    break;
+	vs.clear();
+	nearest = tmp;
+    }
+    return nearest;
+}
+
 
 
 template < class Gt, class Tds >
