@@ -1,5 +1,9 @@
+negocier la doc de Filtered_exact...
+
 General
 - new Vertex/Cell
+	create_cell T3 pour remove
+	etc
 - trouver une interface avec T_2 qui permette d'eviter de reprogrammer 
   tout le 2d dans le 3d
 - virer geom_traits
