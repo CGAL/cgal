@@ -29,7 +29,7 @@ my (
     $release_date
  ); 
 
-my $TESTING = 1;
+my $TESTING = 0;
 
 if ($TESTING) {
     print STDERR "Testing !!!\n\n";
@@ -79,7 +79,8 @@ sub unzip_files($@)
 	    }
 	}
     }
-    system('unzip', '-qq', $package, @to_unzip);
+    system('unzip', '-q', $package, @to_unzip);
+#    system('unzip', '-qq', $package, @to_unzip);
 }
 
 
@@ -257,13 +258,32 @@ EOF
 sub CreateExampleTestDirs()
 {
     my $DIR;
-
     print "Creating example test directories ...\n";
     chdir 'examples' or return;
     foreach $DIR (glob("*")) {
 	print "$DIR\n";
 	if ( -d $DIR ) {
 	    system('cp', '-r', "$DIR", "../test/${DIR}_Examples");
+	}
+    }
+    chdir '..';
+}
+
+#---------------------------------------------------------------#
+# CreateDemoTestDirs
+#---------------------------------------------------------------#
+
+sub CreateDemoTestDirs()
+{
+    my $DIR;
+    print "Creating demo test directories ...\n";
+    chdir 'demo' or return;
+    foreach $DIR (glob("*")) {
+	print "$DIR\n";
+	if ( -d $DIR ) {
+	    system('cp', '-r', "$DIR", "../test/${DIR}_Demo");
+	    system('cp',"$SCRIPTDIR/demo_cgal_test",
+		"../test/${DIR}_Demo/cgal_test");
 	}
     }
     chdir '..';
@@ -290,6 +310,9 @@ sub list_test_directories($)
 	    $test_dirs{$1} = 1;
 	}
 	if ( $zipped_file =~ m|\bexamples/([^/\n]+)| ) {
+	    $test_dirs{$1} = 1;
+	}
+	if ( $zipped_file =~ m|\bdemo/([^/\n]+)| ) {
 	    $test_dirs{$1} = 1;
 	}
     }
@@ -322,7 +345,9 @@ sub install_packages()
 	    next;
 	}
 	print "$filenaam\n";
-	unzip_files("$filenaam", "include", "test", "examples", "demo", "src", "version","doc_tex","stlport","developer_scripts","scripts");
+	unzip_files("$filenaam", "include", "test", "examples", "demo", "src",
+		"version","doc_tex","stlport","winutils","auxiliary",
+		"developer_scripts","scripts");
 	if (-f 'version') {
 	    open CUR_VERSION, 'version';
 	    while (<CUR_VERSION>) {
@@ -341,6 +366,10 @@ sub install_packages()
 		&& ! -f "examples/$direc/version") {
 		copy('version', "examples/$direc");
 	    }
+	    if ( -f 'version' && -d "demo/$direc"
+		&& ! -f "demo/$direc/version") {
+		copy('version', "demo/$direc");
+	    }
 	}
 	unlink 'version';
     }
@@ -358,7 +387,7 @@ sub install_misc()
   system 'unzip', '-oqq', "$MISCPACKAGEDIR/Installation/Installation.zip";
   system 'unzip', '-oqq', "$MISCPACKAGEDIR/Scripts/Scripts.zip";
 
-  unlink 'version', 'description.txt', 'long_description.txt', 'changes.txt';
+  unlink 'version', 'description.txt', 'long_description.txt', 'changes.txt', 'submission_info';
 }
 
 
@@ -383,16 +412,16 @@ sub make_testscripts()
 {
     my ($DIR, $BASEDIR);
     $BASEDIR = cwd();
+    print "creating and checking makefiles ...\n";
+
     chdir 'test';
     foreach $DIR (glob("*")) {
 	if ( -d $DIR ) {
-	    print "checking makefile and cgal_test in $DIR\n";
 	    chdir $DIR;
 	    if ( -f 'Makefile') {
 		rename 'Makefile', 'makefile';
 	    }
 	    if ( -f 'makefile' ) {
-		print "Checking makefile ...\n";
                 open MAKEFILE, "makefile";
                 open NEW_MAKEFILE, ">makefile.new";
 		while (<MAKEFILE>) {
@@ -404,16 +433,40 @@ sub make_testscripts()
 		close MAKEFILE;
 		rename("makefile.new","makefile");
 	    } else {
-		print "creating makefile ...\n";
 		system("$SCRIPTDIR/create_makefile", '-t');
 	    }
 	    if ( ! -f 'cgal_test' ) {
-		print "creating cgal_test ...\n";
 		system("$SCRIPTDIR/create_cgal_test");
 	    }
 	    chdir '..';
 	}
     }
+
+    chdir 'examples';
+    foreach $DIR (glob("*")) {
+	if ( -d $DIR ) {
+	    chdir $DIR;
+	    if ( -f 'Makefile') {
+		rename 'Makefile', 'makefile';
+	    }
+	    if ( -f 'makefile' ) {
+                open MAKEFILE, "makefile";
+                open NEW_MAKEFILE, ">makefile.new";
+		while (<MAKEFILE>) {
+		   s/\.o\b/\$(OBJ_EXT)/g;
+		   s/-g\b/\$(DEBUG_OPT)/g;
+		   print NEW_MAKEFILE $_;
+		}
+		close NEW_MAKEFILE;
+		close MAKEFILE;
+		rename("makefile.new","makefile");
+	    } else {
+		system("$SCRIPTDIR/create_makefile", '-d');
+	    }
+	    chdir '..';
+	}
+    }
+
     chdir $BASEDIR;
 }
 
@@ -538,6 +591,7 @@ close VERSIONS;
 make_src_makefiles;
 CreateSrcTestDir;
 CreateExampleTestDirs;
+CreateDemoTestDirs;
 make_testscripts;
 set_file_headers if !$TESTING;
 set_version_in_config;
