@@ -56,12 +56,16 @@ namespace CGAL {
 
     but[0] = new QToolButton(maintoolbar, "triangulation");
     but[0]->setPixmap(QPixmap( (const char**)triangulation_xpm ));
+    but[0]->setTextLabel("Show Triangulation");
     but[1] = new QToolButton(maintoolbar, "voronoi");
     but[1]->setPixmap(QPixmap( (const char**)voronoi_xpm ));
+    but[1]->setTextLabel("Show Voronoi");
     but[2] = new QToolButton(maintoolbar, "vertices");
     but[2]->setPixmap(QPixmap( (const char**)points_xpm ));
+    but[2]->setTextLabel("Show Vertices");
     but[3] = new QToolButton(maintoolbar, "mouse_coord");
     but[3]->setPixmap(QPixmap( (const char**)mouse_coord_xpm ));
+    but[3]->setTextLabel("Show Mouse Coordinates");
 
 
     nr_of_buttons = 4;
