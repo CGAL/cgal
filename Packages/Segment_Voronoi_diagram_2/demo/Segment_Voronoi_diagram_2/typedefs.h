@@ -39,7 +39,7 @@ struct Gt
   : public CGAL::Segment_Voronoi_diagram_traits_2<Rep,CGAL::Ring_tag> {};
 #endif
 
-typedef Gt::Point_2            Point;
+typedef Gt::Point_2            Point_2;
 typedef Gt::Segment_2          Segment;
 typedef CGAL::Polygon_2<Rep>   Polygon_2;
 typedef Gt::Site_2             Site;

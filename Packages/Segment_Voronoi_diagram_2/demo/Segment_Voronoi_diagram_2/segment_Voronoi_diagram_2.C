@@ -28,10 +28,10 @@
 
 
 #if 0
-Point
+Point_2
 to_nt(const Point_double_2& p)
 {
-  return Point(p.x(), p.y());
+  return Point_2(p.x(), p.y());
 }
 
 Segment
@@ -153,7 +153,7 @@ private:
 #if 1
     if ( svd.number_of_vertices() == 0 ) { return; }
 
-    Point p;
+    Point_2 p;
     if ( CGAL::assign(p, obj) ) {
       SVD_2::Vertex_handle v = svd.nearest_neighbor(p);
 #if 1
@@ -217,7 +217,7 @@ private:
 #else
     if ( svd.number_of_vertices() == 0 ) { return; }
 
-    Point q;
+    Point_2 q;
 
     if ( CGAL::assign(q, obj) ) {
       SVD_2::Vertex_handle v = svd.nearest_neighbor(q);
@@ -240,23 +240,15 @@ private slots:
 
     if ( input_mode == SVD_POINT ) {
       if ( is_snap_mode ) {
-	Point p;
+	Point_2 p;
 	if ( CGAL::assign(p, obj) ) {
 	  SVD_2::Vertex_handle v;
 	  v = svd.nearest_neighbor(p);
-	  if ( v->is_point() ) {
-	    unsigned int n = svd.number_of_incident_segments(v);
-	    char msg[100];
-	    CGAL_CLIB_STD::sprintf(msg,
-				   "number of incident segments is: %d",
-				   n);
-	    statusBar()->message(msg);
-	  }
 	}
 	return;
       }
 
-      Point p;
+      Point_2 p;
       if ( CGAL::assign(p, obj) ) {
 	timer.start();
 	svd.insert(p);
@@ -375,13 +367,13 @@ private slots:
     while (f >> type) {
       CGAL::Bbox_2 tbox;
       if (type == 'p') {
-        Point p;
+        Point_2 p;
         f >> p;
         svd.insert(p);
 	tbox = p.bbox();
 	counter++;
       } else if (type == 's') {
-        Point p1, p2;
+        Point_2 p1, p2;
         f >> p1 >> p2;
         svd.insert(p1, p2);
         tbox = Segment(p1,p2).bbox();
@@ -390,7 +382,7 @@ private slots:
 	Vertex_handle vh;
         int nr_of_points;
         f >> nr_of_points;
-        Point p1, p2;
+        Point_2 p1, p2;
         f >> p1;
 	tbox = p1.bbox();
 	bool got_location = false;
