@@ -156,6 +156,40 @@ public:
     return compare_y_at_x_2_object()(q, cv1, cv2);
   }
 
+  Comparison_result curve_compare_at_x_left(const X_curve_2 & cv1,
+                                            const X_curve_2 & cv2, 
+                                            const Point_2 & q) const 
+  {
+    // The two curves must not be vertical.
+    CGAL_precondition(! curve_is_vertical(cv1));
+    CGAL_precondition(! curve_is_vertical(cv2));
+
+    // The two curve must be defined at q and also to its left.
+    CGAL_precondition_code(
+        Construct_vertex_2 construct_vertex = construct_vertex_2_object();
+	Less_x_2 less_x = less_x_2_object();
+	const Point_2 & source1 = construct_vertex(cv1, 0);
+	const Point_2 & target1 = construct_vertex(cv1, 1);
+	const Point_2 & source2 = construct_vertex(cv2, 0);
+	const Point_2 & target2 = construct_vertex(cv2, 1);
+	);
+
+    CGAL_precondition (less_x(source1, q) || less_x(target1, q));
+    CGAL_precondition (!(less_x(source1, q) && less_x(target1, q)));
+    
+    CGAL_precondition (less_x(source2, q) || less_x(target2, q));
+    CGAL_precondition (!(less_x(source2, q) && less_x(target2, q)));
+    
+    // Since the curves are continuous, if they are not equal at q, the same
+    // result also applies to q's left.
+    Comparison_result r = compare_y_at_x_2_object()(q, cv1, cv2);
+    if (r != EQUAL) return r;     
+    
+    // <cv2> and <cv1> meet at a point with the same x-coordinate as q
+    // compare their derivatives.
+    return compare_slope_2_object()(cv2, cv1);
+  }
+
   /*! curve_compare_at_x_right() compares the y value of two curves in an
    * epsilon environment to the right of the x value of the input point
    * Preconditions: The point q is in the x range of the two curves, and both
