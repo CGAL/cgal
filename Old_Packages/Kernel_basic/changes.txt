@@ -1,3 +1,7 @@
+3.82   (18 March 2002)
+- added LEDA basic file to accommodate LEDA namespace to be introduced
+  with LEDA 4.4
+
 3.81   (6 February 2002)
 - Fix the impossibility to derive from Object.
 
