@@ -83,7 +83,7 @@ constructed arrangement.
 \begin{figure}[h]
     \begin{ccTexOnly}
         \centerline{
-           \includegraphics{overlay_example.eps}
+           \includegraphics{../Map_overlay_2/overlay_example.eps}
            }
     \end{ccTexOnly}
     \caption{Two rectangles (left) and their overlay (right). 
@@ -138,20 +138,6 @@ the sweep-line algorithm,
 
 \section{Map Overlay DCEL}
 \label{sec:dcel}
-
-\begin{figure}[h]
-    \begin{ccTexOnly}
-        \centerline{
-           \includegraphics{simple_overlay.eps}
-           }
-    \end{ccTexOnly}
-\caption{Two segments (left) and their overlay (right). 
-We denote the subdivision induced by the first segment by $R$ and the second by $B$. 
-The vertex $v$ of the overlay, created by the intersection of the two input segments, 
-points to $e_1$ and $e_2$.}
-\label{fig:simple_overlay_example}
-\end{figure}
-
 The \ccc{Map_overlay_default_dcel<Traits,Vertex_base,Halfedge_base,Face_base>}
 class is the data structure representing the DCEL of the overlay. 
 We denote the above DCEL by $OD$.
