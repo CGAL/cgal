@@ -48,32 +48,33 @@ Chapter~\ref{chap:robustness} for a discussion of robustness issues within
 The different needs of the potential application areas demand 
 flexibility in the library. Four sub-issues of flexibility can be identified.
 
-{\bf Modularity}
+{\bf Modularity.}
 \ccIndexMainItem{modularity}
 A clear structuring of \cgal\ into modules with as few dependencies as
 possible helps a user in learning and using \cgal, since the overall
 structure can be grasped more easily and the focus can be narrowed to
 those modules that are actually of interest. 
 
-{\bf Adaptability}
+{\bf Adaptability.}
 \ccIndexMainItem{adaptability}
 \cgal\ might be used in an already established environment with
 geometric classes and algorithms in which case the modules will 
 most probably need adaptation before they can be used. 
 
-{\bf Extensibility}
+{\bf Extensibility.}
 \ccIndexMainItem{extensibility}
 Not all wishes can be fulfilled with \cgal. Users may want to
 extend the library. It should be possible to integrate new 
 classes and algorithms into \cgal.
 
-{\bf Openness}
+{\bf Openness.}
 \ccIndexMainItem{openness}
 \cgal\ should be open to coexist with other libraries, or better, to
-work together with other libraries and programs. The \CC\ Standard
+work together with other libraries and programs. The \CC\ 
+Standard~\cite{cgal:ansi-is14882-98}
 \index{C++ standard@\CC\ standard}
 \ccIndexMainItem{\stl}
-defines with the \CC\ Standard Template Library a common
+defines with the \CC\ Standard Library a common
 foundation for all \CC\ platforms. 
 So it is easy and natural to gain openness by following this standard.
 There are important libraries outside the standard, and \cgal\
@@ -97,7 +98,7 @@ first steps with \cgal.
 \ccIndexSubitem{ease of use}{vs. flexibility}
 \ccIndexSubitem{flexibility}{vs. ease of use}
 
-{\bf Uniformity}
+{\bf Uniformity.}
 \ccIndexMainItem{uniformity}
 A uniform look and feel of the design in \cgal\ will help in learning
 and memorizing. A concept once learned should be applicable in all
@@ -105,15 +106,14 @@ places where one would wish to apply it.
 A function name once learned for a specific
 class should not be named differently for another class. 
 
-\index{C++ standard@\CC\ standard}
-\ccIndexMainItem{\stl}
-\cgal\ is based in many places on concepts borrowed from \stl\ or the
-other parts of the \CC\ Standard Library. An example is the use of
-streams and stream operators in \cgal. Another example is the use of
-container classes and algorithms from the \stl. So these concepts 
-should be used uniformly.
+\index{C++ standard@\CC\ standard} \ccIndexMainItem{\stl} \cgal\ is
+based in many places on concepts borrowed from \stl\ (Standard
+Template Library) or the other parts of the \CC\ Standard Library. An
+example is the use of streams and stream operators in \cgal. Another
+example is the use of container classes and algorithms from the
+\stl. So these concepts should be used uniformly.
 
-{\bf Complete and Minimal Interfaces}
+{\bf Complete and Minimal Interfaces.}
 \ccIndexMainItem{completeness}
 \ccIndexSubitem{interfaces}{designing}
 A goal with similar implications as uniformity is a design
@@ -127,7 +127,7 @@ class, in a more global picture it might hinder the understanding of
 similarities and differences among classes, and make it harder to learn 
 and memorize.
 
-{\bf Rich and Complete Functionality}
+{\bf Rich and Complete Functionality.}
 \ccIndexMainItem{completeness}
 \ccIndexMainItem{functionality}
 We aim for a useful and rich collection of geometric classes, data
