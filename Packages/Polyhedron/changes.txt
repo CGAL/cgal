@@ -1,5 +1,9 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
+2.10 (15 Jun 2001)
+
+     Fixed warnings in test suite.
+
 2.9 (13 Sep 2000)
 
      std::distance in examples/Polyhedron/polyhedron_prog_off.C changed.
