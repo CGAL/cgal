@@ -1,5 +1,7 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+3.30 (8 May 2003)
+     - made VC7.0 happy [af]
 
 3.29 (12 Apr 2003)
 
