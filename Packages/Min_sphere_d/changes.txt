@@ -113,5 +113,5 @@ Changes from 2.26:
 Changes from 2.28:
    - GCC 3.1 fixes.
 
-Changes from 2.29:
+Changes from 2.29/2.30:
    - Use Kernel_d.
