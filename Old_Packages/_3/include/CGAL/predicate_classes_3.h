@@ -29,6 +29,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
+/*
 template < class Point>
 class Less_xyz
 {
@@ -38,7 +39,6 @@ public:
   { return lexicographically_xyz_smaller(p,q); }
 };
 
-/*
 template <class Plane, class Point>
 class Less_signed_dist_to_plane_3
 {

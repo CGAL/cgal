@@ -1,3 +1,6 @@
+3.14 (?? Feb 2001)
+- Comment out CGAL::Less_xyz<>.
+
 3.13 (14 Feb 2001)
 
 - added min_coord(), max_coord() for Iso_cuboid_3 and new constructor
