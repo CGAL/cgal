@@ -67,6 +67,8 @@ using std::less;
 using std::greater_equal;
 using std::max;
 using std::bind2nd;
+using std::cerr;
+using std::endl;
 using CGAL::Cartesian_matrix;
 using CGAL::Random;
 using CGAL::default_random;
