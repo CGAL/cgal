@@ -83,7 +83,7 @@ private:
   
 public:
   Constraint_hierarchy_2() { }
-  Constraint_hierarchy_2(const Constraint_hierarchy_2& ch); 
+  Constraint_hierarchy_2(const Constraint_hierarchy_2<T,Data>& ch); 
   ~Constraint_hierarchy_2(){ clear();}
   void clear();
   Constraint_hierarchy_2& operator=(const Constraint_hierarchy_2& ch);
@@ -132,12 +132,11 @@ public:
   H_c_iterator  c_end()    const{ return c_to_sc_map.end();   }
   H_v_iterator  v_begin()  const{ return vertex_map.begin(); }
   H_v_iterator  v_end()    const{ return vertex_map.end(); }
- 
- 
   
-private:  
+  //Helping functions
   void copy(const Constraint_hierarchy_2& ch);
   void copy(const Constraint_hierarchy_2& ch, std::map<T,T>& vmap);
+private: 
   H_edge    make_edge(T va, T vb) const;
   H_vertex_it     get_pos(T va, T vb) const;
   bool      get_contexts(T va, T vb, 
@@ -152,7 +151,7 @@ public:
 
 template <class T, class Data> 
 Constraint_hierarchy_2<T,Data>::
-Constraint_hierarchy_2<T,Data>(const Constraint_hierarchy_2& ch)
+Constraint_hierarchy_2<T,Data>(const Constraint_hierarchy_2<T,Data>& ch)
 {
   copy(ch);
 }
@@ -205,7 +204,7 @@ copy(const Constraint_hierarchy_2& ch1, std::map<T,T>& vmap)
   for( ; scit1 != ch1.sc_end(); ++scit1) {
     //vertices of the subconstraints
     H_vertex uu2 = vmap[scit1->first.first];
-    H_vertex vv2 = vmap[cit1->first.second];
+    H_vertex vv2 = vmap[scit1->first.second];
     H_context_list* hcl1  = scit1->second;
     H_context_list* hcl2  = new H_context_list;
     H_context_iterator cit1 = hcl1->begin();
@@ -688,7 +687,6 @@ print() const
   }
   return; 
 }
-
 
 
 CGAL_END_NAMESPACE

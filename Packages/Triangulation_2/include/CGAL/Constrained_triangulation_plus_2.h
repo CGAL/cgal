@@ -42,12 +42,14 @@ class Constrained_triangulation_plus_2
 public:
   typedef Tr                                   Triangulation;
   typedef typename Tr::Intersection_tag        Intersection_tag;
+  typedef Constrained_triangulation_plus_2<Tr> Self;
 
-  typedef typename Triangulation::Edge         Edge;
-  typedef typename Triangulation::Vertex        Vertex;
-  typedef typename Triangulation::Vertex_handle Vertex_handle;
-  typedef typename Triangulation::Face_handle   Face_handle;
-  typedef typename Triangulation::Locate_type  Locate_type;
+  typedef typename Triangulation::Edge             Edge;
+  typedef typename Triangulation::Vertex           Vertex;
+  typedef typename Triangulation::Vertex_handle    Vertex_handle;
+  typedef typename Triangulation::Face_handle      Face_handle;
+  typedef typename Triangulation::Vertex_iterator  Vertex_iterator;
+  typedef typename Triangulation::Locate_type      Locate_type;
   typedef typename Triangulation::Line_face_circulator Line_face_circulator;
   typedef typename Triangulation::Geom_traits      Geom_traits;
   typedef typename Geom_traits::Point_2            Point;
@@ -76,13 +78,12 @@ public:
   Constrained_triangulation_plus_2(const Geom_traits& gt=Geom_traits()) 
     : Triangulation(gt) { }
 
-// Constrained_triangulation_plus_2(const Constrained_triangulation_plus2& ctp)
-//     { copy(ctp);}
+  Constrained_triangulation_plus_2(const Self& ctp)
+    { copy(ctp);}
 
   virtual ~Constrained_triangulation_plus_2() {}
 
-  Constrained_triangulation_plus_2 &operator=
-     (const Constrained_triangulation_plus_2 &ctp);
+  Constrained_triangulation_plus_2 &operator= (const Self& ctp);
 
   Constrained_triangulation_plus_2(List_constraints& lc, 
 				   const Geom_traits& gt=Geom_traits())
@@ -109,7 +110,7 @@ public:
   }
 
     //Helping
-  // void copy(const Constrained_triangulation_plus_2 &ctp);
+  void copy(const Constrained_triangulation_plus_2 &ctp);
   // void swap(Triangulation_2 &tr);
 
   // INSERTION
@@ -184,6 +185,21 @@ public:
     }
 
 };
+
+template <class Tr>
+void
+Constrained_triangulation_plus_2<Tr>::
+copy(const Constrained_triangulation_plus_2 &ctp)
+{
+  copy_triangulation(ctp);
+  std::map<Vertex_handle,Vertex_handle> vmap;
+  Vertex_iterator vit = ctp.vertices_begin();
+  Vertex_iterator vvit = vertices_begin();
+  for( ; vit != ctp.vertices_end(); ++vit, ++vvit) 
+    vmap[vit->handle()] = vvit->handle();
+  hierarchy.copy(ctp.hierarchy, vmap);
+}
+
 
 template <class Tr>
 inline

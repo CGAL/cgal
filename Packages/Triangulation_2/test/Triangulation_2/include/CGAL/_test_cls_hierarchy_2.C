@@ -36,25 +36,21 @@ _test_cls_hierarchy_2()
   // result should be 152 3764
   // h.print();
   H_context co = h.context(v[1],v[5]);
-  //H_vertex_it vit = (co.enclosing)->begin();
-  H_vertex_it vit = co.vertices_begin();  
+    H_vertex_it vit = co.vertices_begin();  
   assert( *vit++ == v[1] && 
 	  *vit++ == v[5] && 
 	  *vit++ == v[2] &&
 	  vit == co.vertices_end() &&
 	  *(co.current()) == v[1]) ;
   co = h.context(v[7],v[6]);
-  //vit = (co.enclosing)->begin();
   vit = co.vertices_begin();
   assert( *vit++ == v[3]);
   assert( *vit++ == v[7]);
   assert( *vit++ == v[6]);
   assert( *vit++ == v[4]);
-  //assert( vit == (co.enclosing)->end());
   assert( vit == co.vertices_end());
   assert(*(co.current()) == v[7]) ;
   co = h.context(v[6],v[7]);
-  //assert(*(co.pos) == v[7]) ;
   assert(*(co.current()) == v[7]) ;
   H_vertex_it v_in_c = h.vertices_in_constraint_begin(v[4],v[3]);
   assert(*v_in_c == v[3]);
@@ -106,11 +102,12 @@ _test_cls_hierarchy_2()
 
   //test clear() and copy()
   Hierarchy ch(h);
-  // h.print();
-  //ch.print();
+  assert( ch.number_of_constraints() == h.number_of_constraints());
+  assert( ch.number_of_subconstraints() == h.number_of_subconstraints());
   ch.clear();
   ch = h;
-  //ch.print();
+  assert( ch.number_of_constraints() == h.number_of_constraints());
+  assert( ch.number_of_subconstraints() == h.number_of_subconstraints());
   ch.clear();
   return;
 }

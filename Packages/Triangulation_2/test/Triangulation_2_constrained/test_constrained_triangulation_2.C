@@ -28,10 +28,6 @@
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/_test_cls_constrained_triangulation_2.C>
 
-typedef CGAL::Quotient<Ftype>                       Exact_type;
-typedef CGAL::Simple_cartesian<Exact_type>          Exact_kernel;
-struct EK : public Exact_kernel {};
-
 int main()
 {
   std::cout << "Testing constrained_triangulation "<< std::endl;
@@ -51,8 +47,6 @@ int main()
   
   std::cout << "Testing constrained_triangulation "<< std::endl;
   std::cout << " with Exact_intersections_tag : " << std::endl;
-  
-
   typedef CGAL::Triangulation_vertex_base_2<EK>                 Vbb;
   typedef CGAL::Constrained_triangulation_face_base_2<EK>       Fbb;
   typedef CGAL::Triangulation_data_structure_2<Vbb,Fbb>         TDSS;

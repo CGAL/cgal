@@ -36,10 +36,20 @@ int main()
   std::cout << "Testing constraint hirarchy" << std::endl;
   _test_cls_hierarchy_2();
 
-  std::cout << "Testing constrained_triangulation_plus_2 "<<
-    std::endl;
+  std::cout << "Testing constrained_triangulation_plus_2 "<< std::endl;
+  std::cout << " with Exact_predicates_tag : " << std::endl;
   typedef CGAL::Constrained_Delaunay_triangulation_2<TestK>   CDt;
   typedef CGAL::Constrained_triangulation_plus_2<CDt>   CDtplus;
   _test_cls_const_triang_plus_2(CDtplus());
+  
+  std::cout << "Testing constrained_triangulation_plus_2 "<<   std::endl;
+  std::cout << " with Exact_intersections_tag : " << std::endl;
+  typedef CGAL::Triangulation_vertex_base_2<EK>                 Vbb;
+  typedef CGAL::Constrained_triangulation_face_base_2<EK>       Fbb;
+  typedef CGAL::Triangulation_data_structure_2<Vbb,Fbb>         TDSS;
+  typedef CGAL::Exact_intersections_tag                         EItag;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<EK,TDSS,EItag>  CDtei;
+  _test_cls_constrained_triangulation(CDtei());
+
   return 0;
 }

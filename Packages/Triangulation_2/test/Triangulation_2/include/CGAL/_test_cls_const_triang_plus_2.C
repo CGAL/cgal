@@ -74,6 +74,13 @@ _test_cls_const_triang_plus_2( const TrP & )
 	  (*currentin1 == vb &&  *++currentin1 == va));
   assert( (*currentin2 == va &&  *++currentin2 == vb) ||
 	  (*currentin2 == vb &&  *++currentin2 == va));
+
+  //test copy and swap
+  std::cout << "test copy and swap" << std::endl;
+  TrP  trp2(trp);
+  TrP  trp3 = trp2;
+  assert(trp3.number_of_constraints() == trp.number_of_constraints());
+  assert(trp3.number_of_subconstraints() == trp.number_of_subconstraints());
   return;
 }
 
