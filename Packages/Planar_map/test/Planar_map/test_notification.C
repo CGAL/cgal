@@ -67,9 +67,8 @@ private:
   };
 
 public:
-  typedef typename std::set<const_pointer,less_face>::iterator 
-                                                          Inner_faces_iterator;
-  typedef typename std::set<const_pointer,less_face>::const_iterator
+  typedef std::set<const_pointer,less_face>::iterator   Inner_faces_iterator;
+  typedef std::set<const_pointer,less_face>::const_iterator
                                                     Inner_faces_const_iterator;
   
   Pm_face_plus_area() : face_base() {}
@@ -117,10 +116,10 @@ public:
   typedef typename Planar_map::Traits Traits;
   
 private:
-  typedef CGAL::Polygon_traits_2<R>                  Polygon_traits;
-  typedef std::list<typename Traits::Point>          Polygon_Container;
+  typedef CGAL::Polygon_traits_2<R>                     Polygon_traits;
+  typedef std::list<typename Traits::Point>             Polygon_Container;
   typedef CGAL::Polygon_2<Polygon_traits, Polygon_Container> Polygon;
-  typedef typename R::FT            NT;
+  typedef typename R::FT                                NT;
   
   /* struct less_face{
     bool operator()(typename Planar_map::Face_handle f1, 
