@@ -290,22 +290,22 @@ private:
   void print_kind_of_location(Pmwx::Locate_type &lt)
     {
       switch (lt) {
-      case PM::VERTEX:
+      case  PM::VERTEX:
 	std::cout << "Vertex ";
 	break;
-      case PM::EDGE:
+      case  PM::EDGE:
 	std::cout<< "Edge ";
 	break;
-      case PM::FACE:
+      case  PM::FACE:
 	std::cout<< "Face ";
 	break;
-      case PM::UNBOUNDED_VERTEX:
+      case  PM::UNBOUNDED_VERTEX:
 	std::cout<< "UnBounded Vertex ";
 	break;
-      case PM::UNBOUNDED_EDGE:
+      case  PM::UNBOUNDED_EDGE:
 	std::cout<< "UnBounded Edge ";
 	break;
-      case PM::UNBOUNDED_FACE:
+      case  PM::UNBOUNDED_FACE:
 	std::cout<< "UnBounded Face ";
 	break;
       }
