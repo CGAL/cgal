@@ -94,27 +94,30 @@ namespace Optimisation {
 template < class K_ >
 struct Min_quadrilateral_default_traits_2 {
   // types inherited from Kernel
-  typedef K_                                       Kernel;
-  typedef typename Kernel::RT                      RT;
-  typedef typename Kernel::Point_2                 Point_2;
-  typedef typename Kernel::Vector_2                Vector_2;
-  typedef typename Kernel::Direction_2             Direction_2;
-  typedef typename Kernel::Line_2                  Line_2;
+  typedef K_                                         Kernel;
+  typedef typename Kernel::RT                        RT;
+  typedef typename Kernel::Point_2                   Point_2;
+  typedef typename Kernel::Vector_2                  Vector_2;
+  typedef typename Kernel::Direction_2               Direction_2;
+  typedef typename Kernel::Line_2                    Line_2;
 
   // predicates and constructions inherited from Kernel
-  typedef typename Kernel::Equal_2                 Equal_2;
-  typedef typename Kernel::Less_xy_2               Less_xy_2;
-  typedef typename Kernel::Less_yx_2               Less_yx_2;
-  typedef typename Kernel::Has_on_negative_side_2  Has_on_negative_side_2;
+  typedef typename Kernel::Equal_2                   Equal_2;
+  typedef typename Kernel::Less_xy_2                 Less_xy_2;
+  typedef typename Kernel::Less_yx_2                 Less_yx_2;
+  typedef typename Kernel::Has_on_negative_side_2    Has_on_negative_side_2;
   typedef typename Kernel::Compare_angle_with_x_axis_2
     Compare_angle_with_x_axis_2;
-  typedef typename Kernel::Construct_vector_2      Construct_vector_2;
-  typedef typename Kernel::Construct_direction_2   Construct_direction_2;
-  typedef typename Kernel::Construct_line_2        Construct_line_2;
+  typedef typename Kernel::Construct_vector_2        Construct_vector_2;
+  typedef typename Kernel::Construct_direction_2     Construct_direction_2;
+  typedef typename Kernel::Construct_line_2          Construct_line_2;
   typedef typename Kernel::Construct_perpendicular_vector_2
     Construct_perpendicular_vector_2;
   typedef typename Kernel::Construct_opposite_direction_2
     Construct_opposite_direction_2;
+
+  // used for expensive precondition checks only:
+  typedef typename Kernel::Orientation_2             Orientation_2;
 
 protected:
   // used internally
@@ -423,6 +426,9 @@ public:
   
   Construct_strip_2 construct_strip_2_object() const
   { return Construct_strip_2(); }
+  
+  Orientation_2 orientation_2_object() const { return Orientation_2(); }
+  
 
 };
 

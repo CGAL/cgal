@@ -12,13 +12,13 @@
   \ccIndexSubitem[t]{smallest enclosing}{rectangle}
   \ccIndexSubitem[t]{rectangle}{smallest enclosing}
   
-  \ccDefinition The function computes a minimum area enclosing
-  rectangle $R(P)$ (not necessarily axis-parallel) of a given convex
-  point set $P$.  Note that $R(P)$ is not unique in general. The
-  restriction to convex sets is not really a restriction, since any
-  enclosing rectangle -- as a convex set -- contains the convex hull
-  of $P$.
-
+  \ccDefinition The function computes a minimum area enclosing rectangle
+  $R(P)$ of a given convex point set $P$. Note that $R(P)$ is not
+  necessarily axis-parallel, and it is in general not unique. The focus
+  on convex sets is no restriction, since any rectangle enclosing $P$
+  -- as a convex set -- contains the convex hull of $P$. For general
+  point sets one has to compute the convex hull as a preprocessing step.
+  
   \ccInclude{CGAL/min_quadrilateral_2.h}
 
   \def\ccLongParamLayout{\ccTrue} 
@@ -32,23 +32,22 @@
     OutputIterator o,
     Traits& t = Default_traits);}
   
-  computes a minimum area enclosing rectangle of the point set
-  described by [\ccc{points_begin}, \ccc{points_end}), writes its
-  vertices (counterclockwise) to \ccc{o} and returns the past-the-end
-  iterator
+  computes a minimum area enclosing rectangle of the point set described
+  by [\ccc{points_begin}, \ccc{points_end}), writes its vertices
+  (counterclockwise) to \ccc{o}, and returns the past-the-end iterator
   of this sequence.\\
   If the input range is empty, \ccc{o} remains unchanged.\\
-  If the input range consists of one element only,
-  exactly this point is written to \ccc{o}.
+  If the input range consists of one element only, this point is written
+  to \ccc{o} four times.
   
   \ccPrecond The points denoted by the range [\ccc{points_begin},
   \ccc{points_end}) form the boundary of a simple convex polygon $P$
   in counterclockwise orientation.
   
-  The geometric types and operations to be used for the computation
-  are specified by the traits class parameter \ccc{t}. The parameter
-  can be omitted if \ccc{ForwardIterator} refers to a point type from
-  the 2D-Kernel. In this case, a default traits class
+  The geometric types and operations to be used for the computation are
+  specified by the traits class parameter \ccc{t}. The parameter can be
+  omitted, if \ccc{ForwardIterator} refers to a two-dimensional point
+  type from one the \cgal\ Kernels. In this case, a default traits class
   (\ccc{Min_quadrilateral_default_traits_2<Kernel>}) is used.
   
   \ccRequire
@@ -67,7 +66,7 @@
   \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<Kernel>}
   
   \ccImplementation We use a rotating caliper
-  \ccIndexMainItem[t]{rotating caliper} algorithm \cite{t-sgprc-83}
+  \ccIndexMainItem[t]{rotating caliper} algorithm~\cite{t-sgprc-83}
   with worst case running time linear in the number of input points.
   
   \ccExample The following code generates a random convex polygon
@@ -84,9 +83,11 @@
   
   \ccDefinition The function computes a minimum area enclosing
   parallelogram $A(P)$ of a given convex point set $P$.  Note that
-  $A(P)$ is not unique in general.  The restriction to convex sets is
-  not really a restriction, since any enclosing parallelogram -- as a
-  convex set -- contains the convex hull of $P$.
+  $R(P)$ is not necessarily axis-parallel, and it is in general not
+  unique. The focus on convex sets is no restriction, since any
+  parallelogram enclosing $P$ -- as a convex set -- contains the convex
+  hull of $P$. For general point sets one has to compute the convex hull
+  as a preprocessing step.
 
   \ccInclude{CGAL/min_quadrilateral_2.h}
 
@@ -106,17 +107,17 @@
   vertices (counterclockwise) to \ccc{o} and returns the past-the-end
   iterator of this sequence.
   If the input range is empty, \ccc{o} remains unchanged.\\
-  If the input range consists of one element only,
-  exactly this point is written to \ccc{o}.
+  If the input range consists of one element only, this point is written
+  to \ccc{o} four times.
   
   \ccPrecond The points denoted by the range [\ccc{points_begin},
   \ccc{points_end}) form the boundary of a simple convex polygon $P$
   in counterclockwise orientation.
 
   The geometric types and operations to be used for the computation
-  are specified by the traits class parameter \ccc{t}. The parameter
-  can be omitted if \ccc{ForwardIterator} refers to a point type from
-  the 2D-Kernel. In this case, a default traits class
+  are specified by the traits class parameter \ccc{t}. The parameter can be
+  omitted, if \ccc{ForwardIterator} refers to a two-dimensional point
+  type from one the \cgal\ Kernels. In this case, a default traits class
   (\ccc{Min_quadrilateral_default_traits_2<Kernel>}) is used.
   
   \ccRequire
@@ -155,9 +156,10 @@
   \ccDefinition The function computes a minimum width enclosing strip
   $S(P)$ of a given convex point set $P$. A strip is the closed region
   bounded by two parallel lines in the plane. Note that $S(P)$ is not
-  unique in general.  The restriction to convex sets is not really a
-  restriction, since any enclosing strip -- as a convex set --
-  contains the convex hull of $P$.
+  unique in general. The focus on convex sets is no restriction, since any
+  parallelogram enclosing $P$ -- as a convex set -- contains the convex
+  hull of $P$. For general point sets one has to compute the convex hull
+  as a preprocessing step.
 
   \ccInclude{CGAL/min_quadrilateral_2.h}
 
@@ -173,8 +175,8 @@
     Traits& t = Default_traits);}
   
   computes a minimum enclosing strip of the point set described by
-  [\ccc{points_begin}, \ccc{points_end}), writes its bounding lines to
-  \ccc{o} and returns the past-the-end iterator of this sequence.\\
+  [\ccc{points_begin}, \ccc{points_end}), writes its two bounding lines
+  to \ccc{o} and returns the past-the-end iterator of this sequence.\\
   If the input range is empty or consists of one element only, \ccc{o}
   remains unchanged.
   
@@ -184,17 +186,18 @@
 
   The geometric types and operations to be used for the computation
   are specified by the traits class parameter \ccc{t}. The parameter
-  can be omitted if \ccc{ForwardIterator} refers to a point type from
-  the 2D-Kernel. In this case, a default traits class
-  (\ccc{Min_quadrilateral_default_traits_2<Kernel>}) is used.
+  can be omitted, if \ccc{ForwardIterator} refers to a two-dimensional
+  point type from one the \cgal\ Kernels. In this case, a default
+  traits class (\ccc{Min_quadrilateral_default_traits_2<Kernel>}) is
+  used.
   
   \ccRequire
   \begin{enumerate}
   \item If \ccc{Traits} is specified, it is a model for
     \ccc{MinQuadrilateralTraits_2} and the value type \ccc{VT} of
-    \ccc{ForwardIterator} is \ccc{Traits::Point_2}.  Otherwise \ccc{VT}
+    \ccc{ForwardIterator} is \ccc{Traits::Point_2}. Otherwise \ccc{VT}
     is \ccc{CGAL::Point_2<Kernel>} for some kernel \ccc{Kernel}.
-  \item \ccc{OutputIterator} accepts \ccc{VT} as value type.
+  \item \ccc{OutputIterator} accepts \ccc{Traits::Line_2} as value type.
   \end{enumerate}
   
   \ccSeeAlso
@@ -255,6 +258,8 @@
   \ccNestedType{Less_xy_2}{\ccRefConceptPage{Kernel::Less_xy_2}.}
   
   \ccNestedType{Less_yx_2}{\ccRefConceptPage{Kernel::Less_yx_2}.}
+  
+  \ccNestedType{Orientation_2}{\ccRefConceptPage{Kernel::Orientation_2}.}
   
   \ccNestedType{Has_on_negative_side_2}
   {\ccRefConceptPage{Kernel::Has_on_negative_side_2}.}
@@ -414,9 +419,14 @@
     than the area of $p2$.}
   
   \ccNestedType{Width_less_strip_2}{AdaptableFunctor \\\ccc{op}:
-    \ccc{Strip_2} $\times$ \ccc{Strip_2} $\rightarrow$ \ccc{bool}.\\ 
+    \ccc{Strip_2} $\times$ \ccc{Strip_2} $\rightarrow$ \ccc{bool}.\\
     \ccc{op(s1,s2)} returns true, iff the width of $s1$ is strictly less
     than the width of $s2$.}
+  
+  The following type is used for expensive precondition checking only.
+  
+  \ccNestedType{Orientation_2}{a model for
+    \ccRefConceptPage{Kernel::Orientation_2}.}
   
   \ccHeading{Constructions}
 

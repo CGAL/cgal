@@ -355,9 +355,9 @@ min_rectangle_2(
 {
   typedef Optimisation::Min_quadrilateral_traits_wrapper<BTraits> Traits;
   Traits t(bt);
-  CGAL_optimisation_expensive_precondition(is_convex_2(f, l));
+  CGAL_optimisation_expensive_precondition(is_convex_2(f, l, t));
   CGAL_optimisation_expensive_precondition(
-    orientation_2(f, l) == COUNTERCLOCKWISE);
+    orientation_2(f, l, t) == COUNTERCLOCKWISE);
 
   // check for trivial cases
   if (f == l) return o;
@@ -457,7 +457,7 @@ min_parallelogram_2(ForwardIterator f,
 {
   typedef Optimisation::Min_quadrilateral_traits_wrapper<BTraits> Traits;
   Traits t(bt);
-  CGAL_optimisation_expensive_precondition(is_convex_2(f, l));
+  CGAL_optimisation_expensive_precondition(is_convex_2(f, l, t));
 
   // types from the traits class
   typedef typename Traits::Direction_2            Direction_2;
@@ -639,7 +639,7 @@ min_strip_2(ForwardIterator f,
 {
   typedef Optimisation::Min_quadrilateral_traits_wrapper<BTraits> Traits;
   Traits t(bt);
-  CGAL_optimisation_expensive_precondition(is_convex_2(f, l));
+  CGAL_optimisation_expensive_precondition(is_convex_2(f, l, t));
 
   // types from the traits class
   typedef typename Traits::Direction_2            Direction_2;

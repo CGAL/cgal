@@ -66,6 +66,15 @@ struct MyTraits {
     bool operator()(const Point_2& p, const Point_2& q) const
     { return p.yc < q.yc || p.yc == q.yc && p.xc < q.xc; }
   };
+  struct Orientation_2 {
+    typedef CGAL::Orientation result_type;
+    typedef CGAL::Arity_tag<3> Arity;
+  
+    result_type
+    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const {
+      return CGAL::orientationC2(p.xc, p.yc, q.xc, q.yc, r.xc, r.yc);
+    }
+  };
   struct Has_on_negative_side_2
   : public std::binary_function<Line_2,Point_2,bool>
   {
@@ -319,6 +328,9 @@ struct MyTraits {
   
   Construct_strip_2 construct_strip_2_object() const
   { return Construct_strip_2(); }
+  
+  Orientation_2 orientation_2_object() const { return Orientation_2(); }
+  
 
   friend class Data;
 };
