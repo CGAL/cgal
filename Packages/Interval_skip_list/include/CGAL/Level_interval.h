@@ -24,6 +24,7 @@
 #ifndef CGAL_LEVEL_INTERVAL_H
 #define CGAL_LEVEL_INTERVAL_H
 
+#include <CGAL/Kernel_traits.h>
 #include <iostream>
 
 
@@ -36,7 +37,7 @@ namespace CGAL {
     typedef typename FaceHandle::value_type Face;
     typedef typename Face::Vertex Vertex;
     typedef typename Vertex::Point Point;
-    typedef Kernel_traits<Point>::Kernel K;
+    typedef typename Kernel_traits<Point>::Kernel K;
     typedef typename K::FT Value;
 
 
