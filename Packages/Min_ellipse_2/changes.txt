@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.10.5 on 21-Mar-2001
+- removed 'maintainer' line from file header in example and demo program
+
 Version 3.10.4 on 21-Mar-2001
 - removed 'maintainer' line from file header
 
