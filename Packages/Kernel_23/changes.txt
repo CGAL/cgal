@@ -1,3 +1,6 @@
+1.79 (6 October 2003) [af]
+- smaller extensible kernel (thank you sylvain!!)
+
 1.78 (1 October 2003) [af]
 - Bugfix in examples/Kernel_23/MyPointC2.h
 
