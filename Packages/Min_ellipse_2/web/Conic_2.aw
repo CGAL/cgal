@@ -924,7 +924,7 @@ the drawn curve(s).
         // pixel dimensions of window
         int width  = (int)((ws.xmax() - ws.xmin()) * ws.scale()) + 1,
             height = (int)((ws.ymax() - ws.ymin()) * ws.scale()) + 1,
-            dim    = CGAL::max( width, height);
+            dim    = std::max( width, height);
 
         // pixel coordinates, stored for faster output 
         double *X = new double [2*dim];
