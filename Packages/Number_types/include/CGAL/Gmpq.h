@@ -33,6 +33,7 @@
 #include <utility>
 #include <string>
 #include <gmp.h>
+#include <mpfr.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -476,9 +477,14 @@ inline
 std::pair<double, double>
 to_interval (const Gmpq& z)
 {
-  Interval_nt<> quot = Interval_nt<>(CGAL::to_interval(z.numerator())) /
-                       Interval_nt<>(CGAL::to_interval(z.denominator()));
-  return  quot.pair();
+    mpfr_t x;
+    mpfr_init2 (x, 53); /* Assume IEEE-754 */
+    mpfr_set_q (x, z.mpq(), GMP_RNDD);
+    double i = mpfr_get_d (x, GMP_RNDD); /* EXACT but can overflow */
+    mpfr_set_q (x, z.mpq(), GMP_RNDU);
+    double s = mpfr_get_d (x, GMP_RNDU); /* EXACT but can overflow */
+    mpfr_clear (x);
+    return std::pair<double, double>(i, s);
 }
 
 template <>

@@ -30,6 +30,7 @@
 #include <utility>
 
 #include <gmpxx.h>
+#include <mpfr.h>
 
 // This file gathers the necessary adaptors so that the following
 // C++ number types that come with GMP can be used by CGAL :
@@ -113,37 +114,31 @@ to_interval (const ::__gmp_expr<T, U> & z)
 }
 
 inline
-std::pair<double,double>
+std::pair<double, double>
 to_interval (const mpz_class & z)
 {
-  // GMP returns the closest double (seen in the code).
-  Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-  double app = CGAL::to_double(z);
-  // If it's lower than 2^53, then it's exact.
-  if (CGAL_CLIB_STD::fabs(app) < double(1<<26)*double(1<<27))
-      return to_interval(app);
-  
-  // If the double approximation is infinite, then adding a small +/-
-  // epsilon is not correct enough.
-  if (! CGAL::is_finite(app)) {
-      if (app > 0)
-          return std::pair<double, double>(CGAL_IA_MAX_DOUBLE,CGALi::infinity);
-      return std::pair<double, double>(-CGALi::infinity, -CGAL_IA_MAX_DOUBLE);
-  }
-
-  FPU_set_cw(CGAL_FE_UPWARD);
-  Interval_nt<false> approx(app);
-  approx += Interval_nt<false>::smallest();
-  return approx.pair();
+  mpfr_t x;
+  mpfr_init2 (x, 53); /* Assume IEEE-754 */
+  mpfr_set_z (x, z.get_mpz_t(), GMP_RNDD);
+  double i = mpfr_get_d (x, GMP_RNDD); /* EXACT but can overflow */
+  mpfr_set_z (x, z.get_mpz_t(), GMP_RNDU);
+  double s = mpfr_get_d (x, GMP_RNDU); /* EXACT but can overflow */
+  mpfr_clear (x);
+  return std::pair<double, double>(i, s);
 }
 
 inline
 std::pair<double, double>
 to_interval (const mpq_class & q)
 {
-  Interval_nt<> quot = Interval_nt<>(CGAL::to_interval(q.get_num())) /
-                       Interval_nt<>(CGAL::to_interval(q.get_den()));
-  return  quot.pair();
+  mpfr_t x;
+  mpfr_init2 (x, 53); /* Assume IEEE-754 */
+  mpfr_set_q (x, q.get_mpq_t(), GMP_RNDD);
+  double i = mpfr_get_d (x, GMP_RNDD); /* EXACT but can overflow */
+  mpfr_set_q (x, q.get_mpq_t(), GMP_RNDU);
+  double s = mpfr_get_d (x, GMP_RNDU); /* EXACT but can overflow */
+  mpfr_clear (x);
+  return std::pair<double, double>(i, s);
 }
 
 #ifndef CGAL_USE_ADL_FOR_NT

@@ -1,3 +1,6 @@
+13 August 2004 Sylvain Pion
+- Use MPFR to properly fix to_interval(GMP types).
+
 11 August 2004 Andreas Fabri
 - bug fix in operator>>(istream, Gmpz)
 
