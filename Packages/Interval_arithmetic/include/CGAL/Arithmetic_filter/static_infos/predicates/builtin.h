@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 // 
-// file          : include/CGAL/Arithmetic_filter/static_infos/builtin.h
+// file          : include/CGAL/Arithmetic_filter/static_infos/predicates/builtin.h
 // revision      : $Revision$
 // revision_date : $Date$
 // package       : Interval_arithmetic
