@@ -11,13 +11,17 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefClass}{Ovl_dcel<Traits,V,H,F>}
+\begin{ccRefClass}{Map_overlay_default_dcel<Traits,V,H,F>}
 
 \ccDefinition
 
-    The \ccClassTemplateName\ is a model of the Dcel concept
-    defined above. Its template parameters are the vertex, halfedge and face
-    classes which conform to the requirements given above.
+    The \ccClassTemplateName\ is a model of the \ccc{MapOverlayDcel_2} concept. 
+    Its template parameters are the Traits, the vertex, halfedge and face
+    types. The Traits type conforms to the requirements of the 
+    \ccc{SweepLineTraits_2} concept, and the three latter types
+    conform to the requirements of the \ccc{PlanarMapDcelVertex_2} concept,
+    the \ccc{PlanarMapDcelHalfedge_2} concept and the \ccc{PlanarMapDcelFace_2}
+    concept respectively.
 
 \ccInclude{CGAL/Map_overlay_default_dcel.h}
 
@@ -26,13 +30,14 @@
 
 \ccHeading{Models for Dcel Vertex, Halfedge and Face}
 The \ccStyle{Vertex_overlay<Vertex_base>} is a model for the 
-Dcel vertex concept defined above. 
+\ccc{MapOverlayDcelVertex_2} concept. 
 The \ccStyle{Halfedge_overlay<Halfedge_base>} is a
-model for the Dcel halfedge concept defined above.
+model for the \ccc{MapOverlayDcelHalfedge_2} concept.
 The \ccStyle{Face_overlay<Face_base>} is a
-model for the Dcel face concept defined above. 
+model for the \ccc{MapOverlayDcelFace_2} concept. 
 
 \ccHeading{Requirements}
+\ccc{Traits} is a model for the \ccc{SweepLineTraits_2} concept.
 \ccc{Vertex_base} is a model for the \ccc{PlanarMapDcelVertex_2} concept.
 \ccc{Halfedge_base} is a model for the \ccc{PlanarMapDcelHalfedge_2} concept.
 \ccc{Face_base} is a model for the \ccc{PlanarMapDcelFace_2} concept.
@@ -41,20 +46,20 @@ model for the Dcel face concept defined above.
 \ccInclude{CGAL/Map_overlay_default_dcel.h}
 
 \ccHeading{The Default Dcel Structure}
-The \ccStyle{Map_overlay_default_dcel<Traits,Vertex_base=Pm_vertex_base<Traits::Point>,
-   Halfedge_base=Pm_halfedge_base<Traits::X_curve>,
-   Face_base=Pm_face_base>} 
-is a model of the Dcel concept
-defined above. Its template parameters are the traits class defined below, 
-and the basic vertex, halfedge and face the overlay components inherit.
+The 
+\ccStyle{Map_overlay_default_dcel<Traits,Vertex_base=Pm_vertex_base<Traits::Point>,
+Halfedge_base=Pm_halfedge_base<Traits::X_curve>,
+Face_base=Pm_face_base>} 
+is a model of the \ccc{MapOverlayDcel_2} concept. 
+Its template parameters are the traits class, 
+and the basic vertex, halfedge and face which the overlay components inherit.
 The default template parameters for the three basic components are the 
-\ccc{Planar_map} basic components.
+\ccc{Planar_Map_2} basic components.
 The overlay default DCEL is a wrapper for \ccStyle{Pm_dcel} instantiated 
 with \ccStyle{Vertex_overlay<Vertex_base>},
 \ccStyle{Halfedge_overlay<Halfedge_base>} and 
 \ccStyle{Face_overlay<Fase_base>}.
 
-\ccInclude{CGAL/Map_overlay_default_dcel.h}
 
 \end{ccRefClass}
 % +------------------------------------------------------------------------+
