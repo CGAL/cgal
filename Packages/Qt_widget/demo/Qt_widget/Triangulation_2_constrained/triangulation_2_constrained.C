@@ -167,6 +167,7 @@ public:
 			  double ymin, double ymax)
   {
     widget->set_window(xmin, xmax, ymin, ymax);
+    widget->clear_history();
   }
 
 
@@ -205,14 +206,12 @@ private slots:
         i++;
         for(;i!=poly.vertices_end();i++){
           Point p(i->x(), i->y());
-          Segment s(p, lp);
 	  Vertex_handle vs = ct.insert(p);
 	  Vertex_handle vt = ct.insert(lp);
           ct.insert_constraint(vs, vt);
           lp = p;
         }
       }
-      Segment s(lp, lp1);
       Vertex_handle vs = ct.insert(lp);
       Vertex_handle vt = ct.insert(lp1);
       ct.insert_constraint(vs, vt);
@@ -261,7 +260,6 @@ private slots:
     CGAL::Random_points_in_disc_2<Point> g(0.5);
     for(int count=0; count<200; count++)
       ct.insert(*g++);  
-    widget->redraw();
     something_changed();
   }
 	
@@ -331,6 +329,7 @@ private slots:
     }
 	
     set_window(b.xmin(), b.xmax(), b.ymin(), b.ymax());
+    widget->clear_history();
     something_changed();
   }
 
