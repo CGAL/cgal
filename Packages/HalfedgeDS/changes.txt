@@ -1,5 +1,10 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
+3.5 (15 Jun 2001)
+
+     - hanged filename to avoid upper/lower-case conflict of 
+       HalfedgeDS_[Ii]tems.tex.
+
 3.4 (15 Jun 2001)
 
      - Added missing reference pages in 
