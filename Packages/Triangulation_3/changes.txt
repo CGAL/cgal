@@ -1,3 +1,6 @@
+Version 1.6 (25 august 99)
+minor changes to run with g++ 2.95
+
 Version 1.5 (2 august 99)
 bug fix in  _test_cls_tds_cell.C (which made the test suite fail
 on Linux)
