@@ -158,7 +158,7 @@ public:
     }
   }
 
-#ifdef CGAL_CFG_USING_BASE_MEMBER_BUG
+#if defined(CGAL_CFG_USING_BASE_MEMBER_BUG) || defined(_MSC_VER)
   K2_Point_2
   operator()(const typename K1::Point_2& p) const
   {
