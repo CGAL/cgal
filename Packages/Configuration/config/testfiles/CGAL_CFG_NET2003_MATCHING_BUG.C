@@ -65,5 +65,5 @@ std::vector<Cell_handle>& g){
 }
 
 int main(){
-  return 1;
+  return 0;
 }
