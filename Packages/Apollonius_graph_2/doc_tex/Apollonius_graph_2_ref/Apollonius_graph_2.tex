@@ -157,6 +157,15 @@ operator=(const Apollonius_graph_2<Gt,StoreHidden,Agds>& other);}
 \ccMethod{const Geom_traits& geom_traits();}
 {Returns a const reference to the Apollonius graph traits object.}
 \ccGlue
+\ccMethod{int dimension() const;}
+{Returns the dimension of the Apollonius graph.}
+\ccGlue
+\ccMethod{int number_of_vertices() const;}
+{Returns the number of finite vertices.}
+\ccGlue
+\ccMethod{int number_of_faces() const;}
+{Returns the number of faces (finite or infinite) of the Apollonius
+  graph.}
 \ccMethod{int number_of_vertices() const;}
 {Returns the number of finite vertices.}
 \ccGlue

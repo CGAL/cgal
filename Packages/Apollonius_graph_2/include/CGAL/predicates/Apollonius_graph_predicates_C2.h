@@ -38,6 +38,8 @@
 #include <CGAL/functions_on_signs.h>
 #include <CGAL/predicates/compare_quadratic.h>
 
+#include <CGAL/Number_type_traits.h>
+
 CGAL_BEGIN_NAMESPACE
 
 

@@ -75,18 +75,48 @@ circle $P_i$ is defined as:
 where $\|\cdot\|$ denotes the Euclidean norm.
 It can easily be seen that it is a generalization of the Voronoi
 diagram for points, which can actually be obtained if all the weights
-$w_i$ are equal. If all weights $w_i$ are non-negative, the Apollonius
-diagram can be viewed as the Voronoi diagram of the set of circles
-$\{P_1,\ldots, P_n\}$, where $c_i$ is the center of the circle $P_i$
-and $w_i$ its radius. Unlike the case of points, however, it is
+$w_i$ are equal. Unlike the case of points, however, it is
 possible that a weighted point $P_i$ might have an empty cell. This
 can also happen in the case of the power diagram, whose dual is the
-regular triangulation \ref{}. If this is the
-case we call the weighted point {\em hidden} (these are the black
+regular triangulation (see Section \ref{I1_Sect_Regular}). If this is
+the case we call the weighted point {\em hidden} (these are the black
 circles in Fig. \ref{fig:apollonius}). A weighted point which is not
 hidden will be referred to as {\em visible}.
-From now on we will assume for simplicity that all weights are
-positive and we will refer to the weighted points as circles.
+
+If all weights $w_i$ are non-negative, the Apollonius
+diagram can be viewed as the Voronoi diagram of the set of circles
+$\{P_1,\ldots, P_n\}$, where $c_i$ is the center of the circle $P_i$
+and $w_i$ its radius. If the weights are allowed to be negative,
+we need to go to 3D in order to explain what the Apollonius diagram
+means geometrically. We identify the 2D Euclidean plane with the
+$xy$-plane in 3D. Then Voronoi diagram of a set of points can be
+seen as the vertical projection on the $xy$-plane of the lower
+envelope of a set of 3D cones defined as follows: for each point $p$
+in the set of 2D points we have a cone $C_p$ whose apex is the point
+$p$. The axis of 
+$C_p$ is a line parallel to the $z$-axis passing through $p$, the
+angle of $C_p$ is $45^\circ$ and, finally $C_p$ is facing in the
+positive $z$-direction (that is, $C_p$ is contained in the positive
+$z$-halfspace).
+The Apollonius diagram corresponds to shifting the
+apexes of these cones in the $z$-direction by a quantity equal to the
+weight. So weighted points with negative weight will give rise to
+cones whose apex is in the negative $z$-halfspace and weighted points
+with positive weight will give rise to cones whose apex is in the
+positive $z$-halfspace. In a manner analogous to the case of points,
+the Apollonius diagram can then be defined as the vertical projection
+on the $xy$-plane of the lower envelope of the set of shifted cones.
+Notice that when all apexes are translated along the $z$-direction by
+the same amount, the projection of the lower envelope of the set of
+cones does not change. In particular, we can translate all cones by a
+large enough amount so that all apexes are in the positive
+$z$-halfspace. Algebraically, this means that the Apollonius diagram
+does not change if we add to all weights the same quantity, which in
+particular, implies that we can assume without loss of generality that
+all weights are positive. Given the observations above and in order to
+simplify our discussion of Apollonius diagrams, we will, from now on,
+assume that all weights are positive, and we will refer to the
+weighted points as circles.
 
 
 The Apollonius diagram is a planar graph, and so is its dual, the
@@ -159,6 +189,16 @@ this case a circle that becomes hidden will never reappear. On the
 other hand if deletions are expected as well, then we lose the ability
 to have the hidden circles reappear.
 
+\paragraph{Degenerate dimensions}
+The dimension of the Apollonius graph is in general 2. The exceptions
+to this rule are as follows:
+\begin{itemize}
+\item The dimension is $-1$ if the Apollonius graph contains no circles.
+\item The dimension is $0$ if the Apollonius graph contains exactly
+  one visible circle.
+\item The dimension is $1$ is the Apollonius graph contains exactly
+  two visible circles.
+\end{itemize}
 
 
 \section{Software Design}
@@ -192,6 +232,22 @@ parametrized by three arguments:
   for the corresponding template parameter is provided, so the user
   does not need to specify it.
 \end{itemize}
+
+\paragraph{Storing hidden sites.}
+As we have already mentioned a circle is hidden if it is contained
+inside some visible circle. This creates a parent-child relationship
+between visible and hidden circles: the parent of a hidden circle is the
+visible circle that contains it. If more than one visible circles
+contain a hidden circle then the hidden circle can be assigned to any of
+the visible circles arbitrarily.
+
+To store hidden circles we assign to every visible circle a list. This
+list is comprised of the hidden circles that are contained in the
+visible circle. The user can access the hidden circles associated with
+a visible circle through an iterator called
+\ccc{Hidden_weighted_point_iterator}. This iterator is defined by the
+\ccc{ApolloniusGraphVertexBase_2} concept and is implemented by its
+model, the \ccc{Apollonius_graph_vertex_base_2} class.
 
 
 
@@ -366,7 +422,7 @@ exactly the same interface and functionality as the
 class. Using the Apollonius graph hierarchy involves an additional
 cost in space and time for maintaining the hierarchy. Our experiments
 have shown that it usually pays off to use the hierarchy for inputs
-consisting of more than 100,000 circles.
+consisting of more than 1,000 circles.
 
 
 \section{Examples}
