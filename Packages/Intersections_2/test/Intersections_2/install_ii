@@ -1,9 +1,0 @@
-#!/bin/sh
-
-iifile="ii_files/$1.ii"
-keepfile="ii_files/$1.ii.$2"
-
-if [ -r ${keepfile} ]
-then
-    cp ${keepfile} ${iifile}
-fi
