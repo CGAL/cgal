@@ -158,7 +158,8 @@ struct Input_traits<CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > > {
 };
 #endif
 
-#ifdef _CORE_EXPR_H_
+//#ifdef _CORE_EXPR_H_  
+#ifdef CGAL_CORE_EXPR_H
 /*! CORE::Expr */
 template <>
 struct Input_traits<CORE::Expr> {
