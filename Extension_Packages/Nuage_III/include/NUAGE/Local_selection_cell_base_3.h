@@ -14,10 +14,9 @@
 #ifndef LOCAL_SELECTION_CELL_BASE_3_H
 #define LOCAL_SELECTION_CELL_BASE_3_H
 
-#include <CGAL/Triangulation_cell_base_3.h>
 
-template < class Gt >
-class Local_selection_cell_base_3 : public CGAL::Triangulation_cell_base_3<Gt>
+template < class CellBase >
+class Local_selection_cell_base_3 : public CellBase
 {
 private:
                
@@ -38,7 +37,7 @@ private:
 public:
   
   Local_selection_cell_base_3() 
-    : CGAL::Triangulation_cell_base_3<Gt>(),
+    : CellBase(),
       _smallest_radius_facet_tab(NULL), selected_facet(0)
 #ifndef NOLAZY
       , _circumcenter(NULL), _squared_radius(NULL)
@@ -46,7 +45,7 @@ public:
     {}
   
   Local_selection_cell_base_3(void* v0, void* v1, void* v2, void* v3)
-    : CGAL::Triangulation_cell_base_3<Gt>( v0, v1, v2, v3),
+    : CellBase( v0, v1, v2, v3),
       _smallest_radius_facet_tab(NULL), selected_facet(0)
 #ifndef NOLAZY
       , _circumcenter(NULL), _squared_radius(NULL)
@@ -55,7 +54,7 @@ public:
   
   Local_selection_cell_base_3(void* v0, void* v1, void* v2, void* v3,
 			      void* n0, void* n1, void* n2, void* n3)
-    : CGAL::Triangulation_cell_base_3<Gt>(v0,  v1,  v2, v3,
+    : CellBase(v0,  v1,  v2, v3,
 					  n0,  n1,  n2, n3),
       _smallest_radius_facet_tab(NULL), selected_facet(0)
 #ifndef NOLAZY
