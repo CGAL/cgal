@@ -17,6 +17,7 @@
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+//                 Christophe Delage <Christophe.Delage@sophia.inria.fr>
 
 #ifndef CGAL_REGULAR_TRIANGULATION_3_H
 #define CGAL_REGULAR_TRIANGULATION_3_H
@@ -34,8 +35,8 @@ CGAL_BEGIN_NAMESPACE
 
 template < class Gt,
            class Tds = Triangulation_data_structure_3 <
-                                   Triangulation_vertex_base_3<Gt>,
-                                   Triangulation_cell_base_with_hidden_points_3<Gt> > >
+                           Triangulation_vertex_base_3<Gt>,
+                           Triangulation_cell_base_with_hidden_points_3<Gt> > >
 class Regular_triangulation_3
   : public Triangulation_3<Gt,Tds>
 {
