@@ -15,10 +15,11 @@
 
 include .env
 
-# make the lib and all demos
+# make the lib and all demos, and test
 all:
 	make -C src/CGALQt -f makefile_Qt
 	make -C demo/Qt_widget
+	make -C test/Qt_widget
 
 # compile the doc_tex in a .dvi file.
 doc:
@@ -32,6 +33,7 @@ show-doc: doc
 clean: 
 	make -C src/CGALQt -f makefile_Qt clean
 	make -C demo/Qt_widget clean
+	make -C test/Qt_widget clean
 
 # clean moc files too
 # Warning: this is deprecated since $CGAL_MAKEFILE clean rule now clean
