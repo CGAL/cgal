@@ -119,15 +119,6 @@ sub skip_no_filter_section {
   while (<FI>) { last if m#//CGAL_NO_FILTER_END#; }
 }
 
-# Warns if the return type is not known
-# (to detect functions returning void or FT)
-sub check_known_type {
-  my ($type) = @_;
-  if (not $known_ret_types{$type}) {
-    warning ("\"$type\" is an unknown enumerative type");
-  }
-}
-
 # Print the Filtered_exact<> version of a predicate.
 sub print_filtered_exact {
   # This version doesn't need the template type, nor the body.
@@ -194,7 +185,9 @@ sub parse_whole_definition {
     /($C_symbol_re)\s*$/;
     push @args, $1;
   }
-  check_known_type($ret_type);
+  if (not $known_ret_types{$type}) {
+    warning ("\"$type\" is an unknown enumerative type");
+  }
   return ($template_type, $inline, $ret_type, $fct_name, $body, @args);
 }
 
@@ -219,7 +212,7 @@ sub parse_input_code {
   }
 }
 
-# Prints the code of the overloaded predicates
+# Print the code of the overloaded predicates
 sub print_predicates {
   my $was_in_CGAL = 0;
   # We skip the 2 built-in predicates sign() and compare().
