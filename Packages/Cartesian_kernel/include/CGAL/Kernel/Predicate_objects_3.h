@@ -222,7 +222,7 @@ CGAL_END_NAMESPACE
 
 // This macro is provided for convenience in defining the Kernel
 // function objects inside a new representation class.
-// See Cartesian_3.h and Cartesian.h
+// See Cartesian.h
 
 #define CGAL_UNPACK_KERNEL_PREDICATE_OBJECTS_3(PR) 
 

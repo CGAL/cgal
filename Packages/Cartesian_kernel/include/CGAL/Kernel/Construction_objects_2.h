@@ -131,7 +131,7 @@ CGAL_END_NAMESPACE
 
 // This macro is provided for convenience in defining the Kernel
 // function objects inside a new representation class.
-// See Cartesian_2.h and Cartesian.h
+// See Cartesian.h
 
 #define CGAL_UNPACK_KERNEL_CONSTRUCTION_OBJECTS_2(CO) \
 typedef CO::Construct_point_2              Construct_point_2; \
