@@ -10,7 +10,7 @@ one_run()
     then
 	if [ -r ${goodresult} ]
 	then
-	    if cmp -s output ${goodresult}
+	    if diff output ${goodresult} > /dev/null
 	    then
 		succes=ja
 	    else
