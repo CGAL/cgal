@@ -44,6 +44,15 @@ unsigned int computeBoundCallsCounter = 0;
 const char* Add::name = "+";
 const char* Sub::name = "-";
 
+extLong ceilLg5(const extLong & a) {
+  
+#if defined( _MSC_VER) || defined(__sgi) 
+  return (int) ::ceil(log_5 * a.toLong());
+#else
+  return (int) std::ceil(log_5 * a.toLong());
+#endif
+}
+
 
 /********************************************************
  *  class Expr
