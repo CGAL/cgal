@@ -1,4 +1,4 @@
-1.89 (6 November 2003)
+1.89 (7 November 2003)
 - Fix documentation of do_intersect() for Triangle_3.
 
 =========================  CGAL 3.0  =============================
