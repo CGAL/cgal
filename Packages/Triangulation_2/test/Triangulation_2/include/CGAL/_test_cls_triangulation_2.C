@@ -104,7 +104,8 @@ _test_cls_triangulation_2( const Triangulation & )
   int qx=-1, qy=2;
   Locate_type lt;
   int li;
-  Face_handle    f, loc;
+  Face_handle    f, ff, loc;
+  Vertex_handle v0, v1, v2, v3;
 
 
   std::list<Point> l; l.push_back(p0);
@@ -314,7 +315,7 @@ _test_cls_triangulation_2( const Triangulation & )
      T2_8.insert(Point(1,0,1));
      T2_8.insert(Point(1,1,1));
      T2_8.insert(Point(0,1,1));
-     Face_handle ff = T2_8.locate(Point(1,1,2),lt,li);
+     ff = T2_8.locate(Point(1,1,2),lt,li);
      assert(lt == Cls::EDGE);
      assert(!T2_8.is_infinite(ff));
      Face_handle f2 = ff->neighbor(li);
@@ -373,6 +374,26 @@ _test_cls_triangulation_2( const Triangulation & )
   _test_fct_is_infinite( T2_4 );
   _test_fct_is_infinite( T2_5 );
   _test_fct_is_infinite( T2_6 );
+
+  std::cout << "    is_edge, is_face" << std::endl;
+  assert(  T1_5.is_edge(v1_5_1,v1_5_3));
+  assert( !T1_5.is_edge(v1_5_1,v1_5_2));
+  assert(  T1_5.is_edge(v1_5_1,v1_5_3,f,li));
+  assert(! T1_5.is_edge(v1_5_1,v1_5_2,f,li));
+  assert(  T2_1.is_edge(v2_1_1,v2_1_3));
+  assert( !T2_1.is_edge(v2_1_1,v2_1_2));
+  assert(  T2_1.is_edge(v2_1_1,v2_1_3,f,li));
+  assert(! T2_1.is_edge(v2_1_1,v2_1_2,f,li));
+  f = T2_1.finite_faces_begin();
+  v0 = f->vertex(0);
+  v1 = f->vertex(1);
+  v2 = f->vertex(2);
+  v3 = f->mirror_vertex(0);
+  assert(T2_1.is_face(v0,v1,v2));
+  assert(T2_1.is_face(v0,v2,v1));
+  assert(T2_1.is_face(v1,v2,v3,ff) && ff == f->neighbor(0));
+  assert(! T2_1.is_face(v0,v3,v1));
+  
 
   /*************************************/
   /******** POINT LOCATIONS ************/
