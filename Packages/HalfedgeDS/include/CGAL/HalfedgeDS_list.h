@@ -580,13 +580,13 @@ pointer_update( const CGAL__HDS_IP_List<Traits_,HalfedgeDSItems,Alloc>& hds) {
 
 //      typedef std::map< Vertex_const_handle,
 //                        Vertex_handle,
-//                        CGAL__HDS_Cmp_handle< Vertex_const_handle> >    V_map;
+//                        CGAL__HDS_Cmp_handle< Vertex_const_handle> >   V_map;
 //      typedef std::map< Halfedge_const_handle,
 //                        Halfedge_handle,
-//                        CGAL__HDS_Cmp_handle< Halfedge_const_handle > > H_map;
+//                        CGAL__HDS_Cmp_handle< Halfedge_const_handle > >H_map;
 //      typedef std::map< Face_const_handle,
 //                        Face_handle,
-//                        CGAL__HDS_Cmp_handle< Face_const_handle > >     F_map;
+//                        CGAL__HDS_Cmp_handle< Face_const_handle > >    F_map;
     // initialize maps.
     H_map h_map( hds.halfedges_begin(), hds.halfedges_end(),
                  halfedges_begin(), Halfedge_iterator(), 
