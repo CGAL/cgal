@@ -24,9 +24,6 @@
 
 #include <CGAL/determinant.h>
 
-#ifdef CGAL_USE_QT
-#include <CGAL/IO/Qt_widget.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
