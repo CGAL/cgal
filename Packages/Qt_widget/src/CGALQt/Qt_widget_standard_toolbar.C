@@ -107,6 +107,8 @@ namespace CGAL {
       button_group->insert(but[i]);
     }
     but[0]->setToggleButton(true);
+    //but[1]->setEnabled(false);
+    //but[2]->setEnabled(false);
     button_group->insert(but[0]);
     button_group->setExclusive(true);
   
@@ -116,8 +118,13 @@ namespace CGAL {
         &zoomrectbut, SLOT(stateChanged(int)));	
     connect(but[7], SIGNAL(stateChanged(int)),
         &handtoolbut, SLOT(stateChanged(int)));
+    
+    connect(widget, SIGNAL(set_back_enabled(bool)),
+            but[1], SLOT(setEnabled(bool)));
+    connect(widget, SIGNAL(set_forward_enabled(bool)),
+            but[2], SLOT(setEnabled(bool)));
   };
-    void Qt_widget_standard_toolbar::zoomin()
+  void Qt_widget_standard_toolbar::zoomin()
   {
     widget->zoom_in(2);
     widget->redraw();

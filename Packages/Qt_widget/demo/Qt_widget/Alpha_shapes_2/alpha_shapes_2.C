@@ -202,6 +202,7 @@ public slots:
     tr1.clear();
     A.clear();
     L.clear();
+    win.clear_history();
     win.set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
     win.unlock();
     something_changed();
@@ -259,6 +260,8 @@ private slots:
   void gen_tr()
   {
     tr1.clear();
+    A.clear();
+    win.clear_history();
     win.lock();
     win.set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
 

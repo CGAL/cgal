@@ -285,6 +285,7 @@ private slots:
 
   void gen_points()
   {
+    widget->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
 		// set the Visible Area to the Interval
 

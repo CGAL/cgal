@@ -142,6 +142,10 @@ SOURCE=..\..\..\include\CGAL\IO\Qt_widget_handtool.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\include\CGAL\IO\Qt_widget_history.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\include\CGAL\IO\Qt_widget_layer.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"

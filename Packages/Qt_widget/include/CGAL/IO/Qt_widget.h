@@ -62,13 +62,15 @@ public:
   void set_y_scale(double yscale){ yscal = yscale; }
 
   void add_to_history(){history.add_to_history(xmin, xmax, ymin, ymax);}
+  void clear_history(){history.clear();};
 
   inline void move_center(double distx, double disty) 
-  {
-    add_to_history(); //add the current viewport to history
+  {    
     xcentre += distx;
     ycentre += disty;
     set_scale_center(xcentre, ycentre);
+    add_to_history(); //add the current viewport to history
+    configure_history_buttons();
   }
   inline void set_center(double x, double y) 
   {
@@ -179,18 +181,26 @@ signals:
   void custom_redraw(); // if user want to draw something after layers
   void new_cgal_object(CGAL::Object);	//this signal is emited every time an
 					//attached tool constructed an object
+//private signals (not documented)
+  void set_back_enabled(bool i);    //used by the standard toolbar
+  void set_forward_enabled(bool i); //used by the standard toolbar
+
 public slots:
   void print_to_ps();
   virtual void redraw();
   void back(){
-    if(history.back())
+    if(history.back()){
       set_window_p(history.get_atom()->x1(), history.get_atom()->x2(),
                 history.get_atom()->y1(), history.get_atom()->y2());
+      configure_history_buttons();
+    }
   }
   void forth(){
-    if(history.forward())
+    if(history.forward()) {
       set_window_p(history.get_atom()->x1(), history.get_atom()->x2(),
                 history.get_atom()->y1(), history.get_atom()->y2());
+      configure_history_buttons();
+    }
   }
 protected:
   void paintEvent(QPaintEvent *e);
@@ -214,6 +224,8 @@ private:
   
   Qt_widget_history history;
   void set_window_p(double x_min, double x_max, double y_min, double y_max);
+  void configure_history_buttons(); //change the enabled state of
+                                    //the history buttons
 
   // color types convertors
   static QColor CGAL2Qt_Color(Color c);

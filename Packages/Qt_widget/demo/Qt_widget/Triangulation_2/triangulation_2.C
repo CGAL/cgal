@@ -172,6 +172,7 @@ private slots:
   {
     widget->lock();
     widget->clear();
+    widget->clear_history();
     tr1.clear();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
     widget->unlock();
@@ -250,6 +251,7 @@ private slots:
   void generate_triangulation()
   {
     tr1.clear();
+    widget->clear_history();
     widget->lock();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
 

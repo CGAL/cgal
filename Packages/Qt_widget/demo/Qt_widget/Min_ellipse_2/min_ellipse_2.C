@@ -28,7 +28,6 @@ int main(int, char*)
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_Optimisation_ellipse_2.h>
-//#include <CGAL/IO/Qt_widget_Min_ellipse_2.h>
 #include "Qt_widget_toolbar.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_layer.h>
@@ -214,6 +213,7 @@ private slots:
 
   void gen_points()
   {
+    widget->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
 		// set the Visible Area to the Interval
 

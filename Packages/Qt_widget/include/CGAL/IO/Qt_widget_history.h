@@ -21,7 +21,7 @@
 #ifndef CGAL_QT_WIDGET_HISTORY_H
 #define CGAL_QT_WIDGET_HISTORY_H
 
-#include <vector>
+#include <list>
 
 namespace CGAL {
   class History_atom{
@@ -41,12 +41,16 @@ namespace CGAL {
 
   class Qt_widget_history{
     public:
-      Qt_widget_history() : current_item(0), nr_of_items(0) {};
+      Qt_widget_history() : nr_of_items(0), current_item(0) 
+      {
+        it = history_list.begin();
+      };
       ~Qt_widget_history(){};
 
     bool back(){
       if(nr_of_items > 1 && current_item > 1){
         current_item--;
+        it--;
         return true;
       }
       return false;
@@ -54,24 +58,40 @@ namespace CGAL {
     bool forward(){
       if(current_item < nr_of_items){
         current_item++;
+        it++;
         return true;
       }
       return false;
     }
     History_atom* get_atom(){
-      return &history_vector[current_item-1];
+      return &(*it);
     }
     void add_to_history(double xmin, double xmax, double ymin, double ymax)
-      {
-        History_atom atom(xmin, xmax, ymin, ymax);
-        history_vector.push_back(atom);
-        nr_of_items++;
-        current_item = nr_of_items;
+    {
+      if(nr_of_items > 1){
+        it++;
+        history_list.erase(it, history_list.end());
       }
+      History_atom atom(xmin, xmax, ymin, ymax);
+      history_list.push_back(atom);
+      nr_of_items = history_list.size();
+      current_item = nr_of_items;
+      it = history_list.end();
+      it--;
+    }
+    void clear(){
+      history_list.erase(history_list.begin(), history_list.end());
+      nr_of_items = history_list.size();
+      current_item = nr_of_items;
+      it = history_list.end();
+      it--;
+    }
+    inline int get_current_item(){return current_item;}
+    inline int get_nr_of_items(){return nr_of_items;}
       
     private:
-      
-      std::vector<History_atom> history_vector;
+      std::list<History_atom> history_list;
+      std::list<History_atom>::iterator it;
       int current_item;
       int nr_of_items;
     protected:

@@ -43,6 +43,7 @@ Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   constranges=false;
   set_scales();
   is_the_first_time = true;
+  configure_history_buttons();
 
   // initialize the pixmap and the painter
   painter = new QPainter;
@@ -316,8 +317,6 @@ void Qt_widget::set_window(double  x_min, double x_max,
 			   double y_min, double y_max,
 			   bool const_ranges)
 {
-  if(!is_the_first_time)
-    add_to_history();
   xmin = x_min;
   xmax = x_max;
   ymin = y_min;
@@ -326,6 +325,9 @@ void Qt_widget::set_window(double  x_min, double x_max,
   xcentre = xmin + (xmax - xmin)/2;
   ycentre = ymin + (ymax - ymin)/2;
   set_scales();
+ 
+  add_to_history(); // add the current viewport
+  configure_history_buttons();
 }
 
 void Qt_widget::set_window_p(double  x_min, double x_max,
@@ -340,13 +342,33 @@ void Qt_widget::set_window_p(double  x_min, double x_max,
   set_scales();
 }
 
-void Qt_widget::zoom_in(double ratio, double xc, double yc)
+void Qt_widget::configure_history_buttons()
 {
-  add_to_history(); //add the current viewport to history
+  int n = history.get_nr_of_items();
+  if( n < 2){
+    emit(set_forward_enabled(false));
+    emit(set_back_enabled(false));
+  } else {
+    int i = history.get_current_item();
+    if(i<2)
+      emit(set_back_enabled(false));
+    else
+      emit(set_back_enabled(true));
+    if(i == n)
+      emit(set_forward_enabled(false));
+    else
+      emit(set_forward_enabled(true));
+  }
+}
+
+void Qt_widget::zoom_in(double ratio, double xc, double yc)
+{  
   xscal = xscal*ratio; yscal = yscal*ratio;
   xcentre = xc;
   ycentre = yc;
   set_scale_center(xcentre, ycentre);
+  add_to_history(); //add the current viewport to history
+  configure_history_buttons();
 }
 
 void Qt_widget::zoom_in(double ratio)
