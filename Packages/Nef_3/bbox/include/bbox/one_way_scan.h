@@ -17,7 +17,8 @@ void one_way_scan( RandomAccessIter p_begin, RandomAccessIter p_end,
     // for each box viewed as interval i
     for( RandomAccessIter i = i_begin; i != i_end; ++i ) {
         // look for the first box b with i.min <= p.min
-        for( ; p_begin != p_end && Traits::is_lo_less_lo( *p_begin, *i, 0 ); ++p_begin );
+        for( ; p_begin != p_end && Traits::is_lo_less_lo( *p_begin, *i, 0 ); 
+             ++p_begin );
 
         // look for all boxes with p.min < i.max
         for( RandomAccessIter p = p_begin;
