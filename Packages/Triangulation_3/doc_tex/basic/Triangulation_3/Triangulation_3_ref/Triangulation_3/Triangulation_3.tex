@@ -350,7 +350,7 @@ also functions to test if a given point is inside a finite face
 or not.
 
 \ccMethod{Cell_handle
-          locate(const Point & query) const;}
+          locate(const Point & query, Cell_handle start = Cell_handle()) const;}
 {
 %\ccPrecond{\ccVar.\ccc{dimension()} $= 3$ (otherwise there is no
 %cell yet).}\\
@@ -365,18 +365,13 @@ the tetrahedron $( p, q, r, query )$ is positively oriented
 $( p, q, r )$). \\
 Note that locate works even in degenerate dimensions: in dimension 2
 (resp. 1, 0) the \ccc{Cell_handle} returned is the one that represents
-the facet (resp. edge, vertex) containing the query point.
+the facet (resp. edge, vertex) containing the query point. \\
+The optional argument \ccc{start} is used as a starting place for the search.
 }
 
 \ccMethod{Cell_handle
-          locate(const Point & query, Cell_handle start) const;}
-{Same as the previous method, but \ccc{start} is used as a starting
-place for the search.}
-
-\ccMethod{Cell_handle
-          locate(const Point & query,
-                 Locate_type & lt,
-                 int & li, int & lj ) const;}
+          locate(const Point & query, Locate_type & lt,
+                 int & li, int & lj, Cell_handle start = Cell_handle() ) const;}
 {If \ccc{query} lies inside the affine hull of the points, the $k$-face
 (finite or infinite) that contains \ccc{query} in its interior is
 returned, by means of the cell returned together with \ccc{lt}, which
@@ -398,16 +393,9 @@ which can happen in case of degenerate dimensions, \ccc{lt} is set to
 \ccc{OUTSIDE_AFFINE_HULL}, and the cell returned has no meaning.
 As a particular case, if there is no finite vertex yet in the
 triangulation, \ccc{lt} is set to \ccc{OUTSIDE_AFFINE_HULL} and
-\ccc{locate} returns \ccc{NULL}. 
+\ccc{locate} returns \ccc{NULL}. \\
+The optional argument \ccc{start} is used as a starting place for the search.
 }
-
-\ccMethod{Cell_handle
-          locate(const Point & query,
-		 Cell_handle start,
-                 Locate_type & lt,
-                 int & li, int & lj ) const;}
-{Same as the previous method, but \ccc{start} is used as a starting
-place for the search.}
 
 \ccMethod{Bounded_side
           side_of_cell(const Point & p,
