@@ -14,12 +14,6 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-	   -Iinclude \
-           -I../../include \
-           -I../../../Planar_map/include \
-	   -I../../../Sweep_line_2/include \
-	   -I../../../Trapezoidal_decomposition/include \
-	   -I../../../Leda_rat_kernel/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -45,6 +39,7 @@ all:            \
                 Polyline_arr_from_mouse$(EXE_EXT) \
                 Seg_circ_arr_from_file$(EXE_EXT) \
                 Segment_arr_from_file$(EXE_EXT) \
+                Conics_arr_from_file$(EXE_EXT) \
                 Segment_arr_from_mouse$(EXE_EXT) \
                 Polygon_intersection_demo$(EXE_EXT) 
 
@@ -63,6 +58,9 @@ Seg_circ_arr_from_file$(EXE_EXT): Seg_circ_arr_from_file$(OBJ_EXT)
 Segment_arr_from_file$(EXE_EXT): Segment_arr_from_file$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Segment_arr_from_file Segment_arr_from_file$(OBJ_EXT) $(LDFLAGS)
 
+Conics_arr_from_file$(EXE_EXT): Conics_arr_from_file$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Conics_arr_from_file Conics_arr_from_file$(OBJ_EXT) $(LDFLAGS)
+
 Segment_arr_from_mouse$(EXE_EXT): Segment_arr_from_mouse$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Segment_arr_from_mouse Segment_arr_from_mouse$(OBJ_EXT) $(LDFLAGS)
 
@@ -75,6 +73,7 @@ clean: \
                    Polyline_arr_from_mouse.clean \
                    Seg_circ_arr_from_file.clean \
                    Segment_arr_from_file.clean \
+                   Conics_arr_from_file.clean \
                    Polygon_intersection.clean \
                    Segment_arr_from_mouse.clean \
                    Polygon_intersection_demo.clean
