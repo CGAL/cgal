@@ -22,6 +22,7 @@
 #define CGAL_QT_LAYER_SHOW_TRIANGULATION_H
 
 #include <CGAL/IO/Qt_widget_layer.h>
+#include <CGAL/IO/Qt_widget_Triangulation_2.h>
 
 namespace CGAL {
 
