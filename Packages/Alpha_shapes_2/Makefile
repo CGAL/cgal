@@ -1,6 +1,6 @@
 #  Makefile for CGAL's Alpha_shapes_2 package. [Frank DA]
 
-CVS_MODULE_NAME=rec
+CVS_MODULE_NAME=alpha
 Package=Alpha_shapes_2
 
 .PHONY: doc package filters test example submit version rtag
