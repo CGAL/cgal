@@ -692,6 +692,8 @@ public:
       c1->set_neighbor(i1,c0);
   }
 
+private:
+
   // Change the orientation of the cell by swapping indices 0 and 1.
   void change_orientation(Cell_handle c) const
   {
@@ -702,8 +704,6 @@ public:
       c->set_neighbor(0, c->neighbor(1));
       c->set_neighbor(1, tmp_c);
   }
-
-private:
 
   Cell_container & cell_container()             { return _cell_container; }
   const Cell_container & cell_container() const { return _cell_container; }
