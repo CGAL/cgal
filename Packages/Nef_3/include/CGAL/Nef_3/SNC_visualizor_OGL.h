@@ -842,17 +842,21 @@ public:
   SNC_visualizor_OGL(const SNC_structure& N) : Base(const_cast<SNC_&>(N))
   { ppoly_ = & CGAL::OGL::add_polyhedron(); }
 
-  OGL::Double_point double_point(const Point_3& p) const
-  { return OGL::Double_point(CGAL::to_double(p.x()),
-			     CGAL::to_double(p.y()),
-			     CGAL::to_double(p.z())); }
+  OGL::Double_point double_point(const Point_3& p) const {
+    double x = CGAL::to_double(p.hx().eval_at(1));
+    double y = CGAL::to_double(p.hy().eval_at(1));
+    double z = CGAL::to_double(p.hz().eval_at(1));
+    double w = CGAL::to_double(p.hw().eval_at(1));
+    return OGL::Double_point(x/w,y/w,z/w);
+  }
 
   OGL::Double_segment double_segment(const Segment_3& s) const
   { return OGL::Double_segment(double_point(s.source()),
-			       double_point(s.target())); }
+			       double_point(s.target())); 
+  }
 
   void draw(Vertex_handle v) const
-  { 
+    { 
     Point_3 bp = Infi_box::box_point(point(v));
     TRACEN("vertex " << bp);
     ppoly_->push_back(double_point(bp), mark(v)); 
@@ -883,15 +887,17 @@ public:
 	}
       }
     Vector_3 v = orthogonal_vector(f);
-    g.set_normal(CGAL::to_double(v.x()), 
-		 CGAL::to_double(v.y()), 
-		 CGAL::to_double(v.z()), 
-		 mark(f));
+    double x = CGAL::to_double(v.hx().eval_at(1));
+    double y = CGAL::to_double(v.hy().eval_at(1));
+    double z = CGAL::to_double(v.hz().eval_at(1));
+    double w = CGAL::to_double(v.hw().eval_at(1));    
+    g.set_normal(x/w, y/w, z/w, mark(f));
     ppoly_->push_back(g);
   }
 
   void draw() const
   { 
+    //    SETDTHREAD(53);
     Vertex_iterator v;
     CGAL_nef3_forall_vertices(v,*sncp()) draw(v);
     ppoly_->bbox() = sncp()->bounded_bbox();

@@ -18,12 +18,13 @@
 // revision      : $Revision$
 // revision_date : $Date$
 //
-// author(s)     : Michael Seel    <seel@mpi-sb.mpg.de> 
-//                 Miguel Granados <granados@mpi-sb.mpg.de>
-//                 Susan Hert      <hert@mpi-sb.mpg.de>
-//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
-// maintainer    : Susan Hert      <hert@mpi-sb.mpg.de>
-//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
+// author(s)     : Michael Seel       <seel@mpi-sb.mpg.de> 
+//                 Miguel Granados    <granados@mpi-sb.mpg.de>
+//                 Susan Hert         <hert@mpi-sb.mpg.de>
+//                 Lutz Kettner       <kettner@mpi-sb.mpg.de>
+//                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
+// maintainer    : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
+//                 Lutz Kettner       <kettner@mpi-sb.mpg.de>
 // coordinator   : MPI Saarbruecken
 //
 // SNC_constructor.h       construction of basic SNCs and global construction
@@ -264,6 +265,8 @@ public:
   DECUSING(SHalfedge_around_svertex_circulator);
   #undef DECUSING
 
+  enum{NORMAL, CORNER, DEGENERATE};
+
   Vertex_handle minVertex;
 
   typedef void* GenPtr;
@@ -371,68 +374,10 @@ public:
   volumes.  \precond |categorize_facet_cycles_and_creating_facets()| was
   called before.}*/
 
+  Halffacet_handle get_facet_below( Vertex_handle vi) const; 
   Volume_handle determine_volume( SFace_handle sf, 
                 const std::vector< Vertex_handle>& MinimalVertex, 
-                const Sface_shell_hash&  Shell ) const
-    /*{\Mop determines the volume |C| that a shell |S| pointed by |sf| 
-      belongs to.  \precondition |S| separates the volume |C| from an enclosed
-      volume.}*/ {
-    TRACEN("determine volume");
-    Vertex_handle v_min = MinimalVertex[Shell[sf]];
- 
-    Halffacet_handle f_below = get_facet_below(v_min);
-    if ( f_below == Halffacet_handle())
-      return Base(*this).volumes_begin();
-    Volume_handle c = volume(f_below);
-    if( c != Volume_handle()) {
-      TRACE( "Volume " << &*c << " hit ");
-      TRACEN("(Shell #" << Shell[adjacent_sface(f_below)] << ")");
-      return c;
-    }
-    SFace_handle sf_below = adjacent_sface(f_below);
-    TRACE( "Shell not assigned to a volume hit ");
-    TRACEN( "(Inner shell #" << Shell[sf_below] << ")");
-    c = determine_volume( sf_below, MinimalVertex, Shell);
-    link_as_inner_shell( sf_below, c);
-    return c;
-  }
- 
-  Halffacet_handle get_facet_below( Vertex_handle vi) const 
-     // {\Mop determines the facet below a vertex |vi| via ray shooting. }
-     {
-    Halffacet_handle f_below;
-    Point_3 p = point(vi);
-    if(!Infi_box::is_standard(p))
-      return Halffacet_handle();
-
-    Ray_3 ray = Ray_3(p, Direction_3(-1,0,0));
-
-    SNC_ray_shooter rs(*sncp());
-    Object_handle o = rs.shoot(ray);
-    Vertex_handle v;
-    Halfedge_handle e;
-    Halffacet_handle f;
-    TRACEN("get_facet_below");
-    if( assign(v, o)) {
-      TRACEN("facet below from from vertex...");
-      f_below = get_visible_facet(v, ray);
-      if( f_below == Halffacet_handle())
-	f_below = get_facet_below(v);
-    }
-    else if( assign(e, o)) {
-      TRACEN("facet below from from edge...");
-      f_below = get_visible_facet(e, ray);
-      if( f_below == Halffacet_handle())
-	f_below = get_facet_below(vertex(e));
-    }
-    else if( assign(f, o)) {
-      TRACEN("facet below from from facet...");
-      f_below = get_visible_facet(f, ray);
-      CGAL_nef3_assertion( f_below != Halffacet_handle());
-    }
-    else { TRACEN("no facet below found..."); }
-    return f_below;
-  }  
+				  const Sface_shell_hash&  Shell ) const;
 
   void create_vertices_of_box_with_plane(const Plane_3& h, bool b);
   void create_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2, 
@@ -442,6 +387,9 @@ public:
   void create_degenerate_corner_frame_point(Point_3 p, Point_3 sp1,Point_3 sp2, 
 					   int min,int max, Plane_3 h,
 					    bool boundary)const;
+
+  void create_SM_on_infibox(Point_3 center, Sphere_point* SP, int size, 
+			    bool boundary, bool fmark0) const;
 
 }; // SNC_constructor<SNC>
 
@@ -453,7 +401,7 @@ create_vertices_of_box_with_plane(const Plane_3& h, bool b) {
 
     // SETDTHREAD(19*43*11);
 
-    Point_3 loc(-h.d(),0,0,h.a());
+  //    Point_3 loc(-h.d(),0,0,h.a());
     Vector_3 orth = h.orthogonal_vector();
     
     NT orth_coords[3];
@@ -462,8 +410,10 @@ create_vertices_of_box_with_plane(const Plane_3& h, bool b) {
     orth_coords[2] = orth.hz()[0];
 
     int add_corners = 0;
-    while(orth_coords[add_corners] == 0) add_corners++;
-    CGAL_assertion(add_corners < 3);
+    while(orth_coords[add_corners] == 0){
+      CGAL_assertion(add_corners < 2);
+      add_corners++;
+    }
 
     std::list<Point_3> points;
     for(int dir=0; dir<3;++dir) {
@@ -499,7 +449,7 @@ create_vertices_of_box_with_plane(const Plane_3& h, bool b) {
 					  cross[i][3]));
     }
 
-    for(int i=0;i<2;i++)
+    for(int i=0;i<3;i++)
       orth_coords[i] = CGAL_NTS abs(orth_coords[i]);
 
     int max = 0;
@@ -608,6 +558,11 @@ SNC_constructor<SNC_>::
 create_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2, 
 		   Plane_3 h, bool boundary) const { 
 
+  if(h.d() == 0) {
+    CGAL_nef3_assertion(CGAL_NTS abs(p.hy()) != CGAL_NTS abs(p.hx()) ||
+			CGAL_NTS abs(p.hz()) != CGAL_NTS abs(p.hx()));
+  }
+
   int max = 0;
   if(CGAL_NTS abs(p.hx()) > CGAL_NTS abs(p.hy()))
     max = 1;
@@ -615,79 +570,31 @@ create_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,
     max = 2;
 
   TRACEN("create frame point ");
-  Vertex_handle v=sncp()->new_vertex(p, boundary);
-  SM_decorator SD(v); 
 
   TRACEN("create spoints");
   Sphere_point SP[4];
   switch(max) {
-  case 0: SP[1] = Sphere_point(1,0,0); break;
-  case 1: SP[1] = Sphere_point(0,1,0); break;
-  case 2: SP[1] = Sphere_point(0,0,1); break;
+  case 0: SP[2] = Sphere_point(1,0,0); break;
+  case 1: SP[2] = Sphere_point(0,1,0); break;
+  case 2: SP[2] = Sphere_point(0,0,1); break;
   default: CGAL_nef3_assertion_msg(0,"wrong value");
   }
   
-  SP[0]=sp1;
-  SP[2]=sp2;
+  SP[1]=sp1;
+  SP[0]=sp2;
   
   if (spherical_orientation(SP[0],SP[1],SP[2]) < 0) {
-    SP[3] = SP[1];
-    SP[1] = -Vector_3(SP[3]);
+    SP[3] = SP[2];
+    SP[2] = -Vector_3(SP[3]);
   }
   else
-    SP[3] = -Vector_3(SP[1]);
+    SP[3] = -Vector_3(SP[2]);
  
-  RT delta = h.a()*SP[1].hx()+h.b()*SP[1].hy()+h.c()*SP[1].hz();
+  RT delta = h.a()*SP[2].hx()+h.b()*SP[2].hy()+h.c()*SP[2].hz();
   CGAL_nef3_assertion(delta !=0);
   bool fmark0 = (delta <  0);
 
-  TRACEN("create svertices");
-  SVertex_handle sv[4];
-  for(int i=0; i<4; ++i) {
-    sv[i] = SD.new_vertex(SP[i]);
-    mark(sv[i]) = boundary;
-  }
-  
-  TRACEN("create sedges");
-  SHalfedge_handle she[5];
-  for(int si=0; si<3;++si) {
-    she[si]=SD.new_edge_pair(sv[si], sv[(si+1)%3]);
-    SD.circle(she[si])= 
-      Sphere_circle(Plane_3(SP[si],SP[(si+1)%3],Point_3(0,0,0)));
-    SD.circle(SD.twin(she[si])) =  SD.circle(she[si]).opposite();
-    SD.mark(she[si]) = boundary;
-  }
-
-  she[3] = SD.new_edge_pair(SD.twin(she[2]), sv[3],1);
-  she[4] = SD.new_edge_pair(she[2],sv[3],-1);
-  
-  CGAL_nef3_assertion(SD.next(she[0]) == she[1]);
-  CGAL_nef3_assertion(SD.next(she[1]) == she[2]);
-  CGAL_nef3_assertion(SD.next(she[2]) == she[0]);  
-
-  SD.circle(she[3])= Sphere_circle(Plane_3(SP[0],SP[3],Point_3(0,0,0)));
-  SD.circle(SD.twin(she[3])) =  SD.circle(she[3]).opposite();	  
-  SD.mark(she[3]) = boundary;
-  // SD.mark(SD.twin(she[3])) = !fmark0;
-  
-  SD.circle(she[4])= Sphere_circle(Plane_3(SP[2],SP[3],Point_3(0,0,0)));
-  SD.circle(SD.twin(she[4])) =  SD.circle(she[4]).opposite();
-  SD.mark(she[4]) = boundary;
-  // SD.mark(SD.twin(she[4])) = !fmark0;
-  
-  SFace_handle sf[3];
-  for(int i=0; i<3; ++i)
-    sf[i] = SD.new_face();
-  SD.mark(sf[0])= fmark0;
-  SD.mark(sf[1])=!fmark0;
-  SD.mark(sf[2])= 0;
-
-  SD.link_as_face_cycle(she[0],sf[0]);
-  SD.link_as_face_cycle(SD.twin(she[2]),sf[1]);
-  SD.link_as_face_cycle(SD.twin(she[0]),sf[2]);
-
-  SM_point_locator L(v);
-  L.init_marks_of_halfspheres();
+  create_SM_on_infibox(p, SP, 4, boundary, fmark0);
 }
 
 template <typename SNC_>
@@ -696,126 +603,66 @@ SNC_constructor<SNC_>::
 create_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2, 
 			  int max, Plane_3 h, bool boundary) const { 
 
+  CGAL_nef3_assertion(h.d() == 0);
+
+  Vector_3 vec = h.orthogonal_vector();
+  
+  CGAL_nef3_assertion(CGAL_NTS abs(vec.hx()) != CGAL_NTS abs(vec.hy()) &&
+		      CGAL_NTS abs(vec.hy()) != CGAL_NTS abs(vec.hz()) && 
+		      CGAL_NTS abs(vec.hx()) != CGAL_NTS abs(vec.hz()));
+
+  CGAL_nef3_assertion(vec.hx() + vec.hy() == vec.hz() ||
+		      vec.hx() + vec.hz() == vec.hy() ||
+		      vec.hy() + vec.hz() == vec.hx());
+
   TRACEN("create corner frame point ");
-  Vertex_handle v=sncp()->new_vertex(p, boundary);
-  SM_decorator SD(v); 
 
   RT vp[3];
-  vp[0] = -v->point().hx()[1];
-  vp[1] = -v->point().hy()[1];
-  vp[2] = -v->point().hz()[1];
+  vp[0] = -p.hx()[1];
+  vp[1] = -p.hy()[1];
+  vp[2] = -p.hz()[1];
   
   TRACEN("create spoints");
   Sphere_point SP[5];
   switch(max) {
   case 0: 
-    SP[0] = Sphere_point(0,vp[1],0); 
-    SP[3]= Sphere_point(0,0,vp[2]); 
+    SP[3] = Sphere_point(0,vp[1],0); 
+    SP[2]= Sphere_point(0,0,vp[2]); 
     SP[4] = Sphere_point(vp[0],0,0); 
     break;
   case 1: 
-    SP[0] = Sphere_point(vp[0],0,0); 
-    SP[3]= Sphere_point(0,0,vp[2]); 
+    SP[3] = Sphere_point(vp[0],0,0); 
+    SP[2]= Sphere_point(0,0,vp[2]); 
     SP[4] = Sphere_point(0,vp[1],0); 
     break;
   case 2: 
-    SP[0] = Sphere_point(vp[0],0,0); 
-    SP[3]= Sphere_point(0,vp[1],0); 
+    SP[3] = Sphere_point(vp[0],0,0); 
+    SP[2]= Sphere_point(0,vp[1],0); 
     SP[4] = Sphere_point(0,0,vp[2]); 
     break;
   default: CGAL_nef3_assertion_msg(0,"wrong value");
   }
   
-  if (spherical_orientation(SP[0],Sphere_point(sp1),Sphere_point(sp2)) > 0) {
-    SP[1] = sp1;
-    SP[2] = sp2;
+  if (spherical_orientation(SP[3],Sphere_point(sp1),Sphere_point(sp2)) > 0) {
+    SP[0] = sp1;
+    SP[1] = sp2;
   }
   else {
-    SP[1] = sp2;
-    SP[2] = sp1;
+    SP[0] = sp2;
+    SP[1] = sp1;
   }
 
-  if (spherical_orientation(SP[3],SP[0],SP[1]) < 0) {
-    Sphere_point sx = SP[3];
-    SP[3] = SP[0];
-    SP[0] = sx;
+  if (spherical_orientation(SP[2],SP[3],SP[0]) < 0) {
+    Sphere_point sx = SP[2];
+    SP[2] = SP[3];
+    SP[3] = sx;
   }
 
   RT delta = h.a()*SP[4].hx()+h.b()*SP[4].hy()+h.c()*SP[4].hz();
   CGAL_nef3_assertion(delta !=0);
   bool fmark0 = (delta >  0);
 
-  TRACEN("create svertices");
-  SVertex_handle sv[5];
-  for(int i=0; i<5; ++i) {
-    TRACEN("svertex " << SP[i]);
-    sv[i] = SD.new_vertex(SP[i]);
-    mark(sv[i]) = boundary;
-  }
-  
-  TRACEN("create sedges");
-  SHalfedge_handle she[6];
-  for(int si=0; si<4;++si) {
-    she[si]=SD.new_edge_pair(sv[si], sv[(si+1)%4]);
-    SD.circle(she[si])= 
-      Sphere_circle(Plane_3(SP[si],SP[(si+1)%4],Point_3(0,0,0)));
-    SD.circle(SD.twin(she[si])) =  SD.circle(she[si]).opposite();
-    SD.mark(she[si]) = boundary;
-  }
-
-  she[4] = SD.new_edge_pair(she[1],sv[4],-1);
-
-  CGAL_nef3_assertion(SD.next(she[0]) == she[1]);
-  CGAL_nef3_assertion(SD.next(she[1]) == she[2]);
-  CGAL_nef3_assertion(SD.next(she[2]) == she[3]);
-  CGAL_nef3_assertion(SD.next(she[3]) == she[0]);
-  CGAL_nef3_assertion(SD.next(SD.twin(she[1])) == she[4]);
-  CGAL_nef3_assertion(SD.next(she[4]) == SD.twin(she[4]));
-  CGAL_nef3_assertion(SD.next(SD.twin(she[4])) == SD.twin(she[0]));
-
-  she[5] = SD.new_edge_pair(sv[4],she[2],-1);
-
-  CGAL_nef3_assertion(SD.next(she[0]) == she[1]);
-  CGAL_nef3_assertion(SD.next(she[1]) == she[2]);
-  CGAL_nef3_assertion(SD.next(she[2]) == she[3]);
-  CGAL_nef3_assertion(SD.next(she[3]) == she[0]);
-  CGAL_nef3_assertion(SD.next(she[4]) == she[5]);
-  CGAL_nef3_assertion(SD.next(she[5]) == SD.twin(she[1]));
-  CGAL_nef3_assertion(SD.next(SD.twin(she[1])) == she[4]);
-  CGAL_nef3_assertion(SD.next(she[4]) == she[5]);
-  CGAL_nef3_assertion(spherical_orientation(SP[1],SP[4],SP[2]) > 0);
-  
-  SD.circle(she[4])= 
-    Sphere_circle(Plane_3(SP[1],SP[4],Point_3(0,0,0)));
-  SD.circle(SD.twin(she[4])) =  SD.circle(she[4]).opposite();
-  SD.mark(she[4]) = boundary;
-  
-  SD.circle(she[5])= 
-    Sphere_circle(Plane_3(SP[4],SP[2],Point_3(0,0,0)));
-  SD.circle(SD.twin(she[5])) =  SD.circle(she[5]).opposite();		  
-  SD.mark(she[5]) = 1;
-
-  
-  TRACEN("create sfaces");
-  SFace_handle sf[3];
-  for(int i=0; i<3; ++i)
-    sf[i] = SD.new_face();
-  SD.mark(sf[0])=fmark0;
-  SD.mark(sf[1])=!fmark0;
-  SD.mark(sf[2])=0;
-
-  TRACEN("link faces");
-  SD.link_as_face_cycle(she[0],sf[0]);
-  SD.link_as_face_cycle(SD.twin(she[1]),sf[1]);
-  SD.link_as_face_cycle(SD.twin(she[0]),sf[2]);
-
-  TRACEN("fpwc sedges");
-  SHalfedge_handle se;
-  CGAL_nef3_forall_shalfedges(se,SM_decorator(v))
-    TRACEN(PH(se));
-
-  SM_point_locator L(v);
-  L.init_marks_of_halfspheres();
+  create_SM_on_infibox(p, SP, 5, boundary, fmark0);
 }
 
 template <typename SNC_>
@@ -825,78 +672,113 @@ create_degenerate_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,
 				     int min, int max, Plane_3 h,
 				     bool boundary) const { 
 
-  TRACEN("create degenerate corner frame point ");
-  Vertex_handle v=sncp()->new_vertex(p, boundary);
-  SM_decorator SD(v); 
+  CGAL_nef3_assertion(h.d() == 0);
+
+  Vector_3 vec = h.orthogonal_vector();
+
+  CGAL_nef3_assertion(
+      (CGAL_NTS abs(vec.hx()) == CGAL_NTS abs(vec.hy()) && vec.hz() == 0) ||
+      (CGAL_NTS abs(vec.hy()) == CGAL_NTS abs(vec.hz()) && vec.hx() == 0) || 
+      (CGAL_NTS abs(vec.hx()) == CGAL_NTS abs(vec.hz()) && vec.hy() == 0));
 
   RT vp[3];
   vp[0] = -p.hx()[1];
   vp[1] = -p.hy()[1];
   vp[2] = -p.hz()[1];
+
+  TRACEN("create degenerate corner frame point ");
   
   TRACEN("create spoints");
   Sphere_point SP[4];
 
   switch(max) { 
-  case 0: SP[0] = Sphere_point(vp[0],0,0); break;
-  case 1: SP[0] = Sphere_point(0,vp[1],0); break;
-  case 2: SP[0] = Sphere_point(0,0,vp[2]); break;
+  case 0: SP[2] = Sphere_point(vp[0],0,0); break; // plane(x,x,0), plane(x,0,x)
+  case 1: SP[2] = Sphere_point(0,vp[1],0); break; // plane(0,x,x)
   default: CGAL_nef3_assertion_msg(0,"wrong value \"max\"");
   }
 
   switch(min+max) {
-  case 1: SP[3] = Sphere_point(0,0,vp[2]); break;
-  case 2: SP[3] = Sphere_point(0,vp[1],0); break;
-  case 3: SP[3] = Sphere_point(vp[0],0,0); break;
+  case 1: SP[3] = Sphere_point(0,0,vp[2]); break; // plane(0,x,x), plane(x,0,x)
+  case 2: SP[3] = Sphere_point(0,vp[1],0); break; // plane(x,x,0)
   default: CGAL_nef3_assertion_msg(0,"wrong value \"min+max\"");
   }
   
-  if (spherical_orientation(SP[0],Sphere_point(sp1),Sphere_point(sp2)) > 0) {
-    SP[1] = sp1;
-    SP[2] = sp2;
+  if (spherical_orientation(SP[2],Sphere_point(sp1),Sphere_point(sp2)) > 0) {
+    SP[0] = sp1;
+    SP[1] = sp2;
   }
   else {
-    SP[1] = sp2;
-    SP[2] = sp1;
+    SP[0] = sp2;
+    SP[1] = sp1;
   }
 
-  RT delta = h.a()*SP[0].hx()+h.b()*SP[0].hy()+h.c()*SP[0].hz();
+  RT delta = h.a()*SP[2].hx()+h.b()*SP[2].hy()+h.c()*SP[2].hz();
   CGAL_nef3_assertion(delta !=0);
   bool fmark0 = (delta <  0);
 
+  create_SM_on_infibox(p, SP, 4, boundary, fmark0);
+}
+
+template <typename SNC_>
+void
+SNC_constructor<SNC_>::
+create_SM_on_infibox(Point_3 center, Sphere_point* SP, int size, 
+		     bool boundary, bool fmark0) const {
+
+  Vertex_handle v=sncp()->new_vertex(center, boundary);
+  SM_decorator SD(v); 
+
   TRACEN("create svertices");
-  SVertex_handle sv[4];
-  for(int i=0; i<4; ++i) {
+  SVertex_handle sv[size];
+  for(int i=0; i<size; ++i) {
     sv[i] = SD.new_vertex(SP[i]);
     mark(sv[i]) = boundary;
   }
   
   TRACEN("create sedges");
-  SHalfedge_handle she[5];
-  for(int si=0; si<3;++si) {
-    she[si]=SD.new_edge_pair(sv[si], sv[(si+1)%3]);
+  SHalfedge_handle she[size+1];
+  for(int si=0; si<size-1;++si) {
+    she[si]=SD.new_edge_pair(sv[si], sv[(si+1)%(size-1)]);
     SD.circle(she[si])= 
-      Sphere_circle(Plane_3(SP[si],SP[(si+1)%3],Point_3(0,0,0)));
+      Sphere_circle(Plane_3(SP[si],SP[(si+1)%(size-1)],Point_3(0,0,0)));
     SD.circle(SD.twin(she[si])) =  SD.circle(she[si]).opposite();
     SD.mark(she[si]) = boundary;
   }
 
-  she[3] = SD.new_edge_pair(sv[3],she[1],-1);
-  she[4] = SD.new_edge_pair(sv[3],SD.twin(she[1]),1);
-
+  she[size-1] = SD.new_edge_pair(she[0], sv[size-1], -1);
+  she[size]   = SD.new_edge_pair(sv[size-1], SD.twin(she[0]), 1);
+  
   CGAL_nef3_assertion(SD.next(she[0]) == she[1]);
   CGAL_nef3_assertion(SD.next(she[1]) == she[2]);
-  CGAL_nef3_assertion(SD.next(she[2]) == she[0]);  
-  
-  SD.circle(SD.twin(she[3]))= 
-    Sphere_circle(Plane_3(SP[1],SP[3],Point_3(0,0,0)));
-  SD.circle(she[3]) =  SD.circle(SD.twin(she[3])).opposite();	  
-  SD.mark(she[3]) = boundary;
-  
-  SD.circle(she[4])= Sphere_circle(Plane_3(SP[3],SP[2],Point_3(0,0,0)));
-  SD.circle(SD.twin(she[4])) =  SD.circle(she[4]).opposite();
-  SD.mark(she[4]) = boundary;
+  if(size == 4)
+    CGAL_nef3_assertion(SD.next(she[2]) == she[0]);  
+  else {
+    CGAL_nef3_assertion(SD.next(she[2]) == she[3]);
+    CGAL_nef3_assertion(SD.next(she[3]) == she[0]);
+  }
 
+  CGAL_nef3_assertion(SD.next(SD.twin(she[0])) == she[size-1]);
+  CGAL_nef3_assertion(SD.next(she[size-1]) == she[size]);
+  CGAL_nef3_assertion(SD.next(she[size]) == SD.twin(she[0]));
+
+  CGAL_nef3_assertion(SD.next(SD.twin(she[4])) == SD.twin(she[3]));
+  CGAL_nef3_assertion(SD.next(SD.twin(she[3])) == SD.twin(she[2]));
+  CGAL_nef3_assertion(SD.next(SD.twin(she[2])) == SD.twin(she[1]));
+  if(size == 4)
+    CGAL_nef3_assertion(SD.next(SD.twin(she[1])) == SD.twin(she[4]));
+  else {
+    CGAL_nef3_assertion(SD.next(SD.twin(she[5])) == SD.twin(she[4]));
+    CGAL_nef3_assertion(SD.next(SD.twin(she[1])) == SD.twin(she[5]));
+  }
+
+  SD.circle(she[size-1])= Sphere_circle(Plane_3(SP[0],SP[size-1],Point_3(0,0,0)));
+  SD.circle(SD.twin(she[size-1])) =  SD.circle(she[size-1]).opposite();	  
+  SD.mark(she[size-1]) = boundary;
+  
+  SD.circle(she[size])= Sphere_circle(Plane_3(SP[size-1],SP[1],Point_3(0,0,0)));
+  SD.circle(SD.twin(she[size])) =  SD.circle(she[size]).opposite();
+  SD.mark(she[size]) = boundary;
+  
   TRACEN("create sfaces");
   SFace_handle sf[3];
   for(int i=0; i<3; ++i)
@@ -906,8 +788,8 @@ create_degenerate_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,
   SD.mark(sf[2])=0;
 
   SD.link_as_face_cycle(she[0],sf[0]);
-  SD.link_as_face_cycle(SD.twin(she[1]),sf[1]);
-  SD.link_as_face_cycle(SD.twin(she[0]),sf[2]);
+  SD.link_as_face_cycle(SD.twin(she[0]),sf[1]);
+  SD.link_as_face_cycle(SD.twin(she[1]),sf[2]);
 
   SM_point_locator L(v);
   L.init_marks_of_halfspheres();
@@ -984,6 +866,7 @@ create_extended_box_corner(int x,int y,int z,bool space,bool boundary) const {
   TRACEN("  constructing box corner on "<<Point_3(x,y,z)<<"...");
   Point_3 p = Infi_box::create_extended_point(x,y,z); 
   Vertex_handle v = sncp()->new_vertex(p , boundary);
+  TRACEN( point(v));
   SM_decorator SD(v);
   Sphere_point sp[] = { Sphere_point(-x, 0, 0), 
 			Sphere_point(0, -y, 0), 
@@ -1165,6 +1048,77 @@ create_from_edge(Halfedge_handle e,
 
   return v;
 }
+
+template <typename SNC_>
+typename SNC_::Halffacet_handle 
+SNC_constructor<SNC_>::
+get_facet_below( Vertex_handle vi) const {
+  // {\Mop determines the facet below a vertex |vi| via ray shooting. }
+
+    Halffacet_handle f_below;
+    Point_3 p = point(vi);
+    if(!Infi_box::is_standard(p))
+      return Halffacet_handle();
+
+    Ray_3 ray = Ray_3(p, Direction_3(-1,0,0));
+
+    SNC_ray_shooter rs(*sncp());
+    Object_handle o = rs.shoot(ray);
+    Vertex_handle v;
+    Halfedge_handle e;
+    Halffacet_handle f;
+    TRACEN("get_facet_below");
+    if( assign(v, o)) {
+      TRACEN("facet below from from vertex...");
+      f_below = get_visible_facet(v, ray);
+      if( f_below == Halffacet_handle())
+	f_below = get_facet_below(v);
+    }
+    else if( assign(e, o)) {
+      TRACEN("facet below from from edge...");
+      f_below = get_visible_facet(e, ray);
+      if( f_below == Halffacet_handle())
+	f_below = get_facet_below(vertex(e));
+    }
+    else if( assign(f, o)) {
+      TRACEN("facet below from from facet...");
+      f_below = get_visible_facet(f, ray);
+      CGAL_nef3_assertion( f_below != Halffacet_handle());
+    }
+    else { TRACEN("no facet below found..."); }
+    return f_below;
+  }  
+
+template <typename SNC_>
+typename SNC_::Volume_handle 
+SNC_constructor<SNC_>::
+determine_volume( SFace_handle sf, 
+		  const std::vector< Vertex_handle>& MinimalVertex, 
+		  const Sface_shell_hash&  Shell ) const {
+  //{\Mop determines the volume |C| that a shell |S| pointed by |sf| 
+  //  belongs to.  \precondition |S| separates the volume |C| from an enclosed
+  //  volume.}
+    
+  TRACEN("determine volume");
+    Vertex_handle v_min = MinimalVertex[Shell[sf]];
+ 
+    Halffacet_handle f_below = get_facet_below(v_min);
+    if ( f_below == Halffacet_handle())
+      return Base(*this).volumes_begin();
+    Volume_handle c = volume(f_below);
+    if( c != Volume_handle()) {
+      TRACE( "Volume " << &*c << " hit ");
+      TRACEN("(Shell #" << Shell[adjacent_sface(f_below)] << ")");
+      return c;
+    }
+    SFace_handle sf_below = adjacent_sface(f_below);
+    TRACE( "Shell not assigned to a volume hit ");
+    TRACEN( "(Inner shell #" << Shell[sf_below] << ")");
+    c = determine_volume( sf_below, MinimalVertex, Shell);
+    link_as_inner_shell( sf_below, c);
+    return c;
+  }
+
 
 // ----------------------------------------------------------------------------
 // pair_up_halfedges()

@@ -196,24 +196,8 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     if( h.has_on( seg.source()))
       /* no possible internal intersection */
 	return false;
-#ifdef REDUNDANT_CODE
-    /* This optimization might be inside of |intersection()| code */
-    Oriented_side os1 = h.oriented_side(seg.source());
-    Oriented_side os2 = h.oriented_side(seg.target());
-    TRACEN( "-> endpoint plane side " << os1 << " " << os2);
-    CGAL_nef3_assertion( h.has_on(p));
-    CGAL_nef3_assertion( seg.has_on(p));
-    if (os1 == os2)
-      return false;
-#endif //REDUNDANT_CODE
     Object o = intersection( h, seg);
-    Ray_3 s;
-    if ( assign( s, o) ) {
-      CGAL_nef3_assertion( s == seg );
-      TRACEN( "-> seg belongs to facet's plane." << p );
-      return false;
-    }
-    else if( !assign( p, o))
+    if( !assign( p, o))
       return false;
     TRACEN( "-> intersection point " << p );
     TRACEN( "-> point in facet? "<<locate_point_in_halffacet(p, f));
@@ -223,6 +207,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   bool does_intersect_internally( const Segment_3& seg,
 				  const Halffacet_const_handle f,
 				  Point_3& p) const { 
+    if(plane(f).has_on(seg.target())) return false;
     return (does_intersect_internally(Ray_3(seg.source(),seg.target()),f,p)
 	    && seg.has_on(p));
   }

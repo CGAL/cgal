@@ -133,6 +133,8 @@ public:
     }
   };
 
+  enum {NO_SNC, WITH_SNC};
+
  public:
   typedef void* GenPtr;
 
@@ -726,6 +728,7 @@ public:
 #endif // CGAL_NEF3_DUMP_SPHERE_MAPS
     CGAL_assertion( point(v0) == point(v1));
     Vertex_handle v01 = rsnc.new_vertex( point(v0), BOP( mark(v0),mark(v1)));
+    //    cerr << "BOP Vertex " << mark(v0) << " " << mark(v1) << std::endl;
     TRACEN("  binop result on vertex "<<&*v01<<" on "<<&*(v01->sncp()));
     SM_overlayer O(v01);
     O.subdivide( v0, v1);
@@ -999,10 +1002,10 @@ public:
     O.print();
 #endif // CGAL_NEF3_DUMP_SNC_OPERATORS
 
+    /*
     // remove vertices whose local view is not that of a vertex
-    Vertex_iterator vi, vin;
+    Vertex_iterator vi, vin(v1);
     for( vi = result.vertices_begin(); vi != result.vertices_end(); vi = vin) {
-      vin = vi;
       vin++;
       SM_decorator SD(vi);
       if( (result.is_part_of_volume(vi) && 
@@ -1012,11 +1015,13 @@ public:
 	   mark(vi) == SD.mark(SD.shalfloop())) 
 	  ||
 	  (result.is_part_of_edge(vi) &&
-	   mark(vi) == SD.mark(SD.svertices_begin())))
+	   mark(vi) == SD.mark(SD.svertices_begin()) &&
+	   mark(vi) == SD.mark(++(SD.svertices_begin())))
 	result.delete_vertex(vi);
     }
-    
-    //    compute_all_marks_of_halfspaces();
+    */
+
+    result.vertex_simplification(NO_SNC);
 
     // synthesis of spatial structure
 
@@ -1027,7 +1032,7 @@ public:
     C.link_shalfedges_to_facet_cycles();
     C.categorize_facet_cycles_and_create_facets();
     C.create_volumes();
-    result.simplify();
+    CGAL_nef3_assertion(!result.simplify());
 
 #ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
     TRACEN("=> construction completed, result: ");
@@ -1068,7 +1073,7 @@ public:
     std::list<Point_3> Points(false);   // durch hashmap ersetzen    
     CGAL_nef3_forall_vertices(vi,*this) {
       if(!valid) break;
-      
+
       valid = valid && vi->is_valid(verb, level);
       valid = valid && (vi->sncp()==sncp());
 
@@ -1093,7 +1098,7 @@ public:
 
       valid = valid && (++count <= max);
     }
- 
+
     Points.sort(points_lt());
     typename std::list<Point_3>::const_iterator li1, li2;
     li2 = li1 = Points.begin();
