@@ -21,7 +21,7 @@
 // maintainer    : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
-// implementation: dD construction `point'
+// implementation: 2D construction `point'
 // ============================================================================
 
 #ifndef CGAL_OPTIMISATION_CONSTRUCT_POINT_2_H
@@ -71,7 +71,7 @@ class Construct_point_2 {
     Point
     operator() ( int d, InputIterator first, InputIterator last) const
     {
-	std::vector<typename R::RT>  coords;
+	std::vector<CGAL_TYPENAME_MSVC_NULL R::RT>  coords;
 	std::copy( first, last, std::back_inserter( coords));
 	if ( coords.size() < 3) {
 	    return Point( coords[ 0], coords[ 1]);
