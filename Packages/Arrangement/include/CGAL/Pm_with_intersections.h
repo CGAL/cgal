@@ -230,7 +230,7 @@ public:
   }
 
 
-  // input: cv.source is on vh
+  // input: cv.source is on vh (Vertex Handle)
   // is_overlap is true if cv overlaps prev_halfedge around vh.
   void find_face_of_curve_around_vertex(const X_monotone_curve_2 & cv, 
                                         const X_monotone_curve_2 & orig_cv, 
@@ -929,20 +929,14 @@ public:
         CGAL_PM_WITH_INTERSECTIONS_PRINT_DEBUG_MSG("#");
 
         //-- locate cv around curr_vertex
-        //std::cout << "iis " << " ---- curr_vertex: " 
-        //<< curr_vertex->point() << std::endl;
         X_monotone_curve_2 overlap_cv;
         find_face_of_curve_around_vertex(cv, orig_cv, curr_vertex,
                                          prev_halfedge, overlap_end_pt,
                                          is_overlap, overlap_cv, en);
-        //std::cout << "iis " << " ---- prev_halfedge: " 
-        //<< prev_halfedge->source()->point() <<
-        //   "  ---->  " << prev_halfedge->target()->point() << std::endl;
         if (is_overlap) {
           // if overlaps an edge from curr_vertex 
           CGAL_PM_WITH_INTERSECTIONS_PRINT_DEBUG_MSG("$");
 
-          // rem: prev_halfedge->target == curr_vertex
           if (point_equal(prev_halfedge->source()->point(), overlap_end_pt)) {
             // whole edge is overlapped, proceed to its other end
             CGAL_PM_WITH_INTERSECTIONS_PRINT_DEBUG_MSG("%");
@@ -952,6 +946,14 @@ public:
             last_edge = prev_halfedge;
             // update cv
                         
+            //update the curve of prev_halfedge (and his twin) with overlap_cv
+            //because the overlapped sub-curve contains data from both curves
+            //when using data traits
+            // BZBZ!!
+            prev_halfedge->set_curve(overlap_cv);
+            prev_halfedge->twin()->set_curve(overlap_cv);
+            
+
             CGAL_assertion(point_equal(pmwx_traits->curve_source(cv),
                                        curr_vertex->point()));
             remaining_curve_trivial =
@@ -980,6 +982,9 @@ public:
               // source will be the same as split1's source
               he_split = 
                 Planar_map::split_edge(prev_halfedge->twin(), split1, split2);
+              he_split -> set_curve(overlap_cv);   //BZBZ
+              he_split->twin()->set_curve(overlap_cv); //BZBZ
+              
               if (en != NULL) {
                 en->split_edge(he_split, he_split->next_halfedge(), 
                                split1, split2);
@@ -1012,6 +1017,8 @@ public:
               //  edge 
               // source will be the same as split1's source
               he_split = Planar_map::split_edge(prev_halfedge, split1, split2);
+              he_split->next_halfedge() -> set_curve(overlap_cv);   //BZBZ
+              he_split->next_halfedge()->twin()->set_curve(overlap_cv); //BZBZ
               if (en != NULL) {
                 en->split_edge(he_split, he_split->next_halfedge(), 
                                split1, split2);
@@ -1042,7 +1049,7 @@ public:
           target_vertex = curr_vertex; // temporary -can be changed later
           next_face_valid = false; 
           continue;
-        }
+        }//////////////////////////////////////////////////////////////////////
         // if not overlap then in face
         next_face_valid = true;
       }
