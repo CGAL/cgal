@@ -40,9 +40,7 @@
 #include "icons/demo_fill.xpm"
 #include "icons/demo_colors.xpm"
 
-#if (defined _MSC_VER)
-#include "my_getopt.h"
-#else
+#if (!defined _MSC_VER)
 #include <stdlib.h>
 #include <getopt.h>
 #endif
@@ -409,6 +407,7 @@ int get_window_size(char * optarg)
 /*! Parse command line arguments */
 int parse_args(int argc, char * argv[])
 {
+#if (!defined _MSC_VER)
   const char * prog_name = argv[0];
   optind = 1;
   opterr = 0;
@@ -428,7 +427,7 @@ int parse_args(int argc, char * argv[])
       return -1;
     }
   }
-
+#endif
   return 0;
 }
 
@@ -465,4 +464,3 @@ int main(int, char*)
 
 
 #endif // CGAL_USE_QT
-
