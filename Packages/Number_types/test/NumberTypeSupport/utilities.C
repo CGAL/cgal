@@ -99,7 +99,7 @@ int main()
 #ifdef CGAL_USE_GMPXX
   TESTIT(mpz_class, "mpz_class")
   TESTIT(mpq_class, "mpq_class")
-  TESTIT(mpf_class, "mpf_class")
+  // TESTIT(mpf_class, "mpf_class") // Not finished.
 #endif
 
   // CORE

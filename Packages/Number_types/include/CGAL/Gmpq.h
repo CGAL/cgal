@@ -423,7 +423,7 @@ operator>>(std::istream& is, Gmpq &z)
 }
 
 inline
-std::pair<double,double>
+std::pair<double, double>
 to_interval (const Gmpq& z)
 {
   Interval_nt<> quot = Interval_nt<>(CGAL::to_interval(z.numerator())) /
@@ -431,16 +431,13 @@ to_interval (const Gmpq& z)
   return  quot.pair();
 }
 
-
-
-
 template <>
 struct Rational_traits<Gmpq> {
   typedef Gmpz RT;
- RT  numerator   (const Gmpq & r) const { return r.numerator(); }
- RT  denominator (const Gmpq & r) const { return r.denominator(); }
- Gmpq make_rational(const RT & n, const RT & d) const
- { return Gmpq(n, d); } 
+  RT   numerator     (const Gmpq & r) const { return r.numerator(); }
+  RT   denominator   (const Gmpq & r) const { return r.denominator(); }
+  Gmpq make_rational (const RT & n, const RT & d) const
+  { return Gmpq(n, d); } 
 };
 
 CGAL_END_NAMESPACE

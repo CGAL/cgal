@@ -34,7 +34,9 @@
 // C++ number types that come with GMP can be used by CGAL :
 // - mpz_class
 // - mpq_class
-// - mpf_class
+
+// - mpf_class support is commented out until to_interval() is implemented.
+//   It is probably not very useful with CGAL anyway.
 
 CGAL_BEGIN_NAMESPACE
 
@@ -50,13 +52,6 @@ struct Number_type_traits<mpq_class> {
   typedef Tag_false Has_gcd;
   typedef Tag_true  Has_division;
   typedef Tag_false Has_sqrt;
-};
-
-template <>
-struct Number_type_traits<mpf_class> {
-  typedef Tag_false Has_gcd;
-  typedef Tag_true  Has_division;
-  typedef Tag_true  Has_sqrt;
 };
 
 template <>
@@ -77,13 +72,6 @@ sqrt(const mpz_class &e)
 }
 
 inline
-mpf_class
-sqrt(const mpf_class &e)
-{
-    return ::sqrt(e);
-}
-
-inline
 double
 to_double(const mpz_class & e)
 { return e.get_d(); }
@@ -91,11 +79,6 @@ to_double(const mpz_class & e)
 inline
 double
 to_double(const mpq_class & e)
-{ return e.get_d(); }
-
-inline
-double
-to_double(const mpf_class & e)
 { return e.get_d(); }
 
 inline
@@ -119,16 +102,6 @@ is_valid(const mpq_class &)
 { return true; }
 
 inline
-bool
-is_finite(const mpf_class &)
-{ return true; }
-
-inline
-bool
-is_valid(const mpf_class &)
-{ return true; }
-
-inline
 io_Operator
 io_tag(const mpz_class &)
 { return io_Operator(); }
@@ -139,11 +112,6 @@ io_tag(const mpq_class &)
 { return io_Operator(); }
 
 inline
-io_Operator
-io_tag(const mpf_class &)
-{ return io_Operator(); }
-
-inline
 Sign
 sign(const mpz_class& e)
 { return (Sign) ::sgn(e); }
@@ -151,11 +119,6 @@ sign(const mpz_class& e)
 inline
 Sign
 sign(const mpq_class& e)
-{ return (Sign) ::sgn(e); }
-
-inline
-Sign
-sign(const mpf_class& e)
 { return (Sign) ::sgn(e); }
 
 inline
@@ -172,41 +135,90 @@ compare(const mpq_class& e1, const mpq_class& e2)
   return (Comparison_result) ::cmp(e1, e2);
 }
 
+// Should not be inline, but well...
+inline
+std::pair<double,double>
+to_interval (const mpz_class & z)
+{
+  // GMP returns the closest double (seen in the code).
+  Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
+  double app = CGAL::to_double(z);
+  // If it's lower than 2^53, then it's exact.
+  if (CGAL_CLIB_STD::fabs(app) < double(1<<26)*double(1<<27))
+      return to_interval(app);
+  FPU_set_cw(CGAL_FE_UPWARD);
+  Interval_nt<false> approx(app);
+  approx += Interval_nt<false>::smallest();
+  return approx.pair();
+}
+
+// Should not be inline, but well...
+inline
+std::pair<double, double>
+to_interval (const mpq_class & q)
+{
+  Interval_nt<> quot = Interval_nt<>(CGAL::to_interval(q.get_num())) /
+                       Interval_nt<>(CGAL::to_interval(q.get_den()));
+  return  quot.pair();
+}
+
+
+namespace NTS {
+  // These are necessary due to expression-templates.
+  inline
+  mpz_class
+  abs(const mpz_class& x) { return ::abs(x); }
+
+  inline
+  mpq_class
+  abs(const mpq_class& x) { return ::abs(x); }
+}
+
+#if 0
+template <>
+struct Number_type_traits<mpf_class> {
+  typedef Tag_false Has_gcd;
+  typedef Tag_true  Has_division;
+  typedef Tag_true  Has_sqrt;
+};
+
+inline
+mpf_class
+sqrt(const mpf_class &e)
+{
+    return ::sqrt(e);
+}
+
+inline
+double
+to_double(const mpf_class & e)
+{ return e.get_d(); }
+
+inline
+bool
+is_finite(const mpf_class &)
+{ return true; }
+
+inline
+bool
+is_valid(const mpf_class &)
+{ return true; }
+
+inline
+io_Operator
+io_tag(const mpf_class &)
+{ return io_Operator(); }
+
+inline
+Sign
+sign(const mpf_class& e)
+{ return (Sign) ::sgn(e); }
+
 inline
 Comparison_result
 compare(const mpf_class& e1, const mpf_class& e2)
 {
   return (Comparison_result) ::cmp(e1, e2);
-}
-
-// Should not be inline, but well...
-inline
-std::pair<double,double>
-to_interval (const mpz_class & e)
-{
-  Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
-  double approx = to_double(e);
-  double rel_error = e.get_double_error();
-  FPU_set_cw(CGAL_FE_UPWARD);
-  Interval_nt_advanced ina = (-rel_error,rel_error);
-  ina += 1;
-  ina *= approx;
-  return ina.pair();
-}
-
-// Should not be inline, but well...
-inline
-std::pair<double,double>
-to_interval (const mpq_class & e)
-{
-  Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
-  double approx = to_double(e);
-  double rel_error = e.get_double_error();
-  FPU_set_cw(CGAL_FE_UPWARD);
-  Interval_nt_advanced ina = (-rel_error,rel_error);
-  ina += 1;
-  ina *= approx;
-  return ina.pair();
 }
 
 // Should not be inline, but well...
@@ -225,19 +237,11 @@ to_interval (const mpf_class & e)
 }
 
 namespace NTS {
-  // These are necessary due to expression-templates.
-  inline
-  mpz_class
-  abs(const mpz_class& x) { return ::abs(x); }
-
-  inline
-  mpq_class
-  abs(const mpq_class& x) { return ::abs(x); }
-
   inline
   mpf_class
   abs(const mpf_class& x) { return ::abs(x); }
 }
+#endif
 
 CGAL_END_NAMESPACE
 

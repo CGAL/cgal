@@ -1,3 +1,7 @@
+4.98  (30 May 2003)
+- Implement to_interval(mpz_class) and to_interval(mpq_class).
+- Comment out mpf_class support (and documentation), it's probably useless.
+
 4.97  (23 May 2003)
 - Remove #include <CGAL/Interval_arithmetic.h> from number_type_basic.h.
 - Add missing #includes.

@@ -147,10 +147,11 @@ a wrapper class for the rational type \ccc{mpq_t}, that is compliant
 with the
 \cgal\ number type requirements.
 
-In addition, it is possible to directly use the C++ number types provided with
-recent versions of {\sc Gmp}~: \ccc{mpz_class}, \ccc{mpq_class},
-\ccc{mpf_class}.  The file {\tt CGAL/gmpxx.h} provides the necessary functions
-to make these classes compliant to the \cgal\ number type requirements.
+In addition, it is possible to directly use the C++ number types provided by
+{\sc Gmp}~: \ccc{mpz_class}, \ccc{mpq_class} (note that support for
+\ccc{mpf_class} is incomplete).  The file {\tt CGAL/gmpxx.h} provides the
+necessary functions to make these classes compliant to the \cgal\ number type
+requirements.
 
 To use this, {\sc Gmp} must be installed.
 
