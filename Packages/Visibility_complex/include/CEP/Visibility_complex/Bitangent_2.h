@@ -80,7 +80,7 @@ struct Bitangent_2
     typedef typename Base::Disk_handle        Disk_handle;
     typedef typename Base::Type                  Type;
     typedef typename D_::Point_2        Point_2;
-    typedef typename D_::Segment_2      Segment_2;
+  //    typedef typename D_::Segment_2      Segment_2;
     //--------------------------------------------------------------------------
     Bitangent_2() : Base() { }
     Bitangent_2(const Point_2& v1 , const Point_2& v2 , Type t ,
