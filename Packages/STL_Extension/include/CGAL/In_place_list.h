@@ -255,7 +255,7 @@ public:
   /*
   typedef iterator reverse_iterator;
   typedef const_iterator const_reverse_iterator;
-                                 */
+  */
 #else
   typedef std::reverse_iterator< iterator >       reverse_iterator;
   typedef std::reverse_iterator< const_iterator > const_reverse_iterator;
@@ -491,7 +491,7 @@ public:
     insert( begin(), n, t);
   }
 
-  void resize( size_type sz, T c) {
+  void resize( size_type sz, const T& c) {
     if ( sz > size())
       insert( end(), sz - size(), c);
     else if ( sz < size()) {
@@ -503,7 +503,10 @@ public:
   }
   // Sylvain reported a problem with the default argument
   // on sunpro; hence, I took it out.
-  void resize( size_type sz) { resize( sz, T()); }
+  void resize( size_type sz) {
+    T t;
+    resize( sz, t);
+  }
 
   // COMPARISON OPERATIONS
 

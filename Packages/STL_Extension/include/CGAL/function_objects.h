@@ -40,26 +40,6 @@ struct Identity {
   const Value& operator()( const Value& x) const { return x; }
 };
 
-/* Taken out
-// Composes two function objects: result is
-// Fct1 o Fct2 o x == Fct1()( Fct2()(x)).
-template < class Fct1, class Fct2>
-struct Compose {
-  typedef typename  Fct2::argument_type  argument_type;
-  typedef typename  Fct1::result_type    result_type;
-  result_type&       operator()( argument_type& x)       const {
-    Fct1 fct1;
-    Fct2 fct2;
-    return fct1( fct2(x));
-  }
-  const result_type& operator()( const argument_type& x) const {
-    Fct1 fct1;
-    Fct2 fct2;
-    return fct1( fct2(x));
-  }
-};
-*/
-
 template < class Value>
 struct Dereference {
   typedef Value* argument_type;
