@@ -1,7 +1,5 @@
 - rendre les iterator vraiment const
   creer les classe const_handle
-- defaults template parameter pour triangulations reguliere,
-  contrainte et delaunay contrainte
 - ajouter des acces a la hierarchie dans
   Constrained_triangulation_plus
 - documenter Constrained_triangulation_plus_2
@@ -11,10 +9,8 @@
 - add an example of constrained and delaunay constrained triangulation
 - copy constructor for constrained and Delaunay_constrained triangulation
   has to be modified, so that constrained status are duplicated
-
 - test removal and meshing functions in constrained and Delaunay constrained triangulation
 
-- make a test suite for constrained and Delaunay constrained triangulation	
 - change the return type of insert a constrained
 - file input for constrained triagulation
 
