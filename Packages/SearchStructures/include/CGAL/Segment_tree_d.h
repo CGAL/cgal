@@ -199,10 +199,10 @@ protected:
      }
    }
 
-  // the sceleton of the segment tree is constructed here.
+  // the skeleton of the segment tree is constructed here.
    void build_segment_tree(int n, link_type& leftchild, link_type& rightchild,
 		   link_type& prevchild, link_type& leftmostlink,
-		   int& index, int last, Key *keys)
+		   int& index, int last, const std::vector<Key>& keys)
    { 
      // only two elements ==> two leaves and a parent is constructed
      if (n==2)
@@ -511,7 +511,7 @@ public:
 
     A count = first;
     int n=0;
-    Key *keys = new Key[2*count_elements__C(first, last) + 1];
+    std::vector<Key> keys(2*count_elements__C(first, last) + 1);
     while(count!=last)
     {
       if (interface.comp(interface.get_left(*count),
@@ -534,8 +534,8 @@ public:
       is_build = false;
       return true;
     }
-    std::sort(&keys[0], &keys[n], interface.comp);
-    Key *keys2 = new Key[2*n + 1];
+    std::sort(keys.begin(), keys.end(), interface.comp);
+    std::vector<Key> keys2(2*n + 1);
     int m=0;
     int num=1;
     keys2[0]=keys[0];
@@ -548,7 +548,6 @@ public:
       }
     }
 
-    delete[] keys;
     link_type leftchild;
     link_type rightchild;
     link_type prevchild;
@@ -557,7 +556,6 @@ public:
     int *start = new int(0);
     build_segment_tree(num-1, leftchild, rightchild, prevchild, 
 		      leftmostlink, *start, num-1, keys2);
-    delete[] keys2;
     delete start;
 
     header = new segment_tree_node_t();
