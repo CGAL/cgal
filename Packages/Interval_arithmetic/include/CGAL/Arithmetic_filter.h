@@ -62,27 +62,33 @@ typedef Interval_nt_advanced Filter_Cache;
 
 template <class CT>
 inline
-void
-compute_cache (const CT &value, No_Filter_Cache &cache)
-{ }
-
-template <class CT>
-inline
-void
-compute_cache (const CT &value, Interval_nt_advanced &inter)
-{ inter = convert_to<Interval_nt_advanced>(value); }
-
-template <class CT>
-inline
 Interval_nt_advanced
-give_interval (const CT &value, const No_Filter_Cache &cache)
-{ return convert_to<Interval_nt_advanced>(value); }
+give_interval (const CT &value, const No_Filter_Cache &)
+{
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+    return convert_to<Interval_nt_advanced>(value);
+#else
+    return convert_from_to(Interval_nt_advanced(), value);
+#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+}
 
 template <class CT>
 inline
 Interval_nt_advanced
 give_interval (const CT &value, const Interval_nt_advanced &inter)
 { return inter; }
+
+template <class CT>
+inline
+void
+compute_cache (const CT &, No_Filter_Cache &)
+{ }
+
+template <class CT>
+inline
+void
+compute_cache (const CT &value, Interval_nt_advanced &inter)
+{ inter = give_interval(value, No_Filter_Cache()); }
 
 template <class CT, class ET, class Cache_t = No_Filter_Cache >
 struct Filtered_exact
@@ -92,18 +98,13 @@ struct Filtered_exact
 
   Cache_t cache;
   CT value;
-// #ifdef CGAL_FILTER_USE_CACHE
   void recompute_cache() { compute_cache (value, cache); }
-  // { cache = convert_to<IA>(value); }
-// #else
-  // void recompute_cache() {}
-// #endif
 
   Filtered_exact () {}
   template <class NT>
   Filtered_exact (const NT & nt)
       : value(nt)  { recompute_cache(); }
-  // The following one is used for Quotient<>.
+  // The following ctor is used for Quotient<>.
   template <class NT>
   Filtered_exact (const NT & num, const NT & den)
       : value(num, den)   { recompute_cache(); }
@@ -113,27 +114,15 @@ struct Filtered_exact
   // Filtered_exact (const CT & ct)	: value(ct) {}
 
   // The two conversion functions are provided by the global scope.
-  // Note that we could "cache" interval_value() [will be done].
   IA interval() const { return give_interval(value, cache); }
-#if 0
-
-#ifdef CGAL_FILTER_USE_CACHE
-  IA interval() const { return cache; }
-#else
+  ET exact()    const
+  {
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-  IA interval() const { return convert_to<IA>(value); }
+    return convert_to<ET>(value);
 #else
-  IA interval() const { return convert_from_to(IA(), value); }
+    return convert_from_to(ET(), value);
 #endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-#endif
-
-#endif
-
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-  ET exact()    const { return convert_to<ET>(value); }
-#else
-  ET exact()    const { return convert_from_to(ET(), value); }
-#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+  }
 
   // This one should not be needed, at least for now.
   // CT stored_value()   const { return value; }
