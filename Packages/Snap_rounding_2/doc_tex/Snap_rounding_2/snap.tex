@@ -74,6 +74,13 @@ non-incident edge well separated (the distance between each is at least
 half-the-width-of-a-pixel). However, the guaranteed quality of the
 approximation in ISR degrades. Figure~\ref{fig:isr_vs_sr} depicts
 the results of SR and ISR on the same input.
+Conceptually, the ISR procedure is equivalent to repeated application
+of SR, namely we apply SR to the original set of segments, then we use
+the output of SR as input another round of SR and so on until all the
+vertices are well separated from non-incident edges. Algorithmically
+we operate differently, as this repeated application of SR would have
+resulted in an efficient overall process. The algorithmic details are
+given in \cite{cgal:hp-isr-02}.
 
 \section{Terms and Software Design}
 
