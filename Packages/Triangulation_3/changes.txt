@@ -1,8 +1,6 @@
-Version 1.82 (31 July 01)
+Version 1.81 (31 July 01)
 - Susan moved the doc_tex/*_ref directories up one level and changed htmlfiles
   accordingly
-
-Version 1.81 (31 July 01)
 - ds_cell doesn't derive from Triangulation_util_3 anymore, as this wasted
   memory for nothing with GCC 2.95.
 
