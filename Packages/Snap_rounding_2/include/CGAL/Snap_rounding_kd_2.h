@@ -56,6 +56,8 @@ typedef typename Rep::FT                    NT;
 typedef typename Rep::Segment_2             Segment;
 typedef typename Rep::Point_2               Point_2;
 typedef typename Rep::Iso_rectangle_2       Iso_rectangle_2;
+typedef typename Rep::Direction_2           Direction_2;
+typedef typename Rep::Line_2                Line_2;
 typedef CGAL::Kdtree_interface_2d<my_point<NT,SAVED_OBJECT> >  kd_interface;
 typedef CGAL::Kdtree_d<kd_interface>  kd_tree;
 typedef typename kd_tree::Box Box;
@@ -67,6 +69,7 @@ private:
   int number_of_trees;
   std::list<std::pair<kd_tree *,NT> > kd_trees_list;
   std::list<std::pair<Point_2,SAVED_OBJECT > > input_points_list;
+  std::list<Direction_2> kd_tree_direction;
 
   std::pair<kd_tree *,NT> create_kd_tree(NT angle)
   {
@@ -109,19 +112,18 @@ private:
 
   int get_kd_num(Segment seg,int n)
   {
-    double alpha = _gt.segment_direction_2_object()(seg);
+    Direction_2 d(seg);
+    int i = 0;
+    bool found = false;
+    typename std::list<Direction_2>::const_iterator iter = kd_tree_direction.begin();
 
-    int i;
-
-    if(alpha < 0)
-      alpha += pi / 2.0;
-
-    if(alpha >= pi * (2 * n - 1) / (4 * n))
-      i = 0;
-    else {
-      alpha += pi / (4 * n);
-      i = int(2 * n * alpha / pi);
+    while(i < n && !found) {
+      if(*iter > d)
+        found = true;
+      ++i;
+      ++iter;
     }
+    --i;
 
     return(i);
   }
@@ -156,8 +158,12 @@ public:
       exit(1);
     }
 
+    // create directions for each kd-tree
+    for(double ang = 0;ang < half_pi;ang += half_pi / number_of_trees)
+      kd_tree_direction.push_back(Direction_2(Line_2(tan(ang),-1,0)));
+
     // find the kd trees that have enough candidates  (segments with a close
-    // slope
+    // slope)
     int *kd_counter = new int[number_of_trees];
     int number_of_segments = seg_list.size();
     check_kd(kd_counter,number_of_trees,seg_list);
