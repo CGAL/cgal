@@ -148,6 +148,8 @@ public:
     return n - number_of_vertices();
   }
 
+  Vertex_handle move_point(Vertex_handle v, const Weighted_point & p);
+
 private:
   void remove_2D(Vertex_handle v);
   //  void make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole);
@@ -1143,6 +1145,29 @@ remove(Vertex_handle v)
   remove_3D(v);
 
   CGAL_triangulation_expensive_postcondition(is_valid());
+}
+
+template < class Gt, class Tds >
+typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
+Regular_triangulation_3<Gt,Tds>::
+move_point(Vertex_handle v, const Weighted_point & p)
+{
+    CGAL_triangulation_precondition(! is_infinite(v));
+    CGAL_triangulation_expensive_precondition(is_vertex(v));
+ 
+    // Dummy implementation for a start.
+ 
+    // Remember an incident vertex to restart
+    // the point location after the removal.
+    Cell_handle c = v->cell();
+    Vertex_handle old_neighbor = c->vertex(c->index(v) == 0 ? 1 : 0);
+    CGAL_triangulation_assertion(old_neighbor != v);
+ 
+    remove(v);
+ 
+    if (dimension() <= 0)
+        return insert(p);
+    return insert(p, old_neighbor->cell());
 }
 
 template < class Gt, class Tds >
