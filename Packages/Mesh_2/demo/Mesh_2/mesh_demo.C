@@ -709,8 +709,10 @@ public slots:
       FT xspan = (xmax-xmin)/2,
 	yspan = (ymax-ymin)/2;
 
-      widget->set_window(xmin-1.1*xspan, xmax+1.1*xspan, 
-			 ymin-1.1*yspan, ymax+1.1*yspan);
+      widget->set_window(CGAL::to_double(xmin-1.1*xspan),
+			 CGAL::to_double(xmax+1.1*xspan), 
+			 CGAL::to_double(ymin-1.1*yspan), 
+			 CGAL::to_double(ymax+1.1*yspan));
       widget->clear_history();
 
       updatePointCouter();
