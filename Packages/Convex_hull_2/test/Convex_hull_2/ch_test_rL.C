@@ -40,9 +40,9 @@ main()
   std::istream_iterator< Point2>  in_end;
   std::copy( in_start, in_end , std::back_inserter(V) );
   std::vector< Point2 > CH;
-  CGAL::convex_hull_points_2( V.begin(), V.end(), 
-                              std::back_inserter(CH),
-                              CGAL::convex_hull_rat_leda_traits_2() ); 
+  CGAL::convex_hull_2( V.begin(), V.end(), 
+                       std::back_inserter(CH),
+                       CGAL::Convex_hull_rat_leda_traits_2() ); 
   return 0;
 }
 #endif // CGAL_USE_LEDA

@@ -25,14 +25,16 @@
 
 #include <CGAL/ch_utils.h>
 #include <CGAL/ch_value_type.h>
+
 #ifdef CGAL_REP_CLASS_DEFINED
-#include <CGAL/Convex_hull_traits_2.h>
+#include <CGAL/convex_hull_traits_2.h>
 #ifdef STL_GCC
 #ifndef GNU_ISTREAM_ITERATOR_VALUE_TYPE_FIX_H
 #include <CGAL/gnu_istream_iterator_value_type_fix.h>
 #endif // GNU_ISTREAM_ITERATOR_VALUE_TYPE_FIX_H
 #endif // STL_GCC
 #endif // CGAL_REP_CLASS_DEFINED
+
 #ifndef CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_2.h>
 #endif // CH_NO_POSTCONDITIONS

@@ -20,7 +20,6 @@
 
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/convex_hull_cartesian_double_traits_2.h>
 #include <CGAL/convex_hull_traits_2.h>
 #include <CGAL/convex_hull_constructive_traits_2.h>
 
@@ -42,17 +41,17 @@ int
 main()
 {
 #ifdef CGAL_USE_LEDA
-  CGAL::convex_hull_constructive_traits_2< CGAL::Homogeneous<leda_integer> >    
+  CGAL::Convex_hull_constructive_traits_2< CGAL::Homogeneous<leda_integer> >    
                                                                  cch_H_integer;
   std::cout << "Homogeneous<integer>: C   ";
   CGAL::ch__batch_test( cch_H_integer );
 #else
-  CGAL::convex_hull_constructive_traits_2< CGAL::Homogeneous<CGAL::Gmpz> >       
+  CGAL::Convex_hull_constructive_traits_2< CGAL::Homogeneous<CGAL::Gmpz> >       
                                                                  cch_H_gmp;
   std::cout << "Homogeneous<gmp>: C   ";
   CGAL::ch__batch_test( cch_H_gmp );
 #endif // CGAL_USE_LEDA
-  CGAL::convex_hull_constructive_traits_2< CGAL::Homogeneous<double> > 
+  CGAL::Convex_hull_constructive_traits_2< CGAL::Homogeneous<double> > 
                                                                  cch_H_double;
   std::cout << "Homogeneous<double>: C ";
   CGAL::ch__batch_test( cch_H_double );

@@ -42,7 +42,7 @@ main()
   std::vector< Point2 > CH;
   CGAL::convex_hull_2( V.begin(), V.end(), 
                        std::back_inserter(CH),
-                       CGAL::convex_hull_leda_traits_2() ); 
+                       CGAL::Convex_hull_leda_traits_2() ); 
   return 0;
 }
 #endif // CGAL_USE_LEDA
