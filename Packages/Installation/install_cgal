@@ -5770,7 +5770,7 @@ build_cgal()
 	    cd ${CGAL_SRC_DIR}/CGALWin
 	    _do_compile Win
 	fi
-	if [ -z "${QT_SUPPORT}" -a -d ${CGAL_SRC_DIR}/CGALQt ]; then
+	if [ -n "${QT_SUPPORT}" -a -d ${CGAL_SRC_DIR}/CGALQt ]; then
 	    cd ${CGAL_SRC_DIR}/CGALQt
 	    _do_compile Qt
 	fi
@@ -6245,11 +6245,6 @@ while [ ${#} -gt 0 ]; do
 	    fi
 	    CLN_INSTALLATION='e'
 	    ;;
-	-qt*|-QT*|--qt*|--QT*)
-	    _ANY_OPT='y'
-	    QT_SUPPORT='_QT'
-	    write_buffer "${_LEFTSPACE}Enable Qt support.\n"
-	    ;;
 	--qt_incl_dir*|--QT_INCL_DIR*|-qt_incl_dir*|-QT_INCL_DIR*)
 	    _ANY_OPT='y'
 	    if set_variable_from_command_line 'QT_INCL_DIR' "$1" "$2"; then
@@ -6260,9 +6255,9 @@ while [ ${#} -gt 0 ]; do
 	--qt_dir*|--QT_DIR*|-qt_dir*|-QT_DIR*)
 	    _ANY_OPT='y'
 	    if set_variable_from_command_line 'QT_DIR' "$1" "$2"; then
-		qt_dir_has_changed
 		shift
 	    fi
+	    qt_dir_has_changed
 	    ;;
 	--qt_lib_dir*|--QT_LIB_DIR*|-qt_lib_dir*|-QT_LIB_DIR*)
 	    _ANY_OPT='y'
@@ -6277,6 +6272,11 @@ while [ ${#} -gt 0 ]; do
 		QT_ADVANCED_MODE='y'
 		shift
 	    fi
+	    ;;
+	-qt*|-QT*|--qt*|--QT*)
+	    _ANY_OPT='y'
+	    QT_SUPPORT='_QT'
+	    write_buffer "${_LEFTSPACE}Enable Qt support.\n"
 	    ;;
 	--custom_cxxflags*|--CUSTOM_CXXFLAGS*|-CUSTOM_CXXFLAGS*|-custom_cxxflags*)
 	    _ANY_OPT='y'
