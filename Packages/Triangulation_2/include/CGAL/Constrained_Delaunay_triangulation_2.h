@@ -34,7 +34,10 @@
 CGAL_BEGIN_NAMESPACE
 
 
-template <class Gt, class Tds>
+template <class Gt, 
+          class Tds = Triangulation_data_structure_using_list_2 <
+                      Triangulation_vertex_base_2<Gt>,
+		      Constrained_triangulation_face_base_2<Gt> > >
 class Constrained_Delaunay_triangulation_2
   : public  Constrained_triangulation_2<Gt, Tds> 
 {

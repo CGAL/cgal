@@ -22,15 +22,10 @@
 
 
 #include <CGAL/_test_types.h>
-
-#include <CGAL/Triangulation_vertex_base_2.h>
-#include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
-#include <CGAL/Triangulation_default_data_structure_2.h>
 #include <CGAL/Triangulation_data_structure_using_list_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
 
-#include <CGAL/_test_types.C>
 #include <CGAL/_test_cls_constrained_triangulation_2.C>
 
 int main()
@@ -42,30 +37,8 @@ int main()
   typedef double coord_type;
   typedef CGAL::Cartesian<coord_type>  Rep;
   typedef CGAL::Triangulation_euclidean_traits_2<Rep>            Gt;
-  typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
-  typedef CGAL::Constrained_triangulation_face_base_2<Gt>        CFb;
-  typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,CFb> Tds;
-  typedef CGAL::Constrained_triangulation_2<Gt,Tds>              CCls;
-
+  typedef CGAL::Constrained_triangulation_2<Gt>              CCls;
   _test_cls_constrained_triangulation(CCls());
 
-  // Following tests are performed by test_const_del_triangulation_2.C
-//  std::cout << "Testing constrained_triangulation "<< std::endl;
-//   std::cout << " with Triangulation_data_structure_using_list : " << std::endl;
-//   typedef CGAL::Triangulation_data_structure_using_list_2<Vb,CFb> Tds1;
-//   typedef CGAL::Constrained_triangulation_2<Gt,Tds1>              CCls1;
-
-//   _test_cls_constrained_triangulation(CCls1());
-
-//   std::cout << "Testing constrained_triangulation "<< std::endl;
-//   std::cout << " with Kernel traits cartesian<double> : " << std::endl;
-//   typedef CGAL::Cartesian<double>                                    Gt2;
-//   typedef CGAL::Triangulation_vertex_base_2<Gt2>                     Vb2;
-//   typedef CGAL::Constrained_triangulation_face_base_2<Gt2>           CFb2;
-//   typedef CGAL::Triangulation_default_data_structure_2<Gt2,Vb2,CFb2> Tds2;
-//   typedef CGAL::Constrained_triangulation_2<Gt2,Tds2>                CCls2;
-
-//   _test_cls_constrained_triangulation(CCls2());
-
- return 0;
+  return 0;
 }

@@ -35,7 +35,10 @@
 #include <CGAL/Dummy_output_iterator.h>
 	
 CGAL_BEGIN_NAMESPACE
-template < class Gt, class Tds>
+template < class Gt, 
+           class Tds = Triangulation_data_structure_using_list_2 <
+                       Triangulation_vertex_base_2<Gt>,
+		       Constrained_triangulation_face_base_2<Gt> > >
 class Constrained_triangulation_2  : public Triangulation_2<Gt,Tds>
 {
   friend  class Constrained_triangulation_sweep_2<Gt,Tds>;

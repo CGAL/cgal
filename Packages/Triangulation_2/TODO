@@ -2,7 +2,6 @@
   creer les classe const_handle
 - defaults template parameter pour triangulations reguliere,
   contrainte et delaunay contrainte
-- documenter les defaults dans user manuel et faire un exemple
 - ajouter des acces a la hierarchie dans
   Constrained_triangulation_plus
 - documenter Constrained_triangulation_plus_2
