@@ -556,7 +556,7 @@ public:
 	  Planar_map::insert_from_vertex(cv_first_part, 
 					 remaining_curve_source_vertex, false);
 	if (en != NULL) en->add_edge(cv_first_part, inserted_halfedge,
-				     true, false);
+				     false, false);
 	CGAL_PM_END_OP(4)
 	  return 1;
       }
@@ -864,7 +864,7 @@ public:
 #endif
 		    if (en != NULL) 
 		      en->add_edge(prev_halfedge->curve(), prev_halfedge,
-				   true, true);
+				   false, true);
 		    last_edge = prev_halfedge;
 		    // update cv
                         
