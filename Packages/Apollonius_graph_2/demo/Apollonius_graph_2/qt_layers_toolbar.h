@@ -10,8 +10,6 @@
 #include <qstring.h>
 #include <qwhatsthis.h>
 
-#include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
-
 #include "qt_layers.h"
 
 // icons
@@ -20,7 +18,6 @@
 #include <CGAL/IO/pixmaps/circle.xpm>
 #include <CGAL/IO/pixmaps/triangulation.xpm>
 #include <CGAL/IO/pixmaps/voronoi.xpm>
-//#include <CGAL/IO/pixmaps/mouse_coord.xpm>
 #include <CGAL/IO/pixmaps/notool.xpm>
 //#include "removecircle.xpm"
 
