@@ -27,19 +27,12 @@
 #ifndef CGAL_PM_DEFAULT_DCEL_H
 #define CGAL_PM_DEFAULT_DCEL_H 1
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif
 #include <list>
 #include <map>
 #include <CGAL/N_step_adaptor.h>
-#ifndef CGAL_IN_PLACE_LIST_H
 #include <CGAL/In_place_list.h>
-#endif
-//needed for holes iterator
-#ifndef CGAL_PLANAR_MAP_MISC_H
-#include <CGAL/Planar_map_2/Planar_map_misc.h>
-#endif
+#include <CGAL/Polyhedron_iterator_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -671,17 +664,6 @@ public:  // CREATION
   
 };
 
-
 CGAL_END_NAMESPACE
 
 #endif 
-// EOF //
-
-
-
-
-
-
-
-
-
