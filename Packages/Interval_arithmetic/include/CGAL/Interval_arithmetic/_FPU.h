@@ -33,7 +33,7 @@
 #define CGAL_IA_MAX_DOUBLE (1.7976931348623157081e+308)
 
 #ifdef __i386__
-// The x87 keeps a too wide exponent in the register, even when in double
+// The x87 keeps too wide exponents (15bits) in registers, even in double
 // precision mode.  This causes problems when the intervals overflow or
 // underflow.  To work around that, at every critical moment, we flush the
 // register to memory, using the macro below.
@@ -97,8 +97,8 @@ enum {  //               rounding | def. mask
 #define CGAL_IA_GETFPCW(CW) _FPU_GETCW(CW)
 typedef fpu_control_t FPU_CW_t;
 enum {         // rounding        | def.mask
-    FPU_cw_zero = _FPU_RC_ZERO    | _FPU_DEFAULT,
     FPU_cw_near = _FPU_RC_NEAREST | _FPU_DEFAULT,
+    FPU_cw_zero = _FPU_RC_ZERO    | _FPU_DEFAULT,
     FPU_cw_up   = _FPU_RC_UP      | _FPU_DEFAULT,
     FPU_cw_down = _FPU_RC_DOWN    | _FPU_DEFAULT
 };
@@ -158,8 +158,8 @@ enum {
 typedef unsigned long FPU_CW_t;
 enum { //         rounding
     // I guess it won't work, because enum == int.
-    FPU_cw_zero = 0x0000000000000000UL,
     FPU_cw_near = 0x0800000000000000UL,
+    FPU_cw_zero = 0x0000000000000000UL,
     FPU_cw_up   = 0x0c00000000000000UL,
     FPU_cw_down = 0x0400000000000000UL
 };
@@ -170,8 +170,8 @@ enum { //         rounding
 #define CGAL_IA_SETFPCW(CW) write_rnd(CW)
 typedef unsigned int FPU_CW_t;
 enum {
-    FPU_cw_zero = FP_RND_RZ,
     FPU_cw_near = FP_RND_RN,
+    FPU_cw_zero = FP_RND_RZ,
     FPU_cw_up   = FP_RND_RP,
     FPU_cw_down = FP_RND_RM
 };
