@@ -27,10 +27,10 @@
 CGAL_BEGIN_NAMESPACE
 
 // This is a kernel wrapper which provides the type equality between
-// Kernel::Point_2 and CGAL::Point_2<Kernel>
-// (and similar for the other types).
+// Kernel::Point_2 and CGAL::Point_2<Kernel>, by deriving from
+// K_base::Point_2 (and similar for the other types).
 
-template < typename K_base, typename Kernel = typename K_base::Kernel >
+template < typename K_base, typename Kernel >
 struct Type_equality_wrapper
   : public K_base
 {
