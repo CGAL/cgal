@@ -1,3 +1,6 @@
+1.4.9 (02 May 2002)
+- 3d Delaunay demo changed, Nef demo removed
+
 1.4.8 (29 April 2002)
 - split of user and reference manual
 

@@ -53,7 +53,6 @@ int main(int argc, char *argv[])
 #include <CGAL/Cartesian.h>
 #include <CGAL/geowin_support.h>
 #include <CGAL/Triangulation_3.h>
-#include <CGAL/Triangulation_geom_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
 #if defined(LEDA_NAMESPACE)
@@ -63,11 +62,7 @@ using namespace leda;
 typedef double                                               NT;
 typedef CGAL::Cartesian<NT>                                  K;
 typedef K::Point_3                                           Point_3;
-typedef CGAL::Triangulation_geom_traits_3<K>                 Traits_3;
-typedef CGAL::Triangulation_vertex_base_3<Traits_3>          Vb ;
-typedef CGAL::Triangulation_cell_base_3<Traits_3>            Fb;
-typedef CGAL::Triangulation_data_structure_3<Vb,Fb>          TDS3 ;
-typedef CGAL::Delaunay_triangulation_3<Traits_3,TDS3>        Delaunay_3;
+typedef CGAL::Delaunay_triangulation_3<K>                    Delaunay_3;
 typedef std::list<Point_3>                                   Point_3_list;
 
 void show_d3_points(geo_scene sc, leda_d3_window& W, GRAPH<leda_d3_point,int>& H)
