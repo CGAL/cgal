@@ -54,6 +54,8 @@
 class QComboBox;
 class QPopupMenu;
 
+namespace CGAL{
+
 class Qt_help_window : public QMainWindow
 {
     Q_OBJECT
@@ -80,5 +82,7 @@ private:
     QPopupMenu *hist;
     QMap<int, QString> mHistory;
 };
+
+} //end CGAL namespace
 
 #endif

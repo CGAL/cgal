@@ -102,6 +102,8 @@ static char*homeb[]={
 "..#####.######..",
 "................"};
 
+namespace CGAL{
+
 Qt_help_window::Qt_help_window( const QString& home_, const QString& _path,
 			QWidget* parent, const char *name )
   : QMainWindow( parent, name, WDestructiveClose ),
@@ -240,6 +242,6 @@ void Qt_help_window::readHistory()
 	    history.remove( history.begin() );
     }
 }
-
+} //end CGAL namespace
 
 #include "Qt_help_window.moc"
