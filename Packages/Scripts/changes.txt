@@ -1,3 +1,6 @@
+25 May Sylvain Pion
+- create_internal_release : fix last change about C2vcproj.
+
 22 May Sylvain Pion
 - autotest_cgal : Missing "./" before install_cgal.
 
