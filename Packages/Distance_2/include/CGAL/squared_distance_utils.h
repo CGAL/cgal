@@ -309,7 +309,7 @@ same_direction(const typename K::Vector_2 &u,
 {  
   typedef typename K::Kernel_tag Tag;
   Tag tag;
-  same_direction_tag(u,v, k, tag);
+  return same_direction_tag(u,v, k, tag);
 }
 
 
