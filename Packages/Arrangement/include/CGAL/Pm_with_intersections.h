@@ -562,10 +562,12 @@ public:
 				      remaining_curve_prev_halfedge,
 				      remaining_curve_prev_halfedge_set, 
 				      en);
-			
+
+      // We removed the third parameter from insert_from_vertex()
       inserted_halfedge = 
 	Planar_map::insert_from_vertex(cv_first_part, 
-				       remaining_curve_source_vertex, false);
+				       remaining_curve_source_vertex);
+                                       // false);
       if (en != NULL) en->add_edge(cv_first_part, inserted_halfedge,
 				   false, false);
       CGAL_PM_END_OP(4)
@@ -1066,12 +1068,12 @@ public:
 
   // return the last inserted halfedge whose target points to the last 
   // point of the inserted xcurve
-  Halfedge_handle insert_from_vertex(const typename Traits::Curve& c, 
-				     Vertex_handle src, 
-				     Pmwx_change_notification *en = NULL)
+  Halfedge_handle insert_from_vertex(const typename Traits::Curve & c, 
+				     Vertex_handle                  src, 
+				     Pmwx_change_notification     * en = NULL)
   {
-    CGAL_precondition( ! traits->point_is_same( traits->curve_source( c),
-						traits->curve_target( c)));
+    CGAL_precondition( ! traits->point_is_same( traits->curve_source(c),
+						traits->curve_target(c)));
     Vertex_handle tgt;
     return insert_intersecting_curve(c, src, tgt, true, en);
   }
