@@ -696,6 +696,7 @@ set_compiler_flags()
     CGAL_SHARED_LIB_LDFLAGS=
     CGAL_SHARED_LIB_CREATE="false"
     CGAL_WINLIB_CXXFLAGS=""
+    CGAL_QT_CXXFLAGS=""
     WINDOW_INCLUDE=""
     WINDOW_DIR="/usr/lib/X11"
     XLIBS="-lX11"
@@ -717,6 +718,7 @@ set_compiler_flags()
     EXE_EXT=""
     CGAL_LIBNAME="libCGAL.a"
     CGAL_WIN_LIBNAME="libCGALWin.a"
+    CGAL_QT_LIBNAME="libCGALQt.a"
     CGAL_WIN_EXTRA_DIR=x11
     GMP_LIBNAME="libgmp.a"
     MATH_LIB="m"
@@ -748,6 +750,7 @@ set_compiler_flags()
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_WIN_LIBNAME="CGALWin.lib"
+	    CGAL_QT_LIBNAME="CGALQt.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    MATH_LIB=""
@@ -761,6 +764,7 @@ set_compiler_flags()
 	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -MLd -nologo"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
+	    CGAL_QT_CXXFLAGS="-DQT_DLL -DQT_THREAD_SUPPORT"
 	    CGAL_LIB_CREATE="LIB /OUT:"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE=
@@ -779,6 +783,7 @@ set_compiler_flags()
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_WIN_LIBNAME="CGALWin.lib"
+	    CGAL_QT_LIBNAME="CGALQt.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    MATH_LIB=
@@ -5038,9 +5043,7 @@ write_compiler_flags()
       "(e.g. /usr/local/lib/qt/bin/moc)" \
       >> ${FILE}
     ${_printf} "%s\\\\\n" "QT_MOC = " >> ${FILE}
-    ${_printf} "\t%s\n\n" \
-      "`_where_is 'QT_MOC'`" \
-      >> ${FILE}
+    ${_printf} "\t%s\n\n" "`_posix_path ${QT_MOC}`" >> ${FILE}
   fi
 
   #
@@ -5054,9 +5057,7 @@ write_compiler_flags()
       "(e.g. /usr/local/lib/qt/include)" \
       >> ${FILE}
     ${_printf} "%s\\\\\n" "QT_INCL_DIR = " >> ${FILE}
-    ${_printf} "\t%s\n\n" \
-      "`_where_is 'QT_INCL_DIR'`" \
-      >> ${FILE}
+    ${_printf} "\t%s\n\n" "`_where_is 'QT_INCL_DIR'`" >> ${FILE}
   fi
 
   #
@@ -5092,7 +5093,7 @@ write_compiler_flags()
     fi
   fi
   if [ -n "${QT_SUPPORT}" ]; then
-    makefile_print_line "-DCGAL_USE_QT" >> ${FILE}
+    makefile_print_line "-DCGAL_USE_QT ${CGAL_QT_CXXFLAGS}" >> ${FILE}
     if [ -n "${NEED_EXTRA_QT_IDIR}" ]; then
 	makefile_print_line "'-I\$(QT_INCL_DIR)'" >> ${FILE}
     fi
@@ -5491,6 +5492,7 @@ create_include_makefile()
   ${_printf} "%s\n" "CGAL_LIB = ${CGAL_LIBNAME}" >> ${FILE}
   ${_printf} "%s\n" "CGAL_WIN_LIB = ${CGAL_WIN_LIBNAME}" >> ${FILE}
   ${_printf} "%s\n" "CGAL_WIN_EXTRA_DIR = ${CGAL_WIN_EXTRA_DIR}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_QT_LIB = ${CGAL_QT_LIBNAME}" >> ${FILE}
 
   # 
   # CGAL_LIB_CXXFLAGS
@@ -5593,6 +5595,10 @@ prepare_lib_makefiles()
     done
     if [ -d ${CGAL_SRC_DIR}/CGALWin ]; then
 	replace_line ${CGAL_SRC_DIR}/CGALWin/makefile_Win \
+	    CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+    fi
+    if [ -d ${CGAL_SRC_DIR}/CGALQt ]; then
+	replace_line ${CGAL_SRC_DIR}/CGALQt/makefile_Qt \
 	    CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
     fi
 }
@@ -5717,6 +5723,10 @@ build_cgal()
 	if [ -z "${LEDA_SUPPORT}" -a -d ${CGAL_SRC_DIR}/CGALWin ]; then
 	    cd ${CGAL_SRC_DIR}/CGALWin
 	    _do_compile Win
+	fi
+	if [ -z "${QT_SUPPORT}" -a -d ${CGAL_SRC_DIR}/CGALQt ]; then
+	    cd ${CGAL_SRC_DIR}/CGALQt
+	    _do_compile Qt
 	fi
     fi
     write_buffer "\n"
