@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+10 February 2004 Radu Ursu
+-Updated headers in examples
+
 ver 8.37 (1/2/04) [mk]
 - added this-> before some inherited methods in Delaunay_triangulation_2
   and Triangulation_hierarchy_2; gcc 3.4 was complaining about it 

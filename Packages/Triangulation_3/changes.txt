@@ -1,3 +1,6 @@
+10 February 2004 Radu Ursu
+-Updated headers in examples 
+
 31/01/2004 Sylvain Pion
 - Fix missing CGALi:: qualification.
 

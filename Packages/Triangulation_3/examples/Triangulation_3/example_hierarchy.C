@@ -1,4 +1,11 @@
+// Copyright (c) 2001  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+// 
+// This file is part of an example program for CGAL. This example
+// program may be used, distributed and modified without limitation.
+//
 // Triangulation_3/example_hierarchy.C
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_hierarchy_3.h>

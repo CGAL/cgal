@@ -1,6 +1,12 @@
+// Copyright (c) 2001  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+// 
+// This file is part of an example program for CGAL. This example
+// program may be used, distributed and modified without limitation.
+//
 // Triangulation_3/example_tds.C
-#include <CGAL/Triangulation_data_structure_3.h>
 
+#include <CGAL/Triangulation_data_structure_3.h>
 #include <iostream>
 #include <fstream>
 #include <cassert>
