@@ -1,3 +1,6 @@
+1.30 (8 Apr 2002)
+  - removed remaining <R> parameterization of point type.
+
 1.29 (24 Mar 2002)
   - fixed remaining problems in optimal partition with collinear vertices
   - fixed some problems in the traits classes (referring to old design and
