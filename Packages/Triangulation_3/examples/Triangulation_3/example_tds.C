@@ -22,7 +22,7 @@
 
 // #include <cstring>
 #include <iostream>
-// #include <fstream>
+#include <fstream>
 // #include <strstream.h>
 
 #include <vector>
@@ -38,8 +38,8 @@
 // the definition of the geometric traits class is necessary to
 // instanciate base vertices and cells but will in fact never be used
 // in the program 
-typedef CGAL::Cartesian<double>  Rep;
-typedef CGAL::Triangulation_geom_traits_3<Rep> Gt;
+typedef CGAL::Cartesian<double>  Repr;
+typedef CGAL::Triangulation_geom_traits_3<Repr> Gt;
 
 typedef CGAL::Triangulation_vertex_base_3<Gt> Vb;
 typedef CGAL::Triangulation_cell_base_3<Gt> Cb;
