@@ -209,14 +209,11 @@ public:
       if (!traits->is_degenerate(*curr))
       {
 #ifndef NDEBUG
-        Data_structure* tt=curr->get_node();
-          
 #ifndef CGAL_TD_DEBUG
-          
+        CGAL_warning_code(Data_structure* tt=curr->get_node();)
         CGAL_warning(!tt->is_inner_node());
-          
 #else
-          
+        CGAL_assertion_code(Data_structure* tt=curr->get_node();)
         CGAL_assertion(tt);
         CGAL_assertion(!tt->is_inner_node());
 #endif
@@ -251,13 +248,13 @@ public:
 #ifndef NDEBUG          
 #ifndef CGAL_TD_DEBUG
           
-        Data_structure* tt=curr->get_node();
+        CGAL_warning_code(Data_structure* tt=curr->get_node();)
         CGAL_warning(tt);
         CGAL_warning(tt->is_inner_node());
           
 #else
-          
-        Data_structure* tt=curr->get_node();
+
+        CGAL_assertion_code(Data_structure* tt=curr->get_node();)
         CGAL_assertion(tt);
         CGAL_assertion(tt->is_inner_node());
 #endif
