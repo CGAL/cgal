@@ -122,18 +122,23 @@ public:
 
   void do_after_insertion(const Vertex_handle& v)
   {
+#ifdef DEBUG    
     std::cerr << "update_clusters" << std::endl;
     std::cerr << "va_has_a_cluster=" << va_has_a_cluster
               << std::endl
               << "vb_has_a_cluster=" << vb_has_a_cluster
               << std::endl;
     std::cerr << "clusters.size()=" << clusters.size() << std::endl;
+#endif // DEBUG
     Super::do_after_insertion(v);
     if( va_has_a_cluster ) 
       clusters.update_cluster(ca,ca_it,this->va,this->vb,v,cluster_splitted);
     if( vb_has_a_cluster )
       clusters.update_cluster(cb,cb_it,this->vb,this->va,v,cluster_splitted);
-    std::cerr << "clusters.size()=" << clusters.size() << std::endl;
+#ifdef DEBUG
+    std::cerr << "clusters.size() after update_cluster=" 
+	      << clusters.size() << std::endl;
+#endif // DEBUG
   }
 
   /**
