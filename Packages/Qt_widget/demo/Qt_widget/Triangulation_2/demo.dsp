@@ -68,7 +68,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "$(QTDIR)\include" /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\include\cgal\config\msvc" /I "$(CGALROOT)\auxiliary\wingmp\gmp-2.0.2" /I "$(CGALROOT)\include" /I "..\..\..\\Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "CGAL_USE_QT" /D "QT_DLL" /D "UNICODE" /D "QT_THREAD_SUPPORT" /FR /YX /FD /GZ /c /Tp
+# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "$(QTDIR)\include" /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\include\cgal\config\msvc" /I "$(CGALROOT)\auxiliary\wingmp\gmp-2.0.2" /I "$(CGALROOT)\include" /I "..\..\..\Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "CGAL_USE_QT" /D "QT_DLL" /D "UNICODE" /D "QT_THREAD_SUPPORT" /FR /YX /FD /GZ /c /Tp
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
@@ -123,22 +123,6 @@ SOURCE=.\triangulation_2.C
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=.\Qt_layer_show_nearest_vertex.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Qt_layer_show_points.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Qt_layer_show_triangulation.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Qt_layer_show_voronoy.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\include\CGAL\IO\Qt_widget.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
@@ -155,6 +139,10 @@ InputPath=..\..\..\include\CGAL\IO\Qt_widget.h
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\include\CGAL\IO\Qt_widget_history.h
 # End Source File
 # Begin Source File
 
