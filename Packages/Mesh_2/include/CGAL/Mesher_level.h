@@ -73,7 +73,7 @@ struct Null_mesher_level {
 template <
   class Triangulation_traits, /**< Traits class that defines operations
                                     from the trianguilation. */
-  class Derived, /**< Base class, that implement methods */
+  class Derived, /**< Derived class, that implements methods */
   class Element, /**< Type of elements that this level refines. */
   class Previous = Null_mesher_level /**< Previous level type, 
                                         defaults to \c Null_level
