@@ -33,7 +33,7 @@
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 // includes
-#include <CGAL/Homogeneous.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Min_circle_2.h>
 #include <CGAL/Min_circle_2_traits_2.h>
@@ -42,7 +42,7 @@
 using namespace CGAL;
 
 // typedefs
-typedef  Homogeneous< double >       R;
+typedef  Cartesian< double >         R;
 typedef  Point_2< R >                Point;
 typedef  Min_circle_2_traits_2< R >  Traits;
 typedef  Min_circle_2< Traits >      Min_circle;
