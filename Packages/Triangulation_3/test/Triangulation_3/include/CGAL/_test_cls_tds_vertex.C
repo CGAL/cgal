@@ -32,7 +32,9 @@ _test_vertex_tds_3(const Vertex &)
   // Build object 
   Cell c1;
   Point p;
-  Vertex v1(p,&c1);
+  Vertex v1;
+  v1.set_point(p);
+  v1.set_cell(&c1);
   assert(v1.cell()==&c1);
   c1.set_vertex(0,&v1);
   assert(v1.is_valid());
