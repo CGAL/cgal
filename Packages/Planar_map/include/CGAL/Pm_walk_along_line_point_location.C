@@ -127,114 +127,79 @@ Pm_walk_along_line_point_location<Planar_map>::locate(
 template <class Planar_map>
 typename Pm_walk_along_line_point_location<Planar_map>::Halfedge_handle
 Pm_walk_along_line_point_location<Planar_map>::vertical_ray_shoot(
-                                                 const Point& p, 
-                                                 Locate_type& lt, 
-                                                 bool up) const
+  const Point & p, 
+  Locate_type & lt, 
+  bool          up) const
 {
-  Face_handle f=pm->unbounded_face(),last=pm->faces_end();  
+  Face_handle f    = pm->unbounded_face(),
+              last = pm->faces_end();  
   // p always lies in f's interior
-  Halfedge_handle e=pm->halfedges_end(); // closest halfedge so far
+  Halfedge_handle e = pm->halfedges_end(); // closest halfedge so far
   lt = Planar_map::UNBOUNDED_FACE;
-  while(f!=last) // stop at innermost level
+  while(f != last) // stop at innermost level
+  {
+    last = f;
+    Holes_iterator it  = f->holes_begin(),
+                   end = f->holes_end();
+    // For each hole
+    while(it != end && last == f) 
     {
-      last = f;
-      Holes_iterator it=f->holes_begin(),end=f->holes_end();
-      while(it!=end && last==f)     // handle holes
+      if (find_closest(p,*it,up,false,e,lt))
+      {
+        switch (lt)
         {
-          if (find_closest(p,*it,up,false,e,lt))
-            {
-              switch (lt)
-                {
-                case Planar_map::VERTEX:
+        case Planar_map::VERTEX:
                   
 #ifdef CGAL_PM_DEBUG
-                  
-                  CGAL_assertion(
-                                 traits->point_is_same_x(
-                                                         e->target()->point(),
-                                                         p)
-                                 );
-                  
+          CGAL_assertion(traits->point_is_same_x(e->target()->point(), p));
 #endif
-                  
-                case Planar_map::EDGE:
+        case Planar_map::EDGE:
                   
 #ifdef CGAL_PM_WALK_DEBUG
-                  std::cerr << "\ncalling walk_along_line(" << p << "," 
-                            << up << ",false," << e->curve() << "," << lt 
-                            << ")";
+          std::cerr << "\ncalling walk_along_line(" << p << "," 
+                    << up << ",false," << e->curve() << "," << lt 
+                    << ")";
 #endif
-                  
-                  walk_along_line(p,up,false,e,lt);
-                  switch(lt)
-                    {
-                    case Planar_map::VERTEX:
-                      f=e->twin()->face();
-                      break;
-                    case Planar_map::EDGE:
+          walk_along_line(p,up,false,e,lt);
+          switch(lt)
+          {
+          case Planar_map::VERTEX:
+            f=e->twin()->face();
+            break;
+          case Planar_map::EDGE:
                       
 #ifdef CGAL_PM_DEBUG
-                      
-                      CGAL_assertion(
-                                     up == traits->point_is_left_low(
-                                       e->target()->point(),
-                                       e->source()->point()
-                                       )
-                                     );
-                      
+            CGAL_assertion(
+              up == traits->point_is_left_low(e->target()->point(),
+                                              e->source()->point()));
 #endif                      
-	                  f=e->face();
-                    case Planar_map::UNBOUNDED_FACE:
-                      break;
-                    default:
-                      CGAL_assertion(
-                                     lt==Planar_map::UNBOUNDED_FACE||
-                                     lt==Planar_map::EDGE||
-                                     lt==Planar_map::VERTEX
-                                     );
-                      break;
-                    }
-                  break;
-                default:
-                  CGAL_assertion(
-                                 lt==Planar_map::EDGE||
-                                 lt==Planar_map::VERTEX);
-                  break;
-                }
-            }
-          ++it;
+            f=e->face();
+          case Planar_map::UNBOUNDED_FACE:
+            break;
+          default:
+            CGAL_assertion(
+                           lt==Planar_map::UNBOUNDED_FACE||
+                           lt==Planar_map::EDGE||
+                           lt==Planar_map::VERTEX
+                           );
+            break;
+          }
+          break;
+        default:
+          CGAL_assertion(
+                         lt==Planar_map::EDGE||
+                         lt==Planar_map::VERTEX);
+          break;
         }
+      }
+      ++it;
     }
+  }
   if (e==pm->halfedges_end()) 
     lt=Planar_map::UNBOUNDED_FACE;
   
-  /* symmetric diagrams for downward ray shoot
-     x
-     |\
-     | x
-     p    => VERTEX
-     
-     x
-     \
-     |\  => EDGE
-     | x
-     p
-     
-     x        x
-     |        |
-     p=x   or  p   => EDGE
-     |
-     x
-     
-     x
-     |
-     x
-     => VERTEX
-     p
-  */
   return e;
 }
-
 
 template <class Planar_map>
 typename Pm_walk_along_line_point_location<Planar_map>::Halfedge_handle
