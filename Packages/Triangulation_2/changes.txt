@@ -1,6 +1,8 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+8 April 2004 Andreas Fabri
+- Replaced in Triangulation_2::locate method walk along a straight line with zig zag walk
 
 5 avril 2004 Mariette Yvinec
 - fixed a bug in Triangulation_hierarchy_vertex_base_2

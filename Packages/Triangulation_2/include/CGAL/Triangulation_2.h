@@ -41,7 +41,7 @@
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Triangulation_line_face_circulator_2.h>
-
+#include <CGAL/Random.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -177,6 +177,7 @@ protected:
   Gt  _gt;
   Tds _tds;
   Vertex_handle _infinite_vertex;
+  mutable Random rng;
 
 public:
   // CONSTRUCTORS
@@ -272,6 +273,7 @@ public:
 		  const Point& t,
 		  Locate_type& lt,
 		  int& li) const;
+
   Face_handle
   locate(const Point& p,
 	 Locate_type& lt,
@@ -1617,69 +1619,278 @@ march_locate_1D(const Point& t,
   return Face_handle();
 }
 
-template <class Gt, class Tds >    
-typename Triangulation_2<Gt, Tds>::Face_handle
+#if 1
+
+template <class Gt, class Tds >   typename Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt, Tds>::
-march_locate_2D(Face_handle start,
+march_locate_2D(Face_handle c,
 		const Point& t,
 		Locate_type& lt,
 		int& li) const
 {
-  //    CGAL_triangulation_precondition( ! is_infinite(start) );
-  const Point& p = start->vertex(0)->point();
-  if(xy_equal(t,p)) {
-    lt = VERTEX;
-    li = 0;
-    return start;
-  }
+  CGAL_triangulation_assertion(! is_infinite(c));
+  
+  Face_handle prev = Face_handle();
+  bool first = true;
+  while (1) {
+    if ( is_infinite(c) ) {
+      // c must contain t in its interior
+      lt = OUTSIDE_CONVEX_HULL;
+      li = c->index(infinite_vertex());
+      return c;
+    }
+    
+    // else c is finite
+    // Instead of testing its edges in a random order we do the following
+    // until we find a neighbor to go further:
+    // As we come from prev we do not have to check the edge leading to prev
+    // Now we flip a coin in order to decide if we start checking the
+    // edge before or the edge after the edge leading to prev
+    // We do loop unrolling in order to find out if this is faster.
+    // In the very beginning we do not have a prev, but for the first step 
+    // we do not need randomness
+    int left_first = rng.template get_bits<1>();
+    
+    const Point & p0 = c->vertex( 0 )->point();
+    const Point & p1 = c->vertex( 1 )->point();
+    const Point & p2 = c->vertex( 2 )->point();
+    Orientation o0, o1, o2;
 
-  Line_face_circulator lfc(start->vertex(0), this, t);
-
-  if(lfc==0 || lfc.collinear_outside()){
-    // point t lies outside or on the convex hull
-    // we walk on the convex hull to find it out
-    Face_circulator fc = incident_faces(infinite_vertex());
-    Face_circulator done(fc);
-    int ic = fc->index(infinite_vertex());
-    if (xy_equal(t,fc->vertex(cw(ic))->point())){
-      lt = VERTEX;
-      li = cw(ic);
-      return fc;
-     }
-    Orientation ori;
-    do{ // walking ccw around convex hull
-      ic = fc->index(infinite_vertex());
-      if (xy_equal(t,fc->vertex(ccw(ic))->point())){
-	lt = VERTEX;
-	li = ccw(ic);
-	return fc;
+    if(first){
+      prev = c;
+      first = false;
+      o0 = orientation(p0,p1,t);
+      if ( o0 == NEGATIVE ) {
+	c = c->neighbor( 2 );
+	continue;
       }
-      ori = orientation( fc->vertex(cw(ic))->point(),
-			 fc->vertex(ccw(ic))->point(), t);
-      if (ori == RIGHT_TURN) {
-	lt = OUTSIDE_CONVEX_HULL;
-	li = ic;
-	return fc;
+      o1 = orientation(p1,p2,t);
+      if ( o1 == NEGATIVE ) {
+	c = c->neighbor( 0 );
+	continue;
       }
-      if (ori == COLLINEAR &&
-	  collinear_between(fc->vertex(cw(ic))->point(),
-			    t, 
-			    fc->vertex(ccw(ic))->point()) ) {
-	lt = EDGE;
-	li = ic;
-	return fc;
+      o2 = orientation(p2,p0,t);
+      if ( o2 == NEGATIVE ) {
+	c = c->neighbor( 1 );
+	continue;
       }
-    } while (--fc != done);
-    //should not arrive there;
-    CGAL_triangulation_assertion(fc != done);
-  }
-	  
-    while(! lfc.locate(t, lt, li) ){
-    ++lfc;
-  }
-  return lfc;
-}    
+    } else if(left_first){
+      if(c->neighbor(0) == prev){
+	prev = c;
+	o0 = orientation(p0,p1,t);
+	if ( o0 == NEGATIVE ) {
+	  c = c->neighbor( 2 );
+	  continue;
+	}
+	o2 = orientation(p2,p0,t);
+	if ( o2 == NEGATIVE ) {
+	  c = c->neighbor( 1 );
+	  continue;
+	}
+        o1 = POSITIVE;
+      } else if(c->neighbor(1) == prev){
+	prev = c;
+	o1 = orientation(p1,p2,t);
+	if ( o1 == NEGATIVE ) {
+	  c = c->neighbor( 0 );
+	  continue;
+	}
+	o0 = orientation(p0,p1,t);
+	if ( o0 == NEGATIVE ) {
+	  c = c->neighbor( 2 );
+	  continue;
+	}
+        o2 = POSITIVE;
+      } else {
+	prev = c;
+	o2 = orientation(p2,p0,t);
+	if ( o2 == NEGATIVE ) {
+	  c = c->neighbor( 1 );
+	  continue;
+	}
+	o1 = orientation(p1,p2,t);
+	if ( o1 == NEGATIVE ) {
+	  c = c->neighbor( 0 );
+	  continue;
+	}
+        o0 = POSITIVE;
+      }
       
+    } else { // right_first
+      if(c->neighbor(0) == prev){
+	prev = c;
+	o2 = orientation(p2,p0,t);
+	if ( o2 == NEGATIVE ) {
+	  c = c->neighbor( 1 );
+	  continue;
+	}
+	o0 = orientation(p0,p1,t);
+	if ( o0 == NEGATIVE ) {
+	  c = c->neighbor( 2 );
+	  continue;
+	}
+        o1 = POSITIVE;
+      } else if(c->neighbor(1) == prev){
+	prev = c;
+	o0 = orientation(p0,p1,t);
+	if ( o0 == NEGATIVE ) {
+	  c = c->neighbor( 2 );
+	  continue;
+	}
+	o1 = orientation(p1,p2,t);
+	if ( o1 == NEGATIVE ) {
+	  c = c->neighbor( 0 );
+	  continue;
+	}
+        o2 = POSITIVE;
+      } else {
+	prev = c;
+	o1 = orientation(p1,p2,t);
+	if ( o1 == NEGATIVE ) {
+	  c = c->neighbor( 0 );
+	  continue;
+	}
+	o2 = orientation(p2,p0,t);
+	if ( o2 == NEGATIVE ) {
+	  c = c->neighbor( 1 );
+	  continue;
+	}
+        o0 = POSITIVE;
+      }
+    }
+  
+    // now p is in c or on its boundary
+    int sum = ( o0 == COLLINEAR )
+      + ( o1 == COLLINEAR )
+      + ( o2 == COLLINEAR );
+    switch (sum) {
+    case 0:
+      {
+	lt = FACE;
+	li = 4;
+	break;
+      }
+    case 1:
+      {
+	lt = EDGE;
+	li = ( o0 == COLLINEAR ) ? 2 :
+	  ( o1 == COLLINEAR ) ? 0 :
+	  1;
+	break;
+      }
+    case 2:
+      {
+	lt = VERTEX;
+	li = ( o0 != COLLINEAR ) ? 2 :
+	  ( o1 != COLLINEAR ) ? 0 :
+	  1;
+	break;
+      }
+    }
+    return c;
+  }
+} 
+
+
+#else
+
+template <class Gt, class Tds >   typename Triangulation_2<Gt, Tds>::Face_handle
+Triangulation_2<Gt, Tds>::
+march_locate_2D(Face_handle c,
+		const Point& t,
+		Locate_type& lt,
+		int& li) const
+{
+  CGAL_triangulation_assertion(! is_infinite(c));
+  
+  Face_handle prev = Face_handle();
+  while (1) {
+    if ( is_infinite(c) ) {
+      // c must contain t in its interior
+      lt = OUTSIDE_CONVEX_HULL;
+      li = c->index(infinite_vertex());
+      return c;
+    }
+
+    // else c is finite
+    // we test its edges in a random order until we find a
+    // neighbor to go further
+
+    int i = rng.template get_bits<2>();
+    int ccwi = ccw(i);
+    int cwi = cw(i);
+    const Point & p0 = c->vertex( i )->point();
+    const Point & p1 = c->vertex( ccwi )->point();
+    Orientation o0, o1, o2;
+    CGAL_triangulation_assertion(orientation(p0,p1,c->vertex( cwi )->point())==POSITIVE);
+    if(c->neighbor(cwi) == prev){
+      o0 = POSITIVE;
+    } else {
+      o0 = orientation(p0,p1,t);
+      if ( o0 == NEGATIVE ) {
+	prev = c;
+	c = c->neighbor( cwi );
+	continue;
+      }
+    }
+    const Point & p2 = c->vertex( cwi )->point();
+    if(c->neighbor(i) == prev){
+      o1 = POSITIVE;
+    } else {
+      o1 = orientation(p1,p2,t);
+      if ( o1 == NEGATIVE ) {
+	prev = c;
+	c = c->neighbor( i );
+	continue;
+      }
+    }
+    if(c->neighbor(ccwi) == prev){
+      o2 = POSITIVE;
+    } else {
+      o2 = orientation(p2,p0,t);
+      if ( o2 == NEGATIVE ) {
+	prev = c;
+	c = c->neighbor( ccwi );
+	continue;
+      }
+    }
+
+    // now p is in c or on its boundary
+    int sum = ( o0 == COLLINEAR )
+      + ( o1 == COLLINEAR )
+      + ( o2 == COLLINEAR );
+    switch (sum) {
+    case 0:
+      {
+	lt = FACE;
+	li = 4;
+	break;
+      }
+    case 1:
+      {
+	lt = EDGE;
+	li = ( o0 == COLLINEAR ) ? cwi :
+	  ( o1 == COLLINEAR ) ? i :
+	  ccwi;
+	break;
+      }
+    case 2:
+      {
+	lt = VERTEX;
+	li = ( o0 != COLLINEAR ) ? cwi :
+	  ( o1 != COLLINEAR ) ? i :
+	  ccwi;
+	break;
+      }
+    }
+    return c;
+  }
+}    
+
+
+#endif
+
+
 
     
 template <class Gt, class Tds >
@@ -1715,7 +1926,9 @@ locate(const Point& p,
   }else if(is_infinite(start)){
     start = start->neighbor(start->index(infinite_vertex()));
   }
+
   return march_locate_2D(start, p, lt, li);
+
 }
 
 
