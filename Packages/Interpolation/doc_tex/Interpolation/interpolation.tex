@@ -87,9 +87,11 @@ in general.  It is defined as follows:
 Sibson describes a method to approximate the gradient of the function
 $f$ from the function values on the data sites. For the data point
 $\mathbf{p_i}$, we determine
-$$\mathbf{g_i} = \min_{\mathbf{g}} \sum_j
-\frac{\lambda_j(\mathbf{p_i})}{\|\mathbf{p_i} - \mathbf{p_j}\|^2}
-\left( z_j - (z_i + \mathbf{g}^t (\mathbf{p_j} -\mathbf{p_i})) \right),
+$$\mathbf{g_i} = \min_{\mathbf{g}} 
+%%
+%%\sum_j
+%%\frac{\lambda_j(\mathbf{p_i})}{\|\mathbf{p_i} - \mathbf{p_j}\|^2}
+%%\left( z_j - (z_i + \mathbf{g}^t (\mathbf{p_j} -\mathbf{p_i})) \right),
 $$
 where $\lambda_j(\mathbf{p_i})$ is the natural neighbor coordinate
 of $\mathbf{p_i}$ with respect to $\mathbf{p_i}$ associated to
