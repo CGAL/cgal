@@ -58,7 +58,6 @@ Iso_cuboidC3(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p,
 
 template < class R >
 inline
-//Iso_cuboidC3<R CGAL_CTAG>::~Iso_cuboidH3()
 Iso_cuboidC3<R CGAL_CTAG>::~Iso_cuboidC3()
 {}
 
@@ -232,8 +231,6 @@ bool
 Iso_cuboidC3<R CGAL_CTAG>::
 has_on_unbounded_side(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
-  // return lexicographically_smaller(p,min())
-//       || lexicographically_smaller(max(),p);
   return lexicographically_xyz_smaller(p,min())
       || lexicographically_xyz_smaller(max(),p);
 }

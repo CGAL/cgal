@@ -26,7 +26,6 @@ public:
   typedef typename R::Point_3              Point_3;
   typedef typename R::Aff_transformation_3 Aff_transformation_3;
 #else
-  //typedef PointC3<R>                       Self;
   typedef Iso_cuboidC3<R>                  Self;
   typedef typename R::Point_3_base         Point_3;
   typedef typename R::Aff_transformation_3_base Aff_transformation_3;
@@ -45,10 +44,6 @@ public:
   bool         identical(const Self& s) const;
   int          id() const;
 
-//   Self         min() const;
-//   Self         max() const;
-//   Self         vertex(int i) const;
-//   Self         operator[](int i) const;
   Point_3         min() const;
   Point_3         max() const;
   Point_3         vertex(int i) const;
