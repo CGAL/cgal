@@ -33,7 +33,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#if defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
+!defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
 template < class I, class Fct, class Ref, class Ptr, class Dist, class Ctg>
 #else
 template < class I,
@@ -152,6 +153,7 @@ operator+( D n, Iterator_project<I,Fct,Ref,Ptr,Dist,Ctg> i) {
 }
 
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 template < class I, class Fct, class Ref, class Ptr, class Dist, class Ctg>
 inline  Ctg
 iterator_category( const Iterator_project<I,Fct,Ref,Ptr,Dist,Ctg>&) {
@@ -168,10 +170,12 @@ query_circulator_or_iterator(
   const Iterator_project<I,Fct,Ref,Ptr,Dist,Ctg>&) {
   return Iterator_tag();
 }
+#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 
 
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#if defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
+!defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
 template < class I, class II, class Fct, class Dist, class Ctg>
 #else
 template < class I,
@@ -282,8 +286,10 @@ public:
     return !(*this < i);
   }
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   friend inline  value_type*
   value_type( const Self&) { return (value_type*)(0); }
+#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
@@ -295,6 +301,7 @@ operator+( D n, Iterator_const_project<I,II,Fct,Dist,Ctg> i) {
 }
 
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 template < class I, class II, class Fct, class Dist, class Ctg>
 inline  Ctg
 iterator_category( const Iterator_const_project<I,II,Fct,Dist,Ctg>&) {
@@ -311,6 +318,7 @@ query_circulator_or_iterator(
   const Iterator_const_project<I,II,Fct,Dist,Ctg>&) {
   return Iterator_tag();
 }
+#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 
 CGAL_END_NAMESPACE

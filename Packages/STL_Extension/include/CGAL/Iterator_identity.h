@@ -33,7 +33,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#if defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
+!defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
 template < class I, class Ref, class Ptr, class Val, class Dist, class Ctg>
 #else
 template < class I,
@@ -140,6 +141,7 @@ public:
     return !(*this < i);
   }
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   friend inline  value_type*
   value_type( const Self&) {
     return (value_type*)(0);
@@ -156,6 +158,7 @@ public:
   query_circulator_or_iterator( const Self&) {
     return Iterator_tag();
   }
+#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 

@@ -82,6 +82,7 @@ public:
     return tmp;
   }
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   friend inline  value_type*
   value_type( const Self&) {
     return (value_type*)(0);
@@ -98,6 +99,7 @@ public:
   query_circulator_or_iterator( const Self&) {
     return Iterator_tag();
   }
+#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
@@ -157,6 +159,7 @@ public:
     return tmp;
   }
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   friend inline  value_type*
   value_type( const Self&) {
     return (value_type*)(0);
@@ -173,6 +176,7 @@ public:
   query_circulator_or_iterator( const Self&) {
     return Iterator_tag();
   }
+#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
@@ -235,6 +239,7 @@ public:
     return tmp;
   }
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   friend inline  value_type*
   value_type( const Self&) {
     return (value_type*)(0);
@@ -251,6 +256,7 @@ public:
   query_circulator_or_iterator( const Self&) {
     return Iterator_tag();
   }
+#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
@@ -319,6 +325,7 @@ public:
     return tmp;
   }
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   friend inline  value_type*
   value_type( const Self&) {
     return (value_type*)(0);
@@ -335,6 +342,7 @@ public:
   query_circulator_or_iterator( const Self&) {
     return Iterator_tag();
   }
+#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
@@ -409,6 +417,7 @@ public:
       return tmp;
     }
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
     friend inline  value_type*
     value_type( const Self&) {
       return (value_type*)(0);
@@ -425,6 +434,7 @@ public:
     query_circulator_or_iterator( const Self&) {
       return Iterator_tag();
     }
+#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 

@@ -83,7 +83,13 @@ private:
 
 public:
   void init_index( const IC& i, const IC& j) {
+#if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) || \
+    defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
+    typedef typename std::iterator_traits<IC>::iterator_category ICC;
+    ini_idx( i, j, ICC());
+#else
     ini_idx( i, j, std::iterator_category( i));
+#endif
   }
 
 private:
@@ -109,7 +115,13 @@ private:
 public:
   void push_back( const IC& k) {
     // adds k at the end of the indices.
+#if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) || \
+    defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
+    typedef typename std::iterator_traits<IC>::iterator_category ICC;
+    push_back( k, ICC());
+#else
     push_back( k, std::iterator_category( k));
+#endif
   }
 
   std::size_t find( const IC& k, std::random_access_iterator_tag) const {
@@ -156,7 +168,8 @@ public:
 
   std::size_t operator[]( const IC& k) const {
     // returns inverse index of k.
-#ifndef CGAL_CFG_NO_ITERATOR_TRAITS
+#if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) || \
+    defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
     typedef typename std::iterator_traits<IC>::iterator_category
       category;
     return find( k, category());

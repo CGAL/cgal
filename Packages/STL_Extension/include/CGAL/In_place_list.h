@@ -134,6 +134,7 @@ public:
 };
 
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 template < class T>
 inline  std::bidirectional_iterator_tag
 iterator_category( const  _In_place_list_iterator<T>&) {
@@ -155,6 +156,7 @@ query_circulator_or_iterator(
   const _In_place_list_iterator<T>&) {
   return Iterator_tag();
 }
+#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 
 
@@ -208,6 +210,7 @@ public:
 };
 
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 template < class T>
 inline  std::bidirectional_iterator_tag
 iterator_category( const  _In_place_list_const_iterator<T>&) {
@@ -229,6 +232,7 @@ query_circulator_or_iterator(
   const  _In_place_list_const_iterator<T>&) {
   return Iterator_tag();
 }
+#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 
 

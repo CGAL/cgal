@@ -69,7 +69,13 @@ public:
     start = i;
   }
   void init_index( const IC& i, const IC& j) {
+#if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) || \
+    defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
+    typedef typename std::iterator_traits<IC>::iterator_category ICC;
+    init_index( i, j, ICC());
+#else
     init_index( i, j, std::iterator_category( i));
+#endif
   }
 
 
@@ -119,21 +125,39 @@ public:
 
   void reserve( size_type r) {
     // reserve r entries, if a `vector' is used internally.
+#if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) || \
+    defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
+    typedef typename std::iterator_traits<IC>::iterator_category ICC;
+    reserve( r, ICC());
+#else
     reserve( r, std::iterator_category( IC()));
+#endif
   }
 
   // OPERATIONS
 
   IC  find( size_type n) const {
     // returns inverse index of k.
+#if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) || \
+    defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
+    typedef typename std::iterator_traits<IC>::iterator_category ICC;
+    return find( n, ICC());
+#else
     return find( n, std::iterator_category( IC()));
+#endif
   }
 
   IC  operator[]( size_type n) const { return find(n); }
 
   void push_back( const IC& k) {
     // adds k at the end of the indices.
+#if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) || \
+    defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
+    typedef typename std::iterator_traits<IC>::iterator_category ICC;
+    push_back( k, ICC());
+#else
     push_back( k, std::iterator_category( k));
+#endif
   }
 };
 

@@ -128,12 +128,14 @@ public:
     return tmp.operator*();
   }
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   friend inline  iterator_category
   iterator_category( const Self&) { return iterator_category(); }
   friend inline  value_type*
   value_type( const Self&) { return (value_type*)(0); }
   friend inline  difference_type*
   distance_type( const Self&) { return (difference_type*)(0); }
+#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
@@ -143,12 +145,14 @@ Circulator_project<C,Fct,Ref,Ptr>
 operator+( Dist n, Circulator_project<C,Fct,Ref,Ptr> i) { return i += n; }
 
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
 template < class C, class Fct, class Ref, class Ptr>
 inline  Circulator_tag
 query_circulator_or_iterator(
   const Circulator_project<C,Fct,Ref,Ptr>&) {
   return Circulator_tag();
 }
+#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 
 CGAL_END_NAMESPACE

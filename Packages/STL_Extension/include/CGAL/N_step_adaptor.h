@@ -33,7 +33,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#if defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
+!defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
 template < class I, int N, class Ref, class Ptr,
            class Val, class Dist, class Ctg>
 #else
@@ -154,6 +155,7 @@ public:
   bool operator<=( const Self& i) const { return !(i < *this); }
   bool operator>=( const Self& i) const { return !(*this < i); }
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   friend inline  iterator_category
   iterator_category( const Self&) { return iterator_category(); }
   friend inline  value_type*
@@ -164,6 +166,7 @@ public:
   typedef typename  C_Traits::category  category;
   friend inline  category
   query_circulator_or_iterator( const Self&) { return category(); }
+#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 #ifndef CGAL_CFG_NO_CONSTANTS_IN_FUNCTION_TEMPLATES
