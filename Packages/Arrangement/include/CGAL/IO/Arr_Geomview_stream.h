@@ -41,10 +41,12 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Dcel,class Traits, class Base_node>
-Geomview_stream& operator << (Geomview_stream& os, const Arrangement_2<Dcel,Traits, Base_node>& arr)
+Geomview_stream& operator << (Geomview_stream& os, 
+                              const Arrangement_2<Dcel,Traits, Base_node>& arr)
 {
 
-  Pm_drawer< Arrangement_2<Dcel,Traits, Base_node> , Geomview_stream>  drawer(os);
+  Pm_drawer< Arrangement_2<Dcel,Traits, Base_node> , Geomview_stream>  
+                                                              drawer(os);
   
   draw_pm(arr, drawer, os);
 

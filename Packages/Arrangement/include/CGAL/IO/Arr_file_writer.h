@@ -54,16 +54,22 @@ class Arr_file_writer : public  Pm_file_writer<Arrangement> {
 
 public:
   //typedef Arrangement_                                           Arrangement;
-  typedef typename Arrangement::Curve_iterator                   Curve_iterator;
-  typedef typename Arrangement::Subcurve_iterator                Subcurve_iterator;
-  typedef typename Arrangement::Edge_iterator                    Edge_iterator;
-  typedef typename Arrangement::Curve_const_iterator             Curve_const_iterator;
-  typedef typename Arrangement::Subcurve_const_iterator          Subcurve_const_iterator;
-  typedef typename Arrangement::Edge_const_iterator              Edge_const_iterator;
+  typedef typename Arrangement::Curve_iterator            Curve_iterator;
+  typedef typename Arrangement::Subcurve_iterator         Subcurve_iterator;
+  typedef typename Arrangement::Edge_iterator             Edge_iterator;
+  typedef typename Arrangement::Curve_const_iterator      Curve_const_iterator;
+  typedef typename Arrangement::Subcurve_const_iterator   
+                                                    Subcurve_const_iterator;
+  typedef typename Arrangement::Edge_const_iterator      Edge_const_iterator;
 
-  Arr_file_writer(std::ostream& o, const Arrangement& arr, bool verbose = false) : Pm_file_writer<Arrangement>(o, arr, verbose) {}
+  Arr_file_writer(std::ostream& o, 
+                  const Arrangement& arr, 
+                  bool verbose = false) : 
+    Pm_file_writer<Arrangement>(o, arr, verbose) {}
 
-  Arr_file_writer(std::ostream& o, const File_header& h) : Pm_file_writer<Arrangement>(o, h) {}
+  Arr_file_writer(std::ostream& o, 
+                  const File_header& h) : 
+    Pm_file_writer<Arrangement>(o, h) {}
   
 
   void write_curve (Curve_iterator cv){
@@ -103,6 +109,11 @@ public:
 CGAL_END_NAMESPACE
 #endif // CGAL_IO_FILE_WRITER_ARR_H //
 // EOF //
+
+
+
+
+
 
 
 

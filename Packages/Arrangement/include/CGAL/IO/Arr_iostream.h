@@ -44,7 +44,9 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Dcel, class Traits, class Base_node> inline
-::std::ostream& operator << (::std::ostream& o, const Arrangement_2<Dcel,Traits, Base_node>& arr) 
+::std::ostream& operator << (::std::ostream& o, 
+                             const Arrangement_2<Dcel,Traits, 
+                             Base_node>& arr) 
 {
   //print_OFF(o, arr);
   
@@ -56,7 +58,8 @@ template <class Dcel, class Traits, class Base_node> inline
 }
  
 template <class Dcel, class Traits, class Base_node> inline
-::std::istream& operator>>( std::istream& in, Arrangement_2<Dcel,Traits, Base_node>& arr) {
+::std::istream& operator>>( std::istream& in, 
+                            Arrangement_2<Dcel,Traits, Base_node>& arr) {
   // reads a polyhedron from `in' and appends it to P.
   
   arr.read(in);

@@ -32,7 +32,8 @@ std::ostream&  operator<<(std::ostream& os,  const Curve& cv)
   typedef typename Curve::const_iterator       Points_iterator;
   
   os<<cv.size()<<std::endl;
-  for (Points_iterator points_iter = cv.begin(); points_iter != cv.end(); points_iter++)
+  for (Points_iterator points_iter = cv.begin(); 
+       points_iter != cv.end(); points_iter++)
     os<<" "<<*points_iter;
 
   return os;
@@ -62,3 +63,8 @@ CGAL_END_NAMESPACE
 
 #endif
 //#endif 
+
+
+
+
+

@@ -65,7 +65,8 @@ public:
 
   Arr_file_scanner(std::istream& in) : Pm_file_scanner<Arrangement>(in) {}
 
-  Arr_file_scanner(std::istream& in, const File_header& h) : Pm_file_scanner<Arrangement>(in, h) {}
+  Arr_file_scanner(std::istream& in, const File_header& h) : 
+    Pm_file_scanner<Arrangement>(in, h) {}
 
   void scan_Curve_node(Curve_node* cn){
 
@@ -106,5 +107,12 @@ public:
 CGAL_END_NAMESPACE
 #endif // CGAL_IO_FILE_SCANNER_PM_H //
 // EOF //
+
+
+
+
+
+
+
 
 
