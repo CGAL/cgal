@@ -39,7 +39,7 @@ compile_and_run()
     for DATAFILE in ${datafiles}
     do
         base=`expr $DATAFILE : '.*\/\(.*\)' '|' $DATAFILE`;
-        if [ ${base} == "CVS" ]; then continue; fi
+        if [ ${base}=="CVS" ]; then continue; fi
 
 	COMMAND="./$1 ${DATAFILE}"
         EXEC_AND_DATAFILE="$1 `basename ${DATAFILE}`"
