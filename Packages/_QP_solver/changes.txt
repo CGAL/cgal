@@ -1,5 +1,8 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.12 on 29-Jul-2003 [af]
+Added comparison operator with int in gmp_double.h
+
 Version 0.9.11 on 19-Jun-2003 [bg]
 - Removed bug in 10-Jun-2003 workaround
 
