@@ -29,8 +29,11 @@
 // It also contains the definition of the Protect_FPU_rounding<> classes,
 // a helper class which is a nice way to protect blocks of code needing a
 // particular rounding mode.
-
-#ifdef __linux__
+#if defined __alpha__  && defined __linux__ 
+extern "C" {
+#include <fenv.h>
+}
+#elif defined __linux__ 
 #include <fpu_control.h>
 #elif defined __SUNPRO_CC || (defined __KCC && defined __sun)
 #include <ieeefp.h>
@@ -133,7 +136,7 @@ inline double IA_bug_sqrt(double d)
 // It should work with GNU libc 2.1.  Not tested yet.
 #define CGAL_IA_SETFPCW(CW) fesetround(CW)
 #define CGAL_IA_GETFPCW(CW) CW = fegetround()
-typedef int FPU_CW_t;
+typedef fpu_control_t FPU_CW_t;
 #define CGAL_FE_TONEAREST    FE_TONEAREST
 #define CGAL_FE_TOWARDZERO   FE_TOWARDZERO
 #define CGAL_FE_UPWARD       FE_UPWARD
@@ -150,7 +153,7 @@ typedef unsigned short FPU_CW_t;
 #define CGAL_FE_UPWARD       (0x800 | 0x127f)
 #define CGAL_FE_DOWNWARD     (0x400 | 0x127f)
 
-#elif defined __powerpc__
+#elif defined __powerpc__  
 #define CGAL_IA_SETFPCW(CW) _FPU_SETCW(CW)
 #define CGAL_IA_GETFPCW(CW) _FPU_GETCW(CW)
 typedef fpu_control_t FPU_CW_t;
@@ -204,14 +207,14 @@ typedef unsigned int FPU_CW_t;
 #define CGAL_FE_UPWARD       FP_RND_RP
 #define CGAL_FE_DOWNWARD     FP_RND_RM
 
-#elif defined __alpha__  // Not yet supported.
-#define CGAL_IA_SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : :"f" (CW))
-#define CGAL_IA_GETFPCW(CW) asm volatile ("excb; mf_fpcr %0" : "=f" (CW))
+#elif defined __alpha__  // preliminary suppor.
+#define CGAL_IA_SETFPCW(CW) (__ieee_set_fp_control(CW))
+#define CGAL_IA_GETFPCW(CW) (CW = __ieee_get_fp_control())
 typedef unsigned long FPU_CW_t;
-#define CGAL_FE_TONEAREST    (0x0800000000000000UL)
-#define CGAL_FE_TOWARDZERO   (0x0000000000000000UL)
-#define CGAL_FE_UPWARD       (0x0c00000000000000UL)
-#define CGAL_FE_DOWNWARD     (0x0400000000000000UL)
+#define CGAL_FE_TONEAREST   FE_TONEAREST
+#define CGAL_FE_TOWARDZERO  FE_TOWARDZERO 
+#define CGAL_FE_UPWARD      FE_UPWARD 
+#define CGAL_FE_DOWNWARD    FE_DOWNWARD 
 
 #elif defined _MSC_VER
 // Found in http://msdn.microsoft.com/library/sdkdoc/directx/imover_7410.htm :
