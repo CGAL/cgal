@@ -69,75 +69,33 @@ typdef CGAL::Extended_cartesian<NT> Kernel;
 #include "grid_generator.h"
 
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
-typedef Nef_polyhedron::Point_3 Point_3;
 typedef Nef_polyhedron::Vector_3 Vector_3;
 typedef Nef_polyhedron::Aff_transformation_3 Aff_transformation_3;
 typedef tetrahedron_generator<Kernel> tgen;
 typedef CGAL::grid_generator<Nef_polyhedron> ggen;
-typedef CGAL::Random_points_in_cube_3<Point_3> Point_source;
 
 bool cgal_nef3_timer_on = false;
 
 int main(int argc, char* argv[]) {
 
-  assert(argc>1 && argc < 8);
+  assert(argc==3);
   
-  int nx = argc>2 ? std::atoi(argv[2]) : 2;
-  int ny = argc>3 ? std::atoi(argv[3]) : 2;
-  int nz = argc>4 ? std::atoi(argv[4]) : 2;
-  int n  = argc>5 ? std::atoi(argv[5]) : 2;
+  std::ifstream in1(argv[1]);
+  std::ifstream in1(argv[2]);
 
-  std::ifstream in(argv[1]);
-  Nef_polyhedron Nin;
-  in >> Nin;
-  Nin.transform(Aff_transformation_3(CGAL::SCALING,100,1));
-  std::ostringstream out1;
-  ggen g(out1, Nin);
-  g.print(nx,ny,nz);
-  std::istringstream in1(out1.str());
-  Nef_polyhedron N1;
+  Nef_polyhedron N1, N2;
   in1 >> N1;
-  RT s = g.size_x();
-  N1.transform(Aff_transformation_3(CGAL::TRANSLATION,Vector_3(s,s,s,2)));
-  CGAL_assertion(N1.is_valid());
-
-  std::ostringstream out2;
-  if(argc>6) {
-    tgen t2(out2,s,std::atoi(argv[6]));
-    t2.create_tetrahedra(nx+1,ny+1,nz+1);
-  } else {
-    tgen t2(out2,s);
-    t2.create_tetrahedra(nx+1,ny+1,nz+1);    
-  }
-  std::istringstream in2(out2.str());
-  Nef_polyhedron N2;
   in2 >> N2;
-  CGAL_assertion(N2.is_valid());
+
+  cgal_nef3_timer_on = true;
 
 #if defined CGAL_NEF3_UNION
-  N1=N1.join(N2);
+  N1.join(N2);
 #elif defined CGAL_NEF3_INTERSECTION
-  N1=N1.intersection(N2);
+  N1.intersection(N2);
 #elif defined CGAL_NEF3_DIFFERENCE
-  N1=N1.difference(N2);
+  N1.difference(N2);
 #else
-  N1=N1.symmetric_difference(N2);
+  N1.symmetric_difference(N2);
 #endif
-
-  RT b=s*(nx+1);
-  N1.transform(Aff_transformation_3(CGAL::TRANSLATION,Vector_3(-b,-b,-b,2)));
-
-  CGAL::Timer pl;
-  pl.start();
-
-  Point_source P(CGAL::to_double(b)/2);
-  for(int i=0;i<n;++i) {
-    N1.locate(*P++);
-  }
-  pl.stop();
-
-  std::cout << "Input_size: " << N1.number_of_vertices() << std::endl;
-  std::cout << "Number_of_point_location_queries: " << n << std::endl;
-  std::cout << "Total_runtime: " << pl.time() << std::endl;
-  std::cout << "Runtime_per_query: " << pl.time()/n << std::endl;
 }

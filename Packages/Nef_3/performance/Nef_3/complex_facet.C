@@ -116,13 +116,19 @@ void transform_small(Nef_polyhedron& N, int s, int l, int x, int y) {
 
 int main(int argc, char* argv[]) {
 
+  CGAL_assertion(argc>1 && argc<6);
+
   int n = argc>2 ? std::atoi(argv[2]) : 10;
   int s = argc>3 ? std::atoi(argv[3]) : 100;
-  int l = argc>4 ? std::atoi(argv[4]) : 2;
 
   std::ostringstream out1;
-  tgen t1(out1,s);
-  t1.create_tetrahedra(n,n,1);
+  if(argc>4) {
+    tgen t2(out1,s,std::atoi(argv[4]));
+    t2.create_tetrahedra(n,n,1);
+  } else {
+    tgen t2(out1,s);
+    t2.create_tetrahedra(n,n,1);    
+  }
   std::istringstream in1(out1.str());
   Nef_polyhedron N1;
   in1 >> N1;
@@ -134,10 +140,10 @@ int main(int argc, char* argv[]) {
   Nef_polyhedron N3=N2;
   transform_big(N2,n,s);
 
-  std::cout << N1;
-  std::cout << N2;
-  
+  N1.transform(Aff_transformation_3(0,0,-1, 0,1,0, 1,0,0, 1));
+  N2.transform(Aff_transformation_3(0,0,-1, 0,1,0, 1,0,0, 1));
+
   cgal_nef3_timer_on = true;
 
-  N1=N2.join(N1);
+  N2.join(N1);
 };

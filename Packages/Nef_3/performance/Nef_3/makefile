@@ -6,7 +6,6 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = /usr/local/CGAL/CGAL-3.1/make/makefile_i686_Linux-2.6.8.2.1.p3_g++-3.3.4_LEDA
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -14,6 +13,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           $(ADDITIONAL_CXXFLAGS) \
 	   $(OPTIMIZATION_FLAGS) \
            $(KERNEL_FLAGS) \
            -DCGAL_NEF3_DUMP_STATISTICS \
@@ -61,7 +61,9 @@ all:            \
                 complex_sphere_map$(EXE_EXT) \
                 complex_facet$(EXE_EXT) \
                 point_location$(EXE_EXT) \
-		create_complex_sphere_map_data$(EXE_EXT)
+		point_location2$(EXE_EXT) \
+		create_complex_sphere_map_data$(EXE_EXT) \
+	  	binary_operation$(EXE_EXT)
 
 union_of_rotated_cylinders$(EXE_EXT): union_of_rotated_cylinders$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)union_of_rotated_cylinders union_of_rotated_cylinders$(OBJ_EXT) $(LDFLAGS)
@@ -91,8 +93,12 @@ complex_facet$(EXE_EXT): complex_facet$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)complex_facet complex_facet$(OBJ_EXT) $(LDFLAGS)
 point_location$(EXE_EXT): point_location$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)point_location point_location$(OBJ_EXT) $(LDFLAGS)
+point_location2$(EXE_EXT): point_location2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)point_location2 point_location2$(OBJ_EXT) $(LDFLAGS)
 create_complex_sphere_map_data$(EXE_EXT): create_complex_sphere_map_data$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)create_complex_sphere_map_data create_complex_sphere_map_data$(OBJ_EXT) $(LDFLAGS)
+binary_operation$(EXE_EXT): binary_operation$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)binary_operation binary_operation$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    union_of_rotated_cylinders.clean \
@@ -109,7 +115,9 @@ clean: \
 	           complex_sphere_map.clean \
 	           complex_facet.clean \
 	           point_location.clean \
-	           create_complex_sphere_map_data.clean
+	           point_location2.clean \
+	           create_complex_sphere_map_data.clean \
+	           binary_operation.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

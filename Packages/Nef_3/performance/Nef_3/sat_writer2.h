@@ -18,6 +18,7 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
   typedef typename SNC_structure::SHalfedge_iterator SHalfedge_iterator; 
   typedef typename SNC_structure::SHalfloop_iterator SHalfloop_iterator; 
   typedef typename SNC_structure::SFace_iterator SFace_iterator; 
+  typedef typename SNC_structure::Halffacet_cycle_iterator Halffacet_cycle_iterator;
   
   typedef typename SNC_structure::Volume_handle Volume_handle; 
   typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
@@ -92,7 +93,7 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
     for(f=halffacets_begin();f!=halffacets_end();++f)
       if(CI[f->incident_volume()]==0) {
 	FACE[f]=i;
-	i=distance(f->facet_cycles_begin(),f->facet_cycles_end())+2;
+	i=i+distance(f->facet_cycles_begin(),f->facet_cycles_end())+2;
       }
 
     for(se=shalfedges_begin();se!=shalfedges_end();++se)
@@ -191,19 +192,19 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
 	  << CGAL::to_double(pt.x()) << " "
 	  << CGAL::to_double(pt.y()) << " "
 	  << CGAL::to_double(pt.z()) << " "
-	  << pl.a() << " " 
-	  << pl.b() << " "
-	  << pl.c() << " "
-	  << vec.hx() << " "
-	  << vec.hy() << " "
-	  << vec.hz() << " "
+	  << CGAL::to_double(pl.a()) << " " 
+	  << CGAL::to_double(pl.b()) << " "
+	  << CGAL::to_double(pl.c()) << " "
+	  << CGAL::to_double(vec.hx()) << " "
+	  << CGAL::to_double(vec.hy()) << " "
+	  << CGAL::to_double(vec.hz()) << " "
 	  << "forward_v I I I I #" << std::endl;
    
       loop_offset = FACE[f]+3;
       Halffacet_cycle_iterator fci;
-      for(fci = f->facet_cycle_begin(); fci != facet_cycle_end(); ++fci) {
-	se = SHalfedge_handle(se);
-	if(fci == --facet_cycle_end())
+      for(fci = f->facet_cycles_begin(); fci != f->facet_cycles_end(); ++fci) {
+	se = SHalfedge_handle(fci);
+	if(fci == --f->facet_cycles_end())
 	  out << "loop $-1 -1 $-1 $-1 $" 
 	      << COEDGE[se->source()] << " $" << FACE[f] << " #" << std::endl;
 	else
