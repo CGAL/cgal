@@ -104,7 +104,6 @@ public:
     SHalfedge_iterator shalfedges_begin_, shalfedges_last_;
     SFace_iterator     sfaces_begin_, sfaces_last_;
     SHalfloop_iterator shalfloop_;
-    Mark               m_neg_, m_pos_;
     GenPtr             info_;
 
   public:
@@ -113,14 +112,14 @@ public:
       svertices_begin_(), svertices_last_(),
       shalfedges_begin_(), shalfedges_last_(),
       sfaces_begin_(), sfaces_last_(), shalfloop_(),
-      m_neg_(), m_pos_(), info_() {}
+      info_() {}
 
     Vertex(const Point_3& p, Mark m) : 
       point_at_center_(p), mark_(m), sncp_(), 
       svertices_begin_(), svertices_last_(),
       shalfedges_begin_(), shalfedges_last_(),
       sfaces_begin_(), sfaces_last_(), shalfloop_(),
-      m_neg_(), m_pos_() , info_() {}
+      info_() {}
 
     Vertex(const Vertex<Refs>& v) 
     { 
@@ -134,7 +133,6 @@ public:
       sfaces_begin_ = v.sfaces_begin_;
       sfaces_last_ = v.sfaces_last_;
       shalfloop_ = v.shalfloop_;
-      m_neg_ = v.m_neg_; m_pos_ = v.m_pos_;
       info_ = 0;
     }
       
@@ -150,7 +148,6 @@ public:
       sfaces_begin_ = v.sfaces_begin_;
       sfaces_last_ = v.sfaces_last_;
       shalfloop_ = v.shalfloop_;
-      m_neg_ = v.m_neg_; m_pos_ = v.m_pos_; 
       return *this;
     }
 
@@ -300,13 +297,13 @@ public:
     { std::stringstream os; 
       set_pretty_mode(os); 
       os<<"{ addr, point, mark, snc, svb, sve, seb, see, sfb, sfe, sl,"
-	<<" mneg, mpos, info }"<<std::endl;
+	<<" info }"<<std::endl;
       os<<"{ "<<this<<", "<<point_at_center_<<", "<<mark_<<", "<<&*sncp_<<", "
 	<<&*svertices_begin_ <<", "<<&*svertices_last_ <<", "
 	<<&*shalfedges_begin_<<", "<<&*shalfedges_last_<<", "
 	<<&*sfaces_begin_    <<", "<<&*sfaces_last_    <<", "
 	<<&*shalfloop_       <<", "
-	<<m_neg_<<", "<<m_pos_<<", "<<info_<<" }";
+	<<info_<<" }";
       return os.str();
     }
 
