@@ -359,9 +359,6 @@ namespace CGAL {
     };
 
 
-    ~Point_container()
-    {}
-
     inline bool empty() const { return the_size == 0;}
      
      
