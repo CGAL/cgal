@@ -39,7 +39,8 @@ convert_from_to (const Interval_nt_advanced&, const Quotient<RT> & z)
 		convert_from_to(Interval_nt_advanced(), z.denominator());
 }
 
-#ifndef CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#if !defined(CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION) \
+ && !defined(CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION)
 template <class RT>
 struct converter<Interval_nt_advanced,Quotient<RT> >
 {
@@ -48,7 +49,7 @@ struct converter<Interval_nt_advanced,Quotient<RT> >
 	return convert_from_to(Interval_nt_advanced(), z);
     }
 };
-#endif // CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 
 CGAL_END_NAMESPACE
 
