@@ -21,7 +21,8 @@
 #define CGAL_PM_LANDMARKS_POINT_LOCATION_H
 
 //#define CGAL_LM_DEBUG
-#define LM_CLOCK_DEBUG
+#define LANDMARKS_CLOCK_DEBUG
+//#define TRAITS_CLOCK_DEBUG
 
 //----------------------------------------------------------
 //Pm includes
@@ -51,8 +52,8 @@ public:
 	//----------------------------------------------------------
 
 	typedef typename Planar_map::Traits                       Traits;
-	typedef typename Traits::Kernel                           Kernel;
-	typedef typename Kernel::Segment_2                        Segment;
+	//typedef typename Traits::Kernel                           Kernel;
+	//typedef typename Kernel::Segment_2                        Segment;
 	typedef typename Traits::Point_2                          Point_2;
 	typedef typename Traits::Curve_2                          Curve_2;
 	typedef typename Traits::X_monotone_curve_2               X_monotone_curve_2;
@@ -81,7 +82,9 @@ public:
 	typedef typename Planar_map::Traits_wrap                  Traits_wrap;
 	typedef typename Nearest_neighbor::NN_Point_2      NN_Point_2;
 
-	typedef std::list<NN_Point_2>                                                 NN_Point_list;
+	typedef std::list<NN_Point_2>                                       NN_Point_list;
+	typedef std::list<Halfedge_handle>                              Edge_list;
+	typedef typename Edge_list::iterator							 Std_edge_iterator;
 	//----------------------------------------------------------
 
 protected:
@@ -97,31 +100,122 @@ public:
 		  updated_nn(false), 
 		  verbose(false)
 	  {
-			#ifdef LM_CLOCK_DEBUG
+		  flipped_edges.clear();
+
+			#ifdef LANDMARKS_CLOCK_DEBUG
 				clock_ff = 0.0; 
-				clock_fi= 0.0; 
-				clock_ni= 0.0; 
 				clock_for_nn_search = 0.0; 
 				clock_for_walk = 0.0; 
-				clock_fciif = 0.0;
+				clock_find_edge = 0.0;
 				clock_new_alg = 0.0;
-				entries_to_fi = 0;
+				clock_create_nn = 0.0;
+				clock_is_point = 0.0;
+				clock_check_app = 0.0;
+				clock_nn_and_walk = 0.0;
+
+				entries_find_edge = 0;
+				entries_to_check_app = 0;
+				entries_to_find_face = 0;
+				entries_is_point_in_face = 0;
+			#endif
+
+			#ifdef TRAITS_CLOCK_DEBUG
+				//count entries
+				e_compare_distance = 0;
+				e_point_equal = 0;
+				e_curve_is_between_cw = 0;
+				e_point_in_x_range = 0;
+				e_curve_compare_y_at_x = 0;
+				e_nearest_intersection_to_left = 0;
+				e_nearest_intersection_to_right = 0;
+				e_curve_split = 0;
+				e_compare_xy = 0;
+				e_curves_compare_y_at_x_left = 0;
+				e_curves_compare_y_at_x_right = 0;
+				e_curves_compare_cw = 0;
+				//count clocks
+				c_compare_distance = 0.0;
+				c_point_equal = 0.0;
+				c_curve_is_between_cw = 0.0;
+				c_point_in_x_range = 0.0;
+				c_curve_compare_y_at_x = 0.0;
+				c_nearest_intersection_to_left = 0.0;
+				c_nearest_intersection_to_right = 0.0;
+				c_curve_split = 0.0;
+				c_compare_xy = 0.0;
+				c_curves_compare_y_at_x_left = 0.0;
+				c_curves_compare_y_at_x_right = 0.0;
+				c_curves_compare_cw = 0.0;
+
 			#endif
 	  }
 
 	  //Destructor
 	~Pm_landmarks_point_location() 
 	  {
-		  #ifdef LM_CLOCK_DEBUG
-				std::cout << "total time to walk is " << clock_for_walk <<" clocks" << std::endl;
-				std::cout << "total time to nn search is " << clock_for_nn_search <<" clocks" << std::endl;
-				std::cout << "total time to ff (find face) is " << clock_ff <<" clocks" << std::endl;
-				std::cout << "total time to fi (find intersection) is " << clock_fi <<" clocks" << std::endl;
-				std::cout << "total time to ni (nearest intersection) is " << clock_ni <<" clocks" << std::endl;
-				std::cout << "total time to fciif(find closest intersection in face) is " << clock_fciif <<" clocks" << std::endl;
-				std::cout << "total time to new algorithm is " << clock_new_alg <<" clocks" << std::endl;
-				std::cout << "total entries to fi(find intersection) is " << entries_to_fi <<" times" << std::endl;
-				getchar();
+		#ifdef TRAITS_CLOCK_DEBUG
+		  		std::cout << std::endl;
+				//count entries
+				//std::cout << "e_compare_distance =  " << e_compare_distance << std::endl;
+				//std::cout << "e_point_equal =  " << e_point_equal << std::endl;
+				std::cout << "e_curve_is_between_cw =  " << e_curve_is_between_cw << std::endl;
+				//std::cout << "e_point_in_x_range =  " << e_point_in_x_range << std::endl;
+				std::cout << "e_curve_compare_y_at_x =  " << e_curve_compare_y_at_x << std::endl;
+				//std::cout << "e_nearest_intersection_to_left =  " << e_nearest_intersection_to_left << std::endl;
+				//std::cout << "e_nearest_intersection_to_right =  " << e_nearest_intersection_to_right << std::endl;				
+				std::cout << "e_curve_split =  " << e_curve_split << std::endl;
+				std::cout << "e_compare_xy =  " << e_compare_xy << std::endl;
+				std::cout << "e_curves_compare_y_at_x_left =  " << e_curves_compare_y_at_x_left << std::endl;
+				std::cout << "e_curves_compare_y_at_x_right =  " << e_curves_compare_y_at_x_right << std::endl;
+				std::cout << "e_curves_compare_cw =  " << e_curves_compare_cw << std::endl;
+				std::cout << std::endl;
+				//count clocks
+				//std::cout << "c_compare_distance =  " << c_compare_distance << std::endl;
+				//std::cout << "c_point_equal =  " << c_point_equal << std::endl;
+				std::cout << "c_curve_is_between_cw =  " << c_curve_is_between_cw << std::endl;
+				//std::cout << "c_point_in_x_range =  " <<  c_point_in_x_range<< std::endl;
+				std::cout << "c_curve_compare_y_at_x =  " << c_curve_compare_y_at_x << std::endl;
+				//std::cout << "c_nearest_intersection_to_left =  " << c_nearest_intersection_to_left << std::endl;
+				//std::cout << "c_nearest_intersection_to_right =  " << c_nearest_intersection_to_right << std::endl;
+				std::cout << "c_curve_split =  " << c_curve_split << std::endl;
+				std::cout << "c_compare_xy =  " << c_compare_xy << std::endl;
+				std::cout << "c_curves_compare_y_at_x_left =  " << c_curves_compare_y_at_x_left << std::endl;
+				std::cout << "c_curves_compare_y_at_x_right =  " << c_curves_compare_y_at_x_right << std::endl;
+				std::cout << "c_curves_compare_cw =  " << c_curves_compare_cw << std::endl;
+				//getchar();
+			#endif
+
+		  #ifdef LANDMARKS_CLOCK_DEBUG
+				//std::cout << std::endl;
+				//double seconds;
+				//std::cout << "create landmarks tree  = " << clock_create_nn  << std::endl;				
+				//std::cout << "nn + walk =  " << clock_nn_and_walk << std::endl;				
+				//std::cout << "nn search = " << clock_for_nn_search  << std::endl;
+				//seconds = (double) (clock_for_walk) / (double) CLOCKS_PER_SEC;
+				//std::cout << "walk =  " << clock_for_walk <<" clocks, " << seconds << " seconds" << std::endl;
+				//std::cout << "  find face =  " << clock_ff << std::endl;
+				//std::cout << "  new algorithm = " << clock_new_alg  << std::endl;
+				//std::cout << "    is_point_in_face =  " << clock_is_point  << std::endl;		
+				//std::cout << "    find_edge_to_flip = " << clock_find_edge  << std::endl;
+				//std::cout << "      check_approximate intersection = " << clock_check_app  << std::endl;
+				//std::cout << std::endl;
+				//std::cout << "entries_to_find_face =  " << entries_to_find_face  << std::endl;				
+				//std::cout << "entries_is_point_in_face =  " << entries_is_point_in_face  << std::endl;				
+				//std::cout << "entries find_edge_to_flip = " <<  entries_find_edge << std::endl; 
+				//std::cout << "  entries_to_check_approximate_intersection =  " << entries_to_check_app << std::endl;
+				//std::cout << "create landmarks tree  = " << clock_create_nn  << std::endl;				
+				std::cout << "nn= " << clock_nn_and_walk - clock_for_walk  << std::endl;
+				std::cout << "walk= " << clock_for_walk << std::endl;
+				std::cout << "ff= " << clock_ff << std::endl;
+				std::cout << "na= " << clock_new_alg  << std::endl;
+				std::cout << "is= " << clock_is_point  << std::endl;		
+				std::cout << "fe= " << clock_find_edge  << std::endl;
+				std::cout << "ca= " << clock_check_app  << std::endl;
+				std::cout << "eff= " << entries_to_find_face  << std::endl;				
+				std::cout << "eis= " << entries_is_point_in_face  << std::endl;				
+				std::cout << "efe= " <<  entries_find_edge << std::endl; 
+				std::cout << "eca= " << entries_to_check_app << std::endl;
+				//getchar();
 		  #endif
 	  }
 
@@ -165,32 +259,32 @@ public:
 	  inline void split_edge(const X_monotone_curve_2 &, Halfedge_handle, Halfedge_handle,
 		  //additions by iddo for arrangement
 		  const X_monotone_curve_2 &, const X_monotone_curve_2 &) 
-	  {updated_nn = false; create_landmarks_tree(); }
+	  {updated_nn = false; }
 
 	  inline void merge_edge(const X_monotone_curve_2 &, const X_monotone_curve_2 &, Halfedge_handle, 
 		  //additions by iddo for arrangement
 		  const X_monotone_curve_2 &)   
-	  {updated_nn = false;  create_landmarks_tree();}
+	  {updated_nn = false;  }
 
 	  inline void remove_edge(Halfedge_handle) 
-	  {updated_nn = false;  create_landmarks_tree();}
+	  {updated_nn = false;   }
 
 	  inline void remove_edge(const Halfedge_handle_iterator &,
 		  const Halfedge_handle_iterator &) 
-	  {updated_nn = false; create_landmarks_tree(); };
+	  {updated_nn = false;   };
 
 	  inline void clear() 
-	  {updated_nn = false; create_landmarks_tree();}
+	  {updated_nn = false;  }
 
 	  inline void update(const Halfedge_handle_iterator &,
 		  const Halfedge_handle_iterator &,
 		  const Token& token) 
-	  {updated_nn = false; create_landmarks_tree(); }
+	  {updated_nn = false;   }
 
 private:
 
 	//function that updates the kd-tree for the nearest neightbor
-	void create_landmarks_tree() ;
+	void create_landmarks_tree() const;
 
 	void insert_halfedge_to_ln_tree(Halfedge_handle hh, const X_monotone_curve_2 &cv) ;
 
@@ -203,6 +297,15 @@ private:
 		Locate_type& lt) const;
 
 	void find_face (const Point_2 & p, 
+		Vertex_handle vh,
+		bool & found_vertex_or_edge, 
+		bool & new_vertex, 
+		bool & found_face,
+		Vertex_handle & out_vertex, 
+		Halfedge_handle & out_edge,
+		Locate_type& lt  ) const;
+
+	void new_find_face (const Point_2 & p, 
 		Vertex_handle vh,
 		bool & found_vertex_or_edge, 
 		bool & new_vertex, 
@@ -233,10 +336,19 @@ private:
 		const Ccb_halfedge_circulator & face,                     
 		Halfedge_handle  & out_edge) const ;
 
+	bool find_edge_to_flip (const Point_2 & p,            
+		Vertex_handle  v,     
+		const Ccb_halfedge_circulator & face,                     
+		Halfedge_handle  & out_edge) const ;
+
 	bool find_real_intersection (const Point_2 & p,   
 		Vertex_handle  v,        
 		Halfedge_handle e,
 		Point_2 & out_point) const  ;			
+
+	bool check_approximate_intersection (const Curve_2 & seg,  
+																			const Curve_2 & cv, 
+																			bool & intersect) const ;
 
 #ifdef CGAL_LM_DEBUG
 
@@ -260,19 +372,56 @@ public:
 protected:
 	Planar_map      * pm;
 	Traits_wrap     * traits;
-	Nearest_neighbor  nn;
-	bool              updated_nn;
+	mutable Nearest_neighbor  nn;
+	mutable bool				updated_nn;
+	mutable Edge_list		flipped_edges;
 
-	#ifdef LM_CLOCK_DEBUG
+	#ifdef LANDMARKS_CLOCK_DEBUG
 		mutable double clock_ff; //find face
-		mutable double clock_fi; //find intersection
-		mutable double clock_ni; //nearest intersection (to left/to right)
 		mutable double clock_for_nn_search ; 
 		mutable double clock_for_walk ; 
-		mutable double clock_fciif;
+		mutable double clock_nn_and_walk ; 
+		mutable double clock_find_edge;
 		mutable double clock_new_alg;
-		mutable int entries_to_fi;
+		mutable double clock_create_nn;
+		mutable double clock_check_app;
+		mutable double clock_is_point;
+
+		mutable int entries_find_edge;
+		mutable int entries_to_check_app;
+		mutable int entries_to_find_face; 
+		mutable int entries_is_point_in_face;
 	#endif
+
+	#ifdef TRAITS_CLOCK_DEBUG
+		//count entries
+		mutable int e_compare_distance;
+		mutable int e_point_equal;
+		mutable int e_curve_is_between_cw;
+		mutable int e_point_in_x_range;
+		mutable int e_curve_compare_y_at_x;
+		mutable int e_nearest_intersection_to_left;
+		mutable int e_nearest_intersection_to_right;
+		mutable int e_curve_split;
+		mutable int e_compare_xy;
+		mutable int e_curves_compare_y_at_x_left;
+		mutable int e_curves_compare_y_at_x_right;
+		mutable int e_curves_compare_cw;
+		//count clocks
+		mutable double c_compare_distance;
+		mutable double c_point_equal;
+		mutable double c_curve_is_between_cw;
+		mutable double c_point_in_x_range;
+		mutable double c_curve_compare_y_at_x;
+		mutable double c_nearest_intersection_to_left;
+		mutable double c_nearest_intersection_to_right;
+		mutable double c_curve_split;
+		mutable double c_compare_xy;
+		mutable double c_curves_compare_y_at_x_left;
+		mutable double c_curves_compare_y_at_x_right;
+		mutable double c_curves_compare_cw;
+	#endif
+
 	const bool verbose; 
 	};
 
