@@ -52,7 +52,15 @@ test_directory()
     if [ -f cgal_test -a -x cgal_test ] ; then
       export PLATFORM CGAL_MAKEFILE TESTSUITE_CXXFLAGS TESTSUITE_LDFLAGS
       rm -f error.txt
-      ./cgal_test 2>&1 | tee -a $COMPILER_OUTPUT
+      ./cgal_test 2>&1 > current_compiler_output
+      exit_value=$?
+      cat current_compiler_output >> $COMPILER_OUTPUT
+      cat current_compiler_output
+      rm -f current_compiler_output 
+      if [ "$exit_value" -ne 0 ] ; then
+	echo "ERROR: cgal_test exited with error condition $exit_value" >> $ERRORFILE
+	echo "ERROR: cgal_test exited with error condition $exit_value" >> $ERROR_OUTPUT
+      fi
 
       if [ -f error.txt ] ; then
         cat error.txt >> $ERRORFILE
