@@ -1565,6 +1565,7 @@ Packages/Qt_widget/include/CGAL/IO/pixmaps/arrow.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/back.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/circle.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/constrained.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/demoicon.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/focus.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/focus1.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/focus1_mask.xpm -text

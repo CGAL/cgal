@@ -2051,3 +2051,33 @@ char * line_small_xpm[] = {
 "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"
 };
 
+/* XPM */
+static const char *demoicon_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 7 1",
+"  c black",
+". c #040404",
+"X c #333399",
+"o c #3300CC",
+"O c #0066FF",
+"+ c #0099FF",
+"@ c #FFFF99",
+/* pixels */
+"+++OOOOOOOOOOOOO",
+"o@@@@@@@@@@@@@@O",
+"o@@@@@@@@@@@@@@O",
+"o@@@@@@@@@@@@@@O",
+"o@@@@@@@@@@@@@@O",
+"o@. @@@@@@@@@.@O",
+"X..@ @@@@@..@.@O",
+"o  @@@..@@@.@.@O",
+"o..@@ @ @...@.@O",
+"o..@..@.@.@.@.@O",
+"o@..@...@...@...",
+"o@@@@@@.@@@@@@@O",
+"o@@@@@..@@@@@@@O",
+"o@@@@@@@@@@@@@@O",
+"o@@@@@@@@@@@@@@O",
+"oooooooooooooooo"
+};
+
