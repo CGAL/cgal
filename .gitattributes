@@ -1769,7 +1769,9 @@ Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/walk.gif -text svneol
 Packages/Triangulation_3/doc_tex/TriangulationDS_3/comborient.eps -text
 Packages/Triangulation_3/doc_tex/TriangulationDS_3/comborient.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/TriangulationDS_3/comborient.ipe -text
-Packages/Triangulation_3/doc_tex/TriangulationDS_3/design.gif svneol=native#unset
+Packages/Triangulation_3/doc_tex/TriangulationDS_3/design_tds.eps -text
+Packages/Triangulation_3/doc_tex/TriangulationDS_3/design_tds.fig -text
+Packages/Triangulation_3/doc_tex/TriangulationDS_3/design_tds.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/TriangulationDS_3/flips.eps -text
 Packages/Triangulation_3/doc_tex/TriangulationDS_3/flips.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/TriangulationDS_3/flips.ipe -text
@@ -1835,7 +1837,9 @@ Packages/Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.gif -text svneol=u
 Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/comborient.eps -text
 Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/comborient.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/comborient.ipe -text
-Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/design.gif svneol=native#unset
+Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/design_tds.eps -text
+Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/design_tds.fig -text
+Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/design_tds.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/flips.eps -text
 Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/flips.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/flips.ipe -text
