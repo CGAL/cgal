@@ -71,6 +71,8 @@ if [ $# -ne 0 ] ; then
   done
 else
   compile_and_run Cartesian
+  compile_and_run Filtered_cartesian
+  compile_and_run Filtered_homogeneous
   compile_and_run Homogeneous
   compile_and_run Simple_cartesian
   compile_and_run Simple_homogeneous

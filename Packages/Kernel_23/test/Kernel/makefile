@@ -19,6 +19,8 @@ CXXFLAGS = \
            -I../../../H2/include \
            -I../../../Cartesian_kernel/include \
            -I../../../Number_types/include \
+           -I../../../Distance_2/include \
+           -I../../../Interval_arithmetic/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
@@ -45,16 +47,23 @@ LDFLAGS = \
 
 all:            \
                 Cartesian$(EXE_EXT) \
+                Filtered_cartesian$(EXE_EXT) \
+                Filtered_homogeneous$(EXE_EXT) \
                 Homogeneous$(EXE_EXT) \
                 Simple_cartesian$(EXE_EXT) \
                 Simple_homogeneous$(EXE_EXT) \
                 test_kernel__$(EXE_EXT) \
-		test_kernel_archetype_2$(EXE_EXT) \
-		test_kernel_archetype_3$(EXE_EXT)
-		
+                test_kernel_archetype_2$(EXE_EXT) \
+                test_kernel_archetype_3$(EXE_EXT) 
 
 Cartesian$(EXE_EXT): Cartesian$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Cartesian Cartesian$(OBJ_EXT) $(LDFLAGS)
+
+Filtered_cartesian$(EXE_EXT): Filtered_cartesian$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Filtered_cartesian Filtered_cartesian$(OBJ_EXT) $(LDFLAGS)
+
+Filtered_homogeneous$(EXE_EXT): Filtered_homogeneous$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Filtered_homogeneous Filtered_homogeneous$(OBJ_EXT) $(LDFLAGS)
 
 Homogeneous$(EXE_EXT): Homogeneous$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Homogeneous Homogeneous$(OBJ_EXT) $(LDFLAGS)
@@ -74,15 +83,16 @@ test_kernel_archetype_2$(EXE_EXT): test_kernel_archetype_2$(OBJ_EXT)
 test_kernel_archetype_3$(EXE_EXT): test_kernel_archetype_3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernel_archetype_3 test_kernel_archetype_3$(OBJ_EXT) $(LDFLAGS)
 
-
 clean: \
                    Cartesian.clean \
+                   Filtered_cartesian.clean \
+                   Filtered_homogeneous.clean \
                    Homogeneous.clean \
                    Simple_cartesian.clean \
                    Simple_homogeneous.clean \
                    test_kernel__.clean \
-		   test_kernel_archetype_2.clean \
-		   test_kernel_archetype_3.clean
+                   test_kernel_archetype_2.clean \
+                   test_kernel_archetype_3.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
