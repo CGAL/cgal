@@ -1,45 +1,13 @@
 CGAL_HOME/LICENSE
 -------------------------------------------------------------------------------
 
-The CGAL software falls under the license below:
+The CGAL software falls either under the GNU Lesser General Public License (as
+published by the Free Software Foundation; version 2.1 of the License), or
+under the Q Public License (v1.0), depending on each package.  The texts of
+both licenses can be found in the files LICENSE.LGPL and LICENSE.QPL.  It is
+specified in each file of CGAL which license applies to it.
 
-// ============================================================================
-//
-// Copyright (c) 1997-2001 The CGAL Consortium
 
+The directory "auxiliary" contains external libraries such as GMP.
+These libraries are not part of CGAL and have their own license.
 
-// This software and related documentation are part of the Computational
-// Geometry Algorithms Library (CGAL).
-// This software and documentation are provided "as-is" and without warranty
-// of any kind. In no event shall the CGAL Consortium be liable for any
-// damage of any kind.
-//
-// Every use of CGAL requires a license.
-//
-// Academic research and teaching license
-// - For academic research and teaching purposes, permission to use and copy
-//   the software and its documentation is hereby granted free of charge,
-//   provided that it is not a component of a commercial product, and this
-//   notice appears in all copies of the software and related documentation.
-//
-// Commercial licenses
-// - Please check the CGAL web site http://www.cgal.org/index2.html for
-//   availability.
-//
-// The CGAL Consortium consists of Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).
-//
-// ============================================================================
-
-The directory auxiliary contains the gmp library. This library is not part of
-CGAL and has its own license.
-
-The CGAL Qt widget (with source code in src/CGALQt and 
-include/CGAL/IO/Qt_widget*.h) is distributed under the Q Public License 
-(QPL). See http://www.trolltech.com/developer/licensing/qpl.html.
-
--------------------------------------------------------------------------------
-EOF

@@ -32,9 +32,6 @@ This distribution of CGAL includes:
                         Makefiles and project files for MSVC 6.0 IDE 
                         (experimental) are provided for all programs.
    include/           - the include files for the library
-   include/CGAL/IO/Qt_widget*.h
-                      - the include files for the CGAL Qt widget, which are
-                        distributed under the Q Public License (QPL)
    install_cgal       - the script with which you can install CGAL
    INSTALL            - file containing information about the installation
                         process
@@ -42,7 +39,9 @@ This distribution of CGAL includes:
                         process on the Windows platform
    lib/               - directory in which the CGAL libraries will be 
                         installed
-   LICENSE            - A file containing the license for CGAL
+   LICENSE            - A file describing the license of CGAL
+   LICENSE.LGPL       - A file containing the LGPL v2.1 license
+   LICENSE.QPL        - A file containing the QPL v1.0 license
    make/              - directory containing CGAL include makefiles, which
                         are generated during installation
    makefile           - a makefile that can be used for instaling the CGAL
@@ -52,8 +51,6 @@ This distribution of CGAL includes:
    scripts/           - directory containing some useful scripts for CGAL
                         programmers
    src/               - the library source code
-   src/CGALQt         - the source code for the CGAL Qt widget, which is
-                        distributed under the Q Public License (QPL).
    winutils/          - various Windows-specific installation stuff used by
                         cgal_config.bat
 
