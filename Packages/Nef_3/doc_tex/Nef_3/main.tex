@@ -486,10 +486,11 @@ see Section~\ref{sectionPolyIO}.
 % +------------------------------------------------------------------------+
 \subsection{Using an Extended Kernel}
 
-The provided extended kernels are used the same way as any other \cgal\ kernel.
-The essential difference is, that coordinates are not represented by the number
-type that was used to parameterize the kernel type, but by a \ccc{Nef_polynomial}
-parametrized by that number type.
+The provided extended kernels are used the same way as any other
+\cgal\ kernel.  The essential difference is, that coordinates are not
+represented by the number type that was used to parameterize the
+kernel type, but by a \ccc{Nef_polynomial} parametrized by that number
+type.
 
 The example iterates all vertices of a given Nef polyhedron and decides whether
 it is an standard vertex or a vertex on the infimaximal box. Furthermore, it 
@@ -520,8 +521,7 @@ of the two others.
 
 Using \cgal\ stream modifiers the following output formats can be chosen: 
 ASCII(\ccc{set_ascii_mode}), binary(\ccc{set_binary_mode}) or 
-pretty(\ccc{set_pretty_mode}). The mandatory format is the ASCII format. It 
-is recommended to use this format for file input and output.
+pretty(\ccc{set_pretty_mode}). The mandatory format is the ASCII format.
 
 \ccIncludeExampleCode{Nef_3/nefIO.C}
 
@@ -546,10 +546,10 @@ is shown in the following example.
 \subsection{Exploring Shells}
 
 A \emph{shell} of a Nef polyhedron is the connected part of the
-surface incident to a certain volume, i.e. to a certain
-full-dimensional feature.  Each Halffacet, SFace and SHalfedge belongs
-to a single shell. The figure below illustrates the notion of a shell.
-It shows a Nef polyhedron with two volumes and three shells.
+surface incident to a certain volume.  Each halffacet, sface and
+shalfedge belongs to a single shell. The figure below illustrates the
+notion of a shell.  It shows a Nef polyhedron with two volumes and
+three shells.
 
 \begin{ccTexOnly}
     \begin{center}
@@ -567,33 +567,38 @@ It shows a Nef polyhedron with two volumes and three shells.
 
 
 The first volume is the outer volume and the second volume is the
-interior of the cube. The first shell constitutes the whole plane on
-the left side.  The boundary of the cube with the antenna forms two
-shells further on denoted as the inner and the outer shell.  Both have
-the following items in common: the eight vertices of the cube plus the
-one where the cube and the antenna meet, and the twelve edges (24
-halfedges) belonging to the cube. Additionally, the shell incident to
-the inner volume includes the six halffacets of the cube which are
-oriented to the inside of the cube together with the shalfedges and
-the shalfloops on their facets cycles, and the sfaces incident to
-those shalfedges and shalfloops. The other vertex, halffacets,
-shalfedges, shalfloop and sfaces belong to the outer shell.
+interior of the cube. The first shell is the whole surface of the left
+object. The second shell is the outer surface of the right object, and
+the third shell is the inner surface of the right object. 
 
- \ccc{Nef_polyhedron_3} offers a visitor interface to explore a shell.
-The Interface is illustrated by the following example.
+In detail, the first shell consists of two halffacets, eight halfedges
+and four vertices. The second shell consists of the eight vertices of
+the cube plus the two endpoints of the antenna, all halffacets
+oriented outwards, and all halfedges. The third shell consists of the
+same eight vertices of the cube, plus the endpoint of the antenna
+that is in contact with the cube, all halffacets
+oriented inwards, and all halfedges (the same as for the second shell).
+
+We discuss how sfaces, shalfedges, and sloops belong to the shells
+with a closeup view of the situation at the antenna foot.
+
+\ccc{Nef_polyhedron_3} offers a visitor interface to explore a shell
+following the well-known visitor pattern~cite{cgal:ghjv-dpero-95}.
+The interface is illustrated by the following example.
 
 \ccIncludeExampleCode{Nef_3/shell_exploration.C}
 
-The function 
-\ccc{visit_shell_objects(SFace_const_handle sf, Visitor& V)}~cite{cgal:ghjv-dpero-95} 
-explores a shell starting at the \ccc{sf}. The second argument expects any
-class providing the (possibly empty) functions \ccc{visit(Vertex_const_handle)},
-\ccc{visit(Halfedge_const_handle)} (remember that Halfedge is the same type as
-SVertex), 
-\ccc{visit(Halffacet_const_handle)}, \ccc{visit(SHalfedge_const_handle)}, 
-\ccc{visit(SHalfloop_const_handle)} and \ccc{visit(SFace_const_handle)}. 
-\ccc{visit_shell_objects} will call \ccc{visit} for each item belonging
-to the shell once. There are no further requirements on that class. 
+The function \ccc{visit_shell_objects(SFace_const_handle sf, Visitor&
+  V)} explores a shell starting at the \ccc{sf}. The second argument
+expects any class providing the (possibly empty) functions
+\ccc{visit(Vertex_const_handle)}, \ccc{visit(Halfedge_const_handle)}
+(remember that Halfedge is the same type as SVertex),
+\ccc{visit(Halffacet_const_handle)},
+\ccc{visit(SHalfedge_const_handle)},
+\ccc{visit(SHalfloop_const_handle)} and
+\ccc{visit(SFace_const_handle)}.  The \ccc{visit_shell_objects}
+function will call \ccc{visit} for each item belonging to the shell
+once. There are no further requirements on that class.
 
 In the example, the class \ccc{Shell_explorer} is passed as second argument
 to \ccc{visit_shell_objects}. Its task is to find the lexicographically
@@ -605,43 +610,50 @@ the third variable \ccc{first} is initialized to \ccc{false} to signal that no
 vertex has been visited so far. After the first vertex has been visited 
 \ccc{first} is changed to \ccc{true}.
 
-\ccc{Shell_explorer} provides further member functions. After the exploration
-of a shell \ccc{minimal_vertex} retrieves the smallest vertex. \ccc{reset_minimal_vertex} allows one to use the same instance of 
- \ccc{Shell_explorer} on multiple shells. In this case, \ccc{reset_minimal_vertex}
-has to be called between the exploration of two shells.
+\ccc{Shell_explorer} provides further member functions. After the
+exploration of a shell the \ccc{minimal_vertex} function retrieves the
+smallest vertex. The \ccc{reset_minimal_vertex} function allows one to
+use the same instance of \ccc{Shell_explorer} on multiple shells. In
+this case, the \ccc{reset_minimal_vertex} function has to be called
+between the exploration of two shells.
 
-The example program uses the \ccc{Shell_explorer} for each shell of the given
-Nef polyhedron once and reports the smallest vertices to standard output.
+The example program uses the \ccc{Shell_explorer} for each shell of
+the given Nef polyhedron once and reports the smallest vertex of each
+shell to the standard output.
 
 % +------------------------------------------------------------------------+
 \subsection{Point Location}
 
-The \ccc{locate(Point_3 p)} function locates the point \ccc{p} in the 
-Nef polyhedron and returns the item the point belongs to. The function
-\ccc{locate}
-return an instance of \ccc{Object_handle}, which is a generic handle
-type representing any handle type, no matter if it is mutable or const. 
-For further usage of the result, the \ccc{Object_handle} has to be casted 
-to the handle type represented. The \cgal\ function \ccc{assign}
-helps performing the cast. It returns a boolean signalizing the success
-of the cast. Looking at the return value of \ccc{locate}, 
-\ccc{Object_handle} can represent a 
-\ccc{Vertex_const_handle}, a \ccc{Halfedge_const_handle}, 
-a \ccc{Halffacet_handle}, or a \ccc{Volume_const_handle}. One of the four
-casts will succeed.
+The \ccc{locate(Point_3 p)} function locates the point \ccc{p} in the
+Nef polyhedron and returns the item the point belongs to. The
+\ccc{locate} function returns an instance of \ccc{Object_handle},
+which is a polymorphic handle type representing any handle type, no
+matter if it is mutable or const.  For further usage of the result,
+the \ccc{Object_handle} has to be casted to the concrete handle type.
+The \ccc{CGAl::assign} function performs such a cast. It returns a
+boolean that reports the success or the failure of of the cast.
+Looking at the possible return values of the \ccc{locate} function,
+the \ccc{Object_handle} can represent a \ccc{Vertex_const_handle}, a
+\ccc{Halfedge_const_handle}, a \ccc{Halffacet_handle}, or a
+\ccc{Volume_const_handle}. One of the four casts will succeed.
 
 \ccIncludeExampleCode{Nef_3/point_location.C}
 
 % +------------------------------------------------------------------------+
 \subsection{Visualizing a 3D Nef polyhedron}
 
-With the class \ccc{Nef_Visualizor_OpenGL_3} an interface to OpenGL 
-visualization is offered. Note, that \ccc{Nef_Visualizor_OpenGL_3} does not provide
-any possibilities for configuration of the view. The interface consists of a
-constructor which receives a  Nef polyhedron, the function \ccc{draw} which
-determines the state in which the Nef polyhedron is shown, and 
-the function \ccc{CGAL::OGL::start_viewer()} which starts the visualizor.
-The usage is very easy as can be seen in the following example.
+With the \ccc{Nef_Visualizor_OpenGL_3} class an interface to OpenGL
+visualization is offered, however, it is intended for debugging and a
+first simple illustration. In particular, the GUI is fixed and not
+extensible. The \ccc{Nef_Visualizor_OpenGL_3} class offers a
+constructor from a Nef polyhedron, a \ccc{draw} function  which
+determines the state in which the Nef polyhedron is shown, and the
+\ccc{CGAL::OGL::start_viewer()}  function which opens the visualizor
+window and starts the event processing for the interactive control
+available in the viewer. The \ccc{CGAL::OGL::start_viewer()}  function
+never returns and the application must be terminated with the proper
+entry in the pop-up menu of the visualizer. The viewer is easy to use
+as can be seen in the following example.
 
 \begin{ccTexOnly}
     \begin{center}
@@ -653,7 +665,7 @@ The usage is very easy as can be seen in the following example.
 
 \begin{ccHtmlOnly}
     <CENTER>
-        <img src="./visualization_SNC.gif" alt="Steps in making a cube."><P>
+       <img src="./fig/visualization_SNC.png" alt="Steps in making a cube."><P>
     </CENTER>
 \end{ccHtmlOnly}
 
@@ -662,8 +674,8 @@ The usage is very easy as can be seen in the following example.
 % +------------------------------------------------------------------------+
 \subsection{Visualizing a Sphere Map}
 
-A sphere map can be visualized using the interface between \ccc{Nef_polyhedron_S2}
-and \ccc{Nef_polyhedron_3}.
+A sphere map can be visualized using the interface between
+\ccc{Nef_polyhedron_S2} and \ccc{Nef_polyhedron_3}.
 
 \ccIncludeExampleCode{Nef_3/visualization_SM.C}
 
