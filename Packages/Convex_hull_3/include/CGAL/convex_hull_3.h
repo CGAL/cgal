@@ -538,10 +538,12 @@ convex_hull_3(InputIterator first, InputIterator beyond,
   if (point2_it == points.end())
   {
      typedef typename Traits::Less_distance_to_point_3      Less_dist; 
-     Less_dist less_dist = 
-       traits.less_distance_to_point_3_object(points.front());
+
+     Less_dist less_dist = traits.less_distance_to_point_3_object();
      P3_iterator_pair endpoints = 
-      min_max_element(points.begin(), points.end(), less_dist, less_dist);
+      min_max_element(points.begin(), points.end(), 
+                      bind_1(less_dist, *points.begin()), 
+                      bind_1(less_dist, *points.begin()));
 
      typename Traits::Construct_segment_3 construct_segment =
             traits.construct_segment_3_object();
