@@ -71,8 +71,8 @@ struct Interval_nt_advanced
 protected:
   double _inf, _sup;	// "_inf" stores the lower bound, "_sup" the upper.
 
-private:
-  int overlap_action() const
+public:
+  int overlap_action() const // This should be runtime customisable.
 #ifndef CGAL_IA_NO_EXCEPTION
       throw (unsafe_comparison)
   { number_of_failures++;  throw unsafe_comparison(); }
@@ -85,7 +85,6 @@ private:
   }
 #endif // CGAL_IA_NO_EXCEPTION
 
-public:
   friend IA	sqrt	(const IA &);
   friend IA	square	(const IA &);
   friend IA	abs	(const IA &);
@@ -93,11 +92,6 @@ public:
   friend IA	max	(const IA &, const IA &);
   friend IA	operator- (const double, const IA &);
   friend IA	operator/ (const double, const IA &);
-  friend double to_double (const IA &);
-  friend bool   is_valid  (const IA &);
-  friend bool   is_finite (const IA &);
-  friend Sign	sign	(const IA &);
-  friend Comparison_result compare (const IA &, const IA &);
 
   // The constructors.
   Interval_nt_advanced()
@@ -191,10 +185,10 @@ public:
   bool overlap (const IA & d) const
   { return !((d._inf > _sup) || (d._sup < _inf)); }
 
-  double lower_bound() const { return _inf; }
-  double upper_bound() const { return _sup; }
   double inf() const { return _inf; }
   double sup() const { return _sup; }
+  double lower_bound() const { return _inf; } // Kept for backward
+  double upper_bound() const { return _sup; } // compatibility
 
   // The (join, union, ||) operator.
   IA operator|| (const IA & d) const
@@ -431,25 +425,25 @@ square (const Interval_nt_advanced & d)
 inline
 double
 to_double (const Interval_nt_advanced & d)
-{ return (d._sup+d._inf)*.5; }
+{ return (d.sup()+d.inf())*.5; }
 
 inline
 bool
 is_valid (const Interval_nt_advanced & d)
-{ return is_valid(d._inf) && is_valid(d._sup) && (d._inf <= d._sup); }
+{ return is_valid(d.inf()) && is_valid(d.sup()) && (d.inf() <= d.sup()); }
 
 inline
 bool
 is_finite (const Interval_nt_advanced & d)
-{ return is_finite(d._inf) && is_finite(d._sup); }
+{ return is_finite(d.inf()) && is_finite(d.sup()); }
 
 inline
 Sign
 sign (const Interval_nt_advanced & d)
 {
-  if (d._inf > 0) return POSITIVE;
-  if (d._sup < 0) return NEGATIVE;
-  if (d._inf == d._sup) return ZERO;
+  if (d.inf() > 0) return POSITIVE;
+  if (d.sup() < 0) return NEGATIVE;
+  if (d.inf() == d.sup()) return ZERO;
   return Sign (d.overlap_action());
 }
 
@@ -457,9 +451,9 @@ inline
 Comparison_result
 compare (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 {
-  if (d._inf > e._sup) return LARGER;
-  if (e._inf > d._sup) return SMALLER;
-  if ( (e._inf == d._sup) && (d._inf == e._sup) ) return EQUAL;
+  if (d.inf() > e.sup()) return LARGER;
+  if (e.inf() > d.sup()) return SMALLER;
+  if ( (e.inf() == d.sup()) && (d.inf() == e.sup()) ) return EQUAL;
   return Comparison_result (d.overlap_action());
 }
 
@@ -530,20 +524,8 @@ struct Interval_nt : public Interval_nt_advanced
   friend IA     max (const IA & d, const IA & e)
     { return max((Interval_nt_advanced) d, (Interval_nt_advanced) e); }
   // friend IA     operator* (const double &, const IA &);
-  friend double to_double (const IA & d)
-    { return to_double((Interval_nt_advanced) d); }
-  friend bool   is_valid  (const IA & d)
-    { return is_valid((Interval_nt_advanced) d); }
-  friend bool   is_finite (const IA & d)
-    { return is_finite((Interval_nt_advanced) d); }
-  friend Sign sign   (const IA & d)
-    { return sign((Interval_nt_advanced) d); }
-  friend Comparison_result compare (const IA & d, const IA & e)
-    { return compare((Interval_nt_advanced) d, (Interval_nt_advanced) e); }
-
-  // This particular one needs to be redefined, a pitty...
   IA operator-() const 
-  { return IA(-_sup, -_inf); }
+    { return IA(-_sup, -_inf); }
 
   // The member functions that have to be protected against rounding mode.
   IA operator+(const IA & d) const ;
