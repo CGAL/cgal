@@ -39,7 +39,7 @@ class SF_Coplanar_orientation_3
 {
   Orientation_2 oxy, oyz, oxz;
 
-protected:
+public:
 
   template < class R >
   friend class Static_filters;

@@ -54,7 +54,7 @@ class SF_Side_of_oriented_sphere_3
 
   static const double epsilon; // = 3.6664e-12; // sph_3();
 
-protected:
+public:
 
   template < class R >
   friend class Static_filters;

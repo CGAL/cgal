@@ -47,7 +47,7 @@ public:
 
   static const double epsilon; // = 1.42109e-13; // cir_2();
 
-protected:
+public:
 
   template < class R >
   friend class Static_filters;

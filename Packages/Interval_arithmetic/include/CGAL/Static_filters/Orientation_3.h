@@ -52,7 +52,7 @@ class SF_Orientation_3
 
   static const double epsilon; // = 3.90799e-14; // ori_3();
 
-protected:
+public:
 
   template < class R >
   friend class Static_filters;

@@ -58,7 +58,7 @@ class SF_Side_of_bounded_circle_3
 
   static const double epsilon;
 
-protected:
+public:
 
   template < class R >
   friend class Static_filters;
