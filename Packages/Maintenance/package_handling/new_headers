@@ -142,7 +142,7 @@ END_OF_DISCLAIMER
 	next if ($_ !~ m|^\s*//| );
 	++$authors_seen if m<^\s*//\s*author(s|\(s\))?\s*:>;
 	if ($authors_seen > 0) {
-	  if (m<^\s*//\s*(coordinator|package|release)(s|\(s\))?\s*:>) {
+	  if (m<^\s*//\s*(coordinator|package|release|maintainer)(s|\(s\))?\s*:>) {
           --$authors_seen;
           } else {
             if (! m|//\s*$|) {
