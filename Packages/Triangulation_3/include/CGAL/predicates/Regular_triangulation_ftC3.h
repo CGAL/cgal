@@ -57,7 +57,7 @@ power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
     FT dst = CGAL_NTS square(dsx) + CGAL_NTS square(dsy) + 
              CGAL_NTS square(dsz) - swt + twt;
 
-    return Oriented_side(  sign_of_determinant4x4(dpx, dpy, dpz, dpt,
+    return Oriented_side( - sign_of_determinant4x4(dpx, dpy, dpz, dpt,
 						   dqx, dqy, dqz, dqt,
 						   drx, dry, drz, drt,
 						   dsx, dsy, dsz, dst));

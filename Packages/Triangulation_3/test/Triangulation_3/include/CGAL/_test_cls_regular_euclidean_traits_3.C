@@ -200,27 +200,39 @@ _test_cls_regular_euclidean_traits_3 (const Traits & )
 	 == CGAL::ZERO);
   assert(in_smallest_orthogonal_sphere(wq1, wq0, wq2, wq3, wq4)
 	 == CGAL::ZERO);
-//   assert(in_smallest_orthogonal_sphere(wq01, wq11, wq21, wq31, wq4)
-// 	 == CGAL::POSITIVE);
-//   assert(in_smallest_orthogonal_sphere(wq01, wq21, wq11, wq31, wq4)
-// 	 == CGAL::POSITIVE);
-//   assert(in_smallest_orthogonal_sphere(wq0, wq1, wq2, wq3, wq41)
-// 	 == CGAL::NEGATIVE);
-//   assert(in_smallest_orthogonal_sphere(wq0, wq1, wq3, wq2, wq41)
-// 	 == CGAL::NEGATIVE);
-//   assert(side_of_bounded_orthogonal_sphere(wq0, wq1, wq3, wq2, wq41)
-// 	 == CGAL::ON_BOUNDED_SIDE);
+  assert(in_smallest_orthogonal_sphere(wq01, wq11, wq21, wq31, wq4)
+	 == CGAL::POSITIVE);
+  assert(in_smallest_orthogonal_sphere(wq01, wq21, wq11, wq31, wq4)
+	 == CGAL::POSITIVE);
+  assert(in_smallest_orthogonal_sphere(wq0, wq1, wq2, wq3, wq41)
+	 == CGAL::NEGATIVE);
+  assert(in_smallest_orthogonal_sphere(wq0, wq1, wq3, wq2, wq41)
+	 == CGAL::NEGATIVE);
+  assert(side_of_bounded_orthogonal_sphere(wq0, wq1, wq3, wq2, wq41)
+	 == CGAL::ON_BOUNDED_SIDE);
 
   
   // test weighted_circumcenter
   // test squared_radius_smallest_orthogonal_sphere
-  // test critical_squared_radius 
-Weighted_point wc(
+  // test critical_squared_radius
+  std::cout << "test of  squared_radius_smallest_orthogonal_sphere" 
+	    << std::endl;
+   std::cout << "test of critical_squared_radius" << std::endl;
+  Weighted_point wc(
               weighted_circumcenter(wq11,wq21,wq31,wq41),
 	      squared_radius_smallest_orthogonal_sphere(wq11,wq21,wq31,wq41));
   Weighted_point wt(Bare_point(1.,1.,1.), 0.);
   assert( power_product(wc,wt) == 
 	  critical_squared_radius(wq11,wq21,wq31,wq41,wt));
-  
+  wc = Weighted_point(
+           weighted_circumcenter(wp0,wp1,wp2,wp3),
+	   squared_radius_smallest_orthogonal_sphere(wp0,wp1,wp2,wp3));
+  assert( power_product(wc,wt) == 
+	  critical_squared_radius(wp0,wp1,wp2,wp3,wt));
+  wc = Weighted_point(
+           weighted_circumcenter(wp01,wp1,wp2,wp3),
+	   squared_radius_smallest_orthogonal_sphere(wp01,wp1,wp2,wp3));
+  assert( power_product(wc,wt) == 
+	  critical_squared_radius(wp01,wp1,wp2,wp3,wt));
   
 }

@@ -120,7 +120,9 @@ public:
     typename K::Orientation_3  orientation = traits.orientation_3_object();
     Orientation o = orientation(p,q,r,s);
     Oriented_side os = power_test(p,q,r,s,t);
-    CGAL_triangulation_assertion( o != COPLANAR); 
+    CGAL_triangulation_assertion( o != COPLANAR);
+    // the minus sign below is due to the fact that power_test
+    // return in fact minus the 5x5 determinant of lifted (p,q,r,s.t)
     return Sign( (-1) * o * os);
   }
   
