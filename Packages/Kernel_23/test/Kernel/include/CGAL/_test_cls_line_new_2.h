@@ -37,6 +37,7 @@ _test_cls_line_new_2(const R& )
  typedef typename  R::Segment_2 Segment_2;
  typedef typename  R::Line_2 Line_2;
  typedef typename  R::Ray_2 Ray_2;
+ typedef typename  R::Aff_transformation_2 Aff_transformation_2;
 
  typename R::Construct_point_2 construct_point;
  typename R::Construct_vector_2 construct_vector;
@@ -139,7 +140,7 @@ _test_cls_line_new_2(const R& )
  assert( ld21.x_at_y( gnuFT(2) ) == gnuFT( 1 ) );
 
  Direction_2 up( n0, n1 );
- R::Aff_transformation_2 rot90(CGAL::ROTATION, up, n1, RT(100) );
+ Aff_transformation_2 rot90(CGAL::ROTATION, up, n1, RT(100) );
  Line_2 l12perp1( l12.perpendicular( p1 ) );
  Line_2 l21perp1( l21.perpendicular( p1 ) );
  Line_2 labcperp( labc.perpendicular( labc.point(1) ) );

@@ -35,6 +35,7 @@ _test_cls_circle_new_2(const R& )
  typedef typename  R::Vector_2 Vector_2;
  typedef typename  R::Direction_2 Direction_2;
  typedef typename  R::Circle_2 Circle_2;
+ typedef typename  R::Aff_transformation_2 Aff_transformation_2;
 
  typename R::Construct_vector_2 construct_vector;
  typename R::Construct_point_2 construct_point;
@@ -133,7 +134,7 @@ _test_cls_circle_new_2(const R& )
 
  std::cout << '.';
 
- R::Aff_transformation_2
+ Aff_transformation_2
           rotate1(CGAL::ROTATION,Direction_2(n11,n13),-n2,n12),
           rotate2(CGAL::ROTATION,Direction_2(-n8, n9),-n2,n12),
           rotate3(CGAL::ROTATION,Direction_2( n5,-n1),-n2,n12),
