@@ -81,8 +81,9 @@ class Triangulation_3
   friend class Triangulation_facet_circulator_3<GT,Tds>;
 
 public:
-  typedef Tds Triangulation_data_structure;
-  typedef GT  Geom_traits;
+  typedef Tds                                  Triangulation_data_structure;
+  typedef GT                                   Geom_traits;
+  typedef Triangulation_3<GT, Tds>             Self;
 
   typedef typename GT::Point_3                 Point;
   typedef typename GT::Segment_3               Segment;
@@ -100,24 +101,24 @@ public:
   typedef typename GT::Construct_triangle_3    Construct_triangle_3;
   typedef typename GT::Construct_tetrahedron_3 Construct_tetrahedron_3;
 
-  typedef Triangulation_cell_handle_3<GT,Tds> Cell_handle;
-  typedef Triangulation_vertex_handle_3<GT,Tds> Vertex_handle;
+  typedef Triangulation_cell_handle_3<GT,Tds>          Cell_handle;
+  typedef Triangulation_vertex_handle_3<GT,Tds>        Vertex_handle;
 
-  typedef Triangulation_cell_3<GT,Tds> Cell;
-  typedef Triangulation_vertex_3<GT,Tds> Vertex;
-  typedef std::pair<Cell_handle, int> Facet;
-  typedef triple<Cell_handle, int, int> Edge;
+  typedef Triangulation_cell_3<GT,Tds>                 Cell;
+  typedef Triangulation_vertex_3<GT,Tds>               Vertex;
+  typedef std::pair<Cell_handle, int>                  Facet;
+  typedef triple<Cell_handle, int, int>                Edge;
 
   typedef Triangulation_cell_circulator_3<GT,Tds>      Cell_circulator;
   typedef Triangulation_facet_circulator_3<GT,Tds>     Facet_circulator;
 
-  typedef Triangulation_cell_iterator_3<GT,Tds>   Cell_iterator;
-  typedef Triangulation_facet_iterator_3<GT,Tds>   Facet_iterator;
-  typedef Triangulation_edge_iterator_3<GT,Tds>   Edge_iterator;
-  typedef Triangulation_vertex_iterator_3<GT,Tds> Vertex_iterator;
+  typedef Triangulation_cell_iterator_3<GT,Tds>        Cell_iterator;
+  typedef Triangulation_facet_iterator_3<GT,Tds>       Facet_iterator;
+  typedef Triangulation_edge_iterator_3<GT,Tds>        Edge_iterator;
+  typedef Triangulation_vertex_iterator_3<GT,Tds>      Vertex_iterator;
 
-  typedef Point value_type; // to have a back_inserter
-  typedef const value_type&    const_reference;
+  typedef Point                         value_type; // to have a back_inserter
+  typedef const value_type&             const_reference;
 
   enum Locate_type {
     VERTEX=0, 
@@ -145,8 +146,7 @@ protected:
 
   void init_tds()
     {
-      infinite = (Vertex*) 
- 	_tds.insert_increase_dimension(Vertex());
+      infinite = (Vertex*) _tds.insert_increase_dimension(Vertex());
       // this causes a problem of accessing non initialized data 
       // (seen by purify) in _tds.insert_increase_dimension
       // when doing Vertex* w = new Vertex(v)
@@ -597,20 +597,45 @@ public:
   // dimension 0 not allowed, use outside-affine-hull
 
 private:
-  Cell_handle
-  hat(Vertex_handle v, Cell_handle c);
-  // recursive traversal of the set of facets of the convex hull
-  // that are visible from v
-  // v replaces infinite_vertex in these cells
-  // on the boundary, new cells with vertices v, infinite_vertex
-  // and the two vertices of an edge of the boumdary are created
-  // returns a cell inside the "hat", having a facet on its boundary
-  
-  void
-  link(Vertex_handle v, Cell_handle c);
-  // c belongs to the hat of v and has a facet on its boundary
-  // traverses the boundary of the hat and finds adjacencies
-  // traversal is done counterclockwise as seen from v
+  // Here are the conflit tester function object passed to
+  // _tds.insert_conflict() by insert_outside_convex_hull().
+  class Conflict_tester_outside_convex_hull_3
+  {
+      const Point &p;
+      Self *t;
+
+  public:
+
+      Conflict_tester_outside_convex_hull_3(const Point &pt, Self *tr)
+	  : p(pt), t(tr) {}
+
+      bool operator()(const typename Tds::Cell *c) const
+      {
+	  Locate_type loc;
+          int i, j;
+	  return t->side_of_cell( p, (Cell_handle)(Cell*) c, loc, i, j )
+	      == ON_BOUNDED_SIDE;
+      }
+  };
+
+  class Conflict_tester_outside_convex_hull_2
+  {
+      const Point &p;
+      Self *t;
+
+  public:
+
+      Conflict_tester_outside_convex_hull_2(const Point &pt, Self *tr)
+	  : p(pt), t(tr) {}
+
+      bool operator()(const typename Tds::Cell *c) const
+      {
+	  Locate_type loc;
+          int i, j;
+	  return t->side_of_facet( p, (Cell_handle)(Cell*) c, loc, i, j )
+	      == ON_BOUNDED_SIDE;
+      }
+  };
 
 public:
 
@@ -783,6 +808,7 @@ private:
 			 Cell_handle c,
 			 int dummy_for_windows = 0) const;
 protected:
+  // Only used by Delaunay remove(), and should probably not exist.
   Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
 			  Vertex_handle v2, Vertex_handle v3,
 			  Cell_handle c0, Cell_handle c1,
@@ -2653,7 +2679,7 @@ insert_in_edge(const Point & p, Cell_handle c, int i, int j)
 
   return (Vertex*) _tds.insert_in_edge( Vertex(p), &(*c), i, j);
 }
-  
+
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
@@ -2681,81 +2707,23 @@ insert_outside_convex_hull(const Point & p, Cell_handle c)
     }
   case 2:
     {
-      // 	Cell_handle n = c->neighbor(3-li-lj);
-      // 	// n contains p and is infinite
-
       Vertex_handle v = new Vertex(p);
+      v->set_cell( c );
       set_number_of_vertices(number_of_vertices()+1);
 
-      Locate_type loc;
-      int i, j;
+      Conflict_tester_outside_convex_hull_2 tester(p, this);
+      _tds.insert_conflict(*v, &(*c), tester);
 
-      // traversal in the first one of the two directions
-      // of the infinite cells containing p
-      // updating of the triangulation at the same time
-      // by replacing the infinite vertex by v
-      // 	Cell_handle cur = n;
-      // 	Cell_handle prev = n->neighbor( ccw(n->index(infinite)) );
-      Cell_handle cur = c;
-      Cell_handle prev = c->neighbor( ccw(c->index(infinite)) );
-
-      while ( side_of_facet( p, cur, loc, i, j ) 
-	      // in dimension 2, cur has only one facet numbered 3
-	      == ON_BOUNDED_SIDE ) {
-	// loc must be == CELL since p supposed to be
-	// strictly outside the convex hull
-	cur->set_vertex( cur->index(infinite), v );
-	prev = cur;
-	cur = cur->neighbor( cw(cur->index(v)) ) ;
-      }
-	
-      // creation of an infinite facet "at the end" of the sequence
-      // of infinite facets containing p
-      Cell_handle cnew 
-	= create_cell( &(*( prev->vertex(ccw(prev->index(v))) )), 
-		       &(*v),  
-		       &(*infinite_vertex()), NULL,
-		       NULL, &(*cur), &(*prev), NULL);
-      // neighbor 0 will be set to dnew later
-      prev->set_neighbor(prev->index(cur), cnew);
-      cur->set_neighbor(cur->index(prev),cnew);
-
-      // traversal in the opposite direction, and same operations
-      // starts from the neighbor of n (n already modified)
-      // 	prev = n;
-      // 	cur = n->neighbor( ccw(n->index(v)) );
-      prev = c;
-      cur = c->neighbor( ccw(c->index(v)) );
-
-      while ( side_of_facet( p, cur, loc, i, j ) 
-	      == ON_BOUNDED_SIDE ) {
-	cur->set_vertex( cur->index(infinite), v );
-	prev = cur;
-	cur = cur->neighbor( ccw(cur->index(v)) ) ;
-      }
-	
-      Cell_handle dnew 
-	= create_cell( &(*v), &(*(prev->vertex(cw(prev->index(v))) )), 
-		       &(*infinite_vertex()), NULL,
-		       &(*cur), &(*cnew), &(*prev), NULL);
-      prev->set_neighbor(prev->index(cur), dnew);
-      cur->set_neighbor(cur->index(prev),dnew);
-      cnew->set_neighbor(0,dnew); // correction for cnew
-
-      infinite->set_cell(dnew);			     
-      // 	v->set_cell( n );
-      v->set_cell( c );
       return v;
     }
   case 3:
     {
       Vertex_handle v = new Vertex(p);
       v->set_cell( c );
-
       set_number_of_vertices(number_of_vertices()+1);
 
-      link( v, hat(v,c) );
-      // infinite->set_cell is done by link
+      Conflict_tester_outside_convex_hull_3 tester(p, this);
+      _tds.insert_conflict(*v, &(*c), tester);
 
       return v;
     }
@@ -2763,109 +2731,6 @@ insert_outside_convex_hull(const Point & p, Cell_handle c)
   // to avoid warning with eg++
   return NULL;
 }
-
-template < class GT, class Tds >
-Triangulation_3<GT,Tds>::Cell_handle
-Triangulation_3<GT,Tds>::
-hat(Vertex_handle v, Cell_handle c)
-  // recursive traversal of the set of facets of the convex hull
-  // that are visible from v
-  // v replaces infinite_vertex in these cells
-  // on the boundary, new cells with vertices v, infinite_vertex
-  // and the two vertices of an edge of the boumdary are created
-  // returns a cell inside the "hat", having a facet on its boundary
-{
-  static Cell_handle bound;
-
-  int inf = c->index(infinite_vertex());
-  c->set_vertex( inf , v );
-
-  Cell_handle cni, cnew;
-  Locate_type loc;
-  int li,lj;
-
-  int i, i1, i2;
-  for ( i=0; i<4; i++ ) {
-    if ( i!= inf ) {
-      cni = c->neighbor(i);
-      if ( ! cni->has_vertex( v ) ) {
-	if ( side_of_cell( v->point(), cni, loc, li, lj )
-	     == ON_BOUNDED_SIDE ) {
-	  hat( v, cni );
-	}
-	else { // we are on the boundary of the set of facets of the
-	  // convex hull that are visible from v
-	  i1 = next_around_edge(i,inf);
-	  i2 = 6-i-i1-inf;
-	  cnew = create_cell( &(*(c->vertex(i1))), &(*(c->vertex(i2))), 
-			      &(*v), &(*infinite_vertex()),
-			      NULL, NULL, &(*cni), &(*c) );
-	  c->set_neighbor(i,cnew);
-	  cni->set_neighbor( cni->index(c), cnew );
-
-	  bound = c;
-	}
-      }
-    }// no else
-  } // for
-  return bound;
-} // hat
-
-template < class GT, class Tds >
-void
-Triangulation_3<GT,Tds>::
-link(Vertex_handle v, Cell_handle c)
-  // c belongs to the hat of v and has a facet on its boundary
-  // traverses the boundary of the hat and finds adjacencies
-  // traversal is done counterclockwise as seen from v
-{
-  // finds a facet ib of c on the boundary of the hat
-  int iv = c->index(v);
-  int ib;
-  for ( ib=0; ib<4; ib++ ) {
-    if ( ( ib != iv ) && c->neighbor(ib)->has_vertex(infinite) ) {
-      break;
-    }
-  }
-  
-  infinite->set_cell(c->neighbor(ib));
-
-  Cell_handle bound = c;
-  int i = ib;
-  int next;
-  Vertex_handle v1;
-
-  do {
-    iv = bound->index(v);
-    // indices of the vertices != v of bound on the boundary of the hat
-    // such that (i,i1,i2,iv) positive
-    int i1 = next_around_edge(i,iv);
-    int i2 = 6-i-i1-iv;
-
-    // looking for the neighbor i2 of bound :
-    // we turn around i1 until we reach the boundary of the hat
-    v1 = bound->vertex(i1);
-
-    Cell_handle cur = bound;
-
-    next = next_around_edge(i1,iv);
-    while ( ! cur->neighbor(next)->has_vertex(infinite) ) {
-      cur = cur->neighbor(next);
-      next = next_around_edge(cur->index(v1),cur->index(v));
-    }
-    Cell_handle current = bound->neighbor(i);
-    Cell_handle found = cur->neighbor(next);
-    current->set_neighbor( current->index(bound->vertex(i2)), found);
-    found->set_neighbor( 6 - found->index(v) - 
-			 found->index(infinite) -
-			 found->index(v1), current );
-    bound = cur;
-    i = next;
-  } while ( ( bound != c ) || ( i != ib ) );
-  // c may have two facets on the boundary of the hat
-  // test bound != c is not enough, we must test whether
-  // facet ib of c has been treated
-}// end link
 
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
