@@ -14,12 +14,11 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I../../../Kernel_basic/include \
            -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
-           -Iinclude \
            $(CGAL_CXXFLAGS) \
+           -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
@@ -50,7 +49,7 @@ all:            \
                 doubletst$(EXE_EXT) \
                 floattst$(EXE_EXT) \
                 quotient_io$(EXE_EXT) \
-                utilities$(EXE_EXT)
+                utilities$(EXE_EXT) 
 
 MP_Float$(EXE_EXT): MP_Float$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)MP_Float MP_Float$(OBJ_EXT) $(LDFLAGS)
