@@ -38,8 +38,8 @@ LDFLAGS = \
 all: \
 		test_delaunay_hierarchy_2$(EXE_EXT) \
 		test_delaunay_triangulation_2$(EXE_EXT) \
-		test_regular_triangulation_2$(EXE_EXT) 
-
+		test_regular_triangulation_2$(EXE_EXT) \
+		test_regular_hierarchy_2$(EXE_EXT)
 
 test_delaunay_hierarchy_2$(EXE_EXT): test_delaunay_hierarchy_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_delaunay_hierarchy_2 test_delaunay_hierarchy_2$(OBJ_EXT) $(LDFLAGS)
