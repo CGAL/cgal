@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_doc' package
 
+Version 1.0.14 on 15-Sep-2003
+- Changed filename reference_part.tex to intro.tex
+
 Version 1.0.13 on 20-Jun-2003
 - Fixes for HTML index.
 
