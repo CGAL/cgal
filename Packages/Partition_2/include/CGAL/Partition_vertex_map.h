@@ -225,14 +225,6 @@ public:
        return (num_unshared > 2);
    }
 
-   Edge_info last_edge_info() const
-   {
-      Self_const_iterator e_it = begin();
-      Self_const_iterator prev_e_it = end();
-      
-      for (; e_it != end(); prev_e_it = e_it++) {}
-      return *prev_e_it;
-   }
 
    // NOTE:  the edges here are sorted in CW order so the next CCW edge
    //        comes BEFORE the edge with endpoint v_it in the sorted list
@@ -392,7 +384,7 @@ public:
 #endif
                  *result = (*v_it).first;
                  result++;
-                 next_v_it = (*v_it).second.last_edge_info().endpoint();
+                 next_v_it = (*v_it).second.back().endpoint();
 #ifdef CGAL_PARTITION_CHECK_DEBUG
                  std::cout << "union_vertices: inserting "
                            << (*next_v_it).first << std::endl;
