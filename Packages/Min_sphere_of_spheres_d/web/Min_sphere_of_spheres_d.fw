@@ -75,6 +75,7 @@
 Advisor: Bernd G\"artner \\
 Institute for Theoretical Computer Science \\
 ETH Z\"urich}
+\date{February 19, 2003}
 %
 %
 \begin{document}
@@ -87,10 +88,10 @@ ETH Z\"urich}
 \section{Introduction}
 %
 The work on this program began in the winter of 2001 when I started my
-diploma thesis at the ETH Z\"urich, under guidance by Bernd G\"artner.
-At this time, only Megiddo's algorithm~\cite{m-bsb-89} was known to
-solve the miniball problem, and we hadn't heard of any implementation
-thereof.  But there was Emo Welzl's elegant
+diploma thesis at ETH Z\"urich, under guidance by Bernd G\"artner.  At
+this time, only Megiddo's algorithm~\cite{m-bsb-89} was known to solve
+the miniball problem (of balls), and we hadn't heard of any
+implementation thereof.  But there was Emo Welzl's elegant
 algorithm~\cite{w-sedbe-91a} to solve the less general problem of
 finding the miniball of a given set of points.  We took this as our
 starting point, with the goal to either generalize his algorithm or to
@@ -115,11 +116,11 @@ to the miniball problem, and of a heuristic.\footnote{We call it a
 ``heuristic'' because it doesn't come with any guarantee on the
 running time.  The ball it com\-putes is minimal, though, it's not
 just an approximation.}  Using the material
-from~\cite{f-sebb-01,fg-sebbcsa-03} we develop the needed primitives
+from~\cite{fg-sebbcsa-03,f-sebb-01} we develop the needed primitives
 and provide code in \code{C++} to compute the exact miniball (using
 multiple-precision numbers) as well as a floating-point approximation
 of it.\footnote{The word ``approximation'' might be missleading here:
-Our algorithm is \e{not} an approximation algorithm, i.e.\ it is not
+Our algorithm is \e{not} an approximation algorithm, i.e., it is not
 an algorithm which only computes a ``small'' enclosing ball---our
 algorithm computes the \e{smallest} enclosing ball; however, due to
 rounding-errors, the result might not be exact.}
@@ -194,7 +195,7 @@ coordinates).\par\medskip
 %
 We will use the following notion. A point~$p$ is said to lie on the
 boundary of a certain ball~$B$ if it lies at distance~$\rho_B$ from
-the ball's center~$c_B$, i.e.\ if $\partial B \cap \{p\} \not=
+the ball's center~$c_B$, i.e., if $\partial B \cap \{p\} \not=
 \emptyset$.  For a ball $B'$ we say that ball $B'$ lies \e{on the
 boundary} of~$B$ (or alternatively, is a \e{supporting ball} of~$B$)
 if and only if $B'\subseteq B$ and $\partial B \cap B' \not=
@@ -295,7 +296,7 @@ package knows how to deal with your ball-type.\par\medskip
 %
 Recall that an exact number type is a number type which evaluates
 operations on numbers (like addition, substraction, multiplication and
-division, but also comparision, etc.) exactly, i.e.\ without
+division, but also comparision, etc.) exactly, i.e., without
 (rounding) errors.
 %
 \begin{definition}
@@ -376,7 +377,7 @@ Thank you for your confidence. \\
 \end{tabular}
 \end{center}\par\medskip
 %
-If \code{T::FT} is a floating-point type (i.e.\ \code{float} or
+If \code{T::FT} is a floating-point type (i.e., \code{float} or
 \code{double}), we say that \e{approximate computation} takes place;
 in case \code{T::FT} is an exact number type, we speak of \e{exact
 computation}.\footnote{As mentioned in the introduction, the term
@@ -428,7 +429,7 @@ space.\footnote{The reasons why we have implemented a class
 \code{Min\_sphere\_of\_spheres\_d} (and not a function) are: (i) The
 class encapsulates more information about the miniball than just its
 center and radius; for instance, you can iterate over the miniball's
-support set.  (ii) Updating the miniball (i.e.\ recomputing the
+support set.  (ii) Updating the miniball (i.e., recomputing the
 miniball after adding some more balls) is more efficient since some
 information from the previous calculation is kept internally and can
 be reused.}
@@ -487,7 +488,7 @@ void insert(const Sphere\& b);}{$O(n)$}%
 %
 Adds the ball~\code{b} to the instance's set~$S$.\par
 %
-\emph{Note:} It is okay if some of the added balls are identical (i.e.\ if
+\emph{Note:} It is okay if some of the added balls are identical (i.e., if
 the set $S$ is a multiset).
 \end{fdescitem}
 %
@@ -499,7 +500,7 @@ Adds the $n$ balls from the range \code{[begin,end)} to the instance's
 set~$S$ by calling \code{insert(b)} for every ball~\code{b} in the
 range.\par
 %
-\emph{Note:} It is okay if some of the added balls are identical (i.e.\ if
+\emph{Note:} It is okay if some of the added balls are identical (i.e., if
 the set $S$ is a multiset).
 \end{fdescitem}
 %
@@ -515,7 +516,7 @@ balls you have already added).
 %
 \begin{fdescitem}{l}{void clear();}{$O(n)$}%
 %
-Removes all added balls, i.e.\ sets $S:= \emptyset$.
+Removes all added balls, i.e., sets $S:= \emptyset$.
 \end{fdescitem}
 %
 \begin{fdescitem}{l}{%
@@ -554,7 +555,7 @@ computation and which is a pair (as described above) otherwise.\par
 %
 \begin{fdescitem}{l}{Cartesian\_const\_iterator center\_cartesian\_end()}%
 {$O(1)$}%
-returns \code{center\_cartesian\_begin()+d}, i.e.\ the corresponding
+returns \code{center\_cartesian\_begin()+d}, i.e., the corresponding
 past-the-end iterator.
 \end{fdescitem}
 %
@@ -564,7 +565,7 @@ past-the-end iterator.
   you can use to iterate over a basis of~$S$.  Remember that a
   basis~$R$ of~$S$ is an inclusion-minimal subset of the pushed
   balls~$S$ with the property that $\MB(R)=\MB(S)$.  Furthermore, all
-  balls in~$R$ touch the boundary of the miniball (i.e.\ are tangent
+  balls in~$R$ touch the boundary of the miniball (i.e., are tangent
   to it) and $|R|\le d+1$.
 \end{fdescitem}
 %
@@ -581,7 +582,7 @@ past-the-end iterator.
   following three conditions are satisfied:
 \begin{itemize}
 \item All added balls are contained in the computed ball.
-\item All support balls (i.e.\ the balls in the range returned by
+\item All support balls (i.e., the balls in the range returned by
 \code{support\_begin()} and \code{support\_end()}) are on the boundary
 of the computed ball.
 \item The support balls span the miniball and no
@@ -750,7 +751,7 @@ We will implement two algorithms, the LP-algorithm as described
 in~\cite{f-sebb-01,msw-sblp-92} and a heuristic which we call
 ``farthest-first.''  Both methods rely on the notions of \e{support
 sets} and \e{basises}.  So let's briefly recall their meaning.
-Please refer to~\cite{f-sebb-01,fg-sebbcsa-03} for the details.
+Please refer to~\cite{fg-sebbcsa-03,f-sebb-01} for the details.
 %
 \begin{definition}
 Let $S$ be a set of balls.  A set $R\subseteq S$ is called a \e{support
@@ -1509,7 +1510,7 @@ for the primitive is to compute the balls containing~$R$ on the
 boundary, select the smallest one among them (which coincides with
 $\MBR(\emptyset,R)$ then) and check whether its center is a convex
 combination of the centers of~$R$.  Should this latter test turn out
-positive, then we know by lemma~\ref{lemma_seidel} that the ball in
+positive, then we know by Lemma~\ref{lemma_seidel} that the ball in
 question is the miniball of~$R$ and so we output it.  If on the other hand
 the test fails, then the ball can't be the miniball and we signal
 ``no.''\par\medskip
@@ -1532,7 +1533,7 @@ balls~$B'\in R$.
 \end{definition}
 %
 (The relation between the set $T(R)$ and $\MBR(\emptyset,R)$ will be
-discussed later on, see lemma~\ref{lemma_constr}.)\par\medskip
+discussed later on, see Lemma~\ref{lemma_constr}.)\par\medskip
 %
 {\bf Some notation.}\label{notation}
 %
@@ -1730,16 +1731,16 @@ In our task of computing~$T(R)$ we thus need to solve the
 system~(\ref{b_lin}) of~$m-1$ linear equations in the~$m$
 unknowns~$x,\rho$.  In case the centers of~$R$ are affinely
 independent, we face a regular coefficient matrix
-(lemma~\ref{lemma_Q}), which means that the solution space is a
+(Lemma~\ref{lemma_Q}), which means that the solution space is a
 one-dimensional line.  Taking into account the quadratic
 polynomial~(\ref{b_quad}), we see that the solutions to~$T(R)$ lie
 somewhere on this line, and there are at most two solutions if the
 polynomial is non-zero, and infinitely many otherwise.\par\medskip
 %
 At this point we could implement the primitive as follows: We
-compute~$T(R)$ using lemma~\ref{lemma_TR} and select from it the
+compute~$T(R)$ using Lemma~\ref{lemma_TR} and select from it the
 smallest ball with radius $\rho\ge \max \rho_i$; by
-lemma~\ref{lemma_constr}, this ball coincides with
+Lemma~\ref{lemma_constr}, this ball coincides with
 $\MBR(\emptyset,R)$.  Then we check whether its center is a convex
 combination of the centers of~$R$ and if so, return the ball, or
 signal ``no'' otherwise.
@@ -1821,7 +1822,7 @@ the point~$C_m$ onto the subspace spanned by~$C_1,\ldots,C_{m-1}$.
 %
 \item[(ii)] $M_{m-1} C_m = \q{C}_m$ and $M_{m} C_{m} = C_{m}$.
 %
-\item[(iii)] $\alpha_m = 2\,(C_m-\q{C}_m)^T (C_m-\q{C}_m)$, i.e.\
+\item[(iii)] $\alpha_m = 2\,(C_m-\q{C}_m)^T (C_m-\q{C}_m)$, i.e.,
 $\alpha_m$ is twice the squared distance from the point~$C_m$ to its
 projection.
 %
@@ -1859,7 +1860,7 @@ is given by
 %satisfies~(\ref{b_lin_plus}).
 \end{lemma}
 %
-The statement is a generalization of~\cite[lemma~1]{g-frseb-99}, and
+The statement is a generalization of~\cite[Lemma~1]{g-frseb-99}, and
 it is worthwhile noting that the point $d_m+c_0$ is the center and
 $d_m^T d_m$ the squared radius of the smallest enclosing ball of the
 points~$\{c_0,\ldots,c_m\}$.
@@ -1970,7 +1971,7 @@ following chain of equations.
 Rearranging terms produces~(\ref{b_quad_plus}).
 \end{proof}
 %
-Combining the above update formulas with lemma~\ref{lemma_TR}, we
+Combining the above update formulas with Lemma~\ref{lemma_TR}, we
 see that $D\in T(R)$ if and only if $C_D = Q_m x = d_m + e_m + \rho_D
 f_m$ where the radius~$\rho_D$ of~$D$ satisfies~(\ref{b_quad_plus}).
 So an update step looks as follows: We compute $\q{C}_m$ using
@@ -2025,7 +2026,7 @@ $Q_1=C_1$ and~$A_1 = 2C_1^TC_1\in\R$.  Consequently, we have
 \[ M_1 = 2 Q_1 A_1^{-1} Q_1^T = \frac{2}{\alpha_1}\,C_1 C_1^T =
 \frac{2}{\alpha_1}\,(C_1-\q{C}_1)\,(C_1-\q{C}_1)^T.
 \]
-Formula~(\ref{M_as_sum}) now follows from lemma~\ref{lemma_props}.
+Formula~(\ref{M_as_sum}) now follows from Lemma~\ref{lemma_props}.
 Along the same lines we get
 \begin{eqnarray*}
 d_1 &=& Q_1 A_1^{-1} v_1 = \frac{C_1^T C_1}{\alpha_1}\,C_1 = \frac{\delta_1}{\alpha_1}\,(C_1-\q{C}_1), \\
@@ -2033,7 +2034,7 @@ e_1 &=& Q_1 A_1^{-1} w_1 = \frac{\rho_0^2-\rho_1^2}{\alpha_1}\,C_1 = \frac{\epsi
 f_1 &=& Q_1 A_1^{-1} r_1 = \frac{2\rho_1-2\rho_0}{\alpha_1}\,C_1 = \frac{\phi_1}{\alpha_1}\,(C_1-\q{C}_1).
 \end{eqnarray*}
 Formula~(\ref{C_as_sum}) now follows from $C(\rho)=Q_m x = d_m+e_m+\rho
-f_m$ and lemma~\ref{lemma_props}.
+f_m$ and Lemma~\ref{lemma_props}.
 \end{proof}
 %
 So our update formulas yield a representation of~$C(\rho)$ as
@@ -2064,7 +2065,7 @@ form $C=\sum \gamma_i C_i$ we need to know the
 coefficients~$\tau_{ji}$ of~$C_j-\q{C}_j$ in the representation
 $C_i = \sum_{j=1}^{m-1} \tau_{ji}\,(C_j-\q{C}_j)$.
 So substitute~(\ref{M_as_sum}) into~$M_iC_i=C_i$
-(lemma~\ref{lemma_props}.ii).  Comparing coefficients yields
+(Lemma~\ref{lemma_props}.ii).  Comparing coefficients yields
 \begin{equation}\label{eq_tau}
 \tau_{ji} = \left\{
 \begin{array}{cl}
@@ -2111,7 +2112,7 @@ won't stop before having used all Greek letters, we use this occasion
 to define some more.)
 %
 \begin{lemma}\label{lemma_cpo}
-In the setup of lemma~\ref{lemma_props}, consider the
+In the setup of Lemma~\ref{lemma_props}, consider the
 quadratic~(\ref{b_quad_plus}), mulitplied by the factor~2.  Its coefficents,
 that is the numbers
 \[ \chi_k:=2\left(f_k^T f_k - 1\right), \quad
@@ -2128,7 +2129,7 @@ are updated acoording to the following formulas
 %
 \begin{proof}
 Observe that $Q_{m-1}^T\,(C_m-\q{C}_m)=0$ by property~(i) of
-lemma~\ref{lemma_props}.  Hence
+Lemma~\ref{lemma_props}.  Hence
 \begin{equation}\label{dd}
 d_m^T d_m = d_{m-1}^T d_{m-1} +
 \frac{\delta_m^2}{\alpha_m^2}\,(C_m-\q{C}_m)^T(C_m-\q{C}_m)
@@ -2174,17 +2175,20 @@ store the discriminant in \code{discrim[i]} for every $1\le i
 $\max_{0\le j \le i} \rho_j$.
 \end{itemize}\par\medskip
 %
-Let us consider the case when $R$ constitutes a basis of $R$, i.e.\
-when $\MB(R)=\MBR(\emptyset,R)$.  Here, lemma~Y
-of~\cite{fg-sebbcsa-03} implies that $\MBR(\emptyset,R')$ exists for
-every subset $R'\subseteq R$, and that its center lies in the affine
-hull of the centers of~$R'$.  Thus, in the case when our primitive
-must compute $\MB(R)=\MBR(\emptyset,R)$, the ball $\MBR(\emptyset,R')$
-exists for all ``stacks'' $R'$ occurring during the construction
-of~$R$.  Consequently, the second-to-last invariant can indeed be
-satisfied and the quadratic equation~(\ref{b_quad_plus}) will have at
-least one real solution $\code{sol[i]}\ge\max_{0\le j<i}\rho_j$ for
-every $1\le i\le m$.\par\medskip
+Let us consider the case when $R$ constitutes a basis of $R$, which in
+particular means $\MB(R)=\MBR(\emptyset,R)$.  Here, Corollary~3
+from~\cite{fg-sebbcsa-03} (together with the fact that the optimal
+value of the mathematical program $P_{\mathbf{0}}(U,V)$ appearing in
+the lemma cannot increase if we drop constraints) implies that
+$\MBR(\emptyset,R')$ exists for every subset $R'\subseteq R$, and that
+its center lies in the affine hull of the centers of~$R'$.  Thus, in
+the case when our primitive must compute $\MB(R)=\MBR(\emptyset,R)$,
+the ball $\MBR(\emptyset,R')$ exists for all ``stacks'' $R'$ occurring
+during the construction of~$R$.  Consequently, the second-to-last
+invariant can indeed be satisfied and the quadratic
+equation~(\ref{b_quad_plus}) will have at least one real solution
+$\code{sol[i]}\ge\max_{0\le j<i}\rho_j$ for every $1\le i\le
+m$.\par\medskip
 %
 In the following, I call the set of variables involved in these
 invariants the \e{device}.\par\medskip
@@ -2221,7 +2225,7 @@ for all~\code{v} in the device.  Having done this, we can safely
 increase~\code{m} by one without violating the above invariants.
 However, we will refrain from incrementing~\code{m} in case we realize
 that \code{alpha[m]} drops to zero.  In such a situtation,
-lemma~\ref{lemma_props} toghether with the fact that a basis has
+Lemma~\ref{lemma_props} toghether with the fact that a basis has
 affinely independent centers tells us that the balls~$R\cup\{B\}$
 cannot be part of any basis, allowing us to return \code{false}
 here.\par\medskip
@@ -2267,7 +2271,7 @@ maxradius[0] = t.radius(ball);
 %
 If $B$ is not the first ball to push, we have more work to do in order
 to maintain the invariants.  To find the value of \code{u[m]} we need
-the vector~$\q{C}_m$, which according to lemma~\ref{lemma_props} can
+the vector~$\q{C}_m$, which according to Lemma~\ref{lemma_props} can
 be computed as $\q{C}_m = M_{m-1}C_m$.  But since
 \[
 \q{C}_m = M_{m-1} C_m =
@@ -2278,10 +2282,10 @@ it suffices to compute the values $\tau_{im}$ for $1\le i<m$ according
 to equation~(\ref{eq_tau}) and calculate the sum on the right-hand
 side.  This shows how to find \code{u[m]}.  The vectors \code{d[m]},
 \code{e[m]}, \code{f[m]} and the number \code{alpha[m]} can be
-computed according to lemma~\ref{lemma_props}, the numbers
+computed according to Lemma~\ref{lemma_props}, the numbers
 \code{delta[m]}, \code{eps[m]}, \code{phi[m]} according to their
 definition, \code{sigma[m]} according to equation~(\ref{dd}) and the
-remaining variables according to lemma~\ref{lemma_cpo}.  (The
+remaining variables according to Lemma~\ref{lemma_cpo}.  (The
 %
 variables
 \code{sol[$m+1$]}
@@ -2374,7 +2378,7 @@ the \e{relative} distance to the affine hull is small, that is when
 \frac{\alpha_m}{\rho_{\mathrm curr}^2} < \varepsilon
 \]
 for some constant $\varepsilon$, where $\rho_{\mathrm curr}$ is the
-radius of $\MBR(\emptyset,R')$, i.e.\ $\rho_{\mathrm
+radius of $\MBR(\emptyset,R')$, i.e., $\rho_{\mathrm
 curr}=\code{sol[m]}$.  Consequently, we have:\par\medskip
 %
 @$@<reject push if necessary@>==@{@-
@@ -2406,17 +2410,19 @@ We compute $\MBR(\emptyset,R)$, $R$ being the set of currently pushed
 balls, using the device $M_m$ from section~\ref{sect_implicit}.
 Recall that it suffices to do the computation when $R$ is a subset of
 a basis, so we can assume the centers of~$R$ to be affinely
-indepedent.  From~\cite[lemma~?]{fg-sebbcsa-03}, it then follows that
-$D:= \MBR(\emptyset,R)$ exists and is unique and that its center lies
-in the affine hull of the centers of~$R$.  Consequently, $D\in T(R)$
-and we can compute it by solving system~(\ref{b_lin}--\ref{b_quad}).
-So we first compute the balls~$T(R)$ and select among them the smallest
-ball~$D$ (if any) with $\rho_D\ge\max_{B\in R}\rho_B$.  If there is no
-such ball, then we immediately abort \code{push()} by returning
-\code{false} (since $R$ cannot be part of any basis in this case).  On
-the other hand, if there exists such a ball~$D$, then we save its
-center and radius and return \code{true} to the caller of
-\code{push()}.\par\medskip
+indepedent.  From Lemma~13(i) in~\cite{fg-sebbcsa-03} (and the fact that
+the optimal value of program ${\cal P}_{\mathbf{0}}(U,V)$ appearing in
+the lemma cannot increase if we drop constraints), it then follows
+that $D:= \MBR(\emptyset,R)$ exists and is unique, and that its center
+lies in the affine hull of the centers of~$R$.  Consequently, $D\in
+T(R)$ and we can compute it by solving
+system~(\ref{b_lin}--\ref{b_quad}).  So we first compute the
+balls~$T(R)$ and select among them the smallest ball~$D$ (if any) with
+$\rho_D\ge\max_{B\in R}\rho_B$.  If there is no such ball, then we
+immediately abort \code{push()} by returning \code{false} (since $R$
+cannot be part of any basis in this case).  On the other hand, if
+there exists such a ball~$D$, then we save its center and radius and
+return \code{true} to the caller of \code{push()}.\par\medskip
 %
 Finding the solutions of the quadratic is done using a ``numerically
 stable'' formula from~\cite{g-wecsskafpa-91}.  Since we are allowed to
@@ -2430,7 +2436,7 @@ If $\chi_{m}$ gets negative\footnote{Take all radii to be zero, for
 instance.}, it is necessary to swap these variables.  In any case, the
 routine \code{find\_radius()} returns true if and only if a
 radius~$\rho$ satisfying $\rho\ge \max_{B\in R}\rho_B$ has been found,
-in which case $\rho$ is, by lemma~\ref{lemma_constr} the radius of
+in which case $\rho$ is, by Lemma~\ref{lemma_constr} the radius of
 $\MBR(\emptyset,R)$.\par\medskip
 %
 @$@<routine find_radius()@>==@{@-
@@ -2561,7 +2567,7 @@ bool Support_set<Traits>::is_spanning() {
 }@}\par\medskip%
 %
 After having computed the center of $D:=\MBR(\emptyset,R)$, we check
-whether $D$ coincides with $\MB(R)$.  By lemma~\ref{lemma_seidel},
+whether $D$ coincides with $\MB(R)$.  By Lemma~\ref{lemma_seidel},
 this is equivalent to the center~$c$ of~$D$ lying in the convex hull
 of the centers of~$R$.  Thus, we compute the representation
 $c=\sum_{i=1}^{m-1}\gamma_i c_i + (1-\sum_{i=1}^{m-1}\gamma_i)\,c_0$
@@ -2662,7 +2668,7 @@ point~$d$ not contained in~$\MB(C)$.  The sets produced by
 \code{gen($0$)} are listed in figure~\ref{fig_pivot_tab}.  For every
 set~$T$ we check, using an instance \code{ss} of class
 \code{Support\_set}, whether $T\cup\{d\}$ constitutes a support set of
-itself (e.g.\ whether \code{is\_spanning()} returns true after having pushed
+itself (e.g., whether \code{is\_spanning()} returns true after having pushed
 the members of the set onto~\code{ss}).  If this is the case, we check
 whether the ball $\MB(T\cup\{d\})$ (which we obtain by
 querying~\code{ss}) encloses all other balls in~$C\cup\{d\}$.  If so,
@@ -2693,7 +2699,7 @@ figure~\ref{fig_pivot}.}
 In order to formulate the procedure \code{gen()} without recursion, we
 introduce two variables \code{pos} (with the intial value~$0$) and
 \code{up} (initially \code{true}), which keep the current position
-(i.e.\ the number of the bit we set or clear) and the current direction
+(i.e., the number of the bit we set or clear) and the current direction
 (whether we enter a recursion or whether we return from one).  The
 following rules should then be obvious:
 \begin{itemize}
@@ -2935,7 +2941,7 @@ private: // traits class:
 
 private: // for internal consisteny checks:
   // The following variable is true if and only if the miniball
-  // has been computed of all inserted balls, i.e. iff every checked-in
+  // has been computed of all inserted balls, i.e.,iff every checked-in
   // ball has been respected in the miniball computation.
   bool is_up_to_date;
 
@@ -3224,13 +3230,13 @@ produced so far.\par\medskip
 \subsection{The validity check}
 %
 According to the specification, we have to check that (i)~the computed
-miniball is enclosing, (ii)~that the computed support-set (i.e.\ the
+miniball is enclosing, (ii)~that the computed support-set (i.e., the
 set of balls returned by \code{support\_begin()} and
-\code{support\_end()}) is indeed supporting (i.e.\ all balls are on
+\code{support\_end()}) is indeed supporting (i.e., all balls are on
 the boundary), (iii)~that it spans the miniball and (iv)~that it is
 inclusion-minimal.  While the first two conditions are easily checked,
 the third and the fourth can be expressed using
-lemma~\ref{lemma_seidel} as follows.  We compute the
+Lemma~\ref{lemma_seidel} as follows.  We compute the
 coefficients~$\lambda_i$ of the affine combination
 \begin{equation}\label{valid_coeffs}
 c = \sum_{i=0}^{e-1} \lambda_i c_i \qquad \mbox{for} \qquad
@@ -3585,7 +3591,7 @@ So every single of the above eight tests is run in $2\cdot 2\cdot
 
 // Option: Assertions
 //
-// Background: The package contains lots of assertions (i.e. internal
+// Background: The package contains lots of assertions (i.e.,internal
 // consistency checks).  For instance, if assertions are enabled then
 // the package will complain when you add balls with negative radii.
 // If you disable assertions, such tests will not be made (with the
@@ -4202,14 +4208,14 @@ locally kept; we can make it a global variable.\par\medskip
 \caption{\label{fig_step3}From two to one recursions.}
 \end{figure}
 %
-It's time to tackle the first recursion (i.e.\ the first call to
+It's time to tackle the first recursion (i.e., the first call to
 mini4).  The algorithm, called as $\mathrm{mini4}(n)$, takes a random
 element in $L[0..(n-1)]$, moves it to the end of the list and calls
 itself with $n$ decresed by one.  Here, a random element from
-$L[0..(n-2)]$ is chosen again, moved to the next-to-last place (i.e.\
+$L[0..(n-2)]$ is chosen again, moved to the next-to-last place (i.e.,
 to $L[n-2]$) and a recursive call is issued once more.  This game
 continues until $k=0$.  Now one element $L[i]$ after the other (with
-$i$ going from $0$ to $n-1$) is checked for violation (i.e.\ not being
+$i$ going from $0$ to $n-1$) is checked for violation (i.e., not being
 contained).  If it doesn't violate~$C$, the recursion goes up one
 level, if it does violate $C$, then pivot is called and a "second"
 recursive call takes place.  This justifies the following
