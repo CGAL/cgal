@@ -273,7 +273,7 @@ class Conic_2 : public R_::Kernel_base::Conic_2 {
     void set (const Conic_2<R>& c1, const Conic_2<R>& c2,
               const CGAL::Point_2<R>& p)
     {
-        _Conic_2::set( c1, c2, p);  analyse();
+        _Conic_2::set( c1, c2, p);  this->analyse();
     }
     
     CGAL::Sign vol_derivative (RT dr, RT ds,
