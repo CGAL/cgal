@@ -76,6 +76,8 @@ are_ordered_along_lineH2( const PT& p, const PT& q, const PT& r,
     else
         return(    ( ( phy*qhw < qhy*phw) && ( qhy*rhw < rhy*qhw))
                 || ( ( rhy*qhw < qhy*rhw) && ( qhy*phw < phy*qhw)));
+    // keeps g++ happy
+    return false;
 }
 
 template < class PT_, class DA_ >
