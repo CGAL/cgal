@@ -347,6 +347,9 @@ public:
   const Self*  second_creator () const
   { return sub_division2; }
 
+  const Change_notification* change_notification() const 
+  { return ovl_change_notf; }
+  
 private:
   // only temporary.
   //typedef typename Arrangement::PMWXChangeNotification      PMWXChangeNotification_Empty;
