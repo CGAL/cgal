@@ -243,7 +243,7 @@ Delaunay triangulation.
 The class \ccc{Triangulation_hierarchy_3} implements a
 triangulation augmented with a data structure that allows fast point
 location queries. Thus, it allows fast construction of the
-triangulation. As proved in~\cite{d-iirdt-98}, this structure has an
+triangulation. As proved in~\cite{d-dh-02}, this structure has an
 optimal behavior when it is built for Delaunay triangulations.
 
 Note that, since the algorithms that are provided are randomized, the
@@ -281,11 +281,11 @@ triangulations suitable for speeding up point location.
 The three main classes (\ccc{Triangulation_3}, \ccc{Delaunay_triangulation_3}
 and \ccc{Regular_triangulation_3}) provide high-level geometric functionality
 such as location of a point in the triangulation~\cite{dpt-wt-02}, insertion
-and possibly removal of a point, and are responsible for the geometric
-validity.  They are built as layers on top of a triangulation data structure,
-which stores their combinatorial structure.  This separation between the
-geometry and the combinatorics is reflected in the software design by the fact
-that these three triangulation classes take two template parameters :
+and possibly removal of a point~\cite{dt-pvr3d-03}, and are responsible for the
+geometric validity.  They are built as layers on top of a triangulation data
+structure, which stores their combinatorial structure.  This separation between
+the geometry and the combinatorics is reflected in the software design by the
+fact that these three triangulation classes take two template parameters :
 
 \begin{itemize}
 \item {} the \textbf{geometric traits} class, which provides the type of points
