@@ -1,13 +1,21 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.22 (20 Dec 2001)
+
+     - Changed M_PI to CGAL_PI.
+     - Cleanup of file headers.
+
 3.21 (6 Aug 2001)
+
      - Susan moved missing .gif files into Polyhedron_ref directory
 
 3.20 (31 Jul 2001)
+
      - Susan moved Polyhedron_ref directory up one level
 
 3.19 (27 Jul 2001)
+
      - Susan made changes necessary to do the manual split and minor 
        formatting changes 
 

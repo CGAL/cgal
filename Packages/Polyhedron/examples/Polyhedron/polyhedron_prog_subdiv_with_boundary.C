@@ -42,7 +42,7 @@ struct Smooth_old_vertex {
         if ( degree & 1) // odd degree only at border vertices
             return v.point();
         degree = degree / 2;
-        double alpha = ( 4.0 - 2.0 * cos( 2.0 * M_PI / degree)) / 9.0;
+        double alpha = ( 4.0 - 2.0 * cos( 2.0 * CGAL_PI / degree)) / 9.0;
         Vector vec = (v.point() - CGAL::ORIGIN) * ( 1.0 - alpha);
         HV_circulator h = v.vertex_begin();
         do {

@@ -11,15 +11,16 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : Polyhedron_traits_with_normals_3.h
-// chapter       : $CGAL_Chapter: 3D-Polyhedral Surfaces $
-// package       : $CGAL_Package: Polyhedron 2.9 (13 Sep 2000) $
-// source        : polyhedron.fw
+// file          : include/CGAL/Polyhedron_traits_with_normals_3.h
+// package       : Polyhedron 2.9 (13 Sep 2000)
+// chapter       : 3D-Polyhedral Surfaces
+//
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //
-// coordinator   : MPI Saarbruecken (Stefan Schirra <stschirr@mpi-sb.mpg.de>)
+// author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)
+// maintainer    :
+// coordinator   : MPI Saarbruecken
 //
 // Default Traits for Polyhedral Surfaces in CGAL.
 // ============================================================================
