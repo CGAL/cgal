@@ -34,6 +34,11 @@ CGAL_BEGIN_NAMESPACE
 
 struct Null_output_stream {};
 
+#if defined(__INTEL_COMPILER)
+template<class T>
+Null_output_stream&
+operator<<(Null_output_stream& nos, const T&);
+#endif
 
 template<class T>
 Null_output_stream&

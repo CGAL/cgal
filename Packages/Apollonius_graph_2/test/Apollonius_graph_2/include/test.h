@@ -17,6 +17,34 @@
 
 
 CGAL_BEGIN_NAMESPACE
+#if defined(__INTEL_COMPILER)
+template<class Traits>
+bool test_traits_base(const Traits& = Traits());
+
+template<class AG, class InputStream>
+bool test_algo_generic(InputStream& is, const AG& = AG());
+
+template<class Kernel, class Method_tag, class InputStream>
+bool test_algo(InputStream& is, const Kernel& = Kernel(),
+	       const Method_tag& = Method_tag());
+
+template<class Kernel, class Method_tag, class InputStream>
+bool test_hierarchy_algo(InputStream& is, const Kernel& = Kernel(),
+			 const Method_tag& = Method_tag());
+
+template<class CK, class CKM, class EK, class EKM, class InputStream>
+bool test_filtered_traits_algo(InputStream& is,
+			       const CK& = CK(), const CKM& = CKM(),
+			       const EK& = EK(),
+			       const EKM& = EKM());
+
+template<class CK, class CKM, class EK, class EKM, class InputStream>
+bool test_filtered_traits_hierarchy_algo(InputStream& is, 
+					 const CK& = CK(),
+					 const CKM& = CKM(),
+					 const EK& = EK(),
+					 const EKM& = EKM());
+#endif
 
 
 template<class Kernel, class Method_tag>
@@ -43,8 +71,13 @@ struct Filtered_traits_tester
 
 
 //template<class Kernel, class Method_tag, class InputStream>
+#if defined(__INTEL_COMPILER)
+template<class Traits>
+bool test_traits_base(const Traits&)
+#else
 template<class Traits>
 bool test_traits_base(const Traits& = Traits())
+#endif
   //bool test_traits(InputStream& is)
 {
   //  typedef Apollonius_graph_traits_2<Kernel,Method_tag>  Traits;
@@ -129,8 +162,9 @@ bool test_traits_base(const Traits& = Traits())
   // testing correctness of predicates;
   //--------------------------------------------------------------------
   bool b;
+  Point_2 p1__icc(10.0,-10);
   Site_2
-    wp1(Point_2(10.0,-10),20),
+    wp1(p1__icc,20),
     wp2(Point_2(9,-9),19.),
     wp3(Point_2(1000000,-1000000),0),
     wp4(Point_2(10.0,5.0),5),
@@ -411,8 +445,13 @@ bool test_traits_base(const Traits& = Traits())
 }
 
 
+#if defined(__INTEL_COMPILER)
+template<class AG, class InputStream>
+bool test_algo_generic(InputStream& is, const AG&)
+#else
 template<class AG, class InputStream>
 bool test_algo_generic(InputStream& is)
+#endif
 {
   typedef AG                                      Apollonius_graph;
   typedef typename Apollonius_graph::Geom_traits  Traits;
@@ -771,8 +810,14 @@ bool test_algo_generic(InputStream& is)
   return true;
 }
 
+#if defined(__INTEL_COMPILER)
+template<class Kernel, class Method_tag, class InputStream>
+bool test_algo(InputStream& is, const Kernel&,
+	       const Method_tag&)
+#else
 template<class Kernel, class Method_tag, class InputStream>
 bool test_algo(InputStream& is)
+#endif
 {
   typedef Apollonius_graph_traits_2<Kernel,Method_tag> Traits;
 #if defined( _MSC_VER )
@@ -791,8 +836,13 @@ bool test_algo(InputStream& is)
   return test_algo_generic<Apollonius_graph,InputStream>(is);
 }
 
+#if defined(__INTEL_COMPILER)
+template<class Kernel, class Method_tag, class InputStream>
+bool test_hierarchy_algo(InputStream& is, const Kernel&, const Method_tag&)
+#else
 template<class Kernel, class Method_tag, class InputStream>
 bool test_hierarchy_algo(InputStream& is)
+#endif
 {
   typedef Apollonius_graph_traits_2<Kernel,Method_tag> Traits;
 #if defined( _MSC_VER )
@@ -815,11 +865,14 @@ bool test_hierarchy_algo(InputStream& is)
 
 
 
-
-
-
+#if defined(__INTEL_COMPILER)
+template<class CK, class CKM, class EK, class EKM, class InputStream>
+bool test_filtered_traits_algo(InputStream& is, const CK&,
+			       const CKM&, const EK&, const EKM&)
+#else
 template<class CK, class CKM, class EK, class EKM, class InputStream>
 bool test_filtered_traits_algo(InputStream& is)
+#endif
 {
   typedef Apollonius_graph_filtered_traits_2<CK,CKM,EK,EKM> Traits;
 #if defined( _MSC_VER )
@@ -838,8 +891,15 @@ bool test_filtered_traits_algo(InputStream& is)
   return test_algo_generic<Apollonius_graph,InputStream>(is);
 }
 
+#if defined(__INTEL_COMPILER)
+template<class CK, class CKM, class EK, class EKM, class InputStream>
+bool test_filtered_traits_hierarchy_algo(InputStream& is, 
+					 const CK&, const CKM&,
+					 const EK&, const EKM&)
+#else
 template<class CK, class CKM, class EK, class EKM, class InputStream>
 bool test_filtered_traits_hierarchy_algo(InputStream& is)
+#endif
 {
   typedef Apollonius_graph_filtered_traits_2<CK,CKM,EK,EKM> Traits;
 #if defined( _MSC_VER )
