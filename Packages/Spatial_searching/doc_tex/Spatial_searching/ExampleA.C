@@ -230,6 +230,8 @@ int neighbour_search(CGAL::Split_rule_enumeration::Split_rule s) {
      std::cout << " d(q, nearest neighbour)=  " << nearest_neighbour[i].second << 
      "    d(q, farthest neighbour)= " << farthest_neighbour[i].second << std::endl; 
   } 
+
+  return 0;
 };
 
 int main() {

@@ -61,11 +61,7 @@ int main() {
   generate_kd_tree(CGAL::Split_rule_enumeration::SLIDING_MIDPOINT); 
   generate_kd_tree(CGAL::Split_rule_enumeration::SLIDING_FAIR);    
 
-  /*
-  double dummy;
-  std::cout << "Enter input to stop: \n" ;
-  std::cin >> dummy;
-  */  
+  
 
   return 0;
 };
