@@ -30,7 +30,8 @@
 
 
 namespace CGAL {
-  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point> *l1)
+  Tools_toolbar::Tools_toolbar(Qt_widget *w, 
+			      QMainWindow *mw, std::list<Point> *l1)
   {
 
     move_deletebut = new CGAL::Qt_widget_move_list_point<Rp>(l1);
@@ -42,7 +43,8 @@ namespace CGAL {
 
 #if QT_VERSION < 300
   // for Qt 2.3 and before
-  maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
+  maintoolbar = new QToolBar("tools", mw, 
+			      QMainWindow::Top, TRUE, "Tools");
 #else
   // from Qt 3.0
   maintoolbar = new QToolBar(mw, "Tools");
@@ -97,7 +99,7 @@ namespace CGAL {
   {
     if (but[1]->isOn())
     {
-      widget->attach(pointbut);
+      widget->attach(&pointbut);
       activebutton = 1;
       is_active = true;
     }
@@ -112,7 +114,7 @@ namespace CGAL {
   {
     if (but[2]->isOn())
     {
-      widget->attach(*move_deletebut);
+      widget->attach(move_deletebut);
       activebutton = 2;
       is_active = true;
     }

@@ -31,7 +31,8 @@
 
 
 namespace CGAL {
-  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t) : dt(t)
+  Tools_toolbar::Tools_toolbar(Qt_widget *w, 
+				QMainWindow *mw, Delaunay *t) : dt(t)
   {
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
@@ -41,7 +42,8 @@ namespace CGAL {
 
 #if QT_VERSION < 300
 		// for Qt 2.3 and before
-    maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
+    maintoolbar = new QToolBar("tools", mw, 
+				QMainWindow::Top, TRUE, "Tools");
 #else
     // from Qt 3.0
     maintoolbar = new QToolBar(mw, "Tools");
@@ -89,7 +91,7 @@ namespace CGAL {
   {
     if (but[1]->isOn())
     {
-      widget->attach(pointbut);
+      widget->attach(&pointbut);
       activebutton = 1;
       is_active = true;
     }

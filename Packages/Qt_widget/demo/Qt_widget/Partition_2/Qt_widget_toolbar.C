@@ -40,7 +40,8 @@ namespace CGAL {
 
 #if QT_VERSION < 300
 // for Qt 2.3 and before
-  maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
+  maintoolbar = new QToolBar("tools", mw, 
+			    QMainWindow::Top, TRUE, "Tools");
 #else
 // from Qt 3.0
   maintoolbar = new QToolBar(mw, "Tools");
@@ -91,7 +92,7 @@ namespace CGAL {
   {
     if (but[1]->isOn())
     {
-      widget->attach(getsimplebut);
+      widget->attach(&getsimplebut);
       activebutton = 1;
       is_active = true;
     } else {
