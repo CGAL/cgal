@@ -175,7 +175,8 @@ _test_circulator( const Triangulation &T )
 //        {
 // 	if (t.dimension()==2) {fi=3;}
         fc0=fc=T.incident_facets(*eit,std::make_pair( (*eit).first,
-				 T.nextposaround((*eit).second,(*eit).third)) );
+				 (int) T.nextposaround((*eit).second,
+						       (*eit).third)) );
         do {
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).second), i));
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).third), j));
@@ -189,7 +190,8 @@ _test_circulator( const Triangulation &T )
     {
      fc0=fc=T.incident_facets((*eit).first,(*eit).second,(*eit).third,
 			      std::make_pair( (*eit).first,
-			      T.nextposaround((*eit).second,(*eit).third)) );
+			      (int) T.nextposaround((*eit).second,
+						    (*eit).third)) );
       do {
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).second), i));
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).third), j));
