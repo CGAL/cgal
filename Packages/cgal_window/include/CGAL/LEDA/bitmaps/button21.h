@@ -9,13 +9,15 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2001, May 23
+// release_date  : 
 //
-// file          : ?/include/CGAL/LEDA/bitmaps/button21.h
-// package       : cgal_window (0.9.7)
+// file          : include/CGAL/LEDA/bitmaps/button21.h
+// package       : cgal_window (0.9.8)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// author(s)     : ?
-// coordinator   : ?
+// revision      : 0.9.8
+// revision_date : 12 June 2001
+// author(s)     : Matthias Baesken, Algorithmic Solutions
+// coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
 //
 // ======================================================================
 #include <CGAL/LEDA/bitmaps/button21/a_annulus_21.xbm>
