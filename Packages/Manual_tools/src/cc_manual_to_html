@@ -48,7 +48,9 @@ set DEFAULT_TITLE  = "The CGAL Kernel Manual"
 # The environment variable CGAL_INCL_DIR is used as default. If it is not
 # set, the default setting is empty and include files are not linked.
 set cgal_dir = ""
-if ($?CGAL_INCL_DIR)  set cgal_dir = "-cgal_dir ${CGAL_INCL_DIR}/"
+if ($?CGAL_INCL_DIR) then
+    set cgal_dir = "-cgal_dir ${CGAL_INCL_DIR}/"
+endif
 
 
 # =======================================================
