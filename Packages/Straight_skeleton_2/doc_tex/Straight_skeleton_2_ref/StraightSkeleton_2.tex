@@ -1,0 +1,49 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Name$
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{StraightSkeleton_2}
+
+   A model for the \ccRefName\ concept defines the underlying
+   combinatorial data structure (halfedge data structure) used to
+   represent the 2D straight skeleton of a simple polygon.
+
+The \ccRefName\ concept is a refinement of the \ccc{HalfedgeDS} concept. Hence, the requirements for the latter are requirements for the former.
+The difference in requirements is that the
+\ccHtmlNoLinksFrom{\ccStyle{Vertex} and \ccStyle{Halfedge}}
+types should be models of the more refined concepts
+\ccc{StraightSkeletonVertex_2} and \ccc{StraightSkeletonHalfedge_2}.
+
+\ccTypes
+    \ccNestedType{Vertex}{
+       The vertex type. Should be a model of the
+       \ccc{StraightSkeletonVertex_2} concept.}
+
+    \ccNestedType{Halfedge}{
+       The halfedge type. Should be a model of the
+       \ccc{StraightSkeletonHalfedge_2} concept.}
+
+
+\end{ccRefConcept} % StraightSkeleton_2
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,53 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Name$
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\chapter{2D Straight Skeleton}
+\label{ref-chapter-straightskeleton2}
+
+\ccHeading{Definition}
+
+The straight skeleton of a polygon is a partitioning of the polygon interior into faces corresponding to the monotone areas traced by a continuous offsetting of the polygon's edges.
+These faces are bounded by angular bisectors of the lines supporting the polygon edges; they are non-convex straight-line polygons themselves.
+
+The concept \ccc{StraightSkeleton_2} is a refinement of the \ccc{HalfedfeDS} concept.
+Halfedges represent both polygon edges (borders) and bisectors, while Vertices represent both polygon vertices and skeleton nodes.
+
+\cgal\ provides the class \ccc{CGAL::Straight_skeleton_builder_2<Gt,Ssds>} for
+computing the 2D straight skeleton of a simple polygon.
+The two template parameters must be models of the \ccc{StraightSkeletonBuilderTraits_2} and \ccc{StraightSkeleton_2} concepts.\\
+The first concept is related to the geometric objects and predicates associated with
+the straight skeleton construction process. The class \ccc{Straight_skeleton_builder_traits_2<K,Ssds>} is a model of this concept.\\
+The second concept refers to the data structure used to represent the straight skeleton.
+Any instance of the class \ccc{CGAL_HALFEDGEDS_DEFAULT} with items modeling the right concepts: \ccc{StraightSkeletonVertex_2} and \ccc{StraightSkeletonHalfedge_2}, is a model of this concept (i.e. there is no explicit class for the \ccc{StraightSkeleton_2} concept).
+
+\ccHeading{Concepts}
+\ccRefConceptPage{StraightSkeleton_2} \\
+\ccRefConceptPage{StraightSkeletonVertex_2} \\
+\ccRefConceptPage{StraightSkeletonHalfedge_2} \\
+\ccRefConceptPage{StraightSkeletonBuilderTraits_2} \\
+
+\ccHeading{Classes}
+\ccRefIdfierPage{CGAL::Straight_skeleton_vertex_base_2<Refs,Point,RT>}\\
+\ccRefIdfierPage{CGAL::Straight_skeleton_halfedge_base_2<Refs,Segment>}\\
+\ccRefIdfierPage{CGAL::Straight_skeleton_builder_traits_2<Kernel,Ssds>}\\
+\ccRefIdfierPage{CGAL::Straight_skeleton_builder<Gt,Ssds>}\\
+
+\lcHtml{\ccHeading{Links to the Reference Sections}}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

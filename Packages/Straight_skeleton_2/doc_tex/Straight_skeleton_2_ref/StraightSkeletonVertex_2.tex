@@ -1,0 +1,133 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Name$
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\begin{ccRefConcept}{StraightSkeletonVertex_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccHeading{Introduction}
+
+A straight skeleton is a graph of connected skeleton line segments, called \textbf{edges} in this documentation, which partitions the interior of a simple polygon in faces. Outer edges (which correspond to input polygon edges) are called \textbf{borders}. Inner edges are called \textbf{bisectors}. Each edge, whether a border or a bisector, is represented in the underlying halfedge data structure as a pair of opposite \textit{halfedges}.
+
+Note: In the terminology used in a halfedge data structure, edges in the perimetry of a closed shape will correspond to a pair of opposite halfedges such that only one of these will face outward. The outward facing halfedge will have no incident face, while its opposite will (one of the faces (or face) in the interior of the shape). The halfedge facing outward is called a \textbf{border}, but the opposite is not. Opposite halfedges, however, are related and represent the same single entity: an edge; so we say that an edge is border if one of its corresponding halfedges is a border. Likewise, an edge is a bisector if none of its halfedges is a border.
+
+\textbf{Very Important: To determine if a halfedge corresponds to a bisector is\_bisector() can be called on any of the halfedges of the pair (because both halfedges will return the same answer). However, to determine if a halfedge corresponds to a border, it must be tested that it is not a bisector. The reason is that calling is\_border () would return true in only one of the halfedges of the pair.}
+
+As in any halfedge data structure, the edges are connected (i.e. they intersect), and they intersection is represented by a \textbf{vertex}.\\
+All vertices have degree at least 3; that is, they have at least 3 incident edges (that is, 3 pairs of opposite halfedges).\\
+If 2 of these incident edges are borders, the vertex is called a \textbf{border} vertex and it corresponds to a vertex of the input polygon. The third edge of a border vertex is always a bisector, and border vertices have degree exactly 3.\\
+If all the incident edges are bisectors, the vertex is called an \textbf{inner} vertex and corresponds to a skeleton node (located at the interior of the input polygon). Inner vertices can have any degree $\geq 3$.
+
+Border edges can only be incident upon border vertices, and there must be exactly 2 borders and 1 bisector in this case.
+
+Since borders and bisectors are geometrically embedded as straight line segments in common plane and a vertex corresponds to the intersection of those, a vertex is embedded in that plane as a point.
+
+A vertex is given by the intersection of borders and/or bisectors. Since a bisector is defined by 2 borders, considering these and removing repetitions (intersecting bisectors have 1 common defining border), a vertex is uniquely associated with a unique set of borders. These borders are called the vertex' \textbf{defining borders}.\\
+A vertex is identified by it's set of defining borders. Two vertices are distinct if they have differing sets of defining borders. \textit{Vertices can be distinct even if they are geometrically embedded at the same point}. Distinct vertices at the same point can be merged into a single vertex by replacing them with a vertex joining all the intersecting bisectors. The degree of a merged vertex is 2 + the number of merged vertices. Assuming a RealRAM computation model, it is always possible to merge all distinct vertices at the same point so that all vertices have distinct locations.
+
+Border vertices have exactly two defining borders, which are the border edges incident upon the vertex.\\
+Inner vertices have exactly as many (distinct) defining borders as its degree (which is the number of intersecting bisectors).
+
+A defining characteristic of the polygon partition induced by the straight skeleton is that the distances from a vertex' point to the \textit{lines} supporting its defining borders is the same. The square of this offset distance is called the \textbf{time} of the vertex. Note that different vertices can have the same time. Border vertices have time zero.
+
+During the construction of the straight skeleton, some data must be associated with each vertex, but this data is specific to the construction procedure and is meaningless after the straight skeleton is completed. Such data is generated and maintained by the algorithm, but in order to achieve efficient lookup all vertices have a unique indexing ID which must be given upon construction.
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for the vertex class of the
+\ccc{StraightSkeleton_2} concept. It is a refinement of the \ccc{HalfedgeDSVertex} concept
+with support for storage of the incident halfedge. The requirements of the latter are the requirements of the former. In addition, the \ccRefName\ defines the geometric embedding as a point and should contain the following geometric types and methods.
+
+\ccTypes
+  \ccNestedType{Point_2}{The type of the 2D point being the geometric embedding of the vertex}{}
+\ccGlue
+  \ccNestedType{FT}{The numeric field type representing the time of a vertex (a squared distance)}{}
+\ccGlue
+  \ccNestedType{Halfedge_around_vertex_const_circulator}{}{}
+\ccGlue
+  \ccNestedType{Halfedge_around_vertex_circulator}{The circulator type used to visit all the incident edges around a vertex}
+\ccGlue
+  \ccNestedType{Halfedge_across_incident_faces_const_circulator}{}{}
+\ccGlue
+  \ccNestedType{Halfedge_across_incident_faces_circulator}{The circulator type used to visit all the defining borders of a vertex}
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+\ccConstructor{StraightSkeletonVertex_2();}{Default constructor}
+\ccGlue
+\ccConstructor{StraightSkeletonVertex_2(int id, Point_2 const& p);}{Constructs a border vertex with ID number \ccc{id}, at the point \ccc{p}}
+\ccGlue
+\ccConstructor{StraightSkeletonVertex_2(int id, Point_2 const& p, FT time );}
+{Constructs an inner vertex with ID number \ccc{id}, at point \ccc{p} and time \ccc{time}.}
+
+\ccAccessFunctions
+  \ccMethod{int id() const;}{The ID of the vertex.}
+  \ccGlue
+  \ccMethod{Point_2 const& point() const;}{The vertex point.}
+  \ccGlue
+  \ccMethod{FT time() const;}{The time of the vertex: the squared distance from the vertex point to the lines supporting the defining borders}
+  \ccGlue
+  \ccMethod{Halfedge_around_vertex_circulator incident_edges_begin();}{}
+  \ccGlue
+  \ccMethod{Halfedge_around_vertex_const_circulator incident_edges_begin() const;}
+{Returns a bi-directional circulator pointing to one of the incident edges (which one is unspecified, although defined by the straight skeleton builder depending of the type of vertex).\\
+There will always be as many incident edges as the degree of the vertex.\\
+If this is a \ccc{border} vertex, its degree is exactly 3, and from the edges pointed to by the circulator, 2 are borders and 1 is a bisector.\\
+If this is an \ccc{inner} vertex, its degree is at least 3 and all of the edges pointed to by the circulator are bisectors.\\
+Only one halfedge of each edge will be pointed to by the circulator: the one which is oriented towards the vertex (according to the geometric embedding).\\
+Circulating around a border vertex, the first halfedge returned will be facing inwards and \ccc{is\_border()} will be \ccc{false}. As a general rule of thumb, always use \ccc{!is\_bisector()} as the method to test whether a halfedge corresponds to a border edge.\\
+Circulating around an inner vertex, all the pointed to halfedges will correspond to bisectors.}
+  \ccGlue
+  \ccMethod{Halfedge_across_incident_faces_circulator defining_borders_begin();}{}
+  \ccGlue
+  \ccMethod{Halfedge_across_incident_faces_const_circulator defining_borders_begin() const;}
+{Returns a bi-directional circulator pointing to one of the defining borders of the vertex (which one is unspecified, although defined by the straight skeleton builder depending on the type of vertex).\\
+There will always be as many incident defining borders as the degree of the vertex.\\
+Only one halfedge of each border edge will be pointed to by the circulator: the one facing inwards (which happens to be the one for which \ccc{is\_border()} is \ccc{false}). This reflects the edge' orientation of input polygon.}
+
+
+\ccHeading{Queries}
+\ccMethod{bool is_border() const;}{Returns \ccc{true} iff this is a border vertex.}
+\ccGlue
+\ccMethod{bool is_inner() const;}{Returns \ccc{true} iff this is not a border vertex (i.e. is an inner vertex).}
+\ccGlue
+\ccMethod{bool is_reflex() const;}{Returns \ccc{true} iff this is a reflex border vertex.\\
+A reflex border vertex is a polygon-vertex whose internal angle is $>\pi$}
+\ccGlue
+\ccMethod{int degree() const;}{Returns the degree of the vertex (number of incident edges).}
+
+\ccModifiers
+\ccMethod{void set_is_reflex( bool v );}{Sets the flag which indicates whether this vertex is reflex or not (only border vertices can be reflex)}
+
+\ccHasModels
+
+\ccc{CGAL::Straight_skeleton_vertex_base_2<Refs,Point,RT>}.
+
+\ccSeeAlso
+
+\ccc{StraightSkeleton_2}\\
+\ccc{StraightSkeletonHalfedge_2}\\
+\ccc{CGAL::Straight_skeleton_vertex_base_2<Refs,Point,RT>}\\
+\ccc{CGAL::Straight_skeleton_halfedge_base_2<Refs,Segment>}\\
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,103 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Name$
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\begin{ccRefConcept}{StraightSkeletonBuilderTraits_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccHeading{Introduction}
+
+Two non-parallel lines are bisected by two other lines passing through the intersection point.\\ Two parallel lines are bisected by another parallel line placed halfway in between.\\
+Given just one line, any perpendicular line can be considered the bisecting line (any bisector of any two points along the single line).\\
+The bisecting lines of two edges are the lines bisecting the supporting lines of the edges (if the edges are parallel or collinear, there is just one bisecting line)
+
+The halfplane to the left of the oriented line supporting a straight-line segment is called the \textbf{offset zone} of the segment.\\
+Given any number of segments (not necessarily consecutive), the intersection of their offset zones is called their \textbf{combined offset zone}.
+
+Any two segments define an \textbf{offset bisector}, as follows:
+If the segments are oblique, their bisecting lines can be decomposed as 4 rays originating at the intersection of the supporting lines. Only one of these rays is contained in the combined offset zone of the segments. This ray is the offset bisector of the oblique segments.\\
+If the segments are parallel (but not collinear), the entire (unique) bisecting line is their offset bisector.\\
+If the segments are collinear, a ray of a (perpendicular) bisecting line which originates at the midpoint of the (combined) complement of the segments is their offset bisector. [The complement of a segment are the two rays along its supporting line which are not the segment. The (combined) complement of N segments is the intersection of the complements of each segment]
+An offset bisector is uniquely defined by two segments, or, equivalently, by two oriented supporting lines. We denote an offset bisector as a pair of lines (or segments): \ccc{(E(i),E(j))}. \textit{[The offset bisector is strictly given by the lines, but for convenience it can be denoted as a pair of segments]}. The order of the pair is irrelevant as can be seen by following the halfedge construction of the bisector; therefore, \ccc{(E(i),E(j))} and \ccc{(E(i),E(j))} denote the same bisector.
+
+%% Figure of bisecting lines and offset bisectors here
+
+Consider the edges of a 2D polygon \ccc{P} moving inward along their perpendicular direction at constant speed; that is, the continuous inner offsetting of the polygon. For each distance \ccc{t} moved by the edges, there is an offset polygon \ccc{P(t)}. The initial polygon can be regarded as the offset polygon at distance 0: \ccc{P(0)}, thus, \ccc{P(t)} can be considered a dynamic function describing the evolution of P over time. Each moved distance is therefore considered an instant, or time, of the evolving polygon. We'll see that P can change its topology as it evolves (that is, edges can disappear or get split).
+
+Two moving oblique edges (E(i),E(j)) -not necessarily consecutive-, with supporting lines (L(i),L(j)), trace a moving vertex given by the intersection of L(i) and L(j) as they move. The ray given by this moving vertex is the offset bisector (L(i),L(j)) (or (L(j),L(i)) which is the same). Similarly, two moving collinear edges (E(i),E(j)) -again not necessarily consecutive-, trace a moving vertex at the midpoint of their complement, and the trace of this moving vertex is the offset bisector (L(i),L(j)). As a corner case, two moving parallel non collinear edges (E(i),E(j)) with opposite orientation do not trace a moving vertex but entirely collide collapsing into a single line. This line is the offset bisector (L(i),L(j)). In summary, for any two edges (E(i),E(j)) in the polygon there is an offset bisector (E(i),E(j)) (or (E(j),E(i)) which is the same). [except when E(i),E(j) are parallel non-collinear and have the same orientation]
+
+As edges move, they can shrink or expand and they do so monotonously. A shrinking edge E(i), after having moved a distance \ccc{t}, may eventually degenerate to a point and vanish. This occurs exactly when E(i) collides simultaneously with edges \ccc{E(j)} and \ccc{E(k)}. When this happens, the offset polygon \ccc{P(t)} has a different topology: \ccc{E(i)} no longer exist and edges \ccc{E(j)} and \ccc{E(k)} become consecutive. Another topological change that may occur is an edge \ccc{E(j)} being split by two consecutive edges \ccc{E(i),E(i+1)} forming a reflex vertex (whose interior angle is $>=pi$), which occurs exactly at the time \ccc{t} when the 3 edges collide. In this case, \ccc{P(t)} corresponds to 2 unconnected cycles, each with its own set of edges which continue evolving on its own (the edges on one cycle do not interact further with those in the other). One cycle gets \ccc{E(i)} and the corresponding part of \ccc{E(j)} while the other cycle gets \ccc{E(i+1)} and the rest of \ccc{E(j)}.\\
+A change in topology at time \ccc{t} is called an \textbf{event}. An event corresponding to a vanishing edge is called an \textbf{edge event} while an event corresponding to an edge being split is called a \textbf{split event}.\\
+The two types of events distinguish the topological change they produce in the evolution of P, but they occur when 3 moving edges collide. The collision of three moving edges is given exactly as the simultaneous intersection of their supporting moving lines. Thus, any event, whether an edge or a split event, is uniquely defined by 3 oriented lines as the simultaneous intersection of their offsets. That is, the oriented lines \ccc{(a,b,c)} define an event iff there exist an offset distance \ccc{t} such that the offset lines \ccc{a(t),b(t) and c(t)} intersect simultaneously at a single point \ccc{p}. [We consider only the offset to the left of the lines].\\
+By this definition, an event may not exist (there may be no such intersection), but if it exist, it is given by a point and an offset distance. Therefore, to \textit{compute} an event given by lines \ccc{(a,b,c)} is to find the pair \ccc{(p,t)} which corresponds to the intersection point \ccc{p} of the offset lines at distance \ccc{t}. This point is called the \textbf {position} of the event, and the offset distance its \textbf{time}.
+
+%% Figure of events here.
+
+Side Notes:
+
+According to the definition of edge event, it occurs when \ccc{E(i)} collides with \ccc{E(j) and E(k)}. From the point of view of the polygon evolution, an edge events occurs when the edges before and after \ccc{E(i)} collide, that is, edges i-1 and i+1 \textit{of the offset polygon at the time immediately before t}. However, in this definition we refer to the original edges of P(0), in which case j and k are not necessarily i-1 and i+1. An \textit{initial} edge event is an edge event between \ccc{E(i-1),E(i) and E(i+1)}
+
+Special cases arise when edge or split events occur simultaneously. A multiple edge event occurs when more than one edge vanishes at the collision, for instance at a single point as in a regular polygon, or at a segment as in the case of two parallel opposite edges (in a rectangle, for example). In this case, the last event in any cycle of the evolving P is a multiple edge event. A multiple split event occurs when one edge of \ccc{E(i),E(i+1)} is split by one edge of \ccc{E(j),E(j+1)}. In this case, the event produces not two cycles but N, where N is the number of simultaneous splits.
+
+%% Figure of multiple events here
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for the geometric traits class needed by the algorithm class \ccc{Straight_skeleton_builder_2<Gt,Ssds>}.
+
+\ccTypes
+  \ccNestedType{Point_2}{A point type}{}
+  \ccGlue
+  \ccNestedType{Line_2}{A straight line type}{}
+  \ccGlue
+  \ccNestedType{FT}{A numeric field type}{}
+
+\ccCreationVariable{v}  %% choose variable name
+\ccHeading{Computations}
+
+  \ccMethod{boost::optional< std::pair<Point_2,FT> > compute_event ( Line_2 const& a,
+  Line_2 const& b, Line_2 const& c) const ;}
+  {If the lines \ccc{(a,b,c)} defines an event, given as a point \ccc{p} at a time \ccc{t}, returns it, as the pair (p,t).\\
+  An event exist iff there is a \ccc{t} such that the offset lines
+  \ccc{a(t),b(t),c(t)} all intersect at \ccc{p}. \textit{[The offsets are taken to the left of the lines]}\\
+  (An instance of the boost::optional class constructed with a value v is explicitly initialized with this value, and if default constructed, explicitly uninitialized. Thus, this function returns optional( std::make\_pair(p,t) ) if the event exists, or optional() if it doesn't)}
+
+\ccPredicates
+  \ccMethod{CGAL::Comparison_result compare_events ( Line_2 const& la
+, Line_2 const& lb, Line_2 const& lc, Line_2 const& ra, Line_2 const& rb
+, Line_2 const& rc) const ; }{Given \ccc{lt} $\equiv$ the time of the event \ccc{(la,lb,lc)} and  \ccc{rt} $\equiv$ the time of event \ccc{(ra,rb,rc)}; returns \ccc{compare(lt,rt)}.}
+  \ccGlue
+  \ccMethod{bool is_event_inside_bounded_offset_zone( Line_2 const& a,
+  Line_2 const& b, Line_2 const& c, Line_2 const& edge, Line_2 const& edge_left, Line_2 const& edge_right) const ;}
+  {Returns \ccc{true} iff the event defined by the lines \ccc{(a,b,c)} is inside the bounded offset zone of the \ccc{edge} as delimited by the offset bisectors \ccc{(edge\_left,edge)} and \ccc{(edge,edge\_right)}.\\
+  The bounded offset zone of an edge \ccc{e} delimited by edges \ccc{l} an \ccc{r} is the region simultaneously to the left of \ccc{e}, to the left of the offset bisector \ccc{(e,r)} and to the right of the offset bisector \ccc{(l,e)}}
+
+\ccHasModels
+
+\ccc{CGAL::Straight_skeleton_builder_traits_2<R>}.
+
+\ccSeeAlso
+
+\ccc{CGAL::Straight_skeleton_builder_2<Gt,Ssds>}\\
+\ccc{CGAL::Straight_skeleton_builder_traits_2<R>}\\
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

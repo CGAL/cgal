@@ -1,0 +1,55 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Name$
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefClass}{Straight_skeleton_builder_2<Gt_,Ssds_>}
+
+\ccDefinition
+The class \ccRefName\  encapsulates the algorithm to construct the 2D straight skeleton in the interior of a simple polygon. The class \ccRefName\  has two template arguments: the first is model of the \ccc{StraightSkeletonBuilderTraits_2} concept and the second is a model of the \ccc{StraightSkeleton_2} concept.
+
+\ccTypes
+  \ccTypedef{Gt_ Gt;}{The geometric traits (first template parameter)}{}
+\ccGlue
+  \ccTypedef{Ssds_ Ssds;}{The straight skeleton data structure (second template parameter)}{}
+
+\ccCreation
+\ccCreationVariable{b}  %% choose variable name
+
+\ccConstructor{StraightSkeletonBuilder_2();}{Default constructs the builder.}
+
+\ccHeading{Methods}
+\ccMethod{template<class InputPointIterator>
+  Straight_skeleton_builder_2& insert_CCB ( InputPointIterator aBegin, InputPointIterator aEnd );} {Inserts one Connected Component of the Boundary (CCB) in the resulting straight skeleton. One CCB corresponds to one cycle of border halfedges in the underlying Halfedge Data Structure.\\ This method does not update the straight skeleton (as the algorithm is not incremental), it just sets up the underlying data structure with border halfedges defining the boundaries of the input polygon. Once all the CCBs that make up the input polygon have been inserted, v.proceed() must be called.\\
+  Note: It is possible to insert unconnected CCBs, that is, boundaries which define separate regions in the plane; however, doing so will be much less efficient than constructing the straight skeleton separately for each CCB because in this case the edges in one CCB do not interact at all with those on the other, yet the algorithm cannot assume that and will waste time finding those non-existing interactions.}
+\ccGlue
+\ccMethod{Ssds proceed();}{Constructs the straight skeleton in the interior of polygon as defined by the CCBs inserted previously and returns it.}
+
+\ccInclude{CGAL/Straight_skeleton_builder_2.h}
+
+\ccSeeAlso
+\ccc{StraightSkeletonBuilderTraits_2}\\
+\ccc{StraightSkeletonVertex_2}\\
+\ccc{StraightSkeletonHalfedge_2}\\
+\ccc{StraightSkeleton_2}\\
+\ccc{CGAL::Straight_skeleton_builder_traits_2<R>}\\
+\ccc{CGAL::Straight_skeleton_vertex_base_2<Refs,Segment>}\\
+\ccc{CGAL::Straight_skeleton_halfedge_base_2<Refs,Segment>}\\
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

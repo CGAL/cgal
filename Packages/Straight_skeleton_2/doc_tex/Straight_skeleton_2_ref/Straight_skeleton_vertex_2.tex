@@ -1,0 +1,58 @@
+\RCSdef{\alphashapeRevision}{$Revision$}
+\RCSdefDate{\alphashapeDate}{$Date$}
+
+%----------------------------------------------------------------------
+
+\begin{ccRefClass} {Straight_skeleton_vertex_2<HdsVertex>}
+
+\ccDefinition
+
+The class \ccClassTemplateName\ represents a vertex of the straight skeleton.
+
+A straight skeleton contains two kinds of vertices: border and inner. A border vertex is a vertex of the input polygon. An inner vertex is a vertex of the skeleton itself (the joint of three bisectors).
+
+Every vertex in the straight skeleton has degree 3 or higher (including border vertices).} 
+
+\ccInheritsFrom
+
+\ccc{HdsVertex}
+
+This class is the underlying vertex class.
+
+\ccTypes
+\ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
+\ccThreeToTwo
+
+
+\ccCreation
+\ccCreationVariable{e}
+
+\ccConstructor{Straight_skeleton_vertex();}
+{de}
+
+\ccConstructor{Straight_skeleton_vertex( Point const& p );
+
+\ccConstructor{Straight_skeleton_vertex( Point const& p, bool is_reflex );
+
+
+\ccOperations
+
+\ccMethod{Soutgoing_border()
+\ccMethod{Straight_skeleton_halfedge get_ingoing_border();}
+{Returns the border halfedge which ends at this vertex (as given by \ccc{get_outgoing_border()->opposite()->next()->opposite()}. }
+
+
+\end{ccRefClass}
+
+
+
+
+
+
+
+
+
+
+
+
+

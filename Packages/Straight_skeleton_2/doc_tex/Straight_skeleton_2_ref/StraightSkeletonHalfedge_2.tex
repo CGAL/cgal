@@ -1,0 +1,109 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Name$
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+
+\begin{ccRefConcept}{StraightSkeletonHalfedge_2}
+
+\ccHeading{Introduction}
+
+
+A straight skeleton is a graph of connected straight line segments, called \textbf{edges} in this documentation, which partitions the interior of a simple polygon in faces. Outer edges (which correspond to input polygon edges) are called \textbf{borders}. Inner edges are called \textbf{bisectors}. Each edge, whether a border or a bisector, is represented in the underlying halfedge data structure as a pair of opposite \textit{halfedges}.\\
+
+Note: In the terminology used in a halfedge data structure, edges in the perimetry of a closed shape will correspond to a pair of opposite halfedges such that only one of these will face outward. The outward facing halfedge will have no incident face, while its opposite will (one of the faces (or face) in the interior of the shape). The halfedge facing outward is called a \textbf{border}, but the opposite is not. Opposite halfedges, however, are related and represent the same single entity: an edge; so we say that an edge is border if one of its corresponding halfedges is a border. Likewise, an edge is a bisector is none of its halfedges is a border.\\
+
+\textbf{Very Important: To determine if a halfedge corresponds to a bisector, is\_bisector() can be used on any of the halfedges of the pair (because both halfedges will return the same answer). However, to determine if a halfedge corresponds to a border it must be tested that it is not a bisector. The reason is that calling is\_border () would return true in only one of the halfedges of the pair.}
+
+Both border and bisector edges have a (oriented) straight line segment as the geometric embedding.
+
+Two non-parallel lines are bisected by two other lines passing through the intersection point.\\ Two parallel lines are bisected by another parallel line placed halfway in between.\\
+Given just one line, any perpendicular line can be considered the bisecting line (any bisector of any two points along the single line).\\
+The bisecting lines of two edges are the lines bisecting the supporting lines of the edges (if the edges are parallel or collinear, there is just one bisecting line)
+
+The halfplane to the left of the line supporting a border edge is called the \textbf{offset zone} of the edge.\\
+Given any number of edges (not necessarily consecutive), the intersection of their offset zones is called their \textbf{combined offset zone}.
+
+Any two edges define an \textbf{offset bisector}, as follows:
+If the edges are oblique, their bisecting lines can be decomposed as 4 rays originating at the intersection of the supporting lines. Only one of these rays is contained in the combined offset zone of the edges. This ray is the offset bisector of the oblique edges.\\
+If the edges are parallel (but not collinear), the entire (unique) bisecting line is their offset bisector.\\
+If the edges are collinear, a ray of a (perpendicular) bisecting line which originates at the midpoint of the (combined) complement of the edges is their offset bisector. [The complement of a segment are the two rays along its supporting line which are not the segment. The (combined) complement of N segments is the intersection of the complements of each segment]
+
+%% Figure of bisecting lines and offset bisectors here
+
+The bisectors of the straight skeleton are segments of the offset bisectors as defined above. Consequently, a bisector is uniquely given by two borders, called the \textbf{defining borders} of the bisector. For simplicity, since borders and bisectors are equally represented as halfedges, we convey that the defining borders of a border are the border itself.\\
+Given that a bisector (or border) is represented as a pair of opposite halfedges, each single halfedge points to the defining border which is to its own left (specifically, to the inward-facing (i.e. non-border) halfedge corresponding to this defining border edge). The two opposite halfedges give access to the two defining borders of a bisector.
+
+A \textbf{contour} bisector is a bisector who's defining borders are consecutive. Such a bisector is incident upon 1 border vertex and 1 inner vertex and touches the input polygon at exactly 1 endpoint.\\
+An \textbf{inner} bisector is a bisector who's defining borders are not consecutive. Such a bisector is incident upon 2 inner vertices and is strictly contained in the interior of the polygon.
+
+During the construction of the straight skeleton, some data must be associated with each halfedge, but this data is specific to the construction procedure and is meaningless after the straight skeleton is completed. Such data is generated and maintained by the algorithm, but in order to achieve efficient lookup all halfedges have a unique indexing ID which must be given upon construction.
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccDefinition
+
+The concept \ccRefName\ describes the
+requirements for the halfedge class of the
+\ccc{StraightSkeleton_2} concept. It is a refinement of the
+\ccc{HalfedgeDSHalfedge} concept.
+The requirements of the latter are the requirements of the former.
+In addition, the \ccRefName\ defines the geometric embedding as a straight line segment
+and should contain the following geometric types and methods.
+
+\ccTypes
+  \ccNestedType{Segment_2}{The type of the 2D straight line segment associated with the halfedge}{}
+
+\ccCreation
+\ccCreationVariable{h}  %% choose variable name
+
+\ccConstructor{StraightSkeletonHalfedge_2();}{Default Constructor.}
+
+\ccConstructor{StraightSkeletonHalfedge_2( int id );}
+{Constructs a halfedge with ID \ccc{id} and no geometric embedding.\\
+Whether this is a border, a contour-bisector or an inner bisector is given by the links to other bisectors.}
+
+\ccAccessFunctions
+  \ccMethod{Segment_2 const& segment() const;}{The halfedge segment.}
+  \ccGlue
+  \ccMethod{Halfedge_handle defining_border();}{}
+  \ccGlue
+  \ccMethod{Halfedge_const_handle defining_border() const;}{If this is a bisector halfedge, returns a handle to the inward-facing halfedge (i.e. non-border) corresponding to the defining border which is to its left; if this is not a bisector halfedge, returns a handle to itself if \ccc{is\_border()} is \ccc{false}, or to its opposite if it is true.}
+
+\ccHeading{Queries}
+\ccMethod{bool is_bisector() const;}{Returns \ccc{true} iff this is a bisector halfedge (i.e. is not a border).}
+\ccGlue
+\ccMethod{bool is_contour_bisector() const;}{Returns \ccc{true} iff this is a bisector and is contour (i.e. is not an inner bisector).}
+
+\ccModifiers
+\ccMethod{void set_segment( Segment_2 const& s );}{Sets the straight line segment which is the geometric embedding of the halfedge}
+
+\ccHasModels
+
+\ccc{CGAL::Straight_skeleton_halfedge_2<Refs,Segment>}.
+
+\ccSeeAlso
+
+\ccc{StraightSkeleton_2}\\
+\ccc{StraightSkeletonHalfedge_2}\\
+\ccc{CGAL::Straight_skeleton_vertex_base_2<Refs,Point,RT>}\\
+\ccc{CGAL::Straight_skeleton_halfedge_base_2<Refs,Segment>}\\
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
