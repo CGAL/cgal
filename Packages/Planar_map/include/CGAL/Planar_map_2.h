@@ -202,22 +202,25 @@ public:
                            const X_curve_2_iterator & end,
                            Change_notification * en = NULL)
   {
-    
+#if 0
+    /*! \todo efi: this causes a compilation error when compiling example1 on
+     * windows!
+     */
     sweep_to_construct_planar_map_2(begin, end, *traits, *this);
-     
     return halfedges_begin();
-    
-    /*X_curve_2_iterator it = begin;
-      Halfedge_iterator out;
-      if (it!=end) {
+#else
+    X_curve_2_iterator it = begin;
+    Halfedge_iterator out;
+    if (it!=end) {
       out=insert(*it, en);
       it++;
-      }
-      while (it != end) {
+    }
+    while (it != end) {
       insert(*it, en);
       it++;
-      }
-      return out;*/
+    }
+    return out;
+#endif
   }
 
   //! inserts a given curve into the map as a new inner component of a given
