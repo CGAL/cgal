@@ -97,12 +97,10 @@ public:
   typedef Triangulation_ds_face_circulator_3<Tds>  Face_circulator;
 
   Triangulation_data_structure_3() 
-    : _dimension(-2), _number_of_vertices(0)
+    : _dimension(-2)
   {}
 
   Triangulation_data_structure_3(const Tds & tds)
-    : _number_of_vertices(0)
-    // _number_of_vertices is set to 0 so that clear() in copy_tds() works
   {
     copy_tds(tds);
   }
@@ -118,7 +116,7 @@ public:
     return *this;
   }  
 
-  int number_of_vertices() const {return _number_of_vertices;}
+  int number_of_vertices() const { return vertex_container().size(); }
 
   int dimension() const {return _dimension;}
 
@@ -143,16 +141,11 @@ public:
   // USEFUL CONSTANT TIME FUNCTIONS
 
   // SETTING
-  // to be protected ?
-
-  // DEPRECATED
-  void set_number_of_vertices(int n) { _number_of_vertices = n; }
 
   void set_dimension(int n) { _dimension = n; }
 
   Vertex_handle create_vertex()
   {
-      ++_number_of_vertices;
       return vertex_container().get_new_element();
   }
 
@@ -258,7 +251,6 @@ public:
   void delete_vertex( Vertex_handle v )
   {
       CGAL_triangulation_expensive_precondition( is_vertex(v) );
-      --_number_of_vertices;
       vertex_container().release_element(&*v);
   }
 
@@ -697,7 +689,6 @@ private:
   // in dimension i, number of vertices >= i+2 
   // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
   int _dimension;
-  int _number_of_vertices;
 
   Cell_container   _cell_container;
   Vertex_container _vertex_container;
@@ -2390,7 +2381,6 @@ swap(Tds & tds)
   CGAL_triangulation_expensive_precondition(tds.is_valid() && is_valid());
 
   std::swap(_dimension, tds._dimension);
-  std::swap(_number_of_vertices, tds._number_of_vertices);
   cell_container().swap(tds.cell_container());
   vertex_container().swap(tds.vertex_container());
 }
@@ -2402,8 +2392,6 @@ clear()
 {
   cell_container().clear();
   vertex_container().clear();
-
-  _number_of_vertices = 0;
   set_dimension(-2);
 }
 

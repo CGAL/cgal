@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999,2000,2001,2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -309,11 +309,6 @@ public:
       return infinite_vertex()->cell();
     }
 
-  // ASSIGNMENT
-  // DEPRECATED
-  void set_number_of_vertices(int n)
-    { _tds.set_number_of_vertices(n+1); }
-   
   // GEOMETRIC ACCESS FUNCTIONS
   
   Tetrahedron tetrahedron(const Cell_handle c) const
