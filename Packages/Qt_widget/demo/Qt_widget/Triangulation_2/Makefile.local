@@ -71,7 +71,7 @@ triangulationdemo$(OBJ_EXT): triangulationdemo.C triangulationdemo.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) triangulationdemo.C
 
 triangulationdemo$(EXE_EXT): triangulationdemo$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT)triangulationdemo triangulationdemo$(OBJ_EXT) $(CGAL_QT_LIB) Qt_widget_move_point$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT) Qt_widget_toolbar_views$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(EXE_OPT)triangulationdemo triangulationdemo$(OBJ_EXT)  Qt_widget_move_point$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT) Qt_widget_toolbar_views$(OBJ_EXT) $(LDFLAGS)
 
 clean: triangulation.clean
 
