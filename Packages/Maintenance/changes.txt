@@ -1,3 +1,6 @@
+28 Apr 2004 Sylvain Pion
+- testresults page now points to the new Manual test page.
+
 11 Mar 2004 Sylvain Pion
 - Update treat_result_collection to the version I use.
 
