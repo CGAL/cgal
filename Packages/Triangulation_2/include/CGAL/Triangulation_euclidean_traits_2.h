@@ -30,6 +30,7 @@
 #include <CGAL/Line_2.h>
 #include <CGAL/Direction_2.h>
 #include <CGAL/Ray_2.h>
+#include <CGAL/predicates_on_points_2.h>
 #include <CGAL/basic_constructions_2.h>
 
 #include <CGAL/triangulation_assertions.h>

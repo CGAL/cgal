@@ -35,7 +35,7 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Segment_3.h>
 #include <CGAL/Triangle_3.h>
-#include <CGAL/predicates_on_ftC2.h>
+#include <CGAL/predicates/kernel_ftC2.h>
 
 CGAL_BEGIN_NAMESPACE 
 
