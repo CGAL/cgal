@@ -602,7 +602,7 @@ For $|S|=0$, we get the default constructor, building $me(\emptyset)$.
 
     // constructor for two points
     inline
-    Min_ellipse_2( const Point& p, const Point& q,
+    Min_ellipse_2( const Point& p1, const Point& p2,
                    const Traits& traits = Traits())
         : tco( traits)
     {
@@ -610,8 +610,8 @@ For $|S|=0$, we get the default constructor, building $me(\emptyset)$.
         support_points = new Point[ 5];
 
         // store points
-        points.push_back( p);
-        points.push_back( q);
+        points.push_back( p1);
+        points.push_back( p2);
 
         // compute me
         me( points.end(), 0);
@@ -2107,6 +2107,12 @@ it is declared \ccc{friend}.
             return( false);
         }
 
+        bool
+        operator != (
+            const CGAL::_Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e) const
+        {
+            return( ! ( *this == e));
+        }
     };
 
     // I/O
@@ -2500,6 +2506,13 @@ it is declared \ccc{friend}.
             // keeps g++ happy
             return( false);
         }
+
+        bool
+        operator != (
+            const CGAL::_Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>& e) const
+        {
+            return( ! ( *this == e));
+        }
     };
 
     // I/O
@@ -2645,9 +2658,6 @@ number type \ccc{Gmpz} or \ccc{integer}.
     typedef  Homogeneous< Rt >               RepH;
     typedef  Min_ellipse_2_traits_2< RepC >  TraitsC;
     typedef  Min_ellipse_2_traits_2< RepH >  TraitsH;
-
-    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( RepC::Point_2)
-    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( RepH::Point_2)
 @end
 
 The command line option \ccc{-verbose} enables verbose output.
