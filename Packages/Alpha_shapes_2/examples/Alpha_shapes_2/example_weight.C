@@ -31,11 +31,11 @@ correspondant a l'Alpha Shape ponderee.
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
-typedef double coord_type;
+typedef int coord_type;
 
 typedef CGAL::Cartesian<coord_type>  CRep;
 typedef CGAL::Point_2<CRep> Point_base;
-typedef CGAL::Weighted_point<Point_base,double>  Point;
+typedef CGAL::Weighted_point<Point_base,coord_type>  Point;
 typedef CGAL::Segment_2<CRep>  Segment;
 typedef CGAL::Ray_2<CRep>  Ray;
 typedef CGAL::Line_2<CRep>  Line;
@@ -118,7 +118,7 @@ file_input(std::list<Point>& L)
   for( ; n>0 ; n--)
     {
       is >> p;
-      L.push_back(Point (p.point(),10.0));
+      L.push_back(Point (p.point(),10));
     }
   std::cout << "Points inserted" << std::endl;
   return true;
@@ -131,7 +131,7 @@ int main(int argc,  char* argv[])
   std::list<Point> L;
   file_input(L);
   std::vector<Gt::Segment> V =
-    Construst_Alpha_shape(L,10000.0,Alpha_shape_2::GENERAL);
+    Construst_Alpha_shape(L,10000,Alpha_shape_2::GENERAL);
   std::cout << "Weighted Alpha Shape computed" << std::endl;
   return 0;
 }

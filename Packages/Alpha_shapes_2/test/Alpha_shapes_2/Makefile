@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE =$(UTIL)/CGAL/CGAL-2.1-I-35/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
+CGAL_MAKEFILE =$(UTIL)/CGAL/CGAL-2.1-I-40/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
 
 # for cygwin
 #\prisme\CGAL\CGAL-2.1-I-30\make\makefile_i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168
@@ -27,8 +27,8 @@ include $(CGAL_MAKEFILE)
 # rajouter CGAL_LOCAL_CXXFLAGS si on veut les packages de Local
 
 CXXFLAGS =  -I$(HOME)/Cgal-2.0/To_submit/Alpha_shapes_2/include \
-	    $(CGAL_CXXFLAGS) \
-            -mcpu=ultrasparc -mtune=ultrasparc -O2 \
+	    $(CGAL_CXXFLAGS) -O2 \
+            -mcpu=ultrasparc -mtune=ultrasparc \
             -B /u/alcor/0/prisme_util/Binutils/SunOS/bin/
 
 # for cygwin
