@@ -66,9 +66,11 @@ run()
   fi
   echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" >> $OUTPUTFILE
 
-  if [ $3 -eq $CGAL_SEGMENT_TRAITS -o $3 -eq $CGAL_SEGMENT_LEDA_TRAITS ] ; then
+  if [ $3 -eq $CGAL_SEGMENT_TRAITS -o $3 -eq $CGAL_SEGMENT_CACHED_TRAITS ]
+  then
     datafiles="DATA/segments/*"
-  elif [ $3 -eq $CGAL_POLYLINE_TRAITS ]; then
+  elif [ $3 -eq $CGAL_POLYLINE_TRAITS -o $3 -eq $CGAL_POLYLINE_CACHED_TRAITS ]
+  then
        datafiles="DATA/polylines/*"
   elif [ $3 -eq $CGAL_CONIC_TRAITS ]; then
        datafiles="DATA/segment_circles/*"
@@ -112,19 +114,20 @@ run_io()
   fi
   echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" >> $OUTPUTFILE
 
-  if [ $3 -eq $CGAL_SEGMENT_TRAITS -o $3 -eq $CGAL_SEGMENT_LEDA_TRAITS ] ; then
+  if [ $3 -eq $CGAL_SEGMENT_TRAITS -o $3 -eq $CGAL_SEGMENT_CACHED_TRAITS ]
+  then
     datafiles="DATA/IO/segments/*"
-  elif [ $3 -eq $CGAL_POLYLINE_TRAITS ]; then
+  elif [ $3 -eq $CGAL_POLYLINE_TRAITS -o $3 -eq $CGAL_POLYLINE_CACHED_TRAITS ]
+  then
     datafiles="DATA/IO/polylines/*"   
   fi
 
-  if [ $3 -eq $CGAL_SEGMENT_TRAITS ] ; then
+  if [ $3 -eq $CGAL_SEGMENT_TRAITS -o $3 -eq $CGAL_SEGMENT_CACHED_TRAITS ]
+  then
     iofiles="DATA/IO/segments/exact_io/"
     SUFFIO="exact_io"
-  elif [ $3 -eq $CGAL_SEGMENT_LEDA_TRAITS ] ; then
-    iofiles="DATA/IO/segments/leda_io/"
-    SUFFIO="leda_io"
-  elif [ $3 -eq $CGAL_POLYLINE_TRAITS ]; then
+  elif [ $3 -eq $CGAL_POLYLINE_TRAITS -o $3 -eq $CGAL_POLYLINE_CACHED_TRAITS ]
+  then
     iofiles="DATA/IO/polylines/exact_io/"
     SUFFIO="exact_io"
   elif [ $3 -eq $CGAL_CONIC_TRAITS ]; then
