@@ -12,15 +12,16 @@ The purpose of interval arithmetic is to provide an efficient way to
 control the errors made by floating point computations.
 
 This type is nothing more than doubles, but you can, when you ask for it, have
-a control on the computation error.  By default, when the flag
-\ccc{CGAL_IA_NO_WARNINGS} is not defined, warnings will be emitted if you try
-to compare two overlapping intervals.  This means that if you do the same
-computation with doubles, there is a chance that the comparison may return a
-false result, otherwise the computation with doubles will be safe.
+a control on the computation error.
+By default, when the flag \ccc{CGAL_IA_NO_WARNINGS} is not defined, warnings
+will be emitted if you try to compare two overlapping intervals.  This means
+that if you do the same computation with doubles, there is a chance that the
+comparison may return a false result, otherwise the computation with doubles
+will be safe.
 
 You can select the behaviour of the algorithm in such cases, when you program
 filtered predicates for example.  You can find more information on this topic
-in \cite{bbp-ia-98}.
+in \cite{bbp-iayed-98scg}.
 
 \ccDefinition
 Interval arithmetic is a large concept and we will only consider here a 
@@ -42,8 +43,8 @@ whose bounds are \ccc{d}.}
 \ccConstructor{CGAL_Interval_nt(const double& d, const double& e);}
 {introduces the interval [d;e].}
 
-Several functions should provide a cast from any numerical type used by {\cgal},
-to an interval \ccc{CGAL_Interval_nt}.
+Several functions \ccc{CGAL_to_interval_nt()} provide a cast from any
+numerical type used by {\cgal}, to an interval \ccc{CGAL_Interval_nt}.
 
 
 %\ccTypes
@@ -116,7 +117,7 @@ CGAL_Orientation CGAL_orientation(const FT &px, const FT &py,
 }
 \end{verbatim}
 
-This function becomes the following, if you want it to be exact~:
+This function becomes approximately the following, if you want it to be exact~:
 
 \begin{verbatim}
 #include <CGAL/Interval_arithmetic.h>
@@ -194,7 +195,7 @@ rounding mode.
 \item \ccc{CGAL_FPU_set_rounding_to_minus_infinity()}
 \end{itemize}
 
-Platform support~:
+Platform support:
 
 This part of {\cgal} must be ported to each non-supported platform, because
 of the use of directed rounding modes.  
@@ -233,7 +234,7 @@ Here is the current state of supported platforms:
 %\begin{itemize}
 %\item {\it CGAL/Interval\_arithmetic.h} contains the definition of the
 %      two classes.
-%\item {\it CGAL/\_FPU.h} contains the C and assembly definitions for the
+%\item {\it CGAL/IA/\_FPU.h} contains the C and assembly definitions for the
 %      rounding mode selection.
 %\end{itemize}
 

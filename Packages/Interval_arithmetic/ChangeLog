@@ -1,6 +1,20 @@
-Changes file for the Interval Arithmetic package.
+Changes done for the Interval Arithmetic package.
 
-- Version 1.6 on 10 May 1998.
+Version 1.7 on ??? July 1998.
+- Added CGAL_to_interval_nt() cast functions for Gmpz and
+  leda_{real,rational,integer,bigfloat}.
+- Added operators +=, -=, *=, /=, as required for all CGAL NTs.
+- Todo: *** Moved private files to the directory CGAL/IA (or Interval_nt ?).
+- Todo: *** Documentation modified accordingly.
+- Todo: *** Ecrire des test-suites pour les casts.
+- Todo: *** Headers modified according to the new rules. + Coordinator ?
+- TODO: *****  CGAL/include/CGAL/Integer.h -> nouveau type caché ? (ce n'est
+  pas mentionné dans la doc de CGAL ??).  On le laisse tomber completement ou
+  quoi ?  Est-il utile pour nous, ou GMP fait-il strictement mieux ?  (sauf
+  qu'il faut l'installer, mais est-ce un big deal ?)
+- Doc update: cgal.bib removed, geombib is updated.
+
+Version 1.6 on 10 May 1998.
 - "package" line added in the headers.
 - Added a CGAL_warning_msg() when you compare 2 overlapping intervals,
   disabled by the compilation flag CGAL_IA_NO_WARNINGS (or CGAL_NO_WARNINGS).
@@ -11,24 +25,30 @@ Changes file for the Interval Arithmetic package.
   - update the support status for the Alpha.
   - modifications from Remco for 1.0.
   - reference to our (BBP) ACM SoCG'98 paper added.
-- ChangeLog file added.
+- ChangeLog file created.
 
-- Version 1.5 on 26 February 1998.
+
+Version 1.5 on 26 February 1998.
 - Added "#include <assert.h>" forgotten in 1.4.
 
-- Version 1.4 on 6 February 1998.
+
+Version 1.4 on 6 February 1998.
 - Changed _FPU_* to CGAL_FPU_*.
 - Doc updates.
 
-- Version 1.3 on 16 December 1997.
+
+Version 1.3 on 16 December 1997.
 - Added an assertion when defining an interval with the lower bound greater
   than the upper.  Disabled when CGAL_NO_PRECONDITIONS is defined.
 
-- Version 1.2 on 16 December 1997.
+
+Version 1.2 on 16 December 1997.
 - Added support for old Irix 5.3 include files.
 
-- Version 1.1 on 16 December 1997.
+
+Version 1.1 on 16 December 1997.
 - lines too long problem fixed.
 
-- Version 1.0 on 3 December 1997.
+
+Version 1.0 on 3 December 1997.
 - initial version based on some C code, and 2 C++ wrapper classes for CGAL.

@@ -12,8 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/Interval_arithmetic.h
-// revision      : 1.6
-// revision_date : 10 May 1998
+// revision      : 1.7
+// revision_date : 1 July 1998
 // package       : Interval Arithmetic
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
@@ -23,15 +23,15 @@
 
 // This file contains the description of the two classes:
 // - CGAL_Interval_nt_advanced  (do the FPU tricks yourself)
-// - CGAL_Interval_nt		(derived from the other one)
+// - CGAL_Interval_nt		("plug-in" version, derived from the other one)
 
 #ifndef CGAL_INTERVAL_ARITHMETIC_H
 #define CGAL_INTERVAL_ARITHMETIC_H
 
 #include <iostream.h>
 #include <CGAL/assertions.h>
-#include <CGAL/double.h>        // For CGAL_is_valid() and CGAL_is_finite().
-#include <CGAL/_FPU.h>          // FPU rounding mode functions.
+#include <CGAL/double.h>	// For CGAL_is_valid() and CGAL_is_finite().
+#include <CGAL/IA/_FPU.h>	// FPU rounding mode functions.
 
 
 class CGAL_Interval_nt_advanced
@@ -40,7 +40,6 @@ class CGAL_Interval_nt_advanced
   friend double CGAL_to_double(const CGAL_Interval_nt_advanced& d);
 
 public:
-
   inline CGAL_Interval_nt_advanced(double i, double s)
   {
 #ifndef CGAL_NO_PRECONDITIONS
@@ -70,6 +69,14 @@ public:
     return tmp;
   }
 
+  inline CGAL_Interval_nt_advanced&
+         operator+=(const CGAL_Interval_nt_advanced& d)
+  {
+    inf += d.inf;
+    sup += d.sup;
+    return *this;
+  }
+
   inline CGAL_Interval_nt_advanced
          operator-(const CGAL_Interval_nt_advanced& d) const
   {
@@ -77,6 +84,14 @@ public:
     tmp.inf = inf + d.sup;
     tmp.sup = sup + d.inf;
     return tmp;
+  }
+
+  inline CGAL_Interval_nt_advanced&
+         operator-=(const CGAL_Interval_nt_advanced& d)
+  {
+    inf += d.sup;
+    sup += d.inf;
+    return *this;
   }
 
   inline CGAL_Interval_nt_advanced
@@ -145,6 +160,13 @@ public:
     return tmp;
   }
 
+  inline CGAL_Interval_nt_advanced &
+         operator*=(const CGAL_Interval_nt_advanced& d)
+  {
+    *this = *this * d;
+    return *this;
+  }
+
   inline CGAL_Interval_nt_advanced
          operator/(const CGAL_Interval_nt_advanced& d) const
   {
@@ -188,6 +210,13 @@ public:
     else                                  /* 0 \in [d.inf;d.sup] */
       tmp.inf = tmp.sup = HUGE_VAL;           /* ]-oo;+oo[. */
     return tmp;
+  }
+
+  inline CGAL_Interval_nt_advanced &
+         operator/=(const CGAL_Interval_nt_advanced& d)
+  {
+    *this = *this / d;
+    return *this;
   }
 
   inline CGAL_Interval_nt_advanced operator-() const
@@ -294,6 +323,14 @@ public:
     return tmp;
   }
 
+  inline CGAL_Interval_nt& operator+=(const CGAL_Interval_nt& d)
+  {
+    CGAL_FPU_set_rounding_to_infinity();
+    *this = ((CGAL_Interval_nt_advanced) *this) + (CGAL_Interval_nt_advanced) d;
+    CGAL_FPU_set_rounding_to_nearest();
+    return *this;
+  }
+
   inline CGAL_Interval_nt operator-(const CGAL_Interval_nt& d) const
   {
     CGAL_Interval_nt tmp;
@@ -301,6 +338,14 @@ public:
     tmp = ((CGAL_Interval_nt_advanced) *this) - (CGAL_Interval_nt_advanced) d;
     CGAL_FPU_set_rounding_to_nearest();
     return tmp;
+  }
+
+  inline CGAL_Interval_nt& operator-=(const CGAL_Interval_nt& d)
+  {
+    CGAL_FPU_set_rounding_to_infinity();
+    *this = ((CGAL_Interval_nt_advanced) *this) - (CGAL_Interval_nt_advanced) d;
+    CGAL_FPU_set_rounding_to_nearest();
+    return *this;
   }
 
   inline CGAL_Interval_nt operator*(const CGAL_Interval_nt& d) const
@@ -312,6 +357,14 @@ public:
     return tmp;
   }
 
+  inline CGAL_Interval_nt& operator*=(const CGAL_Interval_nt& d)
+  {
+    CGAL_FPU_set_rounding_to_infinity();
+    *this = ((CGAL_Interval_nt_advanced) *this) * (CGAL_Interval_nt_advanced) d;
+    CGAL_FPU_set_rounding_to_nearest();
+    return *this;
+  }
+
   inline CGAL_Interval_nt operator/(const CGAL_Interval_nt& d) const
   {
     CGAL_Interval_nt tmp;
@@ -319,6 +372,14 @@ public:
     tmp = ((CGAL_Interval_nt_advanced) *this) / (CGAL_Interval_nt_advanced) d;
     CGAL_FPU_set_rounding_to_nearest();
     return tmp;
+  }
+
+  inline CGAL_Interval_nt& operator/=(const CGAL_Interval_nt& d)
+  {
+    CGAL_FPU_set_rounding_to_infinity();
+    *this = ((CGAL_Interval_nt_advanced) *this) / (CGAL_Interval_nt_advanced) d;
+    CGAL_FPU_set_rounding_to_nearest();
+    return *this;
   }
 };
 
@@ -331,6 +392,11 @@ inline CGAL_Interval_nt_advanced sqrt(const CGAL_Interval_nt_advanced& d)
   CGAL_FPU_set_rounding_to_infinity();
   tmp.sup = sqrt(d.sup);
   return tmp;
+}
+
+inline CGAL_Interval_nt CGAL_to_interval_nt(const double &d)
+{
+    return (CGAL_Interval_nt) d;
 }
 
 inline CGAL_Interval_nt sqrt(const CGAL_Interval_nt& d)
@@ -350,5 +416,28 @@ ostream& operator<<(ostream& os, CGAL_Interval_nt_advanced& d)
   os << "[" << d.lower_bound() << ";" << d.upper_bound() << "]";
   return os;
 }
+
+
+// Finally we source the cast functions from other NTs, when necessary.
+
+#ifdef CGAL_GMPZ_H
+#include <CGAL/IA/IA_Gmpz.h>
+#endif
+
+#ifdef CGAL_BIGFLOAT_H
+#include <CGAL/IA/IA_leda_bigfloat.h>
+#endif
+
+#ifdef CGAL_INTEGER_H
+#include <CGAL/IA/IA_leda_integer.h>
+#endif
+
+#ifdef CGAL_REAL_H
+#include <CGAL/IA/IA_leda_real.h>
+#endif
+
+#ifdef CGAL_RATIONAL_H
+#include <CGAL/IA/IA_leda_rational.h>
+#endif
 
 #endif /* CGAL_INTERVAL_ARITHMETIC_H */
