@@ -228,13 +228,9 @@ protected:
   void init_tds()
     {
       infinite = (Vertex*) _tds.insert_increase_dimension(NULL);
-
-      // Forces the compiler to instantiate handle2pointer.
-      handle2pointer( Vertex_handle() ); 
-      handle2pointer( Cell_handle() );
     }
   
-  bool test_dim_down(Vertex_handle v);
+  bool test_dim_down(Vertex_handle v) const;
 
 public:
 
@@ -885,7 +881,7 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
 template < class GT, class Tds >
 bool
 Triangulation_3<GT,Tds>::
-test_dim_down(Vertex_handle v)
+test_dim_down(Vertex_handle v) const
   // tests whether removing v decreases the dimension of the triangulation 
   // true iff
   // v is incident to all finite cells
@@ -899,17 +895,16 @@ test_dim_down(Vertex_handle v)
 
   int i, iv;
   if ( ! cit->has_vertex(v,iv) ) return false;
-  Point p1=cit->vertex((iv+1)&3)->point();  
-  Point p2=cit->vertex((iv+2)&3)->point();  
-  Point p3=cit->vertex((iv+3)&3)->point();
+  const Point &p1=cit->vertex((iv+1)&3)->point();  
+  const Point &p2=cit->vertex((iv+2)&3)->point();  
+  const Point &p3=cit->vertex((iv+3)&3)->point();
   ++cit;
   
   while ( cit != cdone ) {
     if ( ! cit->has_vertex(v,iv) )
       return false;
     for ( i=1; i<4; i++ ) {
-	if ( orientation
-	     (p1,p2,p3,cit->vertex((iv+i)&3)->point()) != COPLANAR )
+	if ( orientation(p1,p2,p3,cit->vertex((iv+i)&3)->point()) != COPLANAR )
 	  return false;
     }
     ++cit;
