@@ -273,8 +273,8 @@ resulting
  in an
 empty triangulation.}
 
-\ccFunction{void ~Triangulation_2();}
-{Destructor. All vertices and faces are deleted.}
+%\ccFunction{void ~Triangulation_2();}
+%{Destructor. All vertices and faces are deleted.}
 
 
 \ccAccessFunctions
@@ -728,15 +728,17 @@ non-mutable and bidirectional. Its value type is \ccc{Face}.
 { This function returns a circulator that allows to visit the 
  faces intersected by the line \ccc{pq}. 
 If there is no such face the circulator has a singular value.\\
- The starting point of the circulator is the face \ccc{f}, or, if
- \ccc{f} is omitted,  the first finite face traversed by \ccc{l}. \\
+ The starting point of the circulator is the face \ccc{f}, or
+ the first finite face traversed by \ccc{l} , if
+ \ccc{f} is omitted. \\
   The circulator wraps around the \ccc{infinite_vertex} :
 after the last traversed finite face, it steps through the infinite face adjacent
 to this face then through the infinite face adjacent to the first
 traversed finite face then through the first finite traversed face
 again.
 \ccPrecond Points \ccc{p} and \ccc{q} must be different points.
-\ccPrecond If \ccc{f != NULL}, the point \ccc{p} must be
+\ccPrecond If \ccc{f != NULL}, it must point to a finite face
+ and the point \ccc{p} must be
 inside or on the boundary of \ccc{f}.}
 
 Figure~\ref{Triangulation_ref_Fig_Line_face_circulator} illustrates which finite faces are enumerated. Lines
