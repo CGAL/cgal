@@ -36,14 +36,14 @@
 // only do something if LEDA available
 #ifdef CGAL_USE_LEDA
 
-#include<CGAL/Random.h>
-#include<CGAL/Cartesian.h>
-#include<CGAL/Homogeneous.h>
-#include<strstream>
+#include <CGAL/Random.h>
+#include <CGAL/Cartesian_d.h>
+#include <CGAL/Homogeneous_d.h>
+#include <strstream>
 #include <cassert>
-#include<CGAL/Optimisation_d_traits_d.h>
-#include<CGAL/Min_sphere_d.h>
-#include<CGAL/leda_rational.h>
+#include <CGAL/Optimisation_d_traits_d.h>
+#include <CGAL/Min_sphere_d.h>
+#include <CGAL/leda_rational.h>
 
 using namespace CGAL;
 
@@ -51,8 +51,8 @@ typedef leda_rational                       NT;
 CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_rational);
 typedef NT                                  FT;
 typedef NT                                  RT;
-typedef Cartesian<FT>                       C;
-typedef Homogeneous<RT>                     H;
+typedef Cartesian_d<FT>                     C;
+typedef Homogeneous_d<RT>                   H;
 typedef Optimisation_d_traits_d<C>          Cartesian_traits;
 typedef Optimisation_d_traits_d<H>          Homogeneous_traits;
 typedef Min_sphere_d<Cartesian_traits>      Min_sphereC;
