@@ -33,7 +33,6 @@
 //| standard C library functions in cctype (isdigit etc.) as macros.
 //| According to the standard they have to be functions.
 
-#include <cassert>
 #include <cctype>
 using std::isalnum;
 using std::isalpha;
@@ -47,10 +46,12 @@ using std::isspace;
 using std::isupper;
 using std::isxdigit;
 
+bool all_assertions_correct = true;
+
 int main()
 {
-  assert(std::isdigit('0'));
-  return 0;
+  all_assertions_correct &= (std::isdigit('0'));
+  return !all_assertions_correct;
 }
 
 // EOF //

@@ -30,7 +30,6 @@
 #include <typeinfo>
 #endif // __GNUG__
 
-#include <cassert>
 
 class Base
 {
@@ -41,17 +40,19 @@ class Base
 class Derived : public Base
 { };
 
+bool all_assertions_correct = true;
+
 int main()
 {
   Base *p_Base_Derived = new Derived;
   Base *p_Base_Base = new Base;
 
   Derived* p_Derived_Derived = dynamic_cast<Derived *>(p_Base_Derived);
-  assert(p_Derived_Derived != 0);
+  all_assertions_correct &= (p_Derived_Derived != 0);
   Derived* p_Derived_Base = dynamic_cast<Derived *>(p_Base_Base);
-  assert(p_Derived_Base == 0);
+  all_assertions_correct &= (p_Derived_Base == 0);
 
-  return 0;
+  return !all_assertions_correct;
 }
 
 // EOF //

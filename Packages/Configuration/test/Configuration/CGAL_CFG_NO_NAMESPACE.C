@@ -32,7 +32,6 @@
 //| If a compiler doesn't know namespaces, the flag
 //| CGAL_CFG_NO_NAMESPACE is set.
 
-#include <cassert>
 
 namespace A {
   int foo() { return 1; }
@@ -42,19 +41,21 @@ namespace B {
   int foo() { return 2; }
 }
 
+bool all_assertions_correct = true;
+
 int main()
 {
-  assert( A::foo() == 1);
-  assert( B::foo() == 2);
+  all_assertions_correct &= ( A::foo() == 1);
+  all_assertions_correct &= ( B::foo() == 2);
   {
     using namespace A;
-    assert( foo() == 1);
+    all_assertions_correct &= ( foo() == 1);
   }
   {
     using namespace B;
-    assert( foo() == 2);
+    all_assertions_correct &= ( foo() == 2);
   }
-  return 0;
+  return !all_assertions_correct;
 }
 
 // EOF //

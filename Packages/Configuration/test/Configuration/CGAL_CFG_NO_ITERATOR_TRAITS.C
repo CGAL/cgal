@@ -29,7 +29,6 @@
 //| including their use in a template class, as a default template
 //| argument and as a return type of global function.
 
-#include <cassert>
 #include <iterator>
 #include <vector>
 
@@ -79,6 +78,8 @@ query( I i) {
 inline
 int discr( std::bidirectional_iterator_tag tag) { return 42; }
 
+bool all_assertions_correct = true;
+
 int main() {
     std::vector<int> v;
     v.push_back(32);
@@ -86,10 +87,10 @@ int main() {
     v.push_back(42);
     Adaptor< std::vector<int>::iterator> i( v.begin());
     ++i;
-    assert( *i == 33);
+    all_assertions_correct &= ( *i == 33);
     ++i;
-    assert( *i == 42);
-    assert( discr( query( i)) == 42);
-    return 0;
+    all_assertions_correct &= ( *i == 42);
+    all_assertions_correct &= ( discr( query( i)) == 42);
+    return !all_assertions_correct;
 }
 

@@ -31,7 +31,6 @@
 //| The following definition is set if the compiler fails parsing.
 
 
-#include <cassert>
 
 template < class T>
 struct A {
@@ -49,10 +48,12 @@ typename T::X  B<T>::foo( typename T::X i) {
     return i + 2;
 }
 
+bool all_assertions_correct = true;
+
 int main() {
     B<A<int> > b;
-    assert( b.foo(40) == 42);
-    return 0;
+    all_assertions_correct &= ( b.foo(40) == 42);
+    return !all_assertions_correct;
 }
 
 // EOF //
