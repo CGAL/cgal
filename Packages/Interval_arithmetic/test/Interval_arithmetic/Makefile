@@ -10,7 +10,7 @@ include $(CGAL_MAKEFILE)
 # Pour utiliser Purify:
 # CGAL_CXX=purify g++
 # CGAL_LDFLAGS= $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)/libCGAL.a \
-              # -L$(GMP_LIB_DIR) -lgmp -lm \
+              # -L$(GMP_LIB_DIR) -lgmp -lm
 
 CXXFLAGS = \
 	-I../../include \
