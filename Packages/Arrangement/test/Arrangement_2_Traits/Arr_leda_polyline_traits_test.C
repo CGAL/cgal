@@ -19,7 +19,8 @@ int main()
 #include <CGAL/Arr_leda_polyline_traits.h>
 #include "include/Polyline_traits_test.h"
 
-typedef CGAL::Arr_leda_polyline_traits<> Traits;
+typedef leda_rational                           NT;
+typedef CGAL::Arr_leda_polyline_traits<NT>      Traits;
 
 int main( int argc, char** argv ){
   Polyline_traits_test< Traits, leda_rational >  test_obj( argc, argv );

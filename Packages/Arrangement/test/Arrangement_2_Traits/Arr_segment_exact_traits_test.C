@@ -8,7 +8,8 @@ typedef CGAL::Quotient<int>                            NT;
 typedef CGAL::Cartesian<NT>                            R;
 typedef CGAL::Arr_segment_exact_traits<R>              Traits;
 
-int main( int argc, char** argv ){
+int main(int argc, char * argv[])
+{
   Segment_traits_test< Traits, NT >  test_obj( argc, argv );
 
   if (test_obj.start())
