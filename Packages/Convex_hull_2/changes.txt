@@ -1,3 +1,6 @@
+3.16    (23 Jul 2001)
+- added missing ; in projective_traits_xy
+
 3.15    (20 Jul 2001)
 - removed constructive predicates
 

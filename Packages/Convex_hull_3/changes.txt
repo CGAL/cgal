@@ -1,3 +1,6 @@
+2.23    (23 July 2001)
+- fixed problem with Convex_hull_3_ref directory not in the right place on CVS
+
 2.22    (19 July 2001)
 - added some missing std:: and CGAL::
 - added some cout statemetns in degeneracy test
