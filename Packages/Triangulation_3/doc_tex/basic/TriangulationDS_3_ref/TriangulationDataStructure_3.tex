@@ -74,7 +74,7 @@ class must provide the following types and operations.
 \ccThree{typedef triple <Cell_handle, int, int>}{Facet }{}
 \ccThreeToTwo
 
-\ccNestedType{Vertex }{}
+\ccNestedType{Vertex}{Vertex type}
 \ccGlue
 \ccNestedType{Cell}{Cell type}
 \lcTex{
@@ -281,28 +281,28 @@ combinatorial triangulation.
 
 \textit{Flips for a 2d triangulation are not implemented yet}
 
-\ccMethod{bool flip(Edge e);}
+\ccMethod{bool flip(Edge e);}{}
 \ccGlue
 \ccMethod{bool flip(Cell_handle c, int i, int j);}
 {Before flipping, these methods check that edge \ccc{e=(c,i,j)} is
 flippable (which is quite expensive). They return \ccc{false} or
 \ccc{true} according to this test.}
 
-\ccMethod{void flip_flippable(Edge e);}
+\ccMethod{void flip_flippable(Edge e);}{}
 \ccGlue
 \ccMethod{void flip_flippable(Cell_handle c, int i, int j);}
 {Should be preferred to the previous methods when the edge is
 known to be flippable.
 \ccPrecond{The edge is flippable.}}
 
-\ccMethod{bool flip(Facet f);}
+\ccMethod{bool flip(Facet f);}{}
 \ccGlue
 \ccMethod{bool flip(Cell_handle c, int i);}
 {Before flipping, these methods check that facet \ccc{f=(c,i)} is
 flippable (which is quite expensive). They return \ccc{false} or
 \ccc{true} according to this test.} 
 
-\ccMethod{void flip_flippable(Facet f);}
+\ccMethod{void flip_flippable(Facet f);}{}
 \ccGlue
 \ccMethod{void flip_flippable(Cell_handle c, int i);}
 {Should be preferred to the previous methods when the facet is
