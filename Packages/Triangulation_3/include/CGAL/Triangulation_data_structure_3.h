@@ -582,7 +582,7 @@ public:
 
   void clear_cells_only();
 
-  void set_adjacency(Cell_handle c0, Cell_handle c1, int i0, int i1) const
+  void set_adjacency(Cell_handle c0, int i0, Cell_handle c1, int i1) const
   {
       CGAL_triangulation_assertion(i0 >= 0 && i0 <= dimension());
       CGAL_triangulation_assertion(i1 >= 0 && i1 <= dimension());
@@ -646,7 +646,7 @@ create_star_3(Vertex_handle v, Cell_handle c, int li,
 				   c->vertex(3));
     cnew->set_vertex(li, v);
     Cell_handle c_li = c->neighbor(li);
-    set_adjacency(cnew, c_li, li, c_li->index(c));
+    set_adjacency(cnew, li, c_li, c_li->index(c));
 
     // Look for the other neighbors of cnew.
     for (int ii=0; ii<4; ++ii) {
@@ -682,7 +682,7 @@ create_star_3(Vertex_handle v, Cell_handle c, int li,
 	nnn = create_star_3(v, nnn, zz, zzz);
       }
 
-      set_adjacency(nnn, cnew, zzz, ii);
+      set_adjacency(nnn, zzz, cnew, ii);
     }
 
     return cnew;
@@ -733,7 +733,7 @@ create_star_2(Vertex_handle v, Cell_handle c, int li )
   } while ( v1 != c->vertex(ccw(li)) );
   // missing neighbors between the first and the last created cells
   cur = c->neighbor(li)->neighbor(ind); // first created cell
-  set_adjacency(cnew, cur, 1, 2);
+  set_adjacency(cnew, 1, cur, 2);
   return cnew;
 }
 
@@ -1115,20 +1115,20 @@ flip_really( Cell_handle c, int i, Cell_handle n, int in )
   int in2 = n->index(c->vertex(i2));
   int in3 = n->index(c->vertex(i3));
 
-  set_adjacency(c, n->neighbor(in3), i, n->neighbor(in3)->index(n));
+  set_adjacency(c, i, n->neighbor(in3), n->neighbor(in3)->index(n));
   c->set_vertex( i3, n->vertex(in) );
 
-  set_adjacency(n, c->neighbor(i1), in, c->neighbor(i1)->index(c));
+  set_adjacency(n, in, c->neighbor(i1), c->neighbor(i1)->index(c));
   n->set_vertex( in1, c->vertex(i) );
 
   Cell_handle cnew = create_cell(c->vertex(i), c->vertex(i1),
 			         n->vertex(in), n->vertex(in3));
 
-  set_adjacency(cnew, n->neighbor(in2), 0, n->neighbor(in2)->index(n));
-  set_adjacency(cnew, n, 1, in2);
-  set_adjacency(cnew, c->neighbor(i2), 2, c->neighbor(i2)->index(c));
-  set_adjacency(cnew, c, 3, i2);
-  set_adjacency(c, n, i1, in3);
+  set_adjacency(cnew, 0, n->neighbor(in2), n->neighbor(in2)->index(n));
+  set_adjacency(cnew, 1, n, in2);
+  set_adjacency(cnew, 2, c->neighbor(i2), c->neighbor(i2)->index(c));
+  set_adjacency(cnew, 3, c, i2);
+  set_adjacency(c, i1, n, in3);
 
   if (i&1 != 0)
       change_orientation(cnew);
@@ -1258,13 +1258,13 @@ flip_really( Cell_handle c, int i, int j,
   c2->set_vertex( i2, v2 );
   v2->set_cell(c2);
 
-  set_adjacency(c1,c2->neighbor(j2), next1, c2->neighbor(j2)->index(c2));
-  set_adjacency(c2,c1->neighbor(i1),c2->index(v1),c1->neighbor(i1)->index(c1));
+  set_adjacency(c1, next1,c2->neighbor(j2), c2->neighbor(j2)->index(c2));
+  set_adjacency(c2,c2->index(v1),c1->neighbor(i1),c1->neighbor(i1)->index(c1));
 
-  set_adjacency(c1, c2, i1, j2);
+  set_adjacency(c1, i1, c2, j2);
 
-  set_adjacency(c1, c->neighbor(j), 6-i1-j1-next1, c->neighbor(j)->index(c));
-  set_adjacency(c2, c->neighbor(i), next2, c->neighbor(i)->index(c));
+  set_adjacency(c1, 6-i1-j1-next1, c->neighbor(j), c->neighbor(j)->index(c));
+  set_adjacency(c2, next2, c->neighbor(i), c->neighbor(i)->index(c));
 
   v3->set_cell( c2 );
 
@@ -1485,17 +1485,17 @@ insert_in_cell( Vertex_handle v, Cell_handle c )
   Cell_handle c2 = create_cell(v0,v1,v,v3);
   Cell_handle c1 = create_cell(v0,v,v2,v3);
 
-  set_adjacency(c3, c, 0, 3);
-  set_adjacency(c2, c, 0, 2);
-  set_adjacency(c1, c, 0, 1);
+  set_adjacency(c3, 0, c, 3);
+  set_adjacency(c2, 0, c, 2);
+  set_adjacency(c1, 0, c, 1);
 
-  set_adjacency(c2, c3, 3, 2);
-  set_adjacency(c1, c3, 3, 1);
-  set_adjacency(c1, c2, 2, 1);
+  set_adjacency(c2, 3, c3, 2);
+  set_adjacency(c1, 3, c3, 1);
+  set_adjacency(c1, 2, c2, 1);
 
-  set_adjacency(n1, c1, n1->index(c), 1);
-  set_adjacency(n2, c2, n2->index(c), 2);
-  set_adjacency(n3, c3, n3->index(c), 3);
+  set_adjacency(n1, n1->index(c), c1, 1);
+  set_adjacency(n2, n2->index(c), c2, 2);
+  set_adjacency(n3, n3->index(c), c3, 3);
 
   c->set_vertex(0,v);
 
@@ -1545,17 +1545,17 @@ insert_in_facet(Vertex_handle v, Cell_handle c, int i)
       // new cell with v in place of i1
       Cell_handle nc = c->neighbor(i1);
       Cell_handle cnew1 = create_cell(vi,v,v2,v3);
-      set_adjacency(cnew1, nc, 1, nc->index(c));
-      set_adjacency(cnew1, c, 3, i1);
+      set_adjacency(cnew1, 1, nc, nc->index(c));
+      set_adjacency(cnew1, 3, c, i1);
 
       v3->set_cell(cnew1);
 
       // new cell with v in place of i2
       nc = c->neighbor(i2);
       Cell_handle cnew2 = create_cell(vi,v1,v,v3);
-      set_adjacency(cnew2, nc, 2, nc->index(c));
-      set_adjacency(cnew2, c, 3, i2);
-      set_adjacency(cnew1, cnew2, 2, 1);
+      set_adjacency(cnew2, 2, nc, nc->index(c));
+      set_adjacency(cnew2, 3, c, i2);
+      set_adjacency(cnew1, 2, cnew2, 1);
 
       // v replaces i3 in c
       c->set_vertex(i3,v);
@@ -1572,18 +1572,18 @@ insert_in_facet(Vertex_handle v, Cell_handle c, int i)
       // new cell with v in place of j1
       Cell_handle nd = d->neighbor(j1);
       Cell_handle dnew1 = create_cell(d->vertex(j),v,v3,v2);
-      set_adjacency(dnew1, nd, 1, nd->index(d));
-      set_adjacency(dnew1, d, 2, j1);
-      set_adjacency(dnew1, cnew1, 0, 0);
+      set_adjacency(dnew1, 1, nd, nd->index(d));
+      set_adjacency(dnew1, 2, d, j1);
+      set_adjacency(dnew1, 0, cnew1, 0);
 
       // new cell with v in place of j2
       nd = d->neighbor(j2);
       Cell_handle dnew2 = create_cell(d->vertex(j),v1,v3,v);
 
-      set_adjacency(dnew2, nd, 3, nd->index(d));
-      set_adjacency(dnew2, d, 2, j2);
-      set_adjacency(dnew2, cnew2, 0, 0);
-      set_adjacency(dnew1, dnew2, 3, 1);
+      set_adjacency(dnew2, 3, nd, nd->index(d));
+      set_adjacency(dnew2, 2, d, j2);
+      set_adjacency(dnew2, 0, cnew2, 0);
+      set_adjacency(dnew1, 3, dnew2, 1);
 
       // v replaces i3 in d
       d->set_vertex(j3,v);
@@ -1596,15 +1596,15 @@ insert_in_facet(Vertex_handle v, Cell_handle c, int i)
       CGAL_triangulation_expensive_precondition( is_facet(c,i) );
       Cell_handle n = c->neighbor(2);
       Cell_handle cnew = create_cell(c->vertex(0),c->vertex(1),v,NULL);
-      set_adjacency(cnew, n, 2, n->index(c));
-      set_adjacency(cnew, c, 0, 2);
+      set_adjacency(cnew, 2, n, n->index(c));
+      set_adjacency(cnew, 0, c, 2);
       c->vertex(0)->set_cell(cnew);
 
       n = c->neighbor(1);
       Cell_handle dnew = create_cell(c->vertex(0),v,c->vertex(2),NULL);
-      set_adjacency(dnew, n, 1, n->index(c));
-      set_adjacency(dnew, c, 0, 1);
-      set_adjacency(dnew, cnew, 2, 1);
+      set_adjacency(dnew, 1, n, n->index(c));
+      set_adjacency(dnew, 0, c, 1);
+      set_adjacency(dnew, 2, cnew, 1);
 
       c->set_vertex(0,v);
       v->set_cell(c);
@@ -1672,14 +1672,14 @@ insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j)
       d->set_vertex(id,v);
 
       Cell_handle nj = c->neighbor(j);
-      set_adjacency(cnew, c, i, j);
-      set_adjacency(cnew, nj, j, nj->index(c));
+      set_adjacency(cnew, i, c, j);
+      set_adjacency(cnew, j, nj, nj->index(c));
 
       nj = d->neighbor(jd);
-      set_adjacency(dnew, d, id, jd);
-      set_adjacency(dnew, nj, jd, nj->index(d));
+      set_adjacency(dnew, id, d, jd);
+      set_adjacency(dnew, jd, nj, nj->index(d));
 
-      set_adjacency(cnew, dnew, k, kd);
+      set_adjacency(cnew, k, dnew, kd);
 
       v->set_cell(cnew);
       break;
@@ -1691,8 +1691,8 @@ insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j)
       Cell_handle cnew = create_cell(v,c->vertex(1),NULL,NULL);
       c->vertex(1)->set_cell(cnew);
       c->set_vertex(1,v);
-      set_adjacency(cnew, c->neighbor(0), 0, 1);
-      set_adjacency(cnew, c, 1, 0);
+      set_adjacency(cnew, 0, c->neighbor(0), 1);
+      set_adjacency(cnew, 1, c, 0);
 
       v->set_cell(cnew); 
       break;
@@ -1748,7 +1748,7 @@ insert_increase_dimension(Vertex_handle v, // new vertex
     {
       Cell_handle d = create_cell( v, NULL, NULL, NULL);
       v->set_cell(d);
-      set_adjacency(d, star->cell(), 0, 0);
+      set_adjacency(d, 0, star->cell(), 0);
       break;
     }
 
@@ -1764,18 +1764,18 @@ insert_increase_dimension(Vertex_handle v, // new vertex
 	c->set_vertex(1,star);
 	d->set_vertex(1,d->vertex(0));
 	d->set_vertex(0,v);
-	set_adjacency(c, d, 1, 0);
+	set_adjacency(c, 1, d, 0);
 	Cell_handle e = create_cell( star, v, NULL, NULL);
-	set_adjacency(e, d, 0, 1);
-	set_adjacency(e, c, 1, 0);
+	set_adjacency(e, 0, d, 1);
+	set_adjacency(e, 1, c, 0);
       }
       else {
 	c->set_vertex(1,d->vertex(0));
 	d->set_vertex(1,v);
 	d->set_neighbor(1,c);
 	Cell_handle e = create_cell( v, star, NULL, NULL);
-	set_adjacency(e, c, 0, 1);
-	set_adjacency(e, d, 1, 0);
+	set_adjacency(e, 0, c, 1);
+	set_adjacency(e, 1, d, 0);
       }
 	
       v->set_cell(d);
@@ -1803,11 +1803,11 @@ insert_increase_dimension(Vertex_handle v, // new vertex
 	enew->set_vertex(j,e->vertex(i));
 	enew->set_vertex(2,star);
 	  
-	set_adjacency(enew, cnew, i, j);
+	set_adjacency(enew, i, cnew, j);
 	// false at the first iteration of the loop where it should
 	// be neighbor 2 
 	// it is corrected after the loop
-	set_adjacency(enew, e, 2, 2);
+	set_adjacency(enew, 2, e, 2);
 	// neighbor j will be set during next iteration of the loop
 	  
 	e->set_vertex(2,v);
@@ -1817,7 +1817,7 @@ insert_increase_dimension(Vertex_handle v, // new vertex
       }
 	
       d->set_vertex(2,v);
-      set_adjacency(enew, d, j, 2);
+      set_adjacency(enew, j, d, 2);
 
       // corrections for star->cell() :
       c = star->cell();
@@ -1857,7 +1857,7 @@ insert_increase_dimension(Vertex_handle v, // new vertex
 	if ( ! it->has_vertex(star) ) {
 	  Cell_handle cnew = create_cell( it->vertex(0), it->vertex(2),
 			                  it->vertex(1), star);
-	  set_adjacency(cnew, it->handle(), 3, 3);
+	  set_adjacency(cnew, 3, it->handle(), 3);
 	  new_cells.push_back(cnew);
 	}
       }
@@ -1881,7 +1881,7 @@ insert_increase_dimension(Vertex_handle v, // new vertex
 	  }
 	  else {
 	    // star is a vertex of n->neighbor(i)
-	    set_adjacency(*ncit, n->neighbor(i), j, 3);//neighbor opposite to v
+	    set_adjacency(*ncit, j, n->neighbor(i), 3);//neighbor opposite to v
 	  }
 	}
       }

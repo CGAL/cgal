@@ -462,7 +462,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	    bound[0]->set_vertex(0,v);
 	    v->set_cell(bound[0]);
 	    bound[1]->set_vertex(1,v);
-	    _tds.set_adjacency(bound[0], bound[1], 1, 0);
+	    _tds.set_adjacency(bound[0], 1, bound[1], 0);
 	  }
 	  else {
 	    bound[1] = _tds.create_cell(bound[0]->vertex(0), v, NULL, NULL,

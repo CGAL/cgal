@@ -1117,19 +1117,19 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
 
 	// The new cell touches the faces that form the ear
 	Facet fac = n->info();
-	_tds.set_adjacency(ch, fac.first, 0, fac.second);
+	_tds.set_adjacency(ch, 0, fac.first, fac.second);
 	fac = f->info();
-	_tds.set_adjacency(ch, fac.first, 3, fac.second);
+	_tds.set_adjacency(ch, 3, fac.first, fac.second);
 
 	// It may touch another face, 
 	// or even two other faces if it is the last cell
 	if(neighbor_i) {
 	  fac = m_i->info();
-	  _tds.set_adjacency(ch, fac.first, 1, fac.second);
+	  _tds.set_adjacency(ch, 1, fac.first, fac.second);
 	}
 	if(neighbor_j) {
 	  fac = m_j->info();
-	  _tds.set_adjacency(ch, fac.first, 2, fac.second);
+	  _tds.set_adjacency(ch, 2, fac.first, fac.second);
 	}
 	
 	if((! neighbor_i) && (! neighbor_j)) {
