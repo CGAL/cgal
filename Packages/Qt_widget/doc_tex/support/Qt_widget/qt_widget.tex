@@ -336,11 +336,17 @@ here:
 
 \ccInclude{CGAL/IO/pixmaps/polygon.xpm}
 
+\ccInclude{CGAL/IO/pixmaps/optimal_convex.xpm}
+
+\ccInclude{CGAL/IO/pixmaps/ymonotone.xpm}
+
+\ccInclude{CGAL/IO/pixmaps/greene_approx.xpm}
+
 To use a pixmap in your code you have to include the right file, and
 to know the names of the pixmaps. The names of the pixmaps are
 composed of two parts, the name of the file and the tag xpm. So for
 example the arrow pixmap has the name \ccStyle{arrow\_xpm}, the line
-pixmap has the name \ccStyle{line\_xpm}, and so on \ldots.  In the
+pixmap has the name \ccStyle{line\_xpm}, and so on. In the
 tutorials and demos, almost all the pixmaps are used for the toolbar
 buttons, like this:
 
@@ -449,17 +455,17 @@ In this tutorial you can see a different method to draw on the window,
 and you'll pass over the limitations of the previous example.
 
 This tutorials insert a point in a Delaunay triangulation every time
-you press the mouse button over the widget, and calls redraw(). This
+you press the mouse button over the widget, and calls \ccc{redraw()}. This
 means that you'll see the results of your insertions immediately. The
-advantage of this approach is that you can resize the window, the
+advantage of this approach is that when you resize the window, the
 painting will not disappear.
 
 As you see the main entry point is the same as in the previous
 tutorial, but instead of using an instance of \ccStyle{Qt\_widget}
 class, you'll use an instance of a class derived from \ccStyle{Qt\_widget}.
-In this sense, we create a new class My\_Window as a child for
+In this sense, we create a new class \ccc{My\_Window} as a child for
 \ccStyle{Qt\_widget}. The resize function has been moved into the
-constructor of My\_Window.
+constructor of \ccc{My\_Window}.
 
 We define a triangulation as a global variable:
 \begin{ccExampleCode}
@@ -469,23 +475,25 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
 \end{ccExampleCode}
-The private member redraw() is used to output the triangulation on the screen. 
+The private slot \ccc{redraw_win()} is used to output the
+triangulation on the screen. This slot is triggered by the
+\ccc{custom\_redraw()} signal emited by \ccc{Qt\_widget} at the end of 
+\ccc{redraw()}. The connection between this signal and our slot is
+made in the constructor of \ccc{My\_Window}.
 \begin{ccExampleCode}
-private:
-  void redraw()
+private slots:
+  void redraw_win()
   {
-    Qt_widget::redraw();
     *this << dt;
   }
 \end{ccExampleCode}
-There is another line in the redraw():
-\begin{ccExampleCode}
-Qt_widget::redraw();
-\end{ccExampleCode}
-This line is meant to call the redraw() from the \ccStyle{Qt\_widget}
-base class, used to draw the attached layers as you'll see later. This function
-also clears the screen. If you remove this line it's necessary to add
-clear() instead.
+
+This slot is triggered every time \ccc{redraw()}
+public member of \ccc{Qt\_widget} is called. This way the window
+redraws the painting from this slot in the same time with the other
+paintings. You will see in the next tutorial how to use a layer. All
+the layers are drawn in this redraw() method of \ccc{Qt\_widget}, and
+at the end is emited \ccc{custom\_redraw()}.
 
 Another private member catches the mouse press event from the Window
 system (X11/Windows). The code put in this function will be executed when
