@@ -313,7 +313,7 @@ the conic class @prg{R::Conic_2} of the representation type @prg{R}.
         friend  class CGAL_Optimisation_ellipse_2<_R>;
         
         friend  CGAL_Window_stream&  operator << CGAL_NULL_TMPL_ARGS (
-            CGAL_Window_stream&, CGAL_Optimisation_ellipse_2<_R> const&);
+            CGAL_Window_stream&, const CGAL_Optimisation_ellipse_2<_R>&);
 
       public:
 
@@ -578,12 +578,12 @@ to bounded and unbounded side, we `extend' the type @prg{CGAL_Bounded_side}.
 We provide tests for equality and inequality of two conics.
 
 @macro <CGAL_Conic_2 comparison methods> = @begin
-    bool operator == ( CGAL_Conic_2<_R> const& c) const
+    bool operator == ( const CGAL_Conic_2<_R>& c) const
     {
         return Conic_2::operator == ( (Conic_2)c);
     }
 
-    bool operator != ( CGAL_Conic_2<_R> const& c) const
+    bool operator != ( const CGAL_Conic_2<_R>& c) const
     {
         return( ! operator == ( c));
     }
@@ -861,7 +861,7 @@ As before, if $\E$ is not an ellipse, the result is meaningless.
 
 @macro <CGAL_Conic_2 I/O routines> = @begin
     template< class _R>
-    ostream& operator << ( ostream& os, CGAL_Conic_2<_R> const& c)
+    ostream& operator << ( ostream& os, const CGAL_Conic_2<_R>& c)
     {
         return( os << c.r() << ' ' << c.s() << ' ' << c.t() << ' '
                    << c.u() << ' ' << c.v() << ' ' << c.w());
@@ -1632,7 +1632,7 @@ data.
 @! ---------------------------------------------------------------------------
 
 @macro <CGAL_ConicHPA2 public member functions> += @begin
-    DA const&  da() const
+    const DA&  da() const
     {
         return dao;
     }
@@ -1640,7 +1640,7 @@ data.
 @end
 
 @macro <CGAL_ConicCPA2 public member functions> += @begin 
-    DA const&  da() const
+    const DA&  da() const
     {
         return dao;
     }
@@ -1948,7 +1948,7 @@ zero, we know that the nonconvex side is empty, see subsection
 We provide tests for equality and inequality of two conics.
 
 @macro <CGAL_ConicHPA2 public member functions> += @begin
-    bool operator == ( CGAL_ConicHPA2<_PT,_DA> const& c) const
+    bool operator == ( const CGAL_ConicHPA2<_PT,_DA>& c) const
     {
         // find coefficient != 0
         RT  factor1;
@@ -1981,7 +1981,7 @@ We provide tests for equality and inequality of two conics.
 @end
 
 @macro <CGAL_ConicCPA2 public member functions> += @begin
-    bool operator == ( CGAL_ConicCPA2<_PT,_DA> const& c) const
+    bool operator == ( const CGAL_ConicCPA2<_PT,_DA>& c) const
     {
         // find coefficient != 0
         FT  factor1;
@@ -3090,7 +3090,7 @@ nontrivial conic through the points.
 
 @macro <CGAL_ConicHPA2 I/O routines> = @begin
     template< class _PT, class _DA>
-    ostream& operator << ( ostream& os, CGAL_ConicHPA2<_PT,_DA> const& c)
+    ostream& operator << ( ostream& os, const CGAL_ConicHPA2<_PT,_DA>& c)
     {
         return( os << c.r() << ' ' << c.s() << ' ' << c.t() << ' '
                    << c.u() << ' ' << c.v() << ' ' << c.w());
@@ -3112,7 +3112,7 @@ nontrivial conic through the points.
 
 @macro <CGAL_ConicCPA2 I/O routines> = @begin
     template< class _PT, class _DA>
-    ostream& operator << ( ostream& os, CGAL_ConicCPA2<_PT,_DA> const& c)
+    ostream& operator << ( ostream& os, const CGAL_ConicCPA2<_PT,_DA>& c)
     {
         return( os << c.r() << ' ' << c.s() << ' ' << c.t() << ' '
                    << c.u() << ' ' << c.v() << ' ' << c.w());

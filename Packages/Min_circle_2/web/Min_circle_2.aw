@@ -157,9 +157,14 @@ in the \cgal\ Reference Manual.
 \renewcommand{\ccSection}{\ccSubsection}
 \renewcommand{\ccFont}{\tt}
 \renewcommand{\ccEndFont}{}
-\ccSetThreeColumns{typedef CGAL_Point_2<R>}{}{%
-  creates a variable \ccc{min_circle} of type \ccc{CGAL_Min_circle_2<Traits>}.}
-\ccPropagateThreeToTwoColumns
+\newcommand{\cgalSetMinCircleLayout}{%
+  \ccSetThreeColumns{Support_point_iterator}{}{creates a variable
+    \ccc{min_circle} of type \ccc{CGAL_Min_circle_2<Traits>}.}
+  \ccPropagateThreeToTwoColumns}
+\newcommand{\cgalSetOptTraitsAdaptLayout}{\ccTexHtml{%
+    \ccSetThreeColumns{CGAL_Oriented_side}{}{returns constants
+      \ccc{CGAL_LEFTTURN}, \ccc{CGAL_COLLINEAR}}
+    \ccPropagateThreeToTwoColumns}{}}
 \input{../../doc_tex/basic/Optimisation/Min_circle_2.tex}
 \input{../../doc_tex/basic/Optimisation/Optimisation_circle_2.tex}
 \input{../../doc_tex/basic/Optimisation/Min_circle_2_adapterC2.tex}
@@ -208,9 +213,9 @@ The class interface looks as follows.
         @<Min_circle_2 private data members>
 
         // copying and assignment not allowed!
-        CGAL_Min_circle_2( CGAL_Min_circle_2<_Traits> const&);
+        CGAL_Min_circle_2( const CGAL_Min_circle_2<_Traits>&);
         CGAL_Min_circle_2<_Traits>&
-            operator = ( CGAL_Min_circle_2<_Traits> const&);
+            operator = ( const CGAL_Min_circle_2<_Traits>&);
 
     @<dividing line>
 
@@ -283,27 +288,27 @@ section, so we do not comment on it here.
                        const Point*  last,
                        bool          randomize = false,
                        CGAL_Random&  random    = CGAL_random,
-                       Traits const& traits    = Traits());
+                       const Traits& traits    = Traits());
     CGAL_Min_circle_2( list<Point>::const_iterator first,
                        list<Point>::const_iterator last,
                        bool          randomize = false,
                        CGAL_Random&  random    = CGAL_random,
-                       Traits const& traits    = Traits());
+                       const Traits& traits    = Traits());
     CGAL_Min_circle_2( istream_iterator<Point,ptrdiff_t> first,
                        istream_iterator<Point,ptrdiff_t> last,
                        bool          randomize = false,
                        CGAL_Random&  random    = CGAL_random,
-                       Traits const& traits    = Traits())
-    CGAL_Min_circle_2( Traits const& traits = Traits());
-    CGAL_Min_circle_2( Point  const& p,
-                       Traits const& traits = Traits());
-    CGAL_Min_circle_2( Point  const& p,
-                       Point  const& q,
-                       Traits const& traits = Traits());
-    CGAL_Min_circle_2( Point  const& p1,
-                       Point  const& p2,
-                       Point  const& p3,
-                       Traits const& traits = Traits());
+                       const Traits& traits    = Traits())
+    CGAL_Min_circle_2( const Traits& traits = Traits());
+    CGAL_Min_circle_2( const Point&  p,
+                       const Traits& traits = Traits());
+    CGAL_Min_circle_2( const Point&  p,
+                       const Point&  q,
+                       const Traits& traits = Traits());
+    CGAL_Min_circle_2( const Point&  p1,
+                       const Point&  p2,
+                       const Point&  p3,
+                       const Traits& traits = Traits());
     ~CGAL_Min_circle_2( );
 
     // access functions
@@ -316,21 +321,21 @@ section, so we do not comment on it here.
     Support_point_iterator  support_points_begin( ) const;
     Support_point_iterator  support_points_end  ( ) const;
 
-    Point const&  support_point( int i) const;
+    const Point&  support_point( int i) const;
 
-    Circle const&  circle( ) const;
+    const Circle&  circle( ) const;
 
     // predicates
-    CGAL_Bounded_side  bounded_side( Point const& p) const;
-    bool  has_on_bounded_side      ( Point const& p) const;
-    bool  has_on_boundary          ( Point const& p) const;
-    bool  has_on_unbounded_side    ( Point const& p) const;
+    CGAL_Bounded_side  bounded_side( const Point& p) const;
+    bool  has_on_bounded_side      ( const Point& p) const;
+    bool  has_on_boundary          ( const Point& p) const;
+    bool  has_on_unbounded_side    ( const Point& p) const;
 
     bool  is_empty     ( ) const;
     bool  is_degenerate( ) const;
 
     // modifiers
-    void  insert( Point const& p);
+    void  insert( const Point& p);
     void  insert( const Point* first,
                   const Point* last );
     void  insert( list<Point>::const_iterator first,
@@ -343,7 +348,7 @@ section, so we do not comment on it here.
     bool  is_valid( bool verbose = false, int level = 0) const;
 
     // miscellaneous
-    Traits const&  traits( ) const;
+    const Traits&  traits( ) const;
     **************************************************************************/
 @end
 
@@ -411,7 +416,7 @@ compute $mc(P)=mc(P,\emptyset)$.
                        const Point*  last,
                        bool          randomize = false,
                        CGAL_Random&  random    = CGAL_random,
-                       Traits const& traits    = Traits())
+                       const Traits& traits    = Traits())
         : tco( traits)
     {
         // allocate support points' array
@@ -439,7 +444,7 @@ compute $mc(P)=mc(P,\emptyset)$.
                        list<Point>::const_iterator last,
                        bool          randomize = false,
                        CGAL_Random&  random    = CGAL_random,
-                       Traits const& traits    = Traits())
+                       const Traits& traits    = Traits())
         : tco( traits)
     {
         // allocate support points' array
@@ -471,7 +476,7 @@ compute $mc(P)=mc(P,\emptyset)$.
                        istream_iterator<Point,ptrdiff_t>  last,
                        bool          randomize = false,
                        CGAL_Random&  random    = CGAL_random,
-                       Traits const& traits    = Traits())
+                       const Traits& traits    = Traits())
         : tco( traits)
     {
         // allocate support points' array
@@ -512,7 +517,7 @@ building $mc(\emptyset)$.
 
     // default constructor
     inline
-    CGAL_Min_circle_2( Traits const& traits = Traits())
+    CGAL_Min_circle_2( const Traits& traits = Traits())
         : tco( traits), n_support_points( 0)
     {
         // allocate support points' array
@@ -526,7 +531,7 @@ building $mc(\emptyset)$.
 
     // constructor for one point
     inline
-    CGAL_Min_circle_2( Point const& p, Traits const& traits = Traits())
+    CGAL_Min_circle_2( const Point& p, const Traits& traits = Traits())
         : tco( traits), points( 1, p), n_support_points( 1)
     {
         // allocate support points' array
@@ -541,9 +546,9 @@ building $mc(\emptyset)$.
 
     // constructor for two points
     inline
-    CGAL_Min_circle_2( Point const& p1,
-                       Point const& p2,
-                       Traits const& traits = Traits())
+    CGAL_Min_circle_2( const Point& p1,
+                       const Point& p2,
+                       const Traits& traits = Traits())
         : tco( traits)
     {
         // allocate support points' array
@@ -559,10 +564,10 @@ building $mc(\emptyset)$.
 
     // constructor for three points
     inline
-    CGAL_Min_circle_2( Point const& p1,
-                       Point const& p2,
-                       Point const& p3,
-                       Traits const& traits = Traits())
+    CGAL_Min_circle_2( const Point& p1,
+                       const Point& p2,
+                       const Point& p3,
+                       const Traits& traits = Traits())
         : tco( traits)
     {
         // allocate support points' array
@@ -650,7 +655,7 @@ Then, we have the access functions for points and support points.
 
     // random access for support points    
     inline
-    Point const&
+    const Point&
     support_point( int i) const
     {
         CGAL_optimisation_precondition( (i >= 0) &&
@@ -664,7 +669,7 @@ Finally, the access function \ccc{circle}.
 @macro <Min_circle_2 access functions> += @begin
     // circle
     inline
-    Circle const&
+    const Circle&
     circle( ) const
     {
         return( tco.circle);
@@ -702,28 +707,28 @@ corresponding predicates of class \ccc{Circle}.
     // in-circle test predicates
     inline
     CGAL_Bounded_side
-    bounded_side( Point const& p) const
+    bounded_side( const Point& p) const
     {
         return( tco.circle.bounded_side( p));
     }
 
     inline
     bool
-    has_on_bounded_side( Point const& p) const
+    has_on_bounded_side( const Point& p) const
     {
         return( tco.circle.has_on_bounded_side( p));
     }
 
     inline
     bool
-    has_on_boundary( Point const& p) const
+    has_on_boundary( const Point& p) const
     {
         return( tco.circle.has_on_boundary( p));
     }
 
     inline
     bool
-    has_on_unbounded_side( Point const& p) const
+    has_on_unbounded_side( const Point& p) const
     {
         return( tco.circle.has_on_unbounded_side( p));
     }
@@ -747,7 +752,7 @@ Section~\ref{sec:algo}.
 
 @macro <Min_circle_2 modifiers> += @begin
     void
-    insert( Point const& p)
+    insert( const Point& p)
     {
         // p not in current circle?
         if ( has_on_unbounded_side( p)) {
@@ -935,7 +940,7 @@ and the circle's center are collinear, then $p$ and $q$ form a
 diameter of the circle.
 
 @macro <Min_circle_2 check two support points> = @begin
-    Point const& p( support_point( 0)),
+    const Point& p( support_point( 0)),
                  q( support_point( 1));
 
     // p equals q?
@@ -969,7 +974,7 @@ Otherwise, if two triples have opposite orientations, the center is not
 contained in the triangle.
 
 @macro <Min_circle_2 check three support points> = @begin
-    Point const& p( support_point( 0)),
+    const Point& p( support_point( 0)),
                  q( support_point( 1)),
                  r( support_point( 2));
 
@@ -993,7 +998,7 @@ contained in the triangle.
                      through its three support points."));
 
     // circle's center on boundary of triangle(p,q,r)?
-    Point const& center( circle().center());
+    const Point& center( circle().center());
     CGAL_Orientation o_pqz = tco.orientation( p, q, center);
     CGAL_Orientation o_qrz = tco.orientation( q, r, center);
     CGAL_Orientation o_rpz = tco.orientation( r, p, center);
@@ -1018,7 +1023,7 @@ traits class object.
 
 @macro <Min_circle_2 miscellaneous> = @begin
     inline
-    Traits const&
+    const Traits&
     traits( ) const
     {
         return( tco);
@@ -1030,7 +1035,7 @@ traits class object.
 
 @macro <Min_circle_2 I/O operators declaration> = @begin
     template < class _Traits >
-    ostream& operator << ( ostream& os, CGAL_Min_circle_2<_Traits> const& mc);
+    ostream& operator << ( ostream& os, const CGAL_Min_circle_2<_Traits>& mc);
 
     template < class _Traits >
     istream& operator >> ( istream& is, CGAL_Min_circle_2<_Traits>      & mc);
@@ -1039,7 +1044,7 @@ traits class object.
 @macro <Min_circle_2 I/O operators> = @begin
     template < class _Traits >
     ostream&
-    operator << ( ostream& os, CGAL_Min_circle_2<_Traits> const& min_circle)
+    operator << ( ostream& os, const CGAL_Min_circle_2<_Traits>& min_circle)
     {
         typedef typename  CGAL_Min_circle_2<_Traits>::Point  Point;
 
@@ -1155,7 +1160,7 @@ pseudocode above.
 
 @macro <Min_circle_2 private member function `mc'> = @begin
     void
-    mc( Point_iterator const& last, int n_sp)
+    mc( const Point_iterator& last, int n_sp)
     {
         // compute circle through support points
         n_support_points = n_sp;
@@ -1165,7 +1170,7 @@ pseudocode above.
         // test first n points
         list<Point>::iterator  point_iter( points.begin());
         for ( ; last != point_iter; ) {
-            Point const& p( *point_iter);
+            const Point& p( *point_iter);
 
             // p not in current circle?
             if ( has_on_unbounded_side( p)) {
@@ -1259,24 +1264,24 @@ section, so we do not comment on it here.
 
     // creation
     void  set( );
-    void  set( Point const& p);
-    void  set( Point const& p, Point const& q);
-    void  set( Point const& p, Point const& q, Point const& r);
-    void  set( Point const& center, Distance const& squared_radius);
+    void  set( const Point& p);
+    void  set( const Point& p, const Point& q);
+    void  set( const Point& p, const Point& q, const Point& r);
+    void  set( const Point& center, const Distance& squared_radius);
 
     // access functions    
-    Point    const&  center        ( ) const;
-    Distance const&  squared_radius( ) const
+    const Point&     center        ( ) const;
+    const Distance&  squared_radius( ) const
 
     // equality tests
-    bool  operator == ( CGAL_Optimisation_circle_2<R> const& c) const;
-    bool  operator != ( CGAL_Optimisation_circle_2<R> const& c) const;
+    bool  operator == ( const CGAL_Optimisation_circle_2<R>& c) const;
+    bool  operator != ( const CGAL_Optimisation_circle_2<R>& c) const;
 
     // predicates
-    CGAL_Bounded_side  bounded_side( Point const& p) const;
-    bool  has_on_bounded_side      ( Point const& p) const;
-    bool  has_on_boundary          ( Point const& p) const;
-    bool  has_on_unbounded_side    ( Point const& p) const;
+    CGAL_Bounded_side  bounded_side( const Point& p) const;
+    bool  has_on_bounded_side      ( const Point& p) const;
+    bool  has_on_boundary          ( const Point& p) const;
+    bool  has_on_unbounded_side    ( const Point& p) const;
 
     bool  is_empty     ( ) const;
     bool  is_degenerate( ) const;
@@ -1311,7 +1316,7 @@ radius.
     
     inline
     void
-    set( Point const& p)
+    set( const Point& p)
     {
         _center         = p;
         _squared_radius = Distance( 0);
@@ -1319,7 +1324,7 @@ radius.
     
     inline
     void
-    set( Point const& p, Point const& q)
+    set( const Point& p, const Point& q)
     {
         _center         = CGAL_midpoint( p, q);
         _squared_radius = CGAL_squared_distance( p, _center);
@@ -1327,7 +1332,7 @@ radius.
     
     inline
     void
-    set( Point const& p, Point const& q, Point const& r)
+    set( const Point& p, const Point& q, const Point& r)
     {
         _center         = CGAL_circumcenter( p, q, r);
         _squared_radius = CGAL_squared_distance( p, _center);
@@ -1335,7 +1340,7 @@ radius.
     
     inline
     void
-    set( Point const& center, Distance const& squared_radius)
+    set( const Point& center, const Distance& squared_radius)
     {
         _center         = center;
         _squared_radius = squared_radius;
@@ -1350,14 +1355,14 @@ squared radius, resp.
 
 @macro <Optimisation_circle_2 access functions> = @begin
     inline
-    Point const&
+    const Point&
     center( ) const
     {
         return( _center);
     }
 
     inline
-    Distance const&
+    const Distance&
     squared_radius( ) const
     {
         return( _squared_radius);
@@ -1369,14 +1374,14 @@ squared radius, resp.
 
 @macro <Optimisation_circle_2 equality tests> = @begin
     bool
-    operator == ( CGAL_Optimisation_circle_2<R> const& c) const
+    operator == ( const CGAL_Optimisation_circle_2<R>& c) const
     {
         return( ( _center          == c._center        ) &&
                 ( _squared_radius  == c._squared_radius) );
     }
     
     bool
-    operator != ( CGAL_Optimisation_circle_2<R> const& c) const
+    operator != ( const CGAL_Optimisation_circle_2<R>& c) const
     {
         return( ! operator==( c));
     }
@@ -1391,7 +1396,7 @@ emptyness and degeneracy, resp.
 @macro <Optimisation_circle_2 predicates> = @begin
     inline
     CGAL_Bounded_side
-    bounded_side( Point const& p) const
+    bounded_side( const Point& p) const
     {
         return( CGAL_static_cast( CGAL_Bounded_side,
                                   CGAL_sign( CGAL_squared_distance( p, _center)
@@ -1400,21 +1405,21 @@ emptyness and degeneracy, resp.
 
     inline
     bool
-    has_on_bounded_side( Point const& p) const
+    has_on_bounded_side( const Point& p) const
     {
         return( CGAL_squared_distance( p, _center) < _squared_radius);
     }
 
     inline
     bool
-    has_on_boundary( Point const& p) const
+    has_on_boundary( const Point& p) const
     {
         return( CGAL_squared_distance( p, _center) == _squared_radius);
     }
 
     inline
     bool
-    has_on_unbounded_side( Point const& p) const
+    has_on_unbounded_side( const Point& p) const
     {
         return( _squared_radius < CGAL_squared_distance( p, _center));
     }
@@ -1440,7 +1445,7 @@ emptyness and degeneracy, resp.
 @macro <Optimisation_circle_2 I/O operators declaration> = @begin
     template < class _R >
     ostream&
-    operator << ( ostream& os, CGAL_Optimisation_circle_2<_R> const& c);
+    operator << ( ostream& os, const CGAL_Optimisation_circle_2<_R>& c);
 
     template < class _R >
     istream&
@@ -1450,7 +1455,7 @@ emptyness and degeneracy, resp.
 @macro <Optimisation_circle_2 I/O operators> = @begin
     template < class _R >
     ostream&
-    operator << ( ostream& os, CGAL_Optimisation_circle_2<_R> const& c)
+    operator << ( ostream& os, const CGAL_Optimisation_circle_2<_R>& c)
     {
         switch ( CGAL_get_mode( os)) {
 
@@ -1575,7 +1580,7 @@ it is declared \ccc{friend}.
 \subsubsection{Constructors}
 
 @macro <Min_circle_2_adapterC2 constructors> = @begin
-    CGAL_Min_circle_2_adapterC2( DA const& da = DA())
+    CGAL_Min_circle_2_adapterC2( const DA& da = DA())
         : dao( da), circle( da)
     { }
 @end
@@ -1585,7 +1590,7 @@ it is declared \ccc{friend}.
 
 @macro <Min_circle_2_adapterC2 operations> = @begin
     CGAL_Orientation
-    orientation( Point const& p, Point const& q, Point const& r) const
+    orientation( const Point& p, const Point& q, const Point& r) const
     {
         typedef  typename _DA::FT  FT;
 
@@ -1628,7 +1633,7 @@ it is declared \ccc{friend}.
 
         // private member functions
         FT
-        sqr_dist( FT const& px, FT const& py, FT const& qx, FT const& qy) const
+        sqr_dist( const FT& px, const FT& py, const FT& qx, const FT& qy) const
         {
             FT  dx( px - qx);
             FT  dy( py - qy);
@@ -1641,7 +1646,7 @@ it is declared \ccc{friend}.
         typedef  FT  Distance;
 
         // creation
-        CGAL__Min_circle_2_adapterC2__Circle( DA const& da) : dao( da) { }
+        CGAL__Min_circle_2_adapterC2__Circle( const DA& da) : dao( da) { }
 
         void  set( )
         {
@@ -1650,13 +1655,13 @@ it is declared \ccc{friend}.
             sqr_rad  = -FT( 1);
         }
 
-        void  set( Point const& p)
+        void  set( const Point& p)
         {
             dao.get( p, center_x, center_y);
             sqr_rad = FT( 0);
         }
 
-        void  set( Point const& p, Point const& q)
+        void  set( const Point& p, const Point& q)
         {
             FT  px;
             FT  py;
@@ -1671,7 +1676,7 @@ it is declared \ccc{friend}.
             sqr_rad  = sqr_dist( px, py, center_x, center_y);
         }
 
-        void  set( Point const& p, Point const& q, Point const& r)
+        void  set( const Point& p, const Point& q, const Point& r)
         {
             FT  px;
             FT  py;
@@ -1701,7 +1706,7 @@ it is declared \ccc{friend}.
 
         // predicates
         CGAL_Bounded_side
-        bounded_side( Point const& p) const
+        bounded_side( const Point& p) const
         {
             FT  px;
             FT  py;
@@ -1711,7 +1716,7 @@ it is declared \ccc{friend}.
         }
 
         bool
-        has_on_bounded_side( Point const& p) const
+        has_on_bounded_side( const Point& p) const
         {
             FT  px;
             FT  py;
@@ -1720,7 +1725,7 @@ it is declared \ccc{friend}.
         }
 
         bool
-        has_on_boundary( Point const& p) const
+        has_on_boundary( const Point& p) const
         {
             FT  px;
             FT  py;
@@ -1729,7 +1734,7 @@ it is declared \ccc{friend}.
         }
 
         bool
-        has_on_unbounded_side( Point const& p) const
+        has_on_unbounded_side( const Point& p) const
         {
             FT  px;
             FT  py;
@@ -1752,7 +1757,7 @@ it is declared \ccc{friend}.
         // additional operations for checking
         bool
         operator == (
-            CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA> const& c) const
+            const CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>& c) const
         {
             return( ( center_x == c.center_x) &&
                     ( center_y == c.center_y) &&
@@ -1767,7 +1772,7 @@ it is declared \ccc{friend}.
             return( p);
         }
 
-        Distance const&
+        const Distance&
         squared_radius( ) const
         {
             return( sqr_rad);
@@ -1777,7 +1782,7 @@ it is declared \ccc{friend}.
         friend
         ostream&
         operator << ( ostream& os,
-                      CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA> const& c)
+                      const CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>& c)
         {
             switch ( CGAL_get_mode( os)) {
 
@@ -1898,7 +1903,7 @@ it is declared \ccc{friend}.
 \subsubsection{Constructors}
 
 @macro <Min_circle_2_adapterH2 constructors> = @begin
-    CGAL_Min_circle_2_adapterH2( DA const& da = DA())
+    CGAL_Min_circle_2_adapterH2( const DA& da = DA())
         : dao( da), circle( da)
     { }
 @end
@@ -1908,7 +1913,7 @@ it is declared \ccc{friend}.
 
 @macro <Min_circle_2_adapterH2 operations> = @begin
     CGAL_Orientation
-    orientation( Point const& p, Point const& q, Point const& r) const
+    orientation( const Point& p, const Point& q, const Point& r) const
     {
         typedef  typename _DA::RT  RT;
 
@@ -1957,8 +1962,8 @@ it is declared \ccc{friend}.
 
         // private member functions
         FT
-        sqr_dist( RT const& phx, RT const& phy, RT const& phw,
-                  RT const& qhx, RT const& qhy, RT const& qhw) const
+        sqr_dist( const RT& phx, const RT& phy, const RT& phw,
+                  const RT& qhx, const RT& qhy, const RT& qhw) const
         {
             RT  dhx( phx*qhw - qhx*phw);
             RT  dhy( phy*qhw - qhy*phw);
@@ -1972,7 +1977,7 @@ it is declared \ccc{friend}.
         typedef  FT  Distance;
 
         // creation
-        CGAL__Min_circle_2_adapterH2__Circle( DA const& da) : dao( da) { }
+        CGAL__Min_circle_2_adapterH2__Circle( const DA& da) : dao( da) { }
 
         void  set( )
         {
@@ -1982,13 +1987,13 @@ it is declared \ccc{friend}.
             sqr_rad   = -FT( 1);
         }
 
-        void  set( Point const& p)
+        void  set( const Point& p)
         {
             dao.get( p, center_hx, center_hy, center_hw);
             sqr_rad = FT( 0);
         }
 
-        void  set( Point const& p, Point const& q)
+        void  set( const Point& p, const Point& q)
         {
             RT  phx;
             RT  phy;
@@ -2006,7 +2011,7 @@ it is declared \ccc{friend}.
                                   center_hx, center_hy, center_hw);
         }
 
-        void  set( Point const& p, Point const& q, Point const& r)
+        void  set( const Point& p, const Point& q, const Point& r)
         {
             RT  phx;
             RT  phy;
@@ -2050,7 +2055,7 @@ it is declared \ccc{friend}.
 
         // predicates
         CGAL_Bounded_side
-        bounded_side( Point const& p) const
+        bounded_side( const Point& p) const
         {
             RT  phx;
             RT  phy;
@@ -2063,7 +2068,7 @@ it is declared \ccc{friend}.
         }
 
         bool
-        has_on_bounded_side( Point const& p) const
+        has_on_bounded_side( const Point& p) const
         {
             RT  phx;
             RT  phy;
@@ -2074,7 +2079,7 @@ it is declared \ccc{friend}.
         }
 
         bool
-        has_on_boundary( Point const& p) const
+        has_on_boundary( const Point& p) const
         {
             RT  phx;
             RT  phy;
@@ -2085,7 +2090,7 @@ it is declared \ccc{friend}.
         }
 
         bool
-        has_on_unbounded_side( Point const& p) const
+        has_on_unbounded_side( const Point& p) const
         {
             RT  phx;
             RT  phy;
@@ -2110,7 +2115,7 @@ it is declared \ccc{friend}.
         // additional operations for checking
         bool
         operator == (
-            CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA> const& c) const
+            const CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>& c) const
         {
             return( ( center_hx*c.center_hw == c.center_hx*center_hw) &&
                     ( center_hy*c.center_hw == c.center_hy*center_hw) &&
@@ -2125,7 +2130,7 @@ it is declared \ccc{friend}.
             return( p);
         }
 
-        Distance const&
+        const Distance&
         squared_radius( ) const
         {
             return( sqr_rad);
@@ -2135,7 +2140,7 @@ it is declared \ccc{friend}.
         friend
         ostream&
         operator << ( ostream& os,
-                      CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA> const& c)
+                      const CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>& c)
         {
             switch ( CGAL_get_mode( os)) {
 
@@ -2269,7 +2274,7 @@ once to ensure code coverage.
 @macro <Min_circle_2 test (code coverage test function)> = @begin
     template < class Traits, class RT >
     void
-    cover_Min_circle_2( bool verbose, Traits const&, RT const&)
+    cover_Min_circle_2( bool verbose, const Traits&, const RT&)
     {
         typedef  CGAL_Min_circle_2< Traits >  Min_circle;
         typedef  Min_circle::Point            Point;
@@ -2486,20 +2491,20 @@ representation) and corresponding data accessors.
         FT _y;
       public:
         MyPointC2( ) { }
-        MyPointC2( FT const& x, FT const& y) : _x( x), _y( y) { }
+        MyPointC2( const FT& x, const FT& y) : _x( x), _y( y) { }
 
-        FT const&  x( ) const { return( _x); }
-        FT const&  y( ) const { return( _y); }
+        const FT&  x( ) const { return( _x); }
+        const FT&  y( ) const { return( _y); }
 
         bool
-        operator == ( MyPointC2 const& p) const
+        operator == ( const MyPointC2& p) const
         {
             return( ( _x == p._x) && ( _y == p._y));
         }
 
         friend
         ostream&
-        operator << ( ostream& os, MyPointC2 const& p)
+        operator << ( ostream& os, const MyPointC2& p)
         {
             return( os << p._x << ' ' << p._y);
         }
@@ -2517,18 +2522,18 @@ representation) and corresponding data accessors.
       public:
         typedef  ::Ft  FT;
 
-        FT const&  get_x( MyPointC2 const& p) const { return( p.x()); }
-        FT const&  get_y( MyPointC2 const& p) const { return( p.y()); }
+        const FT&  get_x( const MyPointC2& p) const { return( p.x()); }
+        const FT&  get_y( const MyPointC2& p) const { return( p.y()); }
 
         void
-        get( MyPointC2 const& p, FT& x, FT& y) const
+        get( const MyPointC2& p, FT& x, FT& y) const
         {
             x = get_x( p);
             y = get_y( p);
         }
 
         void
-        set( MyPointC2& p, FT const& x, FT const& y) const
+        set( MyPointC2& p, const FT& x, const FT& y) const
         {
             p = MyPointC2( x, y);
         }
@@ -2545,22 +2550,22 @@ representation) and corresponding data accessors.
         RT _hw;
       public:
         MyPointH2( ) { }
-        MyPointH2( RT const& hx, RT const& hy, RT const& hw = RT( 1))
+        MyPointH2( const RT& hx, const RT& hy, const RT& hw = RT( 1))
             : _hx( hx), _hy( hy), _hw( hw) { }
 
-        RT const&  hx( ) const { return( _hx); }
-        RT const&  hy( ) const { return( _hy); }
-        RT const&  hw( ) const { return( _hw); }
+        const RT&  hx( ) const { return( _hx); }
+        const RT&  hy( ) const { return( _hy); }
+        const RT&  hw( ) const { return( _hw); }
 
         bool
-        operator == ( MyPointH2 const& p) const
+        operator == ( const MyPointH2& p) const
         {
             return( ( _hx*p._hw == p._hx*_hw) && ( _hy*p._hw == p._hy*_hw));
         }
 
         friend
         ostream&
-        operator << ( ostream& os, MyPointH2 const& p)
+        operator << ( ostream& os, const MyPointH2& p)
         {
             return( os << p._hx << ' ' << p._hy << ' ' << p._hw);
         }
@@ -2578,12 +2583,12 @@ representation) and corresponding data accessors.
       public:
         typedef  ::Rt  RT;
 
-        RT const&  get_hx( MyPointH2 const& p) const { return( p.hx()); }
-        RT const&  get_hy( MyPointH2 const& p) const { return( p.hy()); }
-        RT const&  get_hw( MyPointH2 const& p) const { return( p.hw()); }
+        const RT&  get_hx( const MyPointH2& p) const { return( p.hx()); }
+        const RT&  get_hy( const MyPointH2& p) const { return( p.hy()); }
+        const RT&  get_hw( const MyPointH2& p) const { return( p.hw()); }
 
         void
-        get( MyPointH2 const& p, RT& hx, RT& hy, RT& hw) const
+        get( const MyPointH2& p, RT& hx, RT& hy, RT& hw) const
         {
             hx = get_hx( p);
             hy = get_hy( p);
@@ -2591,7 +2596,7 @@ representation) and corresponding data accessors.
         }
 
         void
-        set( MyPointH2& p, RT const& hx, RT const& hy, RT const& hw) const
+        set( MyPointH2& p, const RT& hx, const RT& hy, const RT& hw) const
         {
             p = MyPointH2( hx, hy, hw);
         }

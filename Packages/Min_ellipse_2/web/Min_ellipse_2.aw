@@ -155,10 +155,14 @@ in the \cgal\ Reference Manual.
 \renewcommand{\ccSection}{\ccSubsection}
 \renewcommand{\ccFont}{\tt}
 \renewcommand{\ccEndFont}{}
-\ccSetThreeColumns{typedef Traits::Ellipse}{}{%
-  creates a variable \ccc{min_ellipse} of type
-  \ccc{CGAL_Min_ellipse_2<Traits>}.}
-\ccPropagateThreeToTwoColumns
+\newcommand{\cgalSetMinEllipseLayout}{%
+  \ccSetThreeColumns{Support_point_iterator}{}{creates a variable
+    \ccc{min_ellipse} of type \ccc{CGAL_Min_ellipse_2<Traits>}.}
+  \ccPropagateThreeToTwoColumns}
+\newcommand{\cgalSetOptTraitsAdaptLayout}{\ccTexHtml{%
+    \ccSetThreeColumns{CGAL_Oriented_side}{}{returns constants
+      \ccc{CGAL_LEFTTURN}, \ccc{CGAL_COLLINEAR}}
+    \ccPropagateThreeToTwoColumns}{}}
 \input{../../doc_tex/basic/Optimisation/Min_ellipse_2.tex}
 \input{../../doc_tex/basic/Optimisation/Optimisation_ellipse_2.tex}
 \input{../../doc_tex/basic/Optimisation/Min_ellipse_2_adapterC2.tex}
@@ -207,9 +211,9 @@ The class interface looks as follows.
         @<Min_ellipse_2 private data members>
 
         // copying and assignment not allowed!
-        CGAL_Min_ellipse_2( CGAL_Min_ellipse_2<_Traits> const&);
+        CGAL_Min_ellipse_2( const CGAL_Min_ellipse_2<_Traits>&);
         CGAL_Min_ellipse_2<_Traits>&
-            operator = ( CGAL_Min_ellipse_2<_Traits> const&);
+            operator = ( const CGAL_Min_ellipse_2<_Traits>&);
 
     @<dividing line>
 
@@ -282,27 +286,27 @@ section, so we do not comment on it here.
                         const Point*  last,
                         bool          randomize = false,
                         CGAL_Random&  random    = CGAL_random,
-                        Traits const& traits    = Traits());
+                        const Traits& traits    = Traits());
     CGAL_Min_ellipse_2( list<Point>::const_iterator first,
                         list<Point>::const_iterator last,
                         bool          randomize = false,
                         CGAL_Random&  random    = CGAL_random,
-                        Traits const& traits    = Traits());
+                        const Traits& traits    = Traits());
     CGAL_Min_ellipse_2( istream_iterator<Point,ptrdiff_t> first,
                         istream_iterator<Point,ptrdiff_t> last,
                         bool          randomize = false,
                         CGAL_Random&  random    = CGAL_random,
-                        Traits const& traits    = Traits())
-    CGAL_Min_ellipse_2( Traits const& traits = Traits());
-    CGAL_Min_ellipse_2( Point  const& p,
-                        Traits const& traits = Traits());
-    CGAL_Min_ellipse_2( Point  const& p,
-                        Point  const& q,
-                        Traits const& traits = Traits());
-    CGAL_Min_ellipse_2( Point  const& p1,
-                        Point  const& p2,
-                        Point  const& p3,
-                        Traits const& traits = Traits());
+                        const Traits& traits    = Traits())
+    CGAL_Min_ellipse_2( const Traits& traits = Traits());
+    CGAL_Min_ellipse_2( const Point&  p,
+                        const Traits& traits = Traits());
+    CGAL_Min_ellipse_2( const Point&  p,
+                        const Point&  q,
+                        const Traits& traits = Traits());
+    CGAL_Min_ellipse_2( const Point&  p1,
+                        const Point&  p2,
+                        const Point&  p3,
+                        const Traits& traits = Traits());
     ~CGAL_Min_ellipse_2( );
 
     // access functions
@@ -315,21 +319,21 @@ section, so we do not comment on it here.
     Support_point_iterator  support_points_begin( ) const;
     Support_point_iterator  support_points_end  ( ) const;
 
-    Point const&  support_point( int i) const;
+    const Point&  support_point( int i) const;
 
-    Ellipse const&  ellipse( ) const;
+    const Ellipse&  ellipse( ) const;
 
     // predicates
-    CGAL_Bounded_side  bounded_side( Point const& p) const;
-    bool  has_on_bounded_side      ( Point const& p) const;
-    bool  has_on_boundary          ( Point const& p) const;
-    bool  has_on_unbounded_side    ( Point const& p) const;
+    CGAL_Bounded_side  bounded_side( const Point& p) const;
+    bool  has_on_bounded_side      ( const Point& p) const;
+    bool  has_on_boundary          ( const Point& p) const;
+    bool  has_on_unbounded_side    ( const Point& p) const;
 
     bool  is_empty     ( ) const;
     bool  is_degenerate( ) const;
 
     // modifiers
-    void  insert( Point const& p);
+    void  insert( const Point& p);
     void  insert( const Point* first,
                   const Point* last );
     void  insert( list<Point>::const_iterator first,
@@ -342,7 +346,7 @@ section, so we do not comment on it here.
     bool  is_valid( bool verbose = false, int level = 0) const;
 
     // miscellaneous
-    Traits const&  traits( ) const;
+    const Traits&  traits( ) const;
     **************************************************************************/
 @end
 
@@ -410,7 +414,7 @@ compute $me(P)=me(P,\emptyset)$.
                         const Point*  last,
                         bool          randomize = false,
                         CGAL_Random&  random    = CGAL_random,
-                        Traits const& traits    = Traits())
+                        const Traits& traits    = Traits())
         : tco( traits)
     {
         // allocate support points' array
@@ -438,7 +442,7 @@ compute $me(P)=me(P,\emptyset)$.
                         list<Point>::const_iterator last,
                         bool          randomize = false,
                         CGAL_Random&  random    = CGAL_random,
-                        Traits const& traits    = Traits())
+                        const Traits& traits    = Traits())
         : tco( traits)
     {
         // allocate support points' array
@@ -470,7 +474,7 @@ compute $me(P)=me(P,\emptyset)$.
                         istream_iterator<Point,ptrdiff_t>  last,
                         bool          randomize = false,
                         CGAL_Random&  random    = CGAL_random,
-                        Traits const& traits    = Traits())
+                        const Traits& traits    = Traits())
         : tco( traits)
     {
         // allocate support points' array
@@ -510,7 +514,7 @@ For $|S|=0$, we get the default constructor, building $me(\emptyset)$.
 
     // default constructor
     inline
-    CGAL_Min_ellipse_2( Traits const& traits = Traits())
+    CGAL_Min_ellipse_2( const Traits& traits = Traits())
         : tco( traits), n_support_points( 0)
     {
         // allocate support points' array
@@ -524,7 +528,7 @@ For $|S|=0$, we get the default constructor, building $me(\emptyset)$.
 
     // constructor for one point
     inline
-    CGAL_Min_ellipse_2( Point const& p, Traits const& traits = Traits())
+    CGAL_Min_ellipse_2( const Point& p, const Traits& traits = Traits())
         : tco( traits), points( 1, p), n_support_points( 1)
     {
         // allocate support points' array
@@ -539,9 +543,9 @@ For $|S|=0$, we get the default constructor, building $me(\emptyset)$.
 
     // constructor for two points
     inline
-    CGAL_Min_ellipse_2( Point const& p,
-                        Point const& q,
-                        Traits const& traits = Traits())
+    CGAL_Min_ellipse_2( const Point& p,
+                        const Point& q,
+                        const Traits& traits = Traits())
         : tco( traits)
     {
         // allocate support points' array
@@ -557,10 +561,10 @@ For $|S|=0$, we get the default constructor, building $me(\emptyset)$.
 
     // constructor for three points
     inline
-    CGAL_Min_ellipse_2( Point const& p1,
-                        Point const& p2,
-                        Point const& p3,
-                        Traits const& traits = Traits())
+    CGAL_Min_ellipse_2( const Point& p1,
+                        const Point& p2,
+                        const Point& p3,
+                        const Traits& traits = Traits())
         : tco( traits)
     {
         // allocate support points' array
@@ -577,11 +581,11 @@ For $|S|=0$, we get the default constructor, building $me(\emptyset)$.
 
     // constructor for four points
     inline
-    CGAL_Min_ellipse_2( Point const& p1,
-                        Point const& p2,
-                        Point const& p3,
-                        Point const& p4,
-                        Traits const& traits = Traits())
+    CGAL_Min_ellipse_2( const Point& p1,
+                        const Point& p2,
+                        const Point& p3,
+                        const Point& p4,
+                        const Traits& traits = Traits())
         : tco( traits)
     {
         // allocate support points' array
@@ -599,12 +603,12 @@ For $|S|=0$, we get the default constructor, building $me(\emptyset)$.
 
     // constructor for five points
     inline
-    CGAL_Min_ellipse_2( Point const& p1,
-                        Point const& p2,
-                        Point const& p3,
-                        Point const& p4,
-                        Point const& p5,
-                        Traits const& traits = Traits())
+    CGAL_Min_ellipse_2( const Point& p1,
+                        const Point& p2,
+                        const Point& p3,
+                        const Point& p4,
+                        const Point& p5,
+                        const Traits& traits = Traits())
         : tco( traits)
     {
         // allocate support points' array
@@ -694,7 +698,7 @@ Then, we have the access functions for points and support points.
 
     // random access for support points    
     inline
-    Point const&
+    const Point&
     support_point( int i) const
     {
         CGAL_optimisation_precondition( (i >= 0) &&
@@ -708,7 +712,7 @@ Finally, the access function \ccc{ellipse}.
 @macro <Min_ellipse_2 access functions> += @begin
     // ellipse
     inline
-    Ellipse const&
+    const Ellipse&
     ellipse( ) const
     {
         return( tco.ellipse);
@@ -746,28 +750,28 @@ corresponding predicates of class \ccc{Ellipse}.
     // in-ellipse test predicates
     inline
     CGAL_Bounded_side
-    bounded_side( Point const& p) const
+    bounded_side( const Point& p) const
     {
         return( tco.ellipse.bounded_side( p));
     }
 
     inline
     bool
-    has_on_bounded_side( Point const& p) const
+    has_on_bounded_side( const Point& p) const
     {
         return( tco.ellipse.has_on_bounded_side( p));
     }
 
     inline
     bool
-    has_on_boundary( Point const& p) const
+    has_on_boundary( const Point& p) const
     {
         return( tco.ellipse.has_on_boundary( p));
     }
 
     inline
     bool
-    has_on_unbounded_side( Point const& p) const
+    has_on_unbounded_side( const Point& p) const
     {
         return( tco.ellipse.has_on_unbounded_side( p));
     }
@@ -791,7 +795,7 @@ Section~\ref{sec:algo}.
 
 @macro <Min_ellipse_2 modifiers> += @begin
     void
-    insert( Point const& p)
+    insert( const Point& p)
     {
         // p not in current ellipse?
         if ( has_on_unbounded_side( p)) {
@@ -945,7 +949,7 @@ traits class object.
 
 @macro <Min_ellipse_2 miscellaneous> = @begin
     inline
-    Traits const&
+    const Traits&
     traits( ) const
     {
         return( tco);
@@ -957,7 +961,7 @@ traits class object.
 
 @macro <Min_ellipse_2 I/O operators declaration> = @begin
     template < class _Traits >
-    ostream& operator << ( ostream& os, CGAL_Min_ellipse_2<_Traits> const& me);
+    ostream& operator << ( ostream& os, const CGAL_Min_ellipse_2<_Traits>& me);
 
     template < class _Traits >
     istream& operator >> ( istream& is, CGAL_Min_ellipse_2<_Traits>      & me);
@@ -966,7 +970,7 @@ traits class object.
 @macro <Min_ellipse_2 I/O operators> = @begin
     template < class _Traits >
     ostream&
-    operator << ( ostream& os, CGAL_Min_ellipse_2<_Traits> const& min_ellipse)
+    operator << ( ostream& os, const CGAL_Min_ellipse_2<_Traits>& min_ellipse)
     {
         typedef typename  CGAL_Min_ellipse_2<_Traits>::Point  Point;
 
@@ -1095,7 +1099,7 @@ pseudocode above.
 
 @macro <Min_ellipse_2 private member function `me'> = @begin
     void
-    me( Point_iterator const& last, int n_sp)
+    me( const Point_iterator& last, int n_sp)
     {
         // compute ellipse through support points
         n_support_points = n_sp;
@@ -1105,7 +1109,7 @@ pseudocode above.
         // test first n points
         list<Point>::iterator  point_iter( points.begin());
         for ( ; last != point_iter; ) {
-            Point const& p( *point_iter);
+            const Point& p( *point_iter);
 
             // p not in current ellipse?
             if ( has_on_unbounded_side( p)) {
@@ -1153,11 +1157,11 @@ The class interface looks as follows.
     template < class _R >
     class CGAL_Optimisation_ellipse_2 {
         friend  ostream&  operator << CGAL_NULL_TMPL_ARGS (
-            ostream&, CGAL_Optimisation_ellipse_2<_R> const&);
+            ostream&, const CGAL_Optimisation_ellipse_2<_R>&);
         friend  istream&  operator << CGAL_NULL_TMPL_ARGS (
             istream&, CGAL_Optimisation_ellipse_2<_R> &);
         friend  CGAL_Window_stream& operator << CGAL_NULL_TMPL_ARGS (
-            CGAL_Window_stream&, CGAL_Optimisation_ellipse_2<_R> const&);
+            CGAL_Window_stream&, const CGAL_Optimisation_ellipse_2<_R>&);
       public:
         @<Optimisation_ellipse_2 public interface>
 
@@ -1211,26 +1215,26 @@ section, so we do not comment on it here.
 
     // creation
     void  set( );
-    void  set( Point const& p);
-    void  set( Point const& p, Point const& q);
-    void  set( Point const& p1, Point const& p2, Point const& p3);
-    void  set( Point const& p1, Point const& p2,
-               Point const& p3, Point const& p4);
-    void  set( Point const& p1, Point const& p2,
-               Point const& p3, Point const& p4, Point const& p5);
+    void  set( const Point& p);
+    void  set( const Point& p, const Point& q);
+    void  set( const Point& p1, const Point& p2, const Point& p3);
+    void  set( const Point& p1, const Point& p2,
+               const Point& p3, const Point& p4);
+    void  set( const Point& p1, const Point& p2,
+               const Point& p3, const Point& p4, const Point& p5);
 
     // access functions    
     int  number_of_boundary_points()
 
     // equality tests
-    bool  operator == ( CGAL_Optimisation_ellipse_2<R> const& e) const;
-    bool  operator != ( CGAL_Optimisation_ellipse_2<R> const& e) const;
+    bool  operator == ( const CGAL_Optimisation_ellipse_2<R>& e) const;
+    bool  operator != ( const CGAL_Optimisation_ellipse_2<R>& e) const;
 
     // predicates
-    CGAL_Bounded_side  bounded_side( Point const& p) const;
-    bool  has_on_bounded_side      ( Point const& p) const;
-    bool  has_on_boundary          ( Point const& p) const;
-    bool  has_on_unbounded_side    ( Point const& p) const;
+    CGAL_Bounded_side  bounded_side( const Point& p) const;
+    bool  has_on_bounded_side      ( const Point& p) const;
+    bool  has_on_boundary          ( const Point& p) const;
+    bool  has_on_unbounded_side    ( const Point& p) const;
 
     bool  is_empty     ( ) const;
     bool  is_degenerate( ) const;
@@ -1296,7 +1300,7 @@ its boundary points.
     
     inline
     void
-    set( Point const& p)
+    set( const Point& p)
     {
         n_boundary_points = 1;
         boundary_point1   = p;
@@ -1304,7 +1308,7 @@ its boundary points.
     
     inline
     void
-    set( Point const& p, Point const& q)
+    set( const Point& p, const Point& q)
     {
         n_boundary_points = 2;
         boundary_point1   = p;
@@ -1313,7 +1317,7 @@ its boundary points.
     
     inline
     void
-    set( Point const& p1, Point const& p2, Point const& p3)
+    set( const Point& p1, const Point& p2, const Point& p3)
     {
         n_boundary_points = 3;
         conic1.set_ellipse( p1, p2, p3);
@@ -1321,7 +1325,7 @@ its boundary points.
     
     inline
     void
-    set( Point const& p1, Point const& p2, Point const& p3, Point const& p4)
+    set( const Point& p1, const Point& p2, const Point& p3, const Point& p4)
     {
         n_boundary_points = 4;
         Conic::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
@@ -1335,8 +1339,8 @@ its boundary points.
     
     inline
     void
-    set( Point const&, Point const&,
-         Point const&, Point const&, Point const& p5)
+    set( const Point&, const Point&,
+         const Point&, const Point&, const Point& p5)
     {
         n_boundary_points = 5;
         conic1.set( conic1, conic2, p5);
@@ -1361,7 +1365,7 @@ its boundary points.
 
 @macro <Optimisation_ellipse_2 equality tests> = @begin
     bool
-    operator == ( CGAL_Optimisation_ellipse_2<R> const& e) const
+    operator == ( const CGAL_Optimisation_ellipse_2<R>& e) const
     {
         if ( n_boundary_points != e.n_boundary_points)
             return( false);
@@ -1393,7 +1397,7 @@ its boundary points.
     
     inline
     bool
-    operator != ( CGAL_Optimisation_ellipse_2<R> const& e) const
+    operator != ( const CGAL_Optimisation_ellipse_2<R>& e) const
     {
         return( ! operator == ( e));
     }
@@ -1411,7 +1415,7 @@ one.
 @macro <Optimisation_ellipse_2 predicates> = @begin
     inline
     CGAL_Bounded_side
-    bounded_side( Point const& p) const
+    bounded_side( const Point& p) const
     {
         switch ( n_boundary_points) {
           case 0:
@@ -1449,21 +1453,21 @@ one.
 
     inline
     bool
-    has_on_bounded_side( Point const& p) const
+    has_on_bounded_side( const Point& p) const
     {
         return( bounded_side( p) == CGAL_ON_BOUNDED_SIDE);
     }
 
     inline
     bool
-    has_on_boundary( Point const& p) const
+    has_on_boundary( const Point& p) const
     {
         return( bounded_side( p) == CGAL_ON_BOUNDARY);
     }
 
     inline
     bool
-    has_on_unbounded_side( Point const& p) const
+    has_on_unbounded_side( const Point& p) const
     {
         return( bounded_side( p) == CGAL_ON_UNBOUNDED_SIDE);
     }
@@ -1489,7 +1493,7 @@ one.
 @macro <Optimisation_ellipse_2 I/O operators declaration> = @begin
     template < class _R >
     ostream&
-    operator << ( ostream& os, CGAL_Optimisation_ellipse_2<_R> const& e);
+    operator << ( ostream& os, const CGAL_Optimisation_ellipse_2<_R>& e);
 
     template < class _R >
     istream&
@@ -1499,7 +1503,7 @@ one.
 @macro <Optimisation_ellipse_2 I/O operators> = @begin
     template < class _R >
     ostream&
-    operator << ( ostream& os, CGAL_Optimisation_ellipse_2<_R> const& e)
+    operator << ( ostream& os, const CGAL_Optimisation_ellipse_2<_R>& e)
     {
         const char* const  empty       = "";
         const char* const  pretty_head = "CGAL_Optimisation_ellipse_2( ";
@@ -1654,7 +1658,7 @@ it is declared \ccc{friend}.
 \subsubsection{Constructors}
 
 @macro <Min_ellipse_2_adapterC2 constructors> = @begin
-    CGAL_Min_ellipse_2_adapterC2( DA const& da = DA())
+    CGAL_Min_ellipse_2_adapterC2( const DA& da = DA())
         : dao( da), ellipse( da)
     { }
 @end
@@ -1664,7 +1668,7 @@ it is declared \ccc{friend}.
 
 @macro <Min_ellipse_2_adapterC2 operations> = @begin
     CGAL_Orientation
-    orientation( Point const& p, Point const& q, Point const& r) const
+    orientation( const Point& p, const Point& q, const Point& r) const
     {
         typedef  typename _DA::FT  FT;
 
@@ -1710,7 +1714,7 @@ it is declared \ccc{friend}.
         typedef  PT  Point;
 
         // creation
-        CGAL__Min_ellipse_2_adapterC2__Ellipse( DA const& da)
+        CGAL__Min_ellipse_2_adapterC2__Ellipse( const DA& da)
             : conic1( da), conic2( da)
         { }
 
@@ -1721,14 +1725,14 @@ it is declared \ccc{friend}.
         }
     
         void
-        set( Point const& p)
+        set( const Point& p)
         {
             n_boundary_points = 1;
             boundary_point1   = p;
         }
     
         void
-        set( Point const& p, Point const& q)
+        set( const Point& p, const Point& q)
         {
             n_boundary_points = 2;
             boundary_point1   = p;
@@ -1736,15 +1740,15 @@ it is declared \ccc{friend}.
         }
     
         void
-        set( Point const& p1, Point const& p2, Point const& p3)
+        set( const Point& p1, const Point& p2, const Point& p3)
         {
             n_boundary_points = 3;
             conic1.set_ellipse( p1, p2, p3);
         }
     
         void
-        set( Point const& p1, Point const& p2,
-             Point const& p3, Point const& p4)
+        set( const Point& p1, const Point& p2,
+             const Point& p3, const Point& p4)
         {
             n_boundary_points = 4;
             CT::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
@@ -1757,8 +1761,8 @@ it is declared \ccc{friend}.
         }
     
         void
-        set( Point const&, Point const&,
-             Point const&, Point const&, Point const& p5)
+        set( const Point&, const Point&,
+             const Point&, const Point&, const Point& p5)
         {
             n_boundary_points = 5;
             conic1.set( conic1, conic2, p5);
@@ -1767,7 +1771,7 @@ it is declared \ccc{friend}.
 
         // predicates
         CGAL_Bounded_side
-        bounded_side( Point const& p) const
+        bounded_side( const Point& p) const
         {
             switch ( n_boundary_points) {
               case 0:
@@ -1804,19 +1808,19 @@ it is declared \ccc{friend}.
         }
 
         bool
-        has_on_bounded_side( Point const& p) const
+        has_on_bounded_side( const Point& p) const
         {
             return( bounded_side( p) == CGAL_ON_BOUNDED_SIDE);
         }
 
         bool
-        has_on_boundary( Point const& p) const
+        has_on_boundary( const Point& p) const
         {
             return( bounded_side( p) == CGAL_ON_BOUNDARY);
         }
 
         bool
-        has_on_unbounded_side( Point const& p) const
+        has_on_unbounded_side( const Point& p) const
         {
             return( bounded_side( p) == CGAL_ON_UNBOUNDED_SIDE);
         }
@@ -1836,7 +1840,7 @@ it is declared \ccc{friend}.
         // additional operations for checking
         bool
         operator == (
-            CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA> const& e) const
+            const CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e) const
         {
             if ( n_boundary_points != e.n_boundary_points)
                 return( false);
@@ -1870,7 +1874,7 @@ it is declared \ccc{friend}.
         friend
         ostream&
         operator << ( ostream& os,
-                      CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA> const& e)
+                      const CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e)
         {
             const char* const  empty       = "";
             const char* const  pretty_head =
@@ -2028,7 +2032,7 @@ it is declared \ccc{friend}.
 \subsubsection{Constructors}
 
 @macro <Min_ellipse_2_adapterH2 constructors> = @begin
-    CGAL_Min_ellipse_2_adapterH2( DA const& da = DA())
+    CGAL_Min_ellipse_2_adapterH2( const DA& da = DA())
         : dao( da), ellipse( da)
     { }
 @end
@@ -2038,7 +2042,7 @@ it is declared \ccc{friend}.
 
 @macro <Min_ellipse_2_adapterH2 operations> = @begin
     CGAL_Orientation
-    orientation( Point const& p, Point const& q, Point const& r) const
+    orientation( const Point& p, const Point& q, const Point& r) const
     {
         typedef  typename _DA::RT  RT;
 
@@ -2088,7 +2092,7 @@ it is declared \ccc{friend}.
         typedef  PT  Point;
 
         // creation
-        CGAL__Min_ellipse_2_adapterH2__Ellipse( DA const& da)
+        CGAL__Min_ellipse_2_adapterH2__Ellipse( const DA& da)
             : conic1( da), conic2( da)
         { }
 
@@ -2099,14 +2103,14 @@ it is declared \ccc{friend}.
         }
     
         void
-        set( Point const& p)
+        set( const Point& p)
         {
             n_boundary_points = 1;
             boundary_point1   = p;
         }
     
         void
-        set( Point const& p, Point const& q)
+        set( const Point& p, const Point& q)
         {
             n_boundary_points = 2;
             boundary_point1   = p;
@@ -2114,15 +2118,15 @@ it is declared \ccc{friend}.
         }
     
         void
-        set( Point const& p1, Point const& p2, Point const& p3)
+        set( const Point& p1, const Point& p2, const Point& p3)
         {
             n_boundary_points = 3;
             conic1.set_ellipse( p1, p2, p3);
         }
     
         void
-        set( Point const& p1, Point const& p2,
-             Point const& p3, Point const& p4)
+        set( const Point& p1, const Point& p2,
+             const Point& p3, const Point& p4)
         {
             n_boundary_points = 4;
             CT::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
@@ -2135,8 +2139,8 @@ it is declared \ccc{friend}.
         }
     
         void
-        set( Point const&, Point const&,
-             Point const&, Point const&, Point const& p5)
+        set( const Point&, const Point&,
+             const Point&, const Point&, const Point& p5)
         {
             n_boundary_points = 5;
             conic1.set( conic1, conic2, p5);
@@ -2145,7 +2149,7 @@ it is declared \ccc{friend}.
 
         // predicates
         CGAL_Bounded_side
-        bounded_side( Point const& p) const
+        bounded_side( const Point& p) const
         {
             switch ( n_boundary_points) {
               case 0:
@@ -2182,19 +2186,19 @@ it is declared \ccc{friend}.
         }
 
         bool
-        has_on_bounded_side( Point const& p) const
+        has_on_bounded_side( const Point& p) const
         {
             return( bounded_side( p) == CGAL_ON_BOUNDED_SIDE);
         }
 
         bool
-        has_on_boundary( Point const& p) const
+        has_on_boundary( const Point& p) const
         {
             return( bounded_side( p) == CGAL_ON_BOUNDARY);
         }
 
         bool
-        has_on_unbounded_side( Point const& p) const
+        has_on_unbounded_side( const Point& p) const
         {
             return( bounded_side( p) == CGAL_ON_UNBOUNDED_SIDE);
         }
@@ -2214,7 +2218,7 @@ it is declared \ccc{friend}.
         // additional operations for checking
         bool
         operator == (
-            CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA> const& e) const
+            const CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>& e) const
         {
             if ( n_boundary_points != e.n_boundary_points)
                 return( false);
@@ -2248,7 +2252,7 @@ it is declared \ccc{friend}.
         friend
         ostream&
         operator << ( ostream& os,
-                      CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA> const& e)
+                      const CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>& e)
         {
             const char* const  empty       = "";
             const char* const  pretty_head =
@@ -2414,7 +2418,7 @@ once to ensure code coverage.
 @macro <Min_ellipse_2 test (code coverage test function)> = @begin
     template < class Traits, class RT >
     void
-    cover_Min_ellipse_2( bool verbose, Traits const&, RT const&)
+    cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
     {
         typedef  CGAL_Min_ellipse_2< Traits >   Min_ellipse;
         typedef  Min_ellipse::Point             Point;
@@ -2654,20 +2658,20 @@ representation) and corresponding data accessors.
         FT _y;
       public:
         MyPointC2( ) { }
-        MyPointC2( FT const& x, FT const& y) : _x( x), _y( y) { }
+        MyPointC2( const FT& x, const FT& y) : _x( x), _y( y) { }
 
-        FT const&  x( ) const { return( _x); }
-        FT const&  y( ) const { return( _y); }
+        const FT&  x( ) const { return( _x); }
+        const FT&  y( ) const { return( _y); }
 
         bool
-        operator == ( MyPointC2 const& p) const
+        operator == ( const MyPointC2& p) const
         {
             return( ( _x == p._x) && ( _y == p._y));
         }
 
         friend
         ostream&
-        operator << ( ostream& os, MyPointC2 const& p)
+        operator << ( ostream& os, const MyPointC2& p)
         {
             return( os << p._x << ' ' << p._y);
         }
@@ -2685,18 +2689,18 @@ representation) and corresponding data accessors.
       public:
         typedef  ::Ft  FT;
 
-        FT const&  get_x( MyPointC2 const& p) const { return( p.x()); }
-        FT const&  get_y( MyPointC2 const& p) const { return( p.y()); }
+        const FT&  get_x( const MyPointC2& p) const { return( p.x()); }
+        const FT&  get_y( const MyPointC2& p) const { return( p.y()); }
 
         void
-        get( MyPointC2 const& p, FT& x, FT& y) const
+        get( const MyPointC2& p, FT& x, FT& y) const
         {
             x = get_x( p);
             y = get_y( p);
         }
 
         void
-        set( MyPointC2& p, FT const& x, FT const& y) const
+        set( MyPointC2& p, const FT& x, const FT& y) const
         {
             p = MyPointC2( x, y);
         }
@@ -2713,22 +2717,22 @@ representation) and corresponding data accessors.
         RT _hw;
       public:
         MyPointH2( ) { }
-        MyPointH2( RT const& hx, RT const& hy, RT const& hw = RT( 1))
+        MyPointH2( const RT& hx, const RT& hy, const RT& hw = RT( 1))
             : _hx( hx), _hy( hy), _hw( hw) { }
 
-        RT const&  hx( ) const { return( _hx); }
-        RT const&  hy( ) const { return( _hy); }
-        RT const&  hw( ) const { return( _hw); }
+        const RT&  hx( ) const { return( _hx); }
+        const RT&  hy( ) const { return( _hy); }
+        const RT&  hw( ) const { return( _hw); }
 
         bool
-        operator == ( MyPointH2 const& p) const
+        operator == ( const MyPointH2& p) const
         {
             return( ( _hx*p._hw == p._hx*_hw) && ( _hy*p._hw == p._hy*_hw));
         }
 
         friend
         ostream&
-        operator << ( ostream& os, MyPointH2 const& p)
+        operator << ( ostream& os, const MyPointH2& p)
         {
             return( os << p._hx << ' ' << p._hy << ' ' << p._hw);
         }
@@ -2746,12 +2750,12 @@ representation) and corresponding data accessors.
       public:
         typedef  ::Rt  RT;
 
-        RT const&  get_hx( MyPointH2 const& p) const { return( p.hx()); }
-        RT const&  get_hy( MyPointH2 const& p) const { return( p.hy()); }
-        RT const&  get_hw( MyPointH2 const& p) const { return( p.hw()); }
+        const RT&  get_hx( const MyPointH2& p) const { return( p.hx()); }
+        const RT&  get_hy( const MyPointH2& p) const { return( p.hy()); }
+        const RT&  get_hw( const MyPointH2& p) const { return( p.hw()); }
 
         void
-        get( MyPointH2 const& p, RT& hx, RT& hy, RT& hw) const
+        get( const MyPointH2& p, RT& hx, RT& hy, RT& hw) const
         {
             hx = get_hx( p);
             hy = get_hy( p);
@@ -2759,7 +2763,7 @@ representation) and corresponding data accessors.
         }
 
         void
-        set( MyPointH2& p, RT const& hx, RT const& hy, RT const& hw) const
+        set( MyPointH2& p, const RT& hx, const RT& hy, const RT& hw) const
         {
             p = MyPointH2( hx, hy, hw);
         }
@@ -2999,8 +3003,8 @@ end of each file.
 
     template < class PT, class DA >
     bool
-    CGAL_are_ordered_along_lineC2( PT const& p, PT const& q, PT const& r,
-                                   DA const& da)
+    CGAL_are_ordered_along_lineC2( const PT& p, const PT& q, const PT& r,
+                                   const DA& da)
     {
         typedef  typename DA::FT  FT;
 
@@ -3066,8 +3070,8 @@ end of each file.
 
     template < class PT, class DA >
     bool
-    CGAL_are_ordered_along_lineH2( PT const& p, PT const& q, PT const& r,
-                                   DA const& da)
+    CGAL_are_ordered_along_lineH2( const PT& p, const PT& q, const PT& r,
+                                   const DA& da)
     {
         typedef  typename DA::RT  RT;
 
