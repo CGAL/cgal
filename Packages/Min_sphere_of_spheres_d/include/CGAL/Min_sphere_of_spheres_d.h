@@ -125,7 +125,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
     template<typename InputIterator>
     inline void insert(InputIterator begin,InputIterator end) {
-      prepare(l.size()+(end-begin)); // todo. istream?
+      prepare(S.size()+(end-begin)); // todo. istream?
       while (begin != end) {
         insert(*begin);
         ++begin;
@@ -201,14 +201,14 @@ namespace CGAL_MINIBALL_NAMESPACE {
   template<class Traits>
   void Min_sphere_of_spheres_d<Traits>::prepare(int size) {
     S.reserve(size);
-    l.reserve(size);
+    // (The vector l will be reserve()'d in update().)
   }
 
   template<class Traits>
   void Min_sphere_of_spheres_d<Traits>::insert(const Sphere& b) {
     CGAL_MINIBALL_ASSERT(t.radius(b) >= FT(0));
     S.push_back(b);
-    l.push_back(&b);
+    // (We push_back a pointer to S.back() in update().)
     is_up_to_date = false;
   }
 
@@ -266,6 +266,12 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
   template<class Traits>
   inline void Min_sphere_of_spheres_d<Traits>::update() {
+    // set up the vector l containing pointers to the balls in S:
+    CGAL_MINIBALL_ASSERT(l.size() == 0);
+    for (typename std::vector<Sphere>::const_iterator it = S.begin(); it != S.end(); ++it)
+      l.push_back(&(*it));
+    
+    // compute the miniball:
     update(Algorithm());
     is_up_to_date = true;
   }
