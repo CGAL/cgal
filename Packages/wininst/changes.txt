@@ -1,3 +1,5 @@
+2.1.28(05/05/03)  modified the include/CGAL/config/msvc7/iterator_specializations.h
+
 2.1.27(30/04/03)  modified the release version from 
                   developer_scripts/examples/master.vcproj
 

@@ -46,7 +46,7 @@ typename iterator_traits<_Iter>::difference_type*
     return static_cast<_diff_type*>(0);
   }
 
-#if defined (__INTEL_COMPILER)
+
 template <class _Iter> inline 
 typename iterator_traits<_Iter>::value_type*
   _Val_type(const _Iter&)
@@ -55,6 +55,8 @@ typename iterator_traits<_Iter>::value_type*
   return static_cast<_value_type*>(0);
 }
 
+
+#if defined (__INTEL_COMPILER)
 template <class _Tp>
 struct iterator_traits<const _Tp*> {
   typedef random_access_iterator_tag iterator_category;
