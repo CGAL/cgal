@@ -31,7 +31,7 @@ template <class Point_3>
 class Less_xy_plane_xy_2 
 {
 public:
-   typedef bool          result_type
+   typedef bool          result_type;
    typedef Arity_tag<2>  Arity;
 
    bool 
@@ -46,7 +46,7 @@ template <class Point_3>
 class Less_yx_plane_xy_2 
 {
 public:
-   typedef bool          result_type
+   typedef bool          result_type;
    typedef Arity_tag<2>  Arity;
 
    bool 
@@ -61,7 +61,7 @@ template <class Point_3>
 class Left_turn_plane_xy_2 
 {
 public:
-   typedef bool          result_type
+   typedef bool          result_type;
    typedef Arity_tag<3>  Arity;
 
    bool 
@@ -75,7 +75,7 @@ template <class Point_3>
 class Less_dist_to_line_plane_xy_2
 {
 public:
-   typedef bool          result_type
+   typedef bool          result_type;
    typedef Arity_tag<4>  Arity;
 
    bool
@@ -99,7 +99,7 @@ template <class Point_3>
 class Less_rotate_ccw_plane_xy_2
 {
 public:
-   typedef bool           result_type
+   typedef bool           result_type;
    typedef Arity_tag< 3 > Arity;
 
    bool
