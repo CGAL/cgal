@@ -45,7 +45,7 @@ print MFLIB <<'EOF';
 #---------------------------------------------------------------------#
 
 lib: $(CGAL_OBJECTS)
-	$(CGAL_LIB_CREATE) $(CGAL_LIB) $(CGAL_OBJECTS) $(CGAL_LIB_LDFLAGS)
+	$(CGAL_LIB_CREATE) $(CGAL_LIB) $(CGAL_EXTRA_OBJECTS) $(CGAL_OBJECTS) $(CGAL_LIB_LDFLAGS)
 	mv $(CGAL_LIB) $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)
 	rm $(CGAL_OBJECTS)
 
@@ -101,7 +101,7 @@ print MFSHARED <<'EOF';
 #---------------------------------------------------------------------#
 
 lib: $(CGAL_OBJECTS)
-	$(CGAL_SHARED_LIB_CREATE) $(CGAL_SHARED_LIB) $(CGAL_OBJECTS) $(CGAL_SHARED_LIB_LDFLAGS)
+	$(CGAL_SHARED_LIB_CREATE) $(CGAL_SHARED_LIB) $(CGAL_EXTRA_OBJECTS) $(CGAL_OBJECTS) $(CGAL_SHARED_LIB_LDFLAGS)
 	mv $(CGAL_SHARED_LIB) $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)
 	rm $(CGAL_OBJECTS)
 
