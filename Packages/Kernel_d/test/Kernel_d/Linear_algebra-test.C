@@ -124,6 +124,11 @@ int main(int argc, char* argv[])
          C = A = D = E; 
       */
 
+      Matrix::iterator it;
+      for (it = A.begin(), i = 0; it != A.end(); ++i,++it) {
+        CGAL_TEST(A( i/mat_dim, i%mat_dim ) == *it);
+      }
+
       CGAL_TEST(A==C);
       CGAL_TEST(A!=B);
       CGAL_TEST(A==D);
@@ -315,6 +320,11 @@ int main(int argc, char* argv[])
              ...
          C = A = D = E; 
       */
+
+      Matrix::iterator it;
+      for (it = A.begin(), i = 0; it != A.end(); ++i,++it) {
+        CGAL_TEST(A( i/mat_dim, i%mat_dim ) == *it);
+      }
 
       CGAL_TEST(A==C);
       CGAL_TEST(A!=B);

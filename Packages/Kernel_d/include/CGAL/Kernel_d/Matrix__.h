@@ -75,8 +75,8 @@ public:
 
 template <typename ROW_, typename V_, typename R_, typename P_> 
 class component_iterator_ {
-  ROW_ row_;   // pointer to row
-  P_ p_;       // pointer to entry
+  ROW_ row_;  // pointer to row
+  int i_, n_; // offset and limit
 public:
   typedef component_iterator_ Self;
   typedef V_  value_type;
@@ -86,24 +86,21 @@ public:
   typedef std::ptrdiff_t  difference_type;
   typedef std::bidirectional_iterator_tag iterator_category;
 
-  component_iterator_() : row_(),p_() {}
-  component_iterator_(ROW_ row, P_ p) 
-    : row_(row),p_(p) {}
+  component_iterator_() : row_(),i_(),n_() {}
+  component_iterator_(ROW_ row, int i, int n) 
+    : row_(row),i_(i),n_(n) {}
 
   bool  operator==( const Self& x) const 
-  { return p_==x.p_; }
+  { return row_==x.row_ && i_==x.i_; }
   bool  operator!=( const Self& x) const   
   { return !(*this == x); }
 
-  R_    operator*()  const { return *p_; }
-  P_    operator->() const { return p_; }
-  Self& operator++() 
-  { if (p_+1 == row_->end()) { p_ = (++row_)->begin(); }
-    else ++p_; }
+  R_    operator*()  const { return (**row_)[i_]; }
+  P_    operator->() const { return (**row_)+i_; }
+
+  Self& operator++() { ++i_; if (i_==n_) { ++row_; i_=0; } return *this; }
   Self  operator++(int) { Self tmp = *this; ++*this; return tmp; }
-  Self& operator--() 
-  { if (p_ == row_->begin()) { p_ = --((--row_)->end()); }
-    else --p_; }
+  Self& operator--() { --i_; if (i_<0) { --row_; i_=n_-1; } return *this; }
   Self  operator--(int) { Self tmp = *this; --*this; return tmp; }
      
 };
@@ -136,9 +133,10 @@ typedef const Vector_<NT_,AL_>* const_vector_pointer;
 typedef NT_ NT;
 /*{\Mtypemember the ring type of the components.}*/ 
 
-typedef component_iterator_<vector_pointer,NT,NT&,NT*> iterator;
-/*{\Mtypemember bidirectional iterator for accessing components.}*/
-typedef component_iterator_<const_vector_pointer,NT,const NT&,const NT*> 
+typedef component_iterator_<vector_pointer*,NT,NT&,NT*> iterator;
+/*{\Mtypemember bidirectional iterator for accessing all components
+row-wise.}*/
+typedef component_iterator_<vector_pointer*,NT,const NT&,const NT*> 
   const_iterator;
 
 typedef NT* row_iterator;
@@ -415,6 +413,14 @@ column_const_iterator column_begin(int i) const
   return column_const_iterator(v_,i); }
 column_const_iterator column_end(int i)   const 
 { return column_begin(i)+dm_; }
+
+iterator begin() { return iterator(v_,0,dn_); }
+/*{\Mop an iterator pointing to the first entry of |\Mvar|.}*/
+iterator end() { return iterator(v_+dm_,0,dn_); }
+/*{\Mop an iterator pointing beyond the last entry of |\Mvar|.}*/
+
+const_iterator begin() const { return const_iterator(v_,0,dn_); }
+const_iterator end() const { return const_iterator(v_+dm_,0,dn_); }
 
 /*{\Mtext The same operations exist for |row_const_iterator| and
 |column_const_iterator|.}*/

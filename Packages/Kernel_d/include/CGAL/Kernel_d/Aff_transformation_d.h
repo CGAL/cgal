@@ -1,3 +1,30 @@
+// ============================================================================
+//
+// Copyright (c) 1997-2000 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       : $CGAL_Revision$
+// release_date  : $CGAL_Date$
+//
+// file          : include/CGAL/Kernel_d/Aff_transformation_d.h
+// package       : Kernel_d
+// chapter       : Basic
+//
+// revision      : $Revision$
+// revision_date : $Date$
+//
+// author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
+// coordinator   : Susan Hert <hert@mpi-sb.mpg.de>
+//
+// implementation: affine transformation interface type
+// ============================================================================
+
 #ifndef CGAL_AFF_TRANSFORMATION_D_H
 #define CGAL_AFF_TRANSFORMATION_D_H
 
