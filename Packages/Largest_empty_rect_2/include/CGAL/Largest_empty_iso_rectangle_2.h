@@ -149,7 +149,8 @@ public:
   Iso_rectangle_2 
   get_largest_empty_iso_rectangle();
 
-  //! Retrieve four points from the input that define the largest empty iso rectangle.
+  //! Retrieve four points from the input that define the largest
+  //! empty iso rectangle.
   Quadruple<Point, Point, Point, Point>
   get_left_bottom_right_top()
   {
@@ -226,9 +227,11 @@ private:
   // These friends are required by SUNPRO CC.
   //! Internal data held under each point that the algorithm requires
   friend class Point_data;
-  //! A functor used to sort points lexicographically by their x and y coordinates
+  //! A functor used to sort points lexicographically by their x and y
+  //! coordinates
   friend class Less_xy;
-  //! A functor used to sort points lexicographically by their y and x coordinates
+  //! A functor used to sort points lexicographically by their y and x
+  //! coordinates
   friend class Less_yx;
 
   /*! this class holds points' data as needed in the LER process.
