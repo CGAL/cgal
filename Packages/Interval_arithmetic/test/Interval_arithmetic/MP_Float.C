@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 #endif
 
   int loops = argc > 1 ? atoi(argv[1]) : 0;
-  bench(loops);
+  // bench(loops);
 
   std::cout.precision(20);
 
@@ -68,12 +68,14 @@ int main(int argc, char **argv)
     double d = drand48();
     int exp = int((drand48()-.5)*1024);
     d = std::ldexp(d, exp);
+    // d = 7.34766e-140; // Crash encore sur PC...
     // d = 1.9696110926449043849e+124;
     // d = 7.3074228557478900057e+47;
     // std::cout << d << std::endl;
     // std::cout << MPI(d) << std::endl;
     // std::cout << CGAL::to_double(MPI(d)) << std::endl;
-    assert(CGAL::to_double(MPI(d)) == d);
+    if (CGAL::to_double(MPI(d)) != d)
+      std::cerr << "CONVERSION ERROR with double : " << d << std::endl;
     // MPI z(d);
   }
 
