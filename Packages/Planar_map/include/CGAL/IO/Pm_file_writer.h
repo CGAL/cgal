@@ -164,7 +164,7 @@ public:
     }
   }
 
-  void write_halfedge(Halfedge_handle h) {
+  /*  void write_halfedge(Halfedge_handle h) {
     if (verbose()) 
       write_vertex(h->target());
     else
@@ -180,8 +180,32 @@ public:
       write_index( v_index[ Vertex_const_iterator(h->target())] );
   
     out() << h->curve() << std::endl;
+    }*/
+
+  void write_halfedge(Halfedge_handle h) {
+    if (verbose()) {
+      out() << h->curve();
+      out() << "  towards  ";
+      write_vertex(h->target());
+    }
+    else {
+      write_index( v_index[ Vertex_const_iterator(h->target())] );
+      out() << h->curve() << std::endl;
+    }
   }
-  
+
+  void write_halfedge(Halfedge_const_handle h) {
+    if (verbose()) {
+      out() << h->curve();
+      out() << "  towards  ";
+      write_vertex(h->target());
+    }
+    else {
+      write_index( v_index[ Vertex_const_iterator(h->target())] );
+      out() << h->curve() << std::endl;
+    }
+  }
+
   void write_faces_header() {
     if ( no_comments())
       out() << std::endl;
