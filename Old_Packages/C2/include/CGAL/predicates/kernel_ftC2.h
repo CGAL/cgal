@@ -21,12 +21,11 @@
 //
 // ============================================================================
 
-
 #ifndef CGAL_PREDICATES_KERNEL_FTC2_H
 #define CGAL_PREDICATES_KERNEL_FTC2_H
 
 #include <CGAL/number_utils.h>
-#include <CGAL/determinant.h>
+#include <CGAL/predicates/sign_of_determinant.h>
 #include <CGAL/constructions/kernel_ftC2.h>
 
 CGAL_BEGIN_NAMESPACE
