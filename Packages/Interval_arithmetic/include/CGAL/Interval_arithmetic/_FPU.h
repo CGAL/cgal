@@ -39,7 +39,6 @@
 // register to memory, using the macro below.
 // The other possible workaround is to use intervals of "long doubles"
 // directly, but I think it would be much slower.
-// #define CGAL_IA_FORCE_TO_DOUBLE(x) ({ volatile double y=(x); y; })
 #define CGAL_IA_FORCE_TO_DOUBLE(x) ({ volatile double y=(x); double z=y; z; })
 #else
 #define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
