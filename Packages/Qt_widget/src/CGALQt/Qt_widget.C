@@ -77,20 +77,20 @@ void Qt_widget::set_scales()
       double ycenter = ymin + (ymax - ymin) / 2;
 
       if(xscal<1) {
-	// if xscal < 1, width()/xscal > width(). then we can round it 
-	// with loosing precision.
-	xmin = xcenter - (int)(width()/xscal)/2;
-	xmax = xcenter + (int)(width()/xscal)/2;
-	ymin = ycenter - (int)(height()/yscal)/2;
-	ymax = ycenter + (int)(height()/yscal)/2;
+        // if xscal < 1, width()/xscal > width(). then we can round it 
+        // with loosing precision.
+	      xmin = xcenter - (int)(width()/xscal)/2;
+	      xmax = xcenter + (int)(width()/xscal)/2;
+	      ymin = ycenter - (int)(height()/yscal)/2;
+	      ymax = ycenter + (int)(height()/yscal)/2;
       } else {
-	xmin = xcenter - (width()/xscal)/2;
-	xmax = xcenter + (width()/xscal)/2;
-	ymin = ycenter - (height()/yscal)/2;
-	ymax = ycenter + (height()/yscal)/2;
+	      xmin = xcenter - (width()/xscal)/2;
+	      xmax = xcenter + (width()/xscal)/2;
+	      ymin = ycenter - (height()/yscal)/2;
+	      ymax = ycenter + (height()/yscal)/2;
       }
     }
-  else
+    else
     {
       xscal=width()/(xmax-xmin);
       yscal=height()/(ymax-ymin);
