@@ -165,14 +165,14 @@ public:
     SHalfedge_around_svertex_circulator el(e_res),ee(el);
     if(direction(el) == d) {
       collinear = true;
-      TRACEN("  determined "<<PH(e_res) << circle(e_res));
-      return e_res;
+      TRACEN("  determined "<<PH(el) << circle(el));
+      return el;
     }
     CGAL_For_all(el,ee) {
       if(direction(cyclic_adj_succ(el)) == d) {
 	collinear = true;
-	TRACEN("  determined "<<PH(cyclic_adj_succ(e_res)) << circle(cyclic_adj_succ(e_res)));
-	return cyclic_adj_succ(e_res);
+	TRACEN("  equal "<<PH(cyclic_adj_succ(el)) << circle(cyclic_adj_succ(el)));
+	return cyclic_adj_succ(el);
       }
       else {
 	TRACEN("strictly_ordered_ccw " << direction(el) << " ? " << d << " ? " << direction(cyclic_adj_succ(el)));
@@ -183,7 +183,7 @@ public:
 	}
       }
     }
-    TRACEN("  determined "<<PH(e_res) << circle(e_res));
+    TRACEN("  finally determined "<<PH(e_res) << circle(e_res));
     /*
     Sphere_direction d2 = direction(cyclic_adj_succ(e_res));
     d2 = normalized(d2);

@@ -239,7 +239,8 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W) :
 */
 
 template <typename EW>
-SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W, bool sorted = false) : 
+SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W, 
+                                                   bool sorted = false) : 
   Base(W), in(std::cin), out(os),
   FI(W.halffacets_begin(),W.halffacets_end(),'F'),
   CI(W.volumes_begin(),W.volumes_end(),'C'),
@@ -626,8 +627,8 @@ read_volume(Volume_handle c) const
 
 template <typename EW>
 void SNC_io_parser<EW>::
-print_sedge(SHalfedge_handle e) const
-{ // syntax: index { twin, sprev, snext, source, sface, prev, next, facet | circle } mark
+print_sedge(SHalfedge_handle e) const { 
+//index { twin, sprev, snext, source, sface, prev, next, facet | circle } mark
   SM_decorator D(vertex(e));
   out << index(e) << " { "
       << index(D.twin(e)) << ", " 
