@@ -29,8 +29,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#define CGAL__VERB(x) if (b) *o << x; return *this
-
 class Verbose_ostream {
     bool          b;
     std::ostream* o;
@@ -39,52 +37,38 @@ public:
         : b(active), o(&out){}
 
     bool          verbose()           const { return b; }
-    void          set_verbose( bool active) { b = active; }
+    void          set_verbose(bool active)  { b = active; }
     std::ostream& out()                     { return *o; }
 
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
     template < class T >
-    Verbose_ostream&  operator<<( const T& t)            { CGAL__VERB(t);}
-#endif // CGAL_CFG_NO_MEMBER_TEMPLATES //
-    // The following specialisations avoid the & for their small args.
-    Verbose_ostream&  operator<<( char c)                { CGAL__VERB(c);}
-    Verbose_ostream&  operator<<( const char* s)         { CGAL__VERB(s);}
-    Verbose_ostream&  operator<<( int a)                 { CGAL__VERB(a);}
-    Verbose_ostream&  operator<<( long l)                { CGAL__VERB(l);}
-    Verbose_ostream&  operator<<( double d)              { CGAL__VERB(d);}
-    Verbose_ostream&  operator<<( float f)               { CGAL__VERB(f);}
-    Verbose_ostream&  operator<<( unsigned int a)        { CGAL__VERB(a);}
-    Verbose_ostream&  operator<<( unsigned long l)       { CGAL__VERB(l);}
-#ifdef CGAL_HAS_INTEGER64
-    Verbose_ostream&  operator<<( Integer64 l)           { CGAL__VERB(l);}
-    Verbose_ostream&  operator<<( UInteger64 l)          { CGAL__VERB(l);}
-#endif
-    Verbose_ostream&  operator<<( void* p)               { CGAL__VERB(p);}
-    Verbose_ostream&  operator<<( short i)               { CGAL__VERB(i);}
-    Verbose_ostream&  operator<<( unsigned short i)      { CGAL__VERB(i);}
+    Verbose_ostream& operator<<(const T& t)
+    {
+        if (b)
+	    *o << t;
+	return *this;
+    }
 
-    Verbose_ostream&  operator<<( std::ostream& (*f)(std::ostream&))
-                                                         { CGAL__VERB(f);}
-    Verbose_ostream&  operator<<( std::ios& (*f)(std::ios&))
-                                                         { CGAL__VERB(f);}
-    Verbose_ostream&  flush() {
+    Verbose_ostream& flush()
+    {
         if (b)
             o->flush();
         return *this;
     }
-    Verbose_ostream&  put(char c) {
+
+    Verbose_ostream& put(char c)
+    {
         if (b)
             o->put(c);
         return *this;
     }
-    Verbose_ostream&  write(const char*  s,int n) {
+
+    Verbose_ostream& write(const char* s, int n)
+    {
         if (b)
-            o->write( s, n);
+            o->write(s, n);
         return *this;
     }
 };
-
-#undef CGAL__VERB
 
 CGAL_END_NAMESPACE
 

@@ -13,6 +13,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
            -g

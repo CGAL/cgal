@@ -1,5 +1,9 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
+2.11 (23 Jan 01)
+- All compilers support member templates.
+- Don't specialize for efficiency when it's not useful.
+
 2.10 (18 Jan 01)
 - Fix long long support "bug" caught by VC++ 7.
 
