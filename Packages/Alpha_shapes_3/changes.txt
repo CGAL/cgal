@@ -1,8 +1,17 @@
+
+Version 3.34 (12 February 2004) MY
+- changed Alpha_shape_cells_iterator into a Filter_iterator
+- merged fixes in classify made for  bugfixrelease
+
 Version 3.33 (09 February 2004) [rursu]
 - Updated the headers of the examples files
 
 Version 3.32 (25 January 2004) [af]
 - Removed Alpha_shape_euclidean_traits_3 from doc, examples, demo and testsuite
+
+Version 3.31 (14 janvier 04) [my]
+- fixed makefile and wrapper of the doc
+- add missing doc for the classify member function for edges
 
 Version 3.30 (4 October 2003)[af]
 - Removed a typo (after cleanup, grrr!##) in demos

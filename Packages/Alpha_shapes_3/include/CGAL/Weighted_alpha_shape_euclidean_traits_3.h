@@ -96,7 +96,7 @@ public:
     FT qz(q.point().z());
     FT qw(q.weight());
 
-    res = squared_radius_smallest_orthogonalsphereC3(px, py, pz, pw,
+    FT res = squared_radius_smallest_orthogonalsphereC3(px, py, pz, pw,
 						    qx, qy, qz, qw);
     return max (FT(0), res);
     }
@@ -139,6 +139,27 @@ public:
 					  rx, ry, rz, rw,
 					  tx, ty, tz, tw);
   }
+
+  result_type
+  operator()(const Point& p, const Point& q, const Point& r) const
+    {  
+    FT px(p.point().x());
+    FT py(p.point().y());
+    FT pz(p.point().z());
+    FT pw(p.weight());
+    FT qx(q.point().x());
+    FT qy(q.point().y());
+    FT qz(q.point().z());
+    FT qw(q.weight());
+    FT rx(r.point().x());
+    FT ry(r.point().y());
+    FT rz(r.point().z());
+    FT rw(r.weight());
+     return in_smallest_orthogonalsphereC3(px, py, pz, pw,
+					   qx, qy, qz, qw,
+					   rx, ry, rz, rw);
+  }
+
 };
   
 //------------------ Traits class -------------------------------------
