@@ -27,10 +27,10 @@ template < class R >
 inline
 Comparison_result
 compare_x(const PointC2<R CGAL_CTAG> &p,
-          const LineC2<R CGAL_CTAG> &l1,
-          const LineC2<R CGAL_CTAG> &l2)
+          const LineC2<R CGAL_CTAG> &l,
+          const LineC2<R CGAL_CTAG> &h)
 {
-  return compare_xC2(p.x(), l1.a(),l1.b(),l1.c(),l2.a(),l2.b(),l2.c());
+  return compare_xC2(p.x(), l.a(),l.b(),l.c(),h.a(),h.b(),h.c());
 }
 
 template < class R >
@@ -41,19 +41,19 @@ compare_x(const LineC2<R CGAL_CTAG> &l,
           const LineC2<R CGAL_CTAG> &h2)
 {
   return compare_xC2(l.a(),l.b(),l.c(),h1.a(),h1.b(),h1.c(),
-                     l.a(),l.b(),l.c(),h2.a(),h2.b(),h2.c());
+                                       h2.a(),h2.b(),h2.c());
 }
 
 template < class R >
 inline
 Comparison_result
 compare_x(const LineC2<R CGAL_CTAG> &l1,
-          const LineC2<R CGAL_CTAG> &l2,
           const LineC2<R CGAL_CTAG> &h1,
+          const LineC2<R CGAL_CTAG> &l2,
           const LineC2<R CGAL_CTAG> &h2)
 {
-  return compare_xC2(l1.a(),l1.b(),l1.c(),l2.a(),l2.b(),l2.c(),
-                     h1.a(),h1.b(),h1.c(),h2.a(),h2.b(),h2.c());
+  return compare_xC2(l1.a(),l1.b(),l1.c(),h1.a(),h1.b(),h1.c(),
+                     l2.a(),l2.b(),l2.c(),h2.a(),h2.b(),h2.c());
 }
 
 template < class R >

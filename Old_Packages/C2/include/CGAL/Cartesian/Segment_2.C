@@ -5,6 +5,8 @@
 #ifndef CGAL_CARTESIAN_SEGMENT_2_C
 #define CGAL_CARTESIAN_SEGMENT_2_C
 
+#include <CGAL/Cartesian/predicates_on_points_2.h>
+
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 #define CGAL_CTAG
 #endif
@@ -226,11 +228,7 @@ bool
 SegmentC2<R CGAL_CTAG>::
 has_on(const typename SegmentC2<R CGAL_CTAG>::Point_2 &p) const
 {
-  return p == source()
-      || p == target()
-      || ( collinear(source(), p, target())
-           && Direction_2(p - source()) != Direction_2(p - target())
-	 );
+  return are_ordered_along_line(source(), p, target());
 }
 
 template < class R >
@@ -239,21 +237,7 @@ bool
 SegmentC2<R CGAL_CTAG>::
 collinear_has_on(const typename SegmentC2<R CGAL_CTAG>::Point_2 &p) const
 {
-    CGAL_kernel_exactness_precondition( collinear(source(), p, target()) );
-    if (abs(target().x()-source().x())
-      > abs(target().y()-source().y())) {
-        if (p.x() < source().x())
-            return (p.x() >= target().x());
-        if (p.x() <= target().x())
-            return true;
-        return (p.x() == source().x());
-    } else {
-        if (p.y() < source().y())
-            return (p.y() >= target().y());
-        if (p.y() <= target().y())
-            return true;
-        return (p.y() == source().y());
-    }
+    return collinear_are_ordered_along_line(source(), p, target());
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_SEGMENTC2

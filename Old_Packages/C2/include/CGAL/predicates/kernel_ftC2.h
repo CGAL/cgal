@@ -31,12 +31,12 @@ template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
 compare_xC2(const FT &px,
-            const FT &l1a, const FT &l1b, const FT &l1c,
-            const FT &l2a, const FT &l2b, const FT &l2c)
+            const FT &la, const FT &lb, const FT &lc,
+            const FT &ha, const FT &hb, const FT &hc)
 {
   // The abscissa of the intersection point is num/den.
-  FT num = det2x2_by_formula( l1b, l1c, l2b, l2c);
-  FT den = det2x2_by_formula( l1a, l1b, l2a, l2b);
+  FT num = det2x2_by_formula( lb, lc, hb, hc);
+  FT den = det2x2_by_formula( la, lb, ha, hb);
   Sign s = CGAL::sign(den);
   CGAL_kernel_assertion( s != ZERO );
   return Comparison_result( s * CGAL::compare( px * den, num) );
@@ -45,18 +45,43 @@ compare_xC2(const FT &px,
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
-compare_xC2(const FT &l1a, const FT &l1b, const FT &l1c,
-            const FT &l2a, const FT &l2b, const FT &l2c,
+compare_xC2(const FT &la, const FT &lb, const FT &lc,
             const FT &h1a, const FT &h1b, const FT &h1c,
             const FT &h2a, const FT &h2b, const FT &h2c)
 {
-  FT numl = det2x2_by_formula( l1b, l1c, l2b, l2c);
-  FT denl = det2x2_by_formula( l1a, l1b, l2a, l2b);
-  FT numh = det2x2_by_formula( h1b, h1c, h2b, h2c);
-  FT denh = det2x2_by_formula( h1a, h1b, h2a, h2b);
-  Sign s = Sign (CGAL::sign(denl) * CGAL::sign(denh));
+  /*
+  FT num1 = det2x2_by_formula( lb, lc, h1b, h1c);
+  FT den1 = det2x2_by_formula( la, lb, h1a, h1b);
+  FT num2 = det2x2_by_formula( lb, lc, h2b, h2c);
+  FT den2 = det2x2_by_formula( la, lb, h2a, h2b);
+  Sign s = Sign (CGAL::sign(den1) * CGAL::sign(den2));
   CGAL_kernel_assertion( s != ZERO );
-  return Comparison_result( s * sign_of_determinant2x2(denh, numh, denl, numl));
+  return Comparison_result( s * sign_of_determinant2x2(num1, num2, den1, den2));
+  */
+  FT num1 = det2x2( la, lc, h1a, h1c);
+  FT num2 = det2x2( la, lc, h2a, h2c);
+  FT num  = det2x2(h1a,h1c,h2a,h2c)*lb+det2x2(num1,num2,h1b,h2b);
+  FT den1 = det2x2( la, lb, h1a, h1b);
+  FT den2 = det2x2( la, lb, h2a, h2b);
+  return Comparison_result( CGAL::sign(lb) * CGAL::sign(num) *
+                            CGAL::sign(den1) * CGAL::sign(den2));
+}
+
+template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+Comparison_result
+compare_xC2(const FT &l1a, const FT &l1b, const FT &l1c,
+            const FT &h1a, const FT &h1b, const FT &h1c,
+            const FT &l2a, const FT &l2b, const FT &l2c,
+            const FT &h2a, const FT &h2b, const FT &h2c)
+{
+  FT num1 = det2x2_by_formula( l1b, l1c, h1b, h1c);
+  FT den1 = det2x2_by_formula( l1a, l1b, h1a, h1b);
+  FT num2 = det2x2_by_formula( l2b, l2c, h2b, h2c);
+  FT den2 = det2x2_by_formula( l2a, l2b, h2a, h2b);
+  Sign s = Sign (CGAL::sign(den1) * CGAL::sign(den2));
+  CGAL_kernel_assertion( s != ZERO );
+  return Comparison_result( s * sign_of_determinant2x2(num1, num2, den1, den2));
 }
 
 template < class FT >

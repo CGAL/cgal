@@ -1,3 +1,10 @@
+Version 3.3.10 (December 10 1999)
+- Proper implementation of compare_x(Line_2,Line_2,Line_2), to have
+  correct degree (was using compare_x(l,h1,l,h2) before, now special
+  implementation in predicates/kernel_ftC2.h).
+- Cleaned up Segment_2.C to use *are_ordered_along_line predicates
+- Prefix CGAL:: for sqrt in Circle_2.C
+
 Version 3.3.9 (November 22 1999)
 - Mega cleanup [Syl & Hervé].
 - Shorter headers in CVS repository, but complete in release

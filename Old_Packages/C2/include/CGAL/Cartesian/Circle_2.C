@@ -256,7 +256,7 @@ CircleC2<R CGAL_CTAG>::bbox() const
   // Robustness problems.
   double cx = CGAL::to_double(center().x());
   double cy = CGAL::to_double(center().y());
-  double radius = sqrt(CGAL::to_double(squared_radius()));
+  double radius = CGAL::sqrt(CGAL::to_double(squared_radius()));
 
   return Bbox_2(cx - radius, cy - radius, cx + radius, cy + radius);
 }
