@@ -135,6 +135,7 @@ public:
     {
 	CGAL_assertion(sizeof(Free_elt) <= sizeof(Elt));
 	init_free_list();
+	size_ = 0;
     }
 
     // The copy constructor and assignment operators preserve
@@ -172,6 +173,7 @@ public:
 	ret->unmark_free();
 	// alloc.construct((Elt *) ret, Elt()); // Creates/copies temporary :(
 	new ((void *) ret) Elt();
+	++size_;
 	return (Elt *) ret;
     }
 
@@ -180,6 +182,7 @@ public:
 	CGAL_assertion(!is_free(x));
 	alloc.destroy(x);
 	put_on_free_list((Free_elt *)x);
+	--size_;
     }
 
     bool is_element(Elt *x) const
@@ -212,6 +215,7 @@ public:
 	std::swap(alloc, c.alloc);
 	std::swap(array_vect, c.array_vect);
         std::swap(free_list, c.free_list);
+	std::swap(size_, c.size_);
     }
 
     void clear()
@@ -223,15 +227,12 @@ public:
 	    alloc.deallocate(*ait, DS_Container_allocation_size);
 	array_vect.clear();
         init_free_list();
+	size_ = 0;
     }
 
     size_type size() const
     {
-	size_type number_of_free_elts = 0;
-	for (Free_elt *p=free_list.next(); p!=NULL; p=p->next())
-	    ++number_of_free_elts;
-	return array_vect.size()*DS_Container_allocation_size
-	     - number_of_free_elts;
+      return size_;
     }
 
 private:
@@ -281,6 +282,7 @@ private:
     Alloc alloc;
     Array_vect array_vect;
     Free_elt free_list;
+    size_type size_;
 };
 
 template < class DSC >

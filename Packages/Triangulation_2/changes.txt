@@ -2,6 +2,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.48 (07/10/02)
+- added _size member in DS_Container
+
 Ver 7.47 (23/09/02)
  - no changes - just to try submission process
 
