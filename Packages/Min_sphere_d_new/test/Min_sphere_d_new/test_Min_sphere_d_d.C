@@ -53,7 +53,6 @@
   typedef  CGAL::Optimisation_d_traits_d<K_1>  Traits_1;
 # define TEST_VARIANT_1 \
     "Optimisation_d_traits_d< Cartesian_d<leda_integer> >"
-  CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_integer)
 #endif
 
 // test variant 2 (needs GMP)

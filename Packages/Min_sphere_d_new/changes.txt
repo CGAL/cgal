@@ -1,5 +1,8 @@
 Changes done to the `Min_sphere_d_new' package
 
+Version 0.12.7 on 18-Jan-2004
+- Remove CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC.
+
 Version 0.12.6 on 23-Sep-2003 [mh]
 - New file headers.
 
