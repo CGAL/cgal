@@ -323,106 +323,19 @@ is_edge(const Vertex* va, const Vertex* vb, Face* &fr,  int & i) const
 {
   Face* fc=va->face(), *start(fc);
   if (fc == NULL) return false;
-  int inda;
+  int inda, indb;
   do {
-    inda=fc->index(va);
-    i=ccw(inda);
-    if(fc->vertex(cw(inda))==vb) {
+    inda = fc->index(va);
+    indb = (dimension() == 2 ? cw(inda) : 1-inda);
+    if(fc->vertex(indb) == vb) {
       fr=fc;
+      i = 3 - inda - indb ; //works in dim 1 or 2
       return true;
     }
-    fc=fc->neighbor(i); //turns ccw around va
+    fc=fc->neighbor(indb); //turns ccw around va
   } while (fc != start);
   return false;
 }
-
-
-// template <class Gt , class Vb, class Fb>
-// inline
-// Triangulation_ds_iterator_base_2<
-// Triangulation_default_data_structure_2<Gt,Vb,Fb> >
-// Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-// iterator_base_begin() const
-// {
-//  return Iterator_base(this);
-// }
-
-// template <class Gt , class Vb, class Fb>
-// inline
-// Triangulation_ds_iterator_base_2<
-// Triangulation_default_data_structure_2<Gt,Vb,Fb> >
-// Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-// iterator_base_end() const
-// {
-//  return Iterator_base(this,1);
-// }
-
-// template <class Gt , class Vb, class Fb>
-// inline
-// Triangulation_ds_face_iterator_2<
-// Triangulation_default_data_structure_2<Gt,Vb,Fb> > 
-// Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-// faces_begin() const
-// {
-//   Tds* ncthis = (Tds *)this;
-//   return Face_iterator(ncthis);
-// }
-
-// template <class Gt , class Vb, class Fb>
-// inline
-// Triangulation_ds_face_iterator_2<
-// Triangulation_default_data_structure_2<Gt,Vb,Fb> > 
-// Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-// faces_end() const
-// {
-//   Tds* ncthis = (Tds *)this;
-//   return Face_iterator(ncthis, 1);
-// }
-
-// template <class Gt , class Vb, class Fb>
-// inline
-// Triangulation_ds_vertex_iterator_2<
-// Triangulation_default_data_structure_2<Gt,Vb,Fb> > 
-// Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-// vertices_begin() const
-// {
-//   Tds* ncthis = (Tds*)this;
-//   return Vertex_iterator(ncthis);
-// }
-
-// template <class Gt , class Vb, class Fb>
-// inline
-// Triangulation_ds_vertex_iterator_2<
-// Triangulation_default_data_structure_2<Gt,Vb,Fb> > 
-// Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-// vertices_end() const
-// {
-//   Tds* ncthis = (Tds*)this;
-//   return Vertex_iterator(ncthis,1);
-// }
-
-// template <class Gt , class Vb, class Fb>
-// inline
-// Triangulation_ds_edge_iterator_2<
-// Triangulation_default_data_structure_2<Gt,Vb,Fb> > 
-// Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-// edges_begin() const
-// {
-//   Tds* ncthis = (Tds*)this;
-//   return Edge_iterator(ncthis);
-// }
-
- 
-// template <class Gt , class Vb, class Fb>
-// inline
-// Triangulation_ds_edge_iterator_2<
-// Triangulation_default_data_structure_2<Gt,Vb,Fb> > 
-// Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-// edges_end() const
-// {
-//   Tds* ncthis = (Tds*)this;
-//   return Edge_iterator(ncthis,1);
-// }
 
 
 template < class Gt , class Vb, class Fb>

@@ -303,7 +303,7 @@ void
 Constrained_triangulation_2<Gt,Tds>:: 
 update_constraints( const std::list<Edge> &hole)
 {
-  typename std::list<Edge>::iterator it = hole.begin();
+  typename std::list<Edge>::const_iterator it = hole.begin();
   Face_handle f;
   int i;
   for ( ; it != hole.end(); it ++) {
@@ -450,7 +450,7 @@ remove_1D(Vertex_handle  v)
 {
   Edge_circulator ec = incident_edges(v), done(ec);
   do {
-    (*ec).first.set_constraint(2,false);
+    (*ec).first->set_constraint(2,false);
   } while (++ec != done);
   Triangulation::remove_1D(v);
 }
@@ -482,7 +482,9 @@ Constrained_triangulation_2<Gt,Tds>::
 remove_constraint(Face_handle f, int i)
 {
   f->set_constraint(i, false);
-  (f->neighbor(i))->set_constraint(f->mirror_index(i), false);
+  if (dimension() == 2)
+    (f->neighbor(i))->set_constraint(f->mirror_index(i), false);
+  return;
 }
     
 template < class Gt, class Tds >
