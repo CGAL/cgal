@@ -10,8 +10,8 @@
 
 typedef double Coord_type;
 typedef CGAL::Simple_cartesian<Coord_type>      K1;
-typedef CGAL::Filtered_kernel<K1>               Rep;
-//struct Rep : public K2{} ;
+typedef CGAL::Filtered_kernel<K1>               K2;
+struct Rep : public K2{} ;
 
 typedef Rep::Point_2                            Point;
 typedef Rep::Segment_2                          Segment;
