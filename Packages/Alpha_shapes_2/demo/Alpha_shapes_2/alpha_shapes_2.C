@@ -337,7 +337,7 @@ private slots:
       alpha_index = result;
       if(mult < result)
         mult = result;
-      slider->setValue(result*10000/mult);	
+      slider->setValue(static_cast<int>(result*10000/mult));	
       A.set_alpha(alpha_index);
       label->setText(QString("The current alpha value: ") +
 		   QString::number(alpha_index));
