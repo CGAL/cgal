@@ -1,0 +1,33 @@
+#!/bin/sh
+
+old_results_dir=/projects/CGAL/old_results
+
+if [ -d "$1" ] ; then
+   if [ -d "$1/Polygon" -o -d "$1/src" ] ; then
+      if [ -x "$1" ] ;
+      then
+         cp -r "$1" $old_results_dir
+         find "$old_results_dir/$1" -name '*.gz' | xargs gunzip
+         (cd $old_results_dir; tar cf /projects/CGAL/old_results/$1.tar $1)
+         if gzip --best /projects/CGAL/old_results/$1.tar
+         then
+             chgrp cgal /projects/CGAL/old_results/$1.tar.gz
+             chmod g+w /projects/CGAL/old_results/$1.tar.gz
+             rm -r /projects/CGAL/old_results/$1
+             cd $1
+             rm */* ;
+             rmdir * 2>/dev/null
+         else
+             echo "Could not gzip /projects/CGAL/old_results/$1.tar " >&2
+             rm -r /projects/CGAL/old_results/$1
+	 fi
+      else
+        echo "Could not cd to $1" >&2
+      fi
+   else
+      echo "$1 seems to be emptied already" >&2
+   fi
+else
+  echo "$1 is not a directory" >&2
+fi
+
