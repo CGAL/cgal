@@ -8,7 +8,7 @@
 
 print_platforms()
 {
-  cd Polygon
+  cd src
   for FILE in `ls CompilerOutput_*` ; do
     PLATFORM=`echo $FILE | sed 's/CompilerOutput_//'| sed 's/\.gz//'`
     printf "$PLATFORM "
