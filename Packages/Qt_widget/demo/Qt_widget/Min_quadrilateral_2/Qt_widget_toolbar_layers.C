@@ -25,9 +25,33 @@
 
 // icons
 #include <CGAL/IO/pixmaps/points.xpm>
-#include <CGAL/IO/pixmaps/line.xpm>
 #include <CGAL/IO/pixmaps/min_rectangle.xpm>
 #include <CGAL/IO/pixmaps/min_parallelogram.xpm>
+
+#include <qiconset.h>
+
+/* XPM */
+static char * lines_small_xpm[] = {
+"16 16 3 1",
+" 	c None",
+".	c #35E8D9",
+"+	c #000000",
+"    ........    ",
+"   ..+.......   ",
+"  ....+.......  ",
+" ......+....... ",
+"........+.......",
+".+.......+......",
+"..+.......+.....",
+"...+.......+....",
+"....+.......+...",
+".....+.......+..",
+"......+.......+.",
+".......+........",
+" .......+...... ",
+"  .......+....  ",
+"   .......+..   ",
+"    ........    "};
 
 
 namespace CGAL {
@@ -49,14 +73,27 @@ namespace CGAL {
 
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 
+    QIconSet set0(QPixmap( (const char**)points_small_xpm ),
+                  QPixmap( (const char**)points_xpm ));
+    QIconSet set1(QPixmap( (const char**)min_parallelogram_small_xpm ),
+                  QPixmap( (const char**)min_parallelogram_xpm ));
+    QIconSet set2(QPixmap( (const char**)lines_small_xpm ),
+                  QPixmap( (const char**)lines_small_xpm ));
+    QIconSet set3(QPixmap( (const char**)min_rectangle_small_xpm ),
+                  QPixmap( (const char**)min_rectangle_xpm ));
+
     but[0] = new QToolButton(maintoolbar, "points");
-    but[0]->setPixmap(QPixmap( (const char**)points_xpm ));
+    but[0]->setIconSet(set0);
+    but[0]->setTextLabel("Show Points");
     but[1] = new QToolButton(maintoolbar, "Minimum_parallelogram");
-    but[1]->setPixmap(QPixmap( (const char**)min_parallelogram_xpm ));
+    but[1]->setIconSet(set1);
+    but[1]->setTextLabel("Show Minimum Parallelogram");
     but[2] = new QToolButton(maintoolbar, "Show_lines");
-    but[2]->setPixmap(QPixmap( (const char**)line_xpm ));
+    but[2]->setIconSet(set2);
+    but[2]->setTextLabel("Show Lines");
     but[3] = new QToolButton(maintoolbar, "Minimum_rectangle");
-    but[3]->setPixmap(QPixmap( (const char**)min_rectangle_xpm ));
+    but[3]->setIconSet(set3);
+    but[3]->setTextLabel("Show Minimum Rectangle");
 
     nr_of_buttons = 4;
     button_group = new QButtonGroup(0, "nonexclusive");	

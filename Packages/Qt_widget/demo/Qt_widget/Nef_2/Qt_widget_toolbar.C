@@ -52,6 +52,7 @@
 #include <CGAL/IO/pixmaps/arrow.xpm>
 #include <CGAL/IO/pixmaps/polygon.xpm>
 
+#include <qiconset.h>
 
 namespace CGAL {
   Tools_toolbar::Tools_toolbar(Qt_widget *w, 
@@ -76,15 +77,28 @@ namespace CGAL {
   maintoolbar = new QToolBar(mw, "Tools");
   mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
 #endif
-		
-  but[0] = new QToolButton(maintoolbar, "notool");
-  but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
-  but[1] = new QToolButton(maintoolbar, "pointtool");
-  but[1]->setPixmap(QPixmap( (const char**)point_xpm ));
-  but[2] = new QToolButton(maintoolbar, "linetool");
-  but[2]->setPixmap(QPixmap( (const char**)line_xpm ));
-  but[3] = new QToolButton(maintoolbar, "polygontool");
-  but[3]->setPixmap(QPixmap( (const char**)polygon_xpm ));
+	
+    QIconSet set0(QPixmap( (const char**)arrow_small_xpm ),
+                  QPixmap( (const char**)arrow_xpm ));
+    QIconSet set1(QPixmap( (const char**)point_small_xpm ),
+                  QPixmap( (const char**)point_xpm ));
+    QIconSet set2(QPixmap( (const char**)line_small_xpm ),
+                  QPixmap( (const char**)line_xpm ));
+    QIconSet set3(QPixmap( (const char**)polygon_small_xpm ),
+                  QPixmap( (const char**)polygon_xpm ));
+	
+  but[0] = new QToolButton(maintoolbar, "Deactivate Layer");
+  but[0]->setIconSet(set0);
+  but[0]->setTextLabel("Deactivate Layer");
+  but[1] = new QToolButton(maintoolbar, "pointinput layer");
+  but[1]->setIconSet(set1);
+  but[1]->setTextLabel("Input Point");
+  but[2] = new QToolButton(maintoolbar, "lineinput layer");
+  but[2]->setIconSet(set2);
+  but[2]->setTextLabel("Input Line");
+  but[3] = new QToolButton(maintoolbar, "polygoninput layer");
+  but[3]->setIconSet(set3);
+  but[3]->setTextLabel("Input Simple Polygon");
   
   nr_of_buttons = 4;
   button_group = new QButtonGroup(0, "My_group");

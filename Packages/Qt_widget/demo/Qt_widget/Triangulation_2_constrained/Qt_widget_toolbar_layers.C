@@ -30,7 +30,7 @@
 //
 // file          : src/Qt_widget_toolbar_layers.C
 // package       : Qt_widget
-// author(s)     : Ursu Radu
+// author(s)     : Radu Ursu
 // release       : CGAL-2.4
 // release_date  : 2002, May 16
 //
@@ -51,6 +51,7 @@
 #include <CGAL/IO/pixmaps/constrained.xpm>
 #include <CGAL/IO/pixmaps/triangulation.xpm>
 
+#include <qiconset.h>
 
 namespace CGAL {
   Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, CDT *t) : 
@@ -70,15 +71,22 @@ namespace CGAL {
     
 
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
+
+    QIconSet set0(QPixmap( (const char**)triangulation_small_xpm ),
+                  QPixmap( (const char**)triangulation_xpm ));
+    QIconSet set1(QPixmap( (const char**)constrained_small_xpm ),
+                  QPixmap( (const char**)constrained_xpm ));
+    QIconSet set2(QPixmap( (const char**)points_small_xpm ),
+                  QPixmap( (const char**)points_xpm ));
 		
     but[0] = new QToolButton(maintoolbar, "triangulation");
-    but[0]->setPixmap(QPixmap( (const char**)triangulation_xpm ));
+    but[0]->setIconSet(set0);
     but[0]->setTextLabel("Show Triangulation");
     but[1] = new QToolButton(maintoolbar, "constraineds");
-    but[1]->setPixmap(QPixmap( (const char**)constrained_xpm ));
+    but[1]->setIconSet(set1);
     but[1]->setTextLabel("Show Constraineds");
     but[2] = new QToolButton(maintoolbar, "vertices");
-    but[2]->setPixmap(QPixmap( (const char**)points_xpm ));
+    but[2]->setIconSet(set2);
     but[2]->setTextLabel("Show Vertices");
 		
 

@@ -167,6 +167,7 @@ public slots:
   {
     widget->lock();
     list_of_points.clear();
+    widget->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
 		// set the Visible Area to the Interval
     widget->unlock();

@@ -28,6 +28,8 @@
 #include <CGAL/IO/pixmaps/arrow.xpm>
 #include <CGAL/IO/pixmaps/movepoint.xpm>
 
+#include <qiconset.h>
+
 namespace CGAL {
   Tools_toolbar::Tools_toolbar(Qt_widget *w, 
 				QMainWindow *mw, Delaunay *t)
@@ -53,14 +55,21 @@ namespace CGAL {
     mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
 #endif
 		
+    QIconSet set0(QPixmap( (const char**)arrow_small_xpm ),
+                  QPixmap( (const char**)arrow_xpm ));
+    QIconSet set1(QPixmap( (const char**)point_small_xpm ),
+                  QPixmap( (const char**)point_xpm ));
+    QIconSet set2(QPixmap( (const char**)movepoint_small_xpm ),
+                  QPixmap( (const char**)movepoint_xpm ));
 
-  but[0] = new QToolButton(maintoolbar, "notool");
-  but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
-  but[1] = new QToolButton(maintoolbar, "pointtool");
-  but[1]->setPixmap(QPixmap( (const char**)point_xpm ));
+  but[0] = new QToolButton(maintoolbar, "deactivate layer");
+  but[0]->setIconSet(set0);
+  but[0]->setTextLabel("Deactivate Layer");
+  but[1] = new QToolButton(maintoolbar, "pointinput layer");
+  but[1]->setIconSet(set1);
   but[1]->setTextLabel("Input Point");
-  but[2] = new QToolButton(maintoolbar, "movepoint");
-  but[2]->setPixmap(QPixmap( (const char**)movepoint_xpm ));
+  but[2] = new QToolButton(maintoolbar, "move/delete layer");
+  but[2]->setIconSet(set2);
   but[2]->setTextLabel("Move/Delete Point");
 
   

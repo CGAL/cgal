@@ -30,7 +30,7 @@
 //
 // file          : src/Qt_widget_toolbar.C
 // package       : Qt_widget
-// author(s)     : Ursu Radu
+// author(s)     : Radu Ursu
 // release       : CGAL-2.4
 // release_date  : 2002, May 16
 //
@@ -51,6 +51,7 @@
 #include <CGAL/IO/pixmaps/arrow.xpm>
 #include <CGAL/IO/pixmaps/polygon.xpm>
 
+#include <qiconset.h>
 
 namespace CGAL {
   Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw)
@@ -70,19 +71,27 @@ namespace CGAL {
   maintoolbar = new QToolBar(mw, "Tools");
   mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
 #endif		  
+
+    QIconSet set0(QPixmap( (const char**)arrow_small_xpm ),
+                  QPixmap( (const char**)arrow_xpm ));
+    QIconSet set1(QPixmap( (const char**)polygon_small_xpm ),
+                  QPixmap( (const char**)polygon_xpm ));
 		
-  but[0] = new QToolButton(maintoolbar, "notool");
-  but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
+  but[0] = new QToolButton(maintoolbar, "deactivate layer");
+  but[0]->setIconSet(set0);
+  but[0]->setTextLabel("Deactivate Layer");
   
   but[1] = new QToolButton(maintoolbar, "spolygon");
-  but[1]->setPixmap(QPixmap( (const char**)polygon_xpm ));
+  but[1]->setIconSet(set1);
+  but[1]->setTextLabel("Input Simple Polygon");
   
   button_group = new QButtonGroup(0, "exclusive_group");
   button_group->insert(but[0]);
   button_group->insert(but[1]);
   button_group->setExclusive(true);
-  
-  but[1]->setToggleButton(TRUE);
+
+  but[0]->setToggleButton(true);
+  but[1]->setToggleButton(true);
   
   connect(but[1], SIGNAL(stateChanged(int)),
         &getsimplebut, SLOT(stateChanged(int)));

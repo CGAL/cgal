@@ -34,7 +34,7 @@
 #include <CGAL/IO/pixmaps/forward.xpm>
 #include <CGAL/IO/pixmaps/mouse_coord.xpm>
 
-
+#include <qiconset.h>
 
 namespace CGAL {
   Qt_widget_standard_toolbar::Qt_widget_standard_toolbar(
@@ -64,25 +64,25 @@ namespace CGAL {
   mw->addDockWindow (maintoolbar, "Qt_widget standard toolbar",
 		     DockTop, TRUE );
 #endif
-		
-    but[0] = new QToolButton(maintoolbar, "notool");
-    but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
-  
-    but[1] = new QToolButton(QPixmap( (const char**)back_xpm ),
-			     "History Back", 
-			     0, 
-			     this, 
-			     SLOT(back()), 
-			     maintoolbar, 
-			     "History Back");
-    but[2] = new QToolButton(QPixmap( (const char**)forward_xpm ),
-			     "History Forward", 
-			     0, 
-			     this, 
-			     SLOT(forward()), 
-			     maintoolbar, 
-			     "History Forward");
 
+    QIconSet set0(QPixmap( (const char**)arrow_small_xpm ),
+                  QPixmap( (const char**)arrow_xpm ));
+    QIconSet set1(QPixmap( (const char**)back_small_xpm ),
+                  QPixmap( (const char**)back_xpm ));
+    QIconSet set2(QPixmap( (const char**)forward_small_xpm ),
+                  QPixmap( (const char**)forward_xpm ));
+		
+    but[0] = new QToolButton(maintoolbar, "nolayer");
+    but[0]->setIconSet(set0);
+    but[0]->setTextLabel("Deactivate Standard Layer");
+  
+    but[1] = new QToolButton(maintoolbar, "History Back");
+    but[1]->setIconSet(set1);
+    but[1]->setTextLabel("History Back");
+
+    but[2] = new QToolButton(maintoolbar, "History Forward");
+    but[2]->setIconSet(set2);
+    but[2]->setTextLabel("History Forward");
   
     but[3] = new QToolButton(QPixmap( (const char**)zoomin_xpm ),
 			     "Zoom in", 
@@ -123,11 +123,14 @@ namespace CGAL {
     but[0]->setToggleButton(true);
     but[8]->setToggleButton(true);
     but[8]->toggle();
-    //but[1]->setEnabled(false);
-    //but[2]->setEnabled(false);
+
     button_group->insert(but[0]);
     button_group->setExclusive(true);
   
+    connect(but[1], SIGNAL(clicked()),
+	    this, SLOT(back()));
+    connect(but[2], SIGNAL(clicked()),
+	    this, SLOT(forward()));
     connect(but[5], SIGNAL(stateChanged(int)),
         &zoombut, SLOT(stateChanged(int)));
     connect(but[6], SIGNAL(stateChanged(int)),

@@ -51,7 +51,7 @@ int main(int, char*)
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 
-const QString my_title_string("Alpha_shapes_2 Demo with"
+const QString my_title_string(" Alpha_shapes_2 Demo with"
 			      " CGAL Qt_widget");
 
 //Global variables
@@ -169,10 +169,9 @@ public:
   help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
   help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
-  //the new tools toolbar
-  setUsesBigPixmaps(TRUE);
+  //the new input layers toolbar
   newtoolbar = new CGAL::Tools_toolbar(widget, this, &tr1);	
-  //the new scenes toolbar
+  //the new drawing layers toolbar
   vtoolbar = new CGAL::Layers_toolbar(widget, this, &tr1);
   //the standard toolbar
   stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
@@ -282,8 +281,8 @@ private slots:
   void about()
   {
     QMessageBox::about( this, my_title_string,
-		"This is a demo for Triangulation,\n"
-  		"Copyright CGAL @2001");
+		"This is a demo for Alpha Shapes,\n"
+  		"Copyright CGAL @2002");
   };
 
   void aboutQt()

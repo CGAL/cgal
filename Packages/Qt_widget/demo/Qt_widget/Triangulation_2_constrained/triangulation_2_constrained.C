@@ -361,7 +361,6 @@ private slots:
     CGAL::set_ascii_mode(in);
 
     std::istream_iterator<Point> it(in), done;
-    bool first(true);
     CGAL::Bbox_2 b;
 
     

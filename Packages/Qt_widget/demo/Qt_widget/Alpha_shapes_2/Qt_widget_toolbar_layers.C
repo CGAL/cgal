@@ -10,7 +10,7 @@
 //
 // file          : src/Qt_widget_toolbar_layers.C
 // package       : Qt_widget
-// author(s)     : Ursu Radu
+// author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
 //
@@ -28,6 +28,7 @@
 #include <CGAL/IO/pixmaps/voronoi.xpm>
 #include <CGAL/IO/pixmaps/triangulation.xpm>
 
+#include <qiconset.h>
 
 namespace CGAL {
   Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t) : 
@@ -48,16 +49,22 @@ namespace CGAL {
     showV->deactivate();
 
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
-		
 
-    but[0] = new QToolButton(maintoolbar, "triangulation");
-    but[0]->setPixmap(QPixmap( (const char**)triangulation_xpm ));
+    QIconSet set0(QPixmap( (const char**)triangulation_small_xpm ),
+                  QPixmap( (const char**)triangulation_xpm ));		
+    QIconSet set1(QPixmap( (const char**)voronoi_small_xpm ),
+                  QPixmap( (const char**)voronoi_xpm ));
+    QIconSet set2(QPixmap( (const char**)points_small_xpm ),
+                  QPixmap( (const char**)points_xpm ));
+
+    but[0] = new QToolButton(maintoolbar, "triangulation layer");
+    but[0]->setIconSet(set0);
     but[0]->setTextLabel("Show Triangulation");
-    but[1] = new QToolButton(maintoolbar, "voronoi");
-    but[1]->setPixmap(QPixmap( (const char**)voronoi_xpm ));
+    but[1] = new QToolButton(maintoolbar, "voronoi layer");
+    but[1]->setIconSet(set1);
     but[1]->setTextLabel("Show Voronoi");
-    but[2] = new QToolButton(maintoolbar, "vertices");
-    but[2]->setPixmap(QPixmap( (const char**)points_xpm ));
+    but[2] = new QToolButton(maintoolbar, "vertices layer");
+    but[2]->setIconSet(set2);
     but[2]->setTextLabel("Show Vertices");
 
     nr_of_buttons = 3;
