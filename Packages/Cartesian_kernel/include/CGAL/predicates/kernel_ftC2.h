@@ -293,8 +293,20 @@ side_of_bounded_circleC2(const FT &px, const FT &py,
 {
   // Note: if the code of these is inlined, and if they are implemented
   // in a good way, some CSE can be done by the compiler.
+  // Or it could be rewritten more efficiently.
   return Bounded_side( side_of_oriented_circleC2(px,py,qx,qy,rx,ry,tx,ty)
                                  * orientationC2(px,py,qx,qy,rx,ry) );
+}
+
+template < class FT >
+CGAL_KERNEL_LARGE_INLINE
+Bounded_side
+side_of_bounded_circleC2(const FT &px, const FT &py,
+                         const FT &qx, const FT &qy,
+                         const FT &tx, const FT &ty)
+{
+  // Returns whether T lies inside or outside the circle which diameter is PQ.
+  return Bounded_side( CGAL_NTS compare((tx-px)*(qx-tx), (ty-py)*(ty-qy)) );
 }
 
 template < class FT >
