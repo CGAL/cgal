@@ -33,6 +33,7 @@
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Static_filter_error.h>
 #include <CGAL/Restricted_double.h>
+#include <CGAL/misc.h>
 
 CGAL_BEGIN_NAMESPACE
 

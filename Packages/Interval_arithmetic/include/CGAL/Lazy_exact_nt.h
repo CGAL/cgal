@@ -28,6 +28,7 @@
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Handle.h>
+#include <CGAL/misc.h>
 
 /*
  * This file contains the definition of the number type Lazy_exact_nt<ET>,
