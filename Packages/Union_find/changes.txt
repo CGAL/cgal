@@ -1,6 +1,11 @@
 Union_find Package: Release changes
 ----------------------------------------------------------------------
 
+1.6 (14 Feb 2003)
+
+     - Fixed bug in the number_of_sets() counting, changed ++sets to --sets
+       in unify_sets (bug reported by Martin Boehme).
+
 1.5 (29 Apr 2002)
      - split of user and reference manuals
 
