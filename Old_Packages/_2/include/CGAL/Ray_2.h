@@ -28,7 +28,7 @@
 #error  no representation class defined
 #endif
 
-#include <CGAL/Segment_2.h>
+#include <CGAL/Point_2.h>
 
 #ifdef CGAL_HOMOGENEOUS_H
 #include <CGAL/RayH2.h>

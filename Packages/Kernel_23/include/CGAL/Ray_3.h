@@ -37,6 +37,10 @@
 #include <CGAL/Cartesian/Ray_3.h>
 #endif
 
+#include <CGAL/Point_3.h>
+#include <CGAL/Direction_3.h>
+#include <CGAL/Line_3.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
@@ -112,6 +116,5 @@ operator>>(std::istream& is, Ray_3<R>& r)
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/Line_3.h>
 
 #endif // CGAL_RAY_3_H

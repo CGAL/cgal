@@ -37,7 +37,8 @@
 #endif
 
 #include <CGAL/predicates_on_points_2.h>
-#include <CGAL/Vector_2.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Ray_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -228,7 +229,5 @@ operator>>(std::istream &is, Line_2<R> &p)
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/Segment_2.h>
-#include <CGAL/Ray_2.h>
 
 #endif  // CGAL_LINE_2_H

@@ -37,6 +37,7 @@
 #include <CGAL/Cartesian/Triangle_3.h>
 #endif
 
+#include <CGAL/Point_3.h>
 #include <CGAL/Plane_3.h>
 
 CGAL_BEGIN_NAMESPACE

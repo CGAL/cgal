@@ -31,6 +31,7 @@
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Direction_3.h>
+#include <CGAL/Aff_transformation_3.h>
 
 #ifdef VECTOR_WRAPPER
 #include <CGAL/Vector_3_rft_wrapper.h>

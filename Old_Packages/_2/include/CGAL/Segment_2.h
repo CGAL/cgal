@@ -36,7 +36,9 @@
 #include <CGAL/Cartesian/Segment_2.h>
 #endif
 
+#include <CGAL/Point_2.h>
 #include <CGAL/Line_2.h>
+#include <CGAL/Direction_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

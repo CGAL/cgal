@@ -37,6 +37,7 @@
 #endif
 
 #include <CGAL/Point_2.h>
+#include <CGAL/Aff_transformation_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -39,6 +39,7 @@
 #include <CGAL/Segment_3.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Ray_3.h>
+#include <CGAL/Plane_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -126,6 +127,5 @@ operator>>(std::istream & is, Line_3<R> & p)
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/Plane_3.h>
 
 #endif // CGAL_LINE_3_H
