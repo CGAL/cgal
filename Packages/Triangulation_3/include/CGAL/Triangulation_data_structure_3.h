@@ -243,7 +243,7 @@ public:
   void flip_flippable(Edge e);
   void flip_flippable(Cell* c, int i, int j);
 private:
-  // common to flip and filp_flippable
+  // common to flip and flip_flippable
   void flip_really(Cell* c, int i, Cell* n, int in);
   void flip_really(Cell* c, int i, int j,
 		   Cell* c1, Vertex* v1, int i1, int j1, int next1,
