@@ -1651,6 +1651,10 @@ Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2/svd-strongl
 Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2/svd-weakly-bw.eps -text
 Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2/svd-weakly-bw.gif -text svneol=unset#unset
 Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2/svd-weakly-bw.pdf -text svneol=unset#unset
+Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2_ref/svd-join_split.eps -text
+Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2_ref/svd-join_split.fig -text
+Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2_ref/svd-join_split.gif -text svneol=unset#unset
+Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2_ref/svd-join_split.pdf -text svneol=unset#unset
 Packages/Snap_rounding_2/demo/Snap_rounding_2/snap_rounding_2.vcproj -text
 Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.gif -text svneol=unset#unset
 Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.pdf -text svneol=unset#unset

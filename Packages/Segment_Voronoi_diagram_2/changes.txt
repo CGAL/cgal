@@ -1,5 +1,7 @@
 20 September 2004:  Menelaos Karavelas
 - added missing sites2.cin data file in examples/data directory
+- added missing svd-join_split.* files needed for documentation of the
+  segment Voronoi diagram data structure concept
 
 9 September 2004:  Menelaos Karavelas
 - added third example (in examples/subdir and in doc) that shows how
