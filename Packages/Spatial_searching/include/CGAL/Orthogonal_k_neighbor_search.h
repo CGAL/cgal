@@ -139,12 +139,10 @@ namespace CGAL {
 	search_nearest(Search_nearest), query_object(q), total_item_number(tree.size()), 
 	number_of_leaf_nodes_visited(0), number_of_internal_nodes_visited(0), number_of_items_visited(0)
     {
-      // if (search_nearest) 
-      distance_to_root =	d.min_distance_to_rectangle(q, tree.bounding_box());
-      // else 
-      //	distance_to_root=
-      //	distance_instance->max_distance_to_rectangle(q,
-      //					tree.bounding_box());
+      if (search_nearest) 
+      distance_to_root = d.min_distance_to_rectangle(q, tree.bounding_box());
+       else 
+      	distance_to_root = d.max_distance_to_rectangle(q, tree.bounding_box());
 
       compute_neighbors_orthogonally(tree.root(), distance_to_root);
        
