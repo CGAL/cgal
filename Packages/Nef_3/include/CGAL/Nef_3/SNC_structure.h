@@ -482,17 +482,17 @@ public:
   { SVertex_handle sv;
     SHalfedge_handle se;
     SHalfloop_handle sl;
-    if ( assign(se,*it) ) { 
+    if ( CGAL::assign(se,*it) ) { 
       if( is_boundary_object(se)) 
 	undef_boundary_item(se); 
       return; 
     }
-    if ( assign(sl,*it) ) { 
+    if ( CGAL::assign(sl,*it) ) { 
       if( is_boundary_object(sl)) 
 	undef_boundary_item(sl);
       return; 
     }
-    if ( assign(sv,*it) ) { 
+    if ( CGAL::assign(sv,*it) ) { 
       if( is_boundary_object(sv)) 
 	undef_boundary_item(sv); 
       return; 
@@ -509,17 +509,17 @@ public:
   { SVertex_handle sv;
     SHalfedge_handle se;
     SHalfloop_handle sl;
-    if ( assign(se,*it) ) { 
+    if ( CGAL::assign(se,*it) ) { 
       if( is_sm_boundary_object(se)) 
 	undef_sm_boundary_item(se); 
       return; 
     }
-    if ( assign(sl,*it) ) { 
+    if ( CGAL::assign(sl,*it) ) { 
       if( is_sm_boundary_object(sl)) 
 	undef_sm_boundary_item(sl);
       return; 
     }
-    if ( assign(sv,*it) ) { 
+    if ( CGAL::assign(sv,*it) ) { 
       if( is_sm_boundary_object(sv)) 
 	undef_sm_boundary_item(sv); 
       return; 
@@ -1163,13 +1163,19 @@ pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
     for(sfc = sf->sface_cycles_begin(); 
         sfc != sf->sface_cycles_end(); ++sfc) {
       SVertex_handle sv;
-      if ( assign(sv,sfc) ) 
-      { *sfc = Object_handle(EM[sv]); store_sm_boundary_item(sv,sfc); }
-      else if ( assign(se,sfc) ) 
-      { *sfc = Object_handle(SEM[se]); store_sm_boundary_item(se,sfc); }
-      else if ( assign(sl,sfc) ) 
-      { *sfc = Object_handle(SLM[sl]); store_sm_boundary_item(sl,sfc); }
-      else CGAL_assertion_msg(0,"damn wrong boundary item in sface.");
+      if (sfc.is_svertex()) { 
+	SVertex_handle sv(sfc);
+	*sfc = Object_handle(EM[sv]);
+	store_sm_boundary_item(sv,sfc);
+      } else if (sfc.is_shalfedge()) { 
+	se = SHalfedge_handle(sfc);
+	*sfc = Object_handle(SEM[se]);
+	store_sm_boundary_item(se,sfc);
+      } else if (sfc.is_shalfloop()) { 
+	sl = SHalfloop_handle(sfc);
+	*sfc = Object_handle(SLM[sl]);
+	store_sm_boundary_item(sl,sfc);
+      } else CGAL_assertion_msg(0,"damn wrong boundary item in sface.");
     }
   }
 }
