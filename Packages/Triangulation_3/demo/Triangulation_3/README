@@ -35,7 +35,3 @@ Constructs a Delaunay triangulation for points on a grid.
 Then removes all the vertices in random order
 --------------------------------------------------------------
 
-------- blind_demo -------------------------------------------
-Same as demo, but without visualization...
---------------------------------------------------------------
-
