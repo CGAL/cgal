@@ -505,7 +505,8 @@ public:
                                  const Point_2 & q,
                                  Tag_false) const 
   { 
-    return curves_compare_y_at_x_left_imp(cv1, cv2, q, Tag_false(), Has_reflect_category());
+    return curves_compare_y_at_x_left_imp(cv1, cv2, q, Tag_false(), 
+					  Has_reflect_category());
   }
 
   //implement the function using reflect
