@@ -61,7 +61,7 @@ public:
 private:
   QCursor oldcursor;
 
-  void widget_repainted(){
+  void redraw(){
       wasrepainted = true;
   };
 
@@ -146,8 +146,8 @@ private:
       *widget << CGAL::GREEN << CGAL::PointSize (5) 
               << CGAL::PointStyle (CGAL::DISC);
       if(!wasrepainted){
-        *widget << old_curve;
-        *widget << old_point;
+        *widget << CGAL::RED << old_curve;
+        *widget << CGAL::GREEN << old_point;
       }
       
       Point p(x,y);
@@ -178,8 +178,8 @@ private:
         old_curve = Curve(old_curve.source(), closest_p);
       else
         old_curve = Curve(closest_p, old_curve.target());
-      *widget << old_curve;
-      *widget << closest_p;
+      *widget << CGAL::RED << old_curve;
+      *widget << CGAL::GREEN << closest_p;
       widget->unlock();
       widget->setRasterOp(old);
       old_point = closest_p;
