@@ -93,16 +93,16 @@ static Borland_workaround Borland_workaround_object;
 //               | -1+ulp | +inf |  zero |
 //               +--------+------+-------+
 
+// I use a global variable here to avoid constant propagation.
+double IA_min_double = CGAL_IA_MIN_DOUBLE;
+
 FPU_CW_t
 FPU_empiric_test()
 {
-    // If not marked "volatile", the result is false when optimizing
-    // because the constants are propagated at compile time !!!
-    volatile const double m = CGAL_IA_MIN_DOUBLE;
-    const double y = 1.0, z = -1.0;
+    double y = 1.0, z = -1.0;
     double ye, ze;
-    ye = y - m;
-    ze = z + m;
+    ye = y - IA_min_double;
+    ze = z + IA_min_double;
     if (y == ye && z == ze) return CGAL_FE_TONEAREST;
     if (y == ye) return CGAL_FE_UPWARD;
     if (z == ze) return CGAL_FE_DOWNWARD;
