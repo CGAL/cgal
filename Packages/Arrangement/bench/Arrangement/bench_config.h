@@ -14,6 +14,7 @@
 #define CONIC_TRAITS                    5
 #define EXACUS_CONIC_TRAITS             6
 #define CK_CONIC_TRAITS                 7
+#define CORE_CONIC_TRAITS               8
 
 #define DOUBLE_NT                       0
 #define GMPZ_NT                         1
@@ -25,8 +26,9 @@
 #define LAZY_GMPQ_NT                    7
 #define LAZY_QUOTIENT_MP_FLOAT_NT       8
 #define LEDA_REAL_NT                    9
-#define NIX_LEDA_FIELD_WITH_SQRT_NT     10
-#define NIX_CORE_FIELD_WITH_SQRT_NT     11
+#define CORE_EXPR_NT                    10
+#define NIX_LEDA_FIELD_WITH_SQRT_NT     11
+#define NIX_CORE_FIELD_WITH_SQRT_NT     12
 
 // Default value based on dependencies:
 #if BENCH_KERNEL == LEDA_KERNEL
@@ -68,6 +70,12 @@
 #if BENCH_TRAITS == EXACUS_CONIC_TRAITS
 #if !defined(BENCH_NT)
 #define BENCH_NT NIX_LEDA_FIELD_WITH_SQRT_NT
+#endif
+#endif
+
+#if BENCH_TRAITS == CORE_CONIC_TRAITS
+#if !defined(BENCH_NT)
+#define BENCH_NT CORE_EXPR_NT
 #endif
 #endif
 
@@ -122,6 +130,10 @@
      BENCH_NT == NIX_CORE_FIELD_WITH_SQRT_NT) && \
     BENCH_TRAITS != EXACUS_CONIC_TRAITS
 #error "NIX number type implies EXACUS conic traits!"
+#endif
+
+#if BENCH_TRAITS == CORE_CONIC_TRAITS && BENCH_NT != CORE_EXPR_NT
+#error "Core conic traits implies Core Expr number type!"
 #endif
 
 #endif

@@ -56,6 +56,15 @@
 #include <CGAL/IO/Qt_widget_Conic_arc_2.h>
 #endif
 
+#elif BENCH_TRAITS == CORE_CONIC_TRAITS
+#include <CORE/BigInt.h>
+#include <CGAL/Arr_conic_traits_2_core.h>
+#if defined(USE_CGAL_WINDOW)
+#include <CGAL/IO/Conic_arc_2_Window_stream_core.h>
+#else
+#include <CGAL/IO/Qt_widget_Conic_arc_2_core.h>
+#endif
+
 // Exacus Conics:
 #elif BENCH_TRAITS == EXACUS_CONIC_TRAITS
 #include <CnX/Conic_sweep_traits_2.h>
@@ -109,7 +118,7 @@
 #if BENCH_TRAITS == SEGMENT_TRAITS
 #include "Segment_reader.h"
 
-#elif BENCH_TRAITS == CONIC_TRAITS
+#elif BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS
 #include "Conic_reader.h"
 
 // Polyline reader:
@@ -182,6 +191,11 @@ typedef CGAL::Arr_polyline_traits_2<Segment_traits>     Traits;
 typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
 #define TRAITS_TYPE "Conics"
 
+#elif BENCH_TRAITS == CORE_CONIC_TRAITS
+typedef CORE::BigInt                                    CfNT;
+typedef CGAL::Arr_conic_traits_2<CfNT,Kernel>           Traits;
+#define TRAITS_TYPE "Conics"
+
 // Exacus Conics:
 #elif BENCH_TRAITS == EXACUS_CONIC_TRAITS
 typedef CnX::Conic_sweep_traits_2<Arithmetic_traits>    CST;
@@ -227,8 +241,8 @@ QApplication * App;
 #endif
 
 // PostScript support:
-#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != EXACUS_CONIC_TRAITS && \
-    BENCH_TRAITS != CK_CONIC_TRAITS
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
+    BENCH_TRAITS != EXACUS_CONIC_TRAITS && BENCH_TRAITS != CK_CONIC_TRAITS
 #define POSTSCRIPT_SUPPORTED 1
 #endif
 
@@ -270,7 +284,7 @@ public:
 #elif BENCH_TRAITS == POLYLINE_TRAITS || BENCH_TRAITS == POLYLINE_CACHED_TRAITS
     Polyline_reader<Traits> reader;
 
-#elif BENCH_TRAITS == CONIC_TRAITS
+#elif BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS
     Conic_reader<Traits> reader;
 
 #elif BENCH_TRAITS == EXACUS_CONIC_TRAITS

@@ -16,6 +16,7 @@ CACHED_POLYLINE_TRAITS =        4
 CONIC_TRAITS =                  5
 EXACUS_CONIC_TRAITS =           6
 CK_CONIC_TRAITS =               7
+CORE_CONIC_TRAITS =             8
 
 DOUBLE_NT =                     0
 GMPZ_NT =                       1
@@ -27,8 +28,9 @@ LAZY_LEDA_RAT_NT =              6
 LAZY_GMPQ_NT =                  7
 LAZY_QUOTIENT_MP_FLOAT_NT =     8
 LEDA_REAL_NT =                  9
-NIX_LEDA_FIELD_WITH_SQRT_NT =   10
-NIX_CORE_FIELD_WITH_SQRT_NT =   11
+CORE_EXPR_NT =                  10
+NIX_LEDA_FIELD_WITH_SQRT_NT =   11
+NIX_CORE_FIELD_WITH_SQRT_NT =   12
 
 # Force values:
 ifeq ($(BENCH_KERNEL), LEDA_KERNEL)
@@ -47,6 +49,10 @@ endif
 
 ifeq ($(BENCH_TRAITS), CONIC_TRAITS)
 BENCH_NT ?= $(LEDA_REAL_NT)
+endif
+
+ifeq ($(BENCH_TRAITS), CORE_CONIC_TRAITS)
+BENCH_NT ?= $(CORE_EXPR_NT)
 endif
 
 # default value:
@@ -79,6 +85,12 @@ error "Conic traits implies non leda kernel!"
 endif
 ifeq ($(BENCH_KERNEL), $(MY_KERNEL))
 error "Conic traits implies non my kernel!"
+endif
+endif
+
+ifeq ($(BENCH_TRAITS), $(CORE_CONIC_TRAITS))
+ifneq ($(BENCH_NT), $(CORE_EXPR_NT))
+error "Conic traits implies Core Expr number type!"
 endif
 endif
 
@@ -155,6 +167,10 @@ ifeq ($(BENCH_NT), $(LEDA_REAL_NT))
 TARGET0 := $(TARGET0)LedaReal
 LOBJDIR :=$(LOBJDIR)_leda_real
 else
+ifeq ($(BENCH_NT), $(CORE_EXPR_NT))
+TARGET0 := $(TARGET0)CoreExpr
+LOBJDIR :=$(LOBJDIR)_core_expr
+else
 ifeq ($(BENCH_NT), $(NIX_LEDA_FIELD_WITH_SQRT_NT))
 TARGET0 := $(TARGET0)NixLeda
 LOBJDIR :=$(LOBJDIR)_nix_leda
@@ -162,6 +178,7 @@ else
 ifeq ($(BENCH_NT), $(NIX_CORE_FIELD_WITH_SQRT_NT))
 TARGET0 := $(TARGET0)NixCore
 LOBJDIR :=$(LOBJDIR)_nix_core
+endif
 endif
 endif
 endif
@@ -225,6 +242,10 @@ ifeq ($(BENCH_TRAITS), $(CONIC_TRAITS))
 TARGET0 := $(TARGET0)Conic
 LOBJDIR :=$(LOBJDIR)_conic
 else
+ifeq ($(BENCH_TRAITS), $(CORE_CONIC_TRAITS))
+TARGET0 := $(TARGET0)CoreConic
+LOBJDIR :=$(LOBJDIR)_core_conic
+else
 ifeq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
 TARGET0 := $(TARGET0)ExacusConic
 LOBJDIR :=$(LOBJDIR)_exacus_conic
@@ -232,6 +253,7 @@ else
 ifeq ($(BENCH_TRAITS), $(CK_CONIC_TRAITS))
 TARGET0 := $(TARGET0)CkConic
 LOBJDIR :=$(LOBJDIR)_ck_conic
+endif
 endif
 endif
 endif
@@ -503,8 +525,11 @@ pol_cached_inst: leda_rat_cartesian_cached_pol_inst \
 conic:
 	$(MAKEF) "BENCH_NT=$(LEDA_REAL_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(CONIC_TRAITS)"
 
-conic_inst:
+leda_conic_inst:
 	$(MAKEF) "BENCH_NT=$(LEDA_REAL_NT)" "BENCH_TRAITS=$(CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
+
+core_conic_inst:
+	$(MAKEF) "BENCH_NT=$(CORE_EXPR_NT)" "BENCH_TRAITS=$(CORE_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "USE_CGAL_WINDOW=1" install
 
 leda_exacus_conic_inst:
 	$(MAKEF) "BENCH_NT=$(NIX_LEDA_FIELD_WITH_SQRT_NT)" "BENCH_TRAITS=$(EXACUS_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install

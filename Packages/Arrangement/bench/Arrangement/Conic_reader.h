@@ -41,9 +41,13 @@ public:
     for (int i = 0; i < count; i++) {
       read_curve(inp, cv);
       ++curves_out = cv;
+#if BENCH_TRAITS == CORE_CONIC_TRAITS      
+      bbox = CGAL::Bbox_2(-10, -10, 10, 10);
+#else
       CGAL::Bbox_2 curve_bbox = cv.bounding_box();
       if (i == 0) bbox = curve_bbox;
       else bbox = bbox + curve_bbox;      
+#endif
     }
     inp.close();
     return 0;

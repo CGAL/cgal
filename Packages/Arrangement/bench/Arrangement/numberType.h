@@ -42,6 +42,9 @@
 #elif BENCH_NT == LEDA_REAL_NT
 #include <CGAL/leda_real.h>
 
+#elif BENCH_NT == CORE_EXPR_NT
+#include <CGAL/CORE_Expr.h>
+
 // #elif BENCH_NT == NIX_ARITHMETIC_TRAITS_NT
 // #include <NiX/Arithmetic_traits.h>
 
@@ -114,6 +117,11 @@ typedef CGAL::Lazy_exact_nt<NT>                         WNT;
 typedef leda_real                                       NT;
 typedef NT                                              WNT;
 #define NUMBER_TYPE "Leda Real"
+
+#elif BENCH_NT == CORE_EXPR_NT
+typedef CORE::Expr                                      NT;
+typedef NT                                              WNT;
+#define NUMBER_TYPE "Core Expr"
 
 // #elif BENCH_NT == NIX_ARITHMETIC_TRAITS_NT
 // typedef NiX::Arithmetic_traits                       Arithmetic_traits;
