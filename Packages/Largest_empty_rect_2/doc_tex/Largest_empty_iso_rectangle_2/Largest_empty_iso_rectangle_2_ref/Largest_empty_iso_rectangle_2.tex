@@ -48,14 +48,10 @@ It is non mutable, bidirectional
 and its value type is \ccc{Point_2}. 
 It is invalidated by any insertion or removal of a point. 
 
-\ccNestedType{const_iterator}{iterator over points}
+\ccNestedType{const_iterator}{Iterator over the points.}
 
 
-The \ccRefName class also defines the following enum type to specify
-which case occurs when locating a point. 
 
-\ccEnum{enum Point_type {REG, BOT_RIGHT, BOT_LEFT, TOP_LEFT, TOP_RIGHT};}
-{}
 
 
 \ccCreation
@@ -113,7 +109,7 @@ the point set.}
 A word to degeneracies.
 
 \ccMethod{void 
-  insert(const Point_2& p, Point_type i_type = REG);}
+  insert(const Point_2& p);}
 {Inserts point \ccc{p} in the .\\
 If point \ccc{p} coincides with an already existing vertex, .}
 
