@@ -20,14 +20,15 @@
 
 #ifdef CGAL_USE_QT
 
-#include <CGAL/Qt_Window.h>
+#include <CGAL/IO/Qt_Window.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/IO/Qt_Window_tool.h>
 
 namespace CGAL {
 
 Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   QWidget(parent, name), initialized(false), Locked(), _pointSize(4),
-  _pointStyle(DISC)
+  _pointStyle(DISC), _has_tool(false), current_tool(0)
 {
   setCaption("CGAL::Qt_widget");
   initialize();
@@ -112,16 +113,58 @@ void Qt_widget::paintEvent(QPaintEvent *e)
 void Qt_widget::mousePressEvent(QMouseEvent *e)
 {
   emit(mousePressed(e));
+  if (has_tool())
+    current_tool->mousePressEvent(e);
 }
 
 void Qt_widget::mouseReleaseEvent(QMouseEvent *e)
 {
   emit(mouseReleased(e));
+  if (has_tool())
+    current_tool->mouseReleaseEvent(e);
 }
 
 void Qt_widget::mouseMoveEvent(QMouseEvent *e)
 {
   emit(mouseMoved(e));
+  if (has_tool())
+    current_tool->mouseMoveEvent(e);
+}
+
+void Qt_widget::wheelEvent(QMouseEvent *e)
+{
+  if (has_tool())
+    current_tool->wheelEvent(e);
+}
+
+void Qt_widget::mouseDoubleClickEvent(QMouseEvent *e)
+{
+  if (has_tool())
+    current_tool->mouseDoubleClickEvent(e);
+}
+
+void Qt_widget::keyPressEvent(QKeyEvent *e)
+{
+  if (has_tool())
+    current_tool->keyPressEvent(e);
+}
+
+void Qt_widget::keyReleaseEvent(QKeyEvent *e)
+{
+  if (has_tool())
+    current_tool->keyReleaseEvent(e);
+}
+
+void Qt_widget::enterEvent(QEvent *e)
+{
+  if (has_tool())
+    current_tool->enterEvent(e);
+}
+
+void Qt_widget::leaveEvent(QEvent *e)
+{
+  if (has_tool())
+    current_tool->leaveEvent(e);
 }
 
 void Qt_widget::init(double x_min, double x_max, double y_min)
@@ -184,6 +227,16 @@ int Qt_widget::y_pixel_dist(double d) const
     return( static_cast<int>(d*yscal+0.5) );
   else
     return( static_cast<int>(d*yscal-0.5) );
+}
+
+Qt_widget& Qt_widget::operator<<(Qt_widget_tool* tool)
+{
+  if (has_tool())
+    current_tool->detach();
+  current_tool=tool;
+  _has_tool=true;
+  tool->attach(this);
+  return *this;
 }
 
 Qt_widget& Qt_widget::operator<<(const Color& c)

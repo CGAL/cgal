@@ -38,7 +38,7 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:
-	make -C src Qt_Window.o
+	make -C src
 	make -C demo/Qt_window -f Makefile.local
 
 clean: 

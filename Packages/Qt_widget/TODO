@@ -1,10 +1,11 @@
-Put Qt_window.h in include/CGAL/IO
----
 Perhaps, my setBackgroundColor should use a const QColor& instead of a 
 single QColor as argument.
 As well as other properties.
 ---
-Tools system
+Tools system:
+~~~~~~~~~~~~
+The virtual base class is done.
+Need now to derive some implementation classes.
 ---
 Scenes system
 ---

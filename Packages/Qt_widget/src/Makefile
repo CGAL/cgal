@@ -39,14 +39,22 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
+all: Qt_Window.o Qt_Window_tool.o
+
 Qt_Window.o: Qt_Window.C Qt_Window.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Window.C
 
 Qt_Window.moc: ../include/CGAL/IO/Qt_Window.h
 	$(MOC) -o Qt_Window.moc $<
 
+Qt_Window_tool.o: Qt_Window_tool.C Qt_Window_tool.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Window_tool.C
+
+Qt_Window_tool.moc: ../include/CGAL/IO/Qt_Window_tool.h
+	$(MOC) -o Qt_Window_tool.moc $<
+
 clean:
-	rm -f Qt_Window.o
+	rm -f Qt_Window.o Qt_Window_tool.o
 
 #---------------------------------------------------------------------#
 #                    suffix rules

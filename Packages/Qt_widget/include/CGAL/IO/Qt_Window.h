@@ -31,6 +31,8 @@
 
 namespace CGAL {
 
+class Qt_widget_tool;
+
 enum PointStyle { PIXEL, CROSS, PLUS, CIRCLE, DISC, RECT, BOX };
 
 class Qt_widget : public QWidget {
@@ -124,6 +126,11 @@ public:
   inline double x_max() const { return xmax; };
   inline double y_max() const { return ymax; };
 
+  // tool system
+  // ~~~~~~~~~~~
+  inline bool has_tool() const { return _has_tool; };
+  Qt_widget& operator<<(Qt_widget_tool* tool);
+
 signals:
   void mousePressed(QMouseEvent *e);
   void mouseReleased(QMouseEvent *e);
@@ -136,6 +143,12 @@ protected:
   void mousePressEvent(QMouseEvent *e);
   void mouseReleaseEvent(QMouseEvent *e);
   void mouseMoveEvent(QMouseEvent *e);
+  void wheelEvent(QMouseEvent *e);
+  void mouseDoubleClickEvent(QMouseEvent *e);
+  void keyPressEvent(QKeyEvent *e);
+  void keyReleaseEvent(QKeyEvent *e);
+  void enterEvent(QEvent *e);
+  void leaveEvent(QEvent *e);
 
 private:
   void initialize(); // initialize initiale dimensions
@@ -158,6 +171,10 @@ private:
 
   double xmin, xmax, ymin, ymax; // real dimensions
   double xscal, yscal; // scalings int/double
+
+  // current tool
+  bool _has_tool;
+  Qt_widget_tool *current_tool;
 };
 
 typedef Qt_widget        Window_stream;
