@@ -93,6 +93,15 @@ the first rounding level for each segment.
 %structure consisting of several kd-trees instead. Hence, the above bounds
 %degrade but nor significantly.
 
+% new addition, Danny 14/4/04:
+The input to the program is a set $S$ of $n$ segments,
+$S=\{s_1,\ldots,s_n\}$ and the output is a set $G$ of $n$ polylines,
+with a polyline $g_i$ for each input segments $s_i$. An input segment
+is given by the coordinates of its endpoints. An output polyline is
+given by the ordered set of vertices $v_0,\ldots,v_k$ along the polyline,
+that is the polyline consists of the segments,
+$\bar{v_0v_1},\ldots,\bar{v_{k-1}v_k}$.
+
 There are three template parameters: \ccc{Traits} is the underlying geometry, i.e., the number type used
 and the coordinate representation. \ccc{InputIterator} is the type of the iterators that point to the first
 and after-the-last elements of the input. Finally, \ccc{OutputContainer} is the type of the output container.

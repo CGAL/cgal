@@ -69,17 +69,29 @@ basic requirement of SR.
   bool int_output = true,
   unsigned int number_of_kd_trees = 1);}
 
-The first two parameters denote the first and after-the-last iterators of the input segments.
-The third parameter is a reference to a container of the output polylines. Since a polyline
-is composed of a sequence of points, a polyline is a container itself.
-The forth parameter denotes the pixel size. The fifth parameter determines whether to apply
-ISR or SR. The sixth parameter determines the output representation.
-If the parameter value is {\it true}, then the output is represented in an integer
-grid where one unit is equal to pixel size. Otherwise, the plane is tiled
-with unit pixels with size {\it pixel\_size} and each vertex of the output is
-represented by the coordinates of the center of the hot pixel that contains it;
-These coordinates are not necessarily integers.
-The seventh (and last) parameter is described next.
+The first two parameters denote the first and after-the-last iterators
+of the input segments.  The third parameter is a reference to a
+container of the output polylines. Since a polyline is composed of a
+sequence of points, a polyline is a container itself.  The fifth
+parameter determines whether to apply ISR or SR.
+
+The forth parameter denotes the pixel size $w$. The plane will be
+tiled with square pixels of width $w$ such that the origin is the
+center of a pixel. The sixth parameter denotes the output
+representation. If the value of the sixth parameter is {\it true\/}
+then the centers of pixels constitute the integer grid, and hence the
+vertices of the output polylines will be integers. For example, the
+coordinates of the center of the pixel to the right of the pixel
+containing the origin will be $(1,0)$ regardless of the pixel width.
+If the value of the sixth parameter is {\it false\/}, then the centers
+of hot pixels (and hence the vertices of the output polylines) will
+bear their original coordinates, which may not necessarily be
+integers. In the latter case, the coordinates of the center of the
+pixel to the right of the pixel containing the origin, for example,
+will be $(w,0)$.
+
+The seventh (and last) parameter is briefly described next; for a
+detailed description see \cite{cgal:hp-isr-02}.
 
 \begin{ccAdvanced}
 
