@@ -48,8 +48,8 @@
 // PL flag enables the running of the test independently of cgal_make.)
 #ifndef CGAL_ARR_TEST_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
-//#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
-#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
+#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
+//#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
 #endif
 
@@ -174,8 +174,6 @@ std::ostream&  operator<<(std::ostream& os,
 std::istream&  operator>>(std::istream& in,  
 			  Curve& cv)
 {
-  typedef Curve::value_type           Point;
-
   std::size_t  size;
 
   in >> size;
