@@ -729,7 +729,8 @@ is_valid(bool verbose, int level) const
     return (dimension() == -1 && infinite_vertex() != NULL );
   }
     
-  bool result = true;
+  bool result = (dimension()>= 0);
+  CGAL_triangulation_assertion(result);
 
   //test the validity of the faces whatever dimension() is
   Iterator_base ib = Iterator_base(this); 
@@ -745,9 +746,11 @@ is_valid(bool verbose, int level) const
  
   // vertex count
   int vertex_count = 0;
-  for(Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it) {
+  for(Vertex_iterator it = vertices_begin(); it != vertices_end();
+      ++it) {
+    CGAL_triangulation_assertion( it->face() != NULL);
     result = result && it->is_valid(verbose,level);
-    CGAL_triangulation_assertion( it->is_valid(verbose, level) );
+    CGAL_triangulation_assertion( result );
     ++vertex_count;
   }
   result = result && (number_of_vertices() == vertex_count);

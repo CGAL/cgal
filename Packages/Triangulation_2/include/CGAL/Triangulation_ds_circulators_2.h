@@ -45,15 +45,15 @@ public:
     typedef Triangulation_ds_face_circulator_2<Vertex,Face> Face_circulator;
 
 private: 
-  Vertex* _v;
-  Face* pos;
+  const Vertex* _v;
+  const Face* pos;
 
 public:
   Triangulation_ds_face_circulator_2()
     : _v(NULL), pos(NULL)
   {}
   
-  Triangulation_ds_face_circulator_2(Vertex* v, Face* f=NULL);
+  Triangulation_ds_face_circulator_2(const Vertex* v, const Face* f=NULL);
         
   Triangulation_ds_face_circulator_2(const Face_circulator &fc)
     : _v(fc._v), pos(fc.pos)
@@ -111,8 +111,8 @@ public:
   typedef Triangulation_ds_vertex_circulator_2<Vertex, Face> 
                                           Vertex_circulator;
 private:
-  Vertex* _v;
-  Face* pos;
+  const Vertex* _v;
+  const Face* pos;
   int _ri;
   
 public:
@@ -120,7 +120,7 @@ public:
     :  _v(NULL), pos(NULL)
   {}
                 
-  Triangulation_ds_vertex_circulator_2( Vertex* v,  Face* f = NULL);
+  Triangulation_ds_vertex_circulator_2(const Vertex* v,const Face* f = NULL);
        
   Triangulation_ds_vertex_circulator_2(const Vertex_circulator &vc)
     :  _v(vc._v), pos(vc.pos), _ri(vc._ri)
@@ -197,15 +197,15 @@ public:
 
 private:
   int _ri;
-  Vertex* _v;
-  Face* pos;
+  const Vertex* _v;
+  const Face* pos;
 
 public:
   Triangulation_ds_edge_circulator_2()
     : _v(NULL), pos(NULL)
   {}
             
-   Triangulation_ds_edge_circulator_2( Vertex* v, Face* f=NULL);
+   Triangulation_ds_edge_circulator_2( const Vertex* v, const Face* f=NULL);
 
    Triangulation_ds_edge_circulator_2(const Edge_circulator &vc)
     : _ri(vc._ri), _v(vc._v), pos(vc.pos)
@@ -259,7 +259,7 @@ public:
 
 template < class Vertex, class Face >
 Triangulation_ds_face_circulator_2<Vertex,Face> ::
-Triangulation_ds_face_circulator_2(Vertex* v, Face* f)
+Triangulation_ds_face_circulator_2(const Vertex* v, const Face* f)
   : _v(v), pos(f)
 {
   if (_v == NULL) pos = NULL;
@@ -320,7 +320,7 @@ Triangulation_ds_face_circulator_2<Vertex,Face> ::
 operator*() const
 {
   CGAL_triangulation_precondition( (pos != NULL) && (_v != NULL) );
-  return *pos;
+  return const_cast<Face&>(*pos);
 }
 
 template < class Vertex, class Face >
@@ -329,13 +329,13 @@ Triangulation_ds_face_circulator_2<Vertex,Face> ::
 operator->() const
 {
   CGAL_triangulation_precondition( (pos != NULL) && (_v != NULL) );
-  return pos;
+  return const_cast<Face *>(pos);
 }
 
 
 template < class Vertex, class Face >
 Triangulation_ds_vertex_circulator_2<Vertex,Face> ::
-Triangulation_ds_vertex_circulator_2 (Vertex* v,  Face* f)
+Triangulation_ds_vertex_circulator_2 (const Vertex* v,  const Face* f)
   : _v( v ), pos(f)
 {
   if (_v == NULL) { pos = NULL;}
@@ -429,7 +429,7 @@ operator->() const
 
 template < class Vertex, class Face >
 Triangulation_ds_edge_circulator_2<Vertex,Face> ::
-Triangulation_ds_edge_circulator_2(Vertex* v, Face* f)
+Triangulation_ds_edge_circulator_2(const Vertex* v, const Face* f)
     : _v(v), pos(f)
 {
   if (_v == NULL) pos = NULL;

@@ -185,6 +185,7 @@ has_neighbor(const void* n, int& i) const
   }
   return false;
 }
+
     
     
 template <class Gt>      

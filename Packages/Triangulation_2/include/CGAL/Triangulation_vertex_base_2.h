@@ -43,13 +43,11 @@ public:
     :  _p(p), _f(f)
     {}
 
-  inline void set_point(const Point & p) { _p = p; }
-  inline void set_face(void* f) { _f = f ;}
+  void set_point(const Point & p) { _p = p; }
+  void set_face(void* f) { _f = f ;}
  
-  inline 
   const Point&  point() const { return _p; }
-     
-  inline void* face() const { return _f;}
+  void* face() const { return _f;}
  
     
   //the following trivial is_valid to allow
