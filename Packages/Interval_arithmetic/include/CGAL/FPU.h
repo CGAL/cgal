@@ -343,9 +343,15 @@ FPU_get_and_set_cw (FPU_CW_t cw)
     return old;
 }
 
-FPU_CW_t FPU_empiric_test(); // Only used for debug.
 
-void force_ieee_double_precision(); // Used by the Fixed_precision_nt.
+// The following is meant to truncate the mantissa of x86 FPUs to 53 bits.
+// It is used by the Fixed_precision_nt.
+inline void force_ieee_double_precision()
+{
+#if defined __i386__ || defined _MSC_VER || defined __BORLANDC__
+    FPU_set_cw(CGAL_FE_TONEAREST);
+#endif
+}
 
 // A class whose constructor sets the FPU mode to +inf, saves a backup of it,
 // and whose destructor resets it back to the saved state.
@@ -370,11 +376,7 @@ private:
 template <>
 struct Protect_FPU_rounding<false>
 {
-  Protect_FPU_rounding(FPU_CW_t CGAL_expensive_assertion_code(r)
-		        = CGAL_FE_UPWARD)
-  {
-    CGAL_expensive_assertion(FPU_empiric_test() == r);
-  }
+  Protect_FPU_rounding(FPU_CW_t = CGAL_FE_UPWARD) {}
 
   ~Protect_FPU_rounding() {}
   // just to shut up a warning, but it has a performance issue with GCC 2.95,

@@ -46,13 +46,6 @@ CGAL_BEGIN_NAMESPACE
 #endif
 
 
-void force_ieee_double_precision()
-{
-#if defined __i386__ || defined _MSC_VER || defined __BORLANDC__
-    FPU_set_cw(CGAL_FE_TONEAREST);
-#endif
-}
-
 #ifdef __BORLANDC__
 // Borland doesn't initialize the FPU exception mask correctly
 // => FP exceptions.
@@ -84,32 +77,6 @@ namespace CGALi {
 double minimin = init_min_double();
 }
 #endif
-
-// The results of 1-epsilon and -1+epsilon are enough
-// to detect exactly the current rounding mode.
-//                          1-MIN_DOUBLE
-//                        +------+-------+
-//                        |  1   | 1-ulp |
-//               +--------+------+-------+
-// -1+MIN_DOUBLE | -1     | near |  -inf |
-//               | -1+ulp | +inf |  zero |
-//               +--------+------+-------+
-
-// I use a global variable here to avoid constant propagation.
-double IA_min_double = CGAL_IA_MIN_DOUBLE;
-
-FPU_CW_t
-FPU_empiric_test()
-{
-    double y = 1.0, z = -1.0;
-    double ye, ze;
-    ye = y - IA_min_double;
-    ze = z + IA_min_double;
-    if (y == ye && z == ze) return CGAL_FE_TONEAREST;
-    if (y == ye) return CGAL_FE_UPWARD;
-    if (z == ze) return CGAL_FE_DOWNWARD;
-    return CGAL_FE_TOWARDZERO;
-}
 
 // needed in order that the test suite passes for Intel7
 namespace CGALi {
