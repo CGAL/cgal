@@ -236,7 +236,7 @@ class Lazy_exact_nt : public Handle
 {
 public :
   typedef typename Number_type_traits<ET>::Has_gcd      Has_gcd;
-  typedef typename Number_type_triats<ET>::Has_division Has_division;
+  typedef typename Number_type_traits<ET>::Has_division Has_division;
   typedef typename Number_type_traits<ET>::Has_sqrt     Has_sqrt;
 
   typedef Lazy_exact_nt<ET> Self;
