@@ -145,7 +145,11 @@ template <class NT>
 CGAL_KERNEL_INLINE
 NT
 abs(const NT& x)
-{ return (x < NT(0)) ? -x: x; }
+{
+    if (x < NT(0))
+	return -x;
+    return x;
+}
 
 template <class NT>
 CGAL_KERNEL_INLINE
