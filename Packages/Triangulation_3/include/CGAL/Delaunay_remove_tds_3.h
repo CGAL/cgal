@@ -29,7 +29,7 @@
 #include <map>
 #include <CGAL/utility.h>
 #include <CGAL/Triangulation_face_base_2.h>
-#include <CGAL/Triangulation_data_structure_using_list_2.h>
+#include <CGAL/Triangulation_data_structure_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -126,9 +126,9 @@ public:
   // Remove neighbor cw(i) and ccw(i) from the list
   void remove_neighbors_from_list(int i) {
     Delaunay_remove_tds_face_3_2 * n = 
-      (Delaunay_remove_tds_face_3_2*)neighbor(cw(i));
+      (Delaunay_remove_tds_face_3_2*)neighbor(Triangulation_utils_3::cw(i));
     n->remove_from_list();
-    n = (Delaunay_remove_tds_face_3_2*)neighbor(ccw(i));
+    n = (Delaunay_remove_tds_face_3_2*)neighbor(Triangulation_utils_3::ccw(i));
     n->remove_from_list();
   }
 
@@ -226,7 +226,7 @@ public:
 
 template <class T>
 class Delaunay_remove_tds_3_2 
-  : public Triangulation_data_structure_using_list_2< 
+  : public Triangulation_data_structure_2< 
            Delaunay_remove_tds_vertex_3_2<typename T::Vertex_handle>,
 	   Delaunay_remove_tds_face_3_2<typename T::Facet> > 
 {
@@ -236,17 +236,15 @@ public:
   typedef typename T::Vertex_handle Vertex_handle;
 
 private:
-  typedef Triangulation_data_structure_using_list_2< 
+  typedef Triangulation_data_structure_2< 
             Delaunay_remove_tds_vertex_3_2<typename T::Vertex_handle>,
             Delaunay_remove_tds_face_3_2<typename T::Facet> > TDSUL2;
 
-  typedef typename TDSUL2::Face Face_3_2;
 public:
   typedef typename TDSUL2::Face_iterator Face_iterator;
-
-  // At the moment, these handles are pointers.
-  typedef typename TDSUL2::Vertex*  Vertex_handle_3_2;
-  typedef typename TDSUL2::Face*    Face_handle_3_2;
+  typedef typename TDSUL2::Face          Face_3_2;
+  typedef typename TDSUL2::Vertex_handle Vertex_handle_3_2;
+  typedef typename TDSUL2::Face_handle   Face_handle_3_2;
 
   // FIXME : similar to operator>>(), isn't it ?  Should we try to factorize ?
   Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole ) {
@@ -350,7 +348,7 @@ public:
 
     for( Face_iterator fit2 = faces_begin(); fit2 != faces_end(); ++fit2) {
       f->set_n(&*fit2);
-      fit2->set_p(f);
+      fit2->set_p(&*f);
       f = &*fit2;
       for(int i = 0; i < 3; i++) {
 	// we mark an edge only on one side
@@ -359,7 +357,7 @@ public:
     }
     // f points to the last face
     f->set_n(dummy.n());
-    ((Face_handle_3_2)dummy.n())->set_p(f);
+    dummy.n()->set_p(&*f);
   }
 
   void remove_degree_3(Vertex_handle_3_2 v, Face_handle_3_2 f) 

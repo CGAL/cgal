@@ -27,14 +27,12 @@
 #include <vector>
 #include <memory>
 
-// What we want is a kind of STL like container/adapter with the following
+// What we want is a kind of STL like container/allocator with the following
 // properties, by decreasing priority :
 // - a fast get_new_element() and release_element().
 // - a compact representation, which should be N*sizeof(Elt) + o(N) (modulo
 //   alignment requirements).
 // - a bidirectional iterator over the (non-free = used) elements.
-// - use a real allocator.  Maybe this forces us to use a separate structure
-//   to store the free list, so maybe it's not so good...
 // - size() to know how many (non-free) elements we have.
 // - find() if an element is stored in the container or not.  This doesn't
 //   really need to be fast, but if we can... (used by is_cell()...).
@@ -75,13 +73,11 @@
 // object passed to DS_Container giving access to the list pointer, and if
 // NULL, then it means the Elt is free.
 
-// More questions :
-// - Should TDS use it also for the vertices, or is it enough like it is now ?
-//   It's not sure if it will be more compact... (an additional pointer,
-//   versus
-
-// TODO : A different container using the same interface should be possible
-// using an In_place_list (?).
+// TODO :
+// - Add a const_iterator
+// - The magic_key is not clean, we should preferably require
+//   some member functions from Elt to store the necessary information
+//   (a bit like In_place_list does).
 
 CGAL_BEGIN_NAMESPACE
 

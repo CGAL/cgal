@@ -1,3 +1,6 @@
+Version 1.103 (25 January 02)
+- Update wrt recent changes in the kernel and TDS_2.
+
 Version 1.102 (22 January 02)
 - Doc : update Tds_3 => TriangulationDataStructure_3.
 - Use STL_extension's Triple and Quadruple.

@@ -1194,7 +1194,8 @@ Delaunay_triangulation_3<Gt,Tds>::
 fill_hole_3D_ear(const std::vector<Facet> & boundhole)
 {
   typedef Delaunay_remove_tds_3_2<Delaunay_triangulation_3> Surface;
-  typedef typename Surface::Face_handle_3_2 Face_handle_3_2;
+  typedef typename Surface::Face_3_2          Face_3_2;
+  typedef typename Surface::Face_handle_3_2   Face_handle_3_2;
   typedef typename Surface::Vertex_handle_3_2 Vertex_handle_3_2;
 
   // The list of cells that gets created, so that we know what
@@ -1218,7 +1219,7 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
     k++;
     if(k == 3) {
       // The faces form a circular list. With f->n() we go to the next face.
-      f = (Face_handle_3_2)f->n();
+      f = (Face_3_2*) f->n();
       if(f == last_op) {
 	// We looked at all edges without doing anything, that is we are
 	// in an infinite loop. ==> Panic mode, delete created cells.
@@ -1334,10 +1335,10 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
       // The adjacent edges may be a concavity
       // that is they are candidates for an ear
       // In the list of faces they get moved behind f
-      f->mark_edge(cw(ni), f);
-      f->mark_edge(ccw(ni), f);
-      n->mark_edge(cw(fi), f);
-      n->mark_edge(ccw(fi), f);
+      f->mark_edge(cw(ni), &*f);
+      f->mark_edge(ccw(ni), &*f);
+      n->mark_edge(cw(fi), &*f);
+      n->mark_edge(ccw(fi), &*f);
 
       f->set_info(Facet(ch,2));
       n->set_info(Facet(ch,1));
