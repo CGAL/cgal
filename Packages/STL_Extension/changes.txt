@@ -1,3 +1,6 @@
+16 June 2004 Menelaos Karavelas
+- removed the CGAL_NO_DEPRECATED_CODE macro in Compact_container.h
+
 20 May 2004 Sylvain Pion
 - Add Compare_to_less.
 

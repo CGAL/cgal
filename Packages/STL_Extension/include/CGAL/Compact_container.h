@@ -678,17 +678,12 @@ namespace CGALi {
       return *this;
     }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-    // This is marked as deprecated in order to be able to test
-    // our code without the feature, but we want to keep it forever
-    // for backward compatibility.
     // Construction from NULL
     CC_iterator(CGAL_NULL_TYPE CGAL_assertion_code(n))
     : p(NULL)
     {
       CGAL_assertion( n == NULL);
     }
-#endif
 
   private:
 
@@ -761,13 +756,11 @@ namespace CGALi {
     reference operator*() const { return *p; }
     pointer   operator->() const { return p; }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
     // For std::less...
     bool operator<(const CC_iterator& other) const
     {
       return p < other.p;
     }
-#endif
 
     // Can itself be used for bit-squatting.
     void *   for_compact_container() const { return (void *) p; }
@@ -814,10 +807,6 @@ namespace CGALi {
                   const CC_iterator<DSC, false> &lhs)
   { return &*rhs != &*lhs; }
 
-  // This is marked as deprecated in order to be able to test
-  // our code without the feature, but we want to keep it forever
-  // for backward compatibility.
-#ifndef CGAL_NO_DEPRECATED_CODE
   template < class DSC, bool Const >
   inline
   bool operator==(const CC_iterator<DSC, Const> &rhs,
@@ -872,7 +861,6 @@ namespace CGALi {
     CGAL_assertion( n == NULL);
     return &*rhs != NULL;
   }
-#endif
 
 #else
   template < class DSC, bool Const1, bool Const2 >
@@ -891,10 +879,6 @@ namespace CGALi {
     return &*rhs != &*lhs;
   }
 
-  // This is marked as deprecated in order to be able to test
-  // our code without the feature, but we want to keep it forever
-  // for backward compatibility.
-#ifndef CGAL_NO_DEPRECATED_CODE
   template < class DSC, bool Const >
   inline
   bool operator==(const CC_iterator<DSC, Const> &rhs,
@@ -912,7 +896,6 @@ namespace CGALi {
     CGAL_assertion( n == NULL);
     return &*rhs != NULL;
   }
-#endif
 
 #endif
 
