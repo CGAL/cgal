@@ -33,7 +33,7 @@ typedef R::Triangle_3				Triangle_3;
 typedef R::Plane_3   				Plane_3;
 
 
-typedef CGAL::Creator_uniform_3<double,Point_3>               Creator;
+typedef CGAL::Creator_uniform_3<Precise_rational, Point_3>    Creator;
 typedef CGAL::Random_points_in_sphere_3<Point_3,Creator>      Generator;
 
 void test_coplanar_xy()
