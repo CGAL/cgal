@@ -41,7 +41,6 @@
  *  Laurent Saboret 01/2005: Change for CGAL:
  *		- Added OpenNL namespace
  *		- solve() returns true on success
- *		- test divisions by zero
  */
 
 #ifndef __BICGSTAB__
@@ -51,13 +50,6 @@
 #include <cassert>
 
 namespace OpenNL {
-
-
-// Utility macro to display a variable's value
-// Usage: x=3.7; cerr << STREAM_TRACE(x) << endl;
-//        prints
-//        x=3.7
-#define STREAM_TRACE(var) #var << "=" << var << " "
 
 
 /**
@@ -77,7 +69,7 @@ namespace OpenNL {
  * @param x initial value.
  * @param eps threshold for the residual.
  * @param max_iter maximum number of iterations.
- */
+  */    
 
 template < class MATRIX, class VECTOR> class Solver_BICGSTAB {
 public:
@@ -119,7 +111,7 @@ public:
         Vector Ad(n) ;
         Vector t(n) ;
         Vector& s = h ;
-        CoeffType rTh, rTAd, rr, alpha, beta, omega, st, tt;
+        CoeffType rTh, rTAd, rTr, alpha, beta, omega, st, tt;
         unsigned int its=0;										// Loop counter
         CoeffType err=epsilon_*epsilon_*BLAS<Vector>::dot(b,b);	// Error to reach
 
@@ -134,21 +126,9 @@ public:
         assert( BLAS<Vector>::dot(rT,rT)>1e-40 );
 
 		rTh=BLAS<Vector>::dot(rT,h);							// (rT|h)
-        rr=BLAS<Vector>::dot(r,r);								// Current error (r|r)
+        rTr=BLAS<Vector>::dot(r,r);								// Current error (r|r)
 
-#ifndef NDEBUG 
-		// Debug trace
-		std::cerr << std::endl << "solve: start: " << STREAM_TRACE(n) << STREAM_TRACE(max_iter) << STREAM_TRACE(err) << std::endl;
-#endif
-
-		while ( rr>err && its < max_iter) 
-		{
-#ifndef NDEBUG 
-			// Debug trace
-			if (its % 10 == 0)
-				std::cerr << "solve: " << STREAM_TRACE(its) << STREAM_TRACE(rr) << STREAM_TRACE(alpha) << STREAM_TRACE(beta) << STREAM_TRACE(omega) << STREAM_TRACE(rTh) << std::endl;
-#endif
-
+        while ( rTr>err && its < max_iter) {
             mult(A,d,Ad);
             rTAd=BLAS<Vector>::dot(rT,Ad);
             assert( fabs(rTAd)>1e-40 );
@@ -170,32 +150,15 @@ public:
             BLAS<Vector>::axpy(-omega,s,x);
             BLAS<Vector>::copy(s,h);
             BLAS<Vector>::axpy(-omega,t,h);
-			if( fabs(rTh)<=1e-40 )								// LS 03/2005: avoid division by zero 
-			{
-				// Stop solver (TO BE CHECKED BY Bruno Levy)
-				std::cerr << "solve: unexpected error: " << STREAM_TRACE(rTh) << std::endl;
-				break;
-			}
-			if( fabs(omega)<=1e-40 )							// LS 03/2005: avoid division by zero 
-			{
-				// Stop solver (TO BE CHECKED BY Bruno Levy)
-				std::cerr << "solve: unexpected error: " << STREAM_TRACE(omega) << std::endl;
-				break;
-			}
             beta=(alpha/omega)/rTh; rTh=BLAS<Vector>::dot(rT,h); beta*=rTh;
             BLAS<Vector>::scal(beta,d);
             BLAS<Vector>::axpy(1,h,d);
             BLAS<Vector>::axpy(-beta*omega,Ad,d);
-            rr=BLAS<Vector>::dot(r,r);
+            rTr=BLAS<Vector>::dot(r,r);
             its++ ;
         }
 
-		bool success = (rr <= err);
-#ifndef NDEBUG 
-		// Debug trace
-		if ( ! success )
-			std::cerr << "solve: failure: " << STREAM_TRACE(its) << STREAM_TRACE(max_iter) << STREAM_TRACE(rr) << STREAM_TRACE(err) << std::endl;
-#endif
+		bool success = (rTr <= err);
 		return success;
     }
 
