@@ -707,6 +707,30 @@
 \newcommand{\protocgal}{{\sc C++gal}}
 \newcommand{\plageo}{{\sc Plageo}}
 
+% +--------------------------------------------------------------------------
+% | Macros that expand to the special characters \{} but with the
+% | character catcode 12, which allows to use them as normal characters.
+% |
+% | \ccOpenBrace, \ccCloseBrace, \ccBackslash
+% +--------------------------------------------------------------------------
+\catcode`\|=0
+\catcode`\[=1
+\catcode`\]=2
+|catcode`\\=12
+|catcode`|{=12
+|catcode`|}=12    
+|newcommand[|ccBackslash][\]%
+|newcommand[|ccOpenBrace][{]%
+|newcommand[|ccCloseBrace][}]%
+|catcode`|\=0
+|catcode`|{=1
+|catcode`|}=2    
+\catcode`\|=12
+\catcode`\[=12
+\catcode`\]=12
+
+
+
 % ___________________________________________________________________________
 % ###########################################################################
 % |
