@@ -23,7 +23,7 @@
 #define CGAL_QT_WIDGET_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/intersections.h>
 //temporary, should remove next line!!
 #include <CGAL/Triangle_2_Iso_rectangle_2_intersection.h>
@@ -518,33 +518,41 @@ Qt_widget& operator<<(Qt_widget& w, const Point_2<R>& p)
 template <class R>
 Qt_widget& operator<<(Qt_widget& w, const Segment_2<R>& s)
 {
+  typedef Simple_cartesian<double> RT;
 
-  typename R::FT xr1, yr1, xr2, yr2;
+  double xr1, yr1, xr2, yr2;
+  double scs_x, scs_y, sct_x, sct_y;
+  scs_x = to_double(s.source().x());
+  scs_y = to_double(s.source().y());
+  sct_x = to_double(s.target().x());
+  sct_y = to_double(s.target().y());
+
   xr1 = w.x_real(0); xr2 = w.x_real(w.geometry().width());
   //next condition true if is outside on the X axes
-  if((s.source().x() < xr1 && s.target().x() < xr1) ||
-     (s.source().x() > xr2 && s.target().x() > xr2))
+  if((scs_x < xr1 && sct_x < xr1) ||
+     (scs_x > xr2 && sct_x > xr2))
     return w;
   else{
     yr2 = w.y_real(0); yr1 = w.y_real(w.geometry().height());
     //next condition true if is outside on the Y axes
-    if((s.source().y() < yr1 && s.target().y() < yr1) ||
-       (s.source().y() > yr2 && s.target().y() > yr2))
+    if((scs_y < yr1 && sct_y < yr1) ||
+       (scs_y > yr2 && sct_y > yr2))
       return w;
   }
+  
   //if is here, the segment intersect the screen boundaries or is inside
   int x1, y1, x2, y2;
-  Segment_2<R>  sr;
+  Segment_2<RT>  sr;
+  sr = Segment_2<RT>(Point_2<RT>(scs_x, scs_y), Point_2<RT>(sct_x, sct_y));;  
   //next condition true if the segment is inside
-  if(s.source().x() >= xr1 && s.source().x() <= xr2 &&
-     s.target().x() >= xr1 && s.target().x() <= xr2 && 
-     s.source().y() >= yr1 && s.source().y() <= yr2 &&
-     s.target().y() >= yr1 && s.target().y() <= yr2)
-    sr = s;
-  else{
-    Iso_rectangle_2<R> r = Iso_rectangle_2<R>(Point_2<R>(xr1, yr1),
-                                              Point_2<R>(xr2, yr2));
-    CGAL::Object obj = CGAL::intersection(r, s);  
+  if(!(scs_x >= xr1 && scs_x <= xr2 &&
+     sct_x >= xr1 && sct_x <= xr2 && 
+     scs_y >= yr1 && scs_y <= yr2 &&
+     sct_y >= yr1 && sct_y <= yr2))
+    {
+    Iso_rectangle_2<RT> r = Iso_rectangle_2<RT>(Point_2<RT>(xr1, yr1),
+                                              Point_2<RT>(xr2, yr2));
+    CGAL::Object obj = CGAL::intersection(r, sr);  
     Point_2<R>    p;
     if (CGAL::assign(p, obj)){
       w << p;
@@ -558,7 +566,6 @@ Qt_widget& operator<<(Qt_widget& w, const Segment_2<R>& s)
   y1 = w.y_pixel(to_double(sr.source().y()));
   y2 = w.y_pixel(to_double(sr.target().y()));
   w.get_painter().drawLine(x1, y1, x2, y2);
-
   w.do_paint();
   return w;
 }
@@ -569,7 +576,7 @@ Qt_widget& operator<<(Qt_widget& w, const Segment_2<R>& s)
 template <class R>
 Qt_widget& operator<<(Qt_widget& w, const Line_2<R>& l)
 {
-  typedef Cartesian<double> Rep;
+  typedef Simple_cartesian<double> Rep;
   typedef Point_2<Rep> Point;
 
   const Point_2<R>
@@ -614,7 +621,7 @@ Qt_widget& operator<<(Qt_widget& w, const Line_2<R>& l)
 template <class R>
 Qt_widget& operator<<(Qt_widget& w, const Ray_2<R>& r)
 {
-  typedef Cartesian<double> Rep;
+  typedef Simple_cartesian<double> Rep;
   typedef Point_2<Rep> Point;
 
   const Point_2<R>
