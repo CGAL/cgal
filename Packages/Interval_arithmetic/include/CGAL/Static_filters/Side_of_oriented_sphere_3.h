@@ -123,12 +123,15 @@ public:
                                    qtx,qty,qtz,qt2,
                                    stx,sty,stz,st2);
 
+#if 1
     // Try a fully static bound first, when possible.
     if (det >  _static_epsilon) return ON_POSITIVE_SIDE;
     if (det < -_static_epsilon) return ON_NEGATIVE_SIDE;
+#endif
 
     CGAL_PROFILER(st_fail, "In_sphere_3 static failures")
 
+#if 1
     // We compute the semi-static bound.
     double maxx = fabs(px);
     if (maxx < fabs(qx)) maxx = fabs(qx);
@@ -160,7 +163,9 @@ public:
     if (det < -eps) return ON_NEGATIVE_SIDE;
 
     CGAL_PROFILER(fail, "In_sphere_3 semi-static failures")
+#endif
 
+#if 1
     // This predicate is different from Orientation_3 in that all arguments are
     // local.  Thus the differences have a big probability to have been exact,
     // and helps a lot in reducing the bound of the last column.
@@ -206,6 +211,7 @@ public:
         if (det < -eps) return ON_NEGATIVE_SIDE;
         CGAL_PROFILER(step2, "In_sphere_3 step2 failures")
     }
+#endif
     CGAL_PROFILER(step3, "In_sphere_3 step3")
 
     typedef Simple_cartesian<Filtered_exact<double, MP_Float> > K;

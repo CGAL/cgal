@@ -108,13 +108,15 @@ private:
     double det = det3x3_by_formula(pqx, pqy, pqz,
                                    prx, pry, prz,
                                    psx, psy, psz);
-
+#if 1
     // Fully static filter first.
     if (det >  _static_epsilon) return POSITIVE;
     if (det < -_static_epsilon) return NEGATIVE;
+#endif
 
     CGAL_PROFILER(st_fail, "Orientation_3 static failures")
 
+#if 1
     // Then semi-static filter.
     double maxx = fabs(px);
     if (maxx < fabs(qx)) maxx = fabs(qx);
@@ -134,6 +136,7 @@ private:
     if (det < -eps) return NEGATIVE;
 
     CGAL_PROFILER(fail, "Orientation_3 semi-static failures")
+#endif
 
     // Experiments showed that there's practically no benefit for testing when
     // the initial substractions were done exactly.  In most cases where the
