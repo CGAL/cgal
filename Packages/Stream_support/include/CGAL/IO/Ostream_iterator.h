@@ -60,25 +60,6 @@ public:
     }
 };
 
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-template <class T, class Stream> inline
-std::output_iterator_tag
-iterator_category( const Ostream_iterator<T,Stream>&) {
-    return std::output_iterator_tag();
-}
-template <class T, class Stream> inline
-T*
-value_type( const Ostream_iterator<T,Stream>&) {
-    return (T*)0;
-}
-template <class T, class Stream> inline
-Iterator_tag
-query_circulator_or_iterator(
-    const Ostream_iterator<T,Stream>&) {
-    return Iterator_tag();
-}
-#endif
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_IO_OSTREAM_ITERATOR_H

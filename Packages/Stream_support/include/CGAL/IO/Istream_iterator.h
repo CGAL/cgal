@@ -78,30 +78,6 @@ public:
     }
 };
 
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-template <class T, class Stream> inline
-std::input_iterator_tag
-iterator_category( const Istream_iterator<T,Stream>&) {
-    return std::input_iterator_tag();
-}
-template <class T, class Stream> inline
-T*
-value_type( const Istream_iterator<T,Stream>&) {
-    return (T*)0;
-}
-template <class T, class Stream> inline
-std::ptrdiff_t*
-distance_type( const Istream_iterator<T,Stream>&) {
-    return (std::ptrdiff_t*)0;
-}
-template <class T, class Stream> inline
-Iterator_tag
-query_circulator_or_iterator(
-    const Istream_iterator<T,Stream>&) {
-    return Iterator_tag();
-}
-#endif
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_IO_ISTREAM_ITERATOR_H

@@ -31,6 +31,4 @@ struct MyKernel
   : public MyCartesian_base<MyKernel<FT_>, CGAL::Cartesian<FT_> >
 {};
 
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_TEMPLATE(MyKernel)
-
 #endif // MYKERNEL_H

@@ -1,9 +1,11 @@
-Stream_support Package: Release changes:
----------------------------------------------------------------------
+2.27 (18 Jan 2004)
+- Remove obsolete *ITERATOR_TRAITS_POINTER_SPEC* workarounds.
 
 2.26 (10 Dec 2003) [rursu]
 - Files with common functionality were moved into this package 
   from Polyhedron_IO
+
+=========================== CGAL 3.0 ============================
 
 2.25 (22 Octo 2003)
 - changed headers
