@@ -1,4 +1,7 @@
 
+Version 2.76 (14 October 2003) [af]
+- Removed inclusion of Kdtree related pages in documentation
+
 Version 2.76 (1 October 2003) [af]
 - Removed kdtree
 
