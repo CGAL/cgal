@@ -10,6 +10,8 @@ a negocier
 
 General
 - constructeurs pour avoir Triangulation T(points.begin(), points.end()); 
+- mettre des locate_2D, locate_3D, insert idem, pour eviter les tests 
+  redondants sur la dimension a chaque insertion.
 - trouver une interface avec T_2 qui permette d'eviter de reprogrammer 
   tout le 2d dans le 3d
 - insure
