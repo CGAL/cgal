@@ -71,12 +71,12 @@ public:
   //face() is the first face adjacent to the vertex
   // in counterclockwise order
 
-  bool is_on_boundary()
-  {
-    Face * f= face();
-    int i= f->index(this);
-    return (f->neighboor(cw(i)) == NULL);
-  }
+//   bool is_on_boundary()
+//   {
+//     Face * f= face();
+//     int i= f->index(this);
+//     return (f->neighboor(cw(i)) == NULL);
+//   }
   
   int degree() const
   {
