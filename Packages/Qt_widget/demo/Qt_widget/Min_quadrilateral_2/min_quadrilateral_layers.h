@@ -1,4 +1,5 @@
 #include <CGAL/IO/Qt_widget_layer.h>
+#include <CGAL/IO/Qt_widget_Polygon_2.h>
 
 //CGAL
 #include <CGAL/Cartesian.h>

@@ -195,8 +195,8 @@ private slots:
 	
 
 private:
-  CGAL::Qt_widget	  *widget;		
-  CGAL::Tools_toolbar	  *newtoolbar;
+  CGAL::Qt_widget       *widget;		
+  CGAL::Tools_toolbar   *newtoolbar;
   CGAL::Qt_widget_standard_toolbar  *stoolbar;
   CGAL::Layers_toolbar	  *vtoolbar;
   int			  old_state;  	
