@@ -1,13 +1,16 @@
 
-Ajouter test dans Delaunay pour
-does_conflict
-find_conflicts
+- defaults template parameter pour triangulations reguliere,
+contrainte et delaunay contrainte
+- documenter les defaults et faire un exemple
+- revoir remove dans Constrained_Delaunay_triangulaion_2
+- ajouter Remove_constraint dans Constrained_Delaunay_triangulaion_2
+- ajouter des acces a la hierarchie dans
+ Constrained_triangulation_plus
+- documenter Constrained_triangulation_plus_2
 
-Corriger la doc pour includes_edge in Triangulation_2
 
+- Corriger la doc pour includes_edge in Triangulation_2
 
-
-Nouvelle triangulation
 - triangulation contrainte avec intersection
   ne marche pas pour des points!= CGAL::Point_2
  modifier les requirements pour la traits class

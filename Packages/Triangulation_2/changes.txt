@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.88 (14/5/01)
+- fixed missind std:: in front of back_inserter
+
 Ver 4.87 (7/5/01)
 - default template parameters for Delaunay_triangulation_2.h
 - added forgotten file Dummy_output_iterator.h
