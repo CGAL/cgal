@@ -1,5 +1,5 @@
 
-#include "include/tst-link.h"
+#include "include/tstlink.h"
 
 int toto_2 (void)
 {
