@@ -41,7 +41,7 @@
 typedef leda_rational                                   NT;
 
 #if defined(USE_LEDA_KERNEL)
-typedef CGAL::leda_rat_kernel_traits                    Kernel;
+typedef CGAL::leda_rat_kernel_traits                    Traits;
 #define PM_TYPE "Leda Kernel"
 #else
 #if defined(USE_MY_KERNEL)
@@ -206,11 +206,8 @@ public:
   virtual void op()
   {
     Strategy strategy;
-    Pm pm(&strategy);
-    Traits traits;
-    CGAL::sweep_to_construct_planar_map_2(m_curveList.begin(),
-                                          m_curveList.end(),
-                                          traits, pm);
+    Pmwx pm(&strategy);
+    pm.insert(m_curveList.begin(), m_curveList.end());
     // if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
   }
 };
