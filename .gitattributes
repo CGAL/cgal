@@ -1410,6 +1410,7 @@ Packages/Polyhedron/examples/Polyhedron/corner.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_hole.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Packages/Polyhedron/examples/Polyhedron/cross.off -text
+Packages/Qt_widget/demo/Qt_widget/Alpha_shapes_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Convex_Hull_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Partition_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/demo.dsp -text
