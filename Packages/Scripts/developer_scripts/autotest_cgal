@@ -32,7 +32,6 @@ GUNZIP="gunzip"
 COMPRESSOR="${GZIP}"
 SENDMAIL="mail"
 CGAL_TESTER=`whoami`
-MAIL_SUBMIT_ADDRESS="Sylvain.Pion@sophia.inria.fr"
 CONSOLE_OUTPUT="y"
 CGAL_ROOT=`pwd`
 FTP_SERVER="ftp-sop.inria.fr"
