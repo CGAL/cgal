@@ -1,10 +1,13 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 6.08 (31/1/02)
+- a few more typenames in Constraint_hierarchy_2.h
+- change include for pair to utility  and some std::
+
 Ver 6.07 (31/1/02)
 - fixed references to leda_color in demo/Delaunay.C
 - fixed warning for unused variables in demoa
-
 
 Ver 6.06 (31/1/02)
 - fixed the clean target of test/Triangulation_2_constrained
