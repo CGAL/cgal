@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 7.78 ()
+- changed the flip(Facs_handle,int) in Constrained_Delaunay_triangulation_2.h
+- fixed bug introduced by Menelaos with the opeartor= of Triangulation_ds_circulator_2
+
 ver 7.77 (23/05/03)
 - resubmitted because of an error introduced in _test_types.h
 
