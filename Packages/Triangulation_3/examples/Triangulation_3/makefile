@@ -46,7 +46,7 @@ example1: example1.o
 
 
 clean:
-	rm -rf *~ *.o core tr
+	rm -rf *~ *.o core 
 
 realclean: clean
 	rm -rf example1 Program* Compiler* Error* error.txt output
