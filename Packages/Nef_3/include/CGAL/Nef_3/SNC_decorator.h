@@ -488,7 +488,8 @@ public:
       }
       else if ( assign( sl, fc)) {
 	SM_decorator SD;
-	TRACEN( "adjacent facet found (SHalfloop cycle)." << SD.circle(sl) << " with facet " << plane(facet(sl)));
+	TRACEN( "adjacent facet found (SHalfloop cycle)." << SD.circle(sl) 
+		<< " with facet " << plane(facet(sl)));
 	f_visible = facet(twin(sl));
 	TRACEN("f_visible" << plane(f_visible));
       }
@@ -499,51 +500,69 @@ public:
     return f_visible;
   }
  
-  Halffacet_handle get_visible_facet( const Halfedge_handle e,
+  Halffacet_handle get_visible_facet( const Halfedge_handle ee,
                                       const Ray_3& ray) const {
-    //{\Mop when one shoot a ray |ray| in order to find the facet below to
-    //  an object, and an edge |e| is hit, we need to choose one of the two 
-   //   facets in the adjacency list of |e| that could be 'seen'  from the
-   //   piercing point of the |ray| on the local (virtual) view  of |e|
-   //   \precondition |ray| target belongs to |e|. } 
+   //{\Mop when one shoot a ray |ray| in order to find the facet below to
+   //  an object, and an edge |e| is hit, we need to choose one of the two 
+   //  facets in the adjacency list of |e| that could be 'seen'  from the
+   //  piercing point of the |ray| on the local (virtual) view  of |e|
+   //  \precondition |ray| target belongs to |e|. } 
 
-    SM_decorator SD;
+    Halfedge_handle e(ee);
+
+    SM_decorator SD(source(e));
     if( SD.is_isolated(e))
       return Halffacet_handle();
+    
+    // We search for the plane in the adjacency list of e, which is closest
+    // to the ray. The cross product of the direction of e and the orthogonal
+    // vector of a plane gives us a vector vec0/vec1 on the plane of the facet 
+    // and orthogonal to e, pointing inside of the facet.
 
     Vector_3 ev(segment(e).direction()), rv(ray.direction());
-    SHalfedge_around_svertex_circulator sh(SD.first_out_edge(e)), send(sh);
-    Halffacet_handle res = facet(sh);    
+    SHalfedge_around_svertex_circulator sh(SD.first_out_edge(e));
+    Halffacet_handle res = facet(sh); 
     Vector_3 vec0(cross_product(ev,plane(res).orthogonal_vector()));
+    CGAL_nef3_assertion(Sphere_segment(SD.point(SD.source(sh)),
+				       SD.point(SD.target(sh))).has_on(vec0));
+    SHalfedge_around_svertex_circulator send(sh);
     TRACEN("initial face candidate "<< plane(res) << " with vector  " << vec0);
-    
-    CGAL_For_all(sh,send) {
-      Vector_3 vec1(cross_product(ev,plane(facet(sh)).orthogonal_vector()));
-      TRACEN("test face candidate "<< plane(facet(sh)) << " with vector  " << vec1);
-    }
- 
+
+    // We compare the vectors vec0/vec1 of the facets. The one that is nearest 
+    // to pointing in the opposite direction of the ray, is chosen. The 
+    // respective facet is the nearest to the ray.
+
     sh++;
     CGAL_For_all(sh,send) {
       Vector_3 vec1(cross_product(ev,plane(facet(sh)).orthogonal_vector()));
-      TRACEN("test face candidate "<< plane(facet(sh)) << " with vector  " << vec1);
+      TRACEN("test face candidate "<< plane(facet(sh))<<" with vector  "<<vec1);
       FT sk0(rv*vec0),  sk1(rv*vec1);
       if(sk0<FT(0) && sk1>FT(0))
         continue;
       if(sk0>FT(0) && sk1<FT(0)) {
-        res = facet(sh);
+        res = facet(sh); 
+	vec0 = vec1;
 	continue;
       }
 
+      // We have to comapare the two skalar products sk0 and sk1. Therefore 
+      // we have to normalize the input vectors vec0 and vec1, which means
+      // that we have to divide them by their lengths len0 and len1. 
+      // To cicumvent irrational numbers, we sqaure the whole inequality.
+
       FT len0 = vec0.x()*vec0.x()+vec0.y()*vec0.y()+vec0.z()*vec0.z();
       FT len1 = vec1.x()*vec1.x()+vec1.y()*vec1.y()+vec1.z()*vec1.z();
-      FT sq0 = sk0 * sk0;
-      FT sq1 = sk1 * sk1;     
-      FT diff = len0*sq1 - len1*sq0;
+      FT diff = len0*sk1*sk1 - len1*sk0*sk0;
 
-      if((sk0>FT(0) && diff<FT(0)) || (sk0 < FT(0) && diff>FT(0)))
-        res= facet(sh);
+      if((sk0>FT(0) && diff<FT(0)) || (sk0<FT(0) && diff>FT(0))) {
+        res = facet(sh);
+	vec0 = vec1;
+      }
     }
  
+    // We have to check which of the two halffacet is visible from
+    // the ray. 
+
     if(rv*plane(res).orthogonal_vector() > FT(0))
       res = twin(res);
 
