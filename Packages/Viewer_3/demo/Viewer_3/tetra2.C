@@ -58,19 +58,19 @@ tetra schrink(tetra tet)
 int main(int argc, char *argv[]) 
 {
   int ex_array[6];
-  ex_array[0] = 0;
+  ex_array[0] = -140;
   ex_array[1] = 500;
-  ex_array[2] = 0;
-  ex_array[3] = 500;
-  ex_array[4] = 0;
-  ex_array[5] = 500;
+  ex_array[2] = -350;
+  ex_array[3] = 400;
+  ex_array[4] = -250;
+  ex_array[5] = 300;
 
   CGAL::Viewer_3 W(ex_array, 6);
 
   Delaunay_3 tr;
   
   tr.insert(point_t(100,100,100));
-  tr.insert(point_t(100,100,100));
+  //  tr.insert(point_t(100,100,100));
   tr.insert(point_t(400,100,300));
   tr.insert(point_t(-100,100,-100));
   tr.insert(point_t(100,-300,0));

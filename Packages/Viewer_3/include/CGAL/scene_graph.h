@@ -28,14 +28,14 @@ class Scene_graph
 {
 
   typedef std::vector<Scene_group> group_list;
-   group_list LD;
+  group_list LD;
   double scene_center[3];
   double* world_rot;
   double* world_trans;
-
-
-
-void erase(group_list &v, int n)
+  
+  
+  
+  void erase(group_list &v, int n)
     {
       group_list::iterator it=v.begin();  
       int i;    
@@ -43,13 +43,11 @@ void erase(group_list &v, int n)
         it++;
       v.erase(it);
     }
-
-public:
-
   
-
+public:
+  
   typedef group_list::iterator iterator;
-
+  
   Scene_graph(): LD(0)   
     {
       set_scene_center();
@@ -57,9 +55,9 @@ public:
       Scene_group g;
       LD.push_back(g);
     }
-
-
-void set_identity()
+  
+  
+  void set_identity()
     {
       world_rot = new double[16];
       world_rot[0]=1 ; world_rot[1]=0 ; world_rot[2]=0 ; world_rot[3]=0 ;

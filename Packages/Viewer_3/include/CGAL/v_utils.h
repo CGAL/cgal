@@ -26,6 +26,7 @@
 #ifndef DRAWABLE
 #include <CGAL/Drawable_object.h>
 #endif
+#include <GL/gl.h>
 #include <GL/glu.h>
 #define V_UTILS
 CGAL_BEGIN_NAMESPACE

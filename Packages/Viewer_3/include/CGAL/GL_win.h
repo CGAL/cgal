@@ -28,177 +28,177 @@
 #include <CGAL/Threads.h>
 #endif
 
+
 CGAL_BEGIN_NAMESPACE
 class GL_win : public Fl_Gl_Window {
-
+  
 public:
-typedef void (*Mouse_click)(int , int , int , GL_win *);
- 
-typedef void (*Mouse_grab)(int , int , int , int , int ,int,int ,
-			   GL_win *) ;
-
+  typedef void (*Mouse_click)(int , int , int , GL_win *);
+  
+  typedef void (*Mouse_grab)(int , int , int , int , int ,int,int ,
+			     GL_win *) ;
+  
 private:
-
 
   float Tclip;
   float Wclip;
   double clip0[4];
   double clip1[4];
-
-
-
+  
   bool rotate;
   float zplan;
   float d_zplan;
-
+  
   int *scale;
   Color bg_color;
   Scene_graph SCG;
   std::vector<double> add_point;
-
+  
   double global_matrix[16];
   double last_rot[16];
-
+  
   bool Projection;
   float deep;
   float angle;
-
+  
   enum group_mode {all=0, selected, move, see};
   int group;
   enum mode {View=0, Insert, Slice, User};
-
+  
   int choice;
-
+  
   Mouse_click    M_P, M_R;
-
+  
   Mouse_grab    M_G;
-
-
+  
   float col_diff[4];
-
+  
   bool light;
   float var;
   float shy;
-
+  
   float Xlight;
   float Ylight;
   float Zlight;
 
+  
   // private functions :
-int handle(int);
+  int handle(int);
   
-void draw();
+  void draw();
   
-void draw_scene();
+  void draw_scene();
   
-void m_grab(int,int , int ) ;
+  void m_grab(int,int , int ) ;
   
-void m_push(int , int , int ) ;
+  void m_push(int , int , int ) ;
   
-void m_release(int , int , int ) ;
+  void m_release(int , int , int ) ;
   
-void set_light(float, float, float, float*, float,float);
+  void set_light(float, float, float, float*, float,float);
 
-std::vector<double> apply_last_rotation(std::vector<double>, double ,double , double);
+  std::vector<double> apply_last_rotation(std::vector<double>, double ,double , double);
 
-std::vector<double> project_on_plan(const std::vector<double> &, double ,double , double);
+  std::vector<double> project_on_plan(const std::vector<double> &, double ,double , double);
 
-void draw_plan(double, double, double);
+  void draw_plan(double, double, double);
 
 
 public:
-
-std::vector<double> get_real_point(int,std::vector<double>);
-
-std::vector<double> get_point();
-
-GL_win(int ,int ,int ,int ,int *sc ,const char*);
-
-void reshape();
-
-void mouse_rotate(float,float);
-
-void reset();
-
-void reset_group(int);
-
-void set_angle(float);
-
-void set_deep(float);
-
-void set_projection(bool);
-
-void set_mouse_push_handler(Mouse_click);
-
-void set_mouse_release_handler(Mouse_click);
-
-void set_mouse_grab_handler(Mouse_grab);
-
-void set_mode(int);
-
-void add_zplan(int);
-
-void add_drawable(Drawable_object*, int);
-
-void remove_drawable(int , int);
-
-void free_drawable(int , int);
-
-Drawable_object* get_drawable(int, int);
-
-double* get_transform();
-
-void redraw();
-
-void make_visible(int);
-
-void change_visibility(int , int , bool );
-
-void add_point_to_object(int,int,std::vector<double>);
-
-void add_new_group();
-
-void change_group(int);
   
-void delete_group(int);
+  std::vector<double> get_real_point(int,std::vector<double>);
 
-void group_visible(bool , int );
+  std::vector<double> get_point();
 
-void group_rotate(float , float , int );
+  GL_win(int ,int ,int ,int ,int *sc ,const char*);
 
-Scene_graph* get_scene_graph();
+  void reshape();
 
-void clean_graph();
+  void mouse_rotate(float,float);
 
-void set_light_diff(float,float,float);
+  void reset();
 
-void set_light_variation(float);
+  void reset_group(int);
 
-void set_light_shy(float);
+  void set_angle(float);
 
-void set_X_light_pos(float);
+  void set_deep(float);
 
-void set_Y_light_pos(float);
+  void set_projection(bool);
 
-void set_Z_light_pos(float);
+  void set_mouse_push_handler(Mouse_click);
+
+  void set_mouse_release_handler(Mouse_click);
+
+  void set_mouse_grab_handler(Mouse_grab);
+
+  void set_mode(int);
+
+  void add_zplan(int);
+
+  void add_drawable(Drawable_object*, int);
+
+  void remove_drawable(int , int);
+
+  void free_drawable(int , int);
+
+  Drawable_object* get_drawable(int, int);
+
+  double* get_transform();
+
+  void redraw();
+
+  void make_visible(int);
+
+  void change_visibility(int , int , bool );
+
+  void add_point_to_object(int,int,std::vector<double>);
+
+  void add_new_group();
+
+  void change_group(int);
+  
+  void delete_group(int);
+
+  void group_visible(bool , int );
+
+  void group_rotate(float , float , int );
+
+  Scene_graph* get_scene_graph();
+
+  void clean_graph();
+
+  void set_light_diff(float,float,float);
+
+  void set_light_variation(float);
+
+  void set_light_shy(float);
+
+  void set_X_light_pos(float);
+
+  void set_Y_light_pos(float);
+
+  void set_Z_light_pos(float);
 
   //void draw_slice(double);
 
-void set_clip_planes(int);
+  void set_clip_planes(int);
 
-void set_clip_width(float,int);
+  void set_clip_width(float,int);
 
-void set_clip_move(float,int);
+  void set_clip_move(float,int);
 
-void set_bgcolor(Color);
+  void set_bgcolor(Color);
 
-void switch_light();
+  void switch_light();
 
-void set_light();
+  void set_light();
 
-void set_light(bool);
+  void set_light(bool);
 
-void draw_ps();
+  void draw_ps();
+
+  int get_group() {return group;}
 
 };
 
@@ -223,109 +223,109 @@ void mouse_release(int x, int y, int but, GL_win *W)
 void GL_win::set_light(float x,float y , float z, float* diff, float
 		       v, float s)
 {
-    GLfloat ambient[] = { 0.4, 0.4, 0.3, 1.0 };
-    
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT,ambient);
-    GLfloat position[] = { x, y, z, 1.0 };
-    glLightf(GL_LIGHT0,GL_CONSTANT_ATTENUATION, v);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, diff);
+  GLfloat ambient[] = { 0.4, 0.4, 0.3, 1.0 };
+  
+  glLightModelfv(GL_LIGHT_MODEL_AMBIENT,ambient);
+  GLfloat position[] = { x, y, z, 1.0 };
+  glLightf(GL_LIGHT0,GL_CONSTANT_ATTENUATION, v);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, diff);
 
-    glLightfv(GL_LIGHT0, GL_POSITION, position);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    
-    // define material reflective properties
-
-    GLfloat ref[] = { 1.0,1.0,0.0};
-    glMaterialfv(GL_FRONT, GL_SPECULAR,ref);
-    glMaterialf(GL_FRONT, GL_SHININESS, s);
-    glEnable(GL_COLOR_MATERIAL);
+  glLightfv(GL_LIGHT0, GL_POSITION, position);
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
+  
+  // define material reflective properties
+  
+  GLfloat ref[] = { 1.0,1.0,0.0};
+  glMaterialfv(GL_FRONT, GL_SPECULAR,ref);
+  glMaterialf(GL_FRONT, GL_SHININESS, s);
+  glEnable(GL_COLOR_MATERIAL);
 }
 
 //#### POST SCRIPT : envoie le graph de scene dans le post script.
 void GL_win::draw_ps()
 {
 #ifdef USE_THREAD
-      pthread_mutex_lock(&Synchronizer::sgMutex);
+  pthread_mutex_lock(&Synchronizer::sgMutex);
 #endif
-      Scene_graph::iterator it;
-      double* t= SCG.get_translation();
-      double trans_mat[16];
-      // on declare la variable ps_stream (a faire)
-      //   ps_steam ps;
-      // on parcoure le graph de scene, groupe apres groupe.
-      for (it=SCG.begin() ; it!=SCG.end() ; it++) {
-	// On s'occupe de la matrice de transformation globale.
-	glLoadIdentity();
-	glPushMatrix();
-	glTranslated(t[0],-t[1],0);
-	glTranslatef(SCG.get_center(1),SCG.get_center(2),SCG.get_center(3));
-        glMultMatrixd(SCG.get_rotation());
-	glTranslatef(-SCG.get_center(1),-SCG.get_center(2),-SCG.get_center(3));
-	if (!group)
-	  glGetDoublev(GL_MODELVIEW_MATRIX,global_matrix);
-  	glMultMatrixd(it->get_group_translation());
-	glMultMatrixd(it->get_group_rotation());
-        glGetDoublev(GL_MODELVIEW_MATRIX,trans_mat);
-        // la matrice de transformation globale trans_mat est envoyee
-	// une fois pour chaque groupe.
-	//        ps << trans_mat;
-	//        it->group_to_ps(ps);
-      }
-	glPopMatrix();
-	std::cout << "Post_script not yet implemented!!" << std::endl;
+  Scene_graph::iterator it;
+  double* t= SCG.get_translation();
+  double trans_mat[16];
+  // on declare la variable ps_stream (a faire)
+  //   ps_steam ps;
+  // on parcoure le graph de scene, groupe apres groupe.
+  for (it=SCG.begin() ; it!=SCG.end() ; it++) {
+    // On s'occupe de la matrice de transformation globale.
+    glLoadIdentity();
+    glPushMatrix();
+    glTranslated(t[0],-t[1],0);
+    glTranslatef(SCG.get_center(1),SCG.get_center(2),SCG.get_center(3));
+    glMultMatrixd(SCG.get_rotation());
+    glTranslatef(-SCG.get_center(1),-SCG.get_center(2),-SCG.get_center(3));
+    if (!group)
+      glGetDoublev(GL_MODELVIEW_MATRIX,global_matrix);
+    glMultMatrixd(it->get_group_translation());
+    glMultMatrixd(it->get_group_rotation());
+    glGetDoublev(GL_MODELVIEW_MATRIX,trans_mat);
+    // la matrice de transformation globale trans_mat est envoyee
+    // une fois pour chaque groupe.
+    //        ps << trans_mat;
+    //        it->group_to_ps(ps);
+  }
+  glPopMatrix();
+  std::cout << "Post_script not yet implemented!!" << std::endl;
 #ifdef USE_THREAD
-      pthread_mutex_unlock(&Synchronizer::sgMutex);
+  pthread_mutex_unlock(&Synchronizer::sgMutex);
 #endif
-    }
+}
 
 
 
 
 void GL_win::draw_scene()
-    {
-      static bool blink=false;
+{
+  static bool blink=false;
 #ifdef USE_THREAD
-      pthread_mutex_lock(&Synchronizer::sgMutex);
+  pthread_mutex_lock(&Synchronizer::sgMutex);
 #endif
-      Scene_graph::iterator it;
-      double* t= SCG.get_translation();
-      for (it=SCG.begin() ; it!=SCG.end() ; it++) {
-	glLoadIdentity();
-	glPushMatrix();
-	glTranslated(t[0],-t[1],0);
-	glTranslatef(SCG.get_center(1),SCG.get_center(2),SCG.get_center(3));
-        glMultMatrixd(SCG.get_rotation());
-	glTranslatef(-SCG.get_center(1),-SCG.get_center(2),-SCG.get_center(3));
-	if (!group)
-	  glGetDoublev(GL_MODELVIEW_MATRIX,global_matrix);
-  	glMultMatrixd(it->get_group_translation());
-	glMultMatrixd(it->get_group_rotation());
-	switch (group) {
-	case all:
-	  it->draw_group();
-	  break;
-	case selected:
-	  it->draw_visible();
-	  break;
-	case see:
-	  it->draw_invisible();
-	  if (blink)
-	    it->draw_visible();
-	  break;
-	default:
-	  it->draw_group();
-	  break;
-	}
-	glPopMatrix();
-      }
-      blink=!blink;
-#ifdef USE_THREAD
-      pthread_mutex_unlock(&Synchronizer::sgMutex);
-#endif
+  Scene_graph::iterator it;
+  double* t= SCG.get_translation();
+  for (it=SCG.begin() ; it!=SCG.end() ; it++) {
+    glLoadIdentity();
+    glPushMatrix();
+    glTranslated(t[0],-t[1],0);
+    glTranslatef(SCG.get_center(1),SCG.get_center(2),SCG.get_center(3));
+    glMultMatrixd(SCG.get_rotation());
+    glTranslatef(-SCG.get_center(1),-SCG.get_center(2),-SCG.get_center(3));
+    if (!group)
+      glGetDoublev(GL_MODELVIEW_MATRIX,global_matrix);
+    glMultMatrixd(it->get_group_translation());
+    glMultMatrixd(it->get_group_rotation());
+    switch (group) {
+    case all:
+      it->draw_group();
+      break;
+    case selected:
+      it->draw_visible();
+      break;
+    case see:
+      it->draw_invisible();
+      if (blink)
+	it->draw_visible();
+      break;
+    default:
+      it->draw_group();
+      break;
     }
+    glPopMatrix();
+  }
+  blink=!blink;
+#ifdef USE_THREAD
+  pthread_mutex_unlock(&Synchronizer::sgMutex);
+#endif
+}
 
-    
+
 
 
 void GL_win::draw_plan(double x, double y, double z) {
@@ -343,11 +343,11 @@ void GL_win::draw_plan(double x, double y, double z) {
   glNormal3dv(v2);
   glVertex3f(x-(scale[1]-scale[0])/2,y+(scale[3]-scale[2])/2,z);
   glEnd();
- }
+}
 
 
 std::vector<double> GL_win::apply_last_rotation(std::vector<double> point, double x
-				 ,double y, double z)
+						,double y, double z)
 {
   std::vector<double> r_point(3);
   r_point=apply_mat(last_rot, point[0]-x, point[1]-y, point[2]-z);
@@ -375,7 +375,7 @@ std::vector<double> GL_win::project_on_plan(const std::vector<double> &point, do
   v2[2] = v2[2]+z;
   v3[2] = v3[2]+z;
 
- std::vector<double> plan = compute_plan(v1[0],v1[1],v1[2],
+  std::vector<double> plan = compute_plan(v1[0],v1[1],v1[2],
 				     v2[0],v2[1],v2[2],
 				     v3[0],v3[1],v3[2]);
 
@@ -384,7 +384,7 @@ std::vector<double> GL_win::project_on_plan(const std::vector<double> &point, do
 		    pow(plan[2],2) );
     vr=translate(point,d_zplan*(plan[0]/den),d_zplan*(plan[1]/den),
 		 d_zplan*(plan[2]/den));
-  d_zplan=0;
+    d_zplan=0;
   } 
   else {
     vr=point;
@@ -401,11 +401,11 @@ void GL_win::draw()
 {
   if (!valid()) 
     reshape();
-
- glClearColor((float)
-	      bg_color.red()/255,(float)bg_color.green()/255,(float)
-	      bg_color.blue()/255,bg_color.alpha());
-
+  
+  glClearColor((float)
+	       bg_color.red()/255,(float)bg_color.green()/255,(float)
+	       bg_color.blue()/255,bg_color.alpha());
+  
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   if (light)
     set_light(Xlight,Ylight,Zlight,col_diff,var,shy);
@@ -413,16 +413,16 @@ void GL_win::draw()
   if (choice == Insert) {
     z_c = SCG.get_center(3);
     double* t = SCG.get_translation();
-
+    
     glPushMatrix();
     glTranslated(t[0],-t[1],0);
     if (rotate) 
       add_point=apply_last_rotation(add_point,SCG.get_center(1),SCG.get_center(2),z_c);
-     else 
-       add_point=project_on_plan(add_point,SCG.get_center(1),SCG.get_center(2),z_c);
-     
-
-
+    else 
+      add_point=project_on_plan(add_point,SCG.get_center(1),SCG.get_center(2),z_c);
+    
+    
+    
     glTranslatef(add_point[0],add_point[1],add_point[2]);
     glColor4f(1.0,1.0,1.0,1);
     GLUquadricObj *q= gluNewQuadric();
@@ -430,8 +430,8 @@ void GL_win::draw()
     gluSphere(q,(float) (scale[5]-scale[4]/100) + 1,10,8);
     gluDeleteQuadric(q);
     glPopMatrix();
-   }
-
+  }
+  
   if (choice == Slice) {
     glClipPlane(GL_CLIP_PLANE0,clip0);
     glClipPlane(GL_CLIP_PLANE1,clip1);
@@ -445,7 +445,7 @@ void GL_win::draw()
     draw_plan(SCG.get_center(1),SCG.get_center(2), SCG.get_center(3)+zplan); 
     glPopMatrix();
   } 
-
+  
   glFlush();
   rotate=false;
 }
@@ -461,14 +461,14 @@ void GL_win::m_grab(int dx,int dy, int but)
       for (it = SCG.begin() ; it < SCG.end() ; it++) 
 	if (it->group_visible()) 
  	  it->set_translation(dx,dy,global_matrix);
-	
+      
     }
     else {
       mx = (double) dx*( (scale[1] - scale[0]) /500.0);
       my = (double) dy*( (scale[3] - scale[2]) /500.0);
       SCG.add_translation(mx,my);
     }
-
+    
     break;
   case 2: 
     if (group==move) {
@@ -476,8 +476,8 @@ void GL_win::m_grab(int dx,int dy, int but)
       for (it = SCG.begin() ; it < SCG.end() ; it++) 
 	if (it->group_visible()) 
 	  it->set_rotation(dx,dy,global_matrix);
-		       //,SCG.get_center(1),SCG.get_center(2), SCG.get_center(3));
-	
+      //,SCG.get_center(1),SCG.get_center(2), SCG.get_center(3));
+      
     }
     else
       mouse_rotate(dx,dy); 
@@ -500,42 +500,69 @@ void GL_win::m_release(int x, int y, int but) {}
 
 int GL_win::handle(int event)
 {
- static int button;
- static int x1, y1, dx, dy;
- int x2, y2; 
+  static int button;
+  static int x1, y1, dx, dy;
+  int x2, y2;
 
- switch (event) { 
- case FL_PUSH:
-   button = Fl::event_button();
-     dx = Fl::event_x(); 
-     dy = Fl::event_y();
-     x1 = Fl::event_x(); 
-     y1 = Fl::event_y();
-     if (choice == User) 
+  double xx, yy;
+  double zz = 10000;
+  int gp = group;
+  int gpi = 0;
+  
+  switch (event) { 
+  case FL_PUSH:
+    button = Fl::event_button();
+    dx = Fl::event_x(); 
+    dy = Fl::event_y();
+    x1 = Fl::event_x(); 
+    y1 = Fl::event_y();
+
+    // jln
+    
+    xx = double(x1 * (scale[1]-scale[0])) / w() + scale[0];
+    yy = double((h()-y1) * (scale[3]-scale[2])) / h() + scale[2];
+
+    cerr << "(" << xx << "," << yy << ")" << endl;
+
+    Scene_graph::iterator it;
+    for (it=SCG.begin() ; it!=SCG.end() ; it++) {
+      gpi++;
+      if (xx > it->get_center(1)-20 && 
+	  xx < it->get_center(1)+20 &&
+	  yy > it->get_center(2)-20 && 
+	  yy < it->get_center(2)+20 &&
+	  it->get_center(3) < zz)
+	gp = gpi;
+    } 
+    change_group(gp);
+    // jln
+
+    if (choice == User) 
       M_P(x1,h()-y1,button,this);
-     else  
+    else  
       m_push(x1,y1,button);
-     redraw();
-     return 1;
- case FL_DRAG:
-   x2 = Fl::event_x();
-   y2 = Fl::event_y();
-   if (choice == User) 
-     M_G(x1,y1,x2,y2,x2-dx,y2-dy,button,this);
-   else
-     m_grab(x2-dx,y2-dy,button);
-   dx=x2; dy=y2;
-     redraw();
-   
-   return 1;
- case FL_RELEASE:
+    redraw();
+
+    return 1;
+  case FL_DRAG:
+    x2 = Fl::event_x();
+    y2 = Fl::event_y();
+    if (choice == User) 
+      M_G(x1,y1,x2,y2,x2-dx,y2-dy,button,this);
+    else
+      m_grab(x2-dx,y2-dy,button);
+    dx=x2; dy=y2;
+    redraw();
+    
+    return 1;
+  case FL_RELEASE:
     if (choice == User) 
       M_R(x1,h()-y1,button,this);
-     else  
-       m_release(x1,y1,button);
- }
+    else  
+      m_release(x1,y1,button);
+  }
 
- return 0;
+  return 0;
 }
 
 
@@ -546,24 +573,25 @@ int GL_win::handle(int event)
 
 
 GL_win::GL_win(int x,int y,int w,int h,int *sc, const char *l=0)
-    : Fl_Gl_Window(x,y,w,h,l), add_point(3)
-      {bg_color=BLACK; bg_color.set_alpha(255);
-      angle=40;Projection=true; M_P = mouse_push; 
-      M_R =mouse_release; M_G = mouse_grab;choice = 0; group=0;rotate=false;
-      zplan=0; col_diff[0]=1; col_diff[1]=1; col_diff[2]=1;
-      col_diff[3]=0.5; 
-      var=1; shy=50; Xlight = 0; Ylight = 0; 
-      Zlight =1000; 
-      
-      scale = sc; 
-
-      deep = 2*(scale[5] - scale[4]); 
-      Tclip=0;Wclip=(scale[5]-scale[4])/5;
-      clip0[0]=0; clip0[1]=0 ; clip0[2]=1 ; clip0[3]= -Tclip + Wclip/2;
-      clip1[0]=0; clip1[1]=0 ; clip1[2]=-1 ; clip1[3]= Tclip +
-					       Wclip/2;
-      light=true;
-      Fl::gl_visual(FL_RGB8);
+  : Fl_Gl_Window(x,y,w,h,l), add_point(3) 
+{
+  bg_color=BLACK; bg_color.set_alpha(255);
+  angle=40;Projection=true; M_P = mouse_push; 
+  M_R =mouse_release; M_G = mouse_grab;choice = 0; group=0;rotate=false;
+  zplan=0; col_diff[0]=1; col_diff[1]=1; col_diff[2]=1;
+  col_diff[3]=0.5; 
+  var=1; shy=50; Xlight = 0; Ylight = 0; 
+  Zlight =1000; 
+  
+  scale = sc;
+  
+  deep = 2*(scale[5] - scale[4]); 
+  Tclip=0;Wclip=(scale[5]-scale[4])/5;
+  clip0[0]=0; clip0[1]=0 ; clip0[2]=1 ; clip0[3]= -Tclip + Wclip/2;
+  clip1[0]=0; clip1[1]=0 ; clip1[2]=-1 ; clip1[3]= Tclip +
+					   Wclip/2;
+  light=true;
+  Fl::gl_visual(FL_RGB8);
 }
 
 
@@ -578,47 +606,47 @@ void GL_win::redraw() {draw();swap_buffers();}
 
 void GL_win::reshape()
 {
-     static bool first;
+  static bool first;
+  
+  glViewport(0, 0, w(), h());
+  
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  float fact = (float) ((scale[5]-scale[4])/100) + 0.1;
+  
+  if (Projection) {
+    if (deep>2*(scale[5] - scale[4]))
+      gluPerspective(angle,(float) w()/h(),
+		     (deep -2*(scale[5] - scale[4]))+fact,
+		     (deep +2*(scale[5] - scale[4])));
+    else
+      gluPerspective(angle,(float) w()/h(),
+		     fact,
+		     4*(scale[5] - scale[4])+deep);
+    glTranslatef(-(scale[0]+scale[1])/2,
+		 -(scale[2]+scale[3])/2,-deep);
+    
 
-     glViewport(0, 0, w(), h());
-     
-     glMatrixMode(GL_PROJECTION);
-     glLoadIdentity();
-     float fact = (float) ((scale[5]-scale[4])/100) + 0.1;
- 
-     if (Projection) {
-       if (deep>2*(scale[5] - scale[4]))
-	 gluPerspective(angle,(float) w()/h(),
-			(deep -2*(scale[5] - scale[4]))+fact,
-			(deep +2*(scale[5] - scale[4])));
-       else
-	  gluPerspective(angle,(float) w()/h(),fact,
-			 4*(scale[5] - scale[4])+deep);
-	glTranslatef(-(scale[0]+scale[1])/2,
-		     -(scale[2]+scale[3])/2,-deep);
+  }
+  else {
+    
+    glOrtho(scale[0], scale[1], scale[2], scale[3],
+	    -2*(scale[5] - scale[4]), 2*(scale[5] - scale[4]));
+    
+  }
+  
 
-
-      }
-     else {
-
-      	glOrtho(2*scale[0] - scale[1], 2*scale[1] - scale[0], 
- 	 	2*scale[2] - scale[3], 2*scale[3] - scale[2],
-	  	-2*(scale[5] - scale[4]), 2*(scale[5] - scale[4]));
-
-     }
-
-
-	glMatrixMode(GL_MODELVIEW); 
-	glLoadIdentity();
-      if (!first) {
-	glGetDoublev(GL_MODELVIEW_MATRIX, global_matrix);
-	glShadeModel(GL_SMOOTH);
-	glEnable(GL_NORMALIZE);
-	glDepthFunc(GL_LESS);
-	glEnable(GL_DEPTH_TEST);
-	first=true;
-	set_light();
-      }
+  glMatrixMode(GL_MODELVIEW); 
+  glLoadIdentity();
+  if (!first) {
+    glGetDoublev(GL_MODELVIEW_MATRIX, global_matrix);
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_NORMALIZE);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_DEPTH_TEST);
+    first=true;
+    set_light();
+  }
 }
 
 

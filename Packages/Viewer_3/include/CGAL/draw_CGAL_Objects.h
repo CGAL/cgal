@@ -45,7 +45,7 @@ class Drawable_point_3: public  Drawable_object
 {
 private:
   Point3 pt;
-
+  
 public:
 
   ~Drawable_point_3(){}
@@ -58,16 +58,15 @@ public:
       set_center(); precision=prec; lind=0; style=sty;type="Point";
     }
 
-   Drawable_point_3(const double x,const double y,const double z,
-		    Color c, Style sty=FILL, Size s = 5 , Precision
-		    prec=15)
-
+  Drawable_point_3(const double x,const double y,const double z,
+		   Color c, Style sty=FILL, Size s = 5 , Precision
+		   prec=15)
     {
-     pt=Point3(x,y,z);
-     color = c; size = s;
-     set_center(); precision=prec; lind=0; style=sty;type="Point";
+      pt=Point3(x,y,z);
+      color = c; size = s;
+      set_center(); precision=prec; lind=0; style=sty;type="Point";
     }
-
+  
 
   void set_center()
     {
@@ -79,7 +78,7 @@ public:
 
   void draw() 
     {
- 
+      
       if (lind)
 	glCallList(lind);
       else {
@@ -150,106 +149,106 @@ public:
       o_center[1]=(to_double(seg.source().y())+to_double(seg.target().y()))/2;
       o_center[2]=(to_double(seg.source().z())+to_double(seg.target().z()))/2;
     }
-
-void draw()
-  {
-  if(lind)
-    glCallList(lind);
-  else {
-    double x1=to_double(seg.source().x());
-    double y1=to_double(seg.source().y());
-    double z1=to_double(seg.source().z());
-    double x2=to_double(seg.target().x());
-    double y2=to_double(seg.target().y());
-    double z2=to_double(seg.target().z());
-   lind = glGenLists(1);
-   glNewList(lind,GL_COMPILE_AND_EXECUTE);
-   set_color(color);
-   if (style==FILL) {
-     GLUquadricObj *q= gluNewQuadric();
-     std::pair<double, double> ag=get_angles(x1,y1,z1,x2,y2,z2);
-     double l=sqrt(pow(x1-x2,2) +pow(y1-y2,2) + pow(z1-z2,2));
-     glPushMatrix();
-     glTranslatef(x1, y1, z1);
-     glRotatef(ag.first,1,0,0);
-     glRotatef(ag.second,0,1,0);
-     gluQuadricNormals(q, (GLenum) GL_SMOOTH);
-     gluCylinder(q, size, size, l, precision, 1);
-     glPopMatrix();
-     gluDeleteQuadric(q);
-   }
-   else {
-     glLineWidth(size);
-     glBegin(GL_LINES);
-       glVertex3f(x1,y1,z1);
-       glVertex3f(x2,y2,z2);
-     glEnd();
-   }
-
-   glEndList();
-  }
-  }
-
+  
+  void draw()
+    {
+      if(lind)
+	glCallList(lind);
+      else {
+	double x1=to_double(seg.source().x());
+	double y1=to_double(seg.source().y());
+	double z1=to_double(seg.source().z());
+	double x2=to_double(seg.target().x());
+	double y2=to_double(seg.target().y());
+	double z2=to_double(seg.target().z());
+	lind = glGenLists(1);
+	glNewList(lind,GL_COMPILE_AND_EXECUTE);
+	set_color(color);
+	if (style==FILL) {
+	  GLUquadricObj *q= gluNewQuadric();
+	  std::pair<double, double> ag=get_angles(x1,y1,z1,x2,y2,z2);
+	  double l=sqrt(pow(x1-x2,2) +pow(y1-y2,2) + pow(z1-z2,2));
+	  glPushMatrix();
+	  glTranslatef(x1, y1, z1);
+	  glRotatef(ag.first,1,0,0);
+	  glRotatef(ag.second,0,1,0);
+	  gluQuadricNormals(q, (GLenum) GL_SMOOTH);
+	  gluCylinder(q, size, size, l, precision, 1);
+	  glPopMatrix();
+	  gluDeleteQuadric(q);
+	}
+	else {
+	  glLineWidth(size);
+	  glBegin(GL_LINES);
+	  glVertex3f(x1,y1,z1);
+	  glVertex3f(x2,y2,z2);
+	  glEnd();
+	}
+	
+	glEndList();
+      }
+    }
+  
 
 };
 
 
 
 
- //### DRAWABLE SET OF POINTS ######
+//### DRAWABLE SET OF POINTS ######
 // The type pointed by InputIterator must be Point
- template < class InputIterator, class Point >
+template < class InputIterator, class Point >
 class Drawable_points_set_3: public  Drawable_object
- {
+{
 private:
-   std::list<Point> LP;
+  std::list<Point> LP;
 
- public:
-   Drawable_points_set_3(){type="Point Set";}
-   Drawable_points_set_3(InputIterator first, InputIterator
+public:
+  Drawable_points_set_3(){type="Point Set";}
+  Drawable_points_set_3(InputIterator first, InputIterator
  			last,Color c, Style sty=FILL, Size s=5,
-			 Precision prec=15)
+			Precision prec=15)
     {
       while(first!=last) {
         LP.push_back(*first);
         ++first;
       }
-     color = c; size = s;
-     set_center(); precision=prec; lind=0;
-     style=sty;type="Point Set";
+      color = c; size = s;
+      set_center(); precision=prec; lind=0;
+      style=sty;type="Point Set";
     }
-
-
-
+  
+  
+  
   void draw() 
     {
-       if (lind)
+      if (lind)
 	glCallList(lind);
       else 
 	{
   	  std::list<Point>::iterator it;
 	  lind = glGenLists(1);
 	  glNewList(lind,GL_COMPILE_AND_EXECUTE);
-	   set_color(color);
-	   for (it=LP.begin();it!=LP.end();it++) {
-	     GLUquadricObj *q= gluNewQuadric();
-	     glPushMatrix();
-	     glTranslatef(to_double(it->x()), to_double(it->y()), to_double(it->z()));
-	     gluQuadricNormals(q, (GLenum) GL_SMOOTH);
-	     if (style != FILL) {
-	       gluQuadricDrawStyle(q,(GLenum) GLU_LINE);
-               glLineWidth(1);
-	     }
-	     else
-	       gluQuadricDrawStyle(q,(GLenum) GLU_FILL);
-	     gluSphere(q,size,precision,precision);
-	     glPopMatrix();
-	     gluDeleteQuadric(q);
-	   }
-	   glEndList();
+	  set_color(color);
+	  for (it=LP.begin();it!=LP.end();it++) {
+	    GLUquadricObj *q= gluNewQuadric();
+	    glPushMatrix();
+	    glTranslatef(to_double(it->x()), to_double(it->y()), to_double(it->z()));
+	    gluQuadricNormals(q, (GLenum) GL_SMOOTH);
+	    if (style != FILL) {
+	      gluQuadricDrawStyle(q,(GLenum) GLU_LINE);
+	      glLineWidth(1);
+	    }
+	    else
+	      gluQuadricDrawStyle(q,(GLenum) GLU_FILL);
+	    gluSphere(q,size,precision,precision);
+	    glPopMatrix();
+	    gluDeleteQuadric(q);
+	  }
+	  glEndList();
 	}
     }
-   
+
 
   void set_center()
     {
@@ -264,14 +263,13 @@ private:
       o_center[0]=o1/s; o_center[1]=o2/s; o_center[2]=o3/s;
     }
 
- void add_point(double x, double y, double z) 
-   {
-     glDeleteLists(lind,1);
-     lind=0;
-     LP.push_back(Point(x,y,z));
-     set_center();
-   }
-		  
+  void add_point(double x, double y, double z) 
+    {
+      glDeleteLists(lind,1);
+      lind=0;
+      LP.push_back(Point(x,y,z));
+      set_center();
+    }
 };
 
 

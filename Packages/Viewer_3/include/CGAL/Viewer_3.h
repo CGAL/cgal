@@ -512,7 +512,7 @@ static void XL_cb(Fl_Widget* w, void* v)
     W->display();
   }
 
- static void YL_cb(Fl_Widget* w, void* v)
+static void YL_cb(Fl_Widget* w, void* v)
   { 
     Viewer_3* W= (Viewer_3*) v;
     Fl_Slider* s =(Fl_Slider*) w;
@@ -1102,11 +1102,6 @@ void Viewer_3::display()
 }
 
 
-
-
-
-
-
 void Viewer_3::init_window()
 {
 #ifdef USE_THREAD
@@ -1116,7 +1111,7 @@ void Viewer_3::init_window()
   
   new Fl_Box(FL_DOWN_FRAME,107,97,size-119,size-144,"");
   canvas = new GL_win(110,100,size-125,size-150,scale,0);
-  //  form->resizable(canvas);
+  //    form->resizable(canvas);
 
   close_but = new Fl_Button(size-85,size-35,80,25,"Quit"); 
 
@@ -1503,6 +1498,11 @@ void Viewer_3::main_loop()
        sendSignal();
 #endif
      }
+     //
+     if (obj == canvas) {
+       scene->select(canvas->get_group());
+       scene->callback(scene_cb, (void*) this); }
+     //
      if (obj == reset_but) reset();
      if (obj == ortho_but) orthogonal_view();
      if (obj == persp_but) perspective_view();

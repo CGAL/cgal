@@ -4,6 +4,8 @@ FLTK_DIR = ${UTIL}/FLTK/SunOS/fltk-1.0.6
 #GL_DIR = /0/prisme_util/MESA/SunOS/Mesa-3.0/include/
 # GL_DIR = /usr/local/mesa
 CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-last/make/makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA
+
+
 include $(CGAL_MAKEFILE)
 
 
@@ -86,5 +88,5 @@ clean:
 	rm -f *.o core *~
 	rm -f ii_files/*
 distclean: clean
-	rm -f demo facet tetra1 tetra1bis tetra2 tetra3 terrain stream_ex
+	rm -f demo facet tetra1 tetra2 tetra3 terrain stream_ex
 	rm ../include/CGAL/*~

@@ -18,7 +18,7 @@ typedef CGAL::Delaunay_triangulation_3<traits_3,TDS3> Delaunay_3;
 
 int main(int argc, char *argv[]) 
 {
-  CGAL::Viewer_3 W(-500, 500, -400, 400, -500, 500);
+  CGAL::Viewer_3 W(-140, 500, -350, 400, 0, 500);
 
   Delaunay_3 tr;
   
