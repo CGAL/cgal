@@ -1,0 +1,83 @@
+#-----------------------------------------------------------
+# Data block
+#-----------------------------------------------------------
+# Number of curves
+8
+#-----------------------------------------------------------
+# curve 0: 1,0 -> 3,0
+1/1 0/1
+3/1 0/1
+#-----------------------------------------------------------
+# curve 1: 2,0 -> 5,0
+2/1 0/1
+5/1 0/1
+#-----------------------------------------------------------
+# curve 2: 4,0 -> 6,0
+4/1 0/1
+6/1 0/1
+#-----------------------------------------------------------
+# curve 3: 0,0 -> 4,0
+0/1 0/1
+4/1 0/1
+#-----------------------------------------------------------
+# opposite direction
+#-----------------------------------------------------------
+# curve 4: 3,0 -> 1,0
+3/1 0/1
+1/1 0/1
+#-----------------------------------------------------------
+# curve 5: 5,0 -> 2,0
+5/1 0/1
+2/1 0/1
+#-----------------------------------------------------------
+# curve 6: 6,0 -> 4,0
+6/1 0/1
+4/1 0/1
+#-----------------------------------------------------------
+# curve 7: 4,0 -> 0,0
+4/1 0/1
+0/1 0/1
+#-----------------------------------------------------------
+# Number of "stand alone" points
+1
+0/1 0/1
+#-----------------------------------------------------------
+# Execution block
+#-----------------------------------------------------------
+curves_overlap 0 1 TRUE
+curves_overlap 0 3 TRUE
+curves_overlap 1 0 TRUE
+curves_overlap 3 0 TRUE
+
+curves_overlap 0 5 TRUE
+curves_overlap 0 7 TRUE
+curves_overlap 1 4 TRUE
+curves_overlap 3 4 TRUE
+
+curves_overlap 4 1 TRUE
+curves_overlap 4 3 TRUE
+curves_overlap 5 0 TRUE
+curves_overlap 7 0 TRUE
+
+curves_overlap 4 5 TRUE
+curves_overlap 4 7 TRUE
+curves_overlap 5 4 TRUE
+curves_overlap 7 4 TRUE
+
+curves_overlap 0 2 FALSE
+curves_overlap 2 0 FALSE
+curves_overlap 0 6 FALSE
+curves_overlap 2 4 FALSE
+curves_overlap 4 2 FALSE
+curves_overlap 6 0 FALSE
+curves_overlap 4 6 FALSE
+curves_overlap 6 4 FALSE
+
+curves_overlap 2 3 FALSE
+curves_overlap 3 2 FALSE
+curves_overlap 2 7 FALSE
+curves_overlap 3 6 FALSE
+curves_overlap 6 3 FALSE
+curves_overlap 7 2 FALSE
+curves_overlap 6 7 FALSE
+curves_overlap 7 6 FALSE
