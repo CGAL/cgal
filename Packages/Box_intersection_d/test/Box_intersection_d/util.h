@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm> // for pair
 #include <cmath>
+#include <cstdio>
 
 #include <CGAL/Random.h>
 
