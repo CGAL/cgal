@@ -476,9 +476,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	    v->set_cell(bound[0]);
 	  }
 
-	  typename std::set<Cell*>::const_iterator it;
-	  for ( it = conflicts.begin(); it != conflicts.end(); ++it)
-	    _tds.delete_cell(*it);
+	  _tds.delete_cells(conflicts.begin(), conflicts.end());
 	  return v;
 	}
       case VERTEX:

@@ -437,6 +437,9 @@ into the triangulation data structure.}
 {Removes the cell from the triangulation data structure.
 \ccPrecond{The cell is a cell of \ccVar.}}
 
+\ccMethod{template <class CellIt> void delete_cells(CellIt begin, CellIt end);}
+{Calls \ccc{delete_cell} over an iterator range.}
+
 \end{ccAdvanced}
 
 \ccHeading{Traversing the triangulation}

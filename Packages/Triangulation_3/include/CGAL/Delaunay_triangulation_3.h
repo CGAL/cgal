@@ -253,16 +253,12 @@ private:
   int max2(int i0, int i1, int i2, int i3, int i4, int m) const;
   int maxless(int i0, int i1, int i2, int i3, int i4, int m) const;
 
-  void delete_cells(std::vector<Cell_handle> & hole);
-
   void make_hole_3D_ear( Vertex_handle v, 
 	                 std::vector<Facet> & boundhole,
 	                 std::vector<Cell_handle> & hole);
   void undo_make_hole_3D_ear(std::vector<Facet> & boundhole,
 		             std::vector<Cell_handle> & hole);
   bool fill_hole_3D_ear(std::vector<Facet> & boundhole);
-
-private:
 
   class Conflict_tester_3
   {
@@ -391,23 +387,13 @@ remove(Vertex_handle v)
   bool filled = fill_hole_3D_ear(boundhole);
   if(filled){
     _tds.delete_vertex(&(*v));
-    delete_cells(hole);
+    _tds.delete_cells(hole.begin(), hole.end());
     set_number_of_vertices(number_of_vertices()-1);
   } else {
     undo_make_hole_3D_ear(boundhole, hole);
   }
 
   return filled;
-}
-
-template < class Gt, class Tds >
-void
-Delaunay_triangulation_3<Gt,Tds>::
-delete_cells(std::vector<Cell_handle> & hole)
-{
-  for(typename std::vector<Cell_handle>::iterator cit = hole.begin();
-      cit != hole.end(); ++cit)
-    _tds.delete_cell( &*(*cit) );
 }
 
 //debug
@@ -996,7 +982,7 @@ fill_hole_3D_ear( std::vector<Facet> & boundhole)
 	// in an infinite loop. ==> Panic mode, delete created cells.
 	std::cerr << "\nUnable to find an ear\n" << std::endl;
 	//	std::cerr <<  surface  << std::endl;
-	delete_cells(cells);
+        _tds.delete_cells(cells.begin(), cells.end());
 	return false;
       }
       k = 0;
@@ -1135,7 +1121,7 @@ fill_hole_3D_ear( std::vector<Facet> & boundhole)
 	  // this should not happen at all  => panic mode, 
 	  //clean up, and say that it didn't work
 	  CGAL_triangulation_warning_msg(true, "panic");
-	  delete_cells(cells);
+          _tds.delete_cells(cells.begin(), cells.end());
 	  return false;
 	} else {
 	  // when we leave the function the vertices and faces of the surface
