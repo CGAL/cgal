@@ -49,105 +49,8 @@ public:
   typedef typename Segment_traits_2::Point_2        Point_2;
   typedef typename Segment_traits_2::Curve_2        Segment_2;
 
-  /*!
-   * Inner representation of a polyline curve.
-   */
-  class My_polyline_2
-  {
-  protected:
-
-    typedef Segment_traits_                           Segment_traits_2;
-    typedef typename Segment_traits_2::Point_2        Point_2;
-    typedef typename Segment_traits_2::Curve_2        Segment_2;
-    typedef ::std::vector<Segment_2>                  Base;
-
-  private:
-    // The segments that comprise the poyline:
-    ::std::vector<Segment_2>                          segments;
-
-  protected:
-    /*!
-     * Default constructor.
-     */
-    My_polyline_2 () :
-      segments()
-    {}
-
-    /*!
-     * Constructor from a range of points, defining the endpoints of the
-     * polyline segments.
-     * \param pts_begin An iterator pointing to the first point in the range.
-     * \param pts_end An iterator pointing after the last point in the range.
-     * \pre The are at least 2 points in the range.
-     *      In other cases, an empty polyline will be created.
-     */
-    template <class Iterator>
-    My_polyline_2 (const Iterator& pts_begin,
-		   const Iterator& pts_end) :
-      segments()
-    {
-      // Check if there are no points in the range:
-      Iterator  ps = pts_begin;
-
-      if (ps == pts_end)
-	return;
-
-      // Construct a segment from each to adjacent points.
-      Iterator  pt = ps;
-      pt++;
-
-      while (pt != pts_end)
-      {
-	segments.push_back (Segment_2 (*ps, *pt));
-	ps++; pt++;
-      }
-    }
-
-    /*!
-     * Append a segment to the polyline.
-     * \param seg The new segment to be appended to the polyline.
-     * \pre If the polyline is not empty, the segment source must be the
-     *      same as the target point of the last segment in the polyline.
-     */
-    inline void push_back (const Segment_2& seg)
-    {
-      segments.push_back(seg);
-      return;
-    }
-
-    /*!
-     * Get the number of segments that comprise the poyline.
-     * \return The number of segments.
-     */
-    inline int size () const
-    {
-      return (segments.size());
-    }
-
-    /*!
-     * Get the i'th segment of the polyline.
-     * \param i The segment index (from 0 to size()-1).
-     * \return A const reference to the segment.
-     */
-    inline const Segment_2& operator[] (const int& i) const
-    {
-      return (segments[i]);
-    }
-
-    /*!
-     * Clear the polyline.
-     */
-    inline void clear ()
-    {
-      segments.clear();
-      return;
-    }
-
-    friend class Arr_polyline_traits_2;
-  };
-
-  typedef Polyline_2<Segment_traits_2>            Curve_2;
-  typedef Polyline_2<Segment_traits_2>            X_monotone_curve_2;
+  typedef Polyline_2<Segment_traits_2>              Curve_2;
+  typedef Polyline_2<Segment_traits_2>              X_monotone_curve_2;
 
   // Obsolete, for backward compatibility
   typedef Point_2                       Point;
@@ -200,7 +103,7 @@ public:
   {
     // An x-monotone polyline can represent a vertical segment only if it
     // is comprised of a single segment.
-    return (cv.size() == 1 && 
+    return (cv._size() == 1 && 
 	    seg_traits.curve_is_vertical(cv[0]));
   } 
 
@@ -345,8 +248,8 @@ public:
                    const X_monotone_curve_2& cv2) const
   {
     // The two curves must contain the same number of segments.
-    int    n1 = cv1.size();
-    int    n2 = cv2.size();
+    int    n1 = cv1._size();
+    int    n2 = cv2._size();
 
     if (n1 != n2) 
       return (false);
@@ -384,7 +287,7 @@ public:
    */
   Point_2 curve_source (const X_monotone_curve_2& cv) const
   {
-    CGAL_assertion(cv.size() > 0);
+    CGAL_assertion(cv._size() > 0);
     return (seg_traits.curve_source(cv[0]));
   }
 
@@ -395,8 +298,8 @@ public:
    */
   Point_2 curve_target (const X_monotone_curve_2 & cv) const
   {
-    CGAL_assertion(cv.size() > 0);
-    return (seg_traits.curve_target(cv[cv.size() - 1]));
+    CGAL_assertion(cv._size() > 0);
+    return (seg_traits.curve_target(cv[cv._size() - 1]));
   }
 
   /*!
@@ -407,13 +310,13 @@ public:
   X_monotone_curve_2 curve_opposite (const X_monotone_curve_2& cv) const
   {
     // Copy the segments in revered order while flipping each one individually.
-    int                n = cv.size();
+    int                n = cv._size();
     int                i;
     X_monotone_curve_2 flip_cv;
 
     for (i = 0; i < n; i++)
     {
-      flip_cv.push_back (seg_traits.curve_opposite(cv[n - i - 1]));
+      flip_cv._push_back (seg_traits.curve_opposite(cv[n - i - 1]));
     }
 
     return (flip_cv); 
@@ -427,7 +330,7 @@ public:
   bool is_x_monotone(const Curve_2& curve) const
   {
     // Go over all curve segments.
-    int               n = curve.size();
+    int               n = curve._size();
     Comparison_result curr_res;
     Comparison_result prev_res = EQUAL;
     int               i;
@@ -440,7 +343,7 @@ public:
       // In case of a vertical segment, it must be the only segment in the 
       // polyline to be considered x-monotone.
       if (curr_res == EQUAL)
-	return (curve.size() == 1);
+	return (curve._size() == 1);
 
       if (curr_res != prev_res && prev_res != EQUAL)
 	return (false);
@@ -463,7 +366,7 @@ public:
 					OutputIterator o)
   {
     // Go over all curve segments.
-    int                n = curve.size();
+    int                n = curve._size();
     Comparison_result  curr_res;
     Comparison_result  prev_res = EQUAL;
     X_monotone_curve_2 x_cv;
@@ -479,45 +382,45 @@ public:
       if (curr_res == EQUAL)
       {
 	// Current segment is vertical:
-	if (x_cv.size() != 0)
+	if (x_cv._size() != 0)
 	{
 	  // Cut the previous chain.
 	  *o++ = x_cv;
-	  x_cv.clear();
+	  x_cv._clear();
 	}
 
 	// Insert the vertical segment as a singleton polyline.
-	x_cv.push_back (curve[i]);
+	x_cv._push_back (curve[i]);
 	*o++ = x_cv;
-	x_cv.clear();
+	x_cv._clear();
       }
       else if (curr_res != prev_res && prev_res != EQUAL)
       {
 	// We should cut the chain at this point and start a new one.
-	if (x_cv.size() != 0)
+	if (x_cv._size() != 0)
 	{
 	  // Cut the previous chain.
 	  *o++ = x_cv;
-	  x_cv.clear();
+	  x_cv._clear();
 	}
 	
-	x_cv.push_back (curve[i]);
+	x_cv._push_back (curve[i]);
       }
       else
       {
 	// Just append [ps, pt] to the current chain.
-	x_cv.push_back (curve[i]);
+	x_cv._push_back (curve[i]);
       }
       
       prev_res = curr_res;
     }
 
     // Append the last x-monotone chain.
-    if (x_cv.size() != 0)
+    if (x_cv._size() != 0)
     {
       // Cut the previous chain.
       *o++ = x_cv;
-      x_cv.clear();
+      x_cv._clear();
     }
 
     return (o);
@@ -546,25 +449,25 @@ public:
     CGAL_precondition(! seg_traits.point_equal(curve_target(cv), p));
 
     // Clear the output curves.
-    c1.clear(); 
-    c2.clear();
+    c1._clear(); 
+    c2._clear();
 
     // Push all segments labeled (0, 1, ... , i-1) into c1.
     int    j;
 
     for (j = 0; j < i; j++)
-      c1.push_back (cv[j]);
+      c1._push_back (cv[j]);
 
     // Check whether the split point is cv[i]'s source of target.
     if (seg_traits.point_equal (seg_traits.curve_source(cv[i]), p))
     {
       // cv[i] should be the first segment in c2.
-      c2.push_back (cv[i]);
+      c2._push_back (cv[i]);
     }
     else if (seg_traits.point_equal (seg_traits.curve_target(cv[i]), p))
     {
       // cv[i] should be the last segment in c1.
-      c1.push_back (cv[i]);
+      c1._push_back (cv[i]);
     }
     else
     {
@@ -576,15 +479,15 @@ public:
 			      p);
 
       // The first part should go into c1 and the second into c2.
-      c1.push_back (cvi_1);
-      c2.push_back (cvi_2);
+      c1._push_back (cvi_1);
+      c2._push_back (cvi_2);
     }
 
     // Push all segments labeled (i+1, i+2, ... , n-1) into cv1.
-    int    n = cv.size();
+    int    n = cv._size();
 
     for (j = i+1; j < n; j++)
-      c2.push_back (cv[j]);
+      c2._push_back (cv[j]);
 
     return;
   }
@@ -709,7 +612,7 @@ private:
     // First check whether the polyline curve really contains q in its x-range.
     int               from = 0;
     Comparison_result res_from;
-    int               to = cv.size() - 1;
+    int               to = cv._size() - 1;
     Comparison_result res_to;
 
     res_from = seg_traits.compare_x (seg_traits.curve_source(cv[from]), q);
@@ -823,7 +726,7 @@ private:
 
       // Otherwise, since cv[i]'s target is cv[i+1]'s source, we should check
       // if the target of the next curve is to the right (or left) of q.
-      if (i < (static_cast<int>(cv.size()) - 1) &&
+      if (i < (cv._size() - 1) &&
 	  seg_traits.compare_x (q, 
 			        seg_traits.curve_target(cv[i+1])) == cres)
       {
@@ -889,8 +792,8 @@ private:
     // determine the desired comparison result (and its inverse).
     Comparison_result d_res;
     Comparison_result i_res;
-    int    n1 = cv1.size();
-    int    n2 = cv2.size();
+    int    n1 = cv1._size();
+    int    n2 = cv2._size();
     int    inc1;
     int    inc2;
 
@@ -1071,23 +974,29 @@ private:
  * traits class.
  */
 template <class Segment_traits_>
-class Polyline_2 :
-    public Arr_polyline_traits_2<Segment_traits_>::My_polyline_2
+class Polyline_2
 {
-private:
-  typedef typename Arr_polyline_traits_2<Segment_traits_>::My_polyline_2
-                                                  Base;
+  friend class Arr_polyline_traits_2<Segment_traits_>;
 
 public:
 
-  typedef typename Base::Segment_2                Segment_2;
-  typedef typename Base::Point_2                  Point_2;
+  typedef Segment_traits_                           Segment_traits_2;
+  typedef typename Segment_traits_2::Point_2        Point_2;
+  typedef typename Segment_traits_2::Curve_2        Segment_2;
+  typedef ::std::vector<Segment_2>                  Base;
+
+private:
+  
+  // The segments that comprise the poyline:
+  ::std::vector<Segment_2>                          segments;
+
+public:
 
   /*!
    * Default constructor.
    */
   Polyline_2 () :
-    Base()
+    segments()
   {}
 
   /*!
@@ -1098,11 +1007,27 @@ public:
    * \pre The are at least 2 points in the range.
    *      In other cases, an empty polyline will be created.
    */
-  template <class Iterator>
-  Polyline_2 (const Iterator& pts_begin,
-	      const Iterator& pts_end) :
-    Base(pts_begin, pts_end)
-  {}
+  template <class InputIterator>
+  Polyline_2 (const InputIterator& pts_begin,
+	      const InputIterator& pts_end) :
+    segments()
+  {
+    // Check if there are no points in the range:
+    InputIterator  ps = pts_begin;
+
+    if (ps == pts_end)
+      return;
+
+    // Construct a segment from each to adjacent points.
+    InputIterator  pt = ps;
+    pt++;
+
+    while (pt != pts_end)
+    {
+      segments.push_back (Segment_2 (*ps, *pt));
+      ps++; pt++;
+    }
+  }
 
   /*!
    * Create a bounding-box for the polyline.
@@ -1112,7 +1037,7 @@ public:
   {
     // Compute the union of the bounding boxes of all segments.
     Bbox_2 bbox;
-    int    n = size();
+    int    n = _size();
     int    i;
 
     for (i = 0; i < n; i++)
@@ -1128,6 +1053,7 @@ public:
 
   class const_iterator;
   friend class const_iterator;
+
   /*!
    * An iterator for the polyline points.
    */
@@ -1153,7 +1079,7 @@ public:
       if (cvP == NULL)
 	n_pts = 0;
       else
-	n_pts = (cvP->size() == 0) ? 0 : (cvP->size() + 1);
+	n_pts = (cvP->_size() == 0) ? 0 : (cvP->_size() + 1);
     }
 
   public:
@@ -1178,10 +1104,10 @@ public:
 
       if (i == 0)
 	// First point is the source of the first segment.
-	return (seg_traits.curve_source (cvP->_get_segment(0)));
+	return (seg_traits.curve_source ((*cvP)[0]));
       else
 	// Return the target of the (i-1)'st segment
-	return (seg_traits.curve_target (cvP->_get_segment(i-1)));
+	return (seg_traits.curve_target ((*cvP)[i-1]));
     }
 
     /*!
@@ -1236,7 +1162,7 @@ public:
    */
   const_iterator begin () const
   {
-    if (size() == 0)
+    if (_size() == 0)
       return (const_iterator (NULL, -1));
     else
       return (const_iterator (this, 0));
@@ -1248,10 +1174,10 @@ public:
    */
   const_iterator end () const
   {
-    if (size() == 0)
+    if (_size() == 0)
       return (const_iterator (NULL, -1));
     else
-      return (const_iterator (this, size() + 1));
+      return (const_iterator (this, _size() + 1));
   }
 
   /*!
@@ -1260,10 +1186,10 @@ public:
    */
   const_iterator rbegin () const
   {
-    if (size() == 0)
+    if (_size() == 0)
       return (const_iterator (NULL, -1));
     else
-      return (const_iterator (this, size()));
+      return (const_iterator (this, _size()));
   }
 
   /*!
@@ -1272,7 +1198,7 @@ public:
    */
   const_iterator rend () const
   {
-    if (size() == 0)
+    if (_size() == 0)
       return (const_iterator (NULL, -1));
     else
       return (const_iterator (this, -1));
@@ -1284,26 +1210,53 @@ public:
    */
   unsigned int points () const
   {
-    if (size() == 0)
+    if (_size() == 0)
       return (0);
     else
-      return (size() + 1);
+      return (_size() + 1);
   }
-
 
 private:
 
   /*!
-   * Get the i'th segment of the polyline.
-   * \param i The index of the requested segment.
-   * \return The i'th segment.
-   * \pre i is between 0 and points()-1.
+   * Append a segment to the polyline.
+   * \param seg The new segment to be appended to the polyline.
+   * \pre If the polyline is not empty, the segment source must be the
+   *      same as the target point of the last segment in the polyline.
    */
-  const Segment_2& _get_segment (const int& i) const
+  inline void _push_back (const Segment_2& seg)
   {
-    return ((*this)[i]);
+    segments.push_back(seg);
+    return;
   }
 
+  /*!
+   * Get the number of segments that comprise the poyline.
+   * \return The number of segments.
+   */
+  inline int _size () const
+  {
+    return (static_cast<int>(segments.size()));
+  }
+
+  /*!
+   * Get the i'th segment of the polyline.
+   * \param i The segment index (from 0 to size()-1).
+   * \return A const reference to the segment.
+   */
+  inline const Segment_2& operator[] (const int& i) const
+  {
+    return (segments[i]);
+  }
+
+  /*!
+   * Clear the polyline.
+   */
+  inline void _clear ()
+  {
+    segments.clear();
+    return;
+  }
 };
 
 CGAL_END_NAMESPACE
