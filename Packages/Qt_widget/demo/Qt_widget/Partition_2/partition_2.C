@@ -65,7 +65,6 @@ public:
   MyWindow(int w, int h): win(this) {
   setCentralWidget(&win);
     
-  connect(&win, SIGNAL(resized()), this, SLOT(redrawWin()));
 
   //create a timer for checking if somthing changed
   QTimer *timer = new QTimer( this );
@@ -132,8 +131,6 @@ public:
 	
 private:
   void something_changed(){current_state++;};
-signals:
-  void was_repainted();
   
 public slots:
 
@@ -150,18 +147,13 @@ public slots:
     win.unlock();
   }
 
-  void redrawWin()
-  {
-    emit(was_repainted());	
-  }
-	
 
 private slots:
   void gen_poly(){
     polygon.erase(polygon.vertices_begin(), polygon.vertices_end());
-    CGAL::random_polygon_2(100,//CGAL::Random().get_int(50,10),
-	                     std::back_inserter(polygon),
-				      Point_generator(1));
+    CGAL::random_polygon_2(100,
+			   std::back_inserter(polygon),
+			   Point_generator(1));
     win.redraw();
   }
 
