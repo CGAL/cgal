@@ -17,14 +17,15 @@ int main(int argc, char* argv[])
 
 typedef leda_rational Number_Type;
 
-typedef CGAL::Cartesian<Number_Type> Rep;
-typedef CGAL::Segment_2<Rep> Segment_2;
-typedef CGAL::Point_2<Rep> Point_2;
-typedef CGAL::Snap_rounding_2<Rep> Snap_rounding_2;
-typedef Snap_rounding_2::Segment_iterator Segment_iterator;
-typedef Snap_rounding_2::Segment_const_iterator Segment_const_iterator;
+typedef CGAL::Cartesian<Number_Type>             Rep;
+typedef CGAL::Snap_rounding_traits<Rep>          Sr_traits;
+typedef CGAL::Snap_rounding_2<Sr_traits>         Snap_rounding_2;
+typedef Snap_rounding_2::Segment_2               Segment_2;
+typedef Snap_rounding_2::Point_2                 Point_2;
+typedef Snap_rounding_2::Segment_iterator        Segment_iterator;
+typedef Snap_rounding_2::Segment_const_iterator  Segment_const_iterator;
 typedef Snap_rounding_2::Polyline_const_iterator Polyline_const_iterator;
-typedef Snap_rounding_2::Point_const_iterator Point_const_iterator;
+typedef Snap_rounding_2::Point_const_iterator    Point_const_iterator;
 
 void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg_list)
 {

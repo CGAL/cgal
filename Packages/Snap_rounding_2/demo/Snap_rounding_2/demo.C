@@ -24,13 +24,16 @@ int main()
 
 typedef leda_rational                                  Number_Type;
 typedef CGAL::Cartesian<Number_Type>                   Rep;
-typedef CGAL::Segment_2<Rep>                           Segment_2;
-typedef CGAL::Point_2<Rep>                             Point_2;
-typedef CGAL::Snap_rounding_2<Rep>                     Snap_rounding_2;
-typedef CGAL::Iso_rectangle_2<Rep>                     Iso_rectangle_2;
+typedef CGAL::Point_2<Rep>                             Local_point_2;
+typedef CGAL::Segment_2<Rep>                           Local_segment_2;
+typedef CGAL::Snap_rounding_traits<Rep>                Sr_traits;
+typedef CGAL::Snap_rounding_2<Sr_traits>               Snap_rounding_2;
+typedef Snap_rounding_2::Segment_2                     Segment_2;
+typedef Snap_rounding_2::Point_2                       Point_2;
 typedef Snap_rounding_2::Segment_iterator              Segment_iterator;
 typedef Snap_rounding_2::Polyline_const_iterator       Polyline_const_iterator;
 typedef Snap_rounding_2::Point_const_iterator          Point_const_iterator;
+typedef CGAL::Iso_rectangle_2<Rep>                     Iso_rectangle_2;
 typedef CGAL::Window_stream                            Window_stream;
 
 #define MIN_X 0
@@ -112,7 +115,7 @@ void display_bounding_box(CGAL::Window_stream &W,
                           const Iso_rectangle_2 &b,
                           bool display_bbox)
 {
-  if(display_bbox)
+  //  if(display_bbox)
     W << CGAL::BLACK << b;
 }
 
@@ -347,7 +350,9 @@ int main(int argc,char *argv[])
         for(Segment_iterator i1 = s.segments_begin();
             i1 != s.segments_end();
             ++i1) {
-          dist = CGAL::squared_distance(Point_2(x3,y3),*i1);
+          Local_segment_2 l_s(Local_point_2(i1->source().x(),i1->source().y()),
+                              Local_point_2(i1->target().x(),i1->target().y()));
+          dist = CGAL::squared_distance(Local_point_2(x3,y3),l_s);
 
           if(min_dist == -1 || dist < min_dist) {
             min_dist = dist;

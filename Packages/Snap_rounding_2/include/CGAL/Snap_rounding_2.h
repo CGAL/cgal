@@ -102,6 +102,7 @@ private:
   Point_2 p_right;
   Point_2 p_down;
   Point_2 p_up;
+  Rep_ rep;
   NT pixel_size;
   Segment_2 *right_seg;
   Segment_2 *left_seg;
@@ -143,6 +144,21 @@ struct hot_pixel_dir_cmp
 
 template<class base_rep>
 class Snap_rounding_traits : public base_rep {
+
+typedef typename base_rep::FT        NT;
+typedef CGAL::Point_2<base_rep> Point_2;
+
+public:
+
+void snap(Point_2 p,NT pixel_size,NT &x,NT &y)
+  {
+    x = NT(floor((p.x() / pixel_size).to_double())) * pixel_size +
+        pixel_size / 2.0;
+
+    y = NT(floor((p.y() / pixel_size).to_double())) * pixel_size +
+        pixel_size / 2.0;
+  }
+
 };
 
 template<class Rep_>
@@ -153,13 +169,13 @@ typedef CGAL::Arr_segment_traits_2<Rep_ >            Traits;// !!!! remove
 typedef Rep_                                         Rep;
 typedef typename Rep::FT                             NT;
 // @@@@ special typedefs for pm
-//typedef CGAL::Quotient<CGAL::MP_Float>               NT2;
-//typedef CGAL::Cartesian<NT>                         Kernel2;
+//typedef CGAL::Quotient<CGAL::MP_Float>             NT2;
+//typedef CGAL::Cartesian<NT>                        Kernel2;
 //typedef CGAL::Arr_segment_traits_2<Kernel2> Traits2;
 typedef CGAL::Pm_default_dcel<Traits>      Dcel2;
-typedef CGAL::Planar_map_2<Dcel2,Traits>            Planar_map2;
+typedef CGAL::Planar_map_2<Dcel2,Traits>             Planar_map2;
 typedef CGAL::Planar_map_with_intersections_2<Planar_map2> Pmwx;
-typedef Traits::X_curve                           X_curve2;
+typedef Traits::X_curve                              X_curve2;
 // @@@@ end special typedefs for pm
 typedef typename Traits::X_curve                     X_curve;
 typedef typename Traits::Curve                       Curve;
@@ -370,12 +386,14 @@ template<class Rep_>
 Hot_Pixel<Rep_>::Hot_Pixel(Point_2 inp_point,NT inp_pixel_size) :
                            pixel_size(inp_pixel_size)
   {
-    // $$$$ the next two functions are not generic !!!
-    NT x = NT(floor((inp_point.x() / pixel_size).to_double())) * pixel_size +
+    NT x,y;
+    rep.snap(inp_point,pixel_size,x,y);
+
+    /*    NT x = NT(floor((inp_point.x() / pixel_size).to_double())) * pixel_size +
         pixel_size / 2.0;
 
     NT y = NT(floor((inp_point.y() / pixel_size).to_double())) * pixel_size +
-        pixel_size / 2.0;
+    pixel_size / 2.0;*/
 
     p = Point_2(x,y);
     p_left = Point_2(x - pixel_size / 2.0,y);
