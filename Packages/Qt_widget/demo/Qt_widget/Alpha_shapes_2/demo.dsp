@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GR /GX /O2 /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\include\cgal\config\msvc6" /I "$(CGALROOT)\auxiliary\wingmp\gmp-4.0.1" /I "$(CGALROOT)\include" /I "$(QTDIR)\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "CGAL_USE_QT" /D "QT_DLL" /D "UNICODE" /D "QT_THREAD_SUPPORT" /FD /Zm900 /c
+# ADD CPP /nologo /W3 /GR /GX /O2 /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\include\cgal\config\msvc6" /I "$(CGALROOT)\auxiliary\wingmp\gmp-4.0.1" /I "$(CGALROOT)\include" /I "$(QTDIR)\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "CGAL_USE_QT" /D "QT_DLL" /D "UNICODE" /D "QT_THREAD_SUPPORT" /FD /Zm900 /c /Tp
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "NDEBUG"
@@ -95,6 +95,10 @@ SOURCE=.\alpha_shapes_2.C
 # End Source File
 # Begin Source File
 
+SOURCE=.\Qt_widget_move_point.C
+# End Source File
+# Begin Source File
+
 SOURCE=.\Qt_widget_toolbar.C
 # End Source File
 # Begin Source File
@@ -105,6 +109,44 @@ SOURCE=.\Qt_widget_toolbar_layers.C
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=.\alpha_shapes_2.h
+
+!IF  "$(CFG)" == "demo - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
+
+# Begin Custom Build
+InputPath=.\alpha_shapes_2.h
+
+"alpha_shapes_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc.exe -o alpha_shapes_2.moc alpha_shapes_2.C
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Qt_widget_move_point.h
+
+!IF  "$(CFG)" == "demo - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
+
+# Begin Custom Build
+InputPath=.\Qt_widget_move_point.h
+
+"Qt_widget_move_point.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc.exe -o Qt_widget_move_point.moc Qt_widget_move_point.h
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # Begin Source File
 
 SOURCE=.\Qt_widget_toolbar.h
