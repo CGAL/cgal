@@ -8,7 +8,9 @@
 #this 2 will desappear in the package submission
 CGAL_QT_LIB=CGALQt.lib
 
-CGAL_MAKEFILE = /cygdrive/d/testqt/CGAL-2.4-I-47/make/makefile_i686_CYGWINNT-5.0-1.3.2_CL.EXE-1200
+#CGAL_MAKEFILE = /cygdrive/d/testqt/CGAL-2.4-I-47/make/makefile_i686_CYGWINNT-5.0-1.3.2_CL.EXE-1200
+
+CGAL_MAKEFILE = ~/CGAL-2.4-I-47/make/makefile_sparc_SunOS-5.6_g++-2.95
 
 include $(CGAL_MAKEFILE)
 
