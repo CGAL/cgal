@@ -1,2 +1,8 @@
 mesh_demo
+conform
+mesh
 *.moc
+last_input.edg
+filename.edg
+semantic.cache
+*.core

@@ -2,3 +2,5 @@
 html
 *.blg *.bbl
 *.mtc*
+semantic.cache
+*.core

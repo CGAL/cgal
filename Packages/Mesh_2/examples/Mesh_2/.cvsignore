@@ -1,1 +1,5 @@
 mesh
+conform
+conforming
+semantic.cache
+*.core

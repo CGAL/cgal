@@ -1,2 +1,4 @@
 *.log *.dvi *.ps *.pdf *.aux *.mtc* _region*
 *.idx
+semantic.cache
+*.core
