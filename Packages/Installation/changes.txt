@@ -2,11 +2,21 @@
 //	Revision History for package Installation
 //=====================================================================
 
+
+//---------------------------------------------------------------------
+//	revision 1214
+//---------------------------------------------------------------------
+
+GLOB: Added Core support.
+GLOB: Changed menu structure (new support menu, the old main menu got too big).
+GLOB: Put gmp.h into system dependent include directory.
+GLOB: Changed upgrade to take this into account.
+
 //---------------------------------------------------------------------
 //	revision 1213
 //---------------------------------------------------------------------
 
-GLOB: New headers.
+GLOB: new headers
 
 //---------------------------------------------------------------------
 //	revision 1212
