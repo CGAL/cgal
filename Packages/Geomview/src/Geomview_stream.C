@@ -267,8 +267,7 @@ Geomview_stream::look_recenter() const
 Geomview_stream&
 Geomview_stream::operator<<(const std::string s)
 {
-    int l = s.length();
-    if (l != ::write(out, s.data(), l)) {
+    if (s.length() != ::write(out, s.data(), s.length())) {
         std::cerr << "write problem in the pipe while sending data to geomview"
              << std::endl;
         exit(-1);
@@ -289,8 +288,7 @@ Geomview_stream::operator<<(int i)
         // transform the int in a character sequence and put whitespace around
         std::ostrstream str;
         str << i << ' ' << std::ends;
-        char *bptr = str.str();
-        ::write(out, bptr, int(::strlen(bptr)));
+        ::write(out, str.str(), ::strlen(str.str()));
     }
     trace(i);
 
@@ -308,9 +306,7 @@ Geomview_stream::operator<<(double d)
         // 'copy' the float in a string and append a blank
         std::ostrstream str;
         str << f << ' ' << std::ends;
-        char *bptr = str.str();
-
-        ::write(out, bptr, int(::strlen(bptr)));
+        ::write(out, str.str(), ::strlen(str.str()));
     }
     trace(f);
     return *this;
