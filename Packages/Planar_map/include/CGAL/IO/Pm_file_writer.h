@@ -189,7 +189,7 @@ public:
   }
 
 protected:
-  virtual void write_face(Face_const_handle f)
+  virtual void write_face(Face_const_handle f) const
   {
     int ck;
     Holes_const_iterator iccbit;
