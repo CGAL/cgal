@@ -20,7 +20,6 @@
 //
 // ==========================================================================
 
-
 #ifndef CGAL_PREDICATES_KERNEL_FTC3_H
 #define CGAL_PREDICATES_KERNEL_FTC3_H
 
@@ -246,36 +245,36 @@ has_smaller_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
-cmp_signed_dist_to_planeC3(
-     const FT &pa, const FT &pb, const FT &pc, const FT &pd,
+cmp_signed_dist_to_directionC3(
+     const FT &pa, const FT &pb, const FT &pc,
      const FT &px, const FT &py, const FT &pz,
      const FT &qx, const FT &qy, const FT &qz)
 {
-  return CGAL::compare(scaled_distance_to_planeC3(pa,pb,pc,pd,px,py,pz),
-                       scaled_distance_to_planeC3(pa,pb,pc,pd,qx,qy,qz));
+  return CGAL::compare(scaled_distance_to_directionC3(pa,pb,pc,px,py,pz),
+                       scaled_distance_to_directionC3(pa,pb,pc,qx,qy,qz));
 }
 
 //CGAL_NO_FILTER_BEGIN
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-has_larger_signed_dist_to_planeC3(
-     const FT &pa, const FT &pb, const FT &pc, const FT &pd,
+has_larger_signed_dist_to_directionC3(
+     const FT &pa, const FT &pb, const FT &pc,
      const FT &px, const FT &py, const FT &pz,
      const FT &qx, const FT &qy, const FT &qz)
 {
-  return cmp_signed_dist_to_planeC3(pa,pb,pc,pd,px,py,pz,qx,qy,qz) == LARGER;
+  return cmp_signed_dist_to_directionC3(pa,pb,pc,px,py,pz,qx,qy,qz) == LARGER;
 }
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-has_smaller_signed_dist_to_planeC3(
-     const FT &pa, const FT &pb, const FT &pc, const FT &pd,
+has_smaller_signed_dist_to_directionC3(
+     const FT &pa, const FT &pb, const FT &pc,
      const FT &px, const FT &py, const FT &pz,
      const FT &qx, const FT &qy, const FT &qz)
 {
-  return cmp_signed_dist_to_planeC3(pa,pb,pc,pd,px,py,pz,qx,qy,qz) == SMALLER;
+  return cmp_signed_dist_to_directionC3(pa,pb,pc,px,py,pz,qx,qy,qz) == SMALLER;
 }
 //CGAL_NO_FILTER_END
 
@@ -289,11 +288,10 @@ cmp_signed_dist_to_planeC3(
      const FT &px, const FT &py, const FT &pz,
      const FT &qx, const FT &qy, const FT &qz)
 {
-  return CGAL::compare(
-           scaled_distance_to_planeC3(ppx,ppy,ppz,pqx,pqy,pqz,
-                                      prx,pry,prz, px,py,pz),
-           scaled_distance_to_planeC3(ppx,ppy,ppz,pqx,pqy,pqz,
-                                      prx,pry,prz, qx,qy,qz) );
+  return Comparison_result(sign_of_determinant3x3(
+	      pqx-ppx, pqy-ppy, pqz-ppz,
+	      prx-ppx, pry-ppy, prz-ppz,
+	      qx-px,   qy-py,   qz-pz));
 }
 
 //CGAL_NO_FILTER_BEGIN
