@@ -288,9 +288,7 @@ public:
 
 public:
   void point_rule(Halfedge_handle edge, Point& pt) {
-    Halfedge_around_facet_circulator cir = he->facet()->facet_begin();
-
-    int n =  CGAL::circulator_size(cir); 
+    int n =  CGAL::circulator_size(he->facet()->facet_begin()); 
 
     Vector cv(0,0,0), t;
     if (n == 4) {
