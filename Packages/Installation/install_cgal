@@ -287,8 +287,8 @@ print_usage_information()
                (other options - except for --CGAL_DIR - are ignored)
   --upgrade <dir>
                runs the script in upgrade mode
-	       Use this option, if you upgrade from CGAL-1.*
-	       and supply the directory where CGAL-1 is installed
+	       Use this option, if you upgrade from CGAL-1.*/2.0
+	       and supply the directory where CGAL is installed
 	       on your system.
 	       The config/install files and GMP installations will 
 	       be copied from there.
@@ -369,18 +369,17 @@ real_which()
 # /<path>/<cmd> -<opt1> ... -<optn>
 _real_basename()
 {
-    ${_basename} `${_printf} "${*}" | ${_awk} '{ printf "%s",$1 }'`
+    ${_basename} "`${_printf} \"${*}\" | ${_awk} '{ printf \"%s\",$1; for (i=2; i<=NF; ++i) if (substr($i,0,1) != \"-\") printf \"%s\",$i }'`"
 }
 
 _real_dirname()
 {
-    ${_dirname} `${_printf} "${*}" | ${_awk} '{ printf "%s",$1 }'`
+    ${_dirname} "`${_printf} \"${*}\" | ${_awk} '{ printf \"%s\",$1; for (i=2; i<=NF; ++i) if (substr($i,0,1) != \"-\") printf \"%s\",$i }'`"
 }
 
 _real_options()
 {
-    ${_printf} "${*}" | \
-	${_awk} '{ for (i=2; i<=NF; ++i) printf "%s",$i }'
+    ${_basename} "`${_printf} \"${*}\" | ${_awk} '{ for (i=2; i<=NF; ++i) if (substr($i,0,1) == \"-\") printf \"%s\",$i }'`"
 }
 
 # print to logfile
@@ -396,9 +395,9 @@ log_print()
 # otherwise return 0, iff it exists)
 _check_for_util()
 {
-    _tmp=`${_which} $1`
+    _tmp="`${_which} $1`"
     if [ -x "${_tmp}" ]; then
-	eval "_${3:-$1}=${_tmp}" 
+	eval "_${3:-$1}=\"${_tmp}\"" 
     elif [ "$2" = "y" ]; then
 	exit_on_error "Couldn't find \"${1}\""
     else
@@ -4757,8 +4756,8 @@ upgrade()
 
 upgrade_menu()
 {
-    # try to find CGAL-1.* directories first
-    for try in ${CGAL_DIR}/../CGAL-1*; do
+    # try to find old CGAL directories first
+    for try in ${CGAL_DIR}/../CGAL-2.0* ${CGAL_DIR}/../CGAL-1.*; do
 	if [ -d "${try}" -a -r "${try}" -a -x "${try}" ]; then
 	    UPGRADE_FROM="`cd ${try}; pwd`"
 	fi
@@ -4775,14 +4774,16 @@ upgrade_menu()
 	menu_tailer 'Main Menu'
 
 	case ${KEY} in
-	    u|U) print_empty_line
-		 upgrade
-		 _WHAT_TO_DO=rebuild-all
-		 go_up_lines 2
-		 flush_buffer
-		 build_all
-		 ${_rm} -f ${CGAL_DIR}/.upgrade-tag
-		 return
+	    u|U) if [ -n "${UPGRADE_FROM}" ]; then
+		    print_empty_line
+		    upgrade
+		    _WHAT_TO_DO=rebuild-all
+		    go_up_lines 2
+		    flush_buffer
+		    build_all
+		    ${_rm} -f ${CGAL_DIR}/.upgrade-tag
+		    return
+		 fi
 		 ;;
 	    d|D) change_dir UPGRADE_FROM dir;;
 	    q|Q) return;;
