@@ -104,7 +104,6 @@
 @! Contents
 @! --------
 
-%\newpage\thispagestyle{empty}\cleardoublepage
 \clearpage
 
 \newlength{\defaultparskip}
@@ -1149,14 +1148,16 @@ radius of the smallest enclosing sphere.
 @end
 
 @macro <Min_sphere_d private member functions> += @begin
+    
     template < class NT >
     void  set_pricing_strategy( NT)
-    { strategyP = new CGAL::Partial_filtered_pricing<QP_rep>;
-      solver.set_pricing_strategy( *strategyP); }
-
+    { /*strategyP = new CGAL::Partial_filtered_pricing<QP_rep>;
+      solver.set_pricing_strategy( *strategyP);*/ }
+  /*
     void  set_pricing_strategy( ET)
     { strategyP = new CGAL::Partial_exact_pricing<QP_rep>;
       solver.set_pricing_strategy( *strategyP); }
+  */
 @end
 
 
@@ -1556,6 +1557,7 @@ variant.
       typedef  CGAL::Min_sphere_d_traits_@1<R_1>   Traits_1;
     # define TEST_VARIANT_1 \
         "Min_sphere_d_traits_@1< Cartesian<leda_integer> >"
+      CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_integer)
     #endif
 @end
 
@@ -1577,7 +1579,7 @@ arithmetic.
     #endif
 @end
 
-The test sets consist of $100$ points with $24$-bit random integer
+The test sets consist of $100$ points with $20$-bit random integer
 coordinates. In $2$- and $3$-space we use \cgal's point generators to build
 the test sets with points lying almost (due to rounding errors) on a circle
 or sphere, respectively.
@@ -1597,7 +1599,7 @@ or sphere, respectively.
 @macro <Min_sphere_d test: generate point set>(3) = @begin
     std::vector<R_@1::Point_@2>  points_@1;
     points_@1.reserve( 100);
-    CGAL::copy_n( CGAL::Random_points_on_@3_@2<R_@1::Point_@2>( 0x1000000),
+    CGAL::copy_n( CGAL::Random_points_on_@3_@2<R_@1::Point_@2>( 0x100000),
                   100, std::back_inserter( points_@1));
 @end
 
@@ -1614,7 +1616,7 @@ in a $d$-cube.
         int  i, j;
         for ( i = 0; i < 100; ++i) {
             for ( j = 0; j < d; ++j)
-                coords[ j] = CGAL::default_random( 0x1000000);
+                coords[ j] = CGAL::default_random( 0x100000);
             points_@1.push_back( R_@1::Point_d( d, coords.begin(),
                                                    coords.end()));
         }
