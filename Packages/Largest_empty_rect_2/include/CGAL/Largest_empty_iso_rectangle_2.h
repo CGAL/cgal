@@ -309,10 +309,15 @@ Largest_empty_iso_rectangle_2<T>::Point_data::Point_data(const Point_2& _p,
 
 
 template<class T>
-void
+bool
 Largest_empty_iso_rectangle_2<T>::insert(const Point_2& _p,
 					 Point_type i_type)
 {
+  // check that the point is inside the bounding box 
+  if(_p.x() < bl_p.x() || _p.x() > tr_p.x() ||
+     _p.y() < bl_p.y() || _p.y() > tr_p.y())
+    return(false);
+
   cache_valid = false;
   Point_data_set_of_y *right_tent = new Point_data_set_of_y;
   Point_data_set_of_y *left_tent = new Point_data_set_of_y;
@@ -320,7 +325,7 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point_2& _p,
 
   x_sorted.insert(po);
   y_sorted.insert(po);
-
+  return(true);
 }
 
 
@@ -1060,10 +1065,10 @@ Largest_empty_iso_rectangle_2<T>::init(const Point_2& bl, const Point_2& tr)
   tr_p = tr;
 
   // add extreme points
-  insert(Point_2(bl.x() - 0.000001, bl.y() - 0.000001), BOT_LEFT);
-  insert(Point_2(tr.x() + 0.000001, bl.y() - 0.000001), BOT_RIGHT);
-  insert(Point_2(bl.x() - 0.000001, tr.y() + 0.000001), TOP_LEFT);
-  insert(Point_2(tr.x() + 0.000001, tr.y() + 0.000001), TOP_RIGHT);
+  insert(Point_2(bl.x() - T(0.000001) * (tr.x() - bl.x()), bl.y() - T(0.000001) * (tr.y() - bl.y())), BOT_LEFT);
+  insert(Point_2(tr.x() + T(0.000001) * (tr.x() - bl.x()), bl.y() - T(0.000001) * (tr.y() - bl.y())), BOT_RIGHT);
+  insert(Point_2(bl.x() - T(0.000001) * (tr.x() - bl.x()), tr.y() + T(0.000001) * (tr.y() - bl.y())), TOP_LEFT);
+  insert(Point_2(tr.x() + T(0.000001) * (tr.x() - bl.x()), tr.y() + T(0.000001) * (tr.y() - bl.y())), TOP_RIGHT);
 }
 
 template<class T>
@@ -1086,6 +1091,11 @@ template<class T>
 Largest_empty_iso_rectangle_2<T>::const_iterator 
 Largest_empty_iso_rectangle_2<T>::begin()
 {
+  Largest_empty_iso_rectangle_2<T>::const_iterator i = x_sorted.begin();
+
+  while(i->type != REG)
+    ++i;
+
   return const_iterator(x_sorted.begin());
 }
 
@@ -1095,7 +1105,6 @@ Largest_empty_iso_rectangle_2<T>::end()
 {
     return const_iterator(x_sorted.end());
 }
-
 
 template<class T>
 void 
