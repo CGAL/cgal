@@ -1,7 +1,8 @@
 % polyhedron.tex
 % ------------------------------------------------------------------------
+\label{sec:poly}
 
-The design of \cgalpoly\ \cite{k-ugpdd-99} consists of four components:
+The design of \cgalpoly\ consists of four components:
 
 \paragraph*{A Geometric Traits Concept} is defined as for all \cgal\
 data structures that describes the types for geometric primitives,
@@ -55,10 +56,12 @@ do-while-loop instead of the usual while-loop for iterators.  Let us
 write a small function rendering a polyhedral surface with convex
 facets in OpenGL with double coordinates in non-reference counted
 points and making a bold, but informed guess about its memory layout.
+Note that circulators and iterators have implicit conversions to the
+corresponding handle types.
 %
 \begin{lstlisting}
-typedef CGAL::Polyhedron_3< CGAL::Simple_cartesian<double> > 
-                                                 Polyhedron;
+typedef Polyhedron_3<Simple_cartesian<double> > Polyhedron;
+
 void render( const Polyhedron& P) {
   Polyhedron::Facet_const_iterator i;
   for ( i = P.facets_begin(); i != P.facets_end(); ++i) {
@@ -96,7 +99,7 @@ formats: First, points are defined with their coordinates, then facets
 are defined as sequence of indices to the points on their boundary. An
 efficient implementation of such a construction is provided with the
 incremental builder class in \cgal. Examples for the different ways of
-modifying the mesh are given the following sections.
+modifying the mesh are given in the following sections.
 
 
 

@@ -2,46 +2,42 @@
 % ----------------------------------------------------------
 \label{sec:sqrt3}
 
+\begin{figure}
+    \centering{\includegraphics[width=7.0cm]{figs/sqrt3}}
+    \caption{$\sqrt{3}$-Subdivision of the mannequin mesh.}
+    \label{fig:sqrt3}
+\end{figure}
 
-The $\sqrt{3}$ subdivision scheme was introduced by
-Kobbelt~\cite{sqrt3}. It is an adaptive scheme, but in our example
-progra we realize only a single uniform subdivision step.
+\begin{figure}[htb]
+    \centering{\includegraphics[width=7.0cm]{figs/sqrt3_basic}}
+    \caption{The $\sqrt{3}$-subdivision scheme is decomposed into
+             Euler operators: center vertex and edge flips.}
+    \label{fig:sqrt3_basic}
+\end{figure}
+
+This scheme was introduced as an adaptive scheme~\cite{sqrt3}, but we
+restrict our example program to a single uniform subdivision step, see
+Fig.~\ref{fig:sqrt3} for an example of a subdivision sequence and
+Fig.~\ref{fig:sqrt3_basic} for a closeup on the refinement.
 
 The subdivision step takes a triangle mesh as input and splits each
 facet at its centroid into three triangles.  We write a function that
-creates the centroid for one triangle. The combinatorial part exists
-already as an Euler operator for \cgalpoly, only the coordinates of
-the new vertex need to be computed. We exploit the knowledge that the
-facet is a triangle and access the 1-ring of the centroid directly
-without any loops or branching decisions.
+creates the centroid for one triangle. The topology refinement part
+exists already as an Euler operator in \cgalpoly, we only have to
+computer the coordinates of the new vertex. Since the facet is a
+triangle, we access the 1-ring of the centroid directly without any
+loops or branching decisions (in general, we could use the circulator
+loop shown in the render function in Section~\ref{sec:poly}).
 
 \begin{lstlisting}
 void create_centroid( Polyhedron& P, Facet_iterator f) {
-    Halfedge_handle h = f->halfedge();
-    Vector vec = h->vertex()->point() - CGAL::ORIGIN;
-    vec = vec + (h->next()->vertex()->point() - CGAL::ORIGIN);
-    vec = vec + (h->next()->next()->vertex()->point() - CGAL::ORIGIN);
-    Halfedge_handle new_center = P.create_center_vertex( h);
-    new_center->vertex()->point() = CGAL::ORIGIN + (vec / 3.0);
+  Halfedge_handle h = f->halfedge();
+  Vector vec = h->vertex()->point() - ORIGIN;
+  vec = vec + (h->next()->vertex()->point() - ORIGIN);
+  vec = vec + (h->next()->next()->vertex()->point() - ORIGIN);
+  Halfedge_handle new_center = P.create_center_vertex(h);
+  new_center->vertex()->point() = ORIGIN + (vec/3.0);
 }
-\end{lstlisting}
-
-We could instead generalize the method to allow non-triangular facets
-in the first step. We would need to to replace the centroid
-computation with a loop based on a circulator over the halfedges
-surrounding the facet. Circulators are the corresponding concept for
-circular sequences as iterator are the concept for linear sequences.
-Main difference are the lack of a past-the-end position for
-circulators that leads to the typical ideom of a do-while-loop instead
-of the usual while-loop for iterators. The example loop could like this
-including the count for the facet size:
-
-\begin{lstlisting}
-    Halfedge_around_facet_circulator h = f->facet_begin();
-    do {
-        vec = vec + ( h->vertex()->point() - CGAL::ORIGIN);
-        ++ facet_size;
-    } while ( ++h != f->facet_begin());
 \end{lstlisting}
 
 Next, all edges of the initial mesh are flipped so that they join two
@@ -51,95 +47,110 @@ Finally, each initial vertex is replaced by a barycentric combination
 of its neighbors. However, the mesh has already been subdivided, so
 the original neighbors of a vertex are actually every other vertex in
 the 1-ring. We write a function object for the smoothing step that
-will be efficiently applicable with the \lstinline!std::transform!
-function.
+can be used with the \CodeFmt{std::transform} function.
 
 \begin{lstlisting}
 struct Smooth_old_vertex {
 Point operator()( const Vertex& v) const {
-    std::size_t degree = v.vertex_degree() / 2;
-    double alpha = (4.0 - 2.0 * cos( 2.0 * CGAL_PI / degree)) / 9.0;
-    Vector vec = (v.point() - CGAL::ORIGIN) * ( 1.0 - alpha);
-    Halfedge_around_vertex_const_circulator h = v.vertex_begin();
-    do {
-        vec = vec + ( h->opposite()->vertex()->point() - CGAL::ORIGIN) 
-                   * alpha / degree;
-        ++ h; ++ h;
-    } while ( h != v.vertex_begin());
-    return (CGAL::ORIGIN + vec);
-}
-};
+  std::size_t degree = v.vertex_degree()/2;
+  double alpha = (4.0-2.0*cos(2.0*CGAL_PI/degree))/9.0;
+  Vector vec = (v.point() - ORIGIN) * (1.0-alpha);
+  Halfedge_around_vertex_const_circulator h = v.vertex_begin();
+  do {
+    vec = vec + ( h->opposite()->vertex()->point() - ORIGIN) 
+               * alpha/degree;
+    ++ h; ++ h;
+  } while ( h != v.vertex_begin());
+  return (ORIGIN + vec);
+}};
 \end{lstlisting}
 
 We are ready to assemble the subdivision program. We are exloiting
-that newly created items are appended at the end, so that we can keep valid
-iterators that tell us where the old items end and where the new items
-start. We use this to be as economical as possible with the extra
-storage needed in this method, which is an extra array for the
-smoothed coordinates of original vertices. We start by creating the
-centroids, then smooth the old vertices, and conclude with flipping
-the old edges.
+that newly created items are appended at the end of the item
+sequences, so that we can keep valid iterators that tell us where the
+old items end and where the new items start. We use this to be as
+economical as possible with the extra storage needed in this method,
+which is an extra array for the smoothed coordinates of original
+vertices. We start by creating the centroids, then smooth the old
+vertices, and conclude with flipping the old edges.
 
 \begin{lstlisting}
 void subdiv( Polyhedron& P) {
-    std::size_t nv = P.size_of_vertices();
-    Vertex_iterator last_v = P.vertices_end();
-    -- last_v;  // the last of the old vertices
-    Edge_iterator last_e = P.edges_end();
-    -- last_e;  // the last of the old edges
-    Facet_iterator last_f = P.facets_end();
-    -- last_f;  // the last of the old facets
+  std::size_t nv = P.size_of_vertices();
+  Vertex_iterator last_v = P.vertices_end();
+  --last_v;                 // the last of the old vertices
+  Edge_iterator last_e = P.edges_end();
+  --last_e;                 //    the last of the old edges
+  Facet_iterator last_f = P.facets_end();
+  --last_f;                 //   the last of the old facets
 
-    Facet_iterator f = P.facets_begin(); // centroids
-    do {
-        create_centroid( P, f);
-    } while ( f++ != last_f);
+  Facet_iterator f = P.facets_begin();         // centroids
+  do {
+    create_centroid( P, f);
+  } while ( f++ != last_f);
 
-    std::vector<Point> pts;              // smooth old vertices
-    pts.reserve( nv);  // get intermediate space for the new points
-    ++ last_v; // make it the past-the-end position again
-    std::transform( P.vertices_begin(), last_v, std::back_inserter( pts), 
-                    Smooth_old_vertex());
-    std::copy( pts.begin(), pts.end(), P.points_begin());
+  std::vector<Point> pts;   //          smooth old vertices
+  pts.reserve( nv);         //     space for the new points
+  ++ last_v;                //   move to past-the-end again
+  std::transform( P.vertices_begin(), last_v, 
+            std::back_inserter( pts), Smooth_old_vertex());
+  std::copy( pts.begin(), pts.end(), P.points_begin());
 
-    ++ last_e; // make it the past-the-end position again
-    for ( Edge_iterator e = P.edges_begin(); e != last_e; ++e)
-        P.flip_edge(e);    // flip the old edges
+  ++ last_e;                //   move to past-the-end again
+  for ( Edge_iterator e = P.edges_begin(); e != last_e; ++e)
+    P.flip_edge(e);         //           flip the old edges
 }
 \end{lstlisting}
 
+The \openmesh\ library comes with a demo application for the
+subdivision algorithms that are available in \openmesh. Since L.
+Kobbelt, the author of the $\sqrt{3}$-subdivision, is the head of the
+group developing \openmesh, it is natural to find his algorithm in the
+library. We used it for a performance comparison with our example
+implementation on a laptop with an Intel Pentium4 Mobile CPU running
+at 1.80GHz with 512KB cache and 254MB main memory under Linux.
 
+We selected an instance of \cgalpoly\ that was closely matching the
+implementation used in \openmesh, which entails the array-storage
+version of halfedge data structure, no plane equation in facets, and
+\CodeFmt{float} coordinates in points. \openmesh\ uses the specialized
+traingle-mesh data structure where our structure remains the general
+polygonal mesh. We only exploited the triangle nature of our mesh in
+the centroid computation, and as it turned out, this was not crucial.
+What is crucial is the size of the structure. For the sake of testing
+we ran the experiment with the unused plane equations in the facets,
+and runtime increased by 25\%. Similarly the choice of the coordinate
+type matters. We used the lion vase, see Fig.~{fig:models} with 400k
+triangles as benchmark in two successive subdivision steps. The other
+models had boundary edges so that we could not use them in our
+currently limited example program. Here are the numbers.
 
-An example of one step of
-the $\sqrt{3}$ subdivision scheme is shown in
-Fig.\ref{fig:sqrt3_basic}, and an example of several steps is shown in
-Fig.\ref{fig:sqrt3}.
-
-\begin{figure}[htb]
-    \centering{\includegraphics[width=7.0cm]{figs/sqrt3_basic}}
-    \caption{The $\sqrt{3}$-Subdivision scheme is decomposed as
-             a set of Euler operators: face splits and edge flips.}
-    \label{fig:sqrt3_basic}
-\end{figure}
-
-\begin{figure}[htb]
-    \centering{\includegraphics[width=7.0cm]{figs/sqrt3}}
-    \caption{$\sqrt{3}$-Subdivision of the mannequin mesh.}
-    \label{fig:sqrt3}
-\end{figure}
-
-\begin{tabular}{l|lll}
-  \textbf{$\sqrt{3}$ subdivision} & \cgal\ float & \cgal\ double &
-  \openmesh\ float \\\hline
-  Lion vase: subdiv 1  & 0.95 & 1.22 &  1.27 \\
-  Lion vase: subdiv 2  & 3.90 & 23.73 & 128 (swap)
+\hspace*{-4mm}%
+\begin{tabular}{l|ccc}
+  & \multicolumn{2}{c}{\cgal} & \openmesh \\
+  \textbf{$\sqrt{3}$-subdivision} & \CodeFmt{float} & \CodeFmt{double} &
+  \CodeFmt{float} \\\hline
+  Lion vase: step 1  & 0.95 & \hspace*{1ex}1.22 &  \hspace*{2ex}1.27 \\
+  Lion vase: step 2  & 3.90 & 23.73 & 128.00
 \end{tabular}
 
-\begin{tabular}{l|ll}
-  \textbf{load OFF file} & \cgal (binary) & \openmesh (ascii) \\\hline
-  Bunny     &  0.7 & 0.8\\
-  Lion vase &  4.2 & 4.5 \\
-  David     &  7.6 & 9.6 \\
-  Raptor    &  22.0 7 20.6
-\end{tabular}
+The result is clearly encouraging for the \cgal\ implementation, but
+as alrady said, it should be interpreted cautiously. For example, the
+\openmesh\ implementation was obviously running into swap problems in
+the second refinement step, which is not expected when studying the
+example program and reading the manual about the default space
+requirements of this implementation. Nonetheless, the simple and easy
+customization possible with the \cgalpoly\ resulted in a short,
+readable, and competitive implementation for this algorithm without
+great efforts. It is also the first result showing that the
+abstraction of Euler operations does not necessarily harm your
+performance, and they clearly make the implementation easy.
+
+% \begin{tabular}{l|ll}
+%   \textbf{load OFF file} & \cgal (binary) & \openmesh (ascii) \\\hline
+%   Bunny     &  0.7 & 0.8\\
+%   Lion vase &  4.2 & 4.5 \\
+%   David     &  7.6 & 9.6 \\
+%   Raptor    &  22.0 7 20.6
+% \end{tabular}
 

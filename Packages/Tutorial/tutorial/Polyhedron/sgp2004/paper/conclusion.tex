@@ -1,27 +1,12 @@
-The CGAL polyhedron is a robust and efficient mesh data structure.
-With the generic design, the CGAL polyhedron is highly flexible
-to be specialized for specific algorithm implementations.
-Having the additional set of CGAL geometry components, the 
-developments of a set of geometry algorithms can be
-persisted within one framework.
+Coming back to our claims in the introduction, we gave ample examples 
+that the \cgal\ polyhedron is indeed a fast, storage efficient,
+highly flexible and customizable solution for a mesh data
+structure. We also believe that our examples are readable, easy to
+understand, and easy to modify. 
 
-In this paper, we have demonstrated several 
-mesh algorithms based on the
-CGAL polyhedron and other CGAL geometry components. We 
-presented a combinatorial subdivisions solution showing the 
-possibility of the extensible algorithm model 
-based on the flexibility of the CGAL polyhedron. We also 
-implemented a $\sqrt{3}$ subdivision showing the 
-efficiency of the CGAL polyhedron.
-Two remeshing algorithms, based on the CGAL polyhedron
-and Delaunay triangulation, were demonstrated to show 
-the versatility of the CGAL framework. And a set of
-geometry functionalities were presented to show [lutz]...
-
-With the emerging of CGAL as the standard library of the 
-computational geometry, more and more geometry algorithms 
-are researched and designed within CGAL. Using the CGAL
-components frees the researchers and developers from the
-implementation details of the underlying data structures
-and lets them focus on the core of the algorithms. It
-furthermore benefits the geometry processing community.
+The performance comparison with \openmesh\ was brief, and opens new
+questions, for example, about the right set of Euler operations to
+support certain algorithm classes efficiently. Such sets could be cast
+into generic concepts, and algorithms could be written for such
+concept, while different mesh data structures, for example \cgal\'s and
+\openmesh's, provide the right interface.
