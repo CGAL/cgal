@@ -4,6 +4,9 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/Triangle_2.h>
+#include <CGAL/Line_2.h>
+#include <CGAL/Direction_2.h>
+#include <CGAL/Ray_2.h>
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
@@ -17,6 +20,11 @@ public:
   typedef CGAL_Point_2<R>  Point;
   typedef CGAL_Segment_2<R> Segment;
   typedef CGAL_Triangle_2<R> Triangle;
+  typedef CGAL_Line_2<R> Line;
+  typedef CGAL_Direction_2<R> Direction;
+  typedef CGAL_Ray_2<R> Ray;
+
+
 
   typedef CGAL_Distance_2<CGAL_Triangulation_euclidean_traits_2<R> > Distance;
 
