@@ -1,5 +1,7 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+1.41 (6. August 2003) [af]
+- Changed to_double(Polynomial)
 
 1.40 (5. August 2003) [af]
 - Yet another tryout for g++3.3 to get rid of error message
