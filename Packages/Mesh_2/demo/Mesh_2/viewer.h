@@ -77,11 +77,9 @@ typedef K::Line_2 Line;
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
-/*
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds,
   CGAL::Exact_predicates_tag> Tr;
-*/
-typedef CGAL::Constrained_triangulation_2<K, Tds> Tr;
+//typedef CGAL::Constrained_triangulation_2<K, Tds> Tr;
 
 typedef CGAL::Mesh_2<Tr> Msh;
 

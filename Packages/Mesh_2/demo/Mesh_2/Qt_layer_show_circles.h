@@ -23,8 +23,10 @@
 
 #include <CGAL/Circle_2.h>
 #include <CGAL/IO/Qt_widget_layer.h>
+#include <CGAL/Triangulation_2.h>
 #include <CGAL/Cartesian.h>
 #include <qobject.h>
+#include <qcolor.h>
 
 
 namespace CGAL {
@@ -35,37 +37,96 @@ public:
   typedef typename T::Point           Point;
   typedef typename T::Segment         Segment;
   typedef typename T::Finite_faces_iterator Finite_faces_iterator;
+  typedef typename T::Locate_type     Locate_type;
+  typedef typename T::Face_handle     Face_handle;
+  typedef Cartesian<double>::Circle_2 Circle_double;
+  typedef Cartesian<double>::Point_2 Point_double;
+  typedef typename T::Geom_traits::FT		FT;
 
-  Qt_layer_show_circles(T &t) : tr(t){};
+  Qt_layer_show_circles(T &t, QLabel& l) : tr(t), label(l),
+    do_erase(false) {};
 
-  void draw()
-  {  
-    typedef Cartesian<double>::Circle_2 Circle_double;
-    typedef Cartesian<double>::Point_2 Point_double;
-
-    widget->lock();
-    for(Finite_faces_iterator it=tr.finite_faces_begin();
-	it!=tr.finite_faces_end();
-	it++)
-      {
-	Point v=((*it).vertex(0))->point();
-	double x=to_double(v.x());
-	double y=to_double(v.y());
-	Point_double vd(x,y);
-	
-	Point c=tr.circumcenter(it);
-	x=to_double(c.x());
-	y=to_double(c.y());
-	Point_double cd(x,y);
-
-
-	*widget << Circle_double(cd,squared_distance(vd,cd));
-      }
-    widget->unlock();
+  void draw() const
+  {
+    do_erase = false;
   };
+
+  void mouseMoveEvent(QMouseEvent *e)
+    {
+      if (tr.dimension()<1) return;
+      FT
+	x=static_cast<FT>(widget->x_real(e->x())),
+	y=static_cast<FT>(widget->y_real(e->y()));
+
+      Point p(x,y);
+
+      int li;
+      Locate_type lt;
+      Face_handle fh = tr.locate(p,lt,li);
+      if(lt == T::FACE)
+	{
+	  if(fh!=old_face)
+	    {
+	      widget->lock();
+	      
+	      if(do_erase) draw_circle(old_face);
+	      draw_circle(fh);
+	      old_face=fh;
+	      
+	      widget->unlock();
+	      QString s;
+	      s.setNum(to_double(tr.aspect_ratio(fh)), 'g', 5);
+	      label.setText(s);
+	      do_erase=true;
+	    }
+	}
+      else
+	{
+	  if(do_erase) 
+	    draw_circle(old_face);
+	  do_erase=false;
+	}
+    };
+
+  void leaveEvent(QEvent *e)
+    {
+      if (tr.dimension()<1) return;      
+      if(do_erase)
+	draw_circle(old_face);
+    };
+
 private:
-  T	&tr;
-  
+  void draw_circle(const Face_handle& fh) const
+    {
+      RasterOp oldRaster = widget->rasterOp();
+      QColor oldcolor = widget->color();
+      int oldwidth = widget->lineWidth();
+      
+      *widget << CGAL::GRAY;
+      *widget << LineWidth(1);
+      widget->get_painter().setRasterOp(NotROP);
+      
+      Point v=((*fh).vertex(0))->point();
+      double x=to_double(v.x());
+      double y=to_double(v.y());
+      Point_double vd(x,y);
+      
+      Point c=tr.circumcenter(fh);
+      x=to_double(c.x());
+      y=to_double(c.y());
+      Point_double cd(x,y);
+      
+      *widget << Circle_double(cd,squared_distance(vd,cd));
+      widget->setColor(oldcolor);
+      widget->setLineWidth(oldwidth);
+      widget->setRasterOp(oldRaster);
+      widget->do_paint();
+    }
+
+  T      &tr;
+  QLabel &label;
+  Face_handle  old_face;
+  bool	       do_erase;
 };//end class 
 
 } // namespace CGAL
