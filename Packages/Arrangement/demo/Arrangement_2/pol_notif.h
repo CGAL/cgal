@@ -22,7 +22,7 @@ public:
                 bool  original_direction , bool overlap = false)
   {
    
-    std::cout << "add_edge" << std::endl;
+    //std::cout << "add_edge" << std::endl;
 
 	
 	Planar_map::Halfedge_handle he;
@@ -41,8 +41,8 @@ public:
 	halfedge_handle->set_curve (my_x_mon_curve);
     halfedge_handle->opposite()->set_curve (my_x_mon_curve);
 
-	std::cout<<" inside notif (add adge) "<< d.halfedge_handle->source()->point()
-		                                  <<" !!!! " << he->source()->point();
+	//std::cout<<" inside notif (add adge) "<< d.halfedge_handle->source()->point()
+		//                                  <<" !!!! " << he->source()->point();
 
     
   }
@@ -52,7 +52,7 @@ public:
                   const Traits::X_monotone_curve_2 & c1,
                   const Traits::X_monotone_curve_2 & c2)
   {
-    std::cout << "split_edge" << std::endl;
+    //std::cout << "split_edge" << std::endl;
 
 	Traits::X_monotone_curve_2 my_c1 (c1);
 	
@@ -83,7 +83,7 @@ public:
   void split_face(Planar_map::Face_handle  orig_face , 
                   Planar_map::Face_handle  new_face )
   {
-    std::cout << "split_face" << std::endl;
+    //std::cout << "split_face" << std::endl;
 	new_face->set_info( orig_face->info());  // the new face's color will be the same
 											 //as the original face
 
@@ -92,7 +92,7 @@ public:
   void add_hole(Planar_map::Face_handle /* in_face */, 
                 Planar_map::Halfedge_handle /* new_hole */)
   {
-    std::cout << "add_hole" << std::endl;
+    //std::cout << "add_hole" << std::endl;
   }
 
   

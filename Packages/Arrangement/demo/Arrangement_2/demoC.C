@@ -286,7 +286,7 @@ void MyWindow::make_overlay( std::list<int> indexes ,
            Pm_seg_2 curve(xcurve, cd);
            seg_list.push_back(curve);
          }// for
-		 all_pm_are_empty = false;
+		     all_pm_are_empty = false;
 	   }// if //..//
      w_demo_p_new->bbox = w_demo_p_new->bbox + w_demo_p->bbox;
        
@@ -326,9 +326,9 @@ void MyWindow::make_overlay( std::list<int> indexes ,
 	 }
 
 	 // update the colors of the faces of the new PM //..//
-	 std::cout<<"overlaying faces...\n";
+	 //std::cout<<"overlaying faces...\n";
 	 w_demo_p_new->update_colors(ubf_colors);   
-	 std::cout<<"finished overlaying faces...\n";
+	 //std::cout<<"finished overlaying faces...\n";
 
 	 
      w_demo_p_new->setCursor(old);     
@@ -381,6 +381,7 @@ void MyWindow::make_overlay( std::list<int> indexes ,
            Pm_pol_2 curve(xcurve, cd);
            pol_list.push_back(curve);
          }// for
+         all_pm_are_empty = false; //..//
        }// if
        w_demo_p_new->bbox = w_demo_p_new->bbox + w_demo_p->bbox;
    	   
@@ -418,9 +419,9 @@ void MyWindow::make_overlay( std::list<int> indexes ,
 	   }
 
 	   // update the colors of the faces of the new PM //..//
-	   std::cout<<"overlaying faces...\n";
+	   //std::cout<<"overlaying faces...\n";
 	   w_demo_p_new->update_colors(ubf_colors);   
-	   std::cout<<"finished overlaying faces...\n";
+	   //std::cout<<"finished overlaying faces...\n";
 
      w_demo_p_new->setCursor(old);
 

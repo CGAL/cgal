@@ -475,7 +475,8 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       pol_list.push_back(curve);
       //w_demo_p->m_curves_arr.insert(Pm_pol_2( *base_polyline , cd));
     }
-	 w_demo_p->m_curves_arr.insert(pol_list.begin(),pol_list.end());
+    Pol_notification pol_notif;
+	 w_demo_p->m_curves_arr.insert(pol_list.begin(),pol_list.end(), &pol_notif);
 
     if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
       w_demo_p->empty = true;
@@ -493,7 +494,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     
     int count;
     inputFile >> count;
-    
+    Seg_notification  seg_notif;
     int i;
     std::list<Pm_seg_2> seg_list;
     for (i = 0; i < count; i++) {
@@ -519,9 +520,10 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       
 	  Pm_seg_2 curve(*base_seg, cd);
       seg_list.push_back(curve);
-      //w_demo_p->m_curves_arr.insert(Pm_seg_2( *base_seg , cd));
+      //w_demo_p->m_curves_arr.insert(Pm_seg_2( *base_seg , cd), &seg_notif);
     }
-	w_demo_p->m_curves_arr.insert(seg_list.begin(),seg_list.end());
+    
+	w_demo_p->m_curves_arr.insert(seg_list.begin(),seg_list.end(), &seg_notif);
 
 	if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
 	  w_demo_p->empty = true;
