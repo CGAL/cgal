@@ -1,4 +1,4 @@
-// Copyright (c) 1997  Tel-Aviv University (Israel).
+// Copyright (c) 2001  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -333,7 +333,7 @@ public:
     check_kd(kd_counter,number_of_trees,seg_list,directions);
     int ind = 0;
 
-#ifdef KD_DEBUG
+#ifdef CGAL_SR_DEBUG
     int number_of_actual_kd_trees = 0;
 #endif
     i = 0;
@@ -345,7 +345,7 @@ public:
         kd = create_kd_tree(angle);
         kd_trees_list.push_back(kd);
 
-#ifdef KD_DEBUG
+#ifdef CGAL_SR_DEBUG
         ++number_of_actual_kd_trees;
 #endif
 
@@ -354,7 +354,7 @@ public:
       ++ind;
     }
 
-#ifdef KD_DEBUG
+#ifdef CGAL_SR_DEBUG
     std::cout << "Actual number of kd-trees created : " << 
       number_of_actual_kd_trees << std::endl;
 #endif

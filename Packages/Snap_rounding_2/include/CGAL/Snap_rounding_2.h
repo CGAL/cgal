@@ -1,4 +1,4 @@
-// Copyright (c) 1997  Tel-Aviv University (Israel).
+// Copyright (c) 2001  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -16,8 +16,8 @@
 // $Name$
 //
 // author(s)     : Eli Packer <elip@post.tau.ac.il>
-#ifndef CGAL_SR_2_H
-#define CGAL_SR_2_H
+#ifndef CGAL_SNAP_ROUNDING_2_H
+#define CGAL_SNAP_ROUNDING_2_H
 
 #include <iostream>
 #include <CGAL/basic.h>
@@ -126,7 +126,7 @@ struct hot_pixel_dir_cmp
   bool operator ()(const Hot_Pixel<Rep_> *h1,const Hot_Pixel<Rep_> *h2);
 };
 
-#ifdef KD_DEBUG
+#ifdef CGAL_SR_DEBUG
 int number_of_false_hp;
 #endif
 
@@ -542,7 +542,7 @@ void Snap_rounding_2<Rep_,OutputContainer>::
         hot_pixels_intersected_set.insert(*iter);
       }
 
-#ifdef KD_DEBUG
+#ifdef CGAL_SR_DEBUG
       else
         ++number_of_false_hp;
 #endif
@@ -675,7 +675,7 @@ void snap_rounding_2(
   bool int_output = true,
   unsigned int number_of_kd_trees = 1)
 {
-#ifdef KD_DEBUG
+#ifdef CGAL_SR_DEBUG
     number_of_false_hp = 0;
 #endif
 
@@ -697,7 +697,7 @@ void snap_rounding_2(
     s.iterate(output_container,pixel_size,int_output,do_isr,seg_list,
          mul_kd_tree);
 
-#ifdef KD_DEBUG
+#ifdef CGAL_SR_DEBUG
     std::cout << "Overall number of false hot pixels in all the queries : "
               << number_of_false_hp << std::endl;
 #endif
