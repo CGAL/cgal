@@ -1,0 +1,465 @@
+#!/usr/local/bin/perl -w
+
+use Cwd;
+use Getopt::Long;
+use HTML::Element;
+use HTML::Tree;
+use XML::Parser;
+use English;
+
+my $help = 0;
+my $nameLength = 32;
+# my $root = $ENV{ROOT};
+my $home = $ENV{HOME};
+$home =~ s/\\/\//g;			# replace '\' with '/';
+my $logDir = $home . '/logs';
+$logDir =~ s/\/+/\//g;			# replace '//.../' with '/';
+
+my $root = $ENV{ROOT};
+my $benchDir = $root . '/bench';
+my $dataDir = $benchDir . '/data';
+my $databaseFile = $dataDir . '/benchDb.xml';
+
+$Getopt::Long::ignorecase = 0;
+GetOptions("databaseFile=s" => \$databaseFile,
+	   "help" => \$help,
+	   "logFile=s" => \$logFile,
+	   "logDir=s" => \$logDir,
+	   "phpFile=s" => \$phpFile,
+	   "nameLength=i" => \$nameLength,
+	   ) or die "Bad command line option!";
+
+usage() if $help;
+
+# Parse database file:
+my $parser = new XML::Parser(ErrorContext => 2,
+			     Handlers     => {Start      => \&start_handler,
+					      End        => \&end_handler,
+					      Char       => \&char_handler,
+					      CdataStart => \&cdata_start,
+					      CdataEnd   => \&cdata_end
+					      }
+			     );
+
+$parser->parsefile($databaseFile);
+
+$logFile = findLogFile($logDir) if (!defined($logFile));
+
+my $date = $logFile;
+$date =~ s/bcgal_(.*)%.*/$1/;
+my $day = substr($date, 0, 2);
+my $month = substr($date, 2, 2);
+my $year = substr($date, 4, 2);
+
+if (!defined($phpFile)) {
+  $phpFile = $logFile;
+  $phpFile =~ s/(.*)\.log/$1\.php/;
+}
+$logFile = $logDir . '/' . $logFile;
+  
+$h = HTML::Element->new('html');
+
+$dec = HTML::Element->new("~declaration", text=>'DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"');
+
+$head = HTML::Element->new('head');
+
+# coomon base:
+$php1 = HTML::Element->new("~pi",
+			   text => 'php require \'../../common/base.php\';?');
+$head->push_content($php1);
+
+# meta
+$meta = HTML::Element->new('meta',
+			   'http-equiv' => 'Content-Type',
+			   content => 'text/html; charset=iso-8859-1');
+$head->push_content($meta);
+
+# link:
+$link = HTML::Element->new('link',
+			   title => 'CGAL style',
+			   rel => 'stylesheet',
+			   type => 'text/css',
+			   href => 'benchmark.css');
+$head->push_content($link);
+
+# title:
+$title = HTML::Element->new('title');
+$title->push_content('CGAL at Tel-Aviv University - Members Page - Evaluation - benchmark');
+$head->push_content($title);
+
+$h->push_content($head);
+
+$body = HTML::Element->new('body', background => '../../images/cgal-bg2.gif');
+
+$a = HTML::Element->new('a', name => 'top');
+$body->push_content($a);
+
+$php2 = HTML::Element->new("~pi",
+			   text => 'php require \'../../common/header.php\';?');
+$body->push_content($php2);
+
+$center = HTML::Element->new('center');
+
+$h1 = HTML::Element->new('h1');
+$font = HTML::Element->new('font', color => '#0f0f80');
+$font->push_content('Benchmarks ' . $day . '/' . $month . '/' . $year);
+$h1->push_content($font);
+$center->push_content($h1);
+
+$body->push_content($center);
+$table = HTML::Element->new('table', border => '1');
+
+$tr = HTML::Element->new('tr');
+
+$th_name = HTML::Element->new('th', align => 'middle', 'nowrap');
+$th_name->push_content('Benchmark Name');
+
+$th_time = HTML::Element->new('th', align => 'middle');
+$th_time->push_content('Allocated Time in seconds');
+
+$th_ops = HTML::Element->new('th', align => 'middle');
+$th_ops->push_content('Number of Operations');
+
+$th_total = HTML::Element->new('th', align => 'middle');
+$th_total->push_content('Total Operation time in seconds');
+
+$th_single = HTML::Element->new('th', align => 'middle');
+$th_single->push_content('Single Operation time in seconds');
+
+$th_num = HTML::Element->new('th', align => 'middle');
+$th_num->push_content('Operations per second');
+
+$tr->push_content($th_name);
+$tr->push_content($th_time);
+$tr->push_content($th_ops);
+$tr->push_content($th_total);
+$tr->push_content($th_single);
+$tr->push_content($th_num);
+
+$th_curves = HTML::Element->new('th', align => 'middle');
+$th_curves->push_content('Number of Curves');
+
+$th_vertices = HTML::Element->new('th', align => 'middle');
+$th_vertices->push_content('Number of Vertices');
+
+$th_halfedges = HTML::Element->new('th', align => 'middle');
+$th_halfedges->push_content('Number of Halfedges');
+
+$th_faces = HTML::Element->new('th', align => 'middle');
+$th_faces->push_content('Number of Faces');
+
+$tr->push_content($th_curves);
+$tr->push_content($th_vertices);
+$tr->push_content($th_halfedges);
+$tr->push_content($th_faces);
+
+$table->push_content($tr);
+
+# loop
+@cpus = ();
+open(LOGFILE, "$logFile") or die "Can't open file: $logFile\n";
+$cnt = 0;
+%days = (Sun => 0, Mon => 1, Tue => 2, Wed => 3, Thu => 4, Fri => 5, Sat => 6);
+while ($line = <LOGFILE>) {
+    next if $line =~ /^\s*$/;		# skip empty lines
+    chop($line);			# remove 'end of line'
+    if ($line =~ /^COMPILER NAME: (.*)/) {
+      $compilerName = $1;
+    } elsif ($line =~ /^COMPILER INFO: (.*)/) {
+      $compilerInfo = $1;	
+    } elsif ($line =~ /^OS NAME: (.*)/) {
+      $osName = $1;
+    } elsif ($line =~ /^OS INFO: (.*)/) {
+      $osInfo = $1;
+    } elsif ($line =~ /^PROCESSOR: (.*)/) {
+      $procId = $1;
+    } elsif ($line =~ /^CPU SPEED: (.*)/) {
+      $cpus[$procId]{'cpuSpeed'} = $1;
+    } elsif ($line =~ /^CPU TYPE: (.*)/) {
+      $cpus[$procId]{'cpuType'} = $1;
+    } elsif ($line =~ /^PRIMARY DATA CACHE: (.*)/) {
+      $cpus[$procId]{'primDataCache'} = $1;
+    } elsif ($line =~ /^SECONDARY DATA CACHE: (.*)/) {
+      $cpus[$procId]{'secDataCache'} = $1;
+    } elsif ($line =~ /^INSTRUCTION CACHE: (.*)/) {
+      $cpus[$procId]{'instCache'} = $1;
+    } elsif ($line =~ /^MEM SIZE: (.*)/) {
+      $memSize = $1;
+    } elsif ($line =~ /^GFX BOARD: (.*)/) {
+      $gfxBoard = $1;
+    } elsif ($line =~ /^CGAL VERSION: (.*)/) {
+      $cgalVersion = $1;
+    } elsif ($line =~ /^LEDA VERSION: (.*)/) {
+      $ledaVersion = $1;
+    } elsif ($line =~ /^QT VERSION: (.*)/) {
+      $qtVersion = $1;
+    } elsif ($line =~ /^(Sun|Mon|Tue|Wed|Thu|Fri|Sat)/) {
+      @words = split ' ', $line;
+      if ($cnt == 0) {
+	@startTime = split /:/, $words[3];
+	$startDay = $days{$words[0]};
+	$cnt = 1;
+      } elsif ($cnt == 1) {
+	@endTime = split /:/, $words[3];
+	$endDay = $days{$words[0]};
+	$cnt = 2;
+      }
+      next;
+    }
+    $offset = 0;
+    $name = substr($line, $offset, $nameLength); $offset += $nameLength + 1;
+    $name =~ s/\s*$//;
+    if ($name =~ m/CGAL Kernel/) {
+      $kernel = 'cgal_kernel';
+      $time_class = 'cgal_kernel_time';
+    } elsif ($name =~ m/My Leda Kernel/) {
+      $kernel = 'my_kernel';
+      $time_class = 'my_kernel_time';
+    } elsif ($name =~ m/Leda Kernel/) {
+      $kernel = 'leda_kernel';
+      $time_class = 'leda_kernel_time';
+    } else {
+      next;
+    }
+    $time = substr($line, $offset, 8);		 $offset += 9;
+    $ops = substr($line, $offset, 8);		 $offset += 9;
+    $total = substr($line, $offset, 8);		 $offset += 9;
+    $single = substr($line, $offset, 8);	 $offset += 9;
+    $num = substr($line, $offset, 8);		 $offset += 9;
+
+    $tr = HTML::Element->new('tr');
+
+    $td_name = HTML::Element->new('td', align => 'left', 'nowrap');
+    $td_name->attr('class', $kernel) if defined($kernel);
+    $td_name->push_content($name);
+
+    $td_time = HTML::Element->new('td', align => 'right');
+    $td_time->attr('class', $kernel) if defined($kernel);
+    $td_time->push_content($time);
+
+    $td_ops = HTML::Element->new('td', align => 'right');
+    $td_ops->attr('class', $kernel) if defined($kernel);
+    $td_ops->push_content($ops);
+
+    $td_total = HTML::Element->new('td', align => 'right');
+    $td_total->attr('class', $kernel) if defined($kernel);
+    $td_total->push_content($total);
+
+    $td_single = HTML::Element->new('td', align => 'right');
+    $td_single->attr('class', $time_class) if defined($time_class);
+    $td_single->push_content($single);
+
+    $td_num = HTML::Element->new('td', align => 'right');
+    $td_num->attr('class', $kernel) if defined($kernel);
+    $td_num->push_content($num);
+
+    $tr->push_content($td_name);
+    $tr->push_content($td_time);
+    $tr->push_content($td_ops);
+    $tr->push_content($td_total);
+    $tr->push_content($td_single);
+    $tr->push_content($td_num);
+
+    $td_curves = HTML::Element->new('td', align => 'right');
+    $td_vertices = HTML::Element->new('td', align => 'right');
+    $td_halfedges = HTML::Element->new('td', align => 'right');
+    $td_faces = HTML::Element->new('td', align => 'right');
+    $fileName = $name;
+    $fileName =~ s/[^\(]*\(([^\)]*)\)?/$1/;
+    $curvesNum = '?';
+    $verticesNum = '?';
+    $halfedgesNum = '?';
+    $facesNum = '?';
+    if (defined($Files{$fileName})) {
+      my $fileAttrTable = $Files{$fileName};
+      $curvesNum = $fileAttrTable->{'curves'};
+      $verticesNum = $fileAttrTable->{'vertices'};
+      $halfedgesNum = $fileAttrTable->{'halfedges'};
+      $facesNum = $fileAttrTable->{'faces'};
+    }
+    $td_curves->push_content($curvesNum);
+    $tr->push_content($td_curves);
+    $td_vertices->push_content($verticesNum);
+    $tr->push_content($td_vertices);
+    $td_halfedges->push_content($halfedgesNum);
+    $tr->push_content($td_halfedges);
+    $td_faces->push_content($facesNum);
+    $tr->push_content($td_faces);
+
+    $table->push_content($tr);
+}
+close LOGFILE;
+# end loop
+
+$center->push_content($table);
+$body->push_content($center);
+
+$p = HTML::Element->new('p');
+$body->push_content($p);
+
+$table = HTML::Element->new('table', 'border' => '1');
+$body->push_content($table);
+
+# bench duration
+benchDuration($table) if (defined(@startTime) && defined(@endTime) &&
+			  defined($endDay) && defined($startDay));
+
+addInfo($table, 'Operating System', $osName);
+addInfo($table, 'System Information', $osInfo);
+addInfo($table, 'Compiler name', $compilerName);
+addInfo($table, 'Compiler info', $compilerInfo);
+addInfo($table, 'Memory Size', $memSize);
+addInfo($table, 'Graphics Board', $gfxBoard);
+addInfo($table, 'CGAL Version', $cgalVersion);
+addInfo($table, 'LEDA Version', $ledaVersion);
+addInfo($table, 'QT Version', $qtVersion);
+addInfo($table, 'Number of CPU\'s', $#cpus+1);
+
+for $i (0 .. $#cpus) {
+  $cpuTable = HTML::Element->new('table');
+  addInfo($cpuTable, 'Speed', $cpus[$i]{'cpuSpeed'});
+  addInfo($cpuTable, 'Type', $cpus[$i]{'cpuType'});
+  addInfo($cpuTable, 'Primary Data Cache', $cpus[$i]{'primDataCache'});
+  addInfo($cpuTable, 'Secondary data Cache', $cpus[$i]{'secDataCache'});
+  addInfo($cpuTable, 'Instruction cache', $cpus[$i]{'instCache'});
+  addInfo($table, 'CPU ' . $i, $cpuTable);
+}
+
+$a2 = HTML::Element->new('a', href => '#top');
+$img = HTML::Element->new('img',
+			  src => '../../images/icons/top.gif',
+			  alt => '[Top]', align => 'middle',  border => '0');
+$a2->push_content($img);
+$body->push_content($a2);
+
+$php3 = HTML::Element->new("~pi",
+			   text => 'php require \'../../common/footer.php\';?');
+$body->push_content($php3);
+    
+$h->push_content($body);
+
+open (PHPFILE, ">$phpFile") or die "cannot open $phpFile: $! for writing\n";
+print PHPFILE $dec->as_HTML('<>&','  ');
+print PHPFILE $h->as_HTML('<>&','  ');
+close PHPFILE;
+
+exit(0);
+################
+## End of main
+################
+
+################
+sub usage {
+  printf "Usage: cgal_bench_log2html [options]\n";
+printf "  -databaseFile <file>\tset database xml file to <file>
+  -help\t\t\tprint this help message
+  -root <root>\t\tset ROOT. Default \$ROOT (env. var.)
+  -logDir <dir>\t\tset log directory. Default is $logDir
+  -logFile <file>\tset log file.
+  \t\t\tDefault is most recent match bcgal_*.log
+  -nameLength <length>\tset the length of the name field\n";
+    
+  exit(0);
+}
+
+####
+sub addInfo
+{
+  my ($table,$name,$value) = @_;
+  $tr = HTML::Element->new('tr');
+  $td1 = HTML::Element->new('td');
+  $td2 = HTML::Element->new('td');
+  $b = HTML::Element->new('b');
+  $b->push_content($name);
+  $td1->push_content($b);
+  $td2->push_content($value);
+  $tr->push_content($td1);
+  $tr->push_content($td2);
+  $table->push_content($tr);
+}
+
+####
+sub benchDuration {
+  my ($table) = @_;
+  $diffTime[0] = $endTime[0] - $startTime[0];
+  $diffTime[1] = $endTime[1] - $startTime[1];
+  $diffTime[2] = $endTime[2] - $startTime[2];
+  $diffDay = $endDay - $startDay;
+  if ($diffTime[2] < 0) {
+    $diffTime[2] += 60;
+    $diffTime[1]--;
+  }
+  if ($diffTime[1] < 0) {
+    $diffTime[1] += 60;
+    $diffTime[0]--;
+  }
+  if ($diffTime[0] < 0) {
+      $diffTime[0] += 24;
+      $diffDay--;
+  }
+  $diffDay += 7 if ($diffDay < 0);
+  
+  $tr = HTML::Element->new('tr');
+  $td1 = HTML::Element->new('td');
+  $td2 = HTML::Element->new('td');
+  $b = HTML::Element->new('b');
+  $b->push_content('Bench Duration');
+  $td1->push_content($b);
+  $td2->push_content("$diffDay:$diffTime[0]:$diffTime[1]:$diffTime[2]");
+  $tr->push_content($td1);
+  $tr->push_content($td2);
+  $table->push_content($tr);
+}
+
+####
+sub findLogFile {
+  my ($logDir) = @_;
+  opendir LOGDIR, $logDir or die "serious braindamage: $logDir $!";
+  @logFiles = grep /bcgal/, readdir LOGDIR;
+  closedir LOGDIR;
+  $day = 0;
+  $month = 0;
+  $year = 0;
+  foreach $newLogFile (@logFiles) {
+    next if !($newLogFile =~ /bcgal_([^\.%]*)%[^\.]+\.log$/);
+    $date = $1;
+    $newDay = substr($date, 0, 2);
+    $newMonth = substr($date, 2, 2);
+    $newYear = substr($date, 4, 2);
+    if (($newYear > $year) ||
+	(($newYear == $year) && ($newMonth > $month)) ||
+	(($newYear == $year) && ($newMonth == $month) && ($newDay > $day)))
+    {
+      $day = $newDay;
+      $month = $newMonth;
+      $year = $newYear;
+      $logFile = $newLogFile;
+    }
+  }
+  return $logFile;
+}
+
+#
+sub start_handler
+{
+  my ($xp, $currentElement) = @_;    
+
+  # Initialize attributes:
+  $attrTable = {};
+  
+  # Update attributes:
+  while (@_) {
+    my $id = shift;
+    my $val = shift;
+    $val = $xp->xml_escape($val, "'");
+    $attrTable->{$id} = $val;
+  }
+  $Files{$attrTable->{'name'}} = $attrTable if ($currentElement eq 'file');
+}
+
+#
+sub end_handler { my ($xp, $currentElement) = @_; }
+sub char_handler { my ($xp, $data) = @_; }
+sub cdata_start { my $xp = shift; }
+sub cdata_end { my $xp = shift; }
+
