@@ -1,0 +1,2 @@
+Version x.y  (14/08/03)
+- Portability changes [af]
