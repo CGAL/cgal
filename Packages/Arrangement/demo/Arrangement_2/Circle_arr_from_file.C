@@ -155,6 +155,7 @@ int main(int argc, char* argv[])
   W.set_mode(leda_src_mode);
   W.set_node_width(3);
   W.button("finish",10);
+  W.open_status_window();
   W.display();
 
   for (unsigned int i=0; i<circles.size(); ++i) {
@@ -165,10 +166,10 @@ int main(int argc, char* argv[])
   }
 
   W << arr;
-  std::cout << "Total insertion time: " <<  insrt_t.time() << std::endl;
+   std::cout << "Total insertion time: " <<  insrt_t.time() << std::endl;
 
   //POINT LOCATION
-  std::cout << "\nEnter a point with left button." << std::endl;
+  W.set_status_string( "Enter a query point with left mouse button" );
   Point p;
 
   Arr_2::Halfedge_handle e;

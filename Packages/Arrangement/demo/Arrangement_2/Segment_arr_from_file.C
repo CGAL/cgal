@@ -234,6 +234,7 @@ int main(int argc, char* argv[])
   W.set_mode(leda_src_mode);
   W.set_node_width(3);
   W.button("finish",10);
+  W.open_status_window();
   W.display();
 
   std::ifstream file(argv[1]);
@@ -256,11 +257,8 @@ int main(int argc, char* argv[])
   
   W << arr;
   
-  std::cout << "Total insertion time: " <<  insrt_t.time() << std::endl;
-
-  
   //POINT LOCATION
-  std::cout << "\nEnter a point with left button." << std::endl;
+  W.set_status_string( "Enter a point with left button." );
   Point p;
   
   Arr_2::Halfedge_handle e=arr.halfedges_begin();
