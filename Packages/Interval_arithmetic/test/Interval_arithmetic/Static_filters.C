@@ -1,11 +1,13 @@
 #define CGAL_PROFILE
 
+#include <CGAL/MP_Float.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Static_filters.h>
 #include <CGAL/Kernel_checker.h>
 #include <CGAL/Cartesian_converter.h>
 
+//typedef CGAL::Simple_cartesian<CGAL::MP_Float>   K0;
 typedef CGAL::Simple_cartesian<double>   K0;
 typedef CGAL::Filtered_kernel<K0>        K1;
 typedef CGAL::Static_filters<K1>         K2;

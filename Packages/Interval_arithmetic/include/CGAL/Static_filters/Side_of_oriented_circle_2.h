@@ -55,14 +55,14 @@ public:
           fit_in_double(r.x()) && fit_in_double(r.y()) &&
           fit_in_double(t.x()) && fit_in_double(t.y()))
       {
-          double px = p.x();
-          double py = p.y();
-          double qx = q.x();
-          double qy = q.y();
-          double rx = r.x();
-          double ry = r.y();
-          double tx = t.x();
-          double ty = t.y();
+          double px = CGAL_NTS to_double(p.x());
+          double py = CGAL_NTS to_double(p.y());
+          double qx = CGAL_NTS to_double(q.x());
+          double qy = CGAL_NTS to_double(q.y());
+          double rx = CGAL_NTS to_double(r.x());
+          double ry = CGAL_NTS to_double(r.y());
+          double tx = CGAL_NTS to_double(t.x());
+          double ty = CGAL_NTS to_double(t.y());
 
           CGAL_PROFILER("In_circle_2 calls");
 

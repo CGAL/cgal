@@ -65,21 +65,21 @@ public:
           fit_in_double(s.x()) && fit_in_double(s.y()) && fit_in_double(s.z()) &&
           fit_in_double(t.x()) && fit_in_double(t.y()) && fit_in_double(t.z()))
       {
-          double px = p.x();
-          double py = p.y();
-          double pz = p.z();
-          double qx = q.x();
-          double qy = q.y();
-          double qz = q.z();
-          double rx = r.x();
-          double ry = r.y();
-          double rz = r.z();
-          double sx = s.x();
-          double sy = s.y();
-          double sz = s.z();
-          double tx = t.x();
-          double ty = t.y();
-          double tz = t.z();
+          double px = CGAL_NTS to_double(p.x());
+          double py = CGAL_NTS to_double(p.y());
+          double pz = CGAL_NTS to_double(p.z());
+          double qx = CGAL_NTS to_double(q.x());
+          double qy = CGAL_NTS to_double(q.y());
+          double qz = CGAL_NTS to_double(q.z());
+          double rx = CGAL_NTS to_double(r.x());
+          double ry = CGAL_NTS to_double(r.y());
+          double rz = CGAL_NTS to_double(r.z());
+          double sx = CGAL_NTS to_double(s.x());
+          double sy = CGAL_NTS to_double(s.y());
+          double sz = CGAL_NTS to_double(s.z());
+          double tx = CGAL_NTS to_double(t.x());
+          double ty = CGAL_NTS to_double(t.y());
+          double tz = CGAL_NTS to_double(t.z());
 
           CGAL_PROFILER("In_sphere_3 calls");
 

@@ -59,12 +59,12 @@ public:
           fit_in_double(q.x()) && fit_in_double(q.y()) &&
           fit_in_double(r.x()) && fit_in_double(r.y()))
       {
-          double px = p.x();
-          double py = p.y();
-          double qx = q.x();
-          double qy = q.y();
-          double rx = r.x();
-          double ry = r.y();
+          double px = CGAL_NTS to_double(p.x());
+          double py = CGAL_NTS to_double(p.y());
+          double qx = CGAL_NTS to_double(q.x());
+          double qy = CGAL_NTS to_double(q.y());
+          double rx = CGAL_NTS to_double(r.x());
+          double ry = CGAL_NTS to_double(r.y());
 
           CGAL_PROFILER("Orientation_2 calls");
 
