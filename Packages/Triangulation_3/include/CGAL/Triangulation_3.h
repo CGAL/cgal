@@ -2215,8 +2215,8 @@ side_of_facet(const Point & p,
 // 	i2 = (inf+2)&3;
 //       }
 //     }
-  // replaced using nextposaroundij
-  i2 = nextposaround(inf,3);
+  // replaced using next_around_edgeij
+  i2 = next_around_edge(inf,3);
   i1 = 3-inf-i2;
   Vertex_handle 
     v1 = c->vertex(i1),
@@ -2563,18 +2563,18 @@ flip( Cell_handle c, int i, int j )
   if ( degree != 3 ) return false;
 
   // checks that future tetrahedra are well oriented
-  Cell_handle n = c->neighbor( nextposaround(i,j) );
+  Cell_handle n = c->neighbor( next_around_edge(i,j) );
   int in = n->index( c->vertex(i) );
   int jn = n->index( c->vertex(j) );
-  if ( geom_traits().orientation( c->vertex(nextposaround(i,j))->point(),
-				  c->vertex(nextposaround(j,i))->point(),
-				  n->vertex(nextposaround(jn,in))->point(),
+  if ( geom_traits().orientation( c->vertex(next_around_edge(i,j))->point(),
+				  c->vertex(next_around_edge(j,i))->point(),
+				  n->vertex(next_around_edge(jn,in))->point(),
 				  c->vertex(j)->point() )
        != LEFTTURN ) return false;
   if ( geom_traits().orientation( c->vertex(i)->point(),
-				  c->vertex(nextposaround(j,i))->point(),
-				  n->vertex(nextposaround(jn,in))->point(),
-				  c->vertex(nextposaround(i,j))->point() )
+				  c->vertex(next_around_edge(j,i))->point(),
+				  n->vertex(next_around_edge(jn,in))->point(),
+				  c->vertex(next_around_edge(i,j))->point() )
        != LEFTTURN ) return false;
 
   _tds.flip_flippable( &(*c), i, j );
@@ -2614,22 +2614,22 @@ flip_flippable( Cell_handle c, int i, int j )
   CGAL_triangulation_precondition( degree==3 );
 
   CGAL_triangulation_precondition_code
-    ( Cell_handle n = c->neighbor( nextposaround(i,j) ); );
+    ( Cell_handle n = c->neighbor( next_around_edge(i,j) ); );
   CGAL_triangulation_precondition_code
     ( int in = n->index( c->vertex(i) ); );
   CGAL_triangulation_precondition_code
     ( int jn = n->index( c->vertex(j) ); );
   CGAL_triangulation_precondition
-    ( geom_traits().orientation( c->vertex(nextposaround(i,j))->point(),
-				 c->vertex(nextposaround(j,i))->point(),
-				 n->vertex(nextposaround(jn,in))->point(),
+    ( geom_traits().orientation( c->vertex(next_around_edge(i,j))->point(),
+				 c->vertex(next_around_edge(j,i))->point(),
+				 n->vertex(next_around_edge(jn,in))->point(),
 				 c->vertex(j)->point() )
        == LEFTTURN );
   CGAL_triangulation_precondition
     ( geom_traits().orientation( c->vertex(i)->point(),
-				 c->vertex(nextposaround(j,i))->point(),
-				 n->vertex(nextposaround(jn,in))->point(),
-				 c->vertex(nextposaround(i,j))->point() )
+				 c->vertex(next_around_edge(j,i))->point(),
+				 n->vertex(next_around_edge(jn,in))->point(),
+				 c->vertex(next_around_edge(i,j))->point() )
        == LEFTTURN );
 
   _tds.flip_flippable( &(*c), i, j );
@@ -2974,7 +2974,7 @@ hat(Vertex_handle v, Cell_handle c)
 	}
 	else { // we are on the boundary of the set of facets of the
 	  // convex hull that are visible from v
-	  i1 = nextposaround(i,inf);
+	  i1 = next_around_edge(i,inf);
 	  i2 = 6-i-i1-inf;
 	  cnew = create_cell( &(*(c->vertex(i1))), &(*(c->vertex(i2))), 
 			      &(*v), &(*infinite_vertex()),
@@ -3018,7 +3018,7 @@ link(Vertex_handle v, Cell_handle c)
     iv = bound->index(v);
     // indices of the vertices != v of bound on the boundary of the hat
     // such that (i,i1,i2,iv) positive
-    int i1 = nextposaround(i,iv);
+    int i1 = next_around_edge(i,iv);
     int i2 = 6-i-i1-iv;
 
     // looking for the neighbor i2 of bound :
@@ -3027,10 +3027,10 @@ link(Vertex_handle v, Cell_handle c)
 
     Cell_handle cur = bound;
 
-    next = nextposaround(i1,iv);
+    next = next_around_edge(i1,iv);
     while ( ! cur->neighbor(next)->has_vertex(infinite) ) {
       cur = cur->neighbor(next);
-      next = nextposaround(cur->index(v1),cur->index(v));
+      next = next_around_edge(cur->index(v1),cur->index(v));
     }
     Cell_handle current = bound->neighbor(i);
     Cell_handle found = cur->neighbor(next);

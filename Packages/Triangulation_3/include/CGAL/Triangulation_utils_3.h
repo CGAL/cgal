@@ -58,7 +58,7 @@ public:
       return (i==0) ? 2 : i-1;
     }
 
-  inline int nextposaround(const int i, 
+  inline int next_around_edge(const int i, 
 			   const int j) const
 {
   // index of the next cell when turning around the
@@ -66,12 +66,12 @@ public:
   CGAL_precondition( (0 <= i) && ( i < 4 ) && 
 		     (0 <= j) && ( j < 4 ) && 
 		     ( i != j ) );
-  static const int tab_nextposaroundij[4][4] = {
+  static const int tab_next_around_edge_ij[4][4] = {
     {5, 2, 3, 1},
     {3, 5, 0, 2},
     {1, 3, 5, 0},
     {2, 0, 1, 5} }; // the diagonal has no meaning
-  return tab_nextposaroundij[i][j];
+  return tab_next_around_edge_ij[i][j];
 }
 
 };

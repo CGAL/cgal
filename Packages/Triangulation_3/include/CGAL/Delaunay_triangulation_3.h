@@ -527,8 +527,8 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
   // v1, v2 finite vertices of the facet such that v1,v2,infinite
   // is positively oriented
   Vertex_handle 
-    v1 = c->vertex( nextposaround(i3,i) ),
-    v2 = c->vertex( nextposaround(i,i3) );
+    v1 = c->vertex( next_around_edge(i3,i) ),
+    v2 = c->vertex( next_around_edge(i,i3) );
   Orientation o =
     geom_traits().orientation_in_plane( v1->point(),
 					v2->point(),

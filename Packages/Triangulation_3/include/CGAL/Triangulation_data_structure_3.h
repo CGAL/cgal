@@ -1030,19 +1030,19 @@ flip( Cell* c, int i, int j )
 
   if ( degree != 3 ) return false;
   
-  int next = nextposaround(i,j);
+  int next = next_around_edge(i,j);
   Cell* c1 = c->neighbor( next );
   Vertex* v1 = c->vertex( next ); // will become vertex of c1
   int i1 = c1->index( c->vertex(i) );
   int j1 = c1->index( c->vertex(j) );
 
-  int next1 = nextposaround(i1,j1);
+  int next1 = next_around_edge(i1,j1);
   Cell* c2  = c1->neighbor( next1 );
   Vertex* v2 = c1->vertex( next1 ); // will become vertex of c2
   int i2 = c2->index( c->vertex(i) );
   int j2 = c2->index( c->vertex(j) );
 
-  int next2 = nextposaround(i2,j2);
+  int next2 = next_around_edge(i2,j2);
   Vertex* v3 = c2->vertex( next2 );
 
   // checks that the edge is flippable,
@@ -1090,19 +1090,19 @@ flip_flippable( Cell* c, int i, int j )
 
   CGAL_triangulation_precondition( degree == 3 );
   
-  int next = nextposaround(i,j);
+  int next = next_around_edge(i,j);
   Cell* c1 = c->neighbor( next );
   Vertex* v1 = c->vertex( next ); // will become vertex of c1
   int i1 = c1->index( c->vertex(i) );
   int j1 = c1->index( c->vertex(j) );
 
-  int next1 = nextposaround(i1,j1);
+  int next1 = next_around_edge(i1,j1);
   Cell* c2  = c1->neighbor( next1 );
   Vertex* v2 = c1->vertex( next1 ); // will become vertex of c2
   int i2 = c2->index( c->vertex(i) );
   int j2 = c2->index( c->vertex(j) );
 
-  int next2 = nextposaround(i2,j2);
+  int next2 = next_around_edge(i2,j2);
   Vertex* v3 = c2->vertex( next2 );
 
   // checks that the edge is flippable,
@@ -1633,7 +1633,7 @@ insert_in_edge(const Vertex & w, Cell* c, int i, int j)
 
       //	int k=Cell_circulator::other(i,j);
       //	Cell* ctmp = c->neighbor(k);
-      Cell* ctmp = c->neighbor( nextposaround(i,j) );
+      Cell* ctmp = c->neighbor( next_around_edge(i,j) );
 
       Cell* cprev = c;
       Cell* cnewprev = cnew;
@@ -1669,7 +1669,7 @@ insert_in_edge(const Vertex & w, Cell* c, int i, int j)
 	//	    ctmp = ctmp->neighbor(k);
 	//	  }
 	cprev = ctmp;
-	ctmp = ctmp->neighbor( nextposaround(i,j) );
+	ctmp = ctmp->neighbor( next_around_edge(i,j) );
       }
       cnew = c->neighbor(c->index(vi));
       cnew->set_neighbor(c->index(cprev),cnewprev);
@@ -2048,12 +2048,12 @@ create_star( std::set<void*, std::less<void*> > & region,
     for (int ii=0; ii<3; ii++) {
       cnew->vertex(ii)->set_cell(cnew);
       // indices of the vertices of cnew such that i[ii],j1,j2,li positive
-      j1 = nextposaround(i[ii],li);
+      j1 = next_around_edge(i[ii],li);
       j2 = 6-i[ii]-li-j1;
       // turn around the oriented edge j1 j2
       cur = c;
       n = c->neighbor(i[ii]);
-      CGAL_triangulation_assertion( nextposaround(j1,j2)==i[ii] );//debug
+      CGAL_triangulation_assertion( next_around_edge(j1,j2)==i[ii] );//debug
       while (true) {
 	j1 = n->index( cur->vertex(j1) );
 	j2 = n->index( cur->vertex(j2) );
@@ -2063,17 +2063,17 @@ create_star( std::set<void*, std::less<void*> > & region,
 	}
 	CGAL_triangulation_assertion( n != c );
 	cur = n;
-	n = n->neighbor( nextposaround(j1,j2) );
+	n = n->neighbor( next_around_edge(j1,j2) );
       }
       // now n is outside region, cur is inside
-      if ( n->neighbor( nextposaround(j2,j1) ) == cur ) {
+      if ( n->neighbor( next_around_edge(j2,j1) ) == cur ) {
 	// neighbor relation is reciprocical, ie
 	// the cell we are looking for is not yet created
 	cnew->set_neighbor(ii,create_star(region,v,cur,cur->index(n)));
 	continue;
       }
       // else the cell we are looking for was already created
-      cnew->set_neighbor(ii,n->neighbor( nextposaround(j2,j1) ));
+      cnew->set_neighbor(ii,n->neighbor( next_around_edge(j2,j1) ));
     }
     return cnew;
   } // endif dimension 3

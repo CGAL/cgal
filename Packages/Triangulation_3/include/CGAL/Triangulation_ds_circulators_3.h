@@ -150,9 +150,9 @@ public:
 //     int i = pos->index(_c->vertex(_s));
 //     int j = pos->index(_c->vertex(_t));
 
-//     pos = pos->neighbor( nextposaround(i,j) );
+//     pos = pos->neighbor( next_around_edge(i,j) );
 
-    pos = pos->neighbor( nextposaround( pos->index(_c->vertex(_s)),
+    pos = pos->neighbor( next_around_edge( pos->index(_c->vertex(_s)),
 					pos->index(_c->vertex(_t)) ) );
     return *this;
   }
@@ -171,9 +171,9 @@ public:
 //     int i = pos->index(_c->vertex(_s));
 //     int j = pos->index(_c->vertex(_t));
 
-//     pos = pos->neighbor( nextposaround(j,i) );
+//     pos = pos->neighbor( next_around_edge(j,i) );
 
-    pos = pos->neighbor( nextposaround( pos->index(_c->vertex(_t)),
+    pos = pos->neighbor( next_around_edge( pos->index(_c->vertex(_t)),
 					pos->index(_c->vertex(_s)) ) );
     return *this;
   }
@@ -290,7 +290,7 @@ public:
       ( start->has_vertex( c->vertex(s), i ) &&
 	start->has_vertex( c->vertex(t), j ) &&
 	( f!=i && f!=j ) );
-    if ( f == (int) nextposaround(i,j) ) pos = start;
+    if ( f == (int) next_around_edge(i,j) ) pos = start;
     else pos = start->neighbor(6-i-j-f); // other cell with same facet
   }
 
@@ -308,7 +308,7 @@ public:
 	start.first->has_vertex( c->vertex(t), j ) &&
 	( start.second !=i && start.second !=j ) );
     
-    if ( start.second == (int) nextposaround(i,j) ) pos = start.first;
+    if ( start.second == (int) next_around_edge(i,j) ) pos = start.first;
     else pos = start.first->neighbor(6-i-j-start.second); 
     // other cell with same facet
   }
@@ -329,7 +329,7 @@ public:
       ( start.first->has_vertex( e.first->vertex(e.second), i ) &&
 	start.first->has_vertex( e.first->vertex(e.third), j ) &&
 	( f!=i && f!=j ) );
-    if ( f == (int) nextposaround(i,j) ) pos = start.first;
+    if ( f == (int) next_around_edge(i,j) ) pos = start.first;
     else pos = start.first->neighbor(6-i-j-f); // other cell with same facet
   }
 
@@ -347,7 +347,7 @@ public:
     CGAL_triangulation_precondition
       ( start.first->has_vertex( e.first->vertex(e.second), i ) &&
 	start.first->has_vertex( e.first->vertex(e.third), j ) );
-    if ( start.second == (int) nextposaround(i,j) ) pos = start.first;
+    if ( start.second == (int) next_around_edge(i,j) ) pos = start.first;
     else pos = start.first->neighbor(6-i-j-start.second); 
   }
 
@@ -374,9 +374,9 @@ public:
 //     int i = pos->index(_c->vertex(_s));
 //     int j = pos->index(_c->vertex(_t));
 
-//     pos = pos->neighbor( nextposaround(i,j) );
+//     pos = pos->neighbor( next_around_edge(i,j) );
 
-    pos = pos->neighbor( nextposaround( pos->index(_c->vertex(_s)),
+    pos = pos->neighbor( next_around_edge( pos->index(_c->vertex(_s)),
 					pos->index(_c->vertex(_t)) ) );
     return *this;
   }
@@ -395,9 +395,9 @@ public:
 //     int i = pos->index(_c->vertex(_s));
 //     int j = pos->index(_c->vertex(_t));
 
-//     pos = pos->neighbor( nextposaround(j,i) );
+//     pos = pos->neighbor( next_around_edge(j,i) );
 
-    pos = pos->neighbor( nextposaround( pos->index(_c->vertex(_t)),
+    pos = pos->neighbor( next_around_edge( pos->index(_c->vertex(_t)),
 					pos->index(_c->vertex(_s)) ) );
     return *this;
   }
@@ -413,7 +413,7 @@ public:
   inline Facet operator*() const
   {
     return std::make_pair(pos,
-			  nextposaround( pos->index(_c->vertex(_s)),
+			  next_around_edge( pos->index(_c->vertex(_s)),
 					 pos->index(_c->vertex(_t)) ) );
   }
 
@@ -443,7 +443,7 @@ private:
   int _t; // index of the target vertex of the edge in _c
   Cell* pos; // current cell
   // the current fact is the facet of pos numbered
-  // nextposaround( pos->index(_c->vertex(_s)),
+  // next_around_edge( pos->index(_c->vertex(_s)),
   //                pos->index(_c->vertex(_t)) )
 };
 
