@@ -43,7 +43,7 @@ class Triangulation_line_face_circulator_2
 	                                    CGAL_CLIB_STD::ptrdiff_t,
                                             CGAL_CLIB_STD::size_t>,
       public Triangulation_cw_ccw_2,
-      public  Triangulation_ds_face_handle_2<Tds>
+      public Tds::Face_handle   
 {
 public:
   typedef Triangulation_line_face_circulator_2<Gt,Tds> Line_face_circulator;

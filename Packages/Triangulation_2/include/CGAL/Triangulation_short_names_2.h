@@ -30,7 +30,7 @@
 // for backward compatibilite
 #define Triangulation_default_data_structure_2 TDDS
 #define Triangulation_data_structure_using_list_2 TDSUL
-#define Triangulation_data_structure TDS
+#define Triangulation_data_structure_2 TDS
 #define Triangulation_vertex_base_2  Tvb
 #define Triangulation_face_base_2  Tfb
 #define Triangulation_euclidean_traits_2 Et2

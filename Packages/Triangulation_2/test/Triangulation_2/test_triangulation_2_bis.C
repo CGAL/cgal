@@ -46,8 +46,17 @@ int main()
   typedef CGAL::Triangulation_face_base_2<Gt2>                       Fb2;
   typedef CGAL::Triangulation_data_structure_2<Vb2,Fb2>  Tds2;
   typedef CGAL::Triangulation_2<Gt2,Tds2>    Cls2;
-
   _test_cls_triangulation_short_2( Cls2() );
+
+  std::cout << std::endl << "Testing Backward Compatibility"
+	    <<std::endl;
+  typedef CGAL::Triangulation_data_structure_using_list_2<Vb2,Fb2>  Tds3;
+  typedef CGAL::Triangulation_2<Gt2,Tds3>    Cls3;
+  _test_cls_triangulation_short_2( Cls3() );
+
+  typedef CGAL::Triangulation_default_data_structure_2<Gt2,Vb2,Fb2>  Tds4;
+  typedef CGAL::Triangulation_2<Gt2,Tds4>    Cls4;
+  _test_cls_triangulation_short_2( Cls4() );
 
   return 0;
 }

@@ -67,6 +67,7 @@ public:
   typedef Triangulation_data_structure_2<Vb,Fb>  Tds;
   typedef Triangulation_default_data_structure_2<Gt,Vb,Fb> Tdds;
   typedef Gt                           Geom_traits; 
+
   Triangulation_default_data_structure_2(const Geom_traits&
 					 gt=Geom_traits())
     : Tds() {}
@@ -81,11 +82,12 @@ class Triangulation_data_structure_using_list_2
   :public Triangulation_data_structure_2<Vb, Fb>
 {
 public:
- typedef Triangulation_data_structure_2<Vb,Fb>  Tds;
- typedef Triangulation_data_structure_using_list_2<Vb,Fb>  Tdsul;
- Triangulation_data_structure_using_list_2(): Tds() {} 
- Triangulation_data_structure_using_list_2(const Tdsul &tdsul)
-   : Tds(tdsul) {}
+  typedef Triangulation_data_structure_2<Vb,Fb>  Tds;
+  typedef Triangulation_data_structure_using_list_2<Vb,Fb>  Tdsul;
+
+  Triangulation_data_structure_using_list_2(): Tds() {} 
+  Triangulation_data_structure_using_list_2(const Tdsul &tdsul)
+    : Tds(tdsul) {}
 };
 
  
