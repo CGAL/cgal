@@ -32,8 +32,7 @@ submit:
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	version maintainer description.txt changes.txt \
 	demo include src test doc_tex doc_ps
-	cp -f Geomview.tar.gz *.txt version $(WWW_dir)
-	cp -f doc_ps/Geomview.ps.gz $(WWW_dir)/doc_ps/
+	cp -f Geomview.tar.gz version doc_ps/Geomview.ps.gz *.txt $(WWW_dir)
 	echo > $(TMP_file)
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
