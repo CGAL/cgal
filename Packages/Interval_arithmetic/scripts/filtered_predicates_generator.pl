@@ -2,6 +2,7 @@
 #
 # Copyright (c) 1998-2000 The CGAL Consortium
 # Author: Sylvain Pion <Sylvain.Pion@sophia.inria.fr>.
+# Package: Interval Arithmetic.
 #
 # This script takes as input a source code file containing template predicates.
 # It outputs the filtered specializations.
@@ -125,6 +126,8 @@ sub print_dynamic {
 "#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* $inline */
 $ret_type
@@ -225,6 +228,8 @@ sub print_static {
   print FO
 "#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* $inline */
 $ret_type
