@@ -37,10 +37,9 @@ class Triangulation_face_base_2
   : public Fb
 {
 public:
+  typedef Gt                                           Geom_traits;
   typedef typename Fb::Vertex_handle                   Vertex_handle;
   typedef typename Fb::Face_handle                     Face_handle;
-
-  typedef Gt                                           Geom_traits;
 
   template < typename TDS2 >
   struct Rebind_TDS {

@@ -44,6 +44,7 @@
 
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
+#include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Triangulation_line_face_circulator_2.h>
 
 
@@ -58,7 +59,8 @@ template < class Gt, class Tds >  std::ostream& operator<<
 
 template < class Gt, 
            class Tds = Triangulation_data_structure_2 <
-                             Triangulation_vertex_base_2<Gt> > >
+                             Triangulation_vertex_base_2<Gt>,
+                             Triangulation_face_base_2<Gt> > >
 class Triangulation_2
   : public Triangulation_cw_ccw_2
 {

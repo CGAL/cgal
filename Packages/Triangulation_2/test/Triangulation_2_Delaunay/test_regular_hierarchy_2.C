@@ -34,12 +34,10 @@
 #include <CGAL/_test_cls_regular_triangulation_2.C>
 #include <CGAL/_test_cls_regular_hierarchy_2.C>
 
-//typedef CGAL::Regular_triangulation_euclidean_traits_2 <TestK,
-//                                                       double> RGt;
 typedef CGAL::Regular_triangulation_euclidean_traits_2<Test_rep_cartesian> RGt;
 typedef CGAL::Regular_triangulation_vertex_base_2<RGt> Vbb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb> Vb;
-typedef CGAL::Regular_triangulation_face_base_2<>  Fb;
+typedef CGAL::Regular_triangulation_face_base_2<RGt>  Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>  Tds;
 typedef CGAL::Regular_triangulation_2<RGt,Tds>  Rt;
 typedef CGAL::Triangulation_hierarchy_2<Rt> Regular_hierarchy_cartesian;

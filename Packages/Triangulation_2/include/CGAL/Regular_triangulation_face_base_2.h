@@ -33,13 +33,14 @@
 CGAL_BEGIN_NAMESPACE
 
 
-template <class Fb = Triangulation_ds_face_base_2 <> >
+template <class Gt, class Fb = Triangulation_face_base_2<Gt> >
 class Regular_triangulation_face_base_2
   :  public Fb
 {
   typedef Fb                                            Fbase;
   typedef typename Fbase::Triangulation_data_structure  TDS;
 public:
+  typedef Gt                                   Geom_traits;
   typedef TDS                                  Triangulation_data_structure;
   typedef typename TDS::Vertex_handle          Vertex_handle;
   typedef typename TDS::Face_handle            Face_handle;
@@ -47,7 +48,7 @@ public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Fb::template Rebind_TDS<TDS2>::Other   Fb2;
-    typedef Regular_triangulation_face_base_2<Fb2>             Other;
+    typedef Regular_triangulation_face_base_2<Gt,Fb2>             Other;
   };
 
   typedef std::list<Vertex_handle>             Vertex_list;

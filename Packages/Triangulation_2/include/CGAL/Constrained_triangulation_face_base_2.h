@@ -30,13 +30,14 @@
 
 CGAL_BEGIN_NAMESPACE 
 
-template <class Fb = Triangulation_ds_face_base_2<> >
+template <class Gt, class Fb = Triangulation_face_base_2<Gt> >
 class Constrained_triangulation_face_base_2
   :  public Fb
 {
   typedef Fb                                           Base;
   typedef typename Fb::Triangulation_data_structure    TDS;
 public:
+  typedef Gt                                   Geom_traits;
   typedef TDS                                  Triangulation_data_structure;
   typedef typename TDS::Vertex_handle          Vertex_handle;
   typedef typename TDS::Face_handle            Face_handle;
@@ -44,7 +45,7 @@ public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Fb::template Rebind_TDS<TDS2>::Other    Fb2;
-    typedef Constrained_triangulation_face_base_2<Fb2>         Other;
+    typedef Constrained_triangulation_face_base_2<Gt,Fb2>    Other;
   };
 
 
@@ -102,9 +103,9 @@ public:
   
 };
 
-template <class Gt>
+template <class Gt, class Fb>
 inline void
-Constrained_triangulation_face_base_2<Gt>::
+Constrained_triangulation_face_base_2<Gt,Fb>::
 set_constraints(bool c0, bool c1, bool c2)
 {
   C[0]=c0;
@@ -112,44 +113,44 @@ set_constraints(bool c0, bool c1, bool c2)
   C[2]=c2;
 }
 
-template <class Gt>
+template <class Gt, class Fb>
 inline void
-Constrained_triangulation_face_base_2<Gt>::
+Constrained_triangulation_face_base_2<Gt,Fb>::
 set_constraint(int i, bool b)
 {
   CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
   C[i] = b;
 }
     
-template <class Gt>
+template <class Gt, class Fb>
 inline bool
-Constrained_triangulation_face_base_2<Gt>::
+Constrained_triangulation_face_base_2<Gt,Fb>::
 is_constrained(int i) const
 {
   return(C[i]);
 }
 
-template <class Gt>
+template <class Gt, class Fb>
 inline void
-Constrained_triangulation_face_base_2<Gt>::
+Constrained_triangulation_face_base_2<Gt,Fb>::
 reorient()
 {
   Base::reorient();
   set_constraints(C[1],C[0],C[2]);
 }
 
-template <class Gt>
+template <class Gt, class Fb>
 inline void
-Constrained_triangulation_face_base_2<Gt>::
+Constrained_triangulation_face_base_2<Gt,Fb>::
 ccw_permute()
 {
   Base::ccw_permute();
   set_constraints(C[2],C[0],C[1]);
 }
 
-template <class Gt>
+template <class Gt, class Fb>
 inline void
-Constrained_triangulation_face_base_2<Gt>::
+Constrained_triangulation_face_base_2<Gt,Fb>::
 cw_permute()
 {
   Base::cw_permute();

@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt, 
            class Tds  = Triangulation_data_structure_2 <
                         Regular_triangulation_vertex_base_2<Gt>,
-		        Regular_triangulation_face_base_2<> > >
+		        Regular_triangulation_face_base_2<Gt> > >
 class Regular_triangulation_2 : public Triangulation_2<Gt,Tds>
 {
   typedef Regular_triangulation_2<Gt, Tds>     Self;
