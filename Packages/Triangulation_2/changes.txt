@@ -1,4 +1,9 @@
-07 January 2005 Mariette
+09   February 2005 Mariette
+- removed the doc of the destructor of Triangulation_2
+- fixed the precondition in the doc of the Line_face_circulator
+
+
+07 February 2005 Mariette
 -fixed a bug in Line_face_circulator
 
 03 January 2005 Mariette
