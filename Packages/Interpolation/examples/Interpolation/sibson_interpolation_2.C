@@ -21,24 +21,7 @@ typedef K::Point_2                                       Point;
 typedef std::map<Point, Coord_type, K::Less_xy_2>        Point_value_map ;
 typedef std::map<Point, K::Vector_2 , K::Less_xy_2 >     Point_vector_map;
 
-//Functor class for accessing the function values/gradients
-template< class Map >  
-struct DataAccess : public std::unary_function< typename Map::key_type,
-		    typename Map::mapped_type> {
-  typedef typename Map::mapped_type Data_type;
-  typedef typename Map::key_type  Point;
-  
-  DataAccess< Map >(const Map& m): map(m){};
-  
-  Data_type operator()(const Point& p) { 
-    typename Map::const_iterator mit = map.find(p);
-    if(mit!= map.end())
-      return mit->second;
-    return Data_type();
-  };
-  
-  const Map& map;
-};
+
 
 int main()
 {
@@ -57,25 +40,33 @@ int main()
       values.insert(std::make_pair(p,a + bx* x+ by*y + c*(x*x+y*y)));
     }
   sibson_gradient_fitting_nn_2(T,std::inserter(gradients,gradients.begin()),
-			       DataAccess<Point_value_map>(values), Traits());
+			       CGAL::DataAccess<Point_value_map>(values), 
+			       Traits());
   
  
   //coordiante computation
   K::Point_2 p(1.6,1.4);
   std::vector< std::pair< Point, Coord_type > > coords;
   Coord_type norm = 
-    CGAL::natural_neighbor_coordinates_2(T, p,std::back_inserter(coords)).second;
+    CGAL::natural_neighbor_coordinates_2(T, p,std::back_inserter
+					 (coords)).second;
   
   
   //Sibson interpolant: version without sqrt:
-  Coord_type res =  CGAL::sibson_c1_interpolation_square(coords.begin(),
-							 coords.end(),norm,p, 
-							 DataAccess<Point_value_map>(values),
-							 DataAccess<Point_vector_map>(gradients),
-							 Traits());
-  std::cout << "   Tested interpolation on " << p << " interpolation: " << res 
-	    << " exact: " 
-	    << a + bx * p.x()+ by * p.y()+ c*(p.x()*p.x()+p.y()*p.y()) 
-	    << std::endl;
-  return 1; 
-}
+  std::pair<Coord_type, bool> res =  
+    CGAL::sibson_c1_interpolation_square
+    (coords.begin(),
+     coords.end(),norm,p, 
+     CGAL::DataAccess<Point_value_map>(values),
+     CGAL::DataAccess<Point_vector_map>(gradients),
+     Traits());
+  if(res.second)
+    std::cout << "   Tested interpolation on " << p 
+	      << " interpolation: " << res.first << " exact: " 
+	      << a + bx * p.x()+ by * p.y()+ c*(p.x()*p.x()+p.y()*p.y()) 
+	      << std::endl;
+  else
+    std::cout << "C^1 Interpolation not successful." << std::endl;
+  
+  return 0; 
+};
