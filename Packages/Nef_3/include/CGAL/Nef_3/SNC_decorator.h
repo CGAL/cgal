@@ -371,7 +371,7 @@ public:
   template <class H> void set_facet(H h, Halffacet_handle f) const 
     { h->incident_facet_ = f; }
   void set_volume(Halffacet_handle h, Volume_handle c) const
-    { h->volume_ = c; }
+    { TRACEN("VOLUME dec"); h->volume_ = c; }
   void set_volume(SFace_handle h, Volume_handle c) const 
     { h->incident_volume_ = c; }
 
@@ -428,9 +428,18 @@ public:
     TRACEN( "Locating " << sp <<" in " << point(v));
     SM_point_locator L(v);
     SObject_handle o = L.locate(sp);
+
     SFace_const_handle sf;
-    CGAL_nef3_assertion( assign( sf, o));
-    assign( sf, o);
+    //    CGAL_nef3_assertion(assign(sf,o));
+    //    assign(sf,o);
+    if(!assign( sf, o))
+      return Halffacet_handle();
+    /*    SM_decorator SD;
+    if(sncp()->halfedges_begin() == sncp()->halfedges_end() || 
+       SD.is_isolated(sncp()->halfedges_begin())) 
+      return Halffacet_handle();  
+    */
+
     SFace_cycle_const_iterator fc = sf->sface_cycles_begin(),
       fce = sf->sface_cycles_end();
     if( is_empty_range( fc, fce)) {
@@ -442,18 +451,22 @@ public:
       SHalfloop_handle sl;
       if ( assign( se, fc)) {
 	TRACEN( "adjacent facet found (SEdges cycle).");
+	TRACEN("se" << PH(se));
 	f_visible = facet(twin(se));
+	TRACEN("f_visible" << &f_visible);
       }
       else if ( assign( sl, fc)) {
 	TRACEN( "adjacent facet found (SHalfloop cycle).");
 	f_visible = facet(twin(sl));
       }
       else 
-	CGAL_nef3_assertion_msg(0, "Damn, wrong handle.");
+	//	CGAL_nef3_assertion_msg(0,"Damn wrong handle");
+      return Halffacet_handle();
     }
+    TRACEN("return");
     return f_visible;
   }
-
+  
   Halffacet_handle get_visible_facet( const Halfedge_handle e,
 				      const Segment_3& ray) const
     /*{\Mop when one shoot a ray |ray| in order to find the facet below to
@@ -631,7 +644,7 @@ public:
     O1.print();
 #endif // CGAL_NEF3_DUMP_SNC_OPERATORS
 
-    // SETDTHREAD(131*19*43);
+    SETDTHREAD(131*19*43);
 
     TRACEN("=> for all v0 in snc0, qualify v0 with respect snc1");
 
@@ -799,7 +812,10 @@ public:
     }
   
     // synthesis of spatial structure
+
     SNC_constructor C(result);
+    SNC_io_parser<SNC_structure> Op(std::cout, result);
+    Op.print();
     C.pair_up_halfedges();
     C.link_shalfedges_to_facet_cycles();
     C.categorize_facet_cycles_and_create_facets();
@@ -890,20 +906,24 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
   while ( true ) {
     if ( SFaceCandidates.empty() && FacetCandidates.empty() ) break;
     if ( !FacetCandidates.empty() ) {
+      TRACEN("Facet");
       Halffacet_handle f = *FacetCandidates.begin();
       FacetCandidates.pop_front();
       V.visit(f); // report facet
       Halffacet_cycle_iterator fc;
       CGAL_nef3_forall_facet_cycles_of(fc,f) {
         SHalfedge_handle e; SHalfloop_handle l;
-        if ( assign(e,fc) ) { 
+        if ( assign(e,fc) ) {
+	  TRACEN("Sedge assigned");
           SHalfedge_around_facet_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { e = twin(ec);
             if ( Done[sface(e)] ) continue;
             SFaceCandidates.push_back(sface(e));
             Done[sface(e)] = true;
           }
-        } else if ( assign(l,fc) ) { l = twin(l);
+        } else if ( assign(l,fc) ) { 
+	  TRACEN("sloop assigned");
+	  l = twin(l);
           if ( Done[sface(l)] ) continue;
           SFaceCandidates.push_back(sface(l));
           Done[sface(l)] = true;
@@ -911,16 +931,24 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
       }
     }
     if ( !SFaceCandidates.empty() ) {
+      TRACEN("Sface");
       SFace_handle sf = *SFaceCandidates.begin();
       SFaceCandidates.pop_front();
       V.visit(sf);
       if ( !Done[vertex(sf)] )
         V.visit(vertex(sf)); // report vertex
+      SVertex_handle sv;
+      SM_decorator SD(vertex(sf));      
+      CGAL_nef3_forall_svertices(sv,SD){
+	if(SD.is_isolated(sv) && !Done[sv])
+	  V.visit(sv);
+      }
       SFace_cycle_iterator fc;
       CGAL_nef3_forall_sface_cycles_of(fc,sf) {
         SVertex_handle v; SHalfedge_handle e; SHalfloop_handle l;
         if ( assign(e,fc) ) {
-          SHalfedge_around_sface_circulator ec(e),ee(e);
+	  TRACEN("sedge assigned2");
+	  SHalfedge_around_sface_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { 
             v = starget(ec);
             if ( !Done[v] ) {
@@ -932,14 +960,21 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
             FacetCandidates.push_back(f); Done[f] = true;
           }
         } else if ( assign(v,fc) ) {
+	  TRACEN("svertex assigned");
           if ( Done[v] ) continue; 
           V.visit(v); // report edge
           Done[v] = Done[twin(v)] = true;
           // note that v is isolated, thus twin(v) is isolated too
-          SFace_handle fo = sface(twin(v));
-          if ( Done[fo] ) continue;
+	  SM_decorator SD;
+	  SFace_handle fo;
+	  if(SD.is_isolated(v)) 
+	    fo = source(v)->sfaces_begin();
+	  else
+	    fo = sface(twin(v));
+	  if ( Done[fo] ) continue;
           SFaceCandidates.push_back(fo); Done[fo] = true;
         } else if ( assign(l,fc) ) {
+	  TRACEN("sloop assigned");
           Halffacet_handle f = facet(twin(l));
           if ( Done[f] ) continue;
           FacetCandidates.push_back(f);  Done[f] = true;

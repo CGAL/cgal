@@ -859,6 +859,10 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
   merge_halfsphere_maps(svertices_begin(),v,O);
   check_integrity_and_topological_planarity();
 
+  TRACEN("subdivided");
+  CGAL_nef3_forall_svertices(v,*this) {
+    TRACEN(PH(v));
+  }
 }
 
 
@@ -873,8 +877,9 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
   Sphere_circle xycircle(0,0,pos);
   while ( start != beyond ) { 
     int i = start->intersection(xycircle,s1,s2);
-    if (i>1) { L.push_back(s2); M[--L.end()] = M[start]; }
-    if (i>0) { L.push_back(s1); M[--L.end()] = M[start]; }
+    TRACEN("segment " << start->source() << " " << start->target());
+    if (i>1) { L.push_back(s2); M[--L.end()] = M[start];    TRACEN(">1 " << s2.source() << " " << s2.target()); }
+    if (i>0) { L.push_back(s1); M[--L.end()] = M[start];    TRACEN(">0 " << s1.source() << " " << s1.target()); }
     ++start;
   }
   // now all segments are split into hemispheres
@@ -889,17 +894,20 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
   CGAL_nef3_forall_iterators(it,L) { TRACEN("  "<<*it);
     if ( equal_as_sets(it->sphere_circle(),xycircle) ) {
       TRACEN("  splitting xy seg "<<*it);
+      bool added=false;
       int n1 =  it->intersection(yzcircle,s1,s2);
       if (n1 > 1 && !s2.is_degenerate()) 
-      { M[ L.insert(it,s2) ] = M[it]; }
+      { M[ L.insert(it,s2) ] = M[it]; added=true; TRACEN(">1 " << s2.source() << " " << s2.target()); }
       if (n1 > 0 && !s1.is_degenerate()) 
-      { M[ L.insert(it,s1) ] = M[it]; }
+      { M[ L.insert(it,s1) ] = M[it]; added = true; TRACEN(">1 " << s1.source() << " " << s1.target()); }
       int n2 =  it->intersection(yzcircle.opposite(),s1,s2);
       if (n2 > 1 && !s2.is_degenerate()) 
-      { M[ L.insert(it,s2) ] = M[it]; }
+      { M[ L.insert(it,s2) ] = M[it]; added=true; TRACEN(">1 " << s2.source() << " " << s2.target()); }
       if (n2 > 0 && !s1.is_degenerate()) 
-      { M[ L.insert(it,s1) ] = M[it]; }
-      itl = it; --it; L.erase(itl); M[itl] = T();
+      { M[ L.insert(it,s1) ] = M[it]; added=true; TRACEN(">1 " << s1.source() << " " << s1.target()); }
+      if(added) {
+	itl = it; --it; L.erase(itl); M[itl] = T();
+      }
       // at least one item was appended
     }
   }
@@ -1000,7 +1008,6 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
 	  if(supp_object(e,i) != NULL)
 	    break;
 	}
-	
 	if(supp_object(e,i) != NULL) {
 	  SHalfedge_handle ei;
 	  if ( assign(ei,supp_object(e,i)) ) { 
@@ -1035,7 +1042,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
 
     for (int i=0; i<2; ++i) {
       SObject_handle o = supp_object(v,i);
-      if ( o == NULL ) { mark(v,i) = m_buffer[i]; continue; }
+      if ( o == NULL ) { TRACEN("no vertex support"); mark(v,i) = m_buffer[i]; continue; }
       SVertex_handle vs;
       SHalfedge_handle es;
       SHalfloop_handle ls;
@@ -1235,7 +1242,9 @@ select(const Selection& SP) const
 template <typename Refs_>
 void SNC_SM_overlayer<Refs_>::simplify() const
 {
+
   TRACEN("simplifying"); 
+
   /* typedef typename CGAL::Partition<SFace_handle>::item partition_item;
      CGAL::Unique_hash_map<SFace_handle,partition_item> Pitem;
      CGAL::Partition<SFace_handle> FP; */
@@ -1257,33 +1266,17 @@ void SNC_SM_overlayer<Refs_>::simplify() const
       TRACEN("deleting "<<PH(e));
       if ( !UF.same_set(Pitem[face(e)],
 			Pitem[face(twin(e))]) ) {
+
         UF.unify_sets( Pitem[face(e)],
 		       Pitem[face(twin(e))] );
         TRACEN("unioning disjoint faces");
       }
-      if ( is_closed_at_source(e) ) 
+      if ( is_closed_at_source(e) )
         set_face(source(e),face(e));
-      if ( is_closed_at_source(twin(e)) ) 
+      if ( is_closed_at_source(twin(e)))
         set_face(target(e),face(e));
       delete_edge_pair(e);
     }
-
-  SVertex_handle v;
-  CGAL_nef3_forall_svertices(v,*this)
-    TRACEN(PH(v) << " " << mark(v));
-  TRACEN(" ");
-
-
-  SHalfedge_handle e;
-  CGAL_nef3_forall_shalfedges(e,*this)
-    TRACEN(PH(e)<< " " << mark(e));
-  TRACEN(" ");
-
-    SFace_handle ff;
-  CGAL_nef3_forall_sfaces(ff,*this)
-    TRACEN(&*ff << " " << mark(ff));
-  TRACEN(" ");
-
   }
 
   CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
@@ -1301,21 +1294,6 @@ void SNC_SM_overlayer<Refs_>::simplify() const
     f = *(UF.find(Pitem[face(twin(l))]));
     link_as_loop(twin(l),f);
   }
-
-  SVertex_handle vi;
-  CGAL_nef3_forall_svertices(vi,*this)
-    TRACEN(PH(vi) << " " << mark(vi));
-  TRACEN(" ");
-
-  SHalfedge_handle ei;
-  CGAL_nef3_forall_shalfedges(ei,*this)
-    TRACEN(PH(ei)<< " " << mark(ei));
-  TRACEN(" ");
-
-    SFace_handle ff;
-  CGAL_nef3_forall_sfaces(ff,*this)
-    TRACEN(&*ff << " " << mark(ff));
-  TRACEN(" ");
 
   SVertex_iterator v,vn;
   for(v = svertices_begin(); v != svertices_end(); v=vn) {
@@ -1338,23 +1316,6 @@ void SNC_SM_overlayer<Refs_>::simplify() const
     }
   }
 
-
-
-  CGAL_nef3_forall_svertices(vi,*this)
-    TRACEN(PH(vi) << " " << mark(vi));
-  TRACEN(" ");
-
-
-  CGAL_nef3_forall_shalfedges(ei,*this)
-    TRACEN(PH(ei)<< " " << mark(ei));
-  TRACEN(" ");
-
-
-
-  CGAL_nef3_forall_sfaces(ff,*this)
-    TRACEN(&*ff << " " << mark(ff));
-  TRACEN(" ");
-
   SFace_iterator fn;
   for (f = fn = sfaces_begin(); f != sfaces_end(); f=fn) { 
     ++fn;
@@ -1362,22 +1323,6 @@ void SNC_SM_overlayer<Refs_>::simplify() const
     if ( UF.find(pit) != pit ) 
       delete_face_only(f);
   }
-
-
-  CGAL_nef3_forall_svertices(vi,*this)
-    TRACEN(PH(vi) << " " << mark(vi));
-  TRACEN(" ");
-
-
-  CGAL_nef3_forall_shalfedges(ei,*this)
-    TRACEN(PH(ei)<< " " << mark(ei));
-  TRACEN(" ");
-
-
-
-  CGAL_nef3_forall_sfaces(ff,*this)
-    TRACEN(&*ff << " " << mark(ff));
-  TRACEN(" ");
 
 }
 

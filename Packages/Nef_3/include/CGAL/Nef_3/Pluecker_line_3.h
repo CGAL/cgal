@@ -53,15 +53,16 @@ class Pluecker_line_3 {
 typedef R_ R;
 /*{\Mtypemember the standard kernel type.}*/
 typedef typename R::RT RT;
+ typedef typename RT::NT NT;
 /*{\Mtypemember the ring type.}*/
 typedef typename R::Point_3 Point_3;
 /*{\Mtypemember the point type of the standard kernel.}*/
 typedef typename R::Line_3  Line_3;
 /*{\Mtypemember the line type of the standard kernel.}*/
-typedef const RT* const_iterator;
+typedef const NT* const_iterator;
 /*{\Mtypemember iterator over Pluecker coefficients.}*/
 typedef Pluecker_line_3<R> Self;
-RT c_[6];
+NT c_[6];
 
 public:
 /*{\Mcreation 3}*/     
@@ -73,25 +74,28 @@ Pluecker_line_3(const Line_3& l)
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname| and
 initializes it to |l|.}*/
 {
+  TRACEN("Vorsicht");
   Point_3 p(l.point(0)), q(l.point(1));
-  c_[0] = p.hx()*q.hy() - p.hy()*q.hx();
-  c_[1] = p.hx()*q.hz() - p.hz()*q.hx();
-  c_[2] = p.hy()*q.hz() - p.hz()*q.hy();
-  c_[3] = p.hx()*q.hw() - p.hw()*q.hx();
-  c_[4] = p.hy()*q.hw() - p.hw()*q.hy();
-  c_[5] = p.hz()*q.hw() - p.hw()*q.hz();
+  c_[0] = (p.hx()*q.hy() - p.hy()*q.hx()).eval_at(1);
+  c_[1] = (p.hx()*q.hz() - p.hz()*q.hx()).eval_at(1);
+  c_[2] = (p.hy()*q.hz() - p.hz()*q.hy()).eval_at(1);
+  c_[3] = (p.hx()*q.hw() - p.hw()*q.hx()).eval_at(1);
+  c_[4] = (p.hy()*q.hw() - p.hw()*q.hy()).eval_at(1);
+  c_[5] = (p.hz()*q.hw() - p.hw()*q.hz()).eval_at(1);
 }
 
 Pluecker_line_3(const Point_3& p, const Point_3& q)
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname| and
 initializes it to the oriented line through |p| and |q|.}*/
 {
-  c_[0] = p.hx()*q.hy() - p.hy()*q.hx();
-  c_[1] = p.hx()*q.hz() - p.hz()*q.hx();
-  c_[2] = p.hy()*q.hz() - p.hz()*q.hy();
-  c_[3] = p.hx()*q.hw() - p.hw()*q.hx();
-  c_[4] = p.hy()*q.hw() - p.hw()*q.hy();
-  c_[5] = p.hz()*q.hw() - p.hw()*q.hz();
+  TRACEN("Pluecker");
+
+  c_[0] = (p.hx()*q.hy() - p.hy()*q.hx()).eval_at(1);
+  c_[1] = (p.hx()*q.hz() - p.hz()*q.hx()).eval_at(1);
+  c_[2] = (p.hy()*q.hz() - p.hz()*q.hy()).eval_at(1);
+  c_[3] = (p.hx()*q.hw() - p.hw()*q.hx()).eval_at(1);
+  c_[4] = (p.hy()*q.hw() - p.hw()*q.hy()).eval_at(1);
+  c_[5] = (p.hz()*q.hw() - p.hw()*q.hz()).eval_at(1);
 
 }
 
@@ -120,7 +124,7 @@ Self& operator=(const Self& l)
 { if (&l!=this) std::copy(l.begin(),l.end(),c_); 
   return *this; }
 
-const RT& operator[](unsigned i) const
+const NT& operator[](unsigned i) const
 /*{\Marrop returns constant access to the $i$th Pluecker coefficient.}*/    
 { CGAL_assertion(i<6); return c_[i]; }
 
@@ -137,19 +141,21 @@ void normalize()
 representation. This is done by dividing all Pluecker 
 coefficients by their common gcd.}*/
 { 
+  TRACEN("normalize");
   int i=0;
   while(i<6 && c_[i]==0)
     i++;
-  
+    
   if(i>5)
     return;
 
-  RT D = c_[i];
+  NT D = c_[i];
   CGAL_assertion(D!=0);
 
   for(++i; i<6; ++i) 
     D = (c_[i]==0 ? D : CGAL_NTS gcd(D, c_[i]));
   if (D==0) return;
+  TRACEN("gcd" << D);
   for(int i=0; i<6; ++i) c_[i]/=D;
 }
 
@@ -160,7 +166,7 @@ void negate()
 Pluecker_line_3<R> opposite() const
 /*{\Mop returns the line opposite to |\Mvar|. }*/
 { Pluecker_line_3<R> res;
-  std::negate<RT> N;
+  std::negate<NT> N;
   std::transform(begin(), end(), res.c_, N);
   return res;
 }
@@ -170,8 +176,8 @@ static int cmp(const Pluecker_line_3<R>& l1,
 /*{\Mstatic returns the lexicographic order on lines defined
 on their Pluecker coefficient tuples.}*/
 { for (unsigned i=0; i<5; ++i) {
-    typename R::RT diff = l1[i]-l2[i];
-    if ( diff != typename R::RT(0) ) return CGAL_NTS sign(diff);
+    typename R::RT::NT diff = l1[i]-l2[i];
+    if ( diff != typename R::RT::NT(0) ) return CGAL_NTS sign(diff);
   }
   return CGAL_NTS sign(l1[5]-l2[5]);
 }
@@ -179,7 +185,7 @@ on their Pluecker coefficient tuples.}*/
 }; // Pluecker_line_3
 
 /*{\Mimplementation The Pluecker coefficients of a line are stored
-in a six-tuple of |RT| coefficients.}*/
+in a six-tuple of |NT| coefficients.}*/
                 
 
 template <typename R>

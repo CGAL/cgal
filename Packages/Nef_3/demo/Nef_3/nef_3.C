@@ -33,6 +33,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Simple_homogeneous.h>
+#include <CGAL/Extended_homogeneous_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -52,8 +53,11 @@ using std::strcmp;
 using std::exit;
 
 // Types
-typedef CGAL::Gmpz                         NT;
-typedef CGAL::Simple_homogeneous<NT>       Kernel;
+typedef CGAL::Gmpz                      NT;
+//typedef CGAL::Simple_homogeneous<NT>     Kernel;
+
+typedef CGAL::Extended_homogeneous_3<NT>   Kernel;
+// struct Kernel : public CGAL::Extended_homogeneous_3<NT>  {};
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 
 typedef CGAL::SNC_items<Kernel, bool>      SNC_items;
@@ -212,8 +216,8 @@ int eval( int argc, char* argv[]) {
                              << argv[i+1] << "' correctly." << endl;
                         error = 5;
                     } else {
-                        Nef_polyhedron nf(poly);
-                        nef.push_back( nf);
+		        Nef_polyhedron nf(poly);
+		        nef.push_back( nf);
                     }
                 }
                 ++i;
@@ -289,6 +293,7 @@ int eval( int argc, char* argv[]) {
             } else {
                 error = 4;
             }
+	   
         } else if ( strcmp( argv[i], "scale") == 0) {
             if ( nef.size() == 0) {
                 cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
@@ -386,7 +391,6 @@ int eval( int argc, char* argv[]) {
                 error = 2;
                 continue;
             }
-	    cerr << "inters" << std::endl;
             Nef_polyhedron nf1 = nef.back();
             nef.pop_back();
             Nef_polyhedron nf2 = nef.back();

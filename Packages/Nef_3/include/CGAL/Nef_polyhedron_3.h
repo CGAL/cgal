@@ -232,6 +232,18 @@ protected:
                                                    SFace_const_iterator;
 
 
+  void initialize_extended_cube_vertices(Content space) {
+    SNC_constructor C(snc());
+    C.create_extended_box_corner( 1, 1, 1, space );
+    C.create_extended_box_corner(-1, 1, 1, space );
+    C.create_extended_box_corner( 1,-1, 1, space );
+    C.create_extended_box_corner(-1,-1, 1, space );
+    C.create_extended_box_corner( 1, 1,-1, space );
+    C.create_extended_box_corner(-1, 1,-1, space );
+    C.create_extended_box_corner( 1,-1,-1, space );
+    C.create_extended_box_corner(-1,-1,-1, space ); 
+  }
+
   void initialize_simple_cube_vertices(Content space) {
     SNC_constructor C(snc());
     C.create_box_corner( INT_MAX, INT_MAX, INT_MAX, space );
@@ -287,12 +299,11 @@ public:
   
   typedef Polyhedron_3< Kernel> Polyhedron;
   Nef_polyhedron_3( Polyhedron& P) {
-    SETDTHREAD(11*131*19*43);
     initialize_simple_cube_vertices(EMPTY);
     polyhedron_3_to_nef_3< Polyhedron, SNC_structure, SNC_constructor>
       ( P, snc() );
-    //   build_external_structure();
-    //   simplify();
+    build_external_structure();
+    simplify();
   }
   
   template <class HDS>
@@ -566,7 +577,7 @@ public:
 
   Nef_polyhedron_3<T> intersection(Nef_polyhedron_3<T>& N1)
     /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/ {
-    SETDTHREAD(11*131*19*43);
+ 
     TRACEN(" intersection between nef3 "<<&*this<<" and "<<&N1);
     AND _and;
     SNC_structure rsnc;
@@ -581,6 +592,7 @@ public:
   /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/ { 
     TRACEN(" join between nef3 "<<&*this<<" and "<<&N1);
     OR _or;
+    //    SETDTHREAD(131*19*43);
     SNC_structure rsnc;
     SNC_decorator D(snc());
     D.binary_operation( N1.snc(), _or, rsnc);

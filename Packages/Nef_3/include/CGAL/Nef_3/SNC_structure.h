@@ -102,6 +102,7 @@ public:
   typedef typename Kernel::FT           FT;
   typedef typename Kernel::RT           RT;
   typedef typename Items::Sphere_kernel Sphere_kernel;
+  
 
   typedef typename Kernel::Point_3      Point_3;
   /*{\Mtypemember embedding vertices.}*/
@@ -1059,7 +1060,7 @@ public:
   void simplify() {
     TRACEN(">>> simplifying");
     SNC_decorator D(*this);
-    SNC_io_parser<SNC_structure> IO_parser(std::cout, *this);
+    SNC_io_parser<SNC_structure> IO_parser(std::cerr, *this);
     IO = &IO_parser;
     
     Unique_hash_map< Volume_handle, UFH_volume> hash_volume;
@@ -1087,7 +1088,7 @@ public:
       hash_sface[sf] = uf_sface.make_set(sf);
       reset_sm_object_list(sf->boundary_entry_objects_);
     }
-    
+
     /* 
      * Volumes simplification 
      */
@@ -1103,7 +1104,7 @@ public:
       CGAL_nef3_assertion( f != D.twin(f));
       Volume_handle c1 = D.volume(f), c2 = D.volume(D.twin(f));
       TRACEN(" mark("<<IO->index(c1)<<")="<<D.mark(c1)<<
-	     " mark("<<IO->index(f) <<")="<<D.mark(f) <<
+      	     " mark("<<IO->index(f) <<")="<<D.mark(f) <<
 	     " mark("<<IO->index(c2)<<")="<<D.mark(c2)<<
 	     " is_twin(f)="<<f->is_twin());
       if( D.mark(c1) == D.mark(f) && D.mark(f) == D.mark(c2)
@@ -1120,6 +1121,7 @@ public:
     CGAL_nef3_forall_halffacets( hf, *this) {
       hash_facet[hf] = uf_facet.make_set(hf);
       reset_object_list(hf->boundary_entry_objects_);
+
     }
 
     /* 
@@ -1134,11 +1136,13 @@ public:
       do 
 	e_next++;
       while( e_next != D.halfedges_end() && e_next->is_twin());
-
+      
       SM_decorator SD(D.source(e));
-      if( SD.is_isolated(e) && D.mark(e) == D.mark(D.volume(D.sface(e)))) {
-	TRACEN("removing pair "<<IO->index(e)<<' '<<IO->index(D.twin(e)));
-	delete_halfedge_pair(e);
+      if( SD.is_isolated(e)) {
+	if(D.mark(e) == D.mark(D.volume(D.source(e)->sfaces_begin()))) {
+	  TRACEN("removing pair "<<IO->index(e)<<' '<<IO->index(D.twin(e)));
+	  delete_halfedge_pair(e);
+	}
       } 
       else { 
 	if( D.has_outdeg_two(e)) {
@@ -1159,8 +1163,10 @@ public:
 	  }
 	}
       }
+
       e = e_next;
     }
+ 
 
     /* 
      * Vertices simplification
@@ -1202,14 +1208,13 @@ public:
       v = v_next;
     }
 
-    purge_no_find_objects(hash_volume, hash_facet, hash_sface,
-			  uf_volume, uf_facet, uf_sface);
+    purge_no_find_objects(hash_volume, hash_facet, hash_sface, uf_volume, uf_facet, uf_sface);
     create_boundary_links_forall_sfaces( hash_sface, uf_sface);
     create_boundary_links_forall_facets( hash_facet, uf_facet);
     create_boundary_links_forall_volumes( hash_volume, uf_volume);
 
     TRACEN(">>> simplifying done");
-   }
+  }
    
   void remove_edge_and_merge_facet_cycles( Halfedge_handle e) {
      SNC_decorator D(*this);
@@ -1322,7 +1327,7 @@ public:
     CGAL_nef3_forall_svertices(sv, *this) {
       SM_decorator SD(D.vertex(sv));
       if( SD.is_isolated(sv)) {
-	SFace_handle sf = *(uf.find(hash[D.sface(sv)])); 
+	SFace_handle sf = *(uf.find(hash[D.source(sv)->sfaces_begin()])); 
 	CGAL_nef3_assertion( sf != SFace_handle());
 	SD.set_face( sv, sf);
 	SD.store_boundary_object( sv, sf);
@@ -1563,7 +1568,7 @@ pointer_update(const SNC_structure<Items>& D)
     for(sfc = sf->sface_cycles_begin(); 
         sfc != sf->sface_cycles_end(); ++sfc) {
       SVertex_handle sv;
-      if ( assign(sv,sf) ) 
+      if ( assign(sv,sfc) ) 
       { *sfc = SObject_handle(EM[sv]); store_sm_boundary_item(sv,sfc); }
       else if ( assign(se,sfc) ) 
       { *sfc = SObject_handle(SEM[se]); store_sm_boundary_item(se,sfc); }

@@ -445,6 +445,7 @@ public:
     { supporting_plane_ = f.supporting_plane_;
       mark_ = f.mark_;
       twin_ = f.twin_;
+      TRACEN("VOLUME const");
       volume_ = f.volume_;
       boundary_entry_objects_ = f.boundary_entry_objects_;
     }
@@ -454,6 +455,7 @@ public:
       supporting_plane_ = f.supporting_plane_;
       mark_ = f.mark_;
       twin_ = f.twin_;
+      TRACEN("VOLUME op=");
       volume_ = f.volume_;
       boundary_entry_objects_ = f.boundary_entry_objects_;
       return *this;

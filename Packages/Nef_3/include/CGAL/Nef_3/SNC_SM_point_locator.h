@@ -456,7 +456,12 @@ void SNC_SM_point_locator<D>::init_marks_of_halfspheres()
     else mark_of_halfsphere(-1) = mark(face(e));
     return;
   }
-  CGAL_nef3_assertion_msg(0,"damn wrong type.");
+  /*
+  TRACEN("1 dimensional object");
+  mark_of_halfsphere(-1) = mark_of_halfsphere(+1) = 0;
+  */
+  CGAL_nef3_assertion_msg(0,"damn wrong type");
+  return;
 }
 
 CGAL_END_NAMESPACE

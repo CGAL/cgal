@@ -97,9 +97,14 @@ int sign_of(const CGAL::Plane_3<R>& h)
 
 template <typename R>
 CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h)
-{ typedef typename R::RT RT;
-  RT a(h.a()),b(h.b()),c(h.c()),d(h.d());
-  RT x = (a==0) ? ((b==0) ? ((c==0) ? ((d==0) ? 1: d): c): b): a;
+{ 
+  typedef typename R::RT::NT NT;
+  CGAL_assertion(h.a().degree()==0);
+  CGAL_assertion(h.b().degree()==0); 
+  CGAL_assertion(h.c().degree()==0);  
+  CGAL_assertion(h.d().degree()==0);
+  NT a(h.a().eval_at(1)),b(h.b().eval_at(1)),c(h.c().eval_at(1)),d(h.d().eval_at(1));
+  NT x = (a==0) ? ((b==0) ? ((c==0) ? ((d==0) ? 1: d): c): b): a;
   TRACE("gcd... i"<<x<<' ');
   x = ( a != 0 ? a : x);
   TRACE(x<<' ');
@@ -141,12 +146,12 @@ class SNC_constructor : public SNC_decorator<SNC_structure_>
 { 
 public:
   typedef SNC_structure_ SNC_structure;
-  typedef typename SNC_structure_::Sphere_kernel  Sphere_kernel;
-  typedef typename SNC_structure_::Kernel         Kernel;
+  typedef typename SNC_structure_::Sphere_kernel        Sphere_kernel;
+  typedef typename SNC_structure_::Kernel               Kernel;
   typedef CGAL::SNC_constructor<SNC_structure>          Self;
   typedef CGAL::SNC_decorator<SNC_structure>            Base;
   typedef CGAL::SNC_decorator<SNC_structure>            SNC_decorator;
-  typedef CGAL::SNC_ray_shooter<SNC_structure>           SNC_ray_shooter;
+  typedef CGAL::SNC_ray_shooter<SNC_structure>          SNC_ray_shooter;
   typedef CGAL::SNC_FM_decorator<SNC_structure>         FM_decorator;
   typedef CGAL::SNC_SM_decorator<SNC_structure>         SM_decorator;
   typedef CGAL::SNC_SM_overlayer<SNC_structure>         SM_overlayer;
@@ -258,11 +263,12 @@ public:
     }
     void visit(Halfedge_handle h) { 
       TRACEN("visit he "<<D.point(D.source(h)));
-      SFace_handle sf = D.sface(h);
+      SM_decorator SD(D.vertex(h));
+      SFace_handle sf = D.source(h)->sfaces_begin();
       if( Closed[sf] ) {
-	SM_decorator SD(D.vertex(h));
-	if( SD.first_out_edge(h) == SD.last_out_edge(h) )
+	if( SD.is_isolated(h) || SD.first_out_edge(h) == SD.last_out_edge(h) ) {
 	  Closed[sf] = false;
+	}
       }
     }
     void visit(Halffacet_handle h) { /* do nothing */ }
@@ -281,6 +287,10 @@ public:
 
   Vertex_handle create_box_corner(int x, int y, int z,
                                   bool space=true, bool boundary=true) const; 
+
+  Vertex_handle create_extended_box_corner(int x, int y, int z,
+                                  bool space=true, bool boundary=true) const;
+
   /*{\Mop produces the sphere map representing thp,e box corner in
           direction $(x,y,z)$.}*/
 
@@ -317,6 +327,7 @@ public:
     /*{\Mop determines the volume |C| that a shell |S| pointed by |sf| 
       belongs to.  \precondition |S| separates the volume |C| from an enclosed
       volume.}*/ {
+    TRACEN("determine volume");
     Vertex_handle v_min = MinimalVertex[Shell[sf]];
     Halffacet_handle f_below = get_facet_below(v_min);
     if ( f_below == Halffacet_handle())
@@ -342,11 +353,12 @@ public:
     // ######### Non-generic code ##########
     Segment_3 ray( p, Point_3( p.hx(), p.hy(), -INT_MAX*p.hw(), p.hw()));
     // ####################################
-    SNC_ray_shooter rs(*sncp());
+   SNC_ray_shooter rs(*sncp());
     Object_handle o = rs.shoot(ray);
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
+    TRACEN("get_facet_below");
     if( assign(v, o)) {
       TRACEN("facet below from from vertex...");
       f_below = get_visible_facet(v, ray);
@@ -386,6 +398,58 @@ create_box_corner(int x, int y, int z, bool space, bool boundary) const {
 		      CGAL_NTS abs(y) == CGAL_NTS abs(z));
   TRACEN("  constructing box corner on "<<Point_3(x,y,z)<<"...");
   Vertex_handle v = sncp()->new_vertex( Point_3(x, y, z), boundary);
+  SM_decorator SD(v);
+  Sphere_point sp[] = { Sphere_point(-x, 0, 0), 
+			Sphere_point(0, -y, 0), 
+			Sphere_point(0, 0, -z) };
+  /* create box vertices */
+  SVertex_handle sv[3];
+  for(int vi=0; vi<3; ++vi) {
+    sv[vi] = SD.new_vertex(sp[vi]);
+    mark(sv[vi]) = boundary;
+  }
+  /* create facet's edge uses */
+  Sphere_segment ss[3];
+  SHalfedge_handle she[3];
+  for(int si=0; si<3; ++si) {
+    she[si] = SD.new_edge_pair(sv[si], sv[(si+1)%3]);
+    ss[si] = Sphere_segment(sp[si],sp[(si+1)%3]);
+    SD.circle(she[si]) = ss[si].sphere_circle();
+    SD.circle(SD.twin(she[si])) = ss[si].opposite().sphere_circle();
+    SD.mark(she[si]) = boundary;
+  }
+  /* create facets */
+  SFace_handle fi = SD.new_face();
+  SFace_handle fe = SD.new_face();
+  SD.link_as_face_cycle(she[0], fi);
+  SD.link_as_face_cycle(SD.twin(she[0]), fe);
+  /* set face mark */
+  SHalfedge_iterator e = SD.shalfedges_begin();
+  SFace_handle f;
+  Sphere_point p1 = SD.point(SD.source(e));
+  Sphere_point p2 = SD.point(SD.target(e));
+  Sphere_point p3 = SD.point(SD.target(SD.next(e)));
+  if ( spherical_orientation(p1,p2,p3) > 0 )
+    f = SD.face(e);
+  else
+    f = SD.face(SD.twin(e));
+  SD.mark(f) = space;
+  // SD.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
+  // SD.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
+  /* TODO: to check if the commented code above could be wrong */
+  SM_point_locator L(v);
+  L.init_marks_of_halfspheres();
+  return v;
+}
+
+template <typename SNC_>
+typename SNC_::Vertex_handle 
+SNC_constructor<SNC_>::
+create_extended_box_corner(int x, int y, int z, bool space, bool boundary) const { 
+  CGAL_nef3_assertion(CGAL_NTS abs(x) == CGAL_NTS abs(y) &&
+		      CGAL_NTS abs(y) == CGAL_NTS abs(z));
+  TRACEN("  constructing box corner on "<<Point_3(x,y,z)<<"...");
+  Vertex_handle v = sncp()->new_vertex( epoint(x,0,y,0,z,0,1), boundary);
   SM_decorator SD(v);
   Sphere_point sp[] = { Sphere_point(-x, 0, 0), 
 			Sphere_point(0, -y, 0), 
@@ -533,7 +597,9 @@ create_from_edge(Halfedge_handle e,
 template <typename SNC_>
 void SNC_constructor<SNC_>::
 pair_up_halfedges() const
-{ TRACEN(">>>>>pair_up_halfedges");
+{ 
+  //  SETDTHREAD(43*61);
+  TRACEN(">>>>>pair_up_halfedges");
   typedef Halfedge_key< Point_3, Halfedge_handle, SNC_decorator>
     Halfedge_key;
   typedef Halfedge_key_lt< Point_3, Halfedge_handle, SNC_decorator> 
@@ -550,18 +616,20 @@ pair_up_halfedges() const
   Halfedge_iterator e;
   CGAL_nef3_forall_halfedges(e,*sncp()) {
     Point_3 p = point(vertex(e));
-    Pluecker_line_3 l(p, p + tmp_point(e));
+    Pluecker_line_3 l(p, p + Vector_3(tmp_point(e)));
     int inverted;
     l = categorize(l,inverted);
     M[l].push_back(Halfedge_key(p,inverted,e,D));
-    TRACEN(" ("<<p<<") ("<<tmp_point(e)<<") "<<&*e<<" |"<<l << " " << inverted);
+    TRACEN(" ("<<p<<") ("<<p+ Vector_3(tmp_point(e))<<") "<< " (" << tmp_point(e) << ") " << &*e<<" |"<<l << " " << inverted);
   }
 
   typename Pluecker_line_map::iterator it;
   CGAL_nef3_forall_iterators(it,M) {
     it->second.sort(Halfedge_key_lt());
-    TRACEN("search opposite  "<<it->first<< "\n    " <<(debug_container(it->second),"")<< std::endl);
+    TRACEN("search opposite  "<<it->first<< "\n    "); 
     typename Halfedge_list::iterator itl;
+    CGAL_nef3_forall_iterators(itl,it->second)
+      TRACEN(PH(itl->e));
     CGAL_nef3_forall_iterators(itl,it->second) {
       Halfedge_handle e1 = itl->e;
       ++itl; CGAL_nef3_assertion(itl != it->second.end());
@@ -717,6 +785,7 @@ create_volumes() const
       SFace_handle f = EntrySFace[i];
       CGAL_nef3_assertion( Shell[EntrySFace[i]] == i );
       if( Closed[f] ) {
+	TRACEN("Shell #" << i << " is closed");
 	SM_decorator SD(v);
 	Volume_handle c = sncp()->new_volume();
 	mark(c) = SD.mark(f);

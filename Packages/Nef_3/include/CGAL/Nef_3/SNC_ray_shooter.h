@@ -80,7 +80,7 @@ class SNC_ray_shooter : public SNC_decorator<SNC_structure_>
   typedef SNC_structure_ SNC_structure;
 
 protected:
-  typedef SNC_ray_shooter<SNC_structure>           Self;
+  typedef SNC_ray_shooter<SNC_structure>          Self;
   typedef SNC_decorator<SNC_structure>            Base;
 
 public:
@@ -233,21 +233,24 @@ public:
 	return Object_handle(f);
       }
     }
-    Volume_handle c;
     /* lets be |s| be the segment that connects |p| to any fixed vertex |va| */
     Vertex_handle va = --(sncp()->vertices_end()); 
     Segment_3 s( p, point(va));
     /* prune |s| by |o| if |o| intersects |s| in its relative interior */
     Object_handle o = shoot(s);
     /* determine the volume that contains |s| from the last pruning object */
+
+    Halffacet_handle hf;
     if( assign( v, o))
-      c = volume(get_visible_facet( v, s));
+      hf = get_visible_facet( v, s);
     else if( assign( e, o))
-      c = volume(get_visible_facet( e, s));
+      hf = get_visible_facet( e, s);
     else if( assign( f, o))
-      c = volume(get_visible_facet( f, s));
+      hf = get_visible_facet( f, s);
     else CGAL_nef3_assertion_msg(0, "where is our point, eh?");
-    return Object_handle(c);
+    if(hf==Halffacet_handle())
+      return ++(sncp()->volumes_begin());
+    return Object_handle(volume(hf));
   }
 
   void shorten(Segment_3& s, const Point_3& p) const { 
@@ -255,10 +258,11 @@ public:
     TRACEN("shooted ray "<<s);
   }
   bool does_contain_internally(const Segment_3& s, const Point_3& p) const {
+    TRACEN("dci begin");
     if(!s.has_on(p))
       return false;
-    Comparison_result r1 = compare_xyz(s.source(),p); 
-    Comparison_result r2 = compare_xyz(s.target(),p); 
+    Comparison_result r1 = compare_xyz(s.source(),p);
+    Comparison_result r2 = compare_xyz(s.target(),p);
     return (r1 == opposite(r2));
   }
 
