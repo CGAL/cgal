@@ -88,7 +88,7 @@ struct Polygon_vertex_iterator_2
     // more typedefs
     Polygon_vertex_iterator_2() {}
     Polygon_vertex_iterator_2(It it) : m_it(it) {}
-    Polygon_vertex_iterator_2 operator=(Polygon_vertex_iterator_2 const & it)
+    Polygon_vertex_iterator_2 & operator=(Polygon_vertex_iterator_2 const & it)
         { m_it = it.m_it; return *this;}
     Polygon_vertex_iterator_2 operator=(It const & it)
         { m_it = it; return *this;}
@@ -102,11 +102,63 @@ struct Polygon_vertex_iterator_2
     	{ ++m_it; return *this;}
     Polygon_vertex_iterator_2 operator++(int)
     	{ Polygon_vertex_iterator_2 result = *this; ++m_it; return result;}
+    // Bidirectional Iterator methods
+    Polygon_vertex_iterator_2 & operator--()
+    	{ --m_it; return *this;}
+    Polygon_vertex_iterator_2 operator--(int)
+    	{ Polygon_vertex_iterator_2 result = *this; --m_it; return result;}
+    // Random Access Iterator methods
+    Polygon_vertex_iterator_2 & operator+=(difference_type n)
+        { m_it += n; return *this;}
+    Polygon_vertex_iterator_2 & operator-=(difference_type n)
+        { m_it -= n; return *this;}
+    difference_type operator-(Polygon_vertex_iterator_2 o)
+        { return m_it - o.m_it;}
+    bool operator<(Polygon_vertex_iterator_2 o)
+        { return m_it < o.m_it;}
+    reference operator[](difference_type n)
+        { return m_it[n];}
+
+    // Access to internals
     It implementation_it() const {return m_it;}
     // should be private and friend of Polygon_2
 private:
     It m_it;
 };
+
+template <class It>
+inline Polygon_vertex_iterator_2<It>
+operator+(Polygon_vertex_iterator_2<It> it,
+          typename Polygon_vertex_iterator_2<It>::difference_type n)
+{
+    Polygon_vertex_iterator_2<It> tmp = it;
+    return tmp += n;
+}
+
+template <class It>
+inline Polygon_vertex_iterator_2<It>
+operator+(typename Polygon_vertex_iterator_2<It>::difference_type n,
+          Polygon_vertex_iterator_2<It> it)
+{
+    Polygon_vertex_iterator_2<It> tmp = it;
+    return tmp += n;
+}
+
+template <class It>
+inline Polygon_vertex_iterator_2<It>
+operator-(Polygon_vertex_iterator_2<It> it,
+          typename Polygon_vertex_iterator_2<It>::difference_type n)
+{
+    Polygon_vertex_iterator_2<It> tmp = it;
+    return tmp -= n;
+}
+
+template <class It>
+inline typename Polygon_vertex_iterator_2<It>::difference_type
+operator-(Polygon_vertex_iterator_2<It> it1, Polygon_vertex_iterator_2<It> it2)
+{
+    return it1.implementation_it() - it2.implementation_it();
+}
 
 #endif // defined(...CACHED)
 
