@@ -1,6 +1,10 @@
 Union_find Package: Release changes
 ----------------------------------------------------------------------
 
+1.7 (08 May 2003)
+
+     - Fixed <strstream> to <sstream>.
+
 1.6 (14 Feb 2003)
 
      - Fixed bug in the number_of_sets() counting, changed ++sets to --sets
