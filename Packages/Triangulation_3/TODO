@@ -1,6 +1,3 @@
-- Envoyer un mail a Susan pour les news page d'accueil cgal.org
-- negocier la doc MP-Float aupres de Sylvain...
-
 General
 - new Vertex/Cell
 - trouver une interface avec T_2 qui permette d'eviter de reprogrammer 
@@ -18,6 +15,7 @@ Doc
 - revoir les anciennes corrections de JF Dufourd
 
 TDS
+- Unification de Triangulation::Vertex et TDS::Vertex.
 - Facet_circulator : Est-ce qu'il y a besoin de stocker un TDS * ?  Stocker
   deux Vertex * plutot que deux ints, ca permet de gagner une Cell *, et
   d'etre plus rapide, non ? 
