@@ -1,5 +1,8 @@
 Modifier Package: Release changes:
 ---------------------------------------------------------------------
+25 March 2004 Radu Ursu
+- made the doc work with the new implementation of Manual tools
+
 1.3.10 (18 Nov 2003)
 - remove doc_ps/Modifier.ps
 
