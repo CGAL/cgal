@@ -81,6 +81,7 @@ struct Pointer
   T*  ptr() const { return _pointer; }
 
   bool operator<(const Pointer& p) const { return ptr() < p.ptr();}
+  bool operator>(const Pointer& p) const { return ptr() > p.ptr();}
 
 private:
   T* _pointer;
