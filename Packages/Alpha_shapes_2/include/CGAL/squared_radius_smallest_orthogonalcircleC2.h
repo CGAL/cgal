@@ -39,14 +39,15 @@
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
-template< class FT >
+template< class K >
 CGAL_KERNEL_MEDIUM_INLINE
-FT 
+typename K::FT 
 squared_radius_orthogonalcircle(
-  const Weighted_point<Point_2< Cartesian<FT> >, FT> &p,
-  const Weighted_point<Point_2< Cartesian<FT> >, FT> &q,
-  const Weighted_point<Point_2< Cartesian<FT> >, FT> &r) 
-{   
+  const Weighted_point<Point_2<K>, typename K::FT> &p,
+  const Weighted_point<Point_2<K>, typename K::FT> &q,
+  const Weighted_point<Point_2<K>, typename K::FT> &r) 
+{  
+  typedef typename  K::FT FT;
   FT px(p.point().x());
   FT py(p.point().y());
   FT pw(p.weight());
@@ -62,13 +63,14 @@ squared_radius_orthogonalcircle(
 					   rx, ry, rw);
 }
 
-template< class FT >
+template< class K >
 CGAL_KERNEL_MEDIUM_INLINE
-FT 
+typename K::FT 
 squared_radius_smallest_orthogonalcircle(
-   const Weighted_point<Point_2< Cartesian<FT> >, FT> &p,
-   const Weighted_point<Point_2< Cartesian<FT> >, FT> &q) 
-{
+   const Weighted_point<Point_2<K>, typename K::FT> &p,
+   const Weighted_point<Point_2<K>, typename K::FT> &q) 
+{ 
+  typedef typename  K::FT FT;
   FT px(p.point().x());
   FT py(p.point().y());
   FT pw(p.weight());
