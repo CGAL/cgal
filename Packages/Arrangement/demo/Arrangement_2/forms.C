@@ -327,7 +327,7 @@ OptionsForm::OptionsForm( QWidget* parent ,int number_of_tabs ,
 
 /*! FileOpenOptionsForm constructor */
 FileOpenOptionsForm::FileOpenOptionsForm( bool flag ,QWidget* parent ,
-                                     const char* name, bool modal, WFlags f  ): 
+                                     const char* name, bool modal, WFlags f ): 
   QDialog( parent, name, modal, f )
 {
   setCaption( "File Open - Options" );

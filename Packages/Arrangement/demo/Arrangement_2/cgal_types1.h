@@ -79,7 +79,7 @@ typedef CGAL::Planar_map_with_intersections_2<Seg_pm>      Seg_arr;
 typedef Seg_arr::Locate_type                               Seg_locate_type;
 typedef Seg_arr::Halfedge_handle                           Seg_halfedge_handle;
 typedef Seg_arr::Face_handle                               Seg_face_handle;
-typedef Seg_arr::Ccb_halfedge_circulator            Seg_ccb_halfedge_circulator;
+typedef Seg_arr::Ccb_halfedge_circulator           Seg_ccb_halfedge_circulator;
 typedef Seg_arr::Holes_iterator                            Seg_holes_iterator;
 typedef std::list<Pm_seg_2*>                               Pm_seg_list;
 typedef Pm_seg_list::const_iterator                        Pm_seg_const_iter;
@@ -110,7 +110,7 @@ typedef CGAL::Planar_map_with_intersections_2<Pol_pm>      Pol_arr;
 typedef Pol_arr::Locate_type                               Pol_locate_type;
 typedef Pol_arr::Halfedge_handle                           Pol_halfedge_handle;
 typedef Pol_arr::Face_handle                               Pol_face_handle;
-typedef Pol_arr::Ccb_halfedge_circulator            Pol_ccb_halfedge_circulator;
+typedef Pol_arr::Ccb_halfedge_circulator           Pol_ccb_halfedge_circulator;
 typedef Pol_arr::Holes_iterator                            Pol_holes_iterator;
 
 typedef std::list<Pm_pol_2*>                               Pm_pol_list;
@@ -143,14 +143,14 @@ typedef CGAL::Pm_default_dcel<Conic_traits>                Conic_dcel;
 typedef CGAL::Planar_map_2<Conic_dcel, Conic_traits>       Conic_pm;
 typedef CGAL::Planar_map_with_intersections_2<Conic_pm>    Conic_arr;
 typedef Conic_arr::Locate_type                             Conic_locate_type;
-typedef Conic_arr::Halfedge_handle                        Conic_halfedge_handle;
+typedef Conic_arr::Halfedge_handle                       Conic_halfedge_handle;
 typedef Conic_arr::Face_handle                             Conic_face_handle;
-typedef Conic_arr::Ccb_halfedge_circulator        Conic_ccb_halfedge_circulator;
-typedef Conic_arr::Holes_iterator                          Conic_holes_iterator;
+typedef Conic_arr::Ccb_halfedge_circulator       Conic_ccb_halfedge_circulator;
+typedef Conic_arr::Holes_iterator                         Conic_holes_iterator;
 typedef CGAL::Pm_file_scanner<Conic_arr>                   Pm_scanner; 
 
 typedef std::list<Pm_xconic_2*>                            Pm_xconic_list;
-typedef Pm_xconic_list::const_iterator                     Pm_xconic_const_iter;
+typedef Pm_xconic_list::const_iterator                    Pm_xconic_const_iter;
 typedef Pm_xconic_list::iterator                           Pm_xconic_iter;
 
 

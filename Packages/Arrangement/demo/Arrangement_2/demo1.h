@@ -43,11 +43,13 @@
 #include <CGAL/IO/Qt_widget_handtool.h>
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 class Qt_layer;
 class Qt_widget_base_tab;
 
-/*! class MyWindow is the main class that controls all the window operations */ 
+/*! class MyWindow is the main class that controls all the window 
+    operations 
+ */ 
 class MyWindow : public QMainWindow
 {
     Q_OBJECT

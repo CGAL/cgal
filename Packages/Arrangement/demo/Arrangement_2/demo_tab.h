@@ -243,7 +243,8 @@ public:
     {
       Locate_type lt;
       Pm_point_2 temp_p (pl_point.x(), pl_point.y());
-      Halfedge_handle e = m_curves_arr.vertical_ray_shoot(temp_p, lt , ray_shooting_direction);
+      Halfedge_handle e = 
+		  m_curves_arr.vertical_ray_shoot(temp_p, lt ,ray_shooting_direction);
       
       setColor(Qt::blue);
       (*this) << CGAL::LineWidth(1);
@@ -259,7 +260,8 @@ public:
       //const Pm_point_2 p(pl_point);
       //Pm_point_2 p1;
       //Pm_point_2 p2;
-      //bool ans = m_tab_traits.nearest_intersection_to_right(c1, c2, p, p1, p2);
+      //bool ans = 
+	  m_tab_traits.nearest_intersection_to_right(c1, c2, p, p1, p2);
       ////Coord_point up(pl_point.x() , y_max());
       //Coord_type x1 = CGAL::to_double(p1.x());
       //Coord_type y1 = CGAL::to_double(p1.y());
@@ -389,7 +391,8 @@ public:
       }
     }
     // finish polyline draw with right button click 
-    else if (active && e->button() == Qt::RightButton && is_pure(e->state())) {
+    else if (active && e->button() == Qt::RightButton && is_pure(e->state())) 
+	{
       m_tab_traits.last_point( p , this );
     }
     
@@ -652,8 +655,8 @@ public:
   
   
 };
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 /*! class Segment_tab_traits defines the segment traits */
 class Segment_tab_traits 
@@ -707,7 +710,8 @@ public:
   }
   
   /*! middle_point - the last point of a segment */
-  void middle_point( Coord_point p , Qt_widget_demo_tab<Segment_tab_traits> * w)
+  void middle_point( Coord_point p , 
+	  Qt_widget_demo_tab<Segment_tab_traits> * w)
   {
     if(m_p1.x() != p.x() || m_p1.y() != p.y()) 
     {
@@ -719,7 +723,8 @@ public:
   }
   
   /*! last_point - meaningless for segments */
-  void last_point( Coord_point p , Qt_widget_demo_tab<Segment_tab_traits> * w )
+  void last_point( Coord_point p , 
+	  Qt_widget_demo_tab<Segment_tab_traits> * w )
   {
     return;
   }
@@ -743,7 +748,9 @@ public:
     w->m_curves_arr.insert(*seg);
   }
   
-  /*! curve_point_distance - return the distance between a point and a segment*/
+  /*! curve_point_distance - return the distance between a point 
+      and a segment
+	  */
   Coord_type curve_point_distance(Coord_point p, Curve * c ,
                                   Qt_widget_demo_tab<Segment_tab_traits> * w)
   {
@@ -839,7 +846,7 @@ public:
   /*! temporary points of the created segment */
   Coord_point m_p1,m_p2;
 };
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 /*! class Polyline_tab_traits defines the polyline traits */
 class Polyline_tab_traits  
@@ -919,8 +926,10 @@ public:
     last_of_poly = p;
   }
   
-  /*! last_point - last point of the polyline, create new polyline and reset */
-  void last_point( Coord_point p , Qt_widget_demo_tab<Polyline_tab_traits> * w )
+  /*! last_point - last point of the polyline, create new 
+      polyline and reset 
+   */
+  void last_point( Coord_point p ,Qt_widget_demo_tab<Polyline_tab_traits> * w)
   {
     get_polyline(w);
     points.clear();
@@ -959,7 +968,7 @@ public:
       and a polyline
    */
   Coord_type xcurve_point_distance(Coord_point p, Xcurve & c ,
-                                   Qt_widget_demo_tab<Polyline_tab_traits> * w)
+                                  Qt_widget_demo_tab<Polyline_tab_traits> * w)
   {
     Curve_const_iterator ps = c.begin();
     Curve_const_iterator pt = ps; pt++;
@@ -1109,7 +1118,7 @@ private:
   
 };
 
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 /*! */
 class Conic_tab_traits
 {
@@ -1247,7 +1256,7 @@ public:
       {                
         Coord_type dist = pow(m_p1.x() - p.x(), 2) + pow(m_p1.y() - p.y(), 2);
         cv = new Pm_base_conic_2(Pm_conic_circle_2 
-                               (Pm_conic_point_2(x,y ), dist, CGAL::CLOCKWISE));
+                             (Pm_conic_point_2(x,y ), dist, CGAL::CLOCKWISE));
       }
       else if (w->conic_type == SEGMENT )
         cv = new Pm_base_conic_2(Pm_conic_segment_2(Pm_conic_point_2(x,y),
@@ -1277,7 +1286,7 @@ public:
       *w << Coord_segment( m_p1 , m_p2 );
     else if (w->conic_type == CIRCLE )
     {
-      Coord_type r = pow(m_p1.x() - m_p2.x(), 2) + pow(m_p1.y() - m_p2.y(), 2);
+      Coord_type r = pow(m_p1.x() - m_p2.x(), 2) + pow(m_p1.y() - m_p2.y(),2);
       *w << Coord_circle(m_p1,r);
      } 
         // Draws an ellipse with center at (x + w/2, y + h/2) and size (w, h). 
@@ -1325,10 +1334,11 @@ public:
     return min_dist;
   }
   ////////////////////////////////////////////////////////////////////////////
-  // those functions will be implemented when support insertion and deletion of
-  // conic curves
+  // those functions will be implemented when support insertion and deletion 
+  // of conic curves
   
-  /*! curve_point_distance - return the distance between a point and a conic */
+  /*! curve_point_distance - return the distance between 
+      a point and a conic */
   Coord_type curve_point_distance(Coord_point p, Curve * c ,
                                   Qt_widget_demo_tab<Conic_tab_traits> * w)
   {
