@@ -91,23 +91,23 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\..\..\..\src\Qt_Widget.C
+SOURCE=..\..\..\..\src\Qt_widget\Qt_widget.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\src\Qt_widget_standard_toolbar.C
+SOURCE=..\..\..\..\src\Qt_widget\Qt_widget_standard_toolbar.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\src\Qt_Widget_tool.C
+SOURCE=..\..\..\..\src\Qt_widget\Qt_widget_tool.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\src\Qt_widget_view.C
+SOURCE=..\..\..\..\src\Qt_widget\Qt_widget_view.C
 # End Source File
 # Begin Source File
 
-SOURCE=.\seventh.C
+SOURCE=.\tutorial8.C
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -120,6 +120,21 @@ SOURCE=..\..\..\..\include\CGAL\IO\Qt_Widget.h
 # Begin Source File
 
 SOURCE=..\..\..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h
+
+!IF  "$(CFG)" == "demo - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
+
+# Begin Custom Build
+InputPath=..\..\..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h
+
+"../../../../src/Qt_widget/Qt_widget_standard_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "../../../../src/Qt_widget/Qt_widget_standard_toolbar.moc" "../../../../Include/CGAL/IO/Qt_widget_standard_toolbar.h"
+
+# End Custom Build
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 

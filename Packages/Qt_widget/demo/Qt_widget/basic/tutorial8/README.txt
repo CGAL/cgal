@@ -1,16 +1,26 @@
-7th tutorial
+8th tutorial
 -----------------
 
-This tutorial is very similar with the previous one. Insert new points in a Delaunay triangulation when you click the mouse on the widget, using a tool, and also let you use the standard toolbar.
+In this tutorial you see a method of how to use a button to attach and detach a Qt_widget_tool. It is used as in the previous example the generic tool Qt_widget_get_point and a toolbar button that will control the process of attaching and detaching.
 
-The difference is that this example is using a generic tool, developed by Cgal. This tool creates new Cgal points every time you click the mouse. The coordinates of the point are the coordinates of the real world. This means that the mouse coordinates are transformed using the current scales to the real world coordinates.
+To use a toolbar, here is what you have to do in the constructor of My_Window:
+    QToolBar  *tools_toolbar;
+    tools_toolbar = new QToolBar("Tools", this, QMainWindow::Top, TRUE, "Tools");
+    addToolBar(tools_toolbar, Top, FALSE);
+To add a button in the toolbar you have to:
+-declare the button in My_Window:
+	QToolButton *get_point_but;	//the toolbar button
+-add the button in the toolbar:
+    get_point_but =  new QToolButton(QPixmap( (const char**)point_xpm ),
+				  "Point Tool", 
+				  0, 
+				  this, 
+				  SLOT(pointtool()), 
+				  tools_toolbar, 
+				  "Point Tool");
+The constructor of QToolButton needs a pointer to QMainWindow, that is "this", and a pointer to a toolbar, that is "tools_toolbar".
+To make the button a toggle button:
+    get_point_but->setToggleButton(TRUE);
+Also in the constructor of QToolButton is needed to declare a function that will be called every time the button is pressed. That is pointtool(). The first parameter is the icon found in <CGAL/IO/pixmaps/point.xpm>.
 
-The generic tools are documented in the manual. They are templetized by a kernel of Cgal. In this tutorial the generic tool get_point it is templetized by Cartesian<double>.
-First comes the inclusion:
-	#include <CGAL/IO/Qt_widget_get_point.h>
-In the class My_Window, it is declared as a private member:
-	CGAL::Qt_widget_get_point<Rep> get_point;
-In the constructor of My_Window also is attached this generic tool:
-	    win.attach(get_point);
 
-The connect is still there in the constructor, the good news is that no matter how many tools you use, you will have to connect only once the SIGNAL with your SLOT.

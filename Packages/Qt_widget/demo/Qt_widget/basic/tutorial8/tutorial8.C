@@ -56,12 +56,15 @@ public:
     connect(&win, SIGNAL(new_cgal_object(CGAL::Object)), this, SLOT(get_object(CGAL::Object)));
   }
 private slots:
+  //this function is called every time the toolbar button is pressed
   void pointtool(){
     if (get_point_but->isOn())
       win.attach(get_point);
     else
       win.detach_current_tool();
   }
+
+  //this function is called every time a tool creates a Cgal object
   void get_object(CGAL::Object obj)
   {
     Point p;
@@ -73,11 +76,11 @@ private slots:
     }
   }
 private:
-  CGAL::Qt_widget win;
-  My_View v;
-  CGAL::Standard_toolbar *stoolbar;
-  CGAL::Qt_widget_get_point<Rep> get_point;
-  QToolButton *get_point_but;
+  CGAL::Qt_widget win;	//the instance of Qt_widget
+  My_View v;		//an instance of a view
+  CGAL::Standard_toolbar *stoolbar; //the standard toolbar
+  CGAL::Qt_widget_get_point<Rep> get_point;   //the generic tool that creates Cgal points
+  QToolButton *get_point_but;	//the toolbar button
 };
 
 #include "tutorial8.moc"
