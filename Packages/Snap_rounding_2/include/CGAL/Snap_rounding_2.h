@@ -38,7 +38,6 @@
 //#include <CGAL/Sweep_line_tight_2.h>
 #include <CGAL/Sweep_line_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_polyline_traits.h>
 #include <list>
 #include <set>
 #include <CGAL/leda_real.h>
@@ -162,19 +161,6 @@ public:
   typedef typename Polylines_container::iterator Polyline_iterator;
   typedef typename std::list<typename Rep::Point_2> Points_container;
   typedef typename Points_container::const_iterator Point_const_iterator;
-  typedef typename std::list<Segment_2> Segments_container;
-  typedef typename Segments_container::const_iterator Segment_const_iterator;
-  typedef typename Segments_container::iterator Segment_iterator;
-
-  //! A constructor
-  /*Snap_rounding_2(Segment_const_iterator begin,
-                  Segment_const_iterator end,
-                  Polylines_container& output_container,
-                  NT pixel_size,
-                  bool do_isr = true,
-                  bool int_output = true,
-                  unsigned int number_of_kd_trees =
-		  default_number_of_kd_trees);*/
 
   void find_hot_pixels_and_create_kd_trees(
        NT pixel_size,
@@ -713,33 +699,6 @@ void Snap_rounding_2<Rep_>::iterate(
       output_container.push_back(seg_output);
     }
   }
-
-/*template<class Rep_>
-Snap_rounding_2<Rep_>::Snap_rounding_2(
-  Segment_const_iterator begin,
-  Segment_const_iterator end,
-  Polylines_container& output_container,
-  NT pixel_size,
-  bool do_isr,
-  bool int_output,
-  unsigned int number_of_kd_trees)
-  {
-    std::list<Segment_data<Rep> > seg_list;
-    Multiple_kd_tree<Rep,Hot_Pixel<Rep> *> *mul_kd_tree;
-
-    // copy segments list
-    while(begin != end) {
-      seg_list.push_back(Segment_data<Rep_>(begin->source(),
-                                            begin->target()));
-      ++begin;
-    }
-
-    find_hot_pixels_and_create_kd_trees(pixel_size,number_of_kd_trees,
-         seg_list,&mul_kd_tree);
-    iterate(output_container,pixel_size,int_output,do_isr,seg_list,
-         mul_kd_tree);
-  }
-*/
 
 template<class Rep_>
 void snap_rounding_2(

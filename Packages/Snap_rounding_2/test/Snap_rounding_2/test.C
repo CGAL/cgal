@@ -21,8 +21,8 @@ typedef leda_rational Number_Type;
 typedef CGAL::Cartesian<Number_Type>             Rep;
 typedef CGAL::Snap_rounding_traits<Rep>          Sr_traits;
 //typedef CGAL::Snap_rounding_2<Sr_traits>         Snap_rounding_2;
-typedef Sr_traits::Segment_2               Segment_2;
-typedef Sr_traits::Point_2                 Point_2;
+typedef Rep::Segment_2               Segment_2;
+typedef Rep::Point_2                 Point_2;
 
 void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg_list)
 {
