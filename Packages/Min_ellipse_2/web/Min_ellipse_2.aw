@@ -73,7 +73,7 @@ We provide an implementation of an optimisation algorithm for computing
 the smallest (w.r.t.\ area) enclosing ellipse of a finite point set $P$
 in the plane. The class template \ccc{CGAL_Min_ellipse_2} is implemented
 as a semi-dynamic data structure, thus allowing to insert points while
-maintaining the smallest enclosing circle. It is parameterized with a
+maintaining the smallest enclosing ellipse. It is parameterized with a
 traits class, that defines the abstract interface between the
 optimisation algorithm and the primitives it uses. For ease of use, we
 provide traits class adapters that interface the optimisation algorithm
@@ -158,6 +158,7 @@ in the \cgal\ Reference Manual.
   \ccc{CGAL_Min_ellipse_2<Traits>}.}
 \ccPropagateThreeToTwoColumns
 \input{../../spec/Optimisation/Min_ellipse_2.tex}
+\input{../../spec/Optimisation/Optimisation_ellipse_2.tex}
 \input{../../spec/Optimisation/Min_ellipse_2_adapterC2.tex}
 \input{../../spec/Optimisation/Min_ellipse_2_adapterH2.tex}
 
@@ -246,8 +247,7 @@ The class interface looks as follows.
 
 	// Validity check
 	// --------------
-	// Not yet implemented!
-	@!<Min_ellipse_2 validity check>
+	@<Min_ellipse_2 validity check>
 
 	// Miscellaneous
 	// -------------
@@ -613,7 +613,7 @@ For $|S|=0$, we get the default constructor, building $me(\emptyset)$.
 	points.push_back( p2);
 	points.push_back( p3);
 	points.push_back( p4);
-	points.push_back( p3);
+	points.push_back( p5);
 
 	// compute me
 	me( points.end(), 0);
@@ -863,6 +863,78 @@ empty ellipse.
 @end
 
 @! ----------------------------------------------------------------------------
+\subsubsection{Validity Check}
+
+A \ccc{CGAL_Min_ellipse_2<Traits>} object can be checked for validity.
+This means, it is checked whether (a) the ellipse contains all points
+of its defining set $P$, (b) the ellipse is the smallest ellipse
+spanned by its support set, and (c) the support set is minimal, i.e.\
+no support point is redundant. (\emph{Note:} (b) and (c) are not yet
+implemented. Instead we check if the support set lies on the boundary
+of the ellipse.) The function \ccc{is_valid} is mainly intended for
+debugging user supplied traits classes but also for convincing the
+anxious user that the traits class implementation is correct. If
+\ccc{verbose} is \ccc{true}, some messages concerning the performed
+checks are written to standard error stream. The second parameter
+\ccc{level} is not used, we provide it only for consistency with
+interfaces of other classes.
+
+@macro <Min_ellipse_2 validity check> = @begin
+    bool
+    is_valid( bool verbose = false, int level = 0) const
+    {
+	CGAL_Verbose_ostream verr( verbose);
+	verr << endl;
+	verr << "CGAL_Min_ellipse_2<Traits>::" << endl;
+	verr << "is_valid( true, " << level << "):" << endl;
+	verr << "  |P| = " << number_of_points()
+	     << ", |S| = " << number_of_support_points() << endl;
+
+	// containment check (a)
+	@<Min_ellipse_2 containment check>
+
+	// support set checks (b)+(c) (not yet implemented)
+	@!<Min_ellipse_2 support set checks>
+
+	// alternative support set check
+	@<Min_ellipse_2 support set check>
+
+	verr << "  object is valid!" << endl;
+	return( true);
+    }
+@end
+
+The containment check (a) is easy to perform, just a loop over all
+points in \ccc{points}.
+
+@macro <Min_ellipse_2 containment check> = @begin
+    verr << "  a) containment check..." << flush;
+    Point_iterator point_iter;
+    for ( point_iter  = points_begin();
+	  point_iter != points_end();
+	  ++point_iter)
+	if ( has_on_unbounded_side( *point_iter)) 
+	    return( CGAL__optimisation_is_valid_fail( verr,
+			"ellipse does not contain all points"));
+    verr << "passed." << endl;
+@end
+
+The alternative support set check is easy to perform, just a loop over all
+support points in \ccc{support_points}.
+
+@macro <Min_ellipse_2 support set check> = @begin
+    verr << "  +) support set check..." << flush;
+    Support_point_iterator support_point_iter;
+    for ( support_point_iter  = support_points_begin();
+	  support_point_iter != support_points_end();
+	  ++support_point_iter)
+	if ( ! has_on_boundary( *support_point_iter)) 
+	    return( CGAL__optimisation_is_valid_fail( verr,
+		"ellipse does not have all support points on the boundary"));
+    verr << "passed." << endl;
+@end
+
+@! ----------------------------------------------------------------------------
 \subsubsection{Miscellaneous}
 
 The member function \ccc{traits} returns a const reference to the
@@ -1050,6 +1122,1256 @@ pseudocode above.
     }
 @end
 
+@! ----------------------------------------------------------------------------
+@! Class template CGAL_Optimisation_ellipse_2<R>
+@! ----------------------------------------------------------------------------
+
+\subsection{Class template \ccFont CGAL\_Optimisation\_ellipse\_2<R>}
+
+First, we declare the class template \ccc{CGAL_Optimisation_ellipse_2},
+
+@macro<Optimisation_ellipse_2 declaration> = @begin
+    template < class _R >
+    class CGAL_Optimisation_ellipse_2;
+
+    class ostream;
+    class istream;
+    class CGAL_Window_stream;
+@end
+
+\emph{Workaround:} The GNU compiler (g++ 2.7.2[.?]) does not accept types
+with scope operator as argument type or return type in class template
+member functions. Therefore, all member functions are implemented in
+the class interface.
+
+The class interface looks as follows.
+
+@macro <Optimisation_ellipse_2 interface> = @begin
+    template < class _R >
+    class CGAL_Optimisation_ellipse_2 {
+        friend
+	ostream& operator<< ( ostream&,CGAL_Optimisation_ellipse_2<_R> const&);
+        friend
+	istream& operator<< ( istream&,CGAL_Optimisation_ellipse_2<_R> &);
+        friend
+	CGAL_Window_stream& operator<< ( CGAL_Window_stream&,
+				       CGAL_Optimisation_ellipse_2<_R> const&);
+      public:
+	@<Optimisation_ellipse_2 public interface>
+
+      private:
+	// private data members
+	@<Optimisation_ellipse_2 private data members>
+
+    @<dividing line>
+
+    // Class implementation
+    // ====================
+
+      public:
+	// Set functions
+	// -------------
+	@<Optimisation_ellipse_2 set functions>
+
+	// Access functions
+	// ----------------
+	@<Optimisation_ellipse_2 access functions>
+
+	// Equality tests
+	// --------------
+	@<Optimisation_ellipse_2 equality tests>
+
+	// Predicates
+	// ----------
+	@<Optimisation_ellipse_2 predicates>
+    };
+@end   
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Public Interface}
+
+The functionality is described and documented in the specification
+section, so we do not comment on it here.
+
+@macro <Optimisation_ellipse_2 public interface> = @begin
+    // types
+    typedef           _R               R;
+    typedef           CGAL_Point_2<R>  Point;
+    typedef	      CGAL_Conic_2<R>  Conic;
+
+    /**************************************************************************
+    WORKAROUND: The GNU compiler (g++ 2.7.2[.*]) does not accept types
+    with scope operator as argument type or return type in class template
+    member functions. Therefore, all member functions are implemented in
+    the class interface.
+
+    // creation
+    void  set( );
+    void  set( Point const& p);
+    void  set( Point const& p, Point const& q);
+    void  set( Point const& p1, Point const& p2, Point const& p3);
+    void  set( Point const& p1, Point const& p2,
+	       Point const& p3, Point const& p4);
+    void  set( Point const& p1, Point const& p2,
+	       Point const& p3, Point const& p4, Point const& p5);
+
+    // access functions    
+    int  number_of_boundary_points()
+
+    // equality tests
+    bool  operator == ( CGAL_Optimisation_ellipse_2<R> const& e) const;
+    bool  operator != ( CGAL_Optimisation_ellipse_2<R> const& e) const;
+
+    // predicates
+    CGAL_Bounded_side  bounded_side( Point const& p) const;
+    bool  has_on_bounded_side      ( Point const& p) const;
+    bool  has_on_boundary          ( Point const& p) const;
+    bool  has_on_unbounded_side    ( Point const& p) const;
+
+    bool  is_empty     ( ) const;
+    bool  is_degenerate( ) const;
+    **************************************************************************/
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Private Data Members}
+
+The representation of the ellipse depends on the number of given
+boundary points, stored in \ccc{n_boundary_points}.
+
+@macro <Optimisation_ellipse_2 private data members> += @begin
+    int    n_boundary_points;			// number of boundary points
+@end
+
+In the degenerate cases with zero to two boundary points, the given
+points are stored directly in \ccc{boundary_point1} and
+\ccc{boundary_point2}, resp.
+
+@macro <Optimisation_ellipse_2 private data members> += @begin
+    Point  boundary_point1, boundary_point2;	// two boundary points
+@end
+
+Given three or five points, the ellipse is represented as a conic,
+using the class \ccc{CGAL_Conic_2<R>}. The case with four boundary
+points is the most complicated one, since in general a direct
+representation with one conic has irrational
+coordinates~\cite{gs-seefe-97}. Therefore the ellipse is represented
+implicitly as a linear combination of two conics.
+
+@macro <Optimisation_ellipse_2 private data members> += @begin
+    Conic  conic1, conic2;			// two conics
+@end
+
+Finally, in the case of four boundary points, we need the gradient
+vector of the linear combination for the volume derivative in the
+in-ellipse test.
+
+@macro <Optimisation_ellipse_2 private data members> += @begin
+    R::RT  dr, ds, dt, du, dv, dw;		// the gradient vector
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Set Functions}
+
+We provide set functions taking zero, one, two, three, four or five
+boundary points. They all set the variable to the smallest ellipse
+through the given points. \emph{Note:} The set function taking five
+boundary points only uses the fifth point from its input together with
+the two internally represented conics to compute the ellipse. The
+algorithm in Section~\ref{sec:algo} garantees that this set function
+is only called an ellipse that already have the first four points as
+its boundary points.
+
+@macro <Optimisation_ellipse_2 set functions> = @begin
+    inline
+    void
+    set( )
+    {
+	n_boundary_points = 0;
+    }
+    
+    inline
+    void
+    set( Point const& p)
+    {
+	n_boundary_points = 1;
+	boundary_point1   = p;
+    }
+    
+    inline
+    void
+    set( Point const& p, Point const& q)
+    {
+	n_boundary_points = 2;
+	boundary_point1   = p;
+	boundary_point2   = q;
+    }
+    
+    inline
+    void
+    set( Point const& p1, Point const& p2, Point const& p3)
+    {
+	n_boundary_points = 3;
+	conic1.set_ellipse( p1, p2, p3);
+    }
+    
+    inline
+    void
+    set( Point const& p1, Point const& p2, Point const& p3, Point const& p4)
+    {
+	n_boundary_points = 4;
+	Conic::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
+	dr = R::RT( 0);
+	ds = conic1.r() * conic2.s() - conic2.r() * conic1.s(),
+	dt = conic1.r() * conic2.t() - conic2.r() * conic1.t(),
+	du = conic1.r() * conic2.u() - conic2.r() * conic1.u(),
+	dv = conic1.r() * conic2.v() - conic2.r() * conic1.v(),
+	dw = conic1.r() * conic2.w() - conic2.r() * conic1.w();
+    }
+    
+    inline
+    void
+    set( Point const&, Point const&,
+	 Point const&, Point const&, Point const& p5)
+    {
+	n_boundary_points = 5;
+	conic1.set( conic1, conic2, p5);
+	conic1.analyse();
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Access Functions}
+
+@macro <Optimisation_ellipse_2 access functions> = @begin
+    inline
+    int
+    number_of_boundary_points( ) const
+    {
+	return( n_boundary_points);
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Equality Tests}
+
+@macro <Optimisation_ellipse_2 equality tests> = @begin
+    bool
+    operator == ( CGAL_Optimisation_ellipse_2<R> const& e) const
+    {
+	if ( n_boundary_points != e.n_boundary_points)
+	    return( false);
+
+	switch ( n_boundary_points) {
+	  case 0:
+	    return( true);
+	    break;
+	  case 1:
+	    return( boundary_point1 == e.boundary_point1);
+	    break;
+	  case 2:
+	    return(    (    ( boundary_point1 == e.boundary_point1)
+		         && ( boundary_point2 == e.boundary_point2))
+		    || (    ( boundary_point1 == e.boundary_point2)
+		         && ( boundary_point2 == e.boundary_point1)));
+	    break;
+	  case 3:
+	  case 5:
+	    return( conic1 == e.conic1);
+	    break;
+	  case 4:
+	    return(    (    ( conic1 == e.conic1)
+	                 && ( conic2 == e.conic2))
+	            || (    ( conic1 == e.conic2)
+	                 && ( conic2 == e.conic1)));
+	    break;
+	  default:
+	    CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
+					 && ( n_boundary_points <= 5)); }
+	// keeps g++ happy
+	return( false);
+    }
+    
+    inline
+    bool
+    operator != ( CGAL_Optimisation_ellipse_2<R> const& e) const
+    {
+	return( ! operator == ( e));
+    }
+@end
+    
+@! ----------------------------------------------------------------------------
+\subsubsection{Predicates}
+
+The following predicates perform in-ellipse tests and check for
+emptyness and degeneracy, resp. The way to evaluate the in-ellipse
+test depends on the number of boundary points and is realised by a
+case analysis. Again, the case with four points is the most difficult
+one.
+
+@macro <Optimisation_ellipse_2 predicates> = @begin
+    inline
+    CGAL_Bounded_side
+    bounded_side( Point const& p) const
+    {
+	switch ( n_boundary_points) {
+	  case 0:
+	    return( CGAL_ON_UNBOUNDED_SIDE);
+	    break;
+	  case 1:
+	    return( ( p == boundary_point1) ?
+			   CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
+	    break;
+	  case 2:
+	    return(    ( p == boundary_point1)
+		    || ( p == boundary_point2)
+		    || ( CGAL_are_ordered_along_line(
+		             boundary_point1, p, boundary_point2)) ?
+			 CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
+	    break;
+	  case 3:
+	  case 5:
+	    return( conic1.convex_side( p));
+	    break;
+	  case 4: {
+	    Conic c;
+	    c.set( conic1, conic2, p);
+	    c.analyse();
+	    if ( ! c.is_ellipse()) {
+	        c.set_ellipse( conic1, conic2);
+		c.analyse();
+		return( c.convex_side( p)); }
+	    else {
+		int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
+		return( CGAL_static_cast( CGAL_Bounded_side,
+					  CGAL_sign( tau_star))); } }
+	    break;
+	  default:
+	    CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
+					 ( n_boundary_points <= 5) ); }
+	// keeps g++ happy
+	return( CGAL_Bounded_side( 0));
+    }
+
+    inline
+    bool
+    has_on_bounded_side( Point const& p) const
+    {
+	return( bounded_side( p) == CGAL_ON_BOUNDED_SIDE);
+    }
+
+    inline
+    bool
+    has_on_boundary( Point const& p) const
+    {
+	return( bounded_side( p) == CGAL_ON_BOUNDARY);
+    }
+
+    inline
+    bool
+    has_on_unbounded_side( Point const& p) const
+    {
+	return( bounded_side( p) == CGAL_ON_UNBOUNDED_SIDE);
+    }
+
+    inline
+    bool
+    is_empty( ) const
+    {
+	return( n_boundary_points == 0);
+    }
+
+    inline
+    bool
+    is_degenerate( ) const
+    {
+	return( n_boundary_points < 3);
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{I/O}
+
+@macro <Optimisation_ellipse_2 I/O operators declaration> = @begin
+    template < class _R >
+    ostream&
+    operator << ( ostream& os, CGAL_Optimisation_ellipse_2<_R> const& e);
+
+    template < class _R >
+    istream&
+    operator >> ( istream& is, CGAL_Optimisation_ellipse_2<_R>      & e);
+@end
+
+@macro <Optimisation_ellipse_2 I/O operators> = @begin
+    template < class _R >
+    ostream&
+    operator << ( ostream& os, CGAL_Optimisation_ellipse_2<_R> const& e)
+    {
+	const char* const  empty       = "";
+	const char* const  pretty_head = "CGAL_Optimisation_ellipse_2( ";
+	const char* const  pretty_sep  = ", ";
+	const char* const  pretty_tail = ")";
+	const char* const  ascii_sep   = " ";
+
+	const char*  head = empty;
+	const char*  sep  = empty;
+	const char*  tail = empty;
+
+	switch ( CGAL_get_mode( os)) {
+	  case CGAL_IO::PRETTY:
+	    head = pretty_head;
+	    sep  = pretty_sep;
+	    tail = pretty_tail;
+	    break;
+	  case CGAL_IO::ASCII:
+	    sep  = ascii_sep;
+	    break;
+	  case CGAL_IO::BINARY:
+	    break;
+	  default:
+	    CGAL_optimisation_assertion_msg( false,
+					     "CGAL_get_mode( os) invalid!");
+	    break; }
+
+	os << head << e.n_boundary_points;
+	switch ( e.n_boundary_points) {
+	  case 0:
+	    break;
+	  case 1:
+	    os << sep << e.boundary_point1;
+	    break;
+	  case 2:
+	    os << sep << e.boundary_point1
+	       << sep << e.boundary_point2;
+	    break;
+	  case 3:
+	  case 5:
+	    os << sep << e.conic1;
+	    break;
+	  case 4:
+	    os << sep << e.conic1
+	       << sep << e.conic2;
+	    break; }
+	os << tail;
+
+	return( os);
+    }
+
+    template < class _R >
+    istream&
+    operator >> ( istream& is, CGAL_Optimisation_ellipse_2<_R>& e)
+    {
+	switch ( CGAL_get_mode( is)) {
+
+	  case CGAL_IO::PRETTY:
+	    cerr << endl;
+	    cerr << "Stream must be in ascii or binary mode" << endl;
+	    break;
+
+	  case CGAL_IO::ASCII:
+	  case CGAL_IO::BINARY:
+	    CGAL_read( is, e.n_boundary_points);
+	    switch ( e.n_boundary_points) {
+	      case 0:
+		break;
+	      case 1:
+		is >> e.boundary_point1;
+		break;
+	      case 2:
+		is >> e.boundary_point1
+		   >> e.boundary_point2;
+	        break;
+	      case 3:
+	      case 5:
+		is >> e.conic1;
+	        break;
+	      case 4:
+		is >> e.conic1
+		   >> e.conic2;
+	        break; }
+	    break;
+
+	  default:
+	    CGAL_optimisation_assertion_msg( false,
+					     "CGAL_get_mode( is) invalid!");
+	    break; }
+
+	return( is);
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+@! Class template CGAL_Min_ellipse_2_adapterC2<PT,DA>
+@! ----------------------------------------------------------------------------
+
+\subsection{Class template \ccFont CGAL\_Min\_ellipse\_2\_adapterC2<PT,DA>}
+
+First, we declare the class templates \ccc{CGAL_Min_ellipse_2},
+\ccc{CGAL_Min_ellipse_2_adapterC2} and
+\ccc{CGAL__Min_ellipse_2_adapterC2__Ellipse}.
+
+@macro<Min_ellipse_2_adapterC2 declarations> = @begin
+    template < class _Traits >
+    class CGAL_Min_ellipse_2;
+
+    template < class _PT, class _DA >
+    class CGAL_Min_ellipse_2_adapterC2;
+
+    template < class _PT, class _DA >
+    class CGAL__Min_ellipse_2_adapterC2__Ellipse;
+@end
+
+The actual work of the adapter is done in the nested class
+\ccc{Ellipse}. Therefore, we implement the whole adapter in its
+interface.
+
+The variable \ccc{ellipse} containing the current ellipse is declared
+\ccc{private} to disallow the user from directly accessing or modifying
+it. Since the algorithm needs to access and modify the current ellipse,
+it is declared \ccc{friend}.
+
+@macro <Min_ellipse_2_adapterC2 interface and implementation> = @begin
+    template < class _PT, class _DA >
+    class CGAL_Min_ellipse_2_adapterC2 {
+      public:
+        // types
+        typedef  _PT  PT;
+        typedef  _DA  DA;
+
+        // nested types
+        typedef  PT                                             Point;
+        typedef  CGAL__Min_ellipse_2_adapterC2__Ellipse<PT,DA>  Ellipse;
+
+      private:
+        DA      dao;                                    // data accessor object
+        Ellipse ellipse;                                // current ellipse
+        friend class CGAL_Min_ellipse_2< CGAL_Min_ellipse_2_adapterC2<PT,DA> >;
+
+      public:
+        // creation
+        @<Min_ellipse_2_adapterC2 constructors>
+
+        // operations
+        @<Min_ellipse_2_adapterC2 operations>
+    };
+@end   
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Constructors}
+
+@macro <Min_ellipse_2_adapterC2 constructors> = @begin
+    CGAL_Min_ellipse_2_adapterC2( DA const& da = DA())
+        : dao( da), ellipse( da)
+    { }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Operations}
+
+@macro <Min_ellipse_2_adapterC2 operations> = @begin
+    CGAL_Orientation
+    orientation( Point const& p, Point const& q, Point const& r) const
+    {
+        typedef  _DA::FT  FT;
+
+        FT  px;
+        FT  py;
+        FT  qx;
+        FT  qy;
+        FT  rx;
+        FT  ry;
+        
+        dao.get( p, px, py);
+        dao.get( q, qx, qy);
+        dao.get( r, rx, ry);
+
+        return( CGAL_static_cast( CGAL_Orientation,
+                    CGAL_sign( ( px-rx) * ( qy-ry) - ( py-ry) * ( qx-rx))));
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Nested Type \ccFont Ellipse}
+
+@macro <Min_ellipse_2_adapterC2 nested type `Ellipse'> = @begin
+    template < class _PT, class _DA >
+    class CGAL__Min_ellipse_2_adapterC2__Ellipse {
+      public:
+        // typedefs
+        typedef  _PT  PT;
+        typedef  _DA  DA;
+
+        typedef  CGAL_ConicC2< PT, DA>  CT;
+	typedef	 _DA::FT		FT;
+
+      private:
+        // data members
+	int  n_boundary_points;			// number of boundary points
+	PT   boundary_point1, boundary_point2;	// two boundary points
+	CT   conic1, conic2;			// two conics
+	FT   dr, ds, dt, du, dv, dw;		// the gradient vector
+
+      public:
+        // types
+        typedef  PT  Point;
+
+        // creation
+        CGAL__Min_ellipse_2_adapterC2__Ellipse( DA const& da)
+	    : conic1( da), conic2( da)
+	{ }
+
+	void
+	set( )
+	{
+	    n_boundary_points = 0;
+	}
+    
+	void
+	set( Point const& p)
+	{
+	    n_boundary_points = 1;
+	    boundary_point1   = p;
+	}
+    
+	void
+	set( Point const& p, Point const& q)
+	{
+	    n_boundary_points = 2;
+	    boundary_point1   = p;
+	    boundary_point2   = q;
+	}
+    
+	void
+	set( Point const& p1, Point const& p2, Point const& p3)
+	{
+	    n_boundary_points = 3;
+	    conic1.set_ellipse( p1, p2, p3);
+	}
+    
+	void
+	set( Point const& p1, Point const& p2,
+	     Point const& p3, Point const& p4)
+	{
+	    n_boundary_points = 4;
+	    CT::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
+	    dr = FT( 0);
+	    ds = conic1.r() * conic2.s() - conic2.r() * conic1.s(),
+	    dt = conic1.r() * conic2.t() - conic2.r() * conic1.t(),
+	    du = conic1.r() * conic2.u() - conic2.r() * conic1.u(),
+	    dv = conic1.r() * conic2.v() - conic2.r() * conic1.v(),
+	    dw = conic1.r() * conic2.w() - conic2.r() * conic1.w();
+	}
+    
+	void
+	set( Point const&, Point const&,
+	     Point const&, Point const&, Point const& p5)
+	{
+	    n_boundary_points = 5;
+	    conic1.set( conic1, conic2, p5);
+	    conic1.analyse();
+	}
+
+        // predicates
+        CGAL_Bounded_side
+        bounded_side( Point const& p) const
+        {
+	    switch ( n_boundary_points) {
+	      case 0:
+		return( CGAL_ON_UNBOUNDED_SIDE);
+		break;
+	      case 1:
+		return( ( p == boundary_point1) ?
+			       CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
+		break;
+	      case 2:
+		return(    ( p == boundary_point1)
+			|| ( p == boundary_point2)
+			|| ( CGAL_are_ordered_along_lineC2( boundary_point1, p,
+			                       boundary_point2, conic1.da())) ?
+				    CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
+		break;
+	      case 3:
+	      case 5:
+		return( conic1.convex_side( p));
+		break;
+	      case 4: {
+		CT c( conic1.da());
+		c.set( conic1, conic2, p);
+		c.analyse();
+		if ( ! c.is_ellipse()) {
+		    c.set_ellipse( conic1, conic2);
+		    c.analyse();
+		    return( c.convex_side( p)); }
+		else {
+		    int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
+		    return( CGAL_static_cast( CGAL_Bounded_side,
+					      CGAL_sign( tau_star))); } }
+		break;
+	      default:
+		CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
+					     ( n_boundary_points <= 5) ); }
+	    // keeps g++ happy
+	    return( CGAL_Bounded_side( 0));
+        }
+
+        bool
+        has_on_bounded_side( Point const& p) const
+        {
+	    return( bounded_side( p) == CGAL_ON_BOUNDED_SIDE);
+        }
+
+        bool
+        has_on_boundary( Point const& p) const
+        {
+	    return( bounded_side( p) == CGAL_ON_BOUNDARY);
+        }
+
+        bool
+        has_on_unbounded_side( Point const& p) const
+        {
+	    return( bounded_side( p) == CGAL_ON_UNBOUNDED_SIDE);
+        }
+
+        bool
+        is_empty( ) const
+        {
+            return( n_boundary_points == 0);
+        }
+
+        bool
+        is_degenerate( ) const
+        {
+            return( n_boundary_points < 3);
+        }
+
+        // additional operations for checking
+        bool
+        operator == (
+            CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA> const& e) const
+        {
+	    if ( n_boundary_points != e.n_boundary_points)
+		return( false);
+
+	    switch ( n_boundary_points) {
+	      case 0:
+		return( true);
+		break;
+	      case 1:
+		return( boundary_point1 == e.boundary_point1);
+		break;
+	      case 2:
+		return(    (    ( boundary_point1 == e.boundary_point1)
+			     && ( boundary_point2 == e.boundary_point2))
+			|| (    ( boundary_point1 == e.boundary_point2)
+			     && ( boundary_point2 == e.boundary_point1)));
+		break;
+	      case 3:
+	      case 5:
+		return( conic1 == e.conic1);
+		break;
+	      case 4:
+		return(    (    ( conic1 == e.conic1)
+			     && ( conic2 == e.conic2))
+			|| (    ( conic1 == e.conic2)
+			     && ( conic2 == e.conic1)));
+		break;
+	      default:
+	        CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
+					     && ( n_boundary_points <= 5)); }
+	    // keeps g++ happy
+	    return( false);
+        }
+
+        // I/O
+        friend
+        ostream&
+        operator << ( ostream& os,
+                      CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA> const& e)
+        {
+	    const char* const  empty       = "";
+	    const char* const  pretty_head =
+				     "CGAL_Min_ellipse_2_adapterC2::Ellipse( ";
+	    const char* const  pretty_sep  = ", ";
+	    const char* const  pretty_tail = ")";
+	    const char* const  ascii_sep   = " ";
+
+	    const char*  head = empty;
+	    const char*  sep  = empty;
+	    const char*  tail = empty;
+
+	    switch ( CGAL_get_mode( os)) {
+	      case CGAL_IO::PRETTY:
+		head = pretty_head;
+		sep  = pretty_sep;
+		tail = pretty_tail;
+		break;
+	      case CGAL_IO::ASCII:
+		sep  = ascii_sep;
+		break;
+	      case CGAL_IO::BINARY:
+		break;
+	      default:
+		CGAL_optimisation_assertion_msg( false,
+						"CGAL_get_mode( os) invalid!");
+		break; }
+
+	    os << head << e.n_boundary_points;
+	    switch ( e.n_boundary_points) {
+	      case 0:
+		break;
+	      case 1:
+		os << sep << e.boundary_point1;
+		break;
+	      case 2:
+		os << sep << e.boundary_point1
+		   << sep << e.boundary_point2;
+		break;
+	      case 3:
+	      case 5:
+		os << sep << e.conic1;
+		break;
+	      case 4:
+		os << sep << e.conic1
+		   << sep << e.conic2;
+		break; }
+	    os << tail;
+
+	    return( os);
+        }
+
+        friend
+        istream&
+        operator >> ( istream& is,
+                      CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e)
+        {
+            switch ( CGAL_get_mode( is)) {
+
+              case CGAL_IO::PRETTY:
+                cerr << endl;
+                cerr << "Stream must be in ascii or binary mode" << endl;
+                break;
+
+              case CGAL_IO::ASCII:
+              case CGAL_IO::BINARY:
+		CGAL_read( is, e.n_boundary_points);
+		switch ( e.n_boundary_points) {
+		  case 0:
+		    break;
+		  case 1:
+		    is >> e.boundary_point1;
+		    break;
+		  case 2:
+		    is >> e.boundary_point1
+		       >> e.boundary_point2;
+		    break;
+		  case 3:
+		  case 5:
+		    is >> e.conic1;
+		    break;
+		  case 4:
+		    is >> e.conic1
+		       >> e.conic2;
+		    break; }
+                break;
+
+              default:
+                CGAL_optimisation_assertion_msg( false,
+                                                 "CGAL_IO::mode invalid!");
+                break; }
+
+            return( is);
+        }
+    };
+@end
+
+@! ----------------------------------------------------------------------------
+@! Class template CGAL_Min_ellipse_2_adapterH2<PT,DA>
+@! ----------------------------------------------------------------------------
+
+\subsection{Class template \ccFont CGAL\_Min\_ellipse\_2\_adapterH2<PT,DA>}
+
+First, we declare the class templates \ccc{Min_ellipse_2},
+\ccc{CGAL_Min_ellipse_2_adapterH2} and
+\ccc{CGAL__Min_ellipse_2_adapterH2__Ellipse}.
+
+@macro<Min_ellipse_2_adapterH2 declarations> = @begin
+    template < class _Traits >
+    class CGAL_Min_ellipse_2;
+
+    template < class _PT, class _DA >
+    class CGAL_Min_ellipse_2_adapterH2;
+
+    template < class _PT, class _DA >
+    class CGAL__Min_ellipse_2_adapterH2__Ellipse;
+@end
+
+The actual work of the adapter is done in the nested class
+\ccc{Ellipse}. Therefore, we implement the whole adapter in its
+interface.
+
+The variable \ccc{ellipse} containing the current ellipse is declared
+\ccc{private} to disallow the user from directly accessing or modifying
+it. Since the algorithm needs to access and modify the current ellipse,
+it is declared \ccc{friend}.
+
+@macro <Min_ellipse_2_adapterH2 interface and implementation> = @begin
+    template < class _PT, class _DA >
+    class CGAL_Min_ellipse_2_adapterH2 {
+      public:
+        // types
+        typedef  _PT  PT;
+        typedef  _DA  DA;
+
+        // nested types
+        typedef  PT						Point;
+        typedef  CGAL__Min_ellipse_2_adapterH2__Ellipse<PT,DA>  Ellipse;
+
+      private:
+        DA      dao;                                    // data accessor object
+        Ellipse ellipse;                                // current ellipse
+        friend class CGAL_Min_ellipse_2< CGAL_Min_ellipse_2_adapterH2<PT,DA> >;
+
+      public:
+        // creation
+        @<Min_ellipse_2_adapterH2 constructors>
+
+        // operations
+        @<Min_ellipse_2_adapterH2 operations>
+    };
+@end   
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Constructors}
+
+@macro <Min_ellipse_2_adapterH2 constructors> = @begin
+    CGAL_Min_ellipse_2_adapterH2( DA const& da = DA())
+        : dao( da), ellipse( da)
+    { }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Operations}
+
+@macro <Min_ellipse_2_adapterH2 operations> = @begin
+    CGAL_Orientation
+    orientation( Point const& p, Point const& q, Point const& r) const
+    {
+        typedef  _DA::RT  RT;
+
+        RT  phx;
+        RT  phy;
+        RT  phw;
+        RT  qhx;
+        RT  qhy;
+        RT  qhw;
+        RT  rhx;
+        RT  rhy;
+        RT  rhw;
+        
+        dao.get( p, phx, phy, phw);
+        dao.get( q, qhx, qhy, qhw);
+        dao.get( r, rhx, rhy, rhw);
+
+        return( CGAL_static_cast( CGAL_Orientation,
+                    CGAL_sign( ( phx*rhw - rhx*phw) * ( qhy*rhw - rhy*qhw)
+                             - ( phy*rhw - rhy*phw) * ( qhx*rhw - rhx*qhw))));
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Nested Type \ccFont Ellipse}
+
+@macro <Min_ellipse_2_adapterH2 nested type `Ellipse'> = @begin
+    template < class _PT, class _DA >
+    class CGAL__Min_ellipse_2_adapterH2__Ellipse {
+      public:
+        // typedefs
+        typedef  _PT  PT;
+        typedef  _DA  DA;
+
+	typedef  CGAL_ConicH2< PT, DA>  CT;
+        typedef  _DA::RT		RT;
+
+      private:
+        // data members
+	int  n_boundary_points;			// number of boundary points
+	PT   boundary_point1, boundary_point2;	// two boundary points
+	CT   conic1, conic2;			// two conics
+	RT   dr, ds, dt, du, dv, dw;		// the gradient vector
+
+      public:
+        // types
+        typedef  PT  Point;
+
+        // creation
+        CGAL__Min_ellipse_2_adapterH2__Ellipse( DA const& da)
+	    : conic1( da), conic2( da)
+	{ }
+
+	void
+	set( )
+	{
+	    n_boundary_points = 0;
+	}
+    
+	void
+	set( Point const& p)
+	{
+	    n_boundary_points = 1;
+	    boundary_point1   = p;
+	}
+    
+	void
+	set( Point const& p, Point const& q)
+	{
+	    n_boundary_points = 2;
+	    boundary_point1   = p;
+	    boundary_point2   = q;
+	}
+    
+	void
+	set( Point const& p1, Point const& p2, Point const& p3)
+	{
+	    n_boundary_points = 3;
+	    conic1.set_ellipse( p1, p2, p3);
+	}
+    
+	void
+	set( Point const& p1, Point const& p2,
+	     Point const& p3, Point const& p4)
+	{
+	    n_boundary_points = 4;
+	    CT::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
+	    dr = RT( 0);
+	    ds = conic1.r() * conic2.s() - conic2.r() * conic1.s(),
+	    dt = conic1.r() * conic2.t() - conic2.r() * conic1.t(),
+	    du = conic1.r() * conic2.u() - conic2.r() * conic1.u(),
+	    dv = conic1.r() * conic2.v() - conic2.r() * conic1.v(),
+	    dw = conic1.r() * conic2.w() - conic2.r() * conic1.w();
+	}
+    
+	void
+	set( Point const&, Point const&,
+	     Point const&, Point const&, Point const& p5)
+	{
+	    n_boundary_points = 5;
+	    conic1.set( conic1, conic2, p5);
+	    conic1.analyse();
+	}
+
+        // predicates
+        CGAL_Bounded_side
+        bounded_side( Point const& p) const
+        {
+	    switch ( n_boundary_points) {
+	      case 0:
+		return( CGAL_ON_UNBOUNDED_SIDE);
+		break;
+	      case 1:
+		return( ( p == boundary_point1) ?
+			       CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
+		break;
+	      case 2:
+		return(    ( p == boundary_point1)
+			|| ( p == boundary_point2)
+			|| ( CGAL_are_ordered_along_lineH2( boundary_point1, p,
+			                       boundary_point2, conic1.da())) ?
+				    CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
+		break;
+	      case 3:
+	      case 5:
+		return( conic1.convex_side( p));
+		break;
+	      case 4: {
+		CT c( conic1.da());
+		c.set( conic1, conic2, p);
+		c.analyse();
+		if ( ! c.is_ellipse()) {
+		    c.set_ellipse( conic1, conic2);
+		    c.analyse();
+		    return( c.convex_side( p)); }
+		else {
+		    int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
+		    return( CGAL_static_cast( CGAL_Bounded_side,
+					      CGAL_sign( tau_star))); } }
+		break;
+	      default:
+		CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
+					     ( n_boundary_points <= 5) ); }
+	    // keeps g++ happy
+	    return( CGAL_Bounded_side( 0));
+        }
+
+        bool
+        has_on_bounded_side( Point const& p) const
+        {
+	    return( bounded_side( p) == CGAL_ON_BOUNDED_SIDE);
+        }
+
+        bool
+        has_on_boundary( Point const& p) const
+        {
+	    return( bounded_side( p) == CGAL_ON_BOUNDARY);
+        }
+
+        bool
+        has_on_unbounded_side( Point const& p) const
+        {
+	    return( bounded_side( p) == CGAL_ON_UNBOUNDED_SIDE);
+        }
+
+        bool
+        is_empty( ) const
+        {
+            return( n_boundary_points == 0);
+        }
+
+        bool
+        is_degenerate( ) const
+        {
+            return( n_boundary_points < 3);
+        }
+
+        // additional operations for checking
+        bool
+        operator == (
+            CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA> const& e) const
+        {
+	    if ( n_boundary_points != e.n_boundary_points)
+		return( false);
+
+	    switch ( n_boundary_points) {
+	      case 0:
+		return( true);
+		break;
+	      case 1:
+		return( boundary_point1 == e.boundary_point1);
+		break;
+	      case 2:
+		return(    (    ( boundary_point1 == e.boundary_point1)
+			     && ( boundary_point2 == e.boundary_point2))
+			|| (    ( boundary_point1 == e.boundary_point2)
+			     && ( boundary_point2 == e.boundary_point1)));
+		break;
+	      case 3:
+	      case 5:
+		return( conic1 == e.conic1);
+		break;
+	      case 4:
+		return(    (    ( conic1 == e.conic1)
+			     && ( conic2 == e.conic2))
+			|| (    ( conic1 == e.conic2)
+			     && ( conic2 == e.conic1)));
+		break;
+	      default:
+	        CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
+					     && ( n_boundary_points <= 5)); }
+	    // keeps g++ happy
+	    return( false);
+        }
+
+        // I/O
+        friend
+        ostream&
+        operator << ( ostream& os,
+                      CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA> const& e)
+        {
+	    const char* const  empty       = "";
+	    const char* const  pretty_head =
+				     "CGAL_Min_ellipse_2_adapterH2::Ellipse( ";
+	    const char* const  pretty_sep  = ", ";
+	    const char* const  pretty_tail = ")";
+	    const char* const  ascii_sep   = " ";
+
+	    const char*  head = empty;
+	    const char*  sep  = empty;
+	    const char*  tail = empty;
+
+	    switch ( CGAL_get_mode( os)) {
+	      case CGAL_IO::PRETTY:
+		head = pretty_head;
+		sep  = pretty_sep;
+		tail = pretty_tail;
+		break;
+	      case CGAL_IO::ASCII:
+		sep  = ascii_sep;
+		break;
+	      case CGAL_IO::BINARY:
+		break;
+	      default:
+		CGAL_optimisation_assertion_msg( false,
+						"CGAL_get_mode( os) invalid!");
+		break; }
+
+	    os << head << e.n_boundary_points;
+	    switch ( e.n_boundary_points) {
+	      case 0:
+		break;
+	      case 1:
+		os << sep << e.boundary_point1;
+		break;
+	      case 2:
+		os << sep << e.boundary_point1
+		   << sep << e.boundary_point2;
+		break;
+	      case 3:
+	      case 5:
+		os << sep << e.conic1;
+		break;
+	      case 4:
+		os << sep << e.conic1
+		   << sep << e.conic2;
+		break; }
+	    os << tail;
+
+	    return( os);
+        }
+
+        friend
+        istream&
+        operator >> ( istream& is,
+                      CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>& e)
+        {
+            switch ( CGAL_get_mode( is)) {
+
+              case CGAL_IO::PRETTY:
+                cerr << endl;
+                cerr << "Stream must be in ascii or binary mode" << endl;
+                break;
+
+              case CGAL_IO::ASCII:
+              case CGAL_IO::BINARY:
+		CGAL_read( is, e.n_boundary_points);
+		switch ( e.n_boundary_points) {
+		  case 0:
+		    break;
+		  case 1:
+		    is >> e.boundary_point1;
+		    break;
+		  case 2:
+		    is >> e.boundary_point1
+		       >> e.boundary_point2;
+		    break;
+		  case 3:
+		  case 5:
+		    is >> e.conic1;
+		    break;
+		  case 4:
+		    is >> e.conic1
+		       >> e.conic2;
+		    break; }
+                break;
+
+              default:
+                CGAL_optimisation_assertion_msg( false,
+                                                 "CGAL_IO::mode invalid!");
+                break; }
+
+            return( is);
+        }
+    };
+@end
+
 @! ============================================================================
 @! Tests
 @! ============================================================================
@@ -1059,23 +2381,34 @@ pseudocode above.
 
 We test \ccc{CGAL_Min_ellipse_2} with the traits class implementation
 for optimisation algorithms, using exact arithmetic, i.e.\ Cartesian
-representation with number type \ccc{CGAL_Quotient<CGAL_Gmpz>} and
-homogeneous representation with number type \ccc{CGAL_Gmpz}.
+representation with number type \ccc{CGAL_Quotient<CGAL_Gmpz>} or
+\ccc{CGAL_Quotient<integer>} and homogeneous representation with
+number type \ccc{CGAL_Gmpz} or \ccc{integer}.
 
 @macro <Min_ellipse_2 test (includes and typedefs)> = @begin
-    #include <CGAL/Gmpz.h>
     #include <CGAL/Cartesian.h>
     #include <CGAL/Homogeneous.h>
     #include <CGAL/Optimisation_traits_2.h>
     #include <CGAL/Min_ellipse_2.h>
+    #include <CGAL/Min_ellipse_2_adapterC2.h>
+    #include <CGAL/Min_ellipse_2_adapterH2.h>
     #include <CGAL/Random.h>
     #include <CGAL/IO/Verbose_ostream.h>
     #include <algo.h>
     #include <assert.h>
     #include <fstream.h>
 
-    typedef  CGAL_Gmpz				 Rt;
-    typedef  CGAL_Quotient< CGAL_Gmpz >		 Ft;
+    #ifndef CGAL_USE_LEDA_BOOL
+    #  include <CGAL/Gmpz.h>
+       typedef  CGAL_Gmpz			Rt;
+       typedef  CGAL_Quotient< CGAL_Gmpz >	Ft;
+    #else
+    #  include <CGAL/Integer.h>
+    #  include <LEDA/REDEFINE_NAMES.h>
+       typedef  integer				Rt;
+       typedef  CGAL_Quotient< integer >	Ft;
+    #  include <LEDA/UNDEFINE_NAMES.h>
+    #endif
 
     typedef  CGAL_Cartesian< Ft >		 RepC;
     typedef  CGAL_Homogeneous< Rt >		 RepH;
@@ -1332,6 +2665,146 @@ once to ensure code coverage.
 @end
 
 @! ----------------------------------------------------------------------------
+@! Adapters
+@! ----------------------------------------------------------------------------
+
+\subsection{Traits Class Adapters}
+
+We define two point classes (one with Cartesian, one with homogeneous
+representation) and corresponding data accessors.
+
+@macro <Min_ellipse_2 test (point classes)> = @begin
+    // 2D Cartesian point class
+    class MyPointC2 {
+      public:
+        typedef  ::Ft  FT;
+      private:
+        FT _x;
+        FT _y;
+      public:
+        MyPointC2( ) { }
+        MyPointC2( FT const& x, FT const& y) : _x( x), _y( y) { }
+
+        FT const&  x( ) const { return( _x); }
+        FT const&  y( ) const { return( _y); }
+
+        bool
+        operator == ( MyPointC2 const& p) const
+        {
+            return( ( _x == p._x) && ( _y == p._y));
+        }
+
+        friend
+        ostream&
+        operator << ( ostream& os, MyPointC2 const& p)
+        {
+            return( os << p._x << ' ' << p._y);
+        }
+
+        friend
+        istream&
+        operator >> ( istream& is, MyPointC2& p)
+        {
+            return( is >> p._x >> p._y);
+        }
+    };
+
+    // 2D Cartesian point class data accessor
+    class MyPointC2DA {
+      public:
+        typedef  ::Ft  FT;
+
+        FT const&  get_x( MyPointC2 const& p) const { return( p.x()); }
+        FT const&  get_y( MyPointC2 const& p) const { return( p.y()); }
+
+        void
+        get( MyPointC2 const& p, FT& x, FT& y) const
+        {
+            x = get_x( p);
+            y = get_y( p);
+        }
+
+        void
+        set( MyPointC2& p, FT const& x, FT const& y) const
+        {
+            p = MyPointC2( x, y);
+        }
+    };
+
+
+    // 2D homogeneous point class
+    class MyPointH2 {
+      public:
+        typedef  ::Rt  RT;
+      private:
+        RT _hx;
+        RT _hy;
+        RT _hw;
+      public:
+        MyPointH2( ) { }
+        MyPointH2( RT const& hx, RT const& hy, RT const& hw = RT( 1))
+            : _hx( hx), _hy( hy), _hw( hw) { }
+
+        RT const&  hx( ) const { return( _hx); }
+        RT const&  hy( ) const { return( _hy); }
+        RT const&  hw( ) const { return( _hw); }
+
+        bool
+        operator == ( MyPointH2 const& p) const
+        {
+            return( ( _hx*p._hw == p._hx*_hw) && ( _hy*p._hw == p._hy*_hw));
+        }
+
+        friend
+        ostream&
+        operator << ( ostream& os, MyPointH2 const& p)
+        {
+            return( os << p._hx << ' ' << p._hy << ' ' << p._hw);
+        }
+
+        friend
+        istream&
+        operator >> ( istream& is, MyPointH2& p)
+        {
+            return( is >> p._hx >> p._hy >> p._hw);
+        }
+    };
+
+    // 2D homogeneous point class data accessor
+    class MyPointH2DA {
+      public:
+        typedef  ::Rt  RT;
+
+        RT const&  get_hx( MyPointH2 const& p) const { return( p.hx()); }
+        RT const&  get_hy( MyPointH2 const& p) const { return( p.hy()); }
+        RT const&  get_hw( MyPointH2 const& p) const { return( p.hw()); }
+
+        void
+        get( MyPointH2 const& p, RT& hx, RT& hy, RT& hw) const
+        {
+            hx = get_hx( p);
+            hy = get_hy( p);
+            hw = get_hw( p);
+        }
+
+        void
+        set( MyPointH2& p, RT const& hx, RT const& hy, RT const& hw) const
+        {
+            p = MyPointH2( hx, hy, hw);
+        }
+    };
+@end
+
+To test the traits class adapters we use the code coverage test function.
+
+@macro <Min_ellipse_2 test (adapters test)> = @begin
+    typedef  CGAL_Min_ellipse_2_adapterC2< MyPointC2, MyPointC2DA >  AdapterC2;
+    typedef  CGAL_Min_ellipse_2_adapterH2< MyPointH2, MyPointH2DA >  AdapterH2;
+    cover_Min_ellipse_2( verbose, AdapterC2(), Rt());
+    cover_Min_ellipse_2( verbose, AdapterH2(), Rt());
+@end
+
+@! ----------------------------------------------------------------------------
 @! External Test Sets
 @! ----------------------------------------------------------------------------
 
@@ -1388,8 +2861,8 @@ end of each file.
 
 \subsection{Min\_ellipse\_2.h}
 
-@file <../../include/CGAL/Optimisation/Min_ellipse_2.h> = @begin
-    @<Min_ellipse_2 header>("include/CGAL/Optimisation/Min_ellipse_2.h")
+@file <include/Optimisation/CGAL/Min_ellipse_2.h> = @begin
+    @<Min_ellipse_2 header>("include/Optimisation/CGAL/Min_ellipse_2.h")
 
     #ifndef CGAL_MIN_ELLIPSE_2_H
     #define CGAL_MIN_ELLIPSE_2_H
@@ -1438,8 +2911,8 @@ end of each file.
 
 \subsection{Min\_ellipse\_2.C}
 
-@file <../../include/CGAL/Optimisation/Min_ellipse_2.C> = @begin
-    @<Min_ellipse_2 header>("include/CGAL/Optimisation/Min_ellipse_2.C")
+@file <include/Optimisation/CGAL/Min_ellipse_2.C> = @begin
+    @<Min_ellipse_2 header>("include/Optimisation/CGAL/Min_ellipse_2.C")
 
     // Class implementation (continued)
     // ================================
@@ -1450,13 +2923,208 @@ end of each file.
     @<end of file line>
 @end
 
-@i ../file_header.awi
- 
-@macro <Min_ellipse_2 header>(1) many = @begin
-    @<file header>("2D Smallest Enclosing Ellipse",@1,
-		   "Optimisation/Min_ellipse_2",
-		   "Bernd Gärtner, Sven Schönherr",
-		   "$Revision$","$Date$")
+@! ----------------------------------------------------------------------------
+@! Optimisation_ellipse_2.h
+@! ----------------------------------------------------------------------------
+
+\subsection{Optimisation\_ellipse\_2.h}
+
+@file <include/Optimisation/CGAL/Optimisation_ellipse_2.h> = @begin
+    @<Optimisation_ellipse_2 header>("include/Optimisation/CGAL/Optimisation_ellipse_2.h")
+
+    #ifndef CGAL_OPTIMISATION_ELLIPSE_2_H
+    #define CGAL_OPTIMISATION_ELLIPSE_2_H
+
+    // Class declaration
+    // =================
+    @<Optimisation_ellipse_2 declaration>
+
+    // Class interface
+    // ===============
+    // includes
+    #ifndef CGAL_POINT_2_H
+    #  include <CGAL/Point_2.h>
+    #endif
+    #ifndef CGAL_CONIC_2_H
+    #  include <CGAL/Conic_2.h>
+    #endif
+
+    @<Optimisation_ellipse_2 interface>
+
+    // Function declarations
+    // =====================
+    // I/O
+    // ---
+    @<Optimisation_ellipse_2 I/O operators declaration>
+
+    #ifdef CGAL_INCLUDE_TEMPLATE_CODE
+    #  include <CGAL/Optimisation_ellipse_2.C>
+    #endif
+
+    #endif // CGAL_OPTIMISATION_ELLIPSE_2_H
+
+    @<end of file line>
+@end
+
+@! ----------------------------------------------------------------------------
+@! Optimisation_ellipse_2.C
+@! ----------------------------------------------------------------------------
+
+\subsection{Optimisation\_ellipse\_2.C}
+
+@file <include/Optimisation/CGAL/Optimisation_ellipse_2.C> = @begin
+    @<Optimisation_ellipse_2 header>("include/Optimisation/CGAL/Optimisation_ellipse_2.C")
+
+    // Class implementation (continued)
+    // ================================
+    // includes
+    #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
+    #  include <CGAL/optimisation_assertions.h>
+    #endif
+
+    // I/O
+    // ---
+    @<Optimisation_ellipse_2 I/O operators>
+
+    @<end of file line>
+@end
+
+@! ----------------------------------------------------------------------------
+@! Min_ellipse_2_adapterC2.h
+@! ----------------------------------------------------------------------------
+
+\subsection{Min\_ellipse\_2\_adapterC2.h}
+
+@file <include/Optimisation/CGAL/Min_ellipse_2_adapterC2.h> = @begin
+    @<Min_ellipse_2 header>("include/Optimisation/CGAL/Min_ellipse_2_adapterC2.h")
+
+    #ifndef CGAL_MIN_ELLIPSE_2_ADAPTERC2_H
+    #define CGAL_MIN_ELLIPSE_2_ADAPTERC2_H
+
+    // Class declarations
+    // ==================
+    @<Min_ellipse_2_adapterC2 declarations>
+
+    // Class interface and implementation
+    // ==================================
+    // includes
+    #ifndef CGAL_CONICC2_H
+    #  include <CGAL/ConicC2.h>
+    #endif
+    #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
+    #  include <CGAL/optimisation_assertions.h>
+    #endif
+
+    template < class PT, class DA >
+    bool
+    CGAL_are_ordered_along_lineC2( PT const& p, PT const& q, PT const& r,
+				   DA const& da)
+    {
+        typedef  DA::FT  FT;
+
+        FT  px;
+        FT  py;
+        FT  qx;
+        FT  qy;
+        FT  rx;
+        FT  ry;
+        
+        da.get( p, px, py);
+        da.get( q, qx, qy);
+        da.get( r, rx, ry);
+
+	// p,q,r collinear?
+	if ( ! CGAL_is_zero( ( px-rx) * ( qy-ry) - ( py-ry) * ( qx-rx)))
+	    return( false);
+
+	// p,q,r vertical?
+	if ( px != rx)
+	    return(    ( ( px < qx) && ( qx < rx))
+		    || ( ( rx < qx) && ( qx < px)));
+	else
+	    return(    ( ( py < qy) && ( qy < ry))
+		    || ( ( ry < qy) && ( qy < py)));
+    }
+
+    @<Min_ellipse_2_adapterC2 interface and implementation>
+
+    // Nested type `Ellipse'
+    @<Min_ellipse_2_adapterC2 nested type `Ellipse'>
+
+    #endif // CGAL_MIN_ELLIPSE_2_ADAPTERC2_H
+
+    @<end of file line>
+@end
+
+@! ----------------------------------------------------------------------------
+@! Min_ellipse_2_adapterH2.h
+@! ----------------------------------------------------------------------------
+
+\subsection{Min\_ellipse\_2\_adapterH2.h}
+
+@file <include/Optimisation/CGAL/Min_ellipse_2_adapterH2.h> = @begin
+    @<Min_ellipse_2 header>("include/Optimisation/CGAL/Min_ellipse_2_adapterH2.h")
+
+    #ifndef CGAL_MIN_ELLIPSE_2_ADAPTERH2_H
+    #define CGAL_MIN_ELLIPSE_2_ADAPTERH2_H
+
+    // Class declarations
+    // ==================
+    @<Min_ellipse_2_adapterH2 declarations>
+
+    // Class interface and implementation
+    // ==================================
+    // includes
+    #ifndef CGAL_CONICH2_H
+    #  include <CGAL/ConicH2.h>
+    #endif
+    #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
+    #  include <CGAL/optimisation_assertions.h>
+    #endif
+
+    template < class PT, class DA >
+    bool
+    CGAL_are_ordered_along_lineH2( PT const& p, PT const& q, PT const& r,
+				   DA const& da)
+    {
+        typedef  DA::RT  RT;
+
+        RT  phx;
+        RT  phy;
+        RT  phw;
+        RT  qhx;
+        RT  qhy;
+        RT  qhw;
+        RT  rhx;
+        RT  rhy;
+        RT  rhw;
+        
+        da.get( p, phx, phy, phw);
+        da.get( q, qhx, qhy, qhw);
+        da.get( r, rhx, rhy, rhw);
+
+	// p,q,r collinear?
+        if ( ! CGAL_is_zero(   ( phx*rhw - rhx*phw) * ( qhy*rhw - rhy*qhw)
+			     - ( phy*rhw - rhy*phw) * ( qhx*rhw - rhx*qhw)))
+	    return( false);
+
+	// p,q,r vertical?
+	if ( phx*rhw != rhx*phw)
+	    return(    ( ( phx*qhw < qhx*phw) && ( qhx*rhw < rhx*qhw))
+		    || ( ( rhx*qhw < qhx*rhw) && ( qhx*phw < phx*qhw)));
+	else
+	    return(    ( ( phy*qhw < qhy*phw) && ( qhy*rhw < rhy*qhw))
+		    || ( ( rhy*qhw < qhy*rhw) && ( qhy*phw < phy*qhw)));
+    }
+
+    @<Min_ellipse_2_adapterH2 interface and implementation>
+
+    // Nested type `Ellipse'
+    @<Min_ellipse_2_adapterH2 nested type `Ellipse'>
+
+    #endif // CGAL_MIN_ELLIPSE_2_ADAPTERH2_H
+
+    @<end of file line>
 @end
 
 @! ----------------------------------------------------------------------------
@@ -1465,7 +3133,7 @@ end of each file.
 
 \subsection{test\_Min\_ellipse\_2.C}
 
-@file <../../test/Optimisation/test_Min_ellipse_2.C> = @begin
+@file <test/Optimisation/test_Min_ellipse_2.C> = @begin
     @<Min_ellipse_2 header>("test/Optimisation/test_Min_ellipse_2.C")
 
     @<Min_ellipse_2 test (includes and typedefs)>
@@ -1473,6 +3141,10 @@ end of each file.
     // code coverage test function
     // ---------------------------
     @<Min_ellipse_2 test (code coverage test function)>
+
+    // point classes for adapters test
+    // -------------------------------
+    @<Min_ellipse_2 test (point classes)>
 
     // main
     // ----
@@ -1488,6 +3160,10 @@ end of each file.
 	// -------------
 	@<Min_ellipse_2 test (code coverage)>
 
+        // adapters test
+        // -------------
+        @<Min_ellipse_2 test (adapters test)>
+
 	// external test sets
 	// -------------------
 	@<Min_ellipse_2 test (external test sets)>
@@ -1496,6 +3172,21 @@ end of each file.
     @<end of file line>
 @end
 
+@i ../file_header.awi
+ 
+@macro <Min_ellipse_2 header>(1) many = @begin
+    @<file header>("2D Smallest Enclosing Ellipse",@1,
+		   "Optimisation/Min_ellipse_2",
+		   "Bernd Gärtner, Sven Schönherr",
+		   "$Revision$","$Date$")
+@end
+
+@macro <Optimisation_ellipse_2 header>(1) many = @begin
+    @<file header>("2D Optimisation Ellipse",@1,
+		   "Optimisation/Optimisation_ellipse_2",
+		   "Bernd Gärtner, Sven Schönherr",
+		   "$Revision$","$Date$")
+@end
 @! ============================================================================
 @! Bibliography
 @! ============================================================================
@@ -1505,930 +3196,3 @@ end of each file.
 \bibliography{geom,cgal}
 
 @! ===== EOF ==================================================================
-
-\clearpage
-
-@section{OLD}
-@subsection{old}
-
-Most important, a \ccc{CGAL_Min_ellipse_2} object at any time
-keeps the actual ellipse $\me(\emptyset,B)$. Unlike in the class
-\ccc{CGAL_Min_ellipse_2}, this is not a \ccc{CGAL_Ellipse_2}, on
-the one hand, because this type does not exist yet, on the other
-hand because the representation of $\me(\emptyset,B)$ is different
-for any number of support points. For $|B|=3,5$, we store an explicit
-ellipse (although in different formats, see below), for $|B|=4$, the
-representation is implicit, because an explicit one might contain
-irrational coordinates. For $|B|\leq 2$, we have no representation
-at all. In this case, the ellipse is degenerate, and the in-ellipse test
-(which is the only routine we need the ellipse for) can be decided directly
-from the set $B$. 
-
-Although at any point in time, only one representation is
-valid and will be accessed, all three representations (for $|B|=3,4,5$)
-are simultaneously stored in a \ccc{CGAL_Min_ellipse_2} object. Since
-none of them is really space-consuming, this is not a problem. 
-(Unions, which would be just the right concept in this situation, are not
-allowed to be used with classes as members, even if the respective
-constructors do absolutely nothing). Each representation has its own
-class. 
-
-@macro <private classes> zero += @begin
-    @<Ellipse_3 class>
-    @<Ellipse_4 class>
-    @<Ellipse_5 class>
-@end
-
-Here are the actual representations. 
-
-@macro <private data members> zero += @begin
-    Ellipse_3 ellipse_3;
-    Ellipse_4 ellipse_4;
-    Ellipse_5 ellipse_5;
-@end   
-    
-
-@! ----------------------------------------------------------------------------
-@subsubsection{ Ellipse representation classes}
-@! ----------------------------------------------------------------------------
-\label{ellipse_rep}
-We have three classes,
-\ccc{Ellipse_3}, \ccc{Ellipse_4} and \ccc{Ellipse_5}, being in charge
-of sets $B$ with 3,4, or 5 points. All classes have a method \ccc{set} to
-compute some representation of $\me(\emptyset,B)$, suitable to do in-ellipse
-tests `$p\in \me(\emptyset,B)$'. To perform these tests, each class has a
-\ccc{bounded_side} method.
-
-@macro <Ellipse_3 class> zero = @begin
-    class Ellipse_3 {
-	public:
-	    @<Ellipse_3 data members>
-
-	    // default constructor
-	    // -------------------
-	    Ellipse_3 () {}
-
-	    // set method
-	    // ----------
-	    void set (const CGAL_Point_2<R>& p1, const CGAL_Point_2<R>& p2,
-	              const CGAL_Point_2<R>& p3)
-	    {
-	    	@<Ellipse_3::set body>
-	    }
-
-	    // bounded_side method
-	    // -------------------
-	    CGAL_Bounded_side bounded_side (const CGAL_Point_2<R>& p) const
-	    {
-	    	@<Ellipse_3::bounded_side body>
-	    }
-    };
-@end 
-
-@macro <Ellipse_4 class> zero = @begin
-    class Ellipse_4 {
-	public:
-	    @<Ellipse_4 data members>
-
-	    // default constructor
-	    // -------------------
-	    Ellipse_4 () {}
-
-	    // set method
-	    // ----------
-	    void set (const CGAL_Point_2<R>& p1, const CGAL_Point_2<R>& p2,
-	              const CGAL_Point_2<R>& p3, const CGAL_Point_2<R>& p4)
-	    {
-	    	@<Ellipse_4::set body>
-	    }
-
-	    // bounded_side method, non-const
-	    // ------------------------------
-	    CGAL_Bounded_side bounded_side (const CGAL_Point_2<R>& p)
-	    {
-	    	@<Ellipse_4::bounded_side body>
-	    }
-    };
-@end 
-
-The class \ccc{Ellipse_5} does not have a method to compute the ellipse 
-from its five support points. The reason is that by the time an 
-\ccc{Ellipse_5} object is set up, the ellipse through the five points 
-has already been computed and stored in the \ccc{Ellipse_4} representation, 
-see implementation section below. Thus it suffices to `steal' this ellipse.
-To this end, a reference to the \ccc{Ellipse_4} object is passed to the
-\ccc{set} method. Because the ellipse in question is computed by the
-\ccc{bounded_side} method of the \ccc{Ellipse_4} class, the latter method
-is not a \ccc{const} method, unlike all other \ccc{bounded_side} methods.
-
-@macro <Ellipse_5 class> zero = @begin
-    class Ellipse_5 {
-	public:
-	    @<Ellipse_5 data members>
-
- 	    // default constructor
-	    // -------------------
-	    Ellipse_5 () {}
-
-	    // set method
-	    // ----------
- 	    void set (Ellipse_4& ellipse_4)
-	    {
-	    	@<Ellipse_5::set body>	
-	    }    
-	
-	    // bounded_side method
-	    // -------------------
-	    CGAL_Bounded_side bounded_side (const CGAL_Point_2<R>& p) const
-	    {
-	 	@<Ellipse_5::bounded_side body>
-	    }	   
-    };
-@end 	    
-
-@! ----------------------------------------------------------------------------
-@section{Class \texttt{CGAL\_Min\_ellipse\_2}: Implementation}
-@! ----------------------------------------------------------------------------
-
-The implementation consists of several parts, each of which is
-described in the sequel. The actual work is hidden in the member
-functions \ccc{set} and \ccc{bounded_side} of the ellipse
-representation classes. The remaining functions -- in particular
-the private member functions \ccc{me} and \ccc{compute_ellipse} -- are
-implemented completely similar to the corresponding functions of the
-class \ccc{CGAL_Min_ellipse_2}. An exception are the predicates for
-the in-ellipse tests. In \ccc{CGAL_Min_ellipse_2}, the in-ellipse predicates
-were directly mapped to the corresponding predicates over the 
-\ccc{CGAL_ellipse_2} object stored in the class. In our case,
-the \ccc{bounded_side} method is mapped to the corresponding one
-of the respective ellipse representation class (and evaluated directly
-if the current ellipse $me$ is defined by less than three points); the predicates (\ccc{has_on_bounded_side}, \ldots) are then implemented by 
-directly referring to the \ccc{bounded_side} method.  
-
-@! ----------------------------------------------------------------------------
-@subsection{ Update operations}
-@! ----------------------------------------------------------------------------
-
-There is another way to build up $\me(P)$, other than by supplying the
-point set $P$ at once. Namely, $\me(P)$ can be built up incrementally,
-adding one point after another. If you look at the pseudocode in the
-introduction, this comes quite naturally. The method \ccc{insert},
-applied with point $p$ to a \ccc{CGAL_Min_ellipse_2} object
-representing $\me(P)$, computes $\me(P \cup \{p\})$, where work has to
-be done only if $p$ lies outside $\me(P)$.  In this case, $\me(P \cup
-\{p\}) = \me(P,\{p\})$ holds, so the method $\me$ is called with
-support set $\{p\}$. After the insertion has been performed, $p$ is
-moved to the front of the point list, just like in the pseudocode and
-the `main' constructor above.
-
-@macro <update operations> zero += @begin
-    // update operations
-    // -----------------
-    template < class R >
-    void
-    CGAL_Min_ellipse_2<R>::
-    insert( const CGAL_Point_2<R>& p)
-    {
-	// store point
-	int old_n = number_of_points();
-	points.push_back( _Point( p));  // NOTE: p is not linked with list yet!
-
-	// p not in current ellipse?
-	if ( has_on_unbounded_side( p)) {
-
-	    // p new support point
-	    support_points[ 0] = p;
-
-	    // recompute me
-	    me( old_n, 1); }
-
-	// make p the first point in list
-	if ( old_n > 0)                                  // old list not empty?
-	    points[ i_first_point].pred = old_n;
-	points[ old_n].succ = i_first_point;
-	i_first_point = old_n;
-    }
-@end
-
-The operation \ccc{reserve} does nothing but tell the
-\ccc{CGAL_Min_ellipse_2} that some number $n$ of points might
-eventually be inserted, allowing the object to allocate storage for
-them at once. Inserting the points without doing this might lead to
-overhead caused by moving the array \ccc{points} around in memory
-while it grows.
-
-@macro <update operations> += @begin
-
-    template < class R > inline
-    void
-    CGAL_Min_ellipse_2<R>::
-    reserve( int n)
-    {
-	points.reserve( n);
-    }
-@end
-
-@! ----------------------------------------------------------------------------
-@subsection{ Access Operations and Predicates}
-@! ----------------------------------------------------------------------------
-
-Next we have predicates testing the relative position of a point
-w.r.t. the ellipse. They rely on the \ccc{bounded_side} method
-which for less than 3 support points is evaluated directly, while
-for at least three support points, the corresponding methods
-of the ellipse representation classes are used. A degenerate ellipse 
-defined by less than two support points has no bounded side. In
-this case, the ellipse itself is the boundary, everything else
-belongs to the unbounded side. Note that the \ccc{bounded_side} method
-is a \ccc{const} method although the underlying method of the class
-\ccc{Ellipse_4} is not. The difference is that, `from the outside', the
-\ccc{CGAL_Min_ellipse_2} object appears unchanged after calling
-\ccc{bounded_side} (logical constness), while internally, 
-we explicitly make use of the changes to an \ccc{Ellipse_4} object
-caused by a call to \ccc{bounded_side}, see the discussion in 
-subsection \ref{ellipse_rep}.
-
-@macro <access operations and predicates> zero += @begin
-    // in-ellipse predicates
-    // -------------------
-    template < class R > inline
-    CGAL_Bounded_side
-    CGAL_Min_ellipse_2<R>::
-    bounded_side( const CGAL_Point_2<R>& p) const
-    {
-	switch (n_support_points) {
-	  case 5: 
-	    return ellipse_5.bounded_side (p);
-	    break;
-	  case 4:
-	    // cast away ellipse_4's constness 
-	    return ( const_cast( Ellipse_4&, ellipse_4)).bounded_side (p);
-	    break;
-	  case 3:
-	    return ellipse_3.bounded_side (p);
-	    break;
-	  case 2: // Min_ellipse is line segment spanned by support points
-	    if (CGAL_between (support_points [0], p, support_points [1]))
-		return CGAL_ON_BOUNDARY;
-	    else
-		return CGAL_ON_UNBOUNDED_SIDE;
-	    break;
-	  case 1: // Min_ellipse is equal to its support point
-	    if (p==support_points [0])
-		return CGAL_ON_BOUNDARY;
-	    else
-		return CGAL_ON_UNBOUNDED_SIDE;
-	    break;
-	  case 0: // Min_ellipse is empty
-	    return CGAL_ON_UNBOUNDED_SIDE;
-	  default:
- 	    // we should never get here ...
-	    CGAL_Min_ellipse_2_assertion 
-		( (number_of_support_points() >= 0) &&
-		  (number_of_support_points() <= 5) );
-	    // ... and we definitely never get here
-	    return CGAL_ON_BOUNDARY; 	
-	    break; 
-	}
-    }
-@end
- 
-@! ----------------------------------------------------------------------------
-@subsection{ Private Member Function \texttt{compute\_ellipse}}
-@! ----------------------------------------------------------------------------
-
-This is the method for computing $me(\emptyset,B)$ the set $B$ given
-by the first \ccc{n_support_points} indices in the array
-\ccc{i_support_points}. It is realized by a case analysis,
-noting that $|B| \leq 5$. If $|B|\leq 2$, nothing is done,
-in the other cases the \ccc{set} methods for \ccc{Ellipse_3}, 
-\ccc{Ellipse_4}, or \ccc{Ellipse_5} are called. 
-
-@macro <private member functions> zero += @begin
-    template < class R >
-    void
-    CGAL_Min_ellipse_2<R>::
-    compute_ellipse( )
-    {
-	switch ( n_support_points) {
-	  case 5:
-	    // `steal' ellipse from Ellipse_4 represemtation
-	    ellipse_5.set (ellipse_4);	    
-            break;
-	  case 4:
-	    ellipse_4.set (support_points[0], support_points[1],
-			   support_points[2], support_points[3]);
-	    break;
-	  case 3:
-	    ellipse_3.set (support_points[0], support_points[1],
-			   support_points[2]); 
-	    break;
-	  default:
-	    // do not compute any representation of a degenerate ellipse
-	    break; 
-	}
-    }
-@end
-
-@! ----------------------------------------------------------------------------
-@subsection{ Class \texttt{Conic<R>}}
-@! ----------------------------------------------------------------------------
-
-In their implementations, the ellipse representation classes rely on a
-concept more general than ellipses, namely on {\em conics}. Ellipses are
-special conics, in addition there are {\em hyperbolas} and {\em parabolas}. 
-Conics play a particularly important role in the \ccc{Ellipse_4} class.
-
-A conic (in linear form) is the set of points $q=(x,y)^T$ satisfying
-\begin{equation}
-{\cal C}(q) := rx^2 + sy^2 + 2txy + 2ux + 2vy + w = 0. 
-\end{equation}
-$r,s,t,u,v,w$ being real parameters. 
-
-Alternatively, ${\cal C}$ can be written as 
-$${\cal C}(q) = (x,y)\left(\begin{array}{cc}r & t \\ t & s \end{array}
-\right)(x,y)^T + 2(u,v)(x,y)^T + w,$$
-and the determinant of the matrix 
-$$M=\left(\begin{array}{cc}r & t \\ t & s \end{array}
-\right)$$ tells the type of ${\cal C}$. We also denote $\det(M)$ 
-by $\det({\cal C})$. 
-
-If $\det({\cal C})>0$, ${\cal C}$ is an ellipse, for $\det({\cal C})<0$ 
-we get a hyperbola, and if $\det({\cal C})=0$, ${\cal C}$ is a parabola. 
-
-The {\em linear combination} $\lambda{\cal C}_1 +\mu{\cal C}_2$ of two
-conics ${\cal C}_1$ and ${\cal C}_2$ is defined as the conic ${\cal C}$
-with $${\cal C}(q) := \lambda{\cal C}_1(q) +\mu{\cal C}_2(q)=0.$$
-
-We introduce a conic class that supports 
-\begin{itemize}
-\item definition of a conic directly from values $r,s,t,u,v,w$,
-\item computation of the linear combination of two conics, 
-\item conic evaluation (i.e. computation of the value 
-${\cal C}(p)$ for given $p\in\R^2$), 
-\item computation of $\det({\cal C})$,
-\item normalization, i.e. scaling of the conic by $-1$ -- if 
-necessary  -- to guarantee $r\geq 0$. 
-If $\det(M) > 0$, normalization guarantees that $M$ 
-is positive definite afterwards (which is important
-for doing in-ellipse tests, see subsequent subsections).
-\end{itemize}
-
-@macro <conic class> zero = @begin
-    template <class R>
-    class Conic {
-	public:
-	    R::FT  r;
-	    R::FT  s;
-	    R::FT  t;
-	    R::FT  u;
-	    R::FT  v;
-	    R::FT  w;
-
-	    // default constructor
-	    // -------------------
-	    Conic () {} 
-	    
-	    // member functions
-	    // ----------------
-	    // definition of conic by values r, s, t, u, v, w
-	    void set (R::FT _r, R::FT _s, R::FT _t, R::FT _u,
-		      R::FT _v, R::FT _w) 
-	    {
-		r=_r; s=_s; t=_t; u=_u; v=_v; w=_w;
-	    }
-
-	    // definition of conic by linear combination of conics
-	    void set (R::FT lambda, Conic& conic1, 
-		      R::FT mu, Conic& conic2)
-	    {
-		r = lambda*conic1.r + mu*conic2.r;
-		s = lambda*conic1.s + mu*conic2.s;
-		t = lambda*conic1.t + mu*conic2.t;
-		u = lambda*conic1.u + mu*conic2.u;
-		v = lambda*conic1.v + mu*conic2.v;
-		w = lambda*conic1.w + mu*conic2.w;
-	    }
-
-	    // evaluation of conic at point p
-	    R::FT eval (const CGAL_Point_2<R>& p) const
-	    {
-		R::FT x = p.x(), y = p.y();
-		return r*x*x + s*y*y + R::FT(2)*(t*x*y + u*x + v*y) + w;
-	    }
-
-	    // determinant of matrix M = [[r,t],[t,s]]
-	    R::FT det () const
-	    {
-		return r*s-t*t;
-	    }
-
-	    // scaling of conic such that r becomes nonnegative
-	    void normalize ()
-	    {
-	   	if (r<R::FT(0)) {
-		   r=-r; s=-s; t=-t; u=-u; v=-v; w=-w;
-	  	}
-	    } 
-    };
-@end
-
-@! ----------------------------------------------------------------------------
-@subsection{ Ellipse\_3 Class}
-@! ----------------------------------------------------------------------------
-
-This class stores $\me(\emptyset,B)$ directly as an ellipse 
-in {\em center form}, i.e. in the form $$(q-c)^TM(q-c)-z = 0,$$
-$c\in \R^2$ the center. 
-For support points $p_1,p_2,p_3$, the ellipse is given by
-$$c=\frac{1}{3}\sum_{i=1}^3p_i,\quad M^{-1} = 
-\frac{2}{3}\sum_{i=1}^3(p_i-c)(p_i-c)^T, \quad z = 1,$$
-see \cite{gs-seefe-97}.
-
-Let $$M^{-1} = \frac{2}{3}
-\left(\begin{array}{cc} m_{11} & m_{12} \\ m_{12} & m_{22}
-\end{array}\right).$$ Then 
-$$M = \frac{3}{2}\left(\begin{array}{cc} m_{11} & m_{12} \\ m_{12} & m_{22}
-\end{array}\right)^{-1} = \frac{3}{2(m_{11}m_{22}-m_{12}^2)}
-\left(\begin{array}{cc} m_{22} & -m_{12} \\ -m_{12} & m_{11}
-\end{array}\right).$$
-
-This implies 
-\begin{eqnarray*}
-(q-c)^TM(q-c)-z 
-&=& \frac{3}{2(m_{11}m_{22}-m_{12}^2)}(q-c)^T
-\left(\begin{array}{cc} m_{22} & -m_{12} \\ -m_{12} & m_{11}
-\end{array}\right)(q-c)-1,
-\end{eqnarray*}
-which is equal in sign to 
-\begin{equation}
-\label{ellipse_3_test}
-(q-c)^T
-\left(\begin{array}{cc} m_{22} & -m_{12} \\ -m_{12} & m_{11}
-\end{array}\right)(q-c)-\frac{2}{3}(m_{11}m_{22}-m_{12}^2).
-\end{equation}
-(For this, we need
-the fact that $M$ is positive definite, hence $\det(M),\det(M')$ and
-$\det(M'^{-1})$ are positive.)
-If $z'$ denotes $2(m_{11}m_{22}-m_{12}^2)/3$, an
-\ccc{Ellipse_3} object stores the values 
-$c, z', m_{11},2m_{12},m_{22}$.
-This enables the subsequent
-\ccc{bounded_side} routine to perform the in-ellipse test by 
-just evaluating the sign of (\ref{ellipse_3_test}).
-
-@macro <Ellipse_3 data members> zero = @begin
-    R::FT  cx;
-    R::FT  cy;
-    R::FT  z;
-    R::FT  m11;
-    R::FT  m12;
-    R::FT  m22;
-@end
-  
-@! ----------------------------------------------------------------------------
-@subsubsection{ The \texttt{set} method}
-@! ----------------------------------------------------------------------------
-
-Using the formulas above, the private data members are
-straightforward to set.
-
-@macro <Ellipse_3::set body> zero = @begin
-    R::FT  x1 = p1.x();
-    R::FT  y1 = p1.y();
-    R::FT  x2 = p2.x(); 
-    R::FT  y2 = p2.y();
-    R::FT  x3 = p3.x(); 
-    R::FT  y3 = p3.y();
-
-    // center c
-    cx = (x1+x2+x3)/R::FT(3);
-    cy = (y1+y2+y3)/R::FT(3);
-
-    R::FT  x1_cx = x1-cx;
-    R::FT  x2_cx = x2-cx;
-    R::FT  x3_cx = x3-cx;
-    R::FT  y1_cy = y1-cy;
-    R::FT  y2_cy = y2-cy;
-    R::FT  y3_cy = y3-cy;
-
-    // matrix M
-    m11 = (x1_cx)*(x1_cx) + (x2_cx)*(x2_cx) + (x3_cx)*(x3_cx);
-    m12 = (x1_cx)*(y1_cy) + (x2_cx)*(y2_cy) + (x3_cx)*(y3_cy);
-    m22 = (y1_cy)*(y1_cy) + (y2_cy)*(y2_cy) + (y3_cy)*(y3_cy);
-
-    // z'
-    z = R::FT(2)*(m11*m22-m12*m12)/R::FT(3);
-
-    // assert positive definiteness
-    CGAL_Min_ellipse_2_assertion( (z > R::FT(0)) && (m11 > R::FT(0)) );
-@end
-
-@! ----------------------------------------------------------------------------
-@subsubsection{ The \texttt{bounded\_side} method}
-@! ----------------------------------------------------------------------------
-
-This is quite obvious now by (\ref{ellipse_3_test}). 
-Since $M$ is positive definite, we have
-$p=(x,y)^T$ in/on/outside the ellipse iff
-$$(x-c_x,y-c_y)^T \left(\begin{array}{cc} m_{22} & -m_{12} \\ -m_{12} & m_{11}
-\end{array}\right) (x-c_x,y-c_y) - z' \left\{\begin{array}{c}<\\=\\>
-\end{array}\right. 0.$$
-
-@macro <Ellipse_3::bounded_side body> zero = @begin
-    R::FT  x = p.x();
-    R::FT  y = p.y();
-    R::FT  x_cx = x-cx;
-    R::FT  y_cy = y-cy;
-    R::FT  discr = m22*(x_cx)*(x_cx) + m11*(y_cy)*(y_cy)
-		   - R::FT(2)*m12*(x_cx)*(y_cy) - z;	    
-    return static_cast( CGAL_Bounded_side, CGAL_sign( discr));
-@end
-
-@! ----------------------------------------------------------------------------
-@subsection{ Ellipse\_4 Class}
-@! ----------------------------------------------------------------------------
-
-This is by far the most complicated one among the three representation 
-classes. The \ccc{set} method computes some implicit representation of 
-the ellipse, derived from the four support points. The \ccc{bounded_side}
-predicate works over this implicit representation and is not
-straightforward anymore.  
-
-@! ----------------------------------------------------------------------------
-@subsubsection{ The \texttt{set} method}
-@! ----------------------------------------------------------------------------
-
-Subsequent computations assume that $p_1,\ldots p_4$ are in convex position 
-and enumerated in clockwise or counterclockwise order (we would like 
-to work without the latter assumption but don't know how). While convex
-position is guaranteed by the ambient algorithm, a (counter)clockwise
-odering can be achieved in a preprocessing step, as follows.
-
-We first check whether $p_1$ and $p_3$ lie on different sides of the
-line through $p_2,p_4$. If so, the segment $\overline{p_2p_4}$ is a
-diagonal of the convex quadrilateral defined by the four points, so
-the given order is ok. Otherwise, we check whether $\overline{p_3p_2}$
-defines a diagonal. From the previous test we already know the relative
-position of $p_4$ w.r.t. this segment, so it remains to check the position
-of $p_1$. If $p_1,p_4$ lie on different sides, $\overline{p_3p_2}$ is a
-diagonal. To achieve correct enumeration of the points, we just need to
-swap points $p_1$ and $p_2$. If $p_1,p_4$ lie on the same side of
-$\overline{p_3p_2}$, then $\overline{p_1p_2}$ must be a diagonal. For
-the correct order, we swap $p_2$ and $p_3$.
-
-@macro <Ellipse_4::set body> zero = @begin
-    // copy p_i's to allow swapping
-    CGAL_Point_2<R>  q1 = p1;
-    CGAL_Point_2<R>  q2 = p2;
-    CGAL_Point_2<R>  q3 = p3;
-    CGAL_Point_2<R>  q4 = p4;
-
-    // preprocessing: bring q_i's into (counter)clockwise order
-    CGAL_Orientation side1_24 = CGAL_orientation (q2, q4, q1),
-	     	     side3_24 = CGAL_orientation (q2, q4, q3);
-    if (side1_24 == side3_24) { 
-	CGAL_Orientation side1_32 = CGAL_orientation (q3, q2, q1);
-	if (side1_32 != side3_24)  // side3_24 == side4_32
-	    swap (q1, q2); 	// swap from STL algobase
-	else 
-	    swap (q2, q3);
-    }
-
-    // assert correct ordering
-    CGAL_Min_ellipse_2_assertion(
-        ( CGAL_orientation( q1, q2, q3) == CGAL_orientation( q2, q3, q4)) &&
-	( CGAL_orientation( q2, q3, q4) == CGAL_orientation( q3, q4, q1)) &&
-	( CGAL_orientation( q3, q4, q1) == CGAL_orientation( q4, q1, q2)) &&
- 	( CGAL_orientation( q1, q2, q3) != CGAL_COLLINEAR               ) );
-
-    // do the actual computations
-    @<Ellipse_4 setup>
-@end 
-
-In all terminology that follows, we refer to \cite{gs-epsee-97,gs-seefe-97}. 
-The implicit representation of
-$\me(\emptyset,\{p_1,p_2,p_3,p_4\})$ first of all consists of two
-special conics ${\cal C}_1,{\cal C}_2$ through the for points. 
-Assuming that $q_i=(x_i,y_i)$, these conics are given by parameters 
-$r_1,s_1,t_1,u_1,v_1,w_1$ and $r_2,s_2,t_2,u_2,v_2,w_2$, where
-\begin{eqnarray*}
-  r_1 & = & (y_1-y_2)(y_3-y_4), \\
-  s_1 & = & (x_1-x_2)(x_3-x_4), \\
-  2t_1 & = & -(x_1-x_2)(y_3-y_4)-(y_1-y_2)(x_3-x_4), \\
-  2u_1 & = & (x_1y_2-x_2y_1)(y_3-y_4) + (x_3y_4-x_4y_3)(y_1-y_2), \\
-  2v_1 & = & (x_1y_2-x_2y_1)(x_4-x_3) + (x_3y_4-x_4y_3)(x_2-x_1), \\
-  w_1 & = & (x_1y_2-x_2y_1)(x_3y_4-x_4y_3)
-\end{eqnarray*}
-and
-\begin{eqnarray*}
-  r_2 & = & (y_2-y_3)(y_4-y_1), \\
-  s_2 & = & (x_2-x_3)(x_4-x_1), \\
-  2t_2 & = & -(x_2-x_3)(y_4-y_1)-(y_2-y_3)(x_4-x_1), \\
-  2u_2 & = & (x_2y_3 - x_3y_2)(y_4-y_1) + (x_4y_1-x_1y_4)(y_2-y_3), \\
-  2v_2 & = & (x_2y_3 - x_3y_2)(x_1-x_4) + (x_4y_1-x_1y_4)(x_3-x_2), \\
-  w_2 & = & (x_2y_3 - x_3y_2)(x_4y_1-x_1y_4).
-\end{eqnarray*}
-
-${\cal C}_1$ and ${\cal C}_2$ are stored as data members in an
-\ccc{Ellipse_4} object.
-
-@macro <Ellipse_4 data members> zero += @begin
-    Conic<R>  conic1;
-    Conic<R>  conic2;
-@end
-
-@macro <Ellipse_4 setup> zero += @begin
-    // point coordinates
-    R::FT  x1 = q1.x();
-    R::FT  y1 = q1.y();
-    R::FT  x2 = q2.x();
-    R::FT  y2 = q2.y();
-    R::FT  x3 = q3.x();
-    R::FT  y3 = q3.y();
-    R::FT  x4 = q4.x();
-    R::FT  y4 = q4.y();
-
-    // auxiliary values
-    R::FT  y1_y2 = y1-y2;
-    R::FT  y3_y4 = y3-y4;
-    R::FT  x1_x2 = x1-x2;
-    R::FT  x3_x4 = x3-x4;
-    R::FT  y2_y3 = y2-y3;
-    R::FT  y4_y1 = y4-y1;
-    R::FT  x2_x3 = x2-x3;
-    R::FT  x4_x1 = x4-x1;
-    R::FT  x1y2_x2y1 = x1*y2 - x2*y1;
-    R::FT  x3y4_x4y3 = x3*y4 - x4*y3;
-    R::FT  x2y3_x3y2 = x2*y3 - x3*y2;
-    R::FT  x4y1_x1y4 = x4*y1 - x1*y4;
-
-    // define conics
-    conic1.set (  y1_y2 * y3_y4, 
-		  x1_x2 * x3_x4, 
-	        -(x1_x2 * y3_y4 + y1_y2 * x3_x4)/R::FT(2),
-		 (x1y2_x2y1 * y3_y4 + x3y4_x4y3 * y1_y2)/R::FT(2),
-		-(x1y2_x2y1 * x3_x4 + x3y4_x4y3 * x1_x2)/R::FT(2),
-    		  x1y2_x2y1 * x3y4_x4y3 ); 
-    conic2.set (  y2_y3 * y4_y1,
-		  x2_x3 * x4_x1,
-		-(x2_x3 * y4_y1 + y2_y3 * x4_x1)/R::FT(2),
-		 (x2y3_x3y2 * y4_y1 + x4y1_x1y4 * y2_y3)/R::FT(2),
-		-(x2y3_x3y2 * x4_x1 + x4y1_x1y4 * x2_x3)/R::FT(2),
-		  x2y3_x3y2 * x4y1_x1y4 );
-@end
-
-In addition, we store values that are needed to perform the in-ellipse
-test w.r.t. $\me(\emptyset,\{p_1,p_2,p_3,p_4\})$, given a fifth point $p$.
-Some of these values are independent of $p$, they are computed here. 
-
-In \cite{gs-epsee-97,gs-seefe-97} it is shown that the unique conic
-${\cal C}_0$ through $\{p_1,p_2,p_3,p_4,p\}$ is given by
-$$\lambda_0 {\cal C}_1 + \mu_0 {\cal C}_2, $$ where
-$\lambda_0,\mu_0$ are given by
-$\lambda_0 = {\cal C}_2(p), \mu_0 = -{\cal C}_1(p).$
-
-Furthermore, to do the in-ellipse test with $p$ over $\me(\emptyset,\{p_1,p_2,p_3,p_4\})$, the sign of a certain 
-derivative needs to be computed. For this, we define
-\begin{equation}
-\left(\begin{array}{c}\lambda(\tau)\\ \mu(\tau)\end{array}\right) = 
-\left(\begin{array}{c}\lambda_0\\ \mu_0\end{array}\right) + {\tau}
-\left(\begin{array}{r} -r2 \\ r1 \end{array}\right)
-\end{equation}
-and then consider the conic
-$$
-{\cal C}(\tau) := \lambda(\tau) {\cal C}_1 + \mu(\tau) {\cal C}_2,
-$$
-given by parameters $r(\tau),s(\tau), t(\tau), u(\tau),v(\tau),w(\tau)$.
-To evaluate the derivative in question, we need the values
-$$r(0)=r_0, s(0)=s_0, t(0)=t_0, u(0)=u_0, v(0)=v_0, w(0)=w_0$$
-and 
-$$r'(0), s'(0), t'(0), u'(0), v'(0), w'(0),$$
-primed functions being derivatives w.r.t. $\tau$
-(see subsection \ref{ellipse_4::bounded_side}).
-While the former values depend on the fifth point $p$, the primed values 
-do not, so they can be computed and stored already here. We get
-\begin{eqnarray*}
-r'(0) &=& r_1 r_2 - r_2 r_1 = 0, \\
-s'(0) &=& r_1 s_2 - r_2 s_1, \\
-t'(0) &=& r_1 t_2 - r_2 t_1, \\
-u'(0) &=& r_1 u_2 - r_2 u_1, \\
-v'(0) &=& r_1 v_2 - r_2 v_1, \\
-w'(0) &=& r_1 w_2 - r_2 w_1.
-\end{eqnarray*}
-
-@macro <Ellipse_4 data members> += @begin
-    R::FT  ds;	  
-    R::FT  dt;
-    R::FT  du;
-    R::FT  dv;	
-    R::FT  dw;
-@end
-
-@macro <Ellipse_4 setup> += @begin
-    ds = conic1.r*conic2.s - conic2.r*conic1.s;
-    dt = conic1.r*conic2.t - conic2.r*conic1.t;
-    du = conic1.r*conic2.u - conic2.r*conic1.u;
-    dv = conic1.r*conic2.v - conic2.r*conic1.v;
-    dw = conic1.r*conic2.w - conic2.r*conic1.w;
-@end
-
-Finally, we need some ellipse through the four points. Such an ellipse
-can be obtained as $$E = \lambda {\cal C}_1 + \mu {\cal C}_2,$$
-with \begin{eqnarray*}
-\lambda &=& 2\gamma-\beta, \\
-\mu &=& 2\alpha-\beta,
-\end{eqnarray*}
-$\alpha = \det({\cal C}_1), \gamma = \det({\cal C}_2), 
-\beta = r_1s_2+r_2s_1-2t_1t_2$.
-This ellipse is stored as another conic in \ccc{Ellipse_4}.
-
-@macro <Ellipse_4 data members> += @begin
-    Conic<R> ellipse;
-@end
-
-@macro <Ellipse_4 setup> += @begin
-    R::FT  beta   = conic1.r*conic2.s + conic2.r*conic1.s 
-		    - R::FT(2)*conic1.t*conic2.t;
-    R::FT  lambda = R::FT(2)*conic2.det()-beta;
-    R::FT  mu     = R::FT(2)*conic1.det()-beta;
-    ellipse.set (lambda, conic1, mu, conic2);
-    ellipse.normalize();
-    CGAL_Min_ellipse_2_assertion( ellipse.det() > R::FT(0));
-@end
-
-@! ----------------------------------------------------------------------------
-@subsubsection{ The \texttt{bounded\_side} method}
-@! ----------------------------------------------------------------------------
-\label{ellipse_4::bounded_side}
-Given a fifth point $p$, the first action is to compute the unique conic
-${\cal C}_0$ through $p_1,p_2,p_3,p_4,p$, as already described in the 
-previous subsubsection. Since ${\cal C}_0$ is possibly being
-recycled for usage in the \ccc{Ellipse_5} class later, we need to 
-store it. Thus, ${\cal C}_0$ is the only data member of \ccc{Ellipse_4}
-that is not independent of the query point $p$. (For this reason, the
-\ccc{bounded_side} method is not a \ccc{const} method; moreover, the change 
-to the \ccc{Ellipse_4} object caused by calling the method does not fall 
-under logical constness, because the change becomes quite visible when 
-${\cal C}_0$ is later passed to the \ccc{set} method of \ccc{Ellipse_5}.)
-
-@macro <Ellipse_4 data members> += @begin
-    Conic<R> conic0;
-@end
-
-Depending on the type of ${\cal C}_0$ (given by its determinant), 
-different actions are taken.
-
-@macro <Ellipse_4::bounded_side body> zero = @begin
-    R::FT  lambda_0 =  conic2.eval(p);
-    R::FT  mu_0     = -conic1.eval(p);
-    conic0.set (lambda_0, conic1, mu_0, conic2);
-    R::FT d = conic0.det();
-    if (d > R::FT(0)) {
-	@<handle ellipse case>
-    }
-    else {
-	@<handle hyperbola/parabola case>
-    }
-@end
-
-In the hyperbola/parabola case, we test $p$ against the ellipse
-$E$ precomputed by the \ccc{Ellipse_4} \ccc{set} method, and just return
-the result (which is the same for all ellipses, in particular for
-$\me(\emptyset,B)$).
-
-@macro <handle hyperbola/parabola case> zero = @begin
-    R::FT discr = ellipse.eval(p); 
-    return static_cast (CGAL_Bounded_side, CGAL_sign (discr));
-@end
-
-To handle the ellipse case, we need to evaluate two derivatives and 
-combine the results. Let us review these two tasks.
-
-(i) compute $$\rho := \frac{\partial}{\partial\tau}E^{\tau}(p),$$
-where 
-\begin{eqnarray*}
-E^{\tau}(p) &=&  
-(\lambda_0-\tau r_2){\cal C}_1(p) + (\mu_0+\tau r_1){\cal C}_2(p) \\
-&=& \tau (r_1{\cal C}_2(p) - r_2{\cal C}_1(p)).
-\end{eqnarray*}
-This means, $$\rho = \lambda_0r_1 + \mu_0r_2 = r_0.$$ 
-
-@macro <handle ellipse case> zero += @begin
-    R::FT rho = conic0.r;
-@end
-
-(ii) in the terminology of the previous subsubsection, 
-the second task is to decide the sign of 
-$$\frac{\partial}{\partial\tau}\det
-\left(\frac{M(\tau)}{z(\tau)}\right)\mid_{\tau=0},$$
-where 
-$$M(\tau) = \left(\begin{array}{cc} r(\tau) & t(\tau) \\ t(\tau) & s(\tau)
-\end{array}\right)$$ and 
-
-$$z(\tau)=\left(u(\tau), v(\tau)\right)M(\tau)^{-1}
-\left(u(\tau), v(\tau)\right)^T - w(\tau).$$
-
-For the sake of readability, we omit the parameter $\tau$ 
-in the sequel. Noting that 
-$$M^{-1} = \frac{1}{\det(M)}\left(\begin{array}{cc}s & - t \\ 
-- t & r\end{array}\right),$$
-we get
-$$z = \frac{1}{\det(M)} (u^2s-2uvt+v^2r) - w.$$
-
-Let us introduce the following abbreviations.
-\begin{eqnarray*}
-d &:=& \det(M), \\
-Z &:=& u^2s-2uvt+v^2r.
-\end{eqnarray*}
-With primes ($d',Z'$ etc.) we denote derivatives w.r.t. $\tau$.
-Now we can write $$\frac{\partial}{\partial \tau}\det(M/z) = (d/z^2)' =
-\frac{d'z^2 - 2dzz'}{z^4} = \frac{d'z -2dz'}{z^3}.$$
-
-Since $d(0),z(0)>0$ (recall that ${\cal C}_0$ is an ellipse), this is
-equal in sign to $$f := d(d'z-2dz'),$$
-at least for $\tau=0$ which is the value we are interested in. 
-Now we have
-\begin{eqnarray*}
-d'z &=& d'(\frac{1}{d}Z-w) = \frac{d'}{d}Z-d'w, \\
-dz' &=& d(\frac{Z'd - Zd'}{d^2} - w') = \frac{Z'd - Zd'}{d} - dw'.
-\end{eqnarray*}
-Hence 
-\begin{eqnarray*} 
-f    &=& d'Z-dd'w - 2(Z'd -Zd' - d^2w') \\
-     &=& 3d'Z + d(2dw'-d'w - 2Z').
-\end{eqnarray*}
-Now it's time to look at the explicit expressions for $d,d',Z,Z'$. 
-Rewriting $Z$ as
-\begin{eqnarray*} 
-Z &=& u (us - vt) + v (vr-ut) \\
-  &=& uZ_1+vZ_2,
-\end{eqnarray*} we get 
-\begin{eqnarray*}
-d   &=& rs-t^2, \\
-d'  &=& r's + rs' - 2tt', \\
-Z_1' &=& u's + us' - v't -vt', \\
-Z_2' &=& v'r + vr'  -u't -ut', \\
-Z'   &=& u'Z_1 + uZ_1' + v'Z_2 + v Z_2'.
-\end{eqnarray*}
-Evaluated for $\tau=0$, all these values can be computed from 
-$r(0),s(0),t(0),u(0),v(0),w(0)$ (the defining values of the conic
-${\cal C}_0$) and their corresponding primed values which have already
-been computed by the \ccc{set} method. $d(0)=\det({\cal C}_0)$ is already
-defined, the other values follow (recall that $r'(0)=0$). For all this,
-${\cal C}_0$ is assumed to be normalized.
-
-@macro <handle ellipse case> += @begin
-    conic0.normalize();
-    R::FT  dd  = conic0.r*ds - R::FT(2)*conic0.t*dt;
-    R::FT  Z1  = conic0.u*conic0.s - conic0.v*conic0.t;
-    R::FT  Z2  = conic0.v*conic0.r - conic0.u*conic0.t;
-    R::FT  dZ1 = du*conic0.s + conic0.u*ds - dv*conic0.t - conic0.v*dt;
-    R::FT  dZ2 = dv*conic0.r - du*conic0.t - conic0.u*dt;
-    R::FT  Z   = conic0.u*Z1 + conic0.v*Z2;
-    R::FT  dZ  = du*Z1 + conic0.u*dZ1 +dv*Z2 + conic0.v*dZ2;
-    R::FT  f   = R::FT(3)*dd*Z + d*(R::FT(2)*d*dw-dd*conic0.w-R::FT(2)*dZ);
-@end
-
-The sign of $f(0)$ is the one we are interested in. We deduce 
-from \cite{gs-epsee-97,gs-seefe-97} that
-$$p \left\{\begin{array}{c} {\rm inside} \\ {\rm on} \\ {\rm outside}
-\end{array}\right\} E^*
-\Leftrightarrow \rho~f(0) \left\{\begin{array}{c}< 0 \\ = 0 \\ > 0
-\end{array}\right.,$$
-$E^{*}$ the smallest ellipse through $p_1,p_2,p_3,p_4$. 
-
-@macro <handle ellipse case> += @begin
-    return static_cast (CGAL_Bounded_side, CGAL_sign (rho)*CGAL_sign (f));
-@end
-
-@! ----------------------------------------------------------------------------
-@subsection{ Ellipse\_5 Class}
-@! ----------------------------------------------------------------------------
-
-This class is the simplest one among the three representation classes, since
-it does not need to compute its ellipse. Recall that the current support set
-$B$ attains cardinality five only if previously, a point
-$p$ was found to lie outside $\me(\emptyset,\{p_1,p_2,p_3,p_4\})$, 
-$\{p_1,p_2,p_3,p_4\}$ the support set at that time. However, during this test
-with $p$, the unique conic (which is then an ellipse)  through 
-$\{p_1,p_2,p_3,p_4,p\}$ has already been computed by the \ccc{Ellipse_4}
-representation. In fact, it is the conic ${\cal C}_0$ addressed in the
-previous subsection, and it suffices to store a pointer to it in the
-\ccc{Ellipse_5} object, which is then initialized by the \ccc{set} method.
-
-@macro <Ellipse_5 data members> zero = @begin
-    Conic<R>* ellipse;
-@end
-
-@macro <Ellipse_5::set body> zero = @begin
-    ellipse = &(ellipse_4.conic0);
-@end
-
-The \ccc{bounded_side} method is then straightforward, noting that the
-ellipse has already been normalized by \ccc{ellipse_4}.
-
-@macro <Ellipse_5::bounded_side body> zero = @begin
-    R::FT discr = (*ellipse).eval(p);
-    return static_cast (CGAL_Bounded_side, CGAL_sign (discr));
-@end 
