@@ -88,7 +88,7 @@ CGAL_BEGIN_NAMESPACE
 // The other possible workaround is to use intervals of "long doubles"
 // directly, but I think it would be much slower.
 #undef CGAL_IA_FORCE_TO_DOUBLE
-#define CGAL_IA_FORCE_TO_DOUBLE(x) ( { volatile double ____x = (x); ____x; } )
+#define CGAL_IA_FORCE_TO_DOUBLE(x) ( { volatile double __x = (x); __x; } )
 
 #ifdef CGAL_IA_USE_ASSEMBLY
 #define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : :"m" (CW))
