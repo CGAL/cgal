@@ -1,3 +1,6 @@
+12 May 2004 Radu Ursu
+- added instructions on how to build GMP in auxiliary/how_to_build_gmp.txt
+
 05 May 2004 Radu Ursu
 - put the new version of gmp for windows (cygwin)
 - the dll is named libgmp-3.dll but I will see if I can change that name to 
