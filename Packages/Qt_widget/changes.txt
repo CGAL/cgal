@@ -1,4 +1,8 @@
-1.3.33 - 06/06/2003 (rursu)
+1.3.35 -13/06/2003 (rursu)
+--------------------------
+	- patched Qt_widget_Triangulation_2.h
+
+1.3.33=34 - 06/06/2003 (rursu)
 ---------------------------
 	- added Qt_widget_get_iso_rectangle layer
 	- written DOC for this layer
