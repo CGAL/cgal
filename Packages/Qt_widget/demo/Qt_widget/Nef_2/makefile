@@ -39,7 +39,7 @@ all: nef_2
 Qt_widget_toolbar_layers$(OBJ_EXT): Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_layers.C
 
-Qt_widget_toolbat_layers.moc: Qt_widget_toolbar_layers.h
+Qt_widget_toolbar_layers.moc: Qt_widget_toolbar_layers.h
 	$(QT_MOC) -o Qt_widget_toolbar_layers.moc $<
 
 Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc

@@ -32,7 +32,7 @@
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : CGAL-2.4
-// release_date  : 2002, May 16
+// release_date  : 2002, July, 05
 //
 // coordinator   : Laurent Rineau
 //
@@ -162,12 +162,6 @@ public:
     file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
     file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
 
-    // drawing menu
-    QPopupMenu * draw = new QPopupMenu( this );
-    menuBar()->insertItem( "&Draw", draw );
-    draw->insertItem("&Generate points", this,
-				SLOT(gen_points()), CTRL+Key_G );
-
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
     menuBar()->insertItem( "&Help", help );
@@ -213,8 +207,10 @@ public:
     widget->resize(w,h-100);
     list1->resize(w, 200);
     list2->resize(w, 200);
-    list1->setPaletteBackgroundColor(QColor(100, 100, 100 ));
-    list2->setPaletteBackgroundColor(QColor(255, 0, 0 ));
+    //In Qt2.3 doesn't exist this method. In Qt3.0 it is recommended
+    //to use it
+    //list1->setPaletteBackgroundColor(QColor(100, 100, 100 ));
+    //list2->setPaletteBackgroundColor(QColor(255, 0, 0 ));
     widget->show();
 
     resize(w, h + 100);
