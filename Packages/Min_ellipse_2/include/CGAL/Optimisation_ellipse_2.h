@@ -86,7 +86,11 @@ class Optimisation_ellipse_2 {
   /* private: */
     // private data members
     int    n_boundary_points;                   // number of boundary points
-    Point  boundary_point1, boundary_point2;    // two boundary points
+    Point  boundary_point1, 
+           boundary_point2,
+           boundary_point3,
+           boundary_point4,
+           boundary_point5;                     // <= 5 support point 
     Conic  conic1, conic2;                      // two conics
 
     // this gradient vector has dr=0 and is used in testing the
@@ -139,15 +143,18 @@ class Optimisation_ellipse_2 {
     set( const Point& p, const Point& q)
     {
         n_boundary_points = 2;
-        boundary_point1   = p;
-        boundary_point2   = q;
+        boundary_point1 = p;
+        boundary_point2 = q;
     }
     
     inline
     void
     set( const Point& p1, const Point& p2, const Point& p3)
-    {
-        n_boundary_points = 3;
+    {       
+        n_boundary_points = 3;        
+	boundary_point1 = p1;
+        boundary_point2 = p2;
+	boundary_point3 = p3;
         conic1.set_ellipse( p1, p2, p3);
     }
     
@@ -155,7 +162,11 @@ class Optimisation_ellipse_2 {
     void
     set( const Point& p1, const Point& p2, const Point& p3, const Point& p4)
     {
-        n_boundary_points = 4;
+        n_boundary_points = 4;	
+	boundary_point1 = p1;
+        boundary_point2 = p2;
+	boundary_point3 = p3;
+        boundary_point4 = p4;
         Conic::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
 
 	d_values_set = false;
@@ -202,25 +213,20 @@ class Optimisation_ellipse_2 {
       }
     }
 
-//    inline
-//     void
-//     set( const Point&, const Point&,
-//          const Point&, const Point&, const Point& p5)
-//     {
-//         n_boundary_points = 5;
-//         conic1.set( conic1, conic2, p5);
-//         conic1.analyse();
-//     }
-
     void
-    set( const Point&, const Point&,
-         const Point&, const Point&, const Point& p5)
+    set( const Point& p1, const Point& p2,
+         const Point& p3, const Point& p4, const Point& p5)
     {
         // uses the fact that the conic to be constructed has already
         // been computed in preceding bounded-side test over a 4-point
         // ellipse
         conic1 = helper_conic;
-	n_boundary_points = 5;
+	n_boundary_points = 5;	
+	boundary_point1 = p1;
+        boundary_point2 = p2;
+	boundary_point3 = p3;
+        boundary_point4 = p4;
+	boundary_point5 = p5;
     }
 
     // Access functions
@@ -255,6 +261,29 @@ class Optimisation_ellipse_2 {
 	// a clean conic, but since this is only internal stuff
 	// right now, the call is omitted to save time    
     }
+
+    void 
+    double_coefficients (double &r, double &s,double &t,
+                         double &u, double &v, double &w) const
+    {
+      // just like double_conic, but we only get the coefficients
+      CGAL_optimisation_precondition( ! is_degenerate());
+    
+      double tau = 0.0;
+    
+      if ( n_boundary_points == 4) {
+        set_e_values();
+        tau = conic1.vol_minimum( er, es, et, eu, ev, ew);
+      }
+
+      r = CGAL::to_double( conic1.r()) + tau*CGAL::to_double( er);
+      s = CGAL::to_double( conic1.s()) + tau*CGAL::to_double( es);
+      t = CGAL::to_double( conic1.t()) + tau*CGAL::to_double( et);
+      u = CGAL::to_double( conic1.u()) + tau*CGAL::to_double( eu);
+      v = CGAL::to_double( conic1.v()) + tau*CGAL::to_double( ev);
+      w = CGAL::to_double( conic1.w()) + tau*CGAL::to_double( ew);
+    }
+
 
     // Equality tests
     // --------------
@@ -368,6 +397,44 @@ class Optimisation_ellipse_2 {
     is_degenerate( ) const
     {
         return( n_boundary_points < 3);
+    }
+
+    bool
+    is_circle( ) const
+    {
+       switch ( n_boundary_points) {
+       case 0: 
+	 return false; // the empty set is not a circle
+       case 1:
+	 return true;  
+       case 2:
+	 return false; // a segment is not a circle
+       case 3:
+       case 5:
+	 return conic1.is_circle();
+       case 4:
+	 // the smallest ellipse through four points is
+	 // a circle only if the four points are cocircular;
+	 // if so, compute this circle (as a conic) and check
+	 // its volume derivative
+	 if (!CGAL::ON_BOUNDARY ==  CGAL::side_of_bounded_circle
+	           (boundary_point1, 
+                    boundary_point2,
+                    boundary_point3,
+                    boundary_point4)) {
+	   return false;
+	 } else {
+	   // ok, they are cocircular, now get the circle and check it
+	   Conic c;
+	   c.set_circle(boundary_point1, boundary_point2, boundary_point3);
+           set_d_values();
+	   return (CGAL_NTS is_zero (c.vol_derivative
+		   (dr, ds, dt, du, dv, dw)));
+	 }
+       default:
+	 CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
+                                      ( n_boundary_points <= 5) ); 
+       }
     }
 };
 
