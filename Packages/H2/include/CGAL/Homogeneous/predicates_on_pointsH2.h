@@ -33,14 +33,14 @@ CGAL_KERNEL_INLINE
 bool
 less_x(const PointH2<R>& p,
        const PointH2<R>& q)
-{ return ( p.hx()*q.hw() == q.hx()*p.hw() ); }
+{ return ( p.hx()*q.hw() < q.hx()*p.hw() ); }
 
 template < class R>
 CGAL_KERNEL_INLINE
 bool
 less_y(const PointH2<R>& p,
        const PointH2<R>& q)
-{ return ( p.hy()*q.hw() == q.hy()*p.hw() ); }
+{ return ( p.hy()*q.hw() < q.hy()*p.hw() ); }
 
 template < class R>
 CGAL_KERNEL_INLINE

@@ -1,3 +1,8 @@
+2.68   (14 Aug 2002)
+- fixed bug in less_x and less_y functions.
+
+======================= CGAL 2.4 ====================
+
 2.67   (13 April 2002)
 - simple_homogeneous_rep.h still contained Point_d stuff.
 
