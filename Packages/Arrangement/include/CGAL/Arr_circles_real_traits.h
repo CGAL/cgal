@@ -24,7 +24,7 @@
 #include <list>
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Arr_intersection_tags.h>
+#include <CGAL/tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -113,7 +113,9 @@ private:
 template <class _NT>
 class Arr_circles_real_traits {
 public:
-  typedef Lazy_intersection_tag      Intersection_category;
+  // Categories:
+  typedef Tag_false                  Has_left_category;
+
   typedef _NT                        NT;
 
   //the difference between Curve and X_curve is semantical only,

@@ -22,13 +22,11 @@
 #define CGAL_ARR_CONIC_TRAITS_2_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Arr_intersection_tags.h>
+#include <CGAL/tags.h>
 #include "CGAL/Arrangement_2/Conic_arc_2.h"
 #include <list>
 
 CGAL_BEGIN_NAMESPACE
-
-// #define REFLECT
 
 // ----------------------------------------------------------------------------
 // Arrangement traits for conic arcs.
@@ -41,10 +39,12 @@ class Arr_conic_traits_2
   typedef Kernel_                       Kernel;
   typedef typename Kernel::FT           NT;
 
-#if defined(REFLECT)
-  typedef Lazy_intersection_tag Intersection_category;
+  // Categories:
+//#define HAS_LEFT_NOT
+#if !defined(HAS_LEFT_NOT)
+  typedef Tag_true                        Has_left_category;
 #else
-  typedef Efficient_intersection_tag Intersection_category;
+  typedef Tag_false                       Has_left_category;
 #endif
     
   // The difference between Curve_2 and X_curve_2 is semantical only,
@@ -822,7 +822,7 @@ class Arr_conic_traits_2
                     Point_2::User_defined));
   }
 
-#if defined(REFLECT)
+#if defined(HAS_LEFT_NOT)
   // Reflect a point in y.
   Point_2 point_reflect_in_y (const Point_2& p) const
   {
