@@ -1,5 +1,9 @@
 Halfedge_DS Package: Release changes:
 ---------------------------------------------------------------------
+2.12 (18 Jun 2001)
+
+     - Moved manual to deprecated_basic.
+
 2.11 (18 Jun 2001)
 
      - Fixed example code inclusion in the doc.
