@@ -1,24 +1,24 @@
-# Microsoft Developer Studio Project File - Name="cgalQt" - Package Owner=<4>
+# Microsoft Developer Studio Project File - Name="cgallib2" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Static Library" 0x0104
 
-CFG=cgalQt - Win32 Debug
+CFG=cgallib2 - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "CGALQt.mak".
+!MESSAGE NMAKE /f "CGALQtlib.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "CGALQt.mak" CFG="cgalQt - Win32 Debug"
+!MESSAGE NMAKE /f "CGALQtlib.mak" CFG="cgallib2 - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "cgalQt - Win32 Release" (based on "Win32 (x86) Static Library")
-!MESSAGE "cgalQt - Win32 Debug" (based on "Win32 (x86) Static Library")
+!MESSAGE "cgallib2 - Win32 Release" (based on "Win32 (x86) Static Library")
+!MESSAGE "cgallib2 - Win32 Debug" (based on "Win32 (x86) Static Library")
 !MESSAGE 
 
 # Begin Project
@@ -28,7 +28,7 @@ CFG=cgalQt - Win32 Debug
 CPP=cl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "cgalQt - Win32 Release"
+!IF  "$(CFG)" == "cgallib2 - Win32 Release"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -40,8 +40,8 @@ RSC=rc.exe
 # PROP Output_Dir "Release"
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "WIN32" /YX /FD /TP /c
-# ADD CPP /nologo /W3 /GX /O2 /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\auxilary\wingmp\gmp-2.0.2" /I "$(CGALROOT)\include\cgal\config\msvc" /I "$(CGALROOT)\include" /D "NDEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "CGAL_USE_GMP" /YX /FD /TP /c
+# ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
 # ADD BASE RSC /l 0x40c /d "NDEBUG"
 # ADD RSC /l 0x40c /d "NDEBUG"
 BSC32=bscmake.exe
@@ -49,9 +49,9 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"lib\msvc\visual\Release\cgal.lib"
+# ADD LIB32 /nologo
 
-!ELSEIF  "$(CFG)" == "cgalQt - Win32 Debug"
+!ELSEIF  "$(CFG)" == "cgallib2 - Win32 Debug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
@@ -63,10 +63,10 @@ LIB32=link.exe -lib
 # PROP Output_Dir "Debug"
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /TP /D /GZ "WIN32" /c
-# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\auxilary\wingmp\gmp-4.0.1" /I "$(CGALROOT)\include\cgal\config\msvc6" /I "$(CGALROOT)\include" /D "_DEBUG" /D "CGAL_USE_GMP" /D "WIN32" /D "_MBCS" /D "_LIB" /FR /YX /FD /TP /GZ /c
+# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "$(QTDIR)/include" /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\auxilary\wingmp\gmp-4.0.1" /I "$(CGALROOT)\include\cgal\config\msvc6" /I "$(CGALROOT)\include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "CGAL_USE_GMP" /D "CGAL_USE_QT" /YX /FD /I /GZ /TP /Zm900 /c
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
-# ADD RSC /l 0x40c /i "$(CGALROOT)\include" /i "$(CGALROOT)\include\cgal" /i "$(CGALROOT)\stlport" /i "$(CGALROOT)\include\cgal\config\msvc" /i "$(CGALROOT)\auxilary\wingmp\gmp-2.0.2" /d "_DEBUG"
+# ADD RSC /l 0x40c /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -78,11 +78,11 @@ LIB32=link.exe -lib
 
 # Begin Target
 
-# Name "cgalQt - Win32 Release"
-# Name "cgalQt - Win32 Debug"
+# Name "cgallib2 - Win32 Release"
+# Name "cgallib2 - Win32 Debug"
 # Begin Group "Source Files"
 
-# PROP Default_Filter "C;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
 SOURCE=.\Qt_widget.C
@@ -103,9 +103,9 @@ SOURCE=.\Qt_widget_standard_toolbar.C
 
 SOURCE=..\..\include\CGAL\IO\Qt_widget.h
 
-!IF  "$(CFG)" == "cgalQt - Win32 Release"
+!IF  "$(CFG)" == "cgallib2 - Win32 Release"
 
-!ELSEIF  "$(CFG)" == "cgalQt - Win32 Debug"
+!ELSEIF  "$(CFG)" == "cgallib2 - Win32 Debug"
 
 # Begin Custom Build
 InputPath=..\..\include\CGAL\IO\Qt_widget.h
@@ -122,9 +122,9 @@ InputPath=..\..\include\CGAL\IO\Qt_widget.h
 
 SOURCE=..\..\include\CGAL\IO\Qt_widget_layer.h
 
-!IF  "$(CFG)" == "cgalQt - Win32 Release"
+!IF  "$(CFG)" == "cgallib2 - Win32 Release"
 
-!ELSEIF  "$(CFG)" == "cgalQt - Win32 Debug"
+!ELSEIF  "$(CFG)" == "cgallib2 - Win32 Debug"
 
 # Begin Custom Build
 InputPath=..\..\include\CGAL\IO\Qt_widget_layer.h
@@ -141,9 +141,9 @@ InputPath=..\..\include\CGAL\IO\Qt_widget_layer.h
 
 SOURCE=..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h
 
-!IF  "$(CFG)" == "cgalQt - Win32 Release"
+!IF  "$(CFG)" == "cgallib2 - Win32 Release"
 
-!ELSEIF  "$(CFG)" == "cgalQt - Win32 Debug"
+!ELSEIF  "$(CFG)" == "cgallib2 - Win32 Debug"
 
 # Begin Custom Build
 InputPath=..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h
