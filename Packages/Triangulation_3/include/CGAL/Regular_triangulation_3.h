@@ -125,10 +125,16 @@ public:
   side_of_power_sphere( Cell_handle c, const Weighted_point &p) const;
   
   Bounded_side
+  side_of_circle( const Facet & f, const Weighted_point & p) const
+    {
+      return side_of_circle(f.first, f.second, p);
+    }
+
+  Bounded_side
   side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const;
 
   Bounded_side
-  side_of_power_edge( Cell_handle c, const Weighted_point &p) const;
+  side_of_power_segment( Cell_handle c, const Weighted_point &p) const;
 
   bool is_valid(bool verbose = false, int level = 0) const;
 
@@ -145,7 +151,7 @@ private:
 
   bool in_conflict_1(const Weighted_point & p, const Cell_handle & c)
     {
-      return side_of_power_edge(c, p) == ON_BOUNDED_SIDE;
+      return side_of_power_segment(c, p) == ON_BOUNDED_SIDE;
     }
 
   void find_conflicts_3(std::set<void*, std::less<void*> > &conflicts, 
@@ -340,7 +346,7 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
 template < class Gt, class Tds >
 Bounded_side
 Regular_triangulation_3<Gt,Tds>::
-side_of_power_edge( Cell_handle c, const Weighted_point &p) const
+side_of_power_segment( Cell_handle c, const Weighted_point &p) const
 {
   CGAL_triangulation_precondition( dimension() == 1 );
   if ( ! is_infinite(c,0,1) ) 
@@ -649,7 +655,7 @@ is_valid(bool verbose = false, int level = 0) const
       for ( it = finite_edges_begin(); it != edges_end(); ++it ) {
 	is_valid_finite((*it).first);
 	for ( i=0; i<2; i++ ) {
-	  if ( side_of_power_edge
+	  if ( side_of_power_segment
 	       ( (*it).first,
 		 (*it).first->vertex( (((*it).first)->neighbor(i))
 				      ->index((*it).first) )->point() )
