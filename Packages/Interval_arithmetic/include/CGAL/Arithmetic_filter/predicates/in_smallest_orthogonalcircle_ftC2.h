@@ -32,15 +32,15 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /* CGAL_MEDIUM_INLINE */
 Oriented_side
 in_smallest_orthogonalcircleC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &pw,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qw,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tw)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &tw)
 {
   CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
@@ -75,22 +75,91 @@ in_smallest_orthogonalcircleC2(
   }
 }
 
-inline
+struct Static_Filtered_in_smallest_orthogonalcircleC2_9
+{
+  static double _bound;
+  static double _epsilon_0;
+  // static unsigned number_of_failures; // ?
+
+  // Call this function from the outside to update the context.
+  static void new_bound (double b, error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  static Oriented_side update_epsilon(
+	const Static_filter_error &px,
+	const Static_filter_error &py,
+	const Static_filter_error &pw,
+	const Static_filter_error &qx,
+	const Static_filter_error &qy,
+	const Static_filter_error &qw,
+	const Static_filter_error &tx,
+	const Static_filter_error &ty,
+	const Static_filter_error &tw,
+	double & epsilon_0)
+  {
+    typedef Static_filter_error FT;
+  
+    FT dpx = px-qx;
+    FT dpy = py-qy;
+    FT dtx = tx-qx;
+    FT dty = ty-qy;
+    FT dpz = square(dpx)+square(dpy);
+   
+    return Oriented_side (Static_Filtered_sign_1::update_epsilon((square(dtx)+square(dty)-tw+qw)*dpz
+  			     -(dpz-pw+qw)*(dpx*dtx+dpy*dty),
+  		epsilon_0));
+  }
+
+  static Oriented_side epsilon_variant(
+	const Restricted_double &px,
+	const Restricted_double &py,
+	const Restricted_double &pw,
+	const Restricted_double &qx,
+	const Restricted_double &qy,
+	const Restricted_double &qw,
+	const Restricted_double &tx,
+	const Restricted_double &ty,
+	const Restricted_double &tw,
+	const double & epsilon_0)
+  {
+    typedef Restricted_double FT;
+  
+    FT dpx = px-qx;
+    FT dpy = py-qy;
+    FT dtx = tx-qx;
+    FT dty = ty-qy;
+    FT dpz = square(dpx)+square(dpy);
+   
+    return Oriented_side (Static_Filtered_sign_1::epsilon_variant((square(dtx)+square(dty)-tw+qw)*dpz
+  			     -(dpz-pw+qw)*(dpx*dtx+dpy*dty),
+  		epsilon_0));
+  }
+};
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_MEDIUM_INLINE */
 Oriented_side
 in_smallest_orthogonalcircleC2(
-    const Static_adaptatif_filter &px,
-    const Static_adaptatif_filter &py,
-    const Static_adaptatif_filter &pw,
-    const Static_adaptatif_filter &qx,
-    const Static_adaptatif_filter &qy,
-    const Static_adaptatif_filter &qw,
-    const Static_adaptatif_filter &tx,
-    const Static_adaptatif_filter &ty,
-    const Static_adaptatif_filter &tw)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &tw)
 {
   bool re_adjusted = false;
-  static double SAF_bound = -1.0;
-  static double SAF_epsilon_0;
+  const double SAF_bound = Static_Filtered_in_smallest_orthogonalcircleC2_9::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (	fabs(px.value()) > SAF_bound ||
@@ -104,46 +173,31 @@ in_smallest_orthogonalcircleC2(
 	fabs(tw.value()) > SAF_bound)
   {
 re_adjust:
-      // Re-adjust SAF_bound.
-      SAF_bound = std::max(0.0, fabs(px.value()));
-      SAF_bound = std::max(SAF_bound, fabs(py.value()));
-      SAF_bound = std::max(SAF_bound, fabs(pw.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qw.value()));
-      SAF_bound = std::max(SAF_bound, fabs(tx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(ty.value()));
-      SAF_bound = std::max(SAF_bound, fabs(tw.value()));
-
-      // recompute the epsilons: "just" call it over Static_filter_error.
-      // That's the tricky part that might not work for everything.
-      (void) in_smallest_orthogonalcircleC2_SAF(
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		SAF_epsilon_0);
-
-      // TODO: We should verify that all epsilons have really been updated.
+    // Compute the new bound.
+    double NEW_bound = std::max(0.0, fabs(px.value()));
+    NEW_bound = std::max(NEW_bound, fabs(py.value()));
+    NEW_bound = std::max(NEW_bound, fabs(pw.value()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
+    NEW_bound = std::max(NEW_bound, fabs(qw.value()));
+    NEW_bound = std::max(NEW_bound, fabs(tx.value()));
+    NEW_bound = std::max(NEW_bound, fabs(ty.value()));
+    NEW_bound = std::max(NEW_bound, fabs(tw.value()));
+    // Re-adjust the context.
+    Static_Filtered_in_smallest_orthogonalcircleC2_9::new_bound(NEW_bound);
   }
 
-  try  // Try the epsilon variant of the predicate.
+  try
   {
-    return in_smallest_orthogonalcircleC2_SAF(
-		Restricted_double(px.value()),
-		Restricted_double(py.value()),
-		Restricted_double(pw.value()),
-		Restricted_double(qx.value()),
-		Restricted_double(qy.value()),
-		Restricted_double(qw.value()),
-		Restricted_double(tx.value()),
-		Restricted_double(ty.value()),
-		Restricted_double(tw.value()),
+    return Static_Filtered_in_smallest_orthogonalcircleC2_9::epsilon_variant(px.to_double(),
+		py.to_double(),
+		pw.to_double(),
+		qx.to_double(),
+		qy.to_double(),
+		qw.to_double(),
+		tx.to_double(),
+		ty.to_double(),
+		tw.to_double(),
 		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
@@ -154,8 +208,7 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return in_smallest_orthogonalcircleC2(
-		px.exact(),
+    return in_smallest_orthogonalcircleC2(px.exact(),
 		py.exact(),
 		pw.exact(),
 		qx.exact(),

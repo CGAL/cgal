@@ -32,18 +32,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /*  */
 Oriented_side
 power_testC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &pwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &twt)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &rwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &twt)
 {
   CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
@@ -84,25 +84,116 @@ power_testC2(
   }
 }
 
-inline
+struct Static_Filtered_power_testC2_12
+{
+  static double _bound;
+  static double _epsilon_0;
+  // static unsigned number_of_failures; // ?
+
+  // Call this function from the outside to update the context.
+  static void new_bound (double b, error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  static Oriented_side update_epsilon(
+	const Static_filter_error &px,
+	const Static_filter_error &py,
+	const Static_filter_error &pwt,
+	const Static_filter_error &qx,
+	const Static_filter_error &qy,
+	const Static_filter_error &qwt,
+	const Static_filter_error &rx,
+	const Static_filter_error &ry,
+	const Static_filter_error &rwt,
+	const Static_filter_error &tx,
+	const Static_filter_error &ty,
+	const Static_filter_error &twt,
+	double & epsilon_0)
+  {
+    typedef Static_filter_error FT;
+  
+      
+  
+      
+      FT dpx = px - tx;
+      FT dpy = py - ty;
+      FT dpz = square(dpx) + square(dpy) - pwt + twt;
+      FT dqx = qx - tx;
+      FT dqy = qy - ty;
+      FT dqz = square(dqx) + square(dqy) - qwt + twt;
+      FT drx = rx - tx;
+      FT dry = ry - ty;
+      FT drz = square(drx) + square(dry) - rwt + twt;
+  
+      return Oriented_side(Static_Filtered_sign_of_determinant3x3_9::update_epsilon(dpx, dpy, dpz,
+                                                  dqx, dqy, dqz,
+                                                  drx, dry, drz,
+  		epsilon_0));
+  }
+
+  static Oriented_side epsilon_variant(
+	const Restricted_double &px,
+	const Restricted_double &py,
+	const Restricted_double &pwt,
+	const Restricted_double &qx,
+	const Restricted_double &qy,
+	const Restricted_double &qwt,
+	const Restricted_double &rx,
+	const Restricted_double &ry,
+	const Restricted_double &rwt,
+	const Restricted_double &tx,
+	const Restricted_double &ty,
+	const Restricted_double &twt,
+	const double & epsilon_0)
+  {
+    typedef Restricted_double FT;
+  
+      
+  
+      
+      FT dpx = px - tx;
+      FT dpy = py - ty;
+      FT dpz = square(dpx) + square(dpy) - pwt + twt;
+      FT dqx = qx - tx;
+      FT dqy = qy - ty;
+      FT dqz = square(dqx) + square(dqy) - qwt + twt;
+      FT drx = rx - tx;
+      FT dry = ry - ty;
+      FT drz = square(drx) + square(dry) - rwt + twt;
+  
+      return Oriented_side(Static_Filtered_sign_of_determinant3x3_9::epsilon_variant(dpx, dpy, dpz,
+                                                  dqx, dqy, dqz,
+                                                  drx, dry, drz,
+  		epsilon_0));
+  }
+};
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/*  */
 Oriented_side
 power_testC2(
-    const Static_adaptatif_filter &px,
-    const Static_adaptatif_filter &py,
-    const Static_adaptatif_filter &pwt,
-    const Static_adaptatif_filter &qx,
-    const Static_adaptatif_filter &qy,
-    const Static_adaptatif_filter &qwt,
-    const Static_adaptatif_filter &rx,
-    const Static_adaptatif_filter &ry,
-    const Static_adaptatif_filter &rwt,
-    const Static_adaptatif_filter &tx,
-    const Static_adaptatif_filter &ty,
-    const Static_adaptatif_filter &twt)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &rwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &twt)
 {
   bool re_adjusted = false;
-  static double SAF_bound = -1.0;
-  static double SAF_epsilon_0;
+  const double SAF_bound = Static_Filtered_power_testC2_12::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (	fabs(px.value()) > SAF_bound ||
@@ -119,55 +210,37 @@ power_testC2(
 	fabs(twt.value()) > SAF_bound)
   {
 re_adjust:
-      // Re-adjust SAF_bound.
-      SAF_bound = std::max(0.0, fabs(px.value()));
-      SAF_bound = std::max(SAF_bound, fabs(py.value()));
-      SAF_bound = std::max(SAF_bound, fabs(pwt.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qwt.value()));
-      SAF_bound = std::max(SAF_bound, fabs(rx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(ry.value()));
-      SAF_bound = std::max(SAF_bound, fabs(rwt.value()));
-      SAF_bound = std::max(SAF_bound, fabs(tx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(ty.value()));
-      SAF_bound = std::max(SAF_bound, fabs(twt.value()));
-
-      // recompute the epsilons: "just" call it over Static_filter_error.
-      // That's the tricky part that might not work for everything.
-      (void) power_testC2_SAF(
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		SAF_epsilon_0);
-
-      // TODO: We should verify that all epsilons have really been updated.
+    // Compute the new bound.
+    double NEW_bound = std::max(0.0, fabs(px.value()));
+    NEW_bound = std::max(NEW_bound, fabs(py.value()));
+    NEW_bound = std::max(NEW_bound, fabs(pwt.value()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
+    NEW_bound = std::max(NEW_bound, fabs(qwt.value()));
+    NEW_bound = std::max(NEW_bound, fabs(rx.value()));
+    NEW_bound = std::max(NEW_bound, fabs(ry.value()));
+    NEW_bound = std::max(NEW_bound, fabs(rwt.value()));
+    NEW_bound = std::max(NEW_bound, fabs(tx.value()));
+    NEW_bound = std::max(NEW_bound, fabs(ty.value()));
+    NEW_bound = std::max(NEW_bound, fabs(twt.value()));
+    // Re-adjust the context.
+    Static_Filtered_power_testC2_12::new_bound(NEW_bound);
   }
 
-  try  // Try the epsilon variant of the predicate.
+  try
   {
-    return power_testC2_SAF(
-		Restricted_double(px.value()),
-		Restricted_double(py.value()),
-		Restricted_double(pwt.value()),
-		Restricted_double(qx.value()),
-		Restricted_double(qy.value()),
-		Restricted_double(qwt.value()),
-		Restricted_double(rx.value()),
-		Restricted_double(ry.value()),
-		Restricted_double(rwt.value()),
-		Restricted_double(tx.value()),
-		Restricted_double(ty.value()),
-		Restricted_double(twt.value()),
+    return Static_Filtered_power_testC2_12::epsilon_variant(px.to_double(),
+		py.to_double(),
+		pwt.to_double(),
+		qx.to_double(),
+		qy.to_double(),
+		qwt.to_double(),
+		rx.to_double(),
+		ry.to_double(),
+		rwt.to_double(),
+		tx.to_double(),
+		ty.to_double(),
+		twt.to_double(),
 		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
@@ -178,8 +251,7 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return power_testC2(
-		px.exact(),
+    return power_testC2(px.exact(),
 		py.exact(),
 		pwt.exact(),
 		qx.exact(),
@@ -200,15 +272,15 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /*  */
 Oriented_side
 power_testC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &pwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &twt)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &twt)
 {
   CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
@@ -243,25 +315,119 @@ power_testC2(
   }
 }
 
-inline
+struct Static_Filtered_power_testC2_9
+{
+  static double _bound;
+  static double _epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3;
+  // static unsigned number_of_failures; // ?
+
+  // Call this function from the outside to update the context.
+  static void new_bound (double b, error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3);
+    // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  static Oriented_side update_epsilon(
+	const Static_filter_error &px,
+	const Static_filter_error &py,
+	const Static_filter_error &pwt,
+	const Static_filter_error &qx,
+	const Static_filter_error &qy,
+	const Static_filter_error &qwt,
+	const Static_filter_error &tx,
+	const Static_filter_error &ty,
+	const Static_filter_error &twt,
+	double & epsilon_0,
+	double & epsilon_1,
+	double & epsilon_2,
+	double & epsilon_3)
+  {
+    typedef Static_filter_error FT;
+  
+      
+      FT dpx = px - tx;
+      FT dpy = py - ty;
+      FT dpz = square(dpx) + square(dpy) - pwt + twt;
+      FT dqx = qx - tx;
+      FT dqy = qy - ty;
+      FT dqz = square(dqx) + square(dqy) - qwt + twt;
+  
+      
+      Comparison_result cmpx = CGAL::Static_Filtered_compare_2::update_epsilon(px, qx,
+  		epsilon_0);
+      if (cmpx != EQUAL)
+  	return Oriented_side(cmpx * Static_Filtered_sign_of_determinant2x2_4::update_epsilon(dpx, dpz, dqx, dqz,
+  		epsilon_1));
+  
+      
+      Comparison_result cmpy = CGAL::Static_Filtered_compare_2::update_epsilon(py, qy,
+  		epsilon_2);
+      return Oriented_side(cmpy * Static_Filtered_sign_of_determinant2x2_4::update_epsilon(dpy, dpz, dqy, dqz,
+  		epsilon_3));
+  }
+
+  static Oriented_side epsilon_variant(
+	const Restricted_double &px,
+	const Restricted_double &py,
+	const Restricted_double &pwt,
+	const Restricted_double &qx,
+	const Restricted_double &qy,
+	const Restricted_double &qwt,
+	const Restricted_double &tx,
+	const Restricted_double &ty,
+	const Restricted_double &twt,
+	const double & epsilon_0,
+	const double & epsilon_1,
+	const double & epsilon_2,
+	const double & epsilon_3)
+  {
+    typedef Restricted_double FT;
+  
+      
+      FT dpx = px - tx;
+      FT dpy = py - ty;
+      FT dpz = square(dpx) + square(dpy) - pwt + twt;
+      FT dqx = qx - tx;
+      FT dqy = qy - ty;
+      FT dqz = square(dqx) + square(dqy) - qwt + twt;
+  
+      
+      Comparison_result cmpx = CGAL::Static_Filtered_compare_2::epsilon_variant(px, qx,
+  		epsilon_0);
+      if (cmpx != EQUAL)
+  	return Oriented_side(cmpx * Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(dpx, dpz, dqx, dqz,
+  		epsilon_1));
+  
+      
+      Comparison_result cmpy = CGAL::Static_Filtered_compare_2::epsilon_variant(py, qy,
+  		epsilon_2);
+      return Oriented_side(cmpy * Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(dpy, dpz, dqy, dqz,
+  		epsilon_3));
+  }
+};
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/*  */
 Oriented_side
 power_testC2(
-    const Static_adaptatif_filter &px,
-    const Static_adaptatif_filter &py,
-    const Static_adaptatif_filter &pwt,
-    const Static_adaptatif_filter &qx,
-    const Static_adaptatif_filter &qy,
-    const Static_adaptatif_filter &qwt,
-    const Static_adaptatif_filter &tx,
-    const Static_adaptatif_filter &ty,
-    const Static_adaptatif_filter &twt)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &twt)
 {
   bool re_adjusted = false;
-  static double SAF_bound = -1.0;
-  static double SAF_epsilon_0;
-  static double SAF_epsilon_1;
-  static double SAF_epsilon_2;
-  static double SAF_epsilon_3;
+  const double SAF_bound = Static_Filtered_power_testC2_9::_bound;
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (	fabs(px.value()) > SAF_bound ||
@@ -275,49 +441,31 @@ power_testC2(
 	fabs(twt.value()) > SAF_bound)
   {
 re_adjust:
-      // Re-adjust SAF_bound.
-      SAF_bound = std::max(0.0, fabs(px.value()));
-      SAF_bound = std::max(SAF_bound, fabs(py.value()));
-      SAF_bound = std::max(SAF_bound, fabs(pwt.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qwt.value()));
-      SAF_bound = std::max(SAF_bound, fabs(tx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(ty.value()));
-      SAF_bound = std::max(SAF_bound, fabs(twt.value()));
-
-      // recompute the epsilons: "just" call it over Static_filter_error.
-      // That's the tricky part that might not work for everything.
-      (void) power_testC2_SAF(
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		Static_filter_error(SAF_bound),
-		SAF_epsilon_0,
-		SAF_epsilon_1,
-		SAF_epsilon_2,
-		SAF_epsilon_3);
-
-      // TODO: We should verify that all epsilons have really been updated.
+    // Compute the new bound.
+    double NEW_bound = std::max(0.0, fabs(px.value()));
+    NEW_bound = std::max(NEW_bound, fabs(py.value()));
+    NEW_bound = std::max(NEW_bound, fabs(pwt.value()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
+    NEW_bound = std::max(NEW_bound, fabs(qwt.value()));
+    NEW_bound = std::max(NEW_bound, fabs(tx.value()));
+    NEW_bound = std::max(NEW_bound, fabs(ty.value()));
+    NEW_bound = std::max(NEW_bound, fabs(twt.value()));
+    // Re-adjust the context.
+    Static_Filtered_power_testC2_9::new_bound(NEW_bound);
   }
 
-  try  // Try the epsilon variant of the predicate.
+  try
   {
-    return power_testC2_SAF(
-		Restricted_double(px.value()),
-		Restricted_double(py.value()),
-		Restricted_double(pwt.value()),
-		Restricted_double(qx.value()),
-		Restricted_double(qy.value()),
-		Restricted_double(qwt.value()),
-		Restricted_double(tx.value()),
-		Restricted_double(ty.value()),
-		Restricted_double(twt.value()),
+    return Static_Filtered_power_testC2_9::epsilon_variant(px.to_double(),
+		py.to_double(),
+		pwt.to_double(),
+		qx.to_double(),
+		qy.to_double(),
+		qwt.to_double(),
+		tx.to_double(),
+		ty.to_double(),
+		twt.to_double(),
 		SAF_epsilon_0,
 		SAF_epsilon_1,
 		SAF_epsilon_2,
@@ -331,8 +479,7 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return power_testC2(
-		px.exact(),
+    return power_testC2(px.exact(),
 		py.exact(),
 		pwt.exact(),
 		qx.exact(),
