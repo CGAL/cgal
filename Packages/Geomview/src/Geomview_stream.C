@@ -136,7 +136,7 @@ void Geomview_stream::setup_geomview(const char *machine,
         char inbuf[10];
         ::read(in, inbuf, 7);
 
-        cout << "done." << std::endl;
+        std::cout << "done." << std::endl;
 
         bbox_count = 0;
         triangle_count = 0;
@@ -316,7 +316,7 @@ Geomview_stream::operator<<(double d)
         ::write(out, (char*)&f, sizeof(f));
     } else {
         // 'copy' the float in a string and append a blank
-        ostrstream str;
+        std::ostrstream str;
         str << f << " " << ends ;
         char *bptr = str.str();
 
