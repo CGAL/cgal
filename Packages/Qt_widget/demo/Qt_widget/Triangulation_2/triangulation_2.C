@@ -37,8 +37,8 @@ int main(int, char*)
 
 //Application headers
 #include "cgal_types.h"
-#include "Qt_widget_toolbar.h"
-#include "Qt_widget_toolbar_layers.h"
+#include "triangulation_2_toolbar.h"
+#include "triangulation_2_toolbar_layers.h"
 
 //Qt_widget headers
 #include <CGAL/IO/Qt_widget.h>

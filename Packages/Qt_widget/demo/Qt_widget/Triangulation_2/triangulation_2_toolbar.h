@@ -8,9 +8,9 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_widget_toolbar.h
+// file          : triangulation_2_toolbar.h
 // package       : Qt_widget
-// author(s)     : Ursu Radu
+// author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
 //
@@ -18,8 +18,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_WIDGET_TOOLBAR_H
-#define CGAL_QT_WIDGET_TOOLBAR_H
+#ifndef CGAL_TRIANGULATION_2_TOOLBAR_H
+#define CGAL_TRIANGULATION_2_TOOLBAR_H
 
 #include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
@@ -39,16 +39,7 @@ class Tools_toolbar : public QObject
   Q_OBJECT
 public:
   Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, Delaunay *t);
-
   QToolBar*	toolbar(){return maintoolbar;}
-
-signals:
-  void new_object(CGAL::Object);
-  void was_repainted();
-
-private slots:
-  void get_new_object(CGAL::Object obj) { emit(new_object(obj)); }
-
 private:
   QToolBar           *maintoolbar;
   QToolButton        *but[10];

@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : src/Qt_widget_toolbar_layers.C
+// file          : triangulation_2_toolbar_layers.C
 // package       : Qt_widget
 // author(s)     : Ursu Radu
 // release       : 
@@ -176,6 +176,6 @@ static char * circum_circle_small_xpm[] = {
   }
   
 
-#include "Qt_widget_toolbar_layers.moc"
+#include "triangulation_2_toolbar_layers.moc"
 
 #endif

@@ -1467,6 +1467,7 @@ Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/conflict_zone_after.gif s
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/input_line_layer.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/input_point_layer.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/movedelete_point_layer.gif svneol=native#unset
+Packages/Qt_widget/demo/Qt_widget/Triangulation_2/regular_triangulation_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/triangulation_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/help/input_point_layer.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/help/input_polygon_layer.gif svneol=native#unset

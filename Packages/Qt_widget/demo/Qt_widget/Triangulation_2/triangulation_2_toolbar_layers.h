@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_widget_toolbar_layers.h
+// file          : triangulation_2_toolbar_layers.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -18,8 +18,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_WIDGET_TOOLBAR_LAYERS_H
-#define CGAL_QT_WIDGET_TOOLBAR_LAYERS_H
+#ifndef CGAL_TRIANGULATION_2_TOOLBAR_LAYERS_H
+#define CGAL_TRIANGULATION_2_TOOLBAR_LAYERS_H
 
 #include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
@@ -45,19 +45,15 @@ public:
     delete showNV;
   };
   QToolBar*	toolbar(){return maintoolbar;};
-
-signals:
-  void new_object(CGAL::Object);
 	
 private:
-  QToolBar	  *maintoolbar;
-  QToolButton	  *but[10];
+  QToolBar        *maintoolbar;
+  QToolButton     *but[10];
   CGAL::Qt_widget *widget;
   QMainWindow     *window;
   Delaunay        *dt;
   QButtonGroup    *button_group;
-
-  int	  nr_of_buttons;
+  int             nr_of_buttons;
 	
   Qt_layer_show_triangulation < Delaunay > *showT;
   Qt_layer_show_voronoi < Delaunay >       *showV;
