@@ -8,13 +8,11 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: $
-// release_date  : $CGAL_Date: $
+// release       : 
+// release_date  : 
 //
 // file          : test_support.C
-// chapter       : $CGAL_Chapter: Stream Support $
-// package       : $CGAL_Package: Stream_support 2.4 (28 Jul 1999) $
-// source        : support.fw
+// package       : Stream_support
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
@@ -25,34 +23,19 @@
 // ============================================================================
 
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
-#endif // CGAL_CARTESIAN_H
-#ifndef CGAL_PROTECT_CSTDDEF
 #include <cstddef>
-#define CGAL_PROTECT_CSTDDEF
-#endif
 
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_PROTECT_STRSTREAM
 #include <strstream>
-#define CGAL_PROTECT_STRSTREAM
-#endif // CGAL_PROTECT_STRSTREAM
-#ifndef CGAL_IO_OSTREAM_ITERATOR_H
 #include <CGAL/IO/Ostream_iterator.h>
-#endif // CGAL_IO_OSTREAM_ITERATOR_H
-#ifndef CGAL_IO_ISTREAM_ITERATOR_H
 #include <CGAL/IO/Istream_iterator.h>
-#endif // CGAL_IO_ISTREAM_ITERATOR_H
 
 using namespace CGAL;
 
-void test_stream_iterator() {
+int main()
+{
     typedef Cartesian<double>                        Rep;
     typedef Point_2<Rep>                             Point;
     typedef Ostream_iterator<Point,std::ostrstream>  IteratorO;
@@ -83,10 +66,5 @@ void test_stream_iterator() {
         Point p = *i;
         CGAL_assertion( p == Point( 1, 2));
     }
-}
-
-int main() {
-    test_stream_iterator();
     return 0;
 }
-// EOF //
