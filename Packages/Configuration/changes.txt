@@ -1,3 +1,6 @@
+17 Feb 2004 Sylvain Pion
+- Remove CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
+
 31/01/2004 Sylvain Pion
 - Also do not define CGAL_USE_GEOMVIEW for __MINGW32__.
 

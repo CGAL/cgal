@@ -1,6 +1,9 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
 
+17 Feb 2004 Sylvain Pion
+- Remove CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
+
 Version 3.41 (09 February 2004) [rursu]
 - Updated headers in examples
 

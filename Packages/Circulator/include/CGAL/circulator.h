@@ -114,7 +114,7 @@ template <class Tag, class IC>
 struct I_Circulator_size_traits {
     typedef  std::size_t  size_type;
 };
-#ifndef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
+
 template <class C>
 struct I_Circulator_size_traits< Forward_circulator_tag, C> {
     typedef  typename  C::size_type  size_type;
@@ -127,7 +127,6 @@ template <class C>
 struct I_Circulator_size_traits< Random_access_circulator_tag, C> {
     typedef  typename  C::size_type  size_type;
 };
-#endif // CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION //
 
 template <class CCtg>
 struct I_Iterator_from_circulator_traits {
