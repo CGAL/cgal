@@ -32,7 +32,6 @@ int main () {
     S.push_back(Sphere(p,r.get_int(Low,High))); // ...and random radius
   }
   
-  Min_sphere ms(S.begin(),S.end());       // check in the spheres...
-  ms.update();                            // ...and compute the minsphere
+  Min_sphere ms(S.begin(),S.end());       // check in the spheres
   CGAL_assertion(ms.is_valid());
 }

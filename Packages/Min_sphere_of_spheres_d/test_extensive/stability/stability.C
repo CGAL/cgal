@@ -52,19 +52,15 @@ void atomicTest(const int test,const std::string& name,Perturbation perturb,
   CGAL::Min_sphere_of_spheres_d<DUT> fumb(S.begin(),S.end());
   CGAL::Min_sphere_of_spheres_d<DAT> famb(S.begin(),S.end());
 
-  dumb.update();
   std::cout << "    Double with sqrts: " << std::setw(50) 
 	    << std::setprecision(30) << rerr(exact,dumb.radius())
 	    << std::endl;
-  damb.update();
   std::cout << "    Double w/o sqrts:  " << std::setw(50) 
 	    << std::setprecision(30) << rerr(exact,damb.radius())
 	    << std::endl;
-  fumb.update();
   std::cout << "    Float with sqrts:  " << std::setw(50) 
 	    << std::setprecision(30) << rerr(exact,fumb.radius())
 	    << std::endl;
-  famb.update();
   std::cout << "    Float w/o sqrts:   " << std::setw(50) 
 	    << std::setprecision(30) << rerr(exact,famb.radius())
 	    << std::endl;

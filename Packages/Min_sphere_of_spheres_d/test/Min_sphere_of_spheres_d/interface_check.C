@@ -102,7 +102,7 @@ void checkRelError(const double exact,
 }
 
 template<int D,typename Sphere,typename FT>
-void compare(const FT& tol,const Sphere& m1,const Sphere& m2,
+void compare(const FT& tol,Sphere& m1,Sphere& m2,
 	     const CGAL::Tag_true is_exact) {
   typedef typename Sphere::Result Pair;
   typedef typename Sphere::Coordinate_iterator CIt;
@@ -119,7 +119,7 @@ void compare(const FT& tol,const Sphere& m1,const Sphere& m2,
 }
 
 template<int D,typename Sphere,typename FT>
-void compare(const FT& tol,const Sphere& m1,const Sphere& m2,
+void compare(const FT& tol,Sphere& m1,Sphere& m2,
 	     const CGAL::Tag_false is_exact) {
   typedef typename Sphere::Coordinate_iterator CIt;
 
@@ -156,7 +156,6 @@ void test(const int n,const FT& tol) {
   
   cout << " constructor with balls:" << endl;
   Min_sphere  ms1(S.begin(),S.end());
-  ms1.update();
   checkCondition(ms1.is_valid(),"Minsphere not valid.");
 
   cout << " default constructor and set():" << endl;
@@ -168,25 +167,20 @@ void test(const int n,const FT& tol) {
   cout << " default constructor and insert():" << endl;
   Min_sphere  ms3;
   ms3.insert(S.begin(),S.end());
-  ms3.update();
   checkCondition(ms3.is_valid(),"Minsphere not valid.");
   compare<D,Min_sphere,FT>(tol,ms1,ms3,is_exact(tol));
 
   cout << " default constructor and multiple insert()'s:" << endl;
   Min_sphere  ms4;
-  for (int i=0; i<S.size(); ++i) {
+  for (int i=0; i<S.size(); ++i)
     ms4.insert(S[i]);
-    ms4.update();
-  }
   checkCondition(ms4.is_valid(),"Minsphere not valid.");
   compare<D,Min_sphere,FT>(tol,ms1,ms4,is_exact(tol));
 
   cout << " clearing and multiple insert()'s:" << endl;
   ms2.clear();
-  for (int i=0; i<S.size(); ++i) {
+  for (int i=0; i<S.size(); ++i)
     ms2.insert(S[i]);
-    ms2.update();
-  }
   checkCondition(ms2.is_valid(),"Minsphere not valid.");
   compare<D,Min_sphere,FT>(tol,ms1,ms2,is_exact(tol));
 }

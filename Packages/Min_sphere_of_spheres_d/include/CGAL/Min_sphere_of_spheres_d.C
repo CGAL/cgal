@@ -243,13 +243,13 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
   template<class Traits>
   bool Min_sphere_of_spheres_d<Traits>::
-    is_valid(const Tag_false is_exact) const {
+    is_valid(const Tag_false is_exact) {
     return true;
   }
   
   template<class Traits>
   bool Min_sphere_of_spheres_d<Traits>::
-    is_valid(const Tag_true is_exact) const {
+    is_valid(const Tag_true is_exact) {
     using namespace Min_sphere_of_spheres_d_impl;
     using std::cerr;
     using std::endl;

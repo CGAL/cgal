@@ -63,7 +63,6 @@ void atomicTest(const int no,const std::string& name,Perturbation perturb,
   typedef BallTraits<D,double,ExactFT,CGAL::Tag_false> Traits;
   typedef CGAL::Min_sphere_of_spheres_d<Traits> Minsphere;
   Minsphere mb(S.begin(),S.end());
-  mb.update();
 
   // verify result:
   if (!mb.is_valid()) {

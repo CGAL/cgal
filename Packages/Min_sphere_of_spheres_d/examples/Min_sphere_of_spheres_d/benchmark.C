@@ -120,10 +120,8 @@ int main(int,char **) {
   // check in the balls:
   Minsphere mb(S.begin(),S.end());
 
-  // compute the miniball:
-  mb.update();
-
   // measure time:
+  bool e = mb.is_empty();
   time = clock() - time;
 
   // output running time:

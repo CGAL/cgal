@@ -436,8 +436,7 @@ be reused.}
 When default-constructed, an instance's set $S$ is empty, and
 consequently its miniball is empty too, by definition.  To compute the
 miniball of a set~$S$ of balls, you check in the balls by calling
-\code{insert()}, followed by a call to \code{update()} which computes the
-miniball.  In order to query the miniball you can use the routines
+\code{insert()}.  In order to query the miniball you can use the routines
 \code{is\_empty()}, \code{radius()}, \code{center\_begin()},
 \code{support\_begin()} and \code{discriminant()}.\par\medskip
 %
@@ -458,11 +457,6 @@ the number~$a+b\sqrt{t}$.  Here, $t$ is the discriminant of the
 miniball (see page~\pageref{disc}), which you obtain by calling
 \code{discriminant()}.\par\medskip
 %
-We say that an instance of this class is \e{up-to-date} if and only if
-the miniball of the inserted balls~$S$ has been computed already
-(e.g.\ it is not up-to-date if you have just called \code{insert()}
-but haven't done an \code{update()} yet).\par\medskip
-%
 Here are more detailed descriptions of the constructors, accessors and
 predicates of class \code{Min\_sphere\_of\_spheres\_d\angl{T}}.
 \begin{fdesclist}
@@ -472,8 +466,7 @@ predicates of class \code{Min\_sphere\_of\_spheres\_d\angl{T}}.
 Constructs an instance and sets the instance's set~$S$ to the empty
 set.  Furthermore, it stores a reference to the given traits class
 \code{traits} which it will use whenever it needs to access
-coordinates or radii of balls.\par
-\emph{Postcondition:} The constructed instance is up-to-date.
+coordinates or radii of balls.
 \end{fdescitem}
 %
 %
@@ -485,9 +478,7 @@ Min\_sphere\_of\_spheres\_d(&InputIterator begin,InputIterator end,\\
 %
 Works like the constructor above, but calls \code{insert(begin,end)}
 in addition (which adds the $n$ balls in the range \code{[begin,end)}
-to~$S$).  Notice that the constructed instance will not be up-to-date,
-so you will have to call \code{update()} to actually compute the
-miniball.
+to~$S$).
 \end{fdescitem}
 %
 %
@@ -501,8 +492,7 @@ destructed.\footnote{This requirement is needed because the class
   \code{Min\_sphere\_of\_spheres\_d\angl{T}}, in order to save some
   space, only maintains pointers to the added balls.}  If you cannot
 guarantee this, you should make a copy of \code{b} and add the latter.
-Notice that you have to call \code{update()} to recompute the
-miniball, i.e.\ the instance is not up-to-date after this call.\par
+\par
 %
 \emph{Note:} It is okay if some of the added balls are identical (i.e.\ if
 the set $S$ is a multiset).
@@ -516,10 +506,8 @@ Adds the $n$ balls from the range \code{[begin,end)} to the instance's
 set~$S$ by calling \code{insert(b)} for every ball~\code{b} in the
 range.  Each ball~$b$ in the range must exist and must not change
 until this instance is destructed.  If you cannot guarantee this, you
-should make copies of the balls and add these.  Notice that you have
-to call \code{update()} to recompute the miniball, i.e.\ the instance
-is not up-to-date after this call.  (This method automatically calls
-\code{prepare()}.)\par
+should make copies of the balls and add these.  (This method
+automatically calls \code{prepare()}.)\par
 %
 \emph{Note:} It is okay if some of the added balls are identical (i.e.\ if
 the set $S$ is a multiset).
@@ -537,8 +525,7 @@ balls you have already added).
 %
 \begin{fdescitem}{l}{void clear();}{$O(n)$}%
 %
-Removes all added balls, i.e.\ sets $S:= \emptyset$.\par
-\emph{Postcondition:} The instance is up-to-date.
+Removes all added balls, i.e.\ sets $S:= \emptyset$.
 \end{fdescitem}
 %
 \begin{fdescitem}{l}{%
@@ -547,47 +534,32 @@ void set(InputIterator begin,InputIterator end)}{$O(n)$}%
 %
 Sets the set $S$ to the spheres in the given range.  More precisely,
 this is identicaly to a call to \code{clear()}, followed by
-\code{insert(begin,end)} and \code{update()}.  Notice that the balls
+\code{insert(begin,end)}.  Notice that the balls
 in the given range must exist until this instance is destructed (see
-discussion of routine \code{insert()} above).\par
-\emph{Postcondition:} The instance is up-to-date.
-\end{fdescitem}
-%
-\begin{fdescitem}{l}{void update()}{}%
-Computes the miniball of all balls in the set~$S$ (that is, of all
-balls added up to now).  (Refer to section~\ref{sect_traits} for
-information on the running time of this method.)\par
-\emph{Postcondition:} The instance is up-to-date.
+discussion of routine \code{insert()} above).
 \end{fdescitem}
 %
 \begin{fdescitem}{l}{bool is\_empty() const}{$O(1)$}%
-Returns true if and only if the set~$S$ is empty.  If the instance
-is not up-to-date, then \code{update()} is called before the
-emptiness check.
+Returns true if and only if the set~$S$ is empty.
 \end{fdescitem}
 %
 \begin{fdescitem}{l}{FT radius() const}{$O(1)$}%
 Returns the radius of the miniball.\par
 %
-\emph{Precondition:} \code{is\_empty()} returns false and the instance
-is up-to-date.
+\emph{Precondition:} \code{is\_empty()} returns false.
 \end{fdescitem}
 %
 \begin{fdescitem}{l}{Coordinate\_iterator center\_begin() const}%
 {$O(1)$}%
 Returns an iterator (of type
-\code{Min\_sphere\_of\_spheres\_d::Coordinate\_\-iterator})
-to the first of the $d$ Euclidean coordinates of the miniball's
-center.
-%
-%
-The value type of the returned iterator is
-\code{Min\_\-sphere\_\-of\_\-spheres\_d\angl{T}::Result},
-which coincides with \code{double} or \code{float} for approximate
+\code{Min\_sphere\_of\_spheres\_d::Coordinate\_\-iterator}) to the
+first of the $d$ Euclidean coordinates of the miniball's center.  The
+value type of the returned iterator is
+\code{Min\_\-sphere\_\-of\_\-spheres\_d\angl{T}::Result}, which
+coincides with \code{double} or \code{float} for approximate
 computation and which is a pair (as described above) otherwise.\par
 %
-\emph{Precondition:} \code{is\_empty()} returns false and the instance
-is up-to-date.
+\emph{Precondition:} \code{is\_empty()} returns false.
 \end{fdescitem}
 %
 \begin{fdescitem}{l}{Support\_iterator support\_begin() const}{$O(1)$}%
@@ -597,16 +569,14 @@ is up-to-date.
   basis~$R$ of~$S$ is an inclusion-minimal subset of the pushed
   balls~$S$ with the property that $\MB(R)=\MB(S)$.  Furthermore, all
   balls in~$R$ touch the boundary of the miniball (i.e.\ are tangent
-  to it) and $|R|\le d+1$.  If the instance is not up-to-date, then
-  \code{update()} is called before returning the iterator.
+  to it) and $|R|\le d+1$.
 \end{fdescitem}
 %
 \begin{fdescitem}{l}{Support\_iterator support\_end() const}{$O(1)$}%
   Returns a past-the-end iterator (of type
   \code{Min\_\-sphere\_\-of\_\-spheres\_d::Support\_\-ite\-ra\-tor})
   pointing past the end of the basis returned by
-  \code{support\_begin()}.  If the instance is not up-to-date, then
-  \code{update()} is called before returning the iterator.
+  \code{support\_begin()}.
 \end{fdescitem}
 %
 \begin{fdescitem}{l}{bool is\_valid() const}{$O(n)$}%
@@ -624,9 +594,7 @@ support ball is redundant.
 This routine should only be called for exact computation, for the
 validity check itself is inexact otherwise.  (If \code{is\_valid()}
 doesn't return \code{true} for an exactly computed miniball, then this
-implementation is incorrect---\e{do} contact me in such a case!)  If
-the instance is not up-to-date, then \code{update()} is called before
-performing the validity check.
+implementation is incorrect---\e{do} contact me in such a case!)
 \end{fdescitem}
 %
 \end{fdesclist}
@@ -738,10 +706,8 @@ int main(int,char **) {
   // check in the balls:
   Minsphere mb(S.begin(),S.end());
 
-  // compute the miniball:
-  mb.update();
-
   // measure time:
+  bool e = mb.is_empty();
   time = clock() - time;
 
   // output running time:
@@ -3024,35 +2990,34 @@ public: // construction and destruction:
   inline void set(InputIterator begin,InputIterator end) {
     clear();
     insert(begin,end);
-    update();
   }
 
-  void update();
-
 public: // predicates and accessors:
-  inline bool is_empty() const;
+  inline bool is_empty();
 
-  inline const Result& radius() const;
+  inline const Result& radius();
 
-  inline Coordinate_iterator center_begin() const;
+  inline Coordinate_iterator center_begin();
 
-  inline const FT& discriminant() const;
+  inline const FT& discriminant();
 
-  inline Support_iterator support_begin() const;
+  inline Support_iterator support_begin();
 
-  inline Support_iterator support_end() const;
+  inline Support_iterator support_end();
 
   inline const Traits& traits() const {
     return t;
   }
 
 public: // validity check:
-  bool is_valid() const;
-  bool is_valid(const Tag_true is_exact) const;
-  bool is_valid(const Tag_false is_exact) const;
+  bool is_valid();
+  bool is_valid(const Tag_true is_exact);
+  bool is_valid(const Tag_false is_exact);
 
 private:
   bool pivot(int B);
+
+  void update();
   void update(LP_algorithm);
   void update(Farthest_first_heuristic);
 
@@ -3277,7 +3242,7 @@ Consequently, we start like this:\par\medskip
 @$@<routine is_valid() (validity check)@>==@{@-
 template<class Traits>
 bool Min_sphere_of_spheres_d<Traits>::
-  is_valid(const Tag_false is_exact) const {
+  is_valid(const Tag_false is_exact) {
 @!##   #ifdef CGAL_MINIBALL_WARNINGS
 @!##   using namespace std;
 @!##   cerr << "Min_sphere_of_spheres_d::is_valid() not supported for inexact number types" << endl;
@@ -3287,7 +3252,7 @@ bool Min_sphere_of_spheres_d<Traits>::
 
 template<class Traits>
 bool Min_sphere_of_spheres_d<Traits>::
-  is_valid(const Tag_true is_exact) const {
+  is_valid(const Tag_true is_exact) {
   using namespace Min_sphere_of_spheres_d_impl;
   using std::cerr;
   using std::endl;
@@ -3737,7 +3702,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   }
 
   template<class Traits>
-  bool Min_sphere_of_spheres_d<Traits>::is_empty() const {
+  bool Min_sphere_of_spheres_d<Traits>::is_empty() {
     if (!is_up_to_date)
       update();
     return is_neg(ss.radius(),ss.disc());
@@ -3745,22 +3710,28 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
   template<class Traits>
   const typename Min_sphere_of_spheres_d<Traits>::Result&
-    Min_sphere_of_spheres_d<Traits>::radius() const {
-    CGAL_MINIBALL_ASSERT(is_up_to_date && !is_empty());
+    Min_sphere_of_spheres_d<Traits>::radius() {
+    if (!is_up_to_date)
+      update();
+    CGAL_MINIBALL_ASSERT(!is_empty());
     return ss.radius();
   }
 
   template<class Traits>
   typename Min_sphere_of_spheres_d<Traits>::Coordinate_iterator
-    Min_sphere_of_spheres_d<Traits>::center_begin() const {
-    CGAL_MINIBALL_ASSERT(is_up_to_date && !is_empty());
+    Min_sphere_of_spheres_d<Traits>::center_begin() {
+    if (!is_up_to_date)
+      update();
+    CGAL_MINIBALL_ASSERT(!is_empty());
     return ss.begin();
   }
 
   template<class Traits>
   const typename Min_sphere_of_spheres_d<Traits>::FT&
-    Min_sphere_of_spheres_d<Traits>::discriminant() const {
-    CGAL_MINIBALL_ASSERT(is_up_to_date && !is_empty());
+    Min_sphere_of_spheres_d<Traits>::discriminant() {
+    if (!is_up_to_date)
+      update();
+    CGAL_MINIBALL_ASSERT(!is_empty());
     return ss.disc();
   }
 
@@ -3772,7 +3743,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   }
 
   template<class Traits>
-  inline bool Min_sphere_of_spheres_d<Traits>::is_valid() const {
+  inline bool Min_sphere_of_spheres_d<Traits>::is_valid() {
     if (!is_up_to_date)
       update();
     return is_valid(Is_exact());
@@ -3780,7 +3751,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
   template<class Traits>
   inline typename Min_sphere_of_spheres_d<Traits>::Support_iterator
-    Min_sphere_of_spheres_d<Traits>::support_begin() const {
+    Min_sphere_of_spheres_d<Traits>::support_begin() {
     if (!is_up_to_date)
       update();
     return Support_iterator(l.begin());
@@ -3788,7 +3759,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
   template<class Traits>
   inline typename Min_sphere_of_spheres_d<Traits>::Support_iterator
-    Min_sphere_of_spheres_d<Traits>::support_end() const {
+    Min_sphere_of_spheres_d<Traits>::support_end() {
     if (!is_up_to_date)
       update();
     return Support_iterator(l.begin()+e);

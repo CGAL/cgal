@@ -165,35 +165,34 @@ namespace CGAL_MINIBALL_NAMESPACE {
     inline void set(InputIterator begin,InputIterator end) {
       clear();
       insert(begin,end);
-      update();
     }
   
-    void update();
-  
   public: // predicates and accessors:
-    inline bool is_empty() const;
+    inline bool is_empty();
   
-    inline const Result& radius() const;
+    inline const Result& radius();
   
-    inline Coordinate_iterator center_begin() const;
+    inline Coordinate_iterator center_begin();
   
-    inline const FT& discriminant() const;
+    inline const FT& discriminant();
   
-    inline Support_iterator support_begin() const;
+    inline Support_iterator support_begin();
   
-    inline Support_iterator support_end() const;
+    inline Support_iterator support_end();
   
     inline const Traits& traits() const {
       return t;
     }
   
   public: // validity check:
-    bool is_valid() const;
-    bool is_valid(const Tag_true is_exact) const;
-    bool is_valid(const Tag_false is_exact) const;
+    bool is_valid();
+    bool is_valid(const Tag_true is_exact);
+    bool is_valid(const Tag_false is_exact);
   
   private:
     bool pivot(int B);
+  
+    void update();
     void update(LP_algorithm);
     void update(Farthest_first_heuristic);
   
@@ -247,7 +246,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   }
 
   template<class Traits>
-  bool Min_sphere_of_spheres_d<Traits>::is_empty() const {
+  bool Min_sphere_of_spheres_d<Traits>::is_empty() {
     if (!is_up_to_date)
       update();
     return is_neg(ss.radius(),ss.disc());
@@ -255,22 +254,28 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
   template<class Traits>
   const typename Min_sphere_of_spheres_d<Traits>::Result&
-    Min_sphere_of_spheres_d<Traits>::radius() const {
-    CGAL_MINIBALL_ASSERT(is_up_to_date && !is_empty());
+    Min_sphere_of_spheres_d<Traits>::radius() {
+    if (!is_up_to_date)
+      update();
+    CGAL_MINIBALL_ASSERT(!is_empty());
     return ss.radius();
   }
 
   template<class Traits>
   typename Min_sphere_of_spheres_d<Traits>::Coordinate_iterator
-    Min_sphere_of_spheres_d<Traits>::center_begin() const {
-    CGAL_MINIBALL_ASSERT(is_up_to_date && !is_empty());
+    Min_sphere_of_spheres_d<Traits>::center_begin() {
+    if (!is_up_to_date)
+      update();
+    CGAL_MINIBALL_ASSERT(!is_empty());
     return ss.begin();
   }
 
   template<class Traits>
   const typename Min_sphere_of_spheres_d<Traits>::FT&
-    Min_sphere_of_spheres_d<Traits>::discriminant() const {
-    CGAL_MINIBALL_ASSERT(is_up_to_date && !is_empty());
+    Min_sphere_of_spheres_d<Traits>::discriminant() {
+    if (!is_up_to_date)
+      update();
+    CGAL_MINIBALL_ASSERT(!is_empty());
     return ss.disc();
   }
 
@@ -281,7 +286,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   }
 
   template<class Traits>
-  inline bool Min_sphere_of_spheres_d<Traits>::is_valid() const {
+  inline bool Min_sphere_of_spheres_d<Traits>::is_valid() {
     if (!is_up_to_date)
       update();
     return is_valid(Is_exact());
@@ -289,7 +294,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
   template<class Traits>
   inline typename Min_sphere_of_spheres_d<Traits>::Support_iterator
-    Min_sphere_of_spheres_d<Traits>::support_begin() const {
+    Min_sphere_of_spheres_d<Traits>::support_begin() {
     if (!is_up_to_date)
       update();
     return Support_iterator(l.begin());
@@ -297,7 +302,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
   template<class Traits>
   inline typename Min_sphere_of_spheres_d<Traits>::Support_iterator
-    Min_sphere_of_spheres_d<Traits>::support_end() const {
+    Min_sphere_of_spheres_d<Traits>::support_end() {
     if (!is_up_to_date)
       update();
     return Support_iterator(l.begin()+e);

@@ -33,23 +33,21 @@ and if their boundaries intersect.)  In general, the support set is
 not unique.
 
 The algorithm computes the center and the radius of $ms(S)$, and finds
-a support set $R$ (which remains fixed until the next \ccc{update()}
-operation).  We also provide a specialization of the algorithm for the
-case when the center coordinates and radii of the input spheres are
-floating-point numbers.  This specialized algorithm uses
-floating-point arithmetic only, is very fast and especially tuned for
-stability and robustness.  Still, it's output may be incorrect in some
-(rare) cases; termination is guaranteed.
+a support set $R$ (which remains fixed until the next \ccc{insert()},
+\ccc{clear()} or \ccc{set()} operation).  We also provide a
+specialization of the algorithm for the case when the center
+coordinates and radii of the input spheres are floating-point numbers.
+This specialized algorithm uses floating-point arithmetic only, is
+very fast and especially tuned for stability and robustness.  Still,
+it's output may be incorrect in some (rare) cases; termination is
+guaranteed.
 
 When default constructed, an instance of type
 \ccc{Min_sphere_of_spheres_d<Traits>} represents the set
 $S=\emptyset$, together with its minsphere $ms(S)=\emptyset$.  You can
-add spheres to the set $S$ by calling \ccc{insert()}.  Once you have
-``checked in'' all your spheres, you call \ccc{update()} to actually
-compute the minsphere.  The instance is called \emph{up-to-date} if
-and only if the minsphere of the inserted spheres $S$ has been
-computed (e.g.\ if \ccc{update()} has been called after an
-\ccc{insert()}).
+add spheres to the set $S$ by calling \ccc{insert()}.  Querying the
+minsphere is done by calling the routines \ccc{is_empty()},
+\ccc{radius()} and \ccc{center_begin()}, among others.
 
 In general, the radius and the Euclidean center coordinates of $ms(S)$
 need not be rational.  Consequently, the algorithm computing the exact
@@ -124,8 +122,7 @@ to access the center coordinates of the minsphere.}
 {creates a variable of type \ccRefName\ and initializes it to
   $ms(\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}})$.  If the traits
   parameter is not supplied, the class \ccc{Traits} must provide a
-  default constructor.
-  \ccPostcond \ccVar\ is up-to-date.}
+  default constructor.}
 
 \ccUnchecked
 \ccConstructor{ template < typename InputIterator >
@@ -137,10 +134,6 @@ to access the center coordinates of the minsphere.}
                                    \ccRefName\ and inserts (cf.\ 
                                    \ccc{insert()}) the spheres from
                                    the range [\ccc{first},\ccc{last}).
-                                   After this call \ccVar\ is not
-                                   up-to-date, so you will have to
-                                   call \ccc{update()} in order to
-                                   actually compute $ms(S)$.
 %
 \ccRequire The value type of \ccc{first} and \ccc{last} is
 \ccc{Sphere}. If the traits parameter is not supplied, the class
@@ -155,14 +148,10 @@ referenced spheres must not change.)}
 \ccIndexMemberFunctionGroup{access}
 
 \ccMemberFunction{ Support_iterator support_begin() const;}{ returns
-  an iterator referring to the first support sphere of \ccVar.  If
-  \ccVar\ is not up-to-date, then \ccc{update()} is called internally
-  before returning the iterator.}
+  an iterator referring to the first support sphere of \ccVar.}
 %
 \ccMemberFunction{ Support_iterator support_end() const;}{ returns the
-  corresponding past-the-end iterator.  If \ccVar\ is not up-to-date,
-  then \ccc{update()} is called internally before returning the
-  iterator.}
+  corresponding past-the-end iterator.}
 
 
 \ccMemberFunction{ const FT& discriminant( ) const;}{ returns the
@@ -170,8 +159,8 @@ referenced spheres must not change.)}
   an inexact number type.  When \ccc{FT} is exact, the center
   coordinates and the radius of the minsphere are numbers of the form
   $a+b\sqrt{t}$, where $t$ is the discriminant of the minsphere as
-  returned by this function.  \ccPrecond \ccVar\ is up-to-date and not
-  empty, and \ccc{FT} is an exact number type.}
+  returned by this function.  \ccPrecond \ccVar\ is not empty, and
+  \ccc{FT} is an exact number type.}
 
 
 \ccMemberFunction{Result radius( ) const;}{ returns the radius of
@@ -179,7 +168,7 @@ referenced spheres must not change.)}
   minsphere is the real number $a+b\sqrt{t}$, where $t$ is the
   minsphere's discriminant, $a$ is the first and $b$ the second
   component of the pair returned by \ccc{radius()}.  \ccPrecond
-  \ccVar\ is up-to-date and not empty.}
+  \ccVar\ is not empty.}
 
 \ccMemberFunction{Coordinate_iterator center_begin( ) const;}{ returns
   a const-iterator to the first of the \ccc{Traits::D} center
@@ -187,17 +176,14 @@ referenced spheres must not change.)}
   \ccc{Result}.  If \ccc{FT} is an exact number type, then a center
   coordinate is represented by a pair $(a,b)$ describing the real
   number $a+b\sqrt{t}$, where $t$ is the minsphere's discriminant (cf.
-  \ccc{discriminant()}).  \ccPrecond \ccVar\ is up-to-date and not
-  empty.}
+  \ccc{discriminant()}).  \ccPrecond \ccVar\ is not empty.}
 
 % -----------------------------------------------------------------------------
 \ccPredicates
 \ccIndexMemberFunctionGroup{predicates}
 
 \ccMemberFunction{ bool is_empty( ) const;}{ returns \ccc{true}, iff
-  \ccVar\ is empty, i.e.\ iff $ms(S)=\emptyset$.  If \ccVar\ is not
-  up-to-date, then \ccc{update()} is called before the emptiness
-  check.}
+  \ccVar\ is empty, i.e.\ iff $ms(S)=\emptyset$.}
 
 %\ccIndexSubitem[t]{degeneracies}{\ccFont Min_sphere_d}
 %\ccMemberFunction{ bool  is_degenerate( ) const;}{
@@ -210,24 +196,21 @@ referenced spheres must not change.)}
 \ccIndexMemberFunctionGroup{modifiers}
 
 \ccMemberFunction{ void clear ();}{
-        resets \ccVar\ to $ms(\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}})$, with $S:= \emptyset$.
-\ccPostcond \ccVar\ is up-to-date.}
+        resets \ccVar\ to $ms(\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}})$, with $S:= \emptyset$.}
 
 \ccUnchecked \ccMemberFunction{ template < class InputIterator > void
   set( InputIterator first, InputIterator last );}{ sets \ccVar\ to
   the $ms(S)$, where $S$ is the set of spheres in the range
-  [\ccc{first},\ccc{last}), and calls \ccc{update()} internally.
+  [\ccc{first},\ccc{last}).
   \ccRequire The value type of \ccc{first} and \ccc{last} is
   \ccc{Sphere}.  Furthermore, the spheres in the given range must not
   change during the lifetime of variable \ccVar.  (The algorithm uses
   pointers to the inserted spheres internally in order to save space
-  and time, and consequently, the referenced spheres must not change.)
-  \ccPostcond \ccVar\ is up-to-date.  }
+  and time, and consequently, the referenced spheres must not change.)}
 
 \ccMemberFunction{ void insert( const Sphere& s );}{ inserts the
-  sphere \ccc{s} into the set $S$ of instance \ccVar.  Notice that
-  \ccVar\ is not up-to-date after this call, so you will have to call
-  \ccc{update()} to actually compute $ms(S)$.  \ccRequire The sphere
+  sphere \ccc{s} into the set $S$ of instance \ccVar.
+  \ccRequire The sphere
   $s$ must not change during the lifetime of variable \ccVar.  (The
   algorithm uses pointers to the inserted spheres internally in order to
   save space and time, and consequently, the referenced spheres must
@@ -237,16 +220,12 @@ referenced spheres must not change.)}
 \ccMemberFunction{ template < class InputIterator > void insert(
   InputIterator first, InputIterator last );}{ inserts the spheres in
   the range [\ccc{first},\ccc{last}) into the set $S$ of instance
-  \ccVar.  Notice that \ccVar\ is not up-to-date after this call, so
-  you will have to call \ccc{update()} to actually compute $ms(S)$.
+  \ccVar.
   \ccRequire The value type of \ccc{first} and \ccc{last} is
   \ccc{Sphere}.  Furthermore, the spheres in the given range must not
   change during the lifetime of variable \ccVar.  (The algorithm uses
   pointers to the inserted spheres internally in order to save space and
   time, and consequently, the referenced spheres must not change.)}
-
-\ccMemberFunction{void update();}{computes $ms(S)$ and a support set of it.
-\ccPostcond \ccVar\ is up-to-date.}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Validity Check}
@@ -263,8 +242,7 @@ An object \ccVar\ is valid, iff
 %                                  int  level   = 0    ) const;}{
 \ccMemberFunction{ bool is_valid() const;}{ returns \ccc{true}, iff
   \ccVar\ is valid.  When \ccc{FT} is inexact, this routine always
-  returns \ccc{true}.  If \ccVar\ is not up-to-date, \ccc{update()} is
-  called before performing the validity check.}
+  returns \ccc{true}.}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Miscellaneous}
