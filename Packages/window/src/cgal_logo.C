@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/IO/cgal_logo.xpm
+// file          : src/cgal_logo.C
 // package       : window
 // revision      : $Revision$
 // revision_date : $Date$
@@ -19,14 +19,11 @@
 //
 // coordinator   : MPI, Saarbruecken 
 // ============================================================================
-#ifndef CGAL_LOGO_XPM
-#define CGAL_LOGO_XPM
-
 /* XPM */
 #if defined(__LEDA__) && (__LEDA__ > 400)
-static const char * cgal_logo[] = {
+const char * cgal_logo[] = {
 #else
-static char * cgal_logo[] = {
+char * cgal_logo[] = {
 #endif // __LEDA__
 "61 61 4 1",
 " 	c None",
@@ -95,4 +92,3 @@ static char * cgal_logo[] = {
 ".............................................................",
 "............................................................."};
 
-#endif // CGAL_LOGO_XPM

@@ -28,7 +28,7 @@
 
 #include <CGAL/IO/Color.h>
 #include <LEDA/window.h>
-#include <CGAL/IO/cgal_logo.xpm>
+#include <CGAL/IO/cgal_logo.h>
 
 
 CGAL_BEGIN_NAMESPACE
