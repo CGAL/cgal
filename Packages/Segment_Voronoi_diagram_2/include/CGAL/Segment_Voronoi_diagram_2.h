@@ -233,7 +233,7 @@ protected:
 
   typedef typename Vertex_base::Storage_site_2  Storage_site_2;
 
-  // the in place edge list
+  // the edge list
   typedef typename CGALi::SVD_which_list<Edge,List_tag>::List  List;
 
 public:
