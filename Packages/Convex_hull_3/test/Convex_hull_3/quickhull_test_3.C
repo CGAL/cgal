@@ -51,6 +51,23 @@ void test_tetrahedron_convexity()
     assert( CGAL::is_strongly_convex_3(P) );
 }
 
+void test_triangle_convexity()
+{
+    Polyhedron_3 P;
+
+    P.make_triangle( Point_3(1,0,0),
+                     Point_3(-1,1,0),
+                     Point_3(0,0,1));
+
+    for( Polyhedron_3::Facet_iterator f = P.facets_begin();
+         f != P.facets_end(); ++f )
+    {
+        CGAL::compute_plane_equation(f);
+    }
+
+    assert( CGAL::is_strongly_convex_3(P) );
+}
+
 void test_small_hull()
 {
   std::vector<Point_3> points;
@@ -76,8 +93,13 @@ void test_small_hull()
 
 int main()
 {
+  std::cerr << "Testing triangle" << std::endl;
+  test_triangle_convexity();
+  std::cerr << "Testing tetrahedron" << std::endl;
   test_tetrahedron_convexity();
+  std::cerr << "Testing small hull" << std::endl;
   test_small_hull();
+
   std::vector<Point_3> points;
   Generator g(500);
   CGAL::copy_n( g, num, std::back_inserter(points));

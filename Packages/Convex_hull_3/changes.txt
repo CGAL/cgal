@@ -1,3 +1,7 @@
+2.31    (26 Nov 2001)
+- made convexity test work for the case when the polyhedron is a single
+  triangular face
+
 2.30    (26 Nov 2001)
 - fixed convexity testing so a tetrahedron now correctly passes the test
 
