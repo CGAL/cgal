@@ -247,7 +247,7 @@ std::istream& operator >>(std::istream& i, Real& x)
   delete [] str;
   return i;
 }//operator >> (std::istream&, Real&)
-
+/*
 //  stream : This function is common to all Realbase_for<> types.
 template <class T>
 std::ostream& Realbase_for<T>::operator <<(std::ostream& o) const
@@ -255,7 +255,8 @@ std::ostream& Realbase_for<T>::operator <<(std::ostream& o) const
   o << ker;
   return o;
 }
-
+*/
+#if 0
 //  constructor for RealLong
 template<>
 Realbase_for<long>::Realbase_for(const long &l)
@@ -319,5 +320,7 @@ Realbase_for<BigRat>::Realbase_for(const BigRat& R) : ker(R)
        mostSignificantBit = mostSignificantBit - 1;
   */
 }
+
+#endif
 
 CORE_END_NAMESPACE
