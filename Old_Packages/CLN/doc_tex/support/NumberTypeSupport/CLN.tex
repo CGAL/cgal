@@ -1,30 +1,28 @@
-% CLN documentation.
-%   $Revision$
-%   $Date$
+\section{Number Types Provided by {\sc Cln}}
+\label{CLN}
 
-\begin{ccClass} {CLN}  % Should not be a class, but a section ?
-\ccSubsection{Number Types Provided by CLN}
-\label{cln}
-\ccChapterAuthor{Sylvain Pion}
+% \ccChapterAuthor{Sylvain Pion}
 
-{\cgal} provides the necessary functions so that the user can directly use
-all the ordinary  number types provided by the CLN library (Class Library for
-Numbers) which is available together with documentation at
-http://clisp.cons.org/\~haible/packages-cln.html. % put a \ref{} instead ?
+\cgal\ defines the functions needed to use the number types provided by
+{\sc Cln}, the Class Library for Numbers~\cite{cln}.
+To use {\sc Cln} with \cgal, just~:
 
-To use it with {\cgal}, just add the desired include directive to your code
-(see below), and add the compilation options corresponding to CLN (-I...,
--L..., -lcln).
+\begin{itemize}
+\item add the desired compilation options, e.g.
+      \mbox{\ccc{-I/usr/local/CLN/include -L/usr/local/CLN/lib -lcln}}.
+\item include the corresponding {\sc Cln} file but with the prefix
+\ccc{CGAL/}.
+\end{itemize}
 
 \ccInclude{CGAL/cl_integer.h}
 
-The \ccc{cl_I} class: exact (multiprecision) integers.
+The class \ccc{cl_I}~: exact multiprecision integers.
 
 \ccInclude{CGAL/cl_rational.h}
 
-The \ccc{cl_RA} class: exact rationals.
+The class \ccc{cl_RA}~: exact multiprecision rationals.
 
-And similarly for the 10 ordinary number types classes defined by CLN:
+And similarly for the 10 ordinary number type classes provided by {\sc Cln}~:
 \ccc{cl_SF, cl_FF, cl_DF, cl_LF, cl_I, cl_RA, cl_F, cl_R, cl_N, cl_number}.
 
-\end{ccClass}
+See the {\sc Cln} documentation for additionnal details.
