@@ -30,6 +30,7 @@
 <img border=0 src="./sphere.gif" align=center>
 <img border=0 src="./grille.gif" align=center>
 \end{ccHtmlOnly}
+
 The basic 3D-triangulation class of \cgal\ is primarily designed to
 represent the triangulations of a set of points $A$ in $\R^3$.  It is
 a partition of the convex hull of {$A$} into tetrahedra whose vertices
@@ -214,7 +215,7 @@ the functionalities described for the concepts
 \ccc{TriangulationTraits_3}\lcTex{
 (\ccRefPage{TriangulationTraits_3})},
 \ccc{DelaunayTriangulationTraits_3}\lcTex{
-(\ccRefPage{DelaunayTriangulationTraits_3})}and
+(\ccRefPage{DelaunayTriangulationTraits_3})} and
 \ccc{TriangulationHierarchyTraits_3}\lcTex{
 (\ccRefPage{TriangulationHierarchyTraits_3})}.
 So, any of them can be used as a default traits
@@ -232,8 +233,8 @@ by \cgal, a class must provide definitions for the \textit{power tests}.
 provided by the class, which derives from the \cgal\ three dimensional
 point class. It supplies
 the user with all the functionalities 
-described for the concept \ccc{TriangulationTraits_3}\lcTex{
-(\ccRefPage{TriangulationTraits_3})}. 
+described for the concept \ccc{RegularTriangulationTraits_3}\lcTex{
+(\ccRefPage{RegularTriangulationTraits_3})}. 
  It can be used as a default traits
 class for \ccc{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>}.
 
@@ -272,7 +273,7 @@ and
 (\ccRefPage{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>})}.
 
 The requirements and default for the triangulation data structure are
-described in Chapter~/ref{chapter-TDS3}. However, a default parameter
+described in Chapter~\ref{chapter-TDS3}. However, a default parameter
 is defined in \ccc{Triangulation_3}, so that the user who 
 has no additional needs can use
 \ccc{Triangulation_3<TriangulationTraits_3>} without specifying the 
