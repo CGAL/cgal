@@ -13,6 +13,7 @@ void usage(char* program)
   std::cerr << std::endl << "OPTIONS" << std::endl
 	    << "     -Delaunay      : display the underlying Delaunay triangulation" << std::endl
 	    << "     -contours      : display contours" << std::endl
+	    << "     -xyz           : input data in xyz format" << std::endl
 	    << "     -no_border -nb : set K = infinity" << std::endl
 	    << "     -delta x       : set the delta constant" << std::endl
 	    << "     -ki x y        : set the K interval (default : [1.1  5])" << std::endl
@@ -53,6 +54,12 @@ parse(int argc, char* argv[], Options &opt)
       argv++;
       argc--;
       std::cout << "-c ";
+    }
+    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-x")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-xyz"))) {
+      opt.xyz = true;
+      argv++;
+      argc--;
+      std::cout << "-x ";
     }
     else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-nb")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-no_border"))) {
       opt.K = HUGE_VAL;

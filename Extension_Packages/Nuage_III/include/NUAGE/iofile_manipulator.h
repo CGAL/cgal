@@ -36,7 +36,7 @@ file_output(char* foutput, std::vector<Point>& L) // to debug...
 //---------------------------------------------------------------------
 
 bool
-file_input(char* finput, const int& number_of_points, std::vector<Point>& L)
+file_input(char* finput, const int& number_of_points, std::vector<Point>& L, bool xyz)
 {
   std::ifstream is(finput, std::ios::in);
 
@@ -57,11 +57,20 @@ file_input(char* finput, const int& number_of_points, std::vector<Point>& L)
   CGAL::set_ascii_mode(is);
 
   int n;
-  is >> n;
-  std::cout << "   reading " << n << " points" << std::endl;
-
-  L.reserve(n);
-  CGAL::copy_n(std::istream_iterator<Point>(is), n, std::back_inserter(L));
+  if(! xyz){
+    is >> n;
+    std::cout << "   reading " << n << " points" << std::endl;
+    L.reserve(n);
+    CGAL::copy_n(std::istream_iterator<Point>(is), n, std::back_inserter(L));
+  } else {
+    // we do not know beforehand how many points we will read
+    std::istream_iterator<Point> it(is), eof;
+    while(it!= eof){
+      L.push_back(*it);
+      it++;
+    }
+    n = L.size();
+  }
 
   std::cout << "   random shuffling" << std::endl;
   std::random_shuffle(L.begin(), L.end());
