@@ -196,6 +196,76 @@ squared_distance_to_line(const typename CGAL_WRAP(K)::Vector_3 & dir,
 			      (K*)0, RT(wdot(dir, dir, k)), diff.hw(), diff.hw()));
 }
 
+
+template <class K>
+inline
+bool
+same_direction_tag(const typename CGAL_WRAP(K)::Vector_3 &u,
+		   const typename CGAL_WRAP(K)::Vector_3 &v,
+		   const K& k,
+		   const Cartesian_tag&)
+{ 
+  typedef typename K::FT FT;
+  const FT& ux = u.x();
+  const FT& uy = u.y();
+  const FT& uz = u.z();
+  if (CGAL_NTS abs(ux) > CGAL_NTS abs(uy)) {
+    if (CGAL_NTS abs(ux) > CGAL_NTS abs(uz)) {
+      return CGAL_NTS sign(ux) == CGAL_NTS sign(v.x());
+    } else {
+      return CGAL_NTS sign(uz) == CGAL_NTS sign(v.z());
+    }
+  } else {
+    if (CGAL_NTS abs(uy) > CGAL_NTS abs(uz)) {
+      return CGAL_NTS sign(uy) == CGAL_NTS sign(v.y());
+    } else {
+      return CGAL_NTS sign(uz) == CGAL_NTS sign(v.z());
+    }
+  } 
+}
+
+
+template <class K>
+inline
+bool
+same_direction_tag(const typename CGAL_WRAP(K)::Vector_3 &u,
+		   const typename CGAL_WRAP(K)::Vector_3 &v,
+		   const K& k,
+		   const Homogeneous_tag&)
+{   
+  typedef typename K::RT RT;
+  const RT& uhx = u.hx();
+  const RT& uhy = u.hy();
+  const RT& uhz = u.hz();
+  if (CGAL_NTS abs(uhx) > CGAL_NTS abs(uhy)) {
+    if (CGAL_NTS abs(uhx) > CGAL_NTS abs(uhz)) {
+      return CGAL_NTS sign(uhx) == CGAL_NTS sign(v.hx());
+    } else {
+      return CGAL_NTS sign(uhz) == CGAL_NTS sign(v.hz());
+    }
+  } else {
+    if (CGAL_NTS abs(uhy) > CGAL_NTS abs(uhz)) {
+      return CGAL_NTS sign(uhy) == CGAL_NTS sign(v.hy());
+    } else {
+      return CGAL_NTS sign(uhz) == CGAL_NTS sign(v.hz());
+    }
+  }
+}
+
+
+template <class K>
+inline
+bool
+same_direction(const typename CGAL_WRAP(K)::Vector_3 &u,
+	       const typename CGAL_WRAP(K)::Vector_3 &v,
+	       const K& k)
+{  
+  typedef typename K::Kernel_tag Tag;
+  Tag tag;
+  return same_direction_tag(u, v, k, tag);
+}
+
+
 } // namespace CGALi
 
 template <class K>

@@ -45,9 +45,9 @@ squared_distance(
     const K& k)
 {
   typedef typename K::Vector_3 Vector_3;
-
+  typename K::Construct_vector_3 construct_vector;
   Vector_3 dir(line.direction().vector());
-  Vector_3 diff = pt - line.point();
+  Vector_3 diff = construct_vector(line.point(), pt);
   return CGALi::squared_distance_to_line(dir, diff, k);
 }
 
@@ -71,9 +71,10 @@ squared_distance(
     const typename CGAL_WRAP(K)::Ray_3 &ray,
     const K& k)
 {
+  typename K::Construct_vector_3 construct_vector;
   typedef typename K::Vector_3 Vector_3;
 
-    Vector_3 diff = pt-ray.start();
+    Vector_3 diff = construct_vector(ray.start(), pt);
     const Vector_3 &dir = ray.direction().vector();
     if (!is_acute_angle(dir,diff, k) )
         return (typename K::FT)(diff*diff);
@@ -93,26 +94,72 @@ squared_distance(
 }
 
 
+
+
 template <class K>
 typename K::FT
 squared_distance(
     const typename CGAL_WRAP(K)::Point_3 &pt,
     const typename CGAL_WRAP(K)::Segment_3 &seg,
-    const K& k)
+    const K& k,
+    const Homogeneous_tag)
 {
-  typedef typename K::Vector_3 Vector_3;
+    typename K::Construct_vector_3 construct_vector;
+    typedef typename K::Vector_3 Vector_3;
     typedef typename K::RT RT;
     typedef typename K::FT FT;
     // assert that the segment is valid (non zero length).
-    Vector_3 diff = pt-seg.start();
-    Vector_3 segvec = seg.end()-seg.start();
+    Vector_3 diff = construct_vector(seg.start(), pt);
+    Vector_3 segvec = construct_vector(seg.start(), seg.end());
     RT d = wdot(diff,segvec, k);
     if (d <= (RT)0)
         return (FT(diff*diff));
     RT e = wdot(segvec,segvec, k);
-    if (wmult((K*)0 ,d, segvec.hw()) > wmult((K*)0, e, diff.hw()))
+    if ( (d * segvec.hw()) > (e * diff.hw()))
         return squared_distance(pt, seg.end(), k);
-    return squared_distance_to_line(segvec, diff, k);
+
+    Vector_3 wcr = wcross(segvec, diff, k);
+    return FT(wcr*wcr)/FT(e * diff.hw() * diff.hw());
+}
+
+template <class K>
+typename K::FT
+squared_distance(
+    const typename CGAL_WRAP(K)::Point_3 &pt,
+    const typename CGAL_WRAP(K)::Segment_3 &seg,
+    const K& k,
+    const Cartesian_tag&)
+{
+    typename K::Construct_vector_3 construct_vector;
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename K::RT RT;
+    typedef typename K::FT FT;
+    // assert that the segment is valid (non zero length).
+    Vector_3 diff = construct_vector(seg.start(), pt);
+    Vector_3 segvec = construct_vector(seg.start(), seg.end());
+    RT d = wdot(diff,segvec, k);
+    if (d <= (RT)0)
+        return (FT(diff*diff));
+    RT e = wdot(segvec,segvec, k);
+    if (d > e)
+        return squared_distance(pt, seg.end(), k);
+
+    Vector_3 wcr = wcross(segvec, diff, k);
+    return FT(wcr*wcr)/e;
+}
+
+
+template <class K>
+inline
+typename K::FT
+squared_distance(
+    const typename CGAL_WRAP(K)::Point_3 &pt,
+    const typename CGAL_WRAP(K)::Segment_3 &seg,
+    const K& k)
+{ 
+  typedef typename K::Kernel_tag Tag;
+  Tag tag;
+  return squared_distance(pt, seg, k, tag);
 }
 
 
@@ -135,30 +182,13 @@ typename K::FT
 squared_distance_parallel(
     const typename CGAL_WRAP(K)::Segment_3 &seg1,
     const typename CGAL_WRAP(K)::Segment_3 &seg2,
-    const K k)
+    const K& k)
 {
   typedef typename K::Vector_3 Vector_3;
-    bool same_direction;
     const Vector_3 &dir1 = seg1.direction().vector();
     const Vector_3 &dir2 = seg2.direction().vector();
-    if (CGAL_NTS abs(dir1.hx()) > CGAL_NTS abs(dir1.hy())) {
-        if (CGAL_NTS abs(dir1.hx()) > CGAL_NTS abs(dir1.hz())) {
-            same_direction =
-                (CGAL_NTS sign(dir1.hx()) == CGAL_NTS sign(dir2.hx()));
-        } else {
-            same_direction =
-                (CGAL_NTS sign(dir1.hz()) == CGAL_NTS sign(dir2.hz()));
-        }
-    } else {
-        if (CGAL_NTS abs(dir1.hy()) > CGAL_NTS abs(dir1.hz())) {
-            same_direction =
-                (CGAL_NTS sign(dir1.hy()) == CGAL_NTS sign(dir2.hy()));
-        } else {
-            same_direction =
-                (CGAL_NTS sign(dir1.hz()) == CGAL_NTS sign(dir2.hz()));
-        }
-    }
-    if (same_direction) {
+ 
+    if (same_direction(dir1, dir2, k)) {
         if (!is_acute_angle(seg1.start(), seg1.end(), seg2.start(), k))
             return squared_distance(seg1.end(), seg2.start(), k);
         if (!is_acute_angle(seg1.end(), seg1.start(), seg2.end(), k))
@@ -194,8 +224,9 @@ squared_distance(
     const typename CGAL_WRAP(K)::Segment_3 &seg2,
     const K& k)
 {
-  typedef typename K::Vector_3 Vector_3;
-  typedef typename K::Point_3 Point_3;
+    typename K::Construct_vector_3 construct_vector;
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename K::Point_3 Point_3;
     typedef typename K::RT RT;
     typedef typename K::FT FT;
     const Point_3 &start1 = seg1.start();
@@ -203,13 +234,11 @@ squared_distance(
     const Point_3 &end1 = seg1.end();
     const Point_3 &end2 = seg2.end();
 
-    //    std::cout << "A" << std::endl;
     if (start1 == end1)
         return squared_distance(start1, seg2, k);
     if (start2 == end2)
         return squared_distance(start2, seg1, k);
     
-    //    std::cout << "B" << std::endl;
     Vector_3 dir1, dir2, normal;
     dir1 = seg1.direction().vector();
     dir2 = seg2.direction().vector();
@@ -217,15 +246,14 @@ squared_distance(
     if (is_null(normal, k))
         return squared_distance_parallel(seg1, seg2, k);
     
-    //    std::cout << "C" << std::endl;
     bool crossing1, crossing2;
     RT sdm_s1to2, sdm_e1to2, sdm_s2to1, sdm_e2to1;
     Vector_3 perpend1, perpend2, s2mins1, e2mins1, e1mins2;
     perpend1 = wcross(dir1, normal, k);
     perpend2 = wcross(dir2, normal, k);
-    s2mins1 = start2-start1;
-    e2mins1 = end2-start1;
-    e1mins2 = end1-start2;
+    s2mins1 = construct_vector(start1, start2);
+    e2mins1 = construct_vector(start1, end2);
+    e1mins2 = construct_vector(start2, end1);
     sdm_s1to2 = -RT(wdot(perpend2, s2mins1, k));
     sdm_e1to2 = wdot(perpend2, e1mins2, k);
     sdm_s2to1 = wdot(perpend1, s2mins1, k);
@@ -251,9 +279,7 @@ squared_distance(
     }
     
     if (crossing1) {
-      //    std::cout << "crossing 1" << std::endl;
         if (crossing2) {
-	  //	      std::cout << "crossing 2" << std::endl;
             return squared_distance_to_plane(normal, s2mins1, k);
         }
     
@@ -261,39 +287,31 @@ squared_distance(
         dm = _distance_measure_sub(
                   sdm_s2to1, sdm_e2to1, s2mins1, e2mins1, k);
         if (dm < RT(0)) {
-	  //    std::cout << "X" << std::endl;
             return squared_distance(start2, seg1, k);
         } else {
             if (dm > RT(0)) {
-	      //    std::cout << "Y" << std::endl;
                 return squared_distance(end2, seg1, k);
             } else {
-	      //    std::cout << "Z" << std::endl;
                 // should not happen with exact arithmetic.
                 return squared_distance_parallel(seg1, seg2, k);
             }
         }
     } else {
         if (crossing2) {
-	  //    std::cout << "crossing 2" << std::endl;
             RT dm;
             dm =_distance_measure_sub(
                  sdm_s1to2, sdm_e1to2, s2mins1, e1mins2, k);
             if (dm < RT(0)) {
-	      //	      std::cout << "X1" << std::endl;
                 return squared_distance(start1, seg2, k);
             } else {
                 if (dm > RT(0)) {
-		  //    std::cout << "X2" << std::endl;
                     return squared_distance(end1, seg2, k);
                 } else {
-		  //    std::cout << "X3" << std::endl;
                     // should not happen with exact arithmetic.
                     return squared_distance_parallel(seg1, seg2, k);
                 }
             }
         } else {
-	  //    std::cout << "D" << std::endl;    
             FT min1, min2;
             RT dm;
             dm = _distance_measure_sub(
@@ -356,9 +374,9 @@ squared_distance(
     const typename CGAL_WRAP(K)::Ray_3 &ray,
     const K& k)
 {
-
-  typedef typename K::Point_3 Point_3;
-  typedef typename K::Vector_3 Vector_3;
+    typename K::Construct_vector_3 construct_vector;
+    typedef typename K::Point_3 Point_3;
+    typedef typename K::Vector_3 Vector_3;
     typedef typename K::RT RT;
     typedef typename K::FT FT;
     const Point_3 & ss = seg.start();
@@ -377,8 +395,8 @@ squared_distance(
     Vector_3 perpend2seg, perpend2ray, ss_min_rs, se_min_rs;
     perpend2seg = wcross(segdir, normal, k);
     perpend2ray = wcross(raydir, normal, k);
-    ss_min_rs = ss-ray.start();
-    se_min_rs = se-ray.start();
+    ss_min_rs = construct_vector(ray.start(), ss);
+    se_min_rs = construct_vector(ray.start(), se);
     sdm_ss2r = wdot(perpend2ray, ss_min_rs, k);
     sdm_se2r = wdot(perpend2ray, se_min_rs, k);
     if (sdm_ss2r < RT(0)) {
@@ -460,9 +478,9 @@ squared_distance(
     const typename CGAL_WRAP(K)::Line_3 &line,
     const K& k)
 {
-
-  typedef typename K::Vector_3 Vector_3;
-  typedef typename K::Point_3 Point_3;
+    typename K::Construct_vector_3 construct_vector;
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename K::Point_3 Point_3;
     typedef typename K::RT RT;
     const Point_3 &linepoint = line.point();
     const Point_3 &start = seg.start();
@@ -474,14 +492,15 @@ squared_distance(
     Vector_3 segdir = seg.direction().vector();
     Vector_3 normal = wcross(segdir, linedir, k);
     if (is_null(normal, k))
-        return squared_distance_to_line(linedir, start-linepoint, k);
+        return squared_distance_to_line(linedir, 
+					construct_vector(linepoint,start), k);
 
     bool crossing;
     RT sdm_ss2l, sdm_se2l;
     Vector_3 perpend2line, start_min_lp, end_min_lp;
     perpend2line = wcross(linedir, normal, k);
-    start_min_lp = start-linepoint;
-    end_min_lp = end-linepoint;
+    start_min_lp = construct_vector(linepoint, start);
+    end_min_lp = construct_vector(linepoint, end);
     sdm_ss2l = wdot(perpend2line, start_min_lp, k);
     sdm_se2l = wdot(perpend2line, end_min_lp, k);
     if (sdm_ss2l < RT(0)) {
@@ -532,23 +551,7 @@ ray_ray_squared_distance_parallel(
     const K& k)
 {
   if (!is_acute_angle(ray2dir, s1_min_s2, k)) {
-    bool same_direction;
-    if (CGAL_NTS abs(ray1dir.hx()) > CGAL_NTS abs(ray1dir.hy())) {
-      if (CGAL_NTS abs(ray1dir.hx()) > CGAL_NTS abs(ray1dir.hz()))
-	same_direction =
-	  (CGAL_NTS sign(ray1dir.hx()) == CGAL_NTS sign(ray2dir.hx()));
-      else
-	same_direction =
-	  (CGAL_NTS sign(ray1dir.hz()) == CGAL_NTS sign(ray2dir.hz()));
-    } else {
-      if (CGAL_NTS abs(ray1dir.hy()) > CGAL_NTS abs(ray1dir.hz()))
-	same_direction =
-	  (CGAL_NTS sign(ray1dir.hy()) == CGAL_NTS sign(ray2dir.hy()));
-      else
-	same_direction =
-	  (CGAL_NTS sign(ray1dir.hz()) == CGAL_NTS sign(ray2dir.hz()));
-    }
-    if (!same_direction)
+    if (!same_direction(ray1dir, ray2dir, k))
       return (typename K::FT)(s1_min_s2*s1_min_s2);
   }
   return squared_distance_to_line(ray1dir, s1_min_s2, k);
@@ -562,8 +565,9 @@ squared_distance(
     const typename CGAL_WRAP(K)::Ray_3 &ray2,
     const K& k)
 {
-  typedef typename K::Vector_3 Vector_3;
-  typedef typename K::Point_3 Point_3;
+  typename K::Construct_vector_3 construct_vector;
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename K::Point_3 Point_3;
     typedef typename K::RT RT;
     typedef typename K::FT FT;
     const Point_3 & s1 = ray1.start();
@@ -572,7 +576,7 @@ squared_distance(
     dir1 = ray1.direction().vector();
     dir2 = ray2.direction().vector();
     normal = wcross(dir1, dir2, k);
-    Vector_3 s1_min_s2 = s1-s2;
+    Vector_3 s1_min_s2 = construct_vector(s2, s1);
     if (is_null(normal, k))
         return ray_ray_squared_distance_parallel(dir1, dir2, s1_min_s2, k);
 
@@ -629,6 +633,7 @@ squared_distance(
     const typename CGAL_WRAP(K)::Ray_3 &ray,
     const K& k)
 {
+  typename K::Construct_vector_3 construct_vector;
   typedef typename K::Vector_3 Vector_3;
   typedef typename K::Point_3 Point_3;
     typedef typename K::RT RT;
@@ -637,7 +642,7 @@ squared_distance(
     linedir = line.direction().vector();
     raydir = ray.direction().vector();
     normal = wcross(raydir, linedir, k);
-    Vector_3 rs_min_lp = rs-line.point();
+    Vector_3 rs_min_lp = construct_vector(line.point(), rs);
     if (is_null(normal, k))
         return squared_distance_to_line(linedir, rs_min_lp, k);
 
@@ -683,14 +688,15 @@ squared_distance(
     const typename CGAL_WRAP(K)::Line_3 &line1,
     const typename CGAL_WRAP(K)::Line_3 &line2,
     const K& k)
-{
-  typedef typename K::Vector_3 Vector_3;
+{   
+  typename K::Construct_vector_3 construct_vector;
+    typedef typename K::Vector_3 Vector_3;
 
     Vector_3 dir1, dir2, normal, diff;
     dir1 = line1.direction().vector();
     dir2 = line2.direction().vector();
     normal = wcross(dir1, dir2, k);
-    diff = line2.point() - line1.point();
+    diff = construct_vector(line1.point(), line2.point());
     if (is_null(normal, k))
         return squared_distance_to_line(dir2, diff, k);
     return squared_distance_to_plane(normal, diff, k);

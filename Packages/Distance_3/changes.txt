@@ -1,3 +1,6 @@
+2.10 (10 September 2003)
+- Added specializations for Cartesian and homogeneous kernels [af]
+
 2.9 (04 September 2003) [af]
 - Simplified template parameter. As side effect we avoid an ICE of SunPro CC 5.4
 
