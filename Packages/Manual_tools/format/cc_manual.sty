@@ -960,6 +960,10 @@
 % | Support macros for HTML manual generation:
 % |
 % | \begin{ccTexOnly}..., \begin{ccHtmlOnly}..., \ccTexHtml{}{}, \ccAnchor{}{}
+% |
+% | \ccHtmlIndex, \ccHtmlIndexC, \ccHtmlCrossLink, 
+% | \ccHtmlNoClassLinks, \ccHtmlNoClassFile, \ccHtmlNoClassIndex
+% | \ccHtmlBeginClassFile, \ccHtmlEndClassFile
 % +--------------------------------------------------------------------------
 
 \newcommand{\ccHtmlCatcode}{%
@@ -987,12 +991,50 @@
 %  Take care: catcodes changes a lot here!!
 \begingroup
 \ccHtmlDefCatcode
-|gdef|ccParseHtmlOnlyBody #1\end{ccHtmlOnly}[%
+|long|gdef|ccParseHtmlOnlyBody #1\end{ccHtmlOnly}[%
   |csname endccHtmlOnly|endcsname|@checkend[ccHtmlOnly]%
   |expandafter|endgroup|if@endpe|@doendpe|fi
   |if@ignore|global|@ignorefalse|ignorespaces|fi
 ]
 |endgroup
+
+% Flexibility for HTML class files.
+% ---------------------------------
+
+\newcommand{\ccHtmlIndex}{%
+    \begingroup\ccCatcode
+    \ccHtmlIndexX
+}
+\newcommand{\ccHtmlIndexC}{%
+    \begingroup\ccCatcode
+    \ccHtmlIndexX
+}
+
+\def\ccHtmlIndexX #1{%
+    \endgroup
+    \isOptionalArg{#1}\ifnum\ccBool=\ccTrue \ccHtmlIndexXX
+    \fi
+}
+\def\ccHtmlIndexXX #1]#2{}
+
+\newcommand{\ccHtmlCrossLink}{%
+    \begingroup\ccCatcode
+    \ccHtmlCrossLinkX
+}
+\def\ccHtmlCrossLinkX #1{\endgroup}
+\newcommand{\ccHtmlNoClassLinks}{}
+\newcommand{\ccHtmlNoClassFile}{}
+\newcommand{\ccHtmlNoClassIndex}{}
+
+\newenvironment{ccHtmlClassFile}{%
+    \begingroup\ccCatcode
+    \ccHtmlClassFileX
+}{}
+\def\ccHtmlClassFileX #1{%
+    \endgroup\ccHtmlClassFileXX
+}
+\def\ccHtmlClassFileXX #1{}
+
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -1055,6 +1097,15 @@
     \ifx#1\_\ccBool=\ccTrue\else
         \if#1_\ccBool=\ccTrue \fi
     \fi}
+
+% Test for a leading underscore, either _ with changed catcode, or \_
+\def\isOptionalArg #1{%
+    \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse 
+        \else\isOptionalArgX #1\ccEnd\fi}
+\def\isOptionalArgX #1#2\ccEnd{%
+    \ccBool=\ccFalse
+    \if#1[\ccBool=\ccTrue\fi
+}
 
 % Test for a leading underscore, either _ with changed catcode, or \_,
 % or the / character. Used to validate the character after a prefix.
