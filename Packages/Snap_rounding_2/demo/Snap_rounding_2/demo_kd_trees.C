@@ -1,23 +1,13 @@
+#define KD_DEBUG
+
 #include <iostream>
-
-#ifndef CGAL_USE_LEDA
-int main()
-{
-
-  std::cout << "Sorry, this demo needs LEDA for visualisation.";
-  std::cout << std::endl;
-
-  return 0;
-}
-
-#else
-
 #include <fstream>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/Polygon_2.h>
+#include <CGAL/Timer.h>
 #include "../../include/CGAL/Snap_rounding_traits_2.h"
 #include "../../include/CGAL/Snap_rounding_2.h"
 
@@ -93,13 +83,18 @@ int main(int argc,char *argv[])
 
   read_data(argv,prec,seg_list);
 
-  CGAL::snap_rounding_2<Sr_traits,std::list<Segment_2>::const_iterator,
-    std::list<std::list<Point_2> > >
-    (seg_list.begin(),seg_list.end(),output_list,prec,true,false,5);
+  for(int i = 1;i < 11;++i) {
+    std::cout << " kd trees parameter is " << i << std::endl;
+    CGAL::Timer t;
+    t.start();
+    CGAL::snap_rounding_2<Sr_traits,std::list<Segment_2>::const_iterator,
+      std::list<std::list<Point_2> > >
+      (seg_list.begin(),seg_list.end(),output_list,prec,true,false,i);
+    t.stop();
+    std::cout << "*** time : " << t.time() << "\n\n";
+  }
 
   delete(is_ptr);
 
   return(0);
 }
-
-#endif
