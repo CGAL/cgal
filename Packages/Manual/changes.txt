@@ -1,3 +1,6 @@
+(7 Aug 2004) [mk]
+- fixed typos in the references added on Aug. 4th
+
 (4 Aug 2004) [mk]
 - added missing references for the Segment Voronoi diagram and Apollonius
   graph packages
