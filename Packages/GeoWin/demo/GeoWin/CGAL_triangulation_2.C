@@ -51,7 +51,6 @@ int main(int argc, char *argv[])
 #else 
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
@@ -60,12 +59,8 @@ typedef K::Point_2                   Point;
 typedef K::Segment_2                 Segment;
 typedef K::Ray_2                     Ray;
 
-typedef CGAL::Triangulation_euclidean_traits_2<K>              Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
-typedef CGAL::Triangulation_face_base_2<Gt>                    Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-typedef CGAL::Triangulation_2<Gt,Tds>                          Triangulation_2;
-typedef CGAL::Delaunay_triangulation_2<Gt,Tds>                 Delaunay_triangulation_2;
+typedef CGAL::Triangulation_2<K>            Triangulation_2;
+typedef CGAL::Delaunay_triangulation_2<K>   Delaunay_triangulation_2;
 
 typedef Triangulation_2::Edge Edge;
 typedef Triangulation_2::Edge_iterator  Edge_iterator;
