@@ -15,7 +15,9 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>
+// Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>,
+//                 Baruch Zukerman <baruchzu@post.tau.ac.il>
+
 #ifndef CGAL_SWEEP_LINE_SUBCURVE_H
 #define CGAL_SWEEP_LINE_SUBCURVE_H
 

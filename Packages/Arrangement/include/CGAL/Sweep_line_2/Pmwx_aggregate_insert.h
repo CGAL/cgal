@@ -15,7 +15,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>
+// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_PMWX_AGGREGATE_INSERT_H
 #define CGAL_PMWX_AGGREGATE_INSERT_H

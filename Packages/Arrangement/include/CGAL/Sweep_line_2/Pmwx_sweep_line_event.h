@@ -16,6 +16,8 @@
 // $Name$
 //
 // Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>
+//                 Baruch Zukerman <baruchzu@post.tau.ac.il>
+
 #ifndef CGAL_PMWX_SWEEP_LINE_EVENT_H
 #define CGAL_PMWX_SWEEP_LINE_EVENT_H
 
