@@ -13,7 +13,7 @@
 //
 // file          : examples/Optimisation/example_Min_circle_2.C
 // chapter       : $CGAL_Chapter: Geometric Optimisation $
-// package       : $CGAL_Package: Optimisation WIP $
+// package       : $CGAL_Package: Min_circle_2 WIP $
 
 // revision      : $Revision$
 // revision_date : $Date$
