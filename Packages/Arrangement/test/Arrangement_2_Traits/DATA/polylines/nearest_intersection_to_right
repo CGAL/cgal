@@ -61,6 +61,6 @@ nearest_intersection_to_right 3 4 0   5/1   5/1   5/1   5/1  TRUE.
 nearest_intersection_to_right 3 4 4   5/1   5/1   5/1   5/1  TRUE.
 nearest_intersection_to_right 3 3 4   0/1  10/1  10/1   0/1  TRUE.
 nearest_intersection_to_right 3 3 5   0/1  10/1  10/1   0/1  TRUE.
-nearest_intersection_to_right 3 5 5   0/1  10/1   0/1  10/1  TRUE.
-nearest_intersection_to_right 3 5 4   0/1  10/1   0/1  10/1  TRUE.
+nearest_intersection_to_right 3 5 5   0/1  10/1  10/1   0/1  TRUE.
+nearest_intersection_to_right 3 5 4   0/1  10/1  10/1   0/1  TRUE.
 nearest_intersection_to_right 3 5 0   5/1   5/1  10/1   0/1  TRUE. 

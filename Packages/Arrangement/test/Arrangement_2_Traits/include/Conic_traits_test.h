@@ -179,6 +179,18 @@ read_curve (std::ifstream & is, Curve & cv)
     // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
     str_line >> r >> s >> t >> u >> v >> w;
 
+    // Read the orientation.
+    int               i_orient;
+    CGAL::Orientation orient;
+    
+    str_line >> i_orient;
+    if (i_orient > 0)
+      orient = CGAL::COUNTERCLOCKWISE;
+    else if (i_orient < 0)
+      orient = CGAL::CLOCKWISE;
+    else
+      orient = CGAL::COLLINEAR;
+
     // Read the approximated source, along with a general conic 
     // <r_1,s_1,t_1,u_1,v_1,w_1> whose intersection with <r,s,t,u,v,w>
     // defines the source.
@@ -203,7 +215,7 @@ read_curve (std::ifstream & is, Curve & cv)
 
     // Create the conic arc.
     cv = Curve (r, s, t, u, v ,w,
-		CGAL::CLOCKWISE,
+		orient,
 		app_source, r1, s1, t1, u1, v1, w1,
 		app_target, r2, s2, t2, u2, v2, w2);
     return;
@@ -214,6 +226,18 @@ read_curve (std::ifstream & is, Curve & cv)
               << std::endl;
     return;
   }
+
+  // Read the orientation.
+  int               i_orient;
+  CGAL::Orientation orient;
+      
+  str_line >> i_orient;
+  if (i_orient > 0)
+    orient = CGAL::COUNTERCLOCKWISE;
+  else if (i_orient < 0)
+    orient = CGAL::CLOCKWISE;
+  else
+    orient = CGAL::COLLINEAR;
 
   // Read the end points of the arc and create it.
   double    x1, y1, x2, y2;
@@ -227,13 +251,13 @@ read_curve (std::ifstream & is, Curve & cv)
   if (is_circle)
   {
     cv = Curve (circle,
-                CGAL::CLOCKWISE,
+                orient,
 		source, target);
   }
   else
   {
     cv = Curve (r, s, t, u, v, w,
-                CGAL::CLOCKWISE,
+                orient,
 		source, target);
   }
  

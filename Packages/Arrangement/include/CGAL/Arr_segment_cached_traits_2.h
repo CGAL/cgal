@@ -597,11 +597,25 @@ public:
       // Notice that p1 < p2.
       if (compare_xy_2_object()(p1, p) == LARGER)
       {
+	// The entire segment p1 -> p2 is to the right of p:
 	return (true);
       }
       else if (compare_xy_2_object()(p2, p) == LARGER)
       {
-	p1 = p;
+	if (has_on_2_object() (cv1.line, p))
+	{
+	  // p is one the overlapping segment, return it as the first point.
+	  p1 = p;
+	}
+	else
+	{
+	  // Perform an upward ray-shooting from p to the overlapping segment
+	  // and make p1 the resulting point.
+	  _vertical_ray_shoot (p, cv1,
+			       true,          // Shoot upward.
+			       p1);
+	}
+
 	return (true);
       }
       return (false);
@@ -650,14 +664,28 @@ public:
     }
     else
     {
-      // Notice that ip1 < ip2.
+      // Notice that p1 < p2.
       if (compare_xy_2_object()(p2, p) == SMALLER)
       {
+	// The entire segment p1 -> p2 is to the left of p:
 	return (true);
       }
       else if (compare_xy_2_object()(p1, p) == SMALLER)
       {
-	p2 = p;
+	if (has_on_2_object() (cv1.line, p))
+	{
+	  // p is one the overlapping segment, return it as the first point.
+	  p2 = p;
+	}
+	else
+	{
+	  // Perform a downward ray-shooting from p to the overlapping segment
+	  // and make p2 the resulting point.
+	  _vertical_ray_shoot (p, cv1,
+			       false,         // Shoot downward.
+			       p2);
+	}
+
 	return (true);
       }
       return (false);
@@ -680,52 +708,82 @@ public:
     // doesn't work, as coincident lines with opposite direction are
     // considered different!
     Has_on_2 has_on = has_on_2_object();
-    if (!has_on(cv1.line, cv2.ps) || !has_on(cv1.line, cv2.pt)) return false;
+    
+    if (!has_on(cv1.line, cv2.ps) || !has_on(cv1.line, cv2.pt))
+      return false;
 
-    if (cv1.is_vert) {
-      if (cv2.is_vert) {
+    if (cv1.is_vert)
+    {
+      if (cv2.is_vert)
+      {
         Compare_y_2 compare_y = compare_y_2_object();
         Comparison_result res_ss = compare_y (cv1.ps, cv2.ps);
         Comparison_result res_st = compare_y (cv1.ps, cv2.pt);
-        if (res_ss == SMALLER) {
-          if (res_st == LARGER) return true;
-          if (compare_y (cv1.pt, cv2.ps) == LARGER) return true;
-          return (compare_y (cv1.pt, cv2.pt) == LARGER);
+
+        if (res_ss == SMALLER)
+	{
+          if (res_st == LARGER)
+	    return true;
+          
+	  if (compare_y (cv1.pt, cv2.ps) == LARGER)
+	    return true;
+          
+	  return (compare_y (cv1.pt, cv2.pt) == LARGER);
         }
 
-        if (res_ss == LARGER) {
-          if (res_st == SMALLER) return true;
-          if (compare_y (cv1.pt, cv2.ps) == SMALLER) return true;
-          return (compare_y (cv1.pt, cv2.pt) == SMALLER);
+        if (res_ss == LARGER)
+	{
+          if (res_st == SMALLER)
+	    return true;
+          
+	  if (compare_y (cv1.pt, cv2.ps) == SMALLER)
+	    return true;
+          
+	  return (compare_y (cv1.pt, cv2.pt) == SMALLER);
         }
 
         // res_ss == EQUAL
         if (res_st == SMALLER)
           return (compare_y (cv1.pt, cv2.ps) == LARGER);
-        return (compare_y (cv1.pt, cv2.ps) == SMALLER);
+        
+	return (compare_y (cv1.pt, cv2.ps) == SMALLER);
       }
       return false;
     }
-    if (cv2.is_vert) return false;
+
+    if (cv2.is_vert)
+      return false;
 
     Compare_x_2 compare_x = compare_x_2_object();
     Comparison_result res_ss = compare_x (cv1.ps, cv2.ps);
     Comparison_result res_st = compare_x (cv1.ps, cv2.pt);
-    if (res_ss == SMALLER) {
-      if (res_st == LARGER) return true;
-      if (compare_x (cv1.pt, cv2.ps) == LARGER) return true;
+    
+    if (res_ss == SMALLER)
+    {
+      if (res_st == LARGER)
+	return true;
+      
+      if (compare_x (cv1.pt, cv2.ps) == LARGER)
+	return true;
+      
       return (compare_x (cv1.pt, cv2.pt) == LARGER);
     }
 
-    if (res_ss == LARGER) {
-      if (res_st == SMALLER) return true;
-      if (compare_x (cv1.pt, cv2.ps) == SMALLER) return true;
+    if (res_ss == LARGER)
+    {
+      if (res_st == SMALLER)
+	return true;
+      
+      if (compare_x (cv1.pt, cv2.ps) == SMALLER)
+	return true;
+      
       return (compare_x (cv1.pt, cv2.pt) == SMALLER);
     }
 
     // res_ss == EQUAL
     if (res_st == SMALLER)
       return (compare_x (cv1.pt, cv2.ps) == LARGER);
+    
     return (compare_x (cv1.pt, cv2.ps) == SMALLER);
   }
 
@@ -740,7 +798,7 @@ private:
    * otherwise the leftmost end-point of the intersection segment.
    * \param p2 If there is an overlap, the rightmost end-point of the 
    * intersection segment.
-   * \return (true) if an intersectio has been found.
+   * \return (true) if an intersection has been found.
    */
   bool _find_intersection (const X_monotone_curve_2 & cv1,
 			   const X_monotone_curve_2 & cv2,
@@ -842,6 +900,30 @@ private:
       return ((res1 == EQUAL) || (res2 == EQUAL) ||
 	      (res1 != res2));
     }
+  }
+
+  /*!
+   * Perform vertical ray-shooting from a given point towards a given curve.
+   * \param q The source point of the ray.
+   * \param cv The target curve.
+   * \param shoot_up Should we should upwards or downwards.
+   * \param p The resulting point.
+   */
+  bool _vertical_ray_shoot (const Point_2& q, const X_monotone_curve_2& cv,
+			    const bool& shoot_up,
+			    Point_2& p) const
+  {
+    // Construct a vertical ray emanating from q.
+    typename Kernel::Direction_2  dir (0, (shoot_up ? 1 : -1));
+    typename Kernel::Ray_2        ray = construct_ray_2_object() (q, dir);
+
+    // Compute the intersetion between the vertical ray and the line
+    // supporting the curve cv.
+    Object    res = intersect_2_object()(cv.line, ray);
+    bool      ray_shoot_successful = assign(p, res);
+
+    CGAL_assertion (ray_shoot_successful);
+    return (ray_shoot_successful);
   }
 };
 
