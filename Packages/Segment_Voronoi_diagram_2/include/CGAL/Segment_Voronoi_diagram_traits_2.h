@@ -349,7 +349,8 @@ public:
   typedef typename Kernel::Ray_2                  Ray_2;
   typedef typename Kernel::Circle_2               Circle_2;
 
-  typedef Segment_Voronoi_diagram_site_2<R>       Site_2;
+  typedef typename Kernel::Site_2                 Site_2;
+  //  typedef Segment_Voronoi_diagram_site_2<R>       Site_2;
 
   typedef typename Kernel::FT                     FT;
   typedef typename Kernel::RT                     RT;

@@ -49,8 +49,8 @@ public:
   typedef typename Tds_base::Face_handle      Face_handle;
   typedef typename Tds_base::Face_circulator  Face_circulator;
 
-  //  typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex_base;
-  //  typedef typename Fb::template Rebind_TDS<Tds>::Other  Face_base;
+  typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex_base;
+  typedef typename Fb::template Rebind_TDS<Tds>::Other  Face_base;
 
 
   /*

@@ -33,9 +33,9 @@ CGAL_BEGIN_NAMESPACE
 //--------------------------------------------------------------------
 // test method
 //--------------------------------------------------------------------
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 is_valid(bool verbose, int level) const
 {
   if (level < 0) { return true; }
@@ -153,10 +153,10 @@ is_valid(bool verbose, int level) const
 //--------------------------------------------------------------------
 
 // circumcenter
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Point
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Point
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 circumcenter(const Face_handle& f) const
 {
   CGAL_triangulation_precondition (dimension()==2 || !is_infinite(f));
@@ -165,10 +165,10 @@ circumcenter(const Face_handle& f) const
 		      f->vertex(2)->site());
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Point
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Point
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 circumcenter(const Site& t0, const Site& t1, 
 	     const Site& t2) const
 {
@@ -177,10 +177,10 @@ circumcenter(const Site& t0, const Site& t1,
 }
 
 // circumcircle
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline
 typename Gt::Circle_2
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 circumcircle(const Face_handle& f) const
 {
   CGAL_triangulation_precondition (dimension()==2 || !is_infinite(f));
@@ -189,20 +189,20 @@ circumcircle(const Face_handle& f) const
 		      f->vertex(2)->site());
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline
 typename Gt::Circle_2
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 circumcircle(const Site& t0, const Site& t1, const Site& t2) const
 {
   return Construct_svd_circle_2()(t0, t1, t2);
 }
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline
 typename Gt::Line_2
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 circumcircle(const Point& p0, const Point& p1) const
 {
   return
@@ -211,20 +211,20 @@ circumcircle(const Point& p0, const Point& p1) const
 
 
 // primal
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Point
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Point
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 primal(const Face_handle& f) const
 {
   return circumcenter(f);
 }
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline
 Object
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 primal(const Edge e) const
 {
   typedef typename Gt::Line_2   Line;
@@ -291,9 +291,10 @@ primal(const Edge e) const
 //--------------------------------------------------------------------
 // combinatorial operations
 //--------------------------------------------------------------------
-template< class Gt, class Svdds >
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Edge
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+template< class Gt, class PContainer, class Svdds >
+inline
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Edge
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 flip(Face_handle& f, int i)
 {
   CGAL_triangulation_precondition ( f != NULL );
@@ -307,20 +308,20 @@ flip(Face_handle& f, int i)
   return Edge(f, ccw(i));
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Edge
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Edge
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 flip(Edge e)
 {
   return flip(e.first, e.second);
 }
 
 /*
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 insert_in_face(Face_handle& f, const Weighted_point& p)
 {
   Vertex_handle v = _tds.insert_in_face( f );
@@ -330,10 +331,10 @@ insert_in_face(Face_handle& f, const Weighted_point& p)
 }
 */
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline
 bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 is_degree_2(const Vertex_handle& v) const
 {
   Face_circulator fc = v->incident_faces();
@@ -342,32 +343,34 @@ is_degree_2(const Vertex_handle& v) const
   return ( fc == fc1 );
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 insert_degree_2(Edge e)
 {
   return _tds.insert_degree_2(e.first,e.second);
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
-Segment_Voronoi_diagram_2<Gt,Svdds>::
-insert_degree_2(Edge e, const Site& t)
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
+#ifdef USE_STORAGE_SITE
+insert_degree_2(Edge e,	const Storage_site_2& ss)
+#else
+insert_degree_2(Edge e,	const Site_2& ss)
+#endif
 {
   Vertex_handle v = insert_degree_2(e);
-
-  v->set_site(t);
+  v->set_site(ss);
   return v;
 }
 
-
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline
 void
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 remove_degree_2(Vertex_handle v)
 {
   CGAL_triangulation_precondition( is_degree_2(v) );
@@ -376,87 +379,149 @@ remove_degree_2(Vertex_handle v)
 }
 
 
-template< class Gt, class Svdds >
+#if 0
+template< class Gt, class PContainer, class Svdds >
 inline
 void
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 remove_degree_3(Vertex_handle v)
 {
   remove_degree_3(v, NULL);
 }
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline
 void
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 remove_degree_3(Vertex_handle v, Face* f)
 {
   CGAL_triangulation_precondition( v->degree() == 3 );
   _tds.remove_degree_3(v, f);
 }
+#endif
 
 //--------------------------------------------------------------------
 // insertion of site
 //--------------------------------------------------------------------
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 insert_first(const Point& p)
 {
   CGAL_triangulation_precondition( number_of_vertices() == 0 );
-  return Delaunay_graph::insert_first(p);
+
+#ifdef USE_STORAGE_SITE
+  Storage_site_2 ss = create_storage_site(p);
+#else
+  Site ss(p);
+#endif
+  //  return create_vertex_dim_up(ss);
+  Vertex_handle v = _tds.insert_second();
+  v->set_site(ss);
+  return v;
 }
 
-template< class Gt, class Svdds >
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+template< class Gt, class PContainer, class Svdds >
+inline
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 insert_second(const Point& p)
 {
   CGAL_triangulation_precondition( number_of_vertices() == 1 );
-
   // p0 is actually a point
-  Site_2 p0 = vertices_begin()->site();
+  Site_2 p0 = finite_vertices_begin()->site();
   // MK: change the equality test between points by the functor in
   // geometric traits
   if ( are_same_points(Site_2(p),p0) ) {
-    return Vertex_handle(vertices_begin());
+    return Vertex_handle(finite_vertices_begin());
   }
 
-  return Delaunay_graph::insert(p);
+#ifdef USE_STORAGE_SITE
+  Storage_site_2 ss = create_storage_site(p);
+#else
+  Site ss(p);
+#endif
+  return create_vertex_dim_up(ss);
 }
 
-template< class Gt, class Svdds >
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
-Segment_Voronoi_diagram_2<Gt,Svdds>::
-insert_third(const Site& t)
+template< class Gt, class PContainer, class Svdds >
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
+insert_third(const Point& p)
 {
+  std::cout << "inside insert third..." << std::endl;
   CGAL_triangulation_precondition( number_of_vertices() == 2 );
-  if ( t.is_point() ) {
-    
-    // p0 and p1 are actually points
-    Site_2 p0 = vertices_begin()->site();
-    Site_2 p1 = (++vertices_begin())->site();
 
-    // MK: change the equality test between points by the functor in
-    // geometric traits
-    if ( are_same_points(t, p0) ) {
-      return Vertex_handle(vertices_begin());
-    }
-    if ( are_same_points(t, p1) ) {
-      return Vertex_handle(++vertices_begin());
-    }
+  Site_2 t(p);
 
-    return Delaunay_graph::insert(t.point());
+  // p0 and p1 are actually points
+  Site_2 t0 = finite_vertices_begin()->site();
+  Site_2 t1 = (++finite_vertices_begin())->site();
+
+  // MK: change the equality test between points by the functor in
+  // geometric traits
+  if ( are_same_points(t, t0) ) {
+    return Vertex_handle(finite_vertices_begin());
   }
+  if ( are_same_points(t, t1) ) {
+    return Vertex_handle(++finite_vertices_begin());
+  }
+
+#ifdef USE_STORAGE_SITE
+  Storage_site_2 ss = create_storage_site(p);
+#else
+  Site ss(p);
+#endif
+
+  Vertex_handle v = create_vertex_dim_up(ss);
+
+  Face_handle f(finite_faces_begin());
+
+  Point p1 = f->vertex(0)->site().point();
+  Point p2 = f->vertex(1)->site().point();
+  Point p3 = f->vertex(2)->site().point();
+
+  Orientation o =
+    geom_traits().orientation_2_object()(p1, p2, p3);
+
+  if ( o != COLLINEAR ) {
+    if ( o == RIGHT_TURN ) {
+      f->reorient();
+      for (int i = 0; i < 3; i++) {
+	f->neighbor(i)->reorient();
+      }
+    }
+  } else {
+    // *************************URGENT***************************
+    //  Here I have to test for collinearlity... and maybe more
+    // In particular the code works correctly if the triangle created by
+    // the three points is CCW and only then
+    CGAL_assertion( false );
+  }
+
+  return v;
+}
+
+template< class Gt, class PContainer, class Svdds >
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
+//insert_third(const Point& p0, const Point & p1)
+insert_third(Vertex_handle v0, Vertex_handle v1)
+{
+  CGAL_precondition( number_of_vertices() == 2 );
 
   //  this can only be the case if the first site is a segment
   CGAL_precondition( _tds.dimension() == 1 );
 
-  Vertex_handle v = _tds.insert_dim_up(infinite_vertex());
-  v->set_site(t);
+#ifdef USE_STORAGE_SITE
+  Storage_site_2 ss = create_storage_site(v0, v1);
+#else
+  Site ss(Segment(v0->site().point(), v1->site().point()));
+#endif
+  Vertex_handle v = create_vertex_dim_up(ss);
 
   Face_circulator fc = incident_faces(v);
 
@@ -473,9 +538,10 @@ insert_third(const Site& t)
 }
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
+inline
 bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 do_intersect(const Site& t, Vertex_handle v) const
 {
   if ( is_infinite(v) ) { return false; }
@@ -495,55 +561,29 @@ do_intersect(const Site& t, Vertex_handle v) const
   return false;
 }
 
-
-template< class Gt, class Svdds >
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
-Segment_Voronoi_diagram_2<Gt,Svdds>::
-insert(const Site& t, Vertex_handle vnear, bool insert_endpoints)
+template< class Gt, class PContainer, class Svdds >
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
+insert_point(const Point& p, Vertex_handle vnear)
 {
-  if ( t.is_segment() && is_degenerate_segment(t) ) {
-    return insert(t.source_site(), vnear);
-  }
-
   if ( number_of_vertices() == 0 ) {
-    if ( t.is_segment() ) {
-      insert( t.source_site() );
-      insert( t.target_site() );
-      return insert( t );
-    }
-    return insert_first(t.point());
+    return insert_first(p);
+  } else if ( number_of_vertices() == 1 ) {
+    return insert_second(p);
+  } else if ( number_of_vertices() == 2 ) {
+    return insert_third(p);
   }
-  if ( number_of_vertices() == 1 ) {
-    if ( t.is_segment() ) {
-      insert( t.source_site() );
-      insert( t.target_site() );
-      return insert( t );
-    } else {
-      return insert_second(t.point());
-    }
-  }
-  if ( number_of_vertices() == 2 ) {
-    return insert_third(t);
-  }
-
 
   // first find the nearest neighbor
-  Vertex_handle vnearest;
-  if ( t.is_point() ) {
-    vnearest = nearest_neighbor( t, vnear );
-  } else if ( insert_endpoints ) {
-    // if we insert a segment, insert the endpoints first
-    vnearest = insert( t.source_site(), vnear );
-    insert( t.target_site(), vnearest );
-  } else {
-    vnearest = vnear;
-  }
+  Site t(p);
+
+  Vertex_handle  vnearest = nearest_neighbor( p, vnear );
 
   CGAL_assertion( vnearest != Vertex_handle(NULL) );
 
+  // find the first conflict
   // check if it is already inserted
-  if ( t.is_point() && vnearest->is_point() &&
-       are_same_points(t, vnearest->site()) ) {
+  if ( vnearest->is_point() && are_same_points(t, vnearest->site()) ) {
     return vnearest;
   }
 
@@ -557,14 +597,9 @@ insert(const Site& t, Vertex_handle vnear, bool insert_endpoints)
   Vertex_circulator vc_start = vc;
   do {
     Vertex_handle vv(vc);
-    if ( same_segments(t, vv) ) {
-      return vv;
-    }
     if ( do_intersect(t, vv) ) {
-      if ( t.is_segment() ) {
-	return insert_intersecting_segment(t, vv);
-	//	return Vertex_handle(NULL);
-      }
+      // ADD HERE CODE THAT DOES THE APPROPRIATE INSERTION
+      return Vertex_handle(NULL);
     }
     ++vc;
   } while ( vc != vc_start );
@@ -617,7 +652,158 @@ insert(const Site& t, Vertex_handle vnear, bool insert_endpoints)
 
     CGAL_assertion( interior_in_conflict );
 
+#ifdef USE_STORAGE_SITE
+    Storage_site_2 ss = create_storage_site(p);
+    return insert_degree_2(e, ss);
+#else
     return insert_degree_2(e, t);
+#endif
+  }
+
+
+  // we are in conflict with a Voronoi vertex; start from that and 
+  // find the entire conflict region and then repair the diagram
+  List l;
+  Face_map fm;
+
+  std::pair<bool, Vertex_handle> vcross(false, Vertex_handle(NULL));
+
+  // MK:: NEED TO WRITE A FUNCTION CALLED find_conflict_region WHICH
+  // IS GIVEN A STARTING FACE, A LIST, A FACE MAP, A VERTEX MAP AND A
+  // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT 
+  // REGION AND EXPANDS THE CONFLICT REGION.
+
+#ifdef USE_STORAGE_SITE
+  Storage_site_2 ss = create_storage_site(p);
+#endif
+
+  initialize_conflict_region(start_f, l);
+#ifdef USE_STORAGE_SITE
+  expand_conflict_region(start_f, t, ss, l, fm, sign_map, vcross, NULL);
+#else
+  expand_conflict_region(start_f, t, l, fm, sign_map, vcross, NULL);
+#endif
+  CGAL_assertion( !vcross.first );
+
+#ifdef USE_STORAGE_SITE
+  Vertex_handle v = create_vertex(ss);
+#else
+  Vertex_handle v = create_vertex(t);
+#endif
+
+  retriangulate_conflict_region(v, l, fm);
+
+  return v;
+}
+
+
+template< class Gt, class PContainer, class Svdds >
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
+#ifdef USE_STORAGE_SITE
+insert_point(const Storage_site_2& ss, const Site& t,
+	     Vertex_handle vnear)
+#else
+insert_point(const Site& t, Vertex_handle vnear)
+#endif
+{
+  CGAL_assertion( false );
+
+  CGAL_precondition( t.is_point() );
+  CGAL_precondition( !t.is_exact() );
+  CGAL_assertion( number_of_vertices() > 2 );
+
+#if 0
+  if ( number_of_vertices() == 0 ) {
+    return insert_first(t.point());
+  } else if ( number_of_vertices() == 1 ) {
+    return insert_second(t.point());
+  } else if ( number_of_vertices() == 2 ) {
+    return insert_third(t.point());
+  }
+#endif
+
+  // first find the nearest neighbor
+  Vertex_handle  vnearest = nearest_neighbor( t.point(), vnear );
+
+  CGAL_assertion( vnearest != Vertex_handle(NULL) );
+
+  // find the first conflict
+  // check if it is already inserted
+  if ( vnearest->is_point() && are_same_points(t, vnearest->site()) ) {
+    return vnearest;
+  }
+
+  // MK: add here code that checks if the inserted segment has already
+  // been inserted
+
+  // find the first conflict
+
+  // first look if there are intersections...
+  Vertex_circulator vc = vnearest->incident_vertices();
+  Vertex_circulator vc_start = vc;
+  do {
+    Vertex_handle vv(vc);
+    if ( do_intersect(t, vv) ) {
+      // ADD HERE CODE THAT DOES THE APPROPRIATE INSERTION
+      return Vertex_handle(NULL);
+    }
+    ++vc;
+  } while ( vc != vc_start );
+
+  // first look for conflict with vertex
+  Face_circulator fc_start = vnearest->incident_faces();
+  Face_circulator fc = fc_start;
+  Face_handle start_f;
+  Sign s;
+
+  std::map<Face_handle,Sign> sign_map;
+
+  do {
+    Face_handle f(fc);
+
+    s = incircle(f, t);
+
+    sign_map[f] = s;
+
+    if ( s == NEGATIVE ) {
+      start_f = f;
+      break;
+    }
+    ++fc;
+  } while ( fc != fc_start );
+
+  // we are not in conflict with a Voronoi vertex, so we have to
+  // be in conflict with the interior of a Voronoi edge
+  if ( s != NEGATIVE ) {
+    Edge_circulator ec_start = vnearest->incident_edges();
+    Edge_circulator ec = ec_start;
+
+    bool interior_in_conflict(false);
+    Edge e;
+    do {
+      e = *ec;
+
+      Sign s1 = sign_map[e.first];
+      Sign s2 = sign_map[e.first->neighbor(e.second)];
+
+      if ( s1 == s2 ) {
+	interior_in_conflict = edge_interior(e, t, s1);
+      }
+
+      if ( interior_in_conflict ) { break; }
+      ++ec;
+    } while ( ec != ec_start );
+
+    sign_map.clear();
+
+    CGAL_assertion( interior_in_conflict );
+
+#ifdef USE_STORAGE_SITE
+    return insert_degree_2(e, ss);
+#else
+    return insert_degree_2(e, t);
+#endif
   }
 
 
@@ -635,18 +821,226 @@ insert(const Site& t, Vertex_handle vnear, bool insert_endpoints)
   initialize_conflict_region(start_f, l);
   expand_conflict_region(start_f, t, l, fm, sign_map, vcross, NULL);
 
+  CGAL_assertion( !vcross.first );
+
+#ifdef USE_STORAGE_SITE
+  Vertex_handle v = create_vertex(ss);
+#else
+  Vertex_handle v = create_vertex(t);
+#endif
+
+  retriangulate_conflict_region(v, l, fm);
+
+  return v;
+}
+
+
+template< class Gt, class PContainer, class Svdds >
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
+insert_segment(const Site& t, Vertex_handle vnear,
+	       bool insert_endpoints)
+{
+  CGAL_precondition( t.is_segment() );
+  CGAL_precondition( t.is_exact() );
+  CGAL_precondition( insert_endpoints );
+
+  if ( is_degenerate_segment(t) ) {
+    return insert_point(t.source(), vnear);
+  }
+
+  if ( number_of_vertices() == 0 ) {
+    Vertex_handle v0 = insert_first( t.source() );
+    Vertex_handle v1 = insert_second( t.target() );
+    Segment s = t.segment();
+    return insert_third(v0, v1);
+  } else {
+    Vertex_handle v0, v1;
+    if ( number_of_vertices() == 1 ) {
+      v0 = insert_second( t.source() );
+      v1 = insert_third( t.target() );
+    } else if ( number_of_vertices() == 2 ) {
+      v0 = insert_third( t.source() );
+      v1 = insert_point( t.target(), v0 );
+    } else {
+      v0 = insert_point( t.source(), vnear );
+      v1 = insert_point( t.target(), v0 );
+    }
+
+#ifdef USE_STORAGE_SITE
+    Storage_site_2 ss = create_storage_site(v0, v1);
+    return insert_segment2( t, ss, v0, false );
+#else
+    return insert_segment2( t, v0, false );
+#endif
+    //    insert_point( t.source_site(), Vertex_handle(NULL) );
+    //    insert_point( t.target_site(), Vertex_handle(NULL) );
+  }
+}
+
+
+template< class Gt, class PContainer, class Svdds >
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
+insert_segment2(const Site_2& t,
+#ifdef USE_STORAGE_SITE
+		const Storage_site_2& ss,
+#endif
+		Vertex_handle vnearest, bool insert_endpoints)
+{
+  CGAL_precondition( t.is_segment() );
+  CGAL_precondition( !insert_endpoints );
+  CGAL_precondition( number_of_vertices() >= 2 );
+
+#if 0
+  if ( is_degenerate_segment(t) ) {
+    return insert_point(t.source_site(), vnear);
+  }
+
+  if ( number_of_vertices() <= 1 ) {
+    //    insert_point( t.source_site(), Vertex_handle(NULL) );
+    //    insert_point( t.target_site(), Vertex_handle(NULL) );
+    Vertex_handle v0 = insert_point( t.source(), Vertex_handle(NULL) );
+    insert_point( t.target(), Vertex_handle(NULL) );
+    return insert_segment( t, v0, false );
+  } else if ( number_of_vertices() == 2 ) {
+    Segment s = t.segment();
+    return insert_third(s.source(), s.target());
+  }
+
+  // first find the nearest neighbor
+  Vertex_handle vnearest;
+  if ( insert_endpoints ) {
+    // if we insert a segment, insert the endpoints first
+    vnearest = insert_point( t.source_site(), vnear );
+    insert_point( t.target_site(), vnearest );
+  } else {
+    vnearest = vnear;
+  }
+
+#endif
+  CGAL_assertion( vnearest != Vertex_handle(NULL) );
+  // MK: add here code that checks if the inserted segment has already
+  // been inserted; MAYBE THIS IS NOT NEEDED; I ALREADY DO IT IN
+  // do_intersect
+
+  // find the first conflict
+
+  // first look if there are intersections...
+  Vertex_circulator vc = vnearest->incident_vertices();
+  Vertex_circulator vc_start = vc;
+  do {
+    Vertex_handle vv(vc);
+    if ( same_segments(t, vv) ) {
+      return vv;
+    }
+    if ( do_intersect(t, vv) ) {
+      if ( t.is_segment() ) {
+#ifdef USE_STORAGE_SITE
+	return insert_intersecting_segment(ss, t, vv);
+#else
+	return insert_intersecting_segment(t, vv);
+#endif
+	//	return Vertex_handle(NULL);
+      }
+    }
+    ++vc;
+  } while ( vc != vc_start );
+
+  // first look for conflict with vertex
+  Face_circulator fc_start = vnearest->incident_faces();
+  Face_circulator fc = fc_start;
+  Face_handle start_f;
+  Sign s;
+
+  std::map<Face_handle,Sign> sign_map;
+
+  do {
+    Face_handle f(fc);
+
+    s = incircle(f, t);
+
+    sign_map[f] = s;
+
+    if ( s == NEGATIVE ) {
+      start_f = f;
+      break;
+    }
+    ++fc;
+  } while ( fc != fc_start );
+
+  // segments must have a conflict with at least one vertex
+  CGAL_assertion( s == NEGATIVE );
+
+#if 0
+  // we are not in conflict with a Voronoi vertex, so we have to
+  // be in conflict with the interior of a Voronoi edge
+  if ( s != NEGATIVE ) {
+    Edge_circulator ec_start = vnearest->incident_edges();
+    Edge_circulator ec = ec_start;
+
+    bool interior_in_conflict(false);
+    Edge e;
+    do {
+      e = *ec;
+
+      Sign s1 = sign_map[e.first];
+      Sign s2 = sign_map[e.first->neighbor(e.second)];
+
+      if ( s1 == s2 ) {
+	interior_in_conflict = edge_interior(e, t, s1);
+      }
+
+      if ( interior_in_conflict ) { break; }
+      ++ec;
+    } while ( ec != ec_start );
+
+    sign_map.clear();
+
+    CGAL_assertion( interior_in_conflict );
+
+    return insert_degree_2(e, t);
+  }
+#endif
+
+  // we are in conflict with a Voronoi vertex; start from that and 
+  // find the entire conflict region and then repair the diagram
+  List l;
+  Face_map fm;
+
+  std::pair<bool, Vertex_handle> vcross(false, Vertex_handle(NULL));
+
+  // MK:: NEED TO WRITE A FUNCTION CALLED find_conflict_region WHICH
+  // IS GIVEN A STARTING FACE, A LIST, A FACE MAP, A VERTEX MAP AND A
+  // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT 
+  // REGION AND EXPANDS THE CONFLICT REGION.
+  initialize_conflict_region(start_f, l);
+#ifdef USE_STORAGE_SITE
+  expand_conflict_region(start_f, t, ss, l, fm, sign_map, vcross, NULL);
+#else
+  expand_conflict_region(start_f, t, l, fm, sign_map, vcross, NULL);
+#endif
+
   // the following condition becomes true only if intersecting
   // segments are found
   if ( vcross.first ) {
     if ( t.is_segment() ) {
+#ifdef USE_STORAGE_SITE
+      return insert_intersecting_segment(ss, t, vcross.second);
+#else
       return insert_intersecting_segment(t, vcross.second);
+#endif
       //      return vcross.second;
     }
   }
 
-  Vertex_handle v = retriangulate_conflict_region(t, l, fm);
+#ifdef USE_STORAGE_SITE
+  Vertex_handle v = create_vertex(ss);
+#else
+  Vertex_handle v = create_vertex(t);
+#endif
 
-  fm.clear();
+  retriangulate_conflict_region(v, l, fm);
 
   return v;
 }
@@ -655,17 +1049,28 @@ insert(const Site& t, Vertex_handle vnear, bool insert_endpoints)
 //--------------------------------------------------------------------
 // insertion of intersecting site
 //--------------------------------------------------------------------
-template< class Gt, class Svdds >
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+template< class Gt, class PContainer, class Svdds >
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
+#ifdef USE_STORAGE_SITE
+insert_intersecting_segment(const Storage_site_2& ss,
+			    const Site_2& t, Vertex_handle v)
+#else
 insert_intersecting_segment(const Site_2& t, Vertex_handle v)
+#endif
 {
+#if 1
   CGAL_precondition( t.is_segment() && v->is_segment() );
 
   if ( same_segments(t, v->site()) ) {
     return v;
   }
 
+#ifdef USE_STORAGE_SITE
+  Storage_site_2 ssx(ss.supporting_segment_handle(),
+		     v->storage_site().supporting_segment_handle());
+  Storage_site_2 ssitev = v->storage_site();
+#endif
   Site_2 sx(t.supporting_segment(), v->site().supporting_segment());
   Site_2 sitev(v->site());
 
@@ -703,169 +1108,137 @@ insert_intersecting_segment(const Site_2& t, Vertex_handle v)
 
   CGAL_assertion( f1 != f2 );
 
-#if 0
-  {
-    std::cout << "---" << std::endl;
-    std::cout << "f1: " << std::endl;
-    for (int i = 0; i < 3; i++) {
-      std::cout << f1->vertex(i)->site() << std::endl;
-    }
-    std::cout << "f2: " << std::endl;
-    for (int i = 0; i < 3; i++) {
-      std::cout << f2->vertex(i)->site() << std::endl;
-    }
-    std::cout << "---" << std::endl;      
-  }
-#endif
-
   Quadruple<Vertex_handle, Vertex_handle, Face_handle, Face_handle>
     qq = this->_tds.split_vertex(v, f1, f2);
 
   // now I need to update the sites for vertices v1 and v2
   Vertex_handle v1 = qq.first;
+#ifdef USE_STORAGE_SITE
+  Storage_site_2 ssv1;
+#endif
   Site_2 sv1;
   if ( sitev.is_exact(0) ) {
-    sv1 = Site_2(sitev.supporting_segment(),
-		 t.supporting_segment(), true);
+    sv1.set_segment(sitev.supporting_segment(),
+		    t.supporting_segment(), true);
+#ifdef USE_STORAGE_SITE
+    ssv1.set_segment(ssitev.supporting_segment_handle(),
+		     ss.supporting_segment_handle(), true);
+#endif
   } else {
-    sv1 = Site_2(sitev.supporting_segment(),
-		 sitev.crossing_segment(0),
-		 t.supporting_segment());
+    sv1.set_segment(sitev.supporting_segment(),
+		    sitev.crossing_segment(0),
+		    t.supporting_segment());
+#ifdef USE_STORAGE_SITE
+    ssv1.set_segment(ssitev.supporting_segment_handle(),
+		     ssitev.crossing_segment_handle(0),
+		     ss.supporting_segment_handle());
+#endif
   }
+#ifdef USE_STORAGE_SITE
+  v1->set_site( ssv1 );
+#else
   v1->set_site( sv1 );
+#endif
 
   Vertex_handle v2 = qq.second;
+#ifdef USE_STORAGE_SITE
+  Storage_site_2 ssv2;
+#endif
   Site_2 sv2;
   if ( sitev.is_exact(1) ) {
-    sv2 = Site_2(sitev.supporting_segment(),
-		 t.supporting_segment(), false);
+    sv2.set_segment(sitev.supporting_segment(),
+		    t.supporting_segment(), false);
+#ifdef USE_STORAGE_SITE
+    ssv2.set_segment(ssitev.supporting_segment_handle(),
+		     ss.supporting_segment_handle(), false);
+#endif
   } else {
-    sv2 = Site_2(sitev.supporting_segment(),
-		 t.supporting_segment(),
-		 sitev.crossing_segment(1));
+    sv2.set_segment(sitev.supporting_segment(),
+		    t.supporting_segment(),
+		    sitev.crossing_segment(1));
+#ifdef USE_STORAGE_SITE
+    ssv2.set_segment(ssitev.supporting_segment_handle(),
+		     ss.supporting_segment_handle(),
+		     ssitev.crossing_segment_handle(1));
+#endif
   }
+#ifdef USE_STORAGE_SITE
+  v2->set_site( ssv2 );
+#else
   v2->set_site( sv2 );
+#endif
 
   Vertex_handle vsx =
     this->_tds.insert_in_edge(qq.third, cw(qq.third->index(v1)));
 
+#ifdef USE_STORAGE_SITE
+  vsx->set_site(ssx);
+#else
   vsx->set_site(sx);
-
-#if 0
-  std::cout << "sv1: " << v1->site() << std::endl;
-  std::cout << "sv2: " << v2->site() << std::endl;
-  std::cout << "sx: " << vsx->site() << std::endl;
 #endif
 
+#ifdef USE_STORAGE_SITE
+  Storage_site_2 ss3, ss4;
+#endif
   Site_2 s3, s4;
   if ( t.is_exact(0) ) {
-    s3 = Site_2(t.supporting_segment(), sitev.supporting_segment(), true);
+    s3.set_segment(t.supporting_segment(),
+		   sitev.supporting_segment(), true);
+#ifdef USE_STORAGE_SITE
+    ss3.set_segment(ss.supporting_segment_handle(),
+		    ssitev.supporting_segment_handle(), true);
+#endif
   } else {
-    s3 = Site_2(t.supporting_segment(),
-		t.crossing_segment(0),
-		sitev.supporting_segment());
+    s3.set_segment(t.supporting_segment(),
+		   t.crossing_segment(0),
+		   sitev.supporting_segment());
+#ifdef USE_STORAGE_SITE
+    ss3.set_segment(ss.supporting_segment_handle(),
+		    ss.crossing_segment_handle(0),
+		    ssitev.supporting_segment_handle());
+#endif
   }
 
   if ( t.is_exact(1) ) {
-    s4 = Site_2(t.supporting_segment(), sitev.supporting_segment(), false);
-  } else {
-    s4 = Site_2(t.supporting_segment(),
-		sitev.supporting_segment(),
-		t.crossing_segment(1));
-  }
-
-
-#if 0
-  std::cout << "===" << std::endl;
-  Finite_vertices_iterator fvit = finite_vertices_begin();
-  for (; fvit != finite_vertices_end(); fvit++ ) {
-    Vertex_handle v(fvit);
-    std::cout << v->site() << std::endl;
-  }
-  std::cout << "===" << std::endl;
+    s4.set_segment(t.supporting_segment(),
+		   sitev.supporting_segment(), false);
+#ifdef USE_STORAGE_SITE
+    ss4.set_segment(ss.supporting_segment_handle(),
+		    ssitev.supporting_segment_handle(), false);
 #endif
+  } else {
+    s4.set_segment(t.supporting_segment(),
+		   sitev.supporting_segment(),
+		   t.crossing_segment(1));
+#ifdef USE_STORAGE_SITE
+    ss4.set_segment(ss.supporting_segment_handle(),
+		    ssitev.supporting_segment_handle(),
+		    ss.crossing_segment_handle(1));
+#endif
+  }
 
-  insert(s3, vsx, false);
-  insert(s4, vsx, false);
-
+#ifdef USE_STORAGE_SITE
+  insert_segment2(s3, ss3, vsx, false);
+  insert_segment2(s4, ss4, vsx, false);
+#else
+  insert_segment2(s3, vsx, false);
+  insert_segment2(s4, vsx, false);
+#endif
   return vsx;
-  //  return v1;
+
+#else
+  CGAL_assertion( false );
+  return Vertex_handle(NULL);
+#endif
 }
 
 //--------------------------------------------------------------------
 // find conflict region
 //--------------------------------------------------------------------
-template< class Gt, class Svdds >
+
+template< class Gt, class PContainer, class Svdds >
 void
-Segment_Voronoi_diagram_2<Gt,Svdds>::
-find_conflict_region_remove(const Vertex_handle& v,
-			    const Vertex_handle& vnearest,
-			    List& l, Face_map& fm,
-			    //			    std::map<Face_handle,Sign>& sign_map,
-			    std::vector<Vh_triple*>* fe)
-{
-  Site t = v->site();
-
-  // check if it is already inserted
-  if ( t.is_point() && vnearest->is_point() &&
-       are_same_points(t, vnearest->site()) ) {
-    return;
-  }
-
-  CGAL_precondition( vnearest != NULL );
-
-
-  // find the first conflict
-
-  // first look for conflict with vertex
-  Face_circulator fc_start = vnearest->incident_faces();
-  Face_circulator fc = fc_start;
-  Face_handle start_f;
-  Sign s;
-  do {
-    Face_handle f(fc);
-    //    int id = f->mirror_indexf->index(vnearest)
-    s = incircle(f, t);
-
-    if ( s == NEGATIVE ) {
-      start_f = f;
-      break;
-    }
-    ++fc;
-  } while ( fc != fc_start );
-
-  CGAL_assertion( s == NEGATIVE );
-
-  // we are not in conflict with an Apollonius vertex, so we have to
-  // be in conflict with the interior of an Apollonius edge
-  if ( s != NEGATIVE ) {
-    Edge_circulator ec_start = vnearest->incident_edges();
-    Edge_circulator ec = ec_start;
-
-    bool interior_in_conflict(false);
-    Edge e;
-    do {
-      e = *ec;
-      interior_in_conflict = edge_interior(e, t, false);
-
-      if ( interior_in_conflict ) { break; }
-      ++ec;
-    } while ( ec != ec_start );
-
-    CGAL_assertion( interior_in_conflict );
-
-    l.push(e);
-    l.push(sym_edge(e));
-    return;
-  }
-
-  initialize_conflict_region(start_f, l);
-  expand_conflict_region(start_f, v->site(), l, fm, fe);
-}
-
-template< class Gt, class Svdds >
-void
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 initialize_conflict_region(const Face_handle& f, List& l)
 {
 
@@ -877,16 +1250,21 @@ initialize_conflict_region(const Face_handle& f, List& l)
 }
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 void
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 expand_conflict_region(const Face_handle& f, const Site& t,
+#ifdef USE_STORAGE_SITE
+		       const Storage_site_2& ss,
+#endif
 		       List& l, Face_map& fm,
 		       std::map<Face_handle,Sign>& sign_map,
 		       std::pair<bool,Vertex_handle>& vcross,
 		       std::vector<Vh_triple*>* fe)
 {
   if ( fm.find(f) != fm.end() ) { return; }
+
+  //  Site t = ss.site();
 
   // this is done to stop the recursion when intersecting segments
   // are found
@@ -967,8 +1345,11 @@ expand_conflict_region(const Face_handle& f, const Site& t,
       fe->push_back(vhq);
     }
 
-
+#ifdef USE_STORAGE_SITE
+    expand_conflict_region(n, t, ss, l, fm, sign_map, vcross, fe);
+#else
     expand_conflict_region(n, t, l, fm, sign_map, vcross, fe);
+#endif
 
     // this is done to stop the recursion when intersecting segments
     // are found
@@ -982,9 +1363,9 @@ expand_conflict_region(const Face_handle& f, const Site& t,
 // retriangulate conflict region
 //--------------------------------------------------------------------
 
-template< class Gt, class Svdds >
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+template< class Gt, class PContainer, class Svdds >
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 add_bogus_vertex(Edge e, List& l)
 {
   Edge esym = sym_edge(e);
@@ -1016,9 +1397,9 @@ add_bogus_vertex(Edge e, List& l)
   return v;
 }
 
-template< class Gt, class Svdds >
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_list
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+template< class Gt, class PContainer, class Svdds >
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_list
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 add_bogus_vertices(List& l)
 {
   Vertex_list vertex_list;
@@ -1053,9 +1434,9 @@ add_bogus_vertices(List& l)
   return vertex_list;
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 void
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 remove_bogus_vertices(Vertex_list& vl)
 {
   while ( vl.size() > 0 ) {
@@ -1065,10 +1446,10 @@ remove_bogus_vertices(Vertex_list& vl)
   }
 }
 
-
-template< class Gt, class Svdds >
-std::vector<typename Segment_Voronoi_diagram_2<Gt,Svdds>::Face*>
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+#if 0
+template< class Gt, class PContainer, class Svdds >
+std::vector<typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Face*>
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 get_faces_for_recycling(Face_map& fm, unsigned int n_wanted)
 {
   std::vector<Face*> vf;
@@ -1092,16 +1473,17 @@ get_faces_for_recycling(Face_map& fm, unsigned int n_wanted)
   
   return vf;
 }
+#endif
 
-
-template< class Gt, class Svdds >
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
-Segment_Voronoi_diagram_2<Gt,Svdds>::
-retriangulate_conflict_region(const Site& t, List& l, 
+template< class Gt, class PContainer, class Svdds >
+void
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
+retriangulate_conflict_region(Vertex_handle v, List& l, 
 			      Face_map& fm)
 {
-  Vertex_handle v = _tds.create_vertex();
-  v->set_site(t);
+  //  Vertex_handle v = create_vertex(ss);
+  //  Vertex_handle v = _tds.create_vertex();
+  //  v->set_site(t);
 
   // 1. add the bogus vetrices
   Vertex_list dummy_vertices = add_bogus_vertices(l);
@@ -1151,8 +1533,10 @@ retriangulate_conflict_region(const Site& t, List& l,
     _tds.delete_face(fh);
   }
 
+  fm.clear();
+
   // 7. DONE!!!!
-  return v;
+  //  return v;
 }
 
 
@@ -1160,9 +1544,9 @@ retriangulate_conflict_region(const Site& t, List& l,
 //--------------------------------------------------------------------
 // point location
 //--------------------------------------------------------------------
-template< class Gt, class Svdds >
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+template< class Gt, class PContainer, class Svdds >
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 nearest_neighbor(const Site_2& p,
 		 Vertex_handle start_vertex) const
 {
@@ -1243,17 +1627,17 @@ nearest_neighbor(const Site_2& p,
 //----------------------------------------------------------------------
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 are_same_points(const Site_2& p, const Site_2& q) const
 {
   return geom_traits().are_same_points_2_object()(p, q);
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 same_segments(const Site_2& t, Vertex_handle v) const
 {
   if ( is_infinite(v) ) { return false; }
@@ -1261,9 +1645,9 @@ same_segments(const Site_2& t, Vertex_handle v) const
   return same_segments(t, v->site());
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 same_segments(const Site_2& p, const Site_2& q) const
 {
   CGAL_precondition( p.is_segment() && q.is_segment() );
@@ -1275,9 +1659,9 @@ same_segments(const Site_2& p, const Site_2& q) const
      are_same_points(p.target_site(), q.source_site()));
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline Oriented_side
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 side_of_bisector(const Site &t1, const Site &t2, const Site &q) const
 {
 #if 0
@@ -1292,18 +1676,18 @@ side_of_bisector(const Site &t1, const Site &t2, const Site &q) const
 }
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline Sign
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 incircle(const Site &t1, const Site &t2,
 	 const Site &t3, const Site &q) const
 {
   return geom_traits().vertex_conflict_2_object()(t1, t2, t3, q);
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline Sign
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 incircle(const Site &t1, const Site &t2,
 	 const Site &q) const
 {
@@ -1312,9 +1696,9 @@ incircle(const Site &t1, const Site &t2,
 }
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 Sign
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 incircle(const Face_handle& f, const Site& q) const
 {
   if ( !is_infinite(f) ) {
@@ -1335,9 +1719,9 @@ incircle(const Face_handle& f, const Site& q) const
 }
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline Sign
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 	 const Vertex_handle& v) const
 {
@@ -1347,9 +1731,9 @@ incircle(const Vertex_handle& v0, const Vertex_handle& v1,
   return incircle( v0->site(), v1->site(), v->site());
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 Sign
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 	      const Vertex_handle& v2, const Vertex_handle& v) const
 {
@@ -1376,9 +1760,9 @@ incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 }
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 finite_edge_interior(const Site& t1, const Site& t2,
 		     const Site& t3, const Site& t4,
 		     const Site& q, Sign sgn) const
@@ -1387,9 +1771,9 @@ finite_edge_interior(const Site& t1, const Site& t2,
     geom_traits().finite_edge_interior_conflict_2_object()(t1,t2,t3,t4,q,sgn);
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 finite_edge_interior(const Face_handle& f, int i,
 		     const Site& q, Sign sgn) const
 {
@@ -1401,9 +1785,9 @@ finite_edge_interior(const Face_handle& f, int i,
 			       f->mirror_vertex(i)->site(), q, sgn);
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 finite_edge_interior(const Vertex_handle& v1,
 		     const Vertex_handle& v2,
 		     const Vertex_handle& v3,
@@ -1418,9 +1802,9 @@ finite_edge_interior(const Vertex_handle& v1,
 			       v->site(), sgn);
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 finite_edge_interior_degenerated(const Site& t1, const Site& t2,
 				 const Site& t3, const Site& q,
 				 Sign sgn) const
@@ -1429,9 +1813,9 @@ finite_edge_interior_degenerated(const Site& t1, const Site& t2,
     geom_traits().finite_edge_interior_conflict_2_object()(t1,t2,t3,q,sgn);
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 finite_edge_interior_degenerated(const Site& t1, const Site& t2,
 				 const Site& q,	 Sign sgn) const
 {
@@ -1440,9 +1824,9 @@ finite_edge_interior_degenerated(const Site& t1, const Site& t2,
 }
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 finite_edge_interior_degenerated(const Face_handle& f, int i,
 				 const Site& q, Sign sgn) const
 {
@@ -1468,9 +1852,9 @@ finite_edge_interior_degenerated(const Face_handle& f, int i,
   return finite_edge_interior_degenerated(t1, t2, t3, q, sgn);
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 finite_edge_interior_degenerated(const Vertex_handle& v1,
 				 const Vertex_handle& v2,
 				 const Vertex_handle& v3,
@@ -1500,9 +1884,9 @@ finite_edge_interior_degenerated(const Vertex_handle& v1,
   return finite_edge_interior_degenerated(t1, t2, t3, q, sgn);
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 inline bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 infinite_edge_interior(const Site& t2, const Site& t3,
 		       const Site& t4, const Site& q, Sign sgn) const
 {
@@ -1510,9 +1894,9 @@ infinite_edge_interior(const Site& t2, const Site& t3,
     geom_traits().infinite_edge_interior_conflict_2_object()(t2,t3,t4,q,sgn);
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 infinite_edge_interior(const Face_handle& f, int i,
 		       const Site& q, Sign sgn) const
 {
@@ -1534,9 +1918,9 @@ infinite_edge_interior(const Face_handle& f, int i,
 }
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 infinite_edge_interior(const Vertex_handle& v1,
 		       const Vertex_handle& v2,
 		       const Vertex_handle& v3,
@@ -1565,9 +1949,9 @@ infinite_edge_interior(const Vertex_handle& v1,
 
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 edge_interior(const Vertex_handle& v1,
 	      const Vertex_handle& v2,
 	      const Vertex_handle& v3,
@@ -1595,9 +1979,9 @@ edge_interior(const Vertex_handle& v1,
 }
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 edge_interior(const Face_handle& f, int i,
 	      const Site& q, Sign sgn) const
 {
@@ -1625,9 +2009,9 @@ edge_interior(const Face_handle& f, int i,
 }
 
 /*
-template< class Gt, class Svdds >
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Conflict_type
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+template< class Gt, class PContainer, class Svdds >
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Conflict_type
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 finite_edge_conflict_type_degenerated(const Weighted_point& p1,
 				      const Weighted_point& p2,
 				      const Weighted_point& q) const
@@ -1663,11 +2047,11 @@ finite_edge_conflict_type_degenerated(const Weighted_point& p1,
 // methods for disk removal
 //----------------------------------------------------------------------
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 std::pair<
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle,
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle >
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle,
+typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle >
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 endpoint_vertices(Vertex_handle v) const
 {
   CGAL_precondition( v->is_segment() );
@@ -1694,9 +2078,9 @@ endpoint_vertices(Vertex_handle v) const
   return vertices;
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 bool
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 is_endpoint_of_segment(Vertex_handle v) const
 {
   if ( v->is_segment() ) { return false; }
@@ -1719,25 +2103,25 @@ is_endpoint_of_segment(Vertex_handle v) const
 }
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 void
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 remove_first(Vertex_handle v)
 {
   Delaunay_graph::remove_first(v);
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 void
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 remove_second(Vertex_handle v)
 {
   Delaunay_graph::remove_second(v);
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 unsigned int
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 remove_third(Vertex_handle v, bool remove_endpoints)
 {
   if ( is_endpoint_of_segment(v) )  { return 0; }
@@ -1772,9 +2156,9 @@ remove_third(Vertex_handle v, bool remove_endpoints)
 }
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 unsigned int
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 remove(Vertex_handle v, bool remove_endpoints)
 {
   CGAL_triangulation_precondition( v != Vertex_handle(NULL) );
@@ -1806,9 +2190,9 @@ remove(Vertex_handle v, bool remove_endpoints)
   return num_removed;
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 unsigned int
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 remove_degree_2(Vertex_handle v, bool remove_endpoints)
 {
   // segments are at least of degree 4
@@ -1821,9 +2205,9 @@ remove_degree_2(Vertex_handle v, bool remove_endpoints)
 }
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 unsigned int
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 remove_degree_3(Vertex_handle v, bool remove_endpoints)
 {
   // segments are at least of degree 4
@@ -1835,9 +2219,9 @@ remove_degree_3(Vertex_handle v, bool remove_endpoints)
   return 1;
 }
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 unsigned int
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 remove_degree_d(Vertex_handle v, bool remove_endpoints)
 {
   if ( v->is_segment() && remove_endpoints ) {
@@ -1864,7 +2248,7 @@ remove_degree_d(Vertex_handle v, bool remove_endpoints)
     return remove_degree_2(v, remove_endpoints);
   }
 
-  Segment_Voronoi_diagram_2<Gt,Svdds> svd_small;
+  Segment_Voronoi_diagram_2<Gt,PContainer,Svdds> svd_small;
 
   std::map<Vertex_handle,Vertex_handle> vmap;
 
@@ -1975,9 +2359,9 @@ remove_degree_d(Vertex_handle v, bool remove_endpoints)
 }
 
 /*
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 void
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 remove_degree_d_vertex(Vertex_handle v)
 {
   minimize_degree(v);
@@ -1991,7 +2375,7 @@ remove_degree_d_vertex(Vertex_handle v)
     return;
   }
   
-  Segment_Voronoi_diagram_2<Gt,Svdds> ag_small;
+  Segment_Voronoi_diagram_2<Gt,PContainer,Svdds> ag_small;
 
   std::map<Vertex_handle,Vertex_handle> vmap;
 
@@ -2077,9 +2461,9 @@ remove_degree_d_vertex(Vertex_handle v)
 }
 */
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 void
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 minimize_degree(Vertex_handle v)
 {
   CGAL_precondition ( v->degree() > 3 );
@@ -2117,15 +2501,84 @@ minimize_degree(Vertex_handle v)
     }
   } while ( found || fc != fc_start );
 }
+#if 0
+template< class Gt, class PContainer, class Svdds >
+void
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
+find_conflict_region_remove(const Vertex_handle& v,
+			    const Vertex_handle& vnearest,
+			    List& l, Face_map& fm,
+			    //			    std::map<Face_handle,Sign>& sign_map,
+			    std::vector<Vh_triple*>* fe)
+{
+  Site t = v->site();
+
+  // check if it is already inserted
+  if ( t.is_point() && vnearest->is_point() &&
+       are_same_points(t, vnearest->site()) ) {
+    return;
+  }
+
+  CGAL_precondition( vnearest != NULL );
+
+
+  // find the first conflict
+
+  // first look for conflict with vertex
+  Face_circulator fc_start = vnearest->incident_faces();
+  Face_circulator fc = fc_start;
+  Face_handle start_f;
+  Sign s;
+  do {
+    Face_handle f(fc);
+    //    int id = f->mirror_indexf->index(vnearest)
+    s = incircle(f, t);
+
+    if ( s == NEGATIVE ) {
+      start_f = f;
+      break;
+    }
+    ++fc;
+  } while ( fc != fc_start );
+
+  CGAL_assertion( s == NEGATIVE );
+
+  // we are not in conflict with an Apollonius vertex, so we have to
+  // be in conflict with the interior of an Apollonius edge
+  if ( s != NEGATIVE ) {
+    Edge_circulator ec_start = vnearest->incident_edges();
+    Edge_circulator ec = ec_start;
+
+    bool interior_in_conflict(false);
+    Edge e;
+    do {
+      e = *ec;
+      interior_in_conflict = edge_interior(e, t, false);
+
+      if ( interior_in_conflict ) { break; }
+      ++ec;
+    } while ( ec != ec_start );
+
+    CGAL_assertion( interior_in_conflict );
+
+    l.push(e);
+    l.push(sym_edge(e));
+    return;
+  }
+
+  initialize_conflict_region(start_f, l);
+  expand_conflict_region(start_f, v->site(), l, fm, fe);
+}
+#endif
 
 //----------------------------------------------------------------------
 // access methods
 //----------------------------------------------------------------------
 
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 unsigned int
-Segment_Voronoi_diagram_2<Gt,Svdds>::
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 number_of_incident_segments(Vertex_handle v) const
 {
   CGAL_precondition( v->is_point() );

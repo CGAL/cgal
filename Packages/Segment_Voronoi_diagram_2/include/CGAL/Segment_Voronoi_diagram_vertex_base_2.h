@@ -29,11 +29,12 @@
 
 
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
+#include <CGAL/Segment_Voronoi_diagram_storage_site_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 
-template < class Gt,
+template < class Gt, class PointHandle,
 	   class Vb = Triangulation_ds_vertex_base_2<> >
 class Segment_Voronoi_diagram_vertex_base_2
   : public Vb
@@ -44,10 +45,15 @@ public:
   // TYPES
   //------
   typedef Gt                      Geom_traits;
+  typedef PointHandle             Point_handle;
   typedef Vb                      Base;
   typedef typename Gt::Site_2     Site_2;
-  typedef typename Gt::Point_2    Point_2;
-  typedef typename Gt::Segment_2  Segment_2;
+
+#ifdef USE_STORAGE_SITE
+  typedef
+  Segment_Voronoi_diagram_storage_site_2<Gt,Point_handle>
+  Storage_site_2;
+#endif
 
   typedef SVDDS           Segment_Voronoi_diagram_data_structure_2;
   
@@ -58,61 +64,49 @@ public:
   template < typename SVDDS2 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<SVDDS2>::Other  Vb2;
-    typedef Segment_Voronoi_diagram_vertex_base_2<Gt,Vb2>    Other;
+    //    typedef Segment_Voronoi_diagram_vertex_base_2<Site_2,Vb2> Other;
+    typedef
+    Segment_Voronoi_diagram_vertex_base_2<Gt,Point_handle,Vb2>  Other;
   };
 
   
-  Segment_Voronoi_diagram_vertex_base_2 () : Vb(), _s() {}
+#ifdef USE_STORAGE_SITE
+  Segment_Voronoi_diagram_vertex_base_2 () : Vb(), ss_() {}
     
-#if 0
-  Segment_Voronoi_diagram_vertex_base_2(const Point_2 & p,
-					Face_handle f = Face_handle(NULL)) 
-    :  _s(p), _f(f), is_point(false)  {}
-
-  Segment_Voronoi_diagram_vertex_base_2(const Segment_2 & s,
-					Face_handle f = Face_handle(NULL))
-    :  _s(s), _f(f), is_point(false)  {}
+  Segment_Voronoi_diagram_vertex_base_2(const Storage_site_2& ss,
+					Face_handle f)
+    : Vb(f), ss_(ss)  {}
+#else
+  Segment_Voronoi_diagram_vertex_base_2 () : Vb(), s_() {}
+    
+  Segment_Voronoi_diagram_vertex_base_2(const Site_2& s,
+					Face_handle f)
+    : Vb(f), s_(s)  {}
 #endif
 
-  Segment_Voronoi_diagram_vertex_base_2(const Site_2 & t, Face_handle f)
-    :  Vb(f), _s(t)  {}
-
-
-  inline void set_point(const Point_2& p)
-    { _s.set_point(p); }
-  inline void set_segment(const Segment_2& s)
-    { _s.set_segment(s); }
-  inline void set_site(const Site_2& t)
-    { _s = t; }
-  
-  //  inline void set_face(Face_handle f) { _f = f; }
- 
-  Point_2    point() const
-  { CGAL_precondition( is_point() ); return _s.point(); }
-
-  Segment_2  segment() const
-  { CGAL_precondition( is_segment() ); return _s.segment(); }
-
-  const Site_2& site() const { return _s; }
-
-  Point_2   source() const
-  { CGAL_precondition( is_segment() ); return _s.source(); }
-
-  Point_2   target() const
-  { CGAL_precondition( is_segment() ); return _s.target(); }
- 
-#if 0
-  inline Point_2&    point()
-    { CGAL_precondition( is_point() ); return _s.point(); }
-  inline Segment_2&  segment()
-    { CGAL_precondition( is_segment() ); return _s.segment(); }
-  inline Site_2&     site() { return _s; }
+#ifdef USE_STORAGE_SITE
+  void set_site(const Storage_site_2& ss) {
+    ss_ = ss;
+  }
+#else
+  void set_site(const Site_2& s) {
+    s_ = s;
+  }  
 #endif
 
-  bool is_segment() const { return _s.is_segment(); }
-  bool is_point()   const { return _s.is_point(); }
+#ifdef USE_STORAGE_SITE
+  const Storage_site_2& storage_site() const { return ss_; }
+  Site_2                site()         const { return ss_.site(); }
 
-   
+  bool is_segment() const { return ss_.is_segment(); }
+  bool is_point()   const { return ss_.is_point(); }
+#else
+  const Site_2&         site()         const { return s_; }
+
+  bool is_segment() const { return s_.is_segment(); }
+  bool is_point()   const { return s_.is_point(); }
+#endif
+
   //the following trivial is_valid to allow
   // the user of derived face base classes 
   // to add their own purpose checking
@@ -120,7 +114,11 @@ public:
   { return true; }
 
 private:
-  Site_2 _s;
+#ifdef USE_STORAGE_SITE
+  Storage_site_2 ss_;
+#else
+  Site_2 s_;
+#endif
   //  std::list<Vb>  adjseg_list; // list of adjacent segments; this is
   // important when I want to do deletions
   //  bool _is_point; // false if it is a segment; true otherwise

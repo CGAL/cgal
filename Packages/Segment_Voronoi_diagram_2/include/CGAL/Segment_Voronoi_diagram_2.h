@@ -43,6 +43,8 @@
 #include <CGAL/in_place_edge_list.h>
 #include <CGAL/Segment_Voronoi_diagram_traits_wrapper_2.h>
 
+#include <CGAL/Point_container.h>
+
 /*
   Conventions:
   ------------
@@ -59,19 +61,21 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template< class Gt, class Svdds >
+template< class Gt, class PContainer, class Svdds >
 class Segment_Voronoi_diagram_hierarchy_2;
 
 
 template < class Gt,
+	   class PContainer = Point_container<typename Gt::Point_2>,
   class Svdds = Segment_Voronoi_diagram_data_structure_2 < 
-                Segment_Voronoi_diagram_vertex_base_2<Gt>,
+                Segment_Voronoi_diagram_vertex_base_2<Gt,
+	                         typename PContainer::Point_handle>,
                 Segment_Voronoi_diagram_face_base_2<Gt> > >
 class Segment_Voronoi_diagram_2
   : private Triangulation_2<
           Segment_Voronoi_diagram_traits_wrapper_2<Gt>, Svdds >
 {
-  friend class Segment_Voronoi_diagram_hierarchy_2<Gt, Svdds>;
+  friend class Segment_Voronoi_diagram_hierarchy_2<Gt,PContainer,Svdds>;
 protected:
   bool intersection_flag;
 
@@ -157,6 +161,9 @@ public:
   typedef typename DG::All_edges_iterator        All_edges_iterator;
   typedef typename DG::Finite_edges_iterator     Finite_edges_iterator;
 
+  typedef Point_container<Point>                  Point_container;
+  typedef typename Point_container::Point_handle  Point_handle;
+  
 protected:
   // some more local types
   //  typedef typename Svdds::Vertex_base          Vertex_base;
@@ -169,6 +176,13 @@ protected:
   typedef typename Vertex_list::iterator   Vertex_list_iterator;
   typedef Vertex_handle                    Vh_triple[3];
 
+#ifdef USE_STORAGE_SITE
+  typedef
+  typename Data_structure::Vertex_base::Storage_site_2  Storage_site_2;
+
+  typedef typename Storage_site_2::Handle_pair       Point_handle_pair;
+#endif
+
   // the in place edge list
   typedef In_place_edge_list<Edge>          List;
 
@@ -176,7 +190,7 @@ protected:
 		 RIGHT_VERTEX, BOTH_VERTICES, ENTIRE_EDGE }
   Conflict_type;
 
-  static inline Conflict_type opposite(const Conflict_type& ct) {
+  static Conflict_type opposite(const Conflict_type& ct) {
     if ( ct == RIGHT_VERTEX ) { return LEFT_VERTEX; }
     if ( ct == LEFT_VERTEX ) { return RIGHT_VERTEX; }
     return ct;
@@ -213,98 +227,99 @@ public:
 public:
   // ACCESS METHODS
   // --------------
-  inline const Geom_traits& geom_traits() const {
+  const Geom_traits& geom_traits() const {
     return DG::geom_traits();
   }
 
-  inline int number_of_vertices() const {
+  int number_of_vertices() const {
     return DG::number_of_vertices();
   }
 
   unsigned int number_of_incident_segments(Vertex_handle v) const;
 
 
-  inline Vertex_handle infinite_vertex() const {
+  Vertex_handle infinite_vertex() const {
     return DG::infinite_vertex();
   }
 
-  inline Face_handle infinite_face() const {
+  Face_handle infinite_face() const {
     return DG::infinite_face();
   }
 
-  inline Vertex_handle finite_vertex() const {
+  Vertex_handle finite_vertex() const {
     return DG::finite_vertex();
   }
 
 public:
   // TRAVERSAL OF THE DUAL GRAPH
   //----------------------------
-  inline Finite_faces_iterator finite_faces_begin() const {
+  Finite_faces_iterator finite_faces_begin() const {
     return DG::finite_faces_begin();
   }
 
-  inline Finite_faces_iterator finite_faces_end() const {
+  Finite_faces_iterator finite_faces_end() const {
     return DG::finite_faces_end();
   }
 
-  inline Finite_vertices_iterator finite_vertices_begin() const {
+  Finite_vertices_iterator finite_vertices_begin() const {
     return DG::finite_vertices_begin();
   }
 
-  inline Finite_vertices_iterator finite_vertices_end() const {
+  Finite_vertices_iterator finite_vertices_end() const {
     return DG::finite_vertices_end();
   }
 
-  inline Finite_edges_iterator finite_edges_begin() const {
+  Finite_edges_iterator finite_edges_begin() const {
     return DG::finite_edges_begin();    
   }
-  inline Finite_edges_iterator finite_edges_end() const {
+
+  Finite_edges_iterator finite_edges_end() const {
     return DG::finite_edges_end();    
   }
 
   //  Point_iterator points_begin() const;
   //  Point_iterator points_end() const;
 
-  inline All_faces_iterator all_faces_begin() const {
+  All_faces_iterator all_faces_begin() const {
     return DG::all_faces_begin();
   }
 
-  inline All_faces_iterator all_faces_end() const {
+  All_faces_iterator all_faces_end() const {
     return DG::all_faces_end();
   }
 
-  inline All_vertices_iterator all_vertices_begin() const {
+  All_vertices_iterator all_vertices_begin() const {
     return DG::all_vertices_begin();
   }
 
-  inline All_vertices_iterator all_vertices_end() const {
+  All_vertices_iterator all_vertices_end() const {
     return DG::all_vertices_end();
   }
 
-  inline All_edges_iterator all_edges_begin() const {
+  All_edges_iterator all_edges_begin() const {
     return DG::all_edges_begin();
   }
 
-  inline All_edges_iterator all_edges_end() const {
+  All_edges_iterator all_edges_end() const {
     return DG::all_edges_end();
   }
 
 public:
   // CIRCULATORS
   //------------
-  inline Face_circulator
+  Face_circulator
   incident_faces(Vertex_handle v,
 		 Face_handle f = Face_handle(NULL)) const {
     return DG::incident_faces(v, f);
   }
 
-  inline Vertex_circulator
+  Vertex_circulator
   incident_vertices(Vertex_handle v,
 		    Face_handle f = Face_handle(NULL)) const { 
     return DG::incident_vertices(v, f);
   }
 
-  inline Edge_circulator
+  Edge_circulator
   incident_edges(Vertex_handle v,
 		 Face_handle f = Face_handle(NULL)) const {
     return DG::incident_edges(v, f);
@@ -313,23 +328,23 @@ public:
 public:
   // PREDICATES
   //-----------
-  inline bool is_infinite(const Vertex_handle& v) const {
+  bool is_infinite(const Vertex_handle& v) const {
     return DG::is_infinite(v);
   }
 
-  inline bool is_infinite(const Face_handle& f) const {
+  bool is_infinite(const Face_handle& f) const {
     return DG::is_infinite(f);
   }
 
-  inline bool is_infinite(const Face_handle& f, int i) const {
+  bool is_infinite(const Face_handle& f, int i) const {
     return DG::is_infinite(f, i);
   }
 
-  inline bool is_infinite(const Edge& e) const {
+  bool is_infinite(const Edge& e) const {
     return is_infinite(e.first, e.second);
   }
 
-  inline bool is_infinite(const Edge_circulator& ec) const {
+  bool is_infinite(const Edge_circulator& ec) const {
     return DG::is_infinite(ec);
   }
 
@@ -353,14 +368,28 @@ public:
     }
   }
 
+  // insert a point
   Vertex_handle  insert(const Point& p) {
-    return insert(Site(p), Vertex_handle(NULL), true);
+    return insert_point(p, Vertex_handle(NULL));
   }
 
-  Vertex_handle  insert(const Segment& s) {
-    return insert(Site(s), Vertex_handle(NULL), true);
+  Vertex_handle  insert(const Point& p, Vertex_handle vnear) {
+    return insert_point(p, vnear);
   }
 
+  // insert a segment
+  Vertex_handle  insert(const Point& p1, const Point& p2) {
+    return
+    insert_segment(Site(Segment(p1, p2)), Vertex_handle(NULL), true);
+  }
+
+  Vertex_handle  insert(const Point& p0, const Point& p1, 
+			Vertex_handle vnear) {
+    return
+    insert_segment(Site(Segment(p1, p2)), vnear, true);
+  }
+
+#if 0
   Vertex_handle  insert(const Site& t) {
     return insert(t, Vertex_handle(NULL), true);
   }
@@ -369,6 +398,7 @@ public:
   {
     return insert(t, vnear, true);
   }
+#endif
 
 public:
   // REMOVAL
@@ -421,11 +451,11 @@ public:
   Point  dual(const Face_handle& f) const;
   Object dual(const Edge e) const;
 
-  inline Object dual(const Edge_circulator& ec) const {
+  Object dual(const Edge_circulator& ec) const {
     return dual(*ec);
   }
 
-  inline Object dual(const Finite_edges_iterator& ei) const {
+  Object dual(const Finite_edges_iterator& ei) const {
     return dual(*ei);
   }
 
@@ -440,9 +470,9 @@ public:
     Finite_vertices_iterator vit = finite_vertices_begin();
     for (; vit != finite_vertices_end(); ++vit) {
       if ( vit->is_point() ) {
-	str << "p " << vit->point() << std::endl;
+	str << "p " << vit->site().point() << std::endl;
       } else {
-	str << "s " << vit->segment() << std::endl;
+	str << "s " << vit->site().segment() << std::endl;
       }
     }
     return str;
@@ -464,7 +494,6 @@ public:
 
 
   template< class Stream >
-  inline
   Stream& draw_primal(Stream &str) const
   {
     Finite_edges_iterator eit = finite_edges_begin();
@@ -515,13 +544,19 @@ public:
 public:
   // MISCELLANEOUS
   //--------------
-  inline void clear() {
-    return DG::clear();
+  void clear() {
+    DG::clear();
+    pc_.clear();
   }
 
-  inline void swap(const Segment_Voronoi_diagram_2& svd) {
+  void swap(const Segment_Voronoi_diagram_2& svd) {
     DG::swap(svd);
+    pc_.swap(svd.pc_);
   }
+
+  const Data_structure&  ds() const { return this->_tds; }
+  const Point_container& point_container() const { return pc_; }
+
 
 public:
   // MK: THE FOLLOWING ARE NOT IN THE SPEC
@@ -529,10 +564,10 @@ public:
   // Primal
   Point  primal(const Face_handle& f) const;
   Object primal(const Edge e) const;
-  inline Object primal(const Edge_circulator& ec) const {
+  Object primal(const Edge_circulator& ec) const {
     return primal(*ec);
   }
-  inline Object primal(const Finite_edges_iterator& ei) const {
+  Object primal(const Finite_edges_iterator& ei) const {
     return primal(*ei);
   }
 
@@ -638,7 +673,7 @@ protected:
 		     const Site& t, Sign sgn) const;
 
 
-  inline bool edge_interior(const Edge& e,
+  bool edge_interior(const Edge& e,
 			    const Site& t, Sign sgn) const {
     return edge_interior(e.first, e.second, t, sgn);
   }
@@ -650,7 +685,7 @@ protected:
 		     const Vertex_handle& v,
 		     Sign sgn) const;
 
-  inline bool is_degenerate_edge(const Site& t1,
+  bool is_degenerate_edge(const Site& t1,
 				 const Site& t2,
 				 const Site& t3,
 				 const Site& t4) const {
@@ -658,7 +693,7 @@ protected:
       (t1, t2, t3, t4);
   }
 
-  inline bool is_degenerate_edge(const Vertex_handle& v1,
+  bool is_degenerate_edge(const Vertex_handle& v1,
 				 const Vertex_handle& v2,
 				 const Vertex_handle& v3,
 				 const Vertex_handle& v4) const {
@@ -669,7 +704,7 @@ protected:
 			      v3->site(), v4->site());
   }
 
-  inline bool is_degenerate_edge(const Face_handle& f, int i) const {
+  bool is_degenerate_edge(const Face_handle& f, int i) const {
     Vertex_handle v1 = f->vertex( ccw(i) );
     Vertex_handle v2 = f->vertex(  cw(i) );
     Vertex_handle v3 = f->vertex(     i  );
@@ -678,7 +713,7 @@ protected:
     return is_degenerate_edge(v1, v2, v3, v4);
   }
 
-  inline bool is_degenerate_edge(const Edge& e) const {
+  bool is_degenerate_edge(const Edge& e) const {
     return is_degenerate_edge(e.first, e.second);
   }
 
@@ -745,11 +780,11 @@ protected:
   // wrappers for combinatorial operations on the data structure
 
   // getting the symmetric edge
-  inline Edge sym_edge(const Edge e) const {
+  Edge sym_edge(const Edge e) const {
     return sym_edge(e.first, e.second);
   }
 
-  inline Edge sym_edge(const Face_handle& f, int i) const {
+  Edge sym_edge(const Face_handle& f, int i) const {
     Face_handle f_sym = f->neighbor(i);
     return Edge(  f_sym, f_sym->index( f->mirror_vertex(i) )  );
   }
@@ -762,15 +797,44 @@ protected:
   bool          is_degree_2(const Vertex_handle& v) const;
 
   Vertex_handle insert_degree_2(Edge e);
-  Vertex_handle insert_degree_2(Edge e, const Site& t);
+#ifdef USE_STORAGE_SITE
+  Vertex_handle insert_degree_2(Edge e, const Storage_site_2& ss);
+#else
+  Vertex_handle insert_degree_2(Edge e, const Site_2& t);
+#endif
+
   void          remove_degree_2(Vertex_handle v);
+#if 0
   void          remove_degree_3(Vertex_handle v);
   void          remove_degree_3(Vertex_handle v, Face* f);
+#endif
 
   // this was defined because the hierarchy needs it
-  inline Vertex_handle create_vertex() {
-    return _tds.create_vertex();
+#ifdef USE_STORAGE_SITE
+  Vertex_handle create_vertex(const Storage_site_2& ss) {
+    Vertex_handle v = _tds.create_vertex();
+    v->set_site(ss);
+    return v;
   }
+
+  Vertex_handle create_vertex_dim_up(const Storage_site_2& ss) {
+    Vertex_handle v = _tds.insert_dim_up(infinite_vertex());
+    v->set_site(ss);
+    return v;
+  }
+#else
+  Vertex_handle create_vertex(const Site_2& s) {
+    Vertex_handle v = _tds.create_vertex();
+    v->set_site(s);
+    return v;
+  }
+
+  Vertex_handle create_vertex_dim_up(const Site_2& s) {
+    Vertex_handle v = _tds.insert_dim_up(infinite_vertex());
+    v->set_site(s);
+    return v;
+  }
+#endif
 
 
 protected:
@@ -778,18 +842,58 @@ protected:
 
   // the first two objects can only be points, since we always
   // add the endpoints first and then the segment.
+#ifdef USE_STORAGE_SITE
+  Storage_site_2 create_storage_site(const Point& p)
+  {
+    Point_handle ph = pc_.insert(p);
+    return Storage_site_2(ph);
+  }
+
+  Storage_site_2 create_storage_site(Vertex_handle v0,
+				     Vertex_handle v1)
+  {
+    Point_handle_pair ph_pair(v0->storage_site().point_handle(),
+			      v1->storage_site().point_handle());
+    return Storage_site_2( ph_pair );
+  }
+#endif
+
   Vertex_handle  insert_first(const Point& p);
   Vertex_handle  insert_second(const Point& p);
-  Vertex_handle  insert_third(const Site& t);
-  Vertex_handle insert_intersecting_segment(const Site_2& t,
-					    Vertex_handle v);
-  Vertex_handle insert(const Site_2& t, Vertex_handle vnear,
-		       bool insert_endpoints);
+  Vertex_handle  insert_third(const Point& p);
+  //  Vertex_handle  insert_third(const Point& p0, const Point& p1);
+  Vertex_handle  insert_third(Vertex_handle v0, Vertex_handle v1);
+#ifdef USE_STORAGE_SITE
+  Vertex_handle  insert_intersecting_segment(const Storage_site_2& ss,
+					     const Site_2& t,
+					     Vertex_handle v);
+#else
+  Vertex_handle  insert_intersecting_segment(const Site_2& t,
+					     Vertex_handle v);
+#endif
+#ifdef USE_STORAGE_SITE
+  Vertex_handle insert_point(const Storage_site_2& t,
+			     const Site_2& t, Vertex_handle vnear);
+#else
+  Vertex_handle insert_point(const Site_2& t, Vertex_handle vnear);
+#endif
+
+  Vertex_handle insert_point(const Point& p, Vertex_handle vnear);
+  Vertex_handle insert_segment(const Site_2& t, Vertex_handle vnear,
+			       bool insert_endpoints);
+  Vertex_handle insert_segment2(const Site_2& t,
+#ifdef USE_STORAGE_SITE
+				const Storage_site_2& ss,
+#endif
+				Vertex_handle vnear, bool insert_endpoints);
 
   // methods for insertion
   void initialize_conflict_region(const Face_handle& f, List& l);
 
   void expand_conflict_region(const Face_handle& f, const Site& t,
+#ifdef USE_STORAGE_SITE
+			      const Storage_site_2& ss,
+#endif
 			      List& l, Face_map& fm,
 			      std::map<Face_handle,Sign>& sign_map,
 			      std::pair<bool, Vertex_handle>& vcross,
@@ -800,11 +904,11 @@ protected:
   void          remove_bogus_vertices(Vertex_list& vl);
 
   // MK: this is not currently used
-  inline  std::vector<Face*> get_faces_for_recycling(Face_map& fm,
+  std::vector<Face*> get_faces_for_recycling(Face_map& fm,
 					     unsigned int n_wanted);
 
-  Vertex_handle retriangulate_conflict_region(const Site& t, List& l, 
-					      Face_map& fm);
+  void retriangulate_conflict_region(Vertex_handle v, List& l,
+				     Face_map& fm);
 
 protected:
   // methods for removal
@@ -855,6 +959,8 @@ protected:
     return str;
   }
 
+private:
+  Point_container pc_;
 
 }; // Segment_Voronoi_diagram_2
 
