@@ -1,5 +1,10 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+- added point_generators_d.h header file. This file contains 
+  Random_points_in_iso_box_d class.
+  Modified the doc too.
+
+
 2.78 (21 Oct 2003)
 - fix headers
 
