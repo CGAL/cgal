@@ -52,7 +52,7 @@ bool operator==( const Polygon_2<Traits_P,Container1_P> &x,
   if ((x.size() == 0) && (y.size() == 0)) return true;
 
   if (x.size() != y.size()) return false;
-  Equal_2 equal_2 = Traits_P().equal_2_object();
+  Equal_2 equal_2 = x.traits_member().equal_2_object();
   typename Polygon_2<Traits_P,Container1_P>::Vertex_const_iterator x_iter =
     x.vertices_begin();
 
