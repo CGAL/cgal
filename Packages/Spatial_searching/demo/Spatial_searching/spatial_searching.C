@@ -174,7 +174,7 @@ private slots:
       // Searching an exact range
       // using default value 0.0 for epsilon fuzziness paramater
       Fuzzy_box exact_range(ir.min(), ir.max());
-      Traits tr;
+
       typedef CGAL::Kd_tree<Traits> Tree;
       std::list<Point_2> l, res;
       CGAL::copy_n(vector_of_points.begin(), vector_of_points.size(),
@@ -198,7 +198,7 @@ private slots:
     } else if(CGAL::assign(c, obj)){
       // exact range searching using default value 0.0 for fuzziness paramater
       Fuzzy_circle exact_range(c.center(), sqrt(c.squared_radius()));
-      Traits tr;
+
       typedef CGAL::Kd_tree<Traits> Tree;
       std::list<Point_2> l, res;
       CGAL::copy_n(vector_of_points.begin(), vector_of_points.size(),
@@ -272,7 +272,7 @@ private slots:
   }
 	
   void n_search(){
-    Traits tr;
+
     typedef CGAL::Kd_tree<Traits> Tree;
     std::list<Point_2> l;
     CGAL::copy_n(vector_of_points.begin(), vector_of_points.size(),
@@ -284,7 +284,7 @@ private slots:
     CGAL::Random_points_in_square_2<Point_2,Creator> h( 1.0);
     std::vector<Point_2> query_points;
     CGAL::copy_n( h, query_point_number, std::back_inserter(query_points));
-    Distance tr_dist;
+
     std::vector<Neighbour_search::Point_with_transformed_distance>
       nearest_neighbour;
     for (int i=0; i < query_point_number; i++) { 
