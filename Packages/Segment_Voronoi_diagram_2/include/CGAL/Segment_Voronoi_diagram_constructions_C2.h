@@ -13,8 +13,6 @@
 #include <CGAL/Parabola_2.h>
 #include <CGAL/Parabola_segment_2.h>
 
-#include <CGAL/leda_real.h>
-
 CGAL_BEGIN_NAMESPACE
 
 
