@@ -2800,7 +2800,7 @@ or clear operation.
     \ccIndexRequirements
     
     The class \ccRefName\ expects a model of the concept
-    \ccc{Optimisation_d_traits} as its template argument.
+    \ccc{OptimisationDTraits} as its template argument.
       We provide the models \ccc{Optimisation_d_traits_2},
       \ccc{Optimisation_d_traits_3} and \ccc{Optimisation_d_traits_d}
     for two-, three-, and $d$-dimensional points respectively. 
@@ -3047,7 +3047,7 @@ bounded side, i.e.\ its unbounded side equals the whole space $\E_d$.
     \ccRefIdfierPage{CGAL::Optimisation_d_traits_2<R,ET,NT>}\\
     \ccRefIdfierPage{CGAL::Optimisation_d_traits_3<R,ET,NT>}\\
     \ccRefIdfierPage{CGAL::Optimisation_d_traits_d<R,ET,NT>}\\
-    \ccRefConceptPage{Optimisation_d_traits}\\
+    \ccRefConceptPage{OptimisationDTraits}\\
     \ccRefIdfierPage{CGAL::Min_circle_2<Traits>}\\
     \ccRefIdfierPage{CGAL::Min_annulus_d<Traits>}
 
