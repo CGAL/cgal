@@ -131,7 +131,7 @@ public:
 
   typedef SweepEvent Event;
   typedef Point_less_functor<Point_2, Traits> PointLess;
-  typedef std::map<const Point_2, Event*, PointLess> EventQueue;
+  typedef std::map<Point_2, Event*, PointLess> EventQueue;
   typedef typename EventQueue::iterator EventQueueIter;
   typedef typename EventQueue::value_type EventQueueValueType;
   typedef std::vector<Event*> EventPtrContainer;
@@ -272,7 +272,6 @@ public:
 
 protected:
 
-  bool m_stop_at_first_int;
 
   void Init(CurveInputIterator begin, CurveInputIterator end);
   void InitCurve(X_monotone_curve_2 &curve);
@@ -336,7 +335,6 @@ protected:
       return;
   }
 
-  void FirstPass();
   void HandleVerticalCurveBottom(SweepLineGetSubCurves &tag);
   void HandleVerticalCurveBottom(SweepLineGetPoints &tag);
   void HandleVerticalOverlapCurves();
@@ -876,6 +874,9 @@ protected:
   /*! if true, end points are reported as intersection points */
   bool m_includeEndPoints;
 
+  /*! this is true when get_intersection_points() is called */
+  bool m_stop_at_first_int;
+
   /*! used to hold all event, processed or not, so that they can 
 `     all be deleted at the end */
   EventPtrContainer m_events; 
@@ -1086,99 +1087,6 @@ InitCurve(X_monotone_curve_2 &curve)
   PRINT_NEW_EVENT(target, e);
 }
 
-
-
-/*! This pass comes to take care of cases in which we reach an
- *  event point that is the left end of a curve that starts on another curve.
- *  For example:
- *       /      ------         /
- *      /----      \          /
- *     /            \     ----------
- *  This method is called before the left curves of an event are handled.
- */
-template <class CurveInputIterator,  class SweepLineTraits_2,
-         class SweepEvent, class CurveWrap>
-inline void 
-Sweep_line_2_impl<CurveInputIterator,SweepLineTraits_2,SweepEvent,CurveWrap>::
-FirstPass()
-{
-  if ( m_statusLine->size() == 0 )
-    return;
-
-  const Point_2& p = m_currentEvent->getPoint();
-
-  DBG("First pass");
-  EventCurveIter rightIter = m_currentEvent->rightCurvesBegin();
-  m_currentPos = m_sweepLinePos;
-
-  m_comp_param->m_compare_func = 0;
-  bool first_time = true;
-  while ( rightIter != m_currentEvent->rightCurvesEnd())
-  {
-    // if the point is not an end point, skip it
-    if ( !(*rightIter)->isEndPoint(p)) {
-      ++rightIter;
-      continue;
-    }
-
-    // if this is the first curve, we look for its place in the status line,
-    // otherwise we use the previoussearch as a hint
-    StatusLineIter slIter;
-    if ( first_time ) {
-      slIter = m_statusLine->lower_bound(*rightIter);
-      //(*rightIter)->set_hint(slIter);
-      m_status_line_insert_hint = slIter; 
-      first_time = false;
-    } else {
-      ++slIter;
-      //(*rightIter)->set_hint(slIter);
-    }
-
-    StatusLineIter prev = slIter;
-    StatusLineIter next = slIter;
- 
-    // check the curve that comes before the rightCurve on the status line.
-    // check also all of the overlaps...
-    if ( slIter != m_statusLine->begin() )
-    { 
-      --prev;
-      while (m_traits->point_in_x_range((*prev)->getCurve(), p) &&
-	     m_traits->curve_compare_y_at_x(p, (*prev)->getCurve()) ==
-             EQUAL &&
-	     !(*prev)->isEndPoint(p))
-      {
-	m_currentEvent->addCurveToRight(*prev);
-	m_currentEvent->addCurveToLeft(*prev, m_prevPos);
-	if ( prev == m_statusLine->begin() )
-	  break;
-	--prev;
-      }
-    }
-
-    // check the curve that comes after the rightCurve on the status line.
-    // check also all of the overlaps...
-    if ( slIter != m_statusLine->end() )
-    {
-      while (m_traits->point_in_x_range((*next)->getCurve(), p) &&
-	     m_traits->curve_compare_y_at_x(p, (*next)->getCurve()) ==
-             EQUAL &&
-	     !(*next)->isEndPoint(p))
-      {
-	m_currentEvent->addCurveToRight(*next);
-	m_currentEvent->addCurveToLeft(*next, m_prevPos);
-	++next;
-	if ( next ==  m_statusLine->end() )
-	  break;
-      }    
-    } 
-
-    ++rightIter;
-  }
-  m_comp_param->m_compare_func = 1;
-
-  SL_DEBUG(m_currentEvent->Print();)
-  SL_DEBUG(std::cout << "First pass - done\n" ;)
-}
 
 
 
@@ -1602,17 +1510,6 @@ HandleRightCurves(OutpoutIterator out, SweepLineGetSubCurves &tag)
 	  break;
       }
     }
-#if 0
-      // new code
-      if ( !m_stop_at_first_int ) {
-        for ( CurveListIter iter = m_curvesToReport.begin() ;
-              iter != m_curvesToReport.end() ; ++iter ) {
-          AddCurveToOutput(*iter, 0, out);
-        }
-        m_curvesToReport.clear();
-      }
-#endif
-
   }
 }
 
@@ -1983,29 +1880,6 @@ Intersect(Subcurve *c1, Subcurve *c2)
   const X_monotone_curve_2 &cv1 = scv1->getCurve();
   const X_monotone_curve_2 &cv2 = scv2->getCurve();
 
-//yyyyyyyyyyy
-#if 0
-  if ( CurveStartsAtCurve(c1, c2) ) {
-    m_currentEvent->addCurveToLeft(c2, m_sweepLinePos);
-    m_currentEvent->addCurveToRight(c2);
-    X_monotone_curve_2 a,b;
-    m_traits->curve_split(cv2, a, b, m_currentEvent->getPoint());
-    m_curvesToReport.push_back(a);
-    c2->setLastPoint(m_currentEvent->getPoint());
-    c2->setLastCurve(b);
-  }
-  if ( CurveStartsAtCurve(c2, c1) ) {
-    m_currentEvent->addCurveToLeft(c1, m_sweepLinePos);
-    m_currentEvent->addCurveToRight(c1);
-    X_monotone_curve_2 a,b;
-    m_traits->curve_split(cv1, a, b, m_currentEvent->getPoint());
-    m_curvesToReport.push_back(a);
-    c1->setLastPoint(m_currentEvent->getPoint());
-    c1->setLastCurve(b);
-  }
-#endif
-
-
   bool isOverlap = false;
 
   Point_2 xp, xp1;
@@ -2081,7 +1955,6 @@ isInternalXPoint(const Point_2 &p)
   EventListIter itt = m_miniq.begin();
   while ( itt != m_miniq.end() )
   {
-    //m_traits->point_is_same(p, (*itt)->getPoint());
     if ( m_traits->point_equal(p, (*itt)->getPoint())) 
     {
       if ((*itt)->isInternalIntersectionPoint()) {
@@ -2163,14 +2036,6 @@ DoCurvesOverlap(Subcurve *c1, Subcurve *c2)
 				    m_sweepLinePos) != EQUAL))
     return false;
 
-#if 0
-  // improve here...
-  if (m_traits->curves_compare_y_at_x_right(c1->getCurve(),
-					 c2->getCurve(),
-					 m_prevPos) != EQUAL)
-    return false;
-#endif
-
   if ( m_traits->curves_overlap(c1->getCurve(),c2->getCurve()) )
     return true;
 
@@ -2185,8 +2050,6 @@ SimilarCurves(const X_monotone_curve_2 &a, const X_monotone_curve_2 &b)
 {
   if ( m_traits->curve_equal(a, b))
     return true;
-  //if ( m_traits->curve_equal(m_traits->curve_opposite(a), b))
-  //  return true;
   return false;
 }
 

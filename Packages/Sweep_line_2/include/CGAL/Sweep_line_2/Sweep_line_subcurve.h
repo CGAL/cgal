@@ -68,7 +68,6 @@ public:
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::Curve_2 Curve_2;
 
-  //typedef typename Traits::X_curve_2 X_curve_2;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   typedef Sweep_line_subcurve<Traits> Self;
   typedef Status_line_curve_less_functor<Traits, Self> StatusLineCurveLess;
