@@ -46,19 +46,26 @@ int main()
   //  bool is_ok =
   //    CGAL::test_traits<Kernel,CGAL::Ring_tag,std::ifstream>(ifs_traits);
 
+  std::cout << "testing the traits class..." << std::flush;
   bool traits_ok = CGAL::test_traits<Kernel,Method_tag>();
 
   assert( traits_ok );
+  std::cout << " done!" << std::endl;
 
+  std::cout << "testing the Apollonius graph class..." << std::flush;
   bool algo_ok =
     CGAL::test_algo<Kernel,Method_tag,std::ifstream>(ifs_algo);
 
   assert( algo_ok );
+  std::cout << " done!" << std::endl;
 
+  std::cout << "testing the Apollonius graph hierarchy class..."
+	    << std::flush;
   bool hierarchy_ok = 
     CGAL::test_hierarchy_algo<Kernel,Method_tag,std::ifstream>(ifs_hierarchy);
 
   assert( hierarchy_ok );
+  std::cout << " done!" << std::endl;
 
   return 0;
 }
