@@ -53,7 +53,7 @@ $(Package).tar.gz:
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO \
 	version description.txt changes.txt \
-	include doc_tex doc_ps test examples
+	include src doc_tex doc_ps test examples
 
 doc: doc_ps/$(Package).ps
 

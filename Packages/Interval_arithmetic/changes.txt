@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 3.3 on 19 March 1999
+- Forgot the src/ directory in the package :(
+
 Version 3.2 on 19 March 1999
 - Changed max<double> to std::max, idem for min().
 
