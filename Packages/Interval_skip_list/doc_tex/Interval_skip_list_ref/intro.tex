@@ -46,12 +46,28 @@
 %----------------------------------------------------------------------
 
 %\clearpage
-%\section{Reference Pages for Interval Skiplist}
+%\section{Reference Pages for Interval Skip List}
 
-\chapter{Interval Skiplist}
+\chapter{Interval Skip List}
 
-This chapter presents the interval skiplist as it is described in
-the article \cite{}. 
+This chapter presents the interval skip list introduced by Hanson~\cite{},
+and derived from the skip list data structure~\cite{}.
+
+The data structure stores intervals and allows to perform stabbing queries,
+that is to test wether a point is covered by any of the intervals.
+It further allows to find all intervals that contain a point.
+
+The interval skip list is, as far as its functionality is concerned,
+related to the \ccc{Segment_tree}. Both allow to do stabbing queries
+and both allow to find all intervals that contain a given point.  The
+implementation of segment trees in {\sc Cgal} works in higher
+dimensions, whereas the interval skip list is limited to the 1D
+case. However, this interval skip list implementation is fully
+dynamic, whereas the segment tree implementation in {\sc Cgal} is
+static, that is all intervals must be known in advance.
+
+This package has one concept, namely for the interval with which 
+the interval skip list lass is parameterized.
 
 \subsection*{Concepts}
 
@@ -62,4 +78,5 @@ the article \cite{}.
 
 \ccRefIdfierPage{CGAL::Interval_skip_list<Interval>}\\
 \ccRefIdfierPage{CGAL::Interval_skip_list_interval<Value>}\\
-\ccRefIdfierPage{CGAL::Face_interval<FaceHandle>}\\
+\ccRefIdfierPage{CGAL::Level_interval<FaceHandle>}\\
+

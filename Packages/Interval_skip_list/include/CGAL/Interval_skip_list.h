@@ -25,9 +25,11 @@
 #define CGAL_INTERVAL_SKIP_LIST_H
 
 #include <cassert>
-#include <stdio.h>
 #include <iostream>
 #include <CGAL/Random.h>
+
+//#include <CGAL/Compact_container.h>
+#include <CGAL/DS_Container.h>
 #include <list>
 
 
@@ -56,7 +58,9 @@ namespace CGAL {
     typedef Interval_ Interval;
     typedef typename Interval::Value Value;
     bool is_header;
-    typedef std::list<Interval>::const_iterator Interval_handle;
+    //    typedef std::list<Interval>::const_iterator Interval_handle;
+    typedef Interval* Interval_handle;
+
     Value key;
     IntervalSLnode** forward;  // array of forward pointers
     IntervalList<Interval>**   markers;  // array of interval markers, 
@@ -108,8 +112,11 @@ namespace CGAL {
     typedef Interval_ Interval;
     typedef typename Interval::Value Value;
     Random rand;
-    std::list<Interval> container;
-    typedef std::list<Interval>::iterator Interval_handle;
+    //std::list<Interval> container;
+    //typedef std::list<Interval>::iterator Interval_handle;
+    DS_Container<Interval> container;
+    typedef Interval* Interval_handle;
+
     int maxLevel;
     IntervalSLnode<Interval>* header;
 
@@ -224,6 +231,27 @@ namespace CGAL {
       return out;
     }
     
+    bool
+    is_contained(const Value& searchKey) const
+    {
+      IntervalSLnode<Interval>* x = header;
+      for(int i=maxLevel; 
+	  i >= 0 && (x->isHeader() || (x->key != searchKey)); i--) {
+	while (x->forward[i] != 0 && (searchKey >= x->forward[i]->key)) {
+	  x = x->forward[i];
+	}
+	// Pick up markers on edge as you drop down a level, unless you are at 
+	// the searchKey node already, in which case you pick up the
+	// eqMarkers just prior to exiting loop.
+	if(!x->isHeader() && (x->key != searchKey)) {
+	  return true;  
+	} else if (!x->isHeader()) { // we're at searchKey
+	  return true;
+	}
+      }
+      return false;
+    }
+    
 
     void insert(const Interval& I);
 
@@ -239,12 +267,14 @@ namespace CGAL {
     }
 
 
-    void remove(const Interval& I);  // delete an interval from list
+    bool remove(const Interval& I);  // delete an interval from list
     void print(std::ostream& os) const;
     void printOrdered(std::ostream& os) const;
 
-
-    typedef std::list<Interval>::const_iterator const_iterator;
+    
+    //typedef std::list<Interval>::const_iterator const_iterator;
+    typedef DS_Container<Interval>::iterator iterator;
+    typedef const iterator const_iterator;
 
     const_iterator begin() const
     {
@@ -254,8 +284,9 @@ namespace CGAL {
     {
       return container.end();
     }
-
+    
   };
+
 
 
   template <class Interval_>
@@ -263,9 +294,15 @@ namespace CGAL {
   {
     typedef Interval_ Interval;
     typedef typename Interval::Value Value;
-    typedef std::list<Interval>::iterator Interval_handle;
+    //    typedef std::list<Interval>::iterator Interval_handle;
+
+    typedef Interval* Interval_handle;
+
     IntervalListElt<Interval>* header;
 
+    //static Compact_container<IntervalListElt<Interval> > compact_container;
+    static DS_Container<IntervalListElt<Interval> > compact_container;
+    
   public:
     friend class IntervalListElt<Interval>;
 
@@ -278,6 +315,23 @@ namespace CGAL {
     void remove(const Interval& I);
 
     void removeAll(IntervalList* l);
+
+
+    IntervalListElt<Interval>* create_list_element(const Interval_handle& I)
+    {
+      IntervalListElt<Interval> *e =compact_container.get_new_element();
+      e->I = I;
+      return e;
+      //IntervalListElt<Interval> e(I);
+      //IntervalListElt<Interval>* it = &*(compact_container.insert(e));
+      //return it;
+    }
+
+    void erase_list_element(IntervalListElt<Interval>* I)
+    {      
+      compact_container.release_element(I);
+      //compact_container.erase(I);
+    }
 
     IntervalListElt<Interval>* get_first();
 
@@ -298,40 +352,51 @@ namespace CGAL {
       }
       return out;
     }
+    
+    bool contains(const Interval_handle& I) const;
 
-    void insertUnique(const Interval_handle& I);
-
-    int contains(const Interval_handle& I) const;
-
-    int isEqual(IntervalList* l);
-
-    int length();
-
-    void empty();  // delete elements of self to make self an empty list.
-
-    // return true if list is empty
-    int isEmpty()
-    {
-      return header==0;
-    }
+    void clear();  // delete elements of self to make self an empty list.
 
     void print(std::ostream& os) const;
 
     ~IntervalList();
   };
 
+
+  //template <class Interval_>
+  //Compact_container<IntervalListElt<Interval_> > IntervalList<Interval_>::compact_container;
+
+  template <class Interval_>
+  DS_Container<IntervalListElt<Interval_> > IntervalList<Interval_>::compact_container;
+
+
   template <class Interval_>
   class IntervalListElt
   {
     typedef Interval_ Interval;
-    typedef std::list<Interval>::iterator Interval_handle;
+    //    typedef std::list<Interval>::iterator Interval_handle;
+    typedef Interval* Interval_handle;
+
     Interval_handle I;
     IntervalListElt* next;
-
+    //void* p;
   public:
+    //void *   for_compact_container() const { return p; }
+    //void * & for_compact_container()       { return p; }
+    
+    bool operator==(const IntervalListElt& e)
+    {
+      return ( ((*I) == (*(e.I))) && (next == e.next) && (p == e.p));
+    }
+    
     friend class IntervalList<Interval>;
 
+
+    IntervalListElt();
+
     IntervalListElt(const Interval_handle& anInterval);
+
+    ~IntervalListElt();
 
     void 
     set_next(IntervalListElt* nextElt)
@@ -371,8 +436,6 @@ namespace CGAL {
     }
   }
 
-  // a new constructor for the header as we no longer want to encode 
-  // this with a NULL pointer
 
   template <class Interval>
   IntervalSLnode<Interval>::IntervalSLnode(int levels)
@@ -475,14 +538,14 @@ template <class Interval>
 
 
 template <class Interval>
-  void IntervalList<Interval>::empty()
+  void IntervalList<Interval>::clear()
   {
     IntervalListElt<Interval>* x = header;
     IntervalListElt<Interval>* y; 
     while(x!=0) {
       y = x;
       x = x->next;
-      delete y;      
+      erase_list_element(y);
     }
     header=0;
   }
@@ -505,8 +568,7 @@ template <class Interval>
       if (newLevel > maxLevel){
 	for(i=maxLevel+1; i<=newLevel; i++){
 	  update[i] = header;
-	  delete header->markers[i];
-	  header->markers[i] = new IntervalList<Interval>();
+	  header->markers[i]->clear();
 	}
 	maxLevel = newLevel;
       }
@@ -589,9 +651,9 @@ template <class Interval>
 	}
       }
       promoted.removeAll(&removePromoted);
-      removePromoted.empty();
+      removePromoted.clear();
       promoted.copy(&newPromoted);
-      newPromoted.empty();
+      newPromoted.clear();
     }
     // Combine the promoted set and updated[i]->markers[i]
     // and install them as the set of markers on the top edge out of x
@@ -608,7 +670,7 @@ template <class Interval>
     // Markers on edges leading into x may need to be promoted as high as
     // the top edge coming into x, but never higher.
     
-    promoted.empty();
+    promoted.clear();
     
     for (i=0; (i <= x->level() - 2) && !update[i+1]->isHeader(); i++) {
       tempMarkList.copy(update[i]->markers[i]);
@@ -624,7 +686,7 @@ template <class Interval>
 	  removeMarkFromLevel(*(m->getInterval()),i,update[i+1],x);
 	}
       }
-      tempMarkList.empty();  // reclaim storage
+      tempMarkList.clear();  // reclaim storage
       
       for(m = promoted.get_first(); m != NULL; m = promoted.get_next(m)) {
 	if (!update[i]->isHeader() && 
@@ -646,11 +708,11 @@ template <class Interval>
       }
       // remove non-promoted marks from promoted
       promoted.removeAll(&removePromoted);
-      removePromoted.empty();  // reclaim storage
+      removePromoted.clear();  // reclaim storage
       
       // add newPromoted to promoted and make newPromoted empty
       promoted.copy(&newPromoted);
-      newPromoted.empty();     
+      newPromoted.clear();     
     }
     
     /* Assertion:  i=x->level()-1 OR update[i+1] is the header.
@@ -678,7 +740,7 @@ template <class Interval>
     for(i=0; i<x->level(); i++)
       x->eqMarkers->copy(x->markers[i]);
     
-    promoted.empty(); // reclaim storage
+    promoted.clear(); // reclaim storage
     
   } // end adjustMarkersOnInsert
 
@@ -737,14 +799,14 @@ template <class Interval>
 	  }
       }
       demoted.removeAll(&tempRemoved);
-      tempRemoved.empty();
+      tempRemoved.clear();
       demoted.copy(&newDemoted);
-      newDemoted.empty();
+      newDemoted.clear();
     }
 
     // Phase 2:  lower markers on edges to the right of D as needed
   
-    demoted.empty();
+    demoted.clear();
     // newDemoted is already empty
 
     for(i=x->level()-1; i>=0; i--){
@@ -776,7 +838,7 @@ template <class Interval>
       }
       demoted.removeAll(&tempRemoved);
       demoted.copy(&newDemoted);
-      newDemoted.empty();
+      newDemoted.clear();
     }
   }  // end adjustMarkersOnDelete
 
@@ -787,24 +849,23 @@ template <class Interval>
       delete markers[i];
     delete forward;
     delete markers;
-    delete eqMarkers; // af: this line was not there
+    delete eqMarkers;
   }
 
   template <class Interval>
-  void Interval_skip_list<Interval>::remove(const Interval& I)
+  bool Interval_skip_list<Interval>::remove(const Interval& I)
   {
     // arrays for maintaining update pointers 
     IntervalSLnode<Interval>* update[MAX_FORWARD]; 
 
     IntervalSLnode<Interval>* left = search(I.inf(),update);
     if(left==0 || left->ownerCount <= 0) {
-      std::cerr << "Error: " << I << " not in interval skip list." << std::endl;
-      exit(1);
+      return false;
     }
 
     Interval_handle ih = removeMarkers(left,I);
-    container.erase(ih);
-
+    // container.erase(ih);
+    container.release_element(ih);
     left->ownerCount--;
     if(left->ownerCount == 0) remove(left,update);
 
@@ -814,11 +875,11 @@ template <class Interval>
 
     IntervalSLnode<Interval>* right = search(I.sup(),update);
     if(right==0 || right->ownerCount <= 0) {
-      std::cerr << "Error: " << I << " not in interval skip list." << std::endl;
-     exit(1);
+      return false;
     }
     right->ownerCount--;
     if(right->ownerCount == 0) remove(right,update);
+    return true;
   }
 
   template <class Interval>
@@ -895,8 +956,10 @@ template <class Interval>
   void
   Interval_skip_list<Interval>::insert(const Interval& I)
   {
-    container.push_front(I);
-    Interval_handle ihandle = container.begin();
+    //container.push_front(I);
+    //Interval_handle ihandle = container.begin();
+    Interval_handle ihandle = container.get_new_element();
+    *ihandle = I;
     insert(ihandle);
   }
 
@@ -959,7 +1022,7 @@ template <class Interval>
     // Remove markers for interval I, which has left as it's left
     // endpoint,  following a staircase pattern.
 
-    Interval_handle res, tmp;
+    Interval_handle res=0, tmp=0;
 
     // remove marks from ascending path
     IntervalSLnode<Interval>* x = left;
@@ -1091,15 +1154,18 @@ template <class Interval>
     os << std::endl << std::endl;
   }
 
+
   template <class Interval>
   void IntervalList<Interval>::insert(const Interval_handle& I)
   {
-    IntervalListElt<Interval>* temp = new IntervalListElt<Interval>(I);
+    IntervalListElt<Interval>* temp = create_list_element(I);
     temp->next = header;
     header = temp;
   }
 
+
   template <class Interval>
+  inline
   bool
   IntervalList<Interval>::remove(const Interval& I, Interval_handle& res)
   {
@@ -1111,22 +1177,20 @@ template <class Interval>
     } 
     if(x==0) {
       return false;
-    }
-
-    else if (last==0) {
+    } else if (last==0) {
       header = x->next;
       res = x->getInterval();
-      delete x;
-    }
-    else {
+      erase_list_element(x);
+    } else {
       last->next = x->next;
       res = x->getInterval();
-      delete x;
+      erase_list_element(x);
     }
     return true;
   }
 
-template <class Interval>
+
+  template <class Interval>
   void
   IntervalList<Interval>::remove(const Interval& I)
   {
@@ -1138,15 +1202,12 @@ template <class Interval>
     }
     if(x==0) {
       return ;
-    }
-
-    else if (last==0) {
+    } else if (last==0) {
       header = x->next;
-      delete x;
-    }
-    else {
+      erase_list_element(x);
+    } else {
       last->next = x->next;
-      delete x;
+      erase_list_element(x);
     }
   }
 
@@ -1158,14 +1219,28 @@ template <class Interval>
       this->remove(*(x->getInterval()));
   }
 
+  // We need the default constructor for the compact_container
   template <class Interval>
-  IntervalListElt<Interval>::IntervalListElt(const Interval_handle& anInterval)
-  {
-    I = anInterval;
-    next = NULL;
-  }
+  inline 
+  IntervalListElt<Interval>::IntervalListElt()
+    : next(NULL)
+  {}
+
 
   template <class Interval>
+  inline 
+  IntervalListElt<Interval>::IntervalListElt(const Interval_handle& anInterval)
+    : I(anInterval), next(NULL)
+  {}
+
+  template <class Interval>
+  inline 
+  IntervalListElt<Interval>::~IntervalListElt()
+  {}
+
+
+  template <class Interval>
+  inline
   IntervalListElt<Interval>* 
   IntervalList<Interval>::get_first()
   {
@@ -1173,6 +1248,7 @@ template <class Interval>
   }
 
   template <class Interval>
+  inline
   IntervalListElt<Interval>* 
   IntervalList<Interval>::get_next(IntervalListElt<Interval>* element)
   {
@@ -1200,56 +1276,30 @@ template <class Interval>
   }
 
   template <class Interval>
-  int IntervalList<Interval>::contains(const Interval_handle& I) const
+  inline 
+  bool IntervalList<Interval>::contains(const Interval_handle& I) const
   {
     IntervalListElt<Interval>* x = header;
     while(x!=0 && I != x->I)
       x = x->next;
     if (x==0)
-      return(0);
+      return false;
     else
-      return(1);
+      return true;
   }
 
 
-  template <class Interval>
-  int IntervalList<Interval>::isEqual(IntervalList<Interval>* l)
-  {
-    // determine if sets represented by two lists are equal
-
-    int equal=1;
-    for(IntervalListElt<Interval>* x=get_first(); x!=0; x=get_next(x))
-      if(!l->contains(x->getInterval())) equal=0;
-    equal = equal && (length() == l->length());
-    return(equal);
-  }
 
   template <class Interval>
-  int IntervalList<Interval>::length()
-  {
-    int i=0;
-    for(IntervalListElt<Interval>* x=get_first(); x!=0; x=get_next(x)) i++;
-    return(i);
-  }
+  inline IntervalList<Interval>::IntervalList()
+    :  header(NULL)
+  {}
 
 
   template <class Interval>
-  IntervalList<Interval>::IntervalList()
+  inline IntervalList<Interval>::~IntervalList()
   {
-    header = NULL;
-  }
-
-  template <class Interval>
-  void IntervalList<Interval>::insertUnique(const Interval_handle& I)
-  {
-    if (!this->contains(I))
-      this->insert(I);
-  }
-
-  template <class Interval>
-  IntervalList<Interval>::~IntervalList()
-  {
-    this->empty();
+    this->clear();
   }
 
 

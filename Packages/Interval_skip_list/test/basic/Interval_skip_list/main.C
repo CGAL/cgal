@@ -16,7 +16,7 @@ fct()
   std::cin >> n >> d;
   std::vector<Interval> intervals(n);
   for(i = 0; i < n; i++) {
-    intervals[i] = Interval('[', i, i+d, ']');
+    intervals[i] = Interval((double)i,(double)i+d);
   }
   std::random_shuffle(intervals.begin(), intervals.end());
 

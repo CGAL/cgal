@@ -19,8 +19,11 @@
 \ccDefinition
   
 The concept \ccRefName\ describes the requirements for the
-interval class of a \ccc{Interval_skip_list<Interval>}.
+template argument \ccc{Interval} of a \ccc{Interval_skip_list<Interval>}.
 
+The concept does not specify, whether the interval is open or
+closed. It is up to the implementer of a model for this concept
+to define that.
 
 
 \ccCreation
@@ -29,14 +32,14 @@ interval class of a \ccc{Interval_skip_list<Interval>}.
 \ccConstructor{Interval();}{default constructor.}
 \ccTypes
 
-\ccNestedType{Value}{The type of infimum and supremum of the interval.}
+\ccNestedType{Value}{The type of the lower and upper bound of the interval.}
 
 
 \ccAccessFunctions
 \ccMethod{Value inf() const;}
-{returns  the infimum.}
+{returns  the lower bound.}
 \ccGlue
-\ccMethod{Value sup() const;}{returns the supremum.}
+\ccMethod{Value sup() const;}{returns the upper bound.}
 
 
 \ccMethod{bool contains(const Value& v) const;}

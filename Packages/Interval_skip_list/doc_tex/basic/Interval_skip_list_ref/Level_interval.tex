@@ -52,23 +52,25 @@
 The class \ccClassTemplateName\ represents intervals for the minimum and
 maximum value of the \ccc{z}-coordinate of a face of a triangulation.
 
-{\it Remark: Here we will exploit that the face type  knows the vertex type,
-who knows the point type, who is known by the kernel traits who knows the FT,
-which will become the type Value.}
+
 
 \ccInclude{CGAL/Level_interval.h}
 
-\ccTypes
 \ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
 \ccThreeToTwo
 
 
+
 \ccRequirements
-The value_type of  \ccc{FaceHandle} must be \ccc{Face}, which must have a 
+The \ccc{value_type} of  \ccc{FaceHandle} must be \ccc{Face}, which must have a 
 nested type \ccc{Vertex}, which must have a nested type \ccc{Point},
 whose \ccc{Kernel_traits<Point>Kernel} must have a nested type \ccc{FT}.
 These requirements are fulfilled, if one uses a {\sc Cgal} triangulation
 and a {\sc Cgal} kernel.
+
+\ccTypes
+
+\ccTypedef{typedef FT Value;}{The type of the $z$-coordinate of points stored in vertices of faces.} 
 
 \ccCreation
 \ccCreationVariable{i}
@@ -92,6 +94,9 @@ stored in the vertices of the face \ccc{fh} points to.}
                   const Level_interval<FaceHandle>& i);}
 {Inserts the interval \ccc{i} into the stream \ccc{os}.
 \ccPrecond The output operator for \ccc{*Face_handle} is defined.}
+
+\ccIsModel
+\ccc{Interval}
 
 \end{ccRefClass}
 

@@ -36,21 +36,26 @@ namespace CGAL {
     typedef Value_ Value;
 
   private:
-    char lbound_;  // '(' = non-strict left bound, '[' = strict left bound
-    char rbound_; //  ')' = non-strict right bound, ']' = strict right bound
+    bool lbound_;
+    bool rbound_;
     Value inf_;
-    Value sup_;  // left and right boundary values
+    Value sup_;
   public:
 
     Interval_skip_list_interval(){}
-    Interval_skip_list_interval(char lb, 
-				const Value& inf_, 
+    Interval_skip_list_interval(const Value& inf_, 
 				const Value& sup_, 
-				char rb);
+				bool lb = true,
+				bool rb = true);
+
     const Value& inf() const {return inf_;}
+
     const Value& sup() const {return sup_;}
-    char lbound() const {return lbound_;}
-    char rbound() const {return rbound_;}
+
+    bool inf_closed() const {return lbound_;}
+
+    bool sup_closed() const {return rbound_;}
+
     bool contains(const Value& V) const;
 
     // true iff this contains (l,r)
@@ -59,7 +64,7 @@ namespace CGAL {
     bool operator==(const Interval_skip_list_interval& I) const 
     {
       return ( (inf() == I.inf()) && (sup() == I.sup()) && 
-	       (lbound() == I.lbound()) && (rbound() == I.rbound()) );
+	       (inf_closed() == I.inf_closed()) && (sup_closed() == I.sup_closed()) );
     }
 
     bool operator!=(const Interval_skip_list_interval& I) const 
@@ -74,26 +79,18 @@ namespace CGAL {
   std::ostream& operator<<(std::ostream& os, 
 			   const Interval_skip_list_interval<V>& i)
   {
-    os << i.lbound() << i.inf() << ", " << i.sup() << i.rbound();
+    os << (i.inf_closed()?"[":"(") << i.inf() << ", " << i.sup() << (i.sup_closed()?"]":")");
     return os;
   }
 
 
   template <class V>
-  Interval_skip_list_interval<V>::Interval_skip_list_interval(char lb, 
+  Interval_skip_list_interval<V>::Interval_skip_list_interval(
 							      const Value& i, 
 							      const Value& s, 
-							      char rb)
+							      bool lb, bool rb)
     : lbound_(lb), rbound_(rb), inf_(i), sup_(s)
   {
-    if ( !( (lb=='(') || (lb=='[') ) ) {
-      printf("Error:  bad inf_ bound.\n");
-      exit(1);
-    }
-    if ( !( (rb==')')|| (rb==']')) ) {
-      printf("Error:  bad sup_ bound.\n");
-      exit(1);
-    }
     if ( inf_ > sup_ )
       {
 	std::cerr << "Error: " << *this << std::endl;
@@ -119,9 +116,9 @@ namespace CGAL {
     // return true if this contains V, false otherwise
     if((v > inf()) && (v < sup()))
       return true;
-    else if ((v == inf()) && lbound() == '[')
+    else if ((v == inf()) && inf_closed())
       return true;
-    else if ((v == sup()) && rbound() == ']')
+    else if ((v == sup()) && sup_closed())
       return true;
     else
       return false;

@@ -5,15 +5,15 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-#CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-69/make/makefile_i686_CYGWINNT-5.0-1.3.12_g++-2.95
-CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-69/make/makefile_i686_CYGWINNT-5.0-1.3.12_ICL.EXE-7
+CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-69/make/makefile_i686_CYGWINNT-5.0-1.3.12_g++-2.95
+#CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-69/make/makefile_i686_CYGWINNT-5.0-1.3.12_ICL.EXE-7
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../include\
+CXXFLAGS = -I../../../include\
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
@@ -39,7 +39,7 @@ LDFLAGS = \
 
 all:            main$(EXE_EXT)
 
-main$(EXE_EXT): main$(OBJ_EXT) 
+main$(EXE_EXT): main$(OBJ_EXT)  ../../../include/CGAL/Interval_skip_list.h
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)main main$(OBJ_EXT)  $(LDFLAGS)
 
 clean: 
