@@ -600,7 +600,7 @@ public:
 
   
   Classification_type  classify(const Cell_handle& s, 
-				const int& i) const
+				int i) const
     {  
       return classify(s, i, get_alpha());
     }
@@ -612,7 +612,7 @@ public:
     }
 
   Classification_type  classify(const Cell_handle& s, 
-				const int& i,
+				int i,
 				const Coord_type& alpha) const;
   // Classifies the face `f' of the underlying Delaunay
   // tetrahedralization with respect to `A'.
@@ -626,8 +626,8 @@ public:
 
   
   Classification_type  classify(const Cell_handle& s, 
-				const int& i,
-				const int& j) const
+				int i,
+				int j) const
     {  
       return classify(s, i, j, get_alpha());
     }
@@ -639,8 +639,8 @@ public:
     }
 
   Classification_type  classify(const Cell_handle& s, 
-				const int& i,
-				const int& j,
+				int i,
+				int j,
 				const Coord_type& alpha) const;
   // Classifies the edge `e' of the underlying Delaunay
   // tetrahedralization with respect to `A'.
@@ -1606,7 +1606,7 @@ Alpha_shape_3<Dt>::get_alpha_shape_facets(std::back_insert_iterator<
 template < class Dt >
 typename Alpha_shape_3<Dt>::Classification_type  
 Alpha_shape_3<Dt>::classify(const Cell_handle& s, 
-			    const int& i,
+			    int i,
 			    const Coord_type& alpha) const
   // Classifies the face `f' of the underlying Delaunay
   // tetrahedralization with respect to `A'.
@@ -1643,8 +1643,8 @@ Alpha_shape_3<Dt>::classify(const Cell_handle& s,
 template < class Dt >
 typename Alpha_shape_3<Dt>::Classification_type  
 Alpha_shape_3<Dt>::classify(const Cell_handle& s, 
-			    const int& i,
-			    const int& j,
+			    int i,
+			    int j,
 			    const Coord_type& alpha) const
   // Classifies the edge `e' of the underlying Delaunay
   // tetrahedralization with respect to `A'.
