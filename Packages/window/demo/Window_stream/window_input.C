@@ -29,9 +29,6 @@
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Circle_2.h>
-#ifndef CGAL_USE_LEDA
-int main() { std::cout << "Sorry, this demo needs LEDA"; return 0; }
-#else
 #include <CGAL/IO/Window_stream.h>
 
 typedef CGAL::Cartesian< double >             RepCls;
@@ -43,10 +40,16 @@ typedef CGAL::Iso_rectangle_2<RepCls>         Iso;
 typedef CGAL::Triangle_2<RepCls>              Triangle;
 typedef CGAL::Circle_2<RepCls>                Circle;
 
+
+#if defined(CGAL_USE_CGAL_WINDOW) 
+#define leda_red     CGAL::red
+#define leda_yellow  CGAL::yellow
+#endif
+
 int
 main()
 {
-  leda_window W;
+  CGAL::Window_stream W;
   CGAL::cgalize( W);
   W.set_fg_color( leda_red);
   W.set_bg_color( leda_yellow);
@@ -110,4 +113,4 @@ main()
   W.acknowledge("THE END");
   return 0;
 }
-#endif // USE_LEDA
+
