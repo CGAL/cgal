@@ -51,7 +51,7 @@ class Point_plus_handle;
 // point location query. This class holds the representation, and the next 
 // will hold the Handle to Point_plus.
 template <class traits, class vertexHandle>
-class Point_plus_rep /*: public Ref_counted*/ {
+class Point_plus_rep {
 public:
   typedef traits                   Traits;
   typedef typename Traits::Point   Point;
