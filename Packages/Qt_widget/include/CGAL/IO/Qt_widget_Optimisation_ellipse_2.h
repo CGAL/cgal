@@ -1,8 +1,8 @@
 #ifndef CGAL_QT_WIDGET_OPTIMISATION_ELLIPSE_2_H
 #define CGAL_QT_WIDGET_OPTIMISATION_ELLIPSE_2_H
 
-#include <CGAL/IO/Qt_widget>
-#include <CGAL/Optimisation_ellipse_2.h>
+#include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_Conic_2.h>
 
 namespace CGAL{
 
@@ -23,7 +23,7 @@ operator << ( Qt_widget &ws,
         ws << oe.boundary_point1;
         break;
       case 2: {
-	double  px1( CGAL::to_double( oe.boundary_point1.x()));
+	      double  px1( CGAL::to_double( oe.boundary_point1.x()));
         double  py1( CGAL::to_double( oe.boundary_point1.y()));
         double  px2( CGAL::to_double( oe.boundary_point2.x()));
         double  py2( CGAL::to_double( oe.boundary_point2.y()));

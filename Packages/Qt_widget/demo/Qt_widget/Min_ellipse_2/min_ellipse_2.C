@@ -27,6 +27,8 @@ int main(int, char*)
 
 
 #include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_Optimisation_ellipse_2.h>
+//#include <CGAL/IO/Qt_widget_Min_ellipse_2.h>
 #include "Qt_widget_toolbar.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_layer.h>
@@ -44,13 +46,14 @@ int main(int, char*)
 #include <qfiledialog.h>
 #include <qtimer.h>
 
-typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>  Rep;
+typedef double                          Coord_type;
+typedef CGAL::Cartesian<Coord_type>     Rep;
 
-typedef CGAL::Point_2<Rep>    Point;
-typedef CGAL::Segment_2<Rep>  Segment;
-typedef  CGAL::Min_ellipse_2_traits_2< Rep >   Traits;
-typedef  CGAL::Min_ellipse_2< Traits >       Min_ellipse;
+typedef CGAL::Point_2<Rep>              Point;
+typedef CGAL::Segment_2<Rep>            Segment;
+typedef CGAL::Min_ellipse_2_traits_2< Rep >
+                                        Traits;
+typedef  CGAL::Min_ellipse_2< Traits >  Min_ellipse;
 
 
 
