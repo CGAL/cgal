@@ -180,7 +180,7 @@ public:
 		
     typename Planar_map::Halfedge_iterator it, eit, closest_edge;
     bool first = false;
-    typename Traits::Curve_point_status point_above_under;
+    typename Traits::Curve_point_status point_above_under, r;
     int curve_above_under;
 		
     it = pm->halfedges_begin();
@@ -206,8 +206,8 @@ public:
 	 rel_it != relevant_halfedges.end();) 
       {
 	it = *rel_it;
-	if ( traits->curve_get_point_status(it->curve(), p) == 
-	     point_above_under ) 
+	r = traits->curve_get_point_status(it->curve(), p);
+	if ( r == point_above_under ) 
 	  {
 	    if (!first) 
 	      {
@@ -223,6 +223,31 @@ public:
 		    closest_edge = it;
 		  }
 	      }
+	  }
+	if ( ( r == Traits::ON_CURVE ) && ( traits->curve_is_vertical(it->curve()) ) )
+	  {
+	      /* The vertical ray shoot is not including p itself,
+	         thus we are interested only in vertical curves that
+  	         extend upwards
+	         In this case the Locate type is always EDGE
+			 Remark: This treatment was originally written in the walk PL.
+	      */
+	      if ( traits->point_is_higher(traits->curve_highest(it->curve()),p) )
+		  /*
+		    x       x
+		    |       |
+		   p=x  or  p
+		            |
+		            x
+		  */
+		  {
+			lt = Planar_map::EDGE;
+			if (up==traits->point_is_left_low(it->target()->point(),
+						    it->source()->point()))
+              return it;
+            else 
+			  return it->twin();
+		  }
 	  }
 	++rel_it;
 	++rel_it;
@@ -468,3 +493,4 @@ protected:
 CGAL_END_NAMESPACE
 
 #endif //CGAL_PM_NAIVE_POINT_LOCATION_H
+

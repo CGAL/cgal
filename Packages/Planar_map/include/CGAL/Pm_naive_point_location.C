@@ -106,7 +106,7 @@ Pm_naive_point_location<Planar_map>::vertical_ray_shoot(const Point& p,
   typename Planar_map::Halfedge_iterator it=pm->halfedges_begin(),
     eit=pm->halfedges_end(),closest_edge=eit;
   bool first = false;
-  typename Traits::Curve_point_status point_above_under;
+  typename Traits::Curve_point_status point_above_under, r;
   int curve_above_under;
 	
   lt=Planar_map::EDGE;
@@ -125,8 +125,8 @@ Pm_naive_point_location<Planar_map>::vertical_ray_shoot(const Point& p,
     }
   for ( ; it != eit; ) 
     {
-      if ( traits->curve_get_point_status(it->curve(), p) 
-	   == point_above_under ) 
+      r = traits->curve_get_point_status(it->curve(), p);
+	  if ( r == point_above_under ) 
         {
 	  if (!first) 
             {
@@ -143,9 +143,34 @@ Pm_naive_point_location<Planar_map>::vertical_ray_shoot(const Point& p,
                 }
             }
         }
+	  if ( ( r == Traits::ON_CURVE ) && ( traits->curve_is_vertical(it->curve()) ) )
+	  {
+	      /* The vertical ray shoot is not including p itself,
+	         thus we are interested only in vertical curves that
+  	         extend upwards
+	         In this case the Locate type is always EDGE
+			 Remark: This treatment was originally written in the walk PL.
+	      */
+	      if ( traits->point_is_higher(traits->curve_highest(it->curve()),p) )
+		  /*
+		    x       x
+		    |       |
+		   p=x  or  p
+		            |
+		            x
+		  */
+		  {
+			lt = Planar_map::EDGE;
+			if (up==traits->point_is_left_low(it->target()->point(),
+						    it->source()->point()))
+              return it;
+            else 
+			  return it->twin();
+		  }
+	  }
       ++it;++it;
     }
-	
+
   // if we didn't find any edge above p then it is the empty face
   if (!first) {
     lt=Planar_map::UNBOUNDED_FACE;
@@ -342,3 +367,4 @@ find_lowest(
 CGAL_END_NAMESPACE
 
 #endif // CGAL_PM_NAIVE_POINT_LOCATION_C
+
