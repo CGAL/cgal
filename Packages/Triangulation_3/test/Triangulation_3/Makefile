@@ -12,7 +12,7 @@
 #CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-last/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66
 
 CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.1-I-21/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
-
+#CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.1-I-21/make/makefile_i686_Linux-2.2.7_g++-2.95.1_LEDA
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#

@@ -1,3 +1,7 @@
+Version 1.12 (23 sept 99)
+Facet_circulator added
+changes in the internal representation of Cell_circulator
+
 Version 1.11 (17 sept 99)
 trying new special macro for MSVC typename bug
 
