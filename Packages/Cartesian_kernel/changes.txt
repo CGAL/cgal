@@ -1,3 +1,6 @@
+Version 6.40 (5 December 2001)
+- added missing line
+
 Version 6.39 (5 December 2001)
 - added compare_slopes
 
