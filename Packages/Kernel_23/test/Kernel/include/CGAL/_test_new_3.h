@@ -104,6 +104,7 @@ test_new_3(const R& rep)
   // remaining constructions tested below, after the 
   // corresponding types have been introduced
 
+
   typename R::Construct_segment_3 construct_segment
         = rep.construct_segment_3_object();
   Segment_3 s1 = construct_segment();
@@ -124,7 +125,7 @@ test_new_3(const R& rep)
   Line_3 l4 = construct_line(p2,d4);
   Line_3 l5 = construct_line(s2);
   Line_3 l6 = construct_line(r2);
-  Line_3 l7 = construct_line(p2,v4);
+  Line_3 l7 = construct_line(p2, construct_direction(v4));
 
   // remaining construct_direction tests
   Direction_3 d5 = construct_direction(l3);
