@@ -108,14 +108,16 @@ struct Sweep_curves_to_planar_map_utils {
   };
 };
 
-template <class Curve_iterator_, class PM_>
+template <class Curve_iterator_, class PM_, class Change_notification_>
 class Sweep_curves_to_planar_map  : 
   public Sweep_curves_base<Curve_iterator_, 
-  typename PM_::Traits, Point_plus_handle<PM_>, Sweep_curves_to_planar_map_utils::X_curve_plus_id<typename PM_::Traits> >
+  typename PM_::Traits, Point_plus_handle<PM_>, 
+  Sweep_curves_to_planar_map_utils::X_curve_plus_id<typename PM_::Traits> >
 {
 public:
   typedef Curve_iterator_                        Curve_iterator;
   typedef PM_                                    PM;
+  typedef Change_notification_                   Change_notification;
   typedef Point_plus_handle<PM>                  Point_plus;
   typedef Sweep_curves_to_planar_map_utils::X_curve_plus_id<typename PM::Traits>   X_curve_plus;
   
@@ -168,7 +170,9 @@ public:
   
   void  sweep_curves_to_planar_map(Curve_iterator curves_begin, 
                                    Curve_iterator curves_end, 
-                                   PM &result)
+                                   PM &result,
+                                   Change_notification* change_notification)
+                                   
   {
     Traits                traits;
     Event_queue           event_queue;
@@ -530,7 +534,7 @@ public:
 
       // now, updating the planar map (or arrangement) according the curves 
       // enemating from the currnet event point.
-      update_subdivision(point_node, result);
+      update_subdivision(point_node, change_notification, result);
 
       // updating all the new intersection nodes of the curves 
       // participating within the event.
@@ -555,7 +559,9 @@ public:
   }
   
 private:
-  void  update_subdivision(Intersection_point_node& point_node, PM &arr)
+  void  update_subdivision(Intersection_point_node& point_node, 
+                           Change_notification *pm_change_notf,
+                           PM &pm)
   {
 
 #ifdef  CGAL_SWEEP_LINE_DEBUG
@@ -582,6 +588,7 @@ private:
       cout<<"now handling "<<cv_iter->get_curve()<<endl;
 #endif
       
+      bool  overlap=false;
       if (is_left(cv_iter->get_rightmost_point().point(), 
                   point_node.get_point().point())) { 
         // means we have a new sub curve to insert.
@@ -622,48 +629,58 @@ private:
         if (cv_iter != point_node.curves_begin()){
           if (traits.curves_overlap(sub_cv, prev_sub_cv)){
             //cout<<sub_cv<<" and "<< prev_sub_cv<<" are overlapping"<<endl;
-            continue;
+            overlap=true;
           }
         }
 
 #ifdef  CGAL_SWEEP_LINE_DEBUG
         cout<<"inserting "<<sub_cv<<endl;
 #endif
-
-        prev_sub_cv = sub_cv;
-        if (cv_iter->get_rightmost_point().vertex() != Vertex_handle(NULL)){
-          //assert(cv_iter->get_rightmost_point().point() == 
-          // cv_iter->get_rightmost_point().vertex()->point());
-          
-          if (point_node.get_point().vertex() != Vertex_handle(NULL)) {
-            //assert(point_node.get_point().point() == 
-            // point_node.get_point().vertex()->point());
+        
+        if (overlap){
+          // special case of overlapping:
+          // We do not insert the overlapped curve. 
+          // However, we have to call add_edge of the notifier in order to update attributes 
+          // of the current halfedge.
+          h = find_halfedge(sub_cv, pm);
+          pm_change_notf->add_edge(sub_cv, h, true, true);
+        }
+        else {
+          prev_sub_cv = sub_cv;
+          if (cv_iter->get_rightmost_point().vertex() != Vertex_handle(NULL)){
+            //assert(cv_iter->get_rightmost_point().point() == 
+            // cv_iter->get_rightmost_point().vertex()->point());
             
-            h = arr.insert_at_vertices(sub_cv, 
-                                       cv_iter->get_rightmost_point().vertex(),                                       point_node.get_point().vertex());
+            if (point_node.get_point().vertex() != Vertex_handle(NULL)) {
+              //assert(point_node.get_point().point() == 
+              // point_node.get_point().vertex()->point());
+              
+              h = pm.insert_at_vertices(sub_cv, 
+                                         cv_iter->get_rightmost_point().vertex(),
+                                         point_node.get_point().vertex());
+            }
+            else
+              h = pm.insert_from_vertex (sub_cv, 
+                                          //X_curve( cv_iter->get_rightmost_point().point(), point_node.get_point().point()), 
+                                          cv_iter->get_rightmost_point().vertex(), true);
           }
-          else
-            h = arr.insert_from_vertex (sub_cv, 
-                                        //X_curve( cv_iter->get_rightmost_point().point(), point_node.get_point().point()), 
-                                        cv_iter->get_rightmost_point().vertex(), true);
+          else if (point_node.get_point().vertex() != Vertex_handle(NULL)) {
+            //assert(point_node.get_point().point() 
+            // == point_node.get_point().vertex()->point());
+            
+            h = pm.insert_from_vertex (sub_cv, 
+                                        // X_curve( point_node.get_point().point(), cv_iter->get_rightmost_point().point()), 
+                                        point_node.get_point().vertex(), false);
+          }
+          else{
+            h = pm.insert_in_face_interior (sub_cv, 
+                                             //X_curve( cv_iter->get_rightmost_point().point(), point_node.get_point().point()), 
+                                             pm.unbounded_face());
+            
+            // the point is that if the curve has no source to start the insertion from, it has to be inserted to the unbounded face, because all the curves to the right of it have not inserted yet, and in that stage of the sweep line, the curve is on the unbounded face - later on it will be updated automatically by the Planar map (Arrangement) insert functions.
+            
+          }
         }
-        else if (point_node.get_point().vertex() != Vertex_handle(NULL)) {
-          //assert(point_node.get_point().point() 
-          // == point_node.get_point().vertex()->point());
-          
-          h = arr.insert_from_vertex (sub_cv, 
-                                      // X_curve( point_node.get_point().point(), cv_iter->get_rightmost_point().point()), 
-                                      point_node.get_point().vertex(), false);
-        }
-        else{
-          h = arr.insert_in_face_interior (sub_cv, 
-                                           //X_curve( cv_iter->get_rightmost_point().point(), point_node.get_point().point()), 
-                                           arr.unbounded_face());
-          
-        // the point is that if the curve has no source to start the insertion from, it has to be inserted to the unbounded face, because all the curves to the right of it have not inserted yet, and in that stage of the sweep line, the curve is on the unbounded face - later on it will be updated automatically by the Planar map (Arrangement) insert functions.
-        
-        }
-        
         //assert(h->source()->point() == cv_iter->get_rightmost_point().point() || (h->target()->point() == cv_iter->get_rightmost_point().point()));
         
         // now update the vertex handle of each point.
@@ -691,6 +708,39 @@ private:
       // else - no new sub curve is inserted to the subdivision.
     }
   }
+
+  Halfedge_handle find_halfedge(const X_curve& cv, PM& pm)
+  { 
+    typename PM::Locate_type lt;
+    Halfedge_handle h = pm.locate(traits.curve_source(cv),lt);
+    
+    //cout<<"cv="<<cv<<endl;
+    //cout<<"h->curve()="<<h->curve()<<endl;
+    
+    if (traits.curve_is_same(h->curve(),cv) || 
+        traits.curve_is_same(h->curve(),traits.curve_flip(cv)) )
+      return h;
+    
+    Vertex_handle v;
+    if (h->source()->point() == traits.curve_source(cv))
+      v = h->source();
+    else
+      v = h->target();
+    
+    typename PM::Halfedge_around_vertex_circulator circ = v->incident_halfedges();
+    
+    do {
+      //cout<<"circ->curve()="<<circ->curve()<<endl;
+      if (traits.curve_is_same(circ->curve(),cv) || 
+          traits.curve_is_same(circ->curve(),traits.curve_flip(cv)))
+        return Halfedge_handle(circ);
+      
+    } while (++circ != v->incident_halfedges());
+
+    CGAL_assertion(0);
+    return Halfedge_handle(0);
+  }
+  
 };
 
 CGAL_END_NAMESPACE
