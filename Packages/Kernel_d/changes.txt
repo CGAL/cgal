@@ -1,6 +1,6 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
-0.95 (18 September 2003) [af]
+0.95 (17 September 2003) [af]
 - Added missing manual page
 
 0.94 (17 September 2003) [af]
