@@ -108,26 +108,26 @@ main() {
     Splitter_test<CGAL::Sliding_fair<TreeTraits> > st;
     st(points,query);
   }
-  /*
+  
   {
     std::cout << "Testing Fair" << std::endl;
     Splitter_test<CGAL::Fair<TreeTraits> > st;
     st(points,query);
   }
-  */
+  
   {
     std::cout << "Testing Median_of_rectangle" << std::endl;
     Splitter_test<CGAL::Median_of_rectangle<TreeTraits> > st;
     st(points,query);
   }
 
-  /*
+  
   {
     std::cout << "Testing Midpoint_of_rectangle" << std::endl;
     Splitter_test<CGAL::Midpoint_of_rectangle<TreeTraits> > st;
     st(points,query);
   }
-  */
+  
   {
     std::cout << "Testing Midpoint_of_max_spread" << std::endl;
     Splitter_test<CGAL::Midpoint_of_max_spread<TreeTraits> > st;
