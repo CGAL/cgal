@@ -853,7 +853,10 @@ public:
   void draw(Vertex_handle v) const
   { 
     Point_3 p = point(v);
-    Point_3 sp(p.hx().eval_at(1000),p.hy().eval_at(1000),p.hz().eval_at(1000),p.hw().eval_at(1000));
+    Point_3 sp(p.hx().eval_at(1000),
+               p.hy().eval_at(1000),
+               p.hz().eval_at(1000),
+               p.hw().eval_at(1000));
     TRACEN("vertex " << sp);
     ppoly_->push_back(double_point(sp), mark(v)); 
   }
@@ -862,8 +865,14 @@ public:
   { 
     Point_3 s = point(source(e));
     Point_3 t = point(target(e));
-    Segment_3 seg(Point_3(s.hx().eval_at(1000),s.hy().eval_at(1000),s.hz().eval_at(1000),s.hw().eval_at(1000)),
-		  Point_3(t.hx().eval_at(1000),t.hy().eval_at(1000),t.hz().eval_at(1000),t.hw().eval_at(1000)));
+    Segment_3 seg(Point_3(s.hx().eval_at(1000),
+                          s.hy().eval_at(1000),
+                          s.hz().eval_at(1000),
+                          s.hw().eval_at(1000)),
+		  Point_3(t.hx().eval_at(1000),
+                          t.hy().eval_at(1000),
+                          t.hz().eval_at(1000),
+                          t.hw().eval_at(1000)));
     TRACEN("edge " << seg);
     ppoly_->push_back(double_segment(seg), mark(e)); 
   }
@@ -879,7 +888,10 @@ public:
 	SHalfedge_around_facet_circulator hc(h), he(hc);
 	CGAL_For_all(hc,he){ // all vertex coordinates in facet cycle
 	  Point_3 p = point(source(hc));
-	  Point_3 sp(p.hx().eval_at(1000),p.hy().eval_at(1000),p.hz().eval_at(1000),p.hw().eval_at(1));
+	  Point_3 sp(p.hx().eval_at(1000),
+                     p.hy().eval_at(1000),
+                     p.hz().eval_at(1000),
+                     p.hw().eval_at(1));
 	      TRACEN(" ");TRACEN("facet" << sp);
 	  g.push_back_vertex(double_point(sp));
 	}
