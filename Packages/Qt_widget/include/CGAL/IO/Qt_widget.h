@@ -61,7 +61,8 @@ public:
   void set_x_scale(double xscale){ xscal = xscale; }
   void set_y_scale(double yscale){ yscal = yscale; }
 
-  void add_to_history(){history.add_to_history(xmin, xmax, ymin, ymax);}
+  void add_to_history(){history.add_to_history(xmin, xmax, ymin,
+                          ymax, xcentre, ycentre, xscal, yscal);}
   void clear_history(){history.clear();};
 
   inline void move_center(double distx, double disty) 
@@ -188,20 +189,9 @@ signals:
 public slots:
   void print_to_ps();
   virtual void redraw();
-  void back(){
-    if(history.back()){
-      set_window_p(history.get_atom()->x1(), history.get_atom()->x2(),
-                history.get_atom()->y1(), history.get_atom()->y2());
-      configure_history_buttons();
-    }
-  }
-  void forth(){
-    if(history.forward()) {
-      set_window_p(history.get_atom()->x1(), history.get_atom()->x2(),
-                history.get_atom()->y1(), history.get_atom()->y2());
-      configure_history_buttons();
-    }
-  }
+  void back();
+  void forth();
+  
 protected:
   void paintEvent(QPaintEvent *e);
   void resizeEvent(QResizeEvent *e);
@@ -223,7 +213,6 @@ private:
   double  xcentre, ycentre; //the center of the axex
   
   Qt_widget_history history;
-  void set_window_p(double x_min, double x_max, double y_min, double y_max);
   void configure_history_buttons(); //change the enabled state of
                                     //the history buttons
 

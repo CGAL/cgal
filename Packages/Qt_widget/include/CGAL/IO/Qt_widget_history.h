@@ -26,17 +26,28 @@
 namespace CGAL {
   class History_atom{
   public:
-    History_atom(double xmin, double xmax, double ymin, double ymax)
-      : m_x1(xmin), m_x2(xmax), m_y1(xmin), m_y2(xmax){};
+    History_atom(double xmin, double xmax, double ymin, double ymax,
+                 double xcenter, double ycenter, double xscal, double yscal)
+      : m_x1(xmin), m_x2(xmax), m_y1(ymin), m_y2(ymax),
+        m_xcenter(xcenter), m_ycenter(ycenter), m_xscal(xscal),
+        m_yscal(yscal){};
     double x1(){return m_x1;}
     double x2(){return m_x2;}
     double y1(){return m_y1;}
     double y2(){return m_y2;}
+    double xcenter(){return m_xcenter;}
+    double ycenter(){return m_ycenter;}
+    double xscal(){return m_xscal;}
+    double yscal(){return m_yscal;}
   private:
     double  m_x1,
             m_x2,
             m_y1,
-            m_y2;
+            m_y2,
+            m_xcenter,
+            m_ycenter,
+            m_xscal,
+            m_yscal;
   };
 
   class Qt_widget_history{
@@ -66,13 +77,14 @@ namespace CGAL {
     History_atom* get_atom(){
       return &(*it);
     }
-    void add_to_history(double xmin, double xmax, double ymin, double ymax)
+    void add_to_history(double xmin, double xmax, double ymin, double ymax,
+                        double xcenter, double ycenter, double xscal, double yscal)
     {
       if(nr_of_items > 1){
         it++;
         history_list.erase(it, history_list.end());
       }
-      History_atom atom(xmin, xmax, ymin, ymax);
+      History_atom atom(xmin, xmax, ymin, ymax, xcenter, ycenter, xscal, yscal);
       history_list.push_back(atom);
       nr_of_items = history_list.size();
       current_item = nr_of_items;

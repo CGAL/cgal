@@ -330,17 +330,6 @@ void Qt_widget::set_window(double  x_min, double x_max,
   configure_history_buttons();
 }
 
-void Qt_widget::set_window_p(double  x_min, double x_max,
-			   double y_min, double y_max)
-{
-  xmin = x_min;
-  xmax = x_max;
-  ymin = y_min;
-  ymax = y_max;  
-  xcentre = xmin + (xmax - xmin)/2;
-  ycentre = ymin + (ymax - ymin)/2;
-  set_scales();
-}
 
 void Qt_widget::configure_history_buttons()
 {
@@ -448,6 +437,34 @@ Qt_widget& Qt_widget::operator<<(const PointStyle& ps)
 void Qt_widget::clear() {
   painter->eraseRect(rect());
 }
+  void Qt_widget::back(){
+    if(history.back()){
+      xmin = history.get_atom()->x1();
+      xmax = history.get_atom()->x2();
+      ymin = history.get_atom()->y1();
+      ymax = history.get_atom()->y2();
+      xcentre = history.get_atom()->xcenter();
+      ycentre = history.get_atom()->ycenter();
+      xscal = history.get_atom()->xscal();
+      yscal = history.get_atom()->yscal();
+      configure_history_buttons();
+      redraw();
+    }
+  }
+  void Qt_widget::forth(){
+    if(history.forward()) {
+      xmin = history.get_atom()->x1();
+      xmax = history.get_atom()->x2();
+      ymin = history.get_atom()->y1();
+      ymax = history.get_atom()->y2();
+      xcentre = history.get_atom()->xcenter();
+      ycentre = history.get_atom()->ycenter();
+      xscal = history.get_atom()->xscal();
+      yscal = history.get_atom()->yscal();
+      configure_history_buttons();
+      redraw();
+    }
+  }
 
   Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r)
   {
