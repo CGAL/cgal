@@ -24,6 +24,7 @@ LCPPINCS = -I$(BASEDIR)/../../include
 LCPPINCS+= -I$(BASEDIR)/../../../Benchmark/include
 LCPPINCS+= -I$(BASEDIR)/../../../Arrangement/include
 LCPPINCS+= -I$(BASEDIR)/../../../Trapezoidal_decomposition/include
+LCPPINCS+= -I$(BASEDIR)/../../../Sweep_line_2/include
 LCPPINCS+= -I$(BASEDIR)/../../../../src/LEDA_KERNEL/include
 LCPPINCS+= $(CGALINCS)
 
