@@ -21,8 +21,7 @@ Let <release_dir> be the directory in which you plan to build the release.
                Edit include/CGAL/version.h
                    #define CGAL_VERSION ...
                    #define CGAL_VERSION_NR ...
-      7.  Edit install_cgal script: remove the "y" in INTERNAL_RELEASE='y'.
-      8.  Copy Release/CHANGES
+      7.  Copy Release/CHANGES
 
 For the manuals:
 

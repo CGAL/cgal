@@ -23,7 +23,6 @@ Run this script. This does the following:
 	#define CGAL_VERSION_NR ...
 
 The rest is done manually still.
-Edit install_cgal script: remove the "y" in INTERNAL_RELEASE='y'.
 Rename the current directory to CGAL-x.y.
 Do
   find CGAL-x.y -exec touch 01221530 {} \;
