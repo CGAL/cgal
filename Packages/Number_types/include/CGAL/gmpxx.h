@@ -175,7 +175,22 @@ compare(const mpf_class& e1, const mpf_class& e2)
   return (Comparison_result) ::cmp(e1, e2);
 }
 
-#if 0 // Unfinished
+// Should not be inline, but well...
+inline
+std::pair<double,double>
+to_interval (const mpz_class & e)
+{
+  Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
+  double approx = to_double(e);
+  double rel_error = e.get_double_error();
+  FPU_set_cw(CGAL_FE_UPWARD);
+  Interval_nt_advanced ina = (-rel_error,rel_error);
+  ina += 1;
+  ina *= approx;
+  return ina.pair();
+}
+
+// Should not be inline, but well...
 inline
 std::pair<double,double>
 to_interval (const mpq_class & e)
@@ -189,7 +204,21 @@ to_interval (const mpq_class & e)
   ina *= approx;
   return ina.pair();
 }
-#endif
+
+// Should not be inline, but well...
+inline
+std::pair<double,double>
+to_interval (const mpf_class & e)
+{
+  Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
+  double approx = to_double(e);
+  double rel_error = e.get_double_error();
+  FPU_set_cw(CGAL_FE_UPWARD);
+  Interval_nt_advanced ina = (-rel_error,rel_error);
+  ina += 1;
+  ina *= approx;
+  return ina.pair();
+}
 
 namespace NTS {
   // These are necessary due to expression-templates.

@@ -36,6 +36,14 @@
 #include <CGAL/Gmpq.h>
 #endif
 
+#ifdef CGAL_USE_GMPXX
+#include <CGAL/gmpxx.h>
+#endif
+
+#ifdef CGAL_USE_CORE
+#include <CGAL/CORE_Expr.h>
+#endif
+
 #include <CGAL/_test_to_interval.h>
 
 int
@@ -66,6 +74,16 @@ main()
   && test_to_interval( CGAL::Gmpq() )
   && test_to_interval( CGAL::Quotient< CGAL::Gmpz>() )
 #endif // CGAL_USE_GMP
+
+#ifdef CGAL_USE_GMPXX
+  && test_to_interval( mpz_class() )
+  && test_to_interval( mpq_class() )
+  && test_to_interval( mpf_class() )
+#endif // CGAL_USE_GMPXX
+
+#ifdef CGAL_USE_CORE
+  && test_to_interval( CORE::Expr() )
+#endif // CGAL_USE_CORE
   ;
 
   return ok ? 0 : 1;

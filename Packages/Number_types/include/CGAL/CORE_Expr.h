@@ -74,7 +74,7 @@ compare(const CORE::Expr& e1, const CORE::Expr& e2)
   return (c < 0) ? SMALLER : ((0 < c) ? LARGER : EQUAL);
 }
 
-#if 0 // Unfinished
+// Should not be inline, but, well...
 inline
 std::pair<double,double>
 to_interval (const CORE::Expr & e)
@@ -88,7 +88,6 @@ to_interval (const CORE::Expr & e)
   ina *= approx;
   return ina.pair();
 }
-#endif
 
 namespace NTS {
   inline
