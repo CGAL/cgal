@@ -18,88 +18,97 @@ int main()
 #else
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Arrangement_2.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
-#include <CGAL/Arr_polyline_traits.h>
-#include <CGAL/leda_real.h>
-#include <CGAL/Draw_preferences.h>
+#include <CGAL/Arrangement_2.h>
+#include <CGAL/Arr_segment_cached_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
 
-typedef leda_real                                       NT;
-typedef CGAL::Cartesian<NT>                             Kernel;
-typedef CGAL::Arr_polyline_traits<Kernel>               Traits;
+typedef CGAL::Quotient<CGAL::MP_Float>                NT;
+typedef CGAL::Cartesian<NT>                           Kernel;
+typedef Kernel::Segment_2                             Segment_2;
+typedef CGAL::Arr_segment_cached_traits_2<Kernel>     Seg_traits;
+typedef CGAL::Arr_polyline_traits_2<Seg_traits>       Traits;
 
-typedef Traits::Point_2                                 Point;
-typedef Traits::X_monotone_curve_2                      X_curve;
-typedef Traits::Curve_2                                 Curve;
+typedef Traits::Point_2                               Point_2;
+typedef Traits::Curve_2                               Curve_2;
+typedef Traits::X_monotone_curve_2                    X_monotone_curve_2;
 
-typedef CGAL::Arr_base_node<X_curve>                    Base_node;
-typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
+typedef CGAL::Pm_default_dcel<Traits>                 Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits>               Pm_2;
+typedef CGAL::Planar_map_with_intersections_2<Pm_2>   Pmwx_2;
 
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>      Arr_2;
+Pmwx_2 pmwx;           // The arrangement, defined as a global variable.
 
-// global variables are used so that the redraw function for the LEDA window
-// can be defined to draw information found in these variables.
-static Arr_2 Arr; 
-
-leda_point to_leda_pnt(Point p)
-{
-  return leda_point(p.x().to_double(), p.y().to_double());
-}
-
-CGAL_BEGIN_NAMESPACE
-Window_stream & operator<<(Window_stream & os, const  Point & p)
-{
-  // conversion to leda_point in order to show it on screen
-  return os << to_leda_pnt(p);
-}
+#include <CGAL/IO/Window_stream.h>
 
 // draw a polyline, with points as 'x's
-Window_stream & operator<<(Window_stream & os, const X_curve & c)
+CGAL::Window_stream& operator<< (CGAL::Window_stream& os, 
+				 const X_monotone_curve_2& cv)
 {
-  X_curve::const_iterator sit, tit;
-  sit = c.begin();
-  tit = sit; tit++;
-  os.draw_point(to_leda_pnt(*sit), leda_green); // draw first point
-  for (; tit != c.end(); tit++, sit++) {
-    // conversion to screen drawble segment
-    os << leda_segment(to_leda_pnt(*sit), to_leda_pnt(*tit));
-    os.draw_point(to_leda_pnt(*tit), leda_green);
+  X_monotone_curve_2::const_iterator ps = cv.begin();
+  X_monotone_curve_2::const_iterator pt = ps; pt++;
+
+  while (pt != cv.end())
+  {
+    os << Segment_2(*ps, *pt);
+    ps++; pt++;
   }
-    
-  return os;
+
+  return (os);
 }
 
-Window_stream & operator<<(Window_stream & os, Arr_2 & arr)
+CGAL::Window_stream& operator<< (CGAL::Window_stream& os, Pmwx_2& _pmwx)
 {
-  My_Arr_drawer<Arr_2, Arr_2::Ccb_halfedge_circulator, 
-    Arr_2::Holes_iterator> drawer(os);
-  draw_pm(arr, drawer, os);
-  
-  return os;
-}
-CGAL_END_NAMESPACE
+  Pmwx_2::Edge_iterator ei;
+  os << CGAL::BLUE;
+  for (ei = _pmwx.edges_begin(); ei != _pmwx.edges_end(); ++ei)
+    os << (*ei).curve();
 
-void read_arr(Arr_2 & arr, char * filename)
+  Pmwx_2::Vertex_iterator vi;
+  os << CGAL::RED;
+  for (vi = _pmwx.vertices_begin(); vi != _pmwx.vertices_end(); ++vi)
+    os << (*vi).point();
+
+  return (os);
+}
+
+// Read the curves from a file and compute their bounding box.
+void read_curves (const char* filename,
+		  std::list<Curve_2>& curves,
+		  CGAL::Bbox_2& bbox)
 {  
   std::ifstream file(filename);
+  curves.clear();
 
-  int num_polylines, num_x_curves ;
-  double x,y; // only used to read file not used in computations
-  X_curve polyline;
+  int                num_polylines, num_segments;
+  NT                 x, y;
+  std::list<Point_2> points;
+  int                i, j;
 
   file >> num_polylines;
-  while (num_polylines--) {
-    file >> num_x_curves;
-    while (num_x_curves--) {
+  for (i = 0; i < num_polylines; i++) 
+  {
+    file >> num_segments;
+    points.clear();
+    for (j = 0; j < num_segments; j++)
+    {
       file >> x >> y;
-      Point s(x,y);
-      polyline.push_back(s);
+      points.push_back (Point_2(x,y));
     }
 
-    arr.insert(polyline);
-    polyline.clear();
+    Curve_2   polyline(points);
+    curves.push_back(polyline);
+
+    if (i == 0)
+      bbox = polyline.bbox();
+    else
+      bbox = bbox + polyline.bbox();
   }
+
+  return;
 }
 
 // redraw function for LEDA window. used automatically when window reappears
@@ -108,7 +117,7 @@ void redraw(CGAL::Window_stream * wp)
   wp->start_buffering();
   wp->clear();
   // draw arragnement
-  *wp << Arr;
+  *wp << pmwx;
   wp->flush_buffer();
   wp->stop_buffering();
 }
@@ -116,58 +125,91 @@ void redraw(CGAL::Window_stream * wp)
 int main(int argc, char* argv[])
 {
   if (argc != 2) {
-    std::cout << "usage: Polyline_arr_from_file filename\n";
+    std::cout << "usage: Polyline_arr_from_file <filename>" << std::endl;
     exit(1);
   }
 
-  double x0 = -20, x1 = 300, y0 = -20;
-  enum { THE_BUTTON = 10 };
-  CGAL::Window_stream W(400, 400, "CGAL - Polyline Arrangement Demo");
-  W.init(x0, x1, y0);
+  // Read the polyline curves from the input file.
+  std::list<Curve_2>                 curves;
+  std::list<Curve_2>::const_iterator cv_it;
+  CGAL::Bbox_2                       bbox;
+
+  read_curves (argv[1],
+	       curves,
+	       bbox);
+
+  for (cv_it = curves.begin(); cv_it != curves.end(); cv_it++)
+    pmwx.insert (*cv_it);
+
+  // Initialize the display window.
+  float x_range = bbox.xmax() - bbox.xmin();
+  float y_range = bbox.ymax() - bbox.ymin();
+  float width = 640;
+  float height = (y_range * width) / x_range;
+    
+  CGAL::Window_stream W (static_cast<int>(width),
+			 static_cast<int>(height),
+			 "CGAL - Polyline Arrangement Demo");
+
+  float min_range = (x_range < y_range) ? x_range : y_range;
+  float x_margin = min_range / 5;
+  float y_margin = (height * x_margin) / width;
+        
+  float x0 = bbox.xmin() - x_margin;
+  float x1 = bbox.xmax() + x_margin;
+  float y0 = bbox.ymin() - y_margin;
+  W.init(x0, x1, y0);   // logical window size 
+
   W.set_redraw(redraw);
   W.set_mode(CGAL_LEDA_SCOPE::src_mode);
   W.set_node_width(3);
+  const int THE_BUTTON = 10;
   W.button("  Quit  ", THE_BUTTON);
   W.open_status_window();
   W.display(leda_window::center,leda_window::center);
 
-  // read arrangement from file
-  read_arr(Arr, argv[1]);
-  W << Arr;
+  // Draw the arrangement.
+  W << pmwx;
 
- // (3) Point Location part
-  Arr_2::Halfedge_handle e;
-  double x,y; // only used in drawing, not computations
-  Point pnt;
+  // Point Location part.
+  Pmwx_2::Halfedge_handle e;
+  double  x,y;
+  Point_2 pnt;
 
   W.set_status_string("Enter a point with left button. Press Quit to quit.");  
   W.set_button_label(THE_BUTTON, "  Quit  ");
-  while (W.read_mouse(x,y) != THE_BUTTON) {
-    pnt = Point(x,y);
-    W << Arr;
+  while (W.read_mouse(x,y) != THE_BUTTON) 
+  {
+    // Read the query point from the mouse.
+    pnt = Point_2(x,y);
+    W << pmwx;
     
-    Arr_2::Locate_type lt;
-    e = Arr.locate(pnt ,lt);
+    Pmwx_2::Locate_type lt;
+    e = pmwx.locate(pnt ,lt);
 
-    //color the face on the screen
+    // Color the face containing the query point on the screen.
     W << CGAL::GREEN;
-    Arr_2::Face_handle f=e->face();
-    if (f->does_outer_ccb_exist()) {
-      Arr_2::Ccb_halfedge_circulator cc = f->outer_ccb();
-      do {
+    Pmwx_2::Face_handle f=e->face();
+    if (f->does_outer_ccb_exist()) 
+    {
+      Pmwx_2::Ccb_halfedge_circulator cc = f->outer_ccb();
+      do 
+      {
 	W << cc->curve();
       } while (++cc != f->outer_ccb());
     }
-    for (Arr_2::Holes_iterator ho = f->holes_begin(), hoe = f->holes_end();
-	 ho != hoe; ++ho) {
-      Arr_2::Ccb_halfedge_circulator cc = *ho; 
+
+    for (Pmwx_2::Holes_iterator ho = f->holes_begin(), hoe = f->holes_end();
+	 ho != hoe; ++ho) 
+    {
+      Pmwx_2::Ccb_halfedge_circulator cc = *ho; 
       do {
 	W << cc->curve();
       } while (++cc != *ho);
     }
-  } // location
+  }
 
-  return 0;  
+  return (0);  
 }
 
 #endif
