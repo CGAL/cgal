@@ -1069,67 +1069,66 @@ Face_const_handle unbounded_face() const {
 //checks validity of planar map and of arrangement's hierarchy tree structures
 bool is_valid(bool verbose = false) const
 {
-
- CGAL::Verbose_ostream verr(verbose);
- //std::ostream& verr = std::cerr;
- bool         valid = true;
-
- verr << std::endl;
- verr << "CGAL::Arrangment_2<Decl, Traits, Base_Node>::";
- verr << "is_valid( true ):" << std::endl;
-
- // Planar Map Check
- verr << "a) planar_map check... " << std::endl;
- if (pm.is_valid())
-   verr << "passed." << std::endl;
- else
-   valid = false;
-
- // Check each Curve Hierarchy tree
- Curve_const_iterator    cit;
- Edge_const_iterator     eit;
- Subcurve_const_iterator sit, child_it, parent_it;
-
- unsigned curve_counter = 1;
- bool
-   curve_node_curve_node          = true,
-   curve_node_is_edge_node        = true,
-   curve_node_null_parent         = true,
-   curve_node_children_parent     = true,
-   curve_node_children_curve_node = true,
-   edge_is_edge_node              = true,
-   edge_node_curve_node           = true,
-   subcurve_is_edge_node          = true,
-   subcurve_curve_node            = true,
-   subcurve_edges_curve_node      = true,
-   subcurve_edges_parent          = true,
-   level_structure_ok             = true,
-   not_curve_node, 
-   circ_curve_is_next_curve       = true,
-   circ_curve_is_halfedge_curve   = true,
-   edge_curve_is_halfedge_curve   = true;
-
- verr << "b) hierarchy tree check:" << std::endl;
- // for each curve tree
- for (cit = curve_node_begin(); cit != curve_node_end(); 
-      cit++, curve_counter++) {
+  CGAL::Verbose_ostream verr(verbose);
+  //std::ostream& verr = std::cerr;
+  bool         valid = true;
+  
+  verr << std::endl;
+  verr << "CGAL::Arrangment_2<Decl, Traits, Base_Node>::";
+  verr << "is_valid( true ):" << std::endl;
+  
+  // Planar Map Check
+  verr << "a) planar_map check... " << std::endl;
+  if (pm.is_valid())
+    verr << "passed." << std::endl;
+  else
+    valid = false;
+  
+  // Check each Curve Hierarchy tree
+  Curve_const_iterator    cit;
+  Edge_const_iterator     eit;
+  Subcurve_const_iterator sit, child_it, parent_it;
+  
+  unsigned curve_counter = 1;
+  bool
+    curve_node_curve_node          = true,
+    curve_node_is_edge_node        = true,
+    curve_node_null_parent         = true,
+    curve_node_children_parent     = true,
+    curve_node_children_curve_node = true,
+    edge_is_edge_node              = true,
+    edge_node_curve_node           = true,
+    subcurve_is_edge_node          = true,
+    subcurve_curve_node            = true,
+    subcurve_edges_curve_node      = true,
+    subcurve_edges_parent          = true,
+    level_structure_ok             = true,
+    not_curve_node, 
+    circ_curve_is_next_curve       = true,
+    circ_curve_is_halfedge_curve   = true,
+    edge_curve_is_halfedge_curve   = true;
+  
+  verr << "b) hierarchy tree check:" << std::endl;
+  // for each curve tree
+  for (cit = curve_node_begin(); cit != curve_node_end(); 
+       cit++, curve_counter++) {
     
-   // check curve node properties
-   // ---------------------------
+    // check curve node properties
+    // ---------------------------
     
-   // is_edge_node() should return false for a Curve_node
-   curve_node_is_edge_node &= (cit->is_edge_node() == false);
+    // is_edge_node() should return false for a Curve_node
+    curve_node_is_edge_node &= (cit->is_edge_node() == false);
     
    // curve_node() should point at this current curve
-   curve_node_curve_node &= (cit->curve_node() == cit);
+    curve_node_curve_node &= (cit->curve_node() == cit);
     
-   // parent() should return NULL
-   curve_node_null_parent &= (cit->parent() == NULL);
+    // parent() should return NULL
+    curve_node_null_parent &= (cit->parent() == NULL);
     
-   // children's parent should equal this curve node
-   sit = cit->children_begin();
-   for (;sit != cit->children_end(); sit++)
-     {
+    // children's parent should equal this curve node
+    sit = cit->children_begin();
+    for (;sit != cit->children_end(); sit++)
+      {
 	curve_node_children_curve_node &= (sit->curve_node() == cit);
 	
 	//parent() always returns Subcurve_iterator while cit is of type
@@ -1137,39 +1136,41 @@ bool is_valid(bool verbose = false) const
 	// I use the following combined test
 	curve_node_children_parent &= (sit->parent()->parent() == NULL &&
 				       sit->parent()->curve_node() == cit);  
-     }
+      }
     
-   // check edges properties
-   // ----------------------
-   eit = cit->edges_begin();
-   for (;eit != cit->edges_end(); eit++) // for each edge
-     {
-	// is_edge_node() should return true for an edge node 
+    // check edges properties
+    // ----------------------
+    eit = cit->edges_begin();
+    for (;eit != cit->edges_end(); eit++) // for each edge
+      {
+        // is_edge_node() should return true for an edge node 
 	edge_is_edge_node &= (eit->is_edge_node() == true);
 	// edged mutual reference check
-	edge_node_curve_node &= eit->curve_node() == cit;
-
-       // checking the vaildity of overlappings.
-       Overlap_const_circulator ovlp_circ = eit->halfedge()->overlap_edges();
+        edge_node_curve_node &= eit->curve_node() == cit;
         
-       edge_curve_is_halfedge_curve &= (eit->curve() == eit->halfedge()->curve());
-       do{
-         Overlap_const_circulator next = ovlp_circ;
-         ++next;
-          
-         circ_curve_is_next_curve &= (ovlp_circ->curve() == next->curve());
-         circ_curve_is_halfedge_curve &= (ovlp_circ->curve() == eit->halfedge()->curve());
+        // checking the vaildity of overlappings.
+        Overlap_const_circulator ovlp_circ = eit->halfedge()->overlap_edges();
+        
+        edge_curve_is_halfedge_curve &= 
+	  (eit->curve() == eit->halfedge()->curve());
 
-         cout<<ovlp_circ->curve()<<endl;
-       } while (++ovlp_circ != eit->halfedge()->overlap_edges());
-     }
+        do{
+          Overlap_const_circulator next = ovlp_circ;
+          ++next;
+          
+          circ_curve_is_next_curve &= (ovlp_circ->curve() == next->curve());
+          circ_curve_is_halfedge_curve &= 
+	    (ovlp_circ->curve() == eit->halfedge()->curve());
+          
+        } while (++ovlp_circ != eit->halfedge()->overlap_edges());
+      }
     
-   // check subcurves properties
-   // --------------------------
-   int i, levels;
-   levels = cit->number_of_sc_levels();
-   if (levels > 0)
-     {
+    // check subcurves properties
+    // --------------------------
+    int i, levels;
+    levels = cit->number_of_sc_levels();
+    if (levels > 0)
+      {
 	for (i = 0; i < levels; i++)
 	  {
 	    sit = cit->level_begin(i);
@@ -1267,7 +1268,7 @@ bool is_valid(bool verbose = false) const
  verr << "for all en : en->curve() == en->halfedge()->curve()             ---";
  verr << (edge_curve_is_halfedge_curve  ? "PASS" : "FAIL") << std::endl;
   
- verr << "for all en : each cirulator curve == next circulator curve      ---";
+ verr << "for all en : all overlapping circulators have the same curve    ---";
  verr << (circ_curve_is_next_curve ? "PASS" : "FAIL") << std::endl;
 
  verr << "for all en : all circulators curves == en->halfedge()->curve()  ---";
@@ -2042,10 +2043,10 @@ void push_in_edge_list(const typename Traits::X_curve& cv,
   // The following condition replaces the original functionality
   // of original_direction, as described in the histroial comment above.
   // The original condition: if (original_direction) 
-  if (CGAL::compare_xy(traits->curve_source(ftr->curve()), 
-                                         traits->curve_target(ftr->curve())) ==
-      CGAL::compare_xy(traits->curve_source(cv), 
-                                         traits->curve_target(cv)))
+  if (traits->compare_xy(traits->curve_source(ftr->curve()), 
+			 traits->curve_target(ftr->curve())) ==
+      traits->compare_xy(traits->curve_source(cv), 
+			 traits->curve_target(cv)))
     en->set_curve(cv);
   else 
     en->set_curve(traits->curve_flip(cv));
