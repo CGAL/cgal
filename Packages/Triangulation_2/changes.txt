@@ -1,7 +1,7 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-ver 8.06 ()
+ver 8.06 (05/08/03)
 - fixed Triangulation:: to Ctr:: in Constraint_delaunay_triangulation_2.h
 - fixed get_conflicts and get_boundary_of_conflicts for SGI CC
 - changed the version number to make it simpler
