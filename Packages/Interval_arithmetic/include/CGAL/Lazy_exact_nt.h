@@ -94,19 +94,19 @@ struct Lazy_exact_rep : public Ref_counted
   Lazy_exact_rep (const Interval_base i)
       : in(i), et(NULL) {}
 
-  Interval_nt<> approx() const
+  Interval_nt<> approx() const  // Better return a const ref instead ?
   {
       return in;
   }
 
-  ET exact()
+  ET exact()  // Better return a const ref instead ?
   {
       if (et==NULL)
           update_exact();
       return *et;
   }
 
-  virtual void update_approx() = 0;  // Not used anymore (at the moment).
+  virtual void update_approx() = 0;  // Not used anymore...  at the moment :)
   virtual void update_exact() = 0;
   virtual ~Lazy_exact_rep () {};
 };
@@ -208,7 +208,8 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 
 // The real number type, handle class
 template <typename ET>
-struct Lazy_exact_nt : public Handle_for<Lazy_exact_rep<ET> >
+struct Lazy_exact_nt : public Handle_for<Lazy_exact_rep<ET> >  // Buggy :
+  // Handle_for<> can't handle virtual hierarchies at the moment.
 {
   typedef Handle_for<Lazy_exact_rep<ET> > PTR;
   typedef Lazy_exact_nt<ET> Self;
