@@ -60,7 +60,7 @@ run()
   if [ $3 -eq $CGAL_SEGMENT_TRAITS -o $3 -eq $CGAL_SEGMENT_CACHED_TRAITS -o \
        $3 -eq $CGAL_SEGMENT_LEDA_TRAITS -o $3 -eq $CGAL_SEGMENT_CACHED_LEDA_TRAITS ] ; then
     datafiles="DATA/segments/*"
-  elif [ $3 -eq $CGAL_POLYLINE_TRAITS ] ; then
+  elif [ $3 -eq $CGAL_POLYLINE_TRAITS -o $3 -eq $CGAL_POLYLINE_CACHED_TRAITS ] ; then
        datafiles="DATA/polylines/*"
   fi
 
@@ -155,5 +155,4 @@ else
     (compile_and_run test_pmwx $NAIVE  $CGAL_POLYLINE_CACHED_TRAITS)
     (compile_and_run test_pmwx $WALK   $CGAL_POLYLINE_CACHED_TRAITS)
     (compile_and_run test_pmwx $SIMPLE $CGAL_POLYLINE_CACHED_TRAITS)
-
 fi
