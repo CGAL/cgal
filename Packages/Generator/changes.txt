@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.48 (7 Mar 2002)
+   - added return statement in demo to get rid of warning
+
 2.47 (02 Jan 2002)
    - changed from use of (nonstandard) M_PI to CGAL_PI
 
