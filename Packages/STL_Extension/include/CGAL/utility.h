@@ -53,6 +53,11 @@ struct Triple
   Triple(const T1& a, const T2& b, const T3& c)
   : first(a), second(b), third(c)
   {}
+
+  template <class U, class V, class W>
+  Triple(const U& a, const V& b, const W& c)
+  : first(a), second(b), third(c)
+  {}
 };
 
 template <class T1, class T2, class T3>
@@ -77,9 +82,9 @@ bool operator<(const Triple<T1, T2, T3>& x,
                const Triple<T1, T2, T3>& y)
 {
   return ( x.first < y.first ||
-           ( (x.first == y.first) && (x.second < y.second) ) ||
-           ( (x.first == y.first) && (x.second == y.second) &&
-             (x.third < y.third) ) );
+           ( !(y.first < x.first) &&
+             ( x.second < y.second ||
+               ( !(y.second < x.second) && x.third < y.third ) ) ) );
 }
 //+---------------------------------------------------------------------+
 //| Quadruple class                                                     |
@@ -101,6 +106,11 @@ struct Quadruple
   Quadruple() {}
 
   Quadruple(const T1& a, const T2& b, const T3& c, const T4& d)
+  : first(a), second(b), third(c), fourth(d)
+  {}
+
+  template <class U, class V, class W, class X>
+  Quadruple(const U& a, const V& b, const W& c, const X& d)
   : first(a), second(b), third(c), fourth(d)
   {}
 };
@@ -132,12 +142,11 @@ operator<(const Quadruple<T1, T2, T3, T4>& x,
           const Quadruple<T1, T2, T3, T4>& y)
 {
   return ( x.first < y.first ||
-           ( (x.first == y.first) && (x.second < y.second) ) ||
-           ( (x.first == y.first) && (x.second == y.second) &&
-             (x.third < y.third) ) ||
-           ( (x.first == y.first) && (x.second == y.second) &&
-             (x.third == y.third) ) &&
-           (x.fourth < y.fourth) );
+           ( !(y.first < x.first) &&
+             ( x.second < y.second ||
+               ( !(y.second < x.second) &&
+                 ( x.third < y.third ||
+                   !(y.third < x.third) && x.fourth < y.fourth) ) ) ) );
 }
 
 

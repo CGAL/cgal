@@ -8100,6 +8100,11 @@ void test_Oneset_iterator()
   *g = b;
   ++g;
 }
+struct My_to_int    { operator int() const { return 2; } };
+struct My_to_float  { operator float() const { return 3.25; } };
+struct My_to_double { operator double() const { return 4.25; } };
+struct My_to_bool   { operator bool() const { return true; } };
+
 void test_Triple()
 {
   typedef CGAL::Triple<int,double,bool> T1;
@@ -8108,6 +8113,11 @@ void test_Triple()
 
   T1 x1;
   x1 = CGAL::make_triple(1, 1.5, true);
+  My_to_int mti;
+  My_to_double mtd;
+  My_to_bool mtb;
+  T1 xx(mti, mtd, mtb);
+  CGAL_assertion(xx.first == 2);
   T2 x2;
   T3 x3;
   T1 y1(2, 2.2, true);
@@ -8132,6 +8142,12 @@ void test_Quadruple()
 
   T1 x1;
   x1 = CGAL::make_quadruple(1, 2.5f, 1.5, true);
+  My_to_int mti;
+  My_to_float mtf;
+  My_to_double mtd;
+  My_to_bool mtb;
+  T1 xx(mti, mtf, mtd, mtb);
+  CGAL_assertion(xx.first == 2);
   T2 x2;
   T3 x3;
   T4 x4;
