@@ -1,3 +1,8 @@
+2.8.4       (21 Jun 2001)
+- changed point output (no nodes are used any more)
+- input and output operators in IO/leda_window.h and IO/cgal_window.h
+  now support filled object
+
 2.8.3       (20 Jun 2001)
 - changed window_input demo for usage with CGAL::window
 
