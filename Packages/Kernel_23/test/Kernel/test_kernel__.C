@@ -20,7 +20,6 @@
 // coordinator   : MPI, Saarbruecken
 // ============================================================================
  
-
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_homogeneous.h>
@@ -48,8 +47,8 @@ main()
   std::cout << "Testing miscellaneous" << std::endl;
   typedef   CGAL::Homogeneous<Precise_integer>                 H_Cls;
   typedef   CGAL::Simple_homogeneous<Precise_integer>          SH_Cls;
-  typedef   CGAL::Cartesian<CGAL::Quotient<Precise_integer> >  C_Cls;
-  typedef   CGAL::Simple_cartesian<CGAL::Quotient<Precise_integer> >  SC_Cls;
+  typedef   CGAL::Cartesian<Precise_rational>                  C_Cls;
+  typedef   CGAL::Simple_cartesian<Precise_rational>           SC_Cls;
   _test_cls_object( C_Cls() );
   _test_cls_object( H_Cls() );
   _test_cls_object( SC_Cls() );
