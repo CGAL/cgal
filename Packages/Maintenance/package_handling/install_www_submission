@@ -255,6 +255,12 @@ sub check_package($)
     }
     if ( ! -f 'description.txt' ) {
 	log_msg "WARNING: File description.txt is missing!";
+    } else {
+	my $word_count;
+	$word_count = `cat description.txt| wc -w`;
+	if ($word_count > 50) {
+	    log_msg "WARNING: File description.txt contains more than 50 words!";
+	}
     }
 #    if ( ! -f 'changes.txt' ) {
 #	log_msg "WARNING: File changes.txt is missing!";
