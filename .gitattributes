@@ -1415,10 +1415,12 @@ Packages/Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#u
 Packages/PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 Packages/PS_Stream/doc_tex/PS_Stream/style.ps -text
 Packages/Partition_2/demo/Partition_2/partition_2.vcproj -text
-Packages/Partition_2/doc_tex/Partition_2/Idar-Oberstein.appx_cvx.gif -text svneol=unset#unset
-Packages/Partition_2/doc_tex/Partition_2/Idar-Oberstein.appx_cvx.ps -text
-Packages/Partition_2/doc_tex/Partition_2/Trier.opt_cvx.gif -text svneol=unset#unset
-Packages/Partition_2/doc_tex/Partition_2/Trier.opt_cvx.ps -text
+Packages/Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.gif -text svneol=unset#unset
+Packages/Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.pdf -text svneol=unset#unset
+Packages/Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.ps -text
+Packages/Partition_2/doc_tex/Partition_2/Trier_opt_cvx.gif -text svneol=unset#unset
+Packages/Partition_2/doc_tex/Partition_2/Trier_opt_cvx.pdf -text svneol=unset#unset
+Packages/Partition_2/doc_tex/Partition_2/Trier_opt_cvx.ps -text
 Packages/Planar_map/doc_tex/Planar_map/example_p.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Planar_map/example_p.ps -text
 Packages/Planar_map/doc_tex/Planar_map/face.gif -text svneol=unset#unset
@@ -1574,8 +1576,10 @@ Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2_ref/join_sp
 Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2_ref/join_split.pdf svneol=native#unset
 Packages/Snap_rounding_2/demo/Snap_rounding_2/snap_rounding_2.vcproj -text
 Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.gif -text svneol=unset#unset
+Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.pdf -text svneol=unset#unset
 Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.ps -text
 Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.gif -text svneol=unset#unset
+Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.pdf -text svneol=unset#unset
 Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.ps -text
 Packages/Spatial_searching/demo/Spatial_searching/spatial_searching.vcproj -text
 Packages/Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#unset

@@ -1,4 +1,5 @@
-
+20 August 2004 Andreas Fabri
+- changes in doc_tex for pdflatex
 
 2 august 2004 Mariette Yvinec
 - changed Edge_list in Partition_vertex_map.h  to Pvm_edge_list
