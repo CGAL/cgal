@@ -26,27 +26,54 @@
 // This file contains the definition of a generic kernel filter.
 //
 // TODO:
-// - at the moment, it's restricted to IA filtering, but this should be easily
+// - at the moment, it's restricted to IA filtering, but this should be
 //   generalized to allow static filters...
 // - at the moment, only the predicates are filtered.
 //   Constructions will come later.
 // - the kernel only works with traits only and as a pure traits only.
+// - split in several files.
 
 #include <CGAL/basic.h>
 #include <CGAL/Filter_predicate.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Simple_cartesian.h>
 
 CGAL_BEGIN_NAMESPACE
 
+#if 0
 // This class is just used to encapsulate something.
 template <class T>
 class Blind_wrapper
 {
 public:
     typedef T  value_type;
+    typedef Blind_wrapper<T>  result_type;
+
+    Blind_wrapper() : obj() {}
 
     Blind_wrapper(const T& object) : obj(object) {}
 
-    const T& get() const // operator() instead ?
+    const T& operator()() const
+    { return obj; }
+
+private:
+    T obj;
+};
+
+// Let's cheat...
+template <>
+class Blind_wrapper<double>
+{
+public:
+    typedef double T;
+    typedef T  value_type;
+    typedef T  result_type;
+
+    Blind_wrapper() : obj() {}
+
+    Blind_wrapper(const T& object) : obj(object) {}
+
+    const T& operator()() const
     { return obj; }
 
 private:
@@ -58,7 +85,7 @@ template < class T >
 class Forward_construction
 {
 public:
-    typedef Blind_wrapper<typename T::result_type>   result_type;
+    typedef Blind_wrapper<typename T::result_type>::result_type   result_type;
 
     Forward_construction() : CK_construction() {}
 
@@ -69,30 +96,30 @@ public:
     template < class A1 >
     result_type
     operator()(const A1& a1) const
-    { return CK_construction(a1.get()); }
+    { return CK_construction(a1()); }
 
     template < class A1, class A2 >
     result_type
     operator()(const A1& a1, const A2& a2) const
-    { return CK_construction(a1.get(), a2.get()); }
+    { return CK_construction(a1(), a2()); }
 
     template < class A1, class A2, class A3 >
     result_type
     operator()(const A1& a1, const A2& a2, const A3& a3) const
-    { return CK_construction(a1.get(), a2.get(), a3.get()); }
+    { return CK_construction(a1(), a2(), a3()); }
 
     template < class A1, class A2, class A3, class A4 >
     result_type
     operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) const
-    { return CK_construction(a1.get(), a2.get(), a3.get(), a4.get()); }
+    { return CK_construction(a1(), a2(), a3(), a4()); }
 
     template < class A1, class A2, class A3, class A4, class A5 >
     result_type
     operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4,
 	       const A5& a5) const
     {
-	return CK_construction(a1.get(), a2.get(), a3.get(), a4.get(),
-		a5.get());
+	return CK_construction(a1(), a2(), a3(), a4(),
+		a5());
     }
 
     template < class A1, class A2, class A3, class A4, class A5, class A6 >
@@ -100,8 +127,8 @@ public:
     operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4,
 	       const A5& a5, const A6& a6) const
     {
-	return CK_construction(a1.get(), a2.get(), a3.get(), a4.get(),
-		a5.get(), a6.get());
+	return CK_construction(a1(), a2(), a3(), a4(),
+		a5(), a6());
     }
 
     template < class A1, class A2, class A3, class A4, class A5, class A6,
@@ -110,8 +137,8 @@ public:
     operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4,
 	       const A5& a5, const A6& a6, const A7& a7) const
     {
-	return CK_construction(a1.get(), a2.get(), a3.get(), a4.get(),
-		a5.get(), a6.get(), a7.get());
+	return CK_construction(a1(), a2(), a3(), a4(),
+		a5(), a6(), a7());
     }
 
     template < class A1, class A2, class A3, class A4, class A5, class A6,
@@ -120,8 +147,8 @@ public:
     operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4,
 	       const A5& a5, const A6& a6, const A7& a7, const A8& a8) const
     {
-	return CK_construction(a1.get(), a2.get(), a3.get(), a4.get(),
-		a5.get(), a6.get(), a7.get(), a8.get());
+	return CK_construction(a1(), a2(), a3(), a4(),
+		a5(), a6(), a7(), a8());
     }
 
     template < class A1, class A2, class A3, class A4, class A5, class A6,
@@ -131,8 +158,8 @@ public:
 	       const A5& a5, const A6& a6, const A7& a7, const A8& a8,
 	       const A9& a9) const
     {
-	return CK_construction(a1.get(), a2.get(), a3.get(), a4.get(),
-		a5.get(), a6.get(), a7.get(), a8.get(), a9.get());
+	return CK_construction(a1(), a2(), a3(), a4(),
+		a5(), a6(), a7(), a8(), a9());
     }
 
     template < class A1, class A2, class A3, class A4, class A5, class A6,
@@ -142,8 +169,8 @@ public:
 	       const A5& a5, const A6& a6, const A7& a7, const A8& a8,
 	       const A9& a9, const A10& a10) const
     {
-	return CK_construction(a1.get(), a2.get(), a3.get(), a4.get(),
-		a5.get(), a6.get(), a7.get(), a8.get(), a9.get(), a10.get());
+	return CK_construction(a1(), a2(), a3(), a4(),
+		a5(), a6(), a7(), a8(), a9(), a10());
     }
 
     template < class A1, class A2, class A3, class A4, class A5, class A6,
@@ -153,9 +180,9 @@ public:
 	       const A5& a5, const A6& a6, const A7& a7, const A8& a8,
 	       const A9& a9, const A10& a10, const A11& a11) const
     {
-	return CK_construction(a1.get(), a2.get(), a3.get(), a4.get(),
-		a5.get(), a6.get(), a7.get(), a8.get(), a9.get(), a10.get(),
-		a11.get());
+	return CK_construction(a1(), a2(), a3(), a4(),
+		a5(), a6(), a7(), a8(), a9(), a10(),
+		a11());
     }
 
     template < class A1, class A2, class A3, class A4, class A5, class A6,
@@ -166,9 +193,9 @@ public:
 	       const A9& a9, const A10& a10, const A11& a11,
 	       const A12& a12) const
     {
-	return CK_construction(a1.get(), a2.get(), a3.get(), a4.get(),
-		a5.get(), a6.get(), a7.get(), a8.get(), a9.get(), a10.get(),
-		a11.get(), a12.get());
+	return CK_construction(a1(), a2(), a3(), a4(),
+		a5(), a6(), a7(), a8(), a9(), a10(),
+		a11(), a12());
     }
 
     template < class A1, class A2, class A3, class A4, class A5, class A6,
@@ -180,76 +207,270 @@ public:
 	       const A9& a9, const A10& a10, const A11& a11,
 	       const A12& a12, const A13& a13) const
     {
-	return CK_construction(a1.get(), a2.get(), a3.get(), a4.get(),
-		a5.get(), a6.get(), a7.get(), a8.get(), a9.get(), a10.get(),
-		a11.get(), a12.get(), a13.get());
+	return CK_construction(a1(), a2(), a3(), a4(),
+		a5(), a6(), a7(), a8(), a9(), a10(),
+		a11(), a12(), a13());
     }
 
 private:
     T CK_construction;
 };
+#endif // 0
 
 // CK = construction kernel.
 // EK = exact kernel called when needed by the filter.
 // FK = filtering kernel
 template <class CK,
-          class EK = Simple_cartesian<MP_Float>,
-	  class C2E_Converter = Default_converter<CK, EK>,
+          class EK,
           class FK = Simple_cartesian<Interval_nt_advanced>,
-	  class C2F_Converter = Default_converter<CK, FK> >
+	  class C2E_Converter = Cartesian_converter<CK, EK>,
+	  class C2F_Converter = Cartesian_converter<CK, FK> >
 class Filtered_kernel
 {
-    typedef typename CK::Kernel_tag                       Kernel_tag; // ?
+public:
+    // What to do with the tag ?
+    // Probably this should not exist, should it ?
+    // struct filter_tag{};
+    // typedef filter_tag                                     Kernel_tag;
+    typedef typename CK::Kernel_tag                       Kernel_tag;
+    typedef typename CK::RT                               RT;
+    typedef typename CK::FT                               FT;
 
-    // Define the object types :
+    // Macros to define the types, predicates and constructions.
 
-#define CGAL_Blind_wrapper(X) typedef Blind_wrapper<typename CK::X> X;
-
-    CGAL_Blind_wrapper(Point_2)
-    CGAL_Blind_wrapper(Vector_2)
-    CGAL_Blind_wrapper(Direction_2)
-    CGAL_Blind_wrapper(Segment_2)
-    CGAL_Blind_wrapper(Line_2)
-    CGAL_Blind_wrapper(Ray_2)
-    CGAL_Blind_wrapper(Triangle_2)
-    CGAL_Blind_wrapper(Circle_2)
-    CGAL_Blind_wrapper(Iso_rectangle_2)
-    CGAL_Blind_wrapper(Aff_transformation_2)
-
-    // CGAL_Blind_wrapper(Data_accessor_2) // ?
-    // CGAL_Blind_wrapper(Conic_2)         // ?
-
-    CGAL_Blind_wrapper(Point_3)
-    CGAL_Blind_wrapper(Vector_3)
-    CGAL_Blind_wrapper(Direction_3)
-    CGAL_Blind_wrapper(Segment_3)
-    CGAL_Blind_wrapper(Line_3)
-    CGAL_Blind_wrapper(Plane_3)
-    CGAL_Blind_wrapper(Ray_3)
-    CGAL_Blind_wrapper(Triangle_3)
-    CGAL_Blind_wrapper(Tetrahedron_3)
-    CGAL_Blind_wrapper(Sphere_3)
-    CGAL_Blind_wrapper(Iso_cuboid_3)
-    CGAL_Blind_wrapper(Aff_transformation_3)
-
-    // Define the predicate types and their accessor functions :
+#if 1 // If we adopt this solution, then we can simply derive ?
+#define CGAL_Filter_type(X) \
+    typedef typename CK::X X##_base; \
+    typedef typename CK::X X;
 
 #define CGAL_Filter_pred(P, Pf) \
-    typedef Filtered_predicate<EK::P, FK::P, C2E_Converter, C2F_Converter> P; \
+    typedef Filtered_predicate<typename EK::P, typename FK::P, \
+	                       C2E_Converter, C2F_Converter> P; \
     P Pf() const { return P(); }
 
-    CGAL_Filter_pred(Orientation, orientation_2_object)
-    ...
+#define CGAL_Filter_already_exact_pred(P, Pf) \
+    typedef typename CK::P P; \
+    P Pf() const { return P(); }
 
-    // Define the construction types and their accessor functions :
-
-#define CGAL_Filter_constr(C, Cf) \
-    typedef Forward_construction<CK::C> C; \
+#define CGAL_Filter_cons(C, Cf) \
+    typedef typename CK::C C; \
     C Cf() const { return C(); }
 
-    CGAL_Filter_constr(Construct_point_2, construct_point_2_object)
-    ...
+#else // old try
+#define CGAL_Filter_type(X) \
+    typedef Blind_wrapper<typename CK::X> X##_base; \
+    typedef Blind_wrapper<typename CK::X> X;
 
+#define CGAL_Filter_pred(P, Pf) \
+    typedef Filtered_predicate<typename EK::P, typename FK::P, \
+	                       C2E_Converter, C2F_Converter> P; \
+    P Pf() const { return P(); }
+
+#define CGAL_Filter_cons(C, Cf) \
+    typedef Forward_construction<typename CK::C> C; \
+    C Cf() const { return C(); }
+#endif
+
+    // Types :
+
+    // CGAL_Filter_type(RT) // ?
+    // CGAL_Filter_type(FT) // ?
+
+    CGAL_Filter_type(Point_2)
+    CGAL_Filter_type(Vector_2)
+    CGAL_Filter_type(Direction_2)
+    CGAL_Filter_type(Segment_2)
+    CGAL_Filter_type(Line_2)
+    CGAL_Filter_type(Ray_2)
+    CGAL_Filter_type(Triangle_2)
+    CGAL_Filter_type(Circle_2)
+    CGAL_Filter_type(Iso_rectangle_2)
+    CGAL_Filter_type(Aff_transformation_2)
+    // CGAL_Filter_type(Data_accessor_2) // ?
+    // CGAL_Filter_type(Conic_2)         // ?
+
+    CGAL_Filter_type(Point_3)
+    CGAL_Filter_type(Vector_3)
+    CGAL_Filter_type(Direction_3)
+    CGAL_Filter_type(Segment_3)
+    CGAL_Filter_type(Line_3)
+    CGAL_Filter_type(Plane_3)
+    CGAL_Filter_type(Ray_3)
+    CGAL_Filter_type(Triangle_3)
+    CGAL_Filter_type(Tetrahedron_3)
+    CGAL_Filter_type(Sphere_3)
+    CGAL_Filter_type(Iso_cuboid_3)
+    CGAL_Filter_type(Aff_transformation_3)
+
+    // Predicates and constructions :
+
+    CGAL_Filter_cons(Construct_point_2, construct_point_2_object)
+    CGAL_Filter_cons(Construct_vector_2, construct_vector_2_object)
+    CGAL_Filter_cons(Construct_direction_2, construct_direction_2_object)
+    CGAL_Filter_cons(Construct_segment_2, construct_segment_2_object)
+    CGAL_Filter_cons(Construct_line_2, construct_line_2_object)
+    CGAL_Filter_cons(Construct_ray_2, construct_ray_2_object)
+    CGAL_Filter_cons(Construct_circle_2, construct_circle_2_object)
+    CGAL_Filter_cons(Construct_triangle_2, construct_triangle_2_object)
+    CGAL_Filter_cons(Construct_iso_rectangle_2, construct_iso_rectangle_2_object)
+    CGAL_Filter_cons(Construct_aff_transformation_2,
+	    construct_aff_transformation_2_object)
+    CGAL_Filter_cons(Construct_point_on_2, construct_point_on_2_object)
+    CGAL_Filter_cons(Construct_second_point_on_2, construct_second_point_on_2_object)
+    CGAL_Filter_cons(Construct_source_point_2, construct_source_point_2_object)
+    CGAL_Filter_cons(Construct_target_point_2, construct_target_point_2_object)
+    CGAL_Filter_cons(Construct_min_point_2, construct_min_point_2_object)
+    CGAL_Filter_cons(Construct_max_point_2, construct_max_point_2_object)
+    CGAL_Filter_cons(Construct_direction_of_line_2,
+	construct_direction_of_line_2_object)
+    CGAL_Filter_cons(Construct_direction_of_ray_2,
+	construct_direction_of_ray_2_object)
+    CGAL_Filter_cons(Construct_supporting_line_2,
+	construct_supporting_line_2_object)
+    CGAL_Filter_cons(Construct_perpendicular_vector_2,
+	construct_perpendicular_vector_2_object)
+    CGAL_Filter_cons(Construct_perpendicular_direction_2,
+	construct_perpendicular_direction_2_object)
+    CGAL_Filter_cons(Construct_perpendicular_line_2,
+	construct_perpendicular_line_2_object)
+    CGAL_Filter_cons(Construct_midpoint_2, construct_midpoint_2_object)
+    CGAL_Filter_cons(Construct_circumcenter_2, construct_circumcenter_2_object)
+    CGAL_Filter_cons(Construct_bisector_2, construct_bisector_2_object)
+    CGAL_Filter_cons(Construct_opposite_segment_2,
+	construct_opposite_segment_2_object)
+    CGAL_Filter_cons(Construct_opposite_ray_2, construct_opposite_ray_2_object)
+    CGAL_Filter_cons(Construct_opposite_line_2, construct_opposite_line_2_object)
+    CGAL_Filter_cons(Construct_opposite_triangle_2,
+	construct_opposite_triangle_2_object)
+    CGAL_Filter_cons(Construct_opposite_circle_2, construct_opposite_circle_2_object)
+    CGAL_Filter_cons(Assign_2, assign_2_object)
+    CGAL_Filter_cons(Transform_2, transform_2_object)
+    CGAL_Filter_cons(Intersect_2, intersect_2_object)
+    CGAL_Filter_cons(Compute_y_at_x_2, compute_y_at_x_2_object)
+    CGAL_Filter_cons(Compute_squared_length_2, Compute_squared_length_2_object)
+
+
+    CGAL_Filter_pred(Equal_2, equal_2_object)
+    CGAL_Filter_pred(Equal_x_2, equal_x_2_object)
+    CGAL_Filter_pred(Equal_y_2, equal_y_2_object)
+    CGAL_Filter_pred(Equal_xy_2, equal_xy_2_object)
+    CGAL_Filter_pred(Less_x_2, less_x_2_object)
+    CGAL_Filter_pred(Less_y_2, less_y_2_object)
+    CGAL_Filter_pred(Less_xy_2, less_xy_2_object)
+    CGAL_Filter_pred(Less_yx_2, less_yx_2_object)
+    CGAL_Filter_already_exact_pred(Compare_x_2, compare_x_2_object)
+    CGAL_Filter_already_exact_pred(Compare_y_2, compare_y_2_object)
+    CGAL_Filter_pred(Compare_xy_2, compare_xy_2_object)
+    CGAL_Filter_pred(Compare_y_at_x_2, compare_y_at_x_2_object)
+    CGAL_Filter_pred(Counterclockwise_in_between_2,
+	counterclockwise_in_between_2_object)
+    CGAL_Filter_pred(Leftturn_2, leftturn_2_object)
+    CGAL_Filter_pred(Collinear_2, collinear_2_object)
+    CGAL_Filter_pred(Orientation_2, orientation_2_object)
+    CGAL_Filter_pred(Side_of_oriented_circle_2, side_of_oriented_circle_2_object)
+    CGAL_Filter_pred(Side_of_bounded_circle_2, side_of_bounded_circle_2_object)
+    CGAL_Filter_pred(Is_horizontal_2, is_horizontal_2_object)
+    CGAL_Filter_pred(Is_vertical_2, is_vertical_2_object)
+    CGAL_Filter_pred(Is_degenerate_2, is_degenerate_2_object)
+    CGAL_Filter_pred(Has_on_2, has_on_2_object)
+    CGAL_Filter_pred(Collinear_has_on_2, collinear_has_on_2_object)
+    CGAL_Filter_pred(Has_on_bounded_side_2, has_on_bounded_side_2_object)
+    CGAL_Filter_pred(Has_on_unbounded_side_2, has_on_unbounded_side_2_object)
+    CGAL_Filter_pred(Has_on_boundary_2, has_on_boundary_2_object)
+    CGAL_Filter_pred(Has_on_positive_side_2, has_on_positive_side_2_object)
+    CGAL_Filter_pred(Has_on_negative_side_2, has_on_negative_side_2_object)
+    CGAL_Filter_pred(Oriented_side_2, oriented_side_2_object)
+    CGAL_Filter_pred(Are_ordered_along_line_2, are_ordered_along_line_2_object)
+    CGAL_Filter_pred(Are_strictly_ordered_along_line_2,
+	are_strictly_ordered_along_line_2_object)
+    CGAL_Filter_pred(Collinear_are_ordered_along_line_2,
+	collinear_are_ordered_along_line_2_object)
+    CGAL_Filter_pred(Collinear_are_strictly_ordered_along_line_2,
+	collinear_are_strictly_ordered_along_line_2_object)
+
+
+    CGAL_Filter_cons(Construct_point_3, construct_point_3_object)
+    CGAL_Filter_cons(Construct_vector_3, construct_vector_3_object)
+    CGAL_Filter_cons(Construct_direction_3, construct_direction_3_object)
+    CGAL_Filter_cons(Construct_segment_3, construct_segment_3_object)
+    CGAL_Filter_cons(Construct_plane_3, construct_plane_3_object)
+    CGAL_Filter_cons(Construct_line_3, construct_line_3_object)
+    CGAL_Filter_cons(Construct_ray_3, construct_ray_3_object)
+    CGAL_Filter_cons(Construct_sphere_3, construct_sphere_3_object)
+    CGAL_Filter_cons(Construct_triangle_3, construct_triangle_3_object)
+    CGAL_Filter_cons(Construct_tetrahedron_3, construct_tetrahedron_object)
+    CGAL_Filter_cons(Construct_iso_cuboid_3, construct_iso_cuboid_3_object)
+    CGAL_Filter_cons(Construct_aff_transformation_3,
+	construct_aff_transformation_3_object)
+    CGAL_Filter_cons(Construct_point_on_3, construct_point_on_3_object)
+    CGAL_Filter_cons(Construct_second_point_on_3, construct_second_point_on_3_object)
+    CGAL_Filter_cons(Construct_source_point_3, construct_source_point_3_object)
+    CGAL_Filter_cons(Construct_target_point_3, construct_target_point_3_object)
+    CGAL_Filter_cons(Construct_min_point_3, construct_min_point_3_object)
+    CGAL_Filter_cons(Construct_max_point_3, construct_max_point_3_object)
+    CGAL_Filter_cons(Construct_direction_of_line_3, 
+	construct_direction_of_line_3_object)
+    CGAL_Filter_cons(Construct_direction_of_ray_3,
+	construct_direction_of_ray_3_object)
+    CGAL_Filter_cons(Construct_supporting_line_3, construct_supporting_line_3_object)
+    CGAL_Filter_cons(Construct_perpendicular_plane_3,
+	construct_perpendicular_plane_3_object)
+    CGAL_Filter_cons(Construct_perpendicular_line_3,
+	construct_perpendicular_line_3_object)
+    CGAL_Filter_cons(Construct_midpoint_3, construct_midpoint_3_object)
+    CGAL_Filter_cons(Construct_circumcenter_3, construct_circumcenter_3_object)
+    CGAL_Filter_cons(Construct_opposite_segment_3,
+	construct_opposite_segment_3_object)
+    CGAL_Filter_cons(Construct_opposite_ray_3, construct_opposite_ray_3_object)
+    CGAL_Filter_cons(Construct_opposite_line_3, construct_opposite_line_3_object)
+    CGAL_Filter_cons(Construct_opposite_plane_3, construct_opposite_plane_3_object)
+    CGAL_Filter_cons(Construct_supporting_plane_3,
+	construct_supporting_plane_3_object)
+    CGAL_Filter_cons(Transform_3, transform_3_object)
+    CGAL_Filter_cons(Assign_3, assign_3_object)
+    CGAL_Filter_cons(Intersect_3, intersect_3_object)
+    CGAL_Filter_cons(Compute_squared_length_3, compute_squared_length_3_object)
+
+
+    CGAL_Filter_already_exact_pred(Equal_3, equal_3_object)
+    CGAL_Filter_pred(Equal_x_3, equal_x_3_object)
+    CGAL_Filter_pred(Equal_y_3, equal_y_3_object)
+    CGAL_Filter_pred(Equal_z_3, equal_z_3_object)
+    CGAL_Filter_pred(Equal_xy_3, equal_xy_3_object)
+    CGAL_Filter_pred(Equal_xyz_3, equal_xyz_3_object)
+    CGAL_Filter_pred(Less_x_3, less_x_3_object)
+    CGAL_Filter_pred(Less_y_3, less_y_3_object)
+    CGAL_Filter_pred(Less_z_3, less_z_3_object)
+    CGAL_Filter_pred(Less_xy_3, less_xy_3_object)
+    CGAL_Filter_pred(Less_xyz_3, less_xyz_3_object)
+    CGAL_Filter_already_exact_pred(Compare_x_3, compare_x_3_object)
+    CGAL_Filter_already_exact_pred(Compare_y_3, compare_y_3_object)
+    CGAL_Filter_already_exact_pred(Compare_z_3, compare_z_3_object)
+    CGAL_Filter_pred(Compare_xy_3, compare_xy_3_object)
+    CGAL_Filter_pred(Compare_xyz_3, compare_xyz_3_object)
+    CGAL_Filter_pred(Collinear_3, collinear_3_object)
+    CGAL_Filter_pred(Coplanar_3, coplanar_3_object)
+    CGAL_Filter_pred(Coplanar_orientation_3, coplanar_orientation_3_object)
+    CGAL_Filter_pred(Orientation_3, orientation_3_object)
+    CGAL_Filter_pred(Is_degenerate_3, is_degenerate_3_object)
+    CGAL_Filter_pred(Has_on_3, has_on_3_object)
+    CGAL_Filter_pred(Has_on_bounded_side_3, has_on_bounded_side_3_object)
+    CGAL_Filter_pred(Has_on_unbounded_side_3, has_on_unbounded_side_3_object)
+    CGAL_Filter_pred(Has_on_boundary_3, has_on_boundary_3_object)
+    CGAL_Filter_pred(Has_on_positive_side_3, has_on_positive_side_3_object)
+    CGAL_Filter_pred(Has_on_negative_side_3, has_on_negative_side_3_object)
+    CGAL_Filter_pred(Oriented_side_3, oriented_side_3_object)
+    CGAL_Filter_pred(Are_ordered_along_line_3, are_ordered_along_line_3_object)
+    CGAL_Filter_pred(Are_strictly_ordered_along_line_3,
+	    are_strictly_ordered_along_line_3_object)
+    CGAL_Filter_pred(Collinear_are_ordered_along_line_3,
+	    collinear_are_ordered_along_line_3_object)
+    CGAL_Filter_pred(Collinear_are_strictly_ordered_along_line_3,
+	    collinear_are_strictly_ordered_along_line_3)
+    CGAL_Filter_pred(Side_of_oriented_sphere_3, side_of_oriented_sphere_3_object)
+    CGAL_Filter_pred(Side_of_bounded_sphere_3, side_of_bounded_sphere_3_object)
+
+    // CGAL_Filter_cons(Construct_point_d, construct_point_d_object)
 };
 
 CGAL_END_NAMESPACE
