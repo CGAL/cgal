@@ -230,7 +230,7 @@ public:
     if ( f == (int) next_around_edge(i,j) )
 	pos = start;
     else
-	pos = start->neighbor(6-i-j-f); // other cell with same facet
+	pos = start->neighbor(f); // other cell with same facet
   }
 
   Triangulation_ds_facet_circulator_3(Tds * tds, Cell* c, int s, int t,
@@ -251,8 +251,7 @@ public:
     if ( start.second == (int) next_around_edge(i,j) )
 	pos = start.first;
     else
-	pos = start.first->neighbor(6-i-j-start.second);
-        // other cell with same facet
+      pos = start.first->neighbor(start.second); // other cell with same facet
   }
 
   Triangulation_ds_facet_circulator_3(Tds * tds, const Edge & e,
@@ -274,7 +273,7 @@ public:
     if ( f == (int) next_around_edge(i,j) )
 	pos = start.first;
     else
-	pos = start.first->neighbor(6-i-j-f); // other cell with same facet
+	pos = start.first->neighbor(f); // other cell with same facet
   }
 
   Triangulation_ds_facet_circulator_3(Tds * tds, const Edge & e,
@@ -293,7 +292,7 @@ public:
     if ( start.second == (int) next_around_edge(i,j) )
 	pos = start.first;
     else
-	pos = start.first->neighbor(6-i-j-start.second);
+	pos = start.first->neighbor(start.second);
   }
 
   Triangulation_ds_facet_circulator_3(const Facet_circulator & ccir)
