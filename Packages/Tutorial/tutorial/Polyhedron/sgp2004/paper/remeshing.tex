@@ -18,9 +18,8 @@ remeshing~\cite{acdld-apr-03}.
 % isotropic remeshing, what is that ?
 
 Isotropic remeshing leads to well-shaped triangles, and thus
-high-quality meshes when the notion of quality is related to the shape
-of the triangles. Such meshes are important for applications where the
-quality of the mesh elements is critical.
+high-quality meshes for applications where the compactness of the mesh
+elements is critical.
 
 % main idea
 
@@ -44,7 +43,7 @@ Fig.\ref{fig:isotropic}).
 
 % CGAL components
 
-Two data structures from CGAL have been used to assembly the
+Two data structures from CGAL have been used to assemble the
 algorithm:
 
 \begin{itemize}
@@ -68,11 +67,11 @@ The CGAL kernel is used to template these two data structures as well
 as all algorithms involved in our remeshing technique
 (parameterization, error diffusion for sampling, Lloyd's clustering
 for sample placement and point location), which nicely unifies all
-components of the algorithm and provides us genericity for all
+components of the algorithm and provides us with genericity for all
 geometric entities and predications. Notice that the filtered kernel
-provided by CGAL (add ref) provides us with the robustness required
-for complex models by mixing exact and approximate arithmetic in a
-transparent manner for the programmer.
+provided by CGAL (add ref) gives necessary robustness for complex
+models by mixing exact and floating point arithmetic in a transparent
+manner for the programmer.
 
 \subsection{Anisotropic Remeshing}
 
