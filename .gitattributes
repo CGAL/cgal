@@ -1605,6 +1605,7 @@ Packages/Qt_widget/include/CGAL/IO/pixmaps/optimal_convex.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/point.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/points.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/polygon.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/rotation.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/show_polygon.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/triangulation.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/voronoi.xpm -text

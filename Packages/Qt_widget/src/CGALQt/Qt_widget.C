@@ -41,6 +41,7 @@ Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   xmax_old = xmax = 1;
   ymin_old = ymin = -1;
   ymax_old = ymax = 1;
+  t = new Transformation();
   constranges=false;
   set_scales();
   emit(rangesChanged());
@@ -404,39 +405,59 @@ void Qt_widget::zoom(double ratio)
        ymin + (ymax - ymin) / 2 );
 }
 
+// the methods x_real, y_real, x_pixel, y_pixel
+// are all deprecated. As soon as someone use rotations
+// this functions are not good enough
+// Users should use from now on xy_pixel, xy_real
+
 #ifdef CGAL_USE_GMP
 void Qt_widget::x_real(int x, Gmpq& return_t) const
 {
+  double temp_x = static_cast<double>(x);
+  double xnew = xmin + temp_x/xscal;
+  CGAL::Point_2<SCD> p1(xnew, 1);
+  p1 = (t->inverse())(p1);
   return_t = simplest_rational_in_interval<Gmpq>( 
-                  xmin+x/xscal-(1/xscal)/2,
-                  xmin+x/xscal+(1/xscal)/2);
+                  p1.x() - (1/xscal)/2,
+                  p1.x() + (1/xscal)/2);
 }
 
 void Qt_widget::y_real(int y, Gmpq& return_t) const
 {
+  double temp_y = static_cast<double>(y);
+  double ynew = ymax - temp_y/yscal;
+  CGAL::Point_2<SCD> p1(1, ynew);
+  p1 = (t->inverse())(p1);
   return_t = simplest_rational_in_interval<Gmpq>( 
-                  ymax - y/yscal-(1/yscal)/2,
-                  ymax - y/yscal+(1/yscal)/2);
+                  p1.y() - (1/yscal)/2,
+                  p1.y() + (1/yscal)/2);
 }
 #endif
 
+
 double Qt_widget::x_real(int x) const
 {
+  double temp_x = static_cast<double>(x);
+  double xnew = xmin + temp_x/xscal;
+  CGAL::Point_2<SCD> p1(xnew, 1);
+  p1 = (t->inverse())(p1);
   if(xscal<1)
-    return(xmin+(int)(x/xscal));
+    return (int)(p1.x());
   else
-    return (xmin+x/xscal);
+    return p1.x();
 }
 
 double Qt_widget::y_real(int y) const
 {
-    if(yscal<1)
-      return(ymax-(int)(y/yscal));
-    else
-      return (ymax-y/yscal);
+  double temp_y = static_cast<double>(y);  
+  double ynew = ymax - temp_y/yscal;
+  CGAL::Point_2<SCD> p1(1, ynew);
+  p1 = (t->inverse())(p1);
+  if(yscal<1)
+    return (int)(p1.y());
+  else
+    return p1.y();
 }
-
-
 
 double Qt_widget::x_real_dist(double d) const
 {
@@ -450,13 +471,27 @@ double Qt_widget::y_real_dist(double d) const
 
 int Qt_widget::x_pixel(double x) const
 {
-  return( static_cast<int>((x-xmin)*xscal+0.5) );
+  CGAL::Point_2<SCD> p1(x, 1);
+  p1 = (*t)(p1);
+  return( static_cast<int>((p1.x() - xmin)*xscal));
 }
 
 int Qt_widget::y_pixel(double y) const
 {
-  return( - static_cast<int>((y-ymax)*yscal+0.5) );
+  CGAL::Point_2<SCD> p1(1, y);
+  p1 = (*t)(p1);
+  return( static_cast<int>((ymax - p1.y())*yscal));
 }
+
+void Qt_widget::xy_pixel(const double x, const double y, 
+                         int &x_result, int &y_result) const
+{
+  CGAL::Point_2<SCD> p1(x, y);
+  p1 = (*t)(p1);
+  x_result = static_cast<int>((p1.x() - xmin)*xscal);
+  y_result = static_cast<int>((ymax - p1.y())*yscal);
+}
+
 
 int Qt_widget::x_pixel_dist(double d) const
 {

@@ -47,8 +47,7 @@ public:
   {
     QString s("x=%1 y=%2");
     double xcoord, ycoord;
-    widget->x_real(e->x(), xcoord);
-    widget->y_real(e->y(), ycoord);
+    widget->xy_real(e->x(), e->y(), xcoord, ycoord);
     qmw.statusBar()->message(s.arg(xcoord, -20, 'g', 15).
 			     arg(ycoord, -20,'g', 15));
 

@@ -60,8 +60,7 @@ protected:
        && is_pure(e->state()))
     {
       FT x, y;
-      widget->x_real(e->x(), x);
-      widget->y_real(e->y(), y);
+      widget->xy_real(e->x(), e->y(), x, y);
       widget->new_object(make_object(Point(x, y)));
     }
   };

@@ -19,7 +19,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Laurent Rineau
+// Author(s)     : Laurent Rineau && Radu Ursu
 
 #ifndef CGAL_QT_WIDGET_H
 #define CGAL_QT_WIDGET_H
@@ -47,6 +47,9 @@
 #include <qcolor.h>
 #include <qpixmap.h>
 #include <qprinter.h>
+
+typedef CGAL::Simple_cartesian<double> SCD;
+typedef CGAL::Aff_transformation_2<SCD> Transformation;
 
 namespace CGAL {
 
@@ -135,6 +138,9 @@ public:
   // coordinates system
   // ~~~~~~~~~~~~~~~~~~
   // real world coordinates
+  // x_real, y_real are deprecated
+  // as soon as rotations are used, those functions are not good.
+  // users should use only xy_real
   double x_real(int x) const;
   double y_real(int y) const;
   template <class FT>
@@ -145,6 +151,8 @@ public:
   void x_real(int, Gmpq&) const;
   void y_real(int, Gmpq&) const;
 #endif
+  template <class FT>
+  void xy_real(int, int, FT&, FT&) const;
 
   double x_real_dist(double d) const;
   double y_real_dist(double d) const;
@@ -153,6 +161,8 @@ public:
   // pixel coordinates
   int x_pixel(double x) const;
   int y_pixel(double y) const;
+  void xy_pixel(const double x, const double y, 
+    int &x_result, int &y_result) const;
   int x_pixel_dist(double d) const;
   int y_pixel_dist(double d) const;
 
@@ -218,6 +228,10 @@ public:
   void add_to_history() { emit(internal_add_to_history()); }
   void clear_history() { emit(internal_clear_history()); }
 
+  Transformation* get_transformation(){return t;};
+  void set_transformation(const Transformation &newt){(*t) = newt;};
+
+
 protected:
   void paintEvent(QPaintEvent *e);
   void resizeEvent(QResizeEvent *e);
@@ -279,6 +293,9 @@ private:
             //backup ranges for resize
   double    xscal, yscal; // scales int/double
   bool      constranges; // tell if the ranges should be const
+  Transformation *t; //this transformation is used to perform mainly
+                     //rotations. It is initialised in the constructor.
+                     //this will remove xscal, yscal in the future 
 
   //for layers
   std::list<Qt_widget_layer*>	qt_layers;
@@ -458,8 +475,9 @@ void Qt_widget::setPointStyle(const PointStyle ps)
 template <class R>
 Qt_widget& operator<<(Qt_widget& w, const Point_2<R>& p)
 {
-  int x = w.x_pixel(CGAL::to_double(p.x()));
-  int y = w.y_pixel(CGAL::to_double(p.y()));
+  int x, y;
+  w.xy_pixel(CGAL::to_double(p.x()), 
+    CGAL::to_double(p.y()), x, y);
 
   uint size=w.pointSize();
   PointStyle ps=w.pointStyle();
@@ -752,41 +770,93 @@ Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r);
 // see Qt_widget for the implementation of this non-template function
 #endif // CGAL_BBOX_2_H
 
-// templated x_real and y_real
-
+// templated x_real and y_real keeped for backward compatibility
+// as soon as someone use rotations, this functions are not good
+// users should only use xy_real/xy_pixel
 template <class FT>
 void Qt_widget::x_real(int x, FT& return_t) const
 {
+  double temp_x = static_cast<double>(x);
+  double xnew = xmin + temp_x/xscal;
+  CGAL::Point_2<SCD> p1(xnew, 1);
+  p1 = (t->inverse())(p1);
+
   if(xscal<1)
-    return_t = static_cast<FT>(xmin+(int)(x/xscal));
+    return_t = static_cast<FT>((int)(p1.x()));
   else{
 #ifdef CGAL_USE_GMP
     CGAL_Rational r = simplest_rational_in_interval<CGAL_Rational>( 
-                            xmin+x/xscal-(x/xscal-(x-1)/xscal)/2, 
-                            xmin+x/xscal+((x+1)/xscal-x/xscal)/2);
+                            p1.x() - (1/xscal)/2, 
+                            p1.x() + (1/xscal)/2);
     return_t = static_cast<FT>(CGAL::to_double(r));
 #else
-    return_t = static_cast<FT>(xmin+x/xscal);
+    return_t = static_cast<FT>(p1.x());
 #endif
   }
 }
 
+
 template <class FT>
 void Qt_widget::y_real(int y, FT& return_t) const
 {
-    if(yscal<1)
-      return_t = static_cast<FT>(ymax-(int)(y/yscal));
-    else{
+  double temp_y = static_cast<double>(y);
+  double ynew = ymax - temp_y/yscal;
+  CGAL::Point_2<SCD> p1(1, ynew);
+  p1 = (t->inverse())(p1);
+
+  if(yscal<1)
+    return_t = static_cast<FT>((int)(p1.y()));
+  else{
 #ifdef CGAL_USE_GMP
     CGAL_Rational r = simplest_rational_in_interval<CGAL_Rational>( 
-                            ymax - y/yscal-(y/yscal-(y-1)/yscal)/2, 
-                            ymax - y/yscal+((y+1)/yscal-y/yscal)/2);
+                            p1.y() - (1/yscal)/2, 
+                            p1.y() + (1/yscal)/2);
     return_t = static_cast<FT>(CGAL::to_double(r));
 #else
-    return_t = static_cast<FT>(ymax-y/yscal);
+    return_t = static_cast<FT>(p1.y());
 #endif
-  }  
+  } 
 }
+
+template <class FT>
+void Qt_widget::xy_real(int x, int y, 
+                        FT& x_result, FT& y_result) const
+{
+  double temp_x = static_cast<double>(x);
+  double xnew = xmin + temp_x/xscal;
+  double temp_y = static_cast<double>(y);
+  double ynew = ymax - temp_y/yscal;
+  CGAL::Point_2<SCD> p1(xnew, ynew);
+  p1 = (t->inverse())(p1);
+
+  if(xscal<1)
+    x_result = static_cast<FT>((int)(p1.x()));
+  else{
+#ifdef CGAL_USE_GMP
+    CGAL_Rational r = simplest_rational_in_interval<CGAL_Rational>( 
+                            p1.x() - (1/xscal)/2, 
+                            p1.x() + (1/xscal)/2);
+    x_result = static_cast<FT>(CGAL::to_double(r));
+#else
+    x_result = static_cast<FT>(p1.x());
+#endif
+  }
+
+  if(yscal<1)
+    y_result = static_cast<FT>((int)(p1.y()));
+  else{
+#ifdef CGAL_USE_GMP
+    CGAL_Rational r = simplest_rational_in_interval<CGAL_Rational>( 
+                            p1.y() - (1/yscal)/2, 
+                            p1.y() + (1/yscal)/2);
+    y_result = static_cast<FT>(CGAL::to_double(r));
+#else
+    y_result = static_cast<FT>(p1.y());
+#endif
+  }
+}
+
+
 
 } // namespace CGAL
 

@@ -35,6 +35,7 @@
 #include <CGAL/IO/pixmaps/back.xpm>
 #include <CGAL/IO/pixmaps/forward.xpm>
 #include <CGAL/IO/pixmaps/mouse_coord.xpm>
+#include <CGAL/IO/pixmaps/rotation.xpm>
 
 #include <qbuttongroup.h>
 #include <qiconset.h>
@@ -48,6 +49,7 @@
 #include <CGAL/IO/Qt_widget_focus.h>
 #include <CGAL/IO/Qt_widget_zoomrect.h>
 #include <CGAL/IO/Qt_widget_handtool.h>
+#include <CGAL/IO/Qt_widget_rotation_layer.h>
 #include <CGAL/IO/Qt_widget_show_mouse_coordinates.h>
 
 namespace CGAL {
@@ -80,25 +82,29 @@ namespace CGAL {
       new Qt_widget_zoomrect(this, "zoomrectlayer");
     Qt_widget_handtool* handtoollayer = 
       new Qt_widget_handtool(this, "handtoollayer");
+    Qt_widget_rotation_layer* rotationlayer = 
+      new Qt_widget_rotation_layer(this, "rotation_layer");
     Qt_widget_show_mouse_coordinates* showcoordlayer = 0; // created below
 
     widget->attach_standard(focuslayer);
     widget->attach_standard(zoomrectlayer);
     widget->attach_standard(handtoollayer);
+    widget->attach_standard(rotationlayer);
     focuslayer->deactivate();
     zoomrectlayer->deactivate();
     handtoollayer->deactivate();
+    rotationlayer->deactivate();
 
     if (mw)
-      {
-	mw->statusBar();
-	showcoordlayer = 
-	  new Qt_widget_show_mouse_coordinates(*mw, this,
+    {
+      mw->statusBar();
+      showcoordlayer = 
+      new Qt_widget_show_mouse_coordinates(*mw, this,
 					       "showcoordlayer");
-	widget->attach_standard(showcoordlayer);
-	showcoordlayer->does_eat_events = false;
-	widget->setMouseTracking(true);
-      }
+      widget->attach_standard(showcoordlayer);
+      showcoordlayer->does_eat_events = false;
+      widget->setMouseTracking(true);
+    }
 
     const QPixmap p1(arrow_small_xpm), p2(arrow_xpm);
     const QIconSet arrow_pixmap(p1, p2);
@@ -108,6 +114,9 @@ namespace CGAL {
 
     const QPixmap p5(forward_small_xpm), p6(forward_xpm);
     const QIconSet forward_pixmap(p5, p6);
+
+    const QPixmap p7(rotation_small_xpm), p8(rotation_xpm);
+    const QIconSet rotation_pixmap(p7, p8);
 
     QToolButton* backBt = new QToolButton(this, "History Back");
     backBt->setIconSet(back_pixmap);
@@ -145,17 +154,21 @@ namespace CGAL {
     nolayerBt->setIconSet(arrow_pixmap);
     nolayerBt->setTextLabel("Deactivate Standard Layer");
 
-    QToolButton* zoomrectBt = new QToolButton(this, "focus on region");
+    QToolButton* zoomrectBt = new QToolButton(this, "focus_on_region_layer");
     zoomrectBt->setPixmap(QPixmap(zoomin_rect_xpm ));
     zoomrectBt->setTextLabel("Focus on region");
 
-    QToolButton* focusBt = new QToolButton(this, "focus");
+    QToolButton* focusBt = new QToolButton(this, "focuslayer");
     focusBt->setPixmap(QPixmap(focus_xpm ));
     focusBt->setTextLabel("Focus on point");
 
-    QToolButton* handtoolBt = new QToolButton(this, "handtool");
+    QToolButton* handtoolBt = new QToolButton(this, "handlayer");
     handtoolBt->setPixmap(QPixmap(hand_xpm ));
     handtoolBt->setTextLabel("Pan tool");
+
+    QToolButton* rotationBt = new QToolButton(this, "rotation_layer");
+    rotationBt->setIconSet(rotation_pixmap);
+    rotationBt->setTextLabel("Rotation tool.(EXPERIMENTAL!!!)");
 
     addSeparator();
 
@@ -171,12 +184,13 @@ namespace CGAL {
     QToolButton* const button_group_list[] = { nolayerBt,
 					       zoomrectBt,
 					       focusBt,
-					       handtoolBt };
-    for(int i=0; i<4; ++i)
-      {
-	button_group_list[i]->setToggleButton(true);
-	button_group->insert(button_group_list[i]);
-      }
+					       handtoolBt,
+                 rotationBt};
+    for(int i=0; i<5; ++i)
+    {
+      button_group_list[i]->setToggleButton(true);
+      button_group->insert(button_group_list[i]);
+    }
     button_group->setExclusive(true);
     connect(button_group, SIGNAL(clicked(int)),
 	    this, SLOT(group_clicked(int)));
@@ -192,6 +206,8 @@ namespace CGAL {
 	    focuslayer, SLOT(stateChanged(int)));
     connect(handtoolBt, SIGNAL(stateChanged(int)),
 	    handtoollayer, SLOT(stateChanged(int)));
+    connect(rotationBt, SIGNAL(stateChanged(int)),
+	    rotationlayer, SLOT(stateChanged(int)));
     connect(showcoordBt, SIGNAL(stateChanged(int)),
 	    showcoordlayer, SLOT(stateChanged(int)));
 
@@ -219,19 +235,17 @@ namespace CGAL {
     // button_group.id(nolayerBt)==0.
 
     if( i == id )
-      {
-	if( i == 0) return;
-	// nolayer is on and cannot be set off like that.
+    {
+      if( i == 0) return;
+      // nolayer is on and cannot be set off like that.
 
-	QToolButton* tBt = 
-	  static_cast<QToolButton*>(button_group->find(i));
-	if( tBt != 0)
-	  tBt->setOn(false);
-
-	nolayerBt->setOn(true);
-	id = 0;
-      }
-    else
+      QToolButton* tBt = 
+        static_cast<QToolButton*>(button_group->find(i));
+      if( tBt != 0)
+        tBt->setOn(false);
+      nolayerBt->setOn(true);
+      id = 0;
+    } else
       id = i;
   }
 
@@ -260,3 +274,4 @@ namespace CGAL {
 #include "Qt_widget_standard_toolbar.moc"
 
 #endif
+

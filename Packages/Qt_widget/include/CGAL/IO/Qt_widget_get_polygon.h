@@ -81,9 +81,7 @@ protected:
     if(e->button() == Qt::LeftButton && is_pure(e->state()))
     {
       FT x, y;
-      widget->x_real(e->x(), x);
-      widget->y_real(e->y(), y);
-
+      widget->xy_real(e->x(), e->y(), x, y);
       if(!active)
       {
         active=true;
@@ -156,9 +154,7 @@ protected:
     if (active)
     {
       FT x, y;
-      widget->x_real(e->x(), x);
-      widget->y_real(e->y(), y);
-
+      widget->xy_real(e->x(), e->y(), x, y);
       rubber = Point_2(x, y);
       widget->lock();
         RasterOp old_rasterop=widget->rasterOp();

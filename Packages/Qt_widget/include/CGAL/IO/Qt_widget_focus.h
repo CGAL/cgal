@@ -114,8 +114,7 @@ private:
        && is_pure(e->state()))
     {
       double x, y;
-      widget->x_real(e->x(), x);
-      widget->y_real(e->y(), y);	
+      widget->xy_real(e->x(), e->y(), x, y);
       widget->set_center(x, y);
     }
   };

@@ -69,8 +69,7 @@ protected:
        && is_pure(e->state()))
     {
       FT x, y;
-      widget->x_real(e->x(), x);
-      widget->y_real(e->y(), y);
+      widget->xy_real(e->x(), e->y(), x, y);
       x1 = x;
       y1 = y;
       x2 = x;
@@ -78,8 +77,7 @@ protected:
       firstpoint = true;
     } else if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON){
       FT x, y; 
-      widget->x_real(e->x(), x);
-      widget->y_real(e->y(), y);
+      widget->xy_real(e->x(), e->y(), x, y);
       widget->new_object(make_object(Circle(Point(x1,y1),
 	      squared_distance(Point(x1, y1), Point(x,y)))));
       firstpoint = false;
@@ -134,8 +132,7 @@ protected:
     if(firstpoint==TRUE)
     {		
       FT x, y;
-      widget->x_real(e->x(), x);
-      widget->y_real(e->y(), y);
+      widget->xy_real(e->x(), e->y(), x, y);
       QColor old_color = widget->color();
       RasterOp old_raster = widget->rasterOp();//save the initial raster mode		
       widget->setRasterOp(XorROP);
