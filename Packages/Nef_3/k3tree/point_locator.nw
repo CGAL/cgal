@@ -446,7 +446,7 @@ public:
     Segment_3 s(p,point(v));
     Point_3 ip;
 
-    Object_list_iterator ox(o);
+//    Object_list_iterator ox(o);
     for(;o!=candidates.end();++o) {
       if( CGAL::assign( e, *o)) {
 	Segment_3 ss(e->source()->point(),e->twin()->source()->point());
