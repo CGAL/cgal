@@ -216,12 +216,12 @@ and \ccc{CGAL::Alpha_shape_face_base_2<Tf>}.
 
 The basic alpha shape needs a Delaunay triangulation as
 underlying triangulation \ccc{Dt}.  The Delaunay triangulation class is
-parameterized with a geometric and a triangulation datastructure traits.
+parameterized with a geometric and a triangulation data structure traits.
 
 For the geometric traits class we can use the \ccc{CGAL::Alpha_shape_traits_2}
 class, which in turn is parameterized with a kernel.
 
-For the triangulation datastructure traits, we have to
+For the triangulation data structure traits, we have to
 choose the vertex and face classes needed for alpha shapes,
 namely \ccc{CGAL::Alpha_shape_vertex_base_2<Gt, Dv>} and \ccc{CGAL::Alpha_shape_face_base_2<Gt,Df>}.
 As default vertex and face type they use \ccc{CGAL::Triangulation_vertex_base_2<Gt>}
