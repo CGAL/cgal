@@ -11,6 +11,9 @@
 %% macro for GNU
 \newcommand{\gnu}{\textsc{Gnu}}
 
+%% macro for QT
+\newcommand{\qt}{\textsc{Qt}}
+
 %% macro for GMP
 \newcommand{\gmp}{\textsc{Gmp}}
 
@@ -58,15 +61,6 @@
 
 %% macros for WWW pages
 \newcommand{\cgalhomepage}{\path'http://www.cgal.org'}
-\newcommand{\cgalwinlibmsvc}{\ccAnchor
-{http://www.cgal.org/download/CGALWin/MS_windows/Visual_C++/CGALWin_msvc_native.zip}
-{\texttt{http://www.cgal.org/download/CGALWin/MS\_windows/Visual\_C++/CGALWin\_msvc\_native.zip}}
-}
-\newcommand{\cgalwinlibbcc}{\ccAnchor
-{http://www.cgal.org/download/CGALWin/MS_windows/Borland/CGALWin_bcc_native.zip}
-{\texttt{http://www.cgal.org/download/CGALWin/MS\_windows/Borland/CGALWin\_bcc\_native.zip}}}
-
-\newcommand{\cgalwinlibpage}{\path'http://www.cgal.org/download/CGALWin/'}
 \newcommand{\sgistlpage}{\path'http://www.sgi.com/tech/stl/'}
 \newcommand{\stlportpage}{\path'http://www.stlport.org/'}
 \newcommand{\ledapage}{\path'http://www.mpi-sb.mpg.de/LEDA'}
@@ -94,7 +88,7 @@ Besides that, you will find some information about the makefile
 structure of \cgal\ and the support for using \cgal\ together with
 other libraries, such as \leda, the Library of Efficient Datatypes and
 Algorithms\footnote{\ledapage}, the \gnu\ Multiple Precision library
-GMP\footnote{\gmppage}, and Trolltech's\footnote{\trolltechpage} Qt
+GMP\footnote{\gmppage}, and Trolltech's\footnote{\trolltechpage} \qt\ 
 toolkit.
 
 \section{Prerequisites}\label{sec:prerequisites}
@@ -217,24 +211,15 @@ contains the following subdirectories:\index{directories!structure}
 \subsection{Visualization}\label{sec:vis}
 
 The programs in the \texttt{demo} directory provide visual output.
-Most of these use the \ccc{CGAL::Window_stream}, which is currently
-provided via the \leda\ library.  If you have \leda\ installed, you
-need do nothing more than compile \cgal\ with \leda\ support to be
-able to use the \ccc{Window_stream} and thus run these demo
-programs.\index{visualization!LEDA}
+Most of these use \ccc{CGAL::Qt_widget}, a widget and some helper
+classes that allow to interact with two dimensional \cgal\ objects in
+\qt\ based applications.\index{visualization!Qt}
 
-Because \leda\ is no longer available for free for academic use, we
-have made arrangements with Algorithmic Solutions Software GmbH, the
-distributors of \leda\, to provide a separate
-\texttt{CGALWin}\TTsubindextwo{visualization}{CGALWin}\TTindex{CGALWin}
-library for those who do not have \leda\ installed. This library is
-based on the \leda\ window but is available for download independently
-of \leda\ from the \cgal\ download page. It is available in binary
-form only and only for academic research and teaching use.
-
-The installation of the \texttt{CGALWin} binary is described in
-Section~\ref{sec:cgalwin}. Note that \texttt{CGALWin} should be
-installed only after the \cgal\ libraries have been built.
+If you have \leda\ installed, you might wan to use
+\ccc{CGAL::Window_stream} as an interface between two dimensional
+\cgal\ objects and a \ccc{leda_window}. To be able to use the
+\ccc{Window_stream}, you need do nothing more than compile \cgal\ with
+\leda\ support.\index{visualization!LEDA}
 
 Some demo programs for 3D structures require the geomview program for
 visualisation.\index{visualization!geomview} This is available from
@@ -404,8 +389,8 @@ the error messages from compiler or linker).
 That's all, it's done. Press ``\texttt{<ENTER>}'' to return to the
 main menu and proceed by installing for a different compiler (go to
 the compiler menu and choose ``\texttt{c}'' to get a list of supported
-compilers detected on your system) or with \leda, GMP, or Qt support
-(go to the \leda, GMP, or Qt menu resp.) or simply quit the install
+compilers detected on your system) or with \leda, GMP, or \qt\ support
+(go to the \leda, GMP, or \qt\ menu resp.) or simply quit the install
 script by typing ``\texttt{q}''. When leaving the script, you get a
 list of successful builds during the session. Furthermore, the script
 prints the setting of \texttt{CGAL\_MAKEFILE} for the last active
@@ -423,60 +408,17 @@ In Section~\ref{sec:makefiles} you can find more information on the
 \cgal\ makefile structure, and how to set \texttt{CGAL\_MAKEFILE} when
 using \cgal\ on several platforms.
 
-If you want to use the visualization provided by
-\ccc{CGAL::Window_stream} (Section~\ref{sec:vis}) and you do not have
-the \leda\ libraries installed, or do not want to use them with \cgal, 
-you should now proceed to
-Section~\ref{sec:cgalwin} and install the \texttt{CGALWin} library.
+%% TODO: some remark regarding visualization
+%% If you want to use the visualization provided by
+%% \ccc{CGAL::Window_stream} (Section~\ref{sec:vis}) and you do not have
+%% the \leda\ libraries installed, or do not want to use them with \cgal,
+%% you should now proceed to Section~\ref{sec:cgalwin} and install the
+%% \texttt{CGALWin} library.
 
 %% Now it would be a good idea to print and read the document ``Getting
 %% Started with \cgal'' that can be found in various formats in the
 %% \texttt{doc\_html}, \texttt{doc\_pdf} and \texttt{doc\_ps}
 %% directories.
-
-\section{Installing the \texttt{CGALWin} library}\label{sec:cgalwin}
-\TTsubindextwo{installation}{CGALWin}\TTsubindextwo{visualization}{CGALWin}
-\TTindex{CGALWin}
-
-\textit{Note: This section applies only to those who do \textbf{not}
-  have the \leda\ libraries installed on their system, or do not want to
-use \leda\ with \cgal.}
-
-The \texttt{CGALWin} library, as described in Section~\ref{sec:vis},
-can be shipped in binary format only because of licensing
-restrictions. The binaries are available at the \cgal\ download
-pages\footnote{\cgalwinlibpage}.
-
-Fetch the file matching your operating system and compiler, uncompress
-it, and place it into the corresponding \cgal\ lib directory. This
-directory has been created during installation of the \cgal\ library
-and it is called
-\begin{alltt}
-      \cgaldir/lib/<\textit{CGAL-OS-description}>
-\end{alltt}
-where $<$\textit{CGAL-OS-description}$>$ identifies your OS/compiler
-combination in a way specified in section \ref{sec:os-compiler-id}.
-When quitting \texttt{install\_cgal}, it prints the \cgal\ lib
-directory (\texttt{CGAL\_LIB\_DIR})\TTindex{CGAL\_LIB\_DIR} of the
-last active configuration.
-
-If you do not find a binary format that works on your system, contact
-us at \texttt{contact@cgal.org}, and we will try to accommodate your
-needs.
-
-Continuing the example from the previous section, you would download
-the file \texttt{libCGALWin.a.gz} from 
-\begin{verbatim}
-      Solaris -> Solaris-2.6 -> g++-2.95.3
-\end{verbatim}
-and uncompress it.
-\begin{alltt}
-      gunzip libCGALWin.a.gz
-\end{alltt}
-Finally, you have to place it into the lib directory
-\begin{alltt}
-      cp libCGALWin.a \cgaldir/lib/sparc_SunOS-5.6_g++-2.95.3
-\end{alltt}
 
 \section{The interactive mode}\label{sec:interactive-mode}
 \index{interactive installation}\index{installation!interactive}
@@ -499,7 +441,7 @@ where you can choose the compiler you want to work with and set custom
 compiler or linker options.  The compiler menu is described in section
 \ref{sec:compiler-menu}.
 
-If you want to use \leda, GMP, or Qt with \cgal, you will have to go
+If you want to use \leda, GMP, or \qt\ with \cgal, you will have to go
 to the \textit{leda menu}, \textit{gmp menu}, or \textit{qt menu}.
 These are described in section \ref{sec:leda-menu},
 \ref{sec:gmp-menu}, \ref{sec:qt-menu}, respectively.
@@ -507,15 +449,15 @@ These are described in section \ref{sec:leda-menu},
 Finally you can build the \cgal\ libraries by typing \texttt{b}.
 However, it is recommended to run the \textit{setup test} which is
 available in all menus as option \texttt{t} before. The setup test
-includes an \stl\ test, a \leda\ test, a GMP test, and a Qt test. But
-not all tests are performed always; e.g. the \leda\ test is only done,
-if you enabled \leda\ support. The install script keeps track of the
-tests passed and only tests again, if you change the setup in a way
-that might affect the test result. If you want to redo \textit{all}
-tests, you have to choose option ``\texttt{a}'' from the main menu.
-This also retests for \leda/GMP/Qt installation in system directories
-which otherwise is only done the first time you enable \leda/GMP/Qt
-support for an OS/compiler combination.
+includes an \stl\ test, a \leda\ test, a GMP test, and a \qt\ test.
+But not all tests are performed always; e.g. the \leda\ test is only
+done, if you enabled \leda\ support. The install script keeps track of
+the tests passed and only tests again, if you change the setup in a
+way that might affect the test result. If you want to redo
+\textit{all} tests, you have to choose option ``\texttt{a}'' from the
+main menu.  This also retests for \leda/GMP/\qt\ installation in
+system directories which otherwise is only done the first time you
+enable \leda/GMP/\qt\ support for an OS/compiler combination.
 
 \subsection{Files created during installation}\label{sec:filescreated}
 
@@ -676,35 +618,35 @@ from the CGAL tree, GMP will be configured with C++ support.
 \subsection{The Qt Menu}\label{sec:qt-menu}
 \index{Qt!menu}\index{menus!Qt}
 
-This menu is to set Qt specific options, if you plan to use Qt
-together with \cgal . Note that for use with \cgal, Qt version 2.2 (or
-later) if required. In order to enable Qt support in \cgal, Qt has to
-be installed on your system first.
-Unlike for GMP, there is no option to install Qt from the \cgal\ 
-installation script.  For information on Qt, please refer to
+This menu is to set \qt\ specific options, if you plan to use \qt\ 
+together with \cgal . Note that for use with \cgal, \qt\ version 2.2
+(or later) if required. In order to enable \qt\ support in \cgal, \qt\ 
+has to be installed on your system first.  Unlike for GMP, there is no
+option to install \qt\ from the \cgal\ installation script.  For
+information on \qt, please refer to
 \begin{quote}
   \qtpage
 \end{quote}
 
 \begin{ccAdvanced}
-The Qt menu has a basic mode and an advanced one. If your Qt
-installation is standard, you shouldn't have to go into the advanced
-mode.
-
-The Qt menu starts in basic mode, unless Qt is installed in standard
-system directories (because in that case, the advanced mode is quicker).
+  The \qt\ menu has a basic mode and an advanced one. If your \qt\ 
+  installation is standard, you shouldn't have to go into the advanced
+  mode.
+  
+  The \qt\ menu starts in basic mode, unless \qt\ is installed in
+  standard system directories (because in that case, the advanced mode
+  is quicker).
 \end{ccAdvanced}
 
 \subsubsection{Basic mode (to use with a standard Qt installation)}
 
-If Qt support is enabled the first time, the script tests whether the
-\texttt{\$QTDIR} environment variable points to a valid Qt directory.
-is installed in standard system directories. If that is not the case,
-you have to supply the Qt directory containing your Qt
-installation. Even if the test passed, you still have the option to
-set this directory differently.
-If your Qt installation is not standard, you would have to go into the
-advanced mode.\bigskip
+If \qt\ support is enabled the first time, the script tests whether
+the \texttt{\$QTDIR} environment variable points to a valid \qt\ 
+directory.  is installed in standard system directories. If that is
+not the case, you have to supply the \qt\ directory containing your
+\qt\ installation.  Even if the test passed, you still have the option
+to set this directory differently.  If your \qt\ installation is not
+standard, you would have to go into the advanced mode.\bigskip
 
 \fbox{
 \begin{minipage}{.95\linewidth}
@@ -731,10 +673,10 @@ advanced mode.\bigskip
 \subsubsection{Advanced mode (to use with a non-standard Qt
   installation) }
 
-In that mode, you have to specify separately directories containing the Qt
-header files (\texttt{QT\_INCL\_DIR})\TTindex{QT\_INCL\_DIR} and the
-Qt library (\texttt{QT\_LIB\_DIR})\TTindex{QT\_LIB\_DIR}, and the
-path to the MOC\footnote{\qtmocpage} executable
+In that mode, you have to specify separately directories containing
+the \qt\ header files (\texttt{QT\_INCL\_DIR})\TTindex{QT\_INCL\_DIR}
+and the \qt\ library (\texttt{QT\_LIB\_DIR})\TTindex{QT\_LIB\_DIR},
+and the path to the MOC\footnote{\qtmocpage} executable
 (\texttt{QT\_MOC})\TTindex{QT\_MOC} unless they are in system
 directories. Even in that case, you still have the option to set them
 differently.
@@ -803,7 +745,7 @@ more of the following conditions apply to you:
   \ref{sec:gmp-setup}) \textit{or}
 \item you want to use \gnu\ GMP's built-in C++ interface together with \cgal\
   (section \ref{sec:gmpxx-setup}) \textit{or}
-\item you want to use Qt together with \cgal\ (section
+\item you want to use \qt\ together with \cgal\ (section
   \ref{sec:qt-setup}).
 \end{itemize}
 
@@ -874,20 +816,20 @@ support is enable correctly.
 \subsection{Setting up support for Qt}\label{sec:qt-setup}
 \index{Qt!enable support}
 
-By default there is no support for Qt, but you can change this easily
-by use of the command line option ``\texttt{-qt}''. If Qt is installed
-in system directories on your system or the \texttt{\$QTDIR}
-environment variable points to the Qt directory, you are already done
-now. If this is not the case, you have to supply either the Qt
+By default there is no support for \qt, but you can change this easily
+by use of the command line option ``\texttt{-qt}''. If \qt\ is
+installed in system directories on your system or the \texttt{\$QTDIR}
+environment variable points to the \qt\ directory, you are already
+done now. If this is not the case, you have to supply either the \qt\ 
 directory (``\texttt{--QT\_DIR}~\textit{$<$dir$>$}'')\TTindex{QT\_DIR}
-if your Qt installation is standard, either directories containing the
-Qt header files
+if your \qt\ installation is standard, either directories containing
+the \qt\ header files
 (``\texttt{--QT\_INCL\_DIR}~\textit{$<$dir$>$}'')\TTindex{QT\_INCL\_DIR}
 and the Qt library
 (``\texttt{--QT\_LIB\_DIR}~\textit{$<$dir$>$}'')\TTindex{QT\_LIB\_DIR},
 and the path to the MOC\footnote{\qtmocpage} executable
 (``\texttt{--QT\_MOC} \textit{$<$exe$>$}'')\TTindex{QT\_MOC} if your
-Qt installation is not standard.
+\qt\ installation is not standard.
 
 \subsection{Setting custom compiler/linker flags}\label{sec:custom-setup}
 \index{compilers!setting custom flags}
@@ -1267,33 +1209,57 @@ corresponding to \leda\ can be recognized by the suffix
 \section{Compiler workarounds}
 \index{compilers!workarounds}\index{workaround flags}
 
-In \cgal\ a number of compiler flags is defined, all of them start
+In \cgal, a number of compiler flags is defined. All of them start
 with the prefix \texttt{CGAL\_CFG}. These flags are used to work
-around compiler bugs and limitations.  For example, the flag
+around compiler bugs and limitations. For example, the flag
 \texttt{CGAL\_CFG\_NO\_MUTABLE} denotes that the compiler does not
-know the keyword \texttt{mutable}. 
+know the keyword \texttt{mutable}.
 
 For each compiler a file \texttt{<CGAL/compiler\_config.h>}
 \index{files!\texttt{compiler\_config.h}} is defined, with the correct
 settings of all flags. This file is generated automatically by the
-\texttt{install\_cgal} script. For this the test programs in the
-directory \nonlinkedpath'CGAL-3.0/config/testfiles'
-\index{directories!config/testfiles@\texttt{config/testfiles}} are
-used.  The file \texttt{<CGAL/compiler\_config.h>} and the test
-programs contain a description of the problem, so in case of trouble
-with a \texttt{CGAL\_CFG} flag it is a good idea to take a look at it.
+\texttt{install\_cgal} script, and it is located in the compiler
+specific include directory. This directory can be found below
+\texttt{include/CGAL/config/};
+\index{directories!include/CGAL/config@\texttt{include/CGAL/config}}
+\index{directories!compiler specific}\index{compiler specific include
+  directory} it is named according to the compiler's \cgal-OS
+description (cf. Section~\ref{sec:os-compiler-id}).
 
-The file \texttt{<CGAL/config.h>} \index{files!\texttt{config.h}}
-manages all configuration problems of the compiler.  This file
-includes the file \texttt{CGAL/compiler\_config.h}.  It is therefore
-important that the file \texttt{<CGAL/config.h>} is always included
-before any other \cgal\ source file that depends on workaround flags.
-In most cases you do not have to do anything special for this, because
-many CGAL files already take care of including
-\texttt{<CGAL/config.h>}. Nevertheless it would be a good idea to
-always start your \cgal\ programs with including
-\texttt{<CGAL/config.h>} (or \texttt{<CGAL/basic.h>}, which contains
-some more basic \cgal\ definitions).
+The test programs used to generate the \texttt{compiler\_config.h}
+file can be found in \nonlinkedpath'CGAL-3.0/config/testfiles'.
+\index{directories!config/testfiles@\texttt{config/testfiles}} Both
+\texttt{compiler\_config.h} and the test programs contain a short
+description of the problem. In case of trouble with one of the
+\texttt{CGAL\_CFG} flags, it is a good idea to take a look at it.
+
+Within \cgal, the file \texttt{<CGAL/basic.h>}
+\index{files!\texttt{basic.h}} manages all configuration problems.
+This file includes \texttt{CGAL/compiler\_config.h}. It is therefore
+\textbf{important that \texttt{<CGAL/basic.h>} is always included
+  before any other file}. In most cases you do not have to do anything
+special for this, because many \cgal\ files (in particular,
+\texttt{<CGAL/Cartesian.h>} and \texttt{<CGAL/Homogeneous.h>}) already
+take care of including \texttt{<CGAL/basic.h>} first. Nevertheless it
+is a good idea to always start your \cgal\ programs with including
+\texttt{<CGAL/basic.h>}.
+
+\subsection{Standard Header Replacements}
+\index{compilers!missing standard header files} %
+\index{standard header replacements} %
+\index{missing standard header files}
+
+Some compilers do still not provide a complete standard library. In
+particular they fail to provide the \texttt{C++} wrappers for files
+from the standard \ccc{C} library, like \textt{cstddef} for
+\texttt{stddef.h}. The \cgal\ install scripts checks for all standard
+header files and generates a simple wrapper file in the \cgal\ include
+directory for those that are missing. These wrapper files include the
+corresponding \texttt{C} header files and add all symbols required by
+the \texttt{C++} standard into namespace \ccc{std}. You can turn off
+the additions to namespace \ccc{std} by defining the macro
+\ccc{CGAL_NO_STDC_NAMESPACE}.
+\index{CGAL\_NO\_STDC\_NAMESPACE@\texttt{CGAL\_NO\_STDC\_NAMESPACE}}
 
 \section{Compiler Optimizations}\label{sec:compiler-optimisations}
 \index{compilers!optimization}
