@@ -1152,15 +1152,17 @@ bool is_valid(bool verbose = false) const
         Overlap_const_circulator ovlp_circ = eit->halfedge()->overlap_edges();
         
         edge_curve_is_halfedge_curve &= 
-	  (eit->curve() == eit->halfedge()->curve());
+	  (traits->curve_is_same(eit->curve(), eit->halfedge()->curve()));
 
         do{
           Overlap_const_circulator next = ovlp_circ;
           ++next;
           
-          circ_curve_is_next_curve &= (ovlp_circ->curve() == next->curve());
+          circ_curve_is_next_curve &= 
+	    traits->curve_is_same(ovlp_circ->curve(), next->curve());
           circ_curve_is_halfedge_curve &= 
-	    (ovlp_circ->curve() == eit->halfedge()->curve());
+	    (traits->curve_is_same(ovlp_circ->curve(),
+				   eit->halfedge()->curve()));
           
         } while (++ovlp_circ != eit->halfedge()->overlap_edges());
       }
