@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.89 on ?? May 2001
+- Workaround what seems to be a bug in KCC with non-inline overloading of
+  inline templates.
+
 Version 4.88 on 16 May 2001
 - Added operator> and operator!= to Interval_base.
 - Handle Angles.

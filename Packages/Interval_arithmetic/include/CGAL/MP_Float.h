@@ -57,9 +57,15 @@ CGAL_BEGIN_NAMESPACE
 
 class MP_Float;
 
+Comparison_result
+compare_noinline (const MP_Float & a, const MP_Float & b);
+
 namespace NTS {
 Comparison_result
-compare (const MP_Float & a, const MP_Float & b);
+compare (const MP_Float & a, const MP_Float & b)
+{
+  return compare_noinline (a, b);
+}
 }
 
 class MP_Float

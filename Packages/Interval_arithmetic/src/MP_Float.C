@@ -86,10 +86,9 @@ MP_Float::MP_Float(double d)
     CGAL_expensive_assertion(CGAL::to_double(*this) == bak);
 }
 
-namespace NTS {
-
+// I should be able to define the non-inline overloading, but KCC complains.
 Comparison_result
-compare (const MP_Float & a, const MP_Float & b)
+compare_noinline (const MP_Float & a, const MP_Float & b)
 {
   if (a.is_zero())
     return (Comparison_result) - b.sign();
@@ -106,8 +105,6 @@ compare (const MP_Float & a, const MP_Float & b)
   }
   return EQUAL;
 }
-
-} // namespace NTS
 
 // Common code for operator+ and operator-.
 template <class BinOp>
