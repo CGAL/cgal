@@ -7,6 +7,8 @@ under the Q Public License (v1.0), depending on each package.  The texts of
 both licenses can be found in the files LICENSE.LGPL and LICENSE.QPL.  It is
 specified in each file of CGAL which license applies to it.
 
+It is possible to obtain commercial licenses from GeometryFactory
+(www.geometryfactory.com) for all or parts of CGAL.
 
 The directory "auxiliary/" contains external libraries such as GMP.
 The directory "src/Core/" contains the CORE library.
