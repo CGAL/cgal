@@ -127,6 +127,7 @@ protected:
   typedef typename Kernel::Compare_y_2          Compare_y_2;
   typedef typename Kernel::Compare_xy_2         Compare_xy_2;
   typedef typename Kernel::Compare_slope_2      Compare_slope_2;
+  typedef typename Kernel::Has_on_2             Has_on_2;
     
 public:
 
@@ -627,13 +628,58 @@ public:
    */
   bool curves_overlap(const X_curve_2 & cv1, const X_curve_2 & cv2) const
   {
-    bool     is_overlap;
-    Point_2  ip1, ip2;
+    // Comparing lines
+    //   if (!equal_2_object()(cv1.line, cv2.line)) return false;
+    // doesn't work, as coincident lines with opposite direction are
+    // considered different!
+    Has_on_2 has_on = has_on_2_object();
+    if (!has_on(cv1.line, cv2.ps) || !has_on(cv1.line, cv2.pt)) return false;
 
-    if (! _find_intersection (cv1, cv2, is_overlap, ip1, ip2))
-      return (false);
+    if (cv1.is_vert) {
+      if (cv2.is_vert) {
+        Compare_y_2 compare_y = compare_y_2_object();
+        Comparison_result res_ss = compare_y (cv1.ps, cv2.ps);
+        Comparison_result res_st = compare_y (cv1.ps, cv2.pt);
+        if (res_ss == SMALLER) {
+          if (res_st == LARGER) return true;
+          if (compare_y (cv1.pt, cv2.ps) == LARGER) return true;
+          return (compare_y (cv1.pt, cv2.pt) == LARGER);
+        }
 
-    return (is_overlap); 
+        if (res_ss == LARGER) {
+          if (res_st == SMALLER) return true;
+          if (compare_y (cv1.pt, cv2.ps) == SMALLER) return true;
+          return (compare_y (cv1.pt, cv2.pt) == SMALLER);
+        }
+
+        // res_ss == EQUAL
+        if (res_st == SMALLER)
+          return (compare_y (cv1.pt, cv2.ps) == LARGER);
+        return (compare_y (cv1.pt, cv2.ps) == SMALLER);
+      }
+      return false;
+    }
+    if (cv2.is_vert) return false;
+
+    Compare_x_2 compare_x = compare_x_2_object();
+    Comparison_result res_ss = compare_x (cv1.ps, cv2.ps);
+    Comparison_result res_st = compare_x (cv1.ps, cv2.pt);
+    if (res_ss == SMALLER) {
+      if (res_st == LARGER) return true;
+      if (compare_x (cv1.pt, cv2.ps) == LARGER) return true;
+      return (compare_x (cv1.pt, cv2.pt) == LARGER);
+    }
+
+    if (res_ss == LARGER) {
+      if (res_st == SMALLER) return true;
+      if (compare_x (cv1.pt, cv2.ps) == SMALLER) return true;
+      return (compare_x (cv1.pt, cv2.pt) == SMALLER);
+    }
+
+    // res_ss == EQUAL
+    if (res_st == SMALLER)
+      return (compare_x (cv1.pt, cv2.ps) == LARGER);
+    return (compare_x (cv1.pt, cv2.ps) == SMALLER);
   }
 
 private:
@@ -654,14 +700,16 @@ private:
                            bool& is_overlap,
 			   Point_2& p1, Point_2& p2) const
   {
+    // Computing the orientation ahead and checking whether the end points of
+    // one curve are in opposite orientations with respect to the other seems
+    // slow down the process!
+
     // Intersect the two supporting lines.
     Object    res = intersect_2_object()(cv1.line, cv2.line);
 
+    // Parallel lines do not intersect
     if (res.is_empty())
-    {
-      // Empty object is returned - no intersection.
       return (false);
-    }
     
     Point_2   ip;
     if (assign(ip, res))
@@ -738,8 +786,8 @@ private:
     else
     {
       Compare_y_2       comp_y = compare_y_2_object();
-      Comparison_result res1 = compare_y (q, cv.ps);
-      Comparison_result res2 = compare_y (q, cv.pt);
+      Comparison_result res1 = comp_y (q, cv.ps);
+      Comparison_result res2 = comp_y (q, cv.pt);
 
       // We check if x(q) equals the y value of one of the end-points.
       // If not, we check whether one end-point is above q and the other is

@@ -58,8 +58,13 @@ public:
 protected:
   typedef typename Kernel::Construct_vertex_2   Construct_vertex_2;
   typedef typename Kernel::Construct_segment_2  Construct_segment_2;
+  typedef typename Kernel::Compare_x_2          Compare_x_2;
+  typedef typename Kernel::Compare_y_2          Compare_y_2;
   typedef typename Kernel::Compare_xy_2         Compare_xy_2;
-
+  typedef typename Kernel::Compare_y_at_x_2     Compare_y_at_x_2;
+  typedef typename Kernel::Is_vertical_2        Is_vertical_2;
+  typedef typename Kernel::Orientation_2        Orientation_2;
+  
 public:
   Arr_segment_traits_2() : Base() { }
 
@@ -106,9 +111,9 @@ public:
     CGAL_precondition(compare_xy(curve_target(cv), split_pt) != EQUAL);
     
     Construct_vertex_2 construct_vertex = construct_vertex_2_object();
-    Construct_segment_2 construct_segment = construct_segment_2_object();
     const Point_2 & source = construct_vertex(cv, 0);
     const Point_2 & target = construct_vertex(cv, 1);
+    Construct_segment_2 construct_segment = construct_segment_2_object();
     c1 = construct_segment(source, split_pt);
     c2 = construct_segment(split_pt, target);
   }
@@ -284,11 +289,65 @@ public:
    * (i.e., not in a finite number of points). Otherwise, false.
    * \todo end point coincidence instead of intersection!
    */
-  bool curves_overlap(const X_curve_2 & c1, const X_curve_2 & c2) const
+  bool curves_overlap(const X_curve_2 & cv1, const X_curve_2 & cv2) const
   {
-    Object res = intersect_2_object()(c1, c2);
-    X_curve_2 seg;
-    return (assign(seg, res) != 0);
+    Construct_vertex_2 construct_vertex = construct_vertex_2_object();
+    const Point_2 & src2 = construct_vertex(cv2, 0);
+    const Point_2 & trg2 = construct_vertex(cv2, 1);
+    const Point_2 & src1 = construct_vertex(cv1, 0);
+    const Point_2 & trg1 = construct_vertex(cv1, 1);
+
+    Orientation_2 orient = orientation_2_object();
+    if ((!orient(src1, trg1, src2) == COLLINEAR) ||
+        (!orient(src1, trg1, trg2) == COLLINEAR))
+      return false;
+
+    Is_vertical_2 is_vertical = is_vertical_2_object();
+    if (is_vertical(cv1)) {
+      if (is_vertical(cv2)) {
+        Compare_y_2 compare_y = compare_y_2_object();
+        Comparison_result res_ss = compare_y (src1, src2);
+        Comparison_result res_st = compare_y (src1, trg2);
+        if (res_ss == SMALLER) {
+          if (res_st == LARGER) return true;
+          if (compare_y (trg1, src2) == LARGER) return true;
+          return (compare_y (trg1, trg2) == LARGER);
+        }
+
+        if (res_ss == LARGER) {
+          if (res_st == SMALLER) return true;
+          if (compare_y (trg1, src2) == SMALLER) return true;
+          return (compare_y (trg1, trg2) == SMALLER);
+        }
+
+        // res_ss == EQUAL
+        if (res_st == SMALLER)
+          return (compare_y (trg1, src2) == LARGER);
+        return (compare_y (trg1, src2) == SMALLER);
+      }
+      return false;
+    }
+    if (is_vertical(cv2)) return false;
+
+    Compare_x_2 compare_x = compare_x_2_object();
+    Comparison_result res_ss = compare_x (src1, src2);
+    Comparison_result res_st = compare_x (src1, trg2);
+    if (res_ss == SMALLER) {
+      if (res_st == LARGER) return true;
+      if (compare_x (trg1, src2) == LARGER) return true;
+      return (compare_x (trg1, trg2) == LARGER);
+    }
+
+    if (res_ss == LARGER) {
+      if (res_st == SMALLER) return true;
+      if (compare_x (trg1, src2) == SMALLER) return true;
+      return (compare_x (trg1, trg2) == SMALLER);
+    }
+
+    // res_ss == EQUAL
+    if (res_st == SMALLER)
+      return (compare_x (trg1, src2) == LARGER);
+    return (compare_x (trg1, src2) == SMALLER);
   }
 
 };
