@@ -212,7 +212,7 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Point_2<R> &p)
 {
-    output_point(p.x(), p.y(), R::FT(0));
+    output_point(gv, p.x(), p.y(), typename R::FT(0));
     return gv;
 }
 #endif
@@ -224,7 +224,7 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Point_3<R> &p)
 {
-    output_point(p.x(), p.y(), p.z());
+    output_point(gv, p.x(), p.y(), p.z());
     return gv;
 }
 #endif
