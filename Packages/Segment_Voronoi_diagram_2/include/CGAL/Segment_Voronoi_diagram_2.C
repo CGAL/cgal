@@ -373,6 +373,11 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   Site_2 sitev_supp(sitev.point(0), sitev.point(1));
   do {
     Face_handle ff1(fc1), ff2(fc2);
+
+    // MK::ERROR: ff1 and ff2 cannot be infinite. Modify the code to
+    //    handle this case
+    CGAL_assertion( !is_infinite(ff1) && !is_infinite(ff2) );
+
     Oriented_side os1 = oriented_side(fc1->vertex(0)->site(),
 				      fc1->vertex(1)->site(),
 				      fc1->vertex(2)->site(),
