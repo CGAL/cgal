@@ -96,8 +96,8 @@ public:
 private:
   // Dirty, so we should avoid it in another way
   Face_handle handle() const {
-    Face_handle n = neighbor(0);
-    int i = Triangulation_utils_3::ccw(n->index(vertex(1)));
+    Face_handle n = this->neighbor(0);
+    int i = Triangulation_utils_3::ccw(n->index(this->vertex(1)));
     return n->neighbor(i);
   }
 
@@ -119,9 +119,9 @@ protected:
 public:
   // Remove neighbor cw(i) and ccw(i) from the list
   void remove_neighbors_from_list(int i) {
-    Face_handle n = neighbor(Triangulation_utils_3::cw(i));
+    Face_handle n = this->neighbor(Triangulation_utils_3::cw(i));
     n->remove_from_list();
-    n = neighbor(Triangulation_utils_3::ccw(i));
+    n = this->neighbor(Triangulation_utils_3::ccw(i));
     n->remove_from_list();
   }
 
@@ -132,7 +132,7 @@ public:
   // Additionally, this face is then moved right behind face h,
   // because it is a candidate for an ear.
   void mark_edge(int i, Face_handle h) {
-    Face_handle n = neighbor(i);
+    Face_handle n = this->neighbor(i);
     if (n < handle()) {
       n->mark_halfedge(n->index(handle()));
       unmark_halfedge(i);
@@ -147,7 +147,7 @@ public:
 
   // unmarks the two halfedges
   void unmark_edge(int i) {
-    Face_handle n = neighbor(i);
+    Face_handle n = this->neighbor(i);
     unmark_halfedge(i);
     int fi = n->index(handle());
     n->unmark_halfedge(fi);
@@ -223,6 +223,14 @@ public:
   typedef typename TDS_2::Face          Face_3_2;
   typedef typename TDS_2::Vertex_handle Vertex_handle_3_2;
   typedef typename TDS_2::Face_handle   Face_handle_3_2;
+
+  using TDS_2::create_face;
+  using TDS_2::create_vertex;
+  using TDS_2::cw;
+  using TDS_2::ccw;
+  using TDS_2::set_dimension;
+  using TDS_2::faces_begin;
+  using TDS_2::faces_end;
 
 private:
 

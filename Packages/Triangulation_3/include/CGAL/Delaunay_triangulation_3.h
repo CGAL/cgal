@@ -88,6 +88,24 @@ public:
   typedef typename Tr_Base::Locate_type Locate_type;
 
   typedef Triple<Vertex_handle,Vertex_handle,Vertex_handle> Vertex_triple;
+
+  using Tr_Base::cw;
+  using Tr_Base::ccw;
+  using Tr_Base::geom_traits;
+  using Tr_Base::number_of_vertices;
+  using Tr_Base::dimension;
+  using Tr_Base::finite_facets_begin;
+  using Tr_Base::finite_facets_end;
+  using Tr_Base::finite_vertices_begin;
+  using Tr_Base::finite_vertices_end;
+  using Tr_Base::finite_cells_begin;
+  using Tr_Base::finite_cells_end;
+  using Tr_Base::finite_edges_begin;
+  using Tr_Base::finite_edges_end;
+  using Tr_Base::tds;
+  using Tr_Base::infinite_vertex;
+  using Tr_Base::next_around_edge;
+
 protected:
 
   Oriented_side

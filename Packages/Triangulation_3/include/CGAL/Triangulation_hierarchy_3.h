@@ -53,6 +53,8 @@ public:
   typedef typename Tr_Base::Finite_facets_iterator    Finite_facets_iterator;
   typedef typename Tr_Base::Finite_edges_iterator     Finite_edges_iterator;
 
+  using Tr_Base::number_of_vertices;
+
 private:
   // here is the stack of triangulations which form the hierarchy
   Tr_Base*   hierarchy[maxlevel];

@@ -31,6 +31,8 @@ template < class Vb >
 struct Triangulation_ds_vertex_3 
   : public Vb
 {
+  using Vb::cell;
+
   bool is_valid(bool verbose = false, int level = 0) const;
 };
 

@@ -1,4 +1,4 @@
-// Copyright (c) 1999  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1999-2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -51,6 +51,9 @@ public:
   typedef typename Tds::Cell_handle    Cell_handle;
   typedef typename Tds::Vertex         Vertex;
   typedef typename Tds::Cell           Cell;
+
+  using Cb::neighbor;
+  using Cb::vertex;
 
   Triangulation_ds_cell_3()
     : Cb()
