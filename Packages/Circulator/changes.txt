@@ -1,5 +1,13 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+3.12 (14 April 00)
+     changes all std::iterator_category(c)
+     to          std::iterator_traits<C>::iterator_category()
+     in circulator.h
+
+3.11 (4 janvier 00)
+     few correction in doc
+
 3.10 (4 november 99)
      suppresses the references to singular valeus of circulators in the docXS
 
