@@ -1,15 +1,15 @@
-#!/sw/bin/perl5 -w
+#!/sw/bin/perl -w
 
 use strict;
 use File::Find;
 use Cwd;
-# install_submission <sender> <url1> <url2> ...
+# install_submission <url1> <url2> ...
 
 
 my $testing=0;
 my $MAIL_PROG='/projects/CGAL/admin_scripts/send_cgal_mail';
 
-my ($sender, $submission, $packagedir, $oldpackagedir, $download_dir,
+my ($submission, $packagedir, $oldpackagedir, $download_dir,
     $console_output,
     $tempdir, $check_source_file_prog, @reply_list);
 my $WGET;
@@ -34,7 +34,7 @@ sub init_variables()
 	$console_output=0;
 	$check_source_file_prog= '/projects/CGAL/admin_scripts/check_headers';
     }
-    @reply_list = ($sender, 'geert@cs.uu.nl');
+    @reply_list = ('geert@cs.uu.nl');
     $WGET="/projects/CGAL/admin_scripts/get_cgal_html";
 }
 
@@ -80,7 +80,7 @@ sub log_done()
 
 sub print_usage()
 {
-    print STDERR "usage: $0 <sender> <url1> \n";
+    print STDERR "usage: $0 <url1> \n";
 }
 
 
@@ -322,7 +322,7 @@ sub check_for_ignored_files()
 		"developer_scripts","scripts","cgal_config.bat",
 		"install.txt","INSTALL.win32",
 		"submission_info","maintainer","description.txt",
-		"changes.txt","long_description.txt");
+		"changes.txt","long_description.txt","doc_ps");
     my @files_in_directory;
     opendir THISDIR, "." or die "Cannot open current directory: $!";
     @files_in_directory = grep !/^\.\.?$/, readdir THISDIR;
@@ -488,7 +488,7 @@ sub do_submission($)
     $cur_dir =cwd();
     my $lockfile = "$download_dir/$package_name.lock";
     if ( system("$LOCKCMD", "-r", '10', $lockfile) != 0) {
-	log_msg "ERROR: could not acquire lock!";
+	log_msg "ERROR: could not acquire lock on file $lockfile!";
 	return 0;
     }
     if (chdir "$download_dir") {
@@ -502,7 +502,6 @@ sub do_submission($)
 
     chdir($tempdir);
     open SUBMISSION_INFO, ">submission_info";
-    print SUBMISSION_INFO "Submitted by: $sender.\n";
     print SUBMISSION_INFO "URL: $url.\n";
     close SUBMISSION_INFO;
     
@@ -529,7 +528,6 @@ if ($#ARGV < 1) {
     exit 1;
 }
 
-$sender=shift;
 my $starting_directory = cwd();
 
 if ($starting_directory =~ m'CGAL/Geert/maintenance') {
