@@ -602,6 +602,7 @@ test_new_2(const R& rep)
   use(tmp24g); use(tmp24h); use(tmp24);use(tmp_bool);
 
   use(bb1);  use(bb2);  use(bb3);  use(bb4);  use(bb5);
+  use(cccit);
   return true;
 }
 

@@ -660,6 +660,7 @@ test_new_3(const R& rep)
   use(tmp12a); use(tmp12b);
   use(bb1); use(bb2); use(bb3); use(bb4); use(bb5); use(bb6); 
   use(r4); use(r5); use(l7); use(l8); use(v7); use(v8); use(v9); use(h8);
+  use(cccit);
 
   return true;
 }
