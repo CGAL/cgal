@@ -40,6 +40,7 @@ DEMO_SUBDIRS= \
 ./Min_quadrilateral_2 \
 ./Partition_2 \
 ./Triangulation_2 \
+./Constrained_triangulation_2 \
 ./basic/tutorial1 \
 ./basic/tutorial2 \
 ./basic/tutorial3 \
