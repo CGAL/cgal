@@ -820,7 +820,7 @@ remove_3D_new(Vertex_handle v)
     unsigned int i_i = i_vt_f_pair.second.second;
     
     // create a new cell and glue it to the outer surface
-    Cell_handle new_ch = _tds.create_cell();
+    Cell_handle new_ch = tds().create_cell();
     new_ch->set_vertices(vmap[i_ch->vertex(0)], vmap[i_ch->vertex(1)],
 			 vmap[i_ch->vertex(2)], vmap[i_ch->vertex(3)]);
     
