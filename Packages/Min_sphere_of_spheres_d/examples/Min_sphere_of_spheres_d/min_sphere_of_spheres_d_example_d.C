@@ -2,11 +2,11 @@
 // This example illustrates how to use CGAL::Point_d and CGAL::
 // Weighted_point with the Min_sphere_of_spheres_d package.
 
-#include <vector>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Random.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
+#include <vector>
 
 const int N = 1000;                       // number of spheres
 const int D = 3;                          // dimension of points
