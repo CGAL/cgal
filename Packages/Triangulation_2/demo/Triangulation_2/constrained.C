@@ -106,9 +106,11 @@ main( )
 {
   CGAL::Window_stream win(400,400); // physical window size
   win.init(-1.1, 1.1, -1.1);   // logical window size
+  win.display_help_text("help/constrained");
   win << CGAL::BLUE;
   CGAL::cgalize( win);
   win.display();
+  win.set_frame_label("Cells of a Constrained Triangulation");
 
   std::ifstream is("data/poisson");
   std::list<Constraint> lc;
