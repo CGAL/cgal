@@ -34,10 +34,10 @@ public:
   Qt_layer_show_polygon(T &p) : polygon(p){};
   void draw()
   {
-    *widget << LineWidth(3);
+    *widget << CGAL::LineWidth(3);
     *widget << CGAL::BLUE; 
     *widget << polygon;
-    *widget << LineWidth(1);
+    *widget << CGAL::LineWidth(1);
     *widget << CGAL::WHITE; 
     *widget << polygon;
   };
