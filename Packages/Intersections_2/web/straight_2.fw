@@ -7,13 +7,15 @@ CGAL_BEGIN_NAMESPACE
 class Straight_2_base_ {
 public:
     enum states {EMPTY, POINT, SEGMENT, RAY, LINE};
-protected:
     enum bound_states {NO_UNBOUNDED=0, MIN_UNBOUNDED=1, MAX_UNBOUNDED=2,
                         BOTH_UNBOUNDED = 3, LINE_EMPTY = 4};
+protected:
                             Straight_2_base_() ;
     int                     main_dir_;  // support_ is x or y directed (0/1).
     int                     dir_sign_;  // sign of main direction coord.
     unsigned int            bound_state_; // 0, 1, 2, 3, 4.
+public:
+inline unsigned int            bound_state() const {return bound_state_;}
 };
 
 template <class R>
@@ -23,6 +25,7 @@ public:
                             Straight_2_(Point_2<R> const &point) ;
                             Straight_2_(Line_2<R> const &line) ;
                             Straight_2_(Ray_2<R> const &ray) ;
+                            Straight_2_(Ray_2<R> const &ray,bool cooriented) ;
                             Straight_2_(Segment_2<R> const &seg) ;
                             ~Straight_2_() {}
     void                    cut_right_off(Line_2<R> const & cutter) ;
@@ -122,6 +125,30 @@ Straight_2_(Ray_2<R> const &ray)
 
 template <class R>
 Straight_2_<R>::
+Straight_2_(Ray_2<R> const &ray_,bool cooriented)
+{
+        Ray_2<R> const &ray = cooriented ? ray_ : ray_.opposite();
+        support_ = ray.supporting_line();
+        /* the supporting line is cooriented with the input ray iff
+        cooriented is true */
+    Vector_2<R> const &dir = ray.direction().to_vector();
+//    main_dir_ = (abs(dir.hx()) > abs(dir.hy()) ) ? 0 : 1;
+    main_dir_ = (abs(dir.x()) > abs(dir.y()) ) ? 0 : 1;
+    dir_sign_ = sign(support_.direction().to_vector().cartesian(main_dir_));
+    if (cooriented)
+        {
+            bound_state_ = MAX_UNBOUNDED;
+                min_ = ray.start();
+        }
+        else
+        {
+                bound_state_ = MIN_UNBOUNDED;
+                max_ = ray.start();
+        }
+}
+
+template <class R>
+Straight_2_<R>::
 Straight_2_(Segment_2<R> const &seg)
 {
     support_ = seg.supporting_line();
@@ -151,7 +178,7 @@ current(Ray_2<R> &ray) const
     CGAL_kernel_assertion(bound_state_ == MIN_UNBOUNDED
                         || bound_state_ == MAX_UNBOUNDED);
     if (bound_state_ == MIN_UNBOUNDED) {
-        ray = Ray_2<R>(max_, -_support.direction());
+        ray = Ray_2<R>(max_, -support_.direction());
     } else {
         ray = Ray_2<R>(min_, support_.direction());
     }
@@ -312,6 +339,106 @@ CGAL_END_NAMESPACE
 
 @}
 
+@$@<2D Straight stream declaration@>==@{
+
+CGAL_BEGIN_NAMESPACE
+
+#ifndef CGAL_NO_OSTREAM_INSERT_STRAIGHT_2
+template <class R>
+std::ostream& operator<<(std::ostream& os,const Straight_2_<R>& cv)
+{
+        typedef Pm_straight_exact_traits<R> Traits;
+        typedef Straight_2_<R> Curve;
+        switch(cv.current_state())
+        {
+        case Curve::SEGMENT:
+                {
+                        Segment_2<R> seg;
+                        cv.current(seg);
+                        return os << seg;
+                }
+        case Curve::RAY:
+                {
+                        Ray_2<R> ray;
+                        cv.current(ray);
+                        return os << ray;
+                }
+        case Curve::LINE:
+                {
+                        Line_2<R> line;
+                        cv.current(line);
+                        return os << line;
+                }
+        case Curve::POINT:
+                {
+                        Point_2<R> p;
+                        cv.current(p);
+                        return os << p;
+                }
+        case Curve::EMPTY:
+          break;
+        }
+        CGAL_assertion_msg(
+                cv.current_state()==Curve::SEGMENT||
+                cv.current_state()==Curve::RAY||
+                cv.current_state()==Curve::LINE||
+                cv.current_state()==Curve::POINT||
+                cv.current_state()==Curve::EMPTY,
+                "\nUnknown type in  std:: ostream& operator<<( \
+                std:: ostream& os,const Straight_2&)");
+        return os;
+}
+#endif //CGAL_NO_OSTREAM_INSERT_STRAIGHT_2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_STRAIGHT_2
+template <class R>
+std:: istream& operator>>(std:: istream& is,Straight_2_<R>& cv)
+{
+        typedef Pm_straight_exact_traits<R> Traits;
+        typedef Straight_2_<R> Curve;
+        switch(cv.current_state())
+        {
+        case Curve::SEGMENT:
+                {
+                        Segment_2<R> seg;
+                        cv.current(seg);
+                        return os >> seg;
+                }
+        case Curve::RAY:
+                {
+                        Ray_2<R> ray;
+                        cv.current(ray);
+                        return os >> ray;
+                }
+        case Curve::LINE:
+                {
+                        Line_2<R> line;
+                        cv.current(line);
+                        return os >> line;
+                }
+        case Curve::POINT:
+                {
+                        Point_2<R> p;
+                        cv.current(p);
+                        return os >> p;
+                }
+        case Curve::EMPTY:
+          break;
+        }
+        CGAL_assertion_msg(
+                cv.current_state()==Curve::SEGMENT||
+                cv.current_state()==Curve::RAY||
+                cv.current_state()==Curve::LINE||
+                cv.current_state()==Curve::POINT||
+                cv.current_state()==Curve::EMPTY,
+                "\nUnknown type in  std:: ostream& operator>>( \
+                std:: ostream& os,Straight_2&)");
+        return os;
+}
+#endif //CGAL_NO_ISTREAM_EXTRACT_STRAIGHT_2
+
+CGAL_END_NAMESPACE
+
+@}
 
 @O@<../include/CGAL/Straight_2.h@>==@{
 @<cgal_heading@>@(@-
@@ -327,3 +454,19 @@ MPI, Saarbruecken@)
 
 #endif
 @}
+
+@O@<../include/CGAL/Straight_2_stream.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Straight_2_stream.h@,@-
+straight_2.fw@,@-
+Oren Nechushtan@,@-
+MPI, Saarbruecken@)
+
+#ifndef CGAL_STRAIGHT_2_STREAM_H
+#define CGAL_STRAIGHT_2_STREAM_H
+
+@<2D Straight stream declaration@>
+
+#endif // CGAL_STRAIGHT_2_STREAM_H
+@}
+
