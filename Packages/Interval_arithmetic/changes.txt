@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.74 on 9 March 2001
+- Remove MP_Integer.
+- VC++ fixes.
+
 Version 4.73 on 1 March 2001
 - Alternative to ::rint() as it doesn't exist on...  yes yes, Windblows.
 - std::ldexp() -> ::ldexp().
