@@ -33,7 +33,8 @@
 
 
 namespace CGAL {
-  Qt_widget_standard_toolbar::Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow *mw)
+  Qt_widget_standard_toolbar::Qt_widget_standard_toolbar(
+	  Qt_widget *w, QMainWindow *mw)
   {
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
