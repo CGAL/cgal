@@ -1,0 +1,14 @@
+\section{Implementation}
+
+The sweep line algorithm was implemented according 
+Bentley and Ottmann~\cite{bkos-cgaa-97}. It supports general 
+curves and all 
+possible degenerate cases including overlapping curves, vertical segments, 
+and tangency between curves.
+
+In the implementation we use the STL container $map$ to hold the event queue 
+as well as the status line. 
+
+The complexity of this algorithm is $O(n\log{n} + k\log{n})$ where $n$ is the 
+number of the curves specified int he input and $k$ is the number of 
+intersection points induced by these curves.

@@ -1,0 +1,29 @@
+\section{Introduction}
+
+% Put here a description of what's in this chapter
+
+In this chapter we describe the functionality provided by
+\cgal\ to produce disjoint-interior subcurves and intersection points 
+of a given collection 
+$C:=\{c_1, \ldots c_n\}$ of planar curves.
+
+We take advantage of the sweep line algorithm implemented here to provide
+an efficient construction of a Planar Map with Intersection. See 
+\ccc{CGAL::Pm_with_intersection} for more deatils.
+
+% Put here the definition of the algorithm (theory)
+Let $C:=\{c_1, \ldots c_n\}$ be the set of curves for which we want 
+to compute all intersections. We want to avoid testing pairs of segments 
+that are far apart. To find the intersecting pairs we imagine sweeping  
+a line $l$ from left to right over the plane, starting from a position 
+left to all curves. While we sweep the imaginary line, we keep track of all 
+curves intersecting it.
+
+This type of algorithm is called a {\em plane sweep algorithm} and the line 
+$l$ is called the {\em sweep line}. The {\em status} of the sweep line is 
+the set of curves intersecting it. The status of the status line changes at 
+specific points, called {\em event points},  
+as the sweep line progresses to the right. These specific points are
+the endpoints of the curves and their intersection points. The initial set of 
+{\em event points} consists of the endpoints alone. Additional 
+{\em event points} are added as intersection points are calculated.
