@@ -4,8 +4,7 @@
 // compare segment tree against brute force and simple implementations
 #include <CGAL/Box_intersection_d/one_way_scan.h>
 #include <CGAL/Box_intersection_d/all_pairs.h>
-
-#include "Timer.h"
+#include <CGAL/Timer.h>
 
 #include <iostream>
 #include <cstdlib>
@@ -134,9 +133,9 @@ test_n( unsigned int n,
         boxes2 = boxes1;
     std::cout << std::endl;
     Counter_callback callback0, callback1, callback2;
-    Timer timer;
+    CGAL::Timer timer;
 
-    if( n < 20000 ) {
+    if( n < 5000 ) {
         std::cout << "all pairs ... " << std::flush;
         timer.start();
         CGAL::Box_intersection_d::all_pairs( boxes1.begin(), boxes1.end(),
@@ -144,7 +143,7 @@ test_n( unsigned int n,
                                              callback0, Traits(), DIM - 1 );
         timer.stop();
         std::cout << "got " << callback0.counter << " intersections in "
-                  << timer.t << " seconds."
+                  << timer.time() << " seconds."
             << std::endl;
         timer.reset();
     }
@@ -159,7 +158,7 @@ test_n( unsigned int n,
                                                 callback1, Traits(), DIM - 1);
     timer.stop();
     std::cout << "got " << callback1.counter << " intersections in "
-              << timer.t << " seconds."
+              << timer.time() << " seconds."
               << std::endl;
 
     std::cout << "segment tree ... " << std::flush;
@@ -171,7 +170,7 @@ test_n( unsigned int n,
                                      callback2, Traits(), cutoff, setting );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
-              << timer.t << " seconds." << std::endl;
+              << timer.time() << " seconds." << std::endl;
 
     if( callback1.counter != callback2.counter ||
         n < 20000 && callback0.counter != callback1.counter )
@@ -193,7 +192,7 @@ void operator()() {
     std::cout << "-------------------------" << std::endl;
     std::cout << "DIM = " << DIM << std::endl;
     std::cout << "-------------------------" << std::endl;
-    for( unsigned int n = 8; n < 200000; n = (int)(n * 1.3)) {
+    for( unsigned int n = 1024; n < 200000; n = (int)(n * 8)) {
         std::cout << "bipartite case: " << std::endl;
         test_n( n, CGAL::Box_intersection_d::BIPARTITE );
         //std::cout << "complete case: " << std::endl;
@@ -258,10 +257,12 @@ int main( int argc, char ** argv ) {
     std::cout << "-------------------------" << std::endl;
     //d();
 
-    if( failed != 0 )
+    if( failed != 0 ) {
         std::cout << "a total number of " << failed
                   << " tests failed!" << std::endl;
-    else
-        std::cout << "all tests passed." << std::endl;
+        return 1;
+    }
+    std::cout << "all tests passed." << std::endl;
+    return 0;
 }
 

@@ -163,7 +163,7 @@ void operator()() {
     outfile << "# problemsize streamingtime scanningtime" << std::endl;
     outfile.precision(9);
     outfile << std::fixed;
-    for( unsigned int n = 8; n < 2000000; n = (int)(n * 1.3)) {
+    for( unsigned int n = 1024; n < 200000; n = (int)(n * 8)) {
         test_n( n, outfile );
     }
 }
@@ -204,9 +204,12 @@ int main( int argc, char ** argv ) {
     test<float> c;
     c();
 
-    if( failed != 0 )
-        std::cout << "a total number of " << failed << " tests failed!" << std::endl;
-    else
-        std::cout << "all tests passed." << std::endl;
+    if( failed != 0 ) {
+        std::cout << "a total number of " << failed << " tests failed!" 
+                  << std::endl;
+        return 1;
+    }
+    std::cout << "all tests passed." << std::endl;
+    return 0;
 }
 

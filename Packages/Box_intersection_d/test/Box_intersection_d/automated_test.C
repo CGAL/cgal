@@ -4,8 +4,7 @@
 
 #include <CGAL/Box_intersection_d/all_pairs.h>
 #include <CGAL/Box_intersection_d/one_way_scan.h>
-
-#include "Timer.h"
+#include <CGAL/Timer.h>
 
 #include <iostream>
 #include <sstream>
@@ -14,6 +13,8 @@
 #include <vector>
 #include <cstdio>
 #include <cmath>
+
+bool test_failed = false;
 
 
 typedef CGAL::Box_intersection_d::Box_d< int, 3 >     Box;
@@ -120,17 +121,18 @@ test( const char* filename1, const char* filename2 )
         callback2( result_tree );
 
     std::cout << "all pairs ...... " << std::flush;
-    Timer timer;
+    CGAL::Timer timer;
     timer.start();
     CGAL::Box_intersection_d::all_pairs( boxes1.begin(), boxes1.end(),
                                          boxes2.begin(), boxes2.end(),
                                          callback1, Traits(), 2 );
     timer.stop();
     std::cout << "got " << callback1.counter << " intersections in "
-              << timer.t << " seconds." << std::endl;
+              << timer.time() << " seconds." << std::endl;
 
 
     std::cout << "one way scan ...... " << std::flush;
+    timer.reset();
     timer.start();
     CGAL::Box_intersection_d::one_way_scan( boxes1.begin(), boxes1.end(),
                                             boxes2.begin(), boxes2.end(),
@@ -140,7 +142,7 @@ test( const char* filename1, const char* filename2 )
                                             callback2, Traits(), 2 );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
-              << timer.t << " seconds." << std::endl;
+              << timer.time() << " seconds." << std::endl;
     callback2.counter = 0;
     result_tree.clear();
 
@@ -154,7 +156,7 @@ test( const char* filename1, const char* filename2 )
                                      callback2, Traits(), cutoff );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
-              << timer.t << " seconds." << std::endl;
+              << timer.time() << " seconds." << std::endl;
 
     if( callback1.counter != callback2.counter ) {
         unsigned int missing    = countMissingItems( result_all_pairs,
@@ -163,6 +165,7 @@ test( const char* filename1, const char* filename2 )
         std::cout << "!! failed !! " << missing  << " missing and "
              << duplicates << " duplicate intersections in tree result."
              << std::endl;
+        test_failed = true;
     }
     else
         std::cout << "--- passed --- " << std::endl;
@@ -178,5 +181,8 @@ int main( int argc, char ** argv ) {
         file2 << "data/test" << n << "_set2.box" << std::ends;
         test( file1.str().c_str(), file2.str().c_str() );
     }
+    if ( test_failed)
+        return 1;
+    return 0;
 }
 
