@@ -78,7 +78,7 @@ public:
       is_vert = kernel.is_vertical_2_object()(seg);
       
       typename Kernel_::Construct_vertex_2 
-	construct_vertex = kernel.construct_vertex_2_object();
+        construct_vertex = kernel.construct_vertex_2_object();
 
       ps = construct_vertex(seg, 0);
       pt = construct_vertex(seg, 1);
@@ -89,35 +89,41 @@ public:
      * \param source The source point.
      * \param target The target point.
      */
-    My_segment_cached_2 (const Point_2 & source, const Point_2 & target)
+    My_segment_cached_2 (const Point_2 & source, const Point_2 & target) :
+      ps (source),
+      pt (target)
     {
       Kernel_   kernel;
       
       line = kernel.construct_line_2_object()(source, target);
       is_vert = kernel.is_vertical_2_object()(line);
-      
-      ps = source;
-      pt = target;
     }
 
     /*!
-     * Copy constructor
-     * \param seg the source segment to copy from
+     * Construct a segment from two end-points on a supporting line.
+     * \param l The supporting line.
+     * \param source The source point.
+     * \param target The target point.
      */
-    My_segment_cached_2 operator+(const My_segment_cached_2 & seg)
+    My_segment_cached_2 (const Line_2& l,
+                         const Point_2 & source, const Point_2 & target) :
+      line (l),
+      ps (source),
+      pt (target)
     {
-      line = seg.line;
-      is_vert = seg.is_vert;
-      ps = seg.ps;
-      pt = seg.pt;
-      return *this;                   
+      Kernel_   kernel;
+
+      CGAL_precondition (kernel.has_on_2_object() (line, source) &&
+                         kernel.has_on_2_object() (line, target));
+
+      is_vert = kernel.is_vertical_2_object()(line);
     }
 
     /*!
-     * Copy constructor
+     * Assignment operator.
      * \param seg the source segment to copy from
      */
-    My_segment_cached_2 operator+(const Segment_2 & seg)
+    const My_segment_cached_2& operator= (const Segment_2 & seg)
     {
       Kernel_   kernel;
       
@@ -125,7 +131,7 @@ public:
       is_vert = kernel.is_vertical_2_object()(seg);
       
       typename Kernel_::Construct_vertex_2 
-	construct_vertex = kernel.construct_vertex_2_object();
+        construct_vertex = kernel.construct_vertex_2_object();
 
       ps = construct_vertex(seg, 0);
       pt = construct_vertex(seg, 1);
@@ -222,7 +228,7 @@ public:
     // If not, we check whether one end-point is to p's left and the other is
     // to its right.
     return ((res1 == EQUAL) || (res2 == EQUAL) ||
-	    (res1 != res2));
+            (res1 != res2));
   }
 
   /*!
@@ -249,24 +255,24 @@ public:
     {
       if (cv2.is_vert)
       {
-	// Compare two vertical segments.
-	Compare_y_2       compare_y = compare_y_2_object();
-	Comparison_result res1 = compare_y (cv1.ps, cv1.pt);
-	const Point_2 &   lower1 = (res1 == SMALLER) ? cv1.ps : cv1.pt;
-	const Point_2 &   upper1 = (res1 == SMALLER) ? cv1.pt : cv1.ps;
-	Comparison_result res2 = compare_y (cv2.ps, cv2.pt);
-	const Point_2 &   lower2 = (res2 == SMALLER) ? cv2.ps : cv2.pt;
-	const Point_2 &   upper2 = (res2 == SMALLER) ? cv2.pt : cv2.ps;
+        // Compare two vertical segments.
+        Compare_y_2       compare_y = compare_y_2_object();
+        Comparison_result res1 = compare_y (cv1.ps, cv1.pt);
+        const Point_2 &   lower1 = (res1 == SMALLER) ? cv1.ps : cv1.pt;
+        const Point_2 &   upper1 = (res1 == SMALLER) ? cv1.pt : cv1.ps;
+        Comparison_result res2 = compare_y (cv2.ps, cv2.pt);
+        const Point_2 &   lower2 = (res2 == SMALLER) ? cv2.ps : cv2.pt;
+        const Point_2 &   upper2 = (res2 == SMALLER) ? cv2.pt : cv2.ps;
 
-	if (compare_y(upper1, lower2) == SMALLER)
-	  // cv1 is entirely below cv2:
-	  return (SMALLER); 
-	else if (compare_y(lower1, upper2) == LARGER)
-	  // cv1 is entirely above cv2:
-	  return (LARGER);
-	else
-	  // cv1 intersects cv2:
-	  return (EQUAL);
+        if (compare_y(upper1, lower2) == SMALLER)
+          // cv1 is entirely below cv2:
+          return (SMALLER); 
+        else if (compare_y(lower1, upper2) == LARGER)
+          // cv1 is entirely above cv2:
+          return (LARGER);
+        else
+          // cv1 intersects cv2:
+          return (EQUAL);
       }
 
       // Only cv1 is vertical:
@@ -275,11 +281,11 @@ public:
 
       if (res1 == res2)
       {
-	CGAL_assertion(res1 != EQUAL);
-	return (res1);
+        CGAL_assertion(res1 != EQUAL);
+        return (res1);
       }
       else
-	return (EQUAL);
+        return (EQUAL);
     }
     else if (cv2.is_vert)
     {
@@ -289,11 +295,11 @@ public:
 
       if (res1 == res2)
       {
-	CGAL_assertion(res1 != EQUAL);
-	return ((res1 == LARGER) ? SMALLER : LARGER);
+        CGAL_assertion(res1 != EQUAL);
+        return ((res1 == LARGER) ? SMALLER : LARGER);
       }
       else
-	return (EQUAL);
+        return (EQUAL);
     }
 
     // Compare using the supporting lines.
@@ -414,9 +420,9 @@ public:
       Comparison_result res2 = compare_y (p, cv.pt);
       
       if (res1 == res2)
-	return (res1);
+        return (res1);
       else
-	return (EQUAL);
+        return (EQUAL);
     }
   }
 
@@ -431,7 +437,7 @@ public:
   {
     Equal_2 equal = equal_2_object();
     return ((equal(cv1.ps, cv2.ps) && equal(cv1.pt, cv2.pt)) ||
-	    (equal(cv1.ps, cv2.pt) && equal(cv1.pt, cv2.ps)));
+            (equal(cv1.ps, cv2.pt) && equal(cv1.pt, cv2.ps)));
   }
 
   /*!
@@ -520,7 +526,7 @@ public:
    * \pre p lies on cv but is not one of its end-points.
    */
   void curve_split(const X_monotone_curve_2 & cv, 
-		   X_monotone_curve_2 & c1, X_monotone_curve_2 & c2, 
+                   X_monotone_curve_2 & c1, X_monotone_curve_2 & c2, 
                    const Point_2 & p) const
   {
     // Check preconditions.
@@ -562,8 +568,8 @@ public:
    *         An object wrapping an X_monotone_curve_2 in case of an overlap.
    */
   Object nearest_intersection_to_right (const X_monotone_curve_2 & cv1,
-				        const X_monotone_curve_2 & cv2,
-					const Point_2 & p) const
+                                        const X_monotone_curve_2 & cv2,
+                                        const Point_2 & p) const
   {
     Point_2  p1, p2;
     bool     is_overlap;
@@ -577,7 +583,7 @@ public:
     {
       // Return the point if it is lexicographically to the right of p.
       if (compare_xy_2_object()(p1, p) == LARGER)
-	return (CGAL::make_object (p1));
+        return (CGAL::make_object (p1));
       
       return Object();
     }
@@ -587,29 +593,31 @@ public:
     if (compare_xy_2_object()(p1, p) == LARGER)
     {
       // The entire segment p1 -> p2 is to the right of p:
-      return (CGAL::make_object (X_monotone_curve_2 (p1, p2)));
+      return (CGAL::make_object (X_monotone_curve_2 (cv1.line,
+                                                     p1, p2)));
     }
     else if (compare_xy_2_object()(p2, p) == LARGER)
     {
       if (has_on_2_object() (cv1.line, p))
       {
-	// p is one the overlapping segment, return it as the first point.
-	p1 = p;
+        // p is one the overlapping segment, return it as the first point.
+        p1 = p;
       }
       else
       {
-	// Perform vertical ray-shooting from p to the overlapping segment
-	// and make p1 the resulting point.
-	_vertical_ray_shoot (p, cv1,
-			     p1);
+        // Perform vertical ray-shooting from p to the overlapping segment
+        // and make p1 the resulting point.
+        _vertical_ray_shoot (p, cv1,
+                             p1);
       }
 
       // If after the trimming we have p1 == p2, return just a single point.
       if (equal_2_object() (p1, p2))
-	return (CGAL::make_object (p1));
+        return (CGAL::make_object (p1));
 
       // Return the segment p1 -> p2.
-      return (CGAL::make_object (X_monotone_curve_2 (p1, p2)));
+      return (CGAL::make_object (X_monotone_curve_2 (cv1.line,
+                                                     p1, p2)));
     }
 
     // The overlap is entirely to the left of p:
@@ -635,8 +643,8 @@ public:
    *         An object wrapping an X_monotone_curve_2 in case of an overlap.
    */
   Object nearest_intersection_to_left (const X_monotone_curve_2 & cv1,
-				       const X_monotone_curve_2 & cv2,
-				       const Point_2 & p) const
+                                       const X_monotone_curve_2 & cv2,
+                                       const Point_2 & p) const
   {
     Point_2  p1, p2;
     bool     is_overlap;
@@ -650,7 +658,7 @@ public:
     {
       // Return the point if it is lexicographically to the left of p.
       if (compare_xy_2_object()(p1, p) == SMALLER)
-	return (CGAL::make_object (p1));
+        return (CGAL::make_object (p1));
 
       return Object();
     }
@@ -660,29 +668,31 @@ public:
     if (compare_xy_2_object()(p2, p) == SMALLER)
     {
       // The entire segment p1 -> p2 is to the left of p:
-      return (CGAL::make_object (X_monotone_curve_2 (p1, p2)));
+      return (CGAL::make_object (X_monotone_curve_2 (cv1.line,
+                                                     p1, p2)));
     }
     else if (compare_xy_2_object()(p1, p) == SMALLER)
     {
       if (has_on_2_object() (cv1.line, p))
       {
-	// p is one the overlapping segment, return it as the first point.
-	p2 = p;
+        // p is one the overlapping segment, return it as the first point.
+        p2 = p;
       }
       else
       {
-	// Perform vertical ray-shooting from p to the overlapping segment
-	// and make p2 the resulting point.
-	_vertical_ray_shoot (p, cv1,
-			     p2);
+        // Perform vertical ray-shooting from p to the overlapping segment
+        // and make p2 the resulting point.
+        _vertical_ray_shoot (p, cv1,
+                             p2);
       }
 
       // If after the trimming we have p1 == p2, return just a single point.
       if (equal_2_object() (p1, p2))
-	return (CGAL::make_object (p1));
+        return (CGAL::make_object (p1));
 
       // Return the segment p1 -> p2.
-      return (CGAL::make_object (X_monotone_curve_2 (p1, p2)));
+      return (CGAL::make_object (X_monotone_curve_2 (cv1.line,
+                                                     p1, p2)));
     }
      
     // The overlap is entirely to the right of p:
@@ -718,32 +728,32 @@ public:
         Comparison_result res_st = compare_y (cv1.ps, cv2.pt);
 
         if (res_ss == SMALLER)
-	{
+        {
           if (res_st == LARGER)
-	    return true;
+            return true;
           
-	  if (compare_y (cv1.pt, cv2.ps) == LARGER)
-	    return true;
+          if (compare_y (cv1.pt, cv2.ps) == LARGER)
+            return true;
           
-	  return (compare_y (cv1.pt, cv2.pt) == LARGER);
+          return (compare_y (cv1.pt, cv2.pt) == LARGER);
         }
 
         if (res_ss == LARGER)
-	{
+        {
           if (res_st == SMALLER)
-	    return true;
+            return true;
           
-	  if (compare_y (cv1.pt, cv2.ps) == SMALLER)
-	    return true;
+          if (compare_y (cv1.pt, cv2.ps) == SMALLER)
+            return true;
           
-	  return (compare_y (cv1.pt, cv2.pt) == SMALLER);
+          return (compare_y (cv1.pt, cv2.pt) == SMALLER);
         }
 
         // res_ss == EQUAL
         if (res_st == SMALLER)
           return (compare_y (cv1.pt, cv2.ps) == LARGER);
         
-	return (compare_y (cv1.pt, cv2.ps) == SMALLER);
+        return (compare_y (cv1.pt, cv2.ps) == SMALLER);
       }
       return false;
     }
@@ -758,10 +768,10 @@ public:
     if (res_ss == SMALLER)
     {
       if (res_st == LARGER)
-	return true;
+        return true;
       
       if (compare_x (cv1.pt, cv2.ps) == LARGER)
-	return true;
+        return true;
       
       return (compare_x (cv1.pt, cv2.pt) == LARGER);
     }
@@ -769,10 +779,10 @@ public:
     if (res_ss == LARGER)
     {
       if (res_st == SMALLER)
-	return true;
+        return true;
       
       if (compare_x (cv1.pt, cv2.ps) == SMALLER)
-	return true;
+        return true;
       
       return (compare_x (cv1.pt, cv2.pt) == SMALLER);
     }
@@ -798,9 +808,9 @@ private:
    * \return (true) if an intersection has been found.
    */
   bool _find_intersection (const X_monotone_curve_2 & cv1,
-			   const X_monotone_curve_2 & cv2,
+                           const X_monotone_curve_2 & cv2,
                            bool & is_overlap,
-			   Point_2 & p1, Point_2 & p2) const
+                           Point_2 & p1, Point_2 & p2) const
   {
     // Computing the orientation ahead and checking whether the end points of
     // one curve are in opposite orientations with respect to the other seems
@@ -821,8 +831,8 @@ private:
       // Simple case of intersection at a single point.
       if (_is_on_segment(cv1, ip) && _is_on_segment(cv2, ip))
       {
-	p1 = ip;
-	return (true);
+        p1 = ip;
+        return (true);
       }
       return (false);
     }
@@ -838,8 +848,8 @@ private:
       }
       else
       {
-	p1 = cv1.pt;
-	p2 = cv1.ps;
+        p1 = cv1.pt;
+        p2 = cv1.ps;
       }
 
       // Clip the first segment with respect to cv2.
@@ -848,14 +858,14 @@ private:
       const Point_2 &   right2 = (res == LARGER) ? cv2.ps : cv2.pt;
 
       if (comp_xy(p2, left2) == SMALLER)
-	return (false);
+        return (false);
       else if (comp_xy(p1, left2) == SMALLER)
-	p1 = left2;
+        p1 = left2;
 
       if (comp_xy(p1, right2) == LARGER)
-	return (false);
+        return (false);
       else if (comp_xy(p2, right2) == LARGER)
-	p2 = right2;
+        p2 = right2;
 
       // Check if the intersection segment has not become a point.
       is_overlap = (comp_xy(p1,p2) != EQUAL);
@@ -883,7 +893,7 @@ private:
       // If not, we check whether one end-point is to q's left and the other is
       // to its right.
       return ((res1 == EQUAL) || (res2 == EQUAL) ||
-	      (res1 != res2));
+              (res1 != res2));
     }
     else
     {
@@ -895,7 +905,7 @@ private:
       // If not, we check whether one end-point is above q and the other is
       // below it.
       return ((res1 == EQUAL) || (res2 == EQUAL) ||
-	      (res1 != res2));
+              (res1 != res2));
     }
   }
 
@@ -907,7 +917,7 @@ private:
    * \return Whether we have successfully computed a point p.
    */
   bool _vertical_ray_shoot (const Point_2& q, const X_monotone_curve_2& cv,
-			    Point_2& p) const
+                            Point_2& p) const
   {
     // Construct a vertical line passing through q.
     typename Kernel::Direction_2  dir (0, 1);
@@ -935,6 +945,7 @@ class Segment_cached_2 :
                                                   Base;
   typedef typename Kernel_::Segment_2             Segment_2;
   typedef typename Kernel_::Point_2               Point_2;
+  typedef typename Kernel_::Line_2                Line_2;
 
   public:
 
@@ -960,6 +971,18 @@ class Segment_cached_2 :
    */
   Segment_cached_2 (const Point_2 & source, const Point_2 & target) :
     Base(source,target)
+  {}
+
+  /*!
+   * Construct a segment from a line and two end-points.
+   * \param line The supporting line.
+   * \param source The source point.
+   * \param target The target point.
+   * \pre Both source and target must be on the supporting line.
+   */
+  Segment_cached_2 (const Line_2 & line,
+                    const Point_2 & source, const Point_2 & target) :
+    Base(line,source,target)
   {}
 
   /*!
