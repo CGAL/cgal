@@ -63,12 +63,12 @@ public:
   }
 
   inline Edge next(const Edge& e) const {
-    CGAL_triangulation_precondition( is_in_list(e) );
+    CGAL_precondition( is_in_list(e) );
     return e.first->next(e.second);
   }
 
   inline Edge previous(const Edge& e) const {
-    CGAL_triangulation_precondition( is_in_list(e) );
+    CGAL_precondition( is_in_list(e) );
     return e.first->previous(e.second);
   }
 
@@ -89,7 +89,7 @@ public:
 
 public:
   inline bool is_singleton() const {
-    CGAL_triangulation_precondition( !is_empty() );
+    CGAL_precondition( !is_empty() );
     return (size() == 1);
   }
 
@@ -100,12 +100,12 @@ public:
   }
 
   inline Edge front() const {
-    CGAL_triangulation_precondition( !is_empty() );
+    CGAL_precondition( !is_empty() );
     return _front;
   }
 
   inline Edge back() const {
-    CGAL_triangulation_precondition( !is_empty() );
+    CGAL_precondition( !is_empty() );
     return previous(_front);
   }
 
@@ -114,13 +114,13 @@ public:
   }
 
   inline void pop() {
-    CGAL_triangulation_precondition( !is_empty() );
+    CGAL_precondition( !is_empty() );
     remove(front()); // it is important here that I do not pass the
     // variable _front but rather a copy of it...
   }
 
   inline void push_front(const Edge& e) {
-    CGAL_triangulation_precondition( !is_in_list(e) );
+    CGAL_precondition( !is_in_list(e) );
     push(e);
     _front = e;
   }
@@ -130,7 +130,7 @@ public:
   }
 
   void push(const Edge& e) {
-    CGAL_triangulation_precondition( !is_in_list(e) );
+    CGAL_precondition( !is_in_list(e) );
 
     if ( is_empty() ) {
       push_first(e);
@@ -146,7 +146,7 @@ public:
   }
 
   inline void insert_after(const Edge& e, const Edge& new_e) {
-    CGAL_triangulation_precondition( is_in_list(e) );
+    CGAL_precondition( is_in_list(e) );
     Edge old_front = _front;
     _front = next(e);
     push_front(new_e);
@@ -154,7 +154,7 @@ public:
   }
 
   inline void insert_before(const Edge& e, const Edge& new_e) {
-    CGAL_triangulation_precondition( is_in_list(e) );
+    CGAL_precondition( is_in_list(e) );
     Edge old_front = _front;
     _front = e;
     push(new_e);
@@ -167,7 +167,7 @@ public:
   }
 
   void remove(const Edge& e) {
-    CGAL_triangulation_precondition( is_in_list(e) );
+    CGAL_precondition( is_in_list(e) );
     static Edge SENTINEL_QUEUE_EDGE = Edge(Face_handle(NULL), -1);
 
     if ( is_singleton() ) {
