@@ -277,7 +277,7 @@ public :
     }
     catch (Interval_base::unsafe_comparison)
     {
-      std::cerr << "Interval filter failure (<)" << std::endl;
+      // std::cerr << "Interval filter failure (<)" << std::endl;
       return exact() < a.exact();
     }
   }
@@ -290,7 +290,7 @@ public :
     }
     catch (Interval_base::unsafe_comparison)
     {
-      std::cerr << "Interval filter failure (==)" << std::endl;
+      // std::cerr << "Interval filter failure (==)" << std::endl;
       return exact() == a.exact();
     }
   }
@@ -334,7 +334,7 @@ sign(const Lazy_exact_nt<ET> & a)
   }
   catch (Interval_base::unsafe_comparison)
   {
-    std::cerr << "Interval filter failure (sign)" << std::endl;
+    // std::cerr << "Interval filter failure (sign)" << std::endl;
     return CGAL_NTS sign(a.exact());
   }
 }
@@ -350,7 +350,7 @@ compare(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
   }
   catch (Interval_base::unsafe_comparison)
   {
-    std::cerr << "Interval filter failure (compare)" << std::endl;
+    // std::cerr << "Interval filter failure (compare)" << std::endl;
     return CGAL_NTS compare(a.exact(), b.exact());
   }
 }

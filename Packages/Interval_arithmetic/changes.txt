@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.108 on 17 July 2001
+- Remove debug messages from Lazy_exact_nt.
+
 Version 4.107 on 16 July 2001
 - Don't test exact square roots without LEDA...
 - VC++ Fix for Kernel_checker test program.
