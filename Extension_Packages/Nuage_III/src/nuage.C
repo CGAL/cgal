@@ -1469,7 +1469,7 @@ int main(int argc,  char* argv[])
   coord_type total_time(0);
 
   if (!opt.Section_file)
-    file_input(opt.finname, opt.number_of_points, L);
+    file_input(opt.finname, opt.number_of_points, L, opt.xyz);
   else
     section_file_input(opt.finname, opt.number_of_points, L);
 

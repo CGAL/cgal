@@ -1,3 +1,6 @@
+- Added support for xyz format
+- Changed Vertex* to Vertex_handle for Unique_hash_map
+  otherwise it does not compile with VC6
 - Removed visu_index (was a vertex data member)
 - added VRML output
 - replaced the dynamically allocated array with a vector in iofile_manipulator.h 
