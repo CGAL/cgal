@@ -1,3 +1,6 @@
+2.14    (23 Mar 2001)
+- Add Construct_center_[23].
+
 2.13    (23 Mar 2001)
 - Fix Construct_sphere_3.
 

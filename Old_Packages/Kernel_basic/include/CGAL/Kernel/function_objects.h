@@ -222,7 +222,20 @@ class p_Midpoint
     typedef Point          result_type;
 
     Point
-    operator()(const Point& p, const Point& q) const { return midpoint(p,q); }
+    operator()(const Point& p, const Point& q) const
+    { return midpoint(p,q); }
+};
+
+template <class Point>
+class p_Center
+{
+  public:
+    typedef Point          result_type;
+
+    template <class C>
+    Point
+    operator()(const C&c) const
+    { return c.center(); }
 };
 
 template <class Point>

@@ -1,3 +1,6 @@
+3.16   (23 Mar 2001)
+- Add Construct_center_[23].
+
 3.15   (20 Mar 2001)
 - Add squared_radius() and Compute_squared_radius_2 and 3.
 

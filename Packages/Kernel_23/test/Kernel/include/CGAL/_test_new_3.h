@@ -222,6 +222,10 @@ test_new_3(const R& rep)
         = rep.construct_midpoint_3_object();
   Point_3 tmp4 = construct_midpoint(p2,p3);
 
+  typename R::Construct_center_3 construct_center
+        = rep.construct_center_3_object();
+          tmp4 = construct_center(sp2);
+
   typename R::Construct_circumcenter_3 construct_circumcenter
         = rep.construct_circumcenter_3_object();
           tmp4 = construct_circumcenter(p2,p3,p4,p5);

@@ -206,9 +206,9 @@ test_new_2(const R& rep)
         = rep.construct_midpoint_2_object();
   Point_2 tmp12 = construct_midpoint_2(p2,p3);
 
-//  typename R::Construct_midpoint construct_midpoint
-//        = rep.construct_midpoint_object();
-//  Point_2 tmp12 = construct_midpoint(p2,p3);
+  typename R::Construct_center_2 construct_center
+        = rep.construct_center_2_object();
+  Point_2 tmp12a = construct_center(c1);
 
   typename R::Construct_circumcenter_2 construct_circumcenter
         = rep.construct_circumcenter_2_object();
