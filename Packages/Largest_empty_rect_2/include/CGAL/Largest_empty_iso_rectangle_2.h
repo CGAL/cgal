@@ -82,7 +82,8 @@ private:
      Internal_point(const Point_2 &p) // "original" point
        : x_part(p), y_part(p) {}
 
-     Internal_point(const Point_2 &p, const Point_2 &q) // "pseudo constructed" point
+     // "pseudo constructed" point
+     Internal_point(const Point_2 &p, const Point_2 &q)
        : x_part(p), y_part(q) {}
 
      // ... and similar constructors if you need them, e.g. :
@@ -162,7 +163,8 @@ private:
   bool larger_xy(const Point_data *a, const Point_data *b) const
   {
     //return traits().compare_xy_2_object()(a->p, b->p) == LARGER;
-    Comparison_result c = traits().compare_x_2_object()(a->p.x_part, b->p.x_part);
+    Comparison_result c = traits().compare_x_2_object()
+           (a->p.x_part, b->p.x_part);
     if(c == LARGER) {
       return true;
     } else if (c == EQUAL) {
@@ -174,7 +176,8 @@ private:
   // was y_larger
   bool larger_yx(const Point_data *a, const Point_data *b) const
   {
-    Comparison_result c = traits().compare_y_2_object()(a->p.y_part, b->p.y_part);
+    Comparison_result c = traits().compare_y_2_object()
+             (a->p.y_part, b->p.y_part);
     if(c == LARGER) {
       return true;
     } else if (c == EQUAL) {
@@ -200,7 +203,8 @@ private:
     bool operator()(const Point_data *a, const Point_data *b) const
     {
       //  return gt.less_yx_2_object()(a->p, b->p);
-      Comparison_result c = traits().compare_y_2_object()(b->p.y_part, a->p.y_part);
+      Comparison_result c = traits().compare_y_2_object()
+             (b->p.y_part, a->p.y_part);
       if(c == LARGER) {
         return true;
       } else if (c == EQUAL) {
@@ -226,7 +230,8 @@ private:
     bool operator()(const Point_data *a, const Point_data *b) const
     {
       // return gt.less_xy_2_object()(a->p, b->p);
-      Comparison_result c = traits().compare_x_2_object()(b->p.x_part, a->p.x_part);
+      Comparison_result c = traits().compare_x_2_object()
+             (b->p.x_part, a->p.x_part);
       if(c == LARGER) {
         return true;
       } else if (c == EQUAL) {
@@ -727,7 +732,8 @@ Largest_empty_iso_rectangle_2<T>::check_for_larger(const Point& px0,
   // check if the rectangle represented by the parameters is larger 
   //than the current one
   NT rect_size =
-    CGAL_NTS abs(px1.x_part.x() - px0.x_part.x()) * CGAL_NTS abs(py1.y_part.y() - py0.y_part.y());
+    CGAL_NTS abs(px1.x_part.x() - px0.x_part.x()) * 
+      CGAL_NTS abs(py1.y_part.y() - py0.y_part.y());
   if(do_check && rect_size > largest_rect_size) {
     largest_rect_size = rect_size;
     left_p = px0;
