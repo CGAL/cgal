@@ -56,6 +56,7 @@ int main(int, char*)
 #include <qlineedit.h>
 #include <qtimer.h>
 #include <qcursor.h>
+#include <qslider.h>
 
 typedef CGAL::Simple_cartesian<double>  K1;
 typedef CGAL::Filtered_kernel<K1>       Kernel;
@@ -158,10 +159,16 @@ public:
 
       QFrame* mainframe = new QFrame(this); 
       QHBoxLayout *hbox = new QHBoxLayout(mainframe);
-      hbox->setAutoAdd(true);
+      //      hbox->setAutoAdd(true);
       widget = new CGAL::Qt_widget(mainframe, "Main widget");
       widget->setSizePolicy(QSizePolicy( QSizePolicy::Expanding,
 					 QSizePolicy::Expanding ));
+      hbox->addWidget(widget);
+
+      QSlider* slider = new QSlider ( 0, 360, 60, 0, QSlider::Vertical, mainframe, "xsl" );
+      slider->setTickmarks( QSlider::Left );
+      hbox->addWidget(slider);
+
       setCentralWidget(mainframe);
       resize(700,500);
       mainframe->show();
@@ -675,7 +682,7 @@ public slots:
       else
 	{
 	  mesh->read(f, true);
-	  seeds->clear();
+	  clearSeeds();
 	  is_mesh_initialized=false;
 	}
 
