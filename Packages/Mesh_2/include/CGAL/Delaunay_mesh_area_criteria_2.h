@@ -43,10 +43,10 @@ public:
     : Private_base(aspect_bound, area_bound) {};
 
   inline
-  double area_bound() const { return sizebound; };
+  double area_bound() const { return this->sizebound; };
 
   inline
-  void set_area_bound(const double ab) { sizebound = ab; };
+  void set_area_bound(const double ab) { this->sizebound = ab; };
 
   class Is_bad: public Private_base::Is_bad
   {
@@ -109,14 +109,14 @@ public:
       q.first = min_sine;
       q.second = area;
 
-      if( min_sine < B ) return true;
-      if( SB == 0 ) return false;
-      return ( area > SB );
+      if( min_sine < this->B ) return true;
+      if( this->SB == 0 ) return false;
+      return ( area > this->SB );
     };
   };
 
   Is_bad is_bad_object() const
-  { return Is_bad(bound(), area_bound()); }
+  { return Is_bad(this->bound(), area_bound()); }
 };
 
 } //end namespace

@@ -85,15 +85,15 @@ public:
 
   Point get_refinement_point(const Constrained_edge& edge)
   {
-    va = edge.first;
-    vb = edge.second;
+    this->va = edge.first;
+    this->vb = edge.second;
     va_has_a_cluster = false;
     vb_has_a_cluster = false;
     
     // true bellow to remove ca and cb because they will
     // be restored by update_cluster(...).
-    if( clusters.get_cluster(va,vb,ca,true) ) {   
-      if( clusters.get_cluster(vb,va,cb,true) )
+    if( clusters.get_cluster(this->va,this->vb,ca,true) ) {   
+      if( clusters.get_cluster(this->vb,this->va,cb,true) )
         { // both ends are clusters
           va_has_a_cluster = true;
           vb_has_a_cluster = true;
@@ -102,13 +102,13 @@ public:
       else {
         // va only is a cluster
         va_has_a_cluster = true;
-        return split_cluster_point(va,vb,ca);
+        return split_cluster_point(this->va,this->vb,ca);
       }
     } else
-    if( clusters.get_cluster(vb,va,cb,true) ){
+    if( clusters.get_cluster(this->vb,this->va,cb,true) ){
       // vb only is a cluster
       vb_has_a_cluster = true;
-      return split_cluster_point(vb,va,cb);
+      return split_cluster_point(this->vb,this->va,cb);
     }else{
       // no cluster
       return Super::get_refinement_point(edge);
@@ -149,20 +149,20 @@ public:
 
 	std::cerr << (int)&*eit << std::endl;
 	
-        if(fh->is_constrained(i) && !is_locally_conform(tr, fh, i, p))
+        if(fh->is_constrained(i) && !is_locally_conform(this->tr, fh, i, p))
           {
-	    const Vertex_handle& v1 = fh->vertex( tr.cw (i));
-	    const Vertex_handle& v2 = fh->vertex( tr.ccw(i));
+	    const Vertex_handle& v1 = fh->vertex( this->tr.cw (i));
+	    const Vertex_handle& v2 = fh->vertex( this->tr.ccw(i));
 
-	    std::cerr << fh->is_constrained(i) << !is_locally_conform(tr, fh, i, p) << std::endl;
+	    std::cerr << fh->is_constrained(i) << !is_locally_conform(this->tr, fh, i, p) << std::endl;
 	    
-	    std::cerr << fh->vertex(tr.cw (i))->point() << "|"
-		      << fh->vertex(tr.ccw(i))->point() << "|"
+	    std::cerr << fh->vertex(this->tr.cw (i))->point() << "|"
+		      << fh->vertex(this->tr.ccw(i))->point() << "|"
 		      << p << std::endl;
 	    
             split_the_face = false;
 
-            bool v1_has_a_cluster = clusters.get_cluster(v1,v2,ca),
+            bool v1_has_a_cluster = clusters.get_cluster(v1,v2,ca);
             bool v2_has_a_cluster = clusters.get_cluster(v2,v1,cb);
 
           if( ( v1_has_a_cluster && v2_has_a_cluster) ||
@@ -225,15 +225,15 @@ private:
   Point split_cluster_point(Vertex_handle va, Vertex_handle vb, Cluster& c)
   {
     typename Geom_traits::Construct_vector_2 vector =
-      tr.geom_traits().construct_vector_2_object();
+      this->tr.geom_traits().construct_vector_2_object();
     typename Geom_traits::Construct_scaled_vector_2 scaled_vector =
-      tr.geom_traits().construct_scaled_vector_2_object();
+      this->tr.geom_traits().construct_scaled_vector_2_object();
     typename Geom_traits::Compute_squared_distance_2 squared_distance =
-      tr.geom_traits().compute_squared_distance_2_object();
+      this->tr.geom_traits().compute_squared_distance_2_object();
     typename Geom_traits::Construct_midpoint_2 midpoint =
-      tr.geom_traits().construct_midpoint_2_object();
+      this->tr.geom_traits().construct_midpoint_2_object();
     typename Geom_traits::Construct_translated_point_2 translate =
-      tr.geom_traits().construct_translated_point_2_object();
+      this->tr.geom_traits().construct_translated_point_2_object();
 
     typedef typename Geom_traits::FT FT;
     

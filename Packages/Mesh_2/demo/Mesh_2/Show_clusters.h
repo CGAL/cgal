@@ -59,9 +59,9 @@ public:
     reinit_clusters();
   }
 
-  void change_mesher(Mesher* mesher)
+  void change_mesher(Mesher* m)
   {
-    m = mesher;
+    mesher = m;
     reinit_clusters();
   }
 

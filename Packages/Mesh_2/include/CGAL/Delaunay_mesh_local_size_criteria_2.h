@@ -94,7 +94,7 @@ public:
 	  
 	  bool is_non_locally_bad = Baseclass::operator()(fh,q);
 
-	  if( q.first < B )
+	  if( q.first < this->B )
 	    return true;
 
           const Point_2& a = fh->vertex(0)->point();
@@ -115,7 +115,7 @@ public:
   };
 
   Is_bad is_bad_object() const
-  { return Is_bad(bound(), size_bound(), local, point()); };
+  { return Is_bad(this->bound(), this->size_bound(), local, point()); };
 };
 
 }; //end namespace

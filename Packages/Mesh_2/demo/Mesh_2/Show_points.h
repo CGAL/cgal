@@ -54,7 +54,7 @@ public:
 	      int pointsize = 3,
 	      PointStyle pointstyle = CGAL::DISC,
 	      QObject * parent=0, const char * name=0)
-    : Show_points_base(c, pointstyle, pointstyle,
+    : Show_points_base(c, pointsize, pointstyle,
 		       parent, name),
       cont(container), _begin(begin), _end(end) {};
 

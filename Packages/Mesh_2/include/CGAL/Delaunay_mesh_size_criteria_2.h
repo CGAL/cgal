@@ -143,14 +143,14 @@ public:
       q.first = min_sine;
       q.second = max_lenght;
       
-      if( min_sine < B ) return true;
+      if( min_sine < this->B ) return true;
       if( SB == 0 ) return false;
       return ( max_lenght > SB );
     }
   };
 
   Is_bad is_bad_object() const
-  { return Is_bad(bound(), size_bound()); }
+  { return Is_bad(this->bound(), size_bound()); }
 };
 
 } // end namespace CGAL
