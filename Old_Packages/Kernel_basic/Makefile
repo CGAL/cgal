@@ -23,7 +23,7 @@ Version:
 	cvs tag -c $(TAG_VERSION)
 	cvs tag -F -c current_submission
 
-submit: specific clean Version $(Package).tar.gz
+submit: clean Version $(Package).tar.gz
 	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
           changes.txt $(WWW_dir)
 	rm -f $(WWW_dir)/$(Package).ps.gz
