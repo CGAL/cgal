@@ -5,6 +5,7 @@ Version 4.101 on ?? June 2001
 - Regenerate filters for the new equal_planeC3.
 - Use the new macros in include/CGAL/Kernel/interface_macros.h for
   Filtered_kernel and Kernel_checker.
+- Update test/Kernel_checker.C for VC++ and new Delaunay.
 
 Version 4.100 on 20 June 2001
 - Arithmetic_filter.h => Filtered_exact.h.
