@@ -1,5 +1,9 @@
 Changes done to the `Polytope_distance_d' package
 
+Version 1.1 on 09-Jul-2001
+- replaced template parameter 'R' by 'K'
+- fixed warning message of test program when no number type is available
+
 Version 1.0.3 on 21-Mar-2001
 - removed 'maintainer' line from file header
 
