@@ -1,3 +1,7 @@
+4.103 (20 July 2003)
+- better handling of mpz_class and mpq_class by dealing with the expression
+  templates.  Adding some tests for that.
+
 4.102 (14 July 2003) [af]
 - Added iterator_traits specializations for Quotient<Gmpz>
 

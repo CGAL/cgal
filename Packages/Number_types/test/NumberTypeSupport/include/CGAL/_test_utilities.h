@@ -203,6 +203,20 @@ test_utilities(NT x)
   if (CGAL_NTS square(two) != four) return false;
   if (sq(two) != four) return false;
 
+  // Tests for number types that use the expression template mechanism
+  // (e.g. mpz_class)
+  if (!CGAL_NTS is_zero(zero+zero)) return false;
+  if (!CGAL_NTS is_one(one-zero)) return false;
+  if (!CGAL_NTS is_positive(one+zero)) return false;
+  if (CGAL_NTS is_negative(one+one)) return false;
+  if (CGAL_NTS sign(mone+mone) != CGAL::NEGATIVE) return false;
+  if (CGAL_NTS abs(mone+mone) != one+one) return false;
+  if (CGAL_NTS compare(zero+zero, one-zero) != CGAL::SMALLER) return false;
+  if (CGAL::to_double(zero+zero) != 0.0) return false;
+  if (! CGAL::is_finite(zero+zero)) return false;
+  if (! CGAL::is_valid(zero+zero)) return false;
+  if (CGAL_NTS square(two+two) != NT(16)) return false;
+
   // gcd
   typedef typename CGAL::Number_type_traits<NT>::Has_gcd Has_gcd;
   Has_gcd has_gcd = Has_gcd();

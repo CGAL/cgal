@@ -38,6 +38,11 @@
 // - mpf_class support is commented out until to_interval() is implemented.
 //   It is probably not very useful with CGAL anyway.
 
+// Note that GMP++ use the expression template mechanism, which makes things
+// a little bit complicated in order to make square(x+y) work for example.
+// Reading gmpxx.h shows that ::__gmp_expr<T, T> is the mp[zqf]_class proper,
+// while ::__gmp_expr<T, U> is the others "expressions".
+
 CGAL_BEGIN_NAMESPACE
 
 template <>
@@ -64,78 +69,46 @@ struct Rational_traits<mpq_class> {
   { return mpq_class(n, d); } 
 };
 
+template < typename T, typename U >
 inline
-mpz_class
-sqrt(const mpz_class &e)
+::__gmp_expr<T, T>
+sqrt(const ::__gmp_expr<T, U> &e)
 {
     return ::sqrt(e);
 }
 
+template < typename T, typename U >
 inline
 double
-to_double(const mpz_class & e)
-{ return e.get_d(); }
+to_double(const ::__gmp_expr<T, U> & e)
+{ return ::__gmp_expr<T, T>(e).get_d(); }
 
-inline
-double
-to_double(const mpq_class & e)
-{ return e.get_d(); }
-
+template < typename T, typename U >
 inline
 bool
-is_finite(const mpz_class &)
+is_finite(const ::__gmp_expr<T, U> &)
 { return true; }
 
+template < typename T, typename U >
 inline
 bool
-is_valid(const mpz_class &)
+is_valid(const ::__gmp_expr<T, U> &)
 { return true; }
 
-inline
-bool
-is_finite(const mpq_class &)
-{ return true; }
-
-inline
-bool
-is_valid(const mpq_class &)
-{ return true; }
-
+template < typename T, typename U >
 inline
 io_Operator
-io_tag(const mpz_class &)
+io_tag(const ::__gmp_expr<T, U> &)
 { return io_Operator(); }
 
-inline
-io_Operator
-io_tag(const mpq_class &)
-{ return io_Operator(); }
-
-inline
-Sign
-sign(const mpz_class& e)
-{ return (Sign) ::sgn(e); }
-
-inline
-Sign
-sign(const mpq_class& e)
-{ return (Sign) ::sgn(e); }
-
-inline
-Comparison_result
-compare(const mpz_class& e1, const mpz_class& e2)
+template < typename T, typename U >
+std::pair<double,double>
+to_interval (const ::__gmp_expr<T, U> & z)
 {
-  return (Comparison_result) ::cmp(e1, e2);
+  // Calls the functions below after dealing with the expression template.
+  return to_interval(::__gmp_expr<T, T>(z));
 }
 
-inline
-Comparison_result
-compare(const mpq_class& e1, const mpq_class& e2)
-{
-  return (Comparison_result) ::cmp(e1, e2);
-}
-
-// Should not be inline, but well...
 inline
 std::pair<double,double>
 to_interval (const mpz_class & z)
@@ -152,7 +125,6 @@ to_interval (const mpz_class & z)
   return approx.pair();
 }
 
-// Should not be inline, but well...
 inline
 std::pair<double, double>
 to_interval (const mpq_class & q)
@@ -165,61 +137,74 @@ to_interval (const mpq_class & q)
 
 namespace NTS {
   // These are necessary due to expression-templates.
+  template < typename T, typename U >
   inline
-  mpz_class
-  abs(const mpz_class& x) { return ::abs(x); }
+  ::__gmp_expr<T, T>
+  abs(const ::__gmp_expr<T, U>& x) { return ::abs(x); }
 
+  template < typename T, typename U >
   inline
-  mpq_class
-  abs(const mpq_class& x) { return ::abs(x); }
+  ::__gmp_expr<T, T>
+  square(const ::__gmp_expr<T, U>& x) { return x*x; }
+
+  template < typename T, typename U >
+  inline
+  Sign
+  sign(const ::__gmp_expr<T, U> & e)
+  { return (Sign) ::sgn(e); }
+
+  template < typename T, typename U >
+  inline
+  Comparison_result
+  compare(const ::__gmp_expr<T, U> & e1,
+          const ::__gmp_expr<T, U> & e2)
+  {
+    return (Comparison_result) ::cmp(e1, e2);
+  }
+
+  template < typename T, typename U1, typename U2 >
+  inline
+  Comparison_result
+  compare(const ::__gmp_expr<T, U1> & e1,
+          const ::__gmp_expr<T, U2> & e2)
+  {
+    return (Comparison_result) ::cmp(e1, e2);
+  }
+
+  template < typename T, typename U >
+  inline
+  bool
+  is_zero(const ::__gmp_expr<T, U> & e)
+  { return ::sgn(e) == 0; }
+
+  template < typename T, typename U >
+  inline
+  bool
+  is_one(const ::__gmp_expr<T, U> & e)
+  { return e == 1; }
+
+  template < typename T, typename U >
+  inline
+  bool
+  is_positive(const ::__gmp_expr<T, U> & e)
+  { return ::sgn(e) > 0; }
+
+  template < typename T, typename U >
+  inline
+  bool
+  is_negative(const ::__gmp_expr<T, U> & e)
+  { return ::sgn(e) < 0; }
+
 }
 
 #if 0
+// Unfinished stuff for mpf_class.
 template <>
 struct Number_type_traits<mpf_class> {
   typedef Tag_false Has_gcd;
   typedef Tag_true  Has_division;
   typedef Tag_true  Has_sqrt;
 };
-
-inline
-mpf_class
-sqrt(const mpf_class &e)
-{
-    return ::sqrt(e);
-}
-
-inline
-double
-to_double(const mpf_class & e)
-{ return e.get_d(); }
-
-inline
-bool
-is_finite(const mpf_class &)
-{ return true; }
-
-inline
-bool
-is_valid(const mpf_class &)
-{ return true; }
-
-inline
-io_Operator
-io_tag(const mpf_class &)
-{ return io_Operator(); }
-
-inline
-Sign
-sign(const mpf_class& e)
-{ return (Sign) ::sgn(e); }
-
-inline
-Comparison_result
-compare(const mpf_class& e1, const mpf_class& e2)
-{
-  return (Comparison_result) ::cmp(e1, e2);
-}
 
 // Should not be inline, but well...
 inline
@@ -234,12 +219,6 @@ to_interval (const mpf_class & e)
   ina += 1;
   ina *= approx;
   return ina.pair();
-}
-
-namespace NTS {
-  inline
-  mpf_class
-  abs(const mpf_class& x) { return ::abs(x); }
 }
 #endif
 
