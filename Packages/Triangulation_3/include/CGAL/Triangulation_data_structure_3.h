@@ -1008,7 +1008,8 @@ public:
     {
     }
 
-  void copy_tds(const Tds & tds)
+  Vertex* copy_tds(const Tds & tds, Vertex* vert = NULL)
+    // returns the new vertex corresponding to vert in the new tds
   {
     map< void*, void*, less<void*> > V;
     map< void*, void*, less<void*> > F;
@@ -1021,7 +1022,7 @@ public:
     set_number_of_vertices(n);
     set_dimension(tds.dimension());
 
-    if(n == 0){ return ; }
+    if(n == 0){ return vert; }
 
     { // create the vertices
 
@@ -1089,7 +1090,11 @@ public:
 //         }
 //     }
 
-    CGAL_triangulation_postcondition( is_valid() );
+    CGAL_triangulation_postcondition( is_valid(true) );
+    if ( vert != NULL ) {
+      return (Vertex*) V[vert];
+    }
+    else return NULL;
   }
  
   
