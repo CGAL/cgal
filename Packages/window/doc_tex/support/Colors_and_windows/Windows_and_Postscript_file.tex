@@ -1,0 +1,139 @@
+\ccParDims
+
+\chapter{Window output an Postscript output}
+\label{chapterWin}
+
+\section{Introduction}
+
+For visualizing and debugging your programs the graphical output of geometric objects is
+important. In this chapter we describe functionality useful for graphical IO and output
+in Postscript format.\\
+For window output we use the \leda window class if \leda is present. If you install
+\cgal without \leda you can use a ported version of the \leda window class.
+This port of the \leda window lib can be downloaded as a precompiled library for various 
+platforms from the \cgal\ web page. Note that Algorithmic Solutions Software GmbH 
+has offered us the possibility to provide the ported version of the \leda\ 
+window.\\
+For output in Postscript format using the \cgal Postscript file stream you need 
+\leda installed.
+
+\section{Window output}
+
+An object of type \ccStyle{CGAL::Window_stream} is a two-dimensional window for
+graphical IO. The input and output operations performs a mapping from
+object coordinates to window coordinates.
+Actually, \ccStyle{CGAL::Window_stream} is identical to the \leda\ class \ccStyle{leda_window},
+if \leda\ is used and to the ported version of the \leda\ window class, if
+\leda\ is not used.
+Therefore, the rich functionality of \ccStyle{leda_window} is available on
+\ccStyle{CGAL::Window_stream} as well, for example panels.
+In addition, the class \ccStyle{CGAL::Window_stream} provides input and output 
+operators for the classes which are defined in the \cgal\ kernel.
+\ccStyle{CGAL::Window_stream} should be initialized with a coordinate frame 
+(by calling member function
+\ccc{init}) and must be displayed (by calling member function \ccc{display}) before
+drawing.
+
+\begin{ccTexOnly}
+For further information on \ccStyle{leda_window}, we refer to \cite{mnsu-lum}.
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+For further information on <i>leda_window</i>, we refer to the 
+<A HREF="http://www.mpi-sb.mpg.de/LEDA/MANUAL/MANUAL.html">LEDA manual</A>.
+\end{ccHtmlOnly}
+
+Input and output operators for \ccStyle{CGAL::Window_stream} are defined for the geometric 
+classes in the \cgal\ kernel.
+The coordinates of the geometric objects are in object space. Data are
+entered with the left mouse button.
+
+It is important that the window stream header file gets included
+{\em after} the inclusion of the header files of geometric classes
+that get inserted to or extracted from the window stream. See the following small example
+program.
+
+\begin{cprog}
+
+#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/IO/Window_stream.h>
+
+typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
+typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
+
+int main()
+{
+    Point p(0,1), q(2,2);
+    Segment s(p,q);
+
+    CGAL::Window_stream W(100,100);
+    W.init(0,10,10);
+    CGAL::cgalize( W);
+    W.display();
+
+    W << CGAL::RED << s << CGAL::BLACK << p << q ;
+    W >> s >> p;
+    return 0;
+}
+\end{cprog} 
+
+3D objects can be used as well with the \ccc{Window_stream}. The stream output
+operator \ccc{<<} projects them to the $xy$-plane. The stream input
+operator \ccc{>>} sets the $z$ coordinate to zero.
+To get these operators you have to 
+
+\ccInclude{CGAL/IO/window_stream_xy_3.h}
+
+
+\section{Postscript output}
+
+An object of type \ccStyle{Postscript_file_stream} provides graphical output in PostScript
+format.
+\ccStyle{Postscript_file_stream} is derived from the \leda\ class \ccStyle{ps_file}.
+Therefore, the functionality of \ccStyle{ps_file} is available on \ccStyle{Postscript_file_stream}
+as well.
+In addition, the class \ccStyle{Postscript_file_stream} provides input and output 
+operators for the classes which are defined in the \cgal\ kernel.
+The interface of \ccStyle{Postscript_file_stream} is very similar to the interface 
+of \ccStyle{leda_window}. 
+To increase similarity, some functions have been added with respect to \ccStyle{ps_file}.
+\begin{ccTexOnly}
+For further information on \ccStyle{ps_file}, we refer to \cite{mnsu-lum}.
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+For further information on <i>ps_file</i>, we refer to the 
+<A HREF="http://www.mpi-sb.mpg.de/LEDA/MANUAL/MANUAL.html">LEDA manual</A>.
+\end{ccHtmlOnly}
+
+The output operator to \ccStyle{Postscript_file_stream} is defined for all geometric classes 
+in the two-dimensional \cgal\ kernel. There are no input operators of course.
+
+It is important that the postscript file stream header file gets included
+{\em after} the inclusion of the header files of geometric classes
+that get inserted to the postscript stream file. See the following example program.
+
+\begin{cprog}
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/IO/Postscript_file_stream.h>
+
+typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
+typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
+
+int main()
+{
+    Point p(0,1), q(2,2);
+    Segment s(p,q);
+
+    CGAL::Postscript_file_stream PS(100,100);
+    PS.init(0,10,0);
+    CGAL::cgalize( PS);
+    PS.display();
+
+    PS << CGAL::RED << s << CGAL::BLACK << p << q ;
+    return 0;
+}
+\end{cprog} 
+
