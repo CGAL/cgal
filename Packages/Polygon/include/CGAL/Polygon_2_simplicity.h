@@ -36,11 +36,11 @@
   are crossed by the sweep line are stored in a tree from bottom to top.
 
   We discern three types of events:
-  - insertion events. When both edges of a polygon vertex extend to the right we
-    need to insert both edges in the tree. We need to search with the vertex to
-    find out between which edges the new edges are to be inserted.
-  - deletion events. When both edges extend to the left of the vertex we need to
-    remove both edges from the tree. We have to check that the vertex lies
+  - insertion events. When both edges of a polygon vertex extend to the right
+    we need to insert both edges in the tree. We need to search with the vertex
+    to find out between which edges the new edges are to be inserted.
+  - deletion events. When both edges extend to the left of the vertex we need
+    to remove both edges from the tree. We have to check that the vertex lies
     between the edges above and below the removed edges.
   - replacement event. In the other case we need to replace the edge that
     extends to the left by the edge that extends to the right. We need to check
@@ -62,10 +62,13 @@
 
   Vertex indices of the polygon play a double role. The number v can be used to
   identify vertex v or the edge from vertex v to vertex v+1.
+
 */
+
 namespace CGAL {
 
-namespace i_polygon {  // namespace CGAL::i_polygon is used for internal functions
+namespace i_polygon {
+ // namespace CGAL::i_polygon is used for internal functions
 
 typedef std::vector<int>::size_type Index_t;
 
@@ -105,7 +108,7 @@ class Less_segments {
 
 template <class ForwardIterator, class PolygonTraits>
 struct Edge_data {
-    typedef std::set<Vertex_index, Less_segments<ForwardIterator,PolygonTraits> >
+    typedef std::set<Vertex_index,Less_segments<ForwardIterator,PolygonTraits> >
             Tree;
     Edge_data() : is_in_tree(false) {}
     typename Tree::iterator tree_it; // The iterator of the edge in the tree.
@@ -120,7 +123,7 @@ struct Edge_data {
 template <class ForwardIterator, class PolygonTraits>
 class Vertex_data {
 public:
-    typedef std::set<Vertex_index, Less_segments<ForwardIterator,PolygonTraits> >
+    typedef std::set<Vertex_index,Less_segments<ForwardIterator,PolygonTraits> >
 	            Tree;
 
     typedef typename PolygonTraits::Point_2 Point_2;
@@ -155,8 +158,10 @@ public:
 //    { return points_start[i.as_int()];}
         { return *iterators[i.as_int()];}
     void sweep(Tree *tree);
-    bool insertion_event(Tree *tree, Vertex_index i, Vertex_index j, Vertex_index k);
-    bool replacement_event(Tree *tree, Vertex_index cur, Vertex_index to_insert);
+    bool insertion_event(Tree *tree,
+                Vertex_index i, Vertex_index j, Vertex_index k);
+    bool replacement_event(Tree *tree,
+                Vertex_index cur, Vertex_index to_insert);
     bool deletion_event(Tree *tree, Vertex_index i, Vertex_index j);
     bool on_right_side(Vertex_index vt, Vertex_index edge, bool above);
 };
@@ -190,8 +195,10 @@ template <class ForwardIterator, class PolygonTraits>
 bool Less_segments<ForwardIterator, PolygonTraits>::
 less_than_in_tree(Vertex_index new_edge, Vertex_index tree_edge)
 {
-    CGAL_polygon_precondition(m_vertex_data->edges[tree_edge.as_int()].is_in_tree);
-    CGAL_polygon_precondition(!m_vertex_data->edges[new_edge.as_int()].is_in_tree);
+    CGAL_polygon_precondition(
+       m_vertex_data->edges[tree_edge.as_int()].is_in_tree);
+    CGAL_polygon_precondition(
+       !m_vertex_data->edges[new_edge.as_int()].is_in_tree);
     Vertex_index left, mid, right;
     m_vertex_data->left_and_right_index(left, right, tree_edge);
     mid = m_vertex_data->left_index(new_edge);
