@@ -1,3 +1,6 @@
+18 Feb 2004 Sylvain Pion
+- Added missing this-> required by g++ 3.4.
+
 0.4 (6 Feb 2004)
 -Added lines
   typedef CGAL::Tag_false Has_sqrt;
