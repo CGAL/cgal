@@ -22,8 +22,8 @@
 #ifndef CGAL_LARGEST_EMPTY_ISO_RECTANGLE_2_H
 #define CGAL_LARGEST_EMPTY_ISO_RECTANGLE_2_H
 
-#include <set.h>
-#include <list.h>
+#include <set>
+#include <list>
 
 #include <CGAL/utility.h>
 #include <CGAL/Iterator_project.h>
@@ -39,11 +39,9 @@ public:
   enum Point_type{REG, BOT_RIGHT, BOT_LEFT, TOP_LEFT, TOP_RIGHT};
   typedef typename T::FT NT;
   typedef typename T::Point_2               Point;
-  //  typedef typename T::Vector_2              Vector_2; 
   typedef typename T::Iso_rectangle_2       Iso_rectangle_2;
-
-
   typedef T                        Traits;
+
 private:
 
   bool cache_valid;
@@ -85,28 +83,27 @@ private:
   // was x_smaller
   bool less_xy(const Point_data *a, const Point_data *b) const
   {
-    return geom_traits().less_xy_2_object()(a->p, b->p);
+    return traits().less_xy_2_object()(a->p, b->p);
   }
 
   // was y_smaller
   bool less_yx(const Point_data *a, const Point_data *b) {
-    return geom_traits().less_yx_2_object()(a->p, b->p);
+    return traits().less_yx_2_object()(a->p, b->p);
     }
 
   // was x_larger
   bool larger_xy(const Point_data *a, const Point_data *b) {
-    return geom_traits().compare_xy_2_object()(a->p, b->p) == LARGER;
+    return traits().compare_xy_2_object()(a->p, b->p) == LARGER;
   }
 
   // was y_larger
   bool larger_yx(const Point_data *a, const Point_data *b) {
-    //Comparison_result c = geom_traits().compare_yx_2_object()(a->p, b->p);
-    Comparison_result c = geom_traits().compare_y_2_object()(a->p, b->p);
+
+    Comparison_result c = traits().compare_y_2_object()(a->p, b->p);
     if(c == LARGER) {
       return true;
     } else if (c == EQUAL) {
-      return geom_traits().less_x_2_object()(b->p, a->p); //af: check
-      /*geom_traits().less_xy_2_object()(b->p, a->p);*/
+      return traits().less_x_2_object()(b->p, a->p); 
     } 
     return false;
   }
@@ -158,7 +155,6 @@ private:
   Point left_p, bottom_p, right_p ,top_p; 
 
   NT largest_rect_size;
-  //  Polygon *polygon;
 
 
   bool insert(const Point& _p,Point_type i_type);
@@ -244,7 +240,7 @@ public:
                            const Point*> const_iterator;
 
 
-  const Traits & geom_traits() const {return _gt;};
+  const Traits & traits() const {return _gt;};
 
   // ctor
   Largest_empty_iso_rectangle_2(const Point& bl, const Point& tr);
@@ -255,8 +251,6 @@ public:
   // ctor
   Largest_empty_iso_rectangle_2();
 
-  // ctor
-  //  Largest_empty_iso_rectangle_2(Polygon &inp_polygon);
 
   // add a point to data
   bool
@@ -387,8 +381,8 @@ Largest_empty_iso_rectangle_2<T>::
 Largest_empty_iso_rectangle_2(
                const Largest_empty_iso_rectangle_2<T>& ler)
 : cache_valid(false), _gt(),
-  x_sorted(Less_xy(geom_traits())),
-  y_sorted(Less_yx(geom_traits()))
+  x_sorted(Less_xy(traits())),
+  y_sorted(Less_yx(traits()))
 {
   copy_memory(ler);
 }
@@ -436,9 +430,9 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p)
 
   cache_valid = false;
   Point_data_set_of_y *right_tent =
-    new Point_data_set_of_y(Less_yx(geom_traits()));
+    new Point_data_set_of_y(Less_yx(traits()));
   Point_data_set_of_y *left_tent =
-    new Point_data_set_of_y(Less_yx(geom_traits()));
+    new Point_data_set_of_y(Less_yx(traits()));
   po = new Point_data(_p,right_tent,left_tent,REG);
 
   x_sorted.insert(po);
@@ -461,8 +455,8 @@ Largest_empty_iso_rectangle_2<T>::remove(const Point& _p)
   if(iter1 == x_sorted.end() || (*iter1)->type != REG)
     return(false);
 
-  delete((*iter1)->right_tent); // af: was iter
-  delete((*iter2)->left_tent);  // af: was iter
+  delete((*iter1)->right_tent);
+  delete((*iter2)->left_tent);
 
   x_sorted.erase(iter1);
   y_sorted.erase(iter2);
@@ -478,17 +472,7 @@ Largest_empty_iso_rectangle_2<T>::check_for_larger(const Point& px0,
 						   const Point& py1)
 {
   bool do_check = true;
-  /*
-  if(polygon) {
-    NT bw = x1 - x0;
-    NT bh = y1 - y0;
-    NT bx = x0 + bw/2;
-    NT by = y0 + bh/2;
 
-    Point center(bx,by);
-    do_check = polygon->has_on_bounded_side(center);
-  }
-  */
   // check if the rectangle represented by the parameters is larger 
   //than the current one
   NT rect_size =
@@ -576,9 +560,9 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
 
   cache_valid = false;
   Point_data_set_of_y *right_tent =
-    new Point_data_set_of_y(Less_yx(geom_traits()));
+    new Point_data_set_of_y(Less_yx(traits()));
   Point_data_set_of_y *left_tent = 
-    new Point_data_set_of_y(Less_yx(geom_traits()));
+    new Point_data_set_of_y(Less_yx(traits()));
   po = new Point_data(_p,right_tent,left_tent,i_type);
 
   x_sorted.insert(po);
@@ -751,9 +735,8 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_bot()
 
   while(size - 4 > points_removed && iter3 != Point_data_list.end()) {
     if(less_yx(*iter1, *iter2) && larger_yx(*iter2, *iter3)) {
-      // Rectangles in phase 2 should be ignored for polygon
-      //if(!polygon)
-        check_for_larger((*iter1)->p, bl_p, (*iter3)->p, (*iter2)->p);
+
+      check_for_larger((*iter1)->p, bl_p, (*iter3)->p, (*iter2)->p);
       tent(*iter1,*iter2,*iter3);
       ++points_removed;
       Point_data_list.erase(iter2);
@@ -913,12 +896,9 @@ template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::phase_2()
 {
-  // Rectangles in phase 2 should be ignored for polygon
-  //if(!polygon) {
     phase_2_on_top();
     phase_2_on_left();
     phase_2_on_right();
-    //}
 
   // Done only for building tents for phase 3
   phase_2_on_bot();
@@ -1119,8 +1099,6 @@ Largest_empty_iso_rectangle_2<T>::update()
   if(! cache_valid){
     largest_rect_size = 0;
 
-    // Rectangles in phase 1 should be ignored for polygon
-    //if(!polygon)
     phase_1();
 
     phase_2();
@@ -1159,59 +1137,11 @@ Largest_empty_iso_rectangle_2<T>::get_left_bottom_right_top()
   return(make_quadruple(left_p, bottom_p, right_p, top_p));
 }
 
-/*
-template<class T>
-Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
-    Polygon &inp_polygon)
-{
-  polygon = new Polygon(inp_polygon);
-
-  // determine extreme values of bounding box
-  min_x2 = min_x = polygon->left_vertex()->x();
-  min_y2 = min_y = polygon->bottom_vertex()->y();
-  max_x2 = max_x = polygon->right_vertex()->x();
-  max_y2 = max_y = polygon->top_vertex()->y();
-
-  // add extreme points
-  insert(Point(min_x - 0.000001,min_y - 0.000001),BOT_LEFT);
-  insert(Point(max_x + 0.000001,min_y2 - 0.000001),BOT_RIGHT);
-  insert(Point(min_x2 - 0.000001,max_y + 0.000001),TOP_LEFT);
-  insert(Point(max_x2 + 0.000001,max_y2 + 0.000001),TOP_RIGHT);
-
-  // insert the polygon 
-  Polygon::Vertex_iterator it = polygon->vertices_begin();
-  Polygon::Vertex_iterator next = it;
-
-  Point p,q;
-  Point p0 = *it;
-
-  while(it != polygon->vertices_end()) {
-    insert(*it);
-    ++next;
-    if(next == polygon->vertices_end())
-      q = p0;
-    else
-      q = *next;
-    p = *it;
-
-    // add some points on the segment 
-    Vector_2 v = (q - p)/6;
-    for(int j = 1; j < 6; j++) {
-      insert(p + j * v);
-    }    
-
-    ++it;
-  }
-}
-*/  
-
 
 template<class T>
 void
 Largest_empty_iso_rectangle_2<T>::init(const Point& bl, const Point& tr)
 {
-  //  polygon = NULL;
-
   // determine extreme values of bounding box
   bl_p = bl;
   tr_p = tr;
@@ -1229,8 +1159,8 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
   const Point& bl,
   const Point& tr)
   : cache_valid(false), _gt(),
-    x_sorted(Less_xy(geom_traits())),
-    y_sorted(Less_yx(geom_traits()))
+    x_sorted(Less_xy(traits())),
+    y_sorted(Less_yx(traits()))
 {
   // precondition: bl and tr
   init(bl, tr);
@@ -1241,8 +1171,8 @@ template<class T>
 Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
   const Iso_rectangle_2 &b)
   : cache_valid(false), _gt(),
-    x_sorted(Less_xy(geom_traits())),
-    y_sorted(Less_yx(geom_traits()))
+    x_sorted(Less_xy(traits())),
+    y_sorted(Less_yx(traits()))
 {
   init(b.min(), b.max());
 }
@@ -1251,8 +1181,8 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
 template<class T>
 Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2()
   : cache_valid(false), _gt(),
-    x_sorted(Less_xy(geom_traits())),
-    y_sorted(Less_yx(geom_traits()))
+    x_sorted(Less_xy(traits())),
+    y_sorted(Less_yx(traits()))
 {
   Point bl(0,0);
   Point tr(1,1);
