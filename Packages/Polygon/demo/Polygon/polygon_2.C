@@ -306,7 +306,8 @@ void show_info()
   void howto(){
     QString home;
     home = "help/index.html";
-    Qt_help_window *help = new Qt_help_window(home, ".", 0, "help viewer");
+    CGAL::Qt_help_window *help = new 
+      CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
     help->show();
