@@ -4,12 +4,15 @@
 % -----------------------------------------------------------------------------
 % file  : Kernel/spec/Random.tex
 % author: Sven Schönherr (sven@inf.fu-berlin.de)
-% $Id$
+% -----------------------------------------------------------------------------
+% $Revision$
+% $Date$
 % =============================================================================
 
 \begin{ccClass}{CGAL_Random}
 \ccSection{Random Numbers Generator}
 
+% -----------------------------------------------------------------------------
 \ccDefinition
 
 An instance of type \ccClassName\ is a random numbers generator. It
@@ -23,20 +26,29 @@ numbers from one stream does \emph{not} depend upon how many numbers
 were extracted from the other streams.
 
 \ccInclude{CGAL/Random.h}
-
-\ccCreation
 \ccCreationVariable{random}
 
-\ccSetThreeColumns{double}{}{
-  returns a random \ccc{double} from the interval
-  $[$\ccc{lower}$,$\ccc{upper}$)$.}
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccSetThreeColumns{double}{\ccVar.get_seed( Seed& seed)}{}
 \ccPropagateThreeToTwoColumns
 
+\ccUnchecked
+\ccNestedType{Seed}{Seed type.}
+
+% -----------------------------------------------------------------------------
+\ccCreation
 
 \ccConstructor{ CGAL_Random( );}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.}
 
+\ccConstructor{ CGAL_Random( Seed seed );}{
+        introduces a variable \ccVar\ of type \ccClassTemplateName\
+        and initializes it's internal seed with \ccc{seed}.}
 
+
+% -----------------------------------------------------------------------------
 \ccOperations
 
 \ccMemberFunction{ bool get_bool( );}{
@@ -53,6 +65,12 @@ were extracted from the other streams.
 
 \ccMemberFunction{ int operator() ( int upper);}{
         returns \ccVar\ccc{.get_int( 0, upper)}.}
+
+\ccMemberFunction{ void get_seed( Seed& seed) const;}{
+        stores the current internal seed in \ccc{seed}.}
+
+\ccMemberFunction{ void set_seed( Seed const& seed);}{
+        sets the internal seed to \ccc{seed}.}
 
 \end{ccClass}
 

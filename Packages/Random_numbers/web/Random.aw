@@ -113,8 +113,12 @@ The functionality is described and documented in the specification
 section, so we do not comment on it here.
 
 @macro <Random public interface> = @begin
+    // types
+    typedef typename  unsigned short  Seed[3];		// 48 Bits
+
     // creation
     CGAL_Random( );
+    CGAL_Random( Seed seed);
 
     // operations
     bool    get_bool  ( );
@@ -122,6 +126,9 @@ section, so we do not comment on it here.
     double  get_double( double lower = 0.0, double upper = 1.0);
 
     int     operator () ( int upper);
+
+    void    get_seed( Seed& seed) const;
+    void    set_seed( Seed const& seed);
 @end
 
   
@@ -131,13 +138,14 @@ The seed is stored in an array of three @prg{unsigned short}s.
 
 @macro <Random private data members> = @begin
     // data members
-    unsigned short  seed[ 3];			// 48 Bits
+    Seed  _seed;			
 @end
 
 
 \subsection{Constructors}
 
-The seed is initialized using the system time.
+In the default constructor te seed is initialized using the system
+time.
 
 @macro <Random constructors> = @begin
     #include <stdlib.h>
@@ -152,8 +160,17 @@ The seed is initialized using the system time.
 	unsigned long  ms = tv.tv_sec*1000000+tv.tv_usec;
 
 	// initialize random numbers generator
-	seed[ 0] = seed[ 2] = CGAL_static_cast( unsigned short, ms >> 16);
-	seed[ 1] =            CGAL_static_cast( unsigned short, ms & 65535);
+	_seed[ 0] = _seed[ 2] = CGAL_static_cast( unsigned short, ms >> 16);
+	_seed[ 1] =             CGAL_static_cast( unsigned short, ms & 65535);
+    }
+
+    CGAL_Random::
+    CGAL_Random( Seed seed)
+    {
+	// initialize random numbers generator
+	_seed[ 0] = seed[ 0];
+	_seed[ 1] = seed[ 1];
+	_seed[ 2] = seed[ 2];
     }
 @end
 
@@ -170,7 +187,7 @@ The result is converted to a number in the given range.
     CGAL_Random::
     get_bool( )
     {
-	return( CGAL_static_cast( bool, ( erand48( seed) >= 0.5)));
+	return( CGAL_static_cast( bool, ( erand48( _seed) >= 0.5)));
     }
 
     inline
@@ -179,7 +196,7 @@ The result is converted to a number in the given range.
     get_int( int lower, int upper)
     {
 	return( lower + CGAL_static_cast( int,
-	          CGAL_static_cast( double, upper-lower) * erand48( seed)));
+	          CGAL_static_cast( double, upper-lower) * erand48( _seed)));
     }
 
     inline
@@ -187,7 +204,7 @@ The result is converted to a number in the given range.
     CGAL_Random::
     get_double( double lower, double upper)
     {
-	return( lower + ( upper-lower) * erand48( seed));
+	return( lower + ( upper-lower) * erand48( _seed));
     }
 
     inline
@@ -199,18 +216,45 @@ The result is converted to a number in the given range.
     }
 @end
 
+The seed operations just copy the internal seed to or from the given
+seed variable, respectively.
+
+@macro <Random seed operations> = @begin
+    void
+    CGAL_Random::
+    get_seed( Seed& seed) const
+    {
+	seed[ 0] = _seed[ 0];
+	seed[ 1] = _seed[ 1];
+	seed[ 2] = _seed[ 2];
+    }
+
+    void
+    CGAL_Random::
+    set_seed( Seed const& seed)
+    {
+	_seed[ 0] = seed[ 0];
+	_seed[ 1] = seed[ 1];
+	_seed[ 2] = seed[ 2];
+    }
+@end
+
 @! ============================================================================
 @! Test
 @! ============================================================================
 
 \section{Test}
 
-We call each function of class @prg{CGAL_Random} at least ones to ensure
-code coverage. I addition we check if the generated random numbers lie in
-the given ranges.
+We call each function of class @prg{CGAL_Random} at least once to
+ensure code coverage. In addition we check if the generated random
+numbers lie in the given ranges, and if two random numbers generators
+initialized with the same seed generate the same sequence of random
+numbers.
 
 @macro <Random tests> = @begin
-    CGAL_Random rnd;
+    CGAL_Random        rnd;
+    CGAL_Random::Seed  seed;
+    rnd.get_seed( seed);
 
     // test get_bool
     {
@@ -239,6 +283,16 @@ the given ranges.
 	int  i = rnd( 5555);
 	CGAL_assertion( ( 0 <= i) && ( i < 5555));
     }
+
+    // test seed funtions
+    {
+	rnd.set_seed( seed);			// now `rnd' and `rnd2'
+	CGAL_Random rnd2( seed);		// have the same seed
+
+	CGAL_assertion( rnd.get_bool()          == rnd2.get_bool());
+	CGAL_assertion( rnd.get_int( -100, 100) == rnd2.get_int( -100, 100));
+	CGAL_assertion( rnd.get_double()        == rnd2.get_double());
+    }
 @end
 
 @! ==========================================================================
@@ -252,6 +306,8 @@ the given ranges.
 
     #ifndef CGAL_RANDOM_H
     #define CGAL_RANDOM_H
+
+    #define typename
 
     // Class declaration
     // =================
@@ -287,6 +343,9 @@ the given ranges.
     // ================================
     // constructors
     @<Random constructors>
+
+    // ssed operations
+    @<Random seed operations>
 
     @<end of file line>
 @end
