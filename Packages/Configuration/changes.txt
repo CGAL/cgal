@@ -1,3 +1,6 @@
+2.74 30/07/2003 [af]
+- Made CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG harder
+
 2.73 30/07/2003 [af]
 - Added some workarounds for SunPro CC 5.5
 
