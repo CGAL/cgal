@@ -1,0 +1,23 @@
+demo/Min_quadrilateral_2/README
+-------------------------------
+
+Interactive demo programs of some optimisation algorithms in CGAL.
+Input (mouse clicks) and output are visualized in a LEDA window.
+
+The provided makefile is prepared to link with LEDA.  
+
+The demo is based on GeoWin, for information about the standard
+features of the geowin interface, please refer to the GeoWin
+documentation.
+
+
+minimum_enclosing_quadrilateral_2_demo:
+
+shows the minimum enclosing rectangle(orange), parallelogram(blue) and
+strip(green) of a planar point set. A strip is the closed region
+between two parallel lines. Click the left mouse button to add points,
+and hold it to drag a point around. There are various options for
+generating test data, loading and saving scenes and changing the
+appearance.
+
+Michael Hoffmann
