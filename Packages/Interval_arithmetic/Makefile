@@ -15,18 +15,18 @@ package: doc filters example clean $(Package).tar.gz
 	@echo "----------------------------------"
 	@echo "---- changes.txt              ----"
 	@echo "---- make test                ----"
-	@echo "---- make VERSION=3.1 version ----"
+	@echo "---- make VERSION=3.4 version ----"
 	@echo "---- cvs commit               ----"
-	@echo "---- make VERSION=3.1 rtag    ----"
+	@echo "---- make VERSION=3.4 rtag    ----"
 	@echo "---- make package             ----"
 	@echo "---- make submit              ----"
 	@echo "----------------------------------"
 
 version:
-	echo "$(VERSION) (" `date +"%e %b %Y"` ")" > version
+	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
 
 rtag:
-	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/"` $(CVS_MODULE_NAME)
+	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/g"` $(CVS_MODULE_NAME)
 
 submit: package
 	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
