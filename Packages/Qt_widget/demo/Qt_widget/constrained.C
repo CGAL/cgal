@@ -57,16 +57,16 @@ class MyWindow : public QMainWindow
   Q_OBJECT
 public:
   MyWindow(int x, int y) {
-    win = new CGAL::Qt_widget(this);
-    setCentralWidget(win);
-    win->set_window(-1.1, 1.1, -1.1, 1.1, true);
+    widget = new CGAL::Qt_widget(this);
+    setCentralWidget(widget);
+    widget->set_window(-1.1, 1.1, -1.1, 1.1, true);
 
     point_factory = new CGAL::Qt_widget_get_point<K>();
-    connect(win, SIGNAL(new_cgal_object(CGAL::Object)),
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
 	    this, SLOT(new_point(CGAL::Object)) );
-    win->attach(*point_factory);
+    widget->attach(*point_factory);
 
-    connect(win, SIGNAL(custom_redraw()), this, SLOT(redrawWin()) );
+    connect(widget, SIGNAL(custom_redraw()), this, SLOT(redrawWin()) );
 
     statusBar();
     
@@ -81,20 +81,20 @@ public:
     menuBar()->insertItem( "&Help", help );
     help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
 
-    win->show();
+    widget->show();
     resize(x,y);
   };
 
   void draw_constraints()
   {
-    *win << CGAL::RED;
-    win->lock();
+    *widget << CGAL::RED;
+    widget->lock();
     std::list<Constraint>::iterator cit=lc.begin();
     for( ; cit != lc.end(); ++cit) {
-      *win << Segment((*cit).first,(*cit).second);
+      *widget << Segment((*cit).first,(*cit).second);
     }
-    win -> unlock();
-    *win << CGAL::BLUE;
+    widget -> unlock();
+    *widget << CGAL::BLUE;
   }
 
   void draw_connected_component(const Point&  p)
@@ -124,22 +124,22 @@ public:
     }
 
     // draw
-    int width=win->lineWidth();
-    *win << CGAL::FillColor(CGAL::GREEN) << CGAL::LineWidth(0);
+    int width=widget->lineWidth();
+    *widget << CGAL::FillColor(CGAL::GREEN) << CGAL::LineWidth(0);
     std::set<Face_handle>::iterator it;
     for ( it = component.begin(); it != component.end(); it++) {
-      if (! ct.is_infinite( *it)) *win << ct.triangle( *it);
-      else *win << ct.segment(*it, (*it)->index(ct.infinite_vertex()));
+      if (! ct.is_infinite( *it)) *widget << ct.triangle( *it);
+      else *widget << ct.segment(*it, (*it)->index(ct.infinite_vertex()));
     }
-    *win << CGAL::LineWidth(width);
+    *widget << CGAL::LineWidth(width);
 
   };
   
   void init_paint()
   {
-    win->lock();
+    widget->lock();
     load_file("data/fish");
-    win->unlock();
+    widget->unlock();
     statusBar()->message("Enter points with the left button");
   };
 
@@ -170,11 +170,11 @@ public slots:
 
   void redrawWin()
   {
-    win->lock();
-    win->clear();
-    *win << CGAL::BLUE << ct;
+    widget->lock();
+    widget->clear();
+    *widget << CGAL::BLUE << ct;
     draw_constraints();
-    win->unlock();
+    widget->unlock();
   }
 
   void new_point(CGAL::Object obj)
@@ -182,13 +182,13 @@ public slots:
     Point p;
     if (CGAL::assign(p,obj))
       {
-	win->clear();
-	win->lock();
-	*win << CGAL::BLUE <<ct;
+	widget->clear();
+	widget->lock();
+	*widget << CGAL::BLUE <<ct;
 	draw_connected_component(p);
 	draw_constraints();
-	*win << p ;
-	win->unlock();
+	*widget << p ;
+	widget->unlock();
       }
   };
 
@@ -211,7 +211,7 @@ public slots:
   };
 
 private:
-  CGAL::Qt_widget* win;
+  CGAL::Qt_widget* widget;
   CGAL::Qt_widget_tool* point_factory;
   std::list<Constraint> lc;
   Constrained_triangulation ct;
