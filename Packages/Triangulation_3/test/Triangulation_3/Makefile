@@ -24,6 +24,7 @@ CXXFLAGS = \
 	 $(CGAL_CXXFLAGS)\
 	 $(TESTSUITE_CXXFLAGS) \
 	-DCGAL_CHECK_EXPENSIVE \
+	-W -Wall \
 	-g 
 #         -gdwarf-2
 #	-O2 -fno-default-inline \
