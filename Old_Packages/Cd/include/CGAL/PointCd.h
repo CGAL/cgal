@@ -200,7 +200,7 @@ inline
 const FT* PointCd<FT>::end() const
 { return ptr()->e + dimension(); }
 
-#ifndef NO_OSTREAM_INSERT_POINTCD
+#ifndef CGAL_NO_OSTREAM_INSERT_POINTCD
 template < class FT >
 std::ostream& 
 operator<<(std::ostream& os, const PointCd<FT> &p)
@@ -226,9 +226,9 @@ operator<<(std::ostream& os, const PointCd<FT> &p)
         return os << p.cartesian(d-1) << "))";
     }
 }
-#endif // NO_OSTREAM_INSERT_POINTCD
+#endif // CGAL_NO_OSTREAM_INSERT_POINTCD
 
-#ifndef NO_ISTREAM_EXTRACT_POINTCD
+#ifndef CGAL_NO_ISTREAM_EXTRACT_POINTCD
 template < class FT >
 std::istream& 
 operator>>(std::istream& is, PointCd<FT> &p)
@@ -253,11 +253,12 @@ operator>>(std::istream& is, PointCd<FT> &p)
         // throw ios_base::failure("Stream must be in ascii or binary mode");
         return is;
     }
-    p = PointCd<FT>( d, e, e+d);
+    if (is)
+	p = PointCd<FT>(d, e, e+d);
     delete[] e;
     return is;
 }
-#endif // NO_ISTREAM_EXTRACT_POINTCD
+#endif // CGAL_NO_ISTREAM_EXTRACT_POINTCD
 
 CGAL_END_NAMESPACE
 

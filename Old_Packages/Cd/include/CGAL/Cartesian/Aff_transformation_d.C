@@ -52,7 +52,7 @@ std::istream &
 operator>>(std::istream &is,
            Aff_transformationCd<R CGAL_CTAG> &t)
 {
-  //TODO
+  // FIXME : TODO
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATIONCD

@@ -246,7 +246,8 @@ collinear_has_on(const typename SegmentCd<R CGAL_CTAG>::Point_d &p) const
 
 #ifndef CGAL_NO_OSTREAM_INSERT_SEGMENTCd
 template < class R >
-std::ostream &operator<<(std::ostream &os, const SegmentCd<R CGAL_CTAG> &s)
+std::ostream &
+operator<<(std::ostream &os, const SegmentCd<R CGAL_CTAG> &s)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -261,13 +262,15 @@ std::ostream &operator<<(std::ostream &os, const SegmentCd<R CGAL_CTAG> &s)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENTCd
 template < class R >
-std::istream &operator>>(std::istream &is, SegmentCd<R CGAL_CTAG> &s)
+std::istream &
+operator>>(std::istream &is, SegmentCd<R CGAL_CTAG> &s)
 {
     typename SegmentCd<R CGAL_CTAG>::Point_d p, q;
 
     is >> p >> q;
 
-    s = SegmentCd<R CGAL_CTAG>(p, q);
+    if (is)
+        s = SegmentCd<R CGAL_CTAG>(p, q);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENTCd

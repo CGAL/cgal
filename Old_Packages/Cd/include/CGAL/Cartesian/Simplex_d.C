@@ -232,7 +232,8 @@ SimplexCd<R CGAL_CTAG>::transform
 
 #ifndef CGAL_NO_OSTREAM_INSERT_SIMPLEXCD
 template < class R >
-std::ostream &operator<<(std::ostream &os, const SimplexCd<R CGAL_CTAG> &t)
+std::ostream &
+operator<<(std::ostream &os, const SimplexCd<R CGAL_CTAG> &t)
 {
   print_d<typename R::Point_d> prt(&os);
   if (os.iword(IO::mode)==IO::PRETTY) os << "SimplexCd(";
@@ -246,9 +247,10 @@ std::ostream &operator<<(std::ostream &os, const SimplexCd<R CGAL_CTAG> &t)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_SIMPLEXCD
 template < class R >
-std::istream &operator>>(std::istream &is, SimplexCd<R CGAL_CTAG> &t)
+std::istream &
+operator>>(std::istream &is, SimplexCd<R CGAL_CTAG> &t)
 {
-    // TODO
+    // FIXME : TODO
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_SIMPLEXCD

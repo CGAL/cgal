@@ -218,7 +218,8 @@ collinear_has_on(const typename RayCd<R CGAL_CTAG>::Point_d &p) const
 
 #ifndef CGAL_NO_OSTREAM_INSERT_RAYCd
 template < class R >
-std::ostream &operator<<(std::ostream &os, const RayCd<R CGAL_CTAG> &r)
+std::ostream &
+operator<<(std::ostream &os, const RayCd<R CGAL_CTAG> &r)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -233,14 +234,16 @@ std::ostream &operator<<(std::ostream &os, const RayCd<R CGAL_CTAG> &r)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_RAYCd
 template < class R >
-std::istream &operator>>(std::istream &is, RayCd<R CGAL_CTAG> &r)
+std::istream &
+operator>>(std::istream &is, RayCd<R CGAL_CTAG> &r)
 {
     typename RayCd<R CGAL_CTAG>::Point_d p;
     typename RayCd<R CGAL_CTAG>::Direction_d d;
 
     is >> p >> d;
 
-    r = RayCd<R CGAL_CTAG>(p, d);
+    if (is)
+        r = RayCd<R CGAL_CTAG>(p, d);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_RAYCd

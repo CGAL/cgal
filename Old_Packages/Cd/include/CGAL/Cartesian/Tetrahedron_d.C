@@ -294,7 +294,8 @@ TetrahedronCd<R CGAL_CTAG>::transform
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TETRAHEDRONCD
 template < class R >
-std::ostream &operator<<(std::ostream &os, const TetrahedronCd<R CGAL_CTAG> &t)
+std::ostream &
+operator<<(std::ostream &os, const TetrahedronCd<R CGAL_CTAG> &t)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -311,13 +312,15 @@ std::ostream &operator<<(std::ostream &os, const TetrahedronCd<R CGAL_CTAG> &t)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRONCD
 template < class R >
-std::istream &operator>>(std::istream &is, TetrahedronCd<R CGAL_CTAG> &t)
+std::istream &
+operator>>(std::istream &is, TetrahedronCd<R CGAL_CTAG> &t)
 {
     typename TetrahedronCd<R CGAL_CTAG>::Point_d p, q, r, s;
 
     is >> p >> q >> r >> s;
 
-    t = TetrahedronCd<R CGAL_CTAG>(p, q, r, s);
+    if (is)
+        t = TetrahedronCd<R CGAL_CTAG>(p, q, r, s);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRONCD

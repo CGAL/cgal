@@ -177,7 +177,8 @@ std::istream &operator>>(std::istream &is, DirectionCd<R CGAL_CTAG> &d)
       std::cerr << "Stream must be in ascii or binary mode" << std::endl;
       break;
   }
-  d = DirectionCd<R CGAL_CTAG>(dim,v,v+dim);
+  if (is)
+      d = DirectionCd<R CGAL_CTAG>(dim, v, v+dim);
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTIONCd

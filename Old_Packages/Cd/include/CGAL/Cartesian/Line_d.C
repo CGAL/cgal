@@ -248,7 +248,8 @@ std::istream &operator>>(std::istream &is, LineCd<R CGAL_CTAG> &l)
 {
     typename LineCd<R CGAL_CTAG>::Point_d p, q;
     is >> p >> q;
-    l = LineCd<R CGAL_CTAG>(p, q);
+    if (is)
+        l = LineCd<R CGAL_CTAG>(p, q);
     return is;
 }
 #endif // CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_LINECD

@@ -250,7 +250,7 @@ operator>>(std::istream &is, LA_matrixCd<LA> &M)
     case IO::BINARY :
       is >> rdim >> cdim;
       dim = cdrim*rdim;
-      M = LA_matrixCd<LA>(rdim,cdim);
+      M = LA_matrixCd<LA>(rdim, cdim);
       std::copy_n(std::istream_iterator<FT>(is),dim, M.begin());
       break;
     default:

@@ -31,11 +31,7 @@ template < class FT >
 class DACd;
 
 template < class R_ >
-class PointCd
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-// This is a partial specialization
-<R,Cartesian_tag>
-#endif
+class PointCd CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public Handle
 {
 public:

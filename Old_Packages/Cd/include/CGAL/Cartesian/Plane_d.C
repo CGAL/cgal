@@ -278,7 +278,8 @@ is_degenerate() const
 
 #ifndef CGAL_NO_OSTREAM_INSERT_PLANECD
 template < class R >
-std::ostream &operator<<(std::ostream &os, const PlaneCd<R CGAL_CTAG> &h)
+std::ostream &
+operator<<(std::ostream &os, const PlaneCd<R CGAL_CTAG> &h)
 {
   typedef typename R::FT FT;
   // normalize but do it with a copy in order to keep h as const
@@ -298,7 +299,8 @@ std::ostream &operator<<(std::ostream &os, const PlaneCd<R CGAL_CTAG> &h)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_PLANECD
 template < class R >
-std::istream &operator>>(std::istream &is, PlaneCd<R CGAL_CTAG> &p)
+std::istream &
+operator>>(std::istream &is, PlaneCd<R CGAL_CTAG> &p)
 {
     int dim;
     typename R::FT h;
@@ -312,11 +314,11 @@ std::istream &operator>>(std::istream &is, PlaneCd<R CGAL_CTAG> &p)
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
     }
-    p = PlaneCd<R CGAL_CTAG>(dim,h,h+dim+1);
+    if (is)
+        p = PlaneCd<R CGAL_CTAG>(dim, h, h+dim+1);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_PLANECD
-
 
 CGAL_END_NAMESPACE
 

@@ -259,7 +259,8 @@ operator>>(std::istream &is, VectorCd<R CGAL_CTAG> &v)
       std::cerr << "Stream must be in ascii or binary mode" << std::endl;
       break;
   }
-  v = VectorCd<R CGAL_CTAG>(dim,w,w+dim);
+  if (is)
+      v = VectorCd<R CGAL_CTAG>(dim, w, w+dim);
   return is;
 }
 #endif // CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_VECTORCD

@@ -187,7 +187,8 @@ TriangleCd<R CGAL_CTAG>::is_degenerate() const
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLECD
 template < class R >
-std::ostream &operator<<(std::ostream &os, const TriangleCd<R CGAL_CTAG> &t)
+std::ostream &
+operator<<(std::ostream &os, const TriangleCd<R CGAL_CTAG> &t)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -203,13 +204,15 @@ std::ostream &operator<<(std::ostream &os, const TriangleCd<R CGAL_CTAG> &t)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLECD
 template < class R >
-std::istream &operator>>(std::istream &is, TriangleCd<R CGAL_CTAG> &t)
+std::istream &
+operator>>(std::istream &is, TriangleCd<R CGAL_CTAG> &t)
 {
     typename TriangleCd<R CGAL_CTAG>::Point_d p, q, r;
 
     is >> p >> q >> r;
 
-    t = TriangleCd<R CGAL_CTAG>(p, q, r);
+    if (is)
+        t = TriangleCd<R CGAL_CTAG>(p, q, r);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLECD

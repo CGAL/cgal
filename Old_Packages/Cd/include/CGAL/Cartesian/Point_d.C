@@ -200,7 +200,8 @@ operator>>(std::istream& is, PointCd<R CGAL_CTAG> &p)
       // throw ios_base::failure("Stream must be in ascii or binary mode");
       return is;
     }
-    p = PointCd<R CGAL_CTAG>(d, e, e+d);
+    if (is)
+        p = PointCd<R CGAL_CTAG>(d, e, e+d);
     delete[] e;
     return is;
 }

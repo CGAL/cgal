@@ -1,6 +1,7 @@
 Ver 1.6 (?? ?????? 2000)
 - Removed long_description.txt. [syl]
 - Changed a few CGAL_assertion() to CGAL_kernel_assertion(). [syl]
+- Added "if (is)" tests in operator>>().
 
 Ver 1.5 (27 July 2000)
 - one more CGAL_NTS fix in PointCd.h [MY]
