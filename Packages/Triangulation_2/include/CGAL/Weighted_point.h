@@ -35,7 +35,11 @@ public:
 
   //explicit
   Weighted_point (const Point &p)
-      : Point(p), _weight(0) {}
+      : Point(p), _weight(0)
+  {
+    //abort();
+    //std::cerr << "Warning : truncated weight !!!" << std::endl;
+  }
 
   Weighted_point (const Point &p, const Weight &w)
       : Point(p), _weight(w) {}
