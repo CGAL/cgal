@@ -907,24 +907,24 @@ namespace CartesianKernelFunctors {
 
 #ifndef CGAL_NO_DEPRECATED_CODE
     Line_2
-    operator()(const RT& a, const RT& b, const RT& c) const
-    { return Line_2(a, b, c); }
+    operator()(const RT& a, const RT& b, const RT& cc) const
+    { return Line_2(a, b, cc); }
 #endif // CGAL_NO_DEPRECATED_CODE
 
     Line_2
     operator()(const Point_2& p, const Point_2& q) const
     { 
-      FT a, b, c;
-      line_from_pointsC2(p.x(), p.y(), q.x(), q.y(), a, b, c);
-      return Line_2(a, b, c);
+      FT a, b, cc;
+      line_from_pointsC2(p.x(), p.y(), q.x(), q.y(), a, b, cc);
+      return Line_2(a, b, cc);
     }
 
     Line_2
     operator()(const Point_2& p, const Direction_2& d) const
     { 
-      FT a, b, c;
-      line_from_point_directionC2(p.x(), p.y(), d.dx(), d.dy(), a, b, c);
-      return Line_2(a, b, c);
+      FT a, b, cc;
+      line_from_point_directionC2(p.x(), p.y(), d.dx(), d.dy(), a, b, cc);
+      return Line_2(a, b, cc);
     }
 
     Line_2
