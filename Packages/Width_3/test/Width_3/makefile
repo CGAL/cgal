@@ -14,10 +14,11 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
-           $(DEBUG_OPT)
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -29,6 +30,7 @@ LIBPATH = \
 
 LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -36,8 +38,8 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                test_width_cube \
-                test_width_simplex 
+                test_width_cube$(EXE_EXT) \
+                test_width_simplex$(EXE_EXT) 
 
 test_width_cube$(EXE_EXT): test_width_cube$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_width_cube test_width_cube$(OBJ_EXT) $(LDFLAGS)
@@ -54,8 +56,5 @@ clean: \
 #---------------------------------------------------------------------#
 
 .C$(OBJ_EXT):
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
-
-.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
