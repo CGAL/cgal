@@ -1,3 +1,7 @@
+1.82 (Shai)
+====
+Added the test for Pm_with_intersections.
+ 
 1.81 (Eti)
 ====
 - Add clear function to the Arrangement.

@@ -1,0 +1,40 @@
+# Pmwx Test Data File
+# Collinear polylines
+#
+# No. of polylines:
+2
+# Polylines:
+# ----------
+# i) Two overlapping collinear polylines
+# No. of points:
+3
+# Points:
+0 0  20 0  40 0
+# No. of points:
+3
+# Points:
+10 0  30 0  50 0
+#
+# No. of test points:
+8
+# Test points:
+# ------------
+# (coordinates followed by expected type:
+# 1 VERTEX, 2 EDGE, 3 FACE, 6 UNBOUNDED_FACE)
+0  1 6
+0 11 6
+0 21 6
+1  0 2
+11 0 2
+21 0 2
+31 0 2
+42 0 2
+#
+# No. of expected vertices :
+6
+# No. of expected edges:
+5
+# No. of expected faces    :
+1
+# No. of expected overlaps :
+3
