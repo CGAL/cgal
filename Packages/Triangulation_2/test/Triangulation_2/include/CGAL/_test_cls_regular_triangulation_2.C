@@ -462,6 +462,12 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   s = T2_3.segment(v2_3_6->incident_edges()); assert( &s == &s );
   s = T2_3.segment(T2_3.finite_edges_begin()); assert( &s == &s );
 
+  /********************/
+  /***** Duality ******/
+  std::cout << "    duality" << std::endl;
+   _test_regular_duality(T1_5);
+   _test_regular_duality(T2_3);
+
 
   /********************/
   /******** I/O *******/
@@ -528,4 +534,53 @@ _test_cls_reg_triangulation_2( const Triangulation & )
 
   // test destructors and return
   std::cout << "    test destructors and return" << std::endl;
+}
+
+
+template <class Del>
+void
+_test_regular_duality( const Del &T )
+{
+  typedef typename Del::Geom_traits          Gt;
+  typedef typename Del::Finite_faces_iterator        Face_iterator;
+  typedef typename Del::Finite_edges_iterator        Edge_iterator;
+  typedef typename Del::Edge_circulator              Edge_circulator;
+
+  // Test dual(face iterator)
+  //dual of faces is tested via dual of edges
+  
+  // Test dual(edge iterator)
+  Edge_iterator eit;
+  for (eit =  T.finite_edges_begin(); eit !=  T.finite_edges_end(); ++eit)
+    {
+      CGAL::Object o = T.dual(eit);
+      typename Gt::Ray_2 r;
+      typename Gt::Segment_2 s;
+      typename Gt::Line_2 l;
+      if ( CGAL::assign(s,o) ) {
+        assert(  ! T.is_infinite((*eit).first) );
+	assert( ! T.is_infinite(((*eit).first)->neighbor((*eit).second )) );
+      } 
+      else if ( CGAL::assign(l,o) ) {
+        assert( T.dimension() == 1 );
+      } 
+      else {
+        assert( CGAL::assign(r,o) );
+      }
+    }
+
+  // Test dual(edge circulator)
+  Edge_circulator ec=T.finite_vertices_begin()->incident_edges(), done(ec);
+  if ( !ec.is_empty() ) 
+  do  
+    {
+      if (! T.is_infinite(ec)){
+	CGAL::Object o = T.dual(ec);
+	typename Gt::Ray_2 r;
+        typename Gt::Segment_2 s;
+	typename Gt::Line_2 l;
+	assert( CGAL::assign(s,o) || CGAL::assign(r,o) || CGAL::assign(l,o) );
+      }
+      ++ec;
+    } while ( ec == done);
 }
