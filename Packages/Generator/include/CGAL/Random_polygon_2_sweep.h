@@ -118,7 +118,7 @@ public:
     bool on_right_side(Vertex_index vt, Vertex_index edge, bool above);
     void find_conflict(Tree *tree, Vertex_index cur_vt,
         typename Tree::iterator seg1, typename Tree::iterator seg2);
-    void find_conflict_between(Tree *tree, Vertex_index cur_vt,
+    void find_conflict_between(Tree *, Vertex_index cur_vt,
         typename Tree::iterator seg1, typename Tree::iterator seg2);
 };
 
@@ -371,7 +371,7 @@ find_conflict(Tree *tree, Vertex_index cur_vt,
 template <class ForwardIterator, class PolygonTraits>
 void
 Vertex_data<ForwardIterator, PolygonTraits>::
-find_conflict_between(Tree *tree, Vertex_index cur_vt,
+find_conflict_between(Tree *, Vertex_index cur_vt,
                       typename Tree::iterator seg1, 
                       typename Tree::iterator seg2)
 {
