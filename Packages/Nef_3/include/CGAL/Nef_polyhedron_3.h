@@ -21,7 +21,7 @@
 
 #undef _DEBUG
 #define _DEBUG 11
-#include <CGAL/debug.h>
+#include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE
 

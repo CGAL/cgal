@@ -101,6 +101,11 @@ public:
   USING(Halffacet_iterator);
   USING(Volume_iterator);
 
+  USING(Vertex_handle);
+  USING(Halfedge_handle);
+  USING(Halffacet_handle);
+  USING(Volume_handle);
+
   USING(Vertex_const_handle);
   USING(Halfedge_const_handle);
   USING(Halffacet_const_handle);
@@ -411,7 +416,8 @@ public:
     SHalfedge_handle e;
     Bounded_side outer_bound_pos;
     if ( assign(e,fc) ) {
-      vector<Point_3> verts;
+      // TODO: implement a projector for the iterator instead to make a copy
+      std::vector<Point_3> verts;
       SHalfedge_handle e0(e);
       CGAL_For_all(e,e0)
 	verts.push_back(point(vertex(e)));
@@ -436,7 +442,8 @@ public:
 	else
 	  inner_bound_pos = CGAL::ON_UNBOUNDED_SIDE;
       } else if ( assign(e,fc) ) {
-	vector<Point_3> verts;
+	// TODO: implement a projector for the iterator instead to make a copy
+	std::vector<Point_3> verts;
 	SHalfedge_handle e0(e);
 	CGAL_For_all(e,e0)
 	  verts.push_back(point(vertex(e)));
