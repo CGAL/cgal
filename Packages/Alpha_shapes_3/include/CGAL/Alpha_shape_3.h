@@ -700,7 +700,7 @@ private:
 
 public:
 
-  Alpha_iterator find_optimal_alpha(int nb_components);
+  Alpha_iterator find_optimal_alpha(int nb_components) const;
   // find the minimum alpha that satisfies the properties
   // (1) all data points are on the boundary of some 3d component
   //    or in its interior
@@ -766,7 +766,7 @@ public:
 
 
   // to Debug
-  void print_maps(); //should be const
+  void print_maps() const; 
   void print_alphas() const;
   void print_alpha_status( const Alpha_status& as) const;
   
@@ -844,17 +844,17 @@ public:
   { return get_alpha_shape_vertices(it, type, get_alpha());}
 
    template<class OutputIterator> 
-   OutputIterator filtration(OutputIterator it)  
+   OutputIterator filtration(OutputIterator it)  const
    // scan  the  alpha_cell_map, alpha_min_facet_map,  alpha_min_edge_map  
    // and alpha_min_vertex in GENERAL mode 
    // only alpha_cell_map in REGULARIZED mode 
    // and output all the faces in order of alpha value of their appearing 
    // in the alpha complexe 
    { 
-     typename Alpha_cell_map::iterator cit ;
-     typename Alpha_facet_map::iterator fit ;
-     typename Alpha_edge_map::iterator eit ;
-     typename Alpha_vertex_map::iterator vit;
+     typename Alpha_cell_map::const_iterator cit ;
+     typename Alpha_facet_map::const_iterator fit ;
+     typename Alpha_edge_map::const_iterator eit ;
+     typename Alpha_vertex_map::const_iterator vit;
   
      if (get_mode() == GENERAL) {
        cit = alpha_cell_map.begin();
@@ -863,7 +863,6 @@ public:
        vit = alpha_min_vertex_map.begin();
      }
      else { //mode==REGULARIZED do not scan maps of Gabriel elements
-       alpha_spectrum.reserve(alpha_cell_map.size());
        cit = alpha_cell_map.begin();
        fit = alpha_min_facet_map.end();
        eit = alpha_min_edge_map.end();
@@ -937,7 +936,7 @@ public:
  				NT& alpha_current, 
  				std::set<Facet>&  facet_set, 
  				std::set<Vertex_handle_pair>&   edge_set, 
- 				std::set<Vertex_handle>& vertex_set) 
+ 				std::set<Vertex_handle>& vertex_set)  const
    { 
      if (afit->first != alpha_current) { //new alpha_value 
        alpha_current = afit->first; 
@@ -1698,7 +1697,7 @@ void Alpha_shape_3<Dt>::traverse(Cell_handle pCell,
 
 template <class Dt>
 typename Alpha_shape_3<Dt>::Alpha_iterator 
-Alpha_shape_3<Dt>::find_optimal_alpha(int nb_components)
+Alpha_shape_3<Dt>::find_optimal_alpha(int nb_components) const
   // find the minimum alpha that satisfies the properties
   // (1) nb_components solid components <= nb_components
   // (2) all data points on the boundary or in its interior
@@ -1780,12 +1779,12 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
 
 template <class Dt>
 void 
-Alpha_shape_3<Dt>::print_maps()
+Alpha_shape_3<Dt>::print_maps() const
 {
-  typename Alpha_cell_map::iterator cit ;
-  typename Alpha_facet_map::iterator fit ;
-  typename Alpha_edge_map::iterator eit ;
-  typename Alpha_vertex_map::iterator vit;
+  typename Alpha_cell_map::const_iterator cit ;
+  typename Alpha_facet_map::const_iterator fit ;
+  typename Alpha_edge_map::const_iterator eit ;
+  typename Alpha_vertex_map::const_iterator vit;
 
   std::cerr << "size of cell map " << alpha_cell_map.size() 
 	    <<   std::endl;

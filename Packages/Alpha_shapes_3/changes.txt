@@ -3,6 +3,10 @@
 
 ======================================== CGAL 3.1 ======================
 
+9 february 2005 Mariette
+- fixed const correctness
+- add doc of the filtration
+
 30 decembre 2004 Mariette
 - filtration  added (const correctness of the function to be done)
 

@@ -98,9 +98,9 @@ public:
  NT get_alpha() const    {  return A;    }
  void set_alpha(const NT & AA) { A = AA;}
 
- Alpha_status_iterator get_facet_status(int i) const {return facet_status[i];}
-//Alpha_status_const_iterator get_facet_status(int i) const {
-//   return facet_status[i];}
+ Alpha_status_iterator get_facet_status(int i) {return facet_status[i];}
+ Alpha_status_const_iterator get_facet_status(int i) const {
+   return facet_status[i];}
 
  void set_facet_status(int i, Alpha_status_iterator as) {
    facet_status[i]= as;  }

@@ -305,14 +305,20 @@ of the output sequence.}
  template<class OutputIterator>
    OutputIterator get_alpha_shape_vertices(OutputIterator it, 
 					Classification_type type,
-			const NT& alphaget_alpha());}) 
+			const NT& alphaget_alpha());} 
 {Write the vertices which are of type \ccc{type} for 
 the alpha value \ccc{alpha} to the sequence
 pointed to by the output iterator \ccc{it}. Return past the end
 of the output sequence.}
 
-
-
+\ccMethod {
+template<class OutputIterator> 
+   OutputIterator filtration(OutputIterator it);}
+{Output all the faces  of the triangulation
+in increasing order of  the alpha value for which they appear
+in the alpha complex. In case of equal alpha value
+lower dimensional faces are output first.
+The value type of the OutputIterator has to be a  CGAL::Object}
 
 
 \ccHeading{Traversal of the $\alpha$-Values}

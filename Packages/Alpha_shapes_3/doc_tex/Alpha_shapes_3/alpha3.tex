@@ -111,6 +111,14 @@ belongs to the alpha complex. Relying on this fact, the family of
 easily. Furthermore, we can select the optimal value
 of  $\alpha$ to get an alpha shape including all data points
 and having   less than a given number of connected components.
+Also, the alpha-values allows to define a filtration on the
+faces of the triangulation of a set of points. 
+In this filtration, the faces of the triangulation are output
+in increasing order of the alpha value  
+for which they appear 
+in the alpha complex.  In case of equal alpha value
+lower dimensional faces are output first.
+
 
 
 The definition is analog in the case of weigthed alpha shapes.
@@ -164,6 +172,12 @@ the vertices, edges, facets and cells of the different types
 (\ccc{EXTERIOR}, \ccc{SINGULAR}, \ccc{REGULAR} or 
 \ccc{INTERIOR}).
 
+Also the class has a filtration member function that, given
+an  output iterator with \ccc{CGAL::object}
+as value  type, outputs the faces of the triangulation 
+according to the 
+order of apparition in the alpha complex when alpha increases.
+  
 
 Finally, it provides a function to determine 
 the smallest value $\alpha$
