@@ -199,6 +199,9 @@
 				RelativePath=".\include\cgal_types.h">
 			</File>
 			<File
+				RelativePath=".\include\Convertible_iterator.h">
+			</File>
+			<File
 				RelativePath=".\include\Feature_skeleton.h">
 			</File>
 			<File
