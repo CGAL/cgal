@@ -67,7 +67,7 @@ class Optimisation_d_traits_3 {
     typedef  CGAL::Access_coordinates_begin_3<K>
                                         Access_coordinates_begin_d;
 
-    typedef  Construct_point_3<K>       Construct_point_d;
+    typedef  _Construct_point_3<K>       Construct_point_d;
     // this does not (yet) work:
     // typedef  typename K::Construct_point_3    Construct_point_d;
 

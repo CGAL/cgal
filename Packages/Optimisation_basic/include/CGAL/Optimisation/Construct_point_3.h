@@ -45,37 +45,43 @@ CGAL_BEGIN_NAMESPACE
 
 // Class declaration
 // =================
-template < class R >
-class Construct_point_3;
+template < class K >
+class _Construct_point_3;
 
 // Class interface
 // ===============
-template < class R_ >
-class Construct_point_3 {
+template < class K_ >
+class _Construct_point_3 {
   public:
     // self
-    typedef  R_                         R;
-    typedef  Construct_point_3<R>       Self;
+    typedef  K_                         K;
+    typedef  _Construct_point_3<K>       Self;
 
     // types
-    typedef  typename R::Point_3        Point;
+    typedef  typename K::Point_3        Point;
 
     // creation
-    Construct_point_3( ) { }
+    _Construct_point_3( ) { }
 
     // operations
     template < class InputIterator >
     Point
     operator() ( int, InputIterator first, InputIterator last) const
     {
-	std::vector<typename R::RT>  coords;
-	std::copy( first, last, std::back_inserter( coords));
-	if ( coords.size() < 4) {
-	    return Point( coords[ 0], coords[ 1], coords[ 2]);
+        InputIterator i(first);
+	typename K::RT x = *(i++);
+	typename K::RT y = *(i++);
+	typename K::RT z = *(i++);
+	typedef typename K::Construct_point_3 Construct_point_3;
+	Construct_point_3 construct_point_3 = K().construct_point_3_object();
+	if (i==last) {
+	    return construct_point_3(x,y,z);
 	} else {
-	    return Point( coords[ 0], coords[ 1], coords[ 2], coords[ 3]);
+	    typename K::RT h = *(i++);
+	    return construct_point_3(x,y,z,h); 
 	}
     }
+
 };
 
 CGAL_END_NAMESPACE

@@ -69,7 +69,7 @@ class Optimisation_d_traits_2 {
 
     // this does not (yet) work:
     // typedef  typename K::Construct_point_2    Construct_point_d;
-    typedef  Construct_point_2<K>       Construct_point_d;
+    typedef  _Construct_point_2<K>       Construct_point_d;
 
     // creation
     Optimisation_d_traits_2( ) { }

@@ -32,29 +32,31 @@ CGAL_BEGIN_NAMESPACE
 
 // Class declaration
 // =================
-template < class R >
-class Construct_point_d;
+template < class K >
+class _Construct_point_d;
 
 // Class interface
 // ===============
-template < class R_ >
-class Construct_point_d {
+template < class K_ >
+class _Construct_point_d {
   public:
     // self
-    typedef  R_                         R;
-    typedef  Construct_point_d<R>       Self;
+    typedef  K_                         K;
+    typedef  _Construct_point_d<K>      Self;
 
     // types
-    typedef  typename R::Point_d        Point;
+    typedef  typename K::Point_d        Point;
 
     // creation
-    Construct_point_d( ) { }
+    _Construct_point_d( ) { }
 
     // operations
     template < class InputIterator >
     Point
     operator() ( int d, InputIterator first, InputIterator last) const
     {
+        // d-dim kernel has no functor to construct a point, use point's
+        // constructor
 	return Point( d, first, last);
     }
 };
