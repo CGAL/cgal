@@ -61,7 +61,7 @@ public:
 
 public:
   
-#line 287 "k3_tree.nw"
+#line 283 "k3_tree.nw"
 typedef typename Traits::SNC_decorator SNC_decorator;
 typedef typename Traits::Infimaximal_box Infimaximal_box;
 typedef typename Traits::Vertex_handle Vertex_handle;
@@ -70,7 +70,7 @@ typedef typename Traits::Halffacet_handle Halffacet_handle;
 typedef typename Traits::Halffacet_triangle_handle Halffacet_triangle_handle;
 
 typedef typename Traits::Object_handle Object_handle;
-typedef typename Traits::Object_list Object_list;
+typedef std::vector<Object_handle> Object_list;
 typedef typename Object_list::const_iterator Object_const_iterator;
 typedef typename Object_list::iterator Object_iterator;
 typedef typename Object_list::size_type size_type;
@@ -90,7 +90,7 @@ typedef typename Traits::Objects_bbox Objects_bbox;
 typedef typename Traits::Kernel Kernel;
 typedef typename Kernel::RT RT;
 
-#line 463 "k3_tree.nw"
+#line 467 "k3_tree.nw"
 class Node {
   friend class K3_tree<Traits>;
 public:
@@ -117,7 +117,7 @@ public:
     }
   }
   
-#line 789 "k3_tree.nw"
+#line 793 "k3_tree.nw"
 friend std::ostream& operator<<
   (std::ostream& os, const Node* node) {
   CGAL_assertion( node != 0);
@@ -135,9 +135,9 @@ friend std::ostream& operator<<
   return os;
 }
 
-#line 489 "k3_tree.nw"
+#line 493 "k3_tree.nw"
   
-#line 564 "k3_tree.nw"
+#line 568 "k3_tree.nw"
 ~Node() {
   TRACEN("~Node: deleting node...");
   if( !is_leaf()) {
@@ -146,7 +146,7 @@ friend std::ostream& operator<<
   }
 }
 
-#line 490 "k3_tree.nw"
+#line 494 "k3_tree.nw"
 private:
   Node* parent_node;
   Node* left_node;
@@ -213,7 +213,7 @@ public:
       }
       Self& operator++() {
         
-#line 859 "k3_tree.nw"
+#line 863 "k3_tree.nw"
 if( S.empty())
   node = 0; // end of the iterator
 else {
@@ -277,7 +277,7 @@ else {
         return node;
       }
       
-#line 720 "k3_tree.nw"
+#line 724 "k3_tree.nw"
 inline 
 const Node* get_child_by_side( const Node* node, Oriented_side side) {
   CGAL_assertion( node != NULL);
@@ -340,27 +340,23 @@ private:
   int max_depth;
   Bounding_box_3 bounding_box;
 public:
-  K3_tree( const Object_list& objects) {
+  K3_tree(Object_list& objects, Object_iterator& v_end) {
     
 #line 266 "k3_tree.nw"
-size_type n_vertices = 0;
-for( Object_const_iterator o = objects.begin(); o != objects.end(); ++o) {
-  Vertex_handle v;
-  if( CGAL::assign( v, *o))
-    n_vertices++;
-}
+typename Object_list::difference_type n_vertices = std::distance(objects.begin(),v_end);
+TRACEN("K3_tree(): n_vertices = " << std::distance(objects.begin(),v_end));
 frexp( (double) n_vertices, &max_depth);
 
 #line 185 "k3_tree.nw"
     
-#line 278 "k3_tree.nw"
+#line 274 "k3_tree.nw"
 // TODO: in the presence of a infimaximal bounding box, the bounding box does not have to be computed
 Objects_bbox objects_bbox = traits.objects_bbox_object();
 bounding_box = objects_bbox(objects);
 //TRACEN("bounding box:"<<objects_bbox);
 
 #line 186 "k3_tree.nw"
-    root = build_kdtree( objects, 0);
+    root = build_kdtree( objects, v_end, 0);
   }
   const Object_list& objects_around_point( const Point_3& p) const {
     return locate( p, root);
@@ -371,7 +367,7 @@ bounding_box = objects_bbox(objects);
   Object_list objects_around_segment( const Segment_3& s) const {
     Object_list O;
     
-#line 813 "k3_tree.nw"
+#line 817 "k3_tree.nw"
 Objects_around_segment objects( *this, s);
 Unique_hash_map< Vertex_handle, bool> v_mark(false);
 Unique_hash_map< Halfedge_handle, bool> e_mark(false);
@@ -472,7 +468,7 @@ for( typename Objects_around_segment::Iterator oar = objects.begin();
   }
 
   
-#line 746 "k3_tree.nw"
+#line 750 "k3_tree.nw"
 #ifdef CODE_DOES_NOT_WORK_WITH_BOTH_KERNELS_AT_THE_SAME_TIME
 template <typename T>
 friend std::ostream& operator<<
@@ -517,7 +513,7 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
 
 #line 251 "k3_tree.nw"
   
-#line 502 "k3_tree.nw"
+#line 506 "k3_tree.nw"
 bool update( Unique_hash_map<Vertex_handle, bool>& V, 
              Unique_hash_map<Halfedge_handle, bool>& E, 
              Unique_hash_map<Halffacet_handle, bool>& F) {
@@ -572,7 +568,7 @@ bool update( Node* node,
 
 #line 252 "k3_tree.nw"
   
-#line 558 "k3_tree.nw"
+#line 562 "k3_tree.nw"
 ~K3_tree() {
   TRACEN("~K3_tree: deleting root...");
   delete root;
@@ -581,27 +577,47 @@ bool update( Node* node,
 #line 253 "k3_tree.nw"
 private:
   
-#line 323 "k3_tree.nw"
+#line 319 "k3_tree.nw"
 template <typename Depth>
-Node* build_kdtree( const Object_list& O, Depth depth, Node* parent=0, int non_efective_splits=0) {
+Node* build_kdtree(Object_list& O, Object_iterator v_end, 
+	           Depth depth, Node* parent=0, int non_efective_splits=0) {
   CGAL_precondition( depth >= 0);
-//  CGAL_precondition( O.size() > 0);
   TRACEN( "build_kdtree: "<<O.size()<<" objects, "<<"depth "<<depth);
   TRACEN( "build_kdtree: "<<dump_object_list(O));
-  if( !can_set_be_divided( O, depth)) {
+  if( !can_set_be_divided(O.begin(), v_end, depth)) {
     TRACEN("build_kdtree: set cannot be divided");
     return new Node( parent, 0, 0, Plane_3(), O);
   }
-  Plane_3 partition_plane = construct_splitting_plane( O, depth);
-  TRACEN("build_kdtree: plane: "<<partition_plane<<partition_plane.point());
+  Object_iterator median; 
+  Plane_3 partition_plane = construct_splitting_plane(O.begin(), v_end, median, depth);
+  TRACEN("build_kdtree: plane: "<<partition_plane<< " " << partition_plane.point());
   Object_list O1, O2;
-  bool splitted = classify_objects( O, partition_plane, depth,
+  Vertex_handle vm,vx;
+  CGAL::assign(vm,*median);
+  for(Object_iterator oi=O.begin();oi!=median;++oi) {
+    O1.push_back(*oi);
+    CGAL::assign(vx,*oi);
+    if(vm->point()[depth%3] == vx->point()[depth%3])
+      O2.push_back(*oi);
+  }
+  O1.push_back(*median);
+  O2.push_back(*median);
+  for(Object_iterator oi=median+1;oi!=v_end;++oi) {
+    O2.push_back(*oi);
+    CGAL::assign(vx,*oi);
+    if(vm->point()[depth%3] == vx->point()[depth%3])
+      O1.push_back(*oi);
+  }
+  typename Object_list::size_type v_end1 = O1.size();
+  typename Object_list::size_type v_end2 = O2.size();
+  bool splitted = classify_objects( v_end, O.end(), partition_plane, depth,
                                     std::back_inserter(O1), 
                                     std::back_inserter(O2));
   if( !splitted) {
     TRACEN("build_kdtree: splitting plane not found");
     return new Node( parent, 0, 0, Plane_3(), O);
   }
+
   CGAL_assertion( O1.size() <= O.size() && O2.size() <= O.size());
   CGAL_assertion( O1.size() + O2.size() >= O.size());
   bool non_efective_split = ((O1.size() == O.size()) || (O2.size() == O.size()));
@@ -614,40 +630,31 @@ Node* build_kdtree( const Object_list& O, Depth depth, Node* parent=0, int non_e
     return new Node( parent, 0, 0, Plane_3(), O);
   }
   Node *node = new Node( parent, 0, 0, partition_plane, Object_list());
-  node->left_node = build_kdtree( O1, depth + 1, node, non_efective_splits);
-  node->right_node = build_kdtree( O2, depth + 1, node, non_efective_splits);
+  node->left_node = build_kdtree( O1, O1.begin()+v_end1, depth + 1, node, non_efective_splits);
+  node->right_node = build_kdtree( O2, O2.begin()+v_end2, depth + 1, node, non_efective_splits);
   return node;
 }
 
-#line 364 "k3_tree.nw"
+#line 380 "k3_tree.nw"
 template <typename Depth>
-bool can_set_be_divided( const Object_list& O, Depth depth) {
-  if( O.size() < 2)
-    return false;
+bool can_set_be_divided(Object_iterator start, Object_iterator end, Depth depth) {
   if( depth >= max_depth)
     return false;
-  size_t number_of_vertices = 0;
-  typename Object_list::const_iterator o;
-  for( o = O.begin(); o != O.end(); o++) {
-    Vertex_handle v;
-    if( CGAL::assign( v, *o)) {
-      number_of_vertices++;
-      if( number_of_vertices > 1)
-        break;
-    }
-  }
-  return (number_of_vertices > 1);
+  if(std::distance(start,end)<2)
+    return false;
+  return true;
 }
 
-#line 389 "k3_tree.nw"
+#line 395 "k3_tree.nw"
 template <typename OutputIterator>
-bool classify_objects( const Object_list& O, Plane_3 partition_plane, int depth,
-                        OutputIterator o1, OutputIterator o2) {
-  size_t on_oriented_boundary = 0;
+bool classify_objects(Object_iterator start, Object_iterator end, 
+                      Plane_3 partition_plane, int depth,
+                      OutputIterator o1, OutputIterator o2) {
+  typename Object_list::difference_type on_oriented_boundary = 0;
   typename Object_list::const_iterator o;
   
   Side_of_plane sop;
-  for( o = O.begin(); o != O.end(); ++o) {
+  for( o = start; o != end; ++o) {
     Oriented_side side = sop( partition_plane, *o);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY) {
       *o1 = *o;
@@ -660,19 +667,22 @@ bool classify_objects( const Object_list& O, Plane_3 partition_plane, int depth,
     if( side == ON_ORIENTED_BOUNDARY)
       on_oriented_boundary++;
   }
-  return (on_oriented_boundary != O.size());
+  return (on_oriented_boundary != std::distance(start,end));
 }
 
-#line 416 "k3_tree.nw"
-template < typename Vertex, typename Explorer, typename Coordinate>
+#line 423 "k3_tree.nw"
+template <typename Object, typename Vertex, typename Explorer, typename Coordinate>
 class Vertex_smaller_than
 {
 public:
   Vertex_smaller_than(Coordinate c) : coord(c) {
     CGAL_assertion( c >= 0 && c <=2);
   }
-  bool operator()( const Vertex& v1, const Vertex& v2) { 
-    return( D.point(v1)[coord] < D.point(v2)[coord]); 
+  bool operator()( const Object& o1, const Object& o2) {
+    Vertex v1,v2;
+    CGAL::assign(v1,o1);
+    CGAL::assign(v2,o2);
+    return(v1->point()[coord] < v2->point()[coord]); 
   }
 private:
   Coordinate coord;
@@ -680,28 +690,22 @@ private:
 };
 
 template <typename Depth>
-Plane_3 construct_splitting_plane( const Object_list& O, Depth depth) {
-  typedef typename std::vector<Vertex_handle> Vertex_list;
+Plane_3 construct_splitting_plane(Object_iterator start, Object_iterator end,
+                                  Object_iterator& median, Depth depth) {
   CGAL_precondition( depth >= 0);
-  Vertex_list vertices;
-  for( typename Object_list::const_iterator o = O.begin(); o != O.end(); ++o) {
-    Vertex_handle v;
-    if( CGAL::assign( v, *o))
-      vertices.push_back(v);
-  }
-  CGAL_assertion( vertices.size() > 1);
-  std::sort( vertices.begin(), vertices.end(), 
-             Vertex_smaller_than<Vertex_handle, SNC_decorator, int>(depth%3));
-  typename Vertex_list::size_type i, n = vertices.size();
-  typename Vertex_list::const_iterator median;
-  for( i = 0, median = vertices.begin(); i < ((n+1)/2)-1; ++i, ++median)
-    CGAL_assertion( median != vertices.end());
-  SNC_decorator D;
-  Point_3 p(D.point(*median));
+  typename Object_list::difference_type n=std::distance(start,end);
+  CGAL_assertion(n>1);
+
+  std::nth_element(start, start+n/2, end,
+  	           Vertex_smaller_than<Object_handle,Vertex_handle, SNC_decorator, int>(depth%3));
+
+  median = start+n/2;
+  Vertex_handle v;
+  CGAL::assign(v,*median);
   switch( depth % 3) {
-  case 0: return Plane_3( p, Vector_3( 1, 0, 0)); break;
-  case 1: return Plane_3( p, Vector_3( 0, 1, 0)); break;
-  case 2: return Plane_3( p, Vector_3( 0, 0, 1)); break;
+  case 0: return Plane_3( v->point(), Vector_3( 1, 0, 0)); break;
+  case 1: return Plane_3( v->point(), Vector_3( 0, 1, 0)); break;
+  case 2: return Plane_3( v->point(), Vector_3( 0, 0, 1)); break;
   }
   CGAL_assertion_msg( 0, "never reached");
   return Plane_3();
@@ -709,7 +713,7 @@ Plane_3 construct_splitting_plane( const Object_list& O, Depth depth) {
 
 #line 255 "k3_tree.nw"
   
-#line 578 "k3_tree.nw"
+#line 582 "k3_tree.nw"
 const Node *locate_cell_containing( const Point_3& p, const Node* node) const {
   CGAL_precondition( node != 0);
   if( node->is_leaf())

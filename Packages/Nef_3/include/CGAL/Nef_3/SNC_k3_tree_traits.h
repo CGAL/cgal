@@ -1,4 +1,4 @@
-#line 911 "k3_tree.nw"
+#line 915 "k3_tree.nw"
 #ifndef SNC_K3_TREE_TRAITS_H
 #define SNC_K3_TREE_TRAITS_H
 
@@ -58,7 +58,7 @@ public:
 
   typedef typename SNC_structure::Halffacet_triangle_handle Halffacet_triangle_handle;
   typedef typename SNC_structure::Object_handle Object_handle;
-  typedef typename SNC_structure::Object_list Object_list;
+  typedef std::vector<Object_handle> Object_list;
 
   typedef typename Decorator_traits::Halffacet_cycle_iterator
     Halffacet_cycle_iterator;
@@ -103,7 +103,7 @@ public:
                                   Halffacet_triangle_handle;
 
   typedef typename SNC_structure::Object_handle Object_handle;
-  typedef typename SNC_structure::Object_list Object_list;
+  typedef std::vector<Object_handle> Object_list;
 
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Segment_3 Segment_3;
