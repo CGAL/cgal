@@ -41,7 +41,7 @@ namespace CGAL {
 
   class Qt_widget_history{
     public:
-      Qt_widget_history() : nr_of_items(0), current_item(1) {};
+      Qt_widget_history() : current_item(0), nr_of_items(0) {};
       ~Qt_widget_history(){};
 
     bool back(){
