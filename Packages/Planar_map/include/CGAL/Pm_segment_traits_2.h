@@ -294,18 +294,24 @@ public:
   bool point_equal(const Point_2 & p1, const Point_2 & p2) const
   { return equal_2_object()(p1, p2); }
   
-  /*! Get the curve source.
+  /*! Obtain the curve source.
+   * We return the point by value (and by reference), because the implementation
+   * of the Construct_vertex_2 function object in undelying kernel may return
+   * a temporary variable.
    * \param cv The curve.
    * \return The source point.
    */
-  const Point_2 & curve_source(const X_monotone_curve_2 & cv) const 
+  const Point_2 curve_source(const X_monotone_curve_2 & cv) const 
   { return construct_vertex_2_object()(cv, 0); }
 
-  /*! Get the curve target.
+  /*! Obtain the curve target.
+   * We return the point by value (and by reference), because the implementation
+   * of the Construct_vertex_2 function object in undelying kernel may return
+   * a temporary variable.
    * \param cv The curve.
    * \return The target point.
    */
-  const Point_2 & curve_target(const X_monotone_curve_2 & cv) const 
+  const Point_2 curve_target(const X_monotone_curve_2 & cv) const 
   { return construct_vertex_2_object()(cv, 1); }
 };
 
