@@ -1,0 +1,11 @@
+CGAL KD-tree impelementation
+----------------------------
+
+  The following contains the CGAL KD-tree implementation. The examples/kdtrees/
+directory contains three simple examples for the use of kd-trees in 2D, 3D
+(using points from the Cgal kernel) and 4D (using user-defined points). 
+
+  The source is under include/CGAL/kdtree_d.h, and it can be used
+independently from the rest of CGAL.
+
+-----------------------------------------------------------------------

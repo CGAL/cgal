@@ -1,0 +1,363 @@
+%--------------------------------------------------------
+% kd-tree.tex
+%    Specification of kd-tree,
+%
+%  by Eyal Flato, Dan Halperin, Sariel Har-Peled
+%--------------------------------------------------------
+% History
+% Version  1.0, 26/4/97  
+%    All about kd-trees.
+% Adapted by Hans Tangelder using reference pages
+%--------------------------------------------------------
+
+%\documentclass[12pt]{book}
+%\usepackage{epsfig,epsf}
+%\usepackage{cprog}
+
+%\pagestyle{empty}
+%\textwidth 15.6cm 
+%\textheight 23 cm
+%\topmargin -14mm       
+%\evensidemargin 3mm 
+%\oddsidemargin 3mm
+%\headsep 1cm
+%\def\keyword#1{{\em #1\/}}
+
+\renewcommand{\Re}{{\rm I\!\hspace{-0.025em} R}}
+%\newcommand{\Section}[1]{Section~{\ref{#1}}}
+%\newcommand{\Chapter}[1]{Chapter~{\ref{#1}}}
+\newcommand{\new}[1]{\marginpar{\sf #1}}
+\newcommand{\kdt}{kd-tree}
+\newcommand{\kdts}{kd-trees}
+\newcommand{\brc}[1]{\left\{ {#1} \right\}}
+\def\Ipe#1{\def\IPEfile{#1}\input{#1}}
+
+\parindent0em
+\setlength{\parskip}{1ex minus 0.9ex}
+\sloppy
+
+%\begin{document}
+%\tableofcontents
+
+
+\clearpage
+
+\section{Kd-Trees} 
+\label{KDT_section}
+
+%This is a simple, but nevertheless efficient, data structure for orthogonal
+%range searching.  In particular, {\cgal}  {\kdt}  seems to perform better
+%than the theoreticly superior range trees, as implemented in \cgal.
+%See Section \ref{KDT_sec:appendix}, for comparative results. Of
+%course, the {\cgal}  range-tree implementation is more flexible than the
+%{\kdt}  implementation by enabling to layer together range-trees and
+%segment-trees in the same data structure, see \Chapter{Range:Trees} for the 
+%details.
+
+The implementation of the {\kdt}  is independent of the implementation of
+the rest of {\cgal}  and can be used separately from \cgal. 
+
+%In \Section{KDT_sec:intro}, we present the {\kdt}  structure and its
+%performance. \Section{KDT_sec:class:main} presents the class
+%\ccStyle{Kdtree_d<I>}.
+
+The kd-tree class is parameterized with a traits class, that defines
+the interface between the class and the geometric primitives used.
+For the description of the traits classes provided by {\cgal}
+and the description of the formal requirements for a class to be 
+a kd-tree traits class please refer to the reference pages.
+% {\cgal}  provides ready-made interface classes that are presented in
+% Section~\ref{KDT_sec:def:interface}.
+% The formal requirements for a class to be a {\kdt} traits class is
+% described in Section~\ref{KDT_sec:def:interface}. 
+
+
+% \section{Introduction}
+% \label{KDT_sec:intro}
+
+For a given set $S = \brc{ p_1, \ldots, p_n }$ on $n$ points in
+$\Re^d$, it is sometimes useful to be able to answer {\em orthogonal
+   range-searching} on $S$; namely, given an axis parallel query box
+$B$ in $\Re^d$, one would like to ``quickly'' determine the subset of
+points of $S$ lying inside $B$.
+
+
+
+
+%Orthogonal range-searching is being widely used in databases,
+%computational-geometry, and vision {\large \bf (references?)}. 
+
+Several data structures were suggested for that problem. 
+Foremost among those, at least theoreticly, is the range-tree data structure
+with $O(n \log^d{(n)})$ preprocessing time, $O(n\log^{d-1}(n))$ space,
+and $O(\log^{d}(n) + k)$ query time, where $k$ is the output size of
+the query.
+%See \Chapter{Range:Trees} for the the {\cgal}implementation of range-trees.
+A theoreticly inferior data structure is the \kdt, which offers $O(n
+\log{n})$ preprocessing time, $O(n)$ space, and $O(n^{1-1/d})$ query
+time. The {\kdt}  is a binary tree constructed as follows: we compute
+the point $p_i$ of $S$ such that its first coordinate is the median
+value among $p_1^1, \ldots, p_n^1$, where $p_i^k$ denote the $k$-th
+coordinate of the $i$-th point of $S$. Let $S_1$ denote all the points
+of $S$ with first coordinate smaller than $p_i$'s first coordinate, and
+let $S_2 = S \setminus S_1$.  Let $T_1,T_2$ be the {\kdts}  constructed
+recursively for $S_1, S_2$, respectively.  The {\kdt}  of $S$ is simply
+the binary tree having $T_1$ as its left subtree and $T_2$ as its
+right subtree. We apply this algorithm recursively, splitting the sets
+in the $i$-level of the {\kdt}  using the median point in the $k$-th
+coordinate, where $k=(i \;\;mod \;\;n) + 1$. See Figure
+\ref{KDT_fig:kdtree} for an illustration.
+
+The resulting data structure has linear size, $O(n\log{n})$
+preprocessing time, and can answer a query in $O(n^{1-1/d} +k)$ time,
+where $k$ is the size of the query output. See \cite{bkos-cgaa-97}.
+
+\begin{ccTexOnly}
+
+\begin{figure}[hb]
+    \begin{center}
+        \Ipe{kdtree.ipe}
+    \end{center}
+
+    \caption{The partition of a set of  points induced by a  
+       {\kdt}  of the points}
+
+    \label{KDT_fig:kdtree}
+\end{figure}
+
+\end{ccTexOnly}
+
+%for html
+\lcHtml{\label{KDT_fig:kdtree}}
+\begin{ccHtmlOnly}
+<P>
+<center><img border=0 src="./kdtree.gif" alt=" "><br>
+The partition of a set of  points induced by a kd-tree of the points</center>
+\end{ccHtmlOnly}
+
+\section{Reference Pages for Kd-Trees}
+\label{KDT_sec:RefPages}
+
+\begin{ccRefClass}{Kdtree_d<Traits>}
+
+\ccThree{KdtreexdxTraitsx}{}{\hspace*{7.6cm}}
+\ccTwo{}{\hspace*{7.6cm}}
+
+%\begin{ccClassTemplate}{Kdtree_d<Traits>} 
+    \ccDefinition An object $T$ of the class
+    \ccStyle{Kdtree_d<Traits>} is the {\kdt}  induced by a set of points
+    in $d$-dimensions.
+
+    \ccInclude{ CGAL/kdtree_d.h}
+
+    \ccTypes
+    
+    \ccNestedType{Box}{represents an axis-parallel box in
+       $d$-dimensions. The box might be unbounded.}
+    
+    \ccTypedef{typedef Traits::Point Point;}{}
+    \ccTypedef{typedef list<Point>  List_points;}{}
+
+    \ccCreation
+    \ccCreationVariable{kd_tree}
+    
+    \ccConstructor{Kdtree_d<Traits>( int dim = 2 );}{construct an
+       empty {\kdt}   of dimension \ccStyle{dim}.}
+
+    \ccOperations
+    
+\ccThree{bool}{}{\hspace*{7.6cm}}
+
+    \ccMethod{bool is_valid(bool verbose = false, int level = 0)
+       const;} {perform internal consistency checks to verify the
+       correctness of the \kdt}
+    
+    \ccMethod{void build( list<Point> &l );}{construct the 
+       {\kdt}  from the points stored in \ccStyle{l}.  
+       \ccPrecond{all the points in \ccStyle{l} are of dimension no
+          smaller than the dimension of {{\ccVar} } itself.} }
+    
+    \ccMethod{void search( back_insert_iterator<List_points>
+       result, Box & query_box );}{return into \ccStyle{result} all
+       the points of the {{\kdt}  } that lie inside \ccStyle{query_box}}
+%\end{ccClassTemplate}
+
+\end{ccRefClass}
+
+%\ccHeading{\ccStyle{Kdtree_d<Traits>::Box}}
+
+%\begin{ccClassTemplate}{Kdtree_d<I>::Box} 
+\begin{ccRefClass}[Kdtree_d<Traits>::]{Box} 
+    \ccDefinition An object $B$ of the class
+    \ccStyle{Box} is a $d$-dimensional box (it may
+    be unbounded). A $d$-dimensional box is the set defined by the
+    Cartesian set $[l_1, r_1) \times [l_2, r_2) \times \cdots \times
+    [l_d,r_d)$.
+
+    \ccCreation
+    \ccCreationVariable{box}
+    
+    \ccConstructor{Box( int d );}{Construct a box corresponding to
+       the whole $d$-dimensional space}
+    
+    \ccConstructor{Box( Point left, Right right, int d );}{ Construct
+       the axis parallel box in the $d$-dimensional space defined by
+       the points \ccStyle{left}, \ccStyle{right}.}
+
+    \ccOperations
+    
+    \ccMethod{void set_coord_left( int k, Point & left );}{ set
+       the left endpoint of the $k$-th dimensional interval of \ccVar\ {}
+       to be the $k$-th coordinate of \ccStyle{left}}
+   
+    \ccMethod{void set_coord_right( int k, Point & right );}{ set
+       the right endpoint of the $k$-th dimensional interval of \ccVar\ {}
+       to be the $k$-th coordinate of \ccStyle{right}}
+    
+    \ccMethod{bool is_in( Point pnt );}{return \ccStyle{true}
+       if \ccStyle{pnt} lies inside \ccVar.}
+    
+    \ccMethod{bool is_coord_in_range( int k, Point pnt );}{ return
+       \ccStyle{true} if the $k$-th coordinate of \ccStyle{pnt} lies
+       inside the $k$-th dimensional interval of \ccVar.}
+%\end{ccClassTemplate}
+%\end{ccClass}
+\end{ccRefClass}
+
+%********************************************************
+\begin{ccRefConcept}{Kdtree_d_traits}
+
+The \ccStyle{Kdtree_d}  class is  parameterized with the
+interface class \ccStyle{Traits} which defines the abstract interface
+between the \ccStyle{Kdtree_d} class and the data (i.e., points). The following
+requirement catalog lists the primitives, i.e.,~types, member functions
+etc., that must be defined for a class that can be used to
+parameterize \kdts. Ready-made implementation are available
+by the \ccStyle{Kdtree_d} default traits classes.
+
+\ccThree{static void}{}{\hspace*{7.1cm}}
+\ccTwo{}{\hspace*{7.1cm}}
+
+
+\begin{ccClass} {Traits}
+
+    \ccCreationVariable{t}
+
+    \ccDefinition
+    A class \ccClassName\ that satisfies the requirements of an
+    interface class for a \ccStyle{Kdtree_d} class must provide the
+    following types and operations. 
+  
+    \ccTypes
+    
+    \ccNestedType{Point}{A type to hold a input item.}
+
+    \ccOperations
+%    \ccSetTwoOfThreeColumns{4cm}{4cm}
+
+    \ccMethod{static Comparison_result compare(
+       int k,
+       const Point & p0,
+       const Point & p1);} {compare the \ccStyle{k}-th coordinate
+       of $p0$ and $p1$.  Return \ccStyle{LARGER} if $p0_k >
+       p1_k$, \ccStyle{SMALLER} if $p0_k < p1_k$, or else
+       \ccStyle{EQUAL}.  }
+
+    \ccMethod{static void  copy_coord( int  k, Point   & dest, 
+       const Point & src );}{Copy the $k$-th coordinate of $src$ to
+       the $k$-th coordinate of $dest$.}
+
+    \ccMethod{static int  dimension( const Point  & pnt );}
+    {return the dimension of \ccStyle{pnt}}
+\end{ccClass}
+\end{ccRefConcept}
+
+\begin{ccRefClass}{Kdtree_Interface<Point>}
+
+{\cgal}  contains a default implementation for the Kdtree\_d traits
+class, that
+may be applied to any
+standard class of point provided by \cgal.
+
+The default traits class \ccStyle{Kdtree_Interface<Point>} is
+templated with a parameter \ccStyle{Point}, which is required to
+supply the following methods:
+
+\begin{itemize}
+    \item Constructor, and copy constructor.
+
+    \item \ccStyle{int dimension();} - return the dimension of the point.
+    
+    \item \ccStyle{operator[](int dim);} - an operator for accessing
+    the various coordinates of the given point. Used also to copy
+    coordinates between points.
+\end{itemize}
+
+There are two other default traits classes \ccStyle{Kdtree_Interface_2d<Point>} 
+and \ccStyle{Kdtree_Interface_3d<Point>} which should be used when using 
+2D and 3D points from the {\cgal} kernel. This is done since the points in the
+kernel do not support changing their coordinates through direct access. 
+
+\end{ccRefClass}
+%********************************************************
+
+%********************************************************
+\begin{ccRefClass}{Kdtree_Interface_2d<Point>}
+
+The default traits class \ccStyle{Kdtree_Interface_2d<Point>} 
+should be used when using 2D points from the {\cgal} kernel.
+It is
+templated with a parameter \ccStyle{Point}, which is required to
+supply the following methods:
+
+\begin{itemize}
+    \item Constructor, and copy constructor.
+
+    \item \ccStyle{int dimension();} - return the dimension of the point.
+    
+    \item \ccStyle{operator[](int dim);} - an operator for accessing
+    the various coordinates of the given point. Used also to copy
+    coordinates between points.
+\end{itemize}
+
+\end{ccRefClass}
+
+%********************************************************
+\begin{ccRefClass}{Kdtree_Interface_3d<Point>}
+
+The default traits class \ccStyle{Kdtree_Interface_3d<Point>} 
+should be used when using 3D points from the {\cgal} kernel.
+It is
+templated with a parameter \ccStyle{Point}, which is required to
+supply the following methods:
+
+\begin{itemize}
+    \item Constructor, and copy constructor.
+
+    \item \ccStyle{int dimension();} - return the dimension of the point.
+    
+    \item \ccStyle{operator[](int dim);} - an operator for accessing
+    the various coordinates of the given point. Used also to copy
+    coordinates between points.
+\end{itemize}
+
+\end{ccRefClass}
+
+%*********************************************************
+
+%-------------------------------------------------------------------------
+% Bibiliography 
+%-------------------------------------------------------------------------
+
+%\bibliographystyle{alpha}
+%\bibliography{geometry}
+
+
+%\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
+
+
