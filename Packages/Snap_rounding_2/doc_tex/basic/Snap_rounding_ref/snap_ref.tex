@@ -9,13 +9,16 @@
 \RCSdefDate{\snapRoundingDate}{$Date$}
 % +------------------------------------------------------------------------+
 
-\chapter{Snap Rounding - Reference Manual}
-\label{chapterSnapRoundibgRef}
-\ccChapterRelease\snapRoundingRev. \ \snapRoundingDate\\
-\ccChapterAuthor{Eli Packer}
+\ccRefPageBegin
 
+%\chapter{Snap Rounding - Reference Manual}
+%\label{chapterSnapRoundibgRef}
+%\ccChapterRelease\snapRoundingRev. \ \snapRoundingDate\\
+%\ccChapterAuthor{Eli Packer}
 
-\section*{Summary}
+\begin{ccRefFunction}{snap_rounding_2}
+
+\ccDefinition
 
 Snap rounding is a well known method for converting
 arbitrary-precision arrangements of segments into a fixed-precision
@@ -50,18 +53,20 @@ degrades.
 The traits used here must support arbitrary-precision number type as this is a
 basic requirement of Snap Rounding.
 
-%\begin{ccRefClass}{Isr<NT>}
-
-\subsection*{Definition}
 \ccInclude{CGAL/Snap_rounding_2.h}
 
-\ccParameters
-The template declaration of the \ccc{Snap_rounding_2} function has one parameter:
+\ccGlobalFunction{
+  template < class Traits, class InputIterator, class OutputContainer >
+  void
+  snap_rounding_2(
+  InputIterator begin,
+  InputIterator end,
+  OutputContainer& output_container,
+  typename Traits::FT pixel_size,
+  bool do_isr = true,
+  bool int_output = true,
+  unsigned int number_of_kd_trees = 1);}
 
-\ccCreation
-    \ccCreationVariable{Snap_rounding_2}
-
-\ccConstructor{snap_rounding(typename std::list<Segment_2>::const_iterator first,typename std::list<Segment_2>::const_iterator beyond,NT pixel_size,bool do_isr = true,bool use_integer_mode = true, int number_of_kd_trees = 1);}{
 The first two parameters denote the first and after-the-last iterators of a list of Segment\_2 which are the input of Snap Rounding.
 The third parameter denotes the pixel size. The forth parameter determines whether to apply Iterated Snap Rounding
 or Snap Rounding. The fifth parameter determines the output representation. If the
@@ -71,16 +76,54 @@ the representation remains {\ccc NT}. Otherwise, the plane is tiled
 with unit pixels with size {\ccc pixel\_size} and each vertice of the output is
 represented by the coordinates of the cenetr of the hot pixel that contains it.
 The sixth parameter is desribed below.
-}
+
 
 \ccPrecond{\ccc{pixel_size} must have a positive value.}
 \ccPrecond{\ccc{number_of_kd_trees} must be a positive integer.}
 
 \begin{ccAdvanced}
-The sixth parameter denotes the number of KD trees to use (see \cite{isr-2002} for details).
-The default, $1$, is ussually the best one to use.
+
+ A basic query used in the algorithm is to report the hot pixels of
+ size $w$ that a certain segment $s$ intersects.  An alternative way to
+ do the same is to query the hot pixels' centers contained in a
+ Minkowski sum of $s$ with a pixel of width $w$ centered at the origin;
+ we denote this Minkowski sum by $M(s)$. Since efficiently implementing
+ this kind of query is difficult, we use an orthogonal range-search
+ structure instead. We query with the bounding box $B(M(s))$ of $M(s)$
+ in a two-dimensional kd-tree which stores the centers of hot
+ pixels. Since $B(M(s))$ in general is larger than $M(s)$, we still
+ need to filter out the hot pixels which do not intersect $s$.
+
+ While this approach is easy to implement with CGAL, it may incur
+ considerable overhead since the area of $B(M(s))$ may be much larger
+ than $M(s)$, possibly resulting in many redundant hot pixels to filter
+ out. Our heuristic solution, which we describe next, is to use a
+ cluster of kd-trees rather than just one.  The cluster includes
+ several kd-trees, each has the plane, and hence the centers of hot
+ pixels, rotated by a different angle in the first quarter of the
+ plane; for our purpose, rotation by other angles are symmetric to a
+ rotation by an angle in the first quarter.
+
+ Given a parameter $c$, the angles of rotation are $(i - 1)
+ \frac{\pi}{2c}, i=1,\ldots,c$, and we construct a kd-tree
+ corresponding to each of these angles. Then for a query segment $s$,
+ we choose the kd-tree for which the area of $B(M(s))$ is the smallest,
+ in order to (potentially) get less hot pixels to filter out.  Since
+ constructing many kd-trees may be costly, our algorithm avoids
+ building a kd-tree which it expects to be queried a relatively small
+ number of times (we estimate this number in advance).  How many
+ kd-trees should be used?  It is difficult to provide a simple
+ answer for that.  There are inputs for which the time to build more
+ than one kd-tree is far greater than the time saved by having to
+ filter out less hot pixels (sparse arrangements demonstrate this
+ behavior), and there are inputs which benefit from using several
+ kd-trees. Thus, the user can control the number of kd-trees
+ with the parameter \ccc{number_of_kd_trees}. Typically, but not
+ always, one kd-tree (the default) is sufficient.
+
 \end{ccAdvanced}
 
+\end{ccRefFunction}
 %\end{ccRefClass}
 
 % +--------------------------------------------------------+
