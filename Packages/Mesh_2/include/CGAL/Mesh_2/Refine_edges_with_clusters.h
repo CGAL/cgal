@@ -73,6 +73,8 @@ class Refine_edges_base_with_clusters :
   Cluster ca, cb;
   clusters_iterator ca_it, cb_it;
 
+  using Super::triangulation_ref_impl;
+
 public:
   /** \name CONSTRUCTORS */
 

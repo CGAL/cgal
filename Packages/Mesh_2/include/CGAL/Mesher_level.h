@@ -399,7 +399,6 @@ public:
   {
     return tr;
   }
-
   const Tr& triangulation_ref_impl() const
   {
     return tr;

@@ -54,6 +54,7 @@ class Refine_faces_base :
   typedef Triangulation_mesher_level_traits_2<Tr> Triangulation_traits;
   typedef typename Triangulation_traits::Zone Zone;
 
+public:
   using Triangulation_mesher_level_traits_2<Tr>::triangulation_ref_impl;
 
 protected: // --- PROTECTED TYPES ---
