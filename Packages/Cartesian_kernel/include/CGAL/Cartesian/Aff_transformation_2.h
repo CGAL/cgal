@@ -23,7 +23,6 @@
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_2_H
 
 #include <cmath>
-#include <CGAL/Cartesian/redefine_names_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -22,7 +22,6 @@
 #ifndef CGAL_CARTESIAN_POINT_2_H
 #define CGAL_CARTESIAN_POINT_2_H
 
-#include <CGAL/Cartesian/redefine_names_2.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 

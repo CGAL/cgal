@@ -22,7 +22,6 @@
 #ifndef CGAL_CARTESIAN_PREDICATES_ON_POINTS_3_H
 #define CGAL_CARTESIAN_PREDICATES_ON_POINTS_3_H
 
-#include <CGAL/Cartesian/redefine_names_3.h>
 #include <CGAL/predicates/kernel_ftC3.h>
 
 CGAL_BEGIN_NAMESPACE

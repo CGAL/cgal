@@ -22,7 +22,6 @@
 #ifndef CGAL_CARTESIAN_POINT_CONSTRUCTIONS_2_H
 #define CGAL_CARTESIAN_POINT_CONSTRUCTIONS_2_H
 
-#include <CGAL/Cartesian/redefine_names_2.h>
 #include <CGAL/Cartesian/Point_2.h>
 
 CGAL_BEGIN_NAMESPACE

@@ -22,8 +22,6 @@
 #ifndef CGAL_CARTESIAN_SEGMENT_3_H
 #define CGAL_CARTESIAN_SEGMENT_3_H
 
-#include <CGAL/Cartesian/redefine_names_3.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >

@@ -22,7 +22,6 @@
 #ifndef CGAL_CARTESIAN_TETRAHEDRON_3_H
 #define CGAL_CARTESIAN_TETRAHEDRON_3_H
 
-#include <CGAL/Cartesian/redefine_names_3.h>
 #include <CGAL/Cartesian/solve_3.h>
 #include <vector>
 #include <functional>

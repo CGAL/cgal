@@ -22,7 +22,6 @@
 #ifndef CGAL_CARTESIAN_SPHERE_3_H
 #define CGAL_CARTESIAN_SPHERE_3_H
 
-#include <CGAL/Cartesian/redefine_names_3.h>
 #include <CGAL/Cartesian/Sphere_rep_3.h>
 
 CGAL_BEGIN_NAMESPACE

@@ -22,7 +22,6 @@
 #ifndef CGAL_CARTESIAN_PLANE_CONSTRUCTIONS_3_H
 #define CGAL_CARTESIAN_PLANE_CONSTRUCTIONS_3_H
 
-#include <CGAL/Cartesian/redefine_names_3.h>
 #include <CGAL/Cartesian/Point_3.h>
 #include <CGAL/constructions/kernel_ftC3.h>
 

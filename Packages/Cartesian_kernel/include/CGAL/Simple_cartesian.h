@@ -27,6 +27,9 @@
 #define CGAL_CARTESIAN_CLASS_DEFINED
 
 #include <CGAL/basic.h>
+#include <CGAL/Cartesian/redefine_names_2.h>
+#include <CGAL/Cartesian/redefine_names_3.h>
+
 #include <CGAL/Cartesian_dynamic_d.h>
 
 #include <CGAL/Twotuple.h>
