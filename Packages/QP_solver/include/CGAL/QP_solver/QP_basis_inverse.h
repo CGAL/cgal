@@ -270,8 +270,8 @@ class QPE_basis_inverse {
     void  swap_variable  ( unsigned int, Tag_true );            // LP case
     void  swap_variable  ( unsigned int, Tag_false);            // QP case
     void  swap_constraint( unsigned int, Tag_true );            // LP case
-    void  swap_constraint( unsigned int, Tag_false);            // QP case
-
+    void  swap_constraint( unsigned int, Tag_false);            // QP case	
+    
     // diagnostic output
     void  print( );
 
@@ -631,10 +631,10 @@ class QPE_basis_inverse {
         ET    z     = d*u_x_it[ b] - inner_product_x( y_x_it, u_x_it);
         bool  z_neg = ( z < et0);
         CGAL_qpe_precondition( z != et0);
-
+	
         // update matrix
 	update_inplace_LP( x_x.begin(), y_x_it, z, ( z_neg ? -d : d));
-                                                            
+                                                  
         // append new row and column
         // -------------------------
         typename Matrix::iterator  matrix_it;
@@ -642,25 +642,26 @@ class QPE_basis_inverse {
         unsigned int                  row, col;
 
 	// QP (in phase I)?
-	matrix_it = M.begin();
-	if ( is_QP) matrix_it += l;
-
-        // store 'x_x' in new row
-	row_it = matrix_it[ s].begin();
-	  x_it = x_x.begin();
-        for (   col = 0;
-		col < b;
-	      ++col,     ++row_it, ++x_it) {
-            *row_it = ( z_neg ? *x_it : -( *x_it));
-        }
+	if ( is_QP) {
+	    ensure_physical_row(l+b);
+	    row_it = M[l+b].begin();
+	    matrix_it = M.begin() + l;
+	} else {
+	    row_it = M[s].begin();
+	    matrix_it = M.begin();
+	} 	
+	
+	// store 'x_x' in new row 
+	x_it = x_x.begin();
+	for ( col = 0; col < b; ++col, ++row_it, ++x_it) {
+		*row_it = ( z_neg ? *x_it : -( *x_it));
+	}
         *row_it = ( z_neg ? -d : d);
-
-	// store 'y_x' in new column
-        for (   row = 0;
-		row < s;
-	      ++row,     ++matrix_it, ++y_x_it) {
-            ( *matrix_it)[ b] = ( z_neg ? *y_x_it : -( *y_x_it));
-        }
+	
+	// store 'y_x' in new col
+	for ( row = 0; row < s; ++row, ++matrix_it, ++y_x_it) {
+		(*matrix_it)[b] = ( z_neg ? *y_x_it : -( *y_x_it));
+	}
 	++s; ++b;
     
         // store new denominator
@@ -672,8 +673,8 @@ class QPE_basis_inverse {
             if ( vout.verbose()) print();
         }
     }
-
-  private:
+  // due to basis_matrix_stays_regular fix, needs reconsideration
+  //private:
 
     // private member functions
     // ------------------------
@@ -684,9 +685,10 @@ class QPE_basis_inverse {
     {
 	// only Q is used to store A_B^-1 in phase I
         for ( s = l, b = 0; b < art_size; ++s, ++b, ++art_first) {
-	    std::fill_n( M[ s].begin(), art_size, et0);
+	    ensure_physical_row(s);
             M[ s][ b] = ( art_first->second ? -et1 : et1);
         }
+
         s = art_size;
     }
 
@@ -700,6 +702,21 @@ class QPE_basis_inverse {
 	    M[ s][ s] = ( art_first->second ? -et1 : et1);
 	}
 	b = art_size;
+    }
+    
+    // append row in Q if no allocated row available
+    void ensure_physical_row (int row) {
+    	int rows = M.size();
+	CGAL_qpe_precondition(rows >= row);
+	if (rows == row) {
+            M.push_back(Row(row+1, et0));
+            CGAL_qpe_postcondition(M[row].size()==row+1);
+	    CGAL_qpe_debug {
+                if ( vout.verbose()) {
+                    vout << "physical row " << (row) << " appended in Q\n";
+		}
+            }
+	}
     }
     
     // matrix-vector multiplication (QP case)
@@ -983,8 +1000,8 @@ template < class ET_, class Is_LP_ >  inline
 void  QPE_basis_inverse<ET_,Is_LP_>::
 set( unsigned int  max_basis_size, Tag_false)
 {
-    M.reserve( l + std::max( max_basis_size, l));
-    for ( unsigned int i = 0; i < l*2; ) M.push_back( Row( ++i, et0));
+    M.reserve( l);
+    for ( unsigned int i = 0; i < l; ) M.push_back( Row( ++i, et0));
 }
     
 // set-up (LP case)
