@@ -1,0 +1,12 @@
+#!/bin/bash
+
+data_dir="data"
+
+rm -f ${data_dir}/upgrade.tmp
+
+while read LINE; do
+    ./nef_3 loadnef3 ${data_dir}/${LINE} sorted >${data_dir}/upgrade.tmp
+    if [ -s ${data_dir}/upgrade.tmp ]; then
+	mv ${data_dir}/upgrade.tmp ${data_dir}/${LINE}
+    fi
+done
