@@ -841,14 +841,14 @@ public:
 		p=v->point();
 		q=dir;
 
-		cerr << " p " << p << " q " << q << endl;
+		//cerr << " p " << p << " q " << q << endl;
 		
 		Face_circulator fc = v->incident_faces();
 		Face_circulator done = fc;
 
-		cerr  << "(" << fc->vertex(0)->point() << ", "
-		      <<fc->vertex(1)->point() << ", "
-		      << fc->vertex(2)->point() << ")" << endl ;
+		//cerr  << "(" << fc->vertex(0)->point() << ", "
+		//      <<fc->vertex(1)->point() << ", "
+		//      << fc->vertex(2)->point() << ")" << endl ;
 
 		int ic = fc->index(v);
 		Vertex_handle  vt= fc->vertex(ccw(ic));
@@ -866,9 +866,9 @@ public:
 		      {  ++fc;}
 		    ic = fc->index(_tr->infinite_vertex());
 		    if( _tr->geom_traits().orientation(
-			       fc->vertex( cw(i))->point(),
-			       fc->vertex( ccw(i))->point(),
-							q) != CGAL_LEFTTURN) {  ++fc;}
+			       fc->vertex( cw(ic))->point(),
+			       fc->vertex( ccw(ic))->point(),
+							q) != CGAL_RIGHTTURN) {  ++fc;}
 		    ptr() = &(*fc);
 		    i = fc->index(_tr->infinite_vertex());
 		    s = vertex_vertex;
@@ -881,7 +881,7 @@ public:
 		    ptq = _tr->geom_traits().orientation(p,  vt->point(), q);
 		}
 		
-		cerr << "t " << vt->point() << endl;
+		//cerr << "t " << vt->point() << endl;
 
 
 		// now vt is a finite vertex and ptq is COLLINEAR or LEFTTURN
@@ -905,11 +905,11 @@ public:
 		vt= fc->vertex(ccw(ic));
 		ptq = _tr->geom_traits().orientation(p,  vt->point(), q);
 
-		cerr << "t " << vt->point() << endl;
-		cerr << "r " << vr->point() << endl;
-		cerr << "face" << "(" << fc->vertex(0)->point() << ", "
-		      <<fc->vertex(1)->point() << ", "
-		      << fc->vertex(2)->point() << ")" << endl ;
+		//cerr << "t " << vt->point() << endl;
+		//cerr << "r " << vr->point() << endl;
+		//cerr  << "face" << "(" << fc->vertex(0)->point() << ", "
+		//     <<fc->vertex(1)->point() << ", "
+		//      << fc->vertex(2)->point() << ")" << endl ;
 
 		if (_tr->is_infinite(vr)) {		  
 		  s = vertex_vertex;
@@ -1291,7 +1291,7 @@ public:
                         if(o == CGAL_RIGHTTURN){
                             return false;
                         }
-                        if(o == CGAL_COLLINEAR){
+                         if(o == CGAL_COLLINEAR){
                             lt = EDGE;
                             li = i;
                             return true;
