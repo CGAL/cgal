@@ -1,0 +1,14 @@
+#!/usr/bin/perl
+#
+# Perl script that computes an encrypted password.
+# Taken from the book "Open Source development with CVS" by Karl Fogel.
+# It is used for the CVS server.
+# Sylvain Pion, 2000.
+
+srand (time());
+my $randletter = "(int (rand(26)) + (int (rand(1) + .5) % 2 ? 65 : 97))";
+my $salt = sprintf ("%c%c", eval $randletter, eval $randletter);
+my $plaintext = shift;
+my $crypttext = crypt ($plaintext, $salt);
+
+print "${crypttext}\n";

@@ -1,3 +1,6 @@
+8 September 2004 Sylvain Pion
+- Add developer_scripts/crypt_passwd .
+
 21 August 2004 Sylvain Pion
 - autotest_cgal : don't keep LATEST at the end (RELEASE_NR is enough).
 
