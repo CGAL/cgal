@@ -614,7 +614,7 @@ Quiet=0
 RealQuiet=0
 Verbose=0
 
-Flex="flex -t -8 -w"
+Flex="flex -t -8 -w -Cae"
 MakePath="mkdir -p"
 
 set_no_color() {
