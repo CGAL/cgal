@@ -1,0 +1,74 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_2::Vertex_base.tex
+% +------------------------------------------------------------------------+
+% | 11.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulation::VertexbaseRev}{$Revision$}
+\RCSdefDate{\RCSTriangulation::VertexbaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationVertexBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the requirements for the
+vertex base class of a \ccc{Triangulation_2<Traits,Tds>}.
+At the bottom layer,  
+a vertex stores a point and a  provides access to one of its incident
+face through a
+\ccc{void *} pointer.
+
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+\ccConstructor{TriangulationVertexBase_2();}{default constructor.}
+\ccConstructor{TriangulationVertexBase_2(Point p);}
+{constructs a vertex embedded in point \ccc{p}.}
+\ccConstructor{TriangulationVertexBase_2(Point p,
+                     void* f);}{constructs a vertex embedded in point \ccc{p}
+and pointing on face \ccc{f}.}
+
+\ccAccessFunctions
+\ccMethod{Point point() const;}
+{returns  the point.}
+\ccGlue
+\ccMethod{void* face() const;}{ a pointer to an incident face.}
+
+\ccHeading{Setting}
+\ccMethod{void set_point(Point p);}
+{sets the point.}
+\ccGlue
+\ccMethod{void set_face(void* f);}
+{sets the incident face.}
+
+\ccHeading{Checking}
+\ccMethod{bool is_valid() const;}{ performs any required geometrical test on a vertex.}
+
+
+\ccHasModels
+
+\ccc{CGAL::TriangulationVertexBase_2<Traits>}.
+
+
+\ccSeeAlso
+
+\ccc{TriangulationDataStructure_2} \\
+\ccc{TriangulationDataStructure_2::Vertex} \\
+\ccc{CGAL::Triangulation_vertex_base_2<Traits>}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

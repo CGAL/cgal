@@ -21,7 +21,7 @@ connected and without singularities. Thus a triangulation
 can be viewed as a collection of triangular faces,
 such that two faces either have an empty intersection or share an edge or a vertex.
 
-Thus the basic elements of the representation are vertices and faces.
+The basic elements of the representation are vertices and faces.
 Each triangular face gives access to its three incident vertices 
 and to its three adjacent faces. 
 Each vertex gives access to one of its incident faces
@@ -56,14 +56,16 @@ Chapter~\ref{ref_chapter_2D_Triangulation_Data_Structure}.
 \ccRefConceptPage{ConstrainedDelaunayTriangulationTraits_2} 
 
 \ccRefConceptPage{TriangulationDataStructure_2}\\
-\ccRefConceptPage{TriangulationDataStructure_2::Face}\\
-\ccRefConceptPage{TriangulationDataStructure_2::Vertex}\\
+
 \ccRefConceptPage{TriangulationFaceBase_2}\\
 \ccRefConceptPage{TriangulationVertexBase_2}\\
 \ccRefConceptPage{ConstrainedTriangulationFaceBase_2}\\
-\ccRefConceptPage{RegularTriangulationFaceBase_2}
+\ccRefConceptPage{RegularTriangulationFaceBase_2} \\
+\ccRefConceptPage{RegularTriangulationVertexBase_2}
 
 \subsection*{Classes}
+
+
 \ccRefIdfierPage{CGAL::Triangulation_2<Traits,Tds>}\\
 \ccRefIdfierPage{CGAL::Delaunay_triangulation_2<Traits,Tds>}\\
 \ccRefIdfierPage{CGAL::Regular_triangulation_2<Traits,Tds>}\\
@@ -81,7 +83,10 @@ Chapter~\ref{ref_chapter_2D_Triangulation_Data_Structure}.
 \ccRefIdfierPage{CGAL::Triangulation_face_base_2<Traits>}\\
 \ccRefIdfierPage{CGAL::Triangulation_vertex_base_2<Traits>}\\
 \ccRefIdfierPage{CGAL::Regular_triangulation_face_base_2<Traits>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_vertex_base_2<Traits>}\\
 \ccRefIdfierPage{CGAL::Constrained_triangulation_face_base_2<Traits>}\\
+\ccRefIdfierPage{CGAL::Triangulation_vertex_base_with_info_2<Info,Traits,Vb>}\\
+\ccRefIdfierPage{CGAL::Triangulation_face_base_with_info_2<Info,Traits,Fb>}\\
 
 \ccRefIdfierPage{CGAL::Weighted_point<Pt,Wt>}\\
 \ccRefIdfierPage{CGAL::Triangulation_cw_ccw_2}\\
