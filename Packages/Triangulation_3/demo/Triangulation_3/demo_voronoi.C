@@ -55,12 +55,11 @@ int main()
 
   Triangulation T;
 
-  int x,y,z;
   std::cout <<"          Inserting points" << std::endl ;
-  for (z=0 ; z<3 ; z++)
-    for (y=0 ; y<3 ; y++)
-      for (x=0 ; x<3 ; x++) 
-	  T.insert(Point(NT(x),NT(y),NT(z)));
+  for (int z=0 ; z<3 ; z++)
+    for (int y=0 ; y<3 ; y++)
+      for (int x=0 ; x<3 ; x++) 
+	  T.insert(Point(x, y, z));
 
   T.is_valid(true);
 
