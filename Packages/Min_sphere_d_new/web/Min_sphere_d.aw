@@ -176,7 +176,7 @@ in the \cgal\ Reference Manual.
 @! ----------------------------------------------------------------------------
 
 \subsectionRef{Class}{CGAL::Min\_sphere\_d\texttt{<}Traits\texttt{>}}
-\input{../doc_tex/basic/Optimisation/Optimisation_ref/Min_sphere_d.tex}
+%\input{../doc_tex/basic/Optimisation/Optimisation_ref/Min_sphere_d.tex}
 
 @! ----------------------------------------------------------------------------
 @! Concept: Optimisation_d_traits
@@ -1166,7 +1166,7 @@ command line.
 @macro <Min_sphere_d test: command line argument> many = @begin
     int verbose = -1;
     if ( argc > 1) verbose = atoi( argv[ 1]);
-    CGAL::Verbose_ostream  verr ( verbose >= 0);
+    CGAL::Verbose_ostream  verr ( verbose >= 0); verr  << "";
     CGAL::Verbose_ostream  verr0( verbose == 0); verr0 << "";
     CGAL::Verbose_ostream  verrX( verbose >  0); verrX << "";
 @end
@@ -1343,7 +1343,6 @@ e.g.~with $2$, $3$, or $d$.
 @macro <Min_sphere_d test: includes>(1) many += @begin
     #include <CGAL/Cartesian.h>
     #include <CGAL/Homogeneous.h>
-    #include <CGAL/Point_@1.h>
     #include <CGAL/Min_sphere_d_new.h>
     #include <CGAL/Optimisation_d_traits_@1.h>
 @end
@@ -1355,8 +1354,8 @@ variant.
     // test variant 1 (needs LEDA)
     #ifdef CGAL_USE_LEDA
     # include <CGAL/leda_integer.h>
-      typedef  CGAL::Cartesian<leda_integer>       R_1;
-      typedef  CGAL::Optimisation_d_traits_@1<R_1>  Traits_1;
+      typedef  CGAL::Cartesian<leda_integer>       K_1;
+      typedef  CGAL::Optimisation_d_traits_@1<K_1>  Traits_1;
     # define TEST_VARIANT_1 \
         "Optimisation_d_traits_@1< Cartesian<leda_integer> >"
       CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_integer)
@@ -1374,8 +1373,8 @@ arithmetic.
     // test variant 2 (needs GMP)
     #ifdef CGAL_USE_GMP
     # include <CGAL/_QP_solver/Double.h>
-      typedef  CGAL::Cartesian< int >                                 R_2;
-      typedef  CGAL::Optimisation_d_traits_@1<R_2,GMP::Double,double>  Traits_2;
+      typedef  CGAL::Cartesian< int >                                 K_2;
+      typedef  CGAL::Optimisation_d_traits_@1<K_2,GMP::Double,double>  Traits_2;
     # define TEST_VARIANT_2 \
         "Optimisation_d_traits_@1< Cartesian<int>, GMP::Double, double >"
     #endif
@@ -1400,9 +1399,9 @@ or sphere, respectively.
 @end
 
 @macro <Min_sphere_d test: generate point set>(3) = @begin
-    std::vector<R_@1::Point_@2>  points_@1;
+    std::vector<K_@1::Point_@2>  points_@1;
     points_@1.reserve( 100);
-    CGAL::copy_n( CGAL::Random_points_on_@3_@2<R_@1::Point_@2>( 0x100000),
+    CGAL::copy_n( CGAL::Random_points_on_@3_@2<K_@1::Point_@2>( 0x100000),
                   100, std::back_inserter( points_@1));
 @end
 
@@ -1411,7 +1410,7 @@ The traits class model with $d$-dimensional points is tested with $d = 5$
 in a $d$-cube.
 
 @macro <Min_sphere_d test: generate point set (dD)>(1) = @begin
-    std::vector<R_@1::Point_d>  points_@1;
+    std::vector<K_@1::Point_d>  points_@1;
     points_@1.reserve( 100);
     {
         int d = 5*@1;
@@ -1420,7 +1419,7 @@ in a $d$-cube.
         for ( i = 0; i < 100; ++i) {
             for ( j = 0; j < d; ++j)
                 coords[ j] = CGAL::default_random( 0x100000);
-            points_@1.push_back( R_@1::Point_d( d, coords.begin(),
+            points_@1.push_back( K_@1::Point_d( d, coords.begin(),
                                                    coords.end()));
         }
     }
@@ -1517,7 +1516,7 @@ model \ccc{Homogeneous<leda_integer>}.
     
     // comparing (needs LEDA)
     #ifdef CGAL_USE_LEDA
-      typedef  CGAL::Homogeneous<leda_integer>   R_3;
+      typedef  CGAL::Homogeneous<leda_integer>   K_3;
       typedef  CGAL::Min_circle_2_traits_2<R_3>  Traits_3;
       typedef  CGAL::Min_sphere_d<Traits_1>      Min_sphere_d;
       typedef  CGAL::Min_circle_2<Traits_3>      O_Min_sphere_d;
@@ -1528,7 +1527,7 @@ model \ccc{Homogeneous<leda_integer>}.
     
     // comparing (needs LEDA)
     #ifdef CGAL_USE_LEDA
-      typedef  CGAL::Homogeneous<leda_integer>     R_3;
+      typedef  CGAL::Homogeneous<leda_integer>     K_3;
       typedef  CGAL::Optimisation_d_traits_@1<R_3>  Traits_3;
       typedef  CGAL::Min_sphere_d<Traits_1>        Min_sphere_d;
       typedef  CGAL::Min_sphere_d<Traits_3>        O_Min_sphere_d;
@@ -1539,24 +1538,24 @@ In order to reuse the points from the first test variant (see above), we
 have to convert them to points with homogeneous representation.
 
 @macro <Min_sphere_d test: convert point set (2D)> = @begin
-    std::vector<R_3::Point_2>  points_3;
+    std::vector<K_3::Point_2>  points_3;
     points_3.reserve( points_1.size());
     {
         unsigned int i;
         for ( i = 0; i < points_1.size(); ++i) {
-            points_3.push_back( R_3::Point_2( points_1[ i][ 0],
+            points_3.push_back( K_3::Point_2( points_1[ i][ 0],
                                               points_1[ i][ 1]));
         }
     }
 @end
 
 @macro <Min_sphere_d test: convert point set (3D)> = @begin
-    std::vector<R_3::Point_3>  points_3;
+    std::vector<K_3::Point_3>  points_3;
     points_3.reserve( points_1.size());
     {
         unsigned int i;
         for ( i = 0; i < points_1.size(); ++i) {
-            points_3.push_back( R_3::Point_3( points_1[ i][ 0],
+            points_3.push_back( K_3::Point_3( points_1[ i][ 0],
                                               points_1[ i][ 1],
                                               points_1[ i][ 2]));
         }
@@ -1564,13 +1563,13 @@ have to convert them to points with homogeneous representation.
 @end
 
 @macro <Min_sphere_d test: convert point set (dD)> = @begin
-    std::vector<R_3::Point_d>  points_3;
+    std::vector<K_3::Point_d>  points_3;
     points_3.reserve( points_1.size());
     {
         int          d = points_1[ 0].dimension();
         unsigned int i;
         for ( i = 0; i < points_1.size(); ++i) {
-            points_3.push_back( R_3::Point_d( d, points_1[ i].begin(),
+            points_3.push_back( K_3::Point_d( d, points_1[ i].begin(),
                                                  points_1[ i].end()));
         }
     }
