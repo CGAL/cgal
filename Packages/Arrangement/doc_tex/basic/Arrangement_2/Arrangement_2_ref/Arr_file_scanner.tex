@@ -1,0 +1,85 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_file_scanner(Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%Arr_file_scanner
+\begin{ccRefClass}{Arr_file_scanner<Arrangement>}
+
+\ccCreationVariable{arr_file_scanner}
+
+\ccDefinition
+This class contains functions for reading the \ccc{Arrangement} components from a given input stream. 
+Users have to make sure that methods for reading \ccStyle{Point} and \ccStyle{Curve} defined in  
+the \ccc{Arrangement traits} class are provided when using the input stream they choose to work with.
+This class is templated with \ccc{Arrangement}, and hence the user can work with \ccRefName \/ 
+with its own \ccc{Arrangement}. 
+ 
+\ccInheritsFrom
+\ccc{Pm_file_scanner}
+
+%The following requirement catalog lists the primitives, i.e., types, member functions
+%etc., that must be defined for any \ccc{Planar map} file scanner class that can be used to parameterize the reading function of \ccc{Planar map}. 
+
+\ccTypes
+
+\ccNestedType{Traits}{Representation of a bounded curve.}
+\ccNestedType{Point}{A type to hold the location of a vertex in the plane.}
+\ccNestedType{X_curve}{A type to hold an $x$-monotone curve in the plane.}
+\ccNestedType{Curve}{A type to hold a curve in the plane.}
+
+\ccNestedType{Curve_node}{The \ccc{Arrangement} curve node type.}
+\ccNestedType{Subcurve_node}{The \ccc{Arrangement} subcurve node type.}
+\ccNestedType{Edge_node}{The \ccc{Arrangement} edge node type.}
+
+\ccCreation
+    
+\ccConstructor{Arr_file_scanner (istream& in)} 
+{A constructor for a given input stream.}
+\ccConstructor{Arr_file_scanner (istream& in, const File_header& header)} 
+{A constructor for a given input stream and File header.}
+
+The operation \ccRefName \/ supports are all the operations \ccc{Pm_file_scanner} supported plus the following:
+
+\ccOperations
+
+\ccMethod{void scan_Curve_node(Curve_node* cn);}
+{scans a curve node from the input stream.}
+
+\ccMethod{void scan_Subcurve_node(Subcurve_node* scn);}
+{scans a subcurve node from the input stream.}
+
+\ccMethod{void scan_Edge_node(Edge_node* en);}
+{scans an edge node from the input stream.}
+
+
+\end{ccRefClass} % Arr_file_scanner
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "draw_pm"
+%%% End: 
