@@ -1707,7 +1707,6 @@ Packages/Tutorial/tutorial/Polyhedron/doc/pfigs/RefSchemes.eps -text
 Packages/Tutorial/tutorial/Polyhedron/doc/pfigs/RefSchemes.fig -text
 Packages/Tutorial/tutorial/Polyhedron/doc/save/tutorial02.tgz -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/doc/save/tutorial03.tgz -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/doc/tutorial.pdf -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/Mesh.sln -text
 Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/Mesh.vcproj -text
 Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Mesh.ico -text svneol=unset#unset
