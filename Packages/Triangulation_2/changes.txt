@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 7.68 (22/04/03)
+- small bug fixes
+
 ver 7.67 (17/04/03)
 - fixes degenerate cases in regular triangulation
 - suppress Filter_iterator_with_handle.h from Regular_triangulation_2
