@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.83 (5 June 2003) [af]
+  - Replaced CGAL_TYPENAME_MSVC_NULL with template
+
 0.9.82 (16 May 2003) [af]
   - Added #include <cstddef> // for std::size_t, std::ptrdiff_t
 
