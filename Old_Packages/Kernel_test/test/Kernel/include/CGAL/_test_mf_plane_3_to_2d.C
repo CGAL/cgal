@@ -53,8 +53,8 @@ _test_mf_plane_3_to_2d(const R& )
  Point_3 p4 = p3 + (p2 - p1);
 
  Plane_3 pl1( p1, p2, p3);
- assert( pl1.has_on_boundary( pl1.to_3d( pl1.to_2d( pl1.point() ))) );
- assert( pl1.has_on_boundary( pl1.to_3d( pl1.to_2d( p4 ))) );
+ assert( pl1.has_on( pl1.to_3d( pl1.to_2d( pl1.point() ))) );
+ assert( pl1.has_on( pl1.to_3d( pl1.to_2d( p4 ))) );
  assert( p1 == pl1.to_3d( pl1.to_2d( p1)) );
  assert( p2 == pl1.to_3d( pl1.to_2d( p2)) );
  assert( p3 == pl1.to_3d( pl1.to_2d( p3)) );
@@ -63,8 +63,8 @@ _test_mf_plane_3_to_2d(const R& )
  std::cout << '.';
 
  Plane_3 pl2( p2, p1, p3);
- assert( pl2.has_on_boundary( pl2.to_3d( pl2.to_2d( pl2.point() ))) );
- assert( pl2.has_on_boundary( pl2.to_3d( pl2.to_2d( p4 ))) );
+ assert( pl2.has_on( pl2.to_3d( pl2.to_2d( pl2.point() ))) );
+ assert( pl2.has_on( pl2.to_3d( pl2.to_2d( p4 ))) );
  assert( p1 == pl2.to_3d( pl2.to_2d( p1)) );
  assert( p2 == pl2.to_3d( pl2.to_2d( p2)) );
  assert( p3 == pl2.to_3d( pl2.to_2d( p3)) );
@@ -85,10 +85,10 @@ _test_mf_plane_3_to_2d(const R& )
  Point_3 p8 = CGAL::midpoint( p3, p3 + (p2-p1) );
  Point_3 p9 = CGAL::midpoint( p1, p3);
  Point_3 p10= CGAL::midpoint( p2, p2 + (p3-p1) );
- assert( pl1.has_on_boundary( p7 ));
- assert( pl1.has_on_boundary( p8 ));
- assert( pl1.has_on_boundary( p9 ));
- assert( pl1.has_on_boundary( p10));
+ assert( pl1.has_on( p7 ));
+ assert( pl1.has_on( p8 ));
+ assert( pl1.has_on( p9 ));
+ assert( pl1.has_on( p10));
 
  std::cout << '.';
 
@@ -103,7 +103,7 @@ _test_mf_plane_3_to_2d(const R& )
  assert( sp1.has_on( pp) );
  assert( sp2.has_on( pp) );
  Point_3 p = pl1.to_3d( pp);
- assert( pl1.has_on_boundary( p ));
+ assert( pl1.has_on( p ));
  CGAL::Segment_3<R> s1( p7, p8);
  CGAL::Segment_3<R> s2( p9, p10);
  assert( s1.has_on( p) );

@@ -71,7 +71,9 @@ test_new_2(const R& rep)
 #ifndef CGAL_NO_DEPRECATED_CODE
   typedef typename R::Aff_transformation_2        Aff_transformation_2;
 #endif // CGAL_NO_DEPRECATED_CODE
-  typedef typename R::Object_2                    Object2;
+  typedef typename R::Object_2                    Object_2;
+  typedef typename R::Plane_3                     Plane_3;
+  typedef typename R::Point_3                     Point_3;
 
   typename R::Construct_point_2 construct_point =
         rep.construct_point_2_object();
@@ -141,6 +143,14 @@ test_new_2(const R& rep)
         = rep.construct_iso_rectangle_2_object();
   Iso_rectangle_2 rec2 = construct_iso_rectangle(p4,p5);
 
+  typename R::Construct_object_2 construct_object 
+        = rep.construct_object_2_object();
+  Object_2 obj = construct_object(rec2);
+           obj = construct_object(t1);
+           obj = construct_object(c41);
+           obj = construct_object(d6);
+           obj = construct_object(l6);
+
 #ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Construct_aff_transformation_2 construct_aff_transformation
         = rep.construct_aff_transformation_2_object();
@@ -160,6 +170,23 @@ test_new_2(const R& rep)
   typename R::Construct_point_on_2 construct_point_on
         = rep.construct_point_on_2_object();
   Point_2 tmp1 = construct_point_on(l2);
+
+  typename R::Construct_projected_point_2 construct_projected_point
+        = rep.construct_projected_point_2_object();
+          tmp1 = construct_projected_point(l2, p4);
+
+  typename R::Construct_projected_xy_point_2 construct_projected_xy_point
+        = rep.construct_projected_xy_point_2_object();
+          tmp1 = construct_projected_xy_point(Plane_3(1,1,1,1), Point_3(1,1,1));
+
+  typename R::Construct_scaled_vector_2 construct_scaled_vector
+        = rep.construct_scaled_vector_2_object();
+  Vector_2 v6 = construct_scaled_vector(v5, RT(5));
+
+  typename R::Construct_translated_point_2 construct_translated_point
+        = rep.construct_translated_point_2_object();
+          p1 = construct_translated_point(tmp1, v6);
+          p2 = construct_translated_point(p3, -v6);
 
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -289,8 +316,8 @@ test_new_2(const R& rep)
 
   typename R::Intersect_2 intersect
         = rep.intersect_2_object();
-  Object2 tmp21a = intersect(l2,l3);
-  Object2 tmp21b = intersect(l2,r2);
+  Object_2 tmp21a = intersect(l2,l3);
+  Object_2 tmp21b = intersect(l2,r2);
 
   bool tmp_bool;
 

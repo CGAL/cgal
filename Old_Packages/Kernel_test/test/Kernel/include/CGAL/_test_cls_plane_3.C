@@ -116,27 +116,27 @@ _test_cls_plane_3(const R& )
  assert( pl1.has_on( pl1.projection( pp0 ) )  );
  assert( pl1.has_on( pl1.projection( pp1 ) )  );
 
- assert( plc.has_on_boundary(plc.point()) );
+ assert( plc.has_on(plc.point()) );
  assert( plc.orthogonal_direction() == pla.orthogonal_direction() );
  assert( plc.perpendicular_line( plc.point() ) == \
          CGAL::Line_3<R>( plc.point(), plc.orthogonal_direction()) );
  assert( CGAL::Line_3<R>( pl1.point(), pl1.point()+pl1.orthogonal_vector() )\
          == CGAL::Line_3<R>( pl1.point(), pl1.orthogonal_direction()) );
  CGAL::Point_3<R>  gnup(RT(345),RT(23),RT(0));
- assert( xy_pl.has_on_boundary( gnup ) );
+ assert( xy_pl.has_on( gnup ) );
 
  CGAL::Vector_3<R> nov = pl1.orthogonal_vector();
  CGAL::Vector_3<R> vb1 = pl1.base1();
  CGAL::Vector_3<R> vb2 = pl1.base2();
  assert( (nov*pl1.base1()) == FT(0)&&(nov*pl1.base2()) == FT(0) );
  assert( (pl1.base2()*pl1.base1()) == FT(0) );
- assert( pl1.has_on_boundary(pl1.point() + pl1.base1()) );
- assert( pl1.has_on_boundary(pl1.point() + pl1.base2()) );
+ assert( pl1.has_on(pl1.point() + pl1.base1()) );
+ assert( pl1.has_on(pl1.point() + pl1.base2()) );
 
  std::cout << '.';
 
- assert( pl1.has_on_boundary( pl1.to_3d( pl1.to_2d( pl1.point() ))) );
- assert( pl1.has_on_boundary( pl1.to_3d( pl1.to_2d( pz ))) );
+ assert( pl1.has_on( pl1.to_3d( pl1.to_2d( pl1.point() ))) );
+ assert( pl1.has_on( pl1.to_3d( pl1.to_2d( pz ))) );
 
  assert( neg_xy_pl_eq.oriented_side( p1 ) == CGAL::ON_POSITIVE_SIDE );
  assert( xy_pl.oriented_side( p1 ) == CGAL::ON_NEGATIVE_SIDE );

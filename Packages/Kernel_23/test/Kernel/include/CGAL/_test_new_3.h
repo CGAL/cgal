@@ -59,7 +59,8 @@ test_new_3(const R& rep)
 #ifndef CGAL_NO_DEPRECATED_CODE
   typedef typename R::Aff_transformation_3        Aff_transformation_3;
 #endif // CGAL_NO_DEPRECATED_CODE
-  typedef typename R::Object_3                    Object3;
+  typedef typename R::Object_3                    Object_3;
+  typedef typename R::Point_2                     Point_2;
 
   typename R::Construct_point_3 construct_point
         = rep.construct_point_3_object();
@@ -149,6 +150,12 @@ test_new_3(const R& rep)
         = rep.construct_iso_cuboid_3_object();
   Iso_cuboid_3 iso1 = construct_iso_cuboid(p3,p6);
 
+  typename R::Construct_object_3 construct_object
+        = rep.construct_object_3_object();
+  Object_3 obj = construct_object(iso1);
+           obj = construct_object(th2);
+           obj = construct_object(t2);
+
 #ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Construct_aff_transformation_3 construct_aff_transformation
         = rep.construct_aff_transformation_3_object();
@@ -170,6 +177,24 @@ test_new_3(const R& rep)
   typename R::Construct_point_on_3 construct_point_on
         = rep.construct_point_on_3_object();
   Point_3 tmp1 = construct_point_on(l2);
+
+  typename R::Construct_projected_point_3 construct_projected_point
+        = rep.construct_projected_point_3_object();
+          tmp1 = construct_projected_point(l2, p4);
+          tmp1 = construct_projected_point(h7, p3);
+
+  typename R::Construct_lifted_point_3 construct_lifted_point
+        = rep.construct_lifted_point_3_object();
+          tmp1 = construct_lifted_point(h7, Point_2(10,4));
+
+  typename R::Construct_scaled_vector_3 construct_scaled_vector
+        = rep.construct_scaled_vector_3_object();
+  Vector_3 v6 = construct_scaled_vector(v5, RT(5));
+
+  typename R::Construct_translated_point_3 construct_translated_point
+        = rep.construct_translated_point_3_object();
+          p1 = construct_translated_point(tmp1, v6);
+          p2 = construct_translated_point(p3, -v6);
 
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -230,6 +255,11 @@ test_new_3(const R& rep)
         = rep.construct_orthogonal_vector_3_object();
   Vector_3 tmp3b = construct_orthogonal_vector(h7);
 
+  typename R::Construct_base_vector_3 construct_base_vector
+        = rep.construct_base_vector_3_object();
+           tmp3b = construct_base_vector(h7, 1);
+           tmp3b = construct_base_vector(h7, 2);
+
   typename R::Construct_midpoint_3 construct_midpoint
         = rep.construct_midpoint_3_object();
   Point_3 tmp4 = construct_midpoint(p2,p3);
@@ -276,6 +306,10 @@ test_new_3(const R& rep)
         = rep.construct_opposite_plane_3_object();
   Plane_3 tmp71 = construct_opposite_plane(h2);
 
+  typename R::Construct_opposite_sphere_3 construct_opposite_sphere
+        = rep.construct_opposite_sphere_3_object();
+  Sphere_3 sp1a = construct_opposite_sphere(sp1);
+
   typename R::Construct_opposite_vector_3 construct_opposite_vector
         = rep.construct_opposite_vector_3_object();
   Vector_3 tmp72 = construct_opposite_vector(v2);
@@ -295,8 +329,8 @@ test_new_3(const R& rep)
 
   typename R::Intersect_3 intersect
         = rep.intersect_3_object();
-  Object3 tmp10a = intersect(l2,h2);
-  Object3 tmp10b = intersect(r2,h2);
+  Object_3 tmp10a = intersect(l2,h2);
+  Object_3 tmp10b = intersect(r2,h2);
 
   bool tmp12a;
   bool tmp12b;
@@ -497,6 +531,7 @@ test_new_3(const R& rep)
   typename R::Oriented_side_3 oriented_side
         = rep.oriented_side_3_object();
   Oriented_side tmp39 = oriented_side(h2,p2);
+                tmp39 = oriented_side(sp9,p2);
 
   typename R::Bounded_side_3 bounded_side
         = rep.bounded_side_3_object();
