@@ -75,6 +75,7 @@ int main() {
     }
     assert(CGAL::squared_distance(center,*pt)> 0.01);
   }
+  std::cout << "done" << std::endl;
   return 0;
 }
 
