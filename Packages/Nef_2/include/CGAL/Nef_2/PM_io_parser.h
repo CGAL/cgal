@@ -86,15 +86,40 @@ class PM_io_parser : public PMDEC
 
 public:
 /*{\Mcreation 3}*/
-PM_io_parser(std::istream& is, Plane_map& H);
+PM_io_parser(std::istream& is, Plane_map& H)
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|
    to input |H| from |is|.}*/
+    : Base(H), in(is), out(std::cout), verbose(0), vn(0), en(0), fn(0)
+        { clear(); }
 
-PM_io_parser(std::ostream& os, const Plane_map& H);
+
+PM_io_parser(std::ostream& os, const Plane_map& H)
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|
 to output |H| to |os|.}*/
+: Base(const_cast<Plane_map&>(H)), in(std::cin), out(os), 
+  VI(vertices_begin(),vertices_end(),'v'),
+  EI(halfedges_begin(),halfedges_end(),'e'),
+  FI(faces_begin(),faces_end(),'f'),
+  vn(number_of_vertices()), 
+  en(number_of_halfedges()), 
+  fn(number_of_faces())
+{ verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
+             out.iword(CGAL::IO::mode) != CGAL::IO::BINARY);
+}
 
-PM_io_parser(std::ostream&, const PMDEC& D);
+
+PM_io_parser(std::ostream& os, const PMDEC& D)
+: Base(D), in(std::cin), out(os), 
+  VI(vertices_begin(),vertices_end(),'v'),
+  EI(halfedges_begin(),halfedges_end(),'e'),
+  FI(faces_begin(),faces_end(),'f'),
+  vn(number_of_vertices()), 
+  en(number_of_halfedges()), 
+  fn(number_of_faces())
+{ verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
+             out.iword(CGAL::IO::mode) != CGAL::IO::BINARY);
+}
+
 
 /*{\Moperations 2 3}*/
 
@@ -113,41 +138,6 @@ static void dump(const PMDEC& D, std::ostream& os = std::cerr);
 /*{\Mstatic prints the plane map decorated by |D| to |os|.}*/
 
 }; // PM_io_parser<PMDEC>
-
-
-template <typename PMDEC>
-PM_io_parser<PMDEC>::PM_io_parser
-  (std::istream& iin, Plane_map& H) :
-  Base(H), in(iin), out(std::cout), verbose(0), vn(0), en(0), fn(0)
-{ clear(); }
-
-template <typename PMDEC>
-PM_io_parser<PMDEC>::PM_io_parser
-  (std::ostream& iout, const Plane_map& H) :
-  Base(const_cast<Plane_map&>(H)), in(std::cin), out(iout), 
-  VI(vertices_begin(),vertices_end(),'v'),
-  EI(halfedges_begin(),halfedges_end(),'e'),
-  FI(faces_begin(),faces_end(),'f'),
-  vn(number_of_vertices()), 
-  en(number_of_halfedges()), 
-  fn(number_of_faces())
-{ verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
-             out.iword(CGAL::IO::mode) != CGAL::IO::BINARY);
-}
-
-template <typename PMDEC>
-PM_io_parser<PMDEC>::PM_io_parser
-  (std::ostream& iout, const PMDEC& D) :
-  Base(D), in(std::cin), out(iout), 
-  VI(vertices_begin(),vertices_end(),'v'),
-  EI(halfedges_begin(),halfedges_end(),'e'),
-  FI(faces_begin(),faces_end(),'f'),
-  vn(number_of_vertices()), 
-  en(number_of_halfedges()), 
-  fn(number_of_faces())
-{ verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
-             out.iword(CGAL::IO::mode) != CGAL::IO::BINARY);
-}
 
 
 //-----------------------------------------------------------------------------

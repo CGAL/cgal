@@ -47,6 +47,9 @@ Nef_polyhedron_2-demo$(EXE_EXT): Nef_polyhedron_2-demo$(OBJ_EXT)
 Simple-demo$(EXE_EXT): Simple-demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Simple-demo Simple-demo$(OBJ_EXT) $(LDFLAGS)
 
+nef_2$(EXE_EXT): nef_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nef_2 nef_2$(OBJ_EXT) $(LDFLAGS)
+
 clean:  \
 	Nef_polyhedron_2-demo.clean Simple-demo.clean 
 

@@ -1,6 +1,11 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.17 (08 May 2002)
+
+     - Moved external member function definitions into class definitions
+       to please VC7.
+
 1.16 (7 May 2002)
      -  casting of Standard_RT(0) required before assignment for Borland
 
