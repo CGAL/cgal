@@ -20,7 +20,7 @@ int main()
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Window_stream.h>
 //#include <CGAL/IO/cgal_window_redefine.h>
-#include <CGAL/Snap_rounding_2.h>
+#include "../../include/CGAL/Snap_rounding_2.h"
 
 typedef leda_rational                                  Number_Type;
 typedef CGAL::Cartesian<Number_Type>                   Rep;
@@ -109,9 +109,11 @@ void show_results(Snap_rounding_2 &s,
 }
 
 void display_bounding_box(CGAL::Window_stream &W,
-                          const Iso_rectangle_2 &b)
+                          const Iso_rectangle_2 &b,
+                          bool display_bbox)
 {
-  W << CGAL::BLACK << b;
+  if(display_bbox)
+    W << CGAL::BLACK << b;
 }
 
 void window_output(Snap_rounding_2 &s,Window_stream &w,
@@ -193,31 +195,35 @@ void read_data(int argc,
       is >> y1;
       is >> x2;
       is >> y2;
-      seg.set_data(x1,y1,x2,y2);
-      seg_list.push_back(Segment_2(Point_2(seg.get_x1(),seg.get_y1()),
-                                   Point_2(seg.get_x2(),seg.get_y2())));
+      seg_list.push_back(Segment_2(Point_2(x1,y1),
+                                   Point_2(x2,y2)));
+      //      seg.set_data(x1,y1,x2,y2);
+      //seg_list.push_back(Segment_2(Point_2(seg.get_x1(),seg.get_y1()),
+      //                             Point_2(seg.get_x2(),seg.get_y2));
   }
 }
 
 void clear(Snap_rounding_2 &s,
            CGAL::Window_stream &W,
-           const Iso_rectangle_2 &b)
+           const Iso_rectangle_2 &b,
+           bool display_bbox)
 {
   s.clear();
 
   W.clear();
 
-  display_bounding_box(W,b);
+  display_bounding_box(W,b,display_bbox);
 }
 
 void redraw(Snap_rounding_2 &s,
             CGAL::Window_stream &W,
             const Iso_rectangle_2 &b,
-            bool show_input)
+            bool show_input,
+            bool display_bbox)
 {
   W.clear();
 
-  display_bounding_box(W,b);
+  display_bounding_box(W,b,display_bbox);
 
   if(show_input) {
     W << CGAL::BLACK;
@@ -298,9 +304,9 @@ int main(int argc,char *argv[])
   } else {
     read_data(argc,argv,prec,seg_list);
     get_extreme_points(seg_list,x1,y1,x2,y2);
-    W.init((x1 - prec * 2).to_double(),x2 - x1 > y2 - y1 ? 
-           (x2 + prec * 2).to_double() : (y2 - y1 + x1 + prec * 2).to_double(),
-           (y1 - prec * 2).to_double());
+    W.init((x1 - 3 - prec * 3).to_double(),x2 - x1 > y2 - y1 ? 
+           (x2 + 3 + prec * 3).to_double() : (y2 - y1 + x1 + 3 + prec * 3).to_double(),
+           (y1 - 3 - prec * 3).to_double());
     W.set_mode(leda_src_mode);
     W.set_node_width(3);
   }
@@ -316,7 +322,7 @@ int main(int argc,char *argv[])
 
   Iso_rectangle_2 b(Point_2(x1, y1), Point_2(x2, y2));
 
-  display_bounding_box(W,b);
+  display_bounding_box(W,b,argc == 1);
   
   double x3,y3,x4,y4;
   int mouse_input;
@@ -352,7 +358,7 @@ int main(int argc,char *argv[])
         if(closest_iter != s.segments_end())
           s.remove(*closest_iter);
 
-	redraw(s,W,b,show_input);
+	redraw(s,W,b,show_input,argc == 1);
       } else {
         // add a segment
         mouse_input = W.read_mouse_seg(x3,y3,x4,y4);
@@ -360,7 +366,7 @@ int main(int argc,char *argv[])
            y4 >= y1 && y4 <= y2) {
           if(sr_shown) {
             sr_shown = false;
-            redraw(s,W,b,show_input);
+            redraw(s,W,b,show_input,argc == 1);
           }
           W << CGAL::BLACK;
           Segment_2 tmp1(Point_2(x3,y3),Point_2(x4,y4));
@@ -379,7 +385,7 @@ int main(int argc,char *argv[])
       show_results(s,prec,W,show_hp,show_output);
       sr_shown = true;
     } else if(mouse_input == 2) {
-      clear(s,W,b);
+      clear(s,W,b,argc == 1);
       sr_shown = false;
     } else if(mouse_input == 3) {
       // change to automatic mode
@@ -389,7 +395,7 @@ int main(int argc,char *argv[])
       W.disable_button(3);
       W.disable_button(1);
       sr_shown = true;
-      redraw(s,W,b,show_input);
+      redraw(s,W,b,show_input,argc == 1);
       show_results(s,prec,W,show_hp,show_output);
       sr_shown = true;
     } else if(mouse_input == 4) {
@@ -399,7 +405,7 @@ int main(int argc,char *argv[])
       W.enable_button(3);
       W.disable_button(4);
       sr_shown = false;
-      redraw(s,W,b,show_input);
+      redraw(s,W,b,show_input,argc == 1);
     } else if(mouse_input == 5) {
       W.enable_button(6);
       W.disable_button(5);
@@ -465,7 +471,7 @@ int main(int argc,char *argv[])
     }
 
     if(mouse_input > 4 && mouse_input < 18) {
-      redraw(s,W,b,show_input);
+      redraw(s,W,b,show_input,argc == 1);
       if(automatic_show)
         show_results(s,prec,W,show_hp,show_output);
     }
