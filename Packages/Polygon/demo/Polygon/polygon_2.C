@@ -60,7 +60,7 @@ int main(int, char*){
 bool         is_point_visible = false;
 int          current_state;
 Cgal_Polygon polygon;
-Point        point;
+Point_2      point;
 
 const QString my_title_string("Polygon_2 Demo with"
 			      " CGAL Qt_widget");
@@ -191,7 +191,7 @@ private slots:
   void get_new_object(CGAL::Object obj)
   {
     Cgal_Polygon poly;
-    Point p;
+    Point_2 p;
     if(CGAL::assign(poly, obj)) {
       polygon = poly;
       something_changed();
@@ -374,8 +374,10 @@ main(int argc, char **argv)
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
+#if !defined (__POWERPC__)
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
   widget.setIcon(cgal_icon); 
+#endif
   widget.show();
   current_state = -1;
   return app.exec();
