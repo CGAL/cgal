@@ -124,7 +124,8 @@ private:
 			const Weighted_point & p,
 			Cell_handle c, Cell_handle & ac, int & i);
 
-  std::set<void*, std::less<void*> > 
+  //  std::set<void*, std::less<void*> > 
+  void
   star_region_delete_points( std::set<void*, std::less<void*> > & region, 
 			     Vertex* v, 
 			     Cell* c, int li);
@@ -353,19 +354,24 @@ insert(const Weighted_point & p, Cell_handle start )
       // TBD : look at the weight...
       
       // else
-      Vertex_handle v = new Vertex(p);
+      Vertex_handle v = NULL;
       std::set<void*, std::less<void*> > conflicts;
-      std::set<void*, std::less<void*> > deleted_points;
+//      std::set<void*, std::less<void*> > deleted_points;
       Cell_handle aconflict;
       int ineighbor;
       if (in_conflict_3(p, c)) {
+	v = new Vertex(p);
 	find_conflicts_3(conflicts, p, c, aconflict, ineighbor);
-	deleted_points = 
-	  star_region_delete_points(conflicts,&(*v),&(*aconflict),
-				    ineighbor);
+	//	deleted_points = 
+	star_region_delete_points(conflicts,&(*v),&(*aconflict),
+				  ineighbor);
 	// a voir : comment compter les sommets redondants ? (***)
 	set_number_of_vertices(number_of_vertices()+1);
       }
+//       else {
+// 	Weighted_point* P = new Weighted_point( p );
+// 	deleted_points.insert( P );
+//       }
       // else : traiter le cas des points redondants a stocker dans
       // la face associee pour le cas d'une future suppression
       return v;
@@ -382,21 +388,17 @@ insert(const Weighted_point & p, Cell_handle start )
       case EDGE:
 	{
 	  Vertex_handle v=NULL;
-	  std::set<void*, std::less<void*> > deleted_points;
+//	  std::set<void*, std::less<void*> > deleted_points;
 	  if (in_conflict_2(p, c, 3)) {
 	    v = new Vertex(p);
 	    std::set<void*, std::less<void*> > conflicts;
 	    Cell_handle aconflict;
 	    int ineighbor;
 	    find_conflicts_2(conflicts,p,c,aconflict,ineighbor);
-	    deleted_points = 
-	      star_region_delete_points(conflicts,&(*v),&(*aconflict),
-					ineighbor);
+//	    deleted_points = 
+	    star_region_delete_points(conflicts,&(*v),&(*aconflict),
+				      ineighbor);
 	    set_number_of_vertices(number_of_vertices()+1);
-	  }
-	  else {
-	    Weighted_point* P = new Weighted_point( p );
-	    deleted_points.insert( P );
 	  }
 	  return v;
 	}
@@ -421,8 +423,8 @@ insert(const Weighted_point & p, Cell_handle start )
       case EDGE:
 	{
 	  Vertex_handle v=NULL;
-	  std::set<void*, std::less<void*> > deleted_points;
-	  Weighted_point * P;
+//	  std::set<void*, std::less<void*> > deleted_points;
+//	  Weighted_point * P;
 	  if ( in_conflict_1(p, c) ) {
 	    v = new Vertex(p);
 	    set_number_of_vertices(number_of_vertices()+1);
@@ -435,8 +437,9 @@ insert(const Weighted_point & p, Cell_handle start )
 	      while ( ( ! is_infinite(n->vertex(1-j)) ) && 
 		      in_conflict_1( p, n->neighbor(j) ) ) {
 		if (n!=c) (void) conflicts.insert( (void *) &(*n) );
-		P = new Weighted_point( n->vertex(1-j)->point() );
-		(void) deleted_points.insert((void*) P);
+// 		P = new Weighted_point( n->vertex(1-j)->point() );
+// 		(void) deleted_points.insert((void*) P);
+		delete( &(*(n->vertex(1-j))) );
 		set_number_of_vertices(number_of_vertices()-1);
 		n = n->neighbor(j);
 	      }
@@ -469,10 +472,10 @@ insert(const Weighted_point & p, Cell_handle start )
 	      delete((Cell*)*it);
 	    }
 	  }
-	  else {
-	    Weighted_point* P = new Weighted_point( p );
-	    deleted_points.insert( P );
-	  }
+// 	  else {
+// 	    Weighted_point* P = new Weighted_point( p );
+// 	    deleted_points.insert( P );
+// 	  }
 	  return v;
 	}
       case VERTEX:
@@ -498,7 +501,8 @@ insert(const Weighted_point & p, Cell_handle start )
 }
 
 template < class Gt, class Tds >
-std::set<void*, std::less<void*> > 
+//std::set<void*, std::less<void*> > 
+void
 Regular_triangulation_3<Gt,Tds>::
 star_region_delete_points(std::set<void*, std::less<void*> > & region, 
 			  Vertex* v, Cell* c, int li) 
@@ -514,7 +518,7 @@ star_region_delete_points(std::set<void*, std::less<void*> > & region,
   Vertex *v_tmp;
   Vertex_handle vh;
   std::set<void*, std::less<void*> > pts;
-  Weighted_point *p;
+//  Weighted_point *p;
     
   // for each cell to be deleted, keep vertices
   std::set<void*, std::less<void*> >::const_iterator it;
@@ -543,15 +547,15 @@ star_region_delete_points(std::set<void*, std::less<void*> > & region,
     v_tmp = (Vertex *) *it;
     if ( (inc_vert.find( v_tmp )) == inc_vert.end() ) {
       // vertex has to be deleted and point to be stored
-      p = new Weighted_point( v_tmp->point() );
-      pts.insert( p );
+//       p = new Weighted_point( v_tmp->point() );
+//       pts.insert( p );
       set_number_of_vertices(number_of_vertices()-1);
       delete((Vertex *)*it);
     }
   }
     
   // returns list of deleted points
-  return pts;
+  //  return pts;
 }
 
 template < class Gt, class Tds >
