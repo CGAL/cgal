@@ -26,6 +26,8 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_3_H
 #define CGAL_REGULAR_TRIANGULATION_3_H
 
+#include <CGAL/basic.h>
+
 #include <set>
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/Triangulation_3.h>
@@ -35,9 +37,10 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds>
 class Regular_triangulation_3 : public Triangulation_3<Gt,Tds>
 {
-public:
   friend std::istream& operator >> CGAL_NULL_TMPL_ARGS
   (std::istream& is, Triangulation_3<Gt,Tds> &tr);
+
+public:
 
   typedef typename Gt::Bare_point Bare_point;
   typedef typename Gt::Weighted_point Weighted_point;

@@ -36,9 +36,10 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds>
 class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
 {
-public:
   friend std::istream& operator >> CGAL_NULL_TMPL_ARGS
   (std::istream& is, Triangulation_3<Gt,Tds> &tr);
+
+public:
 
   typedef typename Gt::Point Point;
   typedef typename Gt::Segment Segment;
