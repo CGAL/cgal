@@ -30,11 +30,13 @@
 #include <CGAL/IO/leda_window.h>
 #endif // CGAL_USE_LEDA
 
-#include <CGAL/IO/polygonal_2.h>
+#include <CGAL/Polygon_2.h>
+#include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Ostream_iterator.h>
 
 typedef  CGAL::Cartesian<double>      K;
 typedef  K::Point_2                   Point_2;
+typedef  CGAL::Polygon_2<K>           Polygon;
 
 CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(Point_2*)
 
@@ -69,9 +71,9 @@ int main()
   CGAL::ch_melkman( V.begin(), V.end(), std::back_inserter(CH) );
   std::cout << "Convex Hull has size " << CH.size() << std::endl;
   W << CGAL::Color(200,200,200);
-  CGAL::send_to_stream_as_polygon( W, CH.begin(), CH.end());
+  W << Polygon( CH.begin(), CH.end());
   W << CGAL::GREEN;
-  CGAL::send_to_stream_as_polygon( W, V.begin(), V.end());
+  W << Polygon( V.begin(), V.end());
   W << CGAL::RED;
   std::copy( CH.begin(), CH.end(),
              CGAL::Ostream_iterator<Point_2,OutStream>(W));
