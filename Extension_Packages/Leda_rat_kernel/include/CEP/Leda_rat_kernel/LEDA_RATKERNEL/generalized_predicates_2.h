@@ -225,6 +225,7 @@ template<class K> CGAL::event  Predicate_leda_rat_equal_2<K>::ev_leda_rat_rectan
 template<class K> 
 class Predicate_leda_rat_less_xy_2 {
   typedef typename K::Point_2   Point_2;
+  typedef typename K::Point_2   __My_Point_2;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -239,7 +240,7 @@ public:
 #if defined(CGAL_GEOMETRY_EVENTS)
       CGAL::occur<const Point_2&,const Point_2&>(Predicate_leda_rat_less_xy_2::ev_leda_rat_point, p1, p2);
 #endif   
-    return ( Point_2::cmp_xy(p1,p2)  <  0 );
+    return ( __My_Point_2::cmp_xy(p1,p2)  <  0 );
   }
 };
 
@@ -253,6 +254,7 @@ template<class K>
 class Predicate_leda_rat_less_yx_2 {
 
   typedef typename K::Point_2   Point_2;
+  typedef typename K::Point_2   __My_Point_2;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -267,7 +269,7 @@ public:
 #if defined(CGAL_GEOMETRY_EVENTS)
       CGAL::occur<const Point_2&,const Point_2&>(Predicate_leda_rat_less_yx_2::ev_leda_rat_point, p1, p2);
 #endif   
-    return ( Point_2::cmp_yx(p1,p2)  <  0 );
+    return ( __My_Point_2::cmp_yx(p1,p2)  <  0 );
   }
 };
 
@@ -280,6 +282,7 @@ template<class K> CGAL::event  Predicate_leda_rat_less_yx_2<K>::ev_leda_rat_poin
 template<class K> 
 class Predicate_leda_rat_equal_x_2 {
   typedef typename K::Point_2    Point_2;
+  typedef typename K::Point_2   __My_Point_2;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -294,7 +297,7 @@ public:
 #if defined(CGAL_GEOMETRY_EVENTS)
       CGAL::occur<const Point_2&,const Point_2&>(Predicate_leda_rat_equal_x_2::ev_leda_rat_point, p1, p2);
 #endif   
-    return (Point_2::cmp_x(p1,p2) == 0);
+    return (__My_Point_2::cmp_x(p1,p2) == 0);
   }
 };
 
@@ -307,6 +310,7 @@ template<class K> CGAL::event  Predicate_leda_rat_equal_x_2<K>::ev_leda_rat_poin
 template<class K> 
 class Predicate_leda_rat_equal_y_2 {
   typedef typename K::Point_2    Point_2;
+  typedef typename K::Point_2   __My_Point_2;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -321,7 +325,7 @@ public:
 #if defined(CGAL_GEOMETRY_EVENTS)
     CGAL::occur<const Point_2&,const Point_2&>(Predicate_leda_rat_equal_y_2::ev_leda_rat_point, p1, p2);
 #endif     
-    return (Point_2::cmp_y(p1,p2) == 0);
+    return (__My_Point_2::cmp_y(p1,p2) == 0);
   }
 };
 
@@ -334,6 +338,7 @@ template<class K> CGAL::event  Predicate_leda_rat_equal_y_2<K>::ev_leda_rat_poin
 template<class K> 
 class Predicate_leda_rat_equal_xy_2 {
   typedef typename K::Point_2   Point_2;
+  typedef typename K::Point_2   __My_Point_2;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -348,7 +353,7 @@ public:
 #if defined(CGAL_GEOMETRY_EVENTS)
     CGAL::occur<const Point_2&,const Point_2&>(Predicate_leda_rat_equal_xy_2::ev_leda_rat_point, p1, p2);
 #endif   
-    return (Point_2::cmp_xy(p1,p2) == 0);
+    return (__My_Point_2::cmp_xy(p1,p2) == 0);
   }
 };
 
@@ -362,6 +367,7 @@ template<class K>
 class Predicate_leda_rat_less_x_2 {
 
   typedef typename K::Point_2    Point_2;
+  typedef typename K::Point_2   __My_Point_2;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -377,7 +383,7 @@ public:
      CGAL::occur<const Point_2&,const Point_2&>(Predicate_leda_rat_less_x_2::ev_leda_rat_point, p1, p2);
 #endif    
     if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return false;
-    return (Point_2::cmp_x(p1,p2) < 0);
+    return (__My_Point_2::cmp_x(p1,p2) < 0);
   }
 };
 
@@ -391,6 +397,7 @@ template<class K>
 class Predicate_leda_rat_less_y_2 {
 
   typedef typename K::Point_2    Point_2;
+  typedef typename K::Point_2   __My_Point_2;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -406,7 +413,7 @@ public:
      CGAL::occur<const Point_2&,const Point_2&>(Predicate_leda_rat_less_y_2::ev_leda_rat_point, p1, p2);
 #endif  
     if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return false;
-    return (Point_2::cmp_y(p1,p2) < 0);
+    return (__My_Point_2::cmp_y(p1,p2) < 0);
   }
 };
 
@@ -421,6 +428,8 @@ class Predicate_leda_rat_compare_x_2 {
 
   typedef typename K::Point_2 Point_2;
   typedef typename K::Line_2  Line_2;
+  
+  typedef typename K::Point_2   __My_Point_2;  
 
 public:
 
@@ -440,7 +449,7 @@ public:
      CGAL::occur<const Point_2&,const Point_2&>(Predicate_leda_rat_compare_x_2::ev_leda_rat_point, p1, p2);
 #endif   
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return EQUAL;  
-     return ( (Comparison_result) Point_2::cmp_x(p1,p2));     
+     return ( (Comparison_result) __My_Point_2::cmp_x(p1,p2));     
   }
   
   Comparison_result operator()(const Point_2& p, const Line_2& l1, const Line_2& l2) const
@@ -453,7 +462,7 @@ public:
     
     l1.intersection(l2,inter);
     
-    return ( (Comparison_result) Point_2::cmp_x(p,inter));
+    return ( (Comparison_result) __My_Point_2::cmp_x(p,inter));
   }
   
   Comparison_result operator()(const Line_2& l1, const Line_2& l2, const Line_2& l3) const
@@ -468,7 +477,7 @@ public:
     l1.intersection(l2, p1);
     l1.intersection(l3, p2);
         
-    return ( (Comparison_result) Point_2::cmp_x(p1,p2));
+    return ( (Comparison_result) __My_Point_2::cmp_x(p1,p2));
   }
   
   Comparison_result operator()(const Line_2& l1, const Line_2& l2, 
@@ -484,7 +493,7 @@ public:
     l1.intersection(l2, p1);
     l3.intersection(l4, p2);
         
-    return ( (Comparison_result) Point_2::cmp_x(p1,p2));  
+    return ( (Comparison_result) __My_Point_2::cmp_x(p1,p2));  
   }  
 };
 
@@ -503,6 +512,8 @@ class Predicate_leda_rat_compare_x_at_y_2 {
   typedef typename K::Point_2         Point_2;
   typedef typename K::Line_2          Line_2;
   typedef typename K::Segment_2       Segment_2;    
+  
+  typedef typename K::Point_2   __My_Point_2;  
 
 public:
   typedef Comparison_result           result_type;
@@ -525,7 +536,7 @@ public:
     int ori = - l.side_of(p);
     
     // has point1 larger y - coord than point2 ????
-    if (Point_2::cmp_y(l.point1(),l.point2()) == 1) ori = -ori;
+    if (__My_Point_2::cmp_y(l.point1(),l.point2()) == 1) ori = -ori;
     return ((Comparison_result) ori);
   }
   
@@ -564,7 +575,7 @@ public:
        int ori = - h.side_of(inter);
     
        // has point1 larger y - coord than point2 ????
-       if (Point_2::cmp_y(h.point1(),h.point2()) == 1) ori = -ori;
+       if (__My_Point_2::cmp_y(h.point1(),h.point2()) == 1) ori = -ori;
        return ((Comparison_result) ori);       
   }
   
@@ -609,6 +620,8 @@ class Predicate_leda_rat_compare_y_2 {
 
   typedef typename K::Point_2         Point_2;
   typedef typename K::Line_2          Line_2;  
+  
+  typedef typename K::Point_2         __My_Point_2;  
 
 public:
   typedef Comparison_result           result_type;
@@ -627,7 +640,7 @@ public:
      CGAL::occur<const Point_2&,const Point_2&>(Predicate_leda_rat_compare_y_2::ev_leda_rat_point, p1, p2);
 #endif   
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return EQUAL;
-     return ( (Comparison_result) Point_2::cmp_y(p1,p2));     
+     return ( (Comparison_result) __My_Point_2::cmp_y(p1,p2));     
   }
   
   Comparison_result operator()(const Point_2& p, const Line_2& l1, const Line_2& l2) const
@@ -640,7 +653,7 @@ public:
     
     l1.intersection(l2,inter);
     
-    return ( (Comparison_result) Point_2::cmp_y(p,inter));
+    return ( (Comparison_result) __My_Point_2::cmp_y(p,inter));
   }
   
   Comparison_result operator()(const Line_2& l1, const Line_2& l2, const Line_2& l3) const
@@ -656,7 +669,7 @@ public:
     l1.intersection(l2, p1);
     l1.intersection(l3, p2);
         
-    return ( (Comparison_result) Point_2::cmp_y(p1,p2));
+    return ( (Comparison_result) __My_Point_2::cmp_y(p1,p2));
   }
   
   Comparison_result operator()(const Line_2& l1, const Line_2& l2, 
@@ -673,7 +686,7 @@ public:
     l1.intersection(l2, p1);
     l3.intersection(l4, p2);
         
-    return ( (Comparison_result) Point_2::cmp_y(p1,p2));  
+    return ( (Comparison_result) __My_Point_2::cmp_y(p1,p2));  
   }  
 };
 
@@ -690,6 +703,8 @@ template<class K>
 class Predicate_leda_rat_compare_xy_2 {
 
   typedef typename K::Point_2  Point_2;
+  
+  typedef typename K::Point_2   __My_Point_2;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -705,7 +720,7 @@ public:
      CGAL::occur<const Point_2&,const Point_2&>(Predicate_leda_rat_compare_xy_2::ev_leda_rat_point, p1, p2);
 #endif   
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return EQUAL;
-     return ( (Comparison_result) Point_2::cmp_xy(p1,p2));
+     return ( (Comparison_result) __My_Point_2::cmp_xy(p1,p2));
   }
     
 };
@@ -722,6 +737,8 @@ class Predicate_leda_rat_compare_y_at_x_2 {
   typedef typename K::Point_2         Point_2;
   typedef typename K::Segment_2       Segment_2;
   typedef typename K::Line_2          Line_2;    
+  
+  typedef typename K::Point_2         __My_Point_2;  
 
 public:
   typedef Comparison_result           result_type;
@@ -742,15 +759,15 @@ public:
   bool curve_is_in_x_range(const Segment_2 & cv, const Point_2 & p) const
   {
       return
-        !(((Point_2::cmp_x(p, cv.source()) < 0) && (Point_2::cmp_x(p, cv.target()) < 0)) ||
-         ((Point_2::cmp_x(p, cv.source()) > 0) && (Point_2::cmp_x(p, cv.target()) > 0)));
+        !(((__My_Point_2::cmp_x(p, cv.source()) < 0) && (__My_Point_2::cmp_x(p, cv.target()) < 0)) ||
+         ((__My_Point_2::cmp_x(p, cv.source()) > 0) && (__My_Point_2::cmp_x(p, cv.target()) > 0)));
   }
 	
   bool curve_is_in_y_range(const Segment_2 & cv, const Point_2 & p) const
   { 
       return
-        !(((Point_2::cmp_y(p, cv.source()) < 0) && (Point_2::cmp_y(p, cv.target()) < 0)) ||
-         ((Point_2::cmp_y(p, cv.source()) > 0) && (Point_2::cmp_y(p, cv.target()) > 0)));
+        !(((__My_Point_2::cmp_y(p, cv.source()) < 0) && (__My_Point_2::cmp_y(p, cv.target()) < 0)) ||
+         ((__My_Point_2::cmp_y(p, cv.source()) > 0) && (__My_Point_2::cmp_y(p, cv.target()) > 0)));
   }
   
     Comparison_result operator()(const Point_2 & q,
@@ -766,9 +783,9 @@ public:
 		
       Segment_2 cv1_ = cv1;
       Segment_2 cv2_ = cv2;
-      if (Point_2::cmp_xy(cv1.source(), cv1.target()) > 0)
+      if (__My_Point_2::cmp_xy(cv1.source(), cv1.target()) > 0)
         cv1_ = cv1.reversal();
-      if (Point_2::cmp_xy(cv2.source(), cv2.target()) > 0)
+      if (__My_Point_2::cmp_xy(cv2.source(), cv2.target()) > 0)
         cv2_ = cv2.reversal();
   		
       //  vertical curves ...
@@ -776,7 +793,7 @@ public:
       if (cv1_.is_vertical()) {
         if (cv2_.is_vertical()) {
           // both cv1 and cv2 are vertical
-          int res = Point_2::cmp_y(cv1_.target(), cv2_.source());
+          int res = __My_Point_2::cmp_y(cv1_.target(), cv2_.source());
           return ((res < 0) ? CGAL::SMALLER : ((res > 0) ? CGAL::LARGER : CGAL::EQUAL));
         }
 
@@ -816,14 +833,14 @@ public:
     
       // this handles trivial segments as well ...
       if (s.is_vertical()) {
-        if ((Point_2::cmp_y(p, s.source()) < 0) && (Point_2::cmp_y(p, s.target()) < 0)) return CGAL::SMALLER;	  
-        if ((Point_2::cmp_y(p, s.source()) > 0) && (Point_2::cmp_y(p, s.target()) > 0)) return CGAL::LARGER;
+        if ((__My_Point_2::cmp_y(p, s.source()) < 0) && (__My_Point_2::cmp_y(p, s.target()) < 0)) return CGAL::SMALLER;	  
+        if ((__My_Point_2::cmp_y(p, s.source()) > 0) && (__My_Point_2::cmp_y(p, s.target()) > 0)) return CGAL::LARGER;
         return CGAL::EQUAL;
       }
       
       int ori = 0;
       
-      if (Point_2::cmp_x(s.source(), s.target()) < 0){
+      if (__My_Point_2::cmp_x(s.source(), s.target()) < 0){
          ori = LEDA_NAMESPACE_NAME::orientation(s.source(), s.target(), p);
       }
       else ori = LEDA_NAMESPACE_NAME::orientation(s.target(), s.source(), p);
@@ -848,7 +865,7 @@ public:
     int ori = l.side_of(p);
     
     // has point1 larger x - coord than point2 ????
-    if (Point_2::cmp_x(l.point1(),l.point2()) == 1) ori = -ori;
+    if (__My_Point_2::cmp_x(l.point1(),l.point2()) == 1) ori = -ori;
     return ((Comparison_result) ori);
   }
   
@@ -880,7 +897,7 @@ public:
     int ori = l3.side_of(p);
     
     // has point1 larger x - coord than point2 ????
-    if (Point_2::cmp_x(l3.point1(),l3.point2()) == 1) ori = -ori;
+    if (__My_Point_2::cmp_x(l3.point1(),l3.point2()) == 1) ori = -ori;
     return ((Comparison_result) ori);    
   }
   
@@ -1027,6 +1044,8 @@ template<class K>
 class Predicate_leda_rat_less_distance_to_point_2 {
 
   typedef typename K::Point_2   Point_2;
+  
+  typedef typename K::Point_2   __My_Point_2;  
 
 public:
   typedef Arity_tag< 3 > Arity;
@@ -1349,6 +1368,8 @@ class Predicate_leda_rat_is_in_x_range_2 {
 
   typedef typename K::Point_2    Point_2;
   typedef typename K::Segment_2  Segment_2; 
+  
+  typedef typename K::Point_2    __My_Point_2;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -1365,9 +1386,9 @@ public:
         (Predicate_leda_rat_is_in_x_range_2::ev_leda_rat_point_segment, p, s);
 #endif   
       // two compare operations ...
-      int res1 = Point_2::cmp_x(s.start(), p);
+      int res1 = __My_Point_2::cmp_x(s.start(), p);
       if (res1 == 0) return true;
-      int res2 = Point_2::cmp_x(s.end(), p);
+      int res2 = __My_Point_2::cmp_x(s.end(), p);
       if (res2 == 0 || res1 != res2) return true;
       
       return false;
@@ -2341,8 +2362,10 @@ class Predicate_leda_rat_do_intersect_2 {
   typedef typename K::Line_2           Line_2;
   typedef typename K::Ray_2            Ray_2;
   typedef typename K::Triangle_2       Triangle_2;
-  typedef typename K::Iso_rectangle_2  Iso_rectangle_2;              
-
+  typedef typename K::Iso_rectangle_2  Iso_rectangle_2;   
+  
+  typedef typename K::Point_2          __My_Point_2;             
+  
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool           result_type;
@@ -2350,7 +2373,7 @@ public:
   // points ...
  
   bool operator()(const Point_2& p, const Point_2& p2) const
-  { return (Point_2::cmp_xy(p,p2)==0); }
+  { return (__My_Point_2::cmp_xy(p,p2)==0); }
   
   bool operator()(const Point_2& p, const Line_2& l) const
   { return l.contains(p); }  

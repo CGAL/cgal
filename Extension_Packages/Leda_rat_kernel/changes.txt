@@ -1,3 +1,7 @@
+0.9.3 some kernel extensions were included
+      (Do_intersect_to_right_2 and Do_intersect_to_left_2)
+      changes in the predicate templates for VC 
+
 0.9.2 faster segment intersection
       small fixes
       most LEDA kernel functors are now templates

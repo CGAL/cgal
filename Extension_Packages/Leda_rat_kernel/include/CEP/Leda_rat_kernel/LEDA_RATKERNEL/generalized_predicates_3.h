@@ -194,6 +194,7 @@ template<class K>
 class Predicate_leda_d3_rat_equal_x {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3      __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -202,7 +203,7 @@ public:
    bool operator()(const Point_3& p1, const Point_3& p2) const
    {
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;
-     if (Point_3::cmp_x(p1,p2) == 0) return true;
+     if (__My_Point_3::cmp_x(p1,p2) == 0) return true;
      return false;
    }
 };
@@ -211,6 +212,7 @@ template<class K>
 class Predicate_leda_d3_rat_equal_y {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3      __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -219,7 +221,7 @@ public:
    bool operator()(const Point_3& p1, const Point_3& p2) const
    {
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;   
-     if (Point_3::cmp_y(p1,p2) == 0) return true;
+     if (__My_Point_3::cmp_y(p1,p2) == 0) return true;
      return false;
    }
 };
@@ -228,6 +230,7 @@ template<class K>
 class Predicate_leda_d3_rat_equal_z {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3      __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -236,7 +239,7 @@ public:
    bool operator()(const Point_3& p1, const Point_3& p2) const
    {
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;   
-     if (Point_3::cmp_z(p1,p2) == 0) return true;
+     if (__My_Point_3::cmp_z(p1,p2) == 0) return true;
      return false;
    }
 };
@@ -245,6 +248,7 @@ template<class K>
 class Predicate_leda_d3_rat_equal_xy {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3      __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -253,7 +257,7 @@ public:
    bool operator()(const Point_3& p1, const Point_3& p2) const
    {
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;   
-     if (Point_3::cmp_x(p1,p2) == 0 && Point_3::cmp_y(p1,p2) == 0) return true;
+     if (__My_Point_3::cmp_x(p1,p2) == 0 && __My_Point_3::cmp_y(p1,p2) == 0) return true;
      return false;
    }
 };
@@ -262,6 +266,7 @@ template<class K>
 class Predicate_leda_d3_rat_equal_xyz {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3      __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -270,7 +275,7 @@ public:
    bool operator()(const Point_3& p1, const Point_3& p2) const
    {
      if (LEDA_NAMESPACE_NAME::identical(p1,p2)) return true;   
-     if (Point_3::cmp_xyz(p1,p2) == 0) return true;
+     if (__My_Point_3::cmp_xyz(p1,p2) == 0) return true;
      return false;
    }
 };
@@ -279,6 +284,7 @@ template<class K>
 class Predicate_leda_d3_rat_less_x {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3   __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -286,7 +292,7 @@ public:
 
    bool operator()(const Point_3& p1, const Point_3& p2) const
    {
-     if (Point_3::cmp_x(p1,p2) == -1) return true;
+     if (__My_Point_3::cmp_x(p1,p2) == -1) return true;
      return false;
    }
 };
@@ -295,6 +301,7 @@ template<class K>
 class Predicate_leda_d3_rat_less_y {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3   __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -302,7 +309,7 @@ public:
 
    bool operator()(const Point_3& p1, const Point_3& p2) const
    {
-     if (Point_3::cmp_y(p1,p2) == -1) return true;
+     if (__My_Point_3::cmp_y(p1,p2) == -1) return true;
      return false;
    }
 };
@@ -311,6 +318,7 @@ template<class K>
 class Predicate_leda_d3_rat_less_z {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3   __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -318,7 +326,7 @@ public:
 
    bool operator()(const Point_3& p1, const Point_3& p2) const
    {
-     if (Point_3::cmp_z(p1,p2) == -1) return true;
+     if (__My_Point_3::cmp_z(p1,p2) == -1) return true;
      return false;
    }
 };
@@ -327,6 +335,7 @@ template<class K>
 class Predicate_leda_d3_rat_less_xy {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3   __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -334,11 +343,11 @@ public:
 
    bool operator()(const Point_3& p1, const Point_3& p2) const
    {
-     int cmx = Point_3::cmp_x(p1,p2);
+     int cmx = __My_Point_3::cmp_x(p1,p2);
      
      if (cmx == -1) return true;
      else {
-      if (cmx==0 && Point_3::cmp_y(p1,p2) == -1) return true;
+      if (cmx==0 && __My_Point_3::cmp_y(p1,p2) == -1) return true;
      }
      return false;
    }
@@ -348,6 +357,7 @@ template<class K>
 class Predicate_leda_d3_rat_less_xyz {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3   __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -355,7 +365,7 @@ public:
 
    bool operator()(const Point_3& p1, const Point_3& p2) const
    {
-     if (Point_3::cmp_xyz(p1,p2) == -1) return true;
+     if (__My_Point_3::cmp_xyz(p1,p2) == -1) return true;
      return false;   
    }
 };
@@ -364,6 +374,7 @@ template<class K>
 class Predicate_leda_d3_rat_compare_x {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3   __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -371,7 +382,7 @@ public:
 
   Comparison_result operator()(const Point_3& p1, const Point_3& p2) const
   {
-     return ( (Comparison_result) Point_3::cmp_x(p1,p2));     
+     return ( (Comparison_result) __My_Point_3::cmp_x(p1,p2));     
   }
 };
 
@@ -379,6 +390,7 @@ template<class K>
 class Predicate_leda_d3_rat_compare_y {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3   __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -386,7 +398,7 @@ public:
 
   Comparison_result operator()(const Point_3& p1, const Point_3& p2) const
   {
-     return ( (Comparison_result) Point_3::cmp_y(p1,p2));     
+     return ( (Comparison_result) __My_Point_3::cmp_y(p1,p2));     
   }
 };
 
@@ -394,6 +406,7 @@ template<class K>
 class Predicate_leda_d3_rat_compare_z {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3   __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -401,7 +414,7 @@ public:
 
   Comparison_result operator()(const Point_3& p1, const Point_3& p2) const
   {
-     return ( (Comparison_result) Point_3::cmp_z(p1,p2));     
+     return ( (Comparison_result) __My_Point_3::cmp_z(p1,p2));     
   }
 };
 
@@ -409,6 +422,7 @@ template<class K>
 class Predicate_leda_d3_rat_compare_xy {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3   __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -416,9 +430,9 @@ public:
 
   Comparison_result operator()(const Point_3& p1, const Point_3& p2) const
   {
-     int cmx = Point_3::cmp_x(p1,p2);    
+     int cmx = __My_Point_3::cmp_x(p1,p2);    
      if (cmx != 0) return  ((Comparison_result) cmx);
-     int cmy = Point_3::cmp_y(p1,p2);
+     int cmy = __My_Point_3::cmp_y(p1,p2);
           
      return ( (Comparison_result) cmy);     
   }
@@ -428,6 +442,7 @@ template<class K>
 class Predicate_leda_d3_rat_compare_xyz {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3   __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -435,7 +450,7 @@ public:
 
   Comparison_result operator()(const Point_3& p1, const Point_3& p2) const
   {
-     return ( (Comparison_result) Point_3::cmp_xyz(p1,p2));     
+     return ( (Comparison_result) __My_Point_3::cmp_xyz(p1,p2));     
   }
 };
 
@@ -554,6 +569,7 @@ template<class K>
 class Predicate_leda_d3_rat_coplanar_orientation {
 
   typedef typename K::Point_3      Point_3;
+  typedef typename K::Point_3   __My_Point_3;  
 
 public:
   typedef Orientation       result_type;
@@ -591,7 +607,7 @@ public:
 
     // we have to project onto another plane :
 
-    if ((Point_3::cmp_x(p1,p2) != 0) || (Point_3::cmp_x(p1,p3) != 0))
+    if ((__My_Point_3::cmp_x(p1,p2) != 0) || (__My_Point_3::cmp_x(p1,p3) != 0))
     {
       // projection into (x,z)-plane is ok
       return Orientation ( LEDA_NAMESPACE_NAME::orientation_xz(p1,p2,p3) * 
@@ -861,6 +877,8 @@ class Predicate_leda_d3_rat_has_on_bounded_side {
   typedef typename K::Iso_cuboid_3 Iso_cuboid_3;  
   typedef typename K::FT           FT;    
 
+  typedef typename K::Point_3   __My_Point_3;
+
 public:
   typedef Arity_tag< 2 > Arity;
   typedef bool       result_type;
@@ -908,9 +926,9 @@ public:
      Point_3 max = ic.vertex(7);
      
      // compare with x/y/z coordinates ...
-     if (Point_3::cmp_x(p,min) != 1 || Point_3::cmp_x(p,max) != -1) return false;
-     if (Point_3::cmp_y(p,min) != 1 || Point_3::cmp_y(p,max) != -1) return false;
-     if (Point_3::cmp_z(p,min) != 1 || Point_3::cmp_z(p,max) != -1) return false;     
+     if (__My_Point_3::cmp_x(p,min) != 1 || __My_Point_3::cmp_x(p,max) != -1) return false;
+     if (__My_Point_3::cmp_y(p,min) != 1 || __My_Point_3::cmp_y(p,max) != -1) return false;
+     if (__My_Point_3::cmp_z(p,min) != 1 || __My_Point_3::cmp_z(p,max) != -1) return false;     
           
      return true;     
    }      
@@ -923,6 +941,8 @@ class Predicate_leda_d3_rat_has_on_unbounded_side {
   typedef typename K::Tetrahedron_3  Tetrahedron_3;
   typedef typename K::Iso_cuboid_3 Iso_cuboid_3;  
   typedef typename K::FT           FT;    
+  
+  typedef typename K::Point_3   __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -969,9 +989,9 @@ public:
      Point_3 max = ic.vertex(7);
      
      // compare with x/y/z coordinates ...
-     if (Point_3::cmp_x(p,min) != 1 || Point_3::cmp_x(p,max) != -1) return true;
-     if (Point_3::cmp_y(p,min) != 1 || Point_3::cmp_y(p,max) != -1) return true;
-     if (Point_3::cmp_z(p,min) != 1 || Point_3::cmp_z(p,max) != -1) return true;     
+     if (__My_Point_3::cmp_x(p,min) != 1 || __My_Point_3::cmp_x(p,max) != -1) return true;
+     if (__My_Point_3::cmp_y(p,min) != 1 || __My_Point_3::cmp_y(p,max) != -1) return true;
+     if (__My_Point_3::cmp_z(p,min) != 1 || __My_Point_3::cmp_z(p,max) != -1) return true;     
           
      return false;     
    }      
@@ -985,6 +1005,8 @@ class Predicate_leda_d3_rat_has_on_boundary {
   typedef typename K::Tetrahedron_3  Tetrahedron_3;
   typedef typename K::Iso_cuboid_3 Iso_cuboid_3;  
   typedef typename K::FT           FT;    
+  
+  typedef typename K::Point_3   __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -1039,18 +1061,18 @@ public:
      
      // compare with x/y/z coordinates ...
      // we need at least one zero in the cmp results;
-     int res1 = Point_3::cmp_x(p,min);
-     int res2 = Point_3::cmp_x(p,max);
+     int res1 = __My_Point_3::cmp_x(p,min);
+     int res2 = __My_Point_3::cmp_x(p,max);
      
      if (res1 == -1 || res2 == 1) return false;
      
-     int res3 = Point_3::cmp_y(p,min);
-     int res4 = Point_3::cmp_y(p,max);     
+     int res3 = __My_Point_3::cmp_y(p,min);
+     int res4 = __My_Point_3::cmp_y(p,max);     
      
      if (res3 == -1 || res4 == 1) return false;
      
-     int res5 = Point_3::cmp_z(p,min);
-     int res6 = Point_3::cmp_z(p,max);        
+     int res5 = __My_Point_3::cmp_z(p,min);
+     int res6 = __My_Point_3::cmp_z(p,max);        
      
      if (res5 == -1 || res6 == 1) return false;     
           
@@ -1267,6 +1289,8 @@ class Predicate_leda_d3_rat_bounded_side {
   typedef typename K::Tetrahedron_3  Tetrahedron_3;
   typedef typename K::Iso_cuboid_3 Iso_cuboid_3;        
   typedef typename K::FT           FT;  
+  
+  typedef typename K::Point_3   __My_Point_3;  
 
 public:
   typedef Arity_tag< 2 > Arity;
@@ -1324,18 +1348,18 @@ public:
      
      // compare with x/y/z coordinates ...
      // we need at least one zero in the cmp results;
-     int res1 = Point_3::cmp_x(p,min);
-     int res2 = Point_3::cmp_x(p,max);
+     int res1 = __My_Point_3::cmp_x(p,min);
+     int res2 = __My_Point_3::cmp_x(p,max);
      
      if (res1 == -1 || res2 == 1) return CGAL::ON_UNBOUNDED_SIDE;
      
-     int res3 = Point_3::cmp_y(p,min);
-     int res4 = Point_3::cmp_y(p,max);     
+     int res3 = __My_Point_3::cmp_y(p,min);
+     int res4 = __My_Point_3::cmp_y(p,max);     
      
      if (res3 == -1 || res4 == 1) return CGAL::ON_UNBOUNDED_SIDE;
      
-     int res5 = Point_3::cmp_z(p,min);
-     int res6 = Point_3::cmp_z(p,max);        
+     int res5 = __My_Point_3::cmp_z(p,min);
+     int res6 = __My_Point_3::cmp_z(p,max);        
      
      if (res5 == -1 || res6 == 1) return CGAL::ON_UNBOUNDED_SIDE;     
           

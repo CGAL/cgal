@@ -66,6 +66,7 @@ touch $ERRORFILE
 compile_and_run convex_hull_2
 compile_and_run delaunay_2
 compile_and_run delaunay_3
+compile_and_run extensions_2
 compile_and_run test_leda_kernelC2
 compile_and_run test_leda_kernelC3
 compile_and_run triangulation_2

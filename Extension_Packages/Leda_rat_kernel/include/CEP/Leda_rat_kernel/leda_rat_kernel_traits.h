@@ -96,6 +96,7 @@ int log(const leda_integer& i)
 #include <CEP/Leda_rat_kernel/LEDA_RATKERNEL/intersections_2.h>
 #include <CEP/Leda_rat_kernel/LEDA_RATKERNEL/computations_2.h>
 #include <CEP/Leda_rat_kernel/LEDA_RATKERNEL/generalized_predicates_2.h>
+#include <CEP/Leda_rat_kernel/LEDA_RATKERNEL/extension_predicates_2.h>
 
 // -------------------------------------------------
 //  ..... 3d kernel .....
@@ -298,6 +299,9 @@ public:
   typedef Predicate_leda_rat_counterclockwise_in_between_2<Self>  Counterclockwise_in_between_2;
   typedef Predicate_leda_rat_do_intersect_2<Self>                 Do_intersect_2;    
 
+  // a number of extensions ...
+  typedef Predicate_leda_rat_do_intersect_to_right_2<Self>        Do_intersect_to_right_2;
+  typedef Predicate_leda_rat_do_intersect_to_left_2<Self>         Do_intersect_to_left_2;
 
 // -----------------------------------------------------------
 // support for 3d kernel traits ...
@@ -764,6 +768,16 @@ public:
   Do_intersect_2
   do_intersect_2_object() const
   { return Do_intersect_2(); } 
+  
+  // extensions ...
+  Do_intersect_to_right_2
+  do_intersect_to_right_2_object() const
+  { return Do_intersect_to_right_2(); }   
+  
+  Do_intersect_to_left_2
+  do_intersect_to_left_2_object() const
+  { return Do_intersect_to_left_2(); }   
+  
   
 // -----------------------------------------------------------
 // support for 3d kernel traits ...

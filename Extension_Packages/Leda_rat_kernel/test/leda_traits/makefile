@@ -40,7 +40,8 @@ all:            \
 		triangulation_2 \
 		delaunay_3 \
 		triangulation_3 \
-		convex_hull_2		
+		convex_hull_2 \
+		extensions_2	
 
 
 test_leda_kernelC2$(EXE_EXT): test_leda_kernelC2$(OBJ_EXT)
@@ -54,6 +55,9 @@ convex_hull_2$(EXE_EXT): convex_hull_2$(OBJ_EXT)
 
 delaunay_2$(EXE_EXT): delaunay_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)delaunay_2 delaunay_2$(OBJ_EXT) $(LDFLAGS)
+
+extensions_2$(EXE_EXT): extensions_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)extensions_2 extensions_2$(OBJ_EXT) $(LDFLAGS)
 
 triangulation_2$(EXE_EXT): triangulation_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)triangulation_2 triangulation_2$(OBJ_EXT) $(LDFLAGS)
@@ -71,7 +75,8 @@ clean: \
 		   triangulation_2.clean \
 		   delaunay_3.clean \
 		   triangulation_3.clean \
-		   convex_hull_2.clean		   
+		   convex_hull_2.clean \
+		   extensions_2.clean		   
 
 
 #---------------------------------------------------------------------#
