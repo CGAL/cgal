@@ -713,7 +713,8 @@ void Conforming_Delaunay_triangulation_2<Tr>::
 create_clusters()
 {
   Unique_hash_map<Vertex_handle,bool> created(false);
-  for(typename Tr::Subconstraint_iterator it = subconstraints_begin(); it != subconstraints_end(); ++it) {
+  for(typename Tr::Subconstraint_iterator it = subconstraints_begin();
+      it != subconstraints_end(); ++it) {
     Vertex_handle vh = it->first.first;
     if(!created[vh]){
       created[vh] = true;
@@ -750,7 +751,8 @@ create_clusters_of_vertex(const Vertex_handle v)
   bool in_a_cluster = false;
   do
     {
-      if(is_small_angle(target(current)->point(), v->point(), target(next)->point()))
+      if(is_small_angle(target(current)->point(), v->point(),
+			target(next)->point()))
 	{
 	  if(!in_a_cluster)
 	    {
@@ -875,7 +877,8 @@ template <class Is_locally_conform>
 void Conforming_Delaunay_triangulation_2<Tr>::
 fill_edge_queue(const Is_locally_conform& is_locally_conform)
 { 
-  for(typename Tr::Subconstraint_iterator it = subconstraints_begin(); it != subconstraints_end(); ++it) {
+  for(typename Tr::Subconstraint_iterator it = subconstraints_begin();
+      it != subconstraints_end(); ++it) {
   
     Vertex_handle va = it->first.first;   
     Vertex_handle vb = it->first.second;
