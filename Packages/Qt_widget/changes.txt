@@ -1,4 +1,9 @@
+1.0.9 (7 June 2001)
+=====
+Removed main's parameters when unused to avoid warnings
+
 1.0.8 (6 June 2001)
+=====
 New version of demo makefiles that works with Qt enable install_cgal
 
 1.0.7 (5 June 2001)
