@@ -1,3 +1,6 @@
+1.38 (19 Dec 2003) [rursu]
+- fixed makefile_Core -> becomes makefile in test directory
+
 1.37 (19 Dec 2003) [rursu]
 - updated developer_scripts/create_internal_release
   the script manage tocopy Core into test directory

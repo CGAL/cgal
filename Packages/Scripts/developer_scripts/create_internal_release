@@ -447,7 +447,7 @@ sub CreateCoreTestDir()
     print "Creating $VERSION/test/Core directory ...\n";
     chdir "$RELEASEDIR/$VERSION/" or die;
     system('cp', '-r', 'src/Core', 'test');
-    rename('test/Core/makefile_Core','test/src/makefile');
+    rename('test/Core/makefile_Core','test/Core/makefile');
     open(CGAL_TEST,">test/Core/cgal_test");
     print CGAL_TEST <<'EOF';
 #! /bin/sh
