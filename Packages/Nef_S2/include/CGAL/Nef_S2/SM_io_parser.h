@@ -92,8 +92,8 @@ std::string index(SVertex_handle v) const
 std::string index(SHalfedge_handle e) const 
 { return EI(e,verbose); }
 std::string index(SHalfloop_handle l) const 
-{ if (verbose)  return (l==shalfloop()? "l0" : "l1");
-  else return (l==shalfloop()? "0" : "1");
+{ if (verbose)  return (l==this->shalfloop()? "l0" : "l1");
+  else return (l==this->shalfloop()? "0" : "1");
 }
 std::string index(SFace_handle f) const 
 { return FI(f,verbose); }
@@ -109,19 +109,19 @@ SM_io_parser<Decorator_>::
 SM_io_parser(std::istream& iin, const Base& H) :
   Base(H), in(iin), out(std::cout), verbose(0), 
   vn(0), en(0), fn(0), ln(0)
-{ clear(); }
+{ this->clear(); }
 
 template <typename Decorator_>
 SM_io_parser<Decorator_>::
 SM_io_parser(std::ostream& iout, const Base& D) 
   : Base(D), in(std::cin), out(iout), 
-  VI(svertices_begin(),svertices_end(),'v'),
-  EI(shalfedges_begin(),shalfedges_end(),'e'),
-  FI(sfaces_begin(),sfaces_end(),'f'),
-  vn(number_of_svertices()), 
-  en(number_of_shalfedges()), 
-  ln(number_of_shalfloops()),
-  fn(number_of_sfaces())
+  VI(this->svertices_begin(),this->svertices_end(),'v'),
+  EI(this->shalfedges_begin(),this->shalfedges_end(),'e'),
+  FI(this->sfaces_begin(),this->sfaces_end(),'f'),
+  vn(this->number_of_svertices()), 
+  en(this->number_of_shalfedges()), 
+  ln(this->number_of_shalfloops()),
+  fn(this->number_of_sfaces())
 { verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
              out.iword(CGAL::IO::mode) != CGAL::IO::BINARY);
 }
@@ -312,8 +312,8 @@ void SM_io_parser<Decorator_>::print() const
   CGAL_forall_shalfedges(eit,*this) print_edge(eit);
   if (verbose) 
     out << "/* index { twin, face, mark, circle } */" << std::endl;
-  if ( has_shalfloop() ) 
-  { print_loop(shalfloop()); print_loop(twin(shalfloop())); }
+  if ( this->has_shalfloop() ) 
+  { print_loop(this->shalfloop()); print_loop(twin(this->shalfloop())); }
   if (verbose) 
     out << "/* index { fclist, ivlist, loop, mark } */" << std::endl;
   SFace_iterator fit;
@@ -339,13 +339,13 @@ void SM_io_parser<Decorator_>::read()
   SVertex_of.reserve(vn);
   Edge_of.reserve(en);
   SFace_of.reserve(fn);
-  for(i=0; i<vn; i++)  SVertex_of[i] =   new_vertex();
+  for(i=0; i<vn; i++)  SVertex_of[i] =   this->new_vertex();
   for(i=0; i<en; i++) 
-    if (i%2==0) Edge_of[i] = new_edge_pair_without_vertices();
+    if (i%2==0) Edge_of[i] = this->new_edge_pair_without_vertices();
     else Edge_of[i] = twin(Edge_of[i-1]);
-  for(i=0; i<fn; i++)  SFace_of[i] =     new_face();
+  for(i=0; i<fn; i++)  SFace_of[i] =     this->new_face();
   if ( ln == 2 ) 
-  { Loop_of[0] = new_loop(); Loop_of[1] = twin(loop()); }
+  { Loop_of[0] = this->new_loop(); Loop_of[1] = twin(this->loop()); }
 
   for(i=0; i<vn; i++) {
     if (!read_vertex(SVertex_of[i]))
@@ -398,9 +398,9 @@ template <typename Decorator_>
 void SM_io_parser<Decorator_>::debug() const
 { 
   out << "\nDEBUG Plane_map\n";
-  out << "Vertices:  " << number_of_svertices() << "\n";
-  out << "SHalfedges: " << number_of_shalfedges() << "\n";
-  out << "Loop:      " << number_of_shalfloops() << "\n";
+  out << "Vertices:  " << this->number_of_svertices() << "\n";
+  out << "SHalfedges: " << this->number_of_shalfedges() << "\n";
+  out << "Loop:      " << this->number_of_shalfloops() << "\n";
   SVertex_iterator vit; 
   CGAL_forall_svertices(vit,*this) {
     if ( is_isolated(vit) ) continue;
@@ -408,8 +408,8 @@ void SM_io_parser<Decorator_>::debug() const
     debug_vertex(vit);
     CGAL_For_all(hcirc,hend) { out << "  "; debug_edge(hcirc); }
   }
-  if ( has_shalfloop() ) 
-  { debug_loop(shalfloop()); debug_loop(twin(shalfloop())); }
+  if ( this->has_shalfloop() ) 
+  { debug_loop(this->shalfloop()); debug_loop(twin(this->shalfloop())); }
   out << std::endl;
 }
 
@@ -417,9 +417,9 @@ template <typename Decorator_>
 void SM_io_parser<Decorator_>::print_faces() const
 { 
   out << "\nFACES\n";
-  out << "Vertices:  " << number_of_svertices() << "\n";
-  out << "SHalfedges: " << number_of_shalfedges() << "\n";
-  out << "Loop:      " << number_of_shalfloops() << "\n";
+  out << "Vertices:  " << this->number_of_svertices() << "\n";
+  out << "SHalfedges: " << this->number_of_shalfedges() << "\n";
+  out << "Loop:      " << this->number_of_shalfloops() << "\n";
   SHalfedge_iterator e;
   Unique_hash_map<SHalfedge_iterator,bool> Done(false);
   CGAL_forall_shalfedges(e,*this) {
@@ -429,8 +429,8 @@ void SM_io_parser<Decorator_>::print_faces() const
     CGAL_For_all(c,ce) 
     { Done[c]=true; out << "  "; debug_vertex(source(c)); }
   }
-  if ( has_shalfloop() ) 
-  { debug_loop(shalfloop()); debug_loop(twin(shalfloop())); }
+  if ( this->has_shalfloop() ) 
+  { debug_loop(this->shalfloop()); debug_loop(twin(this->shalfloop())); }
   out << std::endl;
 }
 

@@ -645,7 +645,7 @@ create_from_segments(Forward_iterator start, Forward_iterator end)
     PH_geometry());
   SP.sweep();
   //TRACEN("POS SWEEP\n"<<(dump(std::cerr),""));
-  v=--svertices_end(); e=--shalfedges_end();
+  v=--this->svertices_end(); e=--this->shalfedges_end();
 
   Negative_halfsphere_sweep SM(
     Input_range(L_neg.begin(),L_neg.end()),O,
@@ -657,9 +657,9 @@ create_from_segments(Forward_iterator start, Forward_iterator end)
   // v = first vertex of CC in negative x-sphere
   // e = first edge of CC in negative x-sphere
 
-  create_face_objects(shalfedges_begin(), e, svertices_begin(), v, O,
+  create_face_objects(this->shalfedges_begin(), e, this->svertices_begin(), v, O,
                       PH_geometry());
-  create_face_objects(e, shalfedges_end(), v, svertices_end(), O,
+  create_face_objects(e, this->shalfedges_end(), v, this->svertices_end(), O,
                       NH_geometry());
 
   SHalfedge_iterator u;
@@ -669,8 +669,8 @@ create_from_segments(Forward_iterator start, Forward_iterator end)
     circle(twin(u)) = s.sphere_circle().opposite();
   }
 
-  merge_halfsphere_maps(svertices_begin(),v,O);
-  check_integrity_and_topological_planarity();
+  merge_halfsphere_maps(this->svertices_begin(),v,O);
+  this->check_integrity_and_topological_planarity();
 
   O.clear_temporary_vertex_info();
 }
@@ -717,7 +717,7 @@ create_from_circles(Forward_iterator start, Forward_iterator end)
     PH_geometry());
   SP.sweep();
   //TRACEN("POS SWEEP\n"<<(dump(std::cerr),""));
-  v=--svertices_end(); e=--shalfedges_end();
+  v=--this->svertices_end(); e=--this->shalfedges_end();
 
   Negative_halfsphere_sweep SM(
     Input_range(L_neg.begin(),L_neg.end()), O,
@@ -729,9 +729,9 @@ create_from_circles(Forward_iterator start, Forward_iterator end)
   // v = first vertex of CC in negative x-sphere
   // e = first edge of CC in negative x-sphere
 
-  create_face_objects(shalfedges_begin(), e, svertices_begin(), v, O,
+  create_face_objects(this->shalfedges_begin(), e, this->svertices_begin(), v, O,
                       PH_geometry());
-  create_face_objects(e, shalfedges_end(), v, svertices_end(), O,
+  create_face_objects(e, this->shalfedges_end(), v, this->svertices_end(), O,
                       NH_geometry());
 
   SHalfedge_iterator u;
@@ -741,8 +741,8 @@ create_from_circles(Forward_iterator start, Forward_iterator end)
     circle(twin(u)) = s.sphere_circle().opposite();
   }
 
-  merge_halfsphere_maps(svertices_begin(),v,O);
-  check_integrity_and_topological_planarity();
+  merge_halfsphere_maps(this->svertices_begin(),v,O);
+  this->check_integrity_and_topological_planarity();
 
   O.clear_temporary_vertex_info();
 }
@@ -878,11 +878,11 @@ check_sphere(const Seg_list& L, bool compute_halfsphere[3][2]) const {
 template <typename Map>
 void SM_overlayer<Map>::
 create(const Sphere_circle& c)
-{ SHalfloop_handle l1 = new_shalfloop_pair();
-  SHalfloop_handle l2 = twin(l1);
+{ SHalfloop_handle l1 = this->new_shalfloop_pair();
+  SHalfloop_handle l2 = this->twin(l1);
   circle(l1) = c; circle(l2) = c.opposite();
-  SFace_handle f1 = new_sface();
-  SFace_handle f2 = new_sface();
+  SFace_handle f1 = this->new_sface();
+  SFace_handle f2 = this->new_sface();
   link_as_loop(l1,f1);
   link_as_loop(l2,f2);
 }
@@ -1009,7 +1009,7 @@ subdivide(const Map* M0, const Map* M1)
 	Input_range(L_pos.begin(),L_pos.end()),O,
 	PH_geometry(cs));
     SP.sweep();
-    v=--svertices_end(); e=--shalfedges_end();
+    v=--this->svertices_end(); e=--this->shalfedges_end();
   }
   
   if(compute_halfsphere[cs][1]) {
@@ -1024,15 +1024,15 @@ subdivide(const Map* M0, const Map* M1)
     ++e;
   }
   else {
-    v = svertices_begin(); 
-    e = shalfedges_begin();
+    v = this->svertices_begin(); 
+    e = this->shalfedges_begin();
   }
   
   if(compute_halfsphere[cs][0])
-    create_face_objects(shalfedges_begin(), e, svertices_begin(), v, O,
+    create_face_objects(this->shalfedges_begin(), e, this->svertices_begin(), v, O,
                         PH_geometry(cs));
   if(compute_halfsphere[cs][1])
-    create_face_objects(e, shalfedges_end(), v, svertices_end(), O,
+    create_face_objects(e, this->shalfedges_end(), v, this->svertices_end(), O,
 			NH_geometry(cs));
 
   SHalfedge_iterator u;
@@ -1051,14 +1051,14 @@ subdivide(const Map* M0, const Map* M1)
   L1.marks_of_halfspheres(mohs, 2, cs);
 
   if(compute_halfsphere[cs][0])
-    complete_face_support(svertices_begin(), v, O, mohs, 0);
+    complete_face_support(this->svertices_begin(), v, O, mohs, 0);
   if(compute_halfsphere[cs][1])
-    complete_face_support(v, svertices_end(), O, mohs, 1);
+    complete_face_support(v, this->svertices_end(), O, mohs, 1);
 
   // DEBUG CODE: to do: have all svertices a halfedge below associated?
   TRACEN("Vertex info after swep");
   CGAL_assertion_code(
-    for( svi=svertices_begin(); svi!=svertices_end(); svi++) {
+    for( svi=this->svertices_begin(); svi!=this->svertices_end(); svi++) {
       GenPtr i = info(svi);
       TRACEN("vertex "<<point(svi)<<" info "<<i<<
 	     " marks "<<mark(svi,0)<<" "<<mark(svi,1));
@@ -1066,11 +1066,11 @@ subdivide(const Map* M0, const Map* M1)
   )
 
   if(compute_halfsphere[cs][0] && compute_halfsphere[cs][1])
-    merge_halfsphere_maps(svertices_begin(),v,O);
+    merge_halfsphere_maps(this->svertices_begin(),v,O);
   else
     set_outer_face_mark(compute_halfsphere[cs][1], mohs);
   
-  check_integrity_and_topological_planarity();
+  this->check_integrity_and_topological_planarity();
 
   TRACEN("subdivided");
   CGAL_assertion_code(CGAL_forall_svertices(v,*this) TRACEN(PH(v)));
@@ -1080,7 +1080,7 @@ template <typename Map>
 void SM_overlayer<Map>::
 set_outer_face_mark(int offset, const std::vector<Mark>& mohs) {
 
-  SFace_handle sf = new_sface();
+  SFace_handle sf = this->new_sface();
   mark(sf, 0) = mohs[offset];
   mark(sf, 1) = mohs[offset+2];
 
@@ -1235,7 +1235,7 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
 	p2 = point(target(e)), 
 	p3 = point(target(next(e)));
       if ( SG.orientation(p1,p2,p3) > 0 ) { // left_turn => outer face cycle
-	SFace_handle f = new_sface();
+	SFace_handle f = this->new_sface();
 	link_as_face_cycle(e,f);
 	TRACEN("  creating new face object "<<&*f<<" bd "<<&*e);
       }
@@ -1351,7 +1351,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
   }
  
   SFace_iterator f;
-  for (f = sfaces_begin(); f != sfaces_end(); ++f) {
+  for (f = this->sfaces_begin(); f != this->sfaces_end(); ++f) {
     assoc_info(f);
     Object_handle boundary_object = sface_cycles_begin(f);
     CGAL_assertion(boundary_object != NULL);
@@ -1456,8 +1456,8 @@ void SM_overlayer<Map>::simplify()
      clear_face_cycle_entries(f);
   }
 
-  if ( has_shalfloop() ) {
-    SHalfloop_handle l = shalfloop();
+  if ( this->has_shalfloop() ) {
+    SHalfloop_handle l = this->shalfloop();
     SFace_handle f = *(UF.find(Pitem[face(l)]));
     link_as_loop(l,f);
     f = *(UF.find(Pitem[face(twin(l))]));
@@ -1465,7 +1465,7 @@ void SM_overlayer<Map>::simplify()
   }
 
   SHalfedge_iterator e, en;
-  for(e = shalfedges_begin(); e != shalfedges_end(); e = en) { 
+  for(e = this->shalfedges_begin(); e != this->shalfedges_end(); e = en) { 
     en = e; ++en; if ( en==twin(e) ) ++en;
     TRACEN("can simplify ? " << PH(e));
     TRACEN(mark(e) << " " << mark(face(e)) << " " << mark(face(twin(e))));
@@ -1493,7 +1493,7 @@ void SM_overlayer<Map>::simplify()
   }
 
   CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
-  for (e = shalfedges_begin(); e != shalfedges_end(); ++e) {
+  for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
     if ( linked[e] ) continue;
     SHalfedge_around_sface_circulator hfc(e),hend(hfc);
     SFace_handle f = *(UF.find( Pitem[face(e)]));
@@ -1502,7 +1502,7 @@ void SM_overlayer<Map>::simplify()
   }
 
   SVertex_iterator v,vn;
-  for(v = svertices_begin(); v != svertices_end(); v=vn) {
+  for(v = this->svertices_begin(); v != this->svertices_end(); v=vn) {
     vn=v; ++vn;
     if ( is_isolated(v) ) {
     
@@ -1535,7 +1535,7 @@ void SM_overlayer<Map>::simplify()
   }
 
   SFace_iterator fn;
-  for (f = fn = sfaces_begin(); f != sfaces_end(); f=fn) { 
+  for (f = fn = this->sfaces_begin(); f != this->sfaces_end(); f=fn) { 
     ++fn;
     Union_find_handle pit = Pitem[f];
     if ( UF.find(pit) != pit ) {
@@ -1579,7 +1579,7 @@ typedef CGAL::generic_sweep<NHS_traits> Negative_halfsphere_sweep;
   Positive_halfsphere_sweep SP(Input_range(Lp.begin(),Lp.end()),O);
   SP.sweep();
   //TRACEN("POS SWEEP\n"<<(dump(std::cerr),""));
-  v1= vertices_begin(); v2=--vertices_end();
+  v1= this->vertices_begin(); v2=--this->vertices_end();
   Negative_halfsphere_sweep SM(Input_range(Lm.begin(),Lm.end()),O);
   SM.sweep();
   //TRACEN("NEG SWEEP\n"<<(dump(std::cerr),""));
@@ -1589,7 +1589,7 @@ typedef CGAL::generic_sweep<NHS_traits> Negative_halfsphere_sweep;
   // v2 = first node of CC in negative xy-sphere
 
   merge_halfsphere_maps(v1,v2,O);
-  check_integrity_and_topological_planarity(false);
+  this->check_integrity_and_topological_planarity(false);
 }
 
 

@@ -67,11 +67,11 @@ Sphere_triangle(const Sphere_triangle<R>& t) : Base(t) {}
 
 const Sphere_point<R>& point(unsigned i) const 
 /*{\Mop returns the ith point of |\Mvar|.}*/
-{ return ptr()->points_[i%3]; }
+{ return ((Base*) this)->ptr()->points_[i%3]; }
 
 const Sphere_circle<R>& circle(unsigned i) const 
 /*{\Mop returns the ith circle of |\Mvar|.}*/
-{ return ptr()->circles_[i%3]; }
+{ return ((Base*) this)->ptr()->circles_[i%3]; }
 
 Sphere_triangle<R> opposite() const 
 /*{\Mop returns the opposite of |\Mvar|.}*/

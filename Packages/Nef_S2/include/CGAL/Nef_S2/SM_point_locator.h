@@ -208,40 +208,40 @@ public:
       }
     }
 
-    if ( has_shalfloop() && circle(shalfloop()).has_on(p) ) {
+    if ( this->has_shalfloop() && circle(this->shalfloop()).has_on(p) ) {
       TRACEN( "  on loop");
-      return Object_handle(SHalfloop_handle(shalfloop()));
+      return Object_handle(SHalfloop_handle(this->shalfloop()));
     }
 
     // now in face:
 
-    if(number_of_sfaces() == 1) {
+    if(this->number_of_sfaces() == 1) {
       TRACEN("  on unique face");
-      SFace_handle f = sfaces_begin();
+      SFace_handle f = this->sfaces_begin();
       return Object_handle(f);
     }
 
     SVertex_handle v_res;
     SHalfedge_handle e_res;
-    SHalfloop_handle l_res(shalfloop());
+    SHalfloop_handle l_res(this->shalfloop());
     SOLUTION solution;
 
     TRACEN("  on face...");
     Sphere_segment s; // we shorten the segment iteratively
-    if ( has_shalfloop() ) {
-      Sphere_circle c(circle(shalfloop()),p); // orthogonal through p
-      s = Sphere_segment(p,intersection(c,circle(shalfloop())));
-      l_res = circle(shalfloop()).has_on_positive_side(p) ? 
-	shalfloop() : twin(shalfloop());
+    if ( this->has_shalfloop() ) {
+      Sphere_circle c(circle(this->shalfloop()),p); // orthogonal through p
+      s = Sphere_segment(p,intersection(c,circle(this->shalfloop())));
+      l_res = circle(this->shalfloop()).has_on_positive_side(p) ? 
+	this->shalfloop() : twin(this->shalfloop());
       solution = is_loop_;
       TRACEN("has loop, initial ray "<<s);
       TRACEN(circle(l_res));
     } else { // has vertices !
-      CGAL_assertion( number_of_svertices()!=0 );
-      SVertex_iterator vi = svertices_begin();
+      CGAL_assertion( this->number_of_svertices()!=0 );
+      SVertex_iterator vi = this->svertices_begin();
       if( p == point(vi).antipode()) {
 	++vi;
-	CGAL_assertion( vi != svertices_end());
+	CGAL_assertion( vi != this->svertices_end());
       }
       TRACEN("initial segment: "<<p<<","<<point(vi));
       CGAL_assertion( p != point(vi).antipode());
@@ -431,8 +431,8 @@ public:
       }
     }
 
-    if(has_shalfloop()) {
-      Sphere_circle cl(shalfloop()->circle());
+    if(this->has_shalfloop()) {
+      Sphere_circle cl(this->shalfloop()->circle());
       if(!s_init)
 	s = Sphere_segment(p,p.antipode(),c);
       Sphere_point p_res;
@@ -442,7 +442,7 @@ public:
 	p_res = p;
       if (start_inclusive || p != p_res) {
 	ip = p_res;
-	return Object_handle(shalfloop());
+	return Object_handle(this->shalfloop());
       }
     }
 

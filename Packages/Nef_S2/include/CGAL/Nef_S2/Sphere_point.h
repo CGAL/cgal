@@ -81,11 +81,11 @@ Sphere_point(const Direction_3& d) :
 /*{\Mtext Access to the coordinates is provided by the following
 operations. Note that the vector $(x,y,z)$ is not normalized.}*/
 
-RT x() const { return hx(); }
+RT x() const { return ((Base*) this)->hx(); }
 /*{\Mop the $x$-coordinate.}*/
-RT y() const { return hy(); }
+RT y() const { return ((Base*) this)->hy(); }
 /*{\Mop the $y$-coordinate.}*/
-RT z() const { return hz(); }
+RT z() const { return ((Base*) this)->hz(); }
 /*{\Mop the $z$-coordinate.}*/
 
 bool operator==(const Sphere_point<R>& q) const 

@@ -41,7 +41,7 @@ the great circle through $p$ and $q$ (oriented such that the segment
 $pq$ is the shorter one of the two possible ones. \precond $p$ and $q$
 are not opposite on $S_2$.}*/ 
 { CGAL_assertion(p!=q.opposite()); 
-  Point_3 p1(0,0,0), p4 = CGAL::ORIGIN + orthogonal_vector();
+  Point_3 p1(0,0,0), p4 = CGAL::ORIGIN + ((Base*) this)->orthogonal_vector();
   if ( CGAL::orientation(p1,p,q,p4) != CGAL::POSITIVE )
     *this = Sphere_direction(opposite());
 }

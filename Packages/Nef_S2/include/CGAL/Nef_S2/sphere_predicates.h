@@ -273,7 +273,7 @@ intersection(const CGAL::Sphere_circle<R>& c,
 // it is sure that $s$ intersects $h$ in its interior. the
 //       question is which part is in the halfspace $h^+$.
     TRACEN("    opposite");
-    Sphere_point<R> i1 = CGAL::intersection(ptr()->c_,c);
+    Sphere_point<R> i1 = CGAL::intersection(this->ptr()->c_,c);
     if ( !has_on(i1) ) i1 = i1.antipode();
     if ( or1 == CGAL::ON_POSITIVE_SIDE ) 
       s1 = Sphere_segment<R>(source(),i1,sphere_circle());
@@ -317,7 +317,7 @@ intersection(const CGAL::Sphere_circle<R>& c,
 //   there are subsegments as part of $h^{0+}$ (one might be
 //   degenerate).
     if ( is_long() ) { 
-      Sphere_point<R> i1 = CGAL::intersection(ptr()->c_,c);
+      Sphere_point<R> i1 = CGAL::intersection(this->ptr()->c_,c);
       Sphere_point<R> i2 = i1.antipode();
       Sphere_segment<R> so(i1,i2,sphere_circle());
       if ( so.has_on(source()) && so.has_on(target()) )
@@ -336,7 +336,7 @@ intersection(const CGAL::Sphere_circle<R>& c,
 // either both endpoints of $s$ are in $h^-$ or one is in $h^-$
 //     and one on $h^0$.
     if ( is_long() ) { 
-      Sphere_point<R> i1 = CGAL::intersection(ptr()->c_,c);
+      Sphere_point<R> i1 = CGAL::intersection(this->ptr()->c_,c);
       Sphere_point<R> i2 = i1.antipode();
       Sphere_segment<R> so(i1,i2,sphere_circle());
       TRACEN("    both <= plane, long"<<so);

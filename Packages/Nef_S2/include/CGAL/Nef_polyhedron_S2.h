@@ -127,9 +127,9 @@ public:
   enum Content { EMPTY=0, COMPLETE=1 };
   /*{\Menum construction selection}*/
 
-  const Sphere_map& sphere_map() const { return ptr()->sm_; }
+  const Sphere_map& sphere_map() const { return this->ptr()->sm_; }
 protected:
-  Sphere_map& sphere_map() { return ptr()->sm_; } 
+  Sphere_map& sphere_map() { return this->ptr()->sm_; } 
 
   struct AND { bool operator()(const Mark& b1, const Mark& b2)  const { return b1&&b2; }  };
   struct OR { bool operator()(const Mark& b1, const Mark& b2)   const { return b1||b2; }  };
@@ -279,7 +279,7 @@ protected:
   underlying structure of |H| is copied into |\Mvar|.}*/
 { 
     if(clone)
-      ptr()->sm_ = H; 
+      this->ptr()->sm_ = H; 
     set_sm(&sphere_map());
   }
   
@@ -318,7 +318,7 @@ protected:
 
   void extract_complement()
   { TRACEN("extract complement");
-    if ( is_shared() ) clone_rep();
+    if ( this->is_shared() ) clone_rep();
     Overlayer D(&sphere_map());
     SVertex_iterator v;
     SHalfedge_iterator e;
@@ -333,7 +333,7 @@ protected:
 
   void extract_interior()
   { TRACEN("extract interior");
-    if ( is_shared() ) clone_rep();
+    if ( this->is_shared() ) clone_rep();
     Overlayer D(&sphere_map());
     SVertex_iterator v;
     SHalfedge_iterator e;
@@ -346,7 +346,7 @@ protected:
 
   void extract_boundary()
   { TRACEN("extract boundary");
-    if ( is_shared() ) clone_rep();
+    if ( this->is_shared() ) clone_rep();
     Overlayer D(&sphere_map());
     SVertex_iterator v;
     SHalfedge_iterator e;

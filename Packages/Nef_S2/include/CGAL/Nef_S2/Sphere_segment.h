@@ -121,11 +121,11 @@ Sphere_segment(const Self& s) : Base(s) {}
 
 /*{\Moperations 4 2}*/
 
-const Sphere_point<R>& source() const { return ptr()->ps_; }
+const Sphere_point<R>& source() const { return this->ptr()->ps_; }
 /*{\Mop the source point of |\Mvar|.}*/
-const Sphere_point<R>& target() const { return ptr()->pt_; }
+const Sphere_point<R>& target() const { return this->ptr()->pt_; }
 /*{\Mop the target point of |\Mvar|.}*/
-const Sphere_circle<R>& sphere_circle() const { return ptr()->c_; }
+const Sphere_circle<R>& sphere_circle() const { return this->ptr()->c_; }
 /*{\Mop the great circle supporting |\Mvar|.}*/
 
 Sphere_segment<R> opposite() const 
@@ -163,20 +163,20 @@ void split_halfcircle(Sphere_segment<R>& s1,
   Sphere_point<R> p = 
     CGAL::intersection(sphere_circle(),Sphere_circle<R>(h));
   if ( !has_on(p) ) p = p.antipode();
-  s1 = Sphere_segment<R>(ptr()->ps_,p,ptr()->c_);
-  s2 = Sphere_segment<R>(p,ptr()->pt_,ptr()->c_);
+  s1 = Sphere_segment<R>(this->ptr()->ps_,p,this->ptr()->c_);
+  s2 = Sphere_segment<R>(p,this->ptr()->pt_,this->ptr()->c_);
 }
 
 bool is_short() const 
 /*{\Mop a segment is short iff it is shorter than a halfcircle.}*/
 { return CGAL::orientation(Point_3(0,0,0), source(), target(),
-                           CGAL::ORIGIN + ptr()->c_.orthogonal_vector()) 
+                           CGAL::ORIGIN + this->ptr()->c_.orthogonal_vector()) 
          == CGAL::POSITIVE; }
 
 bool is_long() const 
 /*{\Mop a segment is long iff it is longer than a halfcircle.}*/
 { return CGAL::orientation(Point_3(0,0,0), source(), target(),
-                           CGAL::ORIGIN + ptr()->c_.orthogonal_vector()) 
+                           CGAL::ORIGIN + this->ptr()->c_.orthogonal_vector()) 
          == CGAL::NEGATIVE; }
 
 bool is_degenerate() const { return source() == target(); }

@@ -128,7 +128,7 @@ int orientation(const Point_2& p1, const Point_2& p2,
   int sor = CGAL::spherical_orientation(p1,p2,p3); 
   if (sor) return sor;
   Point_2 pp1(p1), pp2(p2), pp3(p3); 
-  switch(axis) {
+  switch(((Base*) this)->axis) {
   case 0:
     if ( !( p1.hx() == 0 && p2.hx() == 0 && p3.hx() == 0) ) return sor;
     if ( p1.hz()>0 ) zx_pi_half_rotate(pp1);
@@ -161,7 +161,7 @@ int orientation(const Segment_2& s, const Point_2& p) const
 { return orientation(s.source(),s.target(),p); }
 
 int compare_xy(const Point_2& p1, const Point_2& p2) const
-{ return CGAL::spherical_compare(p1,p2,axis,-1); }
+{ return CGAL::spherical_compare(p1,p2,((Base*) this)->axis,-1); }
 
 }; // Negative_halfsphere_geometry<R>
 
