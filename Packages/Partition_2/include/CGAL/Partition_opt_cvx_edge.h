@@ -71,6 +71,7 @@ public:
       Leftturn_2 leftturn = traits.leftturn_2_object();
 
       _validity = PARTITION_OPT_CVX_NOT_VALID;
+
       Turn_reverser<Point_2_, Leftturn_2>  rightturn(leftturn);
       if (rightturn(p1, p2, p3))
          _validity = PARTITION_OPT_CVX_START_VALID;

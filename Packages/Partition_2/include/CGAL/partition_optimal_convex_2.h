@@ -309,8 +309,10 @@ void partition_opt_cvx_preprocessing(Polygon& polygon,
     typedef Vertex_visibility_graph_2<Traits>             Vis_graph;
     typedef typename Traits::Point_2                      Point_2;
     typedef std::pair<Point_2, Point_2>                   Point_pair;
+    typedef typename Traits::Orientation_2                Orientation_2;
 
     Vis_graph graph(polygon.begin(), polygon.end());
+    Orientation_2 orientation = traits.orientation_2_object();
 
     size_type prev_i, i, next_i, next_next_i;
     size_type prev_j, j, next_j;
@@ -331,9 +333,9 @@ void partition_opt_cvx_preprocessing(Polygon& polygon,
 
        for (j = i + 2 ; j < polygon.size(); j++)
        {
+          prev_j = j-1;
           if (graph.is_an_edge(Point_pair(polygon[i], polygon[j])))
           {
-             prev_j = (j == 0)?polygon.size()-1:j-1;
              next_j = (j + 1)% polygon.size();
              edges[i][j].set_visible(true);
              edges[i][j].set_valid(polygon[prev_i],polygon[i],polygon[next_i],
@@ -348,6 +350,13 @@ void partition_opt_cvx_preprocessing(Polygon& polygon,
                  edges[i][j].set_done(true); 
              }
              // triangles are a base case.
+          }
+          // when vertices are collinear, the farther vertex must be set as
+          // visible so it can be a candidate endpoint for a diagonal.
+          else if (orientation(polygon[i], polygon[prev_j], polygon[j]) ==
+                   COLLINEAR)
+          {
+             edges[i][j].set_visible(true);
           }
        }
    }
