@@ -1604,17 +1604,17 @@ split_edge
  const typename Planar_map_2< Dcel, Traits >::X_monotone_curve_2   & c2,
  Change_notification                                    * en )
 {
-  CGAL_precondition(traits->point_equal(traits->curve_source(c2),
-                                          traits->curve_target(c1)));
+  //CGAL_precondition(traits->point_equal(traits->curve_source(c2),
+    //                                      traits->curve_target(c1)));
 
-  CGAL_precondition(traits->point_equal(traits->curve_source(c1),
+  CGAL_precondition((traits->point_equal(traits->curve_source(c1),
                                           e->source()->point()) &&
                     traits->point_equal(traits->curve_target(c2),
-                                          e->target()->point()) ||
-                    traits->point_equal(traits->curve_source(c1),
+                                          e->target()->point())) ||
+                   (traits->point_equal(traits->curve_source(c1),
                                           e->target()->point()) &&
                     traits->point_equal(traits->curve_target(c2),
-                                          e->source()->point()));
+                                          e->source()->point())));
 
   X_monotone_curve_2 cv(e->curve());
 
@@ -1658,13 +1658,30 @@ merge_edge
  const typename Planar_map_2< Dcel, Traits >::X_monotone_curve_2 & cv, 
  Change_notification * en)
 {
+	std::cout << "e1 source " << e1->source()->point() << std::endl;
+	std::cout << "e1 target " << e1->target()->point() << std::endl;
+	std::cout << "e2 source " << e2->source()->point() << std::endl;
+	std::cout << "e2 target " << e2->target()->point() << std::endl;
+	std::cout << "e1 source degree" << e1->source()->degree() << std::endl;
+	std::cout << "e1 target degree" << e1->target()->degree() << std::endl;
+	std::cout << "e2 source degree" << e2->source()->degree() << std::endl;
+	std::cout << "e2 target degree" << e2->target()->degree() << std::endl;
+
   CGAL_precondition((traits->point_equal(traits->curve_source(cv),
                                            e1->source()->point()) &&
                      traits->point_equal(traits->curve_target(cv),
                                            e2->target()->point())) || 
-                    (traits->point_equal(traits->curve_target(cv),
+                    (traits->point_equal(traits->curve_source(cv),
                                            e1->source()->point()) &&
-                     traits->point_equal(traits->curve_source(cv),
+                     traits->point_equal(traits->curve_target(cv),
+                                           e2->source()->point())) ||
+			         (traits->point_equal(traits->curve_source(cv),
+                                           e1->target()->point()) &&
+                     traits->point_equal(traits->curve_target(cv),
+                                           e2->source()->point())) || 
+                    (traits->point_equal(traits->curve_source(cv),
+                                           e1->target()->point()) &&
+                     traits->point_equal(traits->curve_target(cv),
                                            e2->target()->point())));
 
   // problematic: since we assume e1 will be the new merged halfedge

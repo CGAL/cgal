@@ -1112,19 +1112,54 @@ Topological_map<Dcel>::
 merge_edge (Halfedge_handle e1, Halfedge_handle e2) 
 {
     //check e1->e2 and that degree(e1.target)==2 (i.e no other edge connected)
-    CGAL_assertion(e1->target()==e2->source());
-    CGAL_assertion(e1->target()->degree()==2);
+	//CGAL_assertion(e1->target()==e2->source());
+    CGAL_assertion((e1->target()==e2->source()&& e1->target()->degree()==2 )|| 
+				   (e2->target()==e1->source()&& e2->target()->degree()==2 )||
+		           (e1->target()==e2->target()&& e1->target()->degree()==2 )|| 
+				   (e2->source()==e1->source()&& e1->source()->degree()==2 ));
 
-    typename Dcel::Halfedge* de1=&(*e1);
-    typename Dcel::Halfedge* de1t=de1->opposite();
-    typename Dcel::Halfedge* de2=&(*e2);
-    typename Dcel::Halfedge* de2t=de2->opposite();
+    //CGAL_assertion(e1->target()->degree()==2);
+
+    typename Dcel::Halfedge* de1;
+    typename Dcel::Halfedge* de1t;
+
+	typename Dcel::Halfedge* de2;
+    typename Dcel::Halfedge* de2t;
+
+	if (e1->target() == e2->source())
+	{
+		de1=&(*e1);
+        de1t=de1->opposite();
+        de2=&(*e2);
+        de2t=de2->opposite();
+	}
+	if (e1->source() == e2->source())
+	{
+		de1t=&(*e1);
+        de1=de1t->opposite();
+        de2=&(*e2);
+        de2t=de2->opposite();
+	}
+	if (e1->target() == e2->target())
+	{
+		de1=&(*e1);
+        de1t=de1->opposite();
+        de2t=&(*e2);
+        de2=de2t->opposite();
+	}
+	if (e1->source() == e2->target())
+	{
+		de1t=&(*e1);
+        de1=de1t->opposite();
+        de2t=&(*e2);
+        de2=de2t->opposite();
+	}
 
     typename Dcel::Vertex* v=de1->vertex();
     
     typename Dcel::Face* f=de2->face();
     typename Dcel::Face* ft=de1t->face();
-
+	//typename Dcel::Face* ft=de2t->face();
    
     //at the end de1 and de1t will remain and de2t,de2 will be deleted
     //check if they are a "represantative" of a hole or outer ccb of face
@@ -1153,7 +1188,7 @@ merge_edge (Halfedge_handle e1, Halfedge_handle e2)
     }
     else {
       de1->set_next(de1t);
-    }
+    } 
 
     de1->set_vertex(de2->vertex());  
 
