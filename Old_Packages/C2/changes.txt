@@ -1,5 +1,16 @@
 Version 4.3 (?? ???? 2000)
 - Change to line_from_pointsC2() for better numeric stability. [syl]
+- Moved side_of_oriented_line and side_of_oriented_lineC2 from the
+  constructions to the predicates. [syl]
+- Use square() in bisector_of_pointsC2. [syl]
+- Made LineC2.perpendicular(P) an FT-based construction :
+  perpendicular_through_point(L,P). [syl]
+- Finished the FT-based implementation of Line.projection(). [syl]
+- Use x_equal() and y_equal() instead of comparing .x() and .y() for Segment
+  and Ray is_horizontal/is_vertical. [syl]
+- Made leftturn(Origin,,) and righturn(Origin,,) a little bit faster. [syl]
+- Various other small cleanups. [syl]
+- Removed long_description.txt. [syl]
 
 Version 4.2 (27 July 2000)
 - Suppress id() in Cartesian Ray_2.h [my]
