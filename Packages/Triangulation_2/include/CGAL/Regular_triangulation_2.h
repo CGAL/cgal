@@ -491,6 +491,9 @@ insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li)
   Oriented_side os;
   switch (lt) {
   case VERTEX:
+    //TODO deal with the case that the weight of the newly inserted 
+    // point is smaller  than the weight  of the current vertex
+    // same modif to be done in reinsert
     remove(loc->vertex(li));
     return insert(p);
   case FACE:
