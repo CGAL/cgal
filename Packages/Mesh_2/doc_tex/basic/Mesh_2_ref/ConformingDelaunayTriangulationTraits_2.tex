@@ -33,35 +33,25 @@ edges.
   provide the operator \ccc{FT operator()(Point_2 a, Point_2 b)} that
   computes the squared distance between $a$ and $b$.}
 
-\ccCreation
 \ccCreationVariable{traits}
-
-\ccConstructor{ConformingDelaunayTriangulationTraits_2();}
-{default constructor.}
-\ccGlue
-\ccConstructor{ConformingDelaunayTriangulationTraits_2(
-   const ConformingDelaunayTriangulationTraits_2& traits2);}
-{Copy constructor.}
-\ccGlue
-\ccMethod{ConformingDelaunayTriangulationTraits_2 operator=(
-  ConformingDelaunayTriangulationTraits_2 traits2);}
-{Assignment operator.}
 
 \ccHeading{Access to predicate and constructor objects}
 
+\ccTwo{Construct_translated_point_2}{}
 \ccMethod{Construct_vector_2 construct_vector_2_object();}{}
+\ccGlue
 \ccMethod{Construct_scaled_vector_2 construct_scaled_vector_2_object();}{}
+\ccGlue
 \ccMethod{Construct_translated_point_2
   construct_translated_point_2_object();}{}
+\ccGlue
 \ccMethod{Constructor_midpoint_2 construct_midpoint_2_object();}{}
+\ccGlue
 \ccMethod{Compute_squared_distance_2
   compute_squared_distance_2_object();}{}
 
 \ccHasModels
 Any model of the \ccc{Kernel} concept. In particular, all CGAL kernels.
-
-\todo{Est-ce que j'ai besoin de faire une
-  Conforming\_Delaunay\_triangulation\_traits\_2?}
 
 \end{ccRefConcept}
 

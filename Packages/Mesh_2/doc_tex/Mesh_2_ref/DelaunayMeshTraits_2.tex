@@ -25,24 +25,15 @@ smallest quality first.
   $b$, $c$ satisfies the wanted criteria for mesh triangles. A value
   mesuring the quality of the triangle must be assigned to $q$.}
 
-\ccCreation
 \ccCreationVariable{traits}
-
-\ccConstructor{DelaunayMeshTraits_2();}{default constructor.}
-\ccGlue
-\ccConstructor{DelaunayMeshTraits_2(const DelaunayMeshTraits_2& traits2);}
-{Copy constructor.}
-\ccGlue
-\ccMethod{DelaunayMeshTraits_2 operator=(DelaunayMeshTraits_2 traits2);}
-{Assignment operator.}
 
 \ccHeading{Access to predicate and constructor objects}
 
 \ccMethod{Is_bad is_bad_object();}{}
 
 \ccHasModels
-\ccc{Delaunay_mesh_traits_2}\\
-\ccc{Delaunay_mesh_size_traits_2}
+\ccc{Delaunay_mesh_traits_2<K>}\\
+\ccc{Delaunay_mesh_size_traits_2<K>}
 
 \end{ccRefConcept}
 

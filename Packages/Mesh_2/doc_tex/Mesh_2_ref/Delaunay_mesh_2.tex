@@ -1,17 +1,17 @@
-\begin{ccRefClass}{Delaunay_mesh_2<Tr>}
+\begin{ccRefClass}{Delaunay_mesh_2<CDT>}
 
 The class \ccRefName{} derives
-from \ccc{Conforming_Delaunay_triangulation_2<Tr>}. The template parameter \ccc{Tr} has to be a \cgal\ 
+from \ccc{Conforming_Delaunay_triangulation_2<CDT>}. The template parameter \ccc{CDT} has to be a \cgal\ 
 constrained Delaunay triangulation. Its geometric traits class
 must be a model of the concept \ccc{DelaunayMeshTraits_2} and also to the
-usual model of the geometric traits class of triangulations \ccc{Tr}.
+usual model of the geometric traits class of triangulations \ccc{CDT}.
 This traits class provides not only constructors and predicates needed
 by the mesh algorithm, but also defines the geometric constraints on
 the triangles of the mesh. The meshing procedure is not sure to finish
 if predicates are inexact.
 
-A \ccRefName{} object acts like a \ccc{Tr} CDT, in which one can
-insert points and constrained segments and every \ccc{Tr}'s availlable
+A \ccRefName{} object acts like a \ccc{CDT} CDT, in which one can
+insert points and constrained segments and every \ccc{CDT}'s availlable
 operations, until we call one of the meshing methods. After a call to
 one of these methods, the CDT is meshed according to the geometric
 constraints defined in the traits class.
@@ -24,7 +24,7 @@ mesh the CDT by refining triangles that are in the interior of the
 CDT.  Triangles that are connected to the infinite vertex will not be
 refined. If the CDT is not segment bounded, no triangle at all will be
 refined. The refinement process needs to know which faces have to be
-refined, that's why the base face of the triangulation \ccc{Tr} has to
+refined, that's why the base face of the triangulation \ccc{CDT} has to
 be a model of the concept \ccc{MeshFaceBase_2}.
 
 One can also define a zone of the CDT's interior by specifying some
@@ -34,26 +34,26 @@ will never be refined.
 
 Once a meshing method is called, the CDT is meshed according to
 contraints until points or constrained segments are inserted again in
-the CDT. Then the \ccRefName{} object acts again as a normal \ccc{Tr}
+the CDT. Then the \ccRefName{} object acts again as a normal \ccc{CDT}
 CDT. \todo{Pas facile a expliquer, ce truc!}.
 
 \ccInclude{CGAL/Delaunay_mesh_2.h}
 
 \ccInheritsFrom
 
-\ccc{Conforming_Delaunay_triangulation_2<Tr>}
+\ccc{Conforming_Delaunay_triangulation_2<CDT>}
 
-\ccRequirements
+\ccParameters
 
-\ccc{Tr} must be a \cgal\ constrained Delaunay triangulation.
+\ccc{CDT} must be a \cgal\ constrained Delaunay triangulation.
 
 \ccTypes 
-\ccTypedef{typedef Tr Triangulation;}{the triangulation base class.}
-\ccTypedef{typedef Tr::Geom_traits Geom_traits;}{the geometric traits class.}
-\ccTypedef{typedef Conforming_Delaunay_triangulation_2<Tr> Conform;}{the
+\ccTypedef{typedef CDT Triangulation;}{the triangulation base class.}
+\ccTypedef{typedef CDT::Geom_traits Geom_traits;}{the geometric traits class.}
+\ccTypedef{typedef Conforming_Delaunay_triangulation_2<CDT> Conform;}{the
   conform  triangulation base class.}
 \ccNestedType{Seeds_iterator}{const iterator over defined seeds. Its
-  value type is \ccc{Geom_traits::Point}}
+  value type is \ccc{Geom_traits::Point_2}}
 
 \ccCreation
 \ccCreationVariable{mesh}
@@ -143,14 +143,14 @@ meshing algorithm step by step, using the following methods.
            method. If some points or segments are then inserted 
            in the CDT, this method must be called again. }
 
-\ccMethod{ bool refine_step(); }
+\ccMethod{ bool step_by_step_refine_mesh(); }
          { Applies one step of the algorithm. At one step of the algorithm,
-           only one point is inserted. However, the algorithm
+           at most one point is inserted. The algorithm
            sometimes doesn't insert a point at a step. Anyway,
            internal datas of the \ccRefName{} object are modified at
            each step, until \ccc{c.is_conformed()}. If the algorithm
-           is finished, returns \ccc{false}. If not, return
-           \ccc{true}.}
+           is finished, the function returns \ccc{false}. If not, it 
+           returns \ccc{true}.}
 
 \end{ccAdvanced}
 

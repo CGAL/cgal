@@ -1,12 +1,12 @@
-\begin{ccRefClass}{Conforming_Delaunay_triangulation_2<Tr>}
+\begin{ccRefClass}{Conforming_Delaunay_triangulation_2<CDT>}
 
 The class \ccRefName{} is an auxiliary base class of
-\ccc{Delaunay_mesh_2<Tr>}. It permits to make a constrained Delaunay
+\ccc{Delaunay_mesh_2<CDT>}. It permits to make a constrained Delaunay
 triangulation conforming to the Delaunay or Gabriel criteria. For average
 uses, consider using the global fonctions \ccc{make_conforming_Gabriel_2}
 and \ccc{make_conforming_Delaunay_2} defined in the same header.
 
-The template parameter \ccc{Tr}, from which this class derives, has to be a
+The template parameter \ccc{CDT}, from which this class derives, has to be a
 \cgal\ constrained Delaunay triangulation, and it geometric traits class of
 has to be a model of the concept
 \ccc{ConformingDelaunayTriangulationTraits_2} or
@@ -15,7 +15,7 @@ constructors and predicates needed by the conforming algorithm.
 
 A \ccRefName{} object is only a constrained Delaunay triangulation, in
 which one can insert points and constrained segments and apply very
-\ccc{Tr}'s availlable operations, until we call one of the conforming
+\ccc{CDT}'s availlable operations, until we call one of the conforming
 methods. After a call to one of these methods, the constrained edges of the
 CDT are guaranteed to be conform, in a sens that depends from the
 conforming method called.  If one inserts points or constrained segments in
@@ -24,21 +24,21 @@ be conform.
 
 The conforming methods insert points into constrained edges, splitting 
 them into sub-constraints. If you want to have access to inserted
-constraints, use \ccc{CGAL::Constrained_triangulation_plus_2<Tr>} as
+constraints, use \ccc{CGAL::Constrained_triangulation_plus_2<CDT>} as
 template parameter.
 
 \ccInclude{CGAL/Conforming_Delaunay_triangulation_2.h}
 
 \ccInheritsFrom
 
-\ccc{Tr}
+\ccc{CDT}
 
-\ccRequirements
+\ccParameters
 
-\ccc{Tr} must be a \cgal\ constrained Delaunay triangulation.
+\ccc{CDT} must be a \cgal\ constrained Delaunay triangulation.
 
 \ccTypes 
-\ccTypedef{typedef Tr Triangulation;}{the triangulation base class.}
+\ccTypedef{typedef CDT Triangulation;}{the triangulation base class.}
 
 \ccCreation
 \ccCreationVariable{c}
@@ -57,21 +57,23 @@ template parameter.
 
 \ccMethod{ void make_conforming_Delaunay(); }
 { Conforms the constrained edges regarding the Delaunay criteria.
-  After a call to this method, the CDT is a Delaunay triangulation. }
+  After a call to this method, all triangles fulfill the empty circle
+  property. }
 
 \ccMethod{ void make_conforming_Gabriel(); }
 { Conforms the constrained edges regarding the Gabriel criteria. After
   a call to this method, all constrained edges $e$ have the
   \emph{Gabriel property}: the circle that have $e$ as diameter
-  doesn't contain any points from the triangulation. }
+  doesn't contain any vertex of the triangulation. }
 
 \ccHeading{Checking}
 The following methods verify that the constrained triangulation is
-conforming to the Delaunay or the Gabriel criteria.
-\todo{Il faudrait sans doute parler du co\^ut de ces m\'ethodes.}
+conforming to the Delaunay or the Gabriel criteria. These methods scan 
+the whole triangulation and their complexity is proportional to the
+number of edges.
 
 \ccMethod{ bool is_conforming_Delaunay(); }
-{ Returns \ccc{true} iff all triangles are Delaunay triangles. }
+{ Returns \ccc{true} iff all triangles fulfill the Delaunay property.}
 
 \ccMethod{ bool is_conforming_Gabriel(); }
 { Returns \ccc{true} if all constrained edges have the Gabriel property:
@@ -101,7 +103,7 @@ conforming Delaunay or conforming Gabriel. Any call to a
            internal datas of the \ccRefName{} object are modified at
            each step, until \ccc{c.is_conforming_done()}. If
            \ccc{c.is_conforming_done()}, returns \ccc{false}. If not (when
-           the algorithm is not done), return \ccc{true}.}
+           the algorithm is not done), returns \ccc{true}.}
 
 \ccMethod{ void init_Gabriel(); }{}
 \ccGlue

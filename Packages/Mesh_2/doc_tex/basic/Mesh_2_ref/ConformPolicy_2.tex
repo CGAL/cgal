@@ -3,9 +3,9 @@
 \ccDefinition
 
 The concept \ccRefName{} describes the way the
-\ccc{Conform_triangulation_2<Tr>} class conformes its edges. It is
+\ccc{Conform_triangulation_2<CDT>} class conformes its edges. It is
 used by the templated method
-\ccc{Conform_triangulation_2<Tr>::conform(ConformPolicy)}, in which
+\ccc{Conform_triangulation_2<CDT>::conform(ConformPolicy)}, in which
 the template parameter \ccc{ConformPolicy} must be a model of
 \ccRefName{}.
 
@@ -74,7 +74,7 @@ conform edges according to the Gabriel criteria.
 conform edges according to the Delaunay criteria.
 
 \ccc{Gabriel_conform_inside_policy_2} is a special policy used by
-\ccc{Mesh_2<Tr>}. An edge is encroached only if its diameter circle
+\ccc{Mesh_2<CDT>}. An edge is encroached only if its diameter circle
 intersected by the interior of the domain containts points visible
 from the edge.
 

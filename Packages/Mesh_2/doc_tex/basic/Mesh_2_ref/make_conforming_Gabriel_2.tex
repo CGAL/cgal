@@ -1,12 +1,12 @@
 \begin{ccRefFunction}{make_conforming_Gabriel_2}
 
 
-\ccFunction{ template<class Tr> void make_conforming_Gabriel_2 (Tr &t); } 
+\ccFunction{ template<class CDT> void make_conforming_Gabriel_2 (CDT &t); } 
 { Conforms the constrained edges of \ccc{t} regarding the Gabriel
   criteria. After a call to this functions, all constrained edges of
   \ccc{t} have the \emph{Gabriel property}: the circle that have $e$
   as diameter doesn't contain any points from the triangulation.
-  \ccPrecond \ccc{Tr} has to be a \cgal\ constrained Delaunay
+  \ccPrecond \ccc{CDT} has to be a \cgal\ constrained Delaunay
   triangulation (CDT) and its geometric traits class must be a model
   of \ccc{ConformingGabrielTriangulationTraits_2}.}
 
