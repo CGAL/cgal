@@ -1,7 +1,19 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
-2.4 (28 Jul 1999)
+2.8 (10 Dec 99)
+fixes some bugs in Stream_support/demo/Stream_support_LEDA
+now, it works at least  on Linux 
 
+2.7 (2 Dec 99)
+change the makefile in Stream_support/demo
+
+2.6 (29 nov 99)
+resubmit to include makefile in demo
+
+2.5 (12 November 99)
+     Resubmit to make sure the makefile in test is not part of the submission
+
+2.4 (28 Jul 1999)
      Superfluous Istream_proxy removed. Mariette Yvinec (INRIA) takes
      over the maintenance of this package with this release.
 
