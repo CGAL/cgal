@@ -23,7 +23,8 @@ template <class R>
 int spherical_orientation(const Sphere_point<R>& p1, 
                           const Sphere_point<R>& p2, 
                           const Sphere_point<R>& p3)
-{ return CGAL::orientation(CGAL::Point_3<R>(0,0,0),p1,p2,p3); }
+{ return CGAL::orientation(CGAL::Point_3<R>(0,0,0),(CGAL::Point_3<R>)p1,
+			   (CGAL::Point_3<R>)p2,(CGAL::Point_3<R>)p3); }
 
 
 /* |spherical_compare| codes our order of points during the sweep. The
