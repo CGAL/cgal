@@ -25,6 +25,8 @@
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
 #include <CGAL/Nef_2/geninfo.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
+#include <CGAL/Nef_S2/SM_const_decorator.h>
+#include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_S2/SM_io_parser.h>
 #include <CGAL/Nef_S2/SM_constrained_triang_traits.h>
 
@@ -41,8 +43,8 @@ CGAL_BEGIN_NAMESPACE
 template <typename Decorator_, typename IT, typename INFO>
 struct SM_subdivision {
   typedef Decorator_ Triangulator;
-  typedef typename Decorator_::Vertex_handle Vertex_handle;
-  typedef typename Decorator_::Halfedge_handle   Halfedge_handle;
+  typedef typename Decorator_::SVertex_handle Vertex_handle;
+  typedef typename Decorator_::SHalfedge_handle   Halfedge_handle;
   typedef typename Decorator_::Sphere_point   Point;
   typedef typename Decorator_::Sphere_segment Segment;
   Triangulator T;
@@ -54,7 +56,7 @@ struct SM_subdivision {
                  CGAL::Unique_hash_map<IT,INFO>& Mi) : T(Ti), M(Mi) {}
 
 Vertex_handle new_vertex(const Point& p) const
-{ Vertex_handle v = T.new_vertex(p); T.assoc_info(v);
+{ Vertex_handle v = T.new_svertex(p); T.assoc_info(v);
   return v;
 }
 
@@ -63,7 +65,7 @@ void link_as_target_and_append(Vertex_handle v, Halfedge_handle e) const
 
 Halfedge_handle new_halfedge_pair_at_source(Vertex_handle v) const
 { Halfedge_handle e = 
-  T.new_edge_pair_at_source(v,Decorator_::BEFORE); 
+  T.new_shalfedge_pair_at_source(v,Decorator_::BEFORE); 
   T.assoc_info(e);
   return e;
 }
@@ -110,41 +112,45 @@ public:
   /*{\Mdefinition An instance |\Mvar| of data type |\Mname| is a
   decorator object offering sphere map triangulation calculation.}*/
 
-  typedef Decorator_                    Base;
-  typedef typename Decorator_::Base     Explorer;
-  typedef Decorator_                    Decorator;
-  typedef SM_triangulator<Decorator_>   Self;
-  CGAL_USING(Vertex_handle);
-  CGAL_USING(Halfedge_handle);
-  CGAL_USING(Halfloop_handle);
-  CGAL_USING(Face_handle);
-  CGAL_USING(Vertex_iterator);
-  CGAL_USING(Halfedge_iterator);
-  CGAL_USING(Face_iterator);
-  CGAL_USING(Vertex_const_handle);
-  CGAL_USING(Halfedge_const_handle);
-  CGAL_USING(Halfloop_const_handle);
-  CGAL_USING(Face_const_handle);
-  CGAL_USING(Vertex_const_iterator);
-  CGAL_USING(Halfedge_const_iterator);
-  CGAL_USING(Face_const_iterator);
+  typedef Decorator_                            Base;
+  typedef typename Decorator_::Map              Map;
+  typedef SM_const_decorator<Map>               Explorer;
+  typedef Decorator_                            Decorator;
+  typedef SM_triangulator<Decorator_>           Self;
+  typedef CGAL::SM_const_decorator<Map>         SM_const_decorator;
+  typedef SM_point_locator<SM_const_decorator>  SM_point_locator;
+
+  CGAL_USING(SVertex_handle);
+  CGAL_USING(SHalfedge_handle);
+  CGAL_USING(SHalfloop_handle);
+  CGAL_USING(SFace_handle);
+  CGAL_USING(SVertex_iterator);
+  CGAL_USING(SHalfedge_iterator);
+  CGAL_USING(SFace_iterator);
+  CGAL_USING(SVertex_const_handle);
+  CGAL_USING(SHalfedge_const_handle);
+  CGAL_USING(SHalfloop_const_handle);
+  CGAL_USING(SFace_const_handle);
+  CGAL_USING(SVertex_const_iterator);
+  CGAL_USING(SHalfedge_const_iterator);
+  CGAL_USING(SFace_const_iterator);
   CGAL_USING(Object_handle);
-  CGAL_USING(Halfedge_around_vertex_circulator);
-  CGAL_USING(Halfedge_around_face_circulator);
-  CGAL_USING(Sphere_map);
-  typedef std::pair<Halfedge_handle,Halfedge_handle> Halfedge_pair;
+  CGAL_USING(SHalfedge_around_svertex_circulator);
+  CGAL_USING(SHalfedge_around_sface_circulator);
+  CGAL_USING(Map);
+  typedef std::pair<SHalfedge_handle,SHalfedge_handle> SHalfedge_pair;
 
   /*{\Mtypes 3}*/
 
-  typedef typename Base::Kernel Kernel;
+  typedef typename Base::Sphere_kernel Sphere_kernel;
 
-  typedef typename Kernel::Sphere_point   Sphere_point;
+  typedef typename Sphere_kernel::Sphere_point   Sphere_point;
   /*{\Mtypemember the point type of the sphere geometry.}*/
-  typedef typename Kernel::Sphere_segment Sphere_segment;
+  typedef typename Sphere_kernel::Sphere_segment Sphere_segment;
   /*{\Mtypemember the segment type of the sphere geometry.}*/
-  typedef typename Kernel::Sphere_circle  Sphere_circle;
+  typedef typename Sphere_kernel::Sphere_circle  Sphere_circle;
   /*{\Mtypemember the circle type of the sphere geometry.}*/
-  typedef typename Kernel::Sphere_triangle Sphere_triangle;
+  typedef typename Sphere_kernel::Sphere_triangle Sphere_triangle;
   /*{\Mtypemember the triangle type of the sphere geometry.}*/
 
   typedef typename Decorator::Mark        Mark;
@@ -154,7 +160,7 @@ public:
 
 protected:
   Explorer   E_;
-  const Kernel& K;
+  const Sphere_kernel& K;
 
 public:
 
@@ -167,24 +173,24 @@ public:
   // vertex_info stores the origin of vertices
   struct vertex_info {
     Object_handle         o_;
-    Halfedge_handle       e_;
+    SHalfedge_handle       e_;
     vertex_info() : o_(),e_() {}
     LEDA_MEMORY(vertex_info)
   };
 
-  void assoc_info(Vertex_handle v) const
+  void assoc_info(SVertex_handle v) const
   { geninfo<vertex_info>::create(info(v)); }
 
-  void discard_info(Vertex_handle v) const
+  void discard_info(SVertex_handle v) const
   { geninfo<vertex_info>::clear(info(v)); }
 
-  vertex_info& ginfo(Vertex_handle v) const
+  vertex_info& ginfo(SVertex_handle v) const
   { return geninfo<vertex_info>::access(info(v)); }
 
-  Object_handle& support(Vertex_handle v) const
+  Object_handle& support(SVertex_handle v) const
   { return ginfo(v).o_; }
 
-  Halfedge_handle& halfedge_below(Vertex_handle v) const
+  SHalfedge_handle& halfedge_below(SVertex_handle v) const
   { return ginfo(v).e_; }
 
   // edge_info stores the origin of edges
@@ -195,82 +201,82 @@ public:
     LEDA_MEMORY(edge_info)
   };
 
-  void assoc_info(Halfedge_handle e)  const
+  void assoc_info(SHalfedge_handle e)  const
   { geninfo<edge_info>::create(info(e)); 
     geninfo<edge_info>::create(info(twin(e))); }
 
-  void discard_info(Halfedge_handle e)  const
+  void discard_info(SHalfedge_handle e)  const
   { geninfo<edge_info>::clear(info(e)); 
     geninfo<edge_info>::clear(info(twin(e))); }
 
-  edge_info& ginfo(Halfedge_handle e)  const
+  edge_info& ginfo(SHalfedge_handle e)  const
   { return geninfo<edge_info>::access(info(e)); }
 
-  Object_handle& support(Halfedge_handle e) const
+  Object_handle& support(SHalfedge_handle e) const
   // uedge information we store in the smaller one 
   { if (&*e < &*(twin(e))) return ginfo(e).o_; 
     else                   return ginfo(twin(e)).o_; }
 
-  Mark& incident_mark(Halfedge_handle e)  const
+  Mark& incident_mark(SHalfedge_handle e)  const
   // biedge information we store in the edge
   { return ginfo(e).m_left_; }
 
-  const edge_info& ginfo(Halfedge_const_handle e)  const
+  const edge_info& ginfo(SHalfedge_const_handle e)  const
   { return geninfo<edge_info>::const_access(info(e)); }
-  const Mark& incident_mark(Halfedge_const_handle e)  const
+  const Mark& incident_mark(SHalfedge_const_handle e)  const
   { return ginfo(e).m_left_; }
 
-  bool& is_forward(Halfedge_handle e) const
+  bool& is_forward(SHalfedge_handle e) const
   // biedge information we store in the edge
   { return ginfo(e).forw_; }
 
-  void assert_equal_marks(Vertex_handle v1, Vertex_handle v2) const 
-  { CGAL_nef_assertion(mark(v1)==mark(v2)); }
+  void assert_equal_marks(SVertex_handle v1, SVertex_handle v2) const 
+  { CGAL_assertion(mark(v1)==mark(v2)); }
 
-  void assert_equal_marks(Halfedge_handle e1, Halfedge_handle e2) const
-  { CGAL_nef_assertion(mark(e1)==mark(e2)); }
+  void assert_equal_marks(SHalfedge_handle e1, SHalfedge_handle e2) const
+  { CGAL_assertion(mark(e1)==mark(e2)); }
 
   Sphere_segment segment(Explorer N, 
-                         Halfedge_const_handle e) const
+                         SHalfedge_const_handle e) const
   { return Sphere_segment(
       N.point(N.source(e)),N.point(N.target(e)),N.circle(e)); }
 
   Sphere_segment trivial_segment(Explorer N, 
-                                 Vertex_const_handle v) const
+                                 SVertex_const_handle v) const
   { Sphere_point p = N.point(v); 
     return Sphere_segment(p,p); }
 
   Seg_pair two_segments(Explorer N, 
-                        Halfedge_const_handle e) const
+                        SHalfedge_const_handle e) const
   // we know that source(e)==target(e)
   { return N.circle(e).split_at(N.point(N.source(e))); }
 
   Seg_pair two_segments(Explorer N, 
-                        Halfloop_const_handle l) const
+                        SHalfloop_const_handle l) const
   { return N.circle(l).split_at_xy_plane(); }
 
 
-  Mark& mark(Vertex_handle h) const
+  Mark& mark(SVertex_handle h) const
   { return Base::mark(h); }
-  Mark& mark(Halfedge_handle h) const
+  Mark& mark(SHalfedge_handle h) const
   { return Base::mark(h); }
-  Mark& mark(Halfloop_handle h) const
+  Mark& mark(SHalfloop_handle h) const
   { return Base::mark(h); }
-  Mark& mark(Face_handle h) const
+  Mark& mark(SFace_handle h) const
   { return Base::mark(h); }
-  const Mark& mark(Vertex_const_handle h) const
+  const Mark& mark(SVertex_const_handle h) const
   { return Base::mark(h); }
-  const Mark& mark(Halfedge_const_handle h) const
+  const Mark& mark(SHalfedge_const_handle h) const
   { return Base::mark(h); }
-  const Mark& mark(Halfloop_const_handle h) const
+  const Mark& mark(SHalfloop_const_handle h) const
   { return Base::mark(h); }
-  const Mark& mark(Face_const_handle h) const
+  const Mark& mark(SFace_const_handle h) const
   { return Base::mark(h); }
 
   /*{\Mcreation 6}*/
-  SM_triangulator(const Sphere_map& M, Sphere_map& MT,
-		  const Kernel& Kr = Kernel()) : 
-    Base(MT), E_(const_cast<Sphere_map&>(M)), K(Kr) {}
+  SM_triangulator(const Map& M, Map& MT,
+		  const Sphere_kernel& Kr = Sphere_kernel()) : 
+    Base(&MT), E_(const_cast<Map*>(&M)), K(Kr) {}
   /*{\Mcreate |\Mvar| is a triangulator object for the map |M|,
      stores the triangulation in |MT|.}*/
 
@@ -279,22 +285,22 @@ public:
   void triangulate();
   /*{\Mop produces a triangulated sphere map.}*/
 
-  void triangulate_per_hemisphere(Vertex_iterator start, Vertex_iterator end);
+  void triangulate_per_hemisphere(SVertex_iterator start, SVertex_iterator end);
 
   template <typename Iterator, typename T>
   void partition_to_halfsphere(Iterator start, Iterator end,
     Seg_list& L, CGAL::Unique_hash_map<Iterator,T>& M, int pos) const;
 
-  void merge_halfsphere_maps(Vertex_handle v1, Vertex_handle v2) const;
-  void merge_nodes(Halfedge_handle e1, Halfedge_handle e2) const;
-  void complete_support(Vertex_iterator v_start, Vertex_iterator v_end, 
-			int pos) const;
+  void merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2) const;
+  void merge_nodes(SHalfedge_handle e1, SHalfedge_handle e2) const;
+  void complete_support(SVertex_iterator v_start, SVertex_iterator v_end, 
+			Mark mohs) const;
 
-  void correct_triangle_at(Vertex_handle v)
+  void correct_triangle_at(SVertex_handle v)
   { TRACEN("correct_triangle_at "<<PH(v));
     if ( !has_outdeg_two(v) ) return;
-    Halfedge_handle e = first_out_edge(v);
-    CGAL_nef_assertion(next(next(next(e)))==e);
+    SHalfedge_handle e = first_out_edge(v);
+    CGAL_assertion(next(next(next(e)))==e);
     flip_diagonal(next(e));
   }
 
@@ -302,17 +308,17 @@ public:
   { SM_io_parser<Explorer>::dump(E_,os);
     SM_io_parser<Base>::dump(*this,os); }
 
-  Sphere_triangle incident_triangle(Halfedge_handle e) const
-  { Halfedge_handle en(next(e)), enn(next(en));
-    CGAL_nef_assertion(next(enn)==e);
+  Sphere_triangle incident_triangle(SHalfedge_handle e) const
+  { SHalfedge_handle en(next(e)), enn(next(en));
+    CGAL_assertion(next(enn)==e);
     return Sphere_triangle(
       point(source(e)),point(source(en)),point(source(enn)),
       circle(e),circle(en),circle(enn));
   }
 
-  Sphere_triangle incident_triangle(Halfedge_const_handle e) const
-  { Halfedge_const_handle en(next(e)), enn(next(en));
-    CGAL_nef_assertion(next(enn)==e);
+  Sphere_triangle incident_triangle(SHalfedge_const_handle e) const
+  { SHalfedge_const_handle en(next(e)), enn(next(en));
+    CGAL_assertion(next(enn)==e);
     return Sphere_triangle(
       point(source(e)),point(source(en)),point(source(enn)),
       circle(e),circle(en),circle(enn));
@@ -320,10 +326,10 @@ public:
 
   void discard_info()
   {
-    Vertex_iterator v;
-    Halfedge_iterator e;
-    CGAL_forall_vertices(v,*this) discard_info(v);
-    CGAL_forall_halfedges(e,*this) discard_info(e);
+    SVertex_iterator v;
+    SHalfedge_iterator e;
+    CGAL_forall_svertices(v,*this) discard_info(v);
+    CGAL_forall_shalfedges(e,*this) discard_info(e);
   }
 
 
@@ -336,14 +342,14 @@ void SM_triangulator<Decorator_>::triangulate()
   // first create sphere segments from isoverts, edges, loops
   Seg_list L;
   Seg_map From;
-  Vertex_const_iterator v;
-  CGAL_forall_vertices(v,E_) {
+  SVertex_const_iterator v;
+  CGAL_forall_svertices(v,E_) {
     if ( !E_.is_isolated(v) ) continue;
     L.push_back(trivial_segment(E_,v));
     From[--L.end()] = Object_handle(v);
   }
-  Halfedge_const_iterator e;
-  CGAL_forall_edges(e,E_) {
+  SHalfedge_const_iterator e;
+  CGAL_forall_sedges(e,E_) {
     if ( E_.source(e) == E_.target(e) ) {
       Seg_pair p = two_segments(E_,e);
       L.push_back(p.first); L.push_back(p.second);
@@ -353,10 +359,10 @@ void SM_triangulator<Decorator_>::triangulate()
       From[--L.end()] = Object_handle(e);
     }
   }
-  if ( E_.has_loop() ) {
-    Seg_pair p = two_segments(E_,E_.halfloop());
+  if ( E_.has_sloop() ) {
+    Seg_pair p = two_segments(E_,E_.shalfloop());
     L.push_back(p.first); L.push_back(p.second);
-    From[--L.end()] = From[--(--L.end())] = Object_handle(E_.halfloop());
+    From[--L.end()] = From[--(--L.end())] = Object_handle(E_.shalfloop());
   }
 
   // partition segments from L to positive and negative hemisphere
@@ -366,30 +372,30 @@ void SM_triangulator<Decorator_>::triangulate()
 
   // sweep the hemispheres to create two half sphere maps
   typedef SM_subdivision<Self,Seg_iterator,Object_handle> SM_output;
-  typedef typename Kernel::Positive_halfsphere_geometry PH_geometry;
+  typedef typename Sphere_kernel::Positive_halfsphere_geometry PH_geometry;
   typedef CGAL::Segment_overlay_traits< 
             Seg_iterator, SM_output, PH_geometry>  PHS_traits;
   typedef CGAL::generic_sweep<PHS_traits> Positive_halfsphere_sweep;
 
-  typedef typename Kernel::Negative_halfsphere_geometry NH_geometry;
+  typedef typename Sphere_kernel::Negative_halfsphere_geometry NH_geometry;
   typedef CGAL::Segment_overlay_traits< 
             Seg_iterator, SM_output, NH_geometry> NHS_traits;
   typedef CGAL::generic_sweep<NHS_traits> Negative_halfsphere_sweep;
 
-  Vertex_handle v_sep;
-  Halfedge_handle e_sep;
+  SVertex_handle v_sep;
+  SHalfedge_handle e_sep;
   SM_output O(*this,From); 
 
   typedef typename PHS_traits::INPUT Input_range;
   Positive_halfsphere_sweep SP(
     Input_range(L_pos.begin(),L_pos.end()),O,
-    K.get_positive_halfsphere_geometry());
+    PH_geometry());
   SP.sweep();
-  v_sep=--vertices_end(); e_sep=--halfedges_end();
+  v_sep=--svertices_end(); e_sep=--shalfedges_end();
 
   Negative_halfsphere_sweep SM(
     Input_range(L_neg.begin(),L_neg.end()),O,
-    K.get_negative_halfsphere_geometry());
+    NH_geometry());
   SM.sweep();
   ++v_sep; ++e_sep;
   // now two CCs of sphere graph are calculated
@@ -397,31 +403,33 @@ void SM_triangulator<Decorator_>::triangulate()
   // e_sep = first edge of CC in negative x-sphere
    
   // enrich the edges by circle information
-  Halfedge_iterator u;
-  CGAL_forall_edges(u,*this) {
+  SHalfedge_iterator u;
+  CGAL_forall_sedges(u,*this) {
     Sphere_segment s(point(source(u)),point(target(u)));
     circle(u) = s.sphere_circle(); 
     circle(twin(u)) = s.sphere_circle().opposite();
   }
 
-  // complete the support of per hemisphere
-  complete_support(vertices_begin(), v_sep, +1);
-  complete_support(v_sep, vertices_end(), -1);
+  Mark lower, upper;
+  SM_point_locator PL(E_.center_vertex());
+  PL.marks_of_halfspheres(lower,upper);
+  complete_support(svertices_begin(), v_sep, lower);
+  complete_support(v_sep, svertices_end(), upper);
 
   // triangulate per hemisphere
   typedef SM_constrained_triang_traits<Self,PH_geometry>  PCT_traits;
   typedef CGAL::generic_sweep<PCT_traits> Positive_halfsphere_ct_sweep;
   typedef SM_constrained_triang_traits<Self,NH_geometry>  NCT_traits;
   typedef CGAL::generic_sweep<NCT_traits> Negative_halfsphere_ct_sweep;
-  typedef std::pair<Vertex_iterator,Vertex_iterator> Vertex_pair;
+  typedef std::pair<SVertex_iterator,SVertex_iterator> SVertex_pair;
 
-  Vertex_pair vpp(vertices_begin(),v_sep);
+  SVertex_pair vpp(svertices_begin(),v_sep);
   Positive_halfsphere_ct_sweep PCTS(vpp, *this,
-    K.get_positive_halfsphere_geometry());
+    PH_geometry());
   PCTS.sweep();
-  Vertex_pair vpn(v_sep,vertices_end());
+  SVertex_pair vpn(v_sep,svertices_end());
   Negative_halfsphere_ct_sweep NCTS(vpn, *this,
-    K.get_negative_halfsphere_geometry());
+    NH_geometry());
   NCTS.sweep();
 
   /* Note the we divide the world along the xy equator and 
@@ -431,20 +439,20 @@ void SM_triangulator<Decorator_>::triangulate()
      appear we repair it by flipping the edge opposite to the
      vertex y-(y+).
   */
-  correct_triangle_at(vertices_begin());
-  correct_triangle_at(--Vertex_iterator(v_sep));
+  correct_triangle_at(svertices_begin());
+  correct_triangle_at(--SVertex_iterator(v_sep));
   correct_triangle_at(v_sep);
-  correct_triangle_at(--vertices_end());
+  correct_triangle_at(--svertices_end());
 
   // enrigh triangulation edges by circle information
-  CGAL_forall_edges(u,*this) {
+  CGAL_forall_sedges(u,*this) {
     Sphere_segment s(point(source(u)),point(target(u)));
     circle(u) = s.sphere_circle();
     circle(twin(u)) = s.sphere_circle().opposite();
   }
 
   // merge the hemisphere maps into one sphere map
-  merge_halfsphere_maps(vertices_begin(),v_sep);
+  merge_halfsphere_maps(svertices_begin(),v_sep);
   check_integrity_and_topological_planarity(false);
 }
 
@@ -455,7 +463,7 @@ void SM_triangulator<Decorator_>::
 partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L, 
   CGAL::Unique_hash_map<Iterator,T>& M, int pos) const
 { TRACEN("partition_to_halfsphere ");
-  CGAL_nef_assertion(pos!=0);
+  CGAL_assertion(pos!=0);
   Sphere_segment s1,s2;
   Sphere_circle xycircle(0,0,pos);
   while ( start != beyond ) { 
@@ -521,13 +529,13 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
 
 template <typename Decorator_>
 void SM_triangulator<Decorator_>::
-merge_nodes(Halfedge_handle e1, Halfedge_handle e2) const
+merge_nodes(SHalfedge_handle e1, SHalfedge_handle e2) const
 {
-  Vertex_handle v1 = source(e1), v2 = target(e2);
+  SVertex_handle v1 = source(e1), v2 = target(e2);
   TRACEN("merge_nodes "<<PH(v1)<<PH(v2));
-  CGAL_nef_assertion(point(v1)==point(v2));
-  Halfedge_handle ep1 = previous(e1), en2 = next(e2);
-  Halfedge_around_vertex_circulator eav(out_edges(v2)),ee(eav);
+  CGAL_assertion(point(v1)==point(v2));
+  SHalfedge_handle ep1 = previous(e1), en2 = next(e2);
+  SHalfedge_around_svertex_circulator eav(out_edges(v2)),ee(eav);
   CGAL_For_all(eav,ee) { set_source(eav,v1); }
   link_as_prev_next_pair(e2,e1);  
   link_as_prev_next_pair(ep1,en2); 
@@ -539,27 +547,27 @@ merge_nodes(Halfedge_handle e1, Halfedge_handle e2) const
 
 template <typename Decorator_>
 void SM_triangulator<Decorator_>::
-merge_halfsphere_maps(Vertex_handle v1, Vertex_handle v2) const
+merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2) const
 { TRACEN("merging halfspheres "<<PH(v1)<<PH(v2));
-  CGAL_nef_assertion(point(v1)==point(v2));
-  std::list<Halfedge_pair> L_equator;
-  Halfedge_around_face_circulator 
+  CGAL_assertion(point(v1)==point(v2));
+  std::list<SHalfedge_pair> L_equator;
+  SHalfedge_around_sface_circulator 
     ep(last_out_edge(v1)), en(twin(first_out_edge(v2)));
   do { 
-   L_equator.push_back(Halfedge_pair(ep,en));
+   L_equator.push_back(SHalfedge_pair(ep,en));
    merge_nodes(ep,en); ++ep; --en; 
   } while ( source(ep) != v1 );
   
-  typename std::list<Halfedge_pair>::iterator it;
+  typename std::list<SHalfedge_pair>::iterator it;
   CGAL_forall_iterators(it,L_equator) { 
-    Halfedge_handle e1 = it->first, e2 = it->second;
-    Halfedge_handle e1t = twin(e1), e2t = twin(e2);
+    SHalfedge_handle e1 = it->first, e2 = it->second;
+    SHalfedge_handle e1t = twin(e1), e2t = twin(e2);
     TRACEV(PH(e1));TRACEV(PH(e2));
-    Halfedge_handle e2tp = previous(e2t);
-    Halfedge_handle e2tn = next(e2t);
+    SHalfedge_handle e2tp = previous(e2t);
+    SHalfedge_handle e2tn = next(e2t);
     link_as_prev_next_pair(e2tp,e1);
     link_as_prev_next_pair(e1,e2tn);
-    Face_handle f = face(e2t);
+    SFace_handle f = face(e2t);
     if ( is_boundary_object(e2t) )
     { undo_boundary_object(e2t,f); store_boundary_object(e1,f); }
     set_face(e1,f);
@@ -572,30 +580,29 @@ merge_halfsphere_maps(Vertex_handle v1, Vertex_handle v2) const
 
 template <typename Decorator_>
 void SM_triangulator<Decorator_>::
-complete_support(Vertex_iterator v_start, Vertex_iterator v_end, int pos) const
-{ 
-  TRACEN("complete_support");
-  for (Vertex_iterator v = v_start; v != v_end; ++v) { 
+complete_support(SVertex_iterator v_start, SVertex_iterator v_end,
+		 Mark mohs) const
+{ TRACEN("complete_support");
+  Mark m_buffer(mohs); 
+  for (SVertex_iterator v = v_start; v != v_end; ++v) { 
     TRACEN(" vertex = "<<PH(v));
-    Mark m_buffer;
-    Halfedge_handle e_below = halfedge_below(v);
-    if ( v == v_start ) {
-      m_buffer = E_.mark_of_halfsphere(-pos);
-    } else if ( e_below != Halfedge_handle() ) {
-      m_buffer = incident_mark(e_below); 
-    } else { // e_below does not exist
-      /* this is only the case for a vertex v on the final equatorial
-	 halfcircle; there we take the mark from an inedge edge into v */
-      CGAL_nef_assertion( point(v).z() == 0 && 
-        ( pos > 0 ? (point(v).x() >= 0) : (point(v).x()<=0)) );
-      m_buffer = incident_mark(previous(first_out_edge(v)));
-    } 
+    SHalfedge_handle e_below = halfedge_below(v);
+    if ( v != v_start )
+      if ( e_below != SHalfedge_handle() ) {
+	m_buffer = incident_mark(e_below); 
+      } else { // e_below does not exist
+	/* this is only the case for a vertex v on the final equatorial
+	   halfcircle; there we take the mark from an inedge edge into v */
+	//	CGAL_assertion( point(v).z() == 0 && 
+	//	  ( pos > 0 ? (point(v).x() >= 0) : (point(v).x()<=0)) );
+	m_buffer = incident_mark(previous(first_out_edge(v)));
+      } 
     TRACEN(" face mark below "<<m_buffer);
 
     Object_handle o = support(v);
-    Vertex_const_handle vs;
-    Halfedge_const_handle es;
-    Halfloop_const_handle ls;
+    SVertex_const_handle vs;
+    SHalfedge_const_handle es;
+    SHalfloop_const_handle ls;
     if ( o == NULL ) { mark(v) = m_buffer; }
     else if ( assign(vs,o) ) { mark(v) = E_.mark(vs); }
     else if ( assign(es,o) ) {
@@ -606,29 +613,29 @@ complete_support(Vertex_iterator v_start, Vertex_iterator v_end, int pos) const
       else { mark(v) = E_.mark(es); }
     }
     else if ( assign(ls,o) ) { mark(v) = E_.mark(ls); }
-    else CGAL_nef_assertion_msg(0,"damn wrong support.");
+    else CGAL_assertion_msg(0,"damn wrong support.");
     TRACEN(" face mark at "<<mark(v));
 
     if ( is_isolated(v) ) continue;
 
-    Halfedge_around_vertex_circulator e(first_out_edge(v)), hend(e);
+    SHalfedge_around_svertex_circulator e(first_out_edge(v)), hend(e);
     CGAL_For_all(e,hend) {
       TRACEN("  edge "<<PH(e));
       if ( !is_forward(e) ) break;
       if ( support(e) != NULL ) {
-        Halfedge_const_handle ei;
+        SHalfedge_const_handle ei;
         if ( assign(ei,support(e)) ) { 
           if ( E_.circle(ei) != circle(e) ) { ei = E_.twin(ei); }
-          CGAL_nef_assertion( E_.circle(ei) == circle(e) ); 
+          CGAL_assertion( E_.circle(ei) == circle(e) ); 
           TRACEN("  supporting edge "<<PH(ei));
           incident_mark(twin(e)) = E_.mark(E_.face(E_.twin(ei)));
           mark(e) = E_.mark(ei);
           incident_mark(e) = m_buffer = E_.mark(E_.face(ei)); 
         }
-        Halfloop_const_handle li;
+        SHalfloop_const_handle li;
         if ( assign(li,support(e)) ) { 
           if ( E_.circle(li) != circle(e) ) { li = E_.twin(li); }
-          CGAL_nef_assertion( E_.circle(li) == circle(e) ); 
+          CGAL_assertion( E_.circle(li) == circle(e) ); 
           TRACEN("  supporting loop "<<PH(li));
           incident_mark(twin(e)) = E_.mark(E_.face(E_.twin(li)));
           mark(e) = E_.mark(li);

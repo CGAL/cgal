@@ -2,7 +2,7 @@
 #define CGAL_SPHERE_CIRCLE_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Nef_3/Infimaximal_box.h>
+#include <CGAL/Nef_3/Normalizing.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -33,8 +33,6 @@ typedef typename R_::Line_3 Line_3;
 typedef typename R_::Point_3 Point_3;
 typedef Sphere_circle<R_> Self;
 typedef typename R_::Plane_3 Base;
-
- typedef Infimaximal_box<typename Is_extended_kernel<R_>::value_type, R_> Infi_box;
 
 /*{\Mcreation 5}*/
 Sphere_circle() : Base() {}
@@ -69,8 +67,6 @@ create any great circle that contains $p$ and $q$.}*/
 circle parallel to |h| containing the origin.}*/
 { 
   if(h.d() != 0) *this = Plane_3(h.a(),h.b(),h.c(),RT(0));
-  // if(h.a().degree() != 0 || h.b().degree() != 0 || h.c().degree() != 0) *this = normalized(*this);
-  if(Infi_box::degree(h.a()) != 0 || Infi_box::degree(h.b()) != 0 || Infi_box::degree(h.c()) != 0) *this = normalized(*this);
 } 
 
 Sphere_circle(const RT& x, const RT& y, const RT& z): Base(x,y,z,0) {}

@@ -3,6 +3,7 @@
 
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_2/Object_index.h>
+#include <CGAL/Nef_S2/SM_decorator_traits.h>
 #include <vector>
 #include <iostream>
 
@@ -26,44 +27,48 @@ class SM_io_parser : public Decorator_
   typedef typename Decorator_::Sphere_circle Sphere_circle;
   typedef typename Decorator_::Mark          Mark;
 
-  typedef typename Decorator_::Vertex_iterator     Vertex_iterator;
-  typedef typename Decorator_::Halfedge_iterator   Halfedge_iterator;
-  typedef typename Decorator_::Face_iterator       Face_iterator;
-  typedef typename Decorator_::Vertex_handle       Vertex_handle;
-  typedef typename Decorator_::Halfedge_handle     Halfedge_handle;
-  typedef typename Decorator_::Face_handle         Face_handle;
-  typedef typename Decorator_::Halfloop_handle     Halfloop_handle;
-  typedef typename Decorator_::Face_cycle_iterator Face_cycle_iterator;
+  typedef typename Decorator_::Decorator_traits  Decorator_traits;
+
+  typedef typename Decorator_traits::SVertex_iterator     SVertex_iterator;
+  typedef typename Decorator_traits::SHalfedge_iterator   SHalfedge_iterator;
+  typedef typename Decorator_traits::SFace_iterator       SFace_iterator;
+  typedef typename Decorator_traits::SVertex_handle       SVertex_handle;
+  typedef typename Decorator_traits::SHalfedge_handle     SHalfedge_handle;
+  typedef typename Decorator_traits::SFace_handle         SFace_handle;
+  typedef typename Decorator_traits::SHalfloop_handle     SHalfloop_handle;
+  typedef typename Decorator_traits::SFace_cycle_iterator SFace_cycle_iterator;
+  typedef typename Decorator_traits::SHalfedge_around_svertex_circulator
+                                     SHalfedge_around_svertex_circulator;
+
   std::istream& in; std::ostream& out;
   bool verbose;
   // a reference to the IO object
-  CGAL::Object_index<Vertex_handle>   VI;
-  CGAL::Object_index<Halfedge_handle> EI;
-  CGAL::Object_index<Face_handle>     FI;
-  std::vector<Vertex_handle>        Vertex_of;
-  std::vector<Halfedge_handle>      Edge_of;
-  std::vector<Face_handle>          Face_of;
-  Halfloop_handle                   Loop_of[2];
+  CGAL::Object_index<SVertex_handle>   VI;
+  CGAL::Object_index<SHalfedge_handle> EI;
+  CGAL::Object_index<SFace_handle>     FI;
+  std::vector<SVertex_handle>        SVertex_of;
+  std::vector<SHalfedge_handle>      Edge_of;
+  std::vector<SFace_handle>          SFace_of;
+  SHalfloop_handle                   Loop_of[2];
   // object mapping for input
   int vn,en,ln,fn,i;
   // the number of objects
 
   bool check_sep(char* sep);
-  void print_vertex(Vertex_handle) const;
-  void print_edge(Halfedge_handle) const;
-  void print_loop(Halfloop_handle) const;
-  void print_face(Face_handle) const;
-  void print_init_points() const;
+  void print_vertex(SVertex_handle) const;
+  void print_edge(SHalfedge_handle) const;
+  void print_loop(SHalfloop_handle) const;
+  void print_face(SFace_handle) const;
 
-  bool read_vertex(Vertex_handle);
-  bool read_edge(Halfedge_handle);
-  bool read_loop(Halfloop_handle);
-  bool read_face(Face_handle);
+  bool read_vertex(SVertex_handle);
+  bool read_edge(SHalfedge_handle);
+  bool read_loop(SHalfloop_handle);
+  bool read_face(SFace_handle);
   bool read_init_points() const;
 
-  void debug_vertex(Vertex_handle) const;
-  void debug_edge(Halfedge_handle) const;
-  void debug_loop(Halfloop_handle) const;
+  void debug_vertex(SVertex_handle) const;
+  void debug_edge(SHalfedge_handle) const;
+  void debug_loop(SHalfloop_handle) const;
 
 public:
 /*{\Mcreation 3}*/
@@ -83,15 +88,15 @@ void read();
 void debug() const;
 void print_faces() const;
 
-std::string index(Vertex_handle v) const 
+std::string index(SVertex_handle v) const 
 { return VI(v,verbose); }
-std::string index(Halfedge_handle e) const 
+std::string index(SHalfedge_handle e) const 
 { return EI(e,verbose); }
-std::string index(Halfloop_handle l) const 
-{ if (verbose)  return (l==halfloop()? "l0" : "l1");
-  else return (l==halfloop()? "0" : "1");
+std::string index(SHalfloop_handle l) const 
+{ if (verbose)  return (l==shalfloop()? "l0" : "l1");
+  else return (l==shalfloop()? "0" : "1");
 }
-std::string index(Face_handle f) const 
+std::string index(SFace_handle f) const 
 { return FI(f,verbose); }
 
 static void dump(const Decorator_& D, std::ostream& os = cerr);
@@ -111,13 +116,13 @@ template <typename Decorator_>
 SM_io_parser<Decorator_>::
 SM_io_parser(std::ostream& iout, const Decorator_& D) 
   : Base(D), in(std::cin), out(iout), 
-  VI(vertices_begin(),vertices_end(),'v'),
-  EI(halfedges_begin(),halfedges_end(),'e'),
-  FI(faces_begin(),faces_end(),'f'),
-  vn(number_of_vertices()), 
-  en(number_of_halfedges()), 
-  ln(number_of_halfloops()),
-  fn(number_of_faces())
+  VI(svertices_begin(),svertices_end(),'v'),
+  EI(shalfedges_begin(),shalfedges_end(),'e'),
+  FI(sfaces_begin(),sfaces_end(),'f'),
+  vn(number_of_svertices()), 
+  en(number_of_shalfedges()), 
+  ln(number_of_shalfloops()),
+  fn(number_of_sfaces())
 { verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
              out.iword(CGAL::IO::mode) != CGAL::IO::BINARY);
 }
@@ -144,7 +149,7 @@ bool SM_io_parser<Decorator_>::check_sep(char* sep)
 }
 
 template <typename Decorator_>
-void SM_io_parser<Decorator_>::print_vertex(Vertex_handle v) const
+void SM_io_parser<Decorator_>::print_vertex(SVertex_handle v) const
 {
   // syntax: index { isolated incident_object, mark, point }
   out << index(v) << " { ";
@@ -154,7 +159,7 @@ void SM_io_parser<Decorator_>::print_vertex(Vertex_handle v) const
 }
 
 template <typename Decorator_>
-bool SM_io_parser<Decorator_>::read_vertex(Vertex_handle v)
+bool SM_io_parser<Decorator_>::read_vertex(SVertex_handle v)
 { 
   // precondition: nodes exist
   // syntax: index { isolated incident_object, mark, point}
@@ -169,14 +174,14 @@ bool SM_io_parser<Decorator_>::read_vertex(Vertex_handle v)
        !(in >> p) ||
        !check_sep("}") ) return false;
  
-  if (iso) set_face(v,Face_of[f]);
+  if (iso) set_face(v,SFace_of[f]);
   else     set_first_out_edge(v,Edge_of[f]);
   mark(v) = m; point(v) = p;
   return true; 
 }
 
 template <typename Decorator_>
-void SM_io_parser<Decorator_>::print_edge(Halfedge_handle e) const
+void SM_io_parser<Decorator_>::print_edge(SHalfedge_handle e) const
 { // syntax: index { twin, prev, next, source, face, mark, circle }
   out << index(e) << " { "
       << index(twin(e)) << ", " 
@@ -186,7 +191,7 @@ void SM_io_parser<Decorator_>::print_edge(Halfedge_handle e) const
 }
 
 template <typename Decorator_>
-bool SM_io_parser<Decorator_>::read_edge(Halfedge_handle e)
+bool SM_io_parser<Decorator_>::read_edge(SHalfedge_handle e)
 { // syntax: index { twin, prev, next, source, face, mark, circle }
   int n, eo, epr, ene, v, f; bool m; Sphere_circle k;
   if ( !(in >> n) ||
@@ -199,24 +204,24 @@ bool SM_io_parser<Decorator_>::read_edge(Halfedge_handle e)
        !(in >> m) || !check_sep(",") ||
        !(in >> k) || !check_sep("}") )
     return false;
-  CGAL_nef_assertion_msg 
+  CGAL_assertion_msg 
      (eo >= 0 && eo < en && epr >= 0 && epr < en && ene >= 0 && ene < en &&
       v >= 0 && v < vn && f >= 0 && f < fn ,
       "wrong index in read_edge");
   
   // precond: features exist!
-  CGAL_nef_assertion(EI[twin(e)]);
+  CGAL_assertion(EI[twin(e)]);
   set_prev(e,Edge_of[epr]);
   set_next(e,Edge_of[ene]);
-  set_source(e,Vertex_of[v]);
-  set_face(e,Face_of[f]);
+  set_source(e,SVertex_of[v]);
+  set_face(e,SFace_of[f]);
   mark(e) = m;
   circle(e) = k;
   return true;
 }
 
 template <typename Decorator_>
-void SM_io_parser<Decorator_>::print_loop(Halfloop_handle l) const
+void SM_io_parser<Decorator_>::print_loop(SHalfloop_handle l) const
 { // syntax: index { twin, face, mark, circle }
   out << index(l) << " { "
       << index(twin(l)) << ", " 
@@ -225,7 +230,7 @@ void SM_io_parser<Decorator_>::print_loop(Halfloop_handle l) const
 }
 
 template <typename Decorator_>
-bool SM_io_parser<Decorator_>::read_loop(Halfloop_handle l)
+bool SM_io_parser<Decorator_>::read_loop(SHalfloop_handle l)
 { // syntax: index { twin, face, mark, circle }
   int n, lo, f; bool m; Sphere_circle k;
   if ( !(in >> n) ||
@@ -235,10 +240,10 @@ bool SM_io_parser<Decorator_>::read_loop(Halfloop_handle l)
        !(in >> m) || !check_sep(",") ||
        !(in >> k) || !check_sep("}") )
     return false;
-  CGAL_nef_assertion_msg(
+  CGAL_assertion_msg(
     (lo >= 0 && lo < 2 && f >= 0 && f < fn),"wrong index in read_edge");
   
-  set_face(l,Face_of[f]);
+  set_face(l,SFace_of[f]);
   mark(l) = m;
   circle(l) = k;
   return true;
@@ -246,49 +251,40 @@ bool SM_io_parser<Decorator_>::read_loop(Halfloop_handle l)
 
 
 template <typename Decorator_>
-void SM_io_parser<Decorator_>::print_face(Face_handle f) const
+void SM_io_parser<Decorator_>::print_face(SFace_handle f) const
 { // syntax: index { fclist, ivlist, loop, mark }
   out << index(f) << " { "; 
-  Face_cycle_iterator it;
-  CGAL_forall_face_cycles_of(it,f)
-    if ( it.is_halfedge() ) out << index(Halfedge_handle(it)) << ' ';
+  SFace_cycle_iterator it;
+  CGAL_forall_sface_cycles_of(it,f)
+    if ( it.is_shalfedge() ) out << index(SHalfedge_handle(it)) << ' ';
   out << ", ";
-  CGAL_forall_face_cycles_of(it,f)
-    if ( it.is_vertex() ) out << index(Vertex_handle(it)) << ' ';
+  CGAL_forall_sface_cycles_of(it,f)
+    if ( it.is_svertex() ) out << index(SVertex_handle(it)) << ' ';
   out << ", ";
-  CGAL_forall_face_cycles_of(it,f)
-    if ( it.is_halfloop() ) out << index(Halfloop_handle(it));
+  CGAL_forall_sface_cycles_of(it,f)
+    if ( it.is_shalfloop() ) out << index(SHalfloop_handle(it));
   out << ", " << mark(f) << " }\n";
 }
 
 template <typename Decorator_>
-void SM_io_parser<Decorator_>::print_init_points() const
-{ 
-  out << mark_of_halfsphere(-1) << " "
-      << mark_of_halfsphere(+1) << "\n"; 
-}
-
-
-
-template <typename Decorator_>
-bool SM_io_parser<Decorator_>::read_face(Face_handle f)
+bool SM_io_parser<Decorator_>::read_face(SFace_handle f)
 { // syntax: index { fclist, ivlist, loop, mark }
   int n, ei, vi, li; Mark m;
   if ( !(in >> n) || !check_sep("{") ) return false;
   while (in >> ei) { 
-    CGAL_nef_assertion_msg(ei >= 0 && ei < en, 
+    CGAL_assertion_msg(ei >= 0 && ei < en, 
                            "wrong index in face cycle list.");
     store_boundary_object(Edge_of[ei],f);
   } in.clear();
   if (!check_sep(",")) { return false; }
   while (in >> vi) { 
-    CGAL_nef_assertion_msg(vi >= 0 && vi < vn, 
+    CGAL_assertion_msg(vi >= 0 && vi < vn, 
                            "wrong index in iso vertex list.");
-    store_boundary_object(Vertex_of[vi],f);
+    store_boundary_object(SVertex_of[vi],f);
   } in.clear();
   if (!check_sep(",")) { return false; }
   while (in >> li) { 
-    CGAL_nef_assertion_msg(li >= 0 && li < 2, 
+    CGAL_assertion_msg(li >= 0 && li < 2, 
                            "wrong index in iso vertex list.");
     store_boundary_object(Loop_of[li],f);
   } in.clear();
@@ -319,24 +315,21 @@ void SM_io_parser<Decorator_>::print() const
   out << "faces "     << fn << std::endl;
   if (verbose) 
     out << "/* index { isolated ? face : edge, mark, point } */" << std::endl;
-  Vertex_iterator vit;
-  CGAL_forall_vertices(vit,*this) print_vertex(vit);
+  SVertex_iterator vit;
+  CGAL_forall_svertices(vit,*this) print_vertex(vit);
   if (verbose) 
     out << "/* index { twin, prev, next, source, face, mark, circle } */" 
 	<< std::endl;
-  Halfedge_iterator eit;
-  CGAL_forall_halfedges(eit,*this) print_edge(eit);
+  SHalfedge_iterator eit;
+  CGAL_forall_shalfedges(eit,*this) print_edge(eit);
   if (verbose) 
     out << "/* index { twin, face, mark, circle } */" << std::endl;
-  if ( has_loop() ) 
-  { print_loop(halfloop()); print_loop(twin(halfloop())); }
+  if ( has_sloop() ) 
+  { print_loop(shalfloop()); print_loop(twin(shalfloop())); }
   if (verbose) 
     out << "/* index { fclist, ivlist, loop, mark } */" << std::endl;
-  Face_iterator fit;
-  CGAL_forall_faces(fit,*this) print_face(fit);
-  if (verbose) 
-    out << "/* mark at y-/y+ */" << std::endl;
-  print_init_points();  
+  SFace_iterator fit;
+  CGAL_forall_sfaces(fit,*this) print_face(fit);
   out.flush();
   if (verbose) debug();
 }
@@ -345,44 +338,44 @@ template <typename Decorator_>
 void SM_io_parser<Decorator_>::read() 
 {
   if ( !check_sep("Plane_map_2") )  
-    CGAL_nef_assertion_msg(0,"SM_io_parser::read: no embedded_PM header.");
+    CGAL_assertion_msg(0,"SM_io_parser::read: no embedded_PM header.");
   if ( !(check_sep("vertices") && (in >> vn)) ) 
-    CGAL_nef_assertion_msg(0,"SM_io_parser::read: wrong vertex line.");
+    CGAL_assertion_msg(0,"SM_io_parser::read: wrong vertex line.");
   if ( !(check_sep("edges") && (in >> en) && (en%2==0)) )
-    CGAL_nef_assertion_msg(0,"SM_io_parser::read: wrong edge line.");
+    CGAL_assertion_msg(0,"SM_io_parser::read: wrong edge line.");
   if ( !(check_sep("loops") && (in >> ln)) )
-    CGAL_nef_assertion_msg(0,"SM_io_parser::read: wrong loop line.");
+    CGAL_assertion_msg(0,"SM_io_parser::read: wrong loop line.");
   if ( !(check_sep("faces") && (in >> fn)) )
-    CGAL_nef_assertion_msg(0,"SM_io_parser::read: wrong face line.");
+    CGAL_assertion_msg(0,"SM_io_parser::read: wrong face line.");
 
-  Vertex_of.reserve(vn);
+  SVertex_of.reserve(vn);
   Edge_of.reserve(en);
-  Face_of.reserve(fn);
-  for(i=0; i<vn; i++)  Vertex_of[i] =   new_vertex();
+  SFace_of.reserve(fn);
+  for(i=0; i<vn; i++)  SVertex_of[i] =   new_vertex();
   for(i=0; i<en; i++) 
     if (i%2==0) Edge_of[i] = new_edge_pair_without_vertices();
     else Edge_of[i] = twin(Edge_of[i-1]);
-  for(i=0; i<fn; i++)  Face_of[i] =     new_face();
+  for(i=0; i<fn; i++)  SFace_of[i] =     new_face();
   if ( ln == 2 ) 
   { Loop_of[0] = new_loop(); Loop_of[1] = twin(loop()); }
 
   for(i=0; i<vn; i++) {
-    if (!read_vertex(Vertex_of[i]))
-      CGAL_nef_assertion_msg(0,"SM_io_parser::read: error in node line");
+    if (!read_vertex(SVertex_of[i]))
+      CGAL_assertion_msg(0,"SM_io_parser::read: error in node line");
   }
   for(i=0; i<en; i++) {
     if (!read_edge(Edge_of[i]))
-      CGAL_nef_assertion_msg(0,"SM_io_parser::read: error in edge line");
+      CGAL_assertion_msg(0,"SM_io_parser::read: error in edge line");
   }
   if ( ln == 2 ) {
     read_loop(Loop_of[0]); read_loop(Loop_of[1]);
   }
   for(i=0; i<fn; i++) {
-    if (!read_face(Face_of[i]))
-      CGAL_nef_assertion_msg(0,"SM_io_parser::read: error in face line");
+    if (!read_face(SFace_of[i]))
+      CGAL_assertion_msg(0,"SM_io_parser::read: error in face line");
   }
   if (!read_init_points())
-    CGAL_nef_assertion_msg(0,"SM_io_parser::read: error in init point line");
+    CGAL_assertion_msg(0,"SM_io_parser::read: error in init point line");
 }
 
 //-----------------------------------------------------------------------------
@@ -392,13 +385,13 @@ void SM_io_parser<Decorator_>::read()
 //-----------------------------------------------------------------------------
 
 template <typename Decorator_>
-void SM_io_parser<Decorator_>::debug_vertex(Vertex_handle v) const
+void SM_io_parser<Decorator_>::debug_vertex(SVertex_handle v) const
 { 
   out << index(v) << "[" << mark(v) << "," << point(v) << "]" << std::endl; 
 }
 
 template <typename Decorator_>
-void SM_io_parser<Decorator_>::debug_edge(Halfedge_handle e) const
+void SM_io_parser<Decorator_>::debug_edge(SHalfedge_handle e) const
 { 
   out << index(e)
       << "(" << index(source(e)) << "," << index(target(e)) << ") "
@@ -407,7 +400,7 @@ void SM_io_parser<Decorator_>::debug_edge(Halfedge_handle e) const
 }
 
 template <typename Decorator_>
-void SM_io_parser<Decorator_>::debug_loop(Halfloop_handle l) const
+void SM_io_parser<Decorator_>::debug_loop(SHalfloop_handle l) const
 { 
   out << index(l) << " "
       << index(twin(l)) << " " << index(face(l))
@@ -419,19 +412,18 @@ template <typename Decorator_>
 void SM_io_parser<Decorator_>::debug() const
 { 
   out << "\nDEBUG Plane_map\n";
-  out << "Vertices:  " << number_of_vertices() << "\n";
-  out << "Halfedges: " << number_of_halfedges() << "\n";
-  out << "Loop:      " << number_of_halfloops() << "\n";
-  Vertex_iterator vit; 
-  CGAL_forall_vertices(vit,*this) {
+  out << "Vertices:  " << number_of_svertices() << "\n";
+  out << "SHalfedges: " << number_of_shalfedges() << "\n";
+  out << "Loop:      " << number_of_shalfloops() << "\n";
+  SVertex_iterator vit; 
+  CGAL_forall_svertices(vit,*this) {
     if ( is_isolated(vit) ) continue;
-    typename Base::Halfedge_around_vertex_circulator
-      hcirc = out_edges(vit), hend = hcirc;
+    SHalfedge_around_svertex_circulator hcirc(out_edges(vit)), hend(hcirc);
     debug_vertex(vit);
     CGAL_For_all(hcirc,hend) { out << "  "; debug_edge(hcirc); }
   }
-  if ( has_loop() ) 
-  { debug_loop(halfloop()); debug_loop(twin(halfloop())); }
+  if ( has_sloop() ) 
+  { debug_loop(shalfloop()); debug_loop(twin(shalfloop())); }
   out << std::endl;
 }
 
@@ -439,20 +431,20 @@ template <typename Decorator_>
 void SM_io_parser<Decorator_>::print_faces() const
 { 
   out << "\nFACES\n";
-  out << "Vertices:  " << number_of_vertices() << "\n";
-  out << "Halfedges: " << number_of_halfedges() << "\n";
-  out << "Loop:      " << number_of_halfloops() << "\n";
-  Halfedge_iterator e;
-  Unique_hash_map<Halfedge_iterator,bool> Done(false);
-  CGAL_forall_halfedges(e,*this) {
+  out << "Vertices:  " << number_of_svertices() << "\n";
+  out << "SHalfedges: " << number_of_shalfedges() << "\n";
+  out << "Loop:      " << number_of_shalfloops() << "\n";
+  SHalfedge_iterator e;
+  Unique_hash_map<SHalfedge_iterator,bool> Done(false);
+  CGAL_forall_shalfedges(e,*this) {
     if ( Done[e] ) continue;
-    typename Base::Halfedge_around_face_circulator c(e), ce = c;
+    typename Base::SHalfedge_around_sface_circulator c(e), ce = c;
     out << "face cycle\n";
     CGAL_For_all(c,ce) 
     { Done[c]=true; out << "  "; debug_vertex(source(c)); }
   }
-  if ( has_loop() ) 
-  { debug_loop(halfloop()); debug_loop(twin(halfloop())); }
+  if ( has_sloop() ) 
+  { debug_loop(shalfloop()); debug_loop(twin(shalfloop())); }
   out << std::endl;
 }
 

@@ -3,31 +3,31 @@
 
 #undef CGAL_forall_iterators
 #define CGAL_forall_iterators(x,S)\
-for(x = S.begin(); x != S.end(); ++x)
+for(x = (S).begin(); x != (S).end(); ++x)
 
-#undef CGAL_forall_vertices
-#define CGAL_forall_vertices(x,SM)\
-for(x = (SM).vertices_begin(); x != (SM).vertices_end(); ++x) 
+#undef CGAL_forall_svertices
+#define CGAL_forall_svertices(x,SM)\
+for(x = (SM).svertices_begin(); x != (SM).svertices_end(); ++x) 
 
-#undef CGAL_forall_halfedges
-#define CGAL_forall_halfedges(x,SM)\
-for(x = (SM).halfedges_begin(); x != (SM).halfedges_end(); ++x) 
+#undef CGAL_forall_shalfedges
+#define CGAL_forall_shalfedges(x,SM)\
+for(x = (SM).shalfedges_begin(); x != (SM).shalfedges_end(); ++x) 
 
-#undef CGAL_forall_edges
-#define CGAL_forall_edges(x,SM)\
-for(x = (SM).halfedges_begin(); x != (SM).halfedges_end(); ++(++x)) 
+#undef CGAL_forall_sedges
+#define CGAL_forall_sedges(x,SM)\
+for(x = (SM).shalfedges_begin(); x != (SM).shalfedges_end(); ++(++x))
 
-#undef CGAL_forall_halfloops
-#define CGAL_forall_halfloops(x,SM)\
-for(x = (SM).halfloops_begin(); x != (SM).halfloops_end(); ++x) 
+#undef CGAL_forall_shalfloops
+#define CGAL_forall_shalfloops(x,SM)\
+for(x = (SM).shalfloops_begin(); x != (SM).shalfloops_end(); ++x) 
 
-#undef CGAL_forall_faces
-#define CGAL_forall_faces(x,SM)\
-for(x = (SM).faces_begin(); x != (SM).faces_end(); ++x) 
+#undef CGAL_forall_sfaces
+#define CGAL_forall_sfaces(x,SM)\
+for(x = (SM).sfaces_begin(); x != (SM).sfaces_end(); ++x) 
 
-#undef CGAL_forall_face_cycles_of
-#define CGAL_forall_face_cycles_of(x,F)\
-for(x = (F)->face_cycles_begin(); x != (F)->face_cycles_end(); ++x) 
+#undef CGAL_forall_sface_cycles_of
+#define CGAL_forall_sface_cycles_of(x,F)\
+for(x = (F)->sface_cycles_begin(); x != (F)->sface_cycles_end(); ++x) 
 
 #endif //CGAL_SM_ITERATION_H
 

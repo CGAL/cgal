@@ -37,7 +37,8 @@ typedef CGAL::Sphere_segment<R> Segment_2;
 
 int axis;
 
-Positive_halfsphere_geometry(int check_sphere=2) : axis(check_sphere) {}
+Positive_halfsphere_geometry() : axis(2) {}
+Positive_halfsphere_geometry(int check_sphere) : axis(check_sphere) {}
 
 Point_2 source(const Segment_2& s) const
 { return s.source(); }
@@ -96,7 +97,8 @@ int orientation(const Segment_2& s, const Point_2& p) const
 bool is_degenerate(const Segment_2& s) const
 { return s.is_degenerate(); }
 
-int compare_xy(const Point_2& p1, const Point_2& p2) const { 
+int compare_xy(const Point_2& p1, const Point_2& p2) const {
+  TRACEN("compare_xy " << axis << ":" << p1 << " / " << p2);
   return CGAL::spherical_compare(p1,p2,axis,+1);
 }
 
@@ -117,6 +119,7 @@ typedef Positive_halfsphere_geometry<R> Base;
 typedef typename Base::Point_2   Point_2;
 typedef typename Base::Segment_2 Segment_2;
 
+Negative_halfsphere_geometry() : Base() {}
 Negative_halfsphere_geometry(int check_sphere) : Base(check_sphere) {}
   
 int orientation(const Point_2& p1, const Point_2& p2,
@@ -293,16 +296,17 @@ Point_2 intersection(const Segment_2& s1, const Segment_2& s2) const
 template <typename R_>
 struct Sphere_geometry {
 
-typedef R_                        R;
-typedef typename R_::RT           RT;
-typedef typename R_::FT           FT;
-typedef CGAL::Sphere_point<R>     Sphere_point;
-typedef CGAL::Sphere_segment<R>   Sphere_segment;
-typedef CGAL::Sphere_circle<R>    Sphere_circle;
-typedef CGAL::Sphere_direction<R> Sphere_direction;
-typedef CGAL::Sphere_triangle<R>  Sphere_triangle;
-typedef CGAL::Point_3<R>          Point_3;
-typedef CGAL::Plane_3<R>          Plane_3;
+typedef R_                          R;
+typedef typename R_::RT             RT;
+typedef typename R_::FT             FT;
+typedef CGAL::Sphere_point<R>       Sphere_point;
+typedef CGAL::Sphere_segment<R>     Sphere_segment;
+typedef CGAL::Sphere_circle<R>      Sphere_circle;
+typedef CGAL::Sphere_direction<R>   Sphere_direction;
+typedef CGAL::Sphere_triangle<R>    Sphere_triangle;
+typedef CGAL::Point_3<R>            Point_3;
+typedef CGAL::Plane_3<R>            Plane_3;
+typedef CGAL::Aff_transformation_3<R> Aff_transformation_3;
 typedef Positive_halfsphere_geometry<R> Positive_halfsphere_geometry;
 typedef Negative_halfsphere_geometry<R> Negative_halfsphere_geometry;
 typedef Fullsphere_geometry<R> Fullsphere_geometry;

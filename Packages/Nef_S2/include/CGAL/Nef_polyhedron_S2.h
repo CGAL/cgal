@@ -51,14 +51,15 @@ class Nef_polyhedron_S2_rep
 { typedef Nef_polyhedron_S2_rep<K> Self;
   friend class Nef_polyhedron_S2<K>;
 
-  typedef K                               Kernel;
-  typedef CGAL::Sphere_geometry<Kernel>   Sphere_kernel;
-  typedef CGAL::Sphere_map<Sphere_kernel> Sphere_map;
-  typedef CGAL::SM_const_decorator<Sphere_map,Sphere_kernel>
-    Const_decorator;
-  typedef CGAL::SM_decorator<Sphere_map,Sphere_kernel> Decorator;
+  typedef K                                            Kernel;
+  typedef CGAL::Sphere_geometry<Kernel>                Sphere_kernel;
+  typedef bool                                         Mark;
+  typedef CGAL::SM_items<Sphere_kernel, Mark>          Items;
+  typedef CGAL::Sphere_map<Sphere_kernel,Items>        Sphere_map;
+  typedef CGAL::SM_const_decorator<Sphere_map>         Const_decorator;
+  typedef CGAL::SM_decorator<Sphere_map>               Decorator;
   typedef CGAL::SM_overlayer<Decorator>                Overlayer;
-  typedef CGAL::SM_point_locator<Decorator>            Locator;
+  typedef CGAL::SM_point_locator<Const_decorator>      Locator;
 
   Sphere_map sm_; 
   
@@ -84,7 +85,8 @@ The template parameter |Kernel| is specified via a kernel concept.
 }*/
 
 template <typename K>
-class Nef_polyhedron_S2 : public Handle_for< Nef_polyhedron_S2_rep<K> >
+class Nef_polyhedron_S2 : public Handle_for< Nef_polyhedron_S2_rep<K> >, 
+			  public Nef_polyhedron_S2_rep<K>::Const_decorator
 { 
 public:
   typedef K Kernel;
@@ -107,7 +109,7 @@ public:
 
   typedef typename Sphere_kernel::Sphere_direction Sphere_direction;
 
-  typedef typename Sphere_map::Mark Mark;
+  typedef typename Rep::Mark Mark;
   /*{\Xtypemember marking set membership or exclusion.}*/
 
   enum Boundary { EXCLUDED=0, INCLUDED=1 };
@@ -137,28 +139,30 @@ protected:
   friend std::istream& operator>> <>
       (std::istream& is, Nef_polyhedron_S2<K>& NP);
 
-  typedef typename Decorator::Vertex_handle         Vertex_handle;
-  typedef typename Decorator::Halfedge_handle       Halfedge_handle;
-  typedef typename Decorator::Halfloop_handle       Halfloop_handle;
-  typedef typename Decorator::Face_handle           Face_handle;
+  typedef typename Decorator::SVertex_handle         SVertex_handle;
+  typedef typename Decorator::SHalfedge_handle       SHalfedge_handle;
+  typedef typename Decorator::SHalfloop_handle       SHalfloop_handle;
+  typedef typename Decorator::SFace_handle           SFace_handle;
 
-  typedef typename Decorator::Vertex_const_handle   Vertex_const_handle;
-  typedef typename Decorator::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Decorator::Halfloop_const_handle Halfloop_const_handle;
-  typedef typename Decorator::Face_const_handle     Face_const_handle;
+  typedef typename Decorator::SVertex_const_handle   SVertex_const_handle;
+  typedef typename Decorator::SHalfedge_const_handle SHalfedge_const_handle;
+  typedef typename Decorator::SHalfloop_const_handle SHalfloop_const_handle;
+  typedef typename Decorator::SFace_const_handle     SFace_const_handle;
 
-  typedef typename Decorator::Vertex_iterator       Vertex_iterator;
-  typedef typename Decorator::Halfedge_iterator     Halfedge_iterator;
-  typedef typename Decorator::Halfloop_iterator     Halfloop_iterator;
-  typedef typename Decorator::Face_iterator         Face_iterator;
-  typedef typename Const_decorator::Vertex_const_iterator   
-                                                    Vertex_const_iterator;
-  typedef typename Const_decorator::Halfedge_const_iterator 
-                                                    Halfedge_const_iterator;
-  typedef typename Const_decorator::Halfloop_const_iterator 
-                                                    Halfloop_const_iterator;
-  typedef typename Const_decorator::Face_const_iterator     
-                                                    Face_const_iterator;
+  typedef typename Decorator::SVertex_iterator       SVertex_iterator;
+  typedef typename Decorator::SHalfedge_iterator     SHalfedge_iterator;
+  typedef typename Decorator::SHalfloop_iterator     SHalfloop_iterator;
+  typedef typename Decorator::SFace_iterator         SFace_iterator;
+
+  typedef typename Const_decorator::SVertex_const_iterator   
+                                                    SVertex_const_iterator;
+  typedef typename Const_decorator::SHalfedge_const_iterator 
+                                                    SHalfedge_const_iterator;
+  typedef typename Const_decorator::SHalfloop_const_iterator 
+                                                    SHalfloop_const_iterator;
+  typedef typename Const_decorator::SFace_const_iterator     
+                                                    SFace_const_iterator;
+  typedef typename Const_decorator::Constructor_parameter Constructor_parameter;
 
   typedef std::list<Sphere_segment>  SS_list;
   typedef typename SS_list::const_iterator SS_iterator;
@@ -171,24 +175,28 @@ public:
   and initializes it to the empty set if |sphere == EMPTY|
   and to the whole sphere if |sphere == COMPLETE|.}*/
   {
-    SS_list L;
-    Decorator D(sphere_map());
-    D.mark_of_halfsphere(-1) = D.mark_of_halfsphere(+1) = bool(sphere);
+    set_sm(&sphere_map());
+    Decorator D(&sphere_map());
+    SFace_handle sf=D.new_sface();
+    D.mark(sf) = bool(sphere);
   }
 
 
   Nef_polyhedron_S2(const Sphere_circle& c, 
-		    Boundary circle = INCLUDED) : Base(Nef_rep())
+		    Boundary circle = INCLUDED) : Base(Nef_rep()) {
   /*{\Mcreate creates a Nef polyhedron |\Mvar| containing the half-sphere
   left of |c| including |c| if |circle==INCLUDED|, excluding |c| if 
   |circle==EXCLUDED|.}*/  
-  { TRACEN("Nef_polyhedron_S2(): construction from circle "<<c);
-    Overlayer D(sphere_map()); D.create(c);
-    Halfloop_handle h = D.halfloop();
+    
+    set_sm(&sphere_map());
+    TRACEN("Nef_polyhedron_S2(): construction from circle "<<c);
+    Decorator D(&sphere_map());
+    Overlayer O(&sphere_map()); 
+    O.create(c);
+    SHalfloop_handle h = D.shalfloop();
     if ( D.circle(h) != c ) h = D.twin(h);
     D.mark(D.face(h)) = true;
     D.mark(h) = bool(circle);
-    Locator L(sphere_map()); L.init_marks_of_halfspheres();
   }
 
 
@@ -204,30 +212,32 @@ public:
     otherwise. |Forward_iterator| has to be an iterator with value
     type |Sphere_segment|.}*/
   { TRACEN("Nef_polyhedron_S2(): creation from segment range");
-    CGAL_nef_assertion(first!=beyond);
-    Overlayer D(sphere_map());
+    CGAL_assertion(first!=beyond);
+    set_sm(&sphere_map());
+    Overlayer D(&sphere_map());
     Sphere_segment s = *first;
     D.create_from_segments(first,beyond);
-    Halfedge_iterator e;
-    CGAL_forall_halfedges(e,D) {
+    SHalfedge_iterator e;
+    CGAL_forall_shalfedges(e,D) {
       Sphere_circle c(D.circle(e));
       if ( c == s.sphere_circle() ) break;
     }
-    if ( e != Halfedge_iterator() ) {
+    if ( e != SHalfedge_iterator() ) {
       if ( D.circle(e) != s.sphere_circle() ) e = D.twin(e);
-      CGAL_nef_assertion( D.circle(e) == s.sphere_circle() );
+      CGAL_assertion( D.circle(e) == s.sphere_circle() );
       D.set_marks_in_face_cycle(e,bool(b));
-      if ( D.number_of_faces() > 2 ) D.mark(D.face(e)) = true;
-      else                           D.mark(D.face(e)) = !bool(b);
+      if ( D.number_of_sfaces() > 2 ) D.mark(D.face(e)) = true;
+      else                            D.mark(D.face(e)) = !bool(b);
       return;
     }
     D.simplify();
-    Locator L(sphere_map()); L.init_marks_of_halfspheres();
   }
 
-  Nef_polyhedron_S2(const Nef_polyhedron_S2<K>& N1) : Base(N1) {}
+  Nef_polyhedron_S2(const Nef_polyhedron_S2<K>& N1) : Base(N1) {
+    set_sm(&sphere_map());
+  }
   Nef_polyhedron_S2& operator=(const Nef_polyhedron_S2<K>& N1)
-  { Base::operator=(N1); return (*this); }
+  { Base::operator=(N1); set_sm(&sphere_map()); return (*this); }
   ~Nef_polyhedron_S2() {}
 
   template <class Forward_iterator>
@@ -237,27 +247,31 @@ public:
   the set of circles |S = set[first,beyond)|. The cells of the arrangement
   are selected uniformly at random with probability $p$. \precond $0 < p
   < 1$.}*/
-  { CGAL_nef_assertion(0<=p && p<=1);
-    CGAL_nef_assertion(first!=beyond);
-    Overlayer D(sphere_map());
+  { CGAL_assertion(0<=p && p<=1);
+    CGAL_assertion(first!=beyond);
+    set_sm(&sphere_map());
+    Overlayer D(&sphere_map());
     D.create_from_circles(first, beyond); D.simplify();
-    Vertex_iterator v; Halfedge_iterator e; Face_iterator f;
-    CGAL_forall_vertices(v,D)
+    SVertex_iterator v; SHalfedge_iterator e; SFace_iterator f;
+    CGAL_forall_svertices(v,D)
       D.mark(v) = ( default_random.get_double() < p ? true : false );
-    CGAL_forall_halfedges(e,D)
+    CGAL_forall_shalfedges(e,D)
       D.mark(e) = ( default_random.get_double() < p ? true : false );
-    CGAL_forall_faces(f,D)
+    CGAL_forall_sfaces(f,D)
       D.mark(f) = ( default_random.get_double() < p ? true : false );
     D.simplify();
-    Locator L(sphere_map()); L.init_marks_of_halfspheres();
   }
 
 protected:
   Nef_polyhedron_S2(const Sphere_map& H, bool clone=true) : Base(Nef_rep()) 
   /*{\Xcreate makes |\Mvar| a new object.  If |clone==true| then the
   underlying structure of |H| is copied into |\Mvar|.}*/
-  { if (clone) ptr()->sm_ = H; }
-
+  {     
+    if (!clone) return;
+    ptr()->sm_ = H; 
+    set_sm(&sphere_map());
+  }
+  
   void clone_rep() { *this = Nef_polyhedron_S2<K>(sphere_map()); }
 
   /*{\Moperations 4 3 }*/
@@ -270,53 +284,51 @@ protected:
 
   bool is_empty() const
   /*{\Mop returns true if |\Mvar| is empty, false otherwise.}*/
-  { Const_decorator D(sphere_map());
+  { Const_decorator D(&sphere_map());
     TRACEN("is_empty()"<<*this);
-    Face_const_iterator f = D.faces_begin();
-    return (D.number_of_vertices()==0 &&
-            D.number_of_edges()==0 &&
-            D.number_of_loops()==0 &&
-            D.number_of_faces()==1 &&
+    SFace_const_iterator f = D.sfaces_begin();
+    return (D.number_of_svertices()==0 &&
+            D.number_of_sedges()==0 &&
+            D.number_of_sloops()==0 &&
+            D.number_of_sfaces()==1 &&
             D.mark(f) == false);
   }
 
   bool is_plane() const
   /*{\Mop returns true if |\Mvar| is the whole plane, false otherwise.}*/
-  { Const_decorator D(sphere_map());
-    Face_const_iterator f = D.faces_begin();
-    return (D.number_of_vertices()==0 &&
-            D.number_of_edges()==0 &&
-            D.number_of_loops()==0 &&
-            D.number_of_faces()==1 &&
+  { Const_decorator D(&sphere_map());
+    SFace_const_iterator f = D.sfaces_begin();
+    return (D.number_of_svertices()==0 &&
+            D.number_of_sedges()==0 &&
+            D.number_of_sloops()==0 &&
+            D.number_of_sfaces()==1 &&
             D.mark(f) == true);
   }
 
   void extract_complement()
   { TRACEN("extract complement");
     if ( is_shared() ) clone_rep();
-    Overlayer D(sphere_map());
-    Vertex_iterator v;
-    Halfedge_iterator e;
-    Face_iterator f;
-    CGAL_forall_vertices(v,D) D.mark(v) = !D.mark(v);
-    CGAL_forall_edges(e,D) D.mark(e) = !D.mark(e);
-    CGAL_forall_faces(f,D) D.mark(f) = !D.mark(f);
+    Overlayer D(&sphere_map());
+    SVertex_iterator v;
+    SHalfedge_iterator e;
+    SFace_iterator f;
+    CGAL_forall_svertices(v,D) D.mark(v) = !D.mark(v);
+    CGAL_forall_sedges(e,D) D.mark(e) = !D.mark(e);
+    CGAL_forall_sfaces(f,D) D.mark(f) = !D.mark(f);
 
-    if ( D.has_loop() ) 
-      D.mark(D.halfloop()) = !D.mark(D.halfloop());
-    D.mark_of_halfsphere(-1) = !D.mark_of_halfsphere(-1);
-    D.mark_of_halfsphere(+1) = !D.mark_of_halfsphere(+1); 
+    if ( D.has_sloop() ) 
+      D.mark(D.shalfloop()) = !D.mark(D.shalfloop());
   }
 
   void extract_interior()
   { TRACEN("extract interior");
     if ( is_shared() ) clone_rep();
-    Overlayer D(sphere_map());
-    Vertex_iterator v;
-    Halfedge_iterator e;
-    CGAL_forall_vertices(v,D) D.mark(v) = false;
-    CGAL_forall_edges(e,D) D.mark(e) = false;
-    if ( D.has_loop() ) D.mark(D.halfloop()) = false;
+    Overlayer D(&sphere_map());
+    SVertex_iterator v;
+    SHalfedge_iterator e;
+    CGAL_forall_svertices(v,D) D.mark(v) = false;
+    CGAL_forall_sedges(e,D) D.mark(e) = false;
+    if ( D.has_sloop() ) D.mark(D.shalfloop()) = false;
     D.simplify();
   }
 
@@ -324,15 +336,14 @@ protected:
   void extract_boundary()
   { TRACEN("extract boundary");
     if ( is_shared() ) clone_rep();
-    Overlayer D(sphere_map());
-    Vertex_iterator v;
-    Halfedge_iterator e;
-    Face_iterator f;
-    CGAL_forall_vertices(v,D) D.mark(v) = true;
-    CGAL_forall_edges(e,D)    D.mark(e) = true;
-    CGAL_forall_faces(f,D)    D.mark(f) = false;
-    if ( D.has_loop() ) D.mark(D.halfloop()) = true;
-    D.mark_of_halfsphere(-1) = D.mark_of_halfsphere(+1) = false;
+    Overlayer D(&sphere_map());
+    SVertex_iterator v;
+    SHalfedge_iterator e;
+    SFace_iterator f;
+    CGAL_forall_svertices(v,D) D.mark(v) = true;
+    CGAL_forall_sedges(e,D)    D.mark(e) = true;
+    CGAL_forall_sfaces(f,D)    D.mark(f) = false;
+    if ( D.has_sloop() ) D.mark(D.shalfloop()) = true;
     D.simplify();
   }
 
@@ -393,8 +404,8 @@ protected:
   Nef_polyhedron_S2<K> intersection(const Nef_polyhedron_S2<K>& N1) const
   /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/
   { Nef_polyhedron_S2<K> res(sphere_map(),false); // empty
-    Overlayer D(res.sphere_map());
-    D.subdivide(sphere_map(),N1.sphere_map());
+    Overlayer D(&res.sphere_map());
+    D.subdivide(&sphere_map(),&N1.sphere_map());
     AND _and; D.select(_and); D.simplify();
     return res;
   }
@@ -403,8 +414,8 @@ protected:
   Nef_polyhedron_S2<K> join(const Nef_polyhedron_S2<K>& N1) const
   /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/
   { Nef_polyhedron_S2<K> res(sphere_map(),false); // empty
-    Overlayer D(res.sphere_map());
-    D.subdivide(sphere_map(),N1.sphere_map());
+    Overlayer D(&res.sphere_map());
+    D.subdivide(&sphere_map(),&N1.sphere_map());
     OR _or; D.select(_or); D.simplify();
     return res;
   }
@@ -412,8 +423,8 @@ protected:
   Nef_polyhedron_S2<K> difference(const Nef_polyhedron_S2<K>& N1) const
   /*{\Mop returns |\Mvar| $-$ |N1|. }*/
   { Nef_polyhedron_S2<K> res(sphere_map(),false); // empty
-    Overlayer D(res.sphere_map());
-    D.subdivide(sphere_map(),N1.sphere_map());
+    Overlayer D(&res.sphere_map());
+    D.subdivide(&sphere_map(),&N1.sphere_map());
     DIFF _diff; D.select(_diff); D.simplify();
     return res;
   }    
@@ -423,8 +434,8 @@ protected:
   /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$ 
           |T - \Mvar|. }*/
   { Nef_polyhedron_S2<K> res(sphere_map(),false); // empty
-    Overlayer D(res.sphere_map());
-    D.subdivide(sphere_map(),N1.sphere_map());
+    Overlayer D(&res.sphere_map());
+    D.subdivide(&sphere_map(),&N1.sphere_map());
     XOR _xor; D.select(_xor); D.simplify();
     return res;
   }
@@ -507,9 +518,9 @@ protected:
   plane map. The kind of object |(vertex, halfedge, face)| can 
   be determined and the object can be assigned to a corresponding
   handle by the three functions:\\
-  |bool assign(Vertex_const_handle& h, Object_handle)|\\
-  |bool assign(Halfedge_const_handle& h, Object_handle)|\\
-  |bool assign(Face_const_handle& h, Object_handle)|\\
+  |bool assign(SVertex_const_handle& h, Object_handle)|\\
+  |bool assign(SHalfedge_const_handle& h, Object_handle)|\\
+  |bool assign(SFace_const_handle& h, Object_handle)|\\
   where each function returns |true| iff the assignment to
   |h| was done.}*/
 
@@ -519,13 +530,13 @@ protected:
   bool contains(Object_handle h) const
   /*{\Mop  returns true iff the object |h| is contained in the set
   represented by |\Mvar|.}*/
-  { Locator PL(sphere_map()); return PL.mark(h); }
+  { Locator PL(&sphere_map()); return PL.mark(h); }
 
   bool contained_in_boundary(Object_handle h) const
   /*{\Mop  returns true iff the object |h| is contained in the $1$-skeleton
   of |\Mvar|.}*/
-  { Vertex_const_handle v;
-    Halfedge_const_handle e;
+  { SVertex_const_handle v;
+    SHalfedge_const_handle e;
     return  ( CGAL::assign(v,h) || CGAL::assign(e,h) );
   }
 
@@ -537,43 +548,43 @@ protected:
   |\Mvar.contains(h)| is true. The location mode flag |m| allows one to choose
   between different point location strategies.}*/
   { 
-    Locator PL(sphere_map());
+    Locator PL(&sphere_map());
     return PL.locate(p); 
   }
 
   struct INSET {
     const Const_decorator& D;
     INSET(const Const_decorator& Di) : D(Di) {}
-    bool operator()(Vertex_const_handle v) const { return D.mark(v); }
-    bool operator()(Halfedge_const_handle e) const { return D.mark(e); }
-    bool operator()(Halfloop_const_handle l) const { return D.mark(l); }
-    bool operator()(Face_const_handle f) const { return D.mark(f); }
+    bool operator()(SVertex_const_handle v) const { return D.mark(v); }
+    bool operator()(SHalfedge_const_handle e) const { return D.mark(e); }
+    bool operator()(SHalfloop_const_handle l) const { return D.mark(l); }
+    bool operator()(SFace_const_handle f) const { return D.mark(f); }
   };
 
   Object_handle ray_shoot(const Sphere_point& p, 
 			  const Sphere_direction& d) const
   /*{\Mop returns a handle |h| with |\Mvar.contains(h)| that can be
-  converted to a |Vertex_/Halfedge_/Face_const_handle| as described
+  converted to a |SVertex_/SHalfedge_/SFace_const_handle| as described
   above. The object returned is intersected by the ray starting in |p|
   with direction |d| and has minimal distance to |p|.  The operation
   returns the null handle |NULL| if the ray shoot along |d| does not hit
   any object |h| of |\Mvar| with |\Mvar.contains(h)|.}*/
   { 
-    Locator PL(sphere_map());
+    Locator PL(&sphere_map());
     return PL.ray_shoot(p,d,INSET(PL));
   }
 
   struct INSKEL {
-    bool operator()(Vertex_const_handle) const { return true; }
-    bool operator()(Halfedge_const_handle) const { return true; }
-    bool operator()(Halfloop_const_handle) const { return true; }
-    bool operator()(Face_const_handle) const { return false; }
+    bool operator()(SVertex_const_handle) const { return true; }
+    bool operator()(SHalfedge_const_handle) const { return true; }
+    bool operator()(SHalfloop_const_handle) const { return true; }
+    bool operator()(SFace_const_handle) const { return false; }
   };
 
   Object_handle ray_shoot_to_boundary(const Sphere_point& p, 
 				      const Sphere_direction& d) const
   /*{\Mop returns a handle |h| that can be converted to a
-  |Vertex_/Halfedge_const_handle| as described above. The object
+  |SVertex_/SHalfedge_const_handle| as described above. The object
   returned is part of the $1$-skeleton of |\Mvar|, intersected by the
   ray starting in |p| with direction |d| and has minimal distance to
   |p|.  The operation returns the null handle |NULL| if the ray shoot
@@ -581,7 +592,7 @@ protected:
   location mode flag |m| allows one to choose between different point
   location strategies.}*/
   { 
-    Locator PL(sphere_map());
+    Locator PL(&sphere_map());
     return PL.ray_shoot(p,d,INSKEL());
   }
 
@@ -590,7 +601,7 @@ protected:
   /*{\Mop returns a decorator object which allows read-only access of
   the underlying plane map. See the manual page |Explorer| for its 
   usage.}*/
-  { return Explorer(const_cast<Sphere_map&>(sphere_map())); }
+  { return Explorer(const_cast<Sphere_map*>(&sphere_map())); }
 
   /*{\Mtext\headerline{Input and Output}
   A Nef polyhedron |\Mvar| can be visualized in an open GL window. The 
@@ -636,16 +647,14 @@ protected:
 
 }; // end of Nef_polyhedron_S2
 
-
 template <typename K>
 std::ostream& operator<<
  (std::ostream& os, const Nef_polyhedron_S2<K>& NP)
 {
   os << "Nef_polyhedron_S2\n";
-  typedef typename Nef_polyhedron_S2<K>::Decorator Decorator;
+  typedef typename Nef_polyhedron_S2<K>::Explorer Decorator;
   typedef typename Nef_polyhedron_S2<K>::Sphere_map Sphere_map;
-  CGAL::SM_io_parser<Decorator> O(os, 
-    const_cast<Sphere_map&>(NP.sphere_map())); 
+  CGAL::SM_io_parser<Decorator> O(os, NP.explorer()); 
   O.print();
   return os;
 }
@@ -655,7 +664,7 @@ std::istream& operator>>
   (std::istream& is, Nef_polyhedron_S2<K>& NP)
 {
   typedef typename Nef_polyhedron_S2<K>::Decorator Decorator;
-  CGAL::SM_io_parser<Decorator> I(is, NP.sphere_map()); 
+  CGAL::SM_io_parser<Decorator> I(is, Decorator(NP.sphere_map())); 
   if ( I.check_sep("Nef_polyhedron_S2") ) I.read();
   else {
     std::cerr << "Nef_polyhedron_S2 input corrupted." << std::endl;

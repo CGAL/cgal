@@ -5,7 +5,6 @@
 #undef _DEBUG
 #define _DEBUG 23
 #include <CGAL/Nef_2/debug.h>
-
 #include <vector>
 
 #undef CGAL_forall_iterators
@@ -44,6 +43,7 @@ int spherical_compare(const Sphere_point<R>& p1,
 		      int axis, int pos) {
   
   Sphere_point<R> pS, pN;
+  CGAL_assertion(axis>=0 && axis<=2);
   switch(axis) {
   case 0:
     pS=Sphere_point<R>(0,-1,0);

@@ -10,11 +10,11 @@
 CGAL_BEGIN_NAMESPACE
 
 template <typename K, typename M> class SM_items;
-template <typename K> class Sphere_map;
-template <typename SM, typename K> class SM_const_decorator;
-template <typename SM, typename K> class SM_decorator;
-template <typename EH> struct move_edge_around_vertex;
-template <typename EH> struct move_edge_around_face;
+template <typename K, typename I> class Sphere_map;
+template <typename SM> class SM_const_decorator;
+template <typename SM> class SM_decorator;
+template <typename EH> struct move_edge_around_svertex;
+template <typename EH> struct move_edge_around_sface;
 
 template <typename Kernel_, typename Mark_>
 struct SM_items {
@@ -28,47 +28,47 @@ public:
   typedef void*                           GenPtr;
 
   template <typename Refs>
-  class Vertex : public CGAL::In_place_list_base< Vertex<Refs> >
+  class SVertex : public CGAL::In_place_list_base< SVertex<Refs> >
   { 
     typedef typename Refs::Items Items;
-    friend class Sphere_map<Kernel_>;
-    friend class SM_const_decorator<Refs,Kernel_>;
-    friend class SM_decorator<Refs,Kernel_>;
+    friend class Sphere_map<Kernel_, Items>;
+    friend class SM_const_decorator<Refs>;
+    friend class SM_decorator<Refs>;
 
-    typedef typename Refs::Vertex_handle   Vertex_handle;
-    typedef typename Refs::Halfedge_handle Halfedge_handle;
-    typedef typename Refs::Face_handle     Face_handle;
+    typedef typename Refs::SVertex_handle   SVertex_handle;
+    typedef typename Refs::SHalfedge_handle SHalfedge_handle;
+    typedef typename Refs::SFace_handle     SFace_handle;
 
     Sphere_point    point_; 
     Mark            mark_;
-    Halfedge_handle edge_;
-    Face_handle     face_;
+    SHalfedge_handle out_sedge_;
+    SFace_handle     incident_sface_;
     GenPtr          info_;
     // temporary information:
 
   public:
-    Vertex() : 
-      point_(), mark_(), edge_(), face_(), info_() {}
-    Vertex(const Mark& m) : 
-      point_(), mark_(m), edge_(), face_(), info_() {}
-    Vertex(const Sphere_point& p) : 
-      point_(p), mark_(), edge_(), face_(), info_() {}
+    SVertex() : 
+      point_(), mark_(), out_sedge_(), incident_sface_(), info_() {}
+    SVertex(const Mark& m) : 
+      point_(), mark_(m), out_sedge_(), incident_sface_(), info_() {}
+    SVertex(const Sphere_point& p) : 
+      point_(p), mark_(), out_sedge_(), incident_sface_(), info_() {}
 
-    ~Vertex() {}
+    ~SVertex() {}
 
-    Vertex(const Vertex<Refs>& v)
+    SVertex(const SVertex<Refs>& v)
     { point_ = v.point_;
       mark_ = v.mark_;
-      edge_ = v.edge_;
-      face_ = v.face_;
+      out_sedge_ = v.out_sedge_;
+      incident_sface_ = v.incident_sface_;
       info_ = 0;
     }
 
-    Vertex<Refs>& operator=(const Vertex<Refs>& v)
+    SVertex<Refs>& operator=(const SVertex<Refs>& v)
     { point_ = v.point_;
       mark_ = v.mark_;
-      edge_ = v.edge_;
-      face_ = v.face_;
+      out_sedge_ = v.out_sedge_;
+      incident_sface_ = v.incident_sface_;
       info_ = 0;
       return *this;
     }
@@ -80,63 +80,65 @@ public:
       std::string res(os.str()); os.freeze(0); return res;
     }
  
-  }; // Vertex    
+  }; // SVertex    
 
 
   template <typename Refs>
-  class Halfedge : public CGAL::In_place_list_base< Halfedge<Refs> >
+  class SHalfedge : public CGAL::In_place_list_base< SHalfedge<Refs> >
   { 
     typedef typename Refs::Items Items;
-    typedef typename Refs::Vertex_handle   Vertex_handle;
-    typedef typename Refs::Halfedge_handle Halfedge_handle;
-    typedef typename Refs::Halfedge_const_handle Halfedge_const_handle;
-    typedef typename Refs::Face_handle     Face_handle;
+    typedef typename Refs::SVertex_handle   SVertex_handle;
+    typedef typename Refs::SHalfedge_handle SHalfedge_handle;
+    typedef typename Refs::SHalfedge_const_handle SHalfedge_const_handle;
+    typedef typename Refs::SFace_handle     SFace_handle;
 
-    friend class Sphere_map<Kernel_>;
-    friend class SM_const_decorator<Refs,Kernel_>;
-    friend class SM_decorator<Refs,Kernel_>;
-    friend class move_edge_around_vertex<Halfedge_handle>;
-    friend class move_edge_around_face<Halfedge_handle>;
-    friend class move_edge_around_vertex<Halfedge_const_handle>;
-    friend class move_edge_around_face<Halfedge_const_handle>;
+    friend class Sphere_map<Kernel_, Items>;
+    friend class SM_const_decorator<Refs>;
+    friend class SM_decorator<Refs>;
+    friend class move_edge_around_svertex<SHalfedge_handle>;
+    friend class move_edge_around_sface<SHalfedge_handle>;
+    friend class move_edge_around_svertex<SHalfedge_const_handle>;
+    friend class move_edge_around_sface<SHalfedge_const_handle>;
 
     // Role within local graph:
     Sphere_circle     circle_;
     Mark              mark_;
-    Halfedge_handle   twin_, prev_, next_;
-    Vertex_handle     source_;
-    Face_handle       face_;
+    SHalfedge_handle   twin_, sprev_, snext_;
+    SVertex_handle     source_;
+    SFace_handle       incident_sface_;
     GenPtr            info_;
 
   public:
-    Halfedge() : circle_(), mark_(), twin_(), prev_(), next_(),
-		 source_(), face_(), info_() {}
+    SHalfedge() : circle_(), mark_(), twin_(), sprev_(), snext_(),
+		 source_(), incident_sface_(), info_() {}
 
-    ~Halfedge() {}
+    ~SHalfedge() {}
 
-    Halfedge(const Halfedge<Refs>& e)
+    SHalfedge(const SHalfedge<Refs>& e)
     {
       circle_ = e.circle_;
       mark_ = e.mark_;
       twin_ = e.twin_;
-      prev_ = e.prev_;
-      next_ = e.next_;
+      sprev_ = e.sprev_;
+      snext_ = e.snext_;
       source_ = e.source_;
-      face_ = e.face_;
+      incident_sface_ = e.incident_sface_;
       info_ = 0;
     }
-    Halfedge<Refs>& operator=(const Halfedge<Refs>& e)
+    SHalfedge<Refs>& operator=(const SHalfedge<Refs>& e)
     {
       circle_ = e.circle_;
       mark_ = e.mark_;
       twin_ = e.twin_;
-      prev_ = e.prev_;
-      next_ = e.next_;
+      sprev_ = e.sprev_;
+      snext_ = e.snext_;
       source_ = e.source_;
-      face_ = e.face_;
+      incident_sface_ = e.incident_sface_;
       info_ = 0;
       return *this;
     }
+
+    bool is_twin() const { return (&*twin_ < this); }
 
     std::string debug() const
     { std::ostrstream os; set_pretty_mode(os); 
@@ -145,46 +147,48 @@ public:
       std::string res(os.str()); os.freeze(0); return res;
     }
 
-  }; // Halfedge
+  }; // SHalfedge
 
   template <typename Refs> 
-  class Halfloop : public CGAL::In_place_list_base< Halfloop<Refs> >
+  class SHalfloop : public CGAL::In_place_list_base< SHalfloop<Refs> >
   {
-    typedef typename Refs::Halfloop_handle Halfloop_handle;
-    typedef typename Refs::Face_handle Face_handle;
+    typedef typename Refs::SHalfloop_handle SHalfloop_handle;
+    typedef typename Refs::SFace_handle SFace_handle;
     typedef typename Refs::Items Items;
-    friend class Sphere_map<Kernel_>;
-    friend class SM_const_decorator<Refs,Kernel_>;
-    friend class SM_decorator<Refs,Kernel_>;
-    friend class Self::Vertex<Refs>;
+    friend class Sphere_map<Kernel_, Items>;
+    friend class SM_const_decorator<Refs>;
+    friend class SM_decorator<Refs>;
+    friend class Self::SVertex<Refs>;
 
     Sphere_circle   circle_;
     Mark            mark_;
-    Halfloop_handle twin_;
-    Face_handle     face_;
+    SHalfloop_handle twin_;
+    SFace_handle     incident_sface_;
     GenPtr          info_;
     // temporary needed:
 
   public:
-    Halfloop() : circle_(), mark_(), twin_(), face_(), info_() {}
-    ~Halfloop() {}
-    Halfloop(const Halfloop<Refs>& l)
+    SHalfloop() : circle_(), mark_(), twin_(), incident_sface_(), info_() {}
+    ~SHalfloop() {}
+    SHalfloop(const SHalfloop<Refs>& l)
     { 
       circle_ = l.circle_;
       mark_ = l.mark_;
       twin_ = l.twin_;
-      face_ = l.face_;
+      incident_sface_ = l.incident_sface_;
       info_ = 0;
     }
-    Halfloop<Refs>& operator=(const Halfloop<Refs>& l)
+    SHalfloop<Refs>& operator=(const SHalfloop<Refs>& l)
     { 
       circle_ = l.circle_;
       mark_ = l.mark_;
       twin_ = l.twin_;
-      face_ = l.face_;
+      incident_sface_ = l.incident_sface_;
       info_ = 0;
       return *this;
     }
+
+    bool is_twin() const { return (&*twin_ < this); }
 
     std::string debug() const
     { std::ostrstream os; set_pretty_mode(os); 
@@ -192,55 +196,56 @@ public:
       std::string res(os.str()); os.freeze(0); return res;
     }
 
-  }; // Halfloop
+  }; // SHalfloop
 
   template <typename Refs>
-  class Face : public CGAL::In_place_list_base< Face<Refs> >
+  class SFace : public CGAL::In_place_list_base< SFace<Refs> >
   { 
     typedef typename Refs::Items Items;
-    friend class Sphere_map<Kernel_>;
-    friend class SM_const_decorator<Refs,Kernel_>;
-    friend class SM_decorator<Refs,Kernel_>;
+    friend class Sphere_map<Kernel_, Items>;
+    friend class SM_const_decorator<Refs>;
+    friend class SM_decorator<Refs>;
 
     typedef typename Refs::Object_handle Object_handle;
     typedef typename Refs::Object_list Object_list;
-    typedef typename Refs::Face_cycle_iterator Face_cycle_iterator;
-    typedef typename Refs::Face_cycle_const_iterator 
-      Face_cycle_const_iterator;
+    typedef typename Refs::SFace_cycle_iterator SFace_cycle_iterator;
+    typedef typename Refs::SFace_cycle_const_iterator 
+      SFace_cycle_const_iterator;
 
     Mark             mark_;
-    Object_list      boundary_; // Halfedges, Halfloops, Vertices
+    Object_list      boundary_entry_objects_; 
+    // SHalfedges, SHalfloops, Vertices
     GenPtr           info_;
     // temporary needed:
 
     public:
-    Face() : mark_(), info_() {}
-    ~Face() {}
+    SFace() : mark_(), info_() {}
+    ~SFace() {}
 
-    Face(const Face<Refs>& f)
+    SFace(const SFace<Refs>& f)
     { mark_ = f.mark_;
-      boundary_ = f.boundary_;
+      boundary_entry_objects_ = f.boundary_entry_objects_;
       info_ = 0;
     }
-    Face<Refs>& operator=(const Face<Refs>& f)
+    SFace<Refs>& operator=(const SFace<Refs>& f)
     { if (this == &f) return *this;
       mark_ = f.mark_;
-      boundary_ = f.boundary_;
+      boundary_entry_objects_ = f.boundary_entry_objects_;
       info_ = 0;
       return *this;
     }
 
-    Face_cycle_iterator face_cycles_begin() 
-    { return boundary_.begin(); }
-    Face_cycle_iterator face_cycles_end()
-    { return boundary_.end(); }
+    SFace_cycle_iterator sface_cycles_begin() 
+    { return boundary_entry_objects_.begin(); }
+    SFace_cycle_iterator sface_cycles_end()
+    { return boundary_entry_objects_.end(); }
 
-    Face_cycle_const_iterator face_cycles_begin() const
-    { return boundary_.begin(); }
-    Face_cycle_const_iterator face_cycles_end() const
-    { return boundary_.end(); }
+    SFace_cycle_const_iterator sface_cycles_begin() const
+    { return boundary_entry_objects_.begin(); }
+    SFace_cycle_const_iterator sface_cycles_end() const
+    { return boundary_entry_objects_.end(); }
 
-  }; // Face
+  }; // SFace
 
 }; // SM_items
 

@@ -129,7 +129,7 @@ typedef CGAL::generic_sweep<NHS_traits> Negative_halfsphere_sweep;
   // v2 = first node of CC in negative xy-sphere
 
   merging_halfspheres(v1,v2);
-  clean_trivial_face_cycles();
+  clean_trivial_sface_cycles();
   if (!Is_Plane_Map(G)) error_handler(1,"Sphere map: embedding wrong.");
   compute_faces();
 }
@@ -166,9 +166,9 @@ void merging_halfspheres(leda_node v1, leda_node v2)
 {
   TRACEN("Merging Halfspheres");  
   leda_edge e1,e2,e3,e4,e1n,e2n;
-  forall_adj_edges(e1,v1) 
+  forall_sadj_edges(e1,v1) 
     if ( G[target(e1)].hz()==0 && G[target(e1)].hx()<0 ) break;
-  forall_adj_edges(e2,v2) 
+  forall_sadj_edges(e2,v2) 
     if ( G[target(e2)].hz()==0 && G[target(e2)].hx()>0 ) break;
   e3 = G.face_cycle_pred(e1);
   e4 = e2; e2 = G.face_cycle_pred(e2);
@@ -181,7 +181,7 @@ void merging_halfspheres(leda_node v1, leda_node v2)
 }
 
 
-void clean_trivial_face_cycles() 
+void clean_trivial_sface_cycles() 
 // removes trivial face cycles at equator
 // removes isolated vertices stemming from
 // equator unification
@@ -190,7 +190,7 @@ void clean_trivial_face_cycles()
   leda_list<leda_edge> L;
   leda_list<edge_pair> Lr;
   leda_edge e;
-  forall_edges(e,G) {
+  forall_sedges(e,G) {
     if (known[e]) continue;
     leda_edge en = G.face_cycle_succ(e);
     if ( G.face_cycle_succ(en) != e ) 
@@ -207,7 +207,7 @@ void clean_trivial_face_cycles()
   forall(ep,Lr) G.set_reversal(ep.first,ep.second);
   G.del_edges(L);
   leda_node v;
-  forall_nodes(v,G) if ( G.outdeg(v)==0 ) G.del_node(v);
+  forall_snodes(v,G) if ( G.outdeg(v)==0 ) G.del_node(v);
 }
 
 void compute_faces()
@@ -215,9 +215,9 @@ void compute_faces()
   G.compute_faces();
   leda_face f;
   leda_edge e;
-  forall_faces(f,G) {
+  forall_sfaces(f,G) {
     TRACEN("FACE:");
-    forall_face_edges(e,f) 
+    forall_sface_edges(e,f) 
       TRACEN("  "<<SSegment_2(G[source(e)],G[target(e)]));
   }
 }
@@ -230,9 +230,9 @@ void dump(std::ostream& os) const
 {
   leda_node v;
   leda_edge e;
-  forall_nodes(v,G) {
+  forall_snodes(v,G) {
     dump(os,v);
-    forall_adj_edges(e,v) {
+    forall_sadj_edges(e,v) {
       os << "   ->";
       dump(os,target(e),false);
       os <<" ["<<G[e]<<" ]\n";

@@ -3,6 +3,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
+#include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -138,6 +139,9 @@ Sphere_segment<R> complement() const
   full circle. }*/
 { return Sphere_segment<R>(target(),source(),sphere_circle()); }
 
+
+int intersection(const Sphere_circle<R>& c,
+                 std::vector<Sphere_segment<R> >& s) const;
 
 int intersection(const Sphere_circle<R>& c,
                  Sphere_segment<R>& s1, Sphere_segment<R>& s2) const;

@@ -1,3 +1,25 @@
+// Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de>
+//                 Miguel Granados    <granados@mpi-sb.mpg.de>
+//                 Susan Hert         <hert@mpi-sb.mpg.de>
+//                 Lutz Kettner       <kettner@mpi-sb.mpg.de>
+//                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_SM_CONST_DECORATOR_H 
 #define CGAL_SM_CONST_DECORATOR_H
 
@@ -5,60 +27,44 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_2/Object_index.h>
-#include <CGAL/Nef_2/iterator_tools.h>
 #include <CGAL/Nef_S2/SM_iteration.h>
+#include <CGAL/Nef_S2/SM_decorator_traits.h>
 #include <string>
 #include <list>
-#include <strstream>
+#include <sstream>
 #undef _DEBUG
-#define _DEBUG 127
+#define _DEBUG 67
 #include <CGAL/Nef_S2/debug.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename HE>
-class move_edge_around_vertex {
+template <typename Map>
+class SM_const_decorator { 
+
+  typedef SM_const_decorator<Map> Self;
 public:
-  void forward(HE& e) const  { e = (e->prev_->twin_); }
-  void backward(HE& e) const { e = (e->twin_->next_); }
-};
-
-template <typename HE>
-struct move_edge_around_face {
-  void forward(HE& e)  const { e = (e->next_); }
-  void backward(HE& e) const { e = (e->prev_); }
-};
-
-
-template <typename Sphere_map_, typename Kernel_>
-class SM_decorator;
-
-/*{\Moptions print_title=yes }*/ 
-/*{\Moptions outfile=SM_const_decorator.man }*/
-/*{\Manpage {SM_const_decorator}{Sphere_map,Kernel}
-  {Topological sphere map decorator}{D}}*/
-
-template <typename Sphere_map_, typename Kernel_>
-class SM_const_decorator 
-{ typedef SM_const_decorator<Sphere_map_,Kernel_> Self;
-public:
+  typedef SM_decorator_const_traits<Map>  Decorator_traits;
 
 /*{\Mdefinition ...}*/
 
 /*{\Mtypes 5}*/
 
-typedef Kernel_ Kernel;
+typedef typename Map::Sphere_kernel Sphere_kernel;
+/*{\Mtypemember spherical geometry.}*/
 
-typedef typename Kernel_::Sphere_point Sphere_point;
+typedef typename Map::Sphere_point   Sphere_point;
 /*{\Mtypemember embedding vertices.}*/
 
-typedef typename Kernel_::Sphere_segment Sphere_segment;
+typedef typename Map::Sphere_segment Sphere_segment;
 /*{\Mtypemember embedding edges.}*/
 
-typedef typename Kernel_::Sphere_circle Sphere_circle;
+typedef typename Map::Sphere_circle  Sphere_circle;
 /*{\Mtypemember embedding loops.}*/
 
-typedef typename Sphere_map_::Mark   Mark;
+typedef typename Map::Sphere_direction Sphere_direction;
+/*{\Mtypemember embedding directions.}*/
+
+typedef typename Map::Mark   Mark;
 /*{\Mtypemember attributes of objects (vertices, edges, faces).}*/
 
 typedef size_t Size_type;
@@ -66,50 +72,45 @@ typedef size_t Size_type;
 
 typedef void*  GenPtr;
 
-#define CGAL_USING(t) typedef typename Sphere_map_::t t
-CGAL_USING(Vertex_const_handle);
-CGAL_USING(Vertex_const_iterator);
-CGAL_USING(Vertex); 
-CGAL_USING(Halfedge); 
-CGAL_USING(Halfedge_const_handle); 
-CGAL_USING(Halfedge_const_iterator);
-CGAL_USING(Face);
-CGAL_USING(Face_const_handle);
-CGAL_USING(Face_const_iterator);
-CGAL_USING(Halfloop);
-CGAL_USING(Halfloop_const_handle);
-CGAL_USING(Halfloop_const_iterator);
-#undef CGAL_USING
+typedef typename Map::Constructor_const_parameter Constructor_parameter;
+typedef typename Map::SVertex_const_handle SVertex_const_handle;
+typedef typename Map::SVertex_const_iterator SVertex_const_iterator;
+typedef typename Map::SHalfedge_const_handle SHalfedge_const_handle; 
+typedef typename Map::SHalfedge_const_iterator SHalfedge_const_iterator;
+typedef typename Map::SHalfloop_const_handle SHalfloop_const_handle;
+typedef typename Map::SHalfloop_const_iterator SHalfloop_const_iterator;
+typedef typename Map::SFace_const_handle SFace_const_handle;
+typedef typename Map::SFace_const_iterator SFace_const_iterator;
 
 /*{\Mtext Local types are handles, iterators and circulators of the
-following kind: |Vertex_handle|, |Vertex_iterator|, |Halfedge_handle|,
-|Halfedge_iterator|, |Halfloop_handle|, |Halfloop_iterator|,
-|Face_handle|, |Face_iterator|.  Additionally the following
+following kind: |SVertex_handle|, |SVertex_iterator|, |SHalfedge_handle|,
+|SHalfedge_iterator|, |SHalfloop_handle|, |SHalfloop_iterator|,
+|SFace_handle|, |SFace_iterator|.  Additionally the following
 circulators are defined.}*/
 
-typedef CircFromIt<
-        Halfedge_const_iterator, 
-        move_edge_around_vertex<Halfedge_const_iterator> > 
-        Halfedge_around_vertex_const_circulator;
+typedef typename Map::SHalfedge_around_svertex_const_circulator
+        SHalfedge_around_svertex_const_circulator;
 /*{\Mtypemember circulating the adjacency list of an vertex |v|.}*/
 
-typedef CircFromIt<
-        Halfedge_const_iterator, 
-        move_edge_around_face<Halfedge_const_iterator> > 
-        Halfedge_around_face_const_circulator;
+typedef typename Map::SHalfedge_around_sface_const_circulator
+        SHalfedge_around_sface_const_circulator;
 /*{\Mtypemember circulating the face cycle of an face |f|.}*/
 
-typedef typename Sphere_map_::Face_cycle_const_iterator 
-  Face_cycle_const_iterator;
-/*{\Mtypemember iterating all face cycles of an face |f|.
-The iterator has method |bool is_vertex()|, |bool is_halfedge()|,
-|bool is_halfloop()|, and can be converted to the corresponding
-handles |Vertex_const_handle|, |Halfedge_const_handle|, or 
-|Halfloop_const_handle|.}*/
+typedef typename Map::SFace_cycle_const_iterator 
+        SFace_cycle_const_iterator;
+/*{\Mtypemember iterating all sface cycles of an sface |f|.
+The iterator has method |bool is_svertex()|, |bool is_shalfedge()|,
+|bool is_shalfloop()|, and can be converted to the corresponding
+handles |SVertex_const_handle|, |SHalfedge_const_handle|, or 
+|SHalfloop_const_handle|.}*/
 
 protected: 
-  Sphere_map_* psm_;
-  friend class SM_decorator<Sphere_map_,Kernel_>;
+  Constructor_parameter psm_;
+
+  void set_sm(Constructor_parameter W) {
+    psm_ = W;
+  }
+
 public:
 
 /*{\Mcreation 3}*/
@@ -117,144 +118,145 @@ SM_const_decorator() : psm_(0) {}
 SM_const_decorator(const Self& D) : psm_(D.psm_) {}
 Self& operator=(const Self& D) { psm_=D.psm_; return *this; }
 
-SM_const_decorator(const Sphere_map_& M) : 
-  psm_(const_cast<Sphere_map_*>(&M)) {}
+SM_const_decorator(Constructor_parameter M) : psm_(M) {}
 /*{\Mcreate constructs a plane map decorator exploring |M|.}*/
 
 /*{\Moperations 4 4}*/
 
-Vertex_const_handle source(Halfedge_const_handle e) const
+Constructor_parameter center_vertex() const { return psm_; }
+
+SVertex_const_handle source(SHalfedge_const_handle e) const
 /*{\Mop returns the source of |e|.}*/
 { return e->source_; }
 
-Vertex_const_handle target(Halfedge_const_handle e) const
+SVertex_const_handle target(SHalfedge_const_handle e) const
 /*{\Mop returns the target of |e|.}*/
 { return e->twin_->source_; }
 
-Halfedge_const_handle twin(Halfedge_const_handle e) const 
+SHalfedge_const_handle twin(SHalfedge_const_handle e) const
 /*{\Mop returns the twin of |e|.}*/
 { return e->twin_; }
 
-Halfloop_const_handle twin(Halfloop_const_handle l) const 
+SHalfloop_const_handle twin(SHalfloop_const_handle l) const 
 /*{\Mop returns the twin of |l|.}*/
 { return l->twin_; }
 
-bool is_isolated(Vertex_const_handle v) const
+bool is_isolated(SVertex_const_handle v) const
 /*{\Mop returns |true| when |v| is linked to the interior of a face.}*/
-{ return (Halfedge_const_handle(v->edge_) == Halfedge_const_handle()); }
+{ return (SHalfedge_const_handle(v->out_sedge_) == SHalfedge_const_handle()); }
 
-Halfedge_const_handle first_out_edge(Vertex_const_handle v) const
+SHalfedge_const_handle first_out_edge(SVertex_const_handle v) const
 /*{\Mop returns one edge with source |v|. It's the starting point for
   the circular iteration over the edges with source |v|.
   \precond |!is_isolated(v)|.}*/
-{ return v->edge_; }
+{ return v->out_sedge_; }
 
-Halfedge_const_handle last_out_edge(Vertex_const_handle v) const
+SHalfedge_const_handle last_out_edge(SVertex_const_handle v) const
 /*{\Mop returns one edge with source |v|. \precond |!is_isolated(v)|.}*/
-{ return cap(v->edge_); }
+{ return cap(v->out_sedge_); }
 
-Halfedge_const_handle cyclic_adj_succ(Halfedge_const_handle e) const
+SHalfedge_const_handle cyclic_adj_succ(SHalfedge_const_handle e) const
 /*{\Mop returns the edge after |e| in the cyclic ordered adjacency list of
   |source(e)|.}*/
-{ return e->prev_->twin_; }
+{ return e->sprev_->twin_; }
 
-Halfedge_const_handle cyclic_adj_pred(Halfedge_const_handle e) const
+SHalfedge_const_handle cyclic_adj_pred(SHalfedge_const_handle e) const
 /*{\Mop returns the edge before |e| in the cyclic ordered adjacency list of
   |source(e)|.}*/
-{ return e->twin_->next_; }
+{ return e->twin_->snext_; }
 
 
-Halfedge_const_handle next(Halfedge_const_handle e) const
+SHalfedge_const_handle next(SHalfedge_const_handle e) const
 /*{\Mop returns the next edge in the face cycle containing |e|.}*/
-{ return e->next_; }
+{ return e->snext_; }
 
-Halfedge_const_handle previous(Halfedge_const_handle e) const
+SHalfedge_const_handle previous(SHalfedge_const_handle e) const
 /*{\Mop returns the previous edge in the face cycle containing |e|.}*/
-{ return e->prev_; }
+{ return e->sprev_; }
 
-Face_const_handle face(Halfedge_const_handle e) const
+SFace_const_handle face(SHalfedge_const_handle e) const
 /*{\Mop returns the face incident to |e|.}*/
-{ return e->face_; }
+{ return e->incident_sface_; }
 
-Face_const_handle face(Halfloop_const_handle l) const
+SFace_const_handle face(SHalfloop_const_handle l) const
 /*{\Mop returns the face incident to |l|.}*/
-{ return l->face_; }
+{ return l->incident_sface_; }
 
-Face_const_handle face(Vertex_const_handle v) const
+SFace_const_handle face(SVertex_const_handle v) const
 /*{\Mop returns the face incident to |v|.
    \precond |is_isolated(v)|.}*/
-{ return v->face_; }
+{ return v->incident_sface_; }
 
 /*{\Mtext \headerline{Iteration} \setopdims{3.3cm}{0cm}}*/
   
-Vertex_const_iterator vertices_begin() const
-{ return psm_->vertices_begin(); }
-Vertex_const_iterator vertices_end() const
-{ return psm_->vertices_end(); }
-Halfedge_const_iterator halfedges_begin() const
-{ return psm_->halfedges_begin(); }
-Halfedge_const_iterator halfedges_end() const
-{ return psm_->halfedges_end(); }
-Face_const_iterator faces_begin() const
-{ return psm_->faces_begin(); }
-Face_const_iterator faces_end() const
-{ return psm_->faces_end(); }
-Halfloop_const_iterator halfloops_begin() const
-{ return psm_->halfloops_begin(); }
-Halfloop_const_iterator halfloops_end() const
-{ return psm_->halfloops_end(); }
+SVertex_const_iterator svertices_begin() const
+{ return psm_->svertices_begin(); }
+SVertex_const_iterator svertices_end() const
+{ return psm_->svertices_end(); }
+SHalfedge_const_iterator shalfedges_begin() const
+{ return psm_->shalfedges_begin(); }
+SHalfedge_const_iterator shalfedges_end() const
+{ return psm_->shalfedges_end(); }
+SFace_const_iterator sfaces_begin() const
+{ return psm_->sfaces_begin(); }
+SFace_const_iterator sfaces_end() const
+{ return psm_->sfaces_end(); }
+SHalfloop_const_iterator shalfloops_begin() const
+{ return psm_->shalfloops_begin(); }
+SHalfloop_const_iterator shalfloops_end() const
+{ return psm_->shalfloops_end(); }
 
-Halfloop_const_handle halfloop() const
+SHalfloop_const_handle shalfloop() const
 /*{\Mop returns access to the loop.}*/
-{ return psm_->loops_; }
+{ return psm_->shalfloop_; }
 
-bool has_loop() const
+bool has_sloop() const
 /*{\Mop returns true iff there is a loop.}*/
-{ return halfloop() != 0; }
+{ return psm_->has_sloop(); }
 
-Halfedge_around_vertex_const_circulator 
-  out_edges(Vertex_const_handle v) const
+SHalfedge_around_svertex_const_circulator 
+  out_edges(SVertex_const_handle v) const
 /*{\Mop returns a circulator for the cyclic adjacency list of |v|.
 \precond the adjacency list is not empty.}*/
-{ return Halfedge_around_vertex_const_circulator(first_out_edge(v)); }
+{ return SHalfedge_around_svertex_const_circulator(first_out_edge(v)); }
 
-Face_cycle_const_iterator face_cycles_begin(Face_const_handle f) const
+SFace_cycle_const_iterator sface_cycles_begin(SFace_const_handle f) const
 /*{\Mop returns an iterator for all bounding face cycles of |f|.
-The iterator is is convertable to |Vertex_const_handle|, 
-|Halfloop_const_handle|, or |Halfedge_const_handle|.}*/
-{ return f->bounday_.begin(); }
+The iterator is is convertable to |SVertex_const_handle|, 
+|SHalfloop_const_handle|, or |SHalfedge_const_handle|.}*/
+{ return f->boundary_entry_objects_.begin(); }
 
-Face_cycle_const_iterator face_cycles_end(Face_const_handle f) const
+SFace_cycle_const_iterator sface_cycles_end(SFace_const_handle f) const
 /*{\Mop returns the past the end iterator of |f|.}*/
-{ return f->boundary_.end(); }
+{ return f->boundary_entry_objects_.end(); }
 
 /*{\Mtext \headerline{Statistics and Integrity}}*/
 
-Size_type number_of_vertices() const 
+Size_type number_of_svertices() const 
 /*{\Mop returns the number of vertices.}*/
-{ return psm_->number_of_vertices(); }
+{ return psm_->number_of_svertices(); }
 
-Size_type number_of_halfedges() const 
+Size_type number_of_shalfedges() const 
 /*{\Mop returns the number of halfedges.}*/
-{ return psm_->number_of_halfedges(); }
+{ return psm_->number_of_shalfedges(); }
 
-Size_type number_of_edges() const 
+Size_type number_of_sedges() const 
 /*{\Mop returns the number of edges.}*/
-{ return number_of_halfedges()/2; }
+{ return number_of_shalfedges()/2; }
 
-Size_type number_of_halfloops() const 
+Size_type number_of_shalfloops() const 
 /*{\Mop returns the number of halfloops.}*/
-{ return psm_->number_of_halfloops(); }
+{ return psm_->number_of_shalfloops(); }
 
-Size_type number_of_loops() const 
+Size_type number_of_sloops() const 
 /*{\Mop returns the number of loops.}*/
-{ return psm_->number_of_halfloops()/2; }
+{ return psm_->number_of_shalfloops()/2; }
 
-Size_type number_of_faces() const    
+Size_type number_of_sfaces() const    
 /*{\Mop returns the number of faces.}*/
-{ return psm_->number_of_faces(); }
+{ return psm_->number_of_sfaces(); }
 
-Size_type number_of_face_cycles() const;
+Size_type number_of_sface_cycles() const;
 /*{\Mop returns the number of face cycles.}*/
 
 Size_type number_of_connected_components() const;
@@ -265,20 +267,20 @@ void print_statistics(std::ostream& os = std::cout) const
 and faces.}*/
 {
   os << "Sphere Map - Statistics\n";
-  os << "|V| = " << number_of_vertices() << std::endl;
-  os << "|E| = " << number_of_edges() << std::endl;
-  os << "|L| = " << number_of_halfloops()/2 << std::endl;
-  os << "|F| = " << number_of_faces() << std::endl;
-  os << "|Fcs| = " << number_of_face_cycles() << std::endl << std::endl;
+  os << "|V| = " << number_of_svertices() << std::endl;
+  os << "|E| = " << number_of_shalfedges() << std::endl;
+  os << "|L| = " << number_of_shalfloops() << std::endl;
+  os << "|F| = " << number_of_sfaces() << std::endl;
+  os << "|Fcs| = " << number_of_sface_cycles() << std::endl << std::endl;
 }
  
 void check_integrity_and_topological_planarity(bool faces=true) const;
 /*{\Mop checks the link structure and the genus of |P|.}*/
 
-Halfedge_const_handle cas(Halfedge_const_handle e) const 
+SHalfedge_const_handle cas(SHalfedge_const_handle e) const 
 { return cyclic_adj_succ(e); } 
 
-Halfedge_const_handle cap(Halfedge_const_handle e) const
+SHalfedge_const_handle cap(SHalfedge_const_handle e) const
 { return cyclic_adj_pred(e); }
 
 template <typename H>
@@ -287,122 +289,123 @@ bool is_boundary_object(H h) const
 
 /*{\Mtext \headerline{Associated Information}\restoreopdims}*/
 
-const Sphere_point& point(Vertex_const_handle v) const
+const Sphere_point& point(SVertex_const_handle v) const
 /*{\Mop returns the embedding of |v|.}*/
 { return v->point_; }
 
-const Sphere_circle& circle(Halfedge_const_handle e) const
+const Sphere_circle& circle(SHalfedge_const_handle e) const
 /*{\Mop returns the circle supporting |e|.}*/
 { return e->circle_; }
 
-const Sphere_circle& circle(Halfloop_const_handle l) const
+const Sphere_circle& circle(SHalfloop_const_handle l) const
 /*{\Mop returns the circle supporting |l|.}*/
 { return l->circle_; }
 
-Mark mark(Vertex_const_handle v) const
+const Mark& mark(SVertex_const_handle v) const
 /*{\Mop returns the mark of |v|.}*/
 { return v->mark_; }
 
-Mark mark(Halfedge_const_handle e) const
+const Mark& mark(SHalfedge_const_handle e) const
 /*{\Mop returns the mark of |e|.}*/
 { return ( &*e < &*twin(e) ) ? e->mark_ : twin(e)->mark_; }
 
-Mark mark(Halfloop_const_handle l) const
+const Mark& mark(SHalfloop_const_handle l) const
 /*{\Mop returns the mark of |l|.}*/
 { return ( &*l < &*twin(l) ) ? l->mark_ : twin(l)->mark_; }
 
-Mark mark(Face_const_handle f) const
+const Mark& mark(SFace_const_handle f) const
 /*{\Mop returns the mark of |f|.}*/
 { return f->mark_; }
-
-Mark mark_of_halfsphere(int i) const
-{ CGAL_nef_assertion(i);
-  if (i<0) return psm_->m_neg_; 
-  return psm_->m_pos_; }
 
 /*{\Mtext \headerline{Iteration}}*/
 /*{\Mtext The list of all objects can be accessed via iterator ranges.
 For comfortable iteration we also provide iterations macros. 
 The iterator range access operations are of the following kind:\\
-|Vertex_iterator   vertices_begin()/vertices_end()|\\
-|Halfedge_iterator halfedges_begin()/halfedges_end()|\\
-|Halfloop_iterator halfloops_begin()/halfloops_end()|\\
-|Face_iterator     faces_begin()/faces_end()|
+|SVertex_iterator   svertices_begin()/svertices_end()|\\
+|SHalfedge_iterator shalfedges_begin()/shalfedges_end()|\\
+|SHalfloop_iterator shalfloops_begin()/shalfloops_end()|\\
+|SFace_iterator     sfaces_begin()/sfaces_end()|
 
-The macros are then |CGAL_forall_vertices(v,M)|,
-|CGAL_forall_halfedges(e,M)|, |CGAL_forall_edges(e,M)|,
-|CGAL_forall_faces(f,M)|, |CGAL_forall_face_cycles_of(fc,F)| where |M|
-is a sphere map and |F| is a face.}*/
+The macros are then |CGAL_forall_svertices(v,M)|,
+|CGAL_forall_shalfedges(e,M)|, |CGAL_forall_sedges(e,M)|,
+|CGAL_forall_sfaces(f,M)|, |CGAL_forall_sface_cycles_of(fc,F)|
+where |M| is a sphere map and |F| is a sface.}*/
 
 }; // SM_const_decorator
 
 
 
-template <typename SM_, typename K_>
-void SM_const_decorator<SM_,K_>::
+template <typename SM_>
+void SM_const_decorator<SM_>::
 check_integrity_and_topological_planarity(bool faces) const
 {
   TRACEN("check_integrity_and_topological_planarity:");
   using CGAL::Object_index;
-  Object_index<Vertex_const_iterator>   
-    VI(vertices_begin(),vertices_end(),'v');
-  Object_index<Halfedge_const_iterator> 
-    EI(halfedges_begin(),halfedges_end(),'e');
-  Object_index<Face_const_iterator> 
-    FI(faces_begin(),faces_end(),'f');
-  typedef Halfedge_around_vertex_const_circulator hvc_circulator;
-  typedef Halfedge_around_face_const_circulator   hfc_circulator;
-  Vertex_const_handle v;
+  Object_index<SVertex_const_iterator>   
+    VI(svertices_begin(),svertices_end(),'v');
+  Object_index<SHalfedge_const_iterator> 
+    EI(shalfedges_begin(),shalfedges_end(),'e');
+  Object_index<SFace_const_iterator> 
+    FI(sfaces_begin(),sfaces_end(),'f');
+  typedef SHalfedge_around_svertex_const_circulator hvc_circulator;
+  typedef SHalfedge_around_sface_const_circulator   hfc_circulator;
+  SVertex_const_handle v;
   int iso_vert_num=0;
   /* check the source links of out edges and count isolated vertices */
-  CGAL_forall_vertices(v,*this) {
+  CGAL_forall_svertices(v,*this) {
     if ( is_isolated(v) ) {
       if ( faces )
-        CGAL_nef_assertion_msg( face(v) != Face_const_handle(), VI(v).c_str());
+        CGAL_assertion_msg(face(v) != SFace_const_handle(), VI(v).c_str());
       ++iso_vert_num;
     } else {
-      CGAL_nef_assertion_msg( first_out_edge(v) != Halfedge_const_handle(),
+      CGAL_assertion_msg(first_out_edge(v) != SHalfedge_const_handle(),
       VI(v).c_str());
       TRACEN(point(v)<<" "<<EI(first_out_edge(v)));
-      CGAL_nef_assertion_msg( source(first_out_edge(v)) == v ,
-                          VI(v).c_str());
+      CGAL_assertion_msg(source(first_out_edge(v)) == v,
+			 VI(v).c_str());
     }
   }
 
   /* check the bidirected links and the face pointer init */
-  Halfedge_const_iterator e;
-  CGAL_forall_halfedges(e,*this) {
-    CGAL_nef_assertion( twin(twin(e)) == e );
-    CGAL_nef_assertion( source(e) != Vertex_const_handle() );
-    CGAL_nef_assertion( next(e) != Halfedge_const_handle() );
-    CGAL_nef_assertion( previous(next(e)) == e );
-    CGAL_nef_assertion( target(e) == source(next(e)) );
-    CGAL_nef_assertion( previous(e) != Halfedge_const_handle() );
-    CGAL_nef_assertion( next(previous(e)) == e );
-    CGAL_nef_assertion( target(previous(e)) == source(e) );
+  SHalfedge_const_iterator e;
+  CGAL_forall_shalfedges(e,*this) {
+    CGAL_assertion( twin(twin(e)) == e );
+    CGAL_assertion( source(e) != SVertex_const_handle() );
+    CGAL_assertion( next(e) != SHalfedge_const_handle() );
+    CGAL_assertion( previous(next(e)) == e );
+    CGAL_assertion( target(e) == source(next(e)) );
+    CGAL_assertion( previous(e) != SHalfedge_const_handle() );
+    CGAL_assertion( next(previous(e)) == e );
+    CGAL_assertion( target(previous(e)) == source(e) );
     if ( !faces ) continue;
-    CGAL_nef_assertion( face(e) != Face_const_handle() );
-    CGAL_nef_assertion( face(next(e)) == face(e) );
-    CGAL_nef_assertion( face(previous(e)) == face(e) );
+    CGAL_assertion( face(e) != SFace_const_handle() );
+    CGAL_assertion( face(next(e)) == face(e) );
+    CGAL_assertion( face(previous(e)) == face(e) );
   }
 
   int fc_num(0),iv_num(0);
-  Face_const_iterator f;
-  Face_cycle_const_iterator fci;
-  CGAL_forall_faces(f,*this) {
-    CGAL_forall_face_cycles_of(fci,f) {
-      if ( fci.is_halfedge() ) {
-        CGAL_nef_assertion( face(Halfedge_const_handle(fci)) == f ); ++fc_num;
-      } else if ( fci.is_vertex() ) {
-        CGAL_nef_assertion( face(Vertex_const_handle(fci)) == f ); ++iv_num;
-      } else CGAL_nef_assertion_msg(0,"damn generic handle.");
+  SFace_const_iterator f;
+  SFace_cycle_const_iterator fci;
+  CGAL_forall_sfaces(f,*this) {
+    CGAL_forall_sface_cycles_of(fci,f) {
+      if ( fci.is_shalfedge() ) {
+        CGAL_assertion( face(SHalfedge_const_handle(fci)) == f ); 
+	++fc_num;
+      } else if ( fci.is_svertex() ) {
+        CGAL_assertion( face(SVertex_const_handle(fci)) == f ); 
+	++iv_num;
+      } else if( fci.is_shalfloop() ) {
+        CGAL_assertion( face(SHalfloop_const_handle(fci)) == f );
+	++fc_num;
+      } else CGAL_assertion_msg(0,"damn generic handle.");
     }
   }
 
-  int v_num = number_of_vertices() - iso_vert_num;
-  int e_num = number_of_edges();
-  int c_num = number_of_connected_components() - iso_vert_num;
-  int f_num = number_of_face_cycles() - c_num + 1;
+  int v_num = number_of_svertices() - iso_vert_num + number_of_shalfloops();
+  int e_num = number_of_sedges() + number_of_shalfloops();
+  int c_num = number_of_connected_components() - iso_vert_num 
+    + number_of_sloops();
+  int f_num = number_of_sface_cycles() - c_num + 1;
   TRACEV(fc_num);TRACEV(iv_num);TRACEV(iso_vert_num);
   TRACEV(v_num);TRACEV(e_num);TRACEV(c_num);TRACEV(f_num);
   /* this means all face cycles and all isolated vertices are 
@@ -410,46 +413,45 @@ check_integrity_and_topological_planarity(bool faces) const
   /* every isolated vertex increases the component count
        one face cycle per component is redundent except one
        finally check the Euler formula: */
-  CGAL_nef_assertion( v_num - e_num + f_num == 1 + c_num );
+  CGAL_assertion( v_num - e_num + f_num == 1 + c_num );
 }
 
-template <typename SM_, typename K_>
-typename SM_const_decorator<SM_,K_>::Size_type
-SM_const_decorator<SM_,K_>::
-number_of_face_cycles() const
+template <typename SM_>
+typename SM_const_decorator<SM_>::Size_type
+SM_const_decorator<SM_>::
+number_of_sface_cycles() const
 {
   unsigned int fc_num=0;
-  CGAL::Unique_hash_map<Halfedge_const_handle,bool> visited; 
-    // init with bool() == false
-  Halfedge_const_iterator e;
-  CGAL_forall_halfedges(e,*this) {
+  CGAL::Unique_hash_map<SHalfedge_const_handle,bool> visited; 
+  SHalfedge_const_iterator e;
+  CGAL_forall_shalfedges(e,*this) {
     if (visited[e]) continue;
-    Halfedge_around_face_const_circulator hfc(e), hend(hfc);
+    SHalfedge_around_sface_const_circulator hfc(e), hend(hfc);
     CGAL_For_all(hfc,hend) visited[hfc]=true;
     ++fc_num;
   }
-  if ( has_loop() ) fc_num += 2;
+  if ( has_sloop() ) fc_num += 2;
   return fc_num;
 }
 
-template <typename SM_, typename K_>
-typename SM_const_decorator<SM_,K_>::Size_type
-SM_const_decorator<SM_,K_>::
+template <typename SM_>
+typename SM_const_decorator<SM_>::Size_type
+SM_const_decorator<SM_>::
 number_of_connected_components() const
 {
   int comp_num=0;
-  CGAL::Unique_hash_map<Vertex_const_iterator,bool> visited(false); 
-  Vertex_const_iterator v;
-  CGAL_forall_vertices(v,*this) {
+  CGAL::Unique_hash_map<SVertex_const_iterator,bool> visited(false); 
+  SVertex_const_iterator v;
+  CGAL_forall_svertices(v,*this) {
     if (visited[v]) continue;
-    std::list<Vertex_const_iterator> L;
+    std::list<SVertex_const_iterator> L;
     L.push_back(v); visited[v]=true; 
     /* we keep the invariant that all nodes which have been stacked
        are marked visited */
     while (!L.empty()) {
-      Vertex_const_iterator vc = L.front(); L.pop_front();
+      SVertex_const_iterator vc = L.front(); L.pop_front();
       if ( is_isolated(vc) ) continue;
-      Halfedge_around_vertex_const_circulator 
+      SHalfedge_around_svertex_const_circulator 
 	havc(first_out_edge(vc)), hend(havc);
       CGAL_For_all(havc,hend) {
         if (!visited[target(havc)]) {
