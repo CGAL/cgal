@@ -239,9 +239,6 @@ int main ()
     assert (!msH.is_degenerate());
     
     
-    int size = 100*n;
-    char* buffer = new char[size];  // suffices to store the sphere
-    
     std::ostringstream ost;           // output string
     set_ascii_mode (ost);
     ost << msC << msH << std::endl;      // write spheres
@@ -255,10 +252,6 @@ int main ()
     assert (radiusC == msC.squared_radius());
     assert (radiusH == msH.squared_radius());
     
-    delete[] buffer;
-    
-    
-
     return 0;
 }
 
