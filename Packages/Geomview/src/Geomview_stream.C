@@ -140,7 +140,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         char inbuf[10];
         ::read(in, inbuf, 7);
 
-        if (::strncmp(inbuf, "started", 7) = 0)
+        if (::strncmp(inbuf, "started", 7) == 0)
         {
             std::cerr << "You still have a .geomview file with the\n"
                       << "(echo \"started\") command. Note that this is not\n"
@@ -151,7 +151,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
             if (::strncmp(inbuf, "CGAL-3D", 7) != 0)
                 std::cerr << "Unexpected string from Geomview !" << std::endl;
         }
-        else if (::strncmp(inbuf, "CGAL-3D", 7) = 0)
+        else if (::strncmp(inbuf, "CGAL-3D", 7) == 0)
         {
             std::cerr << "Good, you don't have a .geomview file with the\n"
                       << "(echo \"started\") command" << std::endl;
