@@ -2572,7 +2572,8 @@ clear()
 
 template <class Vb, class Cb >
 void
-Triangulation_data_structure_3<Vb,Cb>::clear_cells_only(std::vector<Vertex *> & Vertices)
+Triangulation_data_structure_3<Vb,Cb>::
+clear_cells_only(std::vector<Vertex *> & Vertices)
 {
   CGAL_triangulation_assertion(_list_of_temporary_free_cells._next_cell
 	  == &_list_of_temporary_free_cells);
