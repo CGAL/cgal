@@ -14,6 +14,8 @@
   peut-etre prendre la premiere cellule de la liste, qui a de bonnes chances
   d'y avoir ete mise recemment, et donc d'etre plus pret... ?
 - Faire des benchs/profiles de points non-randoms...
+- Alignement des cellules en memoire : effets de cache + pointeurs a
+  l'interieur des cellules pour le voisinage (Fred a deja fait => ask).
 - Facet_circulator a l'air bugue (et lent) d'apres F&D quand on specifie une
   facet de depart.  Est-ce qu'il y a besoin de stocker un TDS * ?  Stocker
   deux Vertex * plutot que deux ints, ca permet de gagner une Cell *, et
