@@ -7,6 +7,7 @@ Convex_hull_d
 Polygon
 Nef_2
 Partition_2
+Sweep_line_2
 Planar_map
 Pm_with_intersections_2
 Arrangement_2
@@ -20,5 +21,6 @@ TriangulationDS_3
 Alpha_shapes_2
 Alpha_shapes_3
 Optimisation
+Largest_empty_iso_rectangle_2
 Point_set_2
 SearchStructures
