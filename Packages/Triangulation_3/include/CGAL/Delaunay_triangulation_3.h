@@ -418,11 +418,25 @@ remove(Vertex_handle v)
 
   if (dimension() >= 1 && test_dim_down(v)) {
       _tds.remove_decrease_dimension(v);
-      // FIXME: There might be a need for _tds.reorient() ?
+      // Now try to see if we need to re-orient.
+      if (dimension() == 2) {
+	  Facet f = *finite_facets_begin();
+          if (coplanar_orientation(f.first->vertex(0)->point(),
+		                   f.first->vertex(1)->point(),
+				   f.first->vertex(2)->point()) == NEGATIVE)
+	      _tds.reorient();
+      }
+      CGAL_triangulation_postcondition(is_valid());
       return true;
   }
 
-  if ( dimension() < 3 ) {
+  if (dimension() == 1) {
+      _tds.remove_from_simplex(v);
+      CGAL_triangulation_postcondition(is_valid());
+      return true;
+  }
+
+  if (dimension() < 3) {
     // the triangulation is rebuilt...
 
     Vertex_handle inf = infinite_vertex();
@@ -442,6 +456,7 @@ remove(Vertex_handle v)
 
     _tds.delete_vertex(v);
 
+    CGAL_triangulation_postcondition(is_valid());
     return true;
   }
 
@@ -462,6 +477,7 @@ remove(Vertex_handle v)
     undo_make_hole_3D_ear(boundhole, hole);
   }
 
+  CGAL_triangulation_expensive_postcondition(is_valid());
   return filled;
 }
 
