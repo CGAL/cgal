@@ -50,7 +50,7 @@ operator()( const char* filename1, const char* filename2 )
     Uti1::readBoxesFromFile( infile2, boxes2 );
 
     std::cout << std::endl;
-    typename Uti1::Storage_callback<>
+    typename Uti1::template Storage_callback<>
         callback1( result_all_pairs ),
         callback2( result_tree );
 
@@ -70,7 +70,7 @@ operator()( const char* filename1, const char* filename2 )
     CGAL::box_intersection_all_pairs_custom_predicates_d( 
                 boxes1.begin(), boxes1.end(),
                 boxes2.begin(), boxes2.end(),
-                callback1, Uti1::Traits() );
+                callback1, typename Uti1::Traits() );
     timer.stop();
     std::cout << "got " << callback1.counter << " intersections in "
               << timer.time() << " seconds." << std::endl;
@@ -81,10 +81,12 @@ operator()( const char* filename1, const char* filename2 )
     timer.start();
     CGAL::Box_intersection_d::one_way_scan( boxes1.begin(), boxes1.end(),
                                             boxes2.begin(), boxes2.end(),
-                                            callback2, Uti1::Traits(), 2 );
+                                            callback2, 
+                                            typename Uti1::Traits(), 2 );
     CGAL::Box_intersection_d::one_way_scan( boxes2.begin(), boxes2.end(),
                                             boxes1.begin(), boxes1.end(),
-                                            callback2, Uti1::Traits(), 2 );
+                                            callback2,
+                                            typename Uti1::Traits(), 2 );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
               << timer.time() << " seconds." << std::endl;
@@ -98,7 +100,9 @@ operator()( const char* filename1, const char* filename2 )
     const unsigned int cutoff = n < 2000 ? 6 : n / 100;
     CGAL::box_intersection_custom_predicates_d( boxes1.begin(), boxes1.end(),
                                                 boxes2.begin(), boxes2.end(),
-                                                callback2, Uti1::Traits(), cutoff );
+                                                callback2, 
+                                                typename Uti1::Traits(),
+                                                cutoff );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
               << timer.time() << " seconds." << std::endl;

@@ -76,11 +76,13 @@ test_n( unsigned int n, std::ostream& outfile )
     for( unsigned int i = repetitions; i; --i ) {
         CGAL::Box_intersection_d::one_way_scan( boxes1.begin(), boxes1.end(),
                                                 boxes2.begin(), boxes2.end(),
-                                                callback1, Uti1::Traits(),
+                                                callback1, 
+                                                typename Uti1::Traits(),
                                                 DIM - 1 );
         CGAL::Box_intersection_d::one_way_scan( boxes2.begin(), boxes2.end(),
                                                 boxes1.begin(), boxes1.end(),
-                                                callback1, Uti1::Traits(),
+                                                callback1, 
+                                                typename Uti1::Traits(),
                                                 DIM - 1 );
     }
     timer_scan.stop();
