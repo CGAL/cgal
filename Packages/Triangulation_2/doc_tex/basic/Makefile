@@ -1,4 +1,5 @@
-LATEX_CONV_INPUTS=.:../../examples:Triangulation_2:TDS_2:TEXINPUTS=.:/0/prisme_util/latex:/u/abeille/0/prisme/yvinec/tex/inputs:Triangulation_2:TDS_2:../../examples:
+LATEX_CONV_INPUTS=.:../../examples:Triangulation_2:TDS_2:
+TEXINPUTS=.:/0/prisme_util/latex:/u/abeille/0/prisme/yvinec/tex/inputs:Triangulation_2:TDS_2:../../examples:
 
 doc:
 	latex wrapper;
