@@ -4,6 +4,21 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1218
+//---------------------------------------------------------------------
+
+GLOB: Removed mentioning of CGALWin.
+GLOB: mention commercial licenses
+GLOB: typo Saarbrucken -> Saarbruecken
+GLOB: Fixed error message handling in compiler version test.
+GLOB: No longer up-to-date.
+GLOB: Updated makefile.
+GLOB: Initial revision
+GLOB: Installation
+DOCS: Updated wrt the recent changes in install_cgal.
+DOCS: Added sections for support menu and Core.
+
+//---------------------------------------------------------------------
 //	revision 1217
 //---------------------------------------------------------------------
 
@@ -420,6 +435,8 @@ GLOB: Qt license updates
 //	revision 1158
 //---------------------------------------------------------------------
 
+DOCS: Updated wrt the recent changes in install_cgal.
+DOCS: Added sections for support menu and Core.
 DOCS: - removed stlport from LICENSE
 DOCS: - update installation.tex wrt outdated stuff
 DOCS: - document more options in install_cgal's --help option.
@@ -1010,6 +1027,7 @@ TEST: Updated makefile and removed superfluous include in example.C.
 //---------------------------------------------------------------------
 
 GLOB: Updated makefile.
+GLOB: No longer up-to-date.
 GLOB: - New options --build <config> and --rebuild <config>.
 GLOB: - Update list of supported compilers.
 GLOB: - New interactive option "Register new compiler".
