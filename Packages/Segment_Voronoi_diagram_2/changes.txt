@@ -1,4 +1,6 @@
 22 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+- replaced the site constructors by static methods that create
+  the sites
 - added functors for some predicates that did not have
 - removed the macro USE_SET_METHODS
 - removed unnecessary constructors from the various site classes
