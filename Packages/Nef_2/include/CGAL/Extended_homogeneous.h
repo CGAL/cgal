@@ -499,6 +499,8 @@ on the extended geometric objects.}*/
     return res;
   }
 
+  const char* output_identifier() const { return "Extended_homogeneous"; }
+
 
 
 };

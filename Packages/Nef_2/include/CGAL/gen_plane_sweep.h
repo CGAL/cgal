@@ -31,6 +31,7 @@
 /*{\Moptions print_title=yes}*/
 /*{\Moptions section=subsection}*/
 
+#ifndef _MSC_VER
 #include <CGAL/sweep_observer.h>
 
 /*{\Manpage {gen_plane_sweep}{T}{A Generic Plane Sweep Framework}{PS}}*/
@@ -201,5 +202,42 @@ program:
 \end{Mverb}}*/
 
 };
+
+#else // _MSC_VER
+
+template <typename T>
+class gen_plane_sweep {
+  typedef gen_plane_sweep<T>  Self;
+  T traits;
+public :
+
+typedef T TRAITS;
+typedef typename TRAITS::INPUT  INPUT;
+typedef typename TRAITS::OUTPUT OUTPUT;
+typedef typename TRAITS::GEOMETRY GEOMETRY;
+
+gen_plane_sweep(const INPUT& input, OUTPUT& output, 
+  const GEOMETRY& geometry = GEOMETRY()) : 
+  traits(input,output,geometry) {}
+
+gen_plane_sweep(OUTPUT& output, const GEOMETRY& geometry = GEOMETRY()) : 
+  traits(output,geometry) {}
+
+void sweep()
+{
+  traits.initialize_structures();
+  traits.check_invariants();
+  while ( traits.event_exists() ) {
+    traits.process_event();
+    traits.check_invariants();
+    traits.procede_to_next_event();
+  }
+  traits.complete_structures();
+  traits.check_final();
+}
+
+};
+
+#endif // _MSC_VER
 
 #endif // GEN_PLANE_SWEEP_H

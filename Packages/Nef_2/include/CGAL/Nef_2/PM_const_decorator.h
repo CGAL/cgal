@@ -94,10 +94,14 @@ public:
 
 };
 
+#ifndef _MSC_VER
+
 template <typename Iter, typename Move>
 inline CGAL::Circulator_tag  
 query_circulator_or_iterator(const CircFromIt<Iter,Move>& )
 { return CGAL::Circulator_tag(); }
+
+#endif
 
 template <typename HE>
 class move_halfedge_around_vertex {

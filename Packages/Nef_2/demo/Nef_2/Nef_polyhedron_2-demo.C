@@ -22,8 +22,13 @@ struct ring_or_field<leda_integer> {
   static RT gcd(const RT& r1, const RT& r2) 
   { return ::gcd(r1,r2); }  
 };
-//typedef CGAL::Extended_homogeneous<leda_integer> EKernel;
+
+#define FILTERED_KERNEL
+#ifndef FILTERED_KERNEL
+typedef CGAL::Extended_homogeneous<leda_integer> EKernel;
+#else
 typedef CGAL::Filtered_extended_homogeneous<leda_integer> EKernel;
+#endif
 
 typedef  CGAL::Nef_polyhedron_2<EKernel> Nef_polyhedron;
 typedef  Nef_polyhedron::Point     Point;
@@ -52,7 +57,11 @@ static leda_string     nef1;
 static leda_string     nef2;
 static menu            create_menu;
 static int num;
-static leda_string  dname = "./data";
+#ifndef FILTERED_KERNEL
+static leda_string  dname = "./homogeneous_data";
+#else
+static leda_string  dname = "./filtered_homogeneous_data";
+#endif
 static leda_string  fname = "none";
 static leda_string  filter = "*.nef";
 
@@ -148,7 +157,7 @@ void create(int i)
 static void read_file(leda_string fn) 
 { 
   //win_ptr->set_status_string(" Reading " + fname);
-  ifstream in(fn);
+  std::ifstream in(fn);
   Nef_polyhedron N; in >> N;
   fn.replace_all(".nef","");
   store_new(N,fn);update_history();
@@ -366,7 +375,7 @@ int main(int argc, char* argv[])
   main_panel.display();
   int x0,y0,x1,y1;
   W.frame_box(x0,y0,x1,y1);
-  W.display_help_text("data/nef-demo");
+  W.display_help_text("help/nef-demo");
   Object_handle h;
   for(;;) { 
     double x, y;
@@ -423,7 +432,9 @@ int main(int argc, char* argv[])
       break;
     }
   }
-  return 0; // never reached warning acceptable
+#if !defined(__KCC) && !defined(__BORLANDC__) 
+  return 0; // never reached 
+#endif
 }
 
 #else // CGAL_USE_LEDA

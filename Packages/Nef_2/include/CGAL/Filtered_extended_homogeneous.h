@@ -1224,6 +1224,9 @@ void determine_frame_radius(Forward_iterator start, Forward_iterator end,
   }
 }
 
+const char* output_identifier() const 
+{ return "Filtered_extended_homogeneous"; }
+
 
 
 };

@@ -157,12 +157,14 @@ protected:
 
   typedef Nef_polyhedron_2_rep<T>           Nef_rep;
   typedef typename Nef_rep::Plane_map       Plane_map;
-  typedef typename Nef_rep::Const_decorator Const_decorator;
   typedef typename Nef_rep::Decorator       Decorator;
   typedef typename Nef_rep::Overlayer       Overlayer;
   //typedef typename Nef_rep::T               Transformer;
   typedef typename Nef_rep::Slocator        Slocator;
   typedef typename Nef_rep::Locator         Locator;
+  public:
+  typedef typename Nef_rep::Const_decorator Const_decorator;
+  protected:
 
   Plane_map& pm() { return ptr->pm_; } 
   const Plane_map& pm() const { return ptr->pm_; } 
@@ -795,9 +797,9 @@ template <typename T>
 std::ostream& operator<<
  (std::ostream& os, const Nef_polyhedron_2<T>& NP)
 {
+  os << "Nef_polyhedron_2<" << NP.EPD.output_identifier() << ">\n";
   typedef typename Nef_polyhedron_2<T>::Decorator Decorator;
-  CGAL::PM_io_parser<Decorator> O(os, NP.pm());
-  O.print();
+  CGAL::PM_io_parser<Decorator> O(os, NP.pm()); O.print();
   return os;
 }
 
@@ -806,8 +808,14 @@ std::istream& operator>>
   (std::istream& is, Nef_polyhedron_2<T>& NP)
 {
   typedef typename Nef_polyhedron_2<T>::Decorator Decorator;
-  CGAL::PM_io_parser<Decorator> I(is, NP.pm());
-  I.read();
+  CGAL::PM_io_parser<Decorator> I(is, NP.pm()); 
+  if (I.check_sep("Nef_polyhedron_2<") &&
+      I.check_sep(NP.EPD.output_identifier()) &&
+      I.check_sep(">")) I.read();
+  else {
+    std::cerr << "Nef_polyhedron_2 input corrupted." << std::endl;
+    NP = Nef_polyhedron_2<T>();
+  }
   typename Nef_polyhedron_2<T>::Const_decorator D(NP.explorer());
   D.check_integrity_and_topological_planarity();
   return is;

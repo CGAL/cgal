@@ -623,10 +623,10 @@ public:
       Halfedge_const_handle e = input_halfedge(e_triang);
       if ( e == Halfedge_const_handle() ) // inserted during triangulation
         return make_object(input_face(e_triang)); 
-      int or = K.orientation(segment(e),p);
-      if ( or == 0 ) return make_object(e);
-      if ( or < 0 )  return make_object(face(twin(e)));
-      if ( or > 0 )  return make_object(face(e));
+      int orientation_ = K.orientation(segment(e),p);
+      if ( orientation_ == 0 ) return make_object(e);
+      if ( orientation_ < 0 )  return make_object(face(twin(e)));
+      if ( orientation_ > 0 )  return make_object(face(e));
     }
     assert(0); return h; // compiler warning
   }
@@ -658,8 +658,8 @@ public:
 
     if ( assign(e,h) ) {
       TRACEN("located edge "<<PE(e));
-      int or = K.orientation( segment(e), p);
-      if ( or == 0 ) { // p on segment
+      int orientation_ = K.orientation( segment(e), p);
+      if ( orientation_ == 0 ) { // p on segment
         TRACEN("on edge "<<PE(e));
         if ( d == CT.direction(e) ) 
         { current = EDGE_COLLINEAR; }
@@ -672,7 +672,7 @@ public:
         }
 
       } else { // p not on segment, thus in triangle
-        if ( or < 0  ) e = CT.twin(e);
+        if ( orientation_ < 0  ) e = CT.twin(e);
         // now p left of e
         TRACEN("in face at "<<PE(e));
         if ( M(input_face(e)) ) // face mark
@@ -731,8 +731,8 @@ public:
           }
           Vertex_const_handle v_cand = CT.target(CT.next(e));
           TRACEN("v_cand "<<PV(v_cand));
-          int or = K.orientation(p,q,CT.point(v_cand));
-          switch( or ) {
+          int orientation_ = K.orientation(p,q,CT.point(v_cand));
+          switch( orientation_ ) {
             case 0: 
               v = v_cand; current = VERTEX; break;
             case +1: 
@@ -844,8 +844,8 @@ PM_point_locator<PMD,GEO>::walk_in_triangulation(const Point& q) const
         if ( !(K.orientation(CT.segment(e),q) > 0) ) // q not left of e
           return make_object(e);
         Vertex_const_handle v_cand = CT.target(CT.next(e));
-        int or = K.orientation(p,q,CT.point(v_cand));
-        switch( or ) {
+        int orientation_ = K.orientation(p,q,CT.point(v_cand));
+        switch( orientation_ ) {
           case 0:  // collinear 
             if ( K.strictly_ordered_along_line(p,q,CT.point(v_cand)) ) 
               return make_object(e);

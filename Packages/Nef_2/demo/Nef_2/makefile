@@ -45,7 +45,7 @@ Nef_polyhedron_2-demo$(EXE_EXT): Nef_polyhedron_2-demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Nef_polyhedron_2-demo Nef_polyhedron_2-demo$(OBJ_EXT) $(LDFLAGS)
 
 clean:  \
-	Nef_polyhedron_2-test.clean 
+	Nef_polyhedron_2-demo.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -72,7 +72,7 @@ class PM_io_parser : public PMDEC
   int vn,en,fn,i;
   // the number of objects
 
-  bool check_sep(char* sep);
+
   void print_vertex(Vertex_handle) const;
   void print_hedge(Halfedge_handle) const;
   void print_face(Face_handle) const;
@@ -97,6 +97,9 @@ to output |H| to |os|.}*/
 PM_io_parser(std::ostream&, const PMDEC& D);
 
 /*{\Moperations 2 3}*/
+
+bool check_sep(const char* sep);
+
 void print() const;
 /*{\Mop prints |H| to |os|.}*/
 void read();
@@ -150,12 +153,17 @@ PM_io_parser<PMDEC>::PM_io_parser
 //-----------------------------------------------------------------------------
 // OUTPUT AND INPUT:
 //-----------------------------------------------------------------------------
+#ifdef __BORLANDC__
+#define ISSPACENS std::
+#else
+#define ISSPACENS 
+#endif
 
 template <typename PMDEC>
-bool PM_io_parser<PMDEC>::check_sep(char* sep)
+bool PM_io_parser<PMDEC>::check_sep(const char* sep)
 {
   char c; 
-  do in.get(c); while (std::isspace(c));
+  do in.get(c); while (ISSPACENS isspace(c));
   while (*sep != '\0') { 
     if (*sep != c) {
       in.putback(c);

@@ -50,10 +50,6 @@ misuse memory problems occur.}*/
 
 /*{\Moperations 2 1}*/
 
-#ifdef _MSC_VER
-#pragma warning(disable: 8008)
-#pragma warning(disable: 8066)
-#endif
 #ifdef __BORLANDC__
 #pragma option -w-rch -w-eff -w-ccc
 #endif
@@ -88,11 +84,6 @@ misuse memory problems occur.}*/
     if (sizeof(T) >  sizeof(GenPtr)) delete (T*) p;
     p=0;
   }
-
-#ifdef _MSC_VER
-#pragma warning(default: 8008)
-#pragma warning(default: 8066)
-#endif
 
 };
 
