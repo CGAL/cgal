@@ -33,7 +33,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: max_k-gon
+all:largest_emty_rect_2.moc
 
 Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
@@ -46,18 +46,19 @@ Qt_widget_move_list_point$(OBJ_EXT): Qt_widget_move_list_point.moc \
 Qt_widget_move_list_point.moc: Qt_widget_move_list_point.h
 	$(QT_MOC) -o Qt_widget_move_list_point.moc $<
 
-max_k-gon$(OBJ_EXT): max_k-gon.C max_k-gon.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) max_k-gon.C
-max_k-gon.moc: max_k-gon.C
-	${QT_MOC} -o max_k-gon.moc $<
+largest_emty_rect_2$(OBJ_EXT): largest_emty_rect_2.C largest_emty_rect_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) largest_emty_rect_2.C
+largest_emty_rect_2.moc: largest_emty_rect_2.C
+	${QT_MOC} -o largest_emty_rect_2.moc $<
 
-max_k-gon$(EXE_EXT): max_k-gon$(OBJ_EXT) Qt_widget_move_list_point$(OBJ_EXT) \
+largest_emty_rect_2$(EXE_EXT): largest_emty_rect_2$(OBJ_EXT) \
+			Qt_widget_move_list_point$(OBJ_EXT) \
 			Qt_widget_toolbar$(OBJ_EXT) 
-	$(CGAL_CXX) $(EXE_OPT)max_k-gon max_k-gon$(OBJ_EXT) \
+	$(CGAL_CXX) $(EXE_OPT)largest_emty_rect_2 largest_emty_rect_2$(OBJ_EXT) \
 	 Qt_widget_toolbar$(OBJ_EXT) Qt_widget_move_list_point$(OBJ_EXT) \
 	$(LDFLAGS)
 
-clean: max_k-gon.clean \
+clean: largest_emty_rect_2.clean \
        Qt_widget_toolbar.clean \
        Qt_widget_move_list_point.clean 
 #---------------------------------------------------------------------#
