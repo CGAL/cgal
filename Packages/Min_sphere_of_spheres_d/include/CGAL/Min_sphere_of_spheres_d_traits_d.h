@@ -61,10 +61,10 @@ namespace CGAL {
   class Min_sphere_of_spheres_d_traits_d {
   public: // types:
     typedef FT_ FT;
-    typedef FT_ Wt;
-    typedef CGAL::Point_d<K_> Pt;
-    typedef CGAL::Weighted_point<Pt,Wt> Sphere;
-    typedef typename Pt::Cartesian_const_iterator Coordinate_iterator;
+    typedef FT_ Weight;
+    typedef CGAL::Point_d<K_> Point;
+    typedef CGAL::Weighted_point<Point,Weight> Sphere;
+    typedef typename Point::Cartesian_const_iterator Coordinate_iterator;
     typedef UseSqrt_ Use_square_roots;
     typedef Algorithm_ Algorithm;
 
