@@ -44,6 +44,7 @@ Pm_walk_along_line_point_location<Planar_map>::locate(
   // invariant: p always lies in f's interior or holes
   
   Halfedge_handle e=pm->halfedges_end(); // closest halfedge so far
+
   lt = Planar_map::UNBOUNDED_FACE;
   while(f!=last) // stop at innermost level
     {
@@ -330,7 +331,8 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
 #endif
 
       // ecv holds the closest curve to p found so far.
-      const X_curve& cv = curr->curve(), &ecv = e->curve();   
+      const X_curve& cv = curr->curve();
+      const X_curve& ecv = intersection ? e->curve() : cv;   // dummy ref to cv
       const Point& p1 = traits->curve_source(cv),
                  & p2 = traits->curve_target(cv);
       bool              in_x_range = traits->point_in_x_range(cv, p);
