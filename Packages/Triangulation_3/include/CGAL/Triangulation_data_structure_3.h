@@ -854,7 +854,7 @@ public:
 
   Facet_iterator facets_begin() const
   {
-    if ( dimension < 2 ) return facets_end();
+    if ( dimension() < 2 ) return facets_end();
     //    CGAL_triangulation_precondition( dimension() >=2 );
     Tds* ncthis = (Tds*)this;
     return Facet_iterator(ncthis);
@@ -869,7 +869,7 @@ public:
 
   Edge_iterator edges_begin() const
   {
-    if ( dimension < 1 ) return edges_end();
+    if ( dimension() < 1 ) return edges_end();
     //    CGAL_triangulation_precondition( dimension() >=1 );
     Tds* ncthis = (Tds*)this;
     return Edge_iterator(ncthis);
@@ -884,8 +884,8 @@ public:
 
   Vertex_iterator vertices_begin() const
   {
-    if ( dimension < 0 ) return vertices_end();
-    //    CGAL_triangulation_precondition( number_of_vertices() > 0 );
+    if ( dimension() < 0 ) return vertices_end();
+//    CGAL_triangulation_precondition( number_of_vertices() > 0 );
     Tds* ncthis = (Tds*)this;
     return Vertex_iterator(ncthis);
   }
