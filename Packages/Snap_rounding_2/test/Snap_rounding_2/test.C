@@ -135,10 +135,10 @@ int main(int argc,char *argv[])
   s3.change_number_of_kd_trees(2);
   print_out(s3);
 
-  /*  std::cout << "\ntesting cctor\n";
+  std::cout << "\ntesting cctor\n";
   Snap_rounding_2 s4(s3);
   print_out(s3);
-
+  /*
   std::cout << "\ntesting operator=\n";
   Snap_rounding_2 s5(prec,true,4);
   s5 = s4;
