@@ -1,0 +1,445 @@
+% ___________________________________________________________________________
+% |#########################################################################|
+% |                                                                         |
+% | The Manual for the LaTeX converter   lc_manual.tex                      |
+% | -------------------------------------------------------------           |
+% |                                                                         |
+% | 30.07.1998   Lutz Kettner   kettner@acm.org                             |
+% | Zurich, Switzerland                                                     |
+% | $Revision$                                                       |
+% | $Date$                                            |
+% |_________________________________________________________________________|
+% |#########################################################################|
+
+\documentclass[12pt]{article}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{path}
+\usepackage{epsfig}
+\usepackage{cc_manual}
+\usepackage{latex_converter}
+\usepackage{makeidx}
+\makeindex
+
+%\pagestyle{empty}
+\textwidth 15.4cm 
+\textheight 24 cm
+\topmargin -14mm       
+\evensidemargin 3mm 
+\oddsidemargin 3mm
+
+\parindent0em
+\setlength{\parskip}{1.4ex}
+
+\sloppy
+
+{
+  \begingroup
+    \catcode`\|=0
+    \catcode`\[=1
+    \catcode`\]=2
+    \catcode`\{=12
+    \catcode`\}=12    
+    \catcode`\\=12    
+    |gdef|Open[[|tt {]]
+    |gdef|Close[[|tt }]]
+    |gdef|Backslash[[|tt \]]
+  |endgroup
+}
+
+\newcommand{\Mindex}[1]{\index{#1@\protect\Backslash{\tt #1}}}
+\newcommand{\ccIndex}[1]{\index{#1@\protect\Backslash{\tt cc#1}}}
+\newcommand{\TTindex}[1]{\index{#1@{\tt #1}}}
+\newcommand{\Dindex}[1]{#1\index{#1}}
+
+\def\ind{\hspace*{7mm}}
+
+% ----------------------------------------------------------------------
+\title{\LaTeX\ to HTML Converter\\
+       {\tt latex\_converter} and {\tt latex\_to\_html}}
+\author{Lutz Kettner}
+
+\date{\lcRevision. \lcDate}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+% ----------------------------------------------------------------------
+\section{Introduction}
+
+
+
+% ----------------------------------------------------------------------
+\section{Converting a Manual to {\tt HTML}}
+\label{sectionHTML}
+\index{tools}\index{converting to HTML@converting to {\tt HTML}}
+\TTindex{HTML}\index{hyperlinks}
+
+The programs described in this section are not compatible with the
+older versions of the {\tt cc\_manual.sty}, formerly {\tt
+  cgal\_manual.sty}. The old macro names are no longer recognized. Old
+specifications has to be converted with the scripts provided. The
+scripts are mentioned in Section~\ref{sectionChanges}.
+
+% -------------------------------------------------------
+\subsection{Manual Structure and Induced Output Files}
+
+\index{document structure}\index{structure of document}\index{online
+  manual} The tools for the conversion to an online {\tt HTML} manual
+impose certain restrictions on the \LaTeX\ specification. Each chapter
+and each class defining environment ({\tt ccClass}, {\tt
+  ccClassTemplate}, and {\tt ccHtmlClassFile}) opens a new file. For
+chapters, the new files get the filename of the current \LaTeX\ file
+with the prefix {\tt Chapter\_} and the new postfix {\tt .html}. For
+class defining environments, the new files get the name of the class
+as filename with the postfix {\tt .html} added. These conventions make
+hyperlinking easier.  A set of requirements and recommendations follow
+from these conventions.
+
+\begin{itemize}
+  \item
+    All files in one directory.
+  \item
+    No two chapters in one file. A chapter macro should be located at
+    the beginning of a file.
+  \item
+    No nesting, i.e.\ no chapter or class definition within a class
+    defining environment. (The conventions impose a two-level file
+    hierarchy.)
+  \item
+    No two classes of the same name in one manual.
+\end{itemize}
+
+
+See Section~\ref{sectionHtmlExtended} for a new extended conversion
+model using multiple directories to overcome the filename problem.
+See Section~\ref{sectionHTMLsupport} how the file generation of class
+environments could be customized with \verb+\ccHtmlNoClassFile+ and the
+environment {\tt ccHtmlClassFile} to gain more flexibility.
+
+\index{title page}
+By default, a \LaTeX\ file is assumed to start with a chapter macro or
+a class defining environment. Any pieces of \LaTeX\ code in front of
+it are most probably definitions and not meant for conversion. For
+example a complete manual starts with a title page and the table of
+contents. These are provided by other means for the online {\tt HTML}
+manual, i.e.\ the title page {\tt title.html} has to be written
+manually and the table of contents {\tt contents.html} is
+automatically generated.  In the case of a file without a chapter
+macro or a class defining environment one would like to see the
+conversion result for these parts too. To get it printed to stdout use
+the command line switch {\tt -show\_main}, see below.
+
+
+% -------------------------------------------------------
+\subsection{The Conversion Tools}
+
+The conversion of a specification to an online {\tt HTML} manual is a
+two step process. In the first step, all \LaTeX\ files are converted
+to {\tt HTML} files. Meanwhile auxiliary informations about
+\Dindex{hyperlinks} are collected.  In the second step, the hyperlinks
+are added to all {\tt HTML} files.  The {\tt csh}-script {\tt
+  cc\_manual\_to\_html} integrates the first and second step. It uses
+the program {\tt cc\_extract\_html}, which does the first part, the
+program {\tt flex}, which generates the filter program to add the
+hyperlinks, the standard C compiler {\tt cc}, and the program {\tt
+  cc\_index\_sort}, which sorts the index in a manner that small and
+capital letters are put together. The synopsis for the script {\tt
+  cc\_manual\_to\_html} is:
+
+\ind{\tt cc\_manual\_to\_html [<options>] <tex-files\ldots>}
+
+This command translates all LaTeX files in its commandline to {\tt
+  HTML} files. All files included with the \verb+\input+ or
+\verb+\include+ macros of \LaTeX\ are processed too. Please note that
+the program {\em does not} understand the \verb+\includeonly+ macro.
+The program is capable of translating a complete manual at once. It is
+sufficient to use it with the main \LaTeX\ file.
+
+\index{bibliography}\TTindex{BiBTeX}\index{auxiliary file}
+\Mindex{bibcite}\Mindex{bibitem}
+The converter supports the generation of an {\tt HTML} file {\tt
+  biblio.html} for the bibliography. If the bibliography is generated
+using BiB\TeX\ the {\tt *.bbl} file should provided to the converter.
+If the bibliography is written by hand using the
+\verb+thebibliography+ environment, this file should also be in the
+list of conversion files. In both cases, the related {\tt *.aux} will
+contain \verb+\bibcite+ entries that are needed to generate proper
+labels instead of the internally used citation keys. However, if the
+bibliography is written by hand with optional arguments in the bibitem
+entries the {\tt *.aux} file is not necessary (These optional
+arguments will be also used by \LaTeX\ to label the citations.).  The
+\verb+\+\verb+ref+ macros in \LaTeX\ will be instrumented with
+\Dindex{hyperlinks} to the bibliography.  A table of contents {\tt
+  contents.html} and an index {\tt manual\_index.html} are always
+automatically generated. A handwritten title page {\tt title.html} is
+assumed, but not supplied. A common page layout on all pages
+guarentees easy navigation through the different files.
+
+The command line options for {\tt cc\_manual\_to\_html} are:
+
+\begin{tabular}{ll}
+    {\tt -defaults}        & show the settings of the internal variables.\\
+    {\tt -extended}        & new extended conversion model, see
+                                Section~\ref{sectionHtmlExtended} \\
+    {\tt -show\_main}      & print the translation result for the main
+                               file to stdout.\\
+    {\tt -date <text>}     & set a date for the manual. Default: system date.\\
+    {\tt -release <text>}  & set a release number for the
+                             manual. Default: empty\\
+    {\tt -title <text>}    & set a title text for the manual.\\
+                           & Default: ``Reference Manual''.\\
+    {\tt -author <text>}   & set an author address (email) for the manual. \\
+                           & Default: ``The \cgal\ Project''. \\
+    {\tt -config <dir>} & path to the configuration files.\\
+    {\tt -tmp <dir>}    & temporary directory to keep all intermediate files.\\
+    {\tt -header <dir>} & set the path where the C headers are.\\
+    {\tt -o <dir>}    & output directory for the generated {\tt HTML} manual.\\
+    {\tt -aux <file>} & \LaTeX\ auxiliary file with the
+                                \verb+\bibcite+ entries.\\
+    {\tt -bbl <file>} & bibliography file produced by BiB\TeX.\\
+    {\tt -sty <style>} & use style file.\\
+    {\tt -quiet}      & no output, no warnings for unknown macros.\\
+    {\tt -macrodef}   & Print trace messages for macro definitions.\\
+    {\tt -macroexp}   & Print trace messages for macro expansions.\\
+    {\tt -h, -help}   & A short usage message and a summary of the options.
+\end{tabular}
+
+\TTindex{TMP}\TTindex{TEMP}\index{environment variable} 
+
+The default settings of the internal variables can be viewed with {\tt
+  -defaults}. The result of other options is also shown when applied
+to the left of {\tt -defaults}. The option {\tt -show\_main} is
+already explained above.
+
+A moderate kind of customization is possible with the four options
+{\tt -date, -release, -title,} and {\tt -author}. The manual creation
+date, its release number, the manual title, and the authors address or
+email might decorate each page, depending on the page layout.
+Internal variables are set to the value of the second parameter of
+these command line options.  The header and footer files (see below)
+make use of these variables.
+
+The default output directory is the current directory.  The default
+temporary directory is taken from the environenment variables {\tt
+  TMP} or {\tt TEMP}. If these are empty, {\tt /usr/tmp} is tried. If
+not available, the local directory is chosen. In all cases, a
+subdirectory {\tt extract\_html\_tmp\_\$}\{{\tt USER}\} is created within
+the temporary directory.  It keeps all intermediate files. It will be
+removed after the conversion.  The standard layout of the {\tt HTML}
+pages can be costumized with own header and footer files. The default
+files are provided in a the directory that one might change with the
+option {\tt -config}.
+
+The \verb+\ccInclude+ macro from Section~\ref{sectionStructureMacros}
+is made to a hyperlink referencing the original header files. The path
+to the C header files is predefined in the conversion script and
+can be changed with the {\tt -header} option.\index{include directory}
+
+\TTindex{DEBUG}\index{environment variable}
+In addition to the command line options another debug technique is
+implemented in the {\tt csh}-script. Whenever the environment variable
+DEBUG is set, the script echos each command executed. The file remove
+commands are echoed with a \# in front that denotes that the temporary
+files are not removed in DEBUG mode. One can examine them later on.
+
+
+% -------------------------------------------------------
+\subsection{Configuration Files and Variable Substitution}
+
+\index{variables}\index{customization, HTML}
+The distributed default files for the configuration are the recommended
+start point for further customizations. These are \path|cc_toc_header|,
+\path|cc_toc_footer|, \path|cc_index_header|, \path|cc_index_footer|, 
+\path|cc_manual_header|, \path|cc_manual_footer|, \path|cc_biblio_header|,
+and \path|cc_biblio_footer|.  A variable substitution scheme makes the
+internal variables available in the header and footer files. Variables
+start with an `\%' character and are identified with one more
+character. A speciality are regions between parentheses right behind a
+variable. The variable is not printed, but the region is removed from
+the document if the specified variable is empty, for example if no
+release number is given. The parentheses might be nested. The list of
+variables: 
+
+\begin{tabular}{ll}
+    {\tt\%0}  &  the program name itself (cc\_manual\_to\_html) \\
+    {\tt\%p}  &  the release number of the program. \\
+    {\tt\%f}  &  current {\tt HTML} output file name. \\
+    {\tt\%c}  &  full class name, including template parameters (if any). \\
+    {\tt\%u}  &  file name of the {\tt HTML} file of the chapter wherein a
+    class defining envi- \\ & ronment is used (and is responsible for the
+    {\tt HTML} file we are in at the\\ &  moment). This filename is empty
+    in all other situations. It is used \\ & to build an uplink from a
+    class definition back to its chapter file. \\
+    {\tt\%d}  &  a creation date for the manual.\\
+    {\tt\%r}  &  a release number for the manual.\\
+    {\tt\%t}  &  a manual title. \\
+    {\tt\%a}  &  an author address or email.\\
+    {\tt\%\%}  &  escape sequences for {\tt\%}.\\
+    {\tt\%}\{{\tt , \%}\}  &  escape sequences for \{ or \}.
+\end{tabular}
+
+The variables which might be empty are {\tt\%c, \%u, \%d, \%r, \%t},
+and {\tt\%a}.  An example for a region between parentheses is {\tt
+  \%r}\{{\tt \%r<BR>}\}. It formats the release number in its own line.
+Whenever the relase number is empty the superfluous line break
+is omitted.
+
+% -------------------------------------------------------
+\subsection{The Conversion Capabilities}
+
+A note on the formatting quality. These conversion tools repeat the
+formatting task that the {\tt cc\_manual.sty} does in \LaTeX. They
+will not be as accurate nor flexible than the \LaTeX\ partner. A
+couple of customizations will not work here, for example the column
+widths are not fixed or parameterized, but dependant on the browser.
+However, these tools convert a lot, including itimize lists,
+enumerations, tables, arrays, fractions, \ldots.  If this is not
+enough, Section~\ref{sectionHTMLsupport} explains the macros to format
+certain passages directly in {\tt HTML}.
+
+\index{three-column layout} In the case of formatting own pieces in
+the three- or two-column layout it is recommended to copy an example
+from the output of the {\tt cc\_extract\_html} program rather than
+from the {\tt cc\_manual\_to\_html} script, since the script does
+certain optimizations in the table layout. Most notable, each
+declaration is formatted as its own table, and the script glues
+adjacent tables with equal column number together. To accomplish this,
+each declaration table starts with {\tt <!3><TABLE\ldots} or {\tt
+  <!2><TABLE\ldots}, and ends with {\tt\ldots </TABLE><!3>} or
+{\tt\ldots </TABLE><!2>}. The glueing works only for matching {\tt
+  <!3>} or {\tt <!2>} pairs and if nothing than whitespaces separates
+them.
+
+\Mindex{kill}
+The {\tt tabular} and {\tt tabbing} environments are converted to
+standard {\tt HTML} tables. Most likely, the conversion fails to
+produce an appealing layout for non-regular {\tt tabbing}
+environments. If it is quite regular but only the first table defining
+line uses the \verb+\kill+ possebility of \LaTeX, this line can
+removed from the conversion with the \verb+\ccTexHtml{}{}+ macro from
+Section~\ref{sectionHTMLsupport}. The {\tt ccTexOnly} environment will
+not work in this case.\index{tabbing environment}\index{tabular environment}
+
+Footnotes are managed. They are printed at the end of each file and
+referenced with hyperlinks.\index{footnotes}
+
+The latest (yet still experimental) feature is the capability to
+expand macros.  This should work for simple user definitions with
+\verb+\newcommand+ or \verb+\def+ definitions. The \verb+\RCSdef+ and
+\verb+\RCSdefDate+ macros are also recognized. The command line
+options \verb+-warn+ and \verb+-macro+ provides help for debugging in
+these cases. 
+\index{macro expansion}\Mindex{newcommand}\Mindex{def}
+\Mindex{RCSdef}\Mindex{RCSdefDate}
+
+
+% -------------------------------------------------------
+\subsection{Converting a Manual Using Multiple Directories}
+\label{sectionHtmlExtended}
+
+\index{subdirectories}\index{multiple directories}
+The restriction to keep all files in one directory is weakened with
+the new capabilities of the {\tt cc\_manual\_to\_html} script. Use
+the {\tt -extended} option to activate it. However, the actual
+converter {\tt cc\_extract\_html} has not changed and does not support
+subdirectories. This includes that \verb+\input+ and \verb+\include+
+macros still must not contain paths.
+
+The file layout proposed here works as follows. The manual is split up
+into different parts, each part in its own subdirectory. Each part
+could be converted for its own using the old conversion mode (e.g.~no
+additional subdirectories). Each part has its own main \LaTeX\ file
+that includes all other files of this part. However, no paths are
+allowed in these include statements. It might be necessary to have a
+separate main file to \LaTeX\ the manual. The {\tt
+  cc\_manual\_to\_html} script is now called in the common parent
+directory with all main files from all parts at once. The main files
+are given with their relative path. The bibliography files must be
+supplied to the skript using the {\tt -bbl} and {\tt -aux} options
+(instead of giving the {\tt *.bbl} file directly as a \LaTeX\ file).
+The script converts each part independantly and generates the
+automatic hyperlinks locally. It then collects the table of contents,
+index files, and hyperlinking rules globally and applies the
+hyperlinking rules once again on all files. This way, local classes
+gets hyperlinked within their part without naming conflicts with other
+parts and more global classes will nevertheless be referenced from
+other parts. The conversion script will issue lots of warnings for
+duplicated hyperlinking rules for classes that exists in multiple
+parts, but this does not matter, since the locally achieved links will
+not be changed any more, so they are stable during the global
+processing.
+
+The result of the conversion will be a duplicated subdirectory
+structure in the output directory, where each part is again in its own
+subdirectory, and the table of contents, index, and bibliography are
+located directly in the output directory (with some other auxiliary files).
+
+\index{example}
+In the source code distribution is an example manual with three parts
+in the directory {\tt Tools/src/test\_html/} which can be converted
+with the script {\tt convert} in the same directory. This script calls
+the {\tt cc\_manual\_to\_html} converter with the appropriate
+parameters for the exampel.
+
+% ----------------------------------------------------------------------
+\section{Unsupported Features}
+
+\verb+list+
+\verb+trivlist+
+\verb+verbatim*+
+\verb+theindex+
+\verb++
+
+\verb+\filecontents+
+\verb+\listfiles+
+\verb+\addcontentsline+
+\verb+\addtocontents+
+\verb+\verb*+
+\verb+\underline+
+\verb+\overline+
+\verb+\widehat+
+\verb+\widetilde+
+\verb+\imath+
+\verb+\jmath+
+\verb+\stackrel+
+\verb+\ifthenelse+
+\verb+\whiledo+
+\verb+\kill+
+\verb+\pushtabs+
+\verb+\poptabs+
+\verb+\printindex+
+\verb+\subitem+
+\verb+\subsubitem+
+\verb+\newlength+
+\verb+\setlength+
+\verb+\addtolength+
+\verb+\settowidth+
+\verb+\settoheight+
+\verb+\settodepth+
+\verb+\rule+
+\verb+\raisebox+
+\verb+\centering+
+\verb+\raggedright+
+\verb+\raggedleft+
+
+flushrigth and tabular args restricted
+
+Graphics
+
+Color
+
+% =====================================================
+\newpage
+\bibliographystyle{plain}
+%\bibliography{kettner}
+\bibliography{manual}
+
+\small
+\printindex
+
+\end{document}
+
