@@ -1394,16 +1394,32 @@ add_bogus_vertex(Edge e, List& l)
   return v;
 }
 
+#define USE_VECTOR 0
+#define USE_SET    1
+
 template< class Gt, class PContainer, class Svdds >
 typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_list
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 add_bogus_vertices(List& l)
 {
   Vertex_list vertex_list;
-  Edge_vector edge_list;
+
+#define MK_STATIC static
+  //#define MK_STATIC ;
+
+#if USE_VECTOR
+  MK_STATIC Edge_vector edge_list;
+#elif USE_SET
+  MK_STATIC std::set<Edge> edge_list;
+#else
+  MK_STATIC std::map<Edge,bool> edge_list;
+#endif
+
+  edge_list.clear();
 
   Edge e_start = l.front();
   Edge e = e_start;
+#if USE_VECTOR
   do {
     Edge esym = sym_edge(e);
     if ( l.is_in_list(esym) ) {
@@ -1421,9 +1437,35 @@ add_bogus_vertices(List& l)
   } while ( e != e_start );
 
   typename Edge_vector::iterator it;
+#else
+  do {
+    Edge esym = sym_edge(e);
+    if ( l.is_in_list(esym) &&
+	 edge_list.find(esym) == edge_list.end() ) {
+#  if USE_SET
+      edge_list.insert(e);
+#  else
+      edge_list[e] = true;
+#  endif
+    }
+    e = l.next(e);
+  } while ( e != e_start );
+
+#  if USE_SET
+  typename std::set<Edge>::iterator it;
+#  else
+  typename std::map<Edge,bool>::iterator it;
+#  endif
+#endif
 
   for (it = edge_list.begin();  it != edge_list.end(); ++it) {
+#if USE_VECTOR
     e = *it;
+#elif USE_SET
+    e = *it;
+#else
+    e = it->first;
+#endif
     Vertex_handle v = add_bogus_vertex(e, l);
     vertex_list.push_back(v);
   }
