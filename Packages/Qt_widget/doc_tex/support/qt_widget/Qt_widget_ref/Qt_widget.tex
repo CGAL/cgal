@@ -16,10 +16,10 @@
 
 \ccDefinition
 
-The widget Qt\_Widget is a class that is designed to help \cgal\ users easily 
-visualize \cgal\ objects and for advanced users to interact with them. This 
-widget is designed only for 2D \cgal\ objects.
-
+An object of type Qt\_widget is a two-dimensional window for graphical IO. It 
+is a class that is designed to help \cgal\ users easily visualize \cgal\ 
+objects and for advanced users to interact with them. This widget is designed 
+only for 2D \cgal\ objects.
 
 
 \ccInclude{CGAL/Qt_widget.h}
@@ -39,7 +39,7 @@ widget is designed only for 2D \cgal\ objects.
 \ccMethod{void set_window(double x_min, double x_max, double y_min, double 
 y_max);}{Map the widget coordinates to the interval defined by the rectangle 
 with given coordinates. This method should be called before \ccc{show()} from 
-QWidget.}
+\ccStyle{QWidget}.}
 \ccMethod{void set_x_scale(double xscale);}{Set the current X scale.}
 \ccMethod{void set_y_scale(double yscale);}{Set the current Y scale.}
 \ccMethod{void zoom_in(double ratio);}{Multiply X and Y scales by \ccc{ratio}.}
@@ -71,8 +71,8 @@ to be c.}
 widget to be c.}
 \ccMethod{void setFilled(bool f);}{Set the status of the widget to true or false
  concerning filling the objects: polygons, circles, rectangles \ldots}
-\ccMethod{void setLineWidth(uint i);}{Set the current line width of the widget.}
-\ccMethod{void setPointSize(uint i);}{Set the current point size of the widget.}
+\ccMethod{void setLineWidth(unsigned int i);}{Set the current line width of the widget.}
+\ccMethod{void setPointSize(unsigned int i);}{Set the current point size of the widget.}
 \ccMethod{void setPointStyle(PointStyle s);}{Set the current point style of the
  widget to s. PointStyle is a enumeration declared in Qt\_widget.}
 \ccMethod{void setRasterOp(RasterOp r);}{Set the current raster operation.}
@@ -85,6 +85,12 @@ The last added will be on top of the screen.}
 \ccMethod{void redraw();}{Redraw the scenes situated in the list. Before 
 redraw the scenes clears the screen. Also calls \ccc{widget\_repainted()} for 
 current tool.}
+
+%Cgal
+\ccMethod{void new_object(CGAL::Object obj);}{This function should be called 
+by the tools that create \cgal\ objects. This function emit the signal 
+new\_cgal\_object(CGAL::Object). The user should catch this signal through a 
+connect, like described further down.}
 
 \ccAccessFunctions
 %Properties
@@ -133,13 +139,6 @@ We could imagine a typical scenario to use Qt\_widget, like the example shown
 bellow:
 \begin{ccExampleCode}
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Line_2.h>
-#include <CGAL/Ray_2.h>
-#include <CGAL/Circle_2.h>
-#include <CGAL/Triangle_2.h>
-#include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Polygon_2.h>
 

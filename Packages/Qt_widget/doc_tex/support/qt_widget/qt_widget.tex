@@ -23,19 +23,9 @@
 \ccChapterRelease{\qtwidgetRev. \ \qtwidgetDate}\\
 \ccChapterAuthor{Radu Ursu}
 
-You can visualize \cgal\ objects using all kind of viewers, that knows how to
- paint geometry primitives like points, lines, circles, polygons. For this
-kind of viewers, your code has to convert the primitives from \cgal\ to each 
-viewer style of dealing with this primitives. There was a lot of work to 
-create a generic way to use \cgal\ with \leda. As \leda\ became a commercial 
-product, \cgal\ had to move to other product, to satisfy his academic 
-comunity.
-
-\qt\ GUI development toolkit\footnote{http://www.trolltech.com} is used to 
-develop cross-platform applications that will run on Windows, Linux, Unix, 
-Macintosh. As \qt\ is a powerfull product and has multiplatform support, 
-\cgal\ invested some resurces to create a 2D--visualization tool able to 
-deal directly with \cgal\ objects.
+\qt\ is a GUI development toolkit\footnote{http://www.trolltech.com} that 
+allows to develop cross-platform applications. In this chapter we describe a 
+widget that allows to visualize CGAL objects.
 
 % +-----------------------------------------------------+
 \section{Introduction}
@@ -43,7 +33,7 @@ deal directly with \cgal\ objects.
 
 The QWidget class is the base class of all user interface objects. The widget
  is the atom of the user interface: It receives mouse, keyboard and other 
-events from the window system, and paints a reprezentation of itself on the 
+events from the window system, and paints a representation of itself on the 
 screen. Every widget is rectangular, and they are sorted in a Z-order. A 
 widget is clipped by its parent and by the widgets in front of it.
 
@@ -63,17 +53,16 @@ different scales. Also there is a possibility to tell the widget that you
 want that the visible area should be mapped to a certain interval, and the 
 widget adjust the scales according to that.
 
-The main goal of Qt\_widget was to create the possibility to output \cgal\ 
-objects. There are operators defined for outputing : points, segments, 
-rays, circles, triangles, polygons, and all type of triangulations. Also some
-operators are defined to set Qt\_widget's properties, like BackgroundColor,
-FillColor, LineWidth, PointSize.
+The Qt\_widget provides output operators for all \cgal\ objects. There are 
+operators defined for outputing : points, segments, rays, circles, triangles, 
+polygons, and all type of triangulations. Also some operators are defined to 
+set Qt\_widget's properties, like BackgroundColor, FillColor, LineWidth, 
+PointSize.
 
-As the main goal of Qt\_widget was fulfiled, it was a challange to create some
-generic mechanism for providing input. Now there is a concept of tool, and
- also some tools are already implemented, for input points, segments, line, 
-polygons, simple polygons. Also you can use this concept to define some 
-specialised tools that let you edit your already defined \cgal\ objects.
+For handling input we adopted the event driven design of Qt. Now there is a 
+concept of tool, and also some tools are already implemented, for input points,
+ segments, line, polygons, simple polygons. Also you can use this concept to 
+define some specialised tools that let you edit your already defined \cgal\ objects.
 
 On top of Qt\_widget it is defined a concept of View 
 

@@ -36,11 +36,6 @@ public:
 
   Qt_widget_tool();
 
-  // attach a Qt_widget to the tool
-  void attach(Qt_widget *w);
-  // detach it
-  void detach();
-
   inline bool is_attached() const
   { return (widget==0); };
 
@@ -56,7 +51,6 @@ public:
   virtual void leaveEvent(QEvent *) {};
 
 signals:
-  void new_object(CGAL::Object);
   void redraw();    //this signal is emited when the tool needs to repaint the widget
 
 public slots:
@@ -68,6 +62,12 @@ protected:
 
   Qt_widget *widget;
   QCursor   oldcursor;
+private:
+  // attach a Qt_widget to the tool
+  void attach(Qt_widget *w);
+  // detach it
+  void detach();
+  friend class Qt_widget;
 };
 
 } // namespace CGAL

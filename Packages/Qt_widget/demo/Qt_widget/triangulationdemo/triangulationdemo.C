@@ -21,7 +21,6 @@ int main(int, char*)
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/point_generators_2.h>
@@ -127,9 +126,6 @@ public:
   this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
   this->addToolBar(vtoolbar->toolbar(), Top, FALSE);
   
-
-
-
   win << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
 
   resize(w,h);

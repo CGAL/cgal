@@ -278,10 +278,10 @@ CGAL_QTWIDGET_MANIP( Color, BackgroundColor )
 CGAL_QTWIDGET_MANIP( Color, FillColor )
 
 // w << LineWidth(i) << ... sets lines width
-CGAL_QTWIDGET_MANIP( uint, LineWidth )
+CGAL_QTWIDGET_MANIP( unsigned int, LineWidth )
 
 // w << PointSize(i) << ... sets points size
-CGAL_QTWIDGET_MANIP( uint, PointSize )
+CGAL_QTWIDGET_MANIP( unsigned int, PointSize )
 
 // color types convertors
 // ~~~~~~~~~~~~~~~~~~~~~~
@@ -366,7 +366,7 @@ uint Qt_widget::lineWidth() const
 }
 
 inline
-void Qt_widget::setLineWidth(uint i)
+void Qt_widget::setLineWidth(unsigned int i)
 {
   QPen p=painter().pen();
   p.setWidth(i);
@@ -380,7 +380,7 @@ uint Qt_widget::pointSize() const
 }
 
 inline
-void Qt_widget::setPointSize(uint i)
+void Qt_widget::setPointSize(unsigned int i)
 {
   _pointSize=i;
 }

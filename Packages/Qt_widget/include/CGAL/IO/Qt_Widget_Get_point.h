@@ -35,8 +35,8 @@ class Qt_widget_get_point : public Qt_widget_tool
 {
   //  Q_OBJECT
 public:
-  typedef typename R::Point_2			Point;
-  typedef typename R::FT					FT;
+  typedef typename R::Point_2	Point;
+  typedef typename R::FT	FT;
   
   Qt_widget_get_point(const QCursor c=QCursor(Qt::crossCursor)) :
     cursor(c) {};
@@ -46,11 +46,10 @@ private:
   {
     if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON)
     {
-			FT
-				x=static_cast<FT>(widget->x_real(e->x())),
-				y=static_cast<FT>(widget->y_real(e->y()));
-				widget->new_object(make_object(Point(x, y)));
-				//emit new_object(make_object(Point(x,y)));
+      FT
+	x=static_cast<FT>(widget->x_real(e->x())),
+	y=static_cast<FT>(widget->y_real(e->y()));
+      widget->new_object(make_object(Point(x, y)));
     }
   };
   void attaching()
@@ -64,7 +63,6 @@ private:
     widget->setCursor(oldcursor);
   };
 
-  
   QCursor cursor;
 };
 

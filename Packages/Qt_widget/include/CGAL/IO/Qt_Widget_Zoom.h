@@ -33,9 +33,9 @@ class Qt_widget_zoom : public Qt_widget_tool
 {
   //  Q_OBJECT
 private:
-	int									    x2, y2;
-	bool circle_already_drawn;
-	bool oldMouseTracking;
+  int	x2, y2;
+  bool	circle_already_drawn;
+  bool	old_mouse_tracking;
 
 public:
   Qt_widget_zoom() : circle_already_drawn(false) {};
@@ -103,7 +103,7 @@ public:
 
   void attaching()
   {
-    oldMouseTracking=widget->hasMouseTracking();
+    old_mouse_tracking=widget->hasMouseTracking();
     widget->setMouseTracking(TRUE);
     oldcursor = widget->cursor();
     widget->setCursor(crossCursor);
@@ -115,7 +115,7 @@ public:
     if(circle_already_drawn)
       draw_circle(x2,y2); // erase the circle if needed
     widget->setCursor(oldcursor);
-    widget->setMouseTracking(oldMouseTracking);
+    widget->setMouseTracking(old_mouse_tracking);
   };
 };//end class 
 

@@ -14,13 +14,6 @@ int main(int, char*)
 #else
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Line_2.h>
-#include <CGAL/Ray_2.h>
-#include <CGAL/Circle_2.h>
-#include <CGAL/Triangle_2.h>
-#include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Bbox_2.h>
 #include <list>
 #include <CGAL/Polygon_2.h>
@@ -50,6 +43,7 @@ int main( int argc, char **argv )
     W.show();
     //painting something on the screen
     W.lock();
+    
     W << BackgroundColor(ORANGE) << RED <<
 	  LineWidth(3) << PointSize(3) << PointStyle(DISC);
     W << Segment(Point(10,20),Point(300,400));
@@ -75,7 +69,6 @@ int main( int argc, char **argv )
     W << p;
     W << Ray(Point(200,400), Point(180,430))
       << Ray(Point(200,400), Point(180,370));
-    
     W.unlock();
 
     return app.exec();

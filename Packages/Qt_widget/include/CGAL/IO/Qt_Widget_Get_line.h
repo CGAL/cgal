@@ -103,7 +103,7 @@ private:
 		widget->setCursor(crossCursor);
 	};
 
-	void detaching()
+  void detaching()
 	{
 		widget->setCursor(oldcursor);
 	};
