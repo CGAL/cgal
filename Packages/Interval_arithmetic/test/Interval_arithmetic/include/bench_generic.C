@@ -76,8 +76,8 @@ void bench()
   BENCH_MACRO_generic(c = 1, c += b; c -= b, "+= -=");
   BENCH_MACRO_generic(c = 1, c *= b; c /= b, "*= /=");
 
-  BENCH_MACRO_generic(EMPTY, c = sqrt(b), "sqrt");
-  BENCH_MACRO_generic(EMPTY, c = square(b), "square");
+  BENCH_MACRO_generic(EMPTY, c = CGAL::sqrt(b), "sqrt");
+  BENCH_MACRO_generic(EMPTY, c = CGAL::square(b), "square");
   BENCH_MACRO_generic(EMPTY, c = c * dd, "ia*d");
   BENCH_MACRO_generic(EMPTY, c = dd * c, "d*ia");
   BENCH_MACRO_generic(EMPTY, c = c + dd, "ia+d");
@@ -93,7 +93,7 @@ void bench()
   CGAL::Orientation o;
   dt = t.time(); t.start();
   for (i=0; i<loops; i++)
-    o = orientationC2(a,b,c,d,e,f);
+    o = CGAL::orientationC2(a,b,c,d,e,f);
   t.stop();
   std::cout << (int)o << "\tori2\t" << t.time()-dt << std::endl;
 #endif
@@ -117,8 +117,8 @@ int main()
   bench();
 
   IA_nt a=1, b=2;
-  (int) sign(a);
-  (int) compare(a,b);
+  (int) CGAL::sign(a);
+  (int) CGAL::compare(a,b);
 
 #ifdef ADVANCED
   CGAL::FPU_set_cw(backup);

@@ -28,11 +28,11 @@ bool spiral_test()
 
   while (++i < 500)
   {
-    x_ip1 = x_i - y_i/sqrt(IA_nt(i));
-    y_ip1 = y_i + x_i/sqrt(IA_nt(i));
+    x_ip1 = x_i - y_i/CGAL::sqrt(IA_nt(i));
+    y_ip1 = y_i + x_i/CGAL::sqrt(IA_nt(i));
     x_i = x_ip1;
     y_i = y_ip1;
-    length = square(x_i) + square(y_i);
+    length = CGAL::square(x_i) + CGAL::square(y_i);
     DEBUG(std::cout<<i<<": (" << x_i << " , " << y_i << ") : " << length << "\n";)
     if ( x_i.overlap(0) || y_i.overlap(0) )
       break;
@@ -52,7 +52,7 @@ bool square_root_test()
 
   while (++i < 500)
   {
-    IA_nt b = sqrt(a);
+    IA_nt b = CGAL::sqrt(a);
     DEBUG( std::cout << a-1 << std::endl; )
     if ( b.is_same(a) )
       break;
@@ -121,7 +121,7 @@ bool underflow_test()
 
   for (i=0; i<20; i++) a *= a;
   for (i=0; i<20; i++) b = b * b;
-  for (i=0; i<20; i++) c = square(c);
+  for (i=0; i<20; i++) c = CGAL::square(c);
 
   return a.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE))
       && b.is_same(CGAL_IA_SMALLEST)
@@ -191,41 +191,44 @@ bool utility_test()
   const IA_nt a(-1,1), b(-1,0), c(0,0), d(0,1), e(1,2), f(-2,-1), g(1);
   IA_nt h = 1/c;
 
-  tmpflag = (sign(c) == CGAL::ZERO) &&
-            (sign(e) == CGAL::POSITIVE) &&
-            (sign(f) == CGAL::NEGATIVE) ;
+  tmpflag = (CGAL::sign(c) == CGAL::ZERO) &&
+            (CGAL::sign(e) == CGAL::POSITIVE) &&
+            (CGAL::sign(f) == CGAL::NEGATIVE) ;
   DEBUG( std::cout << "Sign test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = abs(a).is_same(IA_nt(0,1)) && abs(b).is_same(IA_nt(0,1)) &&
-            abs(c).is_same(IA_nt(0,0)) && abs(d).is_same(IA_nt(0,1)) &&
-            abs(e).is_same(IA_nt(1,2)) && abs(f).is_same(IA_nt(1,2)) &&
-            abs(g).is_same(g) ;
+  tmpflag = CGAL::abs(a).is_same(IA_nt(0,1)) &&
+            CGAL::abs(b).is_same(IA_nt(0,1)) &&
+            CGAL::abs(c).is_same(IA_nt(0,0)) &&
+	    CGAL::abs(d).is_same(IA_nt(0,1)) &&
+            CGAL::abs(e).is_same(IA_nt(1,2)) &&
+	    CGAL::abs(f).is_same(IA_nt(1,2)) &&
+            CGAL::abs(g).is_same(g) ;
   DEBUG( std::cout << "abs test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = is_valid(a) && is_valid(h);
+  tmpflag = CGAL::is_valid(a) && CGAL::is_valid(h);
   DEBUG( std::cout << "is_valid test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = is_finite(a) && !is_finite(h);
+  tmpflag = CGAL::is_finite(a) && !CGAL::is_finite(h);
   DEBUG( std::cout << "is_finite test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = max(a,d).is_same(IA_nt(0,1));
+  tmpflag = CGAL::max(a,d).is_same(IA_nt(0,1));
   DEBUG( std::cout << "max test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = min(a,b).is_same(IA_nt(-1,0));
+  tmpflag = CGAL::min(a,b).is_same(IA_nt(-1,0));
   DEBUG( std::cout << "max test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = sign(f) == CGAL::NEGATIVE;
+  tmpflag = CGAL::sign(f) == CGAL::NEGATIVE;
   DEBUG( std::cout << "sign test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = (compare(b,e) == CGAL::SMALLER)
-         && (compare(g,g) == CGAL::EQUAL);
+  tmpflag = (CGAL::compare(b,e) == CGAL::SMALLER)
+         && (CGAL::compare(g,g) == CGAL::EQUAL);
   DEBUG( std::cout << "compare test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
@@ -247,28 +250,28 @@ bool is_valid_test()
   const IA_nt a(nan, nan), b(0,nan), c(nan, 0), d(1,0);
   const IA_nt e(0,1), f(0,0);
 
-  tmpflag = is_valid(a);
+  tmpflag = CGAL::is_valid(a);
   DEBUG( std::cout << std::endl; )
   DEBUG( std::cout << "is_valid( " << a << " ) = " << tmpflag << std::endl; )
   flag = flag && !tmpflag;
 
-  tmpflag = is_valid(b);
+  tmpflag = CGAL::is_valid(b);
   DEBUG( std::cout << "is_valid( " << b << " ) = " << tmpflag << std::endl; )
   flag = flag && !tmpflag;
 
-  tmpflag = is_valid(c);
+  tmpflag = CGAL::is_valid(c);
   DEBUG( std::cout << "is_valid( " << c << " ) = " << tmpflag << std::endl; )
   flag = flag && !tmpflag;
 
-  tmpflag = is_valid(d);
+  tmpflag = CGAL::is_valid(d);
   DEBUG( std::cout << "is_valid( " << d << " ) = " << tmpflag << std::endl; )
   flag = flag && !tmpflag;
 
-  tmpflag = is_valid(e);
+  tmpflag = CGAL::is_valid(e);
   DEBUG( std::cout << "is_valid( " << e << " ) = " << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = is_valid(f);
+  tmpflag = CGAL::is_valid(f);
   DEBUG( std::cout << "is_valid( " << f << " ) = " << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
@@ -286,28 +289,28 @@ bool is_finite_test()
   const IA_nt a(inf, inf), b(-inf,inf), c(-inf, 0), d(0,inf);
   const IA_nt e(0,1), f(0,0);
 
-  tmpflag = is_finite(a);
+  tmpflag = CGAL::is_finite(a);
   DEBUG( std::cout << std::endl; )
   DEBUG( std::cout << "is_finite( " << a << " ) = " << tmpflag << std::endl; )
   flag = flag && !tmpflag;
 
-  tmpflag = is_finite(b);
+  tmpflag = CGAL::is_finite(b);
   DEBUG( std::cout << "is_finite( " << b << " ) = " << tmpflag << std::endl; )
   flag = flag && !tmpflag;
 
-  tmpflag = is_finite(c);
+  tmpflag = CGAL::is_finite(c);
   DEBUG( std::cout << "is_finite( " << c << " ) = " << tmpflag << std::endl; )
   flag = flag && !tmpflag;
 
-  tmpflag = is_finite(d);
+  tmpflag = CGAL::is_finite(d);
   DEBUG( std::cout << "is_finite( " << d << " ) = " << tmpflag << std::endl; )
   flag = flag && !tmpflag;
 
-  tmpflag = is_finite(e);
+  tmpflag = CGAL::is_finite(e);
   DEBUG( std::cout << "is_finite( " << e << " ) = " << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = is_finite(f);
+  tmpflag = CGAL::is_finite(f);
   DEBUG( std::cout << "is_finite( " << f << " ) = " << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
