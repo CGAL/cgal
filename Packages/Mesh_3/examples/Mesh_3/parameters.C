@@ -2,7 +2,7 @@
 
 const int number_of_initial_points = 50;
 
-const double curvature_bound = 0.001;
+const double curvature_bound = 0.01;
 
 // bound on squared radius of surface Delaunay balls
 const double size_bound =  0.5;

@@ -66,10 +66,6 @@ namespace CGAL {
 
       void pop_next_element_impl()
       {
-#if CGAL_MESH_3_DEBUG_DOUBLE_MAP
-	std::cerr << "pop_front(" << &*(m.front()->second) << ")\n";
-#endif
-        m.pop_front();
       }
 
       void remove_element(Element& e)

@@ -64,25 +64,6 @@ struct Triangulation_mesher_level_traits_3 :
     Facets internal_facets;
   };
 
-  Zone conflicts_zone_impl(const Point& p) const
-  {
-    Zone zone;
-
-    zone.cell = triangulation_ref_impl().locate(p,
-						zone.locate_type,
-						zone.i,
-						zone.j);
-
-    if( zone.locate_type == Tr::VERTEX ) return zone;
-
-    triangulation_ref_impl().
-      find_conflicts(p, zone.cell,
-                     std::back_inserter(zone.boundary_facets),
-                     std::back_inserter(zone.cells),
-                     std::back_inserter(zone.internal_facets));
-    return zone;
-  }
-
   Vertex_handle insert_impl(const Point& p, Zone& zone)
   {
     if( zone.locate_type == Tr::VERTEX 

@@ -1,3 +1,8 @@
+24 March 2005 Laurent Rineau
+- new requirements for Mesher_level
+- the bug of Refine_tets.h has been crunched!
+- less verbose debugging outputs
+
 8 February 2005 Laurent Rineau
 - new changes.txt file
 - removed files that are in Mesh_2 and Mesh_3:

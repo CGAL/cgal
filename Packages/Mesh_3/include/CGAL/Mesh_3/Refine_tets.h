@@ -181,33 +181,33 @@ public:
 
 public:
   /* \name Overriden functions of this level */
-  void before_insertion_impl(const Cell_handle& c, const Point& point,
+ Zone conflicts_zone_impl(const Point& p, Cell_handle c) const
+  {
+    Zone zone;
+
+    zone.cell = c;
+    zone.locate_type = Tr::CELL;
+
+    triangulation_ref_impl().
+      find_conflicts(p, zone.cell,
+                     std::back_inserter(zone.boundary_facets),
+                     std::back_inserter(zone.cells),
+                     std::back_inserter(zone.internal_facets));
+    return zone;
+  }
+
+  void before_insertion_impl(const Cell_handle& c, const Point& ,
 			     Zone& zone)
   {
-	const Point& p = c->vertex(0)->point();
-	const Point& q = c->vertex(1)->point();
-	const Point& r = c->vertex(2)->point();
-	const Point& s = c->vertex(3)->point();
-
-	std::cout << "Point(" << point 
-		  << "), radius=" << squared_radius(p,q,r,s) << "\n";
-
     remove_star_from_bad_cells(c, zone); // FIXME: name
   }
 
-  void remove_star_from_bad_cells(const Cell_handle& c, Zone& zone)
+  void remove_star_from_bad_cells(const Cell_handle&, Zone& zone)
   {
-    std::cout << "(" << this->queue_size();
-    int i = 0;
     for(typename Zone::Cells_iterator cit = zone.cells.begin();
 	cit != zone.cells.end();
 	++cit)
-      if(*cit != c)
-	{
-	  i++;
 	  this->remove_element(*cit);
-	}
-    std::cout << "-" << i << "=" << this->queue_size() << ")\n";
   }
 
   void after_insertion_impl(const Vertex_handle& v)
@@ -233,16 +233,16 @@ public:
     for(Cell_iterator cit = incident_cells.begin();
         cit != incident_cells.end();
         ++cit)
-      {
-	const Point& p = (*cit)->vertex(0)->point();
-	const Point& q = (*cit)->vertex(1)->point();
-	const Point& r = (*cit)->vertex(2)->point();
-	const Point& s = (*cit)->vertex(3)->point();
+      if( ! triangulation_ref_impl().is_infinite(*cit) )
+	{
+	  const Point& p = (*cit)->vertex(0)->point();
+	  const Point& q = (*cit)->vertex(1)->point();
+	  const Point& r = (*cit)->vertex(2)->point();
+	  const Point& s = (*cit)->vertex(3)->point();
 
-	(*cit)->set_in_domain(oracle.surf_equation(circumcenter(p,q,r,s))<0.);
-
-	test_if_cell_is_bad(*cit);
-      }
+	  (*cit)->set_in_domain(oracle.surf_equation(circumcenter(p,q,r,s))<0.);
+	  test_if_cell_is_bad(*cit);
+	}
   }
 
 private:
@@ -276,7 +276,7 @@ private:
                             const Point&,
                             Zone& zone) 
       {
-        refine_tets->remove_star_from_bad_cells(Cell_handle(), zone); // FIXME: beurk
+        refine_tets->remove_star_from_bad_cells(Cell_handle(), zone); // FIXME: BEURK
       }
 
       void after_insertion(const Vertex_handle& v)
@@ -366,10 +366,10 @@ public:
     : Base(t, crit, oracle), Mesher(facets_level), f_level(facets_level)
   {}
 
-/** BEURKÂ \todo Put those functions into a visitor class. */
+/** BEURK \todo Put those functions into a visitor class. */
 void before_insertion_impl(const typename Base::Cell_handle& c,
-			      const typename Base::Point& p,
-			      typename Base::Zone& zone)
+			   const typename Base::Point& p,
+			   typename Base::Zone& zone)
 {
   f_level.before_insertion_impl(typename Tr::Facet (), p, zone);
   Base::before_insertion_impl(c, p, zone);
