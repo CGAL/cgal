@@ -19,6 +19,7 @@
 
 %% macro for g++
 \newcommand{\Gcc}[1]{\gnu~\texttt{g++}~{\rm #1}}
+\newcommand{\gccurl}{\path'http://gcc.gnu.org/'}
 
 %% macro for egcs
 \newcommand{\egcs}[1]{\texttt{Egcs}~{\rm #1}}
@@ -28,15 +29,23 @@
 
 %% macro for SGI CC
 \newcommand{\mipsprocc}{\textsc{SGI}~Mips(Pro)~\texttt{CC}}
+\newcommand{\mipsprourl}{\path'http://www.sgi.com/developers/devtools/languages/mipspro.html'}
 
 %% macro for Borland C++
 \newcommand{\bcc}[1]{\textsc{Borland}~\texttt{C++}~{\rm #1}}
+\newcommand{\bccurl}{\path'http://www.inprise.com/bcppbuilder/'}
 
 %% macro for Microsoft Visual C++
 \newcommand{\msvc}[1]{\textsc{MS}~Visual~\texttt{C++}~{\rm #1}}
+\newcommand{\msvcurl}{\path'http://msdn.microsoft.com/visualc/'}
 
 %% macro for Intel C++ Compiler
 \newcommand{\icl}[1]{\textsc{Intel}~\texttt{C++}~{\rm #1}}
+\newcommand{\iclurl}{\path'http://developer.intel.com/vtune/compilers/cpp/'}
+
+%% macro for Kai Compiler
+\newcommand{\kcc}[1]{\textsc{Kai}~\texttt{C++}~{\rm #1}}
+\newcommand{\kccurl}{\path'http://www.kai.com/C\_plus\_plus'}
 
 %% macro for Microsoft Windows
 \newcommand{\mswin}{\textsc{MS}~Windows}
@@ -115,27 +124,36 @@ systems:
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|} \hline
     \textbf{compiler}        & \textbf{operating system}\\\hline\hline
-    \mipsprocc\ 7.3 (n32)    & IRIX 6.5\\\hline
-    \Gcc{2.95} (and later)   & 
-      IRIX 6.5 / Solaris 2.6 / Linux 2.x / 
-      \mswin\ 95/98/NT4\footnotemark[7]\\\hline
-    \egcs{1.1.2} (and later) & 
-      IRIX 6.5 / Solaris 2.6 / Linux 2.x / 
-      \mswin\ 95/98/NT4\footnotemark[7]\\\hline
-    \msvc{6.0}               & \mswin\ 95/98/NT4\\\hline
+    \mipsprocc\ 7.3 (n32) \footnotemark[7] 
+    & IRIX 6.5\\\hline
+    \kcc{4} \footnotemark[8]                 
+    & Solaris 2.6+\\\hline
+    \Gcc{2.95} (and later) \footnotemark[9]            
+    & IRIX 6.5 / Solaris 2.6+ / Linux 2.x / 
+      \mswin\ 95/98/NT4\footnotemark[12]\\\hline
+    \egcs{1.1.2} (and later) \footnotemark[9]
+    & IRIX 6.5 / Solaris 2.6+ / Linux 2.x / 
+      \mswin\ 95/98/NT4\footnotemark[12]\\\hline
+    \msvc{6.0} \footnotemark[10]           
+    & \mswin\ 95/98/NT4\\\hline
+    \bcc{5.5} \footnotemark[11]                          
+    & \mswin\ 95/98/NT4\\\hline
   \end{tabular}
 \end{center}
-\footnotetext[7]{with Cygwin $\beta$20.1}
+\footnotetext[7]{\mipsprourl}\stepcounter{footnote}
+\footnotetext[8]{\kccurl}\stepcounter{footnote}
+\footnotetext[9]{\gccurl}\stepcounter{footnote}
+\footnotetext[10]{\msvcurl}\stepcounter{footnote}
+\footnotetext[11]{\bccurl}\stepcounter{footnote}
+\footnotetext[12]{with Cygwin}\stepcounter{footnote}
 
-There are plans to provide full support for \bcc{5.4} in the future,
-but there is no such support at the moment. \msvc{5.0} and prior is
-not supported and there are no plans to support it in future releases.
-The \sunprocc{4.2} compiler is not supported anymore, please stay with
-\cgal-1.2 if you have to use it.  \Gcc{2.8.1} is not supported
-anymore, please stay with \cgal-2.0 if you have to use it.  Support
-for \sunprocc{5} will be reconsidered as soon as an acceptable degree
-of standard-conformance is reached.  Support for \icl{4.0} will be
-considered.
+\msvc{5.0} and prior is not supported and there are no plans to
+support it in future releases.  The \sunprocc{4.2} compiler is not
+supported anymore, please stay with \cgal-1.2 if you have to use it.
+\Gcc{2.8.1} is not supported anymore, please stay with \cgal-2.0 if
+you have to use it.  Support for \sunprocc{} will be reconsidered as
+soon as an acceptable degree of standard-conformance is reached.
+Support for \icl{4.0} will be considered.
 
 \section{Getting \cgal} \label{sec:gettingcgal}
 \index{CGAL@\cgal!getting}\index{getting \cgal} 
@@ -1444,7 +1462,44 @@ a look at the \cgal\ homepage:
 \end{alltt}
 or send an email to \texttt{cgal@cs.uu.nl}.
 
-\subsection{The ``Long-Name-Problem'' (Solaris only)}
+\subsection{The ``Long-Name-Problem'' on Irix6}\label{sec:longnameirix}
+\index{problems with long names}\index{long name problem}
+
+The system assembler and linker on Irix6 cannot handle symbols with
+more than 4096 characters. But this number can be exceeded where one
+starts nesting templates into each other. So if you encounter strange
+assembler or linker errors like
+\begin{alltt}
+as: Error: /var/tmp/ccPBl5vJ.s, line 41289: Truncating token: 
+<some ridiculously long token snipped>
+\end{alltt}
+there is a good chance that you suffer from this ``long-name''
+problem.
+
+In contrast to Solaris, using the \gnu\ binutils does not work, since
+\texttt{gas} has not been ported to Irix6 yet. The solution proposed
+in the GCC
+faq\footnote{\path'http://gcc.gnu.org/cgi-bin/fom.cgi?file=41'} is to
+compile with the (experimental) option \texttt{-fsquangle}, that
+enables compression of symbol names. This option is experimental and
+likely to disappear in GCC3, but there the problem will hopefully be
+fixed by a new (standard) ABI.
+
+Citing from the above FAQ:
+
+\begin{alltt}
+Note that this option is still under development, and subject to
+change. Since it modifies the name mangling mechanism, you'll need to
+build libstdc++ and any other C++ libraries with this option enabled.
+Furthermore, if this option changes its behavior in the future, you'll
+have to rebuild them all again. :-(
+
+This option can be enabled by default by initializing
+`flag_do_squangling' with `1' in `gcc/cp/decl2.c' (it is not
+initialized by default), then rebuilding GCC and any C++ libraries.
+\end{alltt}
+
+\subsection{The ``Long-Name-Problem'' on Solaris}\label{sec:longnamesolaris}
 \index{problems with long names}\index{long name problem}
 
 The system assembler and linker on Solaris 2.5 and 2.6 cannot handle
