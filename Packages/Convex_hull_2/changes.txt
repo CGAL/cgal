@@ -1,3 +1,6 @@
+3.50 (17 Sep 2003) [rursu]
+- Changed example in the doc. Using ch_example_from_cin_to_cout.C from now on.
+
 3.49 (10 Sep 2003)
 - Qt_help_window class is in the namespace CGAL
 

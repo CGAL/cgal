@@ -56,18 +56,15 @@ simple polygonal chains (or polygons) is available through the function
 \ccc{ch_melkman}\ccIndexMainItem[C]{ch_melkman}.%
 \ccIndexSubitem{convex hull, 2D}{of polyline or polygon}
 
-\section{Example using Bykat's algorithm}
+\section{Example using GrahamAndrew's algorithm}
 
-In the following example a convex hull is constructed from point data read
-from standard input using Bykat's algorithm.  The resulting convex polygon
-is stored in a \ccc{CGAL::Polygon_2} and then it is shown in a \cgal\ window.
-The default traits class is used here.  The same results could be
-achieved by substituting the function \ccc{CGAL::ch_bykat} for
-\ccc{CGAL::convex_hull_2}, since the latter calls the former when the
-input points are specified using input interators.
+In the following example a convex hull is constructed from point data read 
+from standard input using \ccc{Graham_Andrew} algorithm. The resulting convex 
+polygon is shown at the standard ouput console. The same results could be 
+achieved by substituting the function \ccc{CGAL::ch_graham_andrew} by other 
+function like \ccc{CGAL::ch_bykat}.
 
-\ccIncludeExampleCode{Convex_hull_2/convex_hull_2.C}
-
+\ccIncludeExampleCode{../examples/Convex_hull_2/ch_example_from_cin_to_cout.C}
 
 
 \section{Extreme Points and Hull Subsequences}
