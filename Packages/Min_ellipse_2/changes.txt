@@ -1,5 +1,9 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.26 on 07-Sep-2003
+- demo use now the new help class Qt_help_window instead of HelpWindow [rursu]
+- demo use now the new demo icon demoicon
+
 Version 3.25 on 28-Jul-2003
 - fixed demo/Min_ellipse_2/makefile to work on FreeBSD[rursu]
 
