@@ -63,25 +63,25 @@
 % ABSTRACT
 % ------------------------------------------------------------------------
 \abstract{
-%% This document is a tutorial on how to get
-%% started with the halfedge data structure provided by CGAL, the
-%% Computational Geometry Algorithm Library. Assuming the reader to be
-%% familiar with the C++ template mechanisms and the key concepts of the
-%% STL (Standard Template Library), we describe three different
-%% approaches with increasing level of sophistication for implementing
-%% mesh subdivision schemes. The simplest approach uses simple Euler
-%% operators to implement the $\sqrt{3}$ subdivision scheme applicable to
-%% triangle meshes. A second approach overloads the incremental builder
-%% already provided by CGAL to implement the quad-triangle subdivision
-%% scheme applicable to polygon meshes. The third approach is generic and
-%% offers a convenient way to design its own subdivision scheme through
-%% the definition of rule templates. Catmull-Clark, Loop and Doo-Sabin
-%% schemes are illustrated using the latter approach. Two companion
-%% applications, one developed on Windows with MS .NET, MFC and OpenGL,
-%% and the other developed for both Linux and Windows with Qt and OpenGL,
-%% implement the subdivision schemes listed above, as well as several
-%% functionalities for interaction, visualization and raster/vectorial
-%% output.
+This document is a tutorial on how to get
+started with the polyhedron structure provided by CGAL, the
+Computational Geometry Algorithm Library. Assuming the reader to be
+familiar with the C++ template mechanisms and the key concepts of the
+STL (Standard Template Library), we first describe two different
+approaches for implementing mesh subdivision schemes. \emph{Euler
+operators} is applied for $\sqrt{3}$ subdivision and
+the \emph{modifier callback mechanism} is applied for   
+the Quad-Triangle subdivision. Both approaches are based on the
+build-in functionalities of the CGAL polyhedron.
+With the increasing level of sophistication, we then introduce
+a \emph{combinatrory subdivision library} (CSL). CSL
+offers a convenient way to design user-customized subdivision scheme 
+through the definition of rule templates. 
+Catmull-Clark and Doo-Sabin schemes are domonstrated. 
+Two companion applications based on OpenGL, one developed on Windows with MFC,
+and the other developed for Linux with Qt, showcase the subdivision 
+schemes listed above, as well as several functionalities for interaction, 
+visualization.
 }
 
 \vskip 3mm
