@@ -321,12 +321,12 @@ operator<<(std::ostream &os, const SphereC3<R CGAL_CTAG> &c)
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
         os << c.center() << ' ' << c.squared_radius() << ' '
-           << (int)c.orientation();
+           << static_cast<int>(c.orientation());
         break;
     case IO::BINARY :
         os << c.center();
         write(os, c.squared_radius());
-        write(os, (int)c.orientation());
+        write(os, static_cast<int>(c.orientation()));
         break;
     default:
         os << "SphereC3(" << c.center() <<  ", " << c.squared_radius();
@@ -371,7 +371,8 @@ operator>>(std::istream &is, SphereC3<R CGAL_CTAG> &c)
         break;
     }
     if (is)
-	c = SphereC3<R CGAL_CTAG>(center, squared_radius, (Orientation)o);
+	c = SphereC3<R CGAL_CTAG>(center, squared_radius,
+		                  static_cast<Orientation>(o));
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_SPHEREC3

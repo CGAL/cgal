@@ -179,7 +179,7 @@ protected:
   Self        transpose() const { return ptr()->transpose(); }
 
 private:
-  Aff_t_base* ptr() const { return (Aff_t_base*)PTR; }
+  Aff_t_base* ptr() const { return static_cast<Aff_t_base*>(PTR); }
 };
 
 

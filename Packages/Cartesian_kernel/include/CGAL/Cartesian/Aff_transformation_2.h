@@ -182,7 +182,7 @@ public:
   print(std::ostream &os) const;
 
 private:
-  Aff_t_base* ptr() const { return (Aff_t_base*)PTR; }
+  Aff_t_base* ptr() const { return static_cast<Aff_t_base*>(PTR); }
   // FIXME : ptr() should be in Handle.
 };
 
