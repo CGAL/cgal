@@ -1,3 +1,6 @@
+Version 3.54 (09 February 2004) [rursu]
+- Updated headers for examples
+
 3.53 (18 Jan 2004)
 - Add missing CGAL_ prefix to some macros.
 
