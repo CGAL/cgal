@@ -66,6 +66,9 @@ struct Dynamic {};
 struct No_Filter_Cache {};
 typedef Interval_nt_advanced Filter_Cache;
 
+#if defined CGAL_CFG_MATCHING_BUG_2 && !defined CGAL_IA_CT
+#error "You must define some macros"
+#endif
 
 template < class CT, class ET, class Type = Dynamic,
            bool Protection = true, class Cache = No_Filter_Cache >
