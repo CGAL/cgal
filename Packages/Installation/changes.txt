@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Fixed guess_os as suggested by Dima,
+GLOB: to remove '()/', needed for cygwin-1.1.
 GLOB: Save the blank after -o in EXE_OPT for KCC.
 GLOB: Fixed IFS bug reported by Jacques Beigbeder.
 GLOB: Added ws2_32.lib to XLIBS for msvc.
