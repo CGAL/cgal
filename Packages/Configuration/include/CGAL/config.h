@@ -172,6 +172,12 @@ namespace std {
                iterator_traits<ForwardIterator>::iterator_category());
     return n;
   }
+  template <class T>
+  inline typename T::value_type*
+  __value_type (const T&)
+  {
+    return (typename T::value_type*)(0);
+  }
 }
 #endif // if defined(__sun) && defined(__SUNPRO_CC)
 
