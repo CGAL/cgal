@@ -377,14 +377,14 @@ insert_outside(const Vertex_handle vp, const Face_handle f)
      while ( ! ccwlist.empty()) {
       fh = ccwlist.front();
       li = ccw(fh->index(infinite_vertex()));
-      _tds.flip( &(*fh), li);
+      _tds.flip( &(*fh) , li);
       ccwlist.pop_front();
     }
 
     while ( ! cwlist.empty()) {
       fh = cwlist.front();
       li = cw(fh->index(infinite_vertex()));
-      _tds.flip( &(*fh), li);
+      _tds.flip( &(*fh) , li);
       cwlist.pop_front();
     }
 
@@ -553,9 +553,25 @@ insert_collinear_outside(Vertex_handle v, Face_handle f, int i)
     
 public:  
 
- void remove_degree_3(Vertex_handle  v)
+ void remove_degree_3(Vertex_handle  v, Face_handle f = Face_handle())
   {
-    _tds.remove_degree_3(&(*v));
+    if (f == Face_handle()) f=v->face();
+    _tds.remove_degree_3(&(*v), &(*f));
+    return;
+  }
+
+
+
+
+void remove_first(Vertex_handle  v)
+  {
+    _tds.remove_first(&(*v));
+    return;
+  }
+
+void remove_second(Vertex_handle v)
+  {
+    _tds.remove_second(&(*v));
     return;
   }
 
@@ -565,7 +581,7 @@ public:
       CGAL_triangulation_precondition( !is_infinite(v));
     
       if  (number_of_vertices() == 1) {
-        _tds.remove_first(& (*v));
+        remove_first(& (*v));
 	v.clear();
         return;
       }
@@ -597,7 +613,7 @@ public:
     }
 
 protected:
-    void remove_1D(Vertex_handle& v)
+    void remove_1D(Vertex_handle v)
     {
      //deal with one dimensional case
       Face_handle f1, f2, f1n, f2n;
@@ -650,7 +666,7 @@ protected:
         }
      }
     
-  void remove_2D(Vertex_handle& v)
+  void remove_2D(Vertex_handle v)
     {
       // General case
     
