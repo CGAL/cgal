@@ -147,6 +147,10 @@ public:
                          m_sweep_line_traits(m_traits),
                          m_traitsOwner(true),
                          m_includeEndPoints(true),
+                         m_queue(NULL),
+                         m_statusLine(NULL),
+                         m_comp_param(NULL),
+                         m_xcurves(0),
                          m_found_intersection(false),
                          is_first_point(true),
                          m_num_of_subCurves(0)
@@ -158,6 +162,10 @@ public:
                                  m_sweep_line_traits(m_traits),
                                  m_traitsOwner(false),
                                  m_includeEndPoints(true),
+                                 m_queue(NULL),
+                                 m_statusLine(NULL),
+                                 m_comp_param(NULL),
+                                 m_xcurves(0),
                                  m_found_intersection(false),
                                  is_first_point(true),
                                  m_num_of_subCurves(0)
@@ -1131,11 +1139,12 @@ Sweep_line_2_impl<CurveInputIterator,SweepLineTraits_2,SweepEvent,CurveWrap,
 ~Sweep_line_2_impl() 
 {
   if ( m_traitsOwner ) delete m_traits;
-
+  
   for(unsigned int i=0 ; i < m_num_of_subCurves; ++i)
     m_subCurveAlloc.destroy(m_subCurves+i);
 
-  m_subCurveAlloc.deallocate(m_subCurves,m_num_of_subCurves); // deallocate memory 
+  if(m_num_of_subCurves) //if its zero, nothing to deallocate
+    m_subCurveAlloc.deallocate(m_subCurves,m_num_of_subCurves); // deallocate memory 
   delete m_queue;
   delete m_statusLine;
   delete m_comp_param;

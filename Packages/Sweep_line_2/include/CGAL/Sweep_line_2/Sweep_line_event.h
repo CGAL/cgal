@@ -25,12 +25,6 @@
 #include <CGAL/Sweep_line_2/Sweep_line_traits.h>
 #include <list>
 #include <set>
-#include <functional>
-
-
-
-
-
 
  
 CGAL_BEGIN_NAMESPACE
