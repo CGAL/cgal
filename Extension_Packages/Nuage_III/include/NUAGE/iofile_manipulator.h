@@ -5,6 +5,8 @@
 
 #include <iomanip>
 #include <CGAL/algorithm.h>
+#include <CGAL/Unique_hash_map.h>
+
 //#define AF_CGAL_CLIB_STD std
 #define AF_CGAL_CLIB_STD
 //=====================================================================
@@ -157,6 +159,13 @@ section_file_input(char* finput, const int& number_of_points, std::vector<Point>
 //======================= DUMP RESULT =================================
 //=====================================================================
 
+
+struct Is_not_exterior {
+  bool operator()(const Vertex& v)const {
+    return ! v.is_exterior();
+  }
+};
+
 void
 dump_in_file_medit_selected_facets(char* foutput, const Triangulation_3& A)
 { 
@@ -179,32 +188,27 @@ dump_in_file_medit_selected_facets(char* foutput, const Triangulation_3& A)
 
   CGAL::set_ascii_mode(os_points);
   CGAL::set_ascii_mode(os_faces);
+
+  _vh_number = std::count_if(A.finite_vertices_begin(), 
+			     A.finite_vertices_end(), 
+			     Is_not_exterior());
+
+  os_points << _vh_number << std::endl;
+
+  CGAL::Unique_hash_map<Vertex*, int> vertex_index_map(-1, A.number_of_vertices());
+
+  int count(0);
+  for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
+       v_it != A.finite_vertices_end();
+       v_it++){
+    CGAL::Unique_hash_map<Vertex*, int>::Data& d = vertex_index_map[&(*v_it)];
+    if ((!v_it->is_exterior()) && d == -1){
+      d = count;
+      count++;
+      os_points << convert()(v_it->point()) << " 0" << std::endl;
+    }
+  }
   
-
-  for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
-       v_it != A.finite_vertices_end();
-       v_it++)
-    if ((!v_it->is_exterior()) && (v_it->get_visu_index()==-1))
-      {
-	v_it->set_visu_index(_vh_number);
-	_vh_number++;
-      }
-
-  int _vh_size(_vh_number);
-
-  os_points << _vh_size << std::endl;
-
-  typedef const Point*  Const_point_star;
-  Const_point_star * points_tab = new  Const_point_star[_vh_size];
-  for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
-       v_it != A.finite_vertices_end();
-       v_it++)
-    if (v_it->get_visu_index() > -1)
-      points_tab[v_it->get_visu_index()] = &v_it->point();
-
-  for(int vh_i=0; vh_i<_vh_size; vh_i++)
-    os_points << convert()(*points_tab[vh_i]) << " 0" << std::endl;
-
   os_faces << _facet_number << std::endl;
   for(Finite_facets_iterator f_it = A.finite_facets_begin(); 
       f_it != A.finite_facets_end(); 
@@ -222,9 +226,9 @@ dump_in_file_medit_selected_facets(char* foutput, const Triangulation_3& A)
 	  i2 = (ci+2) & 3;
 	  i3 = (ci+3) & 3;
 	  os_faces << 3 << " ";
-	  os_faces << c->vertex(i1)->get_visu_index()+1 << " ";
-	  os_faces << c->vertex(i2)->get_visu_index()+1 << " ";
-	  os_faces << c->vertex(i3)->get_visu_index()+1 << " ";
+	  os_faces << vertex_index_map[&(*c->vertex(i1))] + 1 << " ";
+	  os_faces << vertex_index_map[&(*c->vertex(i2))] + 1 << " ";
+	  os_faces << vertex_index_map[&(*c->vertex(i3))] + 1 << " ";
 	  os_faces << " 0 0 0 0" << std::endl; 
 	}
       
@@ -234,9 +238,9 @@ dump_in_file_medit_selected_facets(char* foutput, const Triangulation_3& A)
 	  i2 = (ni+2) & 3;
 	  i3 = (ni+3) & 3;
 	  os_faces << 3 << " ";
-	  os_faces << n->vertex(i1)->get_visu_index()+1 << " ";
-	  os_faces << n->vertex(i2)->get_visu_index()+1 << " ";
-	  os_faces << n->vertex(i3)->get_visu_index()+1 << " ";
+	  os_faces << vertex_index_map[&(*n->vertex(i1))] + 1 << " ";
+	  os_faces << vertex_index_map[&(*n->vertex(i2))] + 1 << " ";
+	  os_faces << vertex_index_map[&(*n->vertex(i3))] + 1 << " ";
 	  os_faces << " 0 0 0 0" << std::endl; 
 	}
     }
@@ -246,13 +250,12 @@ dump_in_file_medit_selected_facets(char* foutput, const Triangulation_3& A)
       add_f_it != _additional_facets_list->end(); add_f_it++)
     {
       os_faces << 3 << " ";
-      os_faces << (*add_f_it).first->get_visu_index()+1 << " ";
-      os_faces << (*add_f_it).second->get_visu_index()+1 << " ";
-      os_faces << (*add_f_it).third->get_visu_index()+1 << " ";
+      os_faces << vertex_index_map[&(*(*add_f_it).first)] + 1 << " ";
+      os_faces << vertex_index_map[&(*(*add_f_it).second)] + 1 << " ";
+      os_faces << vertex_index_map[&(*(*add_f_it).third)] + 1 << " ";
       os_faces << " 0 0 0 0" << std::endl; 
     }
   std::cout << "-- medit result dumped." << std::endl;
-  delete[] points_tab;
 }
 
 //---------------------------------------------------------------------
@@ -275,31 +278,26 @@ dump_in_file_gv_selected_facets(char* foutput, const Triangulation_3& A)
 
   CGAL::set_ascii_mode(os);
 
-  for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
-       v_it != A.finite_vertices_end();
-       v_it++)
-    if ((!v_it->is_exterior()) && (v_it->get_visu_index()==-1))
-      {
-	v_it->set_visu_index(_vh_number);
-	_vh_number++;
-      }
-
-  int _vh_size(_vh_number);
-
+  _vh_number = std::count_if(A.finite_vertices_begin(), 
+			     A.finite_vertices_end(), 
+			     Is_not_exterior());
   // Header.
   os << "OFF" << std::endl
-     << _vh_size << " " << _facet_number << " " << 0 << std::endl;
+     << _vh_number << " " << _facet_number << " " << 0 << std::endl;
 
-  typedef const Point*  Const_point_star;
-  Const_point_star * points_tab = new  Const_point_star[_vh_size];
+  CGAL::Unique_hash_map<Vertex*, int> vertex_index_map(-1, A.number_of_vertices());
+
+  int count(0);
   for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
        v_it != A.finite_vertices_end();
-       v_it++)
-    if (v_it->get_visu_index() > -1)
-      points_tab[v_it->get_visu_index()] = &v_it->point();
-
-  for(int vh_i=0; vh_i<_vh_size; vh_i++)
-    os << convert()(*points_tab[vh_i]) << std::endl;
+       v_it++){
+    CGAL::Unique_hash_map<Vertex*, int>::Data& d = vertex_index_map[&(*v_it)];
+    if ((!v_it->is_exterior()) && d == -1){
+      d = count;
+      count++;
+      os << convert()(v_it->point())  << " \n";
+    }
+  }
      
   for(Finite_facets_iterator f_it = A.finite_facets_begin(); 
       f_it != A.finite_facets_end(); 
@@ -317,9 +315,9 @@ dump_in_file_gv_selected_facets(char* foutput, const Triangulation_3& A)
 	  i2 = (ci+2) & 3;
 	  i3 = (ci+3) & 3;
 	  os << 3 << " ";
-	  os << c->vertex(i1)->get_visu_index() << " ";
-	  os << c->vertex(i2)->get_visu_index() << " ";
-	  os << c->vertex(i3)->get_visu_index() << " ";
+	  os << vertex_index_map[&(*c->vertex(i1))] << " ";
+	  os << vertex_index_map[&(*c->vertex(i2))] << " ";
+	  os << vertex_index_map[&(*c->vertex(i3))] << " ";
 	  os << 0 << std::endl; // without color.
 	  // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
 	  // color
@@ -331,9 +329,9 @@ dump_in_file_gv_selected_facets(char* foutput, const Triangulation_3& A)
 	  i2 = (ni+2) & 3;
 	  i3 = (ni+3) & 3;
 	  os << 3 << " ";
-	  os << n->vertex(i1)->get_visu_index() << " ";
-	  os << n->vertex(i2)->get_visu_index() << " ";
-	  os << n->vertex(i3)->get_visu_index() << " ";
+	  os << vertex_index_map[&(*n->vertex(i1))] << " ";
+	  os << vertex_index_map[&(*n->vertex(i2))] << " ";
+	  os << vertex_index_map[&(*n->vertex(i3))] << " ";
 	  os << 0 << std::endl; // without color.
 	  // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
 	  // color 
@@ -345,15 +343,14 @@ dump_in_file_gv_selected_facets(char* foutput, const Triangulation_3& A)
       add_f_it != _additional_facets_list->end(); add_f_it++)
     {
       os << 3 << " ";
-      os << (*add_f_it).first->get_visu_index() << " ";
-      os << (*add_f_it).second->get_visu_index() << " ";
-      os << (*add_f_it).third->get_visu_index() << " ";
+      os << vertex_index_map[&(*(*add_f_it).first)] << " ";
+      os << vertex_index_map[&(*(*add_f_it).second)] << " ";
+      os << vertex_index_map[&(*(*add_f_it).third)] << " ";
       os << 0 << std::endl;  // without color.
       // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
       // color 
     }
   std::cout << "-- oogl result dumped." << std::endl;
-  delete[] points_tab;
 }
 
 //---------------------------------------------------------------------
@@ -376,22 +373,14 @@ dump_in_file_ply_selected_facets(char* foutput, const Triangulation_3& A)
 
   CGAL::set_ascii_mode(os);
 
-  for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
-       v_it != A.finite_vertices_end();
-       v_it++)
-    if ((!v_it->is_exterior()) && (v_it->get_visu_index()==-1))
-      {
-	v_it->set_visu_index(_vh_number);
-	_vh_number++;
-      }
-
-  int _vh_size(_vh_number);
-
+  _vh_number = std::count_if(A.finite_vertices_begin(), 
+			     A.finite_vertices_end(), 
+			     Is_not_exterior());
   // Header.
   os << "ply" << std::endl
      << "format ascii 1.0" << std::endl
      << "comment generated by ply_writer" << std::endl
-     << "element vertex " << _vh_size << std::endl
+     << "element vertex " << _vh_number << std::endl
      << "property float x" << std::endl
      << "property float y" << std::endl
      << "property float z" << std::endl
@@ -399,16 +388,19 @@ dump_in_file_ply_selected_facets(char* foutput, const Triangulation_3& A)
      << "property list uchar int vertex_indices" << std::endl
      << "end_header" << std::endl;
 
-  typedef const Point*  Const_point_star;
-  Const_point_star * points_tab = new  Const_point_star[_vh_size];
+  CGAL::Unique_hash_map<Vertex*, int> vertex_index_map(-1, A.number_of_vertices());
+
+  int count(0);
   for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
        v_it != A.finite_vertices_end();
-       v_it++)
-    if (v_it->get_visu_index() > -1)
-      points_tab[v_it->get_visu_index()] = &v_it->point();
-
-  for(int vh_i=0; vh_i<_vh_size; vh_i++)
-    os << convert()(*points_tab[vh_i]) << std::endl;
+       v_it++){
+    CGAL::Unique_hash_map<Vertex*, int>::Data& d = vertex_index_map[&(*v_it)];
+    if ((!v_it->is_exterior()) && d == -1){
+      d = count;
+      count++;
+      os << convert()(v_it->point())  << std::endl;
+    }
+  }
      
   for(Finite_facets_iterator f_it = A.finite_facets_begin(); 
       f_it != A.finite_facets_end(); 
@@ -426,9 +418,9 @@ dump_in_file_ply_selected_facets(char* foutput, const Triangulation_3& A)
 	  i2 = (ci+2) & 3;
 	  i3 = (ci+3) & 3;
 	  os << 3 << " ";
-	  os << c->vertex(i1)->get_visu_index() << " ";
-	  os << c->vertex(i2)->get_visu_index() << " ";
-	  os << c->vertex(i3)->get_visu_index();
+	  os << vertex_index_map[&(*c->vertex(i1))] << " ";
+	  os << vertex_index_map[&(*c->vertex(i2))] << " ";
+	  os << vertex_index_map[&(*c->vertex(i3))];
 	  os << std::endl; // without color.
 	  // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
 	  // color
@@ -440,9 +432,9 @@ dump_in_file_ply_selected_facets(char* foutput, const Triangulation_3& A)
 	  i2 = (ni+2) & 3;
 	  i3 = (ni+3) & 3;
 	  os << 3 << " ";
-	  os << n->vertex(i1)->get_visu_index() << " ";
-	  os << n->vertex(i2)->get_visu_index() << " ";
-	  os << n->vertex(i3)->get_visu_index();
+	  os << vertex_index_map[&(*n->vertex(i1))] << " ";
+	  os << vertex_index_map[&(*n->vertex(i2))] << " ";
+	  os << vertex_index_map[&(*n->vertex(i3))];
 	  os << std::endl; // without color.
 	  // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
 	  // color 
@@ -454,21 +446,20 @@ dump_in_file_ply_selected_facets(char* foutput, const Triangulation_3& A)
       add_f_it != _additional_facets_list->end(); add_f_it++)
     {
       os << 3 << " ";
-      os << (*add_f_it).first->get_visu_index() << " ";
-      os << (*add_f_it).second->get_visu_index() << " ";
-      os << (*add_f_it).third->get_visu_index();
+      os << vertex_index_map[&(*(*add_f_it).first)] << " ";
+      os << vertex_index_map[&(*(*add_f_it).second)] << " ";
+      os << vertex_index_map[&(*(*add_f_it).third)];
       os << std::endl;  // without color.
       // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
       // color 
     }
   std::cout << "-- ply result dumped." << std::endl;
-  delete[] points_tab;
 }
 
 //---------------------------------------------------------------------
 
 void 
-dump_in_file_vrml_border_edges(const Triangulation_3& A, std::ofstream& os)
+dump_in_file_iv_border_edges(const Triangulation_3& A, std::ofstream& os)
 {
   typedef std::pair<Vertex_handle, int>  indiced_vh;
   std::map<Vertex_handle, int> _vh_vect;
@@ -484,7 +475,7 @@ dump_in_file_vrml_border_edges(const Triangulation_3& A, std::ofstream& os)
       }
 
   typedef const Point*  Const_point_star;
-  Const_point_star * points_tab = new  Const_point_star[_vh_bord_count];
+  std::vector<Const_point_star>  points_tab(_vh_bord_count);
   for (std::map<Vertex_handle, int>::iterator vh_it = _vh_vect.begin();
        vh_it != _vh_vect.end(); vh_it++)
     points_tab[vh_it->second] = &vh_it->first->point();
@@ -536,13 +527,12 @@ dump_in_file_vrml_border_edges(const Triangulation_3& A, std::ofstream& os)
   os << " ]" << std::endl <<
 "      }}" << std::endl <<
 "    }}" << std::endl;
-  delete[] points_tab;
 }
 
 //---------------------------------------------------------------------
 
 void 
-dump_in_file_vrml_remaining_points(const Triangulation_3& A, std::ofstream& os)
+dump_in_file_iv_remaining_points(const Triangulation_3& A, std::ofstream& os)
 {
   typedef std::pair<Vertex_handle, int>  indiced_vh;
   std::map<Vertex_handle, int> _vh_vect;
@@ -558,7 +548,7 @@ dump_in_file_vrml_remaining_points(const Triangulation_3& A, std::ofstream& os)
       }
 
   typedef const Point*  Const_point_star;
-  Const_point_star * points_tab = new  Const_point_star[_vh_bord_count];
+  std::vector<Const_point_star>  points_tab(_vh_bord_count);
   for (std::map<Vertex_handle, int>::iterator vh_it = _vh_vect.begin();
        vh_it != _vh_vect.end(); vh_it++)
     points_tab[vh_it->second] = &vh_it->first->point();
@@ -590,7 +580,6 @@ dump_in_file_vrml_remaining_points(const Triangulation_3& A, std::ofstream& os)
 
   os << " }" << std::endl <<
 "      }}" << std::endl;
-  delete[] points_tab;
   
 }
 
@@ -600,7 +589,7 @@ dump_in_file_vrml_remaining_points(const Triangulation_3& A, std::ofstream& os)
 // !!!!  bizarre : ca a l'air de buggue pour hand.xyz (seg fault...)
 
 void 
-dump_in_file_vrml_border_facets(const Triangulation_3& A, std::ofstream& os)
+dump_in_file_iv_border_facets(const Triangulation_3& A, std::ofstream& os)
 {
   typedef std::pair<Vertex_handle, int>  indiced_vh;
   std::map<Vertex_handle, int> _vh_vect;
@@ -616,7 +605,7 @@ dump_in_file_vrml_border_facets(const Triangulation_3& A, std::ofstream& os)
       }
 
   typedef const Point*  Const_point_star;
-  Const_point_star * points_tab = new  Const_point_star[_vh_bord_count];
+  std::vector<Const_point_star>  points_tab(_vh_bord_count);
   for (std::map<Vertex_handle, int>::iterator vh_it = _vh_vect.begin();
        vh_it != _vh_vect.end(); vh_it++)
     points_tab[vh_it->second] = &vh_it->first->point();
@@ -707,19 +696,18 @@ dump_in_file_vrml_border_facets(const Triangulation_3& A, std::ofstream& os)
   os << " ]" << std::endl <<
 "      }}" << std::endl <<
 "    }}" << std::endl;	
-  delete[] points_tab;
 }
 
 //---------------------------------------------------------------------
 
 void
-dump_in_file_vrml_selected_facets(char* foutput, const Triangulation_3& A,
+dump_in_file_iv_selected_facets(char* foutput, const Triangulation_3& A,
 				  const bool& contour)
 { 
   char foutput_tmp[100];
   AF_CGAL_CLIB_STD::strcpy(foutput_tmp, foutput);
 
-  std::strcat(foutput_tmp, ".vrml");
+  std::strcat(foutput_tmp, ".iv");
   std::ofstream os(foutput_tmp, std::ios::out);
 
   if(os.fail())
@@ -730,17 +718,6 @@ dump_in_file_vrml_selected_facets(char* foutput, const Triangulation_3& A,
   os.clear();
 
   CGAL::set_ascii_mode(os);
-
-  for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
-       v_it != A.finite_vertices_end();
-       v_it++)
-    if ((!v_it->is_exterior()) && (v_it->get_visu_index()==-1))
-      {
-	v_it->set_visu_index(_vh_number);
-	_vh_number++;
-      }
-
-  int _vh_size(_vh_number);
 
   // Header.
   os << 
@@ -776,30 +753,24 @@ dump_in_file_vrml_selected_facets(char* foutput, const Triangulation_3& A,
 "	    Coordinate3 {" << std::endl <<
 "	       point [ ";
 
-  typedef const Point*  Const_point_star;
-  Const_point_star * points_tab = new  Const_point_star[_vh_size];
+  CGAL::Unique_hash_map<Vertex*, int> vertex_index_map(-1, A.number_of_vertices());
+
+  int count(0);
   for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
        v_it != A.finite_vertices_end();
-       v_it++)
-    if (v_it->get_visu_index() > -1)
-      points_tab[v_it->get_visu_index()] = &v_it->point();
-
-  bool first(true);
-
-  for(int vh_i=0; vh_i<_vh_size; vh_i++)
-    {
-      if (!first) os << "," << std::endl
-      << "	               ";
-      else
-	first=false;
-      os << convert()(*points_tab[vh_i]);
+       v_it++){
+    CGAL::Unique_hash_map<Vertex*, int>::Data& d = vertex_index_map[&(*v_it)];
+    if ((!v_it->is_exterior()) && d == -1){
+      d = count;
+      count++;
+      os << convert()(v_it->point())  << " ,\n";
     }
+  }
   os << " ]" << std::endl <<
 "		         }" << std::endl <<
 "	     IndexedFaceSet {" << std::endl <<
 "	       coordIndex [ ";
 
-  first=true;
   for(Finite_facets_iterator f_it = A.finite_facets_begin(); 
       f_it != A.finite_facets_end(); 
       f_it++)
@@ -812,31 +783,24 @@ dump_in_file_vrml_selected_facets(char* foutput, const Triangulation_3& A,
 
       if (c->is_selected_facet(ci))
 	{
-	  if (!first) os << "," << std::endl <<
-"		            ";
-	  else
-	    first=false;
+
 	  i1 = (ci+1) & 3;
 	  i2 = (ci+2) & 3;
 	  i3 = (ci+3) & 3;
-	  os << c->vertex(i1)->get_visu_index() << ", ";
-	  os << c->vertex(i2)->get_visu_index() << ", ";
-	  os << c->vertex(i3)->get_visu_index() << ", ";
+	  os <<  vertex_index_map[&(*c->vertex(i1))] << ", ";
+	  os <<  vertex_index_map[&(*c->vertex(i2))] << ", ";
+	  os <<  vertex_index_map[&(*c->vertex(i3))] << ", ";
 	  os << -1;
 	}
 
        if (n->is_selected_facet(ni))
 	{
-	  if (!first) os << "," << std::endl <<
-"		            ";
-	  else
-	    first=false;
 	  i1 = (ni+1) & 3;
 	  i2 = (ni+2) & 3;
 	  i3 = (ni+3) & 3;
-	  os << n->vertex(i1)->get_visu_index() << ", ";
-	  os << n->vertex(i2)->get_visu_index() << ", ";
-	  os << n->vertex(i3)->get_visu_index() << ", ";
+	  os << vertex_index_map[&(*n->vertex(i1))] << ", ";
+	  os << vertex_index_map[&(*n->vertex(i2))] << ", ";
+	  os << vertex_index_map[&(*n->vertex(i3))] << ", ";
 	  os << -1; 
 	}
     }
@@ -847,21 +811,163 @@ dump_in_file_vrml_selected_facets(char* foutput, const Triangulation_3& A,
     {
       os << "," << std::endl <<
 "		            ";
-       os << (*add_f_it).first->get_visu_index() << ", ";
-       os << (*add_f_it).second->get_visu_index() << ", ";
-       os << (*add_f_it).third->get_visu_index() << ", ";
+       os << vertex_index_map[&(*(*add_f_it).first)] << ", ";
+       os << vertex_index_map[&(*(*add_f_it).second)] << ", ";
+       os << vertex_index_map[&(*(*add_f_it).third)] << ", ";
        os << -1;
     }
 
-  os << " ]" << std::endl << 
-"      }" << std::endl <<
-"    }}" << std::endl << 
-"  }" << std::endl;
+  os << " ]\n"
+    "      }\n"
+    "    }}\n"
+    "  }\n";
 
   if (contour)
     {
       // pour visualiser les contours restant a la fin...
-      dump_in_file_vrml_border_edges(A, os);
+      dump_in_file_iv_border_edges(A, os);
+      
+      // pour visualiser les facettes eventuellement candidates...
+      //       dump_in_file_iv_border_facets(A, os);
+
+      // pour afficher les points non selectionnes, ~bruit???
+      //      dump_in_file_iv_remaining_points(A, os);
+    }
+
+  os << "}" << std::endl;  
+
+  std::cout << "-- Inventor result dumped." << std::endl;
+}
+
+
+void
+dump_in_file_vrml2_selected_facets(char* foutput, const Triangulation_3& A,
+				  const bool& contour)
+{ 
+  char foutput_tmp[100];
+  AF_CGAL_CLIB_STD::strcpy(foutput_tmp, foutput);
+
+  std::strcat(foutput_tmp, ".vrml");
+  std::ofstream os(foutput_tmp, std::ios::out);
+
+  if(os.fail())
+    std::cerr << "+++unable to open file for output" << std::endl;
+  else
+    std::cout << ">> file for output : " << foutput_tmp << std::endl;
+
+  os.clear();
+
+  CGAL::set_ascii_mode(os);
+  
+  // Header.
+  os << 
+    "#VRML V2.0 utf8\n"
+    "Background {skyColor .1 .5 .5}\n"
+    "Group {\n"
+    "children [\n"
+    "Shape {\n"
+    "appearance Appearance {\n"
+    "material Material { diffuseColor .6 .5 .9}}\n"
+    "geometry\n"
+    "IndexedFaceSet {\n"
+    "coord DEF def_coords Coordinate {\n"
+    "point [ " << std::endl;
+  
+  CGAL::Unique_hash_map<Vertex*, int> vertex_index_map(-1, A.number_of_vertices());
+
+  int count(0);
+  for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
+       v_it != A.finite_vertices_end();
+       v_it++){
+    CGAL::Unique_hash_map<Vertex*, int>::Data& d = vertex_index_map[&(*v_it)];
+    if ((!v_it->is_exterior()) && d == -1){
+      d = count;
+      count++;
+      os << convert()(v_it->point())  << " ,\n";
+    }
+  }
+
+  os << " ]\n"
+    "}\n"\
+    "solid FALSE\n"
+    "coordIndex [\n";
+
+  for(Finite_facets_iterator f_it = A.finite_facets_begin(); 
+      f_it != A.finite_facets_end(); 
+      f_it++)
+    {
+      Cell_handle n, c = (*f_it).first;
+      int ni, ci = (*f_it).second;
+      n = c->neighbor(ci);
+      ni = n->index(c);
+      int i1, i2 ,i3;
+
+      if (c->is_selected_facet(ci))
+	{
+	  i1 = (ci+1) & 3;
+	  i2 = (ci+2) & 3;
+	  i3 = (ci+3) & 3;
+	  
+	  os << vertex_index_map[&(*c->vertex(i1))] << ", ";
+	  os << vertex_index_map[&(*c->vertex(i2))] << ", ";
+	  os << vertex_index_map[&(*c->vertex(i3))] << ", ";
+	  os << "-1,\n";
+	}
+
+       if (n->is_selected_facet(ni))
+	{
+	  i1 = (ni+1) & 3;
+	  i2 = (ni+2) & 3;
+	  i3 = (ni+3) & 3;
+	  os << vertex_index_map[&(*n->vertex(i1))] << ", ";
+	  os << vertex_index_map[&(*n->vertex(i2))] << ", ";
+	  os << vertex_index_map[&(*n->vertex(i3))] << ", ";
+	  os << "-1,\n"; 
+	}
+    }
+  // iterer sur _additional_facets_list pour rajouter les facttes manquantes
+  for(Additional_facets_list_iterator add_f_it =
+	_additional_facets_list->begin();
+      add_f_it != _additional_facets_list->end(); add_f_it++)
+    {
+       os << vertex_index_map[&(*(*add_f_it).first)] << ", ";
+       os << vertex_index_map[&(*(*add_f_it).second)] << ", ";
+       os << vertex_index_map[&(*(*add_f_it).third)] << ", ";
+       os << "-1,\n";
+    }
+
+  os << " ]\n"
+    "}# IndexedFaceSet\n"
+    "}# Shape\n";
+
+  if (contour)
+    {
+      os << 
+	"Shape {\n"
+	"appearance Appearance {\n"
+	"material Material { emissiveColor 1 0 0}}\n"
+	"geometry\n"
+	"IndexedLineSet {\n"
+	"coord USE def_coords\n"
+	"coordIndex [\n";
+      for(Finite_edges_iterator e_it = A.finite_edges_begin();
+	  e_it != A.finite_edges_end();
+	  e_it++) {
+	Cell_handle c = (*e_it).first;
+	int i1 = (*e_it).second, i2 = (*e_it).third;
+	Edge_like key(c->vertex(i1), c->vertex(i2));
+	Border_elt result;
+
+	if (is_border_elt(key, result))
+	  {
+	    os << vertex_index_map[&(*c->vertex(i1))] << ", ";
+	    os << vertex_index_map[&(*c->vertex(i2))] << ", ";
+	    os << "-1,\n"; 
+	  }
+      }
+      os << "]\n" 
+	"}#IndexedLineSet\n"
+	"}# Shape\n";
       
       // pour visualiser les facettes eventuellement candidates...
       //       dump_in_file_vrml_border_facets(A, os);
@@ -870,11 +976,13 @@ dump_in_file_vrml_selected_facets(char* foutput, const Triangulation_3& A,
       //      dump_in_file_vrml_remaining_points(A, os);
     }
 
-  os << "}" << std::endl;  
 
+  os << "] # children\n"
+    "} # Group\n";
   std::cout << "-- vrml result dumped." << std::endl;
-  delete[] points_tab;
 }
+
+
 
 //---------------------------------------------------------------------
 
@@ -882,29 +990,28 @@ void
 dump_in_file_selected_facets(char* foutput, const Triangulation_3& A,
 			     const bool& contour, const int& out_format)
 {
-  for(Finite_vertices_iterator v_it = A.finite_vertices_begin();
-      v_it != A.finite_vertices_end(); v_it++)
-    v_it->set_visu_index(-1);
-  _vh_number = 0;
   switch(out_format)
     {
     case -2:
       // no output file...
       return;
     case -1:      
-      dump_in_file_vrml_selected_facets(foutput, A, contour);
+      dump_in_file_iv_selected_facets(foutput, A, contour);
+      dump_in_file_vrml2_selected_facets(foutput, A, contour);
       dump_in_file_gv_selected_facets(foutput, A);
       dump_in_file_medit_selected_facets(foutput, A);
       //dump_in_file_ply_selected_facets(foutput, A);
       return;
     case 0:
-      return dump_in_file_vrml_selected_facets(foutput, A, contour);
+      return dump_in_file_vrml2_selected_facets(foutput, A, contour);
     case 1:
       return dump_in_file_gv_selected_facets(foutput, A);
     case 2:
       return dump_in_file_medit_selected_facets(foutput, A);
     case 3:
       return dump_in_file_ply_selected_facets(foutput, A);
+    case 4:
+      return dump_in_file_iv_selected_facets(foutput, A, contour);
     }
 }
 
