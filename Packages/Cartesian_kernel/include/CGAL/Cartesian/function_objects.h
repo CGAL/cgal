@@ -677,7 +677,9 @@ public:
     Comparison_result
     operator()( const Point_2& p, const Line_2& l1, const Line_2& l2) const
     { 
-      return compare_xC2(p.y(), l1.b(), l1.a(), l1.c(), l2.b(), l2.a(), l2.c());
+      return compare_xC2(p.y(), 
+			 l1.b(), l1.a(), l1.c(), 
+			 l2.b(), l2.a(), l2.c());
     }
 
     Comparison_result
