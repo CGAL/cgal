@@ -535,7 +535,8 @@ report_latex() {
         echo "Summary BibTeX"
         echo "--------------"
         echo "For the full logfile see $1.blg"
-        grep -i error $1.blg 
+        grep -i error $1.blg
+        grep 'I found no \\citation commands' $1.blg
         grep -i warn $1.blg | grep -v 'warning[$]'
         if [ $MakeTestSuiteResult -eq 1 ]; then 
             mv $1.blg testsuite/$1.blg.txt
@@ -607,6 +608,22 @@ check_bibtex_warn() {
 }
 
 #---------------------------------------------------------------------#
+# check_bibtex_empty <wrapper-rootname>
+#     - Checks if bibtex logfile contains the empty bibliography
+#       error message and no other error message.
+#     - Returns 0 if there are valid warnings, 1 otherwise
+#---------------------------------------------------------------------#
+
+check_bibtex_empty() {
+    if grep 'I found no \\citation commands' $1.blg > /dev/null ; then
+        if grep 'There was 1 error message' $1.blg > /dev/null ; then
+            return 0
+        fi
+    fi
+    return 1
+}
+
+#---------------------------------------------------------------------#
 # check_index_warn <wrapper-rootname>
 #     - Checks if makeindex logfile contains valid warnings
 #     - Returns 0 if there are valid warnings, 1 otherwise
@@ -662,12 +679,25 @@ run_latex() {
     # see if we need BiBTeX and run it
     if grep '[\\]bibdata'  $1.aux > /dev/null ; then
         if $Bibtex $1 ; then BibtexExit=0 ; else BibtexExit=1 ; fi
-        # Run LaTeX to get citations into the auxfile.
-        $Latex --interaction batchmode $1
-        if [ $? -ne 0 ]; then LatexExit=1 ; fi
+        # Check for documents that have a bibliography entry, 
+        # but no citations. Don't create an empty bibliograpy then.
+        if check_bibtex_empty $1 ; then
+            rm -f $1.bbl
+            BibtexExit=0
+        else
+            # Run LaTeX to get citations into the auxfile.
+            $Latex --interaction batchmode $1
+            if [ $? -ne 0 ]; then LatexExit=1 ; fi
+        fi
     fi
     # see if we need full LaTeX results, or if suffices what we have so far
     if [ ${MakePS} -eq 1 ] ; then
+        # Make sure that there is at least one rerun if makeindex is requested
+        if [ -r $1.idx ]; then
+            if ${MakeIndex} $1.idx; then IndexExit=0 ; else IndexExit=1 ; fi
+            $Latex --interaction batchmode $1
+            if [ $? -ne 0 ]; then LatexExit=1 ; fi
+        fi
         # Run LaTeX until their is no rerun necessary anymore
         while grep "Rerun to get cross-references right" $1.log > /dev/null; do
             # Run makeindex as well if requested
@@ -858,17 +888,21 @@ make_manual() {
 
     if [ $MakeWrapperOnly -eq 1 ]; then 
         if [ -r $1.tex ]; then
-            echo "" 1>&2
             echo "${ErrorColor}ERROR${ResetColor}: Wrapper file '$1.tex' exists already." 1>&2
-            echo "" 1>&2
+            LastFailedWrapper=$1
             GlobalReturnStatus=1
             return 1
         fi
+        # test for the case that a wrapper for Mod was created and now
+        # a wrapper for Mpd and Mod_ref is requested. Avoid creating
+        # a wrapper Mod_ref.tex.
+        if [ "$1" == "${LastFailedWrapper}_ref" ]; then
+            return 1
+        fi
+        LastFailedWrapper=""
         create_wrapper $@ > $1.tex
         if [ ! -r $1.tex ]; then
-            echo "" 1>&2
             echo "${ErrorColor}ERROR${ResetColor}: Something went wrong creating '${1}.tex'." 1>&2
-            echo "" 1>&2
             GlobalReturnStatus=1
             return 1
         fi
