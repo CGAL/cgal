@@ -63,7 +63,7 @@ namespace CGAL {
          (*The_weights)[1]=NT(1.0);
     }
 
-	Weighted_Minkowski_distance (float power, int dim,
+	Weighted_Minkowski_distance (NT power, int dim,
 		Weight_vector Weights) : p(power), The_dimension(dim)
 	{
 		assert(p >= NT(0.0));
@@ -100,19 +100,19 @@ namespace CGAL {
 		if (p == NT(0.0))
 		{
 			for (int i = 0; i < r.dimension(); ++i) {
-				if ((*The_weights)[i]*(r.lower(i) - Point[i]) > distance)
-					distance = (*The_weights)[i] * (r.lower(i)-Point[i]);
-				if ((*The_weights)[i] * (Point[i] - r.upper(i)) > distance)
-					distance = (*The_weights)[i] * (Point[i]-r.upper(i));
+				if ((*The_weights)[i]*(r.min_coord(i) - Point[i]) > distance)
+					distance = (*The_weights)[i] * (r.min_coord(i)-Point[i]);
+				if ((*The_weights)[i] * (Point[i] - r.max_coord(i)) > distance)
+					distance = (*The_weights)[i] * (Point[i]-r.max_coord(i));
 			}
 		}
 		else
 		{
 			for (int i = 0; i < r.dimension(); ++i) {
-				if (Point[i] < r.lower(i))
-					distance += (*The_weights)[i] * pow(r.lower(i)-Point[i],p);
-				if (Point[i] > r.upper(i))
-					distance += (*The_weights)[i] * pow(Point[i]-r.upper(i),p);
+				if (Point[i] < r.min_coord(i))
+					distance += (*The_weights)[i] * pow(r.min_coord(i)-Point[i],p);
+				if (Point[i] > r.max_coord(i))
+					distance += (*The_weights)[i] * pow(Point[i]-r.max_coord(i),p);
 			}
 		};
 		return distance;
@@ -124,21 +124,21 @@ namespace CGAL {
 		if (p == NT(0.0))
 		{
 			for (int i = 0; i < r.dimension(); ++i) {
-				if (Point[i] >= (r.lower(i) + r.upper(i))/NT(2.0))
-					if ((*The_weights)[i] * (Point[i] - r.lower(i)) > distance)
-						distance = (*The_weights)[i] * (Point[i]-r.lower(i));
+				if (Point[i] >= (r.min_coord(i) + r.max_coord(i))/NT(2.0))
+					if ((*The_weights)[i] * (Point[i] - r.min_coord(i)) > distance)
+						distance = (*The_weights)[i] * (Point[i]-r.min_coord(i));
 				else
-					if ((*The_weights)[i] * (r.upper(i) - Point[i]) > distance)
-						distance = (*The_weights)[i] * ( r.upper(i)-Point[i]);
+					if ((*The_weights)[i] * (r.max_coord(i) - Point[i]) > distance)
+						distance = (*The_weights)[i] * ( r.max_coord(i)-Point[i]);
 			}
 		}
 		else
 		{
 			for (int i = 0; i < r.dimension(); ++i) {
-				if (Point[i] <= (r.lower(i)+r.upper(i))/NT(2.0))
-					distance += (*The_weights)[i] * pow(r.upper(i)-Point[i],p);
+				if (Point[i] <= (r.min_coord(i)+r.max_coord(i))/NT(2.0))
+					distance += (*The_weights)[i] * pow(r.max_coord(i)-Point[i],p);
 				else
-					distance += (*The_weights)[i] * pow(Point[i]-r.lower(i),p);
+					distance += (*The_weights)[i] * pow(Point[i]-r.min_coord(i),p);
 			}
 		};
 		return distance;

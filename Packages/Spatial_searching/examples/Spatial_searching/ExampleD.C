@@ -66,7 +66,7 @@ int main() {
         data_points.push_front(Random_point);
   }
   
-  Traits tr(bucket_size, CGAL::Split_rule_enumeration::SLIDING_FAIR, 3.0, false);
+  Traits tr(bucket_size, CGAL::Split_rules::SLIDING_FAIR, 3.0, false);
  
   typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);

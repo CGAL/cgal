@@ -32,7 +32,7 @@
 #include <CGAL/Plane_separator.h>
 namespace CGAL {
 
-class Split_rule_enumeration {
+class Split_rules {
 public:
 enum Split_rule {MEDIAN_OF_MAX_SPREAD, MEDIAN_OF_RECTANGLE,
         MIDPOINT_OF_MAX_SPREAD, MIDPOINT_OF_RECTANGLE, FAIR, 
@@ -98,8 +98,8 @@ public:
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),
               (c.max_span_upper() + c.max_span_lower())/NT(2));
-	NT max_span_lower = c.tight_bounding_box().lower(c.max_span_coord());
-	NT max_span_upper = c.tight_bounding_box().upper(c.max_span_coord());
+	NT max_span_lower = c.tight_bounding_box().min_coord(c.max_span_coord());
+	NT max_span_upper = c.tight_bounding_box().max_coord(c.max_span_coord());
 	if (max_span_upper <= sep->cutting_value()) {
 		sep->set_cutting_val(max_span_upper); 
 	}

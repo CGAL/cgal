@@ -13,7 +13,7 @@
 #include <iostream>
 #include <fstream> 
 
-#include <CGAL/MP_Float.h>
+// #include <CGAL/MP_Float.h>
 #include <CGAL/Iso_rectangle_d.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
@@ -21,10 +21,12 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Splitting_rules.h>
 #include <CGAL/General_priority_search.h>
-#include <CGAL/Homogeneous.h>
+// #include <CGAL/Homogeneous.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/L1_distance_rectangle_point.h>
 
-typedef CGAL::Homogeneous<CGAL::MP_Float> R;
+// typedef CGAL::Homogeneous<CGAL::MP_Float> R;
+typedef CGAL::Cartesian<double> R;
 typedef CGAL::Point_3<R> Point;
 typedef Point::R::FT FT;
 typedef Point::R::RT RT;
@@ -39,7 +41,26 @@ NN_priority_search;
 
 typedef CGAL::Creator_uniform_3<RT,Point> Creator;
 
-int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
+template <class InputIterator, class Size, class OutputIterator>
+OutputIterator my_copy_n( InputIterator first, Size n,
+                       OutputIterator result) {
+  
+  Size number_of_el_to_compute=n;
+  
+  while( (number_of_el_to_compute > 0)) {
+    
+    number_of_el_to_compute--;
+    
+    *result = *first;
+    first++;
+    result++;
+  }
+ 
+  return result;
+}
+
+
+int test_range_searching(CGAL::Split_rules::Split_rule s) {
 
   int bucket_size=1;
   const int dim=3;
@@ -61,6 +82,7 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
 
   // define range query
   // define range query
+  /*
   int p[dim];
   int q[dim];
   for (int i=0; i<dim; i++) {
@@ -70,6 +92,19 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
 
   Point P(p[0],p[1],p[2],1);  
   Point Q(q[0],q[1],q[2],1);
+  */
+
+  
+  double p[dim];
+  double q[dim];
+  for (int i=0; i<dim; i++) {
+  	p[i]=     0.0;
+        q[i]=  200.0;
+  }
+
+  Point P(p[0],p[1],p[2]);  
+  Point Q(q[0],q[1],q[2]);
+
   Rectangle query_rectangle(P,Q);
 
  
@@ -83,8 +118,10 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
 
   std::vector<NN_priority_search::Item_with_distance>::iterator it = nearest_neighbours.begin();
 
-  CGAL::copy_n(NN.begin(), nearest_neighbour_number, it);
- 
+  // CGAL::copy_n(NN.begin(), nearest_neighbour_number, it);
+  my_copy_n(NN.begin(), nearest_neighbour_number, it);
+  
+
   for (int j=0; j < nearest_neighbour_number; ++j) { 
      std::cout << " d(q,nn)= " << nearest_neighbours[j].second << 
      " nn= " << *(nearest_neighbours[j].first) << std::endl; 
@@ -99,13 +136,13 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
 
 int main() {
   
-  test_range_searching(CGAL::Split_rule_enumeration::MEDIAN_OF_MAX_SPREAD); 
-  test_range_searching(CGAL::Split_rule_enumeration::MEDIAN_OF_RECTANGLE); 
-  test_range_searching(CGAL::Split_rule_enumeration::MIDPOINT_OF_MAX_SPREAD);
-  test_range_searching(CGAL::Split_rule_enumeration::MIDPOINT_OF_RECTANGLE);
-  test_range_searching(CGAL::Split_rule_enumeration::FAIR);
-  test_range_searching(CGAL::Split_rule_enumeration::SLIDING_MIDPOINT); 
-  test_range_searching(CGAL::Split_rule_enumeration::SLIDING_FAIR);    
+  test_range_searching(CGAL::Split_rules::MEDIAN_OF_MAX_SPREAD); 
+  test_range_searching(CGAL::Split_rules::MEDIAN_OF_RECTANGLE); 
+  test_range_searching(CGAL::Split_rules::MIDPOINT_OF_MAX_SPREAD);
+  test_range_searching(CGAL::Split_rules::MIDPOINT_OF_RECTANGLE);
+  test_range_searching(CGAL::Split_rules::FAIR);
+  test_range_searching(CGAL::Split_rules::SLIDING_MIDPOINT); 
+  test_range_searching(CGAL::Split_rules::SLIDING_FAIR);    
 
   return 0;
 };

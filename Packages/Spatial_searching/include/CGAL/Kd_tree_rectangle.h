@@ -172,11 +172,11 @@ namespace CGAL {
       return upper_[max_span_coord_] - lower_[max_span_coord_];
     }
 
-    inline NT lower(int i) const {
+    inline NT min_coord(int i) const {
       return lower_[i];
     }
 
-    inline NT upper(int i) const {
+    inline NT max_coord(int i) const {
       return upper_[i];
     }
 
@@ -215,6 +215,18 @@ namespace CGAL {
 
     int dimension() const {return dim;}
 
+    /*
+    template <class Point> bool has_on_bounded_side(const Point& p) 
+  {
+    NT h;
+    for (int i = 0; i < dimension(); ++i) {
+        h=p[i];
+        if (h < min_coord(i) || h > max_coord(i)) return 0;
+    }
+    return 1;
+  } */
+
+
     Kd_tree_rectangle<NT>& operator= (const Kd_tree_rectangle<NT>& r) {
       
       if (this != &r) {
@@ -231,17 +243,7 @@ namespace CGAL {
     return r.print(s);
   }
 
-  template <class NT, class Point> bool belongs(const Point& p, 
-					      const Kd_tree_rectangle<NT>& r) 
-  {
-    NT h;
-    for (int i = 0; i < r.dimension(); ++i) {
-        h=p[i];
-        if (h < r.lower(i) || h > r.upper(i)) return 0;
-    }
-    return 1;
-  }
-
+  
 } // namespace CGAL
 #endif // CGAL_KD_TREE_RECTANGLE_H
 

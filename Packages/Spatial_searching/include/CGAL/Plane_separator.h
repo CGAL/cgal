@@ -51,7 +51,7 @@ template < class NT> class Plane_separator {
 	else  {return ON_POSITIVE_SIDE;}
   } */
 
-  template <class Item>  inline bool below(const Item& i) {
+  template <class Item>  inline bool has_on_negative_side(const Item& i) {
     return i[cutting_dimension()] < cutting_value();
   }
 

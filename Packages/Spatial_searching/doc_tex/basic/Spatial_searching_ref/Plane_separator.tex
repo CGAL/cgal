@@ -17,6 +17,8 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
+
+\begin{ccAdvanced}
   
 The class \ccRefName\ implements a plane separator, i.e. a hyperplane that is used to separate two half spaces.
 This hyperplane is defined by a cutting dimension $d$ and a cutting value $v$
@@ -56,7 +58,7 @@ void set_cutting_val(NT v);}
 \ccMethod{NT cutting_value();}{Returns the cutting value.}
 
 \ccMethod{template <class Item>
-bool on_negative_side(Item& i);}
+bool has_on_negative_side(Item& i);}
 {Returns true if and only if the item value in the cutting dimension is smaller than the cutting value.}
 
 \ccMethod{ 
@@ -71,7 +73,7 @@ std::ostream& operator<<(std::ostream& s, Plane_separator<NT>& p);}
 {Prints the plane separator \ccc{p} to the output stream \ccc{s} and returns \ccc{s}.}
 \ccGlueEnd
 
-
+\end{ccAdvanced}
 
 \end{ccRefClass}
 

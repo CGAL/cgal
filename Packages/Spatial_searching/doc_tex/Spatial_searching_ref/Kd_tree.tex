@@ -65,11 +65,12 @@ of the root node of the tree.}
 Returns the number of items that are stored in the tree.
 }
 
-\ccMethod{void statistics();}
-{
-Prints statistics of the tree.
-}
 
+
+\ccMethod{std::ostream& statistics(std::ostream& s);}
+{
+Inserts statistics of the tree into the output stream \ccc{s}.
+}
 
 
 % -----------------------------------

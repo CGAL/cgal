@@ -45,23 +45,25 @@ Kd_tree_rectangle(const int d, PointIter begin, PointIter end);}
 
 \ccHeading{Member Functions}
 
+\ccMethod{NT min_coord(int i);}
+{Returns the lower bound of the rectangle in dimension \ccc{i}.}
+
+\ccMethod{NT max_coord(int i);}
+{Returns the upper bound of the rectangle in dimension \ccc{i}.}
+
+\begin{ccAdvanced}
+
 \ccMethod{void set_upper_bound(int i, const NT& x);}
 {Sets upper bound in dimension \ccc{i} to \ccc{x}.}
 
 \ccMethod{void set_lower_bound(int i, const NT& x);}
 {Sets lower bound in dimension \ccc{i} to \ccc{x}.}
-
-\ccMethod{NT lower(int i);}
-{Returns the lower bound of the rectangle in dimension \ccc{i}.}
-
-\ccMethod{NT upper(int i);}
-{Returns the upper bound of the rectangle in dimension \ccc{i}.}
  
 \ccMethod{ template <class PointPointerIter>
-void update_from_point_pointers(PointPointerIter begin, PointPointIter end, bool empty);}
-{Returns if empty equals false the bounding box of the points in the range [begin,end). 
-Otherwise returns an empty box with lower bounds set to 1 and upper bounds set to -1.}
-
+void update_from_point_pointers(PointPointerIter begin, PointPointerIter end, bool empty);}
+{Updates the rectangle $r$ as the the bounding box of the points accessed by the pointers
+ in the range [begin,end). If empty is true the result is an empty bounding box.} 
+ 
 \ccMethod{NT max_span();}
 {Returns the maximal span of the rectangle.}
 
@@ -74,9 +76,11 @@ Otherwise returns an empty box with lower bounds set to 1 and upper bounds set t
 \ccMethod{int dimension();}
 {Returns the dimension of the rectangle.}
 
-\ccMethod{Kd_tree_rectangle* split(int d, NT value);}
+\ccMethod{Kd_tree_rectangle<N>* split(int d, NT value);}
 {Splits rectangle in dimension \ccc{d} at coordinate-value \ccc{value} 
- by modifying itself to lower half and returning the the upper half.}
+ by modifying itself to lower half and returning the upper half.
+Note that the \ccc{Kd_tree} datastructure is responsible for the
+deletion of the pointers to the instances of \ccc{Kd_tree_rectangle}.} 
 
 {\bf Non-Member functions related to \ccc{Kd_tree_rectangle<NT>}}
 
@@ -86,13 +90,13 @@ std::ostream& operator<<(std::ostream& s, Kd_tree_rectangle<NT>& b);}
 {Prints the rectangle \ccc{b} to the output stream \ccc{s} and returns \ccc{s}.}
 \ccGlueEnd
 
-\ccGlueBegin
-\ccGlobalFunction{ template <class NT, class Point>
-bool belongs(const Point& p, const Kd_tree_rectangle<NT>& r);} \
-{Returns true if and only if \ccc{p} is in \ccc{r} or is on the boundary of \ccc{r}.}
-\ccGlueEnd
+% \ccGlueBegin
+% \ccGlobalFunction{ template <class NT, class Point>
+% bool belongs(const Point& p, const Kd_tree_rectangle<NT>& r);} \
+% {Returns true if and only if \ccc{p} is in \ccc{r} or is on the boundary of \ccc{r}.}
+% \ccGlueEnd
 
-
+\end{ccAdvanced}
 
 \end{ccRefClass}
 

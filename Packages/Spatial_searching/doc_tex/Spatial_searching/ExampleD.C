@@ -58,7 +58,7 @@ int main() {
   
   // add random points of dimension dim to data_points
   CGAL::Random Rnd;
-  // std::cout << "started tstrandom()" << std::endl;
+  
   for (int i1=0; i1<data_point_number; i1++) {
 	NT v[dim];
 	for (int i2=0; i2<dim; i2++) v[i2]=Rnd.get_double(-1.0,1.0);
@@ -66,7 +66,7 @@ int main() {
         data_points.push_front(Random_point);
   }
   
-  Traits tr(bucket_size, CGAL::Split_rule_enumeration::SLIDING_FAIR, 3.0, false);
+  Traits tr(bucket_size, CGAL::Split_rules::SLIDING_FAIR, 3.0, false);
  
   typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);

@@ -43,8 +43,7 @@ Expects for the parameter \ccc{Distance} an implementation of the concept Orthog
 \ccCreation
 \ccCreationVariable{s}  %% choose variable name
 
-\ccConstructor{Orthogonal_priority_search(Tree& tree, QueryItem& q, Distance& d, int k, NT Eps,
-bool Search_nearest=true);}
+\ccConstructor{Orthogonal_priority_search(Tree& tree, QueryItem& q, Distance& d, int k, NT Eps);}
 {Constructor for searching approximately $k$ neighbours of the query item \ccc{q}
 in the items stored in the $k$-$d$ tree \ccc{tree} using an orthogonal distance
 traits class.}
@@ -56,9 +55,9 @@ traits class.}
 \ccMethod{iterator end();}{Past-the-end iterator. Denotes that all items in the search tree
 have been processed.}
 
-\ccMethod{void statistics();}
+\ccMethod{std::ostream& statistics(std::ostream& s);}
 {
-Prints statistics of the search process.
+Inserts statistics of the search process into the output stream \ccc{s}.
 }
 
 \ccSeeAlso

@@ -95,7 +95,7 @@ public:
   typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
   typedef CGAL::Creator_uniform_3<double,Point> Creator;
 
-int generate_kd_tree(CGAL::Split_rule_enumeration::Split_rule s) {
+int generate_kd_tree(CGAL::Split_rules::Split_rule s) {
 
   int bucket_size=10;
   
@@ -119,13 +119,13 @@ int generate_kd_tree(CGAL::Split_rule_enumeration::Split_rule s) {
 
 int main() {
   
-  generate_kd_tree(CGAL::Split_rule_enumeration::MEDIAN_OF_MAX_SPREAD); 
-  generate_kd_tree(CGAL::Split_rule_enumeration::MEDIAN_OF_RECTANGLE); 
-  generate_kd_tree(CGAL::Split_rule_enumeration::MIDPOINT_OF_MAX_SPREAD);
-  generate_kd_tree(CGAL::Split_rule_enumeration::MIDPOINT_OF_RECTANGLE);
-  generate_kd_tree(CGAL::Split_rule_enumeration::FAIR);
-  generate_kd_tree(CGAL::Split_rule_enumeration::SLIDING_MIDPOINT); 
-  generate_kd_tree(CGAL::Split_rule_enumeration::SLIDING_FAIR);    
+  generate_kd_tree(CGAL::Split_rules::MEDIAN_OF_MAX_SPREAD); 
+  generate_kd_tree(CGAL::Split_rules::MEDIAN_OF_RECTANGLE); 
+  generate_kd_tree(CGAL::Split_rules::MIDPOINT_OF_MAX_SPREAD);
+  generate_kd_tree(CGAL::Split_rules::MIDPOINT_OF_RECTANGLE);
+  generate_kd_tree(CGAL::Split_rules::FAIR);
+  generate_kd_tree(CGAL::Split_rules::SLIDING_MIDPOINT); 
+  generate_kd_tree(CGAL::Split_rules::SLIDING_FAIR);    
 
  
 

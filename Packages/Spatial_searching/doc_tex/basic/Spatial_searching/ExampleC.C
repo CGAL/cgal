@@ -65,7 +65,7 @@ int main() {
   
 
 
-  Traits tr(bucket_size, CGAL::Split_rule_enumeration::SLIDING_FAIR, 3, false);
+  Traits tr(bucket_size, CGAL::Split_rules::SLIDING_FAIR, 3, false);
 
   typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);
@@ -98,7 +98,7 @@ int main() {
   get_elements_in_query(NN.begin(), n, it);
    
   std::cout << 
-  "The " << n << " items in the range [0.0,1.0] x [0.0,1.0] x [0.0,1.0] x [0.0,1.0] are: " 
+  "The " << n << " items in the range [0,1] x [0,1] x [0,1] are: " 
   << std::endl;
 
   for (int j=0; j < n; ++j) { 

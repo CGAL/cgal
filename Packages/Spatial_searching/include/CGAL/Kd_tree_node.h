@@ -98,8 +98,8 @@ namespace CGAL {
     		int cd  = sep->cutting_dimension();
 
 		if (use_extension) {
-    			low_val = bbox.lower(cd);
-    			high_val = bbox.upper(cd);
+    			low_val = bbox.min_coord(cd);
+    			high_val = bbox.max_coord(cd);
 		};
 
     		if (c_low.size() > t.bucket_size())

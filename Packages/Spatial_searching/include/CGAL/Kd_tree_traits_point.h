@@ -38,7 +38,7 @@ namespace CGAL {
     // CGAL dependency typedef typename K::FT NT;
     typedef typename Item::R::FT NT;
     typedef std::pair<Item*,NT> Item_with_distance;
-    typedef typename Split_rule_enumeration::Split_rule split_rule;
+    typedef typename Split_rules::Split_rule split_rule;
 
   private:
 
@@ -52,11 +52,11 @@ namespace CGAL {
        
         
 	Kd_tree_traits_point(unsigned int bucket_size=1, 
-			     split_rule My_split_rule=Split_rule_enumeration::SLIDING_MIDPOINT,
+			     split_rule Selected_split_rule=Split_rules::SLIDING_MIDPOINT,
 			     NT aspect_ratio=NT(3), 
 			     bool use_extended_nodes=true) {
 		the_bucket_size = bucket_size;
-		the_selected_split_rule = My_split_rule;
+		the_selected_split_rule = Selected_split_rule;
 		the_aspect_ratio = aspect_ratio;
 		use_extended_nodes_option = use_extended_nodes;
 	}
@@ -74,45 +74,43 @@ namespace CGAL {
 
 		switch (the_selected_split_rule) {
 
-			case Split_rule_enumeration::SLIDING_MIDPOINT:
+			case Split_rules::SLIDING_MIDPOINT:
 				{Sliding_midpoint<Item> M;
-				sep=M.rule(c0);
-				c0.split_container(c1,sep,true);}
+				 sep=M.rule(c0);
+				 c0.split_container(c1,sep,true);}
 				break;
 
-			case Split_rule_enumeration::SLIDING_FAIR:
-				{Sliding_fair<Item> M;
-                                
-				sep=M.rule(c0,aspect_ratio());
-                                
-				c0.split_container(c1,sep,true);}
+			case Split_rules::SLIDING_FAIR:
+				{Sliding_fair<Item> M;                                
+				 sep=M.rule(c0,aspect_ratio());
+				 c0.split_container(c1,sep,true);}
 				break;
 
-			case Split_rule_enumeration::FAIR:
+			case Split_rules::FAIR:
 				{Fair<Item> M;
-				sep=M.rule(c0,aspect_ratio());
-				c0.split_container(c1,sep);}
+				 sep=M.rule(c0,aspect_ratio());
+				 c0.split_container(c1,sep);}
 				break;
 
-			case Split_rule_enumeration::MEDIAN_OF_MAX_SPREAD:
+			case Split_rules::MEDIAN_OF_MAX_SPREAD:
 				{Median_of_max_spread<Item> M;
-				sep=M.rule(c0);
-				c0.split_container(c1,sep);}
+				 sep=M.rule(c0);
+				 c0.split_container(c1,sep);}
 			    break;
 
-			case Split_rule_enumeration::MEDIAN_OF_RECTANGLE:
+			case Split_rules::MEDIAN_OF_RECTANGLE:
 				{Median_of_rectangle<Item> M;
-				sep=M.rule(c0);
-				c0.split_container(c1,sep);}
+				 sep=M.rule(c0);
+				 c0.split_container(c1,sep);}
 			    break;
 
-			case Split_rule_enumeration::MIDPOINT_OF_MAX_SPREAD:
+			case Split_rules::MIDPOINT_OF_MAX_SPREAD:
 				{Midpoint_of_max_spread<Item> M;
-				sep=M.rule(c0);
-				c0.split_container(c1,sep);}
+				 sep=M.rule(c0);
+				 c0.split_container(c1,sep);}
 			    break;
 
-			case Split_rule_enumeration::MIDPOINT_OF_RECTANGLE:
+			case Split_rules::MIDPOINT_OF_RECTANGLE:
 				{Midpoint_of_rectangle<Item> M;
 				sep=M.rule(c0);
 				c0.split_container(c1,sep);}

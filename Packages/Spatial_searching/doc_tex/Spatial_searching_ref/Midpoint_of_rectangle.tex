@@ -13,6 +13,8 @@
 
 \begin{ccRefFunctionObjectClass}{Midpoint_of_rectangle<Item>}  %% add template arg's if necessary
 
+\begin{ccAdvanced}
+
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
@@ -43,7 +45,7 @@ Midpoint_of_rectangle();}{Default constructor.}
 \ccHeading{Member Functions}
 
 \ccMethod{
-Plane_separator<NT>* Rule(Point_container<Item>& c);} 
+const Plane_separator<NT>& Rule(Point_container<Item>& c);} 
 {Computes and returns the splitter, that can split \ccc{c}.}
 
 \ccSeeAlso
@@ -51,6 +53,8 @@ Plane_separator<NT>* Rule(Point_container<Item>& c);}
 SplitRule,
 \ccc{Point_container},
 \ccc{Plane_separator}.
+
+\end{ccAdvanced}
 
 \end{ccRefFunctionObjectClass}
 

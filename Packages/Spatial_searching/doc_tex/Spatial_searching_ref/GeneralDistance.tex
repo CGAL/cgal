@@ -26,13 +26,13 @@ E.g., for an Euclidian distance the transformed distance is the squared Euclidea
 \ccParameters
 
 Expects for the parameter \ccc{QueryItem} an implementation of a spatial object, for
-example \ccc{Kd_tree_rectangle} implementing iso-rectangles.
+example \ccc{Iso_rectangle_d} implementing iso-rectangles.
 Expects for the parameter \ccc{Item} an implementation a $d$-dimensional point, 
 for example \ccc{CGAL::Point_d}.
 
 \ccTypes
 
-\ccTypedef{Item::FT NT;}{Number type.}
+\ccTypedef{Item::R::FT NT;}{Number type.}
 
 \ccCreation
 \ccCreationVariable{d}  %% choose variable name

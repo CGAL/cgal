@@ -16,7 +16,7 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
-
+\begin{ccAdvanced}
 
 \ccDefinition
 Implements the sliding fair splitting rule.
@@ -46,7 +46,7 @@ Sliding_fair();}{Default constructor.}
 \ccHeading{Member Functions}
 
 \ccMethod{
-Plane_separator<NT>* rule(Point_container<Item>& c, NT Aspect_ratio;);}
+const Plane_separator<NT>& rule(Point_container<Item>& c, NT Aspect_ratio;);}
 {Computes and returns the splitter, that can split \ccc{c}.}
 
 \ccSeeAlso
@@ -54,7 +54,11 @@ Plane_separator<NT>* rule(Point_container<Item>& c, NT Aspect_ratio;);}
 SplitRule,
 \ccc{Point_container},
 \ccc{Plane_separator}.
+
+\end{ccAdvanced}
+
 \end{ccRefFunctionObjectClass}
+
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer

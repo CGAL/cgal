@@ -49,11 +49,11 @@ for example \ccc{CGAL::Point_d}.
 \ccCreationVariable{tr}  %% choose variable name
 
 \ccConstructor{Kd_tree_traits_point();}{Default constructor assigning the default values 
-\ccc{bucket_size=1}, \ccc{selected_split_rule=SLIDING_MIDPOINT}, \ccc{aspect_ratio=3.0}, and \ccc{use_extended_nodes=true}
+\ccc{bucket_size=1}, \ccc{Default_split_rule=SLIDING_MIDPOINT}, \ccc{aspect_ratio=3.0}, and \ccc{use_extended_nodes=true}
 to the parameters.}
 
 \ccConstructor{Kd_tree_traits_point
-(int bucket_size=1, Split_rule My_split_rule=SLIDING_MIDPOINT, NT aspect_ratio=3.0, bool use_extended_nodes=true);}
+(int bucket_size=1, Split_rule Default_split_rule=SLIDING_MIDPOINT, NT aspect_ratio=3.0, bool use_extended_nodes=true);}
 {Constructor assigning values to the parameters.}
 \ccHeading{Member Functions}
 
@@ -67,7 +67,7 @@ of a cell allowed for fair splitting.}
 \ccMethod{bool use_extended_nodes();}{Returns boolean indicating whether extened internal nodes
 should be used.}
 
-\ccMethod{Separator* split(Point_container<Item>& c0, Point_container<Item>& c1);}
+\ccMethod{const Separator& split(Point_container<Item>& c0, Point_container<Item>& c1);}
 {Splits \ccc{c0} into \ccc{c0} and \ccc{c1} and returns the separator.}
 
 \ccSeeAlso

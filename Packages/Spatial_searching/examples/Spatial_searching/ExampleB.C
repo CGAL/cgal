@@ -27,8 +27,8 @@ int main() {
 
   const int dim=4;
   const int bucket_size=3;
-  const CGAL::Split_rule_enumeration::Split_rule s=
-  CGAL::Split_rule_enumeration::MEDIAN_OF_MAX_SPREAD;
+  const CGAL::Split_rules::Split_rule s=
+  CGAL::Split_rules::MEDIAN_OF_MAX_SPREAD;
   
   const int data_point_number=3000;
   const int neighbour_number=5;
@@ -87,7 +87,7 @@ int main() {
   N2.the_k_neighbours(std::back_inserter(neighbours2));
 
   std::cout << 
-  "query point= 4 0.5 0.5 0.5 0.5" << std::endl <<  "5 exact furthest neighbours are: " 
+  "query point= 4 0.0 0.0 0.0 0.0" << std::endl <<  "5 exact furthest neighbours are: " 
   << std::endl; 
   for (int i=0; i < neighbour_number; ++i) { 
      std::cout << " d(q,fn)= " 

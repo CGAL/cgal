@@ -11,29 +11,28 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{QueryItem}
+\begin{ccRefConcept}{QueryItem<R>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
   
-The concept \ccRefName\ defines the requirements for a 
+The concept \ccClassTemplateName\ defines the requirements for a 
 $d$-dimensional spatial object.
+
+\ccTypes
+
+\ccTypedef{Item::R::FT NT;}{Number type.}
 
 \ccCreation
 \ccCreationVariable{q}  %% choose variable name
 
 \ccConstructor{QueryItem();}{default constructor.}
 
-\ccOperations
-
-\ccMethod{int dimension();}
-{Returns the dimension of the spatial object.}
-
 \ccHasModels
 
-\ccc{Kd_tree_rectangle}.
+\ccc{Point_2, Point_3, Point_d, Iso_rectangle_2, Iso_cuboid_3, Iso_rectange_d, Circle_2,Sphere_3,Sphere_d}.
 
 \ccSeeAlso
 

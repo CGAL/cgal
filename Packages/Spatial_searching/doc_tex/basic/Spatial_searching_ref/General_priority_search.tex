@@ -29,7 +29,9 @@ built with extended nodes.
 
 Expects for the parameter \ccc{Traits} an implementation of the concept TreeTraits.
 Expects for the parameter \ccc{QueryItem}  an implementation  
-of a $d$-dimensional point, for example \ccc{CGAL::Point_d}.
+of a $d$-dimensional point, for example \ccc{CGAL::Point_d<R>}
+or an implementation of a spatial object, for
+example \ccc{CGAL::Iso_rectangle_d<R>} implementing iso-rectangles.
 Expects for the parameter \ccc{Distance} an implementation of the
 concept GeneralDistance.
 
@@ -58,10 +60,11 @@ traits class.}
 \ccMethod{iterator end();}{Past-the-end iterator. Denotes that all items in the search tree
 have been processed.}
 
-\ccMethod{void statistics();}
+\ccMethod{ostream& statistics();}
 {
-Prints statistics of the search process.
+Inserts statistics of the search process into an output stream.
 }
+
 
 \ccSeeAlso
 

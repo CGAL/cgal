@@ -22,15 +22,13 @@ The class \ccRefName\ implements approximate $k$-nearest neighbour searching
 using standard search on a $k$-$d$ tree using an orthogonal distance
 class. It is required that he $k$-$d$ tree is built with extended nodes.
 
-\ccInclude{CGAL/Orthogoanl_standard_search.h}
+\ccInclude{CGAL/Orthogonal_standard_search.h}
 
 \ccParameters
 
 Expects for the parameter \ccc{Traits} an implementation of the concept TreeTraits.
 Expects for the parameter \ccc{QueryItem}  an implementation
-of a $d$-dimensional point, for example \ccc{CGAL::Point_d<NT>}.
-or an implementation of a spatial object, for
-example \ccc{CGAL::Kd_tree_rectangle<NT>} implementing iso-rectangles.
+of a $d$-dimensional point, for example \ccc{CGAL::Point_d<R>}.
 Expects for the parameter \ccc{Distance} an implementation of the
 concept OrthogonalDistance.
 
@@ -46,8 +44,7 @@ concept OrthogonalDistance.
 \ccCreation
 \ccCreationVariable{s}  %% choose variable name
 
-\ccConstructor{Orthogonal_standard_search(Tree& tree, QueryItem& q, Distance& d, int k, NT Eps,
-bool Search_nearest=true);}
+\ccConstructor{Orthogonal_standard_search(Tree& tree, QueryItem& q, Distance& d, int k, NT Eps);}
 {Constructor for searching approximately $k$ neighbours of the query item \ccc{q}
 in the items stored in the $k$-$d$ tree \ccc{tree} using an orthogonal distance
 traits class.}
@@ -58,10 +55,12 @@ traits class.}
 OutputIterator  the_k_neighbours(OutputIterator res);}
 {Returns a sequence of $k$ elements of type \ccc{Item_with_distance}}.
 
-\ccMethod{void statistics();}
+
+\ccMethod{std::ostream& statistics(std::ostream& s);}
 {
-Prints statistics of the search process.
+Inserts statistics of the search process into the output stream \ccc{s}.
 }
+
 
 \ccSeeAlso
 
