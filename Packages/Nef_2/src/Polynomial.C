@@ -12,6 +12,7 @@
 // package       : Nef_2
 // author(s)     : Michael Seel
 //                 Radu Ursu
+//                 Andreas Fabri
 // release       : 
 // release_date  : 
 //
@@ -24,6 +25,25 @@
 #include <CGAL/Nef_2/Polynomial.h>
 
 namespace CGAL{
+
+
+ Polynomial<int> operator - (const Polynomial<int>& p)  
+ {  
+   CGAL_assertion(p.degree()>=0);  
+   Polynomial<int> res(std::make_pair(p.coeffs().begin(),p.coeffs().end()));  
+   Polynomial<int>::iterator it, ite=res.coeffs().end();  
+   for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;  
+   return res;  
+ }  
+   
+ Polynomial<double> operator - (const Polynomial<double>& p)  
+ {  
+   CGAL_assertion(p.degree()>=0);  
+   Polynomial<double> res(std::make_pair(p.coeffs().begin(),p.coeffs().end()));  
+   Polynomial<double>::iterator it, ite=res.coeffs().end();  
+   for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;  
+   return res;  
+ }  
 
 
 // SPECIALIZE_IMPLEMENTATION(NT,int double) START
@@ -191,7 +211,5 @@ Polynomial<double> Polynomial<double>::gcd(
   return Polynomial<double>(1)*f1.abs();
 }
 
-int    Polynomial<int>::R_;
-double Polynomial<double>::R_;
 
 }//end namespace CGAL
