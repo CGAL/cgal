@@ -15,8 +15,6 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
-           $(TESTSUITE_CXXFLAGS) \
-           $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
@@ -26,11 +24,9 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
-          $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
@@ -39,32 +35,18 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                Gmpq$(EXE_EXT) \
-                MP_Float$(EXE_EXT) \
-                NT_checker$(EXE_EXT) \
-                _test_valid_finite_double$(EXE_EXT) \
-                _test_valid_finite_float$(EXE_EXT) \
                 doubletst$(EXE_EXT) \
                 floattst$(EXE_EXT) \
+                Gmpq$(EXE_EXT) \
                 long_doubletst$(EXE_EXT) \
+                MP_Float$(EXE_EXT) \
+                NT_checker$(EXE_EXT) \
+                Quotient$(EXE_EXT) \
                 quotient_io$(EXE_EXT) \
                 simplest_rational$(EXE_EXT) \
+                _test_valid_finite_double$(EXE_EXT) \
+                _test_valid_finite_float$(EXE_EXT) \
                 utilities$(EXE_EXT) 
-
-Gmpq$(EXE_EXT): Gmpq$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Gmpq Gmpq$(OBJ_EXT) $(LDFLAGS)
-
-MP_Float$(EXE_EXT): MP_Float$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)MP_Float MP_Float$(OBJ_EXT) $(LDFLAGS)
-
-NT_checker$(EXE_EXT): NT_checker$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)NT_checker NT_checker$(OBJ_EXT) $(LDFLAGS)
-
-_test_valid_finite_double$(EXE_EXT): _test_valid_finite_double$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_valid_finite_double _test_valid_finite_double$(OBJ_EXT) $(LDFLAGS)
-
-_test_valid_finite_float$(EXE_EXT): _test_valid_finite_float$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_valid_finite_float _test_valid_finite_float$(OBJ_EXT) $(LDFLAGS)
 
 doubletst$(EXE_EXT): doubletst$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)doubletst doubletst$(OBJ_EXT) $(LDFLAGS)
@@ -72,8 +54,20 @@ doubletst$(EXE_EXT): doubletst$(OBJ_EXT)
 floattst$(EXE_EXT): floattst$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)floattst floattst$(OBJ_EXT) $(LDFLAGS)
 
+Gmpq$(EXE_EXT): Gmpq$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Gmpq Gmpq$(OBJ_EXT) $(LDFLAGS)
+
 long_doubletst$(EXE_EXT): long_doubletst$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)long_doubletst long_doubletst$(OBJ_EXT) $(LDFLAGS)
+
+MP_Float$(EXE_EXT): MP_Float$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)MP_Float MP_Float$(OBJ_EXT) $(LDFLAGS)
+
+NT_checker$(EXE_EXT): NT_checker$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)NT_checker NT_checker$(OBJ_EXT) $(LDFLAGS)
+
+Quotient$(EXE_EXT): Quotient$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Quotient Quotient$(OBJ_EXT) $(LDFLAGS)
 
 quotient_io$(EXE_EXT): quotient_io$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)quotient_io quotient_io$(OBJ_EXT) $(LDFLAGS)
@@ -81,20 +75,27 @@ quotient_io$(EXE_EXT): quotient_io$(OBJ_EXT)
 simplest_rational$(EXE_EXT): simplest_rational$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)simplest_rational simplest_rational$(OBJ_EXT) $(LDFLAGS)
 
+_test_valid_finite_double$(EXE_EXT): _test_valid_finite_double$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_valid_finite_double _test_valid_finite_double$(OBJ_EXT) $(LDFLAGS)
+
+_test_valid_finite_float$(EXE_EXT): _test_valid_finite_float$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_valid_finite_float _test_valid_finite_float$(OBJ_EXT) $(LDFLAGS)
+
 utilities$(EXE_EXT): utilities$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)utilities utilities$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   Gmpq.clean \
-                   MP_Float.clean \
-                   NT_checker.clean \
-                   _test_valid_finite_double.clean \
-                   _test_valid_finite_float.clean \
                    doubletst.clean \
                    floattst.clean \
+                   Gmpq.clean \
                    long_doubletst.clean \
+                   MP_Float.clean \
+                   NT_checker.clean \
+                   Quotient.clean \
                    quotient_io.clean \
                    simplest_rational.clean \
+                   _test_valid_finite_double.clean \
+                   _test_valid_finite_float.clean \
                    utilities.clean 
 
 #---------------------------------------------------------------------#

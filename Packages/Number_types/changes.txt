@@ -1,3 +1,6 @@
+5 March 2005 Sylvain Pion
+- Add test program for the mixed operators of Quotient.
+
 3 March 2005 Sylvain Pion
 - long_double.h : SunPRO workaround.
 
