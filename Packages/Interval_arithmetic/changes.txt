@@ -1,6 +1,6 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.89 on ?? May 2001
+Version 4.89 on 23 May 2001
 - Workaround what seems to be a bug in KCC with non-inline overloading of
   inline templates.
 
