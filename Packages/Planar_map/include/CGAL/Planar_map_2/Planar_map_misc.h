@@ -27,8 +27,6 @@
 #ifndef CGAL_PLANAR_MAP_MISC_H
 #define CGAL_PLANAR_MAP_MISC_H
 
-#include <CGAL/Polyhedron_iterator_3.h>
-
 CGAL_BEGIN_NAMESPACE
 
 //--------------------------------------------------------------------------
@@ -49,7 +47,6 @@ public:
   typedef PlanarMapTraits_2             Base;
   typedef typename Base::X_curve_2      X_curve_2;
   typedef typename Base::Point_2        Point_2;
-  typedef typename Base::Direction_2    Direction_2;
 
   
   // Creators:
