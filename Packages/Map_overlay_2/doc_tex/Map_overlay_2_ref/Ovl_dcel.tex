@@ -1,0 +1,65 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Ovl_dcel.tex (Map_overlay)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: ovl (Map_Overlay_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Ovl_dcel<Traits,V,H,F>}
+
+\ccDefinition
+
+    The \ccClassTemplateName\ is a model of the Dcel concept
+    defined above. Its template parameters are the vertex, halfedge and face
+    classes which conform to the requirements given above.
+
+\ccInclude{CGAL/Map_overlay_default_dcel.h}
+
+\ccIsModel
+    \ccc{MapOverlayDcel_2}
+
+\ccHeading{Models for Dcel Vertex, Halfedge and Face}
+The \ccStyle{Vertex_overlay<Vertex_base>} is a model for the 
+Dcel vertex concept defined above. 
+The \ccStyle{Halfedge_overlay<Halfedge_base>} is a
+model for the Dcel halfedge concept defined above.
+The \ccStyle{Face_overlay<Face_base>} is a
+model for the Dcel face concept defined above. 
+
+\ccHeading{Requirements}
+\ccc{Vertex_base} is a model for the \ccc{PlanarMapDcelVertex_2} concept.
+\ccc{Halfedge_base} is a model for the \ccc{PlanarMapDcelHalfedge_2} concept.
+\ccc{Face_base} is a model for the \ccc{PlanarMapDcelFace_2} concept.
+
+
+\ccInclude{CGAL/Map_overlay_default_dcel.h}
+
+\ccHeading{The Default Dcel Structure}
+The \ccStyle{Map_overlay_default_dcel<Traits,Vertex_base=Pm_vertex_base<Traits::Point>,
+   Halfedge_base=Pm_halfedge_base<Traits::X_curve>,
+   Face_base=Pm_face_base>} 
+is a model of the Dcel concept
+defined above. Its template parameters are the traits class defined below, 
+and the basic vertex, halfedge and face the overlay components inherit.
+The default template parameters for the three basic components are the 
+\ccc{Planar_map} basic components.
+The overlay default DCEL is a wrapper for \ccStyle{Pm_dcel} instantiated 
+with \ccStyle{Vertex_overlay<Vertex_base>},
+\ccStyle{Halfedge_overlay<Halfedge_base>} and 
+\ccStyle{Face_overlay<Fase_base>}.
+
+\ccInclude{CGAL/Map_overlay_default_dcel.h}
+
+\end{ccRefClass}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
