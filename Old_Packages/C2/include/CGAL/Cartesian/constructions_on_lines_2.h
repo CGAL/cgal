@@ -32,6 +32,20 @@ line_from_point_direction( PointC2<R CGAL_CTAG> const& p,
   return LineC2<R CGAL_CTAG>(a,b,c);
 }
 
+
+template < class R >
+inline
+LineC2<R CGAL_CTAG>
+bisector( PointC2<R CGAL_CTAG> const& p,
+          PointC2<R CGAL_CTAG> const& q)
+{
+  typename R::FT a,b,c;
+  bisector_of_pointsC2(p.x(),p.y(),q.x(),q.y(),a,b,c);
+  return LineC2<R CGAL_CTAG>(a,b,c);
+}
+
+
+
 template < class R >
 inline
 typename R::FT
@@ -79,6 +93,10 @@ side_of_oriented_line( LineC2<R CGAL_CTAG> const& l,
 {
   return side_of_oriented_lineC2(l.a(), l.b(), l.c(), p.x(), p.y());
 }
+
+
+
+
 
 CGAL_END_NAMESPACE
 

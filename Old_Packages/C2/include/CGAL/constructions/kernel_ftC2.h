@@ -20,6 +20,8 @@ midpointC2( const FT &px, const FT &py,
   y = (py+qy) / FT(2);
 }
 
+
+
 template < class FT >
 CGAL_KERNEL_LARGE_INLINE
 void
@@ -83,6 +85,24 @@ line_from_point_directionC2(const FT &px, const FT &py,
   b = dx;
   c = px*dy - py*dx;
 }
+
+
+template < class FT >
+CGAL_KERNEL_INLINE
+void
+bisector_of_pointsC2(const FT &px, const FT &py,
+		     const FT &qx, const FT &qy,
+		     FT &a, FT &b, FT& c )
+{
+  a = FT(2)*(px - qx);
+  b = FT(2)*(py - qy);
+  c = px*px + py*py - qx*qx - qy*qy;
+}
+
+
+
+
+
 
 template < class FT >
 inline
