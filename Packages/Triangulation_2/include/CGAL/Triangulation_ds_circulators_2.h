@@ -67,13 +67,9 @@ public:
   
   Triangulation_ds_face_circulator_2(Vertex_handle v, 
 				     Face_handle f = NULL);
-        
 
   // MK: added to satisfy the mips CC 7.40 compiler
-  Face_circulator& operator=(const Face_circulator& other) {
-    Base_circulator::operator=((Base_circulator)other);
-    return *this;
-  }
+  Face_circulator& operator=(const Face_circulator& other);
 
   Face_circulator& operator++();
   Face_circulator operator++(int);
@@ -231,7 +227,17 @@ Triangulation_ds_face_circulator_2(Vertex_handle v, Face_handle f)
     _v = NULL ; pos = NULL; return;}
   else CGAL_triangulation_precondition( pos->has_vertex(v));
 }
-  
+ 
+template < class Tds >
+Triangulation_ds_face_circulator_2<Tds>&
+Triangulation_ds_face_circulator_2<Tds> ::
+operator=(const Face_circulator& other)
+{
+  Base_circulator::operator=((Base_circulator)other);
+  _v = other._v;
+  pos = other.pos;
+  return *this;
+} 
     
 template < class Tds >
 Triangulation_ds_face_circulator_2<Tds>&
