@@ -158,12 +158,12 @@ protected:
   void sweep(_PM_ &pm, Op tag)
   {
     EventQueueIter eventIter = m_queue->begin();
-    m_prevPos = eventIter->first;
+    m_prevPos = *(eventIter->first);
     Point_2 referencePoint;
 
     while ( eventIter != m_queue->end() )
     {
-      const Point_2 *p = &(eventIter->first);
+      const Point_2 *p = eventIter->first;
       if ( m_traits->compare_x(m_sweepLinePos, *p) == SMALLER ) {
         m_prevPos = m_sweepLinePos;
 	m_verticals.clear();
@@ -172,7 +172,7 @@ protected:
       m_sweepLinePos = *p;
       m_currentPos = *p;
 
-      p = &(eventIter->first);
+      p = eventIter->first;
       m_currentEvent = eventIter->second;
       SL_DEBUG(std::cout << "------------- " << *p << " --------------"
 	                 << std::endl;
@@ -180,7 +180,7 @@ protected:
 	       m_currentEvent->Print();
       )
 
-      if ( m_traits->compare_x(eventIter->first, m_sweepLinePos) != EQUAL) {
+      if ( m_traits->compare_x(*(eventIter->first), m_sweepLinePos) != EQUAL) {
 	SL_DEBUG(std::cout << "clearing miniq " 
 		           << eventIter->first  << " "
 		           << m_prevPos << "\n";)
@@ -331,7 +331,7 @@ protected:
       SL_DEBUG(std::cout<<"starting at curve \n";)
       SL_DEBUG((*slIter)->Print();)
       const Point_2 &topEnd = vcurve->get_top_end();
-      EventQueueIter topEndEventIter = m_queue->find(topEnd);
+      EventQueueIter topEndEventIter = m_queue->find(&topEnd);
       CGAL_assertion(topEndEventIter!=m_queue->end());
       Event *topEndEvent = topEndEventIter->second;
       
@@ -366,7 +366,7 @@ protected:
 	SL_DEBUG(CGAL_assertion(res==true);)
 	  res = 0;
       
-	EventQueueIter eqi = m_queue->find(p);
+	EventQueueIter eqi = m_queue->find(&p);
 	Event *e = 0;
 	if ( eqi == m_queue->end() )
 	{
@@ -377,7 +377,7 @@ protected:
 	  e->add_curve_to_left(*slIter, m_sweepLinePos);
 	  e->add_curve_to_right(*slIter);
 	  PRINT_NEW_EVENT(p, e);
-	  m_queue->insert(EventQueueValueType(p, e));
+	  m_queue->insert(EventQueueValueType(&(e->get_point()), e));
 	  
 	  lastEventCreatedHere = true;
 
@@ -602,7 +602,7 @@ protected:
 	iter = m_verticals.erase(iter);
 	
       } else if (!curve->is_end_point(point)) {
-	EventQueueIter eventIter = m_queue->find(curve->get_top_end());
+	EventQueueIter eventIter = m_queue->find(&(curve->get_top_end()));
 	CGAL_assertion(eventIter!=m_queue->end());
 	(eventIter->second)->add_vertical_curve_x_event(m_currentEvent, true);
 	++iter;
