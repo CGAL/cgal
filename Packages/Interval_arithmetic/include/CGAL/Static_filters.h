@@ -35,6 +35,10 @@
 // To allow pure static filters, the constant bound is computed by calling
 // register_object() over each object (currently only Point_3) that some
 // predicate of the traits will have to deal with.
+//
+// Note that we may extract more information with that : for example decide
+// if all coordinates are fixed points values of a maximum number of bits,
+// which guarantees the initial subtractions are exact...
 
 CGAL_BEGIN_NAMESPACE
 
