@@ -159,5 +159,12 @@ int main ()
 
   test_to_double();
 
+  // Test % and gcd.
+  CGAL::Lazy_exact_nt<int> tmp35(35), tmp7(7), tmp9(9);
+  assert((tmp35 % tmp7) == 0);
+  assert(gcd(tmp35, tmp7) == 7);
+  tmp9 %= tmp7;
+  assert(tmp9 == 2);
+
   return 0;
 }

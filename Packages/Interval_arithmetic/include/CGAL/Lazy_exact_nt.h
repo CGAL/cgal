@@ -33,6 +33,7 @@
 #include <CGAL/Handle.h>
 #include <CGAL/misc.h>
 #include <CGAL/Filtered_exact.h> // to get the overloaded predicates.
+#include <CGAL/Kernel/mpl.h>
 
 /*
  * This file contains the definition of the number type Lazy_exact_nt<ET>,
@@ -250,6 +251,8 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
   }
 };
 
+#define CGAL_int(T)    typename First_if_different<int,    T>::Type
+#define CGAL_double(T) typename First_if_different<double, T>::Type
 
 // The real number type, handle class
 template <typename ET>
@@ -270,17 +273,18 @@ public :
   typedef Lazy_exact_nt<ET> Self;
   typedef Lazy_exact_rep<ET> Self_rep;
 
-  // Lazy_exact_nt () {} // Handle is not such a nice stuff...  at the moment.
-
   Lazy_exact_nt (Self_rep *r)
   { PTR = r; }
 
   // Operations
-  Lazy_exact_nt (double d)
-  { PTR = new Lazy_exact_Cst<ET>(d); }
+  Lazy_exact_nt ()
+  { PTR = new Lazy_exact_Int_Cst<ET>(0); }
 
-  Lazy_exact_nt (int i = 0)
+  Lazy_exact_nt (const CGAL_int(ET) & i)
   { PTR = new Lazy_exact_Int_Cst<ET>(i); }
+
+  Lazy_exact_nt (const CGAL_double(ET) & d)
+  { PTR = new Lazy_exact_Cst<ET>(d); }
 
   Lazy_exact_nt (const ET & e)
   { PTR = new Lazy_exact_Ex_Cst<ET>(e); }
@@ -672,6 +676,34 @@ Lazy_exact_nt<ET> &
 operator/=(Lazy_exact_nt<ET> & a, int b)
 { return a = a / b; }
 
+
+// % and gcd kill filtering.
+template <typename NT> 
+Lazy_exact_nt<NT> &
+operator%=(Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>& b)
+{
+  NT res = a.exact();
+  res %= b.exact();
+  return a = Lazy_exact_nt<NT>(res);
+}
+
+template <typename NT> 
+inline
+Lazy_exact_nt<NT>
+operator%(const Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>& b)
+{
+  Lazy_exact_nt<NT> res = a;
+  return res %= b;
+}
+
+template <typename NT> 
+Lazy_exact_nt<NT>
+gcd(const Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>& b)
+{
+  return Lazy_exact_nt<NT>(CGAL_NTS gcd(a.exact(), b.exact()));
+}
+
+
 template <typename ET>
 inline
 bool
@@ -707,6 +739,9 @@ template < typename ET >
 inline bool
 fit_in_double(const Lazy_exact_nt<ET>& l, double& r)
 { return l.fit_in_double(r); }
+
+#undef CGAL_double
+#undef CGAL_int
 
 CGAL_END_NAMESPACE
 
