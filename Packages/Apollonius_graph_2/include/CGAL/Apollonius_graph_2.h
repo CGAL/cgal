@@ -963,9 +963,9 @@ protected:
 
 CGAL_END_NAMESPACE
 
-
+#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/Apollonius_graph_2.C>
-
+#endif
 
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_H

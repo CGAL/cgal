@@ -56,7 +56,9 @@
 
 #include <CGAL/Apollonius_graph_kernel_wrapper_2.h>
 
+#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/Apollonius_graph_euclidean_traits_2.C>
+#endif
 
 #include <CGAL/Apollonius_graph_constructions_C2.h>
 

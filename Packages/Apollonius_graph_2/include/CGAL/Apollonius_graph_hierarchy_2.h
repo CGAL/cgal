@@ -197,6 +197,10 @@ private:
 
 CGAL_END_NAMESPACE
 
+
+#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/Apollonius_graph_hierarchy_2.C>
+#endif
+
 
 #endif // CGAL_APOLLONIUS_GRAPH_HIERARCHY_2_H

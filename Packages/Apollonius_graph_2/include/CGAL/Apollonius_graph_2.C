@@ -162,7 +162,6 @@ circumcircle(const Site_2& p0, const Site_2& p1) const
 
 // dual
 template< class Gt, class Agds >
-inline
 typename Gt::Object_2
 Apollonius_graph_2<Gt,Agds>::
 dual(const Face_handle& f) const
