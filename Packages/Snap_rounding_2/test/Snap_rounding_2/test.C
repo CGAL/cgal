@@ -26,34 +26,18 @@ typedef Snap_rounding_2::Segment_const_iterator Segment_const_iterator;
 typedef Snap_rounding_2::Polyline_const_iterator Polyline_const_iterator;
 typedef Snap_rounding_2::Point_const_iterator Point_const_iterator;
 
-void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg_list,bool &wait_for_click,int &number_of_kd_trees,bool &do_isr)
+void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg_list)
 {
   int number_of_segments,i;
   CGAL::Segment_data<Rep> seg;
   Number_Type x1,y1,x2,y2;
 
-  if(argc > 5 || argc < 2) {
-    std::cerr << "syntex: test <input file name> [do_isr = t][wait for a click = f] [number of kd-trees = 5]\n";
-    std::cerr << "wait for a click: 0 - not wait, 1 - wait\n";
+  if(argc != 2) {
+    std::cerr << "syntex: test <input file name>\n";
     exit(1);
   }
 
   std::ifstream is(argv[1]);
-  
-  if(argc > 4)
-    do_isr = !strcmp(argv[2],"t");
-  else
-    do_isr = true;
-
-  if(argc > 5)
-    wait_for_click = !strcmp(argv[3],"t");
-  else
-    wait_for_click = false;
-
-  if(argc == 7)
-    number_of_kd_trees = atoi(argv[4]);
-  else
-    number_of_kd_trees = 5;
 
   if(is.bad()) {
     std::cerr << "Bad input file : " << argv[1] << std::endl;
@@ -96,17 +80,14 @@ void print_out(Snap_rounding_2 s)
   }
 }
 
-
 int main(int argc,char *argv[])
 {
   std::list<Segment_2> seg_list;
   Number_Type prec;
-  int number_of_trees;
-  bool wait_for_click,do_isr;
 
-  read_data(argc,argv,prec,seg_list,wait_for_click,number_of_trees,do_isr);
+  read_data(argc,argv,prec,seg_list);
 
-  Snap_rounding_2 s1(seg_list.begin(),seg_list.end(),prec,do_isr,number_of_trees);
+  Snap_rounding_2 s1(seg_list.begin(),seg_list.end(),prec,true,3);
 
   //s1.output(std::cout);
 
@@ -133,9 +114,15 @@ int main(int argc,char *argv[])
   s1.insert(*(seg_list.begin()));
   print_out(s1);
 
-  Snap_rounding_2 i2(prec,do_isr,number_of_trees);;
+  Snap_rounding_2 s2(prec,true,4);
 
-  
+  std::cout << "\ndefault ctor + multiple insertion\n";
+  s2.insert(seg_list.begin(),seg_list.end());
+  print_out(s2);
+
+  std::cout << "\ntesting sr\n";
+  Snap_rounding_2 s3(seg_list.begin(),seg_list.end(),prec,false);
+  print_out(s3);
 
   return(0);
 }
