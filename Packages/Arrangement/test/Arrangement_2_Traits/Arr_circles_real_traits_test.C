@@ -36,7 +36,7 @@ class Arr_circles_real_traits_test : public Arr_traits_test<Traits> {
 
   typedef Arr_traits_test<Traits>::Traits Traits;
 
-  void build_curve_list(list<Curve_with_info>& curve_list)
+  void build_curve_list(std::list<Curve_with_info>& curve_list)
   { 
     // Require:
     CGAL_precondition_msg(curve_list.empty(), \

@@ -13,32 +13,34 @@ private:
 
   // a data structure to store test info connected with each curve
   struct Curve_with_info {
-    Curve    cv;
-    bool     is_x_monotone;
-    unsigned x_monotone_num;
-    string   description;
+    Curve         cv;
+    bool          is_x_monotone;
+    unsigned      x_monotone_num;
+    std::string   description;
     
     // Construction
     Curve_with_info() {};
     
-    Curve_with_info(Curve cv_in, bool is_x, int parts, string desc) :
+    Curve_with_info(Curve cv_in, bool is_x, int parts, std::string desc) :
       cv(cv_in), is_x_monotone(is_x), x_monotone_num(parts), 
       description(desc)
     {};
   };
  
   // Builds list of curves, depends on template parameter arr_traits
-  virtual void build_curve_list(list<Curve_with_info>& curve_list) = 0;
+  virtual void build_curve_list(std::list<Curve_with_info>& curve_list) = 0;
 
   // Checks is_x_monotone and make_x_monotone
-  bool check_monotony_functions(list<Curve_with_info> curves_list, bool flip)
+  bool check_monotony_functions(std::list<Curve_with_info> curves_list, 
+				bool flip)
   {
     bool test_success = true,
       is_x_monotone;
     Curve_with_info cv_w_info;
-    list<Curve> x_monotone_parts;
+    std::list<Curve> x_monotone_parts;
 
-    for (list<Curve_with_info>::iterator cit = curves_list.begin();
+    typename std::list<Curve_with_info>::iterator cit = curves_list.begin();
+    for (;
 	 cit != curves_list.end();
 	 cit++) {
       if (flip) 
@@ -78,7 +80,7 @@ public:
   {
     bool result = true;
 
-    list<Curve_with_info> curves_list;
+    std::list<Curve_with_info> curves_list;
     
     build_curve_list(curves_list);
 
