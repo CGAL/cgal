@@ -1,4 +1,15 @@
 //-----------------------------------------------------------------------//
+//           Changes from 1.12 to 1.13:
+//-----------------------------------------------------------------------//
+
+Guarded definition of iterator_category
+in include/CGAL/Polygon_2_edge_circulator.h and
+include/CGAL/Polygon_2_edge_iterator.h
+by the flag CGAL_CFG_NO_ITERATOR_TRAITS.
+If iterator_traits are available, this definition
+is not necessary, as it is provided by a template.
+
+//-----------------------------------------------------------------------//
 //           Changes from 1.9 to 1.10:
 //-----------------------------------------------------------------------//
 
