@@ -415,8 +415,8 @@ public:
       }
       else if( CGAL::assign( e, *o)) {
         Point_3 q;
-        if( is.does_intersect_internally( s, Segment_3(e0->source()->point(),
-	                                               e0->twin()->source()->point()), q)) {
+        if( is.does_intersect_internally( s, Segment_3(e->source()->point(),
+	                                               e->twin()->source()->point()), q)) {
           q = normalized(q);
           call_back( e0, Object_handle(Halfedge_const_handle(e)), q);
           _TRACEN("edge intersects edge "<<' '<<&*e<< Segment_3(e->source()->point(),
