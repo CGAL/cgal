@@ -46,7 +46,7 @@ all:            \
                 example8$(EXE_EXT) \
                 example9$(EXE_EXT) 
 
-#                example3$(EXE_EXT) \
+#                example3$(EXE_EXT) \ - doesn't compile with msvc in I-2.3-88
 
 example1$(EXE_EXT): example1$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example1 example1$(OBJ_EXT) $(LDFLAGS)
