@@ -44,13 +44,13 @@ all:            \
                 demo$(EXE_EXT) 
 
 demo.moc:  demo.C
-	$(QT_MOC) -o demo.moc $<
+	$(QT_MOC) -o demo.moc demo.C
 
 qt_file_toolbar.moc:  qt_file_toolbar.h
-	$(QT_MOC) -o qt_file_toolbar.moc $<
+	$(QT_MOC) -o qt_file_toolbar.moc qt_file_toolbar.h
 
 qt_layers_toolbar.moc:  qt_layers_toolbar.h
-	$(QT_MOC) -o qt_layers_toolbar.moc $<
+	$(QT_MOC) -o qt_layers_toolbar.moc qt_layers_toolbar.h
 
 demo$(OBJ_EXT): demo.moc qt_file_toolbar.moc qt_layers_toolbar.moc
 
