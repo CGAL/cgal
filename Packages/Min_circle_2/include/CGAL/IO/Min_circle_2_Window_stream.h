@@ -65,7 +65,8 @@ CGAL::Window_stream&
 operator << ( CGAL::Window_stream &ws,
               const CGAL::Min_circle_2<Traits_>& min_circle)
 {
-    typedef  CGAL::Min_circle_2<Traits_>::Point_iterator  Point_iterator;
+    typedef typename CGAL::Min_circle_2<Traits_>::Point_iterator
+	                                          Point_iterator;
 
     Point_iterator  first( min_circle.points_begin());
     Point_iterator  last ( min_circle.points_end());

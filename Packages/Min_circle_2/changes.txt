@@ -1,5 +1,8 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.15 on 13-Apr-2002
+- Missing typename.
+
 Version 3.14 on 12-Feb-2002
 - Replace esprit_logo by cgal_logo.
 
