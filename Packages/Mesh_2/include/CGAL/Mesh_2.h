@@ -390,6 +390,9 @@ private:
 			 Constrained_vertex_circulator begin,
 			 const Constrained_vertex_circulator& end,
 			 Cluster c = Cluster());
+  inline 
+  Vertex_handle insert_in_the_edge(Face_handle fh, int edge_index,
+				   const Point p);
   Vertex_handle insert_middle(Face_handle f, int i);
   void cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster&
 			c);
@@ -908,6 +911,48 @@ construct_cluster(Vertex_handle v,
 }
 
 template <class Tr>
+inline 
+Mesh_2<Tr>::Vertex_handle
+Mesh_2<Tr>::
+insert_in_the_edge(Face_handle fh, int edge_index, const Point p)
+  // insert the point p in the edge (fh, edge_index). It updates seeds 
+  // too.
+{
+  const Vertex_handle&
+    va = fh->vertex(cw(edge_index)),
+    vb = fh->vertex(ccw(edge_index));
+
+  bool 
+    mark_at_right = fh->is_marked(),
+    mark_at_left = fh->neighbor(edge_index)->is_marked();
+
+  Vertex_handle vp = special_insert_in_edge(p, fh, edge_index);
+  // TODO, WARNING: special_insert_in_edge is not robust!
+  // We should deconstrained the constrained edge, insert the two
+  // subconstraints and re-constrain them
+
+  is_edge(va, vp, fh, edge_index); 
+  // set fh to the face at the right of [va,vb]
+
+  Face_circulator fc = incident_faces(vp, fh), fcbegin(fc);
+  // circulators are counter-clockwise, so we start at the right of
+  // [va,vb]
+  do {
+    if( !is_infinite(fc) )
+      fc->set_marked(mark_at_right);
+    ++fc;
+  } while ( fc->vertex(ccw(fc->index(vp))) != vb );
+  // we are now at the left of [va,vb]
+  do {
+    if( !is_infinite(fc) )
+      fc->set_marked(mark_at_left);
+    ++fc;
+  } while ( fc != fcbegin );
+  return vp;
+}
+
+
+template <class Tr>
 void Mesh_2<Tr>::
 cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
 {
@@ -957,29 +1002,7 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
       int index;
       is_edge(va,vb,fh,index);
 
-      // TODO: do not copy-paste with insert_middle
-      bool 
-	mark_at_right = fh->is_marked(),
-	mark_at_left = fh->neighbor(index)->is_marked();
-      
-      vc = special_insert_in_edge(i, fh, index);
-
-      is_edge(va, vc, fh, index); // set f to the face at the right of [va,vb]
-      Face_circulator fc = incident_faces(vc, fh), fcbegin(fc);
-      // circulators are counter-clockwise, so we start at the right of
-      // [va,vb]
-      do {
-	if( !is_infinite(fc) )
-	  fc->set_marked(mark_at_right);
-	++fc;
-      } while ( fc->vertex(ccw(fc->index(vc))) != vb );
-      // we are now at the left of [va,vb]
-      do {
-	if( !is_infinite(fc) )
-	  fc->set_marked(mark_at_left);
-	++fc;
-      } while ( fc != fcbegin );
-      
+      vc = insert_in_the_edge(fh, index, i);
     }
   update_c_edge_queue(va, vb, vc);
   update_facette_map(vc);
@@ -995,36 +1018,13 @@ insert_middle(Face_handle f, int i)
   Construct_midpoint_2
     midpoint = geom_traits().construct_midpoint_2_object();
 
-  Vertex_handle
+  const Vertex_handle& 
     va = f->vertex(cw(i)),
     vb = f->vertex(ccw(i));
 
-  bool 
-    mark_at_right = f->is_marked(),
-    mark_at_left = f->neighbor(i)->is_marked();
-
   Point mp = midpoint(va->point(), vb->point());
 
-  Vertex_handle vm = special_insert_in_edge(mp, f, i);
-  // TODO, WARNING: special_insert_in_edge is not robust!
-  // We should deconstrained the constrained edge, insert the two
-  // subconstraints and re-constrain them
-
-  is_edge(va, vm, f, i); // set f to the face at the right of [va,vb]
-  Face_circulator fc = incident_faces(vm, f), fcbegin(fc);
-  // circulators are counter-clockwise, so we start at the right of
-  // [va,vb]
-  do {
-    if( !is_infinite(fc) )
-      fc->set_marked(mark_at_right);
-    ++fc;
-  } while ( fc->vertex(ccw(fc->index(vm))) != vb );
-  // we are now at the left of [va,vb]
-  do {
-    if( !is_infinite(fc) )
-      fc->set_marked(mark_at_left);
-    ++fc;
-  } while ( fc != fcbegin );
+  Vertex_handle vm = insert_in_the_edge(f, i, mp);
 
   update_c_edge_queue(va, vb, vm);
   update_facette_map(vm);
