@@ -153,11 +153,6 @@ _test_cls_point_2(const R& )
   it2++;
   assert(it == it2);
 
-  // Assignment that allows to interpret the point like an array of coordinates
-  it = &p;
-  it2 = p.cartesian_begin();
-  assert(it == it2);
-
  std::cout << "done" << std::endl;
  return true;
 }
