@@ -56,7 +56,7 @@ int main() {
   }
   
   
-  Traits tr(bucket_size, 3.0, false);
+  Traits tr(bucket_size, 3.0, true);
 
   Distance::Weight_vector w(4);
   w[0]=1.0; w[1]=2.0; w[2]=3.0; w[3]=4.0;
@@ -74,8 +74,7 @@ int main() {
   Point query_item(dim,q,q+dim);
 
   std::vector<NN_standard_search::Item_with_distance> nearest_neighbours;
-  nearest_neighbours.reserve(nearest_neighbour_number);
-
+  
   NN_standard_search NN(d, query_item, tr_dist, nearest_neighbour_number, 0.0);
   std::cout << "neighbour searching statistics using no extended nodes: " << std::endl;
   NN.statistics();
@@ -86,8 +85,8 @@ int main() {
      " nn= " << *(nearest_neighbours[j].first) << std::endl; 
   }
   
+  std::cout << "error in destructor to be found" << std::endl;
+
   return 0;
 
-};
-
-
+}; 

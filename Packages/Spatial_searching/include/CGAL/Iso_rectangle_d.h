@@ -20,13 +20,13 @@
 // coordinator   : Utrecht University
 //
 // ======================================================================
-
 #ifndef CGAL_ISO_RECTANGLE_D_H
 #define CGAL_ISO_RECTANGLE_D_H
 #include <functional>
 #include <algorithm>
 #include <new>
 #include <cassert>
+
 
 namespace CGAL {
   

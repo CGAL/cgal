@@ -7,7 +7,7 @@
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Euclidean_distance.h>
 
-#include <vector>
+#include <vector>  
 #include <iostream>
 
 typedef CGAL::Cartesian_d<double> R;
@@ -65,17 +65,19 @@ int main() {
         data_points.push_front(Random_point);
   }
   
-  Traits tr(bucket_size, 3.0, false);
+  Traits tr(bucket_size, 3.0, true);
  
   typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);
 
+
   // define query item
   double q[dim];
   for (int i=0; i<dim; i++) {
-  	q[i]=0.5;
+  	q[i]=0.5; 
   }
   Point query_item(dim,q,q+dim);
+
 
   Distance tr_dist;
   
