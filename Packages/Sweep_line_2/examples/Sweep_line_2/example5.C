@@ -18,9 +18,9 @@ typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 
 typedef Traits::Point_2                                 Point_2;
 typedef Traits::Curve_2                                 Curve_2;
-typedef Traits::X_curve_2                               X_curve_2;
+typedef Traits::X_monotone_curve_2                               X_monotone_curve_2;
 
-typedef std::pair<Point_2, std::list<X_curve_2> >       Pair_point_curves;
+typedef std::pair<Point_2, std::list<X_monotone_curve_2> >       Pair_point_curves;
 
 typedef std::vector<Curve_2>                            CurveList;
 typedef CurveList::iterator                             CurveListIter;
@@ -54,7 +54,7 @@ int main()
        p_iter != intersecting_curves.end(); ++p_iter)
   {
     std::cout<<"The curves"<< std::endl;
-    for (std::list<X_curve_2>::iterator cv_iter = (p_iter->second).begin();
+    for (std::list<X_monotone_curve_2>::iterator cv_iter = (p_iter->second).begin();
 	 cv_iter != (p_iter->second).end(); ++cv_iter)
       std::cout<< *cv_iter << std::endl;
     std::cout<<"intersect at "<< p_iter->first << std::endl << std::endl;

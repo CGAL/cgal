@@ -59,7 +59,7 @@ The \ccStyle{Sweep_2} is parametrized with four parameters.
 \ccTypes
 \ccNestedType{Traits}{traits class.}
 \ccNestedType{Curve_2}{a 2D curve as defined in the traits class.}
-\ccNestedType{X_curve_2}{an x-monotone 2D curve as defined in the traits class.}
+\ccNestedType{X_monotone_curve_2}{an x-monotone 2D curve as defined in the traits class.}
 \ccNestedType{Point_2}{a 2D point as defined in the traits class.}
 
 \ccQueryFunctions
@@ -78,7 +78,7 @@ is false (default), any overlapping subcurve is reported only once. If the
 parameter is set to true, the subcurve is reported as many times as it 
 is overlapped.
 \\\ccStyle{OutpoutIterator::value_type} is equvalent to 
-\ccStyle{Traits::X_curve_2}.}
+\ccStyle{Traits::X_monotone_curve_2}.}
 
 \ccMethod{  template <class OutpoutIterator>
   void  get_intersection_points(CurveInputIterator curves_begin, 

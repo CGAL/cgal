@@ -31,13 +31,13 @@ primitive operations used by the sweep line functions.
 
   \ccNestedType{Curve_2}{A type that holds a general curve in the plane. The
   sweep-line operation operates on curves of this type.}
-  \ccNestedType{X_curve_2}{A type that holds an $x$-monotone curve in the
+  \ccNestedType{X_monotone_curve_2}{A type that holds an $x$-monotone curve in the
   plane. Sweeping the plane produces $x$-monotone curves.}
   \ccNestedType{Point_2}{A type that holds the position of a vertex in
   the plane. The type of the end points of curves of type \ccc{Curve_2} and
-  \ccc{X_curve_2}.}
+  \ccc{X_monotone_curve_2}.}
   
-  The following methods that have a parameter of type \ccc{X_curve_2} have the
+  The following methods that have a parameter of type \ccc{X_monotone_curve_2} have the
   implicit precondition that requires the parameter to be $x$-monotone.
 
 \ccHeading{Enumerations}
@@ -73,43 +73,43 @@ primitive operations used by the sweep line functions.
   $y(p1) < y(p2)$;
   \ccStyle{EQUAL} otherwise.}
 
-  \ccMethod{bool curve_is_vertical(const X_curve_2& cv);} 
+  \ccMethod{bool curve_is_vertical(const X_monotone_curve_2& cv);} 
   {returns \ccStyle{true} if \ccStyle{cv} is a vertical segment, 
   \ccStyle{false} otherwise.}
 
-  \ccMethod{bool curve_is_in_x_range( const X_curve_2& cv,
+  \ccMethod{bool point_in_x_range( const X_monotone_curve_2& cv,
             const Point_2& pnt );}
   {returns \ccStyle{true} if \ccStyle{pnt} is in the $x$ range of
   \ccStyle{cv}, \ccStyle{false} otherwise.}
     
-  \ccMethod{Comparison_result curve_compare_at_x(const X_curve_2& cv1,
-            const X_curve_2& cv2, const Point_2& pnt );}
+  \ccMethod{Comparison_result curves_compare_y_at_x(const X_monotone_curve_2& cv1,
+            const X_monotone_curve_2& cv2, const Point_2& pnt );}
   {compares the $y$-coordinate of $cv1$ and $cv2$ at the $x$-coordinate 
   of $pnt$. Returns \ccStyle{LARGER} if $cv1(x(q)) > cv2(x(q))$;
   \ccStyle{SMALLER} if $cv1(x(q)) < cv2(x(q))$; \ccStyle{EQUAL} otherwise.
   \ccPrecond{$cv1$ and $cv2$ are defined at $pnt$'s $x$-coordinate.}}
 
-  \ccMethod{Comparison_result curve_compare_at_x_right(const X_curve_2& cv1,
-            const X_curve_2& cv2, const Point_2& pnt);}
+  \ccMethod{Comparison_result curves_compare_y_at_x_right(const X_monotone_curve_2& cv1,
+            const X_monotone_curve_2& cv2, const Point_2& pnt);}
   {compares the $y$-coordinate of $cv1$ and $cv2$ immediately to the right of
   the $x$-coordinate of $pnt$.
   \ccPrecond{$cv1$ and $cv2$ meet at $pnt$ $x$-coordinate.}
   \ccPrecond{$cv1$ and $cv2$ are defined to the left of $pnt$'s
   $x$-coordinate.}}
 
-  \ccMethod{Comparison_result curve_get_point_status(const X_curve_2& cv,
+  \ccMethod{Comparison_result curve_compare_y_at_x(const X_monotone_curve_2& cv,
             const Point_2& pnt);}
   {compares the y-coordinates of $pnt$ and the vertical projection of $pnt$
   on $cv$. Returns \ccStyle{SMALLER} if $cv(x(p)) < y(p)$; \ccStyle{LARGER}
   if $cv(x(p)) > y(p)$; \ccStyle{EQUAL} otherwise (p is on the curve).
   \ccPrecond{$cv$ is defined at $pnt$'s $x$-coordinate.}}
           
-  \ccMethod{bool curve_is_same(const X_curve_2 & cv1,
-                               const X_curve_2 & cv2);}
+  \ccMethod{bool curve_equal(const X_monotone_curve_2 & cv1,
+                               const X_monotone_curve_2 & cv2);}
   {returns \ccc{true} if \ccc{cv1} and \ccc{cv2} have the same graph, 
   \ccc{false} otherwise.}
 
-  \ccMethod{bool point_is_same(const Point_2 & p1,
+  \ccMethod{bool point_equal(const Point_2 & p1,
                                const Point_2 & p2);}
   {returns \ccc{true} if \ccc{p1} is the same as \ccc{p2}, \ccc{false}
   otherwise.}
@@ -123,12 +123,12 @@ primitive operations used by the sweep line functions.
   \ccMethod{Point curve_target(const X_curve& cv);}
   {returns the target of \ccc{cv}.}
 
-  \ccMethod{void make_x_monotone(const Curve& cv, list<X_curve>& l);}
+  \ccMethod{void curve_make_x_monotone(const Curve& cv, list<X_curve>& l);}
   {cuts \ccc{cv} into $x$-monotone subcurves and stores them in $l$.
   The order in which they are inserted into $l$ defines their order
   in the hierarchy tree.}
 
-  \ccMethod{void curve_split(const X_curve_2& cv, X_curve_2& c1, X_curve_2& c2,
+  \ccMethod{void curve_split(const X_monotone_curve_2& cv, X_monotone_curve_2& c1, X_monotone_curve_2& c2,
                              const Point_2& split_pt);}
   {splits $cv$ at \ccc{split_pt} into two curves, and assigns them to
   \ccc{c1} and \ccc{c2} respectively.
@@ -141,7 +141,7 @@ primitive operations used by the sweep line functions.
   {finds the nearest intersection point (or points) of \ccc{c1} and \ccc{c2}
   to the right lexicographically of \ccc{pt} not includin \ccc{pt} itself,
   (with one exception explained below).
-  If the intersection of \ccc{c1} and \ccc{c2} is an \ccc{X_curve_2}, that is,
+  If the intersection of \ccc{c1} and \ccc{c2} is an \ccc{X_monotone_curve_2}, that is,
   they overlap at infinitely many points, then if the right endpoint and the
   left endpoint of the overlapping subcurve are strickly to the right of \
   \ccc{pt}, they are returned through the two point references \ccc{p1} and

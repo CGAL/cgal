@@ -63,9 +63,9 @@ public:
   typedef SweepLineTraits_2 Traits;
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::Curve_2 Curve_2;
-  typedef typename Traits::X_curve_2 X_curve_2;
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
-  Sweep_line_subcurve(int id, X_curve_2 &curve, Point_2 *reference, 
+  Sweep_line_subcurve(int id, X_monotone_curve_2 &curve, Point_2 *reference, 
 		      SweepLineTraits_2 *traits);
 
 
@@ -76,7 +76,7 @@ public:
   /*!
     @return a reference to the curve 
   */
-  const X_curve_2 &getCurve() const { 
+  const X_monotone_curve_2 &getCurve() const { 
     return m_curve;
   }
 
@@ -103,14 +103,14 @@ public:
   /*!
     @return a reference to the last intersecing curve so far
   */
-  const X_curve_2 &getLastCurve() const { 
+  const X_monotone_curve_2 &getLastCurve() const { 
     return m_lastCurve; 
   }
   /*! 
     updates the last intersecting curve so far.
     @param cv a reference to the curve
   */
-  void setLastCurve(const X_curve_2 &cv) { 
+  void setLastCurve(const X_monotone_curve_2 &cv) { 
     m_lastCurve = cv; 
   }
 
@@ -119,11 +119,11 @@ public:
   }
 
   bool isSource(const Point_2 &p) { 
-    return m_traits->point_is_same(p, m_source);
+    return m_traits->point_equal(p, m_source);
   }
 
   bool isTarget(const Point_2 &p) { 
-    return m_traits->point_is_same(p, m_target);
+    return m_traits->point_equal(p, m_target);
   }
 
   /*! returns true if the specified point is the source or the target
@@ -202,8 +202,8 @@ public:
   // one of its ends
   bool isPointInRange(const Point_2 &p)
   {
-    if (! m_traits->curve_is_in_x_range(m_curve, p) ||
-	m_traits->curve_get_point_status(m_curve, p) != EQUAL)
+    if (! m_traits->point_in_x_range(m_curve, p) ||
+	m_traits->curve_compare_y_at_x(m_curve, p) != EQUAL)
       return false;
     if ( isEndPoint(p) )
       return false;
@@ -222,7 +222,7 @@ private:
   Traits *m_traits;
 
   /*! thecurve */
-  X_curve_2 m_curve;
+  X_monotone_curve_2 m_curve;
 
   /* a pointer to a point that is used as a reference point when two 
      curves are compared. This is used when inserting and erasing 
@@ -236,7 +236,7 @@ private:
 
   /*! the portion of the curve to the right of the last event point 
       on the curve */
-  X_curve_2 m_lastCurve;
+  X_monotone_curve_2 m_lastCurve;
 
   /*! true if the source of the curve is to the left of the target. */
   bool m_isRightSide;
@@ -251,7 +251,7 @@ private:
 
 template<class SweepLineTraits_2>
 inline Sweep_line_subcurve<SweepLineTraits_2>::
-Sweep_line_subcurve(int id, X_curve_2 &curve, Point_2 *reference, 
+Sweep_line_subcurve(int id, X_monotone_curve_2 &curve, Point_2 *reference, 
 		    SweepLineTraits_2 *traits)  : m_id(id), m_traits(traits)
 {
   m_curve = curve;

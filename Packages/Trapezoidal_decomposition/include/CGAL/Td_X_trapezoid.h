@@ -337,9 +337,9 @@ public:
           return false;
         }
 
-	b=traits->curve_is_in_x_range(bottom(),left());
+	b=traits->point_in_x_range(bottom(),left());
 	if (b)
-	  t=traits->curve_get_point_status(bottom(),left());
+	  t=traits->curve_compare_y_at_x(bottom(),left());
 
         if (!b || t == LARGER)
         {
@@ -350,9 +350,9 @@ public:
           return false;
         }
 
-	b=traits->curve_is_in_x_range(bottom(),right());
+	b=traits->point_in_x_range(bottom(),right());
 	if (b)
-	  t=traits->curve_get_point_status(bottom(),right());
+	  t=traits->curve_compare_y_at_x(bottom(),right());
 
         if (!b || t == LARGER)
         {
@@ -373,9 +373,9 @@ public:
           return false;
         }
 
-	b=traits->curve_is_in_x_range(top(),left());
+	b=traits->point_in_x_range(top(),left());
 	if (b)
-	  t=traits->curve_get_point_status(top(),left());
+	  t=traits->curve_compare_y_at_x(top(),left());
         
 	if (!b || t == SMALLER)
         {
@@ -386,9 +386,9 @@ public:
           return false;
         }
 
-	b=traits->curve_is_in_x_range(top(),right());
+	b=traits->point_in_x_range(top(),right());
 	if (b)
-	  t=traits->curve_get_point_status(top(),right());
+	  t=traits->curve_compare_y_at_x(top(),right());
 
         if (!b || t == SMALLER)
         {
@@ -479,43 +479,43 @@ public:
           CGAL_warning((!is_right_unbounded()));
           return false;
         }
-        if (!traits->curve_is_in_x_range(bottom(),left()) ||
-	    traits->curve_get_point_status(bottom(),left()) != EQUAL)
+        if (!traits->point_in_x_range(bottom(),left()) ||
+	    traits->curve_compare_y_at_x(bottom(),left()) != EQUAL)
         {
           std::cerr << "\nbottom()==" << bottom() << std::flush;
           std::cerr << "\nleft()==" << left() << std::flush;
-          CGAL_warning(traits->curve_is_in_x_range(bottom(),left()) &&
-		       traits->curve_get_point_status(bottom(),
+          CGAL_warning(traits->point_in_x_range(bottom(),left()) &&
+		       traits->curve_compare_y_at_x(bottom(),
 						      left()) == EQUAL);
           return false;
         }
-        if (!traits->curve_is_in_x_range(bottom(),right()) ||
-	    traits->curve_get_point_status(bottom(),right()) != EQUAL)
+        if (!traits->point_in_x_range(bottom(),right()) ||
+	    traits->curve_compare_y_at_x(bottom(),right()) != EQUAL)
         {
           std::cerr << "\nbottom()==" << bottom() << std::flush;
           std::cerr << "\nright()==" << right() << std::flush;
-          CGAL_warning(traits->curve_is_in_x_range(bottom(),right()) &&
-		       traits->curve_get_point_status(bottom(),
+          CGAL_warning(traits->point_in_x_range(bottom(),right()) &&
+		       traits->curve_compare_y_at_x(bottom(),
 						      right()) == EQUAL);
           return false;
         }
-        if (!traits->curve_is_in_x_range(top(),left()) ||
-	    traits->curve_get_point_status(top(),left()) != EQUAL)
+        if (!traits->point_in_x_range(top(),left()) ||
+	    traits->curve_compare_y_at_x(top(),left()) != EQUAL)
         {
           std::cerr << "\ntop()==" << top() << std::flush;
           std::cerr << "\nleft()==" << left() << std::flush;
-          CGAL_warning(!traits->curve_is_in_x_range(top(),left()) &&
-		       traits->curve_get_point_status(top(),
+          CGAL_warning(!traits->point_in_x_range(top(),left()) &&
+		       traits->curve_compare_y_at_x(top(),
 						      left()) == EQUAL);
           return false;
         }
-        if (!traits->curve_is_in_x_range(top(),right()) ||
-	    traits->curve_get_point_status(top(),right()) != EQUAL)
+        if (!traits->point_in_x_range(top(),right()) ||
+	    traits->curve_compare_y_at_x(top(),right()) != EQUAL)
         {
           std::cerr << "\ntop()==" << top() << std::flush;
           std::cerr << "\nright()==" << right() << std::flush;
-          CGAL_warning(traits->curve_is_in_x_range(top(),right()) &&
-		       traits->curve_get_point_status(top(),
+          CGAL_warning(traits->point_in_x_range(top(),right()) &&
+		       traits->curve_compare_y_at_x(top(),
 						      right()) == EQUAL);
           return false;
         }
@@ -596,11 +596,11 @@ public:
                          left_bottom_neighbour()->is_active());
             return false;
           }
-          if (!traits->point_is_same(left(),right()))
+          if (!traits->point_equal(left(),right()))
           {
             std::cerr << "\nleft()==" << left() << std::flush;
             std::cerr << "\nright()==" << right() << std::flush;
-            CGAL_warning(traits->point_is_same(left(),right()));
+            CGAL_warning(traits->point_equal(left(),right()));
             return false;
           }
         }

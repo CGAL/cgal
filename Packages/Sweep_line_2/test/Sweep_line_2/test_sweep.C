@@ -110,7 +110,7 @@ typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
 #endif
 
 typedef Traits::Point_2                     Point_2;
-typedef Traits::X_curve_2                   X_curve_2;
+typedef Traits::X_monotone_curve_2                   X_monotone_curve_2;
 
 typedef std::list<Point_2> PointList;
 typedef PointList::iterator PointListIter;
@@ -118,7 +118,7 @@ typedef PointList::iterator PointListIter;
 typedef CGAL::Sweep_line_subcurve<Traits> SubCurve;
 typedef CGAL::Sweep_line_event<Traits, SubCurve> Event;
 
-typedef std::list<X_curve_2> CurveList;
+typedef std::list<X_monotone_curve_2> CurveList;
 typedef CurveList::iterator CurveListIter;
 
 void ReadCurveList(std::ifstream &inp, CurveList &clist);
@@ -229,7 +229,7 @@ void ReadCurveList(std::ifstream &inp, CurveList &clist)
 
     Point_2 p1(x0, y0);
     Point_2 p2(x1, y1);
-    X_curve_2 curve(p1, p2);
+    X_monotone_curve_2 curve(p1, p2);
     clist.push_back(curve);
     std::cout << curve << "\n";
   }
@@ -256,7 +256,7 @@ void ReadCurveListRational(std::ifstream &inp, CurveList &clist)
     NT y1(a,b);
     Point_2 p2(x1, y1);
 
-    X_curve_2 curve(p1, p2);
+    X_monotone_curve_2 curve(p1, p2);
     clist.push_back(curve);
     std::cout << curve << "\n";
   }

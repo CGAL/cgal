@@ -60,7 +60,7 @@ class Sweep_line_event
 {
 public:
   typedef SweepLineTraits_2 Traits;
-  typedef typename Traits::X_curve_2 X_curve_2;
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   typedef typename Traits::Point_2 Point_2;
 
   //typedef Sweep_line_subcurve<Traits> SubCurve;
@@ -106,7 +106,7 @@ public:
    */
   void addCurve(SubCurve *scurve)
   {
-    const X_curve_2 &curve = scurve->getCurve();
+    const X_monotone_curve_2 &curve = scurve->getCurve();
     const Point_2 &source = m_traits->curve_source(curve);
     const Point_2 &target = m_traits->curve_target(curve);
     
@@ -117,7 +117,7 @@ public:
     } else 
     {
       const Point_2 *rel = &(source);
-      if ( m_traits->point_is_same(m_point, source) )
+      if ( m_traits->point_equal(m_point, source) )
 	rel = &(target);
       
       if ( m_traits->compare_x(m_point, *rel) == LARGER ) {
@@ -173,7 +173,7 @@ public:
     }
 
     SubCurveIter iter = m_leftCurves->begin();
-    const X_curve_2 &cv = curve->getCurve();
+    const X_monotone_curve_2 &cv = curve->getCurve();
     
     // look for the curve, and if exists, erase it.
     while ( iter != m_leftCurves->end() ) {
@@ -190,20 +190,20 @@ public:
 
     while ( iter != m_leftCurves->end() )
     {
-      if ( m_traits->curve_is_in_x_range((*iter)->getCurve(), ref))
+      if ( m_traits->point_in_x_range((*iter)->getCurve(), ref))
       {
-        res = m_traits->curve_compare_at_x (cv, (*iter)->getCurve(), 
+        res = m_traits->curves_compare_y_at_x (cv, (*iter)->getCurve(), 
 					    ref );
 	if (res == EQUAL)
-	  res = m_traits->curve_compare_at_x_right(cv, (*iter)->getCurve(), 
+	  res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->getCurve(), 
 						   ref );
       }
       else
       {
-        res = m_traits->curve_compare_at_x (cv, (*iter)->getCurve(), 
+        res = m_traits->curves_compare_y_at_x (cv, (*iter)->getCurve(), 
 					    (*iter)->getLeftEnd());
 	if (res == EQUAL)
-	  res = m_traits->curve_compare_at_x_right(cv, (*iter)->getCurve(), 
+	  res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->getCurve(), 
 						   (*iter)->getLeftEnd());
       }
 
@@ -221,9 +221,9 @@ public:
       if ( iter == m_leftCurves->end())
 	break;
 
-      res = m_traits->curve_compare_at_x (cv, (*iter)->getCurve(), ref);
+      res = m_traits->curves_compare_y_at_x (cv, (*iter)->getCurve(), ref);
       if (res == EQUAL)
-	res = m_traits->curve_compare_at_x_right(cv, (*iter)->getCurve(), ref);
+	res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->getCurve(), ref);
     }
     
     // insert the curve. If the curve is already in the list, it is not added
@@ -253,11 +253,11 @@ public:
 
     SubCurveIter iter = m_rightCurves->begin();
     Comparison_result res;
-    while (((res = m_traits->curve_compare_at_x (curve->getCurve(),
+    while (((res = m_traits->curves_compare_y_at_x (curve->getCurve(),
 						(*iter)->getCurve(), 
 						 m_point)) == LARGER) ||
 	   (res == EQUAL &&
-	    (res = m_traits->curve_compare_at_x_right(curve->getCurve(),
+	    (res = m_traits->curves_compare_y_at_x_right(curve->getCurve(),
 						      (*iter)->getCurve(), 
 						      m_point)) == LARGER))
     {
@@ -277,11 +277,11 @@ public:
 	return;
       }
 
-      res = m_traits->curve_compare_at_x (curve->getCurve(),
+      res = m_traits->curves_compare_y_at_x (curve->getCurve(),
 					  (*iter)->getCurve(), 
 					  m_point);
       if (res == EQUAL)
-	res = m_traits->curve_compare_at_x_right(curve->getCurve(),
+	res = m_traits->curves_compare_y_at_x_right(curve->getCurve(),
 						 (*iter)->getCurve(), 
 						 m_point);
     }
@@ -376,7 +376,7 @@ public:
 
     if ( !requireSort ) 
     {
-      if (!m_traits->point_is_same(p, m_verticalCurveXPoints.back())) {
+      if (!m_traits->point_equal(p, m_verticalCurveXPoints.back())) {
 	m_verticalCurveXPoints.push_back(p);
       }
     } else
@@ -391,7 +391,7 @@ public:
       }
       if ( iter == m_verticalCurveXPoints.end() )
 	m_verticalCurveXPoints.push_back(p);
-      else if (!m_traits->point_is_same(p, *iter)) {
+      else if (!m_traits->point_equal(p, *iter)) {
 	m_verticalCurveXPoints.insert(iter, p);
       }
     }

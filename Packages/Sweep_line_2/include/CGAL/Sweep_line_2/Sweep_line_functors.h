@@ -55,7 +55,7 @@ class Status_line_curve_less_functor
 public:
   typedef SweepLineTraits_2 Traits;
   typedef typename Traits::Point_2 Point_2;
-  typedef typename Traits::X_curve_2 X_curve_2;
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   typedef bool (Status_line_curve_less_functor::*func)
                       (const Subcurve*, const Subcurve*) const;
 
@@ -80,7 +80,7 @@ public:
 #if 1  // this may ot work with conics. Need to verify
     const Point_2 *p = c1->getReferencePoint();
     Comparison_result r = 
-      m_compare_param->m_traits->curve_compare_at_x(c1->getCurve(), 
+      m_compare_param->m_traits->curves_compare_y_at_x(c1->getCurve(), 
     				   c2->getCurve(), 
     				   *p);
     if ( r == SMALLER) {
@@ -88,7 +88,7 @@ public:
     } 
     return false;
 #else
-    if ( m_compare_param->m_traits->curve_get_point_status(c2->getCurve(),
+    if ( m_compare_param->m_traits->curve_compare_y_at_x(c2->getCurve(),
                                                           c1->getLeftEnd())
 	 == LARGER)
       return true;
@@ -106,13 +106,13 @@ public:
 	      << "\t\t  " << c2->getCurve() << "\n";
 #endif
     
-    const X_curve_2 &cv1 = c1->getCurve();
-    const X_curve_2 &cv2 = c2->getCurve();
+    const X_monotone_curve_2 &cv1 = c1->getCurve();
+    const X_monotone_curve_2 &cv2 = c2->getCurve();
     Traits *t = m_compare_param->m_traits;
     if ( t->curve_is_vertical(cv1) )
     {
-      if (t->curve_is_in_x_range(cv2, c1->getSource()) &&
-	  t->curve_get_point_status(cv2, c1->getTopEnd()) == LARGER )
+      if (t->point_in_x_range(cv2, c1->getSource()) &&
+	  t->curve_compare_y_at_x(cv2, c1->getTopEnd()) == LARGER )
       {
 	return true;
       }
@@ -120,8 +120,8 @@ public:
     }
     if ( t->curve_is_vertical(cv2))
     {
-      if (t->curve_is_in_x_range(cv1, c2->getSource()) &&
-	  t->curve_get_point_status(cv1, c2->getBottomEnd()) == SMALLER)
+      if (t->point_in_x_range(cv1, c2->getSource()) &&
+	  t->curve_compare_y_at_x(cv1, c2->getBottomEnd()) == SMALLER)
       {
 	return true;
       }
@@ -129,12 +129,12 @@ public:
     }
 
     // non of the curves is vertical... 
-    Comparison_result r =  t->curve_compare_at_x (c1->getCurve(), 
+    Comparison_result r =  t->curves_compare_y_at_x (c1->getCurve(), 
 						  c2->getCurve(), 
 						  *p);
 
     if (r == EQUAL)
-      r = t->curve_compare_at_x_right(c1->getCurve(), 
+      r = t->curves_compare_y_at_x_right(c1->getCurve(), 
 					     c2->getCurve(), 
 					     *p);
     if ( r == SMALLER) {

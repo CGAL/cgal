@@ -68,7 +68,7 @@ public:
   typedef Point_handle<Traits>                       Point_handle_traits;
   typedef X_curve_plus_id<Traits>                    X_curve_plus;
   
-  typedef typename  Traits::X_curve_2                X_curve;
+  typedef typename  Traits::X_monotone_curve_2                X_curve;
   typedef typename  Traits::Point_2                  Point;
 
   typedef Sweep_curves_base_2<CurveInputIterator, Traits, 
@@ -146,10 +146,10 @@ public:
       Curve_node_iterator ncv_iter;
       for (ncv_iter = point_node.curves_begin(); 
 	   ncv_iter != point_node.curves_end(); ++ncv_iter){
-	if (!traits->point_is_same(event_point,
+	if (!traits->point_equal(event_point,
                                    traits->curve_source(ncv_iter->get_curve()))
             && 
-            traits->point_is_same(event_point,
+            traits->point_equal(event_point,
                                   ncv_iter->get_rightmost_point().point()))
 	  ncv_iter->erase_rightmost_point();
       }
@@ -160,7 +160,7 @@ public:
       // participating within the event.
       for (ncv_iter = point_node.curves_begin(); 
 	   ncv_iter != point_node.curves_end(); ++ncv_iter){
-	if (!traits->point_is_same(event_point,
+	if (!traits->point_equal(event_point,
                                    ncv_iter->get_rightmost_point().point()))
 	  ncv_iter->push_event_point(point_node.get_point());
       }
@@ -228,10 +228,10 @@ public:
       Curve_node_iterator cvn_iter;
       for (cvn_iter = point_node.curves_begin(); 
 	   cvn_iter != point_node.curves_end(); ++cvn_iter){
-	if (!traits->point_is_same(event_point,
+	if (!traits->point_equal(event_point,
                                    traits->curve_source(cvn_iter->get_curve()))
             && 
-            traits->point_is_same(event_point,
+            traits->point_equal(event_point,
                                   cvn_iter->get_rightmost_point().point()))
 	  cvn_iter->erase_rightmost_point();
       }
@@ -247,7 +247,7 @@ public:
       // participating within the event.
       for (cvn_iter = point_node.curves_begin(); 
 	   cvn_iter != point_node.curves_end(); ++cvn_iter){
-	if (!traits->point_is_same(event_point,
+	if (!traits->point_equal(event_point,
                                    cvn_iter->get_rightmost_point().point()))
 	  cvn_iter->push_event_point(point_node.get_point());
       }
@@ -327,10 +327,10 @@ public:
       Curve_node_iterator cvn_iter;
       for (cvn_iter = point_node.curves_begin(); 
 	   cvn_iter != point_node.curves_end(); ++cvn_iter){
-	if (!traits->point_is_same(event_point,
+	if (!traits->point_equal(event_point,
                                    traits->curve_source(cvn_iter->get_curve()))
             && 
-            traits->point_is_same(event_point,
+            traits->point_equal(event_point,
                                   cvn_iter->get_rightmost_point().point()))
 	  cvn_iter->erase_rightmost_point();
       }
@@ -339,7 +339,7 @@ public:
       // participating within the event.
       for (cvn_iter = point_node.curves_begin(); 
 	   cvn_iter != point_node.curves_end(); ++cvn_iter){
-	if (!traits->point_is_same(event_point,
+	if (!traits->point_equal(event_point,
                                    cvn_iter->get_rightmost_point().point()))
 	  cvn_iter->push_event_point(point_node.get_point());
       }
@@ -369,9 +369,9 @@ public:
     for (typename Intersection_point_node::Curve_node_const_iterator 
            cv_iter = point_node.curves_begin();
          cv_iter != point_node.curves_end(); ++cv_iter) {
-      if (traits->point_is_same(traits->curve_source(cv_iter->get_curve()), p)
+      if (traits->point_equal(traits->curve_source(cv_iter->get_curve()), p)
           ||
-          traits->point_is_same(traits->curve_target(cv_iter->get_curve()), p))
+          traits->point_equal(traits->curve_target(cv_iter->get_curve()), p))
         return true;
     }
 
@@ -410,9 +410,9 @@ public:
 	  right_cv = cv;
 
 	// split the curve, if necessary      
-	if (!traits->point_is_same(traits->curve_source(cv), 
+	if (!traits->point_equal(traits->curve_source(cv), 
                                    cv_iter->get_rightmost_point().point()) &&
-            !traits->point_is_same(traits->curve_target(cv),
+            !traits->point_equal(traits->curve_target(cv),
                                    cv_iter->get_rightmost_point().point()))
 	{
 	  traits->curve_split(cv, sub_cv, right_cv, 
@@ -421,9 +421,9 @@ public:
 	  cv = right_cv;
 	}
       
-	if (!traits->point_is_same(traits->curve_source(cv),
+	if (!traits->point_equal(traits->curve_source(cv),
                                    point_node.get_point().point()) &&
-            !traits->point_is_same(traits->curve_target(cv),
+            !traits->point_equal(traits->curve_target(cv),
                                    point_node.get_point().point()))
 	  traits->curve_split(cv, sub_cv, right_cv,
                               point_node.get_point().point());
@@ -452,9 +452,9 @@ public:
 	X_curve cv = cv_iter->get_curve(), sub_cv = cv_iter->get_curve(), 
 	  right_cv = cv;
       
-	if (!traits->point_is_same(traits->curve_source(cv),
+	if (!traits->point_equal(traits->curve_source(cv),
                                    cv_iter->get_rightmost_point().point()) &&
-            !traits->point_is_same(traits->curve_target(cv), 
+            !traits->point_equal(traits->curve_target(cv), 
                                    cv_iter->get_rightmost_point().point()))
 	{
 	  traits->curve_split(cv, sub_cv, right_cv, 
@@ -463,9 +463,9 @@ public:
 	  cv = right_cv;
 	}
       
-	if (!traits->point_is_same(traits->curve_source(cv),
+	if (!traits->point_equal(traits->curve_source(cv),
                                    point_node.get_point().point()) &&
-            !traits->point_is_same(traits->curve_target(cv),
+            !traits->point_equal(traits->curve_target(cv),
                                    point_node.get_point().point()))
 	  traits->curve_split(cv, sub_cv, right_cv, 
                               point_node.get_point().point());
@@ -580,7 +580,7 @@ init(CurveInputIterator curves_begin,
   for (cv_iter = curves_begin; cv_iter != curves_end; ++cv_iter){
     if (!traits->is_x_monotone(*cv_iter)) {
       X_curve_list x_monotone_subcurves;
-      traits->make_x_monotone(*cv_iter, x_monotone_subcurves);
+      traits->curve_make_x_monotone(*cv_iter, x_monotone_subcurves);
       
       for (X_curve_list_iterator iter = x_monotone_subcurves.begin(); 
 	   iter != x_monotone_subcurves.end(); ++iter) {
@@ -600,7 +600,7 @@ init(CurveInputIterator curves_begin,
     X_curve cv(*xcv_iter);
     if (is_right(traits->curve_source(*xcv_iter), 
 		 traits->curve_target(*xcv_iter)) )
-      cv = traits->curve_flip(*xcv_iter);
+      cv = traits->curve_opposite(*xcv_iter);
     
     typename Event_queue::iterator  edge_point = 
     event_queue.find( traits->curve_source(cv) );
@@ -671,7 +671,7 @@ public:
   
   bool operator==(const X_curve_plus_id &cv) const {
     Traits traits;
-    return (_id == cv.id() && traits.curve_is_same(*this, cv));
+    return (_id == cv.id() && traits.curve_equal(*this, cv));
   }
   
   void  set_id(unsigned int i) { _id = i; }

@@ -63,46 +63,46 @@ public:
 /* compare curve with static unbounded curve */
     return cv.identical(CURVE_AT_INFINITY);
   }
-inline bool trapezoid_bottom_curve_is_same(X_trapezoid_const_ref left,
+inline bool trapezoid_bottom_curve_equal(X_trapezoid_const_ref left,
 					   X_trapezoid_const_ref right) const
 /* returns true if bottom curves of input are the same */
 {
   if (left.is_bottom_unbounded()) return right.is_bottom_unbounded();
   if (right.is_bottom_unbounded()) return false;
-  return curve_is_same(left.bottom(),right.bottom());
+  return curve_equal(left.bottom(),right.bottom());
 }
 
-inline bool trapezoid_top_curve_is_same(X_trapezoid_const_ref left,
+inline bool trapezoid_top_curve_equal(X_trapezoid_const_ref left,
 					X_trapezoid_const_ref right) const
 /* returns true if top curves of input are the same */
 {
   if (left.is_top_unbounded()) return right.is_top_unbounded();
   if (right.is_top_unbounded()) return false;
-  return curve_is_same(left.top(),right.top());
+  return curve_equal(left.top(),right.top());
 }
 
   bool is_degenerate(const_ref tr) const {
     return is_degenerate_point(tr) || 
       !tr.is_top_unbounded() && 
       !tr.is_bottom_unbounded() && 
-      curve_is_same(tr.bottom(),tr.top());
+      curve_equal(tr.bottom(),tr.top());
   }		
   
   bool is_degenerate_point(const_ref tr) const
   {
     return !tr.is_left_unbounded() && !tr.is_right_unbounded() && 
-      point_is_same(tr.left(),tr.right());
+      point_equal(tr.left(),tr.right());
   }
   bool is_degenerate_curve(const_ref tr) const
   {
     return !tr.is_top_unbounded() && !tr.is_bottom_unbounded() && 
-      curve_is_same(tr.bottom(), tr.top()) && !is_degenerate_point(tr);
+      curve_equal(tr.bottom(), tr.top()) && !is_degenerate_point(tr);
   }
   bool is_vertical(const_ref tr) const
   {
     return !tr.is_left_unbounded() && 
       !tr.is_right_unbounded() && 
-      point_is_same_x(tr.left(),tr.right());
+      point_equal_x(tr.left(),tr.right());
   }
   
   /* Description:
@@ -116,9 +116,9 @@ inline bool trapezoid_top_curve_is_same(X_trapezoid_const_ref left,
       (tr.is_right_unbounded()||
        point_is_right_top(tr.right(),p))&&
       (tr.is_bottom_unbounded()||
-       curve_get_point_status(tr.bottom(),p) == SMALLER)&&
+       curve_compare_y_at_x(tr.bottom(),p) == SMALLER)&&
       (tr.is_top_unbounded()||
-       curve_get_point_status(tr.top(),p) == LARGER);
+       curve_compare_y_at_x(tr.top(),p) == LARGER);
   }
 
   bool is_in_closure(const_ref tr,const Point& p) const
@@ -132,13 +132,13 @@ inline bool trapezoid_top_curve_is_same(X_trapezoid_const_ref left,
         // test bottom side
         if (!tr.is_bottom_unbounded()) 
           {
-            if (curve_get_point_status(tr.bottom(),p) == LARGER)
+            if (curve_compare_y_at_x(tr.bottom(),p) == LARGER)
               return false;
           }
         // test top side
         if (!tr.is_top_unbounded())
           {
-            if (curve_get_point_status(tr.top(),p) == SMALLER)
+            if (curve_compare_y_at_x(tr.top(),p) == SMALLER)
               return false;
           }
         return true;
@@ -163,12 +163,4 @@ CGAL_END_NAMESPACE
 #include <CGAL/Td_traits.C>
 #endif
 
-#endif //CGAL_TD_TRAITS_H
-
-
-
-
-
-
-
-
+#endif

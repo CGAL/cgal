@@ -26,15 +26,15 @@ primitive operations used by the sweep line functions.
 \ccTypes
 
   \ccNestedType{Point_2}{The point type for the endpoints of the curves. }
-  \ccNestedType{X_curve_2}{The x-montone curve type}
+  \ccNestedType{X_monotone_curve_2}{The x-montone curve type}
   \ccNestedType{Curve_2}{The curve type on which the sweep line functions
                          operates.}
 
   The curve type \ccc{Curve_2} should be {\it syntactically} identical
-  to the \ccc{X_curve_2} type (i.e., it should {\em be} the same
+  to the \ccc{X_monotone_curve_2} type (i.e., it should {\em be} the same
   type).  However, {\it semantically} it differs from the
-  \ccc{X_curve_2} in that it is not necessarily $x$-monotone. In the
-  following methods when we require an \ccc{X_curve_2} as a parameter,
+  \ccc{X_monotone_curve_2} in that it is not necessarily $x$-monotone. In the
+  following methods when we require an \ccc{X_monotone_curve_2} as a parameter,
   we assume that the curve is $x$-monotone.
 
 \ccCreationVariable{tr} 
@@ -56,17 +56,17 @@ primitive operations used by the sweep line functions.
    {returns \ccStyle{true} if \ccStyle{cv} is a vertical segment.}
         
 %redundant - we have curve point status ?
-    \ccMethod{bool curve_is_in_x_range( const X_curve& cv,
+    \ccMethod{bool point_in_x_range( const X_curve& cv,
        const Point& pnt );}{returns \ccStyle{true} if \ccStyle{pnt} is
        in the $x$ range of \ccStyle{cv}.}
     
-    \ccMethod{Comparison_result curve_compare_at_x(
+    \ccMethod{Comparison_result curves_compare_y_at_x(
        const X_curve& cv1, const X_curve& cv2, const Point& pnt );}
     {compares the $y$-coordinate of $cv1$ and $cv2$ at the $x$-coordinate 
      of $pnt$. Return \ccStyle{EQUAL} if at least one of $cv1$ and $cv2$  
      is not defined at $pnt$'s $x$-coordinate.}
    
-  \ccMethod{Comparison_result curve_compare_at_x_left(
+  \ccMethod{Comparison_result curves_compare_y_at_x_left(
      const X_curve& cv1, const X_curve& cv2, const Point& pnt);}
   {compares the $y$-coordinate of $cv1$ and $cv2$ immediately to the
      left of the $x$-coordinate of $pnt$. Return \ccStyle{EQUAL}
@@ -74,14 +74,14 @@ primitive operations used by the sweep line functions.
      $x$-coordinate.}
     
   \ccMethod{Comparison_result
-     curve_compare_at_x_right(const X_curve& cv1, const X_curve& cv2,
+     curves_compare_y_at_x_right(const X_curve& cv1, const X_curve& cv2,
      const Point& pnt);} {compares the $y$-coordinate of $cv1$ and
      $cv2$ immediately to the right of the $x$-coordinate of $pnt$.
      Return \ccStyle{EQUAL} if at least one of $cv1$ and $cv2$ is
      not defined to the right of $pnt$'s $x$-coordinate.}
 
     
-    \ccMethod{Curve_point_status curve_get_point_status(const X_curve& cv,
+    \ccMethod{Curve_point_status curve_compare_y_at_x(const X_curve& cv,
        const Point& pnt);} {returns a constant describing the
        relative position between $cv$ and $pnt$:
        \begin{itemize}
@@ -94,7 +94,7 @@ primitive operations used by the sweep line functions.
        \end{itemize}}
 
 
-       \ccMethod{bool curve_is_same(const X_curve &cv1, const X_cur
+       \ccMethod{bool curve_equal(const X_curve &cv1, const X_cur
           ve &cv2);}{returns \ccc{true} if \ccc{cv1} is the same as \ccc{cv2}.}
 
 %construction function
@@ -116,7 +116,7 @@ primitive operations used by the sweep line functions.
 an $x$-monotone curve.}
 
 
-\ccMethod{void make_x_monotone(const Curve& cv, list<X_curve>& l);}{
+\ccMethod{void curve_make_x_monotone(const Curve& cv, list<X_curve>& l);}{
    cuts \ccc{cv} into $x$-monotone subcurves and stores them in $l$.
    The order in which they are inserted into $l$ defines their order
    in the hierarchy tree.}

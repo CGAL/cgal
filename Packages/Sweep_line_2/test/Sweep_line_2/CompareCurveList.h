@@ -10,7 +10,7 @@ class CompareCurveList
 public:
 
   typedef typename Traits::Point_2 Point_2;
-  typedef typename Traits::X_curve_2 X_curve_2;
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
   typedef typename CurveList::iterator CurveListIter;
 
@@ -55,7 +55,7 @@ public:
 	    i != list1.end() ; ++i )
       {
 	//std::cout << "\tcomparing to 1" << *i << " to " << *iter << "\n";
-	if ( traits.curve_is_same(*i, *iter))
+	if ( traits.curve_equal(*i, *iter))
 	{
 	  //std::cout << *i << " is the same as  " << *iter << "\n";
 	  break;
@@ -119,7 +119,7 @@ public:
 	    i != list1.end() ; ++i )
       {
 	//std::cout << "\tcomparing to 1" << *i << " to " << *iter << "\n";
-	if ( traits.point_is_same(*i, *iter))
+	if ( traits.point_equal(*i, *iter))
 	{
 	  //std::cout << *i << " is the same as  " << *iter << "\n";
 	  break;

@@ -95,7 +95,7 @@ typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 #endif
 
 typedef Traits::Point_2                                 Point;
-typedef Traits::X_curve_2                               Curve;
+typedef Traits::X_monotone_curve_2                               Curve;
 typedef std::list<Curve>                                CurveList;
 typedef CurveList::iterator                             CurveListIter;
 
