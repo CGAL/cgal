@@ -1,6 +1,5 @@
 \label{sec:remeshing}
 
-
 % few words on remeshing (why it became a key ingredient of mesh
 % processing).
 
@@ -107,33 +106,35 @@ quad-dominant meshes as illustrated by Fig.\ref{fig:trimming}.
   \label{fig:anisotropic}
 \end{figure}
 
+% CGAL components
+
 As for the isotropic remeshing technique described above, the
 \emph{Polyhedron} has been used to represent the input mesh. Its
 primitives have been enriched so as to store two $u,v$ parameter
 coordinates per halfedge, and both 3D and 2D curvature tensors per
 vertex, or per halfedge on feature vertices.
 
-Extracting the new quad-dominant mesh is another matter since it has
-to be deduced from intersection, then straightening of streamlines.
-In anisotropic regions, we traced lines of curvature using polyline
-approximations while we used regular sample points on spherical
-regions. The \italic{vertices} will therefore be the intersections of
-curvature lines, and the isotropic samples that we spread. While the
-isotropic samples do not require any specific treatment, computing the
-line intersection has to be performed.  In order to perform these
-intersections quickly, as well as to prepare the straightening stage,
-we make use of the 2D constrained Delaunay triangulation (CDT) from
-CGAL, in parameter space. The key idea is to embed the quad-dominant
-polygon mesh within a triangulation through the constrained edges. We
-enter all the little segments defining the streamlines sequentially as
-constraints.  Finally, the isotropic samples are added as vertices in
-the CDT. The vertices, intersection of streamlines, have
-\italic{automatically} been added to the CDT since two intersecting
-edge constraints will generate a vertex insertion. The
-edge-straightening stage is applied by repeatedly eliminating vertices
-from the triangulation while adding new constrained edges until only
-intersection and isotropic vertices remain (see
-Fig.\ref{fig:trimming}).
+Extracting the new quad-dominant mesh is a fairly complex task since
+it has to be deduced from intersection, then straightening of
+streamlines.  In anisotropic regions, we traced lines of curvature
+using polyline approximations while we used regular sample points on
+spherical regions. The \italic{vertices} will therefore be the
+intersections of curvature lines, and the isotropic samples that we
+spread. While the isotropic samples do not require any specific
+treatment, computing the line intersection has to be performed.  In
+order to perform these intersections quickly, as well as to prepare
+the straightening stage, we make use of the 2D constrained Delaunay
+triangulation (CDT) from CGAL, in parameter space. The key idea is to
+embed the quad-dominant polygon mesh within a triangulation through
+the constrained edges. We enter all the little segments defining the
+streamlines sequentially as constraints.  Finally, the isotropic
+samples are added as vertices in the CDT. The vertices, intersection
+of streamlines, have \italic{automatically} been added to the CDT
+since two intersecting edge constraints will generate a vertex
+insertion. The edge-straightening stage is applied by repeatedly
+eliminating vertices from the triangulation while adding new
+constrained edges until only intersection and isotropic vertices
+remain (see Fig.\ref{fig:trimming}).
 
 % figure trimming
 \begin{figure}
