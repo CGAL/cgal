@@ -467,7 +467,7 @@ triangulation.
 
 But, she requires to be templated by special \ccc{Alpha_shape_vertex_base} and
 \ccc{Alpha_shape_face_base<Df>}, to store the alpha values associated. Thus, we need to
-define the requirements of such Alpha Shape \ccc{Alpha_shape_vertex_base} and
+define the requirements of such \ccc{Alpha_shape_vertex_base} and
 \ccc{Alpha_shape_face_base<Df>} classes.
 
 \subsection{Requirements for the \protect \ccc{Vertex_base} Class of an
@@ -478,9 +478,9 @@ vertices of the alpha shape. Thus the nested \ccc{Alpha_shape_vertex_base}
 type of an alpha shape offers additional functionalities to deal with these
 methods. 
 
-This additional functionalities related to the Alpha Shape
+This additional functionalities related to the alpha shape
 are requirements which have to be fulfilled
-by the base vertex for an Alpha Shape,
+by the base vertex for an alpha shape,
 in addition to the functionalities required for a simple triangulation vertex.
 They are listed below as such.
 
@@ -598,7 +598,7 @@ $\alpha$ under $\alpha_3$, the edge is attached but singular,
 for $\alpha$ under $\alpha_2$, the face is regular, and for $\alpha$
 under $\alpha_1$, the edge is interior.}
 \ccMethod{Coord_type get_alpha();}
-{return the Alpha value, under which the Alpha Shape contains the
+{return the alpha value, under which the alpha shape contains the
 face.}
 
 \ccModifiers
@@ -613,7 +613,7 @@ $\alpha$ under $\alpha_3$, the edge is attached but singular,
 for $\alpha$ under $\alpha_2$, the face is regular, and for $\alpha$
 under $\alpha_1$, the edge is interior.}
 \ccMethod{void set_alpha(Coord_type A);}
-{sets the Alpha value, under which the Alpha Shape contains the
+{sets the alpha value, under which the alpha shape contains the
 face.}
 
 \end{ccAdvanced}
@@ -622,7 +622,7 @@ face.}
 
 %----------------------------------------------------------------------
 
-\section{Classic Version of Alpha-Shape\label{I1_SectClassicAS}}
+\section{Classic Version of Alpha-Shapes\label{I1_SectClassicAS}}
 
 \subsection*{The Underlying Triangulation~: a Delaunay Triangulation}
 
@@ -679,7 +679,7 @@ typedef CGAL::Alpha_shape_2<Dt> Alpha_shape_2;
 
 %----------------------------------------------------------------------
 
-\section{Weighted Version of Alpha-Shape\label{I1_SectWeightedAS}}
+\section{Weighted Version of Alpha-Shapes\label{I1_SectWeightedAS}}
 
 \subsection*{The Underlying Triangulation~: a Regular Triangulation}
 
