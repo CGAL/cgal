@@ -151,8 +151,10 @@ public:
 private:
   Face_container& face_container()             { return _face_container;}
   const Face_container& face_container() const { return  _face_container;}
-  Vertex_container& vertex_container()             {return _vertex_container;}
-  const Vertex_container& vertex_container() const {return _vertex_container;}				
+  Vertex_container& vertex_container()         {return _vertex_container;}
+  const Vertex_container& vertex_container() const
+                                               {return  _vertex_container;}
+
 public:
   int  dimension() const { return _dimension;  }
   int number_of_vertices() const {return _number_of_vertices;}
@@ -218,9 +220,12 @@ public:
     return v->incident_faces(f);
   }
   Vertex_circulator incident_vertices(Vertex_handle v, 
-				      Face_handle f = Face_handle(NULL)) const{
-    return v->incident_vertices(f);
+				      Face_handle f =
+				      Face_handle(NULL)) const
+  {    
+    return v->incident_vertices(f);  
   }
+
   Edge_circulator incident_edges(Vertex_handle v, 
 				 Face_handle f = Face_handle(NULL)) const{
     return v->incident_edges(f);
@@ -1285,10 +1290,6 @@ is_valid(bool verbose, int level) const
     CGAL_triangulation_assertion(result);
     break;
   case 2:
-//  result = result &&  edge_count == 3*vertex_count - 6 ;
-//     CGAL_triangulation_assertion(result);
-//     result = result && ( face_count == 2*vertex_count - 4 );
-//     CGAL_triangulation_assertion( face_count == 2*vertex_count - 4 );
     result = result &&  edge_count == 3*face_count/2 ;
     CGAL_triangulation_assertion(edge_count == 3*face_count/2);
     break;
@@ -1300,82 +1301,6 @@ is_valid(bool verbose, int level) const
 }
 
 
-// template <  class Vb, class Fb>
-// typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
-// Triangulation_data_structure_2<Vb,Fb>::
-// copy_tds(const Tds &tds, const Vertex_handle v) 
-//   // TO BE DONE
-//   // when DS_Container will have a copy
-// {
-//   return Vertex_handle();
-// }
-  // copy tds in this and return the vertex  corresponding to v
-// {
-//   CGAL_triangulation_precondition( tds.is_vertex(v));
-//   _number_of_vertices = tds.number_of_vertices();
-//   _dimension = tds.dimension();
-
-//   //if(tds.number_of_vertices() == 0){return static_cast<Vertex_handle>(NULL);}
-
-//   std::map< Vertex_handle, Vertex_handle> V;
-//   std::map< Face_handle, Face_handle > F;
-
-//   Vertex_handle  v2, v_inf;
-//   Face_handle f2;
-
-//   // create the vertices
-//   for( Vertex_iterator it=tds.vertices_begin();
-//        it != tds.vertices_end(); ++it) {
-//     V[it->handle()] = (new Vertex(*it) )->handle();
-//   }
-//   V[0] = 0 ; //to cope with lower dimensional cases  when creating faces
-
-//   //vertex corresponding to v will be returned
-//   v_inf = V[v];
-    
-//   // create the faces
-//   //because faces are inserted at the head of the list
-//   //they have to be created in reverse order
-//   // to provide parallel faces and vertices iterators
-// //   for(Iterator_base ib = tds.iterator_base_begin();
-// //       ib != tds.iterator_base_end(); ++ib) {
-// #ifdef __SUNPRO_CC
-//   typedef  std::reverse_iterator<Iterator_base,
-//                                  typename Iterator_base::iterator_category,
-//                                  typename Iterator_base::value_type,
-//                                  typename Iterator_base::reference,
-//                                  typename Iterator_base::pointer,
-//                                  typename Iterator_base::difference_type> RIB;
-// #else
-//   typedef  std::reverse_iterator<Iterator_base> RIB;
-// #endif
-//   for(RIB rib=RIB(tds.iterator_base_end());
-//        rib != RIB(tds.iterator_base_begin());
-//       ++rib) {
-//     f2 = create_face(rib->handle());
-//     F[rib->handle()]=  f2;
-//     f2->set_vertices(V[rib->vertex(0)], V[rib->vertex(1)], V[rib->vertex(2)] );
-//   }
-
-//   // link each vertex to a face
-//   for( Vertex_iterator vit = tds.vertices_begin();
-//        vit != tds.vertices_end() ; ++vit) {
-//     v2 = V[vit->handle()];
-//     v2->set_face( F[vit->face()] );
-//   }
-
-//   // hook neighbor of the  faces
-//  for( Iterator_base ibb = tds.iterator_base_begin();
-//       ibb != tds.iterator_base_end(); ++ibb){
-//    for(int j = 0; j <= tds.dimension(); ++j){
-//      f2 = F[ibb->handle()];
-//      f2->set_neighbor(j, F[ibb->neighbor(j)] );
-//    }
-//  }
-
-//   CGAL_triangulation_postcondition( is_valid() );
-//   return v_inf;
-// }
 
 template <  class Vb, class Fb>
 typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
@@ -1591,11 +1516,11 @@ vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
   }
 
   //other vertices
-   for( Vertex_iterator vit= vertices_begin(); vit != vertices_end() ; ++vit) {
-     if ( vit->handle() != v) {
-       vmap[vit->handle()] = inum++;
-       os << "\t\t\t\t" << vit->point() << std::endl;
-     }
+  for( Vertex_iterator vit= vertices_begin(); vit != vertices_end() ; ++vit) {
+    if ( vit->handle() != v) {
+      vmap[vit->handle()] = inum++;
+      os << "\t\t\t\t" << vit->point() << std::endl;
+    }
   }
 
    os << "\t\t\t]" << endl;
