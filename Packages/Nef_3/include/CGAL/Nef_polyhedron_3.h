@@ -339,14 +339,14 @@ protected:
            template <class T31, class T32, class T33>
 #endif
            class T3, class T4 >
- Nef_polyhedron_3( typename CGAL::Polyhedron_3<T1,T2,T3,T4>& P,
+ Nef_polyhedron_3( CGAL::Polyhedron_3<T1,T2,T3,T4>& P,
 		   SNC_point_locator* _pl = new SNC_point_locator_default) {
     CGAL_NEF_TRACEN("construction from Polyhedron_3");
     SNC_structure rsnc;
     *this = Nef_polyhedron_3(rsnc, _pl, false);
     initialize_infibox_vertices(EMPTY);
     polyhedron_3_to_nef_3
-      <typename CGAL::Polyhedron_3<T1,T2,T3,T4>, SNC_structure>( P, snc());
+      <CGAL::Polyhedron_3<T1,T2,T3,T4>, SNC_structure>( P, snc());
     build_external_structure();
     simplify();
     set_snc(snc());
@@ -449,6 +449,8 @@ protected:
    // calls the `operator()' of the `modifier'. Precondition: The
    // `modifier' returns a consistent representation.
    modifier(snc());
+   build_external_structure();
+   simplify();
    CGAL_expensive_postcondition( is_valid());
  }
 
@@ -503,7 +505,7 @@ protected:
     first = true;
     SFace_handle sf;
     CGAL_forall_sfaces(sf, SD) {
-      if(D.volume(sf) != Infi_box::getNirvana(snc())) continue;
+      if(Volume_const_handle(sf->volume()) != Infi_box::getNirvana(snc())) continue;
       CGAL_assertion_msg(first, "function shall not be used on this polyhedron");
       SHalfedge_around_sface_circulator estart(sf->sface_cycles_begin()), 
 	                                eend(estart);
@@ -567,6 +569,39 @@ protected:
 
     return true;
   }
+ 
+ bool is_convex() const {
+   
+   Vertex_const_iterator v;
+   CGAL_forall_vertices(v, *this) {
+
+     SM_const_decorator SD(&*v);
+     if(std::distance(SD.sfaces_begin(),SD.sfaces_end())!=2)
+       return false;
+
+     if(!Infi_box::is_standard(v->point())) continue;
+
+     SFace_const_iterator sf;
+     CGAL_forall_sfaces(sf,SD) {
+       if(sf->volume() == Infi_box::getNirvana(snc())) continue;
+       if(std::distance(sf->sface_cycles_begin(),sf->sface_cycles_end())!=1)
+	 return false;
+       SFace_cycle_const_iterator sfi(sf->sface_cycles_begin());
+       if(!sfi.is_shalfedge())
+	 return false;
+       SHalfedge_const_handle se(sf->sface_cycles_begin());
+       SHalfedge_around_sface_const_circulator sec(se),send(sec);
+       CGAL_For_all(sec,send)
+	 if(spherical_orientation(sec->source()->point(),
+				  sec->snext()->source()->point(),
+				  sec->snext()->snext()->source()->point())<0) {
+	   std::cerr << "vertex at " << v->point() << " is not convex" << std::endl;
+	   return false;
+	 }
+     }
+   }
+   return true;
+ }
 
  private:  
   bool is_edge_2manifold(const Halfedge_handle& e) {
@@ -1335,6 +1370,7 @@ Nef_polyhedron_3( const SNC_structure& W, SNC_point_locator* _pl,
   CGAL_assertion( clone_snc == true || clone_pl == false);
   // TODO: granados: define behavior when clone=false
   //  CGAL_NEF_TRACEN("construction from an existing SNC structure (clone="<<clone<<")"); 
+
   this->copy_on_write();
   if(clone_snc) {
     snc() = W;
