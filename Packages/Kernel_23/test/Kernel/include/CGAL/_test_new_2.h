@@ -29,8 +29,8 @@
 #include "_test_cls_segment_new_2.h"
 #include "_test_cls_ray_new_2.h"
 #include "_test_cls_triangle_new_2.h"
-#include "_test_cls_circle_new_2.h"
 #include "_test_cls_iso_rectangle_new_2.h"
+#include "_test_cls_circle_new_2.h"
 
 
 template <class R>
@@ -42,8 +42,8 @@ _test_cls_new_2(const R& r)
    && _test_cls_segment_new_2( r )
    && _test_cls_ray_new_2( r )  
    && _test_cls_triangle_new_2( r )
-   && _test_cls_circle_new_2( r )
    && _test_cls_iso_rectangle_new_2( r )
+   && _test_cls_circle_new_2( r )
    ;
 }
 

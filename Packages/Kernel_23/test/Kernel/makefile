@@ -48,6 +48,7 @@ LDFLAGS = \
 
 all:            \
                 Cartesian$(EXE_EXT) \
+                MyKernel$(EXE_EXT) \
                 Filtered_cartesian$(EXE_EXT) \
                 Filtered_homogeneous$(EXE_EXT) \
                 Homogeneous$(EXE_EXT) \
@@ -59,6 +60,9 @@ all:            \
 
 Cartesian$(EXE_EXT): Cartesian$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Cartesian Cartesian$(OBJ_EXT) $(LDFLAGS)
+
+MyKernel$(EXE_EXT): MyKernel$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)MyKernel MyKernel$(OBJ_EXT) $(LDFLAGS)
 
 Filtered_cartesian$(EXE_EXT): Filtered_cartesian$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Filtered_cartesian Filtered_cartesian$(OBJ_EXT) $(LDFLAGS)
@@ -86,6 +90,7 @@ test_kernel_archetype_3$(EXE_EXT): test_kernel_archetype_3$(OBJ_EXT)
 
 clean: \
                    Cartesian.clean \
+                   MyKernel.clean \
                    Filtered_cartesian.clean \
                    Filtered_homogeneous.clean \
                    Homogeneous.clean \

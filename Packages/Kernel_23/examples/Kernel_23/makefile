@@ -1,3 +1,6 @@
+
+CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-136/make/makefile_i686_CYGWINNT-5.0-1.3.12_CL.EXE-1300
+
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
@@ -7,6 +10,8 @@ include $(CGAL_MAKEFILE)
 # -DCGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS
 
 CXXFLAGS = \
+	   -Id:/cgal/develop/Intersections_2/include \
+	   -Id:/cgal/develop/Cartesian_kernel/include \
 	   -I../../include \
            $(CGAL_CXXFLAGS)
 

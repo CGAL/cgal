@@ -34,8 +34,9 @@ _test_cls_iso_rectangle_new_2(const R& )
  typedef typename  R::Point_2 Point_2;
  typedef typename  R::Iso_rectangle_2 Iso_rectangle_2;
 
+ typename R::Construct_point_2 construct_point;
  typename R::Iso_rectangle_2 ir;
- CGAL::Iso_rectangle_2<R>  r0(ir);
+ Iso_rectangle_2 r0(ir); // CGAL::Iso_rectangle_2<R>  r0(ir);
 
  RT n1 =  1;
  RT n2 =  2;
@@ -47,15 +48,15 @@ _test_cls_iso_rectangle_new_2(const R& )
  RT n8 =  8;
  RT n12= 12;
 
- Point_2 p1( n5, n5, n5);    // ( 1, 1)
- Point_2 p2( n2, n8, n2);    // ( 1, 4)
- Point_2 p3( n12, n12, n3);  // ( 4, 4)
- Point_2 p4( n5, n4, n1);    // ( 5, 4)
- Point_2 p5( n4, n1);        // ( 4, 1)
- Point_2 p6( n8, n4, n2);    // ( 4, 2)
- Point_2 p7( n6, n3, n2);    // ( 3, 1.5)
- Point_2 p8( n4, n6, n2);    // ( 2, 3)
- Point_2 p9(-n3, n7);        // (-3, 7)
+ Point_2 p1 = construct_point( n5, n5, n5);    // ( 1, 1)
+ Point_2 p2 = construct_point( n2, n8, n2);    // ( 1, 4)
+ Point_2 p3 = construct_point( n12, n12, n3);  // ( 4, 4)
+ Point_2 p4 = construct_point( n5, n4, n1);    // ( 5, 4)
+ Point_2 p5 = construct_point( n4, n1);        // ( 4, 1)
+ Point_2 p6 = construct_point( n8, n4, n2);    // ( 4, 2)
+ Point_2 p7 = construct_point( n6, n3, n2);    // ( 3, 1.5)
+ Point_2 p8 = construct_point( n4, n6, n2);    // ( 2, 3)
+ Point_2 p9 = construct_point(-n3, n7);        // (-3, 7)
 
  Iso_rectangle_2 r1( p1, p3);
  Iso_rectangle_2 r2( p3, p1);

@@ -41,7 +41,7 @@ _test_cls_circle_new_2(const R& )
  typename R::Construct_translated_point_2 construct_translated_point;
 
  typename R::Circle_2  ic;
- CGAL::Circle_2<R> c0;
+ Circle_2 c0; // af: CGAL::Circle_2<R> c0;
 
  RT n0 =  0;
  RT n1 = 16;
@@ -57,11 +57,11 @@ _test_cls_circle_new_2(const R& )
  RT n12=200;
  RT n13= 13;
 
- Point_2 p0( n1, n2, -n2);  // ( 4, -1)
- Point_2 p1( n6, n8, n10);  // ( 2,  3)
- Point_2 p2( n2, n0,  n2);  // ( 1,  0)
- Point_2 p3( n5, n5,  n4);  // ( 2,  2)
- Point_2 p4( n0, n2,  n2);  // ( 0,  1)
+ Point_2 p0 = construct_point( n1, n2, -n2);  // ( 4, -1)
+ Point_2 p1 = construct_point( n6, n8, n10);  // ( 2,  3)
+ Point_2 p2 = construct_point( n2, n0,  n2);  // ( 1,  0)
+ Point_2 p3 = construct_point( n5, n5,  n4);  // ( 2,  2)
+ Point_2 p4 = construct_point( n0, n2,  n2);  // ( 0,  1)
 
  Vector_2 vx = construct_vector(construct_point(CGAL::ORIGIN), p2);
  Vector_2 vy = construct_vector(construct_point(CGAL::ORIGIN), p4);
@@ -133,15 +133,16 @@ _test_cls_circle_new_2(const R& )
 
  std::cout << '.';
 
- CGAL::Aff_transformation_2<R>
+ R::Aff_transformation_2
           rotate1(CGAL::ROTATION,Direction_2(n11,n13),-n2,n12),
           rotate2(CGAL::ROTATION,Direction_2(-n8, n9),-n2,n12),
           rotate3(CGAL::ROTATION,Direction_2( n5,-n1),-n2,n12),
           rotate4(CGAL::ROTATION,Direction_2(-n5,-n11),-n2,n12);
- Point_2 p6 = p2.transform( rotate1 );
- Point_2 p7 = p2.transform( rotate2 );
- Point_2 p8 = p2.transform( rotate3 );
- Point_2 p9 = p2.transform( rotate4 );
+ // af: Point_2 p6 = p2.transform( rotate1 );
+ Point_2 p6 = rotate1(p2); // af: try this instead
+ Point_2 p7 = rotate2(p2 );
+ Point_2 p8 = rotate3(p2 );
+ Point_2 p9 = rotate4(p2 );
  p6 =construct_translated_point( p6, v1);  // v1 = ( 2, 3 )
  p7 = construct_translated_point(p7, v1);
  p8 = construct_translated_point(p8, v1);
@@ -158,8 +159,8 @@ _test_cls_circle_new_2(const R& )
  assert( c10.oriented_side(p9 ) == CGAL::ON_ORIENTED_BOUNDARY );
  assert( c10.has_on_boundary(p9) );
  assert( c10.has_on_boundary(construct_translated_point(p4, v1)) );
- Point_2 p11( n4, n4, n3) ; // (2.5, 2.5)
- Point_2 p12( n5, n5, n3) ; // ( 5 ,  5 )
+ Point_2 p11 = construct_point( n4, n4, n3) ; // (2.5, 2.5)
+ Point_2 p12 = construct_point( n5, n5, n3) ; // ( 5 ,  5 )
  assert( c10.has_on_bounded_side( p11 ) );
  assert( ! c10.has_on_bounded_side( p12 ) );
  assert( c10.has_on_unbounded_side( p12 ) );

@@ -22,7 +22,7 @@ public:
   }
 
   
-  MyPointC2(const double x, const double y, int c=0)
+  MyPointC2(const double x, const double y, int c)
     : col(c)
   {
     *vec = x;
@@ -150,8 +150,7 @@ operator>>(std::istream &is, MyPointC2 &p)
         break;
     }
     if (is) {
-      p = MyPointC2(x, y);
-      p.color() = c;
+      p = MyPointC2(x, y, c);
     }
     return is;
 }

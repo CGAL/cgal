@@ -39,6 +39,10 @@ int main()
 
   Segment s1(p,q), s2(a, c);
 
+  K::Construct_midpoint_2 construct_midpoint_2;
+
+  construct_midpoint_2(p,q);
+
   assert(s1.source().color() == 7812);
 
   s1.source().color() = 89;

@@ -34,8 +34,9 @@ _test_cls_triangle_new_2(const R& )
  typedef typename R::Point_2 Point_2;
  typedef typename R::Triangle_2 Triangle_2;
  
+ typename R::Construct_point_2 construct_point;
  typename R::Triangle_2 it;
- CGAL::Triangle_2<R> t0(it);
+ Triangle_2 t0(it); // af:  CGAL::Triangle_2<R> t0(it);
 
  RT n0 =  0;
  RT n1 =  1;
@@ -50,15 +51,15 @@ _test_cls_triangle_new_2(const R& )
  RT n12= 12;
  RT n21= 21;
 
- Point_2 p1( n6, n6, n6);    // ( 1, 1)
- Point_2 p2( n6, n9, n3);    // ( 2, 3)
- Point_2 p3( n6, n10, n2);   // ( 3, 5)
- Point_2 p4( n5, n4, n1);    // ( 5, 4)
- Point_2 p5( n21, n9, n3);   // ( 7, 3)
- Point_2 p6( n8, n4, n2);    // ( 4, 2)
- Point_2 p7( n4, n0);        // ( 4, 0)
- Point_2 p8(-n12,-n8,-n2);   // ( 6, 4)
- Point_2 p9( n9, n9, n3);    // ( 3, 3)
+ Point_2 p1 = construct_point( n6, n6, n6);    // ( 1, 1)
+ Point_2 p2 = construct_point( n6, n9, n3);    // ( 2, 3)
+ Point_2 p3 = construct_point( n6, n10, n2);   // ( 3, 5)
+ Point_2 p4 = construct_point( n5, n4, n1);    // ( 5, 4)
+ Point_2 p5 = construct_point( n21, n9, n3);   // ( 7, 3)
+ Point_2 p6 = construct_point( n8, n4, n2);    // ( 4, 2)
+ Point_2 p7 = construct_point( n4, n0);        // ( 4, 0)
+ Point_2 p8 = construct_point(-n12,-n8,-n2);   // ( 6, 4)
+ Point_2 p9 = construct_point( n9, n9, n3);    // ( 3, 3)
 
  Triangle_2 t1( p1, p3, p5);
  Triangle_2 t2( p3, p1, p5);
@@ -118,8 +119,8 @@ _test_cls_triangle_new_2(const R& )
  assert( t2.has_on_boundary( p4 ) );
  assert( t2.has_on_boundary( p5 ) );
  assert( t2.has_on_boundary( p6 ) );
- assert( t1.has_on_bounded_side( Point_2( n6, n8, n2)) );
- assert( t1.has_on_unbounded_side( Point_2( -n4, n8, n6)) );
+ assert( t1.has_on_bounded_side( construct_point( n6, n8, n2)) );
+ assert( t1.has_on_unbounded_side( construct_point( -n4, n8, n6)) );
 
  std::cout << '.';
 

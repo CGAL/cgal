@@ -39,9 +39,10 @@ _test_cls_segment_new_2(const R& )
  typedef typename  R::Line_2 Line_2;
 
  typename R::Construct_vector_2 construct_vector;
+ typename R::Construct_point_2 construct_point;
 
  typename R::Segment_2  is;
- CGAL::Segment_2<R> s0;
+ Segment_2 s0; // af: CGAL::Segment_2<R> s0;
 
  RT  n2 = 2;
  RT  n3 = 3;
@@ -51,10 +52,10 @@ _test_cls_segment_new_2(const R& )
  RT  n9 = 9;
  RT n10 =10;
 
- Point_2 p1( n2, n8, n2);
- Point_2 p2( n10, n4, n2);
- Point_2 p3( n9, n9, n3);
- Point_2 p4( n10, n8, n2);
+ Point_2 p1 = construct_point( n2, n8, n2);
+ Point_2 p2 = construct_point( n10, n4, n2);
+ Point_2 p3 = construct_point( n9, n9, n3);
+ Point_2 p4 = construct_point( n10, n8, n2);
 
  Segment_2 s1 ( p1, p2 );
  Segment_2 s2 ( p2, p1 );
@@ -121,7 +122,7 @@ _test_cls_segment_new_2(const R& )
  assert( s1.collinear_has_on( p3 ) );
  assert( s2.collinear_has_on( p1 ) );
  assert( ! s3.collinear_has_on( p1 ) );
- assert( s3.collinear_has_on( Point_2( n8, n5, n2)) );
+ assert( s3.collinear_has_on( construct_point( n8, n5, n2)) );
 
  assert( Segment_2( p3, p3).is_degenerate() );
 

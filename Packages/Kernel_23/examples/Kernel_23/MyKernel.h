@@ -9,11 +9,6 @@
 #include "MyPointC2.h"
 #include "MySegmentC2.h"
 
-
-
-
-
-
 // Taken from include/CGAL/Cartesian/Cartesian_base.h
 
 template < typename K_ >
@@ -28,10 +23,6 @@ struct MyCartesian_base : public CGAL::Cartesian_base< K_ >
   typedef MyConstruct_coord_iterator         Construct_cartesian_const_iterator_2;
   typedef MyConstruct_bbox_2<typename Base::Construct_bbox_2>         Construct_bbox_2;
 };
-
-
-
-
 
 
 // Taken from include/CGAL/Cartesian.h
@@ -55,8 +46,6 @@ struct MyCartesian_base_no_ref_count
     static   RT FT_numerator(const FT &r)                { return r;}
     static   RT FT_denominator(const FT &)               { return RT(1);}
 };
-
-
 
 template < typename FT_ >
 struct MyKernel

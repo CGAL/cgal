@@ -38,6 +38,7 @@ _test_cls_line_new_2(const R& )
  typedef typename  R::Line_2 Line_2;
  typedef typename  R::Ray_2 Ray_2;
 
+ typename R::Construct_point_2 construct_point;
  typename R::Construct_vector_2 construct_vector;
  RT n0 =  0;
  RT n1 =  1;
@@ -48,10 +49,10 @@ _test_cls_line_new_2(const R& )
  RT n6 =  6;
  RT n8 =  8;
 
- Point_2 p1( n2, n4, n2 );   // ( 1, 2 )
- Point_2 p2( n6, n8, n2 );   // ( 3, 4 )
- Point_2 p3(-n6, n6, n3 );   // (-2, 2 )
- Point_2 p4( n8, n4, n2 );   // ( 4, 2 )
+ Point_2 p1 = construct_point( n2, n4, n2 );   // ( 1, 2 )
+ Point_2 p2 = construct_point( n6, n8, n2 );   // ( 3, 4 )
+ Point_2 p3 = construct_point(-n6, n6, n3 );   // (-2, 2 )
+ Point_2 p4 = construct_point( n8, n4, n2 );   // ( 4, 2 )
 
  typename R::Line_2 il;
  Line_2  l0(il);
@@ -138,7 +139,7 @@ _test_cls_line_new_2(const R& )
  assert( ld21.x_at_y( gnuFT(2) ) == gnuFT( 1 ) );
 
  Direction_2 up( n0, n1 );
- CGAL::Aff_transformation_2<R> rot90(CGAL::ROTATION, up, n1, RT(100) );
+ R::Aff_transformation_2 rot90(CGAL::ROTATION, up, n1, RT(100) );
  Line_2 l12perp1( l12.perpendicular( p1 ) );
  Line_2 l21perp1( l21.perpendicular( p1 ) );
  Line_2 labcperp( labc.perpendicular( labc.point(1) ) );
@@ -157,7 +158,7 @@ _test_cls_line_new_2(const R& )
 
  std::cout << '.';
 
- Point_2 p5( n5, n6 );
+ Point_2 p5 = construct_point( n5, n6 );
  assert( l12.oriented_side(p3) == CGAL::ON_POSITIVE_SIDE );
  assert( l12.oriented_side(p4) == CGAL::ON_NEGATIVE_SIDE );
  assert( l12.oriented_side(p2) == CGAL::ON_ORIENTED_BOUNDARY );
@@ -168,9 +169,9 @@ _test_cls_line_new_2(const R& )
  assert( l21.has_on_negative_side( p3 ) );
  assert( l12.has_on_positive_side( p3 ) );
  assert( l34.has_on_positive_side( p2 ) );
- assert( l43.has_on( Point_2( n8, n2 )) );
- assert( l43.has_on_boundary( Point_2( n8, n2 )) );
- assert( lr21.has_on( Point_2( -n1, n0 )) );
+ assert( l43.has_on( construct_point( n8, n2 )) );
+ assert( l43.has_on_boundary( construct_point( n8, n2 )) );
+ assert( lr21.has_on( construct_point( -n1, n0 )) );
 
  std::cout << '.';
 

@@ -39,10 +39,11 @@ _test_cls_ray_new_2(const R& )
  typedef typename  R::Line_2 Line_2;
  typedef typename  R::Ray_2 Ray_2; 
 
+ typename R::Construct_point_2 construct_point;
  typename R::Construct_vector_2 construct_vector;
 
  Ray_2  ir;
- CGAL::Ray_2<R> r0;
+ Ray_2 r0; // af was: CGAL::Ray_2<R> r0;
 
  RT  n2 = 2;
  RT  n3 = 3;
@@ -52,10 +53,10 @@ _test_cls_ray_new_2(const R& )
  RT  n9 = 9;
  RT n10 =10;
 
- Point_2 p1( n2, n8, n2);
- Point_2 p2( n10, n4, n2);
- Point_2 p3( n9, n9, n3);
- Point_2 p4( n10, n8, n2);
+ Point_2 p1 = construct_point( n2, n8, n2);
+ Point_2 p2 = construct_point( n10, n4, n2);
+ Point_2 p3 = construct_point( n9, n9, n3);
+ Point_2 p4 = construct_point( n10, n8, n2);
  Direction_2 d12(construct_vector( p1, p2));
  Direction_2 d24(construct_vector( p2, p4));
  Line_2 l12( p1, p2);
@@ -117,7 +118,7 @@ _test_cls_ray_new_2(const R& )
  assert( r1.has_on( p3 ) );
  assert( r3.opposite().has_on( p1 ) );
  assert( ! r1.has_on( p4 ) );
- assert( ! r0.has_on( Point_2( n8, n5, n8 )) );
+ assert( ! r0.has_on( construct_point( n8, n5, n8 )) );
  assert( r4.has_on( r4.point(7)) );
  assert( r3.collinear_has_on( r3.point(7)) );
  assert( r1.collinear_has_on( p3) );
