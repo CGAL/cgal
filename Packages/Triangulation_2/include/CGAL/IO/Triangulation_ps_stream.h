@@ -42,7 +42,8 @@ CGAL_END_NAMESPACE
 #ifdef CGAL_DELAUNAY_TRIANGULATION_2_H
 CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds >
-PS_Stream& operator << (PS_Stream& ps, const Delaunay_triangulation_2<Gt,Tds> &t)
+PS_Stream& operator << (PS_Stream& ps, 
+			const Delaunay_triangulation_2<Gt,Tds> &t)
 {
  t.draw_triangulation(ps);
  return ps; 
@@ -53,7 +54,8 @@ CGAL_END_NAMESPACE
 #ifdef CGAL_CONSTRAINED_TRIANGULATION_2_H
 CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds>
-PS_Stream& operator<<(PS_Stream& ps,const Constrained_triangulation_2<Gt,Tds> &t)
+PS_Stream& operator<<(PS_Stream& ps,
+		      const Constrained_triangulation_2<Gt,Tds> &t)
 {
 
  t.draw_triangulation(ps);
@@ -66,7 +68,8 @@ CGAL_END_NAMESPACE
 #ifdef CGAL_REGULAR_TRIANGULATION_2_H
 CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds >
-PS_Stream& operator << (PS_Stream& ps, Regular_triangulation_2<Gt,Tds> &t)
+PS_Stream& operator << (PS_Stream& ps, 
+			Regular_triangulation_2<Gt,Tds> &t)
 {
   t.draw_triangulation(ps);
   return ps;

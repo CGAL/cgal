@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/IO/Triangulation_Window_stream.h
+// file          : include/CGAL/IO/Triangulation_window_stream.h
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
