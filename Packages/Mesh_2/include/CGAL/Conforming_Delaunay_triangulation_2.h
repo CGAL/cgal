@@ -31,12 +31,12 @@
 #include <CGAL/Filter_circulator.h>
 
 #ifdef CGAL_USE_BOOST
-#  include <boost/iterator_adaptors.hpp>
+#  include <boost/iterator/transform_iterator.hpp>
 #else
 #  include <CGAL/Iterator_project.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Tr>
 struct Conforming_Delaunay_triangulation_2_default_extras
@@ -235,14 +235,14 @@ private:
   //@{
 public:
 #ifdef CGAL_USE_BOOST
-  typedef typename boost::projection_iterator_generator<
+  typedef typename boost::transform_iterator<
     Pair_get_first<typename Cluster_map::value_type>,
-    typename Cluster_map::const_iterator>::type
+    typename Cluster_map::const_iterator>
   Cluster_vertices_iterator;
 
-  typedef typename boost::projection_iterator_generator<
+  typedef typename boost::transform_iterator<
     Pair_get_first<typename Cluster_vertices_map::value_type>,
-    typename Cluster_vertices_map::const_iterator>::type
+    typename Cluster_vertices_map::const_iterator>
   Vertices_in_cluster_iterator;
 #else
   typedef CGAL::Iterator_project<typename Cluster_map::const_iterator,
@@ -264,37 +264,38 @@ public:
 		    const Face_handle& fh,
 		    const int i) const
       {
-	if( ct.extras().is_bad( static_cast<const Tr&>(ct),
-			      fh, i ) ) return false;
+        if( ct.extras().is_bad( static_cast<const Tr&>(ct),
+                              fh, i ) ) return false;
 
-	typedef typename Geom_traits::Angle_2 Angle_2;
-	
-	const Angle_2 angle = ct.geom_traits().angle_2_object();
-	
-	const Point& a = fh->vertex(ct.cw(i))->point();
-	const Point& b = fh->vertex(ct.ccw(i))->point();
-	const Vertex_handle& vi = fh->vertex(i);
-	const Vertex_handle& mvi = fh->mirror_vertex(i);
+        typedef typename Geom_traits::Angle_2 Angle_2;
 
-	return( ( ct.is_infinite(vi) || angle(a, vi->point(), b) != OBTUSE) &&
-		( ct.is_infinite(mvi) || angle(a, mvi->point(), b) != OBTUSE ));
+        const Angle_2 angle = ct.geom_traits().angle_2_object();
+
+        const Point& a = fh->vertex(ct.cw(i))->point();
+        const Point& b = fh->vertex(ct.ccw(i))->point();
+        const Vertex_handle& vi = fh->vertex(i);
+        const Vertex_handle& mvi = fh->mirror_vertex(i);
+
+        return( ( ct.is_infinite(vi) || angle(a, vi->point(), b) != OBTUSE) &&
+                ( ct.is_infinite(mvi) || angle(a, mvi->point(), b) != OBTUSE
+));
       }
     bool operator()(Conform& ct,
 		    const Face_handle& fh,
 		    const int i,
 		    const Point& p) const	
       {
-	if( ct.extras().is_bad( static_cast<const Tr&>(ct),
-			      fh, i ) ) return false;
+        if( ct.extras().is_bad( static_cast<const Tr&>(ct),
+                              fh, i ) ) return false;
 
-	typedef typename Geom_traits::Angle_2 Angle_2;
-	
-	const Angle_2 angle = ct.geom_traits().angle_2_object();
-	
-	const Point& a = fh->vertex(ct.cw(i))->point();
-	const Point& b = fh->vertex(ct.ccw(i))->point();
-	
-	return( angle(a, p, b) != OBTUSE );
+        typedef typename Geom_traits::Angle_2 Angle_2;
+
+        const Angle_2 angle = ct.geom_traits().angle_2_object();
+
+        const Point& a = fh->vertex(ct.cw(i))->point();
+        const Point& b = fh->vertex(ct.ccw(i))->point();
+
+        return( angle(a, p, b) != OBTUSE );
       }
 
   };
@@ -305,34 +306,33 @@ public:
 		    const Face_handle& fh,
 		    const int i) const
       {
-	if( ct.extras().is_bad( static_cast<const Tr&>(ct),
-			      fh, i ) ) return false;
+        if( ct.extras().is_bad( static_cast<const Tr&>(ct),
+                              fh, i ) ) return false;
 
-	typedef typename Geom_traits::Side_of_oriented_circle_2
-	  Side_of_oriented_circle_2;
-	
-	Side_of_oriented_circle_2 in_circle =
-	  ct.geom_traits().side_of_oriented_circle_2_object();
-	
-	const Vertex_handle& vi = fh->vertex(i);
-	const Vertex_handle& mvi = fh->mirror_vertex(i);
+        typedef typename Geom_traits::Side_of_oriented_circle_2
+          Side_of_oriented_circle_2;
 
-	if(ct.is_infinite(vi) || ct.is_infinite(mvi)){
-	  return true;
-	}
+        Side_of_oriented_circle_2 in_circle =
+          ct.geom_traits().side_of_oriented_circle_2_object();
 
-	const Point& a = fh->vertex(ct.cw(i))->point();
-	const Point& b = fh->vertex(ct.ccw(i))->point();
-	const Point& c = vi->point();
-	const Point& d = mvi->point();
-	
-	return( in_circle(c, b, a, d) == ON_NEGATIVE_SIDE );
+        const Vertex_handle& vi = fh->vertex(i);
+        const Vertex_handle& mvi = fh->mirror_vertex(i);
+
+        if(ct.is_infinite(vi) || ct.is_infinite(mvi)){
+          return true;
+        }
+
+        const Point& a = fh->vertex(ct.cw(i))->point();
+        const Point& b = fh->vertex(ct.ccw(i))->point();
+        const Point& c = vi->point();
+        const Point& d = mvi->point();
+
+        return( in_circle(c, b, a, d) == ON_NEGATIVE_SIDE );
       }
   };
 
 public:
   /** \name CONSTRUCTORS */
-  //@{
 
   /** default constructor */
   explicit
@@ -1285,29 +1285,22 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   // insert the point p in the edge (fh, edge_index). It updates seeds 
   // too.
 {
+  const Vertex_handle& va = fh->vertex( cw(edge_index));
+  const Vertex_handle& vb = fh->vertex(ccw(edge_index));
+
   List_of_face_handles zone_of_p;
 
   // deconstrain the edge before finding the conflicts
-  fh->set_constraint(edge_index,false);
-  fh->neighbor(edge_index)->set_constraint(fh->mirror_index(edge_index),
-					   false);
-
-  // Useless, I think.
-  //   get_conflicts_and_boundary(p, 
-  // 			     std::back_inserter(zone_of_p), 
-  // 			     Emptyset_iterator(), fh);
-  
-  // reconstrain the edge
-  fh->set_constraint(edge_index,true);
-  fh->neighbor(edge_index)->set_constraint(fh->mirror_index(edge_index),true);
+  remove_constrained_edge(fh, edge_index);
 
   extras().signal_before_inserted_vertex_in_edge(static_cast<const Tr&>(*this),
 					       fh, edge_index, p);
 
-  Vertex_handle vp = insert(p, Triangulation::EDGE, fh, edge_index);
-  // TODO, WARNING: this is not robust!
-  // We should deconstrained the constrained edge, insert the two
-  // subconstraints and re-constrain them
+  Vertex_handle vp = insert(p, fh);
+
+  // re-insert the two constrained edges
+  insert_constraint(va, vp);
+  insert_constraint(vp, vb);
 
   extras().signal_after_inserted_vertex_in_edge(static_cast<const Tr&>(*this),
 					      vp);
@@ -1547,7 +1540,7 @@ write_poly(const CDT& t, std::ostream &f)
 //     f << ++seeds_counter << " " << *sit << std::endl;
 }
 
-CGAL_END_NAMESPACE
+}
 
 
 #endif //CONFORMING_DELAUNAY_TRIANGULATION_2_H

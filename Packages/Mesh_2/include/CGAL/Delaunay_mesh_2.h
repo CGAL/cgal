@@ -22,7 +22,7 @@
 #include <CGAL/Conforming_Delaunay_triangulation_2.h>
 #include <CGAL/Double_map.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /**
    Tr is a Delaunay constrained triangulation (with intersections or not)
@@ -162,7 +162,6 @@ private:
 
   typedef std::list<typename Base::Edge> List_of_edges;
   typedef std::list<Face_handle> List_of_face_handles;
-  typedef typename Base::Cluster Cluster;
 
   /** \name traits type */
   typedef typename Geom_traits::Is_bad Is_bad;
@@ -449,28 +448,27 @@ refine_face(const Face_handle f, const Quality& q)
     {
       const Face_handle& fh = it->first;
       const int& i = it->second;
-      const Vertex_handle
-	& va = fh->vertex(cw(i)),
-	& vb = fh->vertex(ccw(i));
       if(fh->is_constrained(i) && !is_gabriel_conform(*this, fh, i, pc))
-	{
-	  split_the_face = false;
-	  Cluster c,c2;
-	  bool 
-	    is_cluster_at_va = get_cluster(va,vb,c),
-	    is_cluster_at_vb = get_cluster(vb,va,c2);
-	  if( ( is_cluster_at_va &&  is_cluster_at_vb) || 
-	      (!is_cluster_at_va && !is_cluster_at_vb) )
-	    {
-	      // two clusters or no cluster
-	      add_contrained_edge_to_be_conform(va,vb);
-	      keep_the_face_bad = true;
-	    }
-	  else
-	    {
-	      // only one cluster: c or c2
-	      if(is_cluster_at_vb)
-		c = c2;
+        {
+          const Vertex_handle& va = fh->vertex(cw(i));
+          const Vertex_handle& vb = fh->vertex(ccw(i));
+          split_the_face = false;
+          typename Base::Cluster c,c2;
+          bool
+            is_cluster_at_va = get_cluster(va,vb,c),
+            is_cluster_at_vb = get_cluster(vb,va,c2);
+          if( ( is_cluster_at_va &&  is_cluster_at_vb) ||
+              (!is_cluster_at_va && !is_cluster_at_vb) )
+            {
+              // two clusters or no cluster
+              add_contrained_edge_to_be_conform(va,vb);
+              keep_the_face_bad = true;
+            }
+          else
+            {
+              // only one cluster: c or c2
+              if(is_cluster_at_vb)
+                c = c2;
 // What Shewchuk says:
 // - If the cluster is not reduced (all segments don't have the same
 // length as [va,vb]), then split the edge
@@ -506,8 +504,7 @@ inline
 void Delaunay_mesh_2<Tr, Extras>::
 split_face(const Face_handle& f, const Point& circum_center)
 {
-  bool marked = f->is_marked();
-  CGAL_assertion(marked);
+  CGAL_assertion(f->is_marked());
 
   List_of_face_handles zone_of_cc;
   List_of_edges zone_of_cc_boundary;
@@ -541,9 +538,9 @@ split_face(const Face_handle& f, const Point& circum_center)
 					      v);
 
   Face_circulator fc = incident_faces(v), fcbegin(fc);
-  do { 	 
-    fc->set_marked(marked); 	 
-  } while (++fc != fcbegin); 	 
+  do {
+    fc->set_marked(true);
+  } while (++fc != fcbegin);
 
   compute_new_bad_faces(v);
 }
@@ -556,9 +553,8 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   // insert the point p in the edge (fh, edge_index). It updates seeds 
   // too.
 {
-  const Vertex_handle
-    & va = fh->vertex(cw(edge_index)),
-    & vb = fh->vertex(ccw(edge_index));
+  const Vertex_handle& va = fh->vertex( cw(edge_index));
+  const Vertex_handle& vb = fh->vertex(ccw(edge_index));
 
   bool 
     mark_at_right = fh->is_marked(),
@@ -567,8 +563,7 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   List_of_face_handles zone_of_p;
 
   // deconstrain the edge
-  fh->set_constraint(edge_index,false);
-  fh->neighbor(edge_index)->set_constraint(fh->mirror_index(edge_index),false);
+  remove_constrained_edge(fh, edge_index);
 
   get_conflicts_and_boundary(p, 
 			     std::back_inserter(zone_of_p), 
@@ -591,7 +586,8 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   extras().signal_after_inserted_vertex_in_edge(static_cast<const Tr&>(*this),
 						vp);
 
-  int dummy; 
+  // now, let's update 'in-domain' markers
+  int dummy;
   // if we put edge_index instead of dummy, Intel C++ does not find
   // a matching function for is_edge
   is_edge(va, vp, fh, dummy); 
@@ -611,6 +607,8 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
       fc->set_marked(mark_at_left);
     ++fc;
   } while ( fc != fcbegin );
+
+  // then let's update bad faces
   compute_new_bad_faces(vp);
 
   return vp;
@@ -729,6 +727,6 @@ refine_Delaunay_mesh_2(Tr& t,
   t.swap(mesh);
 }
 
-CGAL_END_NAMESPACE
+}
 
 #endif // CGAL_MESH_2_H

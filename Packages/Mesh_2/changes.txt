@@ -1,3 +1,9 @@
+17 August 2004 Laurent Rineau
+- Use namespace CGAL instead of CGAL_NAMESPACE_BEGIN/END.
+- Insertion in an edge now reinstert the two sub-constraints, instead of
+  using insert with Locate_type==EDGE.
+- Boost iterators have changed.
+
 09  August 2004 Andreas Fabri
 Removed semicolons after closing parenthesis of functions, as they make problems for SunProCC
 
