@@ -185,10 +185,10 @@ enum {
 
 
 // Main functions:
-static inline FPU_CW_t FPU_get_control_word (void);
-static inline void FPU_set_control_word (FPU_CW_t);
+static inline FPU_CW_t FPU_get_cw (void);
+static inline void FPU_set_cw (FPU_CW_t);
 
-static inline FPU_CW_t FPU_get_control_word (void)
+static inline FPU_CW_t FPU_get_cw (void)
 {
     FPU_CW_t cw;
 #ifdef CGAL_IA_USE_ASSEMBLY
@@ -221,7 +221,7 @@ static inline FPU_CW_t FPU_get_control_word (void)
     return cw;
 }
 
-static inline void FPU_set_control_word (FPU_CW_t cw)
+static inline void FPU_set_cw (FPU_CW_t cw)
 {
 #ifdef CGAL_IA_USE_ASSEMBLY
     CGAL_IA_SETFPCW(cw);
@@ -255,17 +255,19 @@ static inline void FPU_set_control_word (FPU_CW_t cw)
 
 // Obscolete: wrappers for the old interface.
 
+#if 1
 static inline void FPU_set_rounding_to_zero (void)
-{ FPU_set_control_word(FPU_cw_zero); }
+{ FPU_set_cw(FPU_cw_zero); }
 
 static inline void FPU_set_rounding_to_nearest (void)
-{ FPU_set_control_word(FPU_cw_near); }
+{ FPU_set_cw(FPU_cw_near); }
 
 static inline void FPU_set_rounding_to_infinity (void)
-{ FPU_set_control_word(FPU_cw_up); }
+{ FPU_set_cw(FPU_cw_up); }
 
 static inline void FPU_set_rounding_to_minus_infinity (void)
-{ FPU_set_control_word(FPU_cw_down); }
+{ FPU_set_cw(FPU_cw_down); }
+#endif
 
 CGAL_END_NAMESPACE
 
