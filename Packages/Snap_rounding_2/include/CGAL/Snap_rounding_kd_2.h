@@ -62,8 +62,7 @@ typedef std::list<my_point<NT,SAVED_OBJECT> > Points_List;
 
 private:
   Rep_   _gt;
-  std::map<const int,NT> angle_to_sines_appr;
-  const double pi,half_pi,epsilon,rad_to_deg;
+  const double pi,half_pi,epsilon;
   int number_of_trees;
   std::list<std::pair<kd_tree *,NT> > kd_trees_list;
   std::list<std::pair<Point,SAVED_OBJECT > > input_points_list;
@@ -144,11 +143,9 @@ public:
   Multiple_kd_tree(std::list<std::pair<Point,SAVED_OBJECT> > 
                    &inp_points_list,int inp_number_of_trees,
                    std::list<Segment> &seg_list) : 
-    pi(3.1415),half_pi(1.57075),epsilon(0.001),rad_to_deg(57.297),
+    pi(3.1415),half_pi(1.57075),epsilon(0.001),
     number_of_trees(inp_number_of_trees),input_points_list(inp_points_list)
   {
-    init_angle_appr();
-
     std::pair<kd_tree *,NT> kd;
 
     // check that there are at least two trees
@@ -174,109 +171,9 @@ public:
     }
   }
 
-  void init_angle_appr()
-  {
-    angle_to_sines_appr[0] = NT(0);
-    angle_to_sines_appr[1] = NT(115) / NT(6613);
-    angle_to_sines_appr[2] = NT(57) / NT(1625);
-    angle_to_sines_appr[3] = NT(39) / NT(761);
-    angle_to_sines_appr[4] = NT(29) / NT(421);
-    angle_to_sines_appr[5] = NT(23) / NT(265);
-    angle_to_sines_appr[6] = NT(19) / NT(181);
-    angle_to_sines_appr[7] = NT(32) / NT(257);
-    angle_to_sines_appr[8] = NT(129) / NT(929);
-    angle_to_sines_appr[9] = NT(100) / NT(629);
-    angle_to_sines_appr[10] = NT(92) / NT(533);
-    angle_to_sines_appr[11] = NT(93) / NT(485);
-    angle_to_sines_appr[12] = NT(76) / NT(365);
-    angle_to_sines_appr[13] = NT(156) / NT(685);
-    angle_to_sines_appr[14] = NT(205) / NT(853);
-    angle_to_sines_appr[15] = NT(69) / NT(269);
-    angle_to_sines_appr[16] = NT(7) / NT(25);
-    angle_to_sines_appr[17] = NT(120) / NT(409);
-    angle_to_sines_appr[18] = NT(57) / NT(185);
-    angle_to_sines_appr[19] = NT(12) / NT(37);
-    angle_to_sines_appr[20] = NT(51) / NT(149);
-    angle_to_sines_appr[21] = NT(135) / NT(377);
-    angle_to_sines_appr[22] = NT(372) / NT(997);
-    angle_to_sines_appr[23] = NT(348) / NT(877);
-    angle_to_sines_appr[24] = NT(231) / NT(569);
-    angle_to_sines_appr[25] = NT(36) / NT(85);
-    angle_to_sines_appr[26] = NT(39) / NT(89);
-    angle_to_sines_appr[27] = NT(300) / NT(661);
-    angle_to_sines_appr[28] = NT(8) / NT(17);
-    angle_to_sines_appr[29] = NT(189) / NT(389);
-    angle_to_sines_appr[30] = NT(451) / NT(901);
-    angle_to_sines_appr[31] = NT(180) / NT(349);
-    angle_to_sines_appr[32] = NT(28) / NT(53);
-    angle_to_sines_appr[33] = NT(432) / NT(793);
-    angle_to_sines_appr[34] = NT(161) / NT(289);
-    angle_to_sines_appr[35] = NT(228) / NT(397);
-    angle_to_sines_appr[36] = NT(504) / NT(865);
-    angle_to_sines_appr[37] = NT(3) / NT(5);
-    angle_to_sines_appr[38] = NT(580) / NT(941);
-    angle_to_sines_appr[39] = NT(341) / NT(541);
-    angle_to_sines_appr[40] = NT(88) / NT(137);
-    angle_to_sines_appr[41] = NT(48) / NT(73);
-    angle_to_sines_appr[42] = NT(65) / NT(97);
-    angle_to_sines_appr[43] = NT(429) / NT(629);
-    angle_to_sines_appr[44] = NT(555) / NT(797);
-    angle_to_sines_appr[45] = NT(697) / NT(985);
-    angle_to_sines_appr[46] = NT(572) / NT(797);
-    angle_to_sines_appr[47] = NT(460) / NT(629);
-    angle_to_sines_appr[48] = NT(72) / NT(97);
-    angle_to_sines_appr[49] = NT(55) / NT(73);
-    angle_to_sines_appr[50] = NT(105) / NT(137);
-    angle_to_sines_appr[51] = NT(420) / NT(541);
-    angle_to_sines_appr[52] = NT(741) / NT(941);
-    angle_to_sines_appr[53] = NT(4) / NT(5);
-    angle_to_sines_appr[54] = NT(703) / NT(865);
-    angle_to_sines_appr[55] = NT(325) / NT(397);
-    angle_to_sines_appr[56] = NT(240) / NT(289);
-    angle_to_sines_appr[57] = NT(665) / NT(793);
-    angle_to_sines_appr[58] = NT(45) / NT(53);
-    angle_to_sines_appr[59] = NT(299) / NT(349);
-    angle_to_sines_appr[60] = NT(780) / NT(901);
-    angle_to_sines_appr[61] = NT(340) / NT(389);
-    angle_to_sines_appr[62] = NT(15) / NT(17);
-    angle_to_sines_appr[63] = NT(589) / NT(661);
-    angle_to_sines_appr[64] = NT(80) / NT(89);
-    angle_to_sines_appr[65] = NT(77) / NT(85);
-    angle_to_sines_appr[66] = NT(520) / NT(569);
-    angle_to_sines_appr[67] = NT(805) / NT(877);
-    angle_to_sines_appr[68] = NT(925) / NT(997);
-    angle_to_sines_appr[69] = NT(352) / NT(377);
-    angle_to_sines_appr[70] = NT(140) / NT(149);
-    angle_to_sines_appr[71] = NT(35) / NT(37);
-    angle_to_sines_appr[72] = NT(176) / NT(185);
-    angle_to_sines_appr[73] = NT(391) / NT(409);
-    angle_to_sines_appr[74] = NT(24) / NT(25);
-    angle_to_sines_appr[75] = NT(260) / NT(269);
-    angle_to_sines_appr[76] = NT(828) / NT(853);
-    angle_to_sines_appr[77] = NT(667) / NT(685);
-    angle_to_sines_appr[78] = NT(357) / NT(365);
-    angle_to_sines_appr[79] = NT(476) / NT(485);
-    angle_to_sines_appr[80] = NT(525) / NT(533);
-    angle_to_sines_appr[81] = NT(621) / NT(629);
-    angle_to_sines_appr[82] = NT(920) / NT(929);
-    angle_to_sines_appr[83] = NT(255) / NT(257);
-    angle_to_sines_appr[84] = NT(180) / NT(181);
-    angle_to_sines_appr[85] = NT(264) / NT(265);
-    angle_to_sines_appr[86] = NT(420) / NT(421);
-    angle_to_sines_appr[87] = NT(760) / NT(761);
-    angle_to_sines_appr[88] = NT(1624) / NT(1625);
-    angle_to_sines_appr[89] = NT(6612) / NT(6613);
-    angle_to_sines_appr[90] = NT(1);
-  }
-
   void rotate(Point &p,NT angle)
   {
-    // using the below rotation is mandatory because the rotation is done
-    // with the predefined sines under angle_to_sines_appr
-    int tranc_angle = int(angle.to_double() * rad_to_deg);
-
-    p = _gt.rotate_point(p,angle_to_sines_appr[90 - tranc_angle],
-                               angle_to_sines_appr[tranc_angle]);
+    p = _gt.rotate_point(p,angle);
   }
 
   Point small_x_point(Point p1,Point p2)
