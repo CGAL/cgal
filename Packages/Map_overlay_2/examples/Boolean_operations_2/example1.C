@@ -34,8 +34,9 @@ typedef Bops::Halfedges_container              Halfedges_container;
 typedef Bops::Vertices_container               Vertices_container;
 
 
-using namespace std;
-
+using std::cin;
+using std::cout;
+using std::endl;
 
 int  main()
 {
@@ -46,9 +47,9 @@ int  main()
   
   std::cin >> num_curves1;
   std::vector<Curve>  curves;
-    
+  
   while (num_curves1--) {
-    std::cin >> x1 >> y1 >> x2 >> y2;
+    cin >> x1 >> y1 >> x2 >> y2;
     curves.push_back(X_curve(Point(x1,y1), Point(x2,y2)));
   }
   
@@ -61,7 +62,9 @@ int  main()
   std::cin >> num_curves2;
   while (num_curves2--) {
     std::cin >> x1 >> y1 >> x2 >> y2;
-    curves.push_back(X_curve(Point(x1,y1), Point(x2,y2)));
+    
+    Point p1(x1,y2), p2(x2,y2);
+    curves.push_back(X_curve(p1, p2));
   }
    
   CGAL::sweep_to_construct_planar_map_2(curves.begin(), 
@@ -77,6 +80,10 @@ int  main()
   Halfedges_container halfedges_result;
   bop.intersection(halfedges_result);
   
+  for (Halfedges_container::iterator h_iter=halfedges_result.begin();
+       h_iter!=halfedges_result.end(); ++h_iter)
+    cout << (*h_iter)->curve() << endl;
+
   // uncomment if LEDA is installed.
   //CGAL::Window_stream W(700, 700);
   //W.init(-10,10,-10);
