@@ -140,7 +140,7 @@ void Qt_widget::paintEvent(QPaintEvent *e)
 
 void Qt_widget::mousePressEvent(QMouseEvent *e)
 {
-  emit(mousePressed(e));
+  emit(s_mousePressEvent(e));
   if(!is_standard_active()) {
     std::list<Qt_widget_layer*>::iterator it;
     for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
@@ -157,7 +157,7 @@ void Qt_widget::mousePressEvent(QMouseEvent *e)
 
 void Qt_widget::mouseReleaseEvent(QMouseEvent *e)
 {
-  emit(mouseReleased(e));
+  emit(s_mouseReleaseEvent(e));
   if(!is_standard_active()) {
     std::list<Qt_widget_layer*>::iterator it;
     for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
@@ -174,7 +174,7 @@ void Qt_widget::mouseReleaseEvent(QMouseEvent *e)
 
 void Qt_widget::mouseMoveEvent(QMouseEvent *e)
 {
-  emit(mouseMoved(e));
+  emit(s_mouseMoveEvent(e));
   if(!is_standard_active()) {
     std::list<Qt_widget_layer*>::iterator it;
     for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
@@ -191,6 +191,7 @@ void Qt_widget::mouseMoveEvent(QMouseEvent *e)
 
 void Qt_widget::wheelEvent(QMouseEvent *e)
 {
+  emit(s_wheelEvent(e));
   if(!is_standard_active()) {
     std::list<Qt_widget_layer*>::iterator it;
     for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
@@ -207,6 +208,7 @@ void Qt_widget::wheelEvent(QMouseEvent *e)
 
 void Qt_widget::mouseDoubleClickEvent(QMouseEvent *e)
 {
+  emit(s_mouseDoubleClickEvent(e));
   if(!is_standard_active()) {
     std::list<Qt_widget_layer*>::iterator it;
     for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
@@ -223,6 +225,7 @@ void Qt_widget::mouseDoubleClickEvent(QMouseEvent *e)
 
 void Qt_widget::keyPressEvent(QKeyEvent *e)
 {
+  emit(s_keyPressEvent(e));
   if(!is_standard_active()) {
     std::list<Qt_widget_layer*>::iterator it;
     for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
@@ -239,6 +242,7 @@ void Qt_widget::keyPressEvent(QKeyEvent *e)
 
 void Qt_widget::keyReleaseEvent(QKeyEvent *e)
 {
+  emit(s_keyReleaseEvent(e));
   if(!is_standard_active()) {
     std::list<Qt_widget_layer*>::iterator it;
     for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
@@ -255,6 +259,7 @@ void Qt_widget::keyReleaseEvent(QKeyEvent *e)
 
 void Qt_widget::enterEvent(QEvent *e)
 {
+  emit(s_enterEvent(e));
   if(!is_standard_active()) {
     std::list<Qt_widget_layer*>::iterator it;
     for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
@@ -271,6 +276,7 @@ void Qt_widget::enterEvent(QEvent *e)
 
 void Qt_widget::leaveEvent(QEvent *e)
 {
+  emit(s_leaveEvent(e));
   if(!is_standard_active()) {
     std::list<Qt_widget_layer*>::iterator it;
     for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
@@ -283,6 +289,25 @@ void Qt_widget::leaveEvent(QEvent *e)
       if((*it)->is_active())
         (*it)->leaveEvent(e);
   }
+}
+
+bool Qt_widget::event(QEvent *e)
+{
+  emit(s_event(e));
+  QWidget::event(e);
+  if(!is_standard_active()) {
+    std::list<Qt_widget_layer*>::iterator it;
+    for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
+      if((*it)->is_active())
+        (*it)->event(e);
+  } else {
+    std::list<Qt_widget_layer*>::iterator it;
+    for(it = qt_standard_layers.begin();
+    it!= qt_standard_layers.end(); it++)
+      if((*it)->is_active())
+        (*it)->event(e);
+  }
+  return true;
 }
 
 void Qt_widget::set_window(double  x_min, double x_max,

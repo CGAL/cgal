@@ -174,10 +174,19 @@ public:
   void detach(Qt_widget_layer* s);
 
 signals:
-  void mousePressed(QMouseEvent *e);
-  void mouseReleased(QMouseEvent *e);
-  void mouseMoved(QMouseEvent *e);
-  //  void resized();
+  void s_mousePressEvent(QMouseEvent *e);
+  void s_mouseReleaseEvent(QMouseEvent *e);
+  void s_mouseMoveEvent(QMouseEvent *e);
+  void s_paintEvent(QPaintEvent *e);
+  void s_resizeEvent(QResizeEvent *e);
+  void s_wheelEvent(QMouseEvent *e);
+  void s_mouseDoubleClickEvent(QMouseEvent *e);
+  void s_keyPressEvent(QKeyEvent *e);
+  void s_keyReleaseEvent(QKeyEvent *e);
+  void s_enterEvent(QEvent *e);
+  void s_leaveEvent(QEvent *e);
+  void s_event(QEvent *e);
+  
   void custom_redraw(); // if user want to draw something after layers
   void new_cgal_object(CGAL::Object);	//this signal is emited every time an
 					//attached tool constructed an object
@@ -196,6 +205,7 @@ protected:
   void keyReleaseEvent(QKeyEvent *e);
   void enterEvent(QEvent *e);
   void leaveEvent(QEvent *e);
+  bool event(QEvent *e);
 
 
 private:
