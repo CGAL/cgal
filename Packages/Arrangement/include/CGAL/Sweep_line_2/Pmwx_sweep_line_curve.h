@@ -29,6 +29,7 @@
 
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <CGAL/Sweep_line_2/Pmwx_insert_info.h>
+#include <CGAL/Sweep_line_2/Pmwx_sweep_line_event.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -41,12 +42,14 @@ public:
   typedef typename Traits::Curve_2 Curve_2;
   typedef typename Traits::X_curve_2 X_curve_2;
   typedef Sweep_line_subcurve<SweepLineTraits_2> Base;
+  typedef Pmwx_sweep_line_curve<Traits, VertexHandle, HalfedgeHandle> Self;
 
-  typedef Pmwx_insert_info<VertexHandle, HalfedgeHandle> PmwxInsertInfo;
+  typedef Pmwx_insert_info<VertexHandle,HalfedgeHandle> PmwxInsertInfo;
+  typedef Pmwx_sweep_line_event<Traits, Self> Event;
 
   Pmwx_sweep_line_curve(int id, X_curve_2 &curve, Point_2 *reference, 
 			SweepLineTraits_2 *traits) : 
-    Base(id, curve, reference, traits) , m_insertInfo(0)
+    Base(id, curve, reference, traits) , m_insertInfo(0), m_lastEvent(0)
   {
   }
 
@@ -57,9 +60,19 @@ public:
   PmwxInsertInfo *getInsertInfo() const {
     return m_insertInfo;
   }
+
+  void setLastEvent(Event *e) {
+    m_lastEvent = e;
+  }
+
+  Event *getLastEvent() const {
+    return m_lastEvent;
+  }
+
 private:
 
   PmwxInsertInfo *m_insertInfo;
+  Event *m_lastEvent;
   
 };
 

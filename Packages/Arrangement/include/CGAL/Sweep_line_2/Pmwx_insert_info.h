@@ -27,9 +27,6 @@
 #ifndef CGAL_PMWX_INSERT_INFO_H
 #define CGAL_PMWX_INSERT_INFO_H
 
-#include <CGAL/Sweep_line_2/Sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Pmwx_sweep_line_curve.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template<class Vertex_handle, class Halfedge_handle>
@@ -58,6 +55,20 @@ public:
 
   Halfedge_handle getHalfedgeHandle() const {
     return m_halfedge;
+  }
+
+  void Print()
+  {
+    if ( m_vertex == Vertex_handle(NULL))
+      std::cout << "vertex: NULL\n";
+    else
+      std::cout << "vertex: " << m_vertex->point() << "\n";
+
+    if ( m_halfedge == Halfedge_handle(NULL))
+      std::cout << "halfedge: NULL\n";
+    else 
+      std::cout << "halfedge: " << m_halfedge->source()->point() 
+		<< " " << m_halfedge->target()->point() << "\n";
   }
  
 private:
