@@ -42,6 +42,10 @@ and do not depend on the geometric embedding.
 \ccNestedType{Vertex} {}
 \ccGlue
 \ccNestedType{Face}{}
+\ccGlue
+\ccTypedef{typedef std::pair<Face*,int> Edge}{ Edge type.}
+\ccGlue
+\ccTypedef{typedef std::list<Edge> List_edges}{ Lists of edges.}
 
 To ensure all the \textbf{flexibility} of class \ccc{Triangulation_2}
 described in \ccRefPage{CGAL::Triangulation_2<Traits,Tds>}
@@ -231,6 +235,19 @@ user.
 They do not guarantee the combinatorial validity 
 of the resulting triangulation.
 
+\ccMethod{Vertex* star_hole(List_edges& hole);}
+{create a new vertex \ccc{v} and use it to star the hole \ccc{hole}.}
+\ccGlue
+\ccMethod{void star_hole(Vertex* v, List_edges& hole);}
+{stars the hole \ccc{hole} using vertex \ccc{v}.}
+\ccGlue
+\ccMethod{void make_hole(Vertex* v, List_edges& hole);}
+{removes the vertex v, and store in hole the list of edges
+on the boundary of the hole.}
+hole \ccc{hole}}
+\ccGlue
+\ccMethod{Vertex* create_vertex()}{adds a new vertex.}
+\ccGlue
 \ccMethod{Face* create_face(Face* f1, int i1, Face* f2, int i2, Face*
 f3, int i3);}{adds a face which is the neighbor \ccc{i1} of \ccc{f1}, 
 \ccc{i2} of \ccc{f2} and \ccc{i3} of \ccc{f3}.}
@@ -255,6 +272,8 @@ and neighbors \ccc{f1}, \ccc{f2}, \ccc{f3}.}
 {adds a face whose vertices and neighbors are set to NULL.}
  \ccGlue
 \ccMethod{void  delete_face(Face*);}{deletes a face.}
+\ccGlue
+\ccMethod{void  delete_vertex(Vertex*);}{deletes a vertex.}
 \end{ccAdvanced}
 
 \ccHeading{Traversing the triangulation}
