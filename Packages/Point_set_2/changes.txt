@@ -1,5 +1,6 @@
 24 September 2004 Andreas Fabri
 - fixed the testsuite
+- Changes for g++-3.4.0
 
 26 March 2004 Radu Ursu
 -made doc work with the current implementation of the Manual tools

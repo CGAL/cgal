@@ -89,8 +89,16 @@ public:
   typedef typename Geom_traits::Compare_distance_2          Comparedist;         
   typedef typename Geom_traits::Construct_center_2          Circlecenter;   
   
-  typedef Unique_hash_map<Vertex_handle, Numb_type>               MAP_TYPE;  
-  
+  typedef Unique_hash_map<Vertex_handle, Numb_type>         MAP_TYPE;  
+  typedef Delaunay_triangulation_2<Gt,Tds>                  Base;
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Base::finite_vertices_begin;
+  using Base::finite_vertices_end;
+  using Base::number_of_vertices;
+  using Base::VERTEX;
+#endif
+
    Comparedist                   tr_comparedist;
    Orientation_2                 tr_orientation;  
    Side_of_oriented_circle_2     tr_so_circle;    
