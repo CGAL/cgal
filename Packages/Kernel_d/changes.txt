@@ -1,5 +1,11 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.86 (17 July 2003) [rursu]
+- In include/Kernel_d/Vector__.h 
+	patched the constructor of Vector_ for VC7.0 that can't handle:
+	  const double *a, *b;
+          std::distance(a, b);
+
 0.9.85 (15 July 2003) [af]
 - In VectorCd.h:  0 -> FT(0)
 

@@ -167,7 +167,14 @@ Vector_(Forward_iterator first, Forward_iterator last)
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|; 
 |\Mvar| is initialized to the vector with entries
 |set [first,last)|. \require |Forward_iterator| has value type |NT|.}*/
-{ d_ = std::distance(first,last);
+{ 
+#if defined _MSC_VER && _MSC_VER == 1300
+  d_ = 0;
+  Forward_iterator fit = first;
+  while(fit++!=last) d_++;
+#else
+  d_ = std::distance(first, last);
+#endif
   allocate_vec_space(v_,d_);
   iterator it = begin();
   while (first != last) { *it = *first; ++it; ++first; }
