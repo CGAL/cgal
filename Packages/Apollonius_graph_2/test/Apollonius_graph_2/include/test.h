@@ -91,6 +91,7 @@ bool test_traits_base(const Traits& = Traits())
   // testing constructors
   //--------------------------------------------------------------------
   Traits tr;
+  tr = Traits(); // to avoid warning that variable was not initialized;
   Traits tr1(tr);
   tr1 = tr;
   tr = tr1;
@@ -774,7 +775,18 @@ template<class Kernel, class Method_tag, class InputStream>
 bool test_algo(InputStream& is)
 {
   typedef Apollonius_graph_traits_2<Kernel,Method_tag> Traits;
+#if defined( _MSC_VER )
+  // Patch for the Microsoft compiler so that it does not produce the
+  // nasty warning about decorated name length
+  // Basically what I do here is create typedefs for the default
+  // template paramaters so as to give them shorter names
+  typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
+  typedef Apollonius_graph_face_base_2<Traits>          Fb;
+  typedef Apollonius_graph_data_structure_2<Vb,Fb>      Agds;
+  typedef Apollonius_graph_2<Traits,Agds>               Apollonius_graph;
+#else
   typedef Apollonius_graph_2<Traits>  Apollonius_graph;
+#endif
 
   return test_algo_generic<Apollonius_graph,InputStream>(is);
 }
@@ -783,7 +795,20 @@ template<class Kernel, class Method_tag, class InputStream>
 bool test_hierarchy_algo(InputStream& is)
 {
   typedef Apollonius_graph_traits_2<Kernel,Method_tag> Traits;
+#if defined( _MSC_VER )
+  // Patch for the Microsoft compiler so that it does not produce the
+  // nasty warning about decorated name length
+  // Basically what I do here is create typedefs for the default
+  // template paramaters so as to give them shorter names
+  typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
+  typedef Apollonius_graph_hierarchy_vertex_base_2<Vb>  HVb;
+  typedef Apollonius_graph_face_base_2<Traits>          Fb;
+  typedef Apollonius_graph_data_structure_2<HVb,Fb>     Agds;
+  typedef Apollonius_graph_hierarchy_2<Traits,Agds>
+    Apollonius_graph_hierarchy;
+#else
   typedef Apollonius_graph_hierarchy_2<Traits>  Apollonius_graph_hierarchy;
+#endif
 
   return test_algo_generic<Apollonius_graph_hierarchy,InputStream>(is);
 }
@@ -797,7 +822,18 @@ template<class CK, class CKM, class EK, class EKM, class InputStream>
 bool test_filtered_traits_algo(InputStream& is)
 {
   typedef Apollonius_graph_filtered_traits_2<CK,CKM,EK,EKM> Traits;
+#if defined( _MSC_VER )
+  // Patch for the Microsoft compiler so that it does not produce the
+  // nasty warning about decorated name length
+  // Basically what I do here is create typedefs for the default
+  // template paramaters so as to give them shorter names
+  typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
+  typedef Apollonius_graph_face_base_2<Traits>          Fb;
+  typedef Apollonius_graph_data_structure_2<Vb,Fb>      Agds;
+  typedef Apollonius_graph_2<Traits,Agds>               Apollonius_graph;
+#else
   typedef Apollonius_graph_2<Traits>  Apollonius_graph;
+#endif
 
   return test_algo_generic<Apollonius_graph,InputStream>(is);
 }
@@ -806,7 +842,20 @@ template<class CK, class CKM, class EK, class EKM, class InputStream>
 bool test_filtered_traits_hierarchy_algo(InputStream& is)
 {
   typedef Apollonius_graph_filtered_traits_2<CK,CKM,EK,EKM> Traits;
+#if defined( _MSC_VER )
+  // Patch for the Microsoft compiler so that it does not produce the
+  // nasty warning about decorated name length
+  // Basically what I do here is create typedefs for the default
+  // template paramaters so as to give them shorter names
+  typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
+  typedef Apollonius_graph_hierarchy_vertex_base_2<Vb>  HVb;
+  typedef Apollonius_graph_face_base_2<Traits>          Fb;
+  typedef Apollonius_graph_data_structure_2<HVb,Fb>     Agds;
+  typedef Apollonius_graph_hierarchy_2<Traits,Agds>
+    Apollonius_graph_hierarchy;
+#else
   typedef Apollonius_graph_hierarchy_2<Traits>  Apollonius_graph_hierarchy;
+#endif
 
   return test_algo_generic<Apollonius_graph_hierarchy,InputStream>(is);
 }
