@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.72 on 25 February 2001
+- Declare force_ieee_double_precision in FPU.h.
+
 Version 4.71 on 25 February 2001
 - Split MP_Float.h into src/MP_Float.C.
 - Test-suite fixes.

@@ -265,6 +265,8 @@ FPU_get_and_set_cw (FPU_CW_t cw)
 
 FPU_CW_t FPU_empiric_test(); // Only used for debug.
 
+void force_ieee_double_precision(); // Used by the Fixed_precision_nt.
+
 // A class whose constructor sets the FPU mode to +inf, saves a backup of it,
 // and whose destructor resets it back to the saved state.
 
