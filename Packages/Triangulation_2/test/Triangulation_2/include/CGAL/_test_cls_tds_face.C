@@ -95,9 +95,9 @@ _test_cls_tds_face( const Tds )
   
   // Test set_vertices()
   gh5->set_vertices();
-  assert( gh5->vertex(0) == NULL );
-  assert( gh5->vertex(1) == NULL );
-  assert( gh5->vertex(2) == NULL);
+  assert( gh5->vertex(0) == Vertex_handle());
+  assert( gh5->vertex(1) == Vertex_handle());
+  assert( gh5->vertex(2) == Vertex_handle());
   gh5->set_vertices( vh1, vh2, vh3 );
   assert( gh5->vertex(0) == vh1 );
   assert( gh5->vertex(1) == vh2 );
@@ -129,9 +129,9 @@ _test_cls_tds_face( const Tds )
   
   // Test set_neighbors()
   gh5->set_neighbors();
-  assert( gh5->neighbor(0) == NULL );
-  assert( gh5->neighbor(1) == NULL );
-  assert( gh5->neighbor(2) == NULL );
+  assert( gh5->neighbor(0) == Face_handle());
+  assert( gh5->neighbor(1) == Face_handle());
+  assert( gh5->neighbor(2) == Face_handle());
   gh5->set_neighbors( fh1, fh2, fh3 );
   assert( gh5->neighbor(0) == fh1 );
   assert( gh5->neighbor(1) == fh2 );
@@ -166,18 +166,19 @@ _test_cls_tds_face( const Tds )
   assert(gh4->dimension() == 2);
 
   //Test low dimensional faces
-  Face_handle gh1 = tds.create_face(vh2,vh3,NULL);
-  Face_handle gh2 = tds.create_face(vh3,vh1, NULL);
-  Face_handle gh3 = tds.create_face(vh1,vh2, NULL);
-  gh1->set_neighbors( gh2, gh3, NULL);
-  gh2->set_neighbors( gh3, gh1, NULL);
-  gh3->set_neighbors( gh1, gh2, NULL);
+  Face_handle gh1 = tds.create_face(vh2,vh3, Vertex_handle());
+  Face_handle gh2 = tds.create_face(vh3,vh1, Vertex_handle());
+  Face_handle gh3 = tds.create_face(vh1,vh2, Vertex_handle());
+  gh1->set_neighbors( gh2, gh3, Face_handle());
+  gh2->set_neighbors( gh3, gh1, Face_handle());
+  gh3->set_neighbors( gh1, gh2, Face_handle());
 
   assert(gh1->dimension() == 1);
   assert (gh1->is_valid());
 
-  Face_handle hh1=tds.create_face(vh1, NULL, NULL);
-  Face_handle hh2=tds.create_face(vh2, NULL, NULL, hh1, NULL, NULL);
+  Face_handle hh1=tds.create_face(vh1, Vertex_handle(), Vertex_handle());
+  Face_handle hh2=tds.create_face(vh2, Vertex_handle(), Vertex_handle(),
+				  hh1, Face_handle(), Face_handle());
   hh1->set_neighbor(0, hh2);
   assert (hh1->dimension() == 0);
   assert (hh1->is_valid()); 

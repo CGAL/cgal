@@ -454,7 +454,7 @@ private:
   {
     if (fit == face_end) return create_face(fn, in, v);
     (*fit)->set_vertices(fn->vertex(cw(in)), fn->vertex(ccw(in)), v);
-    (*fit)->set_neighbors(0,0,fn);
+    (*fit)->set_neighbors(Face_handle(),Face_handle(),fn);
     fn->set_neighbor(in, *fit);
     return *fit++;    
   }

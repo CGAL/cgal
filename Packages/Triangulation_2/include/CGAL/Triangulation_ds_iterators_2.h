@@ -141,7 +141,7 @@ Triangulation_ds_edge_iterator_2<Tds> ::
 associated_edge()
 {
   if (_tds->dimension() == 1) {return true;}
-  return Face_handle(pos)  < pos->neighbor(edge.second);
+  return Face_handle(pos) < pos->neighbor(edge.second);
 }
 
 template<class Tds>

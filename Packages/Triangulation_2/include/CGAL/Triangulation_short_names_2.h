@@ -53,8 +53,9 @@
 #define Triangulation_face_circulator_2       Tfc
 #define Triangulation_edge_circulator_2       Tec
 
-#define Constrained_triangulation_face_base_2  Ctfb
+#define Constrained_triangulation_face_base_2    Ctfb
 #define Regular_triangulation_euclidean_traits_2 Rtet2
-#define Regular_triangulation_face_base_2  Rtfb
+#define Regular_triangulation_face_base_2        Rtfb
+#define Regular_triangulation_vertex_base_2      Rtvb
 
 #endif //CGAL_TRIANGULATION_SHORT_NAMES_2_H

@@ -1,7 +1,13 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-20 April
+26 April 2004 Mariette Yvinec
+- fixed a useless test in _test_triangulation_tds.C
+- fixed deprecated code (replace NULL by Vertex_handle() or Face_handle()
+  in _test_cls_tds_face.C
+- add a short name for Regular_triangulation_vertex_base_2
+
+20 April 2004 Mariette Yvinec
 - changed test_conflict in Delaunay and Contrained_Delaunay
   to avoid, in most cases,  testing for infinite faces twice in  row 
 

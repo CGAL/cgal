@@ -176,7 +176,7 @@ _test_cls_tds_2( const Tds &)
 	 tds0.number_of_full_dim_faces() == 0);
   assert(tds1.dimension() == -1     && tds1.number_of_vertices() == 1 &&
 	 tds1.number_of_faces()== 0 && tds1.number_of_edges()    == 0 &&
-	 tds1.number_of_full_dim_faces() >= 0);
+	 tds1.number_of_full_dim_faces() == 1);
   assert(tds2.dimension() == 0      && tds2.number_of_vertices() == 2 &&
 	 tds2.number_of_faces()== 0 && tds2.number_of_edges()    == 0 &&
 	 tds2.number_of_full_dim_faces() == 2);
