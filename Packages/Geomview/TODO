@@ -1,3 +1,6 @@
+- Implement echo_flag for operator>>(Point).
+- Policy : decide a policy for if operators<<() must save and restore
+  correctly binary_flag.  And apply also to triangulations.
 - Add flags to the stream that say :
   - draw vertices or not
   - draw edges or not
@@ -6,7 +9,6 @@
   menus, so...
 - See how we can mix the Color output with the raw mode.
   Currently it's not clear to me.
-- Use raw mode for triangulations
 - Finish get rid of non standard compliant (and gcc 2.97 friendly) strstream.
   http://www.cmla.ens-cachan.fr/Utilisateurs/dosreis/C++/FAQ/
   It's harder than I thought, since g++ 2.95 doesn't have <sstream>.
