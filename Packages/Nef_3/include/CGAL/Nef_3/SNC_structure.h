@@ -490,7 +490,7 @@ public:
 
   void reset_object_list(Object_list& L)
   { Object_iterator oit;
-    CGAL_forall_iterators(oit,L) reset_iterator_hash(oit);
+    CGAL_nef3_forall_iterators(oit,L) reset_iterator_hash(oit);
     L.clear();
   }
 
@@ -547,10 +547,10 @@ public:
   |Halffacet_iterator halffacets_begin()/halffacets_end()|\\
   |Volume_iterator volumes_begin()/volumes_end()|
 
-  The macros are then |CGAL_forall_vertices(v,\Mvar)|, 
-  |CGAL_forall_halfedges(e,\Mvar)|, |CGAL_forall_edges(e,\Mvar)|,
-  |CGAL_forall_halffacets(f,\Mvar)|, |CGAL_forall_facets(f,\Mvar)|,
-  |CGAL_forall_volumes(w,\Mvar)|.}*/
+  The macros are then |CGAL_nef3_forall_vertices(v,\Mvar)|, 
+  |CGAL_nef3_forall_halfedges(e,\Mvar)|, |CGAL_nef3_forall_edges(e,\Mvar)|,
+  |CGAL_nef3_forall_halffacets(f,\Mvar)|, |CGAL_nef3_forall_facets(f,\Mvar)|,
+  |CGAL_nef3_forall_volumes(w,\Mvar)|.}*/
 
   Size_type number_of_vertices() const  { return vertices_.size(); }
   /*{\Mop returns the number of vertices.}*/
@@ -729,7 +729,7 @@ public:
       Union_find< SFace_handle>& uf ) {
     SNC_decorator D;
     Halffacet_cycle_iterator fc;
-    CGAL_forall_facet_cycles_of(fc, f) {
+    CGAL_nef3_forall_facet_cycles_of(fc, f) {
       SHalfedge_handle e;
       SHalfloop_handle l;
       if( assign(e, fc) ) {
@@ -796,7 +796,7 @@ public:
     /* there must be only two incident sedges to the svertex v */
     CGAL_assertion( SD.circle(e1) == SD.circle(e2o));
     /* the two local sedges share the same scircle */
-    CGAL_assertion( D.mark(e1) == D.mark(v) && D.mark(v) == D.mark(e2o));
+    CGAL_assertion( D.mark(e1) == D.mark(v) && D.mark(v) == D.mark(e2));
     /* the edge and its two incident facets have the same mark */
     SD.link_as_prev_next_pair( SD.previous(e1), SD.next(e1));
     SD.link_as_prev_next_pair( SD.previous(e1o), SD.next(e1o));
@@ -935,13 +935,13 @@ public:
     Union_find< SFace_handle> uf_sface;
 
     Volume_iterator c;
-    CGAL_forall_volumes( c, *this)
+    CGAL_nef3_forall_volumes( c, *this)
       hash_volume[c] = uf_volume.make_set(c);
     Halffacet_iterator hf;
-    CGAL_forall_halffacets( hf, *this)
+    CGAL_nef3_forall_halffacets( hf, *this)
       hash_facet[hf] = uf_facet.make_set(hf);
     SFace_iterator sf;
-    CGAL_forall_sfaces( sf, *this)
+    CGAL_nef3_forall_sfaces( sf, *this)
       hash_sface[sf] = uf_sface.make_set(sf);
     
     Halffacet_handle f((*this).halffacets_begin());
@@ -956,9 +956,7 @@ public:
 	       " mark("<<IO->index(f)<<")="<<D.mark(f)<<
 	       " mark("<<IO->index(c2)<<")="<<D.mark(c2)<<
 	       " is_twin(f)="<<f->is_twin());
-      if( (D.mark(c1) == D.mark(f) && 
-	   D.mark(f) == D.mark(D.twin(f)) &&
-	   D.mark(D.twin(f)) == D.mark(c2))
+      if( (D.mark(c1) == D.mark(f) && D.mark(f) == D.mark(c2))
 	  && !is_bbox_facet(f)) { /* if f is not part of the bounding box */
 	merge_sets( c1, c2, hash_volume, uf_volume);
 	remove_f_including_all_edge_uses_in_its_boundary_cycles
@@ -983,16 +981,13 @@ public:
 	SDt.delete_vertex_only(et);
       } 
       else { 
-	SHalfedge_handle e1(SD.first_out_edge(e)), e1o(SD.twin(e1)),
-	  e2(SD.cyclic_adj_succ(e1)), e2o(SD.twin(e2));
+	SHalfedge_handle e1(SD.first_out_edge(e)), e2(SD.cyclic_adj_succ(e1));
+	TRACEN(" mark(e1) "<<D.mark(e1)<<
+	       " mark(e) "<<D.mark(e)<<
+	       " mark(e2) "<<D.mark(e2));
 	if( (e1 != e2 && e1 == SD.cyclic_adj_succ(e2)) &&
-	    (SD.circle(e1) == SD.circle(e2o)))
-	    TRACEN(" mark(e1) "<<D.mark(e1)<<
-		   " mark(e) "<<D.mark(e)<<
-		   " mark(e2o) "<<D.mark(e2o));
-	if( (e1 != e2 && e1 == SD.cyclic_adj_succ(e2)) &&
-	    (SD.circle(e1) == SD.circle(e2o)) &&
-	    (D.mark(e1) == D.mark(e) && D.mark(e) == D.mark(e2o)) )
+	    (SD.circle(e1) == SD.circle(SD.twin(e2))) &&
+	    (D.mark(e1) == D.mark(e) && D.mark(e) == D.mark(e2)) )
 	  merge_facet_cycles(e, hash_facet, uf_facet);
       }
       e = e_next;
@@ -1049,7 +1044,7 @@ public:
       Union_find< SFace_handle>& uf_sface ) {
      SNC_decorator D(*this);
      SFace_iterator sf;
-     CGAL_forall_sfaces( sf, *this) {
+     CGAL_nef3_forall_sfaces( sf, *this) {
        if( uf_sface.find(hash_sface[sf]) != hash_sface[sf]) {
 	 TRACEN("no find object "<<IO->index(sf));
 	 SM_decorator SD(D.vertex(sf));
@@ -1057,14 +1052,14 @@ public:
        }
      }
      Halffacet_iterator f;
-     CGAL_forall_halffacets( f, *this) {
+     CGAL_nef3_forall_halffacets( f, *this) {
        if( uf_facet.find(hash_facet[f]) != hash_facet[f]) {
 	 TRACEN("no find object "<<IO->index(f));
 	 delete_halffacet_pair(f);
        }
      }
      Volume_iterator c;
-     CGAL_forall_volumes( c, *this) {
+     CGAL_nef3_forall_volumes( c, *this) {
        if( uf_volume.find(hash_volume[c]) != hash_volume[c]) {
 	 TRACEN("no find object "<<IO->index(c));
 	 delete_volume(c);
@@ -1078,7 +1073,7 @@ public:
     SNC_decorator D(*this);
     SM_decorator SD;
     SHalfedge_iterator e;
-    CGAL_forall_shalfedges(e, *this) { // all shalfedges
+    CGAL_nef3_forall_shalfedges(e, *this) { // all shalfedges
       // if( e was not yet assigned to an sface cycle )
       UFH_sface sf(uf.find(hash[D.sface(e)]));
       if( hash[D.sface(e)] != sf) {
@@ -1089,7 +1084,7 @@ public:
       }
     }
     SVertex_handle sv;
-    CGAL_forall_svertices(sv, *this)
+    CGAL_nef3_forall_svertices(sv, *this)
       if( SD.is_isolated(sv))
 	SD.set_face( sv, *(uf.find(hash[D.sface(sv)])));
   }
@@ -1099,7 +1094,7 @@ public:
       Union_find< Halffacet_handle>& uf) {
     SNC_decorator D(*this);
     SHalfedge_iterator u;
-    CGAL_forall_shalfedges(u, *this) { // all edge uses
+    CGAL_nef3_forall_shalfedges(u, *this) { // all edge uses
       // if( u was not yet assigned to a facet cycle )
       UFH_facet sf(uf.find(hash[D.facet(u)]));
       if( hash[D.facet(u)] != sf) {
@@ -1110,7 +1105,7 @@ public:
       }
     }
     SHalfloop_iterator l;
-    CGAL_forall_shalfloops( l, *this) // all sloops
+    CGAL_nef3_forall_shalfloops( l, *this) // all sloops
       l->incident_facet_ = *(uf.find(hash[D.facet(l)]));
   }
 
@@ -1120,7 +1115,7 @@ public:
       Union_find< Volume_handle>& uf) {
     SNC_decorator D(*this);
     SFace_iterator sf;
-    CGAL_forall_sfaces(sf, *this) { // all sfaces
+    CGAL_nef3_forall_sfaces(sf, *this) { // all sfaces
       // if( f was not yet assigned to a shell )
       UFH_volume c(uf.find(hash[D.volume(sf)]));
       if( hash[D.volume(sf)] != c) {
@@ -1188,7 +1183,7 @@ pointer_update(const SNC_structure<Items>& D)
   for ( ; sfc != D.sfaces_end(); ++sfc,++sf) SFM[sfc] = sf;
   SFM[D.sfaces_end()] = sfaces_end();
 
-  CGAL_forall_vertices(v,*this) {
+  CGAL_nef3_forall_vertices(v,*this) {
     // Local Graph update: (SVertices are postponed/updated as Edges)
     v->sncp_ = this;
     v->svertices_begin_ = EM[v->svertices_begin_];
@@ -1200,14 +1195,14 @@ pointer_update(const SNC_structure<Items>& D)
     v->shalfloop_ = SLM[v->shalfloop_];
   }
   // Halfedge update:
-  CGAL_forall_halfedges(e,*this) {
+  CGAL_nef3_forall_halfedges(e,*this) {
     e->center_vertex_ = VM[e->center_vertex_];
     e->twin_ = EM[e->twin_];
     e->out_sedge_ = SEM[e->out_sedge_];
     e->incident_sface_ = SFM[e->incident_sface_];
   }
   // Halffacet update
-  CGAL_forall_halffacets(f,*this) {
+  CGAL_nef3_forall_halffacets(f,*this) {
     f->twin_ = FM[f->twin_];
     f->volume_ = CM[f->volume_];
     Halffacet_cycle_iterator ftc;
@@ -1221,16 +1216,16 @@ pointer_update(const SNC_structure<Items>& D)
     }
   }
   // Volume update
-  CGAL_forall_volumes(c,*this) {
+  CGAL_nef3_forall_volumes(c,*this) {
     Shell_entry_iterator sei;
-    CGAL_forall_shells_of(sei,c) {
+    CGAL_nef3_forall_shells_of(sei,c) {
       sf = sei; // conversion from generic iterator to sface const handle
       *sei = Object_handle(SFM[sf]); 
       store_boundary_item(sf,sei); 
     }
   }
 
-  CGAL_forall_shalfedges(se,*this) {
+  CGAL_nef3_forall_shalfedges(se,*this) {
     se->source_ = EM[se->source_];
     se->sprev_ = SEM[se->sprev_]; se->snext_ = SEM[se->snext_];
     se->incident_sface_ = SFM[se->incident_sface_];
@@ -1238,12 +1233,12 @@ pointer_update(const SNC_structure<Items>& D)
     se->prev_ = SEM[se->prev_]; se->next_ = SEM[se->next_];
     se->incident_facet_ = FM[se->incident_facet_];
   }
-  CGAL_forall_shalfloops(sl,*this) {
+  CGAL_nef3_forall_shalfloops(sl,*this) {
     sl->twin_ = SLM[sl->twin_];
     sl->incident_sface_ = SFM[sl->incident_sface_];
     sl->incident_facet_ = FM[sl->incident_facet_];
   }
-  CGAL_forall_sfaces(sf,*this) {
+  CGAL_nef3_forall_sfaces(sf,*this) {
     sf->center_vertex_ = VM[sf->center_vertex_];
     sf->incident_volume_ = CM[sf->incident_volume_];
     SFace_cycle_iterator sfc;

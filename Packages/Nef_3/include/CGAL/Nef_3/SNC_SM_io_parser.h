@@ -275,13 +275,13 @@ void SNC_SM_io_parser<Refs_>::print_face(SFace_handle f) const
 { // syntax: index { fclist, ivlist, loop, mark }
   out << index(f) << " { "; 
   SFace_cycle_iterator it;
-  CGAL_forall_sface_cycles_of(it,f)
+  CGAL_nef3_forall_sface_cycles_of(it,f)
     if ( it.is_shalfedge() ) out << index(SHalfedge_handle(it)) << ' ';
   out << ", ";
-  CGAL_forall_sface_cycles_of(it,f)
+  CGAL_nef3_forall_sface_cycles_of(it,f)
     if ( it.is_svertex() ) out << index(SVertex_handle(it)) << ' ';
   out << ", ";
-  CGAL_forall_sface_cycles_of(it,f)
+  CGAL_nef3_forall_sface_cycles_of(it,f)
     if ( it.is_shalfloop() ) out << index(SHalfloop_handle(it));
   out << ", " << mark(f) << " }\n";
 }
@@ -322,12 +322,12 @@ void SNC_SM_io_parser<Refs_>::print() const
   if (verbose) 
     out << "/* index { isolated ? face : edge, mark, point } */" << endl;
   SVertex_iterator vit;
-  CGAL_forall_svertices(vit,*this) print_vertex(vit);
+  CGAL_nef3_forall_svertices(vit,*this) print_vertex(vit);
   if (verbose) 
     out << "/* index { twin, prev, next, source, face, mark, circle } */" 
 	<< endl;
   SHalfedge_iterator eit;
-  CGAL_forall_shalfedges(eit,*this) print_edge(eit);
+  CGAL_nef3_forall_shalfedges(eit,*this) print_edge(eit);
   if (verbose) 
     out << "/* index { twin, face, mark, circle } */" << endl;
   if ( has_loop() ) 
@@ -335,7 +335,7 @@ void SNC_SM_io_parser<Refs_>::print() const
   if (verbose) 
     out << "/* index { fclist, ivlist, loop, mark } */" << endl;
   SFace_iterator fit;
-  CGAL_forall_sfaces(fit,*this) print_face(fit);
+  CGAL_nef3_forall_sfaces(fit,*this) print_face(fit);
   out.flush();
   if (verbose) debug();
 }
@@ -420,7 +420,7 @@ void SNC_SM_io_parser<Refs_>::debug() const
   out << "shalfedges: " << number_of_shalfedges() << "\n";
   out << "shalfloops: " << number_of_shalfloops() << "\n";
   SVertex_iterator vit; 
-  CGAL_forall_svertices(vit,*this) {
+  CGAL_nef3_forall_svertices(vit,*this) {
     if ( is_isolated(vit) ) continue;
     typename Base::SHalfedge_around_svertex_circulator
       hcirc = out_edges(vit), hend = hcirc;

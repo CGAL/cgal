@@ -128,7 +128,7 @@ void SNC_SM_checker<Decorator_>::
 check_order_preserving_embedding() const
 {
   SVertex_const_iterator v;
-  CGAL_forall_svertices_of(v,center_vertex())
+  CGAL_nef3_forall_svertices_of(v,center_vertex())
     check_order_preserving_embedding(v);
 }
 
@@ -144,7 +144,7 @@ check_is_triangulation() const
   CGAL::set_pretty_mode ( error_status );
   error_status << "check_is_triangulation\n";
   SHalfedge_const_iterator e;
-  CGAL_forall_shalfedges_of(e,center_vertex()) {
+  CGAL_nef3_forall_shalfedges_of(e,center_vertex()) {
     SHalfedge_around_sface_const_circulator hit(e), hend(hit); 
     int edges_in_face_cycle=0;
     CGAL_For_all(hit,hend) {

@@ -357,7 +357,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
      |MinimalEdge[c]|. */
 
   int i=0; 
-  CGAL_forall_iterators(eit,SHalfedges) { e = *eit;
+  CGAL_nef3_forall_iterators(eit,SHalfedges) { e = *eit;
     if ( FacetCycle[e] >= 0 ) continue; // already assigned
     SHalfedge_around_facet_circulator hfc(e),hend(hfc);
     SHalfedge_handle e_min = e;
@@ -407,13 +407,13 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
      facet objects, and all facet objects know their bounding facet
      cycles. */
 
-  CGAL_forall_iterators(eit,SHalfedges) { e=*eit;
+  CGAL_nef3_forall_iterators(eit,SHalfedges) { e=*eit;
     if ( facet(e) != Halffacet_handle() ) continue;
     TRACEN("  linking hole "<<debug(e));
     Halffacet_handle f = determine_facet(e,MinimalEdge,FacetCycle,Edge_of);
     link_as_facet_cycle(e,f); link_as_facet_cycle(twin(e),twin(f));
   }
-  CGAL_forall_iterators(lit,SHalfloops) { l=*lit;
+  CGAL_nef3_forall_iterators(lit,SHalfloops) { l=*lit;
     SHalfedge_handle e_below = 
       Edge_of[geninfo<unsigned>::access(info(vertex(l)))];
     TRACEN("vertex "<<&*vertex(l));

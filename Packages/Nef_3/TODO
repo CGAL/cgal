@@ -1,6 +1,7 @@
 Nef_3 Package: TODO
 ---------------------------------------------------------------------
 
+- Fix sorting of the edges per Pluecker lines.
 - Simplification of the SNC structure
 - Unary operations
 - Intersections of Line_3 with Line_3

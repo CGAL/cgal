@@ -202,33 +202,33 @@ void SNC_io_parser<EW>::print() const
     out << "/* Vertex: index { svs sve ses see sfs sfe sl,"
         << " mark, point } */\n";
   Vertex_iterator v;
-  CGAL_forall_vertices(v,*sncp()) print_vertex(v);
+  CGAL_nef3_forall_vertices(v,*sncp()) print_vertex(v);
   if (verbose) 
   out << "/* Edge: index { twin, source, isolated incident_object,"
       << " mark } */\n";
   Halfedge_iterator e;
-  CGAL_forall_halfedges(e,*sncp()) print_edge(e);
+  CGAL_nef3_forall_halfedges(e,*sncp()) print_edge(e);
   if (verbose) 
   out << "/* Facet: index { fclist, ivlist, mark, plane } */\n";
   Halffacet_iterator f;
-  CGAL_forall_halffacets(f,*sncp()) print_facet(f);
+  CGAL_nef3_forall_halffacets(f,*sncp()) print_facet(f);
   if (verbose) 
   out << "/* Volume: index { shlist, mark } */\n";
   Volume_iterator c;
-  CGAL_forall_volumes(c,*sncp()) print_volume(c);
+  CGAL_nef3_forall_volumes(c,*sncp()) print_volume(c);
   if (verbose) 
   out << "/* SEdge: index { twin, sprev, snext, source, sface,"
       << " prev, next, facet } */\n";
   SHalfedge_iterator se;
-  CGAL_forall_shalfedges(se,*sncp()) print_sedge(se);
+  CGAL_nef3_forall_shalfedges(se,*sncp()) print_sedge(se);
   if (verbose) 
   out << "/* SLoop: index { twin, sface, facet } */" << std::endl;
   SHalfloop_iterator sl;
-  CGAL_forall_shalfloops(sl,*sncp()) print_sloop(sl);
+  CGAL_nef3_forall_shalfloops(sl,*sncp()) print_sloop(sl);
   if (verbose) 
   out << "/* SFace: index { fclist, ivlist, sloop, volume } */" << std::endl;
   SFace_iterator sf;
-  CGAL_forall_sfaces(sf,*sncp()) print_sface(sf);
+  CGAL_nef3_forall_sfaces(sf,*sncp()) print_sface(sf);
 }
 
 template <typename EW>
@@ -387,10 +387,10 @@ void SNC_io_parser<EW>::print_facet(Halffacet_handle f) const
 { // syntax: index { fclist, ivlist, mark, plane }
   out << index(f) << " { "; 
   Halffacet_cycle_iterator it; 
-  CGAL_forall_facet_cycles_of(it,f)
+  CGAL_nef3_forall_facet_cycles_of(it,f)
     if ( it.is_shalfedge() ) out << index(SHalfedge_handle(it)) << ' ';
   out << ", ";
-  CGAL_forall_facet_cycles_of(it,f)
+  CGAL_nef3_forall_facet_cycles_of(it,f)
     if ( it.is_shalfloop() ) out << index(SHalfloop_handle(it));
   out << ", " << mark(f) << ", " << plane(f) << " }\n";
 }
@@ -423,7 +423,7 @@ void SNC_io_parser<EW>::print_volume(Volume_handle c) const
 { // syntax: index { shlist, mark }
   out << index(c) << " { "; 
   Shell_entry_iterator it;
-  CGAL_forall_shells_of(it,c)
+  CGAL_nef3_forall_shells_of(it,c)
     out << index(SFace_handle(it)) << ' ';
   out << ", " << mark(c) << " }\n";
 }
@@ -534,13 +534,13 @@ print_sface(SFace_handle f) const
 { // syntax: index { vertex, fclist, ivlist, sloop, volume }
   out << index(f) << " { " << index(f->center_vertex_) << ", "; 
   SFace_cycle_iterator it;
-  CGAL_forall_sface_cycles_of(it,f)
+  CGAL_nef3_forall_sface_cycles_of(it,f)
     if ( it.is_shalfedge() ) out << index(SHalfedge_handle(it)) << ' ';
   out << ", ";
-  CGAL_forall_sface_cycles_of(it,f)
+  CGAL_nef3_forall_sface_cycles_of(it,f)
     if ( it.is_svertex() ) out << index(SVertex_handle(it)) << ' ';
   out << ", ";
-  CGAL_forall_sface_cycles_of(it,f)
+  CGAL_nef3_forall_sface_cycles_of(it,f)
     if ( it.is_shalfloop() ) out << index(SHalfloop_handle(it));
   out << ", " << index(volume(f)) << " }\n";
 }
@@ -590,12 +590,12 @@ void SNC_io_parser<EW>::print_local_graph(Vertex_handle v) const
   if (verbose) 
     out << "/* index { twin, source, isolated incident_object, mark } */\n";
   SVertex_iterator vit;
-  CGAL_forall_svertices_of(vit,v) print_edge(vit);
+  CGAL_nef3_forall_svertices_of(vit,v) print_edge(vit);
   if (verbose) 
     out << "/* index { twin, sprev, snext, source, sface,"
         << " prev, next, facet } */\n";
   SHalfedge_iterator eit;
-  CGAL_forall_shalfedges_of(eit,v) print_sedge(eit);
+  CGAL_nef3_forall_shalfedges_of(eit,v) print_sedge(eit);
   if (verbose) 
     out << "/* index { twin, sface, facet } */" << std::endl;
   if ( D.has_loop() ) 
@@ -603,7 +603,7 @@ void SNC_io_parser<EW>::print_local_graph(Vertex_handle v) const
   if (verbose) 
     out << "/* index { fclist, ivlist, sloop, volume } */" << std::endl;
   SFace_iterator fit;
-  CGAL_forall_sfaces_of(fit,v) print_sface(fit);
+  CGAL_nef3_forall_sfaces_of(fit,v) print_sface(fit);
   out.flush();
 }
 

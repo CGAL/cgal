@@ -371,17 +371,17 @@ namespace OGL {
     {
       glNewList(object_list_, GL_COMPILE);
       Vertex_iterator v;
-      CGAL_forall_iterators(v,vertices_) draw(v);
+      CGAL_nef3_forall_iterators(v,vertices_) draw(v);
       glEndList();     
 
       glNewList(object_list_+1, GL_COMPILE);
       Edge_iterator e;
-      CGAL_forall_iterators(e,edges_) draw(e);
+      CGAL_nef3_forall_iterators(e,edges_) draw(e);
       glEndList();     
 
       glNewList(object_list_+2, GL_COMPILE);
       Halffacet_iterator f;
-      CGAL_forall_iterators(f,halffacets_) draw(f);
+      CGAL_nef3_forall_iterators(f,halffacets_) draw(f);
       glEndList();
 
       glNewList(object_list_+3, GL_COMPILE); // axes:
@@ -417,15 +417,15 @@ namespace OGL {
       os << "OGL::Polyhedron" << std::endl;
       os << "Vertices:" << std::endl;
       Vertex_iterator v;
-      CGAL_forall_iterators(v,vertices_) 
+      CGAL_nef3_forall_iterators(v,vertices_) 
 	os << "  "<<*v<<", mark="<<v->mark()<<std::endl;
       os << "Edges:" << std::endl;
       Edge_iterator e;
-      CGAL_forall_iterators(e,edges_) 
+      CGAL_nef3_forall_iterators(e,edges_) 
 	os << "  "<<*e<<", mark="<<e->mark()<<std::endl;
       os << "Facets:" << std::endl;
       Halffacet_iterator f;
-      CGAL_forall_iterators(f,halffacets_) f->debug(); os << std::endl;
+      CGAL_nef3_forall_iterators(f,halffacets_) f->debug(); os << std::endl;
       os << std::endl;
     }
 
@@ -477,21 +477,21 @@ static void show (int mode)
       dx = dy = wx = wy = 0.0;
       s = 0.5;
       motion_mode = ROTATE;
-      CGAL_forall_iterators(it,polyhedra_) it->initialize();
+      CGAL_nef3_forall_iterators(it,polyhedra_) it->initialize();
       glutPostRedisplay();
       break;
     case AXES:
-      CGAL_forall_iterators(it,polyhedra_) it->toggle_axes();
+      CGAL_nef3_forall_iterators(it,polyhedra_) it->toggle_axes();
       glutPostRedisplay();
       break;
     case BOUNDARY:
-      CGAL_forall_iterators(it,polyhedra_) it->boundary_on();
-      CGAL_forall_iterators(it,polyhedra_) it->draw();
+      CGAL_nef3_forall_iterators(it,polyhedra_) it->boundary_on();
+      CGAL_nef3_forall_iterators(it,polyhedra_) it->draw();
       glutPostRedisplay();
       break;
     case SKELETON:
-      CGAL_forall_iterators(it,polyhedra_) it->skeleton_on();
-      CGAL_forall_iterators(it,polyhedra_) it->draw();
+      CGAL_nef3_forall_iterators(it,polyhedra_) it->skeleton_on();
+      CGAL_nef3_forall_iterators(it,polyhedra_) it->draw();
       glutPostRedisplay();
       break;
     case QUIT: 
@@ -742,11 +742,11 @@ public:
   void draw() const
   { 
     Vertex_iterator v;
-    CGAL_forall_vertices(v,*sncp()) draw(v);
+    CGAL_nef3_forall_vertices(v,*sncp()) draw(v);
     Halfedge_iterator e;
-    CGAL_forall_edges(e,*sncp()) draw(e);
+    CGAL_nef3_forall_edges(e,*sncp()) draw(e);
     Halffacet_iterator f;
-    CGAL_forall_facets(f,*sncp()) draw(f);
+    CGAL_nef3_forall_facets(f,*sncp()) draw(f);
   }
 
 }; // SNC_visualizor_OGL<SNC_>

@@ -351,8 +351,8 @@ public:
   {
     Vertex_iterator v;
     Halfedge_iterator e;
-    CGAL_forall_vertices(v,*this) discard_info(v);
-    CGAL_forall_halfedges(e,*this) discard_info(e);
+    CGAL_nef3_forall_vertices(v,*this) discard_info(v);
+    CGAL_nef3_forall_halfedges(e,*this) discard_info(e);
   }
 
 
@@ -366,13 +366,13 @@ void SNC_SM_triangulator<Refs_,Sphere_map_,Sphere_kernel_>::triangulate()
   Seg_list L;
   Seg_map From;
   SNC_SVertex_const_iterator v;
-  CGAL_forall_svertices(v,E_) {
+  CGAL_nef3_forall_svertices(v,E_) {
     if ( !E_.is_isolated(v) ) continue;
     L.push_back(trivial_segment(E_,v));
     From[--L.end()] = Object_handle(v);
   }
   SNC_SHalfedge_const_iterator e;
-  CGAL_forall_sedges(e,E_) {
+  CGAL_nef3_forall_sedges(e,E_) {
     if ( E_.source(e) == E_.target(e) ) {
       Seg_pair p = two_segments(E_,e);
       L.push_back(p.first); L.push_back(p.second);
@@ -427,7 +427,7 @@ void SNC_SM_triangulator<Refs_,Sphere_map_,Sphere_kernel_>::triangulate()
    
   // enrich the edges by circle information
   Halfedge_iterator u;
-  CGAL_forall_edges(u,*this) {
+  CGAL_forall_edges(u,*this) { // for all sphere edges
     Sphere_segment s(point(source(u)),point(target(u)));
     circle(u) = s.sphere_circle(); 
     circle(twin(u)) = s.sphere_circle().opposite();
@@ -466,7 +466,7 @@ void SNC_SM_triangulator<Refs_,Sphere_map_,Sphere_kernel_>::triangulate()
   correct_triangle_at(--vertices_end());*/
 
   // enrigh triangulation edges by circle information
-  CGAL_forall_edges(u,*this) {
+  CGAL_forall_edges(u,*this) { // for all sphere edges
     Sphere_segment s(point(source(u)),point(target(u)));
     circle(u) = s.sphere_circle();
     circle(twin(u)) = s.sphere_circle().opposite();
@@ -503,7 +503,7 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
   typename Seg_list::iterator it, itl;
 
   bool part_in_hemisphere(false);
-  CGAL_forall_iterators(it,L) { TRACEN("  "<<*it);
+  CGAL_nef3_forall_iterators(it,L) { TRACEN("  "<<*it);
     if ( equal_as_sets(it->sphere_circle(),xycircle) ) {
       TRACEN("  splitting xy seg "<<*it);
       int n1 =  it->intersection(yzcircle,s1,s2);
@@ -522,7 +522,7 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
       part_in_hemisphere = true;
     }
   }
-  CGAL_forall_iterators(it,L) {
+  CGAL_nef3_forall_iterators(it,L) {
     if ( it->is_halfcircle() ) {
       TRACEN("  splitting halfcircle "<<*it);
       Sphere_segment s1,s2;
@@ -580,7 +580,7 @@ merge_halfsphere_maps(Vertex_handle v1, Vertex_handle v2) const
   } while ( source(ep) != v1 );
   
   typename std::list<Halfedge_pair>::iterator it;
-  CGAL_forall_iterators(it,L_equator) { 
+  CGAL_nef3_forall_iterators(it,L_equator) { 
     Halfedge_handle e1 = it->first, e2 = it->second;
     Halfedge_handle e1t = twin(e1), e2t = twin(e2);
     TRACEV(PH(e1));TRACEV(PH(e2));

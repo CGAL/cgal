@@ -87,14 +87,14 @@ Bounded_side bounded_side_3(IteratorForward first,
   TRACEN("pv*pxz: "<<pv*pzx);
   TRACEN("pv*pyz: "<<pv*pyz);
   TRACEN("pv*pxy: "<<pv*pxy);
-  if( !is_zero(pv*pzx) )
+  if( !CGAL_NTS is_zero(pv*pzx) )
     /* the plane is not perpendicular to the ZX plane */
     t = &point_3_get_z_x_point_2< Point_2, Point_3>;
-  else if( !is_zero(pv*pyz) )
+  else if( !CGAL_NTS is_zero(pv*pyz) )
     /* the plane is not perpendicular to the YZ plane */
     t = &point_3_get_y_z_point_2< Point_2, Point_3>;
   else {
-    CGAL_assertion( !is_zero(pv*pxy) );
+    CGAL_assertion( !CGAL_NTS is_zero(pv*pxy) );
     /* the plane is not perpendicular to the XY plane */
     t = &point_3_get_x_y_point_2< Point_2, Point_3>;
   }

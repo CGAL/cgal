@@ -36,7 +36,6 @@
 #include <CGAL/Nef_S2/Sphere_geometry_OGL.h>
 #include <CGAL/Nef_3/SNC_SM_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_triangulator.h>
-#include <CGAL/Nef_3/SNC_SM_triangulator.h>
 
 #define LGREY CGAL::Color(170,170,200)
 #define DGREY CGAL::Color(30,30,50)
@@ -144,7 +143,7 @@ void draw_map() const
 {
   // draw sphere segments underlying edges of E_:
   SHalfedge_const_iterator e;
-  CGAL_forall_sedges(e,E_) {
+  CGAL_nef3_forall_sedges(e,E_) {
     if ( E_.source(e) == E_.target(e) ) {
       S_.push_back(E_.circle(e), CO_.color(e,E_.mark(e))); 
     } else {
@@ -162,13 +161,13 @@ void draw_map() const
 
   // draw points underlying vertices of E_:
   SVertex_const_iterator v;
-  CGAL_forall_svertices(v,E_)
+  CGAL_nef3_forall_svertices(v,E_)
     S_.push_back(E_.point(v),CO_.color(v,E_.mark(v)));
 
 
   SM_Halfedge_const_iterator h;
   Unique_hash_map<SM_Halfedge_const_iterator,bool> Done(false);
-  CGAL_forall_halfedges(h,T_) {
+  CGAL_nef3_forall_halfedges(h,T_) {
     if ( Done[h] ) continue;
     SM_Halfedge_const_iterator hn(T_.next(h)),hnn(T_.next(hn));
     TRACEV(T_.incident_triangle(h));
@@ -181,7 +180,7 @@ void draw_map() const
     Done[h]=Done[hn]=Done[hnn]=true;
   }
 
-  CGAL_forall_edges(h,T_)
+  CGAL_forall_edges(h,T_) // for all sphere edges
     S_.push_back_triangle_edge(Sphere_segment(T_.point(T_.source(h)),
 					      T_.point(T_.target(h)),
 					      T_.circle(h)));
@@ -196,18 +195,18 @@ void draw_triangulation() const
   SHalfedge_const_iterator ed;
   SVertex_const_iterator vd;
   SM_Halfedge_const_iterator e;
-  CGAL_forall_edges(e,T_) {
+  CGAL_nef3_forall_edges(e,T_) {
     S_.push_back(Sphere_segment(T_.point(T_.source(e)),T_.point(T_.target(e)),
 				T_.circle(e)),CO_.color(ed,T_.mark(e)));
   }
 
   // draw points underlying vertices of triangulation:
   SM_Vertex_const_iterator v;
-  CGAL_forall_vertices(v,T_)
+  CGAL_nef3_forall_vertices(v,T_)
     S_.push_back(T_.point(v),CO_.color(vd,T_.mark(v)));
 
   Unique_hash_map<SM_Halfedge_const_iterator,bool> Done(false);
-  CGAL_forall_halfedges(e,T_) {
+  CGAL_nef3_forall_halfedges(e,T_) {
     if ( Done[e] ) continue;
     SM_Halfedge_const_iterator en(T_.next(e)),enn(T_.next(en));
     CGAL_nef3_assertion(T_.incident_mark(e)==T_.incident_mark(en)&&

@@ -117,7 +117,7 @@ struct SMO_from_segs {
 
   void clear_temporary_vertex_info() const
   { Vertex_handle v;
-    CGAL_forall_svertices(v,G)
+    CGAL_nef3_forall_svertices(v,G)
       geninfo<Halfedge_handle>::clear(G.info(v));
   }
 
@@ -591,7 +591,7 @@ create_from_segments(Forward_iterator start, Forward_iterator end) const
   Seg_list L(start,end);
   Unique_hash_map<Seg_iterator,bool> From_input(false);
   Seg_iterator it;
-  CGAL_forall_iterators(it,L) From_input[it]=true;
+  CGAL_nef3_forall_iterators(it,L) From_input[it]=true;
   Seg_list L_pos,L_neg;
   partition_to_halfsphere(L.begin(), L.end(), L_pos, From_input, +1);
   partition_to_halfsphere(L.begin(), L.end(), L_neg, From_input, -1);
@@ -637,7 +637,7 @@ create_from_segments(Forward_iterator start, Forward_iterator end) const
                       K.get_negative_halfsphere_geometry());
 
   SHalfedge_iterator u;
-  CGAL_forall_sedges(u,*this) {
+  CGAL_nef3_forall_sedges(u,*this) {
     Sphere_segment s(point(source(u)),point(target(u)));
     circle(u) = s.sphere_circle();
     circle(twin(u)) = s.sphere_circle().opposite();
@@ -663,7 +663,7 @@ create_from_circles(Forward_iterator start, Forward_iterator end) const
     L.push_back(spair.first); L.push_back(spair.second);
   }
   Seg_iterator it;
-  CGAL_forall_iterators(it,L) From_input[it]=true;
+  CGAL_nef3_forall_iterators(it,L) From_input[it]=true;
   Seg_list L_pos,L_neg;
   partition_to_halfsphere(L.begin(), L.end(), L_pos, From_input, +1);
   partition_to_halfsphere(L.begin(), L.end(), L_neg, From_input, -1);
@@ -708,7 +708,7 @@ create_from_circles(Forward_iterator start, Forward_iterator end) const
                       K.get_negative_halfsphere_geometry());
 
   SHalfedge_iterator u;
-  CGAL_forall_sedges(u,*this) {
+  CGAL_nef3_forall_sedges(u,*this) {
     Sphere_segment s(point(source(u)),point(target(u)));
     circle(u) = s.sphere_circle();
     circle(twin(u)) = s.sphere_circle().opposite();
@@ -741,13 +741,13 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
   Seg_map  From;
   for (int i=0; i<2; ++i) {
     SVertex_iterator v;
-    CGAL_forall_svertices(v,PI[i]) {
+    CGAL_nef3_forall_svertices(v,PI[i]) {
       if ( !PI[i].is_isolated(v) ) continue;
       L.push_back(trivial_segment(PI[i],v));
       From[--L.end()] = Seg_info(v,i);
     }
     SHalfedge_iterator e;
-    CGAL_forall_sedges(e,PI[i]) {
+    CGAL_nef3_forall_sedges(e,PI[i]) {
       if ( source(e) == target(e) ) {
         Seg_pair p = two_segments(PI[i],e);
         L.push_back(p.first); 
@@ -810,7 +810,7 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
                       NH_geometry());
 
   SHalfedge_iterator u;
-  CGAL_forall_sedges(u,*this) {
+  CGAL_nef3_forall_sedges(u,*this) {
     Sphere_segment s(point(source(u)),point(target(u)));
     circle(u) = s.sphere_circle(); 
     circle(twin(u)) = s.sphere_circle().opposite();
@@ -851,7 +851,7 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
   Sphere_circle yzcircle(1,0,0);
   typename Seg_list::iterator it, itl;
   
-  CGAL_forall_iterators(it,L) { TRACEN("  "<<*it);
+  CGAL_nef3_forall_iterators(it,L) { TRACEN("  "<<*it);
     if ( equal_as_sets(it->sphere_circle(),xycircle) ) {
       TRACEN("  splitting xy seg "<<*it);
       int n1 =  it->intersection(yzcircle,s1,s2);
@@ -868,7 +868,7 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
       // at least one item was appended
     }
   }
-  CGAL_forall_iterators(it,L) {
+  CGAL_nef3_forall_iterators(it,L) {
     if ( it->is_halfcircle() ) {
       TRACEN("  splitting halfcircle "<<*it);
       Sphere_segment s1,s2;
@@ -1076,7 +1076,7 @@ merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2,
   } while ( source(ep) != v1 );
   
   typename std::list<SHalfedge_pair>::iterator it;
-  CGAL_forall_iterators(it,L_equator) { 
+  CGAL_nef3_forall_iterators(it,L_equator) { 
     SHalfedge_handle e1 = it->first, e2 = it->second;
     SHalfedge_handle e1t = twin(e1), e2t = twin(e2);
     TRACEV(PH(e1));TRACEV(PH(e2));
@@ -1101,17 +1101,17 @@ void SNC_SM_overlayer<Refs_>::
 select(const Selection& SP) const
 { 
   SVertex_iterator v;
-  CGAL_forall_svertices(v,*this) {
+  CGAL_nef3_forall_svertices(v,*this) {
     mark(v) = SP(mark(v,0),mark(v,1));
     discard_info(v); 
   }
   SHalfedge_iterator e;
-  CGAL_forall_sedges(e,*this) {
+  CGAL_nef3_forall_sedges(e,*this) {
     mark(e) = SP(mark(e,0),mark(e,1));
     discard_info(e);
   }
   SFace_iterator f;
-  CGAL_forall_sfaces(f,*this) {
+  CGAL_nef3_forall_sfaces(f,*this) {
     mark(f) = SP(mark(f,0),mark(f,1));
     discard_info(f);
   }
@@ -1133,7 +1133,7 @@ void SNC_SM_overlayer<Refs_>::simplify() const
   CGAL::Union_find< SFace_handle> UF;
 
   SFace_iterator f;
-  CGAL_forall_sfaces(f,*this) {
+  CGAL_nef3_forall_sfaces(f,*this) {
      Pitem[f] = UF.make_set(f);
      clear_face_cycle_entries(f);
   }

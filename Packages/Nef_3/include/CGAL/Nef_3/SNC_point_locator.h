@@ -131,15 +131,15 @@ SNC_point_locator<SNC_>::locate(const Point_3& p) const
   // now not empty:
 
   Vertex_iterator v;
-  CGAL_forall_vertices(v,*sncp()) 
+  CGAL_nef3_forall_vertices(v,*sncp()) 
     if ( p == point(v) ) return Object_handle(v);
 
   Halfedge_iterator e;
-  CGAL_forall_edges(e,*sncp()) 
+  CGAL_nef3_forall_edges(e,*sncp()) 
     if ( segment(e).constains(p) ) return Object_handle(e);
 
   Halffacet_iterator f;
-  CGAL_forall_halffacets(f,*sncp()) { // nur ufacets
+  CGAL_nef3_forall_halffacets(f,*sncp()) { // nur ufacets
     FM_decorator D(f);
     if ( D.facet_contains(p) ) return Object_handle(f);
   }
@@ -147,15 +147,15 @@ SNC_point_locator<SNC_>::locate(const Point_3& p) const
 
   Segment_3 s(p, point(vertices_begin())), so(s.opposite());
   Object_handle closest(vertices_begin());
-  CGAL_forall_vertices(v,*sncp())
+  CGAL_nef3_forall_vertices(v,*sncp())
     if ( s.has_on(point(v)) ) 
     { shorten(s,point(v)); closest=Object_handle(v); }
-  CGAL_forall_edges(e,*sncp()) {
+  CGAL_nef3_forall_edges(e,*sncp()) {
     Point_3 q;
     if ( do_intersect(s,e,q) ) 
     { shorten(s,q); closest=Object_handle(e); }
   }
-  CGAL_forall_halffacets(f,*sncp()) {
+  CGAL_nef3_forall_halffacets(f,*sncp()) {
     Point_3 q;
     if ( do_intersect(s,f,q) )
     { shorten(s,q); closest=Object_handle(f); }

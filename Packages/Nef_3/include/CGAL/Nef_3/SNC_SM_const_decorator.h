@@ -249,14 +249,14 @@ Size_type number_of_svertices() const
 /*{\Mop returns the number of vertices.}*/
 { Size_type n(0);
   SVertex_const_iterator vit;
-  CGAL_forall_svertices_of(vit,psm_) ++n;
+  CGAL_nef3_forall_svertices_of(vit,psm_) ++n;
   return n; }
 
 Size_type number_of_shalfedges() const 
 /*{\Mop returns the number of halfedges.}*/
 { Size_type n(0);
   SHalfedge_const_iterator eit;
-  CGAL_forall_shalfedges_of(eit,psm_) ++n;
+  CGAL_nef3_forall_shalfedges_of(eit,psm_) ++n;
   return n; }
 
 Size_type number_of_sedges() const 
@@ -275,7 +275,7 @@ Size_type number_of_sfaces() const
 /*{\Mop returns the number of faces.}*/
 { Size_type n(0);
   SFace_const_iterator fit;
-  CGAL_forall_sfaces_of(fit,psm_) ++n;
+  CGAL_nef3_forall_sfaces_of(fit,psm_) ++n;
   return n; }
 
 Size_type number_of_sface_cycles() const;
@@ -353,9 +353,9 @@ The iterator range access operations are of the following kind:\\
 |SHalfloop_iterator shalfloops_begin()/shalfloops_end()|\\
 |SFace_iterator     sfaces_begin()/sfaces_end()|
 
-The macros are then |CGAL_forall_svertices(v,M)|,
-|CGAL_forall_shalfedges(e,M)|, |CGAL_forall_sedges(e,M)|,
-|CGAL_forall_sfaces(f,M)|, |CGAL_forall_sface_cycles_of(fc,F)| where |M|
+The macros are then |CGAL_nef3_forall_svertices(v,M)|,
+|CGAL_nef3_forall_shalfedges(e,M)|, |CGAL_nef3_forall_sedges(e,M)|,
+|CGAL_nef3_forall_sfaces(f,M)|, |CGAL_nef3_forall_sface_cycles_of(fc,F)| where |M|
 is a sphere map and |F| is a face.}*/
 
 }; // SNC_SM_const_decorator
@@ -378,7 +378,7 @@ check_integrity_and_topological_planarity(bool faces) const
   SVertex_const_handle v;
   int iso_vert_num=0;
   /* check the source links of out edges and count isolated vertices */
-  CGAL_forall_svertices(v,*this) {
+  CGAL_nef3_forall_svertices(v,*this) {
     if ( is_isolated(v) ) {
       if ( faces )
         CGAL_nef3_assertion_msg(face(v) != SFace_const_handle(), 
@@ -395,7 +395,7 @@ check_integrity_and_topological_planarity(bool faces) const
 
   /* check the bidirected links and the face pointer init */
   SHalfedge_const_iterator e;
-  CGAL_forall_shalfedges(e,*this) {
+  CGAL_nef3_forall_shalfedges(e,*this) {
     CGAL_nef3_assertion( twin(twin(e)) == e );
     CGAL_nef3_assertion( source(e) != SVertex_const_handle() );
     CGAL_nef3_assertion( next(e) != SHalfedge_const_handle() );
@@ -413,8 +413,8 @@ check_integrity_and_topological_planarity(bool faces) const
   int fc_num(0),iv_num(0);
   SFace_const_iterator f;
   SFace_cycle_const_iterator fci;
-  CGAL_forall_sfaces(f,*this) {
-    CGAL_forall_sface_cycles_of(fci,f) {
+  CGAL_nef3_forall_sfaces(f,*this) {
+    CGAL_nef3_forall_sface_cycles_of(fci,f) {
       if ( fci.is_shalfedge() ) {
         CGAL_nef3_assertion( face(SHalfedge_const_handle(fci)) == f ); 
 	++fc_num;
@@ -449,7 +449,7 @@ number_of_sface_cycles() const
   CGAL::Unique_hash_map<SHalfedge_const_handle,bool> visited; 
     // init with bool() == false
   SHalfedge_const_iterator e;
-  CGAL_forall_shalfedges(e,*this) {
+  CGAL_nef3_forall_shalfedges(e,*this) {
     if ( visited[e] ) continue;
     SHalfedge_around_sface_const_circulator hfc(e), hend(hfc);
     CGAL_For_all(hfc,hend) visited[hfc]=true;
@@ -467,7 +467,7 @@ number_of_connected_components() const
   int comp_num=0;
   CGAL::Unique_hash_map<SVertex_const_iterator,bool> visited(false); 
   SVertex_const_iterator v;
-  CGAL_forall_svertices(v,*this) {
+  CGAL_nef3_forall_svertices(v,*this) {
     if (visited[v]) continue;
     std::list<SVertex_const_iterator> L;
     L.push_back(v); visited[v]=true; 

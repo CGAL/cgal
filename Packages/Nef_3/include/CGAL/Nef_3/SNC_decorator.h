@@ -392,7 +392,7 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
       FacetCandidates.pop_front();
       V.visit(f); // report facet
       Halffacet_cycle_iterator fc;
-      CGAL_forall_facet_cycles_of(fc,f) {
+      CGAL_nef3_forall_facet_cycles_of(fc,f) {
         SHalfedge_handle e; SHalfloop_handle l;
         if ( assign(e,fc) ) { 
           SHalfedge_around_facet_circulator ec(e),ee(e);
@@ -415,7 +415,7 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
       if ( !Done[vertex(sf)] )
         V.visit(vertex(sf)); // report vertex
       SFace_cycle_iterator fc;
-      CGAL_forall_sface_cycles_of(fc,sf) {
+      CGAL_nef3_forall_sface_cycles_of(fc,sf) {
         SVertex_handle v; SHalfedge_handle e; SHalfloop_handle l;
         if ( assign(e,fc) ) {
           SHalfedge_around_sface_circulator ec(e),ee(e);

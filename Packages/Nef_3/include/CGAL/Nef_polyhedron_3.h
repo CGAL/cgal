@@ -33,6 +33,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #define SNC_VISUALIZOR
+// #define SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_structure.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_constructor.h>
@@ -46,7 +47,9 @@
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_3/SNC_SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
-//#include <CGAL/Nef_3/SNC_SM_visualizor.h>
+#ifdef SM_VISUALIZOR
+#include <CGAL/Nef_3/SNC_SM_visualizor.h>
+#endif // SM_VISUALIZOR
 
 #include <CGAL/Nef_3/polyhedron_3_to_nef_3.h>
 #include <CGAL/Polyhedron_3.h>
@@ -85,7 +88,9 @@ class Nef_polyhedron_3_rep : public Rep
   typedef CGAL::SNC_SM_overlayer<SNC_structure>        SM_overlayer;
   typedef CGAL::SNC_SM_point_locator<SNC_structure>    SM_point_locator;
   typedef CGAL::SNC_SM_io_parser<SNC_structure>        SM_io_parser;
-  //typedef CGAL::SNC_SM_visualizor<SNC_structure>       SM_visualizor;
+#ifdef SM_VISUALIZOR
+  typedef CGAL::SNC_SM_visualizor<SNC_structure>       SM_visualizor;
+#endif // SM_VISUALIZOR
 
   SNC_structure ews_;
   // SNC_point_locator* pl_;
@@ -148,7 +153,9 @@ protected:
   typedef typename Nef_rep::SM_overlayer        SM_overlayer;
   typedef typename Nef_rep::SM_point_locator    SM_point_locator;
   typedef typename Nef_rep::SM_io_parser        SM_io_parser;
+#ifdef SM_VISUALIZOR
   //typedef typename Nef_rep::SM_visualizor       SM_visualizor;
+#endif // SM_VISUALIZOR
 
   SNC_structure& ews() { return ptr()->ews_; } 
   const SNC_structure& ews() const { return ptr()->ews_; } 
@@ -250,10 +257,11 @@ protected:
     else
       f = D.face(D.twin(e));
     D.mark(f) = space;
-    CGAL_forall_sedges_of(e, v)
+    CGAL_nef3_forall_sedges_of(e, v)
       D.mark(e) = D.mark(D.source(e)) = true;
     // D.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
     // D.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
+    return v;
   }
 
   void initialize_simple_cube_vertices(Content space) {

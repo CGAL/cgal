@@ -41,6 +41,9 @@
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_3/SNC_SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_FM_decorator.h>
+#ifdef SM_VISUALIZOR
+#include <CGAL/Nef_3/SNC_SM_visualizor.h>
+#endif // SM_VISUALIZOR
 #include <map>
 #include <list>
 #undef _DEBUG
@@ -82,7 +85,8 @@ template <typename Point, typename Edge>
 struct Halfedge_key_lt {
   typedef Halfedge_key<Point,Edge> Key;
   bool operator()(const Key& k1, const Key& k2) const
-  { if ( k1.p == k2.p ) return (k1.i < k2.i);
+  { if ( k1.p == k2.p ) return (k1.i > k2.i);
+  // WARNING: we must sort lexicographically along the line!!!
     return CGAL::lexicographically_xyz_smaller(k1.p,k2.p); }
 };
 
@@ -219,15 +223,16 @@ public:
 
   typedef void* GenPtr;
 
-  typedef CGAL::Unique_hash_map<SFace_const_handle,int>  Shell_number_hash;
+  typedef CGAL::Unique_hash_map<SFace_const_handle,unsigned int>  
+                                                         Shell_number_hash;
   typedef CGAL::Unique_hash_map<SFace_const_handle,bool> SFace_visited_hash;
   typedef CGAL::Unique_hash_map<SFace_const_handle,bool> Shell_closed_hash;
 
   struct Shell_explorer {
     const SNC_decorator& D;
     Shell_number_hash&  Shell;
-    SFace_visited_hash& Done;
     Shell_closed_hash& Closed;
+    SFace_visited_hash& Done;
     Vertex_handle v_min;
     int n;
 
@@ -385,8 +390,8 @@ public:
     sg++;
     while ( true ) {
       Vector_3 g(plane(facet(twin(sg))).orthogonal_vector());
-      if( is_positive( cross_product(g, ev) * h)) {
-	if( is_negative( rv * g))
+      if( CGAL_NTS is_positive( cross_product(g, ev) * h)) {
+	if( CGAL_NTS is_negative( rv * g))
 	  return facet(twin(sh));
 	else {
 	  sh = sg;
@@ -405,17 +410,17 @@ public:
     Halffacet_handle f_visible;
     Plane_3 h = plane(f);
     CGAL_assertion( h.has_on(ray.target()));
-    CGAL_assertion( !is_zero(Vector_3(ray.direction()) * 
-			     Vector_3(h.orthogonal_vector())));
+    CGAL_assertion( !CGAL_NTS is_zero(Vector_3(ray.direction()) * 
+				      Vector_3(h.orthogonal_vector())));
     /* is imposible to reach the interior or f using a ray coplanar with f */
-    if( is_negative(Vector_3(ray.direction()) * 
-		    Vector_3(h.orthogonal_vector())))
+    if( CGAL_NTS is_negative(Vector_3(ray.direction()) * 
+			     Vector_3(h.orthogonal_vector())))
       f_visible = f;
     else
       f_visible = twin(f);
-    CGAL_assertion( is_negative( Vector_3(ray.direction()) *
-				 Vector_3(plane(f_visible).
-					  orthogonal_vector())));
+    CGAL_assertion( CGAL_NTS is_negative( Vector_3(ray.direction()) *
+					  Vector_3(plane(f_visible).
+						   orthogonal_vector())));
     return f_visible;
   }
 
@@ -448,7 +453,7 @@ public:
     TRACEN( "Shoting ray " << ray);
     Object_handle o;
     Vertex_handle v;
-    CGAL_forall_vertices( v, *sncp()) {
+    CGAL_nef3_forall_vertices( v, *sncp()) {
       if ( ray.source() != point(v) && ray.has_on(point(v)) ) {
 	TRACEN("ray hit vertex case");
 	shorten( ray, point(v));
@@ -456,7 +461,7 @@ public:
       }
     }
     Halfedge_handle e;
-    CGAL_forall_edges( e, *sncp()) {
+    CGAL_nef3_forall_edges( e, *sncp()) {
       Point_3 q;
       if ( does_ray_intersect_internally( ray, e, q) ) {
 	TRACEN("ray hit edge case");
@@ -465,7 +470,7 @@ public:
       }
     }
     Halffacet_handle f;
-    CGAL_forall_halffacets( f, *sncp()) {
+    CGAL_nef3_forall_halffacets( f, *sncp()) {
       Point_3 q;
       if ( does_ray_intersect_internally( ray, f, q) ) {
 	TRACEN("ray hit facet case");
@@ -691,7 +696,7 @@ create_box_corner(int x, int y, int z,
   if ( spherical_orientation(p1,p2,p3) > 0 ) f = D.face(e);
   else f = D.face(D.twin(e));
   D.mark(f) = true;
-  CGAL_forall_sedges_of(e,v)
+  CGAL_nef3_forall_sedges_of(e,v)
     D.mark(e) = D.mark(D.source(e)) = boundary;
   D.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
   D.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
@@ -807,7 +812,7 @@ pair_up_halfedges() const
 
   Pluecker_line_map M;
   Halfedge_iterator e;
-  CGAL_forall_halfedges(e,*sncp()) {
+  CGAL_nef3_forall_halfedges(e,*sncp()) {
     Point_3 p = point(vertex(e));
     Pluecker_line_3 l(p, p + tmp_point(e));
     TRACEN("  "<<p<<" "<<tmp_point(e)<<" "<<&*e<<" "<<l);
@@ -817,15 +822,18 @@ pair_up_halfedges() const
   }
 
   Pluecker_line_map::iterator it;
-  CGAL_forall_iterators(it,M) {
+  CGAL_nef3_forall_iterators(it,M) {
     it->second.sort(Halfedge_key_lt());
     TRACEN("  "<<it->first<<"\n   "
 	   <<(debug_container(it->second),""));
     Halfedge_list::iterator itl;
-    CGAL_forall_iterators(itl,it->second) {
+    CGAL_nef3_forall_iterators(itl,it->second) {
       Halfedge_handle e1 = itl->e;
       ++itl; CGAL_nef3_assertion(itl != it->second.end());
       Halfedge_handle e2 = itl->e;
+      TRACEN("e1="<<tmp_point(e1)<<"@"<<point(vertex(e1))<<
+	     " & e2="<<tmp_point(e2)<<"@"<<point(vertex(e2)));
+      CGAL_nef3_assertion(tmp_point(e1)==tmp_point(e2).antipode());
       make_twins(e1,e2);
       CGAL_nef3_assertion(mark(e1)==mark(e2));
 
@@ -844,38 +852,43 @@ link_shalfedges_to_facet_cycles() const
 {
   TRACEN(">>>>>link_shalfedges_to_facet_cycles");
   Halfedge_iterator e;
-  CGAL_forall_edges(e,*sncp()) {
+  CGAL_nef3_forall_edges(e,*sncp()) {
     Halfedge_iterator et = twin(e);
     SM_decorator D(vertex(e)), Dt(vertex(et));
     if ( D.is_isolated(e) ) continue;
     SHalfedge_around_svertex_circulator ce(D.first_out_edge(e)),cee(ce);
     SHalfedge_around_svertex_circulator cet(Dt.first_out_edge(et)),cete(cet);
-    /*debug*/
-    SHalfedge_around_svertex_circulator ceti = cet;
-    CGAL_For_all(ceti,cete) {
-      TRACEN(" et   ss "<<Dt.point(Dt.source(ceti))<<" "
-	     <<Dt.point(Dt.target(ceti))<<" "<<&(*ceti));
-      TRACEN(" et plane " << Dt.circle(ceti));
-    }
-    SHalfedge_around_svertex_circulator cei = ce;
-    CGAL_For_all(cei,cee) {
-      TRACEN(" e   ss "<<Dt.point(Dt.source(cei))<<" "
-	     <<Dt.point(Dt.target(cei))<<" "<<&(*cei));
-      TRACEN(" e plane " << Dt.circle(cei));
-    }
-    /*debug*/
     CGAL_For_all(cet,cete) 
-      {
-	TRACEN(" e ss circle "<<D.circle(ce));
-	TRACEN(" e vertices  "<<D.point(D.source(ce))<<" "
-	       <<D.point(D.target(ce)));
-	TRACEN(" et ss circle "<<Dt.circle(cet));
-	TRACEN(" et vertices  "<<Dt.point(Dt.source(cet))<<" "
-	       <<Dt.point(Dt.target(cet)));
-	TRACEN("are circles opossite? "
-	       <<(D.circle(ce).opposite() == Dt.circle(cet)));
-	if ( Dt.circle(cet) == D.circle(ce).opposite() ) break;
-      }
+      if ( Dt.circle(cet) == D.circle(ce).opposite() ) break;
+
+    /* DEBUG BEGIN */
+    if( Dt.circle(cet) != D.circle(ce).opposite() )
+      TRACEN("assertion failed!");
+
+      SHalfedge_around_svertex_circulator sc(D.first_out_edge(e));
+      SHalfedge_around_svertex_circulator sct(Dt.first_out_edge(et));
+      CGAL_For_all(sc,cee)
+	TRACEN("sseg@E addr="<<&*sc<<
+	       " src="<<D.point(D.source(sc))<<
+	       " tgt="<<D.point(D.target(sc))<<endl<<
+	       " circle=" << D.circle(sc));
+      CGAL_For_all(sct,cete)
+	TRACEN("sseg@ET addr="<<&*sct<<
+	       " src="<<Dt.point(Dt.source(sct))<<
+	       " tgt="<<Dt.point(Dt.target(sct))<<endl<<
+	       " circle=" << Dt.circle(sct));
+#ifdef SM_VISUALIZOR
+      typedef CGAL::SNC_SM_visualizor<SNC_structure> SMV;
+      CGAL::OGL::add_sphere();
+      SMV V(vertex(e), CGAL::OGL::spheres_.back());
+      V.draw_map();
+      SMV Vt(vertex(et), CGAL::OGL::spheres_.back());
+      Vt.draw_map();
+      CGAL::OGL::start_viewer();
+      char c;
+      cin >> c;
+#endif
+    /* DEBUG END */
     CGAL_nef3_assertion( Dt.circle(cet) == D.circle(ce).opposite() ); 
     CGAL_For_all(ce,cee) { 
       CGAL_nef3_assertion(ce->tmp_mark()==cet->tmp_mark());
@@ -902,21 +915,21 @@ categorize_facet_cycles_and_create_facets() const
 
   Map_planes M;
   SHalfedge_iterator e;
-  CGAL_forall_shalfedges(e,*sncp()) {
+  CGAL_nef3_forall_shalfedges(e,*sncp()) {
     Sphere_circle c(tmp_circle(e));
     Plane_3 h = c.plane_through(point(vertex(e))); 
     if ( sign_of(h)<0 ) continue;
     M[normalized(h)].push_back(SObject_handle(twin(e)));
   }
   SHalfloop_iterator l;
-  CGAL_forall_shalfloops(l,*sncp()) {
+  CGAL_nef3_forall_shalfloops(l,*sncp()) {
     Sphere_circle c(tmp_circle(l));
     Plane_3 h = c.plane_through(point(vertex(l))); 
     if ( sign_of(h)<0 ) continue;
     M[normalized(h)].push_back(SObject_handle(twin(l)));
   }
   Map_planes::iterator it;
-  CGAL_forall_iterators(it,M) { TRACEN("  plane "<<it->first);
+  CGAL_nef3_forall_iterators(it,M) { TRACEN("  plane "<<it->first);
     FM_decorator D(*sncp());
     D.create_facet_objects(it->first,it->second.begin(),it->second.end());
   }
@@ -938,7 +951,10 @@ create_volumes() const
   std::vector<Vertex_handle> MinimalVertex;
   std::vector<SFace_handle> EntrySFace;
   SFace_iterator f;
-  CGAL_forall_sfaces(f,*sncp()) { 
+  /* First, we classify all the Shere Faces per Shell.  For each Shell we
+     determine its minimum lexicographyly vertex and we check wheter the
+     Shell encloses a region (closed surface) or not. */
+  CGAL_nef3_forall_sfaces(f,*sncp()) { 
     if ( Done[f] ) 
       continue;
     V.minimal_vertex() = vertex(f);
@@ -948,14 +964,18 @@ create_volumes() const
     EntrySFace.push_back(f);
     V.increment_shell_number();
   }
-  Volume_handle outer_volume = sncp()->new_volume();
-  for( unsigned i = 0; i < MinimalVertex.size(); ++i) {
+  /* then, we determine the Shells which correspond to Volumes via a ray
+     shotting in the direction (-1,0,0) over the Sphere_map of the minimal 
+     vertex.  The Shell corresponds to a Volume if the object hit belongs 
+     to another Shell. */
+  sncp()->new_volume(); // Outer volume, aka. nirvana
+  for( unsigned int i = 0; i < MinimalVertex.size(); ++i) {
     Vertex_handle v = MinimalVertex[i];
     TRACEN( "Shell #" << i << " minimal vertex: " << point(v));
     SM_point_locator D(v);
     SObject_handle o = D.locate(Sphere_point(-1,0,0));
     SFace_const_handle sfc;
-    if( !assign(sfc, o) || Shell[sfc] != i) { // TO TEST: !assign(sfc, o) case
+    if( !assign(sfc, o) || Shell[sfc] != i) { /*UNTESTED CASE: !assign(sfc,o)*/
       SFace_handle f = EntrySFace[i];
       CGAL_assertion( Shell[EntrySFace[i]] == i );
       if( Closed[f] ) {
@@ -968,7 +988,10 @@ create_volumes() const
       }
     }
   }
-  CGAL_forall_sfaces(f,*sncp()) {
+  /* finaly, we go through all the Shells which do not correspond to a Volume 
+     and we assign them to its enclosing Volume determined via a facet below
+     check. */
+  CGAL_nef3_forall_sfaces(f,*sncp()) {
     if ( volume(f) != Volume_handle() ) 
       continue;
     TRACEN( "Inner shell #" << Shell[f] << " volume?");

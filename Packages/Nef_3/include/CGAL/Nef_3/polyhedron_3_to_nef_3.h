@@ -104,7 +104,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   //     < typename Polyhedron::Plane_3>( std::cout, "\n"));
 
   SNC_decorator D(S);
-  SNC_constructor C(S);
     
   typename Polyhedron::Vertex_iterator pvi;
   for( pvi = P.vertices_begin(); pvi != P.vertices_end(); ++pvi ) {
@@ -150,7 +149,7 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
       }
     SM_overlayer O(nv);
     O.create_from_segments(ss_list.begin(),ss_list.end());
-    O.simplify();
+    /* why not? O.simplify(); */
     
 #else // CGAL_P2NEF3_USE_SM_OVERLAY
 
@@ -259,15 +258,15 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
 
 #endif // CGAL_P2NEF3_USE_SM_OVERLAY
 	
-#ifdef SM_VISUALIZE
-    CGAL::OGL::add_sphere();
-    SMV V(nv, CGAL::OGL::spheres_.back());
-    V.draw_map();
+#ifdef SM_VISUALIZOR
+    // CGAL::OGL::add_sphere();
+    // SMV V(nv, CGAL::OGL::spheres_.back());
+    // V.draw_map();
 #endif
   }
 
-#ifdef SM_VISUALIZE
-  CGAL::OGL::start_viewer();
+#ifdef SM_VISUALIZOR
+  // CGAL::OGL::start_viewer();
 #endif
 
   return;

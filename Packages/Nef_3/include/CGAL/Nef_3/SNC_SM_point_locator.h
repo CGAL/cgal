@@ -184,12 +184,12 @@ public:
   such that |s| intersects the $1$-skeleton of |P|.}*/
   { TRACEN("locate naivly "<<p);
     SVertex_const_iterator v;
-    CGAL_forall_svertices(v,*this) {
+    CGAL_nef3_forall_svertices(v,*this) {
       if ( p == point(v) ) return SObject_handle(v);
     }
 
     SHalfedge_const_iterator e;
-    CGAL_forall_sedges(e,*this) {
+    CGAL_nef3_forall_sedges(e,*this) {
       if ( segment(e).has_on(p) ) return SObject_handle(e);
     }
     if ( has_loop() && circle(shalfloop()).has_on(p) )
@@ -229,7 +229,7 @@ public:
     
     Sphere_direction dso(s.sphere_circle().opposite()), d_res;
     Unique_hash_map<SHalfedge_const_handle,bool> visited(false);
-    CGAL_forall_svertices(v,*this) {
+    CGAL_nef3_forall_svertices(v,*this) {
       Sphere_point p_res, vp = point(v);
       if ( s.has_on(vp) ) {
         TRACEN(" location via vertex at "<<vp);
@@ -253,7 +253,7 @@ public:
       }
     }
 
-    CGAL_forall_shalfedges(e,*this) {
+    CGAL_nef3_forall_shalfedges(e,*this) {
       if ( visited[e] ) continue;
       Sphere_segment se = segment(e);
       Sphere_point p_res;
@@ -311,7 +311,7 @@ public:
     HASEN: s am anfang circle, ab wann segment ?
 	   wo loop ?
 
-    CGAL_forall_svertices (v,*this) {
+    CGAL_nef3_forall_svertices (v,*this) {
       Point pv = point(v);
       if ( !(s_init && s.has_on(pv) ||
 	    !s_init && c.has_on(pv)) ) continue;
@@ -339,7 +339,7 @@ public:
 
     CGAL::Unique_hash_map<SHalfedge_const_handle,bool> visited(false);
     SHalfedge_const_iterator e_res;
-    CGAL_forall_shalfedges(e,*this) {
+    CGAL_nef3_forall_shalfedges(e,*this) {
       Sphere_segment se = segment(e);
       Sphere_point p_res;
       if ( do_intersect_internally(se,s,p_res) ) {

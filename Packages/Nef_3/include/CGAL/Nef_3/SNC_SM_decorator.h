@@ -860,9 +860,9 @@ The iterator range access operations are of the following kind:\\
 |SHalfedge_iterator sedges_begin()/sedges_end()|\\
 |SFace_iterator sfaces_begin()/sfaces_end()|
 
-The macros are then |CGAL_forall_svertices_of(v,V)|,
-|CGAL_forall_shalfedges_of(e,V)|, |CGAL_forall_sedges_of(e,V)|, 
-|CGAL_forall_sfaces_of(f,V)|, |CGAL_forall_sface_cycles_of(fc,F)|.}*/
+The macros are then |CGAL_nef3_forall_svertices_of(v,V)|,
+|CGAL_nef3_forall_shalfedges_of(e,V)|, |CGAL_nef3_forall_sedges_of(e,V)|, 
+|CGAL_nef3_forall_sfaces_of(f,V)|, |CGAL_nef3_forall_sface_cycles_of(fc,F)|.}*/
 
 }; // SNC_SM_decorator
 
