@@ -178,7 +178,7 @@ bool CGAL_is_strongly_convex_3(Polyhedron& P, Point_3<R>*)
 template<class Polyhedron>
 bool is_strongly_convex_3(Polyhedron& P)
 { 
-  typedef typename Polyhedron::Point Point_3;
+  typedef typename Polyhedron::Point_3 Point_3;
 
   return CGAL_is_strongly_convex_3(P, reinterpret_cast<Point_3*>(0));
 }
