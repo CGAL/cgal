@@ -51,9 +51,10 @@ CGAL_BEGIN_NAMESPACE
 template <class Curve_iterator_, class Traits_, class Point_plus_>
 class Sweep_curves_base 
 {
+public:
+  typedef typename  Traits_::X_curve                     X_curve;
 protected:
   typedef Sweep_curves_base<Curve_iterator_, Traits_, Point_plus_>  Self;
-  typedef  typename Traits_::X_curve  X_curve;
 
   // X_curve_plus:
   // holds a curve and its id number. 
@@ -851,7 +852,7 @@ public:
   typedef Curve_iterator_                               Curve_iterator;
   typedef Traits_                                       Traits;
   typedef Point_plus_                                   Point_plus;
-  typedef typename  Traits::X_curve                     X_curve;
+  //typedef typename  Traits::X_curve                     X_curve;
   typedef typename  Traits::Point                       Point;
   
   //typedef X_curve_plus                                   X_curve_plus;
