@@ -597,6 +597,6 @@ int main(  int argc, char* argv[]) {
     }
     CGAL::set_pretty_mode(std::cerr);
     //std::cin>>debugthread;
-    std::cout<<kernelversion<<std::endl;
+    //    std::cout<<kernelversion<<std::endl;
     return eval( argc-1, argv+1);
 }
