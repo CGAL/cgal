@@ -31,8 +31,8 @@ namespace CGAL {
 
 Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   QWidget(parent, name),  Locked(0), _pointSize(4),
-  _pointStyle(DISC), _has_tool(false), current_tool(0),
-  _has_standard_tool(false), current_standard_tool(0)
+  _pointStyle(DISC), _has_tool(false), _has_standard_tool(false),
+  current_tool(0), current_standard_tool(0)
 {
   setCaption("CGAL::Qt_widget");
 
