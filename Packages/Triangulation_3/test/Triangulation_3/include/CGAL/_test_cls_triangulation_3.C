@@ -120,11 +120,17 @@ list_point lp2;
 			  a*a-d*d-b));
 
 
+// File and triangulation for I/O
+std::ofstream oFileT("Test_triangulation_IO_3",ios::out);
+std::ifstream iFileT("Test_triangulation_IO_3",ios::in);
+Cls Tfromfile;
+
   //########################################################################
 
 
   /**************CONSTRUCTORS (1)*********************/
-  
+  /************** and I/O ****************************/
+
   cout << "    Constructor " << endl;
   // Begining with an empty triangulation and adding point until reaching
   // 3-dimentional triangulation.
@@ -133,11 +139,25 @@ list_point lp2;
   assert(T0.number_of_vertices() == 0);
   assert(T0.is_valid());
 
+  cout << "    I/O" << endl;
+  oFileT << T0;
+  iFileT >> Tfromfile;
+  assert(Tfromfile.is_valid());
+  assert(Tfromfile.dimension() == -1);
+  assert(Tfromfile.number_of_vertices() == 0);
+
 cout << "    Constructor1 " << endl;
   Vertex_handle v0=T0.insert(Point(0,0,0));
   assert(T0.dimension() == 0);
   assert(T0.number_of_vertices() == 1);
   assert(T0.is_valid());
+
+  cout << "    I/O" << endl;
+  oFileT << T0;
+  iFileT >> Tfromfile;
+  assert(Tfromfile.is_valid());
+  assert(Tfromfile.dimension() == 0);
+  assert(Tfromfile.number_of_vertices() == 1);
 
 cout << "    Constructor2 " << endl;
 
@@ -146,11 +166,25 @@ cout << "    Constructor2 " << endl;
   assert(T0.number_of_vertices() == 2);
   assert(T0.is_valid());
 
+  cout << "    I/O" << endl;
+  oFileT << T0;
+  iFileT >> Tfromfile;
+  assert(Tfromfile.is_valid());
+  assert(Tfromfile.dimension() == 1);
+  assert(Tfromfile.number_of_vertices() == 2);
+
 cout << "    Constructor3 " << endl;
   v0=T0.insert(Point(100,-100,0));
   assert(T0.dimension() == 2);
   assert(T0.number_of_vertices() == 3);
   assert(T0.is_valid());
+
+  cout << "    I/O" << endl;
+  oFileT << T0;
+  iFileT >> Tfromfile;
+  assert(Tfromfile.is_valid());
+  assert(Tfromfile.dimension() == 2);
+  assert(Tfromfile.number_of_vertices() == 3);
 
 cout << "    Constructor4 " << endl;
 
@@ -158,6 +192,13 @@ cout << "    Constructor4 " << endl;
   assert(T0.dimension() == 3);
   assert(T0.number_of_vertices() == 4);
   assert(T0.is_valid());
+
+  cout << "    I/O" << endl;
+  oFileT << T0;
+  iFileT >> Tfromfile;
+  assert(Tfromfile.is_valid());
+  assert(Tfromfile.dimension() == 3);
+  assert(Tfromfile.number_of_vertices() == 4);
 
 cout << "    Constructor5 " << endl;
   v0=T0.insert(Point(50,0,100));
@@ -238,6 +279,13 @@ cout << "    Constructor8 " << endl;
   assert(T1_2.number_of_vertices()==n);
   assert(T1_2.is_valid());
 
+  cout << "    I/O" << endl;
+  oFileT << T1_2;
+  iFileT >> Tfromfile;
+  assert(Tfromfile.is_valid());
+  assert(Tfromfile.dimension() == 1);
+  assert(Tfromfile.number_of_vertices() == n);
+
 cout << "    Constructor9 " << endl;
   // 2-dimensional triangulations 
 
@@ -273,6 +321,13 @@ cout << "    Constructor9 " << endl;
   assert(T2_0.dimension()==2);
   assert(T2_0.number_of_vertices()==8);
 
+  cout << "    I/O" << endl;
+  oFileT << T2_0;
+  iFileT >> Tfromfile;
+  assert(Tfromfile.is_valid());
+  assert(Tfromfile.dimension() == 2);
+  assert(Tfromfile.number_of_vertices() == 8);
+
 cout << "    Constructor10 " << endl;
   // test grid insert
   Cls T2_1;
@@ -283,7 +338,7 @@ cout << "    Constructor10 " << endl;
     for (n=0; n<20; n++)
       T2_1.insert( Point(m*px+n*qx, m*py+n*qy, 1) );
   assert( T2_1.number_of_vertices() == m*n );
-  assert(T2_0.dimension()==2);
+  assert( T2_1.dimension()==2 );
   assert( T2_1.is_valid() );
 
 cout << "    Constructor11 " << endl;
@@ -305,6 +360,14 @@ cout << "    Constructor12 " << endl;
   assert(T3_1.is_valid());
   assert(T3_1.number_of_vertices()==22);
   assert(T3_1.dimension()==3);
+
+  cout << "    I/O" << endl;
+  oFileT << T3_1;
+  iFileT >> Tfromfile;
+  assert(Tfromfile.is_valid());
+  assert(Tfromfile.dimension() == 3);
+  assert(Tfromfile.number_of_vertices() == 22);
+
 
 
 //#######################################################################
