@@ -235,7 +235,7 @@ class Lazy_exact_nt : public Handle
 {
 public :
   typedef Tag_false  Has_gcd;
-  typedef Tag_true   Has_divisition
+  typedef Tag_true   Has_division;
   typedef Tag_true   Has_sqrt;
 
   typedef Lazy_exact_nt<ET> Self;
