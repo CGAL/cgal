@@ -15,7 +15,8 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // package       : Cartesian_kernel
-// author(s)     : Sylvain Pion
+// author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+//                 Menelaos Karavelas <mkaravel@cse.nd.edu>
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
@@ -30,15 +31,19 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/NT_converter.h>
+#include <CGAL/Enum_converter.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class K1, class K2,
            class Converter = NT_converter<CGAL_TYPENAME_MSVC_NULL K1::FT,
 	                                  CGAL_TYPENAME_MSVC_NULL K2::FT> >
-class Cartesian_converter
+class Cartesian_converter : public Enum_converter
 {
 public:
+    typedef K1         Source_kernel;
+    typedef K2         Target_kernel;
+    typedef Converter  Number_type_converter;
 
     Cartesian_converter()
 	: c(), k() {}

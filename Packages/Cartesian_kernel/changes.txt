@@ -1,3 +1,8 @@
+Version 6.83 (7 May 2003) [mk]
+- added type names for the template parameters of the Cartesian
+  converter; the Cartesian converter now derives from Enum_converter
+  so that CGAL's enum types are also converted
+
 Version 6.82 (7 May 2003)
 - Moved (some) functionality from global functions into kernel functors
 
