@@ -19,35 +19,33 @@ typedef CGAL::Quotient<CGAL::MP_Float>       NT;
 typedef CGAL::Cartesian<NT>                  Kernel;
 typedef CGAL::Arr_polyline_traits<Kernel>    Traits;
 
-typedef Traits::Point                        Point;
-typedef Traits::Curve                        Curve;
+typedef Traits::Point_2                      Point_2;
+typedef Traits::Curve_2                      Curve_2;
 
 typedef CGAL::Pm_default_dcel<Traits>        Dcel;   
 typedef CGAL::Planar_map_2<Dcel, Traits>     PM;
 typedef CGAL::Pm_file_writer<PM>             Pm_writer;
 
 
-CGAL_BEGIN_NAMESPACE
-
-std::ostream & operator<<(std::ostream & os, const Curve & cv)
+std::ostream & operator<<(std::ostream & os, const Curve_2 & cv)
 {
-  typedef Curve::const_iterator  Points_iterator;
+  typedef Curve_2::const_iterator  Points_iterator;
   
-  os<<cv.size()<<std::endl;
+  os << cv.size() << std::endl;
   for (Points_iterator points_iter = cv.begin(); 
        points_iter != cv.end(); points_iter++)
-    os<<" "<<*points_iter;
+    os << " " << *points_iter;
 
   return os;
 }
 
-std::istream & operator>>(std::istream & in, Curve & cv)
+std::istream & operator>>(std::istream & in, Curve_2 & cv)
 {
   std::size_t size;
   in >> size;
 
   for (unsigned int i = 0; i < size; i++){
-    Point p;
+    Point_2 p;
     in >> p;
     cv.push_back(p);  
   }
@@ -55,30 +53,28 @@ std::istream & operator>>(std::istream & in, Curve & cv)
   return in;
 }
 
-CGAL_END_NAMESPACE
-
 // Read polylines from the input
 
 template <class Container>
 void read_polylines(Container& curves)
 {
-  int  num_polylines = 0;
+  int num_polylines = 0;
 
   std::cin >> num_polylines;
   std::cout << "number of polylines is : " << num_polylines << std::endl;
 
   while (num_polylines--) {
-    Curve      polyline;
+    Curve_2 polyline;
     
-    std::cin>>polyline;
+    std::cin >> polyline;
     curves.push_back(polyline);
   }
 }
 
 int main()
 {
-  PM                 pm;
-  std::vector<Curve> polylines;
+  PM                   pm;
+  std::vector<Curve_2> polylines;
   
   // Read input 
   read_polylines(polylines);

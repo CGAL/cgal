@@ -41,9 +41,9 @@ typedef CGAL::Quotient<CGAL::MP_Float>           NT;
 typedef CGAL::Cartesian<NT>                      Kernel;
 typedef CGAL::Arr_segment_exact_traits<Kernel>   Traits;
 
-typedef Traits::Point                            Point;
-typedef Traits::X_curve                          X_curve;
-typedef Traits::Curve                            Curve;
+typedef Traits::Point_2                          Point_2;
+typedef Traits::X_curve_2                        X_curve_2;
+typedef Traits::Curve_2                          Curve_2;
 
 typedef CGAL::Pm_default_dcel<Traits>            Dcel;   
 typedef CGAL::Planar_map_2<Dcel, Traits>         PM;
@@ -51,9 +51,9 @@ typedef CGAL::Pm_file_writer<PM>                 Pm_writer;
  
 int main()
 {
-  PM                 pm;
-  int                num_segments;
-  std::vector<Curve> segments;
+  PM                   pm;
+  int                  num_segments;
+  std::vector<Curve_2> segments;
   
   std::cout << " * * * Demonstrating a trivial use of the sweep line algorithm"
 	    << std::endl << std::endl;
@@ -66,7 +66,7 @@ int main()
   while (num_segments--) 
   {
     std::cin >> x1 >> y1 >> x2 >> y2;
-    segments.push_back(Curve(Point(x1, y1), Point(x2, y2)));
+    segments.push_back(Curve_2(Point_2(x1, y1), Point_2(x2, y2)));
   }    
   // Construct the planar map  
   Traits traits;

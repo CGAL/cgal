@@ -28,17 +28,17 @@ typedef CGAL::Quotient<CGAL::MP_Float>          NT;
 typedef CGAL::Cartesian<NT>                     Kernel;
 typedef CGAL::Arr_segment_exact_traits<Kernel>  Traits;
 
-typedef Traits::Point                           Point;
-typedef Traits::Curve                           Curve;
+typedef Traits::Point_2                         Point_2;
+typedef Traits::Curve_2                         Curve_2;
 
 typedef CGAL::Pm_default_dcel<Traits>           Dcel;   
 typedef CGAL::Planar_map_2<Dcel,Traits>         PM;
 
 int main()
 {
-  PM                  pm;
-  int                 num_segments;
-  std::vector<Curve>  segments;
+  PM                    pm;
+  int                   num_segments;
+  std::vector<Curve_2>  segments;
   
   std::cout << " * * * Demonstrating a trivial usage of the sweep line ";
   std::cout << "algorithm" << std::endl << std::endl;
@@ -48,13 +48,13 @@ int main()
   
   while (num_segments--) 
   {
-    Curve cv;
+    Curve_2 cv;
     std::cin >> cv;
     segments.push_back(cv);
   }    
 
   // Use a sweep to find the points induced in the arrangement  
-  std::vector<Point> points;
+  std::vector<Point_2> points;
   Traits traits;
   CGAL::sweep_to_produce_points_2(segments.begin(),
                                   segments.end(), 
@@ -65,7 +65,7 @@ int main()
   std::cout << " * * * Printing list of all points in the arrangement ";
   std::cout << "induced by the input segments" << std::endl;
   
-  for (std::vector<Point>::iterator p_iter = points.begin();
+  for (std::vector<Point_2>::iterator p_iter = points.begin();
        p_iter != points.end(); ++p_iter)
     std::cout<< *p_iter << std::endl;
   
