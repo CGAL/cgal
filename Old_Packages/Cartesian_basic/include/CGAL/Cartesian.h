@@ -247,7 +247,7 @@ construct_triangle_2_object() const
 
 Construct_iso_rectangle_2
 construct_iso_rectangle_2_object() const
-{ return Iso_rectangle_2();}
+{ return Construct_iso_rectangle_2();}
 
 Construct_aff_transformation_2
 construct_aff_transformation_2_object() const 
