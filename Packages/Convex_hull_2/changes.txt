@@ -1,3 +1,7 @@
+3.37 (23 Oct 2002)
+- deprecate LEDA traits class; should be replaced by LEDA rat kernel traits
+  CEP
+
 3.36 (17 Oct 2002)
 - added missing include of ch_extreme_points_2.h in ch_jarvis.C
 - adjust LEDA ch traits to use the new kernel function objects
