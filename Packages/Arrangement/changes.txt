@@ -1,3 +1,12 @@
+1.90 (Shai)
+====
+- Introducing handling of non x-monotone curves in Pm_with_intersection.
+- Introducing non-intersecting_insert_at_vertices() there.  
+
+1.89 (Eti)
+====
+- Introducing line sweep algorithm.
+
 1.86 (Shai)
 ====
 - Added documentation for Pm_with_intersections.
