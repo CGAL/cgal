@@ -24,7 +24,7 @@
 #include "CGAL/Segment_2.h"
 #include "CGAL/Triangle_2.h"
 #include "CGAL/Iso_rectangle_2.h"
-#include "CGAL/Segment_2_segment_2_intersection.h"
+#include "CGAL/Segment_2_Segment_2_intersection.h"
 
 #include <vector>
 
