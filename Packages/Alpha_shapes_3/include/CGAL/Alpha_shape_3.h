@@ -294,8 +294,37 @@ private :
                    : std::make_pair(v2,v1);
   }
 
-  void set_alpha_min_of_vertices(Tag_false);
-  void set_alpha_min_of_vertices(Tag_true);
+ // the version to be used with Tag_true is templated to avoid
+ // instanciation through explicit instantiation of the whole class
+  void set_alpha_min_of_vertices(Tag_false) 
+  { 
+    for( Finite_vertices_iterator vit = finite_vertices_begin(); 
+	 vit != finite_vertices_end();  ++vit){
+      Alpha_status* as = vit->get_alpha_status();
+      as->set_is_Gabriel(true);  
+      as->set_alpha_min(NT(0));
+    }
+    // insert a single vertex into the map because they all have the 
+    // same alpha_min value
+    alpha_min_vertex_map.insert(typename Alpha_vertex_map::value_type
+				( NT(0), finite_vertices_begin()));
+  }
+  template <class Tag>
+  void set_alpha_min_of_vertices(Tag) 
+  {
+    for( Finite_vertices_iterator vit = finite_vertices_begin(); 
+	 vit != finite_vertices_end();  ++vit) {
+      if (is_Gabriel(vit)) {
+	Alpha_status* as = vit->get_alpha_status();
+	as->set_is_Gabriel(true);  
+	as->set_alpha_min(squared_radius(vit));      
+	alpha_min_vertex_map.insert(typename Alpha_vertex_map::value_type
+				    (as->alpha_min(),vit));
+      }
+    }
+    return;
+  }
+
 
 
   //---------------------------------------------------------------------
@@ -1032,39 +1061,39 @@ Alpha_shape_3<Dt>::initialize_alpha_vertex_maps(bool reinitialize)
 }
 
 
-template <class Dt>
-void 
-Alpha_shape_3<Dt>::set_alpha_min_of_vertices(Tag_true)
-{
-  for( Finite_vertices_iterator vit = finite_vertices_begin(); 
-       vit != finite_vertices_end();  ++vit) {
-    if (is_Gabriel(vit)) {
-      Alpha_status* as = vit->get_alpha_status();
-      as->set_is_Gabriel(true);  
-      as->set_alpha_min(squared_radius(vit));      
-      alpha_min_vertex_map.insert(typename Alpha_vertex_map::value_type
-				  (as->alpha_min(),vit));
-    }
-  }
-  return;
-}
+/* template <class Dt> */
+/* void  */
+/* Alpha_shape_3<Dt>::set_alpha_min_of_vertices(Tag_true) */
+/* { */
+/*   for( Finite_vertices_iterator vit = finite_vertices_begin();  */
+/*        vit != finite_vertices_end();  ++vit) { */
+/*     if (is_Gabriel(vit)) { */
+/*       Alpha_status* as = vit->get_alpha_status(); */
+/*       as->set_is_Gabriel(true);   */
+/*       as->set_alpha_min(squared_radius(vit));       */
+/*       alpha_min_vertex_map.insert(typename Alpha_vertex_map::value_type */
+/* 				  (as->alpha_min(),vit)); */
+/*     } */
+/*   } */
+/*   return; */
+/* } */
 
 
-template <class Dt>
-void 
-Alpha_shape_3<Dt>::set_alpha_min_of_vertices(Tag_false)
-{ 
-  for( Finite_vertices_iterator vit = finite_vertices_begin(); 
-       vit != finite_vertices_end();  ++vit){
-    Alpha_status* as = vit->get_alpha_status();
-    as->set_is_Gabriel(true);  
-    as->set_alpha_min(NT(0));
-  }
-  // insert a single vertex into the map because they all have the 
-  // same alpha_min value
-  alpha_min_vertex_map.insert(typename Alpha_vertex_map::value_type
-			      ( NT(0), finite_vertices_begin()));
-}
+/* template <class Dt> */
+/* void  */
+/* Alpha_shape_3<Dt>::set_alpha_min_of_vertices(Tag_false) */
+/* {  */
+/*   for( Finite_vertices_iterator vit = finite_vertices_begin();  */
+/*        vit != finite_vertices_end();  ++vit){ */
+/*     Alpha_status* as = vit->get_alpha_status(); */
+/*     as->set_is_Gabriel(true);   */
+/*     as->set_alpha_min(NT(0)); */
+/*   } */
+/*   // insert a single vertex into the map because they all have the  */
+/*   // same alpha_min value */
+/*   alpha_min_vertex_map.insert(typename Alpha_vertex_map::value_type */
+/* 			      ( NT(0), finite_vertices_begin())); */
+/* } */
 
 
 //---------------------------------------------------------------------

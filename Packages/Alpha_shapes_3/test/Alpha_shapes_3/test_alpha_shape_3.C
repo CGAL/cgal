@@ -47,5 +47,5 @@ int main()
 
 // MipsPro prefers this after the other instantiations...
 // Explicit instantiation of the whole class :
-// template class CGAL::Alpha_shape_3<Triangulation_3>;
-// this instantiation is done in test_weighted_alpha_shape_3.C
+template class CGAL::Alpha_shape_3<Triangulation_3>;
+
