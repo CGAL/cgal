@@ -73,7 +73,7 @@ private:
       }
       
       RasterOp old = widget->rasterOp();	//save the initial raster mode
-      widget->setRasterOp(XorROP);
+      widget->setRasterOp(this->XorROP);
       widget->lock();
       *widget << CGAL::GREEN << CGAL::PointSize (5) 
               << CGAL::PointStyle (CGAL::DISC);

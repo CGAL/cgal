@@ -1,3 +1,6 @@
+25 September 2004 Sylvain Pion
+- Missing this-> needed by g++ 3.4.
+
 07 September 2004 Andreas Fabri
 - Changed {\ccc .. } to \ccc{..}
 
