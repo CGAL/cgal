@@ -111,10 +111,6 @@ SOURCE=..\..\..\src\CGALQt\Qt_widget_standard_toolbar.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\src\CGALQt\Qt_widget_tool.C
-# End Source File
-# Begin Source File
-
 SOURCE=.\Qt_widget_toolbar.C
 # End Source File
 # End Group
@@ -150,6 +146,25 @@ SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Handtool.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\include\CGAL\IO\Qt_widget_layer.h
+
+!IF  "$(CFG)" == "demo - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
+
+# Begin Custom Build
+InputPath=..\..\..\include\CGAL\IO\Qt_widget_layer.h
+
+"../../../src/CGALQt/Qt_widget_layer.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_widget_layer.moc" "../../../Include/CGAL/IO/Qt_widget_layer.h"
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\Qt_widget_move_list_point.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
@@ -180,25 +195,6 @@ InputPath=..\..\..\include\CGAL\IO\Qt_Widget_standard_toolbar.h
 
 "../../../src/CGALQt/Qt_Widget_standard_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_Widget_standard_toolbar.moc" "../../../Include/CGAL/IO/Qt_Widget_standard_toolbar.h"
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_tool.h
-
-!IF  "$(CFG)" == "demo - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
-
-# Begin Custom Build
-InputPath=..\..\..\include\CGAL\IO\Qt_Widget_tool.h
-
-"../../../src/CGALQt/Qt_Widget_tool.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_Widget_tool.moc" "../../../Include/CGAL/IO/Qt_Widget_tool.h"
 
 # End Custom Build
 

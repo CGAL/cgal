@@ -91,9 +91,9 @@ public:
   Qt_layer_show_ch(){};
 
 
-  void draw(CGAL::Qt_widget &widget)
+  void draw()
   {
-    widget.lock();
+    widget->lock();
       
       //MAXIMUM INSCRIBED 3-GON
       Polygonvec  outpol;
@@ -104,11 +104,11 @@ public:
 	CGAL::maximum_area_inscribed_k_gon(outpol.vertices_begin(),
 			outpol.vertices_end(),3, std::back_inserter(kg));
       
-      RasterOp old = widget.rasterOp();	//save the initial raster mode
-      widget.setRasterOp(XorROP);
-      widget << CGAL::FillColor(CGAL::BLUE);      
-      widget << kg;
-      widget.setRasterOp(old);
+      RasterOp old = widget->rasterOp();	//save the initial raster mode
+      widget->setRasterOp(XorROP);
+      *widget << CGAL::FillColor(CGAL::BLUE);      
+      *widget << kg;
+      widget->setRasterOp(old);
 
       //MAXIMUM INSCRIBED 5-GON
       Polygonvec  kg1;
@@ -116,18 +116,18 @@ public:
 	CGAL::maximum_area_inscribed_k_gon(outpol.vertices_begin(),
 			outpol.vertices_end(),5, std::back_inserter(kg1));
       
-      old = widget.rasterOp();	//save the initial raster mode
-      widget.setRasterOp(XorROP);
-      widget << CGAL::FillColor(CGAL::GRAY);      
-      widget << kg1;
-      widget.setRasterOp(old);  
+      old = widget->rasterOp();	//save the initial raster mode
+      widget->setRasterOp(XorROP);
+      *widget << CGAL::FillColor(CGAL::GRAY);      
+      *widget << kg1;
+      widget->setRasterOp(old);  
 
       //VERTICES
-      widget << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
-      widget << CGAL::GREEN;
+      *widget << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
+      *widget << CGAL::GREEN;
       std::list<Point>::iterator itp = list_of_points.begin();
       while(itp!=list_of_points.end())
-	widget << (*itp++);
+	*widget << (*itp++);
           
 
       //CONVEX HULL
@@ -150,14 +150,14 @@ public:
 	}
 	Sl.push_back(Segment(pakt,pstart));
 
-	widget << CGAL::RED;
+	*widget << CGAL::RED;
 	std::list<Segment>::iterator its = Sl.begin();
 	while(its!=Sl.end())
-	  widget << (*its++);
+	  *widget << (*its++);
       }
       
       
-    widget.unlock();
+    widget->unlock();
   };	
   
 };//end class 
@@ -181,6 +181,8 @@ public:
     menuBar()->insertItem( "&File", file );
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
     file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
+    file->insertSeparator();
+    file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
     file->insertSeparator();
     file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
     file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
@@ -233,7 +235,6 @@ public slots:
   }
   void new_instance()
   {
-    widget->detach_current_tool();
     widget->lock();
     list_of_points.clear();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
