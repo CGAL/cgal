@@ -1066,445 +1066,6 @@ Face_const_handle unbounded_face() const {
   return Face_const_handle(pm.unbounded_face());
 }
 
-/*
-// checks validity of planar map and of arrangement's hierarchy tree structures
-bool is_valid(bool verbose = false) const
-{
-
-  CGAL::Verbose_ostream verr(verbose);
-  //std::ostream& verr = std::cerr;
-  bool         valid = true;
-
-  verr << std::endl;
-  verr << "CGAL::Arrangment_2<Decl, Traits, Base_Node>::";
-  verr << "is_valid( true ):" << std::endl;
-
-  // Planar Map Check
-  verr << "a) planar_map check... " << std::endl;
-  if (pm.is_valid())
-    verr << "passed." << std::endl;
-  else
-    valid = false;
-
-  // Check each Curve Hierarchy tree
-  Curve_const_iterator    cit;
-  Edge_const_iterator     eit;
-  Subcurve_const_iterator sit, child_it, parent_it;
-
-  unsigned curve_counter = 1;
-  bool
-    curve_node_curve_node          = true,
-    curve_node_is_edge_node        = true,
-    curve_node_null_parent         = true,
-    curve_node_children_parent     = true,
-    curve_node_children_curve_node = true,
-    edge_is_edge_node              = true,
-    edge_node_curve_node           = true,
-    subcurve_is_edge_node          = true,
-    subcurve_curve_node            = true,
-    subcurve_edges_curve_node      = true,
-    subcurve_edges_parent          = true,
-    level_structure_ok             = true,
-    not_curve_node;
-
-  verr << "b) hierarchy tree check:" << std::endl;
-  // for each curve tree
-  for (cit = curve_node_begin(); cit != curve_node_end(); 
-       cit++, curve_counter++) {
-    
-    // check curve node properties
-    // ---------------------------
-    
-    // is_edge_node() should return false for a Curve_node
-    curve_node_is_edge_node &= (cit->is_edge_node() == false);
-    
-    // curve_node() should point at this current curve
-    curve_node_curve_node &= (cit->curve_node() == cit);
-    
-    // parent() should return NULL
-    curve_node_null_parent &= (cit->parent() == NULL);
-    
-    // children's parent should equal this curve node
-    sit = cit->children_begin();
-    for (;sit != cit->children_end(); sit++)
-      {
-	curve_node_children_curve_node &= (sit->curve_node() == cit);
-	
-	//parent() always returns Subcurve_iterator while cit is of type
-	// Curve_iterator. to check that a child's parent indeed points at cit
-	// I use the following combined test
-	curve_node_children_parent &= (sit->parent()->parent() == NULL &&
-				       sit->parent()->curve_node() == cit);  
-      }
-    
-    // check edges properties
-    // ----------------------
-    eit = cit->edges_begin();
-    for (;eit != cit->edges_end(); eit++) // for each edge
-      {
-	// is_edge_node() should return true for an edge node 
-	edge_is_edge_node &= (eit->is_edge_node() == true);
-	// edged mutual reference check
-	edge_node_curve_node &= eit->curve_node() == cit;
-      }
-    
-    // check subcurves properties
-    // --------------------------
-    int i, levels;
-    levels = cit->number_of_sc_levels();
-    if (levels > 0)
-      {
-	for (i = 0; i < levels; i++)
-	  {
-	    sit = cit->level_begin(i);
-	    // check that level i is indeed i deep in this tree
-	    // go up to curve node i times, expect not too find parent
-	    // not too soon, not too late
-	    int j;
-	    for (j = i, not_curve_node = true, parent_it = sit;
-		 j >= 0 && not_curve_node;
-		 j--, parent_it = parent_it->parent())
-	      {
-		// parent found too soon?
-		if (parent_it->parent() == NULL) not_curve_node = false;
-	      }
-	    level_structure_ok &= not_curve_node;
-
-	    // parent found too late :
-	    level_structure_ok &= (parent_it->parent()==NULL); 
-	    // for each subcurve in level i
-	    for (;sit != cit->level_end(i) ; sit++)
-	      {
-		// is_edge_node() should return false for a Subcurve_node
-		subcurve_is_edge_node &= (sit->is_edge_node() == false);
-		
-		// subcurve - curve check 
-		subcurve_curve_node &= (sit->curve_node() == cit);
-
-		// subcurve - edge check 
-		eit = sit->edges_begin();
-		for (;eit != sit->edges_end(); eit++)
-		  {
-		    // ADD CHECK TO PARENT() !!
-		    subcurve_edges_curve_node &= eit->curve_node() == cit;
-		  }
-
-		child_it = sit->children_begin();
-		for (;child_it != sit->children_end(); child_it++)
-		  {
-		    // ADD CHECK TO PARENT() !!
-		    subcurve_edges_parent &= (child_it->parent() == sit);
-		  }
-	      } // for (;sit != ...
-	  } // for (i = 0 ...
-      } // if
-  }
-  verr << std::endl;
-  verr << "let cn denote the root Curve_node of the ";
-  verr << "arrangement hierarchy tree," << std::endl;
-  verr << "    sn denote a Subcurve_node in that tree," << std::endl;
-  verr << "and en denote an Edge_node in that tree." << std::endl;
-  verr << "(&x stands for an iterator that points at x)" << std::endl;
-  
-  verr << std::endl;
-  verr << "Curve checks:" << std::endl;
-  verr << "for all cn : cn.is_edge_node() == false                 ---";
-  verr << (curve_node_is_edge_node ? "PASS" : "FAIL") << std::endl;
-  
-  verr << "for all cn : cn.curve_node() == &cn                     ---";
-  verr << (curve_node_curve_node ? "PASS" : "FAIL") << std::endl;
-  
-  verr << "for all cn : cn.parent() == NULL                        ---";
-  verr << (curve_node_null_parent ? "PASS" : "FAIL") << std::endl;
-  
-  verr << "for all children ch of cn : ch.curve_node_node() == &cn ---";
-  verr << (curve_node_children_curve_node ? "PASS" : "FAIL") << std::endl;
-
-  verr << "for all children ch of cn : ch.parent() is indeed cn    ---";
-  verr << ( curve_node_children_parent ? "PASS" : "FAIL") << std::endl;
-
-  verr << "level i is indeed i deep in tree                        ---";
-  verr << ( level_structure_ok ? "PASS" : "FAIL") << std::endl;
-
-  verr << std::endl;
-  verr << "Subcurve checks:" << std::endl;
-  verr << "for all sn : sn.is_edge_node() == false                 ---";
-  verr << (subcurve_is_edge_node ? "PASS" : "FAIL") << std::endl;
-  
-  verr << "for all sn : sn->curve_node() == &cn                    ---";
-  verr << (subcurve_curve_node ? "PASS" : "FAIL") << std::endl;
-
-  verr << "for all en in an sn subtree: en->curve_node() == &cn    ---";
-  verr << (subcurve_edges_curve_node ? "PASS" : "FAIL") << std::endl;
-
-  verr << "for each child ch of sn : ch->parent() == &sn           ---";
-  verr << (subcurve_edges_parent ? "PASS" : "FAIL") << std::endl;
-  
-  verr << std::endl;
-  verr << "Edge checks:" << std::endl;
-  verr << "for all en : en.is_edge_node() == true                  ---";
-  verr << (edge_is_edge_node ? "PASS" : "FAIL") << std::endl;
-  
-  verr << "for all en : en->curve_node() == &cn                    ---";
-  verr << (edge_node_curve_node ? "PASS" : "FAIL") << std::endl;
-
-  valid =
-    valid                          &
-    curve_node_curve_node          &
-    curve_node_is_edge_node        &
-    curve_node_null_parent         &
-    curve_node_children_parent     &
-    curve_node_children_curve_node &
-    edge_is_edge_node              &
-    edge_node_curve_node           &
-    subcurve_is_edge_node          &
-    subcurve_curve_node            &
-    subcurve_edges_curve_node      &
-    subcurve_edges_parent          &
-    level_structure_ok;
-   
-  // Final Result
-  verr << std::endl;
-  if (valid)
-    verr << " object is valid! " << std::endl;
-  else
-    verr << "object is INVALID!" << std::endl;
-  verr <<   "------------------" << std::endl;
-
-  return valid;
-  }*/
-
-// checks validity of planar map and of arrangement's hierarchy tree structures
-bool is_valid(bool verbose = false) const
-{
-  CGAL::Verbose_ostream verr(verbose);
-  //std::ostream& verr = std::cerr;
-  bool         valid = true;
-
-  verr << std::endl;
-  verr << "CGAL::Arrangment_2<Decl, Traits, Base_Node>::";
-  verr << "is_valid( true ):" << std::endl;
-
-  // Planar Map Check
-  verr << "a) planar_map check... " << std::endl;
-  if (pm.is_valid())
-    verr << "passed." << std::endl;
-  else
-    valid = false;
-
-  // Check each Curve Hierarchy tree
-  Curve_const_iterator    cit;
-  Edge_const_iterator     eit;
-  Subcurve_const_iterator sit, child_it, parent_it;
-
-  unsigned curve_counter = 1;
-  bool
-    curve_node_curve_node          = true,
-    curve_node_is_edge_node        = true,
-    curve_node_null_parent         = true,
-    curve_node_children_parent     = true,
-    curve_node_children_curve_node = true,
-    edge_is_edge_node              = true,
-    edge_node_curve_node           = true,
-    subcurve_is_edge_node          = true,
-    subcurve_curve_node            = true,
-    subcurve_edges_curve_node      = true,
-    subcurve_edges_parent          = true,
-    level_structure_ok             = true,
-    not_curve_node, 
-    circ_curve_is_next_curve       =  true,
-    circ_curve_is_halfedge_curve   = true,
-    edge_curve_is_halfedge_curve   = true;
-
-  verr << "b) hierarchy tree check:" << std::endl;
-  // for each curve tree
-  for (cit = curve_node_begin(); cit != curve_node_end(); 
-       cit++, curve_counter++) {
-    
-    // check curve node properties
-    // ---------------------------
-    
-    // is_edge_node() should return false for a Curve_node
-    curve_node_is_edge_node &= (cit->is_edge_node() == false);
-    
-    // curve_node() should point at this current curve
-    curve_node_curve_node &= (cit->curve_node() == cit);
-    
-    // parent() should return NULL
-    curve_node_null_parent &= (cit->parent() == NULL);
-    
-    // children's parent should equal this curve node
-    sit = cit->children_begin();
-    for (;sit != cit->children_end(); sit++)
-      {
-	curve_node_children_curve_node &= (sit->curve_node() == cit);
-	
-	//parent() always returns Subcurve_iterator while cit is of type
-	// Curve_iterator. to check that a child's parent indeed points at cit
-	// I use the following combined test
-	curve_node_children_parent &= (sit->parent()->parent() == NULL &&
-				       sit->parent()->curve_node() == cit);  
-      }
-    
-    // check edges properties
-    // ----------------------
-    eit = cit->edges_begin();
-    for (;eit != cit->edges_end(); eit++) // for each edge
-      {
-	// is_edge_node() should return true for an edge node 
-	edge_is_edge_node &= (eit->is_edge_node() == true);
-	// edged mutual reference check
-	edge_node_curve_node &= eit->curve_node() == cit;
-
-        // checking the vaildity of overlappings.
-        Overlap_const_circulator ovlp_circ = eit->halfedge()->overlap_edges();
-        
-        //cout<<"----"<<eit->curve()<<endl;
-        //cout<<"***"<<eit->halfedge()->curve()<<endl;
-        //cout<<"***"<<eit->halfedge()->twin()->curve()<<endl;
-        edge_curve_is_halfedge_curve &= 
-	  ( traits->curve_is_same(eit->curve(), eit->halfedge()->curve()));
-        do{
-	  Overlap_const_circulator next = ovlp_circ;
-          ++next;
-          
-          circ_curve_is_next_curve &= 
-	    (traits->curve_is_same(ovlp_circ->curve(), next->curve()));
-          circ_curve_is_halfedge_curve &= 
-	    (traits->curve_is_same(ovlp_circ->curve(), 
-				   eit->halfedge()->curve()));
-
-          //cout<<ovlp_circ->curve()<<endl;
-        } while (++ovlp_circ != eit->halfedge()->overlap_edges());
-      }
-    
-    // check subcurves properties
-    // --------------------------
-    int i, levels;
-    levels = cit->number_of_sc_levels();
-    if (levels > 0)
-      {
-	for (i = 0; i < levels; i++)
-	  {
-	    sit = cit->level_begin(i);
-	    // check that level i is indeed i deep in this tree
-	    // go up to curve node i times, expect not too find parent
-	    // not too soon, not too late
-	    int j;
-	    for (j = i, not_curve_node = true, parent_it = sit;
-		 j >= 0 && not_curve_node;
-		 j--, parent_it = parent_it->parent())
-	      {
-		// parent found too soon?
-		if (parent_it->parent() == NULL) not_curve_node = false;
-	      }
-	    level_structure_ok &= not_curve_node;
-
-	    // parent found too late :
-	    level_structure_ok &= (parent_it->parent()==NULL); 
-	    // for each subcurve in level i
-	    for (;sit != cit->level_end(i) ; sit++)
-	      {
-		// is_edge_node() should return false for a Subcurve_node
-		subcurve_is_edge_node &= (sit->is_edge_node() == false);
-		
-		// subcurve - curve check 
-		subcurve_curve_node &= (sit->curve_node() == cit);
-
-		// subcurve - edge check 
-		eit = sit->edges_begin();
-		for (;eit != sit->edges_end(); eit++)
-		  {
-		    // ADD CHECK TO PARENT() !!
-		    subcurve_edges_curve_node &= eit->curve_node() == cit;
-		  }
-
-		child_it = sit->children_begin();
-		for (;child_it != sit->children_end(); child_it++)
-		  {
-		    // ADD CHECK TO PARENT() !!
-		    subcurve_edges_parent &= (child_it->parent() == sit);
-		  }
-	      } // for (;sit != ...
-	  } // for (i = 0 ...
-      } // if
-  }
-  verr << std::endl;
-  verr << "let cn denote the root Curve_node of the ";
-  verr << "arrangement hierarchy tree," << std::endl;
-  verr << "    sn denote a Subcurve_node in that tree," << std::endl;
-  verr << "and en denote an Edge_node in that tree." << std::endl;
-  verr << "(&x stands for an iterator that points at x)" << std::endl;
-  
-  verr << std::endl;
-  verr << "Curve checks:" << std::endl;
-  verr << "for all cn : cn.is_edge_node() == false                 ---";
-  verr << (curve_node_is_edge_node ? "PASS" : "FAIL") << std::endl;
-  
-  verr << "for all cn : cn.curve_node() == &cn                     ---";
-  verr << (curve_node_curve_node ? "PASS" : "FAIL") << std::endl;
-  
-  verr << "for all cn : cn.parent() == NULL                        ---";
-  verr << (curve_node_null_parent ? "PASS" : "FAIL") << std::endl;
-  
-  verr << "for all children ch of cn : ch.curve_node_node() == &cn ---";
-  verr << (curve_node_children_curve_node ? "PASS" : "FAIL") << std::endl;
-
-  verr << "for all children ch of cn : ch.parent() is indeed cn    ---";
-  verr << ( curve_node_children_parent ? "PASS" : "FAIL") << std::endl;
-
-  verr << "level i is indeed i deep in tree                        ---";
-  verr << ( level_structure_ok ? "PASS" : "FAIL") << std::endl;
-
-  verr << std::endl;
-  verr << "Subcurve checks:" << std::endl;
-  verr << "for all sn : sn.is_edge_node() == false                 ---";
-  verr << (subcurve_is_edge_node ? "PASS" : "FAIL") << std::endl;
-  
-  verr << "for all sn : sn->curve_node() == &cn                    ---";
-  verr << (subcurve_curve_node ? "PASS" : "FAIL") << std::endl;
-  
-  verr << "for all en in an sn subtree: en->curve_node() == &cn    ---";
-  verr << (subcurve_edges_curve_node ? "PASS" : "FAIL") << std::endl;
-
-  verr << "for each child ch of sn : ch->parent() == &sn           ---";
-  verr << (subcurve_edges_parent  ? "PASS" : "FAIL") << std::endl;
-  
-  verr << std::endl;
-  verr << "Edge checks:" << std::endl;
-  verr << "for all en : en.is_edge_node() == true                  ---";
-  verr << (edge_is_edge_node ? "PASS" : "FAIL") << std::endl;
-  
-  verr << "for all en : en->curve_node() == &cn                    ---";
-  verr << (edge_node_curve_node ? "PASS" : "FAIL") << std::endl;
-
-  valid =
-    valid                          &
-    curve_node_curve_node          &
-    curve_node_is_edge_node        &
-    curve_node_null_parent         &
-    curve_node_children_parent     &
-    curve_node_children_curve_node &
-    edge_is_edge_node              &
-    edge_node_curve_node           &
-    subcurve_is_edge_node          &
-    subcurve_curve_node            &
-    subcurve_edges_curve_node      &
-    subcurve_edges_parent          &
-    level_structure_ok;
-   
-  // Final Result
-  verr << std::endl;
-  if (valid)
-    verr << " object is valid! " << std::endl;
-  else
-    verr << "object is INVALID!" << std::endl;
-  verr <<   "------------------" << std::endl;
-
-  return valid;
-}
-
-/*
 //checks validity of planar map and of arrangement's hierarchy tree structures
 bool is_valid(bool verbose = false) const
 {
@@ -1740,7 +1301,7 @@ bool is_valid(bool verbose = false) const
  verr <<   "------------------" << std::endl;
 
  return valid;
-}*/
+}
 
 ///////////////////////////////////////////////////////////////////
 //               INSERTION FUNCTIONS
@@ -2442,11 +2003,31 @@ public:
 };
 
 friend class Arr_hierarchy_ops;
-////////////////////////////////////////////////////////////////////////
-// pushes the curve cv corresponding to halfedge e to the edge_node_list
+
+// Pushes the curve cv corresponding to halfedge e to the edge_node_list
 // push_back if original_direction
 // push_front otherwise - will be called from insert after
 // inserting cv into the pm and getting e
+//
+// *** Edge_node class:
+// Edge_node holds a curve that is used also as the curve of its
+// associated halfedge.  There are two halfedges (an halfedge and its
+// twin) which point to the Edge_node.  The Edge_node contains a
+// handle to one of these halfedges of which has the same orientation
+// as the curve the Edge_node holds.  Edge_node also contains two
+// pointers named begin_child and past_end_child which are two
+// pointers in a circulat list of all overlapping curves on the
+// specific edge.
+//
+// *** Historical comment (Eti and Eyal, January 2002)
+// original_direction was a boolean flag indicating whether cv and
+// ftr->curve() have the same orientation.  Pm_with_intersections
+// calculated this value and passed it through the add_edge
+// function of the notifier However, this value was miscalculated
+// and had an error value. As a result, we do not use
+// original_direction. Instead we compare the directions of cv and
+// ftr->curve().
+//
 void push_in_edge_list(const typename Traits::X_curve& cv,
                        Pm_halfedge_handle phe,
                        Subcurve_node* ftr,
@@ -2455,92 +2036,64 @@ void push_in_edge_list(const typename Traits::X_curve& cv,
                        bool overlap=false)
 {
   Halfedge_handle e = phe;
-  if (original_direction) {
-    Edge_node* en=new Edge_node;
+  Edge_node* en=new Edge_node;
+  en->ftr=ftr;
+
+  // The following condition replaces the original functionality
+  // of original_direction, as described in the histroial comment above.
+  // The original condition: if (original_direction) 
+  if (CGAL::compare_xy(traits->curve_source(ftr->curve()), 
+                                         traits->curve_target(ftr->curve())) ==
+      CGAL::compare_xy(traits->curve_source(cv), 
+                                         traits->curve_target(cv)))
     en->set_curve(cv);
-    en->ftr=ftr;
-    
-    //DEALING WITH OVERLAP:
-    //we use the 2 redundant pointers - begin_child and past_end_child 
-    //to create
-    //a circular linked list of overlapping edges (for the same halfedge)
-
-    //2 options: circular bidircetionsl list(bi-circulator) , 
-    //           or linear single directional list (forward iterator),
-    //           bidirectional iterator can't be implemented because we can't
-    //           have a sentinel for the past_the_end value.
-
-    //we implement below a bi-dircetional circular list, when no overlap
-    //en points at itself - this implies that the default ctr of the
-    //edge node has begin_child and past_end_child initialized to this
-    //(whereas if we implement a forward list, it is initialized to NULL).
-
-    if (overlap) {
-      //pointer shuffling to insert en into circular list
-      //past_end_child == next, begin_child == prev
-
-      Edge_node* aux=&(*e->edge_node());
-      en->past_end_child = aux; 
-      en->begin_child = aux->begin_child;
-
-      aux->begin_child->past_end_child = en;
-      aux->begin_child = en;
-    }
-    else {
-      //initialization of circular list with en - not needed - done in the ctr
-      //en->past_end_child=en;
-      //en->begin_child=en;
-    }
-
-    //the following code should replace the above code if we want a single list
-    //if (overlap)
-    //  en->past_end_child=&(*e->edge_node());
-
-    e->set_edge_node(en);
-    e->twin()->set_edge_node(en);
-    
-    if (traits->point_is_same(e->target()->point(),traits->curve_target(cv)))
-      en->set_halfedge(Halfedge_handle(e));
-    else
-      en->set_halfedge(Halfedge_handle(e->twin())); 
-    edge_list.push_back(*en);
-  }
-  else {  //right_to_left - we've done a flip at beginning
-    Edge_node* en=new Edge_node;
+  else 
     en->set_curve(traits->curve_flip(cv));
-    en->ftr=ftr;
-
-    //DEALING WITH OVERLAP: like above
-    if (overlap) {
-      //pointer shuffling to insert en into circular list
-      //past_end_child == next, begin_child == prev
-
-      Edge_node* aux=&(*e->edge_node());
-      en->past_end_child = aux; 
-      en->begin_child = aux->begin_child;
-
-      aux->begin_child->past_end_child = en;
-      aux->begin_child = en;
-    }
-    else {
-      //initialization of circular list with en - no need done in the ctr
-      //en->past_end_child=en;
-      //en->begin_child=en;
-    }
-
-    //the following code should replace the above code if we want a single list
-    //if (overlap)
-    //  en->past_end_child=&(*e->edge_node());
+  
+  // DEALING WITH OVERLAP:
+  // We use the 2 redundant pointers - begin_child and past_end_child
+  // to create a circular linked list of overlapping edges (for the
+  // same halfedge)
+  
+  // 2 options: circular bidircetionsl list(bi-circulator) , 
+  //            or linear single directional list (forward iterator),
+  //            bidirectional iterator can't be implemented because we can't
+  //            have a sentinel for the past_the_end value.
+  
+  //we implement below a bi-dircetional circular list, when no overlap
+  //en points at itself - this implies that the default ctr of the
+  //edge node has begin_child and past_end_child initialized to this
+  //(whereas if we implement a forward list, it is initialized to NULL).
+  
+  if (overlap) {
+    //pointer shuffling to insert en into circular list
+    //past_end_child == next, begin_child == prev
     
-    e->set_edge_node(en);
-    e->twin()->set_edge_node(en);
+    Edge_node* aux=&(*e->edge_node());
+    en->past_end_child = aux; 
+    en->begin_child = aux->begin_child;
     
-    if (traits->point_is_same(e->source()->point(),traits->curve_target(cv)))
-      en->set_halfedge(Halfedge_handle(e));
-    else
-      en->set_halfedge(Halfedge_handle(e->twin())); 
-    edge_list.push_front(*en);
-  }   
+    aux->begin_child->past_end_child = en;
+    aux->begin_child = en;
+  }
+  else {
+    //initialization of circular list with en - not needed - done in the ctr
+    //en->past_end_child=en;
+    //en->begin_child=en;
+  }
+  
+  //the following code should replace the above code if we want a single list
+  //if (overlap)
+  //  en->past_end_child=&(*e->edge_node());
+
+  e->set_edge_node(en);
+  e->twin()->set_edge_node(en);
+  
+  if (traits->point_is_same(e->target()->point(),traits->curve_target(en->curve())))
+    en->set_halfedge(Halfedge_handle(e));
+  else
+    en->set_halfedge(Halfedge_handle(e->twin())); 
+  edge_list.push_back(*en);
 }
 
 //////////////////////////////////////////////////////////////////////////
