@@ -29,6 +29,20 @@ CGAL_intersection(const CGAL_Line_3<R>&line, const CGAL_Plane_3<R> &plane)
 {
     return CGAL_intersection(plane,line);
 }
+
+template <class R>
+bool
+CGAL_do_intersect(const CGAL_Plane_3<R> &p2, const CGAL_Line_3<R> &p1);
+
+
+template <class R>
+inline bool
+CGAL_do_intersect(
+    const CGAL_Line_3<R> &p1,
+    const CGAL_Plane_3<R> &p2)
+{
+    return CGAL_do_intersect(p2,p1);
+}
 @}
 
 @$@<3D Line Plane intersection implementation@>==@{
@@ -59,6 +73,29 @@ CGAL_intersection(const CGAL_Plane_3<R> &plane, const CGAL_Line_3<R>&line)
         den*line_pt.hz()-num*line_dir.dz(),
         line_pt.hw()*den));
 }
+
+template <class R>
+bool
+CGAL_do_intersect(const CGAL_Plane_3<R> &plane, const CGAL_Line_3<R>&line)
+{
+    typedef typename R::RT RT;
+    const CGAL_Point_3<R> &line_pt = line.point();
+    const CGAL_Direction_3<R> &line_dir = line.direction();
+    RT num,  den;
+    den = plane.a()*line_dir.dx() + plane.b()*line_dir.dy()
+        + plane.c()*line_dir.dz();
+    if (den !=  RT(0))
+        return true;
+    num = plane.a()*line_pt.hx() + plane.b()*line_pt.hy()
+        + plane.c()*line_pt.hz() + plane.d()*line_pt.hw();
+    if (num == RT(0)) {
+        // all line
+        return true;
+    } else {
+        // no intersection
+        return false;
+    }
+}
 @}
 
 @C@<Segment Plane intersection@>
@@ -75,6 +112,20 @@ CGAL_Object
 CGAL_intersection(const CGAL_Segment_3<R>&seg, const CGAL_Plane_3<R> &plane)
 {
     return CGAL_intersection(plane,seg);
+}
+
+template <class R>
+bool
+CGAL_do_intersect(const CGAL_Plane_3<R> &p1, const CGAL_Segment_3<R> &p2);
+
+
+template <class R>
+inline bool
+CGAL_do_intersect(
+    const CGAL_Segment_3<R> &p1,
+    const CGAL_Plane_3<R> &p2)
+{
+    return CGAL_do_intersect(p2,p1);
 }
 @}
 
@@ -116,6 +167,22 @@ CGAL_intersection(const CGAL_Plane_3<R> &plane, const CGAL_Segment_3<R>&seg)
     CGAL_kernel_assertion_msg(false, "Supposedly unreachable code.");
     return CGAL_Object();
 }
+
+template <class R>
+bool
+CGAL_do_intersect(const CGAL_Plane_3<R> &plane, const CGAL_Segment_3<R>&seg)
+{
+    const CGAL_Point_3<R> &source = seg.source();
+    const CGAL_Point_3<R> &target = seg.target();
+    CGAL_Oriented_side source_side,target_side;
+    source_side = plane.oriented_side(source);
+    target_side = plane.oriented_side(target);
+    if ( source_side == target_side
+       && target_side != CGAL_ON_ORIENTED_BOUNDARY) {
+        return false;
+    }
+    return true;
+}
 @}
 
 @C@<Ray Plane intersection@>
@@ -133,10 +200,24 @@ CGAL_intersection(const CGAL_Ray_3<R>&ray, const CGAL_Plane_3<R> &plane)
 {
     return CGAL_intersection(plane,ray);
 }
+
+template <class R>
+bool
+CGAL_do_intersect(const CGAL_Plane_3<R> &p1, const CGAL_Ray_3<R> &p2);
+
+
+template <class R>
+inline bool
+CGAL_do_intersect(
+    const CGAL_Ray_3<R> &p1,
+    const CGAL_Plane_3<R> &p2)
+{
+    return CGAL_do_intersect(p2,p1);
+}
 @}
 
 First we compute the intersection of the supporting line of the ray with
-the plane. If
+the plane.
 
 @$@<3D Ray Plane intersection implementation@>==@{
 template <class R>
@@ -152,9 +233,27 @@ CGAL_intersection(const CGAL_Plane_3<R> &plane, const CGAL_Ray_3<R>&ray)
         else
             return CGAL_Object();
     }
-    if (line_intersection.ptr()->base() == 0)
+    if (line_intersection.is_empty())
         return line_intersection;
     return CGAL_make_object(ray);
+}
+
+template <class R>
+bool
+CGAL_do_intersect(const CGAL_Plane_3<R> &plane, const CGAL_Ray_3<R>&ray)
+{
+    const CGAL_Object line_intersection =
+            CGAL_intersection(plane, ray.supporting_line());
+    if (line_intersection.is_empty())
+        return false;
+    CGAL_Point_3<R> isp;
+    if (CGAL_assign(isp, line_intersection)) {
+        if (ray.collinear_has_on(isp))
+            return true;
+        else
+            return false;
+    }
+    return true;
 }
 @}
 
@@ -165,6 +264,13 @@ CGAL_intersection(const CGAL_Plane_3<R> &plane, const CGAL_Ray_3<R>&ray)
 template <class R>
 CGAL_Object
 CGAL_intersection(const CGAL_Plane_3<R> &plane1, const CGAL_Plane_3<R>&plane2);
+
+template <class R>
+inline bool
+CGAL_do_intersect(const CGAL_Plane_3<R> &plane1, const CGAL_Plane_3<R>&plane2)
+{
+    return ! CGAL_intersection(plane1, plane2).is_empty();
+}
 
 @}
 
