@@ -2,7 +2,7 @@
 #define CGAL_CONSTRAINED_TRIANGULATION_FACE_BASE_2_H
 
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names_2.h
+#include <CGAL/Triangulation_short_names_2.h>
 
 
 template <class Gt>
@@ -76,6 +76,8 @@ public:
     }
     return (result);
   }
+};
+
   
 #endif CGAL_CONSTRAINED_TRIANGULATION_FACE_BASE_2_H
 
