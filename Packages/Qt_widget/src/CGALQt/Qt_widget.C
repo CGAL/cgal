@@ -527,9 +527,9 @@ void Qt_widget::clear() {
             it!= qt_standard_layers.end(); it++)
 		      if((*it)->is_active())
 			      (*it)->draw();
+		emit(custom_redraw());
       unlock();
     }
-    emit(custom_redraw());
   };
   
   void Qt_widget::detach(Qt_widget_layer* s)
