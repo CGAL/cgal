@@ -74,8 +74,8 @@ namespace CGALi {
 
   template < class F >
   struct Swapper_1 {
-    typedef typename F::result_type result_type;
-    typedef typename F::Arity       Arity;
+    typedef typename F::result_type            result_type;
+    typedef typename Arity_traits< F >::Arity  Arity;
   
     Swapper_1(const F& f_) : f(f_) {}
   
@@ -106,8 +106,8 @@ namespace CGALi {
   
   template < class F >
   struct Swapper_2 {
-    typedef typename F::result_type result_type;
-    typedef typename F::Arity       Arity;
+    typedef typename F::result_type            result_type;
+    typedef typename Arity_traits< F >::Arity  Arity;
   
     Swapper_2(const F& f_) : f(f_) {}
   
@@ -138,8 +138,8 @@ namespace CGALi {
   
   template < class F >
   struct Swapper_3 {
-    typedef typename F::result_type result_type;
-    typedef typename F::Arity       Arity;
+    typedef typename F::result_type            result_type;
+    typedef typename Arity_traits< F >::Arity  Arity;
   
     Swapper_3(const F& f_) : f(f_) {}
   
@@ -170,8 +170,8 @@ namespace CGALi {
   
   template < class F >
   struct Swapper_4 {
-    typedef typename F::result_type result_type;
-    typedef typename F::Arity       Arity;
+    typedef typename F::result_type            result_type;
+    typedef typename Arity_traits< F >::Arity  Arity;
   
     Swapper_4(const F& f_) : f(f_) {}
   
@@ -635,8 +635,8 @@ protected:
 
 template < class F1, class F2, class F3 >
 struct Compose_shared_2 {
-  typedef typename F1::result_type result_type;
-  typedef typename F2::Arity       Arity;
+  typedef typename F1::result_type            result_type;
+  typedef typename Arity_traits< F2 >::Arity  Arity;
 
   Compose_shared_2(const F1& f1_, const F2& f2_, const F3& f3_)
   : f1(f1_), f2(f2_), f3(f3_)
@@ -1089,8 +1089,8 @@ protected:
 
 template < class F1, class F2, class F3, class F4 >
 struct Compose_shared_3 {
-  typedef typename F1::result_type result_type;
-  typedef typename F2::Arity       Arity;
+  typedef typename F1::result_type            result_type;
+  typedef typename Arity_traits< F2 >::Arity  Arity;
 
   Compose_shared_3(const F1& f1_, const F2& f2_,
                    const F3& f3_, const F4& f4_)
@@ -1142,7 +1142,7 @@ namespace CGALi {
   // msvc6 needs this, whysoever ...
   template < class T >
   struct CGAL__Wrap_type {
-    typedef typename T::Arity Arity;
+    typedef typename Arity_traits< T >::Arity Arity;
   };
 
   template < class F1, class F2, class F3, class F4 >
