@@ -24,8 +24,6 @@
 %|     Major surgery
 %-----------------------------------------------------------------------------
 
-\def\Ipe#1{\def\IPEfile{#1}\input{#1}}
-
 \renewcommand{\Re}{{\rm I\!\hspace{-0.025em} R}}
 
 \def\C{{\cal C}}
@@ -53,7 +51,7 @@ interior.
 
 \begin{figure}[h]
 \begin{ccTexOnly}
-\centerline{\includegraphics[width=7cm,keepaspectratio]{Planar_map/rose_14.eps}}
+\centerline{\includegraphics[width=7cm,keepaspectratio]{Planar_map/rose_14}}
 \end{ccTexOnly}
 
 \caption{A planar map induced by 14 circles of 53 faces
@@ -85,7 +83,7 @@ the base class are covered in chapter ~\ref{I1_ChapterTopologicalMap},
 
 \begin{figure}[h]
 \begin{ccTexOnly}
-\centerline{\includegraphics[keepaspectratio]{Planar_map/circ_dcel.eps}}
+\centerline{\includegraphics[keepaspectratio]{Planar_map/circ_dcel}}
 \end{ccTexOnly}
 
 \caption{A portion of the planar map depicted in Figure~\ref{PM_sec:rose_14} with some of the {\sc Dcel} records that represent it. $\tilde{f}$ is the unbounded face. The half-edge $e$ (and its twin $e'$) correspond to a circular arc that connects the vertices $v_1$ and $v_2$ and separates the face $f_1$ from $f_2$. The predecessors and successors of $e$ and $e'$ are also shown --- note that $e$, together with its predecessor and successor half-edges form a closed chain representing the boundary of $f_1$ (lightly shaded). Also note that the face $f_3$ (darkly shaded) has a more complicated structure as it contains a hole in its interior.}
