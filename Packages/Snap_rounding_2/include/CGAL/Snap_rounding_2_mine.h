@@ -1969,6 +1969,7 @@ const typename Snap_rounding_2<Rep_>::Polyline_const_iterator
       Snap_rounding_2<Rep_>::polylines_begin()
 {
   if(need_sr) {
+    hot_pixels_list.clear();
     need_sr = false;
     find_hot_pixels_and_create_kd_trees();
     iterate();
@@ -1982,6 +1983,7 @@ const typename Snap_rounding_2<Rep_>::Polyline_const_iterator
       Snap_rounding_2<Rep_>::polylines_end()
 {
   if(need_sr) {
+    hot_pixels_list.clear();
     need_sr = false;
     find_hot_pixels_and_create_kd_trees();
     iterate();
