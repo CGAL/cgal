@@ -27,6 +27,7 @@
 #ifndef CGAL_POLYHEDRON_OLD_POLYHEDRON_3_H
 #define CGAL_POLYHEDRON_OLD_POLYHEDRON_3_H 1
 
+#include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
 #include <CGAL/Halfedge_data_structure_decorator.h>
 
 #ifdef CGAL_REP_CLASS_DEFINED
@@ -630,7 +631,12 @@ private:
     // Hide some other functions of F.
     void      set_halfedge( Halfedge* h) { F::set_halfedge(h);}
 };
-template < class TR, class HDS >
+
+
+
+template < class TR, class HDS 
+    = CGAL::Halfedge_data_structure_polyhedron_default_3< typename TR::R>
+>
 class Polyhedron_3 {
     //
     // DEFINITION
