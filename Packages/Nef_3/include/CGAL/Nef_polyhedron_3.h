@@ -28,7 +28,6 @@
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_constructor.h>
 #include <CGAL/Nef_3/SNC_io_parser.h>
-#include <CGAL/Nef_3/SNC_ray_shooter.h>
 //#include <CGAL/Nef_3/SNC_walker.h>
 #ifdef CGAL_NEF3_VISUALIZOR
 #include <CGAL/Nef_3/SNC_visualizor_OGL.h>
@@ -80,13 +79,14 @@ class Nef_polyhedron_3_rep : public Ref_counted
   typedef CGAL::SNC_decorator<SNC_structure>           SNC_decorator;
   typedef CGAL::SNC_const_decorator<SNC_structure>     SNC_const_decorator;
   typedef CGAL::SNC_constructor<SNC_structure>         SNC_constructor;
-  typedef CGAL::SNC_ray_shooter<SNC_structure> SNC_ray_shooter; // DEPRECATED
   //typedef CGAL::SNC_walker<SNC_structure>              SNC_walker;
   typedef CGAL::SNC_io_parser<SNC_structure>           SNC_io_parser;
   typedef CGAL::SNC_point_locator<SNC_structure>       SNC_point_locator;
-  typedef CGAL::SNC_point_locator_by_spatial_subdivision<SNC_structure>
-    //typedef CGAL::SNC_point_locator_naive<SNC_structure>
-    SNC_point_locator_default;
+#ifdef CGAL_NEF3_POINT_LOCATOR_NAIVE
+  typedef CGAL::SNC_point_locator_naive<SNC_structure> SNC_point_locator_default;
+#else
+  typedef CGAL::SNC_point_locator_by_spatial_subdivision<SNC_structure> SNC_point_locator_default;
+#endif
 
 #ifdef CGAL_NEF3_VISUALIZOR
   typedef CGAL::SNC_visualizor_OGL<SNC_structure>      SNC_visualizor;
@@ -151,7 +151,7 @@ public:
   typedef enum { DEFAULT, NAIVE, WALKING, SPATIAL_SUBDIVISION  } Location_mode;
   /*{\Menum selection flag for the point location mode.}*/
 
-protected:
+protected: 
   struct AND { bool operator()(bool b1, bool b2) const { return b1&&b2; } };
   struct OR { bool operator()(bool b1, bool b2) const { return b1||b2; } };
   struct DIFF { bool operator()(bool b1, bool b2) const { return b1&&!b2; } };
@@ -162,7 +162,6 @@ protected:
   typedef typename Nef_rep::SNC_structure       SNC_structure;
   typedef typename Nef_rep::SNC_decorator       SNC_decorator;
   typedef typename Nef_rep::SNC_constructor     SNC_constructor;
-  typedef typename Nef_rep::SNC_ray_shooter SNC_ray_shooter; // DEPRECATED
   //typedef typename Nef_rep::SNC_walker          SNC_walker;
   typedef typename Nef_rep::SNC_io_parser       SNC_io_parser;
   typedef typename Nef_rep::SNC_point_locator   SNC_point_locator;
@@ -431,7 +430,7 @@ protected:
     P.delegate(bp);
   }
 
-  void dump(bool sorted = false, std::ostream& os = std::cerr) { SNC_io_parser::dump( snc(), os, sorted); }
+  void dump(bool sorted = false, std::ostream& os = std::cout) { SNC_io_parser::dump( snc(), os, sorted); }
 
   bool is_valid( bool verb = false, int level = 0) {
     // checks the combinatorial consistency.
@@ -1127,5 +1126,3 @@ std::istream& operator>>
 CGAL_END_NAMESPACE
 
 #endif //CGAL_NEF_POLYHEDRON_3_H
-
-
