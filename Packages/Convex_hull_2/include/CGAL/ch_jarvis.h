@@ -37,8 +37,8 @@ CGAL_BEGIN_NAMESPACE
 // {\it Precondition:} |start_p| and |stop_p| are extreme points with respect
 // to the points in the range [|first|,|last|) and |stop_p| is an element of
 // range [|first|,|last|).
-// {\sc traits}: uses |Traits::Point_2| $\equiv$ |Point|, |Traits::Equal_2| and 
-// |Traits::Less_rotate_ccw_2|.
+// {\sc traits}: uses |Traits::Point_2| $\equiv$ |Point|, |Traits::Equal_2|
+// and |Traits::Less_rotate_ccw_2|.
 template <class ForwardIterator, class OutputIterator, 
           class Point, class Traits>
 OutputIterator
@@ -62,8 +62,8 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
 
 
 // same as |convex_hull_2(first,last,result)|.
-// {\sc traits}: uses |Traits::Point_2|, |Traits::Less_rotate_ccw_2|, |Traits::Equal_2| and
-// |Traits::Less_xy_2|.
+// {\sc traits}: uses |Traits::Point_2|, |Traits::Less_rotate_ccw_2|,
+// |Traits::Equal_2| and |Traits::Less_xy_2|.
 template <class ForwardIterator, class OutputIterator, class Traits>
 OutputIterator
 ch_jarvis(ForwardIterator first, ForwardIterator last, 
