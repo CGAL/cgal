@@ -332,7 +332,7 @@ public:
   {
       TRACEN("initialize_structures ");
     
-    for ( event=vertices_begin(); event != vertices_end(); ++event )
+    for ( event=this->vertices_begin(); event != this->vertices_end(); ++event )
       event_Q.insert(event); // sorted order of vertices
 
     event_it = event_Q.begin();
@@ -350,7 +350,7 @@ public:
     }
 
 
-    Vertex_handle v_tmp = new_vertex(); point(v_tmp) = Point();
+    Vertex_handle v_tmp = this->new_vertex(); point(v_tmp) = Point();
     e_high = Base::new_halfedge_pair(event,v_tmp);
     e_low  = Base::new_halfedge_pair(event,v_tmp);
     // this are two symbolic edges just accessed as sentinels

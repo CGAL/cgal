@@ -168,6 +168,11 @@ protected:
   typedef typename Nef_rep::Slocator        Slocator;
   typedef typename Nef_rep::Locator         Locator;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Base::ptr;
+  using Base::is_shared;
+#endif
+
   Plane_map& pm() { return ptr()->pm_; } 
   const Plane_map& pm() const { return ptr()->pm_; } 
 

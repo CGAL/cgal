@@ -108,6 +108,13 @@ The type generalizes |Vertex_handle|.}*/
 enum { BEFORE = -1, AFTER = 1 };
 /*{\Menum insertion order labels.}*/
 
+
+
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Base::phds;
+#endif
+
 /*{\Mcreation 3}*/
 
 PM_decorator() : Base() {}
@@ -837,9 +844,9 @@ GenPtr& info(Face_handle f) const
 template <typename  HDS>
 void PM_decorator<HDS>::clone(const HDS& H) const
 {
-  CGAL_assertion(number_of_vertices()==0&&
-                 number_of_halfedges()==0&&
-                 number_of_faces()==0);
+  CGAL_assertion(this->number_of_vertices()==0&&
+                 this->number_of_halfedges()==0&&
+                 this->number_of_faces()==0);
 
   PM_const_decorator<HDS> DC(H);
   CGAL_assertion((DC.check_integrity_and_topological_planarity(),1));
@@ -896,7 +903,7 @@ void PM_decorator<HDS>::clone(const HDS& H) const
       // isolated vertices in the interior
     mark(fit2) = DC.mark(fit);
   }
-  CGAL_assertion((check_integrity_and_topological_planarity(),1));
+  CGAL_assertion((this->check_integrity_and_topological_planarity(),1));
 }
 
 #if ! defined(CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG)
@@ -906,9 +913,9 @@ template <typename LINKDA>
 void PM_decorator<HDS>::
 clone_skeleton(const HDS& H, const LINKDA& L) const
 {
-  CGAL_assertion(number_of_vertices()==0&&
-                 number_of_halfedges()==0&&
-                 number_of_faces()==0);
+  CGAL_assertion(this->number_of_vertices()==0&&
+                 this->number_of_halfedges()==0&&
+                 this->number_of_faces()==0);
 
   PM_const_decorator<HDS> DC(H);
   CGAL_assertion((DC.check_integrity_and_topological_planarity(),1));

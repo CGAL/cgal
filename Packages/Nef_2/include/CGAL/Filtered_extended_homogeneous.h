@@ -234,6 +234,11 @@ template <typename RT_>
 class Extended_point : public Handle_for< Extended_point_rep<RT_> > {
   typedef Extended_point_rep<RT_> Rep;
   typedef Handle_for< Rep >       Base;
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Base::ptr;
+#endif
+
 public:
   typedef typename Rep::DT DT;
   typedef RT_ RT;
@@ -243,17 +248,17 @@ public:
 
   Extended_point(const RT& x, const RT& y, const RT& w) :
     Base( Rep(x,y,w) )
-  { if (w < 0) ptr()->negate(); }
+  { if (w < 0) this->ptr()->negate(); }
   
   Extended_point(const SPolynomial<RT>& x, 
                  const SPolynomial<RT>& y, 
                  const RT& w) : Base( Rep(x,y,w) )
-  { if (w < 0) ptr()->negate(); }
+  { if (w < 0) this->ptr()->negate(); }
 
   Extended_point(const RT& mx, const RT& nx,
                  const RT& my, const RT& ny, const RT& w) :
     Base( Rep(SP(mx,nx), SP(my,ny), w) )
-  { if (w < 0) ptr()->negate(); }
+  { if (w < 0) this->ptr()->negate(); }
   
   Extended_point(const Extended_point<RT>& p) : Base(p) {}
   ~Extended_point() {}
@@ -282,7 +287,7 @@ public:
 
   bool is_standard() const { return (mx()==0)&&(my()==0); }
   Extended_point<RT> opposite() const 
-  { return Extended_point<RT>(-mx(),nx(),-my(),ny(),w()); }
+  { return Extended_point<RT>(-mx(),nx(),-my(),ny(),this->w()); }
 
 #ifdef KERNEL_CHECK
 typedef CGAL::Extended_homogeneous<RT_> CheckKernel;

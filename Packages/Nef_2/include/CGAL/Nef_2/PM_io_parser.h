@@ -50,6 +50,23 @@ class PM_io_parser : public PMDEC
   typedef typename PMDEC::Vertex_handle     Vertex_handle;
   typedef typename PMDEC::Halfedge_handle   Halfedge_handle;
   typedef typename PMDEC::Face_handle       Face_handle;
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Base::clear;
+  using Base::vertices_begin;
+  using Base::vertices_end;
+  using Base::halfedges_begin;
+  using Base::halfedges_end;
+  using Base::faces_begin;
+  using Base::faces_end;
+  using Base::number_of_vertices;
+  using Base::number_of_halfedges;
+  using Base::number_of_faces;
+  using Base::new_vertex;
+  using Base::new_face;
+  using Base::new_halfedge_pair_without_vertices;
+#endif
+
   std::istream& in;
   std::ostream& out;
   bool verbose;

@@ -60,6 +60,24 @@ typedef typename Base::Vertex_const_iterator Vertex_const_iterator;
 typedef typename Base::Halfedge_const_iterator Halfedge_const_iterator;
 typedef typename Base::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator;
 typedef typename Base::Halfedge_around_face_const_circulator Halfedge_around_face_const_circulator;
+
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Base::clear;
+  using Base::vertices_begin;
+  using Base::vertices_end;
+  using Base::halfedges_begin;
+  using Base::halfedges_end;
+  using Base::faces_begin;
+  using Base::faces_end;
+  using Base::number_of_vertices;
+  using Base::number_of_halfedges;
+  using Base::number_of_edges;
+  using Base::number_of_faces;
+  using Base::number_of_connected_components;
+  using Base::check_integrity_and_topological_planarity;
+#endif
+
 /*{\Mtext Iterators, handles, and circulators are inherited from 
 |PM_const_decorator|.}*/
 

@@ -129,8 +129,8 @@ Ray ray(Vertex_const_handle v) const
 
 bool is_frame_edge(Halfedge_const_handle e) const
 /*{\Mop returns true iff |e| is part of the infinimaximal frame.}*/
-{ return ( face(e) == faces_begin() ||
-           face(twin(e)) == faces_begin() ); }
+{ return ( face(e) == this->faces_begin() ||
+           face(twin(e)) == this->faces_begin() ); }
 
 }; // PM_explorer<PMCDEC,GEOM>
 
