@@ -838,7 +838,7 @@ Init(CurveInputIterator begin, CurveInputIterator end)
                 << xcurves.size() << " curves." << std::endl;
       )
 
-      for (std::list<X_curve_2>::iterator i = xcurves.begin();
+      for (typename std::list<X_curve_2>::iterator i = xcurves.begin();
 	   i != xcurves.end() ; ++i )
       {
 	m_xcurves.push_back(*i);
@@ -1669,7 +1669,8 @@ inline bool
 Sweep_line_tight_2<CurveInputIterator,SweepLineTraits_2,SweepEvent,CurveWrap>::
 VerticalSubCurveExists(const X_curve_2 &a)
 {
-  for (std::list<X_curve_2>::iterator iter = m_verticalSubCurves.begin() ;
+  for (typename std::list<X_curve_2>::iterator iter =
+         m_verticalSubCurves.begin() ;
        iter != m_verticalSubCurves.end() ; ++iter)
   {
     if (SimilarCurves(*iter, a)) 

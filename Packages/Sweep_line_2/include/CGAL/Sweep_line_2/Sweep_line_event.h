@@ -547,7 +547,7 @@ Sweep_line_event<SweepLineTraits_2, CurveWrap>::
 PrintVerticalXPoints()
 {
   std::cout << "Vertical intersection points for " << m_point << ":\n";
-  std::list<Point_2>::iterator iter = m_verticalCurveXPoints.begin();
+  typename std::list<Point_2>::iterator iter = m_verticalCurveXPoints.begin();
   while ( iter != m_verticalCurveXPoints.end() )
   {
     std::cout << "\t" << *iter << "\n";

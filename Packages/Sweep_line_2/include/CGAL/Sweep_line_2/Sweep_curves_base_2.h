@@ -993,27 +993,25 @@ public:
   typedef typename Intersection_point_node::Curve_node_iterator     
                                                 Curve_node_iterator;
   typedef typename Intersection_point_node::Curve_node_const_iterator  
-                                             Curve_node_const_iterator;
+                                                Curve_node_const_iterator;
 
 protected:
   typedef  std::pair<const Point,Point_plus>    pair_Point_Point_plus;
   typedef  std::pair<const Point,Intersection_point_node>  
-                                   pair_Point_Intersection_point_node; 
+                                        pair_Point_Intersection_point_node; 
   typedef  std::pair<const Curve_node,X_curve_plus>   
-                                          pair_Curve_node_X_curve_plus;
+                                                pair_Curve_node_X_curve_plus;
 
-  typedef less_point_xy<Point>                      Less_xy;
-  typedef less_curve_xy<Curve_node>                 Less_yx;
+  typedef less_point_xy<Point>                  Less_xy;
+  typedef less_curve_xy<Curve_node>             Less_yx;
   
 public:
-  typedef std::map<Point, Point_plus, less_point_xy<Point> >
-                                                  Vertices_points_plus;
+  typedef std::map<Point, Point_plus, Less_xy>  Vertices_points_plus;
 
-  typedef std::map<Point,Intersection_point_node,less_point_xy<Point> >
-                                                           Event_queue;
+  typedef std::map<Point,Intersection_point_node, Less_xy>
+                                                Event_queue;
 
-  typedef std::set<Curve_node, less_curve_xy<Curve_node> > 
-	                                                   Status_line; 
+  typedef std::set<Curve_node, Less_yx>         Status_line; 
   
   typedef std::list<X_curve>                    X_curve_list;
   typedef typename X_curve_list::iterator       X_curve_list_iterator;
@@ -1024,7 +1022,8 @@ public:
   typedef typename Event_queue::iterator        Event_queue_iterator;
   typedef typename Status_line::iterator        Status_line_iterator;
   
-  typedef std::list<Curve_node>::iterator       list_Curve_node_iterator;
+  typedef typename std::list<Curve_node>::iterator
+                                                list_Curve_node_iterator;
   
   Sweep_curves_base_2() : 
     traits(new Traits), use_delete_traits(true), intersection_exist_(false) {}
@@ -1053,9 +1052,8 @@ protected:
     
     // a container to hold the point_node curve nodes ordered as they
     // should on status.
-    typedef std::set<Curve_node, less_curve_xy<Curve_node> > 
-                                                  Local_status_line; 
-    typedef typename Local_status_line::iterator   Local_status_line_iterator; 
+    typedef std::set<Curve_node,Less_yx>         Local_status_line; 
+    typedef typename Local_status_line::iterator Local_status_line_iterator; 
     Less_yx            pred(traits);
     Local_status_line local_status(pred);   // reserve the size of the
                                             // point_node enamating curves.
