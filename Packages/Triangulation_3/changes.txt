@@ -1,6 +1,7 @@
 Version 1.93 (?? September 01)
 - Use CGAL/iterator.h.
 - New function TDS::create_face() to prepare for the merge TDS_2/TDS_3.
+- BCC doesn't have a working std::unique_copy, so change incident_vertices().
 
 Version 1.92 (25 September 01)
 - Various fixes.

@@ -555,22 +555,19 @@ public:
       else
 	  incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
 
-      std::vector<Vertex_handle> tmp_vertices;
-      tmp_vertices.reserve(dimension()*tmp_cells.size());
+      std::set<Vertex_handle> tmp_vertices;
 
       for(typename std::vector<Cell_handle>::iterator cit = tmp_cells.begin();
 	      cit != tmp_cells.end(); ++cit) {
 	  (*cit)->set_in_conflict_flag(0);
 	  // Put all incident vertices in tmp_vertices.
-	  // They are counted several times.
 	  for (int j=0; j<=dimension(); ++j)
 	      if ((*cit)->vertex(j) != v)
-	          tmp_vertices.push_back((*cit)->vertex(j));
+	          tmp_vertices.insert((*cit)->vertex(j));
       }
 
-      // Now sort and output the vertices.
-      std::sort(tmp_vertices.begin(), tmp_vertices.end());
-      std::unique_copy(tmp_vertices.begin(), tmp_vertices.end(), vertices);
+      // Now output the vertices.
+      std::copy(tmp_vertices.begin(), tmp_vertices.end(), vertices);
   }
 
   void
