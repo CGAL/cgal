@@ -6,9 +6,11 @@
 % | 14.05.1998   Lutz Kettner
 % +------------------------------------------------------------------------+
 
-\chapter{Circulators}
+\chapter{Handles and Circulators}
 
 \section*{Summary}
+
+\input{Handle_ref/handle_intro}
 
 The concept of iterators in \stl\ is tailored for linear sequences.
 In contrast, circular sequences occur naturally in many combinatorial
@@ -24,10 +26,11 @@ circulators as well as with iterators.
 
 \subsection*{Concepts}
 
-\ccRefIdfierPage{Circulator}\\
+\ccRefConceptPage{Handle}\\
+\ccRefConceptPage{Circulator}\\
 \ccc{Forward_circulator}\\
 \ccc{Bidirectional_circulator}\\
-\ccc{Random_access_circulator}
+\ccc{Random_access_circulator}\\
 
 \subsection*{Classes}
 
@@ -51,7 +54,6 @@ circulators as well as with iterators.
 
 \subsection*{Functions}
 \ccThree{random_access_iterator_tag}{}{page 999.}
-% \lcTex{ccAutoIndexingOff}
 \ccAutoIndexingOff
 \ccFunction{size_type        CGAL::circulator_size ( C c);}
     {\hfill \ccRefPage{CGAL::circulator_size}}\ccGlue
@@ -83,12 +85,16 @@ circulators as well as with iterators.
     {}\ccGlue
 \ccFunction{void CGAL::Assert_circulator_or_iterator ( IC i);}
     {}
-%\lcTex{ccAutoIndexingOn}
 \ccAutoIndexingOn
 
 \subsection*{Macros}
 
 \ccc{CGAL_For_all(i,j)}\hfill \ccRefPage{CGAL_For_all}\\
 \ccc{CGAL_For_all_backwards(i,j)}
+
+\begin{ccHtmlOnly}
+    <hr><h2>Reference Pages</h2>
+\end{ccHtmlOnly}
+
 
 %% EOF %%
