@@ -51,6 +51,16 @@ struct Static_filter_error
   Static_filter_error (const double &b, const double &e = 0, const int &d = 1)
       : _b(b), _e(e), _d(d) {}
 
+  static double ulp (const double &d)
+  {
+      // You are supposed to call this function with rounding towards
+      // +infinity, and on a positive number.
+      CGAL_assertion(d>=0);
+      double u = (d + CGAL_IA_MIN_DOUBLE) - d;
+      CGAL_assertion(u!=0);
+      return u;
+  }
+
   Sfe operator+ (const Sfe &f) const
   {
       CGAL_warning_msg(_d == f._d,
@@ -80,11 +90,14 @@ struct Static_filter_error
   Sfe& operator*=(const Sfe &f) { return *this = *this * f; }
   // Sfe& operator/=(const Sfe &f) { return *this = *this / f; }
 
+  double error()  const { return _e; }
+  double bound()  const { return _b; }
+  int    degree() const { return _d; }
+
   bool operator< (const Sfe &f) const
   {
-      double e;
-      // compare_SAF(*this, f, e); // needs to be changed.
-      std::cerr << "Static error is" << e << std::endl;
+      Sfe e = *this + f;
+      std::cerr << "Static error is" << e.error() << std::endl;
       abort();
       return false;
   }
@@ -93,20 +106,6 @@ struct Static_filter_error
   bool operator>=(const Sfe &f) const { return *this < f; }
   bool operator==(const Sfe &f) const { return *this < f; }
   bool operator!=(const Sfe &f) const { return *this < f; }
-
-  double error()  const { return _e; }
-  double bound()  const { return _b; }
-  int    degree() const { return _d; }
-
-  static double ulp (const double &d)
-  {
-      // You are supposed to call this function with rounding towards
-      // +infinity, and on a positive number.
-      CGAL_assertion(d>=0);
-      double u = (d + CGAL_IA_MIN_DOUBLE) - d;
-      CGAL_assertion(u!=0);
-      return u;
-  }
 
 private:
   // _b is a bound on the absolute value of the _double_ value of the
