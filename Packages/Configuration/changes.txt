@@ -1,3 +1,7 @@
+2.30
+- Fixed STLport include (not for VC7) as suggested by Radu.
+- Added CGAL_MSVC_DUMMY_ARGUMENT macro.
+
 2.29
 - Outsourced sun fixes to Sun_fixes.h.
 - Added fix to enable member templates in stdlib.
