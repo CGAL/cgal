@@ -1,5 +1,9 @@
 Changes done to the `Min_sphere_d_new' package
 
+Version 0.8 on 06-Sep-2000
+- adapted to "enhanced" QP solver
+- enabled partial exact/filtered pricing (except M$-VC++)
+
 Version 0.7.1 on 05-Sep-2000
 - no changes (problem with submission script)
 
