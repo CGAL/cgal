@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.68 on 20 February 2001
+- Don't submit tst_static_adaptatic.C, it's not ready yet.
+- Couple of fixes in the test-suite.
+
 Version 4.67 on 15 February 2001
 - test
 
