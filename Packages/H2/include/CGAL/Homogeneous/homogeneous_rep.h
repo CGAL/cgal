@@ -78,34 +78,6 @@ class Homogeneous_base
 
     typedef PointHd< FT, RT>                         Point_d;
 
-    typedef CGAL::Handle_for< Threetuple<RT> >       Point_handle_2;
-    typedef CGAL::Handle_for< Threetuple<RT> >       Vector_handle_2;
-    typedef CGAL::Handle_for< Threetuple<RT> >       Direction_handle_2;
-    typedef CGAL::Handle_for< Twotuple<PointH2<R_> > > Ray_handle_2;
-    typedef CGAL::Handle_for< Threetuple< Point_2 > >  Triangle_handle_2;
-    typedef CGAL::Handle_for< triple<Point_2, FT, Orientation> >
-	                                             Circle_handle_2;
-    typedef CGAL::Handle_for< Twotuple<PointH2<R_> > > Iso_rectangle_handle_2;
-    typedef CGAL::Handle_for< Threetuple<RT> >       Line_handle_2;
-    typedef CGAL::Handle_for< Twotuple<PointH2<R_> > > Segment_handle_2;
-    typedef CGAL::Handle_for_virtual< Aff_transformation_rep_baseH2<R_> >
-			                           Aff_transformation_handle_2;
-
-    typedef CGAL::Handle_for< Fourtuple<RT> >        Point_handle_3;
-    typedef CGAL::Handle_for< Fourtuple<RT> >        Vector_handle_3;
-    typedef CGAL::Handle_for< Fourtuple<RT> >        Direction_handle_3;
-    typedef CGAL::Handle_for< Fourtuple<RT> >        Plane_handle_3;
-    typedef CGAL::Handle_for< std::pair<Point_3, Direction_3> > Ray_handle_3;
-    typedef CGAL::Handle_for< std::pair<Point_3, Direction_3> > Line_handle_3;
-    typedef CGAL::Handle_for< triple<Point_3, FT, Orientation> >
-	                                             Sphere_handle_3;
-    typedef CGAL::Handle_for< Fourtuple<Point_3> >   Tetrahedron_handle_3;
-    typedef CGAL::Handle_for< Twotuple<PointH3<R_> > >  Segment_handle_3;
-    typedef CGAL::Handle_for< Threetuple<PointH3<R_> > >  Triangle_handle_3;
-    typedef CGAL::Handle_for< Twotuple<PointH3<R_> > > Iso_cuboid_handle_3;
-    typedef CGAL::Handle_for_virtual< Aff_transformation_rep_baseH3<R_> >
-			                           Aff_transformation_handle_3;
-
 };
 
 template <class RT_, class FT_ = Quotient<RT_> >
@@ -181,6 +153,37 @@ class Homogeneous
     typedef CGAL::Point_d< R >                     Point_d;
 
     typedef Data_accessorH2<R>                     Data_accessor_2;
+
+    typedef CGAL::Handle_for< Threetuple<RT> >       Point_handle_2;
+    typedef CGAL::Handle_for< Threetuple<RT> >       Vector_handle_2;
+    typedef CGAL::Handle_for< Threetuple<RT> >       Direction_handle_2;
+    typedef CGAL::Handle_for< Twotuple<Point_2_base> > Ray_handle_2;
+    typedef CGAL::Handle_for< Threetuple<Point_2_base> >  Triangle_handle_2;
+    typedef CGAL::Handle_for< triple<Point_2_base, FT, Orientation> >
+	                                             Circle_handle_2;
+    typedef CGAL::Handle_for< Twotuple<Point_2> >
+	                                             Iso_rectangle_handle_2;
+    typedef CGAL::Handle_for< Threetuple<RT> >       Line_handle_2;
+    typedef CGAL::Handle_for< Twotuple<Point_2_base> > Segment_handle_2;
+    typedef CGAL::Handle_for_virtual< Aff_transformation_rep_baseH2<R> >
+			                           Aff_transformation_handle_2;
+
+    typedef CGAL::Handle_for< Fourtuple<RT> >        Point_handle_3;
+    typedef CGAL::Handle_for< Fourtuple<RT> >        Vector_handle_3;
+    typedef CGAL::Handle_for< Fourtuple<RT> >        Direction_handle_3;
+    typedef CGAL::Handle_for< Fourtuple<RT> >        Plane_handle_3;
+    typedef CGAL::Handle_for< std::pair<Point_3_base, Direction_3_base> >
+	Ray_handle_3;
+    typedef CGAL::Handle_for< std::pair<Point_3_base, Direction_3_base> >
+	Line_handle_3;
+    typedef CGAL::Handle_for< triple<Point_3_base, FT, Orientation> >
+	                                             Sphere_handle_3;
+    typedef CGAL::Handle_for< Fourtuple<Point_3_base> >   Tetrahedron_handle_3;
+    typedef CGAL::Handle_for< Twotuple<Point_3_base> >  Segment_handle_3;
+    typedef CGAL::Handle_for< Threetuple<Point_3_base> >  Triangle_handle_3;
+    typedef CGAL::Handle_for< Twotuple<Point_3_base> > Iso_cuboid_handle_3;
+    typedef CGAL::Handle_for_virtual< Aff_transformation_rep_baseH3<R> >
+			                           Aff_transformation_handle_3;
 
     static
     FT
