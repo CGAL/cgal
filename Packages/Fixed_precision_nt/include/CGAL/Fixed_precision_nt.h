@@ -13,8 +13,8 @@
 //
 // file          : include/CGAL/Fixed_precision_nt.h
 // package       : 
-// revision      : 
-// revision_date : 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Olivier Devillers <Olivivier.Devillers@sophia.inria.fr>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
