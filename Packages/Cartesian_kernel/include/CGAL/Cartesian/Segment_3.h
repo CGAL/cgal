@@ -24,7 +24,6 @@
 
 #include <CGAL/Cartesian/redefine_names_3.h>
 #include <CGAL/Twotuple.h>
-#include <CGAL/Cartesian/distance_computations_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
