@@ -7,13 +7,6 @@
 typedef CGAL::Quotient<int>                             NT;
 typedef CGAL::Cartesian<NT>                             Kernel;
 typedef CGAL::Arr_segment_cached_traits_2<Kernel>       Traits;
-typedef Traits::Segment_cached_2                        Segment_cached_2;
-
-std::ostream & operator<<(std::ostream & os, const Segment_cached_2 & seg)
-{
-  os << static_cast<Kernel::Segment_2>(seg);
-  return (os);
-}
 
 int main(int argc, char * argv[])
 {
