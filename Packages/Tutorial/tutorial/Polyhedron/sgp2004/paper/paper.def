@@ -13,17 +13,7 @@
 % ------------------------------------------------------------------------
 \newcommand{\CodeFmt}[1]{{\small\texttt{#1}}}
 
-\def\kernel{\CodeFmt{Kernel}}
-
-\def\cgalpoly{\CodeFmt{CGAL::Polyhedron\_3}}
-\def\poly{\CodeFmt{Polyhedron\_3}}
-\def\polytrait{\CodeFmt{PolyhedronTraits\_3}}
-\def\polyitem{\CodeFmt{PolyhedronItems\_3}}
-\def\polybuilder{\CodeFmt{Polyhedron\_incremental\_builder\_3}}
-
-\def\cgalhds{\CodeFmt{CGAL::HalfedgeDS}}
-\def\hds{\CodeFmt{HalfedgeDS}}
-\def\hdsitem{\CodeFmt{PolyhedronItems}}
+\def\cgalpoly{\CodeFmt{Polyhedron\_3}}
 
 
 % ANDY -------------------------------------------------------------------
