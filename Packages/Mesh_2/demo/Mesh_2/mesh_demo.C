@@ -396,11 +396,12 @@ public:
 
       // MENUS
       QPopupMenu *pmMesh = new QPopupMenu(this);
-      menuBar()->insertItem("&Mesh", pmMesh);
+      menuBar()->insertItem("&File", pmMesh);
       pmMesh->insertItem("&Refine mesh", this, SLOT(refineMesh()),
 			 CTRL+Key_R );
       pmMesh->insertItem("&Clear mesh", this, SLOT(clearMesh()),
 			 CTRL+Key_C );
+      pmMesh->insertItem("Clear seeds", this, SLOT(clearSeeds()));
       pmMesh->insertItem("&Open constrained triangulation...", this,
 			 SLOT(openTriangulation()),
 			 CTRL+Key_O );
@@ -511,9 +512,11 @@ public slots:
 	    }
 	  else // get_point is active
 	    {
-	      seeds->clear();
 	      switch_to_triangulation();
 	      triangulation->insert(p);
+	      switch_to_mesh();
+	      mesh->mark_facets(seeds->begin(), seeds->end());
+	      is_mesh_initialized = false;
 	    }
       else
 	if (CGAL::assign(poly,obj))
@@ -523,6 +526,9 @@ public slots:
 		it!=poly.edges_end();
 		it++)
 	      triangulation->insert((*it).source(),(*it).target());
+	    switch_to_mesh();
+	    mesh->mark_facets(seeds->begin(), seeds->end());
+	    is_mesh_initialized = false;
 	  }
       widget->redraw();
     }
@@ -638,6 +644,13 @@ public slots:
       seeds->clear();
       is_mesh_initialized=false;
       switch_to_triangulation();
+      widget->redraw();
+    }
+
+  void clearSeeds()
+    {
+      seeds->clear();
+      mesh->mark_facets(seeds->begin(), seeds->end());
       widget->redraw();
     }
 
