@@ -1,3 +1,6 @@
+Version 1.92 (25 September 01)
+- Various fixes.
+
 Version 1.91 (21 September 01)
 - small fixes.
 - doc updates.
