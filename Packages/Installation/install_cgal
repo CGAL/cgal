@@ -657,14 +657,8 @@ _microsoft_vc_version()
 # ($* is full path to executable)
 _sunpro_version()
 {
-    _tmp="`$* -V 2>&1 | ${_fgrep} \"C++\" | ${_awk} '{print $9}'`"
-    if [ -n "${_tmp}" ]; then
-	# sunpro 4.2
-	${_printf} "%s" "${_tmp}" 
-    else
-	# sunpro 4.1
-	$* -V 2>&1 | ${_fgrep} "C++" | ${_awk} '{print $NF}'
-    fi
+    ${_printf} "%s" \
+      `$* -V 2>&1 | ${_awk} 'BEGIN {RS="+"} $1 ~ /[0-9.]+/ {print $1}'`
 }
 
 # give version numbers for KAI C++ (KCC)
