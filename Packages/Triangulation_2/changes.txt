@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+14 April 2004 Andreas Fabri
+- Made Triangulation_data_structure_2::create_face more efficient
+
 13 April 2004 Mariette Yvinec
 - fixed test_conflict in Delaunay and Contrained_Delaunay.
   It was not working when the query point was located 
