@@ -23,6 +23,15 @@
 #ifndef CGAL_ARITHMETIC_FILTER_DISPATCH_H
 #define CGAL_ARITHMETIC_FILTER_DISPATCH_H
 
+#if !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_BUILTIN_H )
+#include <CGAL/Arithmetic_filter/predicates/builtin.h>
+#endif
+
+#if defined( CGAL_PREDICATES_SIGN_OF_DETERMINANT_H ) && \
+       !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_SIGN_OF_DETERMINANT_H )
+#include <CGAL/Arithmetic_filter/predicates/sign_of_determinant.h>
+#endif
+
 #if defined( CGAL_PREDICATES_ON_FTC2_H ) && \
    !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC2_H )
 #include <CGAL/Arithmetic_filter/predicates_on_ftC2.h>
@@ -31,11 +40,6 @@
 #if defined( CGAL_PREDICATES_ON_FTC3_H ) && \
        !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC3_H )
 #include <CGAL/Arithmetic_filter/predicates_on_ftC3.h>
-#endif
-
-#if defined( CGAL_PREDICATES_SIGN_OF_DETERMINANT_H ) && \
-       !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_SIGN_OF_DETERMINANT_H )
-#include <CGAL/Arithmetic_filter/predicates/sign_of_determinant.h>
 #endif
 
 #if defined( CGAL_REGULAR_TRIANGULATION_FTC2_H ) && \

@@ -23,6 +23,7 @@
 #ifndef CGAL_ARITHMETIC_FILTER_STATIC_INFOS_DISPATCH_H
 #define CGAL_ARITHMETIC_FILTER_STATIC_INFOS_DISPATCH_H
 
+#include <CGAL/Arithmetic_filter/static_infos/predicates/builtin.h>
 #include <CGAL/Arithmetic_filter/static_infos/predicates/sign_of_determinant.h>
 
 #include <CGAL/Arithmetic_filter/static_infos/predicates_on_ftC2.h>
