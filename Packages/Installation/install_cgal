@@ -52,8 +52,9 @@ INSTALL_VERBOSE=''
 CGAL_CONFIG_PREFIX='CGAL_CFG_'
 
 # ---------------------------------------------
-# set to empty string, if you want to disable testsuite
-INTERNAL_RELEASE='y'
+# will be automatically set later to 'y' if the test/ directory is present,
+# which will enable the test-suite menu.
+INTERNAL_RELEASE=''
 
 # ---------------------------------------------
 # set to non-empty string, if MIPSPRO 64 compiler
@@ -702,6 +703,13 @@ set_dirs_dependant_on_cgal_dir()
 
     # temporary file for confidence tests
     TMP_CXX_FILE=./tmp_test
+
+    # detect if we are an internal release
+    if [ -d $CGAL_TEST_DIR ]; then
+        INTERNAL_RELEASE='y'
+    else
+        INTERNAL_RELEASE=''
+    fi
 }
 
 # initialize once

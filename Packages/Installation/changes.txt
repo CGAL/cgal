@@ -1,4 +1,8 @@
 18 December 2004 Sylvain Pion
+- install_cgal now automatically recognizes internal releases from the
+  existence of "test/", no need to modify it by hand.
+
+18 December 2004 Sylvain Pion
 - Rename makefile_Qt and makefile_Core simply "makefile".
 
 =============================== CGAL 3.1 ================================
