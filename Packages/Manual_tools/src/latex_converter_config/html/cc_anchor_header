@@ -30,6 +30,71 @@
 /* Is used to count nesting levels during PARAMMODE */
 int nesting;
 
+/* find the next occurance of c in s or the '\0' character */
+const char* find_char( const char* s, char c) {
+    while ( *s && *s != c)
+	++s;
+    return s;
+}
+
+/* reverse find of the prev occurance of c in s or the begining position p */
+const char* rfind_char( const char* s, const char* p, char c) {
+    while ( s != p && *s != c)
+	--s;
+    return s;
+}
+
+/* print a HTML tag up to and including the '>' */
+void print_tag( const char* s) {
+    while ( *s && *s != '>') {
+	fputc( *s, stdout);
+	++s;
+    }
+    if ( *s)
+	fputc( *s, stdout);
+}   
+
+/* wraps an anchor around a body. Checks for font changing tags. */
+void wrap_anchor( const char* url, const char* body) {
+    const char* tag_begin = 0;
+    const char* tag_end = 0;
+    const char* s = find_char( body, '<');
+    if ( *s) {
+	++s;
+	if ( *s == '/')
+	    tag_begin = s + 1;
+    }
+    s = find_char( body, '\0');
+    --s;
+    s = rfind_char( s, body, '<');
+    if ( *s ==  '<') {
+	++s;
+	if ( *s != '/')
+	    tag_end = s;
+    }
+    if ( tag_begin) {
+	fputs( "</", stdout);
+	print_tag( tag_begin);
+    }
+    fputs( "<A HREF=\"", stdout);
+    fputs( url, stdout);
+    fputs( "\">", stdout);
+    if ( tag_begin) {
+	fputc( '<', stdout);
+	print_tag( tag_begin);
+    }
+    fputs( body, stdout);
+    if ( tag_end) {
+	fputs( "</", stdout);
+	print_tag( tag_end);
+    }
+    fputs( "</A>", stdout);
+    if ( tag_end) {
+	fputc( '<', stdout);
+	print_tag( tag_end);
+    }
+}
+
 %}
 
 /* One '<' has been detected that starts a template parameter list.  */
@@ -43,6 +108,9 @@ int nesting;
 /* Avoid substitutions while within an HTML Anchor. */
 %x ANCHORMODE
 
+/* Avoid substitutions while within a Heading. */
+%x HEADINGMODE
+
 letter          [a-zA-Z]
 noletter        [^a-zA-Z]
 digit           [0-9]
@@ -51,6 +119,8 @@ noCCchar        [^a-zA-Z0-9_]
 word            {letter}+
 CCidfier        ({CCletter}({CCletter}|{digit})*)
 ws              [ \t\n\r]*
+par             {ws}("<P>"{ws})*
+glue            {ws}("<P>"{ws})*"<!GLUE>"{ws}("<P>"{ws})*
 
 %%
 
@@ -78,17 +148,47 @@ ws              [ \t\n\r]*
                        }
 <PARAMMODE>.           {   yymore(); }
 
-"<HEAD>"(.|[\n])*"</HEAD>" { ECHO; /* Avoid substitutions in the head */ }
+"<HEAD>"(.|[\n])*"</HEAD>"     { ECHO; /* Avoid substitutions in the head */ }
 
-"<"[aA][^0-9a-zA-Z]        { BEGIN( ANCHORMODE); ECHO;}
-<ANCHORMODE>"</"[aA]">"    { BEGIN( INITIAL); ECHO;}
-<ANCHORMODE>.              { ECHO;}
+"<"[aA][^0-9a-zA-Z]            { BEGIN( ANCHORMODE); ECHO;}
+<ANCHORMODE>"</"[aA]">"        { BEGIN( INITIAL); ECHO;}
+<ANCHORMODE>.                  { ECHO;}
 
-"<"                        { BEGIN( TAGMODE); ECHO;}
-<TAGMODE>">"               { BEGIN( INITIAL); ECHO;}
-<TAGMODE>.                 { ECHO;}
+"<"[hH][1-6]">"                { BEGIN( HEADINGMODE); ECHO;}
+<HEADINGMODE>"</"[hH][1-6]">"  { BEGIN( INITIAL); ECHO;}
+<HEADINGMODE>.                 { ECHO;}
+
+"<"                            { BEGIN( TAGMODE); ECHO;}
+<TAGMODE>">"                   { BEGIN( INITIAL); ECHO;}
+<TAGMODE>.                     { ECHO;}
 
 
-"</TABLE><!3>"[ \t\n]*"<!3><TABLE"[^>]*">"    { ; /* smooth adjacent tables */}
-"</TABLE><!2>"[ \t\n]*"<!2><TABLE"[^>]*">"    { ; /* smooth adjacent tables */}
-"<!scramble>"                                 { ; /* better readability     */}
+"</TABLE><!3>"{glue}"<!3><TABLE"[^>]*">"    { ; /* smooth adjacent tables */}
+"</TABLE><!2>"{glue}"<!2><TABLE"[^>]*">"    { ; /* smooth adjacent tables */}
+"</TABLE><!".">"{glue}"<!"."><TABLE"        { /* smooth other tables   */
+                               fputs( "</TABLE>\n        <TABLE", stdout);
+}
+"</TABLE><!3>"{par}"<!3><TABLE"[^>]*">"     {
+                               /* smooth adjacent tables */
+                               fputs( "<TR><TD><BR></TD></TR>", stdout);
+}
+"</TABLE><!2>"{par}"<!2><TABLE"[^>]*">"    {
+                               /* smooth adjacent tables */
+                               fputs( "<TR><TD><BR></TD></TR>", stdout);
+}
+"</TABLE><!".">"{par}"<!"."><TABLE"        { /* smooth other tables   */
+                               fputs( "</TABLE>\n<P>\n\n        <TABLE", stdout);
+}
+{ws}"<P>"{ws}("<P>"{ws})+  {   /* Reduce <P>'s to one <P> */
+                               fputs( "\n<P>\n\n", stdout);
+}
+{ws}"<P>"{ws}              {   /* Pretty print single <P>'s */
+                               fputs( "\n<P>\n\n", stdout);
+}
+{ws}"<BR>"{ws}             {   /* Pretty print single <BR>'s */
+                               fputs( "<BR>\n\n", stdout);
+}
+"<!GLUE>"                  { ; /* remove superfluous glues */ }
+"<!3>"                     { ; /* remove superfluous table hints */ }
+"<!2>"                     { ; /* remove superfluous table hints */ }
+
