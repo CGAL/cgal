@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
     
       f >> x0 >> y0 >> r2;
     
-      Circle      circle (Point (x0, y0), r2);
+      Circle      circle (Point (x0, y0), r2, CGAL::CLOCKWISE);
 
       if (type == 'c' || type == 'C')
       {
@@ -196,10 +196,14 @@ int main(int argc, char* argv[])
   f.close();
 
   // Draw the arrangement.
-  if (max_y - min_y < max_x - max_y)
-    W.init (min_x - 1, max_x + 1, min_y - 1);
-  else
-    W.init (min_x - 1, min_x + (max_y - min_y) +  1, min_y - 1);
+  double  diff_x = max_x - min_x;
+  double  diff_y = max_y - min_y;
+  double  max_diff = (diff_x > diff_y) ? diff_x : diff_y;
+  double  margin_percentage = 8;
+  double  margin = (max_diff * margin_percentage) / 100.0;
+
+  W.init (min_x - margin, max_x + max_diff + 2*margin,
+	  min_y - margin);
 
   W.set_redraw(redraw);
   W.set_mode(leda_src_mode);
