@@ -24,7 +24,7 @@ following predicates and operations.
 
 \ccTypes
 
-\ccNestedType{Sphere}{typedefs to some class representing a sphere.
+\ccNestedType{Sphere}{is a typedef to to some class representing a sphere.
 (The package will compute the minsphere of spheres of type
 \ccc{Sphere}.)}
 
@@ -51,22 +51,23 @@ square-roots).  So even in cases where
 \ccc{Number_type_traits<FT>::Has_sqrt} is \ccc{Tag_true}, it might be
 worth setting \ccc{Use_square_roots} to \ccc{Tag_false}.}
 
-\ccNestedType{Algorithm}{selects the method to compute the minsphere.  It must typedef to either \ccc{CGAL::Default_algorithm},
-\ccc{CGAL::LP_algorithm} or \ccc{CGAL::Farthest_first_heuristic}.  The
-recommended choice is the first, which is a synonym to the one
-of the other two methods which we consider ``the best in
-practice.''  In case of \ccc{CGAL::LP_algorithm}, the minsphere will be
-computed using the LP-algorithm~\cite{msw-sblp-92}, which has (for
-fixed dimension~$d$) linear maximal expected running time (in the
-number of operations on the number type \ccc{FT}).  In case of
-\ccc{CGAL::Farthest_first_heuristic}, a simple heuristic will be used
-instead which seems to work fine in practice, but comes without a
-guarantee on the running time.  For an inexact number type \ccc{FT} we
-strongly recommend \ccc{CGAL::Farthest_first_heuristic} since it
-handles most degeneracies in a satisfying manner.  Notice that
-this compile-time flag is taken as a hint only.  Should one of the
-methods not be available anymore in a future release, then the default
-algorithm will be chosen.}
+\ccNestedType{Algorithm}{selects the method to compute the minsphere.
+  It must typedef to either \ccc{CGAL::Default_algorithm},
+  \ccc{CGAL::LP_algorithm} or \ccc{CGAL::Farthest_first_heuristic}.
+  The recommended choice is the first, which is a synonym to the one
+  of the other two methods which we consider ``the best in practice.''
+  In case of \ccc{CGAL::LP_algorithm}, the minsphere will be computed
+  using the LP-algorithm~\cite{msw-sblp-92}, which in our
+  implementation has maximal expected running time $O(2^d n)$ (in the
+  number of operations on the number type \ccc{FT}).  In case of
+  \ccc{CGAL::Farthest_first_heuristic}, a simple heuristic will be
+  used instead which seems to work fine in practice, but comes without
+  a guarantee on the running time.  For an inexact number type
+  \ccc{FT} we strongly recommend \ccc{CGAL::Farthest_first_heuristic}
+  since it handles most degeneracies in a satisfying manner.  Notice
+  that this compile-time flag is taken as a hint only.  Should one of
+  the methods not be available anymore in a future release, then the
+  default algorithm will be chosen.}
 
 \ccAccessFunctions
 
@@ -78,8 +79,8 @@ Sphere& s);}{ returns the radius of sphere \ccc{s}.
  greater or equal to~$0$.}
 
 \ccMemberFunction{ Coordinate_iterator center_coordinates_begin(const
-Sphere& s);}{ returns an iterator referring to the first coordinate of
-the center of \ccc{s}.}
+  Sphere& s);}{ returns an iterator referring to the first Cartesian
+  coordinate of the center of \ccc{s}.}
 
 \ccMemberFunction{ Coordinate_iterator center_coordinates_end(const
 Sphere& s);}{ returns the corresponding past-the-end iterator.}

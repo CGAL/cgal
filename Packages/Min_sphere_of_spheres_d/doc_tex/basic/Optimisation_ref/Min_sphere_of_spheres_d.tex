@@ -20,15 +20,16 @@
 % -----------------------------------------------------------------------------
 \ccDefinition
 
-An object of the class \ccRefName\ is the unique sphere of smallest
-volume enclosing a finite (multi)set of spheres in $d$-dimensional
-Euclidean space $\E_d$. For a set $S$ of spheres we denote by $ms(S)$
-the smallest sphere that contains all spheres of $S$; we call $ms(S)$
-the \emph{minsphere} of $S$. $ms(S)$ can be degenerate, i.e.,
-$ms(S)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$, if
-$S=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ and $ms(S)=\{s\}$, if
-$S=\{s\}$.  Any sphere in $S$ may be degenerate, too, i.e., any sphere
-from $S$ may be a point.
+An object of the class \ccRefName\ is a data structure that computes
+the unique sphere of smallest volume enclosing a finite set of spheres
+in $d$-dimensional Euclidean space $\E_d$.  For a set $S$ of spheres
+we denote by $ms(S)$ the smallest sphere that contains all spheres of
+$S$; we call $ms(S)$ the \emph{minsphere} of $S$. $ms(S)$ can be
+degenerate, i.e., $ms(S)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$,
+if $S=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ and $ms(S)=\{s\}$,
+if $S=\{s\}$.  Any sphere in $S$ may be degenerate, too, i.e., any
+sphere from $S$ may be a point.  Also, $S$ may contain several
+copies of the same sphere.
 
 An inclusion-minimal subset $R$ of $S$ with $ms(R)=ms(S)$ is called a
 \emph{support set} for $ms(S)$; the spheres in $R$ are the
@@ -45,7 +46,7 @@ case when the center coordinates and radii of the input balls are
 floating-point numbers.  This specialized algorithm uses
 floating-point arithmetic only, is very fast and especially tuned for
 stability and robustness.  Still, it's output may be incorrect in some
-(rare) cases.
+(rare) cases; termination is guaranteed.
 %
 % We provide two versions of the algorithm, one computing
 % the exact minsphere (using exact arithmetic) and one which finds the
@@ -84,15 +85,16 @@ easy to work with $d$-dimensional spheres of type
 % kf.
 %\ccSetTwoColumns{Min_sphere_d<Traits>:: Support_point_iterator}{}
 
-\ccNestedType{Sphere}{typedefs to \ccc{Traits::Sphere}.}
+\ccNestedType{Sphere}{is a typedef to to \ccc{Traits::Sphere}.}
 
-\ccNestedType{FT}{typedefs to \ccc{Traits::FT}.}
+\ccNestedType{FT}{is a typedef to to \ccc{Traits::FT}.}
 
 \ccNestedType{Result}{is the type of the radius and of the center
-coordinates of the computed minsphere: When \ccc{FT} is an inexact
-number type (like \ccc{double}, for instance), then \ccc{Result} is
-simply \ccc{FT}.  However, when \ccc{FT} is an exact number type, then
-\ccc{Result} typedefs to a subclass of class \ccc{std::pair<FT,FT>}.}
+  coordinates of the computed minsphere: When \ccc{FT} is an inexact
+  number type (like \ccc{double}, for instance), then \ccc{Result} is
+  simply \ccc{FT}.  However, when \ccc{FT} is an exact number type,
+  then \ccc{Result} is a typedef to to a derived class of class
+  \ccc{std::pair<FT,FT>}.}
 
 \ccNestedType{Algorithm}{is either \ccc{CGAL::LP_algorithm} or
 \ccc{CGAL::Farthest_first_heuristic}.  As is described in the
@@ -190,7 +192,7 @@ $(a,b)$ describing the real number $a+b\sqrt{t}$, where $t$ is the
 minsphere's discriminant.  \ccPrecond \ccVar\ is not empty.}
 
 \ccMemberFunction{Center_coordinate_iterator center_end( ) const;}{
-Returns the corresponding past-the-end iterator.}
+returns the corresponding past-the-end iterator.}
 
 % -----------------------------------------------------------------------------
 \ccPredicates
@@ -340,13 +342,17 @@ with interfaces of other classes.}
 We implement two algorithms, the LP-algorithm~\cite{msw-sblp-92} and a
 heuristic.  As described in the documentation of concept
 \ccc{MinSphereOfSpheresTraits}, each has its advantages and
-disadvantages: The LP-algorithm has (for fixed dimension~$d$) linear
-maximal expected running time (in the number of operations on the
-number type \ccc{FT}), while the heuristic comes without any
-complexity guarantee.  On the other hand, the LP-algorithm is, for
-inexact number types \ccc{FT}, much worse at handling degeneracies and
-should therefore not be used for approximate computation.  (For exact
-number types \ccc{FT}, both methods handle all kinds of degeneracies.)
+disadvantages: Our implementation of the LP-algorithm has maximal
+expected running time $O(2^d n)$, while the heuristic comes without
+any complexity guarantee.  In particular, the LP-algorithm runs in
+linear time for fixed dimension~$d$. (These running times hold for the
+arithmetic model, so they count the overall number of operations on
+the number type \ccc{FT}.)
+
+On the other hand, the LP-algorithm is, for inexact number types
+\ccc{FT}, much worse at handling degeneracies and should therefore not
+be used for approximate computation.  (For exact number types
+\ccc{FT}, both methods handle all kinds of degeneracies.)
 
 Currently, we require \ccc{Traits::FT} to be either an exact number
 type or \ccc{double}; other inexact number types are not supported at

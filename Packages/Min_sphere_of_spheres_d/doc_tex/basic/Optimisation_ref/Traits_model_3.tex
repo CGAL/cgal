@@ -25,7 +25,12 @@ spheres.
 \ccIsModel
 \ccc{MinSphereOfSpheresTraits}
 
-\ccParameters The template parameters of class
+\ccParameters
+The last two template parameters, \ccc{UseSqrt} and \ccc{Algorithm},
+have default arguments, namely \ccc{CGAL::Tag_false} and
+\ccc{CGAL::Default_algorithm}, respectively.
+
+ The template parameters of class
 \ccc{Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>} must
 fulfill the following requirements:
 
@@ -45,7 +50,7 @@ requirements of type \ccc{Use_square_roots} of concept
 \ccTypes
 In addition to the types required by the concept
 \ccc{MinSphereOfSpheresTraits}, this model also defines the types
-\ccc{Wt} and \ccc{Pt}.  Here's the complete list of defined types:
+\ccc{Weight} and \ccc{Point}.  Here's the complete list of defined types:
 
 \ccNestedType{FT}{}
 
@@ -53,21 +58,22 @@ In addition to the types required by the concept
 
 \ccNestedType{Algorithm}{}
 
-\ccNestedType{Wt}{typedefs to the template parameter \ccc{FT}}
+\ccNestedType{Weight}{is a typedef to to the template parameter \ccc{FT}}
 
-\ccNestedType{Pt}{typedefs to \ccc{CGAL::Point_3<K>}.}
+\ccNestedType{Point}{is a typedef to to \ccc{CGAL::Point_3<K>}.}
 
-\ccNestedType{Sphere}{typedefs to \ccc{CGAL::Weighted_point<Pt,Wt>}.}
+\ccNestedType{Sphere}{is a typedef to to
+  \ccc{CGAL::Weighted_point<Point,Weight>}.}
 
-\ccNestedType{Coordinate_iterator}{typedefs to
-\ccc{Pt::Cartesian_const_iterator}.}
+\ccNestedType{Coordinate_iterator}{is a typedef to to
+\ccc{Point::Cartesian_const_iterator}.}
 
 
 \ccAccessFunctions
 
 The class provides the access functions required by the model
 \ccc{MinSphereOfSpheresTraits}; they simply map to the corresponding
-routines of class \ccc{Weighted_point<Pt,Wt>}:
+routines of class \ccc{Weighted_point<Point,Weight>}:
 
 \ccCreationVariable{traits}
 
