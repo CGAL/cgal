@@ -1,0 +1,3 @@
+0.1  26 Nov. 2003 [rursu]
+-------------------------
+- Created the package Polynomial moving files from Nef_2 package
