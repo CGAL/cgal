@@ -1,3 +1,9 @@
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
 // ----------------------------------------------------------------------
