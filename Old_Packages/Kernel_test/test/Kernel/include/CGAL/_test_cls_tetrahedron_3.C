@@ -50,15 +50,15 @@ _test_cls_tetrahedron_3(const R& )
  RT n8 = 24;
  RT n9 =  8;
 
- CGAL::Point_3<R> p1( n1, n2, n3, n4);
- CGAL::Point_3<R> p2( n2, n9, n3,-n3);
- CGAL::Point_3<R> p3( n5, n6, n1, n5);
- CGAL::Point_3<R> p4( n7, n7, n8, n5);
+ CGAL::Point_3<R> p1( n1, n2, n3, n4);  // (6, 8, -2)
+ CGAL::Point_3<R> p2( n2, n9, n3,-n3);  // (4, -2, -1)
+ CGAL::Point_3<R> p3( n5, n6, n1, n5);  // (1, 10, 4)
+ CGAL::Point_3<R> p4( n7, n7, n8, n5);  // (3, 3, 8)
 
- CGAL::Point_3<R> ps3( n0, n0, n7, n5);
- CGAL::Point_3<R> ps2( n0, n7, n0, n5);
- CGAL::Point_3<R> ps1( n7, n0, n0, n5);
- CGAL::Point_3<R> ps0( CGAL::ORIGIN );
+ CGAL::Point_3<R> ps3( n0, n0, n7, n5); // (0, 0, 3)
+ CGAL::Point_3<R> ps2( n0, n7, n0, n5); // (0, 3, 0)
+ CGAL::Point_3<R> ps1( n7, n0, n0, n5); // (3, 0, 0)
+ CGAL::Point_3<R> ps0( CGAL::ORIGIN );  // (0, 0, 0)
 
  CGAL::Tetrahedron_3<R> t1(p1,p2,p3,p4);
  CGAL::Tetrahedron_3<R> t2(p2,p1,p3,p4);
@@ -142,6 +142,22 @@ _test_cls_tetrahedron_3(const R& )
  assert( t3.oriented_side(p8) == CGAL::ON_ORIENTED_BOUNDARY );
  assert( t4.bounded_side(p9) == CGAL::ON_BOUNDARY );
  assert( t4.oriented_side(p9) == CGAL::ON_ORIENTED_BOUNDARY );
+
+ std::cout << ".";
+
+ assert ( t7.volume() == FT(0) );
+ assert ( t8.volume() == FT(0) );
+ assert ( t1.volume() == -t2.volume() );
+ assert ( t3.volume() == -t4.volume() );
+ assert ( td1.volume() == td2.volume() );
+ assert ( t1.volume() == the.volume() );
+
+ CGAL::Point_3<R> p10( n0, n0, n8, n4); // (0, 0, 12)
+ CGAL::Point_3<R> p11( n0, n8, n0, n4); // (0, 12, 0)
+ CGAL::Point_3<R> p12( n8, n0, n0, n4); // (12, 0, 0)
+
+ CGAL::Tetrahedron_3<R> t9(ps0,p10,p11,p12);
+ assert ( t9.volume() == FT(-288) );
 
  std::cout << "done" << std::endl;
  return true;

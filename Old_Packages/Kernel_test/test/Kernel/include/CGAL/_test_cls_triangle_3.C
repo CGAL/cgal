@@ -50,14 +50,16 @@ _test_cls_triangle_3(const R& )
  RT n8 = 24;
  RT n9 =  8;
 
- CGAL::Point_3<R> p1( n1, n2, n3, n4);
- CGAL::Point_3<R> p2( n2, n9, n3,-n3);
- CGAL::Point_3<R> p3( n5, n6, n1, n5);
- CGAL::Point_3<R> p4( n7, n7, n8, n5);
+ CGAL::Point_3<R> p1( n1, n2, n3, n4);  // (6, 8, -2)
+ CGAL::Point_3<R> p2( n2, n9, n3,-n3);  // (-4, 2, -1)
+ CGAL::Point_3<R> p3( n5, n6, n1, n5);  // (1, 10, 4)
+ CGAL::Point_3<R> p4( n7, n7, n8, n5);  // (3, 3, 6)
+ CGAL::Point_3<R> p5( n2, n1, n0, n4);  // (8, 6, 0)
+ CGAL::Point_3<R> p6( n0, n0, n1, n5);  // (0, 0, 4)
 
- CGAL::Point_3<R> ps3( n0, n0, n7, n5);
- CGAL::Point_3<R> ps2( n0, n7, n0, n5);
- CGAL::Point_3<R> ps1( n7, n0, n0, n5);
+ CGAL::Point_3<R> ps3( n0, n0, n7, n5); // (0, 0, 3)
+ CGAL::Point_3<R> ps2( n0, n7, n0, n5); // (0, 3, 0)
+ CGAL::Point_3<R> ps1( n7, n0, n0, n5); // (3, 0, 0)
 
  CGAL::Triangle_3<R> t1(p1,p2,p3);
  CGAL::Triangle_3<R> t2(p4,p2,p3);
@@ -103,6 +105,15 @@ _test_cls_triangle_3(const R& )
  CGAL::Triangle_3<R> tdeg2( p3,p3,p3);
  assert( tdeg1.is_degenerate() );
  assert( tdeg2.is_degenerate() );
+
+ std::cout <<'.';
+
+ assert ( tdeg1.squared_area() == FT(0) );
+ assert ( tdeg2.squared_area() == FT(0) );
+ assert ( t5.squared_area() == t1.squared_area() );
+ assert ( t3.squared_area() == t4.squared_area() );
+ CGAL::Triangle_3<R> t6(ps3,p5,p6);
+ assert ( t6.squared_area() == FT(25) );
 
  std::cout << "done" << std::endl;
  return true;

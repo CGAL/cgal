@@ -120,6 +120,16 @@ _test_cls_iso_rectangle_2(const R& )
  assert( CGAL::Iso_rectangle_2<R>( p1, p2 ).is_degenerate() );
  assert( CGAL::Iso_rectangle_2<R>( p3, p4 ).is_degenerate() );
 
+ std::cout << '.';
+
+ assert( CGAL::Iso_rectangle_2<R>( p1, p1 ).area() == FT(0) );
+ assert( CGAL::Iso_rectangle_2<R>( p1, p2 ).area() == FT(0) );
+ assert( CGAL::Iso_rectangle_2<R>( p3, p4 ).area() == FT(0) );
+ assert( CGAL::Iso_rectangle_2<R>( p1, p3 ).area() == FT(9) );
+ assert( CGAL::Iso_rectangle_2<R>( p3, p1 ).area() == FT(9) );
+ assert( CGAL::Iso_rectangle_2<R>( p1, p7 ).area() == FT(1) );
+ assert( CGAL::Iso_rectangle_2<R>( p9, p3 ).area() == FT(21) );
+
  std::cout << "done" << std::endl;
  return true;
 }

@@ -271,6 +271,15 @@ test_new_3(const R& rep)
         = rep.compute_squared_length_3_object();
   FT tmp11 = compute_squared_length(s2);
 
+  typename R::Compute_squared_area_3 compute_squared_area
+        = rep.compute_squared_area_3_object();
+  FT tmp11a = compute_squared_area(tmp9b);
+
+  typename R::Compute_volume_3 compute_volume
+        = rep.compute_volume_3_object();
+  FT tmp11b = compute_volume(th2);
+  FT tmp11c = compute_volume(iso1);
+
 
   typename R::Equal_3 equal
         = rep.equal_3_object();

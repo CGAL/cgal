@@ -158,7 +158,7 @@ _test_cls_line_2(const R& )
  assert( l43.has_on_boundary( CGAL::Point_2<R>( n8, n2 )) );
  assert( lr21.has_on( CGAL::Point_2<R>( -n1, n0 )) );
 
- std::cout << '!';
+ std::cout << '.';
 
  assert( l21.has_on( l21.projection( p3 )) );
  assert( l21.has_on( l21.projection( p4 )) );

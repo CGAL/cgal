@@ -136,6 +136,16 @@ _test_cls_triangle_2(const R& )
  assert( tdeg1.is_degenerate() );
  assert( tdeg2.is_degenerate() );
 
+ std::cout << '.';
+
+ assert ( tdeg1.area() == FT(0) );
+ assert ( tdeg2.area() == FT(0) );
+ assert ( t1.area() == FT(-10) );
+ assert ( t1.area() == -t2.area() );
+ assert ( t1.area() == t4.area() );
+ assert ( t2.area() == -t5.area() );
+ assert ( t3.area() == FT(5) );
+
  std::cout << "done" << std::endl;
  return true;
 }

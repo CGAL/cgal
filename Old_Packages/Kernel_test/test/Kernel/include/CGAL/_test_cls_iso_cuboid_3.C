@@ -139,6 +139,17 @@ _test_cls_iso_cuboid_3(const R& )
  assert( CGAL::Iso_cuboid_3<R>( p1, p2 ).is_degenerate() );
  assert( CGAL::Iso_cuboid_3<R>( p3, p4 ).is_degenerate() );
 
+ std::cout << '.';
+
+ assert( CGAL::Iso_cuboid_3<R>( p1, p1 ).volume() == FT(0) );
+ assert( CGAL::Iso_cuboid_3<R>( p1, p2 ).volume() == FT(0) );
+ assert( CGAL::Iso_cuboid_3<R>( p3, p4 ).volume() == FT(0) );
+ assert( r1.volume() == FT(18) );
+ assert( r3.volume() == FT(18) );
+ assert( r1.volume() == r2.volume() );
+ assert( r3.volume() == r4.volume() );
+ assert( r5.volume() == FT(84) );
+
  std::cout << "done" << std::endl;
  return true;
 }

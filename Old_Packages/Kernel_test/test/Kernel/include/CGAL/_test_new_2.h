@@ -266,11 +266,14 @@ test_new_2(const R& rep)
         = rep.compute_y_at_x_2_object();
   FT tmp22 = compute_y_at_x(l2, FT(11));
 
+  typename R::Compute_area_2 compute_area_2
+        = rep.compute_area_2_object();
+  FT tmp22a = compute_area_2(tmp18);
+  FT tmp22b = compute_area_2(rec2);
 
   typename R::Compute_squared_length_2 Compute_squared_length
-        = rep.Compute_squared_length_2_object();
+        = rep.compute_squared_length_2_object();
   FT tmp23 = Compute_squared_length(s2);
-
 
   typename R::Equal_2 equal
         = rep.equal_2_object();

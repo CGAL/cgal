@@ -1,6 +1,7 @@
  3.9   (?? ??? 2001)
 
 - added tests for several function objects in _test_new_2.h and _test_new_3.h
+- added tests for area(), squared_area(), volume()
 
  3.8   (08 Oct 2000)
 
