@@ -42,9 +42,11 @@ const char* prog_release = "$Revision$";
 
 /* Flexibility for HTML class files. */
 /* ================================= */
-bool html_no_class_links = false;
 bool html_no_class_file  = false;
+bool html_no_class_links = false;
 bool html_no_class_index = false;
+bool html_no_links = false;
+bool html_no_index = false;
 
 bool html_inline_classes = false;
 
@@ -369,6 +371,7 @@ const char* tmp_path       = "/usr/tmp/";
 /* Customization tags for the style */
 /* ================================ */
 bool tag_chapter_author;
+bool tag_chapter_release;
 bool tag_replace_prefix;     // not supported yet
 bool tag_replace_include;    // not supported yet
 bool tag_long_param_layout;  // not supported yet
@@ -382,7 +385,8 @@ bool tag_rm_template;
 bool tag_template_inline;    // not supported yet
 
 void tag_defaults() {
-    tag_chapter_author         = true;
+    tag_chapter_author         = false;
+    tag_chapter_release        = false;
     tag_replace_prefix         = false;
     tag_replace_include        = false;
     tag_long_param_layout      = false;
@@ -427,6 +431,8 @@ void handleNewCommand( char* idfier, char* body){
     // check the different idfiers for tag definitions.
     if ( 0 == strcmp( p, "\\ccTagChapterAuthor")) 
         tag_chapter_author = tag;
+    if ( 0 == strcmp( p, "\\ccTagChapterRelease")) 
+        tag_chapter_release = tag;
     if ( 0 == strcmp( p, "\\ccTagReplacePrefix")) 
         tag_replace_prefix = tag;
     if ( 0 == strcmp( p, "\\ccTagReplaceInclude")) 
@@ -908,6 +914,8 @@ void copy_config_file( const char* name){
 /* ================================================ */
 
 void filter_for_index_comment( ostream& out, const char* text) {
+    if ( text == 0)
+	return;
     while( *text) {
         switch (*text) {
 	case '\\':
@@ -934,6 +942,8 @@ void filter_for_index_comment( ostream& out, const char* text) {
 
 // Filter characters that might not be allowed in hyperlink anchors.
 void filter_for_index_anchor( ostream& out, const char* text) {
+    if ( text == 0)
+	return;
     while( *text) {
         switch ( *text) {
 	case '\\':
@@ -1202,6 +1212,8 @@ char* wrap_anchor( const char* filename, const char* contents) {
 }
 
 double estimate_html_size( const char* s) {
+    if ( s == 0)
+	return 0;
     int n = 0;
     while ( *s) {
 	if ( *s == '\\' && isupper(s[1]) && s[2] == '\\') {
@@ -2093,7 +2105,7 @@ void format_function( bool method, const char* signature, const Text& T) {
 			   exp_size_ret > table_width*table_first_col/100.0);
     // ---------
     // index
-    if ( !method) {
+    if ( !method && !html_no_index) {
 	char* formatted_return   = convert_ascii_to_html( return_value);
 	char* formatted_scope    = convert_ascii_to_html( scope);
 	char* formatted_function = convert_ascii_to_html( function_name);
@@ -2276,6 +2288,8 @@ void format_function( bool method, const char* signature, const Text& T) {
     three_cols_html_end( *current_stream, 
 			 exp_size > table_width * table_second_col / 100.0,
 			 is_empty_comment);
+    html_no_links = false;
+    html_no_index = false;
 }
 
 void format_variable( const char* signature, 
@@ -2305,24 +2319,27 @@ void format_variable( const char* signature,
 			   exp_size_ret > table_width*table_first_col/100.0);
    
     if ( class_name == NULL) {
-	// generate a substitution rule for hyperlinking
-	*anchor_stream << "[a-zA-Z0-9_]\"" << formatted_var
-		       << "\"    { ECHO; }" << endl;
-	*anchor_stream << '"' << formatted_var
-		       << "\"/{noCCchar}    { fputs( \"<A HREF=\\\""
-	               << current_filename
-		       << (is_typedef ? "#Typedef_" :  "#Var_" );
-	filter_for_index_anchor( *anchor_stream, variable_name);
-	*anchor_stream << "\\\">" << formatted_var << "</A>\", stdout); }" 
-		       << endl;
-
-	// index
-	*index_stream << (is_typedef ? sort_key_typedef :
-			  sort_key_variable) << '1'; 
-	filter_for_index_comment( *index_stream, variable_name);
-	*index_stream << "!><UL><LI><I>" << formatted_var
-		      << "</I></UL>" << endl;
-    } else  if ( ! html_no_class_index) {
+	if ( !html_no_links) {
+	    // generate a substitution rule for hyperlinking
+	    *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_var
+			   << "\"    { ECHO; }" << endl;
+	    *anchor_stream << '"' << formatted_var
+			   << "\"/{noCCchar}    { fputs( \"<A HREF=\\\""
+			   << current_filename
+			   << (is_typedef ? "#Typedef_" :  "#Var_" );
+	    filter_for_index_anchor( *anchor_stream, variable_name);
+	    *anchor_stream << "\\\">" << formatted_var << "</A>\", stdout); }" 
+			   << endl;
+	}
+	if ( !html_no_index) {
+	    // index
+	    *index_stream << (is_typedef ? sort_key_typedef :
+			      sort_key_variable) << '1'; 
+	    filter_for_index_comment( *index_stream, variable_name);
+	    *index_stream << "!><UL><LI><I>" << formatted_var
+			  << "</I></UL>" << endl;
+	}
+    } else  if ( ! html_no_class_index && ! html_no_index) {
 	// index
 	char* scrambled_var = convert_ascii_to_scrambled_html( variable_name);
 	*index_stream << (is_typedef ? sort_key_typedef :
@@ -2338,10 +2355,12 @@ void format_variable( const char* signature,
 		      << scrambled_var << "</I></A></UL>" << endl;
 	delete[] scrambled_var;
     }
-    *current_stream << "<A NAME=\""
-		    << (is_typedef ? "Typedef_" :  "Var_" );
-    filter_for_index_anchor( *current_stream, variable_name);
-    *current_stream << "\"></A>" << endl;
+    if ( !html_no_links || !html_no_index) {
+	*current_stream << "<A NAME=\""
+			<< (is_typedef ? "Typedef_" :  "Var_" );
+	filter_for_index_anchor( *current_stream, variable_name);
+	*current_stream << "\"></A>" << endl;
+    }
     // end index
 
     if ( return_value)
@@ -2384,6 +2403,8 @@ void format_variable( const char* signature,
     three_cols_html_end( *current_stream, 
 			 exp_size > table_width * table_second_col / 100.0,
 			 is_empty_comment);
+    html_no_links = false;
+    html_no_index = false;
 }
 
 void format_constructor( const char* signature, const Text& T) {
@@ -2471,6 +2492,8 @@ void format_constructor( const char* signature, const Text& T) {
     print_html_text_block( *current_stream, T);
     *current_stream << indNewline << "<P>";
     two_cols_html_end( *current_stream, is_empty_comment);
+    html_no_links = false;
+    html_no_index = false;
 }
 
 void format_nested_type( const char* nested_type_name, const Text& T) {
@@ -2479,7 +2502,7 @@ void format_nested_type( const char* nested_type_name, const Text& T) {
     char* scrambled_type = convert_ascii_to_scrambled_html( nested_type_name);
     two_cols_html_begin( *current_stream);
 
-    if ( ! html_no_class_index) {
+    if ( ! html_no_class_index && ! html_no_index) {
 	// index
 	*index_stream << sort_key_nested_type << '1';
 	filter_for_index_comment( *index_stream, template_class_name);
@@ -2488,8 +2511,10 @@ void format_nested_type( const char* nested_type_name, const Text& T) {
 	*index_stream << "!><UL><LI><A HREF=\""
 		      << current_filename << "#Nested_type_" 
                       << nested_type_name
-		      << "\"><I>" << scrambled_template_class_name
-		      << scrambled_type << "</I></A></UL>" << endl;
+		      << "\"><I>";
+	if ( scrambled_template_class_name)
+	    *index_stream << scrambled_template_class_name;
+	*index_stream << scrambled_type << "</I></A></UL>" << endl;
 	*current_stream << "<A NAME=\"Nested_type_" << nested_type_name 
 			<< "\"></A>" << endl;
 	// end index
@@ -2512,6 +2537,8 @@ void format_nested_type( const char* nested_type_name, const Text& T) {
     two_cols_html_end( *current_stream, is_empty_comment);
     delete[] formatted_type;
     delete[] scrambled_type;
+    html_no_links = false;
+    html_no_index = false;
 }
 
 void format_enum( const char* signature, const Text& T) {
@@ -2535,22 +2562,25 @@ void format_enum( const char* signature, const Text& T) {
     two_cols_html_begin( *current_stream);
 
     if ( class_name == NULL) {
-	// generate a substitution rule for hyperlinking
-	*anchor_stream << "[a-zA-Z0-9_]\"" << formatted_enum
-		       << "\"    { ECHO; }" << endl;
-	*anchor_stream << '"' << formatted_enum
-		       << "\"/{noCCchar}    { fputs( \"<A HREF=\\\""
-		       << current_filename << "#Enum_";
-	filter_for_index_anchor( *anchor_stream, enum_name);
-	*anchor_stream << "\\\">" << formatted_enum << "</A>\", stdout); }" 
-		       << endl;
-
-	// index
-	*index_stream << sort_key_enum << '1';
-	filter_for_index_comment( *index_stream, enum_name);
-	*index_stream << "!><UL><LI><I>" << formatted_enum
-		      << "</I></UL>" << endl;
-    } else  if ( ! html_no_class_index) {
+	if ( !html_no_links) {
+	    // generate a substitution rule for hyperlinking
+	    *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_enum
+			   << "\"    { ECHO; }" << endl;
+	    *anchor_stream << '"' << formatted_enum
+			   << "\"/{noCCchar}    { fputs( \"<A HREF=\\\""
+			   << current_filename << "#Enum_";
+	    filter_for_index_anchor( *anchor_stream, enum_name);
+	    *anchor_stream << "\\\">" << formatted_enum << "</A>\", stdout); }" 
+			   << endl;
+	}
+	if ( !html_no_index) {
+	    // index
+	    *index_stream << sort_key_enum << '1';
+	    filter_for_index_comment( *index_stream, enum_name);
+	    *index_stream << "!><UL><LI><I>" << formatted_enum
+			  << "</I></UL>" << endl;
+	}
+    } else  if ( ! html_no_class_index && ! html_no_index) {
 	// index
 	char* scrambled_enum = convert_ascii_to_scrambled_html( enum_name);
 	*index_stream << sort_key_enum << '1';
@@ -2564,9 +2594,11 @@ void format_enum( const char* signature, const Text& T) {
 		      << scrambled_enum << "</I></A></UL>" << endl;
 	delete[] scrambled_enum;
     }
-    *current_stream << "<A NAME=\"Enum_";
-    filter_for_index_anchor( *current_stream, enum_name);
-    *current_stream << "\"></A>" << endl;
+    if ( !html_no_links || !html_no_index) {
+	*current_stream << "<A NAME=\"Enum_";
+	filter_for_index_anchor( *current_stream, enum_name);
+	*current_stream << "\"></A>" << endl;
+    }
     // end index
 
     // first, estimate size
@@ -2618,34 +2650,37 @@ void format_enum( const char* signature, const Text& T) {
 	    print_ascii_to_html_spc( *current_stream, p);
 
 	    if ( class_name == NULL) {
-		// index: print enum tags with their (possible) initializers
-		*index_stream << sort_key_enum_tags  << '1' << p 
-			      << "!><UL><LI><I>";
-		print_ascii_to_html_spc( *index_stream, p);
-		*index_stream << "</I></UL>" << endl;
-
-		// generate a substitution rule for hyperlinking
-		// Here, the initializer has to be suppressed
-		char* q = p;
-		while( *q && *q != '=')
-		    ++q;
-		while ( q>p && q[-1] <= ' ')
-		    --q;
-		char c_tmp = *q;
-		*q = '\0';
-		char *tmp_param = convert_ascii_to_html( p);
-		*anchor_stream << "[a-zA-Z0-9_]\"" << tmp_param
-			       << "\"    { ECHO; }" << endl;
-		*anchor_stream << '"' << tmp_param
-			       << "\"/{noCCchar}    { fputs( \"<A HREF=\\\""
-			       << current_filename << "#Enum_";
-		filter_for_index_anchor( *anchor_stream, enum_name);
-		*anchor_stream << "\\\">"
-			       << tmp_param << "</A>\", stdout); }" 
-			       << endl;
-		delete[] tmp_param;
-		*q = c_tmp; // restore initializer
-            } else  if ( ! html_no_class_index) {
+		if ( !html_no_index) {
+		    // index: print enum tags with (possible) initializers
+		    *index_stream << sort_key_enum_tags  << '1' << p 
+				  << "!><UL><LI><I>";
+		    print_ascii_to_html_spc( *index_stream, p);
+		    *index_stream << "</I></UL>" << endl;
+		}
+		if ( !html_no_links) {
+		    // generate a substitution rule for hyperlinking
+		    // Here, the initializer has to be suppressed
+		    char* q = p;
+		    while( *q && *q != '=')
+			++q;
+		    while ( q>p && q[-1] <= ' ')
+			--q;
+		    char c_tmp = *q;
+		    *q = '\0';
+		    char *tmp_param = convert_ascii_to_html( p);
+		    *anchor_stream << "[a-zA-Z0-9_]\"" << tmp_param
+				   << "\"    { ECHO; }" << endl;
+		    *anchor_stream << '"' << tmp_param
+				  << "\"/{noCCchar}    { fputs( \"<A HREF=\\\""
+				  << current_filename << "#Enum_";
+		    filter_for_index_anchor( *anchor_stream, enum_name);
+		    *anchor_stream << "\\\">"
+				   << tmp_param << "</A>\", stdout); }" 
+				   << endl;
+		    delete[] tmp_param;
+		    *q = c_tmp; // restore initializer
+		}
+            } else  if ( ! html_no_class_index && ! html_no_index) {
 		// index: print enum tags with their (possible) initializers
 	        char* scrambled_tag = convert_ascii_to_scrambled_html( p);
 		*index_stream << sort_key_enum_tags  << '1' << p 
@@ -2690,6 +2725,8 @@ void format_enum( const char* signature, const Text& T) {
     print_html_text_block( *current_stream, T);
     *current_stream << indNewline << "<P>";
     two_cols_html_end( *current_stream, is_empty_comment);
+    html_no_links = false;
+    html_no_index = false;
 }
 
 
@@ -2713,21 +2750,25 @@ void format_struct( const char* signature, const Text& T) {
     two_cols_html_begin( *current_stream);
 
     if ( class_name == NULL) {
-	// generate a substitution rule for hyperlinking
-	*anchor_stream << "[a-zA-Z0-9_]\"" << formatted_struct
-		       << "\"    { ECHO; }" << endl;
-	*anchor_stream << '"' << formatted_struct
-		       << "\"/{noCCchar}    { fputs( \"<A HREF=\\\""
-		       << current_filename << "#Struct_";
-	filter_for_index_anchor( *anchor_stream, struct_name);
-	*anchor_stream << "\\\">" << formatted_struct << "</A>\", stdout); }" 
-		       << endl;
-	// index
-	*index_stream << sort_key_struct << '1';
-	filter_for_index_comment( *index_stream, struct_name);
-	*index_stream << "!><UL><LI><I>" << formatted_struct
-		      << "</I></UL>" << endl;
-    } else  if ( ! html_no_class_index) {
+	if ( !html_no_links) {
+	    // generate a substitution rule for hyperlinking
+	    *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_struct
+			   << "\"    { ECHO; }" << endl;
+	    *anchor_stream << '"' << formatted_struct
+			   << "\"/{noCCchar}    { fputs( \"<A HREF=\\\""
+			   << current_filename << "#Struct_";
+	    filter_for_index_anchor( *anchor_stream, struct_name);
+	    *anchor_stream << "\\\">" << formatted_struct 
+			   << "</A>\", stdout); }" << endl;
+	}
+	if ( !html_no_index) {
+	    // index
+	    *index_stream << sort_key_struct << '1';
+	    filter_for_index_comment( *index_stream, struct_name);
+	    *index_stream << "!><UL><LI><I>" << formatted_struct
+			  << "</I></UL>" << endl;
+	}
+    } else  if ( ! html_no_class_index && ! html_no_index) {
 	// index
 	char* scrambled_struct = convert_ascii_to_scrambled_html( struct_name);
 	*index_stream << sort_key_struct << '1';
@@ -2741,9 +2782,11 @@ void format_struct( const char* signature, const Text& T) {
 		      << scrambled_struct << "</I></A></UL>" << endl;
 	delete[] scrambled_struct;
     }
-    *current_stream << "<A NAME=\"Struct_";
-    filter_for_index_anchor( *current_stream, struct_name);
-    *current_stream << "\"></A>" << endl;
+    if ( !html_no_links || !html_no_index) {
+	*current_stream << "<A NAME=\"Struct_";
+	filter_for_index_anchor( *current_stream, struct_name);
+	*current_stream << "\"></A>" << endl;
+    }
     // end index
 
     // first, estimate size
@@ -2819,6 +2862,8 @@ void format_struct( const char* signature, const Text& T) {
     print_html_text_block( *current_stream, T);
     *current_stream << indNewline << "<P>";
     two_cols_html_end( *current_stream, is_empty_comment);
+    html_no_links = false;
+    html_no_index = false;
 }
 
 
@@ -2892,6 +2937,10 @@ void handleChapter(  const Text& T) {
     // table of contents
     *contents_stream << "    <LI> <A HREF=\"" << main_filename 
 		     << "\">" << chapter_title << "</A>" << endl;
+
+    // Prevent from effects from previous chapter.
+    html_no_links = false;
+    html_no_index = false;
 }
 
 void handleBiblio(  const Text& T) {
@@ -3216,12 +3265,12 @@ void handleClasses( const char* classname, const char* template_cls) {
 	// Don't delete filename! It's assigned to class_filename.
     }
 
-    if ( ! html_no_class_index)    // Index.
+    if ( ! html_no_class_index && ! html_no_index)    // Index.
 	*current_stream << handleHtmlIndex( sort_key_class, 
 					    template_class_name,
 					    formatted_template_class_name);
 
-    if ( ! html_no_class_links) {   // Cross links.
+    if ( ! html_no_class_links && ! html_no_links) {   // Cross links.
 	// Generate a substitution rule for hyperlinking,
         // but only if classname is longer than 1 character.
 	int len = 0;
@@ -3236,6 +3285,8 @@ void handleClasses( const char* classname, const char* template_cls) {
 	    *current_stream << handleHtmlCrossLink( classname, 
 						    template_cls != NULL);
     }
+    html_no_links = false;
+    html_no_index = false;
 }
 
 void handleClass( const char* classname) {

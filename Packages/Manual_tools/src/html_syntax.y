@@ -158,6 +158,7 @@ extern bool mbox_within_math;
 %token             HEADING
 %token             COMMENTHEADING
 %token             CHAPTERAUTHOR
+%token             CHAPTERRELEASE
 %token             CHAPTERSUBTITLE
 %token             GOBBLEONEPARAM
 %token             GOBBLETWOPARAMS
@@ -312,6 +313,14 @@ stmt:             string              {   handleBuffer( * $1);
 		                      }
                 | CHAPTERAUTHOR  '{' comment_sequence '}' {
                                 if ( tag_chapter_author) {
+				  handleString( "<EM>");
+				  handleText( * $3);
+				  handleString( "</EM>");
+			        }
+			        delete $3;
+			      }
+                | CHAPTERRELEASE  '{' comment_sequence '}' {
+                                if ( tag_chapter_release) {
 				  handleString( "<EM>");
 				  handleText( * $3);
 				  handleString( "</EM>");
@@ -926,6 +935,16 @@ compound_comment:   '{' full_comment_sequence '}' {
                                 }
                   | CHAPTERAUTHOR  comment_group {
                                   if ( tag_chapter_author) {
+                                    $$ = $2;
+				    $$->cons(   *new TextToken( "<P><EM>"));
+				    $$->append( *new TextToken( "</EM><P> "));
+				  } else {
+                                    $$ = new Text( managed);
+				    delete $2;
+				  }
+				}
+                  | CHAPTERRELEASE  comment_group {
+                                  if ( tag_chapter_release) {
                                     $$ = $2;
 				    $$->cons(   *new TextToken( "<P><EM>"));
 				    $$->append( *new TextToken( "</EM><P> "));

@@ -65,9 +65,11 @@ const char* find_sort_key( const char* txt);
 
 /* Flexibility for HTML class files. */
 /* ================================= */
-extern bool html_no_class_links;
 extern bool html_no_class_file;
+extern bool html_no_class_links;
 extern bool html_no_class_index;
+extern bool html_no_links;
+extern bool html_no_index;
 
 extern bool html_inline_classes;
 
@@ -102,6 +104,7 @@ char* extractRCSDate( char* s);
 /* Customization tags for the style */
 /* ================================ */
 extern bool tag_chapter_author;
+extern bool tag_chapter_release;
 extern bool tag_replace_prefix;
 extern bool tag_replace_include;
 extern bool tag_long_param_layout;

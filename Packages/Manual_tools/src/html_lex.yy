@@ -323,7 +323,7 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 
  /* Chapter and labels triggering new file and linking */
  /* -------------------------------------------------- */
-[\\]chapter{w}[\{]  {
+[\\]chapter[*]?{w}[\{]  {
 		    skipspaces();
 		    return CHAPTER;
 }
@@ -626,17 +626,25 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 
  /* Flexibility for HTML class files. */
  /* -------------------------------------------------------------- */
-<INITIAL,MMODE,NestingMode>[\\]ccHtmlNoClassLinks/{noletter}   {
-		    skipspaces();
-		    html_no_class_links = true;
-}
 <INITIAL,MMODE,NestingMode>[\\]ccHtmlNoClassFile/{noletter}    {
 		    skipspaces();
 		    html_no_class_file = true;
 }
+<INITIAL,MMODE,NestingMode>[\\]ccHtmlNoClassLinks/{noletter}   {
+		    skipspaces();
+		    html_no_class_links = true;
+}
 <INITIAL,MMODE,NestingMode>[\\]ccHtmlNoClassIndex/{noletter}   {
 		    skipspaces();
 		    html_no_class_index = true;
+}
+<INITIAL,MMODE,NestingMode>[\\]ccHtmlNoLinks/{noletter}   {
+		    skipspaces();
+		    html_no_links = true;
+}
+<INITIAL,MMODE,NestingMode>[\\]ccHtmlNoIndex/{noletter}   {
+		    skipspaces();
+		    html_no_index = true;
 }
 [\\]begin{w}[\{]ccHtmlClassFile[\}]{w}   {
 		    BEGIN( CCMode);
@@ -1021,6 +1029,9 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 [\\]ccChapterAuthor{w}/{noletter}   {
                     return CHAPTERAUTHOR;
 }
+[\\]ccChapterRelease{w}/{noletter}   {
+                    return CHAPTERRELEASE;
+}
 [\\]ccChapterSubTitle{w}/{noletter}   {
                     return CHAPTERSUBTITLE;
 }
@@ -1221,6 +1232,7 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 		    return yytext[0];
                  }
 
+
   /* yet not supported characters ...
   <MMODE>[\\]delta/{noletter}       { SET( "&delta;");    return STRING;}
   <MMODE>[\\]epsilon/{noletter}     { SET( "&epsi;");     return STRING;}
@@ -1242,15 +1254,18 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 <INITIAL,NestingMode>[\\][`]e     { SET( "&egrave;");   return STRING;}
 <INITIAL,NestingMode>[\\]"^"a     { SET( "&acirc;");    return STRING;}
 <INITIAL,NestingMode>[\\]"^"e     { SET( "&ecirc;");    return STRING;}
-<INITIAL,NestingMode>[\\]ss[\{][\}]  { SET( "&szlig;");    return STRING;}
+<INITIAL,NestingMode>[\\]ss[\{][\}]  { SET( "&szlig;"); return STRING;}
+
+<MMODE>[\\]emptyset/{noletter}    { SET( "&Oslash");    return STRING;}
+<MMODE>[\\]setminus/{noletter}    { SET( "\\");         return STRING;}
 <MMODE>[\\]times/{noletter}       { SET( "&times;");    return STRING;}
 <MMODE>[\\]in/{noletter}          { SET( " is in ");    return STRING;}
 <MMODE>[\\]alpha/{noletter}       { SET( "&alpha;");    return STRING;}
 <MMODE>[\\]beta/{noletter}        { SET( "&beta;");     return STRING;}
 <MMODE>[\\]gamma/{noletter}       { SET( "&gamma;");    return STRING;}
-<MMODE>[\\]delta/{noletter}       { SET( "delta");    return STRING;}
-<MMODE>[\\]epsilon/{noletter}     { SET( "eps");     return STRING;}
-<MMODE>[\\]varepsilon/{noletter}  { SET( "eps");     return STRING;}
+<MMODE>[\\]delta/{noletter}       { SET( "delta");      return STRING;}
+<MMODE>[\\]epsilon/{noletter}     { SET( "eps");        return STRING;}
+<MMODE>[\\]varepsilon/{noletter}  { SET( "eps");        return STRING;}
 <MMODE>[\\]zeta/{noletter}        { SET( "&zeta;");     return STRING;}
 <MMODE>[\\]eta/{noletter}         { SET( "&eta;");      return STRING;}
 <MMODE>[\\]theta/{noletter}       { SET( "&theta;");    return STRING;}
