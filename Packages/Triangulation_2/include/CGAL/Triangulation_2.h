@@ -92,7 +92,25 @@ public:
   typedef typename Tds::Edge_iterator          All_edges_iterator;
   typedef typename Tds::Vertex_iterator        All_vertices_iterator;
  
-  class Infinite_tester;
+
+ // This class is used to generate the Finite_*_iterators.
+ class Infinite_tester
+  {
+    const Triangulation_2 *t;
+  public:
+    Infinite_tester() {}
+    Infinite_tester(const Triangulation_2 *tr)	  : t(tr) {}
+
+    bool operator()(const All_vertices_iterator & vit) const  {
+	  return t->is_infinite(vit);
+    }
+    bool operator()(const All_faces_iterator & fit ) const {
+      return t->is_infinite(fit);
+    }
+    bool operator()(const All_edges_iterator & eit) const {
+      return t->is_infinite(eit);
+    }
+ };
 
   //We derive in order to add a conversion to handle.
   class Finite_vertices_iterator :
@@ -379,28 +397,6 @@ private:
   Vertex_handle insert_outside_convex_hull_1(const Point& p, Face_handle f);
   Vertex_handle insert_outside_convex_hull_2(const Point& p, Face_handle f);
   
-
- // This class is used to generate the Finite_*_iterators.
-public :
-  friend class Infinite_tester;
-  class Infinite_tester
-  {
-    const Triangulation_2 *t;
-  public:
-    Infinite_tester() {}
-    Infinite_tester(const Triangulation_2 *tr)	  : t(tr) {}
-
-    bool operator()(const All_vertices_iterator & vit) const  {
-	  return t->is_infinite(vit);
-    }
-    bool operator()(const All_faces_iterator & fit ) const {
-      return t->is_infinite(fit);
-    }
-    bool operator()(const All_edges_iterator & eit) const {
-      return t->is_infinite(eit);
-    }
-  };
-
   // template members
 public:
 template < class Stream >
