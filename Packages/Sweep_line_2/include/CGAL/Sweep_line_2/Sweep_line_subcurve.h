@@ -158,8 +158,11 @@ public:
     return m_isRightSide; 
   }
 
-  bool is_source(const Point_2 &p) { 
+  /*bool is_source(const Point_2 &p) { 
     return traits()->point_equal(p, traits()->curve_source(m_curve));
+  }*/
+  bool is_source(const Point_2 &p) { 
+    return traits()->point_equal(p, traits()->curve_source(m_lastCurve));
   }
 
   template <class SweepEvent>
@@ -170,9 +173,14 @@ public:
     return (m_right_event == (Event*)event);
   }
 
-  bool is_target(const Point_2 &p)
+  /*bool is_target(const Point_2 &p)
   { 
     return traits()->point_equal(p, traits()->curve_target(m_curve) );
+  }*/
+
+  bool is_target(const Point_2 &p)
+  { 
+    return traits()->point_equal(p, traits()->curve_target(m_lastCurve) );
   }
 
   template <class SweepEvent>

@@ -306,13 +306,13 @@ public:
         leftCurve = (*leftCurveIter); 
       }
 
-      const X_monotone_curve_2 &cv = leftCurve->get_curve();
-      const Point_2 &lastPoint = leftCurve->get_last_point();
+      //const X_monotone_curve_2 &cv = leftCurve->get_curve();
+      //const Point_2 &lastPoint = leftCurve->get_last_point();
 
       if ( leftCurve->is_source(eventPoint))
       {  
         remove_for_good = true;
-        if ( !leftCurve->is_target(lastPoint) )
+        /*if ( !leftCurve->is_target(lastPoint) )
         {
           X_monotone_curve_2 a,b;
           m_traits->curve_split(cv, a, b, lastPoint);
@@ -321,7 +321,9 @@ public:
         else 
         {
           m_visitor->add_subcurve(cv,leftCurve);
-        }
+        }*/
+        m_visitor->add_subcurve(leftCurve->get_last_curve(), leftCurve);
+
         if(leftCurve->get_orig_subcurve1() != NULL)
         {
           leftCurve->get_orig_subcurve1()->set_overlap_subcurve(NULL);
@@ -346,7 +348,7 @@ public:
       else if ( leftCurve->is_target(eventPoint))
       {
         remove_for_good = true;
-        if ( !leftCurve->is_source(lastPoint))
+        /*if ( !leftCurve->is_source(lastPoint))
         {
           X_monotone_curve_2 a,b;
           m_traits->curve_split(cv, a, b, lastPoint);
@@ -354,7 +356,8 @@ public:
         } else
         {
           m_visitor->add_subcurve(cv, leftCurve);
-        }
+        }*/
+        m_visitor->add_subcurve(leftCurve->get_last_curve(), leftCurve);
         if(leftCurve->get_orig_subcurve1() != NULL)
         {
           leftCurve->get_orig_subcurve1()->set_overlap_subcurve(NULL);
@@ -376,13 +379,13 @@ public:
         }
 
       } else { 
-        X_monotone_curve_2 a,b;
+       /* X_monotone_curve_2 a,b;
         if ( leftCurve->is_source(lastPoint)) {
-          m_traits->curve_split(cv, a, b, eventPoint);
+          m_traits->curve_split(leftCurve->get_last_curve(), a, b, eventPoint);
           m_visitor->add_subcurve(a, leftCurve);
         } else if ( leftCurve->is_target(lastPoint)) {
-          m_traits->curve_split(cv, b, a, eventPoint);
-          m_visitor->add_subcurve(a, leftCurve);
+          m_traits->curve_split(leftCurve->get_last_curve(), b, a, eventPoint);
+          m_visitor->add_subcurve(b, leftCurve);
         } else {
           const X_monotone_curve_2 &lastCurve = leftCurve->get_last_curve();
           if ( leftCurve->is_source_left_to_target() ) {
@@ -391,7 +394,19 @@ public:
           } else {
             m_traits->curve_split(lastCurve, b, a, eventPoint);
             m_visitor->add_subcurve(a, leftCurve);
-          }
+          }*/
+
+        X_monotone_curve_2 a,b;
+        const X_monotone_curve_2 &lastCurve = leftCurve->get_last_curve();
+        if ( leftCurve->is_source_left_to_target() ) 
+        {
+          m_traits->curve_split(lastCurve, a, b, eventPoint);
+          m_visitor->add_subcurve(a, leftCurve);
+        }
+        else
+        {
+          m_traits->curve_split(lastCurve, b, a, eventPoint);
+          m_visitor->add_subcurve(a, leftCurve);
         }
         leftCurve->set_last_point(eventPoint);
         leftCurve->set_last_curve(b); 
