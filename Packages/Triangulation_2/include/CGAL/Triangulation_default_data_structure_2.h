@@ -424,9 +424,9 @@ insert_first( )
 {
   CGAL_triangulation_precondition( number_of_vertices() == 0 &&
 				   dimension()==-1 );
-  Vertex* v1 = new Vertex;
+  Vertex* v1 = create_vertex();
   set_infinite_vertex(v1);
-  set_number_of_vertices(1);
+  //set_number_of_vertices(1);
   return v1;
 }
 
@@ -437,14 +437,16 @@ insert_second()
 {
   CGAL_triangulation_precondition( number_of_vertices() == 1 &&
 				   dimension()==-1 );
-  Vertex* v2= new Vertex;
-  Face * f1 = new Face( _infinite_vertex, NULL, NULL);
-  Face * f2 = new Face( v2, NULL, NULL);
+  Vertex* v2= create_vertex();
+  //Face * f1 = new Face( _infinite_vertex, NULL, NULL);
+  //Face * f2 = new Face( v2, NULL, NULL);
+  Face* f1 = create_face( _infinite_vertex, NULL, NULL);
+  Face* f2 = create_face( v2, NULL, NULL);
   f1->set_neighbor(0,f2);
   f2->set_neighbor(0,f1);
   _infinite_vertex->set_face(f1);
   v2->set_face(f2);
-  set_number_of_vertices(2);
+  //set_number_of_vertices(2);
   set_dimension(0);
   return v2;
 }
@@ -457,7 +459,8 @@ insert_in_face(Face* f)
   // New vertex will replace f->vertex(0) in face f
 {
   CGAL_triangulation_precondition( f != NULL && dimension()== 2);
-  Vertex*  v = new Vertex;
+  //Vertex*  v = new Vertex;
+  Vertex*  v = create_vertex();
   Vertex* v0 = f->vertex(0);
   Vertex* v2 = f->vertex(2);
   Vertex* v1 = f->vertex(1);
@@ -465,8 +468,11 @@ insert_in_face(Face* f)
   Face* n1 = f->neighbor(1);
   Face* n2 = f->neighbor(2);
     
-  Face* f1 = new Face(v0, v, v2, f, n1, NULL);
-  Face* f2 = new Face(v0, v1, v, f, NULL, n2);
+  //Face* f1 = new Face(v0, v, v2, f, n1, NULL);
+  //Face* f2 = new Face(v0, v1, v, f, NULL, n2);
+  Face* f1 = create_face(v0, v, v2, f, n1, NULL);
+  Face* f2 = create_face(v0, v1, v, f, NULL, n2);
+
 
   f1->set_neighbor(2, f2);
   f2->set_neighbor(1, f1);
@@ -485,7 +491,7 @@ insert_in_face(Face* f)
   if( v0->face() == f  ) {  v0->set_face(f2); }
   v->set_face(f);
 
-  set_number_of_vertices(number_of_vertices() +1);
+  //set_number_of_vertices(number_of_vertices() +1);
   return v;
 }
 
@@ -503,15 +509,17 @@ insert_in_edge(Face* f, int i)
 							 i == 2);}
   Vertex * v;
   if (dimension() == 1) {
-    v = new Vertex;
+    //v = new Vertex;
+    v = create_vertex();
     Face * ff = f->neighbor(0);
     Vertex * vv = f->vertex(1);
-    Face * g = new Face(v,vv,NULL,ff, f, NULL);
+    //Face * g = new Face(v,vv,NULL,ff, f, NULL);
+    Face * g = create_face(v,vv,NULL,ff, f, NULL);
     f->set_vertex(1,v);f->set_neighbor(0,g);
     ff->set_neighbor(1,g);
     v->set_face(g);
     vv->set_face(ff);
-    set_number_of_vertices(number_of_vertices() +1);
+    //set_number_of_vertices(number_of_vertices() +1);
   }
 
     else { //dimension() ==2
@@ -536,7 +544,8 @@ insert_dim_up(Vertex *w, bool orient)
   // orient governs the orientation of the resulting triangulation
   CGAL_triangulation_precondition(dimension()==0 || dimension()== 1);
 
-  Vertex * v = new Vertex;
+  //Vertex * v = new Vertex;
+  Vertex* v=create_vertex();
 
   std::list<Face *> faces_list;
   Iterator_base ib= Iterator_base(this); 
@@ -552,7 +561,8 @@ insert_dim_up(Vertex *w, bool orient)
 
   for ( ; lfit != faces_list.end() ; ++lfit) {
     f = * lfit;
-    g = new Face( *f);
+    //g = new Face( *f);
+    g = create_face(f);
     f->set_vertex(i,v); f->set_neighbor(i,g);
     g->set_vertex(i,w); g->set_neighbor(i,f);
     if (f->has_vertex(w)) to_delete.push_back(g); // flat face to be deleted 
@@ -601,7 +611,7 @@ insert_dim_up(Vertex *w, bool orient)
     
   v->set_face( *(faces_list.begin()));
   set_dimension(dimension() + 1);
-  set_number_of_vertices(number_of_vertices() + 1);
+  //set_number_of_vertices(number_of_vertices() + 1);
   return v;
 }
 
@@ -857,10 +867,15 @@ Triangulation_default_data_structure_2<Gt,Vb,Fb>::Face*
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
 create_face(Face* f1, int i1, Face* f2, int i2, Face* f3, int i3)
 {
+//   Face* newf = new Face(f1->vertex(cw(i1)),
+// 			f2->vertex(cw(i2)),
+// 			f3->vertex(cw(i3)),
+// 			f2, f3, f1);  
   Face* newf = new Face(f1->vertex(cw(i1)),
 			f2->vertex(cw(i2)),
 			f3->vertex(cw(i3)),
 			f2, f3, f1);
+
   f1->set_neighbor(i1,newf);
   f2->set_neighbor(i2,newf);
   f3->set_neighbor(i3,newf);
