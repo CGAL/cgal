@@ -910,11 +910,13 @@ protected:
   Storage_site_2 create_storage_site(Vertex_handle v0,
 				     Vertex_handle v1)
   {
-    typedef typename Storage_site_2::Handle_pair   Point_handle_pair;
+    //    typedef typename Storage_site_2::Handle_pair   Point_handle_pair;
 
-    Point_handle_pair ph_pair(v0->storage_site().point_handle(),
-			      v1->storage_site().point_handle());
-    return Storage_site_2( ph_pair );
+    //    Point_handle_pair ph_pair(v0->storage_site().point_handle(),
+    //			      v1->storage_site().point_handle());
+    //    return Storage_site_2( ph_pair );
+    return Storage_site_2( v0->storage_site().point_handle(0),
+			   v1->storage_site().point_handle(0) );
   }
 
   Vertex_handle  insert_first(const Point_2& p);

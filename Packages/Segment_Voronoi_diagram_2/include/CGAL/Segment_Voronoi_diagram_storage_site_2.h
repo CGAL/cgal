@@ -32,57 +32,64 @@ CGAL_BEGIN_NAMESPACE
       intersection of two non-parallel segments (if defined)
    */
 
-template <class R_, class H_>
+template <class Gt, class H>
 class Segment_Voronoi_diagram_storage_site_2 
 {
 public:
-  typedef R_ R;
-  typedef R  Rep;
-  typedef H_ Handle;
-  //  typedef typename R::Point_2   Point_2;
-  //  typedef typename R::Segment_2 Segment_2;
-  typedef typename R::Site_2    Site_2;
+  typedef Gt                             Geom_traits;
+  typedef H                              Point_handle;
+  typedef typename Geom_traits::Site_2   Site_2;
 
-  typedef std::pair<Handle,Handle>  Handle_pair;
 protected:
-  typedef typename R::FT        FT;
-  typedef typename R::RT        RT;
-  typedef Segment_Voronoi_diagram_storage_site_2<Rep,Handle>  Self;
+  typedef Point_handle                   Handle;
+
+  typedef
+  Segment_Voronoi_diagram_storage_site_2<Geom_traits,Handle>  Self;
 
 public:
   Segment_Voronoi_diagram_storage_site_2() : type_(0) {}
 
   // constructs point site using input point
-  Segment_Voronoi_diagram_storage_site_2(const Handle &h) {
-    initialize_site(h);
-  }
-
-  // constructs segment site using input segment
-  Segment_Voronoi_diagram_storage_site_2(const Handle_pair &hp) {
+  Segment_Voronoi_diagram_storage_site_2(const Handle& hp) {
     initialize_site(hp);
   }
 
-  // constructs point site using point of intersection
-  Segment_Voronoi_diagram_storage_site_2(const Handle_pair& hp1,
-					 const Handle_pair& hp2) {
+  // constructs segment site corresponding to the segment (*hp1,*hp2)
+  Segment_Voronoi_diagram_storage_site_2(const Handle& hp1,
+					 const Handle& hp2) {
     initialize_site(hp1, hp2);
   }
 
-  // constructs segment site using points of intersection of support
-  // with s1 and support with s2 as endpoints
-  Segment_Voronoi_diagram_storage_site_2(const Handle_pair& hsupport,
-					 const Handle_pair& hp1,
-					 const Handle_pair& hp2) {
-    initialize_site(hsupport, hp1, hp2);
+  // constructs point site using the point of intersection of the
+  // segments (*hp1,*hp2) and (*hq1,*hq2)
+  Segment_Voronoi_diagram_storage_site_2(const Handle& hp1,
+					 const Handle& hp2,
+					 const Handle& hq1,
+					 const Handle& hq2) {
+    initialize_site(hp1, hp2, hq1, hq2);
+  }
+
+  // constructs segment site whose endpoints are the points of
+  // intersection of the pairs of segments (*hp1,*hp2), (*hq1,*hq2)
+  // and (*hp1,*hp2), (*hr1,*hr2)
+  Segment_Voronoi_diagram_storage_site_2(const Handle& hp1,
+					 const Handle& hp2,
+					 const Handle& hq1,
+					 const Handle& hq2,
+					 const Handle& hr1,
+					 const Handle& hr2) {
+    initialize_site(hp1, hp2, hq1, hq2, hr1, hr2);
   }
 
   // constructs segment site using either the source or the target of
-  // support (that depends on the boolean is_first_exact) and the
-  // intersection of support with s as the other endpoint
-  Segment_Voronoi_diagram_storage_site_2(const Handle_pair& hsupport,
-					 const Handle_pair& hp,
+  // (*hp1,*hp2) (that depends on the boolean is_first_exact) and the
+  // intersection of (*hp1,*hp2) with (*hq1,*hq2) as the other endpoint
+  Segment_Voronoi_diagram_storage_site_2(const Handle& hp1,
+					 const Handle& hp2,
+					 const Handle& hq1,
+					 const Handle& hq2,
 					 bool is_first_exact) {
-    initialize_site(hsupport, hp, is_first_exact);
+    initialize_site(hp1, hp2, hq1, hq2, is_first_exact);
   }
 
 public:
@@ -100,33 +107,32 @@ public:
 
   // ACCESS METHODS
   //---------------
-  Handle      point_handle() const { return h_[0]; }
-
-  Handle_pair segment_handle() const {
-    return Handle_pair(h_[0], h_[1]);
+  const Handle& point_handle(unsigned int i) const {
+    CGAL_precondition( i < 6 );
+    return h_[i];
   }
 
-  Handle_pair supporting_segment_handle() const {
+  Self supporting_segment_site() const {
     CGAL_precondition( is_segment() );
-    return Handle_pair(h_[0], h_[1]);
+    return Self(h_[0], h_[1]);
   }
 
-  Handle_pair supporting_segment_handle(unsigned int i) const {
+  Self supporting_segment_site(unsigned int i) const {
     CGAL_precondition( is_point() && !is_exact() && i < 2 );
     if ( i == 0 ) {
-      return Handle_pair(h_[2], h_[3]);
+      return Self(h_[2], h_[3]);
     } else {
-      return Handle_pair(h_[4], h_[5]);
+      return Self(h_[4], h_[5]);
     }
   }
 
-  Handle_pair crossing_segment_handle(unsigned int i) const {
+  Self crossing_segment_site(unsigned int i) const {
     CGAL_precondition( is_segment() && !is_exact() );
     CGAL_precondition( i < 2 && !is_exact(i) );
     if ( i == 0 ) {
-      return Handle_pair(h_[2], h_[3]);
+      return Self(h_[2], h_[3]);
     } else {
-      return Handle_pair(h_[4], h_[5]);
+      return Self(h_[4], h_[5]);
     }
   }
 
@@ -153,85 +159,86 @@ public:
 public:
   // SET METHODS
   //------------
-  void set_point(const Handle& h) {
-    initialize_site(h);
-  }
-
-  void set_segment(const Handle_pair& hp) {
+  void set_point(const Handle& hp) {
     initialize_site(hp);
   }
 
-  void set_point(const Handle_pair& hp1, const Handle_pair& hp2) {
+  void set_segment(const Handle& hp1, const Handle& hp2) {
     initialize_site(hp1, hp2);
   }
 
-  void set_segment(const Handle_pair& hsupport,
-		   const Handle_pair& hp1,
-		   const Handle_pair& hp2) {
-    initialize_site(hsupport, hp1, hp2);
+  void set_point(const Handle& hp1, const Handle& hp2,
+		 const Handle& hq1, const Handle& hq2) {
+    initialize_site(hp1, hp2, hq1, hq2);
   }
 
-  void set_segment(const Handle_pair& hsupport,
-		   const Handle_pair& hp,
+  void set_segment(const Handle& hp1, const Handle& hp2,
+		   const Handle& hq1, const Handle& hq2,
+		   const Handle& hr1, const Handle& hr2) {
+    initialize_site(hp1, hp2, hq1, hq2, hr1, hr2);
+  }
+
+  void set_segment(const Handle& hp1, const Handle& hp2,
+		   const Handle& hq1, const Handle& hq2,
 		   bool is_first_exact) {
-    initialize_site(hsupport, hp, is_first_exact);
+    initialize_site(hp1, hp2, hq1, hq2, is_first_exact);
   }
 
 protected:
   // INITIALIZATION
   //---------------
-  void initialize_site(const Handle& h)
+  void initialize_site(const Handle& hp)
   {
     type_ = 1;
-    h_[0] = h;
+    h_[0] = hp;
   }
 
-  void initialize_site(const Handle_pair& hp)
+  void initialize_site(const Handle& hp1, const Handle& hp2)
   {
     type_ = 2;
-    h_[0] = hp.first;
-    h_[1] = hp.second;
+    h_[0] = hp1;
+    h_[1] = hp2;
   }
-  void initialize_site(const Handle_pair& hp1,
-		       const Handle_pair& hp2)
+  void initialize_site(const Handle& hp1, const Handle& hp2,
+		       const Handle& hq1, const Handle& hq2)
   {
     // MK: Sort the segments s1 and s2 in lexicographical order so
     //     that the computation of the intersection point is always
     //     done in the same manner (?)
     type_ = 5;
-    h_[2] = hp1.first;
-    h_[3] = hp1.second;
-    h_[4] = hp2.first;
-    h_[5] = hp2.second;
+    h_[2] = hp1;
+    h_[3] = hp2;
+    h_[4] = hq1;
+    h_[5] = hq2;
   }
 
 
-  void initialize_site(const Handle_pair& hsupport,
-		       const Handle_pair& hp1,
-		       const Handle_pair& hp2)
+  void initialize_site(const Handle& hp1, const Handle& hp2,
+		       const Handle& hq1, const Handle& hq2,
+		       const Handle& hr1, const Handle& hr2)
   {
     type_ = 14;
-    h_[0] = hsupport.first;
-    h_[1] = hsupport.second;
-    h_[2] = hp1.first;
-    h_[3] = hp1.second;
-    h_[4] = hp2.first;
-    h_[5] = hp2.second;
+    h_[0] = hp1;
+    h_[1] = hp2;
+    h_[2] = hq1;
+    h_[3] = hq2;
+    h_[4] = hr1;
+    h_[5] = hr2;
   }
 
-  void initialize_site(const Handle_pair& hsupport,
-		       const Handle_pair& hp,
+  void initialize_site(const Handle& hp1, const Handle& hp2,
+		       const Handle& hq1, const Handle& hq2,
 		       bool is_first_exact)
   {
     type_ = (is_first_exact ? 10 : 6);
-    h_[0] = hsupport.first;
-    h_[1] = hsupport.second;
+    h_[0] = hp1;
+    h_[1] = hp2;
     if ( is_first_exact ) {
-      h_[4] = hp.first;
-      h_[5] = hp.second;
+      h_[4] = hq1;
+      h_[5] = hq2;
     } else {
-      h_[2] = hp.first;
-      h_[3] = hp.second;
+      h_[2] = hq1;
+      h_[3] = hq2;
     }
   }
 

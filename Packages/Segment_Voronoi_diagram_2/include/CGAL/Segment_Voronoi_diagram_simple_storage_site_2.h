@@ -32,47 +32,55 @@ CGAL_BEGIN_NAMESPACE
       intersection of two non-parallel segments (if defined)
    */
 
-template <class R_, class H_>
+template <class Gt, class H>
 class Segment_Voronoi_diagram_simple_storage_site_2 
 {
 public:
-  typedef R_ R;
-  typedef R  Rep;
-  typedef H_ Handle;
-  //  typedef typename R::Point_2   Point_2;
-  //  typedef typename R::Segment_2 Segment_2;
-  typedef typename R::Site_2    Site_2;
+  typedef Gt                             Geom_traits;
+  typedef H                              Point_handle;
+  typedef typename Geom_traits::Site_2   Site_2;
 
-  typedef std::pair<Handle,Handle>  Handle_pair;
 protected:
-  typedef typename R::FT        FT;
-  typedef typename R::RT        RT;
-  typedef Segment_Voronoi_diagram_simple_storage_site_2<Rep,Handle>  Self;
+  typedef Point_handle                   Handle;
+
+  typedef
+  Segment_Voronoi_diagram_simple_storage_site_2<Geom_traits,Handle>
+  Self;
 
 public:
   Segment_Voronoi_diagram_simple_storage_site_2() : type_(0) {}
 
   // constructs point site using input point
-  Segment_Voronoi_diagram_simple_storage_site_2(const Handle &h) {
-    initialize_site(h);
+  Segment_Voronoi_diagram_simple_storage_site_2(const Handle& hp) {
+    initialize_site(hp);
   }
 
   // constructs segment site using input segment
-  Segment_Voronoi_diagram_simple_storage_site_2(const Handle_pair &hp) {
-    initialize_site(hp);
+  Segment_Voronoi_diagram_simple_storage_site_2(const Handle& hp1,
+						const Handle& hp2) {
+    initialize_site(hp1, hp2);
   }
 
   // the compiler complains that it cannot find this constructor;
   // solution: make the insert_intersecting_segment a template
   // method...
-  template<class A1, class A2>
-  Segment_Voronoi_diagram_simple_storage_site_2(const A1&, const A2&) {
+  template<class A1, class A2, class A3, class A4>
+  Segment_Voronoi_diagram_simple_storage_site_2(const A1&, const A2&,
+						const A3&, const A4&) {
     CGAL_assertion( false );
   }
 
-  template<class A1, class A2, class A3>
+  template<class A1, class A2, class A3, class A4, class A5>
   Segment_Voronoi_diagram_simple_storage_site_2(const A1&, const A2&,
-						const A3&) {
+						const A3&, const A4&,
+						const A5&) {
+    CGAL_assertion( false );
+  }
+
+  template<class A1, class A2, class A3, class A4, class A5, class A6>
+  Segment_Voronoi_diagram_simple_storage_site_2(const A1&, const A2&,
+						const A3&, const A4&,
+						const A5&, const A6&) {
     CGAL_assertion( false );
   }
 
@@ -87,25 +95,26 @@ public:
 
   // ACCESS METHODS
   //---------------
-  Handle      point_handle() const { return h_[0]; }
-
-  Handle_pair segment_handle() const {
-    return Handle_pair(h_[0], h_[1]);
+  const Handle& point_handle(unsigned int i) const {
+    CGAL_precondition( i < 6 );
+    return h_[i];
   }
 
-  Handle_pair supporting_segment_handle() const {
+  Self supporting_segment_site() const {
     CGAL_precondition( is_segment() );
-    return Handle_pair(h_[0], h_[1]);
+    return Self(h_[0], h_[1]);
   }
 
-  Handle_pair supporting_segment_handle(unsigned int i) const {
+  Self supporting_segment_site(unsigned int i) const {
+    CGAL_precondition( false );
     CGAL_precondition( is_point() && i < 2 );
-    return Handle_pair(h_[0], h_[0]);
+    return Self(h_[0], h_[0]);
   }
 
-  Handle_pair crossing_segment_handle(unsigned int i) const {
+  Self crossing_segment_handle(unsigned int i) const {
+    CGAL_precondition( false );
     CGAL_precondition( is_segment() && i < 2 );
-    return Handle_pair(h_[0], h_[1]);
+    return Self(h_[0], h_[1]);
   }
 
   Site_2 site() const {
@@ -119,43 +128,48 @@ public:
 public:
   // SET METHODS
   //------------
-  void set_point(const Handle& h) {
-    initialize_site(h);
+  void set_point(const Handle& hp) {
+    initialize_site(hp);
   }
 
-  void set_segment(const Handle_pair& hp) {
-    initialize_site(hp);
+  void set_segment(const Handle& hp1, const Handle& hp2) {
+    initialize_site(hp1, hp2);
   }
 
   // the compiler complains that it cannot find this constructor;
   // solution: make the insert_intersecting_segment a template
   // method...
-  template<class A1, class A2>
-  void set_point(const A1&, const A2&)
-  {
+  template<class A1, class A2, class A3, class A4>
+  void set_point(const A1&, const A2&, const A3&, const A4&) {
     CGAL_assertion(false);
   }
 
-  template<class A1, class A2, class A3>
-  void set_segment(const A1&, const A2&, const A3&)
-  {
+  template<class A1, class A2, class A3, class A4, class A5>
+  void set_segment(const A1&, const A2&, const A3&, const A4&,
+		   const A5&) {
+    CGAL_assertion(false);
+  }
+
+  template<class A1, class A2, class A3, class A4, class A5, class A6>
+  void set_segment(const A1&, const A2&, const A3&, const A4&,
+		   const A5&, const A6&) {
     CGAL_assertion(false);
   }
 
 protected:
   // INITIALIZATION
   //---------------
-  void initialize_site(const Handle& h)
+  void initialize_site(const Handle& hp)
   {
     type_ = 1;
-    h_[0] = h;
+    h_[0] = hp;
   }
 
-  void initialize_site(const Handle_pair& hp)
+  void initialize_site(const Handle& hp1, const Handle& hp2)
   {
     type_ = 2;
-    h_[0] = hp.first;
-    h_[1] = hp.second;
+    h_[0] = hp1;
+    h_[1] = hp2;
   }
 
 protected:

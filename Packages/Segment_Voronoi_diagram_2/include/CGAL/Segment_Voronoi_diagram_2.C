@@ -1017,9 +1017,11 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
     return v;
   }
 
-  Storage_site_2 ssx(ss.supporting_segment_handle(),
-		     v->storage_site().supporting_segment_handle());
+  //  Storage_site_2 ssx(ss.supporting_segment_handle(),
+  //		     v->storage_site().supporting_segment_handle());
   Storage_site_2 ssitev = v->storage_site();
+  Storage_site_2 ssx( ss.point_handle(0), ss.point_handle(1),
+		      ssitev.point_handle(0), ssitev.point_handle(1) );
 
   Site_2 sitev(v->site());
   Site_2 sx(t.point(0), t.point(1), sitev.point(0), sitev.point(1));
@@ -1069,15 +1071,20 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   if ( sitev.is_exact(0) ) {
     sv1.set_segment(sitev.point(0), sitev.point(1),
 		    t.point(0), t.point(1), true);
-    ssv1.set_segment(ssitev.supporting_segment_handle(),
-		     ss.supporting_segment_handle(), true);
+    //    ssv1.set_segment(ssitev.supporting_segment_handle(),
+    //		     ss.supporting_segment_handle(), true);
+    ssv1.set_segment(ssitev.point_handle(0), ssitev.point_handle(1),
+		     ss.point_handle(0), ss.point_handle(1), true);
   } else {
     sv1.set_segment(sitev.point(0), sitev.point(1),
 		    sitev.point(2), sitev.point(3),
 		    t.point(0), t.point(1));
-    ssv1.set_segment(ssitev.supporting_segment_handle(),
-		     ssitev.crossing_segment_handle(0),
-		     ss.supporting_segment_handle());
+    //    ssv1.set_segment(ssitev.supporting_segment_handle(),
+    //		     ssitev.crossing_segment_handle(0),
+    //		     ss.supporting_segment_handle());
+    ssv1.set_segment(ssitev.point_handle(0), ssitev.point_handle(1),
+		     ssitev.point_handle(2), ssitev.point_handle(3),
+		     ss.point_handle(0), ss.point_handle(1));
   }
   v1->set_site( ssv1 );
 
@@ -1087,15 +1094,20 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   if ( sitev.is_exact(1) ) {
     sv2.set_segment(sitev.point(0), sitev.point(1),
 		    t.point(0), t.point(1), false);
-    ssv2.set_segment(ssitev.supporting_segment_handle(),
-		     ss.supporting_segment_handle(), false);
+    //    ssv2.set_segment(ssitev.supporting_segment_handle(),
+    //		     ss.supporting_segment_handle(), false);
+    ssv2.set_segment(ssitev.point_handle(0), ssitev.point_handle(1),
+		     ss.point_handle(0), ss.point_handle(1), false);
   } else {
     sv2.set_segment(sitev.point(0), sitev.point(1),
 		    t.point(0), t.point(1),
 		    sitev.point(4), sitev.point(5));
-    ssv2.set_segment(ssitev.supporting_segment_handle(),
-		     ss.supporting_segment_handle(),
-		     ssitev.crossing_segment_handle(1));
+    //    ssv2.set_segment(ssitev.supporting_segment_handle(),
+    //		     ss.supporting_segment_handle(),
+    //		     ssitev.crossing_segment_handle(1));
+    ssv2.set_segment(ssitev.point_handle(0), ssitev.point_handle(1),
+		     ss.point_handle(0), ss.point_handle(1),
+		     ssitev.point_handle(4), ssitev.point_handle(5));
   }
   v2->set_site( ssv2 );
 
@@ -1109,29 +1121,39 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   if ( t.is_exact(0) ) {
     s3.set_segment(t.point(0), t.point(1),
 		   sitev.point(0), sitev.point(1), true);
-    ss3.set_segment(ss.supporting_segment_handle(),
-		    ssitev.supporting_segment_handle(), true);
+    //    ss3.set_segment(ss.supporting_segment_handle(),
+    //		    ssitev.supporting_segment_handle(), true);
+    ss3.set_segment(ss.point_handle(0), ss.point_handle(1),
+		    ssitev.point_handle(1), ssitev.point_handle(1), true);
   } else {
     s3.set_segment(t.point(0), t.point(1),
 		   t.point(2), t.point(3),
 		   sitev.point(0), sitev.point(1));
-    ss3.set_segment(ss.supporting_segment_handle(),
-		    ss.crossing_segment_handle(0),
-		    ssitev.supporting_segment_handle());
+    //    ss3.set_segment(ss.supporting_segment_handle(),
+    //		    ss.crossing_segment_handle(0),
+    //		    ssitev.supporting_segment_handle());
+    ss3.set_segment(ss.point_handle(0), ss.point_handle(1),
+		    ss.point_handle(2), ss.point_handle(3),
+		    ssitev.point_handle(0), ssitev.point_handle(1));
   }
 
   if ( t.is_exact(1) ) {
     s4.set_segment(t.point(0), t.point(1),
 		   sitev.point(0), sitev.point(1), false);
-    ss4.set_segment(ss.supporting_segment_handle(),
-		    ssitev.supporting_segment_handle(), false);
+    //    ss4.set_segment(ss.supporting_segment_handle(),
+    //		    ssitev.supporting_segment_handle(), false);
+    ss4.set_segment(ss.point_handle(0), ss.point_handle(1),
+		    ssitev.point_handle(0), ssitev.point_handle(1), false);
   } else {
     s4.set_segment(t.point(0), t.point(1),
 		   sitev.point(0), sitev.point(1),
 		   t.point(4), t.point(5));
-    ss4.set_segment(ss.supporting_segment_handle(),
-		    ssitev.supporting_segment_handle(),
-		    ss.crossing_segment_handle(1));
+    //    ss4.set_segment(ss.supporting_segment_handle(),
+    //		    ssitev.supporting_segment_handle(),
+    //		    ss.crossing_segment_handle(1));
+    ss4.set_segment(ss.point_handle(0), ss.point_handle(1),
+		    ssitev.point_handle(0), ssitev.point_handle(1),
+		    ss.point_handle(4), ss.point_handle(5));
   }
 
   insert_segment2(s3, ss3, vsx, false);

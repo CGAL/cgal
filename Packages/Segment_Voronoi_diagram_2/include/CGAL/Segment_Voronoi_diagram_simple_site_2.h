@@ -62,19 +62,6 @@ public:
   // the compiler complains that it cannot find this constructor;
   // solution: make the insert_intersecting_segment a template
   // method...
-  template<class A1, class A2>
-  Segment_Voronoi_diagram_simple_site_2(const A1&, const A2&) {
-    //    THIS_CONSTRUCTOR_SHOULD_HAVE_NEVER_BEEN_CALLED;
-    CGAL_assertion( false );
-  }
-
-  template<class A1, class A2, class A3>
-  Segment_Voronoi_diagram_simple_site_2(const A1&, const A2&,
-					const A3&) {
-    //    THIS_CONSTRUCTOR_SHOULD_HAVE_NEVER_BEEN_CALLED;
-    CGAL_assertion( false );
-  }
-
   template<class A1, class A2, class A3, class A4>
   Segment_Voronoi_diagram_simple_site_2(const A1&, const A2&,
 					const A3&, const A4&) {
@@ -99,8 +86,9 @@ public:
   }
 
   Segment_Voronoi_diagram_simple_site_2(const Object &o) {
-    if ( assign(p_, o) ) {
-      initialize_site(p_);
+    Point_2 p;
+    if ( assign(p, o) ) {
+      initialize_site(p);
       return;
     }
 
@@ -121,43 +109,43 @@ public:
 
   const Point_2& point() const { 
     CGAL_precondition ( is_point() );
-    return p_;
+    return p_[0];
   }
 
   const Point_2& point(unsigned int i) const { 
     CGAL_precondition ( i < 2 );
-    if ( i == 0 ) { return p_; }
-    else { CGAL_precondition( is_segment() ); return p2_; }
+    if ( i == 0 ) { return p_[0]; }
+    else { CGAL_precondition( is_segment() ); return p_[1]; }
   }
 
   Segment_2 segment() const {
     CGAL_precondition ( is_segment() ); 
-    return Segment_2( p_, p2_ );
+    return Segment_2( p_[0], p_[1] );
   }
 
   Point_2 source() const {
     CGAL_precondition ( is_segment() ); 
-    return p_;
+    return p_[0];
   }
 
   Point_2 target() const {
     CGAL_precondition ( is_segment() ); 
-    return p2_;
+    return p_[1];
   }
 
   Self source_site() const {
     CGAL_precondition( is_segment() );
-    return Self(p_);
+    return Self(p_[0]);
   }
 
   Self target_site() const {
     CGAL_precondition( is_segment() );
-    return Self(p2_);
+    return Self(p_[1]);
   }
 
   Self opposite_site() const {
     CGAL_precondition( is_segment() );
-    return Self( segment().opposite() );
+    return Self(p_[1],p_[0]);
   }
 
   Self supporting_site() const {
@@ -166,11 +154,13 @@ public:
   }
 
   Self supporting_site(unsigned int i) const {
+    CGAL_assertion( false );
     CGAL_precondition( is_point() && i < 2 );
-    return Self(p_, p_);
+    return Self(p_[0], p_[0]);
   }
 
   Self crossing_site(unsigned int i) const {
+    CGAL_assertion( false );
     CGAL_precondition( is_segment() && i < 2 );
     return *this;
   }
@@ -181,13 +171,15 @@ public:
   }
 
   Segment_2 supporting_segment(unsigned int i) const {
+    CGAL_assertion( false );
     CGAL_precondition( is_point() && i < 2 );
-    return Segment_2(p_, p_);
+    return Segment_2(p_[0], p_[0]);
   }
 
   Segment_2 crossing_segment(unsigned int i) const {
+    CGAL_assertion( false );
     CGAL_precondition( is_segment() && i < 2 );
-    return Segment_2(p_, p2_);
+    return Segment_2(p_[0], p_[1]);
   }
 
   void set_point(const Point_2& p) {
@@ -221,27 +213,23 @@ public:
     CGAL_assertion(false);
   }
 
-  std::ostream& write(std::ostream& os)
-  {
-    return os << (*this);
-  }
 
 protected:
   void initialize_site(const Point_2& p)
   {
     type_ = 1;
-    p_ = p;
+    p_[0] = p;
   }
 
   void initialize_site(const Point_2& p1, const Point_2& p2)
   {
     type_ = 2;
-    p_ = p1;
-    p2_ = p2;
+    p_[0] = p1;
+    p_[1] = p2;
   }
 
 protected:
-  Point_2 p_, p2_;
+  Point_2 p_[2];
   char type_;
 };
 
