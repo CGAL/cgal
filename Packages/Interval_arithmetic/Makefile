@@ -12,13 +12,16 @@ TMP_file=/tmp/submit-mail
 all:
 	@echo "-----------------------------------"
 	@echo "---- edit changes.txt          ----"
+	@echo -n "---- the current version file contains : "
+	@cat version
 	@echo "---- make VERSION=X.XX submit  ----"
 	@echo "-----------------------------------"
 
 Version:
 	echo $(CGAL_VERSION) > version
-	cvs commit -m "- Bump for $(CGAL_VERSION)" version
+	cvs commit -m "Bump for $(CGAL_VERSION)" version
 	cvs tag -c $(TAG_VERSION)
+	cvs tag -F -c current_submission
 
 submit: specific clean Version $(Package).tar.gz
 	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
