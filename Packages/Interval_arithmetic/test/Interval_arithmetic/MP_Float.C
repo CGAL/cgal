@@ -131,6 +131,8 @@ int main(int argc, char **argv)
   MPF f = 10*65536 + 7;
   CGAL_assertion(e < f);
 
+  CGAL_assertion(MPF(-2) == -MPF(2));
+
   print_test();
 
   return 0;
