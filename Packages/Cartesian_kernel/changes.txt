@@ -1,3 +1,6 @@
+Version 6.4 (25 January 2001)
+- Use the new file iterator_traits_pointer_specs_for_simple_cartesian_kernel.h
+
 Version 6.3 (22 January 2001)
 - Stefan's original Simple_cartesian replaced by this one.
 
