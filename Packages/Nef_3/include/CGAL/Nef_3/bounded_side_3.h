@@ -36,6 +36,10 @@
 #include <CGAL/Iterator_project.h>
 #include <vector>
 
+#undef _DEBUG
+#define _DEBUG 17
+#include <CGAL/Nef_3/debug.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class Point_2, class Point_3> 
@@ -53,9 +57,9 @@ Point_2 point_3_get_y_z_point_2(Point_3 p) {
   return( Point_2(p.hy(), p.hz(), p.hw()) );
 }
 
-template <class ForwardIterator, class R>
-Bounded_side bounded_side_3(ForwardIterator first,
-                            ForwardIterator last,
+template <class IteratorForward, class R>
+Bounded_side bounded_side_3(IteratorForward first,
+			    IteratorForward last,
                             const Point_3<R>& point,
                             Plane_3<R> plane = Plane_3<R>()) {
   typedef typename R::Point_2 Point_2;
@@ -64,10 +68,8 @@ Bounded_side bounded_side_3(ForwardIterator first,
   typedef typename R::Direction_3 Direction_3;
   typedef typename R::Plane_3 Plane_3;
 
-  CGAL_assertion( !is_empty_range(first, last));
-
   if(plane == Plane_3()) {
-    ForwardIterator p(first);
+    IteratorForward p(first);
     Point_3 p0(*(p++));
     CGAL_assertion(p != last);
     Point_3 p1(*(p++));
@@ -94,8 +96,11 @@ Bounded_side bounded_side_3(ForwardIterator first,
   }
 
   std::vector< Point_2> points;
-  CGAL_For_all( first, last)
+  TRACEN("facet:");
+  for( ; first != last; ++first ) {
+    TRACEN(t(*first)<<" "<<*first);
     points.push_back( t(*first));
+  }
   Bounded_side side = bounded_side_2( points.begin(), points.end(), t(point));
   points.clear();
   return side;

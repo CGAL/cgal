@@ -276,7 +276,7 @@ public:
   struct Shell_volume_setter {
     const SNC_decorator D;
     Volume_handle c;
-    Shell_volume_setter(const SNC_decorator& Di, Volume_handle& ci) 
+    Shell_volume_setter(const SNC_decorator& Di, Volume_handle ci) 
       : D(Di), c(ci) {}
     void visit(SFace_handle h) { 
       // TRACEN("volume assigned to SFace "<<&*h);

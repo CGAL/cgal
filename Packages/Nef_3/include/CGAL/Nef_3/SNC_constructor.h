@@ -47,7 +47,7 @@
 #define _DEBUG 43
 #include <CGAL/Nef_3/debug.h>
 
-#define IMMN 999999
+#define IMMN 999999999
 
 CGAL_BEGIN_NAMESPACE
 
@@ -58,10 +58,12 @@ struct Project_halfedge_point {
   Object& operator()( Node& x) const   { 
     DClass D;
     return D.point(D.source(x));
+    /* a Point_3& reference must be returned by D.point() */
   }
   const Object& operator()( const Node& x) const   { 
     DClass D;
     return D.point(D.source(x)); 
+    /* a Point_3& reference must be returned by D.point() */
   }
 };
   
@@ -335,6 +337,7 @@ public:
 	return facet(twin(se));
       }
     }
+    // TO TEST: code never reached
     TRACEN( "no adjacent facet found.");
     return Halffacet_handle();
   }
@@ -359,7 +362,8 @@ public:
     Halfedge_handle e;
     CGAL_forall_edges( e, *sncp()) {
       Point_3 q;
-      if ( do_intersect( s, e, q) ) { // internally only?
+      if ( does_intersect_internally( s, e, q) ) {
+	// TO TEST: code never reached
 	TRACEN("ray hit edge case");
 	v = vertex(e);
 	Sphere_point sp(point(vi)-point(v));
@@ -371,9 +375,9 @@ public:
       }
     }
     Halffacet_handle f;
-    CGAL_forall_halffacets( f, *sncp()) { // internally only?
+    CGAL_forall_halffacets( f, *sncp()) {
       Point_3 q;
-      if ( do_intersect( s, f, q) ) { 
+      if ( does_intersect_internally( s, f, q) ) { 
 	TRACEN("ray hit facet case");
 	Halffacet_cycle_iterator fc(f->facet_cycles_begin());
 	CGAL_assertion( fc != f->facet_cycles_end());
@@ -403,107 +407,110 @@ public:
     return (r1 == opposite(r2));
   }
 
-  bool do_intersect(const Segment_3& s,
-		    Halfedge_handle e,
-		    Point_3& p) const {
-    return do_intersect(s,segment(e),p);
+  bool does_intersect_internally( const Segment_3& ray,
+				  const Halfedge_handle e,
+				  Point_3& p) const {
+    CGAL_assertion( !ray.is_degenerate());
+    return does_intersect_internally( ray, segment(e), p);
   }
 
 #ifdef LINE3_LINE3_INTERSECTION
-  bool do_intersect( const Segment_3& s, 
-		     const Segment_3& q, 
-		     Point_3& p) const 
-  {
-    Object o = intersection(Line_3(s),Line_3(q)); 
-    if ( !assign(p,o) ) 
+
+  bool does_intersect_internally( const Segment_3& ray, 
+				  const Segment_3& s, 
+				  Point_3& p) const  {
+    CGAL_assertion( !ray.is_degenerate());
+    Object o = intersection(Line_3(ray), Line_3(s)); 
+    if ( !assign(p, o))
       return false;
-    if( !contains_internally(s, p) || !contains_internally(q, p) )
-      return false;
-    return true;
+    return( contains_internally( s, p));
   }
 
 #else // LINE3_LINE3_INTERSECTION
 
-  bool do_intersect( const Segment_3& s, 
-		     const Segment_3& r, 
-		     Point_3& p) const 
-  {
-    if ( s.is_degenerate() || r.is_degenerate())
+  bool does_intersect_internally( const Segment_3& ray, 
+				  const Segment_3& s, 
+				  Point_3& p) const {
+    CGAL_assertion( !ray.is_degenerate());
+    if ( s.is_degenerate())
       return false;
-    /* at least one of the segments is degenerate so 
-       there is not internal intersection */
-    if ( orientation(s.source(),s.target(),r.source(),r.target()) != COPLANAR)
+    /* the segment is degenerate so there is not internal intersection */
+    if ( orientation( ray.source(), ray.target(), s.source(), s.target()) 
+	 != COPLANAR)
       return false;
     /* the segments doesn't define a plane */
-    if ( collinear(s.source(),s.target(),r.source()) &&
-	 collinear(s.source(),s.target(),r.target()) )
+    if ( collinear( ray.source(), ray.target(), s.source()) &&
+	 collinear( ray.source(), ray.target(), s.target()) )
       return false;
     /* the segments are collinear */
-    Line_3 ls(s), lr(r);
-    if ( ls.direction() ==  lr.direction() ||
-	 ls.direction() == -lr.direction() )
+    Line_3 lray(ray), ls(s);
+    if ( lray.direction() ==  ls.direction() ||
+	 lray.direction() == -ls.direction() )
       return false;
     /* the segments are parallel */
     Oriented_side os1, os2;
-    Vector_3 vs(s.direction()), vr(r.direction()), vt(cross_product(vs, vr)), 
-      ws(cross_product(vt, vs)), wr(cross_product(vt, vr));
-    Plane_3 hs(s.source(),ws);
+    Vector_3 vray(ray.direction()), vs(s.direction()), 
+      vt(cross_product( vray, vs)), 
+      wray(cross_product( vt, vray)), ws(cross_product( vt, vs));
+    Plane_3 hray( ray.source(), wray);
+    /* hray is a plane which contains line(ray) and is perpendicular to the
+       plane defined by the ray and s */
+    os1 = hray.oriented_side(s.source());
+    os2 = hray.oriented_side(s.target());
+    if(os1 != opposite(os2))
+      return false;
+    Plane_3 hs( s.source(), ws);
     /* hs is a plane which contains line(s) and is perpendicular to the
-       plane defined by s and r */
-    os1 = hs.oriented_side(r.source());
-    os2 = hs.oriented_side(r.target());
+       plane defined by the ray and s */
+    os1 = hs.oriented_side(ray.source());
+    os2 = hs.oriented_side(ray.target());
     if(os1 != opposite(os2))
       return false;
-    Plane_3 hr(r.source(),wr);
-    /* hr is a plane which contains line(r) and is perpendicular to the
-       plane defined by s and r */
-    os1 = hr.oriented_side(s.source());
-    os2 = hr.oriented_side(s.target());
-    if(os1 != opposite(os2))
-      return false;
-    Object o = intersection(hs, lr);
-    CGAL_assertion(assign(p,o));
-    /* since line(s) and line(r) are not parallel they intersects in only
+    Object o = intersection(hray, ls);
+    CGAL_assertion(assign( p, o));
+    /* since line(ray) and line(s) are not parallel they intersects in only
        one point */
-    assign(p,o);
-    if ( !contains_internally(s, p) || !contains_internally(r, p) )
-      return false;
-    return true;
+    assign( p ,o);
+    return( contains_internally( s, p));
   }
 #endif // LINE3_LINE3_INTERSECTION
 
-  bool do_intersect(const Segment_3& s,
-		    Halffacet_handle f,
-		    Point_3& p) const { 
+  bool does_intersect_internally( const Segment_3& ray,
+				  const Halffacet_handle f,
+				  Point_3& p) const { 
+    CGAL_assertion( !ray.is_degenerate());
     Plane_3 h(plane(f));
-    // TRACEN("intersecting "<<Line_3(s)<<" "<<h);
-    Object o = intersection(h, Line_3(s));
-    if ( !CGAL::assign(p,o) ) 
+    Object o = intersection( h, Line_3(ray));
+    if ( !assign( p, o) ) 
       return false;
-    Oriented_side os1 = h.oriented_side(s.source());
-    Oriented_side os2 = h.oriented_side(s.target());
-    // TRACEN("source side: "<<os1<<", target side: "<<os2);
+    Oriented_side os1 = h.oriented_side(ray.source());
+    Oriented_side os2 = h.oriented_side(ray.target());
     if (os1 != opposite(os2))
       return false;
-    TRACEN( "Point in facet result = "<<locate_point_in_halffacet(p, f));
-    return (locate_point_in_halffacet(p, f) == CGAL::ON_BOUNDED_SIDE);
+    // TRACEN( "Point in facet result = "<<locate_point_in_halffacet(p, f));
+    return (locate_point_in_halffacet( p, f) == CGAL::ON_BOUNDED_SIDE);
   }
 
   Bounded_side locate_point_in_halffacet( const Point_3& p, 
-					  const Halffacet_handle& f) const {
+					  const Halffacet_handle f) const {
     typedef Project_halfedge_point
       < SHalfedge, const Point_3, SNC_decorator> Project;
-    typedef Iterator_project
-      < SHalfedge_handle, Project, const Point_3, const Point_3*> Circulator;
+    typedef Circulator_project
+      < SHalfedge_around_facet_circulator, Project, 
+      const Point_3&, const Point_3*> Circulator;
     typedef Container_from_circulator<Circulator> Container;
+
     Plane_3 h(plane(f));
     CGAL_assertion(h.has_on(p));
     Halffacet_cycle_iterator fc = f->facet_cycles_begin();
-    SHalfedge_handle e;
+    SHalfedge_handle se;
     Bounded_side outer_bound_pos;
-    if ( assign(e,fc) ) {
-      Container pts(Circulator(e));
-      outer_bound_pos = bounded_side_3(pts.begin(), pts.end(), p, h);
+    if ( assign(se,fc) ) {
+      SHalfedge_around_facet_circulator hfc(se);
+      Circulator c(hfc);
+      Container ct(c);
+      CGAL_assertion( !is_empty_range(ct.begin(), ct.end()));
+      outer_bound_pos = bounded_side_3(ct.begin(), ct.end(), p, h);
     } 
     else 
       CGAL_assertion_msg(0, "facet's first cycle is a SHalfloop?");
@@ -525,10 +532,13 @@ public:
 	else
 	  inner_bound_pos = CGAL::ON_UNBOUNDED_SIDE;
       } 
-      else if ( assign(e,fc) ) {
-	Container pts(Circulator(e));
-	inner_bound_pos = bounded_side_3(pts.begin(), pts.end(), p, 
-					 h.opposite());
+      else if ( assign(se,fc) ) {
+	SHalfedge_around_facet_circulator hfc(se);
+	Circulator c(hfc);
+	Container ct(c);
+	CGAL_assertion( !is_empty_range(ct.begin(), ct.end()));
+        inner_bound_pos = bounded_side_3( ct.begin(), ct.end(), 
+					  p, h.opposite());
       } 
       else 
 	CGAL_assertion_msg(0, "Damn wrong handle.");
@@ -822,7 +832,6 @@ create_volumes() const
   Shell_explorer V(*this,Shell,Closed,Done);
   std::vector<Vertex_handle> MinimalVertex;
   std::vector<SFace_handle> EntrySFace;
-
   SFace_iterator f;
   CGAL_forall_sfaces(f,*sncp()) { 
     if ( Done[f] ) 
@@ -833,49 +842,35 @@ create_volumes() const
     EntrySFace.push_back(f);
     V.increment_shell_number();
   }
-
   Volume_handle outer_volume = sncp()->new_volume();
-  //link_as_outer_shell( SFace_handle(), outer_volume); // dummy outer shell
   for (unsigned i = 0; i < MinimalVertex.size(); ++i) {
     Vertex_handle v = MinimalVertex[i];
     TRACEN("Shell #"<<i<<" minimal vertex: "<<point(v));
-    if(true) { // v is not a bounding box vertex, TODO
+    if ( true) { // TODO: if v is not a bounding box vertex
       bool create_shell = false;
       SM_point_locator D(v);
       SObject_handle o = D.locate(Sphere_point(-1,0,0));
       SFace_const_handle sfc;
-      if( !assign(sfc, o)) {
-	TRACEN( "Shell #"<<i<<" is outer candidate (sface not hit case)");
-	create_shell = true;
-      }
-      else {
-	if( Shell[sfc] != i) {
-	  TRACEN( "Shell #"<<i<<" is outer candidate (sface hit case)");
-	  create_shell = true;
-	}
-      }
-      if ( create_shell ) {
+      if( !assign(sfc, o) || Shell[sfc] != i) {
+	// TO TEST: !assign(sfc, o) case
 	SFace_handle f = EntrySFace[i];
 	CGAL_assertion( Shell[EntrySFace[i]] == i );
-	TRACEN( "is outer shell #" << i <<" closed? " << Closed[f]);
 	if( Closed[f] ) {
 	  Volume_handle c = sncp()->new_volume();
 	  link_as_outer_shell(f, c );
-	  TRACEN( "Shell #" << i <<" linked as outer shell ("<<
-		  (c == volume(f))<<")");
+	  TRACE( "Shell #" << i <<" linked as outer shell");
+	  TRACEN( "(sface" << (assign(sfc,o)?"":" not") << " hit case)");
 	}
       }
     }
   }
-
   CGAL_forall_sfaces(f,*sncp()) {
     if ( volume(f) != Volume_handle() ) 
       continue;
-    TRACEN( "Inner shell #" << Shell[f] <<" visited");
+    TRACEN( "Inner shell #" << Shell[f] << " volume?");
     Volume_handle c = determine_volume( f, MinimalVertex, Shell );
     link_as_inner_shell( f, c );
   }
-  return;
 }
 
 
