@@ -1,0 +1,390 @@
+%%
+%%  *** CGAL Installation Guide ***
+%%
+%% file:     appendix.tex
+%%
+%% authors:  Michael Hoffmann, Dima Pasechnik and Wieger Wesselink
+%%
+%% $Revision$ $Date$
+%%
+
+\section{Using \cgal\ and \leda}\label{sec:leda}
+\index{LEDA@\leda!support in \cgal}
+\cgal\ supports \leda\ in the following ways.
+
+\begin{enumerate}
+\item There are support functions defined for the \leda\ number types
+  \texttt{big\_float}, \texttt{integer}, \texttt{rational} and
+  \texttt{real} (see the files \texttt{<CGAL/leda\_*>}).
+\item For all two-dimensional geometric objects there are input/output
+  operators for a \texttt{leda\_window}.
+\item For all two-dimensional geometric objects there are output
+  operators to a \texttt{leda\_ps\_file}.
+\item The registration functions needed to interact with a
+  \texttt{leda\_geowin} are defined for all geometric objects from the
+  \cgal\ kernel.
+\item \cgal\ defines the following \leda-related compiler flags when
+      \leda\ is used: \texttt{CGAL\_USE\_LEDA} and \texttt{LEDA\_PREFIX}.
+\end{enumerate}
+
+The include makefiles in the \texttt{\cgaldir/make} directory
+corresponding to \leda\ can be recognized by the suffix
+``\texttt{\_LEDA}''.
+
+\section{Compiler workarounds}
+\index{compilers!workarounds}\index{workaround flags}
+
+In \cgal, a number of compiler flags is defined. All of them start
+with the prefix \texttt{CGAL\_CFG}. These flags are used to work
+around compiler bugs and limitations. For example, the flag
+\texttt{CGAL\_CFG\_NO\_LONG\_LONG} denotes that the compiler does not
+know the type \texttt{long long}.
+
+For each compiler a file \texttt{<CGAL/compiler\_config.h>}
+\index{files!\texttt{compiler\_config.h}} is defined, with the correct
+settings of all flags. This file is generated automatically by the
+\texttt{install\_cgal} script, and it is located in the compiler
+specific include directory. This directory can be found below
+\texttt{include/CGAL/config/};
+\index{directories!include/CGAL/config@\texttt{include/CGAL/config}}
+\index{directories!compiler specific}\index{compiler specific include
+  directory} it is named according to the compiler's \cgal-OS
+description (cf. Section~\ref{sec:os-compiler-id}).
+
+The test programs used to generate the \texttt{compiler\_config.h}
+file can be found in \texttt{config/testfiles}.
+\index{directories!config/testfiles@\texttt{config/testfiles}} Both
+\texttt{compiler\_config.h} and the test programs contain a short
+description of the problem. In case of trouble with one of the
+\texttt{CGAL\_CFG} flags, it is a good idea to take a look at it.
+
+Within \cgal, the file \texttt{<CGAL/basic.h>}
+\index{files!\texttt{basic.h}} manages all configuration problems. In
+particular, it includes the file \texttt{CGAL/compiler\_config.h}. It
+is therefore \textbf{important that \texttt{<CGAL/basic.h>} is always
+  included before any other file}. In most cases you do not have to do
+anything special for this, because many \cgal\ files (in particular,
+\texttt{<CGAL/Cartesian.h>} and \texttt{<CGAL/Homogeneous.h>}) already
+take care of including \texttt{<CGAL/basic.h>} first. Nevertheless it
+is a good idea to always start your \cgal\ programs with including
+\texttt{<CGAL/basic.h>}.
+
+\subsection{Standard Header Replacements}
+\index{compilers!missing standard header files} %
+\index{standard header replacements} %
+\index{missing standard header files}
+
+Some compilers do still not provide a complete standard library. In
+particular they fail to provide the \texttt{C++} wrappers for files
+from the standard \ccc{C} library, like \texttt{cstddef} for
+\texttt{stddef.h}. The \cgal\ install scripts checks for all standard
+header files and generates a simple wrapper file in the \cgal\ include
+directory for those that are missing. These wrapper files include the
+corresponding \texttt{C} header files and add all symbols required by
+the \texttt{C++} standard into namespace \ccc{std}. You can turn off
+the additions to namespace \ccc{std} by defining the macro
+\ccc{CGAL_NO_STDC_NAMESPACE}.
+\index{CGAL\_NO\_STDC\_NAMESPACE@\texttt{CGAL\_NO\_STDC\_NAMESPACE}}
+
+\section{Compiler Optimizations}\label{sec:compiler-optimisations}
+\index{compilers!optimization}
+\index{optimization compiler flags}
+
+You may have noticed that we do not set optimizer flags as \texttt{-O}
+by default in the include makefiles(see section~\ref{sec:makefiles} for
+a description of the makefile structure in \cgal).  The main reason
+for not doing this is that compilers run much more stable without. On
+the other hand, most if not all \cgal\ programs will run considerably
+faster when compiled with optimizations! So if you are going for
+performance, you should/have to add \texttt{-O}, \texttt{-O3} or maybe
+more specific optimizer flags (please refer to the compiler
+documentation for that) to the \texttt{CXXFLAGS} variable in your
+application makefile:
+\begin{alltt}
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+# The flag CGAL_CXXFLAGS contains the path to the compiler and is defined
+# in the file CGAL_MAKEFILE. You may add your own compiler flags to CXXFLAGS.
+
+CXXFLAGS = $(CGAL_CXXFLAGS) -O
+\end{alltt}
+%$
+
+\section{Troubleshooting}\label{sec:troubleshooting}
+\index{troubleshooting}
+
+This section contains some remarks about known problems and the
+solutions we propose. If your problem is not listed here, please have
+a look at the \cgal\ homepage:
+\begin{alltt}
+\cgalhomepage
+\end{alltt}
+or send an email to \texttt{info at cgal dot org}.
+
+\subsection{Compiler version test execution failed}
+\label{sec:compvertestfails}
+\index{Compiler version test}\index{compilers!version test}
+
+Possibly already during the startup of the install script, the
+execution of the compiler version test might fail with the following
+(or similar) error message.
+\begin{verbatim}
+  ld.so.1: ./tmp_test: fatal: libstdc++.so.5: 
+    open failed: No such file or directory
+\end{verbatim}
+This means that the standard \CC\ library for your compiler is
+installed in a directory that is not on your current runtime linker
+path. You can solve this problem by adding the directory containing
+\texttt{libstdc++.so} to your runtime linker path, usually
+represented by the environment variable \texttt{LD\_LIBRARY\_PATH}.
+
+For example, if you have a standard \texttt{gcc} installation below
+\texttt{/software/gcc-3.3.2/}, you would type 
+\begin{alltt}
+      export LD_LIBRARY_PATH=/software/gcc-3.3.2/lib:$LD_LIBRARY_PATH
+\end{alltt}
+for bourne shell alikes, while for \texttt{csh} descendants the syntax
+is
+\begin{alltt}
+      setenv LD_LIBRARY_PATH /software/gcc-3.3.2/lib:$LD_LIBRARY_PATH
+\end{alltt}
+You might want to add this command to your shell startup file.
+
+Alternatively, you can build the runtime linker path into the
+executables by setting corresponding custom linker flags (cf.
+Section~\ref{sec:compiler-menu}).
+
+\subsection{Defect in the G++ 3.2 ABI}
+\label{sec:gcc32abi}
+\index{gcc@\texttt{g++} 3.2 ABI}\index{compilers!gcc@\texttt{g++} 3.2 ABI}
+
+Some versions of \texttt{gcc}, for example \Gcc{3.3.0}, have problems
+in their \CC-ABI, that surface in error messages similar to the
+following.
+%
+\begin{verbatim}
+  error: due to a defect in the G++ 3.2 ABI, G++ has assigned 
+    the same mangled name to two different types.
+\end{verbatim}
+%
+If this occurs to you, please seriously consider upgrading your
+compiler. This issue is fixed starting from \Gcc{3.3.1}.
+Alternatively, you can add \texttt{-fabi-version=0} to your custom
+compiler flags\footnote{Thanks to Christopher Intemann for pointing
+  this out.}. In interactive mode, this is done via the Compiler Menu,
+as described in Section~\ref{sec:compiler-menu}. Afterwards rebuild
+the libraries. But note that changing the \textsc{Abi} might have side
+effects. Hence, a compiler upgrade is the recommended fix here.
+
+\subsection{The ``Long-Name-Problem'' on IRIX6}\label{sec:longnameirix}
+\index{problems with long names}\index{long name problem}
+
+The system assembler and linker on IRIX6 cannot handle symbols with
+more than 4096 characters. But this number can be exceeded when one
+starts nesting templates into each other. So if you encounter strange
+assembler or linker errors like
+\begin{alltt}
+as: Error: /var/tmp/ccPBl5vJ.s, line 41289: Truncating token: 
+<some ridiculously long token snipped>
+\end{alltt}
+there is a good chance that you suffer from this ``long-name''
+problem.
+
+In contrast to Solaris, using the \gnu\ binutils does not work, since
+\texttt{gas} has not been ported to IRIX6 yet. The solution proposed
+in the GCC
+faq\footnote{\path'http://gcc.gnu.org/cgi-bin/fom.cgi?file=41'} is to
+compile with the (experimental) option \texttt{-fsquangle}, that
+enables compression of symbol names. This option was experimental and
+has disappeared in GCC 3.0, where the ABI has been improved.  So this
+is only interesting for GCC 2.95.3.
+
+Citing from the above FAQ:
+
+\begin{alltt}
+Note that this option is still under development, and subject to
+change. Since it modifies the name mangling mechanism, you'll need to
+build libstdc++ and any other C++ libraries with this option enabled.
+Furthermore, if this option changes its behavior in the future, you'll
+have to rebuild them all again. :-(
+
+This option can be enabled by default by initializing
+`flag_do_squangling' with `1' in `gcc/cp/decl2.c' (it is not
+initialized by default), then rebuilding GCC and any C++ libraries.
+\end{alltt}
+
+\subsection{The ``Long-Name-Problem'' on Solaris}\label{sec:longnamesolaris}
+\index{problems with long names}\index{long name problem}
+
+The system assembler and linker on Solaris 2.5 and 2.6 cannot handle
+symbols with more than 1024 characters. But this number is quickly
+exceeded where one starts nesting templates into each other. So if you
+encounter strange assembler or linker errors like 
+\begin{alltt}
+/usr/ccs/bin/as: "/var/tmp/cc0B5iGc.s", line 24: 
+error: can't compute value of an expression involving an external symbol
+\end{alltt}
+there is a good chance that you suffer from this ``long-name''
+problem.
+
+A solution is to install the \gnu -binutils\footnote{see
+  \path'http://www.gnu.org/software/binutils/'} and to tell the
+compiler that it shall use the \gnu-- instead of the native tools.
+From the compiler-menu (described in section \ref{sec:compiler-menu})
+you can set the corresponding option through the custom compiler
+flags, i.e. for \texttt{gcc} you would add
+\begin{alltt}
+  -B/my/path/to/gnu/binutils/bin
+\end{alltt}
+assuming you installed the \gnu -binutils executables in
+\texttt{/my/path/to/gnu/binutils/bin}.
+
+If you cannot (or do not want to) install \gnu -binutils, there is a
+workaround that lets you compile, link and run your programs, but it
+prevents debugging, since the executables have to be stripped. In
+short the workaround is to compile with \texttt{-g} and to link with
+\texttt{-z nodefs -s} on Solaris, \texttt{-U -s} on IRIX,
+respectively.
+
+In order to still have portable makefiles (see
+section\ref{sec:makefiles}), we define flags
+\texttt{LONG\_NAME\_PROBLEM\_CXXFLAGS} and
+\texttt{LONG\_NAME\_PROBLEM\_LDFLAGS} in the include makefiles which
+are empty except for the Solaris platform where they are set as stated
+above. In order to use these flags, edit your application makefile and
+add the flags to \texttt{CXXFLAGS} resp. \texttt{LDFLAGS} as indicated
+below.
+\begin{alltt}
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+# The flag CGAL_CXXFLAGS contains the path to the compiler and is defined
+# in the file CGAL_MAKEFILE. You may add your own compiler flags to CXXFLAGS.
+
+CXXFLAGS = $(LONG_NAME_PROBLEM_CXXFLAGS) $(CGAL_CXXFLAGS) 
+
+#---------------------------------------------------------------------#
+#                    linker flags
+#---------------------------------------------------------------------#
+# The flag CGAL_LDFLAGS contains common linker flags and is defined
+# in the file CGAL_MAKEFILE. You may add your own linker flags to CXXFLAGS.
+
+LDFLAGS = $(LONG_NAME_PROBLEM_LDFLAGS) $(CGAL_LDFLAGS) 
+\end{alltt}
+
+\subsection{\leda\ and \stl\ conflicts}\label{subs:ledastlconfl}
+
+If you are using an old version of \leda, the combination of \leda\ 
+and \stl\ may give some problems. In order to avoid them, it is highly
+recommended to use the latest \leda\ release, since this is what we
+test \cgal\ with.
+
+\index{LEDA@\leda!on \bcc}\index{LEDA@\leda!on \msvc}
+With \msvc\ or \bcc, \leda\ has to be compiled and used with the
+\texttt{LEDA\_STD\_HEADERS} flag set. \cgal\ uses \CC\ standard
+conformant headers\footnote{the ones that do not have \texttt{.h}
+  suffix}, while \leda\ can also work with the old-style header files;
+but mixing the styles is strictly forbidden. Before compiling \leda\,
+edit the file \texttt{\$(LEDAROOT)/incl/LEDA/system.h} and uncomment
+the \texttt{\#define} in the following fragment there.
+\begin{alltt}
+// use c++ std headers
+//#define LEDA_STD_HEADERS
+\end{alltt}
+
+\paragraph{\msvc-specific problems.}
+
+Also, the \leda\ and \cgal\ libraries have to be compiled with the
+same options controlling the use of debugging and multithreading.
+\footnote{\msvc\ compilation/linking options \texttt{-ML, -MT, -MD,
+    -MLD, -MTD, -MDD}}
+
+If a binary release of \leda{} is used, make sure that it is one of
+them that uses new-style headers. Namely, among the self-extracting
+executables, choose one of these that have the name ending with
+\texttt{-std.exe}.
+
+\subsection{\msvc{}-specific \CC\ problems}
+\index{msvc@\msvc{}!specific \CC\ problems}
+
+\subsubsection{\msvc{6.0}}
+
+This compiler version is no longer supported starting with \cgal\ 3.0.
+
+\subsubsection{\msvc{7.0} (\textsc{.NET})}
+
+This compiler version is no longer supported starting with \cgal\ 3.1.
+
+\medskip
+
+\textbf{Other problems.}
+
+Here goes an incomplete list of problems encountered, and
+\cgal-specific workarounds, if available.  Compiler error messages are
+meant to be hints only, and do not pretend to be complete, as well.
+\begin{enumerate}
+%
+\item Compiler does not support the Koenig
+lookup. That is, it does not search in the namespace of the arguments for
+the function. See
+\texttt{config/testfiles/CGAL\_CFG\_NO\_KOENIG\_LOOKUP.C}. \label{msvc::koenig}
+%
+\item Internal compiler errors can sometimes be avoided by increasing
+  the amount of memory available to the compiler. Use \texttt{-Zm<number>}
+option. In \cgal\ makefiles it is set to \texttt{-Zm900}, meaning
+``using 900\% out of the usual memory limit''. \label{msvc::Zm}
+%
+\item \texttt{[...]/VC98/INCLUDE/xlocnum(268) :
+    error C2587: '\_U' :\\
+    illegal use of local variable as default parameter} can
+  occur\footnote{For instance, in \cgal\ \texttt{Min\_circle}
+    package}. The only workaround we know is to redefine the macro
+  \texttt{\_VIRTUAL} in \texttt{<xlocnum>}\footnote{Yes, in the \msvc\ 
+    header! You need not edit the actual file though. Copy it to
+    a directory that is searched ahead of the other directories.
+    DISCLAIMER:
+    {\em We do not know if the actions described in this footnote are
+      legal in your country. You are on your own here.}}
+  to be empty. Search for\\
+  \texttt{\#define~\_VIRTUAL~virtual} there and replace it by
+  \texttt{\#define~\_VIRTUAL~}. \label{msvc::VIRTUAL}
+%
+\item Various matching failures for overloaded functions and ctors.
+Use dummy parameters.
+%
+\item Avoid multiple forward declarations.
+%
+\item If necessary, simplify template parameters by using extra 
+\texttt{typedef}s.
+\end{enumerate}
+
+\section{Scripts}
+
+\subsection{\texttt{create\_makefile}}\label{sec:create_cgal_makefile}
+\TTindex{create\_makefile}\index{scripts!\texttt{create\_makefile}}
+
+The bourne-shell script \texttt{create\_makefile} is contained in the
+\cgaldir\texttt{/scripts} directory. It can be used to create
+makefiles for compiling \cgal\ applications. Executing
+\texttt{create\_makefile} in an application directory creates a
+\texttt{makefile} containing rules for every \texttt{*.C} file there.
+
+In order to use this makefile, you have to specify the \cgal\ include
+makefile (see section~\ref{sec:makefiles}) to be used. This can be
+done be either setting the environment variable
+\texttt{CGAL\_MAKEFILE} or by editing the line
+\begin{alltt}
+  # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+\end{alltt}
+of the created makefile. First remove the ``\texttt{\#}'' at the
+beginning of the line and then replace the text after ``\texttt{=}''
+by the location of the include makefile. 
+
+Finally type \texttt{make} to compile the application programs.
+
+%%
+%% EOF
+%%
+
+
