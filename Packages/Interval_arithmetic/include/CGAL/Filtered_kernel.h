@@ -224,7 +224,8 @@ template <class CK,
           class EK,
           class FK = Simple_cartesian<Interval_nt_advanced>,
 	  class C2E_Converter = Cartesian_converter<CK, EK>,
-	  class C2F_Converter = Cartesian_converter<CK, FK> >
+	  class C2F_Converter = Cartesian_converter<CK, FK,
+	                Interval_converter<CGAL_TYPENAME_MSVC_NULL CK::RT> > >
 class Filtered_kernel
 {
 public:
@@ -232,7 +233,8 @@ public:
     // Probably this should not exist, should it ?
     // struct filter_tag{};
     // typedef filter_tag                                     Kernel_tag;
-    typedef typename CK::Kernel_tag                       Kernel_tag;
+    // typedef typename CK::Kernel_tag                       Kernel_tag;
+    typedef typename CK::Rep_tag                          Rep_tag;
     typedef typename CK::RT                               RT;
     typedef typename CK::FT                               FT;
 
@@ -248,6 +250,8 @@ public:
 	                       C2E_Converter, C2F_Converter> P; \
     P Pf() const { return P(); }
 
+    // The following could be used instead for some Cartesian predicates
+    // that are exact : compare* and exact*.
 #define CGAL_Filter_already_exact_pred(P, Pf) \
     typedef typename CK::P P; \
     P Pf() const { return P(); }
@@ -358,8 +362,8 @@ public:
     CGAL_Filter_pred(Less_y_2, less_y_2_object)
     CGAL_Filter_pred(Less_xy_2, less_xy_2_object)
     CGAL_Filter_pred(Less_yx_2, less_yx_2_object)
-    CGAL_Filter_already_exact_pred(Compare_x_2, compare_x_2_object)
-    CGAL_Filter_already_exact_pred(Compare_y_2, compare_y_2_object)
+    CGAL_Filter_pred(Compare_x_2, compare_x_2_object)
+    CGAL_Filter_pred(Compare_y_2, compare_y_2_object)
     CGAL_Filter_pred(Compare_xy_2, compare_xy_2_object)
     CGAL_Filter_pred(Compare_y_at_x_2, compare_y_at_x_2_object)
     CGAL_Filter_pred(Counterclockwise_in_between_2,
@@ -419,6 +423,8 @@ public:
 	construct_perpendicular_line_3_object)
     CGAL_Filter_cons(Construct_midpoint_3, construct_midpoint_3_object)
     CGAL_Filter_cons(Construct_circumcenter_3, construct_circumcenter_3_object)
+    CGAL_Filter_cons(Construct_cross_product_vector_3,
+	    construct_cross_product_vector_3_object)
     CGAL_Filter_cons(Construct_opposite_segment_3,
 	construct_opposite_segment_3_object)
     CGAL_Filter_cons(Construct_opposite_ray_3, construct_opposite_ray_3_object)
@@ -432,7 +438,7 @@ public:
     CGAL_Filter_cons(Compute_squared_length_3, compute_squared_length_3_object)
 
 
-    CGAL_Filter_already_exact_pred(Equal_3, equal_3_object)
+    CGAL_Filter_pred(Equal_3, equal_3_object)
     CGAL_Filter_pred(Equal_x_3, equal_x_3_object)
     CGAL_Filter_pred(Equal_y_3, equal_y_3_object)
     CGAL_Filter_pred(Equal_z_3, equal_z_3_object)
@@ -443,9 +449,9 @@ public:
     CGAL_Filter_pred(Less_z_3, less_z_3_object)
     CGAL_Filter_pred(Less_xy_3, less_xy_3_object)
     CGAL_Filter_pred(Less_xyz_3, less_xyz_3_object)
-    CGAL_Filter_already_exact_pred(Compare_x_3, compare_x_3_object)
-    CGAL_Filter_already_exact_pred(Compare_y_3, compare_y_3_object)
-    CGAL_Filter_already_exact_pred(Compare_z_3, compare_z_3_object)
+    CGAL_Filter_pred(Compare_x_3, compare_x_3_object)
+    CGAL_Filter_pred(Compare_y_3, compare_y_3_object)
+    CGAL_Filter_pred(Compare_z_3, compare_z_3_object)
     CGAL_Filter_pred(Compare_xy_3, compare_xy_3_object)
     CGAL_Filter_pred(Compare_xyz_3, compare_xyz_3_object)
     CGAL_Filter_pred(Collinear_3, collinear_3_object)
