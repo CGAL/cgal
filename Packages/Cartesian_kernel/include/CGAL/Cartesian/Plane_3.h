@@ -236,7 +236,7 @@ CGAL_KERNEL_INLINE
 bool PlaneC3<R CGAL_CTAG>::
 operator==(const PlaneC3<R CGAL_CTAG> &p) const
 {
-  if (ptr == p.ptr) return true;
+  if ( identical(p) ) return true;
   return has_on_boundary(p.point()) &&
          (orthogonal_direction() == p.orthogonal_direction());
 

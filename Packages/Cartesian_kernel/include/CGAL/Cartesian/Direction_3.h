@@ -127,7 +127,7 @@ inline
 bool
 DirectionC3<R CGAL_CTAG>::operator==(const DirectionC3<R CGAL_CTAG> &d) const
 {
-  if (ptr == d.ptr) return true;
+  if ( identical(d) ) return true;
   return equal_directionC3(dx(), dy(), dz(), d.dx(), d.dy(), d.dz());
 }
 

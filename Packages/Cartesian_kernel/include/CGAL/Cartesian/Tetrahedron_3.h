@@ -122,7 +122,7 @@ bool
 TetrahedronC3<R CGAL_CTAG>::
 operator==(const TetrahedronC3<R CGAL_CTAG> &t) const
 {
-  if ( ptr == t.ptr ) return true;
+  if ( identical(t) ) return true;
   if ( orientation() != t.orientation() ) return false;
 
   std::vector< Point_3 > V1;

@@ -100,8 +100,8 @@ template < class R >
 bool
 TriangleC3<R CGAL_CTAG>::operator==(const TriangleC3<R CGAL_CTAG> &t) const
 {
+  if ( identical(t) ) return true;
   int i;
-  if (ptr == t.ptr) return true;
   for(i=0; i<3; i++)
     if ( vertex(0) == t.vertex(i) )
        break;

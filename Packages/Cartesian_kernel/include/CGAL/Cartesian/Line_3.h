@@ -70,7 +70,11 @@ public:
   Plane_3     perpendicular_plane(const Point_3 &p) const;
   Self        opposite() const;
 
-  Point_3     point() const;
+  Point_3     point() const
+  {
+      return ptr->e0;
+  }
+
   Point_3     point(int i) const;
 
   Point_3     projection(const Point_3 &p) const;
@@ -150,7 +154,7 @@ inline
 bool
 LineC3<R CGAL_CTAG>::operator==(const LineC3<R CGAL_CTAG> &l) const
 {
-  if (ptr == l.ptr) return true;
+  if ( identical(l) ) return true;
   return has_on(l.point()) && (direction() == l.direction());
 }
 
@@ -160,14 +164,6 @@ bool
 LineC3<R CGAL_CTAG>::operator!=(const LineC3<R CGAL_CTAG> &l) const
 {
   return !(*this == l);
-}
-
-template < class R >
-inline
-typename LineC3<R CGAL_CTAG>::Point_3
-LineC3<R CGAL_CTAG>::point() const
-{
-  return ptr->e0;
 }
 
 template < class R >
