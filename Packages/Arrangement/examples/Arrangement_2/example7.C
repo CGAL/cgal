@@ -11,11 +11,11 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::Quotient<CGAL::MP_Float>                NT;
-typedef CGAL::Cartesian<NT>                           Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>            Traits;
-typedef Traits::Point_2                               Point;
-typedef Traits::Curve_2                               Curve;
+typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
+typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
+typedef Traits::Point_2                                 Point;
+typedef Traits::Curve_2                                 Curve;
 typedef Traits::X_monotone_curve_2                      X_monotone_curve_2;
 
 // A global variable to keep track of when we inserted the edges.

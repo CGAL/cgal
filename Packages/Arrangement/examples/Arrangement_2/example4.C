@@ -6,7 +6,6 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
@@ -19,9 +18,8 @@ typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 typedef Traits::Point_2                                 Point_2;
 typedef Traits::Curve_2                                 Curve_2;
 typedef Traits::X_monotone_curve_2                      X_monotone_curve_2;
-typedef CGAL::Arr_base_node<Curve_2, X_monotone_curve_2> Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>      Arr_2;
+typedef CGAL::Arrangement_2<Dcel,Traits>                Arr_2;
 
 // A simple function that splits a segment into 2
 void my_split_f(const Curve_2 & cv, std::list<Curve_2> & l) 

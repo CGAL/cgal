@@ -5,21 +5,19 @@
 
 #include <CGAL/Homogeneous.h>
 #include <CGAL/MP_Float.h>
-#include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 
-typedef CGAL::MP_Float                               NT;
-typedef CGAL::Homogeneous<NT>                        Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>           Traits;
-typedef Traits::Point_2                              Point;
-typedef Traits::Curve_2                              Curve;
-typedef Traits::X_monotone_curve_2                   X_monotone_curve_2;
-typedef CGAL::Arr_base_node<Curve, X_monotone_curve_2> Base_node;
-typedef CGAL::Arr_2_default_dcel<Traits>             Dcel;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>   Arr_2;
+typedef CGAL::MP_Float                                  NT;
+typedef CGAL::Homogeneous<NT>                           Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
+typedef Traits::Point_2                                 Point;
+typedef Traits::Curve_2                                 Curve;
+typedef Traits::X_monotone_curve_2                      X_monotone_curve_2;
+typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
+typedef CGAL::Arrangement_2<Dcel,Traits>                Arr_2;
 
 int main() 
 {
