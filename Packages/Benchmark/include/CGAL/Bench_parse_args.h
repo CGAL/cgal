@@ -141,6 +141,7 @@ public:
   \t\th[eader]=<bool>\tprint header (default true)\n\
   \t\tname_length=<length>\n\
   \t\tnl=<length>\tset the length of the name field to <length\n\
+  -d <dir>\tadd directory <dir> to list of search directories\n\
   -h\t\tprint this help message\n\
   -i <iters>\tset number of iterations to <iters> (default 0)\n\
   -I <options>\tset input options\n\
