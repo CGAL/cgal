@@ -1,6 +1,8 @@
 version 0.9.5 (2003/11/28) [Laurent]
 --------------------------
-o fix the deprecated use of RIGHTTURN in conforming
+o Fix the deprecated use of RIGHTTURN in conforming.
+o Bix Conforming_Delaunay_triangulation_2 where a typename was missing.
+o bench/bench.C now compile again.
 
 version 0.9.4 (2003/11/5) [Laurent]
 --------------------------
