@@ -22,8 +22,8 @@ SegmentC2<R CGAL_CTAG>::SegmentC2(const SegmentC2<R CGAL_CTAG>  &s)
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-SegmentC2<R CGAL_CTAG>::SegmentC2(const SegmentC2<R CGAL_CTAG>::Point_2 &sp,
-                                  const SegmentC2<R CGAL_CTAG>::Point_2 &ep)
+SegmentC2<R CGAL_CTAG>::SegmentC2(const typename SegmentC2<R CGAL_CTAG>::Point_2 &sp,
+                                  const typename SegmentC2<R CGAL_CTAG>::Point_2 &ep)
 {
   PTR = new _Twotuple< Point_2 >(sp, ep);
 }
@@ -67,7 +67,7 @@ SegmentC2<R CGAL_CTAG>::id() const
 
 template < class R >
 inline
-SegmentC2<R CGAL_CTAG>::Point_2
+typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::start() const
 {
   return ptr()->e0;
@@ -75,7 +75,7 @@ SegmentC2<R CGAL_CTAG>::start() const
 
 template < class R >
 inline
-SegmentC2<R CGAL_CTAG>::Point_2
+typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::end() const
 {
   return ptr()->e1;
@@ -84,7 +84,7 @@ SegmentC2<R CGAL_CTAG>::end() const
 
 template < class R >
 inline
-SegmentC2<R CGAL_CTAG>::Point_2
+typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::source() const
 {
   return ptr()->e0;
@@ -92,7 +92,7 @@ SegmentC2<R CGAL_CTAG>::source() const
 
 template < class R >
 inline
-SegmentC2<R CGAL_CTAG>::Point_2
+typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::target() const
 {
   return ptr()->e1;
@@ -100,7 +100,7 @@ SegmentC2<R CGAL_CTAG>::target() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-SegmentC2<R CGAL_CTAG>::Point_2
+typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::min() const
 {
   return (lexicographically_xy_smaller(source(),target())) ? source()
@@ -109,7 +109,7 @@ SegmentC2<R CGAL_CTAG>::min() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-SegmentC2<R CGAL_CTAG>::Point_2
+typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::max() const
 {
   return (lexicographically_xy_smaller(source(),target())) ? target()
@@ -118,7 +118,7 @@ SegmentC2<R CGAL_CTAG>::max() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-SegmentC2<R CGAL_CTAG>::Point_2
+typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::vertex(int i) const
 {
   return (i%2 ==0) ? source() : target();
@@ -126,7 +126,7 @@ SegmentC2<R CGAL_CTAG>::vertex(int i) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-SegmentC2<R CGAL_CTAG>::Point_2
+typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::point(int i) const
 {
   return (i%2 ==0) ? source() : target();
@@ -134,7 +134,7 @@ SegmentC2<R CGAL_CTAG>::point(int i) const
 
 template < class R >
 inline
-SegmentC2<R CGAL_CTAG>::Point_2
+typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::operator[](int i) const
 {
   return vertex(i);
@@ -150,7 +150,7 @@ SegmentC2<R CGAL_CTAG>::squared_length() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-SegmentC2<R CGAL_CTAG>::Direction_2
+typename SegmentC2<R CGAL_CTAG>::Direction_2
 SegmentC2<R CGAL_CTAG>::direction() const
 {
   return Direction_2( target() - source() );
@@ -158,7 +158,7 @@ SegmentC2<R CGAL_CTAG>::direction() const
 
 template < class R >
 inline
-SegmentC2<R CGAL_CTAG>::Line_2
+typename SegmentC2<R CGAL_CTAG>::Line_2
 SegmentC2<R CGAL_CTAG>::supporting_line() const
 {
   return Line_2(*this);
@@ -175,7 +175,7 @@ SegmentC2<R CGAL_CTAG>::opposite() const
 template < class R >
 inline
 SegmentC2<R CGAL_CTAG>
-SegmentC2<R CGAL_CTAG>::transform(const SegmentC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+SegmentC2<R CGAL_CTAG>::transform(const typename SegmentC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
 {
   return SegmentC2<R CGAL_CTAG>(t.transform(source()), t.transform(target()));
 }
@@ -216,7 +216,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 SegmentC2<R CGAL_CTAG>::
-has_on(const SegmentC2<R CGAL_CTAG>::Point_2 &p) const
+has_on(const typename SegmentC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return(( p == source() )
          || ( p == target() )
@@ -233,7 +233,7 @@ template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 SegmentC2<R CGAL_CTAG>::
-collinear_has_on(const SegmentC2<R CGAL_CTAG>::Point_2 &p) const
+collinear_has_on(const typename SegmentC2<R CGAL_CTAG>::Point_2 &p) const
 {
     CGAL_kernel_exactness_precondition( collinear(source(), p, target()) );
     if (abs(target().x()-source().x())
@@ -271,7 +271,7 @@ std::ostream &operator<<(std::ostream &os, const SegmentC2<R CGAL_CTAG> &s)
 template < class R >
 std::istream &operator>>(std::istream &is, SegmentC2<R CGAL_CTAG> &s)
 {
-    SegmentC2<R CGAL_CTAG>::Point_2 p, q;
+    typename SegmentC2<R CGAL_CTAG>::Point_2 p, q;
 
     is >> p >> q;
 

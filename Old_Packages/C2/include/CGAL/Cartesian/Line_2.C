@@ -35,8 +35,8 @@ LineC2<R CGAL_CTAG>::new_rep(const typename R::FT &a,
 template < class R >
 CGAL_KERNEL_INLINE
 void
-LineC2<R CGAL_CTAG>::new_rep(const LineC2<R CGAL_CTAG>::Point_2 &p,
-                             const LineC2<R CGAL_CTAG>::Point_2 &q)
+LineC2<R CGAL_CTAG>::new_rep(const typename LineC2<R CGAL_CTAG>::Point_2 &p,
+                             const typename LineC2<R CGAL_CTAG>::Point_2 &q)
 {
   LineC2<R CGAL_CTAG> l =  line_from_points(p,q);
   new_rep(l.a(), l.b(), l.c());
@@ -57,8 +57,8 @@ LineC2<R CGAL_CTAG>::LineC2(const LineC2<R CGAL_CTAG>  &l)
 
 template < class R >
 inline
-LineC2<R CGAL_CTAG>::LineC2(const LineC2<R CGAL_CTAG>::Point_2 &p,
-                            const LineC2<R CGAL_CTAG>::Point_2 &q)
+LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Point_2 &p,
+                            const typename LineC2<R CGAL_CTAG>::Point_2 &q)
 {
   new_rep(p, q);
 }
@@ -74,22 +74,22 @@ LineC2<R CGAL_CTAG>::LineC2(const typename R::FT &a,
 
 template < class R >
 inline
-LineC2<R CGAL_CTAG>::LineC2(const LineC2<R CGAL_CTAG>::Segment_2 &s)
+LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Segment_2 &s)
 {
   new_rep(s.start(), s.end());
 }
 
 template < class R >
 inline
-LineC2<R CGAL_CTAG>::LineC2(const LineC2<R CGAL_CTAG>::Ray_2 &r)
+LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Ray_2 &r)
 {
   new_rep(r.start(), r.second_point());
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-LineC2<R CGAL_CTAG>::LineC2(const LineC2<R CGAL_CTAG>::Point_2 &p,
-                            const LineC2<R CGAL_CTAG>::Direction_2 &d)
+LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Point_2 &p,
+                            const typename LineC2<R CGAL_CTAG>::Direction_2 &d)
 {
   LineC2<R CGAL_CTAG> l =  line_from_point_direction(p,d);
   new_rep(l.a(), l.b(), l.c());
@@ -177,7 +177,7 @@ LineC2<R CGAL_CTAG>::y_at_x(const typename R::FT &x) const
 template < class R >
 inline
 LineC2<R CGAL_CTAG>
-LineC2<R CGAL_CTAG>::perpendicular(const LineC2<R CGAL_CTAG>::Point_2 &p) const
+LineC2<R CGAL_CTAG>::perpendicular(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return LineC2<R CGAL_CTAG>( -b() , a() , b() * p.x() - a() * p.y()  );
 }
@@ -193,7 +193,7 @@ LineC2<R CGAL_CTAG>::opposite() const
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-LineC2<R CGAL_CTAG>::Point_2
+typename LineC2<R CGAL_CTAG>::Point_2
 LineC2<R CGAL_CTAG>::point(int i) const
 {
   return line_get_point(*this,i);
@@ -201,7 +201,7 @@ LineC2<R CGAL_CTAG>::point(int i) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-LineC2<R CGAL_CTAG>::Point_2
+typename LineC2<R CGAL_CTAG>::Point_2
 LineC2<R CGAL_CTAG>::point() const
 {
   return line_get_point(*this,FT(0));
@@ -209,8 +209,8 @@ LineC2<R CGAL_CTAG>::point() const
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-LineC2<R CGAL_CTAG>::Point_2
-LineC2<R CGAL_CTAG>::projection(const LineC2<R CGAL_CTAG>::Point_2 &p) const
+typename LineC2<R CGAL_CTAG>::Point_2
+LineC2<R CGAL_CTAG>::projection(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
   if (is_horizontal()) return Point_2(p.x(), -c()/b());
   if (is_vertical())   return Point_2( -c()/a(), p.y());
@@ -222,17 +222,17 @@ LineC2<R CGAL_CTAG>::projection(const LineC2<R CGAL_CTAG>::Point_2 &p) const
 
 template < class R >
 inline
-LineC2<R CGAL_CTAG>::Direction_2
+typename LineC2<R CGAL_CTAG>::Direction_2
 LineC2<R CGAL_CTAG>::direction() const
 {
-  return LineC2<R CGAL_CTAG>::Direction_2( b(), -a() );
+  return Direction_2( b(), -a() );
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
 Oriented_side
 LineC2<R CGAL_CTAG>::
-oriented_side(const LineC2<R CGAL_CTAG>::Point_2 &p) const
+oriented_side(const typename R::LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return side_of_oriented_line(*this,p);
 }
@@ -241,7 +241,7 @@ template < class R >
 inline
 bool
 LineC2<R CGAL_CTAG>::
-has_on_boundary(const LineC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_boundary(const typename R::LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return oriented_side(p) == ON_ORIENTED_BOUNDARY;
 }
@@ -250,7 +250,7 @@ template < class R >
 inline
 bool
 LineC2<R CGAL_CTAG>::
-has_on_positive_side(const LineC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_positive_side(const typename R::LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return oriented_side(p) == ON_POSITIVE_SIDE;
 }
@@ -259,7 +259,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 LineC2<R CGAL_CTAG>::
-has_on_negative_side(const LineC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_negative_side(const typename R::LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return oriented_side(p) == ON_NEGATIVE_SIDE;
 }
@@ -289,7 +289,7 @@ template < class R >
 inline
 LineC2<R CGAL_CTAG>
 LineC2<R CGAL_CTAG>::
-transform(const LineC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+transform(const typename R::LineC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
 {
   return LineC2<R CGAL_CTAG>( t.transform(point(0) ), t.transform(direction() ));
 }

@@ -8,7 +8,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-inline _Twotuple< Iso_rectangleC2<R CGAL_CTAG>::Point_2 > *
+inline _Twotuple< typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 > *
 Iso_rectangleC2<R CGAL_CTAG>::ptr() const
 {
   return (_Twotuple<Point_2>*)PTR;
@@ -32,8 +32,8 @@ Iso_rectangleC2(const Iso_rectangleC2<R CGAL_CTAG> &r)
 template < class R >
 inline
 Iso_rectangleC2<R CGAL_CTAG>::
-Iso_rectangleC2(const Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p,
-                const Iso_rectangleC2<R CGAL_CTAG>::Point_2 &q)
+Iso_rectangleC2(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p,
+                const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &q)
 {
   FT vx0 = p.x();
   FT vy0 = p.y();
@@ -107,7 +107,7 @@ int Iso_rectangleC2<R CGAL_CTAG>::id() const
 
 template < class R >
 inline
-Iso_rectangleC2<R CGAL_CTAG>::Point_2
+typename Iso_rectangleC2<R CGAL_CTAG>::Point_2
 Iso_rectangleC2<R CGAL_CTAG>::min() const
 {
   return  ptr()->e0;
@@ -115,7 +115,7 @@ Iso_rectangleC2<R CGAL_CTAG>::min() const
 
 template < class R >
 inline
-Iso_rectangleC2<R CGAL_CTAG>::Point_2
+typename Iso_rectangleC2<R CGAL_CTAG>::Point_2
 Iso_rectangleC2<R CGAL_CTAG>::max() const
 {
   return  ptr()->e1;
@@ -152,7 +152,7 @@ typename R::FT Iso_rectangleC2<R CGAL_CTAG>::ymax() const
 
 
 template < class R >
-Iso_rectangleC2<R CGAL_CTAG>::Point_2
+typename Iso_rectangleC2<R CGAL_CTAG>::Point_2
 Iso_rectangleC2<R CGAL_CTAG>::vertex(int i) const
 {
   switch (i%4) {
@@ -165,7 +165,7 @@ Iso_rectangleC2<R CGAL_CTAG>::vertex(int i) const
 
 template < class R >
 inline
-Iso_rectangleC2<R CGAL_CTAG>::Point_2
+typename Iso_rectangleC2<R CGAL_CTAG>::Point_2
 Iso_rectangleC2<R CGAL_CTAG>::operator[](int i) const
 {
   return vertex(i);
@@ -205,7 +205,7 @@ template < class R >
 inline
 bool
 Iso_rectangleC2<R CGAL_CTAG>::
-has_on_boundary(const Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_boundary(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return bounded_side(p) == ON_BOUNDARY;
 }
@@ -214,7 +214,7 @@ template < class R >
 inline
 bool
 Iso_rectangleC2<R CGAL_CTAG>::
-has_on_bounded_side(const Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_bounded_side(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return bounded_side(p) == ON_BOUNDED_SIDE;
 }
@@ -223,7 +223,7 @@ template < class R >
 inline
 bool
 Iso_rectangleC2<R CGAL_CTAG>::
-has_on_unbounded_side(const Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_unbounded_side(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return bounded_side(p) == ON_UNBOUNDED_SIDE;
 }
@@ -245,7 +245,7 @@ template < class R >
 inline
 Iso_rectangleC2<R CGAL_CTAG>
 Iso_rectangleC2<R CGAL_CTAG>::
-transform(const Iso_rectangleC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+transform(const typename Iso_rectangleC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
 {
   // We need a precondition like this!!!
   // CGAL_kernel_precondition(t.is_axis_preserving());
@@ -276,7 +276,7 @@ CGAL_KERNEL_MEDIUM_INLINE
 std::istream &
 operator>>(std::istream &is, Iso_rectangleC2<R CGAL_CTAG> &r)
 {
-    Iso_rectangleC2<R CGAL_CTAG>::Point_2 p, q;
+    typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 p, q;
 
     is >> p >> q;
 

@@ -193,8 +193,8 @@ template < class R >
 inline
 bool
 collinear(const PointC2<R CGAL_CTAG> &p,
-               const PointC2<R CGAL_CTAG> &q,
-               const PointC2<R CGAL_CTAG> &r)
+          const PointC2<R CGAL_CTAG> &q,
+          const PointC2<R CGAL_CTAG> &r)
 {
   return (orientation(p,q,r) == COLLINEAR);
 }

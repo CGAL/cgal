@@ -13,7 +13,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
-_Threetuple< TriangleC2<R CGAL_CTAG>::Point_2 > *
+_Threetuple< typename TriangleC2<R CGAL_CTAG>::Point_2 > *
 TriangleC2<R CGAL_CTAG>::ptr() const
 {
   return (_Threetuple<Point_2>*)PTR;
@@ -35,9 +35,9 @@ TriangleC2<R CGAL_CTAG>::TriangleC2(const TriangleC2<R CGAL_CTAG> &t)
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 TriangleC2<R CGAL_CTAG>::
-TriangleC2(const TriangleC2<R CGAL_CTAG>::Point_2 &p,
-                          const TriangleC2<R CGAL_CTAG>::Point_2 &q,
-                          const TriangleC2<R CGAL_CTAG>::Point_2 &r)
+TriangleC2(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p,
+           const typename TriangleC2<R CGAL_CTAG>::Point_2 &q,
+           const typename TriangleC2<R CGAL_CTAG>::Point_2 &r)
 {
   PTR = new _Threetuple<Point_2>(p, q, r);
 }
@@ -84,7 +84,7 @@ int TriangleC2<R CGAL_CTAG>::id() const
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-TriangleC2<R CGAL_CTAG>::Point_2
+typename TriangleC2<R CGAL_CTAG>::Point_2
 TriangleC2<R CGAL_CTAG>::vertex(int i) const
 {
   if (i>2) i = i%3;
@@ -96,7 +96,7 @@ TriangleC2<R CGAL_CTAG>::vertex(int i) const
 
 template < class R >
 inline
-TriangleC2<R CGAL_CTAG>::Point_2
+typename TriangleC2<R CGAL_CTAG>::Point_2
 TriangleC2<R CGAL_CTAG>::operator[](int i) const
 {
   return vertex(i);
@@ -114,7 +114,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 Bounded_side
 TriangleC2<R CGAL_CTAG>::
-bounded_side(const TriangleC2<R CGAL_CTAG>::Point_2 &p) const
+bounded_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
 {
   Orientation o1 = CGAL::orientation(vertex(0), vertex(1), p),
               o2 = CGAL::orientation(vertex(1), vertex(2), p),
@@ -137,7 +137,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 Oriented_side
 TriangleC2<R CGAL_CTAG>::
-oriented_side(const TriangleC2<R CGAL_CTAG>::Point_2 &p) const
+oriented_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
 {
   // depends on the orientation of the vertices
   Orientation o1 = CGAL::orientation(vertex(0), vertex(1), p),
@@ -162,7 +162,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 bool
 TriangleC2<R CGAL_CTAG>::
-has_on_bounded_side(const TriangleC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_bounded_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return bounded_side(p) == ON_BOUNDED_SIDE;
 }
@@ -171,7 +171,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 bool
 TriangleC2<R CGAL_CTAG>::
-has_on_unbounded_side(const TriangleC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_unbounded_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return bounded_side(p) == ON_UNBOUNDED_SIDE;
 }
@@ -180,7 +180,7 @@ template < class R >
 inline
 bool
 TriangleC2<R CGAL_CTAG>::
-has_on_boundary(const TriangleC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_boundary(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return bounded_side(p) == ON_BOUNDARY;
 }
@@ -189,7 +189,7 @@ template < class R >
 inline
 bool
 TriangleC2<R CGAL_CTAG>::
-has_on_negative_side(const TriangleC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_negative_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return oriented_side(p) == ON_NEGATIVE_SIDE;
 }
@@ -198,7 +198,7 @@ template < class R >
 inline
 bool
 TriangleC2<R CGAL_CTAG>::
-has_on_positive_side(const TriangleC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_positive_side(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return oriented_side(p) == ON_POSITIVE_SIDE;
 }
@@ -222,7 +222,7 @@ template < class R >
 inline
 TriangleC2<R CGAL_CTAG>
 TriangleC2<R CGAL_CTAG>::
-transform(const TriangleC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+transform(const typename TriangleC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
 {
   return TriangleC2<R CGAL_CTAG>(t.transform(vertex(0)),
                         t.transform(vertex(1)),

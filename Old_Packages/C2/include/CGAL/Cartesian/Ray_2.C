@@ -9,7 +9,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
-_Twotuple< RayC2<R CGAL_CTAG>::Point_2 > *
+_Twotuple< typename RayC2<R CGAL_CTAG>::Point_2 > *
 RayC2<R CGAL_CTAG>::ptr() const
 {
   return (_Twotuple<Point_2>*)PTR;
@@ -19,7 +19,7 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 RayC2<R CGAL_CTAG>::RayC2()
 {
-  PTR = new _Twotuple< RayC2<R CGAL_CTAG>::Point_2 >;
+  PTR = new _Twotuple<Point_2>;
 }
 
 template < class R >
@@ -30,15 +30,16 @@ RayC2<R CGAL_CTAG>::RayC2(const RayC2<R CGAL_CTAG>  &r)
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-RayC2<R CGAL_CTAG>::RayC2(const RayC2<R CGAL_CTAG>::Point_2 &sp,
-                          const RayC2<R CGAL_CTAG>::Point_2 &secondp)
+RayC2<R CGAL_CTAG>::RayC2(const typename RayC2<R CGAL_CTAG>::Point_2 &sp,
+                          const typename RayC2<R CGAL_CTAG>::Point_2 &secondp)
 {
   PTR = new _Twotuple<Point_2>(sp, secondp);
 }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-RayC2<R CGAL_CTAG>::RayC2(const RayC2<R CGAL_CTAG>::Point_2 &sp, const RayC2<R CGAL_CTAG>::Direction_2 &d)
+RayC2<R CGAL_CTAG>::RayC2(const typename RayC2<R CGAL_CTAG>::Point_2 &sp,
+                          const typename RayC2<R CGAL_CTAG>::Direction_2 &d)
 {
   PTR = new _Twotuple<Point_2>(sp, sp + d.vector());
 }
@@ -78,28 +79,32 @@ int RayC2<R CGAL_CTAG>::id() const
 
 template < class R >
 inline
-RayC2<R CGAL_CTAG>::Point_2  RayC2<R CGAL_CTAG>::start() const
+typename RayC2<R CGAL_CTAG>::Point_2
+RayC2<R CGAL_CTAG>::start() const
 {
   return ptr()->e0;
 }
 
 template < class R >
 inline
-RayC2<R CGAL_CTAG>::Point_2  RayC2<R CGAL_CTAG>::source() const
+typename RayC2<R CGAL_CTAG>::Point_2
+RayC2<R CGAL_CTAG>::source() const
 {
   return ptr()->e0;
 }
 
 template < class R >
 inline
-RayC2<R CGAL_CTAG>::Point_2  RayC2<R CGAL_CTAG>::second_point() const
+typename RayC2<R CGAL_CTAG>::Point_2
+RayC2<R CGAL_CTAG>::second_point() const
 {
   return ptr()->e1;
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-RayC2<R CGAL_CTAG>::Point_2  RayC2<R CGAL_CTAG>::point(int i) const
+typename RayC2<R CGAL_CTAG>::Point_2
+RayC2<R CGAL_CTAG>::point(int i) const
 {
   CGAL_kernel_precondition( i >= 0 );
   if (i == 0) return ptr()->e0;
@@ -109,14 +114,15 @@ RayC2<R CGAL_CTAG>::Point_2  RayC2<R CGAL_CTAG>::point(int i) const
 
 template < class R >
 inline
-RayC2<R CGAL_CTAG>::Direction_2 RayC2<R CGAL_CTAG>::direction() const
+typename RayC2<R CGAL_CTAG>::Direction_2
+RayC2<R CGAL_CTAG>::direction() const
 {
   return Direction_2( second_point() - source() );
 }
 
 template < class R >
 inline
-RayC2<R CGAL_CTAG>::Line_2
+typename RayC2<R CGAL_CTAG>::Line_2
 RayC2<R CGAL_CTAG>::supporting_line() const
 {
   return Line_2(*this);
@@ -135,7 +141,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 RayC2<R CGAL_CTAG>
 RayC2<R CGAL_CTAG>::
-transform(const RayC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+transform(const typename RayC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
 {
   return RayC2<R CGAL_CTAG>(t.transform(source()), t.transform(second_point()));
 }
@@ -165,7 +171,7 @@ bool RayC2<R CGAL_CTAG>::is_degenerate() const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-RayC2<R CGAL_CTAG>::has_on(const RayC2<R CGAL_CTAG>::Point_2 &p) const
+RayC2<R CGAL_CTAG>::has_on(const typename RayC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return ( p == source()
            || ( collinear(source(), p, second_point())
@@ -176,7 +182,7 @@ RayC2<R CGAL_CTAG>::has_on(const RayC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-RayC2<R CGAL_CTAG>::collinear_has_on(const RayC2<R CGAL_CTAG>::Point_2 &p) const
+RayC2<R CGAL_CTAG>::collinear_has_on(const typename RayC2<R CGAL_CTAG>::Point_2 &p) const
 {
     switch(compare_x(source(), second_point())){
     case SMALLER:
@@ -214,8 +220,8 @@ std::ostream &operator<<(std::ostream &os, const RayC2<R CGAL_CTAG> &r)
 template < class R >
 std::istream &operator>>(std::istream &is, RayC2<R CGAL_CTAG> &r)
 {
-    RayC2<R CGAL_CTAG>::Point_2 p;
-    RayC2<R CGAL_CTAG>::Direction_2 d;
+    typename RayC2<R CGAL_CTAG>::Point_2 p;
+    typename RayC2<R CGAL_CTAG>::Direction_2 d;
 
     is >> p >> d;
 

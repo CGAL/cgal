@@ -74,14 +74,14 @@ VectorC2<R CGAL_CTAG>::operator=(const VectorC2<R CGAL_CTAG> &v)
 }
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-VectorC2<R CGAL_CTAG>::VectorC2(const VectorC2<R CGAL_CTAG>::Point_2 &p)
+VectorC2<R CGAL_CTAG>::VectorC2(const typename VectorC2<R CGAL_CTAG>::Point_2 &p)
   : Handle((Handle&)p)
 {
 }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-VectorC2<R CGAL_CTAG>::VectorC2(const VectorC2<R CGAL_CTAG>::Direction_2 &d)
+VectorC2<R CGAL_CTAG>::VectorC2(const typename VectorC2<R CGAL_CTAG>::Direction_2 &d)
   : Handle((Handle&)d)
 {
 }
@@ -238,10 +238,10 @@ VectorC2<R CGAL_CTAG>::operator/(const typename R::FT &c) const
 
 template < class R >
 inline
-VectorC2<R CGAL_CTAG>::Direction_2
+typename VectorC2<R CGAL_CTAG>::Direction_2
 VectorC2<R CGAL_CTAG>::direction() const
 {
-  return VectorC2<R CGAL_CTAG>::Direction_2(*this) ;
+  return Direction_2(*this) ;
 }
 
 template < class R >
@@ -259,7 +259,7 @@ VectorC2<R CGAL_CTAG>::perpendicular(const Orientation &o) const
 template < class R >
 inline
 VectorC2<R CGAL_CTAG>
-VectorC2<R CGAL_CTAG>::transform(const VectorC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+VectorC2<R CGAL_CTAG>::transform(const typename VectorC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
 {
   return t.transform(*this);
 }

@@ -46,7 +46,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 bool equal_line(const LineC2<R CGAL_CTAG> &l1,
-                   const LineC2<R CGAL_CTAG> &l2)
+                const LineC2<R CGAL_CTAG> &l2)
 {
   return equal_lineC2(l1.a(),l1.b(),l1.c(),l2.a(),l2.b(),l2.c());
 }

@@ -38,19 +38,16 @@ Aff_transformationC2<R CGAL_CTAG>::Aff_transformationC2
 
 template < class R >
 Aff_transformationC2<R CGAL_CTAG>::
-Aff_transformationC2(const FT & m11, const FT & m12,
-                     const FT & m21, const FT & m22,
-                     const FT & w)
+Aff_transformationC2(const typename R::FT & m11, const typename R::FT & m12,
+                     const typename R::FT & m21, const typename R::FT & m22,
+                     const typename R::FT & w)
 {
-  if (w != FT(1)) // Un reliquat crade du support commun H2/C2 ?
     PTR = new Aff_transformation_repC2<R>(m11/w, m12/w, m21/w, m22/w);
-  else
-    PTR = new Aff_transformation_repC2<R>(m11, m12, m21, m22);
 }
 
 template < class R >
 Aff_transformationC2<R CGAL_CTAG>::
-Aff_transformationC2(const Translation, const Aff_transformationC2<R CGAL_CTAG>::Vector_2 &v)
+Aff_transformationC2(const Translation, const typename Aff_transformationC2<R CGAL_CTAG>::Vector_2 &v)
 {
   PTR = new Translation_repC2<R>(v);
 }
@@ -58,7 +55,7 @@ Aff_transformationC2(const Translation, const Aff_transformationC2<R CGAL_CTAG>:
 template < class R >
 Aff_transformationC2<R CGAL_CTAG>::
 Aff_transformationC2( const Rotation,
-                      const Aff_transformationC2<R CGAL_CTAG>::Direction_2 &d,
+                      const typename Aff_transformationC2<R CGAL_CTAG>::Direction_2 &d,
                       const FT &num, const FT &den)
 {
   PTR = new Rotation_repC2<R>(d, num, den);
@@ -117,62 +114,62 @@ Aff_transformationC2<R CGAL_CTAG>::operator=(const Aff_transformationC2<R CGAL_C
 }
 
 template < class R >
-Aff_transformationC2<R CGAL_CTAG>::Point_2
-Aff_transformationC2<R CGAL_CTAG>::transform(const Aff_transformationC2<R CGAL_CTAG>::Point_2 &p) const
+typename Aff_transformationC2<R CGAL_CTAG>::Point_2
+Aff_transformationC2<R CGAL_CTAG>::transform(const typename Aff_transformationC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return ptr()->transform(p);
 }
 
 template < class R >
 inline
-Aff_transformationC2<R CGAL_CTAG>::Point_2
-Aff_transformationC2<R CGAL_CTAG>::operator()(const Aff_transformationC2<R CGAL_CTAG>::Point_2 &p) const
+typename Aff_transformationC2<R CGAL_CTAG>::Point_2
+Aff_transformationC2<R CGAL_CTAG>::operator()(const typename Aff_transformationC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return transform(p);
 }
 
 template < class R >
-Aff_transformationC2<R CGAL_CTAG>::Vector_2
-Aff_transformationC2<R CGAL_CTAG>::transform(const Aff_transformationC2<R CGAL_CTAG>::Vector_2 &p) const
+typename Aff_transformationC2<R CGAL_CTAG>::Vector_2
+Aff_transformationC2<R CGAL_CTAG>::transform(const typename Aff_transformationC2<R CGAL_CTAG>::Vector_2 &p) const
 {
   return ptr()->transform(p);
 }
 
 template < class R >
 inline
-Aff_transformationC2<R CGAL_CTAG>::Vector_2
-Aff_transformationC2<R CGAL_CTAG>::operator()(const Aff_transformationC2<R CGAL_CTAG>::Vector_2 &p) const
+typename Aff_transformationC2<R CGAL_CTAG>::Vector_2
+Aff_transformationC2<R CGAL_CTAG>::operator()(const typename Aff_transformationC2<R CGAL_CTAG>::Vector_2 &p) const
 {
   return transform(p);
 }
 template < class R >
-Aff_transformationC2<R CGAL_CTAG>::Direction_2
-Aff_transformationC2<R CGAL_CTAG>::transform(const Aff_transformationC2<R CGAL_CTAG>::Direction_2 &d) const
+typename Aff_transformationC2<R CGAL_CTAG>::Direction_2
+Aff_transformationC2<R CGAL_CTAG>::transform(const typename Aff_transformationC2<R CGAL_CTAG>::Direction_2 &d) const
 {
   return ptr()->transform(d);
 }
 
 template < class R >
 inline
-Aff_transformationC2<R CGAL_CTAG>::Direction_2
-Aff_transformationC2<R CGAL_CTAG>::operator()(const Aff_transformationC2<R CGAL_CTAG>::Direction_2 &d) const
+typename Aff_transformationC2<R CGAL_CTAG>::Direction_2
+Aff_transformationC2<R CGAL_CTAG>::operator()(const typename Aff_transformationC2<R CGAL_CTAG>::Direction_2 &d) const
 {
   return transform(d);
 }
 
 template < class R >
 inline
-Aff_transformationC2<R CGAL_CTAG>::Line_2
-Aff_transformationC2<R CGAL_CTAG>::transform(const Aff_transformationC2<R CGAL_CTAG>::Line_2 &l) const
+typename Aff_transformationC2<R CGAL_CTAG>::Line_2
+Aff_transformationC2<R CGAL_CTAG>::transform(const typename Aff_transformationC2<R CGAL_CTAG>::Line_2 &l) const
 {
-  return Aff_transformationC2<R CGAL_CTAG>::Line_2(ptr()->transform(l.point(0)),
+  return typename Aff_transformationC2<R CGAL_CTAG>::Line_2(ptr()->transform(l.point(0)),
                     ptr()->transform(l.direction()));
 }
 
 template < class R >
 inline
-Aff_transformationC2<R CGAL_CTAG>::Line_2
-Aff_transformationC2<R CGAL_CTAG>::operator()(const Aff_transformationC2<R CGAL_CTAG>::Line_2 &l) const
+typename Aff_transformationC2<R CGAL_CTAG>::Line_2
+Aff_transformationC2<R CGAL_CTAG>::operator()(const typename Aff_transformationC2<R CGAL_CTAG>::Line_2 &l) const
 {
   return transform(l);
 }

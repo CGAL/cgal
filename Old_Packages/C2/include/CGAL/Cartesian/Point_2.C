@@ -47,7 +47,7 @@ PointC2<R CGAL_CTAG>::PointC2(const PointC2<R CGAL_CTAG> &p)
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-PointC2<R CGAL_CTAG>::PointC2(const PointC2<R CGAL_CTAG>::Vector_2 &v)
+PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::Vector_2 &v)
   : Handle((Handle&)v)
 {}
 
@@ -180,7 +180,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 PointC2<R CGAL_CTAG>
 PointC2<R CGAL_CTAG>::
-transform( const PointC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+transform( const typename PointC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
 {
   return t.transform(*this);
 }

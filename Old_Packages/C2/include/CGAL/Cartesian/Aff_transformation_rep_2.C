@@ -18,7 +18,7 @@ inverse() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-Aff_transformation_repC2<R>::Aff_transformation_2
+typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
 operator*(const Aff_transformation_rep_baseC2<R> &t)
   {
@@ -27,7 +27,7 @@ operator*(const Aff_transformation_rep_baseC2<R> &t)
  
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
-Aff_transformation_repC2<R>::Aff_transformation_2
+typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
 compose(const Translation_repC2<R> &t) const
   {
@@ -41,7 +41,7 @@ compose(const Translation_repC2<R> &t) const
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
-Aff_transformation_repC2<R>::Aff_transformation_2
+typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
 compose(const Rotation_repC2<R> &t) const
   {
@@ -55,7 +55,7 @@ compose(const Rotation_repC2<R> &t) const
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
-Aff_transformation_repC2<R>::Aff_transformation_2
+typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
 compose(const Scaling_repC2<R> &t) const
   {
@@ -69,7 +69,7 @@ compose(const Scaling_repC2<R> &t) const
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
-Aff_transformation_repC2<R>::Aff_transformation_2
+typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
 compose(const Aff_transformation_repC2 &t) const
   {

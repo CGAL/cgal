@@ -32,7 +32,7 @@ DirectionC2(const DirectionC2<R CGAL_CTAG> &d)
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC2<R CGAL_CTAG>::
-DirectionC2(const DirectionC2<R CGAL_CTAG>::Vector_2 &v) :
+DirectionC2(const typename DirectionC2<R CGAL_CTAG>::Vector_2 &v) :
   Handle((Handle&)v)
 {}
 
@@ -123,7 +123,7 @@ DirectionC2<R CGAL_CTAG>::counterclockwise_in_between
 
 template < class R >
 inline
-DirectionC2<R CGAL_CTAG>::Vector_2
+typename DirectionC2<R CGAL_CTAG>::Vector_2
 DirectionC2<R CGAL_CTAG>::vector() const
 {
   return Vector_2(*this);
@@ -145,7 +145,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 DirectionC2<R CGAL_CTAG>
 DirectionC2<R CGAL_CTAG>::
-transform(const DirectionC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+transform(const typename DirectionC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
 {
   return t.transform(*this);
 }
