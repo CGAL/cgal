@@ -77,12 +77,23 @@ struct Interval_nt_advanced
 #endif
       {}
 
+  // To stop constant propagation, I need these CGAL_IA_FORCE_TO_DOUBLE(),
+  // and this one is not specific to Intel.
+  // Ideally, the good ones (0.0*x ...) should be enabled...
+
   Interval_nt_advanced(const double d)
       : _inf(d), _sup(d) {}
+//   { _inf = _sup = CGAL_IA_FORCE_TO_DOUBLE(d); }
 
   Interval_nt_advanced(const double i, const double s)
       : _inf(i), _sup(s)
-      { CGAL_assertion_msg(i<=s," Variable used before being initialized ?"); }
+  {
+      CGAL_assertion_msg(i<=s," Variable used before being initialized ?");
+#if 0
+      _inf = CGAL_IA_FORCE_TO_DOUBLE(i);
+      _sup = CGAL_IA_FORCE_TO_DOUBLE(s);
+#endif
+  }
 
 #if 1
   // The copy constructors/assignment: useless.
@@ -315,7 +326,7 @@ operator/ (const double d, const Interval_nt_advanced & t)
 #ifdef CGAL_IA_DEBUG
       CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
-  if ( (t.inf()<=0) && (t.sup()>=0) ) // t~0
+  if (t.inf() <= 0 && t.sup() >= 0) // t~0
       return CGAL_IA_LARGEST;
 
   return (d>=0) ? Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d/-t.sup()),
