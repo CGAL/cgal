@@ -4,7 +4,6 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-
 include $(CGAL_MAKEFILE)
 
 # ---------------------------------------------------------------------#
@@ -15,7 +14,7 @@ CXXFLAGS = \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            -Iinclude \
-          $(CGAL_CXXFLAGS) \
+           $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
@@ -36,7 +35,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: demo demo_color demo_remove blind_demo
+all: demo demo_color demo_remove demo_voronoi blind_demo
 
 demo$(EXE_EXT): demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) $(LDFLAGS)
@@ -47,11 +46,14 @@ demo_color$(EXE_EXT): demo_color$(OBJ_EXT)
 demo_remove$(EXE_EXT): demo_remove$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_remove demo_remove$(OBJ_EXT) $(LDFLAGS)
 
+demo_voronoi$(EXE_EXT): demo_voronoi$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_voronoi demo_voronoi$(OBJ_EXT) $(LDFLAGS)
+
 blind_demo$(EXE_EXT): blind_demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)blind_demo blind_demo$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-	demo.clean demo_color.clean blind_demo.clean demo_remove.clean
+	demo.clean demo_color.clean blind_demo.clean demo_remove.clean demo_voronoi.clean
 	rm -f data/output core
 
 #---------------------------------------------------------------------#

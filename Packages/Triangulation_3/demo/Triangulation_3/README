@@ -23,6 +23,12 @@ For a robust version, CGAL::Filtered_exact<double, CGAL::MP_Float>
 should be used.
 --------------------------------------------------------------
 
+------- demo_voronoi ------------------------------------------
+Constructs a Delaunay triangulation for points on a grid.
+
+Displays the Voronoi edges of the set of points
+--------------------------------------------------------------
+
 ------- demo_remove ------------------------------------------
 Constructs a Delaunay triangulation for points on a grid.
 
