@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.69 (7 May 2002)
+   different templating for Polyhedron to please MSVC 6
+
 0.9.68 (6 May 2002)
    fixed typo in doc
 

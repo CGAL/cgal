@@ -105,13 +105,25 @@ private:
 include |<CGAL/Convex_hull_d_to_polyhedron_3.h>|
 \setopdims{2cm}{3cm}}*/
 
+#if defined(_MSC_VER) && defined(CGAL_USE_POLYHEDRON_DESIGN_ONE)
+template <class R, class Tr, class HDS>       
+void 
+convex_hull_d_to_polyhedron_3(const Convex_hull_d<R>& C,
+                              Polyhedron_3<Tr,HDS>& P)
+#else // non-MSVC compilers or MSVC>1200 can handle this more general interface
 template <class R, class Polyhedron_3>
 void convex_hull_d_to_polyhedron_3(
   const Convex_hull_d<R>& C, Polyhedron_3& P)
+#endif
 /*{\Mfunc converts the convex hull |C| to polyedral surface stored in 
    |P|.\\ \precond |dim == 3| and |dcur == 3|. }*/
 { typedef Convex_hull_d<R> ChullType;
+
+#if defined(_MSC_VER) && defined(CGAL_USE_POLYHEDRON_DESIGN_ONE)  
+   typedef typename Polyhedron_3<Tr, HDS>::HalfedgeDS  HDS;
+#else
   typedef typename Polyhedron_3::HalfedgeDS  HDS;
+#endif
   CGAL_assertion_msg(C.dimension()==3&&C.current_dimension()==3,
   "convex_hull_d_to_polyhedron_3: only full manifold can be transformed.");
   Build_polyhedron_from_chull<HDS,ChullType> get_surface(C);
