@@ -42,7 +42,6 @@ collinearC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ry,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &rz)
 {
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -91,7 +90,6 @@ collinearC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ry,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rz)
 {
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   try
   {
@@ -364,7 +362,6 @@ orientationC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &sy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &sz)
 {
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -422,7 +419,6 @@ orientationC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sz)
 {
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   try
   {
@@ -713,7 +709,6 @@ side_of_oriented_sphereC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ty,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &tz)
 {
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -780,7 +775,6 @@ side_of_oriented_sphereC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ty,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &tz)
 {
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   try
   {
@@ -1144,7 +1138,6 @@ side_of_bounded_sphereC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ty,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &tz)
 {
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -1211,7 +1204,6 @@ side_of_bounded_sphereC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ty,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &tz)
 {
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   try
   {
@@ -1555,7 +1547,6 @@ cmp_dist_to_pointC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ry,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &rz)
 {
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -1604,7 +1595,6 @@ cmp_dist_to_pointC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ry,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rz)
 {
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   try
   {
@@ -1849,7 +1839,6 @@ cmp_signed_dist_to_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qz)
 {
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -1901,7 +1890,6 @@ cmp_signed_dist_to_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qz)
 {
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   try
   {
@@ -2164,7 +2152,6 @@ cmp_signed_dist_to_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qz)
 {
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -2231,7 +2218,6 @@ cmp_signed_dist_to_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qz)
 {
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   try
   {
