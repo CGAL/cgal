@@ -106,6 +106,24 @@ public:
     }
   }
 
+  Zone conflicts_zone_impl(const Point& p, Face_handle fh)
+  {
+    Zone zone;
+
+    triangulation_ref_impl().
+      get_conflicts_and_boundary(p,
+                                 std::back_inserter(zone.faces),
+                                 std::back_inserter(zone.boundary_edges),
+				 fh
+                                 );
+#ifdef DEBUG
+    std::cerr << "get_conflicts_and_boundary(" << p << "):" << std::endl
+              << "faces: " << zone.faces.size() << std::endl
+              << "edges: " << zone.boundary_edges.size() << std::endl;
+#endif // DEBUG
+    return zone;
+  }
+
   /** Tells if the map of faces to be conformed is empty or not. */
   bool no_longer_element_to_refine_impl() const
   {

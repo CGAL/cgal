@@ -157,9 +157,9 @@ public:
     return derived().insert_impl(p, z);
   }
 
-  Zone conflicts_zone(const Point& p)
+  Zone conflicts_zone(const Point& p, Element e)
   {
-    return derived().conflicts_zone_impl(p);
+    return derived().conflicts_zone_impl(p, e);
   }
 
   /** Called before the first refinement, to initialized the queue of
@@ -319,7 +319,7 @@ public:
 
     before_conflicts(e, p, visitor);
 
-    Zone zone = conflicts_zone(p);
+    Zone zone = conflicts_zone(p, e);
 
     const Mesher_level_conflict_status result = test_point_conflict(p, zone);
 

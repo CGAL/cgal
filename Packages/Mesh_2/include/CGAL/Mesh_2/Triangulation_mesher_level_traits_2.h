@@ -53,23 +53,6 @@ struct Triangulation_mesher_level_traits_2 :
     Edges boundary_edges;
   };
 
-  Zone conflicts_zone_impl(const Point& p)
-  {
-    Zone zone;
-
-    triangulation_ref_impl().
-      get_conflicts_and_boundary(p,
-                                 std::back_inserter(zone.faces),
-                                 std::back_inserter(zone.boundary_edges)
-                                 );
-#ifdef DEBUG
-    std::cerr << "get_conflicts_and_boundary(" << p << "):" << std::endl
-              << "faces: " << zone.faces.size() << std::endl
-              << "edges: " << zone.boundary_edges.size() << std::endl;
-#endif // DEBUG
-    return zone;
-  }
-
   Vertex_handle insert_impl(const Point& p, Zone& zone)
   {
 #ifdef DEBUG

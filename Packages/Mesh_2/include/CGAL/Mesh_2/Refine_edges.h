@@ -294,7 +294,6 @@ protected:
   Is_locally_conform is_locally_conform;
 
   Vertex_handle va, vb;
-  Edge edge;
 
   bool imperatively;
 
@@ -332,8 +331,7 @@ public:
     return tr;
   }
 
-  /** Reimplemented from Triangulation_mesher_level_traits_2<Tr>. */
-  Zone conflicts_zone_impl(const Point& p)
+  Zone conflicts_zone_impl(const Point& p, Edge edge)
   {
     Zone zone;
 
@@ -440,9 +438,8 @@ public:
   }
 
   /** Store the edge. */
-  void before_conflicts_impl(const Edge& e, const Point&)
+  void before_conflicts_impl(const Edge&, const Point&)
   {
-    edge = e;
   }
 
   /**

@@ -1,3 +1,6 @@
+23 March 2005 Laurent Rineau
+- conflicts_zone_impl requirements have changed
+
 8 March 2005 Laurent Rineau
 - new Double_map.h
 
