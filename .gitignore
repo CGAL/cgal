@@ -155,6 +155,7 @@ Packages/Qt_widget/demo/Qt_widget/basic/tutorial7/tutorial7
 Packages/Qt_widget/demo/Qt_widget/basic/tutorial8/*.moc
 Packages/Qt_widget/demo/Qt_widget/basic/tutorial8/tutorial8
 Packages/Qt_widget/src/CGALQt/*.moc
+Packages/Qt_widget/test/Qt_widget/test_qt_version
 Packages/Random_numbers/*.aux
 Packages/Random_numbers/*.bbl
 Packages/Random_numbers/*.blg
