@@ -1,5 +1,12 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.24 on 10 October 1999
+- New class Lazy_exact_nt<> (in a preliminary state).
+- Replaced CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION by
+           CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION or
+	   CGAL_CFG_MATCHING_BUG_2 where appropriate.
+- More Visual C++ fixes.
+
 Version 4.23 on 7 October 1999
 - New file include/CGAL/Arithmetic_filter/dispatch.h which contains the list
   of #include<> for the overloaded predicates, so that they are automatically
