@@ -11,6 +11,7 @@ Version 1.46 (?? ??? 01)
   implementation for fill_hole_3d [af]
 - Use std::distance(). [syl]
 - Triangulation_hierarchy<>.
+- Remove some old style casts.
 
 Version 1.45 (22 dec 00)
 - point() of vertex_base returns a const ref instead of a Point. [syl]

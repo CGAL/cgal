@@ -56,8 +56,8 @@ public:
   Triangulation_ds_cell_iterator_3()
     {}
   
-  Triangulation_ds_cell_iterator_3(Tds * tds)
-    : _tds(tds)
+  Triangulation_ds_cell_iterator_3(const Tds * tds)
+    : _tds(const_cast<Tds *>(tds))
     {
       if ( _tds->dimension() < 3 )
 	  pos = _tds->past_end_cell(); // there is no cell yet
@@ -66,8 +66,8 @@ public:
     }
 
   // used to initialize the past-the end iterator
-  Triangulation_ds_cell_iterator_3(Tds* tds, int)
-    : _tds(tds)
+  Triangulation_ds_cell_iterator_3(const Tds* tds, int)
+    : _tds(const_cast<Tds *>(tds))
     {
       pos = _tds->past_end_cell();
     }
@@ -154,8 +154,8 @@ public:
     : _tds(NULL), pos(NULL), index(0)
     {}
   
-  Triangulation_ds_vertex_iterator_3(Tds * tds)
-    : _tds(tds), index(0)
+  Triangulation_ds_vertex_iterator_3(const Tds * tds)
+    : _tds(const_cast<Tds *>(tds)), index(0)
     {
       if ( _tds->number_of_vertices() == 0 )
 	pos = _tds->past_end_cell(); 
@@ -168,10 +168,10 @@ public:
     }
   
   // used to initialize the past-the end iterator
-  Triangulation_ds_vertex_iterator_3(Tds* tds, int)
-    : _tds(tds), index(0)
+  Triangulation_ds_vertex_iterator_3(const Tds* tds, int)
+    : _tds(const_cast<Tds *>(tds)), index(0)
     {
-      pos = tds->past_end_cell() ;
+      pos = _tds->past_end_cell();
     }
   
   Vertex_iterator& operator++()
@@ -276,16 +276,16 @@ public:
     : _tds(NULL), pos(NULL), index(0)
     {}
   
-  Triangulation_ds_facet_iterator_3(Tds * tds)
-    : _tds(tds), index(0)
+  Triangulation_ds_facet_iterator_3(const Tds * tds)
+    : _tds(const_cast<Tds *>(tds)), index(0)
     {
       switch ( _tds->dimension() ) {
       case 2:
-	pos = tds->list_of_cells()._next_cell; 
+	pos = _tds->list_of_cells()._next_cell; 
 	index = 3;
 	return;
       case 3:
-	pos = tds->list_of_cells()._next_cell; 
+	pos = _tds->list_of_cells()._next_cell; 
 	while ( // useless (pos != _tds->past_end_cell()) &&
 	       // there must be at least one facet
 	       pos->neighbor(index) < pos ) {
@@ -293,16 +293,16 @@ public:
 	}
 	return;
       default:
-	pos = tds->past_end_cell();
+	pos = _tds->past_end_cell();
 	return;
       }
     }
   
   // used to initialize the past-the end iterator
-  Triangulation_ds_facet_iterator_3(Tds* tds, int)
-    : _tds(tds), index(0)
+  Triangulation_ds_facet_iterator_3(const Tds* tds, int)
+    : _tds(const_cast<Tds *>(tds)), index(0)
     {
-	pos = tds->past_end_cell();
+	pos = _tds->past_end_cell();
 	if (_tds->dimension() == 2)
 	    index = 3;
     }
@@ -426,18 +426,18 @@ public:
     : _tds(NULL), pos(NULL), b(0), e(1)
     {}
   
-  Triangulation_ds_edge_iterator_3(Tds * tds)
-    : _tds(tds), b(0), e(1)
+  Triangulation_ds_edge_iterator_3(const Tds * tds)
+    : _tds(const_cast<Tds *>(tds)), b(0), e(1)
     {
       switch ( _tds->dimension() ) {
       case 1:
 	{
-	  pos = tds->list_of_cells()._next_cell;
+	  pos = _tds->list_of_cells()._next_cell;
 	  return;
 	}
       case 2:
 	{
-	  pos = tds->list_of_cells()._next_cell; 
+	  pos = _tds->list_of_cells()._next_cell; 
 	  while ( // useless (pos != _tds->past_end_cell()) && 
 		 // there must be at least one edge
 		 ( pos->neighbor(3-b-e) < pos) ) {
@@ -447,7 +447,7 @@ public:
 	}
       case 3:
 	{
-	  pos = tds->list_of_cells()._next_cell;
+	  pos = _tds->list_of_cells()._next_cell;
 	  bool notfound = true;
 	  while ( // useless (pos != _tds->past_end_cell()) &&
 		 // there must be at least one edge
@@ -466,15 +466,15 @@ public:
 	}
       default:
 	{
-	  pos = tds->past_end_cell() ; 
+	  pos = _tds->past_end_cell() ; 
 	  return;
 	}
       }
     }
   
   // used to initialize the past-the end iterator
-  Triangulation_ds_edge_iterator_3(Tds* tds, int)
-    : _tds(tds), b(0), e(1)
+  Triangulation_ds_edge_iterator_3(const Tds* tds, int)
+    : _tds(const_cast<Tds *>(tds)), b(0), e(1)
     {
 	pos = tds->past_end_cell();
     }

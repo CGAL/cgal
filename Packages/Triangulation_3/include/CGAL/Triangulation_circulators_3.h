@@ -1,4 +1,3 @@
-
 // ============================================================================
 //
 // Copyright (c) 1999 The CGAL Consortium
@@ -18,20 +17,18 @@
 //
 // coordinator   : INRIA Sophia Antipolis 
 //                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
-//
 // ============================================================================
 
 #ifndef CGAL_TRIANGULATION_CIRCULATORS_3_H
 #define CGAL_TRIANGULATION_CIRCULATORS_3_H
 
+#include <CGAL/Triangulation_short_names_3.h>
+#include <CGAL/triangulation_assertions.h>
 #include <CGAL/triple.h>
 #include <CGAL/circulator.h>
-#include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_ds_circulators_3.h>
 #include <CGAL/Triangulation_vertex_3.h>
 #include <CGAL/Triangulation_cell_3.h>
-
-#include <CGAL/Triangulation_short_names_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -61,30 +58,31 @@ public:
     : _cb(), _tr(NULL)
     {}
 
-  Triangulation_cell_circulator_3(Triangulation * tr, Cell_handle c,
+  Triangulation_cell_circulator_3(const Triangulation * tr, Cell_handle c,
 				  int s, int t)
-    : _cb( &(tr->_tds), (Ctds *) &(*c), s, t ), _tr(tr)
+    : _cb( &(const_cast<Triangulation *>(tr)->_tds), (Ctds *) &(*c), s, t ),
+      _tr(const_cast<Triangulation *>(tr))
     {}
 
-  Triangulation_cell_circulator_3(Triangulation * tr, const Edge & e)
-    : _cb( &(tr->_tds), (Ctds *) &(*(e.first)), e.second, e.third ), _tr(tr)
+  Triangulation_cell_circulator_3(const Triangulation * tr, const Edge & e)
+    : _cb( &(const_cast<Triangulation *>(tr)->_tds), (Ctds *) &(*(e.first)),
+	    e.second, e.third ), _tr(const_cast<Triangulation *>(tr))
     {}
 
-   Triangulation_cell_circulator_3(Triangulation * tr, 
+   Triangulation_cell_circulator_3(const Triangulation * tr, 
 				   Cell_handle c, int s, int t,
 				   Cell_handle start)
-    : _cb( &(tr->_tds), 
-	   (Ctds *) &(*c), s, t,
-	   (Ctds *) &(*start) ),
-      _tr(tr)
+    : _cb( &(const_cast<Triangulation *>(tr)->_tds), 
+	   (Ctds *) &(*c), s, t, (Ctds *) &(*start) ),
+      _tr(const_cast<Triangulation *>(tr))
     {}
 
-   Triangulation_cell_circulator_3(Triangulation * tr, const Edge & e, 
+   Triangulation_cell_circulator_3(const Triangulation * tr, const Edge & e, 
 				   Cell_handle start)
-    : _cb( &(tr->_tds), 
+    : _cb( &(const_cast<Triangulation *>(tr)->_tds), 
 	   (Ctds *) &(*(e.first)), e.second, e.third, 
 	   (Ctds *) &(*start) ),
-      _tr(tr)
+      _tr(const_cast<Triangulation *>(tr))
     {}
  
   Triangulation_cell_circulator_3(const Cell_circulator & ccir)
@@ -181,47 +179,49 @@ public:
     : _cb(), _tr(NULL)
     {}
 
-  Triangulation_facet_circulator_3(Triangulation * tr, Cell_handle c,
+  Triangulation_facet_circulator_3(const Triangulation * tr, Cell_handle c,
 				  int s, int t)
-    : _cb( &(tr->_tds), (Ctds *) &(*c), s, t ), _tr(tr)
+    : _cb( &(const_cast<Triangulation *>(tr)->_tds), (Ctds *) &(*c), s, t ),
+      _tr(const_cast<Triangulation *>(tr))
     {}
 
-  Triangulation_facet_circulator_3(Triangulation * tr, const Edge & e)
-    : _cb( &(tr->_tds), (Ctds *) &(*(e.first)), e.second, e.third ), _tr(tr)
+  Triangulation_facet_circulator_3(const Triangulation * tr, const Edge & e)
+    : _cb( &(const_cast<Triangulation *>(tr)->_tds), (Ctds *) &(*(e.first)),
+	    e.second, e.third ), _tr(const_cast<Triangulation *>(tr))
     {}
 
-   Triangulation_facet_circulator_3(Triangulation * tr, 
+   Triangulation_facet_circulator_3(const Triangulation * tr, 
 				   Cell_handle c, int s, int t,
 				   const Facet & start)
-    : _cb( &(tr->_tds), 
+    : _cb( &(const_cast<Triangulation *>(tr)->_tds),
 	   (Ctds *) &(*c), s, t,
 	   std::make_pair((Ctds *) &(*start.first), start.second) ),
-      _tr(tr)
+      _tr(const_cast<Triangulation *>(tr))
     {}
 
-   Triangulation_facet_circulator_3(Triangulation * tr, const Edge & e, 
+   Triangulation_facet_circulator_3(const Triangulation * tr, const Edge & e, 
 				   const Facet & start)
-    : _cb( &(tr->_tds), 
+    : _cb( &(const_cast<Triangulation *>(tr)->_tds),
 	   (Ctds *) &(*(e.first)), e.second, e.third, 
 	   std::make_pair((Ctds *) &(*start.first), start.second) ),
-      _tr(tr)
+      _tr(const_cast<Triangulation *>(tr))
     {}
  
-   Triangulation_facet_circulator_3(Triangulation * tr, 
+   Triangulation_facet_circulator_3(const Triangulation * tr, 
 				   Cell_handle c, int s, int t,
 				   Cell_handle start, int f)
-    : _cb( &(tr->_tds), 
+    : _cb( &(const_cast<Triangulation *>(tr)->_tds),
 	   (Ctds *) &(*c), s, t,
 	   (Ctds *) &(*start), f ),
-      _tr(tr)
+      _tr(const_cast<Triangulation *>(tr))
     {}
 
-   Triangulation_facet_circulator_3(Triangulation * tr, const Edge & e, 
+   Triangulation_facet_circulator_3(const Triangulation * tr, const Edge & e, 
 				   Cell_handle start, int f)
-    : _cb( &(tr->_tds), 
+    : _cb( &(const_cast<Triangulation *>(tr)->_tds),
 	   (Ctds *) &(*(e.first)), e.second, e.third, 
 	   (Ctds *) &(*start), f ),
-      _tr(tr)
+      _tr(const_cast<Triangulation *>(tr))
     {}
  
   Triangulation_facet_circulator_3(const Facet_circulator & ccir)

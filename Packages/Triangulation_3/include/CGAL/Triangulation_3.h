@@ -627,166 +627,129 @@ public:
   //TRAVERSING : ITERATORS AND CIRCULATORS
   Cell_iterator finite_cells_begin() const
     {
-      if ( dimension() < 3 ) return cells_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds> *)this;
-      return Cell_iterator(ncthis, false); // false means "without
-      // infinite cells" 
+      if ( dimension() < 3 )
+	  return cells_end();
+      return Cell_iterator(this, false); // false means without infinite cells.
     }
   Cell_iterator all_cells_begin() const
     {
-      if ( dimension() < 3 ) return cells_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds> *)this;
-      return Cell_iterator(ncthis, true); // true means "with infinite cells"
+      if ( dimension() < 3 )
+	  return cells_end();
+      return Cell_iterator(this, true); // true means with infinite cells.
     }
   Cell_iterator cells_end() const
     {
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds> *)this;
-      return Cell_iterator(ncthis); // not second argument -> past-end
+      return Cell_iterator(this); // no second argument -> past-end
     }
 
   Vertex_iterator finite_vertices_begin() const
     {
-      if ( number_of_vertices() <= 0 ) return vertices_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Vertex_iterator(ncthis, false);
+      if ( number_of_vertices() <= 0 )
+	  return vertices_end();
+      return Vertex_iterator(this, false);
     }
   Vertex_iterator all_vertices_begin() const
     {
-      if ( number_of_vertices() <= 0 ) return vertices_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Vertex_iterator(ncthis, true);
+      if ( number_of_vertices() <= 0 )
+	  return vertices_end();
+      return Vertex_iterator(this, true);
     }
   Vertex_iterator vertices_end() const
     {
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Vertex_iterator(ncthis);
+      return Vertex_iterator(this);
     }
 
   Edge_iterator finite_edges_begin() const
     {
-      if ( dimension() < 1 ) return edges_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Edge_iterator(ncthis, false);
+      if ( dimension() < 1 )
+	  return edges_end();
+      return Edge_iterator(this, false);
     }
   Edge_iterator all_edges_begin() const
     {
-      if ( dimension() < 1 ) return edges_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Edge_iterator(ncthis, true);
+      if ( dimension() < 1 )
+	  return edges_end();
+      return Edge_iterator(this, true);
     }
   Edge_iterator edges_end() const
     {
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Edge_iterator(ncthis);
+      return Edge_iterator(this);
     }
 
   Facet_iterator finite_facets_begin() const
     {
-      if ( dimension() < 2 ) return facets_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_iterator(ncthis, false);
+      if ( dimension() < 2 )
+	  return facets_end();
+      return Facet_iterator(this, false);
     }
   Facet_iterator all_facets_begin() const
     {
-      if ( dimension() < 2 ) return facets_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_iterator(ncthis, true);
+      if ( dimension() < 2 )
+	  return facets_end();
+      return Facet_iterator(this, true);
     }
   Facet_iterator facets_end() const
     {
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_iterator(ncthis);
+      return Facet_iterator(this);
     }
 
   // cells around an edge
   Cell_circulator incident_cells(const Edge & e) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Cell_circulator(ncthis,e);
+      return Cell_circulator(this, e);
     }
   Cell_circulator incident_cells(Cell_handle c, int i, int j) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Cell_circulator(ncthis,c,i,j);
+      return Cell_circulator(this,c,i,j);
     }
   Cell_circulator incident_cells(const Edge & e, Cell_handle start) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Cell_circulator(ncthis,e,start);
+      return Cell_circulator(this, e, start);
     }
   Cell_circulator incident_cells(Cell_handle c, int i, int j, 
 				 Cell_handle start) const  
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Cell_circulator(ncthis,c,i,j,start);
+      return Cell_circulator(this, c, i, j, start);
     }
 
   // facets around an edge
   Facet_circulator incident_facets(const Edge & e) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_circulator(ncthis,e);
+      return Facet_circulator(this, e);
     }
   Facet_circulator incident_facets(Cell_handle c, int i, int j) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_circulator(ncthis,c,i,j);
+      return Facet_circulator(this, c, i, j);
     }
   Facet_circulator incident_facets(const Edge & e, 
 				   const Facet & start) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_circulator(ncthis,e,start);
+      return Facet_circulator(this, e, start);
     }
   Facet_circulator incident_facets(Cell_handle c, int i, int j, 
 				   const Facet & start) const  
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_circulator(ncthis,c,i,j,start);
+      return Facet_circulator(this, c, i, j, start);
     }
   Facet_circulator incident_facets(const Edge & e, 
 				   Cell_handle start, int f) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_circulator(ncthis,e,start,f);
+      return Facet_circulator(this, e, start, f);
     }
   Facet_circulator incident_facets(Cell_handle c, int i, int j, 
 				   Cell_handle start, int f) const  
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_circulator(ncthis,c,i,j,start,f);
+      return Facet_circulator(this, c, i, j, start, f);
     }
 
   // around a vertex

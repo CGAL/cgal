@@ -24,12 +24,12 @@
 #define CGAL_TRIANGULATION_DS_CIRCULATORS_3_H
 
 #include <utility>
-#include <CGAL/triple.h>
-#include <CGAL/circulator.h>
-#include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_utils_3.h>
 
 #include <CGAL/Triangulation_short_names_3.h>
+#include <CGAL/triangulation_assertions.h>
+#include <CGAL/triple.h>
+#include <CGAL/circulator.h>
+#include <CGAL/Triangulation_utils_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -66,8 +66,8 @@ public:
 //   }
 
         
-  Triangulation_ds_cell_circulator_3(Tds * tds, Cell* c, int s, int t)
-    : _tds(tds), _c(c), _s(s), _t(t)
+  Triangulation_ds_cell_circulator_3(const Tds * tds, Cell* c, int s, int t)
+    : _tds(const_cast<Tds *>(tds)), _c(c), _s(s), _t(t)
   {
     CGAL_triangulation_precondition( c != NULL && 
 				     s >= 0 && s < 4 &&
@@ -77,8 +77,8 @@ public:
     pos = c;
   }
 
-  Triangulation_ds_cell_circulator_3(Tds * tds, const Edge & e)
-    : _tds(tds), _c(e.first), _s(e.second), _t(e.third)
+  Triangulation_ds_cell_circulator_3(const Tds * tds, const Edge & e)
+    : _tds(const_cast<Tds *>(tds)), _c(e.first), _s(e.second), _t(e.third)
   {
     CGAL_triangulation_precondition( e.first != NULL && 
 				     (e.second==0 || e.second==1 ||
@@ -90,9 +90,9 @@ public:
       pos = e.first;
   }
   
-  Triangulation_ds_cell_circulator_3(Tds * tds, Cell* c, int s, int t,
+  Triangulation_ds_cell_circulator_3(const Tds * tds, Cell* c, int s, int t,
 				     Cell* start) 
-    : _tds(tds), _c(c), _s(s), _t(t)
+    : _tds(const_cast<Tds *>(tds)), _c(c), _s(s), _t(t)
   {
     CGAL_triangulation_precondition( c != NULL && 
 				     s >= 0 && s < 4 &&
@@ -108,8 +108,9 @@ public:
     pos = start;
   }
 
-  Triangulation_ds_cell_circulator_3(Tds * tds, const Edge & e, Cell* start)
-    : _tds(tds), _c(e.first), _s(e.second), _t(e.third)
+  Triangulation_ds_cell_circulator_3(const Tds * tds, const Edge & e,
+	                             Cell* start)
+    : _tds(const_cast<Tds *>(tds)), _c(e.first), _s(e.second), _t(e.third)
   {
     CGAL_triangulation_precondition( e.first != NULL && 
 				     (e.second==0 || e.second==1 ||

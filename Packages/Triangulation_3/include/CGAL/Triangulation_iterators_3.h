@@ -68,8 +68,9 @@ public:
     : _ib(), _tr(NULL), _inf(true)
   {}
         
-  Triangulation_cell_iterator_3(Triangulation_3<Gt,Tds> *tr, bool inf)
-    : _ib( &(tr->_tds)), _tr(tr), _inf(inf)
+  Triangulation_cell_iterator_3(const Triang *tr, bool inf)
+    : _ib( &(const_cast<Triang *>(tr)->_tds)),
+      _tr(const_cast<Triang *>(tr)), _inf(inf)
     { 
       if (! _inf) {
 	while ( // ( _ib != _tr->_tds.cells_end() ) &&
@@ -82,8 +83,9 @@ public:
   
   // for past-end iterator
   // does not need to find a finite cell
-  Triangulation_cell_iterator_3(Triangulation_3<Gt,Tds> *tr)
-    : _ib( &(tr->_tds), 1), _tr(tr), _inf(true)
+  Triangulation_cell_iterator_3(const Triang *tr)
+    : _ib( &(const_cast<Triang *>(tr)->_tds), 1),
+      _tr(const_cast<Triang *>(tr)), _inf(true)
   { }
        
   Triangulation_cell_iterator_3(const Cell_iterator & cit)
@@ -206,8 +208,9 @@ public:
     : _ib(), _tr(NULL), _inf(true)
   {}
         
-  Triangulation_vertex_iterator_3(Triangulation_3<Gt,Tds> * tr, bool inf)
-    : _ib( &(tr->_tds)), _tr(tr), _inf(inf)
+  Triangulation_vertex_iterator_3(const Triang * tr, bool inf)
+    : _ib( &(const_cast<Triang *>(tr)->_tds)),
+      _tr(const_cast<Triang *>(tr)), _inf(inf)
     { 
       if (! _inf) {
 	if ( _tr->is_infinite(Vertex_handle( (Vertex *) &(*(_ib)) )) ) {
@@ -218,8 +221,8 @@ public:
         
   // for past-end iterator
   // does not need to find a finite cell
-  Triangulation_vertex_iterator_3(Triangulation_3<Gt,Tds> * tr)
-    : _ib( &(tr->_tds), 1), _tr(tr)
+  Triangulation_vertex_iterator_3(const Triang * tr)
+    : _ib( &(const_cast<Triang *>(tr)->_tds), 1), _tr(const_cast<Triang *>(tr))
   { }
        
   Triangulation_vertex_iterator_3(const Vertex_iterator & vi)
@@ -343,8 +346,9 @@ public:
     : _ib(), _tr(NULL), _inf(true)
   {}
         
-  Triangulation_edge_iterator_3(Triangulation_3<Gt,Tds> *tr, bool inf)
-    : _ib( &(tr->_tds)), _tr(tr), _inf(inf)
+  Triangulation_edge_iterator_3(const Triang *tr, bool inf)
+    : _ib( &(const_cast<Triang *>(tr)->_tds)),
+      _tr(const_cast<Triang *>(tr)), _inf(inf)
   { 
     if (! _inf) {
 	while ( // ( _ib != _tr->_tds.cells_end() ) &&
@@ -356,8 +360,9 @@ public:
     }
   }
         
-  Triangulation_edge_iterator_3(Triangulation_3<Gt,Tds> *tr)
-    : _ib( &(tr->_tds), 1), _tr(tr), _inf(true)
+  Triangulation_edge_iterator_3(const Triang *tr)
+    : _ib( &(const_cast<Triang *>(tr)->_tds), 1),
+      _tr(const_cast<Triang *>(tr)), _inf(true)
     // _inf is initialized but should never be used
   { }
        
@@ -483,8 +488,9 @@ public:
     : _ib(), _tr(NULL), _inf(true)
   {}
         
-  Triangulation_facet_iterator_3(Triangulation_3<Gt,Tds> *tr, bool inf)
-    : _ib( &(tr->_tds)), _tr(tr), _inf(inf)
+  Triangulation_facet_iterator_3(const Triang *tr, bool inf)
+    : _ib( &(const_cast<Triang *>(tr)->_tds)),
+      _tr(const_cast<Triang *>(tr)), _inf(inf)
   {       
     if (! _inf) {
       while ( // ( _ib != _tr->_tds.cells_end() ) &&
@@ -497,8 +503,9 @@ public:
     }
   }
         
-  Triangulation_facet_iterator_3(Triangulation_3<Gt,Tds> *tr)
-    : _ib( &(tr->_tds), 1), _tr(tr), _inf(true)
+  Triangulation_facet_iterator_3(const Triang *tr)
+    : _ib( &(const_cast<Triang *>(tr)->_tds), 1),
+      _tr(const_cast<Triang *>(tr)), _inf(true)
   // _inf is initialized but should never be used
   { }
        
