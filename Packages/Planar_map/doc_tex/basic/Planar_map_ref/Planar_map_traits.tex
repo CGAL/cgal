@@ -54,13 +54,6 @@
     \ccEnum{enum Comparison_result {SMALLER, EQUAL, LARGER};}
     {a constant describing the relative position between objects.}
     
-    \ccEnum{enum Curve_point_status {UNDER_CURVE = -1,
-                                     CURVE_NOT_IN_RANGE ,
-                                     ABOVE_CURVE ,
-                                     ON_CURVE};
-    }
-    {a constant describing the relative position between a curve and a point.}
-
 \ccCreation
     
 % Only a default constructor is required. Note that further constructors
@@ -91,13 +84,13 @@
     \ccStyle{EQUAL} otherwise.}
 
     \ccMethod{bool curve_is_vertical(const X_curve_2& cv);} 
-   {returns \ccStyle{true} if \ccStyle{cv} is a vertical segment, and
+   {returns \ccStyle{true} if \ccStyle{cv} is a vertical segment, 
     \ccStyle{false} otherwise.}
         
     \ccMethod{bool curve_is_in_x_range( const X_curve_2& cv,
        const Point_2& pnt );}
     {returns \ccStyle{true} if \ccStyle{pnt} is in the $x$ range of
-    \ccStyle{cv}, and \ccStyle{false} otherwise.}
+    \ccStyle{cv}, \ccStyle{false} otherwise.}
     
     \ccMethod{Comparison_result curve_compare_at_x(const X_curve_2& cv1,
       const X_curve_2& cv2, const Point_2& pnt );}
@@ -109,44 +102,35 @@
     \ccMethod{Comparison_result curve_compare_at_x_left(const X_curve_2& cv1,
       const X_curve_2& cv2, const Point_2& pnt);}
     {compares the $y$-coordinate of $cv1$ and $cv2$ immediately to the
-     left of the $x$-coordinate of $pnt$. 
-    \ccPrecond{$cv1$ and $cv2$ are defined to the left of $pnt$'s
+     left of the $x$-coordinate of $pnt$.
+     \ccPrecond{$cv1$ and $cv2$ meet at $pnt$ $x$-coordinate.}
+     \ccPrecond{$cv1$ and $cv2$ are defined to the left of $pnt$'s
      $x$-coordinate.}}
     
     \ccMethod{Comparison_result curve_compare_at_x_right(const X_curve_2& cv1,
       const X_curve_2& cv2, const Point_2& pnt);}
     {compares the $y$-coordinate of $cv1$ and $cv2$ immediately to the right of
      the $x$-coordinate of $pnt$.
-    \ccPrecond{$cv1$ and $cv2$ are defined to the left of $pnt$'s
+     \ccPrecond{$cv1$ and $cv2$ meet at $pnt$ $x$-coordinate.}
+     \ccPrecond{$cv1$ and $cv2$ are defined to the left of $pnt$'s
      $x$-coordinate.}}
     
     \ccMethod{Curve_point_status curve_get_point_status(const X_curve_2& cv,
-       const Point_2& pnt);} {returns a constant describing the
-       relative position between $cv$ and $pnt$:
-       \begin{itemize}
-       \item[]\ccStyle{CURVE_NOT_IN_RANGE} - $pnt$ is not in the $x$-range of
-       $cv$, 
-%       \item[]\ccStyle{CURVE_VERTICAL} - $cv$ is a vertical segment,
-       \item[]\ccStyle{UNDER_CURVE} - $pnt$ is below $cv$,
-       \item[]\ccStyle{ABOVE_CURVE} - $pnt$ is above $cv$, and
-       \item[]\ccStyle{ON_CURVE} - $pnt$ is on $cv$.
-       \end{itemize}}
-       
-       \ccMethod{bool curve_is_between_cw(const X_curve_2& cv,
-          const X_curve_2& first, const X_curve_2& second, const Point_2&
-          pnt);} {given three curves that share an endpoint $pnt$,
-          returns $true$ if $cv$ is between $first$ and $second$, when
-          going in the clockwise direction around $pnt$ from $first$
-          to $second$. }
+       const Point_2& pnt);}
+    {compares the y-coordinates of $pnt$ and the vertical projection of $pnt$
+      on $cv$. Returns \ccStyle{SMALLER} if $cv(x(p)) < y(p)$; \ccStyle{LARGER}
+      if $cv(x(p)) > y(p)$; \ccStyle{EQUAL} otherwise (p is on the curve).
+    \ccPrecond{$cv$ is defined at $pnt$'s $x$-coordinate.}}
 
+    \ccMethod{bool curve_is_same(const X_curve_2 & cv1,
+                                 const X_curve_2 & cv2);}
+    {returns \ccc{true} if \ccc{cv1} and \ccc{cv2} have the same graph, 
+      \ccc{false} otherwise.}
 
-       \ccMethod{bool curve_is_same(const X_curve_2 & cv1,
-                                    const X_curve_2 & cv2);}
-       {returns \ccc{true} if \ccc{cv1} and \ccc{cv2} have the same graph.}
-
-       \ccMethod{bool point_is_same(const Point_2 & p1,
-                                    const Point_2 & p2);}
-       {returns \ccc{true} if \ccc{p1} is the same as \ccc{p2}.}
+    \ccMethod{bool point_is_same(const Point_2 & p1,
+                                 const Point_2 & p2);}
+    {returns \ccc{true} if \ccc{p1} is the same as \ccc{p2}, \ccc{false}
+      otherwise.}
 	  
 %construction function
 %---------------------   
