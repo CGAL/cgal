@@ -61,13 +61,15 @@ template <class TDS>
 class Triangulation_ds_vertex_iterator_3;
 template <class TDS>
 class Triangulation_ds_cell_circulator_3;
+template <class TDS>
+class Triangulation_ds_facet_circulator_3;
 
 template <class Vb, class Cb>
 class Triangulation_data_structure_3
   :public Triangulation_utils_3
 {
 
-  friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
+  friend std::istream& operator >> CGAL_NULL_TMPL_ARGS
   (std::istream&, Triangulation_data_structure_3<Vb,Cb>&);
 //   friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
 //   (std::ostream& os, const Triangulation_data_structure_3<Vb,Cb> &tr);
@@ -84,7 +86,11 @@ class Triangulation_data_structure_3
   <Triangulation_data_structure_3<Vb,Cb> >;
   friend class Triangulation_ds_vertex_iterator_3
   <Triangulation_data_structure_3<Vb,Cb> >;
-  
+   friend class Triangulation_ds_cell_circulator_3
+  <Triangulation_data_structure_3<Vb,Cb> >;
+   friend class Triangulation_ds_facet_circulator_3
+  <Triangulation_data_structure_3<Vb,Cb> >;
+
 public:
   
   //  typedef typename Vb::Point Point;
@@ -101,6 +107,7 @@ public:
   typedef Triangulation_ds_edge_iterator_3<Tds> Edge_iterator;
   typedef Triangulation_ds_vertex_iterator_3<Tds> Vertex_iterator;
   typedef Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
+  typedef Triangulation_ds_facet_circulator_3<Tds> Facet_circulator;
 
   // CONSTRUCTORS
 
@@ -388,6 +395,7 @@ public:
 
   // CIRCULATOR METHODS
 
+  // cells around an edge
   Cell_circulator incident_cells(const Edge & e) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
@@ -424,6 +432,62 @@ public:
     return Cell_circulator(ncthis,ce,i,j,start);
   }
 
+  //facets around an edge
+    Facet_circulator incident_facets(const Edge & e) const
+  {
+    CGAL_triangulation_precondition( dimension() == 3 );
+    Tds* ncthis = (Tds *)this;
+    return Facet_circulator(ncthis,e);
+  }
+
+//   Facet_circulator incident_facets(Cell* ce, int i, int j) const
+//   {
+//     return incident_cells(make_triple(ce,i,j));
+//   }
+  Facet_circulator incident_facets(Cell* ce, int i, int j) const
+  {
+    CGAL_triangulation_precondition( dimension() == 3 );
+    Tds* ncthis = (Tds *)this;
+    return Facet_circulator(ncthis,ce,i,j);
+  }
+
+  Facet_circulator incident_facets(const Edge & e, Facet start) const
+  {
+    CGAL_triangulation_precondition( dimension() == 3 );
+    Tds* ncthis = (Tds *)this;
+    return Facet_circulator(ncthis,e,start);
+  }
+
+//   Facet_circulator incident_facets(Cell* ce, int i, int j, Cell* c) const
+//   {
+//     return incident_facets(make_triple(ce,i,j),c);
+//   }
+  Facet_circulator incident_facets(Cell* ce, int i, int j, Facet start) const
+  {
+    CGAL_triangulation_precondition( dimension() == 3 );
+    Tds* ncthis = (Tds *)this;
+    return Facet_circulator(ncthis,ce,i,j,start);
+  }
+
+  Facet_circulator incident_facets(const Edge & e, Cell* start, int f) const
+  {
+    CGAL_triangulation_precondition( dimension() == 3 );
+    Tds* ncthis = (Tds *)this;
+    return Facet_circulator(ncthis,e,start,f);
+  }
+
+//   Facet_circulator incident_facets(Cell* ce, int i, int j, Cell* c) const
+//   {
+//     return incident_facets(make_triple(ce,i,j),c);
+//   }
+  Facet_circulator incident_facets(Cell* ce, int i, int j, Cell* start, int f) const
+  {
+    CGAL_triangulation_precondition( dimension() == 3 );
+    Tds* ncthis = (Tds *)this;
+    return Facet_circulator(ncthis,ce,i,j,start,f);
+  }
+
+  // around a vertex
   void
   incident_cells(Vertex* v, std::set<Cell*, std::less<Cell*> > & cells,
 		 Cell* c = NULL ) const;
@@ -487,7 +551,7 @@ private:
 };
 
 template < class Vb, class Cb>
-std::istream& operator>>
+std::istream& operator >>
 (std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
   // reads :
   // the dimension

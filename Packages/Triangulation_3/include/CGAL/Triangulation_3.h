@@ -75,13 +75,16 @@ template < class GT, class Tds>
 class Triangulation_cell_circulator_3;
 
 template < class GT, class Tds>
+class Triangulation_facet_circulator_3;
+
+template < class GT, class Tds>
 class Triangulation_cell_3;
 
 template < class GT, class Tds >
 class Triangulation_3
   :public Triangulation_utils_3
 {
-  friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
+  friend std::istream& operator >> CGAL_NULL_TMPL_ARGS
   (std::istream& is, Triangulation_3<GT,Tds> &tr);
 
   friend class Triangulation_cell_3<GT,Tds>;
@@ -94,6 +97,7 @@ class Triangulation_3
   friend Triangulation_edge_iterator_3<GT,Tds>;
   friend Triangulation_vertex_iterator_3<GT,Tds>;
   friend Triangulation_cell_circulator_3<GT,Tds>;
+  friend Triangulation_facet_circulator_3<GT,Tds>;
 
 public:
 
@@ -112,8 +116,7 @@ public:
 
 
   typedef Triangulation_cell_circulator_3<GT,Tds>      Cell_circulator;
-//   typedef Triangulation_edge_circulator_3<GT,Tds>      Edge_circulator;
-//   typedef Triangulation_vertex_circulator_3<GT,Tds>    Vertex_circulator;
+  typedef Triangulation_facet_circulator_3<GT,Tds>     Facet_circulator;
 
   typedef Triangulation_cell_iterator_3<GT,Tds>   Cell_iterator;
   typedef Triangulation_facet_iterator_3<GT,Tds>   Facet_iterator;
@@ -718,7 +721,56 @@ public:
 	= (Triangulation_3<GT, Tds>*)this;
       return Cell_circulator(ncthis,c,i,j,start);
     }
+  //
+  Facet_circulator incident_facets(const Edge & e) const
+    {
+      CGAL_triangulation_precondition( dimension() == 3 );
+      Triangulation_3<GT, Tds>* ncthis 
+	= (Triangulation_3<GT, Tds>*)this;
+      return Facet_circulator(ncthis,e);
+    }
+  Facet_circulator incident_facets(Cell_handle c, int i, int j) const
+    {
+      CGAL_triangulation_precondition( dimension() == 3 );
+      Triangulation_3<GT, Tds>* ncthis 
+	= (Triangulation_3<GT, Tds>*)this;
+      return Facet_circulator(ncthis,c,i,j);
+    }
 
+  Facet_circulator incident_facets(const Edge & e, 
+				   Facet start) const
+    {
+      CGAL_triangulation_precondition( dimension() == 3 );
+      Triangulation_3<GT, Tds>* ncthis 
+	= (Triangulation_3<GT, Tds>*)this;
+      return Facet_circulator(ncthis,e,start);
+    }
+  Facet_circulator incident_facets(Cell_handle c, int i, int j, 
+				   Facet start) const  
+    {
+      CGAL_triangulation_precondition( dimension() == 3 );
+      Triangulation_3<GT, Tds>* ncthis 
+	= (Triangulation_3<GT, Tds>*)this;
+      return Facet_circulator(ncthis,c,i,j,start);
+    }
+  Facet_circulator incident_facets(const Edge & e, 
+				   Cell_handle start, int f) const
+    {
+      CGAL_triangulation_precondition( dimension() == 3 );
+      Triangulation_3<GT, Tds>* ncthis 
+	= (Triangulation_3<GT, Tds>*)this;
+      return Facet_circulator(ncthis,e,start,f);
+    }
+  Facet_circulator incident_facets(Cell_handle c, int i, int j, 
+				   Cell_handle start, int f) const  
+    {
+      CGAL_triangulation_precondition( dimension() == 3 );
+      Triangulation_3<GT, Tds>* ncthis 
+	= (Triangulation_3<GT, Tds>*)this;
+      return Facet_circulator(ncthis,c,i,j,start,f);
+    }
+
+  //
   void
   incident_cells(Vertex_handle v, 
 		 std::set<Cell*, std::less<Cell*> > & cells,
@@ -762,7 +814,7 @@ public:
 
 template < class GT, class Tds >
 std::istream & 
-operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
+operator >> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   // reads
   // the dimension
   // the number of finite vertices

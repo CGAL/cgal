@@ -688,15 +688,30 @@ into the triangulation data structure.}
 const;}
 {Idem for edge \ccc{(i,j)} of \ccc{c}.}
 
+The following circulators on facets are defined only in dimension~3,
+though facets are defined also in dimension~2: there are only two
+facets sharing an edge in dimension~2. 
 \ccMethod{Facet_circulator incident_facets(Edge e) const;}
-{Starts at an arbitrary facet incident to \ccc{e}.\\
-\textit{not yet implemented}} 
+{Starts at an arbitrary facet incident to \ccc{e}.
+\ccPrecond{\ccVar.\ccc{dimension()}~$=3$}} 
 \ccGlue
-\ccMethod{Facet_circulator incident_facets(Edge e, Facet f) const;}
-{Starts at facet \ccc{f}.
-\ccPrecond{\ccVar.\ccc{dimension()}~$\geq 2$ and \ccc{f} is incident to
-\ccc{e}.}\\ 
-\textit{not yet implemented}}
+\ccMethod{Facet_circulator incident_facets(Cell* c, int i, int j) const;}
+{Idem for edge \ccc{(i,j)} of \ccc{c}.} 
+\ccGlue
+\ccMethod{Facet_circulator incident_facets(Edge e, Facet start) const;}
+{Starts at facet \ccc{start}.
+\ccPrecond{\ccc{start} is incident to \ccc{e}.}}
+\ccGlue
+\ccMethod{Facet_circulator incident_facets(Edge e, Cell* start, int f) const;}
+{Starts at facet of index \ccc{f} in \ccc{start}.}
+\ccGlue
+\ccMethod{Facet_circulator incident_facets(Cell* c, int i, int j,
+Facet start) const;} 
+{Idem for edge \ccc{(i,j)} of \ccc{c}.} 
+\ccGlue
+\ccMethod{Facet_circulator incident_facets(Cell* c, int i, int j,
+Cell* start, int f) const;}
+{Idem for edge \ccc{(i,j)} of \ccc{c} and facet \ccc{(start,f)}.} 
 
 \ccHeading{Traversal of the incident cells and the
 adjacent vertices of a given vertex}
