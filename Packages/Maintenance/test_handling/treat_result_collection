@@ -1,0 +1,64 @@
+#!/sw/bin/perl5 -w
+
+use strict;
+
+$ENV{PATH}=
+'/sw/bin:/sbin:/usr/sbin:/usr/bsd:/bin:/usr/bin';
+
+my $scriptsdir = "/projects/CGAL/admin_scripts";
+my $unpack_dir= "/users/geert/CGAL/testresults";
+my $testresult_dir = "/users/www/CGAL/Members/Develop/testsuite";
+#my $testresult_dir = "/users/geert/tmp/tr";
+
+sub usage()
+{
+    print STDERR "usage: $0 URL\n"
+}
+
+# check if there is one param
+if ( $#ARGV != 0) {
+   usage();
+   die;
+}
+
+my $result_url = $ARGV[0];
+my $tarname=`basename $result_url .gz`;
+chomp $tarname;
+my $cgal_version;
+
+if ( $tarname =~ m/^(CGAL-\d+\.\d+-I-\d+)-/ ) {
+    $cgal_version=$1;
+} else {
+    die "$tarname is not a valid name for a testresult collection.\n";
+}
+
+chdir $unpack_dir or die;
+if  (system("w3mir", $result_url) != 0) {
+die "Could not get URL $result_url\n";
+}
+system("gunzip", "${tarname}.gz")== 0 or die "Could not gunzip ${tarname}.gz\n";
+print STDERR "Tarname is $tarname\n";
+my @results;
+@results=grep /gz$/, `tar tf ${tarname}`;
+chomp @results;
+system("tar", "xf", ${tarname}, @results);
+print STDERR "results is @results\n";
+print STDERR "results is", @results, "\n";
+system("$scriptsdir/to_zipped_format", @results);
+chdir $testresult_dir;
+chdir $cgal_version;
+my $resultfile;
+for $resultfile (@results) {
+    $resultfile =~ s/\.gz//;
+    system("tar", "xf", "${unpack_dir}/$resultfile");
+    unlink "${unpack_dir}/$resultfile";
+}
+chdir "..";
+system("./create_testresult_page", $cgal_version);
+
+# clean up stuff in UNPACK_DIR
+
+chdir $unpack_dir;
+unlink $tarname;
+
+
