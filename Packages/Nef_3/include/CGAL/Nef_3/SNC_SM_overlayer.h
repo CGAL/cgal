@@ -555,6 +555,10 @@ public:
   void partition_to_halfsphere(Iterator start, Iterator end,
     Seg_list& L, CGAL::Unique_hash_map<Iterator,T>& M, int pos) const;
 
+  template <typename Iterator, typename T>
+  void cut_at_equator(Iterator start, Iterator beyond, Seg_list& L, 
+		      CGAL::Unique_hash_map<Iterator,T>& M) const;
+
   template <typename Mark_accessor>
   void merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2,
     const Mark_accessor& D) const;
@@ -573,6 +577,8 @@ public:
   template <typename Below_accessor>
   void complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
     Below_accessor& D, std::vector<Mark>& mohs, int offset);
+
+  void set_outer_face_mark(const bool ch[2], const std::vector<Mark>& mohs);
 
   void dump(std::ostream& os = std::cerr) const
   { SNC_SM_io_parser<Refs_>::dump(center_vertex(),os); }
@@ -780,9 +786,44 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
   typename Seg_list::iterator it;
   CGAL_nef3_forall_iterators(it,L) TRACEN("  "<<*it);
 
+  /*
+  Seg_list L_full;
+  cut_at_equator(L.begin(), L.end(), L_full, From);
+
+  CGAL_nef3_forall_iterators(it,L_full) TRACEN("  "<<*it);
+  */
+
+  bool compute_halfsphere[2];
+  compute_halfsphere[0] = compute_halfsphere[1] = false;
+  CGAL_nef3_forall_iterators(it,L) {
+    if(!compute_halfsphere[0]) {
+      if(it->source().hz()>0 || it->target().hz()>0)
+	compute_halfsphere[0] = true;
+      if(CGAL::orientation(it->source(),it->target(), Sphere_point(0,0,1),
+			   CGAL::ORIGIN+it->sphere_circle().orthogonal_vector())
+	 == CGAL::NEGATIVE)
+	compute_halfsphere[0] = true;
+    }
+    if(!compute_halfsphere[1]) {
+      if(it->source().hz()<0 || it->target().hz()<0)
+	compute_halfsphere[1] = true;
+      if(CGAL::orientation(it->source(),it->target(), Sphere_point(0,0,-1),
+			   CGAL::ORIGIN+it->sphere_circle().orthogonal_vector()) 
+	 == CGAL::NEGATIVE)
+	compute_halfsphere[1] = true;
+    }
+  }
+  if(!compute_halfsphere[0] && !compute_halfsphere[1])
+    compute_halfsphere[0] = true;
+
+  TRACEN("compute halfspheres " << compute_halfsphere[0] 
+	                 << " " << compute_halfsphere[1]);
+
   Seg_list L_pos,L_neg;
-  partition_to_halfsphere(L.begin(), L.end(), L_pos, From, +1);
-  partition_to_halfsphere(L.begin(), L.end(), L_neg, From, -1);
+  if(compute_halfsphere[0])
+    partition_to_halfsphere(L.begin(), L.end(), L_pos, From, +1);
+  if(compute_halfsphere[1])
+    partition_to_halfsphere(L.begin(), L.end(), L_neg, From, -1);
   //TRACEN("L_pos="<<(MSDEBUG::print_elements(L_pos),""));
   //TRACEN("L_neg="<<(MSDEBUG::print_elements(L_neg),""));
 
@@ -796,12 +837,20 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
   typedef CGAL::Segment_overlay_traits< 
             Seg_iterator, SNC_SM_output, NH_geometry> NHS_traits;
   typedef CGAL::generic_sweep<NHS_traits> Negative_halfsphere_sweep;
+ 
+  /*
+  typedef SMO_from_sm<Self,Seg_iterator,Seg_info> SNC_SM_output;
+  typedef typename Sphere_kernel::Fullsphere_geometry F_geometry;
+  typedef CGAL::Segment_overlay_traits< 
+            Seg_iterator, SNC_SM_output, F_geometry>  FS_traits;
+  typedef CGAL::generic_sweep<FS_traits> Fullsphere_sweep;
+  */
 
   SVertex_handle v;
   SHalfedge_handle e;
   SNC_SM_output O(*this,PI,From); 
 
-  /* DEBUG CODE: to do: have all svertices a halfedge below associated? */
+  // DEBUG CODE: to do: have all svertices a halfedge below associated?
   TRACEN("Vertex info before swep");
   SVertex_iterator svi;
   for( svi=svertices_begin(); svi!=svertices_end(); svi++) {
@@ -811,26 +860,55 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
   }
 
   typedef typename PHS_traits::INPUT Input_range;
-  Positive_halfsphere_sweep SP(
-    Input_range(L_pos.begin(),L_pos.end()),O,
-    K.get_positive_halfsphere_geometry());
-  SP.sweep();
-  v=--svertices_end(); e=--shalfedges_end();
 
-  Negative_halfsphere_sweep SM(
-    Input_range(L_neg.begin(),L_neg.end()),O,
-    K.get_negative_halfsphere_geometry());
-  SM.sweep();
-  ++v; ++e;
+  if(compute_halfsphere[0]) {
+    Positive_halfsphere_sweep SP(
+	Input_range(L_pos.begin(),L_pos.end()),O,
+	K.get_positive_halfsphere_geometry());
+    SP.sweep();
+    v=--svertices_end(); e=--shalfedges_end();
+  }
+  
+  if(compute_halfsphere[1]) {
+    Negative_halfsphere_sweep SM(
+      Input_range(L_neg.begin(),L_neg.end()),O,
+      K.get_negative_halfsphere_geometry());
+    SM.sweep();
+  }
+  
+  if(compute_halfsphere[0]) {
+    ++v; 
+    ++e;
+  }
+  else {
+    v = svertices_begin(); 
+    e = shalfedges_begin();
+  }
+  
   // now two CCs of sphere graph are calculated
   // v = first vertex of CC in negative x-sphere
   // e = first edge of CC in negative x-sphere
 
-  create_face_objects(shalfedges_begin(), e, svertices_begin(), v, O,
-                      PH_geometry());
-  create_face_objects(e, shalfedges_end(), v, svertices_end(), O,
-                      NH_geometry());
+  /*
+  typedef typename FS_traits::INPUT Input_range;
+  Fullsphere_sweep SF(
+    Input_range(L_full.begin(),L_full.end()),O,
+    K.get_fullsphere_geometry());
+    SF.sweep();
+  */
 
+  if(compute_halfsphere[0])
+    create_face_objects(shalfedges_begin(), e, svertices_begin(), v, O,
+                        PH_geometry());
+  if(compute_halfsphere[1])
+    create_face_objects(e, shalfedges_end(), v, svertices_end(), O,
+			NH_geometry());
+
+  /*
+  create_face_objects(shalfedges_begin(), shalfedges_end(), 
+	      svertices_begin(), svertices_end(), 
+		      O, F_geometry());
+  */
 
   SHalfedge_iterator u;
   CGAL_nef3_forall_sedges(u,*this) {
@@ -847,10 +925,12 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
   L0.init_marks_of_halfspheres(mohs, 0);
   L1.init_marks_of_halfspheres(mohs, 2);
 
-  complete_face_support(svertices_begin(), v, O, mohs, 1);
-  complete_face_support(v, svertices_end(), O, mohs, 0);
+  if(compute_halfsphere[0])
+    complete_face_support(svertices_begin(), v, O, mohs, 0);
+  if(compute_halfsphere[1])
+    complete_face_support(v, svertices_end(), O, mohs, 1);
 
-  /* DEBUG CODE: to do: have all svertices a halfedge below associated? */
+  // DEBUG CODE: to do: have all svertices a halfedge below associated?
   TRACEN("Vertex info after swep");
   for( svi=svertices_begin(); svi!=svertices_end(); svi++) {
     GenPtr i = info(svi);
@@ -858,7 +938,11 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
 	   " marks "<<mark(svi,0)<<" "<<mark(svi,1));
   }
 
-  merge_halfsphere_maps(svertices_begin(),v,O);
+  if(compute_halfsphere[0] && compute_halfsphere[1])
+    merge_halfsphere_maps(svertices_begin(),v,O);
+  else
+    set_outer_face_mark(compute_halfsphere, mohs);
+
   check_integrity_and_topological_planarity();
 
   TRACEN("subdivided");
@@ -867,6 +951,86 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
   }
 }
 
+template <typename Refs_>
+void SNC_SM_overlayer<Refs_>::
+set_outer_face_mark(const bool ch[2], const std::vector<Mark>& mohs) {
+  SHalfedge_handle se(twin(first_out_edge(svertices_begin())));
+  SFace_handle sf = new_face();
+ 
+  int offset = ch[1];
+  mark(sf, 0) = mohs[offset];
+  mark(sf, 1) = mohs[offset+2];
+  link_as_face_cycle(se,sf); 
+}
+
+template <typename Refs_>
+template <typename Iterator, typename T>
+void SNC_SM_overlayer<Refs_>::
+cut_at_equator(Iterator start, Iterator beyond, Seg_list& L, 
+  CGAL::Unique_hash_map<Iterator,T>& M) const
+{ TRACEN("cut_at_equator ");
+  Sphere_circle xycircle(0,0,1);
+  std::vector<Sphere_segment> s;
+  while ( start != beyond ) { 
+    TRACEN("segment " << start->source() << " " << start->target());
+    start->intersection(xycircle,s);
+    while(!s.empty()) {
+      L.push_back(s.back()); M[--L.end()] = M[start];
+      s.pop_back();
+    }
+    ++start;
+  }
+  // now all segments are split into hemispheres
+  // we still have to:
+  // - split segments containing our special poles y^-, y^+
+  // - split halfcircles
+  // - add four equator segments 
+  Sphere_point S(0,-1,0),N(0,1,0);
+  Sphere_circle yzcircle(1,0,0);
+  typename Seg_list::iterator it, itl;
+  
+  CGAL_nef3_forall_iterators(it,L) { TRACEN("  "<<*it);
+    if ( equal_as_sets(it->sphere_circle(),xycircle) ) {
+      TRACEN("  splitting xy seg "<<*it);
+      bool added=false;
+      it->intersection(yzcircle, s);
+      while(!s.empty()) {
+	M[ L.insert(it,s.back()) ] = M[it]; 
+	s.pop_back();
+	added=true; 
+	//	TRACEN(">1 " << s2.source() << " " << s2.target()); 
+      }
+      it->intersection(yzcircle.opposite(),s);
+      while(!s.empty()) {
+	M[ L.insert(it,s.back()) ] = M[it]; 
+	s.pop_back();
+	added=true; 
+	//	TRACEN(">1 " << s2.source() << " " << s2.target()); 
+      }
+      if(added) {
+	itl = it; --it; L.erase(itl); M[itl] = T();
+      }
+      // at least one item was appended
+    }
+  }
+ 
+  CGAL_nef3_forall_iterators(it,L) {
+    if ( it->is_halfcircle() ) {
+      TRACEN("  splitting halfcircle "<<*it);
+      Sphere_segment s1,s2;
+      it->split_halfcircle(s1,s2);
+      *it = s2; 
+      M[ L.insert(it,s1) ] = M[it];
+    }
+  }
+
+  Sphere_segment sp(S,N,xycircle);
+  Sphere_segment sm(S,N,xycircle.opposite());
+  Sphere_segment ss[4];
+  sp.split_halfcircle(ss[0],ss[1]);
+  sm.split_halfcircle(ss[2],ss[3]);
+  L.insert(L.end(),ss,ss+4);
+}
 
 template <typename Refs_>
 template <typename Iterator, typename T>
@@ -949,8 +1113,6 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
   L.insert(L.end(),s,s+4);
 }
 
-
-
 template <typename Refs_>
 template <typename Below_accessor, typename Halfsphere_geometry>
 void SNC_SM_overlayer<Refs_>::
@@ -1024,31 +1186,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
     SHalfedge_handle e_below = halfedge_below(v);
     if ( v == v_start ) {     
       for (int i=0; i<2; ++i){
-	SHalfedge_around_sface_circulator e(first_out_edge(v)), end(e);
-	CGAL_For_all(e,end) {
-	  if(supp_object(e,i) != NULL)
-	    break;
-	}
-	if(supp_object(e,i) != NULL) {
-	  SHalfedge_handle ei;
-	  if ( assign(ei,supp_object(e,i)) ) { 
-	    if ( PI[i].circle(ei) != circle(e) ) { ei = PI[i].twin(ei); }
-	    CGAL_nef3_assertion( PI[i].circle(ei) == circle(e) ); 
-	    TRACEN("initial " << PH(e) << " " << PH(ei)<< " von Ebene " << i);
-	    m_buffer[i] = PI[i].mark(PI[i].face(ei));       
-	  }
-	  SHalfloop_handle li;
-	  if ( assign(li,supp_object(e,i)) ) { 
-	    if ( PI[i].circle(li) != circle(e) ) { li = PI[i].twin(li); }
-	    m_buffer[i] = PI[i].mark(PI[i].face(li));
-	    TRACEN("initial " << PH(li) << " von Ebene " << i);
-	  }
-	}
-	else {
-	  m_buffer[i] = mohs[offset+2*i];
-	  TRACEN("no initial support");
-	}     
-//	m_buffer[i] = mohs[offset+2*i];
+	m_buffer[i] = mohs[offset+2*i];
       }
     } else if ( e_below != SHalfedge_handle() ) {
       for (int i=0; i<2; ++i) {
@@ -1057,7 +1195,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
       }
     } else { // e_below does not exist
       CGAL_nef3_assertion( point(v).hz() == 0 && 
-			   ( offset > 0 ? (point(v).hx() >= 0) : (point(v).hx()<=0)) );
+			   ( offset == 0 ? (point(v).hx() >= 0) : (point(v).hx()<=0)) );
       for (int i=0; i<2; ++i) 
         m_buffer[i] = incident_mark(previous(first_out_edge(v)),i);
     } TRACEN(" faces right and below "<<m_buffer[0]<<" "<<m_buffer[1]);
@@ -1409,8 +1547,6 @@ void SNC_SM_overlayer<Refs_>::simplify() const
   CGAL_nef3_forall_shalfedges(ex,*this)
     TRACEN(PH(ex)<< " circle " << circle(ex) << " " << mark(ex));
   TRACEN(" ");
-
-  SETDTHREAD(1);
 
 }
 
