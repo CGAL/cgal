@@ -205,7 +205,7 @@ public:
   typedef CGAL_Triangulation_vertex_iterator_3<Gt,Tds> Vertex_iterator;
 
   CGAL_Triangulation_vertex_iterator_3()
-    : _ib(), _tr(), _inf()
+    : _ib(), _tr(NULL), _inf(true)
   {}
         
   CGAL_Triangulation_vertex_iterator_3(CGAL_Triangulation_3<Gt,Tds> * tr, bool inf)

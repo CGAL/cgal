@@ -69,6 +69,7 @@ class CGAL_Triangulation_cell_3;
 
 template < class GT, class Tds >
 class CGAL_Triangulation_3
+  :public CGAL_Triangulation_utils_3
 {
 //   friend istream& operator>> CGAL_NULL_TMPL_ARGS
 //   (istream& is, CGAL_Triangulation_3<GT,Tds> &tr);
@@ -2201,7 +2202,7 @@ private:
 	  }
 	  else { // we are on the boundary of the set of facets of the
 	    // convex hull that are visible from v
-	    i1 = nextposaroundij(i,inf);
+	    i1 = nextposaround(i,inf);
 	    i2 = 6-i-i1-inf;
 	    cnew = new Cell( _tds,
 			     c->vertex(i1), c->vertex(i2), 
@@ -2243,7 +2244,7 @@ private:
       iv = bound->index(v);
       // indices of the vertices != v of bound on the boundary of the hat
       // such that (i,i1,i2,iv) positive
-      int i1 = nextposaroundij(i,iv);
+      int i1 = nextposaround(i,iv);
       int i2 = 6-i-i1-iv;
 
       // looking for the neighbor i2 of bound :
@@ -2252,10 +2253,10 @@ private:
 
       Cell_handle cur = bound;
 
-      next = nextposaroundij(i1,iv);
+      next = nextposaround(i1,iv);
       while ( ! cur->neighbor(next)->has_vertex(infinite) ) {
 	cur = cur->neighbor(next);
-	next = nextposaroundij(cur->index(v1),cur->index(v));
+	next = nextposaround(cur->index(v1),cur->index(v));
       }
       Cell_handle current = bound->neighbor(i);
       Cell_handle found = cur->neighbor(next);
@@ -2422,12 +2423,12 @@ public:
 		 set<Cell*, less<Cell*> > & cells,
 		 Cell_handle c = NULL ) const
     {
-      CGAL_triangulation_precondition( v != NULL );
+      CGAL_triangulation_precondition( &(*v) != NULL );
       CGAL_triangulation_precondition( _tds.is_vertex(&(*v)) );
 
       if ( dimension() < 3 ) { return; }
 
-      if ( c == NULL ) {
+      if ( &(*c) == NULL ) {
 	c = v->cell();
       }
       else {
@@ -2450,12 +2451,12 @@ public:
 		    set<Vertex*, less<Vertex*> > & vertices,
 		    Cell_handle c = NULL ) const
     {
-      CGAL_triangulation_precondition( v != NULL );
+      CGAL_triangulation_precondition( &(*v) != NULL );
       CGAL_triangulation_precondition( _tds.is_vertex(&(*v)) );
       
       if ( number_of_vertices() < 2 ) { return; }
 
-      if ( c == NULL ) {
+      if ( &(*c) == NULL ) {
 	c = v->cell();
       }
       else {

@@ -60,6 +60,7 @@ class CGAL_Triangulation_ds_cell_circulator_3;
 
 template <class Vb, class Cb>
 class CGAL_Triangulation_data_structure_3
+  :public CGAL_Triangulation_utils_3
 {
 
   friend istream& operator>> CGAL_NULL_TMPL_ARGS
@@ -508,7 +509,7 @@ public:
 
 	//	int k=Cell_circulator::other(i,j);
 	//	Cell* ctmp = c->neighbor(k);
-	Cell* ctmp = c->neighbor( nextposaroundij(i,j) );
+	Cell* ctmp = c->neighbor( nextposaround(i,j) );
 
 	Cell* cprev = c;
 	Cell* cnewprev = cnew;
@@ -544,7 +545,7 @@ public:
 	  //	    ctmp = ctmp->neighbor(k);
 	  //	  }
 	  cprev = ctmp;
-	  ctmp = ctmp->neighbor( nextposaroundij(i,j) );
+	  ctmp = ctmp->neighbor( nextposaround(i,j) );
 	}
 	cnew = c->neighbor(c->index(vi));
 	cnew->set_neighbor(c->index(cprev),cnewprev);
@@ -864,12 +865,12 @@ private:
       for (int ii=0; ii<3; ii++) {
 	cnew->vertex(ii)->set_cell(cnew);
 	// indices of the vertices of cnew such that i[ii],j1,j2,li positive
-	j1 = nextposaroundij(i[ii],li);
+	j1 = nextposaround(i[ii],li);
 	j2 = 6-i[ii]-li-j1;
 	// turn around the oriented edge j1 j2
 	cur = c;
 	n = c->neighbor(i[ii]);
-	CGAL_triangulation_assertion( nextposaroundij(j1,j2)==i[ii] );//debug
+	CGAL_triangulation_assertion( nextposaround(j1,j2)==i[ii] );//debug
 	while (true) {
 	  j1 = n->index( cur->vertex(j1) );
 	  j2 = n->index( cur->vertex(j2) );
@@ -879,17 +880,17 @@ private:
 	  }
 	  CGAL_triangulation_assertion( n != c );
 	  cur = n;
-	  n = n->neighbor( nextposaroundij(j1,j2) );
+	  n = n->neighbor( nextposaround(j1,j2) );
 	}
 	// now n is outside region, cur is inside
-	if ( n->neighbor( nextposaroundij(j2,j1) ) == cur ) {
+	if ( n->neighbor( nextposaround(j2,j1) ) == cur ) {
 	  // neighbor relation is reciprocical, ie
 	  // the cell we are looking for is not yet created
 	  cnew->set_neighbor(ii,create_star(region,v,cur,cur->index(n)));
 	  continue;
 	}
 	// else the cell we are looking for was already created
-	cnew->set_neighbor(ii,n->neighbor( nextposaroundij(j2,j1) ));
+	cnew->set_neighbor(ii,n->neighbor( nextposaround(j2,j1) ));
       }
       return cnew;
     } // endif dimension 3

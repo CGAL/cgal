@@ -50,7 +50,8 @@ class CGAL_Triangulation_ds_vertex_iterator_3;
 
 template < class Vb, class Cb >
 class CGAL_Triangulation_ds_cell_3
-  : public Cb
+  : public Cb,
+    public CGAL_Triangulation_utils_3
 {
   friend class CGAL_Triangulation_data_structure_3<Vb,Cb>;
 

@@ -21,22 +21,25 @@
 #ifndef CGAL_TRIANGULATION_UTILS_3_H
 #define CGAL_TRIANGULATION_UTILS_3_H
 
-inline unsigned int ccw(const unsigned int i) 
+class CGAL_Triangulation_utils_3
 {
-  CGAL_precondition( i < 3 );
-  static const unsigned int tab_ccw[] = {1,2,0};
-  return tab_ccw[i];
+public:
+  inline unsigned int ccw(const unsigned int i) const
+    {
+      CGAL_precondition( i < 3 );
+      static const unsigned int tab_ccw[] = {1,2,0};
+      return tab_ccw[i];
+    }
+  
+  inline unsigned int cw(const unsigned int i) const
+    {
+      CGAL_precondition( i < 3 );
+      static const unsigned int tab_cw[] = {2,0,1};
+      return tab_cw[i];
 }
-
-inline unsigned int cw(const unsigned int i) 
-{
-  CGAL_precondition( i < 3 );
-  static const unsigned int tab_cw[] = {2,0,1};
-  return tab_cw[i];
-}
-
-inline unsigned int nextposaroundij(const unsigned int i, 
-				    const unsigned int j)
+  
+  inline unsigned int nextposaround(const unsigned int i, 
+				    const unsigned int j) const
 {
   // index of the next cell when turning around the
   // oriented edge vertex(i) vertex(j) in 3d
@@ -48,6 +51,8 @@ inline unsigned int nextposaroundij(const unsigned int i,
     {2, 0, 1, 5} }; // the diagonal has no meaning
   return tab_nextposaroundij[i][j];
 }
+
+};
 
 #endif CGAL_TRIANGULATION_UTILS_3_H
 

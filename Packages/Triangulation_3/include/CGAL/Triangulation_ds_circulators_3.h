@@ -31,7 +31,8 @@
 
 template < class Tds >
 class CGAL_Triangulation_ds_cell_circulator_3
-  : public CGAL_Bidirectional_circulator_base<typename Tds::Cell, ptrdiff_t, size_t>
+  : public CGAL_Bidirectional_circulator_base<typename Tds::Cell, ptrdiff_t, size_t>, 
+    public CGAL_Triangulation_utils_3
 {
   // circulates on cells around a given edge
 public:
@@ -119,7 +120,7 @@ public:
 
     //    prev = tmp;
 
-    pos = pos->neighbor( nextposaroundij(i,j) );
+    pos = pos->neighbor( nextposaround(i,j) );
     return *this;
   }
         
@@ -145,7 +146,7 @@ public:
     //    else prev = n;
     //    pos = tmp;
 
-    pos = pos->neighbor( nextposaroundij(j,i) );
+    pos = pos->neighbor( nextposaround(j,i) );
     return *this;
   }
         

@@ -456,8 +456,8 @@ private:
       // v1, v2 finite vertices of the facet such that v1,v2,infinite
       // is positively oriented
       Vertex_handle 
-	v1 = c->vertex( nextposaroundij(i3,i) ),
-	v2 = c->vertex( nextposaroundij(i,i3) );
+	v1 = c->vertex( nextposaround(i3,i) ),
+	v2 = c->vertex( nextposaround(i,i3) );
       CGAL_Orientation o =
 	geom_traits().orientation_in_plane( v1->point(),
 					    v2->point(),
